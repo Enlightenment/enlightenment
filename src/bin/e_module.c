@@ -704,6 +704,7 @@ _e_module_whitelist_check(void)
         "wl_screenshot",
         "wl_shell",
         "xkbswitch",
+        "echievements",
         
         NULL // end marker
      };
