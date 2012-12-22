@@ -92,7 +92,7 @@ _event_deleted(Nav_Item *ni, int type, void *e)
    if (type == EIO_MONITOR_ERROR)
      {
         //donteven.jpg
-        if (ni->monitor) eio_monitor_del(ni->monitor);
+        eio_monitor_del(ni->monitor);
         ni->monitor = eio_monitor_stringshared_add(ni->path);
         return ECORE_CALLBACK_RENEW;
      }
@@ -631,7 +631,7 @@ _box_button_free(Nav_Item *ni)
    e_box_unpack(ni->o);
    evas_object_del(ni->o);
    E_FREE_LIST(ni->handlers, ecore_event_handler_del);
-   if (ni->monitor) eio_monitor_del(ni->monitor);
+   eio_monitor_del(ni->monitor);
    eina_stringshare_del(ni->path);
    free(ni);
 }
@@ -673,7 +673,6 @@ _box_button_append(Instance *inst, const char *label, Edje_Signal_Cb func)
      }
    ni->path = eina_stringshare_add(path);
    ni->monitor = eio_monitor_stringshared_add(ni->path);
-   if (!ni->monitor) DBG("failed to add file monitor: %s", ni->path);
    E_LIST_HANDLER_APPEND(ni->handlers, EIO_MONITOR_SELF_DELETED, _event_deleted, ni);
    E_LIST_HANDLER_APPEND(ni->handlers, EIO_MONITOR_SELF_RENAME, _event_deleted, ni);
    E_LIST_HANDLER_APPEND(ni->handlers, EIO_MONITOR_ERROR, _event_deleted, ni);
