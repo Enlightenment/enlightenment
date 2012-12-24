@@ -1075,17 +1075,18 @@ _toggle_rows_cols(void)
         _add_border(bd);
     }
 #else
-    int nb_stacks = _G.tinfo->conf->nb_stacks;
+    int nb_stacks = get_stack_count();
     int pos, s;
 
     _G.tinfo->conf->use_rows = !_G.tinfo->conf->use_rows;
 
-    if (_G.tinfo->conf->use_rows)
+    if (_G.tinfo->conf->use_rows) {
         e_zone_useful_geometry_get(_G.tinfo->desk->zone,
                                    NULL, &pos, NULL, &s);
-    else
+    } else {
         e_zone_useful_geometry_get(_G.tinfo->desk->zone,
                                    &pos, NULL, &s, NULL);
+    }
 
     for (i = 0; i < nb_stacks; i++) {
         int size = 0;
