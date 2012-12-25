@@ -124,6 +124,8 @@ _cb_confirm_yes(void *data)
 
    if (!(cfdata = data)) return;
    cfdata->use_composite = 1;
+
+   e_config_dialog_changed_set(cfdata->cfd, _basic_check_changed(cfdata->cfd, cfdata));
 }
 
 static void
@@ -134,4 +136,6 @@ _cb_confirm_no(void *data)
    if (!(cfdata = data)) return;
    cfdata->use_composite = 0;
    e_widget_check_checked_set(cfdata->o_composite, 0);
+
+   e_config_dialog_changed_set(cfdata->cfd, _basic_check_changed(cfdata->cfd, cfdata));
 }
