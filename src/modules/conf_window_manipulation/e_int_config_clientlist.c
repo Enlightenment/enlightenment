@@ -3,6 +3,7 @@
 static void _fill_data(E_Config_Dialog_Data *cfdata);
 static void *_create_data(E_Config_Dialog *cfd);
 static void _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
+static int _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 
@@ -32,6 +33,7 @@ e_int_config_clientlist(E_Container *con, const char *params __UNUSED__)
    v->free_cfdata = _free_data;
    v->basic.apply_cfdata = _basic_apply;
    v->basic.create_widgets = _basic_create;
+   v->basic.check_changed = _basic_check_changed;
 
    cfd = e_config_dialog_new(con, _("Window List Menu Settings"), "E", 
 			     "windows/window_list_menu",
@@ -66,6 +68,21 @@ static void
 _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata) 
 {
    E_FREE(cfdata);
+}
+
+static int
+_basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
+{
+   return (e_config->clientlist_group_by != cfdata->group_by) ||
+          (e_config->clientlist_include_all_zones != cfdata->include_all_zones) ||
+          (e_config->clientlist_separate_with != cfdata->separate_with) ||
+          (e_config->clientlist_sort_by != cfdata->sort_by) ||
+          (e_config->clientlist_separate_iconified_apps !=
+            cfdata->separate_iconified_apps) ||
+          (e_config->clientlist_warp_to_iconified_desktop !=
+            cfdata->warp_to_iconified_desktop) ||
+          (e_config->clientlist_limit_caption_len != cfdata->limit_caption_len) ||
+          (e_config->clientlist_max_caption_len != cfdata->max_caption_len);
 }
 
 static int
