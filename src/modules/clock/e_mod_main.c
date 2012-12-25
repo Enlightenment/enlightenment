@@ -98,11 +98,11 @@ _todaystr_eval(Instance *inst, char *buf, int bufsz)
         if (tm)
           {
              if (inst->cfg->show_date == 1)
-               strftime(buf, bufsz, _("%A, %e %B, %Y"), (const struct tm *)tm);
+               strftime(buf, bufsz, _("%a, %e %b, %Y"), (const struct tm *)tm);
              else if (inst->cfg->show_date == 2)
                strftime(buf, bufsz, _("%a, %x"), (const struct tm *)tm);
              else if (inst->cfg->show_date == 3)
-               strftime(buf, bufsz, _("%x"), (const struct tm *)tm);
+               strftime(buf, bufsz, "%x", (const struct tm *)tm);
           }
         else
           buf[0] = 0;
