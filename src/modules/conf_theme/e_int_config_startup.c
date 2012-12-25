@@ -2,6 +2,7 @@
 
 static void        *_create_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
+static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int          _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 
@@ -18,6 +19,7 @@ struct _E_Config_Dialog_Data
 
    int              show_splash;
    char            *splash;
+   char            *previous_splash;
 };
 
 E_Config_Dialog *
@@ -33,6 +35,7 @@ e_int_config_startup(E_Container *con, const char *params __UNUSED__)
    v->free_cfdata = _free_data;
    v->basic.apply_cfdata = _basic_apply_data;
    v->basic.create_widgets = _basic_create_widgets;
+   v->basic.check_changed = _basic_check_changed;
 
    cfd = e_config_dialog_new(con,
                              _("Startup Settings"),
@@ -187,6 +190,8 @@ _fill_data(E_Config_Dialog_Data *cfdata)
           }
      }
 
+   cfdata->previous_splash = strdup(cfdata->splash);
+
    len = e_prefix_data_concat_static(path, "data/themes");
    if (!strncmp(cfdata->splash, path, len))
      cfdata->fmdir = 1;
@@ -207,8 +212,16 @@ _create_data(E_Config_Dialog *cfd)
 static void
 _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
+   E_FREE(cfdata->previous_splash);
    E_FREE(cfdata->splash);
    E_FREE(cfdata);
+}
+
+static int
+_basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
+{
+   return (e_config->show_splash != cfdata->show_splash) ||
+          (strcmp(cfdata->splash, cfdata->previous_splash));
 }
 
 static int
@@ -218,6 +231,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    if (e_config->init_default_theme)
      eina_stringshare_del(e_config->init_default_theme);
    e_config->init_default_theme = NULL;
+   E_FREE(cfdata->previous_splash);
 
    if (cfdata->splash)
      {
@@ -227,6 +241,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
              f = ecore_file_file_get(cfdata->splash);
              e_config->init_default_theme = eina_stringshare_add(f);
+             cfdata->previous_splash = strdup(cfdata->splash);
           }
      }
 
