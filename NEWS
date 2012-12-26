@@ -1,0 +1,23 @@
+Changes since 0.17.0:
+---------------------
+
+Additions:
+    *
+
+Deprecations:
+    *
+
+Removed:
+    *
+
+Improvements:
+    * Check changed added to several settings dialogs:
+     - clientlist,
+     - startup theme,
+     - desktop environments.
+    * Improve UI of desk settings.
+    * Add icons for gadcon settings.
+
+Fixes:
+    * Force check changed upon confirmation dialog closure for engine settings.
+    * Clock date formats are now internationalizable.
