@@ -15,7 +15,8 @@ Improvements:
      - clientlist,
      - startup theme,
      - desktop environments,
-     - language.
+     - language,
+     - notification.
     * Improve UI of desk settings.
     * Add icons for gadcon settings.
     * Improve strings of pager settings.
