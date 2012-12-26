@@ -1,4 +1,6 @@
 2012-12-26 Chidambar Zinnoury (ilLogict)
+
+	* Pager settings: fix check changed and strings (px→pixels).
 	* Language settings: add check changed and cleanup code.
 
 2012-12-25 Chidambar Zinnoury (ilLogict)

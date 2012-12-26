@@ -197,7 +197,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    ow = e_widget_label_add(evas, _("Resistance to dragging"));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%.0f px"), 0.0, 10.0, 1.0, 0, NULL,
+   ow = e_widget_slider_add(evas, 1, 0, _("%.0f pixels"), 0.0, 10.0, 1.0, 0, NULL,
                             &(cfdata->drag_resist), 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
 
@@ -236,7 +236,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    cfdata->gui.popup_list = eina_list_append(cfdata->gui.popup_list, ow);
    e_widget_disabled_set(ow, !cfdata->popup.show);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%.0f px"), 20.0, 200.0, 1.0, 0, NULL,
+   ow = e_widget_slider_add(evas, 1, 0, _("%.0f pixels"), 20.0, 200.0, 1.0, 0, NULL,
                             &(cfdata->popup.height), 100);
    cfdata->gui.popup_list = eina_list_append(cfdata->gui.popup_list, ow);
    e_widget_disabled_set(ow, !cfdata->popup.show);
@@ -255,7 +255,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
                                cfdata->gui.popup_list);
    ow = e_widget_label_add(evas, _("Pager action popup height"));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_slider_add(evas, 1, 0, _("%.0f px"), 20.0, 200.0, 1.0, 0, NULL,
+   ow = e_widget_slider_add(evas, 1, 0, _("%.0f pixels"), 20.0, 200.0, 1.0, 0, NULL,
                             &(cfdata->popup.act_height), 100);
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Popup"), ol, 1, 0, 1, 0,
@@ -324,16 +324,17 @@ static int
 _adv_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    if ((int)pager_config->popup != cfdata->popup.show) return 1;
-   if ((int)pager_config->disable_live_preview != !cfdata->live_preview) return 1;
-   if ((int)pager_config->show_desk_names != cfdata->show_desk_names) return 1;
-   if ((int)pager_config->popup_urgent != cfdata->popup.urgent_show) return 1;
    if (pager_config->popup_speed != cfdata->popup.speed) return 1;
+   if ((int)pager_config->flip_desk != cfdata->flip_desk) return 1;
+   if ((int)pager_config->disable_live_preview != !cfdata->live_preview) return 1;
+   if ((int)pager_config->popup_urgent != cfdata->popup.urgent_show) return 1;
    if ((int)pager_config->popup_urgent_stick != cfdata->popup.urgent_stick)
      return 1;
    if ((int)pager_config->popup_urgent_focus != cfdata->popup.urgent_focus)
      return 1;
    if (pager_config->popup_urgent_speed != cfdata->popup.urgent_speed)
      return 1;
+   if ((int)pager_config->show_desk_names != cfdata->show_desk_names) return 1;
    if (pager_config->popup_height != cfdata->popup.height) return 1;
    if (pager_config->popup_act_height != cfdata->popup.act_height) return 1;
    if ((int)pager_config->drag_resist != cfdata->drag_resist) return 1;

@@ -18,7 +18,9 @@ Improvements:
      - language.
     * Improve UI of desk settings.
     * Add icons for gadcon settings.
+    * Improve strings of pager settings.
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.
     * Clock date formats are now internationalizable.
+    * Advanced pager settings check changed accounts for flip desktop on mouse wheel.
