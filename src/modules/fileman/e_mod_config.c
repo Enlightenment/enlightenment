@@ -117,7 +117,7 @@ e_int_config_fileman(E_Container       *con,
    v->basic.create_widgets = _basic_create;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(con, _("Fileman Settings"), "E",
+   cfd = e_config_dialog_new(con, _("File Manager Settings"), "E",
                              "fileman/fileman",
                              "system-file-manager", 0, v, NULL);
    return cfd;
@@ -149,19 +149,20 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->view.show_sidebar = fileman_config->view.show_sidebar;
    cfdata->view.desktop_navigation = fileman_config->view.desktop_navigation;
    cfdata->view.menu_shows_files = fileman_config->view.menu_shows_files;
+   cfdata->view.spring_delay = fileman_config->view.spring_delay;
    cfdata->icon.max_thumb_size = fileman_config->icon.max_thumb_size;
    cfdata->icon.icon.w = fileman_config->icon.icon.w;
    cfdata->icon.icon.h = fileman_config->icon.icon.h;
+   cfdata->icon.extension.show = fileman_config->icon.extension.show;
    cfdata->tooltip.delay = fileman_config->tooltip.delay;
    cfdata->tooltip.size = fileman_config->tooltip.size;
    cfdata->tooltip.enable = fileman_config->tooltip.enable;
-   cfdata->icon.extension.show = fileman_config->icon.extension.show;
    cfdata->selection.windows_modifiers = fileman_config->selection.windows_modifiers;
    cfdata->list.sort.dirs.first = fileman_config->list.sort.dirs.first;
-   cfdata->list.sort.case_sen = !(fileman_config->list.sort.no_case);
    cfdata->list.sort.extension = fileman_config->list.sort.extension;
    cfdata->list.sort.mtime = fileman_config->list.sort.mtime;
    cfdata->list.sort.size = fileman_config->list.sort.size;
+   cfdata->list.sort.case_sen = !(fileman_config->list.sort.no_case);
    cfdata->dbus.desktop = e_config->device_desktop;
    cfdata->dbus.auto_mount = e_config->device_auto_mount;
    cfdata->dbus.auto_open = e_config->device_auto_open;
@@ -191,18 +192,15 @@ _basic_apply(E_Config_Dialog *cfd  __UNUSED__,
    fileman_config->view.desktop_navigation = cfdata->view.desktop_navigation;
    fileman_config->view.menu_shows_files = cfdata->view.menu_shows_files;
    fileman_config->view.spring_delay = cfdata->view.spring_delay;
-   fileman_config->icon.extension.show = cfdata->icon.extension.show;
-
-   fileman_config->selection.windows_modifiers = cfdata->selection.windows_modifiers;
-
+   fileman_config->icon.max_thumb_size = cfdata->icon.max_thumb_size;
    /* Make these two equal so that icons are proportioned correctly */
    fileman_config->icon.icon.w = cfdata->icon.icon.w;
    fileman_config->icon.icon.h = cfdata->icon.icon.w;
-
+   fileman_config->icon.extension.show = cfdata->icon.extension.show;
    fileman_config->tooltip.delay = cfdata->tooltip.delay;
    fileman_config->tooltip.size = cfdata->tooltip.size;
    fileman_config->tooltip.enable = cfdata->tooltip.enable;
-
+   fileman_config->selection.windows_modifiers = cfdata->selection.windows_modifiers;
    fileman_config->list.sort.dirs.first = cfdata->list.sort.dirs.first;
    fileman_config->list.sort.dirs.last = !(cfdata->list.sort.dirs.first);
    fileman_config->list.sort.extension = cfdata->list.sort.extension;
@@ -233,6 +231,7 @@ _basic_check_changed(E_Config_Dialog *cfd  __UNUSED__,
      (fileman_config->view.mode != cfdata->view.mode) ||
      (fileman_config->view.open_dirs_in_place != cfdata->view.open_dirs_in_place) ||
      (fileman_config->view.single_click != cfdata->view.single_click) ||
+     (e_config->filemanager_copy != cfdata->copy) ||
      (e_config->filemanager_secure_rm != cfdata->secure_rm) ||
      (fileman_config->view.show_full_path != cfdata->view.show_full_path) ||
      (fileman_config->view.show_desktop_icons != cfdata->view.show_desktop_icons) ||
@@ -240,21 +239,21 @@ _basic_check_changed(E_Config_Dialog *cfd  __UNUSED__,
      (fileman_config->view.show_sidebar != cfdata->view.show_sidebar) ||
      (fileman_config->view.desktop_navigation != cfdata->view.desktop_navigation) ||
      (fileman_config->view.menu_shows_files != cfdata->view.menu_shows_files) ||
-     (fileman_config->icon.extension.show != cfdata->icon.extension.show) ||
+     (fileman_config->view.spring_delay != cfdata->view.spring_delay) ||
      ((int)fileman_config->icon.max_thumb_size != cfdata->icon.max_thumb_size) ||
-     (fileman_config->selection.windows_modifiers != cfdata->selection.windows_modifiers) ||
      (fileman_config->icon.icon.w != cfdata->icon.icon.w) ||
      (fileman_config->icon.icon.h != cfdata->icon.icon.w) ||
+     (fileman_config->icon.extension.show != cfdata->icon.extension.show) ||
+     (fileman_config->tooltip.delay != cfdata->tooltip.delay) ||
+     (fileman_config->tooltip.size != cfdata->tooltip.size) ||
+     (fileman_config->tooltip.enable != cfdata->tooltip.enable) ||
+     (fileman_config->selection.windows_modifiers != cfdata->selection.windows_modifiers) ||
      (fileman_config->list.sort.dirs.first != cfdata->list.sort.dirs.first) ||
      (fileman_config->list.sort.dirs.last != !(cfdata->list.sort.dirs.first)) ||
-     (fileman_config->list.sort.size != cfdata->list.sort.size) ||
      (fileman_config->list.sort.extension != cfdata->list.sort.extension) ||
      (fileman_config->list.sort.mtime != cfdata->list.sort.mtime) ||
+     (fileman_config->list.sort.size != cfdata->list.sort.size) ||
      (fileman_config->list.sort.no_case != !(cfdata->list.sort.case_sen)) ||
-     (fileman_config->tooltip.delay != !(cfdata->tooltip.delay)) ||
-     (fileman_config->tooltip.size != !(cfdata->tooltip.size)) ||
-     (fileman_config->tooltip.enable != !(cfdata->tooltip.enable)) ||
-     (fileman_config->view.spring_delay != cfdata->view.spring_delay) ||
      (e_config->device_desktop != cfdata->dbus.desktop) ||
      (e_config->device_auto_mount != cfdata->dbus.auto_mount) ||
      (e_config->device_auto_open != cfdata->dbus.auto_open);
