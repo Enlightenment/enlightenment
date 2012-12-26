@@ -14,7 +14,8 @@ Improvements:
     * Check changed added to several settings dialogs:
      - clientlist,
      - startup theme,
-     - desktop environments.
+     - desktop environments,
+     - language.
     * Improve UI of desk settings.
     * Add icons for gadcon settings.
 

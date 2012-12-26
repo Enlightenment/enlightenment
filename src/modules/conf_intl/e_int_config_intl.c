@@ -7,9 +7,9 @@ typedef struct _E_Intl_Region_Node   E_Intl_Region_Node;
 static void        *_create_data(E_Config_Dialog *cfd);
 static void        *_create_desklock_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static int          _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
+static int          _basic_advanced_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
+static int          _basic_advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
-static int          _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 
 static void         _ilist_basic_language_cb_change(void *data, Evas_Object *obj);
@@ -590,9 +590,11 @@ e_int_config_intl(E_Container *con, const char *params __UNUSED__)
    v->create_cfdata = _create_data;
    v->free_cfdata = _free_data;
    v->advanced.create_widgets = _advanced_create_widgets;
-   v->advanced.apply_cfdata = _advanced_apply_data;
+   v->advanced.apply_cfdata = _basic_advanced_apply_data;
+   v->advanced.check_changed = _basic_advanced_check_changed;
    v->basic.create_widgets = _basic_create_widgets;
-   v->basic.apply_cfdata = _basic_apply_data;
+   v->basic.apply_cfdata = _basic_advanced_apply_data;
+   v->basic.check_changed = _basic_advanced_check_changed;
 
    cfd = e_config_dialog_new(con,
                              _("Language Settings"),
@@ -613,9 +615,11 @@ e_int_config_desklock_intl(E_Container *con, const char *params __UNUSED__)
    v->create_cfdata = _create_desklock_data;
    v->free_cfdata = _free_data;
    v->advanced.create_widgets = _advanced_create_widgets;
-   v->advanced.apply_cfdata = _advanced_apply_data;
+   v->advanced.apply_cfdata = _basic_advanced_apply_data;
+   v->advanced.check_changed = _basic_advanced_check_changed;
    v->basic.create_widgets = _basic_create_widgets;
-   v->basic.apply_cfdata = _basic_apply_data;
+   v->basic.apply_cfdata = _basic_advanced_apply_data;
+   v->basic.check_changed = _basic_advanced_check_changed;
 
    cfd = e_config_dialog_new(con,
                              _("Desklock Language Settings"),
@@ -964,34 +968,22 @@ _lc_check(void)
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   if (cfdata->cur_language)
-     {
-        if (cfdata->desklock)
-          {
-             if (e_config->desklock_language) eina_stringshare_del(e_config->desklock_language);
-             e_config->desklock_language = NULL;
-             if ((cfdata->cur_language) && (cfdata->cur_language[0]))
-               e_config->desklock_language = eina_stringshare_add(cfdata->cur_language);
-          }
-        else
-          {
-             if (e_config->language) eina_stringshare_del(e_config->language);
-             e_config->language = NULL;
-             if ((cfdata->cur_language) && (cfdata->cur_language[0]))
-               e_config->language = eina_stringshare_add(cfdata->cur_language);
-             e_intl_language_set(e_config->language);
-             _lc_check();
-          }
-     }
+   const char *previous;
 
-   e_config_save_queue();
-   return 1;
+   if (cfdata->desklock)
+     previous = e_config->desklock_language;
+   else
+     previous = e_config->language;
+
+   if (e_util_both_str_empty(previous, cfdata->cur_language))
+     return 0;
+   return e_util_strcmp(previous, cfdata->cur_language);
 }
 
 static int
-_advanced_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_advanced_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    if (cfdata->cur_language)
      {
@@ -1098,7 +1090,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    e_widget_frametable_object_append(of, ob, 0, 0, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(evas, &(cfdata->cur_language), NULL, NULL, NULL);
    cfdata->gui.locale_entry = ob;
-   e_widget_disabled_set(cfdata->gui.locale_entry, 1);
+   e_widget_entry_readonly_set(cfdata->gui.locale_entry, 1);
    e_widget_size_min_set(cfdata->gui.locale_entry, 100, 25);
    e_widget_frametable_object_append(of, cfdata->gui.locale_entry,
                                      1, 0, 1, 1, 1, 1, 1, 0);
@@ -1176,7 +1168,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_widget_frametable_object_append(of, ob, 0, 0, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(evas, &(cfdata->cur_language), NULL, NULL, NULL);
    cfdata->gui.locale_entry = ob;
-   e_widget_disabled_set(cfdata->gui.locale_entry, 1);
+   e_widget_entry_readonly_set(cfdata->gui.locale_entry, 1);
    e_widget_size_min_set(cfdata->gui.locale_entry, 100, 25);
    e_widget_frametable_object_append(of, cfdata->gui.locale_entry,
                                      0, 1, 1, 1, 1, 1, 1, 0);
