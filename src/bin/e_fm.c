@@ -6197,8 +6197,11 @@ _e_fm2_dnd_finish(Evas_Object *obj, int refresh)
 static Eina_Bool
 _e_fm2_cb_dnd_scroller(E_Fm2_Smart_Data *sd)
 {
-   int cx, cy, x, y, w, h, mx, my;
-   double px;
+   int cx = 0, cy = 0;
+   int x = 0, y = 0, w = 0, h = 0;
+   int mx = 0, my = 0;
+   double px = 0.0;
+
 #undef EFM_MAX_PIXEL_DRAG
 #define EFM_MAX_PIXEL_DRAG 25
 
@@ -6250,7 +6253,11 @@ _e_fm2_cb_dnd_scroller(E_Fm2_Smart_Data *sd)
    x = MAX(0, x);
    y = MAX(0, y);
    e_fm2_pan_set(sd->obj, x, y);
-   if (sd->drop_icon && (!E_INSIDE(sd->dnd_current.x, sd->dnd_current.y, sd->drop_icon->x - sd->drop_icon->sd->pos.x, sd->drop_icon->y - sd->drop_icon->sd->pos.y, sd->drop_icon->w, sd->drop_icon->h)))
+   if ((sd->drop_icon) && 
+       (!E_INSIDE(sd->dnd_current.x, sd->dnd_current.y, 
+                  sd->drop_icon->x - sd->drop_icon->sd->pos.x, 
+                  sd->drop_icon->y - sd->drop_icon->sd->pos.y, 
+                  sd->drop_icon->w, sd->drop_icon->h)))
      _e_fm2_dnd_drop_hide(sd->obj);
 /*
  * FIXME: this is slow and doesn't do much, need a better way...
