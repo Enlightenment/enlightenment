@@ -15,8 +15,6 @@ static Eina_List *wins = NULL;
 #ifdef HAVE_ELEMENTARY
 /* intercept elm_win operations so we talk directly to e_border */
 
-#include <Elementary.h>
-
 typedef struct _Elm_Win_Trap_Ctx
 {
    E_Border *border;
