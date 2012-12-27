@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: enlightenment HEAD\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2012-12-21 19:02+0100\n"
-"PO-Revision-Date: 2012-12-22 00:04+0300\n"
+"PO-Revision-Date: 2012-12-27 22:51+0300\n"
 "Last-Translator: سمير حسين <almusalimalmusalimah@gmail.com>\n"
 "Language-Team: Arabic <almusalimalmusalimah@gmail.com>\n"
 "Language: ar\n"
@@ -1268,62 +1268,64 @@ msgstr "فشل تنفيذ البرنامج"
 #: src/bin/e_exec.c:726 src/bin/e_exec.c:728
 #, c-format
 msgid "%s stopped running unexpectedly."
-msgstr "%s توقف عن التشغيل بشكل غير متوقع."
+msgstr "عفوا .... و لكن %s توقف عن التشغيل بشكل غير متوقع."
 
 #: src/bin/e_exec.c:734
 #, c-format
 msgid "An exit code of %i was returned from %s."
-msgstr "تشفير خروج من %i عاد من %s."
+msgstr "تشفير خروج لـ %i عاد من %s."
 
 #: src/bin/e_exec.c:742
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
-msgstr "%s تمت مقاطعته بواسطة إشارة مقاطعة."
+msgstr "عفوا .... و لكن %s تمت مقاطعته بواسطة إشارة مقاطعة."
 
 #: src/bin/e_exec.c:745
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
-msgstr "%s تمت مقاطعته بواسطة إشارة خروج"
+msgstr "عفوا .... و لكن %s تمت مقاطعته بواسطة إشارة خروج"
 
 #: src/bin/e_exec.c:749
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
-msgstr "%s تمت مقاطعته بواسطة إشارة إحباط"
+msgstr "عفوا .... و لكن %s تمت مقاطعته بواسطة إشارة إحباط"
 
 #: src/bin/e_exec.c:752
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
-msgstr "%s تمت مقاطعته بواسطة خطأ النقطة العائمة (floating point)."
+msgstr ""
+"عفوا .... و لكن %s تمت مقاطعته بواسطة خطأ النقطة العائمة (floating point)."
 
 #: src/bin/e_exec.c:756
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
-msgstr "%s تمت مقاطعته بواسطة إشارة قتل."
+msgstr "عفوا .... و لكن %s تمت مقاطعته بواسطة إشارة قتل."
 
 #: src/bin/e_exec.c:760
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
-msgstr "%s تمت مقاطعته بواسطة خطأ في الترقيم (segmentation fault)."
+msgstr ""
+"عفوا .... و لكن %s تمت مقاطعته بواسطة خطأ في الترقيم (segmentation fault)."
 
 #: src/bin/e_exec.c:764
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
-msgstr "%s تمت مقاطعته بسبب أنبوب مكسور (broken pipe)."
+msgstr "عفوا .... و لكن %s تمت مقاطعته بسبب أنبوب مكسور (broken pipe)."
 
 #: src/bin/e_exec.c:767
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
-msgstr "%s تمت مقاطعته بسبب إشارة إنهاء"
+msgstr "عفوا .... و لكن %s تمت مقاطعته بسبب إشارة إنهاء"
 
 #: src/bin/e_exec.c:771
 #, c-format
 msgid "%s was interrupted by a Bus Error."
-msgstr "%s تمت مقاطعته بسبب خطأ في المسار"
+msgstr "عفوا .... و لكن %s تمت مقاطعته بسبب خطأ في المسار"
 
 #: src/bin/e_exec.c:774
 #, c-format
 msgid "%s was interrupted by the signal number %i."
-msgstr "%s تمت مقاطعته بواسطة اﻹشارة رقم %i."
+msgstr "عفوا .... و لكن %s تمت مقاطعته بواسطة اﻹشارة رقم %i."
 
 #: src/bin/e_exec.c:830
 msgid ""
@@ -1371,7 +1373,7 @@ msgstr "مسار غير موجود"
 #: src/bin/e_fm.c:1064
 #, c-format
 msgid "%s doesn't exist."
-msgstr "%s غير موجود."
+msgstr "عفوا .... و لكن %s غير موجود."
 
 #: src/bin/e_fm.c:2826 src/bin/e_fm.c:3783
 #, c-format
@@ -1557,7 +1559,7 @@ msgstr "قد سبق إنشاء ملف جديد لهذا المجلد!"
 #: src/bin/e_fm.c:9614 src/bin/e_fm.c:9635
 #, c-format
 msgid "%s can't be written to!"
-msgstr "%s لايمكن كتابته إلى!"
+msgstr "لايمكن كتابة %s إلى!"
 
 #: src/bin/e_fm.c:9654
 msgid "Directory"
@@ -1907,8 +1909,7 @@ msgstr "الوحدة %s تحتاج لدعم %s"
 #: src/modules/conf_keybindings/e_int_config_keybindings.c:4
 msgid ""
 "Please press key sequence,<br><br>or <hilight>Escape</hilight> to abort."
-msgstr ""
-"Please press key sequence,<br><br>or <hilight>Escape</hilight> to abort."
+msgstr "رجاءا اضغط تسلسل المفتاح,<br><br>أو <hilight>Esc</hilight> للإلغاء."
 
 #: src/bin/e_grab_dialog.c:5
 #: src/modules/conf_keybindings/e_int_config_mousebindings.c:7
@@ -2141,7 +2142,7 @@ msgstr "ملتصق"
 
 #: src/bin/e_int_border_menu.c:178
 msgid "Shade"
-msgstr "ضلل"
+msgstr "ظل"
 
 #: src/bin/e_int_border_menu.c:371 src/bin/e_int_border_prop.c:511
 #: src/modules/comp/e_mod_config.c:884
@@ -2803,7 +2804,7 @@ msgstr "الرفوف"
 
 #: src/bin/e_int_menus.c:341
 msgid "Show/Hide All Windows"
-msgstr "أظهر\\أخفي"
+msgstr "أظهر/أخفِ"
 
 #: src/bin/e_int_menus.c:699
 msgid "No applications"
@@ -2883,7 +2884,7 @@ msgstr "أظهر عند الضغط بالفأرة"
 
 #: src/bin/e_int_shelf_config.c:233
 msgid "Hide timeout"
-msgstr "أخف المهلة"
+msgstr "مهلة اﻹخفاء"
 
 #: src/bin/e_int_shelf_config.c:237
 #: src/modules/notification/e_mod_config.c:107
@@ -3604,35 +3605,35 @@ msgstr "أسفل"
 
 #: src/bin/e_shelf.c:74
 msgid "Top-left Corner"
-msgstr "الركن اﻷيسر العلوي"
+msgstr "الركن العلوي اﻷيسر"
 
 #: src/bin/e_shelf.c:75
 msgid "Top-right Corner"
-msgstr "الركن الايمن العلوي"
+msgstr "الركن العلوي الايمن"
 
 #: src/bin/e_shelf.c:76
 msgid "Bottom-left Corner"
-msgstr "الركن اﻷيسر السفلي"
+msgstr "الركن السفلي اﻷيسر"
 
 #: src/bin/e_shelf.c:77
 msgid "Bottom-right Corner"
-msgstr "الركن اﻷيمن السفلي"
+msgstr "الركن السفلي اﻷيمن"
 
 #: src/bin/e_shelf.c:78
 msgid "Left-top Corner"
-msgstr "الركن العلوي اﻷيسر"
+msgstr "الركن اﻷيسر العلوي"
 
 #: src/bin/e_shelf.c:79
 msgid "Right-top Corner"
-msgstr "الركن العلوي اﻷيمن"
+msgstr "الركن اﻷيمن العلوي"
 
 #: src/bin/e_shelf.c:80
 msgid "Left-bottom Corner"
-msgstr "الركن السفلي اﻷيسر"
+msgstr "الركن اﻷيسر السفلي"
 
 #: src/bin/e_shelf.c:81
 msgid "Right-bottom Corner"
-msgstr "الركن السفلي اﻷيمن"
+msgstr "الركن اﻷيمن السفلي"
 
 #: src/bin/e_shelf.c:267
 msgid "Shelf #"
@@ -3672,7 +3673,7 @@ msgstr "إبدأ تحريك اﻷدوات"
 
 #: src/bin/e_shelf.c:1787
 msgid "Are you sure you want to delete this shelf?"
-msgstr "هل أنت متأكد أنك تريد حذف هذا الرف؟"
+msgstr "هل تريد تأكيد حذف هذا الرف؟"
 
 #: src/bin/e_shelf.c:1789
 msgid ""
@@ -3850,11 +3851,11 @@ msgstr "استخدمه كسمة"
 
 #: src/bin/e_toolbar.c:245
 msgid "Stop Moving/Resizing Items"
-msgstr "أوقف تحريك\\تحجيم العناصر"
+msgstr "أوقف تحريك/تحجيم العناصر"
 
 #: src/bin/e_toolbar.c:247
 msgid "Begin Moving/Resizing Items"
-msgstr "إبدء تحريك\\تحجيم العناصر"
+msgstr "إبدأ تحريك/تحجيم العناصر"
 
 #: src/bin/e_toolbar.c:260
 msgid "Set Toolbar Contents"
@@ -3922,9 +3923,9 @@ msgid_plural "%li Years ago"
 msgstr[0] "لا يوجد"
 msgstr[1] "السنة الماضية"
 msgstr[2] "السنتين الماضيتين"
-msgstr[3] "%li سنوات مضت"
-msgstr[4] "%li سنة مضت"
-msgstr[5] "%li سنة مضت"
+msgstr[3] "السنوات %li الماضية"
+msgstr[4] "السنوات %li الماضية"
+msgstr[5] "السنوات %li الماضية"
 
 #: src/bin/e_utils.c:908
 #, c-format
@@ -3933,9 +3934,9 @@ msgid_plural "%li Months ago"
 msgstr[0] "لا يوجد"
 msgstr[1] " الشهر الماضي"
 msgstr[2] "الشهرين الماضيين"
-msgstr[3] "%li اﻷشهر الماضية"
-msgstr[4] "%li شهرا الماضية"
-msgstr[5] "%li شهرا الماضية"
+msgstr[3] "اﻷشهر %li الماضية"
+msgstr[4] "اﻷشهر %li الماضية"
+msgstr[5] "اﻷشهر %li الماضية"
 
 #: src/bin/e_utils.c:913
 #, c-format
@@ -3944,9 +3945,9 @@ msgid_plural "%li Weeks ago"
 msgstr[0] "لا يوجد"
 msgstr[1] "الأسبوع الماضي"
 msgstr[2] "الأسبوعين الماضيين"
-msgstr[3] "%li أسابيع مضت"
-msgstr[4] "%li أسبوعا مضت"
-msgstr[5] "%li أسبوعا مضت"
+msgstr[3] "اﻷسابيع %li الماضية"
+msgstr[4] "اﻷسابيع %li الماضية"
+msgstr[5] "الأسابيع %li الماضية"
 
 #: src/bin/e_utils.c:918
 #, c-format
@@ -3955,9 +3956,9 @@ msgid_plural "%li Days ago"
 msgstr[0] "لا يوجد"
 msgstr[1] " يوم أمس"
 msgstr[2] " اليومين الماضيين"
-msgstr[3] "%li أيام الماضية"
-msgstr[4] "%li يوما الماضية"
-msgstr[5] "%li يوما الماضي"
+msgstr[3] "اﻷيام %li الماضية"
+msgstr[4] "اﻷيام %li الماضية"
+msgstr[5] "اﻷيام %li الماضية"
 
 #: src/bin/e_utils.c:923
 #, c-format
@@ -3966,9 +3967,9 @@ msgid_plural "%li Hours ago"
 msgstr[0] "لا يوجد"
 msgstr[1] "الساعة الماضية"
 msgstr[2] "الساعتين الماضيتين"
-msgstr[3] "%li ساعات مضت"
-msgstr[4] "%li ساعة مضت"
-msgstr[5] "%li ساعة مضت"
+msgstr[3] "الساعات %li الماضية"
+msgstr[4] "الساعات %li الماضية"
+msgstr[5] "الساعات %li الماضية"
 
 #: src/bin/e_utils.c:928
 #, c-format
@@ -3977,9 +3978,9 @@ msgid_plural "%li Minutes ago"
 msgstr[0] "لا يوجد"
 msgstr[1] "الدقيقة الماضية"
 msgstr[2] "الدقيقتين الماضيتين"
-msgstr[3] "%li دقائق مضت"
-msgstr[4] "%li دقيقة مضت"
-msgstr[5] "%li دقيقة مضت"
+msgstr[3] "الدقائق %li الماضية"
+msgstr[4] "الدقائق %li الماضية"
+msgstr[5] "الدقائق %li الماضية"
 
 #: src/bin/e_utils.c:935 src/bin/e_widget_filepreview.c:538
 #: src/bin/e_widget_filepreview.c:539 src/bin/e_widget_filepreview.c:540
@@ -4726,7 +4727,7 @@ msgstr "مزامنة"
 
 #: src/modules/comp/e_mod_config.c:1192 src/modules/comp/e_mod_config.c:1536
 msgid "Software"
-msgstr "برمجية"
+msgstr "software"
 
 #: src/modules/comp/e_mod_config.c:1198 src/modules/comp/e_mod_config.c:1542
 msgid "OpenGL"
@@ -4991,7 +4992,7 @@ msgstr "انشء مطلق تطبيق"
 
 #: src/modules/conf_applications/e_mod_main.c:62
 msgid "IBar Other"
-msgstr "IBar أخرى"
+msgstr "حقول IBar أخرى"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:53
 msgid "Profile Selector"
@@ -5331,7 +5332,7 @@ msgstr "علِّق التأخير"
 #: src/modules/conf_display/e_int_config_screensaver.c:188
 #: src/modules/conf_display/e_mod_main.c:32
 msgid "Blanking"
-msgstr "إفراغ"
+msgstr ""
 
 #: src/modules/conf_display/e_int_config_screensaver.c:192
 msgid "Presentation mode enabled"
@@ -5408,12 +5409,12 @@ msgstr ""
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:105
 msgid "Edge Bindings Settings"
-msgstr "إعدادات ترابط Edge"
+msgstr "إعدادات ترابط الحد"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:258
 #: src/modules/conf_edgebindings/e_mod_main.c:21
 msgid "Edge Bindings"
-msgstr "ترابط Edge"
+msgstr "ترابط الحد"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:270
 #: src/modules/conf_keybindings/e_int_config_keybindings.c:251
@@ -5470,15 +5471,15 @@ msgstr "اسمح بتفعيل الترابط مع الشاشات المتعدد�
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:874
 msgid "Edge Binding Sequence"
-msgstr "تتابع ترابط Edge"
+msgstr "تتابع ترابط الحد"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:893
 msgid "Clickable edge"
-msgstr "edge قابل للنقر"
+msgstr "حد قابل للنقر"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1214
 msgid "Edge Binding Error"
-msgstr "خطأ في ترابط edge"
+msgstr "خطأ في ترابط الحد"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1215
 #, c-format
@@ -5515,35 +5516,35 @@ msgstr "WIN"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1377
 msgid "Left Edge"
-msgstr "edge الأيسر"
+msgstr "الحد الأيسر"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1381
 msgid "Top Edge"
-msgstr "edge اﻷعلى"
+msgstr "الحد اﻷعلى"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1385
 msgid "Right Edge"
-msgstr "edge اﻷيمن"
+msgstr "الحد اﻷيمن"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1389
 msgid "Bottom Edge"
-msgstr "edge الأسفل"
+msgstr "الحد الأسفل"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1393
 msgid "Top Left Edge"
-msgstr "edge العلوي اﻷيسر"
+msgstr "الحد العلوي اﻷيسر"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1397
 msgid "Top Right Edge"
-msgstr "edge العلوي اﻷيمن"
+msgstr "الحد العلوي اﻷيمن"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1401
 msgid "Bottom Right Edge"
-msgstr "edge السفلي الأيمن"
+msgstr "الحد السفلي الأيمن"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1405
 msgid "Bottom Left Edge"
-msgstr "edge السفلي اﻷيسر"
+msgstr "الحد السفلي اﻷيسر"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1419
 #, c-format
@@ -6950,7 +6951,7 @@ msgstr ""
 #: src/modules/conf_theme/e_int_config_scale.c:310
 #, c-format
 msgid "Base DPI (Currently %i DPI)"
-msgstr "DPI القياسية (الحالية %i DPI)"
+msgstr "نسبة DPI القياسية (الحالية %i DPI)"
 
 #: src/modules/conf_theme/e_int_config_scale.c:314
 #, c-format
@@ -7034,7 +7035,7 @@ msgstr "خطأ في ملف السمة"
 #: src/modules/conf_theme/e_int_config_theme.c:611
 #, c-format
 msgid "%s is probably not an E17 theme!"
-msgstr "%s على اﻷغلب ليست بسمة لـ E17 !"
+msgstr "الملف %s على اﻷغلب ليس بملف سمة لـ E17 !"
 
 #: src/modules/conf_theme/e_int_config_theme.c:773
 msgid " Import..."
@@ -8469,7 +8470,7 @@ msgstr "الشريط الجانبي"
 
 #: src/modules/fileman/e_mod_config.c:385
 msgid "Open Dirs In Place"
-msgstr "إفتح مسارات في مكان"
+msgstr "إفتح المجلدات في نافذة واحدة"
 
 #: src/modules/fileman/e_mod_config.c:388
 msgid "Use Single Click"
@@ -8477,7 +8478,7 @@ msgstr "استخدم نقرة واحدة"
 
 #: src/modules/fileman/e_mod_config.c:391
 msgid "'cp+rm' instead of 'mv'"
-msgstr "'cp+rm' بدلا من 'mv'"
+msgstr "استخدم 'cp+rm' بدلا من 'mv'"
 
 #: src/modules/fileman/e_mod_config.c:397
 msgid "Use Alternate Selection Modifiers"
@@ -9455,7 +9456,7 @@ msgstr "اعرض تنبيهات سطح المكتب عند تغيير القيم
 
 #: src/modules/mixer/conf_module.c:153
 msgid "Launch mixer..."
-msgstr "أطلق خالط ....."
+msgstr "افتح الخالط ....."
 
 #: src/modules/mixer/conf_module.c:188
 msgid "Mixer Module Settings"
@@ -9628,9 +9629,9 @@ msgid ""
 "the app is unknown to us<br>or it is not intended for use with this option."
 "<br>Please choose an action to take:"
 msgstr ""
-"لا يمكن العثور عليه في قاعدة بيانات تطبيق الوصول السريع<brو  هذا يعني إما أن "
-"التطبيق غير معروف لدينا<br>أو أنه غير مخصص للإستخدام مع هذا الخيار .<br>رجاء "
-"اختر إجرء ما تجاهه :"
+"لا يمكن العثور عليه في قاعدة بيانات تطبيق الوصول السريع<br و  هذا يعني إما "
+"أن التطبيق غير معروف لدينا<br> أو أنه غير مخصص للإستخدام مع هذا الخيار ."
+"<br>رجاء اختر إجرء ما تجاهه :"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:376
 #: src/modules/quickaccess/e_mod_quickaccess.c:974
