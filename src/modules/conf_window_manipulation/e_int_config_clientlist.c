@@ -71,7 +71,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    return (e_config->clientlist_group_by != cfdata->group_by) ||
           (e_config->clientlist_include_all_zones != cfdata->include_all_zones) ||
