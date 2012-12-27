@@ -1,3 +1,5 @@
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+
 #include "e.h"
 #include "e_mod_main.h"
 #define HISTORY_MAX 8
@@ -797,3 +799,5 @@ e_modapi_save(E_Module *m __UNUSED__)
    e_config_domain_save("module.access", conf_edd, access_config);
    return 1;
 }
+
+#endif
