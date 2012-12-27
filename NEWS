@@ -27,3 +27,5 @@ Fixes:
     * Clock date formats are now internationalizable.
     * Advanced pager settings check changed accounts for flip desktop on mouse wheel.
     * File manager settings values are now all read, checked and applied as they should.
+    * Fixed crash when changing ibar source
+    * Fixed SIGFPE in tiling module and functionality of toggle_rows_count

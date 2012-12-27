@@ -17,6 +17,14 @@
 	* Engine settings: force check changed upon confirmation dialog
 	  closure.
 
+2012-12-24  Mike Blumenkrantz
+
+        * Fixed crash when changing ibar source
+
+2012-12-24  Boris Faure
+
+        * Fixed SIGFPE in tiling module and functionality of toggle_rows_count
+
 2012-12-21
 
         Initial release
