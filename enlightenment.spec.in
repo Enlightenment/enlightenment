@@ -12,7 +12,7 @@ Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.or
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel, XFree86-devel, libX11-devel
-BuildRequires: efl-devel >= @efl_version@, eeze-devel, edje-devel, edje-bin
+BuildRequires: efl-devel >= @efl_version@, eeze-devel, edje-devel, edje-bin, emotion-devel
 BuildRequires: xcb-devel, xcb-util-devel
 Prefix: %{_prefix}
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
