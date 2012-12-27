@@ -71,7 +71,7 @@ e_modapi_init(E_Module *m)
                {
                   zone = lll->data;
                   if (e_fwin_zone_find(zone)) continue;
-                  if (fileman_config->view.show_desktop_icons)
+                  if (e_config->show_desktop_icons)
                     e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
                }
           }
@@ -238,7 +238,6 @@ _e_mod_fileman_config_load(void)
    E_CONFIG_VAL(D, T, view.link_drop, UCHAR);
    E_CONFIG_VAL(D, T, view.fit_custom_pos, UCHAR);
    E_CONFIG_VAL(D, T, view.show_full_path, UCHAR);
-   E_CONFIG_VAL(D, T, view.show_desktop_icons, UCHAR);
    E_CONFIG_VAL(D, T, view.show_toolbar, UCHAR);
    E_CONFIG_VAL(D, T, view.show_sidebar, UCHAR);
    E_CONFIG_VAL(D, T, view.desktop_navigation, UCHAR);
@@ -280,7 +279,7 @@ _e_mod_fileman_config_load(void)
      {
         fileman_config = E_NEW(Config, 1);
         fileman_config->view.mode = E_FM2_VIEW_MODE_GRID_ICONS;
-        fileman_config->view.show_desktop_icons = 1;
+        e_config->show_desktop_icons = 1;
         fileman_config->icon.icon.w = 48;
         fileman_config->icon.icon.h = 48;
         fileman_config->icon.extension.show = 1;
@@ -296,8 +295,6 @@ _e_mod_fileman_config_load(void)
         fileman_config->icon.max_thumb_size = 5;
         fileman_config->view.toolbar_orient = E_GADCON_ORIENT_TOP;
      }
-
-
     fileman_config->config_version = MOD_CONFIG_FILE_VERSION;
 
     /* UCHAR's give nasty compile warnings about comparisons so not gonna limit those */
@@ -347,7 +344,7 @@ _e_mod_zone_add(__UNUSED__ void *data,
    ev = event;
    zone = ev->zone;
    if (e_fwin_zone_find(zone)) return ECORE_CALLBACK_PASS_ON;
-   if (fileman_config->view.show_desktop_icons)
+   if (e_config->show_desktop_icons)
      e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
    return ECORE_CALLBACK_PASS_ON;
 }

@@ -29,3 +29,5 @@ Fixes:
     * File manager settings values are now all read, checked and applied as they should.
     * Fixed crash when changing ibar source
     * Fixed SIGFPE in tiling module and functionality of toggle_rows_count
+    * Filemanager now uses global setting option for showing desktop
+      icons

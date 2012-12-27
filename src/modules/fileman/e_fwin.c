@@ -592,7 +592,7 @@ e_fwin_reload_all(void)
        EINA_LIST_FOREACH(con->zones, lll, zone)
          {
             if (e_fwin_zone_find(zone)) continue;
-            if (fileman_config->view.show_desktop_icons)
+            if (e_config->show_desktop_icons)
               e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
          }
 }

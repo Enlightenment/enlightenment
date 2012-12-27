@@ -34,7 +34,6 @@ struct _Config
       unsigned char   link_drop;
       unsigned char   fit_custom_pos;
       unsigned char   show_full_path;
-      unsigned char   show_desktop_icons;
       unsigned char   show_toolbar;
       unsigned char   show_sidebar;
       unsigned char   desktop_navigation;

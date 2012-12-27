@@ -144,7 +144,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->copy = e_config->filemanager_copy;
    cfdata->secure_rm = e_config->filemanager_secure_rm;
    cfdata->view.show_full_path = fileman_config->view.show_full_path;
-   cfdata->view.show_desktop_icons = fileman_config->view.show_desktop_icons;
+   cfdata->view.show_desktop_icons = e_config->show_desktop_icons;
    cfdata->view.show_toolbar = fileman_config->view.show_toolbar;
    cfdata->view.show_sidebar = fileman_config->view.show_sidebar;
    cfdata->view.desktop_navigation = fileman_config->view.desktop_navigation;
@@ -186,7 +186,7 @@ _basic_apply(E_Config_Dialog *cfd  __UNUSED__,
    e_config->filemanager_copy = cfdata->copy;
    e_config->filemanager_secure_rm = cfdata->secure_rm;
    fileman_config->view.show_full_path = cfdata->view.show_full_path;
-   fileman_config->view.show_desktop_icons = cfdata->view.show_desktop_icons;
+   e_config->show_desktop_icons = cfdata->view.show_desktop_icons;
    fileman_config->view.show_toolbar = cfdata->view.show_toolbar;
    fileman_config->view.show_sidebar = cfdata->view.show_sidebar;
    fileman_config->view.desktop_navigation = cfdata->view.desktop_navigation;
@@ -234,7 +234,7 @@ _basic_check_changed(E_Config_Dialog *cfd  __UNUSED__,
      (e_config->filemanager_copy != cfdata->copy) ||
      (e_config->filemanager_secure_rm != cfdata->secure_rm) ||
      (fileman_config->view.show_full_path != cfdata->view.show_full_path) ||
-     (fileman_config->view.show_desktop_icons != cfdata->view.show_desktop_icons) ||
+     (e_config->show_desktop_icons != cfdata->view.show_desktop_icons) ||
      (fileman_config->view.show_toolbar != cfdata->view.show_toolbar) ||
      (fileman_config->view.show_sidebar != cfdata->view.show_sidebar) ||
      (fileman_config->view.desktop_navigation != cfdata->view.desktop_navigation) ||
