@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2012-12-28 18:59+0900\n"
-"PO-Revision-Date: 2012-12-21 22:14+0900\n"
-"Last-Translator: Daniel Juyung Seo <seojuyung2@gmail.com>\n"
+"PO-Revision-Date: 2012-12-28 20:57+0900\n"
+"Last-Translator: Daniel Juyung Seo <seojuyung2@gmali.com>\n"
 "Language-Team: Korean <KO@li.org>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
@@ -4463,12 +4463,12 @@ msgstr "일"
 
 #: src/modules/clock/e_mod_main.c:101
 msgid "%a, %e %b, %Y"
-msgstr ""
+msgstr "%a, %e %b, %Y"
 
 #: src/modules/clock/e_mod_main.c:103
 #, c-format
 msgid "%a, %x"
-msgstr ""
+msgstr "%a, %x"
 
 #: src/modules/clock/e_mod_main.c:867
 msgid "Toggle calendar"
@@ -5170,9 +5170,8 @@ msgid "Desk Settings"
 msgstr "데스크 설정"
 
 #: src/modules/conf_display/e_int_config_desk.c:193
-#, fuzzy
 msgid "Profile name"
-msgstr "프로파일 이름:"
+msgstr "프로파일 이름"
 
 #: src/modules/conf_display/e_int_config_desk.c:200
 #: src/modules/conf_display/e_int_config_desklock.c:386
@@ -6130,7 +6129,6 @@ msgid "%5.0f pixels/s"
 msgstr "%5.0f픽셀/초"
 
 #: src/modules/conf_menus/e_int_config_menus.c:306
-#, fuzzy
 msgid "Fast Mouse Move Threshold"
 msgstr "빠른 마우스 이동 임계값"
 
@@ -8100,9 +8098,8 @@ msgid "Move to Trash"
 msgstr "휴지통으로 이동"
 
 #: src/modules/everything/evry_plug_files.c:1331
-#, fuzzy
 msgid "Open Directory"
-msgstr "새 디렉터리"
+msgstr "디렉터리 열기"
 
 #: src/modules/everything/evry_plug_files.c:1335
 msgid "Sort by Date"
@@ -8926,9 +8923,9 @@ msgstr "끌기 저항"
 
 #: src/modules/pager/e_mod_config.c:200 src/modules/pager/e_mod_config.c:239
 #: src/modules/pager/e_mod_config.c:258
-#, fuzzy, c-format
+#, c-format
 msgid "%.0f pixels"
-msgstr "%1.0f픽셀"
+msgstr "%.0f 픽셀"
 
 #: src/modules/pager/e_mod_config.c:205
 msgid "Select and Slide button"
