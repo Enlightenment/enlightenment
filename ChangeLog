@@ -1,3 +1,13 @@
+2012-12-28  Carsten Haitzler
+
+        * Mixer settings dialog is now resizable
+        * Increased maximum menu size, improved menu autoscrolling
+
+
+2012-12-28  Hannes Janetzek
+
+        * Fixed error in Evry when trying to call edje functions on non-edje object
+
 2012-12-27 Mike Blumenkrantz
 
         * Filemanager now uses global setting option for showing desktop

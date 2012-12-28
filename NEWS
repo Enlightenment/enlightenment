@@ -21,6 +21,8 @@ Improvements:
     * Add icons for gadcon settings.
     * Improve strings of pager settings.
     * Improve title of fileman settings.
+    * Mixer settings dialog is now resizable
+    * Increased maximum menu size, improved menu autoscrolling
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.
@@ -31,3 +33,4 @@ Fixes:
     * Fixed SIGFPE in tiling module and functionality of toggle_rows_count
     * Filemanager now uses global setting option for showing desktop
       icons
+    * Fixed error in Evry when trying to call edje functions on non-edje object
