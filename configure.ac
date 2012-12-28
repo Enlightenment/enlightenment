@@ -482,8 +482,6 @@ edbus >= $efl_version \
 eina >= $efl_version"
 efm_requires="$efm_requires $eeze_mount $dbus_mount $hal_mount $udisks_mount"
 
-AC_MSG_WARN([EFM requirements : $efm_requires])
-
 PKG_CHECK_MODULES(E_FM, [$efm_requires])
 
 PKG_CHECK_MODULES(E_FM_CMDLINE, [
