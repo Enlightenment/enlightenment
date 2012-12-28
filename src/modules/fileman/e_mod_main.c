@@ -3,6 +3,7 @@
 /* actual module specifics */
 static void _e_mod_action_fileman_cb(E_Object   *obj,
                                      const char *params);
+static void _e_mod_action_fileman_reset_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED);
 static void      _e_mod_menu_add(void   *data, E_Menu *m);
 static void      _e_mod_fileman_config_load(void);
 static void      _e_mod_fileman_config_free(void);
@@ -12,6 +13,7 @@ static Eina_Bool _e_mod_zone_add(void *data,
 
 static E_Module *conf_module = NULL;
 static E_Action *act = NULL;
+static E_Action *act2 = NULL;
 static E_Int_Menu_Augmentation *maug = NULL;
 static Ecore_Event_Handler *zone_add_handler = NULL;
 
@@ -55,6 +57,9 @@ e_modapi_init(E_Module *m)
         e_action_predef_name_set(N_("Launch"), N_("File Manager"),
                                  "fileman", NULL, "syntax: /path/to/dir or ~/path/to/dir or favorites or desktop, examples: /boot/grub, ~/downloads", 1);
      }
+   act2 = e_action_add("fileman_reset");
+   if (act2)
+     act2->func.go = _e_mod_action_fileman_reset_cb;
    maug = e_int_menus_menu_augmentation_add_sorted("main/1", _("Navigate"), _e_mod_menu_add, NULL, NULL, NULL);
    e_module_delayed_set(m, 1);
 
@@ -134,6 +139,11 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
         e_action_del("fileman");
         act = NULL;
      }
+   if (act2)
+     {
+        e_action_del("fileman_reset");
+        act2 = NULL;
+     }
    while ((cfd = e_config_dialog_get("E", "fileman/mime_edit_dialog")))
       e_object_del(E_OBJECT(cfd));
    while ((cfd = e_config_dialog_get("E", "fileman/file_icons")))
@@ -164,6 +174,12 @@ e_modapi_save(E_Module *m __UNUSED__)
 }
 
 /* action callback */
+static void
+_e_mod_action_fileman_reset_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   e_fwin_reload_all();
+}
+
 static void
 _e_mod_action_fileman_cb(E_Object   *obj,
                          const char *params)
