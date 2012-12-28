@@ -808,6 +808,7 @@ _clock_eio_error(void *d __UNUSED__, int type __UNUSED__, void *event __UNUSED__
    return ECORE_CALLBACK_RENEW;
 }
 
+#ifdef HAVE_SYS_TIMERFD_H
 static Eina_Bool
 _clock_fd_update(void *d __UNUSED__, Ecore_Fd_Handler *fdh)
 {
@@ -817,6 +818,7 @@ _clock_fd_update(void *d __UNUSED__, Ecore_Fd_Handler *fdh)
    e_int_clock_instances_redo(EINA_TRUE);
    return EINA_TRUE;
 }
+#endif
 
 /* module setup */
 EAPI E_Module_Api e_modapi =

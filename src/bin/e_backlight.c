@@ -13,7 +13,6 @@
 
 static double bl_val = 1.0;
 static double bl_animval = 1.0;
-static double bl_delayval = 1.0;
 static int sysmode = MODE_NONE;
 static Ecore_Animator *bl_anim = NULL;
 static Eina_List *bl_devs = NULL;
@@ -33,6 +32,7 @@ static Eina_Bool _bl_anim(void *data, double pos);
 static Eina_Bool bl_avail = EINA_FALSE;
 static Eina_Bool _e_backlight_handler(void *d, int type, void *ev);
 #ifdef HAVE_EEZE
+static double bl_delayval = 1.0;
 static const char *bl_sysval = NULL;
 static Ecore_Event_Handler *bl_sys_exit_handler = NULL;
 static Ecore_Exe *bl_sys_set_exe = NULL;
