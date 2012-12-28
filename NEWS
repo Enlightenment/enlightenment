@@ -34,3 +34,4 @@ Fixes:
     * Filemanager now uses global setting option for showing desktop
       icons
     * Fixed error in Evry when trying to call edje functions on non-edje object
+    * Fix construction of variant list for setxkbmap
