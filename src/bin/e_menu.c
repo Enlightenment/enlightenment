@@ -1152,10 +1152,16 @@ e_menu_idler_before(void)
                        int x, y, w, h;
 
                        e_zone_useful_geometry_get(m->zone, &x, &y, &w, &h);
-                       if ((m->cur.x + m->cur.w) > (x + w))
-                         m->cur.x = x + w - m->cur.w;
-                       if ((m->cur.y + m->cur.h) > (y + h))
-                         m->cur.y = y + h - m->cur.h;
+                       if (m->cur.w <= w)
+                         {
+                            if ((m->cur.x + m->cur.w) > (x + w))
+                              m->cur.x = x + w - m->cur.w;
+                         }
+                       if (m->cur.h <= h)
+                         {
+                            if ((m->cur.y + m->cur.h) > (y + h))
+                              m->cur.y = y + h - m->cur.h;
+                         }
                     }
                   m->prev.x = m->cur.x;
                   m->prev.y = m->cur.y;
@@ -1796,7 +1802,7 @@ _e_menu_items_layout_update(E_Menu *m)
    int min_submenu_w = 0, min_submenu_h = 0;
    int min_toggle_w = 0, min_toggle_h = 0;
    int min_w = 0, min_h = 0;
-   int zh = 0, ms = 0;
+   int zh = 0, ms = 0, maxh = 0;
    unsigned int cur_items = 0, max_items = -1;
 
    e_box_freeze(m->container_object);
@@ -1867,11 +1873,14 @@ _e_menu_items_layout_update(E_Menu *m)
    if (min_h * eina_list_count(m->items) >= (unsigned int)m->zone->h)
      {
         e_zone_useful_geometry_get(m->zone, NULL, NULL, NULL, &zh);
-        max_items = zh / min_h - 1;
+        maxh = zh * 2;
+        if (maxh > 30000) maxh = 30000; // 32k x 32k mx coord limit for wins
+        max_items = (maxh / min_h) - 1;
      }
    EINA_LIST_FOREACH(m->items, l, mi)
      {
-        if ((cur_items >= max_items) || (zh && ((ms + (2 * mh) >= zh) || (ms + (2 * mi->separator_h) >= zh))))
+        if ((cur_items >= max_items) ||
+            (maxh && ((ms + (2 * mh) >= maxh) || (ms + (2 * mi->separator_h) >= maxh))))
           {
              _e_menu_item_unrealize(mi);
              continue;
