@@ -87,6 +87,9 @@ _elm_win_trap_show(void *data, Evas_Object *o)
                {
                   eina_stringshare_replace(&ctx->border->bordername, "borderless");
                   ctx->border->client.border.changed = 1;
+                  ctx->border->client.netwm.state.skip_pager =
+                  ctx->border->client.netwm.state.skip_taskbar = 1;
+                  ctx->border->client.icccm.accepts_focus = 0;
                }
           }
         ctx->border->placed = ctx->placed;
