@@ -30,7 +30,6 @@ e_mod_physics_cfdata_config_new(void)
    Config *cfg;
 
    cfg = E_NEW(Config, 1);
-   cfg->config_version = (MOD_CONFIG_FILE_EPOCH << 16);
    cfg->delay = 10;
    cfg->max_mass = 3.0;
    cfg->gravity = 0.0;

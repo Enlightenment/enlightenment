@@ -57,10 +57,9 @@ e_modapi_init(E_Module *m)
              mod->conf = NULL;
           }
      }
-   if (mod->conf)
-     mod->conf->config_version = MOD_CONFIG_FILE_VERSION;
-   else
+   if (!mod->conf)
      _e_mod_config_new(m);
+   mod->conf->config_version = MOD_CONFIG_FILE_VERSION;
    _physics_mod = mod;
 
    if (!e_mod_physics_init())
