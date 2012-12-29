@@ -35,3 +35,4 @@ Fixes:
       icons
     * Fixed error in Evry when trying to call edje functions on non-edje object
     * Fix construction of variant list for setxkbmap
+    * Fix border(less) style of internal elm tooltip windows

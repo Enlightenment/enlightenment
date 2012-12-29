@@ -67,6 +67,7 @@ _elm_win_trap_show(void *data, Evas_Object *o)
         E_Container *con = e_util_container_window_find(xwin);
         Evas *e = evas_object_evas_get(o);
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(e);
+        Ecore_X_Window_Type type;
 
         if (!con)
           {
@@ -80,6 +81,14 @@ _elm_win_trap_show(void *data, Evas_Object *o)
         ctx->xwin = xwin;
         ctx->border = e_border_new(con, xwin, 0, 1);
         EINA_SAFETY_ON_NULL_RETURN_VAL(ctx->border, EINA_TRUE);
+        if (ecore_x_netwm_window_type_get(xwin, &type))
+          {
+             if (type == ECORE_X_WINDOW_TYPE_TOOLTIP)
+               {
+                  eina_stringshare_replace(&ctx->border->bordername, "borderless");
+                  ctx->border->client.border.changed = 1;
+               }
+          }
         ctx->border->placed = ctx->placed;
         ctx->border->internal = 1;
         ctx->border->internal_ecore_evas = ee;
