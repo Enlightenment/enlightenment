@@ -1111,7 +1111,7 @@ e_config_load(void)
      E_CONFIG_LIMIT(e_config->always_click_to_raise, 0, 1);
      E_CONFIG_LIMIT(e_config->always_click_to_focus, 0, 1);
      E_CONFIG_LIMIT(e_config->use_auto_raise, 0, 1);
-     E_CONFIG_LIMIT(e_config->auto_raise_delay, 0.0, 5.0);
+     E_CONFIG_LIMIT(e_config->auto_raise_delay, 0.0, 9.9);
      E_CONFIG_LIMIT(e_config->use_resist, 0, 1);
      E_CONFIG_LIMIT(e_config->drag_resist, 0, 100);
      E_CONFIG_LIMIT(e_config->desk_resist, 0, 100);

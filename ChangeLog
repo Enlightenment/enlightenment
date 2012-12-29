@@ -1,5 +1,6 @@
-2012-12-27 Mike Blumenkrantz
+2012-12-29 Mike Blumenkrantz
 
+        * Fix incorrect config value clamping for window autoraise delay
         * Fix border(less) style of internal elm tooltip windows
 
 2012-12-28 Tomas Cech
