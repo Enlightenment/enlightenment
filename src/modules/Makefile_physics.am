@@ -4,6 +4,9 @@ physics_DATA = physics/e-module-physics.edj \
 
 EXTRA_DIST += $(physics_DATA)
 
+physics_module_la_CFLAGS = $(AM_CFLAGS)
+physics_module_la_CFLAGS += @EPHYSICS_CFLAGS@
+
 physicspkgdir = $(MDIR)/physics/$(MODULE_ARCH)
 physicspkg_LTLIBRARIES = physics/module.la
 
