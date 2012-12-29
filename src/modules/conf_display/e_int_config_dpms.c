@@ -90,7 +90,7 @@ _apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    if ((e_config->backlight.idle_dim) &&
        (e_config->backlight.timer > (e_config->screensaver_timeout)))
      {
-        e_config->screensaver_timeout = cfdata->backlight_timeout;
+        e_config->screensaver_timeout = e_config->backlight.timer;
         e_config->dpms_standby_timeout = e_config->screensaver_timeout;
         e_config->dpms_suspend_timeout = e_config->screensaver_timeout;
         e_config->dpms_off_timeout = e_config->screensaver_timeout;
