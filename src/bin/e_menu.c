@@ -1792,7 +1792,7 @@ _e_menu_items_layout_update(E_Menu *m)
 {
    Eina_List *l;
    E_Menu_Item *mi;
-   Evas_Coord bw, bh, mw, mh;
+   Evas_Coord bw, bh, mw = 0, mh = 0;
    int toggles_on = 0;
    int icons_on = 0;
    int labels_on = 0;
@@ -1873,14 +1873,13 @@ _e_menu_items_layout_update(E_Menu *m)
    if (min_h * eina_list_count(m->items) >= (unsigned int)m->zone->h)
      {
         e_zone_useful_geometry_get(m->zone, NULL, NULL, NULL, &zh);
-        maxh = zh * 2;
+        maxh = zh * 4;
         if (maxh > 30000) maxh = 30000; // 32k x 32k mx coord limit for wins
         max_items = (maxh / min_h) - 1;
      }
    EINA_LIST_FOREACH(m->items, l, mi)
      {
-        if ((cur_items >= max_items) ||
-            (maxh && ((ms + (2 * mh) >= maxh) || (ms + (2 * mi->separator_h) >= maxh))))
+        if (cur_items >= max_items)
           {
              _e_menu_item_unrealize(mi);
              continue;
