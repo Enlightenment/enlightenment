@@ -155,6 +155,17 @@ _elm_win_trap_raise(void *data, Evas_Object *o __UNUSED__)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_elm_win_trap_activate(void *data, Evas_Object *o __UNUSED__)
+{
+   Elm_Win_Trap_Ctx *ctx = data;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
+   if (!ctx->border) return EINA_TRUE;
+   e_border_focus_set(ctx->border, 1, 1);
+   e_border_raise(ctx->border);
+   return EINA_FALSE;
+}
+
 static const Elm_Win_Trap _elm_win_trap = {
   ELM_WIN_TRAP_VERSION,
   _elm_win_trap_add,
@@ -166,7 +177,7 @@ static const Elm_Win_Trap _elm_win_trap = {
   _elm_win_trap_center,
   _elm_win_trap_lower,
   _elm_win_trap_raise,
-  /* activate */ NULL,
+  _elm_win_trap_activate,
   /* alpha_set */ NULL,
   /* aspect_set */ NULL,
   /* avoid_damage_set */ NULL,

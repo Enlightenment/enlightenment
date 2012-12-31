@@ -39,3 +39,6 @@ Fixes:
     * Fix border(less) style of internal elm tooltip windows
     * Fix incorrect config value clamping for window autoraise delay
     * Always hide menus on desklock
+    * e_win now traps elm_win_activate to ensure that internal elm
+      windows don't fail to raise as expected if user has configured
+      E to ignore activate hints

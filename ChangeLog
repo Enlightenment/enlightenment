@@ -2,6 +2,9 @@
 
         * Added function to hide all active menus
         * Always hide menus on desklock
+        * e_win now traps elm_win_activate to ensure that internal elm
+          windows don't fail to raise as expected if user has configured
+          E to ignore activate hints
 
 2012-12-29 Mike Blumenkrantz
 
