@@ -230,6 +230,20 @@ e_menu_shutdown(void)
    return 1;
 }
 
+EAPI void
+e_menu_hide_all(void)
+{
+   E_Menu *m;
+
+   EINA_LIST_FREE(_e_active_menus, m)
+     {
+        m->active = 0;
+        _e_menu_unrealize(m);
+        m->in_active_list = 0;
+        e_object_unref(E_OBJECT(m));
+     }
+}
+
 EAPI E_Menu *
 e_menu_new(void)
 {

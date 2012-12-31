@@ -218,6 +218,7 @@ e_desklock_show(Eina_Bool suspend)
 
    if (e_config->desklock_use_custom_desklock && e_config->desklock_custom_desklock_cmd && e_config->desklock_custom_desklock_cmd[0])
      {
+        e_menu_hide_all();
         _e_custom_desklock_exe_handler =
           ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                   _e_desklock_cb_custom_desklock_exit, NULL);
@@ -264,6 +265,7 @@ e_desklock_show(Eina_Bool suspend)
    edd->elock_wnd = ecore_x_window_input_new(e_manager_current_get()->root, 0, 0, 1, 1);
    ecore_x_window_show(edd->elock_wnd);
    managers = e_manager_list();
+   e_menu_hide_all();
    if (!e_grabinput_get(edd->elock_wnd, 0, edd->elock_wnd))
      {
         EINA_LIST_FOREACH(managers, l, man)

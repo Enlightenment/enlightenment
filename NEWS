@@ -3,6 +3,7 @@ Changes since 0.17.0:
 
 Additions:
     * Added action to reset filemanager
+    * Added function to hide all active menus
 
 Deprecations:
     *
@@ -37,3 +38,4 @@ Fixes:
     * Fix construction of variant list for setxkbmap
     * Fix border(less) style of internal elm tooltip windows
     * Fix incorrect config value clamping for window autoraise delay
+    * Always hide menus on desklock
