@@ -13,6 +13,13 @@ typedef struct _E_Event_Desk_Window_Profile_Change E_Event_Desk_Window_Profile_C
 
 #define E_DESK_TYPE 0xE0b01005
 
+typedef enum
+{
+   E_DESKFLIP_ANIMATION_MODE_OFF,
+   E_DESKFLIP_ANIMATION_MODE_PANE,
+   E_DESKFLIP_ANIMATION_MODE_ZOOM
+} E_Deskflip_Animation_Mode;
+
 struct _E_Desk
 {
    E_Object             e_obj_inherit;

@@ -6,6 +6,7 @@
           windows don't fail to raise as expected if user has configured
           E to ignore activate hints
         * Various #defines in e_int_menus.h are now enums
+        * Added enum for deskflip animation mode
 
 2012-12-29 Mike Blumenkrantz
 
