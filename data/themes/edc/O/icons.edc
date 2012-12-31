@@ -62,7 +62,7 @@
    ICON("dialog-ok-apply","icon_check.png",64)                     // "enlightenment/check"
    ICON("transform-scale","icon_resize.png",64)                    // "widget/resize"
    ICON("transform-move","icon_autoscroll.png",64)                 // "enlightenment/autoscroll"
-   ICON("view-refresh","icon_efm_refresh.png",16)                  // EFMBUTTON("refresh"
+   ICON("view-refresh","icon_reset.png",16)                  // EFMBUTTON("refresh"
    ICON("view-inherit","icon_dummy.png",64)                 // *** // EFMBUTTON("inherit"
    ICON("screenshot","icon_screenshot.png",64)                     // dunno
    //Standard Status Icons
