@@ -24,6 +24,7 @@ Improvements:
     * Improve title of fileman settings.
     * Mixer settings dialog is now resizable
     * Increased maximum menu size, improved menu autoscrolling
+    * Various #defines in e_int_menus.h are now enums
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.
