@@ -10,12 +10,23 @@ static void _e_obj_dialog_cb_resize(E_Win *win);
 
 /* externally accessible functions */
 
+static void
+_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+{
+   Evas_Event_Key_Down *ev = event;
+
+   if (!strcmp(ev->keyname, "Escape") && data)
+     _e_obj_dialog_cb_delete(data);
+}
+
 EAPI E_Obj_Dialog *
 e_obj_dialog_new(E_Container *con, char *title, char *class_name, char *class_class)
 {
    E_Obj_Dialog *od;
    E_Manager *man;
    Evas_Object *o;
+   Eina_Bool kg;
+   Evas_Modifier_Mask mask;
 
    if (!con)
      {
@@ -45,6 +56,13 @@ e_obj_dialog_new(E_Container *con, char *title, char *class_name, char *class_cl
 
    e_win_centered_set(od->win, 1);
    od->cb_delete = NULL;
+
+   mask = 0;
+   kg = evas_object_key_grab(o, "Escape", mask, ~mask, 0);
+   if (!kg)
+     fprintf(stderr, "ERROR: unable to redirect \"Escape\" key events to object %p.\n", o);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN,
+                                  _key_down_cb, od->win);
 
    return od;
 }
