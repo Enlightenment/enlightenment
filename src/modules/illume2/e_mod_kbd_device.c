@@ -7,28 +7,12 @@ static void _e_mod_kbd_device_ignore_load_file(const char *file);
 static void _e_mod_kbd_device_kbd_add(const char *udi);
 static void _e_mod_kbd_device_kbd_del(const char *udi);
 static void _e_mod_kbd_device_kbd_eval(void);
-#ifdef HAVE_EEZE
 # include <Eeze.h>
 static void _e_mod_kbd_device_udev_event(const char *device, Eeze_Udev_Event event, void *data __UNUSED__, Eeze_Udev_Watch *watch __UNUSED__);
-#else
-# include <E_Hal.h>
-static void _e_mod_kbd_device_cb_input_kbd(void *data __UNUSED__, void *reply, DBusError *err);
-static void _e_mod_kbd_device_cb_input_kbd_is(void *data, void *reply, DBusError *err);
-static void _e_mod_kbd_device_dbus_add(void *data __UNUSED__, DBusMessage *msg);
-static void _e_mod_kbd_device_dbus_del(void *data __UNUSED__, DBusMessage *msg);
-static void _e_mod_kbd_device_dbus_chg(void *data __UNUSED__, DBusMessage *msg);
-#endif
 
 /* local variables */
 static int have_real_kbd = 0;
-#ifdef HAVE_EEZE
 static Eeze_Udev_Watch *watch;
-#else
-static E_DBus_Connection *_dbus_conn = NULL;
-static E_DBus_Signal_Handler *_dev_add = NULL;
-static E_DBus_Signal_Handler *_dev_del = NULL;
-static E_DBus_Signal_Handler *_dev_chg = NULL;
-#endif
 static Eina_List *_device_kbds = NULL, *_ignore_kbds = NULL;
 
 void 
@@ -36,37 +20,9 @@ e_mod_kbd_device_init(void)
 {
    /* load the 'ignored' keyboard file */
    _e_mod_kbd_device_ignore_load();
-#ifdef HAVE_EEZE
    eeze_init();
    watch = eeze_udev_watch_add(EEZE_UDEV_TYPE_KEYBOARD, EEZE_UDEV_EVENT_NONE,
-                            _e_mod_kbd_device_udev_event, NULL);
-#else
-   e_dbus_init();
-   e_hal_init();
-   /* try to attach to the system dbus */
-   if (!(_dbus_conn = e_dbus_bus_get(DBUS_BUS_SYSTEM))) return;
-
-   /* ask HAL for any input keyboards */
-   e_hal_manager_find_device_by_capability(_dbus_conn, "input.keyboard", 
-                                           _e_mod_kbd_device_cb_input_kbd, NULL);
-
-   /* setup dbus signal handlers for when a device gets added/removed/changed */
-   _dev_add = 
-     e_dbus_signal_handler_add(_dbus_conn, E_HAL_SENDER, 
-                               E_HAL_MANAGER_PATH, 
-                               E_HAL_MANAGER_INTERFACE, 
-                               "DeviceAdded", _e_mod_kbd_device_dbus_add, NULL);
-   _dev_del = 
-     e_dbus_signal_handler_add(_dbus_conn, E_HAL_SENDER, 
-                               E_HAL_MANAGER_PATH, 
-                               E_HAL_MANAGER_INTERFACE, 
-                               "DeviceRemoved", _e_mod_kbd_device_dbus_del, NULL);
-   _dev_chg = 
-     e_dbus_signal_handler_add(_dbus_conn, E_HAL_SENDER, 
-                               E_HAL_MANAGER_PATH, 
-                               E_HAL_MANAGER_INTERFACE, 
-                               "NewCapability", _e_mod_kbd_device_dbus_chg, NULL);
-#endif
+                               _e_mod_kbd_device_udev_event, NULL);
 }
 
 void 
@@ -74,17 +30,8 @@ e_mod_kbd_device_shutdown(void)
 {
    char *str;
 
-#ifdef HAVE_EEZE
    if (watch) eeze_udev_watch_del(watch);
    eeze_shutdown();
-#else
-   /* remove the dbus signal handlers if we can */
-   if (_dev_add) e_dbus_signal_handler_del(_dbus_conn, _dev_add);
-   if (_dev_del) e_dbus_signal_handler_del(_dbus_conn, _dev_del);
-   if (_dev_chg) e_dbus_signal_handler_del(_dbus_conn, _dev_chg);
-   e_hal_shutdown();
-   e_dbus_shutdown();
-#endif
    /* free the list of ignored keyboards */
    EINA_LIST_FREE(_ignore_kbds, str)
      eina_stringshare_del(str);
@@ -144,7 +91,6 @@ _e_mod_kbd_device_ignore_load_file(const char *file)
    fclose(f);
 }
 
-#ifdef HAVE_EEZE
 static void 
 _e_mod_kbd_device_udev_event(const char *device, Eeze_Udev_Event event, void *data __UNUSED__, Eeze_Udev_Watch *w __UNUSED__)
 {
@@ -159,104 +105,6 @@ _e_mod_kbd_device_udev_event(const char *device, Eeze_Udev_Event event, void *da
 
    _e_mod_kbd_device_kbd_eval();
 }
-#else
-static void 
-_e_mod_kbd_device_cb_input_kbd(void *data __UNUSED__, void *reply, DBusError *err) 
-{
-   E_Hal_Manager_Find_Device_By_Capability_Return *ret = reply;
-   Eina_List *l;
-   char *dev;
-
-   if ((!ret) || (!ret->strings)) return;
-
-   /* if dbus errored then cleanup and get out */
-   if (dbus_error_is_set(err)) 
-     {
-        dbus_error_free(err);
-        return;
-     }
-
-   /* for each returned keyboard, add it and evaluate it */
-   EINA_LIST_FOREACH(ret->strings, l, dev) 
-     {
-        _e_mod_kbd_device_kbd_add(dev);
-        _e_mod_kbd_device_kbd_eval();
-     }
-}
-
-static void 
-_e_mod_kbd_device_cb_input_kbd_is(void *data, void *reply, DBusError *err) 
-{
-   E_Hal_Device_Query_Capability_Return *ret = reply;
-   char *udi = data;
-
-   /* if dbus errored then cleanup and get out */
-   if (dbus_error_is_set(err)) 
-     {
-        dbus_error_free(err);
-        return;
-     }
-
-   /* if it's an input keyboard, than add it and eval */
-   if ((ret) && (ret->boolean)) 
-     {
-        if (udi) 
-          {
-             _e_mod_kbd_device_kbd_add(udi);
-             _e_mod_kbd_device_kbd_eval();
-          }
-     }
-}
-
-static void 
-_e_mod_kbd_device_dbus_add(void *data __UNUSED__, DBusMessage *msg) 
-{
-   DBusError err;
-   char *udi;
-
-   dbus_error_init(&err);
-   dbus_message_get_args(msg, &err, DBUS_TYPE_STRING, &udi, DBUS_TYPE_INVALID);
-   e_hal_device_query_capability(_dbus_conn, udi, "input.keyboard", 
-                                 _e_mod_kbd_device_cb_input_kbd_is, udi);
-}
-
-static void 
-_e_mod_kbd_device_dbus_del(void *data __UNUSED__, DBusMessage *msg) 
-{
-   DBusError err;
-   char *udi;
-
-   dbus_error_init(&err);
-   dbus_message_get_args(msg, &err, DBUS_TYPE_STRING, &udi, DBUS_TYPE_INVALID);
-   if (udi) 
-     {
-        _e_mod_kbd_device_kbd_del(udi);
-        _e_mod_kbd_device_kbd_eval();
-     }
-}
-
-static void 
-_e_mod_kbd_device_dbus_chg(void *data __UNUSED__, DBusMessage *msg) 
-{
-   DBusError err;
-   char *udi, *cap;
-
-   dbus_error_init(&err);
-   dbus_message_get_args(msg, &err, DBUS_TYPE_STRING, &udi, 
-                         DBUS_TYPE_STRING, &cap, DBUS_TYPE_INVALID);
-   if (cap) 
-     {
-        if (!strcmp(cap, "input.keyboard")) 
-          {
-             if (udi) 
-               {
-                  _e_mod_kbd_device_kbd_add(udi);
-                  _e_mod_kbd_device_kbd_eval();
-               }
-          }
-     }
-}
-#endif
 
 static void 
 _e_mod_kbd_device_kbd_add(const char *udi) 
