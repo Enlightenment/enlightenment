@@ -48,108 +48,64 @@ E_MSGBUS_WIN_ACTION_CB_PROTO(unmaximize);
 static E_Msgbus_Data *_e_msgbus_data = NULL;
 
 static const EDBus_Method core_methods[] = {
-   {
-    "Restart", NULL, NULL, _e_msgbus_core_restart_cb, 0
-   },
-   {
-    "Shutdown", NULL, NULL, _e_msgbus_core_shutdown_cb, 0
-   },
-   { NULL, NULL, NULL, NULL, 0 }
+   { "Restart", NULL, NULL, _e_msgbus_core_restart_cb },
+   { "Shutdown", NULL, NULL, _e_msgbus_core_shutdown_cb },
+   { }
 };
 
 static const EDBus_Method module_methods[] = {
-   {
-    "Load", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_load_cb, 0
-   },
-   {
-    "Unload", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_unload_cb, 0
-   },
-   {
-    "Enable", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_enable_cb, 0
-   },
-   {
-    "Disable", EDBUS_ARGS({"s", "module"}), NULL,
-    _e_msgbus_module_disable_cb, 0
-   },
-   {
-    "List", NULL, EDBUS_ARGS({"a(si)", "array_of_modules"}),
-    _e_msgbus_module_list_cb, 0
-   },
-   { NULL, NULL, NULL, NULL, 0 }
+   { "Load", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_load_cb },
+   { "Unload", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_unload_cb },
+   { "Enable", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_enable_cb },
+   { "Disable", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_disable_cb },
+   { "List", NULL, EDBUS_ARGS({"a(si)", "modules"}),
+      _e_msgbus_module_list_cb },
+   { }
 };
 
 static const EDBus_Method profile_methods[] = {
-   {
-    "Set", EDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_set_cb, 0
-   },
-   {
-    "Get", NULL, EDBUS_ARGS({"s", "profile"}), _e_msgbus_profile_get_cb, 0
-   },
-   {
-    "List", NULL, EDBUS_ARGS({"as", "array_profiles"}),
-    _e_msgbus_profile_list_cb, 0
-   },
-   {
-    "Add", EDBUS_ARGS({"s", "profile"}), NULL,
-    _e_msgbus_profile_add_cb, 0
-   },
-   {
-    "Delete", EDBUS_ARGS({"s", "profile"}), NULL,
-    _e_msgbus_profile_delete_cb, 0
-   },
-   { NULL, NULL, NULL, NULL, 0 }
+   { "Set", EDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_set_cb },
+   { "Get", NULL, EDBUS_ARGS({"s", "profile"}), _e_msgbus_profile_get_cb },
+   { "List", NULL, EDBUS_ARGS({"as", "array_profiles"}),
+      _e_msgbus_profile_list_cb },
+   { "Add", EDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_add_cb },
+   { "Delete", EDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_delete_cb },
+   { }
 };
 
 static const EDBus_Method window_methods[] = {
-   {
-    "List", NULL, EDBUS_ARGS({"a(si)", "array_of_window"}),
-    _e_msgbus_window_list_cb, 0
-   },
-   {
-    "Close", EDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_close_cb, 0
-   },
-   {
-    "Kill", EDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_kill_cb, 0
-   },
-   {
-     "Focus", EDBUS_ARGS({"i", "window_id"}),
-     NULL, _e_msgbus_window_focus_cb, 0
-   },
-   {
-    "Iconify", EDBUS_ARGS({"i", "window_id"}), NULL,
-    _e_msgbus_window_iconify_cb, 0
-   },
-   {
-    "Uniconify", EDBUS_ARGS({"i", "window_id"}), NULL,
-    _e_msgbus_window_uniconify_cb, 0
-   },
-   {
-    "Maximize", EDBUS_ARGS({"i", "window_id"}), NULL,
-    _e_msgbus_window_maximize_cb, 0
-   },
-   {
-    "Unmaximize", EDBUS_ARGS({"i", "window_id"}), NULL,
-    _e_msgbus_window_unmaximize_cb, 0
-   },
-   { NULL, NULL, NULL, NULL, 0 }
+   { "List", NULL, EDBUS_ARGS({"a(si)", "array_of_window"}),
+      _e_msgbus_window_list_cb },
+   { "Close", EDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_close_cb },
+   { "Kill", EDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_kill_cb },
+   { "Focus", EDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_focus_cb },
+   { "Iconify", EDBUS_ARGS({"i", "window_id"}), NULL,
+      _e_msgbus_window_iconify_cb },
+   { "Uniconify", EDBUS_ARGS({"i", "window_id"}), NULL,
+      _e_msgbus_window_uniconify_cb },
+   { "Maximize", EDBUS_ARGS({"i", "window_id"}), NULL,
+      _e_msgbus_window_maximize_cb },
+   { "Unmaximize", EDBUS_ARGS({"i", "window_id"}), NULL,
+      _e_msgbus_window_unmaximize_cb },
+   { }
 };
 
 #define PATH "/org/enlightenment/wm/RemoteObject"
 
 static const EDBus_Service_Interface_Desc core_desc = {
-   "org.enlightenment.wm.Core", core_methods, NULL, NULL, NULL, NULL
+   "org.enlightenment.wm.Core", core_methods
 };
 
 static const EDBus_Service_Interface_Desc module_desc = {
-   "org.enlightenment.wm.Module", module_methods, NULL, NULL, NULL, NULL
+   "org.enlightenment.wm.Module", module_methods
 };
 
 static const EDBus_Service_Interface_Desc profile_desc = {
-   "org.enlightenment.wm.Profile", profile_methods, NULL, NULL, NULL, NULL
+   "org.enlightenment.wm.Profile", profile_methods
 };
 
 static const EDBus_Service_Interface_Desc window_desc = {
-   "org.enlightenment.wm.Window", window_methods, NULL, NULL, NULL, NULL
+   "org.enlightenment.wm.Window", window_methods
 };
 
 /* externally accessible functions */
@@ -208,23 +164,21 @@ _e_msgbus_request_name_cb(void *data __UNUSED__, const EDBus_Message *msg,
                           EDBus_Pending *pending __UNUSED__)
 {
    unsigned int flag;
+
    if (edbus_message_error_get(msg, NULL, NULL))
      {
-        printf("Error requesting bus name.\n");
+        ERR("Could not request bus name");
         return;
      }
 
    if (!edbus_message_arguments_get(msg, "u", &flag))
      {
-        printf("Error getting arguments on on_name_request\n");
+        ERR("Could not get arguments on on_name_request");
         return;
      }
 
    if (!(flag & EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER))
-     {
-        printf("error name already in use\n");
-        return;
-     }
+     ERR("Name already in use\n");
 }
 
 /* Core Handlers */

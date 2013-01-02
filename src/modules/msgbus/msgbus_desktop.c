@@ -184,50 +184,33 @@ cb_desktop_bglist(const EDBus_Service_Interface *iface __UNUSED__,
 }
 
 static const EDBus_Method desktop_methods[] = {
-   {
-    "GetVirtualCount", NULL, EDBUS_ARGS({"i", "desk_x"}, {"i", "desk_y"}),
-    cb_virtual_desktops, 0
-   },
-   {
-    "Show", EDBUS_ARGS({"i", "desk_x"}, {"i", "desk_y"}),
-    NULL, cb_desktop_show, 0
-   },
-   {
-    "ShowByName", EDBUS_ARGS({"s", "desk_name"}), NULL,
-    cb_desktop_show_by_name, 0
-   },
-   {
-    "Lock", NULL, NULL, cb_desktop_lock, 0
-   },
-   {
-    "Unlock", NULL, NULL, cb_desktop_unlock, 0
-   },
-   { NULL, NULL, NULL, NULL, 0 }
+   { "GetVirtualCount", NULL, EDBUS_ARGS({"i", "desk_x"}, {"i", "desk_y"}),
+      cb_virtual_desktops },
+   { "Show", EDBUS_ARGS({"i", "desk_x"}, {"i", "desk_y"}), NULL,
+      cb_desktop_show },
+   { "ShowByName", EDBUS_ARGS({"s", "desk_name"}), NULL,
+      cb_desktop_show_by_name },
+   { "Lock", NULL, NULL, cb_desktop_lock },
+   { "Unlock", NULL, NULL, cb_desktop_unlock },
+   { }
 };
 
 static const EDBus_Method background_methods[] = {
-   {
-    "Add",
-    EDBUS_ARGS({"i", "container"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}, {"s", "path"}),
-    NULL, cb_desktop_bgadd, 0
-   },
-   {
-    "Del", EDBUS_ARGS({"i", "container"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}),
-    NULL, cb_desktop_bgdel, 0
-   },
-   {
-    "List", EDBUS_ARGS({"a(iiiis)", "array_of_bg"}), NULL,
-    cb_desktop_bglist, 0
-   },
-   { NULL, NULL, NULL, NULL, 0 }
+   { "Add",
+      EDBUS_ARGS({"i", "container"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}, {"s", "path"}),
+      NULL, cb_desktop_bgadd },
+   { "Del", EDBUS_ARGS({"i", "container"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}),
+      NULL, cb_desktop_bgdel },
+   { "List", EDBUS_ARGS({"a(iiiis)", "array_of_bg"}), NULL, cb_desktop_bglist },
+   { }
 };
 
 static const EDBus_Service_Interface_Desc desktop = {
-   "org.enlightenment.wm.Desktop", desktop_methods, NULL, NULL, NULL, NULL
+   "org.enlightenment.wm.Desktop", desktop_methods
 };
 
 static const EDBus_Service_Interface_Desc bg = {
-   "org.enlightenment.wm.Desktop.Background", background_methods, NULL, NULL, NULL, NULL
+   "org.enlightenment.wm.Desktop.Background", background_methods
 };
 
 void msgbus_desktop_init(Eina_Array *ifaces)

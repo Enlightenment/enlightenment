@@ -28,12 +28,12 @@ cb_audit_timer_dump(const EDBus_Service_Interface *iface __UNUSED__,
 }
 
 static const EDBus_Method methods[] = {
-   { "Timers", NULL, EDBUS_ARGS({"s", ""}), cb_audit_timer_dump, 0 },
-   { NULL, NULL, NULL, NULL, 0 }
+   { "Timers", NULL, EDBUS_ARGS({"s", ""}), cb_audit_timer_dump },
+   { }
 };
 
 static const EDBus_Service_Interface_Desc audit = {
-  "org.enlightenment.wm.Audit", methods, NULL, NULL, NULL, NULL
+  "org.enlightenment.wm.Audit", methods
 };
 
 void msgbus_audit_init(Eina_Array *ifaces)
