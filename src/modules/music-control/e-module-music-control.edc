@@ -43,8 +43,21 @@ collections {
 	}
 	group {
 		name: "modules/music-control/popup";
-		min: 150 30;
+		min: 150 50;
 		parts {
+			part {
+				name: "player_name";
+				type: TEXT;
+				description {
+					state: "default" 0;
+					text.size: 12;
+					text.text: "Music player";
+					text.font: "Sans";
+					rel1.relative: 0.0 0.0;
+					rel2.relative: 1.0 0.0;
+					rel2.offset: 0 16;
+				}
+			}
 			part {
 				type: IMAGE;
 				name: "previous_btn";
@@ -52,7 +65,8 @@ collections {
 					state: "default" 0;
                		aspect: 1.0 1.0;
 		       		aspect_preference: BOTH;
-               		rel1.relative: 0.0 0.0;
+		       		rel1.to: "player_name";
+		       		rel1.relative: 0.0 1.0;
 					rel2.relative: 0.33 1.0;
 					image.normal: "images/previous.png";
 				}
@@ -64,9 +78,10 @@ collections {
 					state: "default" 0;
                		aspect: 1.0 1.0;
 		       		aspect_preference: BOTH;
-               		rel1.relative: 0.33 0.0;
-					rel2.relative: 0.66 1.0;
-					image.normal: "images/pause.png";
+		       		rel1.to: "player_name";
+		       		rel1.relative: 0.33 1.0;
+		       		rel2.relative: 0.66 1.0;
+		       		image.normal: "images/pause.png";
 				}
 				description {
 		    		state: "play" 0.0;
@@ -81,9 +96,10 @@ collections {
 					state: "default" 0;
                		aspect: 1.0 1.0;
 		       		aspect_preference: BOTH;
-               		rel1.relative: 0.66 0.0;
-					rel2.relative: 1.0 1.0;
-					image.normal: "images/next.png";
+		       		rel1.to: "player_name";
+		       		rel1.relative: 0.66 1.0;
+		       		rel2.relative: 1.0 1.0;
+		       		image.normal: "images/next.png";
 				}
 			}
 		}
@@ -116,6 +132,18 @@ collections {
 				action: STATE_SET "default" 0.0;
 				transition: LINEAR 0.1;
 				target: "play_btn";
+			}
+			program {
+				signal: "mouse,clicked,*";
+				source: "player_name";
+				action: SIGNAL_EMIT "label,clicked" "player_name";
+			}
+		}
+		script {
+			public message(Msg_Type:type, id, ...) {
+				new txt[128];
+				getsarg (2, txt, 128);
+				set_text(PART:"player_name", txt);
 			}
 		}
 	}

@@ -35,6 +35,22 @@ _btn_clicked(void *data, Evas_Object *obj, const char *emission, const char *sou
 }
 
 static void
+_label_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
+{
+   E_Music_Control_Instance *inst = data;
+   music_control_popup_del(inst);
+   mpris_media_player2_raise_call(inst->ctxt->mrpis2);
+}
+
+static void
+_player_name_update(E_Music_Control_Instance *inst)
+{
+   Edje_Message_String msg;
+   msg.str = (char *)music_player_players[inst->ctxt->config->player_selected].name;
+   edje_object_message_send(inst->content_popup, EDJE_MESSAGE_STRING, 0, &msg);
+}
+
+static void
 _popup_new(E_Music_Control_Instance *inst)
 {
    Evas_Object *o;
@@ -44,10 +60,13 @@ _popup_new(E_Music_Control_Instance *inst)
    edje_object_file_set(o, music_control_edj_path_get(),
                         "modules/music-control/popup");
    edje_object_signal_callback_add(o, "btn,clicked", "*", _btn_clicked, inst);
+   edje_object_signal_callback_add(o, "label,clicked", "player_name", _label_clicked, inst);
 
    e_gadcon_popup_content_set(inst->popup, o);
    e_gadcon_popup_show(inst->popup);
    inst->content_popup = o;
+
+   _player_name_update(inst);
    _play_state_update(inst);
 }
 
@@ -156,6 +175,9 @@ music_control_mouse_down_cb(void *data, Evas *evas, Evas_Object *obj, void *even
         E_Menu_Item *mi;
         E_Zone *zone = e_util_zone_current_get(e_manager_current_get());
         int x, y;
+
+        if (inst->popup)
+          music_control_popup_del(inst);
 
         m = e_menu_new();
         mi = e_menu_item_new(m);
