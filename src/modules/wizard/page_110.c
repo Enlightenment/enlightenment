@@ -43,15 +43,6 @@ static EDBus_Pending *pending_connman;
 static Ecore_Timer *connman_timeout = NULL;
 
 static Eina_Bool
-clean_dbus(void *data)
-{
-   EDBus_Connection *conn2 = data;
-   edbus_connection_unref(conn2);
-   edbus_shutdown();
-   return EINA_FALSE;
-}
-
-static Eina_Bool
 _connman_fail(void *data)
 {
    E_Wizard_Page *pg = data;
@@ -77,11 +68,7 @@ _connman_fail(void *data)
         edbus_pending_cancel(pending_connman);
         pending_connman = NULL;
      }
-   if (conn)
-     {
-        ecore_idler_add(clean_dbus, conn);
-        conn = NULL;
-     }
+
    connman_timeout = NULL;
    _recommend_connman(pg);
    return EINA_FALSE;
@@ -111,11 +98,7 @@ _check_connman_owner(void *data, const EDBus_Message *msg,
 
    e_wizard_button_next_enable_set(1);
    e_wizard_next();
-   if (conn)
-     {
-        ecore_idler_add(clean_dbus, conn);
-        conn = NULL;
-     }
+
 fail:
    _connman_fail(data);
 }
@@ -195,6 +178,12 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
         ecore_timer_del(connman_timeout);
         connman_timeout = NULL;
      }
+   if (conn)
+     edbus_connection_unref(conn);
+
+#ifdef HAVE_ECONNMAN
+   edbus_shutdown();
+#endif
 
    return 1;
 }
