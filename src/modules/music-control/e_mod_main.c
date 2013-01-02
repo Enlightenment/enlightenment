@@ -4,8 +4,6 @@
 
 static E_Module *music_control_mod = NULL;
 
-static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
-
 static const char _e_music_control_Name[] = "Music controller";
 
 const Player music_player_players[] =
@@ -18,23 +16,6 @@ const Player music_player_players[] =
    {"XMMS2", "org.mpris.MediaPlayer2.xmms2"},
    {NULL, NULL}
 };
-
-const char *
-music_control_edj_path_get(void)
-{
-#define TF "/e-module-music-control.edj"
-   size_t dirlen;
-
-   dirlen = strlen(music_control_mod->dir);
-   if (dirlen >= sizeof(tmpbuf) - sizeof(TF))
-     return NULL;
-
-   memcpy(tmpbuf, music_control_mod->dir, dirlen);
-   memcpy(tmpbuf + dirlen, TF, sizeof(TF));
-
-   return tmpbuf;
-#undef TF
-}
 
 static void
 _music_control(E_Object *obj, const char *params)
@@ -108,11 +89,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst = calloc(1, sizeof(E_Music_Control_Instance));
    inst->ctxt = ctxt;
    inst->gadget = edje_object_add(gc->evas);
-   edje_object_file_set(inst->gadget, music_control_edj_path_get(),
-                        "modules/music-control/main");
-   /*e_theme_edje_object_set(inst->gadget, "base/theme/modules/music-control",
-                             "e/modules/music-control/main");
-   TODO append theme to data/themes/default.edc*/
+   e_theme_edje_object_set(inst->gadget, "base/theme/modules/music-control",
+                           "modules/music-control/main");
 
    inst->gcc = e_gadcon_client_new(gc, name, id, style, inst->gadget);
    inst->gcc->data = inst;
@@ -162,9 +140,12 @@ static Evas_Object *
 _gc_icon(const E_Gadcon_Client_Class *client_class, Evas *evas)
 {
    Evas_Object *o = edje_object_add(evas);
-   edje_object_file_set(o, music_control_edj_path_get(), "icon");
+   e_theme_edje_object_set(o, "base/theme/modules/music-control",
+                           "modules/music-control/icon");
    return o;
 }
+
+static char tmpbuf[32]; /* general purpose buffer, just use immediately */
 
 static const char *
 _gc_id_new(const E_Gadcon_Client_Class *client_class)

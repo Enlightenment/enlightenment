@@ -116,8 +116,8 @@ _popup_new(E_Music_Control_Instance *inst)
    inst->popup = e_gadcon_popup_new(inst->gcc);
 
    o = edje_object_add(inst->popup->win->evas);
-   edje_object_file_set(o, music_control_edj_path_get(),
-                        "modules/music-control/popup");
+   e_theme_edje_object_set(o, "base/theme/modules/music-control",
+                           "modules/music-control/popup");
    edje_object_signal_callback_add(o, "btn,clicked", "*", _btn_clicked, inst);
    edje_object_signal_callback_add(o, "label,clicked", "player_name", _label_clicked, inst);
 
@@ -214,7 +214,7 @@ _cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi)
 
    e_config_dialog_new(m->zone->container, "Music control Settings", "E",
                        "_e_mod_music_config_dialog",
-                       music_control_edj_path_get(), 0, v, data);
+                       NULL, 0, v, data);
 }
 
 void
