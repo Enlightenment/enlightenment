@@ -3,11 +3,17 @@
 extern Player music_player_players[];
 
 static void
-_play_state_update(E_Music_Control_Instance *inst)
+_play_state_update(E_Music_Control_Instance *inst, Eina_Bool without_delay)
 {
    if (!inst->popup) return;
    if (inst->ctxt->playning)
-     edje_object_signal_emit(inst->content_popup, "btn,state,image,pause", "play");
+     {
+        edje_object_signal_emit(inst->content_popup, "btn,state,image,pause", "play");
+        return;
+     }
+
+   if (without_delay)
+     edje_object_signal_emit(inst->content_popup, "btn,state,image,play,no_delay", "play");
    else
      edje_object_signal_emit(inst->content_popup, "btn,state,image,play", "play");
 }
@@ -19,7 +25,7 @@ music_control_state_update_all(E_Music_Control_Module_Context *ctxt)
    Eina_List *list;
 
    EINA_LIST_FOREACH(ctxt->instances, list, inst)
-     _play_state_update(inst);
+     _play_state_update(inst, EINA_FALSE);
 }
 
 static void
@@ -63,11 +69,11 @@ _popup_new(E_Music_Control_Instance *inst)
    edje_object_signal_callback_add(o, "label,clicked", "player_name", _label_clicked, inst);
 
    e_gadcon_popup_content_set(inst->popup, o);
-   e_gadcon_popup_show(inst->popup);
    inst->content_popup = o;
 
    _player_name_update(inst);
-   _play_state_update(inst);
+   _play_state_update(inst, EINA_TRUE);
+   e_gadcon_popup_show(inst->popup);
 }
 
 void

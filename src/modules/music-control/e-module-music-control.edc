@@ -127,6 +127,13 @@ collections {
 				target: "play_btn";
 			}
 			program {
+				signal: "btn,state,image,play,no_delay";
+				source: "play";
+				action: STATE_SET "play" 0.0;
+				transition: LINEAR 0.0;
+				target: "play_btn";
+			}
+			program {
 				signal: "btn,state,image,pause";
 				source: "play";
 				action: STATE_SET "default" 0.0;
