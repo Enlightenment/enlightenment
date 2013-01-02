@@ -1,39 +1,39 @@
 #include "e.h"
 
 /* local subsystem functions */
-static void _e_msgbus_request_name_cb(void        *data,
-                                      DBusMessage *msg,
-                                      DBusError   *err);
+static void _e_msgbus_request_name_cb(void *data, const EDBus_Message *msg,
+                                      EDBus_Pending *pending);
 
-static DBusMessage *_e_msgbus_core_restart_cb(E_DBus_Object *obj,
-                                              DBusMessage   *msg);
-static DBusMessage *_e_msgbus_core_shutdown_cb(E_DBus_Object *obj,
-                                               DBusMessage   *msg);
+static EDBus_Message *_e_msgbus_core_restart_cb(const EDBus_Service_Interface *iface,
+                                                const EDBus_Message *msg);
+static EDBus_Message *_e_msgbus_core_shutdown_cb(const EDBus_Service_Interface *iface,
+                                                 const EDBus_Message *msg);
 
-static DBusMessage *_e_msgbus_module_load_cb(E_DBus_Object *obj,
-                                             DBusMessage   *msg);
-static DBusMessage *_e_msgbus_module_unload_cb(E_DBus_Object *obj,
-                                               DBusMessage   *msg);
-static DBusMessage *_e_msgbus_module_enable_cb(E_DBus_Object *obj,
-                                               DBusMessage   *msg);
-static DBusMessage *_e_msgbus_module_disable_cb(E_DBus_Object *obj,
-                                                DBusMessage   *msg);
-static DBusMessage *_e_msgbus_module_list_cb(E_DBus_Object *obj,
-                                             DBusMessage   *msg);
+static EDBus_Message *_e_msgbus_module_load_cb(const EDBus_Service_Interface *iface,
+                                               const EDBus_Message *msg);
+static EDBus_Message *_e_msgbus_module_unload_cb(const EDBus_Service_Interface *iface,
+                                                 const EDBus_Message *msg);
+static EDBus_Message *_e_msgbus_module_enable_cb(const EDBus_Service_Interface *iface,
+                                                 const EDBus_Message *msg);
+static EDBus_Message *_e_msgbus_module_disable_cb(const EDBus_Service_Interface *iface,
+                                                  const EDBus_Message *msg);
+static EDBus_Message *_e_msgbus_module_list_cb(const EDBus_Service_Interface *iface,
+                                               const EDBus_Message *msg);
 
-static DBusMessage *_e_msgbus_profile_set_cb(E_DBus_Object *obj,
-                                             DBusMessage   *msg);
-static DBusMessage *_e_msgbus_profile_get_cb(E_DBus_Object *obj,
-                                             DBusMessage   *msg);
-static DBusMessage *_e_msgbus_profile_list_cb(E_DBus_Object *obj,
-                                              DBusMessage   *msg);
-static DBusMessage *_e_msgbus_profile_add_cb(E_DBus_Object *obj,
-                                             DBusMessage   *msg);
-static DBusMessage *_e_msgbus_profile_delete_cb(E_DBus_Object *obj,
-                                                DBusMessage   *msg);
+static EDBus_Message *_e_msgbus_profile_set_cb(const EDBus_Service_Interface *iface,
+                                               const EDBus_Message *msg);
+static EDBus_Message *_e_msgbus_profile_get_cb(const EDBus_Service_Interface *iface,
+                                               const EDBus_Message *msg);
+static EDBus_Message *_e_msgbus_profile_list_cb(const EDBus_Service_Interface *iface,
+                                                const EDBus_Message *msg);
+static EDBus_Message *_e_msgbus_profile_add_cb(const EDBus_Service_Interface *iface,
+                                               const EDBus_Message *msg);
+static EDBus_Message *_e_msgbus_profile_delete_cb(const EDBus_Service_Interface *iface,
+                                                  const EDBus_Message *msg);
 
 #define E_MSGBUS_WIN_ACTION_CB_PROTO(NAME) \
-static DBusMessage *_e_msgbus_window_##NAME##_cb(E_DBus_Object *obj __UNUSED__, DBusMessage   *msg)
+static EDBus_Message *_e_msgbus_window_##NAME##_cb(const EDBus_Service_Interface *iface, \
+                                                   const EDBus_Message *msg)
 
 E_MSGBUS_WIN_ACTION_CB_PROTO(list);
 E_MSGBUS_WIN_ACTION_CB_PROTO(close);
@@ -47,165 +47,213 @@ E_MSGBUS_WIN_ACTION_CB_PROTO(unmaximize);
 /* local subsystem globals */
 static E_Msgbus_Data *_e_msgbus_data = NULL;
 
+static const EDBus_Method core_methods[] = {
+   {
+    "Restart", NULL, NULL, _e_msgbus_core_restart_cb, 0
+   },
+   {
+    "Shutdown", NULL, NULL, _e_msgbus_core_shutdown_cb, 0
+   },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
+static const EDBus_Method module_methods[] = {
+   {
+    "Load", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_load_cb, 0
+   },
+   {
+    "Unload", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_unload_cb, 0
+   },
+   {
+    "Enable", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_enable_cb, 0
+   },
+   {
+    "Disable", EDBUS_ARGS({"s", "module"}), NULL,
+    _e_msgbus_module_disable_cb, 0
+   },
+   {
+    "List", NULL, EDBUS_ARGS({"a(si)", "array_of_modules"}),
+    _e_msgbus_module_list_cb, 0
+   },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
+static const EDBus_Method profile_methods[] = {
+   {
+    "Set", EDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_set_cb, 0
+   },
+   {
+    "Get", NULL, EDBUS_ARGS({"s", "profile"}), _e_msgbus_profile_get_cb, 0
+   },
+   {
+    "List", NULL, EDBUS_ARGS({"as", "array_profiles"}),
+    _e_msgbus_profile_list_cb, 0
+   },
+   {
+    "Add", EDBUS_ARGS({"s", "profile"}), NULL,
+    _e_msgbus_profile_add_cb, 0
+   },
+   {
+    "Delete", EDBUS_ARGS({"s", "profile"}), NULL,
+    _e_msgbus_profile_delete_cb, 0
+   },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
+static const EDBus_Method window_methods[] = {
+   {
+    "List", NULL, EDBUS_ARGS({"a(si)", "array_of_window"}),
+    _e_msgbus_window_list_cb, 0
+   },
+   {
+    "Close", EDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_close_cb, 0
+   },
+   {
+    "Kill", EDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_kill_cb, 0
+   },
+   {
+     "Focus", EDBUS_ARGS({"i", "window_id"}),
+     NULL, _e_msgbus_window_focus_cb, 0
+   },
+   {
+    "Iconify", EDBUS_ARGS({"i", "window_id"}), NULL,
+    _e_msgbus_window_iconify_cb, 0
+   },
+   {
+    "Uniconify", EDBUS_ARGS({"i", "window_id"}), NULL,
+    _e_msgbus_window_uniconify_cb, 0
+   },
+   {
+    "Maximize", EDBUS_ARGS({"i", "window_id"}), NULL,
+    _e_msgbus_window_maximize_cb, 0
+   },
+   {
+    "Unmaximize", EDBUS_ARGS({"i", "window_id"}), NULL,
+    _e_msgbus_window_unmaximize_cb, 0
+   },
+   { NULL, NULL, NULL, NULL, 0 }
+};
+
+#define PATH "/org/enlightenment/wm/RemoteObject"
+
+static const EDBus_Service_Interface_Desc core_desc = {
+   "org.enlightenment.wm.Core", core_methods, NULL, NULL, NULL, NULL
+};
+
+static const EDBus_Service_Interface_Desc module_desc = {
+   "org.enlightenment.wm.Module", module_methods, NULL, NULL, NULL, NULL
+};
+
+static const EDBus_Service_Interface_Desc profile_desc = {
+   "org.enlightenment.wm.Profile", profile_methods, NULL, NULL, NULL, NULL
+};
+
+static const EDBus_Service_Interface_Desc window_desc = {
+   "org.enlightenment.wm.Window", window_methods, NULL, NULL, NULL, NULL
+};
+
 /* externally accessible functions */
 EINTERN int
 e_msgbus_init(void)
 {
-   E_DBus_Interface *iface;
-
    _e_msgbus_data = E_NEW(E_Msgbus_Data, 1);
 
-   e_dbus_init();
-#ifdef HAVE_HAL
-   e_hal_init();
-#endif
+   edbus_init();
 
-   _e_msgbus_data->conn = e_dbus_bus_get(DBUS_BUS_SESSION);
+   _e_msgbus_data->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
    if (!_e_msgbus_data->conn)
      {
-        WRN("Cannot get DBUS_BUS_SESSION");
+        WRN("Cannot get EDBUS_CONNECTION_TYPE_SESSION");
         return 0;
      }
-   e_dbus_request_name(_e_msgbus_data->conn, "org.enlightenment.wm.service", 0, _e_msgbus_request_name_cb, NULL);
-   _e_msgbus_data->obj = e_dbus_object_add(_e_msgbus_data->conn, "/org/enlightenment/wm/RemoteObject", NULL);
 
-   iface = e_dbus_interface_new("org.enlightenment.wm.Core");
-   if (!iface)
-     {
-        WRN("Cannot add org.enlightenment.wm.Core interface");
-        return 0;
-     }
-   e_dbus_object_interface_attach(_e_msgbus_data->obj, iface);
-   e_dbus_interface_unref(iface);
-
-   /* Hardcore methods */
-   e_dbus_interface_method_add(iface, "Restart", "", "", _e_msgbus_core_restart_cb);
-   e_dbus_interface_method_add(iface, "Shutdown", "", "", _e_msgbus_core_shutdown_cb);
-
-   iface = e_dbus_interface_new("org.enlightenment.wm.Module");
-   if (!iface)
-     {
-        WRN("Cannot add org.enlightenment.wm.Module interface");
-        return 0;
-     }
-   e_dbus_object_interface_attach(_e_msgbus_data->obj, iface);
-   e_dbus_interface_unref(iface);
-
-   /* Module methods */
-   e_dbus_interface_method_add(iface, "Load", "s", "", _e_msgbus_module_load_cb);
-   e_dbus_interface_method_add(iface, "Unload", "s", "", _e_msgbus_module_unload_cb);
-   e_dbus_interface_method_add(iface, "Enable", "s", "", _e_msgbus_module_enable_cb);
-   e_dbus_interface_method_add(iface, "Disable", "s", "", _e_msgbus_module_disable_cb);
-   e_dbus_interface_method_add(iface, "List", "", "a(si)", _e_msgbus_module_list_cb);
-
-   iface = e_dbus_interface_new("org.enlightenment.wm.Profile");
-   if (!iface)
-     {
-        WRN("Cannot add org.enlightenment.wm.Profile interface");
-        return 0;
-     }
-   e_dbus_object_interface_attach(_e_msgbus_data->obj, iface);
-   e_dbus_interface_unref(iface);
-
-   /* Profile methods */
-   e_dbus_interface_method_add(iface, "Set", "s", "", _e_msgbus_profile_set_cb);
-   e_dbus_interface_method_add(iface, "Get", "", "s", _e_msgbus_profile_get_cb);
-   e_dbus_interface_method_add(iface, "List", "", "as", _e_msgbus_profile_list_cb);
-   e_dbus_interface_method_add(iface, "Add", "s", "", _e_msgbus_profile_add_cb);
-   e_dbus_interface_method_add(iface, "Delete", "s", "", _e_msgbus_profile_delete_cb);
-
-   iface = e_dbus_interface_new("org.enlightenment.wm.Window");
-   if (!iface)
-     {
-        WRN("Cannot add org.enlightenment.wm.Window interface");
-        return 0;
-     }
-   e_dbus_object_interface_attach(_e_msgbus_data->obj, iface);
-   e_dbus_interface_unref(iface);
-
-   /* Profile methods */
-   e_dbus_interface_method_add(iface, "List", "", "a(si)", _e_msgbus_window_list_cb);
-   e_dbus_interface_method_add(iface, "Close", "i", "", _e_msgbus_window_close_cb);
-   e_dbus_interface_method_add(iface, "Kill", "i", "", _e_msgbus_window_kill_cb);
-   e_dbus_interface_method_add(iface, "Focus", "i", "", _e_msgbus_window_focus_cb);
-   e_dbus_interface_method_add(iface, "Iconify", "i", "", _e_msgbus_window_iconify_cb);
-   e_dbus_interface_method_add(iface, "Uniconify", "i", "", _e_msgbus_window_uniconify_cb);
-   e_dbus_interface_method_add(iface, "Maximize", "i", "", _e_msgbus_window_maximize_cb);
-   e_dbus_interface_method_add(iface, "Unmaximize", "i", "", _e_msgbus_window_unmaximize_cb);
-
+   _e_msgbus_data->iface = edbus_service_interface_register(_e_msgbus_data->conn,
+                                                            PATH, &core_desc);
+   edbus_service_interface_register(_e_msgbus_data->conn, PATH, &module_desc);
+   edbus_service_interface_register(_e_msgbus_data->conn, PATH, &profile_desc);
+   edbus_service_interface_register(_e_msgbus_data->conn, PATH, &window_desc);
+   edbus_name_request(_e_msgbus_data->conn, "org.enlightenment.wm.service",
+                      0, _e_msgbus_request_name_cb, NULL);
    return 1;
 }
 
 EINTERN int
 e_msgbus_shutdown(void)
 {
-   if (_e_msgbus_data->obj)
-     {
-        e_dbus_object_free(_e_msgbus_data->obj);
-     }
+   if (_e_msgbus_data->iface)
+     edbus_service_object_unregister(_e_msgbus_data->iface);
    if (_e_msgbus_data->conn)
      {
-        e_dbus_connection_close(_e_msgbus_data->conn);
+        edbus_name_release(_e_msgbus_data->conn,
+                           "org.enlightenment.wm.service", NULL, NULL);
+        edbus_connection_unref(_e_msgbus_data->conn);
      }
-#ifdef HAVE_HAL
-   e_hal_shutdown();
-#endif
-   e_dbus_shutdown();
+   edbus_shutdown();
 
    E_FREE(_e_msgbus_data);
    _e_msgbus_data = NULL;
    return 1;
 }
 
-EAPI void
-e_msgbus_interface_attach(E_DBus_Interface *iface)
+EAPI EDBus_Service_Interface *
+e_msgbus_interface_attach(const EDBus_Service_Interface_Desc *desc)
 {
-   if (!_e_msgbus_data->obj) return;
-   e_dbus_object_interface_attach(_e_msgbus_data->obj, iface);
-}
-
-EAPI void
-e_msgbus_interface_detach(E_DBus_Interface *iface)
-{
-   if (!_e_msgbus_data->obj) return;
-   e_dbus_object_interface_detach(_e_msgbus_data->obj, iface);
+   if (!_e_msgbus_data->iface)
+     return NULL;
+   return edbus_service_interface_register(_e_msgbus_data->conn, PATH, desc);
 }
 
 static void
-_e_msgbus_request_name_cb(void        *data __UNUSED__,
-                          DBusMessage *msg __UNUSED__,
-                          DBusError   *err __UNUSED__)
+_e_msgbus_request_name_cb(void *data __UNUSED__, const EDBus_Message *msg,
+                          EDBus_Pending *pending __UNUSED__)
 {
-//TODO Handle Errors
+   unsigned int flag;
+   if (edbus_message_error_get(msg, NULL, NULL))
+     {
+        printf("Error requesting bus name.\n");
+        return;
+     }
+
+   if (!edbus_message_arguments_get(msg, "u", &flag))
+     {
+        printf("Error getting arguments on on_name_request\n");
+        return;
+     }
+
+   if (!(flag & EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER))
+     {
+        printf("error name already in use\n");
+        return;
+     }
 }
 
 /* Core Handlers */
-static DBusMessage *
-_e_msgbus_core_restart_cb(E_DBus_Object *obj __UNUSED__,
-                          DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_core_restart_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                          const EDBus_Message *msg)
 {
    e_sys_action_do(E_SYS_RESTART, NULL);
-   return dbus_message_new_method_return(msg);
+   return edbus_message_method_return_new(msg);
 }
 
-static DBusMessage *
-_e_msgbus_core_shutdown_cb(E_DBus_Object *obj __UNUSED__,
-                           DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_core_shutdown_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                           const EDBus_Message *msg)
 {
    e_sys_action_do(E_SYS_EXIT, NULL);
-   return dbus_message_new_method_return(msg);
+   return edbus_message_method_return_new(msg);
 }
 
 /* Modules Handlers */
-static DBusMessage *
-_e_msgbus_module_load_cb(E_DBus_Object *obj __UNUSED__,
-                         DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_module_load_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                         const EDBus_Message *msg)
 {
-   DBusMessageIter iter;
    char *module;
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
 
-   dbus_message_iter_init(msg, &iter);
-   dbus_message_iter_get_basic(&iter, &module);
+   if (!edbus_message_arguments_get(msg, "s", &module))
+     return reply;
 
    if (!e_module_find(module))
      {
@@ -213,19 +261,19 @@ _e_msgbus_module_load_cb(E_DBus_Object *obj __UNUSED__,
         e_config_save_queue();
      }
 
-   return dbus_message_new_method_return(msg);
+   return reply;
 }
 
-static DBusMessage *
-_e_msgbus_module_unload_cb(E_DBus_Object *obj __UNUSED__,
-                           DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_module_unload_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                           const EDBus_Message *msg)
 {
-   DBusMessageIter iter;
    char *module;
    E_Module *m;
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
 
-   dbus_message_iter_init(msg, &iter);
-   dbus_message_iter_get_basic(&iter, &module);
+   if (!edbus_message_arguments_get(msg, "s", &module))
+     return reply;
 
    if ((m = e_module_find(module)))
      {
@@ -234,19 +282,19 @@ _e_msgbus_module_unload_cb(E_DBus_Object *obj __UNUSED__,
         e_config_save_queue();
      }
 
-   return dbus_message_new_method_return(msg);
+   return reply;
 }
 
-static DBusMessage *
-_e_msgbus_module_enable_cb(E_DBus_Object *obj __UNUSED__,
-                           DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_module_enable_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                           const EDBus_Message *msg)
 {
-   DBusMessageIter iter;
    char *module;
    E_Module *m;
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
 
-   dbus_message_iter_init(msg, &iter);
-   dbus_message_iter_get_basic(&iter, &module);
+   if (!edbus_message_arguments_get(msg, "s", &module))
+     return reply;
 
    if ((m = e_module_find(module)))
      {
@@ -254,19 +302,19 @@ _e_msgbus_module_enable_cb(E_DBus_Object *obj __UNUSED__,
         e_config_save_queue();
      }
 
-   return dbus_message_new_method_return(msg);
+   return reply;
 }
 
-static DBusMessage *
-_e_msgbus_module_disable_cb(E_DBus_Object *obj __UNUSED__,
-                            DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_module_disable_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                            const EDBus_Message *msg)
 {
-   DBusMessageIter iter;
    char *module;
    E_Module *m;
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
 
-   dbus_message_iter_init(msg, &iter);
-   dbus_message_iter_get_basic(&iter, &module);
+   if (!edbus_message_arguments_get(msg, "s", &module))
+     return reply;
 
    if ((m = e_module_find(module)))
      {
@@ -274,51 +322,54 @@ _e_msgbus_module_disable_cb(E_DBus_Object *obj __UNUSED__,
         e_config_save_queue();
      }
 
-   return dbus_message_new_method_return(msg);
+   return reply;
 }
 
-static DBusMessage *
-_e_msgbus_module_list_cb(E_DBus_Object *obj __UNUSED__,
-                         DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_module_list_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                         const EDBus_Message *msg)
 {
    Eina_List *l;
    E_Module *mod;
-   DBusMessage *reply;
-   DBusMessageIter iter;
-   DBusMessageIter arr;
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   EDBus_Message_Iter *main_iter, *array;
 
-   reply = dbus_message_new_method_return(msg);
-   dbus_message_iter_init_append(reply, &iter);
-   dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "(si)", &arr);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(reply, NULL);
+   main_iter = edbus_message_iter_get(reply);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_iter, reply);
+
+   edbus_message_iter_arguments_append(main_iter, "a(si)", &array);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(array, reply);
 
    EINA_LIST_FOREACH(e_module_list(), l, mod)
      {
-        DBusMessageIter sub;
+        EDBus_Message_Iter *s;
         const char *name;
         int enabled;
 
         name = mod->name;
         enabled = mod->enabled;
-        dbus_message_iter_open_container(&arr, DBUS_TYPE_STRUCT, NULL, &sub);
-        dbus_message_iter_append_basic(&sub, DBUS_TYPE_STRING, &(name));
-        dbus_message_iter_append_basic(&sub, DBUS_TYPE_INT32, &(enabled));
-        dbus_message_iter_close_container(&arr, &sub);
+
+        edbus_message_iter_arguments_append(array, "(si)", &s);
+        if (!s) continue;
+        edbus_message_iter_arguments_append(s, "si", name, enabled);
+        edbus_message_iter_container_close(array, s);
      }
-   dbus_message_iter_close_container(&iter, &arr);
+   edbus_message_iter_container_close(main_iter, array);
 
    return reply;
 }
 
 /* Profile Handlers */
-static DBusMessage *
-_e_msgbus_profile_set_cb(E_DBus_Object *obj __UNUSED__,
-                         DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_profile_set_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                         const EDBus_Message *msg)
 {
-   DBusMessageIter iter;
    char *profile;
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
 
-   dbus_message_iter_init(msg, &iter);
-   dbus_message_iter_get_basic(&iter, &profile);
+   if (!edbus_message_arguments_get(msg, "s", &profile))
+     return reply;
 
    e_config_save_flush();
    e_config_profile_set(profile);
@@ -326,123 +377,122 @@ _e_msgbus_profile_set_cb(E_DBus_Object *obj __UNUSED__,
    e_config_save_block_set(1);
    e_sys_action_do(E_SYS_RESTART, NULL);
 
-   return dbus_message_new_method_return(msg);
-}
-
-static DBusMessage *
-_e_msgbus_profile_get_cb(E_DBus_Object *obj __UNUSED__,
-                         DBusMessage   *msg)
-{
-   DBusMessageIter iter;
-   DBusMessage *reply;
-   const char *profile;
-
-   profile = e_config_profile_get();
-
-   reply = dbus_message_new_method_return(msg);
-   dbus_message_iter_init_append(reply, &iter);
-   dbus_message_iter_append_basic(&iter, DBUS_TYPE_STRING, &profile);
-
    return reply;
 }
 
-static DBusMessage *
-_e_msgbus_profile_list_cb(E_DBus_Object *obj __UNUSED__,
-                          DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_profile_get_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                         const EDBus_Message *msg)
+{
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   const char *profile;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(reply, NULL);
+   profile = e_config_profile_get();
+   edbus_message_arguments_append(reply, "s", profile);
+   return reply;
+}
+
+static EDBus_Message *
+_e_msgbus_profile_list_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                          const EDBus_Message *msg)
 {
    Eina_List *l;
    const char *name;
-   DBusMessage *reply;
-   DBusMessageIter iter;
-   DBusMessageIter arr;
+   EDBus_Message *reply;
+   EDBus_Message_Iter *array, *main_iter;
 
-   reply = dbus_message_new_method_return(msg);
-   dbus_message_iter_init_append(reply, &iter);
-   dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "s", &arr);
+   reply = edbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(reply, NULL);
+
+   main_iter = edbus_message_iter_get(reply);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(main_iter, reply);
+
+   edbus_message_iter_arguments_append(main_iter, "as", &array);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(array, reply);
 
    EINA_LIST_FOREACH(e_config_profile_list(), l, name)
-     {
-        dbus_message_iter_append_basic(&arr, DBUS_TYPE_STRING, &name);
-     }
-   dbus_message_iter_close_container(&iter, &arr);
+     edbus_message_iter_basic_append(array, 's', name);
+   edbus_message_iter_container_close(main_iter, array);
 
    return reply;
 }
 
-static DBusMessage *
-_e_msgbus_profile_add_cb(E_DBus_Object *obj __UNUSED__,
-                         DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_profile_add_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                         const EDBus_Message *msg)
 {
-   DBusMessageIter iter;
    char *profile;
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
 
-   dbus_message_iter_init(msg, &iter);
-   dbus_message_iter_get_basic(&iter, &profile);
-
+   if (!edbus_message_arguments_get(msg, "s", &profile))
+     return reply;
    e_config_profile_add(profile);
 
-   return dbus_message_new_method_return(msg);
+   return reply;
 }
 
-static DBusMessage *
-_e_msgbus_profile_delete_cb(E_DBus_Object *obj __UNUSED__,
-                            DBusMessage   *msg)
+static EDBus_Message *
+_e_msgbus_profile_delete_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                            const EDBus_Message *msg)
 {
-   DBusMessageIter iter;
    char *profile;
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
 
-   dbus_message_iter_init(msg, &iter);
-   dbus_message_iter_get_basic(&iter, &profile);
+   if (!edbus_message_arguments_get(msg, "s", &profile))
+     return reply;
    if (!strcmp(e_config_profile_get(), profile))
-     {
-        DBusMessage *ret;
-
-        ret = dbus_message_new_error(msg, "org.enlightenment.DBus.InvalidArgument",
-                                     "Can't delete active profile");
-        return ret;
-     }
+     return edbus_message_error_new(msg,
+                                    "org.enlightenment.DBus.InvalidArgument",
+                                    "Can't delete active profile");
    e_config_profile_del(profile);
-
-   return dbus_message_new_method_return(msg);
+   return reply;
 }
 
 /* Window handlers */
-static DBusMessage *
-_e_msgbus_window_list_cb(E_DBus_Object *obj __UNUSED__, DBusMessage *msg)
+static EDBus_Message *
+_e_msgbus_window_list_cb(const EDBus_Service_Interface *iface __UNUSED__,
+                         const EDBus_Message *msg)
 {
    Eina_List *l;
    E_Border *bd;
-   DBusMessage *reply;
-   DBusMessageIter iter;
-   DBusMessageIter arr;
+   EDBus_Message *reply;
+   EDBus_Message_Iter *main_iter, *array;
 
-   reply = dbus_message_new_method_return(msg);
-   dbus_message_iter_init_append(reply, &iter);
-   dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "(si)", &arr);
+   reply = edbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(reply, NULL);
+
+   main_iter = edbus_message_iter_get(reply);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(main_iter, reply);
+
+   edbus_message_iter_arguments_append(main_iter, "a(si)", &array);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(array, reply);
 
    EINA_LIST_FOREACH(e_border_client_list(), l, bd)
      {
-        DBusMessageIter sub;
-        dbus_message_iter_open_container(&arr, DBUS_TYPE_STRUCT, NULL, &sub);
-        dbus_message_iter_append_basic(&sub, DBUS_TYPE_STRING, &bd->client.icccm.name);
-        dbus_message_iter_append_basic(&sub, DBUS_TYPE_INT32, &bd->client.win);
-        dbus_message_iter_close_container(&arr, &sub);
+        EDBus_Message_Iter *s;
+
+        edbus_message_iter_arguments_append(array, "(si)", &s);
+        if (!s) continue;
+        edbus_message_iter_arguments_append(s, "si", bd->client.icccm.name,
+                                            bd->client.win);
+        edbus_message_iter_container_close(array, s);
      }
-   dbus_message_iter_close_container(&iter, &arr);
+   edbus_message_iter_container_close(main_iter, array);
 
    return reply;
 }
 
 #define E_MSGBUS_WIN_ACTION_CB_BEGIN(NAME) \
-static DBusMessage * \
-_e_msgbus_window_##NAME##_cb(E_DBus_Object *obj __UNUSED__, DBusMessage *msg) \
+static EDBus_Message * \
+_e_msgbus_window_##NAME##_cb(const EDBus_Service_Interface *iface __UNUSED__,\
+                             const EDBus_Message *msg) \
 { \
    E_Border *bd; \
    int xwin;\
-   DBusMessageIter iter;\
 \
-   dbus_message_iter_init(msg, &iter);\
-   dbus_message_iter_get_basic(&iter, &xwin);\
+   if (!edbus_message_arguments_get(msg, "i", &xwin)) \
+     return edbus_message_method_return_new(msg); \
    bd = e_border_find_by_client_window(xwin);\
    if (bd)\
      {
@@ -450,7 +500,7 @@ _e_msgbus_window_##NAME##_cb(E_DBus_Object *obj __UNUSED__, DBusMessage *msg) \
 #define E_MSGBUS_WIN_ACTION_CB_END \
      }\
 \
-   return dbus_message_new_method_return(msg);\
+   return edbus_message_method_return_new(msg);\
 }
 
 E_MSGBUS_WIN_ACTION_CB_BEGIN(close)

@@ -25,14 +25,11 @@ e_modapi_init(E_Module *m)
 EAPI int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
-   E_DBus_Interface* iface;
+   EDBus_Service_Interface* iface;
    Eina_Array_Iterator iter;
    size_t i;
    EINA_ARRAY_ITER_NEXT(ifaces, i, iface, iter)
-     {
-	e_msgbus_interface_detach(iface);
-	e_dbus_interface_unref(iface);
-     }
+     edbus_service_interface_unregister(iface);
    eina_array_free(ifaces);
    ifaces = NULL;
    return 1;
