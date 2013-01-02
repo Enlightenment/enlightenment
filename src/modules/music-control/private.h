@@ -19,6 +19,7 @@ typedef struct _E_Music_Control_Module_Context
    EDBus_Proxy *mpris2_player;
    E_Config_DD *conf_edd;
    Music_Control_Config *config;
+   Eina_Bool actions_set:1;
 } E_Music_Control_Module_Context;
 
 typedef struct _E_Music_Control_Instance

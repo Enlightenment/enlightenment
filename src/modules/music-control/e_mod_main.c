@@ -36,6 +36,65 @@ music_control_edj_path_get(void)
 #undef TF
 }
 
+static void
+_music_control(E_Object *obj, const char *params)
+{
+   E_Music_Control_Module_Context *ctxt;
+   EINA_SAFETY_ON_NULL_RETURN(music_control_mod->data);
+   ctxt = music_control_mod->data;
+   if (!strcmp(params, "play"))
+     media_player2_player_pause_call(ctxt->mpris2_player);
+   else if (!strcmp(params, "next"))
+     media_player2_player_next_call(ctxt->mpris2_player);
+   else if (!strcmp(params, "previous"))
+     media_player2_player_previous_call(ctxt->mpris2_player);
+}
+
+#define ACTION_NEXT "next_music"
+#define ACTION_NEXT_NAME "Next Music"
+#define ACTION_PLAY_PAUSE "playpause_music"
+#define ACTION_PLAY_PAUSE_NAME "Play/Pause Music"
+#define ACTION_PREVIOUS "previous_music"
+#define ACTION_PREVIOUS_NAME "Previous Music"
+
+static void
+_actions_register(E_Music_Control_Module_Context *ctxt)
+{
+   E_Action *action;
+   if (ctxt->actions_set) return;
+
+   action = e_action_add(ACTION_NEXT);
+   action->func.go = _music_control;
+   e_action_predef_name_set(_e_music_control_Name, ACTION_NEXT_NAME,
+                            ACTION_NEXT, "next", NULL, 0);
+
+   action = e_action_add(ACTION_PLAY_PAUSE);
+   action->func.go = _music_control;
+   e_action_predef_name_set(_e_music_control_Name, ACTION_PLAY_PAUSE_NAME,
+                            ACTION_PLAY_PAUSE, "play", NULL, 0);
+
+   action = e_action_add(ACTION_PREVIOUS);
+   action->func.go = _music_control;
+   e_action_predef_name_set(_e_music_control_Name, ACTION_PREVIOUS_NAME,
+                            ACTION_PREVIOUS, "previous", NULL, 0);
+
+   ctxt->actions_set = EINA_TRUE;
+}
+
+static void
+_actions_unregister(E_Music_Control_Module_Context *ctxt)
+{
+   if (!ctxt->actions_set) return;
+   e_action_predef_name_del(ACTION_NEXT_NAME, ACTION_NEXT);
+   e_action_del(ACTION_NEXT);
+   e_action_predef_name_del(ACTION_PLAY_PAUSE_NAME, ACTION_PLAY_PAUSE);
+   e_action_del(ACTION_PLAY_PAUSE);
+   e_action_predef_name_del(ACTION_PREVIOUS_NAME, ACTION_PREVIOUS);
+   e_action_del(ACTION_PREVIOUS);
+
+   ctxt->actions_set = EINA_FALSE;
+}
+
 /* Gadcon Api Functions */
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
@@ -61,6 +120,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_DOWN, music_control_mouse_down_cb, inst);
 
    ctxt->instances = eina_list_append(ctxt->instances, inst);
+   _actions_register(ctxt);
 
    return inst->gcc;
 }
@@ -79,6 +139,8 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    evas_object_del(inst->gadget);
    if (inst->popup) music_control_popup_del(inst);
    ctxt->instances = eina_list_remove(ctxt->instances, inst);
+   if (!ctxt->instances)
+     _actions_unregister(ctxt);
 
    free(inst);
 }
