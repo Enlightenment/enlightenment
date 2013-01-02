@@ -705,7 +705,7 @@ _e_module_whitelist_check(void)
         "wl_shell",
         "xkbswitch",
         "echievements",
-        
+        "music-control",
         NULL // end marker
      };
 

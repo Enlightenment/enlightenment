@@ -11,4 +11,6 @@ music_control_module_la_DEPENDENCIES = $(MDEPENDENCIES)
 music_control_module_la_CFLAGS = $(AM_CFLAGS) -Wno-unused-parameter
 music_control_module_la_LIBADD = @MUSIC_CONTROL_LIBS@
 music_control_module_la_SOURCES  = music-control/e_mod_main.h \
-			                       music-control/e_mod_main.c
+                                   music-control/e_mod_main.c \
+                                   music-control/private.h \
+                                   music-control/ui.c

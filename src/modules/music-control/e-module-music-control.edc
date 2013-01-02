@@ -1,5 +1,9 @@
 images {
    image: "images/icon.png" COMP;
+   image: "images/previous.png" COMP;
+   image: "images/next.png" COMP;
+   image: "images/pause.png" COMP;
+   image: "images/play.png" COMP;
 }
 
 collections {
@@ -22,54 +26,96 @@ collections {
 	}	
 	group {
 		name: "modules/music-control/main";
-		min: 16 16;
-		max: 128 128;
 		parts {
 			part {
 				name: "icon";
-		  		mouse_events: 0;
 		  		type: IMAGE;
 		  		description {
 		       		state: "default" 0.0;
 		       		aspect: 1.0 1.0;
 		       		aspect_preference: BOTH;
-		       		rel1.offset: 2 2;
-		       		rel2.offset: -3 -3;
+		       		rel1.relative: 0 0;
+		       		rel2.relative: 1 1;
 		       		image.normal: "images/icon.png";
-		       	}
-		    	description {
-		    		state: "bigger" 0.0;
-		    		inherit: "default" 0.0;
-		      		rel1.offset: -2 -2;
-					rel2.offset: 3 3;
+				}
+			}
+		}
+	}
+	group {
+		name: "modules/music-control/popup";
+		min: 150 30;
+		parts {
+			part {
+				type: IMAGE;
+				name: "previous_btn";
+				description {
+					state: "default" 0;
+               		aspect: 1.0 1.0;
+		       		aspect_preference: BOTH;
+               		rel1.relative: 0.0 0.0;
+					rel2.relative: 0.33 1.0;
+					image.normal: "images/previous.png";
 				}
 			}
 			part {
-		  		name: "event";
-		  		mouse_events: 1;
-		  		type: RECT;
-		  		description {
-		       		state: "default" 0.0;
-		       		color: 255 255 255 0;
-		    	}
+				type: IMAGE;
+				name: "play_btn";
+				description {
+					state: "default" 0;
+               		aspect: 1.0 1.0;
+		       		aspect_preference: BOTH;
+               		rel1.relative: 0.33 0.0;
+					rel2.relative: 0.66 1.0;
+					image.normal: "images/pause.png";
+				}
+				description {
+		    		state: "play" 0.0;
+		    		inherit: "default" 0.0;
+		      		image.normal: "images/play.png";
+				}
+			}
+			part {
+				type: IMAGE;
+				name: "next_btn";
+				description {
+					state: "default" 0;
+               		aspect: 1.0 1.0;
+		       		aspect_preference: BOTH;
+               		rel1.relative: 0.66 0.0;
+					rel2.relative: 1.0 1.0;
+					image.normal: "images/next.png";
+				}
 			}
 		}
 		programs {
 			program {
-				name: "mouse_in";
-				signal: "mouse,in";
-				source: "event";
-				action: STATE_SET "bigger" 0.0;
-				transition: LINEAR 0.1;
-				target: "icon";
+				signal: "mouse,clicked,*";
+				source: "previous_btn";
+				action: SIGNAL_EMIT "btn,clicked" "previous";
 			}
 			program {
-				name: "mouse_out";
-				signal: "mouse,out";
-				source: "event";
+				signal: "mouse,clicked,*";
+				source: "play_btn";
+				action: SIGNAL_EMIT "btn,clicked" "play";
+			}
+			program {
+				signal: "mouse,clicked,*";
+				source: "next_btn";
+				action: SIGNAL_EMIT "btn,clicked" "next";
+			}
+			program {
+				signal: "btn,state,image,play";
+				source: "play";
+				action: STATE_SET "play" 0.0;
+				transition: LINEAR 0.1;
+				target: "play_btn";
+			}
+			program {
+				signal: "btn,state,image,pause";
+				source: "play";
 				action: STATE_SET "default" 0.0;
-				transition: LINEAR 0.2;
-				target: "icon";
+				transition: LINEAR 0.1;
+				target: "play_btn";
 			}
 		}
 	}

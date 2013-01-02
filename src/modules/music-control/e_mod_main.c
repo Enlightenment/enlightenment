@@ -1,5 +1,4 @@
-#include "e.h"
-#include "e_mod_main.h"
+#include "private.h"
 
 static E_Module *music_control_mod = NULL;
 
@@ -7,17 +6,9 @@ static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 
 static const char _e_music_control_Name[] = "Music controller";
 
-static void
-_cb_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event)
-{
-   E_Music_Control_Instance *inst = data;
-   Evas_Event_Mouse_Down *ev = event;
 
-   printf("event mouse down button=%d\n", ev->button);
-}
-
-static const char *
-_edj_path_get(void)
+const char *
+music_control_edj_path_get(void)
 {
 #define TF "/e-module-music-control.edj"
    size_t dirlen;
@@ -46,16 +37,18 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst = calloc(1, sizeof(E_Music_Control_Instance));
    inst->ctxt = ctxt;
    inst->gadget = edje_object_add(gc->evas);
-   edje_object_file_set(inst->gadget, _edj_path_get(),
+   edje_object_file_set(inst->gadget, music_control_edj_path_get(),
                         "modules/music-control/main");
    /*e_theme_edje_object_set(inst->gadget, "base/theme/modules/music-control",
-                           "e/modules/music-control/main");*/
+                             "e/modules/music-control/main");
+   TODO append theme to data/themes/default.edc*/
 
    inst->gcc = e_gadcon_client_new(gc, name, id, style, inst->gadget);
    inst->gcc->data = inst;
 
+   evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_DOWN, music_control_mouse_down_cb, inst);
 
-   evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_DOWN, _cb_mouse_down, inst);
+   ctxt->instances = eina_list_append(ctxt->instances, inst);
 
    return inst->gcc;
 }
@@ -72,6 +65,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    inst = gcc->data;
 
    evas_object_del(inst->gadget);
+   if (inst->popup) music_control_popup_del(inst);
    ctxt->instances = eina_list_remove(ctxt->instances, inst);
 
    free(inst);
@@ -94,7 +88,7 @@ static Evas_Object *
 _gc_icon(const E_Gadcon_Client_Class *client_class, Evas *evas)
 {
    Evas_Object *o = edje_object_add(evas);
-   edje_object_file_set(o, _edj_path_get(), "icon");
+   edje_object_file_set(o, music_control_edj_path_get(), "icon");
    return o;
 }
 
