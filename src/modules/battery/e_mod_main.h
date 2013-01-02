@@ -4,7 +4,7 @@
 #ifdef HAVE_EEZE
 # include <Eeze.h>
 #else
-# include <E_Hal.h>
+# include <EDBus.h>
 #endif
 
 typedef struct _Config       Config;
@@ -58,15 +58,6 @@ struct _Config
 #if defined HAVE_EEZE || defined __OpenBSD__
    Eina_Bool            fuzzy;
    int                  fuzzcount;
-#else
-   struct {
-      // FIXME: on bat_conf del dbus_pending_call_cancel(dbus.have);
-      //        then set dbus.have to NULL
-      DBusPendingCall       *have;
-      // FIXME: on bat_conf del e_dbus_signal_handler_del() these
-      E_DBus_Signal_Handler *dev_add;
-      E_DBus_Signal_Handler *dev_del;
-   } dbus;
 #endif
 };
 
@@ -78,9 +69,6 @@ struct _Battery
    const char *udi;
 #if defined HAVE_EEZE || defined __OpenBSD__
    Ecore_Poller *poll;
-#else
-   E_DBus_Signal_Handler *prop_change;
-   Eina_Bool can_charge:1;
 #endif
    Eina_Bool present:1;
    Eina_Bool charging:1;
@@ -108,6 +96,7 @@ struct _Battery
    const char *model;
    const char *vendor;
    Eina_Bool got_prop:1;
+   EDBus_Proxy *proxy;
 #ifdef __OpenBSD__
    int * mib;
 #endif
@@ -116,11 +105,9 @@ struct _Battery
 struct _Ac_Adapter
 {
    const char *udi;
-#ifndef HAVE_EEZE
-   E_DBus_Signal_Handler *prop_change;
-#endif
    Eina_Bool present:1;
    const char *product;
+   EDBus_Proxy *proxy;
 #ifdef __OpenBSD__
    int * mib;
 #endif
@@ -136,8 +123,8 @@ void _battery_udev_stop(void);
 /* end e_mod_udev.c */
 #elif !defined __OpenBSD__
 /* in e_mod_dbus.c */
-int  _battery_dbus_start(void);
-void _battery_dbus_stop(void);
+int _battery_upower_start(void);
+void _battery_upower_stop(void);
 /* end e_mod_dbus.c */
 #else
 /* in e_mod_openbsd.c */

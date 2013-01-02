@@ -548,6 +548,7 @@ PKG_CHECK_MODULES(E, [
   eina >= ${efl_version}
   dbus-1
   edbus >= ${efl_version}
+  edbus2 >= ${efl_version}
   eio >= ${efl_version}
   $hal_mount
   $eeze_mount
@@ -570,6 +571,7 @@ efreet-trash >= ${efl_version} \
 eina >= ${efl_version} \
 dbus-1 \
 edbus >= ${efl_version} \
+edbus2 \
 eio >= ${efl_version} \
 $hal_mount \
 $udisks_mount \

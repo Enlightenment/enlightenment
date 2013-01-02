@@ -88,9 +88,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
 #ifdef HAVE_EEZE
    eeze_init();
-#elif !defined __OpenBSD__
-   e_dbus_init();
-   e_hal_init();
 #endif
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
@@ -109,9 +106,6 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 
 #ifdef HAVE_EEZE
    eeze_shutdown();
-#elif !defined __OpenBSD__
-   e_hal_shutdown();
-   e_dbus_shutdown();
 #endif
 
    inst = gcc->data;
@@ -380,7 +374,7 @@ _battery_config_updated(void)
 #elif defined __OpenBSD__
         ok = _battery_openbsd_start();
 #else
-        ok = _battery_dbus_start();
+        ok = _battery_upower_start();
 #endif
      }
    if (ok) return;
@@ -858,7 +852,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 #elif defined __OpenBSD__
    _battery_openbsd_stop();
 #else
-   _battery_dbus_stop();
+   _battery_upower_stop();
 #endif
 
 #ifdef HAVE_ENOTIFY
