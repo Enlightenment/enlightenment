@@ -479,7 +479,7 @@ ecore-file >= $efl_version \
 ecore-ipc >= $efl_version \
 eet >= $efl_version \
 efreet >= $efl_version \
-edbus >= $efl_version \
+edbus2 >= $efl_version \
 eina >= $efl_version"
 efm_requires="$efm_requires $eeze_mount $dbus_mount $hal_mount $udisks_mount"
 
@@ -489,6 +489,7 @@ PKG_CHECK_MODULES(E_FM_CMDLINE, [
   eina >= ${efl_version}
   ecore >= ${efl_version}
   ecore-file >= ${efl_version}
+  edbus2 >= ${efl_version}
   edbus >= ${efl_version}
   dbus-1
 ])

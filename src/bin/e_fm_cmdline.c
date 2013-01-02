@@ -5,21 +5,23 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 #include <Ecore_Getopt.h>
-#include <E_DBus.h>
+#include <EDBus.h>
 #include <unistd.h>
 #include <errno.h>
 
-static E_DBus_Connection *conn = NULL;
+static EDBus_Connection *conn = NULL;
 static int retval = EXIT_SUCCESS;
 static int pending = 0;
 
 static void
-fm_open_reply(void *data __UNUSED__, DBusMessage *msg __UNUSED__, DBusError *err)
+fm_open_reply(void *data __UNUSED__, const EDBus_Message *msg,
+              EDBus_Pending *dbus_pending __UNUSED__)
 {
-   if (dbus_error_is_set(err))
+   const char *name, *txt;
+   if (edbus_message_error_get(msg, &name, &txt))
      {
         retval = EXIT_FAILURE;
-        fprintf(stderr, "ERROR: %s: %s", err->name, err->message);
+        fprintf(stderr, "ERROR: %s: %s", name, txt);
      }
 
    pending--;
@@ -36,8 +38,7 @@ fm_error_quit_last(void *data __UNUSED__)
 static void
 fm_open(const char *path)
 {
-   DBusMessage *msg;
-   Eina_Bool sent;
+   EDBus_Message *msg;
    const char *method;
    char *p;
 
@@ -78,10 +79,10 @@ fm_open(const char *path)
    else
      method = "OpenFile";
 
-   msg = dbus_message_new_method_call
-     ("org.enlightenment.FileManager",
-      "/org/enlightenment/FileManager",
-      "org.enlightenment.FileManager", method);
+   msg = edbus_message_method_call_new("org.enlightenment.FileManager",
+                                       "/org/enlightenment/FileManager",
+                                       "org.enlightenment.FileManager",
+                                       method);
    if (!msg)
      {
         fputs("ERROR: Could not create DBus Message\n", stderr);
@@ -89,21 +90,17 @@ fm_open(const char *path)
         free(p);
         return;
      }
-
-   dbus_message_append_args(msg, DBUS_TYPE_STRING, &p, DBUS_TYPE_INVALID);
+   edbus_message_arguments_append(msg, "s", p);
    free(p);
 
-   sent = !!e_dbus_message_send(conn, msg, fm_open_reply, -1, NULL);
-   dbus_message_unref(msg);
-
-   if (!sent)
+   if (!edbus_connection_send(conn, msg, fm_open_reply, NULL, -1))
      {
         fputs("ERROR: Could not send DBus Message\n", stderr);
         ecore_idler_add(fm_error_quit_last, NULL);
-        return;
      }
-
-   pending++;
+   else
+     pending++;
+   edbus_message_unref(msg);
 }
 
 static const Ecore_Getopt options = {
@@ -147,9 +144,9 @@ main(int argc, char *argv[])
 
    ecore_init();
    ecore_file_init();
-   e_dbus_init();
+   edbus_init();
 
-   conn = e_dbus_bus_get(DBUS_BUS_SESSION);
+   conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
    if (!conn)
      {
         fputs("ERROR: Could not DBus SESSION bus.\n", stderr);
@@ -167,9 +164,9 @@ main(int argc, char *argv[])
      }
 
    ecore_main_loop_begin();
-
+   edbus_connection_unref(conn);
  end:
-   e_dbus_shutdown();
+   edbus_shutdown();
    ecore_file_shutdown();
    ecore_shutdown();
    return retval;
