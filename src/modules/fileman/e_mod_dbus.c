@@ -23,19 +23,15 @@ _e_fileman_dbus_daemon_error(const EDBus_Message *msg,
 }
 
 static const EDBus_Method methods[] = {
-   {
-    "OpenDirectory", EDBUS_ARGS({"s", "directory"}), NULL,
-    _e_fileman_dbus_daemon_open_directory_cb, 0
-   },
-   {
-    "OpenFile", EDBUS_ARGS({"s", "file"}), NULL,
-    _e_fileman_dbus_daemon_open_file_cb, 0
-   },
-   { NULL, NULL, NULL, NULL, 0 }
+   { "OpenDirectory", EDBUS_ARGS({"s", "directory"}), NULL,
+      _e_fileman_dbus_daemon_open_directory_cb },
+   { "OpenFile", EDBUS_ARGS({"s", "file"}), NULL,
+      _e_fileman_dbus_daemon_open_file_cb },
+   { }
 };
 
 static const EDBus_Service_Interface_Desc desc = {
-   E_FILEMAN_INTERFACE, methods, NULL, NULL, NULL, NULL
+   E_FILEMAN_INTERFACE, methods
 };
 
 static void
