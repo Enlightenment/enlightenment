@@ -792,7 +792,7 @@ AM_CONDITIONAL(HAVE_ECONNMAN, false)
 AM_CONDITIONAL(HAVE_DUMMY, false)
 define([CHECK_MODULE_CONNMAN],
 [
-  AC_E_CHECK_PKG(ECONNMAN, [ edbus >= $efl_version ], [], [CONNMAN=false])
+  AC_E_CHECK_PKG(ECONNMAN, [ edbus2 >= $efl_version ], [], [CONNMAN=false])
 dnl  AC_E_CHECK_PKG(DUMMY, [ connman >= 1.0 ], [], [CONNMAN=false])
 ])
 AC_SUBST(ECONNMAN_CFLAGS)

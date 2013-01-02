@@ -110,7 +110,7 @@ _econnman_popup_selected_cb(void *data)
      return;
 
    cs = econnman_manager_find_service(inst->ctxt->cm, path);
-   if (cs == NULL)
+   if (!cs)
      return;
 
    switch (cs->state)
@@ -148,7 +148,7 @@ _econnman_popup_update(struct Connman_Manager *cm, E_Connman_Instance *inst)
         Evas_Object *end = _econnman_service_new_end(cs, evas);
         e_widget_ilist_append_full(list, icon, end, cs->name ?: hidden,
                                    _econnman_popup_selected_cb,
-                                   inst, cs->obj.path);
+                                   inst, cs->path);
      }
 
    e_widget_ilist_thaw(list);
@@ -649,7 +649,7 @@ EAPI void *
 e_modapi_init(E_Module *m)
 {
    E_Connman_Module_Context *ctxt;
-   E_DBus_Connection *c;
+   EDBus_Connection *c;
 
    if (_e_connman_log_dom < 0)
      {
@@ -665,8 +665,8 @@ e_modapi_init(E_Module *m)
    ctxt = E_NEW(E_Connman_Module_Context, 1);
    if (!ctxt)
      goto error_connman_context;
-
-   c = e_dbus_bus_get(DBUS_BUS_SYSTEM);
+   edbus_init();
+   c = edbus_connection_get(EDBUS_CONNECTION_TYPE_SYSTEM);
    if (!c)
      goto error_dbus_bus_get;
    if (!e_connman_system_init(c))
@@ -681,6 +681,7 @@ e_modapi_init(E_Module *m)
    return ctxt;
 
 error_connman_system_init:
+   edbus_connection_unref(c);
 error_dbus_bus_get:
    E_FREE(ctxt);
 error_connman_context:
@@ -712,6 +713,7 @@ e_modapi_shutdown(E_Module *m)
      return 0;
 
    e_connman_system_shutdown();
+   edbus_shutdown();
 
    _econnman_instances_free(ctxt);
    _econnman_configure_registry_unregister();

@@ -3,6 +3,7 @@
 
 #include "e.h"
 #include <stdbool.h>
+#include <EDBus.h>
 
 typedef struct _E_Connman_Agent E_Connman_Agent;
 
@@ -28,15 +29,11 @@ enum Connman_Service_Type
    CONNMAN_SERVICE_TYPE_CELLULAR,
 };
 
-struct Connman_Object
-{
-   const char *path;
-   Eina_List *handlers; /* E_DBus_Signal_Handler */
-};
-
 struct Connman_Manager
 {
-   struct Connman_Object obj;
+   const char *path;
+   EDBus_Proxy *technology_iface;
+   EDBus_Proxy *manager_iface;
 
    Eina_Inlist *services; /* The prioritized list of services */
 
@@ -48,17 +45,16 @@ struct Connman_Manager
    /* Private */
    struct
      {
-        DBusPendingCall *get_services;
-        DBusPendingCall *get_properties;
-        DBusPendingCall *get_wifi_properties;
-        DBusPendingCall *set_powered;
-        DBusPendingCall *register_agent;
+        EDBus_Pending *get_services;
+        EDBus_Pending *get_wifi_properties;
+        EDBus_Pending *set_powered;
      } pending;
 };
 
 struct Connman_Service
 {
-   struct Connman_Object obj;
+   const char *path;
+   EDBus_Proxy *service_iface;
    EINA_INLIST;
 
    /* Properties */
@@ -71,8 +67,8 @@ struct Connman_Service
    /* Private */
    struct
      {
-        DBusPendingCall *connect;
-        DBusPendingCall *disconnect;
+        EDBus_Pending *connect;
+        EDBus_Pending *disconnect;
         void *data;
      } pending;
 };
@@ -83,7 +79,7 @@ extern int E_CONNMAN_EVENT_MANAGER_OUT;
 
 
 /* Daemon monitoring */
-unsigned int e_connman_system_init(E_DBus_Connection *edbus_conn) EINA_ARG_NONNULL(1);
+unsigned int e_connman_system_init(EDBus_Connection *edbus_conn) EINA_ARG_NONNULL(1);
 unsigned int e_connman_system_shutdown(void);
 
 /* Requests from UI */
