@@ -674,6 +674,12 @@ define([CHECK_MODULE_TEMPERATURE],
   AC_E_CHECK_PKG(TEMPERATURE, [ ecore >= $efl_version ecore-file >= $efl_version eina >= $efl_version ], [], [TEMPERATURE=false])
 ])
 
+AM_CONDITIONAL(MUSIC_CONTROL, false)
+define([CHECK_MODULE_MUSIC_CONTROL],
+[
+  AC_E_CHECK_PKG(MUSIC_CONTROL, [ ecore >= 1.2.0 eina >= 1.2.0 edbus2 ], [], [MUSIC_CONTROL=false])
+])
+
 ##have_exchange=no
 ##AC_ARG_ENABLE(exchange,
 ##  AC_HELP_STRING([--disable-exchange], [disable Exchange support @<:@default=detect@:>@]),
@@ -863,6 +869,7 @@ AC_E_OPTIONAL_MODULE([conf_randr], true)
 AC_E_OPTIONAL_MODULE([xkbswitch], true)
 AC_E_OPTIONAL_MODULE([tiling], true)
 AC_E_OPTIONAL_MODULE([access], true)
+AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 
 SUSPEND=""
 HIBERNATE=""
@@ -969,6 +976,7 @@ src/modules/tasks/module.desktop
 src/modules/xkbswitch/module.desktop
 src/modules/tiling/module.desktop
 src/modules/access/module.desktop
+src/modules/music-control/module.desktop
 data/Makefile
 data/images/Makefile
 data/flags/Makefile

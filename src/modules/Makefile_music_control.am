@@ -1,0 +1,14 @@
+music_controldir = $(MDIR)/music-control
+music_control_DATA = music-control/e-module-music-control.edj \
+	                 music-control/module.desktop
+
+EXTRA_DIST += $(music_control_DATA)
+
+music_controlpkgdir = $(MDIR)/music-control/$(MODULE_ARCH)
+music_controlpkg_LTLIBRARIES = music-control/module.la
+
+music_control_module_la_DEPENDENCIES = $(MDEPENDENCIES)
+music_control_module_la_CFLAGS = $(AM_CFLAGS) -Wno-unused-parameter
+music_control_module_la_LIBADD = @MUSIC_CONTROL_LIBS@
+music_control_module_la_SOURCES  = music-control/e_mod_main.h \
+			                       music-control/e_mod_main.c

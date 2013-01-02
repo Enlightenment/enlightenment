@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Link
+Name=Music Control
+Icon=e-module-music-control
+Comment=Control your music in your shelf
+X-Enlightenment-ModuleType=utils

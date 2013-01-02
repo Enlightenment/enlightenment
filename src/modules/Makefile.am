@@ -226,6 +226,10 @@ if USE_MODULE_ACCESS
 include Makefile_access.am
 endif
 
+if USE_MODULE_MUSIC_CONTROL
+include Makefile_music_control.am
+endif
+
 #if HAVE_WAYLAND_DRM
 #include Makefile_wl_drm.am
 #endif
