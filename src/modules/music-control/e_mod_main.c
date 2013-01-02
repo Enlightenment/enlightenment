@@ -1,11 +1,23 @@
 #include "private.h"
 
+#define MUSIC_CONTROL_DOMAIN "module.music_control"
+
 static E_Module *music_control_mod = NULL;
 
 static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 
 static const char _e_music_control_Name[] = "Music controller";
 
+const Player music_player_players[] =
+{
+   {"gmusicbrowser", "org.mpris.MediaPlayer2.gmusicbrowser"},
+   {"Banshee", "org.mpris.MediaPlayer2.banshee"},
+   {"Audacious", "org.mpris.MediaPlayer2.audacious"},
+   {"VLC", "org.mpris.MediaPlayer2.vlc"},
+   {"BMP", "org.mpris.MediaPlayer2.bmp"},
+   {"XMMS2", "org.mpris.MediaPlayer2.xmms2"},
+   {NULL, NULL}
+};
 
 const char *
 music_control_edj_path_get(void)
@@ -154,6 +166,21 @@ prop_changed(void *data, EDBus_Proxy *proxy, void *event_info)
      }
 }
 
+Eina_Bool
+music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
+{
+   edbus_init();
+   ctxt->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctxt->conn, EINA_FALSE);
+
+   ctxt->mrpis2 = mpris_media_player2_proxy_get(ctxt->conn, bus, NULL);
+   ctxt->mpris2_player = media_player2_player_proxy_get(ctxt->conn, bus, NULL);
+   media_player2_player_playback_status_propget(ctxt->mpris2_player, cb_playback_status_get, ctxt);
+   edbus_proxy_event_callback_add(ctxt->mpris2_player, EDBUS_PROXY_EVENT_PROPERTY_CHANGED,
+                                  prop_changed, ctxt);
+   return EINA_TRUE;
+}
+
 EAPI void *
 e_modapi_init(E_Module *m)
 {
@@ -161,13 +188,20 @@ e_modapi_init(E_Module *m)
 
    ctxt = calloc(1, sizeof(E_Music_Control_Module_Context));
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctxt, NULL);
-   edbus_init();
-   ctxt->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
-   EINA_SAFETY_ON_NULL_GOTO(ctxt->conn, error_dbus_bus_get);
-   ctxt->mrpis2 = mpris_media_player2_proxy_get(ctxt->conn, "org.mpris.MediaPlayer2.gmusicbrowser", NULL);
-   ctxt->mpris2_player = media_player2_player_proxy_get(ctxt->conn, "org.mpris.MediaPlayer2.gmusicbrowser", NULL);
-   media_player2_player_playback_status_propget(ctxt->mpris2_player, cb_playback_status_get, ctxt);
-   edbus_proxy_event_callback_add(ctxt->mpris2_player, EDBUS_PROXY_EVENT_PROPERTY_CHANGED, prop_changed, ctxt);
+   music_control_mod = m;
+
+   ctxt->conf_edd = E_CONFIG_DD_NEW("music_control_config", Music_Control_Config);
+   #undef T
+   #undef D
+   #define T Music_Control_Config
+   #define D ctxt->conf_edd
+   E_CONFIG_VAL(D, T, player_selected, INT);
+   ctxt->config = e_config_domain_load(MUSIC_CONTROL_DOMAIN, ctxt->conf_edd);
+   if (!ctxt->config)
+     ctxt->config = calloc(1, sizeof(Music_Control_Config));
+
+   if (!music_control_dbus_init(ctxt, music_player_players[ctxt->config->player_selected].dbus_name))
+     goto error_dbus_bus_get;
    music_control_mod = m;
 
    e_gadcon_provider_register(&_gc_class);
@@ -185,6 +219,9 @@ e_modapi_shutdown(E_Module *m)
    E_Music_Control_Module_Context *ctxt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(music_control_mod, 0);
    ctxt = music_control_mod->data;
+
+   free(ctxt->config);
+   E_CONFIG_DD_FREE(ctxt->conf_edd);
 
    media_player2_player_proxy_unref(ctxt->mpris2_player);
    mpris_media_player2_proxy_unref(ctxt->mrpis2);
@@ -205,10 +242,7 @@ e_modapi_shutdown(E_Module *m)
 EAPI int
 e_modapi_save(E_Module *m)
 {
-   E_Music_Control_Module_Context *ctxt;
-
-   ctxt = m->data;
-   if (!ctxt)
-     return 0;
+   E_Music_Control_Module_Context *ctxt = m->data;
+   e_config_domain_save(MUSIC_CONTROL_DOMAIN, ctxt->conf_edd, ctxt->config);
    return 1;
 }
