@@ -12,8 +12,33 @@ extern double init_time;
 static EDBus_Connection *conn;
 static EDBus_Proxy *upower_proxy;
 
-static void _battery_free(Battery *bat);
-static void _ac_free(Ac_Adapter *ac);
+static void
+_battery_free(Battery *bat)
+{
+   EDBus_Object *obj = edbus_proxy_object_get(bat->proxy);
+   edbus_proxy_unref(bat->proxy);
+   edbus_object_unref(obj);
+
+   device_batteries = eina_list_remove(device_batteries, bat);
+   eina_stringshare_del(bat->udi);
+   if (bat->model)
+     eina_stringshare_del(bat->model);
+   if (bat->vendor)
+     eina_stringshare_del(bat->vendor);
+   free(bat);
+}
+
+static void
+_ac_free(Ac_Adapter *ac)
+{
+   EDBus_Object *obj = edbus_proxy_object_get(ac->proxy);
+   edbus_proxy_unref(ac->proxy);
+   edbus_object_unref(obj);
+
+   device_ac_adapters = eina_list_remove(device_ac_adapters, ac);
+   eina_stringshare_del(ac->udi);
+   free(ac);
+}
 
 static void
 _ac_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending __UNUSED__)
@@ -21,20 +46,22 @@ _ac_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending __UN
    Ac_Adapter *ac = data;
    EDBus_Message_Iter *array, *dict, *variant;
 
-   if (edbus_message_error_get(msg, NULL, NULL))
-     return;
    if (!edbus_message_arguments_get(msg, "a{sv}", &array))
      return;
+
    while (edbus_message_iter_get_and_next(array, 'e', &dict))
      {
-        char *key;
+        const char *key;
+
         if (!edbus_message_iter_arguments_get(dict, "sv", &key, &variant))
           continue;
+
         if (!strcmp(key, "Online"))
           {
              Eina_Bool b;
              edbus_message_iter_arguments_get(variant, "b", &b);
              ac->present = b;
+             break;
           }
      }
    _battery_device_update();
@@ -59,19 +86,21 @@ _process_ac(EDBus_Proxy *proxy)
    edbus_proxy_signal_handler_add(proxy, "Changed", _ac_changed_cb, ac);
    device_ac_adapters = eina_list_append(device_ac_adapters, ac);
    return;
+
 error:
    edbus_object_unref(edbus_proxy_object_get(proxy));
+   edbus_proxy_unref(proxy);
    return;
 }
 
-static const char *bat_techologys[] = {
-               "Unknown",
-               "Lithium ion",
-               "Lithium polymer",
-               "Lithium iron phosphate",
-               "Lead acid",
-               "Nickel cadmium",
-               "Nickel metal hydride"
+static const char *bat_techologies[] = {
+   "Unknown",
+   "Lithium ion",
+   "Lithium polymer",
+   "Lithium iron phosphate",
+   "Lead acid",
+   "Nickel cadmium",
+   "Nickel metal hydride"
 };
 
 static void
@@ -81,84 +110,81 @@ _bat_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending __U
    EDBus_Message_Iter *array, *dict, *variant;
 
    bat->got_prop = EINA_TRUE;
-   if (edbus_message_error_get(msg, NULL, NULL))
-     return;
    if (!edbus_message_arguments_get(msg, "a{sv}", &array))
      return;
    while (edbus_message_iter_get_and_next(array, 'e', &dict))
      {
-        char *key;
+        const char *key;
+        union
+          {
+             Eina_Bool b;
+             int64_t i64;
+             unsigned u;
+             double d;
+             const char *s;
+          } val;
+
         if (!edbus_message_iter_arguments_get(dict, "sv", &key, &variant))
           continue;
         if (!strcmp(key, "IsPresent"))
            {
-              Eina_Bool b;
-              edbus_message_iter_arguments_get(variant, "b", &b);
-              bat->present = b;
+              edbus_message_iter_arguments_get(variant, "b", &val.b);
+              bat->present = val.b;
            }
         else if (!strcmp(key, "TimeToEmpty"))
           {
-             int64_t empty = 0;
-             edbus_message_iter_arguments_get(variant, "x", &empty);
-             bat->time_left = (int) empty;
-             if (empty > 0)
+             edbus_message_iter_arguments_get(variant, "x", &val.i64);
+             bat->time_left = (int) val.i64;
+             if (bat->time_left > 0)
                bat->charging = EINA_FALSE;
              else
                bat->charging = EINA_TRUE;
           }
         else if (!strcmp(key, "Percentage"))
           {
-             double d;
-             edbus_message_iter_arguments_get(variant, "d", &d);
-             bat->percent = (int) d;
+             edbus_message_iter_arguments_get(variant, "d", &val.d);
+             bat->percent = (int) val.d;
           }
         else if (!strcmp(key, "Energy"))
           {
-             double d;
-             edbus_message_iter_arguments_get(variant, "d", &d);
-             bat->current_charge = (int) d;
+             edbus_message_iter_arguments_get(variant, "d", &val.d);
+             bat->current_charge = (int) val.d;
           }
         else if (!strcmp(key, "EnergyFullDesign"))
           {
-             double d;
-             edbus_message_iter_arguments_get(variant, "d", &d);
-             bat->design_charge = (int) d;
+             edbus_message_iter_arguments_get(variant, "d", &val.d);
+             bat->design_charge = (int) val.d;
           }
         else if (!strcmp(key, "EnergyFull"))
           {
-             double d;
-             edbus_message_iter_arguments_get(variant, "d", &d);
-             bat->last_full_charge = (int) d;
+             edbus_message_iter_arguments_get(variant, "d", &val.d);
+             bat->last_full_charge = (int) val.d;
           }
         else if (!strcmp(key, "TimeToFull"))
           {
-             int64_t full = 0;
-             edbus_message_iter_arguments_get(variant, "x", &full);
-             bat->time_full = (int) full;
+             edbus_message_iter_arguments_get(variant, "x", &val.i64);
+             bat->time_full = (int) val.i64;
           }
         else if (!strcmp(key, "Technology"))
           {
-             uint32_t tec = 0;
-             edbus_message_iter_arguments_get(variant, "u", &tec);
-             bat->technology = bat_techologys[tec];
+             edbus_message_iter_arguments_get(variant, "u", &val.u);
+             if (val.u > EINA_C_ARRAY_LENGTH(bat_techologies))
+               val.u = 0;
+             bat->technology = bat_techologies[val.u];
           }
         else if (!strcmp(key, "Model"))
           {
-             char *txt;
-             if (!edbus_message_iter_arguments_get(variant, "s", &txt))
+             if (!edbus_message_iter_arguments_get(variant, "s", &val.s))
                continue;
-             if (bat->model)
-               eina_stringshare_del(bat->model);
-             bat->model = eina_stringshare_add(txt);
+             eina_stringshare_replace(&bat->model, val.s);
           }
         else if (!strcmp(key, "Vendor"))
           {
-             char *txt;
-             if (!edbus_message_iter_arguments_get(variant, "s", &txt))
+             if (!edbus_message_iter_arguments_get(variant, "s", &val.s))
                continue;
              if (bat->vendor)
                eina_stringshare_del(bat->vendor);
-             bat->vendor = eina_stringshare_add(txt);
+             bat->vendor = eina_stringshare_add(val.s);
           }
      }
    _battery_device_update();
@@ -179,8 +205,9 @@ _process_battery(EDBus_Proxy *proxy)
    bat = E_NEW(Battery, 1);
    if (!bat)
      {
-	edbus_object_unref(edbus_proxy_object_get(proxy));
-	return;
+        edbus_object_unref(edbus_proxy_object_get(proxy));
+        edbus_proxy_unref(proxy);
+        return;
      }
 
    bat->proxy = proxy;
@@ -197,17 +224,9 @@ _device_type_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending __U
    EDBus_Proxy *proxy = data;
    EDBus_Message_Iter *variant;
    EDBus_Object *obj;
-   unsigned int type = 0;
-   char *signature;
-
-   if (edbus_message_error_get(msg, NULL, NULL))
-     goto error;
+   unsigned int type;
 
    if (!edbus_message_arguments_get(msg, "v", &variant))
-     goto error;
-
-   signature = edbus_message_iter_signature_get(variant);
-   if (!signature || signature[0] != 'u')
      goto error;
 
    edbus_message_iter_arguments_get(variant, "u", &type);
@@ -219,6 +238,7 @@ _device_type_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending __U
      goto error;
 
    return;
+
 error:
    obj = edbus_proxy_object_get(proxy);
    edbus_proxy_unref(proxy);
@@ -227,13 +247,10 @@ error:
 }
 
 static void
-_process_enumerate_path(char *path)
+_process_enumerate_path(const char *path)
 {
    EDBus_Object *obj;
    EDBus_Proxy *proxy;
-
-   if (!path || !path[0])
-     return;
 
    obj = edbus_object_get(conn, BUS, path);
    EINA_SAFETY_ON_FALSE_RETURN(obj);
@@ -244,10 +261,8 @@ _process_enumerate_path(char *path)
 static void
 _enumerate_cb(void *data __UNUSED__, const EDBus_Message *msg, EDBus_Pending *pending __UNUSED__)
 {
-   char *path;
+   const char *path;
    EDBus_Message_Iter *array;
-   if (edbus_message_error_get(msg, NULL, NULL))
-     return;
 
    if (!edbus_message_arguments_get(msg, "ao", &array))
      return;
@@ -259,7 +274,8 @@ _enumerate_cb(void *data __UNUSED__, const EDBus_Message *msg, EDBus_Pending *pe
 static void
 _device_added_cb(void *data __UNUSED__, const EDBus_Message *msg)
 {
-   char *path;
+   const char *path;
+
    if (!edbus_message_arguments_get(msg, "o", &path))
      return;
    _process_enumerate_path(path);
@@ -270,7 +286,7 @@ _device_removed_cb(void *data __UNUSED__, const EDBus_Message *msg)
 {
    Battery *bat;
    Ac_Adapter *ac;
-   char *path;
+   const char *path;
 
    if (!edbus_message_arguments_get(msg, "o", &path))
      return;
@@ -302,6 +318,7 @@ _battery_upower_start(void)
    EINA_SAFETY_ON_NULL_GOTO(obj, obj_error);
    upower_proxy = edbus_proxy_get(obj, IFACE);
    EINA_SAFETY_ON_NULL_GOTO(upower_proxy, proxy_error);
+
    edbus_proxy_call(upower_proxy, "EnumerateDevices", _enumerate_cb, NULL, -1, "");
    edbus_proxy_signal_handler_add(upower_proxy, "DeviceAdded", _device_added_cb, NULL);
    edbus_proxy_signal_handler_add(upower_proxy, "DeviceRemoved", _device_removed_cb, NULL);
@@ -332,32 +349,4 @@ _battery_upower_stop(void)
    edbus_object_unref(obj);
    edbus_connection_unref(conn);
    edbus_shutdown();
-}
-
-static void
-_battery_free(Battery *bat)
-{
-   EDBus_Object *obj = edbus_proxy_object_get(bat->proxy);
-   edbus_proxy_unref(bat->proxy);
-   edbus_object_unref(obj);
-
-   device_batteries = eina_list_remove(device_batteries, bat);
-   eina_stringshare_del(bat->udi);
-   if (bat->model)
-     eina_stringshare_del(bat->model);
-   if (bat->vendor)
-     eina_stringshare_del(bat->vendor);
-   free(bat);
-}
-
-static void
-_ac_free(Ac_Adapter *ac)
-{
-   EDBus_Object *obj = edbus_proxy_object_get(ac->proxy);
-   edbus_proxy_unref(ac->proxy);
-   edbus_object_unref(obj);
-
-   device_ac_adapters = eina_list_remove(device_ac_adapters, ac);
-   eina_stringshare_del(ac->udi);
-   free(ac);
 }
