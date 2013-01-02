@@ -116,6 +116,44 @@ static const E_Gadcon_Client_Class _gc_class =
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, _e_music_control_Name };
 
+static void
+cb_playback_status_get(void *data, EDBus_Pending *p, const char *propname, EDBus_Proxy *proxy, EDBus_Error_Info *error_info, const char *value)
+{
+   E_Music_Control_Module_Context *ctxt = data;
+
+   if (error_info)
+     {
+        ERR("%s %s", error_info->error, error_info->message);
+        return;
+     }
+
+   if (!strcmp(value, "Playing"))
+     ctxt->playning = EINA_TRUE;
+   else
+     ctxt->playning = EINA_FALSE;
+   music_control_state_update_all(ctxt);
+}
+
+static void
+prop_changed(void *data, EDBus_Proxy *proxy, void *event_info)
+{
+   EDBus_Proxy_Event_Property_Changed *event = event_info;
+   E_Music_Control_Module_Context *ctxt = data;
+
+   if (!strcmp(event->name, "PlaybackStatus"))
+     {
+        const Eina_Value *value = event->value;
+        const char *status;
+
+        eina_value_get(value, &status);
+        if (!strcmp(status, "Playing"))
+          ctxt->playning = EINA_TRUE;
+        else
+          ctxt->playning = EINA_FALSE;
+        music_control_state_update_all(ctxt);
+     }
+}
+
 EAPI void *
 e_modapi_init(E_Module *m)
 {
@@ -126,7 +164,10 @@ e_modapi_init(E_Module *m)
    edbus_init();
    ctxt->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
    EINA_SAFETY_ON_NULL_GOTO(ctxt->conn, error_dbus_bus_get);
-
+   ctxt->mrpis2 = mpris_media_player2_proxy_get(ctxt->conn, "org.mpris.MediaPlayer2.gmusicbrowser", NULL);
+   ctxt->mpris2_player = media_player2_player_proxy_get(ctxt->conn, "org.mpris.MediaPlayer2.gmusicbrowser", NULL);
+   media_player2_player_playback_status_propget(ctxt->mpris2_player, cb_playback_status_get, ctxt);
+   edbus_proxy_event_callback_add(ctxt->mpris2_player, EDBUS_PROXY_EVENT_PROPERTY_CHANGED, prop_changed, ctxt);
    music_control_mod = m;
 
    e_gadcon_provider_register(&_gc_class);
@@ -145,6 +186,8 @@ e_modapi_shutdown(E_Module *m)
    EINA_SAFETY_ON_NULL_RETURN_VAL(music_control_mod, 0);
    ctxt = music_control_mod->data;
 
+   media_player2_player_proxy_unref(ctxt->mpris2_player);
+   mpris_media_player2_proxy_unref(ctxt->mrpis2);
    edbus_connection_unref(ctxt->conn);
    edbus_shutdown();
 

@@ -2,12 +2,16 @@
 #define MUSIC_CONTROL_PRIVATE_H
 
 #include "e_mod_main.h"
+#include "gen/edbus_media_player2_player.h"
+#include "gen/edbus_mpris_media_player2.h"
 
 typedef struct _E_Music_Control_Module_Context
 {
    Eina_List *instances;
    EDBus_Connection *conn;
    Eina_Bool playning:1;
+   EDBus_Proxy *mrpis2;
+   EDBus_Proxy *mpris2_player;
 } E_Music_Control_Module_Context;
 
 typedef struct _E_Music_Control_Instance
