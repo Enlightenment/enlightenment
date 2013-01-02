@@ -1,7 +1,6 @@
 #include "e_mod_main.h"
 #include "Pulse.h"
 
-
 #define PULSE_BUS       "org.PulseAudio.Core1"
 #define PULSE_PATH      "/org/pulseaudio/core1"
 #define PULSE_INTERFACE "org.PulseAudio.Core1"
@@ -17,8 +16,8 @@ static Eina_List *sources = NULL;
 static Ecore_Poller *pulse_poller = NULL;
 static Eina_Hash *queue_states = NULL;
 
-static E_DBus_Connection *dbus = NULL;
-static E_DBus_Signal_Handler *dbus_handler = NULL;
+static EDBus_Connection *dbus = NULL;
+static EDBus_Signal_Handler *dbus_handler = NULL;
 static Ecore_Timer *disc_timer = NULL;
 
 static unsigned int disc_count = 0;
@@ -37,54 +36,43 @@ _pulse_poller_cb(void *d __UNUSED__)
 }
 
 static void
-_dbus_poll(void *data   __UNUSED__,
-           DBusMessage *msg)
+_dbus_poll(void *data EINA_UNUSED, const EDBus_Message *msg)
 {
-   DBusError err;
    const char *name, *from, *to;
+   if (edbus_message_arguments_get(msg, "sss", &name, &from, &to))
+     {
+        if (!strcmp(name, PULSE_BUS))
+          e_mixer_pulse_init();
+     }
 
-   dbus_error_init(&err);
-   if (!dbus_message_get_args(msg, &err,
-                              DBUS_TYPE_STRING, &name,
-                              DBUS_TYPE_STRING, &from,
-                              DBUS_TYPE_STRING, &to,
-                              DBUS_TYPE_INVALID))
-     dbus_error_free(&err);
-
-   //printf("name: %s\nfrom: %s\nto: %s\n", name, from, to);
-   if ((name) && !strcmp(name, PULSE_BUS))
-     e_mixer_pulse_init();
    if (dbus_handler)
      {
-        e_dbus_signal_handler_del(dbus, dbus_handler);
+        edbus_signal_handler_del(dbus_handler);
         dbus_handler = NULL;
      }
    if (dbus)
      {
-        e_dbus_connection_close(dbus);
+        edbus_connection_unref(dbus);
         dbus = NULL;
-        e_dbus_shutdown();
+        edbus_shutdown();
      }
 }
 
 static void
-_dbus_test(void *data       __UNUSED__,
-           DBusMessage *msg __UNUSED__,
-           DBusError *error)
+_dbus_test(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
 {
-   if ((error) && (dbus_error_is_set(error)))
+   if (edbus_message_error_get(msg, NULL, NULL))
      {
-        dbus_error_free(error);
         if (dbus_handler)
           {
-             e_dbus_signal_handler_del(dbus, dbus_handler);
+             edbus_signal_handler_del(dbus_handler);
              dbus_handler = NULL;
           }
         if (dbus)
           {
-             e_dbus_connection_close(dbus);
+             edbus_connection_unref(dbus);
              dbus = NULL;
-             e_dbus_shutdown();
+             edbus_shutdown();
           }
         e_mod_mixer_pulse_ready(EINA_FALSE);
         return;
@@ -350,15 +338,15 @@ e_mixer_pulse_init(void)
    if (dbus) goto error;
    if ((!conn) || (!pulse_connect(conn)))
      {
-        DBusMessage *msg;
+        EDBus_Message *msg;
         double interval;
 
-        e_dbus_init();
-        dbus = e_dbus_bus_get(DBUS_BUS_SESSION);
+        edbus_init();
+        dbus = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
 
         if (!dbus)
           {
-             e_dbus_shutdown();
+             edbus_shutdown();
              return EINA_FALSE;
           }
 
@@ -369,14 +357,13 @@ e_mixer_pulse_init(void)
              pulse_poller = ecore_poller_add(ECORE_POLLER_CORE, 5.0 / interval, _pulse_poller_cb, NULL);
           }
         if (!dbus_handler)
-          dbus_handler = e_dbus_signal_handler_add(dbus,
-                                                   E_DBUS_FDO_BUS, E_DBUS_FDO_PATH,
-                                                   E_DBUS_FDO_INTERFACE,
-                                                   "NameOwnerChanged", (E_DBus_Signal_Cb)_dbus_poll, NULL);
+          dbus_handler = edbus_signal_handler_add(dbus, EDBUS_FDO_BUS,
+                                                  EDBUS_FDO_PATH,
+                                                  EDBUS_FDO_INTERFACE, "NameOwnerChanged", _dbus_poll, NULL);
 
-        msg = dbus_message_new_method_call(PULSE_BUS, PULSE_PATH, PULSE_INTERFACE, "suuuuuup");
-        e_dbus_method_call_send(dbus, msg, NULL, (E_DBus_Callback_Func)_dbus_test, NULL, -1, NULL); /* test for not running pulse */
-        dbus_message_unref(msg);
+        msg = edbus_message_method_call_new(PULSE_BUS, PULSE_PATH, PULSE_INTERFACE, "suuuuuup");
+        edbus_connection_send(dbus, msg, _dbus_test, NULL, -1); /* test for not running pulse */
+        edbus_message_unref(msg);
         pulse_free(conn);
         conn = NULL;
         pulse_shutdown();
@@ -421,14 +408,14 @@ e_mixer_pulse_shutdown(void)
    queue_states = NULL;
    if (dbus_handler)
      {
-        e_dbus_signal_handler_del(dbus, dbus_handler);
+        edbus_signal_handler_del(dbus_handler);
         dbus_handler = NULL;
      }
    if (dbus)
      {
-        e_dbus_connection_close(dbus);
+        edbus_connection_unref(dbus);
         dbus = NULL;
-        e_dbus_shutdown();
+        edbus_shutdown();
      }
    pulse_shutdown();
 }
@@ -649,4 +636,3 @@ e_mixer_pulse_has_capture(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *chan
 {
    return 0;
 }
-
