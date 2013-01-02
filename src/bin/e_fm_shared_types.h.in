@@ -9,7 +9,7 @@
 # include <Eeze_Disk.h>
 #endif
 #if @DBUS_MOUNT_CONFIG@
-# include <E_DBus.h>
+# include <EDBus.h>
 #endif
 
 # define E_DEVICE_TYPE_STORAGE 1
@@ -70,6 +70,10 @@ struct _E_Storage
 
    Eina_Bool validated : 1;
    Eina_Bool trackable : 1;
+#if @DBUS_MOUNT_CONFIG@
+   EDBus_Proxy *proxy;
+   const char *dbus_path;
+#endif
 #if @EEZE_MOUNT_CONFIG@
    Eeze_Disk *disk;
 #endif
@@ -107,8 +111,9 @@ struct _E_Volume
    Eina_Bool unlocked;
 
 #if @DBUS_MOUNT_CONFIG@
-   DBusPendingCall *op;                // d-bus call handle
-   void *prop_handler;
+   EDBus_Pending *op;
+   EDBus_Proxy *proxy;
+   const char *dbus_path;
 #endif
 #if @EEZE_MOUNT_CONFIG@
    Eeze_Disk *disk;
