@@ -1,0 +1,49 @@
+#ifndef E_MOD_MAIN_H
+#define E_MOD_MAIN_H
+
+#include "e.h"
+
+EAPI extern E_Module_Api e_modapi;
+
+EAPI void *e_modapi_init(E_Module *m);
+EAPI int   e_modapi_shutdown(E_Module *m);
+EAPI int   e_modapi_save(E_Module *m);
+
+typedef struct _Instance Instance;
+typedef struct _Instance_Xembed Instance_Xembed;
+
+E_Gadcon_Orient systray_orient_get(const Instance *inst);
+const E_Gadcon *systray_gadcon_get(const Instance *inst);
+E_Gadcon_Client *systray_gadcon_client_get(const Instance *inst);
+const char *systray_style_get(const Instance *inst);
+void systray_size_updated(Instance *inst);
+Evas *systray_evas_get(const Instance *inst);
+Evas_Object *systray_edje_get(const Instance *inst);
+void systray_edje_emit(const Instance *inst, const char *sig);
+void systray_edje_box_append(const Instance *inst, const char *part, Evas_Object *child);
+
+int systray_manager_number_get(const Instance *inst);
+Ecore_X_Window systray_root_get(const Instance *inst);
+
+void systray_xembed_init(void);
+void systray_xembed_shutdown(void);
+
+Instance_Xembed *systray_xembed_new(Instance *inst);
+void systray_xembed_free(Instance_Xembed *xembed);
+void systray_xembed_orient_set(Instance_Xembed *xembed, E_Gadcon_Orient orient);
+void systray_xembed_size_updated(Instance_Xembed *xembed);
+
+/**
+ * @addtogroup Optional_Gadgets
+ * @{
+ *
+ * @defgroup Module_Systray Systray (System Icons Tray)
+ *
+ * Shows system icons in a box.
+ *
+ * The icons come from the FreeDesktop.Org systray specification.
+ *
+ * @see http://standards.freedesktop.org/systemtray-spec/systemtray-spec-latest.html
+ * @}
+ */
+#endif

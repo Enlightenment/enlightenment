@@ -1,121 +1,25 @@
-/**
- * @addtogroup Optional_Gadgets
- * @{
- *
- * @defgroup Module_Systray Systray (System Icons Tray)
- *
- * Shows system icons in a box.
- *
- * The icons come from the FreeDesktop.Org systray specification.
- *
- * @see http://standards.freedesktop.org/systemtray-spec/systemtray-spec-latest.html
- * @}
- */
-/**
- * systray implementation following freedesktop.org specification.
- *
- * @see: http://standards.freedesktop.org/systemtray-spec/latest/
- *
- * @todo: implement xembed, mostly done, at least relevant parts are done.
- *        http://standards.freedesktop.org/xembed-spec/latest/
- *
- * @todo: implement messages/popup part of the spec (anyone using this at all?)
- */
-
-#include "e.h"
-
-#define RETRY_TIMEOUT                     2.0
-
-#define SYSTEM_TRAY_REQUEST_DOCK          0
-#define SYSTEM_TRAY_BEGIN_MESSAGE         1
-#define SYSTEM_TRAY_CANCEL_MESSAGE        2
-#define _NET_SYSTEM_TRAY_ORIENTATION_HORZ 0
-#define _NET_SYSTEM_TRAY_ORIENTATION_VERT 1
-
-/* XEMBED messages */
-#define XEMBED_EMBEDDED_NOTIFY            0
-#define XEMBED_WINDOW_ACTIVATE            1
-#define XEMBED_WINDOW_DEACTIVATE          2
-#define XEMBED_REQUEST_FOCUS              3
-#define XEMBED_FOCUS_IN                   4
-#define XEMBED_FOCUS_OUT                  5
-#define XEMBED_FOCUS_NEXT                 6
-#define XEMBED_FOCUS_PREV                 7
-/* 8-9 were used for XEMBED_GRAB_KEY/XEMBED_UNGRAB_KEY */
-#define XEMBED_MODALITY_ON                10
-#define XEMBED_MODALITY_OFF               11
-#define XEMBED_REGISTER_ACCELERATOR       12
-#define XEMBED_UNREGISTER_ACCELERATOR     13
-#define XEMBED_ACTIVATE_ACCELERATOR       14
-
-/* Details for  XEMBED_FOCUS_IN: */
-#define XEMBED_FOCUS_CURRENT              0
-#define XEMBED_FOCUS_FIRST                1
-#define XEMBED_FOCUS_LAST                 2
-
-typedef struct _Instance Instance;
-typedef struct _Icon     Icon;
-
-struct _Icon
-{
-   Ecore_X_Window win;
-   Evas_Object   *o;
-   Instance      *inst;
-};
+#include "e_mod_main.h"
 
 struct _Instance
 {
    E_Gadcon_Client *gcc;
    E_Container     *con;
    Evas            *evas;
-   struct
-   {
-      Ecore_X_Window parent;
-      Ecore_X_Window base;
-      Ecore_X_Window selection;
-   } win;
+   Instance_Xembed *xembed;
    struct
    {
       Evas_Object *gadget;
    } ui;
    struct
    {
-      Ecore_Event_Handler *message;
-      Ecore_Event_Handler *destroy;
-      Ecore_Event_Handler *show;
-      Ecore_Event_Handler *reparent;
-      Ecore_Event_Handler *sel_clear;
-      Ecore_Event_Handler *configure;
-   } handler;
-   struct
-   {
-      Ecore_Timer *retry;
-   } timer;
-   struct
-   {
       Ecore_Job *size_apply;
    } job;
-   Eina_List *icons;
 };
 
 static const char _Name[] = "Systray";
 static const char _name[] = "systray";
 static const char _group_gadget[] = "e/modules/systray/main";
-static const char _part_box[] = "e.box";
-static const char _part_size[] = "e.size";
 static const char _sig_source[] = "e";
-static const char _sig_enable[] = "e,action,enable";
-static const char _sig_disable[] = "e,action,disable";
-
-static Ecore_X_Atom _atom_manager = 0;
-static Ecore_X_Atom _atom_st_orient = 0;
-static Ecore_X_Atom _atom_st_visual = 0;
-static Ecore_X_Atom _atom_st_op_code = 0;
-static Ecore_X_Atom _atom_st_msg_data = 0;
-static Ecore_X_Atom _atom_xembed = 0;
-static Ecore_X_Atom _atom_xembed_info = 0;
-static Ecore_X_Atom _atom_st_num = 0;
-static int _last_st_num = -1;
 
 static E_Module *systray_mod = NULL;
 static Instance *instance = NULL; /* only one systray ever possible */
@@ -179,679 +83,6 @@ _systray_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNU
 
    if (ev->button == 3)
      _systray_menu_new(inst, ev);
-}
-
-static void
-_systray_size_apply_do(Instance *inst)
-{
-   const Evas_Object *o;
-   Evas_Coord x, y, w, h, mw = 1, mh = 1;
-
-   edje_object_message_signal_process(inst->ui.gadget);
-   o = edje_object_part_object_get(inst->ui.gadget, _part_box);
-   if (!o) return;
-   evas_object_size_hint_min_get(o, &w, &h);
-
-   if (w < 1) w = 1;
-   if (h < 1) h = 1;
-
-   if (eina_list_count(inst->icons) == 0)
-     ecore_x_window_hide(inst->win.base);
-   else
-     ecore_x_window_show(inst->win.base);
-
-   edje_object_size_min_calc(inst->ui.gadget, &mw, &mh);
-   e_gadcon_client_min_size_set(inst->gcc, mw, mh);
-
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-   ecore_x_window_move_resize(inst->win.base, x, y, w, h);
-}
-
-static void
-_systray_size_apply_delayed(void *data)
-{
-   Instance *inst = data;
-   _systray_size_apply_do(inst);
-   inst->job.size_apply = NULL;
-}
-
-static void
-_systray_size_apply(Instance *inst)
-{
-   if (inst->job.size_apply) return;
-   inst->job.size_apply = ecore_job_add(_systray_size_apply_delayed, inst);
-}
-
-static void
-_systray_cb_move(void *data, Evas *evas __UNUSED__, Evas_Object *o __UNUSED__, void *event __UNUSED__)
-{
-   Instance *inst = data;
-   _systray_size_apply(inst);
-}
-
-static void
-_systray_cb_resize(void *data, Evas *evas __UNUSED__, Evas_Object *o __UNUSED__, void *event __UNUSED__)
-{
-   Instance *inst = data;
-   _systray_size_apply(inst);
-}
-
-static void
-_systray_icon_geometry_apply(Icon *icon)
-{
-   const Evas_Object *o;
-   Evas_Coord x, y, w, h, wx, wy;
-
-   o = edje_object_part_object_get(icon->inst->ui.gadget, _part_size);
-   if (!o) return;
-
-   evas_object_geometry_get(icon->o, &x, &y, &w, &h);
-   evas_object_geometry_get(o, &wx, &wy, NULL, NULL);
-   ecore_x_window_move_resize(icon->win, x - wx, y - wy, w, h);
-}
-
-static void
-_systray_icon_cb_move(void *data, Evas *evas __UNUSED__, Evas_Object *o __UNUSED__, void *event __UNUSED__)
-{
-   Icon *icon = data;
-   _systray_icon_geometry_apply(icon);
-}
-
-static void
-_systray_icon_cb_resize(void *data, Evas *evas __UNUSED__, Evas_Object *o __UNUSED__, void *event __UNUSED__)
-{
-   Icon *icon = data;
-   _systray_icon_geometry_apply(icon);
-}
-
-static Ecore_X_Gravity
-_systray_gravity(const Instance *inst)
-{
-   switch (inst->gcc->gadcon->orient)
-     {
-      case E_GADCON_ORIENT_FLOAT:
-        return ECORE_X_GRAVITY_STATIC;
-
-      case E_GADCON_ORIENT_HORIZ:
-        return ECORE_X_GRAVITY_CENTER;
-
-      case E_GADCON_ORIENT_VERT:
-        return ECORE_X_GRAVITY_CENTER;
-
-      case E_GADCON_ORIENT_LEFT:
-        return ECORE_X_GRAVITY_CENTER;
-
-      case E_GADCON_ORIENT_RIGHT:
-        return ECORE_X_GRAVITY_CENTER;
-
-      case E_GADCON_ORIENT_TOP:
-        return ECORE_X_GRAVITY_CENTER;
-
-      case E_GADCON_ORIENT_BOTTOM:
-        return ECORE_X_GRAVITY_CENTER;
-
-      case E_GADCON_ORIENT_CORNER_TL:
-        return ECORE_X_GRAVITY_S;
-
-      case E_GADCON_ORIENT_CORNER_TR:
-        return ECORE_X_GRAVITY_S;
-
-      case E_GADCON_ORIENT_CORNER_BL:
-        return ECORE_X_GRAVITY_N;
-
-      case E_GADCON_ORIENT_CORNER_BR:
-        return ECORE_X_GRAVITY_N;
-
-      case E_GADCON_ORIENT_CORNER_LT:
-        return ECORE_X_GRAVITY_E;
-
-      case E_GADCON_ORIENT_CORNER_RT:
-        return ECORE_X_GRAVITY_W;
-
-      case E_GADCON_ORIENT_CORNER_LB:
-        return ECORE_X_GRAVITY_E;
-
-      case E_GADCON_ORIENT_CORNER_RB:
-        return ECORE_X_GRAVITY_W;
-
-      default:
-        return ECORE_X_GRAVITY_STATIC;
-     }
-}
-
-static Icon *
-_systray_icon_add(Instance *inst, const Ecore_X_Window win)
-{
-   Ecore_X_Gravity gravity;
-   Evas_Object *o;
-   int w, h, sz;
-   Icon *icon;
-
-   edje_object_part_geometry_get(inst->ui.gadget, _part_size,
-                                 NULL, NULL, &w, &h);
-   if (w > h)
-     w = h;
-   else
-     h = w;
-
-   /* assuming systray must be on a shelf here */
-   switch (inst->gcc->gadcon->orient)
-     {
-      case E_GADCON_ORIENT_HORIZ:
-      case E_GADCON_ORIENT_TOP:
-      case E_GADCON_ORIENT_BOTTOM:
-      case E_GADCON_ORIENT_CORNER_TL:
-      case E_GADCON_ORIENT_CORNER_TR:
-      case E_GADCON_ORIENT_CORNER_BL:
-      case E_GADCON_ORIENT_CORNER_BR:
-        sz = inst->gcc->gadcon->shelf->h;
-        break;
-
-      case E_GADCON_ORIENT_VERT:
-      case E_GADCON_ORIENT_LEFT:
-      case E_GADCON_ORIENT_RIGHT:
-      case E_GADCON_ORIENT_CORNER_LT:
-      case E_GADCON_ORIENT_CORNER_RT:
-      case E_GADCON_ORIENT_CORNER_LB:
-      case E_GADCON_ORIENT_CORNER_RB:
-      default:
-        sz = inst->gcc->gadcon->shelf->w;
-     }
-   if ((w < 16) && (sz > 16))
-     w = h = sz - 5;
-
-   w = h = e_util_icon_size_normalize(w);
-   if (w > sz - 5)
-     w = h = e_util_icon_size_normalize(sz - 5);
-
-   o = evas_object_rectangle_add(inst->evas);
-   if (!o)
-     return NULL;
-   evas_object_color_set(o, 0, 0, 0, 0);
-   evas_object_resize(o, w, h);
-   evas_object_show(o);
-
-   icon = malloc(sizeof(*icon));
-   if (!icon)
-     {
-        evas_object_del(o);
-        return NULL;
-     }
-   icon->win = win;
-   icon->inst = inst;
-   icon->o = o;
-
-   gravity = _systray_gravity(inst);
-   ecore_x_icccm_size_pos_hints_set(win, 1, gravity,
-                                    w, h, w, h, w, h, 0, 0,
-                                    1.0, (double)w / (double)h);
-
-   ecore_x_window_reparent(win, inst->win.base, 0, 0);
-   ecore_x_window_resize(win, w, h);
-   ecore_x_window_raise(win);
-   ecore_x_window_client_manage(win);
-   ecore_x_window_save_set_add(win);
-   ecore_x_window_shape_events_select(win, 1);
-
-   //ecore_x_window_geometry_get(win, NULL, NULL, &w, &h);
-
-   evas_object_event_callback_add
-     (o, EVAS_CALLBACK_MOVE, _systray_icon_cb_move, icon);
-   evas_object_event_callback_add
-     (o, EVAS_CALLBACK_RESIZE, _systray_icon_cb_resize, icon);
-
-   inst->icons = eina_list_append(inst->icons, icon);
-   edje_object_part_box_append(inst->ui.gadget, _part_box, o);
-   _systray_size_apply_do(inst);
-   _systray_icon_geometry_apply(icon);
-
-   ecore_x_window_show(win);
-
-   return icon;
-}
-
-static void
-_systray_icon_del_list(Instance *inst, Eina_List *l, Icon *icon)
-{
-   inst->icons = eina_list_remove_list(inst->icons, l);
-
-   ecore_x_window_save_set_del(icon->win);
-   ecore_x_window_reparent(icon->win, 0, 0, 0);
-   evas_object_del(icon->o);
-   free(icon);
-
-   _systray_size_apply(inst);
-}
-
-static Ecore_X_Atom
-_systray_atom_st_get(int screen_num)
-{
-   if ((_last_st_num == -1) || (_last_st_num != screen_num))
-     {
-        char buf[32];
-        snprintf(buf, sizeof(buf), "_NET_SYSTEM_TRAY_S%d", screen_num);
-        _atom_st_num = ecore_x_atom_get(buf);
-        _last_st_num = screen_num;
-     }
-
-   return _atom_st_num;
-}
-
-static Eina_Bool
-_systray_selection_owner_set(int screen_num, Ecore_X_Window win)
-{
-   Ecore_X_Atom atom;
-   Ecore_X_Window cur_selection;
-   Eina_Bool ret;
-
-   atom = _systray_atom_st_get(screen_num);
-   ecore_x_selection_owner_set(win, atom, ecore_x_current_time_get());
-   ecore_x_sync();
-   cur_selection = ecore_x_selection_owner_get(atom);
-
-   ret = (cur_selection == win);
-   if (!ret)
-     fprintf(stderr, "SYSTRAY: tried to set selection to %#x, but got %#x\n",
-             win, cur_selection);
-
-   return ret;
-}
-
-static Eina_Bool
-_systray_selection_owner_set_current(Instance *inst)
-{
-   return _systray_selection_owner_set
-            (inst->con->manager->num, inst->win.selection);
-}
-
-static void
-_systray_deactivate(Instance *inst)
-{
-   Ecore_X_Window old;
-
-   if (inst->win.selection == 0) return;
-
-   edje_object_signal_emit(inst->ui.gadget, _sig_disable, _sig_source);
-
-   while (inst->icons)
-     _systray_icon_del_list(inst, inst->icons, inst->icons->data);
-
-   old = inst->win.selection;
-   inst->win.selection = 0;
-   _systray_selection_owner_set_current(inst);
-   ecore_x_sync();
-   ecore_x_window_free(old);
-   ecore_x_window_free(inst->win.base);
-   inst->win.base = 0;
-}
-
-static Eina_Bool
-_systray_base_create(Instance *inst)
-{
-   const Evas_Object *o;
-   Evas_Coord x, y, w, h;
-   unsigned short r, g, b;
-   const char *color;
-
-   if (inst->gcc->gadcon->shelf && (!e_util_strcmp(inst->gcc->gadcon->shelf->style, "invisible")))
-     e_util_dialog_internal (_("Systray Error"),
-       _("Systray cannot set its background invisible to match its shelf."));
-   color = edje_object_data_get(inst->ui.gadget, inst->gcc->style);
-   if (!color)
-     color = edje_object_data_get(inst->ui.gadget, "default");
-
-   if (color && (sscanf(color, "%hu %hu %hu", &r, &g, &b) == 3))
-     {
-        r = (65535 * (unsigned int)r) / 255;
-        g = (65535 * (unsigned int)g) / 255;
-        b = (65535 * (unsigned int)b) / 255;
-     }
-   else
-     r = g = b = (unsigned short)65535;
-
-   o = edje_object_part_object_get(inst->ui.gadget, _part_size);
-   if (!o)
-     return 0;
-
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-   if (w < 1) w = 1;
-   if (h < 1) h = 1;
-   inst->win.base = ecore_x_window_new(0, 0, 0, w, h);
-   ecore_x_window_reparent(inst->win.base, inst->win.parent, x, y);
-   ecore_x_window_background_color_set(inst->win.base, r, g, b);
-   ecore_x_window_show(inst->win.base);
-   return 1;
-}
-
-static Eina_Bool
-_systray_activate(Instance *inst)
-{
-   unsigned int visual;
-   Ecore_X_Atom atom;
-   Ecore_X_Window old_win;
-   Ecore_X_Window_Attributes attr;
-
-   if (inst->win.selection != 0) return 1;
-
-   atom = _systray_atom_st_get(inst->con->manager->num);
-   old_win = ecore_x_selection_owner_get(atom);
-   if (old_win != 0) return 0;
-
-   if (inst->win.base == 0)
-     {
-        if (!_systray_base_create(inst))
-          return 0;
-     }
-
-   inst->win.selection = ecore_x_window_input_new(inst->win.base, 0, 0, 1, 1);
-   if (inst->win.selection == 0)
-     {
-        ecore_x_window_free(inst->win.base);
-        inst->win.base = 0;
-        return 0;
-     }
-
-   if (!_systray_selection_owner_set_current(inst))
-     {
-        ecore_x_window_free(inst->win.selection);
-        inst->win.selection = 0;
-        ecore_x_window_free(inst->win.base);
-        inst->win.base = 0;
-        return 0;
-     }
-
-   ecore_x_window_attributes_get(inst->win.base, &attr);
-
-   visual = ecore_x_visual_id_get(attr.visual);
-   ecore_x_window_prop_card32_set(inst->win.selection, _atom_st_visual,
-                                  (void *)&visual, 1);
-
-   ecore_x_client_message32_send(inst->con->manager->root, _atom_manager,
-                                 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
-                                 ecore_x_current_time_get(), atom,
-                                 inst->win.selection, 0, 0);
-
-   edje_object_signal_emit(inst->ui.gadget, _sig_enable, _sig_source);
-
-   return 1;
-}
-
-static Eina_Bool
-_systray_activate_retry(void *data)
-{
-   Instance *inst = data;
-   Eina_Bool ret;
-
-   fputs("SYSTRAY: reactivate...\n", stderr);
-   ret = _systray_activate(inst);
-   if (ret)
-     fputs("SYSTRAY: activate success!\n", stderr);
-   else
-     fprintf(stderr, "SYSTRAY: activate failure! retrying in %0.1f seconds\n",
-             RETRY_TIMEOUT);
-
-   if (!ret)
-     return ECORE_CALLBACK_RENEW;
-
-   inst->timer.retry = NULL;
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static void
-_systray_retry(Instance *inst)
-{
-   if (inst->timer.retry) return;
-   inst->timer.retry = ecore_timer_add
-       (RETRY_TIMEOUT, _systray_activate_retry, inst);
-}
-
-static Eina_Bool
-_systray_activate_retry_first(void *data)
-{
-   Instance *inst = data;
-   Eina_Bool ret;
-
-   fputs("SYSTRAY: reactivate (first time)...\n", stderr);
-   ret = _systray_activate(inst);
-   if (ret)
-     {
-        fputs("SYSTRAY: activate success!\n", stderr);
-        inst->timer.retry = NULL;
-        return ECORE_CALLBACK_CANCEL;
-     }
-
-   edje_object_signal_emit(inst->ui.gadget, _sig_disable, _sig_source);
-
-   fprintf(stderr, "SYSTRAY: activate failure! retrying in %0.1f seconds\n",
-           RETRY_TIMEOUT);
-
-   inst->timer.retry = NULL;
-   _systray_retry(inst);
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static void
-_systray_handle_request_dock(Instance *inst, Ecore_X_Event_Client_Message *ev)
-{
-   Ecore_X_Window win = (Ecore_X_Window)ev->data.l[2];
-   Ecore_X_Time t;
-   Ecore_X_Window_Attributes attr;
-   const Eina_List *l;
-   Icon *icon;
-   unsigned int val[2];
-   int r;
-
-   EINA_LIST_FOREACH(inst->icons, l, icon)
-     if (icon->win == win)
-       return;
-
-   if (!ecore_x_window_attributes_get(win, &attr))
-     {
-        fprintf(stderr, "SYSTRAY: could not get attributes of win %#x\n", win);
-        return;
-     }
-
-   icon = _systray_icon_add(inst, win);
-   if (!icon)
-     return;
-
-   r = ecore_x_window_prop_card32_get(win, _atom_xembed_info, val, 2);
-   if (r < 2)
-     {
-        /*
-           fprintf(stderr, "SYSTRAY: win %#x does not support _XEMBED_INFO (%d)\n",
-                win, r);
-         */
-        return;
-     }
-
-   t = ecore_x_current_time_get();
-   ecore_x_client_message32_send(win, _atom_xembed,
-                                 ECORE_X_EVENT_MASK_NONE,
-                                 t, XEMBED_EMBEDDED_NOTIFY, 0,
-                                 inst->win.selection, 0);
-}
-
-static void
-_systray_handle_op_code(Instance *inst, Ecore_X_Event_Client_Message *ev)
-{
-   unsigned long message = ev->data.l[1];
-
-   switch (message)
-     {
-      case SYSTEM_TRAY_REQUEST_DOCK:
-        _systray_handle_request_dock(inst, ev);
-        break;
-
-      case SYSTEM_TRAY_BEGIN_MESSAGE:
-      case SYSTEM_TRAY_CANCEL_MESSAGE:
-        fputs("SYSTRAY TODO: handle messages (anyone uses this?)\n", stderr);
-        break;
-
-      default:
-        fprintf(stderr,
-                "SYSTRAY: error, unknown message op code: %ld, win: %#lx\n",
-                message, ev->data.l[2]);
-     }
-}
-
-static void
-_systray_handle_message(Instance *inst __UNUSED__, Ecore_X_Event_Client_Message *ev)
-{
-   fprintf(stderr, "SYSTRAY TODO: message op: %ld, data: %ld, %ld, %ld\n",
-           ev->data.l[1], ev->data.l[2], ev->data.l[3], ev->data.l[4]);
-}
-
-static void
-_systray_handle_xembed(Instance *inst __UNUSED__, Ecore_X_Event_Client_Message *ev __UNUSED__)
-{
-   unsigned long message = ev->data.l[1];
-
-   switch (message)
-     {
-      case XEMBED_EMBEDDED_NOTIFY:
-      case XEMBED_WINDOW_ACTIVATE:
-      case XEMBED_WINDOW_DEACTIVATE:
-      case XEMBED_REQUEST_FOCUS:
-      case XEMBED_FOCUS_IN:
-      case XEMBED_FOCUS_OUT:
-      case XEMBED_FOCUS_NEXT:
-      case XEMBED_FOCUS_PREV:
-      case XEMBED_MODALITY_ON:
-      case XEMBED_MODALITY_OFF:
-      case XEMBED_REGISTER_ACCELERATOR:
-      case XEMBED_UNREGISTER_ACCELERATOR:
-      case XEMBED_ACTIVATE_ACCELERATOR:
-      default:
-        fprintf(stderr,
-                "SYSTRAY: unsupported xembed: %#lx, %#lx, %#lx, %#lx\n",
-                ev->data.l[1], ev->data.l[2], ev->data.l[3], ev->data.l[4]);
-     }
-}
-
-static Eina_Bool
-_systray_cb_client_message(void *data, int type __UNUSED__, void *event)
-{
-   Ecore_X_Event_Client_Message *ev = event;
-   Instance *inst = data;
-
-   if (ev->message_type == _atom_st_op_code)
-     _systray_handle_op_code(inst, ev);
-   else if (ev->message_type == _atom_st_msg_data)
-     _systray_handle_message(inst, ev);
-   else if (ev->message_type == _atom_xembed)
-     _systray_handle_xembed(inst, ev);
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_systray_cb_window_destroy(void *data, int type __UNUSED__, void *event)
-{
-   Ecore_X_Event_Window_Destroy *ev = event;
-   Instance *inst = data;
-   Icon *icon;
-   Eina_List *l;
-   Eina_Bool found = EINA_FALSE;
-
-   EINA_LIST_FOREACH(inst->icons, l, icon)
-     if (icon->win == ev->win)
-       {
-          _systray_icon_del_list(inst, l, icon);
-          found = EINA_TRUE;
-          break;
-       }
-   if (found)
-     {
-        _systray_deactivate(inst);
-        if (!_systray_activate(inst))
-          {
-             if (!inst->timer.retry)
-               inst->timer.retry = ecore_timer_add
-                   (0.1, _systray_activate_retry_first, inst);
-             else
-               edje_object_signal_emit(inst->ui.gadget, _sig_disable, _sig_source);
-          }
-     }
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_systray_cb_window_show(void *data, int type __UNUSED__, void *event)
-{
-   Ecore_X_Event_Window_Show *ev = event;
-   Instance *inst = data;
-   Icon *icon;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(inst->icons, l, icon)
-     if (icon->win == ev->win)
-       {
-          _systray_icon_geometry_apply(icon);
-          break;
-       }
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_systray_cb_window_configure(void *data, int type __UNUSED__, void *event)
-{
-   Ecore_X_Event_Window_Configure *ev = event;
-   Instance *inst = data;
-   Icon *icon;
-   const Eina_List *l;
-
-   EINA_LIST_FOREACH(inst->icons, l, icon)
-     if (icon->win == ev->win)
-       {
-          _systray_icon_geometry_apply(icon);
-          break;
-       }
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_systray_cb_reparent_notify(void *data, int type __UNUSED__, void *event)
-{
-   Ecore_X_Event_Window_Reparent *ev = event;
-   Instance *inst = data;
-   Icon *icon;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(inst->icons, l, icon)
-     if ((icon->win == ev->win) && (ev->parent != inst->win.base))
-       {
-          _systray_icon_del_list(inst, l, icon);
-          break;
-       }
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_systray_cb_selection_clear(void *data, int type __UNUSED__, void *event)
-{
-   Ecore_X_Event_Selection_Clear *ev = event;
-   Instance *inst = data;
-
-   if ((ev->win == inst->win.selection) && (inst->win.selection != 0) &&
-       (ev->atom == _systray_atom_st_get(inst->con->manager->num)))
-     {
-        edje_object_signal_emit(inst->ui.gadget, _sig_disable, _sig_source);
-
-        while (inst->icons)
-          _systray_icon_del_list(inst, inst->icons, inst->icons->data);
-
-        ecore_x_window_free(inst->win.selection);
-        inst->win.selection = 0;
-        ecore_x_window_free(inst->win.base);
-        inst->win.base = 0;
-        _systray_retry(inst);
-     }
-   return ECORE_CALLBACK_PASS_ON;
 }
 
 static void
@@ -962,14 +193,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         return NULL;
      }
 
-   if ((gc->shelf) && (gc->shelf->popup))
-     inst->win.parent = gc->shelf->popup->evas_win;
-   else
-     inst->win.parent = (Ecore_X_Window)ecore_evas_window_get(gc->ecore_evas);
-
-   inst->win.base = 0;
-   inst->win.selection = 0;
-
    inst->ui.gadget = edje_object_add(inst->evas);
 
    _systray_theme(inst->ui.gadget, gc->shelf ? gc->shelf->style : NULL, style);
@@ -984,34 +207,10 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    inst->gcc->data = inst;
 
-   if (!_systray_activate(inst))
-     {
-        if (!inst->timer.retry)
-          inst->timer.retry = ecore_timer_add
-              (0.1, _systray_activate_retry_first, inst);
-        else
-          edje_object_signal_emit(inst->ui.gadget, _sig_disable, _sig_source);
-     }
-
    evas_object_event_callback_add(inst->ui.gadget, EVAS_CALLBACK_MOUSE_DOWN,
                                   _systray_cb_mouse_down, inst);
-   evas_object_event_callback_add(inst->ui.gadget, EVAS_CALLBACK_MOVE,
-                                  _systray_cb_move, inst);
-   evas_object_event_callback_add(inst->ui.gadget, EVAS_CALLBACK_RESIZE,
-                                  _systray_cb_resize, inst);
 
-   inst->handler.message = ecore_event_handler_add
-       (ECORE_X_EVENT_CLIENT_MESSAGE, _systray_cb_client_message, inst);
-   inst->handler.destroy = ecore_event_handler_add
-       (ECORE_X_EVENT_WINDOW_DESTROY, _systray_cb_window_destroy, inst);
-   inst->handler.show = ecore_event_handler_add
-       (ECORE_X_EVENT_WINDOW_SHOW, _systray_cb_window_show, inst);
-   inst->handler.reparent = ecore_event_handler_add
-       (ECORE_X_EVENT_WINDOW_REPARENT, _systray_cb_reparent_notify, inst);
-   inst->handler.sel_clear = ecore_event_handler_add
-       (ECORE_X_EVENT_SELECTION_CLEAR, _systray_cb_selection_clear, inst);
-   inst->handler.configure = ecore_event_handler_add
-       (ECORE_X_EVENT_WINDOW_CONFIGURE, _systray_cb_window_configure, inst);
+   inst->xembed = systray_xembed_new(inst);
 
    instance = inst;
    return inst->gcc;
@@ -1028,28 +227,15 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    if (!inst)
      return;
 
-   _systray_deactivate(inst);
-   evas_object_del(inst->ui.gadget);
+   systray_xembed_free(inst->xembed);
 
-   if (inst->handler.message)
-     ecore_event_handler_del(inst->handler.message);
-   if (inst->handler.destroy)
-     ecore_event_handler_del(inst->handler.destroy);
-   if (inst->handler.show)
-     ecore_event_handler_del(inst->handler.show);
-   if (inst->handler.reparent)
-     ecore_event_handler_del(inst->handler.reparent);
-   if (inst->handler.sel_clear)
-     ecore_event_handler_del(inst->handler.sel_clear);
-   if (inst->handler.configure)
-     ecore_event_handler_del(inst->handler.configure);
-   if (inst->timer.retry)
-     ecore_timer_del(inst->timer.retry);
-   if (inst->job.size_apply)
-     ecore_job_del(inst->job.size_apply);
+   evas_object_del(inst->ui.gadget);
 
    if (instance == inst)
      instance = NULL;
+
+   if (inst->job.size_apply)
+     ecore_job_del(inst->job.size_apply);
 
    E_FREE(inst);
    gcc->data = NULL;
@@ -1060,7 +246,6 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 {
    Instance *inst = gcc->data;
    const char *sig;
-   unsigned int systray_orient;
 
    if (!inst)
      return;
@@ -1069,90 +254,72 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
      {
       case E_GADCON_ORIENT_FLOAT:
         sig = "e,action,orient,float";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_HORZ;
         break;
 
       case E_GADCON_ORIENT_HORIZ:
         sig = "e,action,orient,horiz";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_HORZ;
         break;
 
       case E_GADCON_ORIENT_VERT:
         sig = "e,action,orient,vert";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_VERT;
         break;
 
       case E_GADCON_ORIENT_LEFT:
         sig = "e,action,orient,left";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_VERT;
         break;
 
       case E_GADCON_ORIENT_RIGHT:
         sig = "e,action,orient,right";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_VERT;
         break;
 
       case E_GADCON_ORIENT_TOP:
         sig = "e,action,orient,top";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_HORZ;
         break;
 
       case E_GADCON_ORIENT_BOTTOM:
         sig = "e,action,orient,bottom";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_HORZ;
         break;
 
       case E_GADCON_ORIENT_CORNER_TL:
         sig = "e,action,orient,corner_tl";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_HORZ;
         break;
 
       case E_GADCON_ORIENT_CORNER_TR:
         sig = "e,action,orient,corner_tr";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_HORZ;
         break;
 
       case E_GADCON_ORIENT_CORNER_BL:
         sig = "e,action,orient,corner_bl";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_HORZ;
         break;
 
       case E_GADCON_ORIENT_CORNER_BR:
         sig = "e,action,orient,corner_br";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_HORZ;
         break;
 
       case E_GADCON_ORIENT_CORNER_LT:
         sig = "e,action,orient,corner_lt";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_VERT;
         break;
 
       case E_GADCON_ORIENT_CORNER_RT:
         sig = "e,action,orient,corner_rt";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_VERT;
         break;
 
       case E_GADCON_ORIENT_CORNER_LB:
         sig = "e,action,orient,corner_lb";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_VERT;
         break;
 
       case E_GADCON_ORIENT_CORNER_RB:
         sig = "e,action,orient,corner_rb";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_VERT;
         break;
 
       default:
         sig = "e,action,orient,horiz";
-        systray_orient = _NET_SYSTEM_TRAY_ORIENTATION_HORZ;
      }
 
-   ecore_x_window_prop_card32_set
-     (inst->win.selection, _atom_st_orient, &systray_orient, 1);
+   systray_xembed_orient_set(inst->xembed, orient);
 
    edje_object_signal_emit(inst->ui.gadget, sig, _sig_source);
    edje_object_message_signal_process(inst->ui.gadget);
-   _systray_size_apply(inst);
 }
 
 static const char *
@@ -1196,20 +363,7 @@ e_modapi_init(E_Module *m)
 
    e_gadcon_provider_register(&_gc_class);
 
-   if (!_atom_manager)
-     _atom_manager = ecore_x_atom_get("MANAGER");
-   if (!_atom_st_orient)
-     _atom_st_orient = ecore_x_atom_get("_NET_SYSTEM_TRAY_ORIENTATION");
-   if (!_atom_st_visual)
-     _atom_st_visual = ecore_x_atom_get("_NET_SYSTEM_TRAY_VISUAL");
-   if (!_atom_st_op_code)
-     _atom_st_op_code = ecore_x_atom_get("_NET_SYSTEM_TRAY_OPCODE");
-   if (!_atom_st_msg_data)
-     _atom_st_msg_data = ecore_x_atom_get("_NET_SYSTEM_TRAY_MESSAGE_DATA");
-   if (!_atom_xembed)
-     _atom_xembed = ecore_x_atom_get("_XEMBED");
-   if (!_atom_xembed_info)
-     _atom_xembed_info = ecore_x_atom_get("_XEMBED_INFO");
+   systray_xembed_init();
 
    return m;
 }
@@ -1219,6 +373,9 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    e_gadcon_provider_unregister(&_gc_class);
    systray_mod = NULL;
+
+   systray_xembed_shutdown();
+
    return 1;
 }
 
@@ -1228,3 +385,108 @@ e_modapi_save(E_Module *m __UNUSED__)
    return 1;
 }
 
+E_Gadcon_Orient
+systray_orient_get(const Instance *inst)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, E_GADCON_ORIENT_HORIZ);
+   return inst->gcc->gadcon->orient;
+}
+
+const E_Gadcon *
+systray_gadcon_get(const Instance *inst)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
+   return inst->gcc->gadcon;
+}
+
+E_Gadcon_Client *
+systray_gadcon_client_get(const Instance *inst)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
+   return inst->gcc;
+}
+
+const char *
+systray_style_get(const Instance *inst)
+{
+   const char *style;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
+   style = inst->gcc->style;
+   if (!style)
+     style = "default";
+   return style;
+}
+
+Evas *
+systray_evas_get(const Instance *inst)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
+   return inst->evas;
+}
+
+Evas_Object *
+systray_edje_get(const Instance *inst)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
+   return inst->ui.gadget;
+}
+
+void
+systray_edje_emit(const Instance *inst, const char *sig)
+{
+   EINA_SAFETY_ON_NULL_RETURN(inst);
+   edje_object_signal_emit(inst->ui.gadget, sig, _sig_source);
+}
+
+void
+systray_edje_box_append(const Instance *inst, const char *part,
+                        Evas_Object *child)
+{
+   EINA_SAFETY_ON_NULL_RETURN(inst);
+   EINA_SAFETY_ON_NULL_RETURN(part);
+   EINA_SAFETY_ON_NULL_RETURN(child);
+   edje_object_part_box_append(inst->ui.gadget, part, child);
+}
+
+int
+systray_manager_number_get(const Instance *inst)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, 0);
+   return inst->con->manager->num;
+}
+
+Ecore_X_Window
+systray_root_get(const Instance *inst)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, 0);
+   return inst->con->manager->root;
+}
+
+static void
+_systray_size_apply_do(Instance *inst)
+{
+   Evas_Coord w, h;
+
+   systray_xembed_size_updated(inst->xembed);
+
+   edje_object_message_signal_process(inst->ui.gadget);
+   edje_object_size_min_calc(inst->ui.gadget, &w, &h);
+   e_gadcon_client_min_size_set(inst->gcc, w, h);
+}
+
+static void
+_systray_size_apply_delayed(void *data)
+{
+   Instance *inst = data;
+   _systray_size_apply_do(inst);
+   inst->job.size_apply = NULL;
+}
+
+void
+systray_size_updated(Instance *inst)
+{
+   EINA_SAFETY_ON_NULL_RETURN(inst);
+   if (inst->job.size_apply) return;
+   inst->job.size_apply = ecore_job_add(_systray_size_apply_delayed, inst);
+}
