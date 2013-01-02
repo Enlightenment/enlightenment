@@ -19,14 +19,6 @@ internal_bindir = $(libdir)/enlightenment/utils
 internal_bin_PROGRAMS = \
 enlightenment_fm 
 
-if HAVE_HAL_MOUNT
-hal_s = \
-e_fm_main_hal.h \
-e_fm_main_hal.c
-else
-hal_s =
-endif
-
 if HAVE_UDISKS_MOUNT
 udisks_s = \
 e_fm_main_udisks.h \
@@ -51,7 +43,6 @@ e_fm_main.h \
 e_fm_ipc.h \
 e_fm_main.c \
 e_fm_ipc.c \
-$(hal_s) \
 $(udisks_s) \
 $(eeze_s) \
 ../e_fm_shared_codec.c \

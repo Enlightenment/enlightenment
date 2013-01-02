@@ -54,9 +54,6 @@ void *alloca (size_t);
 #include "e_fm_op.h"
 
 #include "e_fm_shared_device.h"
-#ifdef HAVE_HAL_MOUNT
-# include "e_fm_main_hal.h"
-#endif
 #ifdef HAVE_UDISKS_MOUNT
 # include "e_fm_main_udisks.h"
 #endif
@@ -65,8 +62,7 @@ void *alloca (size_t);
 #endif
 
 
-/* if using ehal, functions will point to _e_fm_main_hal_X
- * if using udisks, functions will point to _e_fm_main_udisks_X
+/* if using udisks, functions will point to _e_fm_main_udisks_X
  * if using eeze, functions will point to _e_fm_main_eeze_X
  */
 
@@ -94,9 +90,6 @@ int efm_log_dom = -1;
 static void
 _e_fm_init(void)
 {
-#ifdef HAVE_HAL_MOUNT
-   _e_fm_main_hal_init();
-#else
 # ifdef HAVE_UDISKS_MOUNT
    _e_fm_main_udisks_init();
 # else
@@ -105,15 +98,11 @@ _e_fm_init(void)
    mode = EFM_MODE_USING_EEZE_MOUNT; /* this gets overridden if the others are available */
 #  endif
 # endif
-#endif
 }
 
 static void
 _e_fm_shutdown(void)
 {
-#ifdef HAVE_HAL_MOUNT
-   _e_fm_main_hal_shutdown();
-#else
 # ifdef HAVE_UDISKS_MOUNT
    _e_fm_main_udisks_shutdown();
 # else
@@ -121,7 +110,6 @@ _e_fm_shutdown(void)
    _e_fm_main_eeze_shutdown();
 #  endif
 # endif
-#endif
 }
 
 /* externally accessible functions */
@@ -170,21 +158,6 @@ main(int argc, char **argv)
    return 0;
 }
 
-#ifdef HAVE_HAL_MOUNT
-void
-_e_fm_main_hal_catch(Eina_Bool usable)
-{
-   if (usable)
-     {
-        mode = EFM_MODE_USING_HAL_MOUNT;
-        return;
-     }
-# ifdef HAVE_EEZE_MOUNT
-   _e_fm_main_eeze_init();
-   mode = EFM_MODE_USING_EEZE_MOUNT;
-# endif
-}
-#endif
 #ifdef HAVE_UDISKS_MOUNT
 void
 _e_fm_main_udisks_catch(Eina_Bool usable)
@@ -220,11 +193,6 @@ e_volume_mount(E_Volume *v)
 {
   switch (mode)
     {
-#ifdef HAVE_HAL_MOUNT
-     case EFM_MODE_USING_HAL_MOUNT:
-       _e_fm_main_hal_volume_mount(v);
-       break;
-#endif
 #ifdef HAVE_UDISKS_MOUNT
      case EFM_MODE_USING_UDISKS_MOUNT:
        _e_fm_main_udisks_volume_mount(v);
@@ -247,11 +215,6 @@ e_volume_unmount(E_Volume *v)
 {
   switch (mode)
     {
-#ifdef HAVE_HAL_MOUNT
-     case EFM_MODE_USING_HAL_MOUNT:
-       _e_fm_main_hal_volume_unmount(v);
-       break;
-#endif
 #ifdef HAVE_UDISKS_MOUNT
      case EFM_MODE_USING_UDISKS_MOUNT:
        _e_fm_main_udisks_volume_unmount(v);
@@ -273,11 +236,6 @@ e_volume_eject(E_Volume *v)
 {
   switch (mode)
     {
-#ifdef HAVE_HAL_MOUNT
-     case EFM_MODE_USING_HAL_MOUNT:
-       _e_fm_main_hal_volume_eject(v);
-       break;
-#endif
 #ifdef HAVE_UDISKS_MOUNT
      case EFM_MODE_USING_UDISKS_MOUNT:
        _e_fm_main_udisks_volume_eject(v);
@@ -299,10 +257,6 @@ e_volume_find(const char *udi)
 {
    switch (mode)
      {
-#ifdef HAVE_HAL_MOUNT
-      case EFM_MODE_USING_HAL_MOUNT:
-        return _e_fm_main_hal_volume_find(udi);
-#endif
 #ifdef HAVE_UDISKS_MOUNT
       case EFM_MODE_USING_UDISKS_MOUNT:
         return _e_fm_main_udisks_volume_find(udi);
@@ -323,11 +277,6 @@ e_storage_del(const char *udi)
 {
   switch (mode)
     {
-#ifdef HAVE_HAL_MOUNT
-     case EFM_MODE_USING_HAL_MOUNT:
-       _e_fm_main_hal_storage_del(udi);
-       break;
-#endif
 #ifdef HAVE_UDISKS_MOUNT
      case EFM_MODE_USING_UDISKS_MOUNT:
        _e_fm_main_udisks_storage_del(udi);
@@ -349,10 +298,6 @@ e_storage_find(const char *udi)
 {
   switch (mode)
     {
-#ifdef HAVE_HAL_MOUNT
-     case EFM_MODE_USING_HAL_MOUNT:
-       return _e_fm_main_hal_storage_find(udi);
-#endif
 #ifdef HAVE_UDISKS_MOUNT
      case EFM_MODE_USING_UDISKS_MOUNT:
        return _e_fm_main_udisks_storage_find(udi);

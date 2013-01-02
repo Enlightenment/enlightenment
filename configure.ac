@@ -326,10 +326,7 @@ if test "x$e_cv_want_device_udev" != "xno";then
     [
       device_backend=eeze
       AC_DEFINE_UNQUOTED([HAVE_EEZE],[1],[enable udev support])
-    ],
-    [device_backend=ehal])
-else
-  device_backend=ehal
+    ])
 fi
 
 AC_MSG_CHECKING([which device backend to use])
@@ -341,26 +338,7 @@ test "x${device_backend}" = "xeeze" || AC_DEFINE_UNQUOTED([HAVE_HAL],[1],[enable
 
 DBUS_MOUNT_CONFIG=1
 dbus_mount="dbus-1"
-hal_mount="ehal >= $efl_version, edbus >= $efl_version"
 udisks_mount="eukit >= $efl_version"
-AC_ARG_ENABLE([mount-hal],
-  AS_HELP_STRING([--enable-mount-hal],[enable hal mounting support @<:@default=enabled@:>@]),
-  [e_cv_want_mount_hal=$enableval],
-  [e_cv_want_mount_hal=yes])
-
-AC_MSG_CHECKING([whether the HAL mounting support is enabled])
-AC_MSG_RESULT([${e_cv_want_mount_hal}])
-
-if test "x$e_cv_want_mount_hal" != "xno";then
-  PKG_CHECK_EXISTS([ehal >= ${efl_version}],
-    [],[
-      hal_mount=
-      AC_MSG_NOTICE([HAL mounting disabled])
-    ])
-else
-  hal_mount=
-  AC_MSG_NOTICE([HAL mounting disabled])
-fi
 
 AC_ARG_ENABLE([mount-udisks],
   AS_HELP_STRING([--enable-mount-udisks],[enable udisks mounting support @<:@default=enabled@:>@]),
@@ -479,6 +457,7 @@ ecore-file >= $efl_version \
 ecore-ipc >= $efl_version \
 eet >= $efl_version \
 efreet >= $efl_version \
+edbus >= $efl_version \
 edbus2 >= $efl_version \
 eina >= $efl_version"
 efm_requires="$efm_requires $eeze_mount $dbus_mount $hal_mount $udisks_mount"
