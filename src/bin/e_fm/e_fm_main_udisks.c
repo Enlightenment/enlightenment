@@ -101,11 +101,6 @@ _e_fm_main_udisks_name_start(void *data __UNUSED__, const EDBus_Message *msg,
    unsigned flag = 0;
    EDBus_Object *obj;
 
-   if (edbus_message_error_get(msg, NULL, NULL))
-     {
-        _e_fm_main_udisks_catch(EINA_FALSE);
-        return;
-     }
    if (!edbus_message_arguments_get(msg, "u", &flag) || !flag)
      {
         _e_fm_main_udisks_catch(EINA_FALSE);
@@ -312,25 +307,25 @@ _e_fm_main_udisks_cb_store_prop(void *data, const EDBus_Message *msg,
 {
    E_Storage *s = data;
    const char *name, *txt;
-   EDBus_Message_Iter *array, *dict;
+   EDBus_Message_Iter *dict, *entry;
 
    if (edbus_message_error_get(msg, &name, &txt))
      {
         ERR("Error %s %s.", name, txt);
         return;
      }
-   if (!edbus_message_arguments_get(msg, "a{sv}", &array))
+   if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
      {
         ERR("Error getting arguments.");
         return;
      }
 
-   while (edbus_message_iter_get_and_next(array, 'e', &dict))
+   while (edbus_message_iter_get_and_next(dict, 'e', &entry))
      {
         char *key;
         EDBus_Message_Iter *var;
 
-        if (!edbus_message_iter_arguments_get(dict, "sv", &key, &var))
+        if (!edbus_message_iter_arguments_get(entry, "sv", &key, &var))
           continue;
         if (!strcmp(key, "DeviceFile"))
           {
@@ -366,11 +361,7 @@ _e_fm_main_udisks_cb_store_prop(void *data, const EDBus_Message *msg,
           {
              const char *model;
              if (edbus_message_iter_arguments_get(var, "s", &model))
-               {
-                  if (s->model)
-                    eina_stringshare_del(s->model);
-                  s->model = eina_stringshare_add(model);
-               }
+               eina_stringshare_replace(&s->model, model);
           }
         else if (!strcmp(key, "DriveVendor"))
            {
@@ -543,6 +534,7 @@ _e_fm_main_udisks_cb_vol_prop(void *data, const EDBus_Message *msg,
 
              if (!edbus_message_iter_arguments_get(var, "as", &inner_array))
                continue;
+
              while (edbus_message_iter_get_and_next(inner_array, 's', &path))
                {
                   eina_stringshare_replace(&v->mount_point, path);
@@ -815,6 +807,10 @@ _volume_task_cb(void *data __UNUSED__, const EDBus_Message *msg __UNUSED__,
    /**
     * if edbus_proxy_send has callback == NULL it will return a NULL
     * but we need a EDBus_Pending to be able to cancel it when timeout occurs
+    */
+   /* FIXME: this should not matter. If we don't have a callback, there's no
+    * reason to cancel it... cancelling has no effect other than saying edbus we
+    * are not interested in the return anymore. I.e.: don't bother to  cancel it
     */
 }
 
