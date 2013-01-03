@@ -8,9 +8,9 @@ static int         _notification_popup_place(Popup_Data *popup,
                                              int         num);
 static void        _notification_popup_refresh(Popup_Data *popup);
 static void        _notification_popup_del(unsigned int                 id,
-                                           E_Notification_Closed_Reason reason);
+                                           E_Notification_Notify_Closed_Reason reason);
 static void        _notification_popdown(Popup_Data                  *popup,
-                                         E_Notification_Closed_Reason reason);
+                                         E_Notification_Notify_Closed_Reason reason);
 
 #define POPUP_LIMIT 7
 static int popups_displayed = 0;
@@ -23,7 +23,7 @@ static int next_pos = 0;
 static Eina_Bool
 _notification_timer_cb(Popup_Data *popup)
 {
-   _notification_popup_del(popup->id, E_NOTIFICATION_CLOSED_REASON_EXPIRED);
+   _notification_popup_del(popup->id, E_NOTIFICATION_NOTIFY_CLOSED_REASON_EXPIRED);
    return EINA_FALSE;
 }
 
@@ -96,13 +96,13 @@ notification_popup_shutdown(void)
    Popup_Data *popup;
 
    EINA_LIST_FREE(notification_cfg->popups, popup)
-     _notification_popdown(popup, E_NOTIFICATION_CLOSED_REASON_REQUESTED);
+     _notification_popdown(popup, E_NOTIFICATION_NOTIFY_CLOSED_REASON_REQUESTED);
 }
 
 void
 notification_popup_close(unsigned int id)
 {
-   _notification_popup_del(id, E_NOTIFICATION_CLOSED_REASON_REQUESTED);
+   _notification_popup_del(id, E_NOTIFICATION_NOTIFY_CLOSED_REASON_REQUESTED);
 }
 
 static void
@@ -121,7 +121,7 @@ _notification_theme_cb_close(Popup_Data *popup,
                              const char  *emission __UNUSED__,
                              const char  *source __UNUSED__)
 {
-   _notification_popup_del(popup->id, E_NOTIFICATION_CLOSED_REASON_DISMISSED);
+   _notification_popup_del(popup->id, E_NOTIFICATION_NOTIFY_CLOSED_REASON_DISMISSED);
 }
 
 static void
@@ -378,7 +378,8 @@ _notification_popup_refresh(Popup_Data *popup)
      }
    else
      {
-        popup->app_icon = e_notification_raw_image_get(popup->e, popup->notif);
+        popup->app_icon = e_notification_notify_raw_image_get(popup->notif,
+                                                              popup->e);
         evas_object_image_filled_set(popup->app_icon, EINA_TRUE);
         evas_object_image_alpha_set(popup->app_icon, EINA_TRUE);
         evas_object_image_size_get(popup->app_icon, &w, &h);
@@ -447,7 +448,7 @@ _notification_popup_find(unsigned int id)
 
 static void
 _notification_popup_del(unsigned int                 id,
-                        E_Notification_Closed_Reason reason)
+                        E_Notification_Notify_Closed_Reason reason)
 {
    Popup_Data *popup;
    Eina_List *l, *l2;
@@ -469,7 +470,7 @@ _notification_popup_del(unsigned int                 id,
 
 static void
 _notification_popdown(Popup_Data                  *popup,
-                      E_Notification_Closed_Reason reason)
+                      E_Notification_Notify_Closed_Reason reason)
 {
    if (popup->timer) ecore_timer_del(popup->timer);
    e_popup_hide(popup->win);
@@ -477,7 +478,7 @@ _notification_popdown(Popup_Data                  *popup,
    evas_object_del(popup->app_icon);
    evas_object_del(popup->theme);
    e_object_del(E_OBJECT(popup->win));
-   e_notification_notification_closed(popup->id, reason);
+   e_notification_notify_close(popup->notif, reason);
    e_notification_notify_free(popup->notif);
    free(popup);
 }

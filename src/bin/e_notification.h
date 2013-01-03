@@ -77,4 +77,8 @@ EAPI void e_notification_notify_free(E_Notification_Notify *notify);
 EAPI void e_notification_notify_close(E_Notification_Notify *notify, E_Notification_Notify_Closed_Reason reason);
 EAPI Evas_Object *e_notification_notify_raw_image_get(E_Notification_Notify *notify, Evas *evas);
 
+//client
+typedef void (*E_Notification_Client_Send_Cb)(void *data, unsigned int id);
+EAPI Eina_Bool e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data);
+
 #endif

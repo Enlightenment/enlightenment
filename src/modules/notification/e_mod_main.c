@@ -213,13 +213,14 @@ e_modapi_init(E_Module *m)
      notification_cfg = _notification_cfg_new();
 
    /* set up the notification daemon */
-   if (!e_notification_start(_notification_cb_notify,
-                             _notification_cb_close,
-                             &server_info,  notification_cfg))
+   if (!e_notification_server_register(&server_info, _notification_cb_notify,
+                                       _notification_cb_close,
+                                       notification_cfg))
      {
-        e_util_dialog_show(_("Error During DBus Init!"),
-                           _("Error during DBus init! Please check if "
-                              "dbus is correctly installed and running."));
+        e_util_dialog_show(_("Error during notification server initialization"),
+                           _("Ensure there's no other module acting as a server"
+                             " and that D-Bus is correctly installed and "
+                             " running"));
         return NULL;
      }
 
@@ -252,7 +253,7 @@ e_modapi_init(E_Module *m)
    e_configure_option_category_tag_add(_("screen"), _("notification"));
    e_configure_option_category_tag_add(_("notification"), _("notification"));
    e_configure_option_category_icon_set(_("notification"), buf);
-   
+
    return m;
 }
 
@@ -270,7 +271,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_configure_registry_category_del("extensions");
 
    notification_popup_shutdown();
-   e_notification_stop();
+   e_notification_server_unregister();
 
 
    E_CONFIGURE_OPTION_LIST_CLEAR(cfg_opts);

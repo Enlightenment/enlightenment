@@ -273,3 +273,153 @@ error:
    evas_object_del(o);
    return NULL;
 }
+
+/* client API */
+
+static void
+client_notify_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+{
+   unsigned id = 0;
+   E_Notification_Client_Send_Cb cb = edbus_pending_data_del(pending, "cb");
+   EDBus_Connection *conn = edbus_pending_data_del(pending, "conn");
+   if (edbus_message_error_get(msg, NULL, NULL))
+     goto end;
+   if (!edbus_message_arguments_get(msg, "u", &id))
+     goto end;
+end:
+   cb(data, id);
+   edbus_connection_unref(conn);
+   edbus_shutdown();
+}
+
+static Eina_Bool
+notification_cliend_dbus_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data)
+{
+   EDBus_Connection *conn;
+   EDBus_Message *msg;
+   EDBus_Message_Iter *main_iter, *actions, *hints;
+   EDBus_Message_Iter *entry, *var;
+   EDBus_Pending *p;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(notify, EINA_FALSE);
+   edbus_init();
+   conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_FALSE);
+
+   msg = edbus_message_method_call_new(BUS, PATH, INTERFACE, "Notify");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
+
+   //build message
+   main_iter = edbus_message_iter_get(msg);
+   if (!edbus_message_iter_arguments_append(main_iter, "susssas",
+                                            notify->app_name,
+                                            notify->replaces_id,
+                                            notify->icon.icon,
+                                            notify->sumary, notify->body,
+                                            &actions))
+     goto error;
+   edbus_message_iter_container_close(main_iter, actions);
+   if (!edbus_message_iter_arguments_append(main_iter, "a{sv}", &hints))
+     goto error;
+
+   if (notify->icon.raw.data)
+     {
+        EDBus_Message_Iter *st, *data_iter;
+        int i;
+        edbus_message_iter_arguments_append(hints, "{sv}", &entry);
+        edbus_message_iter_arguments_append(entry, "s", "image-data");
+        var = edbus_message_iter_container_new(entry, 'v', "(iiibiiay)");
+        edbus_message_iter_arguments_append(var, "(iiibiiay)", &st);
+        edbus_message_iter_arguments_append(st, "iiibiiay",
+                                            notify->icon.raw.width,
+                                            notify->icon.raw.height,
+                                            notify->icon.raw.rowstride,
+                                            notify->icon.raw.has_alpha,
+                                            notify->icon.raw.bits_per_sample,
+                                            notify->icon.raw.channels,
+                                            &data_iter);
+        for (i = 0; i < notify->icon.raw.data_size; i++)
+          edbus_message_iter_basic_append(data_iter, 'y', notify->icon.raw.data[i]);
+        edbus_message_iter_container_close(st, data_iter);
+        edbus_message_iter_container_close(var, st);
+        edbus_message_iter_container_close(entry, var);
+        edbus_message_iter_container_close(hints, entry);
+     }
+   if (notify->icon.icon_path)
+     {
+        edbus_message_iter_arguments_append(hints, "{sv}", &entry);
+        edbus_message_iter_arguments_append(entry, "s", "image-path");
+        var = edbus_message_iter_container_new(entry, 'v', "s");
+        edbus_message_iter_arguments_append(var, "s", notify->icon.icon_path);
+        edbus_message_iter_container_close(entry, var);
+        edbus_message_iter_container_close(hints, entry);
+     }
+
+   edbus_message_iter_arguments_append(hints, "{sv}", &entry);
+   edbus_message_iter_arguments_append(entry, "s", "urgency");
+   var = edbus_message_iter_container_new(entry, 'v', "y");
+   edbus_message_iter_arguments_append(var, "y", notify->urgency);
+   edbus_message_iter_container_close(entry, var);
+   edbus_message_iter_container_close(hints, entry);
+
+   edbus_message_iter_container_close(main_iter, hints);
+
+   edbus_message_iter_arguments_append(main_iter, "i", notify->timeout);
+
+   p = edbus_connection_send(conn, msg, client_notify_cb, data, 5000);
+   EINA_SAFETY_ON_NULL_GOTO(p, error);
+   edbus_pending_data_set(p, "cb", cb);
+   edbus_pending_data_set(p, "conn", conn);
+   edbus_message_unref(msg);
+   return EINA_TRUE;
+error:
+   edbus_message_unref(msg);
+   return EINA_FALSE;
+}
+
+static const char *
+null_strings_replace(const char *text)
+{
+   if (!text)
+     return eina_stringshare_add("");
+   return text;
+}
+
+static void
+normalize_notify(E_Notification_Notify *notify)
+{
+   notify->app_name = null_strings_replace(notify->app_name);
+   notify->body = null_strings_replace(notify->body);
+   notify->sumary = null_strings_replace(notify->sumary);
+   notify->icon.icon = null_strings_replace(notify->icon.icon);
+   if (!notify->timeout)
+     notify->timeout = -1;
+}
+
+EAPI Eina_Bool
+e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data)
+{
+   unsigned id;
+   E_Notification_Notify *copy;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(notify, EINA_FALSE);
+   normalize_notify(notify);
+   if (!n_data)
+     return notification_cliend_dbus_send(notify, cb, data);
+
+   //local
+   copy = malloc(sizeof(E_Notification_Notify));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(copy, EINA_FALSE);
+   memcpy(copy, notify, sizeof(E_Notification_Notify));
+
+   copy->app_name = eina_stringshare_add(notify->app_name);
+   copy->body = eina_stringshare_add(notify->body);
+   copy->sumary = eina_stringshare_add(notify->sumary);
+   copy->icon.icon = eina_stringshare_add(notify->icon.icon);
+   if (notify->icon.icon_path)
+     copy->icon.icon_path = eina_stringshare_add(notify->icon.icon_path);
+
+   id = n_data->notify_cb(n_data->data, copy);
+   if (cb)
+     cb((void *) data, id);
+   return EINA_TRUE;
+}
