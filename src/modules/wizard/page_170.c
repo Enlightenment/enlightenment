@@ -38,7 +38,7 @@ wizard_page_show(E_Wizard_Page *pg)
        "security fixes when they happen. As a<br>"
        "bi-product of this, Enlightenment will<br>"
        "connect to enlightenment.org and transmit<br>"
-       "some information as a result much like any<br>"
+       "some information as a result, much like any<br>"
        "web browser might do. No personal information<br>"
        "such as username, password or any personal<br>"
        "files will be transmitted. If you do not like<br>"
