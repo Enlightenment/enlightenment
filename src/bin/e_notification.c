@@ -311,10 +311,11 @@ notification_cliend_dbus_send(E_Notification_Notify *notify, E_Notification_Clie
    //build message
    main_iter = edbus_message_iter_get(msg);
    if (!edbus_message_iter_arguments_append(main_iter, "susssas",
-                                            notify->app_name,
+                                            notify->app_name ?: "",
                                             notify->replaces_id,
-                                            notify->icon.icon,
-                                            notify->sumary, notify->body,
+                                            notify->icon.icon ?: "",
+                                            notify->sumary ?: "",
+                                            notify->body ?: "",
                                             &actions))
      goto error;
    edbus_message_iter_container_close(main_iter, actions);
@@ -376,21 +377,9 @@ error:
    return EINA_FALSE;
 }
 
-static const char *
-null_strings_replace(const char *text)
-{
-   if (!text)
-     return eina_stringshare_add("");
-   return text;
-}
-
 static void
 normalize_notify(E_Notification_Notify *notify)
 {
-   notify->app_name = null_strings_replace(notify->app_name);
-   notify->body = null_strings_replace(notify->body);
-   notify->sumary = null_strings_replace(notify->sumary);
-   notify->icon.icon = null_strings_replace(notify->icon.icon);
    if (!notify->timeout)
      notify->timeout = -1;
 }
