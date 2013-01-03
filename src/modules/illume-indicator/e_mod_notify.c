@@ -17,11 +17,15 @@ static Eina_List *_nwins = NULL;
 static int _notify_id = 0;
 
 static const E_Notification_Server_Info info = {
-   "illume-indicator", "Enlightenment", "0.17", "1.2", {"body", NULL}
+   .name = "illume-indicator",
+   .vendor = "Enlightenment",
+   .version = "0.17",
+   .spec_version = "1.2",
+   .capabilities = { "body", NULL }
 };
 
-int 
-e_mod_notify_init(void) 
+int
+e_mod_notify_init(void)
 {
    /* init notification subsystem */
    if (!e_notification_server_register(&info, _e_mod_notify_cb_add,
@@ -30,8 +34,8 @@ e_mod_notify_init(void)
    return 1;
 }
 
-int 
-e_mod_notify_shutdown(void) 
+int
+e_mod_notify_shutdown(void)
 {
    Ind_Notify_Win *nwin;
    Eina_List *l, *l2;
@@ -60,14 +64,14 @@ _e_mod_notify_cb_add(void *data EINA_UNUSED, E_Notification_Notify *n)
         _e_mod_notify_refresh(nwin);
      }
 
-   if (!nwin) 
+   if (!nwin)
      {
         nwin = _e_mod_notify_new(n, _notify_id);
         EINA_SAFETY_ON_NULL_RETURN_VAL(nwin, 0);
      }
 
    /* show it */
-   ecore_x_e_illume_quickpanel_state_send(nwin->zone->black_win, 
+   ecore_x_e_illume_quickpanel_state_send(nwin->zone->black_win,
                                           ECORE_X_ILLUME_QUICKPANEL_STATE_ON);
 
    if (nwin->timer) ecore_timer_del(nwin->timer);
@@ -82,7 +86,7 @@ _e_mod_notify_cb_add(void *data EINA_UNUSED, E_Notification_Notify *n)
    return _notify_id;
 }
 
-static void 
+static void
 _e_mod_notify_cb_del(void *data EINA_UNUSED, unsigned int id)
 {
    Ind_Notify_Win *nwin = _e_mod_notify_find(id);
@@ -92,21 +96,21 @@ _e_mod_notify_cb_del(void *data EINA_UNUSED, unsigned int id)
    e_object_del(E_OBJECT(nwin));
 }
 
-static 
+static
 Ind_Notify_Win *
-_e_mod_notify_find(unsigned int id) 
+_e_mod_notify_find(unsigned int id)
 {
    const Eina_List *l;
    Ind_Notify_Win *nwin;
 
-   EINA_LIST_FOREACH(_nwins, l, nwin) 
+   EINA_LIST_FOREACH(_nwins, l, nwin)
      if (nwin->id == id)
        return nwin;
    return NULL;
 }
 
-static void 
-_e_mod_notify_refresh(Ind_Notify_Win *nwin) 
+static void
+_e_mod_notify_refresh(Ind_Notify_Win *nwin)
 {
    const char *icon;
    Evas_Coord mw, mh;
@@ -114,7 +118,7 @@ _e_mod_notify_refresh(Ind_Notify_Win *nwin)
 
    if (!nwin) return;
 
-   if (nwin->o_icon) 
+   if (nwin->o_icon)
      {
         edje_object_part_unswallow(nwin->o_base, nwin->o_icon);
         evas_object_del(nwin->o_icon);
@@ -131,16 +135,16 @@ _e_mod_notify_refresh(Ind_Notify_Win *nwin)
    else if (nwin->notify->icon.icon[0])
      {
         icon = nwin->notify->icon.icon;
-        if (!strncmp(icon, "file://", 7)) 
+        if (!strncmp(icon, "file://", 7))
           {
              icon += 7;
              nwin->o_icon = e_util_icon_add(icon, nwin->win->evas);
           }
-        else 
+        else
            nwin->o_icon = e_util_icon_theme_icon_add(icon, size, nwin->win->evas);
      }
 
-   if (nwin->o_icon) 
+   if (nwin->o_icon)
      {
         evas_object_resize(nwin->o_icon, size, size);
         edje_extern_object_min_size_set(nwin->o_icon, size, size);
@@ -166,7 +170,7 @@ _e_mod_notify_new(E_Notification_Notify *n, unsigned id)
    Ecore_X_Window_State states[2];
    E_Zone *zone;
 
-   nwin = E_OBJECT_ALLOC(Ind_Notify_Win, IND_NOTIFY_WIN_TYPE, 
+   nwin = E_OBJECT_ALLOC(Ind_Notify_Win, IND_NOTIFY_WIN_TYPE,
                          _e_mod_notify_cb_free);
    if (!nwin) return NULL;
    _nwins = eina_list_append(_nwins, nwin);
@@ -193,15 +197,15 @@ _e_mod_notify_new(E_Notification_Notify *n, unsigned id)
    ecore_x_icccm_hints_set(nwin->win->evas_win, 0, 0, 0, 0, 0, 0, 0);
 
    nwin->o_base = edje_object_add(nwin->win->evas);
-   if (!e_theme_edje_object_set(nwin->o_base, 
-                                "base/theme/modules/illume-indicator", 
-                                "modules/illume-indicator/notify")) 
+   if (!e_theme_edje_object_set(nwin->o_base,
+                                "base/theme/modules/illume-indicator",
+                                "modules/illume-indicator/notify"))
      {
         char buff[PATH_MAX];
 
-        snprintf(buff, sizeof(buff), 
+        snprintf(buff, sizeof(buff),
                  "%s/e-module-illume-indicator.edj", _ind_mod_dir);
-        edje_object_file_set(nwin->o_base, buff, 
+        edje_object_file_set(nwin->o_base, buff,
                              "modules/illume-indicator/notify");
      }
    evas_object_move(nwin->o_base, 0, 0);
@@ -216,22 +220,22 @@ _e_mod_notify_new(E_Notification_Notify *n, unsigned id)
    return nwin;
 }
 
-static Eina_Bool 
-_e_mod_notify_cb_timeout(void *data) 
+static Eina_Bool
+_e_mod_notify_cb_timeout(void *data)
 {
    Ind_Notify_Win *nwin;
 
    if (!(nwin = data)) return EINA_FALSE;
 
    /* hide it */
-   ecore_x_e_illume_quickpanel_state_send(nwin->zone->black_win, 
+   ecore_x_e_illume_quickpanel_state_send(nwin->zone->black_win,
                                           ECORE_X_ILLUME_QUICKPANEL_STATE_OFF);
    e_object_del(E_OBJECT(nwin));
    return EINA_FALSE;
 }
 
-static void 
-_e_mod_notify_cb_free(Ind_Notify_Win *nwin) 
+static void
+_e_mod_notify_cb_free(Ind_Notify_Win *nwin)
 {
    if (nwin->timer) ecore_timer_del(nwin->timer);
    nwin->timer = NULL;
@@ -248,8 +252,8 @@ _e_mod_notify_cb_free(Ind_Notify_Win *nwin)
    E_FREE(nwin);
 }
 
-static void 
-_e_mod_notify_cb_resize(E_Win *win) 
+static void
+_e_mod_notify_cb_resize(E_Win *win)
 {
    Ind_Notify_Win *nwin;
 
