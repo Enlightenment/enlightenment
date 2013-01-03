@@ -44,3 +44,4 @@ Fixes:
     * e_win now traps elm_win_activate to ensure that internal elm
       windows don't fail to raise as expected if user has configured
       E to ignore activate hints
+    * Fix restarting E17 after manually monitoring it.
