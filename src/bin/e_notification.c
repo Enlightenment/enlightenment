@@ -59,7 +59,6 @@ notify_cb(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message 
 {
    E_Notification_Notify *n;
    EDBus_Message_Iter *actions_iter, *hints_iter;
-   unsigned id;
    EDBus_Message *reply;
 
    if (!n_data->notify_cb)
@@ -83,9 +82,9 @@ notify_cb(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message 
    n->sumary = eina_stringshare_add(n->sumary);
    n->body = eina_stringshare_add(n->body);
 
-   id = n_data->notify_cb(n_data->data, n);
+   n->id = n_data->notify_cb(n_data->data, n);
    reply = edbus_message_method_return_new(msg);
-   edbus_message_arguments_append(reply, "u", id);
+   edbus_message_arguments_append(reply, "u", n->id);
    return reply;
 }
 
@@ -131,25 +130,28 @@ server_info_cb(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Mes
 static const EDBus_Method methods[] = {
    { "Notify",
      EDBUS_ARGS({"s", "app_name"}, {"u", "replaces_id"}, {"s", "app_icon"}, {"s", "summary"}, {"s", "body"}, {"as", "actions"}, {"a{sv}", "hints"}, {"i", "expire_timeout"}),
-     EDBUS_ARGS({"u", "id"}), notify_cb, 0
-   },
-   {
-    "CloseNotification", EDBUS_ARGS({"u", "id"}), NULL, close_notification_cb, 0
-   },
-   {
-    "GetCapabilities", NULL, EDBUS_ARGS({"as", "capabilities"}), capabilities_cb, 0
-   },
-   {
-    "GetServerInformation", NULL,
-    EDBUS_ARGS({"s", "name"}, {"s", "vendor"}, {"s", "version"}, {"s", "spec_version"}), server_info_cb, 0
-   },
-   { NULL, NULL, NULL, NULL, 0 }
+     EDBUS_ARGS({"u", "id"}), notify_cb },
+   { "CloseNotification", EDBUS_ARGS({"u", "id"}), NULL, close_notification_cb },
+   { "GetCapabilities", NULL, EDBUS_ARGS({"as", "capabilities"}),
+      capabilities_cb },
+   { "GetServerInformation", NULL,
+      EDBUS_ARGS({"s", "name"}, {"s", "vendor"}, {"s", "version"}, {"s", "spec_version"}),
+      server_info_cb },
+   { }
+};
+
+enum
+{
+   SIGNAL_NOTIFICATION_CLOSED = 0,
+   SIGNAL_ACTION_INVOKED,
 };
 
 static const EDBus_Signal signals[] = {
-   {"NotificationClosed", EDBUS_ARGS({"u", "id"}, {"u", "reason"}), 0},
-   {"ActionInvoked", EDBUS_ARGS({"u", "id"}, {"s", "action_key"}), 0},
-   { NULL, NULL, 0}
+   [SIGNAL_NOTIFICATION_CLOSED] =
+     { "NotificationClosed", EDBUS_ARGS({"u", "id"}, {"u", "reason"}) },
+   [SIGNAL_ACTION_INVOKED] =
+     { "ActionInvoked", EDBUS_ARGS({"u", "id"}, {"s", "action_key"}) },
+   { }
 };
 
 #define PATH      "/org/freedesktop/Notifications"
@@ -161,7 +163,7 @@ static const EDBus_Service_Interface_Desc desc = {
 };
 
 EAPI Eina_Bool
-e_notification_start(E_Notification_Notify_Cb notification_cb, E_Notification_Close_Cb close_cb, const E_Notification_Server_Info *server_info, const void *data)
+e_notification_server_register(const E_Notification_Server_Info *server_info, E_Notification_Notify_Cb n_cb, E_Notification_Close_Cb close_cb, const void *data)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(server_info, EINA_FALSE);
    if (n_data)
@@ -172,17 +174,18 @@ e_notification_start(E_Notification_Notify_Cb notification_cb, E_Notification_Cl
    edbus_init();
    n_data->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
    n_data->iface = edbus_service_interface_register(n_data->conn, PATH, &desc);
-   n_data->notify_cb = notification_cb;
+   n_data->notify_cb = n_cb;
    n_data->close_cb = close_cb;
    n_data->data = (void *) data;
    n_data->server_info = server_info;
    edbus_name_request(n_data->conn, BUS,
                       EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING, NULL, NULL);
+
    return EINA_TRUE;
 }
 
 EAPI void
-e_notification_stop(void)
+e_notification_server_unregister(void)
 {
    EINA_SAFETY_ON_NULL_RETURN(n_data);
    edbus_service_interface_unregister(n_data->iface);
@@ -208,15 +211,17 @@ e_notification_notify_free(E_Notification_Notify *notify)
 }
 
 EAPI void
-e_notification_notification_closed(unsigned id, E_Notification_Closed_Reason reason)
+e_notification_notify_close(E_Notification_Notify *notify, E_Notification_Notify_Closed_Reason reason)
 {
    EINA_SAFETY_ON_NULL_RETURN(n_data);
-   EINA_SAFETY_ON_FALSE_RETURN(reason <= E_NOTIFICATION_CLOSED_REASON_UNDEFINED);
-   edbus_service_signal_emit(n_data->iface, 0, id, reason);
+   EINA_SAFETY_ON_NULL_RETURN(notify);
+   EINA_SAFETY_ON_FALSE_RETURN(reason <= E_NOTIFICATION_NOTIFY_CLOSED_REASON_UNDEFINED);
+   edbus_service_signal_emit(n_data->iface, SIGNAL_NOTIFICATION_CLOSED,
+                             notify->id, reason);
 }
 
 EAPI Evas_Object *
-e_notification_raw_image_get(Evas *evas, E_Notification_Notify *notify)
+e_notification_notify_raw_image_get(E_Notification_Notify *notify, Evas *evas)
 {
    Evas_Object *o;
    unsigned char *imgdata;

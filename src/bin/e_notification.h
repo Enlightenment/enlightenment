@@ -11,16 +11,17 @@ typedef enum _E_Notification_Notify_Urgency
   E_NOTIFICATION_NOTIFY_URGENCY_CRITICAL
 } E_Notification_Notify_Urgency;
 
-typedef enum _E_Notification_Closed_Reason
+typedef enum _E_Notification_Notify_Closed_Reason
 {
-  E_NOTIFICATION_CLOSED_REASON_EXPIRED, /** The notification expired. */
-  E_NOTIFICATION_CLOSED_REASON_DISMISSED, /** The notification was dismissed by the user. */
-  E_NOTIFICATION_CLOSED_REASON_REQUESTED, /** The notification was closed by a call to CloseNotification method. */
-  E_NOTIFICATION_CLOSED_REASON_UNDEFINED /** Undefined/reserved reasons. */
-} E_Notification_Closed_Reason;
+  E_NOTIFICATION_NOTIFY_CLOSED_REASON_EXPIRED, /** The notification expired. */
+  E_NOTIFICATION_NOTIFY_CLOSED_REASON_DISMISSED, /** The notification was dismissed by the user. */
+  E_NOTIFICATION_NOTIFY_CLOSED_REASON_REQUESTED, /** The notification was closed by a call to CloseNotification method. */
+  E_NOTIFICATION_NOTIFY_CLOSED_REASON_UNDEFINED /** Undefined/reserved reasons. */
+} E_Notification_Notify_Closed_Reason;
 
 typedef struct _E_Notification_Notify
 {
+   unsigned int id;
    const char *app_name;
    unsigned replaces_id;
    const char *sumary;
@@ -57,10 +58,23 @@ typedef struct _E_Notification_Server_Info
    const char *capabilities[];
 } E_Notification_Server_Info;
 
+/**
+ * Register a notification server
+ *
+ * It's only possible to have one server registered at a time. If this function
+ * is called twice it will return EINA_FALSE on the second time.
+ *
+ * @return EINA_TRUE if server was registered, EINA_FALSE otherwise.
+ */
+EAPI Eina_Bool e_notification_server_register(const E_Notification_Server_Info *server_info, E_Notification_Notify_Cb notify_cb, E_Notification_Close_Cb close_cb, const void *data);
+
+/**
+ * Unregister the sole notification server
+ */
+EAPI void e_notification_server_unregister(void);
+
 EAPI void e_notification_notify_free(E_Notification_Notify *notify);
-EAPI void e_notification_stop(void);
-EAPI Eina_Bool e_notification_start(E_Notification_Notify_Cb notification_cb, E_Notification_Close_Cb close_cb, const E_Notification_Server_Info *server_info, const void *data);
-EAPI void e_notification_notification_closed(unsigned id, E_Notification_Closed_Reason reason);
-EAPI Evas_Object *e_notification_raw_image_get(Evas *evas, E_Notification_Notify *notify);
+EAPI void e_notification_notify_close(E_Notification_Notify *notify, E_Notification_Notify_Closed_Reason reason);
+EAPI Evas_Object *e_notification_notify_raw_image_get(E_Notification_Notify *notify, Evas *evas);
 
 #endif
