@@ -6,6 +6,8 @@
 #define TILING_RESIZE_STEP 5
 #define TILING_WRAP_SPEED 0.1
 
+static Eina_Inlist *cfg_opts = NULL;
+
 typedef enum {
     TILING_RESIZE,
     TILING_MOVE,
@@ -3902,6 +3904,32 @@ e_modapi_init(E_Module *m)
     _G.currently_switching_desktop = 0;
     _G.action_cb = NULL;
 
+    {
+       E_Configure_Option *co;
+
+       co = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_CUSTOM, _("Tiling settings"), "tiling", EINA_TRUE, NULL, NULL);
+       e_configure_option_tags_set(co, (const char*[]){_("tiling"), _("border"), NULL}, 0);
+       co->info = eina_stringshare_add("windows/tiling");
+       E_CONFIGURE_OPTION_ICON(co, _G.edj_path);
+       co->funcs[0].one = co->funcs[0].none = e_tiling_update_conf;
+       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+
+       E_CONFIGURE_OPTION_ADD(co, BOOL, tile_dialogs, tiling_g.config, "Tile dialog windows", _("dialog"), _("tiling"), _("border"), _("placement"));
+       co->funcs[0].one = co->funcs[0].none = e_tiling_update_conf;
+       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+       E_CONFIGURE_OPTION_ADD(co, BOOL, show_titles, tiling_g.config, "Show window titles when tiling", _("tiling"), _("border"));
+       co->funcs[0].one = co->funcs[0].none = e_tiling_update_conf;
+       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+       E_CONFIGURE_OPTION_ADD(co, STR, keyhints, tiling_g.config, "Tiling key hints", _("key"), _("tiling"));
+       co->funcs[0].one = co->funcs[0].none = e_tiling_update_conf;
+       E_CONFIGURE_OPTION_ICON(co, _G.edj_path);
+       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+
+       e_configure_option_category_tag_add(_("windows"), _("tiling"));
+       e_configure_option_category_tag_add(_("tiling"), _("tiling"));
+       e_configure_option_category_icon_set(_("tiling"), _G.edj_path);
+    }
+
     return m;
 }
 
@@ -4021,6 +4049,19 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
     e_configure_registry_category_del("windows");
 
     end_special_input();
+
+   while (cfg_opts)
+     {
+        E_Configure_Option *co;
+
+        co = (E_Configure_Option*)cfg_opts;
+        cfg_opts = eina_inlist_remove(cfg_opts, EINA_INLIST_GET(co));
+        e_configure_option_del(co);
+     }
+
+   e_configure_option_category_icon_set(_("tiling"), _G.edj_path);
+   e_configure_option_category_tag_del(_("border"), _("tiling"));
+   e_configure_option_category_tag_del(_("tiling"), _("tiling"));
 
     free(tiling_g.config->keyhints);
     E_FREE(tiling_g.config);

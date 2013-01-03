@@ -972,10 +972,15 @@ _e_conf2_content_get_cats(void *data, Evas_Object *obj, const char *part)
    if (!strcmp(part, "elm.swallow.end")) return NULL;
    icon = e_configure_option_category_icon_get(data);
    if (!icon) return NULL;
-   snprintf(buf, sizeof(buf), "e/icons/%s", icon);
+   if (eina_str_has_extension(icon, ".edj"))
+     o = e_util_icon_add(icon, evas_object_evas_get(obj));
+   else
+     {
+        snprintf(buf, sizeof(buf), "e/icons/%s", icon);
 
-   o = e_icon_add(evas_object_evas_get(obj));
-   e_util_icon_theme_set(o, icon);
+        o = e_icon_add(evas_object_evas_get(obj));
+        e_util_icon_theme_set(o, icon);
+     }
    return o;
 }
 
