@@ -38,7 +38,7 @@ typedef struct _E_Event_Config_Icon_Theme   E_Event_Config_Icon_Theme;
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 0
+#define E_CONFIG_FILE_GENERATION 1
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 struct _E_Config
@@ -144,6 +144,7 @@ struct _E_Config
    const char *transition_change; // GUI
    Eina_List  *remembers; // GUI
    int         remember_internal_windows; // GUI
+   Eina_Bool  remember_internal_fm_windows; // GUI
    int         move_info_follows; // GUI
    int         resize_info_follows; // GUI
    int         move_info_visible; // GUI
@@ -378,7 +379,7 @@ struct _E_Config
       const char   *xft_rgba;
       const char   *net_theme_name;  // GUI
       const char   *net_theme_name_detected; // not saved
-      const char   *net_icon_theme_name;  // GUI
+      const char   *net_icon_theme_name;
       const char   *gtk_font_name;
    } xsettings;
 

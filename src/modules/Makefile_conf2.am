@@ -1,0 +1,74 @@
+conf2dir = $(MDIR)/conf2
+conf2_DATA = conf2/e-module-conf2.edj \
+	    conf2/module.desktop
+
+EXTRA_DIST += $(conf2_DATA) $(conf2dir)/e-module-conf2.edc
+EXTRA_DIST += \
+images/volume_knob_ledsoff.png \
+images/volume_knob_move.png \
+images/volume_knob.png \
+images/volume_led_01.png \
+images/volume_led_02.png \
+images/volume_led_03.png \
+images/volume_led_04.png \
+images/volume_led_05.png \
+images/volume_led_06.png \
+images/volume_led_07.png \
+images/volume_led_08.png \
+images/volume_led_09.png \
+images/volume_led_10.png \
+images/volume_led_11.png \
+images/volume_led_12.png \
+images/volume_led_13.png \
+images/volume_led_14.png \
+images/volume_led_15.png \
+images/volume_led_16.png \
+images/volume_led_17.png \
+images/volume_led_18.png \
+images/volume_led_19.png \
+images/volume_led_20.png \
+images/volume_led_21.png \
+images/volume_led_22.png \
+images/volume_led_23.png \
+images/volume_led_24.png \
+images/volume_led_25.png \
+images/volume_led_26.png \
+images/volume_led_27.png \
+images/volume_led_28.png \
+images/volume_led_29.png \
+images/volume_led_30.png \
+images/volume_led_31.png \
+images/volume_led_32.png \
+images/volume_led_33.png \
+images/volume_led_34.png \
+images/volume_led_35.png \
+images/volume_led_36.png \
+images/volume_led_37.png \
+images/volume_led_38.png \
+images/volume_led_39.png \
+images/volume_led_40.png \
+images/volume_led_41.png \
+images/volume_led_42.png \
+images/volume_led_43.png \
+images/volume_led_44.png \
+images/volume_led_45.png
+
+conf2pkgdir = $(MDIR)/conf2/$(MODULE_ARCH)
+conf2pkg_LTLIBRARIES = conf2/module.la
+
+conf2_module_la_SOURCES = conf2/e_mod_main.c \
+			 conf2/e_mod_main.h \
+			 conf2/e_conf2.c
+
+conf2_module_la_CFLAGS = $(AM_CFLAGS) @ELM_CFLAGS@
+conf2_module_la_LIBADD = @ELM_LIBS@
+
+CONF2_EDJE_FLAGS = $(EDJE_FLAGS) -id $(srcdir)/conf2/images -id $(top_srcdir)/data/themes/img
+
+conf2/%.edj: conf2/%.edc Makefile
+	$(EDJE_CC) $(CONF2_EDJE_FLAGS) $< $@
+
+.PHONY: conf2 install-conf2
+conf2: $(conf2pkg_LTLIBRARIES) $(conf2_DATA)
+install-conf2: install-conf2DATA install-conf2pkgLTLIBRARIES
+

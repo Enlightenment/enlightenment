@@ -118,6 +118,7 @@ src/modules/battery/module.desktop
 src/modules/clock/module.desktop
 src/modules/comp/module.desktop
 src/modules/conf/module.desktop
+src/modules/conf2/e-module-conf2.edj
 src/modules/conf_applications/module.desktop
 src/modules/conf_dialogs/module.desktop
 src/modules/conf_display/module.desktop

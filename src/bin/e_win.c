@@ -229,6 +229,16 @@ e_win_shutdown(void)
    return 1;
 }
 
+EAPI Eina_Bool
+e_win_elm_available(void)
+{
+#ifdef HAVE_ELEMENTARY
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
+}
+
 EAPI E_Win *
 e_win_new(E_Container *con)
 {

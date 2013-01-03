@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Link
+Name=Configuration
+Icon=e-module-conf2
+Comment=Improved Enlightenment configuration panel.
+X-Enlightenment-ModuleType=core

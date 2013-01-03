@@ -744,6 +744,7 @@ e_config_init(void)
    E_CONFIG_VAL(D, T, transition_change, STR); /**/
    E_CONFIG_LIST(D, T, remembers, _e_config_remember_edd);
    E_CONFIG_VAL(D, T, remember_internal_windows, INT);
+   E_CONFIG_VAL(D, T, remember_internal_fm_windows, UCHAR);
    E_CONFIG_VAL(D, T, move_info_follows, INT); /**/
    E_CONFIG_VAL(D, T, resize_info_follows, INT); /**/
    E_CONFIG_VAL(D, T, move_info_visible, INT); /**/
@@ -1080,6 +1081,8 @@ e_config_load(void)
              e_sys_action_do(E_SYS_RESTART, NULL);
           }
      }
+     if (!e_config->remember_internal_fm_windows)
+       e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
 
      e_config->config_version = E_CONFIG_FILE_VERSION;
 
@@ -1181,6 +1184,7 @@ e_config_load(void)
      E_CONFIG_LIMIT(e_config->fullscreen_flip, 0, 1);
      E_CONFIG_LIMIT(e_config->icon_theme_overrides, 0, 1);
      E_CONFIG_LIMIT(e_config->remember_internal_windows, 0, 3);
+     E_CONFIG_LIMIT(e_config->remember_internal_fm_windows, 0, 1);
      E_CONFIG_LIMIT(e_config->desk_auto_switch, 0, 1);
 
      E_CONFIG_LIMIT(e_config->screen_limits, 0, 2);

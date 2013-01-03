@@ -46,6 +46,7 @@ struct _E_Win
 
 EINTERN int    e_win_init               (void);
 EINTERN int    e_win_shutdown           (void);
+EAPI Eina_Bool e_win_elm_available(void);
 EAPI E_Win *e_win_new                (E_Container *con);
 EAPI void   e_win_show               (E_Win *win);
 EAPI void   e_win_hide               (E_Win *win);

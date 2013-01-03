@@ -2,9 +2,14 @@ Changes since 0.17.0:
 ---------------------
 
 Additions:
-    * Added action to reset filemanager
-    * Added function to hide all active menus
-    * Added enum for deskflip animation mode
+    Modules:
+        * conf2
+    API:
+        * Added action to reset filemanager
+        * Added function to hide all active menus
+        * Added enum for deskflip animation mode
+        * Added e_win_elm_available()
+        * Added e_configure_option API
 
 Deprecations:
     *
