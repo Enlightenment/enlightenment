@@ -112,7 +112,6 @@ void *alloca (size_t);
 # include <Efreet.h>
 # include <Efreet_Mime.h>
 # include <Edje.h>
-# include <E_DBus.h>
 # include <EDBus.h>
 # include <Eio.h>
 

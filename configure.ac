@@ -523,8 +523,6 @@ PKG_CHECK_MODULES(E, [
   efreet-mime >= ${efl_version}
   efreet-trash >= ${efl_version}
   eina >= ${efl_version}
-  dbus-1
-  edbus >= ${efl_version}
   edbus2 >= ${efl_version}
   eio >= ${efl_version}
   $hal_mount
@@ -546,8 +544,6 @@ efreet >= ${efl_version} \
 efreet-mime >= ${efl_version} \
 efreet-trash >= ${efl_version} \
 eina >= ${efl_version} \
-dbus-1 \
-edbus >= ${efl_version} \
 edbus2 \
 eio >= ${efl_version} \
 $hal_mount \
@@ -711,7 +707,7 @@ AC_ARG_ENABLE([enotify],
   AC_CACHE_VAL([e_cv_want_enotify], [e_cv_want_enotify=yes])
 )
 if test "x$e_cv_want_enotify" != "xno" ; then
-  AC_E_CHECK_PKG(ENOTIFY, [ edbus >= $efl_version enotify >= $efl_version ], 
+  AC_E_CHECK_PKG(ENOTIFY, [ edbus2 >= $efl_version ],
   [
     AC_DEFINE_UNQUOTED([HAVE_ENOTIFY], [1], [enable enotify])
   ], 
