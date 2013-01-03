@@ -165,6 +165,8 @@ _cfg_widgets_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfda
         if (i == player_selected)
           e_widget_radio_toggle_set(ob, EINA_TRUE);
      }
+   ob = e_widget_label_add(evas, "* Your player must be configured to export the DBus interface MPRIS2.");
+   e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(o, of, 1, 1, 0.5);
 
    return o;
