@@ -2730,7 +2730,7 @@ evry_view_toggle(Evry_State *s, const char *trigger)
 {
    Evry_View *view, *v = NULL;
    Eina_List *l, *ll;
-   Eina_Bool triggered = FALSE;
+   Eina_Bool triggered = EINA_FALSE;
    Evry_Window *win = s->selector->win;
 
    if (trigger)
