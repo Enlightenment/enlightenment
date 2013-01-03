@@ -111,30 +111,6 @@ item_prop_get(void *data, const void *key, EDBus_Message_Iter *var)
      }
 }
 
-//debug
-static void
-render_menu_itens(void *data, E_DBusMenu_Item *new_root_item)
-{
-   Notifier_Item *item = data;
-   E_DBusMenu_Item *child;
-   //TODO create evas_object of menu
-
-   printf("icon = %s\n", item->id);
-   EINA_SAFETY_ON_FALSE_RETURN(new_root_item->is_submenu);
-
-   EINA_INLIST_FOREACH(new_root_item->sub_items, child)
-     {
-        if (child->type == E_DBUSMENU_ITEM_TYPE_SEPARATOR)
-          printf("\tseparator\n");
-        else
-          {
-             printf("\tLabel= %s | Icon name=%s | Toggle type=%d | Toggle state=%d | Visible = %d | Enabled = %d\n",
-                    child->label, child->icon_name, child->toggle_type,
-                    child->toggle_state, child->visible, child->enabled);
-          }
-     }
-}
-
 static void
 props_changed(void *data, const EDBus_Message *msg)
 {
@@ -153,8 +129,11 @@ props_changed(void *data, const EDBus_Message *msg)
    if (menu != item->menu_path)
      {
         EDBus_Connection *conn = edbus_object_connection_get(edbus_proxy_object_get(item->proxy));
+        item->dbus_item = NULL;
         e_dbusmenu_unload(item->menu_data);
-        item->menu_data = e_dbusmenu_load(conn, item->bus_id, item->menu_path, item);
+        item->menu_data = e_dbusmenu_load(conn, item->bus_id, item->menu_path,
+                                          item);
+        e_dbusmenu_update_cb_set(item->menu_data, systray_notifier_update_menu);
      }
 }
 
@@ -185,7 +164,7 @@ props_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EI
 
    conn = edbus_object_connection_get(edbus_proxy_object_get(item->proxy));
    item->menu_data = e_dbusmenu_load(conn, item->bus_id, item->menu_path, item);
-   e_dbusmenu_update_cb_set(item->menu_data, render_menu_itens);
+   e_dbusmenu_update_cb_set(item->menu_data, systray_notifier_update_menu);
 
    systray_notifier_item_update(item);
 }

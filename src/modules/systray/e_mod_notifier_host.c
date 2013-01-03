@@ -23,10 +23,7 @@ systray_notifier_item_free(Notifier_Item *item)
    EDBus_Signal_Handler *sig;
    evas_object_del(item->icon_object);
    if (item->menu_path)
-     {
-        e_dbusmenu_unload(item->menu_data);
-        //TODO free evas_object of menu
-     }
+     e_dbusmenu_unload(item->menu_data);
    eina_stringshare_del(item->bus_id);
    eina_stringshare_del(item->path);
    if (item->attention_icon_name)
@@ -67,17 +64,105 @@ image_load(const char *name, const char *path, Evas_Object *image)
      e_util_icon_theme_set(image, "dialog-error");
 }
 
+static void
+_sub_item_clicked_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+{
+   E_DBusMenu_Item *item = data;
+   e_dbusmenu_event_send(item, E_DBUSMENU_ITEM_EVENT_CLICKED);
+}
+
+static void
+_menu_post_deactivate(void *data, E_Menu *m)
+{
+   Eina_List *iter;
+   E_Menu_Item *mi;
+   E_Gadcon *gadcon = data;
+
+   if (gadcon)
+     e_gadcon_locked_set(gadcon, 0);
+   EINA_LIST_FOREACH(m->items, iter, mi)
+     {
+        if (mi->submenu)
+          e_menu_deactivate(mi->submenu);
+     }
+   e_object_del(E_OBJECT(m));
+}
+
+static E_Menu *
+_item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
+{
+   E_DBusMenu_Item *child;
+   E_Menu *m;
+   E_Menu_Item *submi;
+
+   m = e_menu_new();
+   e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, NULL);
+   if (mi)
+     e_menu_item_submenu_set(mi, m);
+
+   EINA_INLIST_FOREACH(item->sub_items, child)
+     {
+        if (!child->visible) continue;
+        submi = e_menu_item_new(m);
+        if (child->type == E_DBUSMENU_ITEM_TYPE_SEPARATOR)
+          e_menu_item_separator_set(submi, 1);
+        else
+          {
+             e_menu_item_label_set(submi, child->label);
+             e_menu_item_callback_set(submi, _sub_item_clicked_cb, child);
+             if (!child->enabled) e_menu_item_disabled_set(submi, 1);
+             if (child->toggle_type == E_DBUSMENU_ITEM_TOGGLE_TYPE_CHECKMARK)
+               e_menu_item_check_set(submi, 1);
+             else if (child->toggle_type == E_DBUSMENU_ITEM_TOGGLE_TYPE_RADIO)
+               e_menu_item_radio_set(submi, 1);
+             if (child->toggle_type)
+               e_menu_item_toggle_set(submi, child->toggle_state);
+             if (eina_inlist_count(child->sub_items))
+               _item_submenu_new(child, submi);
+             e_util_menu_item_theme_icon_set(submi, child->icon_name);
+          }
+     }
+   return m;
+}
+
+static void
+_item_menu_new(Notifier_Item *item)
+{
+   E_DBusMenu_Item *root_item;
+   E_Menu *m;
+   E_Zone *zone;
+   int x, y;
+   E_Gadcon *gadcon = item->host_inst->gadcon;
+
+   if (!item->dbus_item) return;
+   root_item = item->dbus_item;
+   EINA_SAFETY_ON_FALSE_RETURN(root_item->is_submenu);
+
+   m = _item_submenu_new(root_item, NULL);
+   e_gadcon_locked_set(gadcon, 1);
+   e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, gadcon);
+
+   zone = e_util_zone_current_get(e_manager_current_get());
+   ecore_x_pointer_xy_get(zone->container->win, &x, &y);
+   e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN,
+                         ecore_x_current_time_get());
+}
+
 void
-_clicked_item_cb(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_clicked_item_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Notifier_Item *item = data;
    Evas_Event_Mouse_Down *ev = event;
 
-   if (ev->button == 1)
-     {
-        DBG("left %s", item->id);
-        return;
-     }
+   if (ev->button != 1) return;
+   _item_menu_new(item);
+}
+
+void
+systray_notifier_update_menu(void *data, E_DBusMenu_Item *new_root_item)
+{
+   Notifier_Item *item = data;
+   item->dbus_item = new_root_item;
 }
 
 static void

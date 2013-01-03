@@ -33,6 +33,7 @@ typedef struct _Notifier_Item
    EDBus_Proxy *proxy;
    Category category;
    Status status;
+   E_DBusMenu_Item *dbus_item;
    const char *id;
    const char *title;
    const char *icon_name;
@@ -47,6 +48,7 @@ typedef struct _Notifier_Item
 } Notifier_Item;
 
 
+void systray_notifier_update_menu(void *data, E_DBusMenu_Item *new_root_item);
 void systray_notifier_item_update(Notifier_Item *item);
 void systray_notifier_item_free(Notifier_Item *item);
 
