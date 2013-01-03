@@ -2,7 +2,6 @@
 #define E_MOD_MAIN_H
 
 #include "e.h"
-#include <E_Notification_Daemon.h>
 
 /* Increment for Major Changes */
 #define MOD_CONFIG_FILE_EPOCH      1
@@ -44,15 +43,15 @@ struct _Config
   
   Ecore_Event_Handler  *handler;
   Eina_List  *popups;
-  int         next_id;
+  unsigned int         next_id;
 
   Ecore_Timer *initial_mode_timer;
-  E_Notification_Daemon *daemon;
 };
 
 struct _Popup_Data
 {
-  E_Notification *notif;
+  unsigned id;
+  E_Notification_Notify *notif;
   E_Popup *win;
   Evas *e;
   Evas_Object *theme;
@@ -63,7 +62,7 @@ struct _Popup_Data
 };
 
 
-int  notification_popup_notify(E_Notification *n, unsigned int replaces_id, const char *appname);
+int notification_popup_notify(E_Notification_Notify *n, unsigned int id);
 void notification_popup_shutdown(void);
 void notification_popup_close(unsigned int id);
 

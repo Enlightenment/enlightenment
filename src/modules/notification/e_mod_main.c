@@ -1,11 +1,5 @@
 #include "e_mod_main.h"
 
-/* Callback function protos */
-static int  _notification_cb_notify(E_Notification_Daemon *daemon,
-                                    E_Notification        *n);
-static void _notification_cb_close_notification(E_Notification_Daemon *daemon,
-                                                unsigned int           id);
-
 /* Config function protos */
 static Config *_notification_cfg_new(void);
 static void    _notification_cfg_free(Config *cfg);
@@ -19,43 +13,39 @@ static E_Config_DD *conf_edd = NULL;
 static Eina_Inlist *cfg_opts = NULL;
 
 static unsigned int
-_notification_notify(E_Notification *n)
+_notification_notify(E_Notification_Notify *n)
 {
-   const char *appname;
-   unsigned int replaces_id, new_id;
+   unsigned int new_id;
    int popuped;
 
    if (e_desklock_state_get()) return 0;
-   appname = e_notification_app_name_get(n);
-   replaces_id = e_notification_replaces_id_get(n);
-   if (replaces_id) new_id = replaces_id;
-   else new_id = notification_cfg->next_id++;
 
-   e_notification_id_set(n, new_id);
-
-   popuped = notification_popup_notify(n, replaces_id, appname);
+   notification_cfg->next_id++;
+   new_id = notification_cfg->next_id;
+   popuped = notification_popup_notify(n, new_id);
    if (!popuped)
      {
-        e_notification_hint_urgency_set(n, 4);
-        notification_popup_notify(n, replaces_id, appname);
+        n->urgency = 4;
+        notification_popup_notify(n, new_id);
      }
 
    return new_id;
 }
 
+//TODO use this call
 static void
-_notification_show_common(const char *summary,
-                          const char *body,
-                          int         replaces_id)
+_notification_show_common(const char *summary EINA_UNUSED,
+                          const char *body EINA_UNUSED,
+                          int         replaces_id EINA_UNUSED)
 {
-   E_Notification *n = e_notification_full_new
+   /*E_Notification *n = e_notification_full_new
        ("enlightenment", replaces_id, "enlightenment", summary, body, -1);
 
    if (!n)
      return;
 
    _notification_notify(n);
-   e_notification_unref(n);
+   e_notification_unref(n);*/
 }
 
 static void
@@ -162,10 +152,26 @@ _notification_corner_info_cb(E_Configure_Option *co)
 /* Module Api Functions */
 EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Notification"};
 
+static const E_Notification_Server_Info server_info = {
+   "e17", "enlightenment.org", "0.17", "1.2", {"body", "body-markup", NULL}
+};
+
+/* Callbacks */
+static unsigned int
+_notification_cb_notify(void *data EINA_UNUSED, E_Notification_Notify *n)
+{
+   return _notification_notify(n);
+}
+
+static void
+_notification_cb_close(void *data EINA_UNUSED, unsigned int id)
+{
+   notification_popup_close(id);
+}
+
 EAPI void *
 e_modapi_init(E_Module *m)
 {
-   E_Notification_Daemon *d;
    char buf[PATH_MAX];
    E_Configure_Option *co;
 
@@ -204,26 +210,18 @@ e_modapi_init(E_Module *m)
      }
 
    if (!notification_cfg)
-     {
-        notification_cfg = _notification_cfg_new();
-     }
+     notification_cfg = _notification_cfg_new();
 
    /* set up the notification daemon */
-   e_notification_daemon_init();
-   d = e_notification_daemon_add("e_notification_module", "Enlightenment");
-   if (!d)
+   if (!e_notification_start(_notification_cb_notify,
+                             _notification_cb_close,
+                             &server_info,  notification_cfg))
      {
-        _notification_cfg_free(notification_cfg);
-        notification_cfg = NULL;
         e_util_dialog_show(_("Error During DBus Init!"),
                            _("Error during DBus init! Please check if "
                               "dbus is correctly installed and running."));
         return NULL;
      }
-   notification_cfg->daemon = d;
-   e_notification_daemon_data_set(d, notification_cfg);
-   e_notification_daemon_callback_notify_set(d, _notification_cb_notify);
-   e_notification_daemon_callback_close_notification_set(d, _notification_cb_close_notification);
 
    notification_cfg->last_config_mode.presentation = e_config->mode.presentation;
    notification_cfg->last_config_mode.offline = e_config->mode.offline;
@@ -272,9 +270,9 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_configure_registry_category_del("extensions");
 
    notification_popup_shutdown();
+   e_notification_stop();
 
-   e_notification_daemon_free(notification_cfg->daemon);
-   e_notification_daemon_shutdown();
+
    E_CONFIGURE_OPTION_LIST_CLEAR(cfg_opts);
    e_configure_option_category_tag_del(_("screen"), _("notification"));
    e_configure_option_category_tag_del(_("notification"), _("notification"));
@@ -289,21 +287,6 @@ EAPI int
 e_modapi_save(E_Module *m __UNUSED__)
 {
    return e_config_domain_save("module.notification", conf_edd, notification_cfg);
-}
-
-/* Callbacks */
-static int
-_notification_cb_notify(E_Notification_Daemon *d __UNUSED__,
-                        E_Notification        *n)
-{
-   return _notification_notify(n);
-}
-
-static void
-_notification_cb_close_notification(E_Notification_Daemon *d __UNUSED__,
-                                    unsigned int           id)
-{
-   notification_popup_close(id);
 }
 
 static Config *
@@ -331,4 +314,3 @@ _notification_cfg_free(Config *cfg)
 {
    free(cfg);
 }
-

@@ -1,9 +1,8 @@
 #include "e_mod_main.h"
 
 /* Popup function protos */
-static Popup_Data *_notification_popup_new(E_Notification *n);
+static Popup_Data *_notification_popup_new(E_Notification_Notify *n, unsigned id);
 static Popup_Data *_notification_popup_find(unsigned int id);
-static Popup_Data *_notification_popup_merge(E_Notification *n);
 
 static int         _notification_popup_place(Popup_Data *popup,
                                              int         num);
@@ -24,58 +23,52 @@ static int next_pos = 0;
 static Eina_Bool
 _notification_timer_cb(Popup_Data *popup)
 {
-   _notification_popup_del(e_notification_id_get(popup->notif),
-                           E_NOTIFICATION_CLOSED_EXPIRED);
+   _notification_popup_del(popup->id, E_NOTIFICATION_CLOSED_REASON_EXPIRED);
    return EINA_FALSE;
 }
 
 int
-notification_popup_notify(E_Notification *n,
-                          unsigned int    replaces_id,
-                          const char     *appname __UNUSED__)
+notification_popup_notify(E_Notification_Notify *n,
+                          unsigned int id)
 {
-   double timeout;
    Popup_Data *popup = NULL;
-   char urgency;
 
-   urgency = e_notification_hint_urgency_get(n);
-
-   switch (urgency)
+   switch (n->urgency)
      {
-      case E_NOTIFICATION_URGENCY_LOW:
+      case E_NOTIFICATION_NOTIFY_URGENCY_LOW:
         if (!notification_cfg->show_low) return 0;
         break;
-      case E_NOTIFICATION_URGENCY_NORMAL:
+      case E_NOTIFICATION_NOTIFY_URGENCY_NORMAL:
         if (!notification_cfg->show_normal) return 0;
         break;
-      case E_NOTIFICATION_URGENCY_CRITICAL:
+      case E_NOTIFICATION_NOTIFY_URGENCY_CRITICAL:
         if (!notification_cfg->show_critical) return 0;
         break;
       default:
         break;
      }
+   if (notification_cfg->ignore_replacement)
+     n->replaces_id = 0;
 
-   if (notification_cfg->ignore_replacement) replaces_id = 0;
-   if (replaces_id && (popup = _notification_popup_find(replaces_id)))
+   if (n->replaces_id && (popup = _notification_popup_find(n->replaces_id)))
      {
-        e_notification_ref(n);
-
         if (popup->notif)
-          e_notification_unref(popup->notif);
+          e_notification_notify_free(popup->notif);
 
         popup->notif = n;
+        popup->id = id;
         _notification_popup_refresh(popup);
-     }
-   else if (!replaces_id)
-     {
-        if ((popup = _notification_popup_merge(n)))
-          _notification_popup_refresh(popup);
      }
 
    if (!popup)
      {
-        popup = _notification_popup_new(n);
-        if (!popup) return 0;
+        popup = _notification_popup_new(n, id);
+        if (!popup)
+          {
+             e_notification_notify_free(n);
+             ERR("Error creating popup");
+             return 0;
+          }
         notification_cfg->popups = eina_list_append(notification_cfg->popups, popup);
         edje_object_signal_emit(popup->theme, "notification,new", "notification");
      }
@@ -86,14 +79,13 @@ notification_popup_notify(E_Notification *n,
         popup->timer = NULL;
      }
 
-   timeout = e_notification_timeout_get(popup->notif);
+   if (n->timeout < 0 || notification_cfg->force_timeout)
+      n->timeout = notification_cfg->timeout;
+   else n->timeout = n->timeout / 1000.0;
 
-   if (timeout < 0 || notification_cfg->force_timeout)
-     timeout = notification_cfg->timeout;
-   else timeout = (double)timeout / 1000.0;
 
-   if (timeout > 0)
-     popup->timer = ecore_timer_add(timeout, (Ecore_Task_Cb)_notification_timer_cb, popup);
+   if (n->timeout > 0)
+     popup->timer = ecore_timer_add(n->timeout, (Ecore_Task_Cb)_notification_timer_cb, popup);
 
    return 1;
 }
@@ -104,98 +96,14 @@ notification_popup_shutdown(void)
    Popup_Data *popup;
 
    EINA_LIST_FREE(notification_cfg->popups, popup)
-     _notification_popdown(popup, E_NOTIFICATION_CLOSED_REQUESTED);
+     _notification_popdown(popup, E_NOTIFICATION_CLOSED_REASON_REQUESTED);
 }
 
 void
 notification_popup_close(unsigned int id)
 {
-   _notification_popup_del(id, E_NOTIFICATION_CLOSED_REQUESTED);
+   _notification_popup_del(id, E_NOTIFICATION_CLOSED_REASON_REQUESTED);
 }
-
-static Popup_Data *
-_notification_popup_merge(E_Notification *n)
-{
-   Eina_List *l, *l2;
-   Eina_List *i, *i2;
-   E_Notification_Action *a, *a2;
-   Popup_Data *popup;
-   const char *str1, *str2;
-   const char *body_old;
-   const char *body_new;
-   char *body_final;
-   size_t len;
-
-   str1 = e_notification_app_name_get(n);
-   if (!str1) return NULL;
-
-   EINA_LIST_FOREACH(notification_cfg->popups, l, popup)
-     {
-        if (!popup->notif) continue;
-        if (!(str2 = e_notification_app_name_get(popup->notif)))
-          continue;
-        if (str1 == str2) break;
-     }
-
-   if (!popup)
-     {
-        /* printf("- no poup to merge\n"); */
-        return NULL;
-     }
-
-   str1 = e_notification_summary_get(n);
-   str2 = e_notification_summary_get(popup->notif);
-
-   if (str1 && str2 && (str1 != str2))
-     {
-        /* printf("- summary doesn match, %s, %s\n", str1, str2); */
-        return NULL;
-     }
-
-   l = e_notification_actions_get(popup->notif);
-   l2 = e_notification_actions_get(n);
-   if ((!!l) + (!!l2) == 1)
-     {
-        /* printf("- actions dont match\n"); */
-        return NULL;
-     }
-   for (i = l, i2 = l2; i && i2; i = i->next, i2 = i2->next)
-     {
-        if ((!!i) + (!!i2) == 1) return NULL;
-        a = i->data, a2 = i2->data;
-        if ((!!a) + (!!a2) == 1) return NULL;
-        if (e_notification_action_id_get(a) != 
-            e_notification_action_id_get(a2)) return NULL;
-        if (e_notification_action_name_get(a) != 
-            e_notification_action_name_get(a2)) return NULL;
-     }
-
-   /* TODO  p->n is not fallback alert..*/
-   /* TODO  both allow merging */
-
-   body_old = e_notification_body_get(popup->notif);
-   body_new = e_notification_body_get(n);
-
-   len = strlen(body_old);
-   len += strlen(body_new);
-   len += 5; /* \xE2\x80\xA9 or <PS/> */
-   if (len < 65536) body_final = alloca(len + 1);
-   else body_final = malloc(len + 1);
-   /* Hack to allow e to include markup */
-   snprintf(body_final, len + 1, "%s<ps/>%s", body_old, body_new);
-
-   /* printf("set body %s\n", body_final); */
-
-   e_notification_body_set(n, body_final);
-
-   e_notification_unref(popup->notif);
-   popup->notif = n;
-   e_notification_ref(popup->notif);
-   if (len >= 65536) free(body_final);
-
-   return popup;
-}
-
 
 static void
 _notification_theme_cb_deleted(Popup_Data *popup,
@@ -213,8 +121,7 @@ _notification_theme_cb_close(Popup_Data *popup,
                              const char  *emission __UNUSED__,
                              const char  *source __UNUSED__)
 {
-   _notification_popup_del(e_notification_id_get(popup->notif),
-                           E_NOTIFICATION_CLOSED_DISMISSED);
+   _notification_popup_del(popup->id, E_NOTIFICATION_CLOSED_REASON_DISMISSED);
 }
 
 static void
@@ -251,7 +158,7 @@ _notification_theme_cb_find(Popup_Data *popup,
 }
 
 static Popup_Data *
-_notification_popup_new(E_Notification *n)
+_notification_popup_new(E_Notification_Notify *n, unsigned id)
 {
    E_Container *con;
    Popup_Data *popup;
@@ -260,11 +167,11 @@ _notification_popup_new(E_Notification *n)
    E_Screen *scr;
    E_Zone *zone = NULL;
 
-   if (popups_displayed > POPUP_LIMIT) return 0;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(popups_displayed > POPUP_LIMIT, NULL);
    popup = E_NEW(Popup_Data, 1);
-   if (!popup) return NULL;
-   e_notification_ref(n);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(popup, NULL);
    popup->notif = n;
+   popup->id = id;
 
    con = e_container_current_get(e_manager_current_get());
    screens = e_xinerama_screens_get();
@@ -326,7 +233,6 @@ _notification_popup_new(E_Notification *n)
    return popup;
 error:
    free(popup);
-   e_notification_unref(n);
    return NULL;
 }
 
@@ -379,9 +285,7 @@ _notification_popups_place(void)
    int pos = 0;
 
    EINA_LIST_FOREACH(notification_cfg->popups, l, popup)
-     {
-        pos = _notification_popup_place(popup, pos);
-     }
+     pos = _notification_popup_place(popup, pos);
 
    next_pos = pos;
 }
@@ -391,12 +295,11 @@ _notification_popup_refresh(Popup_Data *popup)
 {
    const char *icon_path;
    const char *app_icon_max;
-   void *img;
    int w, h, width = 80, height = 80;
 
    if (!popup) return;
 
-   popup->app_name = e_notification_app_name_get(popup->notif);
+   popup->app_name = popup->notif->app_name;
 
    if (popup->app_icon)
      {
@@ -429,12 +332,11 @@ _notification_popup_refresh(Popup_Data *popup)
      }
 
    /* Check if the app specify an icon either by a path or by a hint */
-   img = e_notification_hint_image_data_get(popup->notif);
-   if (!img)
+   if (!popup->notif->icon.raw.data)
      {
-        icon_path = e_notification_hint_image_path_get(popup->notif);
+        icon_path = popup->notif->icon.icon_path;
         if ((!icon_path) || (!icon_path[0]))
-          icon_path = e_notification_app_icon_get(popup->notif);
+          icon_path = popup->notif->icon.icon;
         if (icon_path)
           {
              if (!strncmp(icon_path, "file://", 7)) icon_path += 7;
@@ -451,7 +353,8 @@ _notification_popup_refresh(Popup_Data *popup)
                   else
                     {
                        Evas_Object *o = e_icon_add(popup->e);
-                       if (!e_util_icon_theme_set(o, icon_path)) evas_object_del(o);
+                       if (!e_util_icon_theme_set(o, icon_path))
+                         evas_object_del(o);
                        else
                          {
                             popup->app_icon = o;
@@ -473,11 +376,9 @@ _notification_popup_refresh(Popup_Data *popup)
                }
           }
      }
-   if ((!img) && (!popup->app_icon))
-     img = e_notification_hint_icon_data_get(popup->notif);
-   if (img)
+   else
      {
-        popup->app_icon = e_notification_image_evas_object_add(popup->e, img);
+        popup->app_icon = e_notification_raw_image_get(popup->e, popup->notif);
         evas_object_image_filled_set(popup->app_icon, EINA_TRUE);
         evas_object_image_alpha_set(popup->app_icon, EINA_TRUE);
         evas_object_image_size_get(popup->app_icon, &w, &h);
@@ -539,9 +440,8 @@ _notification_popup_find(unsigned int id)
 
    if (!id) return NULL;
    EINA_LIST_FOREACH(notification_cfg->popups, l, popup)
-     {
-        if (e_notification_id_get(popup->notif) == id) return popup;
-     }
+     if (popup->id == id)
+       return popup;
    return NULL;
 }
 
@@ -555,7 +455,7 @@ _notification_popup_del(unsigned int                 id,
 
    EINA_LIST_FOREACH_SAFE(notification_cfg->popups, l, l2, popup)
      {
-        if (e_notification_id_get(popup->notif) == id)
+        if (popup->id == id)
           {
              _notification_popdown(popup, reason);
              notification_cfg->popups = eina_list_remove_list(notification_cfg->popups, l);
@@ -577,10 +477,8 @@ _notification_popdown(Popup_Data                  *popup,
    evas_object_del(popup->app_icon);
    evas_object_del(popup->theme);
    e_object_del(E_OBJECT(popup->win));
-   e_notification_closed_set(popup->notif, 1);
-   e_notification_daemon_signal_notification_closed
-     (notification_cfg->daemon, e_notification_id_get(popup->notif), reason);
-   e_notification_unref(popup->notif);
+   e_notification_notification_closed(popup->id, reason);
+   e_notification_notify_free(popup->notif);
    free(popup);
 }
 
@@ -588,19 +486,15 @@ static void
 _notification_format_message(Popup_Data *popup)
 {
    Evas_Object *o = popup->theme;
-   const char *title = e_notification_summary_get(popup->notif);
-   const char *b = e_notification_body_get(popup->notif);
-   edje_object_part_text_set(o, "notification.text.title", title);
-
+   Eina_Strbuf *buf = eina_strbuf_new();
+   edje_object_part_text_set(o, "notification.text.title",
+                             popup->notif->sumary);
    /* FIXME: Filter to only include allowed markup? */
-     {
-        /* We need to replace \n with <br>. FIXME: We need to handle all the
-         * newline kinds, and paragraph separator. ATM this will suffice. */
-        Eina_Strbuf *buf = eina_strbuf_new();
-        eina_strbuf_append(buf, b);
-        eina_strbuf_replace_all(buf, "\n", "<br/>");
-        edje_object_part_text_set(o, "notification.textblock.message",
-              eina_strbuf_string_get(buf));
-        eina_strbuf_free(buf);
-     }
+   /* We need to replace \n with <br>. FIXME: We need to handle all the
+   * newline kinds, and paragraph separator. ATM this will suffice. */
+   eina_strbuf_append(buf, popup->notif->body);
+   eina_strbuf_replace_all(buf, "\n", "<br/>");
+   edje_object_part_text_set(o, "notification.textblock.message",
+                             eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
 }
