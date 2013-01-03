@@ -32,20 +32,19 @@ _notification_notify(E_Notification_Notify *n)
    return new_id;
 }
 
-//TODO use this call
 static void
-_notification_show_common(const char *summary EINA_UNUSED,
-                          const char *body EINA_UNUSED,
-                          int         replaces_id EINA_UNUSED)
+_notification_show_common(const char *summary,
+                          const char *body,
+                          int         replaces_id)
 {
-   /*E_Notification *n = e_notification_full_new
-       ("enlightenment", replaces_id, "enlightenment", summary, body, -1);
-
-   if (!n)
-     return;
-
-   _notification_notify(n);
-   e_notification_unref(n);*/
+   E_Notification_Notify n;
+   memset(&n, 0, sizeof(E_Notification_Notify));
+   n.app_name = "enlightenment";
+   n.replaces_id = replaces_id;
+   n.icon.icon = "enlightenment";
+   n.sumary = summary;
+   n.body = body;
+   e_notification_client_send(&n, NULL, NULL);
 }
 
 static void

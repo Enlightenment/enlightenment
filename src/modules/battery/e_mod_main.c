@@ -1,8 +1,5 @@
 #include "e.h"
 #include "e_mod_main.h"
-#ifdef HAVE_ENOTIFY
-#include "E_Notify.h"
-#endif
 
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -434,28 +431,21 @@ _battery_warning_popup(Instance *inst, int t, double percent)
    Evas *e = NULL;
    Evas_Object *rect = NULL, *popup_bg = NULL;
    int x, y, w, h;
-#ifdef HAVE_ENOTIFY
-   static E_Notification *notification;
-#endif
 
    if ((!inst) || (inst->warning)) return;
 
 #ifdef HAVE_ENOTIFY
    if (battery_config && battery_config->desktop_notifications)
      {
-        if (notification) return;
-        notification = e_notification_full_new
-          (
-            _("Battery"),
-            0,
-            "battery-low",
-            _("Your battery is low!"),
-            _("AC power is recommended."),
-            (battery_config->alert_timeout * 1000)
-          );
-        e_notification_send(notification, NULL, NULL);
-        e_notification_unref(notification);
-        notification = NULL;
+        E_Notification_Notify n;
+        memset(&n, 0, sizeof(E_Notification_Notify));
+        n.app_name = _("Battery");
+        n.replaces_id = 0;
+        n.icon.icon = "battery-low";
+        n.sumary = _("Your battery is low!");
+        n.body = _("AC power is recommended.");
+        n.timeout = battery_config->alert_timeout * 1000;
+        e_notification_client_send(&n, NULL, NULL);
         return;
      }
 #endif
@@ -740,10 +730,6 @@ e_modapi_init(E_Module *m)
 {
    char buf[4096];
 
-#ifdef HAVE_ENOTIFY
-   e_notification_init();
-#endif
-
    conf_edd = E_CONFIG_DD_NEW("Battery_Config", Config);
 #undef T
 #undef D
@@ -853,10 +839,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    _battery_openbsd_stop();
 #else
    _battery_upower_stop();
-#endif
-
-#ifdef HAVE_ENOTIFY
-   e_notification_shutdown();
 #endif
 
    free(battery_config);

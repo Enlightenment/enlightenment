@@ -1,7 +1,4 @@
 #include "e_mod_main.h"
-#ifdef HAVE_ENOTIFY
-#include <E_Notify.h>
-#endif
 
 static void      _mixer_popup_timer_new(E_Mixer_Instance *inst);
 static Eina_Bool _mixer_popup_timer_cb(void *data);
@@ -42,11 +39,12 @@ static void
 _mixer_notify(const float val, E_Mixer_Instance *inst __UNUSED__)
 {
 #ifdef HAVE_ENOTIFY
-   E_Notification *n;
+   E_Notification_Notify n;
    E_Mixer_Module_Context *ctxt;
    char *icon, buf[56];
    int ret;
 
+   memset(&n, 0, sizeof(E_Notification_Notify));
    if (val > 100.0 || val < 0.0)
      return;
 
@@ -66,10 +64,13 @@ _mixer_notify(const float val, E_Mixer_Instance *inst __UNUSED__)
    else
      icon = "audio-volume-high";
 
-   n = e_notification_full_new(_("Mixer"), 0, icon, _("Volume changed"), buf, 2000);
-   e_notification_replaces_id_set(n, EINA_TRUE);
-   e_notification_send(n, NULL, NULL);
-   e_notification_unref(n);
+   n.app_name = _("Mixer");
+   n.replaces_id = 0;
+   n.icon.icon = icon;
+   n.sumary = _("Volume changed");
+   n.body = buf;
+   n.timeout = 2000;
+   e_notification_client_send(&n, NULL, NULL);
 #endif
 }
 
@@ -1526,10 +1527,6 @@ e_modapi_init(E_Module *m)
    if (!ctxt)
      return NULL;
 
-#ifdef HAVE_ENOTIFY
-   e_notification_init();
-#endif
-
    _mixer_configure_registry_register();
    e_gadcon_provider_register(&_gc_class);
    if (!e_mixer_pulse_init()) e_mixer_default_setup();
@@ -1577,9 +1574,6 @@ e_modapi_shutdown(E_Module *m)
         _mixer_module_configuration_descriptor_free(ctxt->module_conf_edd);
      }
 
-#ifdef HAVE_ENOTIFY
-   e_notification_shutdown();
-#endif
    e_mixer_pulse_shutdown();
 
    E_FREE(ctxt);
