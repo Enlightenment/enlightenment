@@ -63,6 +63,7 @@ e_configure_option.h \
 e_confirm_dialog.h \
 e_container.h \
 e_datastore.h \
+e_dbusmenu.h \
 e_desk.h \
 e_deskenv.h \
 e_desklock.h \
@@ -221,6 +222,7 @@ e_configure_option.c \
 e_confirm_dialog.c \
 e_container.c \
 e_datastore.c \
+e_dbusmenu.c \
 e_desk.c \
 e_deskenv.c \
 e_desklock.c \
