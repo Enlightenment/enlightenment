@@ -11,6 +11,7 @@ EAPI int   e_modapi_save(E_Module *m);
 
 typedef struct _Instance Instance;
 typedef struct _Instance_Xembed Instance_Xembed;
+typedef struct _Instance_Notifier_Host Instance_Notifier_Host;
 
 E_Gadcon_Orient systray_orient_get(const Instance *inst);
 const E_Gadcon *systray_gadcon_get(const Instance *inst);
@@ -21,6 +22,7 @@ Evas *systray_evas_get(const Instance *inst);
 Evas_Object *systray_edje_get(const Instance *inst);
 void systray_edje_emit(const Instance *inst, const char *sig);
 void systray_edje_box_append(const Instance *inst, const char *part, Evas_Object *child);
+void systray_edje_box_remove(const Instance *inst, const char *part, Evas_Object *child);
 
 int systray_manager_number_get(const Instance *inst);
 Ecore_X_Window systray_root_get(const Instance *inst);
@@ -32,6 +34,9 @@ Instance_Xembed *systray_xembed_new(Instance *inst);
 void systray_xembed_free(Instance_Xembed *xembed);
 void systray_xembed_orient_set(Instance_Xembed *xembed, E_Gadcon_Orient orient);
 void systray_xembed_size_updated(Instance_Xembed *xembed);
+
+Instance_Notifier_Host *systray_notifier_host_new(Instance *inst, E_Gadcon *gadcon);
+void systray_notifier_host_free(Instance_Notifier_Host *notifier);
 
 /**
  * @addtogroup Optional_Gadgets

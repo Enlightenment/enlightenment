@@ -6,6 +6,7 @@ struct _Instance
    E_Container     *con;
    Evas            *evas;
    Instance_Xembed *xembed;
+   Instance_Notifier_Host *notifier;
    struct
    {
       Evas_Object *gadget;
@@ -211,6 +212,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
                                   _systray_cb_mouse_down, inst);
 
    inst->xembed = systray_xembed_new(inst);
+   inst->notifier = systray_notifier_host_new(inst, inst->gcc->gadcon);
 
    instance = inst;
    return inst->gcc;
@@ -228,6 +230,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
      return;
 
    systray_xembed_free(inst->xembed);
+   systray_notifier_host_free(inst->notifier);
 
    evas_object_del(inst->ui.gadget);
 
@@ -447,6 +450,16 @@ systray_edje_box_append(const Instance *inst, const char *part,
    EINA_SAFETY_ON_NULL_RETURN(part);
    EINA_SAFETY_ON_NULL_RETURN(child);
    edje_object_part_box_append(inst->ui.gadget, part, child);
+}
+
+void
+systray_edje_box_remove(const Instance *inst, const char *part,
+                        Evas_Object *child)
+{
+   EINA_SAFETY_ON_NULL_RETURN(inst);
+   EINA_SAFETY_ON_NULL_RETURN(part);
+   EINA_SAFETY_ON_NULL_RETURN(child);
+   edje_object_part_box_remove(inst->ui.gadget, part, child);
 }
 
 int
