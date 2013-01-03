@@ -14,6 +14,10 @@ find_rules(void)
 {
    int i = 0;
    const char *lstfiles[] = {
+#ifdef XKB_BASE
+      XKB_BASE "/rules/xorg.lst",
+      XKB_BASE "/rules/xfree86.lst",
+#endif
 #if defined __NetBSD__
       "/usr/X11R7/lib/X11/xkb/rules/xorg.lst",
 #elif defined __OpenBSD__

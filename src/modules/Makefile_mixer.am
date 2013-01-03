@@ -7,7 +7,7 @@ EXTRA_DIST += $(mixer_DATA)
 mixerpkgdir = $(MDIR)/mixer/$(MODULE_ARCH)
 mixerpkg_LTLIBRARIES = mixer/module.la
 
-mixer_module_la_CFLAGS = $(AM_CFLAGS)
+mixer_module_la_CFLAGS = $(AM_CFLAGS) @SOUND_CFLAGS@
 
 mixer_module_la_SOURCES = mixer/e_mod_main.c \
 			  mixer/e_mod_main.h \

@@ -612,6 +612,11 @@ AC_SUBST(e_cflags)
 AC_SUBST(e_configflags)
 AC_SUBST(requirements_e)
 
+PKG_CHECK_EXISTS([xkeyboard-config],[
+  xkb_base=`$PKG_CONFIG --variable=xkb_base xkeyboard-config 2>/dev/null`
+  AC_DEFINE_UNQUOTED([XKB_BASE],["$xkb_base"],[Define to the base directory for X keyboard configuration data])
+])
+
 profile="SLOW_PC"
 AC_ARG_WITH(profile,
   AS_HELP_STRING([--with-profile=TARGET_PROFILE], 
