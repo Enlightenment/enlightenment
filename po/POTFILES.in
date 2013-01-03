@@ -284,11 +284,14 @@ src/modules/mixer/app_mixer.c
 src/modules/mixer/conf_gadget.c
 src/modules/mixer/conf_module.c
 src/modules/mixer/e_mod_main.c
+src/modules/music-control/e_mod_main.c
+src/modules/music-control/ui.c
 src/modules/connman/e_mod_main.c
 src/modules/quickaccess/e_mod_config.c
 src/modules/quickaccess/e_mod_main.c
 src/modules/quickaccess/e_mod_quickaccess.c
 src/modules/systray/e_mod_main.c
+src/modules/systray/e_mod_xembed.c
 src/modules/shot/e_mod_main.c
 src/modules/tasks/e_mod_main.c
 src/modules/tasks/e_mod_config.c
