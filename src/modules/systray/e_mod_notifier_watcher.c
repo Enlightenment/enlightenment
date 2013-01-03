@@ -118,27 +118,27 @@ properties_get(const EDBus_Service_Interface *s_iface EINA_UNUSED, const char *p
 
 static const EDBus_Property properties[] =
 {
-   { "RegisteredStatusNotifierItems", "as", NULL, NULL, 0 },
-   { "IsStatusNotifierHostRegistered", "b", NULL, NULL, 0 },
-   { "ProtocolVersion", "i", NULL, NULL, 0 },
-   { NULL, NULL, NULL, NULL, 0 }
+   { "RegisteredStatusNotifierItems", "as" },
+   { "IsStatusNotifierHostRegistered", "b" },
+   { "ProtocolVersion", "i" },
+   { }
 };
 
 static const EDBus_Signal signals[] = {
-   { "StatusNotifierItemRegistered", EDBUS_ARGS({"s", "service"}), 0 },
-   { "StatusNotifierItemUnregistered", EDBUS_ARGS({"s", "service"}), 0 },
-   { "StatusNotifierHostRegistered", NULL, 0 },
-   { "StatusNotifierHostUnregistered", NULL, 0 },
-   { NULL, NULL, 0 }
+   { "StatusNotifierItemRegistered", EDBUS_ARGS({"s", "service"}) },
+   { "StatusNotifierItemUnregistered", EDBUS_ARGS({"s", "service"}) },
+   { "StatusNotifierHostRegistered", NULL },
+   { "StatusNotifierHostUnregistered", NULL },
+   { }
 };
 
 static const EDBus_Method methods[] =
 {
-   {"RegisterStatusNotifierItem", EDBUS_ARGS({"s", "service"}), NULL,
-    register_item_cb, 0 },
-   {"RegisterStatusNotifierHost", EDBUS_ARGS({"s", "service"}), NULL,
-    register_host_cb, 0 },
-   { NULL, NULL, NULL, NULL, 0 }
+   { "RegisterStatusNotifierItem", EDBUS_ARGS({"s", "service"}), NULL,
+      register_item_cb },
+   { "RegisterStatusNotifierHost", EDBUS_ARGS({"s", "service"}), NULL,
+      register_host_cb },
+   { }
 };
 
 static const EDBus_Service_Interface_Desc iface_desc = {
