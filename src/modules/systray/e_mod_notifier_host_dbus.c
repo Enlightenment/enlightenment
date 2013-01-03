@@ -373,12 +373,60 @@ notifier_items_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pendi
      }
 }
 
-void systray_notifier_dbus_init(Instance_Notifier_Host *host_inst)
+static void
+item_registered_local_cb(void *data, const char *service)
 {
-   EDBus_Object *obj;
-   edbus_init();
+   const char *bus, *path;
+   Instance_Notifier_Host *host_inst = data;
+   if (service_string_parse(service, &path, &bus))
+     notifier_item_add(path, bus, host_inst);
+}
 
-   host_inst->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+static void
+item_unregistered_local_cb(void *data, const char *service)
+{
+   const char *bus, *path;
+   Instance_Notifier_Host *host_inst = data;
+   Notifier_Item *item;
+
+   if (!service_string_parse(service, &path, &bus))
+     return;
+   item = notifier_item_find(path, bus, host_inst);
+   if (item)
+     systray_notifier_item_free(item);
+   eina_stringshare_del(path);
+   eina_stringshare_del(bus);
+}
+
+static void
+name_request_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
+{
+   const char *error, *error_msg;
+   unsigned flag;
+   EDBus_Object *obj;
+   Instance_Notifier_Host *host_inst = data;
+
+   if (edbus_message_error_get(msg, &error, &error_msg))
+     {
+        ERR("%s %s", error, error_msg);
+        goto end;
+     }
+
+   if (!edbus_message_arguments_get(msg, "u", &flag))
+     {
+        ERR("Error reading message.");
+        goto end;
+     }
+
+   if (flag == EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER)
+     {
+        systray_notifier_dbus_watcher_start(host_inst->conn,
+                                            item_registered_local_cb,
+                                            item_unregistered_local_cb, host_inst);
+        return;
+     }
+end:
+   WRN("Bus name: %s already in use, getting data via dbus.\n", WATCHER_BUS);
    obj = edbus_object_get(host_inst->conn, WATCHER_BUS, WATCHER_PATH);
    host_inst->watcher = edbus_proxy_get(obj, WATCHER_IFACE);
    edbus_proxy_call(host_inst->watcher, "RegisterStatusNotifierHost", NULL, NULL, -1, "s",
@@ -391,18 +439,35 @@ void systray_notifier_dbus_init(Instance_Notifier_Host *host_inst)
                                   notifier_item_del_cb, host_inst);
 }
 
+void systray_notifier_dbus_init(Instance_Notifier_Host *host_inst)
+{
+   edbus_init();
+
+   host_inst->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+
+   edbus_name_request(host_inst->conn,
+                      WATCHER_BUS, EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING,
+                      name_request_cb, host_inst);
+}
+
 void systray_notifier_dbus_shutdown(Instance_Notifier_Host *host_inst)
 {
    Eina_Inlist *safe_list;
    Notifier_Item *item;
-   EDBus_Object *obj;
 
    EINA_INLIST_FOREACH_SAFE(host_inst->items_list, safe_list, item)
      systray_notifier_item_free(item);
 
-   obj = edbus_proxy_object_get(host_inst->watcher);
-   edbus_proxy_unref(host_inst->watcher);
-   edbus_object_unref(obj);
+   if (!host_inst->watcher)
+     systray_notifier_dbus_watcher_stop();
+   else
+     {
+        EDBus_Object *obj;
+        obj = edbus_proxy_object_get(host_inst->watcher);
+        edbus_proxy_unref(host_inst->watcher);
+        edbus_object_unref(obj);
+        host_inst->watcher = NULL;
+     }
    edbus_connection_unref(host_inst->conn);
    edbus_shutdown();
 }

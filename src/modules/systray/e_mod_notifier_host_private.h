@@ -47,6 +47,8 @@ typedef struct _Notifier_Item
    Eina_Bool in_box;
 } Notifier_Item;
 
+typedef void (*E_Notifier_Watcher_Item_Registered_Cb)(void *data, const char *service);
+typedef void (*E_Notifier_Watcher_Item_Unregistered_Cb)(void *data, const char *service);
 
 void systray_notifier_update_menu(void *data, E_DBusMenu_Item *new_root_item);
 void systray_notifier_item_update(Notifier_Item *item);
@@ -54,3 +56,6 @@ void systray_notifier_item_free(Notifier_Item *item);
 
 void systray_notifier_dbus_init(Instance_Notifier_Host *host_inst);
 void systray_notifier_dbus_shutdown(Instance_Notifier_Host *host_inst);
+
+void systray_notifier_dbus_watcher_start(EDBus_Connection *connection, E_Notifier_Watcher_Item_Registered_Cb registered, E_Notifier_Watcher_Item_Unregistered_Cb unregistered, const void *data);
+void systray_notifier_dbus_watcher_stop(void);
