@@ -8,7 +8,8 @@ struct _Ind_Notify_Win
 {
    E_Object e_obj_inherit;
 
-   E_Notification *notify;
+   unsigned id;
+   E_Notification_Notify *notify;
 
    E_Zone *zone;
    E_Win *win;

@@ -3,35 +3,30 @@
 #include "e_mod_notify.h"
 
 /* local function prototypes */
-static int _e_mod_notify_cb_add(E_Notification_Daemon *d __UNUSED__, E_Notification *n);
-static void _e_mod_notify_cb_del(E_Notification_Daemon *d __UNUSED__, unsigned int id);
+static unsigned int _e_mod_notify_cb_add(void *data EINA_UNUSED, E_Notification_Notify *n);
+static void _e_mod_notify_cb_del(void *data EINA_UNUSED, unsigned int id);
 static Ind_Notify_Win *_e_mod_notify_find(unsigned int id);
 static void _e_mod_notify_refresh(Ind_Notify_Win *nwin);
-static Ind_Notify_Win *_e_mod_notify_merge(E_Notification *n);
-static Ind_Notify_Win *_e_mod_notify_new(E_Notification *n);
+static Ind_Notify_Win *_e_mod_notify_new(E_Notification_Notify *n, unsigned id);
 static Eina_Bool _e_mod_notify_cb_timeout(void *data);
 static void _e_mod_notify_cb_free(Ind_Notify_Win *nwin);
 static void _e_mod_notify_cb_resize(E_Win *win);
 
 /* local variables */
-static E_Notification_Daemon *_notify_daemon = NULL;
 static Eina_List *_nwins = NULL;
 static int _notify_id = 0;
+
+static const E_Notification_Server_Info info = {
+   "illume-indicator", "Enlightenment", "0.17", "1.2", {"body", NULL}
+};
 
 int 
 e_mod_notify_init(void) 
 {
    /* init notification subsystem */
-   if (!e_notification_daemon_init()) return 0;
-
-   _notify_daemon = 
-     e_notification_daemon_add("illume-indicator", "Enlightenment");
-
-   e_notification_daemon_callback_notify_set(_notify_daemon, 
-                                             _e_mod_notify_cb_add);
-   e_notification_daemon_callback_close_notification_set(_notify_daemon, 
-                                                         _e_mod_notify_cb_del);
-
+   if (!e_notification_server_register(&info, _e_mod_notify_cb_add,
+                                       _e_mod_notify_cb_del, NULL))
+     return 0;
    return 1;
 }
 
@@ -39,52 +34,36 @@ int
 e_mod_notify_shutdown(void) 
 {
    Ind_Notify_Win *nwin;
+   Eina_List *l, *l2;
 
-   EINA_LIST_FREE(_nwins, nwin) 
+   EINA_LIST_FOREACH_SAFE(_nwins, l, l2, nwin)
      e_object_del(E_OBJECT(nwin));
 
-   if (_notify_daemon) e_notification_daemon_free(_notify_daemon);
-
-   /* shutdown notification subsystem */
-   e_notification_daemon_shutdown();
+   e_notification_server_unregister();
 
    return 1;
 }
 
-static int 
-_e_mod_notify_cb_add(E_Notification_Daemon *d __UNUSED__, E_Notification *n) 
+static unsigned int
+_e_mod_notify_cb_add(void *data EINA_UNUSED, E_Notification_Notify *n)
 {
-   Ind_Notify_Win *nwin;
-   unsigned int replace;
-   double timeout;
+   Ind_Notify_Win *nwin = NULL;
 
-   replace = e_notification_replaces_id_get(n);
-   if (!replace) 
-     {
-        _notify_id++;
-        e_notification_id_set(n, _notify_id);
-     }
-   else
-     e_notification_id_set(n, replace);
+   _notify_id++;
 
-   if ((replace) && (nwin = _e_mod_notify_find(replace)))
+   if (n->replaces_id && (nwin = _e_mod_notify_find(n->replaces_id)))
      {
-        e_notification_ref(n);
-        if (nwin->notify) e_notification_unref(nwin->notify);
+        if (nwin->notify)
+          e_notification_notify_free(nwin->notify);
         nwin->notify = n;
+        nwin->id = _notify_id;
         _e_mod_notify_refresh(nwin);
-     }
-   else if (!replace) 
-     {
-        if ((nwin = _e_mod_notify_merge(n)))
-          _e_mod_notify_refresh(nwin);
      }
 
    if (!nwin) 
      {
-        if (!(nwin = _e_mod_notify_new(n)))
-          return _notify_id;
-        _nwins = eina_list_append(_nwins, nwin);
+        nwin = _e_mod_notify_new(n, _notify_id);
+        EINA_SAFETY_ON_NULL_RETURN_VAL(nwin, 0);
      }
 
    /* show it */
@@ -94,30 +73,23 @@ _e_mod_notify_cb_add(E_Notification_Daemon *d __UNUSED__, E_Notification *n)
    if (nwin->timer) ecore_timer_del(nwin->timer);
    nwin->timer = NULL;
 
-   timeout = e_notification_timeout_get(nwin->notify);
-   if (timeout < 0) timeout = 3000.0;
-   timeout = timeout / 1000.0;
+   if (n->timeout < 0) n->timeout = 3000.0;
+   n->timeout = n->timeout / 1000.0;
 
-   if (timeout > 0)
-     nwin->timer = ecore_timer_add(timeout, _e_mod_notify_cb_timeout, nwin);
+   if (n->timeout > 0)
+     nwin->timer = ecore_timer_add(n->timeout, _e_mod_notify_cb_timeout, nwin);
 
    return _notify_id;
 }
 
 static void 
-_e_mod_notify_cb_del(E_Notification_Daemon *d __UNUSED__, unsigned int id) 
+_e_mod_notify_cb_del(void *data EINA_UNUSED, unsigned int id)
 {
-   const Eina_List *l;
-   Ind_Notify_Win *nwin;
+   Ind_Notify_Win *nwin = _e_mod_notify_find(id);
+   if (!nwin)
+     return;
 
-   EINA_LIST_FOREACH(_nwins, l, nwin) 
-     {
-        if (e_notification_id_get(nwin->notify) == id) 
-          {
-             e_object_del(E_OBJECT(nwin));
-             _nwins = eina_list_remove_list(_nwins, (Eina_List *)l);
-          }
-     }
+   e_object_del(E_OBJECT(nwin));
 }
 
 static 
@@ -128,7 +100,7 @@ _e_mod_notify_find(unsigned int id)
    Ind_Notify_Win *nwin;
 
    EINA_LIST_FOREACH(_nwins, l, nwin) 
-     if ((e_notification_id_get(nwin->notify) == id))
+     if (nwin->id == id)
        return nwin;
    return NULL;
 }
@@ -136,7 +108,7 @@ _e_mod_notify_find(unsigned int id)
 static void 
 _e_mod_notify_refresh(Ind_Notify_Win *nwin) 
 {
-   const char *icon, *tmp;
+   const char *icon;
    Evas_Coord mw, mh;
    int size;
 
@@ -149,29 +121,23 @@ _e_mod_notify_refresh(Ind_Notify_Win *nwin)
      }
 
    size = (48 * e_scale);
-   if ((icon = e_notification_app_icon_get(nwin->notify)))
+   if (nwin->notify->icon.raw.data)
      {
+        nwin->o_icon = e_notification_notify_raw_image_get(nwin->notify,
+                                                           nwin->win->evas);
+        if (nwin->o_icon)
+          evas_object_image_fill_set(nwin->o_icon, 0, 0, size, size);
+     }
+   else if (nwin->notify->icon.icon[0])
+     {
+        icon = nwin->notify->icon.icon;
         if (!strncmp(icon, "file://", 7)) 
           {
              icon += 7;
              nwin->o_icon = e_util_icon_add(icon, nwin->win->evas);
           }
         else 
-          {
-             nwin->o_icon = 
-               e_util_icon_theme_icon_add(icon, size, nwin->win->evas);
-          }
-     }
-   else 
-     {
-        E_Notification_Image *img;
-
-        if ((img = e_notification_hint_icon_data_get(nwin->notify))) 
-          {
-             nwin->o_icon = 
-               e_notification_image_evas_object_add(nwin->win->evas, img);
-             evas_object_image_fill_set(nwin->o_icon, 0, 0, size, size);
-          }
+           nwin->o_icon = e_util_icon_theme_icon_add(icon, size, nwin->win->evas);
      }
 
    if (nwin->o_icon) 
@@ -182,11 +148,9 @@ _e_mod_notify_refresh(Ind_Notify_Win *nwin)
         edje_object_part_swallow(nwin->o_base, "e.swallow.icon", nwin->o_icon);
      }
 
-   tmp = e_notification_summary_get(nwin->notify);
-   edje_object_part_text_set(nwin->o_base, "e.text.title", tmp);
+   edje_object_part_text_set(nwin->o_base, "e.text.title", nwin->notify->sumary);
+   edje_object_part_text_set(nwin->o_base, "e.text.message", nwin->notify->body);
 
-   tmp = e_notification_body_get(nwin->notify);
-   edje_object_part_text_set(nwin->o_base, "e.text.message", tmp);
 
    edje_object_calc_force(nwin->o_base);
    edje_object_size_min_calc(nwin->o_base, &mw, &mh);
@@ -196,41 +160,7 @@ _e_mod_notify_refresh(Ind_Notify_Win *nwin)
 }
 
 static Ind_Notify_Win *
-_e_mod_notify_merge(E_Notification *n) 
-{
-   Ind_Notify_Win *nwin;
-   const Eina_List *l;
-   const char *appname, *bold, *bnew;
-
-   if (!n) return NULL;
-   if (!(appname = e_notification_app_name_get(n))) return NULL;
-   EINA_LIST_FOREACH(_nwins, l, nwin) 
-     {
-        const char *name;
-
-        if (!nwin->notify) continue;
-        if (!(name = e_notification_app_name_get(nwin->notify))) continue;
-        if (!strcmp(appname, name)) break;
-     }
-   if (!nwin) return NULL;
-
-   bold = e_notification_body_get(nwin->notify);
-   bnew = e_notification_body_get(n);
-
-   /* if the bodies are the same, skip merging */
-   if (!strcmp(bold, bnew)) return nwin;
-
-   e_notification_body_set(n, bnew);
-
-   e_notification_unref(nwin->notify);
-   nwin->notify = n;
-   e_notification_ref(nwin->notify);
-
-   return nwin;
-}
-
-static Ind_Notify_Win *
-_e_mod_notify_new(E_Notification *n) 
+_e_mod_notify_new(E_Notification_Notify *n, unsigned id)
 {
    Ind_Notify_Win *nwin;
    Ecore_X_Window_State states[2];
@@ -239,9 +169,9 @@ _e_mod_notify_new(E_Notification *n)
    nwin = E_OBJECT_ALLOC(Ind_Notify_Win, IND_NOTIFY_WIN_TYPE, 
                          _e_mod_notify_cb_free);
    if (!nwin) return NULL;
-
-   e_notification_ref(n);
+   _nwins = eina_list_append(_nwins, nwin);
    nwin->notify = n;
+   nwin->id = id;
 
    zone = e_util_zone_current_get(e_manager_current_get());
    nwin->zone = zone;
@@ -254,8 +184,7 @@ _e_mod_notify_new(E_Notification *n)
    e_win_resize_callback_set(nwin->win, _e_mod_notify_cb_resize);
 
    ecore_x_e_illume_quickpanel_set(nwin->win->evas_win, EINA_TRUE);
-   ecore_x_e_illume_quickpanel_priority_major_set(nwin->win->evas_win, 
-                                                  e_notification_hint_urgency_get(n));
+   ecore_x_e_illume_quickpanel_priority_major_set(nwin->win->evas_win, n->urgency);
    ecore_x_e_illume_quickpanel_zone_set(nwin->win->evas_win, zone->num);
 
    states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
@@ -297,8 +226,6 @@ _e_mod_notify_cb_timeout(void *data)
    /* hide it */
    ecore_x_e_illume_quickpanel_state_send(nwin->zone->black_win, 
                                           ECORE_X_ILLUME_QUICKPANEL_STATE_OFF);
-
-   _nwins = eina_list_remove(_nwins, nwin);
    e_object_del(E_OBJECT(nwin));
    return EINA_FALSE;
 }
@@ -314,11 +241,10 @@ _e_mod_notify_cb_free(Ind_Notify_Win *nwin)
    nwin->o_base = NULL;
    if (nwin->win) e_object_del(E_OBJECT(nwin->win));
    nwin->win = NULL;
-   e_notification_closed_set(nwin->notify, EINA_TRUE);
-   e_notification_daemon_signal_notification_closed(_notify_daemon, 
-                                                    e_notification_id_get(nwin->notify), 
-                                                    E_NOTIFICATION_CLOSED_REQUESTED);
-   e_notification_unref(nwin->notify);
+   e_notification_notify_close(nwin->notify,
+                               E_NOTIFICATION_NOTIFY_CLOSED_REASON_REQUESTED);
+   e_notification_notify_free(nwin->notify);
+   _nwins = eina_list_remove(_nwins, nwin);
    E_FREE(nwin);
 }
 
