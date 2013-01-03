@@ -8,7 +8,7 @@
 
 #define HOST_REGISTRER "/bla" //TODO check what watcher expect we send to him
 
-extern const char *Category_Name[];
+extern const char *Category_Names[];
 extern const char *Status_Names[];
 
 typedef struct _Notifier_Host_Data {
@@ -44,15 +44,15 @@ notifier_item_find(const char *path, const char *bus_id, Instance_Notifier_Host 
 }
 
 static int
-id_find(const char *text, const char *array_of_names[], unsigned max)
+id_find(const char *s, const char *names[])
 {
    unsigned i;
-   for (i = 0; i < max; i++)
+
+   for (i = 0; names[i]; i++)
      {
-        if (strcmp(text, array_of_names[i]))
-          continue;
-        return i;
-      }
+        if (!strcmp(s, names[i]))
+          return i;
+     }
    return 0;
 }
 
@@ -65,7 +65,7 @@ item_prop_get(void *data, const void *key, EDBus_Message_Iter *var)
      {
         const char *category;
         edbus_message_iter_arguments_get(var, "s", &category);
-        item->category = id_find(category, Category_Name, CATEGORY_LAST);
+        item->category = id_find(category, Category_Names);
      }
    else if (!strcmp(key, "IconName"))
      {
@@ -95,7 +95,7 @@ item_prop_get(void *data, const void *key, EDBus_Message_Iter *var)
      {
         const char *status;
         edbus_message_iter_arguments_get(var, "s", &status);
-        item->status = id_find(status, Status_Names, STATUS_LAST);
+        item->status = id_find(status, Status_Names);
      }
    else if (!strcmp(key, "Id"))
      {
@@ -283,7 +283,7 @@ new_status_cb(void *data, const EDBus_Message *msg)
         ERR("Error reading message.");
         return;
      }
-   item->status = id_find(status, Status_Names, STATUS_LAST);
+   item->status = id_find(status, Status_Names);
    systray_notifier_item_update(item);
 }
 

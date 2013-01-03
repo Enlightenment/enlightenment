@@ -6,12 +6,12 @@
 
 #define ITEM_IFACE "org.kde.StatusNotifierItem"
 
-const char *Category_Name[] = {
-   "unknown", "SystemServices"
+const char *Category_Names[] = {
+   "unknown", "SystemServices", NULL
 };
 
 const char *Status_Names[] = {
-   "unknown", "Active", "Passive", "NeedsAttention"
+   "unknown", "Active", "Passive", "NeedsAttention", NULL
 };
 
 static const char *box_part_name = "e.dbus_notifier.box";
