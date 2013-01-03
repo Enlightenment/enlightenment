@@ -127,6 +127,7 @@ e_module.h \
 e_mouse.h \
 e_moveresize.h \
 e_msgbus.h \
+e_notification.h \
 e_msg.h \
 e_obj_dialog.h \
 e_object.h \
@@ -281,6 +282,7 @@ e_module.c \
 e_mouse.c \
 e_moveresize.c \
 e_msgbus.c \
+e_notification.c \
 e_msg.c \
 e_obj_dialog.c \
 e_object.c \
