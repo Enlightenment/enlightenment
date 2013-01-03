@@ -1,13 +1,14 @@
 conf2dir = $(MDIR)/conf2
 conf2_DATA = conf2/e-module-conf2.edj \
 	    conf2/module.desktop
-
-EXTRA_DIST += $(conf2_DATA) $(conf2dir)/e-module-conf2.edc
-EXTRA_DIST += \
-images/volume_knob_ledsoff.png \
-images/volume_knob_move.png \
-images/volume_knob.png \
-images/volume_led_01.png
+CLEANFILES += conf2/e-module-conf2.edj
+EXTRA_DIST += $(conf2_DATA) \
+conf2/e-module-conf2.edc \
+conf2/module.desktop.in \
+conf2/images/volume_knob_ledsoff.png \
+conf2/images/volume_knob_move.png \
+conf2/images/volume_knob.png \
+conf2/images/volume_led_01.png
 
 conf2pkgdir = $(MDIR)/conf2/$(MODULE_ARCH)
 conf2pkg_LTLIBRARIES = conf2/module.la
@@ -21,7 +22,7 @@ conf2_module_la_LIBADD = @ELM_LIBS@
 
 CONF2_EDJE_FLAGS = $(EDJE_FLAGS) -id $(srcdir)/conf2/images -id $(top_srcdir)/data/themes/img
 
-conf2/%.edj: conf2/%.edc Makefile
+conf2/%.edj: $(srcdir)/conf2/%.edc Makefile
 	$(EDJE_CC) $(CONF2_EDJE_FLAGS) $< $@
 
 .PHONY: conf2 install-conf2
