@@ -1615,7 +1615,7 @@ _view_create(Evry_View *ev, const Evry_State *s, const Evas_Object *swallow)
      {
         if ((s->selector->states->next) &&
             ((s->plugin->config->view_mode < 0) ||
-             (!strcmp(s->plugin->name, N_("All")))))
+             (!strcmp(s->plugin->name, _("All")))))
           v->mode = parent->mode;
         else if (s->plugin->config->view_mode >= 0)
           v->mode = s->plugin->config->view_mode;
