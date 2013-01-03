@@ -2,12 +2,7 @@
 #  include "config.h"
 # endif
 
-#include <Ecore.h>
-#include <Ecore_File.h>
-#include <Ecore_Getopt.h>
-#include <EDBus.h>
-#include <unistd.h>
-#include <errno.h>
+#include "e.h"
 
 static EDBus_Connection *conn = NULL;
 static int retval = EXIT_SUCCESS;
@@ -21,7 +16,7 @@ fm_open_reply(void *data __UNUSED__, const EDBus_Message *msg,
    if (edbus_message_error_get(msg, &name, &txt))
      {
         retval = EXIT_FAILURE;
-        fprintf(stderr, "ERROR: %s: %s", name, txt);
+        ERR("%s: %s", name, txt);
      }
 
    pending--;
@@ -49,9 +44,7 @@ fm_open(const char *path)
         char buf[PATH_MAX];
         if (!getcwd(buf, sizeof(buf)))
           {
-             fprintf(stderr,
-                     "ERROR: Could not get current working directory: %s\n",
-                     strerror(errno));
+             ERR("Could not get current working directory: %s", strerror(errno));
              ecore_idler_add(fm_error_quit_last, NULL);
              return;
           }
@@ -65,10 +58,10 @@ fm_open(const char *path)
           }
      }
 
-   EINA_LOG_DBG("'%s' -> '%s'", path, p);
+   DBG("'%s' -> '%s'", path, p);
    if ((!p) || (p[0] == '\0'))
      {
-        fprintf(stderr, "ERROR: Could not get path '%s'\n", path);
+        ERR("Could not get path '%s'", path);
         ecore_idler_add(fm_error_quit_last, NULL);
         free(p);
         return;
@@ -85,7 +78,7 @@ fm_open(const char *path)
                                        method);
    if (!msg)
      {
-        fputs("ERROR: Could not create DBus Message\n", stderr);
+        ERR("Could not create DBus Message");
         ecore_idler_add(fm_error_quit_last, NULL);
         free(p);
         return;
@@ -95,7 +88,7 @@ fm_open(const char *path)
 
    if (!edbus_connection_send(conn, msg, fm_open_reply, NULL, -1))
      {
-        fputs("ERROR: Could not send DBus Message\n", stderr);
+        ERR("Could not send DBus Message");
         ecore_idler_add(fm_error_quit_last, NULL);
      }
    else
@@ -136,7 +129,7 @@ main(int argc, char *argv[])
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
      {
-        fputs("ERROR: Could not parse command line options.\n", stderr);
+        ERR("Could not parse command line options.");
         return EXIT_FAILURE;
      }
 
@@ -149,7 +142,7 @@ main(int argc, char *argv[])
    conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
    if (!conn)
      {
-        fputs("ERROR: Could not DBus SESSION bus.\n", stderr);
+        ERR("Could not DBus SESSION bus.");
         retval = EXIT_FAILURE;
         goto end;
      }
