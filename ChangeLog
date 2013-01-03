@@ -4,10 +4,6 @@
         * Added conf2 module
         * Added e_configure_option API
 
-2013-01-03 Carsten Haitzler
-
-	* Fix translation of evrything strigns to include many more
-
 2013-01-03 Cedric Bail
 
 	* Fix restart of E17 after manually monitoring it.

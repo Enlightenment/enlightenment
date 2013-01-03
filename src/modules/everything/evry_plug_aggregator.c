@@ -299,7 +299,7 @@ _begin(Evry_Plugin *plugin, const Evry_Item *it __UNUSED__)
    /* GET_PLUGIN(base, plugin); */
    EVRY_PLUGIN_INSTANCE(p, plugin);
 
-   p->warning = evry_item_new(NULL, EVRY_PLUGIN(p), _("No plugins loaded"), NULL, NULL);
+   p->warning = evry_item_new(NULL, EVRY_PLUGIN(p), N_("No plugins loaded"), NULL, NULL);
    p->warning->type = EVRY_TYPE_NONE;
 
    return EVRY_PLUGIN(p);
@@ -310,7 +310,7 @@ evry_aggregator_new(int type)
 {
    Evry_Plugin *p;
 
-   p = EVRY_PLUGIN_BASE(_("All"), NULL, 0, _begin, _finish, _fetch);
+   p = EVRY_PLUGIN_BASE("All", NULL, 0, _begin, _finish, _fetch);
 
    if (evry_plugin_register(p, type, -1))
      {

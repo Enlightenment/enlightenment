@@ -180,11 +180,11 @@ _plugins_init(const Evry_API *_api)
 
    E_SETTINGS = evry->type_register("E_SETTINGS");
 
-   p = EVRY_PLUGIN_BASE(_("Settings"), "configure", E_SETTINGS, _begin, _finish, _fetch);
+   p = EVRY_PLUGIN_BASE("Settings", "configure", E_SETTINGS, _begin, _finish, _fetch);
    p->browse = &_browse;
    evry->plugin_register(p, EVRY_PLUGIN_SUBJECT, 10);
 
-   act = EVRY_ACTION_NEW(_("Show Dialog"), E_SETTINGS, 0,
+   act = EVRY_ACTION_NEW("Show Dialog", E_SETTINGS, 0,
                          "preferences-advanced", _action, _action_check);
 
    evry->action_register(act, 0);
