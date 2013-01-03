@@ -293,7 +293,7 @@ end:
 }
 
 static Eina_Bool
-notification_cliend_dbus_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data)
+notification_client_dbus_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data)
 {
    EDBus_Connection *conn;
    EDBus_Message *msg;
@@ -392,8 +392,9 @@ e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(notify, EINA_FALSE);
    normalize_notify(notify);
+
    if (!n_data)
-     return notification_cliend_dbus_send(notify, cb, data);
+     return notification_client_dbus_send(notify, cb, data);
 
    //local
    copy = malloc(sizeof(E_Notification_Notify));

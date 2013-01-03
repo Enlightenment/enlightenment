@@ -153,7 +153,11 @@ _notification_corner_info_cb(E_Configure_Option *co)
 EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Notification"};
 
 static const E_Notification_Server_Info server_info = {
-   "e17", "enlightenment.org", "0.17", "1.2", {"body", "body-markup", NULL}
+   .name = "e17",
+   .vendor = "enlightenment.org",
+   .version = "0.17",
+   .spec_version = "1.2",
+   .capabilities = { "body", "body-markup", NULL }
 };
 
 /* Callbacks */
