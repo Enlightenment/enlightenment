@@ -3,8 +3,12 @@
    for advances in cross toolkit settings */
 
 #include <e.h>
-#include <X11/Xlib.h>
-#include <X11/Xmd.h>            /* For CARD16 */
+//#include <X11/Xlib.h>
+//#include <X11/Xmd.h>            /* For CARD16 */
+
+// define here to avoid needing x includes directly.
+#define C16 unsigned short
+#define C32 unsigned long
 
 #define RETRY_TIMEOUT 2.0
 
@@ -272,7 +276,7 @@ _e_xsettings_copy(unsigned char *buffer, Setting *s)
    buffer += 2;
 
    str_len = strlen(s->name);
-   *(CARD16 *)(buffer) = str_len;
+   *(C16 *)(buffer) = str_len;
    buffer += 2;
 
    memcpy(buffer, s->name, str_len);
@@ -282,19 +286,19 @@ _e_xsettings_copy(unsigned char *buffer, Setting *s)
    memset(buffer, 0, len);
    buffer += len;
 
-   *(CARD32 *)(buffer) = s->last_change;
+   *(C32 *)(buffer) = s->last_change;
    buffer += 4;
 
    switch (s->type)
      {
       case SETTING_TYPE_INT:
-         *(CARD32 *)(buffer) = s->i.value;
+         *(C32 *)(buffer) = s->i.value;
          buffer += 4;
          break;
 
       case SETTING_TYPE_STRING:
          str_len = strlen (s->s.value);
-         *(CARD32 *)(buffer) = str_len;
+         *(C32 *)(buffer) = str_len;
          buffer += 4;
 
          memcpy(buffer, s->s.value, str_len);
@@ -306,10 +310,10 @@ _e_xsettings_copy(unsigned char *buffer, Setting *s)
          break;
 
       case SETTING_TYPE_COLOR:
-         *(CARD16 *)(buffer) = s->c.red;
-         *(CARD16 *)(buffer + 2) = s->c.green;
-         *(CARD16 *)(buffer + 4) = s->c.blue;
-         *(CARD16 *)(buffer + 6) = s->c.alpha;
+         *(C16 *)(buffer) = s->c.red;
+         *(C16 *)(buffer + 2) = s->c.green;
+         *(C16 *)(buffer + 4) = s->c.blue;
+         *(C16 *)(buffer + 6) = s->c.alpha;
          buffer += 8;
          break;
      }
@@ -333,15 +337,15 @@ _e_xsettings_apply(Settings_Manager *sm)
    if (!data) return;
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-   *pos = LSBFirst;
+   *pos = 0;//LSBFirst
 #else
-   *pos = MSBFirst;
+   *pos = 1;//MSBFirst
 #endif
 
    pos += 4;
-   *(CARD32*)pos = sm->serial++;
+   *(C32*)pos = sm->serial++;
    pos += 4;
-   *(CARD32*)pos = eina_list_count(settings);
+   *(C32*)pos = eina_list_count(settings);
    pos += 4;
 
    EINA_LIST_FOREACH(settings, l, s)
