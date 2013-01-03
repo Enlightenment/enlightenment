@@ -8,7 +8,7 @@ struct _E_DBusMenu_Ctx
    E_DBusMenu_Item *root_menu;
    void *data;
    E_DBusMenu_Pop_Request_Cb pop_request_cb;
-   E_DBusMenu_Itens_Update_Cb update_cb;
+   E_DBusMenu_Update_Cb update_cb;
 };
 
 static const char *Menu_Item_Type_Names[] =
@@ -16,7 +16,7 @@ static const char *Menu_Item_Type_Names[] =
    "standard", "separator"
 };
 
-static const char *Menu_Item_Toogle_Type_Names[] =
+static const char *Menu_Item_Toggle_Type_Names[] =
 {
    "", "checkmark", "radio"
 };
@@ -102,19 +102,19 @@ dbus_menu_prop_dict_cb(void *data, const void *key, EDBus_Message_Iter *var)
      }
    else if (!strcmp(key, "toggle-type"))
      {
-        const char *toogle_type;
-        edbus_message_iter_arguments_get(var, "s", &toogle_type);
-        m->toogle_type = id_find(toogle_type, Menu_Item_Toogle_Type_Names,
-                                 MENU_ITEM_TOOGLE_TYPE_LAST);
+        const char *toggle_type;
+        edbus_message_iter_arguments_get(var, "s", &toggle_type);
+        m->toggle_type = id_find(toggle_type, Menu_Item_Toggle_Type_Names,
+                                 E_DBUSMENU_ITEM_TOGGLE_TYPE_LAST);
      }
    else if (!strcmp(key, "toggle-state"))
      {
         int state;
         edbus_message_iter_arguments_get(var, "i", &state);
         if (state == 1)
-          m->toogle_state = EINA_TRUE;
+          m->toggle_state = EINA_TRUE;
         else
-          m->toogle_state = EINA_FALSE;
+          m->toggle_state = EINA_FALSE;
      }
    else if (!strcmp(key, "children-display"))
      {
@@ -139,17 +139,17 @@ dbus_menu_prop_dict_cb(void *data, const void *key, EDBus_Message_Iter *var)
 }
 
 static E_DBusMenu_Item *
-parse_layout(EDBus_Message_Iter *layout, E_DBusMenu_Item *parent, E_DBusMenu_Ctx *menu_data)
+parse_layout(EDBus_Message_Iter *layout, E_DBusMenu_Item *parent, E_DBusMenu_Ctx *ctx)
 {
-   EDBus_Message_Iter *menu_item_prop, *sub_menu_itens_prop, *var;
+   EDBus_Message_Iter *menu_item_prop, *sub_menu_items_prop, *var;
    E_DBusMenu_Item *m = calloc(1, sizeof(E_DBusMenu_Item));
    EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
-   m->internal_ctx = menu_data;
-   m->enabled = EINA_TRUE;//default values
+   m->ctx = ctx;
+   m->enabled = EINA_TRUE;
    m->visible = EINA_TRUE;
 
    if (!edbus_message_iter_arguments_get(layout, "ia{sv}av", &m->id,
-                                         &menu_item_prop, &sub_menu_itens_prop))
+                                         &menu_item_prop, &sub_menu_items_prop))
      {
         ERR("Error reading message");
         free(m);
@@ -158,7 +158,7 @@ parse_layout(EDBus_Message_Iter *layout, E_DBusMenu_Item *parent, E_DBusMenu_Ctx
 
    edbus_message_iter_dict_iterate(menu_item_prop, "sv", dbus_menu_prop_dict_cb, m);
 
-   while (edbus_message_iter_get_and_next(sub_menu_itens_prop, 'v', &var))
+   while (edbus_message_iter_get_and_next(sub_menu_items_prop, 'v', &var))
      {
         EDBus_Message_Iter *st;
         if (!edbus_message_iter_arguments_get(var, "(ia{sv}av)", &st))
@@ -166,7 +166,7 @@ parse_layout(EDBus_Message_Iter *layout, E_DBusMenu_Item *parent, E_DBusMenu_Ctx
              ERR("Error readding message.");
              continue;
           }
-        parse_layout(st, m, menu_data);
+        parse_layout(st, m, ctx);
      }
 
    if (!parent)
@@ -204,7 +204,7 @@ layout_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_
    const char *error, *error_msg;
    EDBus_Message_Iter *layout;
    unsigned revision;
-   E_DBusMenu_Ctx *menu_data = data;
+   E_DBusMenu_Ctx *ctx = data;
 
    if (edbus_message_error_get(msg, &error, &error_msg))
      {
@@ -218,30 +218,30 @@ layout_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_
         return;
      }
 
-   m = parse_layout(layout, NULL, menu_data);
+   m = parse_layout(layout, NULL, ctx);
    m->revision = revision;
-   if (menu_data->update_cb)
-     menu_data->update_cb(menu_data->data, m);
-   if (menu_data->root_menu)
-     dbus_menu_free(menu_data->root_menu);
-   menu_data->root_menu = m;
+   if (ctx->update_cb)
+     ctx->update_cb(ctx->data, m);
+   if (ctx->root_menu)
+     dbus_menu_free(ctx->root_menu);
+   ctx->root_menu = m;
 }
 
 static E_DBusMenu_Item *
-dbus_menu_find(E_DBusMenu_Ctx *menu_data, int id)
+dbus_menu_find(E_DBusMenu_Ctx *ctx, int id)
 {
    E_DBusMenu_Item *m;
-   if (!menu_data)
+   if (!ctx)
      return NULL;
 
-   EINA_INLIST_FOREACH(menu_data->root_menu, m)
+   EINA_INLIST_FOREACH(ctx->root_menu, m)
      {
         E_DBusMenu_Item *child, *found;
         if (m->id == id)
           return m;
         EINA_INLIST_FOREACH(m->sub_items, child)
           {
-             found = dbus_menu_find(menu_data, id);
+             found = dbus_menu_find(ctx, id);
              if (found)
                return found;
           }
@@ -252,7 +252,7 @@ dbus_menu_find(E_DBusMenu_Ctx *menu_data, int id)
 static void
 menu_pop_request(void *data, const EDBus_Message *msg)
 {
-   E_DBusMenu_Ctx *menu_data = data;
+   E_DBusMenu_Ctx *ctx = data;
    int id;
    unsigned timestamp;
    E_DBusMenu_Item *m;
@@ -263,11 +263,11 @@ menu_pop_request(void *data, const EDBus_Message *msg)
         return;
      }
 
-   m = dbus_menu_find(menu_data, id);
+   m = dbus_menu_find(ctx, id);
    if (!m)
      return;
-   if (menu_data->pop_request_cb)
-     menu_data->pop_request_cb(menu_data->data, m);
+   if (ctx->pop_request_cb)
+     ctx->pop_request_cb(ctx->data, m);
 }
 
 static void
@@ -276,7 +276,6 @@ icon_theme_path_get_cb(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_P
    const char *error, *error_msg;
    EDBus_Message_Iter *var, *array;
    const char *path;
-   //DBus_Menu_Ctx *menu_data = data;
 
    if (edbus_message_error_get(msg, &error, &error_msg))
      {
@@ -302,7 +301,6 @@ prop_changed_cb(void *data EINA_UNUSED, const EDBus_Message *msg)
 {
    const char *interface, *propname;
    EDBus_Message_Iter *variant, *array;
-   //DBus_Menu_Ctx *menu_data = data;
 
    if (!edbus_message_arguments_get(msg, "ssv", &interface, &propname, &variant))
      {
@@ -320,61 +318,61 @@ prop_changed_cb(void *data EINA_UNUSED, const EDBus_Message *msg)
 }
 
 static void
-layout_update(E_DBusMenu_Ctx *menu_data)
+layout_update(E_DBusMenu_Ctx *ctx)
 {
    EDBus_Message *msg;
    EDBus_Message_Iter *main_iter, *array;
 
-   msg = edbus_proxy_method_call_new(menu_data->proxy, "GetLayout");
+   msg = edbus_proxy_method_call_new(ctx->proxy, "GetLayout");
    main_iter = edbus_message_iter_get(msg);
    edbus_message_iter_arguments_append(main_iter, "iias", 0, -1, &array);
    edbus_message_iter_container_close(main_iter, array);
-   edbus_proxy_send(menu_data->proxy, msg, layout_get_cb, menu_data, -1);
+   edbus_proxy_send(ctx->proxy, msg, layout_get_cb, ctx, -1);
 }
 
 static void
 layout_updated_cb(void *data, const EDBus_Message *msg EINA_UNUSED)
 {
-   E_DBusMenu_Ctx *menu_data = data;
-   layout_update(menu_data);
+   E_DBusMenu_Ctx *ctx = data;
+   layout_update(ctx);
 }
 
 E_DBusMenu_Ctx *
 e_dbusmenu_load(EDBus_Connection *conn, const char *bus, const char *path, const void *data)
 {
    EDBus_Object *obj;
-   E_DBusMenu_Ctx *menu_data;
+   E_DBusMenu_Ctx *ctx;
    EINA_SAFETY_ON_NULL_RETURN_VAL(bus, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
-   menu_data = calloc(1, sizeof(E_DBusMenu_Ctx));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(menu_data, NULL);
+   ctx = calloc(1, sizeof(E_DBusMenu_Ctx));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
 
-   menu_data->data = (void *)data;
+   ctx->data = (void *)data;
 
    edbus_connection_ref(conn);
    obj = edbus_object_get(conn, bus, path);
-   menu_data->proxy = edbus_proxy_get(obj, DBUS_MENU_IFACE);
+   ctx->proxy = edbus_proxy_get(obj, DBUS_MENU_IFACE);
 
-   layout_update(menu_data);
-   edbus_proxy_signal_handler_add(menu_data->proxy,
+   layout_update(ctx);
+   edbus_proxy_signal_handler_add(ctx->proxy,
                                   "ItemActivationRequested",
-                                  menu_pop_request, menu_data);
+                                  menu_pop_request, ctx);
 
-   edbus_proxy_property_get(menu_data->proxy, "IconThemePath",
-                            icon_theme_path_get_cb, menu_data);
-   edbus_proxy_properties_changed_callback_add(menu_data->proxy,
-                                               prop_changed_cb, menu_data);
+   edbus_proxy_property_get(ctx->proxy, "IconThemePath",
+                            icon_theme_path_get_cb, ctx);
+   edbus_proxy_properties_changed_callback_add(ctx->proxy,
+                                               prop_changed_cb, ctx);
 
-   edbus_proxy_signal_handler_add(menu_data->proxy, "ItemsPropertiesUpdated",
-                                  layout_updated_cb, menu_data);
-   edbus_proxy_signal_handler_add(menu_data->proxy, "LayoutUpdated",
-                                  layout_updated_cb, menu_data);
-   return menu_data;
+   edbus_proxy_signal_handler_add(ctx->proxy, "ItemsPropertiesUpdated",
+                                  layout_updated_cb, ctx);
+   edbus_proxy_signal_handler_add(ctx->proxy, "LayoutUpdated",
+                                  layout_updated_cb, ctx);
+   return ctx;
 }
 
 void
-e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBus_Menu_Item_Event event)
+e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event)
 {
    EDBus_Message *msg;
    EDBus_Message_Iter *main_iter, *var;
@@ -382,48 +380,49 @@ e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBus_Menu_Item_Event event)
 
    EINA_SAFETY_ON_NULL_RETURN(m);
    EINA_SAFETY_ON_FALSE_RETURN(event < E_DBUSMENU_ITEM_EVENT_LAST);
-   EINA_SAFETY_ON_NULL_RETURN(m->internal_ctx);
+   EINA_SAFETY_ON_NULL_RETURN(m->ctx);
 
-   msg = edbus_proxy_method_call_new(m->internal_ctx->proxy, "Event");
+   msg = edbus_proxy_method_call_new(m->ctx->proxy, "Event");
    main_iter = edbus_message_iter_get(msg);
    edbus_message_iter_arguments_append(main_iter, "is", m->id,
                                        Menu_Item_Event_Names[event]);
 
    var = edbus_message_iter_container_new(main_iter, 'v', "s");
-   edbus_message_iter_arguments_append(var, "s", "");//dummy data
+   /* dummy data */
+   edbus_message_iter_arguments_append(var, "s", "");
    edbus_message_iter_container_close(main_iter, var);
 
    edbus_message_iter_arguments_append(main_iter, "u", timestamp);
 
-   edbus_proxy_send(m->internal_ctx->proxy, msg, NULL, NULL, -1);
+   edbus_proxy_send(m->ctx->proxy, msg, NULL, NULL, -1);
    edbus_message_unref(msg);
 }
 
 void
-e_dbusmenu_unload(E_DBusMenu_Ctx *menu_data)
+e_dbusmenu_unload(E_DBusMenu_Ctx *ctx)
 {
    EDBus_Connection *conn;
    EDBus_Object *obj;
-   EINA_SAFETY_ON_NULL_RETURN(menu_data);
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
 
-   if (menu_data->root_menu)
-     dbus_menu_free(menu_data->root_menu);
-   obj = edbus_proxy_object_get(menu_data->proxy);
+   if (ctx->root_menu)
+     dbus_menu_free(ctx->root_menu);
+   obj = edbus_proxy_object_get(ctx->proxy);
    conn = edbus_object_connection_get(obj);
-   edbus_proxy_unref(menu_data->proxy);
+   edbus_proxy_unref(ctx->proxy);
    edbus_object_unref(obj);
    edbus_connection_unref(conn);
-   free(menu_data);
+   free(ctx);
 }
 
 void
-e_dbusmenu_pop_request_callback_set(E_DBusMenu_Ctx *menu_data, E_DBusMenu_Pop_Request_Cb cb)
+e_dbusmenu_pop_request_cb_set(E_DBusMenu_Ctx *ctx, E_DBusMenu_Pop_Request_Cb cb)
 {
-   menu_data->pop_request_cb = cb;
+   ctx->pop_request_cb = cb;
 }
 
 void
-e_dbusmenu_update_callback_set(E_DBusMenu_Ctx *menu_data, E_DBusMenu_Itens_Update_Cb cb)
+e_dbusmenu_update_cb_set(E_DBusMenu_Ctx *ctx, E_DBusMenu_Update_Cb cb)
 {
-   menu_data->update_cb = cb;
+   ctx->update_cb = cb;
 }
