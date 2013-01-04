@@ -22,7 +22,7 @@ _ebluez4_cb_pair(void *data, void *data2 __UNUSED__)
    if(!addr)
      return;
    e_gadcon_popup_hide(inst->popup);
-   DBG("Pairing with : %s", addr);
+   ebluez4_connect_to_device(addr);
 }
 
 static Eina_Bool
@@ -259,8 +259,8 @@ ebluez4_update_inst(Evas_Object *dest, Eina_List *src)
 
    e_widget_ilist_header_append(dest, NULL, ILIST_HEADER);
    EINA_LIST_FOREACH(src, iter, dev)
-     e_widget_ilist_append(dest, NULL, dev->name, NULL, NULL,
-                           dev->addr);
+     if (!dev->connected)
+       e_widget_ilist_append(dest, NULL, dev->name, NULL, NULL, dev->addr);
 
    e_widget_ilist_thaw(dest);
    e_widget_ilist_go(dest);
