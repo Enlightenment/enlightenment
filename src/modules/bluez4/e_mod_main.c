@@ -17,28 +17,41 @@ _ebluez4_search_dialog_del(Instance *inst)
    if (!inst->search_dialog) return;
    e_object_del(E_OBJECT(inst->search_dialog));
    inst->search_dialog = NULL;
+   inst->found_list = NULL;
+
+   if (ctxt->adap_obj)
+     {
+        ebluez4_stop_discovery();
+        DBG("Stopping discovery...");
+     }
 }
 
 static void
 _ebluez4_cb_search_dialog_del(E_Win *win)
 {
    E_Dialog *dialog = win->data;
-
    _ebluez4_search_dialog_del(dialog->data);
-
-   ebluez4_stop_discovery();
-   DBG("Stopping discovery...");
 }
 
 static void
-_ebluez4_cb_pair(void *data, E_Dialog *dialog)
+_ebluez4_cb_paired(void *data, Eina_Bool success, const char *err_msg)
+{
+   Instance *inst = data;
+   if (success)
+     _ebluez4_search_dialog_del(inst);
+   else
+     ebluez4_show_error("Bluez Error", err_msg);
+}
+
+static void
+_ebluez4_cb_pair(void *data)
 {
    Instance *inst = data;
    const char *addr = e_widget_ilist_selected_value_get(inst->found_list);
 
    if(!addr)
      return;
-   ebluez4_pair_with_device(addr);
+   ebluez4_pair_with_device(addr, _ebluez4_cb_paired, inst);
 }
 
 static void
@@ -50,7 +63,7 @@ _ebluez4_cb_search(void *data, E_Menu *m, E_Menu_Item *mi)
    Evas *evas;
 
    if (inst->search_dialog)
-     _ebluez4_cb_search_dialog_del(inst->search_dialog->win);
+     _ebluez4_search_dialog_del(inst);
 
    con = e_container_current_get(e_manager_current_get());
 
@@ -64,7 +77,6 @@ _ebluez4_cb_search(void *data, E_Menu *m, E_Menu_Item *mi)
    inst->found_list = e_widget_ilist_add(evas, 0, 0, NULL);
 
    e_dialog_content_set(dialog, inst->found_list, 250, 220);
-   e_dialog_button_add(dialog, "Pair", NULL, _ebluez4_cb_pair, inst);
 
    e_dialog_show(dialog);
 
@@ -332,7 +344,7 @@ e_modapi_save(E_Module *m)
 
 /* Public Functions */
 void
-ebluez4_update_inst(Evas_Object *dest, Eina_List *src)
+ebluez4_update_inst(Evas_Object *dest, Eina_List *src, Instance *inst)
 {
    Device *dev;
    Eina_List *iter;
@@ -341,7 +353,9 @@ ebluez4_update_inst(Evas_Object *dest, Eina_List *src)
    e_widget_ilist_clear(dest);
 
    EINA_LIST_FOREACH(src, iter, dev)
-     e_widget_ilist_append(dest, NULL, dev->name, NULL, NULL, dev->addr);
+     if (src == ctxt->found_devices && !dev->paired)
+       e_widget_ilist_append(dest, NULL, dev->name, _ebluez4_cb_pair, inst,
+                             dev->addr);
 
    e_widget_ilist_thaw(dest);
    e_widget_ilist_go(dest);
@@ -357,7 +371,7 @@ ebluez4_update_instances(Eina_List *src)
      {
         EINA_LIST_FOREACH(instances, iter, inst)
           if (inst->found_list)
-            ebluez4_update_inst(inst->found_list, src);
+            ebluez4_update_inst(inst->found_list, src, inst);
      }
 }
 

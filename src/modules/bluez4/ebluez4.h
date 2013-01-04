@@ -62,6 +62,6 @@ void ebluez4_start_discovery();
 void ebluez4_stop_discovery();
 void ebluez4_connect_to_device(Device *dev);
 void ebluez4_disconnect_device(Device *dev);
-void ebluez4_pair_with_device(const char *addr);
+void ebluez4_pair_with_device(const char *addr, void (*cb)(void *, Eina_Bool, const char *), void *data);
 void ebluez4_remove_device(EDBus_Object *obj);
 int ebluez4_path_cmp(const void *d1, const void *d2);

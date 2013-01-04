@@ -17,7 +17,7 @@ EAPI void *e_modapi_init(E_Module *m);
 EAPI int e_modapi_shutdown(E_Module *m);
 EAPI int e_modapi_save(E_Module *m);
 
-void ebluez4_update_inst(Evas_Object *dest, Eina_List *src);
+void ebluez4_update_inst(Evas_Object *dest, Eina_List *src, Instance *inst);
 void ebluez4_update_instances(Eina_List *src);
 void ebluez4_update_all_gadgets_visibility();
 void ebluez4_show_error(const char *err_name, const char *err_msg);

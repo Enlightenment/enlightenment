@@ -4,6 +4,12 @@
 #include "e_mod_main.h"
 #include "ebluez4.h"
 
+typedef struct _Pair_Cb
+{
+   void (*cb)(void *, Eina_Bool, const char *);
+   void *data;
+} Pair_Cb;
+
 Service services[] = {
    { HumanInterfaceDevice_UUID, INPUT },
    { AudioSource_UUID, AUDIO_SOURCE },
@@ -245,13 +251,16 @@ static void
 _on_paired(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *err_name, *err_msg;
+   Pair_Cb *d = data;
+   Eina_Bool success = EINA_TRUE;
 
    if (edbus_message_error_get(msg, &err_name, &err_msg))
      {
         ERR("%s: %s", err_name, err_msg);
-        ebluez4_show_error(err_name, err_msg);
-        return;
+        success = EINA_FALSE;
      }
+   if (d->cb) d->cb(d->data, success, err_msg);
+   free(d);
 }
 
 static void
@@ -276,14 +285,14 @@ _on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_unset_dev(const char *path)
+_unset_dev(Device *dev, Eina_List *list)
 {
-   Device *dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp,
-                                           path);
-
    if (!dev)
      return;
-   ctxt->devices = eina_list_remove(ctxt->devices, dev);
+   if (list == ctxt->devices)
+     ctxt->devices = eina_list_remove(list, dev);
+   else
+     ctxt->found_devices = eina_list_remove(list, dev);
    _free_dev(dev);
 }
 
@@ -305,11 +314,15 @@ static void
 _on_removed(void *context, const EDBus_Message *msg)
 {
    const char *path;
+   Device *dev, *fdev;
 
    if (!edbus_message_arguments_get(msg, "o", &path))
      return;
 
-   _unset_dev(path);
+   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp, path);
+   fdev = eina_list_search_unsorted(ctxt->found_devices, _addr_cmp, dev->addr);
+   _unset_dev(dev, ctxt->devices);
+   _unset_dev(fdev, ctxt->found_devices);
 }
 
 static void
@@ -520,9 +533,13 @@ ebluez4_disconnect_device(Device *dev)
 }
 
 void
-ebluez4_pair_with_device(const char *addr)
+ebluez4_pair_with_device(const char *addr, void (*cb)(void *, Eina_Bool, const char *), void *data)
 {
-   edbus_proxy_call(ctxt->adap_proxy, "CreatePairedDevice", _on_paired, NULL,
+   Pair_Cb *d = malloc(sizeof(Pair_Cb));
+   EINA_SAFETY_ON_NULL_RETURN(d);
+   d->cb = cb;
+   d->data = data;
+   edbus_proxy_call(ctxt->adap_proxy, "CreatePairedDevice", _on_paired, d,
                     -1, "sos", addr, AGENT_PATH, "KeyboardDisplay");
 }
 
