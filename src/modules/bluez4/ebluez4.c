@@ -49,6 +49,7 @@ _unset_adapter()
    edbus_object_unref(ctxt->adap_obj);
    ctxt->adap_obj = NULL;
    ebluez4_disabled_set_all_search_buttons(EINA_TRUE);
+   ebluez4_update_instances(ctxt->devices);
 }
 
 static void
@@ -207,6 +208,7 @@ void
 ebluez4_start_discovery()
 {
    _free_dev_list(&ctxt->devices);
+   ebluez4_update_instances(ctxt->devices);
    edbus_proxy_call(ctxt->adap_proxy, "StartDiscovery", NULL, NULL, -1, "");
 }
 

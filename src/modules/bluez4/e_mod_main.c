@@ -3,6 +3,8 @@
 #include "e_mod_main.h"
 #include "ebluez4.h"
 
+#define ILIST_HEADER "Devices Found"
+
 /* Local Variables */
 static Eina_List *instances = NULL;
 static E_Module *mod = NULL;
@@ -61,7 +63,7 @@ _ebluez4_popup_new(Instance *inst)
    inst->found_list = e_widget_ilist_add(evas, 0, 0, NULL);
    e_widget_list_object_append(list, inst->found_list, 1, 1, 0.5);
 
-   e_widget_ilist_header_append(inst->found_list, NULL, "Devices Found");
+   e_widget_ilist_header_append(inst->found_list, NULL, ILIST_HEADER);
 
    inst->bt = e_widget_button_add(evas, "Search Devices", NULL,
                                   _ebluez4_cb_search, inst, NULL);
@@ -244,4 +246,33 @@ ebluez4_append_to_instances(const char *addr, const char *name)
 
    EINA_LIST_FOREACH(instances, iter, inst)
      e_widget_ilist_append(inst->found_list, NULL, name, NULL, NULL, addr);
+}
+
+void
+ebluez4_update_inst(Evas_Object *dest, Eina_List *src)
+{
+   Device *dev;
+   Eina_List *iter;
+
+   e_widget_ilist_freeze(dest);
+   e_widget_ilist_clear(dest);
+
+   e_widget_ilist_header_append(dest, NULL, ILIST_HEADER);
+   EINA_LIST_FOREACH(src, iter, dev)
+     e_widget_ilist_append(dest, NULL, dev->name, NULL, NULL,
+                           dev->addr);
+
+   e_widget_ilist_thaw(dest);
+   e_widget_ilist_go(dest);
+}
+
+void
+ebluez4_update_instances(Eina_List *src)
+{
+   Eina_List *iter;
+   Instance *inst;
+
+   EINA_LIST_FOREACH(instances, iter, inst)
+     if (inst->found_list)
+       ebluez4_update_inst(inst->found_list, src);
 }
