@@ -111,7 +111,7 @@ _ebluez4_add_devices(Instance *inst)
    Device *dev;
    Eina_List *iter;
    E_Menu *m, *subm;
-   E_Menu_Item *mi;
+   E_Menu_Item *mi, *submi;
    Eina_Bool ret = EINA_FALSE;
 
    m = inst->menu;
@@ -131,24 +131,27 @@ _ebluez4_add_devices(Instance *inst)
        {
           mi = e_menu_item_new(m);
           e_menu_item_label_set(mi, dev->name);
+          e_menu_item_check_set(mi, 1);
           subm = e_menu_new();
           e_menu_post_deactivate_callback_set(subm, _menu_post_deactivate,
                                               NULL);
           e_menu_item_submenu_set(mi, subm);
-          mi = e_menu_item_new(subm);
+          submi = e_menu_item_new(subm);
           if (dev->connected)
             {
-               e_menu_item_label_set(mi, "Disconnect");
-               e_menu_item_callback_set(mi, _ebluez4_cb_disconnect, dev);
+               e_menu_item_toggle_set(mi, 1);
+               e_menu_item_label_set(submi, "Disconnect");
+               e_menu_item_callback_set(submi, _ebluez4_cb_disconnect, dev);
             }
           else
             {
-               e_menu_item_label_set(mi, "Connect");
-               e_menu_item_callback_set(mi, _ebluez4_cb_connect, dev);
+               e_menu_item_toggle_set(mi, 0);
+               e_menu_item_label_set(submi, "Connect");
+               e_menu_item_callback_set(submi, _ebluez4_cb_connect, dev);
             }
-          mi = e_menu_item_new(subm);
-          e_menu_item_label_set(mi, "Forget");
-          e_menu_item_callback_set(mi, _ebluez4_cb_forget, dev);
+          submi = e_menu_item_new(subm);
+          e_menu_item_label_set(submi, "Forget");
+          e_menu_item_callback_set(submi, _ebluez4_cb_forget, dev);
        }
 
    return ret;
