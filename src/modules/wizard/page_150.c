@@ -5,7 +5,6 @@
 #define ENGINE_SW 1
 #define ENGINE_GL 2
 
-static int do_comp = 1;
 static int do_gl = 0;
 static int do_vsync = 0;
 
@@ -45,19 +44,7 @@ match_xorg_log(const char *globbing)
      }
    return 0;
 }
-/*
-EAPI int
-wizard_page_init(E_Wizard_Page *pg __UNUSED__, Eina_Bool *need_xdg_desktops __UNUSED__, Eina_Bool *need_xdg_icons __UNUSED__)
-{
-   return 1;
-}
 
-EAPI int
-wizard_page_shutdown(E_Wizard_Page *pg __UNUSED__)
-{
-   return 1;
-}
-*/
 EAPI int
 wizard_page_show(E_Wizard_Page *pg)
 {
@@ -71,6 +58,9 @@ wizard_page_show(E_Wizard_Page *pg)
    memset((&att), 0, sizeof(Ecore_X_Window_Attributes));
    ecore_x_window_attributes_get(ecore_x_window_root_first_get(), &att);
    if ((att.depth <= 8)) return 0;
+
+   if (!ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
+     return 0;
 
    ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 320, 240);
    if (ee)
@@ -89,110 +79,52 @@ wizard_page_show(E_Wizard_Page *pg)
      }
 
    o = e_widget_list_add(pg->evas, 1, 0);
-   e_wizard_title_set(_("Compositing"));
+   e_wizard_title_set(_("Engine"));
 
-   of = e_widget_framelist_add(pg->evas, _("Transparent windows and effects"), 0);
+   of = e_widget_framelist_add(pg->evas, _("HW acceleration"), 0);
 
-   ob = e_widget_textblock_add(pg->evas);
-   e_widget_size_min_set(ob, 260 * e_scale, 200 * e_scale);
-   e_widget_textblock_markup_set
-     (ob,
-     _("Compositing provides translucency<br>"
-       "for windows, window effects like<br>"
-       "fading in and out and zooming<br>"
-       "when they appear and dissapear.<br>"
-       "It is highly recommended to<br>"
-       "enable this for a better<br>"
-       "experience, but it comes at a<br>"
-       "cost. It requires extra CPU<br>"
-       "or a GLSL Shader capable GPU<br>"
-       "with well written drivers.<br>"
-       "It also will add between 10 to<br>"
-       "100 MB to the memory needed<br>"
-       "for Enlightenment."
-       )
-     );
+   ob = e_widget_check_add(pg->evas, _("Hardware Accelerated (OpenGL)"), &(do_gl));
    e_widget_framelist_object_append(of, ob);
 
-   ob = e_widget_check_add(pg->evas, _("Enable Compositing"), &(do_comp));
+   ob = e_widget_check_add(pg->evas, _("Tear-free Rendering (OpenGL only)"), &(do_vsync));
    e_widget_framelist_object_append(of, ob);
-
-   if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
-     {
-        ob = e_widget_check_add(pg->evas, _("Hardware Accelerated (OpenGL)"), &(do_gl));
-        e_widget_framelist_object_append(of, ob);
-
-        ob = e_widget_check_add(pg->evas, _("Tear-free Rendering (OpenGL only)"), &(do_vsync));
-        e_widget_framelist_object_append(of, ob);
-     }
 
    e_widget_list_object_append(o, of, 0, 0, 0.5);
-
    evas_object_show(of);
-
    e_wizard_page_show(o);
-//   pg->data = o;
+
    return 1; /* 1 == show ui, and wait for user, 0 == just continue */
 }
 
 EAPI int
 wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 {
-   if (!do_comp)
-     {
-        E_Config_Module *em;
-        Eina_List *l;
+   E_Config_DD *conf_edd = NULL;
+   E_Config_DD *conf_match_edd = NULL;
+   Config *cfg = NULL;
 
-        EINA_LIST_FOREACH(e_config->modules, l, em)
-          {
-             if (!em->name) continue;
-             if (!strcmp(em->name, "comp"))
-               {
-                  e_config->modules = eina_list_remove_list
-                      (e_config->modules, l);
-                  if (em->name) eina_stringshare_del(em->name);
-                  free(em);
-                  break;
-               }
-          }
-        e_config->use_composite = 0;
+   e_mod_comp_cfdata_edd_init(&(conf_edd), &(conf_match_edd));
+   cfg = e_mod_comp_cfdata_config_new();
+
+   if (do_gl)
+     {
+        cfg->engine = ENGINE_GL;
+        cfg->smooth_windows = 1;
+        cfg->vsync = do_vsync;
      }
    else
      {
-        E_Config_DD *conf_edd = NULL;
-        E_Config_DD *conf_match_edd = NULL;
-        Config *cfg = NULL;
-
-        e_config->use_composite = 1;
-        e_mod_comp_cfdata_edd_init(&(conf_edd), &(conf_match_edd));
-        cfg = e_mod_comp_cfdata_config_new();
-
-        if (do_gl)
-          {
-             cfg->engine = ENGINE_GL;
-             cfg->smooth_windows = 1;
-             cfg->vsync = do_vsync;
-          }
-        else
-          {
-             cfg->engine = ENGINE_SW;
-             cfg->smooth_windows = 0;
-             cfg->vsync = 0;
-          }
-
-        e_config_domain_save("module.comp", conf_edd, cfg);
-        E_CONFIG_DD_FREE(conf_match_edd);
-        E_CONFIG_DD_FREE(conf_edd);
-        e_mod_cfdata_config_free(cfg);
+        cfg->engine = ENGINE_SW;
+        cfg->smooth_windows = 0;
+        cfg->vsync = 0;
      }
+
+   e_config_domain_save("module.comp", conf_edd, cfg);
+   E_CONFIG_DD_FREE(conf_match_edd);
+   E_CONFIG_DD_FREE(conf_edd);
+   e_mod_cfdata_config_free(cfg);
+
    e_config_save_queue();
-//   if (pg->data) evas_object_del(pg->data);
+
    return 1;
 }
-/*
-EAPI int
-wizard_page_apply(E_Wizard_Page *pg __UNUSED__)
-{
-   return 1;
-}
-*/

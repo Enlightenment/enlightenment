@@ -20,7 +20,7 @@ group "E_Config" struct {
     value "zone_desks_y_count" int: 1;
     value "show_desktop_icons" int: 1;
     value "edge_flip_dragging" int: 1;
-    value "use_composite" int: 0;
+    value "use_composite" int: 1;
     value "language" string: "en_US.UTF-8";
     value "window_placement_policy" int: 0;
     value "window_grouping" int: 0;
