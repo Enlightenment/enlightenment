@@ -71,10 +71,10 @@ typedef struct _Context
 
 Context *ctxt;
 
-void ebluez4_edbus_init();
-void ebluez4_edbus_shutdown();
-void ebluez4_start_discovery();
-void ebluez4_stop_discovery();
+void ebluez4_edbus_init(void);
+void ebluez4_edbus_shutdown(void);
+void ebluez4_start_discovery(void);
+void ebluez4_stop_discovery(void);
 void ebluez4_connect_to_device(Device *dev);
 void ebluez4_disconnect_device(Device *dev);
 void ebluez4_pair_with_device(const char *addr, void (*cb)(void *, Eina_Bool, const char *), void *data);

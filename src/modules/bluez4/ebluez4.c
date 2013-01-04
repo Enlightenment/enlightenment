@@ -68,7 +68,7 @@ _free_dev_list(Eina_List **list)
 }
 
 static void
-_free_adap_list()
+_free_adap_list(void)
 {
    Adapter *adap;
 
@@ -494,7 +494,7 @@ _on_adap_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending
 }
 
 static void
-_unset_default_adapter()
+_unset_default_adapter(void)
 {
    DBG("Remove default adapter %s", edbus_object_path_get(ctxt->adap_obj));
    _free_dev_list(&ctxt->devices);
@@ -671,7 +671,7 @@ _bluez_monitor(void *data, const char *bus, const char *old_id, const char *new_
 
 /* Public Functions */
 void
-ebluez4_edbus_init()
+ebluez4_edbus_init(void)
 {
    EDBus_Object *obj;
 
@@ -697,7 +697,7 @@ ebluez4_edbus_init()
 }
 
 void
-ebluez4_edbus_shutdown()
+ebluez4_edbus_shutdown(void)
 {
    _free_dev_list(&ctxt->devices);
    _free_dev_list(&ctxt->found_devices);
@@ -709,7 +709,7 @@ ebluez4_edbus_shutdown()
 }
 
 void
-ebluez4_start_discovery()
+ebluez4_start_discovery(void)
 {
    _free_dev_list(&ctxt->found_devices);
    ebluez4_update_instances(ctxt->found_devices);
@@ -717,7 +717,7 @@ ebluez4_start_discovery()
 }
 
 void
-ebluez4_stop_discovery()
+ebluez4_stop_discovery(void)
 {
    edbus_proxy_call(ctxt->adap_proxy, "StopDiscovery", NULL, NULL, -1, "");
 }

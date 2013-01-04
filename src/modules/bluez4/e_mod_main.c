@@ -530,7 +530,7 @@ ebluez4_update_instances(Eina_List *src)
 }
 
 void
-ebluez4_update_all_gadgets_visibility()
+ebluez4_update_all_gadgets_visibility(void)
 {
    Eina_List *iter;
    Instance *inst;
