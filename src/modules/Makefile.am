@@ -30,6 +30,10 @@ if USE_MODULE_CONNMAN
 include Makefile_connman.am
 endif
 
+if USE_MODULE_BLUEZ4
+include Makefile_bluez4.am
+endif
+
 if USE_MODULE_IBAR
 include Makefile_ibar.am
 endif

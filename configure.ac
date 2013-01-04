@@ -799,6 +799,15 @@ dnl  AC_E_CHECK_PKG(DUMMY, [ connman >= 1.0 ], [], [CONNMAN=false])
 AC_SUBST(ECONNMAN_CFLAGS)
 AC_SUBST(ECONNMAN_LIBS)
 
+AM_CONDITIONAL(HAVE_BLUEZ4, false)
+AM_CONDITIONAL(HAVE_DUMMY, false)
+define([CHECK_MODULE_BLUEZ4],
+[
+  AC_E_CHECK_PKG(BLUEZ4, [ edbus2 ],)
+])
+AC_SUBST(EBLUEZ4_CFLAGS)
+AC_SUBST(EBLUEZ4_LIBS)
+
 have_wayland_clients=no
 AC_ARG_ENABLE([wayland-clients],
   AS_HELP_STRING([--enable-wayland-clients],[enable wayland clients in composite module @<:@default=disabled@:>@]),
@@ -857,6 +866,7 @@ AC_E_OPTIONAL_MODULE([conf_interaction], true)
 AC_E_OPTIONAL_MODULE([gadman], true)
 AC_E_OPTIONAL_MODULE([mixer], true, [CHECK_MODULE_MIXER])
 AC_E_OPTIONAL_MODULE([connman], true, [CHECK_MODULE_CONNMAN])
+AC_E_OPTIONAL_MODULE([bluez4], true, [CHECK_MODULE_BLUEZ4])
 AC_E_OPTIONAL_MODULE([illume2], true)
 AC_E_OPTIONAL_MODULE([syscon], true)
 AC_E_OPTIONAL_MODULE([everything], true)
@@ -957,6 +967,7 @@ src/modules/conf_randr/module.desktop
 src/modules/gadman/module.desktop
 src/modules/mixer/module.desktop
 src/modules/connman/module.desktop
+src/modules/bluez4/module.desktop
 src/modules/illume2/doc/illume.dox
 src/modules/illume2/module.desktop
 src/modules/illume-home/module.desktop

@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Link
+Name=Bluez4
+Icon=e-module-bluez4
+#Several different types available here. NEED TO DOC THESE.
+X-Enlightenment-ModuleType=utils
