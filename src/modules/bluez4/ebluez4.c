@@ -222,6 +222,26 @@ _try_to_connect(EDBus_Proxy *proxy)
 }
 
 static void
+_on_disconnected(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+{
+   const char *err_name, *err_msg;
+
+   if (edbus_message_error_get(msg, &err_name, &err_msg))
+     {
+        ERR("%s: %s", err_name, err_msg);
+        ebluez4_show_error(err_name, err_msg);
+        return;
+     }
+}
+
+static void
+_try_to_disconnect(EDBus_Proxy *proxy)
+{
+   if (proxy)
+     edbus_proxy_call(proxy, "Disconnect", _on_disconnected, NULL, -1, "");
+}
+
+static void
 _on_paired(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *err_name, *err_msg;
@@ -489,6 +509,14 @@ ebluez4_connect_to_device(Device *dev)
    _try_to_connect(dev->proxy.input);
    _try_to_connect(dev->proxy.audio_source);
    _try_to_connect(dev->proxy.audio_sink);
+}
+
+void
+ebluez4_disconnect_device(Device *dev)
+{
+   _try_to_disconnect(dev->proxy.input);
+   _try_to_disconnect(dev->proxy.audio_source);
+   _try_to_disconnect(dev->proxy.audio_sink);
 }
 
 void

@@ -82,6 +82,12 @@ _ebluez4_cb_connect(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 static void
+_ebluez4_cb_disconnect(void *data, E_Menu *m, E_Menu_Item *mi)
+{
+   ebluez4_disconnect_device(data);
+}
+
+static void
 _ebluez4_cb_forget(void *data, E_Menu *m, E_Menu_Item *mi)
 {
    Device *dev = data;
@@ -130,8 +136,16 @@ _ebluez4_add_devices(Instance *inst)
                                               NULL);
           e_menu_item_submenu_set(mi, subm);
           mi = e_menu_item_new(subm);
-          e_menu_item_label_set(mi, "Connect");
-          e_menu_item_callback_set(mi, _ebluez4_cb_connect, dev);
+          if (dev->connected)
+            {
+               e_menu_item_label_set(mi, "Disconnect");
+               e_menu_item_callback_set(mi, _ebluez4_cb_disconnect, dev);
+            }
+          else
+            {
+               e_menu_item_label_set(mi, "Connect");
+               e_menu_item_callback_set(mi, _ebluez4_cb_connect, dev);
+            }
           mi = e_menu_item_new(subm);
           e_menu_item_label_set(mi, "Forget");
           e_menu_item_callback_set(mi, _ebluez4_cb_forget, dev);
