@@ -26,7 +26,7 @@ _pincode_ok(void *data, char *text)
 {
    EDBus_Message *message = data;
    EDBus_Message *reply = edbus_message_method_return_new(message);
-   edbus_message_arguments_set(reply, "s", text);
+   edbus_message_arguments_append(reply, "s", text);
    _reply(message, reply);
 }
 
@@ -36,7 +36,7 @@ _passkey_ok(void *data, char *text)
    EDBus_Message *message = data;
    uint32_t passkey = (uint32_t)atoi(text);
    EDBus_Message *reply = edbus_message_method_return_new(message);
-   edbus_message_arguments_set(reply, "u", passkey);
+   edbus_message_arguments_append(reply, "u", passkey);
    _reply(message, reply);
 }
 
