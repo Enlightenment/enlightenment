@@ -14,7 +14,7 @@ Service services[] = {
    { HumanInterfaceDevice_UUID, INPUT },
    { AudioSource_UUID, AUDIO_SOURCE },
    { AudioSink_UUID, AUDIO_SINK },
-   { NULL, NONE}
+   { }
 };
 
 static int
@@ -35,53 +35,59 @@ _adap_path_cmp(const void *d1, const void *d2)
    return strcmp(edbus_object_path_get(adap->obj), path);
 }
 
-static const char *
-_parse_icon_to_type(const char *icon)
+static struct icon_type
 {
-   if (!strcmp(icon, "audio-card"))
-     return eina_stringshare_add("Audio");
-   else if (!strcmp(icon, "camera-photo"))
-     return eina_stringshare_add("Photo Camera");
-   else if (!strcmp(icon, "camera-video"))
-     return eina_stringshare_add("Video Camera");
-   else if (!strcmp(icon, "computer"))
-     return eina_stringshare_add("Computer");
-   else if (!strcmp(icon, "input-gaming"))
-     return eina_stringshare_add("Game Controller");
-   else if (!strcmp(icon, "input-keyboard"))
-     return eina_stringshare_add("Keyboard");
-   else if (!strcmp(icon, "input-mouse"))
-     return eina_stringshare_add("Mouse");
-   else if (!strcmp(icon, "input-tablet"))
-     return eina_stringshare_add("Tablet");
-   else if (!strcmp(icon, "modem"))
-     return eina_stringshare_add("Modem");
-   else if (!strcmp(icon, "network-wireless"))
-    return eina_stringshare_add("Wireless");
-   else if (!strcmp(icon, "phone"))
-     return eina_stringshare_add("Phone");
-   else if (!strcmp(icon, "printer"))
-     return eina_stringshare_add("Printer");
+   const char *icon;
+   const char *type;
+} icon_type_table[] = {
+   { "audio-card", "Audio" },
+   { "camera-photo", "Photo Camera" },
+   { "camera-video", "Video Camera" },
+   { "computer", "Computer" },
+   { "input-gaming", "Game Controller" },
+   { "input-keyboard", "Keyboard" },
+   { "input-mouse", "Mouse" },
+   { "input-tablet", "Tablet" },
+   { "modem", "Modem" },
+   { "network-wireless", "Wireless" },
+   { "phone", "Phone" },
+   { "printer", "Printer" },
+   { }
+};
+
+static const char *
+_icon_to_type(const char *icon)
+{
+   struct icon_type *it;
+
+   for (it = &icon_type_table[0]; it && it->icon; it++)
+     {
+        if (strcmp(icon, it->icon))
+          return it->type;
+     }
    return NULL;
 }
 
 static void
 _free_dev(Device *dev)
 {
+   if (dev->proxy.input) edbus_proxy_unref(dev->proxy.input);
+   if (dev->proxy.audio_source) edbus_proxy_unref(dev->proxy.audio_source);
+   if (dev->proxy.audio_sink) edbus_proxy_unref(dev->proxy.audio_sink);
+
    if (dev->obj)
      edbus_object_unref(dev->obj);
    eina_stringshare_del(dev->addr);
    dev->addr = NULL;
    eina_stringshare_del(dev->name);
    dev->name = NULL;
-   if (dev->type) eina_stringshare_del(dev->type);
-   dev->type = NULL;
    free(dev);
 }
 
 static void
 _free_adap(Adapter *adap)
 {
+   edbus_proxy_unref(adap->proxy);
    edbus_object_unref(adap->obj);
    eina_stringshare_del(adap->name);
    adap->name = NULL;
@@ -159,37 +165,37 @@ _retrieve_properties(EDBus_Message_Iter *dict, const char **addr,
 
    while (edbus_message_iter_get_and_next(dict, 'e', &entry))
      {
-        if(!edbus_message_iter_arguments_get(entry, "sv", &key, &variant))
+        if (!edbus_message_iter_arguments_get(entry, "sv", &key, &variant))
            return;
 
         if (!strcmp(key, "Address"))
           {
-             if(!edbus_message_iter_arguments_get(variant, "s", addr))
+             if (!edbus_message_iter_arguments_get(variant, "s", addr))
                return;
           }
         else if (!strcmp(key, "Name"))
           {
-             if(!edbus_message_iter_arguments_get(variant, "s", name))
+             if (!edbus_message_iter_arguments_get(variant, "s", name))
                return;
           }
         else if (!strcmp(key, "Icon"))
           {
-             if(!edbus_message_iter_arguments_get(variant, "s", icon))
+             if (!edbus_message_iter_arguments_get(variant, "s", icon))
                return;
           }
         else if (!strcmp(key, "Paired"))
           {
-             if(!edbus_message_iter_arguments_get(variant, "b", paired))
+             if (!edbus_message_iter_arguments_get(variant, "b", paired))
                return;
           }
         else if (!strcmp(key, "Connected"))
           {
-             if(!edbus_message_iter_arguments_get(variant, "b", connected))
+             if (!edbus_message_iter_arguments_get(variant, "b", connected))
                return;
           }
         else if (!strcmp(key, "UUIDs"))
           {
-             if(!edbus_message_iter_arguments_get(variant, "as", uuids))
+             if (!edbus_message_iter_arguments_get(variant, "as", uuids))
                return;
           }
      }
@@ -217,33 +223,29 @@ _on_dev_property_changed(void *context, const EDBus_Message *msg)
 
    if (!strcmp(key, "Name"))
      {
-        if(!edbus_message_iter_arguments_get(variant, "s", &name))
+        if (!edbus_message_iter_arguments_get(variant, "s", &name))
           return;
         DBG("'%s' property of %s changed to %s", key, dev->name, name);
-        eina_stringshare_del(dev->name);
-        dev->name = eina_stringshare_add(name);
+        eina_stringshare_replace(&dev->name, name);
 
         if (found_dev)
           {
-             eina_stringshare_del(found_dev->name);
-             found_dev->name = eina_stringshare_add(name);
+             eina_stringshare_replace(&found_dev->name, name);
              ebluez4_update_instances(ctxt->found_devices);
           }
      }
    else if (!strcmp(key, "Icon"))
      {
-        if(!edbus_message_iter_arguments_get(variant, "s", &icon))
+        if (!edbus_message_iter_arguments_get(variant, "s", &icon))
           return;
         if (!found_dev) return;
         DBG("'%s' property of %s changed to %s", key, found_dev->name, icon);
-        if (found_dev->type)
-          eina_stringshare_del(found_dev->type);
-        found_dev->type = _parse_icon_to_type(icon);
+        found_dev->type = _icon_to_type(icon);
         ebluez4_update_instances(ctxt->found_devices);
      }
    else if (!strcmp(key, "Paired"))
      {
-        if(!edbus_message_iter_arguments_get(variant, "b", &paired))
+        if (!edbus_message_iter_arguments_get(variant, "b", &paired))
           return;
         DBG("'%s' property of %s changed to %d", key, dev->name, paired);
         dev->paired = paired;
@@ -256,14 +258,14 @@ _on_dev_property_changed(void *context, const EDBus_Message *msg)
      }
    else if (!strcmp(key, "Connected"))
      {
-        if(!edbus_message_iter_arguments_get(variant, "b", &connected))
+        if (!edbus_message_iter_arguments_get(variant, "b", &connected))
           return;
         DBG("'%s' property of %s changed to %d", key, dev->name, connected);
         dev->connected = connected;
      }
    else if (!strcmp(key, "UUIDs"))
      {
-        if(!edbus_message_iter_arguments_get(variant, "as", &uuids))
+        if (!edbus_message_iter_arguments_get(variant, "as", &uuids))
           return;
         _set_dev_services(dev, uuids);
      }
@@ -347,14 +349,12 @@ _on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_unset_dev(Device *dev, Eina_List *list)
+_unset_dev(Device *dev, Eina_List **list)
 {
-   if (!dev)
+   if (!dev || !list)
      return;
-   if (list == ctxt->devices)
-     ctxt->devices = eina_list_remove(list, dev);
-   else
-     ctxt->found_devices = eina_list_remove(list, dev);
+
+   *list = eina_list_remove(*list, dev);
    _free_dev(dev);
 }
 
@@ -384,8 +384,8 @@ _on_removed(void *context, const EDBus_Message *msg)
    dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, path);
    fdev = eina_list_search_unsorted(ctxt->found_devices, _dev_addr_cmp,
                                     dev->addr);
-   _unset_dev(dev, ctxt->devices);
-   _unset_dev(fdev, ctxt->found_devices);
+   _unset_dev(dev, &ctxt->devices);
+   _unset_dev(fdev, &ctxt->found_devices);
 }
 
 static void
@@ -410,7 +410,7 @@ _on_device_found(void *context, const EDBus_Message *msg)
    if (!edbus_message_arguments_get(msg, "sa{sv}", &addr, &dict))
      return;
 
-   if(eina_list_search_unsorted(ctxt->found_devices, _dev_addr_cmp, addr))
+   if (eina_list_search_unsorted(ctxt->found_devices, _dev_addr_cmp, addr))
      return;
 
    _retrieve_properties(dict, &addr, &name, &icon, &paired, &connected, &uuids);
@@ -418,7 +418,7 @@ _on_device_found(void *context, const EDBus_Message *msg)
    dev = calloc(1, sizeof(Device));
    dev->addr = eina_stringshare_add(addr);
    dev->name = eina_stringshare_add(name);
-   if (icon) dev->type = _parse_icon_to_type(icon);
+   if (icon) dev->type = _icon_to_type(icon);
    dev->paired = paired;
    ctxt->found_devices = eina_list_append(ctxt->found_devices, dev);
 
@@ -463,7 +463,7 @@ _on_adap_property_changed(void *context, const EDBus_Message *msg)
 
    if (!strcmp(key, "Name"))
      {
-        if(!edbus_message_iter_arguments_get(variant, "s", &name))
+        if (!edbus_message_iter_arguments_get(variant, "s", &name))
           return;
         DBG("'%s' property of %s changed to %s", key, adap->name, name);
         eina_stringshare_del(adap->name);
@@ -473,21 +473,21 @@ _on_adap_property_changed(void *context, const EDBus_Message *msg)
      }
    else if (!strcmp(key, "Discoverable"))
      {
-        if(!edbus_message_iter_arguments_get(variant, "b", &visible))
+        if (!edbus_message_iter_arguments_get(variant, "b", &visible))
           return;
         DBG("'%s' property of %s changed to %d", key, adap->name, visible);
         adap->visible = visible;
      }
    else if (!strcmp(key, "Pairable"))
      {
-        if(!edbus_message_iter_arguments_get(variant, "b", &pairable))
+        if (!edbus_message_iter_arguments_get(variant, "b", &pairable))
           return;
         DBG("'%s' property of %s changed to %d", key, adap->name, pairable);
         adap->pairable = pairable;
      }
    else if (!strcmp(key, "Powered"))
      {
-        if(!edbus_message_iter_arguments_get(variant, "b", &powered))
+        if (!edbus_message_iter_arguments_get(variant, "b", &powered))
           return;
         DBG("'%s' property of %s changed to %d", key, adap->name, powered);
         adap->powered = powered;
@@ -509,27 +509,27 @@ _on_adap_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending
 
    while (edbus_message_iter_get_and_next(dict, 'e', &entry))
      {
-        if(!edbus_message_iter_arguments_get(entry, "sv", &key, &variant))
+        if (!edbus_message_iter_arguments_get(entry, "sv", &key, &variant))
            return;
 
         else if (!strcmp(key, "Name"))
           {
-             if(!edbus_message_iter_arguments_get(variant, "s", &name))
+             if (!edbus_message_iter_arguments_get(variant, "s", &name))
                return;
           }
         else if (!strcmp(key, "Discoverable"))
           {
-             if(!edbus_message_iter_arguments_get(variant, "b", &visible))
+             if (!edbus_message_iter_arguments_get(variant, "b", &visible))
                return;
           }
         else if (!strcmp(key, "Pairable"))
           {
-             if(!edbus_message_iter_arguments_get(variant, "b", &pairable))
+             if (!edbus_message_iter_arguments_get(variant, "b", &pairable))
                return;
           }
         else if (!strcmp(key, "Powered"))
           {
-             if(!edbus_message_iter_arguments_get(variant, "b", &powered))
+             if (!edbus_message_iter_arguments_get(variant, "b", &powered))
                return;
           }
      }

@@ -645,7 +645,7 @@ _e_module_whitelist_check(void)
         "access",
         "backlight",
         "battery",
-        "bluez",
+        "bluez4",
         "clock",
         "comp",
         "conf",

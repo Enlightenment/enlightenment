@@ -221,38 +221,26 @@ _agent_cancel(const EDBus_Service_Interface *iface, const EDBus_Message *message
 }
 
 static const EDBus_Method agent_methods[] = {
-   { "Release", NULL, NULL, _agent_release, 0 },
-   {
-      "RequestPinCode", EDBUS_ARGS({"o", "device"}),
-      EDBUS_ARGS({"s", "pincode"}), _agent_request_pin_code, 0
-   },
-   {
-      "RequestPasskey", EDBUS_ARGS({"o", "device"}),
-      EDBUS_ARGS({"u", "passkey"}), _agent_request_passkey, 0
-   },
-   {
-      "DisplayPasskey",
+   { "Release", NULL, NULL, _agent_release },
+   { "RequestPinCode", EDBUS_ARGS({"o", "device"}),
+      EDBUS_ARGS({"s", "pincode"}), _agent_request_pin_code },
+   { "RequestPasskey", EDBUS_ARGS({"o", "device"}),
+      EDBUS_ARGS({"u", "passkey"}), _agent_request_passkey },
+   { "DisplayPasskey",
       EDBUS_ARGS({"o", "device"},{"u", "passkey"},{"q", "entered"}),
-      NULL, _agent_display_passkey, 0
-   },
-   {
-      "DisplayPinCode", EDBUS_ARGS({"o", "device"},{"s", "pincode"}),
-      NULL, _agent_display_pin_code, 0
-   },
-   {
-      "RequestConfirmation", EDBUS_ARGS({"o", "device"},{"u", "passkey"}),
-      NULL, _agent_request_confirmation, 0
-   },
-   {
-      "Authorize", EDBUS_ARGS({"o", "device"},{"s", "uuid"}),
-      NULL, _agent_authorize, 0
-   },
-   { "Cancel", NULL, NULL, _agent_cancel, 0 },
-   { NULL, NULL, NULL, NULL, 0 }
+      NULL, _agent_display_passkey },
+   { "DisplayPinCode", EDBUS_ARGS({"o", "device"},{"s", "pincode"}),
+      NULL, _agent_display_pin_code },
+   { "RequestConfirmation", EDBUS_ARGS({"o", "device"},{"u", "passkey"}),
+      NULL, _agent_request_confirmation },
+   { "Authorize", EDBUS_ARGS({"o", "device"},{"s", "uuid"}),
+      NULL, _agent_authorize },
+   { "Cancel", NULL, NULL, _agent_cancel },
+   { }
 };
 
 static const EDBus_Service_Interface_Desc agent_iface = {
-   AGENT_INTERFACE, agent_methods, NULL, NULL, NULL, NULL
+   AGENT_INTERFACE, agent_methods
 };
 
 /* Public Functions */
