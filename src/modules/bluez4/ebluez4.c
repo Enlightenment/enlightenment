@@ -52,10 +52,11 @@ _unset_adapter()
 
    _free_dev_list(&ctxt->devices);
    ctxt->devices = NULL;
+   _free_dev_list(&ctxt->found_devices);
+   ctxt->found_devices = NULL;
    edbus_object_unref(ctxt->adap_obj);
    ctxt->adap_obj = NULL;
-   ebluez4_disabled_set_all_search_buttons(EINA_TRUE);
-   ebluez4_update_instances(ctxt->devices);
+   ebluez4_update_instances(ctxt->devices, LIST_TYPE_CREATED_DEVICES);
    ebluez4_update_all_gadgets_visibility();
 }
 
@@ -98,12 +99,55 @@ _set_dev_services(Device *dev, EDBus_Message_Iter *uuids)
 }
 
 static void
+_retrieve_properties(EDBus_Message_Iter *dict, const char **addr,
+                     const char **name, Eina_Bool *paired, Eina_Bool *connected,
+                     EDBus_Message_Iter **uuids)
+{
+   EDBus_Message_Iter *entry, *variant;
+   const char *key;
+
+   while (edbus_message_iter_get_and_next(dict, 'e', &entry))
+     {
+        if(!edbus_message_iter_arguments_get(entry, "sv", &key, &variant))
+           return;
+
+        if (!strcmp(key, "Address"))
+          {
+             if(!edbus_message_iter_arguments_get(variant, "s", addr))
+               return;
+          }
+        else if (!strcmp(key, "Name"))
+          {
+             if(!edbus_message_iter_arguments_get(variant, "s", name))
+               return;
+          }
+        else if (!strcmp(key, "Paired"))
+          {
+             if(!edbus_message_iter_arguments_get(variant, "b", paired))
+               return;
+          }
+        else if (!strcmp(key, "Connected"))
+          {
+             if(!edbus_message_iter_arguments_get(variant, "b", connected))
+               return;
+          }
+        else if (!strcmp(key, "UUIDs"))
+          {
+             if(!edbus_message_iter_arguments_get(variant, "as", uuids))
+               return;
+          }
+     }
+}
+
+static void
 _on_prop_changed(void *context, const EDBus_Message *msg)
 {
    const char *key, *name;
    Eina_Bool paired, connected;
    EDBus_Message_Iter *variant, *uuids;
    Device *dev = context;
+   Device *found_dev = eina_list_search_unsorted(ctxt->found_devices, _addr_cmp,
+                                                 dev->addr);
 
    if (!edbus_message_arguments_get(msg, "sv", &key, &variant))
      {
@@ -118,7 +162,12 @@ _on_prop_changed(void *context, const EDBus_Message *msg)
         DBG("'%s' property of %s changed to %s", key, dev->name, name);
         eina_stringshare_del(dev->name);
         dev->name = eina_stringshare_add(name);
-        ebluez4_update_instances(ctxt->devices);
+
+        if (found_dev)
+          {
+             eina_stringshare_del(found_dev->name);
+             found_dev->name = eina_stringshare_add(name);
+          }
      }
    else if (!strcmp(key, "Paired"))
      {
@@ -126,6 +175,9 @@ _on_prop_changed(void *context, const EDBus_Message *msg)
           return;
         DBG("'%s' property of %s changed to %d", key, dev->name, paired);
         dev->paired = paired;
+
+        if (found_dev)
+          found_dev->paired = paired;
      }
    else if (!strcmp(key, "Connected"))
      {
@@ -133,14 +185,17 @@ _on_prop_changed(void *context, const EDBus_Message *msg)
           return;
         DBG("'%s' property of %s changed to %d", key, dev->name, connected);
         dev->connected = connected;
-        ebluez4_update_instances(ctxt->devices);
      }
    else if (!strcmp(key, "UUIDs"))
      {
         if(!edbus_message_iter_arguments_get(variant, "as", &uuids))
           return;
         _set_dev_services(dev, uuids);
+        return;
      }
+
+   ebluez4_update_instances(ctxt->found_devices, LIST_TYPE_FOUND_DEVICES);
+   ebluez4_update_instances(ctxt->devices, LIST_TYPE_CREATED_DEVICES);
 }
 
 static void
@@ -165,9 +220,6 @@ _try_to_connect(EDBus_Proxy *proxy)
 static void
 _on_paired(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
-   const char *path;
-   Device *dev = data;
-
    const char *err_name, *err_msg;
 
    if (edbus_message_error_get(msg, &err_name, &err_msg))
@@ -175,21 +227,13 @@ _on_paired(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
         ERR("%s: %s", err_name, err_msg);
         return;
      }
-
-   if (!edbus_message_arguments_get(msg, "o", &path))
-     {
-        ERR("Error reading device object path");
-        return;
-     }
-
-   ebluez4_connect_to_device(dev->addr);
 }
 
 static void
 _on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
-   EDBus_Message_Iter *dict, *entry, *variant, *uuids;
-   const char *key, *addr, *name;
+   EDBus_Message_Iter *dict, *uuids;
+   const char *addr, *name;
    Eina_Bool paired;
    Eina_Bool connected;
    Device *dev = data;
@@ -197,44 +241,14 @@ _on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
    if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
      return;
 
-   while (edbus_message_iter_get_and_next(dict,'e', &entry))
-     {
-        if(!edbus_message_iter_arguments_get(entry, "sv", &key, &variant))
-           return;
-
-        if (!strcmp(key, "Address"))
-          {
-             if(!edbus_message_iter_arguments_get(variant, "s", &addr))
-               return;
-          }
-        else if (!strcmp(key, "Name"))
-          {
-             if(!edbus_message_iter_arguments_get(variant, "s", &name))
-               return;
-          }
-        else if (!strcmp(key, "Paired"))
-          {
-             if(!edbus_message_iter_arguments_get(variant, "b", &paired))
-               return;
-          }
-        else if (!strcmp(key, "Connected"))
-          {
-             if(!edbus_message_iter_arguments_get(variant, "b", &connected))
-               return;
-          }
-        else if (!strcmp(key, "UUIDs"))
-          {
-             if(!edbus_message_iter_arguments_get(variant, "as", &uuids))
-               return;
-          }
-     }
+   _retrieve_properties(dict, &addr, &name, &paired, &connected, &uuids);
 
    dev->addr = eina_stringshare_add(addr);
    dev->name = eina_stringshare_add(name);
    dev->paired = paired;
    dev->connected = connected;
    _set_dev_services(dev, uuids);
-   ebluez4_append_to_instances(addr, name);
+   ebluez4_append_to_instances(dev, LIST_TYPE_CREATED_DEVICES);
 }
 
 static void
@@ -265,17 +279,29 @@ _on_created(void *context, const EDBus_Message *msg)
 static void
 _on_device_found(void *context, const EDBus_Message *msg)
 {
-   EDBus_Message_Iter *dict;
-   const char *addr;
+   EDBus_Message_Iter *dict, *uuids;
+   const char *addr, *name;
+   Eina_Bool paired, connected;
+   Device *dev;
 
    if (!edbus_message_arguments_get(msg, "sa{sv}", &addr, &dict))
      return;
 
-   if(eina_list_search_unsorted(ctxt->devices, _addr_cmp, addr))
+   if(eina_list_search_unsorted(ctxt->found_devices, _addr_cmp, addr))
      return;
 
-   edbus_proxy_call(ctxt->adap_proxy, "CreateDevice", NULL, NULL, -1, "s",
-                    addr);
+   if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
+     return;
+
+   _retrieve_properties(dict, &addr, &name, &paired, &connected, &uuids);
+
+   dev = calloc(1, sizeof(Device));
+   dev->addr = eina_stringshare_add(addr);
+   dev->name = eina_stringshare_add(name);
+   dev->paired = paired;
+   ctxt->found_devices = eina_list_append(ctxt->found_devices, dev);
+
+   ebluez4_append_to_instances(dev, LIST_TYPE_FOUND_DEVICES);
 }
 
 static void
@@ -313,7 +339,6 @@ _set_adapter(const EDBus_Message *msg)
    ctxt->adap_obj = edbus_object_get(ctxt->conn, BLUEZ_BUS, adap_path);
    ctxt->adap_proxy = edbus_proxy_get(ctxt->adap_obj, ADAPTER_INTERFACE);
 
-   ebluez4_disabled_set_all_search_buttons(EINA_FALSE);
    edbus_proxy_signal_handler_add(ctxt->adap_proxy, "DeviceFound",
                                   _on_device_found, NULL);
    edbus_proxy_signal_handler_add(ctxt->adap_proxy, "DeviceCreated",
@@ -402,6 +427,7 @@ void
 ebluez4_edbus_shutdown()
 {
    _free_dev_list(&ctxt->devices);
+   _free_dev_list(&ctxt->found_devices);
    edbus_connection_unref(ctxt->conn);
    free(ctxt);
 
@@ -411,7 +437,8 @@ ebluez4_edbus_shutdown()
 void
 ebluez4_start_discovery()
 {
-   ebluez4_update_instances(ctxt->devices);
+   _free_dev_list(&ctxt->found_devices);
+   ebluez4_update_instances(ctxt->found_devices, LIST_TYPE_FOUND_DEVICES);
    edbus_proxy_call(ctxt->adap_proxy, "StartDiscovery", NULL, NULL, -1, "");
 }
 
@@ -425,13 +452,14 @@ void
 ebluez4_connect_to_device(const char *addr)
 {
    Device *dev = eina_list_search_unsorted(ctxt->devices, _addr_cmp, addr);
-   if (dev->paired)
-     {
-        _try_to_connect(dev->proxy.input);
-        _try_to_connect(dev->proxy.audio_source);
-        _try_to_connect(dev->proxy.audio_sink);
-     }
-   else
-     edbus_proxy_call(ctxt->adap_proxy, "CreatePairedDevice", _on_paired, dev,
-                      -1, "sos", dev->addr, AGENT_PATH, "KeyboardDisplay");
+   _try_to_connect(dev->proxy.input);
+   _try_to_connect(dev->proxy.audio_source);
+   _try_to_connect(dev->proxy.audio_sink);
+}
+
+void
+ebluez4_pair_with_device(const char *addr)
+{
+   edbus_proxy_call(ctxt->adap_proxy, "CreatePairedDevice", _on_paired, NULL,
+                    -1, "sos", addr, AGENT_PATH, "KeyboardDisplay");
 }

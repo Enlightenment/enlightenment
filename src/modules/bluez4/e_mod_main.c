@@ -3,8 +3,6 @@
 #include "e_mod_main.h"
 #include "ebluez4.h"
 
-#define ILIST_HEADER "Devices Found"
-
 /* Local Variables */
 static Eina_List *instances = NULL;
 static E_Module *mod = NULL;
@@ -14,10 +12,74 @@ EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Bluez4"};
 
 /* Local Functions */
 static void
-_ebluez4_cb_pair(void *data, void *data2 __UNUSED__)
+_ebluez4_search_dialog_del(Instance *inst)
+{
+   if (!inst->search_dialog) return;
+   e_object_del(E_OBJECT(inst->search_dialog));
+   inst->search_dialog = NULL;
+}
+
+static void
+_ebluez4_cb_search_dialog_del(E_Win *win)
+{
+   E_Dialog *dialog = win->data;
+
+   _ebluez4_search_dialog_del(dialog->data);
+
+   ebluez4_stop_discovery();
+   DBG("Stopping discovery...");
+}
+
+static void
+_ebluez4_cb_pair(void *data, E_Dialog *dialog)
 {
    Instance *inst = data;
    const char *addr = e_widget_ilist_selected_value_get(inst->found_list);
+
+   if(!addr)
+     return;
+   ebluez4_pair_with_device(addr);
+}
+
+static void
+_ebluez4_cb_search(void *data, void *data2 __UNUSED__)
+{
+   Instance *inst = data;
+   E_Container *con;
+   E_Dialog *dialog;
+   Evas *evas;
+
+   if (inst->search_dialog)
+     _ebluez4_cb_search_dialog_del(inst->search_dialog->win);
+
+   con = e_container_current_get(e_manager_current_get());
+
+   dialog = e_dialog_new(con, "Search Dialog", "search");
+   e_dialog_title_set(dialog, "Searching for Devices...");
+   e_dialog_resizable_set(dialog, EINA_TRUE);
+   e_win_delete_callback_set(dialog->win, _ebluez4_cb_search_dialog_del);
+
+   evas = e_win_evas_get(dialog->win);
+
+   inst->found_list = e_widget_ilist_add(evas, 0, 0, NULL);
+
+   e_dialog_content_set(dialog, inst->found_list, 250, 220);
+   e_dialog_button_add(dialog, "Pair", NULL, _ebluez4_cb_pair, inst);
+
+   e_dialog_show(dialog);
+
+   dialog->data = inst;
+   inst->search_dialog = dialog;
+
+   ebluez4_start_discovery();
+   DBG("Starting discovery...");
+}
+
+static void
+_ebluez4_cb_connect(void *data, void *data2 __UNUSED__)
+{
+   Instance *inst = data;
+   const char *addr = e_widget_ilist_selected_value_get(inst->created_list);
 
    if(!addr)
      return;
@@ -25,32 +87,10 @@ _ebluez4_cb_pair(void *data, void *data2 __UNUSED__)
    ebluez4_connect_to_device(addr);
 }
 
-static Eina_Bool
-_ebluez4_cb_stop_search(void *data)
-{
-   Instance *inst = data;
-   ebluez4_stop_discovery();
-   e_widget_disabled_set(inst->bt, 0);
-   DBG("Stopping discovery...");
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static void
-_ebluez4_cb_search(void *data, void *data2 __UNUSED__)
-{
-   Instance *inst = data;
-   e_widget_ilist_clear(inst->found_list);
-   e_widget_ilist_header_append(inst->found_list, NULL, "Devices Found");
-   ebluez4_start_discovery();
-   e_widget_disabled_set(inst->bt, 1);
-   ecore_timer_add(60, _ebluez4_cb_stop_search, inst);
-   DBG("Starting discovery...");
-}
-
 static void
 _ebluez4_popup_new(Instance *inst)
 {
-   Evas_Object *list, *tb, *bt2;
+   Evas_Object *list, *tb, *conn_bt, *blank, *adap_bt, *search_bt;
    Evas_Coord mw, mh;
    Evas *evas;
 
@@ -60,19 +100,26 @@ _ebluez4_popup_new(Instance *inst)
    evas = inst->popup->win->evas;
 
    list = e_widget_list_add(evas, 0, 0);
-   inst->found_list = e_widget_ilist_add(evas, 0, 0, NULL);
-   e_widget_list_object_append(list, inst->found_list, 1, 1, 0.5);
+   inst->created_list = e_widget_ilist_add(evas, 0, 0, NULL);
+   e_widget_list_object_append(list, inst->created_list, 1, 1, 0.5);
+   ebluez4_update_instances(ctxt->devices, LIST_TYPE_CREATED_DEVICES);
 
-   e_widget_ilist_header_append(inst->found_list, NULL, ILIST_HEADER);
+   conn_bt = e_widget_button_add(evas, "Connect", NULL, _ebluez4_cb_connect,
+                                 inst, NULL);
+   search_bt = e_widget_button_add(evas, "Search New Devices", NULL,
+                                   _ebluez4_cb_search, inst, NULL);
+   adap_bt = e_widget_button_add(evas, "Adapters Settings", NULL, NULL, inst,
+                                 NULL);
 
-   inst->bt = e_widget_button_add(evas, "Search Devices", NULL,
-                                  _ebluez4_cb_search, inst, NULL);
-   bt2 = e_widget_button_add(evas, "Connect", NULL, _ebluez4_cb_pair, inst, NULL);
+   blank = e_widget_add(evas);
+   e_widget_size_min_set(blank, 0, 10);
 
    tb = e_widget_table_add(evas, 0);
+   e_widget_table_object_append(tb, search_bt, 0, 0, 1, 1, 1, 1, 1, 1);
+   e_widget_table_object_append(tb, adap_bt, 1, 0, 1, 1, 1, 1, 1, 1);
 
-   e_widget_table_object_append(tb, inst->bt, 0, 0, 1, 1, 1, 1, 1, 1);
-   e_widget_table_object_append(tb, bt2, 1, 0, 1, 1, 1, 1, 1, 1);
+   e_widget_list_object_append(list, conn_bt, 0, 0, 0.5);
+   e_widget_list_object_append(list, blank, 0, 0, 0.5);
    e_widget_list_object_append(list, tb, 1, 0, 0.5);
 
    e_widget_size_min_get(list, &mw, &mh);
@@ -166,6 +213,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
      }
 
    _ebluez4_popup_del(inst);
+   _ebluez4_search_dialog_del(inst);
 
    E_FREE(inst);
 }
@@ -241,27 +289,25 @@ e_modapi_save(E_Module *m)
 
 /* Public Functions */
 void
-ebluez4_disabled_set_all_search_buttons(Eina_Bool disabled)
+ebluez4_append_to_instances(void *data, int list_type)
 {
    Eina_List *iter;
    Instance *inst;
+   Device *dev = data;
 
-   EINA_LIST_FOREACH(instances, iter, inst)
-     e_widget_disabled_set(inst->bt, disabled);
+   if (list_type == LIST_TYPE_FOUND_DEVICES)
+     EINA_LIST_FOREACH(instances, iter, inst)
+       e_widget_ilist_append(inst->found_list, NULL, dev->name, NULL, NULL,
+                             dev->addr);
+   else if (list_type == LIST_TYPE_CREATED_DEVICES)
+     EINA_LIST_FOREACH(instances, iter, inst)
+       if (dev->paired)
+         e_widget_ilist_append(inst->created_list, NULL, dev->name, NULL, NULL,
+                               dev->addr);
 }
 
 void
-ebluez4_append_to_instances(const char *addr, const char *name)
-{
-   Eina_List *iter;
-   Instance *inst;
-
-   EINA_LIST_FOREACH(instances, iter, inst)
-     e_widget_ilist_append(inst->found_list, NULL, name, NULL, NULL, addr);
-}
-
-void
-ebluez4_update_inst(Evas_Object *dest, Eina_List *src)
+ebluez4_update_inst(Evas_Object *dest, Eina_List *src, int list_type)
 {
    Device *dev;
    Eina_List *iter;
@@ -269,9 +315,8 @@ ebluez4_update_inst(Evas_Object *dest, Eina_List *src)
    e_widget_ilist_freeze(dest);
    e_widget_ilist_clear(dest);
 
-   e_widget_ilist_header_append(dest, NULL, ILIST_HEADER);
    EINA_LIST_FOREACH(src, iter, dev)
-     if (!dev->connected)
+     if (dev->paired || list_type == LIST_TYPE_FOUND_DEVICES)
        e_widget_ilist_append(dest, NULL, dev->name, NULL, NULL, dev->addr);
 
    e_widget_ilist_thaw(dest);
@@ -279,14 +324,23 @@ ebluez4_update_inst(Evas_Object *dest, Eina_List *src)
 }
 
 void
-ebluez4_update_instances(Eina_List *src)
+ebluez4_update_instances(Eina_List *src, int list_type)
 {
    Eina_List *iter;
    Instance *inst;
 
-   EINA_LIST_FOREACH(instances, iter, inst)
-     if (inst->found_list)
-       ebluez4_update_inst(inst->found_list, src);
+   if (list_type == LIST_TYPE_FOUND_DEVICES)
+     {
+        EINA_LIST_FOREACH(instances, iter, inst)
+          if (inst->found_list)
+            ebluez4_update_inst(inst->found_list, src, list_type);
+     }
+   else if (list_type == LIST_TYPE_CREATED_DEVICES)
+     {
+        EINA_LIST_FOREACH(instances, iter, inst)
+          if (inst->created_list)
+            ebluez4_update_inst(inst->created_list, src, list_type);
+     }
 }
 
 void
@@ -303,5 +357,6 @@ ebluez4_update_all_gadgets_visibility()
        {
           _ebluez4_set_mod_icon(inst->o_bluez4);
           e_gadcon_popup_hide(inst->popup);
+          _ebluez4_search_dialog_del(inst);
        }
 }
