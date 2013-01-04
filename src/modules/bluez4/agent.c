@@ -177,7 +177,7 @@ _agent_display_passkey(const EDBus_Service_Interface *iface, const EDBus_Message
 
    if(!edbus_message_arguments_get(message, "ouq", &device, &passkey, &entered))
      return edbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
-   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp, device);
+   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, device);
    snprintf(buf, sizeof(buf), "%d keys were typed on %s. Passkey is %06d",
             entered, dev->name, passkey);
    _display_msg("Display Passkey", buf);
@@ -192,7 +192,7 @@ _agent_display_pin_code(const EDBus_Service_Interface *iface, const EDBus_Messag
 
    if(!edbus_message_arguments_get(message, "os", &device, &pincode))
      return edbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
-   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp, device);
+   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, device);
    snprintf(buf, sizeof(buf), "Pincode for %s is %s", dev->name, pincode);
    _display_msg("Display Pincode", buf);
    return edbus_message_method_return_new(message);
@@ -207,7 +207,7 @@ _agent_request_confirmation(const EDBus_Service_Interface *iface, const EDBus_Me
 
    if(!edbus_message_arguments_get(message, "ou", &device, &passkey))
      return edbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
-   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp, device);
+   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, device);
    snprintf(buf, sizeof(buf), "%06d is the passkey presented in %s?",
             passkey, dev->name);
    edbus_message_ref((EDBus_Message *)message);
@@ -223,7 +223,7 @@ _agent_authorize(const EDBus_Service_Interface *iface, const EDBus_Message *mess
 
    if(!edbus_message_arguments_get(message, "os", &device, &uuid))
      return edbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
-   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp, device);
+   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, device);
    snprintf(buf, sizeof(buf), "Grant permission for %s to connect?",
             dev->name);
    edbus_message_ref((EDBus_Message *)message);

@@ -9,6 +9,8 @@ struct _Instance
    Evas_Object *o_bluez4;
    Evas_Object *found_list;
    E_Dialog *search_dialog;
+   Evas_Object *adap_list;
+   E_Dialog *adap_dialog;
 };
 
 EAPI extern E_Module_Api e_modapi;

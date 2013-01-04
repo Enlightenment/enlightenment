@@ -43,15 +43,26 @@ typedef struct _Device
      } proxy;
 } Device;
 
+typedef struct _Adapter
+{
+   const char *name;
+   Eina_Bool visible;
+   Eina_Bool pairable;
+   Eina_Bool powered;
+   Eina_Bool is_default;
+   EDBus_Object *obj;
+   EDBus_Proxy *proxy;
+} Adapter;
+
 typedef struct _Context
 {
    EDBus_Connection *conn;
-   const char *default_adap_path;
    EDBus_Object *adap_obj;
    EDBus_Proxy *man_proxy;
    EDBus_Proxy *adap_proxy;
    Eina_List *devices;
    Eina_List *found_devices;
+   Eina_List *adapters;
 } Context;
 
 Context *ctxt;
@@ -64,4 +75,4 @@ void ebluez4_connect_to_device(Device *dev);
 void ebluez4_disconnect_device(Device *dev);
 void ebluez4_pair_with_device(const char *addr, void (*cb)(void *, Eina_Bool, const char *), void *data);
 void ebluez4_remove_device(EDBus_Object *obj);
-int ebluez4_path_cmp(const void *d1, const void *d2);
+int ebluez4_dev_path_cmp(const void *d1, const void *d2);

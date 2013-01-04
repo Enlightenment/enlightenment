@@ -88,6 +88,53 @@ _ebluez4_cb_search(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 static void
+_ebluez4_adap_list_dialog_del(Instance *inst)
+{
+   if (!inst->adap_dialog) return;
+   e_object_del(E_OBJECT(inst->adap_dialog));
+   inst->adap_dialog = NULL;
+   inst->adap_list = NULL;
+}
+
+static void
+_ebluez4_cb_adap_list_dialog_del(E_Win *win)
+{
+   E_Dialog *dialog = win->data;
+   _ebluez4_adap_list_dialog_del(dialog->data);
+}
+
+static void
+_ebluez4_cb_adap_list(void *data, E_Menu *m, E_Menu_Item *mi)
+{
+   Instance *inst = data;
+   E_Container *con;
+   E_Dialog *dialog;
+   Evas *evas;
+
+   if (inst->adap_dialog)
+      _ebluez4_adap_list_dialog_del(inst);
+
+   con = e_container_current_get(e_manager_current_get());
+
+   dialog = e_dialog_new(con, "Adapters Dialog", "adapters");
+   e_dialog_title_set(dialog, "Adapters Available");
+   e_dialog_resizable_set(dialog, EINA_TRUE);
+   e_win_delete_callback_set(dialog->win, _ebluez4_cb_adap_list_dialog_del);
+
+   evas = e_win_evas_get(dialog->win);
+
+   inst->adap_list = e_widget_ilist_add(evas, 0, 0, NULL);
+
+   e_dialog_content_set(dialog, inst->adap_list, 250, 220);
+   ebluez4_update_instances(ctxt->adapters);
+
+   e_dialog_show(dialog);
+
+   dialog->data = inst;
+   inst->adap_dialog = dialog;
+}
+
+static void
 _ebluez4_cb_connect(void *data, E_Menu *m, E_Menu_Item *mi)
 {
    ebluez4_connect_to_device(data);
@@ -194,6 +241,7 @@ _ebluez4_menu_new(Instance *inst)
 
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, "Adapter Settings");
+   e_menu_item_callback_set(mi, _ebluez4_cb_adap_list, inst);
 
    zone = e_util_zone_current_get(e_manager_current_get());
    ecore_x_pointer_xy_get(zone->container->win, &x, &y);
@@ -269,6 +317,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 
    e_menu_deactivate(inst->menu);
    _ebluez4_search_dialog_del(inst);
+   _ebluez4_adap_list_dialog_del(inst);
 
    E_FREE(inst);
 }
@@ -347,15 +396,25 @@ void
 ebluez4_update_inst(Evas_Object *dest, Eina_List *src, Instance *inst)
 {
    Device *dev;
+   Adapter *adap;
    Eina_List *iter;
 
    e_widget_ilist_freeze(dest);
    e_widget_ilist_clear(dest);
 
-   EINA_LIST_FOREACH(src, iter, dev)
-     if (src == ctxt->found_devices && !dev->paired)
-       e_widget_ilist_append(dest, NULL, dev->name, _ebluez4_cb_pair, inst,
-                             dev->addr);
+   if (src == ctxt->found_devices)
+     {
+        EINA_LIST_FOREACH(src, iter, dev)
+          if (!dev->paired)
+            e_widget_ilist_append(dest, NULL, dev->name, _ebluez4_cb_pair, inst,
+                                  dev->addr);
+     }
+   else if (src == ctxt->adapters)
+     {
+        EINA_LIST_FOREACH(src, iter, adap)
+          e_widget_ilist_append(dest, NULL, adap->name, NULL, NULL, //FIXME: use correct cb for selecting adapter
+                                edbus_object_path_get(adap->obj));
+     }
 
    e_widget_ilist_thaw(dest);
    e_widget_ilist_go(dest);
@@ -367,12 +426,11 @@ ebluez4_update_instances(Eina_List *src)
    Eina_List *iter;
    Instance *inst;
 
-   if (src == ctxt->found_devices)
-     {
-        EINA_LIST_FOREACH(instances, iter, inst)
-          if (inst->found_list)
-            ebluez4_update_inst(inst->found_list, src, inst);
-     }
+   EINA_LIST_FOREACH(instances, iter, inst)
+     if (src == ctxt->found_devices && inst->found_list)
+       ebluez4_update_inst(inst->found_list, src, inst);
+     else if (src == ctxt->adapters && inst->adap_list)
+       ebluez4_update_inst(inst->adap_list, src, inst);
 }
 
 void
@@ -390,6 +448,7 @@ ebluez4_update_all_gadgets_visibility()
           _ebluez4_set_mod_icon(inst->o_bluez4);
           e_menu_deactivate(inst->menu);
           _ebluez4_search_dialog_del(inst);
+          _ebluez4_adap_list_dialog_del(inst);
        }
 }
 
