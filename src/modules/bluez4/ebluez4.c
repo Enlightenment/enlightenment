@@ -56,7 +56,6 @@ _unset_adapter()
    ctxt->found_devices = NULL;
    edbus_object_unref(ctxt->adap_obj);
    ctxt->adap_obj = NULL;
-   ebluez4_update_instances(ctxt->devices, LIST_TYPE_CREATED_DEVICES);
    ebluez4_update_all_gadgets_visibility();
 }
 
@@ -171,6 +170,7 @@ _on_prop_changed(void *context, const EDBus_Message *msg)
           {
              eina_stringshare_del(found_dev->name);
              found_dev->name = eina_stringshare_add(name);
+             ebluez4_update_instances(ctxt->found_devices);
           }
      }
    else if (!strcmp(key, "Paired"))
@@ -181,7 +181,10 @@ _on_prop_changed(void *context, const EDBus_Message *msg)
         dev->paired = paired;
 
         if (found_dev)
-          found_dev->paired = paired;
+          {
+             found_dev->paired = paired;
+             ebluez4_update_instances(ctxt->found_devices);
+          }
      }
    else if (!strcmp(key, "Connected"))
      {
@@ -195,11 +198,7 @@ _on_prop_changed(void *context, const EDBus_Message *msg)
         if(!edbus_message_iter_arguments_get(variant, "as", &uuids))
           return;
         _set_dev_services(dev, uuids);
-        return;
      }
-
-   ebluez4_update_instances(ctxt->found_devices, LIST_TYPE_FOUND_DEVICES);
-   ebluez4_update_instances(ctxt->devices, LIST_TYPE_CREATED_DEVICES);
 }
 
 static void
@@ -254,7 +253,6 @@ _on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
    dev->paired = paired;
    dev->connected = connected;
    _set_dev_services(dev, uuids);
-   ebluez4_append_to_instances(dev, LIST_TYPE_CREATED_DEVICES);
 }
 
 static void
@@ -266,7 +264,6 @@ _unset_dev(const char *path)
    if (!dev)
      return;
    ctxt->devices = eina_list_remove(ctxt->devices, dev);
-   ebluez4_update_instances(ctxt->devices, LIST_TYPE_CREATED_DEVICES);
    _free_dev(dev);
 }
 
@@ -331,7 +328,7 @@ _on_device_found(void *context, const EDBus_Message *msg)
    dev->paired = paired;
    ctxt->found_devices = eina_list_append(ctxt->found_devices, dev);
 
-   ebluez4_append_to_instances(dev, LIST_TYPE_FOUND_DEVICES);
+   ebluez4_update_instances(ctxt->found_devices);
 }
 
 static void
@@ -476,7 +473,7 @@ void
 ebluez4_start_discovery()
 {
    _free_dev_list(&ctxt->found_devices);
-   ebluez4_update_instances(ctxt->found_devices, LIST_TYPE_FOUND_DEVICES);
+   ebluez4_update_instances(ctxt->found_devices);
    edbus_proxy_call(ctxt->adap_proxy, "StartDiscovery", NULL, NULL, -1, "");
 }
 
@@ -487,9 +484,8 @@ ebluez4_stop_discovery()
 }
 
 void
-ebluez4_connect_to_device(const char *addr)
+ebluez4_connect_to_device(Device *dev)
 {
-   Device *dev = eina_list_search_unsorted(ctxt->devices, _addr_cmp, addr);
    _try_to_connect(dev->proxy.input);
    _try_to_connect(dev->proxy.audio_source);
    _try_to_connect(dev->proxy.audio_sink);
@@ -503,11 +499,10 @@ ebluez4_pair_with_device(const char *addr)
 }
 
 void
-ebluez4_remove_device(const char *addr)
+ebluez4_remove_device(EDBus_Object *obj)
 {
-   Device *dev = eina_list_search_unsorted(ctxt->devices, _addr_cmp, addr);
    edbus_proxy_call(ctxt->adap_proxy, "RemoveDevice", NULL, NULL, -1, "o",
-                    edbus_object_path_get(dev->obj));
+                    edbus_object_path_get(obj));
 }
 
 int

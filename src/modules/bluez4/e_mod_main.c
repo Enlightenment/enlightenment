@@ -42,7 +42,7 @@ _ebluez4_cb_pair(void *data, E_Dialog *dialog)
 }
 
 static void
-_ebluez4_cb_search(void *data, void *data2 __UNUSED__)
+_ebluez4_cb_search(void *data, E_Menu *m, E_Menu_Item *mi)
 {
    Instance *inst = data;
    E_Container *con;
@@ -76,83 +76,100 @@ _ebluez4_cb_search(void *data, void *data2 __UNUSED__)
 }
 
 static void
-_ebluez4_cb_connect(void *data, void *data2 __UNUSED__)
+_ebluez4_cb_connect(void *data, E_Menu *m, E_Menu_Item *mi)
 {
-   Instance *inst = data;
-   const char *addr = e_widget_ilist_selected_value_get(inst->created_list);
-
-   if(!addr)
-     return;
-   e_gadcon_popup_hide(inst->popup);
-   ebluez4_connect_to_device(addr);
+   ebluez4_connect_to_device(data);
 }
 
 static void
-_ebluez4_cb_remove(void *data, void *data2 __UNUSED__)
+_ebluez4_cb_forget(void *data, E_Menu *m, E_Menu_Item *mi)
 {
-   Instance *inst = data;
-   const char *addr = e_widget_ilist_selected_value_get(inst->created_list);
-
-   if(!addr)
-     return;
-   ebluez4_remove_device(addr);
+   Device *dev = data;
+   ebluez4_remove_device(dev->obj);
 }
 
 static void
-_ebluez4_popup_new(Instance *inst)
+_menu_post_deactivate(void *data __UNUSED__, E_Menu *m)
 {
-   Evas_Object *list, *tb, *conn_bt, *blank, *adap_bt, *search_bt, *rem_bt;
-   Evas_Coord mw, mh;
-   Evas *evas;
+   Eina_List *iter;
+   E_Menu_Item *mi;
 
-   EINA_SAFETY_ON_FALSE_RETURN(inst->popup == NULL);
+   EINA_LIST_FOREACH(m->items, iter, mi)
+     if (mi->submenu) e_menu_deactivate(mi->submenu);
+   e_object_del(E_OBJECT(m));
+}
 
-   inst->popup = e_gadcon_popup_new(inst->gcc);
-   evas = inst->popup->win->evas;
+static Eina_Bool
+_ebluez4_add_devices(Instance *inst)
+{
+   Device *dev;
+   Eina_List *iter;
+   E_Menu *m, *subm;
+   E_Menu_Item *mi;
+   Eina_Bool ret = EINA_FALSE;
 
-   list = e_widget_list_add(evas, 0, 0);
-   inst->created_list = e_widget_ilist_add(evas, 0, 0, NULL);
-   e_widget_list_object_append(list, inst->created_list, 1, 1, 0.5);
-   ebluez4_update_instances(ctxt->devices, LIST_TYPE_CREATED_DEVICES);
+   m = inst->menu;
 
-   conn_bt = e_widget_button_add(evas, "Connect", NULL, _ebluez4_cb_connect,
-                                 inst, NULL);
-   rem_bt = e_widget_button_add(evas, "Remove", NULL, _ebluez4_cb_remove, inst,
-                                NULL);
-   search_bt = e_widget_button_add(evas, "Search New Devices", NULL,
-                                   _ebluez4_cb_search, inst, NULL);
-   adap_bt = e_widget_button_add(evas, "Adapters Settings", NULL, NULL, inst,
-                                 NULL);
+   EINA_LIST_FOREACH(ctxt->devices, iter, dev)
+     if (dev->paired)
+       {
+          mi = e_menu_item_new(m);
+          e_menu_item_label_set(mi, "Paired Devices");
+          e_menu_item_disabled_set(mi, EINA_TRUE);
+          ret = EINA_TRUE;
+          break;
+       }
 
-   blank = e_widget_add(evas);
-   e_widget_size_min_set(blank, 0, 10);
+   EINA_LIST_FOREACH(ctxt->devices, iter, dev)
+     if (dev->paired)
+       {
+          mi = e_menu_item_new(m);
+          e_menu_item_label_set(mi, dev->name);
+          subm = e_menu_new();
+          e_menu_post_deactivate_callback_set(subm, _menu_post_deactivate,
+                                              NULL);
+          e_menu_item_submenu_set(mi, subm);
+          mi = e_menu_item_new(subm);
+          e_menu_item_label_set(mi, "Connect");
+          e_menu_item_callback_set(mi, _ebluez4_cb_connect, dev);
+          mi = e_menu_item_new(subm);
+          e_menu_item_label_set(mi, "Forget");
+          e_menu_item_callback_set(mi, _ebluez4_cb_forget, dev);
+       }
 
-   tb = e_widget_table_add(evas, 0);
-
-   e_widget_table_object_append(tb, conn_bt, 0, 0, 1, 1, 1, 1, 1, 1);
-   e_widget_table_object_append(tb, rem_bt, 1, 0, 1, 1, 1, 1, 1, 1);
-   e_widget_table_object_append(tb, blank, 0, 1, 1, 1, 1, 1, 1, 1);
-   e_widget_table_object_append(tb, search_bt, 0, 2, 1, 1, 1, 1, 1, 1);
-   e_widget_table_object_append(tb, adap_bt, 1, 2, 1, 1, 1, 1, 1, 1);
-   e_widget_list_object_append(list, tb, 1, 0, 0.5);
-
-   e_widget_size_min_get(list, &mw, &mh);
-   if (mh < 220)
-     mh = 220;
-   if (mw < 250)
-     mw = 250;
-   e_widget_size_min_set(list, mw, mh);
-
-   e_gadcon_popup_content_set(inst->popup, list);
-   e_gadcon_popup_show(inst->popup);
+   return ret;
 }
 
 static void
-_ebluez4_popup_del(Instance *inst)
+_ebluez4_menu_new(Instance *inst)
 {
-   if (!inst->popup) return;
-   e_object_del(E_OBJECT(inst->popup));
-   inst->popup = NULL;
+   E_Menu *m;
+   E_Menu_Item *mi;
+   E_Zone *zone;
+   int x, y;
+
+   m = e_menu_new();
+   e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, NULL);
+   e_menu_title_set(m, "Bluez4");
+   inst->menu = m;
+
+   if (_ebluez4_add_devices(inst))
+     {
+        mi = e_menu_item_new(m);
+        e_menu_item_separator_set(mi, 1);
+     }
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, "Search New Devices");
+   e_menu_item_callback_set(mi, _ebluez4_cb_search, inst);
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, "Adapter Settings");
+
+   zone = e_util_zone_current_get(e_manager_current_get());
+   ecore_x_pointer_xy_get(zone->container->win, &x, &y);
+   e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN,
+                         ecore_x_current_time_get());
 }
 
 static void
@@ -165,12 +182,7 @@ _ebluez4_cb_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event)
    if (ev->button != 1) return;
    if (!ctxt->adap_obj) return;
 
-   if (!inst->popup)
-     _ebluez4_popup_new(inst);
-   else if (inst->popup->win->visible)
-     e_gadcon_popup_hide(inst->popup);
-   else
-     e_gadcon_popup_show(inst->popup);
+   _ebluez4_menu_new(inst);
 }
 
 static void
@@ -226,7 +238,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
         evas_object_del(inst->o_bluez4);
      }
 
-   _ebluez4_popup_del(inst);
+   e_menu_deactivate(inst->menu);
    _ebluez4_search_dialog_del(inst);
 
    E_FREE(inst);
@@ -303,25 +315,7 @@ e_modapi_save(E_Module *m)
 
 /* Public Functions */
 void
-ebluez4_append_to_instances(void *data, int list_type)
-{
-   Eina_List *iter;
-   Instance *inst;
-   Device *dev = data;
-
-   if (list_type == LIST_TYPE_FOUND_DEVICES)
-     EINA_LIST_FOREACH(instances, iter, inst)
-       e_widget_ilist_append(inst->found_list, NULL, dev->name, NULL, NULL,
-                             dev->addr);
-   else if (list_type == LIST_TYPE_CREATED_DEVICES)
-     EINA_LIST_FOREACH(instances, iter, inst)
-       if (dev->paired)
-         e_widget_ilist_append(inst->created_list, NULL, dev->name, NULL, NULL,
-                               dev->addr);
-}
-
-void
-ebluez4_update_inst(Evas_Object *dest, Eina_List *src, int list_type)
+ebluez4_update_inst(Evas_Object *dest, Eina_List *src)
 {
    Device *dev;
    Eina_List *iter;
@@ -330,30 +324,23 @@ ebluez4_update_inst(Evas_Object *dest, Eina_List *src, int list_type)
    e_widget_ilist_clear(dest);
 
    EINA_LIST_FOREACH(src, iter, dev)
-     if (dev->paired || list_type == LIST_TYPE_FOUND_DEVICES)
-       e_widget_ilist_append(dest, NULL, dev->name, NULL, NULL, dev->addr);
+     e_widget_ilist_append(dest, NULL, dev->name, NULL, NULL, dev->addr);
 
    e_widget_ilist_thaw(dest);
    e_widget_ilist_go(dest);
 }
 
 void
-ebluez4_update_instances(Eina_List *src, int list_type)
+ebluez4_update_instances(Eina_List *src)
 {
    Eina_List *iter;
    Instance *inst;
 
-   if (list_type == LIST_TYPE_FOUND_DEVICES)
+   if (src == ctxt->found_devices)
      {
         EINA_LIST_FOREACH(instances, iter, inst)
           if (inst->found_list)
-            ebluez4_update_inst(inst->found_list, src, list_type);
-     }
-   else if (list_type == LIST_TYPE_CREATED_DEVICES)
-     {
-        EINA_LIST_FOREACH(instances, iter, inst)
-          if (inst->created_list)
-            ebluez4_update_inst(inst->created_list, src, list_type);
+            ebluez4_update_inst(inst->found_list, src);
      }
 }
 
@@ -370,7 +357,7 @@ ebluez4_update_all_gadgets_visibility()
      EINA_LIST_FOREACH(instances, iter, inst)
        {
           _ebluez4_set_mod_icon(inst->o_bluez4);
-          e_gadcon_popup_hide(inst->popup);
+          e_menu_deactivate(inst->menu);
           _ebluez4_search_dialog_del(inst);
        }
 }
