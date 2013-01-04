@@ -143,6 +143,7 @@ static void
 _on_prop_changed(void *context, const EDBus_Message *msg)
 {
    const char *key, *name;
+   char err_msg[4096];
    Eina_Bool paired, connected;
    EDBus_Message_Iter *variant, *uuids;
    Device *dev = context;
@@ -151,7 +152,10 @@ _on_prop_changed(void *context, const EDBus_Message *msg)
 
    if (!edbus_message_arguments_get(msg, "sv", &key, &variant))
      {
-        ERR("Property of %s changed, but could not be read", dev->name);
+        snprintf(err_msg, sizeof(err_msg),
+                 "Property of %s changed, but could not be read", dev->name);
+        ERR("%s", err_msg);
+        ebluez4_show_error("Bluez Error", err_msg);
         return;
      }
 
@@ -206,6 +210,7 @@ _on_connected(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
    if (edbus_message_error_get(msg, &err_name, &err_msg))
      {
         ERR("%s: %s", err_name, err_msg);
+        ebluez4_show_error(err_name, err_msg);
         return;
      }
 }
@@ -225,6 +230,7 @@ _on_paired(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
    if (edbus_message_error_get(msg, &err_name, &err_msg))
      {
         ERR("%s: %s", err_name, err_msg);
+        ebluez4_show_error(err_name, err_msg);
         return;
      }
 }
@@ -333,11 +339,13 @@ _on_list(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    EDBus_Message_Iter *array;
    const char *path;
+   const char *err_msg = "Error reading list of devices";
 
    if (!edbus_message_arguments_get(msg, "ao", &array))
      {
-        ERR("Error reading list of devices");
-       return;
+        ERR("%s", err_msg);
+        ebluez4_show_error("Bluez Error", err_msg);
+        return;
      }
 
    while (edbus_message_iter_get_and_next(array, 'o', &path))
@@ -348,10 +356,12 @@ static void
 _set_adapter(const EDBus_Message *msg)
 {
    const char *adap_path;
+   const char *err_msg = "Error reading path of Default Adapter";
 
    if (!edbus_message_arguments_get(msg, "o", &adap_path))
      {
-        ERR("Error reading path of Default Adapter");
+        ERR("%s", err_msg);
+        ebluez4_show_error("Bluez Error", err_msg);
         return;
      }
 
@@ -401,10 +411,12 @@ static void
 _on_adapter_removed(void *context, const EDBus_Message *msg)
 {
    const char *adap_path;
+   const char *err_msg = "Error reading path of Removed Adapter";
 
    if (!edbus_message_arguments_get(msg, "o", &adap_path))
      {
-        ERR("Error reading path of Removed Adapter");
+        ERR("%s", err_msg);
+        ebluez4_show_error("Bluez Error", err_msg);
         return;
      }
 

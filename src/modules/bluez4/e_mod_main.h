@@ -22,5 +22,6 @@ void ebluez4_append_to_instances(void *data, int list_type);
 void ebluez4_update_inst(Evas_Object *dest, Eina_List *src, int list_type);
 void ebluez4_update_instances(Eina_List *src, int list_type);
 void ebluez4_update_all_gadgets_visibility();
+void ebluez4_show_error(const char *err_name, const char *err_msg);
 
 #endif
