@@ -65,3 +65,5 @@ void ebluez4_start_discovery();
 void ebluez4_stop_discovery();
 void ebluez4_connect_to_device(const char *addr);
 void ebluez4_pair_with_device(const char *addr);
+void ebluez4_remove_device(const char *addr);
+int ebluez4_path_cmp(const void *d1, const void *d2);

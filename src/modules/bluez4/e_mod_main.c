@@ -88,9 +88,20 @@ _ebluez4_cb_connect(void *data, void *data2 __UNUSED__)
 }
 
 static void
+_ebluez4_cb_remove(void *data, void *data2 __UNUSED__)
+{
+   Instance *inst = data;
+   const char *addr = e_widget_ilist_selected_value_get(inst->created_list);
+
+   if(!addr)
+     return;
+   ebluez4_remove_device(addr);
+}
+
+static void
 _ebluez4_popup_new(Instance *inst)
 {
-   Evas_Object *list, *tb, *conn_bt, *blank, *adap_bt, *search_bt;
+   Evas_Object *list, *tb, *conn_bt, *blank, *adap_bt, *search_bt, *rem_bt;
    Evas_Coord mw, mh;
    Evas *evas;
 
@@ -106,6 +117,8 @@ _ebluez4_popup_new(Instance *inst)
 
    conn_bt = e_widget_button_add(evas, "Connect", NULL, _ebluez4_cb_connect,
                                  inst, NULL);
+   rem_bt = e_widget_button_add(evas, "Remove", NULL, _ebluez4_cb_remove, inst,
+                                NULL);
    search_bt = e_widget_button_add(evas, "Search New Devices", NULL,
                                    _ebluez4_cb_search, inst, NULL);
    adap_bt = e_widget_button_add(evas, "Adapters Settings", NULL, NULL, inst,
@@ -115,11 +128,12 @@ _ebluez4_popup_new(Instance *inst)
    e_widget_size_min_set(blank, 0, 10);
 
    tb = e_widget_table_add(evas, 0);
-   e_widget_table_object_append(tb, search_bt, 0, 0, 1, 1, 1, 1, 1, 1);
-   e_widget_table_object_append(tb, adap_bt, 1, 0, 1, 1, 1, 1, 1, 1);
 
-   e_widget_list_object_append(list, conn_bt, 0, 0, 0.5);
-   e_widget_list_object_append(list, blank, 0, 0, 0.5);
+   e_widget_table_object_append(tb, conn_bt, 0, 0, 1, 1, 1, 1, 1, 1);
+   e_widget_table_object_append(tb, rem_bt, 1, 0, 1, 1, 1, 1, 1, 1);
+   e_widget_table_object_append(tb, blank, 0, 1, 1, 1, 1, 1, 1, 1);
+   e_widget_table_object_append(tb, search_bt, 0, 2, 1, 1, 1, 1, 1, 1);
+   e_widget_table_object_append(tb, adap_bt, 1, 2, 1, 1, 1, 1, 1, 1);
    e_widget_list_object_append(list, tb, 1, 0, 0.5);
 
    e_widget_size_min_get(list, &mw, &mh);

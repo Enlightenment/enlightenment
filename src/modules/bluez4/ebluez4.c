@@ -252,6 +252,19 @@ _on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
+_unset_dev(const char *path)
+{
+   Device *dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp,
+                                           path);
+
+   if (!dev)
+     return;
+   ctxt->devices = eina_list_remove(ctxt->devices, dev);
+   ebluez4_update_instances(ctxt->devices, LIST_TYPE_CREATED_DEVICES);
+   _free_dev(dev);
+}
+
+static void
 _set_dev(const char *path)
 {
    Device *dev = calloc(1, sizeof(Device));
@@ -263,6 +276,17 @@ _set_dev(const char *path)
    edbus_proxy_signal_handler_add(dev->proxy.dev, "PropertyChanged",
                                   _on_prop_changed, dev);
    ctxt->devices = eina_list_append(ctxt->devices, dev);
+}
+
+static void
+_on_removed(void *context, const EDBus_Message *msg)
+{
+   const char *path;
+
+   if (!edbus_message_arguments_get(msg, "o", &path))
+     return;
+
+   _unset_dev(path);
 }
 
 static void
@@ -343,6 +367,8 @@ _set_adapter(const EDBus_Message *msg)
                                   _on_device_found, NULL);
    edbus_proxy_signal_handler_add(ctxt->adap_proxy, "DeviceCreated",
                                   _on_created, NULL);
+   edbus_proxy_signal_handler_add(ctxt->adap_proxy, "DeviceRemoved",
+                                  _on_removed, NULL);
    edbus_proxy_call(ctxt->adap_proxy, "ListDevices", _on_list, NULL, -1, "");
    edbus_proxy_call(ctxt->adap_proxy, "RegisterAgent", NULL, NULL, -1, "os",
                     REMOTE_AGENT_PATH, "KeyboardDisplay");
@@ -462,4 +488,21 @@ ebluez4_pair_with_device(const char *addr)
 {
    edbus_proxy_call(ctxt->adap_proxy, "CreatePairedDevice", _on_paired, NULL,
                     -1, "sos", addr, AGENT_PATH, "KeyboardDisplay");
+}
+
+void
+ebluez4_remove_device(const char *addr)
+{
+   Device *dev = eina_list_search_unsorted(ctxt->devices, _addr_cmp, addr);
+   edbus_proxy_call(ctxt->adap_proxy, "RemoveDevice", NULL, NULL, -1, "o",
+                    edbus_object_path_get(dev->obj));
+}
+
+int
+ebluez4_path_cmp(const void *d1, const void *d2)
+{
+   const Device *dev = d1;
+   const char *path = d2;
+
+   return strcmp(edbus_object_path_get(dev->obj), path);
 }
