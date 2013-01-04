@@ -4,6 +4,13 @@
 #include "e_mod_main.h"
 #include "ebluez4.h"
 
+Service services[] = {
+   { HumanInterfaceDevice_UUID, INPUT },
+   { AudioSource_UUID, AUDIO_SOURCE },
+   { AudioSink_UUID, AUDIO_SINK },
+   { NULL, NONE}
+};
+
 static int
 _addr_cmp(const void *d1, const void *d2)
 {
@@ -52,12 +59,50 @@ _unset_adapter()
    ebluez4_update_all_gadgets_visibility();
 }
 
+static Profile
+_uuid_to_profile(const char *uuid)
+{
+   Service *service;
+
+   for (service = (Service *)services; service && service->uuid; service++)
+     if (!strcmp(service->uuid, uuid))
+       return service->profile;
+   return NONE;
+}
+
+static void
+_set_dev_services(Device *dev, EDBus_Message_Iter *uuids)
+{
+   const char *uuid;
+
+   while (edbus_message_iter_get_and_next(uuids, 's', &uuid))
+     switch (_uuid_to_profile(uuid))
+       {
+          case INPUT:
+            if (!dev->proxy.input)
+              dev->proxy.input = edbus_proxy_get(dev->obj, INPUT_INTERFACE);
+            break;
+          case AUDIO_SOURCE:
+            if (!dev->proxy.audio_source)
+              dev->proxy.audio_source = edbus_proxy_get(dev->obj,
+                                                   AUDIO_SOURCE_INTERFACE);
+            break;
+          case AUDIO_SINK:
+            if (!dev->proxy.audio_sink)
+              dev->proxy.audio_sink = edbus_proxy_get(dev->obj,
+                                                    AUDIO_SINK_INTERFACE);
+            break;
+          default:
+            break;
+       }
+}
+
 static void
 _on_prop_changed(void *context, const EDBus_Message *msg)
 {
    const char *key, *name;
    Eina_Bool paired, connected;
-   EDBus_Message_Iter *variant;
+   EDBus_Message_Iter *variant, *uuids;
    Device *dev = context;
 
    if (!edbus_message_arguments_get(msg, "sv", &key, &variant))
@@ -90,6 +135,12 @@ _on_prop_changed(void *context, const EDBus_Message *msg)
         dev->connected = connected;
         ebluez4_update_instances(ctxt->devices);
      }
+   else if (!strcmp(key, "UUIDs"))
+     {
+        if(!edbus_message_iter_arguments_get(variant, "as", &uuids))
+          return;
+        _set_dev_services(dev, uuids);
+     }
 }
 
 static void
@@ -102,6 +153,13 @@ _on_connected(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
         ERR("%s: %s", err_name, err_msg);
         return;
      }
+}
+
+static void
+_try_to_connect(EDBus_Proxy *proxy)
+{
+   if (proxy)
+     edbus_proxy_call(proxy, "Connect", _on_connected, NULL, -1, "");
 }
 
 static void
@@ -124,15 +182,13 @@ _on_paired(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
         return;
      }
 
-   //FIXME: recognize device profile to allow connection to all devices
-   dev->prof_proxy = edbus_proxy_get(dev->obj, INPUT_INTERFACE);
-   edbus_proxy_call(dev->prof_proxy, "Connect", _on_connected, NULL, -1, "");
+   ebluez4_connect_to_device(dev->addr);
 }
 
 static void
 _on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
-   EDBus_Message_Iter *dict, *entry, *variant;
+   EDBus_Message_Iter *dict, *entry, *variant, *uuids;
    const char *key, *addr, *name;
    Eina_Bool paired;
    Eina_Bool connected;
@@ -166,12 +222,18 @@ _on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
              if(!edbus_message_iter_arguments_get(variant, "b", &connected))
                return;
           }
+        else if (!strcmp(key, "UUIDs"))
+          {
+             if(!edbus_message_iter_arguments_get(variant, "as", &uuids))
+               return;
+          }
      }
 
    dev->addr = eina_stringshare_add(addr);
    dev->name = eina_stringshare_add(name);
    dev->paired = paired;
    dev->connected = connected;
+   _set_dev_services(dev, uuids);
    ebluez4_append_to_instances(addr, name);
 }
 
@@ -181,10 +243,10 @@ _set_dev(const char *path)
    Device *dev = calloc(1, sizeof(Device));
 
    dev->obj = edbus_object_get(ctxt->conn, BLUEZ_BUS, path);
-   dev->dev_proxy = edbus_proxy_get(dev->obj, DEVICE_INTERFACE);
-   edbus_proxy_call(dev->dev_proxy, "GetProperties", _on_dev_properties, dev,
+   dev->proxy.dev = edbus_proxy_get(dev->obj, DEVICE_INTERFACE);
+   edbus_proxy_call(dev->proxy.dev, "GetProperties", _on_dev_properties, dev,
                     -1, "");
-   edbus_proxy_signal_handler_add(dev->dev_proxy, "PropertyChanged",
+   edbus_proxy_signal_handler_add(dev->proxy.dev, "PropertyChanged",
                                   _on_prop_changed, dev);
    ctxt->devices = eina_list_append(ctxt->devices, dev);
 }
@@ -363,10 +425,12 @@ void
 ebluez4_connect_to_device(const char *addr)
 {
    Device *dev = eina_list_search_unsorted(ctxt->devices, _addr_cmp, addr);
-   //FIXME: recognize device profile to allow connection to all devices
-   dev->prof_proxy = edbus_proxy_get(dev->obj, INPUT_INTERFACE);
    if (dev->paired)
-     edbus_proxy_call(dev->prof_proxy, "Connect", _on_connected, NULL, -1, "");
+     {
+        _try_to_connect(dev->proxy.input);
+        _try_to_connect(dev->proxy.audio_source);
+        _try_to_connect(dev->proxy.audio_sink);
+     }
    else
      edbus_proxy_call(ctxt->adap_proxy, "CreatePairedDevice", _on_paired, dev,
                       -1, "sos", dev->addr, AGENT_PATH, "KeyboardDisplay");
