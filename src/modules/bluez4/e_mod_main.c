@@ -254,7 +254,9 @@ _menu_post_deactivate(void *data __UNUSED__, E_Menu *m)
 {
    Eina_List *iter;
    E_Menu_Item *mi;
+   Instance *inst;
 
+   if ((inst = data)) e_gadcon_locked_set(inst->gcc->gadcon, 0);
    EINA_LIST_FOREACH(m->items, iter, mi)
      if (mi->submenu) e_menu_deactivate(mi->submenu);
    e_object_del(E_OBJECT(m));
@@ -321,7 +323,7 @@ _ebluez4_menu_new(Instance *inst)
    int x, y;
 
    m = e_menu_new();
-   e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, NULL);
+   e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, inst);
    e_menu_title_set(m, "Bluez4");
    inst->menu = m;
 
@@ -356,6 +358,7 @@ _ebluez4_cb_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event)
    if (!ctxt->adap_obj) return;
 
    _ebluez4_menu_new(inst);
+   e_gadcon_locked_set(inst->gcc->gadcon, 1);
 }
 
 static void
