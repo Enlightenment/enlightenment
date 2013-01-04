@@ -35,6 +35,36 @@ _adap_path_cmp(const void *d1, const void *d2)
    return strcmp(edbus_object_path_get(adap->obj), path);
 }
 
+static const char *
+_parse_icon_to_type(const char *icon)
+{
+   if (!strcmp(icon, "audio-card"))
+     return eina_stringshare_add("Audio");
+   else if (!strcmp(icon, "camera-photo"))
+     return eina_stringshare_add("Photo Camera");
+   else if (!strcmp(icon, "camera-video"))
+     return eina_stringshare_add("Video Camera");
+   else if (!strcmp(icon, "computer"))
+     return eina_stringshare_add("Computer");
+   else if (!strcmp(icon, "input-gaming"))
+     return eina_stringshare_add("Game Controller");
+   else if (!strcmp(icon, "input-keyboard"))
+     return eina_stringshare_add("Keyboard");
+   else if (!strcmp(icon, "input-mouse"))
+     return eina_stringshare_add("Mouse");
+   else if (!strcmp(icon, "input-tablet"))
+     return eina_stringshare_add("Tablet");
+   else if (!strcmp(icon, "modem"))
+     return eina_stringshare_add("Modem");
+   else if (!strcmp(icon, "network-wireless"))
+    return eina_stringshare_add("Wireless");
+   else if (!strcmp(icon, "phone"))
+     return eina_stringshare_add("Phone");
+   else if (!strcmp(icon, "printer"))
+     return eina_stringshare_add("Printer");
+   return NULL;
+}
+
 static void
 _free_dev(Device *dev)
 {
@@ -44,6 +74,8 @@ _free_dev(Device *dev)
    dev->addr = NULL;
    eina_stringshare_del(dev->name);
    dev->name = NULL;
+   if (dev->type) eina_stringshare_del(dev->type);
+   dev->type = NULL;
    free(dev);
 }
 
@@ -117,11 +149,13 @@ _set_dev_services(Device *dev, EDBus_Message_Iter *uuids)
 
 static void
 _retrieve_properties(EDBus_Message_Iter *dict, const char **addr,
-                     const char **name, Eina_Bool *paired, Eina_Bool *connected,
-                     EDBus_Message_Iter **uuids)
+                     const char **name, const char **icon, Eina_Bool *paired,
+                     Eina_Bool *connected, EDBus_Message_Iter **uuids)
 {
    EDBus_Message_Iter *entry, *variant;
    const char *key;
+
+   *icon = NULL;
 
    while (edbus_message_iter_get_and_next(dict, 'e', &entry))
      {
@@ -136,6 +170,11 @@ _retrieve_properties(EDBus_Message_Iter *dict, const char **addr,
         else if (!strcmp(key, "Name"))
           {
              if(!edbus_message_iter_arguments_get(variant, "s", name))
+               return;
+          }
+        else if (!strcmp(key, "Icon"))
+          {
+             if(!edbus_message_iter_arguments_get(variant, "s", icon))
                return;
           }
         else if (!strcmp(key, "Paired"))
@@ -159,7 +198,7 @@ _retrieve_properties(EDBus_Message_Iter *dict, const char **addr,
 static void
 _on_dev_property_changed(void *context, const EDBus_Message *msg)
 {
-   const char *key, *name;
+   const char *key, *name, *icon;
    char err_msg[4096];
    Eina_Bool paired, connected;
    EDBus_Message_Iter *variant, *uuids;
@@ -190,6 +229,17 @@ _on_dev_property_changed(void *context, const EDBus_Message *msg)
              found_dev->name = eina_stringshare_add(name);
              ebluez4_update_instances(ctxt->found_devices);
           }
+     }
+   else if (!strcmp(key, "Icon"))
+     {
+        if(!edbus_message_iter_arguments_get(variant, "s", &icon))
+          return;
+        if (!found_dev) return;
+        DBG("'%s' property of %s changed to %s", key, found_dev->name, icon);
+        if (found_dev->type)
+          eina_stringshare_del(found_dev->type);
+        found_dev->type = _parse_icon_to_type(icon);
+        ebluez4_update_instances(ctxt->found_devices);
      }
    else if (!strcmp(key, "Paired"))
      {
@@ -279,7 +329,7 @@ static void
 _on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    EDBus_Message_Iter *dict, *uuids;
-   const char *addr, *name;
+   const char *addr, *name, *icon;
    Eina_Bool paired;
    Eina_Bool connected;
    Device *dev = data;
@@ -287,7 +337,7 @@ _on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
    if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
      return;
 
-   _retrieve_properties(dict, &addr, &name, &paired, &connected, &uuids);
+   _retrieve_properties(dict, &addr, &name, &icon, &paired, &connected, &uuids);
 
    dev->addr = eina_stringshare_add(addr);
    dev->name = eina_stringshare_add(name);
@@ -353,7 +403,7 @@ static void
 _on_device_found(void *context, const EDBus_Message *msg)
 {
    EDBus_Message_Iter *dict, *uuids;
-   const char *addr, *name;
+   const char *addr, *name, *icon;
    Eina_Bool paired, connected;
    Device *dev;
 
@@ -366,11 +416,12 @@ _on_device_found(void *context, const EDBus_Message *msg)
    if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
      return;
 
-   _retrieve_properties(dict, &addr, &name, &paired, &connected, &uuids);
+   _retrieve_properties(dict, &addr, &name, &icon, &paired, &connected, &uuids);
 
    dev = calloc(1, sizeof(Device));
    dev->addr = eina_stringshare_add(addr);
    dev->name = eina_stringshare_add(name);
+   if (icon) dev->type = _parse_icon_to_type(icon);
    dev->paired = paired;
    ctxt->found_devices = eina_list_append(ctxt->found_devices, dev);
 

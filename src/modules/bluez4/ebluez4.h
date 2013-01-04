@@ -31,6 +31,7 @@ typedef struct _Device
 {
    const char *addr;
    const char *name;
+   const char *type;
    Eina_Bool paired;
    Eina_Bool connected;
    EDBus_Object *obj;

@@ -74,9 +74,9 @@ _ebluez4_cb_search(void *data, E_Menu *m, E_Menu_Item *mi)
 
    evas = e_win_evas_get(dialog->win);
 
-   inst->found_list = e_widget_ilist_add(evas, 0, 0, NULL);
+   inst->found_list = e_widget_ilist_add(evas, 100, 0, NULL);
 
-   e_dialog_content_set(dialog, inst->found_list, 250, 220);
+   e_dialog_content_set(dialog, inst->found_list, 300, 200);
 
    e_dialog_show(dialog);
 
@@ -496,6 +496,7 @@ void
 ebluez4_update_inst(Evas_Object *dest, Eina_List *src, Instance *inst)
 {
    Device *dev;
+   Evas_Object *o_type;
    Adapter *adap;
    Eina_List *iter;
 
@@ -506,8 +507,13 @@ ebluez4_update_inst(Evas_Object *dest, Eina_List *src, Instance *inst)
      {
         EINA_LIST_FOREACH(src, iter, dev)
           if (!dev->paired)
-            e_widget_ilist_append(dest, NULL, dev->name, _ebluez4_cb_pair, inst,
-                                  dev->addr);
+            {
+               o_type = e_widget_label_add(evas_object_evas_get(dest),
+                                           dev->type);
+               e_widget_ilist_append_full(dest, NULL, o_type, dev->name,
+                                          _ebluez4_cb_pair, inst, dev->addr);
+
+            }
      }
    else if (src == ctxt->adapters)
      {
@@ -516,8 +522,8 @@ ebluez4_update_inst(Evas_Object *dest, Eina_List *src, Instance *inst)
                                 _ebluez4_cb_adap_settings, adap, NULL);
      }
 
-   e_widget_ilist_thaw(dest);
    e_widget_ilist_go(dest);
+   e_widget_ilist_thaw(dest);
 }
 
 void
