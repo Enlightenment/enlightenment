@@ -160,6 +160,9 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 
    e_config_domain_save("module.fileman", conf_edd, fileman_config);
    e_configure_option_category_tag_del(_("files"), _("files"));
+   e_configure_option_tag_alias_del(_("files"), _("filemanager"));
+   e_configure_option_tag_alias_del(_("files"), _("file manager"));
+   
    E_CONFIGURE_OPTION_LIST_CLEAR(cfg_opts);
    _e_mod_fileman_config_free();
    E_CONFIG_DD_FREE(conf_edd);
@@ -465,6 +468,9 @@ _e_mod_fileman_config_load(void)
        co->info = eina_stringshare_add("fileman/file_icons");
        E_CONFIGURE_OPTION_ICON(co, "preferences-file-icons");
        cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+
+       e_configure_option_tag_alias_add(_("files"), _("filemanager"));
+       e_configure_option_tag_alias_add(_("files"), _("file manager"));
     }
     
     e_config_save_queue();

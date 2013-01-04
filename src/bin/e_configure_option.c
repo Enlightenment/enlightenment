@@ -18,7 +18,12 @@ static Eina_List *gtk_theme_mons = NULL; //Eio_Monitor
 static Eio_File *bg_ls[2] = {NULL, NULL};
 static Eio_Monitor *bg_mon[2] = {NULL, NULL};
 static Eina_Inlist *opts_list = NULL;
+static Eina_Hash *tags_name_hash = NULL;/* (const char*)tag:(Eina_Stringshare*)tag */
 static Eina_Hash *tags_hash = NULL;/* tag:item */
+static Eina_Hash *tags_alias_hash = NULL; /* alias:tag */
+static Eina_Hash *tags_tag_alias_hash = NULL; /* tag:Eina_List(aliases) */
+static Eina_Hash *tags_alias_name_hash = NULL;/* (const char*)alias:(Eina_Stringshare*)alias */
+static Eina_List *tags_alias_list = NULL; /* alias:tag */
 static Eina_List *tags_list = NULL;/* Eina_Stringshare */
 static Eina_List *opts_changed_list = NULL; //co->changed
 static Eina_List *handlers = NULL;
@@ -76,6 +81,19 @@ _e_configure_option_event_tag_add_del(Eina_Stringshare *tag, Eina_Bool del)
 }
 
 static void
+_e_configure_option_tag_alias_list_free(Eina_List *list)
+{
+   Eina_Stringshare *alias;
+
+   EINA_LIST_FREE(list, alias)
+     {
+        eina_hash_del_by_key(tags_alias_name_hash, alias);
+        tags_alias_list = eina_list_remove(tags_alias_list, alias);
+        eina_hash_del_by_key(tags_alias_hash, alias);
+     }
+}
+
+static void
 _e_configure_option_tag_remove(E_Configure_Option *co, Eina_Stringshare *tag)
 {
    Eina_List *items;
@@ -88,6 +106,8 @@ _e_configure_option_tag_remove(E_Configure_Option *co, Eina_Stringshare *tag)
      {
         /* this seems dumb... */
         tags_list = eina_list_remove(tags_list, tag);
+        eina_hash_del_by_key(tags_name_hash, tag);
+        eina_hash_del_by_key(tags_tag_alias_hash, tag);
         _e_configure_option_event_tag_add_del(tag, EINA_TRUE);
      }
    eina_hash_set(tags_hash, tag, items);
@@ -161,6 +181,7 @@ _e_configure_option_tag_append(E_Configure_Option *co, const char *tag)
         Eina_Stringshare *t;
 
         t = eina_stringshare_add(tag);
+        eina_hash_add(tags_name_hash, tag, t);
         tags_list = eina_list_sorted_insert(tags_list, (Eina_Compare_Cb)strcmp, t);
         _e_configure_option_event_tag_add_del(t, EINA_FALSE);
      }
@@ -1400,7 +1421,11 @@ e_configure_option_init(void)
    E_EVENT_CONFIGURE_OPTION_TAG_ADD = ecore_event_type_new();
    E_EVENT_CONFIGURE_OPTION_TAG_DEL = ecore_event_type_new();
 
+   tags_name_hash = eina_hash_string_superfast_new(NULL);
    tags_hash = eina_hash_string_superfast_new(NULL);
+   tags_tag_alias_hash = eina_hash_stringshared_new((Eina_Free_Cb)_e_configure_option_tag_alias_list_free);
+   tags_alias_hash = eina_hash_string_superfast_new(NULL);
+   tags_alias_name_hash = eina_hash_string_superfast_new(NULL);
 #define OPT_ADD(TYPE, NAME, DESC, ...) \
    co = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_##TYPE, DESC, #NAME, EINA_FALSE, &e_config->NAME, NULL);\
    e_configure_option_tags_set(co, (const char*[]){__VA_ARGS__, NULL}, 0)
@@ -2074,6 +2099,12 @@ e_configure_option_init(void)
    e_configure_option_category_tag_add(_("settings"), _("module"));
    e_configure_option_category_icon_set(_("settings"), "preferences-preferences");
 
+   e_configure_option_tag_alias_add(_("border"), _("window"));
+   e_configure_option_tag_alias_add(_("exec"), _("launch"));
+   e_configure_option_tag_alias_add(_("image"), _("icon"));
+   e_configure_option_tag_alias_add(_("theme"), _("style"));
+   e_configure_option_tag_alias_add(_("pointer"), _("cursor"));
+
    event_block = EINA_FALSE;
 
    return 1;
@@ -2082,18 +2113,17 @@ e_configure_option_init(void)
 EINTERN int
 e_configure_option_shutdown(void)
 {
-   Eina_Stringshare *tag;
-
    opts_changed_list = eina_list_free(opts_changed_list);
    event_block = EINA_TRUE;
-   EINA_LIST_FREE(tags_list, tag)
-     {
-        eina_hash_del_by_key(tags_hash, tag);
-        eina_stringshare_del(tag);
-     }
+   E_FREE_LIST(tags_list, eina_stringshare_del);
+   E_FREE_LIST(tags_alias_list, eina_stringshare_del);
    while (opts_list)
      _e_configure_option_free((E_Configure_Option*)opts_list);
    E_FN_DEL(eina_hash_free, tags_hash);
+   E_FN_DEL(eina_hash_free, tags_tag_alias_hash);
+   E_FN_DEL(eina_hash_free, tags_name_hash);
+   E_FN_DEL(eina_hash_free, tags_alias_name_hash);
+   E_FN_DEL(eina_hash_free, tags_alias_hash);
    E_FN_DEL(eio_monitor_del, theme_mon[0]);
    E_FN_DEL(eio_monitor_del, theme_mon[1]);
    E_FN_DEL(eio_file_cancel, theme_ls[0]);
@@ -2457,24 +2487,19 @@ e_configure_option_category_list(void)
 EAPI void
 e_configure_option_category_tag_add(const char *cat, const char *tag)
 {
-   Eina_List *l;
    Eina_Stringshare *t, *c;
+   Eina_List *l;
 
    EINA_SAFETY_ON_NULL_RETURN(cat);
    EINA_SAFETY_ON_NULL_RETURN(tag);
-   t = eina_stringshare_add(tag);
-   if (!eina_list_data_find(tags_list, t))
-     {
-        eina_stringshare_del(t);
-        return;
-     }
+   t = eina_hash_find(tags_name_hash, tag);
+   if (!t) return;
    if (!categories)
      {
         c = eina_stringshare_add(cat);
         eina_hash_add(category_hash, cat, eina_list_append(NULL, t));
         categories = eina_list_append(categories, c);
         _e_configure_option_event_category_add_del(c, EINA_FALSE);
-        eina_stringshare_del(t);
         return;
      }
    l = eina_hash_find(category_hash, cat);
@@ -2490,7 +2515,6 @@ e_configure_option_category_tag_add(const char *cat, const char *tag)
         eina_hash_add(category_hash, cat, eina_list_append(NULL, t));
         _e_configure_option_event_category_add_del(c, EINA_FALSE);
      }
-   eina_stringshare_del(t);
 }
 
 EAPI void
@@ -2506,17 +2530,14 @@ e_configure_option_category_tag_del(const char *cat, const char *tag)
 
    l = eina_hash_find(category_hash, cat);
    if (!l) return;
-   t = eina_stringshare_add(tag);
+   t = eina_hash_find(tags_name_hash, tag);
    l = eina_list_remove(l, t);
    eina_hash_set(category_hash, cat, l);
-   if (!l)
-     {
-        c = eina_stringshare_add(cat);
-        categories = eina_list_remove(categories, c);
-        _e_configure_option_event_category_add_del(c, EINA_TRUE);
-        eina_stringshare_del(c);
-     }
-   eina_stringshare_del(t);
+   if (l) return;
+   c = eina_stringshare_add(cat);
+   categories = eina_list_remove(categories, c);
+   _e_configure_option_event_category_add_del(c, EINA_TRUE);
+   eina_stringshare_del(c);
 }
 
 EAPI Eina_Stringshare *
@@ -2533,6 +2554,43 @@ e_configure_option_category_icon_set(const char *cat, const char *icon)
    eina_stringshare_del(eina_hash_set(category_icon_hash, cat, eina_stringshare_add(icon)));
 }
 
+EAPI void
+e_configure_option_tag_alias_add(const char *tag, const char *alias)
+{
+   Eina_Stringshare *t, *o;
+   Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN(tag);
+   EINA_SAFETY_ON_NULL_RETURN(alias);
+
+   t = eina_hash_find(tags_name_hash, tag);
+   if (!t) return;
+   o = eina_hash_set(tags_alias_hash, alias, t);
+   if (o) return; //alias already in list
+   o = eina_stringshare_add(alias);
+   tags_alias_list = eina_list_append(tags_alias_list, o);
+   l = eina_hash_find(tags_tag_alias_hash, t);
+   eina_hash_set(tags_tag_alias_hash, t, eina_list_append(l, o));
+}
+
+EAPI void
+e_configure_option_tag_alias_del(const char *tag, const char *alias)
+{
+   Eina_Stringshare *t, *a;
+   Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN(tag);
+   EINA_SAFETY_ON_NULL_RETURN(alias);
+
+   t = eina_hash_set(tags_alias_hash, alias, NULL);
+   if (!t) return; //alias doesn't exist
+   a = eina_hash_find(tags_alias_name_hash, alias);
+   tags_alias_list = eina_list_remove(tags_alias_list, a);
+   l = eina_hash_find(tags_tag_alias_hash, t);
+   eina_hash_set(tags_tag_alias_hash, t, eina_list_remove(l, a));
+   eina_stringshare_del(a);
+}
+
 EAPI E_Configure_Option_Ctx *
 e_configure_option_ctx_new(void)
 {
@@ -2543,7 +2601,7 @@ EAPI Eina_Bool
 e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
 {
    Eina_List *l, *ll, *tlist, *clist = NULL;
-   Eina_Stringshare *tag;
+   Eina_Stringshare *tag, *alias;
    char *s, *e;
 
    if ((!str) || (!str[0]))
@@ -2553,6 +2611,36 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
         ctx->opts = eina_list_free(ctx->opts);
         return ctx->changed = EINA_TRUE;
      }
+   tlist = eina_list_clone(tags_alias_list);
+   for (s = e = strdupa(str); e[0]; e++)
+     {
+        if (isalnum(e[0])) continue;
+        e[0] = 0;
+        if (e - s > 1)
+          {
+             EINA_LIST_FOREACH_SAFE(tlist, l, ll, alias)
+               {
+                  if ((!strcasestr(s, alias)) && (!strcasestr(alias, s))) continue;
+                  tag = eina_hash_find(tags_alias_hash, alias);
+                  if (eina_list_data_find(clist, tag)) continue;
+                  clist = eina_list_append(clist, tag);
+                  tlist = eina_list_remove(tlist, l);
+               }
+          }
+        s = e + 1;
+     }
+   if (e - s > 1)
+     {
+        EINA_LIST_FOREACH_SAFE(tlist, l, ll, alias)
+          {
+             if ((!strcasestr(s, alias)) && (!strcasestr(alias, s))) continue;
+             tag = eina_hash_find(tags_alias_hash, alias);
+             if (eina_list_data_find(clist, tag)) continue;
+             clist = eina_list_append(clist, tag);
+             tlist = eina_list_remove(tlist, l);
+          }
+     }
+   eina_list_free(tlist);
    tlist = eina_list_clone(tags_list);
    for (s = e = strdupa(str); e[0]; e++)
      {

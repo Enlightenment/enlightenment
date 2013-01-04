@@ -151,6 +151,9 @@ EAPI void e_configure_option_info_free(E_Configure_Option_Info *oi);
 EAPI Eina_List *e_configure_option_info_get(E_Configure_Option *co);
 EAPI Evas_Object *e_configure_option_info_thumb_get(E_Configure_Option_Info *oi, Evas *evas);
 
+EAPI void e_configure_option_tag_alias_add(const char *tag, const char *alias);
+EAPI void e_configure_option_tag_alias_del(const char *tag, const char *alias);
+
 EAPI const Eina_List *e_configure_option_category_list(void);
 EAPI const Eina_List *e_configure_option_category_list_tags(const char *cat);
 EAPI void e_configure_option_category_tag_add(const char *cat, const char *tag);
