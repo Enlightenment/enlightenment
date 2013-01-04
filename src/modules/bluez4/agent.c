@@ -1,11 +1,142 @@
 #include <inttypes.h>
 #include "e.h"
+#include "ebluez4.h"
 #include "agent.h"
 
 #define AGENT_INTERFACE "org.bluez.Agent"
 #define BLUEZ_ERROR_FAILED "org.bluez.Error.Failed"
 #define GET_ERROR_MSG "edbus_message_arguments_get() error"
+#define BLUEZ_ERROR_REJECTED "org.bluez.Error.Rejected"
+#define REJECTED_MSG "Request was rejected"
 
+static EDBus_Connection *bluez_conn;
+static char buf[1024];
+
+/* Local Functions */
+static void
+_reply(EDBus_Message *message, EDBus_Message *reply)
+{
+   edbus_connection_send(bluez_conn, reply, NULL, NULL, -1);
+   edbus_message_unref(reply);
+   edbus_message_unref(message);
+}
+
+static void
+_pincode_ok(void *data, char *text)
+{
+   EDBus_Message *message = data;
+   EDBus_Message *reply = edbus_message_method_return_new(message);
+   edbus_message_arguments_set(reply, "s", text);
+   _reply(message, reply);
+}
+
+static void
+_passkey_ok(void *data, char *text)
+{
+   EDBus_Message *message = data;
+   uint32_t passkey = (uint32_t)atoi(text);
+   EDBus_Message *reply = edbus_message_method_return_new(message);
+   edbus_message_arguments_set(reply, "u", passkey);
+   _reply(message, reply);
+}
+
+static void
+_cancel(void *data)
+{
+   EDBus_Message *message = data;
+   EDBus_Message *reply = edbus_message_error_new(message,
+                                           BLUEZ_ERROR_REJECTED, REJECTED_MSG);
+   _reply(message, reply);
+}
+
+static E_Dialog *
+_create_dialog(const char *title, const char *class, Evas **evas)
+{
+   E_Container *con;
+   E_Dialog *dialog;
+
+   con = e_container_current_get(e_manager_current_get());
+   dialog = e_dialog_new(con, title, class);
+   e_dialog_title_set(dialog, title);
+   *evas = e_win_evas_get(dialog->win);
+   return dialog;
+}
+
+static void
+_display_msg(const char *title, const char *msg)
+{
+   E_Dialog *dialog;
+   Evas *evas;
+   Evas_Object *box, *label;
+   int mw, mh;
+
+   dialog = _create_dialog(title, "display", &evas);
+   label = e_widget_label_add(evas, msg);
+   box = e_box_add(evas);
+   e_box_pack_start(box, label);
+   e_widget_size_min_get(label, &mw, &mh);
+   e_dialog_content_set(dialog, box, mw+30, mh+30);
+   e_dialog_show(dialog);
+   e_dialog_border_icon_set(dialog, "view-hidden-files");
+}
+
+static void
+_reply_and_del_dialog(EDBus_Message *reply, E_Dialog *dialog)
+{
+   EDBus_Message *message = dialog->data;
+   _reply(message, reply);
+   if (!dialog) return;
+   e_object_del(E_OBJECT(dialog));
+}
+
+static void
+_reject(void *data, E_Dialog *dialog)
+{
+   const EDBus_Message *msg = dialog->data;
+   EDBus_Message *reply = edbus_message_error_new(msg, BLUEZ_ERROR_REJECTED,
+                                                  REJECTED_MSG);
+   _reply_and_del_dialog(reply, dialog);
+}
+
+static void
+_ok(void *data, E_Dialog *dialog)
+{
+   const EDBus_Message *msg = dialog->data;
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   _reply_and_del_dialog(reply, dialog);
+}
+
+static void
+_close(E_Win *win)
+{
+   E_Dialog *dialog = win->data;
+   _reject(NULL, dialog);
+}
+
+static void
+_ask(const char *title, const char *ask_msg, const char *ok_label,
+                  EDBus_Message *edbus_message)
+{
+   E_Dialog *dialog;
+   Evas *evas;
+   Evas_Object *box, *label;
+   int mw, mh;
+
+   dialog = _create_dialog(title, "ask", &evas);
+   dialog->data = edbus_message;
+   e_win_delete_callback_set(dialog->win, _close);
+   label = e_widget_label_add(evas, ask_msg);
+   box = e_box_add(evas);
+   e_box_pack_start(box, label);
+   e_widget_size_min_get(label, &mw, &mh);
+   e_dialog_content_set(dialog, box, mw+30, mh+30);
+   e_dialog_button_add(dialog, ok_label, NULL, _ok, NULL);
+   e_dialog_button_add(dialog, "Reject", NULL, _reject, NULL);
+   e_dialog_show(dialog);
+   e_dialog_border_icon_set(dialog, "dialog-ask");
+}
+
+/* Implementation of agent API */
 static EDBus_Message *
 _agent_release(const EDBus_Service_Interface *iface, const EDBus_Message *message)
 {
@@ -16,71 +147,88 @@ _agent_release(const EDBus_Service_Interface *iface, const EDBus_Message *messag
 static EDBus_Message *
 _agent_request_pin_code(const EDBus_Service_Interface *iface, const EDBus_Message *message)
 {
-   //FIXME: generate random number and show it in dialog
-   EDBus_Message *reply = edbus_message_method_return_new(message);
-   edbus_message_arguments_set(reply, "s", "123456");
-   DBG("Pin Code Requested.");
-   return reply;
+   EDBus_Message *msg = (EDBus_Message *)message;
+   edbus_message_ref(msg);
+   e_entry_dialog_show("Pin Code Requested", NULL,
+                       "Enter the PinCode above. It should have 1-16 "
+                       "characters and can be alphanumeric.", "0000",
+                       "OK", "Cancel", _pincode_ok, _cancel, msg);
+   return NULL;
 }
 
 static EDBus_Message *
 _agent_request_passkey(const EDBus_Service_Interface *iface, const EDBus_Message *message)
 {
-   //FIXME: generate random number and show it in dialog
-   EDBus_Message *reply = edbus_message_method_return_new(message);
-   edbus_message_arguments_set(reply, "s", "123456");
-   DBG("Passkey Requested.");
-   return reply;
+   EDBus_Message *msg = (EDBus_Message *)message;
+   edbus_message_ref(msg);
+   e_entry_dialog_show("Passkey Requested", NULL, "Enter the Passkey above. "
+                       "It should be a numeric value between 0-999999.",
+                       "0", "OK", "Cancel", _passkey_ok, _cancel, msg);
+   return NULL;
 }
 
 static EDBus_Message *
 _agent_display_passkey(const EDBus_Service_Interface *iface, const EDBus_Message *message)
 {
-   //FIXME: show passkey in dialog
    const char *device;
    uint32_t passkey;
    uint16_t entered;
+   Device *dev;
+
    if(!edbus_message_arguments_get(message, "ouq", &device, &passkey, &entered))
      return edbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
-   DBG("Device: %s", device);
-   DBG("Passkey: %u", passkey);
-   DBG("Entered: %d", entered);
+   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp, device);
+   snprintf(buf, sizeof(buf), "%d keys were typed on %s. Passkey is %06d",
+            entered, dev->name, passkey);
+   _display_msg("Display Passkey", buf);
    return edbus_message_method_return_new(message);
 }
 
 static EDBus_Message *
 _agent_display_pin_code(const EDBus_Service_Interface *iface, const EDBus_Message *message)
 {
-   //FIXME: show passkey in dialog
    const char *device, *pincode;
+   Device *dev;
+
    if(!edbus_message_arguments_get(message, "os", &device, &pincode))
      return edbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
-   DBG("Device: %s", device);
-   DBG("Passkey: %s", pincode);
+   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp, device);
+   snprintf(buf, sizeof(buf), "Pincode for %s is %s", dev->name, pincode);
+   _display_msg("Display Pincode", buf);
    return edbus_message_method_return_new(message);
 }
 
 static EDBus_Message *
 _agent_request_confirmation(const EDBus_Service_Interface *iface, const EDBus_Message *message)
 {
-   //FIXME: Ask for confirmation in dialog
    const char *device;
    uint32_t passkey;
+   Device *dev;
+
    if(!edbus_message_arguments_get(message, "ou", &device, &passkey))
      return edbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
-   DBG("Confirming request of %u for device %s", passkey, device);
-   return edbus_message_method_return_new(message);
+   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp, device);
+   snprintf(buf, sizeof(buf), "%06d is the passkey presented in %s?",
+            passkey, dev->name);
+   edbus_message_ref((EDBus_Message *)message);
+   _ask("Confirm Request", buf, "Confirm", (EDBus_Message *)message);
+   return NULL;
 }
 
 static EDBus_Message *
 _agent_authorize(const EDBus_Service_Interface *iface, const EDBus_Message *message)
 {
-   //FIXME: Ask for authorization in dialog
    const char *device, *uuid;
+   Device *dev;
+
    if(!edbus_message_arguments_get(message, "os", &device, &uuid))
      return edbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
-   DBG("Authorizing request for %s", device);
-   return edbus_message_method_return_new(message);
+   dev = eina_list_search_unsorted(ctxt->devices, ebluez4_path_cmp, device);
+   snprintf(buf, sizeof(buf), "Grant permission for %s to connect?",
+            dev->name);
+   edbus_message_ref((EDBus_Message *)message);
+   _ask("Authorize Connection", buf, "Grant", (EDBus_Message *)message);
+   return NULL;
 }
 
 static EDBus_Message *
@@ -128,6 +276,7 @@ static const EDBus_Service_Interface_Desc agent_iface = {
 /* Public Functions */
 void ebluez4_register_agent_interfaces(EDBus_Connection *conn)
 {
+   bluez_conn = conn;
    edbus_service_interface_register(conn, AGENT_PATH, &agent_iface);
    edbus_service_interface_register(conn, REMOTE_AGENT_PATH, &agent_iface);
 }
