@@ -15,7 +15,7 @@ static void
 _ebluez4_cb_pair(void *data, void *data2 __UNUSED__)
 {
    Instance *inst = data;
-   const char *addr = e_widget_ilist_selected_value_get(inst->list);
+   const char *addr = e_widget_ilist_selected_value_get(inst->found_list);
 
    if(!addr)
      return;
@@ -37,6 +37,8 @@ static void
 _ebluez4_cb_search(void *data, void *data2 __UNUSED__)
 {
    Instance *inst = data;
+   e_widget_ilist_clear(inst->found_list);
+   e_widget_ilist_header_append(inst->found_list, NULL, "Devices Found");
    ebluez4_start_discovery();
    e_widget_disabled_set(inst->bt, 1);
    ecore_timer_add(60, _ebluez4_cb_stop_search, inst);
@@ -56,10 +58,10 @@ _ebluez4_popup_new(Instance *inst)
    evas = inst->popup->win->evas;
 
    list = e_widget_list_add(evas, 0, 0);
-   inst->list = e_widget_ilist_add(evas, 0, 0, NULL);
-   e_widget_list_object_append(list, inst->list, 1, 1, 0.5);
+   inst->found_list = e_widget_ilist_add(evas, 0, 0, NULL);
+   e_widget_list_object_append(list, inst->found_list, 1, 1, 0.5);
 
-   e_widget_ilist_header_append(inst->list, NULL, "Devices Found");
+   e_widget_ilist_header_append(inst->found_list, NULL, "Devices Found");
 
    inst->bt = e_widget_button_add(evas, "Search Devices", NULL,
                                   _ebluez4_cb_search, inst, NULL);
@@ -232,4 +234,14 @@ ebluez4_disabled_set_all_search_buttons(Eina_Bool disabled)
 
    EINA_LIST_FOREACH(instances, iter, inst)
      e_widget_disabled_set(inst->bt, disabled);
+}
+
+void
+ebluez4_append_to_instances(const char *addr, const char *name)
+{
+   Eina_List *iter;
+   Instance *inst;
+
+   EINA_LIST_FOREACH(instances, iter, inst)
+     e_widget_ilist_append(inst->found_list, NULL, name, NULL, NULL, addr);
 }

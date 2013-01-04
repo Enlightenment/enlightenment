@@ -89,6 +89,7 @@ _on_device_found(void *context, const EDBus_Message *msg)
         dev->addr = eina_stringshare_add(addr);
         dev->name = eina_stringshare_add(name);
         ctxt->devices = eina_list_append(ctxt->devices, dev);
+        ebluez4_append_to_instances(addr, name);
      }
 }
 
