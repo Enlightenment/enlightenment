@@ -49,7 +49,11 @@ typedef struct _Adapter
    Eina_Bool visible;
    Eina_Bool pairable;
    Eina_Bool powered;
+   int visible_checked;
+   int pairable_checked;
+   int powered_checked;
    Eina_Bool is_default;
+   E_Dialog *dialog;
    EDBus_Object *obj;
    EDBus_Proxy *proxy;
 } Adapter;
@@ -76,3 +80,4 @@ void ebluez4_disconnect_device(Device *dev);
 void ebluez4_pair_with_device(const char *addr, void (*cb)(void *, Eina_Bool, const char *), void *data);
 void ebluez4_remove_device(EDBus_Object *obj);
 int ebluez4_dev_path_cmp(const void *d1, const void *d2);
+void ebluez4_adapter_property_set(Adapter *adap, const char *prop_name, Eina_Bool value);

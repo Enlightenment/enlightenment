@@ -53,6 +53,7 @@ _free_adap(Adapter *adap)
    edbus_object_unref(adap->obj);
    eina_stringshare_del(adap->name);
    adap->name = NULL;
+   ebluez4_adapter_settings_del(adap->dialog);
    free(adap);
 }
 
@@ -419,6 +420,8 @@ _on_adap_property_changed(void *context, const EDBus_Message *msg)
         DBG("'%s' property of %s changed to %s", key, adap->name, name);
         eina_stringshare_del(adap->name);
         adap->name = eina_stringshare_add(name);
+        ebluez4_update_instances(ctxt->adapters);
+        return;
      }
    else if (!strcmp(key, "Discoverable"))
      {
@@ -442,7 +445,7 @@ _on_adap_property_changed(void *context, const EDBus_Message *msg)
         adap->powered = powered;
      }
 
-   ebluez4_update_instances(ctxt->adapters);
+   ebluez4_adapter_properties_update(adap);
 }
 
 static void
@@ -487,6 +490,7 @@ _on_adap_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending
    adap->visible = visible;
    adap->pairable = pairable;
    adap->powered = powered;
+   ebluez4_update_instances(ctxt->adapters);
 }
 
 static void
@@ -533,7 +537,6 @@ _set_adapter(const char *path)
    edbus_proxy_signal_handler_add(adap->proxy, "PropertyChanged",
                                   _on_adap_property_changed, adap);
    ctxt->adapters = eina_list_append(ctxt->adapters, adap);
-   ebluez4_update_instances(ctxt->adapters);
 }
 
 static void
@@ -760,4 +763,22 @@ ebluez4_dev_path_cmp(const void *d1, const void *d2)
    const char *path = d2;
 
    return strcmp(edbus_object_path_get(dev->obj), path);
+}
+
+void
+ebluez4_adapter_property_set(Adapter *adap, const char *prop_name, Eina_Bool value)
+{
+   EDBus_Message_Iter *variant, *iter;
+   EDBus_Message *new_msg;
+
+   if (!adap) return;
+   if (!adap->obj) return;
+   new_msg = edbus_proxy_method_call_new(adap->proxy, "SetProperty");
+   iter = edbus_message_iter_get(new_msg);
+   edbus_message_iter_basic_append(iter, 's', prop_name);
+   variant = edbus_message_iter_container_new(iter, 'v', "b");
+   edbus_message_iter_basic_append(variant, 'b', value);
+   edbus_message_iter_container_close(iter, variant);
+   edbus_proxy_send(adap->proxy, new_msg, NULL, NULL, -1);
+   edbus_message_unref(new_msg);
 }

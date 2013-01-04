@@ -88,11 +88,107 @@ _ebluez4_cb_search(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 static void
+_ebluez4_cb_adap_settings_dialog_del(E_Win *win)
+{
+   E_Dialog *dialog = win->data;
+   ebluez4_adapter_settings_del(dialog);
+}
+
+static void
+_ebluez4_check_changed(void *data, Evas_Object *obj, const char *prop_name)
+{
+   Adapter *adap = data;
+   Eina_Bool value = e_widget_check_checked_get(obj);
+   ebluez4_adapter_property_set(adap, prop_name, value);
+}
+
+static void
+_ebluez4_powered_changed(void *data, Evas_Object *obj, void *info __UNUSED__)
+{
+   _ebluez4_check_changed(data, obj, "Powered");
+}
+
+static void
+_ebluez4_visible_changed(void *data, Evas_Object *obj, void *info __UNUSED__)
+{
+   _ebluez4_check_changed(data, obj, "Discoverable");
+}
+
+static void
+_ebluez4_pairable_changed(void *data, Evas_Object *obj, void *info __UNUSED__)
+{
+   _ebluez4_check_changed(data, obj, "Pairable");
+}
+
+
+static void
+_ebluez4_cb_adap_settings(void *data)
+{
+   Adapter *adap = data;
+   E_Container *con;
+   E_Dialog *dialog;
+   Evas *evas;
+   Evas_Object *list;
+   Evas_Object *ck;
+   int mw, mh;
+   Eina_List *ck_list = NULL;
+
+   if (adap->dialog)
+      ebluez4_adapter_settings_del(adap->dialog);
+
+   con = e_container_current_get(e_manager_current_get());
+
+   dialog = e_dialog_new(con, "Adapter Dialog", "adapter");
+   e_dialog_title_set(dialog, "Adapter Settings");
+   e_dialog_resizable_set(dialog, EINA_TRUE);
+   e_win_delete_callback_set(dialog->win, _ebluez4_cb_adap_settings_dialog_del);
+
+   evas = e_win_evas_get(dialog->win);
+
+   list = e_widget_list_add(evas, 0, 0);
+
+   ck = e_widget_check_add(evas, "Default", NULL);
+   e_widget_check_checked_set(ck, adap->is_default);
+   e_widget_list_object_append(list, ck, 0, 0, 0);
+
+   ck = e_widget_check_add(evas, "Powered", &(adap->powered_checked));
+   e_widget_check_checked_set(ck, adap->powered);
+   e_widget_list_object_append(list, ck, 0, 0, 0);
+   evas_object_smart_callback_add(ck, "changed", _ebluez4_powered_changed,
+                                  adap);
+   ck_list = eina_list_append(ck_list, ck);
+
+
+   ck = e_widget_check_add(evas, "Visible", &(adap->visible_checked));
+   e_widget_check_checked_set(ck, adap->visible);
+   e_widget_list_object_append(list, ck, 0, 0, 0);
+   evas_object_smart_callback_add(ck, "changed",
+                                  _ebluez4_visible_changed, adap);
+   ck_list = eina_list_append(ck_list, ck);
+
+   ck = e_widget_check_add(evas, "Pairable", &(adap->pairable_checked));
+   e_widget_check_checked_set(ck, adap->pairable);
+   e_widget_list_object_append(list, ck, 0, 0, 0);
+   evas_object_smart_callback_add(ck, "changed",
+                                  _ebluez4_pairable_changed, adap);
+   ck_list = eina_list_append(ck_list, ck);
+
+   e_dialog_show(dialog);
+   e_widget_size_min_get(list, &mw, &mh);
+   if(mw < 150) mw = 150;
+   e_dialog_content_set(dialog, list, mw, mh);
+
+   dialog->data = adap;
+   adap->dialog = dialog;
+   e_object_data_set(E_OBJECT(dialog), ck_list);
+}
+
+static void
 _ebluez4_adap_list_dialog_del(Instance *inst)
 {
-   if (!inst->adap_dialog) return;
-   e_object_del(E_OBJECT(inst->adap_dialog));
-   inst->adap_dialog = NULL;
+   if (!inst->adapters_dialog) return;
+   e_object_del(E_OBJECT(inst->adapters_dialog));
+   inst->adapters_dialog = NULL;
    inst->adap_list = NULL;
 }
 
@@ -111,7 +207,7 @@ _ebluez4_cb_adap_list(void *data, E_Menu *m, E_Menu_Item *mi)
    E_Dialog *dialog;
    Evas *evas;
 
-   if (inst->adap_dialog)
+   if (inst->adapters_dialog)
       _ebluez4_adap_list_dialog_del(inst);
 
    con = e_container_current_get(e_manager_current_get());
@@ -131,7 +227,7 @@ _ebluez4_cb_adap_list(void *data, E_Menu *m, E_Menu_Item *mi)
    e_dialog_show(dialog);
 
    dialog->data = inst;
-   inst->adap_dialog = dialog;
+   inst->adapters_dialog = dialog;
 }
 
 static void
@@ -412,8 +508,8 @@ ebluez4_update_inst(Evas_Object *dest, Eina_List *src, Instance *inst)
    else if (src == ctxt->adapters)
      {
         EINA_LIST_FOREACH(src, iter, adap)
-          e_widget_ilist_append(dest, NULL, adap->name, NULL, NULL, //FIXME: use correct cb for selecting adapter
-                                edbus_object_path_get(adap->obj));
+          e_widget_ilist_append(dest, NULL, adap->name,
+                                _ebluez4_cb_adap_settings, adap, NULL);
      }
 
    e_widget_ilist_thaw(dest);
@@ -473,4 +569,35 @@ ebluez4_show_error(const char *err_name, const char *err_msg)
    e_dialog_content_set(dialog, box, mw+30, mh+30);
    e_dialog_show(dialog);
    e_dialog_border_icon_set(dialog, "dialog-error");
+}
+
+void
+ebluez4_adapter_settings_del(E_Dialog *dialog)
+{
+   Adapter *adap;
+   Eina_List *ck_list;
+
+   if (!dialog) return;
+   adap = dialog->data;
+   ck_list = e_object_data_get(E_OBJECT(dialog));
+   eina_list_free(ck_list);
+   e_object_del(E_OBJECT(dialog));
+   adap->dialog = NULL;
+}
+
+void
+ebluez4_adapter_properties_update(void *data)
+{
+   Eina_List *ck_list;
+   Evas_Object *ck;
+   Adapter *adap = data;
+
+   if (!adap->dialog) return;
+   ck_list = e_object_data_get(E_OBJECT(adap->dialog));
+   ck = eina_list_nth(ck_list, 0);
+   e_widget_check_checked_set(ck, adap->powered);
+   ck = eina_list_nth(ck_list, 1);
+   e_widget_check_checked_set(ck, adap->visible);
+   ck = eina_list_nth(ck_list, 2);
+   e_widget_check_checked_set(ck, adap->pairable);
 }
