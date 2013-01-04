@@ -82,13 +82,19 @@ _gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
    return "Application Menu";
 }
 
-static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas EINA_UNUSED)
-{
-   return NULL;
-}
+static char tmpbuf[1024]; /* general purpose buffer, just use immediately */
 
-static char tmpbuf[64]; /* general purpose buffer, just use immediately */
+static Evas_Object *
+_gc_icon(const E_Gadcon_Client_Class *client_class, Evas *evas)
+{
+   Evas_Object *o;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(appmenu_module, NULL);
+   snprintf(tmpbuf, sizeof(tmpbuf), "%s/e-module-appmenu.edj",
+            e_module_dir_get(appmenu_module));
+   o = edje_object_add(evas);
+   edje_object_file_set(o, tmpbuf, "icon");
+   return o;
+}
 
 static const char *
 _gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)

@@ -1,5 +1,6 @@
 appmenudir = $(MDIR)/appmenu
-appmenu_DATA = appmenu/module.desktop
+appmenu_DATA = appmenu/module.desktop \
+               appmenu/e-module-appmenu.edj
 
 EXTRA_DIST += $(appmenu2_DATA)
 
