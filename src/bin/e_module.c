@@ -667,7 +667,6 @@ _e_module_whitelist_check(void)
         "conf_window_remembers",
         "connman",
         "cpufreq",
-        "dropshadow",
         "everything",
         "fileman",
         "fileman_opinfo",

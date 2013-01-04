@@ -8,7 +8,6 @@ EXTRA_DIST = \
 	e.src \
 	module.battery.src \
 	module.cpufreq.src \
-	module.dropshadow.src \
 	module.fileman.src \
 	module.ibar.src \
 	module.ibox.src \
@@ -23,7 +22,6 @@ files_DATA = \
 	e.cfg \
 	module.battery.cfg \
 	module.cpufreq.cfg \
-	module.dropshadow.cfg \
 	module.fileman.cfg \
 	module.ibar.cfg \
 	module.ibox.cfg \

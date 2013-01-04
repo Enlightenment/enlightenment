@@ -159,27 +159,11 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
      }
    else
      {
-        E_Config_Module *em;
-        Eina_List *l;
         E_Config_DD *conf_edd = NULL;
         E_Config_DD *conf_match_edd = NULL;
         Config *cfg = NULL;
 
-        EINA_LIST_FOREACH(e_config->modules, l, em)
-          {
-             if (!em->name) continue;
-             if (!strcmp(em->name, "dropshadow"))
-               {
-                  e_config->modules = eina_list_remove_list
-                      (e_config->modules, l);
-                  if (em->name) eina_stringshare_del(em->name);
-                  free(em);
-                  break;
-               }
-          }
-
         e_config->use_composite = 1;
-
         e_mod_comp_cfdata_edd_init(&(conf_edd), &(conf_match_edd));
         cfg = e_mod_comp_cfdata_config_new();
 

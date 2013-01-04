@@ -137,7 +137,6 @@ src/modules/conf_window_manipulation/module.desktop
 src/modules/conf_window_remembers/module.desktop
 src/modules/connman/module.desktop
 src/modules/cpufreq/module.desktop
-src/modules/dropshadow/module.desktop
 src/modules/everything/module.desktop
 src/modules/fileman/module.desktop
 src/modules/fileman_opinfo/module.desktop

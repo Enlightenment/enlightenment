@@ -95,21 +95,6 @@ e_modapi_init(E_Module *m)
         e_config_save_queue();
      }
 
-   /* XXX: disabled dropshadow module when comp is running */
-   {
-      E_Module *m2;
-
-      m2 = e_module_find("dropshadow");
-      if (m2 && m2->enabled)
-        {
-           e_util_dialog_internal(_("Composite"),
-                                  _("Dropshadow module is incompatible<br>"
-                                    "with compositing. Disabling the<br>"
-                                    "Dropshadow module."));
-           e_module_disable(m2);
-        }
-   }
-
    /* XXX: update old configs. add config versioning */
    if (mod->conf->first_draw_delay == 0)
      mod->conf->first_draw_delay = 0.20;

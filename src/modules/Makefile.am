@@ -38,10 +38,6 @@ if USE_MODULE_IBAR
 include Makefile_ibar.am
 endif
 
-if USE_MODULE_DROPSHADOW
-include Makefile_dropshadow.am
-endif
-
 if USE_MODULE_CLOCK
 include Makefile_clock.am
 endif
