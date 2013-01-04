@@ -507,9 +507,10 @@ _opt_overlay_slider_change(void *data, Evas_Object *obj, void *event_info EINA_U
 }
 
 static void
-_opt_overlay_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_opt_overlay_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Elm_Object_Item *it;
+   E_Event_Configure_Option_Changed ev;
 
    overlay = NULL;
    it = elm_genlist_selected_item_get(list[1]);
@@ -521,7 +522,8 @@ _opt_overlay_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj E
    elm_object_focus_allow_set(list[0], EINA_TRUE);
    elm_object_focus_allow_set(list[1], EINA_TRUE);
    elm_object_focus_set(list[1], EINA_TRUE);
-   _event_opt_changed(NULL, E_EVENT_CONFIGURE_OPTION_CHANGED, NULL);
+   ev.co = evas_object_data_get(obj, "config_option");
+   _event_opt_changed(NULL, E_EVENT_CONFIGURE_OPTION_CHANGED, &ev);
 }
 
 static void
@@ -1149,7 +1151,7 @@ _event_opt_changed(void *d EINA_UNUSED, int type EINA_UNUSED, E_Event_Configure_
         elm_layout_signal_emit(layout, "e,action,discard_hide", "e");
      }
    buttons_visible = EINA_FALSE;
-   if (ev) _opt_item_update(ev->co);
+   _opt_item_update(ev->co);
    return ECORE_CALLBACK_RENEW;
 }
 
