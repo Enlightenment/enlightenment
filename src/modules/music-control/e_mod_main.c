@@ -136,16 +136,19 @@ _gc_label(const E_Gadcon_Client_Class *client_class)
    return _e_music_control_Name;
 }
 
+static char tmpbuf[1024]; /* general purpose buffer, just use immediately */
+
 static Evas_Object *
 _gc_icon(const E_Gadcon_Client_Class *client_class, Evas *evas)
 {
-   Evas_Object *o = edje_object_add(evas);
-   e_theme_edje_object_set(o, "base/theme/modules/music-control",
-                           "modules/music-control/icon");
+   Evas_Object *o;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(music_control_mod, NULL);
+   snprintf(tmpbuf, sizeof(tmpbuf), "%s/e-module-music-control.edj",
+            e_module_dir_get(music_control_mod));
+   o = edje_object_add(evas);
+   edje_object_file_set(o, tmpbuf, "icon");
    return o;
 }
-
-static char tmpbuf[32]; /* general purpose buffer, just use immediately */
 
 static const char *
 _gc_id_new(const E_Gadcon_Client_Class *client_class)
