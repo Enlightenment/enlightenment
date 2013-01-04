@@ -337,7 +337,7 @@ layout_updated_cb(void *data, const EDBus_Message *msg EINA_UNUSED)
    layout_update(ctx);
 }
 
-E_DBusMenu_Ctx *
+EAPI E_DBusMenu_Ctx *
 e_dbusmenu_load(EDBus_Connection *conn, const char *bus, const char *path, const void *data)
 {
    EDBus_Object *obj;
@@ -371,7 +371,7 @@ e_dbusmenu_load(EDBus_Connection *conn, const char *bus, const char *path, const
    return ctx;
 }
 
-void
+EAPI void
 e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event)
 {
    EDBus_Message *msg;
@@ -398,7 +398,7 @@ e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event)
    edbus_message_unref(msg);
 }
 
-void
+EAPI void
 e_dbusmenu_unload(E_DBusMenu_Ctx *ctx)
 {
    EDBus_Connection *conn;
@@ -415,13 +415,13 @@ e_dbusmenu_unload(E_DBusMenu_Ctx *ctx)
    free(ctx);
 }
 
-void
+EAPI void
 e_dbusmenu_pop_request_cb_set(E_DBusMenu_Ctx *ctx, E_DBusMenu_Pop_Request_Cb cb)
 {
    ctx->pop_request_cb = cb;
 }
 
-void
+EAPI void
 e_dbusmenu_update_cb_set(E_DBusMenu_Ctx *ctx, E_DBusMenu_Update_Cb cb)
 {
    ctx->update_cb = cb;
