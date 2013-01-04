@@ -707,7 +707,7 @@ _e_module_whitelist_check(void)
         "echievements",
         "music-control",
         "conf2",
-
+        "appmenu",
         NULL // end marker
      };
 

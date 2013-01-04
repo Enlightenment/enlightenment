@@ -1,0 +1,17 @@
+appmenudir = $(MDIR)/appmenu
+appmenu_DATA = appmenu/module.desktop
+
+EXTRA_DIST += $(appmenu2_DATA)
+
+appmenupkgdir = $(MDIR)/appmenu/$(MODULE_ARCH)
+appmenupkg_LTLIBRARIES = appmenu/module.la
+
+appmenu_module_la_SOURCES = appmenu/e_mod_main.c \
+                            appmenu/e_mod_dbus_registrar_server.c \
+                            appmenu/e_mod_appmenu_render.c \
+                            appmenu/e_mod_appmenu_private.h
+
+
+.PHONY: appmenu install-appmenu
+appmenu: $(appmenupkg_LTLIBRARIES) $(appmenu_DATA)
+install-appmenu: install-appmenuDATA install-appmenupkgLTLIBRARIES

@@ -194,6 +194,10 @@ if USE_MODULE_SYSTRAY
 include Makefile_systray.am
 endif
 
+if USE_MODULE_APPMENU
+include Makefile_appmenu.am
+endif
+
 if USE_MODULE_COMP
 include Makefile_comp.am
 endif

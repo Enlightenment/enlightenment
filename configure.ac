@@ -861,6 +861,7 @@ AC_E_OPTIONAL_MODULE([illume2], true)
 AC_E_OPTIONAL_MODULE([syscon], true)
 AC_E_OPTIONAL_MODULE([everything], true)
 AC_E_OPTIONAL_MODULE([systray], true)
+AC_E_OPTIONAL_MODULE([appmenu], true)
 AC_E_OPTIONAL_MODULE([comp], true)
 AC_E_OPTIONAL_MODULE([physics], true, [CHECK_MODULE_PHYSICS])
 AC_E_OPTIONAL_MODULE([quickaccess], true)
@@ -970,6 +971,7 @@ src/modules/syscon/module.desktop
 src/modules/everything/module.desktop
 src/modules/everything/everything.pc
 src/modules/systray/module.desktop
+src/modules/appmenu/module.desktop
 src/modules/comp/module.desktop
 src/modules/physics/module.desktop
 src/modules/quickaccess/module.desktop

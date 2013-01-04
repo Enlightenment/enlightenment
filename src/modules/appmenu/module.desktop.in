@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Link
+Name=Application Menu
+Icon=e-module-appmenu
+Comment=Gadget that hold the toolbar of the foreground application.
+X-Enlightenment-ModuleType=utils

@@ -47,6 +47,7 @@ collections {
 #include "edc/connman.edc"
 #include "edc/music_control.edc"
 #include "edc/systray.edc"
+#include "edc/appmenu.edc"
 #include "edc/clock.edc"
 #include "edc/ibar-ibox.edc"
 #include "edc/colors.edc"
