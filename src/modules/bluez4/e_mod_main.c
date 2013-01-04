@@ -102,6 +102,7 @@ _ebluez4_cb_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event)
 
    if (!(inst = data)) return;
    if (ev->button != 1) return;
+   if (!ctxt->adap_obj) return;
 
    if (!inst->popup)
      _ebluez4_popup_new(inst);
@@ -111,21 +112,32 @@ _ebluez4_cb_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event)
      e_gadcon_popup_show(inst->popup);
 }
 
+static void
+_ebluez4_set_mod_icon(Evas_Object *base)
+{
+   char edj_path[4096];
+   char *group;
+
+   snprintf(edj_path, sizeof(edj_path), "%s/e-module-bluez4.edj", mod->dir);
+   if (ctxt->adap_obj)
+     group = "modules/bluez4/main";
+   else
+     group = "modules/bluez4/inactive";
+
+   if (!e_theme_edje_object_set(base, "base/theme/modules/bluez4", group))
+     edje_object_file_set(base, edj_path, group);
+}
+
 /* Gadcon */
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
    Instance *inst = NULL;
-   char buf[1024];
-
-   snprintf(buf, sizeof(buf), "%s/e-module-bluez4.edj", mod->dir);
 
    inst = E_NEW(Instance, 1);
 
    inst->o_bluez4 = edje_object_add(gc->evas);
-   if (!e_theme_edje_object_set(inst->o_bluez4, "base/theme/modules/bluez4",
-                                "modules/bluez4/main"))
-     edje_object_file_set(inst->o_bluez4, buf, "modules/bluez4/main");
+   _ebluez4_set_mod_icon(inst->o_bluez4);
 
    inst->gcc = e_gadcon_client_new(gc, name, id, style, inst->o_bluez4);
    inst->gcc->data = inst;
@@ -275,4 +287,21 @@ ebluez4_update_instances(Eina_List *src)
    EINA_LIST_FOREACH(instances, iter, inst)
      if (inst->found_list)
        ebluez4_update_inst(inst->found_list, src);
+}
+
+void
+ebluez4_update_all_gadgets_visibility()
+{
+   Eina_List *iter;
+   Instance *inst;
+
+   if (ctxt->adap_obj)
+     EINA_LIST_FOREACH(instances, iter, inst)
+       _ebluez4_set_mod_icon(inst->o_bluez4);
+   else
+     EINA_LIST_FOREACH(instances, iter, inst)
+       {
+          _ebluez4_set_mod_icon(inst->o_bluez4);
+          e_gadcon_popup_hide(inst->popup);
+       }
 }

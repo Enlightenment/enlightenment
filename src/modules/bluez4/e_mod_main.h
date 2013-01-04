@@ -20,5 +20,6 @@ void ebluez4_disabled_set_all_search_buttons(Eina_Bool disabled);
 void ebluez4_append_to_instances(const char *addr, const char *name);
 void ebluez4_update_inst(Evas_Object *dest, Eina_List *src);
 void ebluez4_update_instances(Eina_List *src);
+void ebluez4_update_all_gadgets_visibility();
 
 #endif

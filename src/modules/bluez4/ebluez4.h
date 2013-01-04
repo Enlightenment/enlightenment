@@ -28,6 +28,8 @@ typedef struct _Context
    Eina_List *devices;
 } Context;
 
+Context *ctxt;
+
 void ebluez4_edbus_init();
 void ebluez4_edbus_shutdown();
 void ebluez4_start_discovery();

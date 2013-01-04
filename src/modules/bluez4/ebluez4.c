@@ -4,9 +4,6 @@
 #include "e_mod_main.h"
 #include "ebluez4.h"
 
-/* Global Module Context */
-Context *ctxt;
-
 static int
 _addr_cmp(const void *d1, const void *d2)
 {
@@ -52,6 +49,7 @@ _unset_adapter()
    ctxt->adap_obj = NULL;
    ebluez4_disabled_set_all_search_buttons(EINA_TRUE);
    ebluez4_update_instances(ctxt->devices);
+   ebluez4_update_all_gadgets_visibility();
 }
 
 static void
@@ -261,6 +259,7 @@ _set_adapter(const EDBus_Message *msg)
    edbus_proxy_call(ctxt->adap_proxy, "ListDevices", _on_list, NULL, -1, "");
    edbus_proxy_call(ctxt->adap_proxy, "RegisterAgent", NULL, NULL, -1, "os",
                     REMOTE_AGENT_PATH, "KeyboardDisplay");
+   ebluez4_update_all_gadgets_visibility();
 }
 
 static void
