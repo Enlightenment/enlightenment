@@ -254,9 +254,13 @@ _menu_post_deactivate(void *data __UNUSED__, E_Menu *m)
 {
    Eina_List *iter;
    E_Menu_Item *mi;
-   Instance *inst;
+   Instance *inst = data;
 
-   if ((inst = data)) e_gadcon_locked_set(inst->gcc->gadcon, 0);
+   if (!(m->parent_item) || !(m->parent_item->menu))
+     {
+        e_gadcon_locked_set(inst->gcc->gadcon, 0);
+        inst->menu = NULL;
+     }
    EINA_LIST_FOREACH(m->items, iter, mi)
      if (mi->submenu) e_menu_deactivate(mi->submenu);
    e_object_del(E_OBJECT(m));
@@ -291,7 +295,7 @@ _ebluez4_add_devices(Instance *inst)
           e_menu_item_check_set(mi, 1);
           subm = e_menu_new();
           e_menu_post_deactivate_callback_set(subm, _menu_post_deactivate,
-                                              NULL);
+                                              inst);
           e_menu_item_submenu_set(mi, subm);
           submi = e_menu_item_new(subm);
           if (dev->connected)
@@ -415,7 +419,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
         evas_object_del(inst->o_bluez4);
      }
 
-   e_menu_deactivate(inst->menu);
+   if (inst->menu) e_menu_deactivate(inst->menu);
    _ebluez4_search_dialog_del(inst);
    _ebluez4_adap_list_dialog_del(inst);
 
@@ -482,6 +486,7 @@ EAPI int
 e_modapi_shutdown(E_Module *m)
 {
    ebluez4_edbus_shutdown();
+   e_gadcon_provider_unregister(&_gc_class);
    return 1;
 }
 
@@ -552,7 +557,7 @@ ebluez4_update_all_gadgets_visibility(void)
      EINA_LIST_FOREACH(instances, iter, inst)
        {
           _ebluez4_set_mod_icon(inst->o_bluez4);
-          e_menu_deactivate(inst->menu);
+          if (inst->menu) e_menu_deactivate(inst->menu);
           _ebluez4_search_dialog_del(inst);
           _ebluez4_adap_list_dialog_del(inst);
        }

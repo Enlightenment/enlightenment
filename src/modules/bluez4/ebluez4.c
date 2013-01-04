@@ -413,9 +413,6 @@ _on_device_found(void *context, const EDBus_Message *msg)
    if(eina_list_search_unsorted(ctxt->found_devices, _dev_addr_cmp, addr))
      return;
 
-   if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
-     return;
-
    _retrieve_properties(dict, &addr, &name, &icon, &paired, &connected, &uuids);
 
    dev = calloc(1, sizeof(Device));
@@ -552,6 +549,7 @@ _unset_default_adapter(void)
    ctxt->devices = NULL;
    _free_dev_list(&ctxt->found_devices);
    ctxt->found_devices = NULL;
+   edbus_object_unref(ctxt->adap_obj);
    ctxt->adap_obj = NULL;
    ebluez4_update_all_gadgets_visibility();
 }
@@ -750,9 +748,10 @@ ebluez4_edbus_init(void)
 void
 ebluez4_edbus_shutdown(void)
 {
-   _free_dev_list(&ctxt->devices);
-   _free_dev_list(&ctxt->found_devices);
+   if (ctxt->adap_obj)
+     _unset_default_adapter();
    _free_adap_list();
+   edbus_object_unref(edbus_proxy_object_get(ctxt->man_proxy));
    edbus_connection_unref(ctxt->conn);
    free(ctxt);
 
