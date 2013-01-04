@@ -272,7 +272,6 @@ _cfg_toolbar_orient_cb_info_cb(E_Configure_Option *co)
 
    for (x = E_GADCON_ORIENT_TOP; x <= E_GADCON_ORIENT_BOTTOM; x++)
      {
-        if (!name[x]) continue;
         oi = e_configure_option_info_new(co, _(name[x - E_GADCON_ORIENT_TOP]), (intptr_t*)(long)x);
         oi->current = (*(int*)co->valptr == x);
         ret = eina_list_append(ret, oi);
