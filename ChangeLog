@@ -1,3 +1,18 @@
+2013-01-04 Lucas Jóia
+        * Added bluez4 module: control bluetoothd daemon
+
+2013-01-03 Lucas Jóia
+        * Added appmenu module: show application menu in shelf
+
+2013-01-03 José Roberto de Souza
+
+        * Modules ported to edbus: battery, connman, mixer, notification,
+          illume-indicator
+        * Fileman and Wizard also ported to edbus
+        * Systray: added DBus notification
+        * Added music-control module: control any mpris2-compatible music
+          player
+
 2013-01-03  Mike Blumenkrantz
 
         * Added e_win_elm_available()
