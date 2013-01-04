@@ -391,6 +391,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->gcc = e_gadcon_client_new(gc, name, id, style, inst->o_bluez4);
    inst->gcc->data = inst;
 
+   e_gadcon_client_util_menu_attach(inst->gcc);
    evas_object_event_callback_add(inst->o_bluez4, EVAS_CALLBACK_MOUSE_DOWN,
                                   _ebluez4_cb_mouse_down, inst);
 
