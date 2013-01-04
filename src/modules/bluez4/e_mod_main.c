@@ -555,24 +555,8 @@ ebluez4_update_all_gadgets_visibility(void)
 void
 ebluez4_show_error(const char *err_name, const char *err_msg)
 {
-   E_Container *con;
-   E_Dialog *dialog;
-   Evas *evas;
-   Evas_Object *box, *label;
-   int mw, mh;
-
-   con = e_container_current_get(e_manager_current_get());
-   dialog = e_dialog_new(con, "Error Dialog", "error");
-   e_dialog_title_set(dialog, "An error has ocurred");
    snprintf(tmpbuf, sizeof(tmpbuf), "%s: %s.", err_name, err_msg);
-   evas = e_win_evas_get(dialog->win);
-   label = e_widget_label_add(evas, tmpbuf);
-   box = e_box_add(evas);
-   e_box_pack_start(box, label);
-   e_widget_size_min_get(label, &mw, &mh);
-   e_dialog_content_set(dialog, box, mw+30, mh+30);
-   e_dialog_show(dialog);
-   e_dialog_border_icon_set(dialog, "dialog-error");
+   e_util_dialog_internal("An error has ocurred", tmpbuf);
 }
 
 void

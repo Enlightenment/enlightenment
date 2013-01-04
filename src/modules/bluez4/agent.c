@@ -50,7 +50,8 @@ _cancel(void *data)
 }
 
 static E_Dialog *
-_create_dialog(const char *title, const char *class, Evas **evas)
+_create_dialog(const char *title, const char *msg,
+             const char *icon, const char *class)
 {
    E_Container *con;
    E_Dialog *dialog;
@@ -58,26 +59,18 @@ _create_dialog(const char *title, const char *class, Evas **evas)
    con = e_container_current_get(e_manager_current_get());
    dialog = e_dialog_new(con, title, class);
    e_dialog_title_set(dialog, title);
-   *evas = e_win_evas_get(dialog->win);
+   e_dialog_icon_set(dialog, icon, 64);
+   e_dialog_text_set(dialog, msg);
    return dialog;
 }
 
 static void
 _display_msg(const char *title, const char *msg)
 {
-   E_Dialog *dialog;
-   Evas *evas;
-   Evas_Object *box, *label;
-   int mw, mh;
-
-   dialog = _create_dialog(title, "display", &evas);
-   label = e_widget_label_add(evas, msg);
-   box = e_box_add(evas);
-   e_box_pack_start(box, label);
-   e_widget_size_min_get(label, &mw, &mh);
-   e_dialog_content_set(dialog, box, mw+30, mh+30);
+   E_Dialog *dialog = _create_dialog(title, msg, "view-hidden-files",
+                                     "display");
+   e_dialog_button_add(dialog, "OK", NULL, NULL, NULL);
    e_dialog_show(dialog);
-   e_dialog_border_icon_set(dialog, "view-hidden-files");
 }
 
 static void
@@ -117,23 +110,12 @@ static void
 _ask(const char *title, const char *ask_msg, const char *ok_label,
                   EDBus_Message *edbus_message)
 {
-   E_Dialog *dialog;
-   Evas *evas;
-   Evas_Object *box, *label;
-   int mw, mh;
-
-   dialog = _create_dialog(title, "ask", &evas);
+   E_Dialog *dialog = _create_dialog(title, ask_msg, "dialog-ask", "ask");
    dialog->data = edbus_message;
    e_win_delete_callback_set(dialog->win, _close);
-   label = e_widget_label_add(evas, ask_msg);
-   box = e_box_add(evas);
-   e_box_pack_start(box, label);
-   e_widget_size_min_get(label, &mw, &mh);
-   e_dialog_content_set(dialog, box, mw+30, mh+30);
    e_dialog_button_add(dialog, ok_label, NULL, _ok, NULL);
    e_dialog_button_add(dialog, "Reject", NULL, _reject, NULL);
    e_dialog_show(dialog);
-   e_dialog_border_icon_set(dialog, "dialog-ask");
 }
 
 /* Implementation of agent API */
