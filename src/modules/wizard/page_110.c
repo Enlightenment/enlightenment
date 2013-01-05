@@ -63,15 +63,17 @@ _connman_fail(void *data)
      }
 
    e_config_save_queue();
-   if (pending_connman)
-     {
-        edbus_pending_cancel(pending_connman);
-        pending_connman = NULL;
-     }
 
    connman_timeout = NULL;
    _recommend_connman(pg);
    return EINA_FALSE;
+}
+
+static Eina_Bool
+_page_next_call(void *data EINA_UNUSED)
+{
+   e_wizard_next();
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -97,7 +99,7 @@ _check_connman_owner(void *data, const EDBus_Message *msg,
      goto fail;
 
    e_wizard_button_next_enable_set(1);
-   e_wizard_next();
+   ecore_idler_add(_page_next_call, NULL);
 
 fail:
    _connman_fail(data);
@@ -119,7 +121,7 @@ wizard_page_shutdown(E_Wizard_Page *pg __UNUSED__)
 EAPI int
 wizard_page_show(E_Wizard_Page *pg)
 {
-   int have_connman = 0;
+   Eina_Bool have_connman = EINA_FALSE;
 
 #ifdef HAVE_ECONNMAN
    edbus_init();
@@ -132,20 +134,16 @@ wizard_page_show(E_Wizard_Page *pg)
 
         pending_connman = edbus_name_owner_get(conn, "net.connman",
                                                _check_connman_owner, pg);
-        if (pending_connman)
-          {
-             if (connman_timeout) ecore_timer_del(connman_timeout);
-             connman_timeout = ecore_timer_add(2.0, _connman_fail, pg);
-             have_connman = 1;
-             e_wizard_button_next_enable_set(0);
-          }
+        if (connman_timeout)
+          ecore_timer_del(connman_timeout);
+        connman_timeout = ecore_timer_add(2.0, _connman_fail, pg);
+        have_connman = EINA_TRUE;
+        e_wizard_button_next_enable_set(0);
      }
    if (!have_connman)
      {
         E_Config_Module *em;
         Eina_List *l;
-
-        edbus_shutdown();
         EINA_LIST_FOREACH(e_config->modules, l, em)
           {
              if (!em->name) continue;
@@ -180,6 +178,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
      }
    if (conn)
      edbus_connection_unref(conn);
+   conn = NULL;
 
 #ifdef HAVE_ECONNMAN
    edbus_shutdown();
