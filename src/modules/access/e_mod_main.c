@@ -14,6 +14,7 @@ typedef struct
    Ecore_X_Window  win;
    Ecore_Timer    *timer;
    Ecore_Timer    *double_down_timer;
+   Ecore_Timer    *tap_timer;
    Evas_Object    *info;
    Evas_Object    *text;
    int             x, y, dx, dy, mx, my;
@@ -192,6 +193,18 @@ _mouse_double_down_timeout(Cover *cov)
    cov->double_down_timer = ecore_timer_add(short_time, _mouse_double_down, cov);
 }
 
+static Eina_Bool
+_mouse_tap(void *data)
+{
+   Cover *cov = data;
+   cov->tap_timer = NULL;
+
+   E_Border *bd = e_border_focused_get();
+   if (bd) _messsage_read_send(bd->client.win);
+
+   return EINA_FALSE;
+}
+
 static void
 _mouse_down(Cover *cov, Ecore_Event_Mouse_Button *ev)
 {
@@ -207,6 +220,12 @@ _mouse_down(Cover *cov, Ecore_Event_Mouse_Button *ev)
    cov->longpressed = EINA_FALSE;
    cov->timer = ecore_timer_add(longtime, _mouse_longpress, cov);
 
+   if (cov->tap_timer)
+     {
+        ecore_timer_del(cov->tap_timer);
+        cov->tap_timer = NULL;
+     }
+
    /* check mouse double down - not two fingers, refer to double click */
    _mouse_double_down_timeout(cov);
 }
@@ -215,6 +234,7 @@ static void
 _mouse_up(Cover *cov, Ecore_Event_Mouse_Button *ev)
 {
    double timeout = 0.15;
+   double double_tap_timeout = 0.25;
    int distance = 40;
    int dx, dy;
    int x, y;
@@ -249,17 +269,22 @@ _mouse_up(Cover *cov, Ecore_Event_Mouse_Button *ev)
    dy = ev->y - cov->dy;
    if (((dx * dx) + (dy * dy)) < (distance * distance))
      {
-        if ((ev->timestamp - cov->dt) > (timeout * 1000) &&
-            (ev->timestamp - cov->dt) < (2 * timeout * 1000))
-          {
-             INFO(cov, "tap");
-             _mouse_win_fake_tap(cov, ev);
-          }
-        else if (ev->double_click)
+        if (ev->double_click)
           {
              INFO(cov, "double_click");
              if (bd)
                ecore_x_e_illume_access_action_activate_send(bd->client.win);
+          }
+        else if ((ev->timestamp - cov->dt) <= (timeout * 1000))
+          {
+             cov->tap_timer = ecore_timer_add(double_tap_timeout,
+                                         _mouse_tap, cov);
+          }
+        else if ((ev->timestamp - cov->dt) > (timeout * 1000) &&
+                 (ev->timestamp - cov->dt) < (2 * timeout * 1000))
+          {
+             INFO(cov, "tap");
+             _mouse_win_fake_tap(cov, ev);
           }
      }
    else if (((dx * dx) + (dy * dy)) > (4 * distance * distance)
@@ -632,6 +657,20 @@ _covers_shutdown(void)
              ecore_timer_del(cov->double_down_timer);
              cov->double_down_timer = NULL;
           }
+
+        if (cov->tap_timer)
+          {
+             ecore_timer_del(cov->tap_timer);
+             cov->tap_timer = NULL;
+          }
+
+#if DEBUG_INFO
+        if (dbg_timer)
+          {
+             ecore_timer_del(dbg_timer);
+             dbg_timer = NULL;
+          }
+#endif
 
         free(cov);
      }
