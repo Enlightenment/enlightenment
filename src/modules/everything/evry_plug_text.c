@@ -60,10 +60,10 @@ _fetch(Evry_Plugin *plugin, const char *input)
 Eina_Bool
 evry_plug_text_init(void)
 {
-   p1 = EVRY_PLUGIN_BASE("Text", "accessories-text-editor",
+   p1 = EVRY_PLUGIN_BASE(N_("Text"), "accessories-text-editor",
                          EVRY_TYPE_TEXT, _begin, _finish, _fetch);
 
-   p2 = EVRY_PLUGIN_BASE("Text", "accessories-text-editor",
+   p2 = EVRY_PLUGIN_BASE(N_("Text"), "accessories-text-editor",
                          EVRY_TYPE_TEXT, _begin, _finish, _fetch);
 
    if (evry_plugin_register(p1, EVRY_PLUGIN_OBJECT, 999))

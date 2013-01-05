@@ -169,7 +169,7 @@ evry_plug_collection_init(void)
 
    COLLECTION_PLUGIN = evry_type_register("COLLECTION_PLUGIN");
 
-   p = _add_plugin("Plugins");
+   p = _add_plugin(N_("Plugins"));
    p->begin = &_begin_all;
    EVRY_ITEM_ICON_SET(p, "preferences-plugin");
 

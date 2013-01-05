@@ -1314,37 +1314,37 @@ _plugins_init(const Evry_API *api)
   if (_register) evry->action_register(act, prio++);                         \
   _actions = eina_list_append(_actions, act);                                \
 
-   ACTION_NEW("Copy To ...", EVRY_TYPE_FILE, "go-next",
+   ACTION_NEW(N_("Copy To ..."), EVRY_TYPE_FILE, "go-next",
               _file_copy_action, NULL, 1);
    act->it2.subtype = EVRY_TYPE_DIR;
    EVRY_ITEM_DATA_INT_SET(act, ACT_COPY);
 
-   ACTION_NEW("Move To ...", EVRY_TYPE_FILE, "go-next",
+   ACTION_NEW(N_("Move To ..."), EVRY_TYPE_FILE, "go-next",
               _file_copy_action, NULL, 1);
    act->it2.subtype = EVRY_TYPE_DIR;
    EVRY_ITEM_DATA_INT_SET(act, ACT_MOVE);
 
-   ACTION_NEW("Move to Trash", 0, "user-trash",
+   ACTION_NEW(N_("Move to Trash"), 0, "user-trash",
               _file_trash_action, NULL, 1);
    EVRY_ITEM_DATA_INT_SET(act, ACT_TRASH);
 
-   ACTION_NEW("Open Directory", 0, "folder-open",
+   ACTION_NEW(N_("Open Directory"), 0, "folder-open",
               _open_folder_action, _open_folder_check, 1);
    act->remember_context = EINA_TRUE;
 
-   ACTION_NEW("Sort by Date", 0, "go-up",
+   ACTION_NEW(N_("Sort by Date"), 0, "go-up",
               _file_sort_action, NULL, 0);
    EVRY_ITEM_DATA_INT_SET(act, ACT_SORT_DATE);
    act_sort_date = act;
 
-   ACTION_NEW("Sort by Name", 0, "go-up",
+   ACTION_NEW(N_("Sort by Name"), 0, "go-up",
               _file_sort_action, NULL, 0);
    EVRY_ITEM_DATA_INT_SET(act, ACT_SORT_NAME);
    act_sort_name = act;
 
 #undef ACTION_NEW
 
-   p = EVRY_PLUGIN_BASE("Files", _module_icon, EVRY_TYPE_FILE,
+   p = EVRY_PLUGIN_BASE(N_("Files"), _module_icon, EVRY_TYPE_FILE,
                         _begin, _finish, _fetch);
    p->input_type = EVRY_TYPE_FILE;
    p->cb_key_down = &_cb_key_down;
@@ -1357,7 +1357,7 @@ _plugins_init(const Evry_API *api)
    if (evry->plugin_register(p, EVRY_PLUGIN_SUBJECT, 2))
      p->config->min_query = 1;
 
-   p = EVRY_PLUGIN_BASE("Files", _module_icon, EVRY_TYPE_FILE,
+   p = EVRY_PLUGIN_BASE(N_("Files"), _module_icon, EVRY_TYPE_FILE,
                         _begin, _finish, _fetch);
    p->cb_key_down = &_cb_key_down;
    p->browse = &_browse;
@@ -1370,7 +1370,7 @@ _plugins_init(const Evry_API *api)
    if (!_conf->show_recent && !_conf->search_recent)
      return EINA_TRUE;
 
-   p = EVRY_PLUGIN_BASE("Recent Files", _module_icon, EVRY_TYPE_FILE,
+   p = EVRY_PLUGIN_BASE(N_("Recent Files"), _module_icon, EVRY_TYPE_FILE,
                         _recentf_begin, _finish, _recentf_fetch);
    p->browse = &_recentf_browse;
    p->config_path = eina_stringshare_ref(config_path);
@@ -1382,7 +1382,7 @@ _plugins_init(const Evry_API *api)
      }
    _plugins = eina_list_append(_plugins, p);
 
-   p = EVRY_PLUGIN_BASE("Recent Files", _module_icon, EVRY_TYPE_FILE,
+   p = EVRY_PLUGIN_BASE(N_("Recent Files"), _module_icon, EVRY_TYPE_FILE,
                         _recentf_begin, _finish, _recentf_fetch);
    p->browse = &_recentf_browse;
    p->config_path = eina_stringshare_ref(config_path);

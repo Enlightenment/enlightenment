@@ -262,7 +262,7 @@ _plugins_init(const Evry_API *_api)
    action_handler = evry->event_handler_add(EVRY_EVENT_ACTION_PERFORMED,
                                             _cb_action_performed, NULL);
 
-   _plug = EVRY_PLUGIN_BASE("Calculator", _module_icon, EVRY_TYPE_TEXT,
+   _plug = EVRY_PLUGIN_BASE(N_("Calculator"), _module_icon, EVRY_TYPE_TEXT,
                             _begin, _finish, _fetch);
 
    _plug->history = EINA_FALSE;

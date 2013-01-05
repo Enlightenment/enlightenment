@@ -310,7 +310,7 @@ evry_aggregator_new(int type)
 {
    Evry_Plugin *p;
 
-   p = EVRY_PLUGIN_BASE("All", NULL, 0, _begin, _finish, _fetch);
+   p = EVRY_PLUGIN_BASE(N_("All"), NULL, 0, _begin, _finish, _fetch);
 
    if (evry_plugin_register(p, type, -1))
      {
