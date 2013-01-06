@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-04 22:11+0100\n"
-"PO-Revision-Date: 2013-01-04 22:21+0100\n"
+"POT-Creation-Date: 2013-01-06 22:49+0100\n"
+"PO-Revision-Date: 2013-01-06 23:22+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: \n"
@@ -2844,10 +2844,11 @@ msgstr "Nessuna finestra"
 msgid "Untitled window"
 msgstr "Finestra senza titolo"
 
-#: src/bin/e_int_menus.c:1621 src/bin/e_shelf.c:1121 src/bin/e_shelf.c:1636
+#: src/bin/e_int_menus.c:1621 src/bin/e_shelf.c:1636
 #: src/modules/conf_shelves/e_int_config_shelf.c:191
-msgid "Shelf"
-msgstr "Mensola"
+#, c-format
+msgid "Shelf %s"
+msgstr "Mensola %s"
 
 #: src/bin/e_int_menus.c:1689
 msgid "Add a Shelf"
@@ -2908,7 +2909,7 @@ msgstr "Mostra al clic del mouse"
 msgid "Hide timeout"
 msgstr "Timeout per la scomparsa"
 
-#: src/bin/e_int_shelf_config.c:237
+#: src/bin/e_int_shelf_config.c:237 src/modules/notification/e_mod_main.c:249
 #: src/modules/notification/e_mod_config.c:115
 #, c-format
 msgid "%.1f seconds"
@@ -3759,9 +3760,10 @@ msgstr "A sinistra in basso"
 msgid "Right-bottom Corner"
 msgstr "A destra in basso"
 
-#: src/bin/e_shelf.c:267
-msgid "Shelf #"
-msgstr "Mensola #"
+#: src/bin/e_shelf.c:268 src/bin/e_shelf.c:1121
+#, c-format
+msgid "Shelf #%d"
+msgstr "Mensola #%d"
 
 #: src/bin/e_shelf.c:892
 msgid "Shelf Autohide Error"
@@ -3835,8 +3837,9 @@ msgid "Refresh"
 msgstr "Aggiornamento"
 
 #: src/bin/e_startup.c:66
-msgid "Starting"
-msgstr "Avvio"
+#, c-format
+msgid "Starting %s"
+msgstr "Avvio %s"
 
 #: src/bin/e_sys.c:295
 msgid "Checking System Permissions"
@@ -4895,6 +4898,7 @@ msgid "Send dump"
 msgstr "Invia comando dump"
 
 #: src/modules/comp/e_mod_config.c:1237 src/modules/comp/e_mod_config.c:1518
+#: src/modules/comp/e_mod_main.c:125
 msgid "Don't composite fullscreen windows"
 msgstr "Niente composite per finestre a tutto schermo"
 
@@ -4963,6 +4967,10 @@ msgstr "Rendering"
 msgid "Composite"
 msgstr "Composite"
 
+#: src/modules/comp/e_mod_main.c:115
+msgid "Composite settings panel"
+msgstr "Pannello impostazioni composite"
+
 #: src/modules/comp/e_mod_main.c:115 src/modules/comp/e_mod_main.c:119
 #: src/modules/comp/e_mod_main.c:122 src/modules/comp/e_mod_main.c:125
 #: src/modules/comp/e_mod_main.c:128 src/modules/comp/e_mod_main.c:133
@@ -4985,6 +4993,18 @@ msgstr "composite"
 #: src/modules/tiling/e_mod_tiling.c:4063
 msgid "border"
 msgstr "bordo"
+
+#: src/modules/comp/e_mod_main.c:119
+msgid "Tear-free compositing (VSYNC)"
+msgstr "Compositing tear-free (VSYNC)"
+
+#: src/modules/comp/e_mod_main.c:122
+msgid "Smooth scaling of composited window content"
+msgstr "Scalatura dolce contenuto finestra"
+
+#: src/modules/comp/e_mod_main.c:128
+msgid "Compositing engine"
+msgstr "Motore di compositing"
 
 #: src/modules/comp/e_mod_main.c:133 src/modules/comp/e_mod_main.c:176
 #: src/modules/quickaccess/e_mod_main.c:85
@@ -5392,7 +5412,7 @@ msgstr "Blocca dopo l'attivazione dello screensaver di X"
 #: src/modules/conf_display/e_int_config_desklock.c:340
 #: src/modules/conf_display/e_int_config_screensaver.c:183
 #: src/modules/conf_display/e_int_config_screensaver.c:200
-#: src/modules/fileman/e_mod_config.c:411
+#: src/modules/fileman/e_mod_config.c:411 src/modules/fileman/e_mod_main.c:462
 #, c-format
 msgid "%1.0f seconds"
 msgstr "%1.0f secondi"
@@ -5751,6 +5771,7 @@ msgstr "Soglia per trascinamento con dita"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:105
 #: src/modules/conf_interaction/e_int_config_mouse.c:178
+#: src/modules/fileman/e_mod_main.c:394
 #, c-format
 msgid "%1.0f pixels"
 msgstr "%1.0f pixel"
@@ -6422,7 +6443,7 @@ msgid "Image cache size"
 msgstr "Dimensione cache immagini"
 
 #: src/modules/conf_performance/e_int_config_performance.c:140
-#: src/modules/fileman/e_mod_config.c:405
+#: src/modules/fileman/e_mod_config.c:405 src/modules/fileman/e_mod_main.c:455
 #, c-format
 msgid "%1.0f MiB"
 msgstr "%1.0f MiB"
@@ -6522,8 +6543,9 @@ msgid "Screen Setup"
 msgstr "Impostazioni schermo"
 
 #: src/modules/conf_shelves/e_int_config_shelf.c:127
-msgid "Configured Shelves: Display"
-msgstr "Mensole configurate: Display"
+#, c-format
+msgid "Configured Shelves: Display %d"
+msgstr "Mensole configurate: Display %d"
 
 #: src/modules/conf_shelves/e_int_config_shelf.c:388
 #, c-format
@@ -7635,7 +7657,7 @@ msgid "Resize by"
 msgstr "Ridimensiona di:"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:257
-#: src/modules/wizard/page_011.c:142 src/modules/xkbswitch/e_mod_main.c:74
+#: src/modules/wizard/page_011.c:146 src/modules/xkbswitch/e_mod_main.c:74
 #: src/modules/xkbswitch/e_mod_main.c:258
 msgid "Keyboard"
 msgstr "Tastiera"
@@ -7889,6 +7911,10 @@ msgid "Everything Configuration"
 msgstr "Configurazione di Everything"
 
 #: src/modules/everything/e_mod_main.c:67
+msgid "Everything launcher settings"
+msgstr "Impostazioni lanciatore Everything"
+
+#: src/modules/everything/e_mod_main.c:67
 msgid "exec"
 msgstr "esecuzione"
 
@@ -8019,6 +8045,7 @@ msgstr "Plugin oggetto"
 
 #: src/modules/everything/evry_config.c:537
 #: src/modules/everything/evry_config.c:736
+#: src/modules/everything/evry_plug_collection.c:172
 msgid "Plugins"
 msgstr "Plugin"
 
@@ -8610,24 +8637,125 @@ msgstr "filemanager"
 msgid "file manager"
 msgstr "file manager"
 
+#: src/modules/fileman/e_mod_main.c:388
+msgid "Default view mode"
+msgstr "Vista predefinita"
+
+#: src/modules/fileman/e_mod_main.c:393
+msgid "Icon size"
+msgstr "Dimensione icona"
+
 #: src/modules/fileman/e_mod_main.c:393 src/modules/fileman/e_mod_main.c:454
 #: src/modules/fileman/e_mod_main.c:466
 msgid "image"
 msgstr "immagine"
 
+#: src/modules/fileman/e_mod_main.c:398
+msgid "Show file extensions"
+msgstr "Mostra estensioni dei file"
+
+#: src/modules/fileman/e_mod_main.c:401
+msgid "Show full path in filemanager window titles"
+msgstr "Mostra percorso completo nel titolo della finestra"
+
+#: src/modules/fileman/e_mod_main.c:404
+msgid "Show path toolbar in filemanager windows"
+msgstr "Mostra barra del percorso nel filemanager"
+
+#: src/modules/fileman/e_mod_main.c:407
+msgid "Filemanager path toolbar position"
+msgstr "Posizione della barra del percorso"
+
+#: src/modules/fileman/e_mod_main.c:412
+msgid "Show favorites sidebar in filemanager windows"
+msgstr "Mostra riquadro dei preferiti nel filemanager"
+
+#: src/modules/fileman/e_mod_main.c:416
+msgid "Ignore letter case when sorting files"
+msgstr "Ignora maiuscole nell'ordinamento dei file"
+
+#: src/modules/fileman/e_mod_main.c:419
+msgid "Group files by extension"
+msgstr "Raggruppa file per estensione"
+
+#: src/modules/fileman/e_mod_main.c:422
+msgid "Sort files by modification time"
+msgstr "Ordina file per data di modifica"
+
+#: src/modules/fileman/e_mod_main.c:425
+msgid "Sort files by size"
+msgstr "Ordina file per dimensione"
+
 #: src/modules/fileman/e_mod_main.c:425 src/modules/fileman/e_mod_main.c:454
 msgid "size"
 msgstr "dimensione"
 
+#: src/modules/fileman/e_mod_main.c:430
+msgid "Sort directories first"
+msgstr "Ordina directory per prime"
+
+#: src/modules/fileman/e_mod_main.c:433
+msgid "Sort directories last"
+msgstr "Ordina directory per ultime"
+
+#: src/modules/fileman/e_mod_main.c:438
+msgid "Open directories in place"
+msgstr "Apri directory nella stessa finestra"
+
+#: src/modules/fileman/e_mod_main.c:441
+msgid "Use single click to open files"
+msgstr "Usa clic singolo per aprire i file"
+
+#: src/modules/fileman/e_mod_main.c:444
+msgid "Use alternate (Mac-style) selection modifiers"
+msgstr "Usa modificatori selezione alternativi (stile Mac)"
+
 #: src/modules/fileman/e_mod_main.c:444 src/modules/tiling/e_mod_tiling.c:3923
 msgid "key"
 msgstr "chiave"
+
+#: src/modules/fileman/e_mod_main.c:447
+msgid "Allow navigation on desktop"
+msgstr "Consenti esplorazione sul desktop"
+
+#: src/modules/fileman/e_mod_main.c:448
+msgid ""
+"Normally, icons on the desktop come from $XDG_HOME_DIR/Desktop[-$SCREEN]. "
+"With this option enabled, the desktop can freely change directories using "
+"the Navigate menu or type buffer."
+msgstr ""
+"Normalmente le icone sul desktop provengono da $XDG_HOME_DIR/Desktop"
+"[-$SCREEN]. Con questa opzione abilitata si può liberamente cambiare "
+"directory per il desktop usando il menù di navigazione o la casella di "
+"inserimento."
+
+#: src/modules/fileman/e_mod_main.c:454
+msgid "Maximum file size for which thumbnails should be generated"
+msgstr "Massima dimensione file per la generazione di miniature"
+
+#: src/modules/fileman/e_mod_main.c:459
+msgid "Spring folder delay"
+msgstr "Ritardo apertura directory su trascinamento"
 
 #: src/modules/fileman/e_mod_main.c:459
 #: src/modules/notification/e_mod_main.c:246
 #: src/modules/notification/e_mod_main.c:248
 msgid "delay"
 msgstr "ritardo"
+
+#: src/modules/fileman/e_mod_main.c:460
+msgid ""
+"A \"spring folder\" is the action that occurs when dragging a file onto a "
+"folder: the folder will \"spring\" open and create a new window to continue "
+"the drag operation in."
+msgstr ""
+"L'apertura su trascinamento è l'azione che viene eseguita quando si trascina "
+"un file su una directory: la directory viene aperta in una nuova finestra in "
+"cui continuare l'operazione di trascinamento"
+
+#: src/modules/fileman/e_mod_main.c:466
+msgid "File icons"
+msgstr "Icone dei file"
 
 #: src/modules/fileman/e_mod_menu.c:239
 msgid "No listable items"
@@ -9328,7 +9456,7 @@ msgstr "Attendere..."
 msgid "Welcome to Enlightenment"
 msgstr "Benvenuti in Enlightenment"
 
-#: src/modules/wizard/page_010.c:161 src/modules/wizard/page_011.c:143
+#: src/modules/wizard/page_010.c:161 src/modules/wizard/page_011.c:147
 #: src/modules/wizard/page_020.c:52
 msgid "Select one"
 msgstr "Selezionare un'opzione"
@@ -9373,7 +9501,7 @@ msgstr "Supporto per Connman disabilitato"
 msgid "Install/Enable Connman for network management support"
 msgstr "Installare/abilitare Connman per la gestione della rete"
 
-#: src/modules/wizard/page_110.c:164
+#: src/modules/wizard/page_110.c:162
 msgid "Checking to see if Connman exists"
 msgstr "Controllo installazione di Connman"
 
@@ -9402,12 +9530,12 @@ msgid ""
 "Enlightenment can check for new<br>versions, updates, security "
 "and<br>bugfixes, as well as available add-ons.<br><br>This is very useful, "
 "because it lets<br>you know about available bug fixes and<br>security fixes "
-"when they happen. As a<br>bi-product of this, Enlightenment will<br>connect "
-"to enlightenment.org and transmit<br>some information as a result, much like "
-"any<br>web browser might do. No personal information<br>such as username, "
-"password or any personal<br>files will be transmitted. If you do not "
-"like<br>this, please disable this below. It is highly<br>advised that you do "
-"not disable this as it<br>may leave you vulnerable or having to live<br>with "
+"when they happen. As a<br>result, Enlightenment will connect "
+"to<br>enlightenment.org and transmit some<br>information, much like any web "
+"browser<br>might do. No personal information such as<br>username, password "
+"or any personal files<br>will be transmitted. If you don't like this,"
+"<br>please disable this below. It is highly<br>advised that you do not "
+"disable this as it<br>may leave you vulnerable or having to live<br>with "
 "bugs."
 msgstr ""
 "Enlightenement può controllare<br>l'esistenza di nuove versioni,"
@@ -9601,6 +9729,10 @@ msgid "Quickaccess"
 msgstr "Quickaccess"
 
 #: src/modules/quickaccess/e_mod_main.c:67
+msgid "Quickaccess settings panel"
+msgstr "Pannello impostazioni di Quickaccess"
+
+#: src/modules/quickaccess/e_mod_main.c:67
 #: src/modules/quickaccess/e_mod_main.c:71
 #: src/modules/quickaccess/e_mod_main.c:75
 #: src/modules/quickaccess/e_mod_main.c:78
@@ -9613,9 +9745,55 @@ msgstr "Quickaccess"
 msgid "quickaccess"
 msgstr "quickaccess"
 
+#: src/modules/quickaccess/e_mod_main.c:71
+msgid "Hide windows on activate instead of raising"
+msgstr "Nascondi finestre all'attivazione invece di elevare"
+
+#: src/modules/quickaccess/e_mod_main.c:72
+msgid ""
+"By default, activating a Quickaccess binding when the window is behind other "
+"windows will raise the window. This option changes that behavior to hide the "
+"window instead."
+msgstr ""
+"Di norma se si attiva un'associazione di Quickaccess mentre la finestra è "
+"sotto le altre questa viene elevata. Questa opzione fa invece in modo che "
+"quella finestra venga nascosta."
+
+#: src/modules/quickaccess/e_mod_main.c:75
+msgid "Hide windows when focus is lost"
+msgstr "Nascondi finestre alla perdita del fuoco"
+
 #: src/modules/quickaccess/e_mod_main.c:75
 msgid "focus"
 msgstr "fuoco"
+
+#: src/modules/quickaccess/e_mod_main.c:76
+msgid ""
+"This option causes Quickaccess windows to automatically hide when they lose "
+"focus"
+msgstr ""
+"Questa opzione fa in modo che le finestre sotto Quickaccess vengano "
+"automaticamente nascoste se perdono il fuoco"
+
+#: src/modules/quickaccess/e_mod_main.c:78
+msgid "Skip taskbar"
+msgstr "Fuori Taskbar"
+
+#: src/modules/quickaccess/e_mod_main.c:79
+msgid "This option causes Quickaccess windows to not show up in taskbars"
+msgstr ""
+"Questa opzione fa in modo che le finestre sotto Quickaccess non vengano "
+"mostrate nelle taskbar"
+
+#: src/modules/quickaccess/e_mod_main.c:81
+msgid "Skip pager"
+msgstr "Fuori Pager"
+
+#: src/modules/quickaccess/e_mod_main.c:82
+msgid "This option causes Quickaccess windows to not show up in pagers"
+msgstr ""
+"Questa opzione fa in modo che le finestre sotto Quickaccess non vengano "
+"mostrate nei pager"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:8
 msgid "Toggle Visibility"
@@ -10183,12 +10361,24 @@ msgid "tiling"
 msgstr "tiling"
 
 #: src/modules/tiling/e_mod_tiling.c:3917
+msgid "Tile dialog windows"
+msgstr "Metti in griglia anche finestre di dialogo"
+
+#: src/modules/tiling/e_mod_tiling.c:3917
 msgid "dialog"
 msgstr "finestre dialogo"
 
 #: src/modules/tiling/e_mod_tiling.c:3917
 msgid "placement"
 msgstr "posizionamento"
+
+#: src/modules/tiling/e_mod_tiling.c:3920
+msgid "Show window titles when tiling"
+msgstr "Mostra i titoli nella disposizione in griglia"
+
+#: src/modules/tiling/e_mod_tiling.c:3923
+msgid "Tiling key hints"
+msgstr "Suggerimenti tasti di Tiling"
 
 #: src/modules/xkbswitch/e_mod_config.c:73
 msgid "Keyboard Settings"
@@ -10284,7 +10474,13 @@ msgstr "Errore nell'inizializzazione del server di Notification"
 msgid ""
 "Ensure there's no other module acting as a server and that D-Bus is "
 "correctly installed and  running"
-msgstr "Assicurarsi che non vi siano altri moduli che facciano da server e che D-Bus sia correttamente installato e in funzione."
+msgstr ""
+"Assicurarsi che non vi siano altri moduli che facciano da server e che D-Bus "
+"sia correttamente installato e in funzione."
+
+#: src/modules/notification/e_mod_main.c:240
+msgid "Display low urgency notifications"
+msgstr "Visualizza notifiche a bassa urgenza"
 
 #: src/modules/notification/e_mod_main.c:240
 #: src/modules/notification/e_mod_main.c:242
@@ -10299,6 +10495,26 @@ msgstr "Assicurarsi che non vi siano altri moduli che facciano da server e che D
 #: src/modules/notification/e_mod_main.c:282
 msgid "notification"
 msgstr "notification"
+
+#: src/modules/notification/e_mod_main.c:242
+msgid "Display normal urgency notifications"
+msgstr "Visualizza notifiche ad urgenza normale"
+
+#: src/modules/notification/e_mod_main.c:244
+msgid "Display high urgency notifications"
+msgstr "Visualizza notifiche ad alta urgenza"
+
+#: src/modules/notification/e_mod_main.c:246
+msgid "Force a specified timeout on all notifications"
+msgstr "Forza timeout impostato per tutte le notifiche"
+
+#: src/modules/notification/e_mod_main.c:248
+msgid "Timeout to force on notifications"
+msgstr "Timeout impostato per tutte le notifiche"
+
+#: src/modules/notification/e_mod_main.c:251
+msgid "Corner in which to display notifications"
+msgstr "Angolo dove mostrare le notifiche"
 
 #: src/modules/notification/e_mod_main.c:251
 #: src/modules/notification/e_mod_main.c:256
