@@ -112,20 +112,20 @@ e_modapi_init(E_Module *m)
    {
       E_Configure_Option *co;
 
-      E_CONFIGURE_OPTION_ADD(co, CUSTOM, engine, mod->conf, "Composite settings panel", _("composite"), _("border"));
+      E_CONFIGURE_OPTION_ADD(co, CUSTOM, engine, mod->conf, _("Composite settings panel"), _("composite"), _("border"));
       co->info = eina_stringshare_add("appearance/comp");
       E_CONFIGURE_OPTION_ICON(co, buf);
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, vsync, mod->conf, "Tear-free compositing (VSYNC)", _("composite"), _("border"));
+      E_CONFIGURE_OPTION_ADD(co, BOOL, vsync, mod->conf, _("Tear-free compositing (VSYNC)"), _("composite"), _("border"));
       co->requires_restart = 1;
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, smooth_windows, mod->conf, "Smooth scaling of composited window content", _("composite"), _("border"));
+      E_CONFIGURE_OPTION_ADD(co, BOOL, smooth_windows, mod->conf, _("Smooth scaling of composited window content"), _("composite"), _("border"));
       co->funcs[1].none = co->funcs[0].none = e_mod_comp_shadow_set;
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, nocomp_fs, mod->conf, "Don't composite fullscreen windows", _("composite"), _("border"));
+      E_CONFIGURE_OPTION_ADD(co, BOOL, nocomp_fs, mod->conf, _("Don't composite fullscreen windows"), _("composite"), _("border"));
       co->funcs[1].none = co->funcs[0].none = e_mod_comp_shadow_set;
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, ENUM, engine, mod->conf, "Compositing engine", _("composite"), _("border"));
+      E_CONFIGURE_OPTION_ADD(co, ENUM, engine, mod->conf, _("Compositing engine"), _("composite"), _("border"));
       co->info_cb = _e_mod_engine_info_cb;
       co->requires_restart = 1;
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));

@@ -237,18 +237,18 @@ e_modapi_init(E_Module *m)
 
    notification_mod = m;
 
-   E_CONFIGURE_OPTION_ADD(co, BOOL, show_low, notification_cfg, "Display low urgency notifications", _("notification"));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, show_low, notification_cfg, _("Display low urgency notifications"), _("notification"));
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, show_normal, notification_cfg, "Display normal urgency notifications", _("notification"));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, show_normal, notification_cfg, _("Display normal urgency notifications"), _("notification"));
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, show_critical, notification_cfg, "Display high urgency notifications", _("notification"));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, show_critical, notification_cfg, _("Display high urgency notifications"), _("notification"));
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, force_timeout, notification_cfg, "Force a specified timeout on all notifications", _("notification"), _("delay"));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, force_timeout, notification_cfg, _("Force a specified timeout on all notifications"), _("notification"), _("delay"));
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-   E_CONFIGURE_OPTION_ADD(co, DOUBLE, timeout, notification_cfg, "Timeout to force on notifications", _("notification"), _("delay"));
-   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0.0, 15.0, 0.1, "%.1f seconds");
+   E_CONFIGURE_OPTION_ADD(co, DOUBLE, timeout, notification_cfg, _("Timeout to force on notifications"), _("notification"), _("delay"));
+   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0.0, 15.0, 0.1, _("%.1f seconds"));
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-   E_CONFIGURE_OPTION_ADD(co, ENUM, corner, notification_cfg, "Corner in which to display notifications", _("notification"), _("screen"));
+   E_CONFIGURE_OPTION_ADD(co, ENUM, corner, notification_cfg, _("Corner in which to display notifications"), _("notification"), _("screen"));
    co->info_cb = _notification_corner_info_cb;
    E_CONFIGURE_OPTION_ICON(co, buf);
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));

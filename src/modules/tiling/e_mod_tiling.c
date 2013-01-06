@@ -3914,13 +3914,13 @@ e_modapi_init(E_Module *m)
        co->funcs[0].one = co->funcs[0].none = e_tiling_update_conf;
        cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
 
-       E_CONFIGURE_OPTION_ADD(co, BOOL, tile_dialogs, tiling_g.config, "Tile dialog windows", _("dialog"), _("tiling"), _("border"), _("placement"));
+       E_CONFIGURE_OPTION_ADD(co, BOOL, tile_dialogs, tiling_g.config, _("Tile dialog windows"), _("dialog"), _("tiling"), _("border"), _("placement"));
        co->funcs[0].one = co->funcs[0].none = e_tiling_update_conf;
        cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-       E_CONFIGURE_OPTION_ADD(co, BOOL, show_titles, tiling_g.config, "Show window titles when tiling", _("tiling"), _("border"));
+       E_CONFIGURE_OPTION_ADD(co, BOOL, show_titles, tiling_g.config, _("Show window titles when tiling"), _("tiling"), _("border"));
        co->funcs[0].one = co->funcs[0].none = e_tiling_update_conf;
        cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-       E_CONFIGURE_OPTION_ADD(co, STR, keyhints, tiling_g.config, "Tiling key hints", _("key"), _("tiling"));
+       E_CONFIGURE_OPTION_ADD(co, STR, keyhints, tiling_g.config, _("Tiling key hints"), _("key"), _("tiling"));
        co->funcs[0].one = co->funcs[0].none = e_tiling_update_conf;
        E_CONFIGURE_OPTION_ICON(co, _G.edj_path);
        cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));

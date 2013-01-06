@@ -64,22 +64,22 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   E_CONFIGURE_OPTION_ADD(co, CUSTOM, entries, qa_config, "Quickaccess settings panel", _("quickaccess"), _("border"));
+   E_CONFIGURE_OPTION_ADD(co, CUSTOM, entries, qa_config, _("Quickaccess settings panel"), _("quickaccess"), _("border"));
    co->info = eina_stringshare_add("launcher/quickaccess");
    E_CONFIGURE_OPTION_ICON(co, buf);
    qa_cfg_opts = eina_inlist_append(qa_cfg_opts, EINA_INLIST_GET(co));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, hide_when_behind, qa_config, "Hide windows on activate instead of raising", _("quickaccess"), _("border"));
-   E_CONFIGURE_OPTION_HELP(co, "By default, activating a Quickaccess binding when the window is behind other windows will raise the window. "
-                           "This option changes that behavior to hide the window instead.");
+   E_CONFIGURE_OPTION_ADD(co, BOOL, hide_when_behind, qa_config, _("Hide windows on activate instead of raising"), _("quickaccess"), _("border"));
+   E_CONFIGURE_OPTION_HELP(co, _("By default, activating a Quickaccess binding when the window is behind other windows will raise the window. "
+                           "This option changes that behavior to hide the window instead."));
    qa_cfg_opts = eina_inlist_append(qa_cfg_opts, EINA_INLIST_GET(co));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, autohide, qa_config, "Hide windows when focus is lost", _("quickaccess"), _("border"), _("focus"));
-   E_CONFIGURE_OPTION_HELP(co, "This option causes Quickaccess windows to automatically hide when they lose focus");
+   E_CONFIGURE_OPTION_ADD(co, BOOL, autohide, qa_config, _("Hide windows when focus is lost"), _("quickaccess"), _("border"), _("focus"));
+   E_CONFIGURE_OPTION_HELP(co, _("This option causes Quickaccess windows to automatically hide when they lose focus"));
    qa_cfg_opts = eina_inlist_append(qa_cfg_opts, EINA_INLIST_GET(co));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, skip_taskbar, qa_config, "Skip taskbar", _("quickaccess"), _("border"));
-   E_CONFIGURE_OPTION_HELP(co, "This option causes Quickaccess windows to not show up in taskbars");
+   E_CONFIGURE_OPTION_ADD(co, BOOL, skip_taskbar, qa_config, _("Skip taskbar"), _("quickaccess"), _("border"));
+   E_CONFIGURE_OPTION_HELP(co, _("This option causes Quickaccess windows to not show up in taskbars"));
    qa_cfg_opts = eina_inlist_append(qa_cfg_opts, EINA_INLIST_GET(co));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, skip_pager, qa_config, "Skip pager", _("quickaccess"), _("border"));
-   E_CONFIGURE_OPTION_HELP(co, "This option causes Quickaccess windows to not show up in pagers");
+   E_CONFIGURE_OPTION_ADD(co, BOOL, skip_pager, qa_config, _("Skip pager"), _("quickaccess"), _("border"));
+   E_CONFIGURE_OPTION_HELP(co, _("This option causes Quickaccess windows to not show up in pagers"));
    qa_cfg_opts = eina_inlist_append(qa_cfg_opts, EINA_INLIST_GET(co));
 
    e_configure_option_category_tag_add(_("windows"), _("quickaccess"));
