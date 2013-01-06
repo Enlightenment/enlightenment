@@ -469,7 +469,7 @@ _e_configure_transition_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas
 static Evas_Object *
 _e_configure_transition_thumb_cb(E_Configure_Option_Info *oi, Evas *evas)
 {
-   Evas_Object *oj, *obj, *o, *oa;
+   Evas_Object *oj = NULL, *obj, *o, *oa;
    Evas *e;
    E_Zone *zone;
 
@@ -511,7 +511,7 @@ _e_configure_transition_thumb_cb(E_Configure_Option_Info *oi, Evas *evas)
 static Evas_Object *
 _e_configure_border_style_thumb_cb(E_Configure_Option_Info *oi, Evas *evas)
 {
-   Evas_Object *ob, *oj, *orect;
+   Evas_Object *ob, *orect, *oj = NULL;
 
    ob = e_livethumb_add(evas);
    e_livethumb_vsize_set(ob, 150, 150);
