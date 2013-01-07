@@ -55,3 +55,4 @@ Fixes:
       windows don't fail to raise as expected if user has configured
       E to ignore activate hints
     * Fix restarting E17 after manually monitoring it.
+    * Fix build with uClibc.

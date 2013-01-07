@@ -1,7 +1,13 @@
+2013-01-07 Thomas Petazzoni
+
+	* Fix build with uClibc.
+
 2013-01-04 Lucas Jóia
+
         * Added bluez4 module: control bluetoothd daemon
 
 2013-01-03 Lucas Jóia
+
         * Added appmenu module: show application menu in shelf
 
 2013-01-03 José Roberto de Souza
