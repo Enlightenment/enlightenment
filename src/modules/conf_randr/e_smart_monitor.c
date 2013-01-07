@@ -639,9 +639,15 @@ e_smart_monitor_clone_add(Evas_Object *obj, Evas_Object *mon)
 
    /* set appropriate changes */
    if (sd->orig.cloned != sd->current.cloned)
-     sd->changes |= E_SMART_MONITOR_CHANGED_CLONED;
+     {
+        sd->changes |= E_SMART_MONITOR_CHANGED_CLONED;
+        sd->changes |= E_SMART_MONITOR_CHANGED_POSITION;
+     }
    else
-     sd->changes &= ~(E_SMART_MONITOR_CHANGED_CLONED);
+     {
+        sd->changes &= ~(E_SMART_MONITOR_CHANGED_CLONED);
+        sd->changes &= ~(E_SMART_MONITOR_CHANGED_POSITION);
+     }
 
    /* set cloned parent */
    msd->parent = obj;
@@ -764,9 +770,6 @@ e_smart_monitor_clone_del(Evas_Object *obj, Evas_Object *mon)
    else
      msd->changes &= ~(E_SMART_MONITOR_CHANGED_CLONED);
 
-   /* set parent object */
-   msd->parent = NULL;
-
    x = msd->cx;
    y = msd->cy;
    w = msd->cw;
@@ -776,12 +779,18 @@ e_smart_monitor_clone_del(Evas_Object *obj, Evas_Object *mon)
     * 
     * NB: Needed in the case that we have no previous setup, we are in a clone 
     * situation (from X), and we were not manually moved */
-   if ((msd->cw == 0) || (msd->ch == 0))
+   if (msd->orig.cloned)
      {
-        e_layout_child_geometry_get(mon, &x, &y, &w, &h);
-        msd->current.x = x;
-        msd->current.y = y;
+        if ((msd->cw == 0) || (msd->ch == 0))
+          {
+             e_layout_child_geometry_get(mon, &x, &y, &w, &h);
+             msd->current.x = x;
+             msd->current.y = y;
+          }
      }
+
+   /* set parent object */
+   msd->parent = NULL;
 
    /* restore to starting size */
    e_layout_child_resize(mon, w, h);
