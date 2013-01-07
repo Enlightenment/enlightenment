@@ -35,7 +35,7 @@ e_screensaver_timeout_get(Eina_Bool use_idle)
        (!e_util_fullscreen_current_any()))
      timeout = e_config->screensaver_timeout * count;
    
-   if (use_idle)
+   if ((use_idle) && (!e_config->mode.presentation))
      {
         if (e_config->backlight.idle_dim)
           {

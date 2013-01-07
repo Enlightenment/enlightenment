@@ -212,7 +212,10 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    bl_now = bl_val;
    bl_val = val;
 //   if (e_config->backlight.mode != E_BACKLIGHT_MODE_NORMAL) return;
-   if (tim < 0.0) tim = e_config->backlight.transition;
+   if (e_config->backlight.mode == E_BACKLIGHT_MODE_NORMAL)
+      tim = 0.5;
+   else
+      if (tim < 0.0) tim = e_config->backlight.transition;
    ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
    if (tim == 0.0)
      {
