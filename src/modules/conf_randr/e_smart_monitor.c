@@ -279,10 +279,8 @@ e_smart_monitor_setup(Evas_Object *obj)
     * NB: This clears old modes and also sets the min & max resolutions */
    _e_smart_monitor_modes_fill(sd);
 
-   /* check if enabled */
+   /* default to disabled */
    sd->orig.enabled = EINA_FALSE;
-   if ((sd->crtc) && (sd->crtc->current_mode))
-     sd->orig.enabled = EINA_TRUE;
 
    /* if we have a crtc, get the x/y location of it and current refresh rate
     * 
@@ -292,42 +290,29 @@ e_smart_monitor_setup(Evas_Object *obj)
         /* set original geometry */
         sd->orig.x = sd->crtc->geometry.x;
         sd->orig.y = sd->crtc->geometry.y;
+	sd->orig.w = sd->crtc->geometry.w;
+	sd->orig.h = sd->crtc->geometry.h;
 
+	/* if we do not have a current mode, then this monitor is 
+	 * considered disabled. conversly if we do have when then we are 
+	 * enabled */
+	if (sd->crtc->current_mode) sd->orig.enabled = EINA_TRUE;
+
+	/* pick the largest possible resolution for a disabled monitor */
         if (!sd->crtc->current_mode)
-          {
-             sd->crtc->current_mode = eina_list_last_data_get(sd->modes);
+          sd->crtc->current_mode = eina_list_last_data_get(sd->modes);
 
-             /* set original mode */
-             sd->orig.mode = sd->crtc->current_mode;
+	/* set original mode */
+	sd->orig.mode = sd->crtc->current_mode;
+	if ((sd->orig.w == 0) || (sd->orig.h == 0))
+	  {
+	     sd->orig.w = sd->orig.mode->width;
+	     sd->orig.h = sd->orig.mode->height;
+	  }
 
-             if (!sd->orig.mode)
-               {
-                  sd->orig.w = 640;
-                  sd->orig.h = 480;
-                  sd->orig.refresh_rate = 60;
-               }
-             else
-               {
-                  sd->orig.w = sd->orig.mode->width;
-                  sd->orig.h = sd->orig.mode->height;
-
-                  /* set original refresh rate */
-                  sd->orig.refresh_rate = 
-                    _e_smart_monitor_refresh_rate_get(sd->orig.mode);
-               }
-          }
-        else
-          {
-             /* set original mode */
-             sd->orig.mode = sd->crtc->current_mode;
-
-             sd->orig.w = sd->orig.mode->width;
-             sd->orig.h = sd->orig.mode->height;
-
-             /* set original refresh rate */
-             sd->orig.refresh_rate = 
-               _e_smart_monitor_refresh_rate_get(sd->orig.mode);
-          }
+	/* set original refresh rate */
+	sd->orig.refresh_rate = 
+	  _e_smart_monitor_refresh_rate_get(sd->orig.mode);
 
         /* set the original orientation */
         sd->orig.orientation = sd->crtc->current_orientation;
@@ -445,6 +430,7 @@ e_smart_monitor_changes_reset(Evas_Object *obj)
    sd->orig.refresh_rate = sd->current.refresh_rate;
    sd->orig.rotation = sd->current.rotation;
    sd->orig.enabled = sd->current.enabled;
+   sd->orig.cloned = sd->current.cloned;
 }
 
 void 
@@ -499,7 +485,7 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
                                                   noutputs, mx, my,
                                                   sd->current.mode->xid, 
                                                   sd->current.orientation);
-                  free(outputs);
+                  if (outputs) free(outputs);
                }
           }
         else
@@ -510,23 +496,33 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
         reset = EINA_TRUE;
      }
 
-   if (sd->changes & E_SMART_MONITOR_CHANGED_POSITION)
+   if ((sd->changes & E_SMART_MONITOR_CHANGED_POSITION) || 
+       (sd->changes & E_SMART_MONITOR_CHANGED_CLONED))
      {
-        if (sd->crtc)
-          {
-             Evas_Coord mx, my;
-             Evas_Coord cx, cy;
+	Evas_Coord mx, my;
+	Evas_Coord cx, cy;
 
-             mx = sd->current.x;
-             my = sd->current.y;
+	mx = sd->current.x;
+	my = sd->current.y;
 
-             ecore_x_randr_crtc_pos_get(root, sd->crtc->xid, &cx, &cy);
-             if ((cx != mx) || (cy != my))
-               {
-                  ecore_x_randr_crtc_pos_set(root, sd->crtc->xid, mx, my);
-                  reset = EINA_TRUE;
-               }
-          }
+	if (sd->current.cloned)
+	  {
+	     E_Smart_Data *psd;
+
+	     /* grab the parent location and apply that to the clone */
+	     if ((psd = evas_object_smart_data_get(sd->parent)))
+	       {
+		  mx = psd->current.x;
+		  my = psd->current.y;
+	       }
+	  }
+
+	ecore_x_randr_crtc_pos_get(root, sd->crtc->xid, &cx, &cy);
+	if ((cx != mx) || (cy != my))
+	  {
+	     ecore_x_randr_crtc_pos_set(root, sd->crtc->xid, mx, my);
+	     reset = EINA_TRUE;
+	  }
      }
 
    if (sd->changes & E_SMART_MONITOR_CHANGED_ROTATION)
@@ -536,7 +532,7 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
              Ecore_X_Randr_Orientation orient;
 
              orient = sd->current.orientation;
-             if ((sd->crtc) && (orient != sd->crtc->current_orientation))
+             if (orient != sd->crtc->current_orientation)
                {
                   ecore_x_randr_crtc_orientation_set(root, 
                                                      sd->crtc->xid, orient);
@@ -639,15 +635,9 @@ e_smart_monitor_clone_add(Evas_Object *obj, Evas_Object *mon)
 
    /* set appropriate changes */
    if (msd->orig.cloned != msd->current.cloned)
-     {
-        msd->changes |= E_SMART_MONITOR_CHANGED_CLONED;
-        msd->changes |= E_SMART_MONITOR_CHANGED_POSITION;
-     }
+     msd->changes |= E_SMART_MONITOR_CHANGED_CLONED;
    else
-     {
-        msd->changes &= ~(E_SMART_MONITOR_CHANGED_CLONED);
-        msd->changes &= ~(E_SMART_MONITOR_CHANGED_POSITION);
-     }
+     msd->changes &= ~(E_SMART_MONITOR_CHANGED_CLONED);
 
    /* set cloned parent */
    msd->parent = obj;
@@ -779,15 +769,15 @@ e_smart_monitor_clone_del(Evas_Object *obj, Evas_Object *mon)
     * 
     * NB: Needed in the case that we have no previous setup, we are in a clone 
     * situation (from X), and we were not manually moved */
-   if (msd->orig.cloned)
+   if ((msd->orig.cloned) || (msd->cw == 0) || (msd->ch == 0))
      {
-        if ((msd->cw == 0) || (msd->ch == 0))
-          {
-             e_layout_child_geometry_get(mon, &x, &y, &w, &h);
-             msd->current.x = x;
-             msd->current.y = y;
-          }
+	e_layout_child_geometry_get(mon, &x, &y, &w, &h);
+	msd->current.x = x;
+	msd->current.y = y;
      }
+
+   /* set the resolution name */
+   _e_smart_monitor_resolution_set(msd, w, h);
 
    /* set parent object */
    msd->parent = NULL;
@@ -811,7 +801,7 @@ e_smart_monitor_cloned_set(Evas_Object *obj, Eina_Bool cloned)
    if (!(sd = evas_object_smart_data_get(obj))) return;
 
    /* set cloned flag */
-   sd->orig.cloned = cloned;
+   sd->orig.cloned = sd->current.cloned = cloned;
 }
 
 void 
@@ -1194,7 +1184,8 @@ _e_smart_monitor_refresh_rates_fill(Evas_Object *obj)
                   char buff[1024];
 
                   /* create radio group for rates */
-                  if (!rg) rg = e_widget_radio_group_new(&sd->current.refresh_rate);
+                  if (!rg) 
+                    rg = e_widget_radio_group_new(&sd->current.refresh_rate);
 
                   /* calculate rate */
                   rate = _e_smart_monitor_refresh_rate_get(mode);
@@ -1317,7 +1308,6 @@ _e_smart_monitor_background_set(E_Smart_Data *sd, Evas_Coord dx, Evas_Coord dy)
 
         /* tell the thumbnail to use this object for preview */
         e_livethumb_thumb_set(sd->o_thumb, o);
-        eina_stringshare_del(bg);
      }
 }
 
@@ -1626,6 +1616,9 @@ _e_smart_monitor_move_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
         if (nx < sx) nx = sx;
         if (ny < sy) ny = sy;
      }
+
+   if (nx < sd->layout.x) nx = sd->layout.x;
+   if (ny < sd->layout.y) ny = sd->layout.y;
 
    /* constrain to the layout bounds */
    if ((nx + mw) > sd->layout.vw)
