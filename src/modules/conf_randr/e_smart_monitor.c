@@ -58,7 +58,7 @@ struct _E_Smart_Data
    Eina_Bool rotating : 1;
 
    /* cloned flag */
-   Eina_Bool cloned : 1;
+   /* Eina_Bool cloned : 1; */
 
    /* layout child geometry on start of move
     * 
@@ -86,6 +86,7 @@ struct _E_Smart_Data
         int refresh_rate;
         int rotation;
         Eina_Bool enabled : 1;
+        Eina_Bool cloned : 1;
      } orig, current;
 
    /* store where user clicked during resize */
@@ -634,7 +635,13 @@ e_smart_monitor_clone_add(Evas_Object *obj, Evas_Object *mon)
    if (!(msd = evas_object_smart_data_get(mon))) return;
 
    /* set cloned flag */
-   msd->cloned = EINA_TRUE;
+   msd->current.cloned = EINA_TRUE;
+
+   /* set appropriate changes */
+   if (sd->orig.cloned != sd->current.cloned)
+     sd->changes |= E_SMART_MONITOR_CHANGED_CLONED;
+   else
+     sd->changes &= ~(E_SMART_MONITOR_CHANGED_CLONED);
 
    /* set cloned parent */
    msd->parent = obj;
@@ -702,6 +709,9 @@ e_smart_monitor_clone_add(Evas_Object *obj, Evas_Object *mon)
 
    /* apply existing rotation to mini */
    _e_smart_monitor_map_apply(msd->o_clone, msd->current.rotation);
+
+   /* send monitor changed signal */
+   evas_object_smart_callback_call(mon, "monitor_changed", NULL);
 }
 
 void 
@@ -746,7 +756,13 @@ e_smart_monitor_clone_del(Evas_Object *obj, Evas_Object *mon)
    evas_object_show(mon);
 
    /* set cloned flag */
-   msd->cloned = EINA_FALSE;
+   msd->current.cloned = EINA_FALSE;
+
+   /* set appropriate changes */
+   if (msd->orig.cloned != msd->current.cloned)
+     msd->changes |= E_SMART_MONITOR_CHANGED_CLONED;
+   else
+     msd->changes &= ~(E_SMART_MONITOR_CHANGED_CLONED);
 
    /* set parent object */
    msd->parent = NULL;
@@ -772,6 +788,21 @@ e_smart_monitor_clone_del(Evas_Object *obj, Evas_Object *mon)
 
    /* restore to starting position */
    e_layout_child_move(mon, x, y);
+
+   /* send monitor changed signal */
+   evas_object_smart_callback_call(mon, "monitor_changed", NULL);
+}
+
+void 
+e_smart_monitor_cloned_set(Evas_Object *obj, Eina_Bool cloned)
+{
+   E_Smart_Data *sd;
+
+   /* try to get the objects smart data */
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+
+   /* set cloned flag */
+   sd->orig.cloned = cloned;
 }
 
 void 
@@ -1548,7 +1579,7 @@ _e_smart_monitor_move_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
 
    /* if this monitor is cloned into another one, then do not process 
     * any mouse move events */
-   if (sd->cloned) return;
+   if (sd->current.cloned) return;
 
    ev = event;
 
@@ -1617,7 +1648,7 @@ _e_smart_monitor_resize_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
 
    /* if this monitor is cloned into another one, then do not process 
     * any mouse move events */
-   if (sd->cloned) return;
+   if (sd->current.cloned) return;
 
    ev = event;
 
@@ -1755,7 +1786,7 @@ _e_smart_monitor_rotate_event(E_Smart_Data *sd, Evas_Object *mon EINA_UNUSED, vo
 
    /* if this monitor is cloned into another one, then do not process 
     * any mouse move events */
-   if (sd->cloned) return;
+   if (sd->current.cloned) return;
 
    ev = event;
 
@@ -2143,7 +2174,7 @@ _e_smart_monitor_thumb_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Ob
         if (!(sd = evas_object_smart_data_get(mon))) return;
 
         /* if this event is not on a cloned monitor */
-        if (!sd->cloned)
+        if (!sd->current.cloned)
           {
              /* try to set the mouse pointer to indicate moving */
              _e_smart_monitor_pointer_push(obj, "move");
@@ -2177,7 +2208,7 @@ _e_smart_monitor_thumb_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Obje
         if (!(sd = evas_object_smart_data_get(mon))) return;
 
         /* check if this is a cloned monitor */
-        if (sd->cloned)
+        if (sd->current.cloned)
           {
              /* un-clone this monitor */
              e_smart_monitor_clone_del(sd->parent, mon);
