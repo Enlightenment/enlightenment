@@ -1945,6 +1945,8 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, syscon.do_input, _("System Console performs default action after idle timeout"), _("syscon"), _("input"));
    //Eina_List    *actions
 
+   OPT_ADD(BOOL, screen_actions_fullscreen_windows_ignore, _("Enable backlight dimming when fullscreen windows are open"), _("backlight"), _("fullscreen"));
+   co->funcs[1].none = co->funcs[0].none = _e_configure_dpms_changed;
    OPT_ADD(DOUBLE, backlight.normal, _("Backlight \"normal\" brightness"), _("backlight")); //slider
    OPT_MINMAX_STEP_FMT(0, 1.0, 0.01, "%1.2f");
    co->funcs[0].none = _e_configure_dpms_changed;
