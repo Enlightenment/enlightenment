@@ -1570,7 +1570,7 @@ e_configure_option_init(void)
    co->info_cb = _e_configure_focus_setting_info_cb;
    OPT_ICON("preferences-focus");
    OPT_ADD(BOOL, pass_click_on, _("Pass click to unfocused windows"), _("focus"), _("border"), _("click"));
-   OPT_HELP("When clicking an unfocused window, the click is not passed through to the application");
+   OPT_HELP("When clicking an unfocused window, pass this click through to the application instead of only using it to focus the window");
    OPT_ADD(ENUM, window_activehint_policy, _("Policy when applications request focus"), _("focus"), _("border")); //enum
    co->info_cb = _e_configure_window_activehint_policy_info_cb;
    OPT_ICON("preferences-focus");
