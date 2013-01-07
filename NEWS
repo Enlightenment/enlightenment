@@ -15,6 +15,9 @@ Additions:
         * Added e_configure_option API
         * Added D-Bus notification to systray module
         * Added D-Bus menu support
+    Config:
+        * Added option for disabling icons in menus
+
 
 Deprecations:
     *

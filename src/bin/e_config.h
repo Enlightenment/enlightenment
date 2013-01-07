@@ -38,7 +38,7 @@ typedef struct _E_Event_Config_Icon_Theme   E_Event_Config_Icon_Theme;
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 1
+#define E_CONFIG_FILE_GENERATION 2
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 struct _E_Config
@@ -173,6 +173,7 @@ struct _E_Config
    int                       menu_eap_comment_show; // GUI
    int                       menu_favorites_show; // GUI
    int                       menu_apps_show; // GUI
+   Eina_Bool                menu_icons_hide; // GUI
    int                       menu_gadcon_client_toplevel; // GUI
    int                       fullscreen_policy; // GUI
    const char               *exebuf_term_cmd; // GUI

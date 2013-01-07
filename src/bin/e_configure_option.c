@@ -1702,6 +1702,7 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, transient.desktop, _("Transient windows follow desk change of their child"), _("border"), _("transient"), _("placement"), _("vdesk"));
    OPT_ADD(BOOL, transient.iconify, _("Transient windows follow iconification of their child"), _("border"), _("transient"), _("iconif"));
 
+   OPT_ADD(BOOL, menu_icons_hide, _("Disable icons in menus"), _("menu"), _("image"));
    OPT_ADD(BOOL, menu_eap_name_show, _("Application menus shows Name field"), _("menu"));
    OPT_HELP("This information is taken from the related .desktop file");
    OPT_ADD(BOOL, menu_eap_generic_show, _("Application menus shows Generic field"), _("menu"));
