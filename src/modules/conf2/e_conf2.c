@@ -765,6 +765,7 @@ _opt_overlay_show(E_Configure_Option *co, Elm_Object_Item *it)
                Elm_Object_Item *iit;
 
                sl = elm_genlist_add(overlay);
+               elm_genlist_homogeneous_set(sl, EINA_TRUE);
                elm_scroller_bounce_set(sl, 0, 0);
                elm_scroller_policy_set(sl, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
                EINA_LIST_FREE(l, oi)
