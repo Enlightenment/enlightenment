@@ -60,3 +60,4 @@ Fixes:
     * Fix restarting E17 after manually monitoring it.
     * Fix build with uClibc.
     * Restore default keybindings no longer restores two bindings for ctrl+alt+f
+    * entry/scrollframe: Fixed issues with submembers.
