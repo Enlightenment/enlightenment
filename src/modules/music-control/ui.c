@@ -33,7 +33,7 @@ _btn_clicked(void *data, Evas_Object *obj, const char *emission, const char *sou
 {
    E_Music_Control_Instance *inst = data;
    if (!strcmp(source, "play"))
-     media_player2_player_pause_call(inst->ctxt->mpris2_player);
+     media_player2_player_play_pause_call(inst->ctxt->mpris2_player);
    else if (!strcmp(source, "next"))
      media_player2_player_next_call(inst->ctxt->mpris2_player);
    else if (!strcmp(source, "previous"))
