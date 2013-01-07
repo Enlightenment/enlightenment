@@ -259,6 +259,7 @@ struct _E_Config
    Eina_List                *mime_icons; // GUI
    int                       desk_auto_switch; // GUI;
    
+   int                       screen_actions_fullscreen_windows_ignore;
    int                       screen_limits;
 
    int                       thumb_nice;

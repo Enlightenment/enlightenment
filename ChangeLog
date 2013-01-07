@@ -1,4 +1,5 @@
 2013-01-07 Brian Miculcy
+        * Added option for doing desklock, blanking or dimming even when showing fullscreen windows.
         * No backlight dimming when in presentation mode.
         * Backlight fade time only applies to dimming - undimming is fixed 0.5 .
 

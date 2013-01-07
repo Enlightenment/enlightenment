@@ -200,7 +200,9 @@ _user_wallpaper_get(E_Zone *zone)
 EAPI int
 e_desklock_show_autolocked(void)
 {
-   if (e_util_fullscreen_current_any()) return 0;
+   if ((e_config->screen_actions_fullscreen_windows_ignore) ||
+       ((!e_config->screen_actions_fullscreen_windows_ignore) && (!e_util_fullscreen_any())))
+      return 0;
    if (_e_desklock_autolock_time < 1.0)
      _e_desklock_autolock_time = ecore_loop_time_get();
    return e_desklock_show(EINA_FALSE);
@@ -1190,7 +1192,8 @@ static Eina_Bool
 _e_desklock_cb_idle_poller(void *data __UNUSED__)
 {
    if ((e_config->desklock_autolock_idle) && (!e_config->mode.presentation) &&
-       (!e_util_fullscreen_current_any()))
+       ((e_config->screen_actions_fullscreen_windows_ignore) ||
+        ((!e_config->screen_actions_fullscreen_windows_ignore) && (!e_util_fullscreen_any()))))
      {
         double idle, max;
 

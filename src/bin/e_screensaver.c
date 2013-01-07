@@ -32,11 +32,13 @@ e_screensaver_timeout_get(Eina_Bool use_idle)
    int timeout = 0, count = (1 + _e_screensaver_ask_presentation_count);
    
    if ((e_config->screensaver_enable) && (!e_config->mode.presentation) &&
-       (!e_util_fullscreen_any()))
+       ((e_config->screen_actions_fullscreen_windows_ignore) ||
+        ((!e_config->screen_actions_fullscreen_windows_ignore) && (!e_util_fullscreen_any()))))
      timeout = e_config->screensaver_timeout * count;
    
    if ((use_idle) && (!e_config->mode.presentation) &&
-       (!e_util_fullscreen_any()))
+       ((e_config->screen_actions_fullscreen_windows_ignore) ||
+        ((!e_config->screen_actions_fullscreen_windows_ignore) && (!e_util_fullscreen_any()))))
      {
         if (e_config->backlight.idle_dim)
           {

@@ -22,7 +22,7 @@ struct _E_Config_Dialog_Data
 
    int enable_screensaver;
    double timeout;
-   int presentation_mode;
+   int fullscreen_windows_ignore;
    int ask_presentation;
    double ask_presentation_timeout;
    
@@ -67,7 +67,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->enable_screensaver = e_config->screensaver_enable;
    cfdata->timeout = (double)e_config->screensaver_timeout / 60.0;
    cfdata->ask_presentation = e_config->screensaver_ask_presentation;
-   cfdata->presentation_mode = e_config->mode.presentation;
+   cfdata->fullscreen_windows_ignore = e_config->screen_actions_fullscreen_windows_ignore;
    cfdata->ask_presentation_timeout = e_config->screensaver_ask_presentation_timeout;
    cfdata->screensaver_suspend = e_config->screensaver_suspend;
    cfdata->screensaver_suspend_on_ac = e_config->screensaver_suspend_on_ac;
@@ -98,7 +98,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    e_config->screensaver_enable = cfdata->enable_screensaver;
    e_config->screensaver_timeout = lround(cfdata->timeout * 60.0);
    e_config->screensaver_ask_presentation = cfdata->ask_presentation;
-   e_config->mode.presentation = cfdata->presentation_mode;
+   e_config->screen_actions_fullscreen_windows_ignore = cfdata->fullscreen_windows_ignore;
    e_config->screensaver_ask_presentation_timeout = cfdata->ask_presentation_timeout;
    e_config->screensaver_suspend = cfdata->screensaver_suspend;
    e_config->screensaver_suspend_on_ac = cfdata->screensaver_suspend_on_ac;
@@ -139,7 +139,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
    return ((e_config->screensaver_enable != cfdata->enable_screensaver) ||
 	   (e_config->screensaver_timeout != lround(cfdata->timeout * 60.0)) ||
 	   (e_config->screensaver_ask_presentation != cfdata->ask_presentation) ||
-           (e_config->mode.presentation != cfdata->presentation_mode) ||
+           (e_config->screen_actions_fullscreen_windows_ignore != cfdata->fullscreen_windows_ignore) ||
 	   (e_config->screensaver_ask_presentation_timeout != cfdata->ask_presentation_timeout) ||
 	   (e_config->screensaver_suspend != cfdata->screensaver_suspend) ||
 	   (e_config->screensaver_suspend_on_ac != cfdata->screensaver_suspend_on_ac) ||
@@ -189,8 +189,8 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                                  1, 0, 1, 0, 0.5, 0.0);
    /* Presentation */
    ol = e_widget_list_add(evas, 0, 0);
-   ow = e_widget_check_add(evas, _("Presentation mode enabled"), 
-                           &(cfdata->presentation_mode));
+   ow = e_widget_check_add(evas, _("Blanking even on fullscreen windows"), 
+                           &(cfdata->fullscreen_windows_ignore));
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    ow = e_widget_check_add(evas, _("Suggest if deactivated before"), 
                            &(cfdata->ask_presentation));
