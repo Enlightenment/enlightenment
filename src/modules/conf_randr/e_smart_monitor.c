@@ -638,15 +638,15 @@ e_smart_monitor_clone_add(Evas_Object *obj, Evas_Object *mon)
    msd->current.cloned = EINA_TRUE;
 
    /* set appropriate changes */
-   if (sd->orig.cloned != sd->current.cloned)
+   if (msd->orig.cloned != msd->current.cloned)
      {
-        sd->changes |= E_SMART_MONITOR_CHANGED_CLONED;
-        sd->changes |= E_SMART_MONITOR_CHANGED_POSITION;
+        msd->changes |= E_SMART_MONITOR_CHANGED_CLONED;
+        msd->changes |= E_SMART_MONITOR_CHANGED_POSITION;
      }
    else
      {
-        sd->changes &= ~(E_SMART_MONITOR_CHANGED_CLONED);
-        sd->changes &= ~(E_SMART_MONITOR_CHANGED_POSITION);
+        msd->changes &= ~(E_SMART_MONITOR_CHANGED_CLONED);
+        msd->changes &= ~(E_SMART_MONITOR_CHANGED_POSITION);
      }
 
    /* set cloned parent */
