@@ -324,8 +324,11 @@ e_smart_randr_monitors_create(Evas_Object *obj)
                        e_layout_child_move(mon, cx, cy);
 
                        /* if we are cloned, then tell randr */
-                       if (pmon)
-                         e_smart_monitor_clone_add(pmon, mon);
+                       if (pmon) 
+                         {
+                            e_smart_monitor_cloned_set(mon, EINA_TRUE);
+                            e_smart_monitor_clone_add(pmon, mon);
+                         }
                     }
                }
           }
@@ -397,8 +400,7 @@ e_smart_randr_monitors_create(Evas_Object *obj)
              e_layout_child_move(mon, cx, cy);
 
              /* if we are cloned, then tell randr */
-             if (pmon)
-               e_smart_monitor_clone_add(pmon, mon);
+             if (pmon) e_smart_monitor_clone_add(pmon, mon);
           }
      }
 }
@@ -675,6 +677,7 @@ _e_smart_randr_changed_set(Evas_Object *obj)
      {
         E_Smart_Monitor_Changes changes = E_SMART_MONITOR_CHANGED_NONE;
 
+        /* determine if this monitor changed */
         changes = e_smart_monitor_changes_get(mon);
         if (changes > E_SMART_MONITOR_CHANGED_NONE)
           {
