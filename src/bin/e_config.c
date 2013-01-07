@@ -858,6 +858,7 @@ e_config_init(void)
 
    E_CONFIG_VAL(D, T, thumb_nice, INT);
 
+   E_CONFIG_VAL(D, T, menu_icons_hide, UCHAR);
    E_CONFIG_VAL(D, T, menu_favorites_show, INT);
    E_CONFIG_VAL(D, T, menu_apps_show, INT);
    E_CONFIG_VAL(D, T, menu_gadcon_client_toplevel, INT);
