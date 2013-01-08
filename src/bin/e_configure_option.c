@@ -1430,7 +1430,7 @@ e_configure_option_init(void)
    co = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_##TYPE, DESC, #NAME, EINA_FALSE, &e_config->NAME, NULL);\
    e_configure_option_tags_set(co, (const char*[]){__VA_ARGS__, NULL}, 0)
 #define OPT_HELP(STR) \
-   co->help = eina_stringshare_add(_(STR))
+   co->help = eina_stringshare_add(STR)
 #define OPT_MINMAX_STEP_FMT(MIN, MAX, STEP, FMT) \
    co->minmax[0] = (MIN), co->minmax[1] = (MAX), co->step = (STEP),\
    co->info = eina_stringshare_add(_(FMT))
@@ -1469,25 +1469,25 @@ e_configure_option_init(void)
    co->info = eina_stringshare_add("appearance/colors");
    OPT_ICON("preferences-desktop-color");
    OPT_ADD(STR, desktop_default_name, _("Default desktop name"), _("desktop"), _("name"));
-   OPT_HELP("Used in Pager displays");
+   OPT_HELP(_("Used in Pager displays"));
    OPT_ICON("preferences-desktop");
    //OPT_ADD(STR, desktop_default_window_profile;
 
    OPT_ADD(DOUBLE, menus_scroll_speed, _("Menu scroll speed"), _("menu"), _("scroll"), _("speed"));
    OPT_MINMAX_STEP_FMT(1.0, 20000.0, 100, "%5.0f pixels/s");
-   OPT_HELP("Speed at which the menus move onto screen if offscreen");
+   OPT_HELP(_("Speed at which the menus move onto screen if offscreen"));
    OPT_ADD(DOUBLE, menus_fast_mouse_move_threshhold, _("Menu fast move threshold"), _("menu"), _("move"), _("speed"));
    OPT_MINMAX_STEP_FMT(1.0, 2000.0, 10, "%4.0f pixels/s");
-   OPT_HELP("Moving the mouse faster than this speed over a menu causes menu items to not be selected");
+   OPT_HELP(_("Moving the mouse faster than this speed over a menu causes menu items to not be selected"));
    OPT_ADD(DOUBLE, menus_click_drag_timeout, _("Menu mouse deactivate delay"), _("menu"), _("drag"), _("delay"));
    OPT_MINMAX_STEP_FMT(0.0, 10.0, 0.25, "%2.2f seconds");
-   OPT_HELP("The minimum time before a menu can be closed by clicking the mouse outside the menu");
+   OPT_HELP(_("The minimum time before a menu can be closed by clicking the mouse outside the menu"));
    OPT_ADD(DOUBLE_INT, menu_autoscroll_margin, _("Menu autoscroll margin"), _("menu"), _("scroll"));
    OPT_MINMAX_STEP_FMT(0, 50, 1, "%2.0f pixels");
-   OPT_HELP("The distance from the edge of the screen before menus begin to move away from the edge");
+   OPT_HELP(_("The distance from the edge of the screen before menus begin to move away from the edge"));
    OPT_ADD(DOUBLE_INT, menu_autoscroll_cursor_margin, _("Menu autoscroll cursor margin"), _("menu"), _("scroll"), _("mouse"), _("pointer"));
    OPT_MINMAX_STEP_FMT(0, 50, 1, "%2.0f pixels");
-   OPT_HELP("The distance of the mouse pointer from the edge of the screen before menus begin to move away from the edge");
+   OPT_HELP(_("The distance of the mouse pointer from the edge of the screen before menus begin to move away from the edge"));
 
    OPT_ADD(BOOL, border_shade_animate, _("Enable window shading animation"), _("border"), _("shade"), _("animate"));
    OPT_ADD(ENUM, border_shade_transition, _("Window shade animation type"), _("border"), _("shade"), _("animate")); //enum
@@ -1499,7 +1499,7 @@ e_configure_option_init(void)
    /* advanced */
    OPT_ADD(DOUBLE, framerate, _("Framerate"), _("speed"), _("animate"));
    OPT_MINMAX_STEP_FMT(5.0, 200.0, 1, "%1.0f frames/second");
-   OPT_HELP("The framerate at which animations in Enlightenment occur");
+   OPT_HELP(_("The framerate at which animations in Enlightenment occur"));
    co->funcs[0].none = _e_configure_framerate_changed;
    OPT_ADD(DOUBLE_INT, priority, _("Application exec priority"), _("application"), _("exec"), _("priority"));
    OPT_MINMAX_STEP_FMT(0, 19, 1, "%1.0f");
@@ -1536,15 +1536,15 @@ e_configure_option_init(void)
    OPT_ADD(DOUBLE_INT, zone_desks_y_count, _("Vertical virtual desktop count"), _("vdesk"), _("desktop"), _("screen"));
    co->funcs[0].none = _e_configure_zone_desks_count_changed;
    OPT_ADD(BOOL, edge_flip_dragging, _("Edge flip while dragging"), _("edge"), _("flip"), _("drag"), _("binding"));
-   OPT_HELP("Enable edge binding functionality while dragging objects to screen edge");
+   OPT_HELP(_("Enable edge binding functionality while dragging objects to screen edge"));
    OPT_ADD(BOOL, use_composite, _("Use ARGB instead of shaped windows"), _("border"));
 
    OPT_ADD(CUSTOM, modules, _("Module settings"), _("module"));
    co->info = eina_stringshare_add("extensions/modules");
    OPT_ICON("preferences-plugin");
    OPT_ADD(BOOL, no_module_delay, _("Disable module delay"), _("module"), _("delay"));
-   OPT_HELP("If enabled, this causes E to load all modules at once during startup "
-            "instead of loading them incrementally");
+   OPT_HELP(_("If enabled, this causes E to load all modules at once during startup "
+            "instead of loading them incrementally"));
 
    /* FIXME */
    OPT_ADD(CUSTOM, language, _("Language"), _("language"));
@@ -1559,7 +1559,7 @@ e_configure_option_init(void)
    OPT_ADD(ENUM, window_placement_policy, _("Window placement policy"), _("border"), _("placement")); //enum
    co->info_cb = _e_configure_window_placement_policy_info_cb;
    OPT_ICON("preferences-system-windows");
-   OPT_HELP("Determines where and how new windows are placed when created");
+   OPT_HELP(_("Determines where and how new windows are placed when created"));
    OPT_ADD(BOOL, window_grouping, _("Group new windows from same application"), _("border"), _("placement"));
    OPT_ADD(BOOL, desk_auto_switch, _("Switch to desk of new window"), _("border"), _("placement"), _("vdesk"));
 
@@ -1570,7 +1570,7 @@ e_configure_option_init(void)
    co->info_cb = _e_configure_focus_setting_info_cb;
    OPT_ICON("preferences-focus");
    OPT_ADD(BOOL, pass_click_on, _("Pass click to unfocused windows"), _("focus"), _("border"), _("click"));
-   OPT_HELP("When clicking an unfocused window, pass this click through to the application instead of only using it to focus the window");
+   OPT_HELP(_("When clicking an unfocused window, pass this click through to the application instead of only using it to focus the window"));
    OPT_ADD(ENUM, window_activehint_policy, _("Policy when applications request focus"), _("focus"), _("border")); //enum
    co->info_cb = _e_configure_window_activehint_policy_info_cb;
    OPT_ICON("preferences-focus");
@@ -1601,12 +1601,12 @@ e_configure_option_init(void)
 
    OPT_ADD(BOOL, geometry_auto_move, _("Move window after autoresizing"), _("border"), _("placement"));
    OPT_ADD(BOOL, geometry_auto_resize_limit, _("Limit window autoresizing to useful geometry"), _("border"), _("placement"), _("resize"));
-   OPT_HELP("Useful geometry is calculated as the screen size minus the geometry of any shelves which do not allow windows to overlap them");
+   OPT_HELP(_("Useful geometry is calculated as the screen size minus the geometry of any shelves which do not allow windows to overlap them"));
 
    OPT_ADD(BOOL, winlist_warp_while_selecting, _("Winlist moves pointer to currently selected window while selecting"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"));
    OPT_ADD(BOOL, winlist_warp_at_end, _("Winlist moves pointer to currently selected window after winlist closes"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"));
    OPT_ADD(BOOL, winlist_no_warp_on_direction, _("Disable pointer warping on winlist directional focus change"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"));
-   OPT_HELP("This option, when enabled, disables pointer warping only when switching windows using a directional winlist action (up/down/left/right)");
+   OPT_HELP(_("This option, when enabled, disables pointer warping only when switching windows using a directional winlist action (up/down/left/right)"));
    OPT_ADD(DOUBLE, winlist_warp_speed, _("Winlist pointer warp speed while selecting"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"), _("speed"));
    OPT_MINMAX_STEP_FMT(0.0, 1.0, 0.01, "%1.2f");
    OPT_ADD(BOOL, winlist_scroll_animate, _("Enable winlist scroll animation"), _("border"), _("winlist"), _("animate"));
@@ -1646,7 +1646,7 @@ e_configure_option_init(void)
    OPT_ICON("preferences-window-geometry");
    OPT_ADD(BOOL, allow_manip, _("Allow moving of maximized windows"), _("border"), _("maximize"));
    OPT_ADD(BOOL, border_fix_on_shelf_toggle, _("Adjust windows on shelf toggle"), _("border"), _("shelf"), _("placement"));
-   OPT_HELP("When using an autohiding shelf, this option causes maximized windows to expand and contract to fill the space that the shelf occupies when it hides");
+   OPT_HELP(_("When using an autohiding shelf, this option causes maximized windows to expand and contract to fill the space that the shelf occupies when it hides"));
    OPT_ADD(BOOL, allow_above_fullscreen, _("Allow windows above fullscreen windows"), _("border"), _("focus"), _("placement"), _("fullscreen"));
 
    OPT_ADD(BOOL, kill_if_close_not_possible, _("Kill window if process not responding to close"), _("border"), _("kill"));
@@ -1662,9 +1662,9 @@ e_configure_option_init(void)
    co->info = eina_stringshare_add("windows/window_remembers");
    OPT_ICON("preferences-desktop-window-remember");
    OPT_ADD(BOOL, remember_internal_windows, _("Remember internal window geometry"), _("border"), _("remember"));
-   OPT_HELP("This option causes E to remember the geometry of its internal dialogs and windows, NOT including filemanager windows");
+   OPT_HELP(_("This option causes E to remember the geometry of its internal dialogs and windows, NOT including filemanager windows"));
    OPT_ADD(BOOL, remember_internal_fm_windows, _("Remember internal filemanager window geometry"), _("border"), _("remember"), _("files"));
-   OPT_HELP("This option causes E to remember the geometry of its internal filemanager windows, NOT including dialog windows");
+   OPT_HELP(_("This option causes E to remember the geometry of its internal filemanager windows, NOT including dialog windows"));
 
    OPT_ADD(BOOL, move_info_follows, _("Window position info follows window when moving"), _("border"), _("placement"), _("move"));
    OPT_ADD(BOOL, resize_info_follows, _("Window geometry info follows window when resizing"), _("border"), _("placement"), _("resize"));
@@ -1706,11 +1706,11 @@ e_configure_option_init(void)
 
    OPT_ADD(BOOL, menu_icons_hide, _("Disable icons in menus"), _("menu"), _("image"));
    OPT_ADD(BOOL, menu_eap_name_show, _("Application menus shows Name field"), _("menu"));
-   OPT_HELP("This information is taken from the related .desktop file");
+   OPT_HELP(_("This information is taken from the related .desktop file"));
    OPT_ADD(BOOL, menu_eap_generic_show, _("Application menus shows Generic field"), _("menu"));
-   OPT_HELP("This information is taken from the related .desktop file");
+   OPT_HELP(_("This information is taken from the related .desktop file"));
    OPT_ADD(BOOL, menu_eap_comment_show, _("Application menus shows Comment field"), _("menu"));
-   OPT_HELP("This information is taken from the related .desktop file");
+   OPT_HELP(_("This information is taken from the related .desktop file"));
 
    OPT_ADD(CUSTOM, path_append_data, _("Create a new application launcher"), _("application"), _("exec"));
    co->info = eina_stringshare_add("applications/new_application");
@@ -1746,23 +1746,23 @@ e_configure_option_init(void)
 
    OPT_ADD(STR, exebuf_term_cmd, _("Launch commands with this command"), _("exec"));
    OPT_ICON("modules-launcher");
-   OPT_HELP("Command used to launch files and applications");
+   OPT_HELP(_("Command used to launch files and applications"));
 
    OPT_ADD(BOOL, use_app_icon, _("Window borders use application icon"), _("border"), _("image"));
-   OPT_HELP("Applications provide their own icons. If this option is not set, E will use internal theme icons instead of the application-provided icon");
+   OPT_HELP(_("Applications provide their own icons. If this option is not set, E will use internal theme icons instead of the application-provided icon"));
 
    OPT_ADD(CUSTOM, path_append_data, _("Enlightenment profile settings"), _("profile"));
    co->info = eina_stringshare_add("settings/profiles");
    OPT_ICON("preferences-profiles");
 
    OPT_ADD(BOOL, cnfmdlg_disabled, _("Disable confirmation dialogs"), _("confirm"), _("dialog"));
-   OPT_HELP("This option suppresses all confirmation dialogs and assumes that the user has clicked the confirm option");
+   OPT_HELP(_("This option suppresses all confirmation dialogs and assumes that the user has clicked the confirm option"));
    OPT_ADD(BOOL, cfgdlg_auto_apply, _("Configuration dialogs automatically apply their changes"), _("dialog"), _("settings"));
-   OPT_HELP("This option causes any configuration options to be applied immediately when changed instead of requiring the 'Apply' button to be clicked");
+   OPT_HELP(_("This option causes any configuration options to be applied immediately when changed instead of requiring the 'Apply' button to be clicked"));
    OPT_ADD(BOOL, cfgdlg_default_mode, _("Configuration dialogs show advanced view by default"), _("dialog"), _("border"), _("settings"));
-   OPT_HELP("Configurations dialogs can have basic and advanced views; this option causes all configuration dialogs to show the advanced view by default");
+   OPT_HELP(_("Configurations dialogs can have basic and advanced views; this option causes all configuration dialogs to show the advanced view by default"));
    OPT_ADD(BOOL, cfgdlg_normal_wins, _("Configuration dialog windows are normal windows"), _("dialog"), _("border"));
-   OPT_HELP("This option causes configuration dialogs to be normal windows instead of dialog windows");
+   OPT_HELP(_("This option causes configuration dialogs to be normal windows instead of dialog windows"));
 
    OPT_ADD(CUSTOM, font_defaults, _("Enlightenment font settings"), _("font"));
    co->info = eina_stringshare_add("appearance/fonts");
@@ -1773,10 +1773,10 @@ e_configure_option_init(void)
 
 /* seems to be disabled ?
    OPT_ADD(STR, desklock_personal_passwd, _("Desklock custom password"), _("desklock")); //passwd
-   OPT_HELP("This option causes desklock to use a custom-provided password instead of the user's password");
+   OPT_HELP(_("This option causes desklock to use a custom-provided password instead of the user's password"));
 */
    OPT_ADD(BOOL, desklock_auth_method, _("Use custom command for desklock"), _("desklock"), _("exec"));
-   OPT_HELP("This option allows an external application to manage desklock");
+   OPT_HELP(_("This option allows an external application to manage desklock"));
    OPT_ADD(STR, desklock_custom_desklock_cmd, _("Custom desklock command"), _("desklock"), _("exec"));
    OPT_ICON("preferences-system-lock-screen");
    OPT_ADD(ENUM, desklock_login_box_zone, _("Desklock login box shows on which screen?"), _("desklock"), _("screen")); //enum+slider
@@ -1888,7 +1888,7 @@ e_configure_option_init(void)
 
    OPT_ADD(DOUBLE_INT, thumb_nice, _("Thumbnailing process priority"), _("priority"), _("image")); //enum
    OPT_MINMAX_STEP_FMT(0, 19, 1, "%1.0f");
-   OPT_HELP("Enlightenment runs its own thumbnailing daemon in the background. This option configures the priority of that process");
+   OPT_HELP(_("Enlightenment runs its own thumbnailing daemon in the background. This option configures the priority of that process"));
 
    OPT_ADD(BOOL, thumbscroll_enable, _("Enable click-to-drag scrolling (thumbscrolling)"), _("scroll"));
    OPT_ADD(DOUBLE_INT, thumbscroll_threshhold, _("Thumbscroll threshold"), _("scroll"), _("speed")); //slider
