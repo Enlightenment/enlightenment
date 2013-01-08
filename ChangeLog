@@ -9,6 +9,7 @@
         * Fixed bug where disabled slider widgets could be changed with mouse wheel
         * Fixed bug where fileman config slider widgets were not properly disabled
         * Tasks gadgets now apply the selected style
+        * Desktop->Shelves menu now shows shelf names
         * Added elm win trap callback for base size setting, calling this causes ICCCM hints to be applied
 
 2013-01-07 Tom "TAsn" Hacohen
