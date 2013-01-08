@@ -2,6 +2,8 @@
 
         * Fixed bug where keyboard resizing of windows would not be possible if timeout was set to zero
         * Fixed crash when clicking apply in wallpaper settings dialog and no wallpaper is selected
+        * Fixed bug where disabled slider widgets could be changed with mouse wheel
+        * Fixed bug where fileman config slider widgets were not properly disabled
         * Added elm win trap callback for base size setting, calling this causes ICCCM hints to be applied
 
 2013-01-07 Tom "TAsn" Hacohen
