@@ -44,7 +44,6 @@ typedef struct _Notifier_Item
    const char *menu_path;
    E_DBusMenu_Ctx *menu_data;
    Eina_List *signals;
-   Eina_Bool in_box;
 } Notifier_Item;
 
 typedef void (*E_Notifier_Watcher_Item_Registered_Cb)(void *data, const char *service);

@@ -213,37 +213,34 @@ systray_notifier_item_update(Notifier_Item *item)
       case STATUS_ACTIVE:
         {
            image_load(item->icon_name, item->icon_path, item->icon_object);
-           if (!item->in_box)
+           if (!evas_object_visible_get(item->icon_object))
              {
                 systray_edje_box_append(item->host_inst->inst, box_part_name,
                                         item->icon_object);
                 evas_object_show(item->icon_object);
              }
-           item->in_box = EINA_TRUE;
            break;
         }
       case STATUS_PASSIVE:
         {
-           if (item->in_box)
+           if (evas_object_visible_get(item->icon_object))
              {
                 systray_edje_box_remove(item->host_inst->inst, box_part_name,
                                         item->icon_object);
                 evas_object_hide(item->icon_object);
              }
-           item->in_box = EINA_FALSE;
            break;
         }
       case STATUS_ATTENTION:
         {
            image_load(item->attention_icon_name, item->icon_path,
                       item->icon_object);
-           if (!item->in_box)
+           if (!evas_object_visible_get(item->icon_object))
              {
                 systray_edje_box_append(item->host_inst->inst, box_part_name,
                                         item->icon_object);
                 evas_object_show(item->icon_object);
              }
-           item->in_box = EINA_TRUE;
            break;
         }
       default:
