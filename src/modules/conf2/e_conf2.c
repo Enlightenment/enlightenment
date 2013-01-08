@@ -1312,8 +1312,19 @@ e_conf2_show(E_Container *con EINA_UNUSED, const char *params)
    elm_layout_thaw(layout);
    evas_object_show(layout);
    elm_box_pack_end(box, layout);
-   elm_win_size_base_set(win, 360, 360);
+
    evas_object_show(win);
+   {
+      E_Border *bd;
+
+      bd = evas_object_data_get(win, "E_Border");
+      if (bd)
+        {
+           bd->client.icccm.min_w = 360;
+           bd->client.icccm.min_h = 360;
+        }
+   }
+   elm_win_size_base_set(win, 360, 360);
    evas_object_resize(win, 480, 480);
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_CONFIGURE_OPTION_CHANGED, _event_opt_changed, NULL);
