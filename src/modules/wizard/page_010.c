@@ -180,12 +180,23 @@ wizard_page_show(E_Wizard_Page *pg)
           }
         else
           ic = NULL;
-        e_widget_ilist_append(ob, ic, _(pair->locale_translation),
-                              NULL, NULL, pair->locale_key);
+        
         if (e_intl_language_get())
           {
-             if (!strcmp(pair->locale_key, e_intl_language_get())) sel = i;
+             if (!strcmp(pair->locale_key, e_intl_language_get()))
+               {
+                  snprintf(buf, sizeof(buf), "System Default [%s]", pair->locale_translation);
+                  e_widget_ilist_nth_label_set(ob, 0, _(buf));
+                  e_widget_ilist_nth_icon_set(ob, 0, ic);
+                  sel = 0;
+               }
+            else
+              e_widget_ilist_append(ob, ic, _(pair->locale_translation),
+                                    NULL, NULL, pair->locale_key);
           }
+        else
+          e_widget_ilist_append(ob, ic, _(pair->locale_translation),
+                                NULL, NULL, pair->locale_key);
      }
    e_widget_ilist_go(ob);
    e_widget_ilist_thaw(ob);

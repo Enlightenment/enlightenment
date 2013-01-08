@@ -1,3 +1,7 @@
+2013-01-08 Thanatermesis
+
+        * "System Default" language in wizard now displays which language it is and no longer removes language from list
+
 2013-01-08 Mike Blumenkrantz
 
         * Fixed bug where keyboard resizing of windows would not be possible if timeout was set to zero

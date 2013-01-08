@@ -43,6 +43,7 @@ Improvements:
     * No backlight dimming when in presentation mode.
     * Backlight fade time only applies to dimming - undimming is fixed 0.5 .
     * Added elm win trap callback for base size setting, calling this causes ICCCM hints to be applied
+    * "System Default" language in wizard now displays which language it is and no longer removes language from list
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.
