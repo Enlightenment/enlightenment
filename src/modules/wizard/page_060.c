@@ -59,6 +59,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
         e_config->pointer_slide = 0;
         e_config->winlist_warp_while_selecting = 0;
         e_config->winlist_warp_at_end = 0;
+        e_config->winlist_no_warp_on_direction = 1;
      }
    else
      {

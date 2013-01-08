@@ -711,6 +711,7 @@ e_config_init(void)
    E_CONFIG_VAL(D, T, geometry_auto_move, INT); /**/
    E_CONFIG_VAL(D, T, winlist_warp_while_selecting, INT); /**/
    E_CONFIG_VAL(D, T, winlist_warp_at_end, INT); /**/
+   E_CONFIG_VAL(D, T, winlist_no_warp_on_direction, INT); /**/
    E_CONFIG_VAL(D, T, winlist_warp_speed, DOUBLE); /**/
    E_CONFIG_VAL(D, T, winlist_scroll_animate, INT); /**/
    E_CONFIG_VAL(D, T, winlist_scroll_speed, DOUBLE); /**/
@@ -1126,6 +1127,7 @@ e_config_load(void)
      E_CONFIG_LIMIT(e_config->geometry_auto_resize_limit, 0, 1);
      E_CONFIG_LIMIT(e_config->winlist_warp_while_selecting, 0, 1);
      E_CONFIG_LIMIT(e_config->winlist_warp_at_end, 0, 1);
+     E_CONFIG_LIMIT(e_config->winlist_no_warp_on_direction, 0, 1);
      E_CONFIG_LIMIT(e_config->winlist_warp_speed, 0.0, 1.0);
      E_CONFIG_LIMIT(e_config->winlist_scroll_animate, 0, 1);
      E_CONFIG_LIMIT(e_config->winlist_scroll_speed, 0.0, 1.0);

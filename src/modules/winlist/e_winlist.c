@@ -341,7 +341,7 @@ e_winlist_hide(void)
 
         e_object_unref(E_OBJECT(bd));
      }
-   
+
    e_border_idler_before();
 
    ecore_x_window_free(_input_window);
@@ -501,14 +501,16 @@ e_winlist_left(E_Zone *zone)
 
              _old_warp_x = _old_warp_y = INT_MAX;
           }
-
-        ecore_x_pointer_xy_get(zone->container->win, &_warp_x, &_warp_y);
-        _win = &zone->container->win;
-        _warp_to = 1;
-        if (!_warp_timer)
-          _warp_timer = ecore_timer_add(0.01, _e_winlist_warp_timer, NULL);
-        if (!_animator)
-          _animator = ecore_animator_add(_e_winlist_animator, NULL);
+        if (!e_config->winlist_no_warp_on_direction)
+          {
+            ecore_x_pointer_xy_get(zone->container->win, &_warp_x, &_warp_y);
+            _win = &zone->container->win;
+            _warp_to = 1;
+            if (!_warp_timer)
+              _warp_timer = ecore_timer_add(0.01, _e_winlist_warp_timer, NULL);
+            if (!_animator)
+              _animator = ecore_animator_add(_e_winlist_animator, NULL);
+          }
 
         if ((!_bd_next->lock_user_stacking) &&
             (e_config->winlist_list_raise_while_selecting))
@@ -623,14 +625,16 @@ e_winlist_down(E_Zone *zone)
 
              _old_warp_x = _old_warp_y = INT_MAX;
           }
-
-        ecore_x_pointer_xy_get(zone->container->win, &_warp_x, &_warp_y);
-        _win = &zone->container->win;
-        _warp_to = 1;
-        if (!_warp_timer)
-          _warp_timer = ecore_timer_add(0.01, _e_winlist_warp_timer, NULL);
-        if (!_animator)
-          _animator = ecore_animator_add(_e_winlist_animator, NULL);
+        if (!e_config->winlist_no_warp_on_direction)
+          {
+            ecore_x_pointer_xy_get(zone->container->win, &_warp_x, &_warp_y);
+            _win = &zone->container->win;
+            _warp_to = 1;
+            if (!_warp_timer)
+              _warp_timer = ecore_timer_add(0.01, _e_winlist_warp_timer, NULL);
+            if (!_animator)
+              _animator = ecore_animator_add(_e_winlist_animator, NULL);
+          }
 
         if ((!_bd_next->lock_user_stacking) &&
             (e_config->winlist_list_raise_while_selecting))
@@ -745,14 +749,16 @@ e_winlist_up(E_Zone *zone)
 
              _old_warp_x = _old_warp_y = INT_MAX;
           }
-
-        ecore_x_pointer_xy_get(zone->container->win, &_warp_x, &_warp_y);
-        _win = &zone->container->win;
-        _warp_to = 1;
-        if (!_warp_timer)
-          _warp_timer = ecore_timer_add(0.01, _e_winlist_warp_timer, NULL);
-        if (!_animator)
-          _animator = ecore_animator_add(_e_winlist_animator, NULL);
+        if (!e_config->winlist_no_warp_on_direction)
+          {
+            ecore_x_pointer_xy_get(zone->container->win, &_warp_x, &_warp_y);
+            _win = &zone->container->win;
+            _warp_to = 1;
+            if (!_warp_timer)
+              _warp_timer = ecore_timer_add(0.01, _e_winlist_warp_timer, NULL);
+            if (!_animator)
+              _animator = ecore_animator_add(_e_winlist_animator, NULL);
+          }
 
         if ((!_bd_next->lock_user_stacking) &&
             (e_config->winlist_list_raise_while_selecting))
@@ -867,14 +873,16 @@ e_winlist_right(E_Zone *zone)
 
              _old_warp_x = _old_warp_y = INT_MAX;
           }
-
-        ecore_x_pointer_xy_get(zone->container->win, &_warp_x, &_warp_y);
-        _win = &zone->container->win;
-        _warp_to = 1;
-        if (!_warp_timer)
-          _warp_timer = ecore_timer_add(0.01, _e_winlist_warp_timer, NULL);
-        if (!_animator)
-          _animator = ecore_animator_add(_e_winlist_animator, NULL);
+        if (!e_config->winlist_no_warp_on_direction)
+          {
+            ecore_x_pointer_xy_get(zone->container->win, &_warp_x, &_warp_y);
+            _win = &zone->container->win;
+            _warp_to = 1;
+            if (!_warp_timer)
+              _warp_timer = ecore_timer_add(0.01, _e_winlist_warp_timer, NULL);
+            if (!_animator)
+              _animator = ecore_animator_add(_e_winlist_animator, NULL);
+          }
 
         if ((!_bd_next->lock_user_stacking) &&
             (e_config->winlist_list_raise_while_selecting))

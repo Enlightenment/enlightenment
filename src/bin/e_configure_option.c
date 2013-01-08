@@ -1605,6 +1605,8 @@ e_configure_option_init(void)
 
    OPT_ADD(BOOL, winlist_warp_while_selecting, _("Winlist moves pointer to currently selected window while selecting"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"));
    OPT_ADD(BOOL, winlist_warp_at_end, _("Winlist moves pointer to currently selected window after winlist closes"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"));
+   OPT_ADD(BOOL, winlist_no_warp_on_direction, _("Disable pointer warping on winlist directional focus change"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"));
+   OPT_HELP("This option, when enabled, disables pointer warping only when switching windows using a directional winlist action (up/down/left/right)");
    OPT_ADD(DOUBLE, winlist_warp_speed, _("Winlist pointer warp speed while selecting"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"), _("speed"));
    OPT_MINMAX_STEP_FMT(0.0, 1.0, 0.01, "%1.2f");
    OPT_ADD(BOOL, winlist_scroll_animate, _("Enable winlist scroll animation"), _("border"), _("winlist"), _("animate"));
