@@ -17,6 +17,7 @@ Additions:
         * Added D-Bus menu support
     Config:
         * Added option for disabling icons in menus
+        * Added option for doing desklock, blanking or dimming even when showing fullscreen windows.
 
 
 Deprecations:
@@ -39,6 +40,8 @@ Improvements:
     * Mixer settings dialog is now resizable
     * Increased maximum menu size, improved menu autoscrolling
     * Various #defines in e_int_menus.h are now enums
+    * No backlight dimming when in presentation mode.
+    * Backlight fade time only applies to dimming - undimming is fixed 0.5 .
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.
