@@ -58,6 +58,8 @@ typedef struct
    int             device;
 } Multi;
 
+static E_Border *_prev_bd;
+
 static Ecore_X_Atom _atom_access = 0;
 static Ecore_X_Window target_win = 0;
 
@@ -81,6 +83,10 @@ _mouse_in_win_get(Cover *cov, int x, int y)
         skip[i] = cov2->win;
         i++;
      }
+
+   /* TODO: if target window is changed without highlight object,
+      then previous target window which has the highlight object
+      should get the message. how? */
    target_win = ecore_x_window_shadow_tree_at_xy_with_skip_get
      (cov->zone->container->manager->root, x, y, skip, i);
 }
@@ -269,6 +275,11 @@ _mouse_up(Cover *cov, Ecore_Event_Mouse_Button *ev)
      {
         if (ev->double_click)
           {
+             /* activate message would change focused window
+                FIXME: but it is possibe to create unfocused window
+                in this case, the message should go to unfocused window? */
+             _prev_bd = e_border_focused_get();
+
              INFO(cov, "double_click");
              ecore_x_e_illume_access_action_activate_send(target_win);
           }
@@ -365,6 +376,7 @@ _cb_mouse_down(void    *data __UNUSED__,
    Cover *cov;
    int i = 0;
    int x, y;
+   E_Border *bd;
 
    for (i = 0; i < 3; i++)
      {
@@ -375,6 +387,12 @@ _cb_mouse_down(void    *data __UNUSED__,
           }
         else if (multi_device[i] == ev->multi.device) break;
      }
+
+   /* activate message would change focused window
+      FIXME: but it is possibe to create unfocused window
+      in this case, the message should go to focused window? */
+   bd = e_border_focused_get();
+   if (bd && (bd != _prev_bd)) target_win = bd->client.win;
 
    EINA_LIST_FOREACH(covers, l, cov)
      {
