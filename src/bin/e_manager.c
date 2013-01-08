@@ -998,7 +998,7 @@ _e_manager_cb_client_message(void *data __UNUSED__, int ev_type __UNUSED__, void
         edje_object_signal_emit(bd->bg_object, "e,state,urgent", "e");
         break;
       default:
-        if (!bd->focused) e_border_activate(bd, EINA_FALSE);
+        if (!bd->focused) e_border_activate(bd, EINA_TRUE);
         else e_border_raise(bd);
      }
 
