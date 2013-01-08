@@ -25,6 +25,18 @@ typedef struct _Elm_Win_Trap_Ctx
    Eina_Bool placed:1;
 } Elm_Win_Trap_Ctx;
 
+static void
+_elm_win_prop_update(Elm_Win_Trap_Ctx *ctx)
+{
+   ecore_x_icccm_size_pos_hints_set(ctx->xwin,
+     ctx->border->placed, ctx->border->client.icccm.gravity,
+     ctx->border->client.icccm.min_w, ctx->border->client.icccm.min_h,
+     ctx->border->client.icccm.max_w, ctx->border->client.icccm.max_h,
+     ctx->border->client.icccm.base_w, ctx->border->client.icccm.base_h,
+     ctx->border->client.icccm.step_w, ctx->border->client.icccm.step_h,
+     ctx->border->client.icccm.min_aspect, ctx->border->client.icccm.max_aspect);
+}
+
 static void *
 _elm_win_trap_add(Evas_Object *o __UNUSED__)
 {
@@ -34,7 +46,7 @@ _elm_win_trap_add(Evas_Object *o __UNUSED__)
 }
 
 static void
-_elm_win_trap_del(void *data, Evas_Object *o __UNUSED__)
+_elm_win_trap_del(void *data, Evas_Object *o)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN(ctx);
@@ -42,6 +54,7 @@ _elm_win_trap_del(void *data, Evas_Object *o __UNUSED__)
      {
         e_border_hide(ctx->border, 1);
         e_object_del(E_OBJECT(ctx->border));
+        evas_object_data_set(o, "E_Border", NULL);
      }
    free(ctx);
 }
@@ -95,6 +108,7 @@ _elm_win_trap_show(void *data, Evas_Object *o)
         ctx->border->placed = ctx->placed;
         ctx->border->internal = 1;
         ctx->border->internal_ecore_evas = ee;
+        evas_object_data_set(o, "E_Border", ctx->border);
      }
    if (ctx->centered) e_border_center(ctx->border);
    e_border_show(ctx->border);
@@ -120,6 +134,7 @@ _elm_win_trap_resize(void *data, Evas_Object *o __UNUSED__, int w, int h)
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
    ctx->centered = EINA_FALSE;
    if (!ctx->border) return EINA_TRUE;
+   e_border_resize_limit(ctx->border, &w, &h);
    e_border_resize_without_border(ctx->border, w, h);
    return EINA_FALSE;
 }
@@ -166,6 +181,19 @@ _elm_win_trap_activate(void *data, Evas_Object *o __UNUSED__)
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_elm_win_trap_size_base_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
+{
+   Elm_Win_Trap_Ctx *ctx = data;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
+   if (!ctx->border) return EINA_TRUE;
+   ctx->border->client.icccm.base_w = w;
+   ctx->border->client.icccm.base_h = h;
+   _elm_win_prop_update(ctx);
+
+   return EINA_FALSE;
+}
+
 static const Elm_Win_Trap _elm_win_trap = {
   ELM_WIN_TRAP_VERSION,
   _elm_win_trap_add,
@@ -196,7 +224,7 @@ static const Elm_Win_Trap _elm_win_trap = {
   /* rotation_set */ NULL,
   /* rotation_with_resize_set */ NULL,
   /* shaped_set */ NULL,
-  /* size_base_set */ NULL,
+  _elm_win_trap_size_base_set,
   /* size_step_set */ NULL,
   /* size_min_set */ NULL,
   /* size_max_set */ NULL,

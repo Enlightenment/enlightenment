@@ -42,6 +42,7 @@ Improvements:
     * Various #defines in e_int_menus.h are now enums
     * No backlight dimming when in presentation mode.
     * Backlight fade time only applies to dimming - undimming is fixed 0.5 .
+    * Added elm win trap callback for base size setting, calling this causes ICCCM hints to be applied
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.

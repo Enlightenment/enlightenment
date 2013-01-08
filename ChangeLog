@@ -1,6 +1,7 @@
 2013-01-07 Mike Blumenkrantz
 
         * Fixed bug where keyboard resizing of windows would not be possible if timeout was set to zero
+        * Added elm win trap callback for base size setting, calling this causes ICCCM hints to be applied
 
 2013-01-07 Tom "TAsn" Hacohen
 	* e_entry + e_scrollable: Fixed issues with smart members.
