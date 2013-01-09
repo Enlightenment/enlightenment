@@ -1,6 +1,7 @@
 2013-01-09 Mike Blumenkrantz
 
         * geometry_auto_move option now also corrects applications which fail in their attempts to center windows
+        * fixed bug where window border insets were not applied to initial positioning geometry, causing them to be placed incorrectly
 
 2013-01-08 David H. Bronke
 
