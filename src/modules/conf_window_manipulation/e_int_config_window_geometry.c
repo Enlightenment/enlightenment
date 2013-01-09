@@ -263,7 +263,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    ow = e_widget_check_add(evas, _("Limit resize to useful geometry"), 
                            &(cfdata->geometry_auto_resize_limit));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
-   ow = e_widget_check_add(evas, _("Move after resize"), 
+   ow = e_widget_check_add(evas, _("Ensure initial placement of windows inside useful geometry"), 
                            &(cfdata->geometry_auto_move));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    ow = e_widget_check_add(evas, _("Adjust windows on shelf hide"), 

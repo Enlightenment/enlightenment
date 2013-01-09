@@ -1599,7 +1599,9 @@ e_configure_option_init(void)
    OPT_ADD(DOUBLE_INT, gadget_resist, _("Window resistance against desktop gadgets"), _("gadget"), _("resist"), _("desktop"), _("drag"));
    OPT_MINMAX_STEP_FMT(0, 100, 2, "%2.0f pixels");
 
-   OPT_ADD(BOOL, geometry_auto_move, _("Move window after autoresizing"), _("border"), _("placement"));
+   OPT_ADD(BOOL, geometry_auto_move, _("Ensure initial placement of windows inside useful geometry"), _("border"), _("placement"));
+   OPT_HELP(_("Useful geometry is calculated as the screen size minus the geometry of any shelves which do not allow windows to overlap them."
+              "This option ensures that non-user placement of windows will be inside the useful geometry of the current screen"));
    OPT_ADD(BOOL, geometry_auto_resize_limit, _("Limit window autoresizing to useful geometry"), _("border"), _("placement"), _("resize"));
    OPT_HELP(_("Useful geometry is calculated as the screen size minus the geometry of any shelves which do not allow windows to overlap them"));
 
