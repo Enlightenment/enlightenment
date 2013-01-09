@@ -46,6 +46,7 @@ Improvements:
     * Added elm win trap callback for base size setting, calling this causes ICCCM hints to be applied
     * "System Default" language in wizard now displays which language it is and no longer removes language from list
     * Desktop->Shelves menu now shows shelf names
+    * geometry_auto_move option now also corrects applications which fail in their attempts to center windows
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.

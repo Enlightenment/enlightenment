@@ -8550,10 +8550,27 @@ _e_border_eval(E_Border *bd)
 
                   if (bd->y + bd->h > zy + zh)
                     bd->y = zy + zh - bd->h;
-                  // <--
 
+                  // <--
                   if (bd->zone && e_container_zone_at_point_get(bd->zone->container, bd->x, bd->y))
                     {
+                       if (!E_INSIDE(bd->x, bd->y, bd->zone->x, bd->zone->y, bd->zone->w, bd->zone->h))
+                         {
+                            bd->x = E_CLAMP(bd->x, bd->zone->x, bd->zone->x + bd->zone->w);
+                            bd->y = E_CLAMP(bd->y, bd->zone->y, bd->zone->y + bd->zone->h);
+                         }
+                       /* some application failing to correctly center a window */
+                       if (eina_list_count(bd->zone->container->zones) > 1)
+                         {
+                            if (((abs((bd->zone->container->w / 2) - bd->x) < 3) || //bd->x is center of container
+                                 ((abs((bd->zone->container->w / 2) - bd->x - bd->w) < 3) || //bd->x - bd->w is center of container
+                                 (abs((bd->zone->container->w / 2) - bd->x - (bd->w / 2)) < 3))) || //bd->x - bd->w/2 is center of container
+                                ((abs((bd->zone->container->h / 2) - bd->y) < 3) || //bd->y is center of container
+                                 ((abs((bd->zone->container->h / 2) - bd->y - bd->h) < 3) || //bd->y - bd->h is center of container
+                                 (abs((bd->zone->container->h / 2) - bd->y - (bd->h / 2)) < 3))) //bd->y - bd->h/2 is center of container
+                               )
+                              e_border_center(bd);
+                         }
                        bd->changes.pos = 1;
                        bd->placed = 1;
                     }
