@@ -94,6 +94,10 @@ if USE_MODULE_CONF2
 include Makefile_conf2.am
 endif
 
+if USE_MODULE_CONF_COMP
+include Makefile_conf_comp.am
+endif
+
 if USE_MODULE_CONF_WALLPAPER2
 include Makefile_conf_wallpaper2.am
 endif
@@ -196,10 +200,6 @@ endif
 
 if USE_MODULE_APPMENU
 include Makefile_appmenu.am
-endif
-
-if USE_MODULE_COMP
-include Makefile_comp.am
 endif
 
 if USE_MODULE_PHYSICS

@@ -1,7 +1,8 @@
 #include "e.h"
 #include "e_mod_main.h"
 #include "e_mod_config.h"
-#include "e_mod_comp.h"
+#include "e_comp.h"
+#include "e_comp_cfdata.h"
 
 typedef struct _E_Demo_Style_Item
 {
@@ -15,7 +16,7 @@ typedef struct _E_Demo_Style_Item
 
 typedef struct _Match_Config
 {
-   Match            match;
+   E_Comp_Match            match;
    E_Config_Dialog *cfd;
    char            *title, *name, *clas, *role;
    int              borderless, dialog, accepts_focus, vkbd;
@@ -110,7 +111,7 @@ e_int_config_comp_module(E_Container *con,
 }
 
 static void
-_match_dup(Match *m,
+_match_dup(E_Comp_Match *m,
            Match_Config *m2)
 {
    m2->match = *m;
@@ -126,7 +127,7 @@ _create_data(E_Config_Dialog *cfd)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *l;
-   Match *m;
+   E_Comp_Match *m;
    Match_Config *m2;
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
@@ -678,7 +679,7 @@ _create_edit_frame(E_Config_Dialog *cfd,
    evas_object_resize(o, w, h);
    evas_object_show(o);
 
-   of = e_widget_frametable_add(evas, _("Edit Match"), 0);
+   of = e_widget_frametable_add(evas, _("Edit E_Comp_Match"), 0);
    evas_object_data_set(of, "bg", o);
    evas_object_data_set(of, "dia", cfd->dia->bg_object);
    evas_object_move(of, x, y);
@@ -1347,7 +1348,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd,
 static void
 _match_list_free(Eina_List *list)
 {
-   Match *m;
+   E_Comp_Match *m;
 
    EINA_LIST_FREE(list, m)
      {
@@ -1362,7 +1363,7 @@ _match_list_free(Eina_List *list)
 
 static void
 _match_dup2(Match_Config *m2,
-            Match *m)
+            E_Comp_Match *m)
 {
    *m = m2->match;
    if (m->title) m->title = eina_stringshare_add(m->title);
@@ -1397,7 +1398,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         if (cfdata->match.changed)
           {
              Eina_List *l;
-             Match *m;
+             E_Comp_Match *m;
              Match_Config *m2;
 
              _match_list_free(_comp_mod->conf->match.popups);
@@ -1412,28 +1413,28 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
 
              EINA_LIST_FOREACH(cfdata->match.popups, l, m2)
                {
-                  m = E_NEW(Match, 1);
+                  m = E_NEW(E_Comp_Match, 1);
                   _match_dup2(m2, m);
                   _comp_mod->conf->match.popups =
                     eina_list_append(_comp_mod->conf->match.popups, m);
                }
              EINA_LIST_FOREACH(cfdata->match.borders, l, m2)
                {
-                  m = E_NEW(Match, 1);
+                  m = E_NEW(E_Comp_Match, 1);
                   _match_dup2(m2, m);
                   _comp_mod->conf->match.borders =
                     eina_list_append(_comp_mod->conf->match.borders, m);
                }
              EINA_LIST_FOREACH(cfdata->match.overrides, l, m2)
                {
-                  m = E_NEW(Match, 1);
+                  m = E_NEW(E_Comp_Match, 1);
                   _match_dup2(m2, m);
                   _comp_mod->conf->match.overrides =
                     eina_list_append(_comp_mod->conf->match.overrides, m);
                }
              EINA_LIST_FOREACH(cfdata->match.menus, l, m2)
                {
-                  m = E_NEW(Match, 1);
+                  m = E_NEW(E_Comp_Match, 1);
                   _match_dup2(m2, m);
                   _comp_mod->conf->match.menus =
                     eina_list_append(_comp_mod->conf->match.menus, m);
@@ -1459,7 +1460,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         _comp_mod->conf->shadow_style = NULL;
         if (cfdata->shadow_style)
           _comp_mod->conf->shadow_style = eina_stringshare_add(cfdata->shadow_style);
-        e_mod_comp_shadow_set();
+        e_comp_shadow_set();
      }
    if ((cfdata->engine != _comp_mod->conf->engine) ||
        (cfdata->indirect != _comp_mod->conf->indirect) ||
@@ -1481,8 +1482,6 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
 
         a = e_action_find("restart");
         if ((a) && (a->func.go)) a->func.go(NULL, NULL);
-//        e_mod_comp_shutdown();
-//        e_mod_comp_init();
      }
    e_config_save_queue();
    return 1;
@@ -1578,7 +1577,7 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         if (cfdata->match.changed)
           {
              Eina_List *l;
-             Match *m;
+             E_Comp_Match *m;
              Match_Config *m2;
 
              _match_list_free(_comp_mod->conf->match.popups);
@@ -1593,28 +1592,28 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
 
              EINA_LIST_FOREACH(cfdata->match.popups, l, m2)
                {
-                  m = E_NEW(Match, 1);
+                  m = E_NEW(E_Comp_Match, 1);
                   _match_dup2(m2, m);
                   _comp_mod->conf->match.popups =
                     eina_list_append(_comp_mod->conf->match.popups, m);
                }
              EINA_LIST_FOREACH(cfdata->match.borders, l, m2)
                {
-                  m = E_NEW(Match, 1);
+                  m = E_NEW(E_Comp_Match, 1);
                   _match_dup2(m2, m);
                   _comp_mod->conf->match.borders =
                     eina_list_append(_comp_mod->conf->match.borders, m);
                }
              EINA_LIST_FOREACH(cfdata->match.overrides, l, m2)
                {
-                  m = E_NEW(Match, 1);
+                  m = E_NEW(E_Comp_Match, 1);
                   _match_dup2(m2, m);
                   _comp_mod->conf->match.overrides =
                     eina_list_append(_comp_mod->conf->match.overrides, m);
                }
              EINA_LIST_FOREACH(cfdata->match.menus, l, m2)
                {
-                  m = E_NEW(Match, 1);
+                  m = E_NEW(E_Comp_Match, 1);
                   _match_dup2(m2, m);
                   _comp_mod->conf->match.menus =
                     eina_list_append(_comp_mod->conf->match.menus, m);
@@ -1640,7 +1639,7 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         _comp_mod->conf->shadow_style = NULL;
         if (cfdata->shadow_style)
           _comp_mod->conf->shadow_style = eina_stringshare_add(cfdata->shadow_style);
-        e_mod_comp_shadow_set();
+        e_comp_shadow_set();
      }
    if ((cfdata->engine != _comp_mod->conf->engine) ||
        (cfdata->indirect != _comp_mod->conf->indirect) ||
@@ -1660,8 +1659,6 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
 
         a = e_action_find("restart");
         if ((a) && (a->func.go)) a->func.go(NULL, NULL);
-//        e_mod_comp_shutdown();
-//        e_mod_comp_init();
      }
    e_config_save_queue();
    return 1;

@@ -1,9 +1,7 @@
 /* Ask about compositing */
 #include "e_wizard.h"
-#include "e_mod_comp_cfdata.h"
-
-#define ENGINE_SW 1
-#define ENGINE_GL 2
+#include "e_comp.h"
+#include "e_comp_cfdata.h"
 
 static int do_gl = 0;
 static int do_vsync = 0;
@@ -101,20 +99,20 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 {
    E_Config_DD *conf_edd = NULL;
    E_Config_DD *conf_match_edd = NULL;
-   Config *cfg = NULL;
+   E_Comp_Config *cfg = NULL;
 
-   e_mod_comp_cfdata_edd_init(&(conf_edd), &(conf_match_edd));
-   cfg = e_mod_comp_cfdata_config_new();
+   e_comp_cfdata_edd_init(&(conf_edd), &(conf_match_edd));
+   cfg = e_comp_cfdata_config_new();
 
    if (do_gl)
      {
-        cfg->engine = ENGINE_GL;
+        cfg->engine = E_COMP_ENGINE_GL;
         cfg->smooth_windows = 1;
         cfg->vsync = do_vsync;
      }
    else
      {
-        cfg->engine = ENGINE_SW;
+        cfg->engine = E_COMP_ENGINE_SW;
         cfg->smooth_windows = 0;
         cfg->vsync = 0;
      }
@@ -122,7 +120,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
    e_config_domain_save("module.comp", conf_edd, cfg);
    E_CONFIG_DD_FREE(conf_match_edd);
    E_CONFIG_DD_FREE(conf_edd);
-   e_mod_cfdata_config_free(cfg);
+   e_comp_cfdata_config_free(cfg);
 
    e_config_save_queue();
 

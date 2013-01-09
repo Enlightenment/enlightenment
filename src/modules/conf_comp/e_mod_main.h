@@ -1,7 +1,7 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-#include "e_mod_comp_cfdata.h"
+#include "e_comp_cfdata.h"
 
 typedef struct _Mod    Mod;
 
@@ -11,7 +11,7 @@ struct _Mod
 
    E_Config_DD     *conf_edd;
    E_Config_DD     *conf_match_edd;
-   Config          *conf;
+   E_Comp_Config   *conf;
 
    E_Config_Dialog *config_dialog;
 };

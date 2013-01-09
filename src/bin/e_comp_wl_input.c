@@ -1,36 +1,35 @@
 #include "e.h"
-#include "e_mod_main.h"
 #ifdef HAVE_WAYLAND_CLIENTS
-# include "e_mod_comp_wl.h"
-# include "e_mod_comp_wl_input.h"
+# include "e_comp_wl.h"
+# include "e_comp_wl_input.h"
 #endif
 
 /* local function prototypes */
-static void _e_mod_comp_wl_input_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id);
-static void _e_mod_comp_wl_input_unbind(struct wl_resource *resource);
-static void _e_mod_comp_wl_input_pointer_get(struct wl_client *client, struct wl_resource *resource, unsigned int id);
-static void _e_mod_comp_wl_input_keyboard_get(struct wl_client *client, struct wl_resource *resource, unsigned int id);
-static void _e_mod_comp_wl_input_touch_get(struct wl_client *client, struct wl_resource *resource, unsigned int id);
-static void _e_mod_comp_wl_input_pointer_cursor_set(struct wl_client *client, struct wl_resource *resource, unsigned int serial, struct wl_resource *surface_resource, int x, int y);
+static void _e_comp_wl_input_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id);
+static void _e_comp_wl_input_unbind(struct wl_resource *resource);
+static void _e_comp_wl_input_pointer_get(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void _e_comp_wl_input_keyboard_get(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void _e_comp_wl_input_touch_get(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void _e_comp_wl_input_pointer_cursor_set(struct wl_client *client, struct wl_resource *resource, unsigned int serial, struct wl_resource *surface_resource, int x, int y);
 
 /* wayland interfaces */
 static const struct wl_seat_interface _wl_seat_interface =
 {
-   _e_mod_comp_wl_input_pointer_get,
-   _e_mod_comp_wl_input_keyboard_get,
-   _e_mod_comp_wl_input_touch_get
+   _e_comp_wl_input_pointer_get,
+   _e_comp_wl_input_keyboard_get,
+   _e_comp_wl_input_touch_get
 };
 
 static const struct wl_pointer_interface _wl_pointer_interface = 
 {
-   _e_mod_comp_wl_input_pointer_cursor_set
+   _e_comp_wl_input_pointer_cursor_set
 };
 
 /* private variables */
 static Wayland_Input *_wl_input;
 
 Eina_Bool
-e_mod_comp_wl_input_init(void)
+e_comp_wl_input_init(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -44,7 +43,7 @@ e_mod_comp_wl_input_init(void)
 
    wl_seat_init(&_wl_input->seat);
    if (!wl_display_add_global(_wl_disp, &wl_seat_interface, _wl_input,
-                              _e_mod_comp_wl_input_bind))
+                              _e_comp_wl_input_bind))
      {
         EINA_LOG_ERR("Failed to add input to wayland\n");
         free(_wl_input);
@@ -58,7 +57,7 @@ e_mod_comp_wl_input_init(void)
 }
 
 void
-e_mod_comp_wl_input_shutdown(void)
+e_comp_wl_input_shutdown(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -68,14 +67,14 @@ e_mod_comp_wl_input_shutdown(void)
 }
 
 Wayland_Input *
-e_mod_comp_wl_input_get(void)
+e_comp_wl_input_get(void)
 {
    return _wl_input;
 }
 
 /* local functions */
 static void
-_e_mod_comp_wl_input_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id)
+_e_comp_wl_input_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id)
 {
    Wayland_Input *input;
    struct wl_seat *device;
@@ -91,7 +90,7 @@ _e_mod_comp_wl_input_bind(struct wl_client *client, void *data, uint32_t version
      wl_client_add_object(client, &wl_seat_interface,
                           &_wl_seat_interface, id, data);
    wl_list_insert(&device->base_resource_list, &resource->link);
-   resource->destroy = _e_mod_comp_wl_input_unbind;
+   resource->destroy = _e_comp_wl_input_unbind;
 
    if (device->pointer) caps |= WL_SEAT_CAPABILITY_POINTER;
    if (device->keyboard) caps |= WL_SEAT_CAPABILITY_KEYBOARD;
@@ -101,7 +100,7 @@ _e_mod_comp_wl_input_bind(struct wl_client *client, void *data, uint32_t version
 }
 
 static void
-_e_mod_comp_wl_input_unbind(struct wl_resource *resource)
+_e_comp_wl_input_unbind(struct wl_resource *resource)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -110,7 +109,7 @@ _e_mod_comp_wl_input_unbind(struct wl_resource *resource)
 }
 
 static void 
-_e_mod_comp_wl_input_pointer_get(struct wl_client *client, struct wl_resource *resource, unsigned int id)
+_e_comp_wl_input_pointer_get(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    Wayland_Input *wi;
    struct wl_resource *res;
@@ -123,7 +122,7 @@ _e_mod_comp_wl_input_pointer_get(struct wl_client *client, struct wl_resource *r
    res = wl_client_add_object(client, &wl_pointer_interface, 
                               &_wl_pointer_interface, id, wi);
    wl_list_insert(&wi->seat.pointer->resource_list, &res->link);
-   res->destroy = _e_mod_comp_wl_input_unbind;
+   res->destroy = _e_comp_wl_input_unbind;
 
    if ((wi->seat.pointer->focus) && 
        (wi->seat.pointer->focus->resource.client == client))
@@ -137,7 +136,7 @@ _e_mod_comp_wl_input_pointer_get(struct wl_client *client, struct wl_resource *r
 }
 
 static void 
-_e_mod_comp_wl_input_keyboard_get(struct wl_client *client, struct wl_resource *resource, unsigned int id)
+_e_comp_wl_input_keyboard_get(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    Wayland_Input *wi;
    struct wl_resource *res;
@@ -149,7 +148,7 @@ _e_mod_comp_wl_input_keyboard_get(struct wl_client *client, struct wl_resource *
 
    res = wl_client_add_object(client, &wl_keyboard_interface, NULL, id, wi);
    wl_list_insert(&wi->seat.keyboard->resource_list, &res->link);
-   res->destroy = _e_mod_comp_wl_input_unbind;
+   res->destroy = _e_comp_wl_input_unbind;
 
    /* TODO: wl_keyboard_send_keymap ?? */
 
@@ -161,7 +160,7 @@ _e_mod_comp_wl_input_keyboard_get(struct wl_client *client, struct wl_resource *
 }
 
 static void 
-_e_mod_comp_wl_input_touch_get(struct wl_client *client, struct wl_resource *resource, unsigned int id)
+_e_comp_wl_input_touch_get(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    Wayland_Input *wi;
    struct wl_resource *res;
@@ -173,11 +172,11 @@ _e_mod_comp_wl_input_touch_get(struct wl_client *client, struct wl_resource *res
 
    res = wl_client_add_object(client, &wl_touch_interface, NULL, id, wi);
    wl_list_insert(&wi->seat.touch->resource_list, &res->link);
-   res->destroy = _e_mod_comp_wl_input_unbind;
+   res->destroy = _e_comp_wl_input_unbind;
 }
 
 static void 
-_e_mod_comp_wl_input_pointer_cursor_set(struct wl_client *client, struct wl_resource *resource, unsigned int serial, struct wl_resource *surface_resource, int x, int y)
+_e_comp_wl_input_pointer_cursor_set(struct wl_client *client, struct wl_resource *resource, unsigned int serial, struct wl_resource *surface_resource, int x, int y)
 {
    /* Wayland_Input *wi; */
    /* Wayland_Surface *ws; */
@@ -219,7 +218,7 @@ _e_mod_comp_wl_input_pointer_cursor_set(struct wl_client *client, struct wl_reso
 }
 
 /* static void */
-/* _e_mod_comp_wl_input_attach(struct wl_client *client, struct wl_resource *resource, uint32_t serial, struct wl_resource *buffer_resource __UNUSED__, int32_t x, int32_t y) */
+/* _e_comp_wl_input_attach(struct wl_client *client, struct wl_resource *resource, uint32_t serial, struct wl_resource *buffer_resource __UNUSED__, int32_t x, int32_t y) */
 /* { */
 /*    Wayland_Input *wi; */
 

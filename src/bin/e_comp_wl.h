@@ -1,7 +1,7 @@
 #ifdef E_TYPEDEFS
 #else
-# ifndef E_MOD_COMP_WL_H
-#  define E_MOD_COMP_WL_H
+# ifndef E_COMP_WL_H
+#  define E_COMP_WL_H
 
 #  include <pixman.h>
 #  include <GLES2/gl2.h>
@@ -91,7 +91,7 @@ struct _Wayland_Shell
    void (*destroy) (Wayland_Shell *shell);
 };
 
-struct _Wayland_Shell_Surface 
+struct _Wayland_Shell_Surface
 {
    struct wl_resource resource;
    Wayland_Surface *surface;
@@ -103,7 +103,7 @@ struct _Wayland_Shell_Surface
 
    char *title, *clas;
 
-   struct 
+   struct
      {
         struct wl_pointer_grab grab;
         uint32_t timestamp;
@@ -115,7 +115,7 @@ struct _Wayland_Compositor
 {
    struct wl_list surfaces;
 
-   struct 
+   struct
      {
         EGLDisplay display;
         EGLContext context;
@@ -178,17 +178,17 @@ struct wl_shell
    struct wl_listener lock_surface_listener;
    struct wl_list hidden_surfaces;
 
-   struct 
+   struct
      {
         struct wl_resource *desktop_shell;
         struct wl_client *client;
      } child;
 };
 
-Eina_Bool e_mod_comp_wl_init(void);
-void e_mod_comp_wl_shutdown(void);
-uint32_t e_mod_comp_wl_time_get(void);
-Ecore_X_Pixmap e_mod_comp_wl_pixmap_get(Ecore_X_Window win);
+Eina_Bool e_comp_wl_init(void);
+void e_comp_wl_shutdown(void);
+uint32_t e_comp_wl_time_get(void);
+Ecore_X_Pixmap e_comp_wl_pixmap_get(Ecore_X_Window win);
 
 extern struct wl_display *_wl_disp;
 

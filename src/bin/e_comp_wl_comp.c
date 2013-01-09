@@ -1,11 +1,10 @@
 #include "e.h"
-#include "e_mod_main.h"
 #ifdef HAVE_WAYLAND_CLIENTS
-# include "e_mod_comp_wl.h"
-# include "e_mod_comp_wl_comp.h"
-# include "e_mod_comp_wl_input.h"
-# include "e_mod_comp_wl_surface.h"
-# include "e_mod_comp_wl_region.h"
+# include "e_comp_wl.h"
+# include "e_comp_wl_comp.h"
+# include "e_comp_wl_input.h"
+# include "e_comp_wl_surface.h"
+# include "e_comp_wl_region.h"
 #endif
 
 #ifdef __linux__
@@ -25,47 +24,47 @@
 #define MODIFIER_SUPER (1 << 10)
 
 /* local function prototypes */
-static Eina_Bool        _e_mod_comp_wl_comp_egl_init(void);
-static void             _e_mod_comp_wl_comp_egl_shutdown(void);
-static void             _e_mod_comp_wl_comp_destroy(void);
-static void             _e_mod_comp_wl_comp_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id);
-static void             _e_mod_comp_wl_comp_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id);
-static void             _e_mod_comp_wl_comp_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
-static void             _e_mod_comp_wl_comp_region_destroy(struct wl_resource *resource);
-static Eina_Bool        _e_mod_comp_wl_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _e_mod_comp_wl_cb_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__);
-static Eina_Bool        _e_mod_comp_wl_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _e_mod_comp_wl_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _e_mod_comp_wl_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _e_mod_comp_wl_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _e_mod_comp_wl_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _e_mod_comp_wl_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool        _e_mod_comp_wl_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool        _e_comp_wl_comp_egl_init(void);
+static void             _e_comp_wl_comp_egl_shutdown(void);
+static void             _e_comp_wl_comp_destroy(void);
+static void             _e_comp_wl_comp_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id);
+static void             _e_comp_wl_comp_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id);
+static void             _e_comp_wl_comp_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void             _e_comp_wl_comp_region_destroy(struct wl_resource *resource);
+static Eina_Bool        _e_comp_wl_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool        _e_comp_wl_cb_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__);
+static Eina_Bool        _e_comp_wl_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool        _e_comp_wl_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool        _e_comp_wl_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool        _e_comp_wl_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool        _e_comp_wl_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool        _e_comp_wl_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool        _e_comp_wl_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event);
 
-static Wayland_Surface *_e_mod_comp_wl_comp_pick_surface(int32_t x __UNUSED__, int32_t y __UNUSED__, int32_t *sx, int32_t *sy);
-static void             _e_mod_comp_wl_comp_update_modifier(Wayland_Input *input, uint32_t key, uint32_t state);
+static Wayland_Surface *_e_comp_wl_comp_pick_surface(int32_t x __UNUSED__, int32_t y __UNUSED__, int32_t *sx, int32_t *sy);
+static void             _e_comp_wl_comp_update_modifier(Wayland_Input *input, uint32_t key, uint32_t state);
 
 /* wayland interfaces */
 static const struct wl_compositor_interface _wl_comp_interface =
 {
-   _e_mod_comp_wl_comp_surface_create,
-   _e_mod_comp_wl_comp_region_create
+   _e_comp_wl_comp_surface_create,
+   _e_comp_wl_comp_region_create
 };
 static const struct wl_surface_interface _wl_surface_interface =
 {
-   e_mod_comp_wl_surface_destroy,
-   e_mod_comp_wl_surface_attach,
-   e_mod_comp_wl_surface_damage,
-   e_mod_comp_wl_surface_frame,
-   e_mod_comp_wl_surface_set_opaque_region,
-   e_mod_comp_wl_surface_set_input_region,
-   e_mod_comp_wl_surface_commit
+   e_comp_wl_surface_destroy,
+   e_comp_wl_surface_attach,
+   e_comp_wl_surface_damage,
+   e_comp_wl_surface_frame,
+   e_comp_wl_surface_set_opaque_region,
+   e_comp_wl_surface_set_input_region,
+   e_comp_wl_surface_commit
 };
 static const struct wl_region_interface _wl_region_interface =
 {
-   e_mod_comp_wl_region_destroy,
-   e_mod_comp_wl_region_add,
-   e_mod_comp_wl_region_subtract
+   e_comp_wl_region_destroy,
+   e_comp_wl_region_add,
+   e_comp_wl_region_subtract
 };
 
 /* private variables */
@@ -73,7 +72,7 @@ static Wayland_Compositor *_wl_comp;
 static Eina_List *_wl_event_handlers = NULL;
 
 Eina_Bool
-e_mod_comp_wl_comp_init(void)
+e_comp_wl_comp_init(void)
 {
    const char *extensions;
 
@@ -87,17 +86,17 @@ e_mod_comp_wl_comp_init(void)
 
    memset(_wl_comp, 0, sizeof(*_wl_comp));
 
-   if (!_e_mod_comp_wl_comp_egl_init())
+   if (!_e_comp_wl_comp_egl_init())
      {
         EINA_LOG_ERR("Could not initialize egl\n");
         free(_wl_comp);
         return EINA_FALSE;
      }
 
-   _wl_comp->destroy = _e_mod_comp_wl_comp_destroy;
+   _wl_comp->destroy = _e_comp_wl_comp_destroy;
 
    if (!wl_display_add_global(_wl_disp, &wl_compositor_interface, _wl_comp,
-                              _e_mod_comp_wl_comp_bind))
+                              _e_comp_wl_comp_bind))
      {
         EINA_LOG_ERR("Failed to add compositor to wayland\n");
         free(_wl_comp);
@@ -138,45 +137,45 @@ e_mod_comp_wl_comp_init(void)
    _wl_event_handlers =
      eina_list_append(_wl_event_handlers,
                       ecore_event_handler_add(ECORE_X_EVENT_WINDOW_FOCUS_IN,
-                                              _e_mod_comp_wl_cb_focus_in, NULL));
+                                              _e_comp_wl_cb_focus_in, NULL));
    _wl_event_handlers =
      eina_list_append(_wl_event_handlers,
                       ecore_event_handler_add(ECORE_X_EVENT_WINDOW_FOCUS_OUT,
-                                              _e_mod_comp_wl_cb_focus_out, NULL));
+                                              _e_comp_wl_cb_focus_out, NULL));
    _wl_event_handlers =
      eina_list_append(_wl_event_handlers,
                       ecore_event_handler_add(ECORE_X_EVENT_MOUSE_IN,
-                                              _e_mod_comp_wl_cb_mouse_in, NULL));
+                                              _e_comp_wl_cb_mouse_in, NULL));
    _wl_event_handlers =
      eina_list_append(_wl_event_handlers,
                       ecore_event_handler_add(ECORE_X_EVENT_MOUSE_OUT,
-                                              _e_mod_comp_wl_cb_mouse_out, NULL));
+                                              _e_comp_wl_cb_mouse_out, NULL));
    _wl_event_handlers =
      eina_list_append(_wl_event_handlers,
                       ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE,
-                                              _e_mod_comp_wl_cb_mouse_move, NULL));
+                                              _e_comp_wl_cb_mouse_move, NULL));
    _wl_event_handlers =
      eina_list_append(_wl_event_handlers,
                       ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN,
-                                              _e_mod_comp_wl_cb_mouse_down, NULL));
+                                              _e_comp_wl_cb_mouse_down, NULL));
    _wl_event_handlers =
      eina_list_append(_wl_event_handlers,
                       ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
-                                              _e_mod_comp_wl_cb_mouse_up, NULL));
+                                              _e_comp_wl_cb_mouse_up, NULL));
    _wl_event_handlers =
      eina_list_append(_wl_event_handlers,
                       ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-                                              _e_mod_comp_wl_cb_key_down, NULL));
+                                              _e_comp_wl_cb_key_down, NULL));
    _wl_event_handlers =
      eina_list_append(_wl_event_handlers,
                       ecore_event_handler_add(ECORE_EVENT_KEY_UP,
-                                              _e_mod_comp_wl_cb_key_up, NULL));
+                                              _e_comp_wl_cb_key_up, NULL));
 
    return EINA_TRUE;
 }
 
 void
-e_mod_comp_wl_comp_shutdown(void)
+e_comp_wl_comp_shutdown(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -186,13 +185,13 @@ e_mod_comp_wl_comp_shutdown(void)
 }
 
 Wayland_Compositor *
-e_mod_comp_wl_comp_get(void)
+e_comp_wl_comp_get(void)
 {
    return _wl_comp;
 }
 
 void
-e_mod_comp_wl_comp_repick(struct wl_seat *seat, uint32_t timestamp __UNUSED__)
+e_comp_wl_comp_repick(struct wl_seat *seat, uint32_t timestamp __UNUSED__)
 {
    Wayland_Surface *ws, *focus;
    struct wl_pointer *pointer;
@@ -200,7 +199,7 @@ e_mod_comp_wl_comp_repick(struct wl_seat *seat, uint32_t timestamp __UNUSED__)
    if (!(pointer = seat->pointer)) return;
 
    ws =
-     _e_mod_comp_wl_comp_pick_surface(pointer->x, pointer->y,
+     _e_comp_wl_comp_pick_surface(pointer->x, pointer->y,
                                       &pointer->current_x, &pointer->current_y);
    if (!ws) return;
    if (&ws->surface != pointer->current)
@@ -222,7 +221,7 @@ e_mod_comp_wl_comp_repick(struct wl_seat *seat, uint32_t timestamp __UNUSED__)
 
 /* local functions */
 static Eina_Bool
-_e_mod_comp_wl_comp_egl_init(void)
+_e_comp_wl_comp_egl_init(void)
 {
    EGLint major, minor, n;
    EGLint config_attribs[] =
@@ -288,7 +287,7 @@ _e_mod_comp_wl_comp_egl_init(void)
 }
 
 static void
-_e_mod_comp_wl_comp_egl_shutdown(void)
+_e_comp_wl_comp_egl_shutdown(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -299,21 +298,21 @@ _e_mod_comp_wl_comp_egl_shutdown(void)
 }
 
 static void
-_e_mod_comp_wl_comp_destroy(void)
+_e_comp_wl_comp_destroy(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (_wl_comp->has_bind)
      _wl_comp->unbind_display(_wl_comp->egl.display, _wl_disp);
 
-   _e_mod_comp_wl_comp_egl_shutdown();
+   _e_comp_wl_comp_egl_shutdown();
 
    if (&_wl_comp->surfaces) wl_list_remove(&_wl_comp->surfaces);
    free(_wl_comp);
 }
 
 static void
-_e_mod_comp_wl_comp_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id)
+_e_comp_wl_comp_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -322,19 +321,19 @@ _e_mod_comp_wl_comp_bind(struct wl_client *client, void *data, uint32_t version 
 }
 
 static void
-_e_mod_comp_wl_comp_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
+_e_comp_wl_comp_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
    Wayland_Surface *ws;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(ws = e_mod_comp_wl_surface_create(0, 0, 0, 0)))
+   if (!(ws = e_comp_wl_surface_create(0, 0, 0, 0)))
      {
         wl_resource_post_no_memory(resource);
         return;
      }
 
-   ws->surface.resource.destroy = e_mod_comp_wl_surface_destroy_surface;
+   ws->surface.resource.destroy = e_comp_wl_surface_destroy_surface;
    ws->surface.resource.object.id = id;
    ws->surface.resource.object.interface = &wl_surface_interface;
    ws->surface.resource.object.implementation =
@@ -345,7 +344,7 @@ _e_mod_comp_wl_comp_surface_create(struct wl_client *client, struct wl_resource 
 }
 
 static void
-_e_mod_comp_wl_comp_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id)
+_e_comp_wl_comp_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    Wayland_Region *region;
 
@@ -356,7 +355,7 @@ _e_mod_comp_wl_comp_region_create(struct wl_client *client, struct wl_resource *
         return;
      }
 
-   region->resource.destroy = _e_mod_comp_wl_comp_region_destroy;
+   region->resource.destroy = _e_comp_wl_comp_region_destroy;
    region->resource.object.id = id;
    region->resource.object.interface = &wl_region_interface;
    region->resource.object.implementation =
@@ -368,7 +367,7 @@ _e_mod_comp_wl_comp_region_create(struct wl_client *client, struct wl_resource *
 }
 
 static void
-_e_mod_comp_wl_comp_region_destroy(struct wl_resource *resource)
+_e_comp_wl_comp_region_destroy(struct wl_resource *resource)
 {
    Wayland_Region *region;
 
@@ -378,7 +377,7 @@ _e_mod_comp_wl_comp_region_destroy(struct wl_resource *resource)
 }
 
 static Eina_Bool
-_e_mod_comp_wl_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_comp_wl_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Wayland_Input *input;
    Wayland_Surface *ws;
@@ -389,7 +388,7 @@ _e_mod_comp_wl_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, void *eve
    ev = event;
    if (wl_list_empty(&_wl_comp->surfaces)) return ECORE_CALLBACK_PASS_ON;
 
-   input = e_mod_comp_wl_input_get();
+   input = e_comp_wl_input_get();
    wl_list_for_each(ws, &_wl_comp->surfaces, link)
    {
       if (((ws->win) && (ws->win->border))
@@ -405,7 +404,7 @@ _e_mod_comp_wl_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, void *eve
 }
 
 static Eina_Bool
-_e_mod_comp_wl_cb_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_e_comp_wl_cb_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
    Wayland_Input *input;
    /* Ecore_X_Event_Window_Focus_Out *ev; */
@@ -413,7 +412,7 @@ _e_mod_comp_wl_cb_focus_out(void *data __UNUSED__, int type __UNUSED__, void *ev
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* ev = event; */
-   input = e_mod_comp_wl_input_get();
+   input = e_comp_wl_input_get();
    if ((!input) || (!input->seat.keyboard)) 
      return ECORE_CALLBACK_PASS_ON;
    wl_keyboard_set_focus(input->seat.keyboard, NULL);
@@ -423,7 +422,7 @@ _e_mod_comp_wl_cb_focus_out(void *data __UNUSED__, int type __UNUSED__, void *ev
 }
 
 static Eina_Bool
-_e_mod_comp_wl_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_comp_wl_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Wayland_Input *input;
    Ecore_X_Event_Mouse_In *ev;
@@ -434,20 +433,20 @@ _e_mod_comp_wl_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *eve
 
    ev = event;
    if (wl_list_empty(&_wl_comp->surfaces)) return ECORE_CALLBACK_PASS_ON;
-   input = e_mod_comp_wl_input_get();
+   input = e_comp_wl_input_get();
 
    ptr = input->seat.pointer;
    ptr->x = ev->x;
    ptr->y = ev->y;
 
-   timestamp = e_mod_comp_wl_time_get();
-   e_mod_comp_wl_comp_repick(&input->seat, timestamp);
+   timestamp = e_comp_wl_time_get();
+   e_comp_wl_comp_repick(&input->seat, timestamp);
 
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_e_mod_comp_wl_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_comp_wl_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Wayland_Input *input;
    Ecore_X_Event_Mouse_Out *ev;
@@ -457,16 +456,16 @@ _e_mod_comp_wl_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *ev
 
    ev = event;
    if (wl_list_empty(&_wl_comp->surfaces)) return ECORE_CALLBACK_PASS_ON;
-   input = e_mod_comp_wl_input_get();
+   input = e_comp_wl_input_get();
 
-   timestamp = e_mod_comp_wl_time_get();
-   e_mod_comp_wl_comp_repick(&input->seat, timestamp);
+   timestamp = e_comp_wl_time_get();
+   e_comp_wl_comp_repick(&input->seat, timestamp);
 
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_e_mod_comp_wl_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_comp_wl_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Wayland_Input *input;
    Ecore_Event_Mouse_Move *ev;
@@ -479,14 +478,14 @@ _e_mod_comp_wl_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *e
    ev = event;
    if (wl_list_empty(&_wl_comp->surfaces)) return ECORE_CALLBACK_PASS_ON;
 
-   input = e_mod_comp_wl_input_get();
+   input = e_comp_wl_input_get();
 
    ptr = input->seat.pointer;
    ptr->x = ev->x;
    ptr->y = ev->y;
 
-   timestamp = e_mod_comp_wl_time_get();
-   e_mod_comp_wl_comp_repick(&input->seat, timestamp);
+   timestamp = e_comp_wl_time_get();
+   e_comp_wl_comp_repick(&input->seat, timestamp);
 
    interface = ptr->grab->interface;
    interface->motion(ptr->grab, timestamp, ptr->grab->x, ptr->grab->y);
@@ -497,7 +496,7 @@ _e_mod_comp_wl_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 static Eina_Bool
-_e_mod_comp_wl_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_comp_wl_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Wayland_Input *input;
    Ecore_Event_Mouse_Button *ev;
@@ -525,9 +524,9 @@ _e_mod_comp_wl_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *e
         break;
      }
 
-   input = e_mod_comp_wl_input_get();
+   input = e_comp_wl_input_get();
    ptr = input->seat.pointer;
-   timestamp = e_mod_comp_wl_time_get();
+   timestamp = e_comp_wl_time_get();
    if (ptr->button_count == 0)
      {
         ptr->grab_button = btn;
@@ -549,7 +548,7 @@ _e_mod_comp_wl_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *e
 }
 
 static Eina_Bool
-_e_mod_comp_wl_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_comp_wl_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Wayland_Input *input;
    Ecore_Event_Mouse_Button *ev;
@@ -577,12 +576,12 @@ _e_mod_comp_wl_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *eve
         break;
      }
 
-   input = e_mod_comp_wl_input_get();
+   input = e_comp_wl_input_get();
    ptr = input->seat.pointer;
    ptr->button_count--;
 
    /* TODO: Run binding ?? */
-   timestamp = e_mod_comp_wl_time_get();
+   timestamp = e_comp_wl_time_get();
    ptr->grab->interface->button(ptr->grab, timestamp, btn, 0);
 
    if (ptr->button_count == 1)
@@ -592,7 +591,7 @@ _e_mod_comp_wl_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *eve
 }
 
 static Eina_Bool
-_e_mod_comp_wl_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_comp_wl_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    /* Wayland_Input *input; */
    /* Ecore_Event_Key *ev; */
@@ -605,14 +604,14 @@ _e_mod_comp_wl_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *eve
    /* ev = event; */
    /* if (wl_list_empty(&_wl_comp->surfaces)) return ECORE_CALLBACK_PASS_ON; */
 
-   /* input = e_mod_comp_wl_input_get(); */
+   /* input = e_comp_wl_input_get(); */
    /* kbd = input->seat.keyboard; */
-   /* timestamp = e_mod_comp_wl_time_get(); */
+   /* timestamp = e_comp_wl_time_get(); */
 
    /* key = ecore_x_keysym_keycode_get(ev->key); */
 
    /* input->modifier_state = 0; */
-   /* _e_mod_comp_wl_comp_update_modifier(input, key, 1); */
+   /* _e_comp_wl_comp_update_modifier(input, key, 1); */
 
    /* end = kbd->keys.data + kbd->keys.size; */
    /* for (k = kbd->keys.data; k < end; k++) */
@@ -630,7 +629,7 @@ _e_mod_comp_wl_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *eve
 }
 
 static Eina_Bool
-_e_mod_comp_wl_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_e_comp_wl_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    /* Wayland_Input *input; */
    /* Ecore_Event_Key *ev; */
@@ -643,13 +642,13 @@ _e_mod_comp_wl_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event
    /* ev = event; */
    /* if (wl_list_empty(&_wl_comp->surfaces)) return ECORE_CALLBACK_PASS_ON; */
 
-   /* input = e_mod_comp_wl_input_get(); */
+   /* input = e_comp_wl_input_get(); */
    /* device = &input->input_device; */
-   /* timestamp = e_mod_comp_wl_time_get(); */
+   /* timestamp = e_comp_wl_time_get(); */
 
    /* key = ecore_x_keysym_keycode_get(ev->key); */
 
-   /* _e_mod_comp_wl_comp_update_modifier(input, key, 0); */
+   /* _e_comp_wl_comp_update_modifier(input, key, 0); */
 
    /* end = device->keys.data + device->keys.size; */
    /* for (k = device->keys.data; k < end; k++) */
@@ -667,7 +666,7 @@ _e_mod_comp_wl_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event
 }
 
 static Wayland_Surface *
-_e_mod_comp_wl_comp_pick_surface(int32_t x __UNUSED__, int32_t y __UNUSED__, int32_t *sx, int32_t *sy)
+_e_comp_wl_comp_pick_surface(int32_t x __UNUSED__, int32_t y __UNUSED__, int32_t *sx, int32_t *sy)
 {
    Wayland_Surface *ws;
 
@@ -684,7 +683,7 @@ _e_mod_comp_wl_comp_pick_surface(int32_t x __UNUSED__, int32_t y __UNUSED__, int
 }
 
 static void
-_e_mod_comp_wl_comp_update_modifier(Wayland_Input *input, uint32_t key, uint32_t state)
+_e_comp_wl_comp_update_modifier(Wayland_Input *input, uint32_t key, uint32_t state)
 {
    uint32_t mod;
 

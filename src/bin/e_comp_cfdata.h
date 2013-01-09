@@ -1,10 +1,10 @@
-#ifndef E_MOD_COMP_CFDATA_H
-#define E_MOD_COMP_CFDATA_H
-
-typedef struct _Config Config;
-typedef struct _Match  Match;
-
-struct _Config
+#ifdef E_TYPEDEFS
+typedef struct _E_Comp_Config E_Comp_Config;
+typedef struct _E_Comp_Match  E_Comp_Match;
+#else
+#ifndef E_COMP_CFDATA_H
+#define E_COMP_CFDATA_H
+struct _E_Comp_Config
 {
    const char   *shadow_style;
    int           engine;
@@ -38,7 +38,7 @@ struct _Config
    } match;
 };
 
-struct _Match
+struct _E_Comp_Match
 {
    const char *title; // glob - used for borders, NULL if not to be used
    const char *name; // glob - used for borders, overrides, popups, NULL if not to be used
@@ -60,8 +60,9 @@ struct _Match
    char        urgent; // used for setting urgent state (on popups): 1 is urgent, unset is use regular logic
 };
 
-EAPI void    e_mod_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd);
-EAPI Config *e_mod_comp_cfdata_config_new(void);
-EAPI void    e_mod_cfdata_config_free(Config *cfg);
+EAPI void           e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd);
+EAPI E_Comp_Config *e_comp_cfdata_config_new(void);
+EAPI void           e_comp_cfdata_config_free(E_Comp_Config *cfg);
 
+#endif
 #endif

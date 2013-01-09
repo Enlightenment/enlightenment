@@ -1,20 +1,19 @@
 #include "e.h"
-#include "e_mod_main.h"
 #ifdef HAVE_WAYLAND_CLIENTS
-# include "e_mod_comp_wl.h"
-# include "e_mod_comp_wl_output.h"
+# include "e_comp_wl.h"
+# include "e_comp_wl_output.h"
 #endif
 
 # define WL_OUTPUT_FLIPPED 0x01
 
 /* local function prototypes */
-static void _e_mod_comp_wl_output_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id);
+static void _e_comp_wl_output_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id);
 
 /* private variables */
 static Wayland_Output *_wl_output;
 
 Eina_Bool
-e_mod_comp_wl_output_init(void)
+e_comp_wl_output_init(void)
 {
    Ecore_X_Window *roots;
    int num = 0, rw, rh;
@@ -54,7 +53,7 @@ e_mod_comp_wl_output_init(void)
    wl_list_init(&_wl_output->frame_callbacks);
 
    if (!wl_display_add_global(_wl_disp, &wl_output_interface, _wl_output,
-                              _e_mod_comp_wl_output_bind))
+                              _e_comp_wl_output_bind))
      {
         EINA_LOG_ERR("Failed to add output to wayland\n");
         free(_wl_output);
@@ -65,7 +64,7 @@ e_mod_comp_wl_output_init(void)
 }
 
 void
-e_mod_comp_wl_output_shutdown(void)
+e_comp_wl_output_shutdown(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -76,14 +75,14 @@ e_mod_comp_wl_output_shutdown(void)
 }
 
 Wayland_Output *
-e_mod_comp_wl_output_get(void)
+e_comp_wl_output_get(void)
 {
    return _wl_output;
 }
 
 /* local functions */
 static void
-_e_mod_comp_wl_output_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id)
+_e_comp_wl_output_bind(struct wl_client *client, void *data, uint32_t version __UNUSED__, uint32_t id)
 {
    Wayland_Output *output;
    struct wl_resource *resource;

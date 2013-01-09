@@ -1,14 +1,13 @@
 #include "e.h"
-#include "e_mod_main.h"
-#include "e_mod_comp_cfdata.h"
+#include "e_comp_cfdata.h"
 
 EAPI void
-e_mod_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
+e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
 {
-   *match_edd = E_CONFIG_DD_NEW("Comp_Match", Match);
+   *match_edd = E_CONFIG_DD_NEW("Comp_Match", E_Comp_Match);
 #undef T
 #undef D
-#define T Match
+#define T E_Comp_Match
 #define D *match_edd
    E_CONFIG_VAL(D, T, title, STR);
    E_CONFIG_VAL(D, T, name, STR);
@@ -27,10 +26,10 @@ e_mod_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_VAL(D, T, urgent, CHAR);
    E_CONFIG_VAL(D, T, shadow_style, STR);
 
-   *conf_edd = E_CONFIG_DD_NEW("Comp_Config", Config);
+   *conf_edd = E_CONFIG_DD_NEW("Comp_Config", E_Comp_Config);
 #undef T
 #undef D
-#define T Config
+#define T E_Comp_Config
 #define D *conf_edd
    E_CONFIG_VAL(D, T, shadow_style, STR);
    E_CONFIG_VAL(D, T, engine, INT);
@@ -60,15 +59,15 @@ e_mod_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_LIST(D, T, match.menus, *match_edd);
 }
 
-EAPI Config *
-e_mod_comp_cfdata_config_new(void)
+EAPI E_Comp_Config *
+e_comp_cfdata_config_new(void)
 {
-   Config *cfg;
-   Match *mat;
+   E_Comp_Config *cfg;
+   E_Comp_Match *mat;
 
-   cfg = E_NEW(Config, 1);
+   cfg = E_NEW(E_Comp_Config, 1);
    cfg->shadow_style = eina_stringshare_add("default");
-   cfg->engine = ENGINE_SW;
+   cfg->engine = E_COMP_ENGINE_SW;
    cfg->max_unmapped_pixels = 32 * 1024;  // implement
    cfg->max_unmapped_time = 10 * 3600; // implement
    cfg->min_unmapped_time = 5 * 60; // implement
@@ -95,80 +94,80 @@ e_mod_comp_cfdata_config_new(void)
    cfg->first_draw_delay = 0.15;
 
    cfg->match.popups = NULL;
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.popups = eina_list_append(cfg->match.popups, mat);
    mat->name = eina_stringshare_add("shelf");
    mat->shadow_style = eina_stringshare_add("popup");
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.popups = eina_list_append(cfg->match.popups, mat);
    mat->name = eina_stringshare_add("_e_popup_desklock");
    mat->shadow_style = eina_stringshare_add("still");
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.popups = eina_list_append(cfg->match.popups, mat);
    mat->name = eina_stringshare_add("_e_popup_notification");
    mat->shadow_style = eina_stringshare_add("still");
    mat->focus = 1;
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.popups = eina_list_append(cfg->match.popups, mat);
    mat->shadow_style = eina_stringshare_add("popup");
 
    cfg->match.borders = NULL;
 
-   mat = E_NEW(Match, 1);
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.borders = eina_list_append(cfg->match.borders, mat);
    mat->fullscreen = 1;
    mat->shadow_style = eina_stringshare_add("fullscreen");
-   
+
    cfg->match.overrides = NULL;
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->name = eina_stringshare_add("E");
    mat->clas = eina_stringshare_add("Background_Window");
    mat->shadow_style = eina_stringshare_add("none");
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->name = eina_stringshare_add("E");
    mat->clas = eina_stringshare_add("everything");
    mat->shadow_style = eina_stringshare_add("everything");
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->name = eina_stringshare_add("E");
    mat->clas = eina_stringshare_add("Init_Window");
    mat->shadow_style = eina_stringshare_add("still");
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->primary_type = ECORE_X_WINDOW_TYPE_DROPDOWN_MENU;
    mat->shadow_style = eina_stringshare_add("menu");
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->primary_type = ECORE_X_WINDOW_TYPE_POPUP_MENU;
    mat->shadow_style = eina_stringshare_add("menu");
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->primary_type = ECORE_X_WINDOW_TYPE_COMBO;
    mat->shadow_style = eina_stringshare_add("menu");
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->primary_type = ECORE_X_WINDOW_TYPE_TOOLTIP;
    mat->shadow_style = eina_stringshare_add("menu");
-   
-   mat = E_NEW(Match, 1);
+
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->shadow_style = eina_stringshare_add("popup");
 
    cfg->match.menus = NULL;
-   mat = E_NEW(Match, 1);
+   mat = E_NEW(E_Comp_Match, 1);
    cfg->match.menus = eina_list_append(cfg->match.menus, mat);
    mat->shadow_style = eina_stringshare_add("menu");
 
@@ -178,7 +177,7 @@ e_mod_comp_cfdata_config_new(void)
 static void
 _match_list_free(Eina_List *list)
 {
-   Match *m;
+   E_Comp_Match *m;
 
    EINA_LIST_FREE(list, m)
      {
@@ -192,7 +191,7 @@ _match_list_free(Eina_List *list)
 }
 
 EAPI void
-e_mod_cfdata_config_free(Config *cfg)
+e_comp_cfdata_config_free(E_Comp_Config *cfg)
 {
    if (!cfg) return;
    eina_stringshare_del(cfg->shadow_style);
@@ -204,4 +203,3 @@ e_mod_cfdata_config_free(Config *cfg)
 
    free(cfg);
 }
-

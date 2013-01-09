@@ -1,11 +1,10 @@
 #include "e.h"
-#include "e_mod_main.h"
-#include "e_mod_comp_update.h"
+#include "e_comp_update.h"
 
 //////////////////////////////////////////////////////////////////////////
 
 static void
-_e_mod_comp_tiles_alloc(E_Update *up)
+_e_comp_tiles_alloc(E_Update *up)
 {
    if (up->tiles) return;
    up->tiles = calloc(up->tw * up->th, sizeof(unsigned char));
@@ -14,7 +13,7 @@ _e_mod_comp_tiles_alloc(E_Update *up)
 //////////////////////////////////////////////////////////////////////////
 
 E_Update *
-e_mod_comp_update_new(void)
+e_comp_update_new(void)
 {
    E_Update *up;
 
@@ -26,32 +25,32 @@ e_mod_comp_update_new(void)
 }
 
 void
-e_mod_comp_update_free(E_Update *up)
+e_comp_update_free(E_Update *up)
 {
    free(up->tiles);
    free(up);
 }
 
 void
-e_mod_comp_update_policy_set(E_Update *up,
+e_comp_update_policy_set(E_Update *up,
                              E_Update_Policy pol)
 {
    up->pol = pol;
 }
 
 void
-e_mod_comp_update_tile_size_set(E_Update *up,
+e_comp_update_tile_size_set(E_Update *up,
                                 int tsw,
                                 int tsh)
 {
    if ((up->tsw == tsw) && (up->tsh == tsh)) return;
    up->tsw = tsw;
    up->tsh = tsh;
-   e_mod_comp_update_clear(up);
+   e_comp_update_clear(up);
 }
 
 void
-e_mod_comp_update_resize(E_Update *up,
+e_comp_update_resize(E_Update *up,
                          int w,
                          int h)
 {
@@ -69,7 +68,7 @@ e_mod_comp_update_resize(E_Update *up,
    up->tw = (up->w + up->tsw - 1) / up->tsw;
    up->th = (up->h + up->tsh - 1) / up->tsh;
    up->tiles = NULL;
-   _e_mod_comp_tiles_alloc(up);
+   _e_comp_tiles_alloc(up);
    if ((ptiles) && (up->tiles))
      {
         if (pth <= up->th)
@@ -105,7 +104,7 @@ e_mod_comp_update_resize(E_Update *up,
 }
 
 void
-e_mod_comp_update_add(E_Update *up,
+e_comp_update_add(E_Update *up,
                       int x,
                       int y,
                       int w,
@@ -117,7 +116,7 @@ e_mod_comp_update_add(E_Update *up,
    if ((w <= 0) || (h <= 0)) return;
    if ((up->tw <= 0) || (up->th <= 0)) return;
 
-   _e_mod_comp_tiles_alloc(up);
+   _e_comp_tiles_alloc(up);
 
    E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, up->w, up->h);
    if ((w <= 0) || (h <= 0)) return;
@@ -157,7 +156,7 @@ e_mod_comp_update_add(E_Update *up,
 }
 
 E_Update_Rect *
-e_mod_comp_update_rects_get(E_Update *up)
+e_comp_update_rects_get(E_Update *up)
 {
    E_Update_Rect *r;
    int ri = 0;
@@ -237,7 +236,7 @@ e_mod_comp_update_rects_get(E_Update *up)
 }
 
 void
-e_mod_comp_update_clear(E_Update *up)
+e_comp_update_clear(E_Update *up)
 {
    if (up->tiles)
      {

@@ -55,6 +55,9 @@ e_canvas.h \
 e_color_class.h \
 e_color_dialog.h  \
 e_color.h \
+e_comp.h \
+e_comp_cfdata.h \
+e_comp_update.h \
 e_config_data.h \
 e_config_dialog.h \
 e_config.h \
@@ -199,6 +202,18 @@ e_xkb.h \
 e_xsettings.h \
 e_zone.h
 
+if HAVE_WAYLAND_CLIENTS
+ENLIGHTENMENTHEADERS += \
+e_comp_wl.h \
+e_comp_wl_buffer.h \
+e_comp_wl_comp.h \
+e_comp_wl_input.h \
+e_comp_wl_output.h \
+e_comp_wl_region.h \
+e_comp_wl_shell.h \
+e_comp_wl_surface.h
+endif
+
 
 enlightenment_src = \
 e_about.c \
@@ -215,6 +230,9 @@ e_canvas.c \
 e_color.c \
 e_color_class.c \
 e_color_dialog.c \
+e_comp.c \
+e_comp_cfdata.c \
+e_comp_update.c \
 e_config.c \
 e_config_data.c \
 e_config_dialog.c \
@@ -363,13 +381,26 @@ e_xsettings.c \
 e_zone.c \
 $(ENLIGHTENMENTHEADERS)
 
+if HAVE_WAYLAND_CLIENTS
+enlightenment_src += \
+e_comp_wl.c \
+e_comp_wl_buffer.c \
+e_comp_wl_comp.c \
+e_comp_wl_input.c \
+e_comp_wl_output.c \
+e_comp_wl_region.c \
+e_comp_wl_shell.c \
+e_comp_wl_surface.c
+endif
+
+enlightenment_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@
 enlightenment_CPPFLAGS = $(AM_CPPFLAGS) -DE_LOGGING=1
 enlightenment_SOURCES = \
 e_main.c \
 $(enlightenment_src)
 
 enlightenment_LDFLAGS = -export-dynamic
-enlightenment_LDADD = @e_libs@ @ELM_LIBS@ @EMOTION_LIBS@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ -lm
+enlightenment_LDADD = @e_libs@ @ELM_LIBS@ @EMOTION_LIBS@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ -lm
 
 enlightenment_imc_SOURCES = \
 e.h \

@@ -1,22 +1,10 @@
 #include "e.h"
 #include "e_mod_main.h"
 #include "e_mod_config.h"
-#include "e_mod_comp.h"
+#include "e_comp.h"
+#include "e_comp_cfdata.h"
 
 static Eina_Inlist *cfg_opts = NULL;
-//static Ecore_Event_Handler *init_done_handler = NULL;
-
-//static int
-//_e_init_done(void *data, int type, void *event)
-//{
-//   ecore_event_handler_del(init_done_handler);
-//   init_done_handler = NULL;
-//   if (!e_mod_comp_init())
-//     {
-//        // FIXME: handle if comp init fails
-//     }
-//   return 1;
-//}
 
 /* module private routines */
 Mod *_comp_mod = NULL;
@@ -74,8 +62,8 @@ e_modapi_init(E_Module *m)
    e_configure_registry_item_add("appearance/comp", 120, _("Composite"), NULL,
                                  buf, e_int_config_comp_module);
 
-   e_mod_comp_cfdata_edd_init(&(mod->conf_edd),
-                              &(mod->conf_match_edd));
+   e_comp_cfdata_edd_init(&(mod->conf_edd),
+                          &(mod->conf_match_edd));
 
    mod->conf = e_config_domain_load("module.comp", mod->conf_edd);
    if (mod->conf)
@@ -84,7 +72,7 @@ e_modapi_init(E_Module *m)
         mod->conf->keep_unmapped = 1;
      }
    else _e_mod_config_new(m);
-   
+
    /* force some config vals off */
    mod->conf->lock_fps = 0;
    mod->conf->indirect = 0;
@@ -94,11 +82,6 @@ e_modapi_init(E_Module *m)
      mod->conf->first_draw_delay = 0.20;
 
    _comp_mod = mod;
-
-   if (!e_mod_comp_init())
-     {
-        // FIXME: handle if comp init fails
-     }
 
    e_module_delayed_set(m, 0);
    e_module_priority_set(m, -1000);
@@ -114,10 +97,10 @@ e_modapi_init(E_Module *m)
       co->requires_restart = 1;
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
       E_CONFIGURE_OPTION_ADD(co, BOOL, smooth_windows, mod->conf, _("Smooth scaling of composited window content"), _("composite"), _("border"));
-      co->funcs[1].none = co->funcs[0].none = e_mod_comp_shadow_set;
+      co->funcs[1].none = co->funcs[0].none = e_comp_shadow_set;
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
       E_CONFIGURE_OPTION_ADD(co, BOOL, nocomp_fs, mod->conf, _("Don't composite fullscreen windows"), _("composite"), _("border"));
-      co->funcs[1].none = co->funcs[0].none = e_mod_comp_shadow_set;
+      co->funcs[1].none = co->funcs[0].none = e_comp_shadow_set;
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
       E_CONFIGURE_OPTION_ADD(co, ENUM, engine, mod->conf, _("Compositing engine"), _("composite"), _("border"));
       co->info_cb = _e_mod_engine_info_cb;
@@ -128,7 +111,7 @@ e_modapi_init(E_Module *m)
       e_configure_option_category_tag_add(_("composite"), _("composite"));
       e_configure_option_category_icon_set(_("composite"), buf);
    }
-   
+
    return mod;
 }
 
@@ -137,7 +120,7 @@ _e_mod_config_new(E_Module *m)
 {
    Mod *mod = m->data;
 
-   mod->conf = e_mod_comp_cfdata_config_new();
+   mod->conf = e_comp_cfdata_config_new();
 }
 
 void
@@ -145,7 +128,7 @@ _e_mod_config_free(E_Module *m)
 {
    Mod *mod = m->data;
 
-   e_mod_cfdata_config_free(mod->conf);
+   e_comp_cfdata_config_free(mod->conf);
    mod->conf = NULL;
 }
 
@@ -153,8 +136,6 @@ EAPI int
 e_modapi_shutdown(E_Module *m)
 {
    Mod *mod = m->data;
-
-   e_mod_comp_shutdown();
 
    e_configure_registry_item_del("appearance/comp");
    e_configure_registry_category_del("appearance");
@@ -168,7 +149,7 @@ e_modapi_shutdown(E_Module *m)
    E_CONFIGURE_OPTION_LIST_CLEAR(cfg_opts);
    e_configure_option_category_tag_del(_("composite"), _("composite"));
    e_configure_option_category_tag_del(_("windows"), _("composite"));
-   
+
    _e_mod_config_free(m);
 
    E_CONFIG_DD_FREE(mod->conf_match_edd);

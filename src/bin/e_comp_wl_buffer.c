@@ -1,14 +1,13 @@
 #include "e.h"
-#include "e_mod_main.h"
-#include "e_mod_comp.h"
+#include "e_comp.h"
 #ifdef HAVE_WAYLAND_CLIENTS
-# include "e_mod_comp_wl.h"
-# include "e_mod_comp_wl_buffer.h"
-# include "e_mod_comp_wl_comp.h"
+# include "e_comp_wl.h"
+# include "e_comp_wl_buffer.h"
+# include "e_comp_wl_comp.h"
 #endif
 
 void
-e_mod_comp_wl_buffer_post_release(struct wl_buffer *buffer)
+e_comp_wl_buffer_post_release(struct wl_buffer *buffer)
 {
    if (--buffer->busy_count > 0) return;
    if (buffer->resource.client)
@@ -16,7 +15,7 @@ e_mod_comp_wl_buffer_post_release(struct wl_buffer *buffer)
 }
 
 void
-e_mod_comp_wl_buffer_attach(struct wl_buffer *buffer, struct wl_surface *surface)
+e_comp_wl_buffer_attach(struct wl_buffer *buffer, struct wl_surface *surface)
 {
    Wayland_Surface *ws;
 
@@ -48,7 +47,7 @@ e_mod_comp_wl_buffer_attach(struct wl_buffer *buffer, struct wl_surface *surface
      {
         Wayland_Compositor *comp;
 
-        comp = e_mod_comp_wl_comp_get();
+        comp = e_comp_wl_comp_get();
         if (ws->image != EGL_NO_IMAGE_KHR)
           comp->destroy_image(comp->egl.display, ws->image);
         ws->image = comp->create_image(comp->egl.display, NULL,

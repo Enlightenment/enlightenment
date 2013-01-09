@@ -1,23 +1,22 @@
 #include "e.h"
-#include "e_mod_main.h"
 #ifdef HAVE_WAYLAND_CLIENTS
-# include "e_mod_comp_wl.h"
-# include "e_mod_comp_wl_comp.h"
-# include "e_mod_comp_wl_output.h"
-# include "e_mod_comp_wl_input.h"
-# include "e_mod_comp_wl_shell.h"
-# include "e_mod_comp_wl_surface.h"
-# include "e_mod_comp_wl_buffer.h"
+# include "e_comp_wl.h"
+# include "e_comp_wl_comp.h"
+# include "e_comp_wl_output.h"
+# include "e_comp_wl_input.h"
+# include "e_comp_wl_shell.h"
+# include "e_comp_wl_surface.h"
+# include "e_comp_wl_buffer.h"
 #endif
 
 /* local function prototypes */
-static void _e_mod_comp_wl_surface_buffer_destroy_handle(struct wl_listener *listener, void *data __UNUSED__);
-static void _e_mod_comp_wl_surface_raise(Wayland_Surface *ws);
-static void _e_mod_comp_wl_surface_damage_rectangle(Wayland_Surface *ws, int32_t x, int32_t y, int32_t width, int32_t height);
-static void _e_mod_comp_wl_surface_frame_destroy_callback(struct wl_resource *resource);
+static void _e_comp_wl_surface_buffer_destroy_handle(struct wl_listener *listener, void *data __UNUSED__);
+static void _e_comp_wl_surface_raise(Wayland_Surface *ws);
+static void _e_comp_wl_surface_damage_rectangle(Wayland_Surface *ws, int32_t x, int32_t y, int32_t width, int32_t height);
+static void _e_comp_wl_surface_frame_destroy_callback(struct wl_resource *resource);
 
 Wayland_Surface *
-e_mod_comp_wl_surface_create(int32_t x, int32_t y, int32_t w, int32_t h)
+e_comp_wl_surface_create(int32_t x, int32_t y, int32_t w, int32_t h)
 {
    Wayland_Surface *ws;
 
@@ -52,7 +51,7 @@ e_mod_comp_wl_surface_create(int32_t x, int32_t y, int32_t w, int32_t h)
    wl_list_init(&ws->frame_callbacks);
 
    ws->buffer_destroy_listener.notify =
-     _e_mod_comp_wl_surface_buffer_destroy_handle;
+     _e_comp_wl_surface_buffer_destroy_handle;
 
    /* ws->transform = NULL; */
 
@@ -60,7 +59,7 @@ e_mod_comp_wl_surface_create(int32_t x, int32_t y, int32_t w, int32_t h)
 }
 
 void
-e_mod_comp_wl_surface_destroy(struct wl_client *client __UNUSED__, struct wl_resource *resource)
+e_comp_wl_surface_destroy(struct wl_client *client __UNUSED__, struct wl_resource *resource)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -68,7 +67,7 @@ e_mod_comp_wl_surface_destroy(struct wl_client *client __UNUSED__, struct wl_res
 }
 
 void
-e_mod_comp_wl_surface_attach(struct wl_client *client __UNUSED__, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t x, int32_t y)
+e_comp_wl_surface_attach(struct wl_client *client __UNUSED__, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t x, int32_t y)
 {
    Wayland_Surface *ws;
    struct wl_buffer *buffer;
@@ -78,13 +77,13 @@ e_mod_comp_wl_surface_attach(struct wl_client *client __UNUSED__, struct wl_reso
 
    ws = resource->data;
    buffer = buffer_resource->data;
-   shell = e_mod_comp_wl_shell_get();
+   shell = e_comp_wl_shell_get();
 
    /* TODO: damage below ?? */
 
    if (ws->buffer)
      {
-        e_mod_comp_wl_buffer_post_release(ws->buffer);
+        e_comp_wl_buffer_post_release(ws->buffer);
         wl_list_remove(&ws->buffer_destroy_listener.link);
      }
 
@@ -100,22 +99,22 @@ e_mod_comp_wl_surface_attach(struct wl_client *client __UNUSED__, struct wl_reso
      shell->shell.configure(&shell->shell, ws, ws->x + x, ws->y + y,
                             buffer->width, buffer->height);
 
-   e_mod_comp_wl_buffer_attach(buffer, &ws->surface);
+   e_comp_wl_buffer_attach(buffer, &ws->surface);
 }
 
 void
-e_mod_comp_wl_surface_damage(struct wl_client *client __UNUSED__, struct wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
+e_comp_wl_surface_damage(struct wl_client *client __UNUSED__, struct wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
 {
    Wayland_Surface *ws;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ws = resource->data;
-   _e_mod_comp_wl_surface_damage_rectangle(ws, x, y, width, height);
+   _e_comp_wl_surface_damage_rectangle(ws, x, y, width, height);
 }
 
 void
-e_mod_comp_wl_surface_frame(struct wl_client *client, struct wl_resource *resource, uint32_t callback)
+e_comp_wl_surface_frame(struct wl_client *client, struct wl_resource *resource, uint32_t callback)
 {
    Wayland_Surface *ws;
    Wayland_Frame_Callback *cb;
@@ -131,7 +130,7 @@ e_mod_comp_wl_surface_frame(struct wl_client *client, struct wl_resource *resour
 
    cb->resource.object.interface = &wl_callback_interface;
    cb->resource.object.id = callback;
-   cb->resource.destroy = _e_mod_comp_wl_surface_frame_destroy_callback;
+   cb->resource.destroy = _e_comp_wl_surface_frame_destroy_callback;
    cb->resource.client = client;
    cb->resource.data = cb;
 
@@ -140,7 +139,7 @@ e_mod_comp_wl_surface_frame(struct wl_client *client, struct wl_resource *resour
 }
 
 void
-e_mod_comp_wl_surface_set_opaque_region(struct wl_client *client __UNUSED__, struct wl_resource *resource, struct wl_resource *region_resource)
+e_comp_wl_surface_set_opaque_region(struct wl_client *client __UNUSED__, struct wl_resource *resource, struct wl_resource *region_resource)
 {
    Wayland_Surface *ws;
 
@@ -161,7 +160,7 @@ e_mod_comp_wl_surface_set_opaque_region(struct wl_client *client __UNUSED__, str
 }
 
 void
-e_mod_comp_wl_surface_set_input_region(struct wl_client *client __UNUSED__, struct wl_resource *resource, struct wl_resource *region_resource)
+e_comp_wl_surface_set_input_region(struct wl_client *client __UNUSED__, struct wl_resource *resource, struct wl_resource *region_resource)
 {
    Wayland_Surface *ws;
    Wayland_Input *input;
@@ -180,12 +179,12 @@ e_mod_comp_wl_surface_set_input_region(struct wl_client *client __UNUSED__, stru
    else
      pixman_region32_init_rect(&ws->input, 0, 0, ws->w, ws->h);
 
-   input = e_mod_comp_wl_input_get();
-   e_mod_comp_wl_comp_repick(&input->seat, e_mod_comp_wl_time_get());
+   input = e_comp_wl_input_get();
+   e_comp_wl_comp_repick(&input->seat, e_comp_wl_time_get());
 }
 
 void 
-e_mod_comp_wl_surface_commit(struct wl_client *client, struct wl_resource *resource)
+e_comp_wl_surface_commit(struct wl_client *client, struct wl_resource *resource)
 {
    Wayland_Surface *ws;
    pixman_region32_t opaque;
@@ -196,8 +195,8 @@ e_mod_comp_wl_surface_commit(struct wl_client *client, struct wl_resource *resou
 
    /* TODO: handle 'pending' ?? */
 
-   e_mod_comp_wl_surface_configure(ws, ws->x, ws->y, ws->w, ws->h);
-   e_mod_comp_wl_surface_damage_surface(ws);
+   e_comp_wl_surface_configure(ws, ws->x, ws->y, ws->w, ws->h);
+   e_comp_wl_surface_damage_surface(ws);
 
    pixman_region32_init_rect(&opaque, 0, 0, ws->w, ws->h);
    pixman_region32_intersect(&opaque, &opaque, &ws->opaque);
@@ -216,7 +215,7 @@ e_mod_comp_wl_surface_commit(struct wl_client *client, struct wl_resource *resou
 }
 
 void
-e_mod_comp_wl_surface_destroy_surface(struct wl_resource *resource)
+e_comp_wl_surface_destroy_surface(struct wl_resource *resource)
 {
    Wayland_Surface *ws;
    Wayland_Input *input;
@@ -228,13 +227,13 @@ e_mod_comp_wl_surface_destroy_surface(struct wl_resource *resource)
    /* TODO: damage below */
    /* TODO: flush damage */
 
-   input = e_mod_comp_wl_input_get();
+   input = e_comp_wl_input_get();
 
    if (ws->win)
      e_object_del(E_OBJECT(ws->win));
 
    wl_list_remove(&ws->link);
-   e_mod_comp_wl_comp_repick(&input->seat, e_mod_comp_wl_time_get());
+   e_comp_wl_comp_repick(&input->seat, e_comp_wl_time_get());
 
    if (ws->texture) glDeleteTextures(1, &ws->texture);
 
@@ -245,7 +244,7 @@ e_mod_comp_wl_surface_destroy_surface(struct wl_resource *resource)
      {
         Wayland_Compositor *comp;
 
-        comp = e_mod_comp_wl_comp_get();
+        comp = e_comp_wl_comp_get();
         comp->destroy_image(comp->egl.display, ws->image);
      }
 
@@ -258,7 +257,7 @@ e_mod_comp_wl_surface_destroy_surface(struct wl_resource *resource)
 }
 
 void
-e_mod_comp_wl_surface_configure(Wayland_Surface *ws, int32_t x, int32_t y, int32_t width, int32_t height)
+e_comp_wl_surface_configure(Wayland_Surface *ws, int32_t x, int32_t y, int32_t width, int32_t height)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -278,13 +277,13 @@ e_mod_comp_wl_surface_configure(Wayland_Surface *ws, int32_t x, int32_t y, int32
      {
         Wayland_Output *output;
 
-        output = e_mod_comp_wl_output_get();
+        output = e_comp_wl_output_get();
         wl_list_insert_list(output->frame_callbacks.prev,
                             &ws->frame_callbacks);
         wl_list_init(&ws->frame_callbacks);
      }
 
-   e_mod_comp_wl_surface_damage_surface(ws);
+   e_comp_wl_surface_damage_surface(ws);
 
    pixman_region32_fini(&ws->opaque);
    if (ws->visual == WAYLAND_RGB_VISUAL)
@@ -294,7 +293,7 @@ e_mod_comp_wl_surface_configure(Wayland_Surface *ws, int32_t x, int32_t y, int32
 }
 
 void
-e_mod_comp_wl_surface_activate(Wayland_Surface *ws, Wayland_Input *wi, uint32_t timestamp __UNUSED__)
+e_comp_wl_surface_activate(Wayland_Surface *ws, Wayland_Input *wi, uint32_t timestamp __UNUSED__)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -304,7 +303,7 @@ e_mod_comp_wl_surface_activate(Wayland_Surface *ws, Wayland_Input *wi, uint32_t 
         ws->win->border->borderless = EINA_TRUE;
      }
 
-   _e_mod_comp_wl_surface_raise(ws);
+   _e_comp_wl_surface_raise(ws);
 
    if (wi->seat.keyboard)
      {
@@ -316,16 +315,16 @@ e_mod_comp_wl_surface_activate(Wayland_Surface *ws, Wayland_Input *wi, uint32_t 
 }
 
 void
-e_mod_comp_wl_surface_damage_surface(Wayland_Surface *ws)
+e_comp_wl_surface_damage_surface(Wayland_Surface *ws)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   _e_mod_comp_wl_surface_damage_rectangle(ws, 0, 0, ws->w, ws->h);
+   _e_comp_wl_surface_damage_rectangle(ws, 0, 0, ws->w, ws->h);
 }
 
 /* local functions */
 static void
-_e_mod_comp_wl_surface_buffer_destroy_handle(struct wl_listener *listener, void *data __UNUSED__)
+_e_comp_wl_surface_buffer_destroy_handle(struct wl_listener *listener, void *data __UNUSED__)
 {
    Wayland_Surface *ws;
 
@@ -336,24 +335,24 @@ _e_mod_comp_wl_surface_buffer_destroy_handle(struct wl_listener *listener, void 
 }
 
 static void
-_e_mod_comp_wl_surface_raise(Wayland_Surface *ws)
+_e_comp_wl_surface_raise(Wayland_Surface *ws)
 {
    Wayland_Compositor *comp;
    Wayland_Input *input;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   comp = e_mod_comp_wl_comp_get();
-   input = e_mod_comp_wl_input_get();
+   comp = e_comp_wl_comp_get();
+   input = e_comp_wl_input_get();
 
    wl_list_remove(&ws->link);
    wl_list_insert(&comp->surfaces, &ws->link);
-   e_mod_comp_wl_comp_repick(&input->seat, e_mod_comp_wl_time_get());
-   e_mod_comp_wl_surface_damage_surface(ws);
+   e_comp_wl_comp_repick(&input->seat, e_comp_wl_time_get());
+   e_comp_wl_surface_damage_surface(ws);
 }
 
 static void
-_e_mod_comp_wl_surface_damage_rectangle(Wayland_Surface *ws, int32_t x, int32_t y, int32_t width, int32_t height)
+_e_comp_wl_surface_damage_rectangle(Wayland_Surface *ws, int32_t x, int32_t y, int32_t width, int32_t height)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -362,7 +361,7 @@ _e_mod_comp_wl_surface_damage_rectangle(Wayland_Surface *ws, int32_t x, int32_t 
 }
 
 static void
-_e_mod_comp_wl_surface_frame_destroy_callback(struct wl_resource *resource)
+_e_comp_wl_surface_frame_destroy_callback(struct wl_resource *resource)
 {
    Wayland_Frame_Callback *cb;
 

@@ -664,7 +664,12 @@ main(int argc, char **argv)
      }
 
    e_screensaver_preinit();
-   
+
+   TS("E_Comp Init");
+   e_comp_init();
+   TS("E_Comp Init Done");
+   _e_main_shutdown_push(e_comp_shutdown);
+
    if (e_config->show_splash)
      e_init_status_set(_("Setup Screens"));
    TS("Screens Init");
