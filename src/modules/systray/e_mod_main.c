@@ -367,6 +367,7 @@ e_modapi_init(E_Module *m)
    e_gadcon_provider_register(&_gc_class);
 
    systray_xembed_init();
+   systray_notifier_host_init();
 
    return m;
 }
@@ -378,6 +379,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    systray_mod = NULL;
 
    systray_xembed_shutdown();
+   systray_notifier_host_shutdown();
 
    return 1;
 }

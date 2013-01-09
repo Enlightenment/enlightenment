@@ -14,18 +14,32 @@ typedef enum {
    STATUS_LAST
 } Status;
 
+typedef struct _Notifier_Data
+{
+   EINA_INLIST;
+   Notifier_Item *item;
+   Evas_Object *icon;
+} Notifier_Item_Icon;
+
 struct _Instance_Notifier_Host
 {
+   EINA_INLIST;
    Instance *inst;
-   Eina_Inlist *items_list;
    const Evas_Object *box;
    const Evas_Object *edje;
-   EDBus_Connection *conn;
-   EDBus_Proxy *watcher;
+   Eina_Inlist *ii_list;
    E_Gadcon *gadcon;
 };
 
-typedef struct _Notifier_Item
+struct _Context_Notifier_Host
+{
+   EDBus_Connection *conn;
+   EDBus_Proxy *watcher;
+   Eina_Inlist *item_list;
+   Eina_Inlist *instances;
+};
+
+struct _Notifier_Item
 {
    EINA_INLIST;
    const char *bus_id;
@@ -39,12 +53,10 @@ typedef struct _Notifier_Item
    const char *icon_name;
    const char *attention_icon_name;
    const char *icon_path;
-   Evas_Object *icon_object;
-   Instance_Notifier_Host *host_inst;
    const char *menu_path;
    E_DBusMenu_Ctx *menu_data;
    Eina_List *signals;
-} Notifier_Item;
+};
 
 typedef void (*E_Notifier_Watcher_Item_Registered_Cb)(void *data, const char *service);
 typedef void (*E_Notifier_Watcher_Item_Unregistered_Cb)(void *data, const char *service);
@@ -53,8 +65,8 @@ void systray_notifier_update_menu(void *data, E_DBusMenu_Item *new_root_item);
 void systray_notifier_item_update(Notifier_Item *item);
 void systray_notifier_item_free(Notifier_Item *item);
 
-void systray_notifier_dbus_init(Instance_Notifier_Host *host_inst);
-void systray_notifier_dbus_shutdown(Instance_Notifier_Host *host_inst);
+void systray_notifier_dbus_init(Context_Notifier_Host *ctx);
+void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx);
 
 void systray_notifier_dbus_watcher_start(EDBus_Connection *connection, E_Notifier_Watcher_Item_Registered_Cb registered, E_Notifier_Watcher_Item_Unregistered_Cb unregistered, const void *data);
 void systray_notifier_dbus_watcher_stop(void);

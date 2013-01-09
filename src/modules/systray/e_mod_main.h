@@ -11,7 +11,9 @@ EAPI int   e_modapi_save(E_Module *m);
 
 typedef struct _Instance Instance;
 typedef struct _Instance_Xembed Instance_Xembed;
+typedef struct _Context_Notifier_Host Context_Notifier_Host;
 typedef struct _Instance_Notifier_Host Instance_Notifier_Host;
+typedef struct _Notifier_Item Notifier_Item;
 
 E_Gadcon_Orient systray_orient_get(const Instance *inst);
 const E_Gadcon *systray_gadcon_get(const Instance *inst);
@@ -37,6 +39,8 @@ void systray_xembed_size_updated(Instance_Xembed *xembed);
 
 Instance_Notifier_Host *systray_notifier_host_new(Instance *inst, E_Gadcon *gadcon);
 void systray_notifier_host_free(Instance_Notifier_Host *notifier);
+void systray_notifier_host_init(void);
+void systray_notifier_host_shutdown(void);
 
 /**
  * @addtogroup Optional_Gadgets

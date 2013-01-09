@@ -15,13 +15,30 @@ const char *Status_Names[] = {
 };
 
 static const char *box_part_name = "e.dbus_notifier.box";
+static Context_Notifier_Host *ctx = NULL;
 
 void
 systray_notifier_item_free(Notifier_Item *item)
 {
    EDBus_Object *obj;
    EDBus_Signal_Handler *sig;
-   evas_object_del(item->icon_object);
+   Instance_Notifier_Host *host_inst;
+   EINA_INLIST_FOREACH(ctx->instances, host_inst)
+     {
+        Notifier_Item_Icon *ii;
+        EINA_INLIST_FOREACH(host_inst->ii_list, ii)
+          {
+             if (ii->item == item)
+               break;
+          }
+        if (!ii)
+          continue;
+        host_inst->ii_list = eina_inlist_remove(host_inst->ii_list,
+                                                EINA_INLIST_GET(ii));
+        evas_object_del(ii->icon);
+        free(ii);
+        systray_size_updated(host_inst->inst);
+     }
    if (item->menu_path)
      e_dbusmenu_unload(item->menu_data);
    eina_stringshare_del(item->bus_id);
@@ -43,9 +60,7 @@ systray_notifier_item_free(Notifier_Item *item)
    obj = edbus_proxy_object_get(item->proxy);
    edbus_proxy_unref(item->proxy);
    edbus_object_unref(obj);
-   item->host_inst->items_list = eina_inlist_remove(item->host_inst->items_list,
-                                                    EINA_INLIST_GET(item));
-   systray_size_updated(item->host_inst->inst);
+   ctx->item_list = eina_inlist_remove(ctx->item_list, EINA_INLIST_GET(item));
    free(item);
 }
 
@@ -126,16 +141,16 @@ _item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
 }
 
 static void
-_item_menu_new(Notifier_Item *item)
+_item_menu_new(Notifier_Item_Icon *ii)
 {
    E_DBusMenu_Item *root_item;
    E_Menu *m;
    E_Zone *zone;
    int x, y;
-   E_Gadcon *gadcon = item->host_inst->gadcon;
-
-   if (!item->dbus_item) return;
-   root_item = item->dbus_item;
+   E_Gadcon *gadcon = evas_object_data_get(ii->icon, "gadcon");
+   EINA_SAFETY_ON_NULL_RETURN(gadcon);
+   if (!ii->item->dbus_item) return;
+   root_item = ii->item->dbus_item;
    EINA_SAFETY_ON_FALSE_RETURN(root_item->is_submenu);
 
    m = _item_submenu_new(root_item, NULL);
@@ -151,11 +166,11 @@ _item_menu_new(Notifier_Item *item)
 void
 _clicked_item_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
-   Notifier_Item *item = data;
+   Notifier_Item_Icon *ii = data;
    Evas_Event_Mouse_Down *ev = event;
 
    if (ev->button != 1) return;
-   _item_menu_new(item);
+   _item_menu_new(ii);
 }
 
 void
@@ -166,10 +181,10 @@ systray_notifier_update_menu(void *data, E_DBusMenu_Item *new_root_item)
 }
 
 static void
-image_scale(Notifier_Item *item)
+image_scale(Instance_Notifier_Host *notifier_inst, Notifier_Item_Icon *ii)
 {
    Evas_Coord sz;
-   switch (systray_gadcon_get(item->host_inst->inst)->orient)
+   switch (systray_gadcon_get(notifier_inst->inst)->orient)
      {
       case E_GADCON_ORIENT_HORIZ:
       case E_GADCON_ORIENT_TOP:
@@ -178,7 +193,7 @@ image_scale(Notifier_Item *item)
       case E_GADCON_ORIENT_CORNER_TR:
       case E_GADCON_ORIENT_CORNER_BL:
       case E_GADCON_ORIENT_CORNER_BR:
-        sz = systray_gadcon_get(item->host_inst->inst)->shelf->h;
+        sz = systray_gadcon_get(notifier_inst->inst)->shelf->h;
         break;
 
       case E_GADCON_ORIENT_VERT:
@@ -189,79 +204,107 @@ image_scale(Notifier_Item *item)
       case E_GADCON_ORIENT_CORNER_LB:
       case E_GADCON_ORIENT_CORNER_RB:
       default:
-        sz = systray_gadcon_get(item->host_inst->inst)->shelf->w;
+        sz = systray_gadcon_get(notifier_inst->inst)->shelf->w;
+        break;
      }
    sz = sz - 5;
-   evas_object_resize(item->icon_object, sz, sz);
+   evas_object_resize(ii->icon, sz, sz);
 }
 
-void
-systray_notifier_item_update(Notifier_Item *item)
+static void
+_systray_notifier_inst_item_update(Instance_Notifier_Host *host_inst, Notifier_Item *item, Eina_Bool search)
 {
-   if (!item->icon_object)
+   Notifier_Item_Icon *ii = NULL;
+   if (!search)
+     goto jump_search;
+   EINA_INLIST_FOREACH(host_inst->ii_list, ii)
      {
-        item->icon_object = e_icon_add(evas_object_evas_get(item->host_inst->edje));
-        EINA_SAFETY_ON_NULL_RETURN(item->icon_object);
-        image_scale(item);
-        systray_size_updated(item->host_inst->inst);
-        evas_object_event_callback_add(item->icon_object, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _clicked_item_cb, item);
+        if (ii->item == item)
+          break;
+     }
+jump_search:
+   if (!ii)
+     {
+        ii = calloc(1, sizeof(Notifier_Item_Icon));
+        ii->item = item;
+        host_inst->ii_list = eina_inlist_append(host_inst->ii_list,
+                                                      EINA_INLIST_GET(ii));
      }
 
+   if (!ii->icon)
+     {
+        ii->icon = e_icon_add(evas_object_evas_get(host_inst->edje));
+        EINA_SAFETY_ON_NULL_RETURN(ii->icon);
+        image_scale(host_inst, ii);
+        evas_object_data_set(ii->icon, "gadcon", host_inst->gadcon);
+        evas_object_event_callback_add(ii->icon, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _clicked_item_cb, ii);
+     }
    switch (item->status)
      {
       case STATUS_ACTIVE:
         {
-           image_load(item->icon_name, item->icon_path, item->icon_object);
-           if (!evas_object_visible_get(item->icon_object))
+           image_load(item->icon_name, item->icon_path, ii->icon);
+           if (!evas_object_visible_get(ii->icon))
              {
-                systray_edje_box_append(item->host_inst->inst, box_part_name,
-                                        item->icon_object);
-                evas_object_show(item->icon_object);
+                systray_edje_box_append(host_inst->inst, box_part_name,
+                                        ii->icon);
+                evas_object_show(ii->icon);
              }
            break;
         }
       case STATUS_PASSIVE:
         {
-           if (evas_object_visible_get(item->icon_object))
+           if (evas_object_visible_get(ii->icon))
              {
-                systray_edje_box_remove(item->host_inst->inst, box_part_name,
-                                        item->icon_object);
-                evas_object_hide(item->icon_object);
+                systray_edje_box_remove(host_inst->inst, box_part_name,
+                                        ii->icon);
+                evas_object_hide(ii->icon);
              }
            break;
         }
       case STATUS_ATTENTION:
         {
-           image_load(item->attention_icon_name, item->icon_path,
-                      item->icon_object);
-           if (!evas_object_visible_get(item->icon_object))
+           image_load(item->attention_icon_name, item->icon_path, ii->icon);
+           if (!evas_object_visible_get(ii->icon))
              {
-                systray_edje_box_append(item->host_inst->inst, box_part_name,
-                                        item->icon_object);
-                evas_object_show(item->icon_object);
+                systray_edje_box_append(host_inst->inst, box_part_name,
+                                        ii->icon);
+                evas_object_show(ii->icon);
              }
            break;
         }
       default:
         {
-           ERR("Status unexpected.");
+           WRN("unhandled status");
            break;
         }
      }
-   systray_size_updated(item->host_inst->inst);
+   systray_size_updated(host_inst->inst);
+}
+
+void
+systray_notifier_item_update(Notifier_Item *item)
+{
+   Instance_Notifier_Host *inst;
+   EINA_INLIST_FOREACH(ctx->instances, inst)
+     _systray_notifier_inst_item_update(inst, item, EINA_TRUE);
 }
 
 Instance_Notifier_Host *
 systray_notifier_host_new(Instance *inst, E_Gadcon *gadcon)
 {
    Instance_Notifier_Host *host_inst = NULL;
+   Notifier_Item *item;
    host_inst = calloc(1, sizeof(Instance_Notifier_Host));
    EINA_SAFETY_ON_NULL_RETURN_VAL(host_inst, NULL);
    host_inst->inst = inst;
    host_inst->edje = systray_edje_get(inst);
    host_inst->gadcon = gadcon;
-   systray_notifier_dbus_init(host_inst);
+   ctx->instances = eina_inlist_append(ctx->instances, EINA_INLIST_GET(host_inst));
+
+   EINA_INLIST_FOREACH(ctx->item_list, item)
+     _systray_notifier_inst_item_update(host_inst, item, EINA_FALSE);
 
    return host_inst;
 }
@@ -269,6 +312,29 @@ systray_notifier_host_new(Instance *inst, E_Gadcon *gadcon)
 void
 systray_notifier_host_free(Instance_Notifier_Host *notifier)
 {
-   systray_notifier_dbus_shutdown(notifier);
+   while (notifier->ii_list)
+     {
+        Notifier_Item_Icon *ii = EINA_INLIST_CONTAINER_GET(notifier->ii_list, Notifier_Item_Icon);
+        notifier->ii_list = eina_inlist_remove(notifier->ii_list,
+                                               notifier->ii_list);
+        free(ii);
+     }
+   ctx->instances = eina_inlist_remove(ctx->instances, EINA_INLIST_GET(notifier));
    free(notifier);
+}
+
+void
+systray_notifier_host_init(void)
+{
+   ctx = calloc(1, sizeof(Context_Notifier_Host));
+   EINA_SAFETY_ON_NULL_RETURN(ctx);
+   systray_notifier_dbus_init(ctx);
+}
+
+void
+systray_notifier_host_shutdown(void)
+{
+   systray_notifier_dbus_shutdown(ctx);
+   free(ctx);
+   ctx = NULL;
 }

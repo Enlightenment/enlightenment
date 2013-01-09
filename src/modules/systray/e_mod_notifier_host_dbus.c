@@ -32,10 +32,10 @@ service_string_parse(const char *item, const char **path, const char **bus_id)
 }
 
 static Notifier_Item *
-notifier_item_find(const char *path, const char *bus_id, Instance_Notifier_Host *host_inst)
+notifier_item_find(const char *path, const char *bus_id, Context_Notifier_Host *ctx)
 {
    Notifier_Item *item;
-   EINA_INLIST_FOREACH(host_inst->items_list, item)
+   EINA_INLIST_FOREACH(ctx->item_list, item)
      {
         if (item->bus_id == bus_id && item->path == path)
           return item;
@@ -267,7 +267,7 @@ new_status_cb(void *data, const EDBus_Message *msg)
 }
 
 static void
-notifier_item_add(const char *path, const char *bus_id, Instance_Notifier_Host *host_inst)
+notifier_item_add(const char *path, const char *bus_id, Context_Notifier_Host *ctx)
 {
    EDBus_Proxy *proxy;
    Notifier_Item *item = calloc(1, sizeof(Notifier_Item));
@@ -276,11 +276,10 @@ notifier_item_add(const char *path, const char *bus_id, Instance_Notifier_Host *
 
    item->path = path;
    item->bus_id = bus_id;
-   host_inst->items_list = eina_inlist_append(host_inst->items_list,
-                                              EINA_INLIST_GET(item));
-   item->host_inst = host_inst;
+   ctx->item_list = eina_inlist_append(ctx->item_list,
+                                        EINA_INLIST_GET(item));
 
-   proxy = edbus_proxy_get(edbus_object_get(host_inst->conn, bus_id, path),
+   proxy = edbus_proxy_get(edbus_object_get(ctx->conn, bus_id, path),
                            ITEM_IFACE);
    item->proxy = proxy;
    edbus_proxy_property_get_all(proxy, props_get_all_cb, item);
@@ -305,7 +304,7 @@ static void
 notifier_item_add_cb(void *data, const EDBus_Message *msg)
 {
    const char *item, *bus, *path;
-   Instance_Notifier_Host *host_inst = data;
+   Context_Notifier_Host *ctx = data;
 
    if (!edbus_message_arguments_get(msg, "s", &item))
      {
@@ -314,7 +313,7 @@ notifier_item_add_cb(void *data, const EDBus_Message *msg)
      }
    DBG("add %s", item);
    if (service_string_parse(item, &path, &bus))
-     notifier_item_add(path, bus, host_inst);
+     notifier_item_add(path, bus, ctx);
 }
 
 static void
@@ -322,7 +321,7 @@ notifier_item_del_cb(void *data, const EDBus_Message *msg)
 {
    const char *service, *bus, *path;
    Notifier_Item *item;
-   Instance_Notifier_Host *host_inst = data;
+   Context_Notifier_Host *ctx = data;
 
    if (!edbus_message_arguments_get(msg, "s", &service))
      {
@@ -332,7 +331,7 @@ notifier_item_del_cb(void *data, const EDBus_Message *msg)
    DBG("service %s", service);
    if (!service_string_parse(service, &path, &bus))
      return;
-   item = notifier_item_find(path, bus, host_inst);
+   item = notifier_item_find(path, bus, ctx);
    if (item)
      systray_notifier_item_free(item);
    eina_stringshare_del(path);
@@ -345,7 +344,7 @@ notifier_items_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pendi
    const char *item;
    const char *error, *error_msg;
    EDBus_Message_Iter *array, *variant;
-   Instance_Notifier_Host *host_inst = data;
+   Context_Notifier_Host *ctx = data;
 
    if (edbus_message_error_get(msg, &error, &error_msg))
      {
@@ -369,7 +368,7 @@ notifier_items_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pendi
      {
         const char *bus, *path;
         if (service_string_parse(item, &path, &bus))
-          notifier_item_add(path, bus, host_inst);
+          notifier_item_add(path, bus, ctx);
      }
 }
 
@@ -377,21 +376,21 @@ static void
 item_registered_local_cb(void *data, const char *service)
 {
    const char *bus, *path;
-   Instance_Notifier_Host *host_inst = data;
+   Context_Notifier_Host *ctx = data;
    if (service_string_parse(service, &path, &bus))
-     notifier_item_add(path, bus, host_inst);
+     notifier_item_add(path, bus, ctx);
 }
 
 static void
 item_unregistered_local_cb(void *data, const char *service)
 {
    const char *bus, *path;
-   Instance_Notifier_Host *host_inst = data;
+   Context_Notifier_Host *ctx = data;
    Notifier_Item *item;
 
    if (!service_string_parse(service, &path, &bus))
      return;
-   item = notifier_item_find(path, bus, host_inst);
+   item = notifier_item_find(path, bus, ctx);
    if (item)
      systray_notifier_item_free(item);
    eina_stringshare_del(path);
@@ -404,7 +403,7 @@ name_request_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EIN
    const char *error, *error_msg;
    unsigned flag;
    EDBus_Object *obj;
-   Instance_Notifier_Host *host_inst = data;
+   Context_Notifier_Host *ctx = data;
 
    if (edbus_message_error_get(msg, &error, &error_msg))
      {
@@ -420,54 +419,55 @@ name_request_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EIN
 
    if (flag == EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER)
      {
-        systray_notifier_dbus_watcher_start(host_inst->conn,
+        systray_notifier_dbus_watcher_start(ctx->conn,
                                             item_registered_local_cb,
-                                            item_unregistered_local_cb, host_inst);
+                                            item_unregistered_local_cb, ctx);
         return;
      }
 end:
    WRN("Bus name: %s already in use, getting data via dbus.\n", WATCHER_BUS);
-   obj = edbus_object_get(host_inst->conn, WATCHER_BUS, WATCHER_PATH);
-   host_inst->watcher = edbus_proxy_get(obj, WATCHER_IFACE);
-   edbus_proxy_call(host_inst->watcher, "RegisterStatusNotifierHost", NULL, NULL, -1, "s",
+   obj = edbus_object_get(ctx->conn, WATCHER_BUS, WATCHER_PATH);
+   ctx->watcher = edbus_proxy_get(obj, WATCHER_IFACE);
+   edbus_proxy_call(ctx->watcher, "RegisterStatusNotifierHost", NULL, NULL, -1, "s",
                     HOST_REGISTRER);
-   edbus_proxy_property_get(host_inst->watcher, "RegisteredStatusNotifierItems",
-                            notifier_items_get_cb, host_inst);
-   edbus_proxy_signal_handler_add(host_inst->watcher, "StatusNotifierItemRegistered",
-                                  notifier_item_add_cb, host_inst);
-   edbus_proxy_signal_handler_add(host_inst->watcher, "StatusNotifierItemUnregistered",
-                                  notifier_item_del_cb, host_inst);
+   edbus_proxy_property_get(ctx->watcher, "RegisteredStatusNotifierItems",
+                            notifier_items_get_cb, ctx);
+   edbus_proxy_signal_handler_add(ctx->watcher, "StatusNotifierItemRegistered",
+                                  notifier_item_add_cb, ctx);
+   edbus_proxy_signal_handler_add(ctx->watcher, "StatusNotifierItemUnregistered",
+                                  notifier_item_del_cb, ctx);
 }
 
-void systray_notifier_dbus_init(Instance_Notifier_Host *host_inst)
+void
+systray_notifier_dbus_init(Context_Notifier_Host *ctx)
 {
    edbus_init();
-
-   host_inst->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
-
-   edbus_name_request(host_inst->conn,
+   ctx->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   edbus_name_request(ctx->conn,
                       WATCHER_BUS, EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING,
-                      name_request_cb, host_inst);
+                      name_request_cb, ctx);
 }
 
-void systray_notifier_dbus_shutdown(Instance_Notifier_Host *host_inst)
+void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx)
 {
    Eina_Inlist *safe_list;
    Notifier_Item *item;
 
-   EINA_INLIST_FOREACH_SAFE(host_inst->items_list, safe_list, item)
+   ERR("systray_notifier_dbus_shutdown");
+
+   EINA_INLIST_FOREACH_SAFE(ctx->item_list, safe_list, item)
      systray_notifier_item_free(item);
 
-   if (!host_inst->watcher)
+   if (!ctx->watcher)
      systray_notifier_dbus_watcher_stop();
    else
      {
         EDBus_Object *obj;
-        obj = edbus_proxy_object_get(host_inst->watcher);
-        edbus_proxy_unref(host_inst->watcher);
+        obj = edbus_proxy_object_get(ctx->watcher);
+        edbus_proxy_unref(ctx->watcher);
         edbus_object_unref(obj);
-        host_inst->watcher = NULL;
+        ctx->watcher = NULL;
      }
-   edbus_connection_unref(host_inst->conn);
+   edbus_connection_unref(ctx->conn);
    edbus_shutdown();
 }
