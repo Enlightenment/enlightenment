@@ -7,6 +7,8 @@ Additions:
         * music-control: control any mpris2-compatible music player
         * appmenu: externally show a menu of the current focused application
         * bluez4: control bluetoothd daemon
+        * conf_comp: configuration dialogs for composite, like in previous comp
+        module
     API:
         * Added action to reset filemanager
         * Added function to hide all active menus
@@ -15,6 +17,7 @@ Additions:
         * Added e_configure_option API
         * Added D-Bus notification to systray module
         * Added D-Bus menu support
+        * Added composite into core from previous comp module
     Config:
         * Added option for disabling icons in menus
         * Added option for doing desklock, blanking or dimming even when showing fullscreen windows.
