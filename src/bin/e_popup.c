@@ -91,7 +91,7 @@ e_popup_show(E_Popup *pop)
    E_OBJECT_TYPE_CHECK(pop, E_POPUP_TYPE);
    if (pop->visible) return;
    pop->visible = 1;
-   if ((pop->shaped) && (!e_config->use_composite))
+   if (pop->shaped && e_config->use_shaped_win)
      {
         ecore_evas_move(pop->ecore_evas,
                         pop->zone->container->manager->w,
@@ -103,7 +103,7 @@ e_popup_show(E_Popup *pop)
    else
      {
         ecore_evas_show(pop->ecore_evas);
-        if (!(pop->shaped && e_config->use_composite))
+        if (!pop->shaped || e_config->use_shaped_win)
           e_container_shape_show(pop->shape);
      }
 }
@@ -196,7 +196,7 @@ e_popup_edje_bg_object_set(E_Popup *pop, Evas_Object *o)
           pop->shaped = 1;
         else
           pop->shaped = 0;
-        if (e_config->use_composite)
+        if (!e_config->use_shaped_win)
           {
              ecore_evas_alpha_set(pop->ecore_evas, pop->shaped);
              eina_hash_del(_e_popup_hash, e_util_winid_str_get(pop->evas_win), pop);
@@ -300,7 +300,7 @@ e_popup_idler_before(void)
              pop->need_shape_export = 0;
           }
         if ((pop->visible) && (!pop->idle_enterer) &&
-            (!pop->shaped && e_config->use_composite))
+            (!pop->shaped && !e_config->use_shaped_win))
           e_container_shape_show(pop->shape);
      }
 }

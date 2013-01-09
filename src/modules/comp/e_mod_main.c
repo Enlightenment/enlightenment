@@ -89,12 +89,6 @@ e_modapi_init(E_Module *m)
    mod->conf->lock_fps = 0;
    mod->conf->indirect = 0;
 
-   if (!e_config->use_composite)
-     {
-        e_config->use_composite = 1;
-        e_config_save_queue();
-     }
-
    /* XXX: update old configs. add config versioning */
    if (mod->conf->first_draw_delay == 0)
      mod->conf->first_draw_delay = 0.20;

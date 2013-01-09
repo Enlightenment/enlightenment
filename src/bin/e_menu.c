@@ -1766,7 +1766,7 @@ _e_menu_realize(E_Menu *m)
 
    if (m->shaped)
      {
-        if (e_config->use_composite)
+        if (!e_config->use_shaped_win)
           {
              ecore_evas_alpha_set(m->ecore_evas, m->shaped);
 

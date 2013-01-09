@@ -806,7 +806,7 @@ _evry_window_new(E_Zone *zone, E_Zone_Edge edge)
      {
         win->shaped = EINA_TRUE;
 
-        if (e_config->use_composite)
+        if (!e_config->use_shaped_win)
           {
              ecore_evas_alpha_set(win->ewin->ecore_evas, 1);
              win->ewin->evas_win = ecore_evas_software_x11_window_get(win->ewin->ecore_evas);

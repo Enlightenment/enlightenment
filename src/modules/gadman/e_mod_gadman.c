@@ -107,8 +107,8 @@ gadman_init(E_Module *m)
    Man->height = Man->container->h;
 
    /* Check if composite is enable */
-   if (ecore_x_screen_is_composited(0) || e_config->use_composite)
-     Man->use_composite = 1;
+   if (e_config->use_shaped_win)
+     Man->use_shaped_win = 0;
 
    /* with this we can trap screen resolution change (a better way?)*/
    e_container_shape_change_callback_add(Man->container, on_shape_change, NULL);
@@ -742,7 +742,7 @@ _gadman_gadcon_new(const char *name, Gadman_Layer_Type layer, E_Zone *zone, E_Ga
                                         &(Man->top_win));
           }
 
-        if (Man->use_composite)
+        if (!Man->use_shaped_win)
           {
              ecore_evas_alpha_set(Man->top_ee, 1);
              Man->top_win = ecore_evas_software_x11_window_get(Man->top_ee);

@@ -6,7 +6,7 @@ static void _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static int _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static void _cb_composite_change(void *data, Evas_Object *obj);
+static void _cb_shaped_change(void *data, Evas_Object *obj);
 static void _cb_confirm_yes(void *data);
 static void _cb_confirm_no(void *data);
 
@@ -14,8 +14,8 @@ struct _E_Config_Dialog_Data
 {
    E_Config_Dialog *cfd;
 
-   int use_composite;
-   Evas_Object *o_composite;
+   int use_shaped_win;
+   Evas_Object *o_shaped;
 };
 
 E_Config_Dialog *
@@ -53,7 +53,7 @@ _create_data(E_Config_Dialog *cfd)
 static void
 _fill_data(E_Config_Dialog_Data *cfdata)
 {
-   cfdata->use_composite = e_config->use_composite;
+   cfdata->use_shaped_win = e_config->use_shaped_win;
 }
 
 static void
@@ -65,7 +65,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 static int
 _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   e_config->use_composite = cfdata->use_composite;
+   e_config->use_shaped_win = cfdata->use_shaped_win;
    e_config_save_queue();
    return 1;
 }
@@ -73,7 +73,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 static int
 _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   return !(cfdata->use_composite == e_config->use_composite);
+   return !(cfdata->use_shaped_win == e_config->use_shaped_win);
 }
 
 static Evas_Object *
@@ -84,10 +84,10 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
    o = e_widget_list_add(evas, 0, 0);
 
    of = e_widget_framelist_add(evas, _("General Settings"), 0);
-   ob = e_widget_check_add(evas, _("Use ARGB instead of shaped windows"),
-			   &(cfdata->use_composite));
-   cfdata->o_composite = ob;
-   e_widget_on_change_hook_set(ob, _cb_composite_change, cfdata);
+   ob = e_widget_check_add(evas, _("Use shaped windows instead of ARGB"),
+                           &(cfdata->use_shaped_win));
+   cfdata->o_shaped = ob;
+   e_widget_on_change_hook_set(ob, _cb_shaped_change, cfdata);
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(o, of, 1, 0, 0.5);
 
@@ -95,25 +95,26 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
 }
 
 static void
-_cb_composite_change(void *data, Evas_Object *obj __UNUSED__)
+_cb_shaped_change(void *data, Evas_Object *obj __UNUSED__)
 {
    E_Config_Dialog_Data *cfdata = NULL;
 
    if (!(cfdata = data)) return;
-   if (cfdata->use_composite)
+   if (cfdata->use_shaped_win)
      {
-	if (!ecore_x_screen_is_composited(0))
-	  {
-	     /* pop dialog */
-	     e_confirm_dialog_show(_("Use ARGB instead of shaped windows"),
-				   "preferences-engine",
-				   _("You have chosen to enable ARGB composite "
-				     "support,<br>but your current screen does "
-				     "not support composite.<br><br>"
-				     "Are you sure you wish to enable ARGB support?"),
-				   _("Enable"), NULL, _cb_confirm_yes, _cb_confirm_no,
-				   cfdata, cfdata, NULL, NULL);
-	  }
+        if (ecore_x_screen_is_composited(0))
+          {
+             /* pop dialog */
+             e_confirm_dialog_show(_("Use shaped windows instead of ARGB"),
+                                   "preferences-engine",
+                                   _("You have chosen to use shaped windows<br>"
+                                     "but your current screen is composited."
+                                     "<br><br>"
+                                     "Are you really sure you wish to use<br>"
+                                     "shaped windows?"),
+                                   NULL, NULL, _cb_confirm_yes,
+                                   _cb_confirm_no, cfdata, cfdata, NULL, NULL);
+          }
      }
 }
 
@@ -123,7 +124,7 @@ _cb_confirm_yes(void *data)
    E_Config_Dialog_Data *cfdata = NULL;
 
    if (!(cfdata = data)) return;
-   cfdata->use_composite = 1;
+   cfdata->use_shaped_win = 1;
 
    e_config_dialog_changed_set(cfdata->cfd, _basic_check_changed(cfdata->cfd, cfdata));
 }
@@ -134,8 +135,8 @@ _cb_confirm_no(void *data)
    E_Config_Dialog_Data *cfdata = NULL;
 
    if (!(cfdata = data)) return;
-   cfdata->use_composite = 0;
-   e_widget_check_checked_set(cfdata->o_composite, 0);
+   cfdata->use_shaped_win = 0;
+   e_widget_check_checked_set(cfdata->o_shaped, 0);
 
    e_config_dialog_changed_set(cfdata->cfd, _basic_check_changed(cfdata->cfd, cfdata));
 }

@@ -669,7 +669,7 @@ e_config_init(void)
    E_CONFIG_VAL(D, T, zone_desks_y_count, INT); /**/
    E_CONFIG_VAL(D, T, show_desktop_icons, INT); /**/
    E_CONFIG_VAL(D, T, edge_flip_dragging, INT); /**/
-   E_CONFIG_VAL(D, T, use_composite, INT); /**/
+   E_CONFIG_VAL(D, T, use_shaped_win, INT); /**/
    E_CONFIG_VAL(D, T, language, STR); /**/
    E_CONFIG_VAL(D, T, no_module_delay, INT); /**/
    E_CONFIG_VAL(D, T, desklock_language, STR); /**/

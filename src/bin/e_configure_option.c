@@ -1537,7 +1537,7 @@ e_configure_option_init(void)
    co->funcs[0].none = _e_configure_zone_desks_count_changed;
    OPT_ADD(BOOL, edge_flip_dragging, _("Edge flip while dragging"), _("edge"), _("flip"), _("drag"), _("binding"));
    OPT_HELP(_("Enable edge binding functionality while dragging objects to screen edge"));
-   OPT_ADD(BOOL, use_composite, _("Use ARGB instead of shaped windows"), _("border"));
+   OPT_ADD(BOOL, use_shaped_win, _("Use shaped windows instead of ARGB"), _("border"));
 
    OPT_ADD(CUSTOM, modules, _("Module settings"), _("module"));
    co->info = eina_stringshare_add("extensions/modules");

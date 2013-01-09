@@ -280,7 +280,7 @@ _theme_edje_object_set_aux(Evas_Object *obj, const char *group)
     }
 }
 #define _theme_edje_object_set(_obj, _group)                                 \
-    if (e_config->use_composite)                                             \
+    if (!e_config->use_shaped_win)                                           \
         _theme_edje_object_set_aux(_obj, _group"/composite");                \
     else                                                                     \
         _theme_edje_object_set_aux(_obj, _group);

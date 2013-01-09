@@ -63,7 +63,7 @@ struct _Manager
    Ecore_Event_Handler *add;
    
    int             visible;
-   int             use_composite;
+   int             use_shaped_win;
    Ecore_X_Window  top_win;
    Ecore_Evas     *top_ee;
    E_Container    *container;
