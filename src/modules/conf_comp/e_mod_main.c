@@ -71,6 +71,14 @@ e_modapi_init(E_Module *m)
 {
    Mod *mod;
    char buf[4096];
+   E_Comp_Config *conf;
+
+   conf = e_comp_config_get();
+   if (!conf)
+     {
+        EINA_LOG_CRIT("COMP CONFIG MISSING!!!! ARGH!");
+        return NULL;
+     }
 
    mod = calloc(1, sizeof(Mod));
    m->data = mod;
@@ -82,17 +90,10 @@ e_modapi_init(E_Module *m)
    e_configure_registry_item_add("appearance/comp", 120, _("Composite"), NULL,
                                  buf, e_int_config_comp_module);
 
-   e_comp_cfdata_edd_init(&(mod->conf_edd),
-                          &(mod->conf_match_edd));
-
-   mod->conf = e_config_domain_load("module.comp", mod->conf_edd);
+   mod->conf = conf;
    maug = e_int_menus_menu_augmentation_add_sorted("config/1", _("Composite"), _e_mod_config_menu_create, NULL, NULL, NULL);
-   if (mod->conf)
-     {
-        mod->conf->max_unmapped_pixels = 32 * 1024;
-        mod->conf->keep_unmapped = 1;
-     }
-   else _e_mod_config_new(m);
+   mod->conf->max_unmapped_pixels = 32 * 1024;
+   mod->conf->keep_unmapped = 1;
 
    /* force some config vals off */
    mod->conf->lock_fps = 0;
@@ -136,23 +137,6 @@ e_modapi_init(E_Module *m)
    return mod;
 }
 
-void
-_e_mod_config_new(E_Module *m)
-{
-   Mod *mod = m->data;
-
-   mod->conf = e_comp_cfdata_config_new();
-}
-
-void
-_e_mod_config_free(E_Module *m)
-{
-   Mod *mod = m->data;
-
-   e_comp_cfdata_config_free(mod->conf);
-   mod->conf = NULL;
-}
-
 EAPI int
 e_modapi_shutdown(E_Module *m)
 {
@@ -171,10 +155,6 @@ e_modapi_shutdown(E_Module *m)
    e_configure_option_category_tag_del(_("composite"), _("composite"));
    e_configure_option_category_tag_del(_("windows"), _("composite"));
 
-   _e_mod_config_free(m);
-
-   E_CONFIG_DD_FREE(mod->conf_match_edd);
-   E_CONFIG_DD_FREE(mod->conf_edd);
    free(mod);
 
    if (maug)
@@ -187,12 +167,3 @@ e_modapi_shutdown(E_Module *m)
 
    return 1;
 }
-
-EAPI int
-e_modapi_save(E_Module *m)
-{
-   Mod *mod = m->data;
-   e_config_domain_save("module.comp", mod->conf_edd, mod->conf);
-   return 1;
-}
-

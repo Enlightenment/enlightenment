@@ -4123,7 +4123,7 @@ e_comp_init(void)
      }
 
    e_comp_cfdata_edd_init(&conf_edd, &conf_match_edd);
-   conf = e_config_domain_load("module.comp", conf_edd);
+   conf = e_config_domain_load("e_comp", conf_edd);
    if (conf)
      {
         conf->max_unmapped_pixels = 32 * 1024;
@@ -4149,6 +4149,12 @@ e_comp_init(void)
    ecore_x_sync();
 
    return EINA_TRUE;
+}
+
+EAPI int
+e_comp_internal_save(void)
+{
+   return e_config_domain_save("e_comp", conf_edd, conf);
 }
 
 EINTERN int
@@ -4178,6 +4184,12 @@ e_comp_shutdown(void)
 
    e_sys_handlers_set(NULL, NULL, NULL, NULL, NULL, NULL);
    return 1;
+}
+
+EAPI E_Comp_Config *
+e_comp_config_get(void)
+{
+   return conf;
 }
 
 EAPI void

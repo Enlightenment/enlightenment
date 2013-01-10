@@ -1075,6 +1075,7 @@ main(int argc, char **argv)
    e_config_save_flush();
    _e_main_desk_save();
    e_remember_internal_save();
+   e_comp_internal_save();
 
    _e_main_shutdown(0);
 

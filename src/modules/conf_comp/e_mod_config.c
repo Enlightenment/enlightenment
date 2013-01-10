@@ -1660,7 +1660,6 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         a = e_action_find("restart");
         if ((a) && (a->func.go)) a->func.go(NULL, NULL);
      }
-   e_config_save_queue();
-   return 1;
+   return e_comp_internal_save();
 }
 
