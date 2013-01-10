@@ -373,6 +373,7 @@ e_int_menus_config_new(void)
    E_Menu *m;
 
    m = e_menu_new();
+   e_menu_category_set(m, "config");
    e_menu_pre_activate_callback_set(m, _e_int_menus_config_pre_cb, NULL);
    return m;
 }

@@ -51,6 +51,7 @@ Improvements:
     * Desktop->Shelves menu now shows shelf names
     * geometry_auto_move option now also corrects applications which fail in their attempts to center windows
     * E_LIST_HANDLER_APPEND macro now asserts the event handler to make debugging easier
+    * config submenu now sets "config" category
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.
