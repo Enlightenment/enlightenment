@@ -13,7 +13,7 @@ Mod *_comp_mod = NULL;
 EAPI E_Module_Api e_modapi =
 {
    E_MODULE_API_VERSION,
-   "Composite"
+   "Composite Settings"
 };
 
 static Eina_List *
