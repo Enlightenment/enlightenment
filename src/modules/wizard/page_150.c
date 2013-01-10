@@ -5,6 +5,8 @@
 
 static int do_gl = 0;
 static int do_vsync = 0;
+static int disable_effects = 0;
+static Eina_Bool gl_avail = EINA_FALSE;
 
 static int
 match_file_glob(FILE *f, const char *globbing)
@@ -57,34 +59,38 @@ wizard_page_show(E_Wizard_Page *pg)
    ecore_x_window_attributes_get(ecore_x_window_root_first_get(), &att);
    if ((att.depth <= 8)) return 0;
 
-   if (!ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
-     return 0;
-
-   ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 320, 240);
-   if (ee)
-     {
-        ecore_evas_free(ee);
-        if (
-          (match_xorg_log("*(II)*NVIDIA*: Creating default Display*")) ||
-          (match_xorg_log("*(II)*intel*: Creating default Display*")) ||
-          (match_xorg_log("*(II)*NOUVEAU*: Creating default Display*")) ||
-          (match_xorg_log("*(II)*RADEON*: Creating default Display*"))
-          )
-          {
-             do_gl = 1;
-             do_vsync = 1;
-          }
-     }
-
    o = e_widget_list_add(pg->evas, 1, 0);
-   e_wizard_title_set(_("Engine"));
+   e_wizard_title_set(_("Compositing"));
 
-   of = e_widget_framelist_add(pg->evas, _("HW acceleration"), 0);
 
-   ob = e_widget_check_add(pg->evas, _("Hardware Accelerated (OpenGL)"), &(do_gl));
-   e_widget_framelist_object_append(of, ob);
+   gl_avail = ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11);
 
-   ob = e_widget_check_add(pg->evas, _("Tear-free Rendering (OpenGL only)"), &(do_vsync));
+
+   of = e_widget_framelist_add(pg->evas, _("Settings"), 0);
+   if (gl_avail)
+     {
+        ee = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 320, 240);
+        if (ee)
+          {
+             ecore_evas_free(ee);
+             if (
+               (match_xorg_log("*(II)*NVIDIA*: Creating default Display*")) ||
+               (match_xorg_log("*(II)*intel*: Creating default Display*")) ||
+               (match_xorg_log("*(II)*NOUVEAU*: Creating default Display*")) ||
+               (match_xorg_log("*(II)*RADEON*: Creating default Display*"))
+               )
+               {
+                  do_gl = 1;
+                  do_vsync = 1;
+               }
+          }
+        ob = e_widget_check_add(pg->evas, _("Hardware Accelerated (OpenGL)"), &(do_gl));
+        e_widget_framelist_object_append(of, ob);
+
+        ob = e_widget_check_add(pg->evas, _("Tear-free Rendering (OpenGL only)"), &(do_vsync));
+        e_widget_framelist_object_append(of, ob);
+     }
+   ob = e_widget_check_add(pg->evas, _("Disable composite effects"), &(disable_effects));
    e_widget_framelist_object_append(of, ob);
 
    e_widget_list_object_append(o, of, 0, 0, 0.5);
@@ -97,32 +103,30 @@ wizard_page_show(E_Wizard_Page *pg)
 EAPI int
 wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 {
-   E_Config_DD *conf_edd = NULL;
-   E_Config_DD *conf_match_edd = NULL;
-   E_Comp_Config *cfg = NULL;
+   E_Comp_Config *conf = NULL;
 
-   e_comp_cfdata_edd_init(&(conf_edd), &(conf_match_edd));
-   cfg = e_comp_cfdata_config_new();
-
+   conf = e_comp_config_get();
    if (do_gl)
      {
-        cfg->engine = E_COMP_ENGINE_GL;
-        cfg->smooth_windows = 1;
-        cfg->vsync = do_vsync;
+        conf->engine = E_COMP_ENGINE_GL;
+        conf->smooth_windows = 1;
+        conf->vsync = do_vsync;
      }
    else
      {
-        cfg->engine = E_COMP_ENGINE_SW;
-        cfg->smooth_windows = 0;
-        cfg->vsync = 0;
+        conf->engine = E_COMP_ENGINE_SW;
+        conf->smooth_windows = 0;
+        conf->vsync = 0;
+     }
+   if (disable_effects)
+     {
+        conf->match.disable_borders =
+        conf->match.disable_popups =
+        conf->match.disable_menus =
+        conf->match.disable_overrides = 1;
      }
 
-   e_config_domain_save("e_comp", conf_edd, cfg);
-   E_CONFIG_DD_FREE(conf_match_edd);
-   E_CONFIG_DD_FREE(conf_edd);
-   e_comp_cfdata_config_free(cfg);
-
-   e_config_save_queue();
+   e_comp_internal_save();
 
    return 1;
 }
