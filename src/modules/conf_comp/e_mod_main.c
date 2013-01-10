@@ -7,7 +7,7 @@
 static Eina_Inlist *cfg_opts = NULL;
 
 /* module private routines */
-Mod *_comp_mod = NULL;
+EINTERN Mod *_comp_mod = NULL;
 
 /* public module routines. all modules must have these */
 EAPI E_Module_Api e_modapi =
