@@ -4046,7 +4046,7 @@ _e_comp_sys_resume(void)
 
 //////////////////////////////////////////////////////////////////////////
 
-Eina_Bool
+EINTERN Eina_Bool
 e_comp_init(void)
 {
    Eina_List *l;
@@ -4151,9 +4151,10 @@ e_comp_init(void)
    return EINA_TRUE;
 }
 
-void
+EINTERN int
 e_comp_shutdown(void)
 {
+   if (!compositors) return 1;
    E_FREE_LIST(compositors, _e_comp_del);
    E_FREE_LIST(handlers, ecore_event_handler_del);
 
@@ -4176,9 +4177,10 @@ e_comp_shutdown(void)
    borders = NULL;
 
    e_sys_handlers_set(NULL, NULL, NULL, NULL, NULL, NULL);
+   return 1;
 }
 
-void
+EAPI void
 e_comp_shadow_set(void)
 {
    Eina_List *l;
