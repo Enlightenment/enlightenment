@@ -489,6 +489,7 @@ _load_modules(const char *dir, Eina_Hash *types_hash)
         const char *type;
         Eina_Bool new_type;
 
+        if (!strcmp(mod, "comp")) goto end_mod;
         snprintf(modpath + modpathlen, sizeof(modpath) - modpathlen,
                  "%s/module.desktop", mod);
         if (!ecore_file_exists(modpath)) goto end_mod;
