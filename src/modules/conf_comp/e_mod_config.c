@@ -1399,10 +1399,6 @@ static int
 _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
                      E_Config_Dialog_Data *cfdata)
 {
-   _comp_mod->conf->match.disable_popups = cfdata->match.disable_popups;
-   _comp_mod->conf->match.disable_borders = cfdata->match.disable_borders;
-   _comp_mod->conf->match.disable_overrides = cfdata->match.disable_overrides;
-   _comp_mod->conf->match.disable_menus = cfdata->match.disable_menus;
    if ((cfdata->lock_fps != _comp_mod->conf->lock_fps) ||
        (cfdata->smooth_windows != _comp_mod->conf->smooth_windows) ||
        (cfdata->grab != _comp_mod->conf->grab) ||
@@ -1418,6 +1414,10 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
        (cfdata->fps_corner != _comp_mod->conf->fps_corner) ||
        (cfdata->fps_average_range != _comp_mod->conf->fps_average_range) ||
        (cfdata->first_draw_delay != _comp_mod->conf->first_draw_delay) ||
+       (_comp_mod->conf->match.disable_popups != cfdata->match.disable_popups) ||
+       (_comp_mod->conf->match.disable_borders != cfdata->match.disable_borders) ||
+       (_comp_mod->conf->match.disable_overrides != cfdata->match.disable_overrides) ||
+       (_comp_mod->conf->match.disable_menus != cfdata->match.disable_menus) ||
        (cfdata->match.changed)
        )
      {
@@ -1467,6 +1467,10 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
                }
              cfdata->match.changed = 0;
           }
+        _comp_mod->conf->match.disable_popups = cfdata->match.disable_popups;
+        _comp_mod->conf->match.disable_borders = cfdata->match.disable_borders;
+        _comp_mod->conf->match.disable_overrides = cfdata->match.disable_overrides;
+        _comp_mod->conf->match.disable_menus = cfdata->match.disable_menus;
         _comp_mod->conf->lock_fps = cfdata->lock_fps;
         _comp_mod->conf->smooth_windows = cfdata->smooth_windows;
         _comp_mod->conf->grab = cfdata->grab;
@@ -1598,14 +1602,8 @@ static int
 _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
                   E_Config_Dialog_Data *cfdata)
 {
-   if (cfdata->match.toggle_changed)
-     {
-        _comp_mod->conf->match.disable_popups = cfdata->match.disable_popups = cfdata->match.disable_all;
-        _comp_mod->conf->match.disable_borders = cfdata->match.disable_borders = cfdata->match.disable_all;
-        _comp_mod->conf->match.disable_overrides = cfdata->match.disable_overrides = cfdata->match.disable_all;
-        _comp_mod->conf->match.disable_menus = cfdata->match.disable_menus = cfdata->match.disable_all;
-     }
-   if ((cfdata->lock_fps != _comp_mod->conf->lock_fps) ||
+   if (cfdata->match.toggle_changed ||
+       (cfdata->lock_fps != _comp_mod->conf->lock_fps) ||
        (cfdata->smooth_windows != _comp_mod->conf->smooth_windows) ||
        (cfdata->grab != _comp_mod->conf->grab) ||
        (cfdata->keep_unmapped != _comp_mod->conf->keep_unmapped) ||
@@ -1668,6 +1666,13 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
                     eina_list_append(_comp_mod->conf->match.menus, m);
                }
              cfdata->match.changed = 0;
+          }
+        if (cfdata->match.toggle_changed)
+          {
+             _comp_mod->conf->match.disable_popups = cfdata->match.disable_popups = cfdata->match.disable_all;
+             _comp_mod->conf->match.disable_borders = cfdata->match.disable_borders = cfdata->match.disable_all;
+             _comp_mod->conf->match.disable_overrides = cfdata->match.disable_overrides = cfdata->match.disable_all;
+             _comp_mod->conf->match.disable_menus = cfdata->match.disable_menus = cfdata->match.disable_all;
           }
         _comp_mod->conf->lock_fps = cfdata->lock_fps;
         _comp_mod->conf->smooth_windows = cfdata->smooth_windows;
