@@ -1,6 +1,7 @@
 2013-01-10 Mike Blumenkrantz
 
         * E_LIST_HANDLER_APPEND macro now asserts the event handler to make debugging easier
+        * fixed bug where internal dialogs would not redraw after unfullscreening
 
 2013-01-10 Deon Thomas
 
