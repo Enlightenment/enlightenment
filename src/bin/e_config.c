@@ -1058,6 +1058,7 @@ e_config_load(void)
         if (!reload) e_config_profile_del(e_config_profile_get());
         e_config_save_block_set(1);
         e_sys_action_do(E_SYS_RESTART, NULL);
+        return;
      }
    if (e_config->config_version < E_CONFIG_FILE_VERSION)
      {
