@@ -82,7 +82,7 @@ e_module_all_load(void)
    EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
      {
         if (!em) continue;
-        if (!e_util_strcasecmp(em->name, "composite"))
+        if (!e_util_strcasecmp(em->name, "comp"))
           {
              e_config->modules = eina_list_remove_list(e_config->modules, l);
              eina_stringshare_del(em->name);
@@ -141,7 +141,7 @@ e_module_new(const char *name)
    int in_list = 0;
 
    if (!name) return NULL;
-   if (!e_util_strcasecmp(name, "composite"))
+   if (!e_util_strcasecmp(name, "comp"))
      {
         e_util_dialog_show(_("Module Error"),
                            _("The composite module cannot be loaded;"
@@ -662,9 +662,9 @@ _e_module_whitelist_check(void)
         "battery",
         "bluez4",
         "clock",
-        "comp",
         "conf",
         "conf_applications",
+        "conf_comp",
         "conf_dialogs",
         "conf_display",
         "conf_edgebindings",
