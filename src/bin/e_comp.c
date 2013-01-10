@@ -4200,7 +4200,7 @@ e_comp_config_get(void)
 }
 
 EAPI void
-e_comp_shadow_set(void)
+e_comp_shadows_reset(void)
 {
    Eina_List *l;
    E_Comp *c;

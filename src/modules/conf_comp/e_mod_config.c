@@ -1490,7 +1490,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         _comp_mod->conf->shadow_style = NULL;
         if (cfdata->shadow_style)
           _comp_mod->conf->shadow_style = eina_stringshare_add(cfdata->shadow_style);
-        e_comp_shadow_set();
+        e_comp_shadows_reset();
      }
    if ((cfdata->engine != _comp_mod->conf->engine) ||
        (cfdata->indirect != _comp_mod->conf->indirect) ||
@@ -1693,7 +1693,7 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         _comp_mod->conf->shadow_style = NULL;
         if (cfdata->shadow_style)
           _comp_mod->conf->shadow_style = eina_stringshare_add(cfdata->shadow_style);
-        e_comp_shadow_set();
+        e_comp_shadows_reset();
      }
    if ((cfdata->engine != _comp_mod->conf->engine) ||
        (cfdata->indirect != _comp_mod->conf->indirect) ||
