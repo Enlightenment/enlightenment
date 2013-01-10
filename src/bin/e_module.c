@@ -70,7 +70,7 @@ e_module_shutdown(void)
 EAPI void
 e_module_all_load(void)
 {
-   Eina_List *l;
+   Eina_List *l, *ll;
    E_Config_Module *em;
    char buf[128];
 
@@ -79,9 +79,16 @@ e_module_all_load(void)
    e_config->modules =
      eina_list_sort(e_config->modules, 0, _e_module_sort_priority);
 
-   EINA_LIST_FOREACH(e_config->modules, l, em)
+   EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
      {
         if (!em) continue;
+        if (!e_util_strcasecmp(em->name, "composite"))
+          {
+             e_config->modules = eina_list_remove_list(e_config->modules, l);
+             eina_stringshare_del(em->name);
+             free(em);
+             continue;
+          }
         if ((em->delayed) && (em->enabled) & (!e_config->no_module_delay))
           {
              if (!_e_module_idler)
