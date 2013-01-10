@@ -117,7 +117,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
         cfg->vsync = 0;
      }
 
-   e_config_domain_save("module.comp", conf_edd, cfg);
+   e_config_domain_save("e_comp", conf_edd, cfg);
    E_CONFIG_DD_FREE(conf_match_edd);
    E_CONFIG_DD_FREE(conf_edd);
    e_comp_cfdata_config_free(cfg);
