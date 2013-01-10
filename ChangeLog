@@ -9,6 +9,7 @@
         * fixed bug where internal dialogs would not redraw after unfullscreening
         * config submenu now sets "config" category
         * e_menu_category_callback create callback parameter order has been changed
+        * composite settings dialog is now accessible from Settings menu
 
 2013-01-10 Deon Thomas
 

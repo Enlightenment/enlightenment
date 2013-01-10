@@ -55,6 +55,7 @@ Improvements:
     * geometry_auto_move option now also corrects applications which fail in their attempts to center windows
     * E_LIST_HANDLER_APPEND macro now asserts the event handler to make debugging easier
     * config submenu now sets "config" category
+    * composite settings dialog is now accessible from Settings menu
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.

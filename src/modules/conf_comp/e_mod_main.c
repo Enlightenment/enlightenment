@@ -5,6 +5,7 @@
 #include "e_comp_cfdata.h"
 
 static Eina_Inlist *cfg_opts = NULL;
+static E_Int_Menu_Augmentation *maug = NULL;
 
 /* module private routines */
 EINTERN Mod *_comp_mod = NULL;
@@ -46,6 +47,25 @@ _e_mod_engine_info_cb(E_Configure_Option *co)
    return ret;
 }
 
+static void
+_e_mod_comp_conf_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
+{
+   e_int_config_comp_module(NULL, NULL);
+}
+
+static void
+_e_mod_config_menu_create(void *d EINA_UNUSED, E_Menu *m)
+{
+   E_Menu_Item *mi;
+   char buf[4096];
+
+   mi = e_menu_item_new(m);
+   snprintf(buf, sizeof(buf), "%s/e-module-comp.edj", e_module_dir_get(_comp_mod->module));
+   e_menu_item_label_set(mi, _("Composite"));
+   e_menu_item_icon_file_set(mi, buf);
+   e_menu_item_callback_set(mi, _e_mod_comp_conf_cb, NULL);
+}
+
 EAPI void *
 e_modapi_init(E_Module *m)
 {
@@ -66,6 +86,7 @@ e_modapi_init(E_Module *m)
                           &(mod->conf_match_edd));
 
    mod->conf = e_config_domain_load("module.comp", mod->conf_edd);
+   maug = e_int_menus_menu_augmentation_add_sorted("config/1", _("Composite"), _e_mod_config_menu_create, NULL, NULL, NULL);
    if (mod->conf)
      {
         mod->conf->max_unmapped_pixels = 32 * 1024;
@@ -155,6 +176,12 @@ e_modapi_shutdown(E_Module *m)
    E_CONFIG_DD_FREE(mod->conf_match_edd);
    E_CONFIG_DD_FREE(mod->conf_edd);
    free(mod);
+
+   if (maug)
+     {
+        e_int_menus_menu_augmentation_del("config/1", maug);
+        maug = NULL;
+     }
 
    if (mod == _comp_mod) _comp_mod = NULL;
 
