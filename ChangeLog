@@ -1,3 +1,7 @@
+2013-01-10 Deon Thomas
+
+        * Fixed bug with desktop config profile where conf module version variable was misnamed
+
 2013-01-09 Lucas De Marchi
 
         * Merged comp module into core
