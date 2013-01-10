@@ -79,6 +79,7 @@ void *alloca (size_t);
 # include <errno.h>
 # include <signal.h>
 # include <inttypes.h>
+# include <assert.h>
 
 # ifdef HAVE_GETTEXT
 #  include <libintl.h>
