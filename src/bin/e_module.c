@@ -134,6 +134,14 @@ e_module_new(const char *name)
    int in_list = 0;
 
    if (!name) return NULL;
+   if (!e_util_strcasecmp(name, "composite"))
+     {
+        e_util_dialog_show(_("Module Error"),
+                           _("The composite module cannot be loaded;"
+                             "Enlightenment is already composited."));
+        ERR("USER TRIED TO LOAD EXTERNAL COMP MODULE! MY TEARS FLOW LIKE VICTORIA FALLS!");
+        return NULL;
+     }
    m = E_OBJECT_ALLOC(E_Module, E_MODULE_TYPE, _e_module_free);
    if (name[0] != '/')
      {
