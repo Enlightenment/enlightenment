@@ -213,10 +213,8 @@ typedef struct _E_Rect         E_Rect;
     { \
        Ecore_Event_Handler *_eh; \
        _eh = ecore_event_handler_add(type, (Ecore_Event_Handler_Cb)callback, data); \
-       if (_eh) \
-         list = eina_list_append(list, _eh); \
-       else \
-         fprintf(stderr, "E_LIST_HANDLER_APPEND\n"); \
+       assert(_eh); \
+       list = eina_list_append(list, _eh); \
     } \
   while (0)
 
