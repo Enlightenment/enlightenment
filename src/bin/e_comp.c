@@ -1614,7 +1614,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
    char buf[4096];
    Eina_List *list = NULL, *l;
    E_Comp_Match *m;
-   Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE;
+   Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE, skip = EINA_FALSE;
    const char *title = NULL, *name = NULL, *clas = NULL, *role = NULL;
    Ecore_X_Window_Type primary_type = ECORE_X_WINDOW_TYPE_UNKNOWN;
 
@@ -1632,6 +1632,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         clas = cw->bd->client.icccm.class;
         role = cw->bd->client.icccm.window_role;
         primary_type = cw->bd->client.netwm.type;
+        skip = (conf->match.disable_borders);
      }
    else if (cw->pop)
      {
@@ -1640,11 +1641,13 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         // etc. etc.
         list = conf->match.popups;
         name = cw->pop->name;
+        skip = (conf->match.disable_borders);
      }
    else if (cw->menu)
      {
         // FIXME: e has no way to tell e menus apart... need naming
         list = conf->match.menus;
+        skip = (conf->match.disable_borders);
      }
    else
      {
@@ -1654,126 +1657,128 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         clas = cw->clas;
         role = cw->role;
         primary_type = cw->primary_type;
+        skip = (conf->match.disable_borders);
      }
 
-   EINA_LIST_FOREACH(list, l, m)
+   if (!skip)
      {
-        if (((m->title) && (!title)) ||
-            ((title) && (m->title) && (!e_util_glob_match(title, m->title))))
-          continue;
-        if (((m->name) && (!name)) ||
-            ((name) && (m->name) && (!e_util_glob_match(name, m->name))))
-          continue;
-        if (((m->clas) && (!clas)) ||
-            ((clas) && (m->clas) && (!e_util_glob_match(clas, m->clas))))
-          continue;
-        if (((m->role) && (!role)) ||
-            ((role) && (m->role) && (!e_util_glob_match(role, m->role))))
-          continue;
-        if ((primary_type != ECORE_X_WINDOW_TYPE_UNKNOWN) &&
-            (m->primary_type != ECORE_X_WINDOW_TYPE_UNKNOWN) &&
-            ((int)primary_type != m->primary_type))
-          continue;
-        if (cw->bd)
+        EINA_LIST_FOREACH(list, l, m)
           {
-             if (m->borderless != 0)
+             if (((m->title) && (!title)) ||
+                 ((title) && (m->title) && (!e_util_glob_match(title, m->title))))
+               continue;
+             if (((m->name) && (!name)) ||
+                 ((name) && (m->name) && (!e_util_glob_match(name, m->name))))
+               continue;
+             if (((m->clas) && (!clas)) ||
+                 ((clas) && (m->clas) && (!e_util_glob_match(clas, m->clas))))
+               continue;
+             if (((m->role) && (!role)) ||
+                 ((role) && (m->role) && (!e_util_glob_match(role, m->role))))
+               continue;
+             if ((primary_type != ECORE_X_WINDOW_TYPE_UNKNOWN) &&
+                 (m->primary_type != ECORE_X_WINDOW_TYPE_UNKNOWN) &&
+                 ((int)primary_type != m->primary_type))
+               continue;
+             if (cw->bd)
                {
-                  int borderless = 0;
+                  if (m->borderless != 0)
+                    {
+                       int borderless = 0;
 
-                  if ((cw->bd->client.mwm.borderless) || (cw->bd->borderless))
-                    borderless = 1;
-                  if (!(((m->borderless == -1) && (!borderless)) ||
-                        ((m->borderless == 1) && (borderless))))
-                    continue;
-               }
-             if (m->dialog != 0)
-               {
-                  int dialog = 0;
+                       if ((cw->bd->client.mwm.borderless) || (cw->bd->borderless))
+                         borderless = 1;
+                       if (!(((m->borderless == -1) && (!borderless)) ||
+                             ((m->borderless == 1) && (borderless))))
+                         continue;
+                    }
+                  if (m->dialog != 0)
+                    {
+                       int dialog = 0;
 
-                  if (((cw->bd->client.icccm.transient_for != 0) ||
-                       (cw->bd->client.netwm.type == ECORE_X_WINDOW_TYPE_DIALOG)))
-                    dialog = 1;
-                  if (!(((m->dialog == -1) && (!dialog)) ||
-                        ((m->dialog == 1) && (dialog))))
-                    continue;
-               }
-             if (m->accepts_focus != 0)
-               {
-                  int accepts_focus = 0;
+                       if (((cw->bd->client.icccm.transient_for != 0) ||
+                            (cw->bd->client.netwm.type == ECORE_X_WINDOW_TYPE_DIALOG)))
+                         dialog = 1;
+                       if (!(((m->dialog == -1) && (!dialog)) ||
+                             ((m->dialog == 1) && (dialog))))
+                         continue;
+                    }
+                  if (m->accepts_focus != 0)
+                    {
+                       int accepts_focus = 0;
 
-                  if (cw->bd->client.icccm.accepts_focus)
-                    accepts_focus = 1;
-                  if (!(((m->accepts_focus == -1) && (!accepts_focus)) ||
-                        ((m->accepts_focus == 1) && (accepts_focus))))
-                    continue;
-               }
-             if (m->vkbd != 0)
-               {
-                  int vkbd = 0;
+                       if (cw->bd->client.icccm.accepts_focus)
+                         accepts_focus = 1;
+                       if (!(((m->accepts_focus == -1) && (!accepts_focus)) ||
+                             ((m->accepts_focus == 1) && (accepts_focus))))
+                         continue;
+                    }
+                  if (m->vkbd != 0)
+                    {
+                       int vkbd = 0;
 
-                  if (cw->bd->client.vkbd.vkbd)
-                    vkbd = 1;
-                  if (!(((m->vkbd == -1) && (!vkbd)) ||
-                        ((m->vkbd == 1) && (vkbd))))
-                    continue;
-               }
-             if (m->quickpanel != 0)
-               {
-                  int quickpanel = 0;
+                       if (cw->bd->client.vkbd.vkbd)
+                         vkbd = 1;
+                       if (!(((m->vkbd == -1) && (!vkbd)) ||
+                             ((m->vkbd == 1) && (vkbd))))
+                         continue;
+                    }
+                  if (m->quickpanel != 0)
+                    {
+                       int quickpanel = 0;
 
-                  if (cw->bd->client.illume.quickpanel.quickpanel)
-                    quickpanel = 1;
-                  if (!(((m->quickpanel == -1) && (!quickpanel)) ||
-                        ((m->quickpanel == 1) && (quickpanel))))
-                    continue;
-               }
-             if (m->argb != 0)
-               {
-                  if (!(((m->argb == -1) && (!cw->argb)) ||
-                        ((m->argb == 1) && (cw->argb))))
-                    continue;
-               }
-             if (m->fullscreen != 0)
-               {
-                  int fullscreen = 0;
+                       if (cw->bd->client.illume.quickpanel.quickpanel)
+                         quickpanel = 1;
+                       if (!(((m->quickpanel == -1) && (!quickpanel)) ||
+                             ((m->quickpanel == 1) && (quickpanel))))
+                         continue;
+                    }
+                  if (m->argb != 0)
+                    {
+                       if (!(((m->argb == -1) && (!cw->argb)) ||
+                             ((m->argb == 1) && (cw->argb))))
+                         continue;
+                    }
+                  if (m->fullscreen != 0)
+                    {
+                       int fullscreen = 0;
 
-                  if (cw->bd->client.netwm.state.fullscreen)
-                    fullscreen = 1;
-                  if (!(((m->fullscreen == -1) && (!fullscreen)) ||
-                        ((m->fullscreen == 1) && (fullscreen))))
-                    continue;
-               }
-             if (m->modal != 0)
-               {
-                  int modal = 0;
+                       if (cw->bd->client.netwm.state.fullscreen)
+                         fullscreen = 1;
+                       if (!(((m->fullscreen == -1) && (!fullscreen)) ||
+                             ((m->fullscreen == 1) && (fullscreen))))
+                         continue;
+                    }
+                  if (m->modal != 0)
+                    {
+                       int modal = 0;
 
-                  if (cw->bd->client.netwm.state.modal)
-                    modal = 1;
-                  if (!(((m->modal == -1) && (!modal)) ||
-                        ((m->modal == 1) && (modal))))
-                    continue;
+                       if (cw->bd->client.netwm.state.modal)
+                         modal = 1;
+                       if (!(((m->modal == -1) && (!modal)) ||
+                             ((m->modal == 1) && (modal))))
+                         continue;
+                    }
                }
-          }
-        focus = m->focus;
-        urgent = m->urgent;
-        if (m->shadow_style)
-          {
-             snprintf(buf, sizeof(buf), "e/comp/%s",
-                      m->shadow_style);
-             ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders",
-                                          buf);
-             if (ok) break;
+             focus = m->focus;
+             urgent = m->urgent;
+             if (m->shadow_style)
+               {
+                  snprintf(buf, sizeof(buf), "e/comp/%s",
+                           m->shadow_style);
+                  ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders",
+                                               buf);
+                  if (ok) break;
+               }
           }
      }
-   if (!ok)
+   while (!ok)
      {
-        if (cw->bd && cw->bd->client.e.state.video)
+        if (skip || (cw->bd && cw->bd->client.e.state.video))
           ok = e_theme_edje_object_set(cw->shobj,
                                        "base/theme/borders",
                                        "e/comp/none");
-     }
-   if (!ok)
-     {
+        if (ok) break;
         if (conf->shadow_style)
           {
              snprintf(buf, sizeof(buf), "e/comp/%s",
@@ -1784,6 +1789,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         if (!ok)
           ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders",
                                        "e/comp/default");
+        break;
      }
    edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
    if (cw->bd && cw->bd->client.e.state.video)
@@ -1807,6 +1813,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
      edje_object_signal_emit(cw->shobj, "e,state,visible,on", "e");
    else
      edje_object_signal_emit(cw->shobj, "e,state,visible,off", "e");
+
    if (!cw->animating)
      {
         cw->c->animating++;

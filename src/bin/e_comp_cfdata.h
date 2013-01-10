@@ -31,9 +31,13 @@ struct _E_Comp_Config
 
    struct
    {
+      Eina_Bool disable_popups;
       Eina_List *popups;    // used for e popups
+      Eina_Bool disable_borders;
       Eina_List *borders;    // used for borders
+      Eina_Bool disable_overrides;
       Eina_List *overrides;    // used for client menus, tooltips etc.
+      Eina_Bool disable_menus;
       Eina_List *menus;    // used for e menus
    } match;
 };

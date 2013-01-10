@@ -11,7 +11,8 @@
         * e_menu_category_callback create callback parameter order has been changed
         * composite settings dialog is now accessible from Settings menu
         * modules no longer require shutdown or save functions
-        * comp module now uses the "e_comp" config domain
+        * comp settings now uses the "e_comp" config domain
+        * added options to disable comp effects on types of windows
 
 2013-01-10 Deon Thomas
 

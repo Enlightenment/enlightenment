@@ -22,7 +22,8 @@ Additions:
         * Added option for disabling icons in menus
         * Added option for doing desklock, blanking or dimming even when showing fullscreen windows.
         * Added option for disabling pointer warping when performing directional focus changes using winlist
-        * comp module now uses the "e_comp" config domain
+        * comp settings now uses the "e_comp" config domain
+        * added options to disable comp effects on types of windows
 
 Changes:
     Modules:

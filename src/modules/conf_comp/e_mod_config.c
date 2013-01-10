@@ -40,11 +40,17 @@ struct _E_Config_Dialog_Data
 
    struct
    {
-      Eina_List *popups;
-      Eina_List *borders;
-      Eina_List *overrides;
-      Eina_List *menus;
+      int disable_popups;
+      Eina_List *popups;    // used for e popups
+      int disable_borders;
+      Eina_List *borders;    // used for borders
+      int disable_overrides;
+      Eina_List *overrides;    // used for client menus, tooltips etc.
+      int disable_menus;
+      Eina_List *menus;    // used for e menus
+      int disable_all;
       int        changed;
+      int toggle_changed : 1;
    } match;
 
    Evas_Object *popups_il;
@@ -136,6 +142,12 @@ _create_data(E_Config_Dialog *cfd)
    if ((cfdata->engine != ENGINE_SW) &&
        (cfdata->engine != ENGINE_GL))
      cfdata->engine = ENGINE_SW;
+   cfdata->match.disable_popups = _comp_mod->conf->match.disable_popups;
+   cfdata->match.disable_borders = _comp_mod->conf->match.disable_borders;
+   cfdata->match.disable_overrides = _comp_mod->conf->match.disable_overrides;
+   cfdata->match.disable_menus = _comp_mod->conf->match.disable_menus;
+   cfdata->match.disable_all =
+     (cfdata->match.disable_menus && cfdata->match.disable_menus && cfdata->match.disable_borders && cfdata->match.disable_popups);
    cfdata->indirect = _comp_mod->conf->indirect;
    cfdata->texture_from_pixmap = _comp_mod->conf->texture_from_pixmap;
    cfdata->smooth_windows = _comp_mod->conf->smooth_windows;
@@ -1161,6 +1173,16 @@ _advanced_create_widgets(E_Config_Dialog *cfd,
    ob = e_widget_check_add(evas, _("Smooth scaling"), &(cfdata->smooth_windows));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
 
+
+   ob = e_widget_check_add(evas, _("Disable composite theming for windows"), &(cfdata->match.disable_borders));
+   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+   ob = e_widget_check_add(evas, _("Disable composite theming for menus"), &(cfdata->match.disable_menus));
+   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+   ob = e_widget_check_add(evas, _("Disable composite theming for popups"), &(cfdata->match.disable_popups));
+   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+   ob = e_widget_check_add(evas, _("Disable composite theming for overrides"), &(cfdata->match.disable_overrides));
+   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+
    of = e_widget_frametable_add(evas, _("Styles"), 0);
    e_widget_frametable_content_align_set(of, 0.5, 0.5);
    oi = _create_styles_toolbook(cfd, evas, cfdata);
@@ -1377,6 +1399,10 @@ static int
 _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
                      E_Config_Dialog_Data *cfdata)
 {
+   _comp_mod->conf->match.disable_popups = cfdata->match.disable_popups;
+   _comp_mod->conf->match.disable_borders = cfdata->match.disable_borders;
+   _comp_mod->conf->match.disable_overrides = cfdata->match.disable_overrides;
+   _comp_mod->conf->match.disable_menus = cfdata->match.disable_menus;
    if ((cfdata->lock_fps != _comp_mod->conf->lock_fps) ||
        (cfdata->smooth_windows != _comp_mod->conf->smooth_windows) ||
        (cfdata->grab != _comp_mod->conf->grab) ||
@@ -1487,6 +1513,16 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
    return 1;
 }
 
+static void
+_basic_comp_style_toggle(void *oi, Evas_Object *o)
+{
+   E_Config_Dialog_Data *cfdata;
+   
+   e_widget_disabled_set(oi, e_widget_check_checked_get(o));
+   cfdata = evas_object_data_get(o, "cfdata");
+   cfdata->match.toggle_changed = 1;
+}
+
 static Evas_Object *
 _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
                       Evas *evas,
@@ -1516,12 +1552,18 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
 
    ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
-   
+
+   ob = e_widget_check_add(evas, _("Disable composite styling"), &(cfdata->match.disable_all));
+   evas_object_data_set(ob, "cfdata", cfdata);
+   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+
    of = e_widget_frametable_add(evas, _("Select default style"), 0);
    e_widget_frametable_content_align_set(of, 0.5, 0.5);
    oi = _style_selector(evas, &(cfdata->shadow_style));
    e_widget_frametable_object_append(of, oi, 0, 0, 1, 1, 1, 1, 1, 1);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
+
+   e_widget_on_change_hook_set(ob, _basic_comp_style_toggle, oi);
 
    e_widget_toolbook_page_append(otb, NULL, _("General"), ol, 1, 1, 1, 1, 0.5, 0.0);
 
@@ -1556,6 +1598,13 @@ static int
 _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
                   E_Config_Dialog_Data *cfdata)
 {
+   if (cfdata->match.toggle_changed)
+     {
+        _comp_mod->conf->match.disable_popups = cfdata->match.disable_popups = cfdata->match.disable_all;
+        _comp_mod->conf->match.disable_borders = cfdata->match.disable_borders = cfdata->match.disable_all;
+        _comp_mod->conf->match.disable_overrides = cfdata->match.disable_overrides = cfdata->match.disable_all;
+        _comp_mod->conf->match.disable_menus = cfdata->match.disable_menus = cfdata->match.disable_all;
+     }
    if ((cfdata->lock_fps != _comp_mod->conf->lock_fps) ||
        (cfdata->smooth_windows != _comp_mod->conf->smooth_windows) ||
        (cfdata->grab != _comp_mod->conf->grab) ||
