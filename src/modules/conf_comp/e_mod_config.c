@@ -1553,7 +1553,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
    ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
 
-   ob = e_widget_check_add(evas, _("Disable composite styling"), &(cfdata->match.disable_all));
+   ob = e_widget_check_add(evas, _("Disable composite effects"), &(cfdata->match.disable_all));
    evas_object_data_set(ob, "cfdata", cfdata);
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
 

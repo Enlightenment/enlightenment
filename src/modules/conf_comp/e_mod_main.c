@@ -118,13 +118,13 @@ e_modapi_init(E_Module *m)
       E_CONFIGURE_OPTION_ADD(co, BOOL, vsync, mod->conf, _("Tear-free compositing (VSYNC)"), _("composite"), _("border"));
       co->requires_restart = 1;
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_borders, mod->conf, _("Disable composite theming for windows"), _("composite"), _("border"), _("theme"));
+      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_borders, mod->conf, _("Disable composite effects for windows"), _("composite"), _("border"), _("theme"), _("animate"));
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_menus, mod->conf, _("Disable composite theming for menus"), _("composite"), _("menu"), _("theme"));
+      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_menus, mod->conf, _("Disable composite effects for menus"), _("composite"), _("menu"), _("theme"), _("animate"));
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_popups, mod->conf, _("Disable composite theming for popups"), _("composite"), _("popup"), _("theme"));
+      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_popups, mod->conf, _("Disable composite effects for popups"), _("composite"), _("popup"), _("theme"), _("animate"));
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, mod->conf, _("Disable composite theming for override-redirect windows (tooltips and such)"), _("composite"), _("theme"));
+      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, mod->conf, _("Disable composite effects for override-redirect windows (tooltips and such)"), _("composite"), _("theme"), _("animate"));
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
       E_CONFIGURE_OPTION_ADD(co, BOOL, smooth_windows, mod->conf, _("Smooth scaling of composited window content"), _("composite"), _("border"));
       co->funcs[1].none = co->funcs[0].none = e_comp_shadow_set;
