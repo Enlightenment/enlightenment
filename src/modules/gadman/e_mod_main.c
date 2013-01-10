@@ -4,7 +4,7 @@
 static void _gadman_maug_cb(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _gadman_maug_add(void *data, E_Menu *m);
 static void _gadman_action_cb(E_Object *obj, const char *params);
-static void _gadman_desktop_menu(E_Menu *m, void *d __UNUSED__, void *icon);
+static void _gadman_desktop_menu(void *d __UNUSED__, E_Menu *m, void *icon);
 
 /* public module routines. all modules must have these */
 EAPI E_Module_Api e_modapi =
@@ -171,7 +171,7 @@ _gadman_desktop_menu_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUS
 }
 
 static void
-_gadman_desktop_menu(E_Menu *m, void *d __UNUSED__, void *icon)
+_gadman_desktop_menu(void *d __UNUSED__, E_Menu *m, void *icon)
 {
    E_Menu_Item *mi;
 

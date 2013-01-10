@@ -153,8 +153,8 @@ struct _E_Menu_Category_Callback
 {
    const char *category;
    void *data;
-   void (*create) (E_Menu *m, void *category_data, void *data);
-   void (*free) (void *data);
+   void (*create) (void *data, E_Menu *m, void *category_data);
+   Ecore_Cb free;
 };
 
 
@@ -175,7 +175,7 @@ EAPI void         e_menu_icon_file_set(E_Menu *m, const char *icon);
 /* menu categories functions */
 EAPI void         e_menu_category_set(E_Menu *m, const char *category);
 EAPI void         e_menu_category_data_set(char *category, void *data);
-EAPI E_Menu_Category_Callback  *e_menu_category_callback_add(char *category, void (*create) (E_Menu *m, void *category_data, void *data), void (free) (void *data), void *data);
+EAPI E_Menu_Category_Callback  *e_menu_category_callback_add(char *category, void (*create_cb) (void *data, E_Menu *m, void *category_data), Ecore_Cb free_cb, void *data);
 EAPI void         e_menu_category_callback_del(E_Menu_Category_Callback *cb);
 
 

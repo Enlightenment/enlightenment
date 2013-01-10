@@ -557,7 +557,7 @@ e_menu_category_data_set(char *category, void *data)
 }
 
 EAPI E_Menu_Category_Callback *
-e_menu_category_callback_add(char *category, void (*create_cb)(E_Menu *m, void *category_data, void *data), void (*free_cb)(void *data), void *data)
+e_menu_category_callback_add(char *category, void (*create_cb) (void *data, E_Menu *m, void *category_data), Ecore_Cb free_cb, void *data)
 {
    E_Menu_Category *cat;
    E_Menu_Category_Callback *cb = NULL;
@@ -2120,7 +2120,7 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
           {
              E_Menu_Category_Callback *cb;
              EINA_LIST_FOREACH(cat->callbacks, l, cb)
-               if (cb->create) cb->create(m, cat->data, cb->data);
+               if (cb->create) cb->create(cb->data, m, cat->data);
           }
      }
    m->cur.visible = 1;
