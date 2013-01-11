@@ -4065,7 +4065,7 @@ _e_comp_sys_resume(void)
 }
 
 static Eina_List *
-_e_comp_engine_info_cb(E_Configure_Option *co)
+_e_comp_config_engine_info_cb(E_Configure_Option *co)
 {
    Eina_List *ret = NULL;
    E_Configure_Option_Info *oi;
@@ -4091,6 +4091,124 @@ _e_comp_engine_info_cb(E_Configure_Option *co)
         if (!name[x - 1]) continue;
         oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t*)(long)x);
         oi->current = (*(int*)co->valptr == x);
+        ret = eina_list_append(ret, oi);
+     }
+   return ret;
+}
+
+
+static Eina_Bool
+_e_comp_config_style_thumb_timer_cb(void *data)
+{
+   Evas_Object *oo, *ofr = data;
+   int demo_state;
+
+   demo_state = (long)(intptr_t)evas_object_data_get(data, "style_demo_state");
+   demo_state = (demo_state + 1) % 4;
+   evas_object_data_set(data, "style_demo_state", (intptr_t*)(long)demo_state);
+
+   oo = evas_object_data_get(ofr, "comp_preview");
+   switch (demo_state)
+     {
+      case 0:
+        edje_object_signal_emit(oo, "e,state,visible,on", "e");
+        edje_object_signal_emit(oo, "e,state,focus,on", "e");
+        edje_object_part_text_set(ofr, "e.text.label", _("Visible"));
+        break;
+
+      case 1:
+        edje_object_signal_emit(oo, "e,state,focus,off", "e");
+        edje_object_part_text_set(ofr, "e.text.label", _("Focus-Out"));
+        break;
+
+      case 2:
+        edje_object_signal_emit(oo, "e,state,focus,on", "e");
+        edje_object_part_text_set(ofr, "e.text.label", _("Focus-In"));
+        break;
+
+      case 3:
+        edje_object_signal_emit(oo, "e,state,visible,off", "e");
+        edje_object_part_text_set(ofr, "e.text.label", _("Hidden"));
+        break;
+
+      default:
+        break;
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_e_comp_config_style_thumb_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   evas_object_del(edje_object_part_swallow_get(obj, "e.swallow.preview"));
+   ecore_timer_del(data);
+}
+
+static Evas_Object *
+_e_comp_config_style_thumb_cb(E_Configure_Option_Info *oi, Evas *evas)
+{
+   Evas_Object *ob, *oly, *oo, *obd, *ofr, *orec;
+   Ecore_Timer *timer;
+   char buf[4096];
+
+   ob = e_livethumb_add(evas);
+   e_livethumb_vsize_set(ob, 240, 240);
+
+   oly = e_layout_add(e_livethumb_evas_get(ob));
+   e_layout_virtual_size_set(oly, 240, 240);
+   e_livethumb_thumb_set(ob, oly);
+   evas_object_show(oly);
+
+   oo = edje_object_add(e_livethumb_evas_get(ob));
+   snprintf(buf, sizeof(buf), "e/comp/%s", oi->name);
+   e_theme_edje_object_set(oo, "base/theme/borders", buf);
+   e_layout_pack(oly, oo);
+   e_layout_child_move(oo, 39, 39);
+   e_layout_child_resize(oo, 162, 162);
+   edje_object_signal_emit(oo, "e,state,shadow,on", "e");
+   edje_object_signal_emit(oo, "e,state,visible,on", "e");
+   evas_object_show(oo);
+
+   ofr = edje_object_add(evas);
+   e_theme_edje_object_set
+     (ofr, "base/theme/modules/comp", "e/modules/comp/preview");
+   edje_object_part_swallow(ofr, "e.swallow.preview", ob);
+   evas_object_show(ofr);
+
+   obd = edje_object_add(e_livethumb_evas_get(ob));
+   e_theme_edje_object_set(obd, "base/theme/borders",
+                           "e/widgets/border/default/border");
+   edje_object_part_text_set(obd, "e.text.title", _("Title"));
+   edje_object_signal_emit(obd, "e,state,focused", "e");
+   edje_object_part_swallow(oo, "e.swallow.content", obd);
+   evas_object_show(obd);
+
+   orec = evas_object_rectangle_add(e_livethumb_evas_get(ob));
+   evas_object_color_set(orec, 0, 0, 0, 128);
+   edje_object_part_swallow(obd, "e.swallow.client", orec);
+   evas_object_show(orec);
+
+   timer = ecore_timer_add(3.0, _e_comp_config_style_thumb_timer_cb, ofr);
+   evas_object_data_set(ofr, "style_demo_state", (void *)1);
+   evas_object_data_set(ofr, "comp_timer", timer);
+   evas_object_data_set(ofr, "comp_preview", oo);
+   evas_object_event_callback_add(ofr, EVAS_CALLBACK_DEL, _e_comp_config_style_thumb_del_cb, timer);
+
+   return ofr;
+}
+
+static Eina_List *
+_e_comp_config_style_info_cb(E_Configure_Option *co)
+{
+   Eina_List *ret = NULL, *styles;
+   Eina_Stringshare *style;
+   E_Configure_Option_Info *oi;
+
+   styles = e_theme_comp_list();
+   EINA_LIST_FREE(styles, style)
+     {
+        oi = e_configure_option_info_new(co, style, style);
+        oi->current = (conf->shadow_style == style);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -4127,8 +4245,13 @@ _e_comp_cfg_init(void)
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, ENUM, engine, conf, _("Compositing engine"), _("composite"), _("border"));
-   co->info_cb = _e_comp_engine_info_cb;
+   co->info_cb = _e_comp_config_engine_info_cb;
    co->requires_restart = 1;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, STR, shadow_style, conf, _("Default window style"), _("composite"), _("border"), _("theme"));
+   co->info_cb = _e_comp_config_style_info_cb;
+   co->thumb_cb = _e_comp_config_style_thumb_cb;
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
 
    e_configure_option_category_tag_add(_("windows"), _("composite"));
