@@ -120,6 +120,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
      }
    if (disable_effects)
      {
+        conf->disable_screen_effects =
         conf->match.disable_borders =
         conf->match.disable_popups =
         conf->match.disable_menus =
