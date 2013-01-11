@@ -3,6 +3,7 @@
         * e_manager_comp_set() is no longer accessible by modules
         * added option to disable comp effects on screen
         * fixed bug where backlight settings would try to update dummy backlight devices
+        * added focus-out color class and functionality to default theme
 
 2013-01-10 Carsten Haitzler
 

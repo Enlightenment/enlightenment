@@ -224,6 +224,13 @@ group { name: "e/comp/default";
    alias: "e/comp/popup";
    images.image: "win_shadow.png" COMP;
    images.image: "win_glow.png" COMP;
+   color_classes {
+      color_class {
+         name: "comp_focus-out_color";
+         color: 253 253 253 255;
+         color3: 0 0 0 0;
+      }
+   }
    parts {
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
@@ -288,8 +295,23 @@ group { name: "e/comp/default";
             rel2.relative: 1.0  1.0;
          }
       }
-      part { name: "e.swallow.content"; type: SWALLOW;
+      part { name: "focus-clipper";
+         type: RECT;
          clip_to: "clipper";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            color_class: "comp_focus-out_color";
+            rel1.to: "clipper";
+            rel2.to: "clipper";
+         }
+         description { state: "focused" 0.0;
+            inherit: "default" 0.0;
+            color_class: "";
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "e.swallow.content"; type: SWALLOW;
+         clip_to: "focus-clipper";
          description { state: "default" 0.0;
             rel1.to: "shower";
             rel2.to: "shower";
@@ -334,6 +356,7 @@ group { name: "e/comp/default";
          action: STATE_SET "focused" 0.0;
          transition: SINUSOIDAL 0.1;
          target: "glow";
+         target: "focus-clipper";
          after: "focus2";
       }
       program { name: "focus2";
@@ -341,9 +364,12 @@ group { name: "e/comp/default";
          transition: SINUSOIDAL 0.4;
          target: "glow";
       }
-//      program {
-//         signal: "e,state,focus,off"; source: "e";
-//      }
+      program {
+         signal: "e,state,focus,off"; source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.1;
+         target: "focus-clipper";
+      }
       program { name: "urgent1";
          signal: "e,state,urgent,on"; source: "e";
          action: STATE_SET "focused" 0.0;

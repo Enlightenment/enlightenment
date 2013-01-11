@@ -63,6 +63,7 @@ Improvements:
     * E_LIST_HANDLER_APPEND macro now asserts the event handler to make debugging easier
     * config submenu now sets "config" category
     * composite settings dialog is now accessible from Settings menu
+    * added focus-out color class and functionality to default theme
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.
