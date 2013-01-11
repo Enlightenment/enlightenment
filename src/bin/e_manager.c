@@ -523,7 +523,7 @@ e_managers_keys_ungrab(void)
      }
 }
 
-EAPI void
+EINTERN void
 e_manager_comp_set(E_Manager *man, E_Manager_Comp *comp)
 {
    E_OBJECT_CHECK(man);

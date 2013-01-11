@@ -31,6 +31,7 @@ Changes:
 
     API:
         * e_menu_category_callback create callback parameter order has been changed
+        * e_manager_comp_set() is no longer accessible by modules
 
 Deprecations:
     *

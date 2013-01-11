@@ -113,7 +113,7 @@ EAPI void            e_managers_keys_ungrab(void);
 // only 1 compositor can own a manager at a time, so before you "set" the
 // comp evas, you need to get it and make sure it's NULL, if so, then
 // you can set the update func and the comp evas
-EAPI void             e_manager_comp_set(E_Manager *man, E_Manager_Comp *comp);
+EINTERN void         e_manager_comp_set(E_Manager *man, E_Manager_Comp *comp);
 EAPI Evas            *e_manager_comp_evas_get(E_Manager *man);
 EAPI void             e_manager_comp_evas_update(E_Manager *man);
 EAPI const Eina_List *e_manager_comp_src_list(E_Manager *man);
