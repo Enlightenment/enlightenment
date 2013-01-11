@@ -1,6 +1,7 @@
 #include "macros.edc"
 
 collections {
+#include "colorclasses.edc"
 // desktop in general
 #include "edc/comp.edc"
 #include "edc/background.edc"

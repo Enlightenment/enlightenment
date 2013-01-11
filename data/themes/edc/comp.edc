@@ -224,13 +224,6 @@ group { name: "e/comp/default";
    alias: "e/comp/popup";
    images.image: "win_shadow.png" COMP;
    images.image: "win_glow.png" COMP;
-   color_classes {
-      color_class {
-         name: "comp_focus-out_color";
-         color: 253 253 253 255;
-         color3: 0 0 0 0;
-      }
-   }
    parts {
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
