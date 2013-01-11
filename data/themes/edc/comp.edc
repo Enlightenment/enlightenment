@@ -241,7 +241,6 @@ group { name: "e/modules/comp/screen/overlay/noeffects";
 }
 
 group { name: "e/comp/default";
-   alias: "e/comp/popup";
    images.image: "win_shadow.png" COMP;
    images.image: "win_glow.png" COMP;
    parts {
@@ -412,9 +411,18 @@ group { name: "e/comp/default";
    }
 }
 
+group { name: "e/comp/popup";
+   inherit: "e/comp/default";
+   parts {
+      part { name: "focus-clipper";
+         description { state: "default";
+            color_class: "";
+         }
+      }
+   }
+}
 
 group { name: "e/comp/default/fast";
-   alias: "e/comp/popup/fast";
    inherit: "e/comp/default";
    programs {
       program {
@@ -440,6 +448,17 @@ group { name: "e/comp/default/fast";
       program {
          name: "focus_off";
          transition: SINUSOIDAL 0;
+      }
+   }
+}
+
+group { name: "e/comp/popup/fast";
+   inherit: "e/comp/default/fast";
+   parts {
+      part { name: "focus-clipper";
+         description { state: "default";
+            color_class: "";
+         }
       }
    }
 }
@@ -488,7 +507,7 @@ group { name: "e/comp/still/fast";
 }
 
 group { name: "e/comp/menu";
-   inherit: "e/comp/default";
+   inherit: "e/comp/popup";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
@@ -500,7 +519,7 @@ group { name: "e/comp/menu";
 }
 
 group { name: "e/comp/menu/fast";
-   inherit: "e/comp/default/fast";
+   inherit: "e/comp/popup/fast";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
@@ -512,7 +531,7 @@ group { name: "e/comp/menu/fast";
 }
 
 group { name: "e/comp/everything";
-   inherit: "e/comp/default";
+   inherit: "e/comp/popup";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
@@ -524,7 +543,7 @@ group { name: "e/comp/everything";
 }
 
 group { name: "e/comp/everything/fast";
-   inherit: "e/comp/default/fast";
+   inherit: "e/comp/popup/fast";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
