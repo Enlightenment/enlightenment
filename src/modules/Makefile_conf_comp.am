@@ -1,6 +1,5 @@
 conf_compdir = $(MDIR)/conf_comp
-conf_comp_DATA = conf_comp/e-module-comp.edj \
-	    conf_comp/module.desktop
+conf_comp_DATA = conf_comp/module.desktop
 
 EXTRA_DIST += $(comp_DATA)
 

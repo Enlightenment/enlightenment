@@ -27,12 +27,10 @@ static void
 _e_mod_config_menu_create(void *d EINA_UNUSED, E_Menu *m)
 {
    E_Menu_Item *mi;
-   char buf[4096];
 
    mi = e_menu_item_new(m);
-   snprintf(buf, sizeof(buf), "%s/e-module-comp.edj", e_module_dir_get(_comp_mod->module));
    e_menu_item_label_set(mi, _("Composite"));
-   e_menu_item_icon_file_set(mi, buf);
+   e_util_menu_item_theme_icon_set(mi, "preferences-composite");
    e_menu_item_callback_set(mi, _e_mod_comp_conf_cb, NULL);
 }
 
@@ -40,7 +38,6 @@ EAPI void *
 e_modapi_init(E_Module *m)
 {
    Mod *mod;
-   char buf[4096];
    E_Comp_Config *conf;
 
    conf = e_comp_config_get();
@@ -54,11 +51,10 @@ e_modapi_init(E_Module *m)
    m->data = mod;
 
    mod->module = m;
-   snprintf(buf, sizeof(buf), "%s/e-module-comp.edj", e_module_dir_get(m));
    e_configure_registry_category_add("appearance", 10, _("Look"), NULL,
                                      "preferences-look");
    e_configure_registry_item_add("appearance/comp", 120, _("Composite"), NULL,
-                                 buf, e_int_config_comp_module);
+                                 "preferences-composite", e_int_config_comp_module);
 
    mod->conf = conf;
    maug = e_int_menus_menu_augmentation_add_sorted("config/1", _("Composite"), _e_mod_config_menu_create, NULL, NULL, NULL);

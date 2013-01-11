@@ -95,7 +95,6 @@ e_int_config_comp_module(E_Container *con,
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   char buf[4096];
    Mod *mod = _comp_mod;
 
    if (e_config_dialog_find("E", "appearance/comp")) return NULL;
@@ -108,10 +107,8 @@ e_int_config_comp_module(E_Container *con,
    v->advanced.apply_cfdata = _advanced_apply_data;
    v->advanced.create_widgets = _advanced_create_widgets;
    
-   snprintf(buf, sizeof(buf), "%s/e-module-comp.edj",
-            e_module_dir_get(mod->module));
    cfd = e_config_dialog_new(con, _("Composite Settings"),
-                             "E", "appearance/comp", buf, 0, v, mod);
+                             "E", "appearance/comp", "preferences-composite", 0, v, mod);
    mod->config_dialog = cfd;
    return cfd;
 }
