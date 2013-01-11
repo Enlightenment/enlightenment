@@ -166,6 +166,8 @@ static E_Comp_Config *conf = NULL;
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_match_edd = NULL;
 
+static Eina_Inlist *cfg_opts = NULL;
+
 //////////////////////////////////////////////////////////////////////////
 #undef DBG
 #if 0
@@ -4051,6 +4053,74 @@ _e_comp_sys_resume(void)
                             EINA_FALSE);
 }
 
+static Eina_List *
+_e_comp_engine_info_cb(E_Configure_Option *co)
+{
+   Eina_List *ret = NULL;
+   E_Configure_Option_Info *oi;
+   int x;
+   const char *name[] =
+   {
+    "Software",
+    NULL
+   };
+
+#define ENGINE_SW 1
+#define ENGINE_GL 2
+   if (!getenv("ECORE_X_NO_XLIB"))
+     {
+        if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
+          {
+             name[1] = "OpenGL";
+          }
+     }
+
+   for (x = ENGINE_SW; x <= ENGINE_GL; x++)
+     {
+        if (!name[x - 1]) continue;
+        oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t*)(long)x);
+        oi->current = (*(int*)co->valptr == x);
+        ret = eina_list_append(ret, oi);
+     }
+   return ret;
+}
+
+static void
+_e_comp_cfg_init(void)
+{
+   E_Configure_Option *co;
+
+   E_CONFIGURE_OPTION_ADD(co, BOOL, vsync, conf, _("Tear-free compositing (VSYNC)"), _("composite"), _("border"));
+   co->requires_restart = 1;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_borders, conf, _("Disable composite effects for windows"), _("composite"), _("border"), _("theme"), _("animate"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_menus, conf, _("Disable composite effects for menus"), _("composite"), _("menu"), _("theme"), _("animate"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_popups, conf, _("Disable composite effects for popups"), _("composite"), _("popup"), _("theme"), _("animate"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, conf, _("Disable composite effects for override-redirect windows (tooltips and such)"), _("composite"), _("theme"), _("animate"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, smooth_windows, conf, _("Smooth scaling of composited window content"), _("composite"), _("border"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, nocomp_fs, conf, _("Don't composite fullscreen windows"), _("composite"), _("border"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, ENUM, engine, conf, _("Compositing engine"), _("composite"), _("border"));
+   co->info_cb = _e_comp_engine_info_cb;
+   co->requires_restart = 1;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+
+   e_configure_option_category_tag_add(_("windows"), _("composite"));
+   e_configure_option_category_tag_add(_("composite"), _("composite"));
+   e_configure_option_category_icon_set(_("composite"), "preferences-composite");
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 EINTERN Eina_Bool
@@ -4143,7 +4213,7 @@ e_comp_init(void)
    if (!e_comp_wl_init())
      EINA_LOG_ERR("Failed to initialize Wayland Client Support !!\n");
 #endif
-
+   _e_comp_cfg_init();
    EINA_LIST_FOREACH(e_manager_list(), l, man)
      {
         E_Comp *c;
@@ -4174,6 +4244,10 @@ e_comp_shutdown(void)
 #ifdef HAVE_WAYLAND_CLIENTS
    e_comp_wl_shutdown();
 #endif
+
+   E_CONFIGURE_OPTION_LIST_CLEAR(cfg_opts);
+   e_configure_option_category_tag_del(_("composite"), _("composite"));
+   e_configure_option_category_tag_del(_("windows"), _("composite"));
 
    e_comp_cfdata_config_free(conf);
    E_CONFIG_DD_FREE(conf_match_edd);

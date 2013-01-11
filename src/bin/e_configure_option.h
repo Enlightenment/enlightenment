@@ -23,6 +23,9 @@ typedef Evas_Object *(*E_Configure_Option_Info_Thumb_Cb)(E_Configure_Option_Info
 #define E_CONFIGURE_OPTION_ADD(OPT, TYPE, NAME, CFGPTR, DESC, ...) \
    OPT = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_##TYPE, DESC, #NAME, EINA_TRUE, &CFGPTR->NAME, NULL);\
    e_configure_option_tags_set(OPT, (const char*[]){__VA_ARGS__, NULL}, 0)
+#define E_CONFIGURE_OPTION_ADD_CUSTOM(OPT, NAME, DESC, ...) \
+   OPT = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_CUSTOM, DESC, NAME, EINA_TRUE, NULL, NULL);\
+   e_configure_option_tags_set(OPT, (const char*[]){__VA_ARGS__, NULL}, 0)
 #define E_CONFIGURE_OPTION_HELP(OPT, STR) \
    OPT->help = eina_stringshare_add(_(STR))
 #define E_CONFIGURE_OPTION_MINMAX_STEP_FMT(OPT, MIN, MAX, STEP, FMT) \

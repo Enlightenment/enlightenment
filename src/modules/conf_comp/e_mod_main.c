@@ -4,8 +4,8 @@
 #include "e_comp.h"
 #include "e_comp_cfdata.h"
 
-static Eina_Inlist *cfg_opts = NULL;
 static E_Int_Menu_Augmentation *maug = NULL;
+static Eina_Inlist *cfg_opts = NULL;
 
 /* module private routines */
 EINTERN Mod *_comp_mod = NULL;
@@ -16,36 +16,6 @@ EAPI E_Module_Api e_modapi =
    E_MODULE_API_VERSION,
    "Composite Settings"
 };
-
-static Eina_List *
-_e_mod_engine_info_cb(E_Configure_Option *co)
-{
-   Eina_List *ret = NULL;
-   E_Configure_Option_Info *oi;
-   int x;
-   const char *name[] =
-   {
-    "Software",
-    NULL
-   };
-
-   if (!getenv("ECORE_X_NO_XLIB"))
-     {
-        if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
-          {
-             name[1] = "OpenGL";
-          }
-     }
-
-   for (x = ENGINE_SW; x <= ENGINE_GL; x++)
-     {
-        if (!name[x - 1]) continue;
-        oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
-        ret = eina_list_append(ret, oi);
-     }
-   return ret;
-}
 
 static void
 _e_mod_comp_conf_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
@@ -104,47 +74,17 @@ e_modapi_init(E_Module *m)
      mod->conf->first_draw_delay = 0.20;
 
    _comp_mod = mod;
-
-   e_module_delayed_set(m, 0);
-   e_module_priority_set(m, -1000);
-
    {
       E_Configure_Option *co;
 
-      E_CONFIGURE_OPTION_ADD(co, CUSTOM, engine, mod->conf, _("Composite settings panel"), _("composite"), _("border"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("settings"), _("Composite settings panel"), _("composite"), _("border"));
       co->info = eina_stringshare_add("appearance/comp");
-      E_CONFIGURE_OPTION_ICON(co, buf);
+      E_CONFIGURE_OPTION_ICON(co, "preferences-composite");
       cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, vsync, mod->conf, _("Tear-free compositing (VSYNC)"), _("composite"), _("border"));
-      co->requires_restart = 1;
-      cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_borders, mod->conf, _("Disable composite effects for windows"), _("composite"), _("border"), _("theme"), _("animate"));
-      co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-      cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_menus, mod->conf, _("Disable composite effects for menus"), _("composite"), _("menu"), _("theme"), _("animate"));
-      co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-      cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_popups, mod->conf, _("Disable composite effects for popups"), _("composite"), _("popup"), _("theme"), _("animate"));
-      co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-      cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, mod->conf, _("Disable composite effects for override-redirect windows (tooltips and such)"), _("composite"), _("theme"), _("animate"));
-      co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-      cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, smooth_windows, mod->conf, _("Smooth scaling of composited window content"), _("composite"), _("border"));
-      co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-      cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, BOOL, nocomp_fs, mod->conf, _("Don't composite fullscreen windows"), _("composite"), _("border"));
-      co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-      cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-      E_CONFIGURE_OPTION_ADD(co, ENUM, engine, mod->conf, _("Compositing engine"), _("composite"), _("border"));
-      co->info_cb = _e_mod_engine_info_cb;
-      co->requires_restart = 1;
-      cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
-
-      e_configure_option_category_tag_add(_("windows"), _("composite"));
-      e_configure_option_category_tag_add(_("composite"), _("composite"));
-      e_configure_option_category_icon_set(_("composite"), buf);
    }
+
+   e_module_delayed_set(m, 0);
+   e_module_priority_set(m, -1000);
 
    return mod;
 }
@@ -163,11 +103,8 @@ e_modapi_shutdown(E_Module *m)
         mod->config_dialog = NULL;
      }
 
-   E_CONFIGURE_OPTION_LIST_CLEAR(cfg_opts);
-   e_configure_option_category_tag_del(_("composite"), _("composite"));
-   e_configure_option_category_tag_del(_("windows"), _("composite"));
-
    free(mod);
+   E_CONFIGURE_OPTION_LIST_CLEAR(cfg_opts);
 
    if (maug)
      {
