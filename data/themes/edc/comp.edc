@@ -195,11 +195,19 @@ group { name: "e/modules/comp/screen/overlay/noeffects";
          }
          program {
             name: "suspend";
+            signal: "e,state,sys,suspend"; source: "e";
+            action: STATE_SET "visible" 0.0;
             transition: ACCELERATE 0 CURRENT;
+            target: "suspender";
+            action: SIGNAL_EMIT "e,state,sys,suspend,done" "e";
          }
          program {
             name: "hibernate";
+            signal: "e,state,sys,hibernate"; source: "e";
+            action: STATE_SET "visible" 0.0;
             transition: ACCELERATE 0 CURRENT;
+            target: "suspender";
+            action: SIGNAL_EMIT "e,state,sys,hibernate,done" "e";
          }
          program {
             name: "resume";
@@ -207,15 +215,27 @@ group { name: "e/modules/comp/screen/overlay/noeffects";
          }
          program {
             name: "reboot";
+            signal: "e,state,sys,reboot"; source: "e";
+            action: STATE_SET "visible" 0.0;
             transition: ACCELERATE 0 CURRENT;
+            target: "suspender";
+            action: SIGNAL_EMIT "e,state,sys,reboot,done" "e";
          }
          program {
             name: "halt";
+            signal: "e,state,sys,halt"; source: "e";
+            action: STATE_SET "visible" 0.0;
             transition: ACCELERATE 0 CURRENT;
+            target: "suspender";
+            action: SIGNAL_EMIT "e,state,sys,halt,done" "e";
          }
          program {
             name: "logout";
+            signal: "e,state,sys,logout"; source: "e";
+            action: STATE_SET "visible" 0.0;
             transition: ACCELERATE 0 CURRENT;
+            target: "suspender";
+            action: SIGNAL_EMIT "e,state,sys,logout,done" "e";
          }
    }
 }
