@@ -1643,13 +1643,13 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         // etc. etc.
         list = conf->match.popups;
         name = cw->pop->name;
-        skip = (conf->match.disable_borders);
+        skip = (conf->match.disable_popups);
      }
    else if (cw->menu)
      {
         // FIXME: e has no way to tell e menus apart... need naming
         list = conf->match.menus;
-        skip = (conf->match.disable_borders);
+        skip = (conf->match.disable_menus);
      }
    else
      {
@@ -1659,7 +1659,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         clas = cw->clas;
         role = cw->role;
         primary_type = cw->primary_type;
-        skip = (conf->match.disable_borders);
+        skip = (conf->match.disable_overrides);
      }
 
    if (!skip)
