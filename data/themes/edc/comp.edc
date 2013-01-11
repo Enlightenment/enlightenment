@@ -754,7 +754,6 @@ group { name: "e/comp/fullscreen/fast";
          transition: DECELERATE 0;
       }
       program { name: "hide2";
-         action: STATE_SET "default" 0.0;
          transition: DECELERATE 0;
       }
    }
