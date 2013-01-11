@@ -1,7 +1,7 @@
 #include "e.h"
 
-#define TEXT_PRESS_KEY_SEQUENCE _("Please press key sequence,<br><br>" \
-                                  "or <hilight>Escape</hilight> to abort.")
+#define TEXT_PRESS_KEY_SEQUENCE            _("Please press key sequence,<br><br>" \
+                                             "or <hilight>Escape</hilight> to abort.")
 #define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<br>"             \
                                              "and press any button on your mouse,<br> or roll a" \
                                              " wheel, to assign mouse binding."                  \
@@ -22,11 +22,11 @@ _e_grab_dialog_key_handler(void *data, int type __UNUSED__, Ecore_Event_Key *ev)
         e_object_del(data);
         return ECORE_CALLBACK_RENEW;
      }
-   
+
    if (eg->key)
      {
         e_object_ref(data);
-        eg->key(eg->data ?: eg, type, ev);
+        eg->key(eg->data ? : eg, type, ev);
         e_object_unref(data);
      }
    return ECORE_CALLBACK_RENEW;
@@ -42,7 +42,7 @@ _e_grab_dialog_wheel_handler(void *data, int type __UNUSED__, Ecore_Event_Mouse_
    if (eg->wheel)
      {
         e_object_ref(data);
-        eg->wheel(eg->data ?: eg, type, ev);
+        eg->wheel(eg->data ? : eg, type, ev);
         e_object_unref(data);
      }
    return ECORE_CALLBACK_RENEW;
@@ -58,7 +58,7 @@ _e_grab_dialog_mouse_handler(void *data, int type __UNUSED__, Ecore_Event_Mouse_
    if (eg->mouse)
      {
         e_object_ref(data);
-        eg->mouse(eg->data ?: eg, type, ev);
+        eg->mouse(eg->data ? : eg, type, ev);
         e_object_unref(data);
      }
    else
@@ -149,7 +149,7 @@ e_grab_dialog_show(E_Win *parent, Eina_Bool is_mouse, Ecore_Event_Handler_Cb key
    eg->key = key;
    eg->mouse = mouse;
    eg->wheel = wheel;
-   eg->data = (void*)data;
+   eg->data = (void *)data;
 
    eh = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, (Ecore_Event_Handler_Cb)_e_grab_dialog_key_handler, eg);
    eg->handlers = eina_list_append(eg->handlers, eh);
@@ -166,3 +166,4 @@ e_grab_dialog_show(E_Win *parent, Eina_Bool is_mouse, Ecore_Event_Handler_Cb key
      e_dialog_parent_set(eg->dia, parent);
    return eg;
 }
+

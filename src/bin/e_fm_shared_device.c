@@ -25,14 +25,13 @@ _e_fm_shared_device_storage_free(E_Storage *s)
    free(s);
 }
 
-
 void
 _e_fm_shared_device_volume_free(E_Volume *v)
 {
    if (v->storage)
      {
         v->storage->volumes = eina_list_remove(v->storage->volumes, v);
-	v->storage = NULL;
+        v->storage = NULL;
      }
    if (v->udi) eina_stringshare_del(v->udi);
    if (v->uuid) eina_stringshare_del(v->uuid);
@@ -45,3 +44,4 @@ _e_fm_shared_device_volume_free(E_Volume *v)
    eina_stringshare_del(v->dbus_path);
    free(v);
 }
+

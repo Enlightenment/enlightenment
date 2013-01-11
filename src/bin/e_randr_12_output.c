@@ -1,8 +1,8 @@
 #include "e_randr_private.h"
 #include "e_randr.h"
 
-E_Randr_Monitor_Info           *_monitor_info_new(E_Randr_Output_Info *output_info);
-static int                      _modes_size_sort_cb(const void *d1, const void *d2);
+E_Randr_Monitor_Info *_monitor_info_new(E_Randr_Output_Info *output_info);
+static int            _modes_size_sort_cb(const void *d1, const void *d2);
 
 void
 _monitor_modes_refs_set(E_Randr_Monitor_Info *mi, Ecore_X_Randr_Output o)
@@ -127,13 +127,13 @@ _output_info_free(E_Randr_Output_Info *output_info)
 {
    EINA_SAFETY_ON_NULL_RETURN(output_info);
 
-    eina_list_free(output_info->wired_clones);
-    eina_list_free(output_info->possible_crtcs);
-    eina_list_free(output_info->compatibility_list);
-    eina_stringshare_del(output_info->name);
-    _monitor_info_free(output_info->monitor);
-    output_info->monitor = NULL;
-    free(output_info);
+   eina_list_free(output_info->wired_clones);
+   eina_list_free(output_info->possible_crtcs);
+   eina_list_free(output_info->compatibility_list);
+   eina_stringshare_del(output_info->name);
+   _monitor_info_free(output_info->monitor);
+   output_info->monitor = NULL;
+   free(output_info);
 }
 
 void
@@ -177,8 +177,8 @@ _outputs_to_array(Eina_List *outputs_info)
 
    if (!outputs_info || !(ret = malloc(sizeof(Ecore_X_Randr_Output) * eina_list_count(outputs_info)))) return NULL;
    EINA_LIST_FOREACH(outputs_info, output_iter, output_info)
-      /* output_info == NULL should _not_ be possible! */
-      ret[i++] = output_info ? output_info->xid : Ecore_X_Randr_None;
+     /* output_info == NULL should _not_ be possible! */
+     ret[i++] = output_info ? output_info->xid : Ecore_X_Randr_None;
    return ret;
 }
 
@@ -187,7 +187,8 @@ _outputs_to_array(Eina_List *outputs_info)
  * optionally limited by max_size_mode. If none are found, NULL is returned.
  */
 Eina_List
-*_outputs_common_modes_get(Eina_List *outputs, Ecore_X_Randr_Mode_Info *max_size_mode)
+*
+_outputs_common_modes_get(Eina_List *outputs, Ecore_X_Randr_Mode_Info *max_size_mode)
 {
    Eina_List *common_modes = NULL, *mode_iter, *output_iter, *mode_next, *output_next;
    E_Randr_Output_Info *output_info;
@@ -237,3 +238,4 @@ _modes_size_sort_cb(const void *d1, const void *d2)
 
    return (mode1->width * mode1->height) - (mode2->width * mode2->height);
 }
+

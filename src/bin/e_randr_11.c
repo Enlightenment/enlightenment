@@ -30,7 +30,7 @@ _11_screen_info_new(void)
    ecore_x_randr_screen_primary_output_current_size_get(e_randr_screen_info.root, NULL, NULL, NULL, NULL, &(randr_info_11->csize_index));
    randr_info_11->corientation = ecore_x_randr_screen_primary_output_orientation_get(e_randr_screen_info.root);
    randr_info_11->orientations = ecore_x_randr_screen_primary_output_orientations_get(e_randr_screen_info.root);
-   randr_info_11->rates = malloc(sizeof(Ecore_X_Randr_Refresh_Rate*) * nsizes);
+   randr_info_11->rates = malloc(sizeof(Ecore_X_Randr_Refresh_Rate *) * nsizes);
    randr_info_11->nrates = malloc(sizeof(int) * nsizes);
    for (i = 0; i < nsizes; i++)
      {
@@ -84,5 +84,6 @@ _11_screen_info_refresh(void)
    _11_screen_info_free(e_randr_screen_info.rrvd_info.randr_info_11);
    e_randr_screen_info.rrvd_info.randr_info_11 = _11_screen_info_new();
 
-   return (e_randr_screen_info.rrvd_info.randr_info_11 != NULL);
+   return e_randr_screen_info.rrvd_info.randr_info_11 != NULL;
 }
+

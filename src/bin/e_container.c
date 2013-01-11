@@ -362,7 +362,7 @@ e_container_zone_id_get(E_Container *con, int id)
 
 EAPI E_Desk *
 e_container_desk_window_profile_get(E_Container *con,
-                                    const char  *profile)
+                                    const char *profile)
 {
    Eina_List *l = NULL;
    E_Zone *zone = NULL;
@@ -767,7 +767,7 @@ e_container_border_stack_above(E_Border *bd, E_Border *above)
    /* Add to new layer */
    bd->layer = above->layer;
    pos = _e_container_layer_map(bd->layer);
-   
+
    ecore_x_window_configure(bd->win,
                             ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING |
                             ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE,

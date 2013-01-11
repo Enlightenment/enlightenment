@@ -956,7 +956,7 @@ _e_manager_cb_screensaver_on(void *data __UNUSED__, int ev_type __UNUSED__, void
           e_desklock_show_autolocked();
         else
           timer_post_screensaver_lock = ecore_timer_add
-          (e_config->desklock_post_screensaver_time,
+              (e_config->desklock_post_screensaver_time,
               _e_manager_cb_timer_post_screensaver_lock, NULL);
      }
    return ECORE_CALLBACK_PASS_ON;
@@ -994,9 +994,11 @@ _e_manager_cb_client_message(void *data __UNUSED__, int ev_type __UNUSED__, void
    switch (e_config->window_activehint_policy)
      {
       case 0: break;
+
       case 1:
         edje_object_signal_emit(bd->bg_object, "e,state,urgent", "e");
         break;
+
       default:
         if (!bd->focused) e_border_activate(bd, EINA_TRUE);
         else e_border_raise(bd);

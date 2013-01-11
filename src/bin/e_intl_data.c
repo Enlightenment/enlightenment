@@ -30,7 +30,6 @@ e_intl_data_shutdown(void)
    return 1;
 }
 
-
 /* Get the input method configuration from the file */
 EAPI E_Input_Method_Config *
 e_intl_input_method_config_read(Eet_File *imc_file)
@@ -40,7 +39,7 @@ e_intl_input_method_config_read(Eet_File *imc_file)
    imc = NULL;
    if (imc_file)
      {
-	imc = (E_Input_Method_Config *) eet_data_read(imc_file, _e_intl_input_method_config_edd, "imc");
+        imc = (E_Input_Method_Config *)eet_data_read(imc_file, _e_intl_input_method_config_edd, "imc");
      }
    return imc;
 }
@@ -53,7 +52,7 @@ e_intl_input_method_config_write(Eet_File *imc_file, E_Input_Method_Config *imc)
 
    if (imc_file)
      {
-	ok = eet_data_write(imc_file, _e_intl_input_method_config_edd, "imc", imc, 0);
+        ok = eet_data_write(imc_file, _e_intl_input_method_config_edd, "imc", imc, 0);
      }
    return ok;
 }
@@ -63,13 +62,14 @@ e_intl_input_method_config_free(E_Input_Method_Config *imc)
 {
    if (imc)
      {
-	if (imc->e_im_name) eina_stringshare_del(imc->e_im_name);
-	if (imc->gtk_im_module) eina_stringshare_del(imc->gtk_im_module);
-	if (imc->qt_im_module) eina_stringshare_del(imc->qt_im_module);
-	if (imc->xmodifiers) eina_stringshare_del(imc->xmodifiers);
-	if (imc->ecore_imf_module) eina_stringshare_del(imc->ecore_imf_module);
-	if (imc->e_im_exec) eina_stringshare_del(imc->e_im_exec);
-	if (imc->e_im_setup_exec) eina_stringshare_del(imc->e_im_setup_exec);
-	E_FREE(imc);
+        if (imc->e_im_name) eina_stringshare_del(imc->e_im_name);
+        if (imc->gtk_im_module) eina_stringshare_del(imc->gtk_im_module);
+        if (imc->qt_im_module) eina_stringshare_del(imc->qt_im_module);
+        if (imc->xmodifiers) eina_stringshare_del(imc->xmodifiers);
+        if (imc->ecore_imf_module) eina_stringshare_del(imc->ecore_imf_module);
+        if (imc->e_im_exec) eina_stringshare_del(imc->e_im_exec);
+        if (imc->e_im_setup_exec) eina_stringshare_del(imc->e_im_setup_exec);
+        E_FREE(imc);
      }
 }
+

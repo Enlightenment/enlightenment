@@ -75,7 +75,7 @@ e_module_all_load(void)
    char buf[128];
 
    _e_modules_initting = EINA_TRUE;
-   
+
    e_config->modules =
      eina_list_sort(e_config->modules, 0, _e_module_sort_priority);
 
@@ -595,7 +595,7 @@ _e_module_cb_idler(void *data __UNUSED__)
      }
 
    ecore_event_add(E_EVENT_MODULE_INIT_END, NULL, NULL, NULL);
-   
+
    _e_modules_initting = EINA_FALSE;
    _e_module_whitelist_check();
 
@@ -655,80 +655,80 @@ _e_module_whitelist_check(void)
    unsigned int known = 0;
    int i;
    const char *s;
-   const char *goodmods[] = 
-     {
-        "access",
-        "backlight",
-        "battery",
-        "bluez4",
-        "clock",
-        "conf",
-        "conf_applications",
-        "conf_comp",
-        "conf_dialogs",
-        "conf_display",
-        "conf_edgebindings",
-        "conf_interaction",
-        "conf_intl",
-        "conf_keybindings",
-        "conf_menus",
-        "conf_paths",
-        "conf_performance",
-        "conf_randr",
-        "conf_shelves",
-        "conf_theme",
-        "conf_wallpaper2",
-        "conf_window_manipulation",
-        "conf_window_remembers",
-        "connman",
-        "cpufreq",
-        "everything",
-        "fileman",
-        "fileman_opinfo",
-        "gadman",
-        "ibar",
-        "ibox",
-        "illume2",
-        "illume-bluetooth",
-        "illume-home",
-        "illume-home-toggle",
-        "illume-indicator",
-        "illume-kbd-toggle",
-        "illume-keyboard",
-        "illume-mode-toggle",
-        "illume-softkey",
-        "layout",
-        "mixer",
-        "msgbus",
-        "notification",
-        "ofono",
-        "pager",
-        "physics",
-        "quickaccess",
-        "shot",
-        "start",
-        "syscon",
-        "systray",
-        "tasks",
-        "temperature",
-        "tiling",
-        "winlist",
-        "wizard",
-        "wl_drm",
-        "wl_screenshot",
-        "wl_shell",
-        "xkbswitch",
-        "echievements",
-        "music-control",
-        "conf2",
-        "appmenu",
-        NULL // end marker
-     };
+   const char *goodmods[] =
+   {
+      "access",
+      "backlight",
+      "battery",
+      "bluez4",
+      "clock",
+      "conf",
+      "conf_applications",
+      "conf_comp",
+      "conf_dialogs",
+      "conf_display",
+      "conf_edgebindings",
+      "conf_interaction",
+      "conf_intl",
+      "conf_keybindings",
+      "conf_menus",
+      "conf_paths",
+      "conf_performance",
+      "conf_randr",
+      "conf_shelves",
+      "conf_theme",
+      "conf_wallpaper2",
+      "conf_window_manipulation",
+      "conf_window_remembers",
+      "connman",
+      "cpufreq",
+      "everything",
+      "fileman",
+      "fileman_opinfo",
+      "gadman",
+      "ibar",
+      "ibox",
+      "illume2",
+      "illume-bluetooth",
+      "illume-home",
+      "illume-home-toggle",
+      "illume-indicator",
+      "illume-kbd-toggle",
+      "illume-keyboard",
+      "illume-mode-toggle",
+      "illume-softkey",
+      "layout",
+      "mixer",
+      "msgbus",
+      "notification",
+      "ofono",
+      "pager",
+      "physics",
+      "quickaccess",
+      "shot",
+      "start",
+      "syscon",
+      "systray",
+      "tasks",
+      "temperature",
+      "tiling",
+      "winlist",
+      "wizard",
+      "wl_drm",
+      "wl_screenshot",
+      "wl_shell",
+      "xkbswitch",
+      "echievements",
+      "music-control",
+      "conf2",
+      "appmenu",
+      NULL   // end marker
+   };
 
    EINA_LIST_FOREACH(_e_modules, l, m)
      {
         Eina_Bool ok;
-        
+
         if (!m->name) continue;
         ok = EINA_FALSE;
         for (i = 0; goodmods[i]; i++)
@@ -780,7 +780,7 @@ _e_module_whitelist_check(void)
      {
         E_Dialog *dia;
         Eina_Strbuf *sbuf;
-        
+
         dia = e_dialog_new(e_container_current_get(e_manager_current_get()),
                            "E", "_module_whitelist_dialog");
         if (!dia)
@@ -824,3 +824,4 @@ _e_module_whitelist_check(void)
           eina_stringshare_del(s);
      }
 }
+

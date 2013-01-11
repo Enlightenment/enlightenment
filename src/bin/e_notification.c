@@ -2,11 +2,11 @@
 
 typedef struct _Notification_Data
 {
-   EDBus_Connection *conn;
-   EDBus_Service_Interface *iface;
-   E_Notification_Notify_Cb notify_cb;
-   E_Notification_Close_Cb close_cb;
-   void *data;
+   EDBus_Connection                 *conn;
+   EDBus_Service_Interface          *iface;
+   E_Notification_Notify_Cb          notify_cb;
+   E_Notification_Close_Cb           close_cb;
+   void                             *data;
    const E_Notification_Server_Info *server_info;
 } Notification_Data;
 
@@ -38,7 +38,7 @@ hints_dict_iter(void *data, const void *key, EDBus_Message_Iter *var)
         n->icon.raw.channels = channels;
         n->icon.raw.data = malloc(sizeof(char) * n->icon.raw.data_size);
         EINA_SAFETY_ON_NULL_RETURN(n->icon.raw.data);
-        memcpy(n->icon.raw.data, raw_data, sizeof(char)*n->icon.raw.data_size);
+        memcpy(n->icon.raw.data, raw_data, sizeof(char) * n->icon.raw.data_size);
      }
    else if (!strcmp(key, "urgency"))
      {
@@ -111,7 +111,7 @@ capabilities_cb(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Me
 
    for (i = 0; n_data->server_info->capabilities[i]; i++)
      edbus_message_iter_arguments_append(array, "s",
-                                      n_data->server_info->capabilities[i]);
+                                         n_data->server_info->capabilities[i]);
    edbus_message_iter_container_close(main_iter, array);
    return reply;
 }
@@ -133,10 +133,10 @@ static const EDBus_Method methods[] = {
      EDBUS_ARGS({"u", "id"}), notify_cb },
    { "CloseNotification", EDBUS_ARGS({"u", "id"}), NULL, close_notification_cb },
    { "GetCapabilities", NULL, EDBUS_ARGS({"as", "capabilities"}),
-      capabilities_cb },
+     capabilities_cb },
    { "GetServerInformation", NULL,
-      EDBUS_ARGS({"s", "name"}, {"s", "vendor"}, {"s", "version"}, {"s", "spec_version"}),
-      server_info_cb },
+     EDBUS_ARGS({"s", "name"}, {"s", "vendor"}, {"s", "version"}, {"s", "spec_version"}),
+     server_info_cb },
    { }
 };
 
@@ -148,9 +148,9 @@ enum
 
 static const EDBus_Signal signals[] = {
    [SIGNAL_NOTIFICATION_CLOSED] =
-     { "NotificationClosed", EDBUS_ARGS({"u", "id"}, {"u", "reason"}) },
+   { "NotificationClosed", EDBUS_ARGS({"u", "id"}, {"u", "reason"}) },
    [SIGNAL_ACTION_INVOKED] =
-     { "ActionInvoked", EDBUS_ARGS({"u", "id"}, {"s", "action_key"}) },
+   { "ActionInvoked", EDBUS_ARGS({"u", "id"}, {"s", "action_key"}) },
    { }
 };
 
@@ -176,7 +176,7 @@ e_notification_server_register(const E_Notification_Server_Info *server_info, E_
    n_data->iface = edbus_service_interface_register(n_data->conn, PATH, &desc);
    n_data->notify_cb = n_cb;
    n_data->close_cb = close_cb;
-   n_data->data = (void *) data;
+   n_data->data = (void *)data;
    n_data->server_info = server_info;
    edbus_name_request(n_data->conn, BUS,
                       EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING, NULL, NULL);
@@ -311,11 +311,11 @@ notification_client_dbus_send(E_Notification_Notify *notify, E_Notification_Clie
    //build message
    main_iter = edbus_message_iter_get(msg);
    if (!edbus_message_iter_arguments_append(main_iter, "susssas",
-                                            notify->app_name ?: "",
+                                            notify->app_name ? : "",
                                             notify->replaces_id,
-                                            notify->icon.icon ?: "",
-                                            notify->sumary ?: "",
-                                            notify->body ?: "",
+                                            notify->icon.icon ? : "",
+                                            notify->sumary ? : "",
+                                            notify->body ? : "",
                                             &actions))
      goto error;
    edbus_message_iter_container_close(main_iter, actions);
@@ -410,6 +410,7 @@ e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_
 
    id = n_data->notify_cb(n_data->data, copy);
    if (cb)
-     cb((void *) data, id);
+     cb((void *)data, id);
    return EINA_TRUE;
 }
+

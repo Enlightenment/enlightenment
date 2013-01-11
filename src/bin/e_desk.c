@@ -107,7 +107,7 @@ e_desk_new(E_Zone *zone, int x, int y)
    if (!ok)
      {
         desk->window_profile = eina_stringshare_add
-          (e_config->desktop_default_window_profile);
+            (e_config->desktop_default_window_profile);
      }
 #endif
    return desk;
@@ -374,8 +374,8 @@ e_desk_deskshow(E_Zone *zone)
                {
                   if (bd->deskshow)
                     {
-                        bd->deskshow = 0;
-                        e_border_uniconify(bd);
+                       bd->deskshow = 0;
+                       e_border_uniconify(bd);
                     }
                }
              else
@@ -453,7 +453,7 @@ e_desk_current_get(E_Zone *zone)
 {
    E_OBJECT_CHECK_RETURN(zone, NULL);
    E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, NULL);
-   
+
    return e_desk_at_xy_get(zone, zone->desk_x_current, zone->desk_y_current);
 }
 
@@ -550,7 +550,7 @@ e_desk_prev(E_Zone *zone)
 
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
 EAPI void
-e_desk_window_profile_set(E_Desk     *desk,
+e_desk_window_profile_set(E_Desk *desk,
                           const char *profile)
 {
    E_Event_Desk_Window_Profile_Change *ev;
@@ -568,10 +568,10 @@ e_desk_window_profile_set(E_Desk     *desk,
 }
 
 EAPI void
-e_desk_window_profile_add(int         container,
-                          int         zone,
-                          int         desk_x,
-                          int         desk_y,
+e_desk_window_profile_add(int container,
+                          int zone,
+                          int desk_x,
+                          int desk_y,
                           const char *profile)
 {
    E_Config_Desktop_Window_Profile *cfprof;
@@ -666,6 +666,7 @@ e_desk_window_profile_update(void)
           }
      }
 }
+
 #endif
 
 static void
@@ -727,6 +728,7 @@ _e_desk_event_desk_name_change_free(void *data __UNUSED__, void *event)
    e_object_unref(E_OBJECT(ev->desk));
    free(ev);
 }
+
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
 static void
 _e_desk_event_desk_window_profile_change_free(void *data __UNUSED__, void *event)
@@ -736,6 +738,7 @@ _e_desk_event_desk_window_profile_change_free(void *data __UNUSED__, void *event
    e_object_unref(E_OBJECT(ev->desk));
    E_FREE(ev);
 }
+
 #endif
 static void
 _e_desk_show_begin(E_Desk *desk, int mode, int dx, int dy)
@@ -1076,4 +1079,5 @@ _e_desk_window_profile_change_protocol_set(void)
           (man->root, e_config->use_desktop_window_profile);
      }
 }
+
 #endif

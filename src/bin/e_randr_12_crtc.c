@@ -223,7 +223,7 @@ _crtc_according_to_policy_get(E_Randr_Crtc_Info *but, Ecore_X_Randr_Output_Polic
      }
 
    // get an initial value for ret
-   ret = (E_Randr_Crtc_Info*)eina_list_last_data_get(possible_crtcs);
+   ret = (E_Randr_Crtc_Info *)eina_list_last_data_get(possible_crtcs);
 
    switch (policy)
      {
@@ -239,7 +239,7 @@ _crtc_according_to_policy_get(E_Randr_Crtc_Info *but, Ecore_X_Randr_Output_Polic
         EINA_LIST_FOREACH(e_randr_screen_info.rrvd_info.randr_info_12->crtcs, iter, crtc_info)
           {
              if ((crtc_info->geometry.x + crtc_info->geometry.w) >
-                  (ret->geometry.x + ret->geometry.w))
+                 (ret->geometry.x + ret->geometry.w))
                ret = crtc_info;
           }
         break;
@@ -248,7 +248,7 @@ _crtc_according_to_policy_get(E_Randr_Crtc_Info *but, Ecore_X_Randr_Output_Polic
         EINA_LIST_FOREACH(e_randr_screen_info.rrvd_info.randr_info_12->crtcs, iter, crtc_info)
           {
              if ((crtc_info->geometry.y + crtc_info->geometry.h) >
-                  (ret->geometry.y + ret->geometry.h))
+                 (ret->geometry.y + ret->geometry.h))
                ret = crtc_info;
           }
         break;
@@ -272,3 +272,4 @@ _crtc_according_to_policy_get(E_Randr_Crtc_Info *but, Ecore_X_Randr_Output_Polic
    eina_list_free(possible_crtcs);
    return ret;
 }
+

@@ -66,14 +66,14 @@ struct _E_Comp
 
 struct _E_Comp_Zone
 {
-   E_Zone         *zone; // never deref - just use for handle cmp's
-   Evas_Object    *base;
-   Evas_Object    *over;
-   int             container_num;
-   int             zone_num;
-   int             x, y, w, h;
-   double          bl;
-   Eina_Bool       bloff;
+   E_Zone      *zone;    // never deref - just use for handle cmp's
+   Evas_Object *base;
+   Evas_Object *over;
+   int          container_num;
+   int          zone_num;
+   int          x, y, w, h;
+   double       bl;
+   Eina_Bool    bloff;
 };
 
 struct _E_Comp_Win
@@ -262,7 +262,7 @@ _e_comp_fullscreen_check(E_Comp *c)
             ((cw->x + cw->w) >= c->man->w) &&
             ((cw->y + cw->h) >= c->man->h) &&
             (!cw->argb) && (!cw->shaped)
-           )
+            )
           {
              return cw;
           }
@@ -471,7 +471,7 @@ _e_comp_win_ready_timeout_setup(E_Comp_Win *cw)
    else
      {
         cw->ready_timeout = ecore_timer_add
-           (conf->first_draw_delay, _e_comp_cb_win_show_ready_timeout, cw);
+            (conf->first_draw_delay, _e_comp_cb_win_show_ready_timeout, cw);
      }
 }
 
@@ -656,7 +656,7 @@ _e_comp_win_update(E_Comp_Win *cw)
                      }
                      }
                      }
-                     */
+                   */
                   ecore_x_pixmap_free(oldpm);
                }
           }
@@ -836,10 +836,10 @@ _e_comp_win_update(E_Comp_Win *cw)
                                  int srcbpp = 0, srcbpl = 0;
                                  // why do we neeed these 2? this smells wrong
                                  srcpix = ecore_x_image_data_get
-                                    (cw->xim, &srcbpl, NULL, &srcbpp);
-                                 ecore_x_image_to_argb_convert(srcpix, 
+                                     (cw->xim, &srcbpl, NULL, &srcbpp);
+                                 ecore_x_image_to_argb_convert(srcpix,
                                                                srcbpp,
-                                                               srcbpl, 
+                                                               srcbpl,
                                                                cw->cmap,
                                                                cw->vis,
                                                                x, y, w, h,
@@ -878,7 +878,7 @@ _e_comp_win_update(E_Comp_Win *cw)
      }
    // FIXME: below cw update check screws with show
    if (/*(!cw->update) &&*/ (cw->visible) && (cw->dmg_updates >= 1) &&
-       (cw->show_ready) && (!cw->bd || cw->bd->visible))
+                            (cw->show_ready) && (!cw->bd || cw->bd->visible))
      {
         if (!evas_object_visible_get(cw->shobj))
           {
@@ -900,8 +900,8 @@ _e_comp_win_update(E_Comp_Win *cw)
 
                   cw->pending_count++;
                   e_manager_comp_event_src_visibility_send
-                     (cw->c->man, (E_Manager_Comp_Source *)cw,
-                      _e_comp_cb_pending_after, cw->c);
+                    (cw->c->man, (E_Manager_Comp_Source *)cw,
+                    _e_comp_cb_pending_after, cw->c);
 
                   cw->show_anim = EINA_TRUE;
                }
@@ -1039,7 +1039,7 @@ _e_comp_win_adopt(E_Comp_Win *cw)
    if (!cw->damage)
      {
         cw->damage = ecore_x_damage_new
-           (cw->win, ECORE_X_DAMAGE_REPORT_DELTA_RECTANGLES);
+            (cw->win, ECORE_X_DAMAGE_REPORT_DELTA_RECTANGLES);
         eina_hash_add(damages, e_util_winid_str_get(cw->damage), cw);
      }
    if (!cw->update)
@@ -1081,7 +1081,7 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
    _e_comp_win_release(cw);
 
    ecore_x_composite_unredirect_subwindows
-      (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+     (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
    c->nocomp = 1;
    c->render_overflow = OVER_FLOW;
    ecore_x_window_hide(c->win);
@@ -1128,7 +1128,7 @@ _e_comp_cb_nocomp_end(E_Comp *c)
    if (!c->nocomp) return;
 
    ecore_x_composite_redirect_subwindows
-      (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+     (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
 
    fprintf(stderr, "COMP!\n");
    c->nocomp = 0;
@@ -1164,8 +1164,8 @@ _e_comp_cb_nocomp_end(E_Comp *c)
              if (!cw->hidden_override) _e_comp_child_show(cw);
              cw->pending_count++;
              e_manager_comp_event_src_visibility_send
-                (cw->c->man, (E_Manager_Comp_Source *)cw,
-                 _e_comp_cb_pending_after, cw->c);
+               (cw->c->man, (E_Manager_Comp_Source *)cw,
+               _e_comp_cb_pending_after, cw->c);
              // no need for effect
           }
         if (cw->counter)
@@ -1270,24 +1270,24 @@ _e_comp_cb_update(E_Comp *c)
              switch (conf->fps_corner)
                {
                 case 3: // bottom-right
-                   x = z->x + z->w - w;
-                   y = z->y + z->h - h;
-                   break;
+                  x = z->x + z->w - w;
+                  y = z->y + z->h - h;
+                  break;
 
                 case 2: // bottom-left
-                   x = z->x;
-                   y = z->y + z->h - h;
-                   break;
+                  x = z->x;
+                  y = z->y + z->h - h;
+                  break;
 
                 case 1: // top-right
-                   x = z->x + z->w - w;
-                   y = z->y;
-                   break;
+                  x = z->x + z->w - w;
+                  y = z->y;
+                  break;
 
                 default: // 0 // top-left
-                   x = z->x;
-                   y = z->y;
-                   break;
+                  x = z->x;
+                  y = z->y;
+                  break;
                }
           }
         evas_object_move(c->fps_bg, x, y);
@@ -1319,7 +1319,7 @@ _e_comp_cb_update(E_Comp *c)
         DBG("JOB1...\n");
         if (c->new_up_timer) ecore_timer_del(c->new_up_timer);
         c->new_up_timer =
-           ecore_timer_add(0.001, _e_comp_cb_delayed_update_timer, c);
+          ecore_timer_add(0.001, _e_comp_cb_delayed_update_timer, c);
         //        _e_comp_render_queue(c);
      }
    c->updates = new_updates;
@@ -1347,7 +1347,7 @@ _e_comp_cb_update(E_Comp *c)
       }
       t0 = t;
       }
-      */
+    */
 nocomp:
    cw = _e_comp_fullscreen_check(c);
    if (cw)
@@ -1358,7 +1358,7 @@ nocomp:
                {
                   if (!c->nocomp_delay_timer)
                     c->nocomp_delay_timer = ecore_timer_add
-                       (1.0, _e_comp_cb_nocomp_begin_timeout, c);
+                        (1.0, _e_comp_cb_nocomp_begin_timeout, c);
                }
           }
      }
@@ -1994,7 +1994,7 @@ _e_comp_win_add(E_Comp *c,
         int num;
 
         cw->damage = ecore_x_damage_new
-           (cw->win, ECORE_X_DAMAGE_REPORT_DELTA_RECTANGLES);
+            (cw->win, ECORE_X_DAMAGE_REPORT_DELTA_RECTANGLES);
         eina_hash_add(damages, e_util_winid_str_get(cw->damage), cw);
         cw->shobj = edje_object_add(c->evas);
         cw->obj = evas_object_image_filled_add(c->evas);
@@ -2042,8 +2042,8 @@ _e_comp_win_add(E_Comp *c,
 
         cw->pending_count++;
         e_manager_comp_event_src_add_send
-           (cw->c->man, (E_Manager_Comp_Source *)cw,
-            _e_comp_cb_pending_after, cw->c);
+          (cw->c->man, (E_Manager_Comp_Source *)cw,
+          _e_comp_cb_pending_after, cw->c);
      }
    else
      {
@@ -2064,7 +2064,7 @@ _e_comp_win_add(E_Comp *c,
    e_comp_update_tile_size_set(cw->up, 32, 32);
    // for software:
    e_comp_update_policy_set
-      (cw->up, E_UPDATE_POLICY_HALF_WIDTH_OR_MORE_ROUND_UP_TO_FULL_WIDTH);
+     (cw->up, E_UPDATE_POLICY_HALF_WIDTH_OR_MORE_ROUND_UP_TO_FULL_WIDTH);
    if (((!cw->input_only) && (!cw->invalid)) && (cw->override))
      {
         cw->redirected = 1;
@@ -2092,8 +2092,8 @@ _e_comp_win_del(E_Comp_Win *cw)
      {
         cw->pending_count++;
         e_manager_comp_event_src_del_send
-           (cw->c->man, (E_Manager_Comp_Source *)cw,
-            _e_comp_cb_pending_after, cw->c);
+          (cw->c->man, (E_Manager_Comp_Source *)cw,
+          _e_comp_cb_pending_after, cw->c);
      }
 
    e_comp_update_free(cw->up);
@@ -2297,8 +2297,8 @@ _e_comp_win_show(E_Comp_Win *cw)
 
         cw->pending_count++;
         e_manager_comp_event_src_visibility_send
-           (cw->c->man, (E_Manager_Comp_Source *)cw,
-            _e_comp_cb_pending_after, cw->c);
+          (cw->c->man, (E_Manager_Comp_Source *)cw,
+          _e_comp_cb_pending_after, cw->c);
      }
    _e_comp_win_render_queue(cw);
 }
@@ -2338,8 +2338,8 @@ _e_comp_win_hide(E_Comp_Win *cw)
 
         cw->pending_count++;
         e_manager_comp_event_src_visibility_send
-           (cw->c->man, (E_Manager_Comp_Source *)cw,
-            _e_comp_cb_pending_after, cw->c);
+          (cw->c->man, (E_Manager_Comp_Source *)cw,
+          _e_comp_cb_pending_after, cw->c);
         return;
      }
    cw->defer_hide = 0;
@@ -2436,8 +2436,8 @@ _e_comp_win_raise_above(E_Comp_Win *cw,
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
    e_manager_comp_event_src_config_send
-      (cw->c->man, (E_Manager_Comp_Source *)cw,
-       _e_comp_cb_pending_after, cw->c);
+     (cw->c->man, (E_Manager_Comp_Source *)cw,
+     _e_comp_cb_pending_after, cw->c);
 }
 
 static void
@@ -2451,8 +2451,8 @@ _e_comp_win_raise(E_Comp_Win *cw)
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
    e_manager_comp_event_src_config_send
-      (cw->c->man, (E_Manager_Comp_Source *)cw,
-       _e_comp_cb_pending_after, cw->c);
+     (cw->c->man, (E_Manager_Comp_Source *)cw,
+     _e_comp_cb_pending_after, cw->c);
 }
 
 static void
@@ -2466,8 +2466,8 @@ _e_comp_win_lower(E_Comp_Win *cw)
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
    e_manager_comp_event_src_config_send
-      (cw->c->man, (E_Manager_Comp_Source *)cw,
-       _e_comp_cb_pending_after, cw->c);
+     (cw->c->man, (E_Manager_Comp_Source *)cw,
+     _e_comp_cb_pending_after, cw->c);
 }
 
 static void
@@ -2612,7 +2612,7 @@ _e_comp_win_damage(E_Comp_Win *cw,
           {
              if (!cw->update_timeout)
                cw->update_timeout = ecore_timer_add
-                  (ecore_animator_frametime_get() * 2,
+                   (ecore_animator_frametime_get() * 2,
                    _e_comp_win_damage_timeout, cw);
              return;
           }
@@ -2687,24 +2687,24 @@ _e_comp_show(void *data __UNUSED__,
    /*
       Vincent Torri via lists.sourceforge.net
 
-2:31 PM (8 minutes ago)
+      2:31 PM (8 minutes ago)
 
-to enlightenment-devel.
-would it be possible to add a note in the code, about the reason of
-that change ?
+      to enlightenment-devel.
+      would it be possible to add a note in the code, about the reason of
+      that change ?
 
-Vincent
+      Vincent
 
-On Thu, Jun 21, 2012 at 3:29 PM, Enlightenment SVN
-<no-reply@enlightenment.org> wrote:
-> Log:
-> gtk developers with IQs over 180 enjoy hiding and showing their windows constantly,
-> especially when resizing. this broke e's comp since we are not nearly that clever
-> and try to defer hide animations in most cases. undoing the defer whenever
-> this happens allows us to keep up with their towering genius.
->  fixes ticket #765 and probably some others.
->  affected apps: claws-mail, firefox
-*/
+      On Thu, Jun 21, 2012 at 3:29 PM, Enlightenment SVN
+      <no-reply@enlightenment.org> wrote:
+      > Log:
+      > gtk developers with IQs over 180 enjoy hiding and showing their windows constantly,
+      > especially when resizing. this broke e's comp since we are not nearly that clever
+      > and try to defer hide animations in most cases. undoing the defer whenever
+      > this happens allows us to keep up with their towering genius.
+      >  fixes ticket #765 and probably some others.
+      >  affected apps: claws-mail, firefox
+    */
    if (cw->defer_hide)
      {
         /*
@@ -2873,11 +2873,11 @@ _e_comp_message(void *data __UNUSED__,
 
              if ((cw->bd->shading) || (cw->bd->shaded)) force = 1;
              clw = cw->hidden.w -
-                cw->bd->client_inset.l -
-                cw->bd->client_inset.r;
+               cw->bd->client_inset.l -
+               cw->bd->client_inset.r;
              clh = cw->hidden.h -
-                cw->bd->client_inset.t -
-                cw->bd->client_inset.b;
+               cw->bd->client_inset.t -
+               cw->bd->client_inset.b;
              DBG("  [0x%x] sync draw done @%4ix%4i, bd %4ix%4i\n", cw->win,
                  w, h, cw->bd->client.w, cw->bd->client.h);
              if ((w != clw) || (h != clh))
@@ -2909,40 +2909,40 @@ _e_comp_message(void *data __UNUSED__,
      }
    DBG("  [0x%x] sync draw done %4ix%4i\n", cw->win, cw->w, cw->h);
    //   if (cw->bd)
-     {
-        if (cw->counter)
-          {
-             DBG("  [0x%x] have counter\n", cw->win);
-             cw->show_ready = 1;
-             if (!cw->update)
-               {
-                  DBG("  [0x%x] set update\n", cw->win);
-                  if (cw->update_timeout)
-                    {
-                       DBG("  [0x%x] del timeout\n", cw->win);
-                       ecore_timer_del(cw->update_timeout);
-                       cw->update_timeout = NULL;
-                    }
-                  cw->update = 1;
-                  cw->c->updates = eina_list_append(cw->c->updates, cw);
-               }
-             if ((cw->w != cw->hidden.w) ||
-                 (cw->h != cw->hidden.h) ||
-                 (force))
-               {
-                  DBG("  [0x%x] rsz done msg %4ix%4i\n", cw->win, cw->hidden.w, cw->hidden.h);
-                  cw->w = cw->hidden.w;
-                  cw->h = cw->hidden.h;
-                  cw->needpix = 1;
-                  // was cw->w / cw->h
-                  //                evas_object_resize(cw->shobj, cw->pw, cw->ph);
-                  _e_comp_win_geometry_update(cw);
-                  _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
-               }
-             cw->drawme = 1;
-             _e_comp_win_render_queue(cw);
-          }
-     }
+   {
+      if (cw->counter)
+        {
+           DBG("  [0x%x] have counter\n", cw->win);
+           cw->show_ready = 1;
+           if (!cw->update)
+             {
+                DBG("  [0x%x] set update\n", cw->win);
+                if (cw->update_timeout)
+                  {
+                     DBG("  [0x%x] del timeout\n", cw->win);
+                     ecore_timer_del(cw->update_timeout);
+                     cw->update_timeout = NULL;
+                  }
+                cw->update = 1;
+                cw->c->updates = eina_list_append(cw->c->updates, cw);
+             }
+           if ((cw->w != cw->hidden.w) ||
+               (cw->h != cw->hidden.h) ||
+               (force))
+             {
+                DBG("  [0x%x] rsz done msg %4ix%4i\n", cw->win, cw->hidden.w, cw->hidden.h);
+                cw->w = cw->hidden.w;
+                cw->h = cw->hidden.h;
+                cw->needpix = 1;
+                // was cw->w / cw->h
+                //                evas_object_resize(cw->shobj, cw->pw, cw->ph);
+                _e_comp_win_geometry_update(cw);
+                _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
+             }
+           cw->drawme = 1;
+           _e_comp_win_render_queue(cw);
+        }
+   }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -3019,7 +3019,7 @@ _e_comp_override_timed_pop(E_Comp *c)
    if (c->nocomp_override_timer)
      ecore_timer_del(c->nocomp_override_timer);
    c->nocomp_override_timer =
-      ecore_timer_add(5.0, _e_comp_override_expire, c);
+     ecore_timer_add(5.0, _e_comp_override_expire, c);
 }
 
 /* here for completeness
@@ -3033,7 +3033,7 @@ _e_comp_override_timed_pop(E_Comp *c)
    if (c->nocomp_want) _e_comp_cb_nocomp_begin(c);
    }
    }
-   */
+ */
 
 static void
 _e_comp_override_push(E_Comp *c)
@@ -3088,9 +3088,9 @@ _e_comp_screensaver_on(void *data __UNUSED__,
                {
                   _e_comp_override_push(c);
                   _e_comp_fade_handle(cz, 1, 3.0);
-                  edje_object_signal_emit(cz->base, 
+                  edje_object_signal_emit(cz->base,
                                           "e,state,screensaver,on", "e");
-                  edje_object_signal_emit(cz->over, 
+                  edje_object_signal_emit(cz->over,
                                           "e,state,screensaver,on", "e");
                }
           }
@@ -3115,9 +3115,9 @@ _e_comp_screensaver_off(void *data __UNUSED__,
              c->saver = EINA_FALSE;
              EINA_LIST_FOREACH(c->zones, ll, cz)
                {
-                  edje_object_signal_emit(cz->base, 
+                  edje_object_signal_emit(cz->base,
                                           "e,state,screensaver,off", "e");
-                  edje_object_signal_emit(cz->over, 
+                  edje_object_signal_emit(cz->over,
                                           "e,state,screensaver,off", "e");
                   _e_comp_fade_handle(cz, 0, 0.5);
                   _e_comp_override_timed_pop(c);
@@ -3140,7 +3140,7 @@ _e_comp_zone_fill(E_Comp *c, E_Comp_Zone *cz)
    if (cz->over)
      {
         e_theme_edje_object_set(cz->over, "base/theme/modules/comp",
-                           styles[conf->disable_screen_effects]);
+                                styles[conf->disable_screen_effects]);
         return;
      }
    cz->base = o = edje_object_add(c->evas);
@@ -3469,7 +3469,8 @@ _e_comp_fps_toggle(void)
         conf->fps_show = 1;
         e_config_save_queue();
      }
-   EINA_LIST_FOREACH(compositors, l, c) _e_comp_cb_update(c);
+   EINA_LIST_FOREACH(compositors, l, c)
+     _e_comp_cb_update(c);
 }
 
 static Eina_Bool
@@ -3480,9 +3481,9 @@ _e_comp_key_down(void *data __UNUSED__,
    Ecore_Event_Key *ev = event;
 
    if ((!strcasecmp(ev->keyname, "f")) &&
-            (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) &&
-            (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) &&
-            (ev->modifiers & ECORE_EVENT_MODIFIER_ALT))
+       (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) &&
+       (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) &&
+       (ev->modifiers & ECORE_EVENT_MODIFIER_ALT))
      {
         _e_comp_fps_toggle();
      }
@@ -3691,9 +3692,9 @@ _e_comp_add(E_Manager *man)
    if (res)
      {
         e_util_dialog_internal
-           (_("Compositor Error"),
-            _("Another compositor is already running<br>"
-              "on your display server."));
+          (_("Compositor Error"),
+          _("Another compositor is already running<br>"
+            "on your display server."));
         free(c);
         return NULL;
      }
@@ -3713,10 +3714,10 @@ _e_comp_add(E_Manager *man)
    if (!c->win)
      {
         e_util_dialog_internal
-           (_("Compositor Error"),
-            _("Your display server does not support the<br>"
-              "compositor overlay window. This is needed<br>"
-              "for it to function."));
+          (_("Compositor Error"),
+          _("Your display server does not support the<br>"
+            "compositor overlay window. This is needed<br>"
+            "for it to function."));
         free(c);
         return NULL;
      }
@@ -3726,7 +3727,7 @@ _e_comp_add(E_Manager *man)
 
    if ((att.depth != 24) && (att.depth != 32))
      {
-        /*        
+        /*
                   e_util_dialog_internal
                   (_("Compositor Error"),
                   _("Your screen is not in 24/32bit display mode.<br>"
@@ -3735,7 +3736,7 @@ _e_comp_add(E_Manager *man)
                   ecore_x_composite_render_window_disable(c->win);
                   free(c);
                   return NULL;
-                  */
+         */
      }
 
    if (c->man->num == 0) e_alert_composite_win(c->man->root, c->win);
@@ -3767,12 +3768,12 @@ _e_comp_add(E_Manager *man)
              opt[opt_i] = conf->swap_mode;
              opt_i++;
           }
-#endif        
+#endif
         if (opt_i > 0)
           {
              opt[opt_i] = ECORE_EVAS_GL_X11_OPT_NONE;
              c->ee = ecore_evas_gl_x11_options_new
-                (NULL, c->win, 0, 0, man->w, man->h, opt);
+                 (NULL, c->win, 0, 0, man->w, man->h, opt);
           }
         if (!c->ee)
           c->ee = ecore_evas_gl_x11_new(NULL, c->win, 0, 0, man->w, man->h);
@@ -3780,7 +3781,7 @@ _e_comp_add(E_Manager *man)
           {
              c->gl = 1;
              ecore_evas_gl_x11_pre_post_swap_callback_set
-                (c->ee, c, _e_comp_pre_swap, NULL);
+               (c->ee, c, _e_comp_pre_swap, NULL);
           }
      }
    if (!c->ee)
@@ -3788,10 +3789,10 @@ _e_comp_add(E_Manager *man)
         if (conf->engine == E_COMP_ENGINE_GL)
           {
              e_util_dialog_internal
-                (_("Compositor Warning"),
-                 _("Your display driver does not support OpenGL, or<br>"
-                   "no OpenGL engines were compiled or installed for<br>"
-                   "Evas or Ecore-Evas. Falling back to software engine."));
+               (_("Compositor Warning"),
+               _("Your display driver does not support OpenGL, or<br>"
+                 "no OpenGL engines were compiled or installed for<br>"
+                 "Evas or Ecore-Evas. Falling back to software engine."));
           }
 
         c->ee = ecore_evas_software_x11_new(NULL, c->win, 0, 0, man->w, man->h);
@@ -3809,7 +3810,7 @@ _e_comp_add(E_Manager *man)
 
    c->ee_win = ecore_evas_window_get(c->ee);
    ecore_x_composite_redirect_subwindows
-      (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+     (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
 
    wins = ecore_x_window_children_get(c->man->root, &num);
    if (wins)
@@ -3949,7 +3950,7 @@ _e_comp_del(E_Comp *c)
 
    ecore_evas_free(c->ee);
    ecore_x_composite_unredirect_subwindows
-      (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+     (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
    ecore_x_composite_render_window_disable(c->win);
    if (c->man->num == 0) e_alert_composite_win(c->man->root, 0);
    if (c->render_animator) ecore_animator_del(c->render_animator);
@@ -3974,7 +3975,6 @@ _e_comp_del(E_Comp *c)
 }
 
 //////////////////////////////////////////////////////////////////////////
-
 
 static void
 _e_comp_sys_done_cb(void *data, Evas_Object *obj, const char *sig, const char *src)
@@ -4072,8 +4072,8 @@ _e_comp_config_engine_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "Software",
-    NULL
+      "Software",
+      NULL
    };
 
 #define ENGINE_SW 1
@@ -4089,13 +4089,12 @@ _e_comp_config_engine_info_cb(E_Configure_Option *co)
    for (x = ENGINE_SW; x <= ENGINE_GL; x++)
      {
         if (!name[x - 1]) continue;
-        oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
 }
-
 
 static Eina_Bool
 _e_comp_config_style_thumb_timer_cb(void *data)
@@ -4105,7 +4104,7 @@ _e_comp_config_style_thumb_timer_cb(void *data)
 
    demo_state = (long)(intptr_t)evas_object_data_get(data, "style_demo_state");
    demo_state = (demo_state + 1) % 4;
-   evas_object_data_set(data, "style_demo_state", (intptr_t*)(long)demo_state);
+   evas_object_data_set(data, "style_demo_state", (intptr_t *)(long)demo_state);
 
    oo = evas_object_data_get(ofr, "comp_preview");
    switch (demo_state)
@@ -4321,19 +4320,19 @@ e_comp_init(void)
    if (!ecore_x_composite_query())
      {
         e_util_dialog_internal
-           (_("Compositor Error"),
-            _("Your display server does not support XComposite,<br>"
-              "or Ecore-X was built without XComposite support.<br>"
-              "Note that for composite support you will also need<br>"
-              "XRender and XFixes support in X11 and Ecore."));
+          (_("Compositor Error"),
+          _("Your display server does not support XComposite,<br>"
+            "or Ecore-X was built without XComposite support.<br>"
+            "Note that for composite support you will also need<br>"
+            "XRender and XFixes support in X11 and Ecore."));
         return EINA_FALSE;
      }
    if (!ecore_x_damage_query())
      {
         e_util_dialog_internal
-           (_("Compositor Error"),
-            _("Your display server does not support XDamage<br>"
-              "or Ecore was built without XDamage support."));
+          (_("Compositor Error"),
+          _("Your display server does not support XDamage<br>"
+            "or Ecore was built without XDamage support."));
         return EINA_FALSE;
      }
 
@@ -4425,7 +4424,7 @@ e_comp_shadows_reset(void)
         //        ecore_evas_manual_render_set(c->ee, conf->lock_fps);
         _e_comp_fps_update(c);
         EINA_LIST_FOREACH(c->zones, ll, cz)
-           _e_comp_zone_fill(c, cz);
+          _e_comp_zone_fill(c, cz);
         EINA_INLIST_FOREACH(c->wins, cw)
           {
              if ((cw->shobj) && (cw->obj))
@@ -4444,8 +4443,8 @@ e_comp_shadows_reset(void)
 
                        cw->pending_count++;
                        e_manager_comp_event_src_visibility_send
-                          (cw->c->man, (E_Manager_Comp_Source *)cw,
-                           _e_comp_cb_pending_after, cw->c);
+                         (cw->c->man, (E_Manager_Comp_Source *)cw,
+                         _e_comp_cb_pending_after, cw->c);
                     }
                }
           }

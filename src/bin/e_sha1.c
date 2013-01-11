@@ -24,12 +24,12 @@ e_sha1_sum(unsigned char *data, int size, unsigned char *dst)
    unsigned char buf[64], *d;
    int idx, left, i;
    const unsigned int magic[4] =
-     {
-        0x5a827999,
-	  0x6ed9eba1,
-	  0x8f1bbcdc,
-	  0xca62c1d6
-     };
+   {
+      0x5a827999,
+      0x6ed9eba1,
+      0x8f1bbcdc,
+      0xca62c1d6
+   };
 
    idx = 0;
    digest[0] = 0x67452301;
@@ -41,62 +41,62 @@ e_sha1_sum(unsigned char *data, int size, unsigned char *dst)
    memset(buf, 0, sizeof(buf));
    for (left = size, d = data; left > 0; left--, d++)
      {
-	if ((idx == 0) && (left < 64))
-	  {
-	     memset(buf, 0, 60);
-	     buf[60] = (size >> 24) & 0xff;
-	     buf[61] = (size >> 16) & 0xff;
-	     buf[62] = (size >>  8) & 0xff;
-	     buf[63] = (size      ) & 0xff;
-	  }
-	buf[idx] = *d;
-	idx++;
-	if ((idx == 64) || (left == 1))
-	  {
-	     if ((left == 1) && (idx < 64)) buf[idx] = 0x80;
-	     for (i = 0; i < 16; i++)
-	       {
-		  word[i]  = (unsigned int)buf[(i * 4)    ] << 24;
-		  word[i] |= (unsigned int)buf[(i * 4) + 1] << 16;
-		  word[i] |= (unsigned int)buf[(i * 4) + 2] << 8;
-		  word[i] |= (unsigned int)buf[(i * 4) + 3];
-	       }
-	     for (i = 16; i < 80; i++)
-	       word[i] = SHSH(1,
-			       word[i - 3 ] ^ word[i - 8 ] ^
-			       word[i - 14] ^ word[i - 16]);
-	     wa = digest[0];
-	     wb = digest[1];
-	     wc = digest[2];
-	     wd = digest[3];
-	     we = digest[4];
+        if ((idx == 0) && (left < 64))
+          {
+             memset(buf, 0, 60);
+             buf[60] = (size >> 24) & 0xff;
+             buf[61] = (size >> 16) & 0xff;
+             buf[62] = (size >> 8) & 0xff;
+             buf[63] = (size) & 0xff;
+          }
+        buf[idx] = *d;
+        idx++;
+        if ((idx == 64) || (left == 1))
+          {
+             if ((left == 1) && (idx < 64)) buf[idx] = 0x80;
+             for (i = 0; i < 16; i++)
+               {
+                  word[i] = (unsigned int)buf[(i * 4)    ] << 24;
+                  word[i] |= (unsigned int)buf[(i * 4) + 1] << 16;
+                  word[i] |= (unsigned int)buf[(i * 4) + 2] << 8;
+                  word[i] |= (unsigned int)buf[(i * 4) + 3];
+               }
+             for (i = 16; i < 80; i++)
+               word[i] = SHSH(1,
+                              word[i - 3 ] ^ word[i - 8 ] ^
+                              word[i - 14] ^ word[i - 16]);
+             wa = digest[0];
+             wb = digest[1];
+             wc = digest[2];
+             wd = digest[3];
+             we = digest[4];
              for (i = 0; i < 80; i++)
-	       {
-		  if (i < 20)
-		    t = SHSH(5, wa) + ((wb & wc) | ((~wb) & wd)) +
-		    we + word[i] + magic[0];
-		  else if (i < 40)
-		    t = SHSH(5, wa) + (wb ^ wc ^ wd) +
-		    we + word[i] + magic[1];
-		  else if (i < 60)
-		    t = SHSH(5, wa) + ((wb & wc) | (wb & wd) | (wc & wd)) +
-		    we + word[i] + magic[2];
-		  else if (i < 80)
-		    t = SHSH(5, wa) + (wb ^ wc ^ wd) +
-		    we + word[i] + magic[3];
-		  we = wd;
-		  wd = wc;
-		  wc = SHSH(30, wb);
-		  wb = wa;
-		  wa = t;
-	       }
-	     digest[0] += wa;
-	     digest[1] += wb;
-	     digest[2] += wc;
-	     digest[3] += wd;
-	     digest[4] += we;
-	     idx = 0;
-	  }
+               {
+                  if (i < 20)
+                    t = SHSH(5, wa) + ((wb & wc) | ((~wb) & wd)) +
+                      we + word[i] + magic[0];
+                  else if (i < 40)
+                    t = SHSH(5, wa) + (wb ^ wc ^ wd) +
+                      we + word[i] + magic[1];
+                  else if (i < 60)
+                    t = SHSH(5, wa) + ((wb & wc) | (wb & wd) | (wc & wd)) +
+                      we + word[i] + magic[2];
+                  else if (i < 80)
+                    t = SHSH(5, wa) + (wb ^ wc ^ wd) +
+                      we + word[i] + magic[3];
+                  we = wd;
+                  wd = wc;
+                  wc = SHSH(30, wb);
+                  wb = wa;
+                  wa = t;
+               }
+             digest[0] += wa;
+             digest[1] += wb;
+             digest[2] += wc;
+             digest[3] += wd;
+             digest[4] += we;
+             idx = 0;
+          }
      }
 
    t = htonl(digest[0]); digest[0] = t;

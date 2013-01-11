@@ -130,7 +130,7 @@ static void      _e_border_cb_drag_finished(E_Drag *drag,
                                             int dropped);
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
 static Eina_Bool _e_border_cb_desk_window_profile_change(void *data,
-                                                         int   ev_type,
+                                                         int ev_type,
                                                          void *ev);
 #endif
 static void      _e_border_eval(E_Border *bd);
@@ -214,7 +214,7 @@ static void      _e_border_shape_input_rectangle_set(E_Border *bd);
 static void      _e_border_show(E_Border *bd);
 static void      _e_border_hide(E_Border *bd);
 
-static void       _e_border_move_lost_window_to_center(E_Border *bd);
+static void      _e_border_move_lost_window_to_center(E_Border *bd);
 static void      _e_border_reset_lost_window(E_Border *bd);
 static Eina_Bool _e_border_pointer_warp_to_center_timer(void *data);
 /* local subsystem globals */
@@ -272,10 +272,10 @@ EAPI int E_EVENT_BORDER_PROPERTY = 0;
 EAPI int E_EVENT_BORDER_FULLSCREEN = 0;
 EAPI int E_EVENT_BORDER_UNFULLSCREEN = 0;
 
-#define GRAV_SET(bd, grav)                                \
-  ecore_x_window_gravity_set(bd->bg_win, grav);           \
-  ecore_x_window_gravity_set(bd->client.shell_win, grav); \
-  if (bd->client.lock_win) ecore_x_window_gravity_set(bd->client.lock_win, grav); \
+#define GRAV_SET(bd, grav)                                                         \
+  ecore_x_window_gravity_set(bd->bg_win, grav);                                    \
+  ecore_x_window_gravity_set(bd->client.shell_win, grav);                          \
+  if (bd->client.lock_win) ecore_x_window_gravity_set(bd->client.lock_win, grav);  \
   ecore_x_window_gravity_set(bd->client.win, grav);
 
 static Eina_List *
@@ -1000,7 +1000,7 @@ e_border_desk_set(E_Border *bd,
         Eina_List *list = _e_border_sub_borders_new(bd);
 
         EINA_LIST_FREE(list, child)
-           e_border_desk_set(child, bd->desk);
+          e_border_desk_set(child, bd->desk);
      }
    e_remember_update(bd);
 }
@@ -1091,16 +1091,18 @@ e_border_hide(E_Border *bd,
         switch (manage)
           {
            case 2: break;
+
            case 3:
              bd->hidden = 1;
+
            case 1:
            default:
-               if (!e_manager_comp_evas_get(bd->zone->container->manager))
-                 {
-                    /* Make sure that this border isn't deleted */
-                    bd->await_hide_event++;
-                    ecore_x_window_hide(bd->client.win);
-                 }
+             if (!e_manager_comp_evas_get(bd->zone->container->manager))
+               {
+                  /* Make sure that this border isn't deleted */
+                  bd->await_hide_event++;
+                  ecore_x_window_hide(bd->client.win);
+               }
           }
      }
 
@@ -1785,7 +1787,7 @@ e_border_layer_set(E_Border *bd,
          */
         e_config->transient.raise = 1;
         EINA_LIST_FREE(list, child)
-           e_border_layer_set(child, layer);
+          e_border_layer_set(child, layer);
      }
    e_border_raise(bd);
    if (layer == E_LAYER_BELOW)
@@ -1814,39 +1816,39 @@ e_border_raise(E_Border *bd)
         Eina_List *list = _e_border_sub_borders_new(bd);
 
         EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, child)
-          {
-             /* Don't stack iconic transients. If the user wants these shown,
-              * thats another option.
-              */
-             if (!child->iconic)
-               {
-                  if (last)
-                    e_border_stack_below(child, last);
-                  else
-                    {
-                       E_Border *above;
+        {
+           /* Don't stack iconic transients. If the user wants these shown,
+            * thats another option.
+            */
+           if (!child->iconic)
+             {
+                if (last)
+                  e_border_stack_below(child, last);
+                else
+                  {
+                     E_Border *above;
 
-                       /* First raise the border to find out which border we will end up above */
-                       above = e_container_border_raise(child);
+                     /* First raise the border to find out which border we will end up above */
+                     above = e_container_border_raise(child);
 
-                       if (above)
-                         {
-                            /* We ended up above a border, now we must stack this border to
-                             * generate the stacking event, and to check if this transient
-                             * has other transients etc.
-                             */
-                            e_border_stack_above(child, above);
-                         }
-                       else
-                         {
-                            /* If we didn't end up above any border, we are on the bottom! */
-                            e_border_lower(child);
-                         }
-                    }
-                  last = child;
-               }
-             list = eina_list_remove_list(list, l);
-          }
+                     if (above)
+                       {
+                          /* We ended up above a border, now we must stack this border to
+                           * generate the stacking event, and to check if this transient
+                           * has other transients etc.
+                           */
+                          e_border_stack_above(child, above);
+                       }
+                     else
+                       {
+                          /* If we didn't end up above any border, we are on the bottom! */
+                          e_border_lower(child);
+                       }
+                  }
+                last = child;
+             }
+           list = eina_list_remove_list(list, l);
+        }
      }
 
    ev = E_NEW(E_Event_Border_Stack, 1);
@@ -1903,39 +1905,39 @@ e_border_lower(E_Border *bd)
         Eina_List *list = _e_border_sub_borders_new(bd);
 
         EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, child)
-          {
-             /* Don't stack iconic transients. If the user wants these shown,
-              * thats another option.
-              */
-             if (!child->iconic)
-               {
-                  if (last)
-                    e_border_stack_below(child, last);
-                  else
-                    {
-                       E_Border *below;
+        {
+           /* Don't stack iconic transients. If the user wants these shown,
+            * thats another option.
+            */
+           if (!child->iconic)
+             {
+                if (last)
+                  e_border_stack_below(child, last);
+                else
+                  {
+                     E_Border *below;
 
-                       /* First lower the border to find out which border we will end up below */
-                       below = e_container_border_lower(child);
+                     /* First lower the border to find out which border we will end up below */
+                     below = e_container_border_lower(child);
 
-                       if (below)
-                         {
-                            /* We ended up below a border, now we must stack this border to
-                             * generate the stacking event, and to check if this transient
-                             * has other transients etc.
-                             */
-                            e_border_stack_below(child, below);
-                         }
-                       else
-                         {
-                            /* If we didn't end up below any border, we are on top! */
-                            e_border_raise(child);
-                         }
-                    }
-                  last = child;
-               }
-             list = eina_list_remove_list(list, l);
-          }
+                     if (below)
+                       {
+                          /* We ended up below a border, now we must stack this border to
+                           * generate the stacking event, and to check if this transient
+                           * has other transients etc.
+                           */
+                          e_border_stack_below(child, below);
+                       }
+                     else
+                       {
+                          /* If we didn't end up below any border, we are on top! */
+                          e_border_raise(child);
+                       }
+                  }
+                last = child;
+             }
+           list = eina_list_remove_list(list, l);
+        }
      }
 
    ev = E_NEW(E_Event_Border_Stack, 1);
@@ -1993,20 +1995,20 @@ e_border_stack_above(E_Border *bd,
         Eina_List *list = _e_border_sub_borders_new(bd);
 
         EINA_LIST_REVERSE_FOREACH_SAFE(list, l, l_prev, child)
-          {
-             /* Don't stack iconic transients. If the user wants these shown,
-              * thats another option.
-              */
-             if (!child->iconic)
-               {
-                  if (last)
-                    e_border_stack_below(child, last);
-                  else
-                    e_border_stack_above(child, above);
-                  last = child;
-               }
-             list = eina_list_remove_list(list, l);
-          }
+        {
+           /* Don't stack iconic transients. If the user wants these shown,
+            * thats another option.
+            */
+           if (!child->iconic)
+             {
+                if (last)
+                  e_border_stack_below(child, last);
+                else
+                  e_border_stack_above(child, above);
+                last = child;
+             }
+           list = eina_list_remove_list(list, l);
+        }
      }
 
    ev = E_NEW(E_Event_Border_Stack, 1);
@@ -2051,20 +2053,20 @@ e_border_stack_below(E_Border *bd,
         Eina_List *list = _e_border_sub_borders_new(bd);
 
         EINA_LIST_REVERSE_FOREACH_SAFE(bd->transients, l, l_prev, child)
-          {
-             /* Don't stack iconic transients. If the user wants these shown,
-              * thats another option.
-              */
-             if (!child->iconic)
-               {
-                  if (last)
-                    e_border_stack_below(child, last);
-                  else
-                    e_border_stack_below(child, below);
-                  last = child;
-               }
-             list = eina_list_remove_list(list, l);
-          }
+        {
+           /* Don't stack iconic transients. If the user wants these shown,
+            * thats another option.
+            */
+           if (!child->iconic)
+             {
+                if (last)
+                  e_border_stack_below(child, last);
+                else
+                  e_border_stack_below(child, below);
+                last = child;
+             }
+           list = eina_list_remove_list(list, l);
+        }
      }
 
    ev = E_NEW(E_Event_Border_Stack, 1);
@@ -2744,7 +2746,7 @@ _e_border_maximize(E_Border *bd, E_Maximize max)
              _e_border_client_inset_calc(bd);
           }
         e_border_resize_limit(bd, &w, &h);
-        
+
         if (bd->w < zw)
           w = bd->w;
         else
@@ -3217,7 +3219,7 @@ e_border_iconify(E_Border *bd)
         Eina_List *list = _e_border_sub_borders_new(bd);
 
         EINA_LIST_FREE(list, child)
-           e_border_iconify(child);
+          e_border_iconify(child);
      }
    e_remember_update(bd);
 }
@@ -3258,7 +3260,7 @@ e_border_uniconify(E_Border *bd)
         Eina_List *list = _e_border_sub_borders_new(bd);
 
         EINA_LIST_FREE(list, child)
-           e_border_uniconify(child);
+          e_border_uniconify(child);
      }
    e_remember_update(bd);
 }
@@ -3541,14 +3543,14 @@ e_border_idler_before(void)
                        bd->changes.visible = 0;
                     }
 
-                   if (bd->zone && (!bd->new_client) &&
-                     (!E_INSIDE(bd->x, bd->y, 0, 0, bd->zone->w - 5, bd->zone->h - 5)) &&
-                     (!E_INSIDE(bd->x, bd->y, 0 - bd->w + 5, 0 - bd->h + 5, bd->zone->w - 5, bd->zone->h - 5))
+                  if (bd->zone && (!bd->new_client) &&
+                      (!E_INSIDE(bd->x, bd->y, 0, 0, bd->zone->w - 5, bd->zone->h - 5)) &&
+                      (!E_INSIDE(bd->x, bd->y, 0 - bd->w + 5, 0 - bd->h + 5, bd->zone->w - 5, bd->zone->h - 5))
                       )
-                     {
+                    {
                        if (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)
-                          _e_border_move_lost_window_to_center(bd);
-                     }
+                         _e_border_move_lost_window_to_center(bd);
+                    }
                }
              e_container_border_list_free(bl);
 
@@ -4389,30 +4391,30 @@ _e_border_zones_layout_calc(E_Border *bd, int *zx, int *zy, int *zw, int *zh)
    zone_right = e_container_zone_at_point_get(bd->zone->container, (x + w + 5), y);
    zone_above = e_container_zone_at_point_get(bd->zone->container, x, (y - h + 5));
    zone_below = e_container_zone_at_point_get(bd->zone->container, x, (y + h + 5));
- 
+
    if (!(zone_above) && (y))
-        zone_above = e_container_zone_at_point_get(bd->zone->container, x, (h - 5));
-  
-   if (!(zone_left) &&(x))
-        zone_left = e_container_zone_at_point_get(bd->zone->container, (x - 5), y);
+     zone_above = e_container_zone_at_point_get(bd->zone->container, x, (h - 5));
+
+   if (!(zone_left) && (x))
+     zone_left = e_container_zone_at_point_get(bd->zone->container, (x - 5), y);
 
    if (zone_right)
-        w = zone_right->x + zone_right->w;
+     w = zone_right->x + zone_right->w;
 
    if (zone_left)
-        w = bd->zone->x + bd->zone->w;
+     w = bd->zone->x + bd->zone->w;
 
    if (zone_below)
-        h = zone_below->y + zone_below->h;
+     h = zone_below->y + zone_below->h;
 
    if (zone_above)
-        h = bd->zone->y + bd->zone->h;
+     h = bd->zone->y + bd->zone->h;
 
    if ((zone_left) && (zone_right))
-        w = bd->zone->w + zone_right->x;
+     w = bd->zone->w + zone_right->x;
 
    if ((zone_above) && (zone_below))
-        h = bd->zone->h + zone_below->y;
+     h = bd->zone->h + zone_below->y;
 
    if (x) x -= bd->zone->w;
    if (y) y -= bd->zone->h;
@@ -4442,7 +4444,7 @@ _e_border_move_lost_window_to_center(E_Border *bd)
      {
         if (e_config->edge_flip_dragging)
           {
-             Eina_Bool lf, rf, tf, bf; 
+             Eina_Bool lf, rf, tf, bf;
 
              lf = rf = tf = bf = EINA_TRUE;
 
@@ -4459,7 +4461,7 @@ _e_border_move_lost_window_to_center(E_Border *bd)
                   if (bd->zone->desk_y_current == 0) tf = EINA_FALSE;
                   if (bd->zone->desk_y_current == (bd->zone->desk_y_count - 1)) bf = EINA_FALSE;
                }
-             
+
              if (!(lf) && (bd->x <= loss_overlap) && !(bd->zone->flip.switching))
                _e_border_reset_lost_window(bd);
 
@@ -4470,11 +4472,11 @@ _e_border_move_lost_window_to_center(E_Border *bd)
                _e_border_reset_lost_window(bd);
 
              if (!(bf) && (bd->y >= (bd->zone->h - loss_overlap)) && !(bd->zone->flip.switching))
-               _e_border_reset_lost_window(bd); 
-          } 
-       
-       if (!e_config->edge_flip_dragging)
-         _e_border_reset_lost_window(bd); 
+               _e_border_reset_lost_window(bd);
+          }
+
+        if (!e_config->edge_flip_dragging)
+          _e_border_reset_lost_window(bd);
      }
 }
 
@@ -4484,7 +4486,7 @@ _e_border_reset_lost_window(E_Border *bd)
    int x, y, w, h;
    E_OBJECT_CHECK(bd);
 
-   if (bd->during_lost) return ;
+   if (bd->during_lost) return;
    bd->during_lost = EINA_TRUE;
 
    if (bd->iconic) e_border_uniconify(bd);
@@ -6151,7 +6153,7 @@ _e_border_cb_window_focus_out(void *data  __UNUSED__,
 static Eina_Bool
 _e_border_cb_client_message(void *data  __UNUSED__,
                             int ev_type __UNUSED__,
-                            void       *ev)
+                            void *ev)
 {
    E_Border *bd;
    Ecore_X_Event_Client_Message *e;
@@ -6199,6 +6201,7 @@ _e_border_cb_client_message(void *data  __UNUSED__,
 
    return ECORE_CALLBACK_PASS_ON;
 }
+
 #endif
 static Eina_Bool
 _e_border_cb_window_state_request(void *data  __UNUSED__,
@@ -6586,7 +6589,8 @@ _e_border_cb_mouse_in(void *data,
         if (!bd->iconic)
           e_focus_event_mouse_in(bd);
      }
-   else if (focus_locked) return ECORE_CALLBACK_RENEW;
+   else if (focus_locked)
+     return ECORE_CALLBACK_RENEW;
 #if 0
    if ((ev->win != bd->win) &&
        (ev->win != bd->event_win) &&
@@ -6880,7 +6884,7 @@ _e_border_stay_within_container(E_Border *bd, int x, int y, int *new_x, int *new
    new_y_max = zh - bd->h;
    lw = bd->w > zw ? EINA_TRUE : EINA_FALSE;
    lh = bd->h > zh ? EINA_TRUE : EINA_FALSE;
-   
+
    if (lw)
      {
         if (x <= new_x_max)
@@ -6960,12 +6964,12 @@ _e_border_cb_mouse_move(void *data,
         e_resist_container_border_position(bd->zone->container, skiplist,
                                            bd->x, bd->y, bd->w, bd->h,
                                            x, y, bd->w, bd->h,
-                                           &new_x, &new_y, &new_w, &new_h);     
+                                           &new_x, &new_y, &new_w, &new_h);
         eina_list_free(skiplist);
- 
+
         if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
           _e_border_stay_within_container(bd, x, y, &new_x, &new_y);
-   
+
         bd->shelf_fix.x = 0;
         bd->shelf_fix.y = 0;
         bd->shelf_fix.modified = 0;
@@ -7122,6 +7126,7 @@ _e_border_cb_desk_window_profile_change(void *data  __UNUSED__,
      }
    return ECORE_CALLBACK_PASS_ON;
 }
+
 #endif
 static Eina_Bool
 _e_border_post_move_resize_job(void *data)
@@ -7220,7 +7225,7 @@ _e_border_eval0(E_Border *bd)
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    Eina_Bool need_desk_set = EINA_FALSE;
 #endif
-   
+
    if (e_object_is_del(E_OBJECT(bd)))
      {
         CRI("_e_border_eval(%p) with deleted border!\n", bd);
@@ -8250,7 +8255,7 @@ _e_border_eval0(E_Border *bd)
         else if ((bd->internal) && (bd->client.icccm.class) &&
                  (!strncmp(bd->client.icccm.class, "e_fwin", 6)))
           bordername = "internal_fileman";
-*/
+ */
         else
           bordername = e_config->theme_default_border_style;
         if (!bordername) bordername = "default";
@@ -8311,7 +8316,6 @@ _e_border_eval0(E_Border *bd)
                        o = bd->bg_object;
                        if (use_argb != bd->argb)
                          _e_border_frame_replace(bd, use_argb);
-
 
                        if (bd->icon_object != o)
                          {
@@ -8564,11 +8568,11 @@ _e_border_eval(E_Border *bd)
                          {
                             if (((abs((bd->zone->container->w / 2) - bd->x) < 3) || //bd->x is center of container
                                  ((abs((bd->zone->container->w / 2) - bd->x - bd->w) < 3) || //bd->x - bd->w is center of container
-                                 (abs((bd->zone->container->w / 2) - bd->x - (bd->w / 2)) < 3))) || //bd->x - bd->w/2 is center of container
+                                  (abs((bd->zone->container->w / 2) - bd->x - (bd->w / 2)) < 3))) || //bd->x - bd->w/2 is center of container
                                 ((abs((bd->zone->container->h / 2) - bd->y) < 3) || //bd->y is center of container
                                  ((abs((bd->zone->container->h / 2) - bd->y - bd->h) < 3) || //bd->y - bd->h is center of container
-                                 (abs((bd->zone->container->h / 2) - bd->y - (bd->h / 2)) < 3))) //bd->y - bd->h/2 is center of container
-                               )
+                                  (abs((bd->zone->container->h / 2) - bd->y - (bd->h / 2)) < 3))) //bd->y - bd->h/2 is center of container
+                                )
                               e_border_center(bd);
                             else
                               _e_border_move_internal(bd, bd->x, bd->y, 1);

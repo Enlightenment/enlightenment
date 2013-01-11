@@ -1,13 +1,13 @@
 #include "e.h"
 
-EAPI E_Path *path_data = NULL;
-EAPI E_Path *path_images = NULL;
-EAPI E_Path *path_fonts = NULL;
-EAPI E_Path *path_themes = NULL;
-EAPI E_Path *path_icons = NULL;
-EAPI E_Path *path_modules = NULL;
-EAPI E_Path *path_backgrounds = NULL;
-EAPI E_Path *path_messages = NULL;
+EAPI E_Path * path_data = NULL;
+EAPI E_Path * path_images = NULL;
+EAPI E_Path * path_fonts = NULL;
+EAPI E_Path * path_themes = NULL;
+EAPI E_Path * path_icons = NULL;
+EAPI E_Path * path_modules = NULL;
+EAPI E_Path * path_backgrounds = NULL;
+EAPI E_Path * path_messages = NULL;
 
 /* local subsystem functions */
 static Eina_Bool    _e_util_cb_delayed_del(void *data);
@@ -579,7 +579,7 @@ static int
 _e_util_layer_map(int layer)
 {
    int pos = 0;
-   
+
    if (layer < 0) layer = 0;
    pos = 1 + (layer / 50);
    if (pos > 10) pos = 10;
@@ -1356,16 +1356,16 @@ e_util_size_debug_set(Evas_Object *obj, Eina_Bool enable)
 {
    if (enable)
      {
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, 
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE,
                                        _e_util_size_debug, NULL);
-        evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, 
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
                                        _e_util_size_debug, NULL);
      }
    else
      {
-        evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOVE, 
+        evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOVE,
                                             _e_util_size_debug, NULL);
-        evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE, 
+        evas_object_event_callback_del_full(obj, EVAS_CALLBACK_RESIZE,
                                             _e_util_size_debug, NULL);
      }
 }
@@ -1376,7 +1376,7 @@ _e_util_default_terminal_get(const char *defaults_list)
    Efreet_Desktop *tdesktop = NULL;
    Efreet_Ini *ini;
    const char *s;
-   
+
    ini = efreet_ini_new(defaults_list);
    if ((ini) && (ini->data) &&
        (efreet_ini_section_set(ini, "Default Applications")) &&
@@ -1393,14 +1393,14 @@ EAPI Efreet_Desktop *
 e_util_terminal_desktop_get(void)
 {
    const char *terms[] =
-     {
-        "terminology.desktop",
-        "xterm.desktop",
-        "rxvt.desktop",
-        "gnome-terminal.desktop",
-        "konsole.desktop",
-        NULL
-     };
+   {
+      "terminology.desktop",
+      "xterm.desktop",
+      "rxvt.desktop",
+      "gnome-terminal.desktop",
+      "konsole.desktop",
+      NULL
+   };
    const char *s;
    char buf[PATH_MAX];
    Efreet_Desktop *tdesktop = NULL, *td;
@@ -1420,7 +1420,7 @@ e_util_terminal_desktop_get(void)
         tdesktop = _e_util_default_terminal_get(buf);
         if (tdesktop) return tdesktop;
      }
-   
+
    for (i = 0; terms[i]; i++)
      {
         tdesktop = efreet_util_desktop_file_id_find(terms[i]);
@@ -1443,7 +1443,6 @@ e_util_terminal_desktop_get(void)
    return tdesktop;
 }
 
-
 EAPI E_Config_Binding_Key *
 e_util_binding_match(const Eina_List *bindlist, Ecore_Event_Key *ev, unsigned int *num, const E_Config_Binding_Key *skip)
 {
@@ -1465,7 +1464,7 @@ e_util_binding_match(const Eina_List *bindlist, Ecore_Event_Key *ev, unsigned in
       if (ev->modifiers & ECORE_X_LOCK_NUM)
       mod |= ECORE_X_LOCK_NUM;
     */
-   EINA_LIST_FOREACH(bindlist ?: e_config->key_bindings, l, bi)
+   EINA_LIST_FOREACH(bindlist ? : e_config->key_bindings, l, bi)
      {
         if (bi != skip)
           {
@@ -1596,7 +1595,6 @@ e_util_gadcon_orient_menu_item_icon_set(E_Gadcon_Orient orient, E_Menu_Item *mi)
      }
 }
 
-
 EAPI char *
 e_util_string_append_char(char *str, size_t *size, size_t *len, char c)
 {
@@ -1612,7 +1610,7 @@ e_util_string_append_char(char *str, size_t *size, size_t *len, char c)
    if (*len >= *size - 1)
      {
         char *str2;
-        
+
         *size += 1024;
         str2 = realloc(str, *size);
         if (!str2)
@@ -1663,3 +1661,4 @@ e_util_string_append_quoted(char *str, size_t *size, size_t *len, const char *sr
 
    return str;
 }
+

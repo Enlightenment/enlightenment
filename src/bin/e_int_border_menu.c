@@ -62,7 +62,7 @@ e_int_border_menu_hook_add(E_Border_Menu_Hook_Cb cb, const void *data)
    if (!h) return NULL;
 
    h->cb = cb;
-   h->data = (void*)data;
+   h->data = (void *)data;
    menu_hooks = eina_list_append(menu_hooks, h);
    return h;
 }

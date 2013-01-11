@@ -132,7 +132,7 @@ _xdg_data_dirs_augment(void)
    char newpath[4096], buf[4096];
 
    if (!p) return;
-   
+
    snprintf(newpath, sizeof(newpath), "%s:%s/share", e_prefix_data_get(), p);
    if (s)
      {
@@ -233,11 +233,11 @@ main(int argc, char **argv)
      }
 #ifdef TS_DO
 #undef TS
-# define TS(x)                                               \
-  {                                                          \
-     t1 = ecore_time_unix_get();                             \
+# define TS(x)                                                    \
+  {                                                               \
+     t1 = ecore_time_unix_get();                                  \
      printf("ESTART: %1.5f [%1.5f] - %s\n", t1 - t0, t1 - t2, x); \
-     t2 = t1;                                                \
+     t2 = t1;                                                     \
   }
 #endif
    TS("Eina Init Done");
@@ -404,7 +404,7 @@ main(int argc, char **argv)
         _e_main_shutdown(-1);
      }
    TS("Emotion Init Done");
-   _e_main_shutdown_push((void*)emotion_shutdown);
+   _e_main_shutdown_push((void *)emotion_shutdown);
 #endif
 
    /* e doesn't sync to compositor - it should be one */
@@ -514,7 +514,7 @@ main(int argc, char **argv)
    _e_main_shutdown_push(e_configure_option_shutdown);
 
    _xdg_data_dirs_augment();
-   
+
    _fix_user_default_edj();
 
    TS("E_Randr Init");
@@ -1030,7 +1030,6 @@ main(int argc, char **argv)
    e_test();
    TS("E_Test Done");
 
-
    if (e_config->show_splash)
      e_init_status_set(_("Setup Shelves"));
    TS("E_Shelf Init");
@@ -1060,7 +1059,7 @@ main(int argc, char **argv)
    inloop = EINA_TRUE;
 
    e_util_env_set("E_RESTART", "1");
-   
+
    TS("MAIN LOOP AT LAST");
    if (!setjmp(x_fatal_buff))
      ecore_main_loop_begin();
@@ -1207,8 +1206,8 @@ _e_main_parse_arguments(int argc, char **argv)
           really_know = EINA_TRUE;
         else if (!strcmp(argv[i], "-locked"))
           locked = EINA_TRUE;
-	else if (!strcmp(argv[i], "-nopause"))
-	  e_nopause = EINA_TRUE;
+        else if (!strcmp(argv[i], "-nopause"))
+          e_nopause = EINA_TRUE;
         else if ((!strcmp(argv[i], "-h")) ||
                  (!strcmp(argv[i], "-help")) ||
                  (!strcmp(argv[i], "--help")))
@@ -1884,7 +1883,7 @@ _e_main_cb_idle_before(void *data __UNUSED__)
              if (!eb->func(eb->data)) eb->delete_me = 1;
           }
      }
-   EINA_LIST_FOREACH_SAFE (_idle_before_list, pl, l, eb)
+   EINA_LIST_FOREACH_SAFE(_idle_before_list, pl, l, eb)
      {
         if ((eb->once) || (eb->delete_me))
           {
@@ -1938,3 +1937,4 @@ _e_main_cb_startup_fake_end(void *data __UNUSED__)
    e_init_hide();
    return ECORE_CALLBACK_CANCEL;
 }
+

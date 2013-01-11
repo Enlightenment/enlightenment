@@ -61,7 +61,7 @@ main(int argc, char **argv)
      }
    else
      exit(1);
-   
+
    if (!dev) return -1;
 
    if (setuid(0) != 0)
@@ -94,9 +94,9 @@ main(int argc, char **argv)
                }
           }
      }
-   
+
    if (!devok) return -1;
-   
+
    str = eeze_udev_syspath_get_sysattr(dev, "max_brightness");
    if (str)
      {
@@ -109,19 +109,21 @@ main(int argc, char **argv)
              eina_stringshare_del(str);
           }
      }
-   
+
    if (maxlevel <= 0) maxlevel = 255;
    if (curlevel >= 0)
      {
         curlevel = ((maxlevel * level) + 500) / 1000;
         if (curlevel > maxlevel) curlevel = maxlevel;
-        else if (curlevel < 0) curlevel = 0;
+        else if (curlevel < 0)
+          curlevel = 0;
         snprintf(buf, sizeof(buf), "%s/brightness", f);
         return _bl_write_file(buf, curlevel);
      }
-   
+
    EINA_LIST_FREE(devs, f)
      eina_stringshare_del(f);
-   
+
    return -1;
 }
+

@@ -24,7 +24,7 @@ _serialized_setup_11_new(void)
      {
         if (e_randr_screen_info.rrvd_info.randr_info_11->csize_index >= e_randr_screen_info.rrvd_info.randr_info_11->nsizes) goto _serialized_setup_11_new_failed_free_ss;
         size = e_randr_screen_info.rrvd_info.randr_info_11->sizes + e_randr_screen_info.rrvd_info.randr_info_11->csize_index;
-        if (!size) goto _serialized_setup_11_new_failed_free_ss;;
+        if (!size) goto _serialized_setup_11_new_failed_free_ss; ;
         rate = e_randr_screen_info.rrvd_info.randr_info_11->current_rate;
         ori = e_randr_screen_info.rrvd_info.randr_info_11->corientation;
         ss->size.width = size->width;
@@ -73,8 +73,8 @@ _11_store_configuration(E_Randr_Configuration_Store_Modifier modifier __UNUSED__
      e_config->randr_serialized_setup->serialized_setup_11 = _serialized_setup_11_new();
 }
 
-
-EAPI void e_randr_11_store_configuration(E_Randr_Configuration_Store_Modifier modifier __UNUSED__)
+EAPI void
+e_randr_11_store_configuration(E_Randr_Configuration_Store_Modifier modifier __UNUSED__)
 {
    _11_store_configuration(modifier);
    e_config_save_queue();
@@ -99,11 +99,11 @@ _11_try_restore_configuration(void)
    Ecore_X_Randr_Screen_Size_MM *stored_size, *sizes = NULL;
    int i = 0, nsizes;
 
-#define SIZE_EQUAL(size) \
-   ((stored_size->width == (size).width) \
-    && (stored_size->height == (size).height) \
-    && (stored_size->width_mm == (size).width_mm) \
-    && (stored_size->height_mm == (size).height_mm))
+#define SIZE_EQUAL(size)                         \
+  ((stored_size->width == (size).width)          \
+   && (stored_size->height == (size).height)     \
+   && (stored_size->width_mm == (size).width_mm) \
+   && (stored_size->height_mm == (size).height_mm))
 
    if (!e_config->randr_serialized_setup->serialized_setup_11) return EINA_FALSE;
    stored_size = &e_config->randr_serialized_setup->serialized_setup_11->size;
@@ -137,3 +137,4 @@ _11_try_restore_configuration(void)
 
    return EINA_FALSE;
 }
+

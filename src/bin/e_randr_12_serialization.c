@@ -5,10 +5,10 @@
 
 static const char *_POLICIES_STRINGS[] = {"ABOVE", "RIGHT", "BELOW", "LEFT", "CLONE", "NONE"};
 
-static E_Randr_Serialized_Crtc  *_serialized_crtc_new(E_Randr_Crtc_Info *crtc_info);
-static inline int                _sort_by_number_of_edids(const void *d1, const void *d2);
-static inline Eina_List         *_find_matching_outputs(Eina_List *sois);
-static inline E_Randr_Crtc_Info *_find_matching_crtc(E_Randr_Serialized_Crtc *sc);
+static E_Randr_Serialized_Crtc        *_serialized_crtc_new(E_Randr_Crtc_Info *crtc_info);
+static inline int                      _sort_by_number_of_edids(const void *d1, const void *d2);
+static inline Eina_List               *_find_matching_outputs(Eina_List *sois);
+static inline E_Randr_Crtc_Info       *_find_matching_crtc(E_Randr_Serialized_Crtc *sc);
 static inline Ecore_X_Randr_Mode_Info *_find_matching_mode_info(Ecore_X_Randr_Mode_Info *mode);
 
 /**********************************************************************
@@ -87,8 +87,8 @@ _serialized_crtc_free(E_Randr_Serialized_Crtc *sc)
 
    EINA_SAFETY_ON_NULL_RETURN(sc);
 
-   EINA_LIST_FREE (sc->outputs, so)
-      _serialized_output_free(so);
+   EINA_LIST_FREE(sc->outputs, so)
+     _serialized_output_free(so);
    _mode_info_free(sc->mode_info);
    free(sc);
 }
@@ -121,7 +121,8 @@ _eina_list_data_index_get(const Eina_List *list, const void *data)
 }
 
 Ecore_X_Randr_Mode_Info
-*_mode_info_clone(const Ecore_X_Randr_Mode_Info *src)
+*
+_mode_info_clone(const Ecore_X_Randr_Mode_Info *src)
 {
    Ecore_X_Randr_Mode_Info *mi = NULL;
 
@@ -142,7 +143,7 @@ Ecore_X_Randr_Mode_Info
    mi->vTotal = src->vTotal;
    if (src->nameLength > 0)
      {
-        mi->name = (char*)eina_stringshare_add(src->name);
+        mi->name = (char *)eina_stringshare_add(src->name);
      }
    mi->nameLength = src->nameLength;
    mi->modeFlags = src->modeFlags;
@@ -151,7 +152,8 @@ Ecore_X_Randr_Mode_Info
 }
 
 E_Randr_Edid_Hash
-*_monitor_edid_hash_clone(E_Randr_Monitor_Info *mi)
+*
+_monitor_edid_hash_clone(E_Randr_Monitor_Info *mi)
 {
    E_Randr_Edid_Hash *edid_hash;
 
@@ -330,7 +332,7 @@ _outputs_policies_update(Eina_List *sops)
 {
    E_Randr_Serialized_Output_Policy *sop;
 
-   EINA_LIST_FREE (sops, sop)
+   EINA_LIST_FREE(sops, sop)
      {
         _serialized_output_policy_free(sop);
      }
@@ -443,7 +445,7 @@ _12_try_restore_configuration(void)
                   continue;
                }
              EINA_LIST_FOREACH(outputs_list, outputs_iter, output_info)
-                ecore_x_randr_output_mode_add(output_info->xid, mode);
+               ecore_x_randr_output_mode_add(output_info->xid, mode);
              INF("E_RANDR: \tSerialized mode was added to the server manually using the name %s.", mi->name);
           }
 
@@ -452,7 +454,7 @@ _12_try_restore_configuration(void)
           DBG("E_RANDR: \tRestoring CRTC %d (index %d) in mode %s.", ci->xid, sc->index, (mode == Ecore_X_Randr_None) ? "(disabled)" : mi->name);
         DBG("E_RANDR: \t\tUsed outputs:");
         EINA_LIST_FOREACH(outputs_list, outputs_iter, output_info)
-            DBG("\t\t%s", output_info->name);
+          DBG("\t\t%s", output_info->name);
         // DEBUG END
 
         ret &= ecore_x_randr_crtc_settings_set(e_randr_screen_info.root, ci->xid, outputs_array, eina_list_count(outputs_list), sc->pos.x, sc->pos.y, mode, sc->orientation);
@@ -470,12 +472,12 @@ _12_serialized_setup_free(E_Randr_Serialized_Setup_12 *ss_12)
 
    if (!ss_12) return;
 
-   EINA_LIST_FREE (ss_12->crtcs, sc)
+   EINA_LIST_FREE(ss_12->crtcs, sc)
      {
         _serialized_crtc_free(sc);
      }
-   EINA_LIST_FREE (ss_12->edid_hashes, edid_hash)
-      free(edid_hash);
+   EINA_LIST_FREE(ss_12->edid_hashes, edid_hash)
+     free(edid_hash);
 
    free(ss_12);
 }
@@ -483,7 +485,7 @@ _12_serialized_setup_free(E_Randr_Serialized_Setup_12 *ss_12)
 EINTERN void
 e_randr_12_serialized_setup_free(E_Randr_Serialized_Setup_12 *ss_12)
 {
-    _12_serialized_setup_free(ss_12);
+   _12_serialized_setup_free(ss_12);
 }
 
 void
@@ -491,7 +493,7 @@ _12_store_configuration(E_Randr_Configuration_Store_Modifier modifier)
 {
    if (modifier & (E_RANDR_CONFIGURATION_STORE_RESOLUTIONS | E_RANDR_CONFIGURATION_STORE_ARRANGEMENT | E_RANDR_CONFIGURATION_STORE_ORIENTATIONS))
      {
-          e_config->randr_serialized_setup->serialized_setups_12 = _12_serialized_setup_update(e_config->randr_serialized_setup->serialized_setups_12);
+        e_config->randr_serialized_setup->serialized_setups_12 = _12_serialized_setup_update(e_config->randr_serialized_setup->serialized_setups_12);
      }
 
    if (modifier & E_RANDR_CONFIGURATION_STORE_POLICIES)
@@ -536,7 +538,6 @@ _find_matching_outputs(Eina_List *sois)
              INF("E_RANDR: \t\tComparing to output \"%s\"", oi->name);
              if (!strncmp(so->name, oi->name, oi->name_length))
                {
-
                   list = eina_list_append(list, oi);
                   break;
                }
@@ -565,18 +566,18 @@ _find_matching_mode_info(Ecore_X_Randr_Mode_Info *mode)
    EINA_LIST_FOREACH(e_randr_screen_info.rrvd_info.randr_info_12->modes, iter, mi)
      {
 #define EQL(arg) (mi->arg == mode->arg)
-         if (EQL(width) &&
-                 EQL(height) &&
-                 EQL(dotClock) &&
-                 EQL(hSyncStart) &&
-                 EQL(hSyncEnd) &&
-                 EQL(hTotal) &&
-                 EQL(hSkew) &&
-                 EQL(vSyncStart) &&
-                 EQL(vSyncEnd) &&
-                 EQL(vTotal) &&
-                 EQL(modeFlags))
-         return mi;
+        if (EQL(width) &&
+            EQL(height) &&
+            EQL(dotClock) &&
+            EQL(hSyncStart) &&
+            EQL(hSyncEnd) &&
+            EQL(hTotal) &&
+            EQL(hSkew) &&
+            EQL(vSyncStart) &&
+            EQL(vSyncEnd) &&
+            EQL(vTotal) &&
+            EQL(modeFlags))
+          return mi;
 #undef EQL
      }
    return NULL;
@@ -585,8 +586,8 @@ _find_matching_mode_info(Ecore_X_Randr_Mode_Info *mode)
 static int
 _sort_by_number_of_edids(const void *d1, const void *d2)
 {
-    const E_Randr_Serialized_Setup_12 *ss1 = (const E_Randr_Serialized_Setup_12*)d1;
-    const E_Randr_Serialized_Setup_12 *ss2 = (const E_Randr_Serialized_Setup_12*)d2;
+   const E_Randr_Serialized_Setup_12 *ss1 = (const E_Randr_Serialized_Setup_12 *)d1;
+   const E_Randr_Serialized_Setup_12 *ss2 = (const E_Randr_Serialized_Setup_12 *)d2;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ss1, 1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ss2, -1);
@@ -596,3 +597,4 @@ _sort_by_number_of_edids(const void *d1, const void *d2)
    else
      return -1;
 }
+

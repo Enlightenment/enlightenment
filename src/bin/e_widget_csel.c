@@ -128,7 +128,7 @@ _e_wid_cb_color_changed(void *data, Evas_Object *o)
      }
 
    /* update the spectrum */
-   if (o != wd->spectrum/* && changed != -1*/)
+   if (o != wd->spectrum /* && changed != -1*/)
      {
         if (wd->mode == changed ||
             (wd->mode >= E_COLOR_COMPONENT_H && changed <= E_COLOR_COMPONENT_B) ||
@@ -152,21 +152,27 @@ _e_wid_cb_color_changed(void *data, Evas_Object *o)
            case E_COLOR_COMPONENT_R:
              snprintf(buf, 10, "%i", wd->cv->r);
              break;
+
            case E_COLOR_COMPONENT_G:
              snprintf(buf, 10, "%i", wd->cv->g);
              break;
+
            case E_COLOR_COMPONENT_B:
              snprintf(buf, 10, "%i", wd->cv->b);
              break;
+
            case E_COLOR_COMPONENT_H:
              snprintf(buf, 10, "%.0f", wd->cv->h);
              break;
+
            case E_COLOR_COMPONENT_S:
              snprintf(buf, 10, "%.2f", wd->cv->s);
              break;
+
            case E_COLOR_COMPONENT_V:
              snprintf(buf, 10, "%.2f", wd->cv->v);
              break;
+
            default:
              break;
           }
@@ -195,7 +201,7 @@ e_widget_csel_add(Evas *evas, E_Color *color, Eina_Bool alpha_enabled)
    char *labels[6] = { N_("R"), N_("G"), N_("B"), N_("H"), N_("S"), N_("V") };
    E_Widget_Data *wd;
    Evas_Coord mw, mh;
-   
+
    obj = e_widget_add(evas);
    e_widget_del_hook_set(obj, _e_wid_del_hook);
 
@@ -243,7 +249,7 @@ e_widget_csel_add(Evas *evas, E_Color *color, Eina_Bool alpha_enabled)
            case E_COLOR_COMPONENT_V:
              snprintf(wd->values[i], 10, "%.2f", wd->cv->v);
              break;
-             
+
            default:
              break;
           }
@@ -306,7 +312,7 @@ e_widget_csel_add(Evas *evas, E_Color *color, Eina_Bool alpha_enabled)
 
    e_widget_size_min_get(table, &mw, &mh);
    e_widget_size_min_set(obj, mw, mh);
-   
+
    return obj;
 }
 

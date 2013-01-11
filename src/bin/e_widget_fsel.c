@@ -19,17 +19,17 @@ struct _E_Widget_Data
    Evas_Object *o_entry;
    Evas_Coord   preview_w, preview_h;
    char        *entry_text;
-   const char *path;
+   const char  *path;
    void         (*sel_func)(void *data, Evas_Object *obj);
    void        *sel_data;
    void         (*chg_func)(void *data, Evas_Object *obj);
    void        *chg_data;
    int          preview;
-   Eina_Bool   nochange : 1; // block changing of entry
-   Eina_Bool   fprev : 1; // current fprev is dir
+   Eina_Bool    nochange : 1; // block changing of entry
+   Eina_Bool    fprev : 1; // current fprev is dir
 };
 
-static void  _e_wid_del_hook(Evas_Object *obj);
+static void _e_wid_del_hook(Evas_Object *obj);
 
 /* local subsystem functions */
 static void
@@ -214,7 +214,7 @@ _e_wid_fsel_sel_chg(E_Widget_Data *wd, Evas_Object *fm)
    rp = e_widget_entry_text_get(wd->o_entry);
    if (wd->nochange && rp && rp[0]) return;
    preview = !!fm;
-   fm = fm ?: wd->o_files_fm;
+   fm = fm ? : wd->o_files_fm;
    wd->fprev = (fm != wd->o_files_fm);
    selected = e_fm2_selected_list_get(fm);
    if (!selected) return;
@@ -344,14 +344,14 @@ e_widget_fsel_add(Evas *evas, const char *dev, const char *path, char *selected,
    if (preview)
      {
         Evas_Coord mw2, mh2;
-        
+
         wd->o_preview_frame = e_widget_framelist_add(evas, _("Preview"), 0);
         wd->o_preview = e_widget_filepreview_add(evas, 128, 128, 0);
         e_widget_filepreview_filemode_force(wd->o_preview);
         e_widget_framelist_object_append(wd->o_preview_frame, wd->o_preview);
         evas_object_smart_callback_add(wd->o_preview, "selected",
                                        _e_wid_fsel_preview_file_selected, wd);
-        
+
         e_widget_size_min_get(wd->o_preview, &mw, &mh);
         e_widget_size_min_get(wd->o_preview_frame, &mw2, &mh2);
         /* need size of preview here or min size will be off */
@@ -564,3 +564,4 @@ _e_wid_del_hook(Evas_Object *obj)
 
    free(wd);
 }
+

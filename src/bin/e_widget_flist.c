@@ -235,3 +235,4 @@ _e_wid_cb_file_deleted(void *data, Evas_Object *obj __UNUSED__, void *event)
 {
    evas_object_smart_callback_call(data, "files_deleted", event);
 }
+

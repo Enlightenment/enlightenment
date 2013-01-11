@@ -4,7 +4,7 @@
 static void _e_bg_signal(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _e_bg_event_bg_update_free(void *data, void *event);
 static void e_bg_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
-static int e_bg_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
+static int  e_bg_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
 static void _e_bg_handler_image_imported(const char *image_path, void *data);
 
 /* local subsystem globals */
@@ -187,7 +187,7 @@ e_bg_file_get(int container_num, int zone_num, int desk_x, int desk_y)
      ok = 1;
    if (!ok)
      eina_stringshare_replace(&bgfile, e_theme_edje_file_get("base/theme/background",
-                                       "e/desktop/background"));
+                                                             "e/desktop/background"));
 
    return bgfile;
 }
@@ -538,7 +538,6 @@ _e_bg_event_bg_update_free(void *data __UNUSED__, void *event)
 static void
 _e_bg_handler_image_imported(const char *image_path, void *data __UNUSED__)
 {
-
    e_bg_default_set(image_path);
    e_bg_update();
    e_config_save_queue();

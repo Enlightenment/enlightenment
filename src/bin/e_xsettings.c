@@ -7,41 +7,50 @@
 //#include <X11/Xmd.h>            /* For CARD16 */
 
 // define here to avoid needing x includes directly.
-#define C16 unsigned short
-#define C32 unsigned long
+#define C16                 unsigned short
+#define C32                 unsigned long
 
-#define RETRY_TIMEOUT 2.0
+#define RETRY_TIMEOUT       2.0
 
-#define SETTING_TYPE_INT	0
-#define SETTING_TYPE_STRING	1
-#define SETTING_TYPE_COLOR	2
+#define SETTING_TYPE_INT    0
+#define SETTING_TYPE_STRING 1
+#define SETTING_TYPE_COLOR  2
 
 #define OFFSET_ADD(n) ((n + 4 - 1) & (~(4 - 1)))
 
 typedef struct _Settings_Manger Settings_Manager;
-typedef struct _Setting Setting;
+typedef struct _Setting         Setting;
 
 struct _Settings_Manger
 {
-   E_Manager *man;
+   E_Manager     *man;
    Ecore_X_Window selection;
-   Ecore_Timer *timer_retry;
-   unsigned long serial;
-   Ecore_X_Atom _atom_xsettings_screen;
+   Ecore_Timer   *timer_retry;
+   unsigned long  serial;
+   Ecore_X_Atom   _atom_xsettings_screen;
 };
 
 struct _Setting
 {
-  unsigned short type;
+   unsigned short type;
 
-  const char *name;
+   const char    *name;
 
-  struct { const char *value; } s;
-  struct { int value; } i;
-  struct { unsigned short red, green, blue, alpha; } c;
+   struct
+   {
+      const char *value;
+   } s;
+   struct
+   {
+      int value;
+   } i;
+   struct
+   {
+      unsigned short red, green, blue, alpha;
+   } c;
 
-  unsigned long length;
-  unsigned long last_change;
+   unsigned long length;
+   unsigned long last_change;
 };
 
 static void _e_xsettings_apply(Settings_Manager *sm);
@@ -57,9 +66,9 @@ static Eio_File *eio_op = NULL;
 static Eina_Bool setting = EINA_FALSE;
 static Eina_Bool reset = EINA_FALSE;
 static const char _setting_icon_theme_name[] = "Net/IconThemeName";
-static const char _setting_theme_name[]      = "Net/ThemeName";
-static const char _setting_font_name[]       = "Gtk/FontName";
-static const char _setting_xft_dpi[]         = "Xft/DPI";
+static const char _setting_theme_name[] = "Net/ThemeName";
+static const char _setting_font_name[] = "Gtk/FontName";
+static const char _setting_xft_dpi[] = "Xft/DPI";
 static const char *_setting_theme = NULL;
 static unsigned int event_ignore = 0;
 
@@ -88,7 +97,7 @@ _e_xsettings_selection_owner_set(Settings_Manager *sm)
    ret = (cur_selection == sm->selection);
    if (!ret)
      ERR("XSETTINGS: tried to set selection to %#x, but got %#x",
-             sm->selection, cur_selection);
+         sm->selection, cur_selection);
 
    return ret;
 }
@@ -165,7 +174,7 @@ _e_xsettings_retry(Settings_Manager *sm)
 {
    if (sm->timer_retry) return;
    sm->timer_retry = ecore_timer_add
-     (RETRY_TIMEOUT, _e_xsettings_activate_retry, sm);
+       (RETRY_TIMEOUT, _e_xsettings_activate_retry, sm);
 }
 
 static void
@@ -263,6 +272,7 @@ _e_xsettings_int_set(const char *name, int value, Eina_Bool set)
    s->length = 12;
    s->length += OFFSET_ADD(strlen(name));
 }
+
 #endif
 
 static unsigned char *
@@ -292,30 +302,30 @@ _e_xsettings_copy(unsigned char *buffer, Setting *s)
    switch (s->type)
      {
       case SETTING_TYPE_INT:
-         *(C32 *)(buffer) = s->i.value;
-         buffer += 4;
-         break;
+        *(C32 *)(buffer) = s->i.value;
+        buffer += 4;
+        break;
 
       case SETTING_TYPE_STRING:
-         str_len = strlen (s->s.value);
-         *(C32 *)(buffer) = str_len;
-         buffer += 4;
+        str_len = strlen(s->s.value);
+        *(C32 *)(buffer) = str_len;
+        buffer += 4;
 
-         memcpy(buffer, s->s.value, str_len);
-         buffer += str_len;
+        memcpy(buffer, s->s.value, str_len);
+        buffer += str_len;
 
-         len = OFFSET_ADD(str_len) - str_len;
-         memset(buffer, 0, len);
-         buffer += len;
-         break;
+        len = OFFSET_ADD(str_len) - str_len;
+        memset(buffer, 0, len);
+        buffer += len;
+        break;
 
       case SETTING_TYPE_COLOR:
-         *(C16 *)(buffer) = s->c.red;
-         *(C16 *)(buffer + 2) = s->c.green;
-         *(C16 *)(buffer + 4) = s->c.blue;
-         *(C16 *)(buffer + 6) = s->c.alpha;
-         buffer += 8;
-         break;
+        *(C16 *)(buffer) = s->c.red;
+        *(C16 *)(buffer + 2) = s->c.green;
+        *(C16 *)(buffer + 4) = s->c.blue;
+        *(C16 *)(buffer + 6) = s->c.alpha;
+        buffer += 8;
+        break;
      }
 
    return buffer;
@@ -337,15 +347,15 @@ _e_xsettings_apply(Settings_Manager *sm)
    if (!data) return;
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
-   *pos = 0;//LSBFirst
+   *pos = 0; //LSBFirst
 #else
-   *pos = 1;//MSBFirst
+   *pos = 1; //MSBFirst
 #endif
 
    pos += 4;
-   *(C32*)pos = sm->serial++;
+   *(C32 *)pos = sm->serial++;
    pos += 4;
-   *(C32*)pos = eina_list_count(settings);
+   *(C32 *)pos = eina_list_count(settings);
    pos += 4;
 
    EINA_LIST_FOREACH(settings, l, s)
@@ -401,7 +411,7 @@ _e_xsettings_icon_theme_set(void)
    if (e_config->xsettings.net_icon_theme_name)
      {
         _e_xsettings_string_set(_setting_icon_theme_name,
-                              e_config->xsettings.net_icon_theme_name);
+                                e_config->xsettings.net_icon_theme_name);
         return;
      }
 
@@ -416,11 +426,12 @@ _e_xsettings_error_cb(void *data, Eio_File *handler __UNUSED__, int error __UNUS
      {
         char buf[PATH_MAX];
         if (reset || (!l)) l = efreet_data_dirs_get();
-        else if (l) l = l->next;
+        else if (l)
+          l = l->next;
         reset = EINA_FALSE;
         if (l)
           {
-             snprintf(buf, sizeof(buf), "%s/themes/%s", (char*)eina_list_data_get(l), _setting_theme);
+             snprintf(buf, sizeof(buf), "%s/themes/%s", (char *)eina_list_data_get(l), _setting_theme);
              eio_op = eio_file_direct_stat(buf, _e_xsettings_done_cb, _e_xsettings_error_cb, l);
              return;
           }
@@ -477,7 +488,7 @@ _e_xsettings_theme_set(void)
    if (e_config->xsettings.net_theme_name)
      {
         _e_xsettings_string_set(_setting_theme_name,
-                              e_config->xsettings.net_theme_name);
+                                e_config->xsettings.net_theme_name);
         return;
      }
 
@@ -534,13 +545,12 @@ _e_xsettings_font_set(void)
 static void
 _e_xsettings_xft_set(void)
 {
-
    if (e_config->scale.use_dpi)
      _e_xsettings_int_set(_setting_xft_dpi, e_config->scale.base_dpi, EINA_TRUE);
    else
      _e_xsettings_int_set(_setting_xft_dpi, 0, EINA_FALSE);
-
 }
+
 #endif
 
 static void
@@ -555,16 +565,16 @@ _e_xsettings_cursor_path_set(void)
    path = getenv("XCURSOR_PATH");
    if (path)
      {
-       if (!strstr(path, buf))
-         {
-           snprintf(env, sizeof(env), "%s:%s", buf, path);
-           path = env;
-         }
+        if (!strstr(path, buf))
+          {
+             snprintf(env, sizeof(env), "%s:%s", buf, path);
+             path = env;
+          }
      }
    else
      {
-       snprintf(env, sizeof(env), "%s:%s", buf, "/usr/share/icons");
-       path = env;
+        snprintf(env, sizeof(env), "%s:%s", buf, "/usr/share/icons");
+        path = env;
      }
    e_env_set("XCURSOR_PATH", path);
 }
@@ -677,3 +687,4 @@ e_xsettings_config_update(void)
      }
    event_ignore++;
 }
+

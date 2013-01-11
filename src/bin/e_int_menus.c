@@ -61,7 +61,7 @@ static void         _e_int_menus_desktops_free_hook(void *obj);
 static void         _e_int_menus_desk_item_cb(void *data, E_Menu *m, E_Menu_Item *mi);
 static void         _e_int_menus_item_label_set(Efreet_Menu *entry, E_Menu_Item *mi);
 static Efreet_Menu *_e_int_menus_apps_thread_new(E_Menu *m, const char *dir);
-static Eina_Bool   _e_int_menus_efreet_desktop_cache_update(void *d, int type, void *e);
+static Eina_Bool    _e_int_menus_efreet_desktop_cache_update(void *d, int type, void *e);
 //static void _e_int_menus_apps_drag_finished(E_Drag *drag, int dropped __UNUSED__);
 
 /* local subsystem globals */
@@ -118,6 +118,7 @@ _TEST(void *d __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
    e_dialog_content_set(dia, o_list, 100, 300);
    e_dialog_show(dia);
 }
+
 #endif
 
 /* externally accessible functions */
@@ -849,7 +850,7 @@ _e_int_menus_apps_free_hook2(void *obj)
    m = obj;
    // XXX TODO: this should be automatic in e_menu, just get references right!
    // XXX TODO: fix references and remove me!!!
-   EINA_LIST_FOREACH_SAFE (m->items, l, l_next, mi)
+   EINA_LIST_FOREACH_SAFE(m->items, l, l_next, mi)
      {
         if (mi->submenu)
           e_object_del(E_OBJECT(mi->submenu));
@@ -958,7 +959,7 @@ _e_int_menus_desktops_free_hook(void *obj)
    m = obj;
    // XXX TODO: this should be automatic in e_menu, just get references right!
    // XXX TODO: fix references and remove me!!!
-   EINA_LIST_FOREACH_SAFE (m->items, l, l_next, mi)
+   EINA_LIST_FOREACH_SAFE(m->items, l, l_next, mi)
      {
         if (mi->submenu)
           e_object_del(E_OBJECT(mi->submenu));
@@ -1392,8 +1393,8 @@ _e_int_menus_clients_title_abbrv(const char *title)
    memset(&abbv, 0, sizeof(abbv));
    /* Advance to the end of the first half of the string. */
    len = 0;
-   for (len2 = (max_len / 2) ; len2 ; len2--)
-      eina_unicode_utf8_get_next(title, &len);
+   for (len2 = (max_len / 2); len2; len2--)
+     eina_unicode_utf8_get_next(title, &len);
 
    strncat(abbvptr, title, len);
    abbvptr += len;
@@ -1404,8 +1405,8 @@ _e_int_menus_clients_title_abbrv(const char *title)
 
    /* Advance to the start of the second half of the string */
    len = str_len = strlen(title);
-   for (len2 = (max_len / 2) ; len2 ; len2--)
-      eina_unicode_utf8_get_prev(title, &len);
+   for (len2 = (max_len / 2); len2; len2--)
+     eina_unicode_utf8_get_prev(title, &len);
 
    strncpy(abbvptr, title + len, str_len);
    abbvptr[str_len] = '\0';

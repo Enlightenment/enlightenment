@@ -20,22 +20,22 @@ static Eina_List *wins = NULL;
 
 typedef struct _Elm_Win_Trap_Ctx
 {
-   E_Border *border;
+   E_Border      *border;
    Ecore_X_Window xwin;
-   Eina_Bool centered:1;
-   Eina_Bool placed:1;
+   Eina_Bool      centered : 1;
+   Eina_Bool      placed : 1;
 } Elm_Win_Trap_Ctx;
 
 static void
 _elm_win_prop_update(Elm_Win_Trap_Ctx *ctx)
 {
    ecore_x_icccm_size_pos_hints_set(ctx->xwin,
-     ctx->border->placed, ctx->border->client.icccm.gravity,
-     ctx->border->client.icccm.min_w, ctx->border->client.icccm.min_h,
-     ctx->border->client.icccm.max_w, ctx->border->client.icccm.max_h,
-     ctx->border->client.icccm.base_w, ctx->border->client.icccm.base_h,
-     ctx->border->client.icccm.step_w, ctx->border->client.icccm.step_h,
-     ctx->border->client.icccm.min_aspect, ctx->border->client.icccm.max_aspect);
+                                    ctx->border->placed, ctx->border->client.icccm.gravity,
+                                    ctx->border->client.icccm.min_w, ctx->border->client.icccm.min_h,
+                                    ctx->border->client.icccm.max_w, ctx->border->client.icccm.max_h,
+                                    ctx->border->client.icccm.base_w, ctx->border->client.icccm.base_h,
+                                    ctx->border->client.icccm.step_w, ctx->border->client.icccm.step_h,
+                                    ctx->border->client.icccm.min_aspect, ctx->border->client.icccm.max_aspect);
 }
 
 static void *
@@ -102,7 +102,7 @@ _elm_win_trap_show(void *data, Evas_Object *o)
                   eina_stringshare_replace(&ctx->border->bordername, "borderless");
                   ctx->border->client.border.changed = 1;
                   ctx->border->client.netwm.state.skip_pager =
-                  ctx->border->client.netwm.state.skip_taskbar = 1;
+                    ctx->border->client.netwm.state.skip_taskbar = 1;
                   ctx->border->client.icccm.accepts_focus = 0;
                }
           }
@@ -196,44 +196,44 @@ _elm_win_trap_size_base_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
 }
 
 static const Elm_Win_Trap _elm_win_trap = {
-  ELM_WIN_TRAP_VERSION,
-  _elm_win_trap_add,
-  _elm_win_trap_del,
-  _elm_win_trap_hide,
-  _elm_win_trap_show,
-  _elm_win_trap_move,
-  _elm_win_trap_resize,
-  _elm_win_trap_center,
-  _elm_win_trap_lower,
-  _elm_win_trap_raise,
-  _elm_win_trap_activate,
-  /* alpha_set */ NULL,
-  /* aspect_set */ NULL,
-  /* avoid_damage_set */ NULL,
-  /* borderless_set */ NULL,
-  /* demand_attention_set */ NULL,
-  /* focus_skip_set */ NULL,
-  /* fullscreen_set */ NULL,
-  /* iconified_set */ NULL,
-  /* layer_set */ NULL,
-  /* manual_render_set */ NULL,
-  /* maximized_set */ NULL,
-  /* modal_set */ NULL,
-  /* name_class_set */ NULL,
-  /* object_cursor_set */ NULL,
-  /* override_set */ NULL,
-  /* rotation_set */ NULL,
-  /* rotation_with_resize_set */ NULL,
-  /* shaped_set */ NULL,
-  _elm_win_trap_size_base_set,
-  /* size_step_set */ NULL,
-  /* size_min_set */ NULL,
-  /* size_max_set */ NULL,
-  /* sticky_set */ NULL,
-  /* title_set */ NULL,
-  /* urgent_set */ NULL,
-  /* withdrawn_set */ NULL
-  };
+   ELM_WIN_TRAP_VERSION,
+   _elm_win_trap_add,
+   _elm_win_trap_del,
+   _elm_win_trap_hide,
+   _elm_win_trap_show,
+   _elm_win_trap_move,
+   _elm_win_trap_resize,
+   _elm_win_trap_center,
+   _elm_win_trap_lower,
+   _elm_win_trap_raise,
+   _elm_win_trap_activate,
+   /* alpha_set */ NULL,
+   /* aspect_set */ NULL,
+   /* avoid_damage_set */ NULL,
+   /* borderless_set */ NULL,
+   /* demand_attention_set */ NULL,
+   /* focus_skip_set */ NULL,
+   /* fullscreen_set */ NULL,
+   /* iconified_set */ NULL,
+   /* layer_set */ NULL,
+   /* manual_render_set */ NULL,
+   /* maximized_set */ NULL,
+   /* modal_set */ NULL,
+   /* name_class_set */ NULL,
+   /* object_cursor_set */ NULL,
+   /* override_set */ NULL,
+   /* rotation_set */ NULL,
+   /* rotation_with_resize_set */ NULL,
+   /* shaped_set */ NULL,
+   _elm_win_trap_size_base_set,
+   /* size_step_set */ NULL,
+   /* size_min_set */ NULL,
+   /* size_max_set */ NULL,
+   /* sticky_set */ NULL,
+   /* title_set */ NULL,
+   /* urgent_set */ NULL,
+   /* withdrawn_set */ NULL
+};
 #endif
 
 /* externally accessible functions */
@@ -771,3 +771,4 @@ _e_win_cb_state(Ecore_Evas *ee)
    if (!win->border) return;
    win->border->changed = win->border->changes.size = 1;
 }
+

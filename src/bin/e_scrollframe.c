@@ -62,7 +62,7 @@ struct _E_Smart_Data
    unsigned char vbar_visible : 1;
    unsigned char extern_pan : 1;
    unsigned char one_dir_at_a_time : 1;
-   Eina_Bool key_nav : 1;
+   Eina_Bool     key_nav : 1;
 };
 
 /* local subsystem functions */
@@ -276,7 +276,7 @@ e_scrollframe_child_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Ev
 
    /* Abort if the request region is already shown */
    if ((px <= x) && (py <= y) && (x + w <= px + vw) && (y + h <= py + vh))
-      return;
+     return;
 
    nx = px;
    if (x < px) nx = x;
@@ -394,15 +394,15 @@ e_scrollframe_key_navigation_set(Evas_Object *obj, Eina_Bool enabled)
 {
    API_ENTRY return;
    if (enabled == sd->key_nav)
-      return;
+     return;
 
    sd->key_nav = enabled;
    if (sd->key_nav)
-      evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
-            _e_smart_event_key_down, sd);
+     evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
+                                    _e_smart_event_key_down, sd);
    else
-      evas_object_event_callback_del_full(obj, EVAS_CALLBACK_KEY_DOWN,
-            _e_smart_event_key_down, sd);
+     evas_object_event_callback_del_full(obj, EVAS_CALLBACK_KEY_DOWN,
+                                         _e_smart_event_key_down, sd);
 }
 
 /* local subsystem functions */
@@ -1157,3 +1157,4 @@ _e_smart_init(void)
       _e_smart = evas_smart_class_new(&sc);
    }
 }
+

@@ -356,7 +356,6 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
 
    ob = e_widget_check_add(evas, _("Remember these Locks"), &(cfdata->lock.remember));
    e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   
 
    return ol;
 }

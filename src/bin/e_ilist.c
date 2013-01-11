@@ -12,7 +12,7 @@ struct _E_Smart_Data
    Eina_List    *items;
    Eina_List    *selected_items;
    int           selected;
-   const char *theme;
+   const char   *theme;
    unsigned char selector : 1;
    unsigned char multi_select : 1;
    unsigned char on_hold : 1;
@@ -25,34 +25,34 @@ struct _E_Smart_Data
    } typebuf;
 };
 
-static void      _e_smart_init(void);
-static void      _e_smart_add(Evas_Object *obj);
-static void      _e_smart_del(Evas_Object *obj);
-static void      _e_smart_show(Evas_Object *obj);
-static void      _e_smart_hide(Evas_Object *obj);
-static void      _e_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-static void      _e_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
-static void      _e_smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
-static void      _e_smart_clip_set(Evas_Object *obj, Evas_Object *clip);
-static void      _e_smart_clip_unset(Evas_Object *obj);
-static void      _e_smart_reconfigure(E_Smart_Data *sd);
-static void      _e_smart_event_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info);
-static void      _e_smart_event_mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info);
-static void      _e_smart_event_key_down(void *data, Evas *evas, Evas_Object *obj, void *event_info);
+static void          _e_smart_init(void);
+static void          _e_smart_add(Evas_Object *obj);
+static void          _e_smart_del(Evas_Object *obj);
+static void          _e_smart_show(Evas_Object *obj);
+static void          _e_smart_hide(Evas_Object *obj);
+static void          _e_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+static void          _e_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+static void          _e_smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
+static void          _e_smart_clip_set(Evas_Object *obj, Evas_Object *clip);
+static void          _e_smart_clip_unset(Evas_Object *obj);
+static void          _e_smart_reconfigure(E_Smart_Data *sd);
+static void          _e_smart_event_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info);
+static void          _e_smart_event_mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info);
+static void          _e_smart_event_key_down(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 
-static void      _e_typebuf_add(Evas_Object *obj, const char *s);
-static void      _e_typebuf_match(Evas_Object *obj);
-static Eina_Bool _e_typebuf_timer_cb(void *data);
-static void      _e_typebuf_timer_update(Evas_Object *obj);
-static void      _e_typebuf_timer_delete(Evas_Object *obj);
-static void      _e_typebuf_clean(Evas_Object *obj);
+static void          _e_typebuf_add(Evas_Object *obj, const char *s);
+static void          _e_typebuf_match(Evas_Object *obj);
+static Eina_Bool     _e_typebuf_timer_cb(void *data);
+static void          _e_typebuf_timer_update(Evas_Object *obj);
+static void          _e_typebuf_timer_delete(Evas_Object *obj);
+static void          _e_typebuf_clean(Evas_Object *obj);
 
 static E_Ilist_Item *_e_ilist_item_new(E_Smart_Data *sd, Evas_Object *icon, Evas_Object *end, const char *label, int header, Ecore_End_Cb func, Ecore_End_Cb func_hilight, void *data, void *data2);
-static void      _e_ilist_item_theme_set(E_Ilist_Item *si, Eina_Bool custom, Eina_Bool header, Eina_Bool even);
-static void      _e_ilist_widget_hack_cb(E_Smart_Data *sd, Evas_Object *obj __UNUSED__, Evas_Object *scr);
+static void          _e_ilist_item_theme_set(E_Ilist_Item *si, Eina_Bool custom, Eina_Bool header, Eina_Bool even);
+static void          _e_ilist_widget_hack_cb(E_Smart_Data *sd, Evas_Object *obj __UNUSED__, Evas_Object *scr);
 
-static void      _item_select(E_Ilist_Item *si);
-static void      _item_unselect(E_Ilist_Item *si);
+static void          _item_select(E_Ilist_Item *si);
+static void          _item_unselect(E_Ilist_Item *si);
 
 static Evas_Smart *_e_smart = NULL;
 
@@ -1392,3 +1392,4 @@ _e_ilist_item_new(E_Smart_Data *sd, Evas_Object *icon, Evas_Object *end, const c
                                   _e_smart_event_mouse_up, si);
    return si;
 }
+

@@ -8,43 +8,43 @@ struct _CFGadget
 
 struct _E_Config_Dialog_Data
 {
-   E_Gadcon *gc;
-   E_Gadcon_Site site;
+   E_Gadcon            *gc;
+   E_Gadcon_Site        site;
 
-   const char *sel;
+   const char          *sel;
 
    struct
    {
       Evas_Object *o_list;
    } basic, advanced;
-   Evas_Object *class_list;
-   Evas_Object *o_add, *o_del;
+   Evas_Object         *class_list;
+   Evas_Object         *o_add, *o_del;
    Ecore_Event_Handler *gcc_add;
    Ecore_Event_Handler *gcc_del;
    Ecore_Event_Handler *cc_del;
    Ecore_Event_Handler *cc_add;
-   Ecore_Timer *load_timer;
-   Eina_Hash *gadget_hash;
+   Ecore_Timer         *load_timer;
+   Eina_Hash           *gadget_hash;
 };
 
 /* local function prototypes */
-static void *_create_data(E_Config_Dialog *cfd);
-static void _fill_data(E_Config_Dialog_Data *cfdata);
-static void _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static Eina_Bool _free_gadgets(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__);
+static void        *_create_data(E_Config_Dialog *cfd);
+static void         _fill_data(E_Config_Dialog_Data *cfdata);
+static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
+static Eina_Bool    _free_gadgets(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_advanced_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
-static Eina_Bool _cb_load_timer(void *data);
-static void _fill_list(E_Config_Dialog_Data *cfdata);
-static void _fill_list_advanced(E_Config_Dialog_Data *cfdata, Eina_Bool, Eina_Bool);
-static void _cb_list_selected(void *data);
-static void _cb_add(void *data, void *data2 __UNUSED__);
-static void _cb_del(void *data, void *data2 __UNUSED__);
-static CFGadget *_search_hash(E_Config_Dialog_Data *cfdata, const char *name);
-static Eina_Bool _cb_cc_add(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Class_Add *ev);
-static Eina_Bool _cb_cc_del(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Class_Add *ev);
-static Eina_Bool _cb_gcc_add(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Add *ev);
-static Eina_Bool _cb_gcc_del(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Add *ev);
+static Eina_Bool    _cb_load_timer(void *data);
+static void         _fill_list(E_Config_Dialog_Data *cfdata);
+static void         _fill_list_advanced(E_Config_Dialog_Data *cfdata, Eina_Bool, Eina_Bool);
+static void         _cb_list_selected(void *data);
+static void         _cb_add(void *data, void *data2 __UNUSED__);
+static void         _cb_del(void *data, void *data2 __UNUSED__);
+static CFGadget    *_search_hash(E_Config_Dialog_Data *cfdata, const char *name);
+static Eina_Bool    _cb_cc_add(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Class_Add *ev);
+static Eina_Bool    _cb_cc_del(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Class_Add *ev);
+static Eina_Bool    _cb_gcc_add(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Add *ev);
+static Eina_Bool    _cb_gcc_del(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Add *ev);
 
 /* local function prototypes */
 static void
@@ -91,14 +91,14 @@ _create_data(E_Config_Dialog *cfd)
    _fill_data(cfdata);
 
    cfdata->gcc_add = ecore_event_handler_add(E_EVENT_GADCON_CLIENT_ADD,
-                                         (Ecore_Event_Handler_Cb)_cb_gcc_add, cfdata);
+                                             (Ecore_Event_Handler_Cb)_cb_gcc_add, cfdata);
    cfdata->gcc_del = ecore_event_handler_add(E_EVENT_GADCON_CLIENT_DEL,
-                                         (Ecore_Event_Handler_Cb)_cb_gcc_del, cfdata);
+                                             (Ecore_Event_Handler_Cb)_cb_gcc_del, cfdata);
 
    cfdata->cc_add = ecore_event_handler_add(E_EVENT_GADCON_CLIENT_CLASS_ADD,
-                                         (Ecore_Event_Handler_Cb)_cb_cc_add, cfdata);
+                                            (Ecore_Event_Handler_Cb)_cb_cc_add, cfdata);
    cfdata->cc_del = ecore_event_handler_add(E_EVENT_GADCON_CLIENT_CLASS_DEL,
-                                         (Ecore_Event_Handler_Cb)_cb_cc_del, cfdata);
+                                            (Ecore_Event_Handler_Cb)_cb_cc_del, cfdata);
    return cfdata;
 }
 
@@ -487,7 +487,7 @@ _cb_del_advanced(void *data, void *data2 __UNUSED__)
    E_Config_Gadcon_Client *cf_gcc;
    const Eina_List *l, *sel, *ll, *lll, *llll;
    E_Ilist_Item *ili;
-   int x = 0, refresh = 0;;
+   int x = 0, refresh = 0;
 
    sel = e_widget_ilist_items_get(cfdata->advanced.o_list);
    EINA_LIST_FOREACH_SAFE(sel, ll, lll, ili)
@@ -686,13 +686,13 @@ _advanced_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    ////////////////////////////////////////////////////////////
    ot = e_widget_table_add(evas, EINA_FALSE);
 
-   cfdata->advanced.o_list = 
+   cfdata->advanced.o_list =
      e_widget_ilist_add(evas, (24 * e_scale), (24 * e_scale), &cfdata->sel);
    e_widget_ilist_multi_select_set(cfdata->advanced.o_list, EINA_TRUE);
    e_widget_size_min_get(cfdata->advanced.o_list, &mw, NULL);
    if (mw < (200 * e_scale)) mw = (200 * e_scale);
    e_widget_size_min_set(cfdata->advanced.o_list, mw, (160 * e_scale));
-   e_widget_table_object_append(ot, cfdata->advanced.o_list, 
+   e_widget_table_object_append(ot, cfdata->advanced.o_list,
                                 0, 0, 1, 1, 1, 1, 1, 1);
 
    cfdata->o_del =
@@ -706,12 +706,12 @@ _advanced_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 //   ot = e_widget_list_add(evas, 0, 0);
    ot = e_widget_table_add(evas, EINA_FALSE);
 
-   cfdata->class_list = 
+   cfdata->class_list =
      e_widget_ilist_add(evas, (24 * e_scale), (24 * e_scale), NULL);
    e_widget_size_min_get(cfdata->class_list, &mw, NULL);
    if (mw < (200 * e_scale)) mw = (200 * e_scale);
    e_widget_size_min_set(cfdata->class_list, mw, (160 * e_scale));
-   e_widget_table_object_append(ot, cfdata->class_list, 
+   e_widget_table_object_append(ot, cfdata->class_list,
                                 0, 0, 1, 1, 1, 1, 1, 1);
 //   e_widget_list_object_append(ot, cfdata->class_list, 1, 1, 0.5);
 
@@ -797,3 +797,4 @@ e_int_gadcon_config_hook(E_Gadcon *gc, const char *name, E_Gadcon_Site site)
 {
    _create_dialog(gc, name, site);
 }
+

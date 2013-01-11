@@ -2,31 +2,31 @@
 
 struct _E_Config_Dialog_Data
 {
-   E_Shelf *es;
+   E_Shelf        *es;
    E_Config_Shelf *escfg;
 
-   Evas_Object *o_autohide, *o_desk_list;
-   Eina_List *autohide_list, *desk_list;
+   Evas_Object    *o_autohide, *o_desk_list;
+   Eina_List      *autohide_list, *desk_list;
 
-   int layer, overlap;
-   int orient, fit_along;
-   int size;
-   const char *style;
-   int autohide, autohide_action;
-   double hide_timeout, hide_duration;
-   int desk_show_mode;
-   Eina_List *handlers;
+   int             layer, overlap;
+   int             orient, fit_along;
+   int             size;
+   const char     *style;
+   int             autohide, autohide_action;
+   double          hide_timeout, hide_duration;
+   int             desk_show_mode;
+   Eina_List      *handlers;
 };
 
 /* local function prototypes */
-static void *_create_data(E_Config_Dialog *cfd);
-static void _fill_data(E_Config_Dialog_Data *cfdata);
-static void _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
+static void        *_create_data(E_Config_Dialog *cfd);
+static void         _fill_data(E_Config_Dialog_Data *cfdata);
+static void         _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata);
-static int _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static void _fill_styles(E_Config_Dialog_Data *cfdata, Evas_Object *obj);
-static void _cb_autohide_change(void *data, Evas_Object *obj __UNUSED__);
-static void _fill_desks(E_Config_Dialog_Data *cfdata);
+static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
+static void         _fill_styles(E_Config_Dialog_Data *cfdata, Evas_Object *obj);
+static void         _cb_autohide_change(void *data, Evas_Object *obj __UNUSED__);
+static void         _fill_desks(E_Config_Dialog_Data *cfdata);
 
 EAPI void
 e_int_shelf_config(E_Shelf *es)
@@ -447,7 +447,7 @@ _fill_styles(E_Config_Dialog_Data *cfdata, Evas_Object *obj)
         e_livethumb_thumb_set(thumb, ow);
         e_widget_ilist_append(obj, thumb, style, NULL, NULL, style);
         if (!strcmp(cfdata->style, style))
-	  e_widget_ilist_selected_set(obj, n);
+          e_widget_ilist_selected_set(obj, n);
         n++;
      }
 
@@ -516,3 +516,4 @@ _fill_desks(E_Config_Dialog_Data *cfdata)
    edje_thaw();
    evas_event_thaw(evas);
 }
+

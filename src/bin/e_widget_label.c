@@ -11,8 +11,8 @@ static void _e_wid_del_hook(Evas_Object *obj);
 static void _e_wid_disable_hook(Evas_Object *obj);
 
 /* externally accessible functions */
-/**  
- * Creates a new label widget 
+/**
+ * Creates a new label widget
  *
  * @param evas pointer
  * @param text to assign to the widget
@@ -33,7 +33,7 @@ e_widget_label_add(Evas *evas, const char *label)
 
    o = edje_object_add(evas);
    e_theme_edje_object_set(o, "base/theme/widgets",
-			   "e/widgets/label");
+                           "e/widgets/label");
    wd->text = o;
    edje_object_part_text_set(o, "e.text.label", label);
    evas_object_show(o);
@@ -46,8 +46,8 @@ e_widget_label_add(Evas *evas, const char *label)
    return obj;
 }
 
-/**  
- * Changes the text for the label 
+/**
+ * Changes the text for the label
  *
  * @param the label widget
  * @param text to assign to the widget
@@ -85,3 +85,4 @@ _e_wid_disable_hook(Evas_Object *obj)
    else
      edje_object_signal_emit(wd->text, "e,state,enabled", "e");
 }
+

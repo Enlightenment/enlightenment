@@ -20,7 +20,7 @@ static const struct wl_seat_interface _wl_seat_interface =
    _e_comp_wl_input_touch_get
 };
 
-static const struct wl_pointer_interface _wl_pointer_interface = 
+static const struct wl_pointer_interface _wl_pointer_interface =
 {
    _e_comp_wl_input_pointer_cursor_set
 };
@@ -108,7 +108,7 @@ _e_comp_wl_input_unbind(struct wl_resource *resource)
    free(resource);
 }
 
-static void 
+static void
 _e_comp_wl_input_pointer_get(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    Wayland_Input *wi;
@@ -119,23 +119,23 @@ _e_comp_wl_input_pointer_get(struct wl_client *client, struct wl_resource *resou
    if (!(wi = resource->data)) return;
    if (!wi->seat.pointer) return;
 
-   res = wl_client_add_object(client, &wl_pointer_interface, 
+   res = wl_client_add_object(client, &wl_pointer_interface,
                               &_wl_pointer_interface, id, wi);
    wl_list_insert(&wi->seat.pointer->resource_list, &res->link);
    res->destroy = _e_comp_wl_input_unbind;
 
-   if ((wi->seat.pointer->focus) && 
+   if ((wi->seat.pointer->focus) &&
        (wi->seat.pointer->focus->resource.client == client))
      {
         /* TODO: surface_from_global_fixed ?? */
 
-        wl_pointer_set_focus(wi->seat.pointer, wi->seat.pointer->focus, 
-                             wi->seat.pointer->x, 
+        wl_pointer_set_focus(wi->seat.pointer, wi->seat.pointer->focus,
+                             wi->seat.pointer->x,
                              wi->seat.pointer->y);
      }
 }
 
-static void 
+static void
 _e_comp_wl_input_keyboard_get(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    Wayland_Input *wi;
@@ -152,14 +152,14 @@ _e_comp_wl_input_keyboard_get(struct wl_client *client, struct wl_resource *reso
 
    /* TODO: wl_keyboard_send_keymap ?? */
 
-   if ((wi->seat.keyboard->focus) && 
+   if ((wi->seat.keyboard->focus) &&
        (wi->seat.keyboard->focus->resource.client == client))
      {
         wl_keyboard_set_focus(wi->seat.keyboard, wi->seat.keyboard->focus);
      }
 }
 
-static void 
+static void
 _e_comp_wl_input_touch_get(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    Wayland_Input *wi;
@@ -175,7 +175,7 @@ _e_comp_wl_input_touch_get(struct wl_client *client, struct wl_resource *resourc
    res->destroy = _e_comp_wl_input_unbind;
 }
 
-static void 
+static void
 _e_comp_wl_input_pointer_cursor_set(struct wl_client *client, struct wl_resource *resource, unsigned int serial, struct wl_resource *surface_resource, int x, int y)
 {
    /* Wayland_Input *wi; */
@@ -213,8 +213,8 @@ _e_comp_wl_input_pointer_cursor_set(struct wl_client *client, struct wl_resource
 
    /* if (ws->buffer) */
    /*   { */
-        /* TODO: cursor surface configure */
-     /* } */
+   /* TODO: cursor surface configure */
+   /* } */
 }
 
 /* static void */

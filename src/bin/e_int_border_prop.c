@@ -403,25 +403,25 @@ _bd_go(void *data, void *data2)
    e_dialog_show(dia);
 }
 
-#define STR_ENTRY(label, x, y, val)                                         \
-  {                                                                         \
-     Evas_Coord mw, mh;                                                     \
-     ob = e_widget_label_add(evas, label);                                  \
-     if (!cfdata->val) e_widget_disabled_set(ob, 1);                        \
-     e_widget_table_object_append(o, ob, x, y, 1, 1, 1, 1, 0, 1);           \
-     ob = e_widget_entry_add(evas, &(cfdata->val), NULL, NULL, NULL);       \
-     e_widget_entry_readonly_set(ob, 1);                                    \
-     e_widget_size_min_get(ob, &mw, &mh);                                   \
-     e_widget_size_min_set(ob, 160, mh);                                    \
-     e_widget_table_object_append(o, ob, x + 1, y, 1, 1, 1, 0, 1, 0);       \
+#define STR_ENTRY(label, x, y, val)                                    \
+  {                                                                    \
+     Evas_Coord mw, mh;                                                \
+     ob = e_widget_label_add(evas, label);                             \
+     if (!cfdata->val) e_widget_disabled_set(ob, 1);                   \
+     e_widget_table_object_append(o, ob, x, y, 1, 1, 1, 1, 0, 1);      \
+     ob = e_widget_entry_add(evas, & (cfdata->val), NULL, NULL, NULL); \
+     e_widget_entry_readonly_set(ob, 1);                               \
+     e_widget_size_min_get(ob, &mw, &mh);                              \
+     e_widget_size_min_set(ob, 160, mh);                               \
+     e_widget_table_object_append(o, ob, x + 1, y, 1, 1, 1, 0, 1, 0);  \
   }
-#define CHK_ENTRY(label, x, y, val)                                         \
-  {                                                                         \
-     ob = e_widget_label_add(evas, label);                                  \
-     e_widget_table_object_append(o, ob, x, y, 1, 1, 1, 1, 0, 1);           \
-     ob = e_widget_check_add(evas, "", & (cfdata->val));                    \
-     e_widget_disabled_set(ob, 1);                                          \
-     e_widget_table_object_append(o, ob, x + 1, y, 1, 1, 1, 0, 1, 0);       \
+#define CHK_ENTRY(label, x, y, val)                                   \
+  {                                                                   \
+     ob = e_widget_label_add(evas, label);                            \
+     e_widget_table_object_append(o, ob, x, y, 1, 1, 1, 1, 0, 1);     \
+     ob = e_widget_check_add(evas, "", & (cfdata->val));              \
+     e_widget_disabled_set(ob, 1);                                    \
+     e_widget_table_object_append(o, ob, x + 1, y, 1, 1, 1, 0, 1, 0); \
   }
 
 static Evas_Object *

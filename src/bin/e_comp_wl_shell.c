@@ -180,7 +180,7 @@ _e_comp_wl_shell_map(Wayland_Shell *base, Wayland_Surface *surface, int32_t widt
 
    if (do_configure)
      e_comp_wl_surface_configure(surface, surface->x, surface->y,
-                                     surface->w, surface->h);
+                                 surface->w, surface->h);
 
    switch (type)
      {

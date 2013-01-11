@@ -18,13 +18,13 @@ static Eina_List *gtk_theme_mons = NULL; //Eio_Monitor
 static Eio_File *bg_ls[2] = {NULL, NULL};
 static Eio_Monitor *bg_mon[2] = {NULL, NULL};
 static Eina_Inlist *opts_list = NULL;
-static Eina_Hash *tags_name_hash = NULL;/* (const char*)tag:(Eina_Stringshare*)tag */
-static Eina_Hash *tags_hash = NULL;/* tag:item */
+static Eina_Hash *tags_name_hash = NULL; /* (const char*)tag:(Eina_Stringshare*)tag */
+static Eina_Hash *tags_hash = NULL; /* tag:item */
 static Eina_Hash *tags_alias_hash = NULL; /* alias:tag */
 static Eina_Hash *tags_tag_alias_hash = NULL; /* tag:Eina_List(aliases) */
-static Eina_Hash *tags_alias_name_hash = NULL;/* (const char*)alias:(Eina_Stringshare*)alias */
+static Eina_Hash *tags_alias_name_hash = NULL; /* (const char*)alias:(Eina_Stringshare*)alias */
 static Eina_List *tags_alias_list = NULL; /* alias:tag */
-static Eina_List *tags_list = NULL;/* Eina_Stringshare */
+static Eina_List *tags_list = NULL; /* Eina_Stringshare */
 static Eina_List *opts_changed_list = NULL; //co->changed
 static Eina_List *handlers = NULL;
 static Eina_List *bgs = NULL;
@@ -112,7 +112,6 @@ _e_configure_option_tag_remove(E_Configure_Option *co, Eina_Stringshare *tag)
      }
    eina_hash_set(tags_hash, tag, items);
 }
-
 
 static void
 _e_configure_option_free(E_Configure_Option *co)
@@ -225,22 +224,27 @@ _e_configure_option_value_reset(E_Configure_Option *co)
       case E_CONFIGURE_OPTION_TYPE_BOOL:
         eina_value_setup(&co->val, EINA_VALUE_TYPE_UCHAR);
         break;
+
       case E_CONFIGURE_OPTION_TYPE_INT:
       case E_CONFIGURE_OPTION_TYPE_ENUM:
         eina_value_setup(&co->val, EINA_VALUE_TYPE_INT);
         break;
+
       case E_CONFIGURE_OPTION_TYPE_UINT:
         eina_value_setup(&co->val, EINA_VALUE_TYPE_UINT);
         break;
+
       case E_CONFIGURE_OPTION_TYPE_DOUBLE_UCHAR:
       case E_CONFIGURE_OPTION_TYPE_DOUBLE_INT:
       case E_CONFIGURE_OPTION_TYPE_DOUBLE_UINT:
       case E_CONFIGURE_OPTION_TYPE_DOUBLE:
         eina_value_setup(&co->val, EINA_VALUE_TYPE_DOUBLE);
         break;
+
       case E_CONFIGURE_OPTION_TYPE_STR:
         eina_value_setup(&co->val, EINA_VALUE_TYPE_STRINGSHARE);
         break;
+
       case E_CONFIGURE_OPTION_TYPE_CUSTOM:
         break;
      }
@@ -261,9 +265,9 @@ _e_configure_option_apply(E_Configure_Option *co, Eina_List **events, Eina_List 
         eina_value_get(&co->val, &dbl);
         x = lround(dbl);
         if (co->type == E_CONFIGURE_OPTION_TYPE_DOUBLE_INT)
-          *(int*)co->valptr = x;
+          *(int *)co->valptr = x;
         else
-          *(unsigned int*)co->valptr = MAX(x, 0);
+          *(unsigned int *)co->valptr = MAX(x, 0);
      }
    else if (co->type == E_CONFIGURE_OPTION_TYPE_STR)
      {
@@ -282,7 +286,7 @@ _e_configure_option_apply(E_Configure_Option *co, Eina_List **events, Eina_List 
           {
              if (!acts)
                {
-                  act->func.go((E_Object*)e_util_container_current_get(), NULL);
+                  act->func.go((E_Object *)e_util_container_current_get(), NULL);
                   break;
                }
              if (*acts && eina_list_data_find(*acts, act)) break;
@@ -297,12 +301,12 @@ _e_configure_option_apply(E_Configure_Option *co, Eina_List **events, Eina_List 
              ecore_event_add(co->event_type, NULL, NULL, NULL);
              break;
           }
-        if (*events && eina_list_data_find(*events, (intptr_t*)(long)co->event_type)) break;
-        *events = eina_list_append(*events, (intptr_t*)(long)co->event_type);
-        break;        
+        if (*events && eina_list_data_find(*events, (intptr_t *)(long)co->event_type)) break;
+        *events = eina_list_append(*events, (intptr_t *)(long)co->event_type);
+        break;
      }
    if (co->type == E_CONFIGURE_OPTION_TYPE_BOOL)
-     none = co->funcs[*(Eina_Bool*)co->valptr].none;
+     none = co->funcs[*(Eina_Bool *)co->valptr].none;
    else if (co->funcs[0].none)
      none = co->funcs[0].none;
    while (none)
@@ -321,26 +325,32 @@ _e_configure_option_apply(E_Configure_Option *co, Eina_List **events, Eina_List 
         switch (co->type)
           {
            case E_CONFIGURE_OPTION_TYPE_BOOL:
-             co->funcs[0].one(*(Eina_Bool*)co->valptr);
+             co->funcs[0].one(*(Eina_Bool *)co->valptr);
              break;
+
            case E_CONFIGURE_OPTION_TYPE_DOUBLE_UCHAR:
-             co->funcs[0].one(*(unsigned char*)co->valptr);
+             co->funcs[0].one(*(unsigned char *)co->valptr);
              break;
+
            case E_CONFIGURE_OPTION_TYPE_DOUBLE_INT: //lround(double)
            case E_CONFIGURE_OPTION_TYPE_INT:
            case E_CONFIGURE_OPTION_TYPE_ENUM:
-             co->funcs[0].one(*(int*)co->valptr);
+             co->funcs[0].one(*(int *)co->valptr);
              break;
+
            case E_CONFIGURE_OPTION_TYPE_DOUBLE_UINT: //lround(double)
            case E_CONFIGURE_OPTION_TYPE_UINT:
-             co->funcs[0].one(*(unsigned int*)co->valptr);
+             co->funcs[0].one(*(unsigned int *)co->valptr);
              break;
+
            case E_CONFIGURE_OPTION_TYPE_DOUBLE:
-             co->funcs[0].one(*(double*)co->valptr);
+             co->funcs[0].one(*(double *)co->valptr);
              break;
+
            case E_CONFIGURE_OPTION_TYPE_STR:
-             co->funcs[0].one(*(Eina_Stringshare**)co->valptr);
+             co->funcs[0].one(*(Eina_Stringshare **)co->valptr);
              break;
+
            case E_CONFIGURE_OPTION_TYPE_CUSTOM:
              break;
           }
@@ -417,7 +427,6 @@ _e_configure_zone_desks_count_changed(void)
        EINA_LIST_FOREACH(con->zones, lll, zone)
          e_zone_desk_count_set(zone, e_config->zone_desks_x_count, e_config->zone_desks_x_count);
 }
-
 
 /********************************************************
  * THUMB CALLBACKS
@@ -531,7 +540,6 @@ _e_configure_border_style_thumb_cb(E_Configure_Option_Info *oi, Evas *evas)
    return ob;
 }
 
-
 static Evas_Object *
 _e_configure_icon_theme_thumb_cb(E_Configure_Option_Info *oi, Evas *evas)
 {
@@ -584,7 +592,7 @@ _e_configure_netwm_theme_thumb_cb(E_Configure_Option_Info *oi EINA_UNUSED, Evas 
    Evas_Object *o;
 
 /* FIXME: uhhhhhhhhhhhhhhhhhhhhhh */
-   //o = e_widget_label_add(evas, oi->name);
+//o = e_widget_label_add(evas, oi->name);
    o = e_box_add(evas);
    return o;
 }
@@ -593,11 +601,10 @@ _e_configure_netwm_theme_thumb_cb(E_Configure_Option_Info *oi EINA_UNUSED, Evas 
  * INFO CALLBACKS
  */
 
-
 /* FIXME
-static Eina_List *
-_e_configure_language_info_cb(E_Configure_Option *co)
-{
+   static Eina_List *
+   _e_configure_language_info_cb(E_Configure_Option *co)
+   {
    Eina_List *l, *ret = NULL;
    E_Configure_Option_Info *oi;
    char *lang;
@@ -611,8 +618,8 @@ _e_configure_language_info_cb(E_Configure_Option *co)
      }
 
    return ret;
-}
-*/
+   }
+ */
 
 static Eina_List *
 _e_configure_border_shade_transition_info_cb(E_Configure_Option *co)
@@ -622,21 +629,21 @@ _e_configure_border_shade_transition_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "Linear",
-    "Accelerate, then decelerate",
-    "Accelerate",
-    "Decelerate",
-    "Pronounced accelerate",
-    "Pronounced decelerate",
-    "Pronounced accelerate, then decelerate",
-    "Bounce",
-    "Bounce more"
+      "Linear",
+      "Accelerate, then decelerate",
+      "Accelerate",
+      "Decelerate",
+      "Pronounced accelerate",
+      "Pronounced decelerate",
+      "Pronounced accelerate, then decelerate",
+      "Bounce",
+      "Bounce more"
    };
 
    for (x = 0; x <= E_TRANSITION_BOUNCE_LOTS; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -650,16 +657,16 @@ _e_configure_window_placement_policy_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "Try not to cover other windows",
-    "Try not to cover gadgets",
-    "Place at mouse pointer (automatic)",
-    "Place at mouse pointer (interactive)"
+      "Try not to cover other windows",
+      "Try not to cover gadgets",
+      "Place at mouse pointer (automatic)",
+      "Place at mouse pointer (interactive)"
    };
 
    for (x = 0; x <= E_WINDOW_PLACEMENT_MANUAL; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -673,15 +680,15 @@ _e_configure_focus_policy_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "Click",
-    "Pointer",
-    "Sloppy"
+      "Click",
+      "Pointer",
+      "Sloppy"
    };
 
    for (x = 0; x <= E_FOCUS_SLOPPY; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -695,16 +702,16 @@ _e_configure_focus_setting_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "Don't set focus on new windows",
-    "Set focus on all new windows",
-    "Set focus only on all new dialog windows",
-    "Set focus only on new dialog windows if dialog's parent window has focus"
+      "Don't set focus on new windows",
+      "Set focus on all new windows",
+      "Set focus only on all new dialog windows",
+      "Set focus only on new dialog windows if dialog's parent window has focus"
    };
 
    for (x = 0; x <= E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -718,15 +725,15 @@ _e_configure_window_activehint_policy_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "Ignore application",
-    "Animate application window",
-    "Raise and set focus to application window"
+      "Ignore application",
+      "Animate application window",
+      "Raise and set focus to application window"
    };
 
    for (x = 0; x <= E_ACTIVEHINT_POLICY_ACTIVATE; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -740,14 +747,14 @@ _e_configure_fullscreen_policy_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "Resize window, do not resize screen",
-    "Resize window and screen"
+      "Resize window, do not resize screen",
+      "Resize window and screen"
    };
 
    for (x = 0; x <= E_FULLSCREEN_ZOOM; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -761,17 +768,17 @@ _e_configure_maximize_policy_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "Fullscreen", /* 1 */
-    "Expand to maximum size without covering shelves", /* 2 */
-    NULL,
-    "Expand to maximum size ignoring shelves" /* 4 */
+      "Fullscreen", /* 1 */
+      "Expand to maximum size without covering shelves", /* 2 */
+      NULL,
+      "Expand to maximum size ignoring shelves" /* 4 */
    };
 
    for (x = E_MAXIMIZE_FULLSCREEN; x <= E_MAXIMIZE_FILL; x++)
      {
         if (!name[x]) continue;
-        oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -785,15 +792,15 @@ _e_configure_font_hinting_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "No hinting",
-    "Automatic hinting",
-    "Bytecode hinting"
+      "No hinting",
+      "Automatic hinting",
+      "Bytecode hinting"
    };
 
    for (x = 0; x <= EVAS_FONT_HINTING_BYTECODE; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -810,9 +817,9 @@ _e_configure_desklock_login_box_zone_info_cb(E_Configure_Option *co)
    Eina_List *ml;
    const char *name[] =
    {
-    "Show on all screens",
-    "Show on screen of pointer",
-    "Show on screen %d"
+      "Show on all screens",
+      "Show on screen of pointer",
+      "Show on screen %d"
    };
 
    EINA_LIST_FOREACH(e_manager_list(), ml, m)
@@ -829,13 +836,13 @@ _e_configure_desklock_login_box_zone_info_cb(E_Configure_Option *co)
         char buf[128];
 
         if (x < 0)
-          oi = e_configure_option_info_new(co, _(name[x + 2]), (intptr_t*)(long)x);
+          oi = e_configure_option_info_new(co, _(name[x + 2]), (intptr_t *)(long)x);
         else
           {
              snprintf(buf, sizeof(buf), _(name[2]), x);
-             oi = e_configure_option_info_new(co, buf, (intptr_t*)(long)x);
+             oi = e_configure_option_info_new(co, buf, (intptr_t *)(long)x);
           }
-        oi->current = (*(int*)co->valptr == x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -849,15 +856,15 @@ _e_configure_clientlist_group_by_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "No grouping",
-    "Virtual desktop",
-    "Window class"
+      "No grouping",
+      "Virtual desktop",
+      "Window class"
    };
 
    for (x = 0; x <= E_CLIENTLIST_GROUP_CLASS; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -871,15 +878,15 @@ _e_configure_clientlist_separate_with_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "No separation",
-    "Separator bars",
-    "Separate menus"
+      "No separation",
+      "Separator bars",
+      "Separate menus"
    };
 
    for (x = 0; x <= E_CLIENTLIST_GROUP_SEP_MENU; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -893,16 +900,16 @@ _e_configure_clientlist_sort_by_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "No sorting",
-    "Alphabetical order",
-    "Window stacking layer",
-    "Recently used windows first"
+      "No sorting",
+      "Alphabetical order",
+      "Window stacking layer",
+      "Recently used windows first"
    };
 
    for (x = 0; x <= E_CLIENTLIST_SORT_MOST_RECENT; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -916,15 +923,15 @@ _e_configure_clientlist_separate_iconified_apps_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "Group by owner virtual desktop",
-    "Group by current virtual desktop",
-    "Separate group"
+      "Group by owner virtual desktop",
+      "Group by current virtual desktop",
+      "Separate group"
    };
 
    for (x = 0; x <= E_CLIENTLIST_GROUPICONS_SEP; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -938,15 +945,15 @@ _e_configure_desk_flip_animate_mode_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "No animation",
-    "Pane",
-    "Zoom"
+      "No animation",
+      "Pane",
+      "Zoom"
    };
 
    for (x = 0; x <= E_DESKFLIP_ANIMATION_MODE_ZOOM; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -960,15 +967,15 @@ _e_configure_screen_limits_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-    "Allow windows partly out of the screen limits",
-    "Allow windows completely out of the screen limits",
-    "Keep windows completely within the screen limits"
+      "Allow windows partly out of the screen limits",
+      "Allow windows completely out of the screen limits",
+      "Keep windows completely within the screen limits"
    };
 
    for (x = 0; x <= E_SCREEN_LIMITS_WITHIN; x++)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
      }
    return ret;
@@ -998,8 +1005,8 @@ _e_configure_icon_theme_info_cb(E_Configure_Option *co)
    l = eina_list_sort(l, 0, _e_configure_icon_theme_info_sort_cb);
    EINA_LIST_FREE(l, theme)
      {
-        if (!theme->directories) continue; //invalid
-        if (!e_util_strcasecmp(theme->name.internal, "hicolor")) continue; //default
+        if (!theme->directories) continue;  //invalid
+        if (!e_util_strcasecmp(theme->name.internal, "hicolor")) continue;  //default
         oi = e_configure_option_info_new(co, theme->name.name, eina_stringshare_add(theme->name.internal));
         oi->current = !e_util_strcmp(e_config->icon_theme, theme->name.internal);
         oi->thumb_file = eina_stringshare_add(theme->example_icon);
@@ -1028,7 +1035,7 @@ _e_configure_netwm_theme_info_cb(E_Configure_Option *co)
         if ((!gtk2) && (!gtk3)) continue;
         name = ecore_file_file_get(dir);
         snprintf(buf, sizeof(buf), "%s (%s)%s%s%s", name, gtk2 ? "gtk2" : "gtk3",
-          (gtk2 && gtk3) ? " (" : "", (gtk2 && gtk3) ? "gtk3" : "", (gtk2 && gtk3) ? ")" : "");
+                 (gtk2 && gtk3) ? " (" : "", (gtk2 && gtk3) ? "gtk3" : "", (gtk2 && gtk3) ? ")" : "");
         oi = e_configure_option_info_new(co, buf, eina_stringshare_add(name));
         oi->current = (e_config->xsettings.net_theme_name == oi->value);
         ret = eina_list_append(ret, oi);
@@ -1048,7 +1055,7 @@ _e_configure_transition_info_cb(E_Configure_Option *co)
 
    file = e_theme_edje_file_get("base/theme/widgets", "e/transpreview/0");
    key = "e/transitions/%s";
-   cur = *(Eina_Stringshare**)co->valptr;
+   cur = *(Eina_Stringshare **)co->valptr;
 
    oi = e_configure_option_info_new(co, _("None"), NULL);
    oi->thumb_file = eina_stringshare_ref(file);
@@ -1121,7 +1128,7 @@ _e_configure_init_default_theme_info_cb(E_Configure_Option *co)
         oi->thumb_file = eina_stringshare_ref(file);
         oi->thumb_key = eina_stringshare_ref(key);
         ret = eina_list_append(ret, oi);
-        oi->current = (oi->name == *(Eina_Stringshare**)co->valptr);
+        oi->current = (oi->name == *(Eina_Stringshare **)co->valptr);
      }
    if (ret && sthemes)
      ret = eina_list_append(ret, e_configure_option_info_new(co, NULL, NULL));
@@ -1134,7 +1141,7 @@ _e_configure_init_default_theme_info_cb(E_Configure_Option *co)
         ret = eina_list_append(ret, oi);
         oi->thumb_file = eina_stringshare_ref(file);
         oi->thumb_key = eina_stringshare_ref(key);
-        oi->current = (oi->name == *(Eina_Stringshare**)co->valptr);
+        oi->current = (oi->name == *(Eina_Stringshare **)co->valptr);
      }
    eina_stringshare_del(key);
    return ret;
@@ -1152,7 +1159,7 @@ _e_configure_background_info_cb(E_Configure_Option *co)
    Eina_Stringshare *key;
 
    key = eina_stringshare_add("e/desktop/background");
-   cur = *(Eina_Stringshare**)co->valptr;
+   cur = *(Eina_Stringshare **)co->valptr;
    if (!cur)
      {
         E_Config_Theme *ct;
@@ -1171,7 +1178,6 @@ _e_configure_background_info_cb(E_Configure_Option *co)
         oi->thumb_key = eina_stringshare_ref(key);
         ret = eina_list_append(ret, oi);
         oi->current = ((file == cur) || (!e_util_strcmp(f, cur)));
-
      }
    EINA_LIST_FOREACH(sthemes, l, file)
      {
@@ -1426,16 +1432,16 @@ e_configure_option_init(void)
    tags_tag_alias_hash = eina_hash_stringshared_new((Eina_Free_Cb)_e_configure_option_tag_alias_list_free);
    tags_alias_hash = eina_hash_string_superfast_new(NULL);
    tags_alias_name_hash = eina_hash_string_superfast_new(NULL);
-#define OPT_ADD(TYPE, NAME, DESC, ...) \
-   co = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_##TYPE, DESC, #NAME, EINA_FALSE, &e_config->NAME, NULL);\
-   e_configure_option_tags_set(co, (const char*[]){__VA_ARGS__, NULL}, 0)
+#define OPT_ADD(TYPE, NAME, DESC, ...)                                                                         \
+  co = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_##TYPE, DESC, #NAME, EINA_FALSE, &e_config->NAME, NULL); \
+  e_configure_option_tags_set(co, (const char *[]){__VA_ARGS__, NULL}, 0)
 #define OPT_HELP(STR) \
-   co->help = eina_stringshare_add(STR)
-#define OPT_MINMAX_STEP_FMT(MIN, MAX, STEP, FMT) \
-   co->minmax[0] = (MIN), co->minmax[1] = (MAX), co->step = (STEP),\
-   co->info = eina_stringshare_add(_(FMT))
+  co->help = eina_stringshare_add(STR)
+#define OPT_MINMAX_STEP_FMT(MIN, MAX, STEP, FMT)                   \
+  co->minmax[0] = (MIN), co->minmax[1] = (MAX), co->step = (STEP), \
+  co->info = eina_stringshare_add(_(FMT))
 #define OPT_ICON(ICON) \
-   e_configure_option_data_set(co, "icon", eina_stringshare_add(ICON))
+  e_configure_option_data_set(co, "icon", eina_stringshare_add(ICON))
 
    OPT_ADD(BOOL, show_splash, _("Show splash screen on startup"), _("splash"), _("startup"));
    OPT_ADD(STR, init_default_theme, _("Startup splash theme"), _("splash"), _("startup"), _("theme"), _("animate"));
@@ -1544,7 +1550,7 @@ e_configure_option_init(void)
    OPT_ICON("preferences-plugin");
    OPT_ADD(BOOL, no_module_delay, _("Disable module delay"), _("module"), _("delay"));
    OPT_HELP(_("If enabled, this causes E to load all modules at once during startup "
-            "instead of loading them incrementally"));
+              "instead of loading them incrementally"));
 
    /* FIXME */
    OPT_ADD(CUSTOM, language, _("Language"), _("language"));
@@ -1776,7 +1782,7 @@ e_configure_option_init(void)
 /* seems to be disabled ?
    OPT_ADD(STR, desklock_personal_passwd, _("Desklock custom password"), _("desklock")); //passwd
    OPT_HELP(_("This option causes desklock to use a custom-provided password instead of the user's password"));
-*/
+ */
    OPT_ADD(BOOL, desklock_auth_method, _("Use custom command for desklock"), _("desklock"), _("exec"));
    OPT_HELP(_("This option allows an external application to manage desklock"));
    OPT_ADD(STR, desklock_custom_desklock_cmd, _("Custom desklock command"), _("desklock"), _("exec"));
@@ -1828,7 +1834,7 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, dpms_off_enable, _("dpms"));
    OPT_ADD(DOUBLE_INT, dpms_off_timeout, _("dpms"), _("delay"));
    OPT_MINMAX_STEP_FMT(30, 5400);
-*/
+ */
    OPT_ADD(ENUM, clientlist_group_by, _("Window list menu grouping policy"), _("menu"), _("border")); //enum
    co->info_cb = _e_configure_clientlist_group_by_info_cb;
    OPT_ICON("preferences-winlist");
@@ -1859,11 +1865,11 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, mouse_hand, _("Enable left-handed mouse"), _("mouse"));
    co->funcs[0].none = co->funcs[1].none = _e_configure_pointer_changed;
    /* FIXME: need to group these two
-   OPT_ADD(DOUBLE_INT, mouse_accel_numerator, _("mouse"), _("speed")); //slider
-   OPT_MINMAX_STEP_FMT(1, 10);
-   OPT_ADD(DOUBLE_INT, mouse_accel_denominator, _("mouse"), _("speed")); //also slider
-   OPT_MINMAX_STEP_FMT(1, 10);
-   */
+      OPT_ADD(DOUBLE_INT, mouse_accel_numerator, _("mouse"), _("speed")); //slider
+      OPT_MINMAX_STEP_FMT(1, 10);
+      OPT_ADD(DOUBLE_INT, mouse_accel_denominator, _("mouse"), _("speed")); //also slider
+      OPT_MINMAX_STEP_FMT(1, 10);
+    */
    OPT_ADD(DOUBLE_INT, mouse_accel_threshold, _("Mouse acceleration threshold"), _("mouse"), _("speed"));
    OPT_MINMAX_STEP_FMT(1, 10, 1, "%1.0f");
    co->funcs[0].none = co->funcs[1].none = _e_configure_pointer_changed;
@@ -1967,21 +1973,21 @@ e_configure_option_init(void)
    co->funcs[0].none = _e_configure_dpms_changed;
 
    /* FIXME
-   OPT_ADD(DOUBLE, powersave.none, _("powersave"));
-   OPT_MINMAX_STEP_FMT(0.01, 5400.00);
-   OPT_ADD(DOUBLE, powersave.low, _("powersave"));
-   OPT_MINMAX_STEP_FMT(0.01, 5400.00);
-   OPT_ADD(DOUBLE, powersave.medium, _("powersave"));
-   OPT_MINMAX_STEP_FMT(0.01, 5400.00);
-   OPT_ADD(DOUBLE, powersave.high, _("powersave"));
-   OPT_MINMAX_STEP_FMT(0.01, 5400.00);
-   OPT_ADD(DOUBLE, powersave.extreme, _("powersave"));
-   OPT_MINMAX_STEP_FMT(0.01, 5400.00);
-   OPT_ADD(DOUBLE_UINT, powersave.min, _("powersave"));
-   OPT_MINMAX_STEP_FMT(E_POWERSAVE_MODE_NONE, E_POWERSAVE_MODE_EXTREME);
-   OPT_ADD(DOUBLE_UINT, powersave.max, _("powersave"));
-   OPT_MINMAX_STEP_FMT(E_POWERSAVE_MODE_NONE, E_POWERSAVE_MODE_EXTREME);
-   */
+      OPT_ADD(DOUBLE, powersave.none, _("powersave"));
+      OPT_MINMAX_STEP_FMT(0.01, 5400.00);
+      OPT_ADD(DOUBLE, powersave.low, _("powersave"));
+      OPT_MINMAX_STEP_FMT(0.01, 5400.00);
+      OPT_ADD(DOUBLE, powersave.medium, _("powersave"));
+      OPT_MINMAX_STEP_FMT(0.01, 5400.00);
+      OPT_ADD(DOUBLE, powersave.high, _("powersave"));
+      OPT_MINMAX_STEP_FMT(0.01, 5400.00);
+      OPT_ADD(DOUBLE, powersave.extreme, _("powersave"));
+      OPT_MINMAX_STEP_FMT(0.01, 5400.00);
+      OPT_ADD(DOUBLE_UINT, powersave.min, _("powersave"));
+      OPT_MINMAX_STEP_FMT(E_POWERSAVE_MODE_NONE, E_POWERSAVE_MODE_EXTREME);
+      OPT_ADD(DOUBLE_UINT, powersave.max, _("powersave"));
+      OPT_MINMAX_STEP_FMT(E_POWERSAVE_MODE_NONE, E_POWERSAVE_MODE_EXTREME);
+    */
    OPT_ADD(BOOL, deskenv.load_xrdb, _("Load ~/.xrdb on startup"), _("environment"));
    OPT_ADD(BOOL, deskenv.load_xmodmap, _("Load ~/.Xmodmap"), _("environment"));
    OPT_ADD(BOOL, deskenv.load_gnome, _("Run gnome-settings-daemon"), _("environment"));
@@ -2010,7 +2016,6 @@ e_configure_option_init(void)
 
    OPT_ADD(BOOL, exe_always_single_instance, _("Always launch applications as single-instance"), _("exec"));
    //OPT_ADD(INT, use_desktop_window_profile,
-
 
    e_user_dir_concat_static(buf, "themes");
    theme_ls[0] = eio_file_ls(buf, _edj_filter_cb, _init_main_cb, _init_done_cb, _init_error_cb, NULL);
@@ -2125,7 +2130,7 @@ e_configure_option_shutdown(void)
    E_FREE_LIST(tags_list, eina_stringshare_del);
    E_FREE_LIST(tags_alias_list, eina_stringshare_del);
    while (opts_list)
-     _e_configure_option_free((E_Configure_Option*)opts_list);
+     _e_configure_option_free((E_Configure_Option *)opts_list);
    E_FN_DEL(eina_hash_free, tags_hash);
    E_FN_DEL(eina_hash_free, tags_tag_alias_hash);
    E_FN_DEL(eina_hash_free, tags_name_hash);
@@ -2168,7 +2173,7 @@ e_configure_option_add(E_Configure_Option_Type type, const char *desc, const cha
    co->name = eina_stringshare_add(name);
    co->desc = eina_stringshare_add(desc);
    co->valptr = valptr;
-   co->data = (void*)data;
+   co->data = (void *)data;
    co->private = !!private_scope;
    _e_configure_option_event_changed(co);
    return co;
@@ -2190,7 +2195,6 @@ e_configure_option_tags_set(E_Configure_Option *co, const char **const tags, uns
      {
         for (x = 0; x < num_tags; x++)
           _e_configure_option_tag_append(co, tags[x]);
-
      }
    else
      {
@@ -2207,7 +2211,7 @@ e_configure_option_info_new(E_Configure_Option *co, const char *name, const void
    oi = E_NEW(E_Configure_Option_Info, 1);
    oi->co = co;
    oi->name = eina_stringshare_add(name);
-   oi->value = (void*)value;
+   oi->value = (void *)value;
    return oi;
 }
 
@@ -2295,49 +2299,57 @@ e_configure_option_changed(E_Configure_Option *co)
           {
            case E_CONFIGURE_OPTION_TYPE_BOOL:
              eina_value_get(&co->val, &u);
-             if (*(unsigned char*)co->valptr != u) break;
+             if (*(unsigned char *)co->valptr != u) break;
              co->changed = EINA_FALSE;
              break;
+
            case E_CONFIGURE_OPTION_TYPE_DOUBLE_UCHAR:
              eina_value_get(&co->val, &d);
              l = lround(d);
              u = MAX(0, l);
-             if (*(unsigned char*)co->valptr != u) break;
+             if (*(unsigned char *)co->valptr != u) break;
              co->changed = EINA_FALSE;
              break;
+
            case E_CONFIGURE_OPTION_TYPE_DOUBLE_INT: //lround(double)
              eina_value_get(&co->val, &d);
-             if (*(int*)co->valptr != lround(d)) break;
+             if (*(int *)co->valptr != lround(d)) break;
              co->changed = EINA_FALSE;
              break;
+
            case E_CONFIGURE_OPTION_TYPE_INT:
            case E_CONFIGURE_OPTION_TYPE_ENUM:
              eina_value_get(&co->val, &i);
-             if (*(int*)co->valptr != i) break;
+             if (*(int *)co->valptr != i) break;
              co->changed = EINA_FALSE;
              break;
+
            case E_CONFIGURE_OPTION_TYPE_DOUBLE_UINT: //lround(double)
              eina_value_get(&co->val, &d);
              l = lround(d);
              ui = MAX(0, l);
-             if (*(unsigned int*)co->valptr != ui) break;
+             if (*(unsigned int *)co->valptr != ui) break;
              co->changed = EINA_FALSE;
              break;
+
            case E_CONFIGURE_OPTION_TYPE_UINT:
              eina_value_get(&co->val, &ui);
-             if (*(unsigned int*)co->valptr != ui) break;
+             if (*(unsigned int *)co->valptr != ui) break;
              co->changed = EINA_FALSE;
              break;
+
            case E_CONFIGURE_OPTION_TYPE_DOUBLE:
              eina_value_get(&co->val, &d);
-             if (fabs(*(double*)co->valptr - d) > DBL_EPSILON) break;
+             if (fabs(*(double *)co->valptr - d) > DBL_EPSILON) break;
              co->changed = EINA_FALSE;
              break;
+
            case E_CONFIGURE_OPTION_TYPE_STR:
              eina_value_get(&co->val, &s);
-             if (*(Eina_Stringshare**)co->valptr != s) break;
+             if (*(Eina_Stringshare **)co->valptr != s) break;
              co->changed = EINA_FALSE;
              break;
+
            case E_CONFIGURE_OPTION_TYPE_CUSTOM:
              break;
           }
@@ -2416,7 +2428,7 @@ e_configure_option_apply_all(void)
    EINA_LIST_FREE(funcs, none)
      none();
    EINA_LIST_FREE(acts, act)
-     act->func.go((E_Object*)e_util_container_current_get(), NULL);
+     act->func.go((E_Object *)e_util_container_current_get(), NULL);
    e_config_save_queue();
    if (e_restart) e_sys_action_do(E_SYS_RESTART, NULL);
 }
@@ -2437,6 +2449,7 @@ e_configure_option_value_get(E_Configure_Option *co)
       case E_CONFIGURE_OPTION_TYPE_BOOL:
         eina_value_get(&co->val, &u);
         return &u;
+
       case E_CONFIGURE_OPTION_TYPE_DOUBLE_UCHAR:
       case E_CONFIGURE_OPTION_TYPE_DOUBLE_INT: //lround(double)
       case E_CONFIGURE_OPTION_TYPE_DOUBLE_UINT: //lround(double)
@@ -2444,15 +2457,19 @@ e_configure_option_value_get(E_Configure_Option *co)
       case E_CONFIGURE_OPTION_TYPE_DOUBLE:
         eina_value_get(&co->val, &d);
         return &d;
+
       case E_CONFIGURE_OPTION_TYPE_INT:
         eina_value_get(&co->val, &l);
         return &l;
+
       case E_CONFIGURE_OPTION_TYPE_UINT:
         eina_value_get(&co->val, &i);
         return &i;
+
       case E_CONFIGURE_OPTION_TYPE_STR:
         eina_value_get(&co->val, &s);
         return &s;
+
       case E_CONFIGURE_OPTION_TYPE_CUSTOM:
         break;
      }
@@ -2573,7 +2590,7 @@ e_configure_option_tag_alias_add(const char *tag, const char *alias)
    t = eina_hash_find(tags_name_hash, tag);
    if (!t) return;
    o = eina_hash_set(tags_alias_hash, alias, t);
-   if (o) return; //alias already in list
+   if (o) return;  //alias already in list
    o = eina_stringshare_add(alias);
    tags_alias_list = eina_list_append(tags_alias_list, o);
    l = eina_hash_find(tags_tag_alias_hash, t);
@@ -2590,7 +2607,7 @@ e_configure_option_tag_alias_del(const char *tag, const char *alias)
    EINA_SAFETY_ON_NULL_RETURN(alias);
 
    t = eina_hash_set(tags_alias_hash, alias, NULL);
-   if (!t) return; //alias doesn't exist
+   if (!t) return;  //alias doesn't exist
    a = eina_hash_find(tags_alias_name_hash, alias);
    tags_alias_list = eina_list_remove(tags_alias_list, a);
    l = eina_hash_find(tags_tag_alias_hash, t);
@@ -2780,3 +2797,4 @@ e_configure_option_ctx_free(E_Configure_Option_Ctx *ctx)
    eina_list_free(ctx->match_tags);
    free(ctx);
 }
+

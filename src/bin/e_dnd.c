@@ -349,7 +349,7 @@ e_drop_xds_update(Eina_Bool enable, const char *value)
    size_t len;
 
    enable = !!enable;
-     
+
    xwin = ecore_x_selection_owner_get(ECORE_X_ATOM_SELECTION_XDND);
    if (enable)
      {
@@ -364,7 +364,7 @@ e_drop_xds_update(Eina_Bool enable, const char *value)
         snprintf(buf, sizeof(buf), "file://%s/", value);
         strncat(buf, file, size);
         free(file);
-        ecore_x_window_prop_property_set(xwin, _xds_atom, _text_atom, 8, (void*)buf, size + len + 8);
+        ecore_x_window_prop_property_set(xwin, _xds_atom, _text_atom, 8, (void *)buf, size + len + 8);
      }
    else
      ecore_x_window_prop_property_del(xwin, _xds_atom);
@@ -621,9 +621,10 @@ _e_drag_coords_update(const E_Drop_Handler *h, int *dx, int *dy)
      {
         switch (h->obj->type)
           {
-           E_Gadcon *gc;
+             E_Gadcon *gc;
+
            case E_GADCON_TYPE:
-             gc = (E_Gadcon*)h->obj;
+             gc = (E_Gadcon *)h->obj;
              e_gadcon_canvas_zone_geometry_get(gc, &px, &py, NULL, NULL);
              if (!gc->toolbar) break;
              px += gc->toolbar->fwin->x;
@@ -1374,7 +1375,7 @@ _e_dnd_cb_event_dnd_finished(void *data __UNUSED__, int type __UNUSED__, void *e
    ev = event;
 
    if (!ev->completed) return ECORE_CALLBACK_PASS_ON;
-*/
+ */
    if (_drag_current)
      {
         E_Drag *tmp;

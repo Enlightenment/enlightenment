@@ -200,7 +200,7 @@ e_comp_wl_comp_repick(struct wl_seat *seat, uint32_t timestamp __UNUSED__)
 
    ws =
      _e_comp_wl_comp_pick_surface(pointer->x, pointer->y,
-                                      &pointer->current_x, &pointer->current_y);
+                                  &pointer->current_x, &pointer->current_y);
    if (!ws) return;
    if (&ws->surface != pointer->current)
      {
@@ -413,7 +413,7 @@ _e_comp_wl_cb_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event 
 
    /* ev = event; */
    input = e_comp_wl_input_get();
-   if ((!input) || (!input->seat.keyboard)) 
+   if ((!input) || (!input->seat.keyboard))
      return ECORE_CALLBACK_PASS_ON;
    wl_keyboard_set_focus(input->seat.keyboard, NULL);
    wl_data_device_set_keyboard_focus(&input->seat);

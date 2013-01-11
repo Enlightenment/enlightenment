@@ -26,8 +26,8 @@ static Ecore_Event_Handler *_e_backlight_handler_border_uniconify = NULL;
 static Ecore_Event_Handler *_e_backlight_handler_border_desk_set = NULL;
 static Ecore_Event_Handler *_e_backlight_handler_desk_show = NULL;
 
-static void _e_backlight_update(E_Zone *zone);
-static void _e_backlight_set(E_Zone *zone, double val);
+static void      _e_backlight_update(E_Zone *zone);
+static void      _e_backlight_set(E_Zone *zone, double val);
 static Eina_Bool _bl_anim(void *data, double pos);
 static Eina_Bool bl_avail = EINA_FALSE;
 static Eina_Bool _e_backlight_handler(void *d, int type, void *ev);
@@ -39,10 +39,10 @@ static Ecore_Exe *bl_sys_set_exe = NULL;
 static Eina_Bool bl_sys_pending_set = EINA_FALSE;
 static Eina_Bool bl_sys_set_exe_ready = EINA_TRUE;
 
-static void _bl_sys_find(void);
-static void _bl_sys_level_get(void);
+static void      _bl_sys_find(void);
+static void      _bl_sys_level_get(void);
 static Eina_Bool _e_bl_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event);
-static void _bl_sys_level_set(double val);
+static void      _bl_sys_level_set(double val);
 #endif
 
 EAPI int E_EVENT_BACKLIGHT_CHANGE = -1;
@@ -59,28 +59,28 @@ e_backlight_init(void)
    bl_avail = EINA_TRUE;
 
    _e_backlight_handler_config_mode = ecore_event_handler_add
-     (E_EVENT_CONFIG_MODE_CHANGED, _e_backlight_handler, NULL);
+       (E_EVENT_CONFIG_MODE_CHANGED, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_fullscreen = ecore_event_handler_add
-     (E_EVENT_BORDER_FULLSCREEN, _e_backlight_handler, NULL);
+       (E_EVENT_BORDER_FULLSCREEN, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_unfullscreen = ecore_event_handler_add
-     (E_EVENT_BORDER_UNFULLSCREEN, _e_backlight_handler, NULL);
+       (E_EVENT_BORDER_UNFULLSCREEN, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_remove = ecore_event_handler_add
-     (E_EVENT_BORDER_REMOVE, _e_backlight_handler, NULL);
+       (E_EVENT_BORDER_REMOVE, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_iconify = ecore_event_handler_add
-     (E_EVENT_BORDER_ICONIFY, _e_backlight_handler, NULL);
+       (E_EVENT_BORDER_ICONIFY, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_uniconify = ecore_event_handler_add
-     (E_EVENT_BORDER_UNICONIFY, _e_backlight_handler, NULL);
+       (E_EVENT_BORDER_UNICONIFY, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_desk_set = ecore_event_handler_add
-     (E_EVENT_BORDER_DESK_SET, _e_backlight_handler, NULL);
+       (E_EVENT_BORDER_DESK_SET, _e_backlight_handler, NULL);
 
    _e_backlight_handler_desk_show = ecore_event_handler_add
-     (E_EVENT_DESK_SHOW, _e_backlight_handler, NULL);
+       (E_EVENT_DESK_SHOW, _e_backlight_handler, NULL);
 
    if (bl_avail)
      {
@@ -101,14 +101,15 @@ EINTERN int
 e_backlight_shutdown(void)
 {
    const char *s;
-   
+
    if (bl_anim) ecore_animator_del(bl_anim);
    bl_anim = NULL;
 
    if (e_config->backlight.mode != E_BACKLIGHT_MODE_NORMAL)
      e_backlight_level_set(NULL, e_config->backlight.normal, 0.0);
-   
-   EINA_LIST_FREE(bl_devs, s) eina_stringshare_del(s);
+
+   EINA_LIST_FREE(bl_devs, s)
+     eina_stringshare_del(s);
 #ifdef HAVE_EEZE
    if (bl_sysval) eina_stringshare_del(bl_sysval);
    bl_sysval = NULL;
@@ -206,16 +207,18 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    // if tim == 0.0 - then do it instantnly, if time == -1 use some default
    // transition time
    if (val < 0.0) val = 0.0;
-   else if (val > 1.0) val = 1.0;
+   else if (val > 1.0)
+     val = 1.0;
    if ((val == bl_val) && (!bl_anim)) return;
    if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
    bl_now = bl_val;
    bl_val = val;
 //   if (e_config->backlight.mode != E_BACKLIGHT_MODE_NORMAL) return;
    if (e_config->backlight.mode == E_BACKLIGHT_MODE_NORMAL)
-      tim = 0.5;
+     tim = 0.5;
    else
-      if (tim < 0.0) tim = e_config->backlight.transition;
+   if (tim < 0.0)
+     tim = e_config->backlight.transition;
    ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
    if (tim == 0.0)
      {
@@ -225,7 +228,7 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
              bl_anim = NULL;
           }
         _e_backlight_set(zone, val);
-       return;
+        return;
      }
    if (bl_anim) ecore_animator_del(bl_anim);
    bl_anim = ecore_animator_timeline_add(tim, _bl_anim, zone);
@@ -245,7 +248,7 @@ e_backlight_mode_set(E_Zone *zone, E_Backlight_Mode mode)
    // zone == NULL == everything
    if (e_config->backlight.mode == mode) return;
    e_config->backlight.mode = mode;
-   if      (e_config->backlight.mode == E_BACKLIGHT_MODE_NORMAL)
+   if (e_config->backlight.mode == E_BACKLIGHT_MODE_NORMAL)
      {
         e_backlight_level_set(zone, e_config->backlight.normal, -1.0);
      }
@@ -258,7 +261,7 @@ e_backlight_mode_set(E_Zone *zone, E_Backlight_Mode mode)
         e_backlight_level_set(zone, e_config->backlight.dim, -1.0);
      }
    else if (e_config->backlight.mode == E_BACKLIGHT_MODE_MAX)
-      e_backlight_level_set(zone, 1.0, -1.0);
+     e_backlight_level_set(zone, 1.0, -1.0);
 }
 
 EAPI E_Backlight_Mode
@@ -299,8 +302,9 @@ _e_backlight_update(E_Zone *zone)
         char *name;
         const char *s;
         Eina_Bool gotten = EINA_FALSE;
-        
-        EINA_LIST_FREE(bl_devs, s) eina_stringshare_del(s);
+
+        EINA_LIST_FREE(bl_devs, s)
+          eina_stringshare_del(s);
         for (i = 0; i < num; i++)
           {
              name = ecore_x_randr_output_name_get(root, out[i], NULL);
@@ -390,7 +394,7 @@ _bl_anim(void *data, double pos)
 
    // FIXME: if zone is deleted while anim going... bad things.
    pos = ecore_animator_pos_map(pos, ECORE_POS_MAP_DECELERATE, 0.0, 0.0);
-   v = (bl_animval * (1.0 - pos)) + (bl_val *pos);
+   v = (bl_animval * (1.0 - pos)) + (bl_val * pos);
    _e_backlight_set(zone, v);
    if (pos >= 1.0)
      {
@@ -470,7 +474,8 @@ _bl_sys_find(void)
         eina_stringshare_del(bl_sysval);
         bl_sysval = NULL;
      }
-   EINA_LIST_FREE(bl_devs, s) eina_stringshare_del(s);
+   EINA_LIST_FREE(bl_devs, s)
+     eina_stringshare_del(s);
    /* if configured backlight is there - use it, or if not use first */
    EINA_LIST_FOREACH(pdevs, l, f)
      {
@@ -504,7 +509,7 @@ _bl_sys_level_get(void)
    const char *str;
 
    if (bl_anim) return;
-   
+
    str = eeze_udev_syspath_get_sysattr(bl_sysval, "max_brightness");
    if (!str) return;
 
@@ -528,7 +533,7 @@ _e_bl_cb_ext_delay(void *data __UNUSED__)
    if (bl_sys_pending_set)
      {
         bl_sys_pending_set = EINA_FALSE;
-        
+
         _bl_sys_level_set(bl_delayval);
      }
    return EINA_FALSE;
@@ -555,8 +560,8 @@ _bl_sys_level_set(double val)
    char buf[PATH_MAX];
 
    if (!bl_sys_exit_handler)
-      bl_sys_exit_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                                                    _e_bl_cb_exit, NULL);
+     bl_sys_exit_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                                   _e_bl_cb_exit, NULL);
    bl_delayval = val;
    if ((bl_sys_set_exe) || (!bl_sys_set_exe_ready))
      {
@@ -569,4 +574,5 @@ _bl_sys_level_set(double val)
             e_prefix_lib_get(), (int)(val * 1000.0), bl_sysval);
    bl_sys_set_exe = ecore_exe_run(buf, NULL);
 }
+
 #endif

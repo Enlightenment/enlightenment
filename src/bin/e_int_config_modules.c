@@ -24,16 +24,16 @@ struct _CFType
 
 struct _E_Config_Dialog_Data
 {
-   Evas        *evas;
-   Evas_Object *l_modules;
-   Evas_Object *o_toolbar;
-   Evas_Object *b_load, *b_unload;
-   Evas_Object *o_desc;
-   Eina_List   *types;
+   Evas                *evas;
+   Evas_Object         *l_modules;
+   Evas_Object         *o_toolbar;
+   Evas_Object         *b_load, *b_unload;
+   Evas_Object         *o_desc;
+   Eina_List           *types;
    Ecore_Event_Handler *module_update;
    struct
    {
-      Eina_List   *loaded, *unloaded;
+      Eina_List *loaded, *unloaded;
    } selected;
 };
 
@@ -176,7 +176,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    Evas_Object *of, *ol;
 
    e_dialog_resizable_set(cfd->dia, 1);
-   
+
    cfdata->evas = e_win_evas_get(cfd->dia->win);
 
    of = e_widget_table_add(evas, 0);
@@ -617,7 +617,6 @@ _widget_list_selection_changed(void *data, Evas_Object *obj __UNUSED__)
              e_widget_disabled_set(cfdata->b_unload, 1);
           }
      }
-   
 
    if ((cfm) && (eina_list_count(cfdata->selected.loaded) + eina_list_count(cfdata->selected.unloaded) == 1))
      description = cfm->comment;

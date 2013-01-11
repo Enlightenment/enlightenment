@@ -120,7 +120,7 @@ _e_xinerama_update(void)
                        E_Screen *screen;
 
                        INF("E17 INIT: XINERAMA SCREEN: [%i][%i], %ix%i+%i+%i",
-                              i, i, w, h, x, y);
+                           i, i, w, h, x, y);
                        /* add it to our list */
                        screen = E_NEW(E_Screen, 1);
                        screen->screen = i;
@@ -135,7 +135,7 @@ _e_xinerama_update(void)
           }
      }
    /* now go through all_screens... and build a list of chosen screens */
-   EINA_LIST_FOREACH (all_screens, l, scr)
+   EINA_LIST_FOREACH(all_screens, l, scr)
      {
         Eina_List *ll;
         E_Screen *scr2;
@@ -181,7 +181,7 @@ _e_xinerama_update(void)
      {
         scr->escreen = n;
         INF("E17 INIT: XINERAMA CHOSEN: [%i][%i], %ix%i+%i+%i",
-               scr->screen, scr->escreen, scr->w, scr->h, scr->x, scr->y);
+            scr->screen, scr->escreen, scr->w, scr->h, scr->x, scr->y);
         n++;
      }
 }
@@ -205,3 +205,4 @@ _e_xinerama_cb_screen_sort(const void *data1, const void *data2)
      }
    return dif;
 }
+

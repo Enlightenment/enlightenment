@@ -58,3 +58,4 @@ e_deskenv_xmodmap_run(void)
    snprintf(buf2, sizeof(buf2), "xmodmap %s", buf);
    ecore_exe_run(buf2, NULL);
 }
+

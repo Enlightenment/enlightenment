@@ -1054,3 +1054,4 @@ _e_intl_imc_dir_scan(const char *dir)
      }
    return imcs;
 }
+

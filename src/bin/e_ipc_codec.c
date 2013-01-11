@@ -28,9 +28,9 @@ static Eet_Data_Descriptor *_e_ipc_3int_3str_list_edd = NULL;
 static Eet_Data_Descriptor *_e_ipc_str_4int_edd = NULL;
 static Eet_Data_Descriptor *_e_ipc_str_4int_list_edd = NULL;
 
-#define E_IPC_DD(Edd, Eddc, Name, Type)		\
-  Eddc.name = Name;				\
-  Eddc.size = sizeof (Type);			\
+#define E_IPC_DD(Edd, Eddc, Name, Type) \
+  Eddc.name = Name;                     \
+  Eddc.size = sizeof (Type);            \
   Edd = eet_data_descriptor_stream_new(&Eddc);
 
 /* externally accessible functions */
@@ -250,7 +250,7 @@ e_ipc_codec_str_enc(const char *str, int *size_ret)
 {
    E_Ipc_Str dat;
 
-   dat.str = (char *) str;
+   dat.str = (char *)str;
    return eet_data_descriptor_encode(_e_ipc_str_edd, &dat, size_ret);
 }
 
@@ -271,8 +271,8 @@ e_ipc_codec_2str_enc(const char *str1, const char *str2, int *size_ret)
 {
    E_Ipc_2Str dat;
 
-   dat.str1 = (char *) str1;
-   dat.str2 = (char *) str2;
+   dat.str1 = (char *)str1;
+   dat.str2 = (char *)str2;
    return eet_data_descriptor_encode(_e_ipc_2str_edd, &dat, size_ret);
 }
 
@@ -309,7 +309,7 @@ e_ipc_codec_str_list_dec(char *data, int bytes, Eina_List **dest)
    if (!dat) return 0;
    EINA_LIST_FOREACH(dat->list, l, str_node)
      {
-	list = eina_list_append(list, str_node->str);
+        list = eina_list_append(list, str_node->str);
      }
    if (dest) *dest = list;
    E_FREE_LIST(dat->list, free);
@@ -329,9 +329,9 @@ e_ipc_codec_str_list_enc(Eina_List *list, int *size_ret)
    dat.list = NULL;
    EINA_LIST_FOREACH(list, l, str)
      {
-	str_node = malloc(sizeof(E_Ipc_Str));
-	str_node->str = str;
-	dat.list = eina_list_append(dat.list, str_node);
+        str_node = malloc(sizeof(E_Ipc_Str));
+        str_node->str = str;
+        dat.list = eina_list_append(dat.list, str_node);
      }
    data = eet_data_descriptor_encode(_e_ipc_str_list_edd, &dat, size_ret);
    E_FREE_LIST(dat.list, free);
@@ -355,7 +355,7 @@ e_ipc_codec_str_int_enc(const char *str, int val, int *size_ret)
 {
    E_Ipc_Str_Int dat;
 
-   dat.str = (char *) str;
+   dat.str = (char *)str;
    dat.val = val;
    return eet_data_descriptor_encode(_e_ipc_str_int_edd, &dat, size_ret);
 }
@@ -398,8 +398,8 @@ e_ipc_codec_2str_int_enc(const char *str1, const char *str2, int val, int *size_
 {
    E_Ipc_2Str_Int dat;
 
-   dat.str1 = (char *) str1;
-   dat.str2 = (char *) str2;
+   dat.str1 = (char *)str1;
+   dat.str2 = (char *)str2;
    dat.val = val;
    return eet_data_descriptor_encode(_e_ipc_2str_int_edd, &dat, size_ret);
 }
@@ -446,8 +446,8 @@ e_ipc_codec_4int_2str_enc(int val1, int val2, int val3, int val4, const char *st
    dat.val2 = val2;
    dat.val3 = val3;
    dat.val4 = val4;
-   dat.str1 = (char *) str1;
-   dat.str2 = (char *) str2;
+   dat.str1 = (char *)str1;
+   dat.str2 = (char *)str2;
    return eet_data_descriptor_encode(_e_ipc_4int_2str_edd, &dat, size_ret);
 }
 
@@ -494,8 +494,8 @@ e_ipc_codec_5int_2str_enc(int val1, int val2, int val3, int val4, int val5, cons
    dat.val3 = val3;
    dat.val4 = val4;
    dat.val5 = val5;
-   dat.str1 = (char *) str1;
-   dat.str2 = (char *) str2;
+   dat.str1 = (char *)str1;
+   dat.str2 = (char *)str2;
    return eet_data_descriptor_encode(_e_ipc_5int_2str_edd, &dat, size_ret);
 }
 
@@ -540,10 +540,10 @@ e_ipc_codec_3int_4str_enc(int val1, int val2, int val3, const char *str1, const 
    dat.val1 = val1;
    dat.val2 = val2;
    dat.val3 = val3;
-   dat.str1 = (char *) str1;
-   dat.str2 = (char *) str2;
-   dat.str3 = (char *) str3;
-   dat.str4 = (char *) str4;
+   dat.str1 = (char *)str1;
+   dat.str2 = (char *)str2;
+   dat.str3 = (char *)str3;
+   dat.str4 = (char *)str4;
    return eet_data_descriptor_encode(_e_ipc_3int_4str_edd, &dat, size_ret);
 }
 
@@ -588,9 +588,9 @@ e_ipc_codec_3int_3str_enc(int val1, int val2, int val3, const char *str1, const 
    dat.val1 = val1;
    dat.val2 = val2;
    dat.val3 = val3;
-   dat.str1 = (char *) str1;
-   dat.str2 = (char *) str2;
-   dat.str3 = (char *) str3;
+   dat.str1 = (char *)str1;
+   dat.str2 = (char *)str2;
+   dat.str3 = (char *)str3;
    return eet_data_descriptor_encode(_e_ipc_3int_3str_edd, &dat, size_ret);
 }
 
@@ -618,27 +618,27 @@ e_ipc_codec_3int_3str_list_enc(Eina_List *list, int *size_ret)
 EAPI int
 e_ipc_codec_str_4int_dec(char *data, int bytes, E_Ipc_Str_4Int **dest)
 {
-  E_Ipc_Str_4Int *dat;
+   E_Ipc_Str_4Int *dat;
 
-  if (!data) return 0;
-  dat = eet_data_descriptor_decode(_e_ipc_str_4int_edd, data, bytes);
-  if (!dat) return 0;
-  if (dest) *dest = dat;
-  return 1;
+   if (!data) return 0;
+   dat = eet_data_descriptor_decode(_e_ipc_str_4int_edd, data, bytes);
+   if (!dat) return 0;
+   if (dest) *dest = dat;
+   return 1;
 }
 
 EAPI void *
 e_ipc_codec_str_4int_enc(const char *str1, int val1, int val2, int val3, int val4, int *size_ret)
 {
-  E_Ipc_Str_4Int dat;
+   E_Ipc_Str_4Int dat;
 
-  dat.str = (char *) str1;
-  dat.val1 = val1;
-  dat.val2 = val2;
-  dat.val3 = val3;
-  dat.val4 = val4;
+   dat.str = (char *)str1;
+   dat.val1 = val1;
+   dat.val2 = val2;
+   dat.val3 = val3;
+   dat.val4 = val4;
 
-  return eet_data_descriptor_encode(_e_ipc_str_4int_edd, &dat, size_ret);
+   return eet_data_descriptor_encode(_e_ipc_str_4int_edd, &dat, size_ret);
 }
 
 EAPI int

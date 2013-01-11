@@ -50,8 +50,7 @@ _e_fm2_device_volume_setup(E_Volume *v)
 
    /* Choose the label */
    if ((v->label) && (v->label[0]))
-     {}
-   else if ((v->partition_label) && (v->partition_label[0]))
+     {}else if ((v->partition_label) && (v->partition_label[0]))
      snprintf(label, sizeof(label) - 1, "%s", v->partition_label);
    else if (((v->storage->vendor) && (v->storage->vendor[0])) &&
             ((v->storage->model) && (v->storage->model[0])))
@@ -190,8 +189,8 @@ EAPI void
 e_fm2_device_storage_del(E_Storage *s)
 {
 //   printf("STO- %s\n", s->udi);
-     _e_stores = eina_list_remove(_e_stores, s);
-     _e_fm_shared_device_storage_free(s);
+   _e_stores = eina_list_remove(_e_stores, s);
+   _e_fm_shared_device_storage_free(s);
 }
 
 EAPI E_Storage *
@@ -207,7 +206,6 @@ e_fm2_device_storage_find(const char *udi)
      }
    return NULL;
 }
-
 
 EAPI void
 e_fm2_device_volume_add(E_Volume *v)
@@ -280,7 +278,6 @@ e_fm2_device_volume_add(E_Volume *v)
      }
 
    if (v->storage) _e_fm2_device_volume_setup(v);
-
 }
 
 EAPI void
@@ -305,7 +302,7 @@ e_fm2_device_volume_del(E_Volume *v)
      {
         E_Fm2_Device_Mount_Op *mop;
 
-        mop = (E_Fm2_Device_Mount_Op*)v->mount_ops;
+        mop = (E_Fm2_Device_Mount_Op *)v->mount_ops;
         v->mount_ops = eina_inlist_remove(v->mount_ops, v->mount_ops);
         _e_fm2_device_mount_op_free(mop);
      }
@@ -419,7 +416,7 @@ e_fm2_device_volume_mountpoint_get(E_Volume *v)
    if (v->mount_point)
      {
         //	printf("GET MOUNTPOINT = %s\n", v->mount_point);
-          return eina_stringshare_add(v->mount_point);
+        return eina_stringshare_add(v->mount_point);
      }
    else if (v->efm_mode != EFM_MODE_USING_HAL_MOUNT)
      return NULL;
@@ -450,7 +447,7 @@ e_fm2_device_mount_op_add(E_Fm2_Mount *m, char *args, size_t size, size_t length
 }
 
 EAPI void
-e_fm2_device_mount_add(E_Volume   *v,
+e_fm2_device_mount_add(E_Volume *v,
                        const char *mountpoint)
 {
    v->mounted = EINA_TRUE;
@@ -512,11 +509,11 @@ e_fm2_device_mount_find(const char *path)
 
 EAPI E_Fm2_Mount *
 e_fm2_device_mount(E_Volume *v,
-                   Ecore_Cb  mount_ok,
-                   Ecore_Cb  mount_fail,
-                   Ecore_Cb  unmount_ok,
-                   Ecore_Cb  unmount_fail,
-                   void     *data)
+                   Ecore_Cb mount_ok,
+                   Ecore_Cb mount_fail,
+                   Ecore_Cb unmount_ok,
+                   Ecore_Cb unmount_fail,
+                   void *data)
 {
    E_Fm2_Mount *m;
 
@@ -534,7 +531,6 @@ e_fm2_device_mount(E_Volume *v,
    m->mounted = v->mounted;
 
    v->mounts = eina_list_prepend(v->mounts, m);
-
 
    if (!v->mounted)
      {
@@ -671,14 +667,14 @@ _e_fm2_device_check_desktop_icons_list_cb(const char *name, const char *path, vo
    Eina_List *l;
    char *file;
 
-   if (path[0] != '|') return; // not e17 link
+   if (path[0] != '|') return;  // not e17 link
    if (!eina_str_has_extension(name, ".desktop")) return;
    snprintf(buf, sizeof(buf), "%s/%s", path, name);
-   if (ecore_file_size(buf) > 200) return; // unlikely that we're going to write a desktop file this long
+   if (ecore_file_size(buf) > 200) return;  // unlikely that we're going to write a desktop file this long
    e_user_dir_snprintf(buf2, sizeof(buf2), "fileman/favorites/%s", name);
    if (!ecore_file_exists(buf2)) return;
    EINA_LIST_FOREACH(data, l, file)
-     if (!strcmp(file, buf)) return; // valid link
+     if (!strcmp(file, buf)) return;  // valid link
 
    ecore_file_unlink(buf);
    ecore_file_unlink(buf2);
@@ -791,3 +787,4 @@ e_fm2_device_volume_list_get(void)
 {
    return _e_vols;
 }
+

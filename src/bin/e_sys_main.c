@@ -21,17 +21,17 @@
 static Eina_Bool mountopts_check(const char *opts);
 static Eina_Bool mount_args_check(int argc, char **argv, const char *action);
 #endif
-static int auth_action_ok(char *a,
-                          gid_t gid,
-                          gid_t *gl,
-                          int gn,
-                          gid_t egid);
-static int auth_etc_enlightenment_sysactions(char *a,
-                                             char *u,
-                                             char **g);
-static void auth_etc_enlightenment_sysactions_perm(char *path);
-static char *get_word(char *s,
-                      char *d);
+static int       auth_action_ok(char *a,
+                                gid_t gid,
+                                gid_t *gl,
+                                int gn,
+                                gid_t egid);
+static int       auth_etc_enlightenment_sysactions(char *a,
+                                                   char *u,
+                                                   char **g);
+static void      auth_etc_enlightenment_sysactions_perm(char *path);
+static char     *get_word(char *s,
+                          char *d);
 
 /* local subsystem globals */
 static Eina_Hash *actions = NULL;
@@ -73,28 +73,28 @@ main(int argc,
              test = 1;
              action = argv[2];
           }
-   else if (!strcmp(argv[1], "gdb"))
-     {
-        if (argc != 4) exit(1);
-        char *end = NULL;
-
-        action = argv[1];
-        pid = strtoul(argv[2], &end, 10);
-        if (end == NULL || *end != '\0')
+        else if (!strcmp(argv[1], "gdb"))
           {
-             printf("Invalid pid for '%s'.\n", argv[3]);
-             exit(0);
-          }
+             if (argc != 4) exit(1);
+             char *end = NULL;
 
-        output = argv[3];
-     }
+             action = argv[1];
+             pid = strtoul(argv[2], &end, 10);
+             if (end == NULL || *end != '\0')
+               {
+                  printf("Invalid pid for '%s'.\n", argv[3]);
+                  exit(0);
+               }
+
+             output = argv[3];
+          }
 #ifdef HAVE_EEZE_MOUNT
         else
           {
              const char *s;
 
              s = strrchr(argv[1], '/');
-             if ((!s) || (!s[1])) exit(1); /* eeze always uses complete path */
+             if ((!s) || (!s[1])) exit(1);  /* eeze always uses complete path */
              s++;
              if (strcmp(s, "mount") && strcmp(s, "umount") && strcmp(s, "eject")) exit(1);
              mnt = EINA_TRUE;
@@ -159,15 +159,15 @@ main(int argc,
         char buffer[4096];
         int r;
 
-	snprintf(buffer, 4096,
+        snprintf(buffer, 4096,
                  "%s --pid=%i "
-		 "-ex 'set logging file %s' "
-		 "-ex 'set logging on' "
-		 "-ex 'thread apply all backtrace full' "
-		 "-ex detach -ex quit > /dev/null 2> /dev/null",
+                 "-ex 'set logging file %s' "
+                 "-ex 'set logging on' "
+                 "-ex 'thread apply all backtrace full' "
+                 "-ex detach -ex quit > /dev/null 2> /dev/null",
                  cmd,
-		 pid,
-		 output);
+                 pid,
+                 output);
 
         r = system(buffer);
 
@@ -175,9 +175,9 @@ main(int argc,
      }
    if ((!test)
 #ifdef HAVE_EEZE_MOUNT
-    && (!mnt)
+       && (!mnt)
 #endif
-      )
+       )
      return system(cmd);
 #ifdef HAVE_EEZE_MOUNT
    if (mnt)
@@ -290,36 +290,36 @@ mountopts_check(const char *opts)
   if (!strncmp(p, OPT, sizeof(OPT) - 1))
 
         CMP("nosuid,")
-          {
-             nosuid = EINA_TRUE;
-             continue;
-          }
+        {
+           nosuid = EINA_TRUE;
+           continue;
+        }
         CMP("nodev,")
-          {
-             nodev = EINA_TRUE;
-             continue;
-          }
+        {
+           nodev = EINA_TRUE;
+           continue;
+        }
         CMP("noexec,")
-          {
-             noexec = EINA_TRUE;
-             continue;
-          }
+        {
+           noexec = EINA_TRUE;
+           continue;
+        }
         CMP("utf8,") continue;
         CMP("utf8=0,") continue;
         CMP("utf8=1,") continue;
         CMP("iocharset=utf8,") continue;
         CMP("uid=")
-          {
-             p += 4;
-             errno = 0;
-             muid = strtoul(p, &end, 10);
-             if (muid == ULONG_MAX) return EINA_FALSE;
-             if (errno) return EINA_FALSE;
-             if (end[0] != ',') return EINA_FALSE;
-             if (muid != uid) return EINA_FALSE;
-             nuid = EINA_TRUE;
-             continue;
-          }
+        {
+           p += 4;
+           errno = 0;
+           muid = strtoul(p, &end, 10);
+           if (muid == ULONG_MAX) return EINA_FALSE;
+           if (errno) return EINA_FALSE;
+           if (end[0] != ',') return EINA_FALSE;
+           if (muid != uid) return EINA_FALSE;
+           nuid = EINA_TRUE;
+           continue;
+        }
         return EINA_FALSE;
      }
    if ((!nosuid) || (!nodev) || (!noexec) || (!nuid)) return EINA_FALSE;
@@ -347,7 +347,7 @@ mount_args_check(int argc, char **argv, const char *action)
    if (!strcmp(action, "mount"))
      {
         /* will ALWAYS be:
-         /path/to/mount -o nosuid,uid=XYZ,[utf8,] UUID=XXXX-XXXX[-XXXX-XXXX] /media/$devnode
+           /path/to/mount -o nosuid,uid=XYZ,[utf8,] UUID=XXXX-XXXX[-XXXX-XXXX] /media/$devnode
          */
         if (argc != 6) return EINA_FALSE;
         if (argv[2][0] == '-')
@@ -366,7 +366,7 @@ mount_args_check(int argc, char **argv, const char *action)
              if (strncmp(argv[4], "/dev/", 5)) return EINA_FALSE;
              if (stat(argv[4], &st)) return EINA_FALSE;
           }
-        
+
         node = strrchr(argv[5], '/');
         if (!node) return EINA_FALSE;
         if (!node[1]) return EINA_FALSE;
@@ -377,7 +377,7 @@ mount_args_check(int argc, char **argv, const char *action)
    else if (!strcmp(action, "umount"))
      {
         /* will ALWAYS be:
-         /path/to/umount /dev/$devnode
+           /path/to/umount /dev/$devnode
          */
         if (argc != 3) return EINA_FALSE;
         if (strncmp(argv[2], "/dev/", 5)) return EINA_FALSE;
@@ -388,16 +388,16 @@ mount_args_check(int argc, char **argv, const char *action)
         if (node - argv[2] != 4) return EINA_FALSE;
         /* this is good, but it prevents umounting user-mounted removable media;
          * need to figure out a better way...
-         * 
-        snprintf(buf, sizeof(buf), "/media%s", node);
-        if (stat(buf, &st)) return EINA_FALSE;
-        if (!S_ISDIR(st.st_mode)) return EINA_FALSE;
-        */
+         *
+           snprintf(buf, sizeof(buf), "/media%s", node);
+           if (stat(buf, &st)) return EINA_FALSE;
+           if (!S_ISDIR(st.st_mode)) return EINA_FALSE;
+         */
      }
    else if (!strcmp(action, "eject"))
      {
         /* will ALWAYS be:
-         /path/to/eject /dev/$devnode
+           /path/to/eject /dev/$devnode
          */
         if (argc != 3) return EINA_FALSE;
         if (strncmp(argv[2], "/dev/", 5)) return EINA_FALSE;
@@ -410,6 +410,7 @@ mount_args_check(int argc, char **argv, const char *action)
    else return EINA_FALSE;
    return EINA_TRUE;
 }
+
 #endif
 
 static int
@@ -539,7 +540,8 @@ auth_etc_enlightenment_sysactions(char *a,
           }
         else if (!strcmp(id, "action:"))
           {
-             while ((*pp) && (isspace(*pp))) pp++;
+             while ((*pp) && (isspace(*pp)))
+               pp++;
              s = eina_hash_find(actions, ugname);
              if (s) eina_hash_del(actions, ugname, s);
              if (!actions) actions = eina_hash_string_superfast_new(free);
@@ -617,3 +619,4 @@ get_word(char *s,
    *p2 = 0;
    return p1;
 }
+

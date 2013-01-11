@@ -421,7 +421,7 @@ main(int argc, char **argv)
      {
         pid_t child;
 
-	stop_ptrace = EINA_FALSE;
+        stop_ptrace = EINA_FALSE;
 
         child = fork();
 

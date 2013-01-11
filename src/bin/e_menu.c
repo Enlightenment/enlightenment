@@ -137,24 +137,24 @@ _e_menu_list_free_unref(Eina_List *l)
     * are deleted before their parents
     */
    EINA_LIST_REVERSE_FOREACH_SAFE(l, ll, lll, o)
-     {
-        e_object_unref(o);
-        l = eina_list_remove_list(l, ll);
-     }
+   {
+      e_object_unref(o);
+      l = eina_list_remove_list(l, ll);
+   }
    return l;
 }
 
 /* macros for debugging menu refcounts */
 #if 0
-#define e_object_ref(X) do {\
-   int xx; \
-   xx = e_object_ref(X); \
-   INF("REF: %p || %d", X, xx); \
+#define e_object_ref(X)   do {      \
+       int xx;                      \
+       xx = e_object_ref(X);        \
+       INF("REF: %p || %d", X, xx); \
   } while (0)
-#define e_object_unref(X) do {\
-   int xx; \
-   xx = e_object_unref(X); \
-   INF("UNREF: %p || %d", X, xx); \
+#define e_object_unref(X) do {        \
+       int xx;                        \
+       xx = e_object_unref(X);        \
+       INF("UNREF: %p || %d", X, xx); \
   } while (0)
 #endif
 
@@ -557,7 +557,7 @@ e_menu_category_data_set(char *category, void *data)
 }
 
 EAPI E_Menu_Category_Callback *
-e_menu_category_callback_add(char *category, void (*create_cb) (void *data, E_Menu *m, void *category_data), Ecore_Cb free_cb, void *data)
+e_menu_category_callback_add(char *category, void (*create_cb)(void *data, E_Menu *m, void *category_data), Ecore_Cb free_cb, void *data)
 {
    E_Menu_Category *cat;
    E_Menu_Category_Callback *cb = NULL;
@@ -791,7 +791,7 @@ e_menu_item_submenu_set(E_Menu_Item *mi, E_Menu *sub)
                                          0.5, 0.5, /* align */
                                          ww, hh, /* min */
                                          -1, -1 /* max */
-                                        );
+                                         );
                   return;
                }
              evas_object_del(mi->submenu_object);
@@ -814,7 +814,7 @@ e_menu_item_submenu_set(E_Menu_Item *mi, E_Menu *sub)
                                0.5, 0.5, /* align */
                                ww, hh, /* min */
                                -1, -1 /* max */
-                              );
+                               );
         edje_object_part_swallow(mi->bg_object, "e.swallow.content",
                                  mi->container_object);
         edje_object_size_min_calc(mi->bg_object, &ww, &hh);
@@ -840,10 +840,10 @@ e_menu_item_submenu_set(E_Menu_Item *mi, E_Menu *sub)
    if ((mi->submenu) || (mi->submenu_pre_cb.func))
      {
         if (e_theme_edje_object_set(mi->bg_object, "base/theme/menus",
-                                     "e/widgets/menu/default/submenu_bg"))
+                                    "e/widgets/menu/default/submenu_bg"))
           return;
      }
-     
+
    e_theme_edje_object_set(mi->bg_object, "base/theme/menus",
                            "e/widgets/menu/default/item_bg");
 }
@@ -961,7 +961,7 @@ e_menu_item_callback_set(E_Menu_Item *mi, void (*func)(void *data, E_Menu *m, E_
    E_OBJECT_CHECK(mi);
    E_OBJECT_TYPE_CHECK(mi, E_MENU_ITEM_TYPE);
    mi->cb.func = func;
-   mi->cb.data = (void*)data;
+   mi->cb.data = (void *)data;
 }
 
 EAPI void
@@ -979,7 +979,7 @@ e_menu_item_submenu_pre_callback_set(E_Menu_Item *mi, void (*func)(void *data, E
    E_OBJECT_CHECK(mi);
    E_OBJECT_TYPE_CHECK(mi, E_MENU_ITEM_TYPE);
    mi->submenu_pre_cb.func = func;
-   mi->submenu_pre_cb.data = (void*)data;
+   mi->submenu_pre_cb.data = (void *)data;
    if (!mi->submenu_post_cb.func)
      mi->submenu_post_cb.func = _e_menu_cb_item_submenu_post_default;
 }
@@ -990,7 +990,7 @@ e_menu_item_submenu_post_callback_set(E_Menu_Item *mi, void (*func)(void *data, 
    E_OBJECT_CHECK(mi);
    E_OBJECT_TYPE_CHECK(mi, E_MENU_ITEM_TYPE);
    mi->submenu_post_cb.func = func;
-   mi->submenu_post_cb.data = (void*)data;
+   mi->submenu_post_cb.data = (void *)data;
 }
 
 EAPI void
@@ -1150,7 +1150,7 @@ e_menu_idler_before(void)
                  ((m->cur.h) != (m->prev.h)))
                {
                   int w, h;
-                  
+
                   m->prev.w = m->cur.w;
                   m->prev.h = m->cur.h;
                   w = m->cur.w;
@@ -1323,7 +1323,7 @@ _e_menu_free(E_Menu *m)
    _e_menu_unrealize(m);
    E_FREE(m->shape_rects);
    m->shape_rects_num = 0;
-   EINA_LIST_FOREACH_SAFE (m->items, l, l_next, mi)
+   EINA_LIST_FOREACH_SAFE(m->items, l, l_next, mi)
      e_object_del(E_OBJECT(mi));
    if (m->in_active_list)
      {
@@ -1357,8 +1357,8 @@ _e_menu_item_free(E_Menu_Item *mi)
              ref = e_object_ref_get(E_OBJECT(mi->submenu)) - 1;
              e_object_unref(E_OBJECT(mi->submenu));
           }
-       if (ref)
-         WRN("DANGLING SUBMENU FOR %s: REF(%d)||MENU(%p)", mi->label, ref, mi->submenu);
+        if (ref)
+          WRN("DANGLING SUBMENU FOR %s: REF(%d)||MENU(%p)", mi->label, ref, mi->submenu);
      }
    if (mi->menu->realized) _e_menu_item_unrealize(mi);
    mi->menu->items = eina_list_remove(mi->menu->items, mi);
@@ -1486,7 +1486,7 @@ no_submenu_item:
                                     0.5, 0.5, /* align */
                                     ww, hh, /* min */
                                     -1, -1 /* max */
-                                   );
+                                    );
           }
         else if (mi->radio)
           {
@@ -1506,7 +1506,7 @@ no_submenu_item:
                                     0.5, 0.5, /* align */
                                     ww, hh, /* min */
                                     -1, -1 /* max */
-                                   );
+                                    );
           }
         else
           {
@@ -1601,7 +1601,7 @@ no_submenu_item:
                                          0.5, 0.5, /* align */
                                          ww, hh, /* min */
                                          -1, -1 /* max */
-                                        );
+                                         );
                }
              else
                {
@@ -1616,7 +1616,7 @@ no_submenu_item:
                                          0.5, 0.5, /* align */
                                          ww, hh, /* min */
                                          -1, -1 /* max */
-                                        );
+                                         );
                }
           }
         else
@@ -1648,7 +1648,7 @@ no_submenu_item:
                                     0.5, 0.5, /* align */
                                     ww, hh, /* min */
                                     -1, -1 /* max */
-                                   );
+                                    );
           }
         else
           {
@@ -1676,7 +1676,7 @@ no_submenu_item:
                                     0.5, 0.5, /* align */
                                     ww, hh, /* min */
                                     -1, -1 /* max */
-                                   );
+                                    );
           }
         else
           {
@@ -1717,7 +1717,7 @@ _e_menu_realize(E_Menu *m)
    E_Menu_Item *mi;
    int ok = 0;
    int w, h;
-   
+
    if (m->realized || (!m->items)) return;
    m->realized = 1;
    m->ecore_evas = e_canvas_new(m->zone->container->win,
@@ -1888,7 +1888,7 @@ _e_menu_items_layout_update(E_Menu *m)
      {
         e_zone_useful_geometry_get(m->zone, NULL, NULL, NULL, &zh);
         maxh = zh * 4;
-        if (maxh > 30000) maxh = 30000; // 32k x 32k mx coord limit for wins
+        if (maxh > 30000) maxh = 30000;  // 32k x 32k mx coord limit for wins
         max_items = (maxh / min_h) - 1;
      }
    EINA_LIST_FOREACH(m->items, l, mi)
@@ -2787,8 +2787,8 @@ _e_menu_auto_place(E_Menu *m, int x, int y, int w, int h)
              return 1;
           }
         else
-        /* T */
           {
+             /* T */
              m->cur.y = y + h;
              if (x < (m->zone->x + ((m->zone->w * 1) / 3)))
                m->cur.x = x;
@@ -2814,8 +2814,8 @@ _e_menu_auto_place(E_Menu *m, int x, int y, int w, int h)
              return 4;
           }
         else
-        /* R */
           {
+             /* R */
              m->cur.x = x - m->cur.w;
              if (y < (m->zone->y + ((m->zone->h * 1) / 3)))
                m->cur.y = y;

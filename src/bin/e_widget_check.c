@@ -20,7 +20,7 @@ static void _e_wid_focus_steal(void *data, Evas *e, Evas_Object *obj, void *even
 
 /* externally accessible functions */
 
-/**  
+/**
  * Creates a check box widget
  *
  * @param evas pointer
@@ -66,7 +66,7 @@ e_widget_check_add(Evas *evas, const char *label, int *val)
    return obj;
 }
 
-/**  
+/**
  * Sets the value of the check box
  *
  * @param check the check box widget
@@ -86,7 +86,7 @@ e_widget_check_checked_set(Evas_Object *check, int checked)
      edje_object_signal_emit(wd->o_check, "e,state,unchecked", "e");
 }
 
-/**  
+/**
  * Sets the value of the check box
  *
  * @param check the check box widget
@@ -108,8 +108,8 @@ e_widget_check_valptr_set(Evas_Object *check, int *val)
      edje_object_signal_emit(wd->o_check, "e,state,unchecked", "e");
 }
 
-/**  
- *Get the value of the check box
+/**
+ * Get the value of the check box
  *
  * @param check the check box widget
  * @return the value of the check box
@@ -129,7 +129,7 @@ e_widget_check_checked_get(Evas_Object *check)
    return ret;
 }
 
-/**  
+/**
  * Creates a check box widget with icon
  *
  * @param evas pointer

@@ -1,10 +1,10 @@
 #include "e.h"
 
 static Ecore_Con_Url *url_up = NULL;
-static Eina_List     *handlers = NULL;
-static Ecore_Timer   *update_timer = NULL;
-static E_Dialog      *dialog = NULL;
-static char          *machid = NULL;
+static Eina_List *handlers = NULL;
+static Ecore_Timer *update_timer = NULL;
+static E_Dialog *dialog = NULL;
+static char *machid = NULL;
 
 static void
 _update_done(void)
@@ -251,13 +251,13 @@ e_update_init(void)
    if (ecore_con_url_init())
      {
         handlers = eina_list_append
-          (handlers, ecore_event_handler_add
+            (handlers, ecore_event_handler_add
               (ECORE_CON_EVENT_URL_DATA, _upload_data_cb, NULL));
         handlers = eina_list_append
-          (handlers, ecore_event_handler_add
+            (handlers, ecore_event_handler_add
               (ECORE_CON_EVENT_URL_PROGRESS, _upload_progress_cb, NULL));
         handlers = eina_list_append
-          (handlers, ecore_event_handler_add
+            (handlers, ecore_event_handler_add
               (ECORE_CON_EVENT_URL_COMPLETE, _upload_complete_cb, NULL));
         if (e_config->update.check)
           {
@@ -292,3 +292,4 @@ e_update_shutdown(void)
      }
    return 1;
 }
+

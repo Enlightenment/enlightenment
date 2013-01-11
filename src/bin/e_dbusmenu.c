@@ -4,11 +4,11 @@
 
 struct _E_DBusMenu_Ctx
 {
-   EDBus_Proxy *proxy;
-   E_DBusMenu_Item *root_menu;
-   void *data;
+   EDBus_Proxy              *proxy;
+   E_DBusMenu_Item          *root_menu;
+   void                     *data;
    E_DBusMenu_Pop_Request_Cb pop_request_cb;
-   E_DBusMenu_Update_Cb update_cb;
+   E_DBusMenu_Update_Cb      update_cb;
 };
 
 static const char *Menu_Item_Type_Names[] =
@@ -40,7 +40,7 @@ id_find(const char *text, const char *array_of_names[], unsigned max)
         if (strcmp(text, array_of_names[i]))
           continue;
         return i;
-      }
+     }
    return 0;
 }
 
@@ -63,7 +63,7 @@ dbus_menu_prop_dict_cb(void *data, const void *key, EDBus_Message_Iter *var)
                   continue;
                }
 
-             if (label[i+1] == '_')
+             if (label[i + 1] == '_')
                {
                   eina_strbuf_append_char(label_buf, label[i]);
                   i++;
@@ -186,7 +186,7 @@ dbus_menu_free(E_DBusMenu_Item *m)
    if (m->icon_name)
      eina_stringshare_del(m->icon_name);
    if (m->label)
-    eina_stringshare_del(m->label);
+     eina_stringshare_del(m->label);
    EINA_INLIST_FOREACH_SAFE(m->sub_items, inlist, child)
      dbus_menu_free(child);
    if (m->parent)
@@ -426,3 +426,4 @@ e_dbusmenu_update_cb_set(E_DBusMenu_Ctx *ctx, E_DBusMenu_Update_Cb cb)
 {
    ctx->update_cb = cb;
 }
+

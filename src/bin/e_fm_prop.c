@@ -555,8 +555,8 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
         if (cfdata->fi->broken_link)
           {
-            ob = e_widget_label_add(evas, _("This link is broken."));
-            e_widget_frametable_object_append(ot, ob, 0, 1, 1, 1, 1, 0, 1, 0);
+             ob = e_widget_label_add(evas, _("This link is broken."));
+             e_widget_frametable_object_append(ot, ob, 0, 1, 1, 1, 1, 0, 1, 0);
           }
 
         e_widget_table_object_append(o, ot, 1, 1, 2, 1, 1, 1, 1, 1);

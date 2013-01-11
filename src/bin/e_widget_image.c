@@ -4,7 +4,7 @@ typedef struct _E_Widget_Data E_Widget_Data;
 struct _E_Widget_Data
 {
    Evas_Object *img;
-   int minw, minh;
+   int          minw, minh;
 };
 
 static void _e_wid_del_hook(Evas_Object *obj);
@@ -112,3 +112,4 @@ _e_wid_del_hook(Evas_Object *obj)
    wd = e_widget_data_get(obj);
    free(wd);
 }
+

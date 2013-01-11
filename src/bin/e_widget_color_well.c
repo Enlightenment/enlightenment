@@ -3,15 +3,15 @@
 typedef struct _E_Widget_Data E_Widget_Data;
 struct _E_Widget_Data
 {
-   Evas_Object *obj;
-   Evas_Object *o_edje;
-   Evas_Object *o_rect;
+   Evas_Object    *obj;
+   Evas_Object    *o_edje;
+   Evas_Object    *o_rect;
 
    E_Color_Dialog *dia;
-   E_Color *color;
-   E_Container *con; /* container to pop a color dialog up on */
-   Eina_Bool show_color_dialog;
-   Eina_Bool alpha_enabled;
+   E_Color        *color;
+   E_Container    *con; /* container to pop a color dialog up on */
+   Eina_Bool       show_color_dialog;
+   Eina_Bool       alpha_enabled;
 };
 
 static void _e_wid_update(E_Widget_Data *wd);
@@ -27,10 +27,10 @@ _e_wid_update(E_Widget_Data *wd)
    if (!wd) return;
 
    evas_object_color_set(wd->o_rect,
-			 (wd->color->r * wd->color->a) / 255,
-			 (wd->color->g * wd->color->a) / 255,
-			 (wd->color->b * wd->color->a) / 255,
-			 wd->color->a);
+                         (wd->color->r * wd->color->a) / 255,
+                         (wd->color->g * wd->color->a) / 255,
+                         (wd->color->b * wd->color->a) / 255,
+                         wd->color->a);
    e_widget_change(wd->obj);
 }
 
@@ -46,10 +46,10 @@ _e_wid_signal_cb1(void *data, Evas_Object *obj __UNUSED__, const char *emission 
    if (!wd->show_color_dialog || !wd->con) return;
    if (!wd->dia)
      {
-	wd->dia = e_color_dialog_new(wd->con, wd->color, wd->alpha_enabled);
-	e_color_dialog_select_callback_set(wd->dia, _e_wid_color_select_cb, wd);
-	e_color_dialog_cancel_callback_set(wd->dia, _e_wid_color_cancel_cb, wd);
-	e_color_dialog_change_callback_set(wd->dia, _e_wid_color_change_cb, wd);
+        wd->dia = e_color_dialog_new(wd->con, wd->color, wd->alpha_enabled);
+        e_color_dialog_select_callback_set(wd->dia, _e_wid_color_select_cb, wd);
+        e_color_dialog_cancel_callback_set(wd->dia, _e_wid_color_cancel_cb, wd);
+        e_color_dialog_change_callback_set(wd->dia, _e_wid_color_change_cb, wd);
      }
    e_color_dialog_show(wd->dia);
 }
@@ -107,13 +107,13 @@ _e_wid_disable_hook(Evas_Object *obj)
    wd = e_widget_data_get(obj);
    if (e_widget_disabled_get(obj))
      {
-	wd->show_color_dialog = 0;
-	edje_object_signal_emit(wd->o_edje, "e,state,disabled", "e");
+        wd->show_color_dialog = 0;
+        edje_object_signal_emit(wd->o_edje, "e,state,disabled", "e");
      }
    else
      {
-	wd->show_color_dialog = 1;
-	edje_object_signal_emit(wd->o_edje, "e,state,enabled", "e");
+        wd->show_color_dialog = 1;
+        edje_object_signal_emit(wd->o_edje, "e,state,enabled", "e");
      }
 }
 
@@ -148,9 +148,9 @@ e_widget_color_well_add_full(Evas *evas, E_Color *color, Eina_Bool show_color_di
    e_widget_sub_object_add(obj, o);
    e_widget_resize_object_set(obj, o);
    e_theme_edje_object_set(o, "base/theme/widgets",
-			   "e/widgets/color_well");
+                           "e/widgets/color_well");
    edje_object_signal_callback_add(o, "e,action,click", "",
-				   _e_wid_signal_cb1, obj);
+                                   _e_wid_signal_cb1, obj);
    evas_object_show(o);
    wd->o_edje = o;
 
@@ -159,10 +159,10 @@ e_widget_color_well_add_full(Evas *evas, E_Color *color, Eina_Bool show_color_di
    o = evas_object_rectangle_add(evas);
    e_widget_sub_object_add(obj, o);
    evas_object_color_set(o,
-			 (color->r * color->a) / 255,
-			 (color->g * color->a) / 255,
-			 (color->b * color->a) / 255,
-			 color->a);
+                         (color->r * color->a) / 255,
+                         (color->g * color->a) / 255,
+                         (color->b * color->a) / 255,
+                         color->a);
    edje_object_part_swallow(wd->o_edje, "e.swallow.content", o);
    evas_object_show(o);
    wd->o_rect = o;
@@ -173,13 +173,13 @@ e_widget_color_well_add_full(Evas *evas, E_Color *color, Eina_Bool show_color_di
 /**
  * Add a color well widget to an evas.
  * An optional E_Container may be passed in.
- If not NULL, when clicked a color dialog will pop up.
+   If not NULL, when clicked a color dialog will pop up.
  */
 Evas_Object *
 e_widget_color_well_add(Evas *evas, E_Color *color, Eina_Bool show_color_dialog)
 {
    return e_widget_color_well_add_full
-     (evas, color, show_color_dialog, EINA_FALSE);
+            (evas, color, show_color_dialog, EINA_FALSE);
 }
 
 /**
@@ -191,3 +191,4 @@ e_widget_color_well_update(Evas_Object *obj)
    E_Widget_Data *wd = e_widget_data_get(obj);
    _e_wid_update(wd);
 }
+

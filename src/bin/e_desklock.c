@@ -17,7 +17,7 @@ typedef struct _E_Desklock_Popup_Data E_Desklock_Popup_Data;
 typedef struct _E_Desklock_Auth       E_Desklock_Auth;
 #endif
 
-typedef struct _E_Desklock_Run  E_Desklock_Run;
+typedef struct _E_Desklock_Run E_Desklock_Run;
 
 struct _E_Desklock_Popup_Data
 {
@@ -28,20 +28,20 @@ struct _E_Desklock_Popup_Data
 
 struct _E_Desklock_Data
 {
-   Eina_List     *elock_wnd_list;
-   Ecore_X_Window elock_wnd;
-   Eina_List     *handlers;
+   Eina_List           *elock_wnd_list;
+   Ecore_X_Window       elock_wnd;
+   Eina_List           *handlers;
    Ecore_Event_Handler *move_handler;
-   Ecore_X_Window elock_grab_break_wnd;
-   char           passwd[PASSWD_LEN];
-   int            state;
-   Eina_Bool      selected : 1;
+   Ecore_X_Window       elock_grab_break_wnd;
+   char                 passwd[PASSWD_LEN];
+   int                  state;
+   Eina_Bool            selected : 1;
 };
 
 struct _E_Desklock_Run
 {
    E_Order *desk_run;
-   int position;
+   int      position;
 };
 
 #ifdef HAVE_PAM
@@ -133,7 +133,7 @@ e_desklock_init(void)
    E_EVENT_DESKLOCK = ecore_event_type_new();
 
    _e_desklock_run_handler = ecore_event_handler_add(E_EVENT_DESKLOCK,
-						     _e_desklock_cb_run, NULL);
+                                                     _e_desklock_cb_run, NULL);
 
    return 1;
 }
@@ -202,7 +202,7 @@ e_desklock_show_autolocked(void)
 {
    if ((e_config->screen_actions_fullscreen_windows_ignore) ||
        ((!e_config->screen_actions_fullscreen_windows_ignore) && (!e_util_fullscreen_any())))
-      return 0;
+     return 0;
    if (_e_desklock_autolock_time < 1.0)
      _e_desklock_autolock_time = ecore_loop_time_get();
    return e_desklock_show(EINA_FALSE);
@@ -657,7 +657,7 @@ _e_desklock_cb_zone_del(void *data __UNUSED__,
    if (!edd) return ECORE_CALLBACK_PASS_ON;
    if ((eina_list_count(e_container_current_get(e_manager_current_get())->zones) == 1) && (e_config->desklock_login_box_zone == -2))
      edd->move_handler = ecore_event_handler_del(edd->move_handler);
-        
+
    l = _e_desklock_popup_find(ev->zone);
    if (l)
      {
@@ -801,8 +801,9 @@ _e_desklock_passwd_update(void)
    *pp = 0;
 
    EINA_LIST_FOREACH(edd->elock_wnd_list, l, edp)
-     if (edp->login_box) edje_object_part_text_set(edp->login_box, "e.text.password",
-                               passwd_hidden);
+     if (edp->login_box)
+       edje_object_part_text_set(edp->login_box, "e.text.password",
+                                 passwd_hidden);
 }
 
 static void
@@ -885,7 +886,7 @@ _e_desklock_check_auth(void)
    if (e_config->desklock_auth_method == 0)
      {
         int ret;
-        
+
         ret = _desklock_auth(edd->passwd);
         // passwd off in child proc now - null out from parent
         memset(edd->passwd, 0, sizeof(char) * PASSWD_LEN);
@@ -894,20 +895,20 @@ _e_desklock_check_auth(void)
    else if (e_config->desklock_auth_method == 1)
      {
 #endif
-        if ((e_config->desklock_personal_passwd) &&
-            (!strcmp(!edd->passwd ? "" : edd->passwd,
-                     !e_config->desklock_personal_passwd ? "" :
-                     e_config->desklock_personal_passwd)))
-          {
-             /* password ok */
-             /* security - null out passwd string once we are done with it */
-             memset(edd->passwd, 0, sizeof(char) * PASSWD_LEN);
-             e_desklock_hide();
-             return 1;
-          }
-#ifdef HAVE_PAM
+   if ((e_config->desklock_personal_passwd) &&
+       (!strcmp(!edd->passwd ? "" : edd->passwd,
+                !e_config->desklock_personal_passwd ? "" :
+                e_config->desklock_personal_passwd)))
+     {
+        /* password ok */
+        /* security - null out passwd string once we are done with it */
+        memset(edd->passwd, 0, sizeof(char) * PASSWD_LEN);
+        e_desklock_hide();
+        return 1;
      }
-   
+#ifdef HAVE_PAM
+}
+
 #endif
    /* password is definitely wrong */
    _e_desklock_state_set(E_DESKLOCK_STATE_INVALID);
@@ -1356,7 +1357,7 @@ _e_desklock_job(void *data __UNUSED__)
    E_Desklock_Run *task;
 
    job = NULL;
-   if (!tasks) return ;
+   if (!tasks) return;
 
    task = eina_list_data_get(tasks);
    if (!_e_desklock_run(task))

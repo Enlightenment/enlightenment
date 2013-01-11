@@ -12,8 +12,8 @@ struct _E_Smart_Data
    unsigned char changed : 1;
    unsigned char horizontal : 1;
    unsigned char homogenous : 1;
-   E_Box_Item  *items;
-   unsigned int item_count;
+   E_Box_Item   *items;
+   unsigned int  item_count;
    struct
    {
       Evas_Coord w, h;
@@ -40,7 +40,7 @@ struct _E_Box_Item
    {
       double x, y;
    } align;
-   int x, y, w, h;
+   int           x, y, w, h;
    Evas_Object  *obj;
 };
 
@@ -232,7 +232,7 @@ e_box_pack_before(Evas_Object *obj, Evas_Object *child, Evas_Object *before)
    l = eina_inlist_prepend_relative(l, EINA_INLIST_GET(bi), EINA_INLIST_GET(bi2));
    sd->items = EINA_INLIST_CONTAINER_GET(l, E_Box_Item);
    sd->item_count++;
-   
+
    for (l = EINA_INLIST_GET(bi)->prev; l; l = l->prev)
      i++;
    sd->changed = 1;

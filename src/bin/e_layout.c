@@ -3,44 +3,44 @@
 /* FIXME: something is weird here - i had to reverse all stacking logic to make
  * it work... */
 
-typedef struct _E_Smart_Data E_Smart_Data;
+typedef struct _E_Smart_Data  E_Smart_Data;
 typedef struct _E_Layout_Item E_Layout_Item;
 
 struct _E_Smart_Data
 {
-   Evas_Coord       x, y, w, h;
-   Evas_Coord       vw, vh;
-   Evas_Object     *obj;
-   Evas_Object     *clip;
-   int              frozen;
-   unsigned char    changed : 1;
-   Eina_List       *items;
+   Evas_Coord    x, y, w, h;
+   Evas_Coord    vw, vh;
+   Evas_Object  *obj;
+   Evas_Object  *clip;
+   int           frozen;
+   unsigned char changed : 1;
+   Eina_List    *items;
 };
 
 struct _E_Layout_Item
 {
-   E_Smart_Data    *sd;
-   Evas_Coord       x, y, w, h;
-   Evas_Object     *obj;
+   E_Smart_Data *sd;
+   Evas_Coord    x, y, w, h;
+   Evas_Object  *obj;
 };
 
 /* local subsystem functions */
 static E_Layout_Item *_e_layout_smart_adopt(E_Smart_Data *sd, Evas_Object *obj);
-static void        _e_layout_smart_disown(Evas_Object *obj);
-static void        _e_layout_smart_item_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void        _e_layout_smart_reconfigure(E_Smart_Data *sd);
-static void        _e_layout_smart_move_resize_item(E_Layout_Item *li);
+static void           _e_layout_smart_disown(Evas_Object *obj);
+static void           _e_layout_smart_item_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void           _e_layout_smart_reconfigure(E_Smart_Data *sd);
+static void           _e_layout_smart_move_resize_item(E_Layout_Item *li);
 
-static void _e_layout_smart_init(void);
-static void _e_layout_smart_add(Evas_Object *obj);
-static void _e_layout_smart_del(Evas_Object *obj);
-static void _e_layout_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-static void _e_layout_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
-static void _e_layout_smart_show(Evas_Object *obj);
-static void _e_layout_smart_hide(Evas_Object *obj);
-static void _e_layout_smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
-static void _e_layout_smart_clip_set(Evas_Object *obj, Evas_Object *clip);
-static void _e_layout_smart_clip_unset(Evas_Object *obj);
+static void           _e_layout_smart_init(void);
+static void           _e_layout_smart_add(Evas_Object *obj);
+static void           _e_layout_smart_del(Evas_Object *obj);
+static void           _e_layout_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+static void           _e_layout_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+static void           _e_layout_smart_show(Evas_Object *obj);
+static void           _e_layout_smart_hide(Evas_Object *obj);
+static void           _e_layout_smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
+static void           _e_layout_smart_clip_set(Evas_Object *obj, Evas_Object *clip);
+static void           _e_layout_smart_clip_unset(Evas_Object *obj);
 
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
@@ -179,9 +179,9 @@ e_layout_child_lower(Evas_Object *obj)
    if (!eina_list_data_find(li->sd->items, obj)) return;
    if ((li->sd->items) && eina_list_next(li->sd->items))
      {
-	li->sd->items = eina_list_remove(li->sd->items, obj);
-	evas_object_lower(obj);
-	li->sd->items = eina_list_prepend(li->sd->items, obj);
+        li->sd->items = eina_list_remove(li->sd->items, obj);
+        evas_object_lower(obj);
+        li->sd->items = eina_list_prepend(li->sd->items, obj);
      }
 }
 
@@ -195,9 +195,9 @@ e_layout_child_raise(Evas_Object *obj)
    if (!eina_list_data_find(li->sd->items, obj)) return;
    if ((li->sd->items) && eina_list_next(li->sd->items))
      {
-	li->sd->items = eina_list_remove(li->sd->items, obj);
-	evas_object_raise(obj);
-	li->sd->items = eina_list_append(li->sd->items, obj);
+        li->sd->items = eina_list_remove(li->sd->items, obj);
+        evas_object_raise(obj);
+        li->sd->items = eina_list_append(li->sd->items, obj);
      }
 }
 
@@ -212,9 +212,9 @@ e_layout_child_lower_below(Evas_Object *obj, Evas_Object *below)
    if (!eina_list_data_find(li->sd->items, obj)) return;
    if ((li->sd->items) && eina_list_next(li->sd->items))
      {
-	li->sd->items = eina_list_remove(li->sd->items, obj);
-	evas_object_stack_below(obj, below);
-	li->sd->items = eina_list_prepend_relative(li->sd->items, obj, below);
+        li->sd->items = eina_list_remove(li->sd->items, obj);
+        evas_object_stack_below(obj, below);
+        li->sd->items = eina_list_prepend_relative(li->sd->items, obj, below);
      }
 }
 
@@ -229,9 +229,9 @@ e_layout_child_raise_above(Evas_Object *obj, Evas_Object *above)
    if (!eina_list_data_find(li->sd->items, obj)) return;
    if ((li->sd->items) && eina_list_next(li->sd->items))
      {
-	li->sd->items = eina_list_remove(li->sd->items, obj);
-	evas_object_stack_above(obj, above);
-	li->sd->items = eina_list_append_relative(li->sd->items, obj, above);
+        li->sd->items = eina_list_remove(li->sd->items, obj);
+        evas_object_stack_above(obj, above);
+        li->sd->items = eina_list_append_relative(li->sd->items, obj, above);
      }
 }
 
@@ -283,7 +283,7 @@ _e_layout_smart_adopt(E_Smart_Data *sd, Evas_Object *obj)
    evas_object_smart_member_add(obj, li->sd->obj);
    evas_object_data_set(obj, "e_layout_data", li);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_FREE,
-				  _e_layout_smart_item_del_hook, NULL);
+                                  _e_layout_smart_item_del_hook, NULL);
    if ((!evas_object_visible_get(sd->clip)) &&
        (evas_object_visible_get(sd->obj)))
      evas_object_show(sd->clip);
@@ -299,12 +299,12 @@ _e_layout_smart_disown(Evas_Object *obj)
    if (!li) return;
    if (!li->sd->items)
      {
-	if (evas_object_visible_get(li->sd->clip))
-	  evas_object_hide(li->sd->clip);
+        if (evas_object_visible_get(li->sd->clip))
+          evas_object_hide(li->sd->clip);
      }
    evas_object_event_callback_del(obj,
-				  EVAS_CALLBACK_FREE,
-				  _e_layout_smart_item_del_hook);
+                                  EVAS_CALLBACK_FREE,
+                                  _e_layout_smart_item_del_hook);
    evas_object_smart_member_del(obj);
    evas_object_data_del(obj, "e_layout_data");
    free(li);
@@ -326,9 +326,9 @@ _e_layout_smart_reconfigure(E_Smart_Data *sd)
 
    EINA_LIST_FOREACH(sd->items, l, obj)
      {
-	E_Layout_Item *li;
-	li = evas_object_data_get(obj, "e_layout_data");
-	_e_layout_smart_move_resize_item(li);
+        E_Layout_Item *li;
+        li = evas_object_data_get(obj, "e_layout_data");
+        _e_layout_smart_move_resize_item(li);
      }
    sd->changed = 0;
 }
@@ -337,41 +337,41 @@ static void
 _e_layout_smart_move_resize_item(E_Layout_Item *li)
 {
    evas_object_move(li->obj,
-		    li->sd->x + ((li->x * li->sd->w) / li->sd->vw),
-		    li->sd->y + ((li->y * li->sd->h) / li->sd->vh));
+                    li->sd->x + ((li->x * li->sd->w) / li->sd->vw),
+                    li->sd->y + ((li->y * li->sd->h) / li->sd->vh));
    evas_object_resize(li->obj,
-		      (li->w * li->sd->w) / li->sd->vw,
-		      (li->h * li->sd->h) / li->sd->vh);
+                      (li->w * li->sd->w) / li->sd->vw,
+                      (li->h * li->sd->h) / li->sd->vh);
 }
 
 static void
 _e_layout_smart_init(void)
 {
    if (_e_smart) return;
-     {
-	static const Evas_Smart_Class sc =
-	  {
-	     "e_layout",
-	       EVAS_SMART_CLASS_VERSION,
-	       _e_layout_smart_add,
-	       _e_layout_smart_del,
-	       _e_layout_smart_move,
-	       _e_layout_smart_resize,
-	       _e_layout_smart_show,
-	       _e_layout_smart_hide,
-	       _e_layout_smart_color_set,
-	       _e_layout_smart_clip_set,
-	       _e_layout_smart_clip_unset,
-	       NULL,
-	       NULL,
-	       NULL,
-	       NULL,
-	       NULL,
-	       NULL,
-	       NULL
-	  };
-	_e_smart = evas_smart_class_new(&sc);
-     }
+   {
+      static const Evas_Smart_Class sc =
+      {
+         "e_layout",
+         EVAS_SMART_CLASS_VERSION,
+         _e_layout_smart_add,
+         _e_layout_smart_del,
+         _e_layout_smart_move,
+         _e_layout_smart_resize,
+         _e_layout_smart_show,
+         _e_layout_smart_hide,
+         _e_layout_smart_color_set,
+         _e_layout_smart_clip_set,
+         _e_layout_smart_clip_unset,
+         NULL,
+         NULL,
+         NULL,
+         NULL,
+         NULL,
+         NULL,
+         NULL
+      };
+      _e_smart = evas_smart_class_new(&sc);
+   }
 }
 
 static void
@@ -405,10 +405,10 @@ _e_layout_smart_del(Evas_Object *obj)
    if (!sd) return;
    while (sd->items)
      {
-	Evas_Object *child;
+        Evas_Object *child;
 
-	child = eina_list_data_get(sd->items);
-	e_layout_unpack(child);
+        child = eina_list_data_get(sd->items);
+        e_layout_unpack(child);
      }
    evas_object_del(sd->clip);
    free(sd);
@@ -423,20 +423,20 @@ _e_layout_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if ((x == sd->x) && (y == sd->y)) return;
-     {
-	Eina_List *l;
-	Evas_Coord dx, dy;
+   {
+      Eina_List *l;
+      Evas_Coord dx, dy;
 
-	dx = x - sd->x;
-	dy = y - sd->y;
-	EINA_LIST_FOREACH(sd->items, l, item)
-	  {
-	     Evas_Coord ox, oy;
+      dx = x - sd->x;
+      dy = y - sd->y;
+      EINA_LIST_FOREACH(sd->items, l, item)
+        {
+           Evas_Coord ox, oy;
 
-	     evas_object_geometry_get(item, &ox, &oy, NULL, NULL);
-	     evas_object_move(item, ox + dx, oy + dy);
-	  }
-     }
+           evas_object_geometry_get(item, &ox, &oy, NULL, NULL);
+           evas_object_move(item, ox + dx, oy + dy);
+        }
+   }
    sd->x = x;
    sd->y = y;
 }
@@ -504,3 +504,4 @@ _e_layout_smart_clip_unset(Evas_Object *obj)
    if (!sd) return;
    evas_object_clip_unset(sd->clip);
 }
+

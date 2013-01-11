@@ -183,7 +183,7 @@ e_comp_wl_surface_set_input_region(struct wl_client *client __UNUSED__, struct w
    e_comp_wl_comp_repick(&input->seat, e_comp_wl_time_get());
 }
 
-void 
+void
 e_comp_wl_surface_commit(struct wl_client *client, struct wl_resource *resource)
 {
    Wayland_Surface *ws;
@@ -371,3 +371,4 @@ _e_comp_wl_surface_frame_destroy_callback(struct wl_resource *resource)
    wl_list_remove(&cb->link);
    free(cb);
 }
+

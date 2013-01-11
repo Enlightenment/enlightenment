@@ -101,10 +101,10 @@ e_configure_registry_item_params_add(const char *path, int pri, const char *labe
    _e_configure_registry_item_full_add(path, pri, label, icon_file, icon, func, NULL, NULL, params);
 }
 
-/**  
+/**
  * Delete an item  in the configuration panel.
- * 
- * @param path location the item to delete 
+ *
+ * @param path location the item to delete
  */
 EAPI void
 e_configure_registry_item_del(const char *path)
@@ -138,15 +138,15 @@ e_configure_registry_item_del(const char *path)
    free(cat);
 }
 
-/**  
+/**
  * Add a category to the configuration panel.
  *
- * @param path location the new category 
+ * @param path location the new category
  * @param pri the priority for sorting the category in the category list
  * @param label the name the user will see in configuration panel
  * @param icon_file the edje file that holds the icon for the category.
  * Can be null to use current theme.
- * @param icon the name of the edje group to use as icon 
+ * @param icon the name of the edje group to use as icon
  */
 static int
 _E_configure_category_pri_cb(E_Configure_Cat *ecat, E_Configure_Cat *ecat2)
@@ -180,10 +180,10 @@ e_configure_registry_category_add(const char *path, int pri, const char *label, 
                                                   ecat);
 }
 
-/**  
+/**
  * Delete a category in the configuration panel.
- * 
- * @param path location the category to delete 
+ *
+ * @param path location the category to delete
  */
 EAPI void
 e_configure_registry_category_del(const char *path)
@@ -209,10 +209,10 @@ e_configure_registry_category_del(const char *path)
    free(cat);
 }
 
-/**  
+/**
  * Add a item to the configuration panel.
  *
- * @param path location the location to place configuration item 
+ * @param path location the location to place configuration item
  * @param pri the priority for sorting the item in the category list
  * @param label the name the user will see in configuration panel
  * @param icon_file the edje file that holds the icon for the category.
@@ -313,7 +313,7 @@ _e_configure_efreet_desktop_cleanup(void)
         E_Configure_It *eci;
         Eina_List *ll, *ln;
 
-        EINA_LIST_FOREACH_SAFE (ecat->items, ll, ln, eci)
+        EINA_LIST_FOREACH_SAFE(ecat->items, ll, ln, eci)
           if (eci->desktop)
             {
                _e_configure_registry_item_free(eci);

@@ -137,7 +137,8 @@ e_fm_mime_icon_cache_flush(void)
 }
 
 /* create (allocate), set properties, and return a new mime handler */
-EAPI E_Fm2_Mime_Handler *e_fm2_mime_handler_new(const char *label, const char *icon_group, void (*action_func) (void *data, Evas_Object *obj, const char *path), void *action_data, int (test_func) (void *data, Evas_Object *obj, const char *path), void *test_data)
+EAPI E_Fm2_Mime_Handler *
+e_fm2_mime_handler_new(const char *label, const char *icon_group, void (*action_func)(void *data, Evas_Object *obj, const char *path), void *action_data, int(test_func) (void *data, Evas_Object * obj, const char *path), void *test_data)
 {
    E_Fm2_Mime_Handler *handler;
 

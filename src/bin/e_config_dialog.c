@@ -18,8 +18,8 @@ static Eina_List *_e_config_dialog_list = NULL;
 
 /* externally accessible functions */
 
-/**  
- * Creates a new dialog  
+/**
+ * Creates a new dialog
  *
  * @param con the container the dialog will be added too
  * @param title to display for the dialog

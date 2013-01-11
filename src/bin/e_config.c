@@ -856,7 +856,7 @@ e_config_init(void)
    E_CONFIG_VAL(D, T, desk_auto_switch, INT);
 
    E_CONFIG_VAL(D, T, screen_actions_fullscreen_windows_ignore, UCHAR);
-   E_CONFIG_VAL(D, T, screen_limits,  INT);
+   E_CONFIG_VAL(D, T, screen_limits, INT);
 
    E_CONFIG_VAL(D, T, thumb_nice, INT);
 
@@ -1086,189 +1086,189 @@ e_config_load(void)
              e_sys_action_do(E_SYS_RESTART, NULL);
           }
      }
-     if (!e_config->remember_internal_fm_windows)
-       e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
+   if (!e_config->remember_internal_fm_windows)
+     e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
 
-     e_config->config_version = E_CONFIG_FILE_VERSION;
+   e_config->config_version = E_CONFIG_FILE_VERSION;
 
-     /* limit values so they are sane */
-     E_CONFIG_LIMIT(e_config->menus_scroll_speed, 1.0, 20000.0);
-     E_CONFIG_LIMIT(e_config->show_splash, 0, 1);
-     E_CONFIG_LIMIT(e_config->menus_fast_mouse_move_threshhold, 1.0, 2000.0);
-     E_CONFIG_LIMIT(e_config->menus_click_drag_timeout, 0.0, 10.0);
-     E_CONFIG_LIMIT(e_config->border_shade_animate, 0, 1);
-     E_CONFIG_LIMIT(e_config->border_shade_transition, 0, 8);
-     E_CONFIG_LIMIT(e_config->border_shade_speed, 1.0, 20000.0);
-     E_CONFIG_LIMIT(e_config->framerate, 1.0, 200.0);
-     E_CONFIG_LIMIT(e_config->priority, 0, 19);
-     E_CONFIG_LIMIT(e_config->image_cache, 0, 256 * 1024);
-     E_CONFIG_LIMIT(e_config->font_cache, 0, 32 * 1024);
-     E_CONFIG_LIMIT(e_config->edje_cache, 0, 256);
-     E_CONFIG_LIMIT(e_config->edje_collection_cache, 0, 512);
-     E_CONFIG_LIMIT(e_config->cache_flush_poll_interval, 8, 32768);
-     E_CONFIG_LIMIT(e_config->zone_desks_x_count, 1, 64);
-     E_CONFIG_LIMIT(e_config->zone_desks_y_count, 1, 64);
-     E_CONFIG_LIMIT(e_config->show_desktop_icons, 0, 1);
-     E_CONFIG_LIMIT(e_config->edge_flip_dragging, 0, 1);
-     E_CONFIG_LIMIT(e_config->window_placement_policy, E_WINDOW_PLACEMENT_SMART, E_WINDOW_PLACEMENT_MANUAL);
-     E_CONFIG_LIMIT(e_config->window_grouping, 0, 1);
-     E_CONFIG_LIMIT(e_config->focus_policy, 0, 2);
-     E_CONFIG_LIMIT(e_config->focus_setting, 0, 3);
-     E_CONFIG_LIMIT(e_config->pass_click_on, 0, 1);
-     E_CONFIG_LIMIT(e_config->window_activehint_policy, 0, 2);
-     E_CONFIG_LIMIT(e_config->always_click_to_raise, 0, 1);
-     E_CONFIG_LIMIT(e_config->always_click_to_focus, 0, 1);
-     E_CONFIG_LIMIT(e_config->use_auto_raise, 0, 1);
-     E_CONFIG_LIMIT(e_config->auto_raise_delay, 0.0, 9.9);
-     E_CONFIG_LIMIT(e_config->use_resist, 0, 1);
-     E_CONFIG_LIMIT(e_config->drag_resist, 0, 100);
-     E_CONFIG_LIMIT(e_config->desk_resist, 0, 100);
-     E_CONFIG_LIMIT(e_config->window_resist, 0, 100);
-     E_CONFIG_LIMIT(e_config->gadget_resist, 0, 100);
-     E_CONFIG_LIMIT(e_config->geometry_auto_move, 0, 1);
-     E_CONFIG_LIMIT(e_config->geometry_auto_resize_limit, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_warp_while_selecting, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_warp_at_end, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_no_warp_on_direction, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_warp_speed, 0.0, 1.0);
-     E_CONFIG_LIMIT(e_config->winlist_scroll_animate, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_scroll_speed, 0.0, 1.0);
-     E_CONFIG_LIMIT(e_config->winlist_list_show_iconified, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_list_show_other_desk_iconified, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_list_show_other_screen_iconified, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_list_show_other_desk_windows, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_list_show_other_screen_windows, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_list_uncover_while_selecting, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_list_jump_desk_while_selecting, 0, 1);
-     E_CONFIG_LIMIT(e_config->winlist_pos_align_x, 0.0, 1.0);
-     E_CONFIG_LIMIT(e_config->winlist_pos_align_y, 0.0, 1.0);
-     E_CONFIG_LIMIT(e_config->winlist_pos_size_w, 0.0, 1.0);
-     E_CONFIG_LIMIT(e_config->winlist_pos_size_h, 0.0, 1.0);
-     E_CONFIG_LIMIT(e_config->winlist_pos_min_w, 0, 4000);
-     E_CONFIG_LIMIT(e_config->winlist_pos_min_h, 0, 4000);
-     E_CONFIG_LIMIT(e_config->winlist_pos_max_w, 8, 4000);
-     E_CONFIG_LIMIT(e_config->winlist_pos_max_h, 8, 4000);
-     E_CONFIG_LIMIT(e_config->maximize_policy, E_MAXIMIZE_FULLSCREEN, E_MAXIMIZE_DIRECTION);
-     E_CONFIG_LIMIT(e_config->allow_manip, 0, 1);
-     E_CONFIG_LIMIT(e_config->border_fix_on_shelf_toggle, 0, 1);
-     E_CONFIG_LIMIT(e_config->allow_above_fullscreen, 0, 1);
-     E_CONFIG_LIMIT(e_config->kill_if_close_not_possible, 0, 1);
-     E_CONFIG_LIMIT(e_config->kill_process, 0, 1);
-     E_CONFIG_LIMIT(e_config->kill_timer_wait, 0.0, 120.0);
-     E_CONFIG_LIMIT(e_config->ping_clients, 0, 1);
-     E_CONFIG_LIMIT(e_config->move_info_follows, 0, 1);
-     E_CONFIG_LIMIT(e_config->resize_info_follows, 0, 1);
-     E_CONFIG_LIMIT(e_config->move_info_visible, 0, 1);
-     E_CONFIG_LIMIT(e_config->resize_info_visible, 0, 1);
-     E_CONFIG_LIMIT(e_config->focus_last_focused_per_desktop, 0, 1);
-     E_CONFIG_LIMIT(e_config->focus_revert_on_hide_or_close, 0, 1);
-     E_CONFIG_LIMIT(e_config->pointer_slide, 0, 1);
-     E_CONFIG_LIMIT(e_config->show_cursor, 0, 1);
-     E_CONFIG_LIMIT(e_config->use_e_cursor, 0, 1);
-     E_CONFIG_LIMIT(e_config->cursor_size, 0, 1024);
-     E_CONFIG_LIMIT(e_config->menu_autoscroll_margin, 0, 50);
-     E_CONFIG_LIMIT(e_config->menu_autoscroll_cursor_margin, 0, 50);
-     E_CONFIG_LIMIT(e_config->menu_eap_name_show, 0, 1);
-     E_CONFIG_LIMIT(e_config->menu_eap_generic_show, 0, 1);
-     E_CONFIG_LIMIT(e_config->menu_eap_comment_show, 0, 1);
-     E_CONFIG_LIMIT(e_config->use_app_icon, 0, 1);
-     E_CONFIG_LIMIT(e_config->cnfmdlg_disabled, 0, 1);
-     E_CONFIG_LIMIT(e_config->cfgdlg_auto_apply, 0, 1);
-     E_CONFIG_LIMIT(e_config->cfgdlg_default_mode, 0, 1);
-     E_CONFIG_LIMIT(e_config->font_hinting, 0, 2);
-     E_CONFIG_LIMIT(e_config->desklock_login_box_zone, -2, 1000);
-     E_CONFIG_LIMIT(e_config->desklock_autolock_screensaver, 0, 1);
-     E_CONFIG_LIMIT(e_config->desklock_post_screensaver_time, 0.0, 300.0);
-     E_CONFIG_LIMIT(e_config->desklock_autolock_idle, 0, 1);
-     E_CONFIG_LIMIT(e_config->desklock_autolock_idle_timeout, 1.0, 5400.0);
-     E_CONFIG_LIMIT(e_config->desklock_use_custom_desklock, 0, 1);
-     E_CONFIG_LIMIT(e_config->desklock_ask_presentation, 0, 1);
-     E_CONFIG_LIMIT(e_config->desklock_ask_presentation_timeout, 1.0, 300.0);
-     E_CONFIG_LIMIT(e_config->border_raise_on_mouse_action, 0, 1);
-     E_CONFIG_LIMIT(e_config->border_raise_on_focus, 0, 1);
-     E_CONFIG_LIMIT(e_config->desk_flip_wrap, 0, 1);
-     E_CONFIG_LIMIT(e_config->fullscreen_flip, 0, 1);
-     E_CONFIG_LIMIT(e_config->icon_theme_overrides, 0, 1);
-     E_CONFIG_LIMIT(e_config->remember_internal_windows, 0, 3);
-     E_CONFIG_LIMIT(e_config->remember_internal_fm_windows, 0, 1);
-     E_CONFIG_LIMIT(e_config->desk_auto_switch, 0, 1);
+   /* limit values so they are sane */
+   E_CONFIG_LIMIT(e_config->menus_scroll_speed, 1.0, 20000.0);
+   E_CONFIG_LIMIT(e_config->show_splash, 0, 1);
+   E_CONFIG_LIMIT(e_config->menus_fast_mouse_move_threshhold, 1.0, 2000.0);
+   E_CONFIG_LIMIT(e_config->menus_click_drag_timeout, 0.0, 10.0);
+   E_CONFIG_LIMIT(e_config->border_shade_animate, 0, 1);
+   E_CONFIG_LIMIT(e_config->border_shade_transition, 0, 8);
+   E_CONFIG_LIMIT(e_config->border_shade_speed, 1.0, 20000.0);
+   E_CONFIG_LIMIT(e_config->framerate, 1.0, 200.0);
+   E_CONFIG_LIMIT(e_config->priority, 0, 19);
+   E_CONFIG_LIMIT(e_config->image_cache, 0, 256 * 1024);
+   E_CONFIG_LIMIT(e_config->font_cache, 0, 32 * 1024);
+   E_CONFIG_LIMIT(e_config->edje_cache, 0, 256);
+   E_CONFIG_LIMIT(e_config->edje_collection_cache, 0, 512);
+   E_CONFIG_LIMIT(e_config->cache_flush_poll_interval, 8, 32768);
+   E_CONFIG_LIMIT(e_config->zone_desks_x_count, 1, 64);
+   E_CONFIG_LIMIT(e_config->zone_desks_y_count, 1, 64);
+   E_CONFIG_LIMIT(e_config->show_desktop_icons, 0, 1);
+   E_CONFIG_LIMIT(e_config->edge_flip_dragging, 0, 1);
+   E_CONFIG_LIMIT(e_config->window_placement_policy, E_WINDOW_PLACEMENT_SMART, E_WINDOW_PLACEMENT_MANUAL);
+   E_CONFIG_LIMIT(e_config->window_grouping, 0, 1);
+   E_CONFIG_LIMIT(e_config->focus_policy, 0, 2);
+   E_CONFIG_LIMIT(e_config->focus_setting, 0, 3);
+   E_CONFIG_LIMIT(e_config->pass_click_on, 0, 1);
+   E_CONFIG_LIMIT(e_config->window_activehint_policy, 0, 2);
+   E_CONFIG_LIMIT(e_config->always_click_to_raise, 0, 1);
+   E_CONFIG_LIMIT(e_config->always_click_to_focus, 0, 1);
+   E_CONFIG_LIMIT(e_config->use_auto_raise, 0, 1);
+   E_CONFIG_LIMIT(e_config->auto_raise_delay, 0.0, 9.9);
+   E_CONFIG_LIMIT(e_config->use_resist, 0, 1);
+   E_CONFIG_LIMIT(e_config->drag_resist, 0, 100);
+   E_CONFIG_LIMIT(e_config->desk_resist, 0, 100);
+   E_CONFIG_LIMIT(e_config->window_resist, 0, 100);
+   E_CONFIG_LIMIT(e_config->gadget_resist, 0, 100);
+   E_CONFIG_LIMIT(e_config->geometry_auto_move, 0, 1);
+   E_CONFIG_LIMIT(e_config->geometry_auto_resize_limit, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_warp_while_selecting, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_warp_at_end, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_no_warp_on_direction, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_warp_speed, 0.0, 1.0);
+   E_CONFIG_LIMIT(e_config->winlist_scroll_animate, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_scroll_speed, 0.0, 1.0);
+   E_CONFIG_LIMIT(e_config->winlist_list_show_iconified, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_list_show_other_desk_iconified, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_list_show_other_screen_iconified, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_list_show_other_desk_windows, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_list_show_other_screen_windows, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_list_uncover_while_selecting, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_list_jump_desk_while_selecting, 0, 1);
+   E_CONFIG_LIMIT(e_config->winlist_pos_align_x, 0.0, 1.0);
+   E_CONFIG_LIMIT(e_config->winlist_pos_align_y, 0.0, 1.0);
+   E_CONFIG_LIMIT(e_config->winlist_pos_size_w, 0.0, 1.0);
+   E_CONFIG_LIMIT(e_config->winlist_pos_size_h, 0.0, 1.0);
+   E_CONFIG_LIMIT(e_config->winlist_pos_min_w, 0, 4000);
+   E_CONFIG_LIMIT(e_config->winlist_pos_min_h, 0, 4000);
+   E_CONFIG_LIMIT(e_config->winlist_pos_max_w, 8, 4000);
+   E_CONFIG_LIMIT(e_config->winlist_pos_max_h, 8, 4000);
+   E_CONFIG_LIMIT(e_config->maximize_policy, E_MAXIMIZE_FULLSCREEN, E_MAXIMIZE_DIRECTION);
+   E_CONFIG_LIMIT(e_config->allow_manip, 0, 1);
+   E_CONFIG_LIMIT(e_config->border_fix_on_shelf_toggle, 0, 1);
+   E_CONFIG_LIMIT(e_config->allow_above_fullscreen, 0, 1);
+   E_CONFIG_LIMIT(e_config->kill_if_close_not_possible, 0, 1);
+   E_CONFIG_LIMIT(e_config->kill_process, 0, 1);
+   E_CONFIG_LIMIT(e_config->kill_timer_wait, 0.0, 120.0);
+   E_CONFIG_LIMIT(e_config->ping_clients, 0, 1);
+   E_CONFIG_LIMIT(e_config->move_info_follows, 0, 1);
+   E_CONFIG_LIMIT(e_config->resize_info_follows, 0, 1);
+   E_CONFIG_LIMIT(e_config->move_info_visible, 0, 1);
+   E_CONFIG_LIMIT(e_config->resize_info_visible, 0, 1);
+   E_CONFIG_LIMIT(e_config->focus_last_focused_per_desktop, 0, 1);
+   E_CONFIG_LIMIT(e_config->focus_revert_on_hide_or_close, 0, 1);
+   E_CONFIG_LIMIT(e_config->pointer_slide, 0, 1);
+   E_CONFIG_LIMIT(e_config->show_cursor, 0, 1);
+   E_CONFIG_LIMIT(e_config->use_e_cursor, 0, 1);
+   E_CONFIG_LIMIT(e_config->cursor_size, 0, 1024);
+   E_CONFIG_LIMIT(e_config->menu_autoscroll_margin, 0, 50);
+   E_CONFIG_LIMIT(e_config->menu_autoscroll_cursor_margin, 0, 50);
+   E_CONFIG_LIMIT(e_config->menu_eap_name_show, 0, 1);
+   E_CONFIG_LIMIT(e_config->menu_eap_generic_show, 0, 1);
+   E_CONFIG_LIMIT(e_config->menu_eap_comment_show, 0, 1);
+   E_CONFIG_LIMIT(e_config->use_app_icon, 0, 1);
+   E_CONFIG_LIMIT(e_config->cnfmdlg_disabled, 0, 1);
+   E_CONFIG_LIMIT(e_config->cfgdlg_auto_apply, 0, 1);
+   E_CONFIG_LIMIT(e_config->cfgdlg_default_mode, 0, 1);
+   E_CONFIG_LIMIT(e_config->font_hinting, 0, 2);
+   E_CONFIG_LIMIT(e_config->desklock_login_box_zone, -2, 1000);
+   E_CONFIG_LIMIT(e_config->desklock_autolock_screensaver, 0, 1);
+   E_CONFIG_LIMIT(e_config->desklock_post_screensaver_time, 0.0, 300.0);
+   E_CONFIG_LIMIT(e_config->desklock_autolock_idle, 0, 1);
+   E_CONFIG_LIMIT(e_config->desklock_autolock_idle_timeout, 1.0, 5400.0);
+   E_CONFIG_LIMIT(e_config->desklock_use_custom_desklock, 0, 1);
+   E_CONFIG_LIMIT(e_config->desklock_ask_presentation, 0, 1);
+   E_CONFIG_LIMIT(e_config->desklock_ask_presentation_timeout, 1.0, 300.0);
+   E_CONFIG_LIMIT(e_config->border_raise_on_mouse_action, 0, 1);
+   E_CONFIG_LIMIT(e_config->border_raise_on_focus, 0, 1);
+   E_CONFIG_LIMIT(e_config->desk_flip_wrap, 0, 1);
+   E_CONFIG_LIMIT(e_config->fullscreen_flip, 0, 1);
+   E_CONFIG_LIMIT(e_config->icon_theme_overrides, 0, 1);
+   E_CONFIG_LIMIT(e_config->remember_internal_windows, 0, 3);
+   E_CONFIG_LIMIT(e_config->remember_internal_fm_windows, 0, 1);
+   E_CONFIG_LIMIT(e_config->desk_auto_switch, 0, 1);
 
-     E_CONFIG_LIMIT(e_config->screen_actions_fullscreen_windows_ignore, 0, 1);
-     E_CONFIG_LIMIT(e_config->screen_limits, 0, 2);
+   E_CONFIG_LIMIT(e_config->screen_actions_fullscreen_windows_ignore, 0, 1);
+   E_CONFIG_LIMIT(e_config->screen_limits, 0, 2);
 
-     E_CONFIG_LIMIT(e_config->dpms_enable, 0, 1);
-     E_CONFIG_LIMIT(e_config->dpms_standby_enable, 0, 1);
-     E_CONFIG_LIMIT(e_config->dpms_suspend_enable, 0, 1);
-     E_CONFIG_LIMIT(e_config->dpms_off_enable, 0, 1);
-     E_CONFIG_LIMIT(e_config->dpms_standby_timeout, 30, 5400);
-     E_CONFIG_LIMIT(e_config->dpms_suspend_timeout, 30, 5400);
-     E_CONFIG_LIMIT(e_config->dpms_off_timeout, 30, 5400);
+   E_CONFIG_LIMIT(e_config->dpms_enable, 0, 1);
+   E_CONFIG_LIMIT(e_config->dpms_standby_enable, 0, 1);
+   E_CONFIG_LIMIT(e_config->dpms_suspend_enable, 0, 1);
+   E_CONFIG_LIMIT(e_config->dpms_off_enable, 0, 1);
+   E_CONFIG_LIMIT(e_config->dpms_standby_timeout, 30, 5400);
+   E_CONFIG_LIMIT(e_config->dpms_suspend_timeout, 30, 5400);
+   E_CONFIG_LIMIT(e_config->dpms_off_timeout, 30, 5400);
 
-     E_CONFIG_LIMIT(e_config->backlight.timer, 1, 3600);
+   E_CONFIG_LIMIT(e_config->backlight.timer, 1, 3600);
 
-     E_CONFIG_LIMIT(e_config->screensaver_timeout, 30, 5400);
-     E_CONFIG_LIMIT(e_config->screensaver_interval, 0, 5400);
-     E_CONFIG_LIMIT(e_config->screensaver_blanking, 0, 2);
-     E_CONFIG_LIMIT(e_config->screensaver_expose, 0, 2);
-     E_CONFIG_LIMIT(e_config->screensaver_ask_presentation, 0, 1);
-     E_CONFIG_LIMIT(e_config->screensaver_ask_presentation_timeout, 1.0, 300.0);
+   E_CONFIG_LIMIT(e_config->screensaver_timeout, 30, 5400);
+   E_CONFIG_LIMIT(e_config->screensaver_interval, 0, 5400);
+   E_CONFIG_LIMIT(e_config->screensaver_blanking, 0, 2);
+   E_CONFIG_LIMIT(e_config->screensaver_expose, 0, 2);
+   E_CONFIG_LIMIT(e_config->screensaver_ask_presentation, 0, 1);
+   E_CONFIG_LIMIT(e_config->screensaver_ask_presentation_timeout, 1.0, 300.0);
 
-     E_CONFIG_LIMIT(e_config->clientlist_group_by, 0, 2);
-     E_CONFIG_LIMIT(e_config->clientlist_include_all_zones, 0, 1);
-     E_CONFIG_LIMIT(e_config->clientlist_separate_with, 0, 2);
-     E_CONFIG_LIMIT(e_config->clientlist_sort_by, 0, 3);
-     E_CONFIG_LIMIT(e_config->clientlist_separate_iconified_apps, 0, 2);
-     E_CONFIG_LIMIT(e_config->clientlist_warp_to_iconified_desktop, 0, 1);
-     E_CONFIG_LIMIT(e_config->mouse_hand, 0, 1);
-     E_CONFIG_LIMIT(e_config->clientlist_limit_caption_len, 0, 1);
-     E_CONFIG_LIMIT(e_config->clientlist_max_caption_len, 2, E_CLIENTLIST_MAX_CAPTION_LEN);
+   E_CONFIG_LIMIT(e_config->clientlist_group_by, 0, 2);
+   E_CONFIG_LIMIT(e_config->clientlist_include_all_zones, 0, 1);
+   E_CONFIG_LIMIT(e_config->clientlist_separate_with, 0, 2);
+   E_CONFIG_LIMIT(e_config->clientlist_sort_by, 0, 3);
+   E_CONFIG_LIMIT(e_config->clientlist_separate_iconified_apps, 0, 2);
+   E_CONFIG_LIMIT(e_config->clientlist_warp_to_iconified_desktop, 0, 1);
+   E_CONFIG_LIMIT(e_config->mouse_hand, 0, 1);
+   E_CONFIG_LIMIT(e_config->clientlist_limit_caption_len, 0, 1);
+   E_CONFIG_LIMIT(e_config->clientlist_max_caption_len, 2, E_CLIENTLIST_MAX_CAPTION_LEN);
 
-     E_CONFIG_LIMIT(e_config->mouse_accel_numerator, 1, 10);
-     E_CONFIG_LIMIT(e_config->mouse_accel_denominator, 1, 10);
-     E_CONFIG_LIMIT(e_config->mouse_accel_threshold, 1, 10);
+   E_CONFIG_LIMIT(e_config->mouse_accel_numerator, 1, 10);
+   E_CONFIG_LIMIT(e_config->mouse_accel_denominator, 1, 10);
+   E_CONFIG_LIMIT(e_config->mouse_accel_threshold, 1, 10);
 
-     E_CONFIG_LIMIT(e_config->menu_favorites_show, 0, 1);
-     E_CONFIG_LIMIT(e_config->menu_apps_show, 0, 1);
-     E_CONFIG_LIMIT(e_config->menu_gadcon_client_toplevel, 0, 1);
+   E_CONFIG_LIMIT(e_config->menu_favorites_show, 0, 1);
+   E_CONFIG_LIMIT(e_config->menu_apps_show, 0, 1);
+   E_CONFIG_LIMIT(e_config->menu_gadcon_client_toplevel, 0, 1);
 
-     E_CONFIG_LIMIT(e_config->ping_clients_interval, 16, 1024);
+   E_CONFIG_LIMIT(e_config->ping_clients_interval, 16, 1024);
 
-     E_CONFIG_LIMIT(e_config->mode.presentation, 0, 1);
-     E_CONFIG_LIMIT(e_config->mode.offline, 0, 1);
+   E_CONFIG_LIMIT(e_config->mode.presentation, 0, 1);
+   E_CONFIG_LIMIT(e_config->mode.offline, 0, 1);
 
-     E_CONFIG_LIMIT(e_config->exec.expire_timeout, 0.1, 1000);
-     E_CONFIG_LIMIT(e_config->exec.show_run_dialog, 0, 1);
-     E_CONFIG_LIMIT(e_config->exec.show_exit_dialog, 0, 1);
+   E_CONFIG_LIMIT(e_config->exec.expire_timeout, 0.1, 1000);
+   E_CONFIG_LIMIT(e_config->exec.show_run_dialog, 0, 1);
+   E_CONFIG_LIMIT(e_config->exec.show_exit_dialog, 0, 1);
 
-     E_CONFIG_LIMIT(e_config->null_container_win, 0, 1);
+   E_CONFIG_LIMIT(e_config->null_container_win, 0, 1);
 
-     E_CONFIG_LIMIT(e_config->powersave.none, 0.01, 5400.00);
-     E_CONFIG_LIMIT(e_config->powersave.low, 0.01, 5400.00);
-     E_CONFIG_LIMIT(e_config->powersave.medium, 0.01, 5400.00);
-     E_CONFIG_LIMIT(e_config->powersave.high, 0.01, 5400.00);
-     E_CONFIG_LIMIT(e_config->powersave.extreme, 0.01, 5400.00);
-     E_CONFIG_LIMIT(e_config->powersave.min, E_POWERSAVE_MODE_NONE, E_POWERSAVE_MODE_EXTREME);
-     E_CONFIG_LIMIT(e_config->powersave.max, E_POWERSAVE_MODE_NONE, E_POWERSAVE_MODE_EXTREME);
+   E_CONFIG_LIMIT(e_config->powersave.none, 0.01, 5400.00);
+   E_CONFIG_LIMIT(e_config->powersave.low, 0.01, 5400.00);
+   E_CONFIG_LIMIT(e_config->powersave.medium, 0.01, 5400.00);
+   E_CONFIG_LIMIT(e_config->powersave.high, 0.01, 5400.00);
+   E_CONFIG_LIMIT(e_config->powersave.extreme, 0.01, 5400.00);
+   E_CONFIG_LIMIT(e_config->powersave.min, E_POWERSAVE_MODE_NONE, E_POWERSAVE_MODE_EXTREME);
+   E_CONFIG_LIMIT(e_config->powersave.max, E_POWERSAVE_MODE_NONE, E_POWERSAVE_MODE_EXTREME);
 
-     E_CONFIG_LIMIT(e_config->border_keyboard.move.dx, 1, 255);
-     E_CONFIG_LIMIT(e_config->border_keyboard.move.dy, 1, 255);
-     E_CONFIG_LIMIT(e_config->border_keyboard.resize.dx, 1, 255);
-     E_CONFIG_LIMIT(e_config->border_keyboard.resize.dy, 1, 255);
+   E_CONFIG_LIMIT(e_config->border_keyboard.move.dx, 1, 255);
+   E_CONFIG_LIMIT(e_config->border_keyboard.move.dy, 1, 255);
+   E_CONFIG_LIMIT(e_config->border_keyboard.resize.dx, 1, 255);
+   E_CONFIG_LIMIT(e_config->border_keyboard.resize.dy, 1, 255);
 
-     E_CONFIG_LIMIT(e_config->multiscreen_flip, 0, 1);
+   E_CONFIG_LIMIT(e_config->multiscreen_flip, 0, 1);
 
-     if (!e_config->icon_theme)
-       e_config->icon_theme = eina_stringshare_add("hicolor"); // FDO default
+   if (!e_config->icon_theme)
+     e_config->icon_theme = eina_stringshare_add("hicolor");  // FDO default
 
-     /* FIXME: disabled auto apply because it causes problems */
-     e_config->cfgdlg_auto_apply = 0;
-     /* FIXME: desklock personalized password id disabled for security reasons */
-     e_config->desklock_auth_method = 0;
-     if (e_config->desklock_personal_passwd)
-       eina_stringshare_del(e_config->desklock_personal_passwd);
-     e_config->desklock_personal_passwd = NULL;
+   /* FIXME: disabled auto apply because it causes problems */
+   e_config->cfgdlg_auto_apply = 0;
+   /* FIXME: desklock personalized password id disabled for security reasons */
+   e_config->desklock_auth_method = 0;
+   if (e_config->desklock_personal_passwd)
+     eina_stringshare_del(e_config->desklock_personal_passwd);
+   e_config->desklock_personal_passwd = NULL;
 
-     ecore_event_add(E_EVENT_CONFIG_LOADED, NULL, NULL, NULL);
+   ecore_event_add(E_EVENT_CONFIG_LOADED, NULL, NULL, NULL);
 }
 
 EAPI int
@@ -2175,3 +2175,4 @@ _e_config_eet_close_handle(Eet_File *ef, char *file)
      }
    return 1;
 }
+

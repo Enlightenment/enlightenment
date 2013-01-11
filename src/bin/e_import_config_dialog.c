@@ -10,7 +10,6 @@
 static void      _import_edj_gen(E_Import_Config_Dialog *import);
 static Eina_Bool _import_cb_edje_cc_exit(void *data, int type, void *event);
 
-
 static void
 _import_edj_gen(E_Import_Config_Dialog *import)
 {
@@ -301,7 +300,7 @@ _import_cb_edje_cc_exit(void *data, __UNUSED__ int type, void *event)
    if (r && import->ok)
      {
         e_object_ref(E_OBJECT(import));
-        import->ok((void*)import->fdest, import);
+        import->ok((void *)import->fdest, import);
         e_object_del(E_OBJECT(import));
         e_object_unref(E_OBJECT(import));
      }
@@ -369,7 +368,7 @@ _import_cb_ok(void *data, E_Dialog *dia __UNUSED__)
    if (r)
      {
         e_object_ref(E_OBJECT(import));
-        if (import->ok) import->ok((void*)buf, import);
+        if (import->ok) import->ok((void *)buf, import);
         e_object_del(E_OBJECT(import));
         e_object_unref(E_OBJECT(import));
      }
@@ -378,16 +377,16 @@ _import_cb_ok(void *data, E_Dialog *dia __UNUSED__)
 }
 
 static void
-_e_import_config_preview_size_get(int size, int w, int h,int *tw, int *th)
+_e_import_config_preview_size_get(int size, int w, int h, int *tw, int *th)
 {
    if (size <= 0) return;
    double aspect;
-   aspect = (double)w/h;
-   
-   if(w > size)
+   aspect = (double)w / h;
+
+   if (w > size)
      {
         w = size;
-        h = (w/aspect);
+        h = (w / aspect);
      }
    *tw = w;
    *th = h;
@@ -430,8 +429,8 @@ _e_import_config_dialog_win_del(E_Win *win)
    e_object_del(E_OBJECT(import));
    e_object_unref(E_OBJECT(import));
 }
-///////////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////////
 
 EAPI E_Import_Config_Dialog *
 e_import_config_dialog_show(E_Container *con, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
@@ -451,7 +450,7 @@ e_import_config_dialog_show(E_Container *con, const char *path, Ecore_End_Cb ok,
    dia = e_dialog_new(con, "E", "_import_config_dialog");
    if (!dia) return NULL;
    e_dialog_resizable_set(dia, 1);
-   
+
    e_dialog_title_set(dia, _("Import Settings..."));
    dia->data = import;
    import->dia = dia;
@@ -471,14 +470,14 @@ e_import_config_dialog_show(E_Container *con, const char *path, Ecore_End_Cb ok,
 
    ot = e_widget_list_add(evas, 0, 0);
    frame = e_widget_frametable_add(evas, _("Preview"), 1);
-   
+
    preview = evas_object_image_add(evas);
    evas_object_image_file_set(preview, path, NULL);
-   evas_object_image_size_get(preview,&w, &h);
+   evas_object_image_size_get(preview, &w, &h);
    evas_object_del(preview);
 
    _e_import_config_preview_size_get(320, w, h, &tw, &th);
-   
+
    preview = e_widget_preview_add(evas, tw, th);
    e_widget_preview_thumb_set(preview, path, NULL, tw, th);
 
@@ -498,7 +497,7 @@ e_import_config_dialog_show(E_Container *con, const char *path, Ecore_End_Cb ok,
                                  "enlightenment/wallpaper_tile",
                                  24, 24, IMPORT_TILE, rg);
    e_widget_frametable_object_append(of, ord, 2, 0, 1, 1, 1, 0, 1, 0);
-   
+
    ord = e_widget_radio_icon_add(evas, _("Within"),
                                  "enlightenment/wallpaper_scale_aspect_in",
                                  24, 24, IMPORT_SCALE_ASPECT_IN, rg);
@@ -542,3 +541,4 @@ e_import_config_dialog_show(E_Container *con, const char *path, Ecore_End_Cb ok,
 
    return import;
 }
+

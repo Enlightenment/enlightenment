@@ -4,7 +4,7 @@ typedef struct _E_Widget_Data E_Widget_Data;
 struct _E_Widget_Data
 {
    Evas_Object *o_widget, *o_tb, *o_bar;
-   Eina_List *content;
+   Eina_List   *content;
 };
 
 static void _e_wid_del_hook(Evas_Object *obj);
@@ -94,3 +94,4 @@ _item_sel(void *data1, void *data2)
         else evas_object_hide(o);
      }
 }
+

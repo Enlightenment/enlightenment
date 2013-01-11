@@ -1,25 +1,25 @@
 #include "e.h"
 
-typedef struct _E_Static_Grab E_Static_Grab;
+typedef struct _E_Static_Grab        E_Static_Grab;
 typedef struct _E_Static_Grab_Module E_Static_Grab_Module;
 
 struct _E_Static_Grab
 {
    struct
    {
-      int core_count;
-      int thread_count;
-      int bogo;
-      int model;
-      int family;
-      int stepping;
-      int cache_size;
-      int addr_space;
+      int         core_count;
+      int         thread_count;
+      int         bogo;
+      int         model;
+      int         family;
+      int         stepping;
+      int         cache_size;
+      int         addr_space;
 
       const char *vendor;
       const char *model_name;
 
-      Eina_Bool fpu;
+      Eina_Bool   fpu;
    } cpu;
 
    struct
@@ -30,7 +30,8 @@ struct _E_Static_Grab
       const char *kernel_release;
    } distribution;
 
-   struct {
+   struct
+   {
       struct
       {
          const char *vendor;
@@ -42,7 +43,7 @@ struct _E_Static_Grab
       const char *release_date;
       const char *build_date;
 
-      Eina_List *modules;
+      Eina_List  *modules;
    } x;
 };
 
@@ -58,30 +59,30 @@ struct _E_Static_Grab_Module
 };
 
 /* For /proc/cpuinfo */
-#define CPU_CORES  "cpu cores"
-#define CACHE_SIZE "cache size"
-#define CPU_FAMILY "cpu family"
-#define STEPPING "stepping"
-#define SIBLINGS "siblings"
-#define BOGOMIPS "bogomips"
-#define MODEL "model"
-#define MODEL_NAME "model name"
-#define VENDOR_ID "vendor_id"
-#define FPU "fpu"
+#define CPU_CORES     "cpu cores"
+#define CACHE_SIZE    "cache size"
+#define CPU_FAMILY    "cpu family"
+#define STEPPING      "stepping"
+#define SIBLINGS      "siblings"
+#define BOGOMIPS      "bogomips"
+#define MODEL         "model"
+#define MODEL_NAME    "model name"
+#define VENDOR_ID     "vendor_id"
+#define FPU           "fpu"
 
 /* For /var/log/Xorg.0.log */
-#define RELEASE_DATE "Release Date"
-#define BUILD_DATE "Build Date"
-#define LOAD_MODULE "(II) LoadModule"
+#define RELEASE_DATE  "Release Date"
+#define BUILD_DATE    "Build Date"
+#define LOAD_MODULE   "(II) LoadModule"
 #define UNLOAD_MODULE "(II) UnloadModule"
-#define MODULE_OF "(II) Module %s"
-#define LOADING "(II) Loading"
-#define VENDOR "vendor=\""
-#define COMPILED "compiled for "
-#define MODULE_CLASS "Module class"
-#define ABI_CLASS "ABI class"
+#define MODULE_OF     "(II) Module %s"
+#define LOADING       "(II) Loading"
+#define VENDOR        "vendor=\""
+#define COMPILED      "compiled for "
+#define MODULE_CLASS  "Module class"
+#define ABI_CLASS     "ABI class"
 #undef VERSION
-#define VERSION ", version "
+#define VERSION       ", version "
 
 static const char *
 _e_static_grab_name(const char *line, const char *end, const char *name)
@@ -180,10 +181,10 @@ _e_static_grab_cpu(E_Static_Grab *grab)
    const char *fpu = NULL;
    int siblings = 0;
 
-   grab->cpu.addr_space = sizeof (void*);
+   grab->cpu.addr_space = sizeof (void *);
 
    f = fopen("/proc/cpuinfo", "r");
-   if (!f) return ;
+   if (!f) return;
 
    while (!feof(f))
      {
@@ -194,32 +195,37 @@ _e_static_grab_cpu(E_Static_Grab *grab)
         length = strlen(buf);
         end = buf + length;
 
-        if (length < 3) continue ;
+        if (length < 3) continue;
 
         switch (*buf)
           {
            case 'c':
-              if (_e_static_grab_int(buf, end, CPU_CORES, &grab->cpu.core_count)) break;
-              if (_e_static_grab_int(buf, end, CACHE_SIZE, &grab->cpu.cache_size)) break;
-              _e_static_grab_int(buf, end, CPU_FAMILY, &grab->cpu.family);
-              break;
+             if (_e_static_grab_int(buf, end, CPU_CORES, &grab->cpu.core_count)) break;
+             if (_e_static_grab_int(buf, end, CACHE_SIZE, &grab->cpu.cache_size)) break;
+             _e_static_grab_int(buf, end, CPU_FAMILY, &grab->cpu.family);
+             break;
+
            case 's':
-              if (_e_static_grab_int(buf, end, STEPPING, &grab->cpu.stepping)) break;
-              _e_static_grab_int(buf, end, SIBLINGS, &siblings);
-              break;
+             if (_e_static_grab_int(buf, end, STEPPING, &grab->cpu.stepping)) break;
+             _e_static_grab_int(buf, end, SIBLINGS, &siblings);
+             break;
+
            case 'b':
-              _e_static_grab_int(buf, end, BOGOMIPS, &grab->cpu.bogo);
-              break;
+             _e_static_grab_int(buf, end, BOGOMIPS, &grab->cpu.bogo);
+             break;
+
            case 'm':
-              if (_e_static_grab_string(buf, end, MODEL_NAME, &grab->cpu.model_name)) break;
-              _e_static_grab_int(buf, end, MODEL, &grab->cpu.model);
-              break;
+             if (_e_static_grab_string(buf, end, MODEL_NAME, &grab->cpu.model_name)) break;
+             _e_static_grab_int(buf, end, MODEL, &grab->cpu.model);
+             break;
+
            case 'v':
-              _e_static_grab_string(buf, end, VENDOR_ID, &grab->cpu.vendor);
-              break;
+             _e_static_grab_string(buf, end, VENDOR_ID, &grab->cpu.vendor);
+             break;
+
            case 'f':
-              _e_static_grab_string(buf, end, FPU, &fpu);
-              break;
+             _e_static_grab_string(buf, end, FPU, &fpu);
+             break;
           }
      }
    fclose(f);
@@ -242,13 +248,13 @@ _e_static_grab_x(E_Static_Grab *grab)
    Eina_File *f;
 
    f = eina_file_open("/var/log/Xorg.0.log", EINA_FALSE);
-   if (!f) return ;
+   if (!f) return;
 
    module = calloc(1, sizeof (E_Static_Grab_Module));
    if (!module)
      {
         eina_file_close(f);
-        return ;
+        return;
      }
 
    it = eina_file_map_lines(f);
@@ -257,13 +263,13 @@ _e_static_grab_x(E_Static_Grab *grab)
         const char *current;
 
         current = _e_static_grab_discard(line->start, line, '[', ']');
-        if (current >= line->end) continue ;
+        if (current >= line->end) continue;
 
         if (!grab->x.name)
           {
-             if (line->end - current - 1 <= 0) continue ;
+             if (line->end - current - 1 <= 0) continue;
              grab->x.name = eina_stringshare_add_length(current, line->end - current - 1);
-             continue ;
+             continue;
           }
 
         if (!in_module)
@@ -271,53 +277,53 @@ _e_static_grab_x(E_Static_Grab *grab)
              switch (*current)
                {
                 case 'R':
-                   if (_e_static_grab_string(current, line->end, RELEASE_DATE, &grab->x.release_date)) break;
-                   break;
+                  if (_e_static_grab_string(current, line->end, RELEASE_DATE, &grab->x.release_date)) break;
+                  break;
 
                 case 'B':
-                   if (_e_static_grab_string(current, line->end, BUILD_DATE, &grab->x.build_date)) break;
-                   break;
+                  if (_e_static_grab_string(current, line->end, BUILD_DATE, &grab->x.build_date)) break;
+                  break;
 
                 case '(':
-                  {
-                     E_Static_Grab_Module *md;
-                     Eina_List *l;
-                     const char *tmp;
+                {
+                   E_Static_Grab_Module *md;
+                   Eina_List *l;
+                   const char *tmp;
 
-                     if (_e_static_grab_string(current, line->end, LOAD_MODULE, &module->name))
-                       {
-                          EINA_LIST_FOREACH(grab->x.modules, l, md)
-                            if (md->name == module->name)
-                              {
-                                 eina_stringshare_del(module->name);
-                                 module->name = NULL;
-                                 break;
-                              }
+                   if (_e_static_grab_string(current, line->end, LOAD_MODULE, &module->name))
+                     {
+                        EINA_LIST_FOREACH(grab->x.modules, l, md)
+                          if (md->name == module->name)
+                            {
+                               eina_stringshare_del(module->name);
+                               module->name = NULL;
+                               break;
+                            }
 
-                          if (module->name) in_module = EINA_TRUE;
-                          break;
-                       }
-                     else if (_e_static_grab_string(current, line->end, UNLOAD_MODULE, &tmp))
-                       {
-                          EINA_LIST_FOREACH(grab->x.modules, l, md)
-                            if (md->name == tmp)
-                              {
-                                 grab->x.modules = eina_list_remove_list(grab->x.modules, l);
+                        if (module->name) in_module = EINA_TRUE;
+                        break;
+                     }
+                   else if (_e_static_grab_string(current, line->end, UNLOAD_MODULE, &tmp))
+                     {
+                        EINA_LIST_FOREACH(grab->x.modules, l, md)
+                          if (md->name == tmp)
+                            {
+                               grab->x.modules = eina_list_remove_list(grab->x.modules, l);
 
-                                 eina_stringshare_del(md->name);
-                                 eina_stringshare_del(md->vendor);
-                                 eina_stringshare_del(md->compiled_for);
-                                 eina_stringshare_del(md->version);
-                                 eina_stringshare_del(md->class);
-                                 eina_stringshare_del(md->ABI_class);
-                                 eina_stringshare_del(md->ABI_version);
-                                 free(md);
-                                 break;
-                              }
-                          eina_stringshare_del(tmp);
-                       }
-                     break;
-                  }
+                               eina_stringshare_del(md->name);
+                               eina_stringshare_del(md->vendor);
+                               eina_stringshare_del(md->compiled_for);
+                               eina_stringshare_del(md->version);
+                               eina_stringshare_del(md->class);
+                               eina_stringshare_del(md->ABI_class);
+                               eina_stringshare_del(md->ABI_version);
+                               free(md);
+                               break;
+                            }
+                        eina_stringshare_del(tmp);
+                     }
+                   break;
+                }
                }
           }
         else
@@ -328,76 +334,79 @@ _e_static_grab_x(E_Static_Grab *grab)
              switch (*current)
                {
                 case '(':
-                  {
-                     const char *vendor;
+                {
+                   const char *vendor;
 
-                     if (strncmp(current, LOADING, strlen(LOADING)) == 0)
-                       {
-                          found = EINA_TRUE;
-                          break;
-                       }
+                   if (strncmp(current, LOADING, strlen(LOADING)) == 0)
+                     {
+                        found = EINA_TRUE;
+                        break;
+                     }
 
-                     buffer = alloca(strlen(MODULE_OF) + strlen(module->name));
-                     sprintf(buffer, MODULE_OF, module->name);
+                   buffer = alloca(strlen(MODULE_OF) + strlen(module->name));
+                   sprintf(buffer, MODULE_OF, module->name);
 
-                     if (_e_static_grab_string(current, line->end, buffer, &vendor))
-                       {
-                          if (strncmp(vendor, VENDOR, strlen(VENDOR)) == 0)
-                            {
-                               module->vendor = eina_stringshare_add_length(vendor + strlen(VENDOR),
-                                                                            eina_stringshare_strlen(vendor) - strlen(VENDOR) - 1);
-                               found = EINA_TRUE;
-                            }
-                          eina_stringshare_del(vendor);
-                       }
-                     break;
-                  }
+                   if (_e_static_grab_string(current, line->end, buffer, &vendor))
+                     {
+                        if (strncmp(vendor, VENDOR, strlen(VENDOR)) == 0)
+                          {
+                             module->vendor = eina_stringshare_add_length(vendor + strlen(VENDOR),
+                                                                          eina_stringshare_strlen(vendor) - strlen(VENDOR) - 1);
+                             found = EINA_TRUE;
+                          }
+                        eina_stringshare_del(vendor);
+                     }
+                   break;
+                }
+
                 case 'c':
-                   if (strncmp(current, COMPILED, strlen(COMPILED)) == 0)
-                     {
-                        const char *lookup = current + strlen(COMPILED);
+                  if (strncmp(current, COMPILED, strlen(COMPILED)) == 0)
+                    {
+                       const char *lookup = current + strlen(COMPILED);
 
-                        while (lookup < line->end && *lookup != ',')
-                          lookup++;
+                       while (lookup < line->end && *lookup != ',')
+                         lookup++;
 
-                        module->compiled_for = eina_stringshare_add_length(current + strlen(COMPILED),
-                                                                           lookup - current - strlen(COMPILED));
-                        found = EINA_TRUE;
-                        break;
-                     }
-                   break;
+                       module->compiled_for = eina_stringshare_add_length(current + strlen(COMPILED),
+                                                                          lookup - current - strlen(COMPILED));
+                       found = EINA_TRUE;
+                       break;
+                    }
+                  break;
+
                 case 'M':
-                   if (_e_static_grab_string(current, line->end, MODULE_CLASS, &module->class))
+                  if (_e_static_grab_string(current, line->end, MODULE_CLASS, &module->class))
+                    {
+                       found = EINA_TRUE;
+                       break;
+                    }
+                  break;
+
+                case 'A':
+                {
+                   const char *tmp;
+
+                   if (_e_static_grab_string(current, line->end, ABI_CLASS, &tmp))
                      {
-                        found = EINA_TRUE;
-                        break;
+                        const char *lookup = strchr(tmp, ',');
+
+                        if (lookup)
+                          {
+                             module->ABI_class = eina_stringshare_add_length(tmp, lookup - tmp);
+                             if (strncmp(lookup, VERSION, strlen(VERSION)) == 0)
+                               {
+                                  module->ABI_version = eina_stringshare_add_length(lookup + strlen(VERSION),
+                                                                                    eina_stringshare_strlen(tmp) - (lookup - tmp + strlen(VERSION) - 1));
+                               }
+                             eina_stringshare_del(tmp);
+                          }
+                        else
+                          {
+                             module->ABI_class = tmp;
+                          }
                      }
                    break;
-                case 'A':
-                  {
-                     const char *tmp;
-
-                     if (_e_static_grab_string(current, line->end, ABI_CLASS, &tmp))
-                       {
-                          const char *lookup = strchr(tmp, ',');
-
-                          if (lookup)
-                            {
-                               module->ABI_class = eina_stringshare_add_length(tmp, lookup - tmp);
-                               if (strncmp(lookup, VERSION, strlen(VERSION)) == 0)
-                                 {
-                                    module->ABI_version = eina_stringshare_add_length(lookup + strlen(VERSION),
-                                                                                      eina_stringshare_strlen(tmp) - (lookup - tmp + strlen(VERSION) - 1));
-                                 }
-                               eina_stringshare_del(tmp);
-                            }
-                          else
-                            {
-                               module->ABI_class = tmp;
-                            }
-                       }
-                     break;
-                  }
+                }
                }
 
              if (!found)
@@ -444,7 +453,7 @@ main(int argc, char **argv EINA_UNUSED)
    _e_static_grab_x(&grab);
 
    fprintf(stderr, "%i core with %i thread running in %i bits at %i bogomips with %i cache from vendor %s with model %s\n",
-	   grab.cpu.core_count, grab.cpu.thread_count, grab.cpu.addr_space * 8, grab.cpu.bogo, grab.cpu.cache_size, grab.cpu.vendor, grab.cpu.model_name);
+           grab.cpu.core_count, grab.cpu.thread_count, grab.cpu.addr_space * 8, grab.cpu.bogo, grab.cpu.cache_size, grab.cpu.vendor, grab.cpu.model_name);
    fprintf(stderr, "X Server: '%s' released '%s' and build '%s'\n",
            grab.x.name, grab.x.release_date, grab.x.build_date);
    fprintf(stderr, "*** X Modules ***\n");
@@ -463,3 +472,4 @@ main(int argc, char **argv EINA_UNUSED)
 
    return 0;
 }
+

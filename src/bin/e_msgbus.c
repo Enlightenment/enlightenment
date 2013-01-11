@@ -1,8 +1,8 @@
 #include "e.h"
 
 /* local subsystem functions */
-static void _e_msgbus_request_name_cb(void *data, const EDBus_Message *msg,
-                                      EDBus_Pending *pending);
+static void           _e_msgbus_request_name_cb(void *data, const EDBus_Message *msg,
+                                                EDBus_Pending *pending);
 
 static EDBus_Message *_e_msgbus_core_restart_cb(const EDBus_Service_Interface *iface,
                                                 const EDBus_Message *msg);
@@ -31,9 +31,9 @@ static EDBus_Message *_e_msgbus_profile_add_cb(const EDBus_Service_Interface *if
 static EDBus_Message *_e_msgbus_profile_delete_cb(const EDBus_Service_Interface *iface,
                                                   const EDBus_Message *msg);
 
-#define E_MSGBUS_WIN_ACTION_CB_PROTO(NAME) \
-static EDBus_Message *_e_msgbus_window_##NAME##_cb(const EDBus_Service_Interface *iface, \
-                                                   const EDBus_Message *msg)
+#define E_MSGBUS_WIN_ACTION_CB_PROTO(NAME)                                                   \
+  static EDBus_Message * _e_msgbus_window_##NAME##_cb(const EDBus_Service_Interface * iface, \
+                                                      const EDBus_Message * msg)
 
 E_MSGBUS_WIN_ACTION_CB_PROTO(list);
 E_MSGBUS_WIN_ACTION_CB_PROTO(close);
@@ -59,7 +59,7 @@ static const EDBus_Method module_methods[] = {
    { "Enable", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_enable_cb },
    { "Disable", EDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_disable_cb },
    { "List", NULL, EDBUS_ARGS({"a(si)", "modules"}),
-      _e_msgbus_module_list_cb },
+     _e_msgbus_module_list_cb },
    { }
 };
 
@@ -67,7 +67,7 @@ static const EDBus_Method profile_methods[] = {
    { "Set", EDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_set_cb },
    { "Get", NULL, EDBUS_ARGS({"s", "profile"}), _e_msgbus_profile_get_cb },
    { "List", NULL, EDBUS_ARGS({"as", "array_profiles"}),
-      _e_msgbus_profile_list_cb },
+     _e_msgbus_profile_list_cb },
    { "Add", EDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_add_cb },
    { "Delete", EDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_delete_cb },
    { }
@@ -75,18 +75,18 @@ static const EDBus_Method profile_methods[] = {
 
 static const EDBus_Method window_methods[] = {
    { "List", NULL, EDBUS_ARGS({"a(si)", "array_of_window"}),
-      _e_msgbus_window_list_cb },
+     _e_msgbus_window_list_cb },
    { "Close", EDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_close_cb },
    { "Kill", EDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_kill_cb },
    { "Focus", EDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_focus_cb },
    { "Iconify", EDBUS_ARGS({"i", "window_id"}), NULL,
-      _e_msgbus_window_iconify_cb },
+     _e_msgbus_window_iconify_cb },
    { "Uniconify", EDBUS_ARGS({"i", "window_id"}), NULL,
-      _e_msgbus_window_uniconify_cb },
+     _e_msgbus_window_uniconify_cb },
    { "Maximize", EDBUS_ARGS({"i", "window_id"}), NULL,
-      _e_msgbus_window_maximize_cb },
+     _e_msgbus_window_maximize_cb },
    { "Unmaximize", EDBUS_ARGS({"i", "window_id"}), NULL,
-      _e_msgbus_window_unmaximize_cb },
+     _e_msgbus_window_unmaximize_cb },
    { }
 };
 
@@ -437,55 +437,54 @@ _e_msgbus_window_list_cb(const EDBus_Service_Interface *iface __UNUSED__,
    return reply;
 }
 
-#define E_MSGBUS_WIN_ACTION_CB_BEGIN(NAME) \
-static EDBus_Message * \
-_e_msgbus_window_##NAME##_cb(const EDBus_Service_Interface *iface __UNUSED__,\
-                             const EDBus_Message *msg) \
-{ \
-   E_Border *bd; \
-   int xwin;\
-\
-   if (!edbus_message_arguments_get(msg, "i", &xwin)) \
-     return edbus_message_method_return_new(msg); \
-   bd = e_border_find_by_client_window(xwin);\
-   if (bd)\
-     {
-
-#define E_MSGBUS_WIN_ACTION_CB_END \
-     }\
-\
-   return edbus_message_method_return_new(msg);\
-}
-
-E_MSGBUS_WIN_ACTION_CB_BEGIN(close)
-e_border_act_close_begin(bd);
-E_MSGBUS_WIN_ACTION_CB_END
-
-E_MSGBUS_WIN_ACTION_CB_BEGIN(kill)
-e_border_act_kill_begin(bd);
-E_MSGBUS_WIN_ACTION_CB_END
-
-E_MSGBUS_WIN_ACTION_CB_BEGIN(focus)
-e_border_focus_set(bd, 1, 1);
-if (!bd->lock_user_stacking)
-  {
-     if (e_config->border_raise_on_focus)
-       e_border_raise(bd);
+#define E_MSGBUS_WIN_ACTION_CB_BEGIN(NAME)                                       \
+  static EDBus_Message *                                                         \
+  _e_msgbus_window_##NAME##_cb(const EDBus_Service_Interface * iface __UNUSED__, \
+                               const EDBus_Message * msg)                        \
+  {                                                                              \
+     E_Border *bd;                                                               \
+     int xwin;                                                                   \
+                                                                                 \
+     if (!edbus_message_arguments_get(msg, "i", &xwin))                          \
+       return edbus_message_method_return_new(msg);                              \
+     bd = e_border_find_by_client_window(xwin);                                  \
+     if (bd)                                                                     \
+       {
+#define E_MSGBUS_WIN_ACTION_CB_END             \
+  }                                            \
+                                               \
+  return edbus_message_method_return_new(msg); \
   }
-E_MSGBUS_WIN_ACTION_CB_END
 
-E_MSGBUS_WIN_ACTION_CB_BEGIN(iconify)
-e_border_iconify(bd);
-E_MSGBUS_WIN_ACTION_CB_END
+ E_MSGBUS_WIN_ACTION_CB_BEGIN(close)
+ e_border_act_close_begin(bd);
+ E_MSGBUS_WIN_ACTION_CB_END
 
-E_MSGBUS_WIN_ACTION_CB_BEGIN(uniconify)
-e_border_uniconify(bd);
-E_MSGBUS_WIN_ACTION_CB_END
+  E_MSGBUS_WIN_ACTION_CB_BEGIN(kill)
+ e_border_act_kill_begin(bd);
+ E_MSGBUS_WIN_ACTION_CB_END
 
-E_MSGBUS_WIN_ACTION_CB_BEGIN(maximize)
-e_border_maximize(bd, e_config->maximize_policy);
-E_MSGBUS_WIN_ACTION_CB_END
+  E_MSGBUS_WIN_ACTION_CB_BEGIN(focus)
+ e_border_focus_set(bd, 1, 1);
+ if (!bd->lock_user_stacking)
+   {
+      if (e_config->border_raise_on_focus)
+        e_border_raise(bd);
+   }
+ E_MSGBUS_WIN_ACTION_CB_END
 
-E_MSGBUS_WIN_ACTION_CB_BEGIN(unmaximize)
-e_border_unmaximize(bd, E_MAXIMIZE_BOTH);
-E_MSGBUS_WIN_ACTION_CB_END
+  E_MSGBUS_WIN_ACTION_CB_BEGIN(iconify)
+ e_border_iconify(bd);
+ E_MSGBUS_WIN_ACTION_CB_END
+
+  E_MSGBUS_WIN_ACTION_CB_BEGIN(uniconify)
+ e_border_uniconify(bd);
+ E_MSGBUS_WIN_ACTION_CB_END
+
+  E_MSGBUS_WIN_ACTION_CB_BEGIN(maximize)
+ e_border_maximize(bd, e_config->maximize_policy);
+ E_MSGBUS_WIN_ACTION_CB_END
+
+  E_MSGBUS_WIN_ACTION_CB_BEGIN(unmaximize)
+ e_border_unmaximize(bd, E_MAXIMIZE_BOTH);
+ E_MSGBUS_WIN_ACTION_CB_END

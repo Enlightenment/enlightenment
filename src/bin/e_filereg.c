@@ -11,12 +11,12 @@ typedef struct _Filereg_Item Filereg_Item;
 struct _Filereg_Item
 {
    const char *path;
-   int ref_count;
+   int         ref_count;
 };
 
 static Eina_Bool _filereg_hash_cb_free(const Eina_Hash *hash __UNUSED__,
-				       const void *key __UNUSED__,
-				       void *data, void *fdata __UNUSED__);
+                                       const void *key __UNUSED__,
+                                       void *data, void *fdata __UNUSED__);
 
 /* Externally accessible functions */
 EINTERN int
@@ -44,8 +44,8 @@ e_filereg_register(const char *path)
    fi = eina_hash_find(_e_filereg, path);
    if (fi)
      {
-	fi->ref_count++;
-	return 1;
+        fi->ref_count++;
+        return 1;
      }
    fi = E_NEW(Filereg_Item, 1);
    if (!fi) return 0;
@@ -63,13 +63,13 @@ e_filereg_deregister(const char *path)
    fi = eina_hash_find(_e_filereg, path);
    if (fi)
      {
-	fi->ref_count--;
-	if (fi->ref_count == 0)
-	  {
-	     eina_hash_del(_e_filereg, path, fi);
-	     if (fi->path) eina_stringshare_del(fi->path);
-	     E_FREE(fi);
-	  }
+        fi->ref_count--;
+        if (fi->ref_count == 0)
+          {
+             eina_hash_del(_e_filereg, path, fi);
+             if (fi->path) eina_stringshare_del(fi->path);
+             E_FREE(fi);
+          }
      }
 }
 
@@ -83,7 +83,7 @@ e_filereg_file_protected(const char *path)
 /* Private Functions */
 static Eina_Bool
 _filereg_hash_cb_free(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__,
-		      void *data, void *fdata __UNUSED__)
+                      void *data, void *fdata __UNUSED__)
 {
    Filereg_Item *fi;
 
@@ -93,3 +93,4 @@ _filereg_hash_cb_free(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED
    E_FREE(fi);
    return EINA_TRUE;
 }
+

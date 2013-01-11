@@ -8,7 +8,7 @@ struct _E_Widget_Data
 {
    Evas_Object *o_widget, *o_scrollframe, *o_ilist;
    Eina_List   *callbacks;
-   const char       **value;
+   const char **value;
    struct
    {
       Eina_List   *queue;
@@ -21,8 +21,8 @@ struct _E_Widget_Data
 
 struct _E_Widget_Callback
 {
-   void  (*func)(void *data);
-   void *data;
+   void        (*func)(void *data);
+   void       *data;
    const char *value;
 };
 

@@ -1,10 +1,10 @@
-#define _XOPEN_SOURCE 600
+#define _XOPEN_SOURCE  600
 #include "e.h"
 
-#define SMART_NAME "e_slider"
-#define API_ENTRY E_Smart_Data *sd; sd = evas_object_smart_data_get(obj); if ((!obj) || (!sd) || (evas_object_type_get(obj) && strcmp(evas_object_type_get(obj), SMART_NAME)))
-#define INTERNAL_ENTRY E_Smart_Data *sd; sd = evas_object_smart_data_get(obj); if (!sd) return;
-typedef struct _E_Smart_Data E_Smart_Data;
+#define SMART_NAME     "e_slider"
+#define API_ENTRY      E_Smart_Data * sd; sd = evas_object_smart_data_get(obj); if ((!obj) || (!sd) || (evas_object_type_get(obj) && strcmp(evas_object_type_get(obj), SMART_NAME)))
+#define INTERNAL_ENTRY E_Smart_Data * sd; sd = evas_object_smart_data_get(obj); if (!sd) return;
+typedef struct _E_Smart_Data           E_Smart_Data;
 
 typedef struct _E_Slider_Special_Value E_Slider_Special_Value;
 
@@ -12,50 +12,50 @@ struct _E_Smart_Data
 {
    Evas_Coord   x, y, w, h;
 
-   Evas_Object   *smart_obj;
-   Evas_Object   *edje_obj;
-   Evas_Object   *event;
-   double         val, val_min, val_max, val_range, step_size;
-   int            reversed, step_count, horizontal;
-   int            direction;
-   int            changing;
-   const char    *format;
-   Evas_Coord     minw, minh;
-   Ecore_Timer   *set_timer;
-   Eina_List     *special_values;
-   Eina_Bool      disabled : 1;
+   Evas_Object *smart_obj;
+   Evas_Object *edje_obj;
+   Evas_Object *event;
+   double       val, val_min, val_max, val_range, step_size;
+   int          reversed, step_count, horizontal;
+   int          direction;
+   int          changing;
+   const char  *format;
+   Evas_Coord   minw, minh;
+   Ecore_Timer *set_timer;
+   Eina_List   *special_values;
+   Eina_Bool    disabled : 1;
 };
 
 struct _E_Slider_Special_Value
 {
-   double value;
-   double error;
+   double      value;
+   double      error;
    const char *label;
 };
 
 /* local subsystem functions */
 static Eina_Bool _e_smart_set_timer(void *data);
-static void _e_smart_value_update(E_Smart_Data *sd);
-static void _e_smart_value_update_now(E_Smart_Data *sd);
-static void _e_smart_value_fetch(E_Smart_Data *sd);
-static void _e_smart_value_limit(E_Smart_Data *sd);
-static void _e_smart_format_update(E_Smart_Data *sd);
-static void _e_smart_signal_cb_drag(void *data, Evas_Object *obj, const char *emission, const char *source);
-static void _e_smart_signal_cb_drag_start(void *data, Evas_Object *obj, const char *emission, const char *source);
-static void _e_smart_signal_cb_drag_stop(void *data, Evas_Object *obj, const char *emission, const char *source);
-static void _e_smart_event_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _e_smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info);
-static void _e_smart_reconfigure(E_Smart_Data *sd);
-static void _e_smart_add(Evas_Object *obj);
-static void _e_smart_del(Evas_Object *obj);
-static void _e_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-static void _e_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
-static void _e_smart_show(Evas_Object *obj);
-static void _e_smart_hide(Evas_Object *obj);
-static void _e_smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
-static void _e_smart_clip_set(Evas_Object *obj, Evas_Object * clip);
-static void _e_smart_clip_unset(Evas_Object *obj);
-static void _e_smart_init(void);
+static void      _e_smart_value_update(E_Smart_Data *sd);
+static void      _e_smart_value_update_now(E_Smart_Data *sd);
+static void      _e_smart_value_fetch(E_Smart_Data *sd);
+static void      _e_smart_value_limit(E_Smart_Data *sd);
+static void      _e_smart_format_update(E_Smart_Data *sd);
+static void      _e_smart_signal_cb_drag(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void      _e_smart_signal_cb_drag_start(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void      _e_smart_signal_cb_drag_stop(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void      _e_smart_event_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void      _e_smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info);
+static void      _e_smart_reconfigure(E_Smart_Data *sd);
+static void      _e_smart_add(Evas_Object *obj);
+static void      _e_smart_del(Evas_Object *obj);
+static void      _e_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+static void      _e_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+static void      _e_smart_show(Evas_Object *obj);
+static void      _e_smart_hide(Evas_Object *obj);
+static void      _e_smart_color_set(Evas_Object *obj, int r, int g, int b, int a);
+static void      _e_smart_clip_set(Evas_Object *obj, Evas_Object *clip);
+static void      _e_smart_clip_unset(Evas_Object *obj);
+static void      _e_smart_init(void);
 
 /* local subsystem globals */
 static Evas_Smart *_e_smart = NULL;
@@ -76,10 +76,10 @@ e_slider_orientation_set(Evas_Object *obj, int horizontal)
    sd->horizontal = horizontal;
    if (sd->horizontal)
      e_theme_edje_object_set(sd->edje_obj, "base/theme/widgets",
-			     "e/widgets/slider_horizontal");
+                             "e/widgets/slider_horizontal");
    else
      e_theme_edje_object_set(sd->edje_obj, "base/theme/widgets",
-			     "e/widgets/slider_vertical");
+                             "e/widgets/slider_vertical");
    edje_object_size_min_calc(sd->edje_obj, &(sd->minw), &(sd->minh));
    _e_smart_value_update(sd);
 }
@@ -181,10 +181,10 @@ e_slider_value_format_display_set(Evas_Object *obj, const char *format)
    if (format) sd->format = eina_stringshare_add(format);
    if (changed)
      {
-	if (sd->format)
-	  edje_object_signal_emit(sd->edje_obj, "e,action,show,label", "e");
-	else
-	  edje_object_signal_emit(sd->edje_obj, "e,action,hide,label", "e");
+        if (sd->format)
+          edje_object_signal_emit(sd->edje_obj, "e,action,show,label", "e");
+        else
+          edje_object_signal_emit(sd->edje_obj, "e,action,hide,label", "e");
      }
    _e_smart_format_update(sd);
    edje_object_message_signal_process(sd->edje_obj);
@@ -260,7 +260,8 @@ _e_smart_set_timer(void *data)
 
    if (sd->val_range > 0.0) pos = (sd->val - sd->val_min) / sd->val_range;
    if (pos < 0.0) pos = 0.0;
-   else if (pos > 1.0) pos = 1.0;
+   else if (pos > 1.0)
+     pos = 1.0;
    if (sd->reversed) pos = 1.0 - pos;
    sd->changing++;
    if (sd->set_timer) ecore_timer_del(sd->set_timer);
@@ -304,33 +305,33 @@ _e_smart_value_limit(E_Smart_Data *sd)
    if (sd->val > sd->val_max) sd->val = sd->val_max;
    if (sd->val_range > 0.0)
      {
-	if (sd->step_count > 0)
-	  {
-	     double p, s;
+        if (sd->step_count > 0)
+          {
+             double p, s;
 
-	     s = sd->val_range / sd->step_count;
-	     p = sd->val / s;
-	     if (sd->direction == 1)
-	       p = ceil(p);
-	     else if (sd->direction == -1)
-	       p = floor(p);
-	     else
-	       p = round(p);
-	     sd->val = p * s;
-	  }
-	else if (sd->step_size > 0.0)
-	  {
-	     double p;
+             s = sd->val_range / sd->step_count;
+             p = sd->val / s;
+             if (sd->direction == 1)
+               p = ceil(p);
+             else if (sd->direction == -1)
+               p = floor(p);
+             else
+               p = round(p);
+             sd->val = p * s;
+          }
+        else if (sd->step_size > 0.0)
+          {
+             double p;
 
-	     p = sd->val / sd->step_size;
-	     if (sd->direction == 1)
-	       p = ceil(p);
-	     else if (sd->direction == -1)
-	       p = floor(p);
-	     else
-	       p = round(p);
-	     sd->val = p * sd->step_size;
-	  }
+             p = sd->val / sd->step_size;
+             if (sd->direction == 1)
+               p = ceil(p);
+             else if (sd->direction == -1)
+               p = floor(p);
+             else
+               p = round(p);
+             sd->val = p * sd->step_size;
+          }
      }
    sd->direction = 0;
 }
@@ -344,16 +345,16 @@ _e_smart_format_update(E_Smart_Data *sd)
    EINA_LIST_FOREACH(sd->special_values, l, sv)
      if (fabs(sd->val - sv->value) <= sv->error)
        {
-	  edje_object_part_text_set(sd->edje_obj, "e.text.label", sv->label);
-	  return;
+          edje_object_part_text_set(sd->edje_obj, "e.text.label", sv->label);
+          return;
        }
 
    if (sd->format)
      {
-	char buf[256];
+        char buf[256];
 
-	snprintf(buf, sizeof(buf), sd->format, sd->val);
-	edje_object_part_text_set(sd->edje_obj, "e.text.label", buf);
+        snprintf(buf, sizeof(buf), sd->format, sd->val);
+        edje_object_part_text_set(sd->edje_obj, "e.text.label", buf);
      }
 }
 
@@ -432,40 +433,40 @@ _e_smart_event_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
        (!strcmp(ev->keyname, "Left")) ||
        (!strcmp(ev->keyname, "KP_Left")))
      {
-	if (sd->step_count > 0)
-	  {
-	     double s = sd->val_range / sd->step_count;
-	     edje_object_part_drag_step(sd->edje_obj, "e.dragable.slider", -s, -s);
-	  }
-	else
-	  edje_object_part_drag_step(sd->edje_obj, "e.dragable.slider", -1, -1);
-	sd->direction = -1;
+        if (sd->step_count > 0)
+          {
+             double s = sd->val_range / sd->step_count;
+             edje_object_part_drag_step(sd->edje_obj, "e.dragable.slider", -s, -s);
+          }
+        else
+          edje_object_part_drag_step(sd->edje_obj, "e.dragable.slider", -1, -1);
+        sd->direction = -1;
      }
    else if ((!strcmp(ev->keyname, "Down")) ||
-	    (!strcmp(ev->keyname, "KP_Down")) ||
-	    (!strcmp(ev->keyname, "Right")) ||
-	    (!strcmp(ev->keyname, "KP_Right")))
+            (!strcmp(ev->keyname, "KP_Down")) ||
+            (!strcmp(ev->keyname, "Right")) ||
+            (!strcmp(ev->keyname, "KP_Right")))
      {
-	if (sd->step_count > 0)
-	  {
-	     double s = sd->val_range / sd->step_count;
-	     edje_object_part_drag_step(sd->edje_obj, "e.dragable.slider", s, s);
-	  }
-	else
-	  edje_object_part_drag_step(sd->edje_obj, "e.dragable.slider", 1, 1);
-	sd->direction = 1;
+        if (sd->step_count > 0)
+          {
+             double s = sd->val_range / sd->step_count;
+             edje_object_part_drag_step(sd->edje_obj, "e.dragable.slider", s, s);
+          }
+        else
+          edje_object_part_drag_step(sd->edje_obj, "e.dragable.slider", 1, 1);
+        sd->direction = 1;
      }
    else if ((!strcmp(ev->keyname, "Home")) ||
-	    (!strcmp(ev->keyname, "KP_Home")))
+            (!strcmp(ev->keyname, "KP_Home")))
      {
-	edje_object_part_drag_value_set(sd->edje_obj, "e.dragable.slider", 0., 0.);
-	sd->direction = 0;
+        edje_object_part_drag_value_set(sd->edje_obj, "e.dragable.slider", 0., 0.);
+        sd->direction = 0;
      }
    else if ((!strcmp(ev->keyname, "End")) ||
-	    (!strcmp(ev->keyname, "KP_End")))
+            (!strcmp(ev->keyname, "KP_End")))
      {
-	edje_object_part_drag_value_set(sd->edje_obj, "e.dragable.slider", 1., 1.);
-	sd->direction = 0;
+        edje_object_part_drag_value_set(sd->edje_obj, "e.dragable.slider", 1., 1.);
+        sd->direction = 0;
      }
 }
 
@@ -541,7 +542,7 @@ _e_smart_add(Evas_Object *obj)
 
    sd->edje_obj = edje_object_add(evas_object_evas_get(obj));
    e_theme_edje_object_set(sd->edje_obj, "base/theme/widgets",
-			   "e/widgets/slider_vertical");
+                           "e/widgets/slider_vertical");
    edje_object_size_min_calc(sd->edje_obj, &(sd->minw), &(sd->minh));
    evas_object_smart_member_add(sd->edje_obj, obj);
 
@@ -575,8 +576,8 @@ _e_smart_del(Evas_Object *obj)
    if (sd->set_timer) ecore_timer_del(sd->set_timer);
    EINA_LIST_FREE(sd->special_values, sv)
      {
-	eina_stringshare_del(sv->label);
-	free(sv);
+        eina_stringshare_del(sv->label);
+        free(sv);
      }
    free(sd);
 }
@@ -623,7 +624,7 @@ _e_smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
 }
 
 static void
-_e_smart_clip_set(Evas_Object *obj, Evas_Object * clip)
+_e_smart_clip_set(Evas_Object *obj, Evas_Object *clip)
 {
    INTERNAL_ENTRY;
    evas_object_clip_set(sd->edje_obj, clip);
@@ -642,20 +643,21 @@ static void
 _e_smart_init(void)
 {
    if (_e_smart) return;
-     {
-	static Evas_Smart_Class sc = EVAS_SMART_CLASS_INIT_NAME_VERSION(SMART_NAME);
-	if (!sc.add)
-	  {
-	     sc.add = _e_smart_add;
-	     sc.del = _e_smart_del;
-	     sc.move = _e_smart_move;
-	     sc.resize = _e_smart_resize;
-	     sc.show = _e_smart_show;
-	     sc.hide = _e_smart_hide;
-	     sc.color_set = _e_smart_color_set;
-	     sc.clip_set = _e_smart_clip_set;
-	     sc.clip_unset = _e_smart_clip_unset;
-	  }
-	_e_smart = evas_smart_class_new(&sc);
-     }
+   {
+      static Evas_Smart_Class sc = EVAS_SMART_CLASS_INIT_NAME_VERSION(SMART_NAME);
+      if (!sc.add)
+        {
+           sc.add = _e_smart_add;
+           sc.del = _e_smart_del;
+           sc.move = _e_smart_move;
+           sc.resize = _e_smart_resize;
+           sc.show = _e_smart_show;
+           sc.hide = _e_smart_hide;
+           sc.color_set = _e_smart_color_set;
+           sc.clip_set = _e_smart_clip_set;
+           sc.clip_unset = _e_smart_clip_unset;
+        }
+      _e_smart = evas_smart_class_new(&sc);
+   }
 }
+

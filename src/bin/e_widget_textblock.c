@@ -34,7 +34,7 @@ e_widget_textblock_add(Evas *evas)
 
    o = edje_object_add(evas);
    e_theme_edje_object_set(o, "base/theme/widgets",
-			   "e/widgets/textblock");
+                           "e/widgets/textblock");
    wd->o_textblock = o;
    evas_object_event_callback_add(wd->o_scrollframe, EVAS_CALLBACK_RESIZE, _e_wid_cb_scrollframe_resize, wd);
    evas_object_event_callback_add(wd->o_textblock, EVAS_CALLBACK_RESIZE, _e_wid_cb_scrollframe_resize, wd);
@@ -75,8 +75,8 @@ e_widget_textblock_plain_set(Evas_Object *obj, const char *text)
 
    if (!text)
      {
-	e_widget_textblock_markup_set(obj, NULL);
-	return;
+        e_widget_textblock_markup_set(obj, NULL);
+        return;
      }
    mlen = strlen(text);
    /* need to look for these and replace with a new string (on the right)
@@ -88,48 +88,51 @@ e_widget_textblock_plain_set(Evas_Object *obj, const char *text)
     */
    for (p = text; *p != 0; p++)
      {
-	if (*p == '\n') mlen += 4 - 1;
-	else if (*p == '\t') mlen += 8 - 1;
-	else if (*p == '<') mlen += 4 - 1;
-	else if (*p == '>') mlen += 4 - 1;
-	else if (*p == '&') mlen += 5 - 1;
+        if (*p == '\n') mlen += 4 - 1;
+        else if (*p == '\t')
+          mlen += 8 - 1;
+        else if (*p == '<')
+          mlen += 4 - 1;
+        else if (*p == '>')
+          mlen += 4 - 1;
+        else if (*p == '&')
+          mlen += 5 - 1;
      }
    markup = alloca(mlen + 1);
    if (!markup) return;
    markup[0] = 0;
    for (d = markup, p = text; *p != 0; p++, d++)
      {
-	if (*p == '\n')
-	  {
-	     strcpy(d, "<br>");
-	     d += 4 - 1;
-	  }
-	else if (*p == '\t')
-	  {
-	     strcpy(d, "        ");
-	     d += 8 - 1;
-	  }
-	else if (*p == '<')
-	  {
-	     strcpy(d, "&lt;");
-	     d += 4 - 1;
-	  }
-	else if (*p == '>')
-	  {
-	     strcpy(d, "&gt;");
-	     d += 4 - 1;
-	  }
-	else if (*p == '&')
-	  {
-	     strcpy(d, "&amp;");
-	     d += 5 - 1;
-	  }
-	else *d = *p;
+        if (*p == '\n')
+          {
+             strcpy(d, "<br>");
+             d += 4 - 1;
+          }
+        else if (*p == '\t')
+          {
+             strcpy(d, "        ");
+             d += 8 - 1;
+          }
+        else if (*p == '<')
+          {
+             strcpy(d, "&lt;");
+             d += 4 - 1;
+          }
+        else if (*p == '>')
+          {
+             strcpy(d, "&gt;");
+             d += 4 - 1;
+          }
+        else if (*p == '&')
+          {
+             strcpy(d, "&amp;");
+             d += 5 - 1;
+          }
+        else *d = *p;
      }
    *d = 0;
    e_widget_textblock_markup_set(obj, markup);
 }
-
 
 static void
 _e_wid_del_hook(Evas_Object *obj)
@@ -148,13 +151,13 @@ _e_wid_focus_hook(Evas_Object *obj)
    wd = e_widget_data_get(obj);
    if (e_widget_focus_get(obj))
      {
-	edje_object_signal_emit(e_scrollframe_edje_object_get(wd->o_scrollframe), "e,state,focused", "e");
-	evas_object_focus_set(wd->o_scrollframe, 1);
+        edje_object_signal_emit(e_scrollframe_edje_object_get(wd->o_scrollframe), "e,state,focused", "e");
+        evas_object_focus_set(wd->o_scrollframe, 1);
      }
    else
      {
-	edje_object_signal_emit(e_scrollframe_edje_object_get(wd->o_scrollframe), "e,state,unfocused", "e");
-	evas_object_focus_set(wd->o_scrollframe, 0);
+        edje_object_signal_emit(e_scrollframe_edje_object_get(wd->o_scrollframe), "e,state,unfocused", "e");
+        evas_object_focus_set(wd->o_scrollframe, 0);
      }
 }
 
@@ -177,3 +180,4 @@ _e_wid_focus_steal(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 {
    e_widget_focus_steal(data);
 }
+

@@ -1,18 +1,18 @@
 #include "e.h"
 
 /* local subsystem functions */
-static Eina_Bool _e_bindings_mapping_change_event_cb(void *data, int type, void *event);
+static Eina_Bool          _e_bindings_mapping_change_event_cb(void *data, int type, void *event);
 
-static void _e_bindings_mouse_free(E_Binding_Mouse *bind);
-static void _e_bindings_key_free(E_Binding_Key *bind);
-static void _e_bindings_edge_free(E_Binding_Edge *bind);
-static void _e_bindings_signal_free(E_Binding_Signal *bind);
-static void _e_bindings_wheel_free(E_Binding_Wheel *bind);
-static void _e_bindings_acpi_free(E_Binding_Acpi *bind);
-static int _e_bindings_context_match(E_Binding_Context bctxt, E_Binding_Context ctxt);
+static void               _e_bindings_mouse_free(E_Binding_Mouse *bind);
+static void               _e_bindings_key_free(E_Binding_Key *bind);
+static void               _e_bindings_edge_free(E_Binding_Edge *bind);
+static void               _e_bindings_signal_free(E_Binding_Signal *bind);
+static void               _e_bindings_wheel_free(E_Binding_Wheel *bind);
+static void               _e_bindings_acpi_free(E_Binding_Acpi *bind);
+static int                _e_bindings_context_match(E_Binding_Context bctxt, E_Binding_Context ctxt);
 static E_Binding_Modifier _e_bindings_modifiers(unsigned int modifiers);
-static int _e_ecore_modifiers(E_Binding_Modifier modifiers);
-static Eina_Bool _e_bindings_edge_cb_timer(void *data);
+static int                _e_ecore_modifiers(E_Binding_Modifier modifiers);
+static Eina_Bool          _e_bindings_edge_cb_timer(void *data);
 
 /* local subsystem globals */
 
@@ -50,7 +50,7 @@ e_bindings_init(void)
    Eina_List *l;
 
    mapping_handler = ecore_event_handler_add
-      (ECORE_X_EVENT_MAPPING_CHANGE, _e_bindings_mapping_change_event_cb, NULL);
+       (ECORE_X_EVENT_MAPPING_CHANGE, _e_bindings_mapping_change_event_cb, NULL);
 
    EINA_LIST_FOREACH(e_config->mouse_bindings, l, ebm)
      e_bindings_mouse_add(ebm->context, ebm->button, ebm->modifiers,
@@ -107,10 +107,10 @@ e_bindings_shutdown(void)
    E_FREE_LIST(acpi_bindings, _e_bindings_acpi_free);
 
    if (mapping_handler)
-      {
-         ecore_event_handler_del(mapping_handler);
-         mapping_handler = NULL;
-      }
+     {
+        ecore_event_handler_del(mapping_handler);
+        mapping_handler = NULL;
+     }
 
    return 1;
 }
@@ -175,9 +175,9 @@ e_bindings_edge_reset(void)
 {
    E_Config_Binding_Edge *ebe;
    Eina_List *l;
-   
+
    E_FREE_LIST(edge_bindings, _e_bindings_edge_free);
-   
+
    EINA_LIST_FOREACH(e_config->edge_bindings, l, ebe)
      e_bindings_edge_add(ebe->context, ebe->edge, ebe->modifiers,
                          ebe->any_mod, ebe->action, ebe->params, ebe->delay);
@@ -194,7 +194,6 @@ e_bindings_mouse_reset(void)
    EINA_LIST_FOREACH(e_config->mouse_bindings, l, ebm)
      e_bindings_mouse_add(ebm->context, ebm->button, ebm->modifiers,
                           ebm->any_mod, ebm->action, ebm->params);
-
 }
 
 EAPI void
@@ -307,7 +306,7 @@ e_bindings_mouse_down_find(E_Binding_Context ctxt, E_Object *obj __UNUSED__, Eco
    mod = _e_bindings_modifiers(ev->modifiers);
    EINA_LIST_FOREACH(mouse_bindings, l, binding)
      {
-        if ((binding->button == (int) ev->buttons) &&
+        if ((binding->button == (int)ev->buttons) &&
             ((binding->any_mod) || (binding->mod == mod)))
           {
              if (_e_bindings_context_match(binding->ctxt, ctxt))
@@ -351,7 +350,7 @@ e_bindings_mouse_up_find(E_Binding_Context ctxt, E_Object *obj __UNUSED__, Ecore
    mod = _e_bindings_modifiers(ev->modifiers);
    EINA_LIST_FOREACH(mouse_bindings, l, binding)
      {
-        if ((binding->button == (int) ev->buttons) &&
+        if ((binding->button == (int)ev->buttons) &&
             ((binding->any_mod) || (binding->mod == mod)))
           {
              if (_e_bindings_context_match(binding->ctxt, ctxt))
@@ -634,7 +633,7 @@ e_bindings_edge_flippable_get(E_Zone_Edge edge)
           {
              if ((!strcmp(binding->action, "desk_flip_in_direction")) ||
                  (!strcmp(binding->action, "desk_flip_by")))
-                return EINA_TRUE;
+               return EINA_TRUE;
           }
      }
    return EINA_FALSE;
@@ -652,7 +651,7 @@ e_bindings_edge_non_flippable_get(E_Zone_Edge edge)
           {
              if ((!strcmp(binding->action, "desk_flip_in_direction")) ||
                  (!strcmp(binding->action, "desk_flip_by")))
-                continue;
+               continue;
              return EINA_TRUE;
           }
      }
@@ -740,16 +739,16 @@ e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Z
 
                        /* The original event will be freed before it can be
                         * used again */
-                       ev2->zone  = ev->zone;
-                       ev2->edge  = ev->edge;
-                       ev2->x     = ev->x;
-                       ev2->y     = ev->y;
+                       ev2->zone = ev->zone;
+                       ev2->edge = ev->edge;
+                       ev2->x = ev->x;
+                       ev2->y = ev->y;
 
                        ed->bind = binding;
-                       ed->obj  = obj;
-                       ed->act  = act;
-                       ed->ev   = ev2;
-                       binding->timer = ecore_timer_add(((double) binding->delay), _e_bindings_edge_cb_timer, ed);
+                       ed->obj = obj;
+                       ed->act = act;
+                       ed->ev = ev2;
+                       binding->timer = ecore_timer_add(((double)binding->delay), _e_bindings_edge_cb_timer, ed);
                     }
                }
           }
@@ -907,7 +906,7 @@ e_bindings_signal_del(E_Binding_Context ctxt, const char *sig, const char *src, 
      }
 }
 
-EAPI E_Action  *
+EAPI E_Action *
 e_bindings_signal_find(E_Binding_Context ctxt, E_Object *obj __UNUSED__, const char *sig, const char *src, E_Binding_Signal **bind_ret)
 {
    E_Binding_Modifier mod = 0;
@@ -1013,12 +1012,14 @@ e_bindings_wheel_grab(E_Binding_Context ctxt, Ecore_X_Window win)
              if (binding->direction == 0)
                {
                   if (binding->z < 0) button = 4;
-                  else if (binding->z > 0) button = 5;
+                  else if (binding->z > 0)
+                    button = 5;
                }
              else if (binding->direction == 1)
                {
                   if (binding->z < 0) button = 6;
-                  else if (binding->z > 0) button = 7;
+                  else if (binding->z > 0)
+                    button = 7;
                }
              if (button != 0)
                ecore_x_window_button_grab(win, button,
@@ -1043,12 +1044,14 @@ e_bindings_wheel_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
              if (binding->direction == 0)
                {
                   if (binding->z < 0) button = 4;
-                  else if (binding->z > 0) button = 5;
+                  else if (binding->z > 0)
+                    button = 5;
                }
              else if (binding->direction == 1)
                {
                   if (binding->z < 0) button = 6;
-                  else if (binding->z > 0) button = 7;
+                  else if (binding->z > 0)
+                    button = 7;
                }
              if (button != 0)
                ecore_x_window_button_ungrab(win, button,
@@ -1200,12 +1203,12 @@ e_bindings_mapping_change_enable(Eina_Bool enable)
 static Eina_Bool
 _e_bindings_mapping_change_event_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
-  if (!_e_bindings_mapping_change_enabled) return ECORE_CALLBACK_RENEW;
-  e_managers_keys_ungrab();
-  e_border_button_bindings_ungrab_all();
-  e_border_button_bindings_grab_all();
-  e_managers_keys_grab();
-  return ECORE_CALLBACK_PASS_ON;
+   if (!_e_bindings_mapping_change_enabled) return ECORE_CALLBACK_RENEW;
+   e_managers_keys_ungrab();
+   e_border_button_bindings_ungrab_all();
+   e_border_button_bindings_grab_all();
+   e_managers_keys_grab();
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static void
@@ -1299,7 +1302,7 @@ _e_bindings_modifiers(unsigned int modifiers)
     * may vary from system to system as different xservers may have differing
     * modifier masks for numlock (it is queried at startup).
     *
-   if (ev->modifiers & ECORE_X_LOCK_NUM) mod |= ECORE_X_LOCK_NUM;
+      if (ev->modifiers & ECORE_X_LOCK_NUM) mod |= ECORE_X_LOCK_NUM;
     */
 
    return mod;
@@ -1316,7 +1319,7 @@ _e_ecore_modifiers(E_Binding_Modifier modifiers)
    if (modifiers & E_BINDING_MODIFIER_WIN) mod |= ECORE_EVENT_MODIFIER_WIN;
    /* see comment in e_bindings on numlock
       if (modifiers & ECORE_X_LOCK_NUM) mod |= ECORE_X_LOCK_NUM;
-   */
+    */
 
    return mod;
 }
@@ -1350,3 +1353,4 @@ _e_bindings_edge_cb_timer(void *data)
 
    return ECORE_CALLBACK_CANCEL;
 }
+

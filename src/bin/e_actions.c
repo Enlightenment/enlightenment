@@ -82,7 +82,7 @@
   static void _e_actions_act_##act##_go_acpi(E_Object * obj __UNUSED__, const char *params use, E_Event_Acpi * ev __UNUSED__)
 
 /* local functions forward declarations (window_jump_to needs the definition of exec) */
-ACT_FN_GO(exec,);
+ACT_FN_GO(exec, );
 
 /* local subsystem functions */
 static void       _e_action_free(E_Action *act);
@@ -1175,9 +1175,9 @@ window_jump_to(const char *params)
          * only if we don't have to warp the pointer anyway */
         current_zone = e_util_zone_current_get(e_manager_current_get());
         if (current_zone != bd->zone && e_config->focus_policy == E_FOCUS_CLICK)
-            ecore_x_pointer_warp(bd->zone->container->win,
-                                 bd->zone->x + (bd->zone->w / 2),
-                                 bd->zone->y + (bd->zone->h / 2));
+          ecore_x_pointer_warp(bd->zone->container->win,
+                               bd->zone->x + (bd->zone->w / 2),
+                               bd->zone->y + (bd->zone->h / 2));
 
         /* Change the virtual desktop if the window isn't on the current virtual desktop */
         e_desk_show(bd->desk);
@@ -1193,12 +1193,12 @@ window_jump_to(const char *params)
    return 0;
 }
 
-ACT_FN_GO(window_jump_to,)
+ACT_FN_GO(window_jump_to, )
 {
    window_jump_to(params);
 }
 
-ACT_FN_GO(window_jump_to_or_start,)
+ACT_FN_GO(window_jump_to_or_start, )
 {
    char *window_name, *start_name;
    if (!params) return;
@@ -1967,7 +1967,7 @@ ACT_FN_GO_KEY(menu_show, , __UNUSED__)
 }
 
 /***************************************************************************/
-ACT_FN_GO(exec,)
+ACT_FN_GO(exec, )
 {
    E_Zone *zone;
    static double lock;
@@ -2037,7 +2037,7 @@ ACT_FN_GO(app_new_instance, __UNUSED__)
    E_Zone *zone;
 
    zone = _e_actions_zone_get(obj);
-   if (!zone) 
+   if (!zone)
      zone = e_util_zone_current_get(e_manager_current_get());
 
    if (!obj) obj = E_OBJECT(e_border_focused_get());
@@ -2812,7 +2812,7 @@ _delayed_action_mouse_del(E_Object *obj, const char *params __UNUSED__, Ecore_Ev
 }
 
 // obj , params  , ev
-ACT_FN_GO_KEY(delayed_action, ,)
+ACT_FN_GO_KEY(delayed_action, , )
 {
    _delayed_action_key_add(obj, params, ev);
 }
@@ -2889,7 +2889,7 @@ ACT_FN_GO(kbd_layout_prev, __UNUSED__)
 ACT_FN_GO(module_enable, )
 {
    E_Module *m;
-   
+
    if (!params) return;
    m = e_module_find(params);
    if (!m)
@@ -2903,7 +2903,7 @@ ACT_FN_GO(module_enable, )
 ACT_FN_GO(module_disable, )
 {
    E_Module *m;
-   
+
    if (!params) return;
    m = e_module_find(params);
    if (!m) return;
@@ -2913,7 +2913,7 @@ ACT_FN_GO(module_disable, )
 ACT_FN_GO(module_toggle, )
 {
    E_Module *m;
-   
+
    fprintf(stderr, "toggle\n");
    if (!params) return;
    fprintf(stderr, "'%s'\n", params);
@@ -3019,7 +3019,6 @@ e_actions_init(void)
    e_action_predef_name_set(N_("Window : State"), N_("Fullscreen Mode Enable"),
                             "window_fullscreen", NULL, NULL, 0);
 
-
    /* window_maximized_toggle */
    ACT_GO(window_maximized_toggle);
    e_action_predef_name_set(N_("Window : State"), N_("Maximize"),
@@ -3062,7 +3061,7 @@ e_actions_init(void)
 
    ACT_GO(window_shaded);
    e_action_predef_name_set(N_("Window : State"), N_("Set Shaded State"),
-                            "window_shaded", NULL, _("syntax: \"(0|1) (up|down|left|right)\"") , 1);
+                            "window_shaded", NULL, _("syntax: \"(0|1) (up|down|left|right)\""), 1);
 
    /* window_borderless_toggle */
    ACT_GO(window_borderless_toggle);
@@ -3228,8 +3227,6 @@ e_actions_init(void)
    e_action_predef_name_set(N_("Window : List"), N_("Jump to window... or start..."),
                             "window_jump_to_or_start", NULL, "syntax: icccm_window_name application", 1);
 
-
-
    /* screen_send_to */
    ACT_GO(screen_send_to);
    e_action_predef_name_set(N_("Screen"), N_("Send Mouse To Screen 0"),
@@ -3392,7 +3389,7 @@ e_actions_init(void)
    e_action_predef_name_set(N_("Enlightenment : Module"),
                             N_("Toggle the named module"),
                             "module_toggle", NULL, NULL, 1);
-   
+
    ACT_GO(logout);
    e_action_predef_name_set(N_("System"), N_("Log Out"), "logout",
                             NULL, NULL, 0);
@@ -3726,3 +3723,4 @@ _action_groups_sort_cb(const void *d1, const void *d2)
    if (!(g2 = d2)) return -1;
    return strcmp(g1->act_grp, g2->act_grp);
 }
+

@@ -38,7 +38,7 @@ e_widget_font_preview_add(Evas *evas, const char *text)
    o = edje_object_add(evas);
    wd->o_text = o;
    e_theme_edje_object_set(o, "base/theme/widgets",
-			      "e/widgets/fontpreview");
+                           "e/widgets/fontpreview");
    evas_object_event_callback_add(wd->o_scrollframe, EVAS_CALLBACK_RESIZE, _e_wid_cb_scrollframe_resize, wd);
    e_scrollframe_child_set(wd->o_scrollframe, o);
    e_widget_sub_object_add(obj, o);
@@ -66,7 +66,6 @@ e_widget_font_preview_font_set(Evas_Object *obj, const char *font, Evas_Font_Siz
 
    edje_object_text_class_set(wd->o_text, "_e_font_preview", font, size);
 }
-
 
 static void
 _e_wid_del_hook(Evas_Object *obj)
@@ -97,3 +96,4 @@ _e_wid_focus_steal(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 {
    e_widget_focus_steal(data);
 }
+

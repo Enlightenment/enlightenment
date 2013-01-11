@@ -6,18 +6,17 @@ e_color_class_init(void)
    const Eina_List *l;
    const E_Color_Class *cc;
 
-  EINA_LIST_FOREACH(e_config->color_classes, l, cc)
-    {
-       if (!cc) continue;
+   EINA_LIST_FOREACH(e_config->color_classes, l, cc)
+     {
+        if (!cc) continue;
 
-       printf("INIT CC: %s, %d %d %d %d\n", cc->name, cc->r, cc->g, cc->b, cc->a);
-       edje_color_class_set(cc->name,
-			    cc->r, cc->g, cc->b, cc->a,
-			    cc->r2, cc->g2, cc->b2, cc->a2,
-			    cc->r3, cc->g3, cc->b3, cc->a3);
-
-    }
-  return 1;
+        printf("INIT CC: %s, %d %d %d %d\n", cc->name, cc->r, cc->g, cc->b, cc->a);
+        edje_color_class_set(cc->name,
+                             cc->r, cc->g, cc->b, cc->a,
+                             cc->r2, cc->g2, cc->b2, cc->a2,
+                             cc->r3, cc->g3, cc->b3, cc->a3);
+     }
+   return 1;
 }
 
 EINTERN int
@@ -77,32 +76,32 @@ e_color_class_instance_set(E_Color_Class *cc, int r, int g, int b, int a, int r2
    if (a3 != -1) cc->a3 = E_CLAMP(a3, 0, 255);
 
    edje_color_class_set(cc->name,
-			cc->r, cc->g, cc->b, cc->a,
-			cc->r2, cc->g2, cc->b2, cc->a2,
-			cc->r3, cc->g3, cc->b3, cc->a3);
+                        cc->r, cc->g, cc->b, cc->a,
+                        cc->r2, cc->g2, cc->b2, cc->a2,
+                        cc->r3, cc->g3, cc->b3, cc->a3);
    e_config_save_queue();
 }
 
 EAPI E_Color_Class *
 e_color_class_set_stringshared(const char *color_class, int r, int g, int b, int a, int r2, int b2, int g2, int a2, int r3, int g3, int b3, int a3)
 {
-  E_Color_Class *cc = e_color_class_find_stringshared(color_class);
-  if (!cc)
-    {
-       cc = E_NEW(E_Color_Class, 1);
-       if (!cc) return NULL;
-       e_config->color_classes = eina_list_append(e_config->color_classes, cc);
-       cc->name = eina_stringshare_ref(color_class);
-       cc->r = cc->g = cc->b = cc->a = 255;
-       cc->r2 = cc->g2 = cc->b2 = cc->a2 = 255;
-       cc->r3 = cc->g3 = cc->b3 = cc->a3 = 255;
-    }
+   E_Color_Class *cc = e_color_class_find_stringshared(color_class);
+   if (!cc)
+     {
+        cc = E_NEW(E_Color_Class, 1);
+        if (!cc) return NULL;
+        e_config->color_classes = eina_list_append(e_config->color_classes, cc);
+        cc->name = eina_stringshare_ref(color_class);
+        cc->r = cc->g = cc->b = cc->a = 255;
+        cc->r2 = cc->g2 = cc->b2 = cc->a2 = 255;
+        cc->r3 = cc->g3 = cc->b3 = cc->a3 = 255;
+     }
 
-  e_color_class_instance_set(cc,
-			     r, g, b, a,
-			     r2, g2, b2, a2,
-			     r3, g3, b3, a3);
-  return cc;
+   e_color_class_instance_set(cc,
+                              r, g, b, a,
+                              r2, g2, b2, a2,
+                              r3, g3, b3, a3);
+   return cc;
 }
 
 EAPI E_Color_Class *
@@ -112,9 +111,9 @@ e_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, i
 
    color_class = eina_stringshare_add(color_class);
    cc = e_color_class_set_stringshared(color_class,
-				       r, g, b, a,
-				       r2, g2, b2, a2,
-				       r3, g3, b3, a3);
+                                       r, g, b, a,
+                                       r2, g2, b2, a2,
+                                       r3, g3, b3, a3);
    eina_stringshare_del(color_class);
 
    return cc;
@@ -159,5 +158,6 @@ e_color_class_del(const char *name)
 EAPI Eina_List *
 e_color_class_list(void)
 {
-  return e_config->color_classes;
+   return e_config->color_classes;
 }
+

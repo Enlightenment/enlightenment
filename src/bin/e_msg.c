@@ -4,8 +4,8 @@ typedef struct _E_Msg_Event E_Msg_Event;
 
 struct _E_Msg_Handler
 {
-   void (*func) (void *data, const char *name, const char *info, int val, E_Object *obj, void *msgdata);
-   void *data;
+   void          (*func)(void *data, const char *name, const char *info, int val, E_Object *obj, void *msgdata);
+   void         *data;
    unsigned char delete_me : 1;
 };
 
@@ -16,13 +16,13 @@ struct _E_Msg_Event
    int       val;
    E_Object *obj;
    void     *msgdata;
-   void    (*afterfunc) (void *data, E_Object *obj, void *msgdata);
+   void      (*afterfunc)(void *data, E_Object *obj, void *msgdata);
    void     *afterdata;
 };
 
 /* local subsystem functions */
 static Eina_Bool _e_msg_event_cb(void *data, int ev_type, void *ev);
-static void _e_msg_event_free(void *data, void *ev);
+static void      _e_msg_event_free(void *data, void *ev);
 
 /* local subsystem globals */
 static Eina_List *handlers = NULL;
@@ -43,7 +43,8 @@ e_msg_init(void)
 EINTERN int
 e_msg_shutdown(void)
 {
-   while (handlers) e_msg_handler_del(eina_list_data_get(handlers));
+   while (handlers)
+     e_msg_handler_del(eina_list_data_get(handlers));
    E_EVENT_MSG = 0;
    if (hand) ecore_event_handler_del(hand);
    hand = NULL;
@@ -51,7 +52,7 @@ e_msg_shutdown(void)
 }
 
 EAPI void
-e_msg_send(const char *name, const char *info, int val, E_Object *obj, void *msgdata, void (*afterfunc) (void *data, E_Object *obj, void *msgdata), void *afterdata)
+e_msg_send(const char *name, const char *info, int val, E_Object *obj, void *msgdata, void (*afterfunc)(void *data, E_Object *obj, void *msgdata), void *afterdata)
 {
    unsigned int size, pos, name_len, info_len;
    E_Msg_Event *ev;
@@ -65,14 +66,14 @@ e_msg_send(const char *name, const char *info, int val, E_Object *obj, void *msg
    pos = size;
    if (name)
      {
-	ev->name = ((char *)ev) + pos;
-	pos += name_len;
-	strcpy(ev->name, name);
+        ev->name = ((char *)ev) + pos;
+        pos += name_len;
+        strcpy(ev->name, name);
      }
    if (info)
      {
-	ev->info = ((char *)ev) + pos;
-	strcpy(ev->info, info);
+        ev->info = ((char *)ev) + pos;
+        strcpy(ev->info, info);
      }
    ev->val = val;
    ev->obj = obj;
@@ -84,7 +85,7 @@ e_msg_send(const char *name, const char *info, int val, E_Object *obj, void *msg
 }
 
 EAPI E_Msg_Handler *
-e_msg_handler_add(void (*func) (void *data, const char *name, const char *info, int val, E_Object *obj, void *msgdata), void *data)
+e_msg_handler_add(void (*func)(void *data, const char *name, const char *info, int val, E_Object *obj, void *msgdata), void *data)
 {
    E_Msg_Handler *emsgh;
 
@@ -101,13 +102,13 @@ e_msg_handler_del(E_Msg_Handler *emsgh)
 {
    if (processing_handlers > 0)
      {
-	emsgh->delete_me = 1;
-	del_handlers = eina_list_append(del_handlers, emsgh);
+        emsgh->delete_me = 1;
+        del_handlers = eina_list_append(del_handlers, emsgh);
      }
    else
      {
-	handlers = eina_list_remove(handlers, emsgh);
-	free(emsgh);
+        handlers = eina_list_remove(handlers, emsgh);
+        free(emsgh);
      }
 }
 
@@ -124,14 +125,14 @@ _e_msg_event_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
    e = ev;
    EINA_LIST_FOREACH(handlers, l, emsgh)
      {
-	if (!emsgh->delete_me)
-	  emsgh->func(emsgh->data, e->name, e->info, e->val, e->obj, e->msgdata);
+        if (!emsgh->delete_me)
+          emsgh->func(emsgh->data, e->name, e->info, e->val, e->obj, e->msgdata);
      }
    if (e->afterfunc) e->afterfunc(e->afterdata, e->obj, e->msgdata);
    processing_handlers--;
    if ((processing_handlers == 0) && (del_handlers))
      {
-	E_FREE_LIST(del_handlers, e_msg_handler_del);
+        E_FREE_LIST(del_handlers, e_msg_handler_del);
      }
    return 1;
 }
@@ -146,3 +147,4 @@ _e_msg_event_free(void *data __UNUSED__, void *ev)
 
    E_FREE(ev);
 }
+

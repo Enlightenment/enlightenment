@@ -8,7 +8,7 @@
 #define ECORE_X_RANDR_1_2   ((1 << 16) | 2)
 #define ECORE_X_RANDR_1_3   ((1 << 16) | 3)
 
-#define Ecore_X_Randr_None   0
+#define Ecore_X_Randr_None  0
 #define Ecore_X_Randr_Unset -1
 
 /*
@@ -89,7 +89,6 @@ _shutdown(void)
    _event_listeners_remove();
 }
 
-
 /**
  * @return EINA_TRUE if info could be refreshed, else EINA_FALSE
  */
@@ -148,7 +147,7 @@ static void
 _event_listeners_remove(void)
 {
    Ecore_Event_Handler *_event_handler = NULL;
-   EINA_LIST_FREE (_event_handlers, _event_handler)
+   EINA_LIST_FREE(_event_handlers, _event_handler)
      ecore_event_handler_del(_event_handler);
 
    if (e_randr_screen_info.randr_version >= ECORE_X_RANDR_1_2)
@@ -156,3 +155,4 @@ _event_listeners_remove(void)
         _12_event_listeners_remove();
      }
 }
+

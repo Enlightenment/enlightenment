@@ -1,6 +1,5 @@
 #include "e.h"
 
-
 static const char *_e_user_homedir = NULL;
 static size_t _e_user_homedir_len = 0;
 
@@ -16,17 +15,17 @@ e_user_homedir_get(void)
    _e_user_homedir = d = getenv("HOME");
    if (!_e_user_homedir)
      {
-	_e_user_homedir = "/tmp";
-	_e_user_homedir_len = sizeof("/tmp") - 1;
-	return _e_user_homedir;
+        _e_user_homedir = "/tmp";
+        _e_user_homedir_len = sizeof("/tmp") - 1;
+        return _e_user_homedir;
      }
 
    _e_user_homedir_len = strlen(_e_user_homedir);
    while ((_e_user_homedir_len > 1) &&
-	  (d[_e_user_homedir_len - 1] == '/'))
+          (d[_e_user_homedir_len - 1] == '/'))
      {
-	_e_user_homedir_len--;
-	d[_e_user_homedir_len] = '\0';
+        _e_user_homedir_len--;
+        d[_e_user_homedir_len] = '\0';
      }
    return _e_user_homedir;
 }
@@ -71,14 +70,14 @@ e_user_homedir_snprintf(char *dst, size_t size, const char *fmt, ...)
    off = _e_user_homedir_len + 1;
    if (size < _e_user_homedir_len + 2)
      {
-	if (size > 1)
-	  {
-	     memcpy(dst, _e_user_homedir, size - 1);
-	     dst[size - 1] = '\0';
-	  }
-	ret = off + vsnprintf(dst + off, size - off, fmt, ap);
-	va_end(ap);
-	return ret;
+        if (size > 1)
+          {
+             memcpy(dst, _e_user_homedir, size - 1);
+             dst[size - 1] = '\0';
+          }
+        ret = off + vsnprintf(dst + off, size - off, fmt, ap);
+        va_end(ap);
+        return ret;
      }
 
    memcpy(dst, _e_user_homedir, _e_user_homedir_len);
@@ -135,17 +134,17 @@ e_user_dir_get(void)
 
    if (!dir[0])
      {
-	char *e_home = getenv("E_HOME");
-	if (e_home)
-	  {
-	     snprintf(buf, sizeof(buf), "%s/e", e_home);
-	  }
-	else
-	  {
-	     snprintf(buf, sizeof(buf), ".e/e");
-	  }
-	_e_user_dir_len = e_user_homedir_concat(dir, sizeof(dir), buf);
-	_e_user_dir = dir;
+        char *e_home = getenv("E_HOME");
+        if (e_home)
+          {
+             snprintf(buf, sizeof(buf), "%s/e", e_home);
+          }
+        else
+          {
+             snprintf(buf, sizeof(buf), ".e/e");
+          }
+        _e_user_dir_len = e_user_homedir_concat(dir, sizeof(dir), buf);
+        _e_user_dir = dir;
      }
 
    return dir;
@@ -191,14 +190,14 @@ e_user_dir_snprintf(char *dst, size_t size, const char *fmt, ...)
    off = _e_user_dir_len + 1;
    if (size < _e_user_dir_len + 2)
      {
-	if (size > 1)
-	  {
-	     memcpy(dst, _e_user_dir, size - 1);
-	     dst[size - 1] = '\0';
-	  }
-	ret = off + vsnprintf(dst + off, size - off, fmt, ap);
-	va_end(ap);
-	return ret;
+        if (size > 1)
+          {
+             memcpy(dst, _e_user_dir, size - 1);
+             dst[size - 1] = '\0';
+          }
+        ret = off + vsnprintf(dst + off, size - off, fmt, ap);
+        va_end(ap);
+        return ret;
      }
 
    memcpy(dst, _e_user_dir, _e_user_dir_len);
@@ -208,3 +207,4 @@ e_user_dir_snprintf(char *dst, size_t size, const char *fmt, ...)
    va_end(ap);
    return ret;
 }
+

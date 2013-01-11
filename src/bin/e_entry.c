@@ -6,49 +6,48 @@ typedef struct _E_Entry_Smart_Data E_Entry_Smart_Data;
 
 struct _E_Entry_Smart_Data
 {
-   Evas_Object *entry_object;
-   Evas_Object *scroll_object;
-   E_Menu *popup;
+   Evas_Object         *entry_object;
+   Evas_Object         *scroll_object;
+   E_Menu              *popup;
    Ecore_Event_Handler *selection_handler;
 
-   int min_width;
-   int height;
-   Evas_Coord theme_width;
-   Evas_Coord theme_height;
-   int preedit_start_pos;
-   int preedit_end_pos;
-   int changing;
-   Eina_Bool enabled : 1;
-   Eina_Bool noedit : 1;
-   Eina_Bool focused : 1;
-   Eina_Bool password_mode : 1;
+   int                  min_width;
+   int                  height;
+   Evas_Coord           theme_width;
+   Evas_Coord           theme_height;
+   int                  preedit_start_pos;
+   int                  preedit_end_pos;
+   int                  changing;
+   Eina_Bool            enabled : 1;
+   Eina_Bool            noedit : 1;
+   Eina_Bool            focused : 1;
+   Eina_Bool            password_mode : 1;
 };
 
 /* local subsystem functions */
 static Eina_Bool _e_entry_x_selection_notify_handler(void *data, int type, void *event);
 
-static void _e_entry_x_selection_update(Evas_Object *entry);
+static void      _e_entry_x_selection_update(Evas_Object *entry);
 
-static void _e_entry_smart_add(Evas_Object *object);
-static void _e_entry_smart_del(Evas_Object *object);
-static void _e_entry_smart_move(Evas_Object *object, Evas_Coord x, Evas_Coord y);
-static void _e_entry_smart_resize(Evas_Object *object, Evas_Coord w, Evas_Coord h);
-static void _e_entry_smart_show(Evas_Object *object);
-static void _e_entry_smart_hide(Evas_Object *object);
-static void _e_entry_color_set(Evas_Object *object, int r, int g, int b, int a);
-static void _e_entry_clip_set(Evas_Object *object, Evas_Object *clip);
-static void _e_entry_clip_unset(Evas_Object *object);
-static void _e_entry_cb_menu_post(void *data, E_Menu *m);
-static void _e_entry_cb_cut(void *data, E_Menu *m, E_Menu_Item *mi);
-static void _e_entry_cb_copy(void *data, E_Menu *m, E_Menu_Item *mi);
-static void _e_entry_cb_paste(void *data, E_Menu *m, E_Menu_Item *mi);
-static void _e_entry_cb_select_all(void *data, E_Menu *m, E_Menu_Item *mi);
-static void _e_entry_cb_delete(void *data, E_Menu *m , E_Menu_Item *mi );
-static void _e_entry_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void      _e_entry_smart_add(Evas_Object *object);
+static void      _e_entry_smart_del(Evas_Object *object);
+static void      _e_entry_smart_move(Evas_Object *object, Evas_Coord x, Evas_Coord y);
+static void      _e_entry_smart_resize(Evas_Object *object, Evas_Coord w, Evas_Coord h);
+static void      _e_entry_smart_show(Evas_Object *object);
+static void      _e_entry_smart_hide(Evas_Object *object);
+static void      _e_entry_color_set(Evas_Object *object, int r, int g, int b, int a);
+static void      _e_entry_clip_set(Evas_Object *object, Evas_Object *clip);
+static void      _e_entry_clip_unset(Evas_Object *object);
+static void      _e_entry_cb_menu_post(void *data, E_Menu *m);
+static void      _e_entry_cb_cut(void *data, E_Menu *m, E_Menu_Item *mi);
+static void      _e_entry_cb_copy(void *data, E_Menu *m, E_Menu_Item *mi);
+static void      _e_entry_cb_paste(void *data, E_Menu *m, E_Menu_Item *mi);
+static void      _e_entry_cb_select_all(void *data, E_Menu *m, E_Menu_Item *mi);
+static void      _e_entry_cb_delete(void *data, E_Menu *m, E_Menu_Item *mi);
+static void      _e_entry_mouse_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 /* local subsystem globals */
 static Evas_Smart *_e_entry_smart = NULL;
 static int _e_entry_smart_use = 0;
-
 
 /* externally accessible functions */
 
@@ -67,26 +66,26 @@ e_entry_add(Evas *evas)
    if (!_e_entry_smart)
      {
         static const Evas_Smart_Class sc =
-          {
-             "e_entry",
-             EVAS_SMART_CLASS_VERSION,
-             _e_entry_smart_add,
-             _e_entry_smart_del,
-             _e_entry_smart_move,
-             _e_entry_smart_resize,
-             _e_entry_smart_show,
-             _e_entry_smart_hide,
-             _e_entry_color_set,
-             _e_entry_clip_set,
-             _e_entry_clip_unset,
-             NULL,
-             NULL,
-             NULL,
-             NULL,
-             NULL,
-             NULL,
-             NULL
-          };
+        {
+           "e_entry",
+           EVAS_SMART_CLASS_VERSION,
+           _e_entry_smart_add,
+           _e_entry_smart_del,
+           _e_entry_smart_move,
+           _e_entry_smart_resize,
+           _e_entry_smart_show,
+           _e_entry_smart_hide,
+           _e_entry_color_set,
+           _e_entry_clip_set,
+           _e_entry_clip_unset,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL,
+           NULL
+        };
         _e_entry_smart = evas_smart_class_new(&sc);
         _e_entry_smart_use = 0;
      }
@@ -113,8 +112,8 @@ e_entry_text_set(Evas_Object *entry, const char *_text)
      return;
 
    text = evas_textblock_text_utf8_to_markup(
-         edje_object_part_object_get(sd->entry_object, ENTRY_PART_NAME),
-         _text);
+       edje_object_part_object_get(sd->entry_object, ENTRY_PART_NAME),
+       _text);
    otext = edje_object_part_text_get(sd->entry_object, ENTRY_PART_NAME);
    if ((text) && (otext) && (!strcmp(text, otext)))
      {
@@ -151,8 +150,8 @@ e_entry_text_get(Evas_Object *entry)
         E_FREE(text);
      }
    text = evas_textblock_text_markup_to_utf8(
-         edje_object_part_object_get(sd->entry_object, ENTRY_PART_NAME),
-         edje_object_part_text_get(sd->entry_object, ENTRY_PART_NAME));
+       edje_object_part_object_get(sd->entry_object, ENTRY_PART_NAME),
+       edje_object_part_text_get(sd->entry_object, ENTRY_PART_NAME));
    return text;
 }
 
@@ -202,16 +201,16 @@ e_entry_password_set(Evas_Object *entry, int password_mode)
    if ((!entry) || (!(sd = evas_object_smart_data_get(entry))))
      return;
    if (sd->password_mode == password_mode)
-      return;
+     return;
 
    text = eina_stringshare_add(
-         edje_object_part_text_get(sd->entry_object, ENTRY_PART_NAME));
+       edje_object_part_text_get(sd->entry_object, ENTRY_PART_NAME));
 
    sd->password_mode = !!password_mode;
    if (!sd->password_mode)
-      e_theme_edje_object_set(sd->entry_object, "base/theme/widgets", "e/widgets/entry/text");
+     e_theme_edje_object_set(sd->entry_object, "base/theme/widgets", "e/widgets/entry/text");
    else
-      e_theme_edje_object_set(sd->entry_object, "base/theme/widgets", "e/widgets/entry/password");
+     e_theme_edje_object_set(sd->entry_object, "base/theme/widgets", "e/widgets/entry/password");
 
    /* Set the text back. */
    if (text)
@@ -273,7 +272,7 @@ e_entry_focus(Evas_Object *entry)
 
    edje_object_part_text_cursor_end_set(sd->entry_object, ENTRY_PART_NAME, EDJE_CURSOR_MAIN);
    if ((sd->enabled) && (!sd->noedit))
-      edje_object_signal_emit(sd->entry_object, "e,action,show,cursor", "e");
+     edje_object_signal_emit(sd->entry_object, "e,action,show,cursor", "e");
    sd->focused = EINA_TRUE;
 }
 
@@ -318,10 +317,10 @@ e_entry_enable(Evas_Object *entry)
      return;
 
    edje_object_signal_emit(e_scrollframe_edje_object_get(sd->scroll_object),
-         "e,state,enabled", "e");
+                           "e,state,enabled", "e");
    edje_object_signal_emit(sd->entry_object, "e,state,enabled", "e");
    if (sd->focused)
-      edje_object_signal_emit(sd->entry_object, "e,action,show,cursor", "e");
+     edje_object_signal_emit(sd->entry_object, "e,action,show,cursor", "e");
    sd->enabled = EINA_TRUE;
 }
 
@@ -343,7 +342,7 @@ e_entry_disable(Evas_Object *entry)
      return;
 
    edje_object_signal_emit(e_scrollframe_edje_object_get(sd->scroll_object),
-         "e,state,disabled", "e");
+                           "e,state,disabled", "e");
    edje_object_signal_emit(sd->entry_object, "e,state,disabled", "e");
    edje_object_signal_emit(sd->entry_object, "e,action,hide,cursor", "e");
    sd->enabled = EINA_FALSE;
@@ -367,7 +366,7 @@ e_entry_edit(Evas_Object *entry)
 
    sd->noedit = EINA_FALSE;
    edje_object_signal_emit(e_scrollframe_edje_object_get(sd->scroll_object),
-         "e,state,edit", "e");
+                           "e,state,edit", "e");
    edje_object_signal_emit(sd->entry_object, "e,state,edit", "e");
    if (sd->focused)
      {
@@ -395,7 +394,7 @@ e_entry_noedit(Evas_Object *entry)
 
    sd->noedit = EINA_TRUE;
    edje_object_signal_emit(e_scrollframe_edje_object_get(sd->scroll_object),
-         "e,state,noedit", "e");
+                           "e,state,noedit", "e");
    edje_object_signal_emit(sd->entry_object, "e,state,noedit", "e");
    edje_object_signal_emit(sd->entry_object, "e,action,hide,cursor", "e");
 }
@@ -408,7 +407,7 @@ e_entry_nomenu(Evas_Object *entry)
 {
    if (evas_object_smart_smart_get(entry) != _e_entry_smart) SMARTERRNR();
    evas_object_event_callback_del_full(entry, EVAS_CALLBACK_MOUSE_DOWN,
-     _e_entry_mouse_down_cb, entry);
+                                       _e_entry_mouse_down_cb, entry);
 }
 
 /* Private functions */
@@ -432,7 +431,6 @@ _e_entry_is_empty(const Evas_Object *entry_edje)
    evas_textblock_cursor_free(cur);
 
    return !ret;
-
 }
 
 /* Called when the entry object is pressed by the mouse */
@@ -480,10 +478,10 @@ _e_entry_mouse_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o
                        e_menu_item_label_set(mi, _("Delete"));
                        e_util_menu_item_theme_icon_set(mi, "edit-delete");
                        e_menu_item_callback_set(mi, _e_entry_cb_delete, sd);
-                       
+
                        mi = e_menu_item_new(sd->popup);
                        e_menu_item_separator_set(mi, 1);
-                       
+
                        if (!s_passwd)
                          {
                             mi = e_menu_item_new(sd->popup);
@@ -543,20 +541,20 @@ _e_entry_x_selection_notify_handler(void *data, int type __UNUSED__, void *event
 
    ev = event;
    if (((ev->selection == ECORE_X_SELECTION_CLIPBOARD) ||
-            (ev->selection == ECORE_X_SELECTION_PRIMARY)) &&
-         (strcmp(ev->target, ECORE_X_SELECTION_TARGET_UTF8_STRING) == 0))
+        (ev->selection == ECORE_X_SELECTION_PRIMARY)) &&
+       (strcmp(ev->target, ECORE_X_SELECTION_TARGET_UTF8_STRING) == 0))
      {
         Ecore_X_Selection_Data_Text *text_data;
 
         text_data = ev->data;
         if ((text_data->data.content == ECORE_X_SELECTION_CONTENT_TEXT) &&
-              (text_data->text))
+            (text_data->text))
           {
              char *txt = evas_textblock_text_utf8_to_markup(NULL, text_data->text);
              if (txt)
                {
                   edje_object_part_text_user_insert(sd->entry_object,
-                        ENTRY_PART_NAME, txt);
+                                                    ENTRY_PART_NAME, txt);
                   free(txt);
                }
           }
@@ -591,7 +589,7 @@ _e_entry_x_selection_update(Evas_Object *entry)
      xwin = win->evas_win;
 
    if (sd->password_mode)
-      return;
+     return;
 
    text = edje_object_part_text_selection_get(sd->entry_object, ENTRY_PART_NAME);
    if (text)
@@ -600,14 +598,14 @@ _e_entry_x_selection_update(Evas_Object *entry)
 
 static void
 _entry_paste_request_signal_cb(void *data,
-      Evas_Object *obj EINA_UNUSED,
-      const char *emission,
-      const char *source EINA_UNUSED)
+                               Evas_Object *obj EINA_UNUSED,
+                               const char *emission,
+                               const char *source EINA_UNUSED)
 {
    Ecore_X_Window xwin;
    E_Win *win;
    E_Container *con;
-   
+
    if (!(win = e_win_evas_object_win_get(data)))
      {
         xwin = e_grabinput_key_win_get();
@@ -624,38 +622,38 @@ _entry_paste_request_signal_cb(void *data,
    if (emission[sizeof("ntry,paste,request,")] == '1')
      {
         ecore_x_selection_primary_request(xwin,
-              ECORE_X_SELECTION_TARGET_UTF8_STRING);
+                                          ECORE_X_SELECTION_TARGET_UTF8_STRING);
      }
    else
      {
         ecore_x_selection_clipboard_request(xwin,
-              ECORE_X_SELECTION_TARGET_UTF8_STRING);
+                                            ECORE_X_SELECTION_TARGET_UTF8_STRING);
      }
 }
 
 static void
 _entry_selection_changed_signal_cb(void *data,
-      Evas_Object *obj EINA_UNUSED,
-      const char *emission EINA_UNUSED,
-      const char *source EINA_UNUSED)
+                                   Evas_Object *obj EINA_UNUSED,
+                                   const char *emission EINA_UNUSED,
+                                   const char *source EINA_UNUSED)
 {
    _e_entry_x_selection_update(data);
 }
 
 static void
 _entry_selection_all_signal_cb(void *data,
-      Evas_Object *obj EINA_UNUSED,
-      const char *emission EINA_UNUSED,
-      const char *source EINA_UNUSED)
+                               Evas_Object *obj EINA_UNUSED,
+                               const char *emission EINA_UNUSED,
+                               const char *source EINA_UNUSED)
 {
    e_entry_select_all(data);
 }
 
 static void
 _entry_copy_notify_signal_cb(void *data,
-      Evas_Object *obj EINA_UNUSED,
-      const char *emission EINA_UNUSED,
-      const char *source EINA_UNUSED)
+                             Evas_Object *obj EINA_UNUSED,
+                             const char *emission EINA_UNUSED,
+                             const char *source EINA_UNUSED)
 {
    E_Entry_Smart_Data *sd;
 
@@ -667,9 +665,9 @@ _entry_copy_notify_signal_cb(void *data,
 
 static void
 _entry_cut_notify_signal_cb(void *data,
-      Evas_Object *obj EINA_UNUSED,
-      const char *emission EINA_UNUSED,
-      const char *source EINA_UNUSED)
+                            Evas_Object *obj EINA_UNUSED,
+                            const char *emission EINA_UNUSED,
+                            const char *source EINA_UNUSED)
 {
    E_Entry_Smart_Data *sd;
 
@@ -698,9 +696,9 @@ _entry_recalc_size(Evas_Object *object)
 
 static void
 _entry_changed_signal_cb(void *data,
-      Evas_Object *obj EINA_UNUSED,
-      const char *emission EINA_UNUSED,
-      const char *source EINA_UNUSED)
+                         Evas_Object *obj EINA_UNUSED,
+                         const char *emission EINA_UNUSED,
+                         const char *source EINA_UNUSED)
 {
    Evas_Object *object = data;
    E_Entry_Smart_Data *sd;
@@ -715,9 +713,9 @@ _entry_changed_signal_cb(void *data,
 
 static void
 _entry_cursor_changed_signal_cb(void *data,
-      Evas_Object *obj EINA_UNUSED,
-      const char *emission EINA_UNUSED,
-      const char *source EINA_UNUSED)
+                                Evas_Object *obj EINA_UNUSED,
+                                const char *emission EINA_UNUSED,
+                                const char *source EINA_UNUSED)
 {
    Evas_Object *object = data;
    E_Entry_Smart_Data *sd;
@@ -727,7 +725,7 @@ _entry_cursor_changed_signal_cb(void *data,
      return;
 
    edje_object_part_text_cursor_geometry_get(sd->entry_object, ENTRY_PART_NAME,
-         &cx, &cy, &cw, &ch);
+                                             &cx, &cy, &cw, &ch);
    e_scrollframe_child_region_show(sd->scroll_object, cx, cy, cw, ch);
 }
 
@@ -763,7 +761,7 @@ _e_entry_smart_add(Evas_Object *object)
    evas_object_propagate_events_set(sd->scroll_object, EINA_TRUE);
    e_scrollframe_custom_theme_set(sd->scroll_object, "base/theme/widgets", "e/widgets/entry/scrollframe");
    edje_object_size_min_calc(e_scrollframe_edje_object_get(sd->scroll_object),
-         &sd->theme_width, &sd->theme_height);
+                             &sd->theme_width, &sd->theme_height);
 
    evas_object_smart_member_add(sd->scroll_object, object);
    evas_object_show(sd->scroll_object);
@@ -778,28 +776,28 @@ _e_entry_smart_add(Evas_Object *object)
    evas_object_show(o);
 
    evas_object_event_callback_add(object, EVAS_CALLBACK_MOUSE_DOWN,
-         _e_entry_mouse_down_cb, object);
+                                  _e_entry_mouse_down_cb, object);
    edje_object_signal_callback_add(sd->entry_object,
-         "selection,changed", ENTRY_PART_NAME,
-         _entry_selection_changed_signal_cb, object);
+                                   "selection,changed", ENTRY_PART_NAME,
+                                   _entry_selection_changed_signal_cb, object);
    edje_object_signal_callback_add(sd->entry_object,
-         "entry,selection,all,request", ENTRY_PART_NAME,
-         _entry_selection_all_signal_cb, object);
+                                   "entry,selection,all,request", ENTRY_PART_NAME,
+                                   _entry_selection_all_signal_cb, object);
    edje_object_signal_callback_add(sd->entry_object,
-         "entry,changed", ENTRY_PART_NAME,
-         _entry_changed_signal_cb, object);
+                                   "entry,changed", ENTRY_PART_NAME,
+                                   _entry_changed_signal_cb, object);
    edje_object_signal_callback_add(sd->entry_object,
-         "entry,paste,request,*", ENTRY_PART_NAME,
-         _entry_paste_request_signal_cb, object);
+                                   "entry,paste,request,*", ENTRY_PART_NAME,
+                                   _entry_paste_request_signal_cb, object);
    edje_object_signal_callback_add(sd->entry_object,
-         "entry,copy,notify", ENTRY_PART_NAME,
-         _entry_copy_notify_signal_cb, object);
+                                   "entry,copy,notify", ENTRY_PART_NAME,
+                                   _entry_copy_notify_signal_cb, object);
    edje_object_signal_callback_add(sd->entry_object,
-         "entry,cut,notify", ENTRY_PART_NAME,
-         _entry_cut_notify_signal_cb, object);
+                                   "entry,cut,notify", ENTRY_PART_NAME,
+                                   _entry_cut_notify_signal_cb, object);
    edje_object_signal_callback_add(sd->entry_object,
-         "cursor,changed", ENTRY_PART_NAME,
-         _entry_cursor_changed_signal_cb, object);
+                                   "cursor,changed", ENTRY_PART_NAME,
+                                   _entry_cursor_changed_signal_cb, object);
 
    _entry_recalc_size(object);
 
@@ -817,29 +815,29 @@ _e_entry_smart_del(Evas_Object *object)
      return;
 
    evas_object_event_callback_del_full(object, EVAS_CALLBACK_MOUSE_DOWN,
-         _e_entry_mouse_down_cb, object);
+                                       _e_entry_mouse_down_cb, object);
 
    edje_object_signal_callback_del_full(sd->entry_object,
-         "selection,changed", ENTRY_PART_NAME,
-         _entry_selection_changed_signal_cb, object);
+                                        "selection,changed", ENTRY_PART_NAME,
+                                        _entry_selection_changed_signal_cb, object);
    edje_object_signal_callback_del_full(sd->entry_object,
-         "entry,selection,all,request", ENTRY_PART_NAME,
-         _entry_selection_all_signal_cb, object);
+                                        "entry,selection,all,request", ENTRY_PART_NAME,
+                                        _entry_selection_all_signal_cb, object);
    edje_object_signal_callback_del_full(sd->entry_object,
-         "entry,changed", ENTRY_PART_NAME,
-         _entry_changed_signal_cb, object);
+                                        "entry,changed", ENTRY_PART_NAME,
+                                        _entry_changed_signal_cb, object);
    edje_object_signal_callback_del_full(sd->entry_object,
-         "entry,paste,request,*", ENTRY_PART_NAME,
-         _entry_paste_request_signal_cb, object);
+                                        "entry,paste,request,*", ENTRY_PART_NAME,
+                                        _entry_paste_request_signal_cb, object);
    edje_object_signal_callback_del_full(sd->entry_object,
-         "entry,copy,notify", ENTRY_PART_NAME,
-         _entry_copy_notify_signal_cb, object);
+                                        "entry,copy,notify", ENTRY_PART_NAME,
+                                        _entry_copy_notify_signal_cb, object);
    edje_object_signal_callback_del_full(sd->entry_object,
-         "entry,cut,notify", ENTRY_PART_NAME,
-         _entry_cut_notify_signal_cb, object);
+                                        "entry,cut,notify", ENTRY_PART_NAME,
+                                        _entry_cut_notify_signal_cb, object);
    edje_object_signal_callback_del_full(sd->entry_object,
-         "cursor,changed", ENTRY_PART_NAME,
-         _entry_cursor_changed_signal_cb, object);
+                                        "cursor,changed", ENTRY_PART_NAME,
+                                        _entry_cursor_changed_signal_cb, object);
    if (sd->selection_handler)
      ecore_event_handler_del(sd->selection_handler);
    evas_object_del(sd->entry_object);

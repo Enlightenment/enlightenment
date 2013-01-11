@@ -19,20 +19,20 @@ struct _E_Widget_Data
    int   cur_enabled;
 
    struct
-     {
-	Evas_Object *list; /* Selecting a list entry starts edit*/
-	Evas_Object *table;
-	Evas_Object *entry;	/* Generic Entry */
-	Evas_Object *up; /* Move selected list entry up */
-	Evas_Object *down; /* Move selected list entry down */
-	Evas_Object *add; /* create and select a new list entry */
-	Evas_Object *remove; /* remove the selected entry */
-     } gui;
+   {
+      Evas_Object *list;   /* Selecting a list entry starts edit*/
+      Evas_Object *table;
+      Evas_Object *entry;       /* Generic Entry */
+      Evas_Object *up;   /* Move selected list entry up */
+      Evas_Object *down;   /* Move selected list entry down */
+      Evas_Object *add;   /* create and select a new list entry */
+      Evas_Object *remove;   /* remove the selected entry */
+   } gui;
 };
 
 /* Externally accessible functions */
 EAPI Evas_Object *
-e_widget_config_list_add(Evas *evas, Evas_Object* (*func_entry_add) (Evas *evas, char **val, void (*func) (void *data, void *data2), void *data, void *data2), const char *label, int listspan __UNUSED__)
+e_widget_config_list_add(Evas *evas, Evas_Object * (*func_entry_add)(Evas * evas, char **val, void (*func)(void *data, void *data2), void *data, void *data2), const char *label, int listspan __UNUSED__)
 {
    Evas_Object *obj, *o;
    E_Widget_Data *wd;
@@ -58,13 +58,13 @@ e_widget_config_list_add(Evas *evas, Evas_Object* (*func_entry_add) (Evas *evas,
    e_widget_table_object_append(wd->gui.table, o, 0, 2, 2, 1, 1, 0, 1, 0);
 
    o = e_widget_button_add(evas, _("Add"), "list-add", _button_cb_add,
-			   wd, obj);
+                           wd, obj);
    wd->gui.add = o;
    e_widget_disabled_set(o, 1);
    e_widget_table_object_append(wd->gui.table, o, 0, 3, 1, 1, 1, 0, 1, 0);
 
    o = e_widget_button_add(evas, _("Remove"), "list-remove",
-			   _button_cb_remove, wd, obj);
+                           _button_cb_remove, wd, obj);
    wd->gui.remove = o;
    e_widget_disabled_set(o, 1);
    e_widget_table_object_append(wd->gui.table, o, 1, 3, 1, 1, 1, 0, 1, 0);
@@ -78,13 +78,13 @@ e_widget_config_list_add(Evas *evas, Evas_Object* (*func_entry_add) (Evas *evas,
    e_widget_table_object_append(wd->gui.table, o, 0, 4, 2, 1, 1, 1, 1, 1);
 
    o = e_widget_button_add(evas, _("Up"), "go-up",
-			   _button_cb_up, wd, NULL);
+                           _button_cb_up, wd, NULL);
    wd->gui.up = o;
    e_widget_disabled_set(o, 1);
    e_widget_table_object_append(wd->gui.table, o, 0, 5, 1, 1, 1, 0, 1, 0);
 
    o = e_widget_button_add(evas, _("Down"), "go-down",
-			   _button_cb_down, wd, NULL);
+                           _button_cb_down, wd, NULL);
    wd->gui.down = o;
    e_widget_disabled_set(o, 1);
    e_widget_table_object_append(wd->gui.table, o, 1, 5, 1, 1, 1, 0, 1, 0);
@@ -145,8 +145,8 @@ e_widget_config_list_object_append(Evas_Object *obj, Evas_Object *sobj, int col,
 
    wd = e_widget_data_get(obj);
    e_widget_table_object_append(wd->gui.table, sobj, col, row,
-				colspan, rowspan, fill_w, fill_h,
-				expand_w, expand_h);
+                                colspan, rowspan, fill_w, fill_h,
+                                expand_w, expand_h);
    e_widget_size_min_get(wd->gui.table, &mw, &mh);
    e_widget_size_min_set(obj, mw, mh);
 }
@@ -175,22 +175,22 @@ _button_cb_add(void *data, void *obj)
    if (!(wd = data)) return;
    if ((wd->cur_entry) && (wd->cur_entry[0]))
      {
-	int i;
+        int i;
 
-	/* If it already esists just select the existing one */
-	for (i = 0; i < e_widget_ilist_count(wd->gui.list); i++)
-	  {
-	     const char *label;
+        /* If it already esists just select the existing one */
+        for (i = 0; i < e_widget_ilist_count(wd->gui.list); i++)
+          {
+             const char *label;
 
-	     label = e_widget_ilist_nth_label_get(wd->gui.list, i);
-	     if ((label) && (!strcmp(label, wd->cur_entry)))
-	       {
-		  e_widget_ilist_selected_set(wd->gui.list, i);
-		  return;
-	       }
-	  }
-	e_widget_config_list_append(o, wd->cur_entry);
-	e_widget_entry_text_set(wd->gui.entry, "");
+             label = e_widget_ilist_nth_label_get(wd->gui.list, i);
+             if ((label) && (!strcmp(label, wd->cur_entry)))
+               {
+                  e_widget_ilist_selected_set(wd->gui.list, i);
+                  return;
+               }
+          }
+        e_widget_config_list_append(o, wd->cur_entry);
+        e_widget_entry_text_set(wd->gui.entry, "");
      }
 }
 
@@ -271,23 +271,23 @@ _list_select_num(E_Widget_Data *wd, int indx)
 
    if ((count == 1) || (indx < 0))
      {
-	e_widget_disabled_set(wd->gui.up, 1);
-	e_widget_disabled_set(wd->gui.down, 1);
+        e_widget_disabled_set(wd->gui.up, 1);
+        e_widget_disabled_set(wd->gui.down, 1);
      }
    else if (indx == 0)
      {
-	e_widget_disabled_set(wd->gui.up, 1);
-	e_widget_disabled_set(wd->gui.down, 0);
+        e_widget_disabled_set(wd->gui.up, 1);
+        e_widget_disabled_set(wd->gui.down, 0);
      }
    else if ((indx + 1) == count)
      {
-	e_widget_disabled_set(wd->gui.up, 0);
-	e_widget_disabled_set(wd->gui.down, 1);
+        e_widget_disabled_set(wd->gui.up, 0);
+        e_widget_disabled_set(wd->gui.down, 1);
      }
    else
      {
-	e_widget_disabled_set(wd->gui.up, 0);
-	e_widget_disabled_set(wd->gui.down, 0);
+        e_widget_disabled_set(wd->gui.up, 0);
+        e_widget_disabled_set(wd->gui.down, 0);
      }
 }
 
@@ -314,15 +314,16 @@ _e_wid_disable_hook(Evas_Object *obj)
 
    if (wd->cur_enabled)
      {
-	e_widget_disabled_set(wd->gui.list, 0);
-	e_widget_disabled_set(wd->gui.add, 0);
-	e_widget_disabled_set(wd->gui.entry, 0);
+        e_widget_disabled_set(wd->gui.list, 0);
+        e_widget_disabled_set(wd->gui.add, 0);
+        e_widget_disabled_set(wd->gui.entry, 0);
      }
    else
      {
-	_list_select_num(wd, -1);
-	e_widget_disabled_set(wd->gui.list, 1);
-	e_widget_disabled_set(wd->gui.entry, 1);
-	e_widget_disabled_set(wd->gui.add, 1);
+        _list_select_num(wd, -1);
+        e_widget_disabled_set(wd->gui.list, 1);
+        e_widget_disabled_set(wd->gui.entry, 1);
+        e_widget_disabled_set(wd->gui.add, 1);
      }
 }
+

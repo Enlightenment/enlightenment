@@ -3,17 +3,17 @@
 typedef struct _E_Widget_Data E_Widget_Data;
 struct _E_Widget_Data
 {
-   Evas_Object         *obj, *table;
-   Eina_List           *desks;
-   int                  w, h, dx, dy, cx, cy;
+   Evas_Object *obj, *table;
+   Eina_List   *desks;
+   int          w, h, dx, dy, cx, cy;
 };
 typedef struct _E_Widget_Desk_Data E_Widget_Desk_Data;
 struct _E_Widget_Desk_Data
 {
-   Evas_Object *icon, *thumb;
-   int          zone, con, x, y;
+   Evas_Object         *icon, *thumb;
+   int                  zone, con, x, y;
    Ecore_Event_Handler *bg_upd_hdl;
-   Eina_Bool configurable : 1;
+   Eina_Bool            configurable : 1;
 };
 
 /* local function prototypes */
@@ -166,7 +166,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
      }
    else
      {
-        zone_ratio = (double) zone->w / zone->h;
+        zone_ratio = (double)zone->w / zone->h;
         desk_ratio = (tw / wd->dx) / (th / wd->dy);
 
         if (zone_ratio > desk_ratio)
@@ -181,7 +181,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
           }
      }
 
-   EINA_LIST_FOREACH_SAFE (wd->desks, l, ll, dw)
+   EINA_LIST_FOREACH_SAFE(wd->desks, l, ll, dw)
      {
         if (!(dd = evas_object_data_get(dw, "desk_data"))) continue;
         if ((dd->x < wd->dx) && (dd->y < wd->dy))

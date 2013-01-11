@@ -218,47 +218,47 @@ EINTERN void
 e_hints_manager_init(E_Manager *man)
 {
    /* Set desktop count, desktop names and workarea */
-    int i = 0, num = 0;
-    unsigned int *areas = NULL;
-    Eina_List *cl;
-    E_Container *c;
-    Ecore_X_Window *vroots = NULL;
-    /* FIXME: Desktop names not yet implemented */
+   int i = 0, num = 0;
+   unsigned int *areas = NULL;
+   Eina_List *cl;
+   E_Container *c;
+   Ecore_X_Window *vroots = NULL;
+   /* FIXME: Desktop names not yet implemented */
 /*   char			**names; */
 
-    e_hints_e16_comms_pretend(man);
+   e_hints_e16_comms_pretend(man);
 
-    num = eina_list_count(man->containers);
+   num = eina_list_count(man->containers);
 
-    vroots = calloc(num, sizeof(Ecore_X_Window));
-    if (!vroots) return;
+   vroots = calloc(num, sizeof(Ecore_X_Window));
+   if (!vroots) return;
 
 /*   names = calloc(num, sizeof(char *));*/
 
-    areas = calloc(4 * num, sizeof(unsigned int));
-    if (!areas)
-      {
-         free(vroots);
-         return;
-      }
+   areas = calloc(4 * num, sizeof(unsigned int));
+   if (!areas)
+     {
+        free(vroots);
+        return;
+     }
 
-    EINA_LIST_FOREACH(man->containers, cl, c)
-      {
-         areas[4 * i] = c->x;
-         areas[4 * i + 1] = c->y;
-         areas[4 * i + 2] = c->w;
-         areas[4 * i + 3] = c->h;
-         vroots[i++] = c->win;
-      }
+   EINA_LIST_FOREACH(man->containers, cl, c)
+     {
+        areas[4 * i] = c->x;
+        areas[4 * i + 1] = c->y;
+        areas[4 * i + 2] = c->w;
+        areas[4 * i + 3] = c->h;
+        vroots[i++] = c->win;
+     }
 
 #if 0
-    ecore_x_netwm_desk_count_set(man->root, num);
-    /* No need for workarea without desktops */
-    ecore_x_netwm_desk_workareas_set(man->root, num, areas);
+   ecore_x_netwm_desk_count_set(man->root, num);
+   /* No need for workarea without desktops */
+   ecore_x_netwm_desk_workareas_set(man->root, num, areas);
 #endif
 
-    free(vroots);
-    free(areas);
+   free(vroots);
+   free(areas);
 }
 
 /* FIXME, this should set the list in map order, not stack order */
@@ -395,7 +395,7 @@ e_hints_client_stacking_set(void)
 
 EAPI void
 e_hints_active_window_set(E_Manager *man,
-                          E_Border  *bd)
+                          E_Border *bd)
 {
    E_OBJECT_CHECK(man);
    if (bd)
@@ -466,13 +466,13 @@ e_hints_window_init(E_Border *bd)
         else
           {
              /* Update netwm desktop with current desktop */
-              e_hints_window_desktop_set(bd);
+             e_hints_window_desktop_set(bd);
           }
      }
    else
      {
         /* Update netwm desktop with current desktop */
-         e_hints_window_desktop_set(bd);
+        e_hints_window_desktop_set(bd);
      }
 #endif
 
@@ -692,8 +692,8 @@ e_hints_window_type_get(E_Border *bd)
 }
 
 EAPI void
-e_hints_window_state_update(E_Border                   *bd,
-                            Ecore_X_Window_State        state,
+e_hints_window_state_update(E_Border *bd,
+                            Ecore_X_Window_State state,
                             Ecore_X_Window_State_Action action)
 {
    switch (state)
@@ -1175,7 +1175,7 @@ _e_hints_process_wakeup(E_Border *bd)
    if (bd->client.netwm.pid <= 0) return;
 #ifdef SIGCHLD
    kill(bd->client.netwm.pid, SIGCHLD);
-#endif             
+#endif
 }
 
 EAPI void
@@ -1231,7 +1231,7 @@ e_hints_window_hidden_set(E_Border *bd)
 
 EAPI void
 e_hints_window_shaded_set(E_Border *bd,
-                          int       on)
+                          int on)
 {
    if ((!bd->client.netwm.state.shaded) && (on))
      {
@@ -1249,7 +1249,7 @@ e_hints_window_shaded_set(E_Border *bd,
 }
 
 EAPI void
-e_hints_window_shade_direction_set(E_Border   *bd,
+e_hints_window_shade_direction_set(E_Border *bd,
                                    E_Direction dir)
 {
    ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_SHADE_DIRECTION, &dir, 1);
@@ -1310,8 +1310,8 @@ e_hints_window_size_get(E_Border *bd)
 
 EAPI void
 e_hints_window_maximized_set(E_Border *bd,
-                             int       horizontal,
-                             int       vertical)
+                             int horizontal,
+                             int vertical)
 {
    if ((horizontal) && (!bd->client.netwm.state.maximized_h))
      {
@@ -1341,7 +1341,7 @@ e_hints_window_maximized_set(E_Border *bd,
 
 EAPI void
 e_hints_window_fullscreen_set(E_Border *bd,
-                              int       on)
+                              int on)
 {
    if ((!bd->client.netwm.state.fullscreen) && (on))
      {
@@ -1359,7 +1359,7 @@ e_hints_window_fullscreen_set(E_Border *bd,
 
 EAPI void
 e_hints_window_sticky_set(E_Border *bd,
-                          int       on)
+                          int on)
 {
    if ((!bd->client.netwm.state.sticky) && (on))
      {
@@ -1376,7 +1376,7 @@ e_hints_window_sticky_set(E_Border *bd,
 }
 
 EAPI void
-e_hints_window_stacking_set(E_Border  *bd,
+e_hints_window_stacking_set(E_Border *bd,
                             E_Stacking stacking)
 {
    if (bd->client.netwm.state.stacking == stacking) return;
@@ -1391,21 +1391,21 @@ e_hints_window_desktop_set(E_Border *bd)
    /* This function is only called when really changing desktop,
     * so just set the property and don't care about the roundtrip.
     */
-     unsigned int deskpos[2];
+   unsigned int deskpos[2];
 
-     /* if valgrind complains here it is complaining bd->client.netwm.desktop
-      * is an uninitialised variable - but it isn't. it can't be. its part of
-      * a calloc()'d struct and thus has to have been set to 0. hell even
-      * e_border.c explicitly sets it to 0 on creation of the border object.
-      */
-     deskpos[0] = bd->desk->x;
-     deskpos[1] = bd->desk->y;
-     ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_DESK, deskpos, 2);
+   /* if valgrind complains here it is complaining bd->client.netwm.desktop
+    * is an uninitialised variable - but it isn't. it can't be. its part of
+    * a calloc()'d struct and thus has to have been set to 0. hell even
+    * e_border.c explicitly sets it to 0 on creation of the border object.
+    */
+   deskpos[0] = bd->desk->x;
+   deskpos[1] = bd->desk->y;
+   ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_DESK, deskpos, 2);
 
 #if 0
-     ecore_x_netwm_desktop_set(bd->client.win, current);
+   ecore_x_netwm_desktop_set(bd->client.win, current);
 #endif
-     bd->client.netwm.desktop = (bd->desk->y * bd->zone->desk_x_count) + bd->desk->x;
+   bd->client.netwm.desktop = (bd->desk->y * bd->zone->desk_x_count) + bd->desk->x;
 }
 
 EAPI void
@@ -1466,7 +1466,7 @@ e_hints_window_virtual_keyboard_state_get(E_Border *bd)
 {
    Ecore_X_Atom atom = 0;
    bd->client.vkbd.state = ecore_x_e_virtual_keyboard_state_get(bd->client.win);
-   if (ecore_x_window_prop_atom_get(bd->client.win, 
+   if (ecore_x_window_prop_atom_get(bd->client.win,
                                     ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE,
                                     &atom, 1))
      bd->client.vkbd.have_property = 1;
@@ -1514,3 +1514,4 @@ e_hints_scale_update(void)
         free(roots);
      }
 }
+

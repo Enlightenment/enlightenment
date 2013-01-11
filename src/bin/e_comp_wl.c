@@ -81,7 +81,7 @@ e_comp_wl_init(void)
    fd = wl_event_loop_get_fd(loop);
 
    _wl_fd_handler =
-     ecore_main_fd_handler_add(fd, ECORE_FD_READ,// | ECORE_FD_WRITE,
+     ecore_main_fd_handler_add(fd, ECORE_FD_READ, // | ECORE_FD_WRITE,
                                _e_comp_wl_fd_handle, NULL, NULL, NULL);
 
    wl_event_loop_dispatch(loop, 0);

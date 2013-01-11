@@ -17,29 +17,29 @@ struct _E_Pointer_Stack
 static Eina_List *_e_pointers = NULL;
 static Eina_List *handlers = NULL;
 
-static void _e_pointer_canvas_add(E_Pointer *p);
-static void _e_pointer_canvas_del(E_Pointer *p);
-static void _e_pointer_cb_move(void        *data,
-                               Evas        *e __UNUSED__,
-                               Evas_Object *obj __UNUSED__,
-                               void        *event_info);
+static void      _e_pointer_canvas_add(E_Pointer *p);
+static void      _e_pointer_canvas_del(E_Pointer *p);
+static void      _e_pointer_cb_move(void *data,
+                                    Evas *e __UNUSED__,
+                                    Evas_Object *obj __UNUSED__,
+                                    void *event_info);
 static void      _e_pointer_free(E_Pointer *p);
 static void      _e_pointer_stack_free(E_Pointer_Stack *elem);
-static void      _e_pointer_type_set(E_Pointer  *p,
+static void      _e_pointer_type_set(E_Pointer *p,
                                      const char *type);
 static void      _e_pointer_active_handle(E_Pointer *p);
 
 static Eina_Bool _e_pointer_cb_mouse_down(void *data,
-                                          int   type,
+                                          int type,
                                           void *event);
 static Eina_Bool _e_pointer_cb_mouse_up(void *data,
-                                        int   type,
+                                        int type,
                                         void *event);
 static Eina_Bool _e_pointer_cb_mouse_move(void *data,
-                                          int   type,
+                                          int type,
                                           void *event);
 static Eina_Bool _e_pointer_cb_mouse_wheel(void *data,
-                                           int   type,
+                                           int type,
                                            void *event);
 static Eina_Bool _e_pointer_cb_idle_timer_pre(void *data);
 static Eina_Bool _e_pointer_cb_idle_timer_wait(void *data);
@@ -77,7 +77,7 @@ e_pointer_shutdown(void)
 
 EAPI E_Pointer *
 e_pointer_window_new(Ecore_X_Window win,
-                     int            filled)
+                     int filled)
 {
    E_Pointer *p = NULL;
 
@@ -151,8 +151,8 @@ e_pointer_hide(E_Pointer *p)
 }
 
 EAPI void
-e_pointer_type_push(E_Pointer  *p,
-                    void       *obj,
+e_pointer_type_push(E_Pointer *p,
+                    void *obj,
                     const char *type)
 {
    E_Pointer_Stack *stack;
@@ -174,8 +174,8 @@ e_pointer_type_push(E_Pointer  *p,
 }
 
 EAPI void
-e_pointer_type_pop(E_Pointer  *p,
-                   void       *obj,
+e_pointer_type_pop(E_Pointer *p,
+                   void *obj,
                    const char *type)
 {
    Eina_List *l;
@@ -316,10 +316,10 @@ _e_pointer_canvas_del(E_Pointer *p)
 }
 
 static void
-_e_pointer_cb_move(void        *data,
-                   Evas        *e __UNUSED__,
+_e_pointer_cb_move(void *data,
+                   Evas *e __UNUSED__,
                    Evas_Object *obj __UNUSED__,
-                   void        *event_info __UNUSED__)
+                   void *event_info __UNUSED__)
 {
    E_Pointer *p;
    Evas_Coord x, y;
@@ -366,7 +366,7 @@ _e_pointer_stack_free(E_Pointer_Stack *elem)
 }
 
 static void
-_e_pointer_type_set(E_Pointer  *p,
+_e_pointer_type_set(E_Pointer *p,
                     const char *type)
 {
    if (!p) return;
@@ -489,7 +489,7 @@ _e_pointer_active_handle(E_Pointer *p)
 
 static Eina_Bool
 _e_pointer_cb_mouse_down(void *data __UNUSED__,
-                         int   type __UNUSED__,
+                         int type __UNUSED__,
                          void *event __UNUSED__)
 {
    Eina_List *l;
@@ -510,7 +510,7 @@ _e_pointer_cb_mouse_down(void *data __UNUSED__,
 
 static Eina_Bool
 _e_pointer_cb_mouse_up(void *data __UNUSED__,
-                       int   type __UNUSED__,
+                       int type __UNUSED__,
                        void *event __UNUSED__)
 {
    Eina_List *l;
@@ -531,7 +531,7 @@ _e_pointer_cb_mouse_up(void *data __UNUSED__,
 
 static Eina_Bool
 _e_pointer_cb_mouse_move(void *data __UNUSED__,
-                         int   type __UNUSED__,
+                         int type __UNUSED__,
                          void *event __UNUSED__)
 {
    Eina_List *l;
@@ -552,7 +552,7 @@ _e_pointer_cb_mouse_move(void *data __UNUSED__,
 
 static Eina_Bool
 _e_pointer_cb_mouse_wheel(void *data __UNUSED__,
-                          int   type __UNUSED__,
+                          int type __UNUSED__,
                           void *event __UNUSED__)
 {
    Eina_List *l;
@@ -626,17 +626,17 @@ _e_pointer_cb_idle_poller(void *data)
      {
         /* it moved - so we are not idle yet - record position and wait
          * 4 secons more */
-          p->x = x;
-          p->y = y;
-          if (p->idle)
-            {
-               if (p->pointer_object)
-                 edje_object_signal_emit(p->pointer_object,
-                                         "e,state,mouse,active", "e");
-               p->idle = 0;
-            }
-          /* use poller to check from now on */
-          return ECORE_CALLBACK_RENEW;
+        p->x = x;
+        p->y = y;
+        if (p->idle)
+          {
+             if (p->pointer_object)
+               edje_object_signal_emit(p->pointer_object,
+                                       "e,state,mouse,active", "e");
+             p->idle = 0;
+          }
+        /* use poller to check from now on */
+        return ECORE_CALLBACK_RENEW;
      }
    /* we are idle - report it if not idle before */
    if (!p->idle)
@@ -647,3 +647,4 @@ _e_pointer_cb_idle_poller(void *data)
      }
    return ECORE_CALLBACK_RENEW;
 }
+

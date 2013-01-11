@@ -14,11 +14,11 @@ static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E
 #define MODE_LOCKS          E_REMEMBER_APPLY_LOCKS
 #define MODE_GEOMETRY_LOCKS E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_LOCKS
 #define MODE_ALL            E_REMEMBER_APPLY_POS | E_REMEMBER_APPLY_SIZE | E_REMEMBER_APPLY_LAYER | \
-                            E_REMEMBER_APPLY_LOCKS | E_REMEMBER_APPLY_BORDER | E_REMEMBER_APPLY_STICKY | \
-                            E_REMEMBER_APPLY_DESKTOP | E_REMEMBER_APPLY_SHADE | E_REMEMBER_APPLY_ZONE | \
-                            E_REMEMBER_APPLY_SKIP_WINLIST | E_REMEMBER_APPLY_SKIP_PAGER | \
-                            E_REMEMBER_APPLY_SKIP_TASKBAR | E_REMEMBER_APPLY_FULLSCREEN | E_REMEMBER_APPLY_ICON_PREF | \
-                            E_REMEMBER_APPLY_OFFER_RESISTANCE
+  E_REMEMBER_APPLY_LOCKS | E_REMEMBER_APPLY_BORDER | E_REMEMBER_APPLY_STICKY |                      \
+  E_REMEMBER_APPLY_DESKTOP | E_REMEMBER_APPLY_SHADE | E_REMEMBER_APPLY_ZONE |                       \
+  E_REMEMBER_APPLY_SKIP_WINLIST | E_REMEMBER_APPLY_SKIP_PAGER |                                     \
+  E_REMEMBER_APPLY_SKIP_TASKBAR | E_REMEMBER_APPLY_FULLSCREEN | E_REMEMBER_APPLY_ICON_PREF |        \
+  E_REMEMBER_APPLY_OFFER_RESISTANCE
 struct _E_Config_Dialog_Data
 {
    E_Border *border;
@@ -686,7 +686,6 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
                            &(cfdata->remember.match_transient));
    e_widget_list_object_append(of, ob, 1, 0, 0.5);
    e_widget_toolbook_page_append(o, NULL, _("Identifiers"), of, 1, 1, 1, 1, 0.5, 0.0);
-
 
    of = e_widget_table_add(evas, 0);
    ob = e_widget_check_add(evas, _("Position"),

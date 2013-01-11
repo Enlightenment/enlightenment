@@ -1,9 +1,9 @@
 #include "e_randr_private.h"
 #include "e_randr.h"
 
-#define ECORE_X_RANDR_1_1   ((1 << 16) | 1)
-#define ECORE_X_RANDR_1_2   ((1 << 16) | 2)
-#define ECORE_X_RANDR_1_3   ((1 << 16) | 3)
+#define ECORE_X_RANDR_1_1 ((1 << 16) | 1)
+#define ECORE_X_RANDR_1_2 ((1 << 16) | 2)
+#define ECORE_X_RANDR_1_3 ((1 << 16) | 3)
 
 /**********************************************************************
  *
@@ -19,11 +19,11 @@ e_randr_store_configuration(E_Randr_Configuration_Store_Modifier modifier)
      e_config->randr_serialized_setup = e_randr_serialized_setup_new();
 
    fprintf(stderr, "E_RANDR: Configuration shall be stored using the following modifier:%s\n%s%s%s%s",
-         ((!modifier) ? "NONE" : ""),
-         ((modifier & E_RANDR_CONFIGURATION_STORE_POLICIES) ? "\tPOLICIES\n" : ""),
-         ((modifier & E_RANDR_CONFIGURATION_STORE_RESOLUTIONS) ? "\tRESOLUTIONS\n" : ""),
-         ((modifier & E_RANDR_CONFIGURATION_STORE_ARRANGEMENT) ? "\tARRANGEMENTS\n" : ""),
-         ((modifier & E_RANDR_CONFIGURATION_STORE_ORIENTATIONS) ? "\tORIENTATIONS\n" : ""));
+           ((!modifier) ? "NONE" : ""),
+           ((modifier & E_RANDR_CONFIGURATION_STORE_POLICIES) ? "\tPOLICIES\n" : ""),
+           ((modifier & E_RANDR_CONFIGURATION_STORE_RESOLUTIONS) ? "\tRESOLUTIONS\n" : ""),
+           ((modifier & E_RANDR_CONFIGURATION_STORE_ARRANGEMENT) ? "\tARRANGEMENTS\n" : ""),
+           ((modifier & E_RANDR_CONFIGURATION_STORE_ORIENTATIONS) ? "\tORIENTATIONS\n" : ""));
 
    if (e_randr_screen_info.randr_version == ECORE_X_RANDR_1_1)
      {
@@ -36,7 +36,7 @@ e_randr_store_configuration(E_Randr_Configuration_Store_Modifier modifier)
    e_config_save_queue();
 }
 
-EAPI Eina_Bool 
+EAPI Eina_Bool
 e_randr_try_restore_configuration(void)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(e_config, EINA_FALSE);
@@ -54,10 +54,10 @@ e_randr_try_restore_configuration(void)
 EINTERN E_Randr_Serialized_Setup *
 e_randr_serialized_setup_new(void)
 {
-    return E_NEW(E_Randr_Serialized_Setup, 1);
+   return E_NEW(E_Randr_Serialized_Setup, 1);
 }
 
-EINTERN void 
+EINTERN void
 e_randr_serialized_setup_free(E_Randr_Serialized_Setup *ss)
 {
    E_Randr_Serialized_Setup_12 *serialized_setup_12 = NULL;
@@ -79,3 +79,4 @@ e_randr_serialized_setup_free(E_Randr_Serialized_Setup *ss)
      }
    free(ss);
 }
+

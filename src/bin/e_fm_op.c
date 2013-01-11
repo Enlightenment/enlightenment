@@ -142,17 +142,17 @@ struct _E_Fm_Op_Task
       size_t      done;
    } dst;
 
-   int          started, finished;
-   unsigned int passes;
-   off_t pos;
+   int           started, finished;
+   unsigned int  passes;
+   off_t         pos;
 
-   void        *data;
+   void         *data;
 
    E_Fm_Op_Task *parent;
-   E_Fm_Op_Type type;
-   E_Fm_Op_Type overwrite;
+   E_Fm_Op_Type  type;
+   E_Fm_Op_Type  overwrite;
 
-   Eina_List   *link;
+   Eina_List    *link;
 };
 
 struct _E_Fm_Op_Copy_Data
@@ -252,7 +252,7 @@ main(int argc, char **argv)
                   memcpy(p3, name, name_len + 1);
 
                   if ((type == E_FM_OP_SYMLINK) &&
-                           (symlink(argv[i], buf) == 0))
+                      (symlink(argv[i], buf) == 0))
                     {
                        done++;
                        _e_fm_op_update_progress_report_simple
@@ -363,7 +363,7 @@ skip_arg:
              if (i) goto quit;
 
              if ((type == E_FM_OP_SYMLINK) &&
-                      (symlink(argv[2], argv[3]) == 0))
+                 (symlink(argv[2], argv[3]) == 0))
                {
                   _e_fm_op_update_progress_report_simple(100, argv[2], argv[3]);
                   goto quit;
@@ -1705,30 +1705,30 @@ _e_fm_op_destroy_atom(E_Fm_Op_Task *task)
 
    if (fd == -1)
      {
-       E_FM_OP_DEBUG("Secure remove: %s\n", task->src.name);
-       struct stat st2;
+        E_FM_OP_DEBUG("Secure remove: %s\n", task->src.name);
+        struct stat st2;
 
-       if (!S_ISREG(task->src.st.st_mode))
-         goto finish;
+        if (!S_ISREG(task->src.st.st_mode))
+          goto finish;
 
-       if (task->src.st.st_nlink > 1)
-         goto finish;
+        if (task->src.st.st_nlink > 1)
+          goto finish;
 
-       if ((fd = open(task->src.name, O_WRONLY|O_NOFOLLOW, 0)) == -1)
-         goto finish;
+        if ((fd = open(task->src.name, O_WRONLY | O_NOFOLLOW, 0)) == -1)
+          goto finish;
 
-       if (fstat(fd, &st2) == -1)
-         goto finish;
+        if (fstat(fd, &st2) == -1)
+          goto finish;
 
-       if (st2.st_dev != task->src.st.st_dev ||
-           st2.st_ino != task->src.st.st_ino ||
-           st2.st_mode != task->src.st.st_mode)
-         goto finish;
+        if (st2.st_dev != task->src.st.st_dev ||
+            st2.st_ino != task->src.st.st_ino ||
+            st2.st_mode != task->src.st.st_mode)
+          goto finish;
 
-       if ((buf = malloc(READBUFSIZE)) == NULL)
-         goto finish;
+        if ((buf = malloc(READBUFSIZE)) == NULL)
+          goto finish;
 
-       task->src.st.st_size = st2.st_size;
+        task->src.st.st_size = st2.st_size;
      }
 
    if (task->pos + READBUFSIZE > task->src.st.st_size) sz = task->src.st.st_size - task->pos;
@@ -1742,20 +1742,20 @@ _e_fm_op_destroy_atom(E_Fm_Op_Task *task)
 
    task->pos += sz;
 
-   _e_fm_op_update_progress_report_simple(lround((double) ((task->pos + (task->passes * task->src.st.st_size)) /
-                                          (double)(task->src.st.st_size * NB_PASS)) * 100.),
+   _e_fm_op_update_progress_report_simple(lround((double)((task->pos + (task->passes * task->src.st.st_size)) /
+                                                          (double)(task->src.st.st_size * NB_PASS)) * 100.),
                                           "/dev/urandom", task->src.name);
 
    if (task->pos >= task->src.st.st_size)
      {
-       task->passes++;
+        task->passes++;
 
-       if (task->passes == NB_PASS)
-         goto finish;
-       if (lseek(fd, 0, SEEK_SET) == -1)
-         goto finish;
+        if (task->passes == NB_PASS)
+          goto finish;
+        if (lseek(fd, 0, SEEK_SET) == -1)
+          goto finish;
 
-       task->pos = 0;
+        task->pos = 0;
      }
 
    return 1;
@@ -1791,7 +1791,7 @@ _e_fm_op_random_char(char *buf, size_t len)
 {
    size_t i;
    static int sranded = 0;
-   
+
    if (!sranded)
      {
         srand((unsigned int)time(NULL));
@@ -1803,3 +1803,4 @@ _e_fm_op_random_char(char *buf, size_t len)
         buf[i] = (rand() % 256) + 'a';
      }
 }
+

@@ -442,17 +442,17 @@ _e_thumb_generate(E_Thumb *eth)
 #define G(v) (((v) >> 8) & 0xff)
 #define B(v) (((v)) & 0xff)
 #define HSV(p)                                         \
-evas_color_rgb_to_hsv(R(p), G(p), B(p), &h, &s, &v); \
-hi = 20 * (h / 360.0);                               \
-si = 20 * s;                                         \
-vi = 20 * v;                                         \
-if (si < 2) hi = 25;
+  evas_color_rgb_to_hsv(R(p), G(p), B(p), &h, &s, &v); \
+  hi = 20 * (h / 360.0);                               \
+  si = 20 * s;                                         \
+  vi = 20 * v;                                         \
+  if (si < 2) hi = 25;
 #define SAVEHSV(h, s, v) \
-id2[n++] = 'a' + h;    \
-id2[n++] = 'a' + v;    \
-id2[n++] = 'a' + s;
+  id2[n++] = 'a' + h;    \
+  id2[n++] = 'a' + v;    \
+  id2[n++] = 'a' + s;
 #define SAVEX(x) \
-id2[n++] = 'a' + x;
+  id2[n++] = 'a' + x;
 #if 0
                   HSV(data3[0]);
                   SAVEHSV(hi, si, vi);

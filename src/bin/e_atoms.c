@@ -20,17 +20,17 @@ e_atoms_init(void)
 {
    const char *atom_names[] = {
       "__E_WINDOW_MANAGED",
-	"__E_WINDOW_CONTAINER",
-	"__E_WINDOW_ZONE",
-	"__E_WINDOW_DESK",
-	"__E_WINDOW_MAPPED",
-	"__E_WINDOW_SHADE_DIRECTION",
-	"__E_WINDOW_HIDDEN",
-	"__E_WINDOW_BORDER_SIZE",
-	"__E_ATOM_WINDOW_STATE",
-        "__E_ATOM_WINDOW_STATE_CENTERED",
-        "__E_ATOM_DESKTOP_FILE",
-	"E_ZONE_GEOMETRY"
+      "__E_WINDOW_CONTAINER",
+      "__E_WINDOW_ZONE",
+      "__E_WINDOW_DESK",
+      "__E_WINDOW_MAPPED",
+      "__E_WINDOW_SHADE_DIRECTION",
+      "__E_WINDOW_HIDDEN",
+      "__E_WINDOW_BORDER_SIZE",
+      "__E_ATOM_WINDOW_STATE",
+      "__E_ATOM_WINDOW_STATE_CENTERED",
+      "__E_ATOM_DESKTOP_FILE",
+      "E_ZONE_GEOMETRY"
    };
    Ecore_X_Atom atoms[12];
 
@@ -56,3 +56,4 @@ e_atoms_shutdown(void)
    /* Nothing really to do here yet, just present for consistency right now */
    return 1;
 }
+

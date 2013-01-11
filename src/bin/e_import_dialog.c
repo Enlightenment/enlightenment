@@ -99,7 +99,6 @@ _fsel_cb_ok(void *data, E_Dialog *dia __UNUSED__)
      _fsel_cb_close(id, NULL);
 }
 
-
 static void
 _e_import_dia_del(void *data)
 {
@@ -148,7 +147,7 @@ e_import_dialog_show(E_Container *con, const char *dev, const char *path, Ecore_
    dia = e_dialog_new(con, "E", "_import_fsel_dialog");
    if (!dia) return NULL;
    e_dialog_resizable_set(dia, 1);
-   
+
    dia->data = id;
    id->dia = dia;
    id->ok = ok, id->cancel = cancel;
@@ -158,8 +157,8 @@ e_import_dialog_show(E_Container *con, const char *dev, const char *path, Ecore_
    evas = e_win_evas_get(dia->win);
    e_dialog_title_set(dia, _("Select a Picture..."));
 
-   fdev = dev ?: e_config->wallpaper_import_last_dev;
-   fpath = path ?: e_config->wallpaper_import_last_path;
+   fdev = dev ? : e_config->wallpaper_import_last_dev;
+   fpath = path ? : e_config->wallpaper_import_last_path;
    if (fdev)
      snprintf(buf, sizeof(buf), "%s/%s",
               fdev, path);
@@ -170,7 +169,7 @@ e_import_dialog_show(E_Container *con, const char *dev, const char *path, Ecore_
    if (!ecore_file_exists(rpath))
      fpath = "/";
    else
-     fpath = path ?: e_config->wallpaper_import_last_path;
+     fpath = path ? : e_config->wallpaper_import_last_path;
    free(rpath);
 
    if ((!fdev) && (!fpath))
@@ -183,7 +182,7 @@ e_import_dialog_show(E_Container *con, const char *dev, const char *path, Ecore_
    /* if we ever use the second param in _fsel_cb_ok() then we will have to create a second function
     * for this callback, but as of now it's okay
     */
-   ofm = e_widget_fsel_add(evas, fdev, fpath, NULL, NULL, (void*)_fsel_cb_ok, id,
+   ofm = e_widget_fsel_add(evas, fdev, fpath, NULL, NULL, (void *)_fsel_cb_ok, id,
                            NULL, NULL, 1);
    e_widget_fsel_window_object_set(ofm, E_OBJECT(dia->win));
    id->fsel_obj = ofm;
@@ -199,3 +198,4 @@ e_import_dialog_show(E_Container *con, const char *dev, const char *path, Ecore_
 
    return id;
 }
+

@@ -7,9 +7,9 @@ struct _E_Widget_Data
    Evas_Object *obj;
 
    Evas_Object *child;
-   int aspect_w, aspect_h;
-   int aspect_preference;
-   double align_x, align_y;
+   int          aspect_w, aspect_h;
+   int          aspect_preference;
+   double       align_x, align_y;
 };
 
 static void
@@ -36,21 +36,21 @@ _e_wid_reconfigure(E_Widget_Data *wd)
 
    if (ph == 0)
      {
-       evas_object_resize(wd->child, 0, 0);
-       return ;
+        evas_object_resize(wd->child, 0, 0);
+        return;
      }
 
    ap = (double)pw / ph;
    ad = (double)(wd->aspect_w) / wd->aspect_h;
    if (ap >= ad)
      {
-	ch = ph;
-	cw = (ch * wd->aspect_w) / wd->aspect_h;
+        ch = ph;
+        cw = (ch * wd->aspect_w) / wd->aspect_h;
      }
    else
      {
-	cw = pw;
-	ch = (cw * wd->aspect_h) / wd->aspect_w;
+        cw = pw;
+        ch = (cw * wd->aspect_h) / wd->aspect_w;
      }
 
    cx = px + (wd->align_x * (pw - cw));
@@ -134,3 +134,4 @@ e_widget_aspect_child_set(Evas_Object *obj, Evas_Object *child)
    e_widget_sub_object_add(obj, child);
    _e_wid_reconfigure(wd);
 }
+

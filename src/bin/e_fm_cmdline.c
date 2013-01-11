@@ -118,11 +118,11 @@ main(int argc, char *argv[])
 {
    Eina_Bool quit_option = EINA_FALSE;
    Ecore_Getopt_Value values[] = {
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_NONE
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_NONE
    };
    int args;
 
@@ -158,9 +158,10 @@ main(int argc, char *argv[])
 
    ecore_main_loop_begin();
    edbus_connection_unref(conn);
- end:
+end:
    edbus_shutdown();
    ecore_file_shutdown();
    ecore_shutdown();
    return retval;
 }
+

@@ -15,8 +15,8 @@ static Eina_Bool  _e_theme_mappings_quickfind_free_cb(const Eina_Hash *hash, con
 static void       _e_theme_category_register(const char *category);
 static Eina_List *_e_theme_collection_item_register(Eina_List *list, const char *name);
 static Eina_List *_e_theme_collection_items_find(const char *base, const char *collname);
-static void e_theme_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
-static int e_theme_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
+static void       e_theme_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
+static int        e_theme_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
 
 /* local subsystem globals */
 static Eina_Hash *mappings = NULL;
@@ -85,9 +85,9 @@ e_theme_shutdown(void)
    return 1;
 }
 
-/**  
- * Assigns a edje group from the current theme to 
- * a recently created edje object 
+/**
+ * Assigns a edje group from the current theme to
+ * a recently created edje object
  *
  * @param o edje object to assign group to
  * @param category that hold the required edj file

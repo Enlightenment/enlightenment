@@ -2,8 +2,8 @@
 
 /* local subsystem functions */
 static Eina_Bool _e_grabinput_focus_check(void *data);
-static void _e_grabinput_focus_do(Ecore_X_Window win, E_Focus_Method method);
-static void _e_grabinput_focus(Ecore_X_Window win, E_Focus_Method method);
+static void      _e_grabinput_focus_do(Ecore_X_Window win, E_Focus_Method method);
+static void      _e_grabinput_focus(Ecore_X_Window win, E_Focus_Method method);
 
 /* local subsystem globals */
 static Ecore_X_Window grab_mouse_win = 0;
@@ -154,16 +154,20 @@ _e_grabinput_focus_do(Ecore_X_Window win, E_Focus_Method method)
      {
       case E_FOCUS_METHOD_NO_INPUT:
         break;
+
       case E_FOCUS_METHOD_LOCALLY_ACTIVE:
         ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
         ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
         break;
+
       case E_FOCUS_METHOD_GLOBALLY_ACTIVE:
         ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
         break;
+
       case E_FOCUS_METHOD_PASSIVE:
         ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
         break;
+
       default:
         break;
      }
@@ -180,3 +184,4 @@ _e_grabinput_focus(Ecore_X_Window win, E_Focus_Method method)
    if (focus_fix_timer) ecore_timer_del(focus_fix_timer);
    focus_fix_timer = ecore_timer_add(0.2, _e_grabinput_focus_check, NULL);
 }
+

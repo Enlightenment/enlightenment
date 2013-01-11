@@ -124,7 +124,7 @@ get_command(void *data, Efreet_Desktop *desktop __UNUSED__, char *command, int r
 }
 
 static char **
-mime_open(const char *mime, const char * const *argv, int argc)
+mime_open(const char *mime, const char *const *argv, int argc)
 {
    Efreet_Desktop *desktop = handler_find(mime);
    Eina_List *files = NULL;
@@ -181,7 +181,7 @@ append_single_quote_escaped(Eina_Strbuf *b, const char *str)
 }
 
 static char **
-single_command_open(const char *command, const char * const *argv, int argc)
+single_command_open(const char *command, const char *const *argv, int argc)
 {
    char **ret = calloc(2, sizeof(char *));
    Eina_Strbuf *b;
@@ -269,7 +269,7 @@ _terminal_get(const char *defaults_list)
    Efreet_Desktop *tdesktop = NULL;
    Efreet_Ini *ini;
    const char *s;
-   
+
    ini = efreet_ini_new(defaults_list);
    if ((ini) && (ini->data) &&
        (efreet_ini_section_set(ini, "Default Applications")) &&
@@ -286,20 +286,20 @@ static char **
 terminal_open(void)
 {
    const char *terms[] =
-     {
-        "terminology.desktop",
-        "xterm.desktop",
-        "rxvt.desktop",
-        "gnome-terimnal.desktop",
-        "konsole.desktop",
-        NULL
-     };
+   {
+      "terminology.desktop",
+      "xterm.desktop",
+      "rxvt.desktop",
+      "gnome-terimnal.desktop",
+      "konsole.desktop",
+      NULL
+   };
    const char *s;
    char buf[PATH_MAX], **ret;
    Efreet_Desktop *tdesktop = NULL, *td;
    Eina_List *l;
    int i;
-   
+
    s = efreet_data_home_get();
    if (s)
      {
@@ -313,7 +313,7 @@ terminal_open(void)
         tdesktop = _terminal_get(buf);
         if (tdesktop) goto have_desktop;
      }
-   
+
    for (i = 0; terms[i]; i++)
      {
         tdesktop = efreet_util_desktop_file_id_find(terms[i]);
@@ -355,7 +355,7 @@ have_desktop:
 }
 
 static char **
-browser_open(const char * const *argv, int argc)
+browser_open(const char *const *argv, int argc)
 {
    const char *env = getenv("BROWSER");
    if (env) return single_command_open(env, argv, argc);
@@ -404,29 +404,30 @@ protocol_open(const char *str)
    return ret;
 }
 
-static const struct type_mime {
+static const struct type_mime
+{
    const char *type;
    const char *mime;
 } type_mimes[] = {
-  /* {"browser", "x-scheme-handler/http"}, */
-  {"mail", "x-scheme-handler/mailto"},
-  /*  {"terminal", NULL}, */
-  {"filemanager", "x-scheme-handler/file"},
-  {"image", "image/jpeg"},
-  {"video", "video/x-mpeg"},
-  {"music", "audio/mp3"},
-  {NULL, NULL}
+   /* {"browser", "x-scheme-handler/http"}, */
+   {"mail", "x-scheme-handler/mailto"},
+   /*  {"terminal", NULL}, */
+   {"filemanager", "x-scheme-handler/file"},
+   {"image", "image/jpeg"},
+   {"video", "video/x-mpeg"},
+   {"music", "audio/mp3"},
+   {NULL, NULL}
 };
 
 static const char *type_choices[] = {
-  "browser",
-  "mail",
-  "terminal",
-  "filemanager",
-  "image",
-  "video",
-  "music",
-  NULL
+   "browser",
+   "mail",
+   "terminal",
+   "filemanager",
+   "image",
+   "video",
+   "music",
+   NULL
 };
 
 static const Ecore_Getopt options = {
@@ -454,12 +455,12 @@ main(int argc, char *argv[])
    Eina_Bool quit_option = EINA_FALSE;
    char *type = NULL;
    Ecore_Getopt_Value values[] = {
-     ECORE_GETOPT_VALUE_STR(type),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_BOOL(quit_option),
-     ECORE_GETOPT_VALUE_NONE
+      ECORE_GETOPT_VALUE_STR(type),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_BOOL(quit_option),
+      ECORE_GETOPT_VALUE_NONE
    };
    int args;
    char **cmds;
@@ -486,7 +487,7 @@ main(int argc, char *argv[])
         if (strcmp(type, "terminal") == 0)
           cmds = terminal_open();
         else if (strcmp(type, "browser") == 0)
-          cmds = browser_open((const char * const *)argv + args, argc - args);
+          cmds = browser_open((const char *const *)argv + args, argc - args);
         else
           {
              const struct type_mime *itr;
@@ -496,7 +497,7 @@ main(int argc, char *argv[])
                   if (strcmp(type, itr->type) == 0)
                     {
                        cmds = mime_open(itr->mime,
-                                        (const char * const *)argv + args,
+                                        (const char *const *)argv + args,
                                         argc - args);
                        break;
                     }
@@ -515,7 +516,6 @@ main(int argc, char *argv[])
 
    efreet_mime_shutdown();
    efreet_shutdown();
-
 
    /* No EFL, plain boring sequential system() calls */
    if (!cmds)
@@ -541,3 +541,4 @@ main(int argc, char *argv[])
         return ret;
      }
 }
+

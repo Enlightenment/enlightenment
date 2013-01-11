@@ -13,7 +13,7 @@ static void _e_color_dialog_cb_csel_change(void *data, Evas_Object *obj);
  * @param color color to initialize to (or NULL for black).
  * @param alpha_enabled if set, uses alpha and let user edit it.
  */
-E_Color_Dialog  *
+E_Color_Dialog *
 e_color_dialog_new(E_Container *con, const E_Color *color, Eina_Bool alpha_enabled)
 {
    E_Color_Dialog *dia;
@@ -124,9 +124,9 @@ _e_color_dialog_free(E_Color_Dialog *dia)
 {
    if (dia->dia)
      {
-	e_object_del_attach_func_set(E_OBJECT(dia->dia), NULL);
-	e_object_del(E_OBJECT(dia->dia));
-	dia->dia = NULL;
+        e_object_del_attach_func_set(E_OBJECT(dia->dia), NULL);
+        e_object_del(E_OBJECT(dia->dia));
+        dia->dia = NULL;
      }
    E_FREE(dia->color);
    E_FREE(dia);
@@ -143,3 +143,4 @@ _e_color_dialog_dia_del(void *obj)
    cdia->dia = NULL;
    e_object_del(E_OBJECT(cdia));
 }
+

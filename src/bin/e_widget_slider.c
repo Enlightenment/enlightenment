@@ -45,7 +45,8 @@ e_widget_slider_add(Evas *evas, int horiz, int rev, const char *fmt, double min,
    e_slider_value_step_count_set(o, count);
    e_slider_value_step_size_set(o, step);
    if (dval) e_slider_value_set(o, *dval);
-   else if (ival) e_slider_value_set(o, *ival);
+   else if (ival)
+     e_slider_value_set(o, *ival);
 
    e_slider_size_min_get(o, &mw, &mh);
    if (horiz)
@@ -198,13 +199,13 @@ _e_wid_focus_hook(Evas_Object *obj)
    wd = e_widget_data_get(obj);
    if (e_widget_focus_get(obj))
      {
-	edje_object_signal_emit(e_slider_edje_object_get(wd->o_slider), "e,state,focused", "e");
-	evas_object_focus_set(wd->o_slider, 1);
+        edje_object_signal_emit(e_slider_edje_object_get(wd->o_slider), "e,state,focused", "e");
+        evas_object_focus_set(wd->o_slider, 1);
      }
    else
      {
-	edje_object_signal_emit(e_slider_edje_object_get(wd->o_slider), "e,state,unfocused", "e");
-	evas_object_focus_set(wd->o_slider, 0);
+        edje_object_signal_emit(e_slider_edje_object_get(wd->o_slider), "e,state,unfocused", "e");
+        evas_object_focus_set(wd->o_slider, 0);
      }
 }
 
@@ -221,7 +222,8 @@ _e_wid_cb_changed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 
    wd = data;
    if (wd->dval) *(wd->dval) = e_slider_value_get(wd->o_slider);
-   else if (wd->ival) *(wd->ival) = e_slider_value_get(wd->o_slider);
+   else if (wd->ival)
+     *(wd->ival) = e_slider_value_get(wd->o_slider);
    e_widget_change(wd->o_widget);
    evas_object_smart_callback_call(wd->o_widget, "changed", NULL);
 }
@@ -237,8 +239,9 @@ _e_wid_disable_hook(Evas_Object *obj)
    e_slider_disabled_set(wd->o_slider, disable);
    if (disable)
      edje_object_signal_emit(e_slider_edje_object_get(wd->o_slider),
-			     "e,state,disabled", "e");
+                             "e,state,disabled", "e");
    else
      edje_object_signal_emit(e_slider_edje_object_get(wd->o_slider),
-			     "e,state,enabled", "e");
+                             "e,state,enabled", "e");
 }
+

@@ -83,7 +83,6 @@ _e_fm_shared_codec_storage_decode(void *s, int size)
    return eet_data_descriptor_decode(_e_storage_edd, s, size);
 }
 
-
 void *
 _e_fm_shared_codec_volume_encode(E_Volume *v, int *size)
 {
@@ -117,3 +116,4 @@ _e_storage_volume_edd_shutdown(void)
         _e_storage_edd = NULL;
      }
 }
+
