@@ -29,6 +29,11 @@ struct _E_Comp_Config
    unsigned char smooth_windows;
    double        first_draw_delay;
    Eina_Bool disable_screen_effects;
+   // the following options add the "/fast" suffix to the normal groups
+   Eina_Bool fast_popups;
+   Eina_Bool fast_borders;
+   Eina_Bool fast_menus;
+   Eina_Bool fast_overrides;
 
    struct
    {

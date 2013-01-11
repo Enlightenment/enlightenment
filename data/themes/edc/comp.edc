@@ -323,6 +323,7 @@ group { name: "e/comp/default";
          target: "shadow";
       }
       program {
+         name: "visible_on";
          signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible" 0.0;
          transition: DECELERATE 0.15;
@@ -334,6 +335,7 @@ group { name: "e/comp/default";
          action: SIGNAL_EMIT "e,action,show,done" "e";
       }
       program {
+         name: "visible_off";
          signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.30;
@@ -345,6 +347,7 @@ group { name: "e/comp/default";
          action: SIGNAL_EMIT "e,action,hide,done" "e";
       }
       program {
+         name: "focus_on";
          signal: "e,state,focus,on"; source: "e";
          action: STATE_SET "focused" 0.0;
          transition: SINUSOIDAL 0.1;
@@ -358,6 +361,7 @@ group { name: "e/comp/default";
          target: "glow";
       }
       program {
+         name: "focus_off";
          signal: "e,state,focus,off"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.1;
@@ -381,6 +385,38 @@ group { name: "e/comp/default";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.6 CURRENT;
          target: "glow";
+      }
+   }
+}
+
+
+group { name: "e/comp/default/fast";
+   alias: "e/comp/popup/fast";
+   inherit: "e/comp/default";
+   programs {
+      program {
+         name: "visible_on";
+         transition: DECELERATE 0;
+      }
+      program {
+         name: "visible_off";
+         transition: DECELERATE 0;
+      }
+      program {
+         name: "focus_on";
+         transition: SINUSOIDAL 0.1;
+         target: "glow";
+         after: "focus2";
+      }
+      program {
+         name: "focus_on2";
+         signal: "e,state,focus,on"; source: "e";
+         action: STATE_SET "focused" 0.0;
+         target: "focus-clipper";
+      }
+      program {
+         name: "focus_off";
+         transition: SINUSOIDAL 0;
       }
    }
 }
@@ -416,6 +452,18 @@ group { name: "e/comp/still";
    }
 }
 
+group { name: "e/comp/still/fast";
+   inherit: "e/comp/default/fast";
+   parts {
+      part { name: "shower";
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+   }
+}
+
 group { name: "e/comp/menu";
    inherit: "e/comp/default";
    parts {
@@ -428,8 +476,32 @@ group { name: "e/comp/menu";
    }
 }
 
+group { name: "e/comp/menu/fast";
+   inherit: "e/comp/default/fast";
+   parts {
+      part { name: "shower";
+         description { state: "default" 0.0;
+            rel1.relative: 0.05 0.0;
+            rel2.relative: 0.95 0.9;
+         }
+      }
+   }
+}
+
 group { name: "e/comp/everything";
    inherit: "e/comp/default";
+   parts {
+      part { name: "shower";
+         description { state: "default" 0.0;
+            rel1.relative: -0.3 -0.3;
+            rel2.relative: 1.3 1.3;
+         }
+      }
+   }
+}
+
+group { name: "e/comp/everything";
+   inherit: "e/comp/default/fast";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;

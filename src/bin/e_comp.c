@@ -1616,7 +1616,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
    char buf[4096];
    Eina_List *list = NULL, *l;
    E_Comp_Match *m;
-   Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE, skip = EINA_FALSE;
+   Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE, skip = EINA_FALSE, fast = EINA_FALSE;
    const char *title = NULL, *name = NULL, *clas = NULL, *role = NULL;
    Ecore_X_Window_Type primary_type = ECORE_X_WINDOW_TYPE_UNKNOWN;
 
@@ -1635,6 +1635,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         role = cw->bd->client.icccm.window_role;
         primary_type = cw->bd->client.netwm.type;
         skip = (conf->match.disable_borders);
+        fast = conf->fast_borders;
      }
    else if (cw->pop)
      {
@@ -1644,12 +1645,14 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         list = conf->match.popups;
         name = cw->pop->name;
         skip = (conf->match.disable_popups);
+        fast = conf->fast_popups;
      }
    else if (cw->menu)
      {
         // FIXME: e has no way to tell e menus apart... need naming
         list = conf->match.menus;
         skip = (conf->match.disable_menus);
+        fast = conf->fast_menus;
      }
    else
      {
@@ -1660,6 +1663,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         role = cw->role;
         primary_type = cw->primary_type;
         skip = (conf->match.disable_overrides);
+        fast = conf->fast_overrides;
      }
 
    if (!skip)
@@ -1766,10 +1770,16 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
              urgent = m->urgent;
              if (m->shadow_style)
                {
-                  snprintf(buf, sizeof(buf), "e/comp/%s",
-                           m->shadow_style);
-                  ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders",
-                                               buf);
+                  if (fast)
+                    {
+                       snprintf(buf, sizeof(buf), "e/comp/%s/fast", m->shadow_style);
+                       ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
+                    }
+                  if (!ok)
+                    {
+                       snprintf(buf, sizeof(buf), "e/comp/%s", m->shadow_style);
+                       ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
+                    }
                   if (ok) break;
                }
           }
@@ -1783,14 +1793,24 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         if (ok) break;
         if (conf->shadow_style)
           {
-             snprintf(buf, sizeof(buf), "e/comp/%s",
-                      conf->shadow_style);
-             ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders",
-                                          buf);
+             if (fast)
+               {
+                  snprintf(buf, sizeof(buf), "e/comp/%s/fast", conf->shadow_style);
+                  ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
+               }
+             if (!ok)
+               {
+                  snprintf(buf, sizeof(buf), "e/comp/%s", conf->shadow_style);
+                  ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
+               }
           }
         if (!ok)
-          ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders",
-                                       "e/comp/default");
+          {
+             if (fast)
+               ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/default/fast");
+             if (!ok)
+               ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/default");
+          }
         break;
      }
    edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
@@ -4221,6 +4241,20 @@ _e_comp_cfg_init(void)
    E_CONFIGURE_OPTION_ADD(co, BOOL, vsync, conf, _("Tear-free compositing (VSYNC)"), _("composite"), _("border"));
    co->requires_restart = 1;
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+
+   E_CONFIGURE_OPTION_ADD(co, BOOL, fast_borders, conf, _("Use fast composite effects for windows"), _("composite"), _("border"), _("theme"), _("animate"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, fast_menus, conf, _("Use fast composite effects for menus"), _("composite"), _("menu"), _("theme"), _("animate"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, fast_popups, conf, _("Use fast composite effects for popups"), _("composite"), _("popup"), _("theme"), _("animate"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, fast_overrides, conf, _("Use fast composite effects for override-redirect windows (tooltips and such)"), _("composite"), _("theme"), _("animate"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_borders, conf, _("Disable composite effects for windows"), _("composite"), _("border"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
