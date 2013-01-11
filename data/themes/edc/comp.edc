@@ -667,6 +667,7 @@ group { name: "e/comp/fullscreen";
          target: "shadow";
       }
       program {
+         name: "visible_on";
          signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible" 0.0;
          transition: DECELERATE 0.25;
@@ -674,6 +675,7 @@ group { name: "e/comp/fullscreen";
          target: "scr_shade";
       }
       program {
+         name: "visible_on2";
          signal: "e,state,visible,on"; source: "e";
          action: STATE_SET "visible1" 0.0;
          transition: DECELERATE 0.05;
@@ -696,6 +698,7 @@ group { name: "e/comp/fullscreen";
          action: SIGNAL_EMIT "e,action,show,done" "e";
       }
       program {
+         name: "visible_off";
          signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.25;
@@ -703,6 +706,7 @@ group { name: "e/comp/fullscreen";
          target: "scr_shade";
       }
       program {
+         name: "visible_off2";
          signal: "e,state,visible,off"; source: "e";
          action: STATE_SET "visible1" 0.0;
          transition: DECELERATE 0.2;
@@ -723,6 +727,35 @@ group { name: "e/comp/fullscreen";
       }
       program { name: "hide3";
          action: SIGNAL_EMIT "e,action,hide,done" "e";
+      }
+   }
+}
+
+group { name: "e/comp/fullscreen/fast";
+   inherit: "e/comp/fullscreen";
+   programs {
+      program {
+         name: "visible_on";
+         transition: DECELERATE 0;
+      }
+      program {
+         name: "visible_on2";
+         transition: DECELERATE 0;
+      }
+      program { name: "show2";
+         transition: DECELERATE 0;
+      }
+      program {
+         name: "visible_off";
+         transition: DECELERATE 0;
+      }
+      program {
+         name: "visible_off2";
+         transition: DECELERATE 0;
+      }
+      program { name: "hide2";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0;
       }
    }
 }
