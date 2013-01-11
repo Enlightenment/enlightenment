@@ -366,6 +366,9 @@ group { name: "e/comp/default";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.1;
          target: "focus-clipper";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.4;
+         target: "glow";
       }
       program { name: "urgent1";
          signal: "e,state,urgent,on"; source: "e";
