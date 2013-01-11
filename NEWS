@@ -65,6 +65,7 @@ Improvements:
     * config submenu now sets "config" category
     * composite settings dialog is now accessible from Settings menu
     * added focus-out color class and functionality to default theme
+    * added fallback timer for system actions
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.

@@ -6,6 +6,7 @@
 #include "e_comp_wl.h"
 #endif
 
+#define ACTION_TIMEOUT 30.0
 #define OVER_FLOW 1
 
 //////////////////////////////////////////////////////////////////////////
@@ -165,6 +166,8 @@ static Eina_Hash *damages = NULL;
 static E_Comp_Config *conf = NULL;
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_match_edd = NULL;
+
+static Ecore_Timer *action_timeout = NULL;
 
 static Eina_Inlist *cfg_opts = NULL;
 
@@ -4001,6 +4004,47 @@ _e_comp_sys_done_cb(void *data, Evas_Object *obj, const char *sig, const char *s
 {
    edje_object_signal_callback_del(obj, sig, src, _e_comp_sys_done_cb);
    e_sys_action_raw_do((E_Sys_Action)(long)data, NULL);
+   E_FN_DEL(ecore_timer_del, action_timeout);
+}
+
+static Eina_Bool
+_e_comp_sys_action_timeout(void *data)
+{
+   Eina_List *l, *ll;
+   E_Comp *c;
+   E_Comp_Zone *cz;
+   E_Sys_Action a = (long)(intptr_t)data;
+   const char *sig = NULL;
+
+   switch (a)
+     {
+      case E_SYS_LOGOUT:
+        sig = "e,state,sys,logout,done";
+        break;
+      case E_SYS_HALT:
+        sig = "e,state,sys,halt,done";
+        break;
+      case E_SYS_REBOOT:
+        sig = "e,state,sys,reboot,done";
+        break;
+      case E_SYS_SUSPEND:
+        sig = "e,state,sys,suspend,done";
+        break;
+      case E_SYS_HIBERNATE:
+        sig = "e,state,sys,hibernate,done";
+        break;
+      default:
+        break;
+     }
+   E_FN_DEL(ecore_timer_del, action_timeout);
+   if (sig)
+     {
+        EINA_LIST_FOREACH(compositors, l, c)
+          EINA_LIST_FOREACH(c->zones, ll, cz)
+            edje_object_signal_callback_del(cz->over, sig, "e", _e_comp_sys_done_cb);
+     }
+   e_sys_action_raw_do(a, NULL);
+   return EINA_FALSE;
 }
 
 static void
@@ -4028,6 +4072,8 @@ _e_comp_sys_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
              first = EINA_FALSE;
           }
      }
+   if (action_timeout) ecore_timer_del(action_timeout);
+   action_timeout = ecore_timer_add(ACTION_TIMEOUT, (Ecore_Task_Cb)_e_comp_sys_action_timeout, (intptr_t*)(long)a);
 }
 
 static void
@@ -4409,6 +4455,7 @@ EINTERN int
 e_comp_shutdown(void)
 {
    if (!compositors) return 1;
+   E_FN_DEL(ecore_timer_del, action_timeout);
    E_FREE_LIST(compositors, _e_comp_del);
    E_FREE_LIST(handlers, ecore_event_handler_del);
 
