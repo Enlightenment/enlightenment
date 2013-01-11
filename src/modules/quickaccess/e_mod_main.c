@@ -64,7 +64,7 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   E_CONFIGURE_OPTION_ADD(co, CUSTOM, entries, qa_config, _("Quickaccess settings panel"), _("quickaccess"), _("border"));
+   E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("settings"), _("Quickaccess settings panel"), _("quickaccess"), _("border"));
    co->info = eina_stringshare_add("launcher/quickaccess");
    E_CONFIGURE_OPTION_ICON(co, buf);
    qa_cfg_opts = eina_inlist_append(qa_cfg_opts, EINA_INLIST_GET(co));

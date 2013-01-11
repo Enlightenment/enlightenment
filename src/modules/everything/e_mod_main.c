@@ -64,7 +64,7 @@ e_modapi_init(E_Module *m)
    e_configure_registry_item_add
      ("launcher/run_everything", 40, _("Everything Configuration"),
      NULL, module_icon, evry_config_dialog);
-   E_CONFIGURE_OPTION_ADD(cfg_opt, CUSTOM, collections, evry_conf, _("Everything launcher settings"), _("exec"), _("everything"));
+   E_CONFIGURE_OPTION_ADD_CUSTOM(cfg_opt, _("settings"), _("Everything launcher settings"), _("exec"), _("everything"));
    E_CONFIGURE_OPTION_ICON(cfg_opt, module_icon);
    cfg_opt->info = eina_stringshare_add("launcher/run_everything");
    e_configure_option_category_tag_add(_("everything"), _("everything"));

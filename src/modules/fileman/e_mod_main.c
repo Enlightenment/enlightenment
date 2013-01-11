@@ -463,7 +463,7 @@ _e_mod_fileman_config_load(void)
        co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
        cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
 
-       E_CONFIGURE_OPTION_ADD(co, CUSTOM, paths, fileman_config, _("File icons"), _("files"), _("image"));
+       E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("settings"), _("File icons"), _("files"), _("image"));
        co->info = eina_stringshare_add("fileman/file_icons");
        E_CONFIGURE_OPTION_ICON(co, "preferences-file-icons");
        cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
