@@ -503,7 +503,7 @@ group { name: "e/comp/everything";
    }
 }
 
-group { name: "e/comp/everything";
+group { name: "e/comp/everything/fast";
    inherit: "e/comp/default/fast";
    parts {
       part { name: "shower";
