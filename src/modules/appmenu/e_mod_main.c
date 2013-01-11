@@ -85,7 +85,7 @@ _gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 static char tmpbuf[1024]; /* general purpose buffer, just use immediately */
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    EINA_SAFETY_ON_NULL_RETURN_VAL(appmenu_module, NULL);
