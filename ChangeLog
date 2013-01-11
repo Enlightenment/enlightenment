@@ -1,6 +1,7 @@
 2013-01-11 Mike Blumenkrantz
 
         * e_manager_comp_set() is no longer accessible by modules
+        * added option to disable comp effects on screen
 
 2013-01-10 Carsten Haitzler
 

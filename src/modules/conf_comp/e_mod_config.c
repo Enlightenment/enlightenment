@@ -72,6 +72,7 @@ struct _E_Config_Dialog_Data
    int          fps_corner;
    int          fps_average_range;
    double       first_draw_delay;
+   int disable_screen_effects;
 };
 
 /* Protos */
@@ -1171,13 +1172,15 @@ _advanced_create_widgets(E_Config_Dialog *cfd,
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
 
 
-   ob = e_widget_check_add(evas, _("Disable composite theming for windows"), &(cfdata->match.disable_borders));
+   ob = e_widget_check_add(evas, _("Disable composite effects for windows"), &(cfdata->match.disable_borders));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
-   ob = e_widget_check_add(evas, _("Disable composite theming for menus"), &(cfdata->match.disable_menus));
+   ob = e_widget_check_add(evas, _("Disable composite effects for menus"), &(cfdata->match.disable_menus));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
-   ob = e_widget_check_add(evas, _("Disable composite theming for popups"), &(cfdata->match.disable_popups));
+   ob = e_widget_check_add(evas, _("Disable composite effects for popups"), &(cfdata->match.disable_popups));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
-   ob = e_widget_check_add(evas, _("Disable composite theming for overrides"), &(cfdata->match.disable_overrides));
+   ob = e_widget_check_add(evas, _("Disable composite effects for overrides"), &(cfdata->match.disable_overrides));
+   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+   ob = e_widget_check_add(evas, _("Disable composite effects for screen"), &(cfdata->disable_screen_effects));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
 
    of = e_widget_frametable_add(evas, _("Styles"), 0);
@@ -1415,6 +1418,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
        (_comp_mod->conf->match.disable_borders != cfdata->match.disable_borders) ||
        (_comp_mod->conf->match.disable_overrides != cfdata->match.disable_overrides) ||
        (_comp_mod->conf->match.disable_menus != cfdata->match.disable_menus) ||
+       (_comp_mod->conf->disable_screen_effects != cfdata->disable_screen_effects) ||
        (cfdata->match.changed)
        )
      {
@@ -1468,6 +1472,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         _comp_mod->conf->match.disable_borders = cfdata->match.disable_borders;
         _comp_mod->conf->match.disable_overrides = cfdata->match.disable_overrides;
         _comp_mod->conf->match.disable_menus = cfdata->match.disable_menus;
+        _comp_mod->conf->disable_screen_effects = cfdata->disable_screen_effects;
         _comp_mod->conf->lock_fps = cfdata->lock_fps;
         _comp_mod->conf->smooth_windows = cfdata->smooth_windows;
         _comp_mod->conf->grab = cfdata->grab;
@@ -1670,6 +1675,7 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
              _comp_mod->conf->match.disable_borders = cfdata->match.disable_borders = cfdata->match.disable_all;
              _comp_mod->conf->match.disable_overrides = cfdata->match.disable_overrides = cfdata->match.disable_all;
              _comp_mod->conf->match.disable_menus = cfdata->match.disable_menus = cfdata->match.disable_all;
+             _comp_mod->conf->disable_screen_effects = cfdata->disable_screen_effects = cfdata->match.disable_all;
           }
         _comp_mod->conf->lock_fps = cfdata->lock_fps;
         _comp_mod->conf->smooth_windows = cfdata->smooth_windows;

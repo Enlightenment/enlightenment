@@ -28,6 +28,7 @@ struct _E_Comp_Config
    unsigned char nocomp_fs;
    unsigned char smooth_windows;
    double        first_draw_delay;
+   Eina_Bool disable_screen_effects;
 
    struct
    {

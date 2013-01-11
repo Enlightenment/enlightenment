@@ -3131,7 +3131,18 @@ static void
 _e_comp_zone_fill(E_Comp *c, E_Comp_Zone *cz)
 {
    Evas_Object *o;
+   const char *const styles[] =
+   {
+      "e/modules/comp/screen/overlay/default",
+      "e/modules/comp/screen/overlay/noeffects"
+   };
 
+   if (cz->over)
+     {
+        e_theme_edje_object_set(cz->over, "base/theme/modules/comp",
+                           styles[conf->disable_screen_effects]);
+        return;
+     }
    cz->base = o = edje_object_add(c->evas);
    e_theme_edje_object_set(o, "base/theme/modules/comp",
                            "e/modules/comp/screen/base/default");
@@ -3142,7 +3153,7 @@ _e_comp_zone_fill(E_Comp *c, E_Comp_Zone *cz)
 
    cz->over = o = edje_object_add(c->evas);
    e_theme_edje_object_set(o, "base/theme/modules/comp",
-                           "e/modules/comp/screen/overlay/default");
+                           styles[conf->disable_screen_effects]);
    evas_object_move(o, cz->zone->x, cz->zone->y);
    evas_object_resize(o, cz->zone->w, cz->zone->h);
    evas_object_raise(o);
@@ -4105,6 +4116,10 @@ _e_comp_cfg_init(void)
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, conf, _("Disable composite effects for override-redirect windows (tooltips and such)"), _("composite"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, conf, _("Disable composite effects for the screen"), _("composite"), _("theme"), _("animate"), _("screen"));
+   E_CONFIGURE_OPTION_HELP(co, _("This option disables composite effects from themes, such as animating the screen fade when blanking"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, smooth_windows, conf, _("Smooth scaling of composited window content"), _("composite"), _("border"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
@@ -4276,15 +4291,18 @@ e_comp_config_get(void)
 EAPI void
 e_comp_shadows_reset(void)
 {
-   Eina_List *l;
+   Eina_List *l, *ll;
    E_Comp *c;
 
    EINA_LIST_FOREACH(compositors, l, c)
      {
         E_Comp_Win *cw;
+        E_Comp_Zone *cz;
 
         //        ecore_evas_manual_render_set(c->ee, conf->lock_fps);
         _e_comp_fps_update(c);
+        EINA_LIST_FOREACH(c->zones, ll, cz)
+           _e_comp_zone_fill(c, cz);
         EINA_INLIST_FOREACH(c->wins, cw)
           {
              if ((cw->shobj) && (cw->obj))

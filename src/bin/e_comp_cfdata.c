@@ -53,6 +53,7 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_VAL(D, T, nocomp_fs, UCHAR);
    E_CONFIG_VAL(D, T, smooth_windows, UCHAR);
    E_CONFIG_VAL(D, T, first_draw_delay, DOUBLE);
+   E_CONFIG_VAL(D, T, disable_screen_effects, UCHAR);
    E_CONFIG_VAL(D, T, match.disable_popups, UCHAR);
    E_CONFIG_VAL(D, T, match.disable_borders, UCHAR);
    E_CONFIG_VAL(D, T, match.disable_overrides, UCHAR);
