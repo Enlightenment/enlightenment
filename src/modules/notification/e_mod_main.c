@@ -10,8 +10,6 @@ Config *notification_cfg = NULL;
 
 static E_Config_DD *conf_edd = NULL;
 
-static Eina_Inlist *cfg_opts = NULL;
-
 static unsigned int
 _notification_notify(E_Notification_Notify *n)
 {
@@ -237,21 +235,16 @@ e_modapi_init(E_Module *m)
 
    notification_mod = m;
 
+   e_configure_option_domain_current_set("notification");
    E_CONFIGURE_OPTION_ADD(co, BOOL, show_low, notification_cfg, _("Display low urgency notifications"), _("notification"));
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, show_normal, notification_cfg, _("Display normal urgency notifications"), _("notification"));
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, show_critical, notification_cfg, _("Display high urgency notifications"), _("notification"));
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, force_timeout, notification_cfg, _("Force a specified timeout on all notifications"), _("notification"), _("delay"));
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, DOUBLE, timeout, notification_cfg, _("Timeout to force on notifications"), _("notification"), _("delay"));
    E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0.0, 15.0, 0.1, _("%.1f seconds"));
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, ENUM, corner, notification_cfg, _("Corner in which to display notifications"), _("notification"), _("screen"));
    co->info_cb = _notification_corner_info_cb;
    E_CONFIGURE_OPTION_ICON(co, buf);
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
 
    e_configure_option_category_tag_add(_("screen"), _("notification"));
    e_configure_option_category_tag_add(_("notification"), _("notification"));
@@ -277,7 +270,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_notification_server_unregister();
 
 
-   E_CONFIGURE_OPTION_LIST_CLEAR(cfg_opts);
+   e_configure_option_domain_clear("quickaccess");
    e_configure_option_category_tag_del(_("screen"), _("notification"));
    e_configure_option_category_tag_del(_("notification"), _("notification"));
    _notification_cfg_free(notification_cfg);

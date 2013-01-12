@@ -17,7 +17,6 @@ static Eio_Monitor *gtk_theme_mon = NULL;
 static Eina_List *gtk_theme_mons = NULL; //Eio_Monitor
 static Eio_File *bg_ls[2] = {NULL, NULL};
 static Eio_Monitor *bg_mon[2] = {NULL, NULL};
-static Eina_Inlist *opts_list = NULL;
 static Eina_Hash *tags_name_hash = NULL; /* (const char*)tag:(Eina_Stringshare*)tag */
 static Eina_Hash *tags_hash = NULL; /* tag:item */
 static Eina_Hash *tags_alias_hash = NULL; /* alias:tag */
@@ -36,6 +35,8 @@ static Eina_Bool event_block = EINA_TRUE;
 static Eina_List *categories = NULL;
 static Eina_Hash *category_hash = NULL;
 static Eina_Hash *category_icon_hash = NULL;
+static Eina_Hash *domain_hash = NULL;
+static const char *domain_current = NULL;
 
 static void
 _e_configure_option_event_str_end(void *d EINA_UNUSED, E_Event_Configure_Option_Category_Add *ev)
@@ -67,11 +68,7 @@ _e_configure_option_event_tag_add_del(Eina_Stringshare *tag, Eina_Bool del)
 {
    E_Event_Configure_Option_Tag_Add *ev;
 
-   if (event_block)
-     {
-        if (del) eina_stringshare_del(tag);
-        return;
-     }
+   if (event_block) return;
    ev = E_NEW(E_Event_Configure_Option_Tag_Add, 1);
    ev->tag = tag;
    if (del)
@@ -116,8 +113,6 @@ _e_configure_option_tag_remove(E_Configure_Option *co, Eina_Stringshare *tag)
 static void
 _e_configure_option_free(E_Configure_Option *co)
 {
-   if (!co->private)
-     opts_list = eina_inlist_remove(opts_list, EINA_INLIST_GET(co));
    if (co->changed)
      {
         eina_value_flush(&co->val);
@@ -133,6 +128,18 @@ _e_configure_option_free(E_Configure_Option *co)
    eina_stringshare_del(co->info);
    eina_stringshare_del(co->changed_action);
    free(co);
+}
+
+static void
+_e_configure_option_list_free(Eina_Inlist *l)
+{
+   while (l)
+     {
+        E_Configure_Option *co = (E_Configure_Option*)l;
+
+        l = eina_inlist_remove(l, l);
+        e_configure_option_del(co);
+     }
 }
 
 static void
@@ -1427,13 +1434,14 @@ e_configure_option_init(void)
    E_EVENT_CONFIGURE_OPTION_TAG_ADD = ecore_event_type_new();
    E_EVENT_CONFIGURE_OPTION_TAG_DEL = ecore_event_type_new();
 
+   domain_hash = eina_hash_string_superfast_new((Eina_Free_Cb)_e_configure_option_list_free);
    tags_name_hash = eina_hash_string_superfast_new(NULL);
    tags_hash = eina_hash_string_superfast_new(NULL);
    tags_tag_alias_hash = eina_hash_stringshared_new((Eina_Free_Cb)_e_configure_option_tag_alias_list_free);
    tags_alias_hash = eina_hash_string_superfast_new(NULL);
    tags_alias_name_hash = eina_hash_string_superfast_new(NULL);
 #define OPT_ADD(TYPE, NAME, DESC, ...)                                                                         \
-  co = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_##TYPE, DESC, #NAME, EINA_FALSE, &e_config->NAME, NULL); \
+  co = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_##TYPE, DESC, #NAME, &e_config->NAME, NULL); \
   e_configure_option_tags_set(co, (const char *[]){__VA_ARGS__, NULL}, 0)
 #define OPT_HELP(STR) \
   co->help = eina_stringshare_add(STR)
@@ -1442,6 +1450,8 @@ e_configure_option_init(void)
   co->info = eina_stringshare_add(_(FMT))
 #define OPT_ICON(ICON) \
   e_configure_option_data_set(co, "icon", eina_stringshare_add(ICON))
+
+  e_configure_option_domain_current_set("internal");
 
    OPT_ADD(BOOL, show_splash, _("Show splash screen on startup"), _("splash"), _("startup"));
    OPT_ADD(STR, init_default_theme, _("Startup splash theme"), _("splash"), _("startup"), _("theme"), _("animate"));
@@ -2128,14 +2138,14 @@ e_configure_option_shutdown(void)
    opts_changed_list = eina_list_free(opts_changed_list);
    event_block = EINA_TRUE;
    E_FREE_LIST(tags_list, eina_stringshare_del);
-   E_FREE_LIST(tags_alias_list, eina_stringshare_del);
-   while (opts_list)
-     _e_configure_option_free((E_Configure_Option *)opts_list);
+   domain_current = NULL;
+   E_FN_DEL(eina_hash_free, domain_hash);
    E_FN_DEL(eina_hash_free, tags_hash);
    E_FN_DEL(eina_hash_free, tags_tag_alias_hash);
    E_FN_DEL(eina_hash_free, tags_name_hash);
    E_FN_DEL(eina_hash_free, tags_alias_name_hash);
    E_FN_DEL(eina_hash_free, tags_alias_hash);
+      E_FREE_LIST(tags_alias_list, eina_stringshare_del);
    E_FN_DEL(eio_monitor_del, theme_mon[0]);
    E_FN_DEL(eio_monitor_del, theme_mon[1]);
    E_FN_DEL(eio_file_cancel, theme_ls[0]);
@@ -2161,20 +2171,20 @@ e_configure_option_shutdown(void)
 }
 
 EAPI E_Configure_Option *
-e_configure_option_add(E_Configure_Option_Type type, const char *desc, const char *name, Eina_Bool private_scope, void *valptr, const void *data)
+e_configure_option_add(E_Configure_Option_Type type, const char *desc, const char *name, void *valptr, const void *data)
 {
    E_Configure_Option *co;
+   Eina_Inlist *l;
 
    co = E_NEW(E_Configure_Option, 1);
-   if (!private_scope)
-     opts_list = eina_inlist_append(opts_list, EINA_INLIST_GET(co));
+   l = eina_hash_find(domain_hash, domain_current);
+   eina_hash_set(domain_hash, domain_current, eina_inlist_append(l, EINA_INLIST_GET(co)));
    co->type = type;
    _e_configure_option_value_reset(co);
    co->name = eina_stringshare_add(name);
    co->desc = eina_stringshare_add(desc);
    co->valptr = valptr;
    co->data = (void *)data;
-   co->private = !!private_scope;
    _e_configure_option_event_changed(co);
    return co;
 }
@@ -2514,6 +2524,7 @@ e_configure_option_category_tag_add(const char *cat, const char *tag)
    Eina_Stringshare *t, *c;
    Eina_List *l;
 
+   if (!tags_name_hash) return;
    EINA_SAFETY_ON_NULL_RETURN(cat);
    EINA_SAFETY_ON_NULL_RETURN(tag);
    t = eina_hash_find(tags_name_hash, tag);
@@ -2567,6 +2578,7 @@ e_configure_option_category_tag_del(const char *cat, const char *tag)
 EAPI Eina_Stringshare *
 e_configure_option_category_icon_get(const char *cat)
 {
+   if (!category_icon_hash) return NULL;
    EINA_SAFETY_ON_NULL_RETURN_VAL(cat, NULL);
    return eina_hash_find(category_icon_hash, cat);
 }
@@ -2574,6 +2586,7 @@ e_configure_option_category_icon_get(const char *cat)
 EAPI void
 e_configure_option_category_icon_set(const char *cat, const char *icon)
 {
+   if (!category_icon_hash) return;
    EINA_SAFETY_ON_NULL_RETURN(cat);
    eina_stringshare_del(eina_hash_set(category_icon_hash, cat, eina_stringshare_add(icon)));
 }
@@ -2584,6 +2597,7 @@ e_configure_option_tag_alias_add(const char *tag, const char *alias)
    Eina_Stringshare *t, *o;
    Eina_List *l;
 
+   if (!tags_name_hash) return;
    EINA_SAFETY_ON_NULL_RETURN(tag);
    EINA_SAFETY_ON_NULL_RETURN(alias);
 
@@ -2603,6 +2617,7 @@ e_configure_option_tag_alias_del(const char *tag, const char *alias)
    Eina_Stringshare *t, *a;
    Eina_List *l;
 
+   if (!tags_alias_hash) return;
    EINA_SAFETY_ON_NULL_RETURN(tag);
    EINA_SAFETY_ON_NULL_RETURN(alias);
 
@@ -2798,3 +2813,24 @@ e_configure_option_ctx_free(E_Configure_Option_Ctx *ctx)
    free(ctx);
 }
 
+EAPI void
+e_configure_option_domain_current_set(const char *domain)
+{
+   domain_current = domain;
+}
+
+EAPI Eina_Inlist *
+e_configure_option_domain_list(const char *domain)
+{
+   if (!domain_hash) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(domain, NULL);
+   return eina_hash_find(domain_hash, domain);
+}
+
+EAPI void
+e_configure_option_domain_clear(const char *domain)
+{
+   if (!domain_hash) return;
+   EINA_SAFETY_ON_NULL_RETURN(domain);
+   eina_hash_del_by_key(domain_hash, domain);
+}

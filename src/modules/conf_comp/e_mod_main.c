@@ -5,7 +5,6 @@
 #include "e_comp_cfdata.h"
 
 static E_Int_Menu_Augmentation *maug = NULL;
-static Eina_Inlist *cfg_opts = NULL;
 
 /* module private routines */
 EINTERN Mod *_comp_mod = NULL;
@@ -73,10 +72,10 @@ e_modapi_init(E_Module *m)
    {
       E_Configure_Option *co;
 
+      e_configure_option_domain_current_set("conf_comp");
       E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("settings"), _("Composite settings panel"), _("composite"), _("border"));
       co->info = eina_stringshare_add("appearance/comp");
       E_CONFIGURE_OPTION_ICON(co, "preferences-composite");
-      cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    }
 
    e_module_delayed_set(m, 0);
@@ -100,7 +99,7 @@ e_modapi_shutdown(E_Module *m)
      }
 
    free(mod);
-   E_CONFIGURE_OPTION_LIST_CLEAR(cfg_opts);
+   e_configure_option_domain_clear("conf_comp");
 
    if (maug)
      {

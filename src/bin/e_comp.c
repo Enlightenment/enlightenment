@@ -169,7 +169,6 @@ static E_Config_DD *conf_match_edd = NULL;
 
 static Ecore_Timer *action_timeout = NULL;
 
-static Eina_Inlist *cfg_opts = NULL;
 
 //////////////////////////////////////////////////////////////////////////
 #undef DBG
@@ -4284,54 +4283,41 @@ _e_comp_cfg_init(void)
 {
    E_Configure_Option *co;
 
+   e_configure_option_domain_current_set("e_comp");
    E_CONFIGURE_OPTION_ADD(co, BOOL, vsync, conf, _("Tear-free compositing (VSYNC)"), _("composite"), _("border"));
    co->requires_restart = 1;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
 
    E_CONFIGURE_OPTION_ADD(co, BOOL, fast_borders, conf, _("Use fast composite effects for windows"), _("composite"), _("border"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, fast_menus, conf, _("Use fast composite effects for menus"), _("composite"), _("menu"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, fast_popups, conf, _("Use fast composite effects for popups"), _("composite"), _("popup"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, fast_overrides, conf, _("Use fast composite effects for override-redirect windows (tooltips and such)"), _("composite"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
 
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_borders, conf, _("Disable composite effects for windows"), _("composite"), _("border"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_menus, conf, _("Disable composite effects for menus"), _("composite"), _("menu"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_popups, conf, _("Disable composite effects for popups"), _("composite"), _("popup"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, conf, _("Disable composite effects for override-redirect windows (tooltips and such)"), _("composite"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, conf, _("Disable composite effects for the screen"), _("composite"), _("theme"), _("animate"), _("screen"));
    E_CONFIGURE_OPTION_HELP(co, _("This option disables composite effects from themes, such as animating the screen fade when blanking"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, smooth_windows, conf, _("Smooth scaling of composited window content"), _("composite"), _("border"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, BOOL, nocomp_fs, conf, _("Don't composite fullscreen windows"), _("composite"), _("border"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, ENUM, engine, conf, _("Compositing engine"), _("composite"), _("border"));
    co->info_cb = _e_comp_config_engine_info_cb;
    co->requires_restart = 1;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
    E_CONFIGURE_OPTION_ADD(co, STR, shadow_style, conf, _("Default window style"), _("composite"), _("border"), _("theme"));
    co->info_cb = _e_comp_config_style_info_cb;
    co->thumb_cb = _e_comp_config_style_thumb_cb;
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   cfg_opts = eina_inlist_append(cfg_opts, EINA_INLIST_GET(co));
 
    e_configure_option_category_tag_add(_("windows"), _("composite"));
    e_configure_option_category_tag_add(_("composite"), _("composite"));
@@ -4463,7 +4449,7 @@ e_comp_shutdown(void)
    e_comp_wl_shutdown();
 #endif
 
-   E_CONFIGURE_OPTION_LIST_CLEAR(cfg_opts);
+   e_configure_option_domain_clear("e_comp");
    e_configure_option_category_tag_del(_("composite"), _("composite"));
    e_configure_option_category_tag_del(_("windows"), _("composite"));
 

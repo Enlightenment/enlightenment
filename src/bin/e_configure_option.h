@@ -21,10 +21,10 @@ typedef Evas_Object *(*E_Configure_Option_Info_Thumb_Cb)(E_Configure_Option_Info
 #define E_CONFIGURE_OPTION_TAG_LENGTH 128
 
 #define E_CONFIGURE_OPTION_ADD(OPT, TYPE, NAME, CFGPTR, DESC, ...) \
-   OPT = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_##TYPE, DESC, #NAME, EINA_TRUE, &CFGPTR->NAME, NULL);\
+   OPT = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_##TYPE, DESC, #NAME, &CFGPTR->NAME, NULL);\
    e_configure_option_tags_set(OPT, (const char*[]){__VA_ARGS__, NULL}, 0)
 #define E_CONFIGURE_OPTION_ADD_CUSTOM(OPT, NAME, DESC, ...) \
-   OPT = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_CUSTOM, DESC, NAME, EINA_TRUE, NULL, NULL);\
+   OPT = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_CUSTOM, DESC, NAME, NULL, NULL);\
    e_configure_option_tags_set(OPT, (const char*[]){__VA_ARGS__, NULL}, 0)
 #define E_CONFIGURE_OPTION_HELP(OPT, STR) \
    OPT->help = eina_stringshare_add(_(STR))
@@ -33,16 +33,6 @@ typedef Evas_Object *(*E_Configure_Option_Info_Thumb_Cb)(E_Configure_Option_Info
    OPT->info = eina_stringshare_add(_(FMT))
 #define E_CONFIGURE_OPTION_ICON(OPT, ICON) \
    e_configure_option_data_set(OPT, "icon", eina_stringshare_add(ICON))
-#define E_CONFIGURE_OPTION_LIST_CLEAR(LIST) do {\
-   while (LIST) \
-     { \
-        E_Configure_Option *co; \
-\
-        co = (E_Configure_Option*)LIST; \
-        LIST = eina_inlist_remove(LIST, EINA_INLIST_GET(co)); \
-        e_configure_option_del(co); \
-     }\
-} while (0)
 
 
 EAPI extern int E_EVENT_CONFIGURE_OPTION_CHANGED;
@@ -94,7 +84,6 @@ struct E_Configure_Option
       void (*one)();
       void (*two)();
    } funcs[2]; //disable, enable
-   Eina_Bool private : 1;
    Eina_Bool requires_restart : 1;
    Eina_Bool changed : 1;
 };
@@ -138,7 +127,7 @@ EAPI const Eina_List *e_configure_option_changed_list(void);
 EAPI void e_configure_option_apply_all(void);
 EAPI void e_configure_option_reset_all(void);
 
-EAPI E_Configure_Option *e_configure_option_add(E_Configure_Option_Type type, const char *desc, const char *name, Eina_Bool private_scope, void *valptr, const void *data);
+EAPI E_Configure_Option *e_configure_option_add(E_Configure_Option_Type type, const char *desc, const char *name, void *valptr, const void *data);
 EAPI void e_configure_option_tags_set(E_Configure_Option *co, const char const **tags, unsigned int num_tags);
 EAPI void e_configure_option_del(E_Configure_Option *eci);
 EAPI const Eina_List *e_configure_option_tag_list_options(const char *tag);
@@ -171,6 +160,10 @@ EAPI const Eina_List *e_configure_option_ctx_option_list(E_Configure_Option_Ctx 
 EAPI const Eina_List *e_configure_option_ctx_match_tag_list(E_Configure_Option_Ctx *ctx);
 EAPI Eina_Bool e_configure_option_ctx_tag_add(E_Configure_Option_Ctx *ctx, Eina_Stringshare *tag);
 EAPI Eina_Bool e_configure_option_ctx_tag_pop(E_Configure_Option_Ctx *ctx);
+
+EAPI void e_configure_option_domain_current_set(const char *domain);
+EAPI Eina_Inlist *e_configure_option_domain_list(const char *domain);
+EAPI void e_configure_option_domain_clear(const char *domain);
 
 EINTERN int e_configure_option_init(void);
 EINTERN int e_configure_option_shutdown(void);

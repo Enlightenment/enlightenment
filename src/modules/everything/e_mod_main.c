@@ -22,7 +22,6 @@ Evry_API *evry = NULL;
 Evry_Config *evry_conf = NULL;
 int _evry_events[NUM_EVRY_EVENTS];
 E_Module *_mod_evry = NULL;
-static E_Configure_Option *cfg_opt = NULL;
 
 /* module setup */
 EAPI E_Module_Api e_modapi =
@@ -64,11 +63,16 @@ e_modapi_init(E_Module *m)
    e_configure_registry_item_add
      ("launcher/run_everything", 40, _("Everything Configuration"),
      NULL, module_icon, evry_config_dialog);
-   E_CONFIGURE_OPTION_ADD_CUSTOM(cfg_opt, _("settings"), _("Everything launcher settings"), _("exec"), _("everything"));
-   E_CONFIGURE_OPTION_ICON(cfg_opt, module_icon);
-   cfg_opt->info = eina_stringshare_add("launcher/run_everything");
-   e_configure_option_category_tag_add(_("everything"), _("everything"));
-   e_configure_option_category_icon_set(_("everything"), module_icon);;
+   {
+      E_Configure_Option *co;
+
+      e_configure_option_domain_current_set("everything");
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("settings"), _("Everything launcher settings"), _("exec"), _("everything"));
+      E_CONFIGURE_OPTION_ICON(co, module_icon);
+      co->info = eina_stringshare_add("launcher/run_everything");
+      e_configure_option_category_tag_add(_("everything"), _("everything"));
+      e_configure_option_category_icon_set(_("everything"), module_icon);;
+   }
    evry_init();
 
    _evry_type_init("NONE");
@@ -169,7 +173,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
         em->active = EINA_FALSE;
      }
    e_configure_option_category_tag_del(_("everything"), _("everything"));
-   E_FN_DEL(e_configure_option_del, cfg_opt);
+   e_configure_option_domain_clear("everything");
 
    evry_plug_apps_shutdown();
    evry_plug_files_shutdown();
