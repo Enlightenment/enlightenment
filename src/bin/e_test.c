@@ -947,13 +947,7 @@ handler(void *data, const char *name, const char *info, int val,
    if (strcmp(name, "comp.manager")) return;
 
    e = e_manager_comp_evas_get(man);
-   if (!strcmp(info, "change.comp"))
-     {
-        if (!e) printf("TTT: No comp manager\n");
-        else printf("TTT: comp canvas = %p\n", e);
-        if (e) setup(man);
-     }
-   else if (!strcmp(info, "resize.comp"))
+   if (!strcmp(info, "resize.comp"))
      {
         printf("%s: %p | %p\n", info, man, src);
      }

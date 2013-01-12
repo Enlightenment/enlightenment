@@ -43,6 +43,7 @@ struct _Frame_Extents
 };
 
 EAPI int E_EVENT_MANAGER_KEYS_GRAB = -1;
+EAPI int E_EVENT_MANAGER_COMP_SET = -1;
 
 static Eina_List *managers = NULL;
 static Eina_Hash *frame_extents = NULL;
@@ -55,6 +56,7 @@ e_manager_init(void)
    ecore_x_screensaver_event_listen_set(1);
    frame_extents = eina_hash_string_superfast_new(NULL);
    E_EVENT_MANAGER_KEYS_GRAB = ecore_event_type_new();
+   E_EVENT_MANAGER_COMP_SET = ecore_event_type_new();
    return 1;
 }
 
@@ -529,11 +531,7 @@ e_manager_comp_set(E_Manager *man, E_Manager_Comp *comp)
    E_OBJECT_CHECK(man);
    E_OBJECT_TYPE_CHECK(man, E_MANAGER_TYPE);
    man->comp = comp;
-   e_msg_send("comp.manager", "change.comp", // name + info
-              0, // val
-              E_OBJECT(man), // obj
-              NULL, // msgdata
-              NULL, NULL); // afterfunc + afterdata
+   ecore_event_add(E_EVENT_MANAGER_COMP_SET, NULL, NULL, NULL);
 }
 
 EAPI Evas *

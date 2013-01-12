@@ -11,6 +11,7 @@ typedef struct _E_Manager_Comp_Source E_Manager_Comp_Source;
 #define E_MANAGER_TYPE (int) 0xE0b01008
 
 extern EAPI int E_EVENT_MANAGER_KEYS_GRAB;
+extern EAPI int E_EVENT_MANAGER_COMP_SET;
 
 struct _E_Manager
 {
