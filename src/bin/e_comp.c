@@ -4141,8 +4141,6 @@ _e_comp_config_engine_info_cb(E_Configure_Option *co)
       NULL
    };
 
-#define ENGINE_SW 1
-#define ENGINE_GL 2
    if (!getenv("ECORE_X_NO_XLIB"))
      {
         if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
@@ -4151,7 +4149,7 @@ _e_comp_config_engine_info_cb(E_Configure_Option *co)
           }
      }
 
-   for (x = ENGINE_SW; x <= ENGINE_GL; x++)
+   for (x = E_COMP_ENGINE_SW; x <= E_COMP_ENGINE_GL; x++)
      {
         if (!name[x - 1]) continue;
         oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t *)(long)x);
