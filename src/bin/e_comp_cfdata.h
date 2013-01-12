@@ -73,6 +73,7 @@ struct _E_Comp_Match
 EAPI void           e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd);
 EAPI E_Comp_Config *e_comp_cfdata_config_new(void);
 EAPI void           e_comp_cfdata_config_free(E_Comp_Config *cfg);
+EAPI void           e_comp_cfdata_match_free(E_Comp_Match *m);
 
 #endif
 #endif

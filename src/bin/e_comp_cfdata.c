@@ -183,20 +183,16 @@ e_comp_cfdata_config_new(void)
    return cfg;
 }
 
-static void
-_match_list_free(Eina_List *list)
+EAPI void
+e_comp_cfdata_match_free(E_Comp_Match *m)
 {
-   E_Comp_Match *m;
-
-   EINA_LIST_FREE(list, m)
-     {
-        if (m->title) eina_stringshare_del(m->title);
-        if (m->name) eina_stringshare_del(m->name);
-        if (m->clas) eina_stringshare_del(m->clas);
-        if (m->role) eina_stringshare_del(m->role);
-        if (m->shadow_style) eina_stringshare_del(m->shadow_style);
-        free(m);
-     }
+   if (!m) return;
+   eina_stringshare_del(m->title);
+   eina_stringshare_del(m->name);
+   eina_stringshare_del(m->clas);
+   eina_stringshare_del(m->role);
+   eina_stringshare_del(m->shadow_style);
+   free(m);
 }
 
 EAPI void
@@ -205,10 +201,10 @@ e_comp_cfdata_config_free(E_Comp_Config *cfg)
    if (!cfg) return;
    eina_stringshare_del(cfg->shadow_style);
 
-   _match_list_free(cfg->match.popups);
-   _match_list_free(cfg->match.borders);
-   _match_list_free(cfg->match.overrides);
-   _match_list_free(cfg->match.menus);
+   E_FREE_LIST(cfg->match.popups, e_comp_cfdata_match_free);
+   E_FREE_LIST(cfg->match.borders, e_comp_cfdata_match_free);
+   E_FREE_LIST(cfg->match.overrides, e_comp_cfdata_match_free);
+   E_FREE_LIST(cfg->match.menus, e_comp_cfdata_match_free);
 
    free(cfg);
 }
