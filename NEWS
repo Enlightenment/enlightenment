@@ -26,6 +26,7 @@ Additions:
         * added options to disable comp effects on types of windows
         * added option to disable comp effects on screen
         * added options and functionality for "fast" composite effects
+        * split comp window match settings into separate dialog
 
 Changes:
     Modules:

@@ -9,7 +9,7 @@ conf_comppkg_LTLIBRARIES = conf_comp/module.la
 conf_comp_module_la_SOURCES  = conf_comp/e_mod_main.h \
 			       conf_comp/e_mod_main.c \
 			       conf_comp/e_mod_config.c \
-			       conf_comp/e_mod_config.h
+			       conf_comp/e_mod_config_match.c
 
 .PHONY: conf_comp install-conf_comp
 conf_comp: $(conf_mppkg_LTLIBRARIES) $(conf_comp_DATA)

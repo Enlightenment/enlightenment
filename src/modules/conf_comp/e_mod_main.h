@@ -9,31 +9,37 @@ struct _Mod
 {
    E_Module        *module;
 
-   E_Config_DD     *conf_edd;
-   E_Config_DD     *conf_match_edd;
    E_Comp_Config   *conf;
 
    E_Config_Dialog *config_dialog;
+   E_Config_Dialog *match_config_dialog;
 };
 
 extern Mod *_comp_mod;
 
-
-#define ENGINE_SW 1
-#define ENGINE_GL 2
+typedef struct _E_Demo_Style_Item
+{
+   Evas_Object *preview;
+   Evas_Object *frame;
+   Evas_Object *livethumb;
+   Evas_Object *layout;
+   Evas_Object *border;
+   Evas_Object *client;
+} E_Demo_Style_Item;
 
 
 /**
- * @addtogroup Optional_Look
+ * @addtogroup Optional_Conf
  * @{
  *
- * @defgroup Module_Comp Comp (Composite Manager)
+ * @defgroup Module_Conf_Comp Conf_Comp (Composite Settings)
  *
- * Implements the X11 Composite Manager to support alpha blend,
- * semi-transparent windows and drop shadow. Does support animations
- * and effects such as coloring unfocused windows.
+ * Change settings for the internal compositor.
  *
  * @}
  */
+EINTERN Evas_Object *_style_selector(Evas *evas, const char **source);
+EINTERN E_Config_Dialog *e_int_config_comp_module(E_Container *con, const char *params EINA_UNUSED);
+EINTERN E_Config_Dialog *e_int_config_comp_match(E_Container *con, const char *params EINA_UNUSED);
 
 #endif
