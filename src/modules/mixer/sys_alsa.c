@@ -631,6 +631,6 @@ e_mixer_system_has_capture(E_Mixer_System *self,
    if ((!self) || (!channel))
      return 0;
 
-   return snd_mixer_selem_has_capture_switch(channel);
+   return snd_mixer_selem_has_capture_switch(channel) || snd_mixer_selem_has_capture_volume(channel);
 }
 
