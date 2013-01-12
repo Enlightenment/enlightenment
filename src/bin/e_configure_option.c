@@ -491,8 +491,8 @@ _e_configure_transition_thumb_cb(E_Configure_Option_Info *oi, Evas *evas)
 
    zone = e_util_zone_current_get(e_manager_current_get());
 
-   oa = e_widget_aspect_add(evas, 150, (200 * zone->h) / zone->w);
    obj = e_widget_preview_add(evas, 150, (200 * zone->h) / zone->w);
+   oa = e_widget_aspect_add(evas, 150, (200 * zone->h) / zone->w);
    e_widget_aspect_child_set(oa, obj);
 
    e = e_widget_preview_evas_get(obj);
@@ -521,7 +521,7 @@ _e_configure_transition_thumb_cb(E_Configure_Option_Info *oi, Evas *evas)
    else
      e_widget_preview_extern_object_set(obj, o);
 
-   return oa;
+   return obj;
 }
 
 static Evas_Object *
