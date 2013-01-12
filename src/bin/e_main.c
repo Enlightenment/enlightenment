@@ -511,7 +511,7 @@ main(int argc, char **argv)
    TS("E_Configure Option Init");
    e_configure_option_init();
    TS("E_Configure Option Init Done");
-   _e_main_shutdown_push(e_configure_option_shutdown);
+   //configure_option_shutdown needs to be first
 
    _xdg_data_dirs_augment();
 
@@ -1049,6 +1049,9 @@ main(int argc, char **argv)
 
    TS("Manage all windows");
    _e_main_manage_all();
+
+   /* this needs to be the first function called on shutdown */
+   _e_main_shutdown_push(e_configure_option_shutdown);
 
    _idle_after = ecore_idle_enterer_add(_e_main_cb_idle_after, NULL);
 
