@@ -951,7 +951,8 @@ _e_conf2_content_get_opts(void *data, Evas_Object *obj, const char *part EINA_UN
 static void
 _e_conf2_item_del_opts(void *data, Evas_Object *obj EINA_UNUSED)
 {
-   e_configure_option_data_set(data, "conf_item", NULL);
+   if (e_configure_option_tags_list()) //if this is false, e is shutting down and the next call will crash
+     e_configure_option_data_set(data, "conf_item", NULL);
 }
 
 static char *
