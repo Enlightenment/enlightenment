@@ -5,13 +5,11 @@ static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdat
 static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
-//static int _sort_widget_themes(const void *data1, const void *data2);
 //static Evas_Object *_icon_new(Evas *evas, const char *theme, const char *icon, unsigned int size);
 
 struct _E_Config_Dialog_Data
 {
    E_Config_Dialog *cfd;
-   Eina_List       *widget_themes;
    const char      *widget_theme;
    int              enable_xsettings;
    int              match_e17_theme;
@@ -188,19 +186,6 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_sort_widget_themes(const void *data1, const void *data2)
-{
-   const char *d1, *d2;
-
-   d1 = data1;
-   d2 = data2;
-   if (!d1) return 1;
-   if (!d2) return -1;
-
-   return strcmp(d1, d2);
-}
-
-static int
 _sort_icon_themes(const void *data1, const void *data2)
 {
    const Efreet_Icon_Theme *m1, *m2;
@@ -216,51 +201,18 @@ _sort_icon_themes(const void *data1, const void *data2)
    return strcmp(m1->name.name, m2->name.name);
 }
 
-static void
-_ilist_files_add(E_Config_Dialog_Data *cfdata, const char *dir)
-{
-   Eina_Iterator *it;
-   const char *file;
-
-   it = eina_file_ls(dir);
-   if (!it) return;
-
-   EINA_ITERATOR_FOREACH(it, file)
-     {
-        if ((ecore_file_is_dir(file)) &&
-            (!eina_list_data_find(cfdata->widget_themes, file)))
-          {
-             cfdata->widget_themes = eina_list_append(cfdata->widget_themes, file);
-          }
-        else
-          eina_stringshare_del(file);
-     }
-
-   eina_iterator_free(it);
-}
-
 static Eina_Bool
 _fill_files_ilist(void *data)
 {
    Evas *evas;
    Evas_Object *o;
-   char theme_dir[4096];
    E_Config_Dialog_Data *cfdata = data;
-   Eina_List *xdg_dirs, *l;
-   const char *dir;
+   const Eina_List *l;
+   Eina_Stringshare *dir;
+   int cnt = 0;
 
    if (!(o = cfdata->gui.widget_list))
      return ECORE_CALLBACK_CANCEL;
-
-   e_user_homedir_concat_static(theme_dir, ".themes");
-   _ilist_files_add(cfdata, theme_dir);
-
-   xdg_dirs = efreet_data_dirs_get();
-   EINA_LIST_FOREACH(xdg_dirs, l, dir)
-     {
-        snprintf(theme_dir, sizeof(theme_dir), "%s/themes", dir);
-        _ilist_files_add(cfdata, theme_dir);
-     }
 
    evas = evas_object_evas_get(o);
    evas_event_freeze(evas);
@@ -268,59 +220,46 @@ _fill_files_ilist(void *data)
    e_widget_ilist_freeze(o);
    e_widget_ilist_clear(o);
 
-   if (cfdata->widget_themes)
+   EINA_LIST_FOREACH(e_configure_option_util_themes_gtk_get(), l, dir)
      {
-        const char *theme;
-        int cnt = 0;
+        const char *tmp;
+        char buf[PATH_MAX];
+        Eina_Bool gtk2 = EINA_FALSE;
+        Eina_Bool gtk3 = EINA_FALSE;
+        char label[256];
+        const char *value;
+        ssize_t len = sizeof(label);
 
-        cfdata->widget_themes = eina_list_sort(cfdata->widget_themes, -1, _sort_widget_themes);
+        snprintf(buf, sizeof(buf), "%s/gtk-2.0", dir);
+        gtk2 = ecore_file_is_dir(buf);
+        snprintf(buf, sizeof(buf), "%s/gtk-3.0", dir);
+        gtk3 = ecore_file_is_dir(buf);
+        if ((!gtk2) && (!gtk3)) continue;
 
-        EINA_LIST_FREE(cfdata->widget_themes, theme)
+        tmp = ecore_file_file_get(dir);
+        if (!tmp) continue;
+        value = eina_stringshare_add(tmp);
+        label[0] = 0;
+        strncpy(label, value, len);
+        len -= strlen(label);
+        if (gtk2 && (len > 5))
           {
-             const char *tmp;
-             char buf[PATH_MAX];
-             Eina_Bool gtk2 = EINA_FALSE;
-             Eina_Bool gtk3 = EINA_FALSE;
-             snprintf(buf, sizeof(buf), "%s/gtk-2.0", theme);
-             gtk2 = ecore_file_is_dir(buf);
-             snprintf(buf, sizeof(buf), "%s/gtk-3.0", theme);
-             gtk3 = ecore_file_is_dir(buf);
-             if ((!gtk2) && (!gtk3)) continue;
-
-             tmp = strrchr(theme, '/');
-             if (tmp)
-               {
-                  char label[256];
-                  const char *value;
-                  ssize_t len = sizeof(label);
-
-                  tmp += 1;
-                  value = eina_stringshare_add(tmp);
-                  label[0] = 0;
-                  strncpy(label, value, len);
-                  len -= strlen(label);
-                  if (gtk2 && (len > 5))
-                    {
-                       strcat(label, " (v2)");
-                       len -= 5;
-                    }
-                  if (gtk3 && (len > 5))
-                    {
-                       strcat(label, " (v3)");
-                       len -= 5;
-                    }
-                  
-                  /* value pointer will exist as long as ilist item
-                     so val remains valid */
-                  e_widget_ilist_append(o, NULL, label, NULL, NULL, value);
-                  if ((e_config->xsettings.net_theme_name_detected == value) || (cfdata->widget_theme == value))
-                    e_widget_ilist_selected_set(cfdata->gui.widget_list, cnt);
-                  eina_stringshare_del(value);
-                  cnt++;
-               }
-
-             eina_stringshare_del(theme);
+             strcat(label, " (v2)");
+             len -= 5;
           }
+        if (gtk3 && (len > 5))
+          {
+             strcat(label, " (v3)");
+             len -= 5;
+          }
+        
+        /* value pointer will exist as long as ilist item
+           so val remains valid */
+        e_widget_ilist_append(o, NULL, label, NULL, NULL, value);
+        if ((e_config->xsettings.net_theme_name_detected == value) || (cfdata->widget_theme == value))
+          e_widget_ilist_selected_set(cfdata->gui.widget_list, cnt);
+        eina_stringshare_del(value);
+        cnt++;
      }
 
    e_widget_ilist_go(o);
