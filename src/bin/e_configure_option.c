@@ -1630,9 +1630,9 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, winlist_scroll_animate, _("Enable winlist scroll animation"), _("border"), _("winlist"), _("animate"));
    OPT_ADD(DOUBLE, winlist_scroll_speed, _("Winlist scroll speed"), _("border"), _("winlist"), _("animate"), _("speed"));
    OPT_MINMAX_STEP_FMT(0.0, 1.0, 0.01, "%1.2f");
-   OPT_ADD(BOOL, winlist_list_show_iconified, _("Winlist shows iconified windows"), _("border"), _("winlist"), _("iconif"));
-   OPT_ADD(BOOL, winlist_list_show_other_desk_iconified, _("Winlist shows iconified windows from other desks"), _("border"), _("winlist"), _("iconif"), _("vdesk"));
-   OPT_ADD(BOOL, winlist_list_show_other_screen_iconified, _("Winlist shows iconified windows from other screens"), _("border"), _("winlist"), _("iconif"), _("screen"));
+   OPT_ADD(BOOL, winlist_list_show_iconified, _("Winlist shows iconified windows"), _("border"), _("winlist"), _("minimize"));
+   OPT_ADD(BOOL, winlist_list_show_other_desk_iconified, _("Winlist shows iconified windows from other desks"), _("border"), _("winlist"), _("minimize"), _("vdesk"));
+   OPT_ADD(BOOL, winlist_list_show_other_screen_iconified, _("Winlist shows iconified windows from other screens"), _("border"), _("winlist"), _("minimize"), _("screen"));
    OPT_ADD(BOOL, winlist_list_show_other_desk_windows, _("Winlist shows windows from other desks"), _("border"), _("winlist"), _("vdesk"));
    OPT_ADD(BOOL, winlist_list_show_other_screen_windows, _("Winlist shows windows from other screens"), _("border"), _("winlist"), _("screen"));
    OPT_ADD(BOOL, winlist_list_uncover_while_selecting, _("Winlist uniconifies and unshades windows while selecting"), _("border"), _("winlist"), _("raise"));
@@ -1720,7 +1720,7 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, transient.lower, _("Transient windows follow lower of their child"), _("border"), _("transient"), _("placement"), _("raise"));
    OPT_ADD(BOOL, transient.layer, _("Transient windows follow layer change of their child"), _("border"), _("transient"), _("placement"));
    OPT_ADD(BOOL, transient.desktop, _("Transient windows follow desk change of their child"), _("border"), _("transient"), _("placement"), _("vdesk"));
-   OPT_ADD(BOOL, transient.iconify, _("Transient windows follow iconification of their child"), _("border"), _("transient"), _("iconif"));
+   OPT_ADD(BOOL, transient.iconify, _("Transient windows follow iconification of their child"), _("border"), _("transient"), _("minimize"));
 
    OPT_ADD(BOOL, menu_icons_hide, _("Disable icons in menus"), _("menu"), _("image"));
    OPT_ADD(BOOL, menu_eap_name_show, _("Application menus shows Name field"), _("menu"));
@@ -1855,7 +1855,7 @@ e_configure_option_init(void)
    OPT_ADD(ENUM, clientlist_sort_by, _("Window list menu sort policy"), _("menu"), _("border")); //enum
    co->info_cb = _e_configure_clientlist_sort_by_info_cb;
    OPT_ICON("preferences-winlist");
-   OPT_ADD(ENUM, clientlist_separate_iconified_apps, _("Window list menu iconified window grouping policy"), _("menu"), _("border"), _("iconif")); //enum
+   OPT_ADD(ENUM, clientlist_separate_iconified_apps, _("Window list menu iconified window grouping policy"), _("menu"), _("border"), _("minimize")); //enum
    co->info_cb = _e_configure_clientlist_separate_iconified_apps_info_cb;
    OPT_ICON("preferences-winlist");
    OPT_ADD(BOOL, clientlist_warp_to_iconified_desktop, _("Window list menu warps to desktop of selected iconified window"), _("menu"), _("border"), _("warp"), _("vdesk"));
@@ -2095,7 +2095,7 @@ e_configure_option_init(void)
    e_configure_option_category_tag_add(_("windows"), _("placement"));
    e_configure_option_category_tag_add(_("windows"), _("resist"));
    e_configure_option_category_tag_add(_("windows"), _("remember"));
-   e_configure_option_category_tag_add(_("windows"), _("iconif"));
+   e_configure_option_category_tag_add(_("windows"), _("minimize"));
    e_configure_option_category_tag_add(_("windows"), _("kill"));
    e_configure_option_category_tag_add(_("windows"), _("transient"));
    e_configure_option_category_tag_add(_("windows"), _("move"));
@@ -2126,6 +2126,7 @@ e_configure_option_init(void)
    e_configure_option_tag_alias_add(_("image"), _("icon"));
    e_configure_option_tag_alias_add(_("theme"), _("style"));
    e_configure_option_tag_alias_add(_("pointer"), _("cursor"));
+   e_configure_option_tag_alias_add(_("minimize"), _("iconif"));
 
    event_block = EINA_FALSE;
 
