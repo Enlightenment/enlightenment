@@ -2835,3 +2835,15 @@ e_configure_option_domain_clear(const char *domain)
    EINA_SAFETY_ON_NULL_RETURN(domain);
    eina_hash_del_by_key(domain_hash, domain);
 }
+
+EAPI const Eina_List *
+e_configure_option_util_themes_get(void)
+{
+   return themes;
+}
+
+EAPI const Eina_List *
+e_configure_option_util_themes_system_get(void)
+{
+   return sthemes;
+}
