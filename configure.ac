@@ -468,6 +468,7 @@ PKG_CHECK_MODULES(E_FM_CMDLINE, [
   ecore >= ${efl_version}
   ecore-file >= ${efl_version}
   edbus2 >= ${efl_version}
+  efreet >= ${efl_version}
 ])
 
 PKG_CHECK_MODULES(E_FM_OP, [

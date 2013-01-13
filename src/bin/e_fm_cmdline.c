@@ -3,6 +3,7 @@
 # endif
 
 #include "e.h"
+#include <Efreet.h>
 
 static EDBus_Connection *conn = NULL;
 static int retval = EXIT_SUCCESS;
@@ -39,6 +40,21 @@ fm_open(const char *path)
 
    if (path[0] == '/')
      p = strdup(path);
+   else if (strstr(path, "://"))
+     {
+        Efreet_Uri *uri = efreet_uri_decode(path);
+        if ((!uri) || (!uri->protocol) || (strcmp(uri->protocol, "file") != 0))
+          {
+             ERR("Invalid URI '%s'", path);
+             ecore_idler_add(fm_error_quit_last, NULL);
+             if (uri)
+               efreet_uri_free(uri);
+             return;
+          }
+
+        p = strdup(uri->path);
+        efreet_uri_free(uri);
+     }
    else
      {
         char buf[PATH_MAX];
