@@ -3,7 +3,6 @@
 # endif
 
 #include "e.h"
-#include <Efreet.h>
 
 static EDBus_Connection *conn = NULL;
 static int retval = EXIT_SUCCESS;
