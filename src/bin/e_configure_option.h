@@ -167,6 +167,7 @@ EAPI void e_configure_option_domain_clear(const char *domain);
 
 EAPI const Eina_List *e_configure_option_util_themes_get(void);
 EAPI const Eina_List *e_configure_option_util_themes_system_get(void);
+EAPI const Eina_List *e_configure_option_util_themes_gtk_get(void);
 
 EINTERN int e_configure_option_init(void);
 EINTERN int e_configure_option_shutdown(void);

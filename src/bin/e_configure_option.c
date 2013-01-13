@@ -2847,3 +2847,9 @@ e_configure_option_util_themes_system_get(void)
 {
    return sthemes;
 }
+
+EAPI const Eina_List *
+e_configure_option_util_themes_gtk_get(void)
+{
+   return gtk_themes;
+}
