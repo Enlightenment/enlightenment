@@ -168,7 +168,7 @@ static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_match_edd = NULL;
 
 static Ecore_Timer *action_timeout = NULL;
-
+static Eina_Bool gl_avail = EINA_FALSE;
 
 //////////////////////////////////////////////////////////////////////////
 #undef DBG
@@ -4141,17 +4141,9 @@ _e_comp_config_engine_info_cb(E_Configure_Option *co)
       NULL
    };
 
-   if (!getenv("ECORE_X_NO_XLIB"))
+   if (gl_avail) name[1] = "OpenGL";
+   for (x = E_COMP_ENGINE_SW; x <= E_COMP_ENGINE_SW + gl_avail; x++)
      {
-        if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
-          {
-             name[1] = "OpenGL";
-          }
-     }
-
-   for (x = E_COMP_ENGINE_SW; x <= E_COMP_ENGINE_GL; x++)
-     {
-        if (!name[x - 1]) continue;
         oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t *)(long)x);
         oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
@@ -4276,14 +4268,60 @@ _e_comp_config_style_info_cb(E_Configure_Option *co)
    return ret;
 }
 
+static Eina_List *
+_e_comp_fps_corner_info_cb(E_Configure_Option *co)
+{
+   Eina_List *ret = NULL;
+   E_Configure_Option_Info *oi;
+   int x;
+   const char *name[] =
+   {
+      "Top left",
+      "Top right",
+      "Bottom left",
+      "Bottom right",
+   };
+
+   for (x = 0; x <= 3; x++)
+     {
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
+        ret = eina_list_append(ret, oi);
+     }
+   return ret;
+}
+
+#ifdef ECORE_EVAS_GL_X11_OPT_SWAP_MODE
+static Eina_List *
+_e_comp_swap_mode_info_cb(E_Configure_Option *co)
+{
+   Eina_List *ret = NULL;
+   E_Configure_Option_Info *oi;
+   int x;
+   const char *name[] =
+   {
+      "Auto",
+      "Invalidate (full redraw)",
+      "Copy from back to front",
+      "Double-buffered",
+      "Triple-buffered"
+   };
+
+   for (x = ECORE_EVAS_GL_X11_SWAP_MODE_AUTO; x <= ECORE_EVAS_GL_X11_SWAP_MODE_TRIPLE; x++)
+     {
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
+        oi->current = (*(int *)co->valptr == x);
+        ret = eina_list_append(ret, oi);
+     }
+   return ret;
+}
+#endif
 static void
 _e_comp_cfg_init(void)
 {
    E_Configure_Option *co;
 
    e_configure_option_domain_current_set("e_comp");
-   E_CONFIGURE_OPTION_ADD(co, BOOL, vsync, conf, _("Tear-free compositing (VSYNC)"), _("composite"), _("border"));
-   co->requires_restart = 1;
 
    E_CONFIGURE_OPTION_ADD(co, BOOL, fast_borders, conf, _("Use fast composite effects for windows"), _("composite"), _("border"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
@@ -4305,16 +4343,67 @@ _e_comp_cfg_init(void)
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, conf, _("Disable composite effects for the screen"), _("composite"), _("theme"), _("animate"), _("screen"));
    E_CONFIGURE_OPTION_HELP(co, _("This option disables composite effects from themes, such as animating the screen fade when blanking"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   E_CONFIGURE_OPTION_ADD(co, BOOL, smooth_windows, conf, _("Smooth scaling of composited window content"), _("composite"), _("border"));
-   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   E_CONFIGURE_OPTION_ADD(co, BOOL, nocomp_fs, conf, _("Don't composite fullscreen windows"), _("composite"), _("border"));
-   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+
    E_CONFIGURE_OPTION_ADD(co, ENUM, engine, conf, _("Compositing engine"), _("composite"), _("border"));
+   E_CONFIGURE_OPTION_ICON(co, "preferences-engine");
    co->info_cb = _e_comp_config_engine_info_cb;
    co->requires_restart = 1;
-   E_CONFIGURE_OPTION_ADD(co, STR, shadow_style, conf, _("Default window style"), _("composite"), _("border"), _("theme"));
+   E_CONFIGURE_OPTION_ADD(co, STR, shadow_style, conf, _("Default window composite effect"), _("composite"), _("border"), _("theme"));
    co->info_cb = _e_comp_config_style_info_cb;
    co->thumb_cb = _e_comp_config_style_thumb_cb;
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+
+   E_CONFIGURE_OPTION_ADD(co, BOOL, smooth_windows, conf, _("Smooth scaling of composited window content"), _("composite"), _("border"));
+   /* FIXME: help text */
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   E_CONFIGURE_OPTION_ADD(co, BOOL, efl_sync, conf, _("Sync composited windows"), _("composite"), _("border"));
+   /* FIXME: help text */
+   co->requires_restart = 1;
+   E_CONFIGURE_OPTION_ADD(co, BOOL, loose_sync, conf, _("Loose sync composited windows"), _("composite"), _("border"));
+   /* FIXME: help text */
+   co->requires_restart = 1;
+   E_CONFIGURE_OPTION_ADD(co, BOOL, grab, conf, _("Grab server during rendering of composited windows"), _("composite"), _("border"));
+   /* FIXME: help text */
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   E_CONFIGURE_OPTION_ADD(co, DOUBLE, first_draw_delay, conf, _("Initial draw timeout for newly-mapped composited windows"), _("composite"), _("border"), _("delay"));
+   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0.01, 0.5, 0.01, _("1.2f seconds"));
+   /* FIXME: help text */
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+
+   if (gl_avail)
+     {
+        E_CONFIGURE_OPTION_ADD(co, BOOL, vsync, conf, _("Tear-free compositing (VSYNC)"), _("composite"), _("border"));
+        co->requires_restart = 1;
+
+        E_CONFIGURE_OPTION_ADD(co, BOOL, texture_from_pixmap, conf, _("Texture from pixmap rendering for composite"), _("composite"), _("border"));
+        co->requires_restart = 1;
+#ifdef ECORE_EVAS_GL_X11_OPT_SWAP_MODE
+             if ((evas_version->major >= 1) &&
+                 (evas_version->minor >= 7) &&
+                 (evas_version->micro >= 99))
+               {
+                  E_CONFIGURE_OPTION_ADD(co, ENUM, swap_mode, conf, _("Composite swapping method"), _("composite"), _("border"));
+                  co->info_cb = _e_comp_swap_mode_info_cb;
+                  co->requires_restart = 1;
+               }
+#endif
+     }
+
+
+   E_CONFIGURE_OPTION_ADD(co, BOOL, nocomp_fs, conf, _("Don't composite fullscreen windows"), _("composite"), _("border"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   E_CONFIGURE_OPTION_ADD(co, BOOL, send_flush, conf, _("Send flush when compositing windows"), _("composite"), _("border"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   E_CONFIGURE_OPTION_ADD(co, BOOL, send_dump, conf, _("Send dump when compositing windows"), _("composite"), _("border"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+
+   E_CONFIGURE_OPTION_ADD(co, BOOL, fps_show, conf, _("Show framerate when compositing windows"), _("composite"), _("border"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   E_CONFIGURE_OPTION_ADD(co, DOUBLE_INT, fps_average_range, conf, _("Rolling average for fps display when compositing"), _("composite"), _("border"));
+   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 1, 120, 1, _("1.0f frames"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   E_CONFIGURE_OPTION_ADD(co, ENUM, fps_corner, conf, _("Composite framerate display corner"), _("composite"), _("border"));
+   co->info_cb = _e_comp_fps_corner_info_cb;
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
 
    e_configure_option_category_tag_add(_("windows"), _("composite"));
@@ -4410,6 +4499,12 @@ e_comp_init(void)
    else
      conf = e_comp_cfdata_config_new();
 
+   if (!getenv("ECORE_X_NO_XLIB"))
+     {
+        if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
+          gl_avail = EINA_TRUE;
+     }
+
 #ifdef HAVE_WAYLAND_CLIENTS
    if (!e_comp_wl_init())
      EINA_LOG_ERR("Failed to initialize Wayland Client Support !!\n");
@@ -4451,6 +4546,7 @@ e_comp_shutdown(void)
    e_configure_option_category_tag_del(_("composite"), _("composite"));
    e_configure_option_category_tag_del(_("windows"), _("composite"));
 
+   gl_avail = EINA_FALSE;
    e_comp_cfdata_config_free(conf);
    E_CONFIG_DD_FREE(conf_match_edd);
    E_CONFIG_DD_FREE(conf_edd);
