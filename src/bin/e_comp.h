@@ -3,12 +3,16 @@ typedef struct _E_Comp      E_Comp;
 typedef struct _E_Comp_Win  E_Comp_Win;
 typedef struct _E_Comp_Zone E_Comp_Zone;
 
-#define E_COMP_ENGINE_SW 1
-#define E_COMP_ENGINE_GL 2
-
 #else
 #ifndef E_MOD_COMP_H
 #define E_MOD_COMP_H
+
+typedef enum
+{
+   E_COMP_ENGINE_NONE = 0,
+   E_COMP_ENGINE_SW = 1,
+   E_COMP_ENGINE_GL = 2
+} E_Comp_Engine;
 
 EINTERN Eina_Bool e_comp_init(void);
 EINTERN int      e_comp_shutdown(void);
