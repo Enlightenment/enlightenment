@@ -160,6 +160,28 @@ e_modapi_init(E_Module *m)
    conf_module = m;
    e_module_delayed_set(m, 1);
 
+   {
+      E_Configure_Option *co;
+
+      e_configure_option_domain_current_set("conf_theme");
+
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("themes"), _("Enlightenment theme settings"), _("theme"));
+      co->info = eina_stringshare_add("appearance/theme");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-theme");
+
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("wallpaper"), _("Desktop wallpaper settings"), _("wallpaper"));
+      co->info = eina_stringshare_add("appearance/wallpaper");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-wallpaper");
+
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("colors"), _("Enlightenment color settings"), _("theme"), _("color"));
+      co->info = eina_stringshare_add("appearance/colors");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-color");
+
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("fonts"), _("Enlightenment font settings"), _("font"));
+      co->info = eina_stringshare_add("appearance/fonts");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-font");
+   }
+
    return m;
 }
 
@@ -219,6 +241,8 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_configure_registry_item_del("appearance/borders");
    e_configure_registry_item_del("internal/wallpaper_desk");
    e_configure_registry_category_del("internal");
+
+   e_configure_option_domain_clear("conf_theme");
 
    conf_module = NULL;
    return 1;

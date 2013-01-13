@@ -29,6 +29,17 @@ e_modapi_init(E_Module *m)
 
    conf_module = m;
    e_module_delayed_set(m, 1);
+
+   {
+      E_Configure_Option *co;
+
+      e_configure_option_domain_current_set("conf_shelves");
+
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("shelves"), _("Shelf settings"), _("shelf"), _("desktop"));
+      co->info = eina_stringshare_add("extensions/shelves");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-shelf");
+   }
+
    return m;
 }
 
@@ -47,6 +58,9 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
      e_object_del(E_OBJECT(cfd));
    e_configure_registry_item_del("extensions/shelves");
    e_configure_registry_category_del("extensions");
+
+   e_configure_option_domain_clear("conf_shelves");
+   
    conf_module = NULL;
    return 1;
 }

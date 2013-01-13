@@ -29,6 +29,17 @@ e_modapi_init(E_Module *m)
    /* store the modules working directory for use later */
    mod_dir = eina_stringshare_add(m->dir);
 
+   {
+      E_Configure_Option *co;
+
+      e_configure_option_domain_current_set("conf_randr");
+
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("randr"), _("Screen resolution and orientation settings"), _("screen"), _("size"));
+      co->info = eina_stringshare_add("screen/screen_setup");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-system-screen-resolution");
+   }
+
+
    /* return the module */
    return m;
 }
@@ -53,6 +64,8 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
     * 
     * NB: If there are other items in 'screen' then this function is a no-op */
    e_configure_registry_category_del("screen");
+
+   e_configure_option_domain_clear("conf_randr");
 
    /* return 1 for shutdown success */
    return 1;

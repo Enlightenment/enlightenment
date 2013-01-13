@@ -74,6 +74,18 @@ e_modapi_init(E_Module *m)
                                  _("Keyboard"), NULL,
                                  "preferences-desktop-keyboard",
                                  _xkb_cfg_dialog);
+
+   {
+      E_Configure_Option *co;
+
+      e_configure_option_domain_current_set("xkbswitch");
+
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("xkb layouts"), _("Keyboard layout settings"), _("input"), _("key"), _("language"));
+      co->info = eina_stringshare_add("keyboard_and_mouse/xkbswitch");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-keyboard");
+   }
+
+
    _xkb.module = m;
    ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, _xkb_changed_state, NULL);
    /* Gadcon */
@@ -90,6 +102,8 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    e_configure_registry_item_del("keyboard_and_mouse/xkbswitch");
    e_configure_registry_category_del("keyboard_and_mouse");
+
+   e_configure_option_domain_clear("xkbswitch");
 
    if (_xkb.evh) ecore_event_handler_del(_xkb.evh);
    if (_xkb.cfd) e_object_del(E_OBJECT(_xkb.cfd));

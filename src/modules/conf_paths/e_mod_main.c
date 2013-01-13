@@ -26,6 +26,20 @@ e_modapi_init(E_Module *m)
                                  e_int_config_env);
    conf_module = m;
    e_module_delayed_set(m, 1);
+
+   {
+      E_Configure_Option *co;
+
+      e_configure_option_domain_current_set("conf_paths");
+
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("search directories"), _("Search directory settings"), _("environment"));
+      co->info = eina_stringshare_add("advanced/search_directories");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-directories");
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("environment variables"), _("Environment variable settings"), _("environment"));
+      co->info = eina_stringshare_add("advanced/environment_variables");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-variables");
+   }
+
    return m;
 }
 
@@ -41,6 +55,8 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_configure_registry_item_del("advanced/environment_variables");
    e_configure_registry_item_del("advanced/search_directories");
    e_configure_registry_category_del("advanced");
+
+   e_configure_option_domain_clear("conf_paths");
    conf_module = NULL;
    return 1;
 }

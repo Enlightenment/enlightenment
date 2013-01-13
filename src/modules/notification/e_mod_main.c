@@ -270,7 +270,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_notification_server_unregister();
 
 
-   e_configure_option_domain_clear("quickaccess");
+   e_configure_option_domain_clear("notification");
    e_configure_option_category_tag_del(_("screen"), _("notification"));
    e_configure_option_category_tag_del(_("notification"), _("notification"));
    _notification_cfg_free(notification_cfg);

@@ -1471,19 +1471,10 @@ e_configure_option_init(void)
    co->thumb_cb = _e_configure_transition_thumb_cb;
    OPT_ICON("preferences-transitions");
 
-   OPT_ADD(CUSTOM, themes, _("Enlightenment theme settings"), _("theme"));
-   co->info = eina_stringshare_add("appearance/theme");
-   OPT_ICON("preferences-desktop-theme");
-   OPT_ADD(CUSTOM, desktop_backgrounds, _("Desktop wallpaper settings"), _("wallpaper"));
-   co->info = eina_stringshare_add("appearance/wallpaper");
-   OPT_ICON("preferences-desktop-wallpaper");
    OPT_ADD(STR, desktop_default_background, _("Default desktop wallpaper"), _("wallpaper"));
    co->info_cb = _e_configure_background_info_cb;
    co->funcs[0].none = co->funcs[1].none = e_bg_update;
    OPT_ICON("preferences-desktop-wallpaper");
-   OPT_ADD(CUSTOM, color_classes, _("Enlightenment color settings"), _("theme"), _("color"));
-   co->info = eina_stringshare_add("appearance/colors");
-   OPT_ICON("preferences-desktop-color");
    OPT_ADD(STR, desktop_default_name, _("Default desktop name"), _("desktop"), _("name"));
    OPT_HELP(_("Used in Pager displays"));
    OPT_ICON("preferences-desktop");
@@ -1536,17 +1527,6 @@ e_configure_option_init(void)
    OPT_MINMAX_STEP_FMT(8, 4096, 8, "%1.0f ticks");
    co->funcs[0].none = _e_configure_framerate_changed;
 
-   OPT_ADD(CUSTOM, path_append_data, _("Search directory settings"), _("environment"));
-   co->info = eina_stringshare_add("advanced/search_directories");
-   OPT_ICON("preferences-directories");
-   OPT_ADD(CUSTOM, path_append_data, _("Environment variable settings"), _("environment"));
-   co->info = eina_stringshare_add("advanced/environment_variables");
-   OPT_ICON("preferences-variables");
-
-   OPT_ADD(CUSTOM, randr_serialized_setup, _("Screen resolution and orientation settings"), _("screen"), _("size"));
-   co->info = eina_stringshare_add("screen/screen_setup");
-   OPT_ICON("preferences-system-screen-resolution");
-
    OPT_ADD(DOUBLE_INT, zone_desks_x_count, _("Horizontal virtual desktop count"), _("vdesk"), _("desktop"), _("screen"));
    co->funcs[0].none = _e_configure_zone_desks_count_changed;
    OPT_ADD(DOUBLE_INT, zone_desks_y_count, _("Vertical virtual desktop count"), _("vdesk"), _("desktop"), _("screen"));
@@ -1563,14 +1543,14 @@ e_configure_option_init(void)
               "instead of loading them incrementally"));
 
    /* FIXME */
-   OPT_ADD(CUSTOM, language, _("Language"), _("language"));
-   co->info = eina_stringshare_add("language/language_settings");
-   OPT_ICON("preferences-desktop-locale");
+   //OPT_ADD(CUSTOM, language, _("Language"), _("language"));
+   //co->info = eina_stringshare_add("language/language_settings");
+   //OPT_ICON("preferences-desktop-locale");
    //co->requires_restart = 1;
    //co->funcs[0].one = e_intl_language_set;
-   OPT_ADD(CUSTOM, desklock_language, _("Desklock language"), _("desklock"), _("language"));
-   co->info = eina_stringshare_add("language/desklock_language_settings");
-   OPT_ICON("preferences-desklock-locale");
+   //OPT_ADD(CUSTOM, desklock_language, _("Desklock language"), _("desklock"), _("language"));
+   //co->info = eina_stringshare_add("language/desklock_language_settings");
+   //OPT_ICON("preferences-desklock-locale");
 
    OPT_ADD(ENUM, window_placement_policy, _("Window placement policy"), _("border"), _("placement")); //enum
    co->info_cb = _e_configure_window_placement_policy_info_cb;
@@ -1603,9 +1583,6 @@ e_configure_option_init(void)
 
    OPT_ADD(DOUBLE_INT, drag_resist, _("Shelf gadget resistance"), _("gadget"), _("resist"), _("drag"), _("shelf"));
    OPT_MINMAX_STEP_FMT(0, 100, 2, "%2.0f pixels");
-   OPT_ADD(CUSTOM, shelves, _("Shelf settings"), _("shelf"), _("desktop"));
-   co->info = eina_stringshare_add("extensions/shelves");
-   OPT_ICON("preferences-desktop-shelf");
 
    OPT_ADD(BOOL, use_resist, _("Enable resistance when dragging windows"), _("border"), _("resist"), _("drag"));
    OPT_ADD(DOUBLE_INT, desk_resist, _("Window resistance against screen edges"), _("border"), _("resist"), _("vdesk"), _("screen"), _("drag"));
@@ -1676,9 +1653,9 @@ e_configure_option_init(void)
    OPT_MINMAX_STEP_FMT(1, 256, 1, "%1.0f seconds");
 
    /* FIXME */
-   OPT_ADD(CUSTOM, remembers, _("Window remember settings"), _("border"), _("remember"));
-   co->info = eina_stringshare_add("windows/window_remembers");
-   OPT_ICON("preferences-desktop-window-remember");
+   //OPT_ADD(CUSTOM, remembers, _("Window remember settings"), _("border"), _("remember"));
+   //co->info = eina_stringshare_add("windows/window_remembers");
+   //OPT_ICON("preferences-desktop-window-remember");
    OPT_ADD(BOOL, remember_internal_windows, _("Remember internal window geometry"), _("border"), _("remember"));
    OPT_HELP(_("This option causes E to remember the geometry of its internal dialogs and windows, NOT including filemanager windows"));
    OPT_ADD(BOOL, remember_internal_fm_windows, _("Remember internal filemanager window geometry"), _("border"), _("remember"), _("files"));
@@ -1689,29 +1666,10 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, move_info_visible, _("Window position info visible when moving"), _("border"), _("placement"), _("move"));
    OPT_ADD(BOOL, resize_info_visible, _("Window geometry info visible when moving"), _("border"), _("placement"), _("resize"));
 
-   OPT_ADD(CUSTOM, key_bindings, _("Key bindings"), _("input"), _("key"), _("binding"));
-   co->info = eina_stringshare_add("keyboard_and_mouse/key_bindings");
-   OPT_ICON("preferences-desktop-keyboard-shortcuts");
-   OPT_ADD(CUSTOM, mouse_bindings, _("Mouse bindings"), _("input"), _("mouse"), _("binding"));
-   co->info = eina_stringshare_add("keyboard_and_mouse/mouse_bindings");
-   OPT_ICON("preferences-desktop-mouse");
-   OPT_ADD(CUSTOM, acpi_bindings, _("ACPI bindings"), _("input"), _("acpi"), _("binding"));
-   co->info = eina_stringshare_add("keyboard_and_mouse/acpi_bindings");
-   OPT_ICON("preferences-system-power-management");
-   OPT_ADD(CUSTOM, edge_bindings, _("Screen edge bindings"), _("input"), _("edge"), _("screen"), _("binding"));
-   co->info = eina_stringshare_add("keyboard_and_mouse/edge_bindings");
-   OPT_ICON("preferences-desktop-edge-bindings");
-   OPT_ADD(CUSTOM, signal_bindings, _("Edje signal bindings"), _("input"), _("edje"), _("mouse"), _("binding"));
-   co->info = eina_stringshare_add("advanced/signal_bindings");
-   OPT_ICON("preferences-desktop-signal-bindings");
-   OPT_ADD(CUSTOM, xkb.used_layouts, _("Keyboard layout settings"), _("input"), _("key"), _("language"));
-   co->info = eina_stringshare_add("keyboard_and_mouse/xkbswitch");
-   OPT_ICON("preferences-desktop-keyboard");
-
    /* FIXME */
-   OPT_ADD(CUSTOM, input_method, _("Input method"), _("input"), _("language"));
-   co->info = eina_stringshare_add("language/input_method_settings");
-   OPT_ICON("preferences-imc");
+   //OPT_ADD(CUSTOM, input_method, _("Input method"), _("input"), _("language"));
+   //co->info = eina_stringshare_add("language/input_method_settings");
+   //OPT_ICON("preferences-imc");
    //co->funcs[0].one = e_intl_input_method_set;
 
    OPT_ADD(BOOL, transient.move, _("Transient windows follow movement of their child"), _("border"), _("transient"), _("move"), _("placement"));
@@ -1730,33 +1688,6 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, menu_eap_comment_show, _("Application menus shows Comment field"), _("menu"));
    OPT_HELP(_("This information is taken from the related .desktop file"));
 
-   OPT_ADD(CUSTOM, path_append_data, _("Create a new application launcher"), _("application"), _("exec"));
-   co->info = eina_stringshare_add("applications/new_application");
-   OPT_ICON("preferences-applications-add");
-   OPT_ADD(CUSTOM, path_append_data, _("Application launchers"), _("application"), _("exec"));
-   co->info = eina_stringshare_add("applications/personal_applications");
-   OPT_ICON("preferences-applications-personal");
-   OPT_ADD(CUSTOM, path_append_data, _("Favorite applications"), _("application"), _("exec"));
-   co->info = eina_stringshare_add("applications/favorite_applications");
-   OPT_ICON("user-bookmarks");
-   OPT_ADD(CUSTOM, path_append_data, _("Ibar applications"), _("application"), _("exec"));
-   co->info = eina_stringshare_add("applications/ibar_applications");
-   OPT_ICON("preferences-applications-ibar");
-   OPT_ADD(CUSTOM, path_append_data, _("Desk lock applications"), _("application"), _("exec"), _("desklock"));
-   co->info = eina_stringshare_add("applications/screen_lock_applications");
-   OPT_ICON("preferences-applications-screen-lock");
-   OPT_ADD(CUSTOM, path_append_data, _("Desk unlock applications"), _("application"), _("exec"), _("desklock"));
-   co->info = eina_stringshare_add("applications/screen_unlock_applications");
-   OPT_ICON("preferences-applications-screen-unlock");
-   OPT_ADD(CUSTOM, path_append_data, _("Enlightenment restart applications"), _("application"), _("exec"));
-   co->info = eina_stringshare_add("applications/restart_applications");
-   OPT_ICON("preferences-applications-restart");
-   OPT_ADD(CUSTOM, path_append_data, _("Enlightenment start applications"), _("application"), _("exec"), _("startup"));
-   co->info = eina_stringshare_add("applications/startup_applications");
-   OPT_ICON("preferences-applications-startup");
-   OPT_ADD(CUSTOM, path_append_data, _("Enlightenment default applications"), _("application"), _("exec"));
-   co->info = eina_stringshare_add("applications/default_applications");
-   OPT_ICON("preferences-desktop-default-applications");
    OPT_ADD(BOOL, menu_favorites_show, _("Show Favorite Applications in the main menu"), _("menu"), _("application"));
    OPT_ADD(BOOL, menu_apps_show, _("Show Applications in the main menu"), _("menu"), _("application"));
 
@@ -1769,9 +1700,10 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, use_app_icon, _("Window borders use application icon"), _("border"), _("image"));
    OPT_HELP(_("Applications provide their own icons. If this option is not set, E will use internal theme icons instead of the application-provided icon"));
 
-   OPT_ADD(CUSTOM, path_append_data, _("Enlightenment profile settings"), _("profile"));
-   co->info = eina_stringshare_add("settings/profiles");
-   OPT_ICON("preferences-profiles");
+   /* FIXME */
+   //OPT_ADD(CUSTOM, path_append_data, _("Enlightenment profile settings"), _("profile"));
+   //co->info = eina_stringshare_add("settings/profiles");
+   //OPT_ICON("preferences-profiles");
 
    OPT_ADD(BOOL, cnfmdlg_disabled, _("Disable confirmation dialogs"), _("confirm"), _("dialog"));
    OPT_HELP(_("This option suppresses all confirmation dialogs and assumes that the user has clicked the confirm option"));
@@ -1782,9 +1714,6 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, cfgdlg_normal_wins, _("Configuration dialog windows are normal windows"), _("dialog"), _("border"));
    OPT_HELP(_("This option causes configuration dialogs to be normal windows instead of dialog windows"));
 
-   OPT_ADD(CUSTOM, font_defaults, _("Enlightenment font settings"), _("font"));
-   co->info = eina_stringshare_add("appearance/fonts");
-   OPT_ICON("preferences-desktop-font");
    OPT_ADD(ENUM, font_hinting, _("Set font hinting mode"), _("font"), _("hinting")); //enum
    co->info_cb = _e_configure_font_hinting_info_cb;
    OPT_ICON("preferences-desktop-font");
