@@ -67,6 +67,7 @@ Improvements:
     * composite settings dialog is now accessible from Settings menu
     * added focus-out color class and functionality to default theme
     * added fallback timer for system actions
+    * compositor now applies focus/urgency state to windows on first show
 
 Fixes:
     * Force check changed upon confirmation dialog closure for engine settings.

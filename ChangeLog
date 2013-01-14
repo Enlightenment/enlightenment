@@ -1,3 +1,7 @@
+2013-01-14 Mike Blumenkrantz
+
+        * compositor now applies focus/urgency state to windows on first show
+
 2013-01-12 Mike Blumenkrantz
 
         * split comp window match settings into separate dialog

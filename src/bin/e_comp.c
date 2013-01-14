@@ -1826,12 +1826,16 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
           edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
      }
 
-   if (cw->bd || focus || urgent)
+   if (cw->bd)
      {
         if (focus || (cw->bd && cw->bd->focused))
           edje_object_signal_emit(cw->shobj, "e,state,focus,on", "e");
+        else
+          edje_object_signal_emit(cw->shobj, "e,state,focus,off", "e");
         if (urgent || (cw->bd && cw->bd->client.icccm.urgent))
           edje_object_signal_emit(cw->shobj, "e,state,urgent,on", "e");
+        else
+          edje_object_signal_emit(cw->shobj, "e,state,urgent,off", "e");
      }
    if (cw->visible)
      edje_object_signal_emit(cw->shobj, "e,state,visible,on", "e");
