@@ -45,7 +45,6 @@ struct _E_Config_Dialog_Data
    int              bg_method_prev;
    Eina_List       *bgs;
    int              custom_lock;
-   int              fullscreen_windows_ignore;
    int              ask_presentation;
    double           ask_presentation_timeout;
 
@@ -151,7 +150,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
         cfdata->zone = 0;
      }
 
-   cfdata->fullscreen_windows_ignore = e_config->screen_actions_fullscreen_windows_ignore;
    cfdata->ask_presentation = e_config->desklock_ask_presentation;
    cfdata->ask_presentation_timeout =
      e_config->desklock_ask_presentation_timeout;
@@ -335,9 +333,6 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 
    /* Presentation */
    ol = e_widget_list_add(evas, 0, 0);
-   ow = e_widget_check_add(evas, _("Lock even on fullscreen windows"), 
-                           &(cfdata->fullscreen_windows_ignore));
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    ow = e_widget_check_add(evas, _("Suggest if deactivated before"),
                            &(cfdata->ask_presentation));
    e_widget_on_change_hook_set(ow, _cb_ask_presentation_changed, cfdata);
@@ -412,7 +407,6 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    e_config->desklock_post_screensaver_time = cfdata->post_screensaver_time;
    e_config->desklock_autolock_screensaver = cfdata->screensaver_lock;
    e_config->desklock_autolock_idle_timeout = (cfdata->idle_time * 60);
-   e_config->screen_actions_fullscreen_windows_ignore = cfdata->fullscreen_windows_ignore;
    e_config->desklock_ask_presentation = cfdata->ask_presentation;
    e_config->desklock_ask_presentation_timeout = cfdata->ask_presentation_timeout;
    if (e_config->xkb.desklock_layout != cfdata->desklock_layout)
@@ -523,8 +517,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
    else if (e_config->desklock_custom_desklock_cmd != cfdata->custom_lock_cmd)
      return 1;
 
-   return (e_config->screen_actions_fullscreen_windows_ignore != cfdata->fullscreen_windows_ignore) ||
-          (e_config->desklock_ask_presentation != cfdata->ask_presentation) ||
+   return (e_config->desklock_ask_presentation != cfdata->ask_presentation) ||
           (e_config->desklock_ask_presentation_timeout != cfdata->ask_presentation_timeout);
 }
 

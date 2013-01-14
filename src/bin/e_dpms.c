@@ -63,8 +63,7 @@ e_dpms_force_update(void)
    int enabled;
 
    enabled = ((e_config->screensaver_enable) &&
-              (!e_config->mode.presentation) &&
-              (!e_util_fullscreen_current_any()));
+              (!e_config->mode.presentation));
    ecore_x_dpms_enabled_set(enabled);
    if (!enabled) return;
 
