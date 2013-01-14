@@ -196,18 +196,20 @@ group { name: "e/modules/comp/screen/overlay/noeffects";
          program {
             name: "suspend";
             signal: "e,state,sys,suspend"; source: "e";
+            action: SIGNAL_EMIT "e,state,sys,suspend,done" "e";
+            after: "action_done";
+         }
+         program {
+            name: "action_done";
             action: STATE_SET "visible" 0.0;
             transition: ACCELERATE 0 CURRENT;
             target: "suspender";
-            action: SIGNAL_EMIT "e,state,sys,suspend,done" "e";
          }
          program {
             name: "hibernate";
             signal: "e,state,sys,hibernate"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0 CURRENT;
-            target: "suspender";
             action: SIGNAL_EMIT "e,state,sys,hibernate,done" "e";
+            after: "action_done";
          }
          program {
             name: "resume";
@@ -216,26 +218,20 @@ group { name: "e/modules/comp/screen/overlay/noeffects";
          program {
             name: "reboot";
             signal: "e,state,sys,reboot"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0 CURRENT;
-            target: "suspender";
             action: SIGNAL_EMIT "e,state,sys,reboot,done" "e";
+            after: "action_done";
          }
          program {
             name: "halt";
             signal: "e,state,sys,halt"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0 CURRENT;
-            target: "suspender";
             action: SIGNAL_EMIT "e,state,sys,halt,done" "e";
+            after: "action_done";
          }
          program {
             name: "logout";
             signal: "e,state,sys,logout"; source: "e";
-            action: STATE_SET "visible" 0.0;
-            transition: ACCELERATE 0 CURRENT;
-            target: "suspender";
             action: SIGNAL_EMIT "e,state,sys,logout,done" "e";
+            after: "action_done";
          }
    }
 }
@@ -385,6 +381,10 @@ group { name: "e/comp/default";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.1;
          target: "focus-clipper";
+         after: "focus_off2";
+      }
+      program {
+         name: "focus_off2";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 0.4;
          target: "glow";
