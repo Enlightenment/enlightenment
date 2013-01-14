@@ -411,6 +411,59 @@ group { name: "e/comp/default";
    }
 }
 
+group { name: "e/comp/rotate";
+   inherit: "e/comp/default";
+   parts {
+      part { name: "e.swallow.content";
+         description { state: "default";
+            map {
+               on: 1;
+               rotation {
+                  z: 0;
+               }
+            }
+         }
+         description { state: "focus-out";
+            inherit: "default";
+            map.rotation.z: 180;
+         }
+      }
+      part {
+         name: "shower";
+         description { state: "default";
+            rel1.relative: 0.0  0.0;
+            rel2.relative: 1.0  1.0;
+         }
+      }
+   }
+   programs {
+      program { name: "focus3";
+         signal: "e,state,focus,on"; source: "e";
+         action: STATE_SET "default" 0.0;
+         target: "e.swallow.content";
+         transition: LINEAR 0.3;
+      }
+      program { name: "focus_off3";
+         signal: "e,state,focus,off"; source: "e";
+         action: STATE_SET "focus-out" 0.0;
+         target: "e.swallow.content";
+         transition: LINEAR 0.3;
+      }
+   }
+}
+
+group { name: "e/comp/rotate/fast";
+   inherit: "e/comp/rotate";
+   programs {
+      program { name: "focus3";
+         transition: LINEAR 0;
+      }
+      program { name: "focus_off3";
+         transition: LINEAR 0;
+      }
+   }
+}
+
 group { name: "e/comp/popup";
    inherit: "e/comp/default";
    parts {
