@@ -512,6 +512,7 @@ _opt_overlay_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, 
    Elm_Object_Item *it;
    E_Event_Configure_Option_Changed ev;
 
+   if (!e_configure_option_tags_list()) return;
    overlay = NULL;
    it = elm_genlist_selected_item_get(list[1]);
    if (it) elm_genlist_item_selected_set(it, EINA_FALSE);
