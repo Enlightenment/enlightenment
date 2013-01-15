@@ -1,4 +1,9 @@
+2013-01-15 Mike Blumenkrantz
+
+        * prevent windows dragged from one screen to another from being larger than the destination screen
+
 2013-01-14 Brian Miculcy
+
         * Backlight, screenlock and screensaver don't check for fullscreen windows - we have presentation mode for that.
 
 2013-01-14 Mike Blumenkrantz

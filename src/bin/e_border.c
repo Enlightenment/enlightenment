@@ -937,6 +937,9 @@ e_border_zone_set(E_Border *bd,
       ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_ZONE_GEOMETRY, zgeom, 4);
    }
    e_remember_update(bd);
+   e_border_res_change_geometry_save(bd);
+   e_border_res_change_geometry_restore(bd);
+   bd->pre_res_change.valid = 0;
 }
 
 EAPI void

@@ -67,6 +67,7 @@ Improvements:
     * added focus-out color class and functionality to default theme
     * added fallback timer for system actions
     * compositor now applies focus/urgency state to windows on first show
+    * prevent windows dragged from one screen to another from being larger than the destination screen
 
 Fixes:
     * Backlight, screenlock and screensaver don't check for fullscreen windows - we have presentation mode for that.
