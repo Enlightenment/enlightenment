@@ -14,10 +14,12 @@ filesdir = $(datadir)/enlightenment/data/themes
 files_DATA = default.edj
 
 EXTRA_DIST = \
+colorclasses.edc \
 default.edc \
 macros.edc \
 edc/about-e.edc \
 edc/about-theme.edc \
+edc/appmenu.edc \
 edc/background.edc \
 edc/backlight.edc \
 edc/battery.edc \
@@ -51,6 +53,7 @@ edc/init.edc \
 edc/label.edc \
 edc/menu.edc \
 edc/mixer.edc \
+edc/music_control.edc \
 edc/notification.edc \
 edc/pager.edc \
 edc/pointer.edc \
@@ -213,6 +216,7 @@ img/icon_enlightenment.png \
 img/icon_preferences-applications-personal.png \
 img/icon_preferences-applications-screen-lock.png \
 img/icon_preferences-applications-screen-unlock.png \
+img/icon_preferences-composite.png \
 img/icon_preferences-desklock-locale.png \
 img/icon_preferences-desktop-environments.png \
 img/icon_preferences-desktop-signal-bindings.png \
@@ -282,10 +286,15 @@ img/mini_blue_glow_arrow_2.png \
 img/mini_blue_glow_arrow_3.png \
 img/mini_box_bevel_shadow.png \
 img/mini_box_glow.png \
+img/music_control_icon.png \
+img/next.png \
+img/pause.png\
+img/play.png \
 img/pointer_entry_bar.png \
 img/pointer_glow.png \
 img/pointer_mono.png \
 img/pointer.png \
+img/previous.png \
 img/runner_glow_horiz.png \
 img/runner_glow_vert.png \
 img/runner_horiz.png \
