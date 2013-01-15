@@ -2,7 +2,7 @@ appmenudir = $(MDIR)/appmenu
 appmenu_DATA = appmenu/module.desktop \
                appmenu/e-module-appmenu.edj
 
-EXTRA_DIST += $(appmenu2_DATA)
+EXTRA_DIST += $(appmenu_DATA)
 
 appmenupkgdir = $(MDIR)/appmenu/$(MODULE_ARCH)
 appmenupkg_LTLIBRARIES = appmenu/module.la
