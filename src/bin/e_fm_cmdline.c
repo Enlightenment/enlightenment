@@ -104,11 +104,11 @@ fm_open(const char *path)
    if (!edbus_connection_send(conn, msg, fm_open_reply, NULL, -1))
      {
         ERR("Could not send DBus Message");
+        edbus_message_unref(msg);
         ecore_idler_add(fm_error_quit_last, NULL);
      }
    else
      pending++;
-   edbus_message_unref(msg);
 }
 
 static const Ecore_Getopt options = {

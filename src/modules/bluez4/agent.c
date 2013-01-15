@@ -17,7 +17,6 @@ static void
 _reply(EDBus_Message *message, EDBus_Message *reply)
 {
    edbus_connection_send(bluez_conn, reply, NULL, NULL, -1);
-   edbus_message_unref(reply);
    edbus_message_unref(message);
 }
 

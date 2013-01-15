@@ -363,7 +363,6 @@ e_mixer_pulse_init(void)
 
         msg = edbus_message_method_call_new(PULSE_BUS, PULSE_PATH, PULSE_INTERFACE, "suuuuuup");
         edbus_connection_send(dbus, msg, _dbus_test, NULL, -1); /* test for not running pulse */
-        edbus_message_unref(msg);
         pulse_free(conn);
         conn = NULL;
         pulse_shutdown();

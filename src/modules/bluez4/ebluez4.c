@@ -830,5 +830,4 @@ ebluez4_adapter_property_set(Adapter *adap, const char *prop_name, Eina_Bool val
    edbus_message_iter_basic_append(variant, 'b', value);
    edbus_message_iter_container_close(iter, variant);
    edbus_proxy_send(adap->proxy, new_msg, NULL, NULL, -1);
-   edbus_message_unref(new_msg);
 }

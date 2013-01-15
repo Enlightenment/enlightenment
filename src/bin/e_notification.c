@@ -370,8 +370,9 @@ notification_client_dbus_send(E_Notification_Notify *notify, E_Notification_Clie
    EINA_SAFETY_ON_NULL_GOTO(p, error);
    edbus_pending_data_set(p, "cb", cb);
    edbus_pending_data_set(p, "conn", conn);
-   edbus_message_unref(msg);
+
    return EINA_TRUE;
+
 error:
    edbus_message_unref(msg);
    return EINA_FALSE;

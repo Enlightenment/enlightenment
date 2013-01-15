@@ -147,7 +147,6 @@ _e_fm_main_udisks_cb_dev_all(void *data __UNUSED__, const EDBus_Message *msg,
         edbus_connection_send(_e_fm_main_udisks_conn, new_msg,
                               _e_fm_main_udisks_cb_dev_verify,
                               eina_stringshare_add(path), -1);
-        edbus_message_unref(new_msg);
         INF("DB INIT DEV+: %s", path);
      }
 }
@@ -826,9 +825,7 @@ _volume_umount(EDBus_Proxy *proxy)
    edbus_message_iter_arguments_append(main_iter, "as", &array);
    edbus_message_iter_container_close(main_iter, array);
 
-   ret = edbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
-   edbus_message_unref(msg);
-   return ret;
+   return edbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
 }
 
 static EDBus_Pending *
@@ -843,9 +840,7 @@ _volume_eject(EDBus_Proxy *proxy)
    edbus_message_iter_arguments_append(main_iter, "as", &array);
    edbus_message_iter_container_close(main_iter, array);
 
-   ret = edbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
-   edbus_message_unref(msg);
-   return ret;
+   return edbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
 }
 
 static EDBus_Pending *
@@ -864,9 +859,7 @@ _volume_mount(EDBus_Proxy *proxy, const char *fstype, Eina_List *opt)
      edbus_message_iter_basic_append(array, 's', opt_txt);
    edbus_message_iter_container_close(main_iter, array);
 
-   ret = edbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
-   edbus_message_unref(msg);
-   return ret;
+   return edbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
 }
 
 static Eina_Bool
