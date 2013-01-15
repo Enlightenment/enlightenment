@@ -28,8 +28,8 @@ struct _E_Module
 
    E_Module_Api        *api;
 
-   const char          *name;
-   const char          *dir;
+   Eina_Stringshare    *name;
+   Eina_Stringshare    *dir;
    void                *handle;
 
    struct {
@@ -38,8 +38,8 @@ struct _E_Module
       int    (*save)        (E_Module *m);
    } func;
 
-   unsigned char        enabled : 1;
-   unsigned char        error : 1;
+   Eina_Bool        enabled : 1;
+   Eina_Bool        error : 1;
 
    /* the module is allowed to modify these */
    void                *data;
