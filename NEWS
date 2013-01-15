@@ -70,6 +70,7 @@ Improvements:
     * compositor now applies focus/urgency state to windows on first show
     * prevent windows dragged from one screen to another from being larger than the destination screen
     * track module directories
+    * improve module config dialog load speed
 
 Fixes:
     * Backlight, screenlock and screensaver don't check for fullscreen windows - we have presentation mode for that.

@@ -3,6 +3,7 @@
         * prevent windows dragged from one screen to another from being larger than the destination screen
         * add new APIs for getting module .desktop files
         * track module directories
+        * improve module config dialog load speed
 
 2013-01-14 Brian Miculcy
 
