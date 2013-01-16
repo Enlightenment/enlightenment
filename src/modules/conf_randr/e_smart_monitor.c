@@ -1425,6 +1425,7 @@ static int
 _e_smart_monitor_rotation_amount_get(E_Smart_Data *sd, Evas_Event_Mouse_Move *ev)
 {
    Evas_Coord cx = 0, cy = 0;
+   Evas_Coord fx = 0, fy = 0, fw = 0, fh = 0;
    double a = 0.0, b = 0.0, c = 0.0, r = 0.0;
    double ax = 0.0, ay = 0.0, bx = 0.0, by = 0.0;
    double dotprod = 0.0;
@@ -1441,24 +1442,35 @@ _e_smart_monitor_rotation_amount_get(E_Smart_Data *sd, Evas_Event_Mouse_Move *ev
        (ev->cur.canvas.y == ev->prev.canvas.y))
      return 0;
 
-   /* if the mouse is moved outside the monitor then get out
+   /* get the geometry of the frame */
+   evas_object_geometry_get(sd->o_frame, &fx, &fy, &fw, &fh);
+
+   /* if the mouse is moved outside the frame then get out
     * 
     * NB: This could be coded into one giant OR statement, but I am feeling 
     * lazy today ;) */
-   if ((ev->cur.canvas.x > (sd->x + sd->w))) return 0;
-   else if ((ev->cur.canvas.x < sd->x)) return 0;
-   if ((ev->cur.canvas.y > (sd->y + sd->h))) return 0;
-   else if ((ev->cur.canvas.y < sd->y)) return 0;
+   /* if ((ev->cur.canvas.x > (sd->x + sd->w))) return 0; */
+   /* else if ((ev->cur.canvas.x < sd->x)) return 0; */
+   /* if ((ev->cur.canvas.y > (sd->y + sd->h))) return 0; */
+   /* else if ((ev->cur.canvas.y < sd->y)) return 0; */
+   if ((ev->cur.canvas.x > (fx + fw))) return 0;
+   else if ((ev->cur.canvas.x < fx)) return 0;
+   if ((ev->cur.canvas.y > (fy + fh))) return 0;
+   else if ((ev->cur.canvas.y < fy)) return 0;
 
    /* get center point
     * 
     * NB: This COULD be used to provide a greater amount of rotation 
     * depending on distance of movement from center */
-   cx = (sd->x + (sd->w / 2));
-   cy = (sd->y + (sd->h / 2));
+   /* cx = (sd->x + (sd->w / 2)); */
+   /* cy = (sd->y + (sd->h / 2)); */
+   cx = (fx + (fw / 2));
+   cy = (fy + (fh / 2));
 
-   ax = ((sd->x + sd->w) - cx);
-   ay = (sd->y - cy);
+   /* ax = ((sd->x + sd->w) - cx); */
+   /* ay = (sd->y - cy); */
+   ax = ((fx + fw) - cx);
+   ay = (fy - cy);
 
    bx = (ev->cur.canvas.x - cx);
    by = (ev->cur.canvas.y - cy);
@@ -1470,10 +1482,14 @@ _e_smart_monitor_rotation_amount_get(E_Smart_Data *sd, Evas_Event_Mouse_Move *ev
    b = sqrt((bx * bx) + (by * by));
    if ((a < 1) || (b < 1)) return 0;
 
-   c = sqrt((ev->cur.canvas.x - (sd->x + sd->w)) * 
-            (ev->cur.canvas.x - (sd->x + sd->w)) +
-            (ev->cur.canvas.y - sd->y) * 
-            (ev->cur.canvas.y - sd->y));
+   /* c = sqrt((ev->cur.canvas.x - (sd->x + sd->w)) *  */
+   /*          (ev->cur.canvas.x - (sd->x + sd->w)) + */
+   /*          (ev->cur.canvas.y - sd->y) *  */
+   /*          (ev->cur.canvas.y - sd->y)); */
+   c = sqrt((ev->cur.canvas.x - (fx + fw)) * 
+            (ev->cur.canvas.x - (fx + fw)) +
+            (ev->cur.canvas.y - fy) * 
+            (ev->cur.canvas.y - fy));
 
    r = acos(((a * a) + (b * b) - (c * c)) / (2 * (a * b)));
    r = r * 180 / M_PI;
