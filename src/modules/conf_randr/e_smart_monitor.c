@@ -143,7 +143,7 @@ static Ecore_X_Randr_Orientation _e_smart_monitor_orientation_get(int rotation);
 static void _e_smart_monitor_pointer_push(Evas_Object *obj, const char *ptr);
 static void _e_smart_monitor_pointer_pop(Evas_Object *obj, const char *ptr);
 static void _e_smart_monitor_map_apply(Evas_Object *obj, int rotation);
-static void _e_smart_monitor_map_remove(E_Smart_Data *sd);
+static void _e_smart_monitor_map_remove(E_Smart_Data *sd, Ecore_X_Randr_Orientation orient);
 
 static void _e_smart_monitor_move_event(E_Smart_Data *sd, Evas_Object *mon, void *event);
 static void _e_smart_monitor_resize_event(E_Smart_Data *sd, Evas_Object *mon, void *event);
@@ -1582,7 +1582,7 @@ _e_smart_monitor_map_apply(Evas_Object *obj, int rotation)
 }
 
 static void 
-_e_smart_monitor_map_remove(E_Smart_Data *sd)
+_e_smart_monitor_map_remove(E_Smart_Data *sd, Ecore_X_Randr_Orientation orient)
 {
    const Evas_Map *map = NULL;
    Evas_Coord fx = 0, fy = 0;
@@ -1594,22 +1594,22 @@ _e_smart_monitor_map_remove(E_Smart_Data *sd)
    /* grab the frame geometry after everything is done */
    evas_object_geometry_get(sd->o_frame, NULL, NULL, &fw, &fh);
 
-   if (sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_0)
+   if (orient == ECORE_X_RANDR_ORIENTATION_ROT_0)
      {
         /* only need the point 0 coords */
         evas_map_point_coord_get(map, 0, &fx, &fy, NULL);
      }
-   else if (sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_180)
+   else if (orient == ECORE_X_RANDR_ORIENTATION_ROT_180)
      {
         /* only need the point 2 coords */
         evas_map_point_coord_get(map, 2, &fx, &fy, NULL);
      }
-   else if (sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_90)
+   else if (orient == ECORE_X_RANDR_ORIENTATION_ROT_90)
      {
         /* only need the point 3 coords */
         evas_map_point_coord_get(map, 3, &fx, &fy, NULL);
      }
-   else if (sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_270)
+   else if (orient == ECORE_X_RANDR_ORIENTATION_ROT_270)
      {
         /* only need the point 1 coords */
         evas_map_point_coord_get(map, 1, &fx, &fy, NULL);
@@ -1628,11 +1628,24 @@ _e_smart_monitor_map_remove(E_Smart_Data *sd)
     * NB: This is done to reflect the current orientation */
    evas_object_move(sd->o_frame, fx, fy);
 
-   if ((sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_0) || 
-       (sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_180))
-     evas_object_resize(sd->o_frame, fw, fh);
-   else
-     evas_object_resize(sd->o_frame, fh, fw);
+   if ((orient == ECORE_X_RANDR_ORIENTATION_ROT_90) || 
+       (orient == ECORE_X_RANDR_ORIENTATION_ROT_270))
+     {
+        if ((sd->current.orientation != ECORE_X_RANDR_ORIENTATION_ROT_90) || 
+            (sd->current.orientation != ECORE_X_RANDR_ORIENTATION_ROT_270))
+          {
+             evas_object_resize(sd->o_frame, fh, fw);
+          }
+     }
+   else if ((orient == ECORE_X_RANDR_ORIENTATION_ROT_0) || 
+            (orient == ECORE_X_RANDR_ORIENTATION_ROT_180))
+     {
+        if ((sd->current.orientation != ECORE_X_RANDR_ORIENTATION_ROT_0) || 
+            (sd->current.orientation != ECORE_X_RANDR_ORIENTATION_ROT_180))
+          {
+             evas_object_resize(sd->o_frame, fh, fw);
+          }
+     }
 }
 
 static void 
@@ -1871,6 +1884,7 @@ _e_smart_monitor_rotate_event(E_Smart_Data *sd, Evas_Object *mon EINA_UNUSED, vo
 
    /* factor in any existing rotation */
    rotation += sd->current.rotation;
+   rotation %= 360;
 
    /* update rotation value */
    sd->current.rotation = rotation;
@@ -2053,6 +2067,8 @@ _e_smart_monitor_frame_cb_rotate_start(void *data, Evas_Object *obj EINA_UNUSED,
 
    /* set rotating flag */
    sd->rotating = EINA_TRUE;
+
+   sd->orig.rotation = _e_smart_monitor_rotation_get(sd->current.orientation);
 }
 
 static void 
@@ -2061,6 +2077,7 @@ _e_smart_monitor_frame_cb_rotate_stop(void *data, Evas_Object *obj EINA_UNUSED, 
    Evas_Object *mon;
    E_Smart_Data *sd;
    Ecore_X_Randr_Orientation orient;
+   Evas_Coord nx = 0, ny = 0;
    Evas_Coord nw = 0, nh = 0;
    int rot = 0;
 
@@ -2071,6 +2088,8 @@ _e_smart_monitor_frame_cb_rotate_stop(void *data, Evas_Object *obj EINA_UNUSED, 
    /* set rotating flag */
    sd->rotating = EINA_FALSE;
 
+   sd->current.rotation += sd->orig.rotation;
+
    /* get the orientation that this monitor would be in */
    orient = _e_smart_monitor_orientation_get(sd->current.rotation);
 
@@ -2079,7 +2098,7 @@ _e_smart_monitor_frame_cb_rotate_stop(void *data, Evas_Object *obj EINA_UNUSED, 
    if (sd->current.orientation == orient) return;
 
    /* grab the current geometry */
-   e_layout_child_geometry_get(mon, NULL, NULL, &nw, &nh);
+   e_layout_child_geometry_get(mon, &nx, &ny, &nw, &nh);
 
    /* get the degrees of rotation based on this orient
     * 
@@ -2096,9 +2115,6 @@ _e_smart_monitor_frame_cb_rotate_stop(void *data, Evas_Object *obj EINA_UNUSED, 
      {
         /* update rotation value */
         sd->current.rotation = rot;
-
-        /* apply existing rotation */
-        _e_smart_monitor_map_apply(sd->o_frame, sd->current.rotation);
      }
 
    /* snap the monitor to this rotation */
@@ -2110,7 +2126,6 @@ _e_smart_monitor_frame_cb_rotate_stop(void *data, Evas_Object *obj EINA_UNUSED, 
         if ((sd->current.orientation != ECORE_X_RANDR_ORIENTATION_ROT_90) || 
             (sd->current.orientation != ECORE_X_RANDR_ORIENTATION_ROT_270))
           {
-             Evas_Coord nx = 0, ny = 0;
              int sx = 0, sy = 0;
 
              /* resize monitor object based on rotation */
@@ -2121,11 +2136,15 @@ _e_smart_monitor_frame_cb_rotate_stop(void *data, Evas_Object *obj EINA_UNUSED, 
                                             sd->current.mode->width);
 
              /* grab the current geometry */
-             e_layout_child_geometry_get(mon, &nx, &ny, &nw, &nh);
+             /* e_layout_child_geometry_get(mon, &nx, &ny, &nw, &nh); */
 
-             sx = ((nh - nw) / 2);
-             sy = ((nw - nh) / 2);
+             /* sx = ((nh - nw) / 2); */
+             /* sy = ((nw - nh) / 2); */
 
+             sx = ((nw - nh) / 2);
+             sy = ((nh - nw) / 2);
+
+             /* e_layout_child_geometry_get(mon, &nx, &ny, NULL, NULL); */
              nx -= (sx + sd->layout.x);
              ny -= (sy - sd->layout.y);
 
@@ -2151,11 +2170,8 @@ _e_smart_monitor_frame_cb_rotate_stop(void *data, Evas_Object *obj EINA_UNUSED, 
           }
      }
 
-   /* update current orientation */
-   sd->current.orientation = orient;
-
    /* update the changes flag */
-   if (sd->orig.orientation != sd->current.orientation)
+   if (sd->orig.orientation != orient)
      sd->changes |= E_SMART_MONITOR_CHANGED_ROTATION;
    else
      sd->changes &= ~(E_SMART_MONITOR_CHANGED_ROTATION);
@@ -2168,7 +2184,10 @@ _e_smart_monitor_frame_cb_rotate_stop(void *data, Evas_Object *obj EINA_UNUSED, 
 
    /* remove the currently applied map so that the background and 
     * text get reset to a "normal" orientation */
-   _e_smart_monitor_map_remove(sd);
+   _e_smart_monitor_map_remove(sd, orient);
+
+   /* update current orientation */
+   sd->current.orientation = orient;
 }
 
 static void 
