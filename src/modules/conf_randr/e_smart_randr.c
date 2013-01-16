@@ -805,6 +805,7 @@ _e_smart_randr_monitor_cb_moving(void *data, Evas_Object *obj, void *event EINA_
    E_Smart_Data *sd;
    Eina_List *l = NULL;
    Evas_Object *mon;
+   Evas_Coord ox = 0, oy = 0;
    Eina_Rectangle o;
 
    /* data is the randr object */
@@ -813,22 +814,27 @@ _e_smart_randr_monitor_cb_moving(void *data, Evas_Object *obj, void *event EINA_
    /* try to get the RandR objects smart data */
    if (!(sd = evas_object_smart_data_get(o_randr))) return;
 
-   /* NB FIXME: Hmmmm, this may need to use the geometry of the actual 
-    * frame object for comparison */
+   /* get the current frame geometry of the monitor we were passed in */
+   e_smart_monitor_frame_geometry_get(obj, &ox, &oy, NULL, NULL);
 
-   /* get the current geometry of the monitor we were passed in */
-   e_layout_child_geometry_get(obj, &o.x, &o.y, &o.w, &o.h);
+   /* convert frame geometry into virtual space */
+   e_layout_coord_canvas_to_virtual(sd->o_layout, ox, oy, &o.x, &o.y);
 
    /* loop the list of monitors */
    EINA_LIST_FOREACH(sd->monitors, l, mon)
      {
         Eina_Rectangle m;
+        Evas_Coord fx = 0, fy = 0, fw = 0, fh = 0;
 
         /* if this monitor is the one we want to skip, than skip it */
         if (mon == obj) continue;
 
-        /* get the current geometry of this monitor */
-        e_layout_child_geometry_get(mon, &m.x, &m.y, &m.w, &m.h);
+        /* get the geometry of the monitor frame */
+        e_smart_monitor_frame_geometry_get(mon, &fx, &fy, &fw, &fh);
+
+        /* convert frame geometry into virtual space */
+        e_layout_coord_canvas_to_virtual(sd->o_layout, fx, fy, &m.x, &m.y);
+        e_layout_coord_canvas_to_virtual(sd->o_layout, fw, fh, &m.w, &m.h);
 
         /* check if the moved monitor is inside an existing one */
         if (E_INSIDE(o.x, o.y, m.x, m.y, m.w, m.h))
