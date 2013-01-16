@@ -324,7 +324,6 @@ img/spanner_glow.png \
 img/spanner_hilight.png \
 img/spanner_inset.png \
 img/speaker.png \
-img/speaker_shadow.png \
 img/split_h_glow.png \
 img/split_h_hilight.png \
 img/split_h_inset.png \
