@@ -1767,80 +1767,31 @@ _e_smart_monitor_resize_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
        (e_config->drag_resist * e_config->drag_resist)) 
      return;
 
-   /* TODO: NB: Hmmm, want to badly enable the below code to stop 
-    * extra processing when the mouse moves outside of the monitor, 
-    * HOWEVER when enabled it creates a torrent of problems for 
-    * resizing with snap mode :( */
-
-   /* don't process mouse movements that are outside the object
-    * 
-    * NB: We add a few pixels of 'fuzziness' here to help with monitor resize 
-    * hit detection when at the lowest resolution */
-   /* if (!E_INSIDE(ev->cur.canvas.x, ev->cur.canvas.y,  */
-   /*               (sd->x - 10), (sd->y - 10), (sd->w + 10), (sd->h + 10))) */
-   /*   return; */
-
    /* calculate resize difference based on mouse movement */
    dx = (ev->cur.canvas.x - ev->prev.canvas.x);
    dy = (ev->cur.canvas.y - ev->prev.canvas.y);
 
+   if ((dx == 0) && (dy == 0)) return;
+
    /* TODO: FIXME: Handle case where monitor is rotated */
 
    /* convert monitor size to canvas coords */
-   e_layout_coord_virtual_to_canvas(sd->layout.obj, sd->current.w, 
-                                    sd->current.h, &mw, &mh);
+   e_layout_coord_virtual_to_canvas(sd->layout.obj, 
+                                    sd->current.w, sd->current.h, &mw, &mh);
 
    /* factor in the resize difference and convert to virtual coords */
    e_layout_coord_canvas_to_virtual(sd->layout.obj, 
                                     (mw + dx), (mh + dy), &nw, &nh);
 
-   /* don't process mouse movements that are outside the object
-    * 
-    * NB: This is a different 'hack' to the E_INSIDE code above */
-   if (dx < 0)
-     {
-        /* while trying to resize smaller, if the mouse is outside the 
-         * monitor then get out */
-        if ((ev->cur.canvas.x > (sd->x + sd->w))) return;
-
-        /* make sure the min requested width is not smaller than the 
-         * smallest resolution */
-        if (nw < sd->min.w) nw = sd->min.w;
-     }
-   if (dy < 0)
-     {
-        /* while trying to resize smaller, if the mouse is outside the 
-         * monitor then get out */
-        if ((ev->cur.canvas.y > (sd->y + sd->h))) return;
-
-        /* make sure the min requested height is not smaller than the 
-         * smallest resolution */
-        if (nh < sd->min.h) nh = sd->min.h;
-     }
-
-   if (dx > 0)
-     {
-        /* while trying to resize larger, if the mouse is outside the 
-         * monitor then get out */
-        if (ev->cur.canvas.x < sd->x) return;
-
-        /* make sure the max requested width is not larger than the 
-         * largest resolution */
-        if (nw > sd->max.w) nw = sd->max.w;
-     }
-   if (dy > 0)
-     {
-        /* while trying to resize larger, if the mouse is outside the 
-         * monitor then get out */
-        if (ev->cur.canvas.y < sd->y) return;
-
-        /* make sure the max requested height is not larger than the 
-         * largest resolution */
-        if (nh > sd->max.h) nh = sd->max.h;
-     }
+   if (nw < sd->min.w) nw = sd->min.w;
+   if (nw > sd->max.w) nw = sd->max.w;
+   if (nh < sd->min.h) nh = sd->min.h;
+   if (nh > sd->max.h) nh = sd->max.h;
 
    /* check if size already matches, if so we have nothing to do */
-   if ((nw == sd->current.w) && (nh == sd->current.h)) return;
+   if ((nw == (int)sd->current.mode->width) && 
+       (nh == (int)sd->current.mode->height))
+     return;
 
    /* TODO: Make both types of resizing here (freeform and snap) a 
     * checkbox option on the dialog maybe ?? */
@@ -1861,22 +1812,14 @@ _e_smart_monitor_resize_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
    /* find the next nearest resolution to this new size */
    if ((mode = _e_smart_monitor_resolution_get(sd, nw, nh, EINA_TRUE)))
      {
-        if (sd->current.mode != mode)
-          {
-             /* reset current mode to match */
-             sd->current.mode = mode;
+        /* reset current mode to match */
+        sd->current.mode = mode;
 
-             /* actually resize the monitor (snap) */
-             e_layout_child_resize(mon, mode->width, mode->height);
+        /* actually resize the monitor (snap) */
+        e_layout_child_resize(mon, mode->width, mode->height);
 
-             /* reset current size to match */
-             sd->current.w = mode->width;
-             sd->current.h = mode->height;
-
-             /* set the resolution text */
-             _e_smart_monitor_resolution_set(sd, sd->current.mode->width, 
-                                            sd->current.mode->height);
-          }
+        /* set the resolution text */
+        _e_smart_monitor_resolution_set(sd, mode->width, mode->height);
      }
 
 // ************************* END SNAP RESIZING **************************
