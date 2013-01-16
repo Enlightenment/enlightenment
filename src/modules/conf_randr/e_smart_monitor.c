@@ -143,6 +143,7 @@ static Ecore_X_Randr_Orientation _e_smart_monitor_orientation_get(int rotation);
 static void _e_smart_monitor_pointer_push(Evas_Object *obj, const char *ptr);
 static void _e_smart_monitor_pointer_pop(Evas_Object *obj, const char *ptr);
 static void _e_smart_monitor_map_apply(Evas_Object *obj, int rotation);
+static void _e_smart_monitor_map_remove(E_Smart_Data *sd);
 
 static void _e_smart_monitor_move_event(E_Smart_Data *sd, Evas_Object *mon, void *event);
 static void _e_smart_monitor_resize_event(E_Smart_Data *sd, Evas_Object *mon, void *event);
@@ -1565,6 +1566,60 @@ _e_smart_monitor_map_apply(Evas_Object *obj, int rotation)
 }
 
 static void 
+_e_smart_monitor_map_remove(E_Smart_Data *sd)
+{
+   const Evas_Map *map = NULL;
+   Evas_Coord fx = 0, fy = 0;
+   Evas_Coord fw = 0, fh = 0;
+
+   /* get the current map */
+   if (!(map = evas_object_map_get(sd->o_frame))) return;
+
+   /* grab the frame geometry after everything is done */
+   evas_object_geometry_get(sd->o_frame, NULL, NULL, &fw, &fh);
+
+   if (sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_0)
+     {
+        /* only need the point 0 coords */
+        evas_map_point_coord_get(map, 0, &fx, &fy, NULL);
+     }
+   else if (sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_180)
+     {
+        /* only need the point 2 coords */
+        evas_map_point_coord_get(map, 2, &fx, &fy, NULL);
+     }
+   else if (sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_90)
+     {
+        /* only need the point 3 coords */
+        evas_map_point_coord_get(map, 3, &fx, &fy, NULL);
+     }
+   else if (sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_270)
+     {
+        /* only need the point 1 coords */
+        evas_map_point_coord_get(map, 1, &fx, &fy, NULL);
+     }
+
+   /* disable the map so that the background and text get "unrotated"
+    * 
+    * NB: This has the effect of resetting the frame geometry to the point 
+    * where it was Before rotation started, thus why we need the 
+    * move & resize below */
+   evas_object_map_set(sd->o_frame, NULL);
+   evas_object_map_enable_set(sd->o_frame, EINA_FALSE);
+
+   /* move and resize the frame to the geometry of the frame
+    * 
+    * NB: This is done to reflect the current orientation */
+   evas_object_move(sd->o_frame, fx, fy);
+
+   if ((sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_0) || 
+       (sd->current.orientation == ECORE_X_RANDR_ORIENTATION_ROT_180))
+     evas_object_resize(sd->o_frame, fw, fh);
+   else
+     evas_object_resize(sd->o_frame, fh, fw);
+}
+
+static void 
 _e_smart_monitor_move_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
 {
    Evas_Event_Mouse_Move *ev;
@@ -2094,6 +2149,10 @@ _e_smart_monitor_frame_cb_rotate_stop(void *data, Evas_Object *obj EINA_UNUSED, 
 
    /* send monitor rotated signal */
    evas_object_smart_callback_call(mon, "monitor_rotated", NULL);
+
+   /* remove the currently applied map so that the background and 
+    * text get reset to a "normal" orientation */
+   _e_smart_monitor_map_remove(sd);
 }
 
 static void 
