@@ -355,10 +355,14 @@ e_smart_monitor_setup(Evas_Object *obj)
         E_Randr_Monitor_Info *monitor = NULL;
         const char *name = NULL;
 
-        if ((monitor = sd->output->monitor))
-          name = ecore_x_randr_edid_display_name_get(monitor->edid, 
-                                                     monitor->edid_length);
-        if (!name) name = sd->output->name;
+        name = sd->output->name;
+        if (!name)
+          {
+             if ((monitor = sd->output->monitor))
+               name = ecore_x_randr_edid_display_name_get(monitor->edid, 
+                                                          monitor->edid_length);
+          }
+
         edje_object_part_text_set(sd->o_frame, "e.text.name", name);
      }
 
