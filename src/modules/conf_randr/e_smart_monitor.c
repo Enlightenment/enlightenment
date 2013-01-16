@@ -137,6 +137,7 @@ static void _e_smart_monitor_background_set(E_Smart_Data *sd, Evas_Coord dx, Eva
 static Eina_Bool _e_smart_monitor_background_update(void *data, int type, void *event);
 static Ecore_X_Randr_Mode_Info *_e_smart_monitor_resolution_get(E_Smart_Data *sd, Evas_Coord w, Evas_Coord h, Eina_Bool skip_rate_check);
 static void _e_smart_monitor_resolution_set(E_Smart_Data *sd, Evas_Coord width, Evas_Coord height);
+static void _e_smart_monitor_position_set(E_Smart_Data *sd, Evas_Coord x, Evas_Coord y);
 static int _e_smart_monitor_rotation_get(Ecore_X_Randr_Orientation orient);
 static int _e_smart_monitor_rotation_amount_get(E_Smart_Data *sd, Evas_Event_Mouse_Move *ev);
 static Ecore_X_Randr_Orientation _e_smart_monitor_orientation_get(int rotation);
@@ -366,7 +367,10 @@ e_smart_monitor_setup(Evas_Object *obj)
         edje_object_part_text_set(sd->o_frame, "e.text.name", name);
      }
 
-   /* set the resolution name */
+   /* set the position text */
+   _e_smart_monitor_position_set(sd, sd->orig.x, sd->orig.y);
+
+   /* set the resolution text */
    _e_smart_monitor_resolution_set(sd, sd->orig.w, sd->orig.h);
 
    /* send enabled/disabled signals */
@@ -1020,6 +1024,8 @@ _e_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    E_Smart_Data *sd;
    Eina_List *l;
    Evas_Object *mclone;
+   Evas_Coord fx = 0, fy = 0;
+   Evas_Coord cx = 0, cy = 0;
 
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
@@ -1034,6 +1040,15 @@ _e_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 
    /* if we are not visible, no need to update map */
    if (!sd->visible) return;
+
+   /* grab geometry of the frame */
+   evas_object_geometry_get(sd->o_frame, &fx, &fy, NULL, NULL);
+
+   /* convert to virtual coordinates */
+   e_layout_coord_canvas_to_virtual(sd->layout.obj, fx, fy, &cx, &cy);
+
+   /* set monitor position text */
+   _e_smart_monitor_position_set(sd, cx, cy);
 
    /* apply any existing rotation */
    _e_smart_monitor_map_apply(sd->o_frame, sd->current.rotation);
@@ -1371,6 +1386,19 @@ _e_smart_monitor_resolution_set(E_Smart_Data *sd, Evas_Coord width, Evas_Coord h
    edje_object_part_text_set(sd->o_frame, "e.text.resolution", buff);
 }
 
+static void 
+_e_smart_monitor_position_set(E_Smart_Data *sd, Evas_Coord x, Evas_Coord y)
+{
+   char buff[1024];
+
+   if (!sd) return;
+
+   snprintf(buff, sizeof(buff), "%d + %d", x, y);
+
+   /* set the frame's resolution text */
+   edje_object_part_text_set(sd->o_frame, "e.text.position", buff);
+}
+
 static Ecore_X_Randr_Mode_Info *
 _e_smart_monitor_resolution_get(E_Smart_Data *sd, Evas_Coord w, Evas_Coord h, Eina_Bool skip_rate_check)
 {
@@ -1696,7 +1724,7 @@ _e_smart_monitor_move_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
    e_layout_coord_canvas_to_virtual(sd->layout.obj, (sd->layout.x + dx), 
                                     (sd->layout.y + dy), &nx, &ny);
 
-   /* factor monitor size into mouse movement */
+   /* factor monitor position into mouse movement */
    nx += mx;
    ny += my;
 
@@ -2316,10 +2344,24 @@ static void
 _e_smart_monitor_layout_cb_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Smart_Data *sd;
+   Evas_Coord fx = 0, fy = 0, cx = 0, cy = 0;
 
    if (!(sd = data)) return;
 
    /* get the layout's geometry and store it in our smart data structure */
    evas_object_geometry_get(sd->layout.obj, 
                             &sd->layout.x, &sd->layout.y, NULL, NULL);
+
+   /* NB: This whole block below is needed because the layout may move 
+    * AFTER the monitors have been placed, thus providing invalid 
+    * monitor position text */
+
+   /* grab geometry of the frame */
+   evas_object_geometry_get(sd->o_frame, &fx, &fy, NULL, NULL);
+
+   /* convert to virtual coordinates */
+   e_layout_coord_canvas_to_virtual(sd->layout.obj, fx, fy, &cx, &cy);
+
+   /* set monitor position text */
+   _e_smart_monitor_position_set(sd, cx, cy);
 }
