@@ -1062,8 +1062,6 @@ _e_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
 
-   if ((sd->w == h) && (sd->w == h)) return;
-
    sd->w = w;
    sd->h = h;
 
@@ -1810,7 +1808,7 @@ _e_smart_monitor_resize_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
 // ************************* BEGIN SNAP RESIZING ************************
 
    /* find the next nearest resolution to this new size */
-   if ((mode = _e_smart_monitor_resolution_get(sd, nw, nh, EINA_TRUE)))
+   if ((mode = _e_smart_monitor_resolution_get(sd, nw, nh, EINA_FALSE)))
      {
         /* reset current mode to match */
         sd->current.mode = mode;
