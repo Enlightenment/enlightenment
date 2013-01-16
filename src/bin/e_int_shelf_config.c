@@ -5,7 +5,7 @@ struct _E_Config_Dialog_Data
    E_Shelf        *es;
    E_Config_Shelf *escfg;
 
-   Evas_Object    *o_autohide, *o_desk_list;
+   Evas_Object    *o_autohide, *o_desk_list, *o_overlap;
    Eina_List      *autohide_list, *desk_list;
 
    int             layer, overlap;
@@ -146,10 +146,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    ow = e_widget_radio_add(evas, _("Below Everything"), 0, rg);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   ow = e_widget_check_add(evas, _("Allow windows to overlap the shelf"),
-                           &(cfdata->overlap));
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Stacking"), ol,
+  e_widget_toolbook_page_append(otb, NULL, _("Stacking"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
 
    /* position */
@@ -248,6 +245,11 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                             &(cfdata->hide_duration), NULL, 100);
    cfdata->autohide_list = eina_list_append(cfdata->autohide_list, ow);
    e_widget_disabled_set(ow, !cfdata->autohide);
+   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   ow = e_widget_check_add(evas, _("Don't adjust windows when overlapping the shelf"),
+                           &(cfdata->overlap));
+   e_widget_disabled_set(ow, ((!cfdata->autohide) || (!e_config->border_fix_on_shelf_toggle)));
+   cfdata->o_overlap = ow;
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Auto Hide"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
@@ -473,6 +475,8 @@ _cb_autohide_change(void *data, Evas_Object *obj __UNUSED__)
    if (!(cfdata = data)) return;
    EINA_LIST_FOREACH(cfdata->autohide_list, l, ow)
      e_widget_disabled_set(ow, !cfdata->autohide);
+   
+   e_widget_disabled_set(cfdata->o_overlap, ((!cfdata->autohide) || (!e_config->border_fix_on_shelf_toggle)));
 }
 
 static void

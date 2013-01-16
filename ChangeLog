@@ -1,3 +1,6 @@
+2013-01-16 Brian Miculcy
+        * Shelf option 'overlapping' made clearer and disabled when window automatic movement on shelf hide isn't set.
+
 2013-01-15 Mike Blumenkrantz
 
         * prevent windows dragged from one screen to another from being larger than the destination screen

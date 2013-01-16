@@ -73,6 +73,7 @@ Improvements:
     * improve module config dialog load speed
 
 Fixes:
+    * Shelf option 'overlapping' made clearer and disabled when window automatic movement on shelf hide isn't set.
     * Backlight, screenlock and screensaver don't check for fullscreen windows - we have presentation mode for that.
     * Force check changed upon confirmation dialog closure for engine settings.
     * Clock date formats are now internationalizable.

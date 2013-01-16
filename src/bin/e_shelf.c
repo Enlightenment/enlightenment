@@ -1542,7 +1542,9 @@ _e_shelf_toggle_border_fix(E_Shelf *es)
    Eina_List *l;
    E_Border *bd;
 
-   if ((es->cfg->overlap) || (!e_config->border_fix_on_shelf_toggle))
+   if (!e_config->border_fix_on_shelf_toggle)
+     return;
+   if (es->cfg->overlap)
      return;
 
    EINA_LIST_FOREACH(e_border_client_list(), l, bd)
