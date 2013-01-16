@@ -37,6 +37,7 @@ void e_smart_monitor_clone_add(Evas_Object *obj, Evas_Object *mon);
 void e_smart_monitor_clone_del(Evas_Object *obj, Evas_Object *mon);
 void e_smart_monitor_cloned_set(Evas_Object *obj, Eina_Bool cloned);
 void e_smart_monitor_drop_zone_set(Evas_Object *obj, Eina_Bool can_drop);
+void e_smart_monitor_frame_geometry_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
 # endif
 #endif

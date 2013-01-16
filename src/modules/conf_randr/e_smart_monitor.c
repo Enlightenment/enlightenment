@@ -825,6 +825,23 @@ e_smart_monitor_drop_zone_set(Evas_Object *obj, Eina_Bool can_drop)
      edje_object_signal_emit(sd->o_frame, "e,state,drop,off", "e");
 }
 
+void 
+e_smart_monitor_frame_geometry_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   E_Smart_Data *sd;
+   Evas_Coord fx = 0, fy = 0, fw = 0, fh = 0;
+
+   /* try to get the objects smart data */
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+
+   /* get the geometry of the frame */
+   evas_object_geometry_get(sd->o_frame, &fx, &fy, &fw, &fh);
+   if (x) *x = fx;
+   if (y) *y = fy;
+   if (w) *w = fw;
+   if (h) *h = fh;
+}
+
 /* local functions */
 static void 
 _e_smart_add(Evas_Object *obj)
