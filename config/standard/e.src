@@ -161,6 +161,7 @@ group "E_Config" struct {
     value "theme_default_border_style" string: "default";
     value "desk_auto_switch" int: 0;
     value "thumb_nice" int: 0;
+    value "screen_limits" int: 0;
     value "menu_favorites_show" int: 1;
     value "menu_apps_show" int: 1;
     value "ping_clients_interval" int: 128;
