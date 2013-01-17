@@ -59,6 +59,10 @@ typedef struct E_Mixer_Instance
    E_Mixer_Channel *channel;
    E_Mixer_Channel_State mixer_state;
    E_Mixer_Gadget_Config *conf;
+
+#ifdef HAVE_ENOTIFY
+   unsigned int notification_id;
+#endif
 } E_Mixer_Instance;
 
 typedef struct E_Mixer_Module_Context

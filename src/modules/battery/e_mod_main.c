@@ -33,6 +33,9 @@ struct _Instance
    Evas_Object     *o_battery;
    Evas_Object     *popup_battery;
    E_Gadcon_Popup  *warning;
+#ifdef HAVE_ENOTIFY
+   unsigned int     notification_id;
+#endif
 };
 
 static void      _battery_update(int full, int time_left, int time_full, Eina_Bool have_battery, Eina_Bool have_power);
@@ -425,6 +428,16 @@ _battery_warning_popup_destroy(Instance *inst)
    inst->popup_battery = NULL;
 }
 
+#ifdef HAVE_ENOTIFY
+static void
+_battery_warning_popup_cb(void *data, unsigned int id)
+{
+   Instance *inst = data;
+
+   inst->notification_id = id;
+}
+#endif
+
 static void
 _battery_warning_popup(Instance *inst, int t, double percent)
 {
@@ -445,7 +458,7 @@ _battery_warning_popup(Instance *inst, int t, double percent)
         n.sumary = _("Your battery is low!");
         n.body = _("AC power is recommended.");
         n.timeout = battery_config->alert_timeout * 1000;
-        e_notification_client_send(&n, NULL, NULL);
+        e_notification_client_send(&n, _battery_warning_popup_cb, inst);
         return;
      }
 #endif

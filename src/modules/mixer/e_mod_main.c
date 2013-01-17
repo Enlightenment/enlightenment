@@ -35,8 +35,18 @@ E_Mixer_Cb e_mod_mixer_card_default_get;
 static void _mixer_actions_unregister(E_Mixer_Module_Context *ctxt);
 static void _mixer_actions_register(E_Mixer_Module_Context *ctxt);
 
+#ifdef HAVE_ENOTIFY
 static void
-_mixer_notify(const float val, E_Mixer_Instance *inst __UNUSED__)
+_mixer_notify_cb(void *data, unsigned int id)
+{
+   E_Mixer_Instance *inst = data;
+
+   inst->notification_id = id;
+}
+#endif
+
+static void
+_mixer_notify(const float val, E_Mixer_Instance *inst)
 {
 #ifdef HAVE_ENOTIFY
    E_Notification_Notify n;
@@ -65,12 +75,12 @@ _mixer_notify(const float val, E_Mixer_Instance *inst __UNUSED__)
      icon = "audio-volume-high";
 
    n.app_name = _("Mixer");
-   n.replaces_id = 0;
+   n.replaces_id = inst->notification_id;
    n.icon.icon = icon;
    n.sumary = _("Volume changed");
    n.body = buf;
    n.timeout = 2000;
-   e_notification_client_send(&n, NULL, NULL);
+   e_notification_client_send(&n, _mixer_notify_cb, inst);
 #endif
 }
 
@@ -1050,6 +1060,9 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->mixer_state.right = inst->conf->state.right;
    inst->mixer_state.left = inst->conf->state.left;
    inst->mixer_state.mute = inst->conf->state.mute;
+#ifdef HAVE_ENOTIFY
+   inst->notification_id = 0;
+#endif
    conf->instance = inst;
    if ((!_mixer_sys_setup(inst)) && (!_mixer_sys_setup_defaults(inst)))
      {
