@@ -547,6 +547,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
    cfdata->match.disable_all =
      (cfdata->match.disable_menus && cfdata->match.disable_menus && cfdata->match.disable_borders &&
       cfdata->match.disable_popups && cfdata->disable_screen_effects);
+   e_widget_disabled_set(ob, cfdata->match.disable_all);
    ob = e_widget_check_add(evas, _("Disable composite effects"), &(cfdata->match.disable_all));
    evas_object_data_set(ob, "cfdata", cfdata);
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
