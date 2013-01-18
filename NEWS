@@ -17,7 +17,7 @@ Additions:
         * Added e_configure_option API
         * Added D-Bus notification to systray module
         * Added D-Bus menu support
-        * Added e_comp namespace
+        * Added e_comp namespace and E_EVENT_COMP events
         * Added API for fetching module .desktop files
     Config:
         * Added option for disabling icons in menus
@@ -40,7 +40,7 @@ Deprecations:
     *
 
 Removed:
-    *
+    * e_manager_comp namespace
 
 Improvements:
     * Check changed added to several settings dialogs:

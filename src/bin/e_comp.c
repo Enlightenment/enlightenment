@@ -51,7 +51,6 @@ struct _E_Comp
 
    int             nocomp_override;
 
-   E_Manager_Comp  comp;
    Ecore_X_Window  cm_selection;
 
    Eina_Bool       gl : 1;
@@ -167,6 +166,11 @@ static E_Config_DD *conf_match_edd = NULL;
 static Ecore_Timer *action_timeout = NULL;
 static Eina_Bool gl_avail = EINA_FALSE;
 
+EAPI int E_EVENT_COMP_SOURCE_VISIBILITY = -1;
+EAPI int E_EVENT_COMP_SOURCE_ADD = -1;
+EAPI int E_EVENT_COMP_SOURCE_DEL = -1;
+EAPI int E_EVENT_COMP_SOURCE_CONFIGURE = -1;
+
 //////////////////////////////////////////////////////////////////////////
 #undef DBG
 #if 0
@@ -190,6 +194,56 @@ static void _e_comp_win_hide(E_Comp_Win *cw);
 static void _e_comp_win_configure(E_Comp_Win *cw,
                                   int x, int y, int w, int h,
                                   int border);
+
+static void
+_e_comp_event_end(void *d EINA_UNUSED, E_Event_Comp *ev)
+{
+   ev->cw->pending_count--;
+   if (ev->cw->delete_pending && (!ev->cw->pending_count))
+     free(ev->cw);
+   free(ev);
+}
+
+/* FIXME: external ? */
+static void
+_e_comp_event_source_visibility(E_Comp_Win *cw)
+{
+   E_Event_Comp *ev;
+
+   ev = E_NEW(E_Event_Comp, 1);
+   ev->cw = cw;
+   ecore_event_add(E_EVENT_COMP_SOURCE_VISIBILITY, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
+}
+
+static void
+_e_comp_event_source_add(E_Comp_Win *cw)
+{
+   E_Event_Comp *ev;
+
+   ev = E_NEW(E_Event_Comp, 1);
+   ev->cw = cw;
+   ecore_event_add(E_EVENT_COMP_SOURCE_VISIBILITY, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
+}
+
+static void
+_e_comp_event_source_del(E_Comp_Win *cw)
+{
+   E_Event_Comp *ev;
+
+   ev = E_NEW(E_Event_Comp, 1);
+   ev->cw = cw;
+   ecore_event_add(E_EVENT_COMP_SOURCE_VISIBILITY, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
+}
+
+static void
+_e_comp_event_source_configure(E_Comp_Win *cw)
+{
+   E_Event_Comp *ev;
+
+   ev = E_NEW(E_Event_Comp, 1);
+   ev->cw = cw;
+   ecore_event_add(E_EVENT_COMP_SOURCE_VISIBILITY, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
+}
 
 static void
 _e_comp_child_show(E_Comp_Win *cw)
@@ -230,20 +284,6 @@ _e_comp_child_hide(E_Comp_Win *cw)
 
              evas_object_hide(tcw->shobj);
           }
-     }
-}
-
-static void
-_e_comp_cb_pending_after(void *data __UNUSED__,
-                         E_Manager *man __UNUSED__,
-                         E_Manager_Comp_Source *src)
-{
-   E_Comp_Win *cw = (E_Comp_Win *)src;
-   cw->pending_count--;
-   if (!cw->delete_pending) return;
-   if (cw->pending_count == 0)
-     {
-        free(cw);
      }
 }
 
@@ -898,10 +938,7 @@ _e_comp_win_update(E_Comp_Win *cw)
                   cw->animating = 1;
 
                   cw->pending_count++;
-                  e_manager_comp_event_src_visibility_send
-                    (cw->c->man, (E_Manager_Comp_Source *)cw,
-                    _e_comp_cb_pending_after, cw->c);
-
+                  _e_comp_event_source_visibility(cw);
                   cw->show_anim = EINA_TRUE;
                }
           }
@@ -1162,9 +1199,7 @@ _e_comp_cb_nocomp_end(E_Comp *c)
           {
              if (!cw->hidden_override) _e_comp_child_show(cw);
              cw->pending_count++;
-             e_manager_comp_event_src_visibility_send
-               (cw->c->man, (E_Manager_Comp_Source *)cw,
-               _e_comp_cb_pending_after, cw->c);
+             _e_comp_event_source_visibility(cw);
              // no need for effect
           }
         if (cw->counter)
@@ -2064,9 +2099,7 @@ _e_comp_win_add(E_Comp *c,
         evas_object_pass_events_set(cw->obj, 1);
 
         cw->pending_count++;
-        e_manager_comp_event_src_add_send
-          (cw->c->man, (E_Manager_Comp_Source *)cw,
-          _e_comp_cb_pending_after, cw->c);
+        _e_comp_event_source_add(cw);
      }
    else
      {
@@ -2114,9 +2147,7 @@ _e_comp_win_del(E_Comp_Win *cw)
    if ((!cw->input_only) && (!cw->invalid))
      {
         cw->pending_count++;
-        e_manager_comp_event_src_del_send
-          (cw->c->man, (E_Manager_Comp_Source *)cw,
-          _e_comp_cb_pending_after, cw->c);
+        _e_comp_event_source_del(cw);
      }
 
    e_comp_update_free(cw->up);
@@ -2319,9 +2350,7 @@ _e_comp_win_show(E_Comp_Win *cw)
         _e_comp_win_render_queue(cw);
 
         cw->pending_count++;
-        e_manager_comp_event_src_visibility_send
-          (cw->c->man, (E_Manager_Comp_Source *)cw,
-          _e_comp_cb_pending_after, cw->c);
+        _e_comp_event_source_visibility(cw);
      }
    _e_comp_win_render_queue(cw);
 }
@@ -2360,9 +2389,7 @@ _e_comp_win_hide(E_Comp_Win *cw)
         _e_comp_win_render_queue(cw);
 
         cw->pending_count++;
-        e_manager_comp_event_src_visibility_send
-          (cw->c->man, (E_Manager_Comp_Source *)cw,
-          _e_comp_cb_pending_after, cw->c);
+        _e_comp_event_source_visibility(cw);
         return;
      }
    cw->defer_hide = 0;
@@ -2458,9 +2485,7 @@ _e_comp_win_raise_above(E_Comp_Win *cw,
    _e_comp_win_restack(cw);
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
-   e_manager_comp_event_src_config_send
-     (cw->c->man, (E_Manager_Comp_Source *)cw,
-     _e_comp_cb_pending_after, cw->c);
+   _e_comp_event_source_configure(cw);
 }
 
 static void
@@ -2473,9 +2498,7 @@ _e_comp_win_raise(E_Comp_Win *cw)
    _e_comp_win_restack(cw);
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
-   e_manager_comp_event_src_config_send
-     (cw->c->man, (E_Manager_Comp_Source *)cw,
-     _e_comp_cb_pending_after, cw->c);
+   _e_comp_event_source_configure(cw);
 }
 
 static void
@@ -2488,9 +2511,7 @@ _e_comp_win_lower(E_Comp_Win *cw)
    _e_comp_win_restack(cw);
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
-   e_manager_comp_event_src_config_send
-     (cw->c->man, (E_Manager_Comp_Source *)cw,
-     _e_comp_cb_pending_after, cw->c);
+   _e_comp_event_source_configure(cw);
 }
 
 static void
@@ -2598,9 +2619,7 @@ _e_comp_win_configure(E_Comp_Win *cw,
    if (moved || resized) _e_comp_win_geometry_update(cw);
    // add pending manager comp event count to match below config send
    cw->pending_count++;
-   e_manager_comp_event_src_config_send(cw->c->man,
-                                        (E_Manager_Comp_Source *)cw,
-                                        _e_comp_cb_pending_after, cw->c);
+   _e_comp_event_source_configure(cw);
 }
 
 static void
@@ -3532,173 +3551,6 @@ _e_comp_signal_user(void *data __UNUSED__,
 }
 
 //////////////////////////////////////////////////////////////////////////
-static Evas *
-_e_comp_evas_get_func(void *data,
-                      E_Manager *man __UNUSED__)
-{
-   E_Comp *c = data;
-   return c->evas;
-}
-
-static void
-_e_comp_update_func(void *data,
-                    E_Manager *man __UNUSED__)
-{
-   E_Comp *c = data;
-   _e_comp_render_queue(c);
-}
-
-static E_Manager_Comp_Source *
-_e_comp_border_src_get_func(void *data __UNUSED__,
-                            E_Manager *man __UNUSED__,
-                            Ecore_X_Window win)
-{
-   return (E_Manager_Comp_Source *)_e_comp_border_client_find(win);
-}
-
-static E_Manager_Comp_Source *
-_e_comp_src_get_func(void *data __UNUSED__,
-                     E_Manager *man __UNUSED__,
-                     Ecore_X_Window win)
-{
-   return (E_Manager_Comp_Source *)_e_comp_win_find(win);
-}
-
-static const Eina_List *
-_e_comp_src_list_get_func(void *data,
-                          E_Manager *man __UNUSED__)
-{
-   E_Comp *c = data;
-   E_Comp_Win *cw;
-
-   if (!c->wins) return NULL;
-   if (c->wins_invalid)
-     {
-        c->wins_invalid = 0;
-        if (c->wins_list) eina_list_free(c->wins_list);
-        c->wins_list = NULL;
-        EINA_INLIST_FOREACH(c->wins, cw)
-          {
-             if ((cw->shobj) && (cw->obj))
-               c->wins_list = eina_list_append(c->wins_list, cw);
-          }
-     }
-   return c->wins_list;
-}
-
-static Evas_Object *
-_e_comp_src_image_get_func(void *data             __UNUSED__,
-                           E_Manager *man         __UNUSED__,
-                           E_Manager_Comp_Source *src)
-{
-   //   E_Comp *c = data;
-   E_Comp_Win *cw = (E_Comp_Win *)src;
-   if (!cw->c) return NULL;
-   return cw->obj;
-}
-
-static Evas_Object *
-_e_comp_src_shadow_get_func(void *data             __UNUSED__,
-                            E_Manager *man         __UNUSED__,
-                            E_Manager_Comp_Source *src)
-{
-   //   E_Comp *c = data;
-   E_Comp_Win *cw = (E_Comp_Win *)src;
-   if (!cw->c) return NULL;
-   return cw->shobj;
-}
-
-static Evas_Object *
-_e_comp_src_image_mirror_add_func(void *data             __UNUSED__,
-                                  E_Manager *man         __UNUSED__,
-                                  E_Manager_Comp_Source *src)
-{
-   //   E_Comp *c = data;
-   E_Comp_Win *cw = (E_Comp_Win *)src;
-   if (!cw->c) return NULL;
-   return _e_comp_win_mirror_add(cw);
-}
-
-static Eina_Bool
-_e_comp_src_visible_get_func(void *data             __UNUSED__,
-                             E_Manager *man         __UNUSED__,
-                             E_Manager_Comp_Source *src)
-{
-   //   E_Comp *c = data;
-   E_Comp_Win *cw = (E_Comp_Win *)src;
-   if (!cw->c) return 0;
-   return cw->visible;
-}
-
-static void
-_e_comp_src_hidden_set_func(void *data             __UNUSED__,
-                            E_Manager *man         __UNUSED__,
-                            E_Manager_Comp_Source *src,
-                            Eina_Bool hidden)
-{
-   //   E_Comp *c = data;
-   E_Comp_Win *cw = (E_Comp_Win *)src;
-   if (!cw->c) return;
-   if (cw->hidden_override == hidden) return;
-   cw->hidden_override = hidden;
-   if (cw->bd) e_border_comp_hidden_set(cw->bd, cw->hidden_override);
-   if (cw->visible)
-     {
-        if (cw->hidden_override)
-          _e_comp_child_hide(cw);
-        else if (!cw->bd || cw->bd->visible)
-          _e_comp_child_show(cw);
-     }
-   else
-     {
-        if (cw->hidden_override) _e_comp_child_hide(cw);
-     }
-}
-
-static Eina_Bool
-_e_comp_src_hidden_get_func(void *data             __UNUSED__,
-                            E_Manager *man         __UNUSED__,
-                            E_Manager_Comp_Source *src)
-{
-   //   E_Comp *c = data;
-   E_Comp_Win *cw = (E_Comp_Win *)src;
-   if (!cw->c) return 0;
-   return cw->hidden_override;
-}
-
-static E_Popup *
-_e_comp_src_popup_get_func(void *data             __UNUSED__,
-                           E_Manager *man         __UNUSED__,
-                           E_Manager_Comp_Source *src)
-{
-   //   E_Comp *c = data;
-   E_Comp_Win *cw = (E_Comp_Win *)src;
-   if (!cw->c) return 0;
-   return cw->pop;
-}
-
-static E_Border *
-_e_comp_src_border_get_func(void *data             __UNUSED__,
-                            E_Manager *man         __UNUSED__,
-                            E_Manager_Comp_Source *src)
-{
-   //   E_Comp *c = data;
-   E_Comp_Win *cw = (E_Comp_Win *)src;
-   if (!cw->c) return 0;
-   return cw->bd;
-}
-
-static Ecore_X_Window
-_e_comp_src_window_get_func(void *data             __UNUSED__,
-                            E_Manager *man         __UNUSED__,
-                            E_Manager_Comp_Source *src)
-{
-   //   E_Comp *c = data;
-   E_Comp_Win *cw = (E_Comp_Win *)src;
-   if (!cw->c) return 0;
-   return cw->win;
-}
-
 static E_Comp *
 _e_comp_add(E_Manager *man)
 {
@@ -3733,6 +3585,7 @@ _e_comp_add(E_Manager *man)
    ecore_x_e_comp_sync_supported_set(man->root, conf->efl_sync);
 
    c->man = man;
+   man->comp = c;
    c->win = ecore_x_composite_render_window_enable(man->root);
    if (!c->win)
      {
@@ -3881,23 +3734,6 @@ _e_comp_add(E_Manager *man)
                            ECORE_EVENT_MODIFIER_CTRL |
                            ECORE_EVENT_MODIFIER_ALT, 0);
 
-   c->comp.data = c;
-   c->comp.func.evas_get = _e_comp_evas_get_func;
-   c->comp.func.update = _e_comp_update_func;
-   c->comp.func.src_get = _e_comp_src_get_func;
-   c->comp.func.border_src_get = _e_comp_border_src_get_func;
-   c->comp.func.src_list_get = _e_comp_src_list_get_func;
-   c->comp.func.src_image_get = _e_comp_src_image_get_func;
-   c->comp.func.src_shadow_get = _e_comp_src_shadow_get_func;
-   c->comp.func.src_image_mirror_add = _e_comp_src_image_mirror_add_func;
-   c->comp.func.src_visible_get = _e_comp_src_visible_get_func;
-   c->comp.func.src_hidden_set = _e_comp_src_hidden_set_func;
-   c->comp.func.src_hidden_get = _e_comp_src_hidden_get_func;
-   c->comp.func.src_window_get = _e_comp_src_window_get_func;
-   c->comp.func.src_border_get = _e_comp_src_border_get_func;
-   c->comp.func.src_popup_get = _e_comp_src_popup_get_func;
-
-   e_manager_comp_set(c->man, &(c->comp));
    return c;
 }
 
@@ -3909,6 +3745,7 @@ _e_comp_del(E_Comp *c)
    Eina_List *l, *hide_bd = NULL;
    E_Border *bd;
 
+   c->man->comp = NULL;
    EINA_LIST_FOREACH(e_border_client_list(), l, bd)
      {
         if (!bd->visible)
@@ -3925,7 +3762,6 @@ _e_comp_del(E_Comp *c)
         evas_object_del(c->fps_bg);
         c->fps_bg = NULL;
      }
-   e_manager_comp_set(c->man, NULL);
 
    ecore_x_window_key_ungrab(c->man->root,
                              "F",
@@ -4490,6 +4326,11 @@ e_comp_init(void)
         return EINA_FALSE;
      }
 
+   E_EVENT_COMP_SOURCE_VISIBILITY = ecore_event_type_new();
+   E_EVENT_COMP_SOURCE_ADD = ecore_event_type_new();
+   E_EVENT_COMP_SOURCE_DEL = ecore_event_type_new();
+   E_EVENT_COMP_SOURCE_CONFIGURE = ecore_event_type_new();
+
    e_comp_cfdata_edd_init(&conf_edd, &conf_match_edd);
    conf = e_config_domain_load("e_comp", conf_edd);
    if (conf)
@@ -4604,12 +4445,130 @@ e_comp_shadows_reset(void)
                        cw->animating = 1;
 
                        cw->pending_count++;
-                       e_manager_comp_event_src_visibility_send
-                         (cw->c->man, (E_Manager_Comp_Source *)cw,
-                         _e_comp_cb_pending_after, cw->c);
+                       _e_comp_event_source_visibility(cw);
                     }
                }
           }
      }
 }
 
+
+EAPI Evas *
+e_comp_evas_get(E_Comp *c)
+{
+   return c->evas;
+}
+
+EAPI void
+e_comp_update(E_Comp *c)
+{
+   _e_comp_render_queue(c);
+}
+
+EAPI E_Comp_Win *
+e_comp_border_src_get(Ecore_X_Window win)
+{
+   return _e_comp_border_client_find(win);
+}
+
+EAPI E_Comp_Win *
+e_comp_src_get(Ecore_X_Window win)
+{
+   return _e_comp_win_find(win);
+}
+
+EAPI const Eina_List *
+e_comp_src_list_get(E_Comp *c)
+{
+   E_Comp_Win *cw;
+
+   if (!c->wins) return NULL;
+   if (c->wins_invalid)
+     {
+        c->wins_invalid = 0;
+        if (c->wins_list) eina_list_free(c->wins_list);
+        c->wins_list = NULL;
+        EINA_INLIST_FOREACH(c->wins, cw)
+          {
+             if ((cw->shobj) && (cw->obj))
+               c->wins_list = eina_list_append(c->wins_list, cw);
+          }
+     }
+   return c->wins_list;
+}
+
+EAPI Evas_Object *
+e_comp_src_image_get(E_Comp_Win *cw)
+{
+   if (!cw->c) return NULL;
+   return cw->obj;
+}
+
+EAPI Evas_Object *
+e_comp_src_shadow_get(E_Comp_Win *cw)
+{
+   if (!cw->c) return NULL;
+   return cw->shobj;
+}
+
+EAPI Evas_Object *
+e_comp_src_image_mirror_add(E_Comp_Win *cw)
+{
+   if (!cw->c) return NULL;
+   return _e_comp_win_mirror_add(cw);
+}
+
+EAPI Eina_Bool
+e_comp_src_visible_get(E_Comp_Win *cw)
+{
+   if (!cw->c) return EINA_FALSE;
+   return cw->visible;
+}
+
+EAPI void
+e_comp_src_hidden_set(E_Comp_Win *cw, Eina_Bool hidden)
+{
+   if (!cw->c) return;
+   if (cw->hidden_override == hidden) return;
+   cw->hidden_override = hidden;
+   if (cw->bd) e_border_comp_hidden_set(cw->bd, cw->hidden_override);
+   if (cw->visible)
+     {
+        if (cw->hidden_override)
+          _e_comp_child_hide(cw);
+        else if (!cw->bd || cw->bd->visible)
+          _e_comp_child_show(cw);
+     }
+   else
+     {
+        if (cw->hidden_override) _e_comp_child_hide(cw);
+     }
+}
+
+EAPI Eina_Bool
+e_comp_src_hidden_get(E_Comp_Win *cw)
+{
+   if (!cw->c) return EINA_FALSE;
+   return cw->hidden_override;
+}
+
+EAPI E_Popup *
+e_comp_src_popup_get(E_Comp_Win *cw)
+{
+   if (!cw->c) return NULL;
+   return cw->pop;
+}
+
+EAPI E_Border *
+e_comp_src_border_get(E_Comp_Win *cw)
+{
+   if (!cw->c) return NULL;
+   return cw->bd;
+}
+
+EAPI Ecore_X_Window
+e_comp_src_window_get(E_Comp_Win *cw)
+{
+   if (!cw->c) return 0;
+   return cw->win;
+}
