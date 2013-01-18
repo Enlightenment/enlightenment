@@ -818,7 +818,6 @@ _volume_umount(EDBus_Proxy *proxy)
 {
    EDBus_Message *msg;
    EDBus_Message_Iter *array, *main_iter;
-   EDBus_Pending *ret;
 
    msg = edbus_proxy_method_call_new(proxy, "FilesystemUnmount");
    main_iter = edbus_message_iter_get(msg);
@@ -833,7 +832,6 @@ _volume_eject(EDBus_Proxy *proxy)
 {
    EDBus_Message *msg;
    EDBus_Message_Iter *array, *main_iter;
-   EDBus_Pending *ret;
 
    msg = edbus_proxy_method_call_new(proxy, "DriveEject");
    main_iter = edbus_message_iter_get(msg);
@@ -850,7 +848,6 @@ _volume_mount(EDBus_Proxy *proxy, const char *fstype, Eina_List *opt)
    EDBus_Message_Iter *array, *main_iter;
    Eina_List *l;
    const char *opt_txt;
-   EDBus_Pending *ret;
 
    msg = edbus_proxy_method_call_new(proxy, "FilesystemMount");
    main_iter = edbus_message_iter_get(msg);
