@@ -1,7 +1,5 @@
 #include "e.h"
 #include "e_mod_main.h"
-#include "e_comp.h"
-#include "e_comp_cfdata.h"
 
 
 typedef struct _Match_Config

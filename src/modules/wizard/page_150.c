@@ -1,7 +1,5 @@
 /* Ask about compositing */
 #include "e_wizard.h"
-#include "e_comp.h"
-#include "e_comp_cfdata.h"
 
 static int do_gl = 0;
 static int do_vsync = 0;

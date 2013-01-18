@@ -1,7 +1,4 @@
 #include "e.h"
-#include "e_comp.h"
-#include "e_comp_cfdata.h"
-#include "e_comp_update.h"
 #ifdef HAVE_WAYLAND_CLIENTS
 #include "e_comp_wl.h"
 #endif

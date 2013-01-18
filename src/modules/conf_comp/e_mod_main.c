@@ -1,7 +1,5 @@
 #include "e.h"
 #include "e_mod_main.h"
-#include "e_comp.h"
-#include "e_comp_cfdata.h"
 
 static E_Int_Menu_Augmentation *maug = NULL;
 
