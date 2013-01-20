@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-16 14:24+0100\n"
-"PO-Revision-Date: 2013-01-16 22:20+0100\n"
+"POT-Creation-Date: 2013-01-20 16:47+0100\n"
+"PO-Revision-Date: 2013-01-20 17:28+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: \n"
@@ -308,7 +308,7 @@ msgstr "Commuta stato attaccata"
 #: src/bin/e_actions.c:3209 src/bin/e_actions.c:3211 src/bin/e_actions.c:3213
 #: src/bin/e_actions.c:3215 src/bin/e_actions.c:3217 src/bin/e_actions.c:3430
 #: src/bin/e_actions.c:3435 src/bin/e_int_menus.c:187
-#: src/bin/e_int_shelf_config.c:267
+#: src/bin/e_int_shelf_config.c:269
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:118
 #: src/modules/fileman/e_mod_menu.c:426 src/modules/ibox/e_mod_config.c:166
 msgid "Desktop"
@@ -978,7 +978,7 @@ msgstr ""
 "%s<br><br>Questo file è stato cancellato per evitare<br>corruzione di dati."
 "<br>"
 
-#: src/bin/e_config_dialog.c:226 src/modules/battery/e_mod_main.c:797
+#: src/bin/e_config_dialog.c:226 src/modules/battery/e_mod_main.c:810
 #: src/modules/conf_edgebindings/e_mod_main.c:19
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
@@ -996,7 +996,7 @@ msgid "Apply"
 msgstr "Applica"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
-#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1281
+#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1294
 #: src/modules/connman/e_mod_main.c:634
 #: src/modules/notification/e_mod_main.c:181
 msgid "Extensions"
@@ -1158,7 +1158,7 @@ msgstr "File desktop"
 
 #: src/bin/e_eap_editor.c:781 src/bin/e_int_border_prop.c:450
 #: src/bin/e_int_border_prop.c:502 src/modules/access/e_mod_config.c:70
-#: src/modules/conf_comp/e_mod_config.c:562
+#: src/modules/conf_comp/e_mod_config.c:561
 #: src/modules/conf_applications/e_int_config_defapps.c:358
 #: src/modules/conf_performance/e_int_config_performance.c:122
 #: src/modules/everything/evry_config.c:378
@@ -1197,7 +1197,7 @@ msgid "Select an Executable"
 msgstr "Seleziona un'eseguibile"
 
 #: src/bin/e_entry.c:478 src/bin/e_fm.c:9121 src/bin/e_fm.c:10791
-#: src/bin/e_shelf.c:1795 src/bin/e_shelf.c:2480
+#: src/bin/e_shelf.c:1797 src/bin/e_shelf.c:2482
 #: src/modules/conf_dialogs/e_int_config_profiles.c:135
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:266
@@ -1420,7 +1420,7 @@ msgstr "Impossibile espellere il dispositivo"
 #: src/bin/e_fm.c:9640 src/bin/e_fm.c:9645 src/bin/e_fm.c:10271
 #: src/bin/e_fm.c:10275 src/bin/e_fm.c:10279 src/bin/e_fm.c:10307
 #: src/bin/e_fm.c:10312 src/bin/e_fm.c:10316 src/bin/e_fm.c:10375
-#: src/bin/e_fm.c:10599 src/bin/e_fm_prop.c:254 src/bin/e_shelf.c:2348
+#: src/bin/e_fm.c:10599 src/bin/e_fm_prop.c:254 src/bin/e_shelf.c:2350
 msgid "Error"
 msgstr "Errore"
 
@@ -1480,7 +1480,7 @@ msgstr "Azioni..."
 msgid "Link"
 msgstr "Collega"
 
-#: src/bin/e_fm.c:9129 src/bin/e_fm.c:10428 src/bin/e_shelf.c:2475
+#: src/bin/e_fm.c:9129 src/bin/e_fm.c:10428 src/bin/e_shelf.c:2477
 #: src/modules/conf_shelves/e_int_config_shelf.c:140
 #: src/modules/quickaccess/e_mod_config.c:226
 #: src/modules/quickaccess/e_mod_config.c:274
@@ -1750,7 +1750,7 @@ msgstr "Dispositivo rimovibile"
 msgid "Cannot change permissions: %s"
 msgstr "Impossibile cambiare i permessi: %s"
 
-#: src/bin/e_fm_prop.c:390 src/bin/e_shelf.c:1126 src/bin/e_shelf.c:2368
+#: src/bin/e_fm_prop.c:390 src/bin/e_shelf.c:1126 src/bin/e_shelf.c:2370
 #: src/modules/conf_dialogs/e_int_config_profiles.c:316
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:152
 msgid "Name:"
@@ -1872,7 +1872,7 @@ msgid "Inset"
 msgstr "Incassato"
 
 #: src/bin/e_gadcon.c:1782 src/bin/e_int_config_modules.c:53
-#: src/modules/conf_comp/e_mod_main.c:233
+#: src/modules/conf_comp/e_mod_main.c:231
 #: src/modules/conf_theme/e_mod_main.c:123 src/modules/physics/e_mod_main.c:45
 msgid "Look"
 msgstr "Aspetto"
@@ -2057,12 +2057,12 @@ msgid "Prevent Changes In:"
 msgstr "Impedisci cambiamenti di:"
 
 #: src/bin/e_int_border_locks.c:309 src/bin/e_int_border_locks.c:328
-#: src/bin/e_int_border_remember.c:691 src/bin/e_int_shelf_config.c:194
+#: src/bin/e_int_border_remember.c:691 src/bin/e_int_shelf_config.c:191
 msgid "Position"
 msgstr "Posizione"
 
 #: src/bin/e_int_border_locks.c:311 src/bin/e_int_border_locks.c:330
-#: src/bin/e_int_border_remember.c:694 src/bin/e_int_shelf_config.c:205
+#: src/bin/e_int_border_remember.c:694 src/bin/e_int_shelf_config.c:202
 #: src/modules/conf_interaction/e_int_config_mouse.c:174
 #: src/modules/conf_theme/e_int_config_fonts.c:441
 #: src/modules/conf_theme/e_int_config_fonts.c:660
@@ -2071,7 +2071,7 @@ msgstr "Dimensione"
 
 #: src/bin/e_int_border_locks.c:313 src/bin/e_int_border_locks.c:332
 #: src/bin/e_int_border_menu.c:697 src/bin/e_int_border_prop.c:501
-#: src/bin/e_int_border_remember.c:697 src/bin/e_int_shelf_config.c:152
+#: src/bin/e_int_border_remember.c:697 src/bin/e_int_shelf_config.c:149
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:305
 msgid "Stacking"
 msgstr "Livello"
@@ -2387,7 +2387,7 @@ msgid "ICCCM"
 msgstr "ICCCM"
 
 #: src/bin/e_int_border_prop.c:444 src/bin/e_int_border_remember.c:651
-#: src/modules/conf_comp/e_mod_main.c:179 src/modules/wizard/page_050.c:95
+#: src/modules/conf_comp/e_mod_main.c:177 src/modules/wizard/page_050.c:95
 msgid "Title"
 msgstr "Titolo"
 
@@ -2485,8 +2485,8 @@ msgstr "Richiede posizione"
 
 #: src/bin/e_int_border_prop.c:477 src/bin/e_int_border_prop.c:512
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:273
-#: src/bin/e_shelf.c:2446 src/modules/backlight/e_mod_main.c:309
-#: src/modules/battery/e_mod_main.c:185 src/modules/clock/e_mod_main.c:360
+#: src/bin/e_shelf.c:2448 src/modules/backlight/e_mod_main.c:309
+#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:360
 #: src/modules/clock/e_mod_main.c:603 src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf_interaction/e_int_config_mouse.c:170
 #: src/modules/conf_shelves/e_int_config_shelf.c:147
@@ -2496,7 +2496,7 @@ msgstr "Richiede posizione"
 #: src/modules/ibar/e_mod_main.c:380 src/modules/ibar/e_mod_main.c:865
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
 #: src/modules/pager/e_mod_main.c:877 src/modules/temperature/e_mod_main.c:230
-#: src/modules/wizard/page_150.c:69 src/modules/mixer/e_mod_main.c:777
+#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:787
 #: src/modules/connman/e_mod_main.c:459 src/modules/tasks/e_mod_main.c:728
 #: src/modules/xkbswitch/e_mod_main.c:341
 #: src/modules/xkbswitch/e_mod_main.c:383
@@ -2521,7 +2521,7 @@ msgstr "Fuori Taskbar"
 msgid "Skip Pager"
 msgstr "Fuori Pager"
 
-#: src/bin/e_int_border_prop.c:510 src/modules/conf_comp/e_mod_main.c:72
+#: src/bin/e_int_border_prop.c:510 src/modules/conf_comp/e_mod_main.c:70
 msgid "Hidden"
 msgstr "Nascosto"
 
@@ -2833,7 +2833,7 @@ msgstr "Nessuna finestra"
 msgid "Untitled window"
 msgstr "Finestra senza titolo"
 
-#: src/bin/e_int_menus.c:1629 src/bin/e_shelf.c:1639
+#: src/bin/e_int_menus.c:1629 src/bin/e_shelf.c:1641
 #: src/modules/conf_shelves/e_int_config_shelf.c:191
 #, c-format
 msgid "Shelf %s"
@@ -2864,65 +2864,65 @@ msgstr "Al di sotto delle finestre"
 msgid "Below Everything"
 msgstr "Al di sotto di tutto"
 
-#: src/bin/e_int_shelf_config.c:149
-msgid "Allow windows to overlap the shelf"
-msgstr "Consenti alle finestre di sovrapporsi alla mensola"
-
-#: src/bin/e_int_shelf_config.c:199
+#: src/bin/e_int_shelf_config.c:196
 #, c-format
 msgid "Height (%3.0f pixels)"
 msgstr "Altezza (%3.0f pixel)"
 
-#: src/bin/e_int_shelf_config.c:202
+#: src/bin/e_int_shelf_config.c:199
 msgid "Shrink to Content Width"
 msgstr "Riduci alla larghezza del contenuto"
 
-#: src/bin/e_int_shelf_config.c:213
+#: src/bin/e_int_shelf_config.c:210
 #: src/modules/conf_theme/e_int_config_fonts.c:651
 msgid "Style"
 msgstr "Stile"
 
-#: src/bin/e_int_shelf_config.c:219
+#: src/bin/e_int_shelf_config.c:216
 msgid "Auto-hide the shelf"
 msgstr "Nascondi automaticamente la mensola"
 
-#: src/bin/e_int_shelf_config.c:224
+#: src/bin/e_int_shelf_config.c:221
 msgid "Show on mouse in"
 msgstr "Mostra al passaggio del mouse"
 
-#: src/bin/e_int_shelf_config.c:228
+#: src/bin/e_int_shelf_config.c:225
 msgid "Show on mouse click"
 msgstr "Mostra al clic del mouse"
 
-#: src/bin/e_int_shelf_config.c:233
+#: src/bin/e_int_shelf_config.c:230
 msgid "Hide timeout"
 msgstr "Timeout per la scomparsa"
 
-#: src/bin/e_int_shelf_config.c:237 src/modules/notification/e_mod_main.c:244
+#: src/bin/e_int_shelf_config.c:234 src/modules/notification/e_mod_main.c:244
 #: src/modules/notification/e_mod_config.c:115
 #, c-format
 msgid "%.1f seconds"
 msgstr "%.1f secondi"
 
-#: src/bin/e_int_shelf_config.c:243
+#: src/bin/e_int_shelf_config.c:240
 msgid "Hide duration"
 msgstr "Durata scomparsa"
 
-#: src/bin/e_int_shelf_config.c:247
+#: src/bin/e_int_shelf_config.c:244
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:888
 #, c-format
 msgid "%.2f seconds"
 msgstr "%.2f secondi"
 
-#: src/bin/e_int_shelf_config.c:252
+#: src/bin/e_int_shelf_config.c:249
+msgid "Don't adjust windows when overlapping the shelf"
+msgstr "Non sistemare le finestre se sovrapposte alla mensola"
+
+#: src/bin/e_int_shelf_config.c:254
 msgid "Auto Hide"
 msgstr "Scomparsa automatica"
 
-#: src/bin/e_int_shelf_config.c:258
+#: src/bin/e_int_shelf_config.c:260
 msgid "Show on all Desktops"
 msgstr "Mostra su tutti i desktop"
 
-#: src/bin/e_int_shelf_config.c:260
+#: src/bin/e_int_shelf_config.c:262
 msgid "Show on specified Desktops"
 msgstr "Mostra sui desktop specificati"
 
@@ -3609,7 +3609,9 @@ msgstr "Errore del modulo"
 #: src/bin/e_module.c:262
 msgid ""
 "The composite module cannot be loaded;Enlightenment is already composited."
-msgstr "Il modulo composite non può essere caricato; Enlightenment usa già le estensioni composite."
+msgstr ""
+"Il modulo composite non può essere caricato; Enlightenment usa già le "
+"estensioni composite."
 
 #: src/bin/e_module.c:289
 #, c-format
@@ -3657,7 +3659,7 @@ msgstr "Modulo %s di Enlightenment"
 msgid "What action should be taken with this module?<br>"
 msgstr "Quale azione dovrebbe essere eseguita con questo modulo?<br>"
 
-#: src/bin/e_module.c:710 src/bin/e_shelf.c:1795
+#: src/bin/e_module.c:710 src/bin/e_shelf.c:1797
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
 #: src/modules/conf_shelves/e_int_config_shelf.c:392
 #: src/modules/ibar/e_mod_config.c:199
@@ -3789,19 +3791,19 @@ msgstr "Errore della mensola"
 msgid "A shelf with that name already exists!"
 msgstr "Esiste già una mensola con lo stesso nome!"
 
-#: src/bin/e_shelf.c:1660 src/bin/e_shelf.c:2491
+#: src/bin/e_shelf.c:1662 src/bin/e_shelf.c:2493
 msgid "Stop Moving Gadgets"
 msgstr "Fine spostamento gadget"
 
-#: src/bin/e_shelf.c:1662 src/bin/e_shelf.c:2493
+#: src/bin/e_shelf.c:1664 src/bin/e_shelf.c:2495
 msgid "Begin Moving Gadgets"
 msgstr "Inizio spostamento gadget"
 
-#: src/bin/e_shelf.c:1790
+#: src/bin/e_shelf.c:1792
 msgid "Are you sure you want to delete this shelf?"
 msgstr "Siete sicuri di voler eliminare questa mensola?"
 
-#: src/bin/e_shelf.c:1792
+#: src/bin/e_shelf.c:1794
 msgid ""
 "You requested to delete this shelf.<br><br>Are you sure you want to delete "
 "it?"
@@ -3809,28 +3811,28 @@ msgstr ""
 "Avete chiesto di eliminare questa mensola.<br><br>Siete sicuri di volerla "
 "eliminare?"
 
-#: src/bin/e_shelf.c:2348
+#: src/bin/e_shelf.c:2350
 msgid "A shelf with that name and id already exists!"
 msgstr "Esiste già una mensola con lo stesso nome e id!"
 
-#: src/bin/e_shelf.c:2367
+#: src/bin/e_shelf.c:2369
 msgid "Rename Shelf"
 msgstr "Rinomina mensola"
 
-#: src/bin/e_shelf.c:2441 src/modules/conf_shelves/e_int_config_shelf.c:143
+#: src/bin/e_shelf.c:2443 src/modules/conf_shelves/e_int_config_shelf.c:143
 #: src/modules/ibar/e_mod_main.c:859
 msgid "Contents"
 msgstr "Contenuti"
 
-#: src/bin/e_shelf.c:2451
+#: src/bin/e_shelf.c:2453
 msgid "Orientation"
 msgstr "Orientamento"
 
-#: src/bin/e_shelf.c:2460 src/modules/quickaccess/e_mod_quickaccess.c:789
+#: src/bin/e_shelf.c:2462 src/modules/quickaccess/e_mod_quickaccess.c:789
 msgid "Autohide"
 msgstr "Scomparsa automatica"
 
-#: src/bin/e_shelf.c:2467
+#: src/bin/e_shelf.c:2469
 msgid "Refresh"
 msgstr "Aggiornamento"
 
@@ -4438,7 +4440,7 @@ msgid "Auto Detect"
 msgstr "Rileva automaticamente"
 
 #: src/modules/battery/e_mod_config.c:295
-#: src/modules/conf_comp/e_mod_main.c:238
+#: src/modules/conf_comp/e_mod_main.c:236
 #: src/modules/conf_applications/e_mod_main.c:60
 #: src/modules/conf_display/e_mod_main.c:40
 #: src/modules/conf_theme/e_mod_main.c:116
@@ -4464,33 +4466,33 @@ msgstr "HAL"
 msgid "Hardware"
 msgstr "Hardware"
 
-#: src/modules/battery/e_mod_main.c:143 src/modules/battery/e_mod_main.c:442
+#: src/modules/battery/e_mod_main.c:146 src/modules/battery/e_mod_main.c:455
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:354
 msgid "Battery"
 msgstr "Battery"
 
-#: src/modules/battery/e_mod_main.c:191
+#: src/modules/battery/e_mod_main.c:194
 msgid "Power Management Timing"
 msgstr "Temporizzazioni gestione energetica"
 
-#: src/modules/battery/e_mod_main.c:445 src/modules/battery/e_mod_main.c:477
+#: src/modules/battery/e_mod_main.c:458 src/modules/battery/e_mod_main.c:490
 msgid "Your battery is low!"
 msgstr "Basso livello batteria!"
 
-#: src/modules/battery/e_mod_main.c:446 src/modules/battery/e_mod_main.c:479
+#: src/modules/battery/e_mod_main.c:459 src/modules/battery/e_mod_main.c:492
 msgid "AC power is recommended."
 msgstr "Consigliata alimentazione AC."
 
-#: src/modules/battery/e_mod_main.c:573
+#: src/modules/battery/e_mod_main.c:586
 msgid "N/A"
 msgstr "N/D"
 
-#: src/modules/battery/e_mod_main.c:677 src/modules/battery/e_mod_main.c:679
-#: src/modules/battery/e_mod_main.c:686 src/modules/battery/e_mod_main.c:688
+#: src/modules/battery/e_mod_main.c:690 src/modules/battery/e_mod_main.c:692
+#: src/modules/battery/e_mod_main.c:699 src/modules/battery/e_mod_main.c:701
 msgid "ERROR"
 msgstr "ERRORE"
 
-#: src/modules/battery/e_mod_main.c:799
+#: src/modules/battery/e_mod_main.c:812
 msgid "Battery Meter"
 msgstr "Indicatore di carica"
 
@@ -4569,265 +4571,265 @@ msgstr "%a, %x"
 msgid "Toggle calendar"
 msgstr "Commuta calendario"
 
-#: src/modules/conf_comp/e_mod_config.c:88
+#: src/modules/conf_comp/e_mod_config.c:86
 msgid "Composite Settings"
 msgstr "Impostazioni compositing"
 
-#: src/modules/conf_comp/e_mod_config.c:186
+#: src/modules/conf_comp/e_mod_config.c:184
 msgid "Edit window matches"
 msgstr "Modifica regole finestre"
 
-#: src/modules/conf_comp/e_mod_config.c:189
-#: src/modules/conf_comp/e_mod_config.c:554
+#: src/modules/conf_comp/e_mod_config.c:187
+#: src/modules/conf_comp/e_mod_config.c:553
 msgid "Select default style"
 msgstr "Seleziona stile predefinito"
 
-#: src/modules/conf_comp/e_mod_config.c:195
+#: src/modules/conf_comp/e_mod_config.c:193
 msgid "Styles"
 msgstr "Stili"
 
-#: src/modules/conf_comp/e_mod_config.c:200
+#: src/modules/conf_comp/e_mod_config.c:198
 msgid "Smooth scaling"
 msgstr "Scalatura dolce"
 
-#: src/modules/conf_comp/e_mod_config.c:205
+#: src/modules/conf_comp/e_mod_config.c:203
 msgid "Fast Effects"
 msgstr "Effetti rapidi"
 
-#: src/modules/conf_comp/e_mod_config.c:206
+#: src/modules/conf_comp/e_mod_config.c:204
 msgid "Enable fast composite effects for windows"
 msgstr "Abilita effetti compositing rapidi per le finestre"
 
-#: src/modules/conf_comp/e_mod_config.c:209
+#: src/modules/conf_comp/e_mod_config.c:207
 msgid "Enable fast composite effects for menus"
 msgstr "Abilita effetti compositing rapidi per i menù"
 
-#: src/modules/conf_comp/e_mod_config.c:212
+#: src/modules/conf_comp/e_mod_config.c:210
 msgid "Enable fast composite effects for popups"
 msgstr "Abilita effetti compositing rapidi per i popup"
 
-#: src/modules/conf_comp/e_mod_config.c:215
+#: src/modules/conf_comp/e_mod_config.c:213
 msgid "Enable fast composite effects for overrides"
 msgstr "Abilita effetti compositing rapidi per gli override"
 
-#: src/modules/conf_comp/e_mod_config.c:220
+#: src/modules/conf_comp/e_mod_config.c:218
 msgid "Disable Effects"
 msgstr "Disabilita effetti"
 
-#: src/modules/conf_comp/e_mod_config.c:221
+#: src/modules/conf_comp/e_mod_config.c:219
 msgid "Disable composite effects for windows"
 msgstr "Disabilita effetti compositing per le finestre"
 
-#: src/modules/conf_comp/e_mod_config.c:224
+#: src/modules/conf_comp/e_mod_config.c:222
 msgid "Disable composite effects for menus"
 msgstr "Disabilita effetti compositing per i menù"
 
-#: src/modules/conf_comp/e_mod_config.c:227
+#: src/modules/conf_comp/e_mod_config.c:225
 msgid "Disable composite effects for popups"
 msgstr "Disabilita effetti compositing per i popup"
 
-#: src/modules/conf_comp/e_mod_config.c:230
+#: src/modules/conf_comp/e_mod_config.c:228
 msgid "Disable composite effects for overrides"
 msgstr "Disabilita effetti compositing per gli override"
 
-#: src/modules/conf_comp/e_mod_config.c:233
+#: src/modules/conf_comp/e_mod_config.c:231
 msgid "Disable composite effects for screen"
 msgstr "Disabilita effetti compositing per lo schermo"
 
-#: src/modules/conf_comp/e_mod_config.c:238
+#: src/modules/conf_comp/e_mod_config.c:236
 msgid "Effects"
 msgstr "Effetti"
 
-#: src/modules/conf_comp/e_mod_config.c:242
+#: src/modules/conf_comp/e_mod_config.c:240
 msgid "Sync windows"
 msgstr "Sincronizza finestre"
 
-#: src/modules/conf_comp/e_mod_config.c:244
+#: src/modules/conf_comp/e_mod_config.c:242
 msgid "Loose sync"
 msgstr "Sincronizzazione Loose"
 
-#: src/modules/conf_comp/e_mod_config.c:246
+#: src/modules/conf_comp/e_mod_config.c:244
 msgid "Grab Server during draw"
 msgstr "Prendi server durante disegno"
 
-#: src/modules/conf_comp/e_mod_config.c:248
+#: src/modules/conf_comp/e_mod_config.c:246
 msgid "Initial draw timeout for newly mapped windows"
 msgstr "Timeout disegno iniziale per nuove finestre"
 
-#: src/modules/conf_comp/e_mod_config.c:250
+#: src/modules/conf_comp/e_mod_config.c:248
 #, c-format
 msgid "%1.2f Seconds"
 msgstr "%1.2f secondi"
 
-#: src/modules/conf_comp/e_mod_config.c:252
+#: src/modules/conf_comp/e_mod_config.c:250
 msgid "Sync"
 msgstr "Sincronizzazione"
 
-#: src/modules/conf_comp/e_mod_config.c:257
-#: src/modules/conf_comp/e_mod_config.c:567
+#: src/modules/conf_comp/e_mod_config.c:255
+#: src/modules/conf_comp/e_mod_config.c:566
 msgid "Software"
 msgstr "Software"
 
-#: src/modules/conf_comp/e_mod_config.c:263
-#: src/modules/conf_comp/e_mod_config.c:573
+#: src/modules/conf_comp/e_mod_config.c:261
+#: src/modules/conf_comp/e_mod_config.c:572
 msgid "OpenGL"
 msgstr "OpenGL"
 
-#: src/modules/conf_comp/e_mod_config.c:266
+#: src/modules/conf_comp/e_mod_config.c:264
 msgid "OpenGL options"
 msgstr "Opzioni OpenGL"
 
-#: src/modules/conf_comp/e_mod_config.c:268
-#: src/modules/conf_comp/e_mod_config.c:531
+#: src/modules/conf_comp/e_mod_config.c:266
+#: src/modules/conf_comp/e_mod_config.c:529
 msgid "Tear-free updates (VSynced)"
 msgstr "Aggiornamenti tear-free (VSynced)"
 
-#: src/modules/conf_comp/e_mod_config.c:270
+#: src/modules/conf_comp/e_mod_config.c:268
 msgid "Texture from pixmap"
 msgstr "Texture da pixmap"
 
-#: src/modules/conf_comp/e_mod_config.c:277
+#: src/modules/conf_comp/e_mod_config.c:275
 msgid "Assume swapping method:"
 msgstr "Assumi metodo di swapping:"
 
-#: src/modules/conf_comp/e_mod_config.c:280
+#: src/modules/conf_comp/e_mod_config.c:278
 msgid "Auto"
 msgstr "Automatico"
 
-#: src/modules/conf_comp/e_mod_config.c:282
+#: src/modules/conf_comp/e_mod_config.c:280
 msgid "Invalidate (full redraw)"
 msgstr "Invalida (ridisegno totale)"
 
-#: src/modules/conf_comp/e_mod_config.c:284
+#: src/modules/conf_comp/e_mod_config.c:282
 msgid "Copy from back to front"
 msgstr "Copia da dietro al fronte"
 
-#: src/modules/conf_comp/e_mod_config.c:286
+#: src/modules/conf_comp/e_mod_config.c:284
 msgid "Double buffered swaps"
 msgstr "Swapping a doppio buffer"
 
-#: src/modules/conf_comp/e_mod_config.c:288
+#: src/modules/conf_comp/e_mod_config.c:286
 msgid "Triple buffered swaps"
 msgstr "Swapping a triplo buffer"
 
-#: src/modules/conf_comp/e_mod_config.c:298
+#: src/modules/conf_comp/e_mod_config.c:296
 #: src/modules/conf_performance/e_mod_main.c:19
 msgid "Engine"
 msgstr "Motore"
 
-#: src/modules/conf_comp/e_mod_config.c:302
+#: src/modules/conf_comp/e_mod_config.c:300
 msgid "Send flush"
 msgstr "Invia comando flush"
 
-#: src/modules/conf_comp/e_mod_config.c:304
+#: src/modules/conf_comp/e_mod_config.c:302
 msgid "Send dump"
 msgstr "Invia comando dump"
 
-#: src/modules/conf_comp/e_mod_config.c:306
-#: src/modules/conf_comp/e_mod_config.c:537
+#: src/modules/conf_comp/e_mod_config.c:304
+#: src/modules/conf_comp/e_mod_config.c:535
 msgid "Don't composite fullscreen windows"
 msgstr "Niente compositing per finestre a tutto schermo"
 
-#: src/modules/conf_comp/e_mod_config.c:334
+#: src/modules/conf_comp/e_mod_config.c:332
 msgid "Memory"
 msgstr "Memoria"
 
-#: src/modules/conf_comp/e_mod_config.c:382
+#: src/modules/conf_comp/e_mod_config.c:380
 msgid "Show Framerate"
 msgstr "Mostra framerate"
 
-#: src/modules/conf_comp/e_mod_config.c:384
+#: src/modules/conf_comp/e_mod_config.c:382
 msgid "Rolling average frame count"
 msgstr "Media frame per rolling"
 
-#: src/modules/conf_comp/e_mod_config.c:386
+#: src/modules/conf_comp/e_mod_config.c:384
 #, c-format
 msgid "%1.0f Frames"
 msgstr "%1.0f Frame"
 
-#: src/modules/conf_comp/e_mod_config.c:390
+#: src/modules/conf_comp/e_mod_config.c:388
 msgid "Corner"
 msgstr "Angolo"
 
-#: src/modules/conf_comp/e_mod_config.c:393
+#: src/modules/conf_comp/e_mod_config.c:391
 msgid "Top Left"
 msgstr "Superiore sinistro"
 
-#: src/modules/conf_comp/e_mod_config.c:396
+#: src/modules/conf_comp/e_mod_config.c:394
 msgid "Top Right"
 msgstr "Superiore destro"
 
-#: src/modules/conf_comp/e_mod_config.c:399
+#: src/modules/conf_comp/e_mod_config.c:397
 msgid "Bottom Left"
 msgstr "Inferiore sinistro"
 
-#: src/modules/conf_comp/e_mod_config.c:402
+#: src/modules/conf_comp/e_mod_config.c:400
 msgid "Bottom Right"
 msgstr "Inferiore destro"
 
-#: src/modules/conf_comp/e_mod_config.c:407
+#: src/modules/conf_comp/e_mod_config.c:405
 msgid "Debug"
 msgstr "Debug"
 
-#: src/modules/conf_comp/e_mod_config.c:534
+#: src/modules/conf_comp/e_mod_config.c:532
 msgid "Smooth scaling of window content"
 msgstr "Scalatura dolce del contenuto"
 
-#: src/modules/conf_comp/e_mod_config.c:542
+#: src/modules/conf_comp/e_mod_config.c:540
 msgid "Enable \"fast\" composite effects"
 msgstr "Abilita effetti compositing \"rapidi\""
 
-#: src/modules/conf_comp/e_mod_config.c:550 src/modules/wizard/page_150.c:93
+#: src/modules/conf_comp/e_mod_config.c:549 src/modules/wizard/page_150.c:91
 msgid "Disable composite effects"
 msgstr "Disabilita effetti compositing"
 
-#: src/modules/conf_comp/e_mod_config.c:577
+#: src/modules/conf_comp/e_mod_config.c:576
 msgid "To reset compositor:"
 msgstr "Per reimpostazione compositor:"
 
-#: src/modules/conf_comp/e_mod_config.c:579
+#: src/modules/conf_comp/e_mod_config.c:578
 msgid "Ctrl+Alt+Shift+Home"
 msgstr "Ctrl+Alt+Shift+Home"
 
-#: src/modules/conf_comp/e_mod_config.c:582
+#: src/modules/conf_comp/e_mod_config.c:581
 msgid "Rendering"
 msgstr "Rendering"
 
-#: src/modules/conf_comp/e_mod_main.c:30
-#: src/modules/conf_comp/e_mod_main.c:235
-#: src/modules/conf_comp/e_mod_main.c:244
+#: src/modules/conf_comp/e_mod_main.c:28
+#: src/modules/conf_comp/e_mod_main.c:233
+#: src/modules/conf_comp/e_mod_main.c:242
 msgid "Composite"
 msgstr "Composite"
 
-#: src/modules/conf_comp/e_mod_main.c:57
+#: src/modules/conf_comp/e_mod_main.c:55
 msgid "Visible"
 msgstr "Visibile"
 
-#: src/modules/conf_comp/e_mod_main.c:62
+#: src/modules/conf_comp/e_mod_main.c:60
 msgid "Focus-Out"
 msgstr "fuori fuoco"
 
-#: src/modules/conf_comp/e_mod_main.c:67
+#: src/modules/conf_comp/e_mod_main.c:65
 msgid "Focus-In"
 msgstr "A fuoco"
 
-#: src/modules/conf_comp/e_mod_main.c:240
+#: src/modules/conf_comp/e_mod_main.c:238
 msgid "Composite Style Settings"
 msgstr "Impostazioni stile compositing"
 
-#: src/modules/conf_comp/e_mod_main.c:261
+#: src/modules/conf_comp/e_mod_main.c:259
 msgid "comp_settings"
 msgstr "impostazioni_compositing"
 
-#: src/modules/conf_comp/e_mod_main.c:261
+#: src/modules/conf_comp/e_mod_main.c:259
 msgid "Advanced composite settings panel"
 msgstr "Pannello impostazioni compositing avanzate"
 
-#: src/modules/conf_comp/e_mod_main.c:261
+#: src/modules/conf_comp/e_mod_main.c:259
 msgid "composite"
 msgstr "composite"
 
-#: src/modules/conf_comp/e_mod_main.c:261
+#: src/modules/conf_comp/e_mod_main.c:259
 #: src/modules/conf_window_remembers/e_mod_main.c:28
 #: src/modules/fileman/e_mod_main.c:399
 #: src/modules/quickaccess/e_mod_main.c:68
@@ -6477,7 +6479,9 @@ msgstr "Usa finestre sagomate invece di ARGB"
 msgid ""
 "You have chosen to use shaped windows<br>but your current screen is "
 "composited.<br><br>Are you really sure you wish to use<br>shaped windows?"
-msgstr "Avete scelto di usare finestre sagomate<br>ma lo schermo una il compositing.<br><br>Siete sicuri di voler usare finestre sagomate?"
+msgstr ""
+"Avete scelto di usare finestre sagomate<br>ma lo schermo una il compositing."
+"<br><br>Siete sicuri di voler usare finestre sagomate?"
 
 #: src/modules/conf_performance/e_int_config_performance.c:36
 msgid "Performance Settings"
@@ -9683,15 +9687,15 @@ msgstr "Installare/abilitare Connman per la gestione della rete"
 msgid "Checking to see if Connman exists"
 msgstr "Controllo installazione di Connman"
 
-#: src/modules/wizard/page_150.c:63
+#: src/modules/wizard/page_150.c:61
 msgid "Compositing"
 msgstr "Compositing"
 
-#: src/modules/wizard/page_150.c:87
+#: src/modules/wizard/page_150.c:85
 msgid "Hardware Accelerated (OpenGL)"
 msgstr "Accelerazione hardware (OpenGL)"
 
-#: src/modules/wizard/page_150.c:90
+#: src/modules/wizard/page_150.c:88
 msgid "Tear-free Rendering (OpenGL only)"
 msgstr "Rendering Tear-free (solo OpenGL)"
 
@@ -9781,7 +9785,7 @@ msgstr "Sinistro:"
 msgid "Right:"
 msgstr "Destro:"
 
-#: src/modules/mixer/app_mixer.c:438 src/modules/mixer/e_mod_main.c:697
+#: src/modules/mixer/app_mixer.c:438 src/modules/mixer/e_mod_main.c:707
 msgid "Mute"
 msgstr "Muto"
 
@@ -9825,35 +9829,35 @@ msgstr "Lancia mixer..."
 msgid "Mixer Module Settings"
 msgstr "Impostazioni del modulo Mixer"
 
-#: src/modules/mixer/e_mod_main.c:11 src/modules/mixer/e_mod_main.c:67
+#: src/modules/mixer/e_mod_main.c:11 src/modules/mixer/e_mod_main.c:77
 msgid "Mixer"
 msgstr "Mixer"
 
-#: src/modules/mixer/e_mod_main.c:54
+#: src/modules/mixer/e_mod_main.c:64
 msgid "New volume"
 msgstr "Nuovo livello audio"
 
-#: src/modules/mixer/e_mod_main.c:70
+#: src/modules/mixer/e_mod_main.c:80
 msgid "Volume changed"
 msgstr "Il volume dell'audio è cambiato"
 
-#: src/modules/mixer/e_mod_main.c:189
+#: src/modules/mixer/e_mod_main.c:199
 msgid "Mixer Settings Updated"
 msgstr "Impostazioni di Mixer aggiornate"
 
-#: src/modules/mixer/e_mod_main.c:1358
+#: src/modules/mixer/e_mod_main.c:1371
 msgid "Mixer Module"
 msgstr "Modulo Mixer"
 
-#: src/modules/mixer/e_mod_main.c:1386
+#: src/modules/mixer/e_mod_main.c:1399
 msgid "Increase Volume"
 msgstr "Aumenta volume"
 
-#: src/modules/mixer/e_mod_main.c:1387
+#: src/modules/mixer/e_mod_main.c:1400
 msgid "Decrease Volume"
 msgstr "Diminuisce volume"
 
-#: src/modules/mixer/e_mod_main.c:1388
+#: src/modules/mixer/e_mod_main.c:1401
 msgid "Mute Volume"
 msgstr "Silenzia audio"
 
