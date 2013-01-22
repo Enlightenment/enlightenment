@@ -2592,12 +2592,12 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
                   tag = eina_hash_find(tags_alias_hash, alias);
                   if (eina_list_data_find(clist, tag))
                     {
-                       if (strcasecmp(s, alias)) continue;
+                       if (strncasecmp(s, alias, e - s)) continue;
                        tmp = eina_list_free(tmp);
                        break;
                     }
                   tlist = eina_list_remove(tlist, l);
-                  if (strcasecmp(s, alias))
+                  if (strncasecmp(s, alias, e - s))
                     {
                        tmp = eina_list_append(tmp, tag);
                        continue;
@@ -2619,12 +2619,12 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
              tag = eina_hash_find(tags_alias_hash, alias);
              if (eina_list_data_find(clist, tag))
                {
-                  if (strcasecmp(s, alias)) continue;
+                  if (strncasecmp(s, alias, e - s)) continue;
                   tmp = eina_list_free(tmp);
                   break;
                }
              tlist = eina_list_remove(tlist, l);
-             if (strcasecmp(s, alias))
+             if (strncasecmp(s, alias, e - s))
                {
                   tmp = eina_list_append(tmp, tag);
                   continue;
@@ -2649,12 +2649,12 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
                   if ((!strcasestr(s, tag)) && (!strcasestr(tag, s))) continue;
                   if (eina_list_data_find(clist, tag))
                     {
-                       if (strcasecmp(s, tag)) continue;
+                       if (strncasecmp(s, tag, e - s)) continue;
                        tmp = eina_list_free(tmp);
                        break;
                     }
                   tlist = eina_list_remove(tlist, l);
-                  if (strcasecmp(s, tag))
+                  if (strncasecmp(s, tag, e - s))
                     {
                        tmp = eina_list_append(tmp, tag);
                        continue;
@@ -2675,12 +2675,12 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
              if ((!strcasestr(s, tag)) && (!strcasestr(tag, s))) continue;
              if (eina_list_data_find(clist, tag))
                {
-                  if (strcasecmp(s, tag)) continue;
+                  if (strncasecmp(s, tag, e - s)) continue;
                   tmp = eina_list_free(tmp);
                   break;
                }
              tlist = eina_list_remove(tlist, l);
-             if (strcasecmp(s, tag))
+             if (strncasecmp(s, tag, e - s))
                {
                   tmp = eina_list_append(tmp, tag);
                   continue;
