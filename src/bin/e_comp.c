@@ -4291,6 +4291,7 @@ e_comp_init(void)
      }
 
    _e_comp_log_dom = eina_log_domain_register("e_comp", EINA_COLOR_YELLOW);
+   eina_log_domain_level_set("e_comp", EINA_LOG_LEVEL_INFO);
 
    e_sys_handlers_set(_e_comp_sys_suspend,
                       _e_comp_sys_hibernate,
