@@ -4256,6 +4256,25 @@ e_comp_init(void)
    Eina_List *l;
    E_Manager *man;
 
+   if (!ecore_x_composite_query())
+     {
+        e_util_dialog_internal
+          (_("Compositor Error"),
+          _("Your display server does not support XComposite,<br>"
+            "or Ecore-X was built without XComposite support.<br>"
+            "Note that for composite support you will also need<br>"
+            "XRender and XFixes support in X11 and Ecore."));
+        return EINA_FALSE;
+     }
+   if (!ecore_x_damage_query())
+     {
+        e_util_dialog_internal
+          (_("Compositor Error"),
+          _("Your display server does not support XDamage<br>"
+            "or Ecore was built without XDamage support."));
+        return EINA_FALSE;
+     }
+
    e_sys_handlers_set(_e_comp_sys_suspend,
                       _e_comp_sys_hibernate,
                       _e_comp_sys_reboot,
@@ -4306,25 +4325,6 @@ e_comp_init(void)
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_PROPERTY, _e_comp_bd_property, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_FULLSCREEN, _e_comp_bd_fullscreen, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_UNFULLSCREEN, _e_comp_bd_unfullscreen, NULL);
-
-   if (!ecore_x_composite_query())
-     {
-        e_util_dialog_internal
-          (_("Compositor Error"),
-          _("Your display server does not support XComposite,<br>"
-            "or Ecore-X was built without XComposite support.<br>"
-            "Note that for composite support you will also need<br>"
-            "XRender and XFixes support in X11 and Ecore."));
-        return EINA_FALSE;
-     }
-   if (!ecore_x_damage_query())
-     {
-        e_util_dialog_internal
-          (_("Compositor Error"),
-          _("Your display server does not support XDamage<br>"
-            "or Ecore was built without XDamage support."));
-        return EINA_FALSE;
-     }
 
    E_EVENT_COMP_SOURCE_VISIBILITY = ecore_event_type_new();
    E_EVENT_COMP_SOURCE_ADD = ecore_event_type_new();
