@@ -363,6 +363,7 @@ _e_configure_option_apply(E_Configure_Option *co, Eina_List **events, Eina_List 
           }
      }
    co->changed = EINA_FALSE;
+   _e_configure_option_event_changed(co);
 
    return co->requires_restart;
 }
