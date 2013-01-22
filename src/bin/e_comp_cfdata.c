@@ -98,7 +98,7 @@ e_comp_cfdata_config_new(void)
    cfg->keep_unmapped = 1;
    cfg->send_flush = 1; // implement
    cfg->send_dump = 1; // implement
-   cfg->nocomp_fs = 0; // buggy
+   cfg->nocomp_fs = 1;
    cfg->smooth_windows = 0; // 1 if gl, 0 if not
    cfg->first_draw_delay = 0.15;
 
