@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-20 16:47+0100\n"
-"PO-Revision-Date: 2013-01-20 17:28+0100\n"
+"POT-Creation-Date: 2013-01-22 22:15+0100\n"
+"PO-Revision-Date: 2013-01-22 22:17+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: \n"
@@ -78,7 +78,7 @@ msgstr "Uccidi"
 #: src/bin/e_actions.c:2472 src/bin/e_confirm_dialog.c:53
 #: src/bin/e_desklock.c:1314 src/bin/e_fm.c:10426 src/bin/e_fm.c:10792
 #: src/bin/e_screensaver.c:190
-#: src/modules/quickaccess/e_mod_quickaccess.c:1264
+#: src/modules/quickaccess/e_mod_quickaccess.c:1267
 msgid "No"
 msgstr "No"
 
@@ -94,7 +94,7 @@ msgstr "Siete sicuri di voler uscire da Enlightement?"
 #: src/bin/e_actions.c:2340 src/bin/e_actions.c:2405 src/bin/e_actions.c:2470
 #: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:1312
 #: src/bin/e_fm.c:10429 src/bin/e_screensaver.c:188
-#: src/modules/quickaccess/e_mod_quickaccess.c:1264
+#: src/modules/quickaccess/e_mod_quickaccess.c:1267
 msgid "Yes"
 msgstr "Sì"
 
@@ -800,7 +800,7 @@ msgstr "Seleziona"
 #: src/modules/fileman/e_int_config_mime_edit.c:316
 #: src/modules/syscon/e_syscon.c:122
 #: src/modules/quickaccess/e_mod_quickaccess.c:319
-#: src/modules/quickaccess/e_mod_quickaccess.c:378
+#: src/modules/quickaccess/e_mod_quickaccess.c:381
 #: src/modules/shot/e_mod_main.c:291 src/modules/shot/e_mod_main.c:542
 #: src/modules/shot/e_mod_main.c:568 src/modules/shot/e_mod_main.c:804
 #: src/modules/xkbswitch/e_mod_config.c:529
@@ -1863,11 +1863,11 @@ msgstr "Sposta in"
 msgid "Automatically scroll contents"
 msgstr "Scorri automaticamente contenuto"
 
-#: src/bin/e_gadcon.c:1756 src/modules/gadman/e_mod_gadman.c:1002
+#: src/bin/e_gadcon.c:1756 src/modules/gadman/e_mod_gadman.c:1000
 msgid "Plain"
 msgstr "Liscio"
 
-#: src/bin/e_gadcon.c:1769 src/modules/gadman/e_mod_gadman.c:1010
+#: src/bin/e_gadcon.c:1769 src/modules/gadman/e_mod_gadman.c:1008
 msgid "Inset"
 msgstr "Incassato"
 
@@ -1883,7 +1883,7 @@ msgstr "Aspetto"
 #: src/modules/conf_applications/e_int_config_apps.c:291
 #: src/modules/conf_applications/e_int_config_apps.c:311
 #: src/modules/conf_applications/e_int_config_apps_personal.c:97
-#: src/modules/gadman/e_mod_gadman.c:1058 src/modules/ibar/e_mod_main.c:877
+#: src/modules/gadman/e_mod_gadman.c:1056 src/modules/ibar/e_mod_main.c:877
 #: src/modules/xkbswitch/e_mod_config.c:267
 msgid "Remove"
 msgstr "Elimina"
@@ -3701,14 +3701,14 @@ msgstr "Fluttuante"
 #: src/bin/e_shelf.c:68
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:227
 #: src/modules/everything/evry_config.c:568
-#: src/modules/gadman/e_mod_gadman.c:1030
+#: src/modules/gadman/e_mod_gadman.c:1028
 msgid "Horizontal"
 msgstr "Orizzontale"
 
 #: src/bin/e_shelf.c:69
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:229
 #: src/modules/everything/evry_config.c:561
-#: src/modules/gadman/e_mod_gadman.c:1038
+#: src/modules/gadman/e_mod_gadman.c:1036
 msgid "Vertical"
 msgstr "Verticale"
 
@@ -3828,7 +3828,7 @@ msgstr "Contenuti"
 msgid "Orientation"
 msgstr "Orientamento"
 
-#: src/bin/e_shelf.c:2462 src/modules/quickaccess/e_mod_quickaccess.c:789
+#: src/bin/e_shelf.c:2462 src/modules/quickaccess/e_mod_quickaccess.c:792
 msgid "Autohide"
 msgstr "Scomparsa automatica"
 
@@ -9019,19 +9019,19 @@ msgstr "Animazioni"
 msgid "Background Options"
 msgstr "Opzioni dello sfondo"
 
-#: src/modules/gadman/e_mod_gadman.c:992
+#: src/modules/gadman/e_mod_gadman.c:990
 msgid "Begin move/resize"
 msgstr "Inizio spostamento/ridimensionamento"
 
-#: src/modules/gadman/e_mod_gadman.c:1022
+#: src/modules/gadman/e_mod_gadman.c:1020
 msgid "Free"
 msgstr "Libero"
 
-#: src/modules/gadman/e_mod_gadman.c:1046
+#: src/modules/gadman/e_mod_gadman.c:1044
 msgid "Appearance"
 msgstr "Aspetto"
 
-#: src/modules/gadman/e_mod_gadman.c:1067
+#: src/modules/gadman/e_mod_gadman.c:1065
 msgid "Add other gadgets"
 msgstr "Aggiungi altri gadget"
 
@@ -10003,14 +10003,14 @@ msgstr "Rimuovi Quickaccess dalla finestra attuale"
 #: src/modules/quickaccess/e_mod_quickaccess.c:265
 #: src/modules/quickaccess/e_mod_quickaccess.c:343
 #: src/modules/quickaccess/e_mod_quickaccess.c:350
-#: src/modules/quickaccess/e_mod_quickaccess.c:373
-#: src/modules/quickaccess/e_mod_quickaccess.c:389
-#: src/modules/quickaccess/e_mod_quickaccess.c:484
+#: src/modules/quickaccess/e_mod_quickaccess.c:376
+#: src/modules/quickaccess/e_mod_quickaccess.c:392
+#: src/modules/quickaccess/e_mod_quickaccess.c:487
 msgid "Quickaccess Error"
 msgstr "Errore di Quickaccess"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:265
-#: src/modules/quickaccess/e_mod_quickaccess.c:389
+#: src/modules/quickaccess/e_mod_quickaccess.c:392
 msgid "Could not determine command for starting this application!"
 msgstr "Impossibile determinare il comando per avviare questa applicazione!"
 
@@ -10038,16 +10038,16 @@ msgid "Like so:"
 msgstr "In questo modo:"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:316
-#: src/modules/quickaccess/e_mod_quickaccess.c:832
-#: src/modules/quickaccess/e_mod_quickaccess.c:932
-#: src/modules/quickaccess/e_mod_quickaccess.c:971
-#: src/modules/quickaccess/e_mod_quickaccess.c:1000
-#: src/modules/quickaccess/e_mod_quickaccess.c:1012
-#: src/modules/quickaccess/e_mod_quickaccess.c:1028
-#: src/modules/quickaccess/e_mod_quickaccess.c:1193
-#: src/modules/quickaccess/e_mod_quickaccess.c:1223
-#: src/modules/quickaccess/e_mod_quickaccess.c:1244
-#: src/modules/quickaccess/e_mod_quickaccess.c:1261
+#: src/modules/quickaccess/e_mod_quickaccess.c:835
+#: src/modules/quickaccess/e_mod_quickaccess.c:935
+#: src/modules/quickaccess/e_mod_quickaccess.c:974
+#: src/modules/quickaccess/e_mod_quickaccess.c:1003
+#: src/modules/quickaccess/e_mod_quickaccess.c:1015
+#: src/modules/quickaccess/e_mod_quickaccess.c:1031
+#: src/modules/quickaccess/e_mod_quickaccess.c:1196
+#: src/modules/quickaccess/e_mod_quickaccess.c:1226
+#: src/modules/quickaccess/e_mod_quickaccess.c:1247
+#: src/modules/quickaccess/e_mod_quickaccess.c:1264
 msgid "Quickaccess Help"
 msgstr "Aiuto di Quickaccess"
 
@@ -10061,77 +10061,72 @@ msgid "Cannot set relaunch for internal E dialog!"
 msgstr ""
 "Impossibile impostare la riesecuzione per le finstre di dialogo interne!"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:367
-msgid "The selected window created with name:"
-msgstr "La finestra selezionata creata con nome:"
-
 #: src/modules/quickaccess/e_mod_quickaccess.c:368
-msgid "and class:"
-msgstr "e classe:"
-
-#: src/modules/quickaccess/e_mod_quickaccess.c:368
+#, c-format
 msgid ""
-"could not be found in the Quickaccess app database<brThis means that either "
-"the app is unknown to us<br>or it is not intended for use with this option."
+"The selected window created with name:<br>%s<br>and class:<br>%s<br>could "
+"not be found in the Quickaccess app database<br>This means that either the "
+"app is unknown to us<br>or it is not intended for use with this option."
 "<br>Please choose an action to take:"
 msgstr ""
-"non è stata trovata nel database di Quickaccess.<br>Questo significa che "
-"l'applicazione non è a noi<br>nota o che non è intesa per essere usata "
-"con<br>questa opzione. Si prega di scegliere una<br>azione da intraprendere:"
+"La finestra selezionata creata con nome:<br>%s<br>e classe:<br>%s<br>non è "
+"stata trovata nel database di Quickaccess.<br>Questo significa che "
+"l'applicazione non è a noi<br>nota o che non è intesa per essere usata con"
+"<br>questa opzione. Si prega di scegliere una<br>azione da intraprendere:"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:376
-#: src/modules/quickaccess/e_mod_quickaccess.c:974
-#: src/modules/quickaccess/e_mod_quickaccess.c:1015
-#: src/modules/quickaccess/e_mod_quickaccess.c:1227
-#: src/modules/quickaccess/e_mod_quickaccess.c:1250
+#: src/modules/quickaccess/e_mod_quickaccess.c:379
+#: src/modules/quickaccess/e_mod_quickaccess.c:977
+#: src/modules/quickaccess/e_mod_quickaccess.c:1018
+#: src/modules/quickaccess/e_mod_quickaccess.c:1230
+#: src/modules/quickaccess/e_mod_quickaccess.c:1253
 msgid "Continue"
 msgstr "Continua"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:377
+#: src/modules/quickaccess/e_mod_quickaccess.c:380
 msgid "More Help"
 msgstr "Ulteriore aiuto"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:484
+#: src/modules/quickaccess/e_mod_quickaccess.c:487
 msgid "The requested Quickaccess entry does not exist!"
 msgstr "La voce Quickaccess richiesta non esiste!"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:651
+#: src/modules/quickaccess/e_mod_quickaccess.c:654
 msgid "Keybind Error"
 msgstr "Errore associazione di tasti"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:651
+#: src/modules/quickaccess/e_mod_quickaccess.c:654
 msgid "The keybinding you have entered is already in use!"
 msgstr "L'associazione di tasti inserita è già usata!"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:795
+#: src/modules/quickaccess/e_mod_quickaccess.c:798
 msgid "Hide Instead Of Raise"
 msgstr "Nascondi invece di alzare"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:802
+#: src/modules/quickaccess/e_mod_quickaccess.c:805
 msgid "Jump Mode"
 msgstr "Modalità salto"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:811
+#: src/modules/quickaccess/e_mod_quickaccess.c:814
 msgid "Relaunch When Closed"
 msgstr "Riesegui alla chiusura"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:818
+#: src/modules/quickaccess/e_mod_quickaccess.c:821
 msgid "Transient"
 msgstr "Transitoria"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:825
+#: src/modules/quickaccess/e_mod_quickaccess.c:828
 msgid "Remove Quickaccess"
 msgstr "Rimuovi Quickaccess"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:853
+#: src/modules/quickaccess/e_mod_quickaccess.c:856
 msgid "Quickaccess..."
 msgstr "Quickaccess..."
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:859
+#: src/modules/quickaccess/e_mod_quickaccess.c:862
 msgid "Add Quickaccess"
 msgstr "Aggiungi Quickaccess"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:933
+#: src/modules/quickaccess/e_mod_quickaccess.c:936
 msgid ""
 "The options found in the Quickaccess menu are as follows:"
 "<br><hilight>Autohide</hilight> - hide the window whenever it loses "
@@ -10152,30 +10147,30 @@ msgstr ""
 "finestra<br><hilight>Transitoria</hilight> - ricorda solo questa istanza "
 "della finestra (non permanente)"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:972
+#: src/modules/quickaccess/e_mod_quickaccess.c:975
 msgid "You deleted it on your own, you rascal!<br>Way to go!"
 msgstr "L'hai eliminata da solo, mascalzone!<br>Bravo!"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:974
-#: src/modules/quickaccess/e_mod_quickaccess.c:1015
-#: src/modules/quickaccess/e_mod_quickaccess.c:1227
-#: src/modules/quickaccess/e_mod_quickaccess.c:1250
+#: src/modules/quickaccess/e_mod_quickaccess.c:977
+#: src/modules/quickaccess/e_mod_quickaccess.c:1018
+#: src/modules/quickaccess/e_mod_quickaccess.c:1230
+#: src/modules/quickaccess/e_mod_quickaccess.c:1253
 msgid "Stop"
 msgstr "Ferma"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:991
+#: src/modules/quickaccess/e_mod_quickaccess.c:994
 msgid "Great! Activate the Quickaccess entry again to show it!"
 msgstr "Grande! Attiva nuovamente la voce Quickaccess per mostrarla!"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:993
+#: src/modules/quickaccess/e_mod_quickaccess.c:996
 msgid "Great! Activate the Quickaccess entry again to hide it!"
 msgstr "Grande! Attiva nuovamente la voce Quickaccess per nasconderla!"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:1013
+#: src/modules/quickaccess/e_mod_quickaccess.c:1016
 msgid "Well done.<br>Now to delete the entry we just made..."
 msgstr "Ben fatto.<br>Adesso per eliminare la voce appena creata..."
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:1029
+#: src/modules/quickaccess/e_mod_quickaccess.c:1032
 msgid ""
 "The demo dialog has been bound to the keys you pressed.<br>Try pressing the "
 "same keys!"
@@ -10183,22 +10178,22 @@ msgstr ""
 "La finestra è stata associata ai tasti che hai premuto.<br>Prova a premere "
 "gli stessi tasti!"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:1194
+#: src/modules/quickaccess/e_mod_quickaccess.c:1197
 msgid ""
 "The newly displayed window will activate<br>the Quickaccess binding sequence."
 msgstr ""
 "La finestra appena mostrata attiverà<br>la sequenza di associazione "
 "Quickaccess."
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:1201
+#: src/modules/quickaccess/e_mod_quickaccess.c:1204
 msgid "Quickaccess Demo"
 msgstr "Finestra dimostrativa di Quickaccess"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:1202
+#: src/modules/quickaccess/e_mod_quickaccess.c:1205
 msgid "This is a demo dialog used in the Quickaccess tutorial"
 msgstr "Questa è una finestra dimostrativa usata nel tutorial di Quickaccess"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:1224
+#: src/modules/quickaccess/e_mod_quickaccess.c:1227
 msgid ""
 "Quickaccess entries can be created from<br>the border menu of any window."
 "<br>Click Continue to see a demonstration."
@@ -10206,7 +10201,7 @@ msgstr ""
 "Le voci Quickaccess possono essere<br>create dal bordo di qualunque finestra."
 "<br>Premere Continua per vedere una dimostrazione."
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:1245
+#: src/modules/quickaccess/e_mod_quickaccess.c:1248
 msgid ""
 "Quickaccess is a way of binding user-selected<br>windows and applications to "
 "keyboard shortcuts.<br>Once a Quickaccess entry has been created,<br>the "
@@ -10218,7 +10213,7 @@ msgstr ""
 "Quickaccess si può tornare alla<br>finestra associata immediatamente "
 "alla<br>pressione dei tasti della scorciatoia."
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:1262
+#: src/modules/quickaccess/e_mod_quickaccess.c:1265
 msgid ""
 "This appears to be your first time using the Quickaccess module.<br>Would "
 "you like some usage tips?"
@@ -10226,7 +10221,7 @@ msgstr ""
 "Questa sembra essere la tua prima volta con il<br>modulo Quickaccess. Vuoi "
 "qualche suggerimento?"
 
-#: src/modules/quickaccess/e_mod_quickaccess.c:1309
+#: src/modules/quickaccess/e_mod_quickaccess.c:1312
 msgid "quick access name/identifier"
 msgstr "Nome/identificatore Quickaccess"
 
