@@ -195,3 +195,11 @@ appmenu_dbus_registrar_server_init(E_AppMenu_Context *ctx)
    edbus_name_request(ctx->conn, REGISTRAR_BUS,
                       EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING, NULL, NULL);
 }
+
+void
+appmenu_dbus_registrar_server_shutdown(E_AppMenu_Context *ctx)
+{
+   edbus_service_interface_unregister(ctx->iface);
+   edbus_name_release(ctx->conn, REGISTRAR_BUS, NULL, NULL);
+   ctx->iface = NULL;
+}

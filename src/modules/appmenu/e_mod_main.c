@@ -193,7 +193,7 @@ e_modapi_shutdown(E_Module *m)
    EINA_LIST_FOREACH_SAFE(ctxt->windows, l, l2, w)
      appmenu_window_free(w);
 
-   edbus_service_interface_unregister(ctxt->iface);
+   appmenu_dbus_registrar_server_shutdown(ctxt);
    edbus_connection_unref(ctxt->conn);
    edbus_shutdown();
    free(ctxt);

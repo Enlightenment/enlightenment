@@ -37,6 +37,7 @@ struct _E_AppMenu_Window
 
 void appmenu_window_free(E_AppMenu_Window *window);
 void appmenu_dbus_registrar_server_init(E_AppMenu_Context *ctx);
+void appmenu_dbus_registrar_server_shutdown(E_AppMenu_Context *ctx);
 void appmenu_application_monitor(void *data, const char *bus, const char *old, const char *new);
 void appmenu_menu_render(E_AppMenu_Context *ctxt EINA_UNUSED, E_AppMenu_Window *w);
 void appmenu_menu_of_instance_render(E_AppMenu_Instance *inst, E_AppMenu_Window *window);
