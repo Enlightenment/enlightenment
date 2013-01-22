@@ -71,6 +71,7 @@ Improvements:
     * prevent windows dragged from one screen to another from being larger than the destination screen
     * track module directories
     * improve module config dialog load speed
+    * No longer build illume edj files
 
 Fixes:
     * Shelf option 'overlapping' made clearer and disabled when window automatic movement on shelf hide isn't set.

@@ -1,3 +1,7 @@
+2013-01-22 Mike Blumenkrantz
+
+        * No longer build illume edj files
+
 2013-01-15 Mike Blumenkrantz
 
         * Removed old comp hook and msgbus API, replacing with new e_comp namespaced API and events
