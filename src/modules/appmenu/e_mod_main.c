@@ -64,6 +64,10 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
      }
    inst->gcc->data = inst;
    _gc_orient(inst->gcc, inst->gcc->gadcon->orient);
+
+   if (!ctxt->iface)
+     appmenu_dbus_registrar_server_init(ctxt);
+
    return inst->gcc;
 }
 
@@ -73,6 +77,8 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    E_AppMenu_Instance *inst = gcc->data;
    evas_object_del(inst->box);
    inst->ctx->instances = eina_list_remove(inst->ctx->instances, inst);
+   if (!inst->ctx->instances)
+     appmenu_dbus_registrar_server_shutdown(inst->ctx);
    free(inst);
 }
 
@@ -161,7 +167,6 @@ e_modapi_init(E_Module *m)
 
    edbus_init();
    ctxt->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
-   appmenu_dbus_registrar_server_init(ctxt);
 
    event = ecore_event_handler_add(E_EVENT_BORDER_FOCUS_IN, cb_focus_in, ctxt);
    ctxt->events[0] = event;
