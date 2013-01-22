@@ -2,6 +2,7 @@
 
         * No longer build illume edj files
         * fixed gadget dragging on desktop near screen edges
+        * fixed bug where "don't composite fullscreen windows" option would cause some windows to stop appearing
 
 2013-01-15 Mike Blumenkrantz
 
