@@ -4153,7 +4153,7 @@ _e_comp_cfg_init(void)
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, conf, _("Disable composite effects for override-redirect windows (tooltips and such)"), _("composite"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, conf, _("Disable composite effects for the screen"), _("composite"), _("theme"), _("animate"), _("screen"));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, disable_screen_effects, conf, _("Disable composite effects for the screen"), _("composite"), _("theme"), _("animate"), _("screen"));
    E_CONFIGURE_OPTION_HELP(co, _("This option disables composite effects from themes, such as animating the screen fade when blanking"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
 
