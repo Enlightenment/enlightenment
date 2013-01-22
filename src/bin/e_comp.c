@@ -838,7 +838,7 @@ _e_comp_win_update(E_Comp_Win *cw)
                             w = r[i].w; h = r[i].h;
                             if (!ecore_x_image_get(cw->xim, cw->pixmap, x, y, x, y, w, h))
                               {
-                                 DBG("UPDATE [0x%x] %i %i %ix%i FAIL!!!!!!!!!!!!!!!!!", cw->win, x, y, w, h);
+                                 WRN("UPDATE [0x%x] %i %i %ix%i FAIL!!!!!!!!!!!!!!!!!", cw->win, x, y, w, h);
                                  e_comp_update_add(cw->up, x, y, w, h);
                                  cw->update = 1;
                               }
@@ -880,7 +880,7 @@ _e_comp_win_update(E_Comp_Win *cw)
                             w = r[i].w; h = r[i].h;
                             if (!ecore_x_image_get(cw->xim, cw->pixmap, x, y, x, y, w, h))
                               {
-                                 DBG("UPDATE [0x%x] %i %i %ix%i FAIL!!!!!!!!!!!!!!!!!", cw->win, x, y, w, h);
+                                 WRN("UPDATE [0x%x] %i %i %ix%i FAIL!!!!!!!!!!!!!!!!!", cw->win, x, y, w, h);
                                  e_comp_update_add(cw->up, x, y, w, h);
                                  cw->update = 1;
                               }
