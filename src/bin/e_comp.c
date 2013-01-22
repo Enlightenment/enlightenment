@@ -4473,7 +4473,7 @@ e_comp_shadows_reset(void)
 EAPI Evas *
 e_comp_evas_get(E_Comp *c)
 {
-   return c->evas;
+   return c ? c->evas : NULL;
 }
 
 EAPI void
@@ -4517,28 +4517,28 @@ e_comp_src_list_get(E_Comp *c)
 EAPI Evas_Object *
 e_comp_src_image_get(E_Comp_Win *cw)
 {
-   if (!cw->c) return NULL;
+   if ((!cw) || (!cw->c)) return NULL;
    return cw->obj;
 }
 
 EAPI Evas_Object *
 e_comp_src_shadow_get(E_Comp_Win *cw)
 {
-   if (!cw->c) return NULL;
+   if ((!cw) || (!cw->c)) return NULL;
    return cw->shobj;
 }
 
 EAPI Evas_Object *
 e_comp_src_image_mirror_add(E_Comp_Win *cw)
 {
-   if (!cw->c) return NULL;
+   if ((!cw) || (!cw->c)) return NULL;
    return _e_comp_win_mirror_add(cw);
 }
 
 EAPI Eina_Bool
 e_comp_src_visible_get(E_Comp_Win *cw)
 {
-   if (!cw->c) return EINA_FALSE;
+   if ((!cw) || (!cw->c)) return EINA_FALSE;
    return cw->visible;
 }
 
@@ -4565,27 +4565,27 @@ e_comp_src_hidden_set(E_Comp_Win *cw, Eina_Bool hidden)
 EAPI Eina_Bool
 e_comp_src_hidden_get(E_Comp_Win *cw)
 {
-   if (!cw->c) return EINA_FALSE;
+   if ((!cw) || (!cw->c)) return EINA_FALSE;
    return cw->hidden_override;
 }
 
 EAPI E_Popup *
 e_comp_src_popup_get(E_Comp_Win *cw)
 {
-   if (!cw->c) return NULL;
+   if ((!cw) || (!cw->c)) return NULL;
    return cw->pop;
 }
 
 EAPI E_Border *
 e_comp_src_border_get(E_Comp_Win *cw)
 {
-   if (!cw->c) return NULL;
+   if ((!cw) || (!cw->c)) return NULL;
    return cw->bd;
 }
 
 EAPI Ecore_X_Window
 e_comp_src_window_get(E_Comp_Win *cw)
 {
-   if (!cw->c) return 0;
+   if ((!cw) || (!cw->c)) return 0;
    return cw->win;
 }
