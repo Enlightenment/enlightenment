@@ -8552,6 +8552,14 @@ _e_border_eval(E_Border *bd)
                   if (bd->y < zy)
                     bd->y = zy;
 
+                  /* ensure we account for windows which already have client_inset;
+                   * fixes lots of wine placement issues
+                   */
+                  if (bd->x - bd->client_inset.l >= zx)
+                    bd->x -= bd->client_inset.l;
+                  if (bd->y - bd->client_inset.t >= zy)
+                    bd->y -= bd->client_inset.t;
+
                   if (bd->x + bd->w > zx + zw)
                     bd->x = zx + zw - bd->w;
 
@@ -8577,18 +8585,13 @@ _e_border_eval(E_Border *bd)
                                   (abs((bd->zone->container->h / 2) - bd->y - (bd->h / 2)) < 3))) //bd->y - bd->h/2 is center of container
                                 )
                               e_border_center(bd);
-                            else
-                              _e_border_move_internal(bd, bd->x, bd->y, 1);
                          }
-                       else
-                         _e_border_move_internal(bd, bd->x, bd->y, 1);
                        bd->changes.pos = 1;
                        bd->placed = 1;
                     }
                }
              else
                {
-                  _e_border_move_internal(bd, bd->x, bd->y, 1);
                   bd->changes.pos = 1;
                   bd->placed = 1;
                }
