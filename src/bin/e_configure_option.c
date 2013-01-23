@@ -2599,7 +2599,7 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
                        tmp = eina_list_free(tmp);
                        break;
                     }
-                  tlist = eina_list_remove(tlist, l);
+                  tlist = eina_list_remove_list(tlist, l);
                   if (strncmp(s, alias, e - s))
                     {
                        tmp = eina_list_append(tmp, tag);
@@ -2626,7 +2626,7 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
                   tmp = eina_list_free(tmp);
                   break;
                }
-             tlist = eina_list_remove(tlist, l);
+             tlist = eina_list_remove_list(tlist, l);
              if (strncmp(s, alias, e - s))
                {
                   tmp = eina_list_append(tmp, tag);
@@ -2656,7 +2656,7 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
                        tmp = eina_list_free(tmp);
                        break;
                     }
-                  tlist = eina_list_remove(tlist, l);
+                  tlist = eina_list_remove_list(tlist, l);
                   if (strncmp(s, tag, e - s))
                     {
                        tmp = eina_list_append(tmp, tag);
@@ -2682,7 +2682,7 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
                   tmp = eina_list_free(tmp);
                   break;
                }
-             tlist = eina_list_remove(tlist, l);
+             tlist = eina_list_remove_list(tlist, l);
              if (strncmp(s, tag, e - s))
                {
                   tmp = eina_list_append(tmp, tag);
