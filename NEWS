@@ -110,3 +110,4 @@ Fixes:
     * Reuse notifications for mixer and battery modules.
     * fixed gadget dragging on desktop near screen edges
     * fixed bug where "don't composite fullscreen windows" option would cause some windows to stop appearing
+    * module error dialog is no longer remembered across restarts
