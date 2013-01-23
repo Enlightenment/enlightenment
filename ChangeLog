@@ -1,6 +1,8 @@
 2013-01-23 Mike Blumenkrantz
 
         * module error dialog is no longer remembered across restarts
+        * fixed small leak in efm when performing dnd onto mounted drive icon
+        * fixed small leak in e_import_config_dialog_show during failure case
 
 2013-01-22 Mike Blumenkrantz
 
