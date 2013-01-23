@@ -110,6 +110,10 @@
 
 	* Fix build with uClibc.
 
+2013-01-04 Lucas De Marchi
+
+        * Fixed crash when changing desktop configuration while clock popup was present
+
 2013-01-04 Lucas Jóia
 
         * Added bluez4 module: control bluetoothd daemon

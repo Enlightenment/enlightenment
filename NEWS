@@ -101,6 +101,7 @@ Fixes:
     * Fixed bug where disabled slider widgets could be changed with mouse wheel
     * Fixed bug where fileman config slider widgets were not properly disabled
     * Tasks gadgets now apply the selected style
+    * Fixed crash when changing desktop configuration while clock popup was present
     * fixed bug where window border insets were not applied to initial positioning geometry, causing them to be placed incorrectly
     * Fixed bug with desktop config profile where conf module version variable was misnamed
     * fixed bug where internal dialogs would not redraw after unfullscreening
