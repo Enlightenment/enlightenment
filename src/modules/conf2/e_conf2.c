@@ -664,24 +664,6 @@ _opt_overlay_show(E_Configure_Option *co, Elm_Object_Item *it)
    char buf[256];
 
    if (!it) it = e_configure_option_data_get(co, "conf_item");
-   if (co->changed)
-     {
-        if (!buttons_visible)
-          {
-             elm_layout_signal_emit(layout, "e,action,apply_show", "e");
-             elm_layout_signal_emit(layout, "e,action,discard_show", "e");
-          }
-        buttons_visible = EINA_TRUE;
-     }
-   else
-     {
-        if (buttons_visible)
-          {
-             elm_layout_signal_emit(layout, "e,action,apply_hide", "e");
-             elm_layout_signal_emit(layout, "e,action,discard_hide", "e");
-          }
-        buttons_visible = EINA_FALSE;
-     }
    switch (co->type)
      {
         case E_CONFIGURE_OPTION_TYPE_CUSTOM:
@@ -839,6 +821,25 @@ _opt_overlay_show(E_Configure_Option *co, Elm_Object_Item *it)
           break;
         default:
           if (overlay) evas_object_del(overlay);
+          return;
+     }
+   if (e_configure_option_changed_list())
+     {
+        if (!buttons_visible)
+          {
+             elm_layout_signal_emit(layout, "e,action,apply_show", "e");
+             elm_layout_signal_emit(layout, "e,action,discard_show", "e");
+          }
+        buttons_visible = EINA_TRUE;
+     }
+   else
+     {
+        if (buttons_visible)
+          {
+             elm_layout_signal_emit(layout, "e,action,apply_hide", "e");
+             elm_layout_signal_emit(layout, "e,action,discard_hide", "e");
+          }
+        buttons_visible = EINA_FALSE;
      }
 }
 
