@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Marc Furtià  i Puig\\\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-01-06 22:32+0100\n"
-"PO-Revision-Date: 2013-01-22 22:56+0100\n"
+"PO-Revision-Date: 2013-01-23 20:21+0100\n"
 "Last-Translator: Marc Furtià i Puig <marc.furtia@gmail.com>\n"
 "Language-Team: \n"
 "Language: \n"
@@ -12,6 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-Language: Catalan\n"
+"X-Poedit-Bookmarks: -1,-1,1139,-1,-1,-1,-1,-1,-1,-1\n"
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
@@ -1340,7 +1341,6 @@ msgid "Comment"
 msgstr "Comentari"
 
 #: src/bin/e_eap_editor.c:710
-#, fuzzy
 msgid "URL"
 msgstr "URL"
 
@@ -2228,9 +2228,8 @@ msgstr "Sagnat"
 #: src/modules/comp/e_mod_main.c:72
 #: src/modules/conf_theme/e_mod_main.c:229
 #: src/modules/physics/e_mod_main.c:45
-#, fuzzy
 msgid "Look"
-msgstr "Bloquejos "
+msgstr "Pinta"
 
 #: src/bin/e_gadcon.c:1793
 #: src/bin/e_int_gadcon_config.c:699
@@ -2345,9 +2344,8 @@ msgid "Import Settings..."
 msgstr "Preferències d'importació"
 
 #: src/bin/e_import_config_dialog.c:487
-#, fuzzy
 msgid "Fill and Stretch Options"
-msgstr "Omplir i estirar les opcions"
+msgstr "Omplir iEestirar Opcions"
 
 #: src/bin/e_import_config_dialog.c:489
 msgid "Stretch"
@@ -2529,9 +2527,8 @@ msgid "Sticky"
 msgstr "﻿Enganxós"
 
 #: src/bin/e_int_border_menu.c:178
-#, fuzzy
 msgid "Shade"
-msgstr "Ombrejat"
+msgstr "Ombra"
 
 #: src/bin/e_int_border_menu.c:371
 #: src/bin/e_int_border_prop.c:511
@@ -3045,14 +3042,12 @@ msgid "Window type"
 msgstr "Tipus de Finestra"
 
 #: src/bin/e_int_border_remember.c:683
-#, fuzzy
 msgid "wildcard matches are allowed"
-msgstr "els partits de comodins estan permesos"
+msgstr "Parells de comodins estan permesos"
 
 #: src/bin/e_int_border_remember.c:685
-#, fuzzy
 msgid "Transience"
-msgstr "transitorietat"
+msgstr "Transitorietat"
 
 #: src/bin/e_int_border_remember.c:688
 msgid "Identifiers"
@@ -3761,9 +3756,8 @@ msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenment no pot establir aquesta combinació de tecles del sistema.\n"
 
 #: src/bin/e_main.c:936
-#, fuzzy
 msgid "Setup Thumbnailer"
-msgstr "Ungla"
+msgstr "Preferències Miniatura"
 
 #: src/bin/e_main.c:940
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
@@ -5172,9 +5166,8 @@ msgid "Style:"
 msgstr "Estil:"
 
 #: src/modules/comp/e_mod_config.c:681
-#, fuzzy
 msgid "Edit Match"
-msgstr "Edita Icona"
+msgstr "Edita Parell"
 
 #: src/modules/comp/e_mod_config.c:733
 msgid "Names"
@@ -5744,9 +5737,8 @@ msgid "Flip when dragging objects to the screen edge"
 msgstr "Salta quan s'arrastrin objectes a l'extrem de la Pantalla"
 
 #: src/modules/conf_display/e_int_config_desks.c:194
-#, fuzzy
 msgid "Wrap desktops around when flipping"
-msgstr "Emboliqui al voltant del llançar ordinadors d'escriptori"
+msgstr "Emboliqui els escriptoris quan es mouen d'una tirada"
 
 #: src/modules/conf_display/e_int_config_desks.c:200
 #: src/modules/conf_display/e_int_config_desk.c:192
@@ -5844,9 +5836,8 @@ msgid "Use Custom Screenlock Command"
 msgstr "Usa Comanda Protecció Pantalla"
 
 #: src/modules/conf_display/e_int_config_desklock.c:236
-#, fuzzy
 msgid "Locking"
-msgstr "Bloqueix"
+msgstr "Entrellaçat"
 
 #: src/modules/conf_display/e_int_config_desklock.c:278
 msgid "Keyboard Layout"
@@ -5893,13 +5884,11 @@ msgid "%1.0f minutes"
 msgstr "%1.0f minuts"
 
 #: src/modules/conf_display/e_int_config_desklock.c:331
-#, fuzzy
 msgid "Timers"
-msgstr "Temes"
+msgstr "Temporitzador"
 
 #: src/modules/conf_display/e_int_config_desklock.c:336
 #: src/modules/conf_display/e_int_config_screensaver.c:195
-#, fuzzy
 msgid "Suggest if deactivated before"
 msgstr "Suggerir si es desactiva abans de"
 
@@ -5930,30 +5919,25 @@ msgstr "Autoritza Salva Pantalles en blanc"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:163
 #: src/modules/syscon/e_int_config_syscon.c:167
-#, fuzzy
 msgid "Timeout"
-msgstr "Temps d'Amagar"
+msgstr "Expirar"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:171
-#, fuzzy
 msgid "Suspend on blank"
-msgstr "Suspendre en blanc"
+msgstr "Suspendre en inactivatat"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:175
-#, fuzzy
 msgid "Suspend even if AC"
-msgstr "suspendre el temps"
+msgstr "Suspendre si CA"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:180
-#, fuzzy
 msgid "Suspend delay"
-msgstr "suspendre el temps"
+msgstr "Retràs de suspendre "
 
 #: src/modules/conf_display/e_int_config_screensaver.c:188
 #: src/modules/conf_display/e_mod_main.c:32
-#, fuzzy
 msgid "Blanking"
-msgstr "blanking"
+msgstr "En blanc"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:192
 msgid "Presentation mode enabled"
@@ -5964,40 +5948,36 @@ msgid "Backlight Settings"
 msgstr "Preferències llum de fons"
 
 #: src/modules/conf_display/e_int_config_dpms.c:150
-#, fuzzy
 msgid "Normal Backlight"
-msgstr "llum de fons normal"
+msgstr "Llum de Fons Normal"
 
 #: src/modules/conf_display/e_int_config_dpms.c:152
 #: src/modules/conf_display/e_int_config_dpms.c:158
-#, fuzzy, c-format
+#, c-format
 msgid "%3.0f"
-msgstr "%3.0f%%"
+msgstr "%3.0f"
 
 #: src/modules/conf_display/e_int_config_dpms.c:156
-#, fuzzy
 msgid "Dim Backlight"
-msgstr "Il·luminació tènue"
+msgstr "Llum de Fons Fosc"
 
 #: src/modules/conf_display/e_int_config_dpms.c:162
-#, fuzzy
 msgid "Idle Fade Time"
-msgstr "Fade Time Idle"
+msgstr "Temps Disminuació Repós"
 
 #: src/modules/conf_display/e_int_config_dpms.c:164
-#, fuzzy, c-format
+#, c-format
 msgid "%1.0f second(s)"
-msgstr "%1.0f segons"
+msgstr "%1.0f segon(s="
 
 #: src/modules/conf_display/e_int_config_dpms.c:170
-#, fuzzy
 msgid "Fade Time"
-msgstr "Fade Time"
+msgstr "Disminuir Ttemps"
 
 #: src/modules/conf_display/e_int_config_dpms.c:172
-#, fuzzy, c-format
+#, c-format
 msgid "%1.1f second(s)"
-msgstr "%1.1f segons"
+msgstr "%1.1f segon(s)"
 
 #: src/modules/conf_display/e_mod_main.c:21
 #: src/modules/tiling/e_mod_config.c:198
@@ -6038,17 +6018,15 @@ msgstr "Preferències Tecles Edge"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:258
 #: src/modules/conf_edgebindings/e_mod_main.c:21
-#, fuzzy
 msgid "Edge Bindings"
-msgstr "Bindatje de tecles"
+msgstr "Bindatje de tecles de Cantonada"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:270
 #: src/modules/conf_keybindings/e_int_config_keybindings.c:251
 #: src/modules/conf_keybindings/e_int_config_mousebindings.c:298
 #: src/modules/conf_paths/e_int_config_env.c:314
-#, fuzzy
 msgid "Modify"
-msgstr "Modificar Tecla"
+msgstr "Modifica"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:274
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:816
@@ -6073,9 +6051,8 @@ msgid "Action"
 msgstr "Acció"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:290
-#, fuzzy
 msgid "Mouse Button"
-msgstr "Configuració del Mòdul"
+msgstr "Butó de Ratolí"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:296
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:832
@@ -6094,34 +6071,31 @@ msgid "Allow binding activation with fullscreen windows"
 msgstr "Permetre drasera activació  amb finestres de pantalla completa"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:309
-#, fuzzy
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
-msgstr "Permetre l'activació d'unió amb les finestres de pantalla completa"
+msgstr "Permetre tecles activació amb multiples escriptoris (PERILLÓS!)"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:874
-#, fuzzy
 msgid "Edge Binding Sequence"
-msgstr "Enquadernació per la vora de seqüència"
+msgstr "Seqüència de tecles de Cantonada"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:893
-#, fuzzy
 msgid "Clickable edge"
-msgstr "Feu clic a la vora"
+msgstr "Cantonada Pitjable "
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1214
-#, fuzzy
 msgid "Edge Binding Error"
-msgstr "Bindatje del Ratolí "
+msgstr "Error Telces Cantonada"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1215
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The edge binding that you chose is already used by\n"
 "<hilight>%s</hilight> action.\n"
 "Please choose another edge to bind."
 msgstr ""
-"El Seqüència de Bindatge de tecles que ha escollit està  essent usat per l'acció \n"
-" <hilight>%s</hilight>. Si us plau tria una altra seqüència."
+"El Seqüència de tecles que ha escollit està  essent usat per l'acció \n"
+" <hilight>%s</hilight>. \n"
+"Si us plau tria una altra seqüència."
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1350
 #: src/modules/conf_keybindings/e_int_config_keybindings.c:1305
@@ -6148,19 +6122,16 @@ msgid "WIN"
 msgstr "WIN"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1377
-#, fuzzy
 msgid "Left Edge"
-msgstr "Elimina Tecla"
+msgstr "Cantonada Esquerra"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1381
-#, fuzzy
 msgid "Top Edge"
-msgstr "Modificar Tecla"
+msgstr "Cantonada Dalt"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1385
-#, fuzzy
 msgid "Right Edge"
-msgstr "Lluminós"
+msgstr "Cantonada Dreta"
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1389
 msgid "Bottom Edge"
@@ -6188,38 +6159,35 @@ msgid "(left clickable)"
 msgstr ""
 
 #: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1421
-#, fuzzy, c-format
+#, c-format
 msgid "(clickable)"
-msgstr "Feu clic a la vora"
+msgstr "(pitjable)"
 
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:574
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:584
-#, fuzzy
 msgid "Signal Binding Error"
-msgstr "Bindatje de tecles"
+msgstr "Senyal d'error de Tecles"
 
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:574
 msgid "Signal and Source must NOT be blank!"
 msgstr ""
 
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:585
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The signal and source that you entered are already used by\n"
 "<hilight>%s</hilight> action.\n"
 msgstr ""
-"El Seqüència de Bindatge de tecles que ha escollit està  essent usat per l'acció \n"
-" <hilight>%s</hilight>. Si us plau tria una altra seqüència."
+"La senyal i la seqüència de tecles que ha escollit està  essent usat per l'acció \n"
+" <hilight>%s</hilight>. \n"
 
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:634
-#, fuzzy
 msgid "Add Signal Binding"
-msgstr "Bindatje de tecles"
+msgstr "Afegir Tecla de Senyal"
 
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:645
-#, fuzzy
 msgid "Source:"
-msgstr "Mou Text"
+msgstr "Font:"
 
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:650
 msgid "Signal:"
@@ -6227,9 +6195,8 @@ msgstr ""
 
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:804
 #: src/modules/conf_edgebindings/e_mod_main.c:25
-#, fuzzy
 msgid "Signal Bindings"
-msgstr "Bindatje de tecles"
+msgstr "Senyals de Tecles"
 
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:865
 msgid "Signal Bindings Settings"
@@ -6241,9 +6208,8 @@ msgstr "Preferències Tecles Senyal"
 #: src/modules/mixer/app_mixer.c:308
 #: src/modules/mixer/app_mixer.c:326
 #: src/modules/xkbswitch/e_mod_main.c:71
-#, fuzzy
 msgid "Input"
-msgstr "Inici"
+msgstr "Entrada"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:36
 msgid "Interaction Settings"
@@ -6255,14 +6221,12 @@ msgid "Thumbscroll"
 msgstr "Ungla"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:97
-#, fuzzy
 msgid "Enable Thumbscroll"
-msgstr "habilitar Thumbscroll"
+msgstr "Autoritza Thumbscroll"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:102
-#, fuzzy
 msgid "Threshold for a thumb drag"
-msgstr "Llindar per a un llast per al polze"
+msgstr "Llindar per a Arrossegament"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:105
 #: src/modules/conf_interaction/e_int_config_mouse.c:178
@@ -6272,34 +6236,31 @@ msgid "%1.0f pixels"
 msgstr "%1.0f pixels"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:110
-#, fuzzy
 msgid "Threshold for applying drag momentum"
-msgstr "Llindar per a l'aplicació de força d'arrossegament"
+msgstr "Llindar per l'aplicació d'un impuls d'arrossegament"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:113
-#, fuzzy, c-format
+#, c-format
 msgid "%1.0f pixels/s"
-msgstr "%5.0f pixels/seg"
+msgstr "%1.0f pixels/seg"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:119
-#, fuzzy
 msgid "Friction slowdown"
-msgstr "la fricció desacceleració"
+msgstr "Disminució de fricció"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:122
 #: src/modules/conf_performance/e_int_config_powermanagement.c:243
-#, fuzzy, c-format
+#, c-format
 msgid "%1.2f s"
-msgstr "%1.1f sec"
+msgstr "%1.2f sec"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:47
 msgid "Mouse Settings"
 msgstr "Preferències Ratolí"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:166
-#, fuzzy
 msgid "Show Cursor"
-msgstr "Color d'Ombra"
+msgstr "Mostra Cursor"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:183
 #: src/modules/conf_theme/e_mod_main.c:163
@@ -6314,19 +6275,16 @@ msgid "X"
 msgstr "X"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:197
-#, fuzzy
 msgid "Idle effects"
 msgstr "efectes d'inactivitat"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:203
-#, fuzzy
 msgid "Cursor"
-msgstr "Color d'Ombra"
+msgstr "Cursor"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:210
-#, fuzzy
 msgid "Mouse Hand"
-msgstr "Bindatje del Ratolí "
+msgstr "Del Ratolí "
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:218
 msgid "Mouse Acceleration"
@@ -6343,14 +6301,12 @@ msgstr "llindar"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:233
 #: src/modules/conf_interaction/e_mod_main.c:24
-#, fuzzy
 msgid "Mouse"
-msgstr "Les més usades"
+msgstr "Ratolí"
 
 #: src/modules/conf_interaction/e_mod_main.c:20
-#, fuzzy
 msgid "Touch"
-msgstr "Afegir al Llançador"
+msgstr "Tocar"
 
 #: src/modules/conf_intl/e_int_config_imc.c:103
 #: src/modules/conf_intl/e_mod_main.c:28
@@ -6358,9 +6314,8 @@ msgid "Input Method Settings"
 msgstr "Paràmetres del Mètode d'Entrada"
 
 #: src/modules/conf_intl/e_int_config_imc.c:290
-#, fuzzy
 msgid "Input Method Selector"
-msgstr "De mètodes d'entrada de selecció"
+msgstr "Selector Mètode Entrada"
 
 #: src/modules/conf_intl/e_int_config_imc.c:293
 #: src/modules/conf_intl/e_int_config_imc.c:880
@@ -6381,9 +6336,8 @@ msgid "Import..."
 msgstr "Importa..."
 
 #: src/modules/conf_intl/e_int_config_imc.c:893
-#, fuzzy
 msgid "Input Method Parameters"
-msgstr "Paràmetres de mètodes d'entrada"
+msgstr "Paràmetres Mètodes Entrada"
 
 #: src/modules/conf_intl/e_int_config_imc.c:903
 msgid "Execute Command"
@@ -6403,9 +6357,8 @@ msgstr "Seleccioneu Preferències Mètode Entrada"
 
 #: src/modules/conf_intl/e_int_config_imc_import.c:283
 #: src/modules/conf_intl/e_int_config_imc_import.c:299
-#, fuzzy
 msgid "Input Method Config Import Error"
-msgstr "Mètode d'entrada de configuració d'error d'importació"
+msgstr "Error en Importació de Configuració de Mètode d'Entrada"
 
 #: src/modules/conf_intl/e_int_config_imc_import.c:284
 msgid ""
@@ -6447,9 +6400,8 @@ msgid ""
 msgstr ""
 
 #: src/modules/conf_intl/e_int_config_intl.c:966
-#, fuzzy
 msgid "Possible Locale problems"
-msgstr "Els possibles problemes de configuració regional"
+msgstr "Possible Problema de Configuració Regional"
 
 #: src/modules/conf_intl/e_int_config_intl.c:1024
 #: src/modules/conf_intl/e_int_config_intl.c:1115
@@ -6460,9 +6412,8 @@ msgstr "Selecció d'Idioma"
 #: src/modules/conf_intl/e_int_config_intl.c:1503
 #: src/modules/conf_menus/e_int_config_menus.c:169
 #: src/modules/wizard/page_010.c:169
-#, fuzzy
 msgid "System Default"
-msgstr "Ajusta a Predeterminat"
+msgstr "Sistema per Defecte"
 
 #: src/modules/conf_intl/e_int_config_intl.c:1088
 #: src/modules/conf_intl/e_int_config_intl.c:1166
@@ -6499,14 +6450,12 @@ msgid "Ac Adapter"
 msgstr ""
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:356
-#, fuzzy
 msgid "Button"
-msgstr "Botons"
+msgstr "Botó"
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:358
-#, fuzzy
 msgid "Fan"
-msgstr "Llunyà "
+msgstr "Ventilador "
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:361
 #, fuzzy
@@ -6527,23 +6476,20 @@ msgid "Lid"
 msgstr ""
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:367
-#, fuzzy
 msgid "Power Button"
-msgstr "Configuració del Mòdul"
+msgstr "Botó Engegada"
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:369
 msgid "Processor"
 msgstr ""
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:371
-#, fuzzy
 msgid "Sleep Button"
-msgstr "Configuració del Mòdul"
+msgstr "Botó Dormir"
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:373
-#, fuzzy
 msgid "Thermal"
-msgstr "Normal"
+msgstr "Tèrmic "
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:375
 msgid "Video"
@@ -6554,24 +6500,20 @@ msgid "Wifi"
 msgstr ""
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:381
-#, fuzzy
 msgid "Zoom Out"
-msgstr "Surt"
+msgstr "Zoom Fora"
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:383
-#, fuzzy
 msgid "Zoom In"
-msgstr "Zoom"
+msgstr "Zoom dins"
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:385
-#, fuzzy
 msgid "Brightness Down"
-msgstr "Aturada"
+msgstr "Baixar Brillantor"
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:387
-#, fuzzy
 msgid "Brightness Up"
-msgstr "llum de fons"
+msgstr "Pujar Brillantor"
 
 #: src/modules/conf_keybindings/e_int_config_acpibindings.c:389
 #, fuzzy
