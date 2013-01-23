@@ -705,12 +705,11 @@ _pan_sel(Evas_Object *obj, Item *it)
              if (p)
                {
                   p++;
-                  name = strdup(p);
+                  name = strdupa(p);
                   p = strrchr(name, '.');
                   if (p) *p = 0;
                }
              edje_object_part_text_set(sd->info->bg, "e.text.filename", name);
-             free(name);
           }
         else
           {
