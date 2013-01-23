@@ -31,6 +31,7 @@ _e_kbd_buf_layout_unref(E_Kbd_Buf_Layout *kbl)
         if (ky->key) eina_stringshare_del(ky->key);
         if (ky->key_shift) eina_stringshare_del(ky->key_shift);
         if (ky->key_capslock) eina_stringshare_del(ky->key_capslock);
+        if (ky->key_altgr) eina_stringshare_del(ky->key_altgr);
         free(ky);
         kbl->keys = eina_list_remove_list(kbl->keys, kbl->keys);
      }
@@ -366,7 +367,7 @@ e_kbd_buf_layout_fuzz_set(E_Kbd_Buf *kb, int fuzz)
 }
 
 EAPI void
-e_kbd_buf_layout_key_add(E_Kbd_Buf *kb, const char *key,  const char *key_shift, const char *key_capslock, int x, int y, int w, int h)
+e_kbd_buf_layout_key_add(E_Kbd_Buf *kb, const char *key,  const char *key_shift, const char *key_capslock, const char *key_altgr, int x, int y, int w, int h)
 {
    E_Kbd_Buf_Key *ky;
 
@@ -378,6 +379,7 @@ e_kbd_buf_layout_key_add(E_Kbd_Buf *kb, const char *key,  const char *key_shift,
    ky->key = eina_stringshare_add(key);
    if (key_shift) ky->key_shift = eina_stringshare_add(key_shift);
    if (key_capslock) ky->key_capslock = eina_stringshare_add(key_capslock);
+   if (key_altgr) ky->key_altgr = eina_stringshare_add(key_altgr);
    ky->x = x;
    ky->y = y;
    ky->w = w;

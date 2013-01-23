@@ -112,21 +112,22 @@ _e_kbd_int_layout_buf_update(E_Kbd_Int *ki)
           }
         if (out)
           {
-             char *s1 = NULL, *s2 = NULL, *s3 = NULL;
+             char *s1 = NULL, *s2 = NULL, *s3 = NULL, *s4 = NULL;
 
              if ((out) && (out[0] == '"')) 
                s1 = strdup(_e_kbd_int_str_unquote(out));
              if ((out_shift) && (out_shift[0] == '"')) 
                s2 = strdup(_e_kbd_int_str_unquote(out_shift));
              if ((out_altgr) && (out_altgr[0] == '"')) 
-               s2 = strdup(_e_kbd_int_str_unquote(out_altgr));
+               s4 = strdup(_e_kbd_int_str_unquote(out_altgr));
              if ((out_capslock) && (out_capslock[0] == '"')) 
                s3 = strdup(_e_kbd_int_str_unquote(out_capslock));
-             e_kbd_buf_layout_key_add(ki->kbuf, s1, s2, s3, 
+             e_kbd_buf_layout_key_add(ki->kbuf, s1, s2, s3, s4, 
                                       ky->x, ky->y, ky->w, ky->h);
              free(s1);
              free(s2);
              free(s3);
+             free(s4);
           }
      }
 }

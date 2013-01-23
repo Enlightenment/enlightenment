@@ -33,7 +33,7 @@ struct _E_Kbd_Buf
 struct _E_Kbd_Buf_Key
 {
    int         x, y, w, h;
-   const char *key, *key_shift, *key_capslock;
+   const char *key, *key_shift, *key_capslock, *key_altgr;
 };
 
 struct _E_Kbd_Buf_Keystroke
@@ -45,7 +45,8 @@ struct _E_Kbd_Buf_Keystroke
    unsigned char     capslock : 1;
 };
 
-struct _E_Kbd_Buf_Layout {
+struct _E_Kbd_Buf_Layout 
+{
    int        ref;
    int        w, h;
    int        fuzz;
@@ -59,7 +60,7 @@ EAPI void e_kbd_buf_clear(E_Kbd_Buf *kb);
 EAPI void e_kbd_buf_layout_clear(E_Kbd_Buf *kb);
 EAPI void e_kbd_buf_layout_size_set(E_Kbd_Buf *kb, int w, int h);
 EAPI void e_kbd_buf_layout_fuzz_set(E_Kbd_Buf *kb, int fuzz);
-EAPI void e_kbd_buf_layout_key_add(E_Kbd_Buf *kb, const char *key, const char *key_shift, const char *key_capslock, int x, int y, int w, int h);
+EAPI void e_kbd_buf_layout_key_add(E_Kbd_Buf *kb, const char *key, const char *key_shift, const char *key_capslock, const char *key_altgr, int x, int y, int w, int h);
 EAPI void e_kbd_buf_pressed_key_add(E_Kbd_Buf *kb, const char *key, int shift, int capslock);
 EAPI void e_kbd_buf_pressed_point_add(E_Kbd_Buf *kb, int x, int y, int shift, int capslock);
 EAPI const char *e_kbd_buf_actual_string_get(E_Kbd_Buf *kb);
