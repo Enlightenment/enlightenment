@@ -2570,7 +2570,7 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
 {
    Eina_List *l, *ll, *tlist, *tmp, *clist = NULL;
    Eina_Stringshare *tag, *alias;
-   char *s, *e;
+   char *s, *e, *update;
 
    if ((!str) || (!str[0]))
      {
@@ -2579,8 +2579,10 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
         ctx->opts = eina_list_free(ctx->opts);
         return ctx->changed = EINA_TRUE;
      }
+   update = strdupa(str);
+   eina_str_tolower(&update);
    tlist = eina_list_clone(tags_alias_list);
-   for (s = e = strdupa(str); e[0]; e++)
+   for (s = e = strdupa(update); e[0]; e++)
      {
         if (isalnum(e[0])) continue;
         e[0] = 0;
@@ -2589,7 +2591,7 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
              tmp = NULL;
              EINA_LIST_FOREACH_SAFE(tlist, l, ll, alias)
                {
-                  if ((!strcasestr(s, alias)) && (!strcasestr(alias, s))) continue;
+                  if ((!strstr(s, alias)) && (!strstr(alias, s))) continue;
                   tag = eina_hash_find(tags_alias_hash, alias);
                   if (eina_list_data_find(clist, tag))
                     {
@@ -2616,7 +2618,7 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
         tmp = NULL;
         EINA_LIST_FOREACH_SAFE(tlist, l, ll, alias)
           {
-             if ((!strcasestr(s, alias)) && (!strcasestr(alias, s))) continue;
+             if ((!strstr(s, alias)) && (!strstr(alias, s))) continue;
              tag = eina_hash_find(tags_alias_hash, alias);
              if (eina_list_data_find(clist, tag))
                {
@@ -2638,7 +2640,7 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
      }
    eina_list_free(tlist);
    tlist = eina_list_clone(tags_list);
-   for (s = e = strdupa(str); e[0]; e++)
+   for (s = e = strdupa(update); e[0]; e++)
      {
         if (isalnum(e[0])) continue;
         e[0] = 0;
@@ -2647,7 +2649,7 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
              tmp = NULL;
              EINA_LIST_FOREACH_SAFE(tlist, l, ll, tag)
                {
-                  if ((!strcasestr(s, tag)) && (!strcasestr(tag, s))) continue;
+                  if ((!strstr(s, tag)) && (!strstr(tag, s))) continue;
                   if (eina_list_data_find(clist, tag))
                     {
                        if (strncasecmp(s, tag, e - s)) continue;
@@ -2673,7 +2675,7 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
         tmp = NULL;
         EINA_LIST_FOREACH_SAFE(tlist, l, ll, tag)
           {
-             if ((!strcasestr(s, tag)) && (!strcasestr(tag, s))) continue;
+             if ((!strstr(s, tag)) && (!strstr(tag, s))) continue;
              if (eina_list_data_find(clist, tag))
                {
                   if (strncasecmp(s, tag, e - s)) continue;
