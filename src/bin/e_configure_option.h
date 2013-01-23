@@ -119,6 +119,7 @@ struct E_Configure_Option_Ctx
    Eina_List *match_tags; // Eina_Stringshare
    Eina_List *opts; // E_Configure_Option
    Eina_Stringshare *category;
+   char *text;
    Eina_Bool changed : 1;
 };
 

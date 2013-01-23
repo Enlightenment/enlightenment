@@ -2578,10 +2578,18 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
         if ((!ctx->tags) && (ctx->opts)) return EINA_FALSE;
         ctx->tags = eina_list_free(ctx->tags);
         ctx->opts = eina_list_free(ctx->opts);
+        E_FREE(ctx->text);
         return ctx->changed = EINA_TRUE;
      }
-   update = strdupa(str);
+   update = strdup(str);
    eina_str_tolower(&update);
+   if (!e_util_strcmp(ctx->text, update))
+     {
+        free(update);
+        return EINA_FALSE;
+     }
+   free(ctx->text);
+   ctx->text = update;
    alist = eina_list_clone(tags_alias_list);
    tlist = eina_list_clone(tags_list);
    for (s = e = strdupa(update); e[0]; e++)
@@ -2606,10 +2614,12 @@ e_configure_option_ctx_update(E_Configure_Option_Ctx *ctx, const char *str)
              if (strncmp(s, alias, e - s))
                {
                   tmp = eina_list_append(tmp, tag);
+                  tlist = eina_list_remove(tlist, tag);
                   continue;
                }
              tmp = eina_list_free(tmp);
              tmp = eina_list_append(tmp, tag);
+             tlist = eina_list_remove(tlist, tag);
              skip = EINA_TRUE;
              break;
           }
@@ -2657,10 +2667,12 @@ end:
              if (strncmp(s, alias, e - s))
                {
                   tmp = eina_list_append(tmp, tag);
+                  tlist = eina_list_remove(tlist, tag);
                   continue;
                }
              tmp = eina_list_free(tmp);
              tmp = eina_list_append(tmp, tag);
+             tlist = eina_list_remove(tlist, tag);
              skip = EINA_TRUE;
              break;
           }
@@ -2791,6 +2803,7 @@ e_configure_option_ctx_free(E_Configure_Option_Ctx *ctx)
    eina_list_free(ctx->tags);
    eina_list_free(ctx->opts);
    eina_list_free(ctx->match_tags);
+   free(ctx->text);
    free(ctx);
 }
 
