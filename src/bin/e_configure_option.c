@@ -784,7 +784,7 @@ _e_configure_maximize_policy_info_cb(E_Configure_Option *co)
 
    for (x = E_MAXIMIZE_FULLSCREEN; x <= E_MAXIMIZE_FILL; x++)
      {
-        if (!name[x]) continue;
+        if (!name[x - 1]) continue;
         oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t *)(long)x);
         oi->current = (*(int *)co->valptr == x);
         ret = eina_list_append(ret, oi);
