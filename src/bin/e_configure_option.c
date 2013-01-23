@@ -2744,7 +2744,7 @@ e_configure_option_ctx_match_tag_list(E_Configure_Option_Ctx *ctx)
 
         EINA_LIST_FOREACH(co->tags, ll, tag)
           {
-             if ((!ctx->match_tags) || (!eina_list_data_find(ctx->match_tags, tag)))
+             if ((!ctx->match_tags) || ((!eina_list_data_find(ctx->match_tags, tag)) && (!eina_list_data_find(ctx->tags, tag))))
                ctx->match_tags = eina_list_append(ctx->match_tags, tag);
           }
      }
