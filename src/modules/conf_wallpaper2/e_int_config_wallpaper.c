@@ -17,7 +17,7 @@ struct _Info
 {
    E_Win *win;
    Evas_Object *bg, *preview, *mini, *button, *box, *sframe, *span;
-   char *bg_file;
+   Eina_Stringshare *bg_file;
    int iw, ih;
    Eina_List *dirs;
    char *curdir;
@@ -52,7 +52,7 @@ struct _Item
 {
    Evas_Object *obj;
    Evas_Coord x, y, w, h;
-   const char *file;
+   Eina_Stringshare *file;
    char *sort_id;
    Evas_Object *frame, *image;
    Eina_Bool selected : 1;
@@ -456,7 +456,7 @@ _e_smart_del(Evas_Object *obj)
      {
         if (it->frame) evas_object_del(it->frame);
         if (it->image) evas_object_del(it->image);
-        if (it->file) eina_stringshare_del(it->file);
+        eina_stringshare_del(it->file);
         free(it->sort_id);
         free(it);
      }
@@ -691,14 +691,14 @@ _pan_sel(Evas_Object *obj, Item *it)
              if (it2->selected) it2->selected = 0;
           }
         it->selected = EINA_TRUE;
-        free(sd->info->bg_file);
+        eina_stringshare_del(sd->info->bg_file);
         evas_object_hide(sd->info->mini);
         if (it->file)
           {
              char *name = NULL, *p;
 
              sd->info->use_theme_bg = 0;
-             sd->info->bg_file = strdup(it->file);
+             sd->info->bg_file = eina_stringshare_ref(it->file);
              edje_object_file_set(sd->info->mini, sd->info->bg_file,
                                   "e/desktop/background");
              p = strrchr(sd->info->bg_file, '/');
@@ -922,7 +922,7 @@ _pan_file_add(Evas_Object *obj, const char *file, Eina_Bool remote, Eina_Bool th
           {
              int match = 0;
 
-             if (!strcmp(sd->info->bg_file, it->file)) match = 1;
+             if (sd->info->bg_file == it->file) match = 1;
              if (!match)
                {
                   const char *p1, *p2;
@@ -941,12 +941,11 @@ _pan_file_add(Evas_Object *obj, const char *file, Eina_Bool remote, Eina_Bool th
                   if (p)
                     {
                        p++;
-                       name = strdup(p);
+                       name = strdupa(p);
                        p = strrchr(name, '.');
                        if (p) *p = 0;
                     }
                   edje_object_part_text_set(sd->info->bg, "e.text.filename", name);
-                  free(name);
                }
           }
      }
@@ -1147,10 +1146,10 @@ wp_browser_new(E_Container *con)
              else
                info->mode = 2;
           }
-        info->bg_file = strdup(cfbg->file);
+        info->bg_file = eina_stringshare_ref(cfbg->file);
      }
    if ((!info->bg_file) && (e_config->desktop_default_background))
-     info->bg_file = strdup(e_config->desktop_default_background);
+     info->bg_file = eina_stringshare_ref(e_config->desktop_default_background);
    else
      info->use_theme_bg = 1;
 
@@ -1160,7 +1159,8 @@ wp_browser_new(E_Container *con)
    win = e_win_new(con);
    if (!win)
      {
-        E_FREE(info);
+        eina_stringshare_del(info->bg_file);
+        free(info);
         return NULL;
      }
    info->win = win;
@@ -1319,7 +1319,7 @@ wp_broser_free(Info *info)
    if (!info) return;
    e_object_del(E_OBJECT(info->win));
    if (info->dir) eina_iterator_free(info->dir);
-   free(info->bg_file);
+   eina_stringshare_del(info->bg_file);
    free(info->curdir);
    EINA_LIST_FREE(info->dirs, s)
      free(s);
