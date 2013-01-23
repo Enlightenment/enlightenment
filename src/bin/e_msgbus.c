@@ -391,16 +391,15 @@ _e_msgbus_profile_delete_cb(const EDBus_Service_Interface *iface __UNUSED__,
                             const EDBus_Message *msg)
 {
    char *profile;
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
 
    if (!edbus_message_arguments_get(msg, "s", &profile))
-     return reply;
+     return edbus_message_method_return_new(msg);
    if (!strcmp(e_config_profile_get(), profile))
      return edbus_message_error_new(msg,
                                     "org.enlightenment.DBus.InvalidArgument",
                                     "Can't delete active profile");
    e_config_profile_del(profile);
-   return reply;
+   return edbus_message_method_return_new(msg);
 }
 
 /* Window handlers */
