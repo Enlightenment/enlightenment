@@ -280,7 +280,7 @@ _e_configure_option_apply(E_Configure_Option *co, Eina_List **events, Eina_List 
      {
         eina_stringshare_replace(co->valptr, NULL);
         eina_value_get(&co->val, co->valptr);
-        eina_stringshare_ref(co->valptr);
+        eina_stringshare_ref(*(Eina_Stringshare**)co->valptr);
      }
    else if (co->type != E_CONFIGURE_OPTION_TYPE_CUSTOM)
      eina_value_get(&co->val, co->valptr);
