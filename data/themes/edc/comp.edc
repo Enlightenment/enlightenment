@@ -464,6 +464,43 @@ group { name: "e/comp/rotate/fast";
    }
 }
 
+group { name: "e/comp/flip";
+   inherit: "e/comp/rotate";
+   parts {
+      part { name: "e.swallow.content";
+         description { state: "default";
+            map {
+               on: 1;
+               rotation {
+                  z: 0;
+                  y: 0;
+               }
+               backface_cull: 1;
+            }
+         }
+         description { state: "focus-out";
+            inherit: "default";
+            map.rotation {
+               z: 0;
+               y: 180;
+            }
+         }
+      }
+   }
+}
+
+group { name: "e/comp/flip/fast";
+   inherit: "e/comp/flip";
+   programs {
+      program { name: "focus3";
+         transition: LINEAR 0;
+      }
+      program { name: "focus_off3";
+         transition: LINEAR 0;
+      }
+   }
+}
+
 group { name: "e/comp/popup";
    inherit: "e/comp/default";
    parts {
