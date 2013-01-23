@@ -249,7 +249,7 @@ _cfg_view_mode_info_cb(E_Configure_Option *co)
 
    for (x = E_FM2_VIEW_MODE_GRID_ICONS; x <= E_FM2_VIEW_MODE_LIST; x++)
      {
-        if (!name[x]) continue;
+        if (!name[x - 1]) continue;
         oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t*)(long)x);
         oi->current = (*(int*)co->valptr == x);
         ret = eina_list_append(ret, oi);
