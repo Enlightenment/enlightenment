@@ -8979,7 +8979,7 @@ msgstr "Sfondo"
 
 #: src/modules/gadman/e_mod_config.c:22
 msgid "Hover (Key Toggle)"
-msgstr "Passaggio mouse (tasto commutazione)"
+msgstr "Livello nascosto (tasti visualizzazione)"
 
 #: src/modules/gadman/e_mod_config.c:79 src/modules/gadman/e_mod_config.c:156
 #: src/modules/gadman/e_mod_main.c:163
