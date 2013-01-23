@@ -3568,8 +3568,6 @@ e_action_predef_name_set(const char *act_grp, const char *act_name, const char *
         if (!actg) return;
 
         actg->act_grp = eina_stringshare_add(act_grp);
-        actg->acts = NULL;
-
         action_groups = eina_list_append(action_groups, actg);
         action_groups =
           eina_list_sort(action_groups, -1, _action_groups_sort_cb);
