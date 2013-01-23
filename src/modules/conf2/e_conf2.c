@@ -24,6 +24,35 @@ static Eina_Bool _event_opt_changed(void *d EINA_UNUSED, int type EINA_UNUSED, E
 static void _tag_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void _opt_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info);
 
+static void
+_buttons_toggle(E_Configure_Option *co, Eina_Bool global)
+{
+   Eina_Bool show;
+
+   if (global)
+     show = !!e_configure_option_changed_list();
+   else
+     show = co->changed;
+   if (show)
+     {
+        if (!buttons_visible)
+          {
+             elm_layout_signal_emit(layout, "e,action,apply_show", "e");
+             elm_layout_signal_emit(layout, "e,action,discard_show", "e");
+          }
+        buttons_visible = EINA_TRUE;
+     }
+   else
+     {
+        if (buttons_visible)
+          {
+             elm_layout_signal_emit(layout, "e,action,apply_hide", "e");
+             elm_layout_signal_emit(layout, "e,action,discard_hide", "e");
+          }
+        buttons_visible = EINA_FALSE;
+     }
+}
+
 static double
 _opt_overlay_value_update(E_Configure_Option *co, Evas_Object *obj)
 {
@@ -275,12 +304,7 @@ _reset_cb(void *d EINA_UNUSED)
    EINA_LIST_FOREACH(e_configure_option_category_list(), l, cat)
      elm_genlist_item_append(list[0], itc_cats, cat, NULL, 0, _cat_sel, cat);
    elm_object_disabled_set(back, 1);
-   if (!e_configure_option_changed_list())
-     {
-        elm_layout_signal_emit(layout, "e,action,apply_hide", "e");
-        elm_layout_signal_emit(layout, "e,action,discard_hide", "e");
-        buttons_visible = EINA_FALSE;
-     }
+   _buttons_toggle(NULL, EINA_TRUE);
    ctx_active->category = NULL;
    reset_timer = NULL;
    return EINA_FALSE;
@@ -319,12 +343,7 @@ static void
 _apply_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    e_configure_option_apply_all();
-   if (buttons_visible)
-     {
-        elm_layout_signal_emit(layout, "e,action,apply_hide", "e");
-        elm_layout_signal_emit(layout, "e,action,discard_hide", "e");
-     }
-   buttons_visible = EINA_FALSE;
+   _buttons_toggle(NULL, EINA_TRUE);
 }
 
 static void
@@ -658,7 +677,7 @@ static void
 _opt_overlay_show(E_Configure_Option *co, Elm_Object_Item *it)
 {
    Evas_Object *o, *sl;
-   Eina_Bool show = EINA_TRUE;
+   Eina_Bool global = EINA_FALSE, show = EINA_TRUE;
    Eina_List *l;
    double d;
    char buf[256];
@@ -821,26 +840,9 @@ _opt_overlay_show(E_Configure_Option *co, Elm_Object_Item *it)
           break;
         default:
           if (overlay) evas_object_del(overlay);
-          return;
+          global = EINA_TRUE;
      }
-   if (e_configure_option_changed_list())
-     {
-        if (!buttons_visible)
-          {
-             elm_layout_signal_emit(layout, "e,action,apply_show", "e");
-             elm_layout_signal_emit(layout, "e,action,discard_show", "e");
-          }
-        buttons_visible = EINA_TRUE;
-     }
-   else
-     {
-        if (buttons_visible)
-          {
-             elm_layout_signal_emit(layout, "e,action,apply_hide", "e");
-             elm_layout_signal_emit(layout, "e,action,discard_hide", "e");
-          }
-        buttons_visible = EINA_FALSE;
-     }
+   _buttons_toggle(co, global);
 }
 
 static void
@@ -1118,43 +1120,12 @@ _event_opt_changed(void *d EINA_UNUSED, int type EINA_UNUSED, E_Event_Configure_
      {
         co = evas_object_data_get(overlay, "config_option");
         if (ev->co != co) return ECORE_CALLBACK_RENEW;
-        if (co->changed)
-          {
-             if (!buttons_visible)
-               {
-                  elm_layout_signal_emit(layout, "e,action,apply_show", "e");
-                  elm_layout_signal_emit(layout, "e,action,discard_show", "e");
-               }
-             buttons_visible = EINA_TRUE;
-          }
-        else
-          {
-             if (buttons_visible)
-               {
-                  elm_layout_signal_emit(layout, "e,action,apply_hide", "e");
-                  elm_layout_signal_emit(layout, "e,action,discard_hide", "e");
-               }
-             buttons_visible = EINA_FALSE;
-             _opt_item_update(co);
-          }
+        _buttons_toggle(co, EINA_FALSE);
+        if (!co->changed) _opt_item_update(co);
         return ECORE_CALLBACK_RENEW;
      }
-   if (e_configure_option_changed_list())
-     {
-        if (!buttons_visible)
-          {
-             elm_layout_signal_emit(layout, "e,action,apply_show", "e");
-             elm_layout_signal_emit(layout, "e,action,discard_show", "e");
-          }
-        buttons_visible = EINA_TRUE;
-        return ECORE_CALLBACK_RENEW;
-     }
-   if (buttons_visible)
-     {
-        elm_layout_signal_emit(layout, "e,action,apply_hide", "e");
-        elm_layout_signal_emit(layout, "e,action,discard_hide", "e");
-     }
-   buttons_visible = EINA_FALSE;
+   _buttons_toggle(NULL, EINA_TRUE);
+   if (buttons_visible) return ECORE_CALLBACK_RENEW;
    _opt_item_update(ev->co);
    return ECORE_CALLBACK_RENEW;
 }
