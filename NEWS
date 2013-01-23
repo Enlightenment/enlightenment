@@ -72,6 +72,7 @@ Improvements:
     * track module directories
     * improve module config dialog load speed
     * No longer build illume edj files
+    * add support for AltGr in illume2's E_Kbd_Buf_Key, fix related leak
 
 Fixes:
     * Shelf option 'overlapping' made clearer and disabled when window automatic movement on shelf hide isn't set.
