@@ -63,6 +63,7 @@ deserialize_sink(Pulse *conn __UNUSED__, Pulse_Tag *tag, Eina_Bool source)
    const char *monitor_source_name, *driver;
    Eina_Hash *props = NULL;
    unsigned int x;
+   Pulse_Sink_Port_Info *pi = NULL;
 
    monitor_source_name = driver = NULL;
    EINA_SAFETY_ON_FALSE_GOTO(untag_uint32(tag, &x), error);
@@ -98,13 +99,12 @@ deserialize_sink(Pulse *conn __UNUSED__, Pulse_Tag *tag, Eina_Bool source)
 
    for (x = 0; x < n_ports; x++)
      {
-        Pulse_Sink_Port_Info *pi;
-
         pi = calloc(1, sizeof(Pulse_Sink_Port_Info));
-        sink->ports = eina_list_append(sink->ports, pi);
         EINA_SAFETY_ON_FALSE_GOTO(untag_string(tag, &pi->name), error);
         EINA_SAFETY_ON_FALSE_GOTO(untag_string(tag, &pi->description), error);
         EINA_SAFETY_ON_FALSE_GOTO(untag_uint32(tag, &pi->priority), error);
+        sink->ports = eina_list_append(sink->ports, pi);
+        pi = NULL;
      }
    EINA_SAFETY_ON_FALSE_GOTO(untag_string(tag, &sink->active_port), error);
    if (exist)
@@ -119,6 +119,13 @@ deserialize_sink(Pulse *conn __UNUSED__, Pulse_Tag *tag, Eina_Bool source)
      }
    return sink;
 error:
+   if (pi)
+     {
+        if (pi->name) eina_stringshare_del(pi->name);
+        if (pi->description) eina_stringshare_del(pi->description);
+        free(pi);
+        pi = NULL;
+     }
    pulse_sink_free(sink);
    eina_hash_free(props);
    return NULL;
