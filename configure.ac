@@ -360,11 +360,10 @@ else
 fi
 
 
-if test "x${e_cv_want_mount_udisks}" = "xno" && test "x${e_cv_want_mount_hal}" = "xno" ; then
+if test "x${e_cv_want_mount_udisks}" = "xno" ; then
   DBUS_MOUNT_CONFIG=0
   dbus_mount=
   udisks_mount=
-  hal_mount=
 fi
 
 AC_ARG_ENABLE([mount-eeze],
@@ -402,9 +401,7 @@ fi
 
 AC_SUBST([EEZE_MOUNT_CONFIG])
 AC_SUBST([DBUS_MOUNT_CONFIG])
-AM_CONDITIONAL([HAVE_HAL_MOUNT], [test -n "$hal_mount"])
 AM_CONDITIONAL([HAVE_EEZE_MOUNT], [false])
-test -n "$hal_mount" && AC_DEFINE_UNQUOTED([HAVE_HAL_MOUNT], [1], [enable HAL mounting])
 test -n "$udisks_mount" && AC_DEFINE_UNQUOTED([HAVE_UDISKS_MOUNT], [1], [enable Udisks mounting])
 AM_CONDITIONAL([HAVE_UDISKS_MOUNT], [test -n "$udisks_mount"])
 AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test -n "$eeze_mount"])
@@ -459,7 +456,7 @@ eet >= $efl_version \
 efreet >= $efl_version \
 edbus2 >= $efl_version \
 eina >= $efl_version"
-efm_requires="$efm_requires $eeze_mount $dbus_mount $hal_mount $udisks_mount"
+efm_requires="$efm_requires $eeze_mount $dbus_mount $udisks_mount"
 
 PKG_CHECK_MODULES(E_FM, [$efm_requires])
 
@@ -526,7 +523,6 @@ PKG_CHECK_MODULES(E, [
   eina >= ${efl_version}
   edbus2 >= ${efl_version}
   eio >= ${efl_version}
-  $hal_mount
   $eeze_mount
   $udisks_mount
   $device_backend
@@ -547,7 +543,6 @@ efreet-trash >= ${efl_version} \
 eina >= ${efl_version} \
 edbus2 \
 eio >= ${efl_version} \
-$hal_mount \
 $udisks_mount \
 $eeze_mount \
 $device_backend"
@@ -1033,7 +1028,6 @@ echo
 cat << DEVICE_EOF
 Preferred Backends:
  * device..............: $device_backend
- * hal_mount...........: $e_cv_want_mount_hal
  * udisks_mount........: $e_cv_want_mount_udisks
  * eeze_mount..........: $e_cv_want_mount_eeze
 DEVICE_EOF
