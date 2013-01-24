@@ -138,6 +138,7 @@
         * Modules ported to edbus: battery, connman, mixer, notification,
           illume-indicator
         * Fileman and Wizard also ported to edbus
+        * HAL backend for EFM removed
         * Systray: added DBus notification
         * Added music-control module: control any mpris2-compatible music
           player

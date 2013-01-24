@@ -41,6 +41,7 @@ Deprecations:
 
 Removed:
     * e_manager_comp namespace
+    * HAL support for filemanager
 
 Improvements:
     * Check changed added to several settings dialogs:
