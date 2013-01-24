@@ -150,6 +150,8 @@ struct _E_Comp_Win
    Eina_Bool            show_ready : 1;  // is this window ready for its first show
 
    Eina_Bool            show_anim : 1; // ran show animation
+
+   Eina_Bool            bg_win : 1; // window is the bg win for a container
 };
 
 static Eina_List *handlers = NULL;
@@ -314,7 +316,7 @@ _e_comp_fullscreen_check(E_Comp *c)
         if ((cw->x == 0) && (cw->y == 0) &&
             ((cw->x + cw->w) >= c->man->w) &&
             ((cw->y + cw->h) >= c->man->h) &&
-            (!cw->argb) && (!cw->shaped)
+            (!cw->argb) && (!cw->shaped) && (!cw->bg_win)
             )
           {
              return cw;
@@ -2026,6 +2028,7 @@ _e_comp_win_add(E_Comp *c,
         cw->role = ecore_x_icccm_window_role_get(cw->win);
         if (!ecore_x_netwm_window_type_get(cw->win, &cw->primary_type))
           cw->primary_type = ECORE_X_WINDOW_TYPE_UNKNOWN;
+        cw->bg_win = (cw->win == e_util_container_current_get()->bg_win);
         // setup on show
         // _e_comp_win_sync_setup(cw, cw->win);
      }
