@@ -46,13 +46,22 @@ _module_filter_cb(void *d EINA_UNUSED, Eio_File *ls EINA_UNUSED, const Eina_File
 }
 
 static void
-_module_main_cb(void *d EINA_UNUSED, Eio_File *ls EINA_UNUSED, const Eina_File_Direct_Info *info)
+_module_main_cb(void *d, Eio_File *ls EINA_UNUSED, const Eina_File_Direct_Info *info)
 {
    Eina_Stringshare *s;
 
    s = eina_hash_set(_e_module_path_hash, info->path + info->name_start, eina_stringshare_add(info->path));
    if (!s) return;
-   WRN("REPLACING DUPLICATE MODULE PATH: %s -> %s", s, info->path);
+   if (!d)
+     {
+        if (!strstr(s, e_user_dir_get()))
+          INF("REPLACING DUPLICATE MODULE PATH: %s -> %s", s, info->path);
+        else
+          {
+             INF("NOT REPLACING DUPLICATE MODULE PATH: %s -X> %s", s, info->path);
+             s = eina_hash_set(_e_module_path_hash, info->path + info->name_start, s);
+          }
+     }
    eina_stringshare_del(s);
 }
 
@@ -73,15 +82,24 @@ _module_error_cb(void *d EINA_UNUSED, Eio_File *ls, int error EINA_UNUSED)
 }
 
 static Eina_Bool
-_module_monitor_dir_create(void *d EINA_UNUSED, int type EINA_UNUSED, Eio_Monitor_Event *ev)
+_module_monitor_dir_create(void *d, int type EINA_UNUSED, Eio_Monitor_Event *ev)
 {
    Eina_Stringshare *s;
    const char *path;
 
    path = ecore_file_file_get(ev->filename);
    s = eina_hash_set(_e_module_path_hash, path, eina_stringshare_ref(ev->filename));
-   if (s && (s != ev->filename))
-     WRN("REPLACING DUPLICATE MODULE PATH: %s -> %s", s, ev->filename);
+   if (!s) return ECORE_CALLBACK_RENEW;
+   if ((!d) && (s != ev->filename))
+     {
+        if (!strstr(s, e_user_dir_get()))
+          INF("REPLACING DUPLICATE MODULE PATH: %s -> %s", s, ev->filename);
+        else
+          {
+             INF("NOT REPLACING DUPLICATE MODULE PATH: %s -X> %s", s, ev->filename);
+             s = eina_hash_set(_e_module_path_hash, path, s);
+          }
+     }
    eina_stringshare_del(s);
 
    return ECORE_CALLBACK_RENEW;
@@ -130,9 +148,11 @@ e_module_init(void)
      {
         Eio_Monitor *mon;
         Eio_File *ls;
+        void *data = NULL;
 
         mon = eio_monitor_stringshared_add(epd->dir);
-        ls = eio_file_direct_ls(epd->dir, _module_filter_cb, _module_main_cb, _module_done_cb, _module_error_cb, NULL);
+        data = (intptr_t*)(long)!!strstr(epd->dir, e_user_dir_get());
+        ls = eio_file_direct_ls(epd->dir, _module_filter_cb, _module_main_cb, _module_done_cb, _module_error_cb, data);
         _e_module_path_monitors = eina_list_append(_e_module_path_monitors, mon);
         _e_module_path_lists = eina_list_append(_e_module_path_lists, ls);
         eina_stringshare_del(epd->dir);
