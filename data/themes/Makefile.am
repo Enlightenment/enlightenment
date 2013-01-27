@@ -23,6 +23,7 @@ edc/appmenu.edc \
 edc/background.edc \
 edc/backlight.edc \
 edc/battery.edc \
+edc/bluez4.edc \
 edc/border.edc \
 edc/border-icons.edc \
 edc/button.edc \

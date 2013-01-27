@@ -62,6 +62,7 @@ collections {
 #include "edc/battery.edc"
 #include "edc/evrything.edc"
 #include "edc/illume.edc"
+#include "edc/bluez4.edc"
 // icons
 #include "edc/icons.edc"
 #include "edc/border-icons.edc"

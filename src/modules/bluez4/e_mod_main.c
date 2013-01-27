@@ -373,9 +373,9 @@ _ebluez4_set_mod_icon(Evas_Object *base)
 
    snprintf(edj_path, sizeof(edj_path), "%s/e-module-bluez4.edj", mod->dir);
    if (ctxt->adap_obj)
-     group = "modules/bluez4/main";
+     group = "e/modules/bluez4/main";
    else
-     group = "modules/bluez4/inactive";
+     group = "e/modules/bluez4/inactive";
 
    if (!e_theme_edje_object_set(base, "base/theme/modules/bluez4", group))
      edje_object_file_set(base, edj_path, group);
