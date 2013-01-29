@@ -1,5 +1,5 @@
 2013-01-29 Brian Miculcy
-        * IBar fixes when using other sources than 'default'.
+        * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.
 
 2013-01-29 Carsten Haitzler
 
