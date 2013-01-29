@@ -5285,14 +5285,29 @@ _e_border_cb_window_hide(void *data  __UNUSED__,
                          int ev_type __UNUSED__,
                          void *ev)
 {
-   E_Border *bd;
+   E_Border *bd = NULL;
    Ecore_X_Event_Window_Hide *e;
 
    e = ev;
-//   printf("HIDE: %x, event %x\n", e->win, e->event_win);
+//   printf("HIDE: %x, event %x send: %i\n", e->win, e->event_win, e->send_event);
 // not interested in hide events from windows other than the window in question
-   if (e->win != e->event_win) return ECORE_CALLBACK_PASS_ON;
-   bd = e_border_find_by_client_window(e->win);
+   if (e->win != e->event_win)
+     {
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+        bd = e_border_find_by_client_window(e->win);
+        if (!bd) return ECORE_CALLBACK_PASS_ON;
+        if (!e->send_event) return ECORE_CALLBACK_PASS_ON;
+        else
+          {
+             if (!((bd->zone) && 
+                   (bd->zone->container->manager->root == e->event_win)))
+               return ECORE_CALLBACK_PASS_ON;
+          }
+#else
+        return ECORE_CALLBACK_PASS_ON;
+#endif
+     }
+   if (!bd) bd = e_border_find_by_client_window(e->win);
 //   printf("  bd = %p\n", bd);
    if (!bd) return ECORE_CALLBACK_PASS_ON;
 //   printf("  bd->ignore_first_unmap = %i\n", bd->ignore_first_unmap);
