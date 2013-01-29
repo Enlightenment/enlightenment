@@ -1,3 +1,6 @@
+2013-01-29 Brian Miculcy
+        * IBar fixes when using other sources than 'default'.
+
 2013-01-29 Carsten Haitzler
 
         * fix map then unmap race condition for borders

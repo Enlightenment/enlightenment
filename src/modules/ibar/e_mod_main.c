@@ -376,6 +376,26 @@ _ibar_cb_empty_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
    if (ev->button != 3) return;
 
    m = e_menu_new();
+
+   if (e_configure_registry_exists("applications/new_application"))
+     {
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, _("Create new Icon"));
+        e_util_menu_item_theme_icon_set(mi, "document-new");
+        e_menu_item_callback_set(mi, _ibar_cb_menu_icon_new, NULL);
+
+        mi = e_menu_item_new(m);
+        e_menu_item_separator_set(mi, 1);
+     }
+
+   if (e_configure_registry_exists("applications/ibar_applications"))
+     {
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, _("Contents"));
+        e_util_menu_item_theme_icon_set(mi, "list-add");
+        e_menu_item_callback_set(mi, _ibar_cb_menu_icon_add, b);
+     }
+
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Settings"));
    e_util_menu_item_theme_icon_set(mi, "configure");
@@ -730,13 +750,17 @@ _ibar_cb_menu_icon_new(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item 
 }
 
 static void
-_ibar_cb_menu_icon_add(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_ibar_cb_menu_icon_add(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
-   E_Container *con;
+   char path[PATH_MAX];
+   IBar *b;
 
-   if (!e_configure_registry_exists("applications/ibar_applications")) return;
-   con = e_container_current_get(e_manager_current_get());
-   e_configure_registry_call("applications/ibar_applications", con, NULL);
+   b = data;
+   e_user_dir_snprintf(path, sizeof(path), "applications/bar/%s/.order",
+                       b->inst->ci->dir);
+   e_configure_registry_call("internal/ibar_other",
+                             e_container_current_get(e_manager_current_get()),
+                             path);
 }
 
 static void
@@ -771,19 +795,6 @@ _ibar_cb_menu_configuration(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __
    b = data;
    _config_ibar_module(b->inst->ci);
 }
-
-/*
-   static void
-   _ibar_cb_menu_add(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
-   {
-   IBar *b;
-
-   b = data;
-   e_configure_registry_call("internal/ibar_other",
-                             b->inst->gcc->gadcon->zone->container,
-                             b->io->eo->path);
-   }
- */
 
 static void
 _ibar_cb_icon_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -858,7 +869,7 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
              mi = e_menu_item_new(m);
              e_menu_item_label_set(mi, _("Contents"));
              e_util_menu_item_theme_icon_set(mi, "list-add");
-             e_menu_item_callback_set(mi, _ibar_cb_menu_icon_add, NULL);
+             e_menu_item_callback_set(mi, _ibar_cb_menu_icon_add, ic->ibar);
           }
 
         mi = e_menu_item_new(m);

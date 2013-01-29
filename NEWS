@@ -76,6 +76,7 @@ Improvements:
     * add support for AltGr in illume2's E_Kbd_Buf_Key, fix related leak
 
 Fixes:
+    * IBar fixes when using other sources than 'default'.
     * Shelf option 'overlapping' made clearer and disabled when window automatic movement on shelf hide isn't set.
     * Backlight, screenlock and screensaver don't check for fullscreen windows - we have presentation mode for that.
     * Force check changed upon confirmation dialog closure for engine settings.
