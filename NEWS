@@ -121,4 +121,5 @@ Fixes:
     * fixed path setting in import dialog
     * fixed possible NULL deref in desktop editor
     * fixed possible NULL deref in e_sys when debugging
+    * fixed map then unmap race condition for some windows (needs efl 1.8)
     * fixed bug where dragging files into sidebar would move them instead of creating links
