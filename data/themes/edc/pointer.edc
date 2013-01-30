@@ -24,10 +24,10 @@ group { name: "e/pointer/enlightenment/default/color";
       part { name: "e.swallow.hotspot"; type: SWALLOW;
          description { state: "default" 0.0;
             visible: 0;
-            rel1.relative: (6/32) (8/32);
+            rel1.relative: (5/32) (5/32);
             rel1.to: "base";
             rel2.to: "base";
-            rel2.relative: (6/32) (8/32); 
+            rel2.relative: (5/32) (5/32); 
             rel2.offset: 0 0;
         }
       }
