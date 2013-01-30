@@ -750,6 +750,7 @@ _cb_client_message(void *data __UNUSED__,
    if (event->message_type != _atom_access)
      return ECORE_CALLBACK_PASS_ON;
 
+   e_config_save_block_set(0);
    if ((Eina_Bool)event->data.l[0])
      {
         EINA_LOG_INFO("[access module] module enable");
@@ -766,7 +767,8 @@ _cb_client_message(void *data __UNUSED__,
      }
 
    /* save config value */
-   e_config_save_queue();
+   e_config_domain_save("module.access", conf_edd, access_config);
+   e_config_save_block_set(1);
 
    return ECORE_CALLBACK_PASS_ON;
 }
