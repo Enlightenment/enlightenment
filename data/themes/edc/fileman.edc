@@ -363,7 +363,7 @@ group { name: "e/fileman/default/list/variable";
       }
       program { name: "gen";
          action: STATE_SET "visible" 0.0;
-         transition: SPRING 0.7 2.0 4;
+         transition: SPRING 0.4 1.7 5;
          target: "icon";
       }
       program {
@@ -792,7 +792,7 @@ group { name: "e/fileman/default/icon/fixed";
       }
       program { name: "gen";
          action: STATE_SET "visible" 0.0;
-         transition: SPRING 0.7 2.0 4;
+         transition: SPRING 0.4 1.7 5;
          target: "icon";
       }
       program {
