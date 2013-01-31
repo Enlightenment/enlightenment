@@ -674,7 +674,7 @@ define([CHECK_MODULE_TEMPERATURE],
 AM_CONDITIONAL(MUSIC_CONTROL, false)
 define([CHECK_MODULE_MUSIC_CONTROL],
 [
-  AC_E_CHECK_PKG(MUSIC_CONTROL, [ ecore >= 1.2.0 eina >= 1.2.0 edbus2 ], [], [MUSIC_CONTROL=false])
+  AC_E_CHECK_PKG(MUSIC_CONTROL, [ ecore >= $efl_version eina >= $efl_version edbus2 ], [], [MUSIC_CONTROL=false])
 ])
 
 ##have_exchange=no
