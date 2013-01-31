@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-01-22 22:15+0100\n"
-"PO-Revision-Date: 2013-01-22 22:17+0100\n"
+"POT-Creation-Date: 2013-01-31 18:07+0100\n"
+"PO-Revision-Date: 2013-01-31 18:09+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: \n"
@@ -39,12 +39,12 @@ msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
 msgid ""
-"<title>Copyright &copy; 2000-2012, by the Enlightenment Development Team</"
+"<title>Copyright &copy; 2000-2013, by the Enlightenment Development Team</"
 "><br><br>We hope you enjoy using this software as much as we enjoyed writing "
 "it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
 "org</><br><br>"
 msgstr ""
-"<title>Copyright &copy; 2000-2012, dell'Enlightenment Development Team.</"
+"<title>Copyright &copy; 2000-2013, dell'Enlightenment Development Team.</"
 "><br><br>Ci auguriamo che vi piacerà usare questo software tanto quanto a "
 "noi è piaciuto scriverlo.<br><br>Per contattarci visitate:"
 "<br><hilight>http://www.enlightenment.org</><br><br>"
@@ -143,7 +143,7 @@ msgstr "Siete sicuri di voler ibernare il computer?"
 #: src/bin/e_actions.c:2982 src/bin/e_actions.c:2987 src/bin/e_actions.c:2992
 #: src/bin/e_actions.c:3275 src/bin/e_actions.c:3279 src/bin/e_actions.c:3284
 #: src/bin/e_actions.c:3290 src/bin/e_actions.c:3296 src/bin/e_actions.c:3302
-#: src/modules/shot/e_mod_main.c:987
+#: src/modules/shot/e_mod_main.c:986
 msgid "Window : Actions"
 msgstr "Finestre : Azioni"
 
@@ -515,7 +515,7 @@ msgstr "Salta alla finestra... o avvia..."
 #: src/modules/backlight/e_mod_main.c:509
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:19 src/modules/ibox/e_mod_config.c:135
-#: src/modules/shot/e_mod_main.c:745 src/modules/shot/e_mod_main.c:980
+#: src/modules/shot/e_mod_main.c:744 src/modules/shot/e_mod_main.c:979
 msgid "Screen"
 msgstr "Schermo"
 
@@ -792,8 +792,8 @@ msgstr "Seleziona"
 
 #: src/bin/e_color_dialog.c:47 src/bin/e_eap_editor.c:862
 #: src/bin/e_eap_editor.c:925 src/bin/e_entry_dialog.c:64 src/bin/e_fm.c:9968
-#: src/bin/e_fm_prop.c:625 src/bin/e_import_dialog.c:193
-#: src/bin/e_import_config_dialog.c:536
+#: src/bin/e_fm_prop.c:625 src/bin/e_import_dialog.c:195
+#: src/bin/e_import_config_dialog.c:540
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:637
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
 #: src/modules/conf_theme/e_int_config_theme_import.c:123
@@ -802,7 +802,7 @@ msgstr "Seleziona"
 #: src/modules/quickaccess/e_mod_quickaccess.c:319
 #: src/modules/quickaccess/e_mod_quickaccess.c:381
 #: src/modules/shot/e_mod_main.c:291 src/modules/shot/e_mod_main.c:542
-#: src/modules/shot/e_mod_main.c:568 src/modules/shot/e_mod_main.c:804
+#: src/modules/shot/e_mod_main.c:568 src/modules/shot/e_mod_main.c:803
 #: src/modules/xkbswitch/e_mod_config.c:529
 msgid "Cancel"
 msgstr "Annulla"
@@ -861,9 +861,9 @@ msgstr ""
 #: src/bin/e_config_dialog.c:278 src/bin/e_eap_editor.c:860
 #: src/bin/e_eap_editor.c:923 src/bin/e_entry_dialog.c:63 src/bin/e_exec.c:615
 #: src/bin/e_fm.c:9967 src/bin/e_fm.c:10698 src/bin/e_fm_prop.c:624
-#: src/bin/e_import_config_dialog.c:535 src/bin/e_int_border_remember.c:318
-#: src/bin/e_int_border_remember.c:507 src/bin/e_module.c:568
-#: src/bin/e_module.c:975 src/bin/e_sys.c:619 src/bin/e_sys.c:660
+#: src/bin/e_import_config_dialog.c:539 src/bin/e_int_border_remember.c:318
+#: src/bin/e_int_border_remember.c:507 src/bin/e_module.c:588
+#: src/bin/e_module.c:995 src/bin/e_sys.c:619 src/bin/e_sys.c:660
 #: src/bin/e_utils.c:695
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:636
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
@@ -1501,7 +1501,7 @@ msgid "Eject"
 msgstr "Espelli"
 
 #: src/bin/e_fm.c:9172 src/bin/e_int_border_remember.c:741
-#: src/modules/ibar/e_mod_main.c:872
+#: src/modules/ibar/e_mod_main.c:883
 msgid "Properties"
 msgstr "Proprietà"
 
@@ -1809,7 +1809,7 @@ msgstr "Gruppo:"
 msgid "Others:"
 msgstr "Altri:"
 
-#: src/bin/e_fm_prop.c:480 src/bin/e_import_config_dialog.c:472
+#: src/bin/e_fm_prop.c:480 src/bin/e_import_config_dialog.c:476
 #: src/bin/e_widget_fsel.c:348
 #: src/modules/conf_theme/e_int_config_transitions.c:218
 #: src/modules/conf_theme/e_int_config_theme.c:1414
@@ -1883,20 +1883,20 @@ msgstr "Aspetto"
 #: src/modules/conf_applications/e_int_config_apps.c:291
 #: src/modules/conf_applications/e_int_config_apps.c:311
 #: src/modules/conf_applications/e_int_config_apps_personal.c:97
-#: src/modules/gadman/e_mod_gadman.c:1056 src/modules/ibar/e_mod_main.c:877
+#: src/modules/gadman/e_mod_gadman.c:1056 src/modules/ibar/e_mod_main.c:888
 #: src/modules/xkbswitch/e_mod_config.c:267
 msgid "Remove"
 msgstr "Elimina"
 
-#: src/bin/e_gadcon.c:2434
+#: src/bin/e_gadcon.c:2436
 msgid "Stop moving"
 msgstr "Ferma spostamento"
 
-#: src/bin/e_gadcon.c:3086
+#: src/bin/e_gadcon.c:3088
 msgid "Insufficent gadcon support"
 msgstr "Supporto gadcon insufficiente"
 
-#: src/bin/e_gadcon.c:3087
+#: src/bin/e_gadcon.c:3089
 #, c-format
 msgid "Module %s needs to support %s"
 msgstr "Il modulo %s ha bisogno del supporto %s"
@@ -1955,11 +1955,11 @@ msgstr ""
 "Enlightenment non ha potuto importare l'immagine.<br>Siete sicuri che sia "
 "un'immagine valida?"
 
-#: src/bin/e_import_dialog.c:158
+#: src/bin/e_import_dialog.c:162
 msgid "Select a Picture..."
 msgstr "Selezionare un'immagine..."
 
-#: src/bin/e_import_dialog.c:192
+#: src/bin/e_import_dialog.c:194
 msgid "Use"
 msgstr "Usa"
 
@@ -1974,53 +1974,53 @@ msgstr ""
 "Enlightenment non ha potuto importare la foto<br>a causa di errori di "
 "conversione."
 
-#: src/bin/e_import_config_dialog.c:454
+#: src/bin/e_import_config_dialog.c:458
 msgid "Import Settings..."
 msgstr "Impostazioni importazione..."
 
-#: src/bin/e_import_config_dialog.c:486
+#: src/bin/e_import_config_dialog.c:490
 msgid "Fill and Stretch Options"
 msgstr "Opzioni riempimento"
 
-#: src/bin/e_import_config_dialog.c:488
+#: src/bin/e_import_config_dialog.c:492
 msgid "Stretch"
 msgstr "Stira"
 
-#: src/bin/e_import_config_dialog.c:492 src/bin/e_int_border_prop.c:236
+#: src/bin/e_import_config_dialog.c:496 src/bin/e_int_border_prop.c:236
 #, c-format
 msgid "Center"
 msgstr "Centra"
 
-#: src/bin/e_import_config_dialog.c:496
+#: src/bin/e_import_config_dialog.c:500
 msgid "Tile"
 msgstr "Affianca"
 
-#: src/bin/e_import_config_dialog.c:501
+#: src/bin/e_import_config_dialog.c:505
 msgid "Within"
 msgstr "Adatta"
 
-#: src/bin/e_import_config_dialog.c:505
+#: src/bin/e_import_config_dialog.c:509
 msgid "Fill"
 msgstr "Riempi"
 
-#: src/bin/e_import_config_dialog.c:509
+#: src/bin/e_import_config_dialog.c:513
 msgid "Pan"
 msgstr "Ritaglia"
 
-#: src/bin/e_import_config_dialog.c:517
+#: src/bin/e_import_config_dialog.c:521
 msgid "File Quality"
 msgstr "Qualità file"
 
-#: src/bin/e_import_config_dialog.c:518
+#: src/bin/e_import_config_dialog.c:522
 msgid "Use original file"
 msgstr "Usa file originale"
 
-#: src/bin/e_import_config_dialog.c:520
+#: src/bin/e_import_config_dialog.c:524
 #, c-format
 msgid "%3.0f%%"
 msgstr "%3.0f%%"
 
-#: src/bin/e_import_config_dialog.c:525
+#: src/bin/e_import_config_dialog.c:529
 msgid "Fill Color"
 msgstr "Colore riempimento"
 
@@ -2493,7 +2493,7 @@ msgstr "Richiede posizione"
 #: src/modules/everything/evry_gadget.c:511
 #: src/modules/everything/evry_gadget.c:695
 #: src/modules/everything/evry_plug_settings.c:183
-#: src/modules/ibar/e_mod_main.c:380 src/modules/ibar/e_mod_main.c:865
+#: src/modules/ibar/e_mod_main.c:400 src/modules/ibar/e_mod_main.c:876
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
 #: src/modules/pager/e_mod_main.c:877 src/modules/temperature/e_mod_main.c:230
 #: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:787
@@ -2589,7 +2589,7 @@ msgstr "Dimensione, posizione e blocchi"
 #: src/bin/e_int_border_remember.c:609
 #: src/modules/everything/evry_gadget.c:644
 #: src/modules/everything/evry_plug_aggregator.c:313
-#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:749
+#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:748
 msgid "All"
 msgstr "Tutto"
 
@@ -2692,7 +2692,7 @@ msgstr "Gestione moduli"
 msgid "Load"
 msgstr "Carica"
 
-#: src/bin/e_int_config_modules.c:203 src/bin/e_module.c:709
+#: src/bin/e_int_config_modules.c:203 src/bin/e_module.c:728
 msgid "Unload"
 msgstr "Scarica"
 
@@ -2825,25 +2825,25 @@ msgstr "Nessuna applicazione"
 msgid "Set Virtual Desktops"
 msgstr "Imposta desktop virtuali"
 
-#: src/bin/e_int_menus.c:1323 src/bin/e_int_menus.c:1516
+#: src/bin/e_int_menus.c:1323 src/bin/e_int_menus.c:1520
 msgid "No windows"
 msgstr "Nessuna finestra"
 
-#: src/bin/e_int_menus.c:1429 src/bin/e_int_menus.c:1529
+#: src/bin/e_int_menus.c:1433 src/bin/e_int_menus.c:1533
 msgid "Untitled window"
 msgstr "Finestra senza titolo"
 
-#: src/bin/e_int_menus.c:1629 src/bin/e_shelf.c:1641
+#: src/bin/e_int_menus.c:1633 src/bin/e_shelf.c:1641
 #: src/modules/conf_shelves/e_int_config_shelf.c:191
 #, c-format
 msgid "Shelf %s"
 msgstr "Mensola %s"
 
-#: src/bin/e_int_menus.c:1697
+#: src/bin/e_int_menus.c:1701
 msgid "Add a Shelf"
 msgstr "Aggiungi mensola"
 
-#: src/bin/e_int_menus.c:1704
+#: src/bin/e_int_menus.c:1708
 msgid "Delete a Shelf"
 msgstr "Elimina mensola"
 
@@ -3597,23 +3597,23 @@ msgstr ""
 "finestra di configurazione<br>dei moduli dovrebbe permettervi di "
 "selezionare<br>nuovamente i vostri moduli."
 
-#: src/bin/e_module.c:222
+#: src/bin/e_module.c:242
 #, c-format
 msgid "Loading Module: %s"
 msgstr "Caricamento modulo: %s"
 
-#: src/bin/e_module.c:261
+#: src/bin/e_module.c:281
 msgid "Module Error"
 msgstr "Errore del modulo"
 
-#: src/bin/e_module.c:262
+#: src/bin/e_module.c:282
 msgid ""
 "The composite module cannot be loaded;Enlightenment is already composited."
 msgstr ""
 "Il modulo composite non può essere caricato; Enlightenment usa già le "
 "estensioni composite."
 
-#: src/bin/e_module.c:289
+#: src/bin/e_module.c:309
 #, c-format
 msgid ""
 "There was an error loading the module named: %s<br>No module named %s could "
@@ -3622,11 +3622,11 @@ msgstr ""
 "C'è stato un errore nel caricamento del modulo: %s<br>Non ho potuto trovare "
 "nessun modulo di nome %s nelle<br>directory di ricerca dei moduli.<br>"
 
-#: src/bin/e_module.c:292 src/bin/e_module.c:305 src/bin/e_module.c:323
+#: src/bin/e_module.c:312 src/bin/e_module.c:325 src/bin/e_module.c:343
 msgid "Error loading Module"
 msgstr "Errore nel caricamento del modulo"
 
-#: src/bin/e_module.c:300 src/bin/e_module.c:317
+#: src/bin/e_module.c:320 src/bin/e_module.c:337
 #, c-format
 msgid ""
 "There was an error loading the module named: %s<br>The full path to this "
@@ -3635,11 +3635,11 @@ msgstr ""
 "C'è stato un errore nel caricamento del modulo: %s<br>Il percorso completo "
 "del modulo è:<br>%s<br>L'errore riportato è stato:<br>%s<br>"
 
-#: src/bin/e_module.c:322
+#: src/bin/e_module.c:342
 msgid "Module does not contain all needed functions"
 msgstr "Il modulo non contiene tutte le funzioni necessarie"
 
-#: src/bin/e_module.c:337
+#: src/bin/e_module.c:357
 #, c-format
 msgid ""
 "Module API Error<br>Error initializing Module: %s<br>It requires a minimum "
@@ -3650,23 +3650,23 @@ msgstr ""
 "richiede una versione minima dell'API dei moduli di: %i.<br>L'API dei moduli "
 "dichiarata da Enlightenment è: %i.<br>"
 
-#: src/bin/e_module.c:342
+#: src/bin/e_module.c:362
 #, c-format
 msgid "Enlightenment %s Module"
 msgstr "Modulo %s di Enlightenment"
 
-#: src/bin/e_module.c:704
+#: src/bin/e_module.c:723
 msgid "What action should be taken with this module?<br>"
 msgstr "Quale azione dovrebbe essere eseguita con questo modulo?<br>"
 
-#: src/bin/e_module.c:710 src/bin/e_shelf.c:1797
+#: src/bin/e_module.c:729 src/bin/e_shelf.c:1797
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
 #: src/modules/conf_shelves/e_int_config_shelf.c:392
 #: src/modules/ibar/e_mod_config.c:199
 msgid "Keep"
 msgstr "Mantieni"
 
-#: src/bin/e_module.c:960
+#: src/bin/e_module.c:980
 msgid ""
 "The following modules are not standard ones for<br>Enlightenment and may "
 "cause bugs and crashes.<br>Please remove them before reporting any bugs."
@@ -3676,11 +3676,11 @@ msgstr ""
 "potrebbero causare problemi.<br>Si prega di rimuoverli prima di segnalare "
 "bug.<br>Questo è l'elenco dei moduli:<br><br>"
 
-#: src/bin/e_module.c:972
+#: src/bin/e_module.c:992
 msgid "Unstable module tainting"
 msgstr "Caricamento moduli instabili"
 
-#: src/bin/e_module.c:976
+#: src/bin/e_module.c:996
 msgid "I know"
 msgstr "Lo so"
 
@@ -3820,7 +3820,7 @@ msgid "Rename Shelf"
 msgstr "Rinomina mensola"
 
 #: src/bin/e_shelf.c:2443 src/modules/conf_shelves/e_int_config_shelf.c:143
-#: src/modules/ibar/e_mod_main.c:859
+#: src/modules/ibar/e_mod_main.c:394 src/modules/ibar/e_mod_main.c:870
 msgid "Contents"
 msgstr "Contenuti"
 
@@ -6582,13 +6582,13 @@ msgid "e.g. Saving to disk"
 msgstr "es: salvataggi su disco"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:235
-#: src/modules/shot/e_mod_main.c:731
+#: src/modules/shot/e_mod_main.c:730
 #: src/modules/notification/e_mod_config.c:102
 msgid "Low"
 msgstr "Bassa"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:274
-#: src/modules/shot/e_mod_main.c:729
+#: src/modules/shot/e_mod_main.c:728
 msgid "Medium"
 msgstr "Media"
 
@@ -6600,7 +6600,7 @@ msgid "%.0f s"
 msgstr "%.0f s"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:313
-#: src/modules/shot/e_mod_main.c:727
+#: src/modules/shot/e_mod_main.c:726
 msgid "High"
 msgstr "Alta"
 
@@ -7745,8 +7745,8 @@ msgid "Focus last focused window on lost focus"
 msgstr "Restituisci il fuoco all'ultima finestra in caso di perdita"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:344
-msgid "Slide pointer to a new focused window"
-msgstr "Invia puntatore alla finestra che prende il fuoco"
+msgid "Slide pointer to a new window which is focused"
+msgstr "Invia puntatore alla nuova finestra che prende il fuoco"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:66
 #: src/modules/conf_window_manipulation/e_mod_main.c:20
@@ -9262,20 +9262,20 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "Siete sicuri di voler rimuovere questa sorgente per Ibar?"
 
-#: src/modules/ibar/e_mod_main.c:285 src/modules/ibar/e_mod_main.c:1802
+#: src/modules/ibar/e_mod_main.c:285 src/modules/ibar/e_mod_main.c:1813
 msgid "IBar"
 msgstr "IBar"
 
-#: src/modules/ibar/e_mod_main.c:848
+#: src/modules/ibar/e_mod_main.c:383 src/modules/ibar/e_mod_main.c:859
 msgid "Create new Icon"
 msgstr "Crea nuova icona"
 
-#: src/modules/ibar/e_mod_main.c:882
+#: src/modules/ibar/e_mod_main.c:893
 #, c-format
 msgid "Icon %s"
 msgstr "Icona %s"
 
-#: src/modules/ibar/e_mod_main.c:1802
+#: src/modules/ibar/e_mod_main.c:1813
 msgid "Focus IBar"
 msgstr "Fuoco di Ibar"
 
@@ -10071,8 +10071,8 @@ msgid ""
 msgstr ""
 "La finestra selezionata creata con nome:<br>%s<br>e classe:<br>%s<br>non è "
 "stata trovata nel database di Quickaccess.<br>Questo significa che "
-"l'applicazione non è a noi<br>nota o che non è intesa per essere usata con"
-"<br>questa opzione. Si prega di scegliere una<br>azione da intraprendere:"
+"l'applicazione non è a noi<br>nota o che non è intesa per essere usata "
+"con<br>questa opzione. Si prega di scegliere una<br>azione da intraprendere:"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:379
 #: src/modules/quickaccess/e_mod_quickaccess.c:977
@@ -10278,7 +10278,7 @@ msgstr ""
 msgid "Select screenshot save location"
 msgstr "Selezionare la directory di salvataggio"
 
-#: src/modules/shot/e_mod_main.c:289 src/modules/shot/e_mod_main.c:800
+#: src/modules/shot/e_mod_main.c:289 src/modules/shot/e_mod_main.c:799
 msgid "Save"
 msgstr "Salva"
 
@@ -10372,36 +10372,36 @@ msgstr ""
 msgid "Confirm"
 msgstr "Conferma"
 
-#: src/modules/shot/e_mod_main.c:669
+#: src/modules/shot/e_mod_main.c:668
 msgid "Where to put Screenshot..."
 msgstr "Dove salvare l'immagine"
 
-#: src/modules/shot/e_mod_main.c:721
+#: src/modules/shot/e_mod_main.c:720
 msgid "Quality"
 msgstr "Qualità"
 
-#: src/modules/shot/e_mod_main.c:725
+#: src/modules/shot/e_mod_main.c:724
 msgid "Perfect"
 msgstr "Perfetta"
 
-#: src/modules/shot/e_mod_main.c:802
+#: src/modules/shot/e_mod_main.c:801
 msgid "Share"
 msgstr "Condivisione"
 
-#: src/modules/shot/e_mod_main.c:939 src/modules/shot/e_mod_main.c:987
+#: src/modules/shot/e_mod_main.c:938 src/modules/shot/e_mod_main.c:986
 msgid "Take Shot"
 msgstr "Scatta istantanea"
 
-#: src/modules/shot/e_mod_main.c:950 src/modules/shot/e_mod_main.c:980
-#: src/modules/shot/e_mod_main.c:991
+#: src/modules/shot/e_mod_main.c:949 src/modules/shot/e_mod_main.c:979
+#: src/modules/shot/e_mod_main.c:990
 msgid "Take Screenshot"
 msgstr "Scatta istantanea"
 
-#: src/modules/shot/e_mod_main.c:968
+#: src/modules/shot/e_mod_main.c:967
 msgid "Shot Error"
 msgstr "Errore di Shot"
 
-#: src/modules/shot/e_mod_main.c:969
+#: src/modules/shot/e_mod_main.c:968
 msgid "Cannot initialize network"
 msgstr "Non riesco ad inizializzare la rete"
 
