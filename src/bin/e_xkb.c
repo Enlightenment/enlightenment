@@ -221,8 +221,12 @@ e_xkb_layout_set(const char *name)
 EAPI const char *
 e_xkb_layout_name_reduce(const char *name)
 {
-   if ((name) && (strchr(name, '/'))) name = strchr(name, '/') + 1;
-   return name;
+   const char *s;
+
+   if (!name) return NULL;
+   s = strchr(name, '/');
+   if (s) s++;
+   return s;
 }
 
 EAPI void
