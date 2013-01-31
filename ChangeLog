@@ -2,6 +2,7 @@
 
         * fixed window autoraise triggering from pointer slide
         * fixed opening of links in filemanager in some cases
+        * filemanager now ignores changes to .part files
 
 2013-01-29 Brian Miculcy
 

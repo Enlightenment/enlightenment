@@ -126,3 +126,4 @@ Fixes:
     * fixed bug where dragging files into sidebar would move them instead of creating links
     * fixed window autoraise triggering from pointer slide
     * fixed opening of links in filemanager in some cases
+    * filemanager now ignores changes to .part files
