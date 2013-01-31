@@ -226,6 +226,7 @@ e_xkb_layout_name_reduce(const char *name)
    if (!name) return NULL;
    s = strchr(name, '/');
    if (s) s++;
+   else s = name;
    return s;
 }
 
