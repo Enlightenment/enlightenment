@@ -1,4 +1,9 @@
+2013-01-30 Mike Blumenkrantz
+
+        * fixed window autoraise triggering from pointer slide
+
 2013-01-29 Brian Miculcy
+
         * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.
 
 2013-01-29 Carsten Haitzler
