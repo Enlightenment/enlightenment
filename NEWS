@@ -19,6 +19,7 @@ Additions:
         * Added D-Bus menu support
         * Added e_comp namespace and E_EVENT_COMP events
         * Added API for fetching module .desktop files
+        * e_config_xkb functions
     Config:
         * Added option for disabling icons in menus
         * Added option for disabling pointer warping when performing directional focus changes using winlist
@@ -35,6 +36,7 @@ Changes:
     API:
         * e_menu_category_callback create callback parameter order has been changed
         * e_manager_comp_set() is no longer accessible by modules
+        * e_xkb_layout API now deals directly with E_Config_XKB_Layout structs
 
 Deprecations:
     *
@@ -127,3 +129,4 @@ Fixes:
     * fixed window autoraise triggering from pointer slide
     * fixed opening of links in filemanager in some cases
     * filemanager now ignores changes to .part files
+    * fixed bugs where keyboard layouts could not be applied or selected
