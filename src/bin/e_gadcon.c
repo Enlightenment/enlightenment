@@ -2069,8 +2069,10 @@ _e_gadcon_client_delfn(void *d __UNUSED__, void *o)
    if (gcc->drag.drag)
      e_object_del(E_OBJECT(gcc->drag.drag));
    gcc->gadcon->clients = eina_list_remove(gcc->gadcon->clients, gcc);
-   if (gcc->scroll_timer) ecore_timer_del(gcc->scroll_timer);
-   if (gcc->scroll_animator) ecore_animator_del(gcc->scroll_animator);
+   E_FN_DEL(ecore_timer_del, gcc->scroll_timer);
+   E_FN_DEL(ecore_animator_del, gcc->scroll_animator);
+   E_FN_DEL(evas_object_del, gcc->o_box);
+   E_FN_DEL(evas_object_del, gcc->o_frame);
    e_object_ref(E_OBJECT(gcc));
    ev = E_NEW(E_Event_Gadcon_Client_Add, 1);
    ev->gcc = gcc;
@@ -3326,16 +3328,6 @@ _e_gadcon_client_del_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 
    gcc = data;
    gcc->o_base = NULL;
-   if (gcc->o_box)
-     {
-        evas_object_del(gcc->o_box);
-        gcc->o_box = NULL;
-     }
-   if (gcc->o_frame)
-     {
-        evas_object_del(gcc->o_frame);
-        gcc->o_frame = NULL;
-     }
    e_object_del(E_OBJECT(gcc));
 }
 
