@@ -445,7 +445,7 @@ e_modapi_init(E_Module *m)
    temperature_config = e_config_domain_load("module.temperature", conf_edd);
    if (!temperature_config)
      temperature_config = E_NEW(Config, 1);
-   else
+   else if (temperature_config->faces)
      eina_hash_foreach(temperature_config->faces, _temperature_face_id_max, &uuid);
    temperature_config->module = m;
 
@@ -457,7 +457,8 @@ EAPI int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    e_gadcon_provider_unregister(&_gadcon_class);
-   eina_hash_foreach(temperature_config->faces, _temperature_face_shutdown, NULL);
+   if (temperature_config->faces)
+     eina_hash_foreach(temperature_config->faces, _temperature_face_shutdown, NULL);
    eina_hash_free(temperature_config->faces);
    free(temperature_config);
    temperature_config = NULL;
