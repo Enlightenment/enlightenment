@@ -15,7 +15,7 @@ static void         _free_data   (E_Config_Dialog *cfd __UNUSED__, E_Config_Dial
 static Evas_Object *_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata);
 static int          _basic_apply (E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
 
-void 
+void
 _config_pager_module(void)
 {
    E_Config_Dialog_View *v;
@@ -32,14 +32,14 @@ _config_pager_module(void)
    v->basic.apply_cfdata =   _basic_apply;
 
    con = e_container_current_get(e_manager_current_get());
-   e_config_dialog_new(con, _("Access Settings"), "E", 
+   e_config_dialog_new(con, _("Access Settings"), "E",
                        "_e_mod_access_config_dialog",
                        "preferences-desktop-access", 0, v, NULL);
 }
 
 /* local function prototypes */
 static void *
-_create_data(E_Config_Dialog *cfd __UNUSED__) 
+_create_data(E_Config_Dialog *cfd __UNUSED__)
 {
    E_Config_Dialog_Data *cfdata;
 
@@ -54,8 +54,8 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->dummy = 1;
 }
 
-static void 
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata) 
+static void
+_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    E_FREE(cfdata);
 }
