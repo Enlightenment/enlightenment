@@ -1088,8 +1088,8 @@ e_config_load(void)
 
         e_config_bindings_free(e_bindings);
         prof = eina_stringshare_ref(e_config_profile_get());
-        e_config_profile_set("default");
-        e_bindings = e_config_domain_load("e_bindings", _e_config_binding_edd);
+        e_config_profile_set("standard");
+        e_bindings = e_config_domain_system_load("e_bindings", _e_config_binding_edd);
         e_config_profile_set(prof);
         eina_stringshare_del(prof);
         ecore_timer_add(1.0, _e_config_cb_timer,
