@@ -6,6 +6,7 @@
         * binding dialogs now reload the default config from file when reset defaults is clicked
         * fixed leak in profile list dbus method
         * binding dialogs are now able to reset bindings to the system profile file bindings
+        * fixed behavior of Up/Down keys in filemanager when typebuf was visible
 
 2013-01-31 Mike Blumenkrantz
 
