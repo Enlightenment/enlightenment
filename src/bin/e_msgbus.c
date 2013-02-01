@@ -351,6 +351,7 @@ static EDBus_Message *
 _e_msgbus_profile_list_cb(const EDBus_Service_Interface *iface __UNUSED__,
                           const EDBus_Message *msg)
 {
+   Eina_List *l;
    char *name;
    EDBus_Message *reply;
    EDBus_Message_Iter *array, *main_iter;
@@ -364,7 +365,8 @@ _e_msgbus_profile_list_cb(const EDBus_Service_Interface *iface __UNUSED__,
    edbus_message_iter_arguments_append(main_iter, "as", &array);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(array, reply);
 
-   EINA_LIST_FREE(e_config_profile_list(), name)
+   l = e_config_profile_list();
+   EINA_LIST_FREE(l, name)
      {
         edbus_message_iter_basic_append(array, 's', name);
         free(name);
