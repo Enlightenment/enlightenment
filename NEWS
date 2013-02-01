@@ -79,6 +79,7 @@ Improvements:
     * No longer build illume edj files
     * add support for AltGr in illume2's E_Kbd_Buf_Key, fix related leak
     * split out binding configs into separate config domain
+    * binding dialogs now reload the default config from file when reset defaults is clicked
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.
@@ -133,3 +134,4 @@ Fixes:
     * fixed opening of links in filemanager in some cases
     * filemanager now ignores changes to .part files
     * fixed bugs where keyboard layouts could not be applied or selected
+    * fixed leak in profile list dbus method
