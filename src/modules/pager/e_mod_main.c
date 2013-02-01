@@ -2684,7 +2684,7 @@ _pager_popup_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event
         E_Config_Binding_Key *binding;
         Eina_List *l;
 
-        EINA_LIST_FOREACH(e_config->key_bindings, l, binding)
+        EINA_LIST_FOREACH(e_bindings->key_bindings, l, binding)
           {
              E_Binding_Modifier mod = 0;
 

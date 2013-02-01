@@ -27,6 +27,8 @@ typedef struct _E_Config_XKB_Option         E_Config_XKB_Option;
 
 typedef struct _E_Event_Config_Icon_Theme   E_Event_Config_Icon_Theme;
 
+typedef struct E_Config_Bindings E_Config_Bindings;
+
 #else
 #ifndef E_CONFIG_H
 #define E_CONFIG_H
@@ -38,8 +40,10 @@ typedef struct _E_Event_Config_Icon_Theme   E_Event_Config_Icon_Theme;
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 5
+#define E_CONFIG_FILE_GENERATION 6
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
+
+#define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
 
 struct _E_Config
 {
@@ -77,12 +81,15 @@ struct _E_Config
    Eina_List  *font_fallbacks; // GUI
    Eina_List  *font_defaults; // GUI
    Eina_List  *themes; // GUI
+
+   /* NO LONGER SAVED WITH THIS STRUCT */
    Eina_List  *mouse_bindings; // GUI
    Eina_List  *key_bindings; // GUI
    Eina_List  *edge_bindings; // GUI
-   Eina_List  *signal_bindings;
+   Eina_List  *signal_bindings; // GUI
    Eina_List  *wheel_bindings; // GUI
    Eina_List  *acpi_bindings; // GUI
+
    Eina_List  *path_append_data; // GUI
    Eina_List  *path_append_images; // GUI
    Eina_List  *path_append_fonts; // GUI
@@ -414,6 +421,17 @@ struct _E_Config
    int           use_desktop_window_profile; // GUI
 };
 
+struct E_Config_Bindings
+{
+   unsigned int config_version;
+   Eina_List  *mouse_bindings; // GUI
+   Eina_List  *key_bindings; // GUI
+   Eina_List  *edge_bindings; // GUI
+   Eina_List  *signal_bindings; // GUI
+   Eina_List  *wheel_bindings; // GUI
+   Eina_List  *acpi_bindings; // GUI
+};
+
 struct _E_Config_Desklock_Background
 {
    const char *file;
@@ -644,7 +662,8 @@ EAPI E_Config_Binding_Wheel  *e_config_binding_wheel_match(E_Config_Binding_Whee
 EAPI E_Config_Binding_Acpi   *e_config_binding_acpi_match(E_Config_Binding_Acpi *eb_in);
 EAPI void                     e_config_mode_changed(void);
 
-extern EAPI E_Config * e_config;
+extern EAPI E_Config *e_config;
+extern EAPI E_Config_Bindings *e_bindings;
 
 extern EAPI int E_EVENT_CONFIG_ICON_THEME;
 extern EAPI int E_EVENT_CONFIG_MODE_CHANGED;

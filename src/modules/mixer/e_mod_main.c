@@ -525,7 +525,7 @@ _mixer_popup_input_window_key_down_cb(void *data, int type __UNUSED__, void *eve
         E_Binding_Modifier mod;
         Eina_Bool handled = EINA_FALSE;
 
-        EINA_LIST_FOREACH(e_config->key_bindings, l, binding)
+        EINA_LIST_FOREACH(e_bindings->key_bindings, l, binding)
           {
              if (binding->action &&
                  (strcmp(binding->action, "volume_increase") &&

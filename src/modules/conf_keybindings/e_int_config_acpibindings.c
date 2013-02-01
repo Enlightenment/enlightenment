@@ -94,7 +94,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    Eina_List *l;
    E_Config_Binding_Acpi *binding;
 
-   EINA_LIST_FOREACH(e_config->acpi_bindings, l, binding)
+   EINA_LIST_FOREACH(e_bindings->acpi_bindings, l, binding)
      {
         E_Config_Binding_Acpi *b2;
 
@@ -150,7 +150,7 @@ _basic_apply(E_Config_Dialog *cfd  __UNUSED__,
    E_Config_Binding_Acpi *binding, *b2;
    Eina_List *l;
 
-   EINA_LIST_FREE(e_config->acpi_bindings, binding)
+   EINA_LIST_FREE(e_bindings->acpi_bindings, binding)
      {
         e_bindings_acpi_del(binding->context, binding->type, binding->status,
                             binding->action, binding->params);
@@ -167,8 +167,8 @@ _basic_apply(E_Config_Dialog *cfd  __UNUSED__,
         b2->status = binding->status;
         b2->action = eina_stringshare_ref(binding->action);
         b2->params = eina_stringshare_ref(binding->params);
-        e_config->acpi_bindings =
-          eina_list_append(e_config->acpi_bindings, b2);
+        e_bindings->acpi_bindings =
+          eina_list_append(e_bindings->acpi_bindings, b2);
 
         e_bindings_acpi_add(b2->context, b2->type, b2->status,
                             b2->action, b2->params);
@@ -535,7 +535,7 @@ _cb_del_binding(void *data,
    if (!(binding = _selected_binding_get(cfdata))) return;
 
    /* delete from e_config */
-   EINA_LIST_FOREACH(e_config->acpi_bindings, l, bind2)
+   EINA_LIST_FOREACH(e_bindings->acpi_bindings, l, bind2)
      {
         if ((binding->context == bind2->context) && (binding->type == bind2->type) &&
             (((binding->action) && (bind2->action) &&
@@ -548,8 +548,8 @@ _cb_del_binding(void *data,
              if (bind2->action) eina_stringshare_del(bind2->action);
              if (bind2->params) eina_stringshare_del(bind2->params);
              E_FREE(bind2);
-             e_config->acpi_bindings =
-               eina_list_remove_list(e_config->acpi_bindings, l);
+             e_bindings->acpi_bindings =
+               eina_list_remove_list(e_bindings->acpi_bindings, l);
              e_config_save_queue();
              break;
           }

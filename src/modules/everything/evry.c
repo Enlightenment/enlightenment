@@ -1982,7 +1982,7 @@ _evry_cb_key_down(void *data, int type __UNUSED__, void *event)
         E_Config_Binding_Key *binding;
         E_Binding_Modifier mod;
 
-	EINA_LIST_FOREACH(e_config->key_bindings, l, binding)
+	       EINA_LIST_FOREACH(e_bindings->key_bindings, l, binding)
           {
              if (binding->action && strcmp(binding->action, "everything")) continue;
 

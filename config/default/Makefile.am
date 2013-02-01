@@ -5,13 +5,15 @@ EET_EET = @eet_eet@
 EXTRA_DIST = \
         profile.desktop \
         enlightenment-default.png \
-	e.src
+	e.src \
+	e_bindings.src
 
 filesdir = $(datadir)/enlightenment/data/config/default
 files_DATA = \
         profile.desktop \
         enlightenment-default.png \
-	e.cfg
+	e.cfg \
+	e_bindings.cfg
 
 SUFFIXES = .cfg
 

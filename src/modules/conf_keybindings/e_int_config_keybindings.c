@@ -128,7 +128,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->binding.key = NULL;
    cfdata->locals.eg = NULL;
 
-   EINA_LIST_FOREACH(e_config->key_bindings, l, bi)
+   EINA_LIST_FOREACH(e_bindings->key_bindings, l, bi)
      {
         if (!bi) continue;
 
@@ -190,7 +190,7 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
    _auto_apply_changes(cfdata);
 
    e_managers_keys_ungrab();
-   EINA_LIST_FREE(e_config->key_bindings, bi)
+   EINA_LIST_FREE(e_bindings->key_bindings, bi)
      {
         e_bindings_key_del(bi->context, bi->key, bi->modifiers, bi->any_mod,
                            bi->action, bi->params);
@@ -216,7 +216,7 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         bi->params =
           ((!bi2->params) || (!bi2->params[0])) ? NULL : eina_stringshare_ref(bi2->params);
 
-        e_config->key_bindings = eina_list_append(e_config->key_bindings, bi);
+        e_bindings->key_bindings = eina_list_append(e_bindings->key_bindings, bi);
         e_bindings_key_add(bi->context, bi->key, bi->modifiers, bi->any_mod,
                            bi->action, bi->params);
      }

@@ -666,7 +666,7 @@ _grab_key_down_cb(void *data, int type __UNUSED__, void *event)
    bi->params = eina_stringshare_ref(entry->id);
 
    e_managers_keys_ungrab();
-   e_config->key_bindings = eina_list_append(e_config->key_bindings, bi);
+   e_bindings->key_bindings = eina_list_append(e_bindings->key_bindings, bi);
    e_bindings_key_add(bi->context, bi->key, bi->modifiers, bi->any_mod, bi->action, bi->params);
    e_managers_keys_grab();
    e_config_save_queue();

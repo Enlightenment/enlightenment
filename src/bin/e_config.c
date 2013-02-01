@@ -10,7 +10,8 @@
 #define RANDR_SERIALIZED_SETUP_12 ((int)((1 << 16) | 2))
 #define RANDR_SERIALIZED_SETUP_13 ((int)((1 << 16) | 3))
 
-EAPI E_Config * e_config = NULL;
+EAPI E_Config *e_config = NULL;
+EAPI E_Config_Bindings *e_bindings = NULL;
 
 static int _e_config_revisions = 9;
 
@@ -26,6 +27,7 @@ static E_Powersave_Deferred_Action *_e_config_save_defer = NULL;
 static const char *_e_config_profile = NULL;
 
 static E_Config_DD *_e_config_edd = NULL;
+static E_Config_DD *_e_config_binding_edd = NULL;
 static E_Config_DD *_e_config_module_edd = NULL;
 static E_Config_DD *_e_config_font_fallback_edd = NULL;
 static E_Config_DD *_e_config_font_default_edd = NULL;
@@ -105,6 +107,58 @@ _e_config_profile_name_get(Eet_File *ef)
         free(data);
      }
    return s;
+}
+
+static void
+_e_config_bindings_free(E_Config_Bindings *ecb)
+{
+   E_Config_Binding_Signal *ebs;
+   E_Config_Binding_Mouse *ebm;
+   E_Config_Binding_Wheel *ebw;
+   E_Config_Binding_Key *ebk;
+   E_Config_Binding_Edge *ebe;
+   E_Config_Binding_Acpi *eba;
+
+   EINA_LIST_FREE(ecb->mouse_bindings, ebm)
+     {
+        eina_stringshare_del(ebm->action);
+        eina_stringshare_del(ebm->params);
+        free(ebm);
+     }
+   EINA_LIST_FREE(ecb->key_bindings, ebk)
+     {
+        eina_stringshare_del(ebk->key);
+        eina_stringshare_del(ebk->action);
+        eina_stringshare_del(ebk->params);
+        free(ebk);
+     }
+   EINA_LIST_FREE(ecb->edge_bindings, ebe)
+     {
+        eina_stringshare_del(ebe->action);
+        eina_stringshare_del(ebe->params);
+        free(ebe);
+     }
+   EINA_LIST_FREE(ecb->signal_bindings, ebs)
+     {
+        eina_stringshare_del(ebs->signal);
+        eina_stringshare_del(ebs->source);
+        eina_stringshare_del(ebs->action);
+        eina_stringshare_del(ebs->params);
+        free(ebs);
+     }
+   EINA_LIST_FREE(ecb->wheel_bindings, ebw)
+     {
+        eina_stringshare_del(ebw->action);
+        eina_stringshare_del(ebw->params);
+        free(ebw);
+     }
+   EINA_LIST_FREE(ecb->acpi_bindings, eba)
+     {
+        eina_stringshare_del(eba->action);
+        eina_stringshare_del(eba->params);
+        free(eba);
+     }
+   free(ecb);
 }
 
 /* externally accessible functions */
@@ -967,6 +1021,20 @@ e_config_init(void)
    E_CONFIG_VAL(D, T, exe_always_single_instance, UCHAR);
 
    E_CONFIG_VAL(D, T, use_desktop_window_profile, INT);
+
+   _e_config_binding_edd = E_CONFIG_DD_NEW("E_Config_Bindings", E_Config_Bindings);
+#undef T
+#undef D
+#define T E_Config_Bindings
+#define D _e_config_binding_edd
+   E_CONFIG_VAL(D, T, config_version, UINT); /**/
+   E_CONFIG_LIST(D, T, mouse_bindings, _e_config_bindings_mouse_edd); /**/
+   E_CONFIG_LIST(D, T, key_bindings, _e_config_bindings_key_edd); /**/
+   E_CONFIG_LIST(D, T, edge_bindings, _e_config_bindings_edge_edd); /**/
+   E_CONFIG_LIST(D, T, signal_bindings, _e_config_bindings_signal_edd); /**/
+   E_CONFIG_LIST(D, T, wheel_bindings, _e_config_bindings_wheel_edd); /**/
+   E_CONFIG_LIST(D, T, acpi_bindings, _e_config_bindings_acpi_edd); /**/
+
    e_config_load();
 
    e_config_save_queue();
@@ -978,6 +1046,7 @@ e_config_shutdown(void)
 {
    eina_stringshare_del(_e_config_profile);
    E_CONFIG_DD_FREE(_e_config_edd);
+   E_CONFIG_DD_FREE(_e_config_binding_edd);
    E_CONFIG_DD_FREE(_e_config_module_edd);
    E_CONFIG_DD_FREE(_e_config_font_default_edd);
    E_CONFIG_DD_FREE(_e_config_font_fallback_edd);
@@ -1063,9 +1132,30 @@ e_config_load(void)
         //e_sys_action_do(E_SYS_RESTART, NULL);
         return;
      }
+
+   e_bindings = e_config_domain_load("e_bindings", _e_config_binding_edd);
+   if (e_bindings && (e_bindings->config_version != E_CONFIG_BINDINGS_VERSION))
+     {
+        Eina_Stringshare *prof;
+
+        _e_config_bindings_free(e_bindings);
+        prof = eina_stringshare_ref(e_config_profile_get());
+        e_config_profile_set("default");
+        e_bindings = e_config_domain_load("e_bindings", _e_config_binding_edd);
+        e_config_profile_set(prof);
+        eina_stringshare_del(prof);
+        ecore_timer_add(1.0, _e_config_cb_timer,
+                        _("Your bindings settings version does not match the current settings version.<br>"
+                          "As a result, all bindings have been reloaded from defaults.<br>"
+                          "Sorry for the inconvenience.<br>"));
+     }
+
    if (e_config->config_version < E_CONFIG_FILE_VERSION)
      {
-        if (e_config->config_version - (E_CONFIG_FILE_EPOCH * 1000000) == 4)
+#define CONFIG_VERSION_CHECK(VERSION) \
+  if (e_config->config_version - (E_CONFIG_FILE_EPOCH * 1000000) < (VERSION))
+
+        CONFIG_VERSION_CHECK(5)
           {
              E_Config_XKB_Layout *cl;
              Eina_List *l;
@@ -1087,10 +1177,25 @@ e_config_load(void)
                    }
               }
           }
+        CONFIG_VERSION_CHECK(6)
+          {
+             e_bindings = E_NEW(E_Config_Bindings, 1);
+#undef SET
+#define SET(X) e_bindings->X = e_config->X, e_config->X = NULL
+
+             SET(mouse_bindings);
+             SET(key_bindings);
+             SET(edge_bindings);
+             SET(signal_bindings);
+             SET(wheel_bindings);
+             SET(acpi_bindings);
+#undef SET
+          }
      }
    if (!e_config->remember_internal_fm_windows)
      e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
 
+   e_bindings->config_version = E_CONFIG_BINDINGS_VERSION;
    e_config->config_version = E_CONFIG_FILE_VERSION;
 
    /* limit values so they are sane */
@@ -1275,11 +1380,7 @@ e_config_load(void)
 EAPI int
 e_config_save(void)
 {
-   if (_e_config_save_defer)
-     {
-        e_powersave_deferred_action_del(_e_config_save_defer);
-        _e_config_save_defer = NULL;
-     }
+   E_FN_DEL(e_powersave_deferred_action_del, _e_config_save_defer);
    _e_config_save_cb(NULL);
    return e_config_domain_save("e", _e_config_edd, e_config);
 }
@@ -1677,7 +1778,7 @@ e_config_binding_mouse_match(E_Config_Binding_Mouse *eb_in)
    Eina_List *l;
    E_Config_Binding_Mouse *eb;
 
-   EINA_LIST_FOREACH(e_config->mouse_bindings, l, eb)
+   EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, eb)
      {
         if ((eb->context == eb_in->context) &&
             (eb->button == eb_in->button) &&
@@ -1698,7 +1799,7 @@ e_config_binding_key_match(E_Config_Binding_Key *eb_in)
    Eina_List *l;
    E_Config_Binding_Key *eb;
 
-   EINA_LIST_FOREACH(e_config->mouse_bindings, l, eb)
+   EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, eb)
      {
         if ((eb->context == eb_in->context) &&
             (eb->modifiers == eb_in->modifiers) &&
@@ -1720,7 +1821,7 @@ e_config_binding_edge_match(E_Config_Binding_Edge *eb_in)
    Eina_List *l;
    E_Config_Binding_Edge *eb;
 
-   EINA_LIST_FOREACH(e_config->edge_bindings, l, eb)
+   EINA_LIST_FOREACH(e_bindings->edge_bindings, l, eb)
      {
         if ((eb->context == eb_in->context) &&
             (eb->modifiers == eb_in->modifiers) &&
@@ -1742,7 +1843,7 @@ e_config_binding_signal_match(E_Config_Binding_Signal *eb_in)
    Eina_List *l;
    E_Config_Binding_Signal *eb;
 
-   EINA_LIST_FOREACH(e_config->signal_bindings, l, eb)
+   EINA_LIST_FOREACH(e_bindings->signal_bindings, l, eb)
      {
         if ((eb->context == eb_in->context) &&
             (eb->modifiers == eb_in->modifiers) &&
@@ -1766,7 +1867,7 @@ e_config_binding_wheel_match(E_Config_Binding_Wheel *eb_in)
    Eina_List *l;
    E_Config_Binding_Wheel *eb;
 
-   EINA_LIST_FOREACH(e_config->wheel_bindings, l, eb)
+   EINA_LIST_FOREACH(e_bindings->wheel_bindings, l, eb)
      {
         if ((eb->context == eb_in->context) &&
             (eb->direction == eb_in->direction) &&
@@ -1788,7 +1889,7 @@ e_config_binding_acpi_match(E_Config_Binding_Acpi *eb_in)
    Eina_List *l;
    E_Config_Binding_Acpi *eb;
 
-   EINA_LIST_FOREACH(e_config->acpi_bindings, l, eb)
+   EINA_LIST_FOREACH(e_bindings->acpi_bindings, l, eb)
      {
         if ((eb->context == eb_in->context) &&
             (eb->type == eb_in->type) &&
@@ -1817,19 +1918,14 @@ _e_config_save_cb(void *data __UNUSED__)
    e_config_profile_save();
    e_module_save_all();
    e_config_domain_save("e", _e_config_edd, e_config);
+   e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
    _e_config_save_defer = NULL;
 }
 
 static void
 _e_config_free(E_Config *ecf)
 {
-   E_Config_Binding_Signal *ebs;
-   E_Config_Binding_Mouse *ebm;
-   E_Config_Binding_Wheel *ebw;
    E_Config_Syscon_Action *sca;
-   E_Config_Binding_Key *ebk;
-   E_Config_Binding_Edge *ebe;
-   E_Config_Binding_Acpi *eba;
    E_Font_Fallback *eff;
    E_Config_Module *em;
    E_Font_Default *efd;
@@ -1879,45 +1975,6 @@ _e_config_free(E_Config *ecf)
         if (et->category) eina_stringshare_del(et->category);
         if (et->file) eina_stringshare_del(et->file);
         E_FREE(et);
-     }
-   EINA_LIST_FREE(ecf->mouse_bindings, ebm)
-     {
-        if (ebm->action) eina_stringshare_del(ebm->action);
-        if (ebm->params) eina_stringshare_del(ebm->params);
-        E_FREE(ebm);
-     }
-   EINA_LIST_FREE(ecf->key_bindings, ebk)
-     {
-        if (ebk->key) eina_stringshare_del(ebk->key);
-        if (ebk->action) eina_stringshare_del(ebk->action);
-        if (ebk->params) eina_stringshare_del(ebk->params);
-        E_FREE(ebk);
-     }
-   EINA_LIST_FREE(ecf->edge_bindings, ebe)
-     {
-        if (ebe->action) eina_stringshare_del(ebe->action);
-        if (ebe->params) eina_stringshare_del(ebe->params);
-        E_FREE(ebe);
-     }
-   EINA_LIST_FREE(ecf->signal_bindings, ebs)
-     {
-        if (ebs->signal) eina_stringshare_del(ebs->signal);
-        if (ebs->source) eina_stringshare_del(ebs->source);
-        if (ebs->action) eina_stringshare_del(ebs->action);
-        if (ebs->params) eina_stringshare_del(ebs->params);
-        E_FREE(ebs);
-     }
-   EINA_LIST_FREE(ecf->wheel_bindings, ebw)
-     {
-        if (ebw->action) eina_stringshare_del(ebw->action);
-        if (ebw->params) eina_stringshare_del(ebw->params);
-        E_FREE(ebw);
-     }
-   EINA_LIST_FREE(ecf->acpi_bindings, eba)
-     {
-        if (eba->action) eina_stringshare_del(eba->action);
-        if (eba->params) eina_stringshare_del(eba->params);
-        E_FREE(eba);
      }
    EINA_LIST_FREE(ecf->path_append_data, epd)
      {

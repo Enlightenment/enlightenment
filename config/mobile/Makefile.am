@@ -6,6 +6,7 @@ EXTRA_DIST = \
         profile.desktop \
         enlightenment-mobile.png \
         e.src \
+	e_bindings.src \
 	module.battery.src \
 	module.illume-home.src \
 	module.illume-keyboard.src \
@@ -19,6 +20,7 @@ files_DATA = \
         profile.desktop \
         enlightenment-mobile.png \
 	e.cfg \
+	e_bindings.cfg \
 	module.battery.cfg \
 	module.illume-home.cfg \
         module.illume-keyboard.cfg \

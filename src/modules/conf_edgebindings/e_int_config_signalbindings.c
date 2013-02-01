@@ -150,7 +150,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->locals.dia = NULL;
    cfdata->binding.signal = NULL;
 
-   EINA_LIST_FOREACH(e_config->signal_bindings, l, bi)
+   EINA_LIST_FOREACH(e_bindings->signal_bindings, l, bi)
      {
         if (!bi) continue;
         bi2 = _signal_binding_copy(bi);
@@ -467,11 +467,11 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    E_Config_Binding_Signal *bi, *bi2;
 
    _auto_apply_changes(cfdata);
-   E_FREE_LIST(e_config->signal_bindings, _signal_binding_free);
+   E_FREE_LIST(e_bindings->signal_bindings, _signal_binding_free);
    EINA_LIST_FOREACH(cfdata->binding.signal, l, bi2)
      {
         bi = _signal_binding_copy(bi2);
-        e_config->signal_bindings = eina_list_append(e_config->signal_bindings, bi);
+        e_bindings->signal_bindings = eina_list_append(e_bindings->signal_bindings, bi);
      }
    e_bindings_signal_reset();
 

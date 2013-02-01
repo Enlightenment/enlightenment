@@ -6,6 +6,7 @@ EXTRA_DIST = \
         profile.desktop \
         enlightenment-standard.png \
 	e.src \
+	e_bindings.src \
 	module.battery.src \
 	module.cpufreq.src \
 	module.fileman.src \
@@ -20,6 +21,7 @@ files_DATA = \
         profile.desktop \
         enlightenment-standard.png \
 	e.cfg \
+	e_bindings.cfg \
 	module.battery.cfg \
 	module.cpufreq.cfg \
 	module.fileman.cfg \

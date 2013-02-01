@@ -1348,7 +1348,7 @@ _e_winlist_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
         E_Config_Binding_Key *binding;
         E_Binding_Modifier mod;
 
-        EINA_LIST_FOREACH(e_config->key_bindings, l, binding)
+        EINA_LIST_FOREACH(e_bindings->key_bindings, l, binding)
           {
              if (binding->action != _winlist_act) continue;
 
@@ -1415,7 +1415,7 @@ _e_winlist_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
           }
      }
 
-   EINA_LIST_FOREACH(e_config->key_bindings, l, binding)
+   EINA_LIST_FOREACH(e_bindings->key_bindings, l, binding)
      {
         if (binding->action != _winlist_act) continue;
         mod = 0;

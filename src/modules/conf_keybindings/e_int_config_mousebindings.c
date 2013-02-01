@@ -127,7 +127,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->binding.wheel = NULL;
    cfdata->locals.eg = NULL;
 
-   EINA_LIST_FOREACH(e_config->mouse_bindings, l, eb)
+   EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, eb)
      {
         eb2 = E_NEW(E_Config_Binding_Mouse, 1);
         eb2->context = eb->context;
@@ -140,7 +140,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
         cfdata->binding.mouse = eina_list_append(cfdata->binding.mouse, eb2);
      }
 
-   EINA_LIST_FOREACH(e_config->wheel_bindings, l, bw)
+   EINA_LIST_FOREACH(e_bindings->wheel_bindings, l, bw)
      {
         bw2 = E_NEW(E_Config_Binding_Wheel, 1);
         bw2->context = bw->context;
@@ -207,7 +207,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    e_border_button_bindings_ungrab_all();
    e_managers_keys_ungrab();
 
-   EINA_LIST_FREE(e_config->mouse_bindings, eb)
+   EINA_LIST_FREE(e_bindings->mouse_bindings, eb)
      {
         e_bindings_mouse_del(eb->context, eb->button, eb->modifiers, eb->any_mod,
                              eb->action, eb->params);
@@ -226,12 +226,12 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
         eb2->action = !eb->action ? NULL : eina_stringshare_add(eb->action);
         eb2->params = !eb->params ? NULL : eina_stringshare_add(eb->params);
 
-        e_config->mouse_bindings = eina_list_append(e_config->mouse_bindings, eb2);
+        e_bindings->mouse_bindings = eina_list_append(e_bindings->mouse_bindings, eb2);
         e_bindings_mouse_add(eb2->context, eb2->button, eb2->modifiers, eb2->any_mod,
                              eb2->action, eb2->params);
      }
 
-   EINA_LIST_FREE(e_config->wheel_bindings, bw)
+   EINA_LIST_FREE(e_bindings->wheel_bindings, bw)
      {
         e_bindings_wheel_del(bw->context, bw->direction, bw->z, bw->modifiers, bw->any_mod,
                              bw->action, bw->params);
@@ -264,7 +264,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
         bw2->action = !bw->action ? NULL : eina_stringshare_add(bw->action);
         bw2->params = !bw->params ? NULL : eina_stringshare_add(bw->params);
 
-        e_config->wheel_bindings = eina_list_append(e_config->wheel_bindings, bw2);
+        e_bindings->wheel_bindings = eina_list_append(e_bindings->wheel_bindings, bw2);
         e_bindings_wheel_add(bw2->context, bw2->direction, bw2->z, bw2->modifiers,
                              bw2->any_mod, bw2->action, bw2->params);
      }

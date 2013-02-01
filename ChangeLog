@@ -1,3 +1,7 @@
+2013-02-01 Mike Blumenkrantz
+
+        * split out binding configs into separate config domain
+
 2013-01-31 Mike Blumenkrantz
 
         * fixed window autoraise triggering from pointer slide

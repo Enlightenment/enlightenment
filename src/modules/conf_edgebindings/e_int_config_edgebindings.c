@@ -129,7 +129,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->locals.click = 0;
    cfdata->binding.edge = NULL;
 
-   EINA_LIST_FOREACH(e_config->edge_bindings, l, bi)
+   EINA_LIST_FOREACH(e_bindings->edge_bindings, l, bi)
      {
         if (!bi) continue;
 
@@ -194,7 +194,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
    _auto_apply_changes(cfdata);
 
-   EINA_LIST_FREE(e_config->edge_bindings, bi)
+   EINA_LIST_FREE(e_bindings->edge_bindings, bi)
      {
         e_bindings_edge_del(bi->context, bi->edge, bi->modifiers, bi->any_mod,
                             bi->action, bi->params, bi->delay);
@@ -217,7 +217,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
         bi->params =
           ((!bi2->params) || (!bi2->params[0])) ? NULL : eina_stringshare_add(bi2->params);
 
-        e_config->edge_bindings = eina_list_append(e_config->edge_bindings, bi);
+        e_bindings->edge_bindings = eina_list_append(e_bindings->edge_bindings, bi);
         e_bindings_edge_add(bi->context, bi->edge, bi->modifiers, bi->any_mod,
                             bi->action, bi->params, bi->delay);
      }

@@ -52,19 +52,19 @@ e_bindings_init(void)
    mapping_handler = ecore_event_handler_add
        (ECORE_X_EVENT_MAPPING_CHANGE, _e_bindings_mapping_change_event_cb, NULL);
 
-   EINA_LIST_FOREACH(e_config->mouse_bindings, l, ebm)
+   EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, ebm)
      e_bindings_mouse_add(ebm->context, ebm->button, ebm->modifiers,
                           ebm->any_mod, ebm->action, ebm->params);
 
-   EINA_LIST_FOREACH(e_config->key_bindings, l, ebk)
+   EINA_LIST_FOREACH(e_bindings->key_bindings, l, ebk)
      e_bindings_key_add(ebk->context, ebk->key, ebk->modifiers,
                         ebk->any_mod, ebk->action, ebk->params);
 
-   EINA_LIST_FOREACH(e_config->edge_bindings, l, ebe)
+   EINA_LIST_FOREACH(e_bindings->edge_bindings, l, ebe)
      e_bindings_edge_add(ebe->context, ebe->edge, ebe->modifiers,
                          ebe->any_mod, ebe->action, ebe->params, ebe->delay);
 
-   EINA_LIST_FOREACH(e_config->signal_bindings, l, ebs)
+   EINA_LIST_FOREACH(e_bindings->signal_bindings, l, ebs)
      {
         e_bindings_signal_add(ebs->context, ebs->signal, ebs->source, ebs->modifiers,
                               ebs->any_mod, ebs->action, ebs->params);
@@ -85,11 +85,11 @@ e_bindings_init(void)
           }
      }
 
-   EINA_LIST_FOREACH(e_config->wheel_bindings, l, ebw)
+   EINA_LIST_FOREACH(e_bindings->wheel_bindings, l, ebw)
      e_bindings_wheel_add(ebw->context, ebw->direction, ebw->z, ebw->modifiers,
                           ebw->any_mod, ebw->action, ebw->params);
 
-   EINA_LIST_FOREACH(e_config->acpi_bindings, l, eba)
+   EINA_LIST_FOREACH(e_bindings->acpi_bindings, l, eba)
      e_bindings_acpi_add(eba->context, eba->type, eba->status,
                          eba->action, eba->params);
 
@@ -122,7 +122,7 @@ e_bindings_signal_reset(void)
    Eina_List *l;
    E_FREE_LIST(signal_bindings, _e_bindings_signal_free);
 
-   EINA_LIST_FOREACH(e_config->signal_bindings, l, ebs)
+   EINA_LIST_FOREACH(e_bindings->signal_bindings, l, ebs)
      {
         e_bindings_signal_add(ebs->context, ebs->signal, ebs->source, ebs->modifiers,
                               ebs->any_mod, ebs->action, ebs->params);
@@ -152,7 +152,7 @@ e_bindings_acpi_reset(void)
 
    E_FREE_LIST(acpi_bindings, _e_bindings_acpi_free);
 
-   EINA_LIST_FOREACH(e_config->acpi_bindings, l, eba)
+   EINA_LIST_FOREACH(e_bindings->acpi_bindings, l, eba)
      e_bindings_acpi_add(eba->context, eba->type, eba->status,
                          eba->action, eba->params);
 }
@@ -165,7 +165,7 @@ e_bindings_wheel_reset(void)
 
    E_FREE_LIST(wheel_bindings, _e_bindings_wheel_free);
 
-   EINA_LIST_FOREACH(e_config->wheel_bindings, l, ebw)
+   EINA_LIST_FOREACH(e_bindings->wheel_bindings, l, ebw)
      e_bindings_wheel_add(ebw->context, ebw->direction, ebw->z, ebw->modifiers,
                           ebw->any_mod, ebw->action, ebw->params);
 }
@@ -178,7 +178,7 @@ e_bindings_edge_reset(void)
 
    E_FREE_LIST(edge_bindings, _e_bindings_edge_free);
 
-   EINA_LIST_FOREACH(e_config->edge_bindings, l, ebe)
+   EINA_LIST_FOREACH(e_bindings->edge_bindings, l, ebe)
      e_bindings_edge_add(ebe->context, ebe->edge, ebe->modifiers,
                          ebe->any_mod, ebe->action, ebe->params, ebe->delay);
 }
@@ -191,7 +191,7 @@ e_bindings_mouse_reset(void)
 
    E_FREE_LIST(mouse_bindings, _e_bindings_mouse_free);
 
-   EINA_LIST_FOREACH(e_config->mouse_bindings, l, ebm)
+   EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, ebm)
      e_bindings_mouse_add(ebm->context, ebm->button, ebm->modifiers,
                           ebm->any_mod, ebm->action, ebm->params);
 }
@@ -205,7 +205,7 @@ e_bindings_key_reset(void)
    e_managers_keys_ungrab();
    E_FREE_LIST(key_bindings, _e_bindings_key_free);
 
-   EINA_LIST_FOREACH(e_config->key_bindings, l, ebk)
+   EINA_LIST_FOREACH(e_bindings->key_bindings, l, ebk)
      e_bindings_key_add(ebk->context, ebk->key, ebk->modifiers,
                         ebk->any_mod, ebk->action, ebk->params);
    e_managers_keys_grab();

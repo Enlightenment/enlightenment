@@ -1446,7 +1446,7 @@ e_util_binding_match(const Eina_List *bindlist, Ecore_Event_Key *ev, unsigned in
       if (ev->modifiers & ECORE_X_LOCK_NUM)
       mod |= ECORE_X_LOCK_NUM;
     */
-   EINA_LIST_FOREACH(bindlist ? : e_config->key_bindings, l, bi)
+   EINA_LIST_FOREACH(bindlist ? : e_bindings->key_bindings, l, bi)
      {
         if (bi != skip)
           {
