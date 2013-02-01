@@ -13,7 +13,7 @@ typedef struct
    E_Zone         *zone;
    Ecore_X_Window  win;
    Ecore_Timer    *timer;
-   Ecore_Timer    *double_down_timer;
+   Ecore_Timer    *double_click_timer;
    Ecore_Timer    *tap_timer;
    Evas_Object    *info;
    Evas_Object    *text;
@@ -23,7 +23,7 @@ typedef struct
    Eina_Inlist    *history;
    Eina_Bool       longpressed : 1;
    Eina_Bool       two_finger_down : 1;
-   Eina_Bool       mouse_double_down : 1;
+   Eina_Bool       double_clicked : 1;
 } Cover;
 
 #if DEBUG_INFO
@@ -162,13 +162,13 @@ static Eina_Bool
 _mouse_double_down(void *data)
 {
    Cover *cov = data;
-   ecore_timer_del(cov->double_down_timer);
-   cov->double_down_timer = NULL;
+   ecore_timer_del(cov->double_click_timer);
+   cov->double_click_timer = NULL;
    return EINA_FALSE;
 }
 
 static void
-_mouse_double_down_timeout(Cover *cov)
+_double_click_timeout(Cover *cov)
 {
    double short_time = 0.3;
    int distance = 40;
@@ -177,11 +177,11 @@ _mouse_double_down_timeout(Cover *cov)
    dx = cov->x - cov->dx;
    dy = cov->y - cov->dy;
 
-   if ((cov->double_down_timer) &&
+   if ((cov->double_click_timer) &&
        (((dx * dx) + (dy * dy)) < (distance * distance)))
      {
         // start double tap and move from here
-        cov->mouse_double_down = EINA_TRUE;
+        cov->double_clicked = EINA_TRUE;
 
         if (cov->timer)
           {
@@ -190,14 +190,14 @@ _mouse_double_down_timeout(Cover *cov)
           }
      }
 
-   if (cov->double_down_timer)
+   if (cov->double_click_timer)
      {
-        ecore_timer_del(cov->double_down_timer);
-        cov->double_down_timer = NULL;
+        ecore_timer_del(cov->double_click_timer);
+        cov->double_click_timer = NULL;
         return;
      }
 
-   cov->double_down_timer = ecore_timer_add(short_time, _mouse_double_down, cov);
+   cov->double_click_timer = ecore_timer_add(short_time, _mouse_double_down, cov);
 }
 
 static Eina_Bool
@@ -233,7 +233,7 @@ _mouse_down(Cover *cov, Ecore_Event_Mouse_Button *ev)
      }
 
    /* check mouse double down - not two fingers, refer to double click */
-   _mouse_double_down_timeout(cov);
+   _double_click_timeout(cov);
 }
 
 static void
@@ -255,7 +255,7 @@ _mouse_up(Cover *cov, Ecore_Event_Mouse_Button *ev)
      }
 
    // reset double down and moving
-   cov->mouse_double_down = EINA_FALSE;
+   cov->double_clicked = EINA_FALSE;
 
    if (cov->timer)
      {
@@ -471,13 +471,13 @@ _cb_mouse_move(void    *data __UNUSED__,
                   INFO(cov, "read");
                   _messsage_read_send(cov);
                }
-             else if (cov->mouse_double_down && // client message for moving is available only after long press is detected
+             else if (cov->double_clicked && // client message for moving is available only after long press is detected
                       !(cov->two_finger_down) && ev->multi.device == multi_device[0])
                {
                   int distance = 5;
                   int dx, dy;
 
-                  if (ev->multi.device == multi_device[0] && cov->mouse_double_down)
+                  if (ev->multi.device == multi_device[0] && cov->double_clicked)
                     {
                        dx = ev->x - cov->mx;
                        dy = ev->y - cov->my;
@@ -650,10 +650,10 @@ _covers_shutdown(void)
              cov->timer = NULL;
           }
 
-        if (cov->double_down_timer)
+        if (cov->double_click_timer)
           {
-             ecore_timer_del(cov->double_down_timer);
-             cov->double_down_timer = NULL;
+             ecore_timer_del(cov->double_click_timer);
+             cov->double_click_timer = NULL;
           }
 
         if (cov->tap_timer)
