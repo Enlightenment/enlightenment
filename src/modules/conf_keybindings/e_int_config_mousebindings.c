@@ -569,77 +569,27 @@ _delete_mouse_binding_cb(void *data, void *data2 __UNUSED__)
 static void
 _restore_mouse_binding_defaults_cb(void *data, void *data2 __UNUSED__)
 {
-   E_Config_Binding_Mouse *eb;
-   E_Config_Binding_Wheel *bw;
-   E_Config_Dialog_Data *cfdata;
+   E_Config_Bindings *ecb;
+   Eina_Stringshare *prof;
+   E_Config_Dialog_Data *cfdata = data;
 
-   cfdata = data;
-
-   EINA_LIST_FREE(cfdata->binding.mouse, eb)
+   ecb = e_config_domain_system_load("e_bindings", e_config_descriptor_find("E_Config_Bindings"));
+   if (!ecb)
      {
-        eina_stringshare_del(eb->action);
-        eina_stringshare_del(eb->params);
-        E_FREE(eb);
+        prof = eina_stringshare_ref(e_config_profile_get());
+        /* FIXME: need some type of parenting/typing system for profiles */
+        e_config_profile_set("standard");
+        ecb = e_config_domain_system_load("e_bindings", e_config_descriptor_find("E_Config_Bindings"));
+        e_config_profile_set(prof);
+        eina_stringshare_del(prof);
      }
+   if (!ecb) return;
+   E_FREE_LIST(cfdata->binding.mouse, e_config_binding_mouse_free);
+   E_FREE_LIST(cfdata->binding.wheel, e_config_binding_wheel_free);
 
-   EINA_LIST_FREE(cfdata->binding.wheel, bw)
-     {
-        if (bw->action) eina_stringshare_del(bw->action);
-        if (bw->params) eina_stringshare_del(bw->params);
-        E_FREE(bw);
-     }
-#define CFG_MOUSEBIND_DFLT(_context, _button, _modifiers, _anymod, _action, _params) \
-  eb = E_NEW(E_Config_Binding_Mouse, 1);                                             \
-  eb->context = _context;                                                            \
-  eb->button = _button;                                                              \
-  eb->modifiers = _modifiers;                                                        \
-  eb->any_mod = _anymod;                                                             \
-  eb->action = _action == NULL ? NULL : eina_stringshare_add(_action);               \
-  eb->params = _params == NULL ? NULL : eina_stringshare_add(_params);               \
-  cfdata->binding.mouse = eina_list_append(cfdata->binding.mouse, eb)
-
-   CFG_MOUSEBIND_DFLT(E_BINDING_CONTEXT_WINDOW, 1, E_BINDING_MODIFIER_ALT, 0, "window_move", NULL);
-   CFG_MOUSEBIND_DFLT(E_BINDING_CONTEXT_WINDOW, 2, E_BINDING_MODIFIER_ALT, 0, "window_resize", NULL);
-   CFG_MOUSEBIND_DFLT(E_BINDING_CONTEXT_WINDOW, 3, E_BINDING_MODIFIER_ALT, 0, "window_menu", NULL);
-   CFG_MOUSEBIND_DFLT(E_BINDING_CONTEXT_ZONE, 1, 0, 0, "menu_show", "main");
-   CFG_MOUSEBIND_DFLT(E_BINDING_CONTEXT_ZONE, 2, 0, 0, "menu_show", "clients");
-   CFG_MOUSEBIND_DFLT(E_BINDING_CONTEXT_ZONE, 3, 0, 0, "menu_show", "favorites");
-
-#define CFG_WHEELBIND_DFLT(_context, _direction, _z, _modifiers, _anymod, _action, _params) \
-  bw = E_NEW(E_Config_Binding_Wheel, 1);                                                    \
-  bw->context = _context;                                                                   \
-  bw->direction = _direction;                                                               \
-  bw->z = _z;                                                                               \
-  bw->modifiers = _modifiers;                                                               \
-  bw->any_mod = _anymod;                                                                    \
-  bw->action = _action == NULL ? NULL : eina_stringshare_add(_action);                      \
-  bw->params = _params == NULL ? NULL : eina_stringshare_add(_params);                      \
-  cfdata->binding.wheel = eina_list_append(cfdata->binding.wheel, bw)
-
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_CONTAINER, 0, -1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "-1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_CONTAINER, 1, -1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "-1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_CONTAINER, 0, 1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_CONTAINER, 1, 1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_WINDOW, 0, -1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "-1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_WINDOW, 1, -1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "-1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_WINDOW, 0, 1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_WINDOW, 1, 1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_POPUP, 0, -1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "-1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_POPUP, 1, -1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "-1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_POPUP, 0, 1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "1");
-   CFG_WHEELBIND_DFLT(E_BINDING_CONTEXT_POPUP, 1, 1, E_BINDING_MODIFIER_ALT, 0,
-                      "desk_linear_flip_by", "1");
+   cfdata->binding.mouse = ecb->mouse_bindings, ecb->mouse_bindings = NULL;
+   cfdata->binding.wheel = ecb->wheel_bindings, ecb->wheel_bindings = NULL;
+   e_config_bindings_free(ecb);
 
    eina_stringshare_del(cfdata->locals.cur);
    cfdata->locals.cur = NULL;

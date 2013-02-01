@@ -469,224 +469,24 @@ static void
 _restore_key_binding_defaults_cb(void *data,
                                  void *data2 __UNUSED__)
 {
-   E_Config_Dialog_Data *cfdata;
-   E_Config_Binding_Key *bi;
+   E_Config_Bindings *ecb;
+   Eina_Stringshare *prof;
+   E_Config_Dialog_Data *cfdata = data;
 
-   cfdata = data;
-
-   EINA_LIST_FREE(cfdata->binding.key, bi)
+   ecb = e_config_domain_system_load("e_bindings", e_config_descriptor_find("E_Config_Bindings"));
+   if (!ecb)
      {
-        eina_stringshare_del(bi->key);
-        eina_stringshare_del(bi->action);
-        eina_stringshare_del(bi->params);
-        E_FREE(bi);
+        prof = eina_stringshare_ref(e_config_profile_get());
+        /* FIXME: need some type of parenting/typing system for profiles */
+        e_config_profile_set("standard");
+        ecb = e_config_domain_system_load("e_bindings", e_config_descriptor_find("E_Config_Bindings"));
+        e_config_profile_set(prof);
+        eina_stringshare_del(prof);
      }
-
-#define CFG_KEYBIND_DFLT(_context, _key, _modifiers, _anymod, _action, _params) \
-  bi = E_NEW(E_Config_Binding_Key, 1);                                          \
-  bi->context = _context;                                                       \
-  bi->key = eina_stringshare_add(_key);                                         \
-  bi->modifiers = _modifiers;                                                   \
-  bi->any_mod = _anymod;                                                        \
-  bi->action = eina_stringshare_add(_action);                                   \
-  bi->params = eina_stringshare_add(_params);                                   \
-  cfdata->binding.key = eina_list_append(cfdata->binding.key, bi)
-
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Left",
-                    E_BINDING_MODIFIER_SHIFT | E_BINDING_MODIFIER_ALT, 0,
-                    "desk_flip_by", "-1 0");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Right",
-                    E_BINDING_MODIFIER_SHIFT | E_BINDING_MODIFIER_ALT, 0,
-                    "desk_flip_by", "1 0");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Up",
-                    E_BINDING_MODIFIER_SHIFT | E_BINDING_MODIFIER_ALT, 0,
-                    "desk_flip_by", "0 -1");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Down",
-                    E_BINDING_MODIFIER_SHIFT | E_BINDING_MODIFIER_ALT, 0,
-                    "desk_flip_by", "0 1");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Up",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "window_raise", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Down",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "window_lower", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "x",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "window_close", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "k",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "window_kill", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "w",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "window_menu", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "s",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "window_sticky_toggle", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "f",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "window_fullscreen_toggle", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "i",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "window_iconic_toggle", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "n",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "window_maximized_toggle", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F10",
-                    E_BINDING_MODIFIER_SHIFT, 0,
-                    "window_maximized_toggle", "default vertical");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F10",
-                    E_BINDING_MODIFIER_CTRL, 0,
-                    "window_maximized_toggle", "default horizontal");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Left",
-                    E_BINDING_MODIFIER_WIN, 0,
-                    "window_maximized_toggle", "default left");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Right",
-                    E_BINDING_MODIFIER_WIN, 0,
-                    "window_maximized_toggle", "default right");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "r",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "window_shaded_toggle", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Left",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_by", "-1");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Right",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_by", "1");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F1",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "0");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F2",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "1");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F3",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "2");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F4",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "3");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F5",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "4");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F6",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "5");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F7",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "6");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F8",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "7");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F9",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "8");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F10",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "9");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F11",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "10");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F12",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "desk_linear_flip_to", "11");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "m",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "menu_show", "main");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "a",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "menu_show", "favorites");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Menu",
-                    0, 0,
-                    "menu_show", "main");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Menu",
-                    E_BINDING_MODIFIER_CTRL, 0,
-                    "menu_show", "clients");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Menu",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "menu_show", "favorites");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Insert",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "exec", "terminology");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Tab",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "winlist", "next");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Tab",
-                    E_BINDING_MODIFIER_SHIFT | E_BINDING_MODIFIER_ALT, 0,
-                    "winlist", "prev");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "End",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "restart", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Delete",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "syscon", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Escape",
-                    E_BINDING_MODIFIER_ALT, 0,
-                    "everything", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "l",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "desk_lock", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "d",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_ALT, 0,
-                    "desk_deskshow_toggle", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F1",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_SHIFT, 0,
-                    "screen_send_to", "0");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F2",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_SHIFT, 0,
-                    "screen_send_to", "1");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F3",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_SHIFT, 0,
-                    "screen_send_to", "2");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "F4",
-                    E_BINDING_MODIFIER_CTRL | E_BINDING_MODIFIER_SHIFT, 0,
-                    "screen_send_to", "3");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86AudioLowerVolume",
-                    0, 0,
-                    "volume_decrease", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86AudioRaiseVolume",
-                    0, 0,
-                    "volume_increase", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86AudioMute",
-                    0, 0,
-                    "volume_mute", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Print",
-                    0, 0,
-                    "shot", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86Standby",
-                    0, 0,
-                    "suspend", "now");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86Start",
-                    0, 0,
-                    "menu_show", "all");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86PowerDown",
-                    0, 0,
-                    "hibernate", "now");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86PowerOff",
-                    0, 0,
-                    "halt", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86Sleep",
-                    0, 0,
-                    "suspend", "now");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86Suspend",
-                    0, 0,
-                    "suspend", "now");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86Hibernate",
-                    0, 0,
-                    "hibernate", "now");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "Execute",
-                    0, 0,
-                    "everything", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86MonBrightnessUp",
-                    0, 0,
-                    "backlight_adjust", "0.1");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86MonBrightnessDown",
-                    0, 0,
-                    "backlight_adjust", "-0.1");
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86LightBulb",
-                    0, 0,
-                    "backlight", NULL);
-   CFG_KEYBIND_DFLT(E_BINDING_CONTEXT_ANY, "XF86BrightnessAdjust",
-                    0, 0,
-                    "backlight", NULL);
+   if (!ecb) return;
+   E_FREE_LIST(cfdata->binding.key, e_config_binding_key_free);
+   cfdata->binding.key = ecb->key_bindings, ecb->key_bindings = NULL;
+   e_config_bindings_free(ecb);
 
    eina_stringshare_del(cfdata->locals.cur);
    cfdata->locals.cur = NULL;

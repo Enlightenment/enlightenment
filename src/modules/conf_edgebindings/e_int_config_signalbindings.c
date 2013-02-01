@@ -39,19 +39,6 @@ struct _E_Config_Dialog_Data
 };
 
 static E_Config_Binding_Signal *
-_signal_binding_new(const char *sig, const char *src)
-{
-   E_Config_Binding_Signal *bi;
-
-   bi = E_NEW(E_Config_Binding_Signal, 1);
-   bi->context = 2;
-   bi->any_mod = 1;
-   bi->signal = eina_stringshare_add(sig);
-   bi->source = eina_stringshare_add(src);
-   return bi;
-}
-
-static E_Config_Binding_Signal *
 _signal_binding_copy(E_Config_Binding_Signal *bi)
 {
    E_Config_Binding_Signal *bi2;
@@ -739,47 +726,24 @@ _delete_all_signal_binding_cb(void *data, void *data2 __UNUSED__)
 static void
 _restore_signal_binding_defaults_cb(void *data, void *data2 __UNUSED__)
 {
-   E_Config_Dialog_Data *cfdata;
-   E_Config_Binding_Signal *bi;
+   E_Config_Bindings *ecb;
+   Eina_Stringshare *prof;
+   E_Config_Dialog_Data *cfdata = data;
 
-   cfdata = data;
-
-   E_FREE_LIST(cfdata->binding.signal, _signal_binding_free);
-
-#define CFG_SIGBIND_DFLT(_signal, _source, _action, _params) \
-  bi = _signal_binding_new(_signal, _source); \
-  bi->action = eina_stringshare_add(_action);                                             \
-  bi->params = eina_stringshare_add(_params);                                             \
-  cfdata->binding.signal = eina_list_append(cfdata->binding.signal, bi)
-
-   CFG_SIGBIND_DFLT("mouse,down,1,double", "e.event.titlebar", "window_shaded_toggle", "up");
-   CFG_SIGBIND_DFLT("mouse,down,2", "e.event.titlebar", "window_shaded_toggle", "up");
-   CFG_SIGBIND_DFLT("mouse,wheel,?,1", "e.event.titlebar", "window_shaded", "0 up");
-   CFG_SIGBIND_DFLT("mouse,wheel,?,-1", "e.event.titlebar", "window_shaded", "1 up");
-   CFG_SIGBIND_DFLT("mouse,clicked,3", "e.event.titlebar", "window_menu", NULL);
-   CFG_SIGBIND_DFLT("mouse,clicked,?", "e.event.icon", "window_menu", NULL);
-   CFG_SIGBIND_DFLT("mouse,clicked,[12]", "e.event.close", "window_close", NULL);
-   CFG_SIGBIND_DFLT("mouse,clicked,3", "e.event.close", "window_kill", NULL);
-   CFG_SIGBIND_DFLT("mouse,clicked,1", "e.event.maximize", "window_maximized_toggle", NULL);
-   CFG_SIGBIND_DFLT("mouse,clicked,2", "e.event.maximize", "window_maximized_toggle", "smart");
-   CFG_SIGBIND_DFLT("mouse,clicked,3", "e.event.maximize", "window_maximized_toggle", "expand");
-   CFG_SIGBIND_DFLT("mouse,clicked,?", "e.event.minimize", "window_iconic_toggle", NULL);
-   CFG_SIGBIND_DFLT("mouse,clicked,?", "e.event.shade", "window_shaded_toggle", "up");
-   CFG_SIGBIND_DFLT("mouse,clicked,?", "e.event.lower", "window_lower", NULL);
-   CFG_SIGBIND_DFLT("mouse,down,1", "e.event.icon", "window_drag_icon", NULL);
-   CFG_SIGBIND_DFLT("mouse,down,1", "e.event.titlebar", "window_move", NULL);
-   CFG_SIGBIND_DFLT("mouse,up,1", "e.event.titlebar", "window_move", "end");
-   CFG_SIGBIND_DFLT("mouse,down,1", "e.event.resize.tl", "window_resize", "tl");
-   CFG_SIGBIND_DFLT("mouse,down,1", "e.event.resize.t", "window_resize", "t");
-   CFG_SIGBIND_DFLT("mouse,down,1", "e.event.resize.tr", "window_resize", "tr");
-   CFG_SIGBIND_DFLT("mouse,down,1", "e.event.resize.r", "window_resize", "r");
-   CFG_SIGBIND_DFLT("mouse,down,1", "e.event.resize.br", "window_resize", "br");
-   CFG_SIGBIND_DFLT("mouse,down,1", "e.event.resize.b", "window_resize", "b");
-   CFG_SIGBIND_DFLT("mouse,down,1", "e.event.resize.bl", "window_resize", "bl");
-   CFG_SIGBIND_DFLT("mouse,down,1", "e.event.resize.l", "window_resize", "l");
-   CFG_SIGBIND_DFLT("mouse,up,1", "e.event.resize.*", "window_resize", "end");
-   CFG_SIGBIND_DFLT("mouse,down,3", "e.event.resize.*", "window_move", NULL);
-   CFG_SIGBIND_DFLT("mouse,up,3", "e.event.resize.*", "window_move", "end");
+   ecb = e_config_domain_system_load("e_bindings", e_config_descriptor_find("E_Config_Bindings"));
+   if (!ecb)
+     {
+        prof = eina_stringshare_ref(e_config_profile_get());
+        /* FIXME: need some type of parenting/typing system for profiles */
+        e_config_profile_set("standard");
+        ecb = e_config_domain_system_load("e_bindings", e_config_descriptor_find("E_Config_Bindings"));
+        e_config_profile_set(prof);
+        eina_stringshare_del(prof);
+     }
+   if (!ecb) return;
+   E_FREE_LIST(cfdata->binding.signal, e_config_binding_signal_free);
+   cfdata->binding.signal = ecb->signal_bindings, ecb->signal_bindings = NULL;
+   e_config_bindings_free(ecb);
 
    eina_stringshare_del(cfdata->locals.cur);
    cfdata->locals.cur = NULL;

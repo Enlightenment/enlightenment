@@ -505,37 +505,24 @@ _delete_edge_binding_cb(void *data, void *data2 __UNUSED__)
 static void
 _restore_edge_binding_defaults_cb(void *data, void *data2 __UNUSED__)
 {
-   E_Config_Dialog_Data *cfdata;
-   E_Config_Binding_Edge *bi;
+   E_Config_Bindings *ecb;
+   Eina_Stringshare *prof;
+   E_Config_Dialog_Data *cfdata = data;
 
-   cfdata = data;
-
-   EINA_LIST_FREE(cfdata->binding.edge, bi)
+   ecb = e_config_domain_system_load("e_bindings", e_config_descriptor_find("E_Config_Bindings"));
+   if (!ecb)
      {
-        eina_stringshare_del(bi->action);
-        eina_stringshare_del(bi->params);
-        E_FREE(bi);
+        prof = eina_stringshare_ref(e_config_profile_get());
+        /* FIXME: need some type of parenting/typing system for profiles */
+        e_config_profile_set("standard");
+        ecb = e_config_domain_system_load("e_bindings", e_config_descriptor_find("E_Config_Bindings"));
+        e_config_profile_set(prof);
+        eina_stringshare_del(prof);
      }
-
-#define CFG_EDGEBIND_DFLT(_context, _edge, _modifiers, _anymod, _action, _params, _delay) \
-  bi = E_NEW(E_Config_Binding_Edge, 1);                                                   \
-  bi->context = _context;                                                                 \
-  bi->edge = _edge;                                                                       \
-  bi->modifiers = _modifiers;                                                             \
-  bi->any_mod = _anymod;                                                                  \
-  bi->delay = _delay;                                                                     \
-  bi->action = eina_stringshare_add(_action);                                             \
-  bi->params = eina_stringshare_add(_params);                                             \
-  cfdata->binding.edge = eina_list_append(cfdata->binding.edge, bi)
-
-   CFG_EDGEBIND_DFLT(E_BINDING_CONTEXT_ZONE, E_ZONE_EDGE_LEFT,
-                     0, 0, "desk_flip_in_direction", NULL, 0.3);
-   CFG_EDGEBIND_DFLT(E_BINDING_CONTEXT_ZONE, E_ZONE_EDGE_RIGHT,
-                     0, 0, "desk_flip_in_direction", NULL, 0.3);
-   CFG_EDGEBIND_DFLT(E_BINDING_CONTEXT_ZONE, E_ZONE_EDGE_TOP,
-                     0, 0, "desk_flip_in_direction", NULL, 0.3);
-   CFG_EDGEBIND_DFLT(E_BINDING_CONTEXT_ZONE, E_ZONE_EDGE_BOTTOM,
-                     0, 0, "desk_flip_in_direction", NULL, 0.3);
+   if (!ecb) return;
+   E_FREE_LIST(cfdata->binding.edge, e_config_binding_edge_free);
+   cfdata->binding.edge = ecb->edge_bindings, ecb->edge_bindings = NULL;
+   e_config_bindings_free(ecb);
 
    eina_stringshare_del(cfdata->locals.cur);
    cfdata->locals.cur = NULL;

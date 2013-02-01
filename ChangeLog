@@ -5,6 +5,7 @@
         * E_Config_DD structs are now tracked and retrievable through e_config_descriptor_find
         * binding dialogs now reload the default config from file when reset defaults is clicked
         * fixed leak in profile list dbus method
+        * binding dialogs are now able to reset bindings to the system profile file bindings
 
 2013-01-31 Mike Blumenkrantz
 
