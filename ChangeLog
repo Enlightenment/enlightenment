@@ -1,6 +1,7 @@
 2013-02-01 Mike Blumenkrantz
 
         * split out binding configs into separate config domain
+        * added functions for freeing binding config structs
 
 2013-01-31 Mike Blumenkrantz
 

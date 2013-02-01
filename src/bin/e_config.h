@@ -662,6 +662,15 @@ EAPI E_Config_Binding_Wheel  *e_config_binding_wheel_match(E_Config_Binding_Whee
 EAPI E_Config_Binding_Acpi   *e_config_binding_acpi_match(E_Config_Binding_Acpi *eb_in);
 EAPI void                     e_config_mode_changed(void);
 
+
+EAPI void e_config_bindings_free(E_Config_Bindings *ecb);
+EAPI void e_config_binding_signal_free(E_Config_Binding_Signal *ebs);
+EAPI void e_config_binding_wheel_free(E_Config_Binding_Wheel *ebw);
+EAPI void e_config_binding_mouse_free(E_Config_Binding_Mouse *ebm);
+EAPI void e_config_binding_edge_free(E_Config_Binding_Edge *ebe);
+EAPI void e_config_binding_key_free(E_Config_Binding_Key *ebk);
+EAPI void e_config_binding_acpi_free(E_Config_Binding_Acpi *eba);
+
 extern EAPI E_Config *e_config;
 extern EAPI E_Config_Bindings *e_bindings;
 

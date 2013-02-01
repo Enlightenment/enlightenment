@@ -109,58 +109,6 @@ _e_config_profile_name_get(Eet_File *ef)
    return s;
 }
 
-static void
-_e_config_bindings_free(E_Config_Bindings *ecb)
-{
-   E_Config_Binding_Signal *ebs;
-   E_Config_Binding_Mouse *ebm;
-   E_Config_Binding_Wheel *ebw;
-   E_Config_Binding_Key *ebk;
-   E_Config_Binding_Edge *ebe;
-   E_Config_Binding_Acpi *eba;
-
-   EINA_LIST_FREE(ecb->mouse_bindings, ebm)
-     {
-        eina_stringshare_del(ebm->action);
-        eina_stringshare_del(ebm->params);
-        free(ebm);
-     }
-   EINA_LIST_FREE(ecb->key_bindings, ebk)
-     {
-        eina_stringshare_del(ebk->key);
-        eina_stringshare_del(ebk->action);
-        eina_stringshare_del(ebk->params);
-        free(ebk);
-     }
-   EINA_LIST_FREE(ecb->edge_bindings, ebe)
-     {
-        eina_stringshare_del(ebe->action);
-        eina_stringshare_del(ebe->params);
-        free(ebe);
-     }
-   EINA_LIST_FREE(ecb->signal_bindings, ebs)
-     {
-        eina_stringshare_del(ebs->signal);
-        eina_stringshare_del(ebs->source);
-        eina_stringshare_del(ebs->action);
-        eina_stringshare_del(ebs->params);
-        free(ebs);
-     }
-   EINA_LIST_FREE(ecb->wheel_bindings, ebw)
-     {
-        eina_stringshare_del(ebw->action);
-        eina_stringshare_del(ebw->params);
-        free(ebw);
-     }
-   EINA_LIST_FREE(ecb->acpi_bindings, eba)
-     {
-        eina_stringshare_del(eba->action);
-        eina_stringshare_del(eba->params);
-        free(eba);
-     }
-   free(ecb);
-}
-
 /* externally accessible functions */
 EINTERN int
 e_config_init(void)
@@ -1138,7 +1086,7 @@ e_config_load(void)
      {
         Eina_Stringshare *prof;
 
-        _e_config_bindings_free(e_bindings);
+        e_config_bindings_free(e_bindings);
         prof = eina_stringshare_ref(e_config_profile_get());
         e_config_profile_set("default");
         e_bindings = e_config_domain_load("e_bindings", _e_config_binding_edd);
@@ -1909,6 +1857,76 @@ EAPI void
 e_config_mode_changed(void)
 {
    ecore_event_add(E_EVENT_CONFIG_MODE_CHANGED, NULL, NULL, NULL);
+}
+
+EAPI void
+e_config_binding_acpi_free(E_Config_Binding_Acpi *eba)
+{
+   if (!eba) return;
+   eina_stringshare_del(eba->action);
+   eina_stringshare_del(eba->params);
+   free(eba);
+}
+
+EAPI void
+e_config_binding_key_free(E_Config_Binding_Key *ebk)
+{
+   if (!ebk) return;
+   eina_stringshare_del(ebk->key);
+   eina_stringshare_del(ebk->action);
+   eina_stringshare_del(ebk->params);
+   free(ebk);
+}
+
+EAPI void
+e_config_binding_edge_free(E_Config_Binding_Edge *ebe)
+{
+   if (!ebe) return;
+   eina_stringshare_del(ebe->action);
+   eina_stringshare_del(ebe->params);
+   free(ebe);
+}
+
+EAPI void
+e_config_binding_mouse_free(E_Config_Binding_Mouse *ebm)
+{
+   if (!ebm) return;
+   eina_stringshare_del(ebm->action);
+   eina_stringshare_del(ebm->params);
+   free(ebm);
+}
+
+EAPI void
+e_config_binding_wheel_free(E_Config_Binding_Wheel *ebw)
+{
+   if (!ebw) return;
+   eina_stringshare_del(ebw->action);
+   eina_stringshare_del(ebw->params);
+   free(ebw);
+}
+
+EAPI void
+e_config_binding_signal_free(E_Config_Binding_Signal *ebs)
+{
+   if (!ebs) return;
+   eina_stringshare_del(ebs->signal);
+   eina_stringshare_del(ebs->source);
+   eina_stringshare_del(ebs->action);
+   eina_stringshare_del(ebs->params);
+   free(ebs);
+}
+
+EAPI void
+e_config_bindings_free(E_Config_Bindings *ecb)
+{
+   if (!ecb) return;
+   E_FREE_LIST(ecb->mouse_bindings, e_config_binding_mouse_free);
+   E_FREE_LIST(ecb->key_bindings, e_config_binding_key_free);
+   E_FREE_LIST(ecb->edge_bindings, e_config_binding_edge_free);
+   E_FREE_LIST(ecb->signal_bindings, e_config_binding_signal_free);
+   E_FREE_LIST(ecb->wheel_bindings, e_config_binding_wheel_free);
+   E_FREE_LIST(ecb->acpi_bindings, e_config_binding_acpi_free);
+   free(ecb);
 }
 
 /* local subsystem functions */
