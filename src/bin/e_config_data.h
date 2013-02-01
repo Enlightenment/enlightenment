@@ -12,7 +12,7 @@
  * is used to free definition of a struct  
  * \eed eed the pointer created by \link #E_CONFIG_DD_NEW
  */
-#define E_CONFIG_DD_FREE(eed) if (eed) { eet_data_descriptor_free((eed)); (eed) = NULL; }
+#define E_CONFIG_DD_FREE(eed) if (eed) { e_config_descriptor_free((eed)); (eed) = NULL; }
 #define E_CONFIG_VAL(edd, type, member, dtype) EET_DATA_DESCRIPTOR_ADD_BASIC(edd, type, #member, member, dtype)
 #define E_CONFIG_SUB(edd, type, member, eddtype) EET_DATA_DESCRIPTOR_ADD_SUB(edd, type, #member, member, eddtype)
 
@@ -55,6 +55,8 @@ typedef Eet_Data_Descriptor                 E_Config_DD;
 #define E_CONFIG_DATA_H
 
 EAPI E_Config_DD *e_config_descriptor_new(const char *name, int size);
+EAPI void e_config_descriptor_free(E_Config_DD *edd);
+EAPI E_Config_DD *e_config_descriptor_find(const char *name);
 
 #endif
 #endif
