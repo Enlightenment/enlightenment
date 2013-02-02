@@ -1138,6 +1138,7 @@ e_config_load(void)
              SET(wheel_bindings);
              SET(acpi_bindings);
 #undef SET
+             e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
           }
      }
    if (!e_config->remember_internal_fm_windows)
