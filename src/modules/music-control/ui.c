@@ -29,7 +29,7 @@ music_control_state_update_all(E_Music_Control_Module_Context *ctxt)
 }
 
 static void
-_btn_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
+_btn_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source)
 {
    E_Music_Control_Instance *inst = data;
    if (!strcmp(source, "play"))
@@ -41,7 +41,7 @@ _btn_clicked(void *data, Evas_Object *obj, const char *emission, const char *sou
 }
 
 static void
-_label_clicked(void *data, Evas_Object *obj, const char *emission, const char *source)
+_label_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    E_Music_Control_Instance *inst = data;
    music_control_popup_del(inst);
@@ -182,9 +182,17 @@ _cfg_data_create(E_Config_Dialog *cfd)
 }
 
 static void
-_cfg_data_free(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
+_cfg_data_free(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    free(cfdata);
+}
+
+static int
+_cfg_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
+{
+   E_Music_Control_Instance *inst = cfd->data;
+
+   return inst->ctxt->config->player_selected != cfdata->index;
 }
 
 static int
@@ -204,7 +212,7 @@ _cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi)
+_cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
 {
    E_Config_Dialog_View *v;
 
@@ -213,6 +221,7 @@ _cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi)
    v->free_cfdata = _cfg_data_free;
    v->basic.create_widgets = _cfg_widgets_create;
    v->basic.apply_cfdata = _cfg_data_apply;
+   v->basic.check_changed = _cfg_check_changed;
 
    e_config_dialog_new(m->zone->container, "Music control Settings", "E",
                        "_e_mod_music_config_dialog",
@@ -220,7 +229,7 @@ _cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 void
-music_control_mouse_down_cb(void *data, Evas *evas, Evas_Object *obj, void *event)
+music_control_mouse_down_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    E_Music_Control_Instance *inst = data;
    Evas_Event_Mouse_Down *ev = event;
