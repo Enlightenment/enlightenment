@@ -279,6 +279,8 @@ group { name: "e/fileman/default/list/variable";
       part { name: "event"; type: RECT;
          description { state: "default" 0.0;
             color: 0 0 0 0;
+            rel1.to: "icon_base";
+            rel2.to: "icon_base";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -701,6 +703,8 @@ group { name: "e/fileman/default/icon/fixed";
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
             color: 0 0 0 0;
+            rel1.to: "icon0";
+            rel2.to: "icon0";
          }
       }
       part { name: "label_event"; type: RECT;
