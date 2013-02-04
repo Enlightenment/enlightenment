@@ -14,6 +14,8 @@ typedef struct _Instance_Xembed Instance_Xembed;
 typedef struct _Context_Notifier_Host Context_Notifier_Host;
 typedef struct _Instance_Notifier_Host Instance_Notifier_Host;
 typedef struct _Notifier_Item Notifier_Item;
+typedef struct _Systray_Context Systray_Context;
+typedef struct _E_Config_Dialog_Data Systray_Config;
 
 E_Gadcon_Orient systray_orient_get(const Instance *inst);
 const E_Gadcon *systray_gadcon_get(const Instance *inst);

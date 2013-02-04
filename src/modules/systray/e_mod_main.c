@@ -17,12 +17,24 @@ struct _Instance
    } job;
 };
 
+struct _Systray_Context
+{
+   Systray_Config *config;
+   E_Config_DD *conf_edd;
+};
+
+struct _E_Config_Dialog_Data
+{
+   int use_xembed;
+};
+
 static const char _Name[] = "Systray";
 static const char _name[] = "systray";
 static const char _group_gadget[] = "e/modules/systray/main";
 static const char _sig_source[] = "e";
 
 static E_Module *systray_mod = NULL;
+static Systray_Context *ctx = NULL;
 static Instance *instance = NULL; /* only one systray ever possible */
 static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 
@@ -58,16 +70,87 @@ _systray_theme_path(void)
 #undef TF
 }
 
+
+static void *
+_cfg_data_create(E_Config_Dialog *cfd EINA_UNUSED)
+{
+   E_Config_Dialog_Data *cfdata = calloc(1, sizeof(E_Config_Dialog_Data));
+   cfdata->use_xembed = ctx->config->use_xembed;
+   return cfdata;
+}
+
+static void
+_cfg_data_free(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
+{
+   free(cfdata);
+}
+
+static Evas_Object *
+_cfg_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
+{
+   Evas_Object *o, *of;
+   o = e_widget_list_add(evas, 0, 0);
+   of = e_widget_check_add(evas, "Enable Xembed?", &(cfdata->use_xembed));
+   e_widget_list_object_append(o, of, 1, 1, 0.5);
+
+   return o;
+}
+
+static int
+_cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
+{
+   Instance *inst = cfd->data;
+   if (ctx->config->use_xembed == cfdata->use_xembed)
+     return 1;
+
+   if (cfdata->use_xembed)
+     {
+        systray_xembed_init();
+        inst->xembed = systray_xembed_new(inst);
+     }
+   else if (inst->xembed)
+     {
+        systray_xembed_free(inst->xembed);
+        systray_xembed_shutdown();
+        inst->xembed = NULL;
+     }
+   systray_size_updated(inst);
+
+   ctx->config->use_xembed = cfdata->use_xembed;
+   return 1;
+}
+
+static void
+_cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
+{
+   E_Config_Dialog_View *v;
+
+   v = calloc(1, sizeof(E_Config_Dialog_View));
+   v->create_cfdata = _cfg_data_create;
+   v->free_cfdata = _cfg_data_free;
+   v->basic.create_widgets = _cfg_widgets_create;
+   v->basic.apply_cfdata = _cfg_data_apply;
+
+   e_config_dialog_new(m->zone->container, "Systray Settings", "E",
+                       "_e_mod_music_config_dialog",
+                       NULL, 0, v, data);
+}
+
 static void
 _systray_menu_new(Instance *inst, Evas_Event_Mouse_Down *ev)
 {
    E_Zone *zone;
    E_Menu *m;
+   E_Menu_Item *mi;
    int x, y;
 
    zone = e_util_zone_current_get(e_manager_current_get());
 
    m = e_menu_new();
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, "Settings");
+   e_util_menu_item_theme_icon_set(mi, "configure");
+   e_menu_item_callback_set(mi, _cb_menu_cfg, inst);
    m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
    e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &x, &y, NULL, NULL);
    e_menu_activate_mouse(m, zone, x + ev->output.x, y + ev->output.y,
@@ -211,7 +294,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    evas_object_event_callback_add(inst->ui.gadget, EVAS_CALLBACK_MOUSE_DOWN,
                                   _systray_cb_mouse_down, inst);
 
-   inst->xembed = systray_xembed_new(inst);
+   if (ctx->config->use_xembed)
+     inst->xembed = systray_xembed_new(inst);
    inst->notifier = systray_notifier_host_new(inst, inst->gcc->gadcon);
 
    instance = inst;
@@ -229,7 +313,8 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    if (!inst)
      return;
 
-   systray_xembed_free(inst->xembed);
+   if (inst->xembed)
+     systray_xembed_free(inst->xembed);
    systray_notifier_host_free(inst->notifier);
 
    evas_object_del(inst->ui.gadget);
@@ -318,8 +403,8 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
       default:
         sig = "e,action,orient,horiz";
      }
-
-   systray_xembed_orient_set(inst->xembed, orient);
+   if (inst->xembed)
+     systray_xembed_orient_set(inst->xembed, orient);
 
    edje_object_signal_emit(inst->ui.gadget, sig, _sig_source);
    edje_object_message_signal_process(inst->ui.gadget);
@@ -364,12 +449,24 @@ e_modapi_init(E_Module *m)
 {
    systray_mod = m;
 
+   ctx = calloc(1, sizeof(Systray_Context));
+   ctx->conf_edd = E_CONFIG_DD_NEW("systray_config", Systray_Config);
+   #undef T
+   #undef D
+   #define T Systray_Config
+   #define D ctx->conf_edd
+   E_CONFIG_VAL(D, T, use_xembed, INT);
+   ctx->config = e_config_domain_load(_name, ctx->conf_edd);
+   if (!ctx->config)
+     ctx->config = calloc(1, sizeof(Systray_Config));
+
    e_gadcon_provider_register(&_gc_class);
 
-   systray_xembed_init();
+   if (ctx->config->use_xembed)
+     systray_xembed_init();
    systray_notifier_host_init();
 
-   return m;
+   return ctx;
 }
 
 EAPI int
@@ -378,15 +475,20 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_gadcon_provider_unregister(&_gc_class);
    systray_mod = NULL;
 
-   systray_xembed_shutdown();
+   if (ctx->config->use_xembed)
+     systray_xembed_shutdown();
    systray_notifier_host_shutdown();
 
+   E_CONFIG_DD_FREE(ctx->conf_edd);
+   free(ctx->config);
+   free(ctx);
    return 1;
 }
 
 EAPI int
 e_modapi_save(E_Module *m __UNUSED__)
 {
+   e_config_domain_save(_name, ctx->conf_edd, ctx->config);
    return 1;
 }
 
@@ -483,7 +585,8 @@ _systray_size_apply_do(Instance *inst)
 {
    Evas_Coord w, h;
 
-   systray_xembed_size_updated(inst->xembed);
+   if (inst->xembed)
+     systray_xembed_size_updated(inst->xembed);
 
    edje_object_message_signal_process(inst->ui.gadget);
    edje_object_size_min_calc(inst->ui.gadget, &w, &h);
