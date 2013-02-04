@@ -56,12 +56,8 @@ static void         _e_desktop_editor_exec_update(E_Config_Dialog_Data *cfdata);
 static void         _e_desktop_edit_select_cb(void *data, Evas_Object *obj);
 static void         _e_desktop_editor_icon_entry_changed(void *data, Evas_Object *obj);
 
-#define IFADD(src, dst) if (src) dst = eina_stringshare_add(src); else \
-    dst = NULL
-#define IFDEL(src)      if (src) eina_stringshare_del(src); src = NULL;
 #define IFDUP(src, dst) if (src) dst = strdup(src); else \
     dst = NULL
-#define IFFREE(src)     if (src) free(src); src = NULL;
 
 /* externally accessible functions */
 
@@ -204,7 +200,6 @@ e_desktop_edit(E_Container *con, Efreet_Desktop *desktop)
 {
    E_Desktop_Edit *editor;
 
-   if (!con) return NULL;
    editor = E_OBJECT_ALLOC(E_Desktop_Edit, E_DESKTOP_EDIT_TYPE, _e_desktop_edit_free);
    if (!editor) return NULL;
    if (desktop) editor->desktop = desktop;
@@ -253,7 +248,7 @@ _e_desktop_edit_free(E_Desktop_Edit *editor)
    E_OBJECT_CHECK(editor);
    E_OBJECT_TYPE_CHECK(editor, E_EAP_EDIT_TYPE);
 
-   IFFREE(editor->tmp_image_path);
+   E_FREE(editor->tmp_image_path);
    E_FREE(editor);
 }
 
@@ -364,17 +359,17 @@ _e_desktop_edit_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data 
      }
    if (cfdata->desktop) efreet_desktop_free(cfdata->desktop);
 
-   IFFREE(cfdata->name);
-   IFFREE(cfdata->generic_name);
-   IFFREE(cfdata->comment);
-   IFFREE(cfdata->exec);
-   IFFREE(cfdata->try_exec);
-   IFFREE(cfdata->url);
-   IFFREE(cfdata->startup_wm_class);
-   IFFREE(cfdata->categories);
-   IFFREE(cfdata->icon);
-   IFFREE(cfdata->mimes);
-   IFFREE(cfdata->orig_path);
+   E_FREE(cfdata->name);
+   E_FREE(cfdata->generic_name);
+   E_FREE(cfdata->comment);
+   E_FREE(cfdata->exec);
+   E_FREE(cfdata->try_exec);
+   E_FREE(cfdata->url);
+   E_FREE(cfdata->startup_wm_class);
+   E_FREE(cfdata->categories);
+   E_FREE(cfdata->icon);
+   E_FREE(cfdata->mimes);
+   E_FREE(cfdata->orig_path);
 
    if (cfdata->editor->icon_fsel_dia)
      e_object_del(E_OBJECT(cfdata->editor->icon_fsel_dia));
@@ -451,42 +446,41 @@ _e_desktop_edit_update_orig_path(E_Config_Dialog_Data *cfdata)
 static int
 _e_desktop_edit_basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   char *str;
-
-   IFFREE(cfdata->desktop->name);
+   E_FREE(cfdata->desktop->name);
    IFDUP(cfdata->name, cfdata->desktop->name);
-   IFFREE(cfdata->desktop->comment);
+   E_FREE(cfdata->desktop->comment);
    IFDUP(cfdata->comment, cfdata->desktop->comment);
 
    switch (cfdata->type)
      {
       case 1:
-        IFFREE(cfdata->desktop->url);
+        E_FREE(cfdata->desktop->url);
         IFDUP(cfdata->url, cfdata->desktop->url);
         break;
 
       default:
-        IFFREE(cfdata->desktop->exec);
+        E_FREE(cfdata->desktop->exec);
         IFDUP(cfdata->exec, cfdata->desktop->exec);
-        IFFREE(cfdata->desktop->try_exec);
+        E_FREE(cfdata->desktop->try_exec);
         IFDUP(cfdata->try_exec, cfdata->desktop->try_exec);
         break;
      }
 
-   IFFREE(cfdata->desktop->generic_name);
+   E_FREE(cfdata->desktop->generic_name);
    IFDUP(cfdata->generic_name, cfdata->desktop->generic_name);
-   IFFREE(cfdata->desktop->startup_wm_class);
+   E_FREE(cfdata->desktop->startup_wm_class);
    IFDUP(cfdata->startup_wm_class, cfdata->desktop->startup_wm_class);
 
-   EINA_LIST_FREE(cfdata->desktop->categories, str)
-     eina_stringshare_del(str);
-   cfdata->desktop->categories = efreet_desktop_string_list_parse(cfdata->categories);
 
-   EINA_LIST_FREE(cfdata->desktop->mime_types, str)
-     eina_stringshare_del(str);
-   cfdata->desktop->mime_types = efreet_desktop_string_list_parse(cfdata->mimes);
+   E_FREE_LIST(cfdata->desktop->categories, eina_stringshare_del);
+   if (cfdata->categories)
+     cfdata->desktop->categories = efreet_desktop_string_list_parse(cfdata->categories);
 
-   IFFREE(cfdata->desktop->icon);
+   E_FREE_LIST(cfdata->desktop->mime_types, eina_stringshare_del);
+   if (cfdata->mimes)
+     cfdata->desktop->mime_types = efreet_desktop_string_list_parse(cfdata->mimes);
+
+   E_FREE(cfdata->desktop->icon);
    IFDUP(cfdata->icon, cfdata->desktop->icon);
 
    cfdata->desktop->startup_notify = cfdata->startup_notify;
@@ -545,7 +539,7 @@ _e_desktop_edit_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Di
    if (cfdata->edited_categories)
      {
         const char *str;
-        Eina_List *lst, *old_lst;
+        Eina_List *lst = NULL, *old_lst;
 
         cfdata->edited_categories = EINA_FALSE;
         cfdata->changed_categories = EINA_FALSE;
@@ -557,7 +551,8 @@ _e_desktop_edit_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Di
         else
           old_lst = NULL;
 
-        lst = efreet_desktop_string_list_parse(cfdata->categories);
+        if (cfdata->categories)
+          lst = efreet_desktop_string_list_parse(cfdata->categories);
         if (eina_list_count(lst) != eina_list_count(old_lst))
           cfdata->changed_categories = EINA_TRUE;
 
@@ -589,7 +584,7 @@ _e_desktop_edit_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Di
         if (cfdata->edited_mimes)
           {
              const char *str;
-             Eina_List *lst, *old_lst;
+             Eina_List *lst = NULL, *old_lst;
 
              cfdata->edited_mimes = EINA_FALSE;
              cfdata->changed_mimes = EINA_FALSE;
@@ -601,7 +596,8 @@ _e_desktop_edit_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Di
              else
                old_lst = NULL;
 
-             lst = efreet_desktop_string_list_parse(cfdata->mimes);
+             if (cfdata->mimes)
+               lst = efreet_desktop_string_list_parse(cfdata->mimes);
              if (eina_list_count(lst) != eina_list_count(old_lst))
                cfdata->changed_mimes = EINA_TRUE;
 
@@ -957,7 +953,7 @@ _e_desktop_edit_cb_icon_select_ok(void *data, E_Dialog *dia)
    file = e_widget_fsel_selection_path_get(cfdata->editor->icon_fsel);
    dir = ecore_file_dir_get(file);
 
-   IFFREE(cfdata->icon);
+   E_FREE(cfdata->icon);
 
    /* TODO: Check for theme icon */
    icon_dir = e_user_icon_dir_get();
@@ -1048,7 +1044,7 @@ _e_desktop_edit_cb_exec_select_ok(void *data, E_Dialog *dia)
    cfdata = data;
    file = e_widget_fsel_selection_path_get(cfdata->editor->exec_fsel);
 
-   IFFREE(cfdata->exec);
+   E_FREE(cfdata->exec);
    IFDUP(file, cfdata->exec);
 
    _e_desktop_edit_cb_exec_select_cancel(data, dia);
