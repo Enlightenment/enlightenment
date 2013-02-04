@@ -521,6 +521,7 @@ _e_config_edd_init(Eina_Bool old)
 #define D _e_config_edd
    /**/ /* == already configurable via ipc */
    E_CONFIG_VAL(D, T, config_version, INT); /**/
+   E_CONFIG_VAL(D, T, config_type, UINT); /**/
    E_CONFIG_VAL(D, T, show_splash, INT); /**/
    E_CONFIG_VAL(D, T, init_default_theme, STR); /**/
    E_CONFIG_VAL(D, T, desktop_default_background, STR); /**/
@@ -1207,6 +1208,17 @@ e_config_load(void)
              SET(acpi_bindings);
 #undef SET
              e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
+          }
+        CONFIG_VERSION_CHECK(8)
+          {
+             if (!e_config->config_type)
+               {
+                  /* I guess this probably isn't great, but whatever */
+                  if (eina_list_count(e_bindings->key_bindings) > 2)
+                    e_config->config_type = E_CONFIG_PROFILE_TYPE_DESKTOP;
+                  else
+                    e_config->config_type = E_CONFIG_PROFILE_TYPE_TABLET;
+               }
           }
      }
    if (!e_config->remember_internal_fm_windows)

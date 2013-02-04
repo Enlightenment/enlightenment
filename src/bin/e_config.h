@@ -29,6 +29,14 @@ typedef struct _E_Event_Config_Icon_Theme   E_Event_Config_Icon_Theme;
 
 typedef struct E_Config_Bindings E_Config_Bindings;
 
+typedef enum
+{
+   E_CONFIG_PROFILE_TYPE_NONE,
+   E_CONFIG_PROFILE_TYPE_MOBILE,
+   E_CONFIG_PROFILE_TYPE_TABLET,
+   E_CONFIG_PROFILE_TYPE_DESKTOP
+} E_Config_Profile_Type;
+
 #else
 #ifndef E_CONFIG_H
 #define E_CONFIG_H
@@ -40,7 +48,7 @@ typedef struct E_Config_Bindings E_Config_Bindings;
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 7
+#define E_CONFIG_FILE_GENERATION 8
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -48,6 +56,7 @@ typedef struct E_Config_Bindings E_Config_Bindings;
 struct _E_Config
 {
    int         config_version; // INTERNAL
+   E_Config_Profile_Type config_type; // INTERNAL
    int         show_splash; // GUI
    const char *init_default_theme; // GUI
    const char *desktop_default_background; // GUI
