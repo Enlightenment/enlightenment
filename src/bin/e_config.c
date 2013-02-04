@@ -1166,6 +1166,21 @@ e_config_load(void)
                           "As a result, all bindings have been reloaded from defaults.<br>"
                           "Sorry for the inconvenience.<br>"));
      }
+   else if (!e_bindings)
+     {
+        e_bindings = E_NEW(E_Config_Bindings, 1);
+#undef SET
+#define SET(X) e_bindings->X = e_config->X, e_config->X = NULL
+
+        SET(mouse_bindings);
+        SET(key_bindings);
+        SET(edge_bindings);
+        SET(signal_bindings);
+        SET(wheel_bindings);
+        SET(acpi_bindings);
+#undef SET
+        e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
+     }
 
    if (e_config->config_version < E_CONFIG_FILE_VERSION)
      {
@@ -1198,6 +1213,7 @@ e_config_load(void)
                    }
               }
           }
+/* this gets done above but I'm leaving it here so it can be seen
         CONFIG_VERSION_CHECK(6)
           {
              CONFIG_VERSION_UPDATE_INFO(6);
@@ -1214,6 +1230,7 @@ e_config_load(void)
 #undef SET
              e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
           }
+*/
         CONFIG_VERSION_CHECK(8)
           {
              CONFIG_VERSION_UPDATE_INFO(8);
