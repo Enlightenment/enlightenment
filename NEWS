@@ -54,7 +54,6 @@ Improvements:
      - desktop environments,
      - language,
      - notification,
-     - music-control.
     * Improve UI of desk settings.
     * Add icons for gadcon settings.
     * Improve strings of pager settings.
@@ -82,6 +81,7 @@ Improvements:
     * split out binding configs into separate config domain
     * binding dialogs are now able to reset bindings to the system profile file bindings
     * "No listable items" in Navigate menu is now clickable
+    * optimize use of edje_file_collection_list
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.

@@ -1979,9 +1979,10 @@ _e_fm2_icon_thumb_edje_get(Evas *evas, const E_Fm2_Icon *ic, Evas_Smart_Cb cb, v
      group = eina_stringshare_add(*itr);
    else
      {
-        Eina_List *l = edje_file_collection_list(buf);
-        if (!l) return NULL;
-        group = eina_stringshare_add(eina_list_data_get(l));
+        Eina_List *l;
+
+        l = edje_file_collection_list(buf);
+        group = eina_stringshare_ref(eina_list_data_get(l));
         edje_file_collection_list_free(l);
      }
    if (!group) return NULL;

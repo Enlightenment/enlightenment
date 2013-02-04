@@ -78,7 +78,7 @@ e_bg_shutdown(void)
 EAPI const E_Config_Desktop_Background *
 e_bg_config_get(int container_num, int zone_num, int desk_x, int desk_y)
 {
-   Eina_List *l, *ll, *entries;
+   Eina_List *l, *entries;
    E_Config_Desktop_Background *bg = NULL, *cfbg = NULL;
    const char *bgfile = "";
    char *entry;
@@ -121,18 +121,17 @@ e_bg_config_get(int container_num, int zone_num, int desk_x, int desk_y)
              if (eina_str_has_extension(bgfile, ".edj"))
                {
                   entries = edje_file_collection_list(bgfile);
-                  if (entries)
+                  EINA_LIST_FREE(entries, entry)
                     {
-                       EINA_LIST_FOREACH(entries, ll, entry)
+                       if (!strcmp(entry, "e/desktop/background"))
                          {
-                            if (!strcmp(entry, "e/desktop/background"))
-                              {
-                                 bg = cfbg;
-                                 current_spec = spec;
-                              }
+                            bg = cfbg;
+                            current_spec = spec;
+                            break;
                          }
-                       edje_file_collection_list_free(entries);
+                       eina_stringshare_del(entry);
                     }
+                  E_FREE_LIST(entries, eina_stringshare_del);
                }
              else
                {

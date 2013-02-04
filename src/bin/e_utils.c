@@ -666,20 +666,18 @@ e_util_desk_border_below(E_Border *bd)
 EAPI int
 e_util_edje_collection_exists(const char *file, const char *coll)
 {
-   Eina_List *clist, *l;
-   char *str;
+   Eina_List *clist;
+   Eina_Stringshare *str;
+   Eina_Bool ret = EINA_FALSE;
 
    clist = edje_file_collection_list(file);
-   EINA_LIST_FOREACH(clist, l, str)
+   EINA_LIST_FREE(clist, str)
      {
-        if (!strcmp(coll, str))
-          {
-             edje_file_collection_list_free(clist);
-             return 1;
-          }
+        if ((!ret) && (!strcmp(coll, str)))
+          ret = EINA_TRUE;
+        eina_stringshare_del(str);
      }
-   edje_file_collection_list_free(clist);
-   return 0;
+   return ret;
 }
 
 EAPI E_Dialog *

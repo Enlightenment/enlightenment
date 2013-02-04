@@ -1,6 +1,6 @@
-2013-02-02 Chidambar Zinnoury (ilLogict)
+2013-02-04 Mike Blumenkrantz
 
-        * Music-control settings: add check changed.
+        * optimize use of edje_file_collection_list
 
 2013-02-01 Mike Blumenkrantz
 

@@ -164,7 +164,6 @@ _e_theme_edje_file_get(const char *category, const char *group, Eina_Bool fallba
 {
    E_Theme_Result *res;
    char buf[4096];
-   const char *q;
    char *p;
 
    /* find category -> edje mapping */
@@ -196,7 +195,7 @@ _e_theme_edje_file_get(const char *category, const char *group, Eina_Bool fallba
         if (str)
           {
              void *tres;
-             Eina_List *coll, *l;
+             Eina_List *coll;
              int ok;
 
              snprintf(buf, sizeof(buf), "%s/::/%s", str, group);
@@ -206,18 +205,14 @@ _e_theme_edje_file_get(const char *category, const char *group, Eina_Bool fallba
                   /* if the group exists - return */
                   if (!res->quickfind)
                     {
-                       const char *col;
+                       Eina_Stringshare *col;
 
                        res->quickfind = eina_hash_string_superfast_new(NULL);
                        /* create a quick find hash of all group entries */
                        coll = edje_file_collection_list(str);
 
-                       EINA_LIST_FOREACH(coll, l, col)
-                         {
-                            q = eina_stringshare_add(col);
-                            eina_hash_direct_add(res->quickfind, q, q);
-                         }
-                       if (coll) edje_file_collection_list_free(coll);
+                       EINA_LIST_FREE(coll, col)
+                         eina_hash_direct_add(res->quickfind, col, col);
                     }
                   /* save in the group cache hash */
                   if (eina_hash_find(res->quickfind, group))
@@ -660,33 +655,28 @@ _e_theme_collection_items_find(const char *base, const char *collname)
                }
              if (str)
                {
-                  Eina_List *coll, *l;
+                  Eina_List *coll;
+                  Eina_Stringshare *c;
+                  int collname_len;
 
                   coll = edje_file_collection_list(str);
-                  if (coll)
+                  if (coll) collname_len = strlen(collname);
+                  EINA_LIST_FREE(coll, c)
                     {
-                       const char *c;
-                       int collname_len;
-
-                       collname_len = strlen(collname);
-                       EINA_LIST_FOREACH(coll, l, c)
+                       if (!strncmp(c, collname, collname_len))
                          {
-                            if (!strncmp(c, collname, collname_len))
-                              {
-                                 char *trans, *p2;
+                            char *trans, *p2;
 
-                                 trans = strdup(c);
-                                 p = trans + collname_len + 1;
-                                 if (*p)
-                                   {
-                                      p2 = strchr(p, '/');
-                                      if (p2) *p2 = 0;
-                                      list = _e_theme_collection_item_register(list, p);
-                                   }
-                                 free(trans);
+                            trans = strdupa(c);
+                            p = trans + collname_len + 1;
+                            if (*p)
+                              {
+                                 p2 = strchr(p, '/');
+                                 if (p2) *p2 = 0;
+                                 list = _e_theme_collection_item_register(list, p);
                               }
                          }
-                       edje_file_collection_list_free(coll);
+                       eina_stringshare_del(c);
                     }
                }
           }
