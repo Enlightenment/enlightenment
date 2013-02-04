@@ -75,7 +75,7 @@
 #include "e_int_border_locks.h"
 #include "e_thumb.h"
 #include "e_int_border_remember.h"
-#include "e_eap_editor.h"
+#include "e_desktop_editor.h"
 #include "e_scrollframe.h"
 #include "e_int_border_menu.h"
 #include "e_ilist.h"
