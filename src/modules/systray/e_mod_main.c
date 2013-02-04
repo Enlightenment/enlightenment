@@ -450,7 +450,7 @@ e_modapi_init(E_Module *m)
    systray_mod = m;
 
    ctx = calloc(1, sizeof(Systray_Context));
-   ctx->conf_edd = E_CONFIG_DD_NEW("systray_config", Systray_Config);
+   ctx->conf_edd = E_CONFIG_DD_NEW("Systray_Config", Systray_Config);
    #undef T
    #undef D
    #define T Systray_Config
