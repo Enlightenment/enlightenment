@@ -1172,11 +1172,15 @@ e_config_load(void)
 #define CONFIG_VERSION_CHECK(VERSION) \
   if (e_config->config_version - (E_CONFIG_FILE_EPOCH * 1000000) < (VERSION))
 
+#define CONFIG_VERSION_UPDATE_INFO(VERSION) \
+  INF("Performing config upgrade for %d.%d", E_CONFIG_FILE_EPOCH, VERSION);
+
         CONFIG_VERSION_CHECK(5)
           {
              E_Config_XKB_Layout *cl;
              Eina_List *l;
 
+            CONFIG_VERSION_UPDATE_INFO(5);
             if (e_config->xkb.cur_layout || e_config->xkb.selected_layout || e_config->xkb.desklock_layout)
               {
                  EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
@@ -1196,6 +1200,7 @@ e_config_load(void)
           }
         CONFIG_VERSION_CHECK(6)
           {
+             CONFIG_VERSION_UPDATE_INFO(6);
              e_bindings = E_NEW(E_Config_Bindings, 1);
 #undef SET
 #define SET(X) e_bindings->X = e_config->X, e_config->X = NULL
@@ -1211,6 +1216,7 @@ e_config_load(void)
           }
         CONFIG_VERSION_CHECK(8)
           {
+             CONFIG_VERSION_UPDATE_INFO(8);
              if (!e_config->config_type)
                {
                   /* I guess this probably isn't great, but whatever */
