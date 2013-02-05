@@ -7,6 +7,8 @@
         * new option for disabling all pointer warps
         * move pointer warp speed option to be general option
         * new tab in focus settings for pointer warping
+        * add e_border_pointer_warp_to_center_now()
+        * unify all pointer warp animators
 
 2013-02-04 Mike Blumenkrantz
 

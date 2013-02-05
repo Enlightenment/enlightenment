@@ -807,6 +807,7 @@ EAPI void           e_border_focus_track_freeze(void);
 EAPI void           e_border_focus_track_thaw(void);
 
 EAPI E_Border      *e_border_under_pointer_get(E_Desk *desk, E_Border *exclude);
+EAPI int            e_border_pointer_warp_to_center_now(E_Border *bd);
 EAPI int            e_border_pointer_warp_to_center(E_Border *bd);
 
 EAPI void           e_border_comp_hidden_set(E_Border *bd, Eina_Bool hidden);
