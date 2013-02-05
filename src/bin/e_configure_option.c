@@ -1579,6 +1579,7 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, focus_last_focused_per_desktop, _("Revert window focus on desk switch"), _("border"), _("focus"), _("vdesk"));
    OPT_ADD(BOOL, focus_revert_on_hide_or_close, _("Revert window focus on window hide or close"), _("border"), _("focus"));
    OPT_ADD(BOOL, pointer_slide, _("Warp pointer to new windows and away from closed windows"), _("border"), _("focus"), _("warp"), _("pointer"));
+   OPT_ADD(BOOL, disable_all_pointer_warps, _("Prevent all forms of pointer warping"), _("border"), _("focus"), _("warp"), _("pointer"));
    OPT_ADD(BOOL, border_raise_on_mouse_action, _("Windows raise on mouse move/resize"), _("border"), _("raise"), _("focus"), _("mouse"), _("pointer"), _("move"), _("resize"));
    OPT_ADD(BOOL, border_raise_on_focus, _("Windows raise when focused"), _("border"), _("raise"), _("focus"), _("mouse"));
 

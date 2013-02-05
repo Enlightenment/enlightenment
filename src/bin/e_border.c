@@ -2156,13 +2156,15 @@ e_border_focus_set_with_pointer(E_Border *bd)
    if (e_config->focus_policy == E_FOCUS_SLOPPY)
      {
         E_Border *pbd;
+        int ret = 0;
         pbd = e_border_under_pointer_get(bd->desk, bd);
-        if (pbd && (pbd != bd)) e_border_pointer_warp_to_center(bd);
-        else e_border_focus_set(bd, 1, 0);
+        if (pbd && (pbd != bd)) ret = e_border_pointer_warp_to_center(bd);
+        if (!ret) e_border_focus_set(bd, 1, 0);
      }
    else
      {
-        e_border_pointer_warp_to_center(bd);
+        if (!e_border_pointer_warp_to_center(bd))
+          e_border_focus_set(bd, 1, 0);
      }
 }
 
@@ -4495,25 +4497,28 @@ _e_border_reset_lost_window(E_Border *bd)
    if (bd->iconic) e_border_uniconify(bd);
    if (!bd->moving) e_border_center(bd);
 
-   e_zone_useful_geometry_get(bd->zone, &x, &y, &w, &h);
-   ecore_x_pointer_xy_get(bd->zone->container->win, &warp_x[0], &warp_y[0]);
-
-   warp_to_x = x + ((w / 2) - (bd->w / 2)) + (warp_x[0] - bd->x);
-   warp_to_y = y + ((h / 2) - (bd->h / 2)) + (warp_y[0] - bd->y);
-
-   warp_to = 1;
-   warp_to_win = bd->zone->container->win;
-
-   if (warp_timer) ecore_timer_del(warp_timer);
-   warp_timer = ecore_timer_add(0.01, _e_border_pointer_warp_to_center_timer, bd);
-
    e_border_raise(bd);
    if (!bd->lock_focus_out)
      e_border_focus_set(bd, 1, 1);
 
+   if (!e_config->disable_all_pointer_warps)
+     {
+        e_zone_useful_geometry_get(bd->zone, &x, &y, &w, &h);
+        ecore_x_pointer_xy_get(bd->zone->container->win, &warp_x[0], &warp_y[0]);
+
+        warp_to_x = x + ((w / 2) - (bd->w / 2)) + (warp_x[0] - bd->x);
+        warp_to_y = y + ((h / 2) - (bd->h / 2)) + (warp_y[0] - bd->y);
+
+        warp_to = 1;
+        warp_to_win = bd->zone->container->win;
+
+        if (warp_timer) ecore_timer_del(warp_timer);
+        warp_timer = ecore_timer_add(0.01, _e_border_pointer_warp_to_center_timer, bd);
+
+        e_border_focus_lock_set(EINA_TRUE);
+        warp_timer_border = bd;
+     }
    bd->during_lost = EINA_FALSE;
-   e_border_focus_lock_set(EINA_TRUE);
-   warp_timer_border = bd;
 }
 
 EAPI void
@@ -10239,6 +10244,7 @@ e_border_pointer_warp_to_center(E_Border *bd)
    /* Do not slide pointer when disabled (probably breaks focus
     * on sloppy/mouse focus but requested by users). */
    if (!e_config->pointer_slide) return 0;
+   if (e_config->disable_all_pointer_warps) return 0;
    /* Only warp the pointer if it is not already in the area of
     * the given border */
    ecore_x_pointer_xy_get(bd->zone->container->win, &x, &y);

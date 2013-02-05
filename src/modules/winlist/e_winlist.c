@@ -481,9 +481,10 @@ e_winlist_left(E_Zone *zone)
         if (!bd_orig->lock_focus_out)
           e_border_focus_set(bd_orig, 0, 0);
 
-        if ((e_config->focus_policy != E_FOCUS_CLICK) ||
+        if ((!e_config->disable_all_pointer_warps) &&
+            ((e_config->focus_policy != E_FOCUS_CLICK) ||
             (e_config->winlist_warp_at_end) ||
-            (e_config->winlist_warp_while_selecting))
+            (e_config->winlist_warp_while_selecting)))
           {
              _warp_to_x = _bd_next->x + (_bd_next->w / 2);
              if (_warp_to_x < (_bd_next->zone->x + 1))
@@ -605,9 +606,10 @@ e_winlist_down(E_Zone *zone)
         if (!bd_orig->lock_focus_out)
           e_border_focus_set(bd_orig, 0, 0);
 
-        if ((e_config->focus_policy != E_FOCUS_CLICK) ||
+        if ((!e_config->disable_all_pointer_warps) &&
+            ((e_config->focus_policy != E_FOCUS_CLICK) ||
             (e_config->winlist_warp_at_end) ||
-            (e_config->winlist_warp_while_selecting))
+            (e_config->winlist_warp_while_selecting)))
           {
              _warp_to_x = _bd_next->x + (_bd_next->w / 2);
              if (_warp_to_x < (_bd_next->zone->x + 1))
@@ -729,9 +731,10 @@ e_winlist_up(E_Zone *zone)
         if (!bd_orig->lock_focus_out)
           e_border_focus_set(bd_orig, 0, 0);
 
-        if ((e_config->focus_policy != E_FOCUS_CLICK) ||
+        if ((!e_config->disable_all_pointer_warps) &&
+            ((e_config->focus_policy != E_FOCUS_CLICK) ||
             (e_config->winlist_warp_at_end) ||
-            (e_config->winlist_warp_while_selecting))
+            (e_config->winlist_warp_while_selecting)))
           {
              _warp_to_x = _bd_next->x + (_bd_next->w / 2);
              if (_warp_to_x < (_bd_next->zone->x + 1))
@@ -853,9 +856,10 @@ e_winlist_right(E_Zone *zone)
         if (!bd_orig->lock_focus_out)
           e_border_focus_set(bd_orig, 0, 0);
 
-        if ((e_config->focus_policy != E_FOCUS_CLICK) ||
+        if ((!e_config->disable_all_pointer_warps) &&
+            ((e_config->focus_policy != E_FOCUS_CLICK) ||
             (e_config->winlist_warp_at_end) ||
-            (e_config->winlist_warp_while_selecting))
+            (e_config->winlist_warp_while_selecting)))
           {
              _warp_to_x = _bd_next->x + (_bd_next->w / 2);
              if (_warp_to_x < (_bd_next->zone->x + 1))
@@ -1122,9 +1126,10 @@ _e_winlist_activate(void)
      ok = 1;
    if (ok)
      {
-        if ((e_config->focus_policy != E_FOCUS_CLICK) ||
+        if ((!e_config->disable_all_pointer_warps) &&
+            ((e_config->focus_policy != E_FOCUS_CLICK) ||
             (e_config->winlist_warp_at_end) ||
-            (e_config->winlist_warp_while_selecting))
+            (e_config->winlist_warp_while_selecting)))
           {
              _warp_to_x = ww->border->x + (ww->border->w / 2);
              if (_warp_to_x < (ww->border->zone->x + 1))

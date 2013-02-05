@@ -48,7 +48,7 @@ typedef enum
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 8
+#define E_CONFIG_FILE_GENERATION 9
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -168,6 +168,7 @@ struct _E_Config
    int         resize_info_visible; // GUI
    int         focus_last_focused_per_desktop; // GUI
    int         focus_revert_on_hide_or_close; // GUI
+   int         disable_all_pointer_warps; // GUI
    int         pointer_slide; // GUI
    int         use_e_cursor; // GUI
    int         cursor_size; // GUI
