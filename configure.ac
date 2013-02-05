@@ -850,8 +850,7 @@ AC_E_OPTIONAL_MODULE([msgbus], true)
 AC_E_OPTIONAL_MODULE([conf_applications], true)
 AC_E_OPTIONAL_MODULE([conf_display], true)
 AC_E_OPTIONAL_MODULE([conf_shelves], true)
-AC_E_OPTIONAL_MODULE([conf_keybindings], true)
-AC_E_OPTIONAL_MODULE([conf_edgebindings], true)
+AC_E_OPTIONAL_MODULE([conf_bindings], true)
 AC_E_OPTIONAL_MODULE([conf_window_remembers], true)
 AC_E_OPTIONAL_MODULE([conf_window_manipulation], true)
 AC_E_OPTIONAL_MODULE([conf_menus], true)
@@ -947,8 +946,7 @@ src/modules/conf_intl/module.desktop
 src/modules/conf_applications/module.desktop
 src/modules/conf_display/module.desktop
 src/modules/conf_shelves/module.desktop
-src/modules/conf_keybindings/module.desktop
-src/modules/conf_edgebindings/module.desktop
+src/modules/conf_bindings/module.desktop
 src/modules/conf_window_remembers/module.desktop
 src/modules/conf_window_manipulation/module.desktop
 src/modules/conf_menus/module.desktop

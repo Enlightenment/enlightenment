@@ -4,6 +4,8 @@
 E_Config_Dialog *e_int_config_acpibindings(E_Container *con, const char *params __UNUSED__);
 E_Config_Dialog *e_int_config_keybindings(E_Container *con, const char *params __UNUSED__);
 E_Config_Dialog *e_int_config_mousebindings(E_Container *con, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_edgebindings(E_Container *con, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_signalbindings(E_Container *con, const char *params);
 
 /**
  * @addtogroup Optional_Conf

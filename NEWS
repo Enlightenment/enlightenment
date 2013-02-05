@@ -35,6 +35,7 @@ Additions:
 Changes:
     Modules:
         * modules no longer require shutdown or save functions
+        * merged all binding config dialogs into conf_bindings module
 
     API:
         * e_menu_category_callback create callback parameter order has been changed

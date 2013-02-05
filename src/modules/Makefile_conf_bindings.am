@@ -1,0 +1,19 @@
+conf_bindingsdir = $(MDIR)/conf_bindings
+conf_bindings_DATA = conf_bindings/module.desktop
+
+EXTRA_DIST += $(conf_bindings_DATA)
+
+conf_bindingspkgdir = $(MDIR)/conf_bindings/$(MODULE_ARCH)
+conf_bindingspkg_LTLIBRARIES = conf_bindings/module.la
+
+conf_bindings_module_la_SOURCES = conf_bindings/e_mod_main.c \
+			     conf_bindings/e_mod_main.h \
+			     conf_bindings/e_int_config_keybindings.c \
+			     conf_bindings/e_int_config_mousebindings.c \
+			     conf_bindings/e_int_config_edgebindings.c \
+			     conf_bindings/e_int_config_signalbindings.c \
+			     conf_bindings/e_int_config_acpibindings.c
+
+.PHONY: conf_bindings install-conf_bindings
+conf_bindings: $(conf_bindingspkg_LTLIBRARIES) $(conf_bindings_DATA)
+install-conf_bindings: install-conf_bindingsDATA install-conf_bindingspkgLTLIBRARIES

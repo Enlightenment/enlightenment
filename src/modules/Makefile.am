@@ -126,12 +126,8 @@ if USE_MODULE_CONF_SHELVES
 include Makefile_conf_shelves.am
 endif
 
-if USE_MODULE_CONF_KEYBINDINGS
-include Makefile_conf_keybindings.am
-endif
-
-if USE_MODULE_CONF_EDGEBINDINGS
-include Makefile_conf_edgebindings.am
+if USE_MODULE_CONF_BINDINGS
+include Makefile_conf_bindings.am
 endif
 
 if USE_MODULE_CONF_WINDOW_REMEMBERS

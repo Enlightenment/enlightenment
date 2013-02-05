@@ -217,13 +217,6 @@ e_module_all_load(void)
    EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
      {
         if (!em) continue;
-        if (!e_util_strcasecmp(em->name, "comp"))
-          {
-             e_config->modules = eina_list_remove_list(e_config->modules, l);
-             eina_stringshare_del(em->name);
-             free(em);
-             continue;
-          }
         if ((em->delayed) && (em->enabled) & (!e_config->no_module_delay))
           {
              if (!_e_module_idler)
@@ -847,10 +840,9 @@ _e_module_whitelist_check(void)
       "conf_comp",
       "conf_dialogs",
       "conf_display",
-      "conf_edgebindings",
       "conf_interaction",
       "conf_intl",
-      "conf_keybindings",
+      "conf_bindings",
       "conf_menus",
       "conf_paths",
       "conf_performance",

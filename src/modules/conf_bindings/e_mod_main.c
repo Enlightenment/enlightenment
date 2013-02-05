@@ -29,13 +29,23 @@ e_modapi_init(E_Module *m)
                                  _("ACPI Bindings"), NULL,
                                  "preferences-system-power-management",
                                  e_int_config_acpibindings);
+   e_configure_registry_item_add("keyboard_and_mouse/edge_bindings", 10,
+                                 _("Edge Bindings"), NULL,
+                                 "preferences-desktop-edge-bindings",
+                                 e_int_config_edgebindings);
+
+   e_configure_registry_category_add("advanced", 80, _("Advanced"), NULL, "preferences-advanced");
+   e_configure_registry_item_add("advanced/signal_bindings", 10,
+                                 _("Signal Bindings"), NULL,
+                                 "preferences-desktop-signal-bindings",
+                                 e_int_config_signalbindings);
    conf_module = m;
    e_module_delayed_set(m, 1);
 
    {
       E_Configure_Option *co;
 
-      e_configure_option_domain_current_set("conf_keybindings");
+      e_configure_option_domain_current_set("conf_bindings");
 
       E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("key bindings"), _("Key binding settings"), _("input"), _("key"), _("binding"));
       co->info = eina_stringshare_add("keyboard_and_mouse/key_bindings");
@@ -46,6 +56,13 @@ e_modapi_init(E_Module *m)
       E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("ACPI bindings"), _("ACPI binding settings"), _("input"), _("acpi"), _("binding"));
       co->info = eina_stringshare_add("keyboard_and_mouse/acpi_bindings");
       E_CONFIGURE_OPTION_ICON(co, "preferences-system-power-management");
+
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("edge bindings"), _("Screen edge binding settings"), _("input"), _("edge"), _("screen"), _("binding"));
+      co->info = eina_stringshare_add("keyboard_and_mouse/edge_bindings");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-edge-bindings");
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("signal bindings"), _("Edje signal binding settings"), _("input"), _("edje"), _("mouse"), _("binding"));
+      co->info = eina_stringshare_add("advanced/signal_bindings");
+      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-signal-bindings");
    }
 
 
@@ -63,14 +80,20 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
      e_object_del(E_OBJECT(cfd));
    while ((cfd = e_config_dialog_get("E", "keyboard_and_mouse/key_bindings")))
      e_object_del(E_OBJECT(cfd));
+   while ((cfd = e_config_dialog_get("E", "keyboard_and_mouse/edge_bindings")))
+     e_object_del(E_OBJECT(cfd));
+   while ((cfd = e_config_dialog_get("E", "advanced/signal_bindings")))
+     e_object_del(E_OBJECT(cfd));
 
    e_configure_registry_item_del("keyboard_and_mouse/acpi_bindings");
    e_configure_registry_item_del("keyboard_and_mouse/mouse_bindings");
    e_configure_registry_item_del("keyboard_and_mouse/key_bindings");
-
+   e_configure_registry_item_del("keyboard_and_mouse/edge_bindings");
+   e_configure_registry_item_del("advanced/signal_bindings");
    e_configure_registry_category_del("keyboard_and_mouse");
+   e_configure_registry_category_del("advanced");
 
-   e_configure_option_domain_clear("conf_keybindings");
+   e_configure_option_domain_clear("conf_bindings");
 
    conf_module = NULL;
    return 1;

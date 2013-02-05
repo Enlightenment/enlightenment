@@ -1,6 +1,6 @@
 #ifdef E_TYPEDEFS
 
-#define E_MODULE_API_VERSION 12
+#define E_MODULE_API_VERSION 13
 
 typedef struct _E_Module     E_Module;
 typedef struct _E_Module_Api E_Module_Api;

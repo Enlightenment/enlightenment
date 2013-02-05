@@ -1251,6 +1251,45 @@ e_config_load(void)
                     e_config->config_type = E_CONFIG_PROFILE_TYPE_TABLET;
                }
           }
+        CONFIG_VERSION_CHECK(10)
+          {
+             int do_conf = 0;
+             Eina_List *l, *ll;
+             E_Config_Module *em;
+             int enabled = 0, delayed = 0, priority = 0;
+
+             CONFIG_VERSION_UPDATE_INFO(10);
+             EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
+               {
+                  Eina_Bool do_free = EINA_FALSE;
+
+                  if (!e_util_strcmp(em->name, "comp"))
+                    do_free = EINA_TRUE;
+                  else if ((!e_util_strcmp(em->name, "conf_keybindings")) || (!e_util_strcmp(em->name, "conf_edgebindings")))
+                    {
+                       do_conf += do_free = EINA_TRUE;
+                       enabled |= em->enabled;
+                       delayed |= em->delayed;
+                       priority = MIN(priority, em->priority);
+                    }
+                  if (do_free)
+                    {
+                       e_config->modules = eina_list_remove_list(e_config->modules, l);
+                       eina_stringshare_del(em->name);
+                       free(em);
+                    }
+                  if (do_conf == 2) break;
+               }
+             if (do_conf)
+               {
+                  em = E_NEW(E_Config_Module, 1);
+                  em->name = eina_stringshare_add("conf_bindings");
+                  em->enabled = !!enabled;
+                  em->delayed = !!delayed;
+                  em->priority = priority;
+                  e_config->modules = eina_list_append(e_config->modules, em);
+               }
+          }
      }
    if (!e_config->remember_internal_fm_windows)
      e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
