@@ -257,13 +257,15 @@ _advanced_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Da
 
    /* Focus */
    ol = e_widget_list_add(evas, 0, 0);
+   of = e_widget_framelist_add(evas, _("Focus Policy"), 0);
    rg = e_widget_radio_group_new(&(cfdata->focus_policy));
    ob = e_widget_radio_add(evas, _("Click"), E_FOCUS_CLICK, rg);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+   e_widget_framelist_object_append(of, ob);
    ob = e_widget_radio_add(evas, _("Pointer"), E_FOCUS_MOUSE, rg);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+   e_widget_framelist_object_append(of, ob);
    ob = e_widget_radio_add(evas, _("Sloppy"), E_FOCUS_SLOPPY, rg);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+   e_widget_framelist_object_append(of, ob);
+   e_widget_list_object_append(ol, of, 1, 0, 0.5);
 
    of = e_widget_framelist_add(evas, _("New Window Focus"), 0);
    rg = e_widget_radio_group_new(&(cfdata->focus_setting));
