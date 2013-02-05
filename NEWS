@@ -143,3 +143,4 @@ Fixes:
     * fix possible crash in xkb rule parsing
     * fix list update on deletion of personal app launchers
     * fix button toggling in personal app launchers dialog
+    * fix bug where edge flips would stop functioning after dragging to an invalid edge containing a shelf

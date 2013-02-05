@@ -1,6 +1,7 @@
-2013-02-04 Mike Blumenkrantz
+2013-02-05 Mike Blumenkrantz
 
         * improve load time of apps dialogs
+        * fix bug where edge flips would stop functioning after dragging to an invalid edge containing a shelf
 
 2013-02-04 Mike Blumenkrantz
 
