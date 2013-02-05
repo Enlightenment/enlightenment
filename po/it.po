@@ -662,7 +662,7 @@ msgstr "Lancia"
 msgid "Command"
 msgstr "Comando"
 
-#: src/bin/e_actions.c:3350 src/bin/e_eap_editor.c:698
+#: src/bin/e_actions.c:3350 src/bin/e_desktop_editor.c:698
 #: src/bin/e_int_border_menu.c:118
 #, c-format
 msgid "Application"
@@ -790,8 +790,8 @@ msgstr "Selettore colore"
 msgid "Select"
 msgstr "Seleziona"
 
-#: src/bin/e_color_dialog.c:47 src/bin/e_eap_editor.c:862
-#: src/bin/e_eap_editor.c:925 src/bin/e_entry_dialog.c:64 src/bin/e_fm.c:9968
+#: src/bin/e_color_dialog.c:47 src/bin/e_desktop_editor.c:862
+#: src/bin/e_desktop_editor.c:925 src/bin/e_entry_dialog.c:64 src/bin/e_fm.c:9968
 #: src/bin/e_fm_prop.c:625 src/bin/e_import_dialog.c:195
 #: src/bin/e_import_config_dialog.c:540
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:637
@@ -858,8 +858,8 @@ msgstr ""
 "stato abortito per sicurezza.<br>"
 
 #: src/bin/e_config.c:1529 src/bin/e_config.c:2163
-#: src/bin/e_config_dialog.c:278 src/bin/e_eap_editor.c:860
-#: src/bin/e_eap_editor.c:923 src/bin/e_entry_dialog.c:63 src/bin/e_exec.c:615
+#: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:860
+#: src/bin/e_desktop_editor.c:923 src/bin/e_entry_dialog.c:63 src/bin/e_exec.c:615
 #: src/bin/e_fm.c:9967 src/bin/e_fm.c:10698 src/bin/e_fm_prop.c:624
 #: src/bin/e_import_config_dialog.c:539 src/bin/e_int_border_remember.c:318
 #: src/bin/e_int_border_remember.c:507 src/bin/e_module.c:588
@@ -986,7 +986,7 @@ msgstr ""
 msgid "Advanced"
 msgstr "Avanzate"
 
-#: src/bin/e_config_dialog.c:255 src/bin/e_eap_editor.c:719
+#: src/bin/e_config_dialog.c:255 src/bin/e_desktop_editor.c:719
 msgid "Basic"
 msgstr "Basilari"
 
@@ -1092,11 +1092,11 @@ msgstr "No, ma aumenta la temporizzazione"
 msgid "No, and stop asking"
 msgstr "No, e non chiedere più"
 
-#: src/bin/e_eap_editor.c:181
+#: src/bin/e_desktop_editor.c:181
 msgid "Incomplete Window Properties"
 msgstr "Proprietà della finestra incomplete"
 
-#: src/bin/e_eap_editor.c:182
+#: src/bin/e_desktop_editor.c:182
 msgid ""
 "The window you are creating an icon for<br>does not contain window name and "
 "class<br>properties. Without these, you will have to<br>use the window title "
@@ -1108,11 +1108,11 @@ msgstr ""
 "\"titolo finestra\". Questo funzionerà solo se<br>il titolo sarà identico "
 "all'avvio della finestra<br>e non cambierà in seguito."
 
-#: src/bin/e_eap_editor.c:235
+#: src/bin/e_desktop_editor.c:235
 msgid "Desktop Entry Editor"
 msgstr "Editor file desktop"
 
-#: src/bin/e_eap_editor.c:677 src/bin/e_int_border_prop.c:445
+#: src/bin/e_desktop_editor.c:677 src/bin/e_int_border_prop.c:445
 #: src/bin/e_int_border_prop.c:499
 #: src/modules/conf_display/e_int_config_desk.c:186
 #: src/modules/conf_intl/e_int_config_imc.c:896
@@ -1121,42 +1121,42 @@ msgstr "Editor file desktop"
 msgid "Name"
 msgstr "Nome"
 
-#: src/bin/e_eap_editor.c:688 src/modules/ibar/e_mod_config.c:134
+#: src/bin/e_desktop_editor.c:688 src/modules/ibar/e_mod_config.c:134
 msgid "Comment"
 msgstr "Commento"
 
-#: src/bin/e_eap_editor.c:710
+#: src/bin/e_desktop_editor.c:710
 msgid "URL"
 msgstr "URL"
 
-#: src/bin/e_eap_editor.c:732 src/bin/e_eap_editor.c:741
+#: src/bin/e_desktop_editor.c:732 src/bin/e_desktop_editor.c:741
 #: src/bin/e_fm_prop.c:495 src/modules/conf_theme/e_int_config_fonts.c:95
 #: src/modules/fileman/e_int_config_mime_edit.c:145
 msgid "Icon"
 msgstr "Icona"
 
-#: src/bin/e_eap_editor.c:745
+#: src/bin/e_desktop_editor.c:745
 msgid "Generic Name"
 msgstr "Descrizione"
 
-#: src/bin/e_eap_editor.c:751
+#: src/bin/e_desktop_editor.c:751
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:120
 msgid "Window Class"
 msgstr "Classe"
 
-#: src/bin/e_eap_editor.c:757 src/modules/fileman/e_int_config_mime.c:170
+#: src/bin/e_desktop_editor.c:757 src/modules/fileman/e_int_config_mime.c:170
 msgid "Categories"
 msgstr "Categorie"
 
-#: src/bin/e_eap_editor.c:764
+#: src/bin/e_desktop_editor.c:764
 msgid "Mime Types"
 msgstr "Tipi Mime"
 
-#: src/bin/e_eap_editor.c:771
+#: src/bin/e_desktop_editor.c:771
 msgid "Desktop file"
 msgstr "File desktop"
 
-#: src/bin/e_eap_editor.c:781 src/bin/e_int_border_prop.c:450
+#: src/bin/e_desktop_editor.c:781 src/bin/e_int_border_prop.c:450
 #: src/bin/e_int_border_prop.c:502 src/modules/access/e_mod_config.c:70
 #: src/modules/conf_comp/e_mod_config.c:561
 #: src/modules/conf_applications/e_int_config_defapps.c:358
@@ -1169,30 +1169,30 @@ msgstr "File desktop"
 msgid "General"
 msgstr "Impostazioni generali"
 
-#: src/bin/e_eap_editor.c:784
+#: src/bin/e_desktop_editor.c:784
 msgid "Startup Notify"
 msgstr "Notifica avvio"
 
-#: src/bin/e_eap_editor.c:786 src/modules/everything/evry_plug_apps.c:1183
+#: src/bin/e_desktop_editor.c:786 src/modules/everything/evry_plug_apps.c:1183
 msgid "Run in Terminal"
 msgstr "Esegui in terminale"
 
-#: src/bin/e_eap_editor.c:788
+#: src/bin/e_desktop_editor.c:788
 msgid "Show in Menus"
 msgstr "Mostra in menù"
 
-#: src/bin/e_eap_editor.c:791 src/bin/e_fm.c:8776 src/bin/e_fm.c:8936
+#: src/bin/e_desktop_editor.c:791 src/bin/e_fm.c:8776 src/bin/e_fm.c:8936
 #: src/bin/e_int_border_remember.c:762
 #: src/modules/xkbswitch/e_mod_config.c:334
 msgid "Options"
 msgstr "Opzioni"
 
-#: src/bin/e_eap_editor.c:822
+#: src/bin/e_desktop_editor.c:822
 #, c-format
 msgid "Select an Icon for '%s'"
 msgstr "Selezionare un'icona per '%s'"
 
-#: src/bin/e_eap_editor.c:888
+#: src/bin/e_desktop_editor.c:888
 msgid "Select an Executable"
 msgstr "Seleziona un'eseguibile"
 

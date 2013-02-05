@@ -689,7 +689,7 @@ msgstr "Ausführen"
 msgid "Command"
 msgstr "Befehl"
 
-#: src/bin/e_actions.c:3353 src/bin/e_eap_editor.c:698
+#: src/bin/e_actions.c:3353 src/bin/e_desktop_editor.c:698
 #: src/bin/e_int_border_menu.c:118
 #, c-format
 msgid "Application"
@@ -817,8 +817,8 @@ msgstr "Farbwähler"
 msgid "Select"
 msgstr "Auswählen"
 
-#: src/bin/e_color_dialog.c:47 src/bin/e_eap_editor.c:862
-#: src/bin/e_eap_editor.c:925 src/bin/e_entry_dialog.c:64 src/bin/e_fm.c:9959
+#: src/bin/e_color_dialog.c:47 src/bin/e_desktop_editor.c:862
+#: src/bin/e_desktop_editor.c:925 src/bin/e_entry_dialog.c:64 src/bin/e_fm.c:9959
 #: src/bin/e_fm_prop.c:625 src/bin/e_import_dialog.c:194
 #: src/bin/e_import_config_dialog.c:537
 #: src/modules/conf_edgebindings/e_int_config_signalbindings.c:637
@@ -883,8 +883,8 @@ msgstr ""
 "%s<br>verschieben.<br>Sicherheitshalber wurde der Schreibvorgang abgebrochen."
 
 #: src/bin/e_config.c:1732 src/bin/e_config.c:2366
-#: src/bin/e_config_dialog.c:278 src/bin/e_eap_editor.c:860
-#: src/bin/e_eap_editor.c:923 src/bin/e_entry_dialog.c:63 src/bin/e_exec.c:613
+#: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:860
+#: src/bin/e_desktop_editor.c:923 src/bin/e_entry_dialog.c:63 src/bin/e_exec.c:613
 #: src/bin/e_fm.c:9958 src/bin/e_fm.c:10684 src/bin/e_fm_prop.c:624
 #: src/bin/e_import_config_dialog.c:536 src/bin/e_int_border_remember.c:318
 #: src/bin/e_int_border_remember.c:507 src/bin/e_module.c:431
@@ -1012,7 +1012,7 @@ msgstr ""
 msgid "Advanced"
 msgstr "Erweitert"
 
-#: src/bin/e_config_dialog.c:255 src/bin/e_eap_editor.c:719
+#: src/bin/e_config_dialog.c:255 src/bin/e_desktop_editor.c:719
 msgid "Basic"
 msgstr "Einfach"
 
@@ -1118,11 +1118,11 @@ msgstr "Nein, stattdessen Verzögerung erhöhen"
 msgid "No, and stop asking"
 msgstr "Nein, nicht mehr nachfragen"
 
-#: src/bin/e_eap_editor.c:181
+#: src/bin/e_desktop_editor.c:181
 msgid "Incomplete Window Properties"
 msgstr "Unvollständige Fenstereigenscahften"
 
-#: src/bin/e_eap_editor.c:182
+#: src/bin/e_desktop_editor.c:182
 msgid ""
 "The window you are creating an icon for<br>does not contain window name and "
 "class<br>properties. Without these, you will have to<br>use the window title "
@@ -1135,11 +1135,11 @@ msgstr ""
 "der<br>Fenstertitel bei jedem Öffnen des Fensters<br>identisch ist und sich "
 "nicht ändert."
 
-#: src/bin/e_eap_editor.c:235
+#: src/bin/e_desktop_editor.c:235
 msgid "Desktop Entry Editor"
 msgstr "Editor für Programmeinträge"
 
-#: src/bin/e_eap_editor.c:677 src/bin/e_int_border_prop.c:445
+#: src/bin/e_desktop_editor.c:677 src/bin/e_int_border_prop.c:445
 #: src/bin/e_int_border_prop.c:499 src/modules/comp/e_mod_config.c:713
 #: src/modules/conf_intl/e_int_config_imc.c:896
 #: src/modules/conf_menus/e_int_config_menus.c:265
@@ -1147,42 +1147,42 @@ msgstr "Editor für Programmeinträge"
 msgid "Name"
 msgstr "Name"
 
-#: src/bin/e_eap_editor.c:688 src/modules/ibar/e_mod_config.c:134
+#: src/bin/e_desktop_editor.c:688 src/modules/ibar/e_mod_config.c:134
 msgid "Comment"
 msgstr "Kommentar"
 
-#: src/bin/e_eap_editor.c:710
+#: src/bin/e_desktop_editor.c:710
 msgid "URL"
 msgstr "URL"
 
-#: src/bin/e_eap_editor.c:732 src/bin/e_eap_editor.c:741
+#: src/bin/e_desktop_editor.c:732 src/bin/e_desktop_editor.c:741
 #: src/bin/e_fm_prop.c:495 src/modules/conf_theme/e_int_config_fonts.c:95
 #: src/modules/fileman/e_int_config_mime_edit.c:145
 msgid "Icon"
 msgstr "Symbol"
 
-#: src/bin/e_eap_editor.c:745
+#: src/bin/e_desktop_editor.c:745
 msgid "Generic Name"
 msgstr "Generischer Name"
 
-#: src/bin/e_eap_editor.c:751
+#: src/bin/e_desktop_editor.c:751
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:103
 msgid "Window Class"
 msgstr "Fensterklasse"
 
-#: src/bin/e_eap_editor.c:757 src/modules/fileman/e_int_config_mime.c:170
+#: src/bin/e_desktop_editor.c:757 src/modules/fileman/e_int_config_mime.c:170
 msgid "Categories"
 msgstr "Kategorien"
 
-#: src/bin/e_eap_editor.c:764
+#: src/bin/e_desktop_editor.c:764
 msgid "Mime Types"
 msgstr "Dateitypen"
 
-#: src/bin/e_eap_editor.c:771
+#: src/bin/e_desktop_editor.c:771
 msgid "Desktop file"
 msgstr ".desktop-Datei"
 
-#: src/bin/e_eap_editor.c:781 src/bin/e_int_border_prop.c:450
+#: src/bin/e_desktop_editor.c:781 src/bin/e_int_border_prop.c:450
 #: src/bin/e_int_border_prop.c:502 src/modules/access/e_mod_config.c:68
 #: src/modules/comp/e_mod_config.c:1531
 #: src/modules/conf_applications/e_int_config_defapps.c:358
@@ -1195,30 +1195,30 @@ msgstr ".desktop-Datei"
 msgid "General"
 msgstr "Allgemein"
 
-#: src/bin/e_eap_editor.c:784
+#: src/bin/e_desktop_editor.c:784
 msgid "Startup Notify"
 msgstr "Startmitteilung"
 
-#: src/bin/e_eap_editor.c:786 src/modules/everything/evry_plug_apps.c:1182
+#: src/bin/e_desktop_editor.c:786 src/modules/everything/evry_plug_apps.c:1182
 msgid "Run in Terminal"
 msgstr "In der Konsole ausführen"
 
-#: src/bin/e_eap_editor.c:788
+#: src/bin/e_desktop_editor.c:788
 msgid "Show in Menus"
 msgstr "In den Menüs zeigen"
 
-#: src/bin/e_eap_editor.c:791 src/bin/e_fm.c:8764 src/bin/e_fm.c:8924
+#: src/bin/e_desktop_editor.c:791 src/bin/e_fm.c:8764 src/bin/e_fm.c:8924
 #: src/bin/e_int_border_remember.c:763
 #: src/modules/xkbswitch/e_mod_config.c:334
 msgid "Options"
 msgstr "Optionen"
 
-#: src/bin/e_eap_editor.c:822
+#: src/bin/e_desktop_editor.c:822
 #, c-format
 msgid "Select an Icon for '%s'"
 msgstr "Wählen Sie ein Symbol für '%s'"
 
-#: src/bin/e_eap_editor.c:888
+#: src/bin/e_desktop_editor.c:888
 msgid "Select an Executable"
 msgstr "Wählen Sie eine ausführbare Datei aus"
 
