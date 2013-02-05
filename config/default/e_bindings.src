@@ -1,5 +1,5 @@
 group "E_Config_Bindings" struct {
-  value "config_version" int: 1000000;
+  value "config_version" int: 0;
   group "mouse_bindings" list {
     group "E_Config_Binding_Mouse" struct {
       value "context" int: 3;
