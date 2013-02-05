@@ -10,7 +10,8 @@ typedef struct _E_Config_App_List
 {
    E_Config_Dialog_Data *cfdata;
    Evas_Object          *o_list, *o_add, *o_del, *o_desc;
-   Eina_List            *desks;
+   Eina_List            *desks, *icons;
+   Ecore_Idler *idler;
 } E_Config_App_List;
 
 struct _E_Config_Dialog_Data
@@ -38,7 +39,6 @@ static void             _fill_xdg_list(E_Config_App_List *apps);
 static void             _fill_order_list(E_Config_Dialog_Data *cfdata);
 static void             _cb_apps_list_selected(void *data);
 static void             _cb_order_list_selected(void *data);
-static int              _cb_desks_sort(const void *data1, const void *data2);
 static int              _cb_desks_name(const void *data1, const void *data2);
 static int              _cb_desks_sort(const void *data1, const void *data2);
 static void             _cb_add(void *data, void *data2 __UNUSED__);
@@ -47,7 +47,6 @@ static void             _cb_up(void *data, void *data2 __UNUSED__);
 static void             _cb_down(void *data, void *data2 __UNUSED__);
 static void             _cb_order_del(void *data, void *data2 __UNUSED__);
 static Eina_Bool        _cb_fill_delay(void *data);
-static void             _list_items_state_set(E_Config_App_List *apps);
 
 E_Config_Dialog *
 e_int_config_apps_add(E_Container *con, const char *params __UNUSED__)
@@ -215,10 +214,9 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Config_Data *data;
-   Efreet_Desktop *desk;
 
    if (cfdata->fill_delay) ecore_timer_del(cfdata->fill_delay);
 
@@ -230,13 +228,18 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
         if (data->filename) eina_stringshare_del(data->filename);
         E_FREE(data);
      }
-   EINA_LIST_FREE(cfdata->apps, desk)
-     efreet_desktop_free(desk);
-   EINA_LIST_FREE(cfdata->apps_user.desks, desk)
-     efreet_desktop_free(desk);
-   EINA_LIST_FREE(cfdata->apps_xdg.desks, desk)
-     efreet_desktop_free(desk);
-   E_FREE(cfdata);
+
+   E_FREE_LIST(cfdata->apps, efreet_desktop_free);
+   eina_list_free(cfdata->apps_user.icons);
+   eina_list_free(cfdata->apps_xdg.icons);
+   E_FN_DEL(ecore_idler_del, cfdata->apps_user.idler);
+   E_FN_DEL(ecore_idler_del, cfdata->apps_xdg.idler);
+   e_widget_ilist_clear(cfdata->apps_xdg.o_list);
+   /* FIXME: this is suuuuper slow and blocking :/ */
+   e_widget_ilist_clear(cfdata->apps_user.o_list);
+   E_FREE_LIST(cfdata->apps_user.desks, efreet_desktop_free);
+   E_FREE_LIST(cfdata->apps_xdg.desks, efreet_desktop_free);
+   free(cfdata);
 }
 
 static Evas_Object *
@@ -413,34 +416,61 @@ _save_order(E_Config_Dialog_Data *cfdata)
 }
 
 static void
+_list_item_icon_set(Evas_Object *o, const char *icon)
+{
+   const char *ext, *path;
+
+   if (!icon) return;
+
+   path = efreet_icon_path_find(e_config->icon_theme, icon, 24);
+   if (!path) return;
+   ext = strrchr(path, '.');
+   if (ext)
+     {
+        if (!strcmp(ext, ".edj"))
+          e_icon_file_edje_set(o, path, "icon");
+        else
+          e_icon_file_set(o, path);
+     }
+   else
+     e_icon_file_set(o, path);
+}
+
+static Eina_Bool
+_list_items_icon_set_cb(E_Config_App_List *apps)
+{
+   unsigned int count = 0;
+   Evas_Object *o;
+
+   EINA_LIST_FREE(apps->icons, o)
+     {
+       if (count++ == 5) break;
+       
+       _list_item_icon_set(o, evas_object_data_get(o, "deskicon"));
+     }
+   if (!apps->icons) apps->idler = NULL;
+   return !!apps->icons;
+}
+
+static void
 _list_items_state_set(E_Config_App_List *apps)
 {
    Evas *evas;
-   Eina_List *l;
    Efreet_Desktop *desk;
+   Eina_List *l;
+   unsigned int count = 0;
 
-   if (!apps->o_list)
-     return;
+   if (!apps->o_list) return;
 
    evas = evas_object_evas_get(apps->o_list);
    evas_event_freeze(evas);
-   edje_freeze();
    e_widget_ilist_freeze(apps->o_list);
-   e_widget_ilist_clear(apps->o_list);
-
    EINA_LIST_FOREACH(apps->desks, l, desk)
      {
-        Evas_Object *icon = NULL, *end = NULL;
+        Evas_Object *icon = NULL, *end;
 
         end = edje_object_add(evas);
-        if (!e_theme_edje_object_set(end, "base/theme/widgets",
-                                     "e/widgets/ilist/toggle_end"))
-          {
-             evas_object_del(end);
-             end = NULL;
-          }
-
-        if (!end) break;
+        e_theme_edje_object_set(end, "base/theme/widgets", "e/widgets/ilist/toggle_end");
 
         if (eina_list_search_unsorted(apps->cfdata->apps, _cb_desks_sort, desk))
           {
@@ -451,15 +481,35 @@ _list_items_state_set(E_Config_App_List *apps)
              edje_object_signal_emit(end, "e,state,unchecked", "e");
           }
 
-        icon = e_util_desktop_icon_add(desk, 24, evas);
+        if (desk->icon)
+          {
+             icon = e_icon_add(evas);
+             e_icon_scale_size_set(icon, 24);
+             e_icon_preload_set(icon, 1);
+             e_icon_fill_inside_set(icon, 1);
+             if (count++ > 10)
+               {
+                  evas_object_data_set(icon, "deskicon", desk->icon);
+                  apps->icons = eina_list_append(apps->icons, icon);
+               }
+             else
+               _list_item_icon_set(icon, desk->icon);
+          }
         e_widget_ilist_append_full(apps->o_list, icon, end, desk->name,
                                    _cb_apps_list_selected, apps, NULL);
      }
-
-   e_widget_ilist_go(apps->o_list);
+   if (apps->icons) apps->idler = ecore_idler_add((Ecore_Task_Cb)_list_items_icon_set_cb, apps);
    e_widget_ilist_thaw(apps->o_list);
-   edje_thaw();
    evas_event_thaw(evas);
+}
+
+static void
+_list_items_state_idler_start(E_Config_App_List *apps)
+{
+   if (apps->idler) return;
+   e_widget_ilist_clear(apps->o_list);
+   _list_items_state_set(apps);
+   e_widget_ilist_go(apps->o_list);
 }
 
 static void
@@ -502,7 +552,7 @@ _fill_apps_list(E_Config_App_List *apps)
      }
    apps->desks = eina_list_sort(apps->desks, -1, _cb_desks_sort);
 
-   _list_items_state_set(apps);
+   _list_items_state_idler_start(apps);
 }
 
 static void
@@ -556,7 +606,7 @@ _fill_xdg_list(E_Config_App_List *apps)
 
    apps->desks = eina_list_sort(apps->desks, -1, _cb_desks_sort);
 
-   _list_items_state_set(apps);
+   _list_items_state_idler_start(apps);
 }
 
 static void
@@ -739,8 +789,8 @@ _cb_order_del(void *data, void *data2 __UNUSED__)
           }
      }
 
-   _list_items_state_set(&(cfdata->apps_xdg));
-   _list_items_state_set(&(cfdata->apps_user));
+   _list_items_state_idler_start(&(cfdata->apps_xdg));
+   _list_items_state_idler_start(&(cfdata->apps_user));
 
    e_widget_ilist_unselect(cfdata->o_list);
    e_widget_disabled_set(cfdata->o_del, EINA_TRUE);

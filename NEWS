@@ -83,6 +83,7 @@ Improvements:
     * "No listable items" in Navigate menu is now clickable
     * optimize use of edje_file_collection_list
     * add support for edje files in filepreview widget
+    * improve load time of apps dialogs
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.
