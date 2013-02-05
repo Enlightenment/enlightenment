@@ -1580,6 +1580,8 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, focus_revert_on_hide_or_close, _("Revert window focus on window hide or close"), _("border"), _("focus"));
    OPT_ADD(BOOL, pointer_slide, _("Warp pointer to new windows and away from closed windows"), _("border"), _("focus"), _("warp"), _("pointer"));
    OPT_ADD(BOOL, disable_all_pointer_warps, _("Prevent all forms of pointer warping"), _("border"), _("focus"), _("warp"), _("pointer"));
+   OPT_ADD(DOUBLE, pointer_warp_speed, _("Speed to move pointer when warping between windows"), _("border"), _("focus"), _("warp"), _("pointer"), _("speed"));
+   OPT_MINMAX_STEP_FMT(0.0, 1.0, 0.01, "%1.2f");
    OPT_ADD(BOOL, border_raise_on_mouse_action, _("Windows raise on mouse move/resize"), _("border"), _("raise"), _("focus"), _("mouse"), _("pointer"), _("move"), _("resize"));
    OPT_ADD(BOOL, border_raise_on_focus, _("Windows raise when focused"), _("border"), _("raise"), _("focus"), _("mouse"));
 
@@ -1604,8 +1606,6 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, winlist_warp_at_end, _("Winlist moves pointer to currently selected window after winlist closes"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"));
    OPT_ADD(BOOL, winlist_no_warp_on_direction, _("Disable pointer warping on winlist directional focus change"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"));
    OPT_HELP(_("This option, when enabled, disables pointer warping only when switching windows using a directional winlist action (up/down/left/right)"));
-   OPT_ADD(DOUBLE, winlist_warp_speed, _("Winlist pointer warp speed while selecting"), _("border"), _("winlist"), _("focus"), _("warp"), _("pointer"), _("speed"));
-   OPT_MINMAX_STEP_FMT(0.0, 1.0, 0.01, "%1.2f");
    OPT_ADD(BOOL, winlist_scroll_animate, _("Enable winlist scroll animation"), _("border"), _("winlist"), _("animate"));
    OPT_ADD(DOUBLE, winlist_scroll_speed, _("Winlist scroll speed"), _("border"), _("winlist"), _("animate"), _("speed"));
    OPT_MINMAX_STEP_FMT(0.0, 1.0, 0.01, "%1.2f");

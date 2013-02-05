@@ -29,6 +29,7 @@ struct _E_Config_Dialog_Data
    int focus_revert_on_hide_or_close;
    int pointer_slide;
    int disable_all_pointer_warps;
+   double pointer_warp_speed;
    double auto_raise_delay;
    int border_raise_on_mouse_action;
    int border_raise_on_focus;
@@ -79,6 +80,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
      e_config->focus_revert_on_hide_or_close;
    cfdata->pointer_slide = e_config->pointer_slide;
    cfdata->disable_all_pointer_warps = e_config->disable_all_pointer_warps;
+   cfdata->pointer_warp_speed = e_config->pointer_warp_speed;
 
    cfdata->mode = cfdata->focus_policy;
 
@@ -187,6 +189,7 @@ _advanced_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
      cfdata->focus_revert_on_hide_or_close;
    e_config->pointer_slide = cfdata->pointer_slide;
    e_config->disable_all_pointer_warps = cfdata->disable_all_pointer_warps;
+   e_config->pointer_warp_speed = cfdata->pointer_warp_speed;
 
    e_config->use_auto_raise = cfdata->use_auto_raise;
    e_config->auto_raise_delay = cfdata->auto_raise_delay;
@@ -211,6 +214,7 @@ _advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *c
 	   (e_config->focus_revert_on_hide_or_close != cfdata->focus_revert_on_hide_or_close) ||
 	   (e_config->pointer_slide != cfdata->pointer_slide) ||
 	   (e_config->disable_all_pointer_warps != cfdata->disable_all_pointer_warps) ||
+    (fabs(e_config->pointer_warp_speed - cfdata->pointer_warp_speed) < DBL_EPSILON) ||
 	   (e_config->use_auto_raise != cfdata->use_auto_raise) ||
 	   (e_config->auto_raise_delay != cfdata->auto_raise_delay) ||
 	   (e_config->border_raise_on_mouse_action != cfdata->border_raise_on_mouse_action) ||
@@ -323,6 +327,32 @@ _advanced_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Da
    e_widget_framelist_object_append(of, ob);
    e_widget_toolbook_page_append(otb, NULL, _("Hints"), of, 
                                  1, 0, 1, 0, 0.5, 0.0);
+   /* Pointer */
+   ol = e_widget_list_add(evas, 0, 0);
+   of = e_widget_framelist_add(evas, _("Warping"), 0);
+   /* NOTE/TODO:
+    *
+    * IMHO all these slide-pointer-to-window, warp and all should have
+    * an unique and consistent setting. In some cases it just do not
+    * make sense to have one but not the other.
+    */
+
+   ob = e_widget_check_add(evas, _("Slide pointer to a new window which is focused"), 
+                           &(cfdata->pointer_slide));
+   e_widget_framelist_object_append(of, ob);
+
+   ob = e_widget_check_add(evas, _("Prevent all forms of pointer warping"), 
+                           &(cfdata->disable_all_pointer_warps));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_label_add(evas, _("Warp speed"));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f"), 0.0, 1.0, 0.01, 0,
+                            &(cfdata->pointer_warp_speed), NULL, 100);
+   e_widget_framelist_object_append(of, ob);
+   e_widget_list_object_append(ol, of, 1, 0, 0.5);
+   e_widget_toolbook_page_append(otb, NULL, _("Pointer"), ol, 
+                                 1, 0, 1, 0, 0.5, 0.0);
+
    /* Misc */
    ol = e_widget_list_add(evas, 0, 0);
    of = e_widget_framelist_add(evas, _("Other Settings"), 0);
@@ -340,20 +370,6 @@ _advanced_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Da
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_check_add(evas, _("Focus last focused window on lost focus"), 
                            &(cfdata->focus_revert_on_hide_or_close));
-   e_widget_framelist_object_append(of, ob);
-   /* NOTE/TODO:
-    *
-    * IMHO all these slide-pointer-to-window, warp and all should have
-    * an unique and consistent setting. In some cases it just do not
-    * make sense to have one but not the other.
-    */
-
-   ob = e_widget_check_add(evas, _("Slide pointer to a new window which is focused"), 
-                           &(cfdata->pointer_slide));
-   e_widget_framelist_object_append(of, ob);
-
-   ob = e_widget_check_add(evas, _("Prevent all forms of pointer warping"), 
-                           &(cfdata->disable_all_pointer_warps));
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Miscellaneous"), ol, 

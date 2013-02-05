@@ -48,7 +48,7 @@ typedef enum
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 10
+#define E_CONFIG_FILE_GENERATION 11
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -128,7 +128,7 @@ struct _E_Config
    int         winlist_warp_while_selecting; // GUI
    int         winlist_warp_at_end; // GUI
    int         winlist_no_warp_on_direction; // GUI
-   double      winlist_warp_speed; // GUI
+   double      winlist_warp_speed; // GUI **** NO LONGER USED!!!
    int         winlist_scroll_animate; // GUI
    double      winlist_scroll_speed; // GUI
    int         winlist_list_show_iconified; // GUI
@@ -170,6 +170,7 @@ struct _E_Config
    int         focus_revert_on_hide_or_close; // GUI
    int         disable_all_pointer_warps; // GUI
    int         pointer_slide; // GUI
+   double      pointer_warp_speed; // GUI
    int         use_e_cursor; // GUI
    int         cursor_size; // GUI
    int         menu_autoscroll_margin; // GUI

@@ -4,6 +4,9 @@
         * fix bug where edge flips would stop functioning after dragging to an invalid edge containing a shelf
         * edge bindings can now be set to "drag only"
         * merged all binding config dialogs into conf_bindings module
+        * new option for disabling all pointer warps
+        * move pointer warp speed option to be general option
+        * new tab in focus settings for pointer warping
 
 2013-02-04 Mike Blumenkrantz
 

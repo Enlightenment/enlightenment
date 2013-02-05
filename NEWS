@@ -31,16 +31,19 @@ Additions:
         * added options and functionality for "fast" composite effects
         * split comp window match settings into separate dialog
         * edge bindings can now be set to "drag only"
+        * new option for disabling all pointer warps
 
 Changes:
     Modules:
         * modules no longer require shutdown or save functions
         * merged all binding config dialogs into conf_bindings module
-
     API:
         * e_menu_category_callback create callback parameter order has been changed
         * e_manager_comp_set() is no longer accessible by modules
         * e_xkb_layout API now deals directly with E_Config_XKB_Layout structs
+    Config:
+        * move winlist_warp_speed option to pointer_warp_speed
+
 
 Deprecations:
     *
@@ -86,6 +89,7 @@ Improvements:
     * optimize use of edje_file_collection_list
     * add support for edje files in filepreview widget
     * improve load time of apps dialogs
+    * new tab in focus settings for pointer warping
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.

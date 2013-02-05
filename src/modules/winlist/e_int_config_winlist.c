@@ -23,7 +23,6 @@ struct _E_Config_Dialog_Data
    int    warp_while_selecting;
    int    warp_at_end;
    int    no_warp_on_direction;
-   double warp_speed;
    int    jump_desk;
 
    int    scroll_animate;
@@ -84,7 +83,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->warp_while_selecting = e_config->winlist_warp_while_selecting;
    cfdata->warp_at_end = e_config->winlist_warp_at_end;
    cfdata->no_warp_on_direction = e_config->winlist_no_warp_on_direction;
-   cfdata->warp_speed = e_config->winlist_warp_speed;
 
    cfdata->scroll_animate = e_config->winlist_scroll_animate;
    cfdata->scroll_speed = e_config->winlist_scroll_speed;
@@ -133,7 +131,6 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    DO(warp_while_selecting, warp_while_selecting);
    DO(warp_at_end, warp_at_end);
    DO(no_warp_on_direction, no_warp_on_direction);
-   DO(warp_speed, warp_speed);
    DO(scroll_animate, scroll_animate);
    DO(scroll_speed, scroll_speed);
    DO(list_focus_while_selecting, focus);
@@ -167,7 +164,6 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
    DO(warp_while_selecting, warp_while_selecting);
    DO(warp_at_end, warp_at_end);
    DO(no_warp_on_direction, no_warp_on_direction);
-   DO(warp_speed, warp_speed);
    DO(scroll_animate, scroll_animate);
    DO(scroll_speed, scroll_speed);
    DO(list_focus_while_selecting, focus);
@@ -239,14 +235,6 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                                  0, 0, 1, 0, 0.5, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
-   ob = e_widget_label_add(evas, _("Warp speed"));
-   cfdata->gui.disable_warp =
-     eina_list_append(cfdata->gui.disable_warp, ob);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f"), 0.0, 1.0, 0.01, 0,
-                            &(cfdata->warp_speed), NULL, 100);
-   cfdata->gui.disable_warp = eina_list_append(cfdata->gui.disable_warp, ob);
-   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Scroll Animation"),
                            &(cfdata->scroll_animate));
    e_widget_on_change_hook_set(ob, _scroll_animate_changed, cfdata);

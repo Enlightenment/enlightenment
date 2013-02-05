@@ -631,6 +631,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, focus_revert_on_hide_or_close, INT); /**/
    E_CONFIG_VAL(D, T, pointer_slide, INT); /**/
    E_CONFIG_VAL(D, T, disable_all_pointer_warps, INT); /**/
+   E_CONFIG_VAL(D, T, pointer_warp_speed, DOUBLE); /**/
    E_CONFIG_VAL(D, T, use_e_cursor, INT); /**/
    E_CONFIG_VAL(D, T, cursor_size, INT); /**/
    E_CONFIG_VAL(D, T, menu_autoscroll_margin, INT); /**/
@@ -1290,6 +1291,12 @@ e_config_load(void)
                   e_config->modules = eina_list_append(e_config->modules, em);
                }
           }
+        CONFIG_VERSION_CHECK(11)
+          {
+             CONFIG_VERSION_UPDATE_INFO(11);
+             e_config->pointer_warp_speed = e_config->winlist_warp_speed;
+             e_config->winlist_warp_speed = 0;
+          }
      }
    if (!e_config->remember_internal_fm_windows)
      e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
@@ -1370,6 +1377,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->focus_revert_on_hide_or_close, 0, 1);
    E_CONFIG_LIMIT(e_config->pointer_slide, 0, 1);
    E_CONFIG_LIMIT(e_config->disable_all_pointer_warps, 0, 1);
+   E_CONFIG_LIMIT(e_config->pointer_warp_speed, 0.0, 1.0);
    E_CONFIG_LIMIT(e_config->show_cursor, 0, 1);
    E_CONFIG_LIMIT(e_config->use_e_cursor, 0, 1);
    E_CONFIG_LIMIT(e_config->cursor_size, 0, 1024);
