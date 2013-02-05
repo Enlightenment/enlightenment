@@ -63,12 +63,13 @@ struct _E_Binding_Edge
    E_Binding_Context ctxt;
    E_Zone_Edge edge;
    E_Binding_Modifier mod;
-   unsigned char any_mod : 1;
    const char *action;
    const char *params;
 
    float delay;
    Ecore_Timer *timer;
+   Eina_Bool any_mod : 1;
+   Eina_Bool drag_only : 1;
 };
 
 struct _E_Binding_Signal
@@ -130,11 +131,11 @@ EAPI E_Action   *e_bindings_key_up_event_handle(E_Binding_Context ctxt, E_Object
 EAPI E_Action   *e_bindings_key_down_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev);
 EAPI E_Action   *e_bindings_key_up_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev);
 
-EAPI void        e_bindings_edge_add(E_Binding_Context ctxt, E_Zone_Edge edge, E_Binding_Modifier mod, int any_mod, const char *action, const char *params, float delay);
+EAPI void        e_bindings_edge_add(E_Binding_Context ctxt, E_Zone_Edge edge, Eina_Bool drag_only, E_Binding_Modifier mod, int any_mod, const char *action, const char *params, float delay);
 EAPI Eina_Bool   e_bindings_edge_flippable_get(E_Zone_Edge edge);
 EAPI Eina_Bool   e_bindings_edge_non_flippable_get(E_Zone_Edge edge);
 EAPI E_Binding_Edge *e_bindings_edge_get(const char *action, E_Zone_Edge edge, int click);
-EAPI void        e_bindings_edge_del(E_Binding_Context ctxt, E_Zone_Edge edge, E_Binding_Modifier mod, int any_mod, const char *action, const char *params, float delay);
+EAPI void        e_bindings_edge_del(E_Binding_Context ctxt, E_Zone_Edge edge, Eina_Bool drag_only, E_Binding_Modifier mod, int any_mod, const char *action, const char *params, float delay);
 EAPI E_Action   *e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev);
 EAPI E_Action   *e_bindings_edge_out_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev);
 EAPI E_Action   *e_bindings_edge_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Zone_Edge *ev);

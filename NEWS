@@ -30,6 +30,7 @@ Additions:
         * added option to disable comp effects on screen
         * added options and functionality for "fast" composite effects
         * split comp window match settings into separate dialog
+        * edge bindings can now be set to "drag only"
 
 Changes:
     Modules:

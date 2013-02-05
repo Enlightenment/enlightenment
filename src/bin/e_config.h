@@ -505,6 +505,7 @@ struct _E_Config_Binding_Edge
    const char   *params;
    unsigned char edge;
    unsigned char any_mod;
+   Eina_Bool    drag_only;
 };
 
 struct _E_Config_Binding_Signal

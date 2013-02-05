@@ -2,6 +2,7 @@
 
         * improve load time of apps dialogs
         * fix bug where edge flips would stop functioning after dragging to an invalid edge containing a shelf
+        * edge bindings can now be set to "drag only"
 
 2013-02-04 Mike Blumenkrantz
 
