@@ -1150,7 +1150,34 @@ e_config_load(void)
         return;
      }
 
-   e_bindings = e_config_domain_load("e_bindings", _e_config_binding_edd);
+#define CONFIG_VERSION_CHECK(VERSION) \
+  if (e_config->config_version - (E_CONFIG_FILE_EPOCH * 1000000) < (VERSION))
+
+#define CONFIG_VERSION_UPDATE_INFO(VERSION) \
+  INF("Performing config upgrade for %d.%d", E_CONFIG_FILE_EPOCH, VERSION);
+
+   CONFIG_VERSION_CHECK(6)
+     {
+        /* e_bindings config domain didn't exist before this version, so we have to do this
+         * check before we load or else we wipe configs :(
+         */
+        e_bindings = E_NEW(E_Config_Bindings, 1);
+#undef SET
+#define SET(X) e_bindings->X = e_config->X, e_config->X = NULL
+
+        CONFIG_VERSION_UPDATE_INFO(6);
+        SET(mouse_bindings);
+        SET(key_bindings);
+        SET(edge_bindings);
+        SET(signal_bindings);
+        SET(wheel_bindings);
+        SET(acpi_bindings);
+#undef SET
+        e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
+     }
+   else
+     e_bindings = e_config_domain_load("e_bindings", _e_config_binding_edd);
+
    if (e_bindings && (e_bindings->config_version != E_CONFIG_BINDINGS_VERSION))
      {
         Eina_Stringshare *prof;
@@ -1166,30 +1193,9 @@ e_config_load(void)
                           "As a result, all bindings have been reloaded from defaults.<br>"
                           "Sorry for the inconvenience.<br>"));
      }
-   else if (!e_bindings)
-     {
-        e_bindings = E_NEW(E_Config_Bindings, 1);
-#undef SET
-#define SET(X) e_bindings->X = e_config->X, e_config->X = NULL
-
-        SET(mouse_bindings);
-        SET(key_bindings);
-        SET(edge_bindings);
-        SET(signal_bindings);
-        SET(wheel_bindings);
-        SET(acpi_bindings);
-#undef SET
-        e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
-     }
 
    if (e_config->config_version < E_CONFIG_FILE_VERSION)
      {
-#define CONFIG_VERSION_CHECK(VERSION) \
-  if (e_config->config_version - (E_CONFIG_FILE_EPOCH * 1000000) < (VERSION))
-
-#define CONFIG_VERSION_UPDATE_INFO(VERSION) \
-  INF("Performing config upgrade for %d.%d", E_CONFIG_FILE_EPOCH, VERSION);
-
         CONFIG_VERSION_CHECK(5)
           {
              E_Config_XKB_Layout *cl;
