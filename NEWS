@@ -48,7 +48,6 @@ Changes:
     Config:
         * move winlist_warp_speed option to pointer_warp_speed
 
-
 Deprecations:
     *
 
@@ -155,3 +154,4 @@ Fixes:
     * fix list update on deletion of personal app launchers
     * fix button toggling in personal app launchers dialog
     * fix bug where edge flips would stop functioning after dragging to an invalid edge containing a shelf
+    * moved "allow windows above fullscreen windows" option to geometry settings dialog
