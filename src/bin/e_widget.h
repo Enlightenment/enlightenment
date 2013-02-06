@@ -8,6 +8,7 @@ EAPI void e_widget_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj
 EAPI void e_widget_focus_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void e_widget_activate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
 EAPI void e_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
+EAPI void e_widget_on_disable_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void e_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void e_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
 EAPI void e_widget_data_set(Evas_Object *obj, void *data);

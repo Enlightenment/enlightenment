@@ -1,6 +1,7 @@
 2013-02-06 Mike Blumenkrantz
 
         * added api to automatically disable widgets when checkboxes are checked or unchecked
+        * added e_widget_on_disable_hook_set
 
 2013-02-05 Mike Blumenkrantz
 
