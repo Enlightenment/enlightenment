@@ -13,7 +13,6 @@ static void _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
-static void _cb_disable(void *data, Evas_Object *obj);
 static void _cb_ask_presentation_changed(void *data, Evas_Object *obj);
 
 struct _E_Config_Dialog_Data
@@ -28,8 +27,6 @@ struct _E_Config_Dialog_Data
    int screensaver_suspend;
    int screensaver_suspend_on_ac;
    double screensaver_suspend_delay;
-
-   Eina_List *disable_list;
 
    struct 
      {
@@ -86,8 +83,7 @@ _create_data(E_Config_Dialog *cfd)
 static void
 _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   eina_list_free(cfdata->disable_list);
-   E_FREE(cfdata);
+   free(cfdata);
 }
 
 static int
@@ -145,89 +141,71 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 static Evas_Object *
 _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *otb, *ol, *ow;
+   Evas_Object *otb, *ol, *ow, *oc, *oc2;
 
    otb = e_widget_toolbook_add(evas, (24 * e_scale), (24 * e_scale));
 
    /* Screensaver */
    ol = e_widget_list_add(evas, 0, 0);
-   ow = e_widget_check_add(evas, _("Enable screen blanking"),
+   oc = e_widget_check_add(evas, _("Enable screen blanking"),
                            &(cfdata->enable_screensaver));
-   e_widget_on_change_hook_set(ow, _cb_disable, cfdata);
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
    
    ow = e_widget_label_add(evas, _("Timeout"));
-   cfdata->disable_list = eina_list_append(cfdata->disable_list, ow);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    ow = e_widget_slider_add(evas, 1, 0, _("%1.0f minutes"),
 			    0.5, 90.0, 1.0, 0, &(cfdata->timeout), NULL, 100);
-   cfdata->disable_list = eina_list_append(cfdata->disable_list, ow);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    
    ow = e_widget_check_add(evas, _("Suspend on blank"), 
                            &(cfdata->screensaver_suspend));
-   cfdata->disable_list = eina_list_append(cfdata->disable_list, ow);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    ow = e_widget_check_add(evas, _("Suspend even if AC"),
                            &(cfdata->screensaver_suspend_on_ac));
-   cfdata->disable_list = eina_list_append(cfdata->disable_list, ow);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    
    ow = e_widget_label_add(evas, _("Suspend delay"));
-   cfdata->disable_list = eina_list_append(cfdata->disable_list, ow);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    ow = e_widget_slider_add(evas, 1, 0, _("%1.0f seconds"),
 			    1.0, 20.0, 1.0, 0, &(cfdata->screensaver_suspend_delay), NULL, 100);
-   cfdata->disable_list = eina_list_append(cfdata->disable_list, ow);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    
    e_widget_toolbook_page_append(otb, NULL, _("Blanking"), ol, 
                                  1, 0, 1, 0, 0.5, 0.0);
    /* Presentation */
    ol = e_widget_list_add(evas, 0, 0);
-   ow = e_widget_check_add(evas, _("Suggest if deactivated before"), 
+   oc2 = e_widget_check_add(evas, _("Suggest if deactivated before"), 
                            &(cfdata->ask_presentation));
-   e_widget_on_change_hook_set(ow, _cb_ask_presentation_changed, cfdata);
-   cfdata->disable_list = eina_list_append(cfdata->disable_list, ow);
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   e_widget_check_widget_disable_on_unchecked_add(oc, oc2);
+   e_widget_list_object_append(ol, oc2, 1, 1, 0.5);
    ow = e_widget_slider_add(evas, 1, 0, _("%1.0f seconds"),
 			    1.0, 300.0, 10.0, 0,
 			    &(cfdata->ask_presentation_timeout), NULL, 100);
    cfdata->gui.ask_presentation_slider = ow;
-   cfdata->disable_list = eina_list_append(cfdata->disable_list, ow);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
+   e_widget_check_widget_disable_on_unchecked_add(oc2, ow);
+   e_widget_on_disable_hook_set(ow, _cb_ask_presentation_changed, cfdata);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Presentation"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
    
    e_widget_toolbook_page_show(otb, 0);
 
-   // handler for enable/disable widget array
-   _cb_disable(cfdata, NULL);
-
    return otb;
-}
-
-static void
-_cb_disable(void *data, Evas_Object *obj __UNUSED__)
-{
-   E_Config_Dialog_Data *cfdata;
-   const Eina_List *l;
-   Evas_Object *o;
-
-   if (!(cfdata = data)) return;
-   EINA_LIST_FOREACH(cfdata->disable_list, l, o)
-     e_widget_disabled_set(o, !cfdata->enable_screensaver);
-
-   _cb_ask_presentation_changed(cfdata, NULL);
 }
 
 static void
 _cb_ask_presentation_changed(void *data, Evas_Object *obj __UNUSED__)
 {
-   E_Config_Dialog_Data *cfdata;
+   E_Config_Dialog_Data *cfdata = data;
    Eina_Bool disable;
 
-   if (!(cfdata = data)) return;
    disable = ((!cfdata->enable_screensaver) || (!cfdata->ask_presentation));
    e_widget_disabled_set(cfdata->gui.ask_presentation_slider, disable);
 }

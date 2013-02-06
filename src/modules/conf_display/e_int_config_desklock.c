@@ -13,7 +13,6 @@ static void         _cb_login_change(void *data, Evas_Object *obj);
 static int          _zone_count_get(void);
 
 static void         _cb_bg_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event);
-static void         _cb_ask_presentation_changed(void *data, Evas_Object *obj);
 
 struct _E_Config_Dialog_Data
 {
@@ -52,9 +51,7 @@ struct _E_Config_Dialog_Data
    {
       Evas_Object *kbd_list;
       Evas_Object *loginbox_slider;
-      Evas_Object *post_screensaver_slider;
       Evas_Object *auto_lock_slider;
-      Evas_Object *ask_presentation_slider;
       Evas_Object *o_table;
       Eina_List *bgs;
    } gui;
@@ -178,34 +175,12 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    E_FREE(cfdata);
 }
 
-static void
-_basic_auto_lock_cb_changed(void *data, Evas_Object *o __UNUSED__)
-{
-   E_Config_Dialog_Data *cfdata;
-   int disable;
-
-   if (!(cfdata = data)) return;
-   disable = ((!cfdata->use_xscreensaver) || (!cfdata->auto_lock));
-   e_widget_disabled_set(cfdata->gui.auto_lock_slider, disable);
-}
-
-static void
-_basic_screensaver_lock_cb_changed(void *data, Evas_Object *o __UNUSED__)
-{
-   E_Config_Dialog_Data *cfdata;
-   int disable;
-
-   if (!(cfdata = data)) return;
-   disable = ((!cfdata->use_xscreensaver) || (!cfdata->screensaver_lock));
-   e_widget_disabled_set(cfdata->gui.post_screensaver_slider, disable);
-}
-
 static Evas_Object *
 _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    E_Config_XKB_Layout *cl;
    int grp = 0;
-   Evas_Object *otb, *ol, *ow, *of, *ot;
+   Evas_Object *otb, *ol, *ow, *of, *ot, *oc;
    Eina_List *l, *ll, *lll;
    E_Zone *zone;
    E_Radio_Group *rg;
@@ -306,41 +281,37 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 
    /* Timers */
    ol = e_widget_list_add(evas, 0, 0);
-   ow = e_widget_check_add(evas, _("Lock after X screensaver activates"),
+   oc = e_widget_check_add(evas, _("Lock after X screensaver activates"),
                            &cfdata->screensaver_lock);
-   e_widget_on_change_hook_set(ow, _basic_screensaver_lock_cb_changed, cfdata);
-   e_widget_disabled_set(ow, !cfdata->use_xscreensaver);
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   e_widget_disabled_set(oc, !cfdata->use_xscreensaver);
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
 
    ow = e_widget_slider_add(evas, 1, 0, _("%1.0f seconds"), 0.0, 300.0, 10.0, 0,
                             &(cfdata->post_screensaver_time), NULL, 100);
-   cfdata->gui.post_screensaver_slider = ow;
    e_widget_disabled_set(ow, !cfdata->use_xscreensaver);
+   if (cfdata->use_xscreensaver)
+     e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
-   ow = e_widget_check_add(evas, _("Lock when idle time exceeded"),
+   oc = e_widget_check_add(evas, _("Lock when idle time exceeded"),
                            &cfdata->auto_lock);
-   e_widget_on_change_hook_set(ow, _basic_auto_lock_cb_changed, cfdata);
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
 
    ow = e_widget_slider_add(evas, 1, 0, _("%1.0f minutes"), 1.0, 90.0, 1.0, 0,
                             &(cfdata->idle_time), NULL, 100);
-   cfdata->gui.auto_lock_slider = ow;
-   e_widget_disabled_set(ow, !cfdata->use_xscreensaver);
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Timers"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
 
    /* Presentation */
    ol = e_widget_list_add(evas, 0, 0);
-   ow = e_widget_check_add(evas, _("Suggest if deactivated before"),
+   oc = e_widget_check_add(evas, _("Suggest if deactivated before"),
                            &(cfdata->ask_presentation));
-   e_widget_on_change_hook_set(ow, _cb_ask_presentation_changed, cfdata);
-   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
    ow = e_widget_slider_add(evas, 1, 0, _("%1.0f seconds"), 1.0, 300.0, 10.0, 0,
                             &(cfdata->ask_presentation_timeout), NULL, 100);
-   cfdata->gui.ask_presentation_slider = ow;
-   e_widget_disabled_set(ow, (!cfdata->ask_presentation));
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Presentation Mode"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
@@ -387,9 +358,6 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                                  1, 0, 1, 0, 0.5, 0.0);
 
    e_widget_toolbook_page_show(otb, 0);
-
-   _basic_auto_lock_cb_changed(cfdata, NULL);
-   _basic_screensaver_lock_cb_changed(cfdata, NULL);
 
    return otb;
 }
@@ -668,16 +636,5 @@ _cb_bg_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *eve
      e_win_raise(cfdata->bg_fsel->dia->win);
    else
      cfdata->bg_fsel = e_int_config_desklock_fsel(cfdata->cfd, obj);
-}
-
-static void
-_cb_ask_presentation_changed(void *data, Evas_Object *obj __UNUSED__)
-{
-   E_Config_Dialog_Data *cfdata;
-   Eina_Bool disable;
-
-   if (!(cfdata = data)) return;
-   disable = (!cfdata->ask_presentation);
-   e_widget_disabled_set(cfdata->gui.ask_presentation_slider, disable);
 }
 
