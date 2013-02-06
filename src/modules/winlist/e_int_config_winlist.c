@@ -6,7 +6,6 @@ static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfd
 static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static void         _iconified_changed(void *data, Evas_Object *obj);
-static void         _warp_changed(void *data, Evas_Object *obj __UNUSED__);
 static void         _scroll_animate_changed(void *data, Evas_Object *obj);
 static void         _width_limits_changed(void *data, Evas_Object *obj __UNUSED__);
 static void         _height_limits_changed(void *data, Evas_Object *obj __UNUSED__);
@@ -35,7 +34,6 @@ struct _E_Config_Dialog_Data
    {
       Eina_List   *disable_iconified;
       Eina_List   *disable_scroll_animate;
-      Eina_List   *disable_warp;
       Evas_Object *min_w, *min_h;
    } gui;
 };
@@ -111,8 +109,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    eina_list_free(cfdata->gui.disable_iconified);
    eina_list_free(cfdata->gui.disable_scroll_animate);
-   eina_list_free(cfdata->gui.disable_warp);
-   E_FREE(cfdata);
+   free(cfdata);
 }
 
 static int
@@ -219,15 +216,12 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Warp mouse while selecting"),
                            &(cfdata->warp_while_selecting));
-   e_widget_on_change_hook_set(ob, _warp_changed, cfdata);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Warp mouse at end"),
                            &(cfdata->warp_at_end));
-   e_widget_on_change_hook_set(ob, _warp_changed, cfdata);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Disable mouse warp on directional focus change"),
                            &(cfdata->no_warp_on_direction));
-   e_widget_on_change_hook_set(ob, _warp_changed, cfdata);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Jump to desk"), &(cfdata->jump_desk));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
@@ -297,7 +291,6 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                                  0, 0, 1, 0, 0.5, 0.0);
 
    _iconified_changed(cfdata, iconified);
-   _warp_changed(cfdata, NULL);
    _scroll_animate_changed(cfdata, scroll_animate);
 
    e_widget_toolbook_page_show(otb, 0);
@@ -346,20 +339,6 @@ _iconified_changed(void *data, Evas_Object *obj)
    Eina_Bool disabled = !e_widget_check_checked_get(obj);
 
    EINA_LIST_FOREACH(cfdata->gui.disable_iconified, l, o)
-     e_widget_disabled_set(o, disabled);
-}
-
-static void
-_warp_changed(void *data, Evas_Object *obj __UNUSED__)
-{
-   E_Config_Dialog_Data *cfdata = data;
-   const Eina_List *l;
-   Evas_Object *o;
-   Eina_Bool disabled;
-
-   disabled = ((!cfdata->warp_while_selecting) && (!cfdata->warp_at_end)
-			   && (!cfdata->no_warp_on_direction));
-   EINA_LIST_FOREACH(cfdata->gui.disable_warp, l, o)
      e_widget_disabled_set(o, disabled);
 }
 
