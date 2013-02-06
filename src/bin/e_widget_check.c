@@ -245,6 +245,8 @@ e_widget_check_widget_disable_on_checked_add(Evas_Object *check, Evas_Object *ob
    EINA_SAFETY_ON_NULL_RETURN(obj);
    wd = e_widget_data_get(check);
    EINA_SAFETY_ON_NULL_RETURN(wd);
+   if (wd->valptr)
+     e_widget_disabled_set(obj, *wd->valptr);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _extern_obj_enable_del, wd);
    wd->widgets_enable = eina_list_append(wd->widgets_enable, obj);
 }
@@ -263,6 +265,8 @@ e_widget_check_widget_disable_on_unchecked_add(Evas_Object *check, Evas_Object *
    EINA_SAFETY_ON_NULL_RETURN(obj);
    wd = e_widget_data_get(check);
    EINA_SAFETY_ON_NULL_RETURN(wd);
+   if (wd->valptr)
+     e_widget_disabled_set(obj, !(*wd->valptr));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _extern_obj_disable_del, wd);
    wd->widgets_disable = eina_list_append(wd->widgets_disable, obj);
 }
