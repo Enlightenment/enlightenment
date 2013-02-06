@@ -216,12 +216,15 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Warp mouse while selecting"),
                            &(cfdata->warp_while_selecting));
+   e_widget_disabled_set(ob, e_config->disable_all_pointer_warps);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Warp mouse at end"),
                            &(cfdata->warp_at_end));
+   e_widget_disabled_set(ob, e_config->disable_all_pointer_warps);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Disable mouse warp on directional focus change"),
                            &(cfdata->no_warp_on_direction));
+   e_widget_disabled_set(ob, e_config->disable_all_pointer_warps);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Jump to desk"), &(cfdata->jump_desk));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
