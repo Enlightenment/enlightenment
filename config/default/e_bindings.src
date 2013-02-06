@@ -20,8 +20,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_shaded_toggle";
       value "params" string: "up";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,2";
@@ -31,8 +29,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_shaded_toggle";
       value "params" string: "up";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,wheel,?,1";
@@ -42,8 +38,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_shaded";
       value "params" string: "0 up";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,wheel,?,-1";
@@ -53,8 +47,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_shaded";
       value "params" string: "1 up";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,clicked,3";
@@ -63,8 +55,6 @@ group "E_Config_Bindings" struct {
       value "any_mod" uchar: 1;
       value "action" string: "window_menu";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,clicked,?";
@@ -73,8 +63,6 @@ group "E_Config_Bindings" struct {
       value "any_mod" uchar: 1;
       value "action" string: "window_menu";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,clicked,[12]";
@@ -83,8 +71,6 @@ group "E_Config_Bindings" struct {
       value "any_mod" uchar: 1;
       value "action" string: "window_close";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,clicked,3";
@@ -93,8 +79,6 @@ group "E_Config_Bindings" struct {
       value "any_mod" uchar: 1;
       value "action" string: "window_kill";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,clicked,1";
@@ -103,8 +87,6 @@ group "E_Config_Bindings" struct {
       value "any_mod" uchar: 1;
       value "action" string: "window_maximized_toggle";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,clicked,2";
@@ -114,8 +96,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_maximized_toggle";
       value "params" string: "smart";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,clicked,3";
@@ -125,8 +105,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_maximized_toggle";
       value "params" string: "expand";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,clicked,?";
@@ -135,8 +113,6 @@ group "E_Config_Bindings" struct {
       value "any_mod" uchar: 1;
       value "action" string: "window_iconic_toggle";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,clicked,?";
@@ -146,8 +122,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_shaded_toggle";
       value "params" string: "up";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,clicked,?";
@@ -156,8 +130,6 @@ group "E_Config_Bindings" struct {
       value "any_mod" uchar: 1;
       value "action" string: "window_lower";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,1";
@@ -166,8 +138,6 @@ group "E_Config_Bindings" struct {
       value "any_mod" uchar: 1;
       value "action" string: "window_drag_icon";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,1";
@@ -176,8 +146,6 @@ group "E_Config_Bindings" struct {
       value "any_mod" uchar: 1;
       value "action" string: "window_move";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,up,1";
@@ -187,8 +155,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_move";
       value "params" string: "end";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,1";
@@ -198,8 +164,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_resize";
       value "params" string: "tl";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,1";
@@ -209,8 +173,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_resize";
       value "params" string: "t";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,1";
@@ -220,8 +182,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_resize";
       value "params" string: "tr";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,1";
@@ -231,8 +191,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_resize";
       value "params" string: "r";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,1";
@@ -242,8 +200,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_resize";
       value "params" string: "br";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,1";
@@ -253,8 +209,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_resize";
       value "params" string: "b";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,1";
@@ -264,8 +218,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_resize";
       value "params" string: "bl";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,1";
@@ -275,8 +227,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_resize";
       value "params" string: "l";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,up,1";
@@ -286,8 +236,6 @@ group "E_Config_Bindings" struct {
       value "action" string: "window_resize";
       value "params" string: "end";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,down,3";
@@ -296,8 +244,6 @@ group "E_Config_Bindings" struct {
       value "any_mod" uchar: 1;
       value "action" string: "window_move";
     }
-  }
-  group "signal_bindings" list {
     group "E_Config_Binding_Signal" struct {
       value "context" int: 2;
       value "signal" string: "mouse,up,3";
