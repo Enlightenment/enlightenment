@@ -16,6 +16,7 @@ struct _E_Config_Dialog_Data
    const char  *default_model;
 
    int          only_label;
+   int dont_touch_my_damn_keyboard;
 
    E_Dialog    *dlg_add_new;
 };
@@ -109,6 +110,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
    /* Initialize options */
 
    cfdata->only_label = e_config->xkb.only_label;
+   cfdata->dont_touch_my_damn_keyboard = e_config->xkb.dont_touch_my_damn_keyboard;
    cfdata->cfg_options = NULL;
 
    lll = e_config->xkb.used_options;
@@ -191,6 +193,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
    /* Save options */
    e_config->xkb.only_label = cfdata->only_label;
+   e_config->xkb.dont_touch_my_damn_keyboard = cfdata->dont_touch_my_damn_keyboard;
 
    EINA_LIST_FREE(e_config->xkb.used_options, oc)
      {
@@ -218,7 +221,7 @@ static Evas_Object *
 _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *mainn, *layoutss, *modelss, *options, *configs, *buttons,
-     *general, *scroller, *only_label;
+     *general, *scroller, *only_label, *dont_touch_my_damn_keyboard;
    E_XKB_Option *option;
    E_XKB_Option_Group *group;
    Eina_List *l, *ll, *lll;
@@ -270,8 +273,11 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    /* Holds the options */
    options = e_widget_list_add(evas, 0, 0);
 
-   general = e_widget_framelist_add(evas, _("Gadgets"), 0);
-   only_label = e_widget_check_add(evas, _("Label only"), &(cfdata->only_label));
+   general = e_widget_framelist_add(evas, _("General"), 0);
+   dont_touch_my_damn_keyboard = e_widget_check_add(evas, _("Do not apply any keyboard settings ever"), &(cfdata->dont_touch_my_damn_keyboard));
+   e_widget_framelist_object_append(general, dont_touch_my_damn_keyboard);
+   only_label = e_widget_check_add(evas, _("Label only in gadgets"), &(cfdata->only_label));
+   e_widget_check_widget_disable_on_checked_add(dont_touch_my_damn_keyboard, only_label);
    e_widget_framelist_object_append(general, only_label);
    e_widget_list_object_append(options, general, 1, 1, 0.0);
 
@@ -290,6 +296,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
              chk = e_widget_check_add(evas, option->description,
                                      &(((E_XKB_Dialog_Option *)
                                         eina_list_data_get(lll))->enabled));
+             e_widget_check_widget_disable_on_checked_add(dont_touch_my_damn_keyboard, chk);
              e_widget_framelist_object_append(grp, chk);
              lll = eina_list_next(lll);
           }

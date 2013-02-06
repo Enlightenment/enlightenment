@@ -32,6 +32,7 @@ EAPI int
 e_xkb_init(void)
 {
    E_EVENT_XKB_CHANGED = ecore_event_type_new();
+   if (e_config->xkb.dont_touch_my_damn_keyboard) return 1;
    e_xkb_update(-1);
    if (e_config->xkb.cur_layout)
      ecore_timer_add(1.5, _e_xkb_init_timer, e_config->xkb.current_layout);
@@ -56,6 +57,7 @@ e_xkb_update(int cur_group)
    Eina_List *l;
    Eina_Strbuf *buf;
 
+   if (e_config->xkb.dont_touch_my_damn_keyboard) return;
    if ((!e_config->xkb.used_layouts) && (!e_config->xkb.used_options) && (!e_config->xkb.default_model)) return;
    if (cur_group != -1)
      {
@@ -153,6 +155,7 @@ e_xkb_layout_next(void)
    Eina_List *l;
    E_Config_XKB_Layout *cl;
 
+   if (e_config->xkb.dont_touch_my_damn_keyboard) return;
    l = eina_list_nth_list(e_config->xkb.used_layouts, e_config->xkb.cur_group);
    l = eina_list_next(l);
    if (!l) l = e_config->xkb.used_layouts;
@@ -173,6 +176,7 @@ e_xkb_layout_prev(void)
    Eina_List *l;
    E_Config_XKB_Layout *cl;
 
+   if (e_config->xkb.dont_touch_my_damn_keyboard) return;
    l = eina_list_nth_list(e_config->xkb.used_layouts, e_config->xkb.cur_group);
    l = eina_list_prev(l);
    if (!l) l = eina_list_last(e_config->xkb.used_layouts);
@@ -196,6 +200,7 @@ e_xkb_layout_get(void)
 {
    unsigned int n = 0;
 
+   if (e_config->xkb.dont_touch_my_damn_keyboard) return NULL;
    if (e_config->xkb.current_layout) return e_config->xkb.current_layout;
    if (_e_xkb_cur_group >= 0)
      n = _e_xkb_cur_group;
@@ -210,6 +215,7 @@ e_xkb_layout_set(const E_Config_XKB_Layout *cl)
    int cur_group = -1;
 
    EINA_SAFETY_ON_NULL_RETURN(cl);
+   if (e_config->xkb.dont_touch_my_damn_keyboard) return;
    if (e_config_xkb_layout_eq(e_config->xkb.current_layout, cl)) return;
    e_config_xkb_layout_free(e_config->xkb.current_layout);
    e_config->xkb.current_layout = e_config_xkb_layout_dup(cl);

@@ -35,6 +35,7 @@ Additions:
         * split comp window match settings into separate dialog
         * edge bindings can now be set to "drag only"
         * new option for disabling all pointer warps
+        * added option for preventing all keyboard layout changes
 
 Changes:
     Modules:

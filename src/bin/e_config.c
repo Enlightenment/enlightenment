@@ -833,6 +833,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_LIST(D, T, xkb.used_layouts, _e_config_xkb_layout_edd);
    E_CONFIG_LIST(D, T, xkb.used_options, _e_config_xkb_option_edd);
    E_CONFIG_VAL(D, T, xkb.only_label, INT);
+   E_CONFIG_VAL(D, T, xkb.dont_touch_my_damn_keyboard, UCHAR);
    E_CONFIG_VAL(D, T, xkb.default_model, STR);
 
    if (old)

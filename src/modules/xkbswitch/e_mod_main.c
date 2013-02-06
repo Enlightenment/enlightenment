@@ -195,7 +195,7 @@ _gc_init(E_Gadcon *gc, const char *gcname, const char *id, const char *style)
    /* The gadget */
    inst->o_xkbswitch = edje_object_add(gc->evas);
    inst->layout = e_xkb_layout_get();
-   if (e_config->xkb.only_label)
+   if (e_config->xkb.only_label || (!inst->layout))
      e_theme_edje_object_set(inst->o_xkbswitch,
                              "base/theme/modules/xkbswitch",
                              "e/modules/xkbswitch/noflag");
@@ -204,12 +204,12 @@ _gc_init(E_Gadcon *gc, const char *gcname, const char *id, const char *style)
                              "base/theme/modules/xkbswitch",
                              "e/modules/xkbswitch/main");
    edje_object_part_text_set(inst->o_xkbswitch, "e.text.label",
-                             e_xkb_layout_name_reduce(inst->layout->name));
+                             inst->layout ? e_xkb_layout_name_reduce(inst->layout->name) : "?");
    /* The gadcon client */
    inst->gcc = e_gadcon_client_new(gc, gcname, id, style, inst->o_xkbswitch);
    inst->gcc->data = inst;
    /* The flag icon */
-   if (!e_config->xkb.only_label)
+   if (inst->layout && (!e_config->xkb.only_label))
      {
         inst->o_xkbflag = e_icon_add(gc->evas);
         e_xkb_e_icon_flag_setup(inst->o_xkbflag, inst->layout->name);
@@ -513,6 +513,5 @@ _e_xkb_cb_lmenu_set(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi __UNUSED_
    e_xkb_layout_set(cl);
    e_config_xkb_layout_free(e_config->xkb.sel_layout);
    e_config->xkb.sel_layout = e_config_xkb_layout_dup(cl);
-   _xkb_update_icon(cur_group);
 }
 
