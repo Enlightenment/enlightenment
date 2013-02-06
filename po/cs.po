@@ -27,7 +27,7 @@ msgstr "O Enlightenmentu"
 #: src/bin/e_fm.c:1059 src/bin/e_int_border_menu.c:194
 #: src/bin/e_int_border_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf/e_conf.c:179
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:877
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:877
 #: src/modules/everything/evry_plug_windows.c:452
 #: src/modules/fileman/e_fwin.c:2528 src/modules/mixer/app_mixer.c:550
 msgid "Close"
@@ -135,7 +135,7 @@ msgid "Are you sure you want to suspend your computer?"
 msgstr "Opravdu chcete uspat váš počítač?"
 
 #: src/bin/e_actions.c:2467 src/bin/e_actions.c:3421
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:379
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:379
 msgid "Hibernate"
 msgstr "Hibernovat"
 
@@ -163,7 +163,7 @@ msgstr "Změnit velikost"
 #: src/bin/e_actions.c:2969 src/bin/e_actions.c:3333 src/bin/e_actions.c:3335
 #: src/bin/e_actions.c:3337 src/bin/e_actions.c:3339 src/bin/e_actions.c:3341
 #: src/modules/comp/e_mod_config.c:452 src/modules/comp/e_mod_config.c:761
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:336
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:336
 msgid "Menu"
 msgstr "Nabídka"
 
@@ -801,7 +801,7 @@ msgstr "Vybrat"
 #: src/bin/e_desktop_editor.c:925 src/bin/e_entry_dialog.c:64 src/bin/e_fm.c:9959
 #: src/bin/e_fm_prop.c:625 src/bin/e_import_dialog.c:194
 #: src/bin/e_import_config_dialog.c:537
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:637
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:637
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
 #: src/modules/conf_theme/e_int_config_theme_import.c:123
 #: src/modules/fileman/e_int_config_mime_edit.c:316
@@ -868,7 +868,7 @@ msgstr ""
 #: src/bin/e_int_border_remember.c:507 src/bin/e_module.c:431
 #: src/bin/e_module.c:798 src/bin/e_sys.c:618 src/bin/e_sys.c:659
 #: src/bin/e_utils.c:695 src/modules/comp/e_mod_config.c:918
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:636
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:636
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
 #: src/modules/conf_theme/e_int_config_theme_import.c:119
 #: src/modules/cpufreq/e_mod_main.c:436 src/modules/cpufreq/e_mod_main.c:465
@@ -979,7 +979,7 @@ msgstr ""
 
 #: src/bin/e_config_dialog.c:226 src/modules/battery/e_mod_main.c:817
 #: src/modules/conf/e_mod_main.c:283
-#: src/modules/conf_edgebindings/e_mod_main.c:19
+#: src/modules/conf_bindings/e_mod_main.c:19
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
 #: src/modules/syscon/e_mod_main.c:36
@@ -991,7 +991,7 @@ msgid "Basic"
 msgstr "Základní"
 
 #: src/bin/e_config_dialog.c:280
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:876
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:876
 msgid "Apply"
 msgstr "Použít"
 
@@ -1199,11 +1199,11 @@ msgstr "Vyberte spustitelný soubor"
 #: src/bin/e_shelf.c:1792 src/bin/e_shelf.c:2475
 #: src/modules/conf_dialogs/e_int_config_profiles.c:135
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:266
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:812
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:201
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:247
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:294
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:266
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:812
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:201
+#: src/modules/conf_bindings/e_int_config_keybindings.c:247
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:294
 #: src/modules/conf_paths/e_int_config_env.c:317
 #: src/modules/conf_shelves/e_int_config_shelf.c:137
 #: src/modules/conf_shelves/e_int_config_shelf.c:392
@@ -1902,14 +1902,14 @@ msgid "Module %s needs to support %s"
 msgstr "Modul %s potřebuje podporovat %s"
 
 #: src/bin/e_grab_dialog.c:3
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:4
+#: src/modules/conf_bindings/e_int_config_keybindings.c:4
 msgid ""
 "Please press key sequence,<br><br>or <hilight>Escape</hilight> to abort."
 msgstr ""
 "Prosím zadejte zkratku,<br><br>nebo klávesou <hilight>Esc</hilight> zrušte."
 
 #: src/bin/e_grab_dialog.c:5
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:7
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:7
 msgid ""
 "Please hold any modifier you want<br>and press any button on your mouse,<br> "
 "or roll a wheel, to assign mouse binding.<br>Press <hilight>Escape</"
@@ -2127,7 +2127,7 @@ msgid "Remember these Locks"
 msgstr "Zapamatovat tyto zámky"
 
 #: src/bin/e_int_border_menu.c:127
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:332
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:332
 msgid "Window"
 msgstr "Okno"
 
@@ -2347,7 +2347,7 @@ msgstr "Statický"
 
 #: src/bin/e_int_border_prop.c:298 src/modules/clock/e_mod_config.c:103
 #: src/modules/clock/e_mod_config.c:141
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:360
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:360
 #: src/modules/conf_performance/e_int_config_powermanagement.c:196
 #: src/modules/conf_theme/e_int_config_fonts.c:689
 #: src/modules/conf_theme/e_int_config_transitions.c:199
@@ -2899,7 +2899,7 @@ msgid "Hide duration"
 msgstr "Doba skrývání"
 
 #: src/bin/e_int_shelf_config.c:247
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:888
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:888
 #, c-format
 msgid "%.2f seconds"
 msgstr "%.2f sekund"
@@ -4007,10 +4007,10 @@ msgstr[2] "Před %li minutami"
 #: src/bin/e_widget_filepreview.c:571 src/bin/e_widget_filepreview.c:582
 #: src/modules/comp/e_mod_config.c:516
 #: src/modules/conf_dialogs/e_int_config_profiles.c:298
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1218
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:587
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:395
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1170
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1218
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:587
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:395
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1170
 #: src/modules/wizard/page_020.c:24
 msgid "Unknown"
 msgstr "Neznámý"
@@ -4145,11 +4145,11 @@ msgstr "%li minut"
 #: src/modules/conf_applications/e_int_config_apps.c:287
 #: src/modules/conf_applications/e_int_config_apps_personal.c:93
 #: src/modules/conf_dialogs/e_int_config_profiles.c:133
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:263
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:809
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:197
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:244
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:292
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:263
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:809
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:197
+#: src/modules/conf_bindings/e_int_config_keybindings.c:244
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:292
 #: src/modules/conf_paths/e_int_config_env.c:311
 #: src/modules/conf_shelves/e_int_config_shelf.c:135
 #: src/modules/ibar/e_mod_config.c:110
@@ -4402,7 +4402,7 @@ msgid "Hardware"
 msgstr "Hardware"
 
 #: src/modules/battery/e_mod_main.c:152 src/modules/battery/e_mod_main.c:455
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:354
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:354
 msgid "Battery"
 msgstr "Baterie"
 
@@ -5410,17 +5410,17 @@ msgstr "Zamčení obrazovky"
 msgid "Desk"
 msgstr "Plocha"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:4
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:11
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:3
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:462
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:3
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:7
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:3
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:4
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:11
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:3
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:462
+#: src/modules/conf_bindings/e_int_config_keybindings.c:3
+#: src/modules/conf_bindings/e_int_config_keybindings.c:7
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:3
 msgid "<None>"
 msgstr "<Žádný>"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:5
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:5
 msgid ""
 "Please select an edge,<br>or click <hilight>Close</hilight> to abort."
 "<br><br>You can either specify a delay of this<br> action using the slider, "
@@ -5430,81 +5430,81 @@ msgstr ""
 "zrušení.<br><br>Můžete také vybrat zpoždění<br> činnosti použitím posuvníku "
 "nebo jej přimět<br>reagovat na kliky na okraji:"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:105
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:105
 msgid "Edge Bindings Settings"
 msgstr "Nastavení vazeb pro okraje obrazovky"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:258
-#: src/modules/conf_edgebindings/e_mod_main.c:21
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:258
+#: src/modules/conf_bindings/e_mod_main.c:21
 msgid "Edge Bindings"
 msgstr "Vazby pro okraje obrazovky"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:270
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:251
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:298
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:270
+#: src/modules/conf_bindings/e_int_config_keybindings.c:251
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:298
 #: src/modules/conf_paths/e_int_config_env.c:314
 msgid "Modify"
 msgstr "Upravit"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:274
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:816
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:255
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:302
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:274
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:816
+#: src/modules/conf_bindings/e_int_config_keybindings.c:255
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:302
 msgid "Delete All"
 msgstr "Smazat vše"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:278
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:820
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:259
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:306
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:278
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:820
+#: src/modules/conf_bindings/e_int_config_keybindings.c:259
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:306
 msgid "Restore Default Bindings"
 msgstr "Obnovit výchozí vazby"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:283
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:825
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:209
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:264
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:312
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:283
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:825
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:209
+#: src/modules/conf_bindings/e_int_config_keybindings.c:264
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:312
 msgid "Action"
 msgstr "Činnost"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:290
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:290
 msgid "Mouse Button"
 msgstr "Tlačítko myši"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:296
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:832
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:216
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:271
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:319
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:296
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:832
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:216
+#: src/modules/conf_bindings/e_int_config_keybindings.c:271
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:319
 msgid "Action Params"
 msgstr "Parametry činnosti"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:306
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:306
 msgid "General Options"
 msgstr "Obecné možnosti"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:307
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:307
 msgid "Allow binding activation with fullscreen windows"
 msgstr "Povolit aktivaci vazeb s maximalizovanými okny"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:309
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:309
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
 msgstr "Povolit aktivaci vazeb s maximalizovanými okny"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:874
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:874
 msgid "Edge Binding Sequence"
 msgstr "Sekvence vazeb na okraje"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:893
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:893
 msgid "Clickable edge"
 msgstr "Okraj reagující na kliknutí"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1214
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1214
 msgid "Edge Binding Error"
 msgstr "Chyba vazby okraje"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1215
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1215
 #, c-format
 msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
@@ -5513,82 +5513,82 @@ msgstr ""
 "Vybraná okraj má již nastavenu vazbu<br><hilight>%s</hilight> akcí."
 "<br>Prosím vyberte jiný okraj."
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1350
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1305
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1337
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1350
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1305
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1337
 msgid "CTRL"
 msgstr "Ctrl"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1355
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1310
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1342
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1355
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1310
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1342
 msgid "ALT"
 msgstr "Alt"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1361
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1316
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1348
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1361
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1316
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1348
 msgid "SHIFT"
 msgstr "Shift"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1367
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1322
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1354
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1367
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1322
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1354
 msgid "WIN"
 msgstr "Win"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1377
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1377
 msgid "Left Edge"
 msgstr "Levý okraj"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1381
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1381
 msgid "Top Edge"
 msgstr "Horní okraj"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1385
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1385
 msgid "Right Edge"
 msgstr "Pravý okraj"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1389
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1389
 msgid "Bottom Edge"
 msgstr "Spodní okraj"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1393
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 msgid "Top Left Edge"
 msgstr "Levý horní roh"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1397
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1397
 msgid "Top Right Edge"
 msgstr "Pravý horní roh"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1401
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1401
 msgid "Bottom Right Edge"
 msgstr "Pravý dolní roh"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1405
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1405
 msgid "Bottom Left Edge"
 msgstr "Levý dolní roh"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1419
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1419
 #, c-format
 msgid "(left clickable)"
 msgstr "(okraj reagující na kliknutí levým tlačitkem)"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1421
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1421
 #, c-format
 msgid "(clickable)"
 msgstr "(okraj reagující na kliknutí)"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:574
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:584
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:574
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:584
 msgid "Signal Binding Error"
 msgstr "Chyba vazby na signál"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:574
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:574
 msgid "Signal and Source must NOT be blank!"
 msgstr "Signál a zdroj NESMÍ být prázdné!"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:585
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:585
 #, c-format
 msgid ""
 "The signal and source that you entered are already used by<br><hilight>%s</"
@@ -5597,30 +5597,30 @@ msgstr ""
 "Signál a zdroj, který jste vybralí již má nastavenu vazbu<br><hilight>%s</"
 "hilight> na akci.<br>"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:634
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:634
 msgid "Add Signal Binding"
 msgstr "Přidat vazbu na signál"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:645
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:645
 msgid "Source:"
 msgstr "Zdroj:"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:650
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:650
 msgid "Signal:"
 msgstr "Signál:"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:804
-#: src/modules/conf_edgebindings/e_mod_main.c:25
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:804
+#: src/modules/conf_bindings/e_mod_main.c:25
 msgid "Signal Bindings"
 msgstr "Vazby na signály"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:865
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:865
 msgid "Signal Bindings Settings"
 msgstr "Nastavení vazeb na signály"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:17
+#: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/conf_interaction/e_mod_main.c:17
-#: src/modules/conf_keybindings/e_mod_main.c:17
+#: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/mixer/app_mixer.c:308 src/modules/mixer/app_mixer.c:326
 #: src/modules/xkbswitch/e_mod_main.c:71
 msgid "Input"
@@ -5837,105 +5837,105 @@ msgstr "Lokalizace"
 msgid "Language"
 msgstr "Jazyk"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:71
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:190
-#: src/modules/conf_keybindings/e_mod_main.c:29
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:71
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:190
+#: src/modules/conf_bindings/e_mod_main.c:29
 msgid "ACPI Bindings"
 msgstr "Vazby na ACPI"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:349
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:349
 msgid "AC Adapter Unplugged"
 msgstr "Zdroj odpojen"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:350
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:350
 msgid "AC Adapter Plugged"
 msgstr "Zdroj připojen"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:351
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:351
 msgid "Ac Adapter"
 msgstr "Zdroj"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:356
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:356
 msgid "Button"
 msgstr "Tlačítko"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:358
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:358
 msgid "Fan"
 msgstr "Větrák"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:361
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:361
 msgid "Lid Unknown"
 msgstr "Neznámý stav víka"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:362
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:362
 msgid "Lid Closed"
 msgstr "Víko zavřené"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:363
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:363
 msgid "Lid Opened"
 msgstr "Víko otevřené"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:364
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:364
 msgid "Lid"
 msgstr "Víko"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:367
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:367
 msgid "Power Button"
 msgstr "Vypínač počítače"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:369
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:369
 msgid "Processor"
 msgstr "Procesor"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:371
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:371
 msgid "Sleep Button"
 msgstr "Tlačítko uspání"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:373
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:373
 msgid "Thermal"
 msgstr "Teplotní čidlo"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:375
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:375
 msgid "Video"
 msgstr "Video"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:377
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:377
 msgid "Wifi"
 msgstr "WiFi"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:381
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:381
 msgid "Zoom Out"
 msgstr "Oddálit"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:383
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:383
 msgid "Zoom In"
 msgstr "Přiblížit"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:385
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:385
 msgid "Brightness Down"
 msgstr "Snížit úroveň Podsvícení"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:387
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:387
 msgid "Brightness Up"
 msgstr "Zvýšit úroveň podsvícení"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:389
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:389
 msgid "Assist"
 msgstr "Assist"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:391
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:391
 msgid "S1"
 msgstr "S1"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:393
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:393
 msgid "Vaio"
 msgstr "Vaio"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:497
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:497
 msgid "ACPI Binding"
 msgstr "Vazby na ACPI"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:500
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:500
 msgid ""
 "Please trigger the ACPI event you wish to bind to, <br><br>or "
 "<hilight>Escape</hilight> to abort."
@@ -5943,24 +5943,24 @@ msgstr ""
 "Prosím, vyvolejte událost ACPI, kterou si přejete svázat,<br><br>nebo "
 "klávesou <hilight>Esc</hilight> zrušte."
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:8
+#: src/modules/conf_bindings/e_int_config_keybindings.c:8
 msgid "Single key"
 msgstr "Jedna klávesa"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:106
+#: src/modules/conf_bindings/e_int_config_keybindings.c:106
 msgid "Key Bindings Settings"
 msgstr "Nastavení klávesových zkratek"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:239
-#: src/modules/conf_keybindings/e_mod_main.c:21
+#: src/modules/conf_bindings/e_int_config_keybindings.c:239
+#: src/modules/conf_bindings/e_mod_main.c:21
 msgid "Key Bindings"
 msgstr "Klávesové zkratky"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1165
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1165
 msgid "Binding Key Error"
 msgstr "Chyba klávesové zkratky"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1166
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1166
 #, c-format
 msgid ""
 "The binding key sequence, that you choose, is already used by <br><hilight>"
@@ -5969,11 +5969,11 @@ msgstr ""
 "Klávesová zkratka, kterou jste zadali, je již použita <br><hilight>%s</"
 "hilight> akcí.<br>Prosím vyberte si jinou zkratku."
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:109
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:109
 msgid "Mouse Bindings Settings"
 msgstr "Nastavení vazeb myši"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:247
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:247
 msgid ""
 "Unable to set a mouse wheel binding without modifiers<br>on a window: "
 "conflict with existing edje signal bindings.<br>FIXME!!!"
@@ -5981,20 +5981,20 @@ msgstr ""
 "Nemohu nastavit vazbu na kolečko myši bez modifikátoru<br> na okno: konflikt "
 "mezi existujícími vazbami signálů Edje.<br>FIXME!!!"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:250
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:250
 msgid "Mouse Binding Error"
 msgstr "Chyba vazby myši"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:286
-#: src/modules/conf_keybindings/e_mod_main.c:25
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:286
+#: src/modules/conf_bindings/e_mod_main.c:25
 msgid "Mouse Bindings"
 msgstr "Vazby myši"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:326
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:326
 msgid "Action Context"
 msgstr "Kontext činnosti"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:328
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:328
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:348
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:352
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:356
@@ -6002,82 +6002,82 @@ msgstr "Kontext činnosti"
 msgid "Any"
 msgstr "Libovolný"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:340
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:340
 msgid "Win List"
 msgstr "Seznam oken"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:344
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:344
 #: src/modules/pager/e_mod_config.c:141 src/modules/pager/e_mod_config.c:261
 msgid "Popup"
 msgstr "Pop-up"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:348
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:348
 msgid "Zone"
 msgstr "Zóna"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:352
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:352
 msgid "Container"
 msgstr "Kontejner"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:356
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:356
 msgid "Manager"
 msgstr "Správce"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:745
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:745
 msgid "Mouse Buttons"
 msgstr "Tlačítka myši"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:805
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:805
 msgid "Mouse Wheels"
 msgstr "Kolečko myši"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1178
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1196
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1178
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1196
 #: src/modules/pager/e_mod_config.c:373 src/modules/pager/e_mod_config.c:399
 #, c-format
 msgid "Left button"
 msgstr "Levé tlačítko"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1180
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1194
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1180
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1194
 #: src/modules/pager/e_mod_config.c:378 src/modules/pager/e_mod_config.c:394
 #, c-format
 msgid "Right button"
 msgstr "Pravé tlačítko"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1183
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1199
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1183
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1199
 #: src/modules/pager/e_mod_config.c:383 src/modules/pager/e_mod_config.c:404
 #: src/modules/pager/e_mod_config.c:409
 #, c-format
 msgid "Button %i"
 msgstr "Tlačítko %i"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1189
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1189
 #: src/modules/pager/e_mod_config.c:388
 #, c-format
 msgid "Middle button"
 msgstr "Prostřední tlačítko"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1211
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1211
 #, c-format
 msgid "Extra button (%d)"
 msgstr "Extra tlačítko (%d)"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1227
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1227
 msgid "Mouse Wheel Up"
 msgstr "Kolečko myši nahoru"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1229
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1229
 msgid "Mouse Wheel Down"
 msgstr "Kolečko myši dolů"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1233
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1233
 #, c-format
 msgid "Extra Wheel (%d) Up"
 msgstr "Extra kolečko (%d) nahoru"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1235
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1235
 #, c-format
 msgid "Extra Wheel (%d) Down"
 msgstr "Extra kolečko (%d) dolů"

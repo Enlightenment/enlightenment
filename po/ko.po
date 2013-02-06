@@ -29,7 +29,7 @@ msgstr "인라이튼먼트 정보"
 #: src/bin/e_fm.c:1059 src/bin/e_int_border_menu.c:194
 #: src/bin/e_int_border_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf/e_conf.c:179
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:877
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:877
 #: src/modules/everything/evry_plug_windows.c:452
 #: src/modules/fileman/e_fwin.c:2529 src/modules/mixer/app_mixer.c:550
 msgid "Close"
@@ -135,7 +135,7 @@ msgid "Are you sure you want to suspend your computer?"
 msgstr "정말로 컴퓨터를 대기 모드로 전환하시겠습니까?"
 
 #: src/bin/e_actions.c:2467 src/bin/e_actions.c:3421
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:379
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:379
 msgid "Hibernate"
 msgstr "최대 절전 모드"
 
@@ -163,7 +163,7 @@ msgstr "크기 변경"
 #: src/bin/e_actions.c:2969 src/bin/e_actions.c:3333 src/bin/e_actions.c:3335
 #: src/bin/e_actions.c:3337 src/bin/e_actions.c:3339 src/bin/e_actions.c:3341
 #: src/modules/comp/e_mod_config.c:452 src/modules/comp/e_mod_config.c:757
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:336
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:336
 msgid "Menu"
 msgstr "메뉴"
 
@@ -801,7 +801,7 @@ msgstr "선택"
 #: src/bin/e_desktop_editor.c:925 src/bin/e_entry_dialog.c:64 src/bin/e_fm.c:9966
 #: src/bin/e_fm_prop.c:625 src/bin/e_import_dialog.c:194
 #: src/bin/e_import_config_dialog.c:537
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:637
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:637
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
 #: src/modules/conf_theme/e_int_config_theme_import.c:123
 #: src/modules/fileman/e_int_config_mime_edit.c:316
@@ -868,7 +868,7 @@ msgstr ""
 #: src/bin/e_int_border_remember.c:507 src/bin/e_module.c:431
 #: src/bin/e_module.c:799 src/bin/e_sys.c:618 src/bin/e_sys.c:659
 #: src/bin/e_utils.c:695 src/modules/comp/e_mod_config.c:914
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:636
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:636
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
 #: src/modules/conf_theme/e_int_config_theme_import.c:119
 #: src/modules/cpufreq/e_mod_main.c:436 src/modules/cpufreq/e_mod_main.c:465
@@ -978,7 +978,7 @@ msgstr ""
 
 #: src/bin/e_config_dialog.c:226 src/modules/battery/e_mod_main.c:817
 #: src/modules/conf/e_mod_main.c:283
-#: src/modules/conf_edgebindings/e_mod_main.c:19
+#: src/modules/conf_bindings/e_mod_main.c:19
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
 #: src/modules/syscon/e_mod_main.c:36
@@ -990,7 +990,7 @@ msgid "Basic"
 msgstr "기본"
 
 #: src/bin/e_config_dialog.c:280
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:876
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:876
 msgid "Apply"
 msgstr "적용"
 
@@ -1197,11 +1197,11 @@ msgstr "실행 파일 선택"
 #: src/bin/e_shelf.c:1792 src/bin/e_shelf.c:2475
 #: src/modules/conf_dialogs/e_int_config_profiles.c:135
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:266
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:812
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:201
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:247
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:294
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:266
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:812
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:201
+#: src/modules/conf_bindings/e_int_config_keybindings.c:247
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:294
 #: src/modules/conf_paths/e_int_config_env.c:317
 #: src/modules/conf_shelves/e_int_config_shelf.c:137
 #: src/modules/conf_shelves/e_int_config_shelf.c:392
@@ -1896,7 +1896,7 @@ msgid "Module %s needs to support %s"
 msgstr "%s 모듈은 %s 지원이 필요합니다"
 
 #: src/bin/e_grab_dialog.c:3
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:4
+#: src/modules/conf_bindings/e_int_config_keybindings.c:4
 msgid ""
 "Please press key sequence,<br><br>or <hilight>Escape</hilight> to abort."
 msgstr ""
@@ -1904,7 +1904,7 @@ msgstr ""
 "시오."
 
 #: src/bin/e_grab_dialog.c:5
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:7
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:7
 msgid ""
 "Please hold any modifier you want<br>and press any button on your mouse,<br> "
 "or roll a wheel, to assign mouse binding.<br>Press <hilight>Escape</"
@@ -2121,7 +2121,7 @@ msgid "Remember these Locks"
 msgstr "잠금 상태 기억"
 
 #: src/bin/e_int_border_menu.c:127
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:332
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:332
 msgid "Window"
 msgstr "창"
 
@@ -2341,7 +2341,7 @@ msgstr "고정"
 
 #: src/bin/e_int_border_prop.c:298 src/modules/clock/e_mod_config.c:103
 #: src/modules/clock/e_mod_config.c:141
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:360
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:360
 #: src/modules/conf_performance/e_int_config_powermanagement.c:196
 #: src/modules/conf_theme/e_int_config_fonts.c:689
 #: src/modules/conf_theme/e_int_config_transitions.c:199
@@ -2701,11 +2701,11 @@ msgstr "불러온 가젯"
 #: src/modules/conf_applications/e_int_config_apps.c:287
 #: src/modules/conf_applications/e_int_config_apps_personal.c:93
 #: src/modules/conf_dialogs/e_int_config_profiles.c:133
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:263
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:809
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:197
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:244
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:292
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:263
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:809
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:197
+#: src/modules/conf_bindings/e_int_config_keybindings.c:244
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:292
 #: src/modules/conf_paths/e_int_config_env.c:311
 #: src/modules/conf_shelves/e_int_config_shelf.c:135
 #: src/modules/ibar/e_mod_config.c:110
@@ -2894,7 +2894,7 @@ msgid "Hide duration"
 msgstr "숨기기 지속시간"
 
 #: src/bin/e_int_shelf_config.c:247
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:888
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:888
 #, c-format
 msgid "%.2f seconds"
 msgstr "%.2f 초"
@@ -3992,10 +3992,10 @@ msgstr[0] "%li분 전"
 #: src/bin/e_widget_filepreview.c:571 src/bin/e_widget_filepreview.c:582
 #: src/modules/comp/e_mod_config.c:516
 #: src/modules/conf_dialogs/e_int_config_profiles.c:298
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1218
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:587
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:395
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1170
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1218
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:587
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:395
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1170
 #: src/modules/wizard/page_020.c:24
 msgid "Unknown"
 msgstr "알 수 없음"
@@ -4370,7 +4370,7 @@ msgid "Hardware"
 msgstr "하드웨어"
 
 #: src/modules/battery/e_mod_main.c:152 src/modules/battery/e_mod_main.c:455
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:354
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:354
 msgid "Battery"
 msgstr "배터리"
 
@@ -5379,17 +5379,17 @@ msgstr "화면 잠금"
 msgid "Desk"
 msgstr "데스크"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:4
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:11
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:3
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:462
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:3
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:7
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:3
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:4
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:11
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:3
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:462
+#: src/modules/conf_bindings/e_int_config_keybindings.c:3
+#: src/modules/conf_bindings/e_int_config_keybindings.c:7
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:3
 msgid "<None>"
 msgstr "<없음>"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:5
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:5
 msgid ""
 "Please select an edge,<br>or click <hilight>Close</hilight> to abort."
 "<br><br>You can either specify a delay of this<br> action using the slider, "
@@ -5399,81 +5399,81 @@ msgstr ""
 "<br><br>슬라이더를 사용하여 이 동작의<br> 지연시간을 지정하거나 테두리를 눌렀"
 "을 때 반응하게 할 수 있습니다:"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:105
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:105
 msgid "Edge Bindings Settings"
 msgstr "가장자리 바인딩 설정"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:258
-#: src/modules/conf_edgebindings/e_mod_main.c:21
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:258
+#: src/modules/conf_bindings/e_mod_main.c:21
 msgid "Edge Bindings"
 msgstr "가장자리 바인딩"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:270
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:251
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:298
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:270
+#: src/modules/conf_bindings/e_int_config_keybindings.c:251
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:298
 #: src/modules/conf_paths/e_int_config_env.c:314
 msgid "Modify"
 msgstr "수정"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:274
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:816
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:255
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:302
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:274
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:816
+#: src/modules/conf_bindings/e_int_config_keybindings.c:255
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:302
 msgid "Delete All"
 msgstr "모두 삭제"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:278
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:820
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:259
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:306
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:278
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:820
+#: src/modules/conf_bindings/e_int_config_keybindings.c:259
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:306
 msgid "Restore Default Bindings"
 msgstr "기본 바인딩 복원"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:283
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:825
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:209
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:264
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:312
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:283
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:825
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:209
+#: src/modules/conf_bindings/e_int_config_keybindings.c:264
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:312
 msgid "Action"
 msgstr "동작"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:290
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:290
 msgid "Mouse Button"
 msgstr "마우스 버튼"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:296
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:832
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:216
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:271
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:319
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:296
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:832
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:216
+#: src/modules/conf_bindings/e_int_config_keybindings.c:271
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:319
 msgid "Action Params"
 msgstr "동작 인자"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:306
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:306
 msgid "General Options"
 msgstr "일반 옵션"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:307
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:307
 msgid "Allow binding activation with fullscreen windows"
 msgstr "전체 화면 창과 활성 바인딩 허용"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:309
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:309
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
 msgstr "다중 화면과 활성 바인딩 허용 (위험!)"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:874
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:874
 msgid "Edge Binding Sequence"
 msgstr "가장자리 바인딩 순서"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:893
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:893
 msgid "Clickable edge"
 msgstr "클릭 가능한 가장자리"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1214
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1214
 msgid "Edge Binding Error"
 msgstr "가장자리 바인딩 오류"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1215
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1215
 #, c-format
 msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
@@ -5482,82 +5482,82 @@ msgstr ""
 "여러분이 선택한 테두리 바인딩은 <hilight>%s</hilight> 동작에서 이미 사용중입"
 "니다.<br>바인딩할 다른 테두리를 선택하십시오."
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1350
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1305
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1337
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1350
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1305
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1337
 msgid "CTRL"
 msgstr "CTRL"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1355
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1310
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1342
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1355
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1310
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1342
 msgid "ALT"
 msgstr "ALT"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1361
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1316
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1348
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1361
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1316
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1348
 msgid "SHIFT"
 msgstr "SHIFT"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1367
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1322
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1354
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1367
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1322
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1354
 msgid "WIN"
 msgstr "WIN"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1377
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1377
 msgid "Left Edge"
 msgstr "왼쪽 테두리"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1381
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1381
 msgid "Top Edge"
 msgstr "상단 가장자리"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1385
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1385
 msgid "Right Edge"
 msgstr "오른쪽 가장자리"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1389
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1389
 msgid "Bottom Edge"
 msgstr "하단 가장자리"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1393
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 msgid "Top Left Edge"
 msgstr "상단 왼쪽 가장자리"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1397
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1397
 msgid "Top Right Edge"
 msgstr "상단 오른쪽 가장자리"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1401
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1401
 msgid "Bottom Right Edge"
 msgstr "하단 오른쪽 가장자리"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1405
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1405
 msgid "Bottom Left Edge"
 msgstr "하단 왼쪽 가장자리"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1419
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1419
 #, c-format
 msgid "(left clickable)"
 msgstr "(왼쪽 마우스 버튼 클릭 가능)"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1421
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1421
 #, c-format
 msgid "(clickable)"
 msgstr "(클릭가능)"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:574
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:584
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:574
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:584
 msgid "Signal Binding Error"
 msgstr "시그널 바인딩 오류"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:574
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:574
 msgid "Signal and Source must NOT be blank!"
 msgstr "시그널과 소스가 비어있으면 안됩니다!"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:585
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:585
 #, c-format
 msgid ""
 "The signal and source that you entered are already used by<br><hilight>%s</"
@@ -5566,30 +5566,30 @@ msgstr ""
 "여러분이 입력한 시그널과 소스를 <hilight>%s</hilight> 동작에서 이미 사용중입"
 "니다.<br>"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:634
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:634
 msgid "Add Signal Binding"
 msgstr "시그널 바인딩 추가"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:645
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:645
 msgid "Source:"
 msgstr "소스:"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:650
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:650
 msgid "Signal:"
 msgstr "시그널:"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:804
-#: src/modules/conf_edgebindings/e_mod_main.c:25
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:804
+#: src/modules/conf_bindings/e_mod_main.c:25
 msgid "Signal Bindings"
 msgstr "시그널 바인딩"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:865
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:865
 msgid "Signal Bindings Settings"
 msgstr "시그널 바인딩 설정"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:17
+#: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/conf_interaction/e_mod_main.c:17
-#: src/modules/conf_keybindings/e_mod_main.c:17
+#: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/mixer/app_mixer.c:308 src/modules/mixer/app_mixer.c:326
 #: src/modules/xkbswitch/e_mod_main.c:71
 msgid "Input"
@@ -5804,105 +5804,105 @@ msgstr "로캘"
 msgid "Language"
 msgstr "언어"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:71
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:190
-#: src/modules/conf_keybindings/e_mod_main.c:29
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:71
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:190
+#: src/modules/conf_bindings/e_mod_main.c:29
 msgid "ACPI Bindings"
 msgstr "ACPI 바인딩"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:349
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:349
 msgid "AC Adapter Unplugged"
 msgstr "AC 어댑터 빠짐"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:350
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:350
 msgid "AC Adapter Plugged"
 msgstr "AC 어댑터 연결함"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:351
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:351
 msgid "Ac Adapter"
 msgstr "AC 어댑터"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:356
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:356
 msgid "Button"
 msgstr "버튼"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:358
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:358
 msgid "Fan"
 msgstr "바람날개"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:361
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:361
 msgid "Lid Unknown"
 msgstr "덮개상태 알 수 없음"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:362
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:362
 msgid "Lid Closed"
 msgstr "덮개 닫힘"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:363
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:363
 msgid "Lid Opened"
 msgstr "덮개 열림"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:364
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:364
 msgid "Lid"
 msgstr "덮개"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:367
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:367
 msgid "Power Button"
 msgstr "전원 버튼"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:369
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:369
 msgid "Processor"
 msgstr "프로세서"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:371
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:371
 msgid "Sleep Button"
 msgstr "대기 모드 버튼"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:373
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:373
 msgid "Thermal"
 msgstr "온도"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:375
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:375
 msgid "Video"
 msgstr "비디오"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:377
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:377
 msgid "Wifi"
 msgstr "무선랜"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:381
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:381
 msgid "Zoom Out"
 msgstr "축소"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:383
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:383
 msgid "Zoom In"
 msgstr "확대"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:385
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:385
 msgid "Brightness Down"
 msgstr "어둡게"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:387
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:387
 msgid "Brightness Up"
 msgstr "밝게"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:389
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:389
 msgid "Assist"
 msgstr "보조"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:391
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:391
 msgid "S1"
 msgstr "S1"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:393
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:393
 msgid "Vaio"
 msgstr "Vaio"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:497
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:497
 msgid "ACPI Binding"
 msgstr "ACPI 바인딩"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:500
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:500
 msgid ""
 "Please trigger the ACPI event you wish to bind to, <br><br>or "
 "<hilight>Escape</hilight> to abort."
@@ -5910,24 +5910,24 @@ msgstr ""
 "바인드할 ACPI 이벤트를 실행하거나,<br>취소하기 위해 <hilight>ESC</hilight> 키"
 "를 누르십시오."
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:8
+#: src/modules/conf_bindings/e_int_config_keybindings.c:8
 msgid "Single key"
 msgstr "단일 키"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:106
+#: src/modules/conf_bindings/e_int_config_keybindings.c:106
 msgid "Key Bindings Settings"
 msgstr "단축키 설정"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:239
-#: src/modules/conf_keybindings/e_mod_main.c:21
+#: src/modules/conf_bindings/e_int_config_keybindings.c:239
+#: src/modules/conf_bindings/e_mod_main.c:21
 msgid "Key Bindings"
 msgstr "단축키"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1165
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1165
 msgid "Binding Key Error"
 msgstr "단축키 오류"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1166
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1166
 #, c-format
 msgid ""
 "The binding key sequence, that you choose, is already used by <br><hilight>"
@@ -5936,11 +5936,11 @@ msgstr ""
 "선택한 키 조합 시퀀스는 <hilight>%s</hilight> 동작이 이미<br> 사용중입니다."
 "<br>다른 키 조합 시퀀스를 선택해주십시오."
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:109
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:109
 msgid "Mouse Bindings Settings"
 msgstr "마우스 바인딩 설정"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:247
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:247
 msgid ""
 "Unable to set a mouse wheel binding without modifiers<br>on a window: "
 "conflict with existing edje signal bindings.<br>FIXME!!!"
@@ -5948,20 +5948,20 @@ msgstr ""
 "창에서 조합 키 없이 마우스 휠 바인딩을 설정할 수 없습니다:<br>이미 존재하는 "
 "edje 시그널 바인딩과 충돌합니다.<br>고쳐주세요!!!"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:250
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:250
 msgid "Mouse Binding Error"
 msgstr "마우스 바인딩 오류"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:286
-#: src/modules/conf_keybindings/e_mod_main.c:25
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:286
+#: src/modules/conf_bindings/e_mod_main.c:25
 msgid "Mouse Bindings"
 msgstr "마우스 바인딩"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:326
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:326
 msgid "Action Context"
 msgstr "동작 컨텍스트"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:328
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:328
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:348
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:352
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:356
@@ -5969,82 +5969,82 @@ msgstr "동작 컨텍스트"
 msgid "Any"
 msgstr "어디에서나"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:340
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:340
 msgid "Win List"
 msgstr "창 목록"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:344
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:344
 #: src/modules/pager/e_mod_config.c:141 src/modules/pager/e_mod_config.c:261
 msgid "Popup"
 msgstr "팝업"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:348
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:348
 msgid "Zone"
 msgstr "영역"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:352
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:352
 msgid "Container"
 msgstr "컨테이너"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:356
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:356
 msgid "Manager"
 msgstr "매니저"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:745
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:745
 msgid "Mouse Buttons"
 msgstr "마우스 버튼"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:805
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:805
 msgid "Mouse Wheels"
 msgstr "마우스 휠"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1178
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1196
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1178
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1196
 #: src/modules/pager/e_mod_config.c:374 src/modules/pager/e_mod_config.c:400
 #, c-format
 msgid "Left button"
 msgstr "왼쪽 버튼"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1180
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1194
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1180
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1194
 #: src/modules/pager/e_mod_config.c:379 src/modules/pager/e_mod_config.c:395
 #, c-format
 msgid "Right button"
 msgstr "오른쪽 버튼"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1183
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1199
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1183
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1199
 #: src/modules/pager/e_mod_config.c:384 src/modules/pager/e_mod_config.c:405
 #: src/modules/pager/e_mod_config.c:410
 #, c-format
 msgid "Button %i"
 msgstr "버튼 %i"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1189
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1189
 #: src/modules/pager/e_mod_config.c:389
 #, c-format
 msgid "Middle button"
 msgstr "가운데 버튼"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1211
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1211
 #, c-format
 msgid "Extra button (%d)"
 msgstr "추가 버튼 (%d)"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1227
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1227
 msgid "Mouse Wheel Up"
 msgstr "마우스 휠 위로 굴리기"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1229
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1229
 msgid "Mouse Wheel Down"
 msgstr "마우스 휠 아래로 굴리기"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1233
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1233
 #, c-format
 msgid "Extra Wheel (%d) Up"
 msgstr "추가 휠 (%d) 위로 굴리기"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1235
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1235
 #, c-format
 msgid "Extra Wheel (%d) Down"
 msgstr "추가 휠 (%d) 아래로 굴리기"

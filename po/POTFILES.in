@@ -156,9 +156,9 @@ src/modules/conf_display/e_int_config_desklock.c
 src/modules/conf_display/e_int_config_screensaver.c
 src/modules/conf_display/e_int_config_dpms.c
 src/modules/conf_display/e_mod_main.c
-src/modules/conf_edgebindings/e_int_config_edgebindings.c
-src/modules/conf_edgebindings/e_int_config_signalbindings.c
-src/modules/conf_edgebindings/e_mod_main.c
+src/modules/conf_bindings/e_int_config_edgebindings.c
+src/modules/conf_bindings/e_int_config_signalbindings.c
+src/modules/conf_bindings/e_mod_main.c
 src/modules/conf_interaction/e_int_config_interaction.c
 src/modules/conf_interaction/e_int_config_mouse.c
 src/modules/conf_interaction/e_mod_main.c
@@ -166,10 +166,10 @@ src/modules/conf_intl/e_int_config_imc.c
 src/modules/conf_intl/e_int_config_imc_import.c
 src/modules/conf_intl/e_int_config_intl.c
 src/modules/conf_intl/e_mod_main.c
-src/modules/conf_keybindings/e_int_config_acpibindings.c
-src/modules/conf_keybindings/e_int_config_keybindings.c
-src/modules/conf_keybindings/e_int_config_mousebindings.c
-src/modules/conf_keybindings/e_mod_main.c
+src/modules/conf_bindings/e_int_config_acpibindings.c
+src/modules/conf_bindings/e_int_config_keybindings.c
+src/modules/conf_bindings/e_int_config_mousebindings.c
+src/modules/conf_bindings/e_mod_main.c
 src/modules/conf_menus/e_int_config_menus.c
 src/modules/conf_menus/e_mod_main.c
 src/modules/conf_paths/e_int_config_paths.c

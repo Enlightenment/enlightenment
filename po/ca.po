@@ -25,7 +25,7 @@ msgstr "Sobre Enlightenment"
 #: src/bin/e_int_border_menu.c:194
 #: src/bin/e_int_border_prop.c:81
 #: src/bin/e_theme_about.c:24
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:877
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:877
 #: src/modules/everything/evry_plug_windows.c:452
 #: src/modules/fileman/e_fwin.c:2529
 #: src/modules/mixer/app_mixer.c:550
@@ -145,7 +145,7 @@ msgstr "Segur que vols suspendre l'ordinador ?"
 
 #: src/bin/e_actions.c:2467
 #: src/bin/e_actions.c:3418
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:379
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:379
 msgid "Hibernate"
 msgstr "Hiberna"
 
@@ -186,7 +186,7 @@ msgstr "Re-dimensiona"
 #: src/bin/e_actions.c:3334
 #: src/bin/e_actions.c:3336
 #: src/bin/e_actions.c:3338
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:336
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:336
 msgid "Menu"
 msgstr "Menú"
 
@@ -922,7 +922,7 @@ msgstr "Selecciona"
 #: src/bin/e_fm_prop.c:625
 #: src/bin/e_import_dialog.c:195
 #: src/bin/e_import_config_dialog.c:540
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:637
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:637
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
 #: src/modules/conf_theme/e_int_config_theme_import.c:123
 #: src/modules/fileman/e_int_config_mime_edit.c:316
@@ -973,7 +973,7 @@ msgstr "Enlightenment ha tingut un error mentre movia fitxers de configuració<b
 #: src/bin/e_sys.c:619
 #: src/bin/e_sys.c:660
 #: src/bin/e_utils.c:695
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:636
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:636
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
 #: src/modules/conf_theme/e_int_config_theme_import.c:119
 #: src/modules/cpufreq/e_mod_main.c:436
@@ -1071,7 +1071,7 @@ msgstr "Enlightenment ha tingut un error mentre escrivia <br>el seu fitxer de co
 
 #: src/bin/e_config_dialog.c:226
 #: src/modules/battery/e_mod_main.c:810
-#: src/modules/conf_edgebindings/e_mod_main.c:19
+#: src/modules/conf_bindings/e_mod_main.c:19
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
 #: src/modules/syscon/e_mod_main.c:36
@@ -1084,7 +1084,7 @@ msgid "Basic"
 msgstr "Bàsic"
 
 #: src/bin/e_config_dialog.c:280
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:876
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:876
 msgid "Apply"
 msgstr "Aplica"
 
@@ -1286,11 +1286,11 @@ msgstr "Seleccioneu un Executable "
 #: src/bin/e_shelf.c:2482
 #: src/modules/conf_dialogs/e_int_config_profiles.c:135
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:266
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:812
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:201
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:247
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:294
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:266
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:812
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:201
+#: src/modules/conf_bindings/e_int_config_keybindings.c:247
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:294
 #: src/modules/conf_paths/e_int_config_env.c:317
 #: src/modules/conf_shelves/e_int_config_shelf.c:137
 #: src/modules/conf_shelves/e_int_config_shelf.c:392
@@ -2060,12 +2060,12 @@ msgid "Module %s needs to support %s"
 msgstr "El mòdul %s necessita suport %s"
 
 #: src/bin/e_grab_dialog.c:3
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:4
+#: src/modules/conf_bindings/e_int_config_keybindings.c:4
 msgid "Please press key sequence,<br><br>or <hilight>Escape</hilight> to abort."
 msgstr "Si us plau, pitja la seqüència de tecles,<br><br> o <hilight> Escape </hilight> per avortar."
 
 #: src/bin/e_grab_dialog.c:5
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:7
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:7
 msgid "Please hold any modifier you want<br>and press any button on your mouse,<br> or roll a wheel, to assign mouse binding.<br>Press <hilight>Escape</highlight> to abort."
 msgstr "Si us plau espera qualsevol modificaor que tu vols<br> i pitja qualsevol butó en el teu ratolí.<br> o fes rodar la roda, per assignar dreçera de ratolí.<br>Pitja<hilight>Escape</hilight> per abortar."
 
@@ -2290,7 +2290,7 @@ msgid "Remember these Locks"
 msgstr "Recorda aquesta aparença"
 
 #: src/bin/e_int_border_menu.c:127
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:332
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:332
 msgid "Window"
 msgstr "Finestra"
 
@@ -2527,7 +2527,7 @@ msgstr "Estàtic"
 #: src/bin/e_int_border_prop.c:298
 #: src/modules/clock/e_mod_config.c:103
 #: src/modules/clock/e_mod_config.c:141
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:360
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:360
 #: src/modules/conf_performance/e_int_config_powermanagement.c:196
 #: src/modules/conf_theme/e_int_config_fonts.c:689
 #: src/modules/conf_theme/e_int_config_transitions.c:199
@@ -2884,11 +2884,11 @@ msgstr "Artefactes Carregats"
 #: src/modules/conf_applications/e_int_config_apps.c:287
 #: src/modules/conf_applications/e_int_config_apps_personal.c:93
 #: src/modules/conf_dialogs/e_int_config_profiles.c:133
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:263
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:809
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:197
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:244
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:292
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:263
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:809
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:197
+#: src/modules/conf_bindings/e_int_config_keybindings.c:244
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:292
 #: src/modules/conf_paths/e_int_config_env.c:311
 #: src/modules/conf_shelves/e_int_config_shelf.c:135
 #: src/modules/ibar/e_mod_config.c:110
@@ -3080,7 +3080,7 @@ msgid "Hide duration"
 msgstr "Durada de l'ocultació "
 
 #: src/bin/e_int_shelf_config.c:244
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:888
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:888
 #, c-format
 msgid "%.2f seconds"
 msgstr "%2.2f segons"
@@ -4124,10 +4124,10 @@ msgstr[1] "Fa %li Minuts"
 #: src/bin/e_widget_filepreview.c:571
 #: src/bin/e_widget_filepreview.c:582
 #: src/modules/conf_dialogs/e_int_config_profiles.c:298
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1218
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:587
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:395
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1170
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1218
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:587
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:395
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1170
 #: src/modules/wizard/page_020.c:24
 msgid "Unknown"
 msgstr "Desconegut"
@@ -4468,7 +4468,7 @@ msgstr "Maquinari"
 
 #: src/modules/battery/e_mod_main.c:146
 #: src/modules/battery/e_mod_main.c:455
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:354
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:354
 msgid "Battery"
 msgstr "Bateria"
 
@@ -5486,232 +5486,232 @@ msgstr "Bloqueig de Pantalla"
 msgid "Desk"
 msgstr "Desk"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:4
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:11
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:3
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:462
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:3
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:7
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:3
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:4
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:11
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:3
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:462
+#: src/modules/conf_bindings/e_int_config_keybindings.c:3
+#: src/modules/conf_bindings/e_int_config_keybindings.c:7
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:3
 msgid "<None>"
 msgstr "Cap"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:5
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:5
 msgid "Please select an edge,<br>or click <hilight>Close</hilight> to abort.<br><br>You can either specify a delay of this<br> action using the slider, or make it<br>respond to edge clicks:"
 msgstr "Si us plau selecciona cantonada,<br>o pitja<hilight>Tanca</hilight> per abortar.<br><br>Podeu especificar una demora d'aquesta <br>acció usant el desllisador, o fent que<br> respongui als clicks de Vora:"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:105
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:105
 msgid "Edge Bindings Settings"
 msgstr "Preferències Tecles Cantonada"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:258
-#: src/modules/conf_edgebindings/e_mod_main.c:21
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:258
+#: src/modules/conf_bindings/e_mod_main.c:21
 msgid "Edge Bindings"
 msgstr "Bindatje de tecles de Cantonada"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:270
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:251
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:298
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:270
+#: src/modules/conf_bindings/e_int_config_keybindings.c:251
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:298
 #: src/modules/conf_paths/e_int_config_env.c:314
 msgid "Modify"
 msgstr "Modifica"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:274
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:816
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:255
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:302
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:274
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:816
+#: src/modules/conf_bindings/e_int_config_keybindings.c:255
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:302
 msgid "Delete All"
 msgstr "Elimina-ho Tot"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:278
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:820
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:259
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:306
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:278
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:820
+#: src/modules/conf_bindings/e_int_config_keybindings.c:259
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:306
 msgid "Restore Default Bindings"
 msgstr "Ajusta a predeterminat"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:283
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:825
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:209
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:264
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:312
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:283
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:825
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:209
+#: src/modules/conf_bindings/e_int_config_keybindings.c:264
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:312
 msgid "Action"
 msgstr "Acció"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:290
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:290
 msgid "Mouse Button"
 msgstr "Butó de Ratolí"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:296
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:832
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:216
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:271
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:319
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:296
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:832
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:216
+#: src/modules/conf_bindings/e_int_config_keybindings.c:271
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:319
 msgid "Action Params"
 msgstr "Paràmetres d'Acció "
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:306
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:306
 msgid "General Options"
 msgstr "Opcions Generals"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:307
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:307
 msgid "Allow binding activation with fullscreen windows"
 msgstr "Permetre dreçera activació  amb finestres de pantalla completa"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:309
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:309
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
 msgstr "Permetre dreçera activació amb multiples escriptoris (PERILLÓS!)"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:874
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:874
 msgid "Edge Binding Sequence"
 msgstr "Seqüència de Dreçera de Cantonada"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:893
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:893
 msgid "Clickable edge"
 msgstr "Cantonada Pitjable "
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1214
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1214
 msgid "Edge Binding Error"
 msgstr "Error Dreçera Cantonada"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1215
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1215
 #, c-format
 msgid "The edge binding that you chose is already used by<br><hilight>%s</hilight> action.<br>Please choose another edge to bind."
 msgstr "La dreçera de cantonada que ha escollit està  essent usat per l'acció<br><hilight>%s</hilight>. <br>Si us plau tria una altra seqüència."
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1350
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1305
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1337
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1350
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1305
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1337
 msgid "CTRL"
 msgstr "CTRL"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1355
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1310
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1342
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1355
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1310
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1342
 msgid "ALT"
 msgstr "ALT"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1361
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1316
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1348
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1361
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1316
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1348
 msgid "SHIFT"
 msgstr "SHIFT"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1367
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1322
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1354
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1367
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1322
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1354
 msgid "WIN"
 msgstr "WIN"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1377
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1377
 msgid "Left Edge"
 msgstr "Cantonada Esquerra"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1381
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1381
 msgid "Top Edge"
 msgstr "Cantonada Dalt"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1385
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1385
 msgid "Right Edge"
 msgstr "Cantonada Dreta"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1389
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1389
 msgid "Bottom Edge"
 msgstr "Vora de Baix"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1393
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 msgid "Top Left Edge"
 msgstr "Vora Dalt Esquerra"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1397
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1397
 msgid "Top Right Edge"
 msgstr "Vora Dalt Dreta"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1401
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1401
 msgid "Bottom Right Edge"
 msgstr "Vora Baix Dreta"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1405
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1405
 msgid "Bottom Left Edge"
 msgstr "Vora Baix Esquerra"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1419
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1419
 #, c-format
 msgid "(left clickable)"
 msgstr "(clicable esquerra)"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1421
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1421
 #, c-format
 msgid "(clickable)"
 msgstr "(pitjable)"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:574
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:584
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:574
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:584
 msgid "Signal Binding Error"
 msgstr "Error de Dreçera de Senyal"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:574
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:574
 msgid "Signal and Source must NOT be blank!"
 msgstr "Senyal i font no poden ser blancs!"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:585
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:585
 #, c-format
 msgid "The signal and source that you entered are already used by<br><hilight>%s</hilight> action.<br>"
 msgstr "La senyal i la seqüència de tecles que ha escollit està  essent usat per l'acció<br><hilight>%s</hilight>. <br>"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:634
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:634
 msgid "Add Signal Binding"
 msgstr "Afegir Dreçera de Senyal"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:645
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:645
 msgid "Source:"
 msgstr "Font:"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:650
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:650
 msgid "Signal:"
 msgstr "Senyal"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:804
-#: src/modules/conf_edgebindings/e_mod_main.c:25
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:804
+#: src/modules/conf_bindings/e_mod_main.c:25
 msgid "Signal Bindings"
 msgstr "Senyals de Tecles"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:865
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:865
 msgid "Signal Bindings Settings"
 msgstr "Preferències Tecles Senyal"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:17
+#: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/conf_interaction/e_mod_main.c:17
-#: src/modules/conf_keybindings/e_mod_main.c:17
+#: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/mixer/app_mixer.c:308
 #: src/modules/mixer/app_mixer.c:326
 #: src/modules/xkbswitch/e_mod_main.c:71
 msgid "Input"
 msgstr "Entrada"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:36
 msgid "edge bindings"
 msgstr "Dreceres de cantonada"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:36
 msgid "Screen edge binding settings"
 msgstr "Preferències dreçeres de cantonada de pantalla"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
-#: src/modules/conf_edgebindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:39
 #: src/modules/conf_intl/e_mod_main.c:45
-#: src/modules/conf_keybindings/e_mod_main.c:40
-#: src/modules/conf_keybindings/e_mod_main.c:43
-#: src/modules/conf_keybindings/e_mod_main.c:46
+#: src/modules/conf_bindings/e_mod_main.c:40
+#: src/modules/conf_bindings/e_mod_main.c:43
+#: src/modules/conf_bindings/e_mod_main.c:46
 #: src/modules/xkbswitch/e_mod_main.c:83
 msgid "input"
 msgstr "entrada"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:36
 msgid "edge"
 msgstr "Cantonada"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:36
 #: src/modules/conf_randr/e_mod_main.c:37
 #: src/modules/notification/e_mod_main.c:245
 #: src/modules/notification/e_mod_main.c:249
@@ -5719,28 +5719,28 @@ msgstr "Cantonada"
 msgid "screen"
 msgstr "pantalla"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
-#: src/modules/conf_edgebindings/e_mod_main.c:39
-#: src/modules/conf_keybindings/e_mod_main.c:40
-#: src/modules/conf_keybindings/e_mod_main.c:43
-#: src/modules/conf_keybindings/e_mod_main.c:46
+#: src/modules/conf_bindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:40
+#: src/modules/conf_bindings/e_mod_main.c:43
+#: src/modules/conf_bindings/e_mod_main.c:46
 msgid "binding"
 msgstr "Dreçeres"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:39
 msgid "signal bindings"
 msgstr "Dreceres de senyals"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:39
 msgid "Edje signal binding settings"
 msgstr "Preferències de dreçeres de senyal de vora"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:39
 msgid "edje"
 msgstr "vora"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:39
-#: src/modules/conf_keybindings/e_mod_main.c:43
+#: src/modules/conf_bindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:43
 msgid "mouse"
 msgstr "ratolí"
 
@@ -5971,152 +5971,152 @@ msgstr "mètode entrada"
 msgid "Input method settings"
 msgstr "Paràmetres del mètode entrada"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:71
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:190
-#: src/modules/conf_keybindings/e_mod_main.c:29
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:71
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:190
+#: src/modules/conf_bindings/e_mod_main.c:29
 msgid "ACPI Bindings"
 msgstr "Dreçeres ACPI"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:349
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:349
 msgid "AC Adapter Unplugged"
 msgstr "Adaptador CA Desendollat"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:350
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:350
 msgid "AC Adapter Plugged"
 msgstr "Adaptador CA Endollat"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:351
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:351
 msgid "Ac Adapter"
 msgstr "Adaptador CA "
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:356
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:356
 msgid "Button"
 msgstr "Botó"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:358
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:358
 msgid "Fan"
 msgstr "Ventilador "
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:361
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:361
 msgid "Lid Unknown"
 msgstr "Tapa Desconeguda"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:362
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:362
 msgid "Lid Closed"
 msgstr "Tapa Tancada"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:363
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:363
 msgid "Lid Opened"
 msgstr "Lid Obert"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:364
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:364
 msgid "Lid"
 msgstr "Lid"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:367
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:367
 msgid "Power Button"
 msgstr "Botó Engegada"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:369
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:369
 msgid "Processor"
 msgstr "Processador"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:371
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:371
 msgid "Sleep Button"
 msgstr "Botó Dormir"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:373
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:373
 msgid "Thermal"
 msgstr "Tèrmic "
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:375
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:375
 msgid "Video"
 msgstr "Vídeo"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:377
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:377
 msgid "Wifi"
 msgstr "wiFi"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:381
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:381
 msgid "Zoom Out"
 msgstr "Zoom Fora"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:383
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:383
 msgid "Zoom In"
 msgstr "Zoom dins"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:385
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:385
 msgid "Brightness Down"
 msgstr "Baixar Brillantor"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:387
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:387
 msgid "Brightness Up"
 msgstr "Pujar Brillantor"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:389
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:389
 msgid "Assist"
 msgstr "Ajuda"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:391
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:391
 msgid "S1"
 msgstr "S1"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:393
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:393
 msgid "Vaio"
 msgstr "Vaio"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:497
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:497
 msgid "ACPI Binding"
 msgstr "Dreçera ACPI "
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:500
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:500
 msgid "Please trigger the ACPI event you wish to bind to, <br><br>or <hilight>Escape</hilight> to abort."
 msgstr "Si us plau, dispara l'even ACPI que vols lligar,<br><br> o <hilight> Escape </hilight> per avortar."
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:8
+#: src/modules/conf_bindings/e_int_config_keybindings.c:8
 msgid "Single key"
 msgstr "Única tecla"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:106
+#: src/modules/conf_bindings/e_int_config_keybindings.c:106
 msgid "Key Bindings Settings"
 msgstr "Preferències Dreceres Tecles"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:239
-#: src/modules/conf_keybindings/e_mod_main.c:21
+#: src/modules/conf_bindings/e_int_config_keybindings.c:239
+#: src/modules/conf_bindings/e_mod_main.c:21
 msgid "Key Bindings"
 msgstr "Dreceres de tecles"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1165
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1165
 msgid "Binding Key Error"
 msgstr "Error de Dreçera de Tecles"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1166
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1166
 #, c-format
 msgid "The binding key sequence, that you choose, is already used by <br><hilight>%s</hilight> action.<br>Please choose another binding key sequence."
 msgstr "La seqüència de dreçera de tecles, que ha escollit, està essent usat per l'acció<br><hilight>%s</hilight>. Si us plau tria una altra drecera de seqüència de tecles."
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:109
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:109
 msgid "Mouse Bindings Settings"
 msgstr "Preferències Dreceres Tecles Ratolí"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:247
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:247
 msgid "Unable to set a mouse wheel binding without modifiers<br>on a window: conflict with existing edje signal bindings.<br>FIXME!!!"
 msgstr "No es poden carregar la dreçera de roda de ratolí sense modificacors<br> a la finestra;El conflicte existeix en la senyal de drecera de vora.<br>FIXA'M!!!"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:250
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:250
 msgid "Mouse Binding Error"
 msgstr "Error Drecera de Ratolí "
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:286
-#: src/modules/conf_keybindings/e_mod_main.c:25
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:286
+#: src/modules/conf_bindings/e_mod_main.c:25
 msgid "Mouse Bindings"
 msgstr "Drecera del Ratolí "
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:326
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:326
 msgid "Action Context"
 msgstr "Acció de Context"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:328
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:328
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:348
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:352
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:356
@@ -6124,54 +6124,54 @@ msgstr "Acció de Context"
 msgid "Any"
 msgstr "Qualsevol"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:340
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:340
 msgid "Win List"
 msgstr "Llistat de Finestres"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:344
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:344
 #: src/modules/pager/e_mod_config.c:141
 #: src/modules/pager/e_mod_config.c:261
 msgid "Popup"
 msgstr "Programa Adicional"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:348
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:348
 msgid "Zone"
 msgstr "Zona"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:352
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:352
 msgid "Container"
 msgstr "Contenidor"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:356
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:356
 msgid "Manager"
 msgstr "Managador"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:745
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:745
 msgid "Mouse Buttons"
 msgstr "Butons de Mouse"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:805
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:805
 msgid "Mouse Wheels"
 msgstr "Roda Ratolí"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1178
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1196
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1178
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1196
 #: src/modules/pager/e_mod_config.c:374
 #: src/modules/pager/e_mod_config.c:400
 #, c-format
 msgid "Left button"
 msgstr "Botó Esquerra"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1180
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1194
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1180
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1194
 #: src/modules/pager/e_mod_config.c:379
 #: src/modules/pager/e_mod_config.c:395
 #, c-format
 msgid "Right button"
 msgstr "Botó Dret"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1183
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1199
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1183
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1199
 #: src/modules/pager/e_mod_config.c:384
 #: src/modules/pager/e_mod_config.c:405
 #: src/modules/pager/e_mod_config.c:410
@@ -6179,67 +6179,67 @@ msgstr "Botó Dret"
 msgid "Button %i"
 msgstr "Botó %i"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1189
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1189
 #: src/modules/pager/e_mod_config.c:389
 #, c-format
 msgid "Middle button"
 msgstr "Botó Mig"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1211
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1211
 #, c-format
 msgid "Extra button (%d)"
 msgstr "Extra Botó %i"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1227
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1227
 msgid "Mouse Wheel Up"
 msgstr "Roda Ratolí Amunt"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1229
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1229
 msgid "Mouse Wheel Down"
 msgstr "Roda Ratolí Avall"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1233
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1233
 #, c-format
 msgid "Extra Wheel (%d) Up"
 msgstr "Roda Extra (%d) Amunt"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1235
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1235
 #, c-format
 msgid "Extra Wheel (%d) Down"
 msgstr "Roda Extra (%d) Avall"
 
-#: src/modules/conf_keybindings/e_mod_main.c:40
+#: src/modules/conf_bindings/e_mod_main.c:40
 msgid "key bindings"
 msgstr "Drecera tecla"
 
-#: src/modules/conf_keybindings/e_mod_main.c:40
+#: src/modules/conf_bindings/e_mod_main.c:40
 msgid "Key binding settings"
 msgstr "Preferències Drecera Tecla"
 
-#: src/modules/conf_keybindings/e_mod_main.c:40
+#: src/modules/conf_bindings/e_mod_main.c:40
 #: src/modules/fileman/e_mod_main.c:430
 #: src/modules/tiling/e_mod_tiling.c:3919
 #: src/modules/xkbswitch/e_mod_main.c:83
 msgid "key"
 msgstr "Tecla"
 
-#: src/modules/conf_keybindings/e_mod_main.c:43
+#: src/modules/conf_bindings/e_mod_main.c:43
 msgid "mouse bindings"
 msgstr "Drecera de Ratolí "
 
-#: src/modules/conf_keybindings/e_mod_main.c:43
+#: src/modules/conf_bindings/e_mod_main.c:43
 msgid "Mouse binding settings"
 msgstr "Preferències drecera de Ratolí "
 
-#: src/modules/conf_keybindings/e_mod_main.c:46
+#: src/modules/conf_bindings/e_mod_main.c:46
 msgid "ACPI bindings"
 msgstr "Drecera ACPI"
 
-#: src/modules/conf_keybindings/e_mod_main.c:46
+#: src/modules/conf_bindings/e_mod_main.c:46
 msgid "ACPI binding settings"
 msgstr "Preferències Drecera ACPI"
 
-#: src/modules/conf_keybindings/e_mod_main.c:46
+#: src/modules/conf_bindings/e_mod_main.c:46
 msgid "acpi"
 msgstr "acpi"
 

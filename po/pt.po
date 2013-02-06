@@ -23,7 +23,7 @@ msgstr "Sobre o Enlightenment"
 #: src/bin/e_about.c:20 src/bin/e_actions.c:2987 src/bin/e_config_dialog.c:288
 #: src/bin/e_fm.c:1060 src/bin/e_int_border_menu.c:194
 #: src/bin/e_int_border_prop.c:81 src/bin/e_theme_about.c:24
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:877
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:877
 #: src/modules/everything/evry_plug_windows.c:452
 #: src/modules/fileman/e_fwin.c:2529 src/modules/mixer/app_mixer.c:550
 msgid "Close"
@@ -131,7 +131,7 @@ msgid "Are you sure you want to suspend your computer?"
 msgstr "Tem a certeza que quer suspender o computador?"
 
 #: src/bin/e_actions.c:2467 src/bin/e_actions.c:3418
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:379
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:379
 msgid "Hibernate"
 msgstr "Hibernar"
 
@@ -158,7 +158,7 @@ msgstr "Redimensionar"
 
 #: src/bin/e_actions.c:2969 src/bin/e_actions.c:3330 src/bin/e_actions.c:3332
 #: src/bin/e_actions.c:3334 src/bin/e_actions.c:3336 src/bin/e_actions.c:3338
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:336
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:336
 msgid "Menu"
 msgstr "Menu"
 
@@ -794,7 +794,7 @@ msgstr "Selecionar"
 #: src/bin/e_desktop_editor.c:925 src/bin/e_entry_dialog.c:64 src/bin/e_fm.c:9968
 #: src/bin/e_fm_prop.c:625 src/bin/e_import_dialog.c:193
 #: src/bin/e_import_config_dialog.c:536
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:637
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:637
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
 #: src/modules/conf_theme/e_int_config_theme_import.c:123
 #: src/modules/fileman/e_int_config_mime_edit.c:316
@@ -862,7 +862,7 @@ msgstr ""
 #: src/bin/e_int_border_remember.c:507 src/bin/e_module.c:568
 #: src/bin/e_module.c:975 src/bin/e_sys.c:619 src/bin/e_sys.c:660
 #: src/bin/e_utils.c:695
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:636
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:636
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
 #: src/modules/conf_theme/e_int_config_theme_import.c:119
 #: src/modules/cpufreq/e_mod_main.c:436 src/modules/cpufreq/e_mod_main.c:465
@@ -974,7 +974,7 @@ msgstr ""
 "eliminado para evitar a danificação dos dados.<br>"
 
 #: src/bin/e_config_dialog.c:226 src/modules/battery/e_mod_main.c:810
-#: src/modules/conf_edgebindings/e_mod_main.c:19
+#: src/modules/conf_bindings/e_mod_main.c:19
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
 #: src/modules/syscon/e_mod_main.c:36
@@ -986,7 +986,7 @@ msgid "Basic"
 msgstr "Básico"
 
 #: src/bin/e_config_dialog.c:280
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:876
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:876
 msgid "Apply"
 msgstr "Aplicar"
 
@@ -1194,11 +1194,11 @@ msgstr "Escolha o executável"
 #: src/bin/e_shelf.c:1797 src/bin/e_shelf.c:2482
 #: src/modules/conf_dialogs/e_int_config_profiles.c:135
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:266
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:812
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:201
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:247
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:294
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:266
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:812
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:201
+#: src/modules/conf_bindings/e_int_config_keybindings.c:247
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:294
 #: src/modules/conf_paths/e_int_config_env.c:317
 #: src/modules/conf_shelves/e_int_config_shelf.c:137
 #: src/modules/conf_shelves/e_int_config_shelf.c:392
@@ -1896,7 +1896,7 @@ msgid "Module %s needs to support %s"
 msgstr "O módulo %s tem que suportar %s."
 
 #: src/bin/e_grab_dialog.c:3
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:4
+#: src/modules/conf_bindings/e_int_config_keybindings.c:4
 msgid ""
 "Please press key sequence,<br><br>or <hilight>Escape</hilight> to abort."
 msgstr ""
@@ -1904,7 +1904,7 @@ msgstr ""
 "abortar."
 
 #: src/bin/e_grab_dialog.c:5
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:7
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:7
 msgid ""
 "Please hold any modifier you want<br>and press any button on your mouse,<br> "
 "or roll a wheel, to assign mouse binding.<br>Press <hilight>Escape</"
@@ -2125,7 +2125,7 @@ msgid "Remember these Locks"
 msgstr "Memorizar estes bloqueios"
 
 #: src/bin/e_int_border_menu.c:127
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:332
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:332
 msgid "Window"
 msgstr "Janela"
 
@@ -2343,7 +2343,7 @@ msgstr "Estático"
 
 #: src/bin/e_int_border_prop.c:298 src/modules/clock/e_mod_config.c:103
 #: src/modules/clock/e_mod_config.c:141
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:360
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:360
 #: src/modules/conf_performance/e_int_config_powermanagement.c:196
 #: src/modules/conf_theme/e_int_config_fonts.c:689
 #: src/modules/conf_theme/e_int_config_transitions.c:199
@@ -2706,11 +2706,11 @@ msgstr "Gadgets carregados"
 #: src/modules/conf_applications/e_int_config_apps.c:287
 #: src/modules/conf_applications/e_int_config_apps_personal.c:93
 #: src/modules/conf_dialogs/e_int_config_profiles.c:133
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:263
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:809
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:197
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:244
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:292
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:263
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:809
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:197
+#: src/modules/conf_bindings/e_int_config_keybindings.c:244
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:292
 #: src/modules/conf_paths/e_int_config_env.c:311
 #: src/modules/conf_shelves/e_int_config_shelf.c:135
 #: src/modules/ibar/e_mod_config.c:110
@@ -2897,7 +2897,7 @@ msgid "Hide duration"
 msgstr "Intervalo para mostrar"
 
 #: src/bin/e_int_shelf_config.c:244
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:888
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:888
 #, c-format
 msgid "%.2f seconds"
 msgstr "%.2f segundos"
@@ -4024,10 +4024,10 @@ msgstr[1] "%li minutos atrás"
 #: src/bin/e_widget_filepreview.c:539 src/bin/e_widget_filepreview.c:540
 #: src/bin/e_widget_filepreview.c:571 src/bin/e_widget_filepreview.c:582
 #: src/modules/conf_dialogs/e_int_config_profiles.c:298
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1218
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:587
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:395
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1170
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1218
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:587
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:395
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1170
 #: src/modules/wizard/page_020.c:24
 msgid "Unknown"
 msgstr "Desconhecido"
@@ -4388,7 +4388,7 @@ msgid "Hardware"
 msgstr "Equipamento"
 
 #: src/modules/battery/e_mod_main.c:146 src/modules/battery/e_mod_main.c:455
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:354
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:354
 msgid "Battery"
 msgstr "Bateria"
 
@@ -5396,17 +5396,17 @@ msgstr "Bloqueio de ecrã"
 msgid "Desk"
 msgstr "Área de trabalho"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:4
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:11
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:3
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:462
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:3
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:7
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:3
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:4
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:11
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:3
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:462
+#: src/modules/conf_bindings/e_int_config_keybindings.c:3
+#: src/modules/conf_bindings/e_int_config_keybindings.c:7
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:3
 msgid "<None>"
 msgstr "<Nenhuma>"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:5
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:5
 msgid ""
 "Please select an edge,<br>or click <hilight>Close</hilight> to abort."
 "<br><br>You can either specify a delay of this<br> action using the slider, "
@@ -5416,81 +5416,81 @@ msgstr ""
 "<br><br>Pode também especificar<br>um atrasopara esta ação utilizando<br>o "
 "cursor ou fazê-lo responder aos cliques nas margens:"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:105
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:105
 msgid "Edge Bindings Settings"
 msgstr "Definições da associação das margens"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:258
-#: src/modules/conf_edgebindings/e_mod_main.c:21
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:258
+#: src/modules/conf_bindings/e_mod_main.c:21
 msgid "Edge Bindings"
 msgstr "Associação das margens"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:270
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:251
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:298
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:270
+#: src/modules/conf_bindings/e_int_config_keybindings.c:251
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:298
 #: src/modules/conf_paths/e_int_config_env.c:314
 msgid "Modify"
 msgstr "Modificar"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:274
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:816
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:255
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:302
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:274
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:816
+#: src/modules/conf_bindings/e_int_config_keybindings.c:255
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:302
 msgid "Delete All"
 msgstr "Eliminar tudo"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:278
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:820
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:259
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:306
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:278
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:820
+#: src/modules/conf_bindings/e_int_config_keybindings.c:259
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:306
 msgid "Restore Default Bindings"
 msgstr "Restaurar associações padrão"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:283
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:825
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:209
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:264
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:312
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:283
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:825
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:209
+#: src/modules/conf_bindings/e_int_config_keybindings.c:264
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:312
 msgid "Action"
 msgstr "Ação"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:290
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:290
 msgid "Mouse Button"
 msgstr "Botão do rato"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:296
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:832
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:216
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:271
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:319
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:296
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:832
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:216
+#: src/modules/conf_bindings/e_int_config_keybindings.c:271
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:319
 msgid "Action Params"
 msgstr "Parâmetros da ação"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:306
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:306
 msgid "General Options"
 msgstr "Opções gerais"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:307
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:307
 msgid "Allow binding activation with fullscreen windows"
 msgstr "Permitir ativação de associações nas janelas em ecrã completo"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:309
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:309
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
 msgstr "Permitir ativação de associações em vários ecrãs (PERIGOSO)"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:874
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:874
 msgid "Edge Binding Sequence"
 msgstr "Combinação de associação das margens"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:893
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:893
 msgid "Clickable edge"
 msgstr "Margem clicável"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1214
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1214
 msgid "Edge Binding Error"
 msgstr "Erro na associação da margem"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1215
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1215
 #, c-format
 msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
@@ -5499,82 +5499,82 @@ msgstr ""
 "A associação da margem escolhida já está a ser<br>utilizada pela "
 "ação<br><hilight>%s</hilight>.<br>Por favor escolha outra margem."
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1350
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1305
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1337
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1350
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1305
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1337
 msgid "CTRL"
 msgstr "CTRL"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1355
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1310
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1342
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1355
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1310
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1342
 msgid "ALT"
 msgstr "ALT"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1361
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1316
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1348
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1361
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1316
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1348
 msgid "SHIFT"
 msgstr "SHIFT"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1367
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1322
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1354
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1367
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1322
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1354
 msgid "WIN"
 msgstr "WIN"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1377
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1377
 msgid "Left Edge"
 msgstr "Margem esquerda"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1381
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1381
 msgid "Top Edge"
 msgstr "Margem superior"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1385
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1385
 msgid "Right Edge"
 msgstr "Margem direita"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1389
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1389
 msgid "Bottom Edge"
 msgstr "Margem inferior"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1393
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 msgid "Top Left Edge"
 msgstr "Margem superior esquerda"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1397
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1397
 msgid "Top Right Edge"
 msgstr "Margem superior direita"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1401
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1401
 msgid "Bottom Right Edge"
 msgstr "Margem inferior direita"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1405
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1405
 msgid "Bottom Left Edge"
 msgstr "Margem inferior esquerda"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1419
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1419
 #, c-format
 msgid "(left clickable)"
 msgstr "(clicável à esquerda)"
 
-#: src/modules/conf_edgebindings/e_int_config_edgebindings.c:1421
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1421
 #, c-format
 msgid "(clickable)"
 msgstr "(clicável)"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:574
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:584
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:574
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:584
 msgid "Signal Binding Error"
 msgstr "Erro na associação de sinais"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:574
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:574
 msgid "Signal and Source must NOT be blank!"
 msgstr "O sinal e a fonte não podem estar vazios!"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:585
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:585
 #, c-format
 msgid ""
 "The signal and source that you entered are already used by<br><hilight>%s</"
@@ -5583,58 +5583,58 @@ msgstr ""
 "O sinal e a fonte que introduziu já estão a ser utilizados pela "
 "ação<br><hilight>%s</hilight>.<br>"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:634
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:634
 msgid "Add Signal Binding"
 msgstr "Adicionar associação de sinal"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:645
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:645
 msgid "Source:"
 msgstr "Fonte:"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:650
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:650
 msgid "Signal:"
 msgstr "Sinal:"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:804
-#: src/modules/conf_edgebindings/e_mod_main.c:25
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:804
+#: src/modules/conf_bindings/e_mod_main.c:25
 msgid "Signal Bindings"
 msgstr "Associação dos sinais"
 
-#: src/modules/conf_edgebindings/e_int_config_signalbindings.c:865
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:865
 msgid "Signal Bindings Settings"
 msgstr "Definições da associação de sinais"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:17
+#: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/conf_interaction/e_mod_main.c:17
-#: src/modules/conf_keybindings/e_mod_main.c:17
+#: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/mixer/app_mixer.c:308 src/modules/mixer/app_mixer.c:326
 #: src/modules/xkbswitch/e_mod_main.c:71
 msgid "Input"
 msgstr "Entrada"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:36
 msgid "edge bindings"
 msgstr "associações de margens"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:36
 msgid "Screen edge binding settings"
 msgstr "Definições da associação de margens"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
-#: src/modules/conf_edgebindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:39
 #: src/modules/conf_intl/e_mod_main.c:45
-#: src/modules/conf_keybindings/e_mod_main.c:40
-#: src/modules/conf_keybindings/e_mod_main.c:43
-#: src/modules/conf_keybindings/e_mod_main.c:46
+#: src/modules/conf_bindings/e_mod_main.c:40
+#: src/modules/conf_bindings/e_mod_main.c:43
+#: src/modules/conf_bindings/e_mod_main.c:46
 #: src/modules/xkbswitch/e_mod_main.c:83
 msgid "input"
 msgstr "entrada"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:36
 msgid "edge"
 msgstr "margem"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:36
 #: src/modules/conf_randr/e_mod_main.c:37
 #: src/modules/notification/e_mod_main.c:245
 #: src/modules/notification/e_mod_main.c:249
@@ -5642,28 +5642,28 @@ msgstr "margem"
 msgid "screen"
 msgstr "ecrã"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:36
-#: src/modules/conf_edgebindings/e_mod_main.c:39
-#: src/modules/conf_keybindings/e_mod_main.c:40
-#: src/modules/conf_keybindings/e_mod_main.c:43
-#: src/modules/conf_keybindings/e_mod_main.c:46
+#: src/modules/conf_bindings/e_mod_main.c:36
+#: src/modules/conf_bindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:40
+#: src/modules/conf_bindings/e_mod_main.c:43
+#: src/modules/conf_bindings/e_mod_main.c:46
 msgid "binding"
 msgstr "associação"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:39
 msgid "signal bindings"
 msgstr "associações de sinais"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:39
 msgid "Edje signal binding settings"
 msgstr "Definições da associação de sinais Edje"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:39
 msgid "edje"
 msgstr "edje"
 
-#: src/modules/conf_edgebindings/e_mod_main.c:39
-#: src/modules/conf_keybindings/e_mod_main.c:43
+#: src/modules/conf_bindings/e_mod_main.c:39
+#: src/modules/conf_bindings/e_mod_main.c:43
 msgid "mouse"
 msgstr "rato"
 
@@ -5906,105 +5906,105 @@ msgstr "método de introdução"
 msgid "Input method settings"
 msgstr "Definições do método de introdução"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:71
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:190
-#: src/modules/conf_keybindings/e_mod_main.c:29
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:71
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:190
+#: src/modules/conf_bindings/e_mod_main.c:29
 msgid "ACPI Bindings"
 msgstr "Associação ACPI"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:349
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:349
 msgid "AC Adapter Unplugged"
 msgstr "Adaptador AC desligado"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:350
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:350
 msgid "AC Adapter Plugged"
 msgstr "Adaptador AC ligado"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:351
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:351
 msgid "Ac Adapter"
 msgstr "Adaptador AC"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:356
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:356
 msgid "Button"
 msgstr "Botão"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:358
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:358
 msgid "Fan"
 msgstr "Ventoinha"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:361
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:361
 msgid "Lid Unknown"
 msgstr "Estado desconhecido (tampo)"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:362
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:362
 msgid "Lid Closed"
 msgstr "Fechar tampo"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:363
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:363
 msgid "Lid Opened"
 msgstr "Abrir tampo"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:364
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:364
 msgid "Lid"
 msgstr "Tampo"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:367
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:367
 msgid "Power Button"
 msgstr "Botão de energia"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:369
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:369
 msgid "Processor"
 msgstr "Processador"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:371
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:371
 msgid "Sleep Button"
 msgstr "Botão de suspensão"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:373
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:373
 msgid "Thermal"
 msgstr "Térmico"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:375
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:375
 msgid "Video"
 msgstr "Vídeo"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:377
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:377
 msgid "Wifi"
 msgstr "Wifi"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:381
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:381
 msgid "Zoom Out"
 msgstr "Reduzir"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:383
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:383
 msgid "Zoom In"
 msgstr "Ampliar"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:385
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:385
 msgid "Brightness Down"
 msgstr "Diminuir brilho"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:387
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:387
 msgid "Brightness Up"
 msgstr "Aumentar brilho"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:389
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:389
 msgid "Assist"
 msgstr "Assistente"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:391
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:391
 msgid "S1"
 msgstr "S1"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:393
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:393
 msgid "Vaio"
 msgstr "Vaio"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:497
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:497
 msgid "ACPI Binding"
 msgstr "Associação ACPI"
 
-#: src/modules/conf_keybindings/e_int_config_acpibindings.c:500
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:500
 msgid ""
 "Please trigger the ACPI event you wish to bind to, <br><br>or "
 "<hilight>Escape</hilight> to abort."
@@ -6012,24 +6012,24 @@ msgstr ""
 "Por favor escolha o evento ACPI que pretende associar<br><br>ou "
 "<hilight>Escape</hilight> para cancelar."
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:8
+#: src/modules/conf_bindings/e_int_config_keybindings.c:8
 msgid "Single key"
 msgstr "Uma tecla"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:106
+#: src/modules/conf_bindings/e_int_config_keybindings.c:106
 msgid "Key Bindings Settings"
 msgstr "Definições da associação do teclado"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:239
-#: src/modules/conf_keybindings/e_mod_main.c:21
+#: src/modules/conf_bindings/e_int_config_keybindings.c:239
+#: src/modules/conf_bindings/e_mod_main.c:21
 msgid "Key Bindings"
 msgstr "Associação do teclado"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1165
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1165
 msgid "Binding Key Error"
 msgstr "Erro na associação do teclado"
 
-#: src/modules/conf_keybindings/e_int_config_keybindings.c:1166
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1166
 #, c-format
 msgid ""
 "The binding key sequence, that you choose, is already used by <br><hilight>"
@@ -6038,11 +6038,11 @@ msgstr ""
 "A combinação da associação do teclado escolhida já está a ser utilizada pela "
 "ação<br><hilight>%s</hilight>.<br>Por favor escolha outra combinação."
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:109
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:109
 msgid "Mouse Bindings Settings"
 msgstr "Definições da associação do rato"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:247
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:247
 msgid ""
 "Unable to set a mouse wheel binding without modifiers<br>on a window: "
 "conflict with existing edje signal bindings.<br>FIXME!!!"
@@ -6050,20 +6050,20 @@ msgstr ""
 "Não foi possível definir a associação da rota do rato de<br>uma janela sem "
 "modificadores pois existe um conflito com<br>uma associação edje. Corrija!"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:250
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:250
 msgid "Mouse Binding Error"
 msgstr "Erro na associação do rato"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:286
-#: src/modules/conf_keybindings/e_mod_main.c:25
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:286
+#: src/modules/conf_bindings/e_mod_main.c:25
 msgid "Mouse Bindings"
 msgstr "Associação do rato"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:326
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:326
 msgid "Action Context"
 msgstr "Contexto da ação"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:328
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:328
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:348
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:352
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:356
@@ -6071,117 +6071,117 @@ msgstr "Contexto da ação"
 msgid "Any"
 msgstr "Qualquer"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:340
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:340
 msgid "Win List"
 msgstr "Lista de janelas"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:344
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:344
 #: src/modules/pager/e_mod_config.c:141 src/modules/pager/e_mod_config.c:261
 msgid "Popup"
 msgstr "Alerta"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:348
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:348
 msgid "Zone"
 msgstr "Zona"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:352
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:352
 msgid "Container"
 msgstr "Contentor"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:356
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:356
 msgid "Manager"
 msgstr "Gestor"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:745
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:745
 msgid "Mouse Buttons"
 msgstr "Botões do rato"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:805
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:805
 msgid "Mouse Wheels"
 msgstr "Rodas do rato"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1178
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1196
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1178
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1196
 #: src/modules/pager/e_mod_config.c:374 src/modules/pager/e_mod_config.c:400
 #, c-format
 msgid "Left button"
 msgstr "Botão esquerdo"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1180
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1194
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1180
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1194
 #: src/modules/pager/e_mod_config.c:379 src/modules/pager/e_mod_config.c:395
 #, c-format
 msgid "Right button"
 msgstr "Botão direito"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1183
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1199
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1183
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1199
 #: src/modules/pager/e_mod_config.c:384 src/modules/pager/e_mod_config.c:405
 #: src/modules/pager/e_mod_config.c:410
 #, c-format
 msgid "Button %i"
 msgstr "Botão %i"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1189
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1189
 #: src/modules/pager/e_mod_config.c:389
 #, c-format
 msgid "Middle button"
 msgstr "Roda"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1211
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1211
 #, c-format
 msgid "Extra button (%d)"
 msgstr "Botão extra (%d)"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1227
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1227
 msgid "Mouse Wheel Up"
 msgstr "Roda do rato para baixo"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1229
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1229
 msgid "Mouse Wheel Down"
 msgstr "Roda do rato para baixo"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1233
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1233
 #, c-format
 msgid "Extra Wheel (%d) Up"
 msgstr "Roda extra (%d) para cima"
 
-#: src/modules/conf_keybindings/e_int_config_mousebindings.c:1235
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1235
 #, c-format
 msgid "Extra Wheel (%d) Down"
 msgstr "Roda extra (%d) para baixo"
 
-#: src/modules/conf_keybindings/e_mod_main.c:40
+#: src/modules/conf_bindings/e_mod_main.c:40
 msgid "key bindings"
 msgstr "associações de teclado"
 
-#: src/modules/conf_keybindings/e_mod_main.c:40
+#: src/modules/conf_bindings/e_mod_main.c:40
 msgid "Key binding settings"
 msgstr "Definições da associação de teclado"
 
-#: src/modules/conf_keybindings/e_mod_main.c:40
+#: src/modules/conf_bindings/e_mod_main.c:40
 #: src/modules/fileman/e_mod_main.c:430 src/modules/tiling/e_mod_tiling.c:3919
 #: src/modules/xkbswitch/e_mod_main.c:83
 msgid "key"
 msgstr "tecla"
 
-#: src/modules/conf_keybindings/e_mod_main.c:43
+#: src/modules/conf_bindings/e_mod_main.c:43
 msgid "mouse bindings"
 msgstr "associação do rato"
 
-#: src/modules/conf_keybindings/e_mod_main.c:43
+#: src/modules/conf_bindings/e_mod_main.c:43
 msgid "Mouse binding settings"
 msgstr "Definições da associação do rato"
 
-#: src/modules/conf_keybindings/e_mod_main.c:46
+#: src/modules/conf_bindings/e_mod_main.c:46
 msgid "ACPI bindings"
 msgstr "associações ACPI"
 
-#: src/modules/conf_keybindings/e_mod_main.c:46
+#: src/modules/conf_bindings/e_mod_main.c:46
 msgid "ACPI binding settings"
 msgstr "Definições de associação ACPI"
 
-#: src/modules/conf_keybindings/e_mod_main.c:46
+#: src/modules/conf_bindings/e_mod_main.c:46
 msgid "acpi"
 msgstr "acpi"
 

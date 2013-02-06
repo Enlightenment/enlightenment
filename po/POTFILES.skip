@@ -18,7 +18,7 @@ src/modules/conf_icon_theme/module.desktop.in
 src/modules/conf_imc/module.desktop.in
 src/modules/conf_interaction/module.desktop.in
 src/modules/conf_intl/module.desktop.in
-src/modules/conf_keybindings/module.desktop.in
+src/modules/conf_bindings/module.desktop.in
 src/modules/conf_menus/module.desktop.in
 src/modules/conf_mime/module.desktop.in
 src/modules/conf_mouse/module.desktop.in
