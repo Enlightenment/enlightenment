@@ -1164,7 +1164,6 @@ e_config_load(void)
         /* e_bindings config domain didn't exist before this version, so we have to do this
          * check before we load or else we wipe configs :(
          */
-        e_bindings = E_NEW(E_Config_Bindings, 1);
 #undef SET
 #define SET(X) e_bindings->X = e_config->X, e_config->X = NULL
 
@@ -1172,6 +1171,7 @@ e_config_load(void)
         if (e_config->mouse_bindings || e_config->key_bindings || e_config->edge_bindings ||
             e_config->signal_bindings || e_config->wheel_bindings || e_config->acpi_bindings)
           {
+             e_bindings = E_NEW(E_Config_Bindings, 1);
              SET(mouse_bindings);
              SET(key_bindings);
              SET(edge_bindings);
