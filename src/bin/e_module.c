@@ -23,6 +23,7 @@ static Eina_Hash *_e_modules_hash = NULL;
 static Ecore_Idle_Enterer *_e_module_idler = NULL;
 static Eina_List *_e_modules_delayed = NULL;
 static Eina_Bool _e_modules_initting = EINA_FALSE;
+static Eina_Bool _e_modules_init_end = EINA_FALSE;
 
 static Eina_List *_e_module_path_monitors = NULL;
 static Eina_List *_e_module_path_lists = NULL;
@@ -71,6 +72,11 @@ _module_done_cb(void *d EINA_UNUSED, Eio_File *ls)
    _e_module_path_lists = eina_list_remove(_e_module_path_lists, ls);
    if (_e_module_path_lists) return;
    if (_e_modules_initting) e_module_all_load();
+   else if (!_e_modules_init_end)
+     {
+        ecore_event_add(E_EVENT_MODULE_INIT_END, NULL, NULL, NULL);
+        _e_modules_init_end = EINA_TRUE;
+     }
 }
 
 static void
@@ -243,6 +249,7 @@ e_module_all_load(void)
    if (!_e_modules_delayed)
      {
         ecore_event_add(E_EVENT_MODULE_INIT_END, NULL, NULL, NULL);
+        _e_modules_init_end = EINA_TRUE;
         _e_modules_initting = EINA_FALSE;
         _e_module_whitelist_check();
      }
@@ -253,7 +260,7 @@ e_module_all_load(void)
 EAPI Eina_Bool
 e_module_loading_get(void)
 {
-   return _e_modules_initting;
+   return !_e_modules_init_end;
 }
 
 EAPI E_Module *
@@ -768,7 +775,7 @@ _e_module_cb_idler(void *data __UNUSED__)
      }
 
    ecore_event_add(E_EVENT_MODULE_INIT_END, NULL, NULL, NULL);
-
+   _e_modules_init_end = EINA_TRUE;
    _e_modules_initting = EINA_FALSE;
    _e_module_whitelist_check();
 
