@@ -1169,14 +1169,20 @@ e_config_load(void)
 #define SET(X) e_bindings->X = e_config->X, e_config->X = NULL
 
         CONFIG_VERSION_UPDATE_INFO(6);
-        SET(mouse_bindings);
-        SET(key_bindings);
-        SET(edge_bindings);
-        SET(signal_bindings);
-        SET(wheel_bindings);
-        SET(acpi_bindings);
+        if (e_config->mouse_bindings || e_config->key_bindings || e_config->edge_bindings ||
+            e_config->signal_bindings || e_config->wheel_bindings || e_config->acpi_bindings)
+          {
+             SET(mouse_bindings);
+             SET(key_bindings);
+             SET(edge_bindings);
+             SET(signal_bindings);
+             SET(wheel_bindings);
+             SET(acpi_bindings);
+             e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
 #undef SET
-        e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
+          }
+        else
+          e_bindings = e_config_domain_load("e_bindings", _e_config_binding_edd);
      }
    else
      e_bindings = e_config_domain_load("e_bindings", _e_config_binding_edd);
