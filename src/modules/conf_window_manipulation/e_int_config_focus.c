@@ -249,7 +249,7 @@ static Evas_Object *
 _advanced_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    /* generate the core widget layout for an advanced dialog */
-   Evas_Object *otb, *ol, *ob, *of;
+   Evas_Object *otb, *ol, *ob, *obp, *of;
    Evas_Object *autoraise_check;
    E_Radio_Group *rg;
 
@@ -339,17 +339,23 @@ _advanced_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Da
     * make sense to have one but not the other.
     */
 
+   obp = ob = e_widget_check_add(evas, _("Prevent all forms of pointer warping"), 
+                           &(cfdata->disable_all_pointer_warps));
+   e_widget_framelist_object_append(of, ob);
    ob = e_widget_check_add(evas, _("Slide pointer to a new window which is focused"), 
                            &(cfdata->pointer_slide));
    e_widget_framelist_object_append(of, ob);
+   e_widget_disabled_set(ob, cfdata->disable_all_pointer_warps);
+   e_widget_check_widget_disable_on_checked_add(obp, ob);
 
-   ob = e_widget_check_add(evas, _("Prevent all forms of pointer warping"), 
-                           &(cfdata->disable_all_pointer_warps));
-   e_widget_framelist_object_append(of, ob);
    ob = e_widget_label_add(evas, _("Warp speed"));
+   e_widget_check_widget_disable_on_checked_add(obp, ob);
+   e_widget_disabled_set(ob, cfdata->disable_all_pointer_warps);
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_slider_add(evas, 1, 0, _("%1.2f"), 0.0, 1.0, 0.01, 0,
                             &(cfdata->pointer_warp_speed), NULL, 100);
+   e_widget_disabled_set(ob, cfdata->disable_all_pointer_warps);
+   e_widget_check_widget_disable_on_checked_add(obp, ob);
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Pointer"), ol, 
