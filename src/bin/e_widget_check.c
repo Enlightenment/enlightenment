@@ -6,16 +6,37 @@ struct _E_Widget_Data
    Evas_Object *o_check;
    Evas_Object *o_icon;
    int         *valptr;
+   Eina_List *widgets_enable;
+   Eina_List *widgets_disable;
 };
 
 /* local subsystem functions */
 
 static void
+_extern_obj_enable_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Widget_Data *wd = data;
+   wd->widgets_enable = eina_list_remove(wd->widgets_enable, obj);
+}
+
+static void
+_extern_obj_disable_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Widget_Data *wd = data;
+   wd->widgets_disable = eina_list_remove(wd->widgets_disable, obj);
+}
+
+static void
 _e_wid_del_hook(Evas_Object *obj)
 {
    E_Widget_Data *wd;
+   Evas_Object *o;
 
    wd = e_widget_data_get(obj);
+   EINA_LIST_FREE(wd->widgets_enable, o)
+     evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL, _extern_obj_enable_del, wd);
+   EINA_LIST_FREE(wd->widgets_disable, o)
+     evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL, _extern_obj_disable_del, wd);
    free(wd);
 }
 
@@ -47,6 +68,9 @@ _e_wid_do(Evas_Object *obj)
    wd = e_widget_data_get(obj);
    if (wd->valptr)
      {
+        Eina_List *l;
+        Evas_Object *o;
+
         if (*(wd->valptr) == 0)
           {
              *(wd->valptr) = 1;
@@ -57,6 +81,10 @@ _e_wid_do(Evas_Object *obj)
              *(wd->valptr) = 0;
              edje_object_signal_emit(wd->o_check, "e,state,unchecked", "e");
           }
+        EINA_LIST_FOREACH(wd->widgets_enable, l, o)
+          e_widget_disabled_set(o, *wd->valptr);
+        EINA_LIST_FOREACH(wd->widgets_disable, l, o)
+          e_widget_disabled_set(o, !(*wd->valptr));
      }
    evas_object_smart_callback_call(obj, "changed", NULL);
    e_widget_change(obj);
@@ -91,7 +119,6 @@ _e_wid_focus_steal(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 {
    e_widget_focus_steal(data);
 }
-
 
 /* externally accessible functions */
 
@@ -203,6 +230,43 @@ e_widget_check_checked_get(Evas_Object *check)
 
    return ret;
 }
+
+/**
+ * Add widget to disable when check object is checked
+ * @param check the check box widget
+ * @param obj the object to disable when @p check is checked
+ */
+EAPI void
+e_widget_check_widget_disable_on_checked_add(Evas_Object *check, Evas_Object *obj)
+{
+   E_Widget_Data *wd;
+
+   EINA_SAFETY_ON_NULL_RETURN(check);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   wd = e_widget_data_get(check);
+   EINA_SAFETY_ON_NULL_RETURN(wd);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _extern_obj_enable_del, wd);
+   wd->widgets_enable = eina_list_append(wd->widgets_enable, obj);
+}
+
+/**
+ * Add widget to disable when check object is unchecked
+ * @param check the check box widget
+ * @param obj the object to disable when @p check is not unchecked
+ */
+EAPI void
+e_widget_check_widget_disable_on_unchecked_add(Evas_Object *check, Evas_Object *obj)
+{
+   E_Widget_Data *wd;
+
+   EINA_SAFETY_ON_NULL_RETURN(check);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   wd = e_widget_data_get(check);
+   EINA_SAFETY_ON_NULL_RETURN(wd);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _extern_obj_disable_del, wd);
+   wd->widgets_disable = eina_list_append(wd->widgets_disable, obj);
+}
+
 
 /**
  * Creates a check box widget with icon
