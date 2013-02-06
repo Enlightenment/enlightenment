@@ -292,7 +292,8 @@ e_winlist_hide(void)
      }
    if (bd)
      {
-        e_border_pointer_warp_to_center_now(bd);
+        if (!e_border_pointer_warp_to_center_now(bd))
+          e_border_focus_set(bd, 1, 0);
         e_object_unref(E_OBJECT(bd));
      }
 
@@ -440,7 +441,8 @@ e_winlist_left(E_Zone *zone)
             (e_config->winlist_warp_at_end) ||
             (e_config->winlist_warp_while_selecting)))
           {
-            e_border_pointer_warp_to_center(_bd_next);
+            if (!e_border_pointer_warp_to_center(_bd_next))
+              e_border_focus_set(_bd_next, 1, 1);
             if (!_animator)
               _animator = ecore_animator_add(_e_winlist_animator, NULL);
           }
@@ -543,7 +545,8 @@ e_winlist_down(E_Zone *zone)
             (e_config->winlist_warp_at_end) ||
             (e_config->winlist_warp_while_selecting)))
           {
-            e_border_pointer_warp_to_center(_bd_next);
+            if (!e_border_pointer_warp_to_center(_bd_next))
+              e_border_focus_set(_bd_next, 1, 1);
             if (!_animator)
               _animator = ecore_animator_add(_e_winlist_animator, NULL);
           }
@@ -646,7 +649,8 @@ e_winlist_up(E_Zone *zone)
             (e_config->winlist_warp_at_end) ||
             (e_config->winlist_warp_while_selecting)))
           {
-            e_border_pointer_warp_to_center(_bd_next);
+            if (!e_border_pointer_warp_to_center(_bd_next))
+              e_border_focus_set(_bd_next, 1, 1);
             if (!_animator)
               _animator = ecore_animator_add(_e_winlist_animator, NULL);
           }
@@ -749,7 +753,8 @@ e_winlist_right(E_Zone *zone)
             (e_config->winlist_warp_at_end) ||
             (e_config->winlist_warp_while_selecting)))
           {
-            e_border_pointer_warp_to_center(_bd_next);
+            if (!e_border_pointer_warp_to_center(_bd_next))
+              e_border_focus_set(_bd_next, 1, 1);
             if (!_animator)
               _animator = ecore_animator_add(_e_winlist_animator, NULL);
           }
@@ -997,7 +1002,8 @@ _e_winlist_activate(void)
             (e_config->winlist_warp_at_end) ||
             (e_config->winlist_warp_while_selecting)))
           {
-            e_border_pointer_warp_to_center(ww->border);
+            if (!e_border_pointer_warp_to_center(ww->border))
+              e_border_focus_set(ww->border, 1, 1);
             if (!_animator)
               _animator = ecore_animator_add(_e_winlist_animator, NULL);
           }
