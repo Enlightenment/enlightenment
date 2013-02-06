@@ -1859,6 +1859,10 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, filemanager_copy, _("Filemanager always performs `cp+rm` instead of `mv`"), _("files"));
    OPT_ADD(BOOL, filemanager_secure_rm, _("Filemanager deletes files securely"), _("files"));
 
+   OPT_ADD(BOOL, xkb.only_label, _("Only show label on keyboard gadgets instead of flags"), _("key"), _("gadget"));
+   /* FIXME: need to repop xkb gadgets? */
+   OPT_ADD(BOOL, xkb.dont_touch_my_damn_keyboard, _("Do not apply any keyboard layout settings"), _("key"), _("settings"));
+
    OPT_ADD(DOUBLE, border_keyboard.timeout, _("Window change timeout when moving or resizing using keyboard"), _("border"), _("placement"), _("delay"), _("key")); //slider
    OPT_MINMAX_STEP_FMT(1, 10, 1, "%1.0f seconds");
    OPT_ADD(DOUBLE_UCHAR, border_keyboard.move.dx, _("Window horizontal movement speed when using keyboard"), _("border"), _("placement"), _("move"), _("key")); //slider
