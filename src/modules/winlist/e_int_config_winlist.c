@@ -5,8 +5,6 @@ static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdat
 static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
-static void         _iconified_changed(void *data, Evas_Object *obj);
-static void         _scroll_animate_changed(void *data, Evas_Object *obj);
 static void         _width_limits_changed(void *data, Evas_Object *obj __UNUSED__);
 static void         _height_limits_changed(void *data, Evas_Object *obj __UNUSED__);
 
@@ -32,8 +30,6 @@ struct _E_Config_Dialog_Data
 
    struct
    {
-      Eina_List   *disable_iconified;
-      Eina_List   *disable_scroll_animate;
       Evas_Object *min_w, *min_h;
    } gui;
 };
@@ -107,8 +103,6 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 static void
 _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   eina_list_free(cfdata->gui.disable_iconified);
-   eina_list_free(cfdata->gui.disable_scroll_animate);
    free(cfdata);
 }
 
@@ -190,20 +184,16 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    ob = e_widget_check_add(evas, _("Windows from other screens"),
                            &(cfdata->windows_other_screens));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_check_add(evas, _("Iconified"), &(cfdata->iconified));
-   iconified = ob;
-   e_widget_on_change_hook_set(ob, _iconified_changed, cfdata);
+   iconified = ob = e_widget_check_add(evas, _("Iconified"), &(cfdata->iconified));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_check_add(evas, _("Iconified from other desks"),
                            &(cfdata->iconified_other_desks));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   cfdata->gui.disable_iconified =
-     eina_list_append(cfdata->gui.disable_iconified, ob);
+   e_widget_check_widget_disable_on_unchecked_add(iconified, ob);
    ob = e_widget_check_add(evas, _("Iconified from other screens"),
                            &(cfdata->iconified_other_screens));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   cfdata->gui.disable_iconified =
-     eina_list_append(cfdata->gui.disable_iconified, ob);
+   e_widget_check_widget_disable_on_unchecked_add(iconified, ob);
    e_widget_toolbook_page_append(otb, NULL, _("Display"), ol,
                                  0, 0, 1, 0, 0.5, 0.0);
 
@@ -232,19 +222,15 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                                  0, 0, 1, 0, 0.5, 0.0);
 
    ol = e_widget_list_add(evas, 0, 0);
-   ob = e_widget_check_add(evas, _("Scroll Animation"),
+   scroll_animate = ob = e_widget_check_add(evas, _("Scroll Animation"),
                            &(cfdata->scroll_animate));
-   e_widget_on_change_hook_set(ob, _scroll_animate_changed, cfdata);
-   scroll_animate = ob;
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_label_add(evas, _("Scroll speed"));
-   cfdata->gui.disable_scroll_animate =
-     eina_list_append(cfdata->gui.disable_scroll_animate, ob);
+   e_widget_check_widget_disable_on_unchecked_add(scroll_animate, ob);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_slider_add(evas, 1, 0, _("%1.2f"), 0.0, 1.0, 0.01, 0,
                             &(cfdata->scroll_speed), NULL, 100);
-   cfdata->gui.disable_scroll_animate =
-     eina_list_append(cfdata->gui.disable_scroll_animate, ob);
+   e_widget_check_widget_disable_on_unchecked_add(scroll_animate, ob);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    e_widget_toolbook_page_append(otb, NULL, _("Animations"), ol,
                                  0, 0, 1, 0, 0.5, 0.0);
@@ -293,9 +279,6 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_toolbook_page_append(otb, NULL, _("Alignment"), ol,
                                  0, 0, 1, 0, 0.5, 0.0);
 
-   _iconified_changed(cfdata, iconified);
-   _scroll_animate_changed(cfdata, scroll_animate);
-
    e_widget_toolbook_page_show(otb, 0);
 
    return otb;
@@ -331,30 +314,6 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 
    return o;
  */
-}
-
-static void
-_iconified_changed(void *data, Evas_Object *obj)
-{
-   E_Config_Dialog_Data *cfdata = data;
-   const Eina_List *l;
-   Evas_Object *o;
-   Eina_Bool disabled = !e_widget_check_checked_get(obj);
-
-   EINA_LIST_FOREACH(cfdata->gui.disable_iconified, l, o)
-     e_widget_disabled_set(o, disabled);
-}
-
-static void
-_scroll_animate_changed(void *data, Evas_Object *obj)
-{
-   E_Config_Dialog_Data *cfdata = data;
-   const Eina_List *l;
-   Evas_Object *o;
-   Eina_Bool disabled = !e_widget_check_checked_get(obj);
-
-   EINA_LIST_FOREACH(cfdata->gui.disable_scroll_animate, l, o)
-     e_widget_disabled_set(o, disabled);
 }
 
 static void
