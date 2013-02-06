@@ -1,12 +1,5 @@
 #include "e.h"
 
-static void *_create_data(E_Config_Dialog *cfd);
-static void _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static int  _advanced_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static int  _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
-static Evas_Object  *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas,
-					      E_Config_Dialog_Data *cfdata);
-
 struct _E_Config_Dialog_Data
 {
    E_Config_Dialog *cfd;
@@ -20,30 +13,6 @@ struct _E_Config_Dialog_Data
    double backlight_timeout;
    double backlight_transition;
 };
-
-E_Config_Dialog *
-e_int_config_dpms(E_Container *con, const char *params __UNUSED__)
-{
-   E_Config_Dialog *cfd;
-   E_Config_Dialog_View *v;
-
-   if (e_config_dialog_find("E", "screen/power_management"))
-     return NULL;
-
-   v = E_NEW(E_Config_Dialog_View, 1);
-
-   v->create_cfdata = _create_data;
-   v->free_cfdata = _free_data;
-   v->basic.apply_cfdata = _advanced_apply_data;
-   v->basic.create_widgets = _advanced_create_widgets;
-   v->basic.check_changed = _advanced_check_changed;
-   v->override_auto_apply = 1;
-
-   cfd = e_config_dialog_new(con, _("Backlight Settings"), "E",
-			     "screen/power_management", "preferences-system-power-management",
-			     0, v, NULL);
-   return cfd;
-}
 
 static void
 _fill_data(E_Config_Dialog_Data *cfdata)
@@ -99,9 +68,9 @@ _apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    return 1;
 }
 
-/* advanced window */
+/* basic window */
 static int
-_advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    return (e_config->backlight.normal * 100.0 != cfdata->backlight_normal) ||
           (e_config->backlight.dim * 100.0 != cfdata->backlight_dim) ||
@@ -110,15 +79,8 @@ _advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *c
           (e_config->backlight.idle_dim != cfdata->enable_idle_dim);
 }
 
-static int
-_advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
-{
-   _apply_data(cfd, cfdata);
-   return 1;
-}
-
 static Evas_Object *
-_advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *otb, *o, *ob, *oc;
    Eina_List *devs, *l;
@@ -201,4 +163,28 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
    e_widget_toolbook_page_show(otb, 0);
 
    return otb;
+}
+
+E_Config_Dialog *
+e_int_config_dpms(E_Container *con, const char *params __UNUSED__)
+{
+   E_Config_Dialog *cfd;
+   E_Config_Dialog_View *v;
+
+   if (e_config_dialog_find("E", "screen/power_management"))
+     return NULL;
+
+   v = E_NEW(E_Config_Dialog_View, 1);
+
+   v->create_cfdata = _create_data;
+   v->free_cfdata = _free_data;
+   v->basic.apply_cfdata = _apply_data;
+   v->basic.create_widgets = _basic_create_widgets;
+   v->basic.check_changed = _basic_check_changed;
+   v->override_auto_apply = 1;
+
+   cfd = e_config_dialog_new(con, _("Backlight Settings"), "E",
+			     "screen/power_management", "preferences-system-power-management",
+			     0, v, NULL);
+   return cfd;
 }
