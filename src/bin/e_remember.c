@@ -308,14 +308,10 @@ e_remember_default_match_set(E_Remember *rem, E_Border *bd)
    const char *title, *clasz, *name, *role;
    int match;
 
-   if (rem->name) eina_stringshare_del(rem->name);
-   if (rem->class) eina_stringshare_del(rem->class);
-   if (rem->title) eina_stringshare_del(rem->title);
-   if (rem->role) eina_stringshare_del(rem->role);
-   rem->name = NULL;
-   rem->class = NULL;
-   rem->title = NULL;
-   rem->role = NULL;
+   eina_stringshare_replace(&rem->name, NULL);
+   eina_stringshare_replace(&rem->class, NULL);
+   eina_stringshare_replace(&rem->title, NULL);
+   eina_stringshare_replace(&rem->role, NULL);
 
    name = bd->client.icccm.name;
    if (!name || name[0] == 0) name = NULL;
@@ -333,18 +329,18 @@ e_remember_default_match_set(E_Remember *rem, E_Border *bd)
    if (name && clasz)
      {
         match |= E_REMEMBER_MATCH_NAME | E_REMEMBER_MATCH_CLASS;
-        rem->name = eina_stringshare_add(name);
-        rem->class = eina_stringshare_add(clasz);
+        rem->name = eina_stringshare_ref(name);
+        rem->class = eina_stringshare_ref(clasz);
      }
    else if ((title = e_border_name_get(bd)) && title[0])
      {
         match |= E_REMEMBER_MATCH_TITLE;
-        rem->title = eina_stringshare_add(title);
+        rem->title = eina_stringshare_ref(title);
      }
    if (role)
      {
         match |= E_REMEMBER_MATCH_ROLE;
-        rem->role = eina_stringshare_add(role);
+        rem->role = eina_stringshare_ref(role);
      }
    if (bd->client.netwm.type != ECORE_X_WINDOW_TYPE_UNKNOWN)
      {
@@ -844,9 +840,8 @@ _e_remember_cb_hook_pre_post_fetch(void *data __UNUSED__, void *border)
      {
         if (rem->prop.border)
           {
-             if (bd->bordername) eina_stringshare_del(bd->bordername);
-             if (rem->prop.border) bd->bordername = eina_stringshare_add(rem->prop.border);
-             else bd->bordername = NULL;
+             eina_stringshare_replace(&bd->bordername, NULL);
+             bd->bordername = eina_stringshare_ref(rem->prop.border);
              bd->client.border.changed = 1;
           }
      }
