@@ -4,26 +4,63 @@ typedef struct _E_Comp_Win  E_Comp_Win;
 typedef struct _E_Comp_Zone E_Comp_Zone;
 typedef struct E_Event_Comp E_Event_Comp;
 
+typedef enum
+{
+   E_COMP_CANVAS_LAYER_BOTTOM = -100,
+   E_COMP_CANVAS_LAYER_BG = -1, // zone bg stuff
+   E_COMP_CANVAS_LAYER_DESKTOP = 0, // desktop objects: fileman, gadgets, shelves
+   E_COMP_CANVAS_LAYER_LAYOUT = 100, // should be nothing else on this layer
+   E_COMP_CANVAS_LAYER_ABOVE = 999,
+   E_COMP_CANVAS_LAYER_MAX = 32767 // EVAS_LAYER_MAX
+} E_Comp_Canvas_Layer;
+
+typedef enum _E_Layer
+{
+   E_LAYER_DESKTOP = 0,
+   E_LAYER_BELOW = 50,
+   E_LAYER_NORMAL = 100,
+   E_LAYER_ABOVE = 150,
+   E_LAYER_EDGE = 200,
+   E_LAYER_FULLSCREEN = 250,
+   E_LAYER_EDGE_FULLSCREEN = 300,
+   E_LAYER_POPUP = 300,
+   E_LAYER_TOP = 350,
+   E_LAYER_DRAG = 400,
+   E_LAYER_PRIO = 450
+} E_Layer;
+
+typedef enum
+{
+   E_COMP_CANVAS_STACK_UNDER = -1,
+   E_COMP_CANVAS_STACK_NONE = 0,
+   E_COMP_CANVAS_STACK_ABOVE = 1
+} E_Comp_Canvas_Stack;
+
 #else
 #ifndef E_MOD_COMP_H
 #define E_MOD_COMP_H
 
 # include "e_comp_cfdata.h"
-# include "e_comp_update.h"
+# include "e_comp_render_update.h"
 
 
 struct _E_Comp
 {
    Ecore_X_Window  win; // input overlay
    Ecore_Evas     *ee;
+   Ecore_X_Window  ee_win;
    Evas           *evas;
    Evas_Object    *layout;
    Eina_List      *zones;
    E_Manager      *man;
+
+   Eina_List *debug_rects;
+
    Eina_Inlist    *wins;
    Eina_List      *wins_list;
    Eina_List      *updates;
    Ecore_Animator *render_animator;
+   Ecore_Job      *shape_job;
    Ecore_Job      *update_job;
    Ecore_Timer    *new_up_timer;
    Evas_Object    *fps_bg;
@@ -31,7 +68,6 @@ struct _E_Comp
    Ecore_Job      *screen_job;
    Ecore_Timer    *nocomp_delay_timer;
    Ecore_Timer    *nocomp_override_timer;
-   Ecore_X_Window  ee_win;
    int             animating;
    int             render_overflow;
    double          frametimes[122];
@@ -51,6 +87,7 @@ struct _E_Comp
 
 struct _E_Comp_Zone
 {
+   E_Comp      *comp;
    E_Zone      *zone;    // never deref - just use for handle cmp's
    Evas_Object *base;
    Evas_Object *over;
@@ -67,14 +104,12 @@ struct _E_Comp_Win
 
    E_Comp              *c;  // parent compositor
    Ecore_X_Window       win;  // raw window - for menus etc.
+   E_Container_Shape *shape;
    E_Border            *bd;  // if its a border - later
    E_Popup             *pop;  // if its a popup - later
    E_Menu              *menu;  // if it is a menu - later
    int                  x, y, w, h;  // geometry
-   struct
-   {
-      int x, y, w, h; // hidden geometry (used when its unmapped and re-instated on map)
-   } hidden;
+   Eina_Rectangle     hidden; // hidden geometry (used when its unmapped and re-instated on map)
    int                  pw, ph;  // pixmap w/h
    int                  border;  // border width
    Ecore_X_Pixmap       pixmap;  // the compositing pixmap
@@ -86,7 +121,7 @@ struct _E_Comp_Win
    Evas_Object         *shobj;  // shadow object
    Eina_List           *obj_mirror;  // extra mirror objects
    Ecore_X_Image       *xim;  // x image - software fallback
-   E_Update            *up;  // update handler
+   E_Comp_Render_Update            *up;  // update handler
    E_Object_Delfn      *dfn;  // delete function handle for objects being tracked
    Ecore_X_Sync_Counter counter;  // sync counter for syncronised drawing
    Ecore_Timer         *update_timeout;  // max time between damage and "done" event
@@ -140,6 +175,7 @@ struct _E_Comp_Win
    Eina_Bool            show_anim : 1; // ran show animation
 
    Eina_Bool            bg_win : 1; // window is the bg win for a container
+   Eina_Bool            free_shape : 1; // container shape needs to be freed
 };
 
 struct E_Event_Comp
@@ -167,7 +203,8 @@ EAPI int e_comp_internal_save(void);
 EAPI E_Comp_Config *e_comp_config_get(void);
 EAPI void e_comp_shadows_reset(void);
 
-EAPI void e_comp_update(E_Comp *c);
+EAPI void e_comp_render_update(E_Comp *c);
+EAPI void e_comp_zone_update(E_Comp_Zone *cz);
 
 EAPI E_Comp_Win *e_comp_win_find_border_win(Ecore_X_Window win);
 EAPI E_Comp_Win *e_comp_win_find(Ecore_X_Window win);
@@ -178,6 +215,21 @@ EAPI void e_comp_win_hidden_set(E_Comp_Win *cw, Eina_Bool hidden);
 
 EAPI E_Comp *e_comp_get(void *o);
 
+EAPI Ecore_X_Window e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y, Ecore_X_Window *ignore, unsigned int ignore_num);
+
+#define E_LAYER_SET(obj, layer) e_comp_canvas_layer_set(obj, layer, E_COMP_CANVAS_STACK_NONE)
+#define E_LAYER_SET_UNDER(obj, layer) e_comp_canvas_layer_set(obj, layer, E_COMP_CANVAS_STACK_UNDER)
+#define E_LAYER_SET_ABOVE(obj, layer) e_comp_canvas_layer_set(obj, layer, E_COMP_CANVAS_STACK_ABOVE)
+
+static inline void
+e_comp_canvas_layer_set(Evas_Object *obj, E_Comp_Canvas_Layer layer, E_Comp_Canvas_Stack stack)
+{
+   evas_object_layer_set(obj, layer);
+   if (stack == E_COMP_CANVAS_STACK_ABOVE)
+     evas_object_raise(obj);
+   else if (stack == E_COMP_CANVAS_STACK_UNDER)
+     evas_object_lower(obj);
+}
 
 static inline Eina_Bool
 e_comp_evas_exists(void *o)

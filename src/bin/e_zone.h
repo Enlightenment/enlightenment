@@ -39,6 +39,7 @@ struct _E_Zone
     * this zone belongs to. */
    unsigned int num;
    E_Container *container;
+   E_Comp_Zone *comp_zone;
    int          fullscreen;
 
    Evas_Object *bg_object;

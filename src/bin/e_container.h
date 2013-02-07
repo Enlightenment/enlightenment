@@ -11,26 +11,13 @@ typedef enum _E_Container_Shape_Change
    E_CONTAINER_SHAPE_RECTS
 } E_Container_Shape_Change;
 
-typedef enum _E_Layer
-{
-   E_LAYER_DESKTOP = 0,
-   E_LAYER_BELOW = 50,
-   E_LAYER_NORMAL = 100,
-   E_LAYER_ABOVE = 150,
-   E_LAYER_EDGE = 200,
-   E_LAYER_FULLSCREEN = 250,
-   E_LAYER_EDGE_FULLSCREEN = 300,
-   E_LAYER_POPUP = 300,
-   E_LAYER_TOP = 350,
-   E_LAYER_DRAG = 400,
-   E_LAYER_PRIO = 450
-} E_Layer;
-
 typedef struct _E_Container                E_Container;
 typedef struct _E_Border_List              E_Border_List;
 typedef struct _E_Container_Shape          E_Container_Shape;
 typedef struct _E_Container_Shape_Callback E_Container_Shape_Callback;
 typedef struct _E_Event_Container_Resize   E_Event_Container_Resize;
+
+typedef void (*E_Container_Shape_Cb)(void *data, E_Container_Shape *es, E_Container_Shape_Change ch);
 
 #else
 #ifndef E_CONTAINER_H
@@ -64,7 +51,7 @@ struct _E_Container
    unsigned int clients;
    struct {
       Ecore_X_Window win;
-      Eina_List *clients;
+      Eina_List *clients; /* E_Border */
    } layers[12];
 
    Ecore_X_Window       scratch_win;
@@ -82,6 +69,7 @@ struct _E_Container_Shape
    E_Object       e_obj_inherit;
 
    E_Container   *con;
+   E_Comp_Win    *comp_win;
    int            x, y, w, h;
    unsigned char  visible : 1;
    struct {
@@ -92,7 +80,7 @@ struct _E_Container_Shape
 
 struct _E_Container_Shape_Callback
 {
-   void (*func) (void *data, E_Container_Shape *es, E_Container_Shape_Change ch);
+   E_Container_Shape_Cb func;
    void *data;
 };
 
@@ -135,8 +123,8 @@ EAPI void               e_container_shape_resize(E_Container_Shape *es, int w, i
 EAPI Eina_List         *e_container_shape_list_get(E_Container *con);
 EAPI void               e_container_shape_geometry_get(E_Container_Shape *es, int *x, int *y, int *w, int *h);
 EAPI E_Container       *e_container_shape_container_get(E_Container_Shape *es);
-EAPI void               e_container_shape_change_callback_add(E_Container *con, void (*func) (void *data, E_Container_Shape *es, E_Container_Shape_Change ch), void *data);
-EAPI void               e_container_shape_change_callback_del(E_Container *con, void (*func) (void *data, E_Container_Shape *es, E_Container_Shape_Change ch), void *data);
+EAPI void               e_container_shape_change_callback_add(E_Container *con, E_Container_Shape_Cb func, void *data);
+EAPI void               e_container_shape_change_callback_del(E_Container *con, E_Container_Shape_Cb func, void *data);
 EAPI Eina_List         *e_container_shape_rects_get(E_Container_Shape *es);
 EAPI void               e_container_shape_rects_set(E_Container_Shape *es, Ecore_X_Rectangle *rects, int num);
 EAPI void               e_container_shape_solid_rect_set(E_Container_Shape *es, int x, int y, int w, int h);

@@ -843,6 +843,8 @@ e_fm2_init(void)
 EINTERN int
 e_fm2_shutdown(void)
 {
+   E_FREE_LIST(_e_fm2_list, evas_object_del);
+
    eina_stringshare_replace(&_e_fm2_icon_desktop_str, NULL);
    eina_stringshare_replace(&_e_fm2_icon_thumb_str, NULL);
    eina_stringshare_replace(&_e_fm2_mime_inode_directory, NULL);
@@ -7338,6 +7340,7 @@ _e_fm_drag_key_down_cb(E_Drag *drag, Ecore_Event_Key *e)
    if (!strncmp(e->keyname, "Alt", 3))
      {
         ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_ASK);
+        e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_ASK);
         edje_object_signal_emit(drag->object, "e,state,ask", "e");
      }
    else if (!strncmp(e->keyname, "Shift", 5))
@@ -7345,11 +7348,13 @@ _e_fm_drag_key_down_cb(E_Drag *drag, Ecore_Event_Key *e)
         if (e->modifiers == ECORE_EVENT_MODIFIER_CTRL)
           {
              ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_ASK);
+             e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_ASK);
              edje_object_signal_emit(drag->object, "e,state,ask", "e");
           }
         else
           {
              ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
+             e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
              edje_object_signal_emit(drag->object, "e,state,move", "e");
           }
      }
@@ -7358,11 +7363,13 @@ _e_fm_drag_key_down_cb(E_Drag *drag, Ecore_Event_Key *e)
         if (e->modifiers == ECORE_EVENT_MODIFIER_SHIFT)
           {
              ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_ASK);
+             e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_ASK);
              edje_object_signal_emit(drag->object, "e,state,ask", "e");
           }
         else
           {
              ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_COPY);
+             e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_COPY);
              edje_object_signal_emit(drag->object, "e,state,copy", "e");
           }
      }
@@ -7371,14 +7378,18 @@ _e_fm_drag_key_down_cb(E_Drag *drag, Ecore_Event_Key *e)
 static void
 _e_fm_drag_key_up_cb(E_Drag *drag, Ecore_Event_Key *e)
 {
+   Ecore_X_Atom act;
    /* Default action would be move. ;) */
 
    if (!strncmp(e->keyname, "Alt", 3))
-     ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
+     act = ECORE_X_ATOM_XDND_ACTION_MOVE;
    else if (!strncmp(e->keyname, "Shift", 5))
-     ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
+     act = ECORE_X_ATOM_XDND_ACTION_MOVE;
    else if (!strncmp(e->keyname, "Control", 7))
-     ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
+     act = ECORE_X_ATOM_XDND_ACTION_MOVE;
+
+   ecore_x_dnd_source_action_set(act);
+   e_drop_handler_action_set(act);
 
    edje_object_signal_emit(drag->object, "e,state,move", "e");
 }
@@ -7527,6 +7538,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 
              d = e_drag_new(con, x, y, drag_types, 1,
                             sel, sel_length, NULL, _e_fm2_cb_drag_finished);
+             e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
              o = edje_object_add(e_drag_evas_get(d));
              if (_e_fm2_view_mode_get(ic->sd) == E_FM2_VIEW_MODE_LIST)
                {

@@ -174,7 +174,7 @@ typedef struct _E_Rect         E_Rect;
 #ifndef MAX
 # define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #endif
-# define E_FN_DEL(_fn, _h) if (_h) { _fn((void*)_h); _h = NULL; }
+# define E_FN_DEL(_fn, _h) do { if (_h) { _fn((void*)_h); _h = NULL; } } while (0)
 # define E_INTERSECTS(x, y, w, h, xx, yy, ww, hh) \
   (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
 # define E_INSIDE(x, y, xx, yy, ww, hh) \

@@ -1692,7 +1692,7 @@ no_submenu_item:
 
         o = evas_object_rectangle_add(mi->menu->evas);
         evas_object_color_set(o, 0, 0, 0, 0);
-        evas_object_layer_set(o, 1);
+        //evas_object_layer_set(o, 1); FIXME: COMP
         evas_object_repeat_events_set(o, 1);
         evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN,
                                        _e_menu_cb_item_in, mi);

@@ -221,28 +221,20 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
      }
 
    if (transition == E_BG_TRANSITION_NONE)
-     {
-        if (zone->bg_object)
-          {
-             evas_object_del(zone->bg_object);
-             zone->bg_object = NULL;
-          }
-     }
+     E_FN_DEL(evas_object_del, zone->bg_object);
    else
      {
         char buf[4096];
 
         if (zone->bg_object)
           {
-             if (zone->prev_bg_object)
-               evas_object_del(zone->prev_bg_object);
+             E_FN_DEL(evas_object_del, zone->prev_bg_object);
              zone->prev_bg_object = zone->bg_object;
-             if (zone->transition_object)
-               evas_object_del(zone->transition_object);
-             zone->transition_object = NULL;
              zone->bg_object = NULL;
+             E_FN_DEL(evas_object_del, zone->transition_object);
           }
         o = edje_object_add(zone->container->bg_evas);
+        evas_object_repeat_events_set(o, 1);
         zone->transition_object = o;
         /* FIXME: segv if zone is deleted while up??? */
         evas_object_data_set(o, "e_zone", zone);
@@ -251,14 +243,13 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
         edje_object_signal_callback_add(o, "e,state,done", "*", _e_bg_signal, zone);
         evas_object_move(o, zone->x, zone->y);
         evas_object_resize(o, zone->w, zone->h);
-        evas_object_layer_set(o, -1);
+        E_LAYER_SET(o, E_COMP_CANVAS_LAYER_BG);
         evas_object_clip_set(o, zone->bg_clip_object);
         evas_object_show(o);
      }
    if (eina_str_has_extension(bgfile, ".edj"))
      {
         o = edje_object_add(zone->container->bg_evas);
-        evas_object_data_set(o, "e_zone", zone);
         edje_object_file_set(o, bgfile, "e/desktop/background");
         if (edje_object_data_get(o, "noanimation"))
           edje_object_animation_set(o, EINA_FALSE);
@@ -266,16 +257,17 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
    else
      {
         o = e_icon_add(zone->container->bg_evas);
-        evas_object_data_set(o, "e_zone", zone);
         e_icon_file_key_set(o, bgfile, NULL);
         e_icon_fill_inside_set(o, 0);
      }
+   evas_object_data_set(o, "e_zone", zone);
+   evas_object_repeat_events_set(o, 1);
    zone->bg_object = o;
    if (transition == E_BG_TRANSITION_NONE)
      {
         evas_object_move(o, zone->x, zone->y);
         evas_object_resize(o, zone->w, zone->h);
-        evas_object_layer_set(o, -1);
+        E_LAYER_SET(o, E_COMP_CANVAS_LAYER_BG);
      }
    evas_object_clip_set(o, zone->bg_clip_object);
    evas_object_show(o);
@@ -292,6 +284,10 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
                                  zone->bg_object);
         edje_object_signal_emit(zone->transition_object, "e,action,start", "e");
      }
+   if (zone->bg_object) evas_object_name_set(zone->bg_object, "zone->bg_object");
+   if (zone->prev_bg_object) evas_object_name_set(zone->prev_bg_object, "zone->prev_bg_object");
+   if (zone->transition_object) evas_object_name_set(zone->transition_object, "zone->transition_object");
+   if (zone->comp_zone) e_comp_zone_update(zone->comp_zone);
 end:
    eina_stringshare_del(bgfile);
 }
@@ -523,7 +519,7 @@ _e_bg_signal(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNU
      }
    evas_object_move(zone->bg_object, zone->x, zone->y);
    evas_object_resize(zone->bg_object, zone->w, zone->h);
-   evas_object_layer_set(zone->bg_object, -1);
+   E_LAYER_SET(zone->bg_object, E_COMP_CANVAS_LAYER_BG);
    evas_object_clip_set(zone->bg_object, zone->bg_clip_object);
    evas_object_show(zone->bg_object);
 }

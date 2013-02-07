@@ -1,4 +1,4 @@
-group { name: "e/modules/comp/preview";
+group { name: "e/comp/preview";
    parts {
       part { name: "e.swallow.preview"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
@@ -21,17 +21,17 @@ group { name: "e/modules/comp/preview";
    }
 }
 
-group { name: "e/modules/comp/screen/base/default";
+group { name: "e/comp/screen/base/default";
+   alias: "e/comp/screen/base/noeffects";
    parts {
-      part { name: "black"; type: RECT; mouse_events: 0;
+      part { name: "e.swallow.background"; type: SWALLOW; mouse_events: 0;
          description { state: "default" 0.0;
-            color: 0 0 0 255;
          }
       }
    }
 }
 
-group { name: "e/modules/comp/screen/overlay/default";
+group { name: "e/comp/screen/overlay/default";
    images.image: "screen_circular_shadow.png" COMP;
    parts {
       part { name: "clip"; type: RECT; mouse_events: 0;
@@ -174,8 +174,8 @@ group { name: "e/modules/comp/screen/overlay/default";
 }
 
 
-group { name: "e/modules/comp/screen/overlay/noeffects";
-   inherit: "e/modules/comp/screen/overlay/default";
+group { name: "e/comp/screen/overlay/noeffects";
+   inherit: "e/comp/screen/overlay/default";
    programs {
          program {
             name: "screensaver_on";

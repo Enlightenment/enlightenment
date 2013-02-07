@@ -24,7 +24,7 @@ e_busycover_new(E_Win *win)
    edje_object_part_text_set(cover->o_base, "e.text.title", _("LOADING"));
    evas_object_move(cover->o_base, win->x, win->y);
    evas_object_resize(cover->o_base, win->w, win->h);
-   evas_object_layer_set(cover->o_base, 999);
+   evas_object_layer_set(cover->o_base, 999);  //FIXME: COMP
    return cover;
 }
 

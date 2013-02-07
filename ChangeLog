@@ -7,6 +7,10 @@
         * keyboard mapping change now also disables for window class "vmware"
         * added option for remembering filemanager windows globally
         * added edit functionality to window remembers dialog
+        * added function for getting children of e_layout
+        * container now uses compositor window
+        * bindings now use new E_Binding_Event structs for mouse events
+        * added utility function for printing all objects above a given object
 
 2013-02-07 Carsten Haitzler
 
@@ -69,7 +73,6 @@
 2013-01-29 Mike Blumenkrantz
 
         * fixed bug where dragging files into sidebar would move them instead of creating links
-        * added function for getting children of e_layout
 
 2013-01-23 Chris Michael
 

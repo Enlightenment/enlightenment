@@ -165,7 +165,7 @@ _style_selector(Evas *evas, const char **source)
 
         ds_it->frame = edje_object_add(evas);
         e_theme_edje_object_set
-          (ds_it->frame, "base/theme/modules/comp", "e/modules/comp/preview");
+          (ds_it->frame, "base/theme/comp", "e/comp/preview");
         edje_object_part_swallow(ds_it->frame, "e.swallow.preview", ob);
         evas_object_show(ds_it->frame);
         style_shadows = eina_list_append(style_shadows, ds_it);

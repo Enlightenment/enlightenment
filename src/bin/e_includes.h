@@ -152,4 +152,4 @@
 #include "e_notification.h"
 #include "e_comp.h"
 #include "e_comp_cfdata.h"
-#include "e_comp_update.h"
+#include "e_comp_render_update.h"

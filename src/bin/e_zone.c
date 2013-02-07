@@ -222,6 +222,8 @@ e_zone_new(E_Container *con,
 
    o = evas_object_rectangle_add(con->bg_evas);
    zone->bg_clip_object = o;
+   evas_object_repeat_events_set(o, 1);
+   evas_object_name_set(o, "zone->bg_clip_object");
    evas_object_move(o, x, y);
    evas_object_resize(o, w, h);
    evas_object_color_set(o, 255, 255, 255, 255);
@@ -229,7 +231,9 @@ e_zone_new(E_Container *con,
 
    o = evas_object_rectangle_add(con->bg_evas);
    zone->bg_event_object = o;
+   evas_object_name_set(o, "zone->bg_event_object");
    evas_object_clip_set(o, zone->bg_clip_object);
+   evas_object_repeat_events_set(o, 1);
    evas_object_move(o, x, y);
    evas_object_resize(o, w, h);
    evas_object_color_set(o, 0, 0, 0, 0);
@@ -1461,7 +1465,7 @@ static void
 _e_zone_cb_bg_mouse_down(void *data,
                          Evas *evas       __UNUSED__,
                          Evas_Object *obj __UNUSED__,
-                         void *event_info __UNUSED__)
+                         void *event_info)
 {
    E_Zone *zone;
 
@@ -1470,22 +1474,16 @@ _e_zone_cb_bg_mouse_down(void *data,
 
    if (!zone->cur_mouse_action)
      {
-        if (ecore_event_current_type_get() == ECORE_EVENT_MOUSE_BUTTON_DOWN)
+        zone->cur_mouse_action =
+          e_bindings_mouse_down_evas_event_handle(E_BINDING_CONTEXT_ZONE,
+                                             E_OBJECT(zone), event_info);
+        if (zone->cur_mouse_action)
           {
-             Ecore_Event_Mouse_Button *ev2;
-
-             ev2 = ecore_event_current_event_get();
-             zone->cur_mouse_action =
-               e_bindings_mouse_down_event_handle(E_BINDING_CONTEXT_ZONE,
-                                                  E_OBJECT(zone), ev2);
+             if ((!zone->cur_mouse_action->func.end_mouse) &&
+                 (!zone->cur_mouse_action->func.end))
+               zone->cur_mouse_action = NULL;
              if (zone->cur_mouse_action)
-               {
-                  if ((!zone->cur_mouse_action->func.end_mouse) &&
-                      (!zone->cur_mouse_action->func.end))
-                    zone->cur_mouse_action = NULL;
-                  if (zone->cur_mouse_action)
-                    e_object_ref(E_OBJECT(zone->cur_mouse_action));
-               }
+               e_object_ref(E_OBJECT(zone->cur_mouse_action));
           }
      }
 }
@@ -1494,36 +1492,31 @@ static void
 _e_zone_cb_bg_mouse_up(void *data,
                        Evas *evas       __UNUSED__,
                        Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
+                       void *event_info)
 {
    E_Zone *zone;
 
    zone = data;
    if (zone->cur_mouse_action)
      {
-        if (ecore_event_current_type_get() == ECORE_EVENT_MOUSE_BUTTON_UP)
-          {
-             Ecore_Event_Mouse_Button *ev2;
+        E_Binding_Event_Mouse_Button event;
 
-             ev2 = ecore_event_current_event_get();
-             if (zone->cur_mouse_action->func.end_mouse)
-               zone->cur_mouse_action->func.end_mouse(E_OBJECT(zone), "", ev2);
-             else if (zone->cur_mouse_action->func.end)
-               zone->cur_mouse_action->func.end(E_OBJECT(zone), "");
-          }
+        e_bindings_evas_event_mouse_button_convert(event_info, &event);
+        if (zone->cur_mouse_action->func.end_mouse)
+          zone->cur_mouse_action->func.end_mouse(E_OBJECT(zone), "", &event);
+        else if (zone->cur_mouse_action->func.end)
+          zone->cur_mouse_action->func.end(E_OBJECT(zone), "");
+
         e_object_unref(E_OBJECT(zone->cur_mouse_action));
         zone->cur_mouse_action = NULL;
      }
    else
      {
-        if (ecore_event_current_type_get() == ECORE_EVENT_MOUSE_BUTTON_UP)
-          {
-             Ecore_Event_Mouse_Button *ev2;
+        E_Binding_Event_Mouse_Button event;
 
-             ev2 = ecore_event_current_event_get();
-             e_bindings_mouse_up_event_handle(E_BINDING_CONTEXT_ZONE,
-                                              E_OBJECT(zone), ev2);
-          }
+        e_bindings_ecore_event_mouse_button_convert(event_info, &event);
+        e_bindings_mouse_up_event_handle(E_BINDING_CONTEXT_ZONE,
+                                         E_OBJECT(zone), &event);
      }
 }
 

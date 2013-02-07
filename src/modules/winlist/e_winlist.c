@@ -1299,7 +1299,7 @@ _e_winlist_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event
 
    ev = event;
    if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
-   e_bindings_mouse_down_event_handle(E_BINDING_CONTEXT_WINLIST,
+   e_bindings_mouse_down_ecore_event_handle(E_BINDING_CONTEXT_WINLIST,
                                       E_OBJECT(_winlist->zone), ev);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1311,7 +1311,7 @@ _e_winlist_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 
    ev = event;
    if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
-   if (e_bindings_mouse_up_event_handle(E_BINDING_CONTEXT_WINLIST, E_OBJECT(_winlist->zone), ev))
+   if (e_bindings_mouse_up_ecore_event_handle(E_BINDING_CONTEXT_WINLIST, E_OBJECT(_winlist->zone), ev))
      return ECORE_CALLBACK_RENEW;
    if (_activate_type != E_WINLIST_ACTIVATE_TYPE_MOUSE) return ECORE_CALLBACK_RENEW;
    if (!--_hold_count) e_winlist_hide();
@@ -1326,7 +1326,7 @@ _e_winlist_cb_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *even
 
    ev = event;
    if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
-   e_bindings_wheel_event_handle(E_BINDING_CONTEXT_WINLIST,
+   e_bindings_wheel_ecore_event_handle(E_BINDING_CONTEXT_WINLIST,
                                  E_OBJECT(_winlist->zone), ev);
    if (ev->z < 0) /* up */
      {

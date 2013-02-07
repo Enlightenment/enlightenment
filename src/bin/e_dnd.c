@@ -306,6 +306,9 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
       ECORE_X_DND_ACTION_COPY, ECORE_X_DND_ACTION_ASK,
       ECORE_X_DND_ACTION_LINK
    };
+   const Eina_List *l;
+   E_Drop_Handler *h;
+
    if (_drag_win) return 0;
    _drag_win = ecore_x_window_input_new(drag->container->win,
                                         drag->container->x, drag->container->y,
@@ -322,6 +325,29 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
 
    drag->dx = x - drag->x;
    drag->dy = y - drag->y;
+
+   EINA_LIST_FOREACH(_drop_handlers, l, h)
+     {
+        unsigned int i, j;
+
+        h->active = 0;
+        eina_stringshare_del(h->active_type);
+        h->active_type = NULL;
+        for (i = 0; i < h->num_types; i++)
+          {
+             for (j = 0; j < drag->num_types; j++)
+               {
+                  if (h->types[i] == drag->types[j])
+                    {
+                       h->active = 1;
+                       h->active_type = eina_stringshare_ref(h->types[i]);
+                       break;
+                    }
+               }
+             if (h->active) break;
+          }
+        h->entered = 0;
+     }
 
    ecore_x_dnd_aware_set(_drag_win, 1);
    ecore_x_dnd_types_set(_drag_win, drag->types, drag->num_types);
@@ -573,6 +599,55 @@ e_drag_key_up_cb_set(E_Drag *drag, void (*func)(E_Drag *drag, Ecore_Event_Key *e
    drag->cb.key_up = func;
 }
 
+/* from ecore_x_selection.c */
+EAPI Eina_List *
+e_dnd_util_text_uri_list_convert(char *data, int size)
+{
+   char *tmp;
+   int i, is;
+   Eina_List *ret = NULL;
+
+   if (data && data[size - 1])
+     {
+        /* Isn't nul terminated */
+        size++;
+        data = realloc(data, size);
+        data[size - 1] = 0;
+     }
+
+   tmp = malloc(size);
+   is = i = 0;
+   while ((is < size) && (data[is]))
+     {
+        if ((i == 0) && (data[is] == '#'))
+          for (; ((data[is]) && (data[is] != '\n')); is++) ;
+        else
+          {
+             if ((data[is] != '\r') &&
+                 (data[is] != '\n'))
+               tmp[i++] = data[is++];
+             else
+               {
+                  while ((data[is] == '\r') || (data[is] == '\n'))
+                    is++;
+                  tmp[i] = 0;
+                  ret = eina_list_append(ret, strdup(tmp));
+                  tmp[0] = 0;
+                  i = 0;
+               }
+          }
+     }
+   if (i > 0)
+     {
+        tmp[i] = 0;
+        ret = eina_list_append(ret, strdup(tmp));
+     }
+
+   free(tmp);
+
+   return ret;
+}
+
 /* local subsystem functions */
 
 static void
@@ -786,19 +861,14 @@ _e_drag_update(Ecore_X_Window root, int x, int y, Ecore_X_Atom action)
    E_Event_Dnd_Move move_ev;
    E_Event_Dnd_Leave leave_ev;
    int dx, dy;
-   Ecore_X_Window win, ignore_win[2];
+   Ecore_X_Window win;
    int responsive = 0;
 
 //   double t1 = ecore_time_get(); ////
    if (_drag_current && !_xdnd)
      {
-        ignore_win[0] = _drag_current->evas_win;
-        ignore_win[1] = _drag_win;
-        /* FIXME: this is nasty. every x mouse event we go back to x and do
-         * a whole bunch of round-trips narrowing down the toplevel window
-         * which contains the mouse */
-        win = ecore_x_window_shadow_tree_at_xy_with_skip_get(root, x, y, ignore_win, 2);
-//	win = ecore_x_window_at_xy_with_skip_get(x, y, ignore_win, 2);
+        win = ecore_evas_window_get(_drag_current->ecore_evas);
+        win = e_comp_top_window_at_xy_get(e_comp_get(e_manager_find_by_root(root)), x, y, &win, 1);
      }
    else
      win = root;
@@ -916,15 +986,12 @@ _e_drag_end(Ecore_X_Window root, int x, int y)
    const Eina_List *l;
    E_Event_Dnd_Drop ev;
    int dx, dy;
-   Ecore_X_Window win, ignore_win[2];
+   Ecore_X_Window win;
    E_Drag *tmp;
 
    if (!_drag_current) return;
-   ignore_win[0] = _drag_current->evas_win;
-   ignore_win[1] = _drag_win;
-   /* this is nasty - but necessary to get the window stacking */
-   win = ecore_x_window_shadow_tree_at_xy_with_skip_get(root, x, y, ignore_win, 2);
-//   win = ecore_x_window_at_xy_with_skip_get(x, y, ignore_win, 2);
+   win = ecore_evas_window_get(_drag_current->ecore_evas);
+   win = e_comp_top_window_at_xy_get(e_comp_get(e_manager_find_by_root(root)), x, y, &win, 1);
    zone = e_container_zone_at_point_get(_drag_current->container, x, y);
    /* Pass -1, -1, so that it is possible to drop at the edge. */
    if (zone) e_zone_flip_coords_handle(zone, -1, -1);
@@ -932,12 +999,13 @@ _e_drag_end(Ecore_X_Window root, int x, int y)
    _e_drag_hide(_drag_current);
 
    e_grabinput_release(_drag_win, _drag_win);
-   if (_drag_current->type == E_DRAG_XDND)
+   while (_drag_current->type == E_DRAG_XDND)
      {
         int dropped;
 
         if (!(dropped = ecore_x_dnd_drop()))
           {
+             if (win == e_comp_get(NULL)->ee_win) break;
              ecore_x_window_free(_drag_win);
              _drag_win = 0;
           }
@@ -972,14 +1040,29 @@ _e_drag_end(Ecore_X_Window root, int x, int y)
              if ((_e_drag_win_matches(h, win, 0)) &&
                  ((h->cb.drop) && (E_INSIDE(ev.x, ev.y, h->x, h->y, h->w, h->h))))
                {
+                  Eina_Bool need_free = EINA_FALSE;
+
                   if (_drag_current->cb.convert)
                     {
                        ev.data = _drag_current->cb.convert(_drag_current,
                                                            h->active_type);
                     }
                   else
-                    ev.data = _drag_current->data;
+                    {
+                       unsigned int i;
+
+                       for (i = 0; i < _drag_current->num_types; i++)
+                         if (_drag_current->types[i] == _type_text_uri_list)
+                           {
+                              ev.data = e_dnd_util_text_uri_list_convert(_drag_current->data, _drag_current->data_size);
+                              need_free = EINA_TRUE;
+                              break;
+                           }
+                       if (!need_free)
+                         ev.data = _drag_current->data;
+                    }
                   h->cb.drop(h->cb.data, h->active_type, &ev);
+                  if (need_free) E_FREE_LIST(ev.data, free);
                   dropped = 1;
                }
              h->entered = 0;
@@ -1187,7 +1270,7 @@ _e_dnd_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 
    if (!_xdnd)
      _e_drag_update(_drag_win_root, ev->x, ev->y,
-                    ECORE_X_ATOM_XDND_ACTION_PRIVATE);
+                    _action ?: ECORE_X_ATOM_XDND_ACTION_PRIVATE);
 
    return ECORE_CALLBACK_PASS_ON;
 }

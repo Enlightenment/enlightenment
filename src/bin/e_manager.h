@@ -48,5 +48,17 @@ EAPI E_Manager      *e_manager_number_get(int num);
 
 EAPI void            e_managers_keys_grab(void);
 EAPI void            e_managers_keys_ungrab(void);
+
+static inline E_Manager *
+e_manager_find_by_root(Ecore_X_Window root)
+{
+   Eina_List *l;
+   E_Manager *man;
+
+   EINA_LIST_FOREACH(e_manager_list(), l, man)
+     if (root == man->root) return man;
+   return NULL;
+}
+
 #endif
 #endif

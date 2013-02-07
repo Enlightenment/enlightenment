@@ -298,6 +298,11 @@ gadman_gadget_place(E_Gadcon_Client *gcc, const E_Gadcon_Client_Class *cc, E_Con
 
    if (gcc->gadcon->id == ID_GADMAN_LAYER_TOP)
      edje_object_signal_emit(gcc->o_frame, "e,state,visibility,hide", "e");
+   else
+     {
+        E_LAYER_SET(gcc->o_base, E_COMP_CANVAS_LAYER_DESKTOP);
+        E_LAYER_SET(gcc->o_frame, E_COMP_CANVAS_LAYER_DESKTOP);
+     }
    if (cc->name)
      {
         l = eina_hash_find(_gadman_gadgets, cc->name);
@@ -839,6 +844,19 @@ _gadman_gadcon_new(const char *name, Gadman_Layer_Type layer, E_Zone *zone, E_Ga
    return gc;
 }
 
+static void
+_mover_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   unsigned int layer;
+
+   for (layer = 0; layer < GADMAN_LAYER_COUNT; layer++)
+     {
+        if (Man->movers[layer] != obj) continue;
+        Man->movers[layer] = NULL;
+        return;
+     }
+}
+
 static Evas_Object *
 _create_mover(E_Gadcon *gc)
 {
@@ -846,6 +864,11 @@ _create_mover(E_Gadcon *gc)
 
    /* create mover object */
    mover = edje_object_add(gc->evas);
+   if (gc->id == ID_GADMAN_LAYER_BG)
+     {
+        E_LAYER_SET_ABOVE(mover, E_COMP_CANVAS_LAYER_DESKTOP);
+        evas_object_event_callback_add(mover, EVAS_CALLBACK_DEL, _mover_del, NULL);
+     }
    e_theme_edje_object_set(mover, "base/theme/gadman", "e/gadman/control");
 
    edje_object_signal_callback_add(mover, "e,action,move,start", "",
@@ -992,7 +1015,7 @@ _attach_menu(void *data __UNUSED__, E_Gadcon_Client *gcc, E_Menu *menu)
    e_menu_item_callback_set(mi, on_menu_edit, gcc);
 
    /* plain / inset */
-   if (!gcc->cf->style)
+   if (gcc->cf && (!gcc->cf->style))
      gcc->cf->style = eina_stringshare_add(E_GADCON_CLIENT_STYLE_INSET);
 
    mn = e_menu_new();

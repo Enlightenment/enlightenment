@@ -256,8 +256,8 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, int popup, E
      {
         evas_object_move(es->o_event, es->zone->x + es->x, es->zone->y + es->y);
         evas_object_move(es->o_base, es->zone->x + es->x, es->zone->y + es->y);
-        evas_object_layer_set(es->o_event, layer);
-        evas_object_layer_set(es->o_base, layer);
+        E_LAYER_SET(es->o_event, layer);
+        E_LAYER_SET(es->o_base, layer);
      }
 
    es->gadcon =
@@ -576,8 +576,8 @@ e_shelf_layer_set(E_Shelf *es, E_Layer layer)
      e_popup_layer_set(es->popup, es->layer);
    else
      {
-        evas_object_layer_set(es->o_event, es->layer);
-        evas_object_layer_set(es->o_base, es->layer);
+        E_LAYER_SET(es->o_event, layer);
+        E_LAYER_SET(es->o_base, layer);
      }
 }
 
@@ -1009,8 +1009,8 @@ e_shelf_popup_set(E_Shelf *es, int popup)
 
         evas_object_move(es->o_event, es->zone->x + es->x, es->zone->y + es->y);
         evas_object_move(es->o_base, es->zone->x + es->x, es->zone->y + es->y);
-        evas_object_layer_set(es->o_event, es->cfg->layer);
-        evas_object_layer_set(es->o_base, es->cfg->layer);
+        E_LAYER_SET(es->o_event, es->cfg->layer);
+        E_LAYER_SET(es->o_base, es->cfg->layer);
 
         e_drop_xdnd_register_set(es->zone->container->bg_win, 1);
         e_gadcon_xdnd_window_set(es->gadcon, es->zone->container->bg_win);

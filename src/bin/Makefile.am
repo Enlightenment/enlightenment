@@ -58,7 +58,7 @@ e_color_dialog.h  \
 e_color.h \
 e_comp.h \
 e_comp_cfdata.h \
-e_comp_update.h \
+e_comp_render_update.h \
 e_config_data.h \
 e_config_dialog.h \
 e_config.h \
@@ -233,7 +233,7 @@ e_color_class.c \
 e_color_dialog.c \
 e_comp.c \
 e_comp_cfdata.c \
-e_comp_update.c \
+e_comp_render_update.c \
 e_config.c \
 e_config_data.c \
 e_config_dialog.c \

@@ -789,7 +789,7 @@ _e_mod_action_cb_key(E_Object *obj __UNUSED__, const char *params, Ecore_Event_K
 }
 
 static void
-_e_mod_action_cb_mouse(E_Object *obj __UNUSED__, const char *params, Ecore_Event_Mouse_Button *ev __UNUSED__)
+_e_mod_action_cb_mouse(E_Object *obj __UNUSED__, const char *params, E_Binding_Event_Mouse_Button *ev __UNUSED__)
 {
    _e_mod_action(params);
 }

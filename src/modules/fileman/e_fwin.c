@@ -201,13 +201,6 @@ static void             _e_fwin_zone_cb_mouse_down(void *data,
                                                    Evas *evas,
                                                    Evas_Object *obj,
                                                    void *event_info);
-static void             _e_fwin_zone_focus_out(void *data,
-                                                   Evas *evas,
-                                                   Evas_Object *obj,
-                                                   void *event_info);
-static void             _e_fwin_zone_focus_in(void *data,
-                                                   Evas *evas,
-                                                   void *event_info);
 static Eina_Bool        _e_fwin_zone_move_resize(void *data,
                                                  int type,
                                                  void *event);
@@ -388,6 +381,19 @@ _e_fwin_dnd_begin_cb(E_Fwin *fwin __UNUSED__, Evas_Object *obj __UNUSED__, void 
    drag_fwin = NULL;
 }
 
+static void
+_e_fwin_zone_shutdown(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Fwin *fwin = data;
+   const char *dev, *path;
+
+   fwin->path->desktop_mode = e_fm2_view_mode_get(obj);
+   e_fm2_path_get(obj, &dev, &path);
+   eina_stringshare_replace(&fwin->path->dev, dev);
+   eina_stringshare_replace(&fwin->path->path, path);
+   e_object_del(E_OBJECT(fwin));
+}
+
 void
 e_fwin_zone_new(E_Zone *zone, void *p)
 {
@@ -421,9 +427,8 @@ e_fwin_zone_new(E_Zone *zone, void *p)
    fwins = eina_list_append(fwins, fwin);
 
    o = e_fm2_add(zone->container->bg_evas);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_fwin_zone_shutdown, fwin);
    page->fm_obj = o;
-   evas_event_callback_add(zone->container->bg_evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, _e_fwin_zone_focus_in, fwin);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_FOCUS_OUT, _e_fwin_zone_focus_out, fwin);
    _e_fwin_config_set(page);
 
    e_fm2_custom_theme_content_set(o, "desktop");
@@ -452,7 +457,6 @@ e_fwin_zone_new(E_Zone *zone, void *p)
    evas_object_show(o);
 
    o = e_scrollframe_add(zone->container->bg_evas);
-   ecore_x_icccm_state_set(zone->container->bg_win, ECORE_X_WINDOW_STATE_HINT_NORMAL);
    e_drop_xdnd_register_set(zone->container->event_win, 1);
    e_scrollframe_custom_theme_set(o, "base/theme/fileman",
                                   "e/fileman/desktop/scrollframe");
@@ -480,6 +484,7 @@ e_fwin_zone_new(E_Zone *zone, void *p)
                                 _e_fwin_pan_child_size_get);
    evas_object_propagate_events_set(page->fm_obj, 0);
    e_widget_can_focus_set(o, 0);
+   E_LAYER_SET(o, E_COMP_CANVAS_LAYER_DESKTOP);
    page->scrollframe_obj = page->scr = o;
 
    e_zone_useful_geometry_get(zone, &x, &y, &w, &h);
@@ -512,17 +517,12 @@ e_fwin_zone_shutdown(E_Zone *zone)
 {
    Eina_List *f, *fn;
    E_Fwin *win;
-   const char *dev, *path;
+   
 
    EINA_LIST_FOREACH_SAFE(fwins, f, fn, win)
      {
         if (win->zone != zone) continue;
-        win->path->desktop_mode = e_fm2_view_mode_get(win->cur_page->fm_obj);
-        e_fm2_path_get(win->cur_page->fm_obj, &dev, &path);
-        eina_stringshare_replace(&win->path->dev, dev);
-        eina_stringshare_replace(&win->path->path, path);
-        evas_event_callback_del_full(zone->container->bg_evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, _e_fwin_zone_focus_in, win);
-        e_object_del(E_OBJECT(win));
+        _e_fwin_zone_shutdown(win, NULL, win->cur_page->fm_obj, NULL);
         win = NULL;
      }
 }
@@ -1924,27 +1924,6 @@ _e_fwin_zone_cb_mouse_down(void *data,
    if (!fwin) return;
    e_fwin_all_unsel(fwin);
    e_fm2_typebuf_clear(fwin->cur_page->fm_obj);
-}
-
-static void
-_e_fwin_zone_focus_out(void *data __UNUSED__,
-                       Evas *evas       __UNUSED__,
-                       Evas_Object *obj,
-                       void *event_info __UNUSED__)
-{
-   evas_object_focus_set(obj, EINA_TRUE);
-}
-
-static void
-_e_fwin_zone_focus_in(void *data,
-                       Evas *evas       __UNUSED__,
-                       void *event_info __UNUSED__)
-{
-   E_Fwin *fwin;
-
-   fwin = data;
-   if ((!fwin) || (!fwin->cur_page) || (!fwin->cur_page->fm_obj)) return;
-   evas_object_focus_set(fwin->cur_page->fm_obj, EINA_TRUE);
 }
 
 static Eina_Bool

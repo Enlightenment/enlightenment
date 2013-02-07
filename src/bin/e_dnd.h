@@ -147,6 +147,7 @@ EAPI int          e_drop_handler_responsive_get(const E_Drop_Handler *handler);
 EAPI void         e_drop_handler_action_set(Ecore_X_Atom action);
 EAPI Ecore_X_Atom e_drop_handler_action_get(void);
 
+EAPI Eina_List *e_dnd_util_text_uri_list_convert(char *data, int size);
 #endif
 #endif
 

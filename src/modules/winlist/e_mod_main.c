@@ -3,7 +3,7 @@
 
 /* actual module specifics */
 static void _e_mod_action_winlist_cb(E_Object *obj, const char *params);
-static void _e_mod_action_winlist_mouse_cb(E_Object *obj, const char *params, Ecore_Event_Mouse_Button *ev);
+static void _e_mod_action_winlist_mouse_cb(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev);
 static void _e_mod_action_winlist_key_cb(E_Object *obj, const char *params, Ecore_Event_Key *ev);
 static void _e_mod_action_winlist_edge_cb(E_Object *obj, const char *params, E_Event_Zone_Edge *ev);
 static void _e_mod_action_winlist_signal_cb(E_Object *obj, const char *params, const char *sig, const char *src);
@@ -192,9 +192,9 @@ _e_mod_action_winlist_cb(E_Object *obj, const char *params)
 }
 
 static void
-_e_mod_action_winlist_mouse_cb(E_Object *obj, const char *params, Ecore_Event_Mouse_Button *ev)
+_e_mod_action_winlist_mouse_cb(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev)
 {
-   _e_mod_action_winlist_cb_helper(obj, params, ev->modifiers, E_WINLIST_ACTIVATE_TYPE_MOUSE);
+   _e_mod_action_winlist_cb_helper(obj, params, e_bindings_modifiers_to_ecore_convert(ev->modifiers), E_WINLIST_ACTIVATE_TYPE_MOUSE);
 }
 
 static void

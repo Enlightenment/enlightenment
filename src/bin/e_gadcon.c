@@ -1129,7 +1129,7 @@ e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
    else return;  /* make clang happy */
 
    gcc->o_control = edje_object_add(gcc->gadcon->evas);
-   evas_object_layer_set(gcc->o_control, 100);
+   //evas_object_layer_set(gcc->o_control, 100); FIXME: COMP
    e_gadcon_locked_set(gcc->gadcon, 1);
    gcc->gadcon->editing = 1;
 
@@ -1155,7 +1155,7 @@ e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
    gcc->o_event = evas_object_rectangle_add(gcc->gadcon->evas);
    evas_object_color_set(gcc->o_event, 0, 0, 0, 0);
    evas_object_repeat_events_set(gcc->o_event, 1);
-   evas_object_layer_set(gcc->o_event, 100);
+   //evas_object_layer_set(gcc->o_event, 100); FIXME: COMP
    evas_object_move(gcc->o_event, x, y);
    evas_object_resize(gcc->o_event, w, h);
 

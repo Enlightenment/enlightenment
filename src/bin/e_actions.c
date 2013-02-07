@@ -15,7 +15,7 @@
      if (act) act->func.go_mouse = _e_actions_act_##name##_go_mouse;  \
   }
 #define ACT_FN_GO_MOUSE(act, use) \
-  static void _e_actions_act_##act##_go_mouse(E_Object * obj __UNUSED__, const char *params use, Ecore_Event_Mouse_Button * ev __UNUSED__)
+  static void _e_actions_act_##act##_go_mouse(E_Object * obj __UNUSED__, const char *params use, E_Binding_Event_Mouse_Button * ev __UNUSED__)
 
 #define ACT_GO_WHEEL(name)                                            \
   {                                                                   \
@@ -23,7 +23,7 @@
      if (act) act->func.go_wheel = _e_actions_act_##name##_go_wheel;  \
   }
 #define ACT_FN_GO_WHEEL(act, use) \
-  static void _e_actions_act_##act##_go_wheel(E_Object * obj __UNUSED__, const char *params use, Ecore_Event_Mouse_Wheel * ev __UNUSED__)
+  static void _e_actions_act_##act##_go_wheel(E_Object * obj __UNUSED__, const char *params use, E_Binding_Event_Wheel * ev __UNUSED__)
 
 #define ACT_GO_EDGE(name)                                           \
   {                                                                 \
@@ -63,7 +63,7 @@
      if (act) act->func.end_mouse = _e_actions_act_##name##_end_mouse;  \
   }
 #define ACT_FN_END_MOUSE(act, use) \
-  static void _e_actions_act_##act##_end_mouse(E_Object * obj __UNUSED__, const char *params use, Ecore_Event_Mouse_Button * ev __UNUSED__)
+  static void _e_actions_act_##act##_end_mouse(E_Object * obj __UNUSED__, const char *params use, E_Binding_Event_Mouse_Button * ev __UNUSED__)
 
 #define ACT_END_KEY(name)                                           \
   {                                                                 \
@@ -1925,8 +1925,8 @@ ACT_FN_GO_MOUSE(menu_show, )
 
                   /* FIXME: this is a bit of a hack... setting m->con - bad hack */
                   m->zone = zone;
-                  x = ev->root.x;
-                  y = ev->root.y;
+                  x = ev->canvas.x;
+                  y = ev->canvas.y;
                   x -= zone->container->x;
                   y -= zone->container->y;
                   e_menu_post_deactivate_callback_set(m, _e_actions_cb_menu_end, NULL);
@@ -2775,7 +2775,7 @@ _delayed_action_key_del(E_Object *obj, const char *params __UNUSED__, Ecore_Even
 }
 
 static void
-_delayed_action_mouse_add(E_Object *obj, const char *params, Ecore_Event_Mouse_Button *ev)
+_delayed_action_mouse_add(E_Object *obj, const char *params, E_Binding_Event_Mouse_Button *ev)
 {
    Delayed_Action *da;
 
@@ -2787,13 +2787,13 @@ _delayed_action_mouse_add(E_Object *obj, const char *params, Ecore_Event_Mouse_B
         e_object_ref(da->obj);
      }
    da->mouse = 1;
-   da->button = ev->buttons;
+   da->button = ev->button;
    if (params) _delayed_action_list_parse(da, params);
    _delayed_actions = eina_list_append(_delayed_actions, da);
 }
 
 static void
-_delayed_action_mouse_del(E_Object *obj, const char *params __UNUSED__, Ecore_Event_Mouse_Button *ev)
+_delayed_action_mouse_del(E_Object *obj, const char *params __UNUSED__, E_Binding_Event_Mouse_Button *ev)
 {
    Eina_List *l;
    Delayed_Action *da;
@@ -2801,7 +2801,7 @@ _delayed_action_mouse_del(E_Object *obj, const char *params __UNUSED__, Ecore_Ev
    EINA_LIST_FOREACH(_delayed_actions, l, da)
      {
         if ((da->obj == obj) && (da->mouse) &&
-            ((int)ev->buttons == da->button))
+            ((int)ev->button == da->button))
           {
              _delayed_action_do(da);
              _delayed_action_free(da);
