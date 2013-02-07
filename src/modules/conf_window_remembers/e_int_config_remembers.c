@@ -7,15 +7,17 @@ static int          _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Conf
 static int          _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static void         _fill_remembers(E_Config_Dialog_Data *cfdata);
+static void         _cb_edit(void *data, void *data2 __UNUSED__);
 static void         _cb_delete(void *data, void *data2);
 static void         _cb_list_change(void *data, Evas_Object *obj);
 
 struct _E_Config_Dialog_Data
 {
-   Evas_Object *list, *btn, *name, *class, *title, *role;
+   Evas_Object *list, *btn, *btn2, *name, *class, *title, *role;
    int          remember_dialogs;
    int          remember_fm_wins;
    int          remember_internal_fm_windows_globally;
+   Eina_List *cfds;
 };
 
 E_Config_Dialog *
@@ -89,8 +91,10 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 }
 
 static void
-_free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+_free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
+   EINA_LIST_FREE(cfdata->cfds, cfd)
+     E_OBJECT_DEL_SET(cfd, NULL);
    free(cfdata);
 }
 
@@ -132,10 +136,6 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
                            &(cfdata->remember_internal_fm_windows_globally));
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 0, 0.0);
-
-   ow = e_widget_button_add(evas, _("Delete"), "list-remove",
-                            _cb_delete, cfdata, NULL);
-   cfdata->btn = ow;
 
    ow = e_widget_ilist_add(evas, 1, 1, NULL);
    cfdata->list = ow;
@@ -179,7 +179,14 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    e_widget_list_object_append(ol, cfdata->list, 1, 1, 0.0);
    e_widget_list_object_append(ol, of2, 1, 0, 0.0);
-   e_widget_list_object_append(ol, cfdata->btn, 1, 0, 0.0);
+
+   of2 = e_widget_list_add(evas, 1, 1);
+
+   cfdata->btn = ow = e_widget_button_add(evas, _("Edit"), "edit-rename", _cb_edit, cfdata, NULL);
+   e_widget_list_object_append(of2, ow, 1, 1, 0.5);
+   cfdata->btn2 = ow = e_widget_button_add(evas, _("Delete"), "list-remove", _cb_delete, cfdata, NULL);
+   e_widget_list_object_append(of2, ow, 1, 1, 0.5);
+   e_widget_list_object_append(ol, of2, 1, 1, 0.5);
 
    _cb_list_change(cfdata, NULL);
    return ol;
@@ -274,6 +281,36 @@ _fill_remembers(E_Config_Dialog_Data *cfdata)
    evas_event_thaw(evas);
 
    e_widget_disabled_set(cfdata->btn, 1);
+}
+
+static void
+_cb_edit_del(void *obj)
+{
+   E_Config_Dialog_Data *cfdata;
+
+   cfdata = e_object_data_get(obj);
+   cfdata->cfds = eina_list_remove(cfdata->cfds, obj);
+   _fill_remembers(cfdata);
+}
+
+static void
+_cb_edit(void *data, void *data2 __UNUSED__)
+{
+   E_Config_Dialog_Data *cfdata = data;
+   const Eina_List *l;
+   E_Ilist_Item *ili;
+
+   EINA_LIST_FOREACH(e_widget_ilist_selected_items_get(cfdata->list), l, ili)
+     {
+        E_Remember *rem;
+        E_Config_Dialog *cfd;
+
+        rem = e_widget_ilist_item_data_get(ili);
+        cfd = e_int_border_remember_edit(rem);
+        e_object_data_set(E_OBJECT(cfd), cfdata);
+        E_OBJECT_DEL_SET(cfd, _cb_edit_del);
+        cfdata->cfds = eina_list_append(cfdata->cfds, cfd);
+     }
 }
 
 static void

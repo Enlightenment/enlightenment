@@ -22,6 +22,7 @@ static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E
 struct _E_Config_Dialog_Data
 {
    E_Border *border;
+   E_Remember *rem;
    /*- BASIC -*/
    int       mode;
    int       warned;
@@ -66,6 +67,25 @@ struct _E_Config_Dialog_Data
 };
 
 /* a nice easy setup function that does the dirty work */
+EAPI E_Config_Dialog *
+e_int_border_remember_edit(E_Remember *rem)
+{
+   E_Config_Dialog_View *v;
+
+   v = E_NEW(E_Config_Dialog_View, 1);
+   /* methods */
+   v->create_cfdata = _create_data;
+   v->free_cfdata = _free_data;
+   v->basic.apply_cfdata = _advanced_apply_data;
+   v->basic.create_widgets = _advanced_create_widgets;
+   v->override_auto_apply = 1;
+
+   /* create config dialog for bd object/data */
+   return e_config_dialog_new(NULL, _("Window Remember"),
+                             "E", "_border_remember_edit_dialog",
+                             NULL, 0, v, rem);
+}
+
 EAPI void
 e_int_border_remember(E_Border *bd)
 {
@@ -114,7 +134,10 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    E_Remember *rem;
 
    bd = cfdata->border;
-   rem = bd->remember;
+   if (bd)
+     rem = bd->remember;
+   else
+     rem = cfdata->rem;
 
    if (rem)
      {
@@ -134,68 +157,71 @@ _fill_data(E_Config_Dialog_Data *cfdata)
           cfdata->remember.apply_desktop_file = 1;
      }
 
-   if (!cfdata->name &&
-       bd->client.icccm.name &&
-       bd->client.icccm.name[0])
-     cfdata->name = strdup(bd->client.icccm.name);
-   if (!cfdata->class &&
-       bd->client.icccm.class &&
-       bd->client.icccm.class[0])
-     cfdata->class = strdup(bd->client.icccm.class);
-   if (!cfdata->role &&
-       bd->client.icccm.window_role &&
-       bd->client.icccm.window_role[0])
-     cfdata->role = strdup(bd->client.icccm.window_role);
-   if (!cfdata->title)
+   if (bd)
      {
-        const char *title = e_border_name_get(bd);
-        if (title && title[0])
-          cfdata->title = strdup(title);
-     }
-   if (!cfdata->desktop && bd->desktop)
-     cfdata->desktop = strdup(bd->desktop->name);
-
-   if (!cfdata->command &&
-       (bd->client.icccm.command.argc > 0) &&
-       (bd->client.icccm.command.argv))
-     {
-        char buf[4096];
-        int i, j, k;
-
-        buf[0] = 0;
-        k = 0;
-        for (i = 0; i < bd->client.icccm.command.argc; i++)
+        if (!cfdata->name &&
+            bd->client.icccm.name &&
+            bd->client.icccm.name[0])
+          cfdata->name = strdup(bd->client.icccm.name);
+        if (!cfdata->class &&
+            bd->client.icccm.class &&
+            bd->client.icccm.class[0])
+          cfdata->class = strdup(bd->client.icccm.class);
+        if (!cfdata->role &&
+            bd->client.icccm.window_role &&
+            bd->client.icccm.window_role[0])
+          cfdata->role = strdup(bd->client.icccm.window_role);
+        if (!cfdata->title)
           {
-             if (i > 0)
+             const char *title = e_border_name_get(bd);
+             if (title && title[0])
+               cfdata->title = strdup(title);
+          }
+        if (!cfdata->desktop && bd->desktop)
+          cfdata->desktop = strdup(bd->desktop->name);
+
+        if (!cfdata->command &&
+            (bd->client.icccm.command.argc > 0) &&
+            (bd->client.icccm.command.argv))
+          {
+             char buf[4096];
+             int i, j, k;
+
+             buf[0] = 0;
+             k = 0;
+             for (i = 0; i < bd->client.icccm.command.argc; i++)
                {
-                  buf[k] = ' ';
-                  k++;
-               }
-             for (j = 0; bd->client.icccm.command.argv[i][j]; j++)
-               {
-                  if (k >= (int)(sizeof(buf) - 10))
+                  if (i > 0)
                     {
-                       buf[k] = 0;
-                       goto done;
-                    }
-                  if ((bd->client.icccm.command.argv[i][j] == ' ') ||
-                      (bd->client.icccm.command.argv[i][j] == '\t') ||
-                      (bd->client.icccm.command.argv[i][j] == '\\') ||
-                      (bd->client.icccm.command.argv[i][j] == '\"') ||
-                      (bd->client.icccm.command.argv[i][j] == '\'') ||
-                      (bd->client.icccm.command.argv[i][j] == '$') ||
-                      (bd->client.icccm.command.argv[i][j] == '%'))
-                    {
-                       buf[k] = '\\';
+                       buf[k] = ' ';
                        k++;
                     }
-                  buf[k] = bd->client.icccm.command.argv[i][j];
-                  k++;
+                  for (j = 0; bd->client.icccm.command.argv[i][j]; j++)
+                    {
+                       if (k >= (int)(sizeof(buf) - 10))
+                         {
+                            buf[k] = 0;
+                            goto done;
+                         }
+                       if ((bd->client.icccm.command.argv[i][j] == ' ') ||
+                           (bd->client.icccm.command.argv[i][j] == '\t') ||
+                           (bd->client.icccm.command.argv[i][j] == '\\') ||
+                           (bd->client.icccm.command.argv[i][j] == '\"') ||
+                           (bd->client.icccm.command.argv[i][j] == '\'') ||
+                           (bd->client.icccm.command.argv[i][j] == '$') ||
+                           (bd->client.icccm.command.argv[i][j] == '%'))
+                         {
+                            buf[k] = '\\';
+                            k++;
+                         }
+                       buf[k] = bd->client.icccm.command.argv[i][j];
+                       k++;
+                    }
                }
+             buf[k] = 0;
+     done:
+             cfdata->command = strdup(buf);
           }
-        buf[k] = 0;
-done:
-        cfdata->command = strdup(buf);
      }
 
    if (rem)
@@ -265,7 +291,10 @@ _create_data(E_Config_Dialog *cfd)
    E_Config_Dialog_Data *cfdata;
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
-   cfdata->border = cfd->data;
+   if (!strcmp(cfd->class, "_border_remember_dialog"))
+     cfdata->border = cfd->data;
+   else
+     cfdata->rem = cfd->data;
    cfdata->applied = 1;
    return cfdata;
 }
@@ -281,14 +310,17 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    free(cfdata->command);
    free(cfdata->desktop);
 
-   if (!cfdata->applied && cfdata->border->remember)
+   if (cfdata->border)
      {
-        e_remember_unuse(cfdata->border->remember);
-        e_remember_del(cfdata->border->remember);
-        e_config_save_queue();
-     }
+        if (!cfdata->applied && cfdata->border->remember)
+          {
+             e_remember_unuse(cfdata->border->remember);
+             e_remember_del(cfdata->border->remember);
+             e_config_save_queue();
+          }
 
-   cfdata->border->border_remember_dialog = NULL;
+        cfdata->border->border_remember_dialog = NULL;
+     }
    free(cfdata);
 }
 
@@ -425,7 +457,10 @@ static int
 _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
    E_Border *bd = cfdata->border;
-   E_Remember *rem = bd->remember;
+   E_Remember *rem;
+
+   if (bd) rem = bd->remember;
+   else rem = cfdata->rem;
 
    if (!rem)
      {
@@ -475,19 +510,22 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
         rem->match |= E_REMEMBER_MATCH_ROLE;
         rem->role = eina_stringshare_add(cfdata->role);
      }
-   if (cfdata->remember.match_type)
+   if (bd)
      {
-        rem->match |= E_REMEMBER_MATCH_TYPE;
-        rem->type = bd->client.netwm.type;
-     }
+        if (cfdata->remember.match_type)
+          {
+             rem->match |= E_REMEMBER_MATCH_TYPE;
+             rem->type = bd->client.netwm.type;
+          }
 
-   if (cfdata->remember.match_transient)
-     {
-        rem->match |= E_REMEMBER_MATCH_TRANSIENT;
-        if (bd->client.icccm.transient_for != 0)
-          rem->transient = 1;
-        else
-          rem->transient = 0;
+        if (cfdata->remember.match_transient)
+          {
+             rem->match |= E_REMEMBER_MATCH_TRANSIENT;
+             if (bd->client.icccm.transient_for != 0)
+               rem->transient = 1;
+             else
+               rem->transient = 0;
+          }
      }
 
    if (!rem->match)
@@ -507,7 +545,8 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
         e_win_centered_set(dia->win, 1);
         e_dialog_show(dia);
-        cfdata->border->remember = rem;
+        if (bd)
+          cfdata->border->remember = rem;
         return 0;
      }
 
@@ -566,7 +605,7 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    if (cfdata->remember.offer_resistance)
      rem->apply |= E_REMEMBER_APPLY_OFFER_RESISTANCE;
 
-   if (!rem->apply && !rem->prop.desktop_file)
+   if (bd && (!rem->apply && !rem->prop.desktop_file))
      {
         e_remember_unuse(rem);
         e_remember_del(rem);
@@ -575,13 +614,16 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
         return 1;
      }
 
-   _check_matches(rem, 1);
-   rem->keep_settings = 0;
-   cfdata->border->remember = rem;
-   e_remember_update(cfdata->border);
+   if (bd)
+     {
+        _check_matches(rem, 1);
+        rem->keep_settings = 0;
+        cfdata->border->remember = rem;
+        e_remember_update(cfdata->border);
+        cfdata->applied = 1;
+     }
    rem->keep_settings = cfdata->remember.keep_settings;
 
-   cfdata->applied = 1;
    e_config_save_queue();
    return 1; /* Apply was OK */
 }
@@ -670,21 +712,24 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
      {
         cfdata->remember.match_role = 0;
      }
-   if (cfdata->border->client.netwm.type != ECORE_X_WINDOW_TYPE_UNKNOWN)
+   if (cfdata->border)
      {
-        ob = e_widget_check_add(evas, _("Window type"),
-                                &(cfdata->remember.match_type));
+        if (cfdata->border->client.netwm.type != ECORE_X_WINDOW_TYPE_UNKNOWN)
+          {
+             ob = e_widget_check_add(evas, _("Window type"),
+                                     &(cfdata->remember.match_type));
+             e_widget_list_object_append(of, ob, 1, 0, 0.5);
+          }
+        else
+          {
+             cfdata->remember.match_type = 0;
+          }
+        ob = e_widget_label_add(evas, _("wildcard matches are allowed"));
+        e_widget_list_object_append(of, ob, 1, 0, 0.5);
+        ob = e_widget_check_add(evas, _("Transience"),
+                                &(cfdata->remember.match_transient));
         e_widget_list_object_append(of, ob, 1, 0, 0.5);
      }
-   else
-     {
-        cfdata->remember.match_type = 0;
-     }
-   ob = e_widget_label_add(evas, _("wildcard matches are allowed"));
-   e_widget_list_object_append(of, ob, 1, 0, 0.5);
-   ob = e_widget_check_add(evas, _("Transience"),
-                           &(cfdata->remember.match_transient));
-   e_widget_list_object_append(of, ob, 1, 0, 0.5);
    e_widget_toolbook_page_append(o, NULL, _("Identifiers"), of, 1, 1, 1, 1, 0.5, 0.0);
 
    of = e_widget_table_add(evas, 0);
