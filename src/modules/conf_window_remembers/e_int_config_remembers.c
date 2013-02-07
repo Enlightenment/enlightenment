@@ -80,8 +80,8 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
    E_Config_Dialog_Data *cfdata;
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
-   cfdata->remember_dialogs = (e_config->remember_internal_windows & E_REMEMBER_INTERNAL_DIALOGS);
-   cfdata->remember_fm_wins = (e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
+   cfdata->remember_dialogs = e_config->remember_internal_windows;
+   cfdata->remember_fm_wins = e_config->remember_internal_fm_windows;
    
    return cfdata;
 }
@@ -89,34 +89,21 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 static void 
 _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   E_FREE(cfdata);
+   free(cfdata);
 }
 
 static int
 _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   return ((cfdata->remember_dialogs) &&
-	   !(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_DIALOGS)) ||
-          ((!cfdata->remember_dialogs) &&
-	   (e_config->remember_internal_windows & E_REMEMBER_INTERNAL_DIALOGS)) ||
-          ((cfdata->remember_fm_wins) &&
-	   !(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS)) ||
-          ((!cfdata->remember_fm_wins) &&
-	   (e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS));
+   return ((cfdata->remember_dialogs == e_config->remember_internal_windows) &&
+            (cfdata->remember_fm_wins == e_config->remember_internal_fm_windows));
 }
 
 static int
 _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   if (cfdata->remember_dialogs)
-     e_config->remember_internal_windows |= E_REMEMBER_INTERNAL_DIALOGS;
-   else
-     e_config->remember_internal_windows &= ~E_REMEMBER_INTERNAL_DIALOGS;
-
-   if (cfdata->remember_fm_wins)
-     e_config->remember_internal_windows |= E_REMEMBER_INTERNAL_FM_WINS;
-   else
-     e_config->remember_internal_windows &= ~E_REMEMBER_INTERNAL_FM_WINS;
+   e_config->remember_internal_windows = cfdata->remember_dialogs;
+   e_config->remember_internal_fm_windows = cfdata->remember_fm_wins;
 
    e_config_save_queue();
    return 1;

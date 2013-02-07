@@ -602,13 +602,11 @@ _e_remember_cb_hook_eval_post_new_border(void *data __UNUSED__, void *border)
 
         if (!strncmp(bd->client.icccm.class, "e_fwin", 6))
           {
-             if (!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS) &&
-                 (!e_config->remember_internal_fm_windows))
-               return;
+             if (!e_config->remember_internal_fm_windows) return;
           }
         else
           {
-             if (!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_DIALOGS))
+             if (!e_config->remember_internal_windows)
                return;
           }
 
