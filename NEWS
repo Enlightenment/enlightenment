@@ -96,6 +96,7 @@ Improvements:
     * new tab in focus settings for pointer warping
     * unify all pointer warp animators
     * clock listens to /etc/timezone changes now too
+    * enable image preloading for all e_widget_preview using edje
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.
