@@ -69,6 +69,7 @@
 2013-01-29 Mike Blumenkrantz
 
         * fixed bug where dragging files into sidebar would move them instead of creating links
+        * added function for getting children of e_layout
 
 2013-01-23 Chris Michael
 

@@ -22,5 +22,7 @@ EAPI void         e_layout_child_lower_below (Evas_Object *obj, Evas_Object *bel
 EAPI void         e_layout_child_geometry_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 EAPI void         e_layout_unpack            (Evas_Object *obj);
 
+EAPI const Eina_List *e_layout_children_get(Evas_Object *obj);
+
 #endif
 #endif

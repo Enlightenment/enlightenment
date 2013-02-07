@@ -262,6 +262,16 @@ e_layout_unpack(Evas_Object *obj)
    _e_layout_smart_disown(obj);
 }
 
+EAPI const Eina_List *
+e_layout_children_get(Evas_Object *obj)
+{
+   E_Smart_Data *sd;
+
+   if (evas_object_smart_smart_get(obj) != _e_smart) SMARTERRNR() NULL;
+   sd = evas_object_smart_data_get(obj);
+   return sd->items;
+}
+
 /* local subsystem functions */
 static E_Layout_Item *
 _e_layout_smart_adopt(E_Smart_Data *sd, Evas_Object *obj)
