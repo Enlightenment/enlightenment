@@ -4,6 +4,7 @@
 
 2013-02-07 Mike Blumenkrantz
 
+        * keyboard mapping change now also disables for window class "vmware"
         * added option for remembering filemanager windows globally
         * added edit functionality to window remembers dialog
 
