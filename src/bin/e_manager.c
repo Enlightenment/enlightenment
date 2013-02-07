@@ -95,11 +95,16 @@ e_manager_new(Ecore_X_Window root, int num)
    if (!ecore_x_window_manage(root)) return NULL;
    man = E_OBJECT_ALLOC(E_Manager, E_MANAGER_TYPE, _e_manager_free);
    if (!man) return NULL;
-   managers = eina_list_append(managers, man);
    man->root = root;
    man->num = num;
    ecore_x_window_size_get(man->root, &(man->w), &(man->h));
    man->win = man->root;
+   if (!e_comp_manager_init(man))
+     {
+        e_object_del(E_OBJECT(man));
+        return NULL;
+     }
+   managers = eina_list_append(managers, man);
 
    E_LIST_HANDLER_APPEND(man->handlers, ECORE_X_EVENT_WINDOW_SHOW_REQUEST,
                          _e_manager_cb_window_show_request, man);

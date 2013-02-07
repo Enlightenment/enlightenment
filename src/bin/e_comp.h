@@ -30,6 +30,7 @@ typedef enum
 
 EINTERN Eina_Bool e_comp_init(void);
 EINTERN int      e_comp_shutdown(void);
+EINTERN Eina_Bool e_comp_manager_init(E_Manager *man);
 
 EAPI int e_comp_internal_save(void);
 EAPI E_Comp_Config *e_comp_config_get(void);

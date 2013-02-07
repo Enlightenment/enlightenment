@@ -26,7 +26,7 @@
 
 struct _E_Comp
 {
-   Ecore_X_Window  win;
+   Ecore_X_Window  win; // input overlay
    Ecore_Evas     *ee;
    Evas           *evas;
    Evas_Object    *layout;
@@ -2028,7 +2028,12 @@ _e_comp_win_add(E_Comp *c,
         cw->role = ecore_x_icccm_window_role_get(cw->win);
         if (!ecore_x_netwm_window_type_get(cw->win, &cw->primary_type))
           cw->primary_type = ECORE_X_WINDOW_TYPE_UNKNOWN;
-        cw->bg_win = (cw->win == e_util_container_current_get()->bg_win);
+        {
+           E_Container *con;
+
+           con = e_util_container_current_get();
+           cw->bg_win = (con && (cw->win == con->bg_win));
+        }
         // setup on show
         // _e_comp_win_sync_setup(cw, cw->win);
      }
@@ -3530,14 +3535,52 @@ _e_comp_signal_user(void *data __UNUSED__,
 }
 
 //////////////////////////////////////////////////////////////////////////
+static void
+_e_comp_populate(E_Comp *c)
+{
+   Ecore_X_Window *wins;
+   int i, num;
+
+   wins = ecore_x_window_children_get(c->man->root, &num);
+   if (!wins) return;
+   for (i = 0; i < num; i++)
+     {
+        E_Comp_Win *cw;
+        int x, y, w, h, border;
+        char *wname = NULL, *wclass = NULL;
+
+        ecore_x_icccm_name_class_get(wins[i], &wname, &wclass);
+        if ((c->man->initwin == wins[i]) ||
+            ((wname) && (wclass) && (!strcmp(wname, "E")) &&
+             (!strcmp(wclass, "Init_Window"))))
+          {
+             free(wname);
+             free(wclass);
+             ecore_x_window_reparent(wins[i], c->win, 0, 0);
+             ecore_x_sync();
+             continue;
+          }
+        free(wname);
+        free(wclass);
+        wname = wclass = NULL;
+        cw = _e_comp_win_add(c, wins[i]);
+        if (!cw) continue;
+        ecore_x_window_geometry_get(cw->win, &x, &y, &w, &h);
+        border = ecore_x_window_border_width_get(cw->win);
+        if (wins[i] == c->win) continue;
+        _e_comp_win_configure(cw, x, y, w, h, border);
+        if (ecore_x_window_visible_get(wins[i]))
+          _e_comp_win_show(cw);
+     }
+   free(wins);
+}
+
 static E_Comp *
 _e_comp_add(E_Manager *man)
 {
    E_Comp *c;
-   Ecore_X_Window *wins;
    Ecore_X_Window_Attributes att;
    Eina_Bool res;
-   int i, num;
 
    c = calloc(1, sizeof(E_Comp));
    if (!c) return NULL;
@@ -3667,40 +3710,8 @@ _e_comp_add(E_Manager *man)
    ecore_x_composite_redirect_subwindows
      (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
 
-   wins = ecore_x_window_children_get(c->man->root, &num);
-   if (wins)
-     {
-        for (i = 0; i < num; i++)
-          {
-             E_Comp_Win *cw;
-             int x, y, w, h, border;
-             char *wname = NULL, *wclass = NULL;
-
-             ecore_x_icccm_name_class_get(wins[i], &wname, &wclass);
-             if ((man->initwin == wins[i]) ||
-                 ((wname) && (wclass) && (!strcmp(wname, "E")) &&
-                  (!strcmp(wclass, "Init_Window"))))
-               {
-                  free(wname);
-                  free(wclass);
-                  ecore_x_window_reparent(wins[i], c->win, 0, 0);
-                  ecore_x_sync();
-                  continue;
-               }
-             free(wname);
-             free(wclass);
-             wname = wclass = NULL;
-             cw = _e_comp_win_add(c, wins[i]);
-             if (!cw) continue;
-             ecore_x_window_geometry_get(cw->win, &x, &y, &w, &h);
-             border = ecore_x_window_border_width_get(cw->win);
-             if (wins[i] == c->win) continue;
-             _e_comp_win_configure(cw, x, y, w, h, border);
-             if (ecore_x_window_visible_get(wins[i]))
-               _e_comp_win_show(cw);
-          }
-        free(wins);
-     }
+   /* ensure we're in main loop so managers and containers have been set up */
+   ecore_job_add((Ecore_Cb)_e_comp_populate, c);
 
    ecore_x_window_key_grab(c->man->root,
                            "Home",
@@ -4232,9 +4243,6 @@ _e_comp_cfg_init(void)
 EINTERN Eina_Bool
 e_comp_init(void)
 {
-   Eina_List *l;
-   E_Manager *man;
-
    if (!ecore_x_composite_query())
      {
         e_util_dialog_internal
@@ -4334,18 +4342,19 @@ e_comp_init(void)
      EINA_LOG_ERR("Failed to initialize Wayland Client Support !!");
 #endif
    _e_comp_cfg_init();
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
-     {
-        E_Comp *c;
-
-        c = _e_comp_add(man);
-        if (c)
-          compositors = eina_list_append(compositors, c);
-     }
-
-   ecore_x_sync();
 
    return EINA_TRUE;
+}
+
+EINTERN Eina_Bool
+e_comp_manager_init(E_Manager *man)
+{
+   E_Comp *c;
+
+   c = _e_comp_add(man);
+   if (c)
+     compositors = eina_list_append(compositors, c);
+   return !!c;
 }
 
 EAPI int

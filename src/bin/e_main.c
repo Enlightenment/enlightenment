@@ -1672,6 +1672,13 @@ _e_main_screens_init(void)
         free(roots);
         return 0;
      }
+
+
+   TS("E_Comp Init");
+   e_comp_init();
+   TS("E_Comp Init Done");
+   _e_main_shutdown_push(e_comp_shutdown);
+     
    TS("\tscreens: manage roots");
    for (i = 0; i < num; i++)
      {
@@ -1710,11 +1717,6 @@ _e_main_screens_init(void)
 #endif
      }
    free(roots);
-
-   TS("E_Comp Init");
-   e_comp_init();
-   TS("E_Comp Init Done");
-   _e_main_shutdown_push(e_comp_shutdown);
 
    TS("\tscreens: sync");
    ecore_x_sync();
