@@ -83,43 +83,6 @@ static void _e_mod_physics_win_configure(E_Physics_Win *pw,
                                          int h,
                                          int border);
 static void _e_mod_physics_shelf_new(E_Physics *p, E_Shelf *es);
-/* TODO
-static void
-_e_mod_physics_fps_update(E_Physics *p)
-{
-   if (_comp_mod->conf->fps_show)
-     {
-        if (!p->fps_bg)
-          {
-             p->fps_bg = evas_object_rectangle_add(p->evas);
-             evas_object_color_set(p->fps_bg, 0, 0, 0, 128);
-             evas_object_layer_set(p->fps_bg, EVAS_LAYER_MAX);
-             evas_object_show(p->fps_bg);
-
-             p->fps_fg = evas_object_text_add(p->evas);
-             evas_object_text_font_set(p->fps_fg, "Sans", 10);
-             evas_object_text_text_set(p->fps_fg, "???");
-             evas_object_color_set(p->fps_fg, 255, 255, 255, 255);
-             evas_object_layer_set(p->fps_fg, EVAS_LAYER_MAX);
-             evas_object_show(p->fps_fg);
-          }
-     }
-   else
-     {
-        if (p->fps_fg)
-          {
-             evas_object_del(p->fps_fg);
-             p->fps_fg = NULL;
-          }
-        if (p->fps_bg)
-          {
-             evas_object_del(p->fps_bg);
-             p->fps_bg = NULL;
-          }
-     }
-}
-*/
-
 
 static void
 _e_mod_physics_move_end(void *p_w, void *b_d)
