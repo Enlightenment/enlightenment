@@ -266,6 +266,24 @@ e_layout_children_get(Evas_Object *obj)
    return l;
 }
 
+EAPI Evas_Object *
+e_layout_top_child_at_xy_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, const Eina_List *ignore)
+{
+   E_Smart_Data *sd;
+   E_Layout_Item *li;
+
+   if (evas_object_smart_smart_get(obj) != _e_smart) SMARTERRNR() NULL;
+   sd = evas_object_smart_data_get(obj);
+   if (!sd->items) return NULL;
+   EINA_INLIST_REVERSE_FOREACH(sd->items, li)
+     if (E_INSIDE(x, y, li->x, li->y, li->w, li->h))
+       {
+          if (eina_list_data_find(ignore, li->obj)) continue;
+          return li->obj;
+       }
+   return NULL;
+}
+
 /* local subsystem functions */
 static E_Layout_Item *
 _e_layout_smart_adopt(E_Smart_Data *sd, Evas_Object *obj)
