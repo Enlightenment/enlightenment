@@ -239,11 +239,13 @@ static E_Fwin *drag_fwin = NULL;
 static Eina_List *fwins = NULL;
 static E_Fm2_Mime_Handler *dir_handler = NULL;
 static Efreet_Desktop *tdesktop = NULL;
+static Eina_Stringshare *fwin_class = NULL;
 
 /* externally accessible functions */
 int
 e_fwin_init(void)
 {
+   fwin_class = eina_stringshare_add("e_fwin");
    tdesktop = e_util_terminal_desktop_get();
    if (!tdesktop) return 1;
    dir_handler = e_fm2_mime_handler_new(_("Open Terminal here"),
@@ -262,6 +264,7 @@ e_fwin_shutdown(void)
    EINA_LIST_FREE(fwins, fwin)
      e_object_del(E_OBJECT(fwin));
 
+   eina_stringshare_replace(&fwin_class, NULL);
    if (dir_handler)
      {
         e_fm2_mime_handler_mime_del(dir_handler, "inode/directory");
@@ -1513,8 +1516,13 @@ _e_fwin_window_title_set(E_Fwin_Page *page)
         e_win_title_set(page->fwin->win, buf);
      }
 
-   snprintf(buf, sizeof(buf), "e_fwin::%s", e_fm2_real_path_get(page->fm_obj));
-   e_win_name_class_set(page->fwin->win, "E", buf);
+   if (e_config->remember_internal_fm_windows_globally)
+     e_win_name_class_set(page->fwin->win, "E", fwin_class);
+   else
+     {
+        snprintf(buf, sizeof(buf), "e_fwin::%s", e_fm2_real_path_get(page->fm_obj));
+        e_win_name_class_set(page->fwin->win, "E", buf);
+     }
 }
 
 static void
@@ -2222,35 +2230,28 @@ _e_fwin_border_set(E_Fwin_Page *page, E_Fwin *fwin, E_Fm2_Icon_Info *ici)
    oic = e_fm2_icon_get(evas_object_evas_get(ici->fm),
                         ici->ic, NULL, NULL, 0, &itype);
    if (!oic) return;
-   if (fwin->win->border->internal_icon)
-     eina_stringshare_del(fwin->win->border->internal_icon);
-   fwin->win->border->internal_icon = NULL;
-   if (fwin->win->border->internal_icon_key)
-     eina_stringshare_del(fwin->win->border->internal_icon_key);
-   fwin->win->border->internal_icon_key = NULL;
 
+   eina_stringshare_replace(&fwin->win->border->internal_icon, NULL);
+   eina_stringshare_replace(&fwin->win->border->internal_icon_key, NULL);
    if (!strcmp(evas_object_type_get(oic), "edje"))
      {
         edje_object_file_get(oic, &file, &group);
-        if (file)
-          {
-             fwin->win->border->internal_icon =
-               eina_stringshare_add(file);
-             if (group)
-               fwin->win->border->internal_icon_key =
-                 eina_stringshare_add(group);
-          }
+        fwin->win->border->internal_icon = eina_stringshare_ref(file);
+        fwin->win->border->internal_icon_key = eina_stringshare_ref(group);
      }
    else
      {
         e_icon_file_get(oic, &file, &group);
-        fwin->win->border->internal_icon = eina_stringshare_add(file);
-        fwin->win->border->internal_icon_key = eina_stringshare_add(group);
+        fwin->win->border->internal_icon = eina_stringshare_ref(file);
+        fwin->win->border->internal_icon_key = eina_stringshare_ref(group);
      }
    evas_object_del(oic);
    if (fwin->win->border->placed) return;
 
-   class = eina_stringshare_printf("e_fwin::%s", e_fm2_real_path_get(fwin->cur_page->fm_obj));
+   if (e_config->remember_internal_fm_windows_globally)
+     class = fwin_class;
+   else
+     class = eina_stringshare_printf("e_fwin::%s", e_fm2_real_path_get(fwin->cur_page->fm_obj));
    e_zone_useful_geometry_get(fwin->win->border->zone,
                               NULL, NULL, &zw, &zh);
    EINA_LIST_FOREACH(e_config->remembers, ll, rem)
@@ -2263,7 +2264,8 @@ _e_fwin_border_set(E_Fwin_Page *page, E_Fwin *fwin, E_Fm2_Icon_Info *ici)
           rem->prop.pos_y = E_CLAMP(rem->prop.pos_y, 0, zh - rem->prop.h);
           break;
        }
-   eina_stringshare_del(class);
+   if (!e_config->remember_internal_fm_windows_globally)
+     eina_stringshare_del(class);
 
    if (found) return;
 

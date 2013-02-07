@@ -36,6 +36,7 @@ Additions:
         * edge bindings can now be set to "drag only"
         * new option for disabling all pointer warps
         * added option for preventing all keyboard layout changes
+        * added option for remembering filemanager windows globally
 
 Changes:
     Modules:

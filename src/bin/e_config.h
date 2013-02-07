@@ -162,6 +162,7 @@ struct _E_Config
    Eina_List  *remembers; // GUI
    int         remember_internal_windows; // GUI
    Eina_Bool  remember_internal_fm_windows; // GUI
+   Eina_Bool  remember_internal_fm_windows_globally; // GUI
    int         move_info_follows; // GUI
    int         resize_info_follows; // GUI
    int         move_info_visible; // GUI

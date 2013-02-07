@@ -1661,7 +1661,9 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, remember_internal_windows, _("Remember internal window geometry"), _("border"), _("remember"));
    OPT_HELP(_("This option causes E to remember the geometry of its internal dialogs and windows, NOT including filemanager windows"));
    OPT_ADD(BOOL, remember_internal_fm_windows, _("Remember internal filemanager window geometry"), _("border"), _("remember"), _("files"));
-   OPT_HELP(_("This option causes E to remember the geometry of its internal filemanager windows, NOT including dialog windows"));
+   OPT_HELP(_("This option causes E to remember the geometry of its internal filemanager windows, NOT including dialog windows, based on the directory the window is showing"));
+   OPT_ADD(BOOL, remember_internal_fm_windows_globally, _("Remember internal filemanager window geometry globally"), _("border"), _("remember"), _("files"));
+   OPT_HELP(_("This option causes E to remember the geometry of its internal filemanager windows globally instead of using the target directory"));
 
    OPT_ADD(BOOL, move_info_follows, _("Window position info follows window when moving"), _("border"), _("placement"), _("move"));
    OPT_ADD(BOOL, resize_info_follows, _("Window geometry info follows window when resizing"), _("border"), _("placement"), _("resize"));

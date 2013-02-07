@@ -623,6 +623,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_LIST(D, T, remembers, _e_config_remember_edd);
    E_CONFIG_VAL(D, T, remember_internal_windows, INT);
    E_CONFIG_VAL(D, T, remember_internal_fm_windows, UCHAR);
+   E_CONFIG_VAL(D, T, remember_internal_fm_windows_globally, UCHAR);
    E_CONFIG_VAL(D, T, move_info_follows, INT); /**/
    E_CONFIG_VAL(D, T, resize_info_follows, INT); /**/
    E_CONFIG_VAL(D, T, move_info_visible, INT); /**/
@@ -1413,6 +1414,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->icon_theme_overrides, 0, 1);
    E_CONFIG_LIMIT(e_config->remember_internal_windows, 0, 3);
    E_CONFIG_LIMIT(e_config->remember_internal_fm_windows, 0, 1);
+   E_CONFIG_LIMIT(e_config->remember_internal_fm_windows_globally, 0, 1);
    E_CONFIG_LIMIT(e_config->desk_auto_switch, 0, 1);
 
    E_CONFIG_LIMIT(e_config->screen_limits, 0, 2);

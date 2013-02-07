@@ -15,6 +15,7 @@ struct _E_Config_Dialog_Data
    Evas_Object *list, *btn, *name, *class, *title, *role;
    int remember_dialogs;
    int remember_fm_wins;
+   int remember_internal_fm_windows_globally;
 };
 
 E_Config_Dialog *
@@ -82,6 +83,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    cfdata->remember_dialogs = e_config->remember_internal_windows;
    cfdata->remember_fm_wins = e_config->remember_internal_fm_windows;
+   cfdata->remember_internal_fm_windows_globally = e_config->remember_internal_fm_windows_globally;
    
    return cfdata;
 }
@@ -96,7 +98,8 @@ static int
 _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    return ((cfdata->remember_dialogs == e_config->remember_internal_windows) &&
-            (cfdata->remember_fm_wins == e_config->remember_internal_fm_windows));
+            (cfdata->remember_fm_wins == e_config->remember_internal_fm_windows) &&
+            (cfdata->remember_internal_fm_windows_globally == e_config->remember_internal_fm_windows_globally));
 }
 
 static int
@@ -104,6 +107,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    e_config->remember_internal_windows = cfdata->remember_dialogs;
    e_config->remember_internal_fm_windows = cfdata->remember_fm_wins;
+   e_config->remember_internal_fm_windows_globally = cfdata->remember_internal_fm_windows_globally;
 
    e_config_save_queue();
    return 1;
@@ -112,7 +116,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 static Evas_Object *
 _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *ol, *of2, *ow;
+   Evas_Object *ol, *of2, *ow, *oc;
    Evas_Coord mw, mh;
 
    e_dialog_resizable_set(cfd->dia, 1);
@@ -121,8 +125,12 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    ow = e_widget_check_add(evas, _("Remember internal dialogs"),
                            &(cfdata->remember_dialogs));
    e_widget_list_object_append(ol, ow, 1, 0, 0.0);
-   ow = e_widget_check_add(evas, _("Remember file manager windows"),
+   oc = e_widget_check_add(evas, _("Remember file manager windows"),
                            &(cfdata->remember_fm_wins));
+   e_widget_list_object_append(ol, oc, 1, 0, 0.0);
+   ow = e_widget_check_add(evas, _("Don't remember file manager windows by directory"),
+                           &(cfdata->remember_internal_fm_windows_globally));
+   e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 0, 0.0);
 
    ow = e_widget_button_add(evas, _("Delete"), "list-remove",

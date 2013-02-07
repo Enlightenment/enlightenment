@@ -1,3 +1,7 @@
+2013-02-07 Mike Blumenkrantz
+
+        * added option for remembering filemanager windows globally
+
 2013-02-07 Carsten Haitzler
 
         * fix clock timerfd usage to actually detect a date change.
