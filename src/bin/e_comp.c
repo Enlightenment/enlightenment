@@ -3344,6 +3344,29 @@ _e_comp_shapes_update_job(E_Comp *c)
                        else if (cw->menu)
                          INF("COMP MENU: %u", cw->win);
 #endif
+
+                       if (cw->rects)
+                         {
+                            int num;
+                            Ecore_X_Rectangle *rect;
+                          
+                            for (num = 0, rect = cw->rects; num < cw->rects_num; num++, rect++)
+                              {
+                                 x = rect->x, y = rect->y, w = rect->width, h = rect->height;
+                                 if (cw->bd)
+                                   x += cw->bd->x, y += cw->bd->y;
+                                 else
+                                   x += cw->x, y += cw->y;
+//#ifdef SHAPE_DEBUG not sure we can shape check these?
+                                 //r = E_NEW(Eina_Rectangle, 1);
+                                 //EINA_RECTANGLE_SET(r, x, y, w, h);
+                                 //rl = eina_list_append(rl, r);
+//#endif
+                                 eina_tiler_rect_del(tb, &(Eina_Rectangle){x, y, w, h});
+                                 SHAPE_INF("DEL: %d,%d@%dx%d", x, y, w, h);
+                              }
+                            continue;
+                         }
                        /* borders and popups sometimes call shape changes before the changes have
                         * propagated to the comp_win :/
                         */
