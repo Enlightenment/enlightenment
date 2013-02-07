@@ -198,8 +198,8 @@ struct _E_Border
    Evas_Object   *bg_object;
    Evas_Object   *icon_object;
    Ecore_X_Window event_win;
-   const char    *internal_icon;
-   const char    *internal_icon_key;
+   Eina_Stringshare  *internal_icon;
+   Eina_Stringshare  *internal_icon_key;
    Eina_Bool      bg_evas_in : 1;
 
    struct
@@ -214,7 +214,7 @@ struct _E_Border
       {
          unsigned char changed : 1;
          unsigned char user_selected : 1;
-         const char   *name;
+         Eina_Stringshare *name;
       } border;
 
       unsigned char  shaped : 1;
@@ -223,11 +223,11 @@ struct _E_Border
       /* ICCCM */
       struct
       {
-         const char               *title;
-         const char               *name;
-         const char               *class;
-         const char               *icon_name;
-         const char               *machine;
+         Eina_Stringshare        *title;
+         Eina_Stringshare        *name;
+         Eina_Stringshare        *class;
+         Eina_Stringshare        *icon_name;
+         Eina_Stringshare        *machine;
          int                       min_w, min_h;
          int                       max_w, max_h;
          int                       base_w, base_h;
@@ -243,7 +243,7 @@ struct _E_Border
          Ecore_X_Window            transient_for;
          Ecore_X_Window            client_leader;
          Ecore_X_Gravity           gravity;
-         const char               *window_role;
+         Eina_Stringshare         *window_role;
          unsigned char             take_focus : 1;
          unsigned char             accepts_focus : 1;
          unsigned char             urgent : 1;
@@ -290,8 +290,8 @@ struct _E_Border
       {
          pid_t         pid;
          unsigned int  desktop;
-         const char   *name;
-         const char   *icon_name;
+         Eina_Stringshare *name;
+         Eina_Stringshare *icon_name;
          Ecore_X_Icon *icons;
          int           num_icons;
          unsigned int  user_time;
@@ -396,8 +396,8 @@ struct _E_Border
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
             struct
             {
-               const char     *name;
-               const char    **available_list;
+               Eina_Stringshare *name;
+               Eina_Stringshare **available_list;
                int             num;
                unsigned char   wait_for_done : 1;
                unsigned char   use : 1;
@@ -532,7 +532,7 @@ struct _E_Border
    E_Fullscreen       fullscreen_policy;
    unsigned int       borderless : 1;
    unsigned char      offer_resistance : 1;
-   const char        *bordername;
+   Eina_Stringshare  *bordername;
 
    unsigned int       lock_user_location : 1; /*DONE*/
    unsigned int       lock_client_location : 1; /*DONE*/
