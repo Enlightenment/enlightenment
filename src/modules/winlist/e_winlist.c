@@ -292,8 +292,31 @@ e_winlist_hide(void)
      }
    if (bd)
      {
-        if (!e_border_pointer_warp_to_center_now(bd))
-          e_border_focus_set(bd, 1, 0);
+        if (bd->shaded)
+          {
+             if (!bd->lock_user_shade)
+               e_border_unshade(bd, bd->shade.dir);
+          }
+        else if (bd->desk)
+          {
+             if (!bd->sticky) e_desk_show(bd->desk);
+          }
+        if (!bd->lock_user_stacking)
+          e_border_raise(bd);
+
+        if (!bd->lock_focus_out)
+          {
+             e_border_focus_set(bd, 1, 1);
+             e_border_focus_latest_set(bd);
+             e_border_focus_set(bd, 1, 1);
+          }
+        if ((e_config->focus_policy != E_FOCUS_CLICK) ||
+            (e_config->winlist_warp_at_end) ||
+            (e_config->winlist_warp_while_selecting))
+          {
+             if (!e_border_pointer_warp_to_center_now(bd))
+               e_border_focus_set(bd, 1, 0);
+          }
         e_object_unref(E_OBJECT(bd));
      }
 
