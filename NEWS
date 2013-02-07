@@ -94,6 +94,7 @@ Improvements:
     * improve load time of apps dialogs
     * new tab in focus settings for pointer warping
     * unify all pointer warp animators
+    * clock listens to /etc/timezone changes now too
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.
@@ -156,3 +157,4 @@ Fixes:
     * fix bug where edge flips would stop functioning after dragging to an invalid edge containing a shelf
     * moved "allow windows above fullscreen windows" option to geometry settings dialog
     * fix filemanager efreet cache listeners and updates
+    * fix clock timerfd usage to actually detect date changes
