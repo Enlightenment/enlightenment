@@ -1642,3 +1642,25 @@ e_util_string_append_quoted(char *str, size_t *size, size_t *len, const char *sr
    return str;
 }
 
+EAPI void
+e_util_evas_objects_above_print(Evas_Object *o)
+{
+   Evas_Object *a, *oo;
+
+   EINA_SAFETY_ON_NULL_RETURN(o);
+   a = o;
+   while ((a = evas_object_above_get(a)))
+     {
+        const Eina_List *l, *ll;
+
+        l = evas_object_clipees_get(a);
+        if (l)
+          {
+             fprintf(stderr, "[%p] - %s :: CLIPPEES: ", a, evas_object_type_get(a));
+             EINA_LIST_FOREACH(l, ll, oo)
+               fprintf(stderr, "[%p] - %s %s", oo, evas_object_type_get(oo), ll->next ? "| " : "");
+          }
+        else
+          fprintf(stderr, "[%p] - %s\n", a, evas_object_type_get(a));
+     }
+}

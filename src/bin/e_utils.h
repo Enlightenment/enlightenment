@@ -70,10 +70,18 @@ EAPI void e_util_gadcon_orient_menu_item_icon_set(E_Gadcon_Orient orient, E_Menu
 EAPI char *e_util_string_append_char(char *str, size_t *size, size_t *len, char c);
 EAPI char *e_util_string_append_quoted(char *str, size_t *size, size_t *len, const char *src);
 
+EAPI void e_util_evas_objects_above_print(Evas_Object *o);
+
 static inline E_Container *
 e_util_container_current_get(void)
 {
    return e_container_current_get(e_manager_current_get());
+}
+
+static inline E_Comp *
+e_util_comp_current_get(void)
+{
+   return e_manager_current_get()->comp;
 }
 
 #endif
