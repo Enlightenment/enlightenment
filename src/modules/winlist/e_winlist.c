@@ -54,7 +54,6 @@ static Ecore_X_Window _input_window = 0;
 static int _scroll_to = 0;
 static double _scroll_align_to = 0.0;
 static double _scroll_align = 0.0;
-static Ecore_Timer *_warp_timer = NULL;
 static Ecore_Timer *_scroll_timer = NULL;
 static Ecore_Animator *_animator = NULL;
 static E_Border *_bd_next = NULL;
@@ -232,7 +231,6 @@ e_winlist_hide(void)
 {
    E_Border *bd = NULL;
    E_Winlist_Win *ww;
-   Ecore_Event_Handler *handler;
 
    if (!_winlist) return;
    if (_win_selected)
@@ -272,24 +270,14 @@ e_winlist_hide(void)
    _hold_mod = 0;
    _activate_type = 0;
 
-   EINA_LIST_FREE(_handlers, handler)
-     ecore_event_handler_del(handler);
+   E_FREE_LIST(_handlers, ecore_event_handler_del);
 
-   if (_warp_timer)
-     {
-        ecore_timer_del(_warp_timer);
-        _warp_timer = NULL;
-     }
-   if (_scroll_timer)
-     {
-        ecore_timer_del(_scroll_timer);
-        _scroll_timer = NULL;
-     }
-   if (_animator)
-     {
-        ecore_animator_del(_animator);
-        _animator = NULL;
-     }
+   E_FN_DEL(ecore_timer_del, _scroll_timer);
+   E_FN_DEL(ecore_animator_del, _animator);
+
+   ecore_x_window_free(_input_window);
+   e_grabinput_release(_input_window, _input_window);
+   _input_window = 0;
    if (bd)
      {
         if (bd->shaded)
@@ -304,12 +292,6 @@ e_winlist_hide(void)
         if (!bd->lock_user_stacking)
           e_border_raise(bd);
 
-        if (!bd->lock_focus_out)
-          {
-             e_border_focus_set(bd, 1, 1);
-             e_border_focus_latest_set(bd);
-             e_border_focus_set(bd, 1, 1);
-          }
         if ((e_config->focus_policy != E_FOCUS_CLICK) ||
             (e_config->winlist_warp_at_end) ||
             (e_config->winlist_warp_while_selecting))
@@ -317,14 +299,15 @@ e_winlist_hide(void)
              if (!e_border_pointer_warp_to_center_now(bd))
                e_border_focus_set(bd, 1, 0);
           }
+        else if (!bd->lock_focus_out)
+          {
+             e_border_focus_set(bd, 1, 1);
+             e_border_focus_latest_set(bd);
+          }
         e_object_unref(E_OBJECT(bd));
      }
 
    e_border_idler_before();
-
-   ecore_x_window_free(_input_window);
-   e_grabinput_release(_input_window, _input_window);
-   _input_window = 0;
 }
 
 void
@@ -1032,7 +1015,6 @@ _e_winlist_activate(void)
           }
         else
           {
-             E_FN_DEL(ecore_timer_del, _warp_timer);
              E_FN_DEL(ecore_animator_del, _animator);
           }
 
