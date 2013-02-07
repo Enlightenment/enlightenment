@@ -1100,7 +1100,7 @@ e_border_hide(E_Border *bd,
 
            case 1:
            default:
-             if (!e_comp_evas_get(bd->zone->container->manager->comp))
+             if (!e_comp_evas_exists(bd))
                {
                   /* Make sure that this border isn't deleted */
                   bd->await_hide_event++;
@@ -3501,7 +3501,7 @@ _e_border_shape_input_rectangle_set(E_Border *bd)
           }
         else
           {
-             if (!e_comp_evas_get(bd->zone->container->manager->comp))
+             if (!e_comp_evas_exists(bd))
                ecore_x_composite_window_events_enable(bd->win);
              else
                ecore_x_composite_window_events_disable(bd->win);
@@ -3677,7 +3677,7 @@ _e_border_hide(E_Border *bd)
    E_Border *tmp;
    Eina_List *l;
 
-   if (!e_comp_evas_get(bd->zone->container->manager->comp))
+   if (!e_comp_evas_exists(bd))
      {
         ecore_x_window_hide(bd->win);
         ecore_evas_hide(bd->bg_ecore_evas);
