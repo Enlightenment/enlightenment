@@ -3598,6 +3598,15 @@ _e_comp_populate(E_Comp *c)
    free(wins);
 }
 
+static void
+_e_comp_add_fail_job(void *d EINA_UNUSED)
+{
+   e_util_dialog_internal
+     (_("Compositor Warning"), _("Your display driver does not support OpenGL, or<br>"
+       "no OpenGL engines were compiled or installed for<br>"
+       "Evas or Ecore-Evas. Falling back to software engine."));
+}
+
 static E_Comp *
 _e_comp_add(E_Manager *man)
 {
@@ -3659,7 +3668,7 @@ _e_comp_add(E_Manager *man)
 
    if (c->man->num == 0) e_alert_composite_win(c->man->root, c->win);
 
-   if (conf->engine == E_COMP_ENGINE_GL)
+   if (gl_avail && (conf->engine == E_COMP_ENGINE_GL))
      {
         int opt[20];
         int opt_i = 0;
@@ -3704,17 +3713,9 @@ _e_comp_add(E_Manager *man)
      }
    if (!c->ee)
      {
-#if 0
-        if (conf->engine == E_COMP_ENGINE_GL)
-          {
-             e_util_dialog_internal
-               (_("Compositor Warning"), _("Your display driver does not support OpenGL, or<br>"
-                 "no OpenGL engines were compiled or installed for<br>"
-                 "Evas or Ecore-Evas. Falling back to software engine."));
-          }
-#endif
-
         c->ee = ecore_evas_software_x11_new(NULL, c->win, 0, 0, man->w, man->h);
+        if (conf->engine == E_COMP_ENGINE_GL)
+          ecore_job_add(_e_comp_add_fail_job, NULL);
      }
 
    {
