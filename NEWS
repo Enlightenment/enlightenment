@@ -167,3 +167,4 @@ Fixes:
     * fix filemanager efreet cache listeners and updates
     * fix clock timerfd usage to actually detect date changes
     * keyboard mapping change now also disables for window class "vmware"
+    * don't call efreet_menu_parse from a thread
