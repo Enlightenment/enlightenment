@@ -3704,6 +3704,7 @@ _e_comp_add(E_Manager *man)
      }
    if (!c->ee)
      {
+#if 0
         if (conf->engine == E_COMP_ENGINE_GL)
           {
              e_util_dialog_internal
@@ -3711,6 +3712,7 @@ _e_comp_add(E_Manager *man)
                  "no OpenGL engines were compiled or installed for<br>"
                  "Evas or Ecore-Evas. Falling back to software engine."));
           }
+#endif
 
         c->ee = ecore_evas_software_x11_new(NULL, c->win, 0, 0, man->w, man->h);
      }
