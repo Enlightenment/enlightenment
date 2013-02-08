@@ -3907,8 +3907,11 @@ _e_comp_sys_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
              first = EINA_FALSE;
           }
      }
-   if (action_timeout) ecore_timer_del(action_timeout);
-   action_timeout = ecore_timer_add(ACTION_TIMEOUT, (Ecore_Task_Cb)_e_comp_sys_action_timeout, (intptr_t*)(long)a);
+   if (rep)
+     {
+        if (action_timeout) ecore_timer_del(action_timeout);
+        action_timeout = ecore_timer_add(ACTION_TIMEOUT, (Ecore_Task_Cb)_e_comp_sys_action_timeout, (intptr_t*)(long)a);
+     }
 }
 
 static void
