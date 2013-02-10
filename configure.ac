@@ -877,6 +877,7 @@ AC_E_OPTIONAL_MODULE([xkbswitch], true)
 AC_E_OPTIONAL_MODULE([tiling], true)
 AC_E_OPTIONAL_MODULE([access], true)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
+AC_E_OPTIONAL_MODULE([contact], true)
 
 SUSPEND=""
 HIBERNATE=""
@@ -985,6 +986,7 @@ src/modules/xkbswitch/module.desktop
 src/modules/tiling/module.desktop
 src/modules/access/module.desktop
 src/modules/music-control/module.desktop
+src/modules/contact/module.desktop
 data/Makefile
 data/images/Makefile
 data/flags/Makefile
