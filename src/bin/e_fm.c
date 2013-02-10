@@ -7378,7 +7378,7 @@ _e_fm_drag_key_down_cb(E_Drag *drag, Ecore_Event_Key *e)
 static void
 _e_fm_drag_key_up_cb(E_Drag *drag, Ecore_Event_Key *e)
 {
-   Ecore_X_Atom act;
+   Ecore_X_Atom act = ECORE_X_ATOM_XDND_ACTION_MOVE;
    /* Default action would be move. ;) */
 
    if (!strncmp(e->keyname, "Alt", 3))
