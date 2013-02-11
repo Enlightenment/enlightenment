@@ -39,6 +39,30 @@ e_policy_shutdown(void)
    EINA_LIST_FREE(handlers, eh) ecore_event_handler_del(eh);
 }
 
+void
+e_policy_kbd_override_set(Eina_Bool override)
+{
+   Eina_List *l;
+   E_Border *bd, *kbd = NULL;;
+   
+   if (kbd_override == override) return;
+   kbd_override = override;
+   EINA_LIST_FOREACH(e_border_client_list(), l, bd)
+     {
+        if (bd->client.vkbd.vkbd)
+          {
+             kbd = bd;
+          }
+     }
+   if (kbd)
+     {
+        bd = kbd;
+        e_border_uniconify(bd);
+        e_border_raise(bd);
+        e_border_show(bd);
+     }
+}
+
 static Eina_Bool
 _cb_event_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
@@ -98,30 +122,6 @@ _cb_hook_post_assign(void *data __UNUSED__, void *data2)
 
    /* lock the border type so user/client cannot change */
    bd->lock_border = 1;
-}
-
-void
-e_policy_kbd_override_set(Eina_Bool override)
-{
-   Eina_List *l;
-   E_Border *bd, *kbd = NULL;;
-   
-   if (kbd_override == override) return;
-   kbd_override = override;
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd)
-     {
-        if (bd->client.vkbd.vkbd)
-          {
-             kbd = bd;
-          }
-     }
-   if (kbd)
-     {
-        bd = kbd;
-        e_border_uniconify(bd);
-        e_border_raise(bd);
-        e_border_show(bd);
-     }
 }
 
 static void
