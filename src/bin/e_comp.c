@@ -3388,7 +3388,7 @@ _e_comp_shapes_update_job(E_Comp *c)
                        eina_tiler_rect_del(tb, &(Eina_Rectangle){x, y, w, h});
                        SHAPE_INF("DEL: %d,%d@%dx%d", x, y, w, h);
                     }
-                  else if (evas_object_visible_get(ch) && (!evas_object_pass_events_get(o)))
+                  else if (evas_object_visible_get(ch) && (!evas_object_pass_events_get(ch)))
                     {
                        evas_object_geometry_get(o, &x, &y, &w, &h);
                        eina_tiler_rect_add(tb, &(Eina_Rectangle){x, y, w, h});
