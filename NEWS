@@ -169,3 +169,4 @@ Fixes:
     * keyboard mapping change now also disables for window class "vmware"
     * don't call efreet_menu_parse from a thread
     * fixed bug where pointer warping to new clients would start at a random location
+    * fix crash when locking screen from Start gadget and then activating gadget again
