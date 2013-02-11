@@ -168,3 +168,4 @@ Fixes:
     * fix clock timerfd usage to actually detect date changes
     * keyboard mapping change now also disables for window class "vmware"
     * don't call efreet_menu_parse from a thread
+    * fixed bug where pointer warping to new clients would start at a random location
