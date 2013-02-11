@@ -9,7 +9,11 @@ contactpkgdir = $(MDIR)/contact/$(MODULE_ARCH)
 contactpkg_LTLIBRARIES = contact/module.la
 
 contact_module_la_SOURCES = contact/e_mod_main.c \
-			    contact/e_mod_main.h
+			    contact/e_mod_main.h \
+                            contact/e_policy.c \
+                            contact/e_policy.h \
+                            contact/e_edges.c \
+                            contact/e_edges.h
 
 # TODO: incomplete
 .PHONY: contact install-contact
