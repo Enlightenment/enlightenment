@@ -380,7 +380,8 @@ _12_policies_restore(void)
      {
         EINA_LIST_FOREACH(e_config->randr_serialized_setup->outputs_policies, iter2, sop)
           {
-             if (!strncmp(sop->name, output->name, output->name_length))
+             if ((output->name_length > 0) && 
+                 (!strncmp(sop->name, output->name, output->name_length)))
                {
                   output->policy = sop->policy;
                   INF("E_RANDR: Policy \"%s\" for output \"%s\" restored.", _POLICIES_STRINGS[sop->policy - 1], output->name);
