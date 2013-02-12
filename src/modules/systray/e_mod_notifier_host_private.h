@@ -37,6 +37,7 @@ struct _Context_Notifier_Host
    EDBus_Proxy *watcher;
    Eina_Inlist *item_list;
    Eina_Inlist *instances;
+   Eina_List *pending;
 };
 
 struct _Notifier_Item

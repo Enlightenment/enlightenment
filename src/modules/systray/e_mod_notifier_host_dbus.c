@@ -398,13 +398,14 @@ item_unregistered_local_cb(void *data, const char *service)
 }
 
 static void
-name_request_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
+name_request_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *error, *error_msg;
    unsigned flag;
    EDBus_Object *obj;
    Context_Notifier_Host *ctx = data;
 
+   ctx->pending = eina_list_remove(ctx->pending, pending);
    if (edbus_message_error_get(msg, &error, &error_msg))
      {
         ERR("%s %s", error, error_msg);
@@ -441,11 +442,15 @@ end:
 void
 systray_notifier_dbus_init(Context_Notifier_Host *ctx)
 {
+   EDBus_Pending *p;
+   
    edbus_init();
    ctx->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
-   edbus_name_request(ctx->conn,
-                      WATCHER_BUS, EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING,
-                      name_request_cb, ctx);
+   if (!ctx->conn) return;
+   p = edbus_name_request(ctx->conn,
+                          WATCHER_BUS, EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING,
+                          name_request_cb, ctx);
+   if (p) ctx->pending = eina_list_append(ctx->pending, p);
 }
 
 void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx)
