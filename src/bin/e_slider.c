@@ -210,7 +210,14 @@ EAPI void
 e_slider_disabled_set(Evas_Object *obj, Eina_Bool disable)
 {
    API_ENTRY return;
+
+   if (sd->disabled == disable) return;
    sd->disabled = disable;
+
+   if (disable)
+     edje_object_signal_emit(sd->edje_obj, "e,state,disabled", "e");
+   else
+     edje_object_signal_emit(sd->edje_obj, "e,state,enabled", "e");
 }
 
 EAPI int
