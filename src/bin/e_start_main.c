@@ -20,6 +20,7 @@
 #include <errno.h>
 
 #include <Eina.h>
+#include <Evas.h>
 
 static Eina_Bool stop_ptrace = EINA_FALSE;
 
@@ -244,6 +245,7 @@ main(int argc, char **argv)
    const char *valgrind_log = NULL;
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
+   pid_t child = -1, cs_child = -1;
 #if !defined(__OpenBSD__) && !defined(__NetBSD__) && !defined(__FreeBSD__) && \
    !(defined (__MACH__) && defined (__APPLE__))
    Eina_Bool restart = EINA_TRUE;
@@ -419,10 +421,26 @@ main(int argc, char **argv)
    /* Now looping until */
    while (restart)
      {
-        pid_t child;
-
         stop_ptrace = EINA_FALSE;
 
+/*        
+        if (cs_child < 0)
+          {             
+             cs_child = fork();
+             if (cs_child == 0) 
+               {
+                  char *cs_args[2] = { NULL, NULL };
+                  
+                  cs_args[0] = (char *)evas_cserve_path_get();
+                  execv(cs_args[0], cs_args);
+                  exit(-1);
+               }
+             else if (cs_child > 0)
+               {
+                  putenv("EVAS_CSERVE2=1");
+               }
+          }
+ */
         child = fork();
 
         if (child < 0) /* failed attempt */
@@ -444,12 +462,11 @@ main(int argc, char **argv)
              pid_t result;
              int status;
              Eina_Bool done = EINA_FALSE;
+
 #ifdef HAVE_SYS_PTRACE_H
              if (!really_know)
                ptrace(PT_ATTACH, child, NULL, NULL);
-#endif
              result = waitpid(child, &status, 0);
-#ifdef HAVE_SYS_PTRACE_H
              if ((!really_know) && (!stop_ptrace))
                {
                   if (WIFSTOPPED(status))
