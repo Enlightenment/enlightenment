@@ -388,6 +388,8 @@ e_border_shutdown(void)
    borders_hash = NULL;
    e_int_border_menu_hooks_clear();
    focus_locked = EINA_FALSE;
+   if (warp_timer) ecore_timer_del(warp_timer);
+   warp_timer = NULL;
    warp_timer_border = NULL;
 
    return 1;
@@ -4860,6 +4862,12 @@ e_border_resize_limit(E_Border *bd,
 static void
 _e_border_free(E_Border *bd)
 {
+   if (warp_timer_border == bd)
+     {
+        if (warp_timer) ecore_timer_del(warp_timer);
+        warp_timer = NULL;
+        warp_timer_border = NULL;
+     }
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    if (bd->client.e.state.profile.use)
      {
@@ -10225,34 +10233,37 @@ _e_border_pointer_warp_to_center_timer(void *data __UNUSED__)
         return ECORE_CALLBACK_RENEW;
      }
 cleanup:
-   ecore_timer_del(warp_timer);
+   if (warp_timer) ecore_timer_del(warp_timer);
    warp_timer = NULL;
-   warp_x[0] = warp_x[1] = warp_y[0] = warp_y[1] = -1;
-   e_border_focus_lock_set(EINA_FALSE);
-   e_focus_event_mouse_in(warp_timer_border);
-   if (warp_timer_border->iconic)
+   if (warp_timer_border)
      {
-        if (!warp_timer_border->lock_user_iconify)
-          e_border_uniconify(warp_timer_border);
+        warp_x[0] = warp_x[1] = warp_y[0] = warp_y[1] = -1;
+        e_border_focus_lock_set(EINA_FALSE);
+        e_focus_event_mouse_in(warp_timer_border);
+        if (warp_timer_border->iconic)
+          {
+             if (!warp_timer_border->lock_user_iconify)
+               e_border_uniconify(warp_timer_border);
+          }
+        if (warp_timer_border->shaded)
+          {
+             if (!warp_timer_border->lock_user_shade)
+               e_border_unshade(warp_timer_border, warp_timer_border->shade.dir);
+          }
+        else if (warp_timer_border->desk)
+          {
+             if (!warp_timer_border->sticky) e_desk_show(warp_timer_border->desk);
+          }
+        if (!warp_timer_border->lock_user_stacking)
+          e_border_raise(warp_timer_border);
+        
+        if (!warp_timer_border->lock_focus_out)
+          {
+             e_border_focus_set(warp_timer_border, 1, 1);
+             e_border_focus_latest_set(warp_timer_border);
+          }
+        warp_timer_border = NULL;
      }
-   if (warp_timer_border->shaded)
-     {
-        if (!warp_timer_border->lock_user_shade)
-          e_border_unshade(warp_timer_border, warp_timer_border->shade.dir);
-     }
-   else if (warp_timer_border->desk)
-     {
-        if (!warp_timer_border->sticky) e_desk_show(warp_timer_border->desk);
-     }
-   if (!warp_timer_border->lock_user_stacking)
-     e_border_raise(warp_timer_border);
-
-   if (!warp_timer_border->lock_focus_out)
-     {
-        e_border_focus_set(warp_timer_border, 1, 1);
-        e_border_focus_latest_set(warp_timer_border);
-     }
-   warp_timer_border = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -10262,6 +10273,9 @@ e_border_pointer_warp_to_center_now(E_Border *bd)
    if (e_config->disable_all_pointer_warps) return 0;
    if (warp_timer_border == bd)
      {
+        if (warp_timer) ecore_timer_del(warp_timer);
+        warp_timer = NULL;
+        warp_timer_border = NULL;
         ecore_x_pointer_warp(warp_to_win, warp_to_x, warp_to_y);
         warp_to = 0;
      }
