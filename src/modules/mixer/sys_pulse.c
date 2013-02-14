@@ -15,6 +15,7 @@ static Eina_List *sinks = NULL;
 static Eina_List *sources = NULL;
 static Ecore_Poller *pulse_poller = NULL;
 static Eina_Hash *queue_states = NULL;
+static const char *_name = NULL;
 
 static EDBus_Connection *dbus = NULL;
 static EDBus_Signal_Handler *dbus_handler = NULL;
@@ -372,6 +373,7 @@ e_mixer_pulse_init(void)
    ph = ecore_event_handler_add(PULSE_EVENT_CONNECTED, (Ecore_Event_Handler_Cb)_pulse_connected, conn);
    pch = ecore_event_handler_add(PULSE_EVENT_CHANGE, (Ecore_Event_Handler_Cb)_pulse_update, conn);
    pdh = ecore_event_handler_add(PULSE_EVENT_DISCONNECTED, (Ecore_Event_Handler_Cb)_pulse_disconnected, conn);
+   if (!_name) _name = eina_stringshare_add("Output");
    return EINA_TRUE;
 error:
    pulse_free(conn);
@@ -417,6 +419,8 @@ e_mixer_pulse_shutdown(void)
         edbus_shutdown();
      }
    pulse_shutdown();
+   if (_name) eina_stringshare_del(_name);
+   _name = NULL;
 }
 
 E_Mixer_System *
@@ -484,7 +488,7 @@ e_mixer_pulse_free_channels(Eina_List *channels)
 Eina_List *
 e_mixer_pulse_get_channels_names(E_Mixer_System *self EINA_UNUSED)
 {
-   return eina_list_append(NULL, eina_stringshare_add("Output"));
+   return eina_list_append(NULL, eina_stringshare_ref(_name));
 }
 
 void
@@ -498,7 +502,7 @@ e_mixer_pulse_free_channels_names(Eina_List *channels_names)
 const char *
 e_mixer_pulse_get_default_channel_name(E_Mixer_System *self EINA_UNUSED)
 {
-   return eina_stringshare_add("Output");
+   return eina_stringshare_ref(_name);
 }
 
 E_Mixer_Channel *
@@ -516,7 +520,7 @@ const char *
 e_mixer_pulse_get_channel_name(E_Mixer_System *self EINA_UNUSED, E_Mixer_Channel *channel)
 {
    if (!channel) return NULL;
-   return eina_stringshare_add("Output");
+   return eina_stringshare_ref(_name);
 }
 
 int
