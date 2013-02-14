@@ -5022,37 +5022,51 @@ _e_border_free(E_Border *bd)
         bd->already_unparented = 1;
      }
    if (bd->group) eina_list_free(bd->group);
+   bd->group = NULL;
    if (bd->transients) eina_list_free(bd->transients);
+   bd->transients = NULL;
    if (bd->stick_desks) eina_list_free(bd->stick_desks);
+   bd->stick_desks = NULL;
    if (bd->client.netwm.icons)
      {
         int i;
         for (i = 0; i < bd->client.netwm.num_icons; i++)
           free(bd->client.netwm.icons[i].data);
         free(bd->client.netwm.icons);
+        bd->client.netwm.icons = NULL;
      }
    free(bd->client.netwm.extra_types);
+   bd->client.netwm.extra_types = NULL;
    if (bd->client.border.name)
      eina_stringshare_del(bd->client.border.name);
+   bd->client.border.name = NULL;
    if (bd->bordername)
      eina_stringshare_del(bd->bordername);
+   bd->bordername = NULL;
    if (bd->client.icccm.name)
      eina_stringshare_del(bd->client.icccm.name);
+   bd->client.icccm.name = NULL;
    if (bd->client.icccm.class)
      {
-        if ((!strcasecmp(bd->client.icccm.class, "vmplayer")) || (!strcasecmp(bd->client.icccm.class, "vmware")))
+        if ((!strcasecmp(bd->client.icccm.class, "vmplayer")) || 
+            (!strcasecmp(bd->client.icccm.class, "vmware")))
           e_bindings_mapping_change_enable(EINA_TRUE);
         eina_stringshare_del(bd->client.icccm.class);
+        bd->client.icccm.class = NULL;
      }
    if (bd->client.icccm.title)
      eina_stringshare_del(bd->client.icccm.title);
+   bd->client.icccm.title = NULL;
    if (bd->client.icccm.icon_name)
      eina_stringshare_del(bd->client.icccm.icon_name);
+   bd->client.icccm.icon_name = NULL;
    if (bd->client.icccm.machine)
      eina_stringshare_del(bd->client.icccm.machine);
+   bd->client.icccm.machine = NULL;
    if (bd->client.icccm.window_role)
      eina_stringshare_del(bd->client.icccm.window_role);
-
+   bd->client.icccm.window_role = NULL;
+   
    if ((bd->client.icccm.command.argc > 0) && (bd->client.icccm.command.argv))
      {
         int i;
@@ -5060,24 +5074,36 @@ _e_border_free(E_Border *bd)
         for (i = 0; i < bd->client.icccm.command.argc; i++)
           free(bd->client.icccm.command.argv[i]);
         free(bd->client.icccm.command.argv);
+        bd->client.icccm.command.argv = NULL;
      }
    if (bd->client.netwm.name)
      eina_stringshare_del(bd->client.netwm.name);
+   bd->client.netwm.name = NULL;
    if (bd->client.netwm.icon_name)
      eina_stringshare_del(bd->client.netwm.icon_name);
+   bd->client.netwm.icon_name = NULL;
    e_object_del(E_OBJECT(bd->shape));
+   bd->shape = NULL;
    if (bd->internal_icon) eina_stringshare_del(bd->internal_icon);
+   bd->internal_icon = NULL;
    if (bd->internal_icon_key) eina_stringshare_del(bd->internal_icon_key);
+   bd->internal_icon_key = NULL;
    if (bd->icon_object) evas_object_del(bd->icon_object);
+   bd->icon_object = NULL;
    evas_object_del(bd->bg_object);
+   bd->bg_object = NULL;
    e_canvas_del(bd->bg_ecore_evas);
+   bd->bg_ecore_evas = NULL;
    ecore_evas_free(bd->bg_ecore_evas);
+   bd->bg_ecore_evas = NULL;
    ecore_x_window_free(bd->client.shell_win);
+   bd->client.shell_win = 0;
    e_focus_setdown(bd);
    e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, bd->win);
    e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, bd->win);
    ecore_x_window_free(bd->win);
-
+   bd->win = 0;
+   
    eina_hash_del(borders_hash, e_util_winid_str_get(bd->client.win), bd);
    eina_hash_del(borders_hash, e_util_winid_str_get(bd->bg_win), bd);
    eina_hash_del(borders_hash, e_util_winid_str_get(bd->win), bd);
