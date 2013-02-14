@@ -96,7 +96,7 @@ int e_mixer_app_dialog_select(E_Dialog *dialog, const char *card_name, const cha
 int e_mixer_update(E_Mixer_Instance *inst);
 const char *e_mixer_theme_path(void);
 
-void e_mod_mixer_pulse_ready(Eina_Bool);
-void e_mod_mixer_pulse_update(void);
+void e_sys_pulse_ready_cb(Eina_Bool);
+void e_sys_pulse_update_cb(void);
 
 #endif

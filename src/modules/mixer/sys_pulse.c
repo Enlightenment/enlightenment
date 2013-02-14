@@ -1,4 +1,3 @@
-#include "e_mod_main.h"
 #include "e_mod_mixer.h"
 #include "Pulse.h"
 
@@ -25,6 +24,10 @@ static Ecore_Timer *disc_timer = NULL;
 static unsigned int disc_count = 0;
 static unsigned int update_count = 0;
 static Ecore_Timer *update_timer = NULL;
+static E_Mixer_Cb sys_pulse_mixer_update_cb = NULL;
+static E_Mixer_Ready_Cb sys_pulse_mixer_ready_cb = NULL;
+
+static Eina_Bool _mixer_pulse_init(void);
 
 static Eina_Bool
 _pulse_poller_cb(void *d __UNUSED__)
@@ -33,7 +36,7 @@ _pulse_poller_cb(void *d __UNUSED__)
 
    snprintf(buf, sizeof(buf), "%s/.pulse-cookie", getenv("HOME"));
    if (ecore_file_exists(buf))
-     return !e_mixer_pulse_init();
+     return !_mixer_pulse_init();
    return EINA_TRUE;
 }
 
@@ -44,7 +47,7 @@ _dbus_poll(void *data EINA_UNUSED, const EDBus_Message *msg)
    if (edbus_message_arguments_get(msg, "sss", &name, &from, &to))
      {
         if (!strcmp(name, PULSE_BUS))
-          e_mixer_pulse_init();
+          _mixer_pulse_init();
      }
 
    if (dbus_handler)
@@ -76,7 +79,7 @@ _dbus_test(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pend
              dbus = NULL;
              edbus_shutdown();
           }
-        e_mod_mixer_pulse_ready(EINA_FALSE);
+        if(sys_pulse_mixer_ready_cb) sys_pulse_mixer_ready_cb(EINA_FALSE);
         return;
      }
 }
@@ -94,16 +97,16 @@ _pulse_info_get(Pulse *d __UNUSED__, int type __UNUSED__, Pulse_Server_Info *ev)
        {
           if (default_sink == sink) return;
           default_sink = sink;
-          if (!_mixer_using_default) e_mod_mixer_pulse_update();
+          if (!_mixer_using_default && sys_pulse_mixer_update_cb) sys_pulse_mixer_update_cb();
           break;
        }
-   e_mod_mixer_pulse_ready(EINA_TRUE);
+   if(sys_pulse_mixer_ready_cb) sys_pulse_mixer_ready_cb(EINA_FALSE);
 }
 
 static Eina_Bool
 _pulse_update_timer(void *d EINA_UNUSED)
 {
-   e_mod_mixer_pulse_update();
+   if (sys_pulse_mixer_update_cb) sys_pulse_mixer_update_cb();
    update_timer = NULL;
    return EINA_FALSE;
 }
@@ -153,7 +156,7 @@ _pulse_sinks_get(Pulse *p __UNUSED__, Pulse_Tag_Id id __UNUSED__, Eina_List *ev)
 
    sinks = ev;
    pulse_sinks_watch(conn);
-   if (default_sink) e_mod_mixer_pulse_ready(EINA_TRUE);
+   if (default_sink && sys_pulse_mixer_ready_cb) sys_pulse_mixer_ready_cb(EINA_FALSE);
 }
 
 static void
@@ -212,9 +215,9 @@ _pulse_disc_timer(void *d __UNUSED__)
      {
         if (pulse_connect(conn)) return EINA_FALSE;
      }
-   e_mod_mixer_pulse_ready(EINA_FALSE);
+   if (sys_pulse_mixer_ready_cb) sys_pulse_mixer_ready_cb(EINA_FALSE);
    e_mixer_pulse_shutdown();
-   e_mixer_pulse_init();
+   _mixer_pulse_init();
    disc_count = 0;
    return EINA_FALSE;
 }
@@ -333,7 +336,15 @@ e_mixer_pulse_ready(void)
 }
 
 Eina_Bool
-e_mixer_pulse_init(void)
+e_mixer_pulse_init(E_Mixer_Ready_Cb e_sys_pulse_ready_cb, E_Mixer_Cb e_sys_pulse_update_cb)
+{
+   sys_pulse_mixer_ready_cb = e_sys_pulse_ready_cb;
+   sys_pulse_mixer_update_cb = e_sys_pulse_update_cb;
+   return _mixer_pulse_init();
+}
+
+static Eina_Bool
+_mixer_pulse_init(void)
 {
    pulse_init();
    conn = pulse_new();

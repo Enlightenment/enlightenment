@@ -955,7 +955,7 @@ _mixer_pulse_setup(void)
 }
 
 void
-e_mod_mixer_pulse_ready(Eina_Bool ready)
+e_sys_pulse_ready_cb(Eina_Bool ready)
 {
    E_Mixer_Instance *inst;
    E_Mixer_Module_Context *ctxt;
@@ -1004,7 +1004,7 @@ e_mod_mixer_pulse_ready(Eina_Bool ready)
 }
 
 void
-e_mod_mixer_pulse_update(void)
+e_sys_pulse_update_cb(void)
 {
    E_Mixer_Instance *inst;
    E_Mixer_Module_Context *ctxt;
@@ -1474,7 +1474,8 @@ e_modapi_init(E_Module *m)
 
    _mixer_configure_registry_register();
    e_gadcon_provider_register(&_gc_class);
-   if (!e_mixer_pulse_init()) e_mixer_default_setup();
+   if (!e_mixer_pulse_init((void*)e_sys_pulse_ready_cb,(void*)e_sys_pulse_update_cb))
+     e_mixer_default_setup();
    else _mixer_pulse_setup();
 
    mixer_mod = m;

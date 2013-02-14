@@ -29,6 +29,7 @@ typedef int (*E_Mixer_Mute_Set_Cb)(E_Mixer_System *, E_Mixer_Channel *, int);
 typedef int (*E_Mixer_State_Get_Cb)(E_Mixer_System *, E_Mixer_Channel *, E_Mixer_Channel_State *);
 typedef int (*E_Mixer_Capture_Cb)(E_Mixer_System *, E_Mixer_Channel *);
 typedef void *(*E_Mixer_Cb)();
+typedef void *(*E_Mixer_Ready_Cb)(Eina_Bool);
 
 extern Eina_Bool _mixer_using_default;
 extern E_Mixer_Volume_Get_Cb e_mod_mixer_volume_get;
@@ -87,9 +88,8 @@ int e_mixer_alsa_get_state(E_Mixer_System *self, E_Mixer_Channel *channel, E_Mix
 int e_mixer_alsa_set_state(E_Mixer_System *self, E_Mixer_Channel *channel, const E_Mixer_Channel_State *state);
 
 /* PULSE */
-int pulse_init(void);
 Eina_Bool e_mixer_pulse_ready(void);
-Eina_Bool e_mixer_pulse_init(void);
+Eina_Bool e_mixer_pulse_init(E_Mixer_Ready_Cb e_sys_pulse_ready_cb, E_Mixer_Cb e_sys_pulse_update_cb);
 void e_mixer_pulse_shutdown(void);
 
 E_Mixer_System *e_mixer_pulse_new(const char *name);
