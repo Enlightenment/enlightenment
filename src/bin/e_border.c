@@ -5101,12 +5101,12 @@ _e_border_free(E_Border *bd)
    e_focus_setdown(bd);
    e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, bd->win);
    e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, bd->win);
-   ecore_x_window_free(bd->win);
-   bd->win = 0;
-   
    eina_hash_del(borders_hash, e_util_winid_str_get(bd->client.win), bd);
    eina_hash_del(borders_hash, e_util_winid_str_get(bd->bg_win), bd);
    eina_hash_del(borders_hash, e_util_winid_str_get(bd->win), bd);
+   ecore_x_window_free(bd->win);
+   bd->win = 0;
+   
    borders = eina_list_remove(borders, bd);
    focus_stack = eina_list_remove(focus_stack, bd);
    raise_stack = eina_list_remove(raise_stack, bd);
