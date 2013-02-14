@@ -14,7 +14,8 @@ mixer_module_la_SOURCES = mixer/e_mod_main.c \
 			  mixer/app_mixer.c \
 			  mixer/conf_gadget.c \
 			  mixer/conf_module.c \
-			  mixer/e_mod_system.h \
+			  mixer/e_mod_mixer.h \
+			  mixer/e_mod_mixer.c \
 			  mixer/msg.c \
 			  mixer/Pulse.h \
 			  mixer/pa.h \

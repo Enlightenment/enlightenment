@@ -1,4 +1,4 @@
-#include "e_mod_system.h"
+#include "e_mod_mixer.h"
 #include <alsa/asoundlib.h>
 #include <poll.h>
 

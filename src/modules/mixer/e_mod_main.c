@@ -9,28 +9,6 @@ static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 static const char _conf_domain[] = "module.mixer";
 static const char _name[] = "mixer";
 const char _e_mixer_Name[] = N_("Mixer");
-Eina_Bool _mixer_using_default = EINA_FALSE;
-E_Mixer_Volume_Get_Cb e_mod_mixer_volume_get;
-E_Mixer_Volume_Set_Cb e_mod_mixer_volume_set;
-E_Mixer_Mute_Get_Cb e_mod_mixer_mute_get;
-E_Mixer_Mute_Set_Cb e_mod_mixer_mute_set;
-E_Mixer_Capture_Cb e_mod_mixer_mutable_get;
-E_Mixer_State_Get_Cb e_mod_mixer_state_get;
-E_Mixer_Capture_Cb e_mod_mixer_capture_get;
-E_Mixer_Cb e_mod_mixer_new;
-E_Mixer_Cb e_mod_mixer_del;
-E_Mixer_Cb e_mod_mixer_channel_default_name_get;
-E_Mixer_Cb e_mod_mixer_channel_get_by_name;
-E_Mixer_Cb e_mod_mixer_channel_name_get;
-E_Mixer_Cb e_mod_mixer_channel_del;
-E_Mixer_Cb e_mod_mixer_channel_free;
-E_Mixer_Cb e_mod_mixer_channels_free;
-E_Mixer_Cb e_mod_mixer_channels_get;
-E_Mixer_Cb e_mod_mixer_channels_names_get;
-E_Mixer_Cb e_mod_mixer_card_name_get;
-E_Mixer_Cb e_mod_mixer_cards_get;
-E_Mixer_Cb e_mod_mixer_cards_free;
-E_Mixer_Cb e_mod_mixer_card_default_get;
 
 static void _mixer_actions_unregister(E_Mixer_Module_Context *ctxt);
 static void _mixer_actions_register(E_Mixer_Module_Context *ctxt);
@@ -957,6 +935,25 @@ _mixer_sys_setup_defaults(E_Mixer_Instance *inst)
    return _mixer_sys_setup_default_channel(inst);
 }
 
+static void
+_mixer_pulse_setup(void)
+{
+   E_Mixer_Instance *inst;
+   E_Mixer_Module_Context *ctxt;
+   Eina_List *l;
+
+   e_mixer_pulse_setup();
+
+   if (!mixer_mod) return;
+
+   ctxt = mixer_mod->data;
+   EINA_LIST_FOREACH(ctxt->instances, l, inst)
+     {
+        if (!inst->conf->card)
+          _mixer_gadget_configuration_defaults(inst->conf);
+     }
+}
+
 void
 e_mod_mixer_pulse_ready(Eina_Bool ready)
 {
@@ -980,7 +977,7 @@ e_mod_mixer_pulse_ready(Eina_Bool ready)
              inst->sys = NULL;
           }
      }
-   if (ready) e_mixer_pulse_setup();
+   if (ready) _mixer_pulse_setup();
    else e_mixer_default_setup();
 
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
@@ -1466,71 +1463,6 @@ _mixer_actions_unregister(E_Mixer_Module_Context *ctxt)
      }
 }
 
-void
-e_mixer_default_setup(void)
-{
-   e_mod_mixer_volume_get = (void *)e_mixer_alsa_get_volume;
-   e_mod_mixer_volume_set = (void *)e_mixer_alsa_set_volume;
-   e_mod_mixer_mute_get = (void *)e_mixer_alsa_get_mute;
-   e_mod_mixer_mute_set = (void *)e_mixer_alsa_set_mute;
-   e_mod_mixer_mutable_get = (void *)e_mixer_alsa_can_mute;
-   e_mod_mixer_state_get = (void *)e_mixer_alsa_get_state;
-   e_mod_mixer_capture_get = (void *)e_mixer_alsa_has_capture;
-   e_mod_mixer_new = (void *)e_mixer_alsa_new;
-   e_mod_mixer_del = (void *)e_mixer_alsa_del;
-   e_mod_mixer_channel_default_name_get = (void *)e_mixer_alsa_get_default_channel_name;
-   e_mod_mixer_channel_get_by_name = (void *)e_mixer_alsa_get_channel_by_name;
-   e_mod_mixer_channel_name_get = (void *)e_mixer_alsa_get_channel_name;
-   e_mod_mixer_channel_del = (void *)e_mixer_alsa_channel_del;
-   e_mod_mixer_channels_free = (void *)e_mixer_alsa_free_channels;
-   e_mod_mixer_channels_get = (void *)e_mixer_alsa_get_channels;
-   e_mod_mixer_channels_names_get = (void *)e_mixer_alsa_get_channels_names;
-   e_mod_mixer_card_name_get = (void *)e_mixer_alsa_get_card_name;
-   e_mod_mixer_cards_get = (void *)e_mixer_alsa_get_cards;
-   e_mod_mixer_cards_free = (void *)e_mixer_alsa_free_cards;
-   e_mod_mixer_card_default_get = (void *)e_mixer_alsa_get_default_card;
-   _mixer_using_default = EINA_TRUE;
-}
-
-void
-e_mixer_pulse_setup(void)
-{
-   E_Mixer_Instance *inst;
-   E_Mixer_Module_Context *ctxt;
-   Eina_List *l;
-
-   e_mod_mixer_volume_get = (void *)e_mixer_pulse_get_volume;
-   e_mod_mixer_volume_set = (void *)e_mixer_pulse_set_volume;
-   e_mod_mixer_mute_get = (void *)e_mixer_pulse_get_mute;
-   e_mod_mixer_mute_set = (void *)e_mixer_pulse_set_mute;
-   e_mod_mixer_mutable_get = (void *)e_mixer_pulse_can_mute;
-   e_mod_mixer_state_get = (void *)e_mixer_pulse_get_state;
-   e_mod_mixer_capture_get = (void *)e_mixer_pulse_has_capture;
-   e_mod_mixer_new = (void *)e_mixer_pulse_new;
-   e_mod_mixer_del = (void *)e_mixer_pulse_del;
-   e_mod_mixer_channel_default_name_get = (void *)e_mixer_pulse_get_default_channel_name;
-   e_mod_mixer_channel_get_by_name = (void *)e_mixer_pulse_get_channel_by_name;
-   e_mod_mixer_channel_name_get = (void *)e_mixer_pulse_get_channel_name;
-   e_mod_mixer_channel_del = (void *)e_mixer_pulse_channel_del;
-   e_mod_mixer_channels_free = (void *)e_mixer_pulse_free_channels;
-   e_mod_mixer_channels_get = (void *)e_mixer_pulse_get_channels;
-   e_mod_mixer_channels_names_get = (void *)e_mixer_pulse_get_channels_names;
-   e_mod_mixer_card_name_get = (void *)e_mixer_pulse_get_card_name;
-   e_mod_mixer_cards_get = (void *)e_mixer_pulse_get_cards;
-   e_mod_mixer_cards_free = (void *)e_mixer_pulse_free_cards;
-   e_mod_mixer_card_default_get = (void *)e_mixer_pulse_get_default_card;
-   _mixer_using_default = EINA_FALSE;
-
-   if (!mixer_mod) return;
-
-   ctxt = mixer_mod->data;
-   EINA_LIST_FOREACH(ctxt->instances, l, inst)
-     {
-        if (!inst->conf->card)
-          _mixer_gadget_configuration_defaults(inst->conf);
-     }
-}
-
 EAPI void *
 e_modapi_init(E_Module *m)
 {
@@ -1543,7 +1475,7 @@ e_modapi_init(E_Module *m)
    _mixer_configure_registry_register();
    e_gadcon_provider_register(&_gc_class);
    if (!e_mixer_pulse_init()) e_mixer_default_setup();
-   else e_mixer_pulse_setup();
+   else _mixer_pulse_setup();
 
    mixer_mod = m;
    return ctxt;
