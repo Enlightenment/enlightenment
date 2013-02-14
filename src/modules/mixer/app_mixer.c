@@ -159,7 +159,7 @@ _update_channel_editor_state(E_Mixer_App_Dialog_Data *app, const E_Mixer_Channel
    e_widget_disabled_set(ui->right, disabled);
    e_widget_disabled_set(ui->lock_sliders, disabled);
 
-   if (e_mod_mixer_channel_mutable(app->channel_info))
+   if (e_mod_mixer_channel_is_mutable(app->channel_info))
      {
         e_widget_disabled_set(ui->mute, 0);
         e_widget_check_checked_set(ui->mute, state.mute);
@@ -265,7 +265,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
      {
         E_Mixer_Channel_Info *info = l->data;
 
-        if (header_input != (info->capabilities & E_MIXER_CHANNEL_MASK))
+        if (header_input != e_mod_mixer_channel_group_get(info))
           {
              if (e_mod_mixer_channel_is_boost(info))
                e_widget_ilist_header_append(ilist, NULL, _("Boost"));
@@ -275,7 +275,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
                e_widget_ilist_header_append(ilist, NULL, _("Capture"));
              else
                e_widget_ilist_header_append(ilist, NULL, _("Switch"));
-             header_input = (info->capabilities & E_MIXER_CHANNEL_MASK);
+             header_input = e_mod_mixer_channel_group_get(info);
              i++;
           }
 
@@ -539,9 +539,9 @@ _find_channel_by_name(E_Mixer_App_Dialog_Data *app, const char *channel_name)
    header_input = 0;
    EINA_LIST_FOREACH(app->channel_infos, l, info)
      {
-        if (header_input != (info->capabilities & E_MIXER_CHANNEL_MASK))
+        if (header_input != e_mod_mixer_channel_group_get(info))
           {
-             header_input = (info->capabilities & E_MIXER_CHANNEL_MASK);
+             header_input = e_mod_mixer_channel_group_get(info);
              i++;
           }
 

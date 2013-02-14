@@ -366,7 +366,7 @@ _mixer_toggle_mute(E_Mixer_Instance *inst, Eina_Bool non_ui)
 {
    E_Mixer_Channel_State *state;
 
-   if (!e_mod_mixer_channel_mutable(inst->channel_info))
+   if (!e_mod_mixer_channel_is_mutable(inst->channel_info))
      return;
 
    state = &inst->mixer_state;
@@ -691,7 +691,7 @@ _mixer_popup_new(E_Mixer_Instance *inst)
           inst->ui.right = NULL;
      }
 
-   if (e_mod_mixer_channel_mutable(inst->channel_info))
+   if (e_mod_mixer_channel_is_mutable(inst->channel_info))
      {
         inst->ui.mute = e_widget_check_add(evas, _("Mute"), &state->mute);
         evas_object_show(inst->ui.mute);

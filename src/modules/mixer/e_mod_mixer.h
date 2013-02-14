@@ -18,7 +18,27 @@ typedef struct _E_Mixer_Channel_State
 #define E_MIXER_CHANNEL_IS_MONO        0x02
 #define E_MIXER_CHANNEL_HAS_CAPTURE    0x04
 #define E_MIXER_CHANNEL_HAS_PLAYBACK   0x08
-#define E_MIXER_CHANNEL_MASK           0xFC
+#define E_MIXER_CHANNEL_GROUP_MASK     0xFC
+#define E_MIXER_CHANNEL_USABLE_MASK    0xFD
+
+#define e_mod_mixer_channel_is_mutable(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_CAN_MUTE )!=0 )
+#define e_mod_mixer_channel_is_mono(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_IS_MONO )!=0 )
+#define e_mod_mixer_channel_has_capture(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_CAPTURE )!=0 )
+#define e_mod_mixer_channel_has_playback(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_PLAYBACK )!=0 )
+#define e_mod_mixer_channel_is_boost(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_PLAYBACK )!=0 && \
+     ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_CAPTURE )!=0 )
+#define e_mod_mixer_channel_has_no_volume(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_PLAYBACK )==0 && \
+     ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_CAPTURE )==0 )
+#define e_mod_mixer_channel_group_get(_ch) \
+   ( (_ch)->capabilities & E_MIXER_CHANNEL_GROUP_MASK )
+#define e_mod_mixer_capabilities_usable(_capa) \
+   ( ((_capa) & E_MIXER_CHANNEL_USABLE_MASK)!=0 )
 
 typedef struct _E_Mixer_Channel_Info
 {
@@ -58,13 +78,6 @@ Eina_List *e_mod_mixer_channel_infos_get(E_Mixer_System *sys);
 void e_mod_mixer_channel_infos_free(Eina_List*);
 void e_mod_mixer_channel_names_free(Eina_List*);
 void e_mod_mixer_card_names_free(Eina_List*);
-
-int e_mod_mixer_channel_mutable(const E_Mixer_Channel_Info *channel);
-int e_mod_mixer_channel_is_mono(const E_Mixer_Channel_Info *channel);
-int e_mod_mixer_channel_has_capture(const E_Mixer_Channel_Info *channel);
-int e_mod_mixer_channel_has_playback(const E_Mixer_Channel_Info *channel);
-int e_mod_mixer_channel_is_boost(const E_Mixer_Channel_Info *channel);
-int e_mod_mixer_channel_has_no_volume(const E_Mixer_Channel_Info *channel);
 
 void e_mixer_default_setup(void);
 void e_mixer_pulse_setup();

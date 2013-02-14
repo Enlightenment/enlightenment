@@ -349,7 +349,7 @@ e_mixer_alsa_get_channels(E_Mixer_System *self)
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         capabilities = _mixer_channel_capabilities(elem);
-        if (capabilities == 0)
+        if (!e_mod_mixer_capabilities_usable(capabilities))
           continue;
 
         ch_info = malloc(sizeof(*ch_info));
@@ -438,7 +438,7 @@ e_mixer_alsa_get_channel_by_name(E_Mixer_System *self,
      {
         const char *n;
         capabilities = _mixer_channel_capabilities(elem);
-        if (capabilities == 0)
+        if (!e_mod_mixer_capabilities_usable(capabilities))
           continue;
 
         snd_mixer_selem_get_id(elem, sid);
