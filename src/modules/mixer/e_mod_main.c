@@ -644,11 +644,12 @@ _mixer_popup_new(E_Mixer_Instance *inst)
    state = &inst->mixer_state;
    e_mod_mixer_state_get(inst->sys, inst->channel_info->id, state);
 
-   if ((state->right >= 0) &&
-       (inst->conf->show_locked || (!inst->conf->lock_sliders)))
-     colspan = 2;
-   else
+   if (e_mod_mixer_channel_has_no_volume(inst->channel_info) ||
+       e_mod_mixer_channel_is_mono(inst->channel_info) ||
+       (inst->conf->lock_sliders && !inst->conf->show_locked))
      colspan = 1;
+   else
+     colspan = 2;
 
    inst->popup = e_gadcon_popup_new(inst->gcc);
    evas = inst->popup->win->evas;
@@ -659,36 +660,35 @@ _mixer_popup_new(E_Mixer_Instance *inst)
    e_widget_table_object_append(inst->ui.table, inst->ui.label,
                                 0, 0, colspan, 1, 0, 0, 0, 0);
 
-   if (!e_mod_mixer_channel_has_no_volume(inst->channel_info))
+   if (colspan==1)
      {
-        if (state->left >= 0)
+        if (e_mod_mixer_channel_has_no_volume(inst->channel_info))
           {
-             inst->ui.left = _mixer_popup_add_slider(
-                inst, state->left, _mixer_popup_cb_volume_left_change);
+             inst->ui.left = _mixer_popup_add_slider(inst, 0, NULL);
+             e_widget_table_object_append(inst->ui.table, inst->ui.left,
+                                          0, 1, 1, 1, 1, 1, 1, 1);
+             e_slider_disabled_set(inst->ui.left, 1);
+          }
+        else
+          {
+             inst->ui.left = _mixer_popup_add_slider(inst, state->left,
+                                                      _mixer_popup_cb_volume_left_change);
              e_widget_table_object_append(inst->ui.table, inst->ui.left,
                                           0, 1, 1, 1, 1, 1, 1, 1);
           }
-        else
-          inst->ui.left = NULL;
-
-        if ((state->right >= 0) &&
-            (inst->conf->show_locked || (!inst->conf->lock_sliders)))
-          {
-             inst->ui.right = _mixer_popup_add_slider(
-                inst, state->right, _mixer_popup_cb_volume_right_change);
-             e_widget_table_object_append(inst->ui.table, inst->ui.right,
-                                          1, 1, 1, 1, 1, 1, 1, 1);
-          }
-        else
-          inst->ui.right = NULL;
+        inst->ui.right = NULL;
      }
    else
      {
-          inst->ui.left = _mixer_popup_add_slider(inst, 0, NULL);
-          e_widget_table_object_append(inst->ui.table, inst->ui.left,
-                                       0, 1, 1, 1, 1, 1, 1, 1);
-          e_slider_disabled_set(inst->ui.left, 1);
-          inst->ui.right = NULL;
+        inst->ui.left = _mixer_popup_add_slider(inst, state->left,
+                                                _mixer_popup_cb_volume_left_change);
+        e_widget_table_object_append(inst->ui.table, inst->ui.left,
+                                     0, 1, 1, 1, 1, 1, 1, 1);
+
+        inst->ui.right = _mixer_popup_add_slider(inst, state->right,
+                                                 _mixer_popup_cb_volume_right_change);
+        e_widget_table_object_append(inst->ui.table, inst->ui.right,
+                                         1, 1, 1, 1, 1, 1, 1, 1);
      }
 
    if (e_mod_mixer_channel_is_mutable(inst->channel_info))

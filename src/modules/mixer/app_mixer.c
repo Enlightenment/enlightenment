@@ -140,34 +140,23 @@ static void
 _update_channel_editor_state(E_Mixer_App_Dialog_Data *app, const E_Mixer_Channel_State state)
 {
    struct e_mixer_app_ui_channel_editor *ui = &app->ui.channel_editor;
-   int disabled;
 
-   if (e_mod_mixer_channel_has_no_volume(app->channel_info))
+   if (!e_mod_mixer_channel_has_no_volume(app->channel_info))
      {
-        disabled = 1;
-        e_widget_slider_value_int_set(ui->right, 0);
-        e_widget_slider_value_int_set(ui->right, 0);
+        if (e_mod_mixer_channel_is_mono(app->channel_info))
+          {
+             e_widget_slider_value_int_set(ui->left, state.left);
+          }
+        else
+          {
+             e_widget_slider_value_int_set(ui->left, state.left);
+             e_widget_slider_value_int_set(ui->right, state.right);
+          }
      }
-   else
-     {
-        disabled = 0;
-        e_widget_slider_value_int_set(ui->left, state.left);
-        e_widget_slider_value_int_set(ui->right, state.right);
-     }
-
-   e_widget_disabled_set(ui->left, disabled);
-   e_widget_disabled_set(ui->right, disabled);
-   e_widget_disabled_set(ui->lock_sliders, disabled);
 
    if (e_mod_mixer_channel_is_mutable(app->channel_info))
      {
-        e_widget_disabled_set(ui->mute, 0);
         e_widget_check_checked_set(ui->mute, state.mute);
-     }
-   else
-     {
-        e_widget_disabled_set(ui->mute, 1);
-        e_widget_check_checked_set(ui->mute, 0);
      }
 }
 
@@ -203,7 +192,40 @@ _populate_channel_editor(E_Mixer_App_Dialog_Data *app)
    e_mod_mixer_state_get(app->sys, app->channel_info->id, &state);
    _update_channel_editor_state(app, state);
 
-   app->lock_sliders = (state.left == state.right);
+   if (e_mod_mixer_channel_is_mutable(app->channel_info))
+     {
+        e_widget_disabled_set(ui->mute, 0);
+     }
+   else
+     {
+        e_widget_disabled_set(ui->mute, 1);
+        e_widget_check_checked_set(ui->mute, 0);
+     }
+
+   if (e_mod_mixer_channel_has_no_volume(app->channel_info))
+     {
+        app->lock_sliders = 1;
+        e_widget_slider_value_int_set(ui->left, 0);
+        e_widget_slider_value_int_set(ui->right, 0);
+        e_widget_disabled_set(ui->lock_sliders, 1);
+        e_widget_disabled_set(ui->left, 1);
+        e_widget_disabled_set(ui->right, 1);
+     }
+   else if (e_mod_mixer_channel_is_mono(app->channel_info))
+     {
+        app->lock_sliders = 0;
+        e_widget_slider_value_int_set(ui->right, 0);
+        e_widget_disabled_set(ui->lock_sliders, 1);
+        e_widget_disabled_set(ui->left, 0);
+        e_widget_disabled_set(ui->right, 1);
+     }
+   else
+     {
+        app->lock_sliders = (state.left == state.right);
+        e_widget_disabled_set(ui->lock_sliders, 0);
+        e_widget_disabled_set(ui->left, 0);
+        e_widget_disabled_set(ui->right, 0);
+     }
    e_widget_check_checked_set(ui->lock_sliders, app->lock_sliders);
 }
 
