@@ -517,12 +517,12 @@ e_mixer_pulse_get_channel_by_name(E_Mixer_System *self EINA_UNUSED, const char *
    return ch_info;
 }
 
-const char *
-e_mixer_pulse_get_channel_name(E_Mixer_System *self EINA_UNUSED, E_Mixer_Channel *channel)
-{
-   if (!channel) return NULL;
-   return eina_stringshare_ref(_name);
-}
+/* const char * */
+/* e_mixer_pulse_get_channel_name(E_Mixer_System *self EINA_UNUSED, E_Mixer_Channel_Info *channel) */
+/* { */
+/*    if (!channel) return NULL; */
+/*    return eina_stringshare_ref(_name); */
+/* } */
 
 int
 e_mixer_pulse_get_volume(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int *left, int *right)

@@ -10,7 +10,6 @@ E_Mixer_Cb e_mod_mixer_new;
 E_Mixer_Cb e_mod_mixer_del;
 E_Mixer_Cb e_mod_mixer_channel_default_name_get;
 E_Mixer_Cb e_mod_mixer_channel_info_get_by_name;
-E_Mixer_Cb e_mod_mixer_channel_name_get;
 E_Mixer_Cb e_mod_mixer_channels_get;
 E_Mixer_Cb e_mod_mixer_channel_names_get;
 E_Mixer_Cb e_mod_mixer_card_name_get;
@@ -29,7 +28,6 @@ e_mixer_default_setup(void)
    e_mod_mixer_del = (void *)e_mixer_alsa_del;
    e_mod_mixer_channel_default_name_get = (void *)e_mixer_alsa_get_default_channel_name;
    e_mod_mixer_channel_info_get_by_name = (void *)e_mixer_alsa_get_channel_by_name;
-   e_mod_mixer_channel_name_get = (void *)e_mixer_alsa_get_channel_name;
    e_mod_mixer_channels_get = (void *)e_mixer_alsa_get_channels;
    e_mod_mixer_channel_names_get = (void *)e_mixer_alsa_get_channel_names;
    e_mod_mixer_card_name_get = (void *)e_mixer_alsa_get_card_name;
@@ -50,7 +48,6 @@ e_mixer_pulse_setup()
    e_mod_mixer_del = (void *)e_mixer_pulse_del;
    e_mod_mixer_channel_default_name_get = (void *)e_mixer_pulse_get_default_channel_name;
    e_mod_mixer_channel_info_get_by_name = (void *)e_mixer_pulse_get_channel_by_name;
-   e_mod_mixer_channel_name_get = (void *)e_mixer_pulse_get_channel_name;
    e_mod_mixer_channels_get = (void *)e_mixer_pulse_get_channels;
    e_mod_mixer_channel_names_get = (void *)e_mixer_pulse_get_channel_names;
    e_mod_mixer_card_name_get = (void *)e_mixer_pulse_get_card_name;

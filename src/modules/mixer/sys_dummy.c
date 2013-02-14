@@ -110,16 +110,16 @@ e_mixer_system_get_channel_by_name(E_Mixer_System *self __UNUSED__, const char *
      return NULL;
 }
 
-const char *
-e_mixer_system_get_channel_name(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel)
-{
-   _e_mixer_dummy_set();
-
-   if (channel == (E_Mixer_Channel *)-2)
-     return eina_stringshare_ref(_name);
-   else
-     return NULL;
-}
+/* const char * */
+/* e_mixer_system_get_channel_name(E_Mixer_System *self __UNUSED__, E_Mixer_Channel_Info *channel) */
+/* { */
+/*    _e_mixer_dummy_set(); */
+/**/
+/*    if (channel == (E_Mixer_Channel *)-2) */
+/*      return eina_stringshare_ref(_name); */
+/*    else */
+/*      return NULL; */
+/* } */
 
 int
 e_mixer_system_get_volume(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel __UNUSED__, int *left, int *right)

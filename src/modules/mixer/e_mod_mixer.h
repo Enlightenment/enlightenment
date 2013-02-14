@@ -66,7 +66,6 @@ extern E_Mixer_Cb e_mod_mixer_new;
 extern E_Mixer_Cb e_mod_mixer_del;
 extern E_Mixer_Cb e_mod_mixer_channel_default_name_get;
 extern E_Mixer_Cb e_mod_mixer_channel_info_get_by_name;
-extern E_Mixer_Cb e_mod_mixer_channel_name_get;
 extern E_Mixer_Cb e_mod_mixer_channel_names_get;
 extern E_Mixer_Cb e_mod_mixer_card_name_get;
 extern E_Mixer_Cb e_mod_mixer_card_names_get;
@@ -90,7 +89,6 @@ void e_mixer_alsa_del(E_Mixer_System *self);
 Eina_List *e_mixer_alsa_get_cards(void);
 const char *e_mixer_alsa_get_default_card(void);
 const char *e_mixer_alsa_get_card_name(const char *card);
-const char *e_mixer_alsa_get_channel_name(E_Mixer_System *self, E_Mixer_Channel *channel);
 
 Eina_List *e_mixer_alsa_get_channels(E_Mixer_System *self);
 Eina_List *e_mixer_alsa_get_channel_names(E_Mixer_System *self);
@@ -115,7 +113,6 @@ void e_mixer_pulse_del(E_Mixer_System *self);
 Eina_List *e_mixer_pulse_get_cards(void);
 const char *e_mixer_pulse_get_default_card(void);
 const char *e_mixer_pulse_get_card_name(const char *card);
-const char *e_mixer_pulse_get_channel_name(E_Mixer_System *self, E_Mixer_Channel *channel);
 
 Eina_List *e_mixer_pulse_get_channels(E_Mixer_System *self);
 Eina_List *e_mixer_pulse_get_channel_names(E_Mixer_System *self);

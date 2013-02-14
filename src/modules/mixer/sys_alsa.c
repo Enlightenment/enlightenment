@@ -461,22 +461,22 @@ e_mixer_alsa_get_channel_by_name(E_Mixer_System *self,
    return NULL;
 }
 
-const char *
-e_mixer_alsa_get_channel_name(E_Mixer_System *self,
-                                E_Mixer_Channel *channel)
-{
-   snd_mixer_selem_id_t *sid;
-   const char *name;
-
-   if ((!self) || (!channel))
-     return NULL;
-
-   snd_mixer_selem_id_alloca(&sid);
-   snd_mixer_selem_get_id(channel, sid);
-   name = eina_stringshare_add(snd_mixer_selem_id_get_name(sid));
-
-   return name;
-}
+/* const char * */
+/* e_mixer_alsa_get_channel_name(E_Mixer_System *self, */
+/*                                 E_Mixer_Channel_Info *channel) */
+/* { */
+/*    snd_mixer_selem_id_t *sid; */
+/*    const char *name; */
+/**/
+/*    if ((!self) || (!channel)) */
+/*      return NULL; */
+/**/
+/*    snd_mixer_selem_id_alloca(&sid); */
+/*    snd_mixer_selem_get_id(channel->id, sid); */
+/*    name = eina_stringshare_add(snd_mixer_selem_id_get_name(sid)); */
+/**/
+/*    return name; */
+/* } */
 
 int
 e_mixer_alsa_get_volume(E_Mixer_System *self,
