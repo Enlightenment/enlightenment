@@ -140,15 +140,26 @@ static void
 _update_channel_editor_state(E_Mixer_App_Dialog_Data *app, const E_Mixer_Channel_State state)
 {
    struct e_mixer_app_ui_channel_editor *ui = &app->ui.channel_editor;
+   int disabled;
 
-   e_widget_disabled_set(ui->left, 0);
-   e_widget_disabled_set(ui->right, 0);
-   e_widget_disabled_set(ui->lock_sliders, 0);
+   if (e_mod_mixer_channel_has_no_volume(app->channel_info))
+     {
+        disabled = 1;
+        e_widget_slider_value_int_set(ui->right, 0);
+        e_widget_slider_value_int_set(ui->right, 0);
+     }
+   else
+     {
+        disabled = 0;
+        e_widget_slider_value_int_set(ui->left, state.left);
+        e_widget_slider_value_int_set(ui->right, state.right);
+     }
 
-   e_widget_slider_value_int_set(ui->left, state.left);
-   e_widget_slider_value_int_set(ui->right, state.right);
+   e_widget_disabled_set(ui->left, disabled);
+   e_widget_disabled_set(ui->right, disabled);
+   e_widget_disabled_set(ui->lock_sliders, disabled);
 
-   if (e_mod_mixer_mutable_get(app->sys, app->channel_info->id))
+   if (e_mod_mixer_channel_mutable(app->channel_info))
      {
         e_widget_disabled_set(ui->mute, 0);
         e_widget_check_checked_set(ui->mute, state.mute);
@@ -180,7 +191,7 @@ _populate_channel_editor(E_Mixer_App_Dialog_Data *app)
 
    e_widget_entry_text_set(ui->channel, app->channel_name);
 
-   if (e_mod_mixer_capture_get(app->sys, app->channel_info->id))
+   if (e_mod_mixer_channel_has_capture(app->channel_info->id))
      e_widget_entry_text_set(ui->type, _("Capture"));
    else
      e_widget_entry_text_set(ui->type, _("Playback"));
@@ -247,7 +258,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
    if (app->channel_infos)
      {
         E_Mixer_Channel_Info *info = app->channel_infos->data;
-        if (info->has_capture)
+        if (e_mod_mixer_channel_has_capture(info))
           {
              e_widget_ilist_header_append(ilist, NULL, _("Input"));
              header_input = 1;
@@ -265,7 +276,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
      {
         E_Mixer_Channel_Info *info = l->data;
 
-        if ((!header_input) && info->has_capture)
+        if ((!header_input) && e_mod_mixer_channel_has_capture(info))
           {
              e_widget_ilist_header_append(ilist, NULL, _("Input"));
              header_input = 1;
@@ -533,13 +544,13 @@ _find_channel_by_name(E_Mixer_App_Dialog_Data *app, const char *channel_name)
      {
         info = app->channel_infos->data;
 
-        header_input = !!info->has_capture;
+        header_input = !!e_mod_mixer_channel_has_capture(info);
         i = 1;
      }
 
    EINA_LIST_FOREACH(app->channel_infos, l, info)
      {
-        if ((!header_input) && info->has_capture)
+        if ((!header_input) && e_mod_mixer_channel_has_capture(info))
           {
              header_input = 1;
              i++;

@@ -294,11 +294,48 @@ e_mixer_alsa_get_card_name(const char *card)
    return eina_stringshare_add(name);
 }
 
+static int
+_mixer_channel_has_capabilities(snd_mixer_elem_t *elem)
+{
+   if (!snd_mixer_selem_is_active(elem)) return 0;
+   if (snd_mixer_selem_has_playback_volume(elem)) return 1;
+   if (snd_mixer_selem_has_capture_volume(elem)) return 1;
+   if (snd_mixer_selem_has_playback_switch(elem)) return 1;
+   if (snd_mixer_selem_has_capture_switch(elem)) return 1;
+   if (snd_mixer_selem_has_playback_switch_joined(elem)) return 1;
+   if (snd_mixer_selem_has_capture_switch_joined(elem)) return 1;
+
+   return 0;
+}
+
+static int
+_mixer_channel_capabilities(snd_mixer_elem_t *elem)
+{
+   int capabilities = 0;
+
+   if (!snd_mixer_selem_is_active(elem))
+     return 0;
+
+   if (snd_mixer_selem_has_capture_volume(elem))
+     capabilities |= E_MIXER_CHANNEL_HAS_CAPTURE;
+   if (snd_mixer_selem_has_playback_volume(elem))
+     capabilities |= E_MIXER_CHANNEL_HAS_PLAYBACK;
+   if (snd_mixer_selem_has_playback_switch(elem) ||
+       snd_mixer_selem_has_capture_switch(elem) ||
+       snd_mixer_selem_has_playback_switch_joined(elem) ||
+       snd_mixer_selem_has_capture_switch_joined(elem))
+     capabilities |= E_MIXER_CHANNEL_CAN_MUTE;
+
+   return capabilities;
+}
+
 Eina_List *
 e_mixer_alsa_get_channels(E_Mixer_System *self)
 {
+   int capabilities;
    Eina_List *channels;
    snd_mixer_elem_t *elem;
+   E_Mixer_Channel_Info *ch_info;
 
    if (!self)
      return NULL;
@@ -308,16 +345,14 @@ e_mixer_alsa_get_channels(E_Mixer_System *self)
    elem = snd_mixer_first_elem(self);
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
-        if ((!snd_mixer_selem_is_active(elem)) ||
-            (!snd_mixer_selem_has_playback_volume(elem)))
+        capabilities = _mixer_channel_capabilities(elem);
+        if (capabilities == 0)
           continue;
-
-        E_Mixer_Channel_Info *ch_info;
 
         ch_info = malloc(sizeof(*ch_info));
         ch_info->id = elem;
         ch_info->name = eina_stringshare_add(snd_mixer_selem_get_name(elem));
-        ch_info->has_capture = snd_mixer_selem_has_capture_switch(elem) || snd_mixer_selem_has_capture_volume(elem);
+        ch_info->capabilities = capabilities;
 
         channels = eina_list_append(channels, ch_info);
      }
@@ -342,8 +377,7 @@ e_mixer_alsa_get_channel_names(E_Mixer_System *self)
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         const char *name;
-        if ((!snd_mixer_selem_is_active(elem)) ||
-            (!snd_mixer_selem_has_playback_volume(elem)))
+        if (!_mixer_channel_has_capabilities(elem))
           continue;
 
         snd_mixer_selem_get_id(elem, sid);
@@ -370,8 +404,7 @@ e_mixer_alsa_get_default_channel_name(E_Mixer_System *self)
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         const char *name;
-        if ((!snd_mixer_selem_is_active(elem)) ||
-            (!snd_mixer_selem_has_playback_volume(elem)))
+        if (!_mixer_channel_has_capabilities(elem))
           continue;
 
         snd_mixer_selem_get_id(elem, sid);
@@ -387,6 +420,7 @@ E_Mixer_Channel_Info *
 e_mixer_alsa_get_channel_by_name(E_Mixer_System *self,
                                    const char *name)
 {
+   int capabilities;
    snd_mixer_elem_t *elem;
    snd_mixer_selem_id_t *sid;
    E_Mixer_Channel_Info *ch_info;
@@ -400,8 +434,8 @@ e_mixer_alsa_get_channel_by_name(E_Mixer_System *self,
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         const char *n;
-        if ((!snd_mixer_selem_is_active(elem)) ||
-            (!snd_mixer_selem_has_playback_volume(elem)))
+        capabilities = _mixer_channel_capabilities(elem);
+        if (capabilities == 0)
           continue;
 
         snd_mixer_selem_get_id(elem, sid);
@@ -411,7 +445,7 @@ e_mixer_alsa_get_channel_by_name(E_Mixer_System *self,
              ch_info = malloc(sizeof(*ch_info));
              ch_info->id = elem;
              ch_info->name = eina_stringshare_add(n);
-             ch_info->has_capture = snd_mixer_selem_has_capture_switch(elem) || snd_mixer_selem_has_capture_volume(elem);
+             ch_info->capabilities = capabilities;
 
              return ch_info;
           }
@@ -527,18 +561,6 @@ e_mixer_alsa_set_volume(E_Mixer_System *self,
 }
 
 int
-e_mixer_alsa_can_mute(E_Mixer_System *self,
-                        E_Mixer_Channel *channel)
-{
-   if ((!self) || (!channel))
-     return 0;
-
-   snd_mixer_handle_events(self);
-   return snd_mixer_selem_has_playback_switch(channel) ||
-          snd_mixer_selem_has_playback_switch_joined(channel);
-}
-
-int
 e_mixer_alsa_get_mute(E_Mixer_System *self,
                         E_Mixer_Channel *channel,
                         int *mute)
@@ -608,15 +630,5 @@ e_mixer_alsa_set_state(E_Mixer_System *self,
    r = e_mixer_alsa_set_mute(self, channel, state->mute);
    r &= e_mixer_alsa_set_volume(self, channel, state->left, state->right);
    return r;
-}
-
-int
-e_mixer_alsa_has_capture(E_Mixer_System *self,
-                           E_Mixer_Channel *channel)
-{
-   if ((!self) || (!channel))
-     return 0;
-
-   return snd_mixer_selem_has_capture_switch(channel) || snd_mixer_selem_has_capture_volume(channel);
 }
 

@@ -5,9 +5,7 @@ E_Mixer_Volume_Get_Cb e_mod_mixer_volume_get;
 E_Mixer_Volume_Set_Cb e_mod_mixer_volume_set;
 E_Mixer_Mute_Get_Cb e_mod_mixer_mute_get;
 E_Mixer_Mute_Set_Cb e_mod_mixer_mute_set;
-E_Mixer_Capture_Cb e_mod_mixer_mutable_get;
 E_Mixer_State_Get_Cb e_mod_mixer_state_get;
-E_Mixer_Capture_Cb e_mod_mixer_capture_get;
 E_Mixer_Cb e_mod_mixer_new;
 E_Mixer_Cb e_mod_mixer_del;
 E_Mixer_Cb e_mod_mixer_channel_default_name_get;
@@ -26,9 +24,7 @@ e_mixer_default_setup(void)
    e_mod_mixer_volume_set = (void *)e_mixer_alsa_set_volume;
    e_mod_mixer_mute_get = (void *)e_mixer_alsa_get_mute;
    e_mod_mixer_mute_set = (void *)e_mixer_alsa_set_mute;
-   e_mod_mixer_mutable_get = (void *)e_mixer_alsa_can_mute;
    e_mod_mixer_state_get = (void *)e_mixer_alsa_get_state;
-   e_mod_mixer_capture_get = (void *)e_mixer_alsa_has_capture;
    e_mod_mixer_new = (void *)e_mixer_alsa_new;
    e_mod_mixer_del = (void *)e_mixer_alsa_del;
    e_mod_mixer_channel_default_name_get = (void *)e_mixer_alsa_get_default_channel_name;
@@ -49,9 +45,7 @@ e_mixer_pulse_setup()
    e_mod_mixer_volume_set = (void *)e_mixer_pulse_set_volume;
    e_mod_mixer_mute_get = (void *)e_mixer_pulse_get_mute;
    e_mod_mixer_mute_set = (void *)e_mixer_pulse_set_mute;
-   e_mod_mixer_mutable_get = (void *)e_mixer_pulse_can_mute;
    e_mod_mixer_state_get = (void *)e_mixer_pulse_get_state;
-   e_mod_mixer_capture_get = (void *)e_mixer_pulse_has_capture;
    e_mod_mixer_new = (void *)e_mixer_pulse_new;
    e_mod_mixer_del = (void *)e_mixer_pulse_del;
    e_mod_mixer_channel_default_name_get = (void *)e_mixer_pulse_get_default_channel_name;
@@ -65,14 +59,41 @@ e_mixer_pulse_setup()
    _mixer_using_default = EINA_FALSE;
 }
 
+int e_mod_mixer_channel_mutable(const E_Mixer_Channel_Info *channel)
+{
+   return ((channel->capabilities & E_MIXER_CHANNEL_CAN_MUTE )!=0);
+}
+
+int e_mod_mixer_channel_has_capture(const E_Mixer_Channel_Info *channel)
+{
+   return ((channel->capabilities & E_MIXER_CHANNEL_HAS_CAPTURE )!=0);
+}
+
+int e_mod_mixer_channel_has_playback(const E_Mixer_Channel_Info *channel)
+{
+   return ((channel->capabilities & E_MIXER_CHANNEL_HAS_PLAYBACK )!=0);
+}
+
+int e_mod_mixer_channel_is_boost(const E_Mixer_Channel_Info *channel)
+{
+   return ((channel->capabilities & E_MIXER_CHANNEL_HAS_PLAYBACK )!=0 &&
+           (channel->capabilities & E_MIXER_CHANNEL_HAS_CAPTURE )!=0);
+}
+
+int e_mod_mixer_channel_has_no_volume(const E_Mixer_Channel_Info *channel)
+{
+   return ((channel->capabilities & E_MIXER_CHANNEL_HAS_PLAYBACK )==0 &&
+           (channel->capabilities & E_MIXER_CHANNEL_HAS_CAPTURE )==0);
+}
+
 static int
 _channel_info_cmp(const void *data_a, const void *data_b)
 {
    const E_Mixer_Channel_Info *a = data_a, *b = data_b;
 
-   if (a->has_capture < b->has_capture)
+   if (e_mod_mixer_channel_has_capture(a) < e_mod_mixer_channel_has_capture(b))
      return -1;
-   else if (a->has_capture > b->has_capture)
+   else if (e_mod_mixer_channel_has_capture(a) > e_mod_mixer_channel_has_capture(b))
      return 1;
 
    return strcmp(a->name, b->name);

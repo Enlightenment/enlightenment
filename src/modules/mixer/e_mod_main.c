@@ -366,7 +366,7 @@ _mixer_toggle_mute(E_Mixer_Instance *inst, Eina_Bool non_ui)
 {
    E_Mixer_Channel_State *state;
 
-   if (!e_mod_mixer_mutable_get(inst->sys, inst->channel_info->id))
+   if (!e_mod_mixer_channel_mutable(inst->channel_info))
      return;
 
    state = &inst->mixer_state;
@@ -659,28 +659,39 @@ _mixer_popup_new(E_Mixer_Instance *inst)
    e_widget_table_object_append(inst->ui.table, inst->ui.label,
                                 0, 0, colspan, 1, 0, 0, 0, 0);
 
-   if (state->left >= 0)
+   if (!e_mod_mixer_channel_has_no_volume(inst->channel_info))
      {
-        inst->ui.left = _mixer_popup_add_slider(
-            inst, state->left, _mixer_popup_cb_volume_left_change);
-        e_widget_table_object_append(inst->ui.table, inst->ui.left,
-                                     0, 1, 1, 1, 1, 1, 1, 1);
+        if (state->left >= 0)
+          {
+             inst->ui.left = _mixer_popup_add_slider(
+                inst, state->left, _mixer_popup_cb_volume_left_change);
+             e_widget_table_object_append(inst->ui.table, inst->ui.left,
+                                          0, 1, 1, 1, 1, 1, 1, 1);
+          }
+        else
+          inst->ui.left = NULL;
+
+        if ((state->right >= 0) &&
+            (inst->conf->show_locked || (!inst->conf->lock_sliders)))
+          {
+             inst->ui.right = _mixer_popup_add_slider(
+                inst, state->right, _mixer_popup_cb_volume_right_change);
+             e_widget_table_object_append(inst->ui.table, inst->ui.right,
+                                          1, 1, 1, 1, 1, 1, 1, 1);
+          }
+        else
+          inst->ui.right = NULL;
      }
    else
-     inst->ui.left = NULL;
-
-   if ((state->right >= 0) &&
-       (inst->conf->show_locked || (!inst->conf->lock_sliders)))
      {
-        inst->ui.right = _mixer_popup_add_slider(
-            inst, state->right, _mixer_popup_cb_volume_right_change);
-        e_widget_table_object_append(inst->ui.table, inst->ui.right,
-                                     1, 1, 1, 1, 1, 1, 1, 1);
+          inst->ui.left = _mixer_popup_add_slider(inst, 0, NULL);
+          e_widget_table_object_append(inst->ui.table, inst->ui.left,
+                                       0, 1, 1, 1, 1, 1, 1, 1);
+          e_slider_disabled_set(inst->ui.left, 1);
+          inst->ui.right = NULL;
      }
-   else
-     inst->ui.right = NULL;
 
-   if (e_mod_mixer_mutable_get(inst->sys, inst->channel_info->id))
+   if (e_mod_mixer_channel_mutable(inst->channel_info))
      {
         inst->ui.mute = e_widget_check_add(evas, _("Mute"), &state->mute);
         evas_object_show(inst->ui.mute);
@@ -991,8 +1002,10 @@ e_sys_pulse_ready_cb(Eina_Bool ready)
              inst->sys = NULL;
              return;
           }
-        if (_mixer_using_default) e_mixer_alsa_callback_set(inst->sys, _mixer_system_cb_update, inst);
-        else e_mixer_alsa_callback_set(inst->sys, NULL, NULL);
+        if (_mixer_using_default)
+          e_mixer_alsa_callback_set(inst->sys, _mixer_system_cb_update, inst);
+        else
+          e_mixer_alsa_callback_set(inst->sys, NULL, NULL);
         if (inst->channel_info)
           {
              if ((inst->mixer_state.left > -1) && (inst->mixer_state.right > -1) && (inst->mixer_state.mute > -1))

@@ -62,14 +62,14 @@ e_mixer_system_get_card_name(const char *card)
 Eina_List *
 e_mixer_system_get_channels(E_Mixer_System *self __UNUSED__)
 {
-   _e_mixer_dummy_set();
-
    E_Mixer_Channel_Info *ch_info;
+
+   _e_mixer_dummy_set();
 
    ch_info = malloc(sizeof(*ch_info));
    ch_info->id = (void*)-2;
    ch_info->name = eina_stringshare_ref(_name);
-   ch_info->has_capture = 0;
+   ch_info->capabilities = E_MIXER_CHANNEL_CAN_MUTE|E_MIXER_CHANNEL_HAS_PLAYBACK;
 
    return eina_list_append(NULL, ch_info);
 }
@@ -102,7 +102,7 @@ e_mixer_system_get_channel_by_name(E_Mixer_System *self __UNUSED__, const char *
         ch_info = malloc(sizeof(*ch_info));
         ch_info->id = (void*)-2;
         ch_info->name = eina_stringshare_ref(_name);
-        ch_info->has_capture = 0;
+        ch_info->capabilities = E_MIXER_CHANNEL_CAN_MUTE|E_MIXER_CHANNEL_HAS_PLAYBACK;
 
         return ch_info;
      }
@@ -139,12 +139,6 @@ e_mixer_system_set_volume(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *chan
 }
 
 int
-e_mixer_system_can_mute(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel __UNUSED__)
-{
-   return 1;
-}
-
-int
 e_mixer_system_get_mute(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel __UNUSED__, int *mute)
 {
    if (mute)
@@ -172,12 +166,6 @@ e_mixer_system_get_state(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *chann
 
 int
 e_mixer_system_set_state(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel __UNUSED__, const E_Mixer_Channel_State *state __UNUSED__)
-{
-   return 0;
-}
-
-int
-e_mixer_system_has_capture(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel __UNUSED__)
 {
    return 0;
 }
