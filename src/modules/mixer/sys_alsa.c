@@ -318,6 +318,9 @@ _mixer_channel_capabilities(snd_mixer_elem_t *elem)
 
    if (snd_mixer_selem_has_capture_volume(elem))
      capabilities |= E_MIXER_CHANNEL_HAS_CAPTURE;
+   if (snd_mixer_selem_is_playback_mono(elem)==1 ||
+       snd_mixer_selem_is_capture_mono(elem)==1)
+     capabilities |= E_MIXER_CHANNEL_IS_MONO;
    if (snd_mixer_selem_has_playback_volume(elem))
      capabilities |= E_MIXER_CHANNEL_HAS_PLAYBACK;
    if (snd_mixer_selem_has_playback_switch(elem) ||

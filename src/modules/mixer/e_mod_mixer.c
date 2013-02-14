@@ -64,6 +64,11 @@ int e_mod_mixer_channel_mutable(const E_Mixer_Channel_Info *channel)
    return ((channel->capabilities & E_MIXER_CHANNEL_CAN_MUTE )!=0);
 }
 
+int e_mod_mixer_channel_is_mono(const E_Mixer_Channel_Info *channel)
+{
+   return ((channel->capabilities & E_MIXER_CHANNEL_IS_MONO )!=0);
+}
+
 int e_mod_mixer_channel_has_capture(const E_Mixer_Channel_Info *channel)
 {
    return ((channel->capabilities & E_MIXER_CHANNEL_HAS_CAPTURE )!=0);

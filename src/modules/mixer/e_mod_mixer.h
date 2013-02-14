@@ -15,9 +15,10 @@ typedef struct _E_Mixer_Channel_State
 } E_Mixer_Channel_State;
 
 #define E_MIXER_CHANNEL_CAN_MUTE       0x01
-#define E_MIXER_CHANNEL_HAS_CAPTURE    0x02
-#define E_MIXER_CHANNEL_HAS_PLAYBACK   0x04
-#define E_MIXER_CHANNEL_MASK           0xFE
+#define E_MIXER_CHANNEL_IS_MONO        0x02
+#define E_MIXER_CHANNEL_HAS_CAPTURE    0x04
+#define E_MIXER_CHANNEL_HAS_PLAYBACK   0x08
+#define E_MIXER_CHANNEL_MASK           0xFC
 
 typedef struct _E_Mixer_Channel_Info
 {
@@ -59,6 +60,7 @@ void e_mod_mixer_channel_names_free(Eina_List*);
 void e_mod_mixer_card_names_free(Eina_List*);
 
 int e_mod_mixer_channel_mutable(const E_Mixer_Channel_Info *channel);
+int e_mod_mixer_channel_is_mono(const E_Mixer_Channel_Info *channel);
 int e_mod_mixer_channel_has_capture(const E_Mixer_Channel_Info *channel);
 int e_mod_mixer_channel_has_playback(const E_Mixer_Channel_Info *channel);
 int e_mod_mixer_channel_is_boost(const E_Mixer_Channel_Info *channel);
