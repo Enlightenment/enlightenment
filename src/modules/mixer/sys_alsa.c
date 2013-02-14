@@ -383,12 +383,13 @@ e_mixer_alsa_get_default_channel_name(E_Mixer_System *self)
    return NULL;
 }
 
-E_Mixer_Channel *
+E_Mixer_Channel_Info *
 e_mixer_alsa_get_channel_by_name(E_Mixer_System *self,
                                    const char *name)
 {
    snd_mixer_elem_t *elem;
    snd_mixer_selem_id_t *sid;
+   E_Mixer_Channel_Info *ch_info;
 
    if ((!self) || (!name))
      return NULL;
@@ -406,15 +407,17 @@ e_mixer_alsa_get_channel_by_name(E_Mixer_System *self,
         snd_mixer_selem_get_id(elem, sid);
         n = snd_mixer_selem_id_get_name(sid);
         if (n && (strcmp(n, name) == 0))
-          return elem;
+          {
+             ch_info = malloc(sizeof(*ch_info));
+             ch_info->id = elem;
+             ch_info->name = eina_stringshare_add(n);
+             ch_info->has_capture = snd_mixer_selem_has_capture_switch(elem) || snd_mixer_selem_has_capture_volume(elem);
+
+             return ch_info;
+          }
      }
 
    return NULL;
-}
-
-void
-e_mixer_alsa_channel_del(E_Mixer_Channel *channel __UNUSED__)
-{
 }
 
 const char *

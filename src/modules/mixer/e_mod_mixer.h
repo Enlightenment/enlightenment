@@ -42,15 +42,14 @@ extern E_Mixer_Capture_Cb e_mod_mixer_capture_get;
 extern E_Mixer_Cb e_mod_mixer_new;
 extern E_Mixer_Cb e_mod_mixer_del;
 extern E_Mixer_Cb e_mod_mixer_channel_default_name_get;
-extern E_Mixer_Cb e_mod_mixer_channel_get_by_name;
+extern E_Mixer_Cb e_mod_mixer_channel_info_get_by_name;
 extern E_Mixer_Cb e_mod_mixer_channel_name_get;
-extern E_Mixer_Cb e_mod_mixer_channel_del;
-extern E_Mixer_Cb e_mod_mixer_channel_free;
 extern E_Mixer_Cb e_mod_mixer_channel_names_get;
 extern E_Mixer_Cb e_mod_mixer_card_name_get;
 extern E_Mixer_Cb e_mod_mixer_card_names_get;
 extern E_Mixer_Cb e_mod_mixer_card_default_get;
 
+void e_mod_mixer_channel_info_free(E_Mixer_Channel_Info*);
 Eina_List *e_mod_mixer_channel_infos_get(E_Mixer_System *sys);
 void e_mod_mixer_channel_infos_free(Eina_List*);
 void e_mod_mixer_channel_names_free(Eina_List*);
@@ -74,8 +73,7 @@ Eina_List *e_mixer_alsa_get_channels(E_Mixer_System *self);
 Eina_List *e_mixer_alsa_get_channel_names(E_Mixer_System *self);
 
 const char *e_mixer_alsa_get_default_channel_name(E_Mixer_System *self);
-E_Mixer_Channel *e_mixer_alsa_get_channel_by_name(E_Mixer_System *self, const char *name);
-void e_mixer_alsa_channel_del(E_Mixer_Channel *channel);
+E_Mixer_Channel_Info *e_mixer_alsa_get_channel_by_name(E_Mixer_System *self, const char *name);
 
 int e_mixer_alsa_has_capture(E_Mixer_System *self, E_Mixer_Channel *channel);
 int e_mixer_alsa_get_volume(E_Mixer_System *self, E_Mixer_Channel *channel, int *left, int *right);
@@ -103,8 +101,7 @@ Eina_List *e_mixer_pulse_get_channels(E_Mixer_System *self);
 Eina_List *e_mixer_pulse_get_channel_names(E_Mixer_System *self);
 
 const char *e_mixer_pulse_get_default_channel_name(E_Mixer_System *self);
-E_Mixer_Channel *e_mixer_pulse_get_channel_by_name(E_Mixer_System *self, const char *name);
-void e_mixer_pulse_channel_del(E_Mixer_Channel *channel);
+E_Mixer_Channel_Info *e_mixer_pulse_get_channel_by_name(E_Mixer_System *self, const char *name);
 
 int e_mixer_pulse_has_capture(E_Mixer_System *self, E_Mixer_Channel *channel);
 int e_mixer_pulse_get_volume(E_Mixer_System *self, E_Mixer_Channel *channel, int *left, int *right);

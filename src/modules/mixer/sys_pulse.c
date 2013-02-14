@@ -504,15 +504,17 @@ e_mixer_pulse_get_default_channel_name(E_Mixer_System *self EINA_UNUSED)
    return eina_stringshare_ref(_name);
 }
 
-E_Mixer_Channel *
+E_Mixer_Channel_Info *
 e_mixer_pulse_get_channel_by_name(E_Mixer_System *self EINA_UNUSED, const char *name EINA_UNUSED)
 {
-   return (E_Mixer_Channel *)1;
-}
+   E_Mixer_Channel_Info *ch_info;
 
-void
-e_mixer_pulse_channel_del(E_Mixer_Channel *channel __UNUSED__)
-{
+   ch_info = malloc(sizeof(*ch_info));
+   ch_info->id = (void*)1;
+   ch_info->name = eina_stringshare_ref(_name);
+   ch_info->has_capture = 0;
+
+   return ch_info;
 }
 
 const char *

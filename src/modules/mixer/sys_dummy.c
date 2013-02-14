@@ -90,20 +90,24 @@ e_mixer_system_get_default_channel_name(E_Mixer_System *self __UNUSED__)
    return eina_stringshare_ref(_name);
 }
 
-E_Mixer_Channel *
+E_Mixer_Channel_Info *
 e_mixer_system_get_channel_by_name(E_Mixer_System *self __UNUSED__, const char *name)
 {
+   E_Mixer_Channel_Info *ch_info;
+
    _e_mixer_dummy_set();
 
    if (name == _name || strcmp(name, _name) == 0)
-     return (E_Mixer_Channel *)-2;
+     {
+        ch_info = malloc(sizeof(*ch_info));
+        ch_info->id = (void*)-2;
+        ch_info->name = eina_stringshare_ref(_name);
+        ch_info->has_capture = 0;
+
+        return ch_info;
+     }
    else
      return NULL;
-}
-
-void
-e_mixer_system_channel_del(E_Mixer_Channel *channel __UNUSED__)
-{
 }
 
 const char *
