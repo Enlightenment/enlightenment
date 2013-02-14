@@ -326,7 +326,7 @@ e_mixer_alsa_get_channels(E_Mixer_System *self)
 }
 
 Eina_List *
-e_mixer_alsa_get_channels_names(E_Mixer_System *self)
+e_mixer_alsa_get_channel_names(E_Mixer_System *self)
 {
    Eina_List *channels;
    snd_mixer_elem_t *elem;

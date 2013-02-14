@@ -9,7 +9,7 @@ typedef struct E_Mixer_App_Dialog_Data
    const char           *channel_name;
    int                   lock_sliders;
    Eina_List            *cards;
-   Eina_List            *channels_infos;
+   Eina_List            *channel_infos;
    E_Mixer_Channel_Info *channel_info;
    E_Mixer_Channel_State state;
 
@@ -240,13 +240,13 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
    eina_stringshare_del(app->channel_name);
    app->channel_name = e_mod_mixer_channel_default_name_get(app->sys);
 
-   if (app->channels_infos)
-     e_mod_mixer_channels_info_free(app->channels_infos);
-   app->channels_infos = e_mod_mixer_channels_info_get(app->sys);
+   if (app->channel_infos)
+     e_mod_mixer_channel_infos_free(app->channel_infos);
+   app->channel_infos = e_mod_mixer_channel_infos_get(app->sys);
 
-   if (app->channels_infos)
+   if (app->channel_infos)
      {
-        E_Mixer_Channel_Info *info = app->channels_infos->data;
+        E_Mixer_Channel_Info *info = app->channel_infos->data;
         if (info->has_capture)
           {
              e_widget_ilist_header_append(ilist, NULL, _("Input"));
@@ -261,7 +261,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
           }
      }
 
-   for (l = app->channels_infos; l; l = l->next, i++)
+   for (l = app->channel_infos; l; l = l->next, i++)
      {
         E_Mixer_Channel_Info *info = l->data;
 
@@ -441,8 +441,8 @@ _mixer_app_dialog_del(E_Dialog *dialog, E_Mixer_App_Dialog_Data *app)
    eina_stringshare_del(app->channel_name);
    if (app->cards)
      e_mod_mixer_card_names_free(app->cards);
-   if (app->channels_infos)
-     e_mod_mixer_channels_info_free(app->channels_infos);
+   if (app->channel_infos)
+     e_mod_mixer_channel_infos_free(app->channel_infos);
    e_mod_mixer_del(app->sys);
 
    e_util_defer_object_del(E_OBJECT(dialog));
@@ -529,15 +529,15 @@ _find_channel_by_name(E_Mixer_App_Dialog_Data *app, const char *channel_name)
    if (!channel_name)
      return 0;
 
-   if (app->channels_infos)
+   if (app->channel_infos)
      {
-        info = app->channels_infos->data;
+        info = app->channel_infos->data;
 
         header_input = !!info->has_capture;
         i = 1;
      }
 
-   EINA_LIST_FOREACH(app->channels_infos, l, info)
+   EINA_LIST_FOREACH(app->channel_infos, l, info)
      {
         if ((!header_input) && info->has_capture)
           {

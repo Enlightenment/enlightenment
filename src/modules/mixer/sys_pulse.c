@@ -493,7 +493,7 @@ e_mixer_pulse_get_channels(E_Mixer_System *self EINA_UNUSED)
 }
 
 Eina_List *
-e_mixer_pulse_get_channels_names(E_Mixer_System *self EINA_UNUSED)
+e_mixer_pulse_get_channel_names(E_Mixer_System *self EINA_UNUSED)
 {
    return eina_list_append(NULL, eina_stringshare_ref(_name));
 }
