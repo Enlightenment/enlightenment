@@ -5,14 +5,23 @@
 
 typedef void E_Mixer_System;
 typedef void E_Mixer_Channel;
+typedef void E_Mixer_App;
 
-struct E_Mixer_Channel_State
+
+typedef struct _E_Mixer_Channel_State
 {
    int mute;
    int left;
    int right;
-};
-typedef struct E_Mixer_Channel_State E_Mixer_Channel_State;
+} E_Mixer_Channel_State;
+
+typedef struct _E_Mixer_Channel_Info
+{
+   int                      has_capture;
+   const char              *name;
+   E_Mixer_Channel         *id;
+   E_Mixer_App             *app;
+} E_Mixer_Channel_Info;
 
 Eina_List *e_mixer_system_get_cards(void);
 void e_mixer_system_free_cards(Eina_List *cards);
