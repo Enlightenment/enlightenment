@@ -302,8 +302,6 @@ _mixer_channel_has_capabilities(snd_mixer_elem_t *elem)
    if (snd_mixer_selem_has_capture_volume(elem)) return 1;
    if (snd_mixer_selem_has_playback_switch(elem)) return 1;
    if (snd_mixer_selem_has_capture_switch(elem)) return 1;
-   if (snd_mixer_selem_has_playback_switch_joined(elem)) return 1;
-   if (snd_mixer_selem_has_capture_switch_joined(elem)) return 1;
 
    return 0;
 }
@@ -312,22 +310,28 @@ static int
 _mixer_channel_capabilities(snd_mixer_elem_t *elem)
 {
    int capabilities = 0;
+   /*
+    * never vol_joined if not mono
+    *    -> mono is enough
+    * never switch_joined if not switch
+    *    -> switch is enough
+    * never common_vol if not (playback_vol && capture vol)
+    *    -> palyback_vol & capture_vol is enough
+    */
 
    if (!snd_mixer_selem_is_active(elem))
      return 0;
 
    if (snd_mixer_selem_has_capture_volume(elem))
      capabilities |= E_MIXER_CHANNEL_HAS_CAPTURE;
-   if (snd_mixer_selem_is_playback_mono(elem)==1 ||
-       snd_mixer_selem_is_capture_mono(elem)==1)
-     capabilities |= E_MIXER_CHANNEL_IS_MONO;
    if (snd_mixer_selem_has_playback_volume(elem))
      capabilities |= E_MIXER_CHANNEL_HAS_PLAYBACK;
    if (snd_mixer_selem_has_playback_switch(elem) ||
-       snd_mixer_selem_has_capture_switch(elem) ||
-       snd_mixer_selem_has_playback_switch_joined(elem) ||
-       snd_mixer_selem_has_capture_switch_joined(elem))
+       snd_mixer_selem_has_capture_switch(elem))
      capabilities |= E_MIXER_CHANNEL_CAN_MUTE;
+   if (snd_mixer_selem_is_playback_mono(elem)==1 ||
+       snd_mixer_selem_is_capture_mono(elem)==1)
+     capabilities |= E_MIXER_CHANNEL_IS_MONO;
 
    return capabilities;
 }
