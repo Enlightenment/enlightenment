@@ -321,16 +321,17 @@ e_mixer_alsa_get_channels(E_Mixer_System *self)
             (!snd_mixer_selem_has_playback_volume(elem)))
           continue;
 
-        channels = eina_list_append(channels, elem);
+        E_Mixer_Channel_Info *ch_info;
+
+        ch_info = malloc(sizeof(*ch_info));
+        ch_info->id = elem;
+        ch_info->name = eina_stringshare_add(snd_mixer_selem_get_name(elem));
+        ch_info->has_capture = snd_mixer_selem_has_capture_switch(elem) || snd_mixer_selem_has_capture_volume(elem);
+
+        channels = eina_list_append(channels, ch_info);
      }
 
    return channels;
-}
-
-void
-e_mixer_alsa_free_channels(Eina_List *channels)
-{
-   eina_list_free(channels);
 }
 
 Eina_List *
@@ -361,15 +362,6 @@ e_mixer_alsa_get_channels_names(E_Mixer_System *self)
      }
 
    return channels;
-}
-
-void
-e_mixer_alsa_free_channels_names(Eina_List *channels_names)
-{
-   const char *channel;
-
-   EINA_LIST_FREE(channels_names, channel)
-     eina_stringshare_del(channel);
 }
 
 const char *

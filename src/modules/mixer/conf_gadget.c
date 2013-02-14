@@ -136,7 +136,7 @@ _free_data(E_Config_Dialog *dialog, E_Config_Dialog_Data *cfdata)
      eina_stringshare_del(card);
 
    if (cfdata->channels_names)
-     e_mod_mixer_channels_free(cfdata->channels_names);
+     e_mod_mixer_channels_names_free(cfdata->channels_names);
    if (cfdata->cards)
      e_mod_mixer_cards_free(cfdata->cards);
 
@@ -293,7 +293,7 @@ _card_change(void *data, Evas_Object *obj, void *event __UNUSED__)
 
    eina_stringshare_del(cfdata->card);
 
-   e_mod_mixer_channels_free(cfdata->channels_names);
+   e_mod_mixer_channels_names_free(cfdata->channels_names);
 
    eina_stringshare_del(cfdata->channel_name);
 
