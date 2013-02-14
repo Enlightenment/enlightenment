@@ -264,7 +264,7 @@ pulse_sink_channel_names_get(Pulse_Sink *sink)
 {
    Eina_List *ret = NULL;
    unsigned int x;
-   
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(sink, NULL);
    for (x = 0; x < sink->volume.channels; x++)
       ret = eina_list_append(ret, pulse_sink_channel_id_get_name(sink, x));
@@ -275,7 +275,7 @@ unsigned int
 pulse_sink_channel_name_get_id(Pulse_Sink *sink, const char *name)
 {
    unsigned int x;
-   
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(sink, UINT_MAX);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, UINT_MAX);
    for (x = 0; x < sink->channel_map.channels; x++)

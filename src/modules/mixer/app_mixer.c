@@ -176,13 +176,13 @@ _populate_channel_editor(E_Mixer_App_Dialog_Data *app)
    const char *card_name;
 
    card_name = e_mod_mixer_card_name_get(app->card);
-   
+
    if (!card_name)
      {
         _disable_channel_editor(app);
         return;
      }
-   
+
    e_widget_entry_text_set(ui->card, card_name);
    eina_stringshare_del(card_name);
 
@@ -380,7 +380,7 @@ _create_cards(E_Dialog *dialog __UNUSED__, Evas *evas, E_Mixer_App_Dialog_Data *
         const char *card_name;
 
         card_name = e_mod_mixer_card_name_get(card);
-        
+
         if (!card_name)
           continue;
 
@@ -566,7 +566,7 @@ _find_card_by_name(E_Mixer_App_Dialog_Data *app, const char *card_name)
 
    if (!card_name)
      return 0;
-   
+
    for (i = 0, l = app->cards; l; i++, l = l->next)
      if (strcmp(card_name, l->data) == 0)
        return i;
@@ -584,7 +584,7 @@ _find_channel_by_name(E_Mixer_App_Dialog_Data *app, const char *channel_name)
 
    if (!channel_name)
      return 0;
-   
+
    if (app->channels_infos)
      {
         info = app->channels_infos->data;
@@ -618,7 +618,7 @@ e_mixer_app_dialog_select(E_Dialog *dialog, const char *card_name, const char *c
 
    if (!dialog)
      return 0;
-   
+
    if ((!card_name) || (!channel_name))
      return 0;
 

@@ -16,7 +16,7 @@ deserialize_server_info(Pulse *conn, Pulse_Tag *tag)
    EINA_SAFETY_ON_FALSE_GOTO(untag_sample(tag, &spec), error);
    EINA_SAFETY_ON_FALSE_GOTO(untag_string(tag, &ev->default_sink), error);
    EINA_SAFETY_ON_FALSE_GOTO(untag_string(tag, &ev->default_source), error);
-   
+
    return ev;
 error:
    pulse_server_info_free(ev);

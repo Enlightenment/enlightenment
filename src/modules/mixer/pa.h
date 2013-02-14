@@ -253,7 +253,7 @@ typedef enum
     PA_TAG_SIZE_CVOLUME = 2,
     PA_TAG_SIZE_PROPLIST = 1 + PA_TAG_SIZE_STRING_NULL,
     PA_TAG_SIZE_VOLUME = 2
-} PA_Tag_Size;   
+} PA_Tag_Size;
 
 /** Volume specification:
  *  PA_VOLUME_MUTED: silence;

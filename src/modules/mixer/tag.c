@@ -174,7 +174,7 @@ untag_arbitrary(Pulse_Tag *tag, Eina_Binbuf **val)
    ret = tag->data + tag->size;
    if (*ret != PA_TAG_ARBITRARY) return 0;
    ret += PA_TAG_SIZE_ARBITRARY;
-   
+
    *val = eina_binbuf_new();
    eina_binbuf_append_length(*val, ret, len);
    ret += len;
@@ -215,7 +215,7 @@ tag_proplist(Pulse_Tag *tag)
 
    ret = tag->data + tag->size;
    *ret = PA_TAG_PROPLIST, tag->size++;
-   
+
    eina_hash_foreach(tag->props, (Eina_Hash_Foreach)tag_proplist_foreach, tag);
    return tag_string(tag, NULL);
 }
@@ -303,7 +303,7 @@ untag_cvol(Pulse_Tag *tag, pa_cvolume *cvol)
         memcpy(&pa_vol, ret, sizeof(pa_vol));
         cvol->values[x] = ntohl(pa_vol);
      }
-     
+
    tag->size = ret - tag->data;
    return ret;
 }

@@ -57,11 +57,11 @@ proplist_init(Pulse_Tag *tag)
    snprintf(pid, sizeof(pid), "%"PRIu32, getpid());
    eina_hash_add(tag->props, "application.process.id", eina_stringshare_add(pid));
    tag->dsize += PA_TAG_SIZE_ARBITRARY + sizeof("application.process.id") + strlen(pid) + 2 + PA_TAG_SIZE_U32;
-   
+
    str = getenv("USER");
    eina_hash_add(tag->props, "application.process.user", eina_stringshare_add(str));
    tag->dsize += PA_TAG_SIZE_ARBITRARY + sizeof("application.process.user") + strlen(str) + 2 + PA_TAG_SIZE_U32;
-   
+
    file = eina_file_open("/etc/hostname", EINA_FALSE);
    if (file)
      {
@@ -77,7 +77,7 @@ proplist_init(Pulse_Tag *tag)
         eina_hash_add(tag->props, "application.process.host", eina_stringshare_add(""));
         tag->dsize += PA_TAG_SIZE_ARBITRARY + sizeof("application.process.host") + 2 + PA_TAG_SIZE_U32;
      }
-   
+
    ecore_app_args_get(&argc, &argv);
    str = strrchr(argv[0], '/');
    str = (str) ? str + 1 : argv[0];
@@ -85,14 +85,14 @@ proplist_init(Pulse_Tag *tag)
    tag->dsize += PA_TAG_SIZE_ARBITRARY + sizeof("application.process.binary") + strlen(str) + 2 + PA_TAG_SIZE_U32;
    eina_hash_add(tag->props, "application.name", eina_stringshare_add(str));
    tag->dsize += PA_TAG_SIZE_ARBITRARY + sizeof("application.name") + strlen(str) + 2 + PA_TAG_SIZE_U32;
-   
+
    str = getenv("LANG");
    if (str)
      {
         eina_hash_add(tag->props, "application.language", eina_stringshare_add(str));
         tag->dsize += PA_TAG_SIZE_ARBITRARY + sizeof("application.language") + strlen(str) + 2 + PA_TAG_SIZE_U32;
      }
-   
+
    str = getenv("DISPLAY");
    if (str)
      {
@@ -136,7 +136,7 @@ cookie_file(uint8_t *cookie)
    size_t size;
    void *cookie_data;
 
-   snprintf(buf, sizeof(buf), "%s/.pulse-cookie", getenv("HOME"));   
+   snprintf(buf, sizeof(buf), "%s/.pulse-cookie", getenv("HOME"));
    file = eina_file_open(buf, EINA_FALSE);
    size = eina_file_size_get(file);
    cookie_data = eina_file_map_all(file, EINA_FILE_WILLNEED);
@@ -151,26 +151,26 @@ login_setup(Pulse *conn)
    Pulse_Tag *tag;
    uint32_t x;
    uint8_t cookie[PA_NATIVE_COOKIE_LENGTH];
-   
+
    tag = calloc(1, sizeof(Pulse_Tag));
    tag->dsize = 4 * PA_TAG_SIZE_U32 + sizeof(cookie);
    tag->data = malloc(tag->dsize);
    tag_simple_init(conn, tag, PA_COMMAND_AUTH, PA_TAG_U32);
    DBG("%zu bytes", tag->dsize);
-   
+
    if (!getuid())
      x = PA_PROTOCOL_VERSION;
    else
      x = PA_PROTOCOL_VERSION | 0x80000000U;
    tag_uint32(tag, x);
    DBG("%zu bytes", tag->dsize);
-   
+
    cookie_file(cookie);
    tag_arbitrary(tag, cookie, sizeof(cookie));
    DBG("%zu bytes", tag->dsize);
 
    tag_finish(tag);
-   
+
    return tag;
 }
 
@@ -262,7 +262,7 @@ fdh_func(Pulse *conn, Ecore_Fd_Handler *fdh)
    pa_write = !!ecore_main_fd_handler_active_get(fdh, ECORE_FD_WRITE) * ECORE_FD_WRITE;
    rprev = eina_list_data_get(conn->iq);
    wprev = eina_list_data_get(conn->oq);
-   
+
    switch (conn->state)
      {
       case PA_STATE_INIT:
@@ -274,7 +274,7 @@ fdh_func(Pulse *conn, Ecore_Fd_Handler *fdh)
 
         if (!wprev->auth)
           msg_sendmsg_creds(conn, wprev);
-          
+
 
         if (wprev->auth && msg_send(conn, wprev))
           {
@@ -326,7 +326,7 @@ fdh_func(Pulse *conn, Ecore_Fd_Handler *fdh)
                   Pulse_Tag *tag;
                   PA_Commands command;
                   if (!pulse_recv(conn, fdh, &tag)) break;
-                       
+
                   command = (uintptr_t)eina_hash_find(conn->tag_handlers, &tag->tag_count);
                   eina_hash_del_by_key(conn->tag_handlers, &tag->tag_count);
                   deserialize_tag(conn, command, tag);
@@ -623,7 +623,7 @@ int
 pulse_init(void)
 {
    if (pulse_init_count++) return pulse_init_count;
-   
+
    eina_init();
    ecore_init();
    ecore_con_init();

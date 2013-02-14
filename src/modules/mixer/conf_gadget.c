@@ -337,7 +337,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
      return NULL;
 
    e_dialog_resizable_set(cfd->dia, 1);
-   
+
    cfdata->ui.table = e_widget_table_add(evas, 0);
    _basic_create_general(evas, cfdata);
    _basic_create_cards(evas, cfdata);

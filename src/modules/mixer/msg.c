@@ -44,7 +44,7 @@ msg_recv_creds(Pulse *conn, Pulse_Tag *tag)
 #else
    conn = NULL;
    tag = NULL;
-#endif   
+#endif
 }
 
 Eina_Bool
@@ -91,14 +91,14 @@ msg_recv(Pulse *conn, Pulse_Tag *tag)
 #else
    conn = NULL;
    tag = NULL;
-#endif   
+#endif
    return EINA_FALSE;
 }
 
 void
 msg_sendmsg_creds(Pulse *conn, Pulse_Tag *tag)
 {
-#ifdef __linux__   
+#ifdef __linux__
    int r;
    struct msghdr mh;
    struct iovec iov;
@@ -144,13 +144,13 @@ msg_sendmsg_creds(Pulse *conn, Pulse_Tag *tag)
 #else
    conn = NULL;
    tag = NULL;
-#endif   
+#endif
 }
 
 void
 msg_send_creds(Pulse *conn, Pulse_Tag *tag)
 {
-#ifdef __linux__   
+#ifdef __linux__
    int r;
 
    INF("trying to send 20 byte auth header");

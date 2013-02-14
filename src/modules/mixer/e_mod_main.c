@@ -850,7 +850,7 @@ _mixer_sys_setup(E_Mixer_Instance *inst)
         ERR("conf->card in mixer sys setup is NULL");
         return 1;
      }
-   
+
    if (inst->sys)
      e_mod_mixer_del(inst->sys);
 
@@ -1018,7 +1018,7 @@ e_mod_mixer_pulse_update(void)
    ctxt = mixer_mod->data;
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
      {
-        if (inst->conf->using_default) 
+        if (inst->conf->using_default)
           _mixer_sys_setup_default_card(inst);
         e_mod_mixer_state_get(inst->sys, inst->channel, &inst->mixer_state);
         _mixer_gadget_update(inst);
