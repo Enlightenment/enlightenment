@@ -251,7 +251,7 @@ _mixer_balance_left(E_Mixer_Instance *inst)
    E_Mixer_Channel_State *state;
 
    state = &inst->mixer_state;
-   e_mod_mixer_volume_get(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_get(inst->sys, inst->channel_info,
                           &state->left, &state->right);
    if (state->left >= 0)
      {
@@ -268,7 +268,7 @@ _mixer_balance_left(E_Mixer_Instance *inst)
           state->right = 100;
      }
 
-   e_mod_mixer_volume_set(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_set(inst->sys, inst->channel_info,
                           state->left, state->right);
    _mixer_gadget_update(inst);
 }
@@ -279,7 +279,7 @@ _mixer_balance_right(E_Mixer_Instance *inst)
    E_Mixer_Channel_State *state;
 
    state = &inst->mixer_state;
-   e_mod_mixer_volume_get(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_get(inst->sys, inst->channel_info,
                           &state->left, &state->right);
    if (state->left >= 0)
      {
@@ -295,7 +295,7 @@ _mixer_balance_right(E_Mixer_Instance *inst)
         else
           state->right = 0;
      }
-   e_mod_mixer_volume_set(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_set(inst->sys, inst->channel_info,
                           state->left, state->right);
    _mixer_gadget_update(inst);
 }
@@ -306,7 +306,7 @@ _mixer_volume_increase(E_Mixer_Instance *inst, Eina_Bool non_ui)
    E_Mixer_Channel_State *state;
 
    state = &inst->mixer_state;
-   e_mod_mixer_volume_get(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_get(inst->sys, inst->channel_info,
                           &state->left, &state->right);
    if (state->left >= 0)
      {
@@ -324,7 +324,7 @@ _mixer_volume_increase(E_Mixer_Instance *inst, Eina_Bool non_ui)
           state->right = 100;
      }
 
-   e_mod_mixer_volume_set(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_set(inst->sys, inst->channel_info,
                           state->left, state->right);
    _mixer_gadget_update(inst);
    if (non_ui)
@@ -337,7 +337,7 @@ _mixer_volume_decrease(E_Mixer_Instance *inst, Eina_Bool non_ui)
    E_Mixer_Channel_State *state;
 
    state = &inst->mixer_state;
-   e_mod_mixer_volume_get(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_get(inst->sys, inst->channel_info,
                           &state->left, &state->right);
    if (state->left >= 0)
      {
@@ -354,7 +354,7 @@ _mixer_volume_decrease(E_Mixer_Instance *inst, Eina_Bool non_ui)
           state->right = 0;
      }
 
-   e_mod_mixer_volume_set(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_set(inst->sys, inst->channel_info,
                           state->left, state->right);
    _mixer_gadget_update(inst);
    if (non_ui)
@@ -370,10 +370,10 @@ _mixer_toggle_mute(E_Mixer_Instance *inst, Eina_Bool non_ui)
      return;
 
    state = &inst->mixer_state;
-   e_mod_mixer_mute_get(inst->sys, inst->channel_info->id, &state->mute);
+   e_mod_mixer_mute_get(inst->sys, inst->channel_info, &state->mute);
    state->mute = !state->mute;
-   e_mod_mixer_mute_set(inst->sys, inst->channel_info->id, state->mute);
-   if (!state->mute) e_mod_mixer_volume_set(inst->sys, inst->channel_info->id, state->left, state->right);
+   e_mod_mixer_mute_set(inst->sys, inst->channel_info, state->mute);
+   if (!state->mute) e_mod_mixer_volume_set(inst->sys, inst->channel_info, state->left, state->right);
    _mixer_gadget_update(inst);
    if (non_ui)
      {
@@ -390,7 +390,7 @@ _mixer_popup_cb_volume_left_change(void *data, Evas_Object *obj, void *event __U
    E_Mixer_Instance *inst = data;
    E_Mixer_Channel_State *state = &inst->mixer_state;
 
-   e_mod_mixer_volume_get(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_get(inst->sys, inst->channel_info,
                           &state->left, &state->right);
 
    state->left = (int)e_slider_value_get(obj);
@@ -400,7 +400,7 @@ _mixer_popup_cb_volume_left_change(void *data, Evas_Object *obj, void *event __U
         e_slider_value_set(inst->ui.right, state->right);
      }
 
-   e_mod_mixer_volume_set(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_set(inst->sys, inst->channel_info,
                           state->left, state->right);
    if (!_mixer_using_default) _mixer_gadget_update(inst);
 }
@@ -411,7 +411,7 @@ _mixer_popup_cb_volume_right_change(void *data, Evas_Object *obj, void *event __
    E_Mixer_Instance *inst = data;
    E_Mixer_Channel_State *state = &inst->mixer_state;
 
-   e_mod_mixer_volume_get(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_get(inst->sys, inst->channel_info,
                           &state->left, &state->right);
 
    state->right = (int)e_slider_value_get(obj);
@@ -421,7 +421,7 @@ _mixer_popup_cb_volume_right_change(void *data, Evas_Object *obj, void *event __
         e_slider_value_set(inst->ui.left, state->left);
      }
 
-   e_mod_mixer_volume_set(inst->sys, inst->channel_info->id,
+   e_mod_mixer_volume_set(inst->sys, inst->channel_info,
                           state->left, state->right);
    if (!_mixer_using_default) _mixer_gadget_update(inst);
 }
@@ -433,7 +433,7 @@ _mixer_popup_cb_mute_change(void *data, Evas_Object *obj, void *event __UNUSED__
    E_Mixer_Channel_State *state = &inst->mixer_state;
 
    state->mute = e_widget_check_checked_get(obj);
-   e_mod_mixer_mute_set(inst->sys, inst->channel_info->id, state->mute);
+   e_mod_mixer_mute_set(inst->sys, inst->channel_info, state->mute);
 
    if (!_mixer_using_default) _mixer_gadget_update(inst);
 }
@@ -642,7 +642,7 @@ _mixer_popup_new(E_Mixer_Instance *inst)
      return;
 
    state = &inst->mixer_state;
-   e_mod_mixer_state_get(inst->sys, inst->channel_info->id, state);
+   e_mod_mixer_state_get(inst->sys, inst->channel_info, state);
 
    if (e_mod_mixer_channel_has_no_volume(inst->channel_info) ||
        e_mod_mixer_channel_is_mono(inst->channel_info) ||
@@ -858,7 +858,7 @@ static int
 _mixer_system_cb_update(void *data, E_Mixer_System *sys __UNUSED__)
 {
    E_Mixer_Instance *inst = data;
-   e_mod_mixer_state_get(inst->sys, inst->channel_info->id, &inst->mixer_state);
+   e_mod_mixer_state_get(inst->sys, inst->channel_info, &inst->mixer_state);
    _mixer_gadget_update(inst);
 
    return 1;
@@ -1009,10 +1009,10 @@ e_sys_pulse_ready_cb(Eina_Bool ready)
         if (inst->channel_info)
           {
              if ((inst->mixer_state.left > -1) && (inst->mixer_state.right > -1) && (inst->mixer_state.mute > -1))
-               e_mod_mixer_volume_set(inst->sys, inst->channel_info->id,
+               e_mod_mixer_volume_set(inst->sys, inst->channel_info,
                                       inst->mixer_state.left, inst->mixer_state.right);
              else
-               e_mod_mixer_state_get(inst->sys, inst->channel_info->id, &inst->mixer_state);
+               e_mod_mixer_state_get(inst->sys, inst->channel_info, &inst->mixer_state);
           }
         _mixer_gadget_update(inst);
      }
@@ -1033,7 +1033,7 @@ e_sys_pulse_update_cb(void)
      {
         if (inst->conf->using_default)
           _mixer_sys_setup_default_card(inst);
-        e_mod_mixer_state_get(inst->sys, inst->channel_info->id, &inst->mixer_state);
+        e_mod_mixer_state_get(inst->sys, inst->channel_info, &inst->mixer_state);
         _mixer_gadget_update(inst);
      }
 }
@@ -1104,10 +1104,10 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
      {
         if (_mixer_using_default &&
              ((inst->mixer_state.left > -1) && (inst->mixer_state.right > -1) && (inst->mixer_state.mute > -1)))
-          e_mod_mixer_volume_set(inst->sys, inst->channel_info->id,
+          e_mod_mixer_volume_set(inst->sys, inst->channel_info,
                                  inst->mixer_state.left, inst->mixer_state.right);
         else
-          e_mod_mixer_state_get(inst->sys, inst->channel_info->id, &inst->mixer_state);
+          e_mod_mixer_state_get(inst->sys, inst->channel_info, &inst->mixer_state);
         _mixer_gadget_update(inst);
      }
 

@@ -48,12 +48,11 @@ typedef struct _E_Mixer_Channel_Info
    E_Mixer_App             *app;
 } E_Mixer_Channel_Info;
 
-typedef int (*E_Mixer_Volume_Set_Cb)(E_Mixer_System *, E_Mixer_Channel *, int, int);
-typedef int (*E_Mixer_Volume_Get_Cb)(E_Mixer_System *, E_Mixer_Channel *, int *, int *);
-typedef int (*E_Mixer_Mute_Get_Cb)(E_Mixer_System *, E_Mixer_Channel *, int *);
-typedef int (*E_Mixer_Mute_Set_Cb)(E_Mixer_System *, E_Mixer_Channel *, int);
-typedef int (*E_Mixer_State_Get_Cb)(E_Mixer_System *, E_Mixer_Channel *, E_Mixer_Channel_State *);
-typedef int (*E_Mixer_Capture_Cb)(E_Mixer_System *, E_Mixer_Channel *);
+typedef int (*E_Mixer_Volume_Set_Cb)(E_Mixer_System *, E_Mixer_Channel_Info *, int, int);
+typedef int (*E_Mixer_Volume_Get_Cb)(E_Mixer_System *, E_Mixer_Channel_Info *, int *, int *);
+typedef int (*E_Mixer_Mute_Get_Cb)(E_Mixer_System *, E_Mixer_Channel_Info *, int *);
+typedef int (*E_Mixer_Mute_Set_Cb)(E_Mixer_System *, E_Mixer_Channel_Info *, int);
+typedef int (*E_Mixer_State_Get_Cb)(E_Mixer_System *, E_Mixer_Channel_Info *, E_Mixer_Channel_State *);
 typedef void *(*E_Mixer_Cb)();
 typedef void *(*E_Mixer_Ready_Cb)(Eina_Bool);
 
@@ -99,12 +98,11 @@ Eina_List *e_mixer_alsa_get_channel_names(E_Mixer_System *self);
 const char *e_mixer_alsa_get_default_channel_name(E_Mixer_System *self);
 E_Mixer_Channel_Info *e_mixer_alsa_get_channel_by_name(E_Mixer_System *self, const char *name);
 
-int e_mixer_alsa_get_volume(E_Mixer_System *self, E_Mixer_Channel *channel, int *left, int *right);
-int e_mixer_alsa_set_volume(E_Mixer_System *self, E_Mixer_Channel *channel, int left, int right);
-int e_mixer_alsa_get_mute(E_Mixer_System *self, E_Mixer_Channel *channel, int *mute);
-int e_mixer_alsa_set_mute(E_Mixer_System *self, E_Mixer_Channel *channel, int mute);
-int e_mixer_alsa_get_state(E_Mixer_System *self, E_Mixer_Channel *channel, E_Mixer_Channel_State *state);
-int e_mixer_alsa_set_state(E_Mixer_System *self, E_Mixer_Channel *channel, const E_Mixer_Channel_State *state);
+int e_mixer_alsa_get_volume(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int *left, int *right);
+int e_mixer_alsa_set_volume(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int left, int right);
+int e_mixer_alsa_get_mute(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int *mute);
+int e_mixer_alsa_set_mute(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int mute);
+int e_mixer_alsa_get_state(E_Mixer_System *self, E_Mixer_Channel_Info *channel, E_Mixer_Channel_State *state);
 
 /* PULSE */
 Eina_Bool e_mixer_pulse_ready(void);
@@ -125,12 +123,11 @@ Eina_List *e_mixer_pulse_get_channel_names(E_Mixer_System *self);
 const char *e_mixer_pulse_get_default_channel_name(E_Mixer_System *self);
 E_Mixer_Channel_Info *e_mixer_pulse_get_channel_by_name(E_Mixer_System *self, const char *name);
 
-int e_mixer_pulse_get_volume(E_Mixer_System *self, E_Mixer_Channel *channel, int *left, int *right);
-int e_mixer_pulse_set_volume(E_Mixer_System *self, E_Mixer_Channel *channel, int left, int right);
-int e_mixer_pulse_get_mute(E_Mixer_System *self, E_Mixer_Channel *channel, int *mute);
-int e_mixer_pulse_set_mute(E_Mixer_System *self, E_Mixer_Channel *channel, int mute);
-int e_mixer_pulse_get_state(E_Mixer_System *self, E_Mixer_Channel *channel, E_Mixer_Channel_State *state);
-int e_mixer_pulse_set_state(E_Mixer_System *self, E_Mixer_Channel *channel, const E_Mixer_Channel_State *state);
+int e_mixer_pulse_get_volume(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int *left, int *right);
+int e_mixer_pulse_set_volume(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int left, int right);
+int e_mixer_pulse_get_mute(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int *mute);
+int e_mixer_pulse_set_mute(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int mute);
+int e_mixer_pulse_get_state(E_Mixer_System *self, E_Mixer_Channel_Info *channel, E_Mixer_Channel_State *state);
 
 /**
  * @addtogroup Optional_Devices

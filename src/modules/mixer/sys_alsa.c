@@ -480,7 +480,7 @@ e_mixer_alsa_get_channel_name(E_Mixer_System *self,
 
 int
 e_mixer_alsa_get_volume(E_Mixer_System *self,
-                          E_Mixer_Channel *channel,
+                          E_Mixer_Channel_Info *channel,
                           int *left,
                           int *right)
 {
@@ -490,24 +490,34 @@ e_mixer_alsa_get_volume(E_Mixer_System *self,
      return 0;
 
    snd_mixer_handle_events(self);
-   snd_mixer_selem_get_playback_volume_range(channel, &min, &max);
+
+   if (e_mod_mixer_channel_has_playback(channel))
+     snd_mixer_selem_get_playback_volume_range(channel->id, &min, &max);
+   else if (e_mod_mixer_channel_has_capture(channel))
+     snd_mixer_selem_get_capture_volume_range(channel->id, &min, &max);
+   else
+     return 0;
+
    range = max - min;
    if (range < 1)
      return 0;
 
-   if (snd_mixer_selem_has_playback_channel(channel, 0))
-     snd_mixer_selem_get_playback_volume(channel, 0, &lvol);
+   if (e_mod_mixer_channel_has_playback(channel))
+     {
+        snd_mixer_selem_get_playback_volume(channel->id, 0, &lvol);
+        if (!e_mod_mixer_channel_is_mono(channel))
+          snd_mixer_selem_get_playback_volume(channel->id, 1, &rvol);
+        else
+          rvol = lvol;
+     }
    else
-     lvol = min;
-
-   if (snd_mixer_selem_has_playback_channel(channel, 1))
-     snd_mixer_selem_get_playback_volume(channel, 1, &rvol);
-   else
-     rvol = min;
-
-   if (snd_mixer_selem_is_playback_mono(channel) ||
-       snd_mixer_selem_has_playback_volume_joined(channel))
-     rvol = lvol;
+     {
+        snd_mixer_selem_get_capture_volume(channel->id, 0, &lvol);
+        if (!e_mod_mixer_channel_is_mono(channel))
+          snd_mixer_selem_get_capture_volume(channel->id, 1, &rvol);
+        else
+          rvol = lvol;
+     }
 
    *left = rint((double)(lvol - min) * 100 / (double)range);
    *right = rint((double)(rvol - min) * 100 / (double)range);
@@ -517,7 +527,7 @@ e_mixer_alsa_get_volume(E_Mixer_System *self,
 
 int
 e_mixer_alsa_set_volume(E_Mixer_System *self,
-                          E_Mixer_Channel *channel,
+                          E_Mixer_Channel_Info *channel,
                           int left,
                           int right)
 {
@@ -528,7 +538,14 @@ e_mixer_alsa_set_volume(E_Mixer_System *self,
      return 0;
 
    snd_mixer_handle_events(self);
-   snd_mixer_selem_get_playback_volume_range(channel, &min, &max);
+
+   if (e_mod_mixer_channel_has_playback(channel))
+     snd_mixer_selem_get_playback_volume_range(channel->id, &min, &max);
+   else if (e_mod_mixer_channel_has_capture(channel))
+     snd_mixer_selem_get_capture_volume_range(channel->id, &min, &max);
+   else
+     return 0;
+
    divide = 100 + min;
    if (divide == 0)
      {
@@ -547,21 +564,26 @@ e_mixer_alsa_set_volume(E_Mixer_System *self,
         mode |= 1;
      }
 
-   if (right >= 0)
+   if (!e_mod_mixer_channel_is_mono(channel) && (right >= 0))
      {
         right = (((range * right) + (range / 2)) / divide) - min;
         mode |= 2;
      }
 
    if (mode & 1)
-     snd_mixer_selem_set_playback_volume(channel, 0, left);
-
-   if ((!snd_mixer_selem_is_playback_mono(channel)) &&
-       (!snd_mixer_selem_has_playback_volume_joined(channel)) &&
-       (mode & 2))
      {
-        if (snd_mixer_selem_has_playback_channel(channel, 1))
-          snd_mixer_selem_set_playback_volume(channel, 1, right);
+        if (e_mod_mixer_channel_has_playback(channel))
+          snd_mixer_selem_set_playback_volume(channel->id, 0, left);
+        else
+          snd_mixer_selem_set_capture_volume(channel->id, 0, left);
+     }
+
+   if (mode & 2)
+     {
+        if (e_mod_mixer_channel_has_playback(channel))
+          snd_mixer_selem_set_playback_volume(channel->id, 1, right);
+        else
+          snd_mixer_selem_set_capture_volume(channel->id, 1, right);
      }
 
    return 1;
@@ -569,22 +591,25 @@ e_mixer_alsa_set_volume(E_Mixer_System *self,
 
 int
 e_mixer_alsa_get_mute(E_Mixer_System *self,
-                        E_Mixer_Channel *channel,
+                        E_Mixer_Channel_Info *channel,
                         int *mute)
 {
    if ((!self) || (!channel) || (!mute))
      return 0;
 
    snd_mixer_handle_events(self);
-   if (snd_mixer_selem_has_playback_switch(channel) ||
-       snd_mixer_selem_has_playback_switch_joined(channel))
+
+   if (e_mod_mixer_channel_is_mutable(channel))
      {
         int m;
 
         /* XXX: not checking for return, always returns 0 even if it worked.
          * alsamixer also don't check it. Bug?
          */
-        snd_mixer_selem_get_playback_switch(channel, 0, &m);
+        if (e_mod_mixer_channel_has_capture(channel))
+          snd_mixer_selem_get_capture_switch(channel->id, 0, &m);
+        else
+          snd_mixer_selem_get_playback_switch(channel->id, 0, &m);
         *mute = !m;
      }
    else
@@ -595,23 +620,26 @@ e_mixer_alsa_get_mute(E_Mixer_System *self,
 
 int
 e_mixer_alsa_set_mute(E_Mixer_System *self,
-                        E_Mixer_Channel *channel,
+                        E_Mixer_Channel_Info *channel,
                         int mute)
 {
    if ((!self) || (!channel))
      return 0;
 
-   snd_mixer_handle_events(self);
-   if (snd_mixer_selem_has_playback_switch(channel) ||
-       snd_mixer_selem_has_playback_switch_joined(channel))
-     return snd_mixer_selem_set_playback_switch_all(channel, !mute);
+   if (e_mod_mixer_channel_is_mutable(channel))
+     {
+        if (e_mod_mixer_channel_has_capture(channel))
+          return snd_mixer_selem_set_capture_switch_all(channel->id, !mute);
+        else
+          return snd_mixer_selem_set_playback_switch_all(channel->id, !mute);
+     }
    else
      return 0;
 }
 
 int
 e_mixer_alsa_get_state(E_Mixer_System *self,
-                         E_Mixer_Channel *channel,
+                         E_Mixer_Channel_Info *channel,
                          E_Mixer_Channel_State *state)
 {
    int r;
@@ -624,18 +652,18 @@ e_mixer_alsa_get_state(E_Mixer_System *self,
    return r;
 }
 
-int
-e_mixer_alsa_set_state(E_Mixer_System *self,
-                         E_Mixer_Channel *channel,
-                         const E_Mixer_Channel_State *state)
-{
-   int r;
-
-   if (!state)
-     return 0;
-
-   r = e_mixer_alsa_set_mute(self, channel, state->mute);
-   r &= e_mixer_alsa_set_volume(self, channel, state->left, state->right);
-   return r;
-}
+/* int */
+/* e_mixer_alsa_set_state(E_Mixer_System *self, */
+/*                          E_Mixer_Channel *channel, */
+/*                          const E_Mixer_Channel_State *state) */
+/* { */
+/*    int r; */
+/**/
+/*    if (!state) */
+/*      return 0; */
+/**/
+/*    r = e_mixer_alsa_set_mute(self, channel, state->mute); */
+/*    r &= e_mixer_alsa_set_volume(self, channel, state->left, state->right); */
+/*    return r; */
+/* } */
 

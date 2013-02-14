@@ -164,9 +164,9 @@ e_mixer_system_get_state(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *chann
    return 1;
 }
 
-int
-e_mixer_system_set_state(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel __UNUSED__, const E_Mixer_Channel_State *state __UNUSED__)
-{
-   return 0;
-}
+/* int */
+/* e_mixer_system_set_state(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel __UNUSED__, const E_Mixer_Channel_State *state __UNUSED__) */
+/* { */
+/*    return 0; */
+/* } */
 
