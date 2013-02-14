@@ -50,7 +50,7 @@ _mixer_fill_cards_info(E_Config_Dialog_Data *cfdata)
    int i = 0;
 
    cfdata->card_num = -1;
-   cfdata->cards = e_mod_mixer_cards_get();
+   cfdata->cards = e_mod_mixer_card_names_get();
    cfdata->cards_names = NULL;
    EINA_LIST_FOREACH(cfdata->cards, l, card)
      {
@@ -138,7 +138,7 @@ _free_data(E_Config_Dialog *dialog, E_Config_Dialog_Data *cfdata)
    if (cfdata->channels_names)
      e_mod_mixer_channels_names_free(cfdata->channels_names);
    if (cfdata->cards)
-     e_mod_mixer_cards_free(cfdata->cards);
+     e_mod_mixer_card_names_free(cfdata->cards);
 
    eina_stringshare_del(cfdata->card);
    eina_stringshare_del(cfdata->channel_name);
