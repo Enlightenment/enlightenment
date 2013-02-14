@@ -420,6 +420,7 @@ PKG_CHECK_MODULES(E_REMOTE, [
 
 PKG_CHECK_MODULES(E_START, [
   eina >= ${efl_version}
+  evas >= ${efl_version}
 ])
 
 PKG_CHECK_MODULES(E_IMC, [
