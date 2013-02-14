@@ -105,7 +105,7 @@ _basic_create_general(E_Config_Dialog *dialog, Evas *evas, E_Config_Dialog_Data 
         inst = l->data;
         conf = inst->conf;
 
-        card_name = e_mixer_system_get_card_name(conf->card);
+        card_name = e_mixer_alsa_get_card_name(conf->card);
         snprintf(name, sizeof(name), "%s: %s", card_name, conf->channel_name);
         eina_stringshare_del(card_name);
 

@@ -283,7 +283,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
      e_mod_mixer_del(app->sys);
    app->sys = e_mod_mixer_new(app->card);
    if (_mixer_using_default)
-     e_mixer_system_callback_set(app->sys, _cb_system_update, app);
+     e_mixer_alsa_callback_set(app->sys, _cb_system_update, app);
 
    eina_stringshare_del(app->channel_name);
    app->channel_name = e_mod_mixer_channel_default_name_get(app->sys);

@@ -886,7 +886,7 @@ e_mixer_update(E_Mixer_Instance *inst)
 
    r = _mixer_sys_setup(inst);
    if (r && _mixer_using_default)
-     e_mixer_system_callback_set(inst->sys, _mixer_system_cb_update, inst);
+     e_mixer_alsa_callback_set(inst->sys, _mixer_system_cb_update, inst);
 
    return r;
 }
@@ -994,8 +994,8 @@ e_mod_mixer_pulse_ready(Eina_Bool ready)
              inst->sys = NULL;
              return;
           }
-        if (_mixer_using_default) e_mixer_system_callback_set(inst->sys, _mixer_system_cb_update, inst);
-        else e_mixer_system_callback_set(inst->sys, NULL, NULL);
+        if (_mixer_using_default) e_mixer_alsa_callback_set(inst->sys, _mixer_system_cb_update, inst);
+        else e_mixer_alsa_callback_set(inst->sys, NULL, NULL);
         if ((inst->mixer_state.left > -1) && (inst->mixer_state.right > -1) && (inst->mixer_state.mute > -1))
           e_mod_mixer_volume_set(inst->sys, inst->channel,
                                  inst->mixer_state.left, inst->mixer_state.right);
@@ -1073,7 +1073,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         return NULL;
      }
 
-   if (_mixer_using_default) e_mixer_system_callback_set(inst->sys, _mixer_system_cb_update, inst);
+   if (_mixer_using_default) e_mixer_alsa_callback_set(inst->sys, _mixer_system_cb_update, inst);
 
    inst->ui.gadget = edje_object_add(gc->evas);
    e_theme_edje_object_set(inst->ui.gadget, "base/theme/modules/mixer",
@@ -1469,26 +1469,26 @@ _mixer_actions_unregister(E_Mixer_Module_Context *ctxt)
 void
 e_mixer_default_setup(void)
 {
-   e_mod_mixer_volume_get = (void *)e_mixer_system_get_volume;
-   e_mod_mixer_volume_set = (void *)e_mixer_system_set_volume;
-   e_mod_mixer_mute_get = (void *)e_mixer_system_get_mute;
-   e_mod_mixer_mute_set = (void *)e_mixer_system_set_mute;
-   e_mod_mixer_mutable_get = (void *)e_mixer_system_can_mute;
-   e_mod_mixer_state_get = (void *)e_mixer_system_get_state;
-   e_mod_mixer_capture_get = (void *)e_mixer_system_has_capture;
-   e_mod_mixer_new = (void *)e_mixer_system_new;
-   e_mod_mixer_del = (void *)e_mixer_system_del;
-   e_mod_mixer_channel_default_name_get = (void *)e_mixer_system_get_default_channel_name;
-   e_mod_mixer_channel_get_by_name = (void *)e_mixer_system_get_channel_by_name;
-   e_mod_mixer_channel_name_get = (void *)e_mixer_system_get_channel_name;
-   e_mod_mixer_channel_del = (void *)e_mixer_system_channel_del;
-   e_mod_mixer_channels_free = (void *)e_mixer_system_free_channels;
-   e_mod_mixer_channels_get = (void *)e_mixer_system_get_channels;
-   e_mod_mixer_channels_names_get = (void *)e_mixer_system_get_channels_names;
-   e_mod_mixer_card_name_get = (void *)e_mixer_system_get_card_name;
-   e_mod_mixer_cards_get = (void *)e_mixer_system_get_cards;
-   e_mod_mixer_cards_free = (void *)e_mixer_system_free_cards;
-   e_mod_mixer_card_default_get = (void *)e_mixer_system_get_default_card;
+   e_mod_mixer_volume_get = (void *)e_mixer_alsa_get_volume;
+   e_mod_mixer_volume_set = (void *)e_mixer_alsa_set_volume;
+   e_mod_mixer_mute_get = (void *)e_mixer_alsa_get_mute;
+   e_mod_mixer_mute_set = (void *)e_mixer_alsa_set_mute;
+   e_mod_mixer_mutable_get = (void *)e_mixer_alsa_can_mute;
+   e_mod_mixer_state_get = (void *)e_mixer_alsa_get_state;
+   e_mod_mixer_capture_get = (void *)e_mixer_alsa_has_capture;
+   e_mod_mixer_new = (void *)e_mixer_alsa_new;
+   e_mod_mixer_del = (void *)e_mixer_alsa_del;
+   e_mod_mixer_channel_default_name_get = (void *)e_mixer_alsa_get_default_channel_name;
+   e_mod_mixer_channel_get_by_name = (void *)e_mixer_alsa_get_channel_by_name;
+   e_mod_mixer_channel_name_get = (void *)e_mixer_alsa_get_channel_name;
+   e_mod_mixer_channel_del = (void *)e_mixer_alsa_channel_del;
+   e_mod_mixer_channels_free = (void *)e_mixer_alsa_free_channels;
+   e_mod_mixer_channels_get = (void *)e_mixer_alsa_get_channels;
+   e_mod_mixer_channels_names_get = (void *)e_mixer_alsa_get_channels_names;
+   e_mod_mixer_card_name_get = (void *)e_mixer_alsa_get_card_name;
+   e_mod_mixer_cards_get = (void *)e_mixer_alsa_get_cards;
+   e_mod_mixer_cards_free = (void *)e_mixer_alsa_free_cards;
+   e_mod_mixer_card_default_get = (void *)e_mixer_alsa_get_default_card;
    _mixer_using_default = EINA_TRUE;
 }
 
