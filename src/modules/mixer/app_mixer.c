@@ -191,10 +191,14 @@ _populate_channel_editor(E_Mixer_App_Dialog_Data *app)
 
    e_widget_entry_text_set(ui->channel, app->channel_name);
 
-   if (e_mod_mixer_channel_has_capture(app->channel_info->id))
-     e_widget_entry_text_set(ui->type, _("Capture"));
+   if (e_mod_mixer_channel_is_boost(app->channel_info))
+       e_widget_entry_text_set(ui->type, _("Boost"));
+   else if (e_mod_mixer_channel_has_playback(app->channel_info))
+       e_widget_entry_text_set(ui->type, _("Playback"));
+   else if (e_mod_mixer_channel_has_capture(app->channel_info))
+       e_widget_entry_text_set(ui->type, _("Capture"));
    else
-     e_widget_entry_text_set(ui->type, _("Playback"));
+       e_widget_entry_text_set(ui->type, _("Switch"));
 
    e_mod_mixer_state_get(app->sys, app->channel_info->id, &state);
    _update_channel_editor_state(app, state);
@@ -255,31 +259,23 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
      e_mod_mixer_channel_infos_free(app->channel_infos);
    app->channel_infos = e_mod_mixer_channel_infos_get(app->sys);
 
-   if (app->channel_infos)
-     {
-        E_Mixer_Channel_Info *info = app->channel_infos->data;
-        if (e_mod_mixer_channel_has_capture(info))
-          {
-             e_widget_ilist_header_append(ilist, NULL, _("Input"));
-             header_input = 1;
-             i = 1;
-          }
-        else
-          {
-             e_widget_ilist_header_append(ilist, NULL, _("Output"));
-             header_input = 0;
-             i = 1;
-          }
-     }
-
+   i = 0;
+   header_input = 0;
    for (l = app->channel_infos; l; l = l->next, i++)
      {
         E_Mixer_Channel_Info *info = l->data;
 
-        if ((!header_input) && e_mod_mixer_channel_has_capture(info))
+        if (header_input != (info->capabilities & E_MIXER_CHANNEL_MASK))
           {
-             e_widget_ilist_header_append(ilist, NULL, _("Input"));
-             header_input = 1;
+             if (e_mod_mixer_channel_is_boost(info))
+               e_widget_ilist_header_append(ilist, NULL, _("Boost"));
+             else if (e_mod_mixer_channel_has_playback(info))
+               e_widget_ilist_header_append(ilist, NULL, _("Playback"));
+             else if (e_mod_mixer_channel_has_capture(info))
+               e_widget_ilist_header_append(ilist, NULL, _("Capture"));
+             else
+               e_widget_ilist_header_append(ilist, NULL, _("Switch"));
+             header_input = (info->capabilities & E_MIXER_CHANNEL_MASK);
              i++;
           }
 
@@ -540,19 +536,12 @@ _find_channel_by_name(E_Mixer_App_Dialog_Data *app, const char *channel_name)
    if (!channel_name)
      return 0;
 
-   if (app->channel_infos)
-     {
-        info = app->channel_infos->data;
-
-        header_input = !!e_mod_mixer_channel_has_capture(info);
-        i = 1;
-     }
-
+   header_input = 0;
    EINA_LIST_FOREACH(app->channel_infos, l, info)
      {
-        if ((!header_input) && e_mod_mixer_channel_has_capture(info))
+        if (header_input != (info->capabilities & E_MIXER_CHANNEL_MASK))
           {
-             header_input = 1;
+             header_input = (info->capabilities & E_MIXER_CHANNEL_MASK);
              i++;
           }
 
