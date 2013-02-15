@@ -5,7 +5,7 @@ extern const char _e_mixer_Name[];
 typedef struct E_Mixer_App_Dialog_Data
 {
    E_Mixer_System       *sys;
-   const char           *card;
+   const char           *sys_card_name;
    const char           *channel_name;
    int                   lock_sliders;
    Eina_List            *cards;
@@ -165,19 +165,14 @@ _populate_channel_editor(E_Mixer_App_Dialog_Data *app)
 {
    struct e_mixer_app_ui_channel_editor *ui = &app->ui.channel_editor;
    E_Mixer_Channel_State state;
-   const char *card_name;
 
-   card_name = e_mod_mixer_card_name_get(app->card);
-
-   if (!card_name)
+   if ((!app->sys_card_name) || (!app->channel_name))
      {
         _disable_channel_editor(app);
         return;
      }
 
-   e_widget_entry_text_set(ui->card, card_name);
-   eina_stringshare_del(card_name);
-
+   e_widget_entry_text_set(ui->card, app->sys_card_name);
    e_widget_entry_text_set(ui->channel, app->channel_name);
 
    if (e_mod_mixer_channel_is_boost(app->channel_info))
@@ -261,7 +256,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
    Eina_List *l;
    Evas_Object *ilist;
    int header_input;
-   int i;
+   int i, selected;
 
    ilist = app->ui.channels.list;
    edje_freeze();
@@ -270,18 +265,16 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
 
    if (app->sys)
      e_mod_mixer_del(app->sys);
-   app->sys = e_mod_mixer_new(app->card);
+   app->sys = e_mod_mixer_new(app->sys_card_name);
    if (_mixer_using_default)
      e_mixer_alsa_callback_set(app->sys, _cb_system_update, app);
-
-   eina_stringshare_del(app->channel_name);
-   app->channel_name = e_mod_mixer_channel_default_name_get(app->sys);
 
    if (app->channel_infos)
      e_mod_mixer_channel_infos_free(app->channel_infos);
    app->channel_infos = e_mod_mixer_channel_infos_get(app->sys);
 
    i = 0;
+   selected = 0;
    header_input = 0;
    for (l = app->channel_infos; l; l = l->next, i++)
      {
@@ -304,13 +297,19 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
         info->app = app;
         e_widget_ilist_append(ilist, NULL, info->name, _cb_channel_selected,
                               info, info->name);
-        if (app->channel_name && info->name &&
+        if ((selected == 0) && app->channel_name && info->name &&
             (strcmp(app->channel_name, info->name) == 0))
           {
              e_widget_ilist_selected_set(ilist, i);
              app->channel_info = info;
+             selected = 1;
           }
      }
+
+   if ((selected == 0) && (i > 0))
+     e_widget_ilist_selected_set(ilist, 0);
+   else
+     app->channel_name = NULL;
 
    e_widget_ilist_go(ilist);
    e_widget_ilist_thaw(ilist);
@@ -318,19 +317,9 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
 }
 
 static void
-select_card(E_Mixer_App_Dialog_Data *app)
-{
-   _populate_channels(app);
-   if (e_widget_ilist_count(app->ui.channels.list) > 0)
-     e_widget_ilist_selected_set(app->ui.channels.list, 1);
-   else
-     _disable_channel_editor(app);
-}
-
-static void
 _cb_card_selected(void *data)
 {
-   select_card(data);
+   _populate_channels(data);
 }
 
 static void
@@ -340,12 +329,11 @@ _create_cards(E_Dialog *dialog __UNUSED__, Evas *evas, E_Mixer_App_Dialog_Data *
    const char *card;
    Eina_List *l;
 
-   app->card = e_mod_mixer_card_default_get();
    app->cards = e_mod_mixer_card_names_get();
    if (eina_list_count(app->cards) < 2)
      return;
 
-   ui->list = e_widget_ilist_add(evas, 32, 32, &app->card);
+   ui->list = e_widget_ilist_add(evas, 32, 32, &app->sys_card_name);
    e_widget_size_min_set(ui->list, 180, 100);
    e_widget_ilist_go(ui->list);
    EINA_LIST_FOREACH(app->cards, l, card)
@@ -446,12 +434,6 @@ _create_ui(E_Dialog *dialog, E_Mixer_App_Dialog_Data *app)
    _create_channels(dialog, evas, app);
    _create_channel_editor(dialog, evas, app);
 
-   if (ui->cards.list)
-     e_widget_ilist_selected_set(ui->cards.list, 0);
-   else
-     select_card(app);
-   e_widget_ilist_selected_set(ui->channels.list, 1);
-
    e_widget_size_min_get(ui->hlayout, &mw, &mh);
    if (mw < 300)
      mw = 300;
@@ -466,8 +448,9 @@ _mixer_app_dialog_del(E_Dialog *dialog, E_Mixer_App_Dialog_Data *app)
    if (app->del.func)
      app->del.func(dialog, app->del.data);
 
-   eina_stringshare_del(app->card);
-   eina_stringshare_del(app->channel_name);
+   if ((!app->ui.cards.list) && (app->ui.channels.list))
+     eina_stringshare_del(app->sys_card_name);
+
    if (app->cards)
      e_mod_mixer_card_names_free(app->cards);
    if (app->channel_infos)
@@ -531,77 +514,47 @@ e_mixer_app_dialog_new(E_Container *con, void (*func)(E_Dialog *dialog, void *da
    return dialog;
 }
 
-static inline int
-_find_card_by_name(E_Mixer_App_Dialog_Data *app, const char *card_name)
-{
-   Eina_List *l;
-   int i;
-
-   if (!card_name)
-     return 0;
-
-   for (i = 0, l = app->cards; l; i++, l = l->next)
-     if (strcmp(card_name, l->data) == 0)
-       return i;
-
-   return -1;
-}
-
-static inline int
-_find_channel_by_name(E_Mixer_App_Dialog_Data *app, const char *channel_name)
-{
-   E_Mixer_Channel_Info *info;
-   Eina_List *l;
-   int i = 0;
-   int header_input;
-
-   if (!channel_name)
-     return 0;
-
-   header_input = 0;
-   EINA_LIST_FOREACH(app->channel_infos, l, info)
-     {
-        if (header_input != e_mod_mixer_channel_group_get(info))
-          {
-             header_input = e_mod_mixer_channel_group_get(info);
-             i++;
-          }
-
-        if (strcmp(channel_name, info->name) == 0)
-          return i;
-
-        ++i;
-     }
-
-   return -1;
-}
-
 int
-e_mixer_app_dialog_select(E_Dialog *dialog, const char *card_name, const char *channel_name)
+e_mixer_app_dialog_select(E_Dialog *dialog, const char *sys_card_name, const char *channel_name)
 {
+   int n, i;
+   Eina_List *l;
    E_Mixer_App_Dialog_Data *app;
-   int n;
 
    if (!dialog)
      return 0;
 
-   if ((!card_name) || (!channel_name))
+   if ((!sys_card_name) || (!channel_name))
      return 0;
 
    app = dialog->data;
    if (!app)
      return 0;
 
-   n = _find_card_by_name(app, card_name);
+   n = -1;
+   for (i = 0, l = app->cards; l; i++, l = l->next)
+     {
+        if (strcmp(sys_card_name, l->data) == 0)
+          n = i;
+          break;
+     }
+
    if (n < 0)
-     return 0;
+     {
+        /* FIXME device disappeared, very bad !! */
+        return 0;
+     }
+
+   /* app->channel_name will be overriden by selection in _populate_channels */
+   app->channel_name = channel_name;
+
    if (app->ui.cards.list)
      e_widget_ilist_selected_set(app->ui.cards.list, n);
-
-   n = _find_channel_by_name(app, channel_name);
-   if (n < 0)
-     return 0;
-   e_widget_ilist_selected_set(app->ui.channels.list, n);
+   else if (app->ui.channels.list)
+     {
+        app->sys_card_name = eina_stringshare_add(sys_card_name);
+        _populate_channels(app);
+     }
 
    return 1;
 }
