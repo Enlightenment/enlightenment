@@ -5093,7 +5093,6 @@ _e_border_free(E_Border *bd)
    evas_object_del(bd->bg_object);
    bd->bg_object = NULL;
    e_canvas_del(bd->bg_ecore_evas);
-   bd->bg_ecore_evas = NULL;
    ecore_evas_free(bd->bg_ecore_evas);
    bd->bg_ecore_evas = NULL;
    ecore_x_window_free(bd->client.shell_win);
