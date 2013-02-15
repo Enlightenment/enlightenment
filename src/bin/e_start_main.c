@@ -245,7 +245,10 @@ main(int argc, char **argv)
    const char *valgrind_log = NULL;
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
-   pid_t child = -1, cs_child = -1;
+   pid_t child = -1;
+#if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
+   pid_t cs_child = -1;
+#endif
 #if !defined(__OpenBSD__) && !defined(__NetBSD__) && !defined(__FreeBSD__) && \
    !(defined (__MACH__) && defined (__APPLE__))
    Eina_Bool restart = EINA_TRUE;
@@ -422,7 +425,7 @@ main(int argc, char **argv)
    while (restart)
      {
         stop_ptrace = EINA_FALSE;
-
+#if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
         if (getenv("E_CSERVE"))
           {
              if (cs_child < 0)
@@ -442,6 +445,7 @@ main(int argc, char **argv)
                     }
                }
           }
+#endif
 
         child = fork();
 
