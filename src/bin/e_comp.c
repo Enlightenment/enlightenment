@@ -2119,8 +2119,13 @@ _e_comp_win_show(E_Comp_Win *cw)
    DBG("  [0x%x] sho ++ [redir=%i, pm=%x, dmg_up=%i]",
        cw->win, cw->redirected, cw->pixmap, cw->dmg_updates);
    _e_comp_win_configure(cw, cw->hidden.x, cw->hidden.y, cw->w, cw->h, cw->border);
-   if ((cw->input_only) || (cw->invalid)) return;
-
+   if (cw->invalid) return;
+   if (cw->input_only)
+     {
+        if (!cw->shape) return;
+        cw->shape->visible = 0;
+        e_container_shape_show(cw->shape);
+     }
    cw->show_anim = EINA_FALSE;
 
    // setup on show
@@ -2257,7 +2262,12 @@ _e_comp_win_hide(E_Comp_Win *cw)
 
    if ((!cw->visible) && (!cw->defer_hide)) return;
    cw->visible = 0;
-   if ((cw->input_only) || (cw->invalid)) return;
+   if (cw->invalid) return;
+   if (cw->input_only)
+     {
+        if (cw->shape) e_container_shape_hide(cw->shape);
+        return;
+     }
    DBG("  [0x%x] hid --", cw->win);
    if (!cw->force)
      {
@@ -2580,6 +2590,8 @@ _e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
              break;
           }
         if (!cw->shape) cw->shape = e_container_shape_add(eina_list_data_get(c->man->containers));
+        e_container_shape_move(cw->shape, ev->x, ev->y);
+        e_container_shape_resize(cw->shape, ev->w, ev->h);
      }
    cw->shape->comp_win = cw;
    return ECORE_CALLBACK_PASS_ON;
@@ -3581,8 +3593,6 @@ _e_comp_populate(E_Comp *c)
         border = ecore_x_window_border_width_get(cw->win);
         if (wins[i] == c->win) continue;
         _e_comp_win_configure(cw, x, y, w, h, border);
-        if (ecore_x_window_visible_get(wins[i]))
-          _e_comp_win_show(cw);
         if (cw->free_shape)
           {
              EINA_LIST_FOREACH(c->man->containers, l, con)
@@ -3594,6 +3604,10 @@ _e_comp_populate(E_Comp *c)
              if (!cw->shape) cw->shape = e_container_shape_add(eina_list_data_get(c->man->containers));
           }
         cw->shape->comp_win = cw;
+        e_container_shape_move(cw->shape, x, y);
+        e_container_shape_resize(cw->shape, w, h);
+        if (ecore_x_window_visible_get(wins[i]))
+          _e_comp_win_show(cw);
      }
    free(wins);
 }
