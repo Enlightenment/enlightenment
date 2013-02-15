@@ -941,6 +941,8 @@ _e_winlist_border_del(E_Border *bd)
 static void
 _e_winlist_activate_nth(int n)
 {
+   E_Winlist_Win *ww;
+   E_Border *bd;
    Eina_List *l;
    int cnt;
 
@@ -950,6 +952,16 @@ _e_winlist_activate_nth(int n)
    l = eina_list_nth_list(_wins, n);
    if (l)
      {
+        ww = eina_list_data_get(l);
+        bd = e_border_under_pointer_get(ww->border->desk, NULL);
+
+        if (bd && (ww->border->client.win == bd->client.win) && (cnt > 1))
+          {
+             _wins = eina_list_promote_list(_wins, l);
+             _e_winlist_activate_nth(n);
+             return;
+          }
+
         _win_selected = l;
         _e_winlist_show_active();
         _e_winlist_activate();
