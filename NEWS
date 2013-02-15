@@ -103,6 +103,7 @@ Improvements:
     * enable image preloading for all e_widget_preview using edje
     * window remember dialog now allows editing of remembers
     * container now uses compositor window
+    * Menu->Applications now only list valid .desktop files
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.

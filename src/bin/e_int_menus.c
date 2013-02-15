@@ -644,6 +644,117 @@ _e_int_menus_main_exit(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item 
    if ((a) && (a->func.go)) a->func.go(NULL, NULL);
 }
 
+/*
+ * This function searches $PATH for try_exec or exec
+ * return true if try_exec or exec is found!
+ */
+static Eina_Bool
+_e_int_menus_app_finder(const char *exec)
+{
+   const char *env = getenv("PATH");
+   char **split, buf[PATH_MAX];
+   Eina_Bool exec_found = EINA_FALSE;
+   int i = 0;
+
+   if (strchr(exec, '/'))
+     {
+        if (ecore_file_exists(exec) && ecore_file_can_exec(exec))
+          return EINA_TRUE;
+     }
+
+   if (!env)
+     {
+        ERR("Unable to $PATH, Returning TRUE for every .desktop");
+        return EINA_TRUE;
+     }
+
+   split = eina_str_split(env, ":", 0);
+   for (i = 0; split[i] != NULL; i++)
+     {
+        snprintf(buf, sizeof(buf), "%s/%s", split[i], exec);
+
+        if (ecore_file_exists(buf) && ecore_file_can_exec(buf))
+          {
+             exec_found = EINA_TRUE;
+             break;
+          }
+     }
+   free(split[0]);
+   free(split);
+
+   if (!exec_found)
+     ERR("Unable to find: [%s] I searched $PATH=%s", exec, env);
+
+   return exec_found;
+}
+
+/*
+ * This function initalises E_Int_Menu_Applications and add
+ * our data.
+ */
+static E_Int_Menu_Applications*
+_e_int_menus_app_config_set(Efreet_Desktop *desktop)
+{
+   E_Int_Menu_Applications *ma;
+
+   ma = E_NEW(E_Int_Menu_Applications, 1);
+
+   ma->orig_path = eina_stringshare_add(desktop->orig_path);
+   ma->try_exec = eina_stringshare_add(desktop->try_exec);
+   ma->exec = eina_stringshare_add(desktop->exec);
+   ma->load_time = desktop->load_time;
+   ma->exec_valid = 1; //ALL .desktop files are VALID unless proven otherwise :)
+   return ma;
+}
+
+/*
+ * This function adds/updates our E_Int_Menu_Applications config,
+ * returns true if the .desktop file is valid.
+ */
+static Eina_Bool
+_e_int_menus_app_config_append(Efreet_Desktop *desktop)
+{
+   E_Int_Menu_Applications *ma, *cma;
+   Eina_List *l;
+
+   if (!desktop) return EINA_TRUE;
+
+   cma = _e_int_menus_app_config_set(desktop);
+   EINA_LIST_FOREACH(e_config->menu_applications, l, ma)
+     {
+        if ((!strcmp(ma->orig_path, cma->orig_path)) && (ma->load_time == cma->load_time))
+          return ma->exec_valid;
+
+        if ((!strcmp(ma->orig_path, cma->orig_path)) && (ma->load_time != cma->load_time))
+          {
+             ERR("Modified: [%s]", cma->orig_path);
+             e_config->menu_applications = eina_list_remove(e_config->menu_applications, ma);
+          }
+     }
+
+   if (cma->try_exec)
+     {
+        ERR("Try_Exec: [%s]", cma->try_exec);
+        cma->exec_valid = _e_int_menus_app_finder(cma->try_exec);
+     }
+   else
+     {
+        if (!strchr(cma->exec, '\0'))
+          cma->exec_valid = _e_int_menus_app_finder(cma->exec);
+        else
+          {
+             char **split;
+             split = eina_str_split(cma->exec, " ", 0);
+             cma->exec_valid = _e_int_menus_app_finder(split[0]);
+             free(split[0]);
+             free(split);
+          }
+     }
+
+   e_config->menu_applications = eina_list_append(e_config->menu_applications, cma);
+   return cma->exec_valid;
+}
+
 static void
 _e_int_menus_apps_scan(E_Menu *m, Efreet_Menu *menu)
 {
@@ -656,8 +767,11 @@ _e_int_menus_apps_scan(E_Menu *m, Efreet_Menu *menu)
 
         EINA_LIST_FOREACH(menu->entries, l, entry)
           {
-             mi = e_menu_item_new(m);
+             if ((entry->type == EFREET_MENU_ENTRY_DESKTOP) &&
+                 (!_e_int_menus_app_config_append(entry->desktop)))
+               continue;
 
+             mi = e_menu_item_new(m);
              _e_int_menus_item_label_set(entry, mi);
 
              if (entry->icon)

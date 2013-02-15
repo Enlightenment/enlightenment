@@ -1,6 +1,7 @@
 #ifdef E_TYPEDEFS
 
 typedef struct _E_Int_Menu_Augmentation E_Int_Menu_Augmentation;
+typedef struct _E_Int_Menu_Applications E_Int_Menu_Applications;
 
 #else
 #ifndef E_INT_MENUS_H
@@ -37,6 +38,15 @@ typedef enum
 
 
 #define E_CLIENTLIST_MAX_CAPTION_LEN 256
+
+struct _E_Int_Menu_Applications
+{
+   const char *orig_path;
+   const char *try_exec;
+   const char *exec;
+   long long load_time;
+   int exec_valid;
+};
 
 struct _E_Int_Menu_Augmentation
 {
