@@ -1,5 +1,7 @@
 #include "e_mod_main.h"
 
+static Eina_Bool _cb_event_add(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool _cb_event_del(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _cb_event_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _cb_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 static void _cb_hook_post_fetch(void *data __UNUSED__, void *data2);
@@ -9,8 +11,10 @@ static void _cb_hook_layout(void *data __UNUSED__, void *data2);
 static Eina_List *hooks = NULL;
 static Eina_List *handlers = NULL;
 
-static Eina_Bool kbd_on = EINA_FALSE;
-static Eina_Bool kbd_override = EINA_FALSE;
+static Eina_Bool  kbd_on = EINA_FALSE;
+static Eina_Bool  kbd_override = EINA_FALSE;
+static Eina_List *borders = NULL;
+static E_Border  *bd_active = NULL;
 
 #define LADD(l, f) l = eina_list_append(l, f)
 
@@ -23,6 +27,10 @@ e_policy_init(void)
                                  _cb_hook_post_assign, NULL));
    LADD(hooks, e_border_hook_add(E_BORDER_HOOK_CONTAINER_LAYOUT,
                                  _cb_hook_layout, NULL));
+   LADD(handlers, ecore_event_handler_add(E_EVENT_BORDER_ADD,
+                                          _cb_event_add, NULL));
+   LADD(handlers, ecore_event_handler_add(E_EVENT_BORDER_REMOVE,
+                                          _cb_event_del, NULL));
    LADD(handlers, ecore_event_handler_add(E_EVENT_BORDER_FOCUS_IN,
                                           _cb_event_focus_in, NULL));
    LADD(handlers, ecore_event_handler_add(E_EVENT_BORDER_FOCUS_OUT,
@@ -63,19 +71,57 @@ e_policy_kbd_override_set(Eina_Bool override)
      }
 }
 
+const Eina_List *
+e_policy_borders_get(void)
+{
+   return borders;
+}
+
+const E_Border *
+e_polict_border_active_get(void)
+{
+   return bd_active;
+}
+
+static Eina_Bool
+_cb_event_add(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   E_Event_Border_Add *ev = event;
+   E_Border *bd = ev->border;
+   
+   if (bd_active) borders = eina_list_append_relative(borders, bd, bd_active);
+   else borders = eina_list_prepend(borders, bd);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_cb_event_del(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   E_Event_Border_Remove *ev = event;
+   E_Border *bd = ev->border;
+   
+   borders = eina_list_remove(borders, bd);
+   if (bd_active == bd) bd_active = NULL;
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 static Eina_Bool
 _cb_event_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   E_Border *bd = event;
+   E_Event_Border_Focus_In *ev = event;
+   E_Border *bd = ev->border;
    
+   bd_active = bd;
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
 _cb_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   E_Border *bd = event;
+   E_Event_Border_Focus_Out *ev = event;
+   E_Border *bd = ev->border;
 
+   if (bd_active == bd) bd_active = NULL;
    if (kbd_on) e_policy_kbd_override_set(EINA_FALSE);
    return ECORE_CALLBACK_PASS_ON;
 }

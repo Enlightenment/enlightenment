@@ -7,6 +7,30 @@ _cb_in_left(void *data, int d, double v)
 {
    // show PREV window in list from urrent focused window on top of current
    // window but in an inital "off to the right" state in comp
+   Eina_List *borders = (Eina_List *)e_policy_borders_get();
+   E_Border *bd_active = (E_Border *)e_polict_border_active_get();
+   E_Border *bd = NULL;
+   Eina_List *bd_active_l = NULL;
+   if (!bd_active)
+     {
+        if (!borders) return;
+        bd = eina_list_last(borders)->data;
+     }
+   if (!bd)
+     {
+        if (bd_active)
+          bd_active_l = eina_list_data_find_list(borders, bd_active);
+        if ((bd_active_l) && (bd_active_l->prev)) bd = bd_active_l->prev->data;
+     }
+   if ((!bd) && (bd_active))
+     {
+        e_border_iconify(bd_active);
+        return;
+     }
+   if (!bd) return;
+   e_border_uniconify(bd);
+   e_border_raise(bd);
+   e_border_show(bd);
 }
 
 static void
@@ -21,6 +45,30 @@ _cb_in_right(void *data, int d, double v)
 {
    // show NEXT window in list from urrent focused window on top of current
    // window but in an inital "off to the right" state in comp
+   Eina_List *borders = (Eina_List *)e_policy_borders_get();
+   E_Border *bd_active = (E_Border *)e_polict_border_active_get();
+   E_Border *bd = NULL;
+   Eina_List *bd_active_l = NULL;
+   if (!bd_active)
+     {
+        if (!borders) return;
+        bd = borders->data;
+     }
+   if (!bd)
+     {
+        if (bd_active)
+          bd_active_l = eina_list_data_find_list(borders, bd_active);
+        if ((bd_active_l) && (bd_active_l->next)) bd = bd_active_l->next->data;
+     }
+   if ((!bd) && (bd_active))
+     {
+        e_border_iconify(bd_active);
+        return;
+     }
+   if (!bd) return;
+   e_border_uniconify(bd);
+   e_border_raise(bd);
+   e_border_show(bd);
 }
 
 static void
