@@ -1,4 +1,4 @@
-#include "e_mod_mixer.h"
+#include "e_mod_system.h"
 #include <alsa/asoundlib.h>
 #include <poll.h>
 
@@ -143,7 +143,7 @@ _mixer_callback_replace(E_Mixer_System *self __UNUSED__,
 }
 
 E_Mixer_System *
-e_mixer_alsa_new(const char *name)
+e_mixer_system_new(const char *name)
 {
    snd_mixer_t *handle;
    int err;
@@ -177,7 +177,7 @@ error_open:
 }
 
 void
-e_mixer_alsa_del(E_Mixer_System *self)
+e_mixer_system_del(E_Mixer_System *self)
 {
    struct e_mixer_callback_desc *desc;
 
@@ -192,7 +192,7 @@ e_mixer_alsa_del(E_Mixer_System *self)
 }
 
 int
-e_mixer_alsa_callback_set(E_Mixer_System *self,
+e_mixer_system_callback_set(E_Mixer_System *self,
                             int (*func)(void *data, E_Mixer_System *self),
                             void *data)
 {
@@ -218,7 +218,7 @@ e_mixer_alsa_callback_set(E_Mixer_System *self,
 }
 
 Eina_List *
-e_mixer_alsa_get_cards(void)
+e_mixer_system_get_cards(void)
 {
    int err, card_num;
    Eina_List *cards;
@@ -245,8 +245,17 @@ e_mixer_alsa_get_cards(void)
    return cards;
 }
 
+void
+e_mixer_system_free_cards(Eina_List *cards)
+{
+   const char *card;
+
+   EINA_LIST_FREE(cards, card)
+     eina_stringshare_del(card);
+}
+
 const char *
-e_mixer_alsa_get_default_card(void)
+e_mixer_system_get_default_card(void)
 {
    static const char buf[] = "hw:0";
    snd_ctl_t *control;
@@ -258,7 +267,7 @@ e_mixer_alsa_get_default_card(void)
 }
 
 const char *
-e_mixer_alsa_get_card_name(const char *card)
+e_mixer_system_get_card_name(const char *card)
 {
    snd_ctl_card_info_t *hw_info;
    const char *name;
@@ -294,55 +303,11 @@ e_mixer_alsa_get_card_name(const char *card)
    return eina_stringshare_add(name);
 }
 
-static int
-_mixer_channel_has_capabilities(snd_mixer_elem_t *elem)
-{
-   if (!snd_mixer_selem_is_active(elem)) return 0;
-   if (snd_mixer_selem_has_playback_volume(elem)) return 1;
-   if (snd_mixer_selem_has_capture_volume(elem)) return 1;
-   if (snd_mixer_selem_has_playback_switch(elem)) return 1;
-   if (snd_mixer_selem_has_capture_switch(elem)) return 1;
-
-   return 0;
-}
-
-static int
-_mixer_channel_capabilities(snd_mixer_elem_t *elem)
-{
-   int capabilities = 0;
-   /*
-    * never vol_joined if not mono
-    *    -> mono is enough
-    * never switch_joined if not switch
-    *    -> switch is enough
-    * never common_vol if not (playback_vol && capture vol)
-    *    -> palyback_vol & capture_vol is enough
-    */
-
-   if (!snd_mixer_selem_is_active(elem))
-     return 0;
-
-   if (snd_mixer_selem_has_capture_volume(elem))
-     capabilities |= E_MIXER_CHANNEL_HAS_CAPTURE;
-   if (snd_mixer_selem_has_playback_volume(elem))
-     capabilities |= E_MIXER_CHANNEL_HAS_PLAYBACK;
-   if (snd_mixer_selem_has_playback_switch(elem) ||
-       snd_mixer_selem_has_capture_switch(elem))
-     capabilities |= E_MIXER_CHANNEL_CAN_MUTE;
-   if (snd_mixer_selem_is_playback_mono(elem)==1 ||
-       snd_mixer_selem_is_capture_mono(elem)==1)
-     capabilities |= E_MIXER_CHANNEL_IS_MONO;
-
-   return capabilities;
-}
-
 Eina_List *
-e_mixer_alsa_get_channels(E_Mixer_System *self)
+e_mixer_system_get_channels(E_Mixer_System *self)
 {
-   int capabilities;
    Eina_List *channels;
    snd_mixer_elem_t *elem;
-   E_Mixer_Channel_Info *ch_info;
 
    if (!self)
      return NULL;
@@ -352,23 +317,24 @@ e_mixer_alsa_get_channels(E_Mixer_System *self)
    elem = snd_mixer_first_elem(self);
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
-        capabilities = _mixer_channel_capabilities(elem);
-        if (!e_mod_mixer_capabilities_usable(capabilities))
+        if ((!snd_mixer_selem_is_active(elem)) ||
+            (!snd_mixer_selem_has_playback_volume(elem)))
           continue;
 
-        ch_info = malloc(sizeof(*ch_info));
-        ch_info->id = elem;
-        ch_info->name = eina_stringshare_add(snd_mixer_selem_get_name(elem));
-        ch_info->capabilities = capabilities;
-
-        channels = eina_list_append(channels, ch_info);
+        channels = eina_list_append(channels, elem);
      }
 
    return channels;
 }
 
+void
+e_mixer_system_free_channels(Eina_List *channels)
+{
+   eina_list_free(channels);
+}
+
 Eina_List *
-e_mixer_alsa_get_channel_names(E_Mixer_System *self)
+e_mixer_system_get_channels_names(E_Mixer_System *self)
 {
    Eina_List *channels;
    snd_mixer_elem_t *elem;
@@ -384,7 +350,8 @@ e_mixer_alsa_get_channel_names(E_Mixer_System *self)
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         const char *name;
-        if (!_mixer_channel_has_capabilities(elem))
+        if ((!snd_mixer_selem_is_active(elem)) ||
+            (!snd_mixer_selem_has_playback_volume(elem)))
           continue;
 
         snd_mixer_selem_get_id(elem, sid);
@@ -396,8 +363,17 @@ e_mixer_alsa_get_channel_names(E_Mixer_System *self)
    return channels;
 }
 
+void
+e_mixer_system_free_channels_names(Eina_List *channels_names)
+{
+   const char *channel;
+
+   EINA_LIST_FREE(channels_names, channel)
+     eina_stringshare_del(channel);
+}
+
 const char *
-e_mixer_alsa_get_default_channel_name(E_Mixer_System *self)
+e_mixer_system_get_default_channel_name(E_Mixer_System *self)
 {
    snd_mixer_elem_t *elem;
    snd_mixer_selem_id_t *sid;
@@ -411,7 +387,8 @@ e_mixer_alsa_get_default_channel_name(E_Mixer_System *self)
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         const char *name;
-        if (!_mixer_channel_has_capabilities(elem))
+        if ((!snd_mixer_selem_is_active(elem)) ||
+            (!snd_mixer_selem_has_playback_volume(elem)))
           continue;
 
         snd_mixer_selem_get_id(elem, sid);
@@ -423,14 +400,12 @@ e_mixer_alsa_get_default_channel_name(E_Mixer_System *self)
    return NULL;
 }
 
-E_Mixer_Channel_Info *
-e_mixer_alsa_get_channel_by_name(E_Mixer_System *self,
+E_Mixer_Channel *
+e_mixer_system_get_channel_by_name(E_Mixer_System *self,
                                    const char *name)
 {
-   int capabilities;
    snd_mixer_elem_t *elem;
    snd_mixer_selem_id_t *sid;
-   E_Mixer_Channel_Info *ch_info;
 
    if ((!self) || (!name))
      return NULL;
@@ -441,46 +416,44 @@ e_mixer_alsa_get_channel_by_name(E_Mixer_System *self,
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         const char *n;
-        capabilities = _mixer_channel_capabilities(elem);
-        if (!e_mod_mixer_capabilities_usable(capabilities))
+        if ((!snd_mixer_selem_is_active(elem)) ||
+            (!snd_mixer_selem_has_playback_volume(elem)))
           continue;
 
         snd_mixer_selem_get_id(elem, sid);
         n = snd_mixer_selem_id_get_name(sid);
         if (n && (strcmp(n, name) == 0))
-          {
-             ch_info = malloc(sizeof(*ch_info));
-             ch_info->id = elem;
-             ch_info->name = eina_stringshare_add(n);
-             ch_info->capabilities = capabilities;
-
-             return ch_info;
-          }
+          return elem;
      }
 
    return NULL;
 }
 
-/* const char * */
-/* e_mixer_alsa_get_channel_name(E_Mixer_System *self, */
-/*                                 E_Mixer_Channel_Info *channel) */
-/* { */
-/*    snd_mixer_selem_id_t *sid; */
-/*    const char *name; */
-/**/
-/*    if ((!self) || (!channel)) */
-/*      return NULL; */
-/**/
-/*    snd_mixer_selem_id_alloca(&sid); */
-/*    snd_mixer_selem_get_id(channel->id, sid); */
-/*    name = eina_stringshare_add(snd_mixer_selem_id_get_name(sid)); */
-/**/
-/*    return name; */
-/* } */
+void
+e_mixer_system_channel_del(E_Mixer_Channel *channel __UNUSED__)
+{
+}
+
+const char *
+e_mixer_system_get_channel_name(E_Mixer_System *self,
+                                E_Mixer_Channel *channel)
+{
+   snd_mixer_selem_id_t *sid;
+   const char *name;
+
+   if ((!self) || (!channel))
+     return NULL;
+
+   snd_mixer_selem_id_alloca(&sid);
+   snd_mixer_selem_get_id(channel, sid);
+   name = eina_stringshare_add(snd_mixer_selem_id_get_name(sid));
+
+   return name;
+}
 
 int
-e_mixer_alsa_get_volume(E_Mixer_System *self,
-                          E_Mixer_Channel_Info *channel,
+e_mixer_system_get_volume(E_Mixer_System *self,
+                          E_Mixer_Channel *channel,
                           int *left,
                           int *right)
 {
@@ -490,34 +463,24 @@ e_mixer_alsa_get_volume(E_Mixer_System *self,
      return 0;
 
    snd_mixer_handle_events(self);
-
-   if (e_mod_mixer_channel_has_playback(channel))
-     snd_mixer_selem_get_playback_volume_range(channel->id, &min, &max);
-   else if (e_mod_mixer_channel_has_capture(channel))
-     snd_mixer_selem_get_capture_volume_range(channel->id, &min, &max);
-   else
-     return 0;
-
+   snd_mixer_selem_get_playback_volume_range(channel, &min, &max);
    range = max - min;
    if (range < 1)
      return 0;
 
-   if (e_mod_mixer_channel_has_playback(channel))
-     {
-        snd_mixer_selem_get_playback_volume(channel->id, 0, &lvol);
-        if (!e_mod_mixer_channel_is_mono(channel))
-          snd_mixer_selem_get_playback_volume(channel->id, 1, &rvol);
-        else
-          rvol = lvol;
-     }
+   if (snd_mixer_selem_has_playback_channel(channel, 0))
+     snd_mixer_selem_get_playback_volume(channel, 0, &lvol);
    else
-     {
-        snd_mixer_selem_get_capture_volume(channel->id, 0, &lvol);
-        if (!e_mod_mixer_channel_is_mono(channel))
-          snd_mixer_selem_get_capture_volume(channel->id, 1, &rvol);
-        else
-          rvol = lvol;
-     }
+     lvol = min;
+
+   if (snd_mixer_selem_has_playback_channel(channel, 1))
+     snd_mixer_selem_get_playback_volume(channel, 1, &rvol);
+   else
+     rvol = min;
+
+   if (snd_mixer_selem_is_playback_mono(channel) ||
+       snd_mixer_selem_has_playback_volume_joined(channel))
+     rvol = lvol;
 
    *left = rint((double)(lvol - min) * 100 / (double)range);
    *right = rint((double)(rvol - min) * 100 / (double)range);
@@ -526,8 +489,8 @@ e_mixer_alsa_get_volume(E_Mixer_System *self,
 }
 
 int
-e_mixer_alsa_set_volume(E_Mixer_System *self,
-                          E_Mixer_Channel_Info *channel,
+e_mixer_system_set_volume(E_Mixer_System *self,
+                          E_Mixer_Channel *channel,
                           int left,
                           int right)
 {
@@ -538,14 +501,7 @@ e_mixer_alsa_set_volume(E_Mixer_System *self,
      return 0;
 
    snd_mixer_handle_events(self);
-
-   if (e_mod_mixer_channel_has_playback(channel))
-     snd_mixer_selem_get_playback_volume_range(channel->id, &min, &max);
-   else if (e_mod_mixer_channel_has_capture(channel))
-     snd_mixer_selem_get_capture_volume_range(channel->id, &min, &max);
-   else
-     return 0;
-
+   snd_mixer_selem_get_playback_volume_range(channel, &min, &max);
    divide = 100 + min;
    if (divide == 0)
      {
@@ -564,52 +520,56 @@ e_mixer_alsa_set_volume(E_Mixer_System *self,
         mode |= 1;
      }
 
-   if (!e_mod_mixer_channel_is_mono(channel) && (right >= 0))
+   if (right >= 0)
      {
         right = (((range * right) + (range / 2)) / divide) - min;
         mode |= 2;
      }
 
    if (mode & 1)
-     {
-        if (e_mod_mixer_channel_has_playback(channel))
-          snd_mixer_selem_set_playback_volume(channel->id, 0, left);
-        else
-          snd_mixer_selem_set_capture_volume(channel->id, 0, left);
-     }
+     snd_mixer_selem_set_playback_volume(channel, 0, left);
 
-   if (mode & 2)
+   if ((!snd_mixer_selem_is_playback_mono(channel)) &&
+       (!snd_mixer_selem_has_playback_volume_joined(channel)) &&
+       (mode & 2))
      {
-        if (e_mod_mixer_channel_has_playback(channel))
-          snd_mixer_selem_set_playback_volume(channel->id, 1, right);
-        else
-          snd_mixer_selem_set_capture_volume(channel->id, 1, right);
+        if (snd_mixer_selem_has_playback_channel(channel, 1))
+          snd_mixer_selem_set_playback_volume(channel, 1, right);
      }
 
    return 1;
 }
 
 int
-e_mixer_alsa_get_mute(E_Mixer_System *self,
-                        E_Mixer_Channel_Info *channel,
+e_mixer_system_can_mute(E_Mixer_System *self,
+                        E_Mixer_Channel *channel)
+{
+   if ((!self) || (!channel))
+     return 0;
+
+   snd_mixer_handle_events(self);
+   return snd_mixer_selem_has_playback_switch(channel) ||
+          snd_mixer_selem_has_playback_switch_joined(channel);
+}
+
+int
+e_mixer_system_get_mute(E_Mixer_System *self,
+                        E_Mixer_Channel *channel,
                         int *mute)
 {
    if ((!self) || (!channel) || (!mute))
      return 0;
 
    snd_mixer_handle_events(self);
-
-   if (e_mod_mixer_channel_is_mutable(channel))
+   if (snd_mixer_selem_has_playback_switch(channel) ||
+       snd_mixer_selem_has_playback_switch_joined(channel))
      {
         int m;
 
         /* XXX: not checking for return, always returns 0 even if it worked.
          * alsamixer also don't check it. Bug?
          */
-        if (e_mod_mixer_channel_has_capture(channel))
-          snd_mixer_selem_get_capture_switch(channel->id, 0, &m);
-        else
-          snd_mixer_selem_get_playback_switch(channel->id, 0, &m);
+        snd_mixer_selem_get_playback_switch(channel, 0, &m);
         *mute = !m;
      }
    else
@@ -619,27 +579,24 @@ e_mixer_alsa_get_mute(E_Mixer_System *self,
 }
 
 int
-e_mixer_alsa_set_mute(E_Mixer_System *self,
-                        E_Mixer_Channel_Info *channel,
+e_mixer_system_set_mute(E_Mixer_System *self,
+                        E_Mixer_Channel *channel,
                         int mute)
 {
    if ((!self) || (!channel))
      return 0;
 
-   if (e_mod_mixer_channel_is_mutable(channel))
-     {
-        if (e_mod_mixer_channel_has_capture(channel))
-          return snd_mixer_selem_set_capture_switch_all(channel->id, !mute);
-        else
-          return snd_mixer_selem_set_playback_switch_all(channel->id, !mute);
-     }
+   snd_mixer_handle_events(self);
+   if (snd_mixer_selem_has_playback_switch(channel) ||
+       snd_mixer_selem_has_playback_switch_joined(channel))
+     return snd_mixer_selem_set_playback_switch_all(channel, !mute);
    else
      return 0;
 }
 
 int
-e_mixer_alsa_get_state(E_Mixer_System *self,
-                         E_Mixer_Channel_Info *channel,
+e_mixer_system_get_state(E_Mixer_System *self,
+                         E_Mixer_Channel *channel,
                          E_Mixer_Channel_State *state)
 {
    int r;
@@ -647,23 +604,33 @@ e_mixer_alsa_get_state(E_Mixer_System *self,
    if (!state)
      return 0;
 
-   r = e_mixer_alsa_get_mute(self, channel, &state->mute);
-   r &= e_mixer_alsa_get_volume(self, channel, &state->left, &state->right);
+   r = e_mixer_system_get_mute(self, channel, &state->mute);
+   r &= e_mixer_system_get_volume(self, channel, &state->left, &state->right);
    return r;
 }
 
-/* int */
-/* e_mixer_alsa_set_state(E_Mixer_System *self, */
-/*                          E_Mixer_Channel *channel, */
-/*                          const E_Mixer_Channel_State *state) */
-/* { */
-/*    int r; */
-/**/
-/*    if (!state) */
-/*      return 0; */
-/**/
-/*    r = e_mixer_alsa_set_mute(self, channel, state->mute); */
-/*    r &= e_mixer_alsa_set_volume(self, channel, state->left, state->right); */
-/*    return r; */
-/* } */
+int
+e_mixer_system_set_state(E_Mixer_System *self,
+                         E_Mixer_Channel *channel,
+                         const E_Mixer_Channel_State *state)
+{
+   int r;
+
+   if (!state)
+     return 0;
+
+   r = e_mixer_system_set_mute(self, channel, state->mute);
+   r &= e_mixer_system_set_volume(self, channel, state->left, state->right);
+   return r;
+}
+
+int
+e_mixer_system_has_capture(E_Mixer_System *self,
+                           E_Mixer_Channel *channel)
+{
+   if ((!self) || (!channel))
+     return 0;
+
+   return snd_mixer_selem_has_capture_switch(channel) || snd_mixer_selem_has_capture_volume(channel);
+}
 
