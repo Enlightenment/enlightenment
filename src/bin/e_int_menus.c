@@ -737,9 +737,9 @@ _e_int_menus_app_config_append(Efreet_Desktop *desktop)
         ERR("Try_Exec: [%s]", cma->try_exec);
         cma->exec_valid = _e_int_menus_app_finder(cma->try_exec);
      }
-   else
+   else if (cma->exec)
      {
-        if (!strchr(cma->exec, '\0'))
+        if (!strchr(cma->exec, ' '))
           cma->exec_valid = _e_int_menus_app_finder(cma->exec);
         else
           {
