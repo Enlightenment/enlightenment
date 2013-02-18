@@ -8,6 +8,7 @@
         * e_gadcon_unpopulate now correctly freezes the container while deleting gadgets
         * e_popup is now a wrapper for drawing objects onto the compositor canvas
         * added e_layout functions for returning objects above or below a layout child
+        * compositor nocomp mode now dynamically enables/disables based on the state and stacking of fullscreen windows and comp objects
 
 2013-02-13 Deon Thomas
 

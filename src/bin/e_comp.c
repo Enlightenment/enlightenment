@@ -196,7 +196,7 @@ _e_comp_fullscreen_check(E_Comp *c)
    if (!c->wins) return NULL;
    EINA_INLIST_REVERSE_FOREACH(c->wins, cw)
      {
-        if ((!cw->visible) || (cw->input_only) || (cw->invalid))
+        if ((!cw->visible) || (cw->input_only) || (cw->invalid) || (cw->real_obj))
           continue;
         if ((cw->x == 0) && (cw->y == 0) &&
             ((cw->x + cw->w) >= c->man->w) &&
@@ -1563,10 +1563,12 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
    char buf[4096];
    Eina_List *list = NULL, *l;
    E_Comp_Match *m;
-   Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE, skip = EINA_FALSE, fast = EINA_FALSE;
+   Eina_Stringshare *reshadow_group = NULL;
+   Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE, skip = EINA_FALSE, fast = EINA_FALSE, reshadow;
    const char *title = NULL, *name = NULL, *clas = NULL, *role = NULL;
    Ecore_X_Window_Type primary_type = ECORE_X_WINDOW_TYPE_UNKNOWN;
 
+   edje_object_file_get(cw->shobj, NULL, &reshadow_group);
    if (!cw->real_obj)
      evas_object_image_smooth_scale_set(cw->obj, conf->smooth_windows);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
@@ -1729,12 +1731,16 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
                   if (fast)
                     {
                        snprintf(buf, sizeof(buf), "e/comp/%s/fast", m->shadow_style);
-                       ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
+                       reshadow = ok = !e_util_strcmp(reshadow_group, buf);
+                       if (!ok)
+                         ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
                     }
                   if (!ok)
                     {
                        snprintf(buf, sizeof(buf), "e/comp/%s", m->shadow_style);
-                       ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
+                       reshadow = ok = !e_util_strcmp(reshadow_group, buf);
+                       if (!ok)
+                         ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
                     }
                   if (ok) break;
                }
@@ -1743,30 +1749,47 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
    while (!ok)
      {
         if (skip || (cw->bd && cw->bd->client.e.state.video))
-          ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/none");
+          {
+             reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/none");
+             if (!ok)
+               ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/none");
+          }
         if (ok) break;
         if (conf->shadow_style)
           {
              if (fast)
                {
                   snprintf(buf, sizeof(buf), "e/comp/%s/fast", conf->shadow_style);
-                  ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
+                  reshadow = ok = !e_util_strcmp(reshadow_group, buf);
+                  if (!ok)
+                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
                }
              if (!ok)
                {
                   snprintf(buf, sizeof(buf), "e/comp/%s", conf->shadow_style);
-                  ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
+                  reshadow = ok = !e_util_strcmp(reshadow_group, buf);
+                  if (!ok)
+                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
                }
           }
         if (!ok)
           {
              if (fast)
-               ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/default/fast");
+               {
+                  reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/default/fast");
+                  if (!ok)
+                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/default/fast");
+               }
              if (!ok)
-               ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/default");
+               {
+                  reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/default");
+                  if (!ok)
+                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/default");
+               }
           }
         break;
      }
+   if (reshadow) return;
    edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
    if (cw->bd && cw->bd->client.e.state.video)
      edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
@@ -1789,10 +1812,13 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         else
           edje_object_signal_emit(cw->shobj, "e,state,urgent,off", "e");
      }
-   if (cw->visible)
-     edje_object_signal_emit(cw->shobj, "e,state,visible,on", "e");
-   else
-     edje_object_signal_emit(cw->shobj, "e,state,visible,off", "e");
+   if (!cw->visible)
+     {
+        edje_object_signal_emit(cw->shobj, "e,state,visible,off", "e");
+        return;
+     }
+
+   edje_object_signal_emit(cw->shobj, "e,state,visible,on", "e");
 
    if (!cw->animating)
      {
@@ -1800,6 +1826,8 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
      }
    cw->animating = 1;
    _e_comp_win_render_queue(cw);
+   cw->pending_count++;
+   _e_comp_event_source_visibility(cw);
 }
 
 static void
@@ -2212,7 +2240,11 @@ _e_comp_win_del(E_Comp_Win *cw)
           }
      }
    if (cw->real_obj && cw->obj)
-     evas_object_event_callback_del_full(cw->obj, EVAS_CALLBACK_DEL, _e_comp_injected_win_del_cb, cw);
+     {
+        if (evas_object_layer_get(cw->obj) > E_COMP_CANVAS_LAYER_LAYOUT)
+          e_comp_override_del(cw->c);
+        evas_object_event_callback_del_full(cw->obj, EVAS_CALLBACK_DEL, _e_comp_injected_win_del_cb, cw);
+     }
    if (cw->obj)
      {
         evas_object_del(cw->obj);
@@ -3047,26 +3079,6 @@ _e_comp_override_timed_pop(E_Comp *c)
      ecore_timer_add(5.0, _e_comp_override_expire, c);
 }
 
-/* here for completeness
-   static void
-   _e_comp_override_pop(E_Comp *c)
-   {
-   c->nocomp_override--;
-   if (c->nocomp_override <= 0)
-   {
-   c->nocomp_override = 0;
-   if (c->nocomp_want) _e_comp_cb_nocomp_begin(c);
-   }
-   }
- */
-
-static void
-_e_comp_override_push(E_Comp *c)
-{
-   c->nocomp_override++;
-   if ((c->nocomp_override > 0) && (c->nocomp)) _e_comp_cb_nocomp_end(c);
-}
-
 static void
 _e_comp_fade_handle(E_Comp_Zone *cz, int out, double tim)
 {
@@ -3109,7 +3121,7 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
              c->saver = EINA_TRUE;
              EINA_LIST_FOREACH(c->zones, ll, cz)
                {
-                  _e_comp_override_push(c);
+                  e_comp_override_add(c);
                   _e_comp_fade_handle(cz, 1, 3.0);
                   edje_object_signal_emit(cz->base, "e,state,screensaver,on", "e");
                   edje_object_signal_emit(cz->over, "e,state,screensaver,on", "e");
@@ -3433,10 +3445,12 @@ _e_comp_injected_win_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj E
 }
 
 static void
-_e_comp_injected_win_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_injected_win_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Comp_Win *cw = data;
 
+   if (evas_object_layer_get(obj) > E_COMP_CANVAS_LAYER_LAYOUT)
+     e_comp_override_del(cw->c);
    cw->obj = NULL;
    if (cw->animating) cw->delete_me = 1;
    else _e_comp_win_del(cw);
@@ -4070,6 +4084,7 @@ _e_comp_del(E_Comp *c)
    ecore_evas_free(c->ee);
    ecore_x_composite_unredirect_subwindows
      (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+   if (c->block_win) ecore_x_window_free(c->block_win);
    ecore_x_composite_render_window_disable(c->win);
    if (c->man->num == 0) e_alert_composite_win(c->man->root, 0);
    if (c->render_animator) ecore_animator_del(c->render_animator);
@@ -4153,7 +4168,7 @@ _e_comp_sys_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_
 
    EINA_LIST_FOREACH(compositors, l, c)
      {
-        if (nocomp_push) _e_comp_override_push(c);
+        if (nocomp_push) e_comp_override_add(c);
         else _e_comp_override_timed_pop(c);
         EINA_LIST_FOREACH(c->zones, ll, cz)
           {
@@ -4647,6 +4662,12 @@ e_comp_config_get(void)
    return conf;
 }
 
+EAPI const Eina_List *
+e_comp_list(void)
+{
+   return compositors;
+}
+
 EAPI void
 e_comp_shadows_reset(void)
 {
@@ -4662,24 +4683,8 @@ e_comp_shadows_reset(void)
         E_LIST_FOREACH(c->zones, e_comp_zone_update);
         EINA_INLIST_FOREACH(c->wins, cw)
           {
-             if ((cw->shobj) && (cw->obj))
-               {
-                  _e_comp_win_shadow_setup(cw);
-
-                  if (cw->visible)
-                    {
-                       edje_object_signal_emit(cw->shobj, "e,state,visible,on", "e");
-                       if (!cw->animating)
-                         {
-                            cw->c->animating++;
-                         }
-                       _e_comp_win_render_queue(cw);
-                       cw->animating = 1;
-
-                       cw->pending_count++;
-                       _e_comp_event_source_visibility(cw);
-                    }
-               }
+             if ((!cw->shobj) || (!cw->obj)) continue;
+             _e_comp_win_shadow_setup(cw);
           }
      }
 }
@@ -5013,13 +5018,17 @@ EAPI void
 e_comp_canvas_layer_set(Evas_Object *obj, E_Comp_Canvas_Layer comp_layer, E_Layer layer, E_Comp_Canvas_Stack stack)
 {
    E_Comp_Win *cw;
+   E_Comp *c;
 
+   c = e_comp_util_evas_object_comp_get(obj);
    if (comp_layer == E_COMP_CANVAS_LAYER_LAYOUT)
-     cw = e_comp_object_inject(e_comp_util_evas_object_comp_get(obj), obj, evas_object_data_get(obj, "eobj"), layer);
+     cw = e_comp_object_inject(c, obj, evas_object_data_get(obj, "eobj"), layer);
    else
      {
-        cw = e_comp_object_add(e_comp_util_evas_object_comp_get(obj), obj, evas_object_data_get(obj, "eobj"));
+        cw = e_comp_object_add(c, obj, evas_object_data_get(obj, "eobj"));
         evas_object_layer_set(cw->shobj, comp_layer);
+        if (comp_layer > E_COMP_CANVAS_LAYER_LAYOUT)
+          e_comp_override_add(c); 
      }
    if (stack == E_COMP_CANVAS_STACK_ABOVE)
      _e_comp_win_raise(cw);
@@ -5052,4 +5061,60 @@ e_comp_ignore_win_add(Ecore_X_Window win)
 {
    EINA_SAFETY_ON_TRUE_RETURN(_e_comp_ignore_find(win));
    eina_hash_add(ignores, e_util_winid_str_get(win), (void*)1);
+}
+
+
+EAPI void
+e_comp_override_del(E_Comp *c)
+{
+   c->nocomp_override--;
+   if (c->nocomp_override <= 0)
+     {
+        c->nocomp_override = 0;
+        if (c->nocomp_want) _e_comp_cb_nocomp_begin(c);
+     }
+}
+
+EAPI void
+e_comp_override_add(E_Comp *c)
+{
+   c->nocomp_override++;
+   if ((c->nocomp_override > 0) && (c->nocomp)) _e_comp_cb_nocomp_end(c);
+}
+
+EAPI void
+e_comp_block_window_add(void)
+{
+   E_Comp *c;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(compositors, l, c)
+     {
+        c->block_count++;
+        if (c->block_win) continue;
+        c->block_win = ecore_x_window_new(c->man->root, c->man->x, c->man->y, c->man->w, c->man->h);
+        INF("BLOCK WIN: %x", c->block_win);
+        ecore_x_window_background_color_set(c->block_win, 0, 0, 0);
+        e_comp_ignore_win_add(c->block_win);
+        ecore_x_window_configure(c->block_win,
+          ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING | ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE,
+          0, 0, 0, 0, 0, ((E_Comp_Win*)c->wins)->win, ECORE_X_WINDOW_STACK_ABOVE);
+        ecore_x_window_show(c->block_win);
+     }
+}
+
+EAPI void
+e_comp_block_window_del(void)
+{
+   E_Comp *c;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(compositors, l, c)
+     {
+        if (!c->block_count) continue;
+        c->block_count--;
+        if (c->block_count) continue;
+        if (c->block_win) ecore_x_window_free(c->block_win);
+        c->block_win = 0;
+     }
 }

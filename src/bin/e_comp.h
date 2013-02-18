@@ -76,7 +76,9 @@ struct _E_Comp
    double          frametimes[122];
    int             frameskip;
 
-   int             nocomp_override;
+   int             nocomp_override; //number of times nocomp override has been requested
+   Ecore_X_Window block_win;
+   int             block_count; //number of times block window has been requested
 
    Ecore_X_Window  cm_selection;
 
@@ -204,12 +206,20 @@ EINTERN Eina_Bool e_comp_init(void);
 EINTERN int      e_comp_shutdown(void);
 EINTERN Eina_Bool e_comp_manager_init(E_Manager *man);
 
+EAPI const Eina_List *e_comp_list(void);
+
 EAPI int e_comp_internal_save(void);
 EAPI E_Comp_Config *e_comp_config_get(void);
 EAPI void e_comp_shadows_reset(void);
 
+EAPI void e_comp_block_window_add(void);
+EAPI void e_comp_block_window_del(void);
+
 EAPI void e_comp_render_update(E_Comp *c);
 EAPI void e_comp_zone_update(E_Comp_Zone *cz);
+
+EAPI void e_comp_override_del(E_Comp *c);
+EAPI void e_comp_override_add(E_Comp *c);
 
 EAPI E_Comp_Win *e_comp_win_find_border_win(Ecore_X_Window win);
 EAPI E_Comp_Win *e_comp_win_find(Ecore_X_Window win);
