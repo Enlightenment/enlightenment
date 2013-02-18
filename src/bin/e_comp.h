@@ -10,7 +10,8 @@ typedef enum
    E_COMP_CANVAS_LAYER_BG = -1, // zone bg stuff
    E_COMP_CANVAS_LAYER_DESKTOP = 0, // desktop objects: fileman, gadgets, shelves
    E_COMP_CANVAS_LAYER_LAYOUT = 100, // should be nothing else on this layer
-   E_COMP_CANVAS_LAYER_ABOVE = 999,
+   E_COMP_CANVAS_LAYER_ABOVE = 999, // for popups and stuff
+   E_COMP_CANVAS_LAYER_DESKLOCK = 9999, // desklock
    E_COMP_CANVAS_LAYER_MAX = 32767 // EVAS_LAYER_MAX
 } E_Comp_Canvas_Layer;
 
