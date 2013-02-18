@@ -1,4 +1,9 @@
+2013-02-18 Mike Blumenkrantz
+
+        * fixed disable of input methods in input method config dialog
+
 2013-02-13 Deon Thomas
+
 	* Fixed Menu->Applications now only lists valid .desktop files, if the exec is missing it will not be added to the menu list.
 
 2013-02-11 Mike Blumenkrantz
