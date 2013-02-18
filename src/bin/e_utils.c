@@ -1664,3 +1664,34 @@ e_util_evas_objects_above_print(Evas_Object *o)
           fprintf(stderr, "[%p] - %s(%s) %s\n", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
      }
 }
+
+EAPI void
+e_util_evas_objects_above_print_smart(Evas_Object *o)
+{
+   Evas_Object *a, *oo;
+
+   EINA_SAFETY_ON_NULL_RETURN(o);
+   a = o;
+   while ((a = evas_object_above_get(a)))
+     {
+        const Eina_List *l, *ll;
+
+        l = evas_object_clipees_get(a);
+        if (l)
+          {
+             fprintf(stderr, "[%p] - %s(%s) %s :: CLIPPEES: ", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
+             EINA_LIST_FOREACH(l, ll, oo)
+               fprintf(stderr, "[%p] - %s(%s) %s", oo, evas_object_type_get(oo), evas_object_name_get(oo), ll->next ? "| " : "");
+             fprintf(stderr, "\n");
+          }
+        else if (evas_object_smart_data_get(a))
+          {
+             fprintf(stderr, "[%p] - %s(%s) %s :: SMART MEMBERS: ", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
+             EINA_LIST_FOREACH(evas_object_smart_members_get(a), l, oo)
+               fprintf(stderr, "[%p] - %s(%s) %s", oo, evas_object_type_get(oo), evas_object_name_get(oo), l->next ? "| " : "");
+             fprintf(stderr, "\n");
+          }
+        else
+          fprintf(stderr, "[%p] - %s(%s) %s\n", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
+     }
+}

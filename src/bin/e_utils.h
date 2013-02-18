@@ -71,6 +71,7 @@ EAPI char *e_util_string_append_char(char *str, size_t *size, size_t *len, char 
 EAPI char *e_util_string_append_quoted(char *str, size_t *size, size_t *len, const char *src);
 
 EAPI void e_util_evas_objects_above_print(Evas_Object *o);
+EAPI void e_util_evas_objects_above_print_smart(Evas_Object *o);
 
 static inline E_Container *
 e_util_container_current_get(void)
