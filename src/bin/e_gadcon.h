@@ -365,6 +365,8 @@ EAPI void                    e_gadcon_client_add_location_menu(E_Gadcon_Client *
 EAPI void                    e_gadcon_drag_finished_cb(E_Drag *drag, int dropped);
 EAPI void                    e_gadcon_client_drag_set(E_Gadcon_Client *gcc);
 
+EAPI Eina_Bool              e_gadcon_client_visible_get(const E_Gadcon_Client *gcc, const E_Desk *desk);
+
 #define GADCON_CLIENT_CONFIG_GET(_type, _items, _gc_class, _id)                             \
   if (!_id)                                                                                 \
     {                                                                                       \
