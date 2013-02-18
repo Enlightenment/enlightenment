@@ -328,34 +328,13 @@ works:
      }
 
    /* handlers */
-   edd->handlers =
-     eina_list_append(edd->handlers,
-                      ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-                                              _e_desklock_cb_key_down, NULL));
-   edd->handlers =
-     eina_list_append(edd->handlers,
-                      ecore_event_handler_add(ECORE_X_EVENT_WINDOW_STACK,
-                                              _e_desklock_cb_window_stack, NULL));
-   edd->handlers =
-     eina_list_append(edd->handlers,
-                      ecore_event_handler_add(ECORE_X_EVENT_WINDOW_CONFIGURE,
-                                              _e_desklock_cb_window_stack, NULL));
-   edd->handlers =
-     eina_list_append(edd->handlers,
-                      ecore_event_handler_add(ECORE_X_EVENT_WINDOW_CREATE,
-                                              _e_desklock_cb_window_stack, NULL));
-   edd->handlers =
-     eina_list_append(edd->handlers,
-                      ecore_event_handler_add(E_EVENT_ZONE_ADD,
-                                              _e_desklock_cb_zone_add, NULL));
-   edd->handlers =
-     eina_list_append(edd->handlers,
-                      ecore_event_handler_add(E_EVENT_ZONE_DEL,
-                                              _e_desklock_cb_zone_del, NULL));
-   edd->handlers =
-     eina_list_append(edd->handlers,
-                      ecore_event_handler_add(E_EVENT_ZONE_MOVE_RESIZE,
-                                              _e_desklock_cb_zone_move_resize, NULL));
+   E_LIST_HANDLER_APPEND(edd->handlers, ECORE_EVENT_KEY_DOWN, _e_desklock_cb_key_down, NULL);
+   E_LIST_HANDLER_APPEND(edd->handlers, ECORE_X_EVENT_WINDOW_STACK, _e_desklock_cb_window_stack, NULL);
+   E_LIST_HANDLER_APPEND(edd->handlers, ECORE_X_EVENT_WINDOW_CONFIGURE, _e_desklock_cb_window_stack, NULL);
+   E_LIST_HANDLER_APPEND(edd->handlers, ECORE_X_EVENT_WINDOW_CREATE, _e_desklock_cb_window_stack, NULL);
+   E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_ZONE_ADD, _e_desklock_cb_zone_add, NULL);
+   E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_ZONE_DEL, _e_desklock_cb_zone_del, NULL);
+   E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_ZONE_MOVE_RESIZE, _e_desklock_cb_zone_move_resize, NULL);
 
    if ((total_zone_num > 1) && (e_config->desklock_login_box_zone == -2))
      edd->move_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _e_desklock_cb_mouse_move, NULL);
