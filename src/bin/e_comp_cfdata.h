@@ -34,6 +34,7 @@ struct _E_Comp_Config
    Eina_Bool fast_borders;
    Eina_Bool fast_menus;
    Eina_Bool fast_overrides;
+   Eina_Bool fast_objects;
 
    struct
    {
@@ -45,6 +46,8 @@ struct _E_Comp_Config
       Eina_List *overrides;    // used for client menus, tooltips etc.
       Eina_Bool disable_menus;
       Eina_List *menus;    // used for e menus
+      Eina_Bool disable_objects;
+      Eina_List *objects;    // used for e objects which are not popups or menus
    } match;
 };
 

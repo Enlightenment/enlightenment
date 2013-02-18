@@ -243,7 +243,7 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
         edje_object_signal_callback_add(o, "e,state,done", "*", _e_bg_signal, zone);
         evas_object_move(o, zone->x, zone->y);
         evas_object_resize(o, zone->w, zone->h);
-        E_LAYER_SET(o, E_COMP_CANVAS_LAYER_BG);
+        evas_object_layer_set(o, E_COMP_CANVAS_LAYER_BG);
         evas_object_clip_set(o, zone->bg_clip_object);
         evas_object_show(o);
      }
@@ -267,7 +267,7 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
      {
         evas_object_move(o, zone->x, zone->y);
         evas_object_resize(o, zone->w, zone->h);
-        E_LAYER_SET(o, E_COMP_CANVAS_LAYER_BG);
+        evas_object_layer_set(o, E_COMP_CANVAS_LAYER_BG);
      }
    evas_object_clip_set(o, zone->bg_clip_object);
    evas_object_show(o);
@@ -519,7 +519,7 @@ _e_bg_signal(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNU
      }
    evas_object_move(zone->bg_object, zone->x, zone->y);
    evas_object_resize(zone->bg_object, zone->w, zone->h);
-   E_LAYER_SET(zone->bg_object, E_COMP_CANVAS_LAYER_BG);
+   evas_object_layer_set(zone->bg_object, E_COMP_CANVAS_LAYER_BG);
    evas_object_clip_set(zone->bg_object, zone->bg_clip_object);
    evas_object_show(zone->bg_object);
 }

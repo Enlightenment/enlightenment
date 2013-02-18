@@ -780,7 +780,7 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
              break;
 
            case E_POPUP_TYPE:
-             hwin = ((E_Popup *)(h->obj))->evas_win;
+             hwin = e_comp_get(h->obj)->win;
              break;
 
            /* FIXME: add more types as needed */

@@ -775,7 +775,6 @@ _pager_popup_new(E_Zone *zone, int keyaction)
         free(pp);
         return NULL;
      }
-   e_popup_layer_set(pp->popup, E_LAYER_POPUP);
 
    pp->pager = _pager_new(pp->popup->evas, zone, NULL);
    pp->pager->popup = pp;
@@ -807,15 +806,16 @@ _pager_popup_new(E_Zone *zone, int keyaction)
 
    evas_object_move(pp->o_bg, 0, 0);
    evas_object_resize(pp->o_bg, w, h);
-   e_popup_edje_bg_object_set(pp->popup, pp->o_bg);
+   e_popup_content_set(pp->popup, pp->o_bg);
    //e_popup_ignore_events_set(pp->popup, 1);
    e_zone_useful_geometry_get(zone, &zx, &zy, &zw, &zh);
    zx -= zone->x;
    zy -= zone->y;
    e_popup_move_resize(pp->popup,
                        zx + ((zw - w) / 2), zy + ((zh - h) / 2), w, h);
-   e_bindings_mouse_grab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
-   e_bindings_wheel_grab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
+   /* FIXME: COMP */
+   //e_bindings_mouse_grab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
+   //e_bindings_wheel_grab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
 
    e_popup_show(pp->popup);
 
@@ -830,8 +830,9 @@ _pager_popup_free(Pager_Popup *pp)
    if (pp->timer) ecore_timer_del(pp->timer);
    evas_object_del(pp->o_bg);
    _pager_free(pp->pager);
-   e_bindings_mouse_ungrab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
-   e_bindings_wheel_ungrab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
+   /* FIXME: COMP */
+   //e_bindings_mouse_ungrab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
+   //e_bindings_wheel_ungrab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
    e_object_del(E_OBJECT(pp->popup));
    free(pp);
 }
@@ -2476,7 +2477,8 @@ _pager_popup_show(void)
                       _pager_drop_cb_leave, _pager_drop_cb_drop,
                       drop, 3, x, y, w, h);
 
-   e_bindings_key_grab(E_BINDING_CONTEXT_POPUP, act_popup->popup->evas_win);
+   /* FIXME: COMP */
+   //e_bindings_key_grab(E_BINDING_CONTEXT_POPUP, act_popup->popup->evas_win);
 
    evas_event_freeze(act_popup->popup->evas);
    evas_event_feed_mouse_in(act_popup->popup->evas,
@@ -2493,7 +2495,8 @@ _pager_popup_show(void)
 static void
 _pager_popup_hide(int switch_desk)
 {
-   e_bindings_key_ungrab(E_BINDING_CONTEXT_POPUP, act_popup->popup->evas_win);
+   /* FIXME: COMP */
+   //e_bindings_key_ungrab(E_BINDING_CONTEXT_POPUP, act_popup->popup->evas_win);
    hold_count = 0;
    hold_mod = 0;
    while (handlers)

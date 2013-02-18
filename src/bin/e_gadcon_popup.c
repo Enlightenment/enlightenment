@@ -2,14 +2,30 @@
 
 /* local subsystem functions */
 
-static void
-_e_gadcon_popup_free(E_Gadcon_Popup *pop)
+static Eina_Bool
+_e_popup_autoclose_deskafter_show_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   if (pop->gadcon_was_locked)
-     _e_gadcon_popup_locked_set(pop, 0);
-   pop->gcc = NULL;
-   e_object_del(E_OBJECT(pop->win));
-   free(pop);
+   E_Event_Desk_After_Show *ev = event;
+   E_Gadcon_Popup *pop = data;
+
+   if (!pop->win->visible) return ECORE_CALLBACK_RENEW;
+   if (!e_gadcon_client_visible_get(pop->gcc, ev->desk))
+     e_object_del(E_OBJECT(pop));
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_e_popup_autoclose_border_fullscreen_cb(void *data, int type EINA_UNUSED, void *event)
+{
+   E_Event_Border_Fullscreen *ev = event;
+   E_Gadcon_Popup *pop = data;
+
+   if (!pop->win->visible) return ECORE_CALLBACK_RENEW;
+   if (!ev->border->fullscreen) return ECORE_CALLBACK_RENEW;
+   if (e_gadcon_client_visible_get(pop->gcc, ev->border->desk))
+     e_object_del(E_OBJECT(pop));
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -23,23 +39,29 @@ _e_gadcon_popup_locked_set(E_Gadcon_Popup *pop, Eina_Bool locked)
 }
 
 static void
-_e_gadcon_popup_size_recalc(E_Gadcon_Popup *pop, Evas_Object *obj)
+_e_gadcon_popup_free(E_Gadcon_Popup *pop)
 {
-   Evas_Coord w = 0, h = 0;
+   E_FN_DEL(ecore_event_handler_del, pop->autoclose_handlers[0]);
+   E_FN_DEL(ecore_event_handler_del, pop->autoclose_handlers[1]);
 
-   e_widget_size_min_get(obj, &w, &h);
-   if ((!w) || (!h)) evas_object_size_hint_min_get(obj, &w, &h);
-   if ((!w) || (!h))
-     {
-        edje_object_size_min_get(obj, &w, &h);
-        edje_object_size_min_restricted_calc(obj, &w, &h, w, h);
-     }
-   edje_extern_object_min_size_set(obj, w, h);
-   edje_object_size_min_calc(pop->o_bg, &pop->w, &pop->h);
-   evas_object_resize(pop->o_bg, pop->w, pop->h);
+   if (pop->gadcon_was_locked)
+     _e_gadcon_popup_locked_set(pop, 0);
+   pop->gcc = NULL;
+   evas_object_del(pop->content);
+   if (pop->win)
+     E_OBJECT_DEL_SET(pop->win, NULL);
+   E_FN_DEL(e_object_del, pop->win);
+   free(pop);
+}
 
-   if (pop->win->visible)
-     _e_gadcon_popup_position(pop);
+static void
+_e_gadcon_popup_del_cb(void *obj)
+{
+   E_Gadcon_Popup *pop;
+
+   pop = e_object_data_get(obj);
+   pop->win = NULL;
+   e_object_del(E_OBJECT(pop));
 }
 
 static void
@@ -126,6 +148,27 @@ _e_gadcon_popup_position(E_Gadcon_Popup *pop)
 }
 
 static void
+_e_gadcon_popup_size_recalc(E_Gadcon_Popup *pop, Evas_Object *obj)
+{
+   Evas_Coord w = 0, h = 0;
+
+   e_widget_size_min_get(obj, &w, &h);
+   if ((!w) || (!h)) evas_object_size_hint_min_get(obj, &w, &h);
+   if ((!w) || (!h))
+     {
+        edje_object_size_min_get(obj, &w, &h);
+        edje_object_size_min_restricted_calc(obj, &w, &h, w, h);
+     }
+   edje_extern_object_min_size_set(obj, w, h);
+   edje_object_size_min_calc(pop->o_bg, &pop->w, &pop->h);
+   evas_object_resize(pop->o_bg, pop->w, pop->h);
+   e_popup_resize(pop->win, pop->w, pop->h);
+
+   if (pop->win->visible)
+     _e_gadcon_popup_position(pop);
+}
+
+static void
 _e_gadcon_popup_changed_size_hints_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    E_Gadcon_Popup *pop;
@@ -147,13 +190,12 @@ e_gadcon_popup_new(E_Gadcon_Client *gcc)
    if (!pop) return NULL;
    zone = e_gadcon_client_zone_get(gcc);
    pop->win = e_popup_new(zone, 0, 0, 0, 0);
-   e_popup_layer_set(pop->win, E_LAYER_POPUP);
+   e_object_data_set(E_OBJECT(pop->win), pop);
+   E_OBJECT_DEL_SET(pop->win, _e_gadcon_popup_del_cb);
 
    o = edje_object_add(pop->win->evas);
    e_theme_edje_object_set(o, "base/theme/gadman", "e/gadman/popup");
-   evas_object_show(o);
-   evas_object_move(o, 0, 0);
-   e_popup_edje_bg_object_set(pop->win, o);
+   e_popup_content_set(pop->win, o);
    pop->o_bg = o;
 
    pop->gcc = gcc;
@@ -184,7 +226,7 @@ e_gadcon_popup_content_set(E_Gadcon_Popup *pop, Evas_Object *o)
         evas_object_event_callback_add(o, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _e_gadcon_popup_changed_size_hints_cb, pop);
      }
-
+   pop->content = o;
    _e_gadcon_popup_size_recalc(pop, o);
 }
 
@@ -197,9 +239,10 @@ e_gadcon_popup_show(E_Gadcon_Popup *pop)
 
    if (pop->win->visible) return;
 
-   e_popup_show(pop->win);
-
    _e_gadcon_popup_position(pop);
+   pop->autoclose_handlers[0] = ecore_event_handler_add(E_EVENT_DESK_AFTER_SHOW, _e_popup_autoclose_deskafter_show_cb, NULL);
+   pop->autoclose_handlers[1] = ecore_event_handler_add(E_EVENT_BORDER_FULLSCREEN, _e_popup_autoclose_border_fullscreen_cb, NULL);
+   e_popup_show(pop->win);
 }
 
 EAPI void
@@ -236,7 +279,6 @@ e_gadcon_popup_toggle_pinned(E_Gadcon_Popup *pop)
 EAPI void
 e_gadcon_popup_lock_set(E_Gadcon_Popup *pop, Eina_Bool setting)
 {
-   if (!pop) return;
    E_OBJECT_CHECK(pop);
    E_OBJECT_TYPE_CHECK(pop, E_GADCON_POPUP_TYPE);
 

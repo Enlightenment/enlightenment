@@ -211,7 +211,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
                                   "modules/notification/main"))
        edje_object_file_set(popup->theme, buf, "modules/notification/main");
 
-   e_popup_edje_bg_object_set(popup->win, popup->theme);
+   e_popup_content_set(popup->win, popup->theme);
 
    evas_object_show(popup->theme);
    edje_object_signal_callback_add
@@ -227,7 +227,6 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    _notification_popup_refresh(popup);
    next_pos = _notification_popup_place(popup, next_pos);
    e_popup_show(popup->win);
-   e_popup_layer_set(popup->win, E_LAYER_POPUP);
    popups_displayed++;
 
    return popup;

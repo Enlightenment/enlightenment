@@ -177,54 +177,6 @@ econnman_mod_services_changed(struct Connman_Manager *cm)
      }
 }
 
-static Eina_Bool
-_econnman_popup_input_window_mouse_up_cb(void *data, int type, void *event)
-{
-   Ecore_Event_Mouse_Button *ev = event;
-   E_Connman_Instance *inst = data;
-
-   if (ev->window != inst->ui.popup.input_win)
-     return ECORE_CALLBACK_PASS_ON;
-
-   econnman_popup_del(inst);
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static void
-_econnman_popup_input_window_destroy(E_Connman_Instance *inst)
-{
-   ecore_x_window_free(inst->ui.popup.input_win);
-   inst->ui.popup.input_win = 0;
-
-   ecore_event_handler_del(inst->ui.popup.input_mouse_up);
-   inst->ui.popup.input_mouse_up = NULL;
-}
-
-static void
-_econnman_popup_input_window_create(E_Connman_Instance *inst)
-{
-   Ecore_X_Window_Configure_Mask mask;
-   Ecore_X_Window w, popup_w;
-   E_Manager *man;
-
-   man = e_manager_current_get();
-
-   w = ecore_x_window_input_new(man->root, 0, 0, man->w, man->h);
-   mask = (ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE |
-           ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING);
-   popup_w = inst->popup->win->evas_win;
-   ecore_x_window_configure(w, mask, 0, 0, 0, 0, 0, popup_w,
-                            ECORE_X_WINDOW_STACK_BELOW);
-   ecore_x_window_show(w);
-
-   inst->ui.popup.input_mouse_up =
-      ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
-                              _econnman_popup_input_window_mouse_up_cb, inst);
-
-   inst->ui.popup.input_win = w;
-}
-
 static void
 _econnman_app_launch(E_Connman_Instance *inst)
 {
@@ -293,6 +245,12 @@ _e_connman_widget_size_set(E_Connman_Instance *inst, Evas_Object *widget, Evas_C
 }
 
 static void
+_econnman_popup_del_cb(void *obj)
+{
+   econnman_popup_del(e_object_data_get(obj));
+}
+
+static void
 _econnman_popup_new(E_Connman_Instance *inst)
 {
    E_Connman_Module_Context *ctxt = inst->ctxt;
@@ -327,17 +285,16 @@ _econnman_popup_new(E_Connman_Instance *inst)
    /* 30,40 % -- min vga, max uvga */
    _e_connman_widget_size_set(inst, list, 30, 40, 192, 192, 384, 384);
    e_gadcon_popup_content_set(inst->popup, list);
+   e_popup_autoclose(inst->popup->win, NULL, NULL);
    e_gadcon_popup_show(inst->popup);
-   _econnman_popup_input_window_create(inst);
+   e_object_data_set(E_OBJECT(inst->popup), inst);
+   E_OBJECT_DEL_SET(inst->popup, _econnman_popup_del_cb);
 }
 
 void
 econnman_popup_del(E_Connman_Instance *inst)
 {
-   if (!inst->popup) return;
-   _econnman_popup_input_window_destroy(inst);
-   e_object_del(E_OBJECT(inst->popup));
-   inst->popup = NULL;
+   E_FN_DEL(e_object_del, inst->popup);
 }
 
 static void

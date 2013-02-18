@@ -97,7 +97,6 @@ e_syscon_show(E_Zone *zone, const char *defact)
         return 0;
      }
    evas_event_freeze(popup->evas);
-   e_popup_layer_set(popup, E_LAYER_POPUP);
 
    handlers = eina_list_append
        (handlers, ecore_event_handler_add
@@ -296,7 +295,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
    evas_object_move(o_bg, 0, 0);
    evas_object_resize(o_bg, w, h);
    evas_object_show(o_bg);
-   e_popup_edje_bg_object_set(popup, o_bg);
+   e_popup_content_set(popup, o_bg);
 
    if (e_config->syscon.do_input)
      {

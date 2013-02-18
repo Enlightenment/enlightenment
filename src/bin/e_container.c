@@ -67,7 +67,7 @@ e_container_new(E_Manager *man)
 
    o = evas_object_rectangle_add(con->bg_evas);
    con->bg_blank_object = o;
-   E_LAYER_SET(o, E_COMP_CANVAS_LAYER_BOTTOM);
+   evas_object_layer_set(o, E_COMP_CANVAS_LAYER_BOTTOM);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, con->w, con->h);
    evas_object_color_set(o, 255, 255, 255, 255);

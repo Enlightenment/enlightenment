@@ -304,7 +304,7 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
         if ((cfdata->escfg->popup != 0) || (cfdata->escfg->layer != 1))
           {
              cfdata->escfg->popup = 0;
-             cfdata->escfg->layer = 1;
+             cfdata->escfg->layer = E_COMP_CANVAS_LAYER_DESKTOP_TOP;
              recreate = 1;
           }
      }

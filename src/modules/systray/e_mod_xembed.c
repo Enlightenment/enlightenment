@@ -830,7 +830,7 @@ systray_xembed_new(Instance *inst)
    xembed->inst = inst;
 
    if ((gc->shelf) && (gc->shelf->popup))
-     xembed->win.parent = gc->shelf->popup->evas_win;
+     xembed->win.parent = e_comp_get(gc->shelf)->win;
    else
      xembed->win.parent = (Ecore_X_Window)ecore_evas_window_get(gc->ecore_evas);
 

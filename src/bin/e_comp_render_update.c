@@ -27,6 +27,7 @@ e_comp_render_update_new(void)
 void
 e_comp_render_update_free(E_Comp_Render_Update *up)
 {
+   if (!up) return;
    free(up->tiles);
    free(up);
 }

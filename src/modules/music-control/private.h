@@ -29,9 +29,6 @@ typedef struct _E_Music_Control_Instance
    Evas_Object *gadget;
    E_Gadcon_Popup *popup;
    Evas_Object *content_popup;
-   Ecore_X_Window win;
-   Ecore_Event_Handler *mouse_up;
-   Ecore_Event_Handler *key_down;
 } E_Music_Control_Instance;
 
 void music_control_mouse_down_cb(void *data, Evas *evas, Evas_Object *obj, void *event);

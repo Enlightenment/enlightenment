@@ -161,6 +161,12 @@ _fix_user_default_edj(void)
    if (ecore_file_exists(buff)) ecore_file_unlink(buff);
 }
 
+static void
+_e_main_shelf_init_job(void *d EINA_UNUSED)
+{
+   e_shelf_config_update();
+}
+
 /* externally accessible functions */
 int
 main(int argc, char **argv)
@@ -1043,11 +1049,7 @@ main(int argc, char **argv)
    TS("E_Shelf Init Done");
    _e_main_shutdown_push(e_shelf_shutdown);
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Configure Shelves"));
-   TS("E_Shelf Config Update");
-   e_shelf_config_update();
-   TS("E_Shelf Config Update Done");
+   ecore_job_add(_e_main_shelf_init_job, NULL);
 
    TS("Manage all windows");
    _e_main_manage_all();
@@ -1887,7 +1889,6 @@ _e_main_cb_idle_before(void *data __UNUSED__)
    e_menu_idler_before();
    e_focus_idler_before();
    e_border_idler_before();
-   e_popup_idler_before();
    e_drag_idler_before();
    e_pointer_idler_before();
    EINA_LIST_FOREACH(_idle_before_list, l, eb)

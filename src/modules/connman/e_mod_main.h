@@ -30,9 +30,6 @@ struct E_Connman_Instance
           {
              Evas_Object *list;
              Evas_Object *powered;
-
-             Ecore_X_Window input_win;
-             Ecore_Event_Handler *input_mouse_up;
           } popup;
      } ui;
 };

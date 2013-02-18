@@ -484,28 +484,10 @@ _mixer_app_cb_del(E_Dialog *dialog __UNUSED__, void *data)
 static void _mixer_popup_del(E_Mixer_Instance *inst);
 
 static Eina_Bool
-_mixer_popup_input_window_mouse_up_cb(void *data, int type __UNUSED__, void *event)
+_mixer_popup_key_down_cb(void *data, Ecore_Event_Key *ev)
 {
-   Ecore_Event_Mouse_Button *ev = event;
-   E_Mixer_Instance *inst = data;
-
-   if (ev->window != inst->ui.input.win)
-     return ECORE_CALLBACK_PASS_ON;
-
-   _mixer_popup_del(inst);
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_mixer_popup_input_window_key_down_cb(void *data, int type __UNUSED__, void *event)
-{
-   Ecore_Event_Key *ev = event;
    E_Mixer_Instance *inst = data;
    const char *keysym;
-
-   if (ev->window != inst->ui.input.win)
-     return ECORE_CALLBACK_PASS_ON;
 
    keysym = ev->key;
    if (strcmp(keysym, "Escape") == 0)
@@ -562,52 +544,8 @@ _mixer_popup_input_window_key_down_cb(void *data, int type __UNUSED__, void *eve
 }
 
 static void
-_mixer_popup_input_window_destroy(E_Mixer_Instance *inst)
-{
-   e_grabinput_release(0, inst->ui.input.win);
-   ecore_x_window_free(inst->ui.input.win);
-   inst->ui.input.win = 0;
-
-   ecore_event_handler_del(inst->ui.input.mouse_up);
-   inst->ui.input.mouse_up = NULL;
-
-   ecore_event_handler_del(inst->ui.input.key_down);
-   inst->ui.input.key_down = NULL;
-}
-
-static void
-_mixer_popup_input_window_create(E_Mixer_Instance *inst)
-{
-   Ecore_X_Window_Configure_Mask mask;
-   Ecore_X_Window w, popup_w;
-   E_Manager *man;
-
-   man = e_manager_current_get();
-
-   w = ecore_x_window_input_new(man->root, 0, 0, man->w, man->h);
-   mask = (ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE |
-           ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING);
-   popup_w = inst->popup->win->evas_win;
-   ecore_x_window_configure(w, mask, 0, 0, 0, 0, 0, popup_w,
-                            ECORE_X_WINDOW_STACK_BELOW);
-   ecore_x_window_show(w);
-
-   inst->ui.input.mouse_up =
-     ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
-                             _mixer_popup_input_window_mouse_up_cb, inst);
-
-   inst->ui.input.key_down =
-     ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-                             _mixer_popup_input_window_key_down_cb, inst);
-
-   inst->ui.input.win = w;
-   e_grabinput_get(0, 0, inst->ui.input.win);
-}
-
-static void
 _mixer_popup_del(E_Mixer_Instance *inst)
 {
-   _mixer_popup_input_window_destroy(inst);
    e_object_del(E_OBJECT(inst->popup));
    inst->ui.label = NULL;
    inst->ui.left = NULL;
@@ -619,6 +557,12 @@ _mixer_popup_del(E_Mixer_Instance *inst)
    if (inst->popup_timer)
      ecore_timer_del(inst->popup_timer);
    inst->popup_timer = NULL;
+}
+
+static void
+_mixer_popup_del_cb(void *obj)
+{
+   _mixer_popup_del(e_object_data_get(obj));
 }
 
 static void
@@ -724,8 +668,10 @@ _mixer_popup_new(E_Mixer_Instance *inst)
    e_widget_size_min_set(inst->ui.table, mw, mh);
 
    e_gadcon_popup_content_set(inst->popup, inst->ui.table);
+   e_popup_autoclose(inst->popup->win, _mixer_popup_key_down_cb, inst);
    e_gadcon_popup_show(inst->popup);
-   _mixer_popup_input_window_create(inst);
+   e_object_data_set(E_OBJECT(inst->popup), inst);
+   E_OBJECT_DEL_SET(inst->popup, _mixer_popup_del_cb);
 }
 
 static void
@@ -806,8 +752,6 @@ _mixer_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
      {
         if (!inst->popup)
           _mixer_popup_new(inst);
-        else
-          _mixer_popup_del(inst);
      }
    else if (ev->button == 2)
      _mixer_toggle_mute(inst, EINA_FALSE);

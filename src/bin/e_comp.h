@@ -9,6 +9,7 @@ typedef enum
    E_COMP_CANVAS_LAYER_BOTTOM = -100,
    E_COMP_CANVAS_LAYER_BG = -1, // zone bg stuff
    E_COMP_CANVAS_LAYER_DESKTOP = 0, // desktop objects: fileman, gadgets, shelves
+   E_COMP_CANVAS_LAYER_DESKTOP_TOP = 10, // raised desktop objects: gadgets, shelves
    E_COMP_CANVAS_LAYER_LAYOUT = 100, // should be nothing else on this layer
    E_COMP_CANVAS_LAYER_POPUP = 999, // popups
    E_COMP_CANVAS_LAYER_DESKLOCK = 9999, // desklock
@@ -56,6 +57,7 @@ struct _E_Comp
    E_Manager      *man;
 
    Eina_List *debug_rects;
+   Eina_List *ignore_wins;
 
    Eina_Inlist    *wins;
    Eina_List      *wins_list;
@@ -177,6 +179,8 @@ struct _E_Comp_Win
 
    Eina_Bool            bg_win : 1; // window is the bg win for a container
    Eina_Bool            free_shape : 1; // container shape needs to be freed
+   Eina_Bool            real_obj : 1;  // real object (for dummy comp wins)
+   Eina_Bool            not_in_layout : 1; // object is a dummy not in comp layout
 };
 
 struct E_Event_Comp
@@ -218,20 +222,33 @@ EAPI E_Comp *e_comp_get(void *o);
 
 EAPI Ecore_X_Window e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y, Ecore_X_Window *ignore, unsigned int ignore_num);
 
-EAPI void e_comp_object_inject(E_Comp *c, Evas_Object *obj, E_Layer layer);
+/* for injecting objects into the comp layout */
+EAPI E_Comp_Win *e_comp_object_inject(E_Comp *c, Evas_Object *obj, E_Object *eobj, E_Layer layer);
+/* for giving objects the comp theme and such without injecting into layout */
+EAPI E_Comp_Win *e_comp_object_add(E_Comp *c, Evas_Object *obj, E_Object *eobj);
 
-#define E_LAYER_SET(obj, layer) e_comp_canvas_layer_set(obj, layer, E_COMP_CANVAS_STACK_NONE)
-#define E_LAYER_SET_UNDER(obj, layer) e_comp_canvas_layer_set(obj, layer, E_COMP_CANVAS_STACK_UNDER)
-#define E_LAYER_SET_ABOVE(obj, layer) e_comp_canvas_layer_set(obj, layer, E_COMP_CANVAS_STACK_ABOVE)
+EAPI void e_comp_win_move(E_Comp_Win *cw, Evas_Coord x, Evas_Coord y);
+EAPI void e_comp_win_resize(E_Comp_Win *cw, int w, int h);
+EAPI void e_comp_win_moveresize(E_Comp_Win *cw, Evas_Coord x, Evas_Coord y, int w, int h);
+EAPI void e_comp_win_hide(E_Comp_Win *cw);
+EAPI void e_comp_win_show(E_Comp_Win *cw);
+EAPI void e_comp_win_del(E_Comp_Win *cw);
 
-static inline void
-e_comp_canvas_layer_set(Evas_Object *obj, E_Comp_Canvas_Layer layer, E_Comp_Canvas_Stack stack)
+EAPI void e_comp_ignore_win_add(Ecore_X_Window win);
+
+#define E_LAYER_SET(obj, layer) e_comp_canvas_layer_set(obj, layer, 0, E_COMP_CANVAS_STACK_NONE)
+#define E_LAYER_SET_UNDER(obj, layer) e_comp_canvas_layer_set(obj, layer, 0, E_COMP_CANVAS_STACK_UNDER)
+#define E_LAYER_SET_ABOVE(obj, layer) e_comp_canvas_layer_set(obj, layer, 0, E_COMP_CANVAS_STACK_ABOVE)
+#define E_LAYER_LAYOUT_ADD(obj, layer) e_comp_canvas_layer_set(obj, E_COMP_CANVAS_LAYER_LAYOUT, layer, E_COMP_CANVAS_STACK_NONE)
+#define E_LAYER_LAYOUT_ADD_UNDER(obj, layer) e_comp_canvas_layer_set(obj, E_COMP_CANVAS_LAYER_LAYOUT, layer, E_COMP_CANVAS_STACK_UNDER)
+#define E_LAYER_LAYOUT_ADD_ABOVE(obj, layer) e_comp_canvas_layer_set(obj, E_COMP_CANVAS_LAYER_LAYOUT, layer, E_COMP_CANVAS_STACK_ABOVE)
+
+EAPI void e_comp_canvas_layer_set(Evas_Object *obj, E_Comp_Canvas_Layer comp_layer, E_Layer layer, E_Comp_Canvas_Stack stack);
+
+static inline E_Comp *
+e_comp_util_evas_object_comp_get(Evas_Object *obj)
 {
-   evas_object_layer_set(obj, layer);
-   if (stack == E_COMP_CANVAS_STACK_ABOVE)
-     evas_object_raise(obj);
-   else if (stack == E_COMP_CANVAS_STACK_UNDER)
-     evas_object_lower(obj);
+   return ecore_evas_data_get(ecore_evas_ecore_evas_get(evas_object_evas_get(obj)), "comp");
 }
 
 static inline Eina_Bool
@@ -243,6 +260,16 @@ e_comp_evas_exists(void *o)
    c = e_comp_get(o);
    return c ? !!c->evas : EINA_FALSE;
 }
+
+static inline void
+e_comp_win_ignore_events_set(E_Comp_Win *cw, Eina_Bool ignore)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cw);
+   ignore = !!ignore;
+   evas_object_pass_events_set(cw->shobj, ignore);
+}
+
+EAPI void e_comp_util_wins_print(const E_Comp *c);
 
 #endif
 #endif

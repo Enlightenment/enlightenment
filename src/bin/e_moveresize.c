@@ -10,7 +10,6 @@ static void _e_move_end(void *data, void *bd);
 static void _e_move_resize_object_coords_set(int x, int y, int w, int h);
 
 static E_Popup *_disp_pop = NULL;
-static Evas_Object *_obj = NULL;
 static Eina_List *hooks = NULL;
 static int visible = 0;
 static int obj_x = 0;
@@ -54,13 +53,13 @@ static void
 _e_resize_begin(void *data __UNUSED__, void *border)
 {
    E_Border *bd = border;
+   Evas_Object *o;
    Evas_Coord ew, eh;
    char buf[40];
    int w, h;
 
    if (_disp_pop) e_object_del(E_OBJECT(_disp_pop));
    _disp_pop = NULL;
-   _obj = NULL;
 
    if (!e_config->resize_info_visible)
      return;
@@ -74,27 +73,15 @@ _e_resize_begin(void *data __UNUSED__, void *border)
 
    _disp_pop = e_popup_new(bd->zone, 0, 0, 1, 1);
    if (!_disp_pop) return;
-   e_popup_layer_set(_disp_pop, E_LAYER_POPUP);
-   _obj = edje_object_add(_disp_pop->evas);
-   e_theme_edje_object_set(_obj, "base/theme/borders",
+   o = edje_object_add(_disp_pop->evas);
+   e_theme_edje_object_set(o, "base/theme/borders",
                            "e/widgets/border/default/resize");
    snprintf(buf, sizeof(buf), "9999x9999");
-   edje_object_part_text_set(_obj, "e.text.label", buf);
+   edje_object_part_text_set(o, "e.text.label", buf);
 
-   edje_object_size_min_calc(_obj, &ew, &eh);
-   evas_object_move(_obj, 0, 0);
-   evas_object_resize(_obj, ew, eh);
-   evas_object_show(_obj);
-   e_popup_edje_bg_object_set(_disp_pop, _obj);
-
-   if (!visible)
-     {
-        evas_object_show(_obj);
-        e_popup_show(_disp_pop);
-        visible = 1;
-     }
+   edje_object_size_min_calc(o, &ew, &eh);
    snprintf(buf, sizeof(buf), _("%i×%i"), w, h);
-   edje_object_part_text_set(_obj, "e.text.label", buf);
+   edje_object_part_text_set(_disp_pop->content, "e.text.label", buf);
 
    e_popup_move_resize(_disp_pop,
                        (obj_x - _disp_pop->zone->x) +
@@ -102,10 +89,10 @@ _e_resize_begin(void *data __UNUSED__, void *border)
                        (obj_y - _disp_pop->zone->y) +
                        ((obj_h - eh) / 2),
                        ew, eh);
+   e_popup_content_set(_disp_pop, o);
 
-   e_popup_show(_disp_pop);
-
-   visible = 1;
+   snprintf(buf, sizeof(buf), _("%i×%i"), w, h);
+   edje_object_part_text_set(o, "e.text.label", buf);
 }
 
 static void
@@ -113,11 +100,6 @@ _e_resize_end(void *data __UNUSED__, void *border __UNUSED__)
 {
    if (e_config->resize_info_visible)
      {
-        if (_obj)
-          {
-             evas_object_del(_obj);
-             _obj = NULL;
-          }
         if (_disp_pop)
           {
              e_object_del(E_OBJECT(_disp_pop));
@@ -139,19 +121,16 @@ _e_resize_update(void *data __UNUSED__, void *border)
 
    if (e_config->resize_info_follows)
      _e_move_resize_object_coords_set(bd->x + bd->fx.x, bd->y + bd->fx.y, bd->w, bd->h);
-   else
-     _e_move_resize_object_coords_set(bd->zone->x, bd->zone->y, bd->zone->w, bd->zone->h);
 
    _e_resize_border_extents(bd, &w, &h);
 
    if (!visible)
      {
-        evas_object_show(_obj);
         e_popup_show(_disp_pop);
         visible = 1;
      }
    snprintf(buf, sizeof(buf), _("%i×%i"), w, h);
-   edje_object_part_text_set(_obj, "e.text.label", buf);
+   edje_object_part_text_set(_disp_pop->content, "e.text.label", buf);
 }
 
 static void
@@ -186,12 +165,12 @@ static void
 _e_move_begin(void *data __UNUSED__, void *border)
 {
    E_Border *bd = border;
+   Evas_Object *o;
    Evas_Coord ew, eh;
    char buf[40];
 
    if (_disp_pop) e_object_del(E_OBJECT(_disp_pop));
    _disp_pop = NULL;
-   _obj = NULL;
 
    if (!e_config->move_info_visible)
      return;
@@ -202,17 +181,15 @@ _e_move_begin(void *data __UNUSED__, void *border)
      _e_move_resize_object_coords_set(bd->zone->x, bd->zone->y, bd->zone->w, bd->zone->h);
 
    _disp_pop = e_popup_new(bd->zone, 0, 0, 1, 1);
-   _obj = edje_object_add(_disp_pop->evas);
-   e_theme_edje_object_set(_obj, "base/theme/borders",
+   o = edje_object_add(_disp_pop->evas);
+   e_theme_edje_object_set(o, "base/theme/borders",
                            "e/widgets/border/default/move");
    snprintf(buf, sizeof(buf), "9999 9999");
-   edje_object_part_text_set(_obj, "e.text.label", buf);
+   edje_object_part_text_set(o, "e.text.label", buf);
 
-   edje_object_size_min_calc(_obj, &ew, &eh);
-   evas_object_move(_obj, 0, 0);
-   evas_object_resize(_obj, ew, eh);
-   evas_object_show(_obj);
-   e_popup_edje_bg_object_set(_disp_pop, _obj);
+   edje_object_size_min_calc(o, &ew, &eh);
+   snprintf(buf, sizeof(buf), "%i %i", bd->x, bd->y);
+   edje_object_part_text_set(o, "e.text.label", buf);
 
    e_popup_move_resize(_disp_pop,
                        (obj_x - _disp_pop->zone->x) +
@@ -220,6 +197,7 @@ _e_move_begin(void *data __UNUSED__, void *border)
                        (obj_y - _disp_pop->zone->y) +
                        ((obj_h - eh) / 2),
                        ew, eh);
+   e_popup_content_set(_disp_pop, o);
 }
 
 static void
@@ -227,11 +205,6 @@ _e_move_end(void *data __UNUSED__, void *border __UNUSED__)
 {
    if (e_config->move_info_visible)
      {
-        if (_obj)
-          {
-             evas_object_del(_obj);
-             _obj = NULL;
-          }
         if (_disp_pop)
           {
              e_object_del(E_OBJECT(_disp_pop));
@@ -252,17 +225,14 @@ _e_move_update(void *data __UNUSED__, void *border)
 
    if (e_config->move_info_follows)
      _e_move_resize_object_coords_set(bd->x + bd->fx.x, bd->y + bd->fx.y, bd->w, bd->h);
-   else
-     _e_move_resize_object_coords_set(bd->zone->x, bd->zone->y, bd->zone->w, bd->zone->h);
 
    if (!visible)
      {
-        evas_object_show(_obj);
         e_popup_show(_disp_pop);
         visible = 1;
      }
    snprintf(buf, sizeof(buf), "%i %i", bd->x, bd->y);
-   edje_object_part_text_set(_obj, "e.text.label", buf);
+   edje_object_part_text_set(_disp_pop->content, "e.text.label", buf);
 }
 
 static void

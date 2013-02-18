@@ -627,7 +627,7 @@ _do_overlay(E_Border *focused_bd,
                 if (!extra->overlay.popup)
                     continue;
 
-                e_popup_layer_set(extra->overlay.popup, E_LAYER_NORMAL);
+                e_popup_layer_set(extra->overlay.popup, E_COMP_CANVAS_LAYER_LAYOUT, E_LAYER_NORMAL);
                 extra->overlay.obj =
                     edje_object_add(extra->overlay.popup->evas);
                 e_theme_edje_object_set(extra->overlay.obj,
@@ -661,7 +661,7 @@ _do_overlay(E_Border *focused_bd,
                 evas_object_move(extra->overlay.obj, 0, 0);
                 evas_object_resize(extra->overlay.obj, ew, eh);
                 evas_object_show(extra->overlay.obj);
-                e_popup_edje_bg_object_set(extra->overlay.popup,
+                e_popup_content_set(extra->overlay.popup,
                                            extra->overlay.obj);
 
                 evas_object_show(extra->overlay.obj);
@@ -1810,12 +1810,12 @@ _check_moving_anims(const E_Border *bd, const Border_Extra *extra, int stack)
             if (!overlay->popup)
                 return;
 
-            e_popup_layer_set(overlay->popup, E_LAYER_NORMAL);
+            e_popup_layer_set(overlay->popup, E_COMP_CANVAS_LAYER_LAYOUT, E_LAYER_NORMAL);
             overlay->obj = edje_object_add(overlay->popup->evas);
             _theme_edje_object_set(overlay->obj,
                                    "modules/tiling/move/left");
             edje_object_size_min_calc(overlay->obj, &ew, &eh);
-            e_popup_edje_bg_object_set(overlay->popup,
+            e_popup_content_set(overlay->popup,
                                        overlay->obj);
             evas_object_show(overlay->obj);
             e_popup_move_resize(overlay->popup,
@@ -1862,12 +1862,12 @@ _check_moving_anims(const E_Border *bd, const Border_Extra *extra, int stack)
             if (!overlay->popup)
                 return;
 
-            e_popup_layer_set(overlay->popup, E_LAYER_NORMAL);
+            e_popup_layer_set(overlay->popup, E_COMP_CANVAS_LAYER_LAYOUT, E_LAYER_NORMAL);
             overlay->obj = edje_object_add(overlay->popup->evas);
             _theme_edje_object_set(overlay->obj,
                                    "modules/tiling/move/right");
             edje_object_size_min_calc(overlay->obj, &ew, &eh);
-            e_popup_edje_bg_object_set(overlay->popup,
+            e_popup_content_set(overlay->popup,
                                        overlay->obj);
             evas_object_show(overlay->obj);
             e_popup_move_resize(overlay->popup,
@@ -1913,11 +1913,11 @@ _check_moving_anims(const E_Border *bd, const Border_Extra *extra, int stack)
             if (!overlay->popup)
                 return;
 
-            e_popup_layer_set(overlay->popup, E_LAYER_NORMAL);
+            e_popup_layer_set(overlay->popup, E_COMP_CANVAS_LAYER_LAYOUT, E_LAYER_NORMAL);
             overlay->obj = edje_object_add(overlay->popup->evas);
             _theme_edje_object_set(overlay->obj, "modules/tiling/move/up");
             edje_object_size_min_calc(overlay->obj, &ew, &eh);
-            e_popup_edje_bg_object_set(overlay->popup,
+            e_popup_content_set(overlay->popup,
                                        overlay->obj);
             evas_object_show(overlay->obj);
             e_popup_move_resize(overlay->popup,
@@ -1964,12 +1964,12 @@ _check_moving_anims(const E_Border *bd, const Border_Extra *extra, int stack)
             if (!overlay->popup)
                 return;
 
-            e_popup_layer_set(overlay->popup, E_LAYER_NORMAL);
+            e_popup_layer_set(overlay->popup, E_COMP_CANVAS_LAYER_LAYOUT, E_LAYER_NORMAL);
             overlay->obj = edje_object_add(overlay->popup->evas);
             _theme_edje_object_set(overlay->obj,
                                    "modules/tiling/move/down");
             edje_object_size_min_calc(overlay->obj, &ew, &eh);
-            e_popup_edje_bg_object_set(overlay->popup,
+            e_popup_content_set(overlay->popup,
                                        overlay->obj);
             evas_object_show(overlay->obj);
             e_popup_move_resize(overlay->popup,
@@ -2840,7 +2840,7 @@ _transition_overlay_key_down(void *data __UNUSED__,
             if (!trov->overlay.popup) {
                 trov->overlay.popup = e_popup_new(_G.tinfo->desk->zone,
                                                   0, 0, 1, 1);
-                e_popup_layer_set(trov->overlay.popup, E_LAYER_NORMAL);
+                e_popup_layer_set(trov->overlay.popup, E_COMP_CANVAS_LAYER_LAYOUT, E_LAYER_NORMAL);
             }
             if (!trov->overlay.obj) {
                 trov->overlay.obj =
@@ -2856,7 +2856,7 @@ _transition_overlay_key_down(void *data __UNUSED__,
             }
 
             edje_object_size_min_calc(trov->overlay.obj, &ew, &eh);
-            e_popup_edje_bg_object_set(trov->overlay.popup,
+            e_popup_content_set(trov->overlay.popup,
                                        trov->overlay.obj);
             evas_object_show(trov->overlay.obj);
             if (bd) {
@@ -2965,7 +2965,7 @@ _do_transition_overlay(void)
                      continue;
                   }
 
-                e_popup_layer_set(trov->overlay.popup, E_LAYER_NORMAL);
+                e_popup_layer_set(trov->overlay.popup, E_COMP_CANVAS_LAYER_LAYOUT, E_LAYER_NORMAL);
                 trov->overlay.obj = edje_object_add(trov->overlay.popup->evas);
                 e_theme_edje_object_set(trov->overlay.obj,
                                         "base/theme/borders",
@@ -3000,7 +3000,7 @@ _do_transition_overlay(void)
                 evas_object_move(trov->overlay.obj, 0, 0);
                 evas_object_resize(trov->overlay.obj, ew, eh);
                 evas_object_show(trov->overlay.obj);
-                e_popup_edje_bg_object_set(trov->overlay.popup,
+                e_popup_content_set(trov->overlay.popup,
                                            trov->overlay.obj);
 
                 evas_object_show(trov->overlay.obj);
@@ -3038,7 +3038,7 @@ _do_transition_overlay(void)
             if (!trov->overlay.popup)
                 continue;
 
-            e_popup_layer_set(trov->overlay.popup, E_LAYER_NORMAL);
+            e_popup_layer_set(trov->overlay.popup, E_COMP_CANVAS_LAYER_LAYOUT, E_LAYER_NORMAL);
             trov->overlay.obj = edje_object_add(trov->overlay.popup->evas);
             e_theme_edje_object_set(trov->overlay.obj,
                                     "base/theme/borders",
@@ -3073,7 +3073,7 @@ _do_transition_overlay(void)
             evas_object_move(trov->overlay.obj, 0, 0);
             evas_object_resize(trov->overlay.obj, ew, eh);
             evas_object_show(trov->overlay.obj);
-            e_popup_edje_bg_object_set(trov->overlay.popup,
+            e_popup_content_set(trov->overlay.popup,
                                        trov->overlay.obj);
 
             evas_object_show(trov->overlay.obj);

@@ -529,7 +529,7 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
 
    if (ki->zoomkey.popup) return;
    ki->zoomkey.popup = e_popup_new(ki->win->border->zone, -1, -1, 1, 1);
-   e_popup_layer_set(ki->zoomkey.popup, 190);
+   e_popup_layer_set(ki->zoomkey.popup, E_COMP_CANVAS_LAYER_LAYOUT, 190);
 
    o = _theme_obj_new(ki->zoomkey.popup->evas, ki->themedir,
                       "e/modules/kbd/zoom/default");
@@ -625,9 +625,9 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
    evas_object_resize(ki->zoomkey.base_obj,
                       ki->zoomkey.popup->w, ki->zoomkey.popup->h);
    evas_object_show(ki->zoomkey.base_obj);
-   e_popup_edje_bg_object_set(ki->zoomkey.popup, ki->zoomkey.base_obj);
+   e_popup_content_set(ki->zoomkey.popup, ki->zoomkey.base_obj);
    e_popup_show(ki->zoomkey.popup);
-   e_popup_layer_set(ki->zoomkey.popup, 190);
+   e_popup_layer_set(ki->zoomkey.popup, E_COMP_CANVAS_LAYER_LAYOUT, 190);
 }
 
 static void
@@ -1453,7 +1453,7 @@ _e_kbd_int_dictlist_up(E_Kbd_Int *ki)
    if (ki->dictlist.popup) return;
 
    ki->dictlist.popup = e_popup_new(ki->win->border->zone, -1, -1, 1, 1);
-   e_popup_layer_set(ki->dictlist.popup, 190);
+   e_popup_layer_set(ki->dictlist.popup, E_COMP_CANVAS_LAYER_LAYOUT, 190);
 
    o = _theme_obj_new(ki->dictlist.popup->evas, ki->themedir,
                       "e/modules/kbd/match/default");
@@ -1553,7 +1553,7 @@ _e_kbd_int_dictlist_up(E_Kbd_Int *ki)
    evas_object_resize(ki->dictlist.base_obj, 
                       ki->dictlist.popup->w, ki->dictlist.popup->h);
    evas_object_show(ki->dictlist.base_obj);
-   e_popup_edje_bg_object_set(ki->dictlist.popup, ki->dictlist.base_obj);
+   e_popup_content_set(ki->dictlist.popup, ki->dictlist.base_obj);
    e_popup_show(ki->dictlist.popup);
    _e_kbd_int_matchlist_down(ki);
 }
@@ -1600,7 +1600,7 @@ _e_kbd_int_matchlist_up(E_Kbd_Int *ki)
    if (!e_kbd_buf_string_matches_get(ki->kbuf)) return;
    if (ki->matchlist.popup) return;
    ki->matchlist.popup = e_popup_new(ki->win->border->zone, -1, -1, 1, 1);
-   e_popup_layer_set(ki->matchlist.popup, 190);
+   e_popup_layer_set(ki->matchlist.popup, E_COMP_CANVAS_LAYER_LAYOUT, 190);
 
    o = _theme_obj_new(ki->matchlist.popup->evas, ki->themedir,
                       "e/modules/kbd/match/default");
@@ -1657,7 +1657,7 @@ _e_kbd_int_matchlist_up(E_Kbd_Int *ki)
    evas_object_resize(ki->matchlist.base_obj, 
                       ki->matchlist.popup->w, ki->matchlist.popup->h);
    evas_object_show(ki->matchlist.base_obj);
-   e_popup_edje_bg_object_set(ki->matchlist.popup, ki->matchlist.base_obj);
+   e_popup_content_set(ki->matchlist.popup, ki->matchlist.base_obj);
    e_popup_show(ki->matchlist.popup);
 
    _e_kbd_int_dictlist_down(ki);

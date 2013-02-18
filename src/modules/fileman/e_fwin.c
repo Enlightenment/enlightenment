@@ -484,13 +484,13 @@ e_fwin_zone_new(E_Zone *zone, void *p)
                                 _e_fwin_pan_child_size_get);
    evas_object_propagate_events_set(page->fm_obj, 0);
    e_widget_can_focus_set(o, 0);
-   E_LAYER_SET(o, E_COMP_CANVAS_LAYER_DESKTOP);
-   page->scrollframe_obj = page->scr = o;
-
+   evas_object_name_set(o, "zone_fwin");
    e_zone_useful_geometry_get(zone, &x, &y, &w, &h);
    evas_object_move(o, x, y);
    evas_object_resize(o, w, h);
+   E_LAYER_SET_UNDER(o, E_COMP_CANVAS_LAYER_DESKTOP);
    evas_object_show(o);
+   page->scrollframe_obj = page->scr = o;
 
    e_fm2_window_object_set(page->fm_obj, E_OBJECT(fwin->zone));
 
@@ -799,12 +799,10 @@ _e_fwin_icon_popup(void *data)
      fx = fwin->win->x, fy = fwin->win->y;
    fwin->popup = e_popup_new(zone, 0, 0, 1, 1);
    e_popup_ignore_events_set(fwin->popup, 1);
-   ecore_x_window_shape_input_rectangle_set(fwin->popup->evas_win, 0, 0, 0, 0);
    
    bg = edje_object_add(fwin->popup->evas);
    e_theme_edje_object_set(bg, "base/theme/fileman",
                            "e/fileman/popup/default");
-   e_popup_edje_bg_object_set(fwin->popup, bg);
    mw = zone->w * fileman_config->tooltip.size / 100.0;
    mh = zone->h * fileman_config->tooltip.size / 100.0;
 
@@ -822,9 +820,7 @@ _e_fwin_icon_popup(void *data)
    edje_object_part_swallow(bg, "e.swallow.content", list);
    
    edje_object_size_min_calc(bg, &mw, &mh);
-   evas_object_show(o);
-   evas_object_show(list);
-   evas_object_show(bg);
+   e_popup_object_add(fwin->popup, list);
 
    /* prefer tooltip left of icon */
    px = (fx + x) - mw - 3;
@@ -846,7 +842,7 @@ _e_fwin_icon_popup(void *data)
    /* give up */
    if (py < 0) py = 0;
    e_popup_move_resize(fwin->popup, px, py, mw, mh);
-   evas_object_resize(bg, mw, mh);
+   e_popup_content_set(fwin->popup, bg);
    if (!fwin->popup_handlers)
      {
         E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_ENTER, _e_fwin_icon_popup_handler, fwin);

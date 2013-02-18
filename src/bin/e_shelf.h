@@ -18,7 +18,6 @@ struct _E_Shelf
    E_Popup             *popup; /* NULL if its within an existing canvas */
    E_Zone              *zone;
    Evas_Object         *o_base;
-   Evas_Object         *o_event;
    Ecore_Evas          *ee;
    Evas                *evas;
    E_Gadcon            *gadcon;
@@ -83,18 +82,16 @@ EAPI void             e_shelf_urgent_show(E_Shelf *es);
 EAPI void             e_shelf_move(E_Shelf *es, int x, int y);
 EAPI void             e_shelf_resize(E_Shelf *es, int w, int h);
 EAPI void             e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h);
-EAPI void             e_shelf_layer_set(E_Shelf *es, E_Layer layer);
 EAPI void             e_shelf_save(E_Shelf *es);
 EAPI void             e_shelf_unsave(E_Shelf *es);
 EAPI void             e_shelf_orient(E_Shelf *es, E_Gadcon_Orient orient);
 EAPI const char      *e_shelf_orient_string_get(E_Shelf *es);
 EAPI void             e_shelf_position_calc(E_Shelf *es);
 EAPI void             e_shelf_style_set(E_Shelf *es, const char *style);
-EAPI void             e_shelf_popup_set(E_Shelf *es, int popup);
 EAPI E_Shelf         *e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es);
 EAPI void             e_shelf_name_set(E_Shelf *es, const char *name);
 EAPI void             e_shelf_rename_dialog(E_Shelf *es);
 EAPI void             e_shelf_autohide_set(E_Shelf *es, int autohide_type);
-EAPI Eina_Bool       e_shelf_desk_visible(E_Shelf *es, E_Desk *desk);
+EAPI Eina_Bool       e_shelf_desk_visible(const E_Shelf *es, const E_Desk *desk);
 #endif
 #endif

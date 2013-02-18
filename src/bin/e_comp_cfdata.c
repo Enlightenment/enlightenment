@@ -62,10 +62,12 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_VAL(D, T, match.disable_borders, UCHAR);
    E_CONFIG_VAL(D, T, match.disable_overrides, UCHAR);
    E_CONFIG_VAL(D, T, match.disable_menus, UCHAR);
+   E_CONFIG_VAL(D, T, match.disable_objects, UCHAR);
    E_CONFIG_LIST(D, T, match.popups, *match_edd);
    E_CONFIG_LIST(D, T, match.borders, *match_edd);
    E_CONFIG_LIST(D, T, match.overrides, *match_edd);
    E_CONFIG_LIST(D, T, match.menus, *match_edd);
+   E_CONFIG_LIST(D, T, match.objects, *match_edd);
 }
 
 EAPI E_Comp_Config *
@@ -205,6 +207,7 @@ e_comp_cfdata_config_free(E_Comp_Config *cfg)
    E_FREE_LIST(cfg->match.borders, e_comp_cfdata_match_free);
    E_FREE_LIST(cfg->match.overrides, e_comp_cfdata_match_free);
    E_FREE_LIST(cfg->match.menus, e_comp_cfdata_match_free);
+   E_FREE_LIST(cfg->match.objects, e_comp_cfdata_match_free);
 
    free(cfg);
 }

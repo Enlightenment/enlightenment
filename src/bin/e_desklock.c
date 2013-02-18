@@ -308,6 +308,7 @@ e_desklock_show(Eina_Bool suspend)
         return 0;
      }
 works:
+   e_comp_ignore_win_add(edd->elock_wnd);
    if (e_config->desklock_language)
      e_intl_language_set(e_config->desklock_language);
 
@@ -425,6 +426,7 @@ _e_desklock_popup_add(E_Zone *zone)
    evas = e_comp_get(zone)->evas;
    evas_event_freeze(evas);
    edp->bg_object = edje_object_add(evas);
+   evas_object_name_set(edp->bg_object, "desklock->bg_object");
 
    if ((!bg) || (!strcmp(bg, "theme_desklock_background")))
      {
@@ -497,6 +499,7 @@ _e_desklock_login_box_add(E_Desklock_Popup_Data *edp)
 
    evas = evas_object_evas_get(edp->bg_object);
    edp->login_box = edje_object_add(evas);
+   evas_object_name_set(edp->login_box, "desklock->login_box");
    e_theme_edje_object_set(edp->login_box,
                            "base/theme/desklock",
                            "e/desklock/login_box");

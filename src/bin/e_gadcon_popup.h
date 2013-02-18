@@ -16,6 +16,8 @@ struct _E_Gadcon_Popup
    E_Gadcon_Client     *gcc;
    Evas_Coord		w, h;
    Evas_Object	       *o_bg;
+   Evas_Object        *content;
+   Ecore_Event_Handler *autoclose_handlers[2];
 
    Eina_Bool            pinned : 1;
    Eina_Bool            gadcon_lock : 1;

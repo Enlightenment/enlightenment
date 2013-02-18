@@ -108,6 +108,7 @@ Improvements:
     * Menu->Applications now only list valid .desktop files
     * desklock now uses compositor canvas
     * e_gadcon_unpopulate now correctly freezes the container while deleting gadgets
+    * e_popup is now a wrapper for drawing objects onto the compositor canvas
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.

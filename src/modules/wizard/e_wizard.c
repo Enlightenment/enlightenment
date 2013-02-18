@@ -3,7 +3,7 @@
 static void     _e_wizard_next_eval(void);
 static E_Popup *_e_wizard_main_new(E_Zone *zone);
 static E_Popup *_e_wizard_extra_new(E_Zone *zone);
-static void     _e_wizard_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event);
+static Eina_Bool _e_wizard_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static void     _e_wizard_cb_next(void *data, Evas_Object *obj, const char *emission, const char *source);
 
 static Eina_Bool _e_wizard_check_xdg(void);
@@ -64,6 +64,7 @@ e_wizard_init(void)
 
    E_LIST_HANDLER_APPEND(handlers, EFREET_EVENT_ICON_CACHE_UPDATE,
                          _e_wizard_cb_icons_update, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_KEY_DOWN, _e_wizard_cb_key_down, NULL);
    return 1;
 }
 
@@ -274,55 +275,24 @@ static E_Popup *
 _e_wizard_main_new(E_Zone *zone)
 {
    E_Popup *popup;
-   Evas_Object *o;
-   Evas_Modifier_Mask mask;
-   Eina_Bool kg;
 
    popup = e_popup_new(zone, 0, 0, zone->w, zone->h);
-   e_popup_layer_set(popup, E_LAYER_TOP);
-   o = edje_object_add(popup->evas);
+   o_bg = edje_object_add(popup->evas);
 
-   e_theme_edje_object_set(o, "base/theme/wizard", "e/wizard/main");
-   evas_object_move(o, 0, 0);
-   evas_object_resize(o, zone->w, zone->h);
-   evas_object_show(o);
-   edje_object_signal_callback_add(o, "e,action,next", "",
+   e_theme_edje_object_set(o_bg, "base/theme/wizard", "e/wizard/main");
+   edje_object_part_text_set(o_bg, "e.text.title", _("Welcome to Enlightenment"));
+   edje_object_signal_callback_add(o_bg, "e,action,next", "",
                                    _e_wizard_cb_next, popup);
-   o_bg = o;
-
-   o = evas_object_rectangle_add(popup->evas);
-   mask = 0;
-   kg = evas_object_key_grab(o, "Tab", mask, ~mask, 0);
-   if (!kg)
-     fprintf(stderr, "ERROR: unable to redirect \"Tab\" key events to object %p.\n", o);
-   mask = evas_key_modifier_mask_get(popup->evas, "Shift");
-   kg = evas_object_key_grab(o, "Tab", mask, ~mask, 0);
-   if (!kg)
-     fprintf(stderr, "ERROR: unable to redirect \"Tab\" key events to object %p.\n", o);
-   mask = 0;
-   kg = evas_object_key_grab(o, "Return", mask, ~mask, 0);
-   if (!kg)
-     fprintf(stderr, "ERROR: unable to redirect \"Return\" key events to object %p.\n", o);
-   mask = 0;
-   kg = evas_object_key_grab(o, "KP_Enter", mask, ~mask, 0);
-   if (!kg)
-     fprintf(stderr, "ERROR: unable to redirect \"KP_Enter\" key events to object %p.\n", o);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN,
-                                  _e_wizard_cb_key_down, popup);
+   o_bg = o_bg;
+   e_popup_move_resize(popup, 0, 0, zone->w, zone->h);
+   e_popup_layer_set(popup, E_COMP_CANVAS_LAYER_POPUP, 0);
+   e_popup_content_set(popup, o_bg);
 
    /* set up next/prev buttons */
-   edje_object_part_text_set(o_bg, "e.text.title", _("Welcome to Enlightenment"));
 //   edje_object_signal_emit(o_bg, "e,state,next,disable", "e");
    e_wizard_labels_update();
 
-   e_popup_edje_bg_object_set(popup, o_bg);
    e_popup_show(popup);
-   if (!e_grabinput_get(ecore_evas_software_x11_window_get(popup->ecore_evas),
-                        1, ecore_evas_software_x11_window_get(popup->ecore_evas)))
-     {
-        e_object_del(E_OBJECT(popup));
-        popup = NULL;
-     }
    return popup;
 }
 
@@ -333,40 +303,43 @@ _e_wizard_extra_new(E_Zone *zone)
    Evas_Object *o;
 
    popup = e_popup_new(zone, 0, 0, zone->w, zone->h);
-   e_popup_layer_set(popup, E_LAYER_TOP);
+   e_popup_layer_set(popup, E_COMP_CANVAS_LAYER_POPUP, 0);
    o = edje_object_add(popup->evas);
    e_theme_edje_object_set(o, "base/theme/wizard", "e/wizard/extra");
    evas_object_move(o, 0, 0);
    evas_object_resize(o, zone->w, zone->h);
    evas_object_show(o);
-   e_popup_edje_bg_object_set(popup, o);
+   e_popup_content_set(popup, o);
    e_popup_show(popup);
    return popup;
 }
 
-static void
-_e_wizard_cb_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+static Eina_Bool
+_e_wizard_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   Evas_Event_Key_Down *ev;
+   Ecore_Event_Key *ev = event;
 
-   ev = event;
-   if (!o_content) return;
+   if (!o_content) return ECORE_CALLBACK_RENEW;
    if (!strcmp(ev->keyname, "Tab"))
      {
-        if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+        if (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT)
           e_widget_focus_jump(o_content, 0);
         else
           e_widget_focus_jump(o_content, 1);
      }
-   else if (((!strcmp(ev->keyname, "Return")) ||
-             (!strcmp(ev->keyname, "KP_Enter")) ||
-             (!strcmp(ev->keyname, "space"))))
+   else if ((!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "KP_Enter")))
+     {
+        if (next_can)
+          e_wizard_next();
+     }
+   else if (!strcmp(ev->keyname, "space"))
      {
         Evas_Object *o;
 
         o = e_widget_focused_object_get(o_content);
         if (o) e_widget_activate(o);
      }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void

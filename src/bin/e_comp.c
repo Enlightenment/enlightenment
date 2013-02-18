@@ -30,6 +30,7 @@ static Eina_List *compositors = NULL;
 static Eina_Hash *windows = NULL;
 static Eina_Hash *borders = NULL;
 static Eina_Hash *damages = NULL;
+static Eina_Hash *ignores = NULL;
 
 static E_Comp_Config *conf = NULL;
 static E_Config_DD *conf_edd = NULL;
@@ -92,6 +93,8 @@ static void _e_comp_win_real_hide(E_Comp_Win *cw);
 static void _e_comp_win_hide(E_Comp_Win *cw);
 static void _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, int border);
 static void _e_comp_shapes_update(void *data, E_Container_Shape *es, E_Container_Shape_Change ch);
+
+static void _e_comp_injected_win_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
 static void
 _e_comp_event_end(void *d EINA_UNUSED, E_Event_Comp *ev)
@@ -452,8 +455,26 @@ _e_comp_win_restack(E_Comp_Win *cw)
 static void
 _e_comp_win_geometry_update(E_Comp_Win *cw)
 {
-   e_layout_child_move(cw->shobj, cw->x, cw->y);
-   e_layout_child_resize(cw->shobj, cw->pw, cw->ph);
+   int x, y, w, h;
+
+   if (cw->visible)
+     x = cw->x, y = cw->y;
+   else
+     x = cw->hidden.x, y = cw->hidden.y;
+   if (cw->real_obj)
+     w = cw->w, h = cw->h;
+   else
+     w = cw->pw, h = cw->ph;
+   if (cw->not_in_layout)
+     {
+        evas_object_move(cw->shobj, x, y);
+        evas_object_resize(cw->shobj, w, h);
+     }
+   else
+     {
+        e_layout_child_move(cw->shobj, x, y);
+        e_layout_child_resize(cw->shobj, w, h);
+     }
 }
 
 static void
@@ -878,14 +899,16 @@ _e_comp_fps_update(E_Comp *c)
           {
              c->fps_bg = evas_object_rectangle_add(c->evas);
              evas_object_color_set(c->fps_bg, 0, 0, 0, 128);
-             E_LAYER_SET_ABOVE(c->fps_bg, E_COMP_CANVAS_LAYER_MAX);
+             evas_object_layer_set(c->fps_bg, E_COMP_CANVAS_LAYER_MAX);
+             evas_object_lower(c->fps_bg);
              evas_object_show(c->fps_bg);
 
              c->fps_fg = evas_object_text_add(c->evas);
              evas_object_text_font_set(c->fps_fg, "Sans", 10);
              evas_object_text_text_set(c->fps_fg, "???");
              evas_object_color_set(c->fps_fg, 255, 255, 255, 255);
-             E_LAYER_SET_ABOVE(c->fps_fg, E_COMP_CANVAS_LAYER_MAX);
+             evas_object_layer_set(c->fps_fg, E_COMP_CANVAS_LAYER_MAX);
+             evas_object_stack_above(c->fps_fg, c->fps_bg);
              evas_object_show(c->fps_fg);
           }
      }
@@ -917,8 +940,11 @@ _e_comp_win_release(E_Comp_Win *cw)
         ecore_x_image_free(cw->xim);
         cw->xim = NULL;
      }
-   evas_object_image_native_surface_set(cw->obj, NULL);
-   cw->native = 0;
+   if (!cw->real_obj)
+     {
+        evas_object_image_native_surface_set(cw->obj, NULL);
+        cw->native = 0;
+     }
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         if (cw->xim)
@@ -1064,7 +1090,7 @@ _e_comp_cb_nocomp_end(E_Comp *c)
      {
         if (!cw->nocomp)
           {
-             if ((cw->input_only) || (cw->invalid)) continue;
+             if ((cw->input_only) || (cw->invalid) || cw->real_obj) continue;
 
              if (cw->nocomp_need_update)
                {
@@ -1387,6 +1413,12 @@ _e_comp_win_damage_find(Ecore_X_Damage damage)
 }
 
 static Eina_Bool
+_e_comp_ignore_find(Ecore_X_Window win)
+{
+   return !!eina_hash_find(ignores, e_util_winid_str_get(win));
+}
+
+static Eina_Bool
 _e_comp_win_is_borderless(E_Comp_Win *cw)
 {
    if (!cw->bd) return 1;
@@ -1454,6 +1486,7 @@ _e_comp_object_del(void *data, void *obj)
      }
    else if (obj == cw->pop)
      {
+        cw->pop->cw = NULL;
         cw->pop = NULL;
         evas_object_data_del(cw->shobj, "popup");
      }
@@ -1467,6 +1500,7 @@ _e_comp_object_del(void *data, void *obj)
         e_object_delfn_del(obj, cw->dfn);
         cw->dfn = NULL;
      }
+   e_comp_win_del(cw);
 }
 
 static void
@@ -1533,7 +1567,8 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
    const char *title = NULL, *name = NULL, *clas = NULL, *role = NULL;
    Ecore_X_Window_Type primary_type = ECORE_X_WINDOW_TYPE_UNKNOWN;
 
-   evas_object_image_smooth_scale_set(cw->obj, conf->smooth_windows);
+   if (!cw->real_obj)
+     evas_object_image_smooth_scale_set(cw->obj, conf->smooth_windows);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         evas_object_image_smooth_scale_set(o, conf->smooth_windows);
@@ -1566,6 +1601,14 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         list = conf->match.menus;
         skip = (conf->match.disable_menus);
         fast = conf->fast_menus;
+     }
+   else if (cw->real_obj)
+     {
+        list = conf->match.objects;
+        name = evas_object_name_get(cw->obj);
+        //skip = conf->match.disable_objects;
+        skip = 1;
+        fast = conf->fast_objects;
      }
    else
      {
@@ -1836,7 +1879,87 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
         evas_object_image_size_set(o, w, h);
         evas_object_image_data_update_add(o, 0, 0, w, h);
      }
+   else if (cw->real_obj)
+     {
+        /* FIXME!!! */
+        evas_object_image_alpha_set(o, 1);
+        evas_object_image_source_set(o, cw->obj);
+     }
    return o;
+}
+
+static E_Comp_Win *
+_e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nolayout)
+{
+   E_Comp_Win *cw;
+   int x, y, w, h;
+
+   cw = calloc(1, sizeof(E_Comp_Win));
+   if (!cw) return NULL;
+   cw->not_in_layout = nolayout;
+   if (eobj)
+     {
+        switch (eobj->type)
+          {
+           case E_POPUP_TYPE:
+             cw->pop = (void*)eobj;
+             cw->pop->cw = cw;
+             cw->shape = cw->pop->shape;
+             cw->dfn = e_object_delfn_add(E_OBJECT(cw->pop), _e_comp_object_del, cw);
+             cw->show_ready = 1;
+             break;
+           //case E_MENU_TYPE:
+             //cw->menu = eobj;
+             //cw->menu->cw = cw;
+             //break;
+           default:
+             CRI("UNHANDLED");
+          }
+     }
+   else
+     {
+        if (evas_object_visible_get(obj))
+          cw->show_ready = 1;
+        else
+          cw->real_hid = 1;
+     }
+
+   cw->obj = obj;
+   cw->c = c;
+   cw->real_obj = 1;
+   cw->argb = 1;
+   cw->opacity = 255.0;
+   if (cw->shape) cw->shape->comp_win = cw;
+   if (conf->grab) ecore_x_grab();
+
+   cw->shobj = edje_object_add(c->evas);
+   _e_comp_win_shadow_setup(cw);
+
+   edje_object_signal_callback_add(cw->shobj, "e,action,show,done", "e", _e_comp_show_done, cw);
+   edje_object_signal_callback_add(cw->shobj, "e,action,hide,done", "e", _e_comp_hide_done, cw);
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   _e_comp_win_configure(cw, x, y, w, h, 0);
+
+   if (!nolayout) _e_comp_win_layout_populate(cw);
+
+   if (cw->bd) evas_object_data_set(cw->shobj, "border", cw->bd);
+   else if (cw->pop)
+     evas_object_data_set(cw->shobj, "popup", cw->pop);
+   else if (cw->menu)
+     evas_object_data_set(cw->shobj, "menu", cw->menu);
+
+   cw->pending_count++;
+   _e_comp_event_source_add(cw);
+   evas_object_data_set(cw->shobj, "comp_win", cw);
+   evas_object_data_set(cw->obj, "comp_win", cw);
+
+   c->wins_invalid = 1;
+   c->wins = eina_inlist_append(c->wins, EINA_INLIST_GET(cw));
+   DBG("  [0x%x] add", cw->win);
+   if (conf->grab) ecore_x_ungrab();
+   if (cw->show_ready) _e_comp_win_show(cw);
+   return cw;
 }
 
 static E_Comp_Win *
@@ -1861,19 +1984,36 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win)
         // setup on show
         // _e_comp_win_sync_setup(cw, cw->bd->client.win);
      }
-   else if ((cw->pop = e_popup_find_by_window(cw->win)))
-     {
-        cw->dfn = e_object_delfn_add(E_OBJECT(cw->pop), _e_comp_object_del, cw);
-        cw->show_ready = 1;
-        cw->shape = cw->pop->shape;
-     }
+   /* popups handled in _dummy_add */
    else if ((cw->menu = e_menu_find_by_window(cw->win)))
      {
         cw->dfn = e_object_delfn_add(E_OBJECT(cw->menu), _e_comp_object_del, cw);
         cw->show_ready = 1;
         cw->shape = cw->menu->shape;
      }
-   else
+   // fixme: could use bd/pop/menu for this too
+   memset((&att), 0, sizeof(Ecore_X_Window_Attributes));
+   if (!ecore_x_window_attributes_get(cw->win, &att))
+     {
+        free(cw->name);
+        free(cw->clas);
+        free(cw->role);
+        free(cw);
+        if (conf->grab) ecore_x_ungrab();
+        return NULL;
+     }
+   if ((!att.input_only) &&
+       ((att.depth != 24) && (att.depth != 32)))
+     {
+        //        printf("WARNING: window 0x%x not 24/32bpp -> %ibpp", cw->win, att.depth);
+        //        cw->invalid = 1;
+     }
+   cw->input_only = att.input_only;
+   cw->override = att.override;
+   cw->vis = att.visual;
+   cw->cmap = att.colormap;
+   cw->depth = att.depth;
+   if ((!cw->bd) && (!cw->menu) && (!cw->input_only))
      {
         char *netwm_title = NULL;
 
@@ -1903,28 +2043,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win)
         // FIXME: config - disable ready timeout for non-counter wins
         //        cw->show_ready = 1;
      }
-   // fixme: could use bd/pop/menu for this too
-   memset((&att), 0, sizeof(Ecore_X_Window_Attributes));
-   if (!ecore_x_window_attributes_get(cw->win, &att))
-     {
-        free(cw->name);
-        free(cw->clas);
-        free(cw->role);
-        free(cw);
-        if (conf->grab) ecore_x_ungrab();
-        return NULL;
-     }
-   if ((!att.input_only) &&
-       ((att.depth != 24) && (att.depth != 32)))
-     {
-        //        printf("WARNING: window 0x%x not 24/32bpp -> %ibpp", cw->win, att.depth);
-        //        cw->invalid = 1;
-     }
-   cw->input_only = att.input_only;
-   cw->override = att.override;
-   cw->vis = att.visual;
-   cw->cmap = att.colormap;
-   cw->depth = att.depth;
+
    cw->argb = ecore_x_window_argb_get(cw->win);
    eina_hash_add(windows, e_util_winid_str_get(cw->win), cw);
    cw->inhash = 1;
@@ -1969,13 +2088,26 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win)
              free(rects);
           }
 
-        if (cw->bd) evas_object_data_set(cw->shobj, "border", cw->bd);
+        if (cw->bd)
+          {
+             evas_object_data_set(cw->shobj, "border", cw->bd);
+             evas_object_name_set(cw->shobj, "cw->shobj::BORDER");
+          }
         else if (cw->pop)
-          evas_object_data_set(cw->shobj, "popup", cw->pop);
+          {
+             evas_object_data_set(cw->shobj, "popup", cw->pop);
+             evas_object_name_set(cw->shobj, "cw->shobj::POPUP");
+          }
         else if (cw->menu)
-          evas_object_data_set(cw->shobj, "menu", cw->menu);
+          {
+             evas_object_data_set(cw->shobj, "menu", cw->menu);
+             evas_object_name_set(cw->shobj, "cw->shobj::MENU");
+          }
+        else
+          evas_object_name_set(cw->shobj, "cw->shobj::WINDOW");
 
         evas_object_pass_events_set(cw->obj, 1);
+        evas_object_name_set(cw->obj, "cw->obj");
 
         cw->pending_count++;
         _e_comp_event_source_add(cw);
@@ -1983,7 +2115,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win)
    else
      {
         cw->shobj = evas_object_rectangle_add(c->evas);
-
+        e_util_size_debug_set(cw->shobj, 1);
         _e_comp_win_layout_populate(cw);
 
         evas_object_color_set(cw->shobj, 0, 0, 0, 0);
@@ -2051,6 +2183,7 @@ _e_comp_win_del(E_Comp_Win *cw)
           }
         else if (cw->pop)
           {
+             cw->pop->cw = NULL;
              e_object_delfn_del(E_OBJECT(cw->pop), cw->dfn);
              cw->pop = NULL;
           }
@@ -2078,6 +2211,8 @@ _e_comp_win_del(E_Comp_Win *cw)
              evas_object_del(o);
           }
      }
+   if (cw->real_obj && cw->obj)
+     evas_object_event_callback_del_full(cw->obj, EVAS_CALLBACK_DEL, _e_comp_injected_win_del_cb, cw);
    if (cw->obj)
      {
         evas_object_del(cw->obj);
@@ -2114,7 +2249,7 @@ _e_comp_win_show(E_Comp_Win *cw)
    Eina_List *l;
    Evas_Object *o;
 
-   if (cw->visible) return;
+   if (cw->visible || cw->input_only || cw->invalid) return;
    cw->visible = 1;
    DBG("  [0x%x] sho ++ [redir=%i, pm=%x, dmg_up=%i]",
        cw->win, cw->redirected, cw->pixmap, cw->dmg_updates);
@@ -2131,7 +2266,7 @@ _e_comp_win_show(E_Comp_Win *cw)
    // setup on show
    if (cw->bd)
      _e_comp_win_sync_setup(cw, cw->bd->client.win);
-   else
+   else if (cw->win)
      _e_comp_win_sync_setup(cw, cw->win);
 
    if (cw->real_hid)
@@ -2173,15 +2308,13 @@ _e_comp_win_show(E_Comp_Win *cw)
              cw->pw = 0;
              cw->ph = 0;
           }
-        if (cw->pop)
+        if (!cw->win)
           cw->dmg_updates = 1;
-        else
-          cw->dmg_updates = 0;
      }
    else
      cw->dmg_updates = 1;
 
-   if ((!cw->redirected) || (!cw->pixmap))
+   if (cw->win && ((!cw->redirected) || (!cw->pixmap)))
      {
         // we redirect all subwindows anyway
         //        ecore_x_composite_redirect_window(cw->win, ECORE_X_COMPOSITE_UPDATE_MANUAL);
@@ -2231,12 +2364,12 @@ _e_comp_win_show(E_Comp_Win *cw)
              cw->c->animating++;
           }
         cw->animating = 1;
-        _e_comp_win_render_queue(cw);
+        if (!cw->real_obj) _e_comp_win_render_queue(cw);
 
         cw->pending_count++;
         _e_comp_event_source_visibility(cw);
      }
-   _e_comp_win_render_queue(cw);
+   if (!cw->real_obj) _e_comp_win_render_queue(cw);
    if (!cw->shape) return;
    cw->shape->visible = 0;
    e_container_shape_show(cw->shape);
@@ -2294,7 +2427,7 @@ _e_comp_win_hide(E_Comp_Win *cw)
         ecore_timer_del(cw->update_timeout);
         cw->update_timeout = NULL;
      }
-   if (conf->keep_unmapped)
+   if (conf->keep_unmapped && cw->win)
      {
         if (conf->send_flush)
           {
@@ -2353,6 +2486,7 @@ _e_comp_win_hide(E_Comp_Win *cw)
         cw->ph = 0;
      }
    _e_comp_win_render_queue(cw);
+   if (!cw->win) return;
    if (conf->send_flush)
      {
         if (cw->bd) ecore_x_e_comp_flush_send(cw->bd->client.win);
@@ -2486,7 +2620,7 @@ _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, int border)
              // was cw->w / cw->h
              //             evas_object_resize(cw->shobj, cw->pw, cw->ph);
              resized = EINA_TRUE;
-             _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
+             if (!cw->real_obj) _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
           }
         if (cw->border != border)
           {
@@ -2497,9 +2631,12 @@ _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, int border)
              _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
           }
         if ((cw->input_only) || (cw->invalid)) return;
-        _e_comp_win_render_queue(cw);
+        if (!cw->real_obj) _e_comp_win_render_queue(cw);
      }
-   if (moved || resized) _e_comp_win_geometry_update(cw);
+   /* need to block move/resize of the edje for real objects so the external object doesn't
+    * accidentally get shown and block our show callback
+    */
+   if ((moved || resized) && ((!cw->real_obj) || cw->visible)) _e_comp_win_geometry_update(cw);
    // add pending manager comp event count to match below config send
    cw->pending_count++;
    _e_comp_event_source_configure(cw);
@@ -2574,6 +2711,8 @@ _e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (_e_comp_win_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
    if (c->win == ev->win) return ECORE_CALLBACK_PASS_ON;
    if (c->ee_win == ev->win) return ECORE_CALLBACK_PASS_ON;
+   if (c->man->root == ev->win) return ECORE_CALLBACK_PASS_ON;
+   if (_e_comp_ignore_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
    cw = _e_comp_win_add(c, ev->win);
    if (!cw) return ECORE_CALLBACK_RENEW;
    _e_comp_win_configure(cw, ev->x, ev->y, ev->w, ev->h, ev->border);
@@ -2593,7 +2732,7 @@ _e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         e_container_shape_move(cw->shape, ev->x, ev->y);
         e_container_shape_resize(cw->shape, ev->w, ev->h);
      }
-   cw->shape->comp_win = cw;
+   if (cw->shape) cw->shape->comp_win = cw;
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2602,7 +2741,11 @@ _e_comp_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Window_Destroy *ev = event;
    E_Comp_Win *cw = _e_comp_win_find(ev->win);
-   if (!cw) return ECORE_CALLBACK_PASS_ON;
+   if (!cw)
+     {
+        eina_hash_del_by_key(ignores, e_util_winid_str_get(ev->win));
+        return ECORE_CALLBACK_PASS_ON;
+     }
    if (cw->animating) cw->delete_me = 1;
    else _e_comp_win_del(cw);
    return ECORE_CALLBACK_PASS_ON;
@@ -3257,16 +3400,58 @@ _e_comp_bd_unfullscreen(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
 }
 
 static void
+_e_comp_injected_win_focus_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Comp_Win *cw = data;
+   edje_object_signal_emit(cw->shobj, "e,state,focus,off", "e");
+}
+
+static void
+_e_comp_injected_win_focus_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Comp_Win *cw = data;
+   edje_object_signal_emit(cw->shobj, "e,state,focus,on", "e");
+}
+
+static void
+_e_comp_injected_win_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Comp_Win *cw = data;
+
+   _e_comp_win_real_hide(cw);
+}
+
+static void
+_e_comp_injected_win_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Comp_Win *cw = data;
+
+   cw->defer_hide = 0;
+   cw->show_ready = 1;
+   _e_comp_win_geometry_update(cw);
+   _e_comp_win_show(cw);
+}
+
+static void
+_e_comp_injected_win_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Comp_Win *cw = data;
+
+   cw->obj = NULL;
+   if (cw->animating) cw->delete_me = 1;
+   else _e_comp_win_del(cw);
+}
+/*
+static void
 _e_comp_injected_win_moveresize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   E_Comp *c = data;
+   E_Comp_Win *cw = data;
    int x, y, w, h;
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   e_layout_child_move(obj, x, y);
-   e_layout_child_resize(obj, w, h);
+   _e_comp_win_configure(cw, x, y, w, h, 0);
 }
-
+*/
 #ifdef SHAPE_DEBUG
 static void
 _e_comp_shape_debug_rect(E_Comp *c, Ecore_X_Rectangle *rect, E_Color *color)
@@ -3315,6 +3500,96 @@ _e_comp_shapes_update_object_checker_function_thingy(E_Comp *c, Evas_Object *o)
 }
 
 static void
+#ifdef SHAPE_DEBUG
+_e_comp_shapes_update_comp_win_shape_comp_helper(E_Comp_Win *cw, Eina_Tiler *tb, Eina_List **rl)
+#else
+_e_comp_shapes_update_comp_win_shape_comp_helper(E_Comp_Win *cw, Eina_Tiler *tb)
+#endif
+{
+   int x, y, w, h;
+
+   /* ignore deleted shapes */
+   if (!cw->shape)
+     {
+        SHAPE_INF("IGNORING DELETED: %u", cw->win);
+        return;
+     }
+   if (cw->invalid || cw->real_hid || (!cw->visible) || (!cw->shape->visible))
+     {
+        SHAPE_DBG("SKIPPING SHAPE");
+        return;
+     }
+#ifdef SHAPE_DEBUG
+   if (cw->bd)
+     INF("COMP BD: %u", cw->win);
+   else if (cw->pop)
+     INF("COMP POP: %u", cw->win);
+   else if (cw->menu)
+     INF("COMP MENU: %u", cw->win);
+   else if (cw->real_obj)
+     INF("COMP OBJ: %s", evas_object_name_get(cw->obj));
+   else
+     INF("COMP WIN: %u", cw->win);
+#endif
+
+   if (cw->rects)
+     {
+        int num;
+        Ecore_X_Rectangle *rect;
+      
+        for (num = 0, rect = cw->rects; num < cw->rects_num; num++, rect++)
+          {
+             x = rect->x, y = rect->y, w = rect->width, h = rect->height;
+             if (cw->bd)
+               x += cw->bd->x, y += cw->bd->y;
+             else
+               x += cw->x, y += cw->y;
+   //#ifdef SHAPE_DEBUG not sure we can shape check these?
+             //r = E_NEW(Eina_Rectangle, 1);
+             //EINA_RECTANGLE_SET(r, x, y, w, h);
+             //rl = eina_list_append(rl, r);
+   //#endif
+             eina_tiler_rect_del(tb, &(Eina_Rectangle){x, y, w, h});
+             SHAPE_INF("DEL: %d,%d@%dx%d", x, y, w, h);
+          }
+        return;
+     }
+   /* borders and popups sometimes call shape changes before the changes have
+    * propagated to the comp_win :/
+    */
+   if (cw->bd)
+     x = cw->bd->x, y = cw->bd->y, w = cw->bd->w, h = cw->bd->h;
+   else if (cw->pop)
+     x = cw->pop->x + cw->pop->zone->x, y = cw->pop->y + cw->pop->zone->y, w = cw->pop->w, h = cw->pop->h;
+   /*
+   else if (cw->menu)
+     x = cw->menu->cur.x, y = cw->menu->cur.y, w = cw->menu->cur.w, h = cw->menu->cur.h;
+   */
+   else
+     x = cw->x, y = cw->y, w = cw->w, h = cw->h;
+#ifdef SHAPE_DEBUG
+   if (!cw->real_obj)
+     {
+        Eina_Rectangle *r;
+
+        r = E_NEW(Eina_Rectangle, 1);
+        EINA_RECTANGLE_SET(r, x, y, w, h);
+        *rl = eina_list_append(*rl, r);
+     }
+#endif
+   if (cw->real_obj)
+     {
+        eina_tiler_rect_add(tb, &(Eina_Rectangle){x, y, w, h});
+        SHAPE_INF("ADD: %d,%d@%dx%d", x, y, w, h);
+     }
+   else
+     {
+        eina_tiler_rect_del(tb, &(Eina_Rectangle){x, y, w, h});
+        SHAPE_INF("DEL: %d,%d@%dx%d", x, y, w, h);
+     }
+}
+
+static void
 _e_comp_shapes_update_job(E_Comp *c)
 {
    Eina_Tiler *tb;
@@ -3351,78 +3626,35 @@ _e_comp_shapes_update_job(E_Comp *c)
 
                   cw = evas_object_data_get(ch, "comp_win");
                   if (cw)
-                    {
-                       /* ignore deleted shapes */
-                       if (!cw->shape)
-                         {
-                            SHAPE_INF("IGNORING DELETED: %u", cw->win);
-                            continue;
-                         }
-                       if (cw->invalid || cw->real_hid || (!cw->visible) || (!cw->shape->visible)) continue;
+                    _e_comp_shapes_update_comp_win_shape_comp_helper(cw, tb
 #ifdef SHAPE_DEBUG
-                       if (cw->bd)
-                         INF("COMP BD: %u", cw->win);
-                       else if (cw->pop)
-                         INF("COMP POP: %u", cw->win);
-                       else if (cw->menu)
-                         INF("COMP MENU: %u", cw->win);
+                                                                     ,&rl
 #endif
-
-                       if (cw->rects)
-                         {
-                            int num;
-                            Ecore_X_Rectangle *rect;
-                          
-                            for (num = 0, rect = cw->rects; num < cw->rects_num; num++, rect++)
-                              {
-                                 x = rect->x, y = rect->y, w = rect->width, h = rect->height;
-                                 if (cw->bd)
-                                   x += cw->bd->x, y += cw->bd->y;
-                                 else
-                                   x += cw->x, y += cw->y;
-//#ifdef SHAPE_DEBUG not sure we can shape check these?
-                                 //r = E_NEW(Eina_Rectangle, 1);
-                                 //EINA_RECTANGLE_SET(r, x, y, w, h);
-                                 //rl = eina_list_append(rl, r);
-//#endif
-                                 eina_tiler_rect_del(tb, &(Eina_Rectangle){x, y, w, h});
-                                 SHAPE_INF("DEL: %d,%d@%dx%d", x, y, w, h);
-                              }
-                            continue;
-                         }
-                       /* borders and popups sometimes call shape changes before the changes have
-                        * propagated to the comp_win :/
-                        */
-                       if (cw->bd)
-                         x = cw->bd->x, y = cw->bd->y, w = cw->bd->w, h = cw->bd->h;
-                       else if (cw->pop)
-                         x = cw->pop->x + cw->pop->zone->x, y = cw->pop->y + cw->pop->zone->y, w = cw->pop->w, h = cw->pop->h;
-/*
-                       else if (cw->menu)
-                         x = cw->menu->cur.x, y = cw->menu->cur.y, w = cw->menu->cur.w, h = cw->menu->cur.h;
-*/
-                       else
-                         x = cw->x, y = cw->y, w = cw->w, h = cw->h;
-#ifdef SHAPE_DEBUG
-                       r = E_NEW(Eina_Rectangle, 1);
-                       EINA_RECTANGLE_SET(r, x, y, w, h);
-                       rl = eina_list_append(rl, r);
-#endif
-                       eina_tiler_rect_del(tb, &(Eina_Rectangle){x, y, w, h});
-                       SHAPE_INF("DEL: %d,%d@%dx%d", x, y, w, h);
-                    }
+                                                                    );
                   else if (evas_object_visible_get(ch) && (!evas_object_pass_events_get(ch)))
                     {
-                       evas_object_geometry_get(o, &x, &y, &w, &h);
+                       SHAPE_INF("COMP OBJ: %p", ch);
+                       e_layout_child_geometry_get(ch, &x, &y, &w, &h);
                        eina_tiler_rect_add(tb, &(Eina_Rectangle){x, y, w, h});
                        SHAPE_INF("ADD: %d,%d@%dx%d", x, y, w, h);
                     }
-                  
                }
           }
         else if (layout && evas_object_visible_get(o) && (!evas_object_pass_events_get(o)))
           {
+             E_Comp_Win *cw;
+
              if (_e_comp_shapes_update_object_checker_function_thingy(c, o)) continue;
+             cw = evas_object_data_get(o, "comp_win");
+             if (cw)
+               {
+                  _e_comp_shapes_update_comp_win_shape_comp_helper(cw, tb
+#ifdef SHAPE_DEBUG
+                                                                  ,&rl
+#endif
+                                                                  );
+                  continue;
+               }
              SHAPE_INF("OBJ: %p:%s", o, evas_object_name_get(o));
              evas_object_geometry_get(o, &x, &y, &w, &h);
              eina_tiler_rect_add(tb, &(Eina_Rectangle){x, y, w, h});
@@ -3447,7 +3679,7 @@ _e_comp_shapes_update_job(E_Comp *c)
         EINA_LIST_FOREACH(rl, l, r)
           {
              if (E_INTERSECTS(r->x, r->y, r->w, r->h, tr->x, tr->y, tr->w, tr->h))
-               ERR("RECT FAIL!!!!");
+               ERR("POSSIBLE RECT FAIL!!!!");
           }
 #endif
      }
@@ -3566,8 +3798,9 @@ _e_comp_populate(E_Comp *c)
 
    c->layout = e_layout_add(c->evas);
    evas_object_name_set(c->layout, "c->layout");
-   E_LAYER_SET_ABOVE(c->layout, E_COMP_CANVAS_LAYER_LAYOUT);
+   evas_object_layer_set(c->layout, E_COMP_CANVAS_LAYER_LAYOUT);
    evas_object_show(c->layout);
+   e_drop_xdnd_register_set(c->win, 1);
 
    EINA_LIST_FOREACH(c->man->containers, l, con)
      {
@@ -3614,13 +3847,17 @@ _e_comp_populate(E_Comp *c)
                }
              if (!cw->shape) cw->shape = e_container_shape_add(eina_list_data_get(c->man->containers));
           }
-        cw->shape->comp_win = cw;
-        e_container_shape_move(cw->shape, x, y);
-        e_container_shape_resize(cw->shape, w, h);
+        if (cw->shape)
+          {
+             cw->shape->comp_win = cw;
+             e_container_shape_move(cw->shape, x, y);
+             e_container_shape_resize(cw->shape, w, h);
+          }
         if (ecore_x_window_visible_get(wins[i]))
           _e_comp_win_show(cw);
      }
    free(wins);
+   if (!c->shape_job) c->shape_job = ecore_job_add((Ecore_Cb)_e_comp_shapes_update_job, c);
 }
 
 static void
@@ -3743,16 +3980,11 @@ _e_comp_add(E_Manager *man)
           ecore_job_add(_e_comp_add_fail_job, NULL);
      }
 
-   {
-      Ecore_X_Rectangle rect[1] = {{0}};
-
-      rect[0].width = man->w, rect[0].height = man->h;
-      ecore_x_window_shape_input_rectangles_set(c->win, rect, 1);
-   }
    ecore_evas_comp_sync_set(c->ee, 0);
    ecore_evas_name_class_set(c->ee, "E", "Comp_EE");
    //   ecore_evas_manual_render_set(c->ee, conf->lock_fps);
    c->evas = ecore_evas_get(c->ee);
+   ecore_evas_data_set(c->ee, "comp", c);
    ecore_evas_show(c->ee);
 
    c->ee_win = ecore_evas_window_get(c->ee);
@@ -4166,6 +4398,8 @@ _e_comp_cfg_init(void)
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    E_CONFIGURE_OPTION_ADD(co, BOOL, fast_popups, conf, _("Use fast composite effects for popups"), _("composite"), _("popup"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   E_CONFIGURE_OPTION_ADD(co, BOOL, fast_objects, conf, _("Use fast composite effects for objects"), _("composite"), _("theme"), _("animate"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    E_CONFIGURE_OPTION_ADD(co, BOOL, fast_overrides, conf, _("Use fast composite effects for override-redirect windows (tooltips and such)"), _("composite"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
 
@@ -4174,6 +4408,8 @@ _e_comp_cfg_init(void)
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_menus, conf, _("Disable composite effects for menus"), _("composite"), _("menu"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_popups, conf, _("Disable composite effects for popups"), _("composite"), _("popup"), _("theme"), _("animate"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_objects, conf, _("Disable composite effects for objects"), _("composite"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    E_CONFIGURE_OPTION_ADD(co, BOOL, match.disable_overrides, conf, _("Disable composite effects for override-redirect windows (tooltips and such)"), _("composite"), _("theme"), _("animate"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
@@ -4279,6 +4515,7 @@ e_comp_init(void)
    windows = eina_hash_string_superfast_new(NULL);
    borders = eina_hash_string_superfast_new(NULL);
    damages = eina_hash_string_superfast_new(NULL);
+   ignores = eina_hash_string_superfast_new(NULL);
 
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_CREATE, _e_comp_create, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_DESTROY, _e_comp_destroy, NULL);
@@ -4391,9 +4628,11 @@ e_comp_shutdown(void)
    conf_match_edd = NULL;
    conf_edd = NULL;
 
+   if (ignores) eina_hash_free(ignores);
    if (damages) eina_hash_free(damages);
    if (windows) eina_hash_free(windows);
    if (borders) eina_hash_free(borders);
+   ignores = NULL;
    damages = NULL;
    windows = NULL;
    borders = NULL;
@@ -4514,18 +4753,43 @@ EAPI E_Comp *
 e_comp_get(void *o)
 {
    E_Border *bd;
+   E_Popup *pop;
+   E_Shelf *es;
    E_Object *obj = o;
    E_Zone *zone = NULL;
    E_Container *con = NULL;
    E_Manager *man = NULL;
+   E_Gadcon_Popup *gp;
 
    if (!o) obj = (E_Object*)e_manager_current_get();
+   /* try to get to zone type first */
    switch (obj->type)
      {
       case E_BORDER_TYPE:
         bd = (E_Border*)obj;
-        zone = bd->zone;
-        EINA_SAFETY_ON_NULL_RETURN_VAL(zone, NULL);
+        obj = (void*)bd->zone;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        break;
+      case E_POPUP_TYPE:
+        pop = (E_Popup*)obj;
+        obj = (void*)pop->zone;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        break;
+      case E_SHELF_TYPE:
+        es = (E_Shelf*)obj;
+        obj = (void*)es->zone;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        break;
+      case E_GADCON_POPUP_TYPE:
+        gp = (E_Gadcon_Popup*)obj;
+        obj = (void*)gp->win->zone;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        break;
+      default:
+        break;
+     }
+   switch (obj->type)
+     {
       case E_ZONE_TYPE:
         if (!zone) zone = (E_Zone*)obj;
         con = zone->container;
@@ -4576,11 +4840,12 @@ e_comp_zone_update(E_Comp_Zone *cz)
    edje_object_part_swallow(cz->base, "e.swallow.background", cz->zone->transition_object ?: cz->zone->bg_object);
    evas_object_move(o, cz->zone->x, cz->zone->y);
    evas_object_resize(o, cz->zone->w, cz->zone->h);
-   E_LAYER_SET(o, E_COMP_CANVAS_LAYER_BG);
+   evas_object_layer_set(o, E_COMP_CANVAS_LAYER_BG);
    evas_object_show(o);
 
    cz->over = o = edje_object_add(cz->comp->evas);
-   E_LAYER_SET_ABOVE(o, E_COMP_CANVAS_LAYER_MAX);
+   evas_object_layer_set(o, E_COMP_CANVAS_LAYER_MAX);
+   evas_object_raise(o);
    evas_object_name_set(cz->over, "cz->over");
    evas_object_pass_events_set(o, 1);
    e_theme_edje_object_set(o, "base/theme/comp", over_styles[conf->disable_screen_effects]);
@@ -4619,28 +4884,172 @@ e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y, Ecore_X_Windo
    return cw->win;
 }
 
-EAPI void
-e_comp_object_inject(E_Comp *c, Evas_Object *obj, E_Layer layer)
+EAPI E_Comp_Win *
+e_comp_object_inject(E_Comp *c, Evas_Object *obj, E_Object *eobj, E_Layer layer)
 {
-   E_Comp_Win *cw;
+   E_Comp_Win *cw, *cwn;
    E_Container *con;
-   int pos, x, y, w, h;
+   int pos;
 
-   EINA_SAFETY_ON_NULL_RETURN(c);
-   EINA_SAFETY_ON_NULL_RETURN(obj);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(c, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
    con = e_container_current_get(c->man);
-   EINA_SAFETY_ON_NULL_RETURN(con);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(con, NULL);
 
    pos = 1 + (layer / 50);
    if (pos > 10) pos = 10;
    cw = _e_comp_win_find(con->layers[pos].win);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cw, NULL);
+
+   cwn = _e_comp_win_dummy_add(c, obj, eobj, 0);
+
+   if (EINA_INLIST_GET(cw)->prev)
+     _e_comp_win_raise_above(cwn, (E_Comp_Win*)EINA_INLIST_GET(cw)->prev);
+   else
+     _e_comp_win_lower(cwn);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_injected_win_del_cb, cwn);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _e_comp_injected_win_focus_in_cb, cwn);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _e_comp_injected_win_focus_out_cb, cwn);
+   return cwn;
+}
+
+EAPI E_Comp_Win *
+e_comp_object_add(E_Comp *c, Evas_Object *obj, E_Object *eobj)
+{
+   E_Comp_Win *cw;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(c, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+
+   cw = _e_comp_win_dummy_add(c, obj, eobj, 1);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_injected_win_del_cb, cw);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _e_comp_injected_win_show_cb, cw);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _e_comp_injected_win_hide_cb, cw);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _e_comp_injected_win_focus_in_cb, cw);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _e_comp_injected_win_focus_out_cb, cw);
+   return cw;
+}
+
+EAPI void
+e_comp_win_move(E_Comp_Win *cw, Evas_Coord x, Evas_Coord y)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(cw->real_obj);
+   if (cw->visible)
+     {
+        if ((cw->x == x) && (cw->y == y)) return;
+     }
+   else
+     {
+        if ((cw->hidden.x == x) && (cw->hidden.y == y)) return;
+     }
+   if (cw->shape) e_container_shape_move(cw->shape, x, y);
+   _e_comp_win_configure(cw, x, y, cw->w, cw->h, 0);
+}
+
+EAPI void
+e_comp_win_resize(E_Comp_Win *cw, int w, int h)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(cw->real_obj);
+   if ((cw->w == w) && (cw->h == h)) return;
+   if (cw->shape) e_container_shape_resize(cw->shape, w, h);
+   edje_extern_object_min_size_set(cw->obj, w, h);
+   _e_comp_win_configure(cw, cw->x, cw->y, w, h, 0);
+}
+
+EAPI void
+e_comp_win_moveresize(E_Comp_Win *cw, Evas_Coord x, Evas_Coord y, int w, int h)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(cw->real_obj);
+   if ((cw->w == w) && (cw->h == h))
+     {
+        if (cw->visible)
+          {
+             if ((cw->x == x) && (cw->y == y)) return;
+          }
+        else
+          {
+             if ((cw->hidden.x == x) && (cw->hidden.y == y)) return;
+          }
+     }
+   if (cw->shape)
+     {
+        e_container_shape_move(cw->shape, x, y);
+        e_container_shape_resize(cw->shape, w, h);
+     }
+   edje_extern_object_min_size_set(cw->obj, w, h);
+   _e_comp_win_configure(cw, x, y, w, h, 0);
+}
+
+EAPI void
+e_comp_win_del(E_Comp_Win *cw)
+{
+   if (!cw) return;
+   if (cw->animating) cw->delete_me = 1;
+   else _e_comp_win_del(cw);
+}
+
+EAPI void
+e_comp_win_hide(E_Comp_Win *cw)
+{
    EINA_SAFETY_ON_NULL_RETURN(cw);
-   e_layout_pack(c->layout, obj);
-   e_layout_child_lower_below(obj, cw->shobj);
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
-   e_layout_child_move(obj, x, y);
-   e_layout_child_resize(obj, w, h);
-   evas_object_smart_callback_add(obj, EVAS_CALLBACK_MOVE, _e_comp_injected_win_moveresize_cb, c);
-   evas_object_smart_callback_add(obj, EVAS_CALLBACK_RESIZE, _e_comp_injected_win_moveresize_cb, c);
+   EINA_SAFETY_ON_FALSE_RETURN(cw->real_obj);
+   _e_comp_win_real_hide(cw);
+}
+
+EAPI void
+e_comp_win_show(E_Comp_Win *cw)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cw);
+   EINA_SAFETY_ON_FALSE_RETURN(cw->real_obj);
+   cw->defer_hide = 0;
+   cw->show_ready = 1;
+   _e_comp_win_geometry_update(cw);
+   _e_comp_win_show(cw);
+}
+
+EAPI void
+e_comp_canvas_layer_set(Evas_Object *obj, E_Comp_Canvas_Layer comp_layer, E_Layer layer, E_Comp_Canvas_Stack stack)
+{
+   E_Comp_Win *cw;
+
+   if (comp_layer == E_COMP_CANVAS_LAYER_LAYOUT)
+     cw = e_comp_object_inject(e_comp_util_evas_object_comp_get(obj), obj, evas_object_data_get(obj, "eobj"), layer);
+   else
+     {
+        cw = e_comp_object_add(e_comp_util_evas_object_comp_get(obj), obj, evas_object_data_get(obj, "eobj"));
+        evas_object_layer_set(cw->shobj, comp_layer);
+     }
+   if (stack == E_COMP_CANVAS_STACK_ABOVE)
+     _e_comp_win_raise(cw);
+   else if (stack == E_COMP_CANVAS_STACK_UNDER)
+     _e_comp_win_lower(cw);
+}
+
+EAPI void
+e_comp_util_wins_print(const E_Comp *c)
+{
+   E_Comp_Win *cw;
+
+   EINA_INLIST_FOREACH(c->wins, cw)
+     {
+        if (cw->bd)
+          fprintf(stderr, "COMP BD: %p - %s\n", cw, cw->bd->client.icccm.name);
+        else if (cw->pop)
+          fprintf(stderr, "COMP POP: %p - %s\n", cw, cw->pop->name);
+        else if (cw->menu)
+          fprintf(stderr, "COMP MENU: %p - %s\n", cw, cw->menu->header.title);
+        else if (cw->real_obj)
+          fprintf(stderr, "COMP OBJ: %p - %s\n", cw, evas_object_name_get(cw->obj));
+        else
+          fprintf(stderr, "COMP WIN: %p - %u%s\n", cw, cw->win, cw->input_only ? " INPUT" : "");
+     }
+}
+
+EAPI void
+e_comp_ignore_win_add(Ecore_X_Window win)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(_e_comp_ignore_find(win));
+   eina_hash_add(ignores, e_util_winid_str_get(win), (void*)1);
 }

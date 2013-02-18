@@ -300,8 +300,9 @@ gadman_gadget_place(E_Gadcon_Client *gcc, const E_Gadcon_Client_Class *cc, E_Con
      edje_object_signal_emit(gcc->o_frame, "e,state,visibility,hide", "e");
    else
      {
-        E_LAYER_SET(gcc->o_base, E_COMP_CANVAS_LAYER_DESKTOP);
-        E_LAYER_SET(gcc->o_frame, E_COMP_CANVAS_LAYER_DESKTOP);
+        /* FIXME: comp */
+        evas_object_layer_set(gcc->o_base, E_COMP_CANVAS_LAYER_DESKTOP);
+        evas_object_layer_set(gcc->o_frame, E_COMP_CANVAS_LAYER_DESKTOP);
      }
    if (cc->name)
      {
@@ -866,7 +867,7 @@ _create_mover(E_Gadcon *gc)
    mover = edje_object_add(gc->evas);
    if (gc->id == ID_GADMAN_LAYER_BG)
      {
-        E_LAYER_SET_ABOVE(mover, E_COMP_CANVAS_LAYER_DESKTOP);
+        evas_object_layer_set(mover, E_COMP_CANVAS_LAYER_DESKTOP);
         evas_object_event_callback_add(mover, EVAS_CALLBACK_DEL, _mover_del, NULL);
      }
    e_theme_edje_object_set(mover, "base/theme/gadman", "e/gadman/control");
@@ -900,10 +901,6 @@ _create_mover(E_Gadcon *gc)
                                    on_top, (void *)DRAG_STOP);
    edje_object_signal_callback_add(mover, "e,action,resize,up,go", "",
                                    on_top, (void *)DRAG_MOVE);
-
-   evas_object_move(mover, 20, 30);
-   evas_object_resize(mover, 100, 100);
-   evas_object_hide(mover);
 
    return mover;
 }

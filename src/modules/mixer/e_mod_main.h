@@ -47,12 +47,6 @@ typedef struct E_Mixer_Instance
       Evas_Object *mute;
       Evas_Object *table;
       Evas_Object *button;
-      struct
-      {
-         Ecore_X_Window win;
-         Ecore_Event_Handler *mouse_up;
-         Ecore_Event_Handler *key_down;
-      } input;
    } ui;
 
    E_Mixer_System *sys;

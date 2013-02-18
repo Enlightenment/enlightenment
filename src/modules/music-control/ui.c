@@ -56,57 +56,10 @@ _player_name_update(E_Music_Control_Instance *inst)
    edje_object_message_send(inst->content_popup, EDJE_MESSAGE_STRING, 0, &msg);
 }
 
-static Eina_Bool
-_popup_input_window_mouse_up_cb(void *data, int type __UNUSED__, void *event)
-{
-   Ecore_Event_Mouse_Button *ev = event;
-   E_Music_Control_Instance *inst = data;
-   if (ev->window == inst->win)
-     music_control_popup_del(inst);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_popup_input_window_key_down_cb(void *data, int type __UNUSED__, void *event)
-{
-   Ecore_Event_Key *ev = event;
-   E_Music_Control_Instance *inst = data;
-   if (ev->window == inst->win)
-     music_control_popup_del(inst);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
 static void
-_popup_input_window_create(E_Music_Control_Instance *inst)
+_popup_del_cb(void *obj)
 {
-   Ecore_X_Window_Configure_Mask mask;
-   Ecore_X_Window popup_w;
-   E_Manager *man = e_manager_current_get();
-
-   inst->win = ecore_x_window_input_new(man->root, 0, 0, man->w, man->h);
-   mask = (ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE |
-           ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING);
-   popup_w = inst->popup->win->evas_win;
-   ecore_x_window_configure(inst->win, mask, 0, 0, 0, 0, 0, popup_w,
-                            ECORE_X_WINDOW_STACK_BELOW);
-   ecore_x_window_show(inst->win);
-
-   inst->mouse_up =
-            ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP,
-                                    _popup_input_window_mouse_up_cb, inst);
-   inst->key_down =
-            ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-                                    _popup_input_window_key_down_cb, inst);
-   e_grabinput_get(0, 0, inst->win);
-}
-
-static void
-_popup_input_window_destroy(E_Music_Control_Instance *inst)
-{
-   e_grabinput_release(0, inst->win);
-   ecore_x_window_free(inst->win);
-   ecore_event_handler_del(inst->mouse_up);
-   ecore_event_handler_del(inst->key_down);
+   music_control_popup_del(e_object_data_get(obj));
 }
 
 static void
@@ -126,17 +79,16 @@ _popup_new(E_Music_Control_Instance *inst)
 
    _player_name_update(inst);
    _play_state_update(inst, EINA_TRUE);
+   e_popup_autoclose(inst->popup->win, NULL, NULL);
    e_gadcon_popup_show(inst->popup);
-   _popup_input_window_create(inst);
+   e_object_data_set(E_OBJECT(inst->popup), inst);
+   E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
 }
 
 void
 music_control_popup_del(E_Music_Control_Instance *inst)
 {
-   e_gadcon_popup_hide(inst->popup);
-   _popup_input_window_destroy(inst);
-   e_object_del(E_OBJECT(inst->popup));
-   inst->popup = NULL;
+   E_FN_DEL(e_object_del, inst->popup);
 }
 
 struct _E_Config_Dialog_Data
