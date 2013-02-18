@@ -218,6 +218,8 @@ EAPI E_Comp *e_comp_get(void *o);
 
 EAPI Ecore_X_Window e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y, Ecore_X_Window *ignore, unsigned int ignore_num);
 
+EAPI void e_comp_object_inject(E_Comp *c, Evas_Object *obj, E_Layer layer);
+
 #define E_LAYER_SET(obj, layer) e_comp_canvas_layer_set(obj, layer, E_COMP_CANVAS_STACK_NONE)
 #define E_LAYER_SET_UNDER(obj, layer) e_comp_canvas_layer_set(obj, layer, E_COMP_CANVAS_STACK_UNDER)
 #define E_LAYER_SET_ABOVE(obj, layer) e_comp_canvas_layer_set(obj, layer, E_COMP_CANVAS_STACK_ABOVE)

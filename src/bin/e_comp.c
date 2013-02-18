@@ -3256,6 +3256,17 @@ _e_comp_bd_unfullscreen(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void
+_e_comp_injected_win_moveresize_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   E_Comp *c = data;
+   int x, y, w, h;
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   e_layout_child_move(obj, x, y);
+   e_layout_child_resize(obj, w, h);
+}
+
 #ifdef SHAPE_DEBUG
 static void
 _e_comp_shape_debug_rect(E_Comp *c, Ecore_X_Rectangle *rect, E_Color *color)
@@ -4606,4 +4617,30 @@ e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y, Ecore_X_Windo
    cw = evas_object_data_get(o, "comp_win");
    if (!cw) return c->ee_win;
    return cw->win;
+}
+
+EAPI void
+e_comp_object_inject(E_Comp *c, Evas_Object *obj, E_Layer layer)
+{
+   E_Comp_Win *cw;
+   E_Container *con;
+   int pos, x, y, w, h;
+
+   EINA_SAFETY_ON_NULL_RETURN(c);
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+
+   con = e_container_current_get(c->man);
+   EINA_SAFETY_ON_NULL_RETURN(con);
+
+   pos = 1 + (layer / 50);
+   if (pos > 10) pos = 10;
+   cw = _e_comp_win_find(con->layers[pos].win);
+   EINA_SAFETY_ON_NULL_RETURN(cw);
+   e_layout_pack(c->layout, obj);
+   e_layout_child_lower_below(obj, cw->shobj);
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   e_layout_child_move(obj, x, y);
+   e_layout_child_resize(obj, w, h);
+   evas_object_smart_callback_add(obj, EVAS_CALLBACK_MOVE, _e_comp_injected_win_moveresize_cb, c);
+   evas_object_smart_callback_add(obj, EVAS_CALLBACK_RESIZE, _e_comp_injected_win_moveresize_cb, c);
 }
