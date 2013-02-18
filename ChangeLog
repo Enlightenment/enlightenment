@@ -2,6 +2,7 @@
 
         * fixed disable of input methods in input method config dialog
         * fixed pointer warp when pointer was inside warp window but not directly over it
+        * desklock now uses compositor canvas
 
 2013-02-13 Deon Thomas
 
