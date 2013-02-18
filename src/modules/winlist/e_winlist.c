@@ -210,6 +210,8 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
           _last_border = NULL;
      }
    _e_winlist_activate_nth(1);
+   if ((eina_list_count(_wins) > 1) && (eina_list_data_get(_win_selected) == _last_border))
+     e_winlist_next();
    evas_event_thaw(_winlist->evas);
    _e_winlist_size_adjust();
 
@@ -941,8 +943,6 @@ _e_winlist_border_del(E_Border *bd)
 static void
 _e_winlist_activate_nth(int n)
 {
-   E_Winlist_Win *ww;
-   E_Border *bd;
    Eina_List *l;
    int cnt;
 
@@ -950,22 +950,11 @@ _e_winlist_activate_nth(int n)
    cnt = eina_list_count(_wins);
    if (n >= cnt) n = cnt - 1;
    l = eina_list_nth_list(_wins, n);
-   if (l)
-     {
-        ww = eina_list_data_get(l);
-        bd = e_border_under_pointer_get(ww->border->desk, NULL);
+   if (!l) return;
 
-        if (bd && (ww->border->client.win == bd->client.win) && (cnt > 1))
-          {
-             _wins = eina_list_promote_list(_wins, l);
-             _e_winlist_activate_nth(n);
-             return;
-          }
-
-        _win_selected = l;
-        _e_winlist_show_active();
-        _e_winlist_activate();
-     }
+   _win_selected = l;
+   _e_winlist_show_active();
+   _e_winlist_activate();
 }
 
 static void
