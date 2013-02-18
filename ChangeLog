@@ -3,6 +3,8 @@
         * fixed disable of input methods in input method config dialog
         * fixed pointer warp when pointer was inside warp window but not directly over it
         * desklock now uses compositor canvas
+        * e_shelf_desk_visible_get now takes const params
+        * e_util_size_debug_set now also prints for object show/hide events
 
 2013-02-13 Deon Thomas
 
