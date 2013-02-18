@@ -154,6 +154,41 @@ e_layout_child_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if (li->sd->frozen <= 0) _e_layout_smart_move_resize_item(li);
 }
 
+EAPI Evas_Object *
+e_layout_child_above_get(Evas_Object *obj)
+{
+   E_Layout_Item *li;
+
+   li = evas_object_data_get(obj, "e_layout_data");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(li, NULL);
+   li = (E_Layout_Item*)EINA_INLIST_GET(li)->next;
+   return li ? li->obj : NULL;
+}
+
+EAPI Evas_Object *
+e_layout_child_below_get(Evas_Object *obj)
+{
+   E_Layout_Item *li;
+
+   li = evas_object_data_get(obj, "e_layout_data");
+   EINA_SAFETY_ON_NULL_RETURN_VAL(li, NULL);
+   li = (E_Layout_Item*)EINA_INLIST_GET(li)->prev;
+   return li ? li->obj : NULL;
+}
+
+EAPI Evas_Object *
+e_layout_top_child_get(Evas_Object *obj)
+{
+   E_Smart_Data *sd;
+   E_Layout_Item *li;
+
+   if (evas_object_smart_smart_get(obj) != _e_smart) SMARTERRNR() NULL;
+   sd = evas_object_smart_data_get(obj);
+   if (!sd->items) return NULL;
+   li = (E_Layout_Item*)sd->items->last;
+   return li->obj;
+}
+
 EAPI void
 e_layout_child_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {

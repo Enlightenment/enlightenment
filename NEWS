@@ -28,6 +28,7 @@ Additions:
         * e_int_border_remember_edit
         * Added function for getting children of e_layout
         * added utility function for printing all objects above a given object
+        * added e_layout functions for returning objects above or below a layout child
     Config:
         * Added option for disabling icons in menus
         * Added option for disabling pointer warping when performing directional focus changes using winlist
