@@ -173,3 +173,4 @@ Fixes:
     * fix crash when locking screen from Start gadget and then activating gadget again
     * fixed bug where e_layout would ignore frozen state and crash
     * fixed disable of input methods in input method config dialog
+    * fixed pointer warp when pointer was inside warp window but not directly over it
