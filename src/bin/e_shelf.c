@@ -275,8 +275,8 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, int popup, E
    e_gadcon_zone_set(es->gadcon, zone);
    e_gadcon_ecore_evas_set(es->gadcon, es->ee);
    e_gadcon_shelf_set(es->gadcon, es);
-   e_gadcon_xdnd_window_set(es->gadcon, e_comp_get(es)->win);
-   e_gadcon_dnd_window_set(es->gadcon, e_comp_get(es)->win);
+   e_gadcon_xdnd_window_set(es->gadcon, e_comp_get(es)->ee_win);
+   e_gadcon_dnd_window_set(es->gadcon, e_comp_get(es)->ee_win);
    evas_object_clip_set(es->o_base, es->zone->bg_clip_object);
    e_gadcon_util_menu_attach_func_set(es->gadcon,
                                       _e_shelf_cb_menu_items_append, es);
