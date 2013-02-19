@@ -2148,7 +2148,6 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win)
    else
      {
         cw->shobj = evas_object_rectangle_add(c->evas);
-        e_util_size_debug_set(cw->shobj, 1);
         _e_comp_win_layout_populate(cw);
 
         evas_object_color_set(cw->shobj, 0, 0, 0, 0);
