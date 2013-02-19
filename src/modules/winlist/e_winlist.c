@@ -146,16 +146,13 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    _bg_object = o;
    e_theme_edje_object_set(o, "base/theme/winlist",
                            "e/widgets/winlist/main");
-   evas_object_move(o, 0, 0);
-   evas_object_resize(o, w, h);
-   evas_object_show(o);
-   e_popup_content_set(_winlist, o);
 
    o = e_box_add(_winlist->evas);
    _list_object = o;
    e_box_align_set(o, 0.5, 0.0);
    e_box_orientation_set(o, 0);
    e_box_homogenous_set(o, 1);
+   e_popup_object_add(_winlist, o);
    edje_object_part_swallow(_bg_object, "e.swallow.list", o);
    edje_object_part_text_set(_bg_object, "e.text.title", _("Select a window"));
    evas_object_show(o);
@@ -223,6 +220,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    E_LIST_HANDLER_APPEND(_handlers, ECORE_EVENT_MOUSE_WHEEL, _e_winlist_cb_mouse_wheel, NULL);
    E_LIST_HANDLER_APPEND(_handlers, ECORE_EVENT_MOUSE_MOVE, _e_winlist_cb_mouse_move, NULL);
 
+   e_popup_content_set(_winlist, _bg_object);
    e_popup_show(_winlist);
    return 1;
 }
@@ -239,31 +237,16 @@ e_winlist_hide(void)
         ww = _win_selected->data;
         bd = ww->border;
      }
-   evas_event_freeze(_winlist->evas);
    e_popup_hide(_winlist);
-   e_box_freeze(_list_object);
-   while (_wins)
+   EINA_LIST_FREE(_wins, ww)
      {
-        ww = _wins->data;
-        evas_object_del(ww->bg_object);
-        if (ww->icon_object) evas_object_del(ww->icon_object);
-        _wins = eina_list_remove_list(_wins, _wins);
         if ((!bd) || (ww->border != bd))
           e_object_unref(E_OBJECT(ww->border));
         free(ww);
      }
-   e_box_thaw(_list_object);
    _win_selected = NULL;
-   if (_icon_object)
-     {
-        evas_object_del(_icon_object);
-        _icon_object = NULL;
-     }
-   evas_object_del(_list_object);
-   _list_object = NULL;
-   evas_object_del(_bg_object);
-   _bg_object = NULL;
-   evas_event_thaw(_winlist->evas);
+   _icon_object = NULL;
+     
    e_object_del(E_OBJECT(_winlist));
    e_border_focus_track_thaw();
    _winlist = NULL;
@@ -822,7 +805,6 @@ _e_winlist_size_adjust(void)
    if (h > zone->h) h = zone->h;
    y = (double)(zone->h - h) * e_config->winlist_pos_align_y;
 
-   evas_object_resize(_bg_object, w, h);
    e_popup_move_resize(_winlist, x, y, w, h);
 }
 
@@ -877,6 +859,7 @@ _e_winlist_border_add(E_Border *bd, E_Zone *zone, E_Desk *desk)
    ww->border = bd;
    _wins = eina_list_append(_wins, ww);
    o = edje_object_add(_winlist->evas);
+   e_popup_object_add(_winlist, o);
    ww->bg_object = o;
    e_theme_edje_object_set(o, "base/theme/winlist",
                            "e/widgets/winlist/item");
@@ -886,6 +869,7 @@ _e_winlist_border_add(E_Border *bd, E_Zone *zone, E_Desk *desk)
      {
         o = e_border_icon_add(bd, _winlist->evas);
         ww->icon_object = o;
+        e_popup_object_add(_winlist, o);
         edje_object_part_swallow(ww->bg_object, "e.swallow.icon", o);
         evas_object_show(o);
      }
@@ -930,8 +914,13 @@ _e_winlist_border_del(E_Border *bd)
                   _e_winlist_show_active();
                   _e_winlist_activate();
                }
+             e_popup_object_remove(_winlist, ww->bg_object);
              evas_object_del(ww->bg_object);
-             if (ww->icon_object) evas_object_del(ww->icon_object);
+             if (ww->icon_object)
+               {
+                  e_popup_object_remove(_winlist, ww->icon_object);
+                  evas_object_del(ww->icon_object);
+               }
              E_FREE(ww);
              _wins = eina_list_remove_list(_wins, l);
              return;
@@ -1029,6 +1018,7 @@ _e_winlist_activate(void)
                              e_border_name_get(ww->border));
    if (_icon_object)
      {
+        e_popup_object_remove(_winlist, _icon_object);
         evas_object_del(_icon_object);
         _icon_object = NULL;
      }
@@ -1036,6 +1026,7 @@ _e_winlist_activate(void)
      {
         o = e_border_icon_add(ww->border, _winlist->evas);
         _icon_object = o;
+        e_popup_object_add(_winlist, o);
         edje_object_part_swallow(_bg_object, "e.swallow.icon", o);
         evas_object_show(o);
      }
@@ -1062,11 +1053,6 @@ _e_winlist_deactivate(void)
      }
    ww->was_shaded = 0;
    ww->was_iconified = 0;
-   if (_icon_object)
-     {
-        evas_object_del(_icon_object);
-        _icon_object = NULL;
-     }
    edje_object_part_text_set(_bg_object, "e.text.label", "");
    edje_object_signal_emit(ww->bg_object, "e,state,unselected", "e");
    if (ww->icon_object)
