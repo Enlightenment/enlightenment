@@ -4894,7 +4894,7 @@ e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y, Ecore_X_Windo
    eina_list_free(ignore_list);
    cw = evas_object_data_get(o, "comp_win");
    if (!cw) return c->ee_win;
-   return cw->win;
+   return cw->real_obj ? c->ee_win : cw->win;
 }
 
 EAPI E_Comp_Win *
