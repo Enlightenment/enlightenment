@@ -101,7 +101,7 @@ _e_comp_event_end(void *d EINA_UNUSED, E_Event_Comp *ev)
 {
    ev->cw->pending_count--;
    if (ev->cw->delete_pending && (!ev->cw->pending_count))
-     free(ev->cw);
+     _e_comp_win_del(ev->cw);
    free(ev);
 }
 
@@ -2179,20 +2179,14 @@ static void
 _e_comp_win_del(E_Comp_Win *cw)
 {
    Evas_Object *o;
-   int pending_count;
 
    if (cw->animating)
      {
         cw->c->animating--;
      }
    cw->animating = 0;
-   if ((!cw->input_only) && (!cw->invalid))
-     {
-        cw->pending_count++;
-        _e_comp_event_source_del(cw);
-     }
 
-   e_comp_render_update_free(cw->up);
+   E_FN_DEL(e_comp_render_update_free, cw->up);
    DBG("  [0x%x] del", cw->win);
    E_FREE(cw->rects);
    if (cw->update_timeout)
@@ -2234,6 +2228,19 @@ _e_comp_win_del(E_Comp_Win *cw)
 
    _e_comp_win_release(cw);
 
+   if (!cw->delete_pending)
+     {
+        cw->c->wins_invalid = 1;
+        cw->c->wins = eina_inlist_remove(cw->c->wins, EINA_INLIST_GET(cw));
+     }
+   if ((!cw->delete_pending) && (!cw->input_only) && (!cw->invalid))
+     {
+        cw->pending_count++;
+        _e_comp_event_source_del(cw);
+        cw->delete_pending = 1;
+        return;
+     }
+   if (cw->pending_count) return;
    if (cw->obj_mirror)
      {
         EINA_LIST_FREE(cw->obj_mirror, o)
@@ -2269,13 +2276,6 @@ _e_comp_win_del(E_Comp_Win *cw)
    free(cw->name);
    free(cw->clas);
    free(cw->role);
-   cw->c->wins_invalid = 1;
-   cw->c->wins = eina_inlist_remove(cw->c->wins, EINA_INLIST_GET(cw));
-   pending_count = cw->pending_count;
-   memset(cw, 0, sizeof(E_Comp_Win));
-   cw->pending_count = pending_count;
-   cw->delete_pending = 1;
-   if (cw->pending_count > 0) return;
    free(cw);
 }
 
