@@ -1520,7 +1520,12 @@ _e_comp_done_defer(E_Comp_Win *cw)
    cw->force = 1;
    if (cw->defer_hide) _e_comp_win_hide(cw);
    cw->force = 1;
-   if (cw->delete_me) _e_comp_win_del(cw);
+   if (cw->delete_me)
+     {
+        if (cw->real_obj && (cw->pop || cw->menu))
+          e_object_unref(evas_object_data_get(cw->obj, "eobj"));
+        _e_comp_win_del(cw);
+     }
    else cw->force = 0;
 }
 
@@ -2442,6 +2447,8 @@ _e_comp_win_hide(E_Comp_Win *cw)
              cw->c->animating++;
           }
         cw->animating = 1;
+        if (cw->real_obj && (cw->pop || cw->menu))
+          e_object_ref(evas_object_data_get(cw->obj, "eobj"));
         _e_comp_win_render_queue(cw);
 
         cw->pending_count++;

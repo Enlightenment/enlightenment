@@ -197,10 +197,13 @@ e_popup_hide(E_Popup *pop)
    E_OBJECT_TYPE_CHECK(pop, E_POPUP_TYPE);
    if (!pop->visible) return;
    pop->visible = 0;
-   if (pop->cw) e_comp_win_hide(pop->cw);
+   if (pop->cw)
+     {
+        e_comp_win_hide(pop->cw);
+        e_comp_win_del(pop->cw);
+     }
    if (!pop->autoclose) return;
    if (e_object_is_del(E_OBJECT(pop))) return;
-   autoclose_popup = NULL;
    _e_popup_autoclose_cleanup();
 }
 
