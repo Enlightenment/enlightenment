@@ -294,6 +294,15 @@ e_popup_object_add(E_Popup *pop, Evas_Object *obj)
 }
 
 EAPI void
+e_popup_object_remove(E_Popup *pop, Evas_Object *obj)
+{
+   E_OBJECT_CHECK(pop);
+   E_OBJECT_TYPE_CHECK(pop, E_POPUP_TYPE);
+
+   pop->objects = eina_list_remove(pop->objects, obj);
+}
+
+EAPI void
 e_popup_autoclose(E_Popup *pop, E_Popup_Key_Cb cb, const void *data)
 {
    E_OBJECT_CHECK(pop);

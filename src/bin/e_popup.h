@@ -47,6 +47,7 @@ EAPI void        e_popup_ignore_events_set(E_Popup *pop, int ignore);
 EAPI void        e_popup_layer_set(E_Popup *pop, E_Comp_Canvas_Layer comp_layer, E_Layer layer);
 EAPI void        e_popup_name_set(E_Popup *pop, const char *name);
 EAPI void        e_popup_object_add(E_Popup *pop, Evas_Object *obj);
+EAPI void        e_popup_object_remove(E_Popup *pop, Evas_Object *obj);
 EAPI void        e_popup_autoclose(E_Popup *pop, E_Popup_Key_Cb cb, const void *data);
 #endif
 #endif
