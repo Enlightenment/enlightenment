@@ -1376,6 +1376,7 @@ _e_comp_render_queue(E_Comp *c)
 static void
 _e_comp_win_render_queue(E_Comp_Win *cw)
 {
+   if (cw->real_obj) return;
    DBG("JOB3...");
    _e_comp_render_queue(cw->c);
 }
@@ -2400,12 +2401,12 @@ _e_comp_win_show(E_Comp_Win *cw)
              cw->c->animating++;
           }
         cw->animating = 1;
-        if (!cw->real_obj) _e_comp_win_render_queue(cw);
+        _e_comp_win_render_queue(cw);
 
         cw->pending_count++;
         _e_comp_event_source_visibility(cw);
      }
-   if (!cw->real_obj) _e_comp_win_render_queue(cw);
+   _e_comp_win_render_queue(cw);
    if (!cw->shape) return;
    cw->shape->visible = 0;
    e_container_shape_show(cw->shape);
@@ -2667,7 +2668,7 @@ _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, int border)
              _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
           }
         if ((cw->input_only) || (cw->invalid)) return;
-        if (!cw->real_obj) _e_comp_win_render_queue(cw);
+        _e_comp_win_render_queue(cw);
      }
    /* need to block move/resize of the edje for real objects so the external object doesn't
     * accidentally get shown and block our show callback
