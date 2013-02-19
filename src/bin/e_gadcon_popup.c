@@ -134,14 +134,14 @@ _e_gadcon_popup_position(E_Gadcon_Popup *pop)
         break;
 
       default:
-        e_popup_move_resize(pop->win, 50, 50, pop->w, pop->h);
+        e_popup_move(pop->win, 50, 50);
         return;
      }
    if (px - zx < 0)
      px = zx;
    if (py - zy < 0)
      py = zy;
-   e_popup_move_resize(pop->win, px - zx, py - zy, pop->w, pop->h);
+   e_popup_move(pop->win, px - zx, py - zy);
 
    if (pop->gadcon_lock && (!pop->gadcon_was_locked))
      _e_gadcon_popup_locked_set(pop, 1);
@@ -161,7 +161,6 @@ _e_gadcon_popup_size_recalc(E_Gadcon_Popup *pop, Evas_Object *obj)
      }
    edje_extern_object_min_size_set(obj, w, h);
    edje_object_size_min_calc(pop->o_bg, &pop->w, &pop->h);
-   evas_object_resize(pop->o_bg, pop->w, pop->h);
    e_popup_resize(pop->win, pop->w, pop->h);
 
    if (pop->win->visible)
@@ -195,7 +194,6 @@ e_gadcon_popup_new(E_Gadcon_Client *gcc)
 
    o = edje_object_add(pop->win->evas);
    e_theme_edje_object_set(o, "base/theme/gadman", "e/gadman/popup");
-   e_popup_content_set(pop->win, o);
    pop->o_bg = o;
 
    pop->gcc = gcc;
@@ -242,6 +240,7 @@ e_gadcon_popup_show(E_Gadcon_Popup *pop)
    _e_gadcon_popup_position(pop);
    pop->autoclose_handlers[0] = ecore_event_handler_add(E_EVENT_DESK_AFTER_SHOW, _e_popup_autoclose_deskafter_show_cb, NULL);
    pop->autoclose_handlers[1] = ecore_event_handler_add(E_EVENT_BORDER_FULLSCREEN, _e_popup_autoclose_border_fullscreen_cb, NULL);
+   e_popup_content_set(pop->win, pop->o_bg);
    e_popup_show(pop->win);
 }
 
