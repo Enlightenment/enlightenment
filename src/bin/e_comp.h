@@ -12,7 +12,6 @@ typedef enum
    E_COMP_CANVAS_LAYER_DESKTOP_TOP = 10, // raised desktop objects: gadgets, shelves
    E_COMP_CANVAS_LAYER_LAYOUT = 100, // should be nothing else on this layer
    E_COMP_CANVAS_LAYER_POPUP = 999, // popups
-   E_COMP_CANVAS_LAYER_MENU = 5000, // menus
    E_COMP_CANVAS_LAYER_DESKLOCK = 9999, // desklock
    E_COMP_CANVAS_LAYER_MAX = 32767 // EVAS_LAYER_MAX
 } E_Comp_Canvas_Layer;

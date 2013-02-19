@@ -52,12 +52,15 @@ struct _E_Menu
    E_Menu_Item         *parent_item;
 
    /* only useful if realized != 0 (ie menu is ACTUALLY realized) */
-   E_Comp_Win          *cw;
-   E_Container_Shape    *shape;
-   Evas                 *evas;
+   Ecore_Evas          *ecore_evas;
+   Evas                *evas;
+   Ecore_X_Window       evas_win;
    Evas_Object         *bg_object;
    Evas_Object         *container_object;
    Evas_Coord           container_x, container_y, container_w, container_h;
+   E_Container_Shape   *shape;
+   int                  shape_rects_num;
+   Ecore_X_Rectangle   *shape_rects;
 
    struct {
       void *data;
@@ -71,6 +74,8 @@ struct _E_Menu
    Eina_Bool        pending_new_submenu : 1;
    Eina_Bool        have_submenu : 1;
    Eina_Bool        in_active_list : 1;
+   Eina_Bool        shaped : 1;
+   Eina_Bool        need_shape_export : 1;
 };
 
 struct _E_Menu_Item
@@ -93,6 +98,8 @@ struct _E_Menu_Item
    Evas_Object   *icon_object;
    Evas_Object   *label_object;
    Evas_Object   *submenu_object;
+
+   Evas_Object   *event_object;
 
    Eina_List	 *list_position;
 
@@ -204,6 +211,8 @@ EAPI void         e_menu_item_disabled_set(E_Menu_Item *mi, int disable);
 EAPI void         e_menu_idler_before(void);
 
 EAPI Ecore_X_Window e_menu_grab_window_get(void);
+
+EAPI E_Menu      *e_menu_find_by_window(Ecore_X_Window win);
 
 #endif
 #endif
