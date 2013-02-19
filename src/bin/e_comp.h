@@ -124,6 +124,7 @@ struct _E_Comp_Win
    int                  depth;  // window depth
    Evas_Object         *obj;  // composite object
    Evas_Object         *shobj;  // shadow object
+   E_Object            *eobj; // internal e object
    Eina_List           *obj_mirror;  // extra mirror objects
    Ecore_X_Image       *xim;  // x image - software fallback
    E_Comp_Render_Update            *up;  // update handler
