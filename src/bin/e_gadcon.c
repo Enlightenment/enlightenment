@@ -1119,19 +1119,18 @@ EAPI void
 e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
 {
    Evas_Coord x, y, w, h;
+   Evas_Object *base;
 
    E_OBJECT_CHECK(gcc);
    E_OBJECT_TYPE_CHECK(gcc, E_GADCON_CLIENT_TYPE);
    if (gcc->o_control) return;
 
-   if (gcc->o_frame)
-     evas_object_geometry_get(gcc->o_frame, &x, &y, &w, &h);
-   else if (gcc->o_base)
-     evas_object_geometry_get(gcc->o_base, &x, &y, &w, &h);
-   else return;  /* make clang happy */
+   base = gcc->o_frame ?: gcc->o_base;
+   if (!base) return;
+   evas_object_geometry_get(base, &x, &y, &w, &h);
 
    gcc->o_control = edje_object_add(gcc->gadcon->evas);
-   //evas_object_layer_set(gcc->o_control, 100); FIXME: COMP
+   evas_object_layer_set(gcc->o_control, evas_object_layer_get(base) + 1);
    e_gadcon_locked_set(gcc->gadcon, 1);
    gcc->gadcon->editing = 1;
 
@@ -1157,7 +1156,7 @@ e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
    gcc->o_event = evas_object_rectangle_add(gcc->gadcon->evas);
    evas_object_color_set(gcc->o_event, 0, 0, 0, 0);
    evas_object_repeat_events_set(gcc->o_event, 1);
-   //evas_object_layer_set(gcc->o_event, 100); FIXME: COMP
+   evas_object_layer_set(gcc->o_event, evas_object_layer_get(base) + 1);
    evas_object_move(gcc->o_event, x, y);
    evas_object_resize(gcc->o_event, w, h);
 
@@ -1199,20 +1198,10 @@ e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
    evas_object_event_callback_add(gcc->o_event, EVAS_CALLBACK_MOUSE_OUT,
                                   _e_gadcon_cb_client_mouse_out, gcc);
 
-   if (gcc->o_frame)
-     {
-        evas_object_event_callback_add(gcc->o_frame, EVAS_CALLBACK_MOVE,
-                                       _e_gadcon_cb_client_move, gcc);
-        evas_object_event_callback_add(gcc->o_frame, EVAS_CALLBACK_RESIZE,
-                                       _e_gadcon_cb_client_resize, gcc);
-     }
-   else if (gcc->o_base)
-     {
-        evas_object_event_callback_add(gcc->o_base, EVAS_CALLBACK_MOVE,
-                                       _e_gadcon_cb_client_move, gcc);
-        evas_object_event_callback_add(gcc->o_base, EVAS_CALLBACK_RESIZE,
-                                       _e_gadcon_cb_client_resize, gcc);
-     }
+   evas_object_event_callback_add(base, EVAS_CALLBACK_MOVE,
+                                  _e_gadcon_cb_client_move, gcc);
+   evas_object_event_callback_add(base, EVAS_CALLBACK_RESIZE,
+                                  _e_gadcon_cb_client_resize, gcc);
 
    evas_object_show(gcc->o_event);
    evas_object_show(gcc->o_control);
