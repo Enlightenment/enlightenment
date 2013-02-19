@@ -1,3 +1,7 @@
+2013-02-25 Mike Blumenkrantz
+
+        * menus are now drawn directly on the compositor canvas
+
 2013-02-18 Mike Blumenkrantz
 
         * fixed disable of input methods in input method config dialog

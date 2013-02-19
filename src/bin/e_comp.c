@@ -467,8 +467,8 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
      w = cw->pw, h = cw->ph;
    if (cw->not_in_layout)
      {
-        evas_object_move(cw->shobj, x, y);
         evas_object_resize(cw->shobj, w, h);
+        evas_object_move(cw->shobj, x, y);
      }
    else
      {
@@ -1492,6 +1492,7 @@ _e_comp_object_del(void *data, void *obj)
      }
    else if (obj == cw->menu)
      {
+        cw->menu->cw = NULL;
         cw->menu = NULL;
         evas_object_data_del(cw->shobj, "menu");
      }
@@ -1934,12 +1935,17 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
              cw->pop->cw = cw;
              cw->shape = cw->pop->shape;
              cw->dfn = e_object_delfn_add(E_OBJECT(cw->pop), _e_comp_object_del, cw);
-             cw->show_ready = 1;
              break;
-           //case E_MENU_TYPE:
-             //cw->menu = eobj;
-             //cw->menu->cw = cw;
-             //break;
+           case E_MENU_TYPE:
+             cw->menu = (void*)eobj;
+             cw->menu->cw = cw;
+             cw->shape = cw->menu->shape;
+             cw->dfn = e_object_delfn_add(E_OBJECT(cw->menu), _e_comp_object_del, cw);
+             if (cw->menu->cur.visible)
+               cw->show_ready = 1;
+             else
+               cw->real_hid = 1;
+             break;
            default:
              CRI("UNHANDLED");
           }
@@ -2013,12 +2019,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win)
         // _e_comp_win_sync_setup(cw, cw->bd->client.win);
      }
    /* popups handled in _dummy_add */
-   else if ((cw->menu = e_menu_find_by_window(cw->win)))
-     {
-        cw->dfn = e_object_delfn_add(E_OBJECT(cw->menu), _e_comp_object_del, cw);
-        cw->show_ready = 1;
-        cw->shape = cw->menu->shape;
-     }
+   /* menus handled in _dummy_add */
    // fixme: could use bd/pop/menu for this too
    memset((&att), 0, sizeof(Ecore_X_Window_Attributes));
    if (!ecore_x_window_attributes_get(cw->win, &att))
@@ -2218,6 +2219,7 @@ _e_comp_win_del(E_Comp_Win *cw)
         else if (cw->menu)
           {
              e_object_delfn_del(E_OBJECT(cw->menu), cw->dfn);
+             cw->menu->cw = NULL;
              cw->menu = NULL;
           }
         cw->dfn = NULL;
@@ -3575,10 +3577,8 @@ _e_comp_shapes_update_comp_win_shape_comp_helper(E_Comp_Win *cw, Eina_Tiler *tb)
      x = cw->bd->x, y = cw->bd->y, w = cw->bd->w, h = cw->bd->h;
    else if (cw->pop)
      x = cw->pop->x + cw->pop->zone->x, y = cw->pop->y + cw->pop->zone->y, w = cw->pop->w, h = cw->pop->h;
-   /*
-   else if (cw->menu)
-     x = cw->menu->cur.x, y = cw->menu->cur.y, w = cw->menu->cur.w, h = cw->menu->cur.h;
-   */
+   //else if (cw->menu)
+     //x = cw->menu->x + cw->menu->zone->x, y = cw->menu->y + cw->menu->zone->y, w = cw->menu->w, h = cw->menu->h;
    else
      x = cw->x, y = cw->y, w = cw->w, h = cw->h;
 #ifdef SHAPE_DEBUG
@@ -4760,6 +4760,8 @@ e_comp_get(void *o)
    E_Border *bd;
    E_Popup *pop;
    E_Shelf *es;
+   E_Menu *m;
+   E_Menu_Item *mi;
    E_Object *obj = o;
    E_Zone *zone = NULL;
    E_Container *con = NULL;
@@ -4778,6 +4780,16 @@ e_comp_get(void *o)
       case E_POPUP_TYPE:
         pop = (E_Popup*)obj;
         obj = (void*)pop->zone;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        break;
+      case E_MENU_TYPE:
+        m = (E_Menu*)obj;
+        obj = (void*)m->zone;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        break;
+      case E_MENU_ITEM_TYPE:
+        mi = (E_Menu_Item*)obj;
+        obj = (void*)mi->menu->zone;
         EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
         break;
       case E_SHELF_TYPE:
