@@ -1,6 +1,7 @@
 2013-02-22 Mike Blumenkrantz
 
         * compositor now allows user changing/remembering of object opacity
+        * added E_LIST_REVERSE_FREE macro
 
 2013-02-20 Mike Blumenkrantz
 

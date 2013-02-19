@@ -174,6 +174,11 @@ typedef struct _E_Rect         E_Rect;
 #ifndef MAX
 # define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #endif
+
+#if (EINA_VERSION_MAJOR == 1) && (EINA_VERSION_MINOR < 8)
+# define eina_list_last_data_get(X) eina_list_data_get(eina_list_last(X))
+#endif
+
 # define E_FN_DEL(_fn, _h) do { if (_h) { _fn((void*)_h); _h = NULL; } } while (0)
 # define E_INTERSECTS(x, y, w, h, xx, yy, ww, hh) \
   (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
@@ -197,6 +202,12 @@ typedef struct _E_Rect         E_Rect;
          }                          \
     }                               \
   while (0)
+
+# define E_LIST_REVERSE_FREE(list, data)         \
+  for (data = eina_list_last_data_get(list);          \
+       list;                                     \
+       list = eina_list_remove_list(list, eina_list_last(list)), \
+       data = eina_list_last_data_get(list))
 
 # define E_LIST_FOREACH(list, func)    \
   do                                \
@@ -247,11 +258,6 @@ typedef struct _E_Rect         E_Rect;
           _w = 0; _h = 0;                                         \
        }                                                          \
   }
-
-
-#if (EINA_VERSION_MAJOR == 1) && (EINA_VERSION_MINOR < 8)
-# define eina_list_last_data_get(X) eina_list_data_get(eina_list_last(X))
-#endif
 
 # define E_REMOTE_OPTIONS 1
 # define E_REMOTE_OUT     2
