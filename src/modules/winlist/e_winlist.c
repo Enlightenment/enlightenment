@@ -256,8 +256,8 @@ e_winlist_hide(void)
 
    E_FREE_LIST(_handlers, ecore_event_handler_del);
 
-   E_FN_DEL(ecore_timer_del, _scroll_timer);
-   E_FN_DEL(ecore_animator_del, _animator);
+   E_FREE_FUNC(_scroll_timer, ecore_timer_del);
+   E_FREE_FUNC(_animator, ecore_animator_del);
 
    ecore_x_window_free(_input_window);
    e_grabinput_release(_input_window, _input_window);
@@ -1004,7 +1004,7 @@ _e_winlist_activate(void)
           }
         else
           {
-             E_FN_DEL(ecore_animator_del, _animator);
+             E_FREE_FUNC(_animator, ecore_animator_del);
           }
 
         if ((!ww->border->lock_user_stacking) &&

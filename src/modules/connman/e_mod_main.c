@@ -294,7 +294,7 @@ _econnman_popup_new(E_Connman_Instance *inst)
 void
 econnman_popup_del(E_Connman_Instance *inst)
 {
-   E_FN_DEL(e_object_del, inst->popup);
+   E_FREE_FUNC(inst->popup, e_object_del);
 }
 
 static void

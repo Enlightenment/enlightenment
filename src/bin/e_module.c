@@ -198,8 +198,8 @@ e_module_shutdown(void)
           }
      }
 
-   E_FN_DEL(eina_hash_free, _e_module_path_hash);
-   E_FN_DEL(eina_hash_free, _e_modules_hash);
+   E_FREE_FUNC(_e_module_path_hash, eina_hash_free);
+   E_FREE_FUNC(_e_modules_hash, eina_hash_free);
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_LIST(_e_module_path_monitors, eio_monitor_del);
    E_FREE_LIST(_e_module_path_lists, eio_file_cancel);

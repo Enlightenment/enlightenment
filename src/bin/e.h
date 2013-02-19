@@ -179,7 +179,7 @@ typedef struct _E_Rect         E_Rect;
 # define eina_list_last_data_get(X) eina_list_data_get(eina_list_last(X))
 #endif
 
-# define E_FN_DEL(_fn, _h) do { if (_h) { _fn((void*)_h); _h = NULL; } } while (0)
+# define E_FREE_FUNC(_h, _fn) do { if (_h) { _fn((void*)_h); _h = NULL; } } while (0)
 # define E_INTERSECTS(x, y, w, h, xx, yy, ww, hh) \
   (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
 # define E_INSIDE(x, y, xx, yy, ww, hh) \

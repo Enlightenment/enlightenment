@@ -1815,7 +1815,7 @@ static Eina_Bool
 _e_main_modules_load_after(void *d EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
 {
    e_int_config_modules(NULL, NULL);
-   E_FN_DEL(ecore_event_handler_del, mod_init_end);
+   E_FREE_FUNC(mod_init_end, ecore_event_handler_del);
    return ECORE_CALLBACK_RENEW;
 }
 

@@ -16,9 +16,9 @@ _e_popup_autoclose_cleanup(void)
         e_grabinput_release(0, e_comp_get(autoclose_popup)->ee_win);
         autoclose_popup->autoclose = 0;
      }
-   E_FN_DEL(e_object_del, autoclose_popup);
-   E_FN_DEL(evas_object_del, event_rect);
-   E_FN_DEL(ecore_event_handler_del, key_handler);
+   E_FREE_FUNC(autoclose_popup, e_object_del);
+   E_FREE_FUNC(event_rect, evas_object_del);
+   E_FREE_FUNC(key_handler, ecore_event_handler_del);
 }
 
 static void
@@ -27,7 +27,7 @@ _e_popup_free(E_Popup *pop)
    e_object_unref(E_OBJECT(pop->zone));
    if (pop->autoclose)
      _e_popup_autoclose_cleanup();
-   E_FN_DEL(e_object_del, pop->shape);
+   E_FREE_FUNC(pop->shape, e_object_del);
    E_FREE_LIST(pop->objects, evas_object_del);
    pop->zone->popups = eina_list_remove(pop->zone->popups, pop);
    eina_stringshare_del(pop->name);
@@ -56,8 +56,8 @@ _e_popup_autoclose_mouse_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas
 static void
 _e_popup_autoclose_setup(E_Popup *pop)
 {
-   E_FN_DEL(e_object_del, autoclose_popup);
-   E_FN_DEL(evas_object_del, event_rect);
+   E_FREE_FUNC(autoclose_popup, e_object_del);
+   E_FREE_FUNC(event_rect, evas_object_del);
 
    event_rect = evas_object_rectangle_add(e_comp_get(pop)->evas);
    evas_object_color_set(event_rect, 0, 0, 0, 0);

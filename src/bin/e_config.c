@@ -1398,7 +1398,7 @@ e_config_load(void)
 EAPI int
 e_config_save(void)
 {
-   E_FN_DEL(e_powersave_deferred_action_del, _e_config_save_defer);
+   E_FREE_FUNC(_e_config_save_defer, e_powersave_deferred_action_del);
    _e_config_save_cb(NULL);
    return e_config_domain_save("e", _e_config_edd, e_config);
 }

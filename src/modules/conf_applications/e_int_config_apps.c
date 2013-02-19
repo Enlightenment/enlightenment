@@ -232,8 +232,8 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    E_FREE_LIST(cfdata->apps, efreet_desktop_free);
    eina_list_free(cfdata->apps_user.icons);
    eina_list_free(cfdata->apps_xdg.icons);
-   E_FN_DEL(ecore_idler_del, cfdata->apps_user.idler);
-   E_FN_DEL(ecore_idler_del, cfdata->apps_xdg.idler);
+   E_FREE_FUNC(cfdata->apps_user.idler, ecore_idler_del);
+   E_FREE_FUNC(cfdata->apps_xdg.idler, ecore_idler_del);
    e_widget_ilist_clear(cfdata->apps_xdg.o_list);
    /* FIXME: this is suuuuper slow and blocking :/ */
    e_widget_ilist_clear(cfdata->apps_user.o_list);

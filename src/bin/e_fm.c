@@ -1664,7 +1664,7 @@ _e_fm2_icons_update_helper(E_Fm2_Smart_Data *sd, Eina_Bool icon_only)
         if (!ic->realized) continue;
         if (icon_only)
           {
-             E_FN_DEL(evas_object_del, ic->obj_icon);
+             E_FREE_FUNC(ic->obj_icon, evas_object_del);
              _e_fm2_icon_icon_set(ic);
           }
         else

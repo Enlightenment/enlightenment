@@ -2198,14 +2198,14 @@ _e_comp_win_del(E_Comp_Win *cw)
         e_object_unref(E_OBJECT(cw->eobj));
         cw->eobj = NULL;
      }
-   E_FN_DEL(ecore_timer_del, cw->opacity_set_timer);
+   E_FREE_FUNC(cw->opacity_set_timer, ecore_timer_del);
    if (cw->animating)
      {
         cw->c->animating--;
      }
    cw->animating = 0;
 
-   E_FN_DEL(e_comp_render_update_free, cw->up);
+   E_FREE_FUNC(cw->up, e_comp_render_update_free);
    DBG("  [0x%x] del", cw->win);
    E_FREE(cw->rects);
    if (cw->update_timeout)
@@ -2291,7 +2291,7 @@ _e_comp_win_del(E_Comp_Win *cw)
         cw->shobj = NULL;
      }
 
-   if (cw->free_shape) E_FN_DEL(e_object_del, cw->shape);
+   if (cw->free_shape) E_FREE_FUNC(cw->shape, e_object_del);
 
    free(cw->title);
    free(cw->name);
@@ -4024,9 +4024,9 @@ _e_comp_del(E_Comp *c)
           hide_bd = eina_list_append(hide_bd, bd);
      }
 
-   E_FN_DEL(evas_object_del, c->fps_fg);
-   E_FN_DEL(evas_object_del, c->fps_bg);
-   E_FN_DEL(ecore_job_del, c->shape_job);
+   E_FREE_FUNC(c->fps_fg, evas_object_del);
+   E_FREE_FUNC(c->fps_bg, evas_object_del);
+   E_FREE_FUNC(c->shape_job, ecore_job_del);
 
    ecore_x_window_key_ungrab(c->man->root, "F", ECORE_EVENT_MODIFIER_SHIFT |
                              ECORE_EVENT_MODIFIER_CTRL |
@@ -4103,7 +4103,7 @@ _e_comp_sys_done_cb(void *data, Evas_Object *obj, const char *sig, const char *s
 {
    edje_object_signal_callback_del(obj, sig, src, _e_comp_sys_done_cb);
    e_sys_action_raw_do((E_Sys_Action)(long)data, NULL);
-   E_FN_DEL(ecore_timer_del, action_timeout);
+   E_FREE_FUNC(action_timeout, ecore_timer_del);
 }
 
 static Eina_Bool
@@ -4135,7 +4135,7 @@ _e_comp_sys_action_timeout(void *data)
       default:
         break;
      }
-   E_FN_DEL(ecore_timer_del, action_timeout);
+   E_FREE_FUNC(action_timeout, ecore_timer_del);
    if (sig)
      {
         EINA_LIST_FOREACH(compositors, l, c)
@@ -4698,7 +4698,7 @@ EINTERN int
 e_comp_shutdown(void)
 {
    if (!compositors) return 1;
-   E_FN_DEL(ecore_timer_del, action_timeout);
+   E_FREE_FUNC(action_timeout, ecore_timer_del);
    E_FREE_LIST(compositors, _e_comp_del);
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_LIST(actions, e_object_del);
@@ -4912,8 +4912,8 @@ e_comp_zone_update(E_Comp_Zone *cz)
                                 over_styles[conf->disable_screen_effects]);
         return;
      }
-   E_FN_DEL(evas_object_del, cz->base);
-   E_FN_DEL(evas_object_del, cz->over);
+   E_FREE_FUNC(cz->base, evas_object_del);
+   E_FREE_FUNC(cz->over, evas_object_del);
    cz->base = o = edje_object_add(cz->comp->evas);
    evas_object_repeat_events_set(o, 1);
    evas_object_name_set(cz->base, "cz->base");

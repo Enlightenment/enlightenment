@@ -43,8 +43,8 @@ _e_gadcon_popup_locked_set(E_Gadcon_Popup *pop, Eina_Bool locked)
 static void
 _e_gadcon_popup_free(E_Gadcon_Popup *pop)
 {
-   E_FN_DEL(ecore_event_handler_del, pop->autoclose_handlers[0]);
-   E_FN_DEL(ecore_event_handler_del, pop->autoclose_handlers[1]);
+   E_FREE_FUNC(pop->autoclose_handlers[0], ecore_event_handler_del);
+   E_FREE_FUNC(pop->autoclose_handlers[1], ecore_event_handler_del);
 
    if (pop->gadcon_was_locked)
      _e_gadcon_popup_locked_set(pop, 0);
@@ -52,7 +52,7 @@ _e_gadcon_popup_free(E_Gadcon_Popup *pop)
    evas_object_del(pop->content);
    if (pop->win)
      E_OBJECT_DEL_SET(pop->win, NULL);
-   E_FN_DEL(e_object_del, pop->win);
+   E_FREE_FUNC(pop->win, e_object_del);
    free(pop);
 }
 

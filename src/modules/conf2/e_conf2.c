@@ -235,7 +235,7 @@ _tag_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    const Eina_List *l;
    Eina_Stringshare *tag;
 
-   E_FN_DEL(ecore_timer_del, reset_timer);
+   E_FREE_FUNC(reset_timer, ecore_timer_del);
    if (!ctx_click) ctx_click = e_configure_option_ctx_new();
    if (!e_configure_option_ctx_tag_add(ctx_click, data)) return;
    _ctx_active_update();
@@ -261,7 +261,7 @@ _cat_sel(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
    elm_object_disabled_set(back, 0);
    if (!ctx_click) ctx_click = e_configure_option_ctx_new();
    ctx_click->category = ctx_active->category = data;
-   E_FN_DEL(ecore_timer_del, reset_timer);
+   E_FREE_FUNC(reset_timer, ecore_timer_del);
    elm_genlist_clear(list[0]);
    EINA_LIST_FOREACH(e_configure_option_category_list_tags(data), l, tag)
      {
@@ -299,8 +299,8 @@ _reset_cb(void *d EINA_UNUSED)
    ctx_active->match_tags = eina_list_free(ctx_active->match_tags);
    ctx_active->tags = eina_list_free(ctx_active->tags);
    ctx_active->opts = eina_list_free(ctx_active->opts);
-   E_FN_DEL(e_configure_option_ctx_free, ctx_entry);
-   E_FN_DEL(e_configure_option_ctx_free, ctx_click);
+   E_FREE_FUNC(ctx_entry, e_configure_option_ctx_free);
+   E_FREE_FUNC(ctx_click, e_configure_option_ctx_free);
    EINA_LIST_FOREACH(e_configure_option_category_list(), l, cat)
      elm_genlist_item_append(list[0], itc_cats, cat, NULL, 0, _cat_sel, cat);
    elm_object_disabled_set(back, 1);
@@ -316,9 +316,9 @@ _entry_change_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA
    Eina_Stringshare *txt, *tag;
    Eina_List *l;
 
-   E_FN_DEL(ecore_timer_del, reset_timer);
+   E_FREE_FUNC(reset_timer, ecore_timer_del);
    txt = elm_entry_entry_get(obj);
-   E_FN_DEL(evas_object_del, overlay);
+   E_FREE_FUNC(overlay, evas_object_del);
    if (!ctx_entry) ctx_entry = e_configure_option_ctx_new();
    if (!e_configure_option_ctx_update(ctx_entry, txt)) return;
    _ctx_active_update();
@@ -383,14 +383,14 @@ _back_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
    Eina_Stringshare *tag;
    Eina_Bool cat = EINA_FALSE;
 
-   E_FN_DEL(ecore_timer_del, reset_timer);
+   E_FREE_FUNC(reset_timer, ecore_timer_del);
    if (overlay)
      {
         evas_object_del(overlay);
         return;
      }
    if (!ctx_click) return;
-   E_FN_DEL(evas_object_del, overlay);
+   E_FREE_FUNC(overlay, evas_object_del);
    if (ctx_click->tags)
      {
         cat = EINA_TRUE;
@@ -417,14 +417,14 @@ _back_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info 
 static void
 _e_conf2_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_FN_DEL(elm_genlist_item_class_free, itc_cats);
-   E_FN_DEL(elm_genlist_item_class_free, itc_tags);
-   E_FN_DEL(elm_genlist_item_class_free, itc_opts);
-   E_FN_DEL(elm_genlist_item_class_free, itc_thumb);
-   E_FN_DEL(e_configure_option_ctx_free, ctx_entry);
-   E_FN_DEL(e_configure_option_ctx_free, ctx_click);
-   E_FN_DEL(e_configure_option_ctx_free, ctx_active);
-   E_FN_DEL(ecore_timer_del, reset_timer);
+   E_FREE_FUNC(itc_cats, elm_genlist_item_class_free);
+   E_FREE_FUNC(itc_tags, elm_genlist_item_class_free);
+   E_FREE_FUNC(itc_opts, elm_genlist_item_class_free);
+   E_FREE_FUNC(itc_thumb, elm_genlist_item_class_free);
+   E_FREE_FUNC(ctx_entry, e_configure_option_ctx_free);
+   E_FREE_FUNC(ctx_click, e_configure_option_ctx_free);
+   E_FREE_FUNC(ctx_active, e_configure_option_ctx_free);
+   E_FREE_FUNC(reset_timer, ecore_timer_del);
    list[0] = list[1] = layout = overlay = back = entry = NULL;
    E_FREE_LIST(handlers, ecore_event_handler_del);
    e_configure_option_reset_all();

@@ -221,17 +221,17 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
      }
 
    if (transition == E_BG_TRANSITION_NONE)
-     E_FN_DEL(evas_object_del, zone->bg_object);
+     E_FREE_FUNC(zone->bg_object, evas_object_del);
    else
      {
         char buf[4096];
 
         if (zone->bg_object)
           {
-             E_FN_DEL(evas_object_del, zone->prev_bg_object);
+             E_FREE_FUNC(zone->prev_bg_object, evas_object_del);
              zone->prev_bg_object = zone->bg_object;
              zone->bg_object = NULL;
-             E_FN_DEL(evas_object_del, zone->transition_object);
+             E_FREE_FUNC(zone->transition_object, evas_object_del);
           }
         o = edje_object_add(zone->container->bg_evas);
         evas_object_repeat_events_set(o, 1);

@@ -215,7 +215,7 @@ _backlight_popup_new(Instance *inst)
 static void
 _backlight_popup_free(Instance *inst)
 {
-   E_FN_DEL(e_object_del, inst->popup);
+   E_FREE_FUNC(inst->popup, e_object_del);
 }
 
 static void
