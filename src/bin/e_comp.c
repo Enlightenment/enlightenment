@@ -1432,6 +1432,10 @@ static Eina_Bool
 _e_comp_win_do_shadow(E_Comp_Win *cw)
 {
    if (cw->shaped) return 0;
+   if (cw->real_obj)
+     {
+        return ((!!cw->pop) || (!!cw->menu));
+     }
    if (cw->argb)
      {
         if (_e_comp_win_is_borderless(cw)) return 0;
