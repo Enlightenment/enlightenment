@@ -2233,6 +2233,10 @@ _e_comp_win_del(E_Comp_Win *cw)
 
    _e_comp_win_release(cw);
 
+   if (cw->inhash)
+     eina_hash_del(windows, e_util_winid_str_get(cw->win), cw);
+   cw->inhash = 0;
+
    if (!cw->delete_pending)
      {
         cw->c->wins_invalid = 1;
@@ -2273,9 +2277,6 @@ _e_comp_win_del(E_Comp_Win *cw)
      }
 
    if (cw->free_shape) E_FN_DEL(e_object_del, cw->shape);
-
-   if (cw->inhash)
-     eina_hash_del(windows, e_util_winid_str_get(cw->win), cw);
 
    free(cw->title);
    free(cw->name);
