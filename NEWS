@@ -50,7 +50,6 @@ Changes:
         * merged all binding config dialogs into conf_bindings module
     API:
         * e_menu_category_callback create callback parameter order has been changed
-        * e_manager_comp_set() is no longer accessible by modules
         * e_xkb_layout API now deals directly with E_Config_XKB_Layout structs
         * e_shelf_desk_visible_get now takes const params
         * e_util_size_debug_set now also prints for object show/hide events
