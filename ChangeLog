@@ -1,3 +1,7 @@
+2013-02-19 Mike Blumenkrantz
+
+        * e_util_size_debug_set now displays delete events
+
 2013-02-18 Mike Blumenkrantz
 
         * fixed disable of input methods in input method config dialog

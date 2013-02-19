@@ -1323,6 +1323,15 @@ e_util_time_str_get(long int seconds)
 }
 
 static void
+_e_util_size_debug_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   int x, y, w, h;
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   fprintf(stderr, "DEL %s OBJ[%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", obj, x, y, w, h);
+}
+
+static void
 _e_util_size_debug(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    int x, y, w, h;
@@ -1344,6 +1353,8 @@ e_util_size_debug_set(Evas_Object *obj, Eina_Bool enable)
                                        _e_util_size_debug, NULL);
         evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE,
                                        _e_util_size_debug, NULL);
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
+                                       _e_util_size_debug_del, NULL);
      }
    else
      {
@@ -1355,6 +1366,8 @@ e_util_size_debug_set(Evas_Object *obj, Eina_Bool enable)
                                        _e_util_size_debug, NULL);
         evas_object_event_callback_del_full(obj, EVAS_CALLBACK_HIDE,
                                        _e_util_size_debug, NULL);
+        evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                       _e_util_size_debug_del, NULL);
      }
 }
 
