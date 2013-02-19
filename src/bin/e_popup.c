@@ -69,12 +69,15 @@ static Eina_Bool
 _e_popup_autoclose_mouse_up_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Mouse_Button *ev = event;
-
-   if (autoclose_event && ((!autoclose_down_obj) || (ev->event_window != e_comp_get(autoclose_popup)->ee_win)))
+/*
+   if (autoclose_event && 
+       ((!autoclose_down_obj) || 
+           (ev->event_window != e_comp_get(autoclose_popup)->ee_win)))
      _e_popup_autoclose_cleanup();
    else
      autoclose_event++;
    autoclose_down_obj = 0;
+ */
    return ECORE_CALLBACK_RENEW;
 }
 
