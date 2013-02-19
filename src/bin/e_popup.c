@@ -13,8 +13,12 @@ static void
 _e_popup_autoclose_cleanup(void)
 {
    if (autoclose_popup)
-     e_grabinput_release(0, e_comp_get(autoclose_popup)->ee_win);
+     {
+        e_grabinput_release(0, e_comp_get(autoclose_popup)->ee_win);
+        autoclose_popup->autoclose = 0;
+     }
    E_FN_DEL(e_object_del, autoclose_popup);
+   autoclose_popup = NULL;
    E_FN_DEL(ecore_event_handler_del, autoclose_handlers[0]);
    E_FN_DEL(ecore_event_handler_del, autoclose_handlers[1]);
    E_FN_DEL(ecore_event_handler_del, autoclose_handlers[2]);
