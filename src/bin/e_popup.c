@@ -200,7 +200,8 @@ e_popup_hide(E_Popup *pop)
    if (pop->cw)
      {
         e_comp_win_hide(pop->cw);
-        e_comp_win_del(pop->cw);
+        if (e_object_is_del(E_OBJECT(pop)))
+          e_comp_win_del(pop->cw);
      }
    if (!pop->autoclose) return;
    if (e_object_is_del(E_OBJECT(pop))) return;
