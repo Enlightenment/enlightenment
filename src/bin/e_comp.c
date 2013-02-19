@@ -2414,12 +2414,7 @@ _e_comp_win_show(E_Comp_Win *cw)
 static void
 _e_comp_win_real_hide(E_Comp_Win *cw)
 {
-   if (cw->bd)
-     {
-        _e_comp_win_hide(cw);
-        return;
-     }
-   cw->real_hid = 1;
+   if (!cw->bd) cw->real_hid = 1;
    _e_comp_win_hide(cw);
 }
 
