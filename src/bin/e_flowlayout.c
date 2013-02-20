@@ -482,7 +482,7 @@ _e_flowlayout_smart_adopt(E_Smart_Data *sd, Evas_Object *obj)
    evas_object_clip_set(obj, sd->clip);
    evas_object_smart_member_add(obj, bi->sd->obj);
    evas_object_data_set(obj, "e_flowlayout_data", bi);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_FREE,
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                   _e_flowlayout_smart_item_del_hook, NULL);
    if ((!evas_object_visible_get(sd->clip)) &&
        (evas_object_visible_get(sd->obj)))
@@ -503,7 +503,7 @@ _e_flowlayout_smart_disown(Evas_Object *obj)
           evas_object_hide(bi->sd->clip);
      }
    evas_object_event_callback_del(obj,
-                                  EVAS_CALLBACK_FREE,
+                                  EVAS_CALLBACK_DEL,
                                   _e_flowlayout_smart_item_del_hook);
    evas_object_smart_member_del(obj);
    evas_object_clip_unset(obj);
@@ -940,20 +940,15 @@ static void
 _e_flowlayout_smart_del(Evas_Object *obj)
 {
    E_Smart_Data *sd;
+   Evas_Object *child;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
-   /* FIXME: this gets into an infinite loop when changin basic->advanced on
-    * ibar config dialog
-    */
-   while (sd->items)
+   EINA_LIST_FREE(sd->items, child)
      {
-        Evas_Object *child;
-
-        child = eina_list_data_get(sd->items);
-        e_flowlayout_unpack(child);
+        evas_object_event_callback_del(child, EVAS_CALLBACK_DEL, _e_flowlayout_smart_item_del_hook);
+        free(evas_object_data_get(child, "e_flowlayout_data"));
      }
-   evas_object_del(sd->clip);
    free(sd);
 }
 
