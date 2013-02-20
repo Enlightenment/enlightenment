@@ -2,11 +2,7 @@
 #include "e_mod_main.h"
 
 /* local subsystem functions */
-static Eina_Bool _cb_key_down(void *data, int type, void *event);
-static Eina_Bool _cb_mouse_down(void *data, int type, void *event);
-static Eina_Bool _cb_mouse_up(void *data, int type, void *event);
-static Eina_Bool _cb_mouse_move(void *data, int type, void *event);
-static Eina_Bool _cb_mouse_wheel(void *data, int type, void *event);
+static Eina_Bool _cb_key_down(__UNUSED__ void *data, Ecore_Event_Key *ev);
 static void      _cb_signal_close(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void      _cb_signal_syscon(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void      _cb_signal_action(void *data, Evas_Object *obj, const char *emission, const char *source);
@@ -78,12 +74,9 @@ e_syscon_show(E_Zone *zone, const char *defact)
         return 0;
      }
 
-   input_window = ecore_x_window_input_new(zone->container->win, zone->x,
-                                           zone->y, zone->w, zone->h);
-   ecore_x_window_show(input_window);
+   input_window = e_comp_get(zone)->ee_win;
    if (!e_grabinput_get(input_window, 1, input_window))
      {
-        ecore_x_window_free(input_window);
         input_window = 0;
         return 0;
      }
@@ -92,27 +85,11 @@ e_syscon_show(E_Zone *zone, const char *defact)
    if (!popup)
      {
         e_grabinput_release(input_window, input_window);
-        ecore_x_window_free(input_window);
         input_window = 0;
         return 0;
      }
+   e_popup_autoclose(popup, _cb_key_down, NULL);
    evas_event_freeze(popup->evas);
-
-   handlers = eina_list_append
-       (handlers, ecore_event_handler_add
-         (ECORE_EVENT_KEY_DOWN, _cb_key_down, NULL));
-   handlers = eina_list_append
-       (handlers, ecore_event_handler_add
-         (ECORE_EVENT_MOUSE_BUTTON_DOWN, _cb_mouse_down, NULL));
-   handlers = eina_list_append
-       (handlers, ecore_event_handler_add
-         (ECORE_EVENT_MOUSE_BUTTON_UP, _cb_mouse_up, NULL));
-   handlers = eina_list_append
-       (handlers, ecore_event_handler_add
-         (ECORE_EVENT_MOUSE_MOVE, _cb_mouse_move, NULL));
-   handlers = eina_list_append
-       (handlers, ecore_event_handler_add
-         (ECORE_EVENT_MOUSE_WHEEL, _cb_mouse_wheel, NULL));
 
    o = edje_object_add(popup->evas);
    o_bg = o;
@@ -135,18 +112,21 @@ e_syscon_show(E_Zone *zone, const char *defact)
    //  home | close | kill
 
    o = e_flowlayout_add(popup->evas);
+   e_popup_object_add(popup, o);
    o_flow_main = o;
    e_flowlayout_orientation_set(o, 1);
    e_flowlayout_flowdirection_set(o, 1, 1);
    e_flowlayout_homogenous_set(o, 1);
 
    o = e_flowlayout_add(popup->evas);
+   e_popup_object_add(popup, o);
    o_flow_secondary = o;
    e_flowlayout_orientation_set(o, 1);
    e_flowlayout_flowdirection_set(o, 1, 1);
    e_flowlayout_homogenous_set(o, 1);
 
    o = e_flowlayout_add(popup->evas);
+   e_popup_object_add(popup, o);
    o_flow_extra = o;
    e_flowlayout_orientation_set(o, 1);
    e_flowlayout_flowdirection_set(o, 1, 1);
@@ -322,28 +302,18 @@ e_syscon_hide(void)
      }
    if (do_defact) eina_stringshare_del(do_defact);
    do_defact = NULL;
-   while (handlers)
-     {
-        ecore_event_handler_del(handlers->data);
-        handlers = eina_list_remove_list(handlers, handlers);
-     }
-   e_popup_hide(popup);
+   E_FREE_LIST(handlers, ecore_event_handler_del);
    e_object_del(E_OBJECT(popup));
    popup = NULL;
    e_grabinput_release(input_window, input_window);
-   ecore_x_window_free(input_window);
    input_window = 0;
    o_selected_flow = o_selected = o_flow_extra = o_flow_main = o_flow_secondary = NULL;
 }
 
 /* local subsystem functions */
 static Eina_Bool
-_cb_key_down(__UNUSED__ void *data, __UNUSED__ int type, void *event)
+_cb_key_down(__UNUSED__ void *data, Ecore_Event_Key *ev)
 {
-   Ecore_Event_Key *ev;
-
-   ev = event;
-   if (ev->event_window != input_window) return ECORE_CALLBACK_PASS_ON;
    if (!strcmp(ev->key, "Escape"))
      e_syscon_hide();
    else if ((!strcmp(ev->key, "Left")) || (!strcmp(ev->key, "Up")))
@@ -468,67 +438,6 @@ _cb_key_down(__UNUSED__ void *data, __UNUSED__ int type, void *event)
           }
      }
 
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_cb_mouse_down(__UNUSED__ void *data, __UNUSED__ int type, void *event)
-{
-   Ecore_Event_Mouse_Button *ev;
-   Evas_Button_Flags flags = EVAS_BUTTON_NONE;
-
-   ev = event;
-   if (ev->event_window != input_window) return ECORE_CALLBACK_PASS_ON;
-   if (ev->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
-   if (ev->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
-   if ((ev->x < popup->x) || (ev->x >= (popup->x + popup->w)) ||
-       (ev->y < popup->y) || (ev->y >= (popup->y + popup->h)))
-     {
-        e_syscon_hide();
-        return ECORE_CALLBACK_PASS_ON;
-     }
-   evas_event_feed_mouse_down(popup->evas, ev->buttons, flags, ev->timestamp, NULL);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_cb_mouse_up(__UNUSED__ void *data, __UNUSED__ int type, void *event)
-{
-   Ecore_Event_Mouse_Button *ev;
-
-   ev = event;
-   if (ev->event_window != input_window) return ECORE_CALLBACK_PASS_ON;
-   evas_event_feed_mouse_up(popup->evas, ev->buttons, EVAS_BUTTON_NONE,
-                            ev->timestamp, NULL);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_cb_mouse_move(__UNUSED__ void *data, __UNUSED__ int type, void *event)
-{
-   Ecore_Event_Mouse_Move *ev;
-
-   ev = event;
-   if (ev->event_window != input_window) return ECORE_CALLBACK_PASS_ON;
-   if (!inevas)
-     {
-        evas_event_feed_mouse_in(popup->evas, ev->timestamp, NULL);
-        inevas = 1;
-     }
-   evas_event_feed_mouse_move(popup->evas, ev->x - popup->x, ev->y - popup->y,
-                              ev->timestamp, NULL);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_cb_mouse_wheel(__UNUSED__ void *data, __UNUSED__ int type, void *event)
-{
-   Ecore_Event_Mouse_Wheel *ev;
-
-   ev = event;
-   if (ev->event_window != input_window) return ECORE_CALLBACK_PASS_ON;
-   evas_event_feed_mouse_wheel(popup->evas, ev->direction, ev->z,
-                               ev->timestamp, NULL);
    return ECORE_CALLBACK_PASS_ON;
 }
 
