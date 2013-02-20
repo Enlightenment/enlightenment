@@ -256,6 +256,7 @@ EAPI void e_comp_ignore_win_add(Ecore_X_Window win);
 #define E_LAYER_LAYOUT_ADD_ABOVE(obj, layer) e_comp_canvas_layer_set(obj, E_COMP_CANVAS_LAYER_LAYOUT, layer, E_COMP_CANVAS_STACK_ABOVE)
 
 EAPI void e_comp_canvas_layer_set(Evas_Object *obj, E_Comp_Canvas_Layer comp_layer, E_Layer layer, E_Comp_Canvas_Stack stack);
+EAPI unsigned int e_comp_e_object_layer_get(const E_Object *obj);
 
 static inline E_Comp *
 e_comp_util_evas_object_comp_get(Evas_Object *obj)
@@ -279,6 +280,17 @@ e_comp_win_ignore_events_set(E_Comp_Win *cw, Eina_Bool ignore)
    EINA_SAFETY_ON_NULL_RETURN(cw);
    ignore = !!ignore;
    evas_object_pass_events_set(cw->shobj, ignore);
+}
+
+static inline unsigned int
+e_comp_e_object_layer_effective_get(const E_Object *obj)
+{
+   unsigned int layer;
+
+   layer = e_comp_e_object_layer_get(obj);
+   if ((layer > E_COMP_CANVAS_LAYER_LAYOUT) && (layer < E_COMP_CANVAS_LAYER_POPUP))
+     layer = E_COMP_CANVAS_LAYER_LAYOUT;
+   return layer;
 }
 
 EAPI void e_comp_util_wins_print(const E_Comp *c);

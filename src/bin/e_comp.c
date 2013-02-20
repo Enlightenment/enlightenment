@@ -5208,3 +5208,53 @@ e_comp_block_window_del(void)
         c->block_win = 0;
      }
 }
+
+
+EAPI unsigned int
+e_comp_e_object_layer_get(const E_Object *obj)
+{
+   if (!obj) return 0;
+   switch (obj->type)
+     {
+      E_Gadcon *gc;
+
+      case E_GADCON_TYPE:
+        gc = (E_Gadcon *)obj;
+        if (gc->shelf)
+          {
+             if (gc->shelf->popup)
+               return E_COMP_CANVAS_LAYER_LAYOUT + gc->shelf->popup->layer;
+             return E_COMP_CANVAS_LAYER_DESKTOP_TOP;
+          }
+        if (!gc->toolbar) return E_COMP_CANVAS_LAYER_DESKTOP;
+        return E_COMP_CANVAS_LAYER_LAYOUT + gc->toolbar->fwin->border->layer;
+
+      case E_GADCON_CLIENT_TYPE:
+        gc = ((E_Gadcon_Client *)(obj))->gadcon;
+        if (gc->shelf)
+          {
+             if (gc->shelf->popup)
+               return E_COMP_CANVAS_LAYER_LAYOUT + gc->shelf->popup->layer;
+             return E_COMP_CANVAS_LAYER_DESKTOP_TOP;
+          }
+        if (!gc->toolbar) return E_COMP_CANVAS_LAYER_DESKTOP;
+        return E_COMP_CANVAS_LAYER_LAYOUT + gc->toolbar->fwin->border->layer;
+
+      case E_WIN_TYPE:
+        return E_COMP_CANVAS_LAYER_LAYOUT + ((E_Win *)(obj))->border->layer;
+
+      case E_ZONE_TYPE:
+        return E_COMP_CANVAS_LAYER_DESKTOP;
+
+      case E_BORDER_TYPE:
+        return E_COMP_CANVAS_LAYER_LAYOUT + ((E_Win *)(obj))->border->layer;
+
+      case E_POPUP_TYPE:
+        return ((E_Popup *)(obj))->comp_layer + ((E_Popup *)(obj))->layer;
+
+      /* FIXME: add more types as needed */
+      default:
+        break;
+     }
+   return 0;
+}
