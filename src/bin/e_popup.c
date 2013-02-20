@@ -117,6 +117,14 @@ _e_popup_autoclose_setup(E_Popup *pop)
      autoclose_handlers[3] = ecore_event_handler_add(E_EVENT_BORDER_FOCUS_IN, _e_popup_autoclose_focus_cb, pop->key_data);
    e_grabinput_get(0, 0, e_comp_get(pop)->ee_win);
 }
+
+static void
+_e_popup_delay_del_cb(E_Popup *pop)
+{
+   e_popup_hide(pop);
+   if (pop->cw) e_comp_win_del(pop->cw);
+}
+
 /* externally accessible functions */
 
 EINTERN int
@@ -139,7 +147,7 @@ e_popup_new(E_Zone *zone, int x, int y, int w, int h)
 
    pop = E_OBJECT_ALLOC(E_Popup, E_POPUP_TYPE, _e_popup_free);
    if (!pop) return NULL;
-   e_object_delay_del_set(E_OBJECT(pop), e_popup_hide);
+   e_object_delay_del_set(E_OBJECT(pop), _e_popup_delay_del_cb);
    pop->zone = zone;
    pop->ecore_evas = zone->container->bg_ecore_evas;
    pop->zx = pop->zone->x;
