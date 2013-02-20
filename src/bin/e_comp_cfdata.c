@@ -24,6 +24,7 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_VAL(D, T, modal, CHAR);
    E_CONFIG_VAL(D, T, focus, CHAR);
    E_CONFIG_VAL(D, T, urgent, CHAR);
+   E_CONFIG_VAL(D, T, no_shadow, CHAR);
    E_CONFIG_VAL(D, T, shadow_style, STR);
 
    *conf_edd = E_CONFIG_DD_NEW("Comp_Config", E_Comp_Config);
@@ -120,6 +121,7 @@ e_comp_cfdata_config_new(void)
    cfg->match.popups = eina_list_append(cfg->match.popups, mat);
    mat->name = eina_stringshare_add("_e_popup_notification");
    mat->shadow_style = eina_stringshare_add("still");
+   mat->no_shadow = 1;
    mat->focus = 1;
 
    mat = E_NEW(E_Comp_Match, 1);

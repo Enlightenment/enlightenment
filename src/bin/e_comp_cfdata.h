@@ -71,6 +71,7 @@ struct _E_Comp_Match
    char        modal; // used for borders, 0 == don't use, 1 == is modal, -1 == not modal
    char        focus; // used for setting focus state (on popups): 1 is focused, unset is use regular logic
    char        urgent; // used for setting urgent state (on popups): 1 is urgent, unset is use regular logic
+   char        no_shadow; // set whether shadow is disabled
 };
 
 EAPI void           e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd);

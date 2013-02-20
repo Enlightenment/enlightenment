@@ -1574,7 +1574,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
    Eina_List *list = NULL, *l;
    E_Comp_Match *m;
    Eina_Stringshare *reshadow_group = NULL;
-   Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE, skip = EINA_FALSE, fast = EINA_FALSE, reshadow;
+   Eina_Bool focus = EINA_FALSE, urgent = EINA_FALSE, skip = EINA_FALSE, fast = EINA_FALSE, reshadow, no_shadow = EINA_FALSE;
    const char *title = NULL, *name = NULL, *clas = NULL, *role = NULL;
    Ecore_X_Window_Type primary_type = ECORE_X_WINDOW_TYPE_UNKNOWN;
 
@@ -1736,6 +1736,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
                }
              focus = m->focus;
              urgent = m->urgent;
+             no_shadow = m->no_shadow;
              if (m->shadow_style)
                {
                   if (fast)
@@ -1805,7 +1806,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
      edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
    else
      {
-        if (_e_comp_win_do_shadow(cw))
+        if (_e_comp_win_do_shadow(cw) && (!no_shadow))
           edje_object_signal_emit(cw->shobj, "e,state,shadow,on", "e");
         else
           edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
