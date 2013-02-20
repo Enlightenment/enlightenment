@@ -2254,10 +2254,12 @@ _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y)
    E_Drag *drag;
    Evas_Object *o = NULL;
    Evas_Coord w = 0, h = 0;
+   E_Zone *zone;
    const char *drag_types[] = { "enlightenment/gadcon_client" };
 
-   if ((gcc->gadcon->drag_gcc) || (!gcc->gadcon->zone) || (!gcc->gadcon->zone->container))
-     return;
+   zone = e_gadcon_zone_get(gcc->gadcon);
+   if (gcc->gadcon->drag_gcc) return;
+   if ((!zone) || (!zone->container)) return;
 
    if (!e_util_strcmp(gcc->client_class->name, "systray"))
      return;
@@ -2274,9 +2276,9 @@ _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y)
    if (!e_drop_inside(gcc->gadcon->drop_handler, x, y))
      e_gadcon_client_hide(gcc);
 
-   ecore_x_pointer_xy_get(gcc->gadcon->zone->container->win, &x, &y);
+   ecore_x_pointer_xy_get(zone->container->win, &x, &y);
 
-   gcc->drag.drag = drag = e_drag_new(gcc->gadcon->zone->container, x, y,
+   gcc->drag.drag = drag = e_drag_new(zone->container, x, y,
                                       drag_types, 1, gcc, -1, NULL,
                                       e_gadcon_drag_finished_cb);
    if (!drag) return;
