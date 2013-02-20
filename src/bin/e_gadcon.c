@@ -2584,7 +2584,7 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
 
    if (e_gadcon_layout_orientation_get(gcc->gadcon->o_container))
      {
-        if (cy + e_config->drag_resist < 0 || cy - e_config->drag_resist > gh)
+        if (cy + e_config->drag_resist < 0 || cy - e_config->drag_resist >= gh)
           {
              _e_gadcon_client_drag_begin(gcc, cx, cy);
              return;
