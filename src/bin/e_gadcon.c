@@ -1122,6 +1122,7 @@ e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
 {
    Evas_Coord x, y, w, h;
    Evas_Object *base;
+   unsigned int layer;
 
    E_OBJECT_CHECK(gcc);
    E_OBJECT_TYPE_CHECK(gcc, E_GADCON_CLIENT_TYPE);
@@ -1132,7 +1133,9 @@ e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
    evas_object_geometry_get(base, &x, &y, &w, &h);
 
    gcc->o_control = edje_object_add(gcc->gadcon->evas);
-   evas_object_layer_set(gcc->o_control, evas_object_layer_get(base) + 1);
+   /* FIXME: should probably be in gadget theme or something */
+   layer = e_comp_e_object_layer_effective_get(E_OBJECT(gcc)) + 1;
+   evas_object_layer_set(gcc->o_control, layer);
    e_gadcon_locked_set(gcc->gadcon, 1);
    gcc->gadcon->editing = 1;
 
@@ -1158,7 +1161,7 @@ e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
    gcc->o_event = evas_object_rectangle_add(gcc->gadcon->evas);
    evas_object_color_set(gcc->o_event, 0, 0, 0, 0);
    evas_object_repeat_events_set(gcc->o_event, 1);
-   evas_object_layer_set(gcc->o_event, evas_object_layer_get(base) + 1);
+   evas_object_layer_set(gcc->o_event, layer);
    evas_object_move(gcc->o_event, x, y);
    evas_object_resize(gcc->o_event, w, h);
 
