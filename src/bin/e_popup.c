@@ -3,9 +3,8 @@
 /* local subsystem globals */
 static Eina_List *_e_popup_list = NULL;
 static E_Popup *autoclose_popup = NULL;
-static Ecore_Event_Handler *autoclose_handlers[4] = {NULL};
-static Eina_Bool autoclose_down_obj = EINA_FALSE;
-static unsigned int autoclose_event = 0;
+static Evas_Object *event_rect = NULL;
+static Ecore_Event_Handler *key_handler = NULL;
 
 /* local subsystem functions */
 
@@ -18,12 +17,8 @@ _e_popup_autoclose_cleanup(void)
         autoclose_popup->autoclose = 0;
      }
    E_FN_DEL(e_object_del, autoclose_popup);
-   autoclose_popup = NULL;
-   E_FN_DEL(ecore_event_handler_del, autoclose_handlers[0]);
-   E_FN_DEL(ecore_event_handler_del, autoclose_handlers[1]);
-   E_FN_DEL(ecore_event_handler_del, autoclose_handlers[2]);
-   E_FN_DEL(ecore_event_handler_del, autoclose_handlers[3]);
-   autoclose_down_obj = 0;
+   E_FN_DEL(evas_object_del, event_rect);
+   E_FN_DEL(ecore_event_handler_del, key_handler);
 }
 
 static void
@@ -40,19 +35,6 @@ _e_popup_free(E_Popup *pop)
    free(pop);
 }
 
-static void
-_e_popup_obj_autoclose_mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   autoclose_down_obj = 1;
-}
-
-static Eina_Bool
-_e_popup_autoclose_focus_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
-{
-   _e_popup_autoclose_cleanup();
-   return ECORE_CALLBACK_RENEW;
-}
-
 static Eina_Bool
 _e_popup_autoclose_key_down_cb(void *data, int type EINA_UNUSED, void *event)
 {
@@ -65,57 +47,33 @@ _e_popup_autoclose_key_down_cb(void *data, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool
-_e_popup_autoclose_mouse_up_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+static void
+_e_popup_autoclose_mouse_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Ecore_Event_Mouse_Button *ev = event;
-/*
-   if (autoclose_event && 
-       ((!autoclose_down_obj) || 
-           (ev->event_window != e_comp_get(autoclose_popup)->ee_win)))
-     _e_popup_autoclose_cleanup();
-   else
-     autoclose_event++;
-   autoclose_down_obj = 0;
- */
-   return ECORE_CALLBACK_RENEW;
-}
-
-static Eina_Bool
-_e_popup_autoclose_mouse_down_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_Event_Mouse_Button *ev = event;
-
-   if (ev->event_window != e_comp_get(autoclose_popup)->ee_win)
-     _e_popup_autoclose_cleanup();
-   autoclose_event++;
-   return ECORE_CALLBACK_RENEW;
+   _e_popup_autoclose_cleanup();
 }
 
 static void
 _e_popup_autoclose_setup(E_Popup *pop)
 {
    E_FN_DEL(e_object_del, autoclose_popup);
-   autoclose_event = 0;
-   evas_object_event_callback_add(pop->content, EVAS_CALLBACK_MOUSE_DOWN, _e_popup_obj_autoclose_mouse_down_cb, NULL);
-   autoclose_popup = pop;
-   if (autoclose_handlers[0])
-     ecore_event_handler_data_set(autoclose_handlers[0], pop->key_data);
+   E_FN_DEL(evas_object_del, event_rect);
+
+   event_rect = evas_object_rectangle_add(e_comp_get(pop)->evas);
+   evas_object_color_set(event_rect, 0, 0, 0, 0);
+   evas_object_resize(event_rect, pop->zone->container->w, pop->zone->container->h);
+   evas_object_event_callback_add(event_rect, EVAS_CALLBACK_MOUSE_UP, _e_popup_autoclose_mouse_up_cb, NULL);
+   if (pop->comp_layer == E_COMP_CANVAS_LAYER_LAYOUT)
+     {
+        e_layout_pack(e_comp_get(pop)->layout, event_rect);
+        e_layout_child_lower_below(event_rect, pop->cw->shobj);
+     }
    else
-     autoclose_handlers[0] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_popup_autoclose_mouse_down_cb, pop->key_data);
-   if (autoclose_handlers[1])
-     ecore_event_handler_data_set(autoclose_handlers[1], pop->key_data);
-   else
-     autoclose_handlers[1] = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _e_popup_autoclose_mouse_up_cb, pop->key_data);
-   if (autoclose_handlers[2])
-     ecore_event_handler_data_set(autoclose_handlers[2], pop->key_data);
-   else
-     autoclose_handlers[2] = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_popup_autoclose_key_down_cb, pop->key_data);
-   if (autoclose_handlers[3])
-     ecore_event_handler_data_set(autoclose_handlers[3], pop->key_data);
-   else
-     autoclose_handlers[3] = ecore_event_handler_add(E_EVENT_BORDER_FOCUS_IN, _e_popup_autoclose_focus_cb, pop->key_data);
+     evas_object_layer_set(event_rect, pop->comp_layer - 1);
+   evas_object_show(event_rect);
+   key_handler = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_popup_autoclose_key_down_cb, NULL);
    e_grabinput_get(0, 0, e_comp_get(pop)->ee_win);
+   autoclose_popup = pop;
 }
 
 static void
@@ -321,6 +279,5 @@ e_popup_autoclose(E_Popup *pop, E_Popup_Key_Cb cb, const void *data)
    pop->autoclose = 1;
    pop->key_cb = cb;
    pop->key_data = (void*)data;
-   if (!pop->visible) return;
-   _e_popup_autoclose_setup(pop);
+   if (pop->visible) _e_popup_autoclose_setup(pop);
 }
