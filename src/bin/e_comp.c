@@ -1522,8 +1522,8 @@ _e_comp_done_defer(E_Comp_Win *cw)
    cw->force = 1;
    if (cw->delete_me)
      {
-        if (cw->real_obj && cw->eobj)
-          e_object_unref(cw->eobj);
+//        if (cw->real_obj && cw->eobj)
+//          e_object_unref(E_OBJECT(cw->eobj));
         _e_comp_win_del(cw);
      }
    else cw->force = 0;
@@ -1955,6 +1955,7 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
              CRI("UNHANDLED");
           }
         cw->eobj = eobj;
+        e_object_ref(E_OBJECT(cw->eobj));
      }
    else
      {
@@ -2187,6 +2188,11 @@ _e_comp_win_del(E_Comp_Win *cw)
 {
    Evas_Object *o;
 
+   if (cw->real_obj && cw->eobj)
+     {
+        e_object_unref(E_OBJECT(cw->eobj));
+        cw->eobj = NULL;
+     }
    if (cw->animating)
      {
         cw->c->animating--;
@@ -2450,8 +2456,8 @@ _e_comp_win_hide(E_Comp_Win *cw)
              cw->c->animating++;
           }
         cw->animating = 1;
-        if (cw->real_obj && cw->eobj)
-          e_object_ref(cw->eobj);
+//        if (cw->real_obj && cw->eobj)
+//          e_object_ref(cw->eobj);
         _e_comp_win_render_queue(cw);
 
         cw->pending_count++;
