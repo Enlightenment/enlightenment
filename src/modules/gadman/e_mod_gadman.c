@@ -448,7 +448,7 @@ gadman_gadget_edit_end(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const
 void
 gadman_gadgets_show(void)
 {
-   Eina_List *l, *ll;
+   Eina_List *l;
    E_Gadcon_Client *gcc;
    E_Config_Gadcon_Client *cf_gcc;
 
@@ -475,14 +475,10 @@ gadman_gadgets_show(void)
      }
 
    /* Showing top gadgets */
-   EINA_LIST_FOREACH_SAFE(Man->gadgets[GADMAN_LAYER_TOP], l, ll, cf_gcc)
+   EINA_LIST_FOREACH(Man->gadgets[GADMAN_LAYER_TOP], l, cf_gcc)
      {
         gcc = e_gadcon_client_find(NULL, cf_gcc);
-        if (!gcc)
-          {
-             Man->gadgets[GADMAN_LAYER_TOP] = eina_list_remove_list(Man->gadgets[GADMAN_LAYER_TOP], l);
-             continue;
-          }
+        if (!gcc) continue;
         if (Man->conf->anim_gad)
           edje_object_signal_emit(gcc->o_frame,
                                   "e,state,visibility,show", "e");
@@ -495,7 +491,7 @@ gadman_gadgets_show(void)
 void
 gadman_gadgets_hide(void)
 {
-   Eina_List *l, *ll;
+   Eina_List *l;
    E_Gadcon_Client *gcc;
    E_Config_Gadcon_Client *cf_gcc;
    Eina_Bool editing = EINA_FALSE;
@@ -522,14 +518,10 @@ gadman_gadgets_hide(void)
      }
 
    /* Hiding top gadgets */
-   EINA_LIST_FOREACH_SAFE(Man->gadgets[GADMAN_LAYER_TOP], l, ll, cf_gcc)
+   EINA_LIST_FOREACH(Man->gadgets[GADMAN_LAYER_TOP], l, cf_gcc)
      {
         gcc = e_gadcon_client_find(NULL, cf_gcc);
-        if (!gcc)
-          {
-             Man->gadgets[GADMAN_LAYER_TOP] = eina_list_remove_list(Man->gadgets[GADMAN_LAYER_TOP], l);
-             continue;
-          }
+        if (!gcc) continue;
         editing = gcc->gadcon->editing;
         if (Man->conf->anim_gad)
           edje_object_signal_emit(gcc->o_frame,
