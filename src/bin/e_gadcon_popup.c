@@ -8,6 +8,7 @@ _e_popup_autoclose_deskafter_show_cb(void *data EINA_UNUSED, int type EINA_UNUSE
    E_Event_Desk_After_Show *ev = event;
    E_Gadcon_Popup *pop = data;
 
+   if (!pop) return ECORE_CALLBACK_RENEW;
    if (!pop->win->visible) return ECORE_CALLBACK_RENEW;
    if (!e_gadcon_client_visible_get(pop->gcc, ev->desk))
      e_object_del(E_OBJECT(pop));
@@ -21,6 +22,7 @@ _e_popup_autoclose_border_fullscreen_cb(void *data, int type EINA_UNUSED, void *
    E_Event_Border_Fullscreen *ev = event;
    E_Gadcon_Popup *pop = data;
 
+   if (!pop) return ECORE_CALLBACK_RENEW;
    if (!pop->win->visible) return ECORE_CALLBACK_RENEW;
    if (!ev->border->fullscreen) return ECORE_CALLBACK_RENEW;
    if (e_gadcon_client_visible_get(pop->gcc, ev->border->desk))
