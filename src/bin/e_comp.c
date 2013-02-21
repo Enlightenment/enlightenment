@@ -1505,6 +1505,7 @@ _e_comp_object_del(void *data, void *obj)
         e_object_delfn_del(obj, cw->dfn);
         cw->dfn = NULL;
      }
+   cw->eobj = NULL;
    e_comp_win_del(cw);
 }
 
