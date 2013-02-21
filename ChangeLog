@@ -3,6 +3,7 @@
         * compositor now allows user changing/remembering of object opacity
         * added E_LIST_REVERSE_FREE macro
         * E_FN_DEL renamed to E_FREE_FUNC for consistency
+        * added e_object_ref_debug_set
 
 2013-02-20 Mike Blumenkrantz
 
