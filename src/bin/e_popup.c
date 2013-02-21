@@ -178,13 +178,11 @@ e_popup_content_set(E_Popup *pop, Evas_Object *obj)
    evas_object_data_set(obj, "eobj", pop);
    evas_object_move(obj, pop->zone->x + pop->x, pop->zone->y + pop->y);
    evas_object_resize(obj, pop->w, pop->h);
+   evas_object_show(obj);
    e_popup_layer_set(pop, pop->comp_layer, pop->layer);
    e_popup_ignore_events_set(pop, pop->ignore_events);
    if (pop->visible)
-     {
-        e_comp_win_moveresize(pop->cw, pop->zone->x + pop->x, pop->zone->y + pop->y, pop->w, pop->h);
-        evas_object_show(obj);
-     }
+     e_comp_win_moveresize(pop->cw, pop->zone->x + pop->x, pop->zone->y + pop->y, pop->w, pop->h);
 }
 
 EAPI void
