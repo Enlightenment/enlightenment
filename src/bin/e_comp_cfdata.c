@@ -126,6 +126,12 @@ e_comp_cfdata_config_new(void)
 
    mat = E_NEW(E_Comp_Match, 1);
    cfg->match.popups = eina_list_append(cfg->match.popups, mat);
+   mat->name = eina_stringshare_add("E Drag");
+   mat->shadow_style = eina_stringshare_add("still");
+   mat->no_shadow = 1;
+
+   mat = E_NEW(E_Comp_Match, 1);
+   cfg->match.popups = eina_list_append(cfg->match.popups, mat);
    mat->shadow_style = eina_stringshare_add("popup");
 
    cfg->match.borders = NULL;

@@ -38,22 +38,15 @@ struct _E_Drag
    } cb;
 
    E_Container       *container;
-   Ecore_Evas        *ecore_evas;
    Evas              *evas;
-   Ecore_X_Window     evas_win;
-   E_Container_Shape *shape;
+   E_Popup          *pop;
    Evas_Object       *object;
 
    int                x, y, w, h;
    int                dx, dy;
 
-   int                shape_rects_num;
-   Ecore_X_Rectangle *shape_rects;
-
    E_Layer            layer;
    unsigned char      visible : 1;
-   unsigned char      need_shape_export : 1;
-   unsigned char      xy_update : 1;
 
    unsigned int       num_types;
    const char        *types[];
@@ -72,6 +65,7 @@ struct _E_Drop_Handler
    } cb;
 
    E_Object     *obj;
+   Evas_Object *base;
    int           x, y, w, h;
 
    unsigned char active : 1;
@@ -120,7 +114,6 @@ EAPI Evas           *e_drag_evas_get(const E_Drag *drag);
 EAPI void            e_drag_object_set(E_Drag *drag, Evas_Object *object);
 EAPI void            e_drag_move(E_Drag *drag, int x, int y);
 EAPI void            e_drag_resize(E_Drag *drag, int w, int h);
-EAPI void            e_drag_idler_before(void);
 EAPI void            e_drag_key_down_cb_set(E_Drag *drag, void (*func)(E_Drag *drag, Ecore_Event_Key *e));
 EAPI void            e_drag_key_up_cb_set(E_Drag *drag, void (*func)(E_Drag *drag, Ecore_Event_Key *e));
 
@@ -146,11 +139,20 @@ EAPI void         e_drop_handler_responsive_set(E_Drop_Handler *handler);
 EAPI int          e_drop_handler_responsive_get(const E_Drop_Handler *handler);
 EAPI void         e_drop_handler_action_set(Ecore_X_Atom action);
 EAPI Ecore_X_Atom e_drop_handler_action_get(void);
-
 EAPI Eina_List *e_dnd_util_text_uri_list_convert(char *data, int size);
-#endif
-#endif
 
-#ifndef MIN
-# define MIN(x, y) (((x) > (y)) ? (y) : (x))
+
+static inline void
+e_drag_show(E_Drag *drag)
+{
+   drag->visible = 1;
+}
+
+static inline void
+e_drag_hide(E_Drag *drag)
+{
+   drag->visible = 0;
+}
+
+#endif
 #endif

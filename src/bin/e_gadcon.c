@@ -2309,6 +2309,7 @@ _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y)
    e_drag_object_set(drag, o);
    e_drag_resize(drag, w, h);
    e_drag_start(drag, x + w / 2, y + h / 2);
+   e_drag_hide(drag);
 }
 
 static void
@@ -2523,7 +2524,7 @@ _e_gadcon_client_move_start(E_Gadcon_Client *gcc)
      evas_pointer_canvas_xy_get(gcc->gadcon->evas, &gcc->dx, &gcc->dy);
    else
      {
-        ecore_x_pointer_xy_get(gcc->gadcon->zone->container->win, &gcc->dx, &gcc->dy);
+        ecore_x_pointer_xy_get(e_comp_get(gcc)->ee_win, &gcc->dx, &gcc->dy);
         e_gadcon_canvas_zone_geometry_get(gcc->gadcon, &gcx, &gcy, NULL, NULL);
         evas_object_geometry_get(gcc->gadcon->o_container, &gx, &gy, NULL, NULL);
         gcc->dx -= (gcx + gx);
@@ -2595,7 +2596,8 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
 
    if (e_gadcon_layout_orientation_get(gcc->gadcon->o_container))
      {
-        if (cy + e_config->drag_resist < 0 || cy - e_config->drag_resist >= gh)
+        if ((cy + e_config->drag_resist < 0 || cy - e_config->drag_resist >= gh) ||
+            (cx + e_config->drag_resist < 0 || cx - e_config->drag_resist > gw))
           {
              _e_gadcon_client_drag_begin(gcc, cx, cy);
              return;
@@ -2610,7 +2612,7 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
              changes = 1;
           }
         /* DRAG LEFT */
-        else if (x < 0 && (gcc->drag.x - cx < gcc->config.pos))
+        else if (x < 0 && (cx + gcc->drag.x < gcc->config.pos))
           {
              if (gcc->state_info.state != E_LAYOUT_ITEM_STATE_POS_DEC)
                gcc->state_info.resist = 0;
@@ -2632,12 +2634,14 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
      }
    else
      {
-        if (cx + e_config->drag_resist < 0 || cx - e_config->drag_resist > gw)
+        if ((cy + e_config->drag_resist < 0 || cy - e_config->drag_resist >= gh) ||
+            (cx + e_config->drag_resist < 0 || cx - e_config->drag_resist > gw))
           {
              _e_gadcon_client_drag_begin(gcc, cx, cy);
              return;
           }
 
+        /* DRAG DOWN */
         if (y > 0 && (cy + gcc->drag.y > gcc->config.pos))
           {
              if (gcc->state_info.state != E_LAYOUT_ITEM_STATE_POS_INC)
@@ -2645,6 +2649,7 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
              gcc->state_info.state = E_LAYOUT_ITEM_STATE_POS_INC;
              changes = 1;
           }
+        /* DRAG UP */
         else if (y < 0 && (cy + gcc->drag.y < gcc->config.pos))
           {
              if (gcc->state_info.state != E_LAYOUT_ITEM_STATE_POS_DEC)
@@ -2865,7 +2870,7 @@ _e_gadcon_cb_dnd_enter(void *data, const char *type __UNUSED__, void *event)
    if ((!gcc->hidden) && (gcc->gadcon == gc))
      {
         if (gc->dnd_enter_cb) gc->dnd_enter_cb(gc, gc->drag_gcc);
-        evas_object_hide(gc->drag_gcc->drag.drag->object);
+        e_drag_hide(gc->drag_gcc->drag.drag);
         return;
      }
    if (gcc->gadcon != gc)
@@ -2873,7 +2878,7 @@ _e_gadcon_cb_dnd_enter(void *data, const char *type __UNUSED__, void *event)
    else if (e_gadcon_site_is_desktop(gcc->gadcon->location->site))
      {
         e_gadcon_client_show(gc->drag_gcc);
-        evas_object_hide(gc->drag_gcc->drag.drag->object);
+        e_drag_hide(gc->drag_gcc->drag.drag);
         if (gc->dnd_enter_cb) gc->dnd_enter_cb(gc, gc->drag_gcc);
         return;
      }
@@ -2957,7 +2962,7 @@ _e_gadcon_cb_dnd_enter(void *data, const char *type __UNUSED__, void *event)
                }
           }
 
-        evas_object_hide(gc->drag_gcc->drag.drag->object);
+        e_drag_hide(gc->drag_gcc->drag.drag);
         e_gadcon_client_edit_begin(gc->new_gcc);
         e_gadcon_client_autoscroll_set(gc->new_gcc, gcc->autoscroll);
 /*		  e_gadcon_client_resizable_set(gc->new_gcc, gcc->resizable);*/
@@ -3040,7 +3045,7 @@ _e_gadcon_cb_dnd_leave(void *data, const char *type __UNUSED__, void *event __UN
    //INF("DELETING new_gcc");
    e_object_del(E_OBJECT(gc->new_gcc));
    gc->new_gcc = NULL;
-   evas_object_show(gc->drag_gcc->drag.drag->object);
+   e_drag_show(gc->drag_gcc->drag.drag);
    if (gc->dnd_leave_cb) gc->dnd_leave_cb(gc, gc->drag_gcc);
 }
 

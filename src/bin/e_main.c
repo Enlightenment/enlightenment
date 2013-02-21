@@ -1900,7 +1900,6 @@ _e_main_cb_idle_before(void *data __UNUSED__)
    e_menu_idler_before();
    e_focus_idler_before();
    e_border_idler_before();
-   e_drag_idler_before();
    e_pointer_idler_before();
    EINA_LIST_FOREACH(_idle_before_list, l, eb)
      {

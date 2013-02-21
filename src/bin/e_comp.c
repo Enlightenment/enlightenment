@@ -4843,6 +4843,9 @@ e_comp_get(void *o)
    E_Container *con = NULL;
    E_Manager *man = NULL;
    E_Gadcon_Popup *gp;
+   E_Gadcon *gc;
+   E_Gadcon_Client *gcc;
+   E_Drag *drag;
 
    if (!o) obj = (E_Object*)e_manager_current_get();
    /* try to get to zone type first */
@@ -4866,6 +4869,20 @@ e_comp_get(void *o)
       case E_GADCON_POPUP_TYPE:
         gp = (E_Gadcon_Popup*)obj;
         obj = (void*)gp->win->zone;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        break;
+      case E_DRAG_TYPE:
+        drag = (E_Drag*)obj;
+        obj = (void*)drag->container;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        break;
+      case E_GADCON_CLIENT_TYPE:
+        gcc = (E_Gadcon_Client*)obj;
+        obj = (void*)gcc->gadcon;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+      case E_GADCON_TYPE:
+        gc = (E_Gadcon*)obj;
+        obj = (void*)e_gadcon_zone_get(gc);
         EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
         break;
       default:

@@ -118,6 +118,7 @@ Improvements:
     * e_util_size_debug_set now displays delete events
     * compositor now allows user changing/remembering of object opacity
     * EFM toolbar now has its own gadcon location
+    * DND canvas merged to compositor
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.

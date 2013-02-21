@@ -1473,8 +1473,8 @@ on_move(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const 
 
    e_drag_object_set(drag, o);
    e_drag_resize(drag, ow, oh);
-   evas_object_hide(o);
    e_drag_start(drag, mx, my);
+   e_drag_hide(drag);
 }
 
 static void

@@ -7583,6 +7583,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              edje_object_signal_emit(o, "e,state,selected", "e");
              edje_object_signal_emit(o2, "e,state,selected", "e");
              e_drag_object_set(d, o);
+             e_popup_object_add(d->pop, o2);
              edje_object_signal_emit(o, "e,state,move", "e");
              e_drag_resize(d, w, h);
              evas_object_smart_callback_call(ic->sd->obj, "dnd_begin", &ic->info);
