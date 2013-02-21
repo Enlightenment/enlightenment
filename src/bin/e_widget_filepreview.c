@@ -220,8 +220,9 @@ _e_wid_fprev_preview_video_position(E_Widget_Data *wd, Evas_Object *obj, void *e
 {
    double t, tot, ratio;
    int iw, ih;
-   Evas_Coord w, h;
+   Evas_Coord w, h, mw, mh, ow, oh;
 
+   evas_object_geometry_get(wd->o_preview_preview, NULL, NULL, &ow, &oh);
    evas_object_geometry_get(wd->o_preview_properties_table, NULL, NULL, &w, &h);
 
    tot = emotion_object_play_length_get(obj);
@@ -236,10 +237,23 @@ _e_wid_fprev_preview_video_position(E_Widget_Data *wd, Evas_Object *obj, void *e
    if (ratio > 0.0) iw = (ih * ratio) + 0.5;
    if (iw < 1) iw = 1;
    if (ih < 1) ih = 1;
-   e_widget_preview_vsize_set(wd->o_preview_preview, w, (w * ih) / iw);
-   e_widget_size_min_set(wd->o_preview_preview, w, (w * ih) / iw);
+
+   w = w;
+   h = (w * ih) / iw;
+   e_widget_preview_vsize_set(wd->o_preview_preview, w, h);
+   if (h > oh)
+     {
+        w = (w * oh) / h;
+        h = oh;
+     }
+   e_widget_size_min_set(wd->o_preview_preview, w, h);
    e_widget_table_object_repack(wd->o_preview_properties_table,
                                 wd->o_preview_preview, 0, 0, 2, 2, 0, 0, 1, 1);
+   e_widget_list_object_repack(wd->o_preview_list,
+                               wd->o_preview_properties_table,
+                               1, 1, 0.5);
+   e_widget_size_min_get(wd->o_preview_list, &mw, &mh);
+   e_widget_size_min_set(wd->obj, mw, mh);
 }
 
 static void
