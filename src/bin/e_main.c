@@ -902,6 +902,17 @@ main(int argc, char **argv)
    _e_main_shutdown_push(e_gadcon_shutdown);
 
    if (e_config->show_splash)
+     e_init_status_set(_("Setup Toolbars"));
+   TS("E_Toolbar Init");
+   if (!e_toolbar_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its toolbars.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Toolbar Init Done");
+   _e_main_shutdown_push(e_toolbar_shutdown);
+
+   if (e_config->show_splash)
      e_init_status_set(_("Setup Wallpaper"));
    TS("E_Bg Init");
    if (!e_bg_init())
