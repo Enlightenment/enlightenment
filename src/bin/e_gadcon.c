@@ -615,6 +615,17 @@ e_gadcon_unpopulate(E_Gadcon *gc)
 }
 
 EAPI void
+e_gadcon_repopulate(E_Gadcon *gc)
+{
+   E_OBJECT_CHECK(gc);
+   E_OBJECT_TYPE_CHECK(gc, E_GADCON_TYPE);
+   if (gc->o_container) e_gadcon_layout_freeze(gc->o_container);
+   e_gadcon_unpopulate(gc);
+   e_gadcon_populate(gc);
+   if (gc->o_container) e_gadcon_layout_thaw(gc->o_container);
+}
+
+EAPI void
 e_gadcon_populate_class(E_Gadcon *gc, const E_Gadcon_Client_Class *cc)
 {
    Eina_List *l;

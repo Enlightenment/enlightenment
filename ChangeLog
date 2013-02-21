@@ -4,6 +4,7 @@
         * added E_LIST_REVERSE_FREE macro
         * added e_object_ref_debug_set
         * E_FN_DEL macro renamed to E_FREE_FUNC with param order swapped for consistency
+        * added e_gadcon_repopulate
 
 2013-02-20 Mike Blumenkrantz
 

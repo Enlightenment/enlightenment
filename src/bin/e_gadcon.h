@@ -292,6 +292,7 @@ EAPI void                    e_gadcon_populate_callback_set(E_Gadcon *gc, void (
 EAPI void                    e_gadcon_layout_policy_set(E_Gadcon *gc, E_Gadcon_Layout_Policy layout_policy);
 EAPI Eina_Bool               e_gadcon_populate(E_Gadcon *gc);
 EAPI void                    e_gadcon_unpopulate(E_Gadcon *gc);
+EAPI void                    e_gadcon_repopulate(E_Gadcon *gc);
 EAPI void                    e_gadcon_populate_class(E_Gadcon *gc, const E_Gadcon_Client_Class *cc);
 EAPI void                    e_gadcon_orient(E_Gadcon *gc, E_Gadcon_Orient orient);
 EAPI void                    e_gadcon_edit_begin(E_Gadcon *gc);
