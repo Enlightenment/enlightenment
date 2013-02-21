@@ -21,6 +21,7 @@ static void        _e_toolbar_menu_items_append(void *data, E_Gadcon_Client *gcc
 
 /* local vars */
 static Eina_List *toolbars = NULL;
+static E_Gadcon_Location *tb_location = NULL;
 
 static void
 _tb_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *info __UNUSED__)
@@ -31,9 +32,104 @@ _tb_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *info __UNUSED
    if (tbar->gadcon) e_gadcon_swallowed_min_size_set(tbar->gadcon, w, h);
 }
 
+static void
+_e_toolbar_gadget_remove(void *data EINA_UNUSED, E_Gadcon_Client *gcc)
+{
+   E_Toolbar *tbar = eina_list_data_get(toolbars);
+   Eina_List *l;
+
+   if (!tbar)
+     {
+        E_Config_Gadcon *cf_gc;
+        EINA_LIST_FOREACH(e_config->gadcons, l, cf_gc)
+          {
+             if (e_util_strcmp(cf_gc->name, "toolbar")) continue;
+             cf_gc->clients = eina_list_remove(cf_gc->clients, gcc->cf);
+             break;
+          }
+        if (!cf_gc) return;
+     }
+   else if (gcc->cf)
+     e_gadcon_client_config_del(tbar->gadcon->cf, gcc->cf);
+   EINA_LIST_FOREACH(toolbars, l, tbar)
+     e_gadcon_repopulate(tbar->gadcon);
+   e_config_save_queue();
+}
+
+static int
+_e_toolbar_gadget_add(void *data EINA_UNUSED, E_Gadcon_Client *gcc, const E_Gadcon_Client_Class *cc)
+{
+   E_Toolbar *tbar = eina_list_data_get(toolbars);
+   E_Config_Gadcon *cf_gc = NULL;
+   E_Gadcon *gc = NULL;
+   Eina_List *l;
+   E_Config_Gadcon_Client *cf_gcc = gcc->cf;
+
+   if (!tbar)
+     {
+        E_Config_Gadcon *cf_gc2;
+        EINA_LIST_FOREACH(e_config->gadcons, l, cf_gc2)
+          {
+             if (e_util_strcmp(cf_gc2->name, "toolbar")) continue;
+             cf_gc = cf_gc2;
+             break;
+          }
+        if (!cf_gc) return 0;
+     }
+   else
+     gc = tbar->gadcon, cf_gc = gc->cf;
+   if (gcc)
+     {
+        gcc->gadcon->cf->clients = eina_list_remove(gcc->gadcon->cf->clients, cf_gcc);
+        if (gc && gc->zone)
+          cf_gcc->geom.res = gc->zone->w;
+        else if (gc && gc->o_container)
+          {
+             int w, h;
+             evas_object_geometry_get(gc->o_container, NULL, NULL, &w, &h);
+             switch (gc->orient)
+               {
+                case E_GADCON_ORIENT_VERT:
+                case E_GADCON_ORIENT_LEFT:
+                case E_GADCON_ORIENT_RIGHT:
+                case E_GADCON_ORIENT_CORNER_LT:
+                case E_GADCON_ORIENT_CORNER_RT:
+                case E_GADCON_ORIENT_CORNER_LB:
+                case E_GADCON_ORIENT_CORNER_RB:
+                  cf_gcc->geom.res = h;
+                  break;
+
+                default:
+                  cf_gcc->geom.res = w;
+               }
+          }
+        else
+          cf_gcc->geom.res = 800;
+        cf_gcc->geom.size = 80;
+        cf_gcc->geom.pos = cf_gcc->geom.res - cf_gcc->geom.size;
+        cf_gc->clients = eina_list_append(cf_gc->clients, cf_gcc);
+     }
+   else
+     {
+        if (!gc); // FIXME: okay...need to create a gcc from nothing and add it to nothing...
+        else if (!e_gadcon_client_config_new(gc, cc->name))
+          return 0;
+     }
+   EINA_LIST_FOREACH(toolbars, l, tbar)
+     e_gadcon_repopulate(tbar->gadcon);
+   if (gc || gcc)
+     e_config_save_queue();
+   return (gc || gcc);
+}
+
 EINTERN int
 e_toolbar_init(void)
 {
+   tb_location = e_gadcon_location_new("EFM Toolbar", E_GADCON_SITE_EFM_TOOLBAR,
+                                    _e_toolbar_gadget_add, NULL,
+                                    _e_toolbar_gadget_remove, NULL);
+   e_gadcon_location_set_icon_name(tb_location, "configure-toolbars");
+   e_gadcon_location_register(tb_location);
    return 1;
 }
 
@@ -47,6 +143,8 @@ e_toolbar_shutdown(void)
         tbar = eina_list_data_get(toolbars);
         e_object_del(E_OBJECT(tbar));
      }
+   e_gadcon_location_unregister(tb_location);
+   E_FREE_FUNC(tb_location, e_gadcon_location_free);
    return 1;
 }
 
@@ -101,8 +199,7 @@ e_toolbar_new(Evas *evas, const char *name, E_Win *fwin, Evas_Object *fm2)
    e_toolbar_orient(tbar, E_GADCON_ORIENT_TOP);
 
    e_gadcon_toolbar_set(tbar->gadcon, tbar);
-   e_gadcon_xdnd_window_set(tbar->gadcon, tbar->fwin->evas_win);
-   e_gadcon_dnd_window_set(tbar->gadcon, tbar->fwin->evas_win);
+   tbar->gadcon->location = tb_location;
    e_gadcon_ecore_evas_set(tbar->gadcon, tbar->fwin->ecore_evas);
    e_gadcon_util_menu_attach_func_set(tbar->gadcon,
                                       _e_toolbar_menu_items_append, tbar);

@@ -5,6 +5,7 @@
         * added e_object_ref_debug_set
         * E_FN_DEL macro renamed to E_FREE_FUNC with param order swapped for consistency
         * added e_gadcon_repopulate
+        * EFM toolbar now has its own gadcon location
 
 2013-02-20 Mike Blumenkrantz
 
