@@ -191,6 +191,7 @@ e_gadcon_popup_new(E_Gadcon_Client *gcc)
    if (!pop) return NULL;
    zone = e_gadcon_client_zone_get(gcc);
    pop->win = e_popup_new(zone, 0, 0, 0, 0);
+   e_popup_layer_set(pop->win, E_COMP_CANVAS_LAYER_POPUP, 0);
    e_object_data_set(E_OBJECT(pop->win), pop);
    E_OBJECT_DEL_SET(pop->win, _e_gadcon_popup_del_cb);
 
