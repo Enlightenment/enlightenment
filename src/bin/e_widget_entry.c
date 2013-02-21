@@ -199,6 +199,10 @@ _e_wid_del_hook(Evas_Object *obj)
 
    if (!(obj) || (!(wd = e_widget_data_get(obj))))
      return;
+   evas_object_del(wd->o_entry);
+   evas_object_del(wd->o_inout);
+   wd->o_entry = NULL;
+   wd->o_inout = NULL;
    free(wd);
 }
 
