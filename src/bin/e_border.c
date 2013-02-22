@@ -8477,7 +8477,7 @@ _e_border_eval0(E_Border *bd)
     * and relevant netwm atom
     * ...eventually
     */
-   e_comp_win_opacity_set(bd->cw, bd->client.netwm.opacity);
+   if (bd->cw) e_comp_win_opacity_set(bd->cw, bd->client.netwm.opacity);
 
    if (change_urgent)
      {

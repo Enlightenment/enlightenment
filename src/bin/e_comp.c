@@ -2025,6 +2025,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win)
         cw->dfn = e_object_delfn_add(E_OBJECT(cw->bd), _e_comp_object_del, cw);
         cw->shape = cw->bd->shape;
         cw->bd->cw = cw;
+        cw->opacity = cw->bd->client.netwm.opacity;
         // setup on show
         // _e_comp_win_sync_setup(cw, cw->bd->client.win);
      }
@@ -2181,6 +2182,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win)
         // ecore_x_composite_redirect_window(cw->win, ECORE_X_COMPOSITE_UPDATE_MANUAL);
         cw->dmg_updates = 0;
      }
+   if (cw->bd) e_comp_win_opacity_set(cw, cw->opacity);
    DBG("  [0x%x] add", cw->win);
    if (conf->grab) ecore_x_ungrab();
    return cw;
