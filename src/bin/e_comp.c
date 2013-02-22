@@ -4712,7 +4712,7 @@ e_comp_render_update(E_Comp *c)
 }
 
 EAPI E_Comp_Win *
-e_comp_win_find_border_win(Ecore_X_Window win)
+e_comp_win_find_client_win(Ecore_X_Window win)
 {
    return _e_comp_border_client_find(win);
 }

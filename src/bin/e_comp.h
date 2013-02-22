@@ -222,7 +222,7 @@ EAPI void e_comp_zone_update(E_Comp_Zone *cz);
 EAPI void e_comp_override_del(E_Comp *c);
 EAPI void e_comp_override_add(E_Comp *c);
 
-EAPI E_Comp_Win *e_comp_win_find_border_win(Ecore_X_Window win);
+EAPI E_Comp_Win *e_comp_win_find_client_win(Ecore_X_Window win);
 EAPI E_Comp_Win *e_comp_win_find(Ecore_X_Window win);
 EAPI const Eina_List *e_comp_win_list_get(E_Comp *c);
 EAPI Evas_Object *e_comp_win_image_mirror_add(E_Comp_Win *cw);
