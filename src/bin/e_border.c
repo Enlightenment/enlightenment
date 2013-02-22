@@ -539,6 +539,7 @@ e_border_new(E_Container *con,
    bd->client.netwm.action.fullscreen = 0;
    bd->client.netwm.action.change_desktop = 0;
    bd->client.netwm.action.close = 0;
+   bd->client.netwm.opacity = 255;
    bd->client.netwm.type = ECORE_X_WINDOW_TYPE_UNKNOWN;
 
    {
