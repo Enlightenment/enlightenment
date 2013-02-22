@@ -218,7 +218,12 @@ _mouse_longpress(void *data)
         cov->longpressed = EINA_TRUE;
         INFO(cov, "longpress");
 
-        _messsage_read_send(cov);
+        if (!cov->double_down) _messsage_read_send(cov);
+        else
+          {
+             INFO(cov, "double down and longpress");
+             //TODO: send message to notify start longpress
+          }
      }
    return EINA_FALSE;
 }
@@ -235,6 +240,7 @@ _mouse_double_down(void *data)
 static void
 _double_down_timeout(Cover *cov)
 {
+   double long_time = 0.5;
    double short_time = 0.3;
    int distance = 40;
    int dx, dy;
@@ -253,6 +259,8 @@ _double_down_timeout(Cover *cov)
              ecore_timer_del(cov->timer);
              cov->timer = NULL;
           }
+        /* check longpress after double down */
+        cov->timer = ecore_timer_add(long_time, _mouse_longpress, cov);
      }
 
    if (cov->double_down_timer)
@@ -279,7 +287,7 @@ _mouse_tap(void *data)
 static void
 _mouse_down(Cover *cov, Ecore_Event_Mouse_Button *ev)
 {
-   double longtime = 0.5;
+   double long_time = 0.5;
 
    cov->dx = ev->x;
    cov->dy = ev->y;
@@ -289,7 +297,7 @@ _mouse_down(Cover *cov, Ecore_Event_Mouse_Button *ev)
    cov->y = ev->y;
    cov->dt = ev->timestamp;
    cov->longpressed = EINA_FALSE;
-   cov->timer = ecore_timer_add(longtime, _mouse_longpress, cov);
+   cov->timer = ecore_timer_add(long_time, _mouse_longpress, cov);
 
    if (cov->tap_timer)
      {
@@ -457,8 +465,6 @@ _mouse_move(Cover *cov, Ecore_Event_Mouse_Move *ev)
 
    //FIXME: why here.. after long press you cannot go below..
    //if (!cov->down) return;
-   cov->x = ev->x;
-   cov->y = ev->y;
 
    //FIXME: one finger cannot come here
    //_record_mouse_history(cov, ev);
@@ -580,17 +586,18 @@ _cb_mouse_move(void    *data __UNUSED__,
 
    EINA_LIST_FOREACH(covers, l, cov)
      {
+        cov->x = ev->x;
+        cov->y = ev->y;
+
         if (ev->window == cov->win)
           {
              //if (ev->multi.device == multi_device[0] || ev->multi.device == multi_device[1])
              if (cov->two_finger_down && ev->multi.device == multi_device[1])
                _mouse_move(cov, ev);
              else if (cov->longpressed && // client message for moving is available only after long press is detected
+                      !(cov->double_down) && /* mouse move after double down should not send read message */
                       !(cov->two_finger_down) && ev->multi.device == multi_device[0])
                {
-                  cov->x = ev->x;
-                  cov->y = ev->y;
-
                   INFO(cov, "read");
                   _messsage_read_send(cov);
                }
@@ -600,7 +607,11 @@ _cb_mouse_move(void    *data __UNUSED__,
                   int distance = 5;
                   int dx, dy;
 
-                  if (ev->multi.device == multi_device[0] && cov->double_down)
+                  if (cov->longpressed)
+                    {
+                       //TODO: send message to notify move afte longpress
+                    }
+                  else
                     {
                        dx = ev->x - cov->mx;
                        dy = ev->y - cov->my;
