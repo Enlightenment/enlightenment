@@ -745,12 +745,15 @@ _cb_client_message(void *data __UNUSED__,
                    int   type __UNUSED__,
                    void *ev)
 {
+   int block;
    Ecore_X_Event_Client_Message *event = ev;
 
    if (event->message_type != _atom_access)
      return ECORE_CALLBACK_PASS_ON;
 
-   e_config_save_block_set(0);
+   block = e_config_save_block_get();
+   if (block) e_config_save_block_set(!block);
+
    if ((Eina_Bool)event->data.l[0])
      {
         EINA_LOG_INFO("[access module] module enable");
@@ -768,7 +771,7 @@ _cb_client_message(void *data __UNUSED__,
 
    /* save config value */
    e_config_domain_save("module.access", conf_edd, access_config);
-   e_config_save_block_set(1);
+   e_config_save_block_set(block);
 
    return ECORE_CALLBACK_PASS_ON;
 }
