@@ -24,7 +24,12 @@ group { name: "e/comp/preview";
 group { name: "e/comp/screen/base/default";
    alias: "e/comp/screen/base/noeffects";
    parts {
+      part { name: "clip"; type: RECT; mouse_events: 0;
+         description { state: "default" 0.0;
+         }
+      }
       part { name: "e.swallow.background"; type: SWALLOW; mouse_events: 0;
+         clip_to: "clip";
          description { state: "default" 0.0;
          }
       }
