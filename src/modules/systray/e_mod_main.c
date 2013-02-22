@@ -288,6 +288,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         E_FREE(inst);
         return NULL;
      }
+   e_gadcon_client_min_size_set(inst->gcc, 8, 8);
 
    inst->gcc->data = inst;
 
