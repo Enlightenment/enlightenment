@@ -24,7 +24,7 @@ _music_control(E_Object *obj, const char *params)
    EINA_SAFETY_ON_NULL_RETURN(music_control_mod->data);
    ctxt = music_control_mod->data;
    if (!strcmp(params, "play"))
-     media_player2_player_pause_call(ctxt->mpris2_player);
+     media_player2_player_play_pause_call(ctxt->mpris2_player);
    else if (!strcmp(params, "next"))
      media_player2_player_next_call(ctxt->mpris2_player);
    else if (!strcmp(params, "previous"))
