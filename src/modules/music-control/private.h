@@ -5,9 +5,12 @@
 #include "gen/edbus_media_player2_player.h"
 #include "gen/edbus_mpris_media_player2.h"
 
+static Ecore_Event_Handler *desklock_handler = NULL;
+
 typedef struct _Music_Control_Config
 {
    int player_selected;
+   int pause_on_desklock;
 } Music_Control_Config;
 
 typedef struct _E_Music_Control_Module_Context
@@ -36,6 +39,7 @@ const char *music_control_edj_path_get(void);
 void music_control_popup_del(E_Music_Control_Instance *inst);
 void music_control_state_update_all(E_Music_Control_Module_Context *ctxt);
 Eina_Bool music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus);
+Eina_Bool _desklock_cb(void *data, int type, void *ev);
 
 typedef struct _Player {
    const char *name;

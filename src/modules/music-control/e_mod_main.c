@@ -4,6 +4,8 @@
 
 static E_Module *music_control_mod = NULL;
 
+static Eina_Bool was_playing_before_lock = EINA_FALSE;
+
 static const char _e_music_control_Name[] = "Music controller";
 
 const Player music_player_players[] =
@@ -16,6 +18,37 @@ const Player music_player_players[] =
    {"XMMS2", "org.mpris.MediaPlayer2.xmms2"},
    {NULL, NULL}
 };
+
+Eina_Bool
+_desklock_cb(void *data, int type, void *ev)
+{
+   E_Music_Control_Module_Context *ctxt;
+   E_Event_Desklock *event;
+
+   ctxt = data;
+   event = ev;
+
+   /* Lock with music on. Pause it */
+   if (event->on && ctxt->playing)
+     {
+        media_player2_player_play_pause_call(ctxt->mpris2_player);
+        was_playing_before_lock = EINA_TRUE;
+        return ECORE_CALLBACK_DONE;
+     }
+
+   /* Lock without music. Keep music off as state */
+   if (event->on && (!ctxt->playing))
+     {
+        was_playing_before_lock = EINA_FALSE;
+        return ECORE_CALLBACK_DONE;
+     }
+
+   /* Unlock with music pause and playing before lock. Turn it back on */
+   if ((!event->on) && (!ctxt->playing) && was_playing_before_lock)
+     media_player2_player_play_pause_call(ctxt->mpris2_player);
+
+   return ECORE_CALLBACK_DONE;
+}
 
 static void
 _music_control(E_Object *obj, const char *params)
@@ -242,6 +275,7 @@ e_modapi_init(E_Module *m)
    #define T Music_Control_Config
    #define D ctxt->conf_edd
    E_CONFIG_VAL(D, T, player_selected, INT);
+   E_CONFIG_VAL(D, T, pause_on_desklock, INT);
    ctxt->config = e_config_domain_load(MUSIC_CONTROL_DOMAIN, ctxt->conf_edd);
    if (!ctxt->config)
      ctxt->config = calloc(1, sizeof(Music_Control_Config));
@@ -251,6 +285,9 @@ e_modapi_init(E_Module *m)
    music_control_mod = m;
 
    e_gadcon_provider_register(&_gc_class);
+
+   if (ctxt->config->pause_on_desklock)
+     desklock_handler = ecore_event_handler_add(E_EVENT_DESKLOCK, _desklock_cb, ctxt);
 
    return ctxt;
 
@@ -268,6 +305,8 @@ e_modapi_shutdown(E_Module *m)
 
    free(ctxt->config);
    E_CONFIG_DD_FREE(ctxt->conf_edd);
+
+   E_FREE_FUNC(desklock_handler, ecore_event_handler_del);
 
    media_player2_player_proxy_unref(ctxt->mpris2_player);
    mpris_media_player2_proxy_unref(ctxt->mrpis2);

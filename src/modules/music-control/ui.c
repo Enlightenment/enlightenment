@@ -94,12 +94,13 @@ music_control_popup_del(E_Music_Control_Instance *inst)
 struct _E_Config_Dialog_Data
 {
    int index;
+   int pause_on_desklock;
 };
 
 static Evas_Object *
 _cfg_widgets_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *o, *of, *ob;
+   Evas_Object *o, *of, *ob, *oc;
    E_Radio_Group *rg;
    int i;
    E_Music_Control_Instance *inst = cfd->data;
@@ -119,6 +120,10 @@ _cfg_widgets_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfda
      }
    ob = e_widget_label_add(evas, "* Your player must be configured to export the DBus interface MPRIS2.");
    e_widget_framelist_object_append(of, ob);
+
+   oc = e_widget_check_add(evas, _("Pause music when screen is locked"), &(cfdata->pause_on_desklock));
+   e_widget_framelist_object_append(of, oc);
+
    e_widget_list_object_append(o, of, 1, 1, 0.5);
 
    return o;
@@ -130,6 +135,8 @@ _cfg_data_create(E_Config_Dialog *cfd)
    E_Music_Control_Instance *inst = cfd->data;
    E_Config_Dialog_Data *cfdata = calloc(1, sizeof(E_Config_Dialog_Data));
    cfdata->index = inst->ctxt->config->player_selected;
+   cfdata->pause_on_desklock = inst->ctxt->config->pause_on_desklock;
+
    return cfdata;
 }
 
@@ -144,17 +151,27 @@ _cfg_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
    E_Music_Control_Instance *inst = cfd->data;
 
-   return inst->ctxt->config->player_selected != cfdata->index;
+   return ((inst->ctxt->config->pause_on_desklock != cfdata->pause_on_desklock) ||
+            (inst->ctxt->config->player_selected != cfdata->index));
 }
 
 static int
 _cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
    E_Music_Control_Instance *inst = cfd->data;
-   if (inst->ctxt->config->player_selected == cfdata->index)
+
+   if ((inst->ctxt->config->player_selected == cfdata->index) &&
+       (inst->ctxt->config->pause_on_desklock == cfdata->pause_on_desklock))
      return 1;
 
    inst->ctxt->config->player_selected = cfdata->index;
+   inst->ctxt->config->pause_on_desklock = cfdata->pause_on_desklock;
+
+   if (inst->ctxt->config->pause_on_desklock)
+      desklock_handler = ecore_event_handler_add(E_EVENT_DESKLOCK, _desklock_cb, inst->ctxt);
+   else
+     E_FREE_FUNC(desklock_handler, ecore_event_handler_del);
+
    inst->ctxt->playing = EINA_FALSE;
    mpris_media_player2_proxy_unref(inst->ctxt->mpris2_player);
    media_player2_player_proxy_unref(inst->ctxt->mrpis2);
