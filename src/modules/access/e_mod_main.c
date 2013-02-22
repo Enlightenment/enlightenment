@@ -91,6 +91,69 @@ _mouse_in_win_get(Cover *cov, int x, int y)
      (cov->zone->container->manager->root, x, y, skip, i);
 }
 
+static unsigned int
+_win_angle_get(Ecore_X_Window win)
+{
+   Ecore_X_Window root;
+
+   if (!win) return 0;
+
+   int ret;
+   int count;
+   int angle = 0;
+   unsigned char *prop_data = NULL;
+
+   root = ecore_x_window_root_get(win);
+   ret = ecore_x_window_prop_property_get(root,
+       ECORE_X_ATOM_E_ILLUME_ROTATE_ROOT_ANGLE,
+                         ECORE_X_ATOM_CARDINAL,
+                        32, &prop_data, &count);
+
+   if (ret && prop_data)
+      memcpy (&angle, prop_data, sizeof (int));
+
+   if (prop_data) free (prop_data);
+
+   return angle;
+}
+
+static void
+_coordinate_calibrate(Ecore_X_Window win, int *x, int *y)
+{
+   int tx, ty, w, h;
+   unsigned int angle;
+
+   if (!x) return;
+   if (!y) return;
+
+   angle = _win_angle_get(win);
+   ecore_x_window_geometry_get(win, NULL, NULL, &w, &h);
+
+   tx = *x;
+   ty = *y;
+
+   switch (angle)
+     {
+      case 90:
+        *x = h - ty;
+        *y = tx;
+        break;
+
+      case 180:
+        *x = w - tx;
+        *y = h - ty;
+        break;
+
+      case 270:
+        *x = ty;
+        *y = w - tx;
+        break;
+
+      default:
+        break;
+     }
+}
+
 static void
 _mouse_win_fake_tap(Cover *cov, Ecore_Event_Mouse_Button *ev)
 {
@@ -116,6 +179,8 @@ _messsage_read_send(Cover *cov)
    _mouse_in_win_get(cov, cov->x, cov->y);
 
    ecore_x_pointer_xy_get(target_win, &x, &y);
+   _coordinate_calibrate(target_win, &x, &y);
+
    ecore_x_client_message32_send(target_win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  target_win,
@@ -244,6 +309,7 @@ _mouse_up(Cover *cov, Ecore_Event_Mouse_Button *ev)
    int distance = 40;
    int dx, dy;
    int x, y;
+   int angle = 0;
 
    // for two finger panning
    if (cov->two_finger_down)
@@ -298,17 +364,47 @@ _mouse_up(Cover *cov, Ecore_Event_Mouse_Button *ev)
    else if (((dx * dx) + (dy * dy)) > (4 * distance * distance)
             && ((ev->timestamp - cov->dt) < (timeout * 1000)))
      {
+        /* get root window rotation */
+        angle = _win_angle_get(target_win);
+
         if (abs(dx) > abs(dy)) // left or right
           {
              if (dx > 0) // right
                {
                   INFO(cov, "single flick right");
-                  ecore_x_e_illume_access_action_read_next_send(target_win);
+                  switch (angle)
+                    {
+                     case 180:
+                     case 270:
+                       ecore_x_e_illume_access_action_read_prev_send
+                                                        (target_win);
+                     break;
+
+                     case 90:
+                     default:
+                       ecore_x_e_illume_access_action_read_next_send
+                                                        (target_win);
+                     break;
+                    }
+
                }
              else // left
                {
                   INFO(cov, "single flick left");
-                  ecore_x_e_illume_access_action_read_prev_send(target_win);
+                  switch (angle)
+                    {
+                     case 180:
+                     case 270:
+                       ecore_x_e_illume_access_action_read_next_send
+                                                        (target_win);
+                     break;
+
+                     case 90:
+                     default:
+                       ecore_x_e_illume_access_action_read_prev_send
+                                                        (target_win);
+                     break;
+                    }
                }
           }
         else // up or down
@@ -316,12 +412,38 @@ _mouse_up(Cover *cov, Ecore_Event_Mouse_Button *ev)
              if (dy > 0) // down
                {
                   INFO(cov, "single flick down");
-                  ecore_x_e_illume_access_action_next_send(target_win);
+                  switch (angle)
+                    {
+                     case 90:
+                     case 180:
+                       ecore_x_e_illume_access_action_read_prev_send
+                                                        (target_win);
+                     break;
+
+                     case 270:
+                     default:
+                       ecore_x_e_illume_access_action_read_next_send
+                                                        (target_win);
+                     break;
+                    }
                }
              else // up
                {
                   INFO(cov, "single flick up");
-                  ecore_x_e_illume_access_action_prev_send(target_win);
+                  switch (angle)
+                    {
+                     case 90:
+                     case 180:
+                       ecore_x_e_illume_access_action_read_next_send
+                                                        (target_win);
+                     break;
+
+                     case 270:
+                     default:
+                       ecore_x_e_illume_access_action_read_prev_send
+                                                        (target_win);
+                     break;
+                    }
                }
           }
      }
@@ -454,6 +576,7 @@ _cb_mouse_move(void    *data __UNUSED__,
    Ecore_Event_Mouse_Move *ev = event;
    Eina_List *l;
    Cover *cov;
+   int angle = 0;
 
    EINA_LIST_FOREACH(covers, l, cov)
      {
@@ -481,6 +604,10 @@ _cb_mouse_move(void    *data __UNUSED__,
                     {
                        dx = ev->x - cov->mx;
                        dy = ev->y - cov->my;
+
+                       /* get root window rotation */
+                       angle = _win_angle_get(target_win);
+
                        if (((dx * dx) + (dy * dy)) > (distance * distance))
                          {
 
@@ -489,12 +616,34 @@ _cb_mouse_move(void    *data __UNUSED__,
                                  if (dx > 0) // right
                                    {
                                       INFO(cov, "mouse double down and move - right");
-                                      ecore_x_e_illume_access_action_up_send(target_win);
+                                      switch (angle)
+                                        {
+                                         case 180:
+                                         case 270:
+                                           ecore_x_e_illume_access_action_down_send(target_win);
+                                         break;
+
+                                         case 90:
+                                         default:
+                                           ecore_x_e_illume_access_action_up_send(target_win);
+                                         break;
+                                        }
                                    }
                                  else // left
                                    {
                                       INFO(cov, "mouse double down and move - left");
-                                      ecore_x_e_illume_access_action_down_send(target_win);
+                                      switch (angle)
+                                        {
+                                         case 180:
+                                         case 270:
+                                           ecore_x_e_illume_access_action_up_send(target_win);
+                                         break;
+
+                                         case 90:
+                                         default:
+                                           ecore_x_e_illume_access_action_down_send(target_win);
+                                         break;
+                                        }
                                    }
                               }
                             else // up or down
@@ -502,12 +651,34 @@ _cb_mouse_move(void    *data __UNUSED__,
                                  if (dy > 0) // down
                                    {
                                       INFO(cov, "mouse double down and move - down");
-                                      ecore_x_e_illume_access_action_down_send(target_win);
+                                      switch (angle)
+                                        {
+                                         case 90:
+                                         case 180:
+                                           ecore_x_e_illume_access_action_up_send(target_win);
+                                         break;
+
+                                         case 270:
+                                         default:
+                                           ecore_x_e_illume_access_action_down_send(target_win);
+                                         break;
+                                        }
                                    }
                                  else // up
                                    {
                                       INFO(cov, "mouse double down and move - up");
-                                      ecore_x_e_illume_access_action_up_send(target_win);
+                                      switch (angle)
+                                        {
+                                         case 90:
+                                         case 180:
+                                           ecore_x_e_illume_access_action_down_send(target_win);
+                                         break;
+
+                                         case 270:
+                                         default:
+                                           ecore_x_e_illume_access_action_up_send(target_win);
+                                         break;
+                                        }
                                    }
                                }
 
