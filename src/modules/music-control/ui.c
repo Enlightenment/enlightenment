@@ -6,7 +6,7 @@ static void
 _play_state_update(E_Music_Control_Instance *inst, Eina_Bool without_delay)
 {
    if (!inst->popup) return;
-   if (inst->ctxt->playning)
+   if (inst->ctxt->playing)
      {
         edje_object_signal_emit(inst->content_popup, "btn,state,image,pause", "play");
         return;
@@ -155,7 +155,7 @@ _cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
      return 1;
 
    inst->ctxt->config->player_selected = cfdata->index;
-   inst->ctxt->playning = EINA_FALSE;
+   inst->ctxt->playing = EINA_FALSE;
    mpris_media_player2_proxy_unref(inst->ctxt->mpris2_player);
    media_player2_player_proxy_unref(inst->ctxt->mrpis2);
    music_control_dbus_init(inst->ctxt,

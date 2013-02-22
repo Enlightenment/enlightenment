@@ -14,7 +14,7 @@ typedef struct _E_Music_Control_Module_Context
 {
    Eina_List *instances;
    EDBus_Connection *conn;
-   Eina_Bool playning:1;
+   Eina_Bool playing:1;
    EDBus_Proxy *mrpis2;
    EDBus_Proxy *mpris2_player;
    E_Config_DD *conf_edd;

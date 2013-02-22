@@ -186,9 +186,9 @@ cb_playback_status_get(void *data, EDBus_Pending *p, const char *propname, EDBus
      }
 
    if (!strcmp(value, "Playing"))
-     ctxt->playning = EINA_TRUE;
+     ctxt->playing = EINA_TRUE;
    else
-     ctxt->playning = EINA_FALSE;
+     ctxt->playing = EINA_FALSE;
    music_control_state_update_all(ctxt);
 }
 
@@ -205,9 +205,9 @@ prop_changed(void *data, EDBus_Proxy *proxy, void *event_info)
 
         eina_value_get(value, &status);
         if (!strcmp(status, "Playing"))
-          ctxt->playning = EINA_TRUE;
+          ctxt->playing = EINA_TRUE;
         else
-          ctxt->playning = EINA_FALSE;
+          ctxt->playing = EINA_FALSE;
         music_control_state_update_all(ctxt);
      }
 }
