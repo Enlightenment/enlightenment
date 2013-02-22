@@ -95,6 +95,9 @@ static void _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, in
 static void _e_comp_shapes_update(void *data, E_Container_Shape *es, E_Container_Shape_Change ch);
 
 static void _e_comp_injected_win_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void _e_comp_injected_win_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void _e_comp_injected_win_focus_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void _e_comp_injected_win_focus_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
 static void
 _e_comp_event_end(void *d EINA_UNUSED, E_Event_Comp *ev)
@@ -1947,7 +1950,7 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
              cw->pop->cw = cw;
              cw->shape = cw->pop->shape;
              cw->dfn = e_object_delfn_add(E_OBJECT(cw->pop), _e_comp_object_del, cw);
-             cw->show_ready = 1;
+             cw->show_ready = cw->pop->visible;
              break;
            //case E_MENU_TYPE:
              //cw->menu = eobj;
@@ -1960,15 +1963,11 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
         e_object_ref(E_OBJECT(cw->eobj));
      }
    else
-     {
-        if (evas_object_visible_get(obj))
-          cw->show_ready = 1;
-        else
-          cw->real_hid = 1;
-     }
+     cw->show_ready = evas_object_visible_get(obj);
 
    cw->obj = obj;
    cw->c = c;
+   cw->real_hid = !cw->show_ready;
    cw->real_obj = 1;
    cw->argb = 1;
    cw->opacity = 255.0;
@@ -2279,6 +2278,9 @@ _e_comp_win_del(E_Comp_Win *cw)
         if (evas_object_layer_get(cw->obj) > E_COMP_CANVAS_LAYER_LAYOUT)
           e_comp_override_del(cw->c);
         evas_object_event_callback_del_full(cw->obj, EVAS_CALLBACK_DEL, _e_comp_injected_win_del_cb, cw);
+        evas_object_event_callback_del_full(cw->obj, EVAS_CALLBACK_HIDE, _e_comp_injected_win_hide_cb, cw);
+        evas_object_event_callback_del_full(cw->obj, EVAS_CALLBACK_FOCUS_IN, _e_comp_injected_win_focus_in_cb, cw);
+        evas_object_event_callback_del_full(cw->obj, EVAS_CALLBACK_FOCUS_OUT, _e_comp_injected_win_focus_out_cb, cw);
      }
    if (cw->obj)
      {
