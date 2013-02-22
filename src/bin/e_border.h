@@ -192,6 +192,7 @@ struct _E_Border
       int l, r, t, b;
    } client_inset;
 
+   E_Comp_Win   *cw;
    Ecore_Evas    *bg_ecore_evas;
    Evas          *bg_evas;
    Ecore_X_Window bg_win;
@@ -295,6 +296,8 @@ struct _E_Border
          Ecore_X_Icon *icons;
          int           num_icons;
          unsigned int  user_time;
+         unsigned char opacity;
+         Eina_Bool     opacity_changed : 1; // prevent fetching opacity next prop change
          struct
          {
             int left;
@@ -365,6 +368,7 @@ struct _E_Border
             unsigned char strut : 1;
             unsigned char type : 1;
             unsigned char state : 1;
+            unsigned char opacity : 1;
             /* No, fetch on new_client, shouldn't be changed after map.
                unsigned char pid : 1;
              */

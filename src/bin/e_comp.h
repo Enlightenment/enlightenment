@@ -145,6 +145,7 @@ struct _E_Comp_Win
    int                  pending_count;  // pending event count
 
    unsigned int         opacity;  // opacity set with _NET_WM_WINDOW_OPACITY
+   Ecore_Timer        *opacity_set_timer; // timer for setting opacity in ecore-x to avoid roundtrips
 
    char                *title, *name, *clas, *role;  // fetched for override-redirect windowa
    Ecore_X_Window_Type  primary_type;  // fetched for override-redirect windowa
@@ -227,7 +228,7 @@ EAPI E_Comp_Win *e_comp_win_find(Ecore_X_Window win);
 EAPI const Eina_List *e_comp_win_list_get(E_Comp *c);
 EAPI Evas_Object *e_comp_win_image_mirror_add(E_Comp_Win *cw);
 EAPI void e_comp_win_hidden_set(E_Comp_Win *cw, Eina_Bool hidden);
-
+EAPI void e_comp_win_opacity_set(E_Comp_Win *cw, unsigned int opacity);
 
 EAPI E_Comp *e_comp_get(void *o);
 

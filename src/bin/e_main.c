@@ -674,6 +674,17 @@ main(int argc, char **argv)
    e_screensaver_preinit();
 
    if (e_config->show_splash)
+     e_init_status_set(_("Setup Actions"));
+   TS("E_Actions Init");
+   if (!e_actions_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its actions system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Actions Init Done");
+   _e_main_shutdown_push(e_actions_shutdown);
+
+   if (e_config->show_splash)
      e_init_status_set(_("Setup Screens"));
    TS("Screens Init");
    if (!_e_main_screens_init())
@@ -786,17 +797,6 @@ main(int argc, char **argv)
      }
    TS("E_Sys Init Done");
    _e_main_shutdown_push(e_sys_shutdown);
-
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Actions"));
-   TS("E_Actions Init");
-   if (!e_actions_init())
-     {
-        e_error_message_show(_("Enlightenment cannot set up its actions system.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_Actions Init Done");
-   _e_main_shutdown_push(e_actions_shutdown);
 
    if (e_config->show_splash)
      e_init_status_set(_("Setup Execution System"));

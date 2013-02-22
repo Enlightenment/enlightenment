@@ -71,11 +71,7 @@ static Eina_Bool _e_border_cb_window_focus_in(void *data,
 static Eina_Bool _e_border_cb_window_focus_out(void *data,
                                                int ev_type,
                                                void *ev);
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
-static Eina_Bool _e_border_cb_client_message(void *data,
-                                             int ev_type,
-                                             void *ev);
-#endif
+static Eina_Bool _e_border_cb_client_message(void *data, int ev_type, void *ev);
 static Eina_Bool _e_border_cb_window_state_request(void *data,
                                                    int ev_type,
                                                    void *ev);
@@ -322,10 +318,8 @@ e_border_init(void)
                          _e_border_cb_window_focus_in, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_FOCUS_OUT,
                          _e_border_cb_window_focus_out, NULL);
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_CLIENT_MESSAGE,
                          _e_border_cb_client_message, NULL);
-#endif
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_STATE_REQUEST,
                          _e_border_cb_window_state_request, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST,
@@ -634,6 +628,8 @@ e_border_new(E_Container *con,
                   {
                      bd->client.netwm.fetch.state = 1;
                   }
+                else if (atoms[i] == ECORE_X_ATOM_NET_WM_WINDOW_OPACITY)
+                  bd->client.netwm.fetch.opacity = 1;
              }
            /* other misc atoms */
            for (i = 0; i < at_num; i++)
@@ -5951,6 +5947,16 @@ _e_border_cb_window_property(void *data  __UNUSED__,
         bd->client.netwm.fetch.state = 1;
         bd->changed = 1;
      }
+   else if (e->atom == ECORE_X_ATOM_NET_WM_WINDOW_OPACITY)
+     {
+        if (bd->client.netwm.opacity_changed)
+          bd->client.netwm.opacity_changed = 0;
+        else
+          {
+             bd->client.netwm.fetch.opacity = 1;
+             bd->changed = 1;
+          }
+     }
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    else if (e->atom == ECORE_X_ATOM_E_WINDOW_PROFILE_SUPPORTED)
      {
@@ -6186,28 +6192,31 @@ _e_border_cb_window_focus_out(void *data  __UNUSED__,
    return ECORE_CALLBACK_PASS_ON;
 }
 
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
 static Eina_Bool
-_e_border_cb_client_message(void *data  __UNUSED__,
-                            int ev_type __UNUSED__,
-                            void *ev)
+_e_border_cb_client_message(void *data  __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    E_Border *bd;
-   Ecore_X_Event_Client_Message *e;
-   char *profile = NULL;
-
-   e = (Ecore_X_Event_Client_Message *)ev;
+   Ecore_X_Event_Client_Message *e = ev;
+   
    bd = e_border_find_by_client_window(e->win);
    if (!bd) return ECORE_CALLBACK_PASS_ON;
 
-   if (e->message_type == ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE)
+   if (e->message_type == ECORE_X_ATOM_NET_WM_WINDOW_OPACITY)
+     {
+        bd->client.netwm.fetch.opacity = 1;
+        bd->changed = 1;
+     }
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+   else if (e->message_type == ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE)
      {
         if (bd->client.e.state.profile.use)
           {
+             char *profile;
              profile = ecore_x_atom_name_get(e->data.l[1]);
              ecore_x_e_window_profile_change_request_send(bd->client.win,
                                                           profile);
              bd->client.e.state.profile.wait_for_done = 1;
+             free(profile);
           }
      }
    else if (e->message_type == ECORE_X_ATOM_E_WINDOW_PROFILE_CHANGE_DONE)
@@ -6217,29 +6226,25 @@ _e_border_cb_client_message(void *data  __UNUSED__,
           {
              E_Container *con = bd->zone->container;
              E_Desk *desk = NULL;
+             char *profile;
 
              profile = ecore_x_atom_name_get(e->data.l[1]);
              if (profile)
-               {
-                  if (bd->client.e.state.profile.name)
-                    eina_stringshare_del(bd->client.e.state.profile.name);
-                  bd->client.e.state.profile.name = eina_stringshare_add(profile);
-               }
+               eina_stringshare_replace(&bd->client.e.state.profile.name, profile);
 
              bd->client.e.state.profile.wait_for_done = 0;
 
              desk = e_container_desk_window_profile_get(con, profile);
              if ((desk) && (bd->desk != desk))
                e_border_desk_set(bd, desk);
+             free(profile);
           }
      }
-
-   free(profile);
+#endif
 
    return ECORE_CALLBACK_PASS_ON;
 }
 
-#endif
 static Eina_Bool
 _e_border_cb_window_state_request(void *data  __UNUSED__,
                                   int ev_type __UNUSED__,
@@ -7726,6 +7731,13 @@ _e_border_eval0(E_Border *bd)
         bd->client.netwm.fetch.icon_name = 0;
         rem_change = 1;
      }
+   if (bd->client.netwm.fetch.opacity)
+     {
+        unsigned int val;
+
+        if (ecore_x_window_prop_card32_get(bd->client.win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY, &val, 1) > 0)
+          bd->client.netwm.opacity = (val >> 24);
+     }
    if (bd->client.netwm.fetch.icon)
      {
         int i;
@@ -8460,6 +8472,11 @@ _e_border_eval0(E_Border *bd)
 
    bd->changes.prop = 0;
    if (rem_change) e_remember_update(bd);
+   /* the below function updates the border's remember
+    * and relevant netwm atom
+    * ...eventually
+    */
+   e_comp_win_opacity_set(bd->cw, bd->client.netwm.opacity);
 
    if (change_urgent)
      {

@@ -117,7 +117,8 @@ e_remember_internal_save(void)
                       E_REMEMBER_APPLY_SKIP_WINLIST |
                       E_REMEMBER_APPLY_SKIP_PAGER |
                       E_REMEMBER_APPLY_SKIP_TASKBAR |
-                      E_REMEMBER_APPLY_OFFER_RESISTANCE);
+                      E_REMEMBER_APPLY_OFFER_RESISTANCE |
+                      E_REMEMBER_APPLY_OPACITY);
         _e_remember_update(bd, rem);
 
         remembers->list = eina_list_append(remembers->list, rem);
@@ -453,6 +454,8 @@ _e_remember_update(E_Border *bd, E_Remember *rem)
      rem->prop.fullscreen = bd->fullscreen;
    if (rem->apply & E_REMEMBER_APPLY_OFFER_RESISTANCE)
      rem->prop.offer_resistance = bd->offer_resistance;
+   if (rem->apply & E_REMEMBER_APPLY_OPACITY)
+     rem->prop.opacity = bd->client.netwm.opacity;
    rem->no_reopen = bd->internal_no_reopen;
    {
       E_Event_Remember_Update *ev;
@@ -899,6 +902,8 @@ _e_remember_cb_hook_pre_post_fetch(void *data __UNUSED__, void *border)
      bd->offer_resistance = rem->prop.offer_resistance;
    if (rem->apply & E_REMEMBER_SET_FOCUS_ON_START)
      bd->want_focus = 1;
+   if (rem->apply & E_REMEMBER_APPLY_OPACITY)
+     bd->client.netwm.opacity = rem->prop.opacity;
 
    if (temporary)
      _e_remember_free(rem);
@@ -972,6 +977,7 @@ _e_remember_init_edd(void)
    E_CONFIG_VAL(D, T, prop.icon_preference, UCHAR);
    E_CONFIG_VAL(D, T, prop.desktop_file, STR);
    E_CONFIG_VAL(D, T, prop.offer_resistance, UCHAR);
+   E_CONFIG_VAL(D, T, prop.opacity, UCHAR);
 #undef T
 #undef D
    e_remember_list_edd = E_CONFIG_DD_NEW("E_Remember_List", E_Remember_List);

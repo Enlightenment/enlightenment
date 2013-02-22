@@ -18,7 +18,7 @@ static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E
   E_REMEMBER_APPLY_DESKTOP | E_REMEMBER_APPLY_SHADE | E_REMEMBER_APPLY_ZONE |                       \
   E_REMEMBER_APPLY_SKIP_WINLIST | E_REMEMBER_APPLY_SKIP_PAGER |                                     \
   E_REMEMBER_APPLY_SKIP_TASKBAR | E_REMEMBER_APPLY_FULLSCREEN | E_REMEMBER_APPLY_ICON_PREF |        \
-  E_REMEMBER_APPLY_OFFER_RESISTANCE
+  E_REMEMBER_APPLY_OFFER_RESISTANCE | E_REMEMBER_APPLY_OPACITY
 struct _E_Config_Dialog_Data
 {
    E_Border *border;
@@ -61,6 +61,7 @@ struct _E_Config_Dialog_Data
       int set_focus_on_start;
       int keep_settings;
       int offer_resistance;
+      int apply_opacity;
    } remember;
 
    int applied;
@@ -275,6 +276,8 @@ _fill_data(E_Config_Dialog_Data *cfdata)
           cfdata->remember.set_focus_on_start = 1;
         if (rem->apply & E_REMEMBER_APPLY_OFFER_RESISTANCE)
           cfdata->remember.offer_resistance = 1;
+        if (rem->apply & E_REMEMBER_APPLY_OPACITY)
+          cfdata->remember.apply_opacity = 1;
      }
 
    if (!rem) cfdata->mode = MODE_NOTHING;
@@ -604,6 +607,8 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
      rem->apply |= E_REMEMBER_SET_FOCUS_ON_START;
    if (cfdata->remember.offer_resistance)
      rem->apply |= E_REMEMBER_APPLY_OFFER_RESISTANCE;
+   if (cfdata->remember.apply_opacity)
+     rem->apply |= E_REMEMBER_APPLY_OPACITY;
 
    if (bd && (!rem->apply && !rem->prop.desktop_file))
      {
@@ -733,6 +738,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
    e_widget_toolbook_page_append(o, NULL, _("Identifiers"), of, 1, 1, 1, 1, 0.5, 0.0);
 
    of = e_widget_table_add(evas, 0);
+   e_widget_table_freeze(of);
    ob = e_widget_check_add(evas, _("Position"),
                            &(cfdata->remember.apply_pos));
    e_widget_table_object_append(of, ob, 0, 0, 1, 1, 1, 0, 1, 0);
@@ -778,12 +784,15 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
    ob = e_widget_check_add(evas, _("Offer Resistance"),
                            &(cfdata->remember.offer_resistance));
    e_widget_table_object_append(of, ob, 1, 7, 1, 1, 1, 0, 1, 0);
+   ob = e_widget_check_add(evas, _("Opacity"),
+                           &(cfdata->remember.apply_opacity));
+   e_widget_table_object_append(of, ob, 0, 7, 1, 1, 1, 0, 1, 0);
    oc = e_widget_check_add(evas, _("Application file or name (.desktop)"),
                            &(cfdata->remember.apply_desktop_file));
-   e_widget_table_object_append(of, oc, 0, 7, 1, 1, 1, 0, 1, 0);
+   e_widget_table_object_append(of, oc, 0, 8, 1, 1, 1, 0, 1, 0);
    ob = e_widget_entry_add(evas, &cfdata->desktop, NULL, NULL, NULL);
    e_widget_check_widget_disable_on_unchecked_add(oc, ob);
-   e_widget_table_object_append(of, ob, 0, 8, 2, 1, 1, 0, 1, 0);
+   e_widget_table_object_append(of, ob, 0, 9, 2, 1, 1, 0, 1, 0);
    e_widget_toolbook_page_append(o, NULL, _("Properties"), of, 1, 1, 1, 1, 0.5, 0.0);
 
    of = e_widget_table_add(evas, 0);
@@ -805,6 +814,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_D
                                 &(cfdata->remember.apply_run));
         e_widget_table_object_append(of, ob, 0, 3, 1, 1, 1, 0, 1, 0);
      }
+   e_widget_table_thaw(of);
    e_widget_toolbook_page_append(o, NULL, _("Options"), of, 1, 1, 1, 1, 0.5, 0.0);
    e_widget_toolbook_page_show(o, 0);
 

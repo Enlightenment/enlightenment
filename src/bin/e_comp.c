@@ -17,7 +17,6 @@
 //   3. for unmapped windows - when window goes out of unmapped comp cache
 //      make a miniature copy (1/4 width+height?) and set property on window
 //      with pixmap id
-//   8. obey transparent property
 //   9. shortcut lots of stuff to draw inside the compositor - shelf,
 //      wallpaper, efm - hell even menus and anything else in e (this is what
 //      e18 was mostly about)
@@ -31,6 +30,7 @@ static Eina_Hash *windows = NULL;
 static Eina_Hash *borders = NULL;
 static Eina_Hash *damages = NULL;
 static Eina_Hash *ignores = NULL;
+static Eina_List *actions = NULL;
 
 static E_Comp_Config *conf = NULL;
 static E_Config_DD *conf_edd = NULL;
@@ -1484,6 +1484,7 @@ _e_comp_object_del(void *data, void *obj)
              ecore_x_sync_counter_inc(cw->counter, 1);
           }
         if (cw->bd) eina_hash_del(borders, e_util_winid_str_get(cw->bd->client.win), cw);
+        cw->bd->cw = NULL;
         cw->bd = NULL;
         evas_object_data_del(cw->shobj, "border");
         // hmm - lockup?
@@ -2023,6 +2024,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win)
         eina_hash_add(borders, e_util_winid_str_get(cw->bd->client.win), cw);
         cw->dfn = e_object_delfn_add(E_OBJECT(cw->bd), _e_comp_object_del, cw);
         cw->shape = cw->bd->shape;
+        cw->bd->cw = cw;
         // setup on show
         // _e_comp_win_sync_setup(cw, cw->bd->client.win);
      }
@@ -2194,6 +2196,7 @@ _e_comp_win_del(E_Comp_Win *cw)
         e_object_unref(E_OBJECT(cw->eobj));
         cw->eobj = NULL;
      }
+   E_FN_DEL(ecore_timer_del, cw->opacity_set_timer);
    if (cw->animating)
      {
         cw->c->animating--;
@@ -2219,6 +2222,7 @@ _e_comp_win_del(E_Comp_Win *cw)
           {
              eina_hash_del(borders, e_util_winid_str_get(cw->bd->client.win), cw);
              e_object_delfn_del(E_OBJECT(cw->bd), cw->dfn);
+             cw->bd->cw = NULL;
              cw->bd = NULL;
           }
         else if (cw->pop)
@@ -2886,32 +2890,6 @@ _e_comp_stack(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static void
-_e_comp_win_opacity_set(E_Comp_Win *cw)
-{
-   unsigned int val;
-
-   if (ecore_x_window_prop_card32_get(cw->win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY, &val, 1) > 0)
-     {
-        cw->opacity = (val >> 24);
-        evas_object_color_set(cw->shobj, cw->opacity, cw->opacity, cw->opacity, cw->opacity);
-     }
-}
-
-static Eina_Bool
-_e_comp_property(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
-{
-   Ecore_X_Event_Window_Property *ev = event;
-
-   if (ev->atom == ECORE_X_ATOM_NET_WM_WINDOW_OPACITY)
-     {
-        E_Comp_Win *cw = _e_comp_win_find(ev->win);
-        if (!cw) return ECORE_CALLBACK_PASS_ON;
-        _e_comp_win_opacity_set(cw);
-     }
-   return ECORE_CALLBACK_PASS_ON;
-}
-
 static Eina_Bool
 _e_comp_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -2919,14 +2897,6 @@ _e_comp_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    E_Comp_Win *cw = NULL;
    int version, w = 0, h = 0;
    Eina_Bool force = 0;
-
-   if (ev->message_type == ECORE_X_ATOM_NET_WM_WINDOW_OPACITY)
-     {
-        cw = _e_comp_win_find(ev->win);
-        if (!cw) return ECORE_CALLBACK_PASS_ON;
-        _e_comp_win_opacity_set(cw);
-        return ECORE_CALLBACK_PASS_ON;
-     }
 
    if ((ev->message_type != ECORE_X_ATOM_E_COMP_SYNC_DRAW_DONE) ||
        (ev->format != 32)) return ECORE_CALLBACK_PASS_ON;
@@ -4515,6 +4485,77 @@ _e_comp_cfg_init(void)
    e_configure_option_category_icon_set(_("composite"), "preferences-composite");
 }
 
+static Eina_Bool
+_e_comp_opacity_set_timer_cb(E_Comp_Win *cw)
+{
+   unsigned int opacity;
+
+   cw->bd->client.netwm.opacity = cw->opacity;
+   e_remember_update(cw->bd);
+   opacity = (cw->opacity << 24);
+   ecore_x_window_prop_card32_set(cw->bd->client.win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY, &opacity, 1);
+   cw->bd->client.netwm.opacity_changed = 1;
+   cw->opacity_set_timer = NULL;
+   return EINA_FALSE;
+}
+
+static E_Comp_Win *
+_e_comp_act_opacity_win_finder(E_Object *obj)
+{
+   E_Border *bd;
+
+   switch (obj->type)
+     {
+      case E_WIN_TYPE:
+        bd = ((E_Win*)obj)->border;
+        if (!bd) return NULL;
+        return _e_comp_border_client_find(bd->client.win);
+      case E_BORDER_TYPE:
+        bd = (E_Border*)obj;
+        return _e_comp_border_client_find(bd->client.win);
+      case E_POPUP_TYPE:
+        return evas_object_data_get(((E_Popup*)obj)->content, "comp_win");
+      default:
+      case E_ZONE_TYPE:
+      case E_CONTAINER_TYPE:
+      case E_MANAGER_TYPE:
+      case E_MENU_TYPE:
+        bd = e_border_focused_get();
+        if (bd) return _e_comp_border_client_find(bd->client.win);
+     }
+   return NULL;
+}
+
+static void
+_e_comp_act_opacity_change_go(E_Object *obj, const char *params)
+{
+   int opacity;
+   E_Comp_Win *cw;
+
+   if ((!params) || (!params[0])) return;
+   cw = _e_comp_act_opacity_win_finder(obj);
+   if (!cw) return;
+   opacity = atoi(params);
+   opacity = E_CLAMP(opacity, -255, 255);
+   opacity += cw->opacity;
+   opacity = MAX(0, opacity);
+   e_comp_win_opacity_set(cw, opacity);
+}
+
+static void
+_e_comp_act_opacity_set_go(E_Object * obj __UNUSED__, const char *params)
+{
+   int opacity;
+   E_Comp_Win *cw;
+
+   if ((!params) || (!params[0])) return;
+   cw = _e_comp_act_opacity_win_finder(obj);
+   if (!cw) return;
+   opacity = atoi(params);
+   opacity = E_CLAMP(opacity, 0, 255);
+   e_comp_win_opacity_set(cw, opacity);
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 EINTERN Eina_Bool
@@ -4555,7 +4596,6 @@ e_comp_init(void)
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_REPARENT, _e_comp_reparent, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_CONFIGURE, _e_comp_configure, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_STACK, _e_comp_stack, NULL);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_PROPERTY, _e_comp_property, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_CLIENT_MESSAGE, _e_comp_message, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_SHAPE, _e_comp_shape, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_DAMAGE_NOTIFY, _e_comp_damage, NULL);
@@ -4609,6 +4649,23 @@ e_comp_init(void)
           gl_avail = EINA_TRUE;
      }
 
+   {
+      E_Action *act;
+
+      act = e_action_add("opacity_change");
+      act->func.go = _e_comp_act_opacity_change_go;
+      e_action_predef_name_set(N_("Compositor"),
+                               N_("Change current window opacity"), "opacity_change",
+                               NULL, "syntax: +/- the amount to change opacity by (>0 for more opaque)", 1);
+      actions = eina_list_append(actions, act);
+      act = e_action_add("opacity_set");
+      act->func.go = _e_comp_act_opacity_set_go;
+      e_action_predef_name_set(N_("Compositor"),
+                               N_("Set current window opacity"), "opacity_set",
+                               "255", "syntax: number between 0-255 to set for transparent-opaque", 1);
+      actions = eina_list_append(actions, act);
+   }
+
 #ifdef HAVE_WAYLAND_CLIENTS
    if (!e_comp_wl_init())
      EINA_LOG_ERR("Failed to initialize Wayland Client Support !!");
@@ -4642,6 +4699,7 @@ e_comp_shutdown(void)
    E_FN_DEL(ecore_timer_del, action_timeout);
    E_FREE_LIST(compositors, _e_comp_del);
    E_FREE_LIST(handlers, ecore_event_handler_del);
+   E_FREE_LIST(actions, e_object_del);
 
 #ifdef HAVE_WAYLAND_CLIENTS
    e_comp_wl_shutdown();
@@ -5079,6 +5137,20 @@ e_comp_ignore_win_add(Ecore_X_Window win)
    eina_hash_add(ignores, e_util_winid_str_get(win), (void*)1);
 }
 
+EAPI void
+e_comp_win_opacity_set(E_Comp_Win *cw, unsigned int opacity)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cw);
+   if (opacity == cw->opacity) return;
+   opacity = MIN(opacity, 255);
+   cw->opacity = opacity;
+   if (cw->bd)
+     {
+        if (cw->opacity_set_timer) ecore_timer_reset(cw->opacity_set_timer);
+        else cw->opacity_set_timer = ecore_timer_add(5.0, (Ecore_Task_Cb)_e_comp_opacity_set_timer_cb, cw);
+     }
+   evas_object_color_set(cw->shobj, cw->opacity, cw->opacity, cw->opacity, cw->opacity);
+}
 
 EAPI void
 e_comp_override_del(E_Comp *c)
