@@ -1,4 +1,5 @@
 #include "e_mod_main.h"
+#include "e_mod_mixer.h"
 #include "Pulse.h"
 
 #define PULSE_BUS       "org.PulseAudio.Core1"
