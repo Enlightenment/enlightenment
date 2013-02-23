@@ -28,9 +28,7 @@ _cb_in_left(void *data, int d, double v)
         return;
      }
    if (!bd) return;
-   e_border_uniconify(bd);
-   e_border_raise(bd);
-   e_border_show(bd);
+   e_border_activate(bd, EINA_TRUE);
 }
 
 static void
@@ -66,9 +64,7 @@ _cb_in_right(void *data, int d, double v)
         return;
      }
    if (!bd) return;
-   e_border_uniconify(bd);
-   e_border_raise(bd);
-   e_border_show(bd);
+   e_border_activate(bd, EINA_TRUE);
 }
 
 static void
