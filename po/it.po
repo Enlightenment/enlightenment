@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-02-23 00:07+0900\n"
-"PO-Revision-Date: 2013-02-09 22:29+0100\n"
+"POT-Creation-Date: 2013-02-23 15:38+0100\n"
+"PO-Revision-Date: 2013-02-22 20:29+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: \n"
@@ -2652,7 +2652,7 @@ msgstr "Fuori lista finestre"
 
 #: src/bin/e_int_border_remember.c:787
 msgid "Opacity"
-msgstr ""
+msgstr "Opacità"
 
 #: src/bin/e_int_border_remember.c:790
 msgid "Application file or name (.desktop)"
@@ -3340,16 +3340,14 @@ msgstr ""
 "sistema di controllo dei gadget.\n"
 
 #: src/bin/e_main.c:905
-#, fuzzy
 msgid "Setup Toolbars"
-msgstr "Imposta contenuti della barra strumenti"
+msgstr "Imposta barre strumenti"
 
 #: src/bin/e_main.c:909
-#, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr ""
-"Enlightenment non riesce a configurare il suo\n"
-"sistema di intl (internazionalizzazione).\n"
+"Enlightenment non riesce a configurare le sue\n"
+"barre degli strumenti.\n"
 
 #: src/bin/e_main.c:916
 msgid "Setup Wallpaper"
@@ -4634,9 +4632,8 @@ msgid "Enable fast composite effects for popups"
 msgstr "Abilita effetti compositing rapidi per i popup"
 
 #: src/modules/conf_comp/e_mod_config.c:217
-#, fuzzy
 msgid "Enable fast composite effects for objects"
-msgstr "Abilita effetti compositing rapidi per i menù"
+msgstr "Abilita effetti compositing rapidi per gli oggetti"
 
 #: src/modules/conf_comp/e_mod_config.c:220
 msgid "Enable fast composite effects for overrides"
@@ -4659,9 +4656,8 @@ msgid "Disable composite effects for popups"
 msgstr "Disabilita effetti compositing per i popup"
 
 #: src/modules/conf_comp/e_mod_config.c:235
-#, fuzzy
 msgid "Disable composite effects for objects"
-msgstr "Disabilita effetti compositing per i menù"
+msgstr "Disabilita effetti compositing per gli oggetti"
 
 #: src/modules/conf_comp/e_mod_config.c:238
 msgid "Disable composite effects for overrides"
@@ -6658,9 +6654,8 @@ msgid "Screen Setup"
 msgstr "Impostazioni schermo"
 
 #: src/modules/conf_randr/e_int_config_randr.c:114
-#, fuzzy
 msgid "Restore On Startup"
-msgstr "Blocca all'avvio"
+msgstr "Ripristina all'avvio"
 
 #: src/modules/conf_randr/e_mod_main.c:31
 msgid "randr"
@@ -10838,6 +10833,3 @@ msgstr "Non sostituire ID notifica"
 #: src/modules/notification/e_mod_config.c:152
 msgid "Use multiple monitor geometry"
 msgstr "Usa geometria per monitor multipli"
-
-#~ msgid "Configure Shelves"
-#~ msgstr "Configura mensole porta-gadget"

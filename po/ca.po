@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Marc Furtià  i Puig\\\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-02-23 00:07+0900\n"
-"PO-Revision-Date: 2013-02-04 19:32+0100\n"
+"POT-Creation-Date: 2013-02-23 15:38+0100\n"
+"PO-Revision-Date: 2013-02-16 20:37+0100\n"
 "Last-Translator: Marc Furtià i Puig <marc.furtia@gmail.com>\n"
 "Language-Team: \n"
 "Language: ca\n"
@@ -1855,7 +1855,7 @@ msgstr "Seleccioneu una Imatge"
 
 #: src/bin/e_gadcon.c:1408
 msgid "Gadget error"
-msgstr "Error Artefacte "
+msgstr "Error Giny"
 
 #: src/bin/e_gadcon.c:1408
 #, c-format
@@ -2716,7 +2716,7 @@ msgstr "Més d'un mòdul seleccionat."
 
 #: src/bin/e_int_gadcon_config.c:704
 msgid "Loaded Gadgets"
-msgstr "Artefactes Carregats"
+msgstr "Ginys Carregats"
 
 #: src/bin/e_int_gadcon_config.c:719 src/bin/e_int_gadcon_config.c:752
 #: src/bin/e_widget_config_list.c:60
@@ -2738,7 +2738,7 @@ msgstr "Afegeix"
 
 #: src/bin/e_int_gadcon_config.c:724
 msgid "Available Gadgets"
-msgstr "Artefactes Autoritzats "
+msgstr "Ginys Autoritzats "
 
 #: src/bin/e_int_gadcon_config.c:786
 msgid "Shelf Contents"
@@ -3336,7 +3336,7 @@ msgstr "Configura la Comanda"
 
 #: src/bin/e_main.c:898
 msgid "Enlightenment cannot set up its gadget control system.\n"
-msgstr "Enlightenment no pot carregar el artefactes de control de sistema.\n"
+msgstr "Enlightenment no pot carregar el ginys de control de sistema.\n"
 
 #: src/bin/e_main.c:905
 #, fuzzy
@@ -3787,11 +3787,11 @@ msgstr "Una lleixa amb aquest nom ja existeix!"
 
 #: src/bin/e_shelf.c:1526 src/bin/e_shelf.c:2330
 msgid "Stop Moving Gadgets"
-msgstr "Parar de Moure Artefactes"
+msgstr "Parar de Moure Ginys"
 
 #: src/bin/e_shelf.c:1528 src/bin/e_shelf.c:2332
 msgid "Begin Moving Gadgets"
-msgstr "Començar a Moure Artefactes"
+msgstr "Començar a Moure Ginys"
 
 #: src/bin/e_shelf.c:1656
 msgid "Are you sure you want to delete this shelf?"
@@ -6308,11 +6308,11 @@ msgstr "Comentaris"
 #: src/modules/gadman/e_mod_main.c:76 src/modules/gadman/e_mod_main.c:83
 #: src/modules/gadman/e_mod_main.c:203
 msgid "Gadgets"
-msgstr "Artefactes"
+msgstr "Ginys"
 
 #: src/modules/conf_menus/e_int_config_menus.c:275
 msgid "Show gadget settings in top-level"
-msgstr "Mostra la preferències Artefactes nivell superior"
+msgstr "Mostra la preferències Ginys nivell superior"
 
 #: src/modules/conf_menus/e_int_config_menus.c:278
 #: src/modules/conf_menus/e_mod_main.c:17
@@ -7544,7 +7544,7 @@ msgstr "Disposició Intel·ligent"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:169
 msgid "Don't hide Gadgets"
-msgstr "No Ocultis Artefactes"
+msgstr "No Ocultis Ginys"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:172
 msgid "Place at mouse pointer"
@@ -7797,7 +7797,7 @@ msgstr "Vora de la pantalla"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:193
 msgid "Desktop gadgets"
-msgstr "Artefactes d'Escriptori "
+msgstr "Ginys d'Escriptori "
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:200
 msgid "Resistance"
@@ -8309,7 +8309,7 @@ msgstr "Tot d'Arranc"
 
 #: src/modules/everything/evry_gadget.c:587
 msgid "Everything Gadgets"
-msgstr "Tot artefactes"
+msgstr "Tot Ginys"
 
 #: src/modules/everything/evry_gadget.c:685
 msgid "Plugin"
@@ -9019,7 +9019,7 @@ msgstr "Sobre (Alternar Tecla)"
 #: src/modules/gadman/e_mod_config.c:79 src/modules/gadman/e_mod_config.c:156
 #: src/modules/gadman/e_mod_main.c:163
 msgid "Desktop Gadgets"
-msgstr "artefactes Escriptori"
+msgstr "Ginys Escriptori"
 
 #: src/modules/gadman/e_mod_config.c:179
 msgid "Available Layers"
@@ -9068,15 +9068,15 @@ msgstr "Aparença"
 
 #: src/modules/gadman/e_mod_gadman.c:1076
 msgid "Add other gadgets"
-msgstr "Afegir altres artefactes"
+msgstr "Afegir altres Ginys"
 
 #: src/modules/gadman/e_mod_main.c:83
 msgid "Show/hide gadgets"
-msgstr "Mostra/Oculta artefactes"
+msgstr "Mostra/Oculta Ginys"
 
 #: src/modules/gadman/e_mod_main.c:183
 msgid "Change Gadgets"
-msgstr "Canvia Artefactes"
+msgstr "Canvia Ginys"
 
 #: src/modules/winlist/e_int_config_winlist.c:52
 msgid "Window Switcher Settings"
@@ -10248,8 +10248,7 @@ msgstr "Una altra safata del sistema existeix"
 #: src/modules/systray/e_mod_main.c:256
 msgid "There can be only one systray gadget and another one already exists."
 msgstr ""
-"Només pot haver un artefacte de la safata del sistema i una altra ja "
-"existeix."
+"Només pot haver un Giny de la safata del sistema i una altra ja existeix."
 
 #: src/modules/systray/e_mod_main.c:264 src/modules/systray/e_mod_xembed.c:395
 msgid "Systray Error"

@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-02-23 00:07+0900\n"
-"PO-Revision-Date: 2013-01-22 20:03+0100\n"
+"POT-Creation-Date: 2013-02-23 15:38+0100\n"
+"PO-Revision-Date: 2013-02-17 14:35+0100\n"
 "Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Español; Castellano <>\n"
 "Language: es\n"
@@ -45,7 +45,6 @@ msgid "Enlightenment"
 msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
-#, fuzzy
 msgid ""
 "<title>Copyright &copy; 2000-2013, by the Enlightenment Development Team</"
 "><br><br>We hope you enjoy using this software as much as we enjoyed writing "
@@ -859,6 +858,8 @@ msgid ""
 "<br>As a result, all bindings have been reloaded from defaults.<br>Sorry for "
 "the inconvenience.<br>"
 msgstr ""
+"Los atajos no coinciden con la versión instalada.<br>Todos los atajos se han "
+"reseteado.<br>Perdone las molestias.<br>"
 
 #: src/bin/e_config.c:1638 src/bin/e_config.c:2298
 msgid "Enlightenment Settings Write Problems"
@@ -1886,7 +1887,7 @@ msgstr "Plano"
 
 #: src/bin/e_gadcon.c:1776 src/modules/gadman/e_mod_gadman.c:1019
 msgid "Inset"
-msgstr ""
+msgstr "Dentro"
 
 #: src/bin/e_gadcon.c:1789 src/bin/e_int_config_modules.c:53
 #: src/modules/conf_comp/e_mod_main.c:231
@@ -2016,7 +2017,7 @@ msgstr "Mosaico"
 # Sale al importar una imagen para el fondo de pantalla
 #: src/bin/e_import_config_dialog.c:505
 msgid "Within"
-msgstr ""
+msgstr "Dentro"
 
 #: src/bin/e_import_config_dialog.c:509
 msgid "Fill"
@@ -2026,7 +2027,7 @@ msgstr "Llenar"
 # Sale al importar una imagen para el fondo de pantalla
 #: src/bin/e_import_config_dialog.c:513
 msgid "Pan"
-msgstr ""
+msgstr "Deslizar"
 
 #: src/bin/e_import_config_dialog.c:521
 msgid "File Quality"
@@ -2936,9 +2937,8 @@ msgid "%.2f seconds"
 msgstr "%.2f segundos"
 
 #: src/bin/e_int_shelf_config.c:249
-#, fuzzy
 msgid "Don't adjust windows when overlapping the shelf"
-msgstr "Permitir ventanas por encima del panel"
+msgstr "No ajustar ventanas al superponerse al panel"
 
 #: src/bin/e_int_shelf_config.c:254
 msgid "Auto Hide"
@@ -3541,7 +3541,7 @@ msgid ""
 msgstr ""
 "Enlightenment falló al arranque y se ha reiniciado. Todos los módulos fueron "
 "deshabilitados<br>y no serán cargados para ayudar a resolver cualquier "
-"problema<br> con los módulos en su configuración. El diálogo de "
+"problema<br> con los módulos en su configuración. El cuadro de diálogo de "
 "configuración<br>de módulos le permitirá elegir nuevamente los módulos.\n"
 
 #: src/bin/e_main.c:1874
@@ -3553,7 +3553,7 @@ msgid ""
 msgstr ""
 "Enlightenment falló al arranque y se ha reiniciado. Todos los módulos fueron "
 "deshabilitados<br>y no serán cargados para ayudar a resolver cualquier "
-"problema<br> con los módulos en su configuración. El diálogo de "
+"problema<br> con los módulos en su configuración. El cuadro de diálogo de "
 "configuración<br>de módulos le permitirá elegir nuevamente<br>sus módulos."
 
 #: src/bin/e_module.c:241
@@ -4524,7 +4524,7 @@ msgstr "Opciones de composición"
 
 #: src/modules/conf_comp/e_mod_config.c:188
 msgid "Edit window matches"
-msgstr ""
+msgstr "Editar coincidencias de las ventanas"
 
 #: src/modules/conf_comp/e_mod_config.c:191
 #: src/modules/conf_comp/e_mod_config.c:567
@@ -5092,7 +5092,7 @@ msgstr "Preferencias generales"
 
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:111
 msgid "Disable Confirmation Dialogs"
-msgstr "Deshabilitar diálogos de confirmación"
+msgstr "Deshabilitar las ventanas de confirmación"
 
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:113
 msgid "Normal Windows"
@@ -5178,11 +5178,11 @@ msgstr "Volteo de escritorio"
 
 #: src/modules/conf_display/e_int_config_desks.c:191
 msgid "Flip when dragging objects to the screen edge"
-msgstr "Voltear cuando se arrastren objetos al borde de la pantalla"
+msgstr "Rotar cuando se arrastren objetos al borde de la pantalla"
 
 #: src/modules/conf_display/e_int_config_desks.c:194
 msgid "Wrap desktops around when flipping"
-msgstr "Rotar de escritorio al llegar al final"
+msgstr "Volver al escritorio inicial al llegar al final"
 
 #: src/modules/conf_display/e_int_config_desks.c:200
 #: src/modules/conf_display/e_int_config_desk.c:192
@@ -5387,7 +5387,7 @@ msgstr "Retardo de suspensión"
 #: src/modules/conf_display/e_int_config_screensaver.c:179
 #: src/modules/conf_display/e_mod_main.c:32
 msgid "Blanking"
-msgstr "Apagado de pantalla"
+msgstr "Salvapantallas"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:195
 msgid "Presentation"
@@ -5462,9 +5462,9 @@ msgid ""
 "<br><br>You can either specify a delay of this<br> action using the slider, "
 "or make it<br>respond to edge clicks:"
 msgstr ""
-"Seleccione un borde,<br>o haga click en <hilight>Cerrar</hilight> para "
-"abortar.<br><br>Tambien puede seleccionar un retardo para esta acción usando "
-"el deslizador, <br> o hacer que responda a los clicks en los bordes: "
+"Seleccione un borde<br>o haga click en <hilight>Cerrar</hilight> para "
+"abortar.<br><br>Puede seleccionar un retardo para esta acción<br>usando el "
+"deslizador, o<br>hacer que responda a los clicks en los bordes: "
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:106
 msgid "Edge Bindings Settings"
@@ -5538,9 +5538,8 @@ msgid "Clickable edge"
 msgstr "Activar al hacer click"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:892
-#, fuzzy
 msgid "Drag only"
-msgstr "Arrastrar icono..."
+msgstr "Solo arrastrar"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
 msgid "Edge Binding Error"
@@ -5624,9 +5623,8 @@ msgstr "(click)"
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:561
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:571
-#, fuzzy
 msgid "Signal Binding Error"
-msgstr "Error al asignar atajo al borde"
+msgstr "Error de atajo"
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:561
 msgid "Signal and Source must NOT be blank!"
@@ -5641,9 +5639,8 @@ msgstr ""
 "La señal y el origen ya se está usando para<br><hilight>%s</hilight><br>"
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:621
-#, fuzzy
 msgid "Add Signal Binding"
-msgstr "Atajos de los bordes"
+msgstr "Añadir atajo"
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:632
 msgid "Source:"
@@ -5656,7 +5653,7 @@ msgstr "Señal:"
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:768
 #: src/modules/conf_bindings/e_mod_main.c:39
 msgid "Signal Bindings"
-msgstr ""
+msgstr "Atajos de señales"
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:829
 #, fuzzy
@@ -5714,9 +5711,8 @@ msgstr "tecla"
 #: src/modules/conf_bindings/e_mod_main.c:56
 #: src/modules/conf_bindings/e_mod_main.c:60
 #: src/modules/conf_bindings/e_mod_main.c:63
-#, fuzzy
 msgid "binding"
-msgstr "Atajo ACPI"
+msgstr "atajo"
 
 #: src/modules/conf_bindings/e_mod_main.c:53
 msgid "mouse bindings"
@@ -6594,7 +6590,7 @@ msgstr "Manejo de energía"
 #: src/modules/conf_randr/e_int_config_randr.c:47
 #: src/modules/conf_randr/e_mod_main.c:21
 msgid "Screen Setup"
-msgstr "Configuración de la pantalla"
+msgstr "Resolución de pantalla"
 
 #: src/modules/conf_randr/e_int_config_randr.c:114
 #, fuzzy
@@ -6713,9 +6709,8 @@ msgid "Error Text"
 msgstr "Texto de error"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:83
-#, fuzzy
 msgid "Menu Background Base"
-msgstr "Base del fondo del menú"
+msgstr "Fondo de los menús"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:84
 #: src/modules/conf_theme/e_int_config_fonts.c:61
@@ -6767,9 +6762,8 @@ msgid "Winlist Title"
 msgstr "Título de la lista de ventanas"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:95
-#, fuzzy
 msgid "Dialog Background Base"
-msgstr "Fondo base de los diálogos"
+msgstr "Fondo de los diálogos"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:96
 msgid "Shelf Background Base"
@@ -6875,9 +6869,8 @@ msgid "Slider Text Disabled"
 msgstr "Texto del deslizador deshabilitado"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:124
-#, fuzzy
 msgid "Frame Background Base"
-msgstr "Frame Background Base"
+msgstr "Fondo de los marcos"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:125
 #, fuzzy
@@ -7332,7 +7325,7 @@ msgstr "Adaptarse al tema de Enlightenment, si es posible"
 
 #: src/modules/conf_theme/e_int_config_xsettings.c:422
 msgid "Enable X Application Settings"
-msgstr "Habilitar tema de las aplicaciones X"
+msgstr "Habilitar tema para las aplicaciones"
 
 #: src/modules/conf_theme/e_int_config_xsettings.c:427
 msgid "GTK Applications"
@@ -7405,7 +7398,7 @@ msgstr "fuente"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:38
 msgid "Window List Menu Settings"
-msgstr "Ajustes del menú de la lista de ventanas "
+msgstr "Opciones de lista de ventanas "
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:114
 msgid "Group By"
@@ -7433,7 +7426,7 @@ msgstr "Agrupamiento"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:145
 msgid "Alphabetical"
-msgstr "Alfabético"
+msgstr "Alfabética"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:148
 msgid "Window stacking layer"
@@ -7480,10 +7473,11 @@ msgstr "%1.0f Caracteres"
 msgid "Captions"
 msgstr "Etiquetas"
 
+# Hace referencia a diversas opciones de las ventanas
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:44
 #: src/modules/conf_window_manipulation/e_mod_main.c:18
 msgid "Window Display"
-msgstr "Información de ventanas"
+msgstr "Opciones"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:130
 msgid "Border Icon"
@@ -7636,9 +7630,8 @@ msgid "Raise windows on mouse over"
 msgstr "Elevar las ventanas cuando el ratón esté encima"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:252
-#, fuzzy
 msgid "Focus Policy"
-msgstr "Política"
+msgstr "Política de enfocado"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:254
 #: src/modules/wizard/page_060.c:33
@@ -7717,10 +7710,9 @@ msgstr "Activar al sugerir"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:314
 msgid "Hints"
-msgstr "Sugerencias"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:318
-#, fuzzy
 msgid "Warping"
 msgstr "Agrupamiento"
 
@@ -7729,9 +7721,8 @@ msgid "Prevent all forms of pointer warping"
 msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:329
-#, fuzzy
 msgid "Slide pointer to a new window which is focused"
-msgstr "Deslizar el puntero a una nueva ventana focalizada"
+msgstr "Deslizar puntero a una nueva ventana focalizada"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:334
 msgid "Warp speed"
@@ -7774,7 +7765,7 @@ msgstr "Enfocar la última ventana focalizada al cambiar de escritorio"
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:64
 #: src/modules/conf_window_manipulation/e_mod_main.c:20
 msgid "Window Geometry"
-msgstr "Geometria de la ventana"
+msgstr "Geometría"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:177
 msgid "Resist obstacles"
@@ -7813,9 +7804,8 @@ msgid "Both"
 msgstr "Ambas"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:226
-#, fuzzy
 msgid "Manipulation"
-msgstr "aplicación"
+msgstr "Manipulación"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:227
 msgid "Allow manipulation of maximized windows"
@@ -7853,7 +7843,7 @@ msgstr "Limitar el redimensionado a la geometría útil"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:263
 msgid "Ensure initial placement of windows inside useful geometry"
-msgstr ""
+msgstr "Emplazamiento inicial de ventanas a la geometría útil"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:266
 msgid "Adjust windows on shelf hide"
@@ -7941,9 +7931,8 @@ msgid "Remember file manager windows"
 msgstr "Recordar ventanas del administrador de archivos"
 
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:135
-#, fuzzy
 msgid "Don't remember file manager windows by directory"
-msgstr "Recordar ventanas del administrador de archivos"
+msgstr "No recordar ventanas del administrador de archivos por directorio"
 
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:146
 msgid "Details"
@@ -8018,9 +8007,8 @@ msgid "Lower Power Automatic"
 msgstr "Bajo consumo automático"
 
 #: src/modules/cpufreq/e_mod_main.c:233 src/modules/cpufreq/e_mod_main.c:269
-#, fuzzy
 msgid "Automatic Interactive"
-msgstr "Ahorro de energía automático"
+msgstr "Automático"
 
 #: src/modules/cpufreq/e_mod_main.c:235 src/modules/cpufreq/e_mod_main.c:271
 msgid "Minimum Speed"
@@ -9231,7 +9219,7 @@ msgstr "La lista de ventanas no se puede activar desde un atajo de borde"
 
 #: src/modules/winlist/e_mod_main.c:215
 msgid "Winlist cannot be activated from a signal binding"
-msgstr ""
+msgstr "La lista de ventanas no se puede activar desde un atajo de señal"
 
 #: src/modules/winlist/e_mod_main.c:221
 msgid "Winlist cannot be activated from an ACPI binding"
@@ -9273,7 +9261,7 @@ msgstr "Bloquear movimiento de los iconos"
 # Pero no estoy seguro
 #: src/modules/ibar/e_mod_config.c:147
 msgid "Track launch"
-msgstr ""
+msgstr "Seguir lanzamiento de aplicaciones"
 
 #: src/modules/ibar/e_mod_config.c:179
 msgid "Create new IBar source"
@@ -9608,7 +9596,7 @@ msgstr "Control del sistema"
 
 #: src/modules/temperature/e_mod_config.c:56
 msgid "Temperature Settings"
-msgstr "Configuración de la temperatura"
+msgstr "Temperatura"
 
 #: src/modules/temperature/e_mod_config.c:217
 msgid "Sensors"
@@ -9758,13 +9746,13 @@ msgid ""
 "disable this as it<br>may leave you vulnerable or having to live<br>with "
 "bugs."
 msgstr ""
-"Enlightenment puede comprobar nuevas versiones, actualizaciones y fallos de "
-"seguridad, así como nuevos complementos.<br>Esto es muy útil, ya que le "
-"permite mantener el sistema actualizado."
+"Enlightenment puede comprobar nuevas<br>versiones, actualizaciones "
+"y<br>fallos de seguridad, así como nuevos complementos.<br><br>Esto es muy "
+"útil, ya que le permite saber<br>si hay fallos de seguridad o correcciones."
 
 #: src/modules/wizard/page_170.c:53
 msgid "Enable update checking"
-msgstr "Habilitar comprobación de actualización"
+msgstr "Habilitar comprobación de actualizaciones"
 
 #: src/modules/wizard/page_180.c:26
 msgid "Information"
@@ -10079,16 +10067,16 @@ msgid "Cannot set relaunch for internal E dialog!"
 msgstr "No se puede asignar relanzamiento para un cuadro de dialogo interno E!"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:368
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected window created with name:<br>%s<br>and class:<br>%s<br>could "
 "not be found in the Quickaccess app database<br>This means that either the "
 "app is unknown to us<br>or it is not intended for use with this option."
 "<br>Please choose an action to take:"
 msgstr ""
-"no se pudo encontrar en la base de datos de acceso rápido<br>Esto significa "
-"que, o bien la aplicación es desconocida, <br>o que no se debería usar con "
-"esta opción.<br>Por favor, elija la acción a realizar:"
+"La ventana de nombre:<br>%s<br>y clase:<br>%s<br>no se pudo encontrar en la "
+"base de datos<br>O la aplicación es desconocida,<br>o no se puede utilizar "
+"con esta opción.<br>Por favor, elija la acción a tomar: "
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:379
 #: src/modules/quickaccess/e_mod_quickaccess.c:977
@@ -10485,11 +10473,11 @@ msgstr ""
 
 #: src/modules/tiling/e_mod_tiling.c:3802
 msgid "Add a stack"
-msgstr ""
+msgstr "Añadir una pila"
 
 #: src/modules/tiling/e_mod_tiling.c:3805
 msgid "Remove a stack"
-msgstr ""
+msgstr "Eliminar una pila"
 
 #: src/modules/tiling/e_mod_tiling.c:3808
 msgid "Toggle between rows and columns"
@@ -10561,9 +10549,8 @@ msgid "tiling"
 msgstr "mosaico"
 
 #: src/modules/tiling/e_mod_tiling.c:3915
-#, fuzzy
 msgid "Tile dialog windows"
-msgstr "Poner en mosaico las ventanas de diálogo"
+msgstr "Poner en mosaico los cuadros de diálogo"
 
 #: src/modules/tiling/e_mod_tiling.c:3915
 msgid "dialog"
@@ -10592,7 +10579,7 @@ msgstr "Opciones de distribución de teclado"
 
 #: src/modules/xkbswitch/e_mod_main.c:207
 msgid "NONE"
-msgstr ""
+msgstr "Ninguna"
 
 #: src/modules/xkbswitch/e_mod_config.c:74
 msgid "Keyboard Settings"
@@ -10608,12 +10595,11 @@ msgstr "Modelos"
 
 #: src/modules/xkbswitch/e_mod_config.c:277
 msgid "Do not apply any keyboard settings ever"
-msgstr ""
+msgstr "Nunca aplicar preferencias de teclado"
 
 #: src/modules/xkbswitch/e_mod_config.c:279
-#, fuzzy
 msgid "Label only in gadgets"
-msgstr "Sólo etiqueta"
+msgstr "Etiqueta solo en las herramientas de escritorio"
 
 #: src/modules/xkbswitch/e_mod_config.c:463
 msgid "Add New Configuration"
