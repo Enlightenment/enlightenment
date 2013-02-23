@@ -3,6 +3,7 @@
 
 #include "e.h"
 
+typedef void E_Mixer_App;
 typedef void E_Mixer_System;
 typedef void E_Mixer_Channel;
 
@@ -12,6 +13,14 @@ typedef struct _E_Mixer_Channel_State
    int left;
    int right;
 } E_Mixer_Channel_State;
+
+typedef struct _E_Mixer_Channel_Info
+{
+   int                      has_capture;
+   const char              *name;
+   E_Mixer_Channel         *id;
+   E_Mixer_App             *app;
+} E_Mixer_Channel_Info;
 
 typedef int (*E_Mixer_Volume_Set_Cb)(E_Mixer_System *, E_Mixer_Channel *, int, int);
 typedef int (*E_Mixer_Volume_Get_Cb)(E_Mixer_System *, E_Mixer_Channel *, int *, int *);

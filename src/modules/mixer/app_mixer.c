@@ -10,7 +10,7 @@ typedef struct E_Mixer_App_Dialog_Data
    int                   lock_sliders;
    Eina_List            *cards;
    Eina_List            *channels_infos;
-   struct channel_info  *channel_info;
+   E_Mixer_Channel_Info *channel_info;
    E_Mixer_Channel_State state;
 
    struct e_mixer_app_ui
@@ -50,14 +50,6 @@ typedef struct E_Mixer_App_Dialog_Data
       void (*func)(E_Dialog *dialog, void *data);
    } del;
 } E_Mixer_App_Dialog_Data;
-
-struct channel_info
-{
-   int                      has_capture;
-   const char              *name;
-   E_Mixer_Channel         *id;
-   E_Mixer_App_Dialog_Data *app;
-};
 
 static void
 _cb_changed_left(void *data, Evas_Object *obj __UNUSED__)
@@ -203,7 +195,7 @@ _populate_channel_editor(E_Mixer_App_Dialog_Data *app)
 static void
 _cb_channel_selected(void *data)
 {
-   struct channel_info *info = data;
+   E_Mixer_Channel_Info *info = data;
    E_Mixer_App_Dialog_Data *app;
 
    app = info->app;
@@ -214,7 +206,7 @@ _cb_channel_selected(void *data)
 static int
 _channel_info_cmp(const void *data_a, const void *data_b)
 {
-   const struct channel_info *a = data_a, *b = data_b;
+   const E_Mixer_Channel_Info *a = data_a, *b = data_b;
 
    if (a->has_capture < b->has_capture)
      return -1;
@@ -233,7 +225,7 @@ _channels_info_new(E_Mixer_System *sys)
    channels_infos = NULL;
    for (l = channels; l; l = l->next)
      {
-        struct channel_info *info;
+        E_Mixer_Channel_Info *info;
 
         info = malloc(sizeof(*info));
         info->id = l->data;
@@ -250,7 +242,7 @@ _channels_info_new(E_Mixer_System *sys)
 static void
 _channels_info_free(Eina_List *list)
 {
-   struct channel_info *info;
+   E_Mixer_Channel_Info *info;
 
    EINA_LIST_FREE(list, info)
      {
@@ -302,7 +294,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
 
    if (app->channels_infos)
      {
-        struct channel_info *info = app->channels_infos->data;
+        E_Mixer_Channel_Info *info = app->channels_infos->data;
         if (info->has_capture)
           {
              e_widget_ilist_header_append(ilist, NULL, _("Input"));
@@ -319,7 +311,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
 
    for (l = app->channels_infos; l; l = l->next, i++)
      {
-        struct channel_info *info = l->data;
+        E_Mixer_Channel_Info *info = l->data;
 
         if ((!header_input) && info->has_capture)
           {
@@ -577,7 +569,7 @@ _find_card_by_name(E_Mixer_App_Dialog_Data *app, const char *card_name)
 static inline int
 _find_channel_by_name(E_Mixer_App_Dialog_Data *app, const char *channel_name)
 {
-   struct channel_info *info;
+   E_Mixer_Channel_Info *info;
    Eina_List *l;
    int i = 0;
    int header_input;
