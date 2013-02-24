@@ -528,7 +528,22 @@ _e_fm2_icon_path(const E_Fm2_Icon *ic, char *buf, int buflen)
    int r;
 
    if (ic->info.link)
-     r = snprintf(buf, buflen, "%s", ic->info.link);
+     {
+        if (ic->info.link[0] == '/')
+          r = snprintf(buf, buflen, "%s", ic->info.link);
+        else
+          {
+             char *tmp;
+             
+             r = snprintf(buf, buflen, "%s/%s", ic->sd->path, ic->info.file);
+             tmp = ecore_file_realpath(buf);
+             if (tmp)
+               {
+                  r = snprintf(buf, buflen, "%s", tmp);
+                  free(tmp);
+               }
+          }
+     }
    else
      r = snprintf(buf, buflen, "%s/%s", ic->sd->path, ic->info.file);
    return r < buflen;
