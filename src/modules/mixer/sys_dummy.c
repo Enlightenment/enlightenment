@@ -75,7 +75,7 @@ e_mixer_system_get_channels(E_Mixer_System *self __UNUSED__)
 }
 
 Eina_List *
-e_mixer_system_get_channels_names(E_Mixer_System *self __UNUSED__)
+e_mixer_system_get_channel_names(E_Mixer_System *self __UNUSED__)
 {
    _e_mixer_dummy_set();
 

@@ -16,7 +16,7 @@ E_Mixer_Cb e_mod_mixer_channel_name_get;
 E_Mixer_Cb e_mod_mixer_channel_del;
 E_Mixer_Cb e_mod_mixer_channel_free;
 E_Mixer_Cb e_mod_mixer_channels_get;
-E_Mixer_Cb e_mod_mixer_channels_names_get;
+E_Mixer_Cb e_mod_mixer_channel_names_get;
 E_Mixer_Cb e_mod_mixer_card_name_get;
 E_Mixer_Cb e_mod_mixer_card_names_get;
 E_Mixer_Cb e_mod_mixer_card_default_get;
@@ -38,7 +38,7 @@ e_mixer_default_setup(void)
    e_mod_mixer_channel_name_get = (void *)e_mixer_system_get_channel_name;
    e_mod_mixer_channel_del = (void *)e_mixer_system_channel_del;
    e_mod_mixer_channels_get = (void *)e_mixer_system_get_channels;
-   e_mod_mixer_channels_names_get = (void *)e_mixer_system_get_channels_names;
+   e_mod_mixer_channel_names_get = (void *)e_mixer_system_get_channel_names;
    e_mod_mixer_card_name_get = (void *)e_mixer_system_get_card_name;
    e_mod_mixer_card_names_get = (void *)e_mixer_system_get_cards;
    e_mod_mixer_card_default_get = (void *)e_mixer_system_get_default_card;
@@ -62,7 +62,7 @@ e_mixer_pulse_setup()
    e_mod_mixer_channel_name_get = (void *)e_mixer_pulse_get_channel_name;
    e_mod_mixer_channel_del = (void *)e_mixer_pulse_channel_del;
    e_mod_mixer_channels_get = (void *)e_mixer_pulse_get_channels;
-   e_mod_mixer_channels_names_get = (void *)e_mixer_pulse_get_channels_names;
+   e_mod_mixer_channel_names_get = (void *)e_mixer_pulse_get_channel_names;
    e_mod_mixer_card_name_get = (void *)e_mixer_pulse_get_card_name;
    e_mod_mixer_card_names_get = (void *)e_mixer_pulse_get_cards;
    e_mod_mixer_card_default_get = (void *)e_mixer_pulse_get_default_card;
@@ -83,13 +83,13 @@ _channel_info_cmp(const void *data_a, const void *data_b)
 }
 
 Eina_List *
-e_mod_mixer_channels_info_get(E_Mixer_System *sys)
+e_mod_mixer_channel_infos_get(E_Mixer_System *sys)
 {
    return eina_list_sort(e_mod_mixer_channels_get(sys), -1, _channel_info_cmp);
 }
 
 void
-e_mod_mixer_channels_info_free(Eina_List *list)
+e_mod_mixer_channel_infos_free(Eina_List *list)
 {
    E_Mixer_Channel_Info *info;
 
@@ -101,7 +101,7 @@ e_mod_mixer_channels_info_free(Eina_List *list)
 }
 
 void
-e_mod_mixer_channels_names_free(Eina_List *list)
+e_mod_mixer_channel_names_free(Eina_List *list)
 {
    const char *str;
    EINA_LIST_FREE(list, str)
