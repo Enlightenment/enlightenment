@@ -948,7 +948,7 @@ _apply_widget_position(E_Gadcon_Client *gcc)
    /* something broke the config's geom, make it visible so it can be
     * resized/deleted
     */
-   if ((!gcc->cf->geom.pos_x) && (!gcc->cf->geom.pos_y) && (!gcc->cf->geom.size_w) && (!gcc->cf->geom.size_h))
+   if ((gcc->cf->geom.pos_x < 0) || (gcc->cf->geom.pos_y < 0) || (!gcc->cf->geom.size_w) || (!gcc->cf->geom.size_h))
      {
         gcc->cf->style = eina_stringshare_add(gcc->client_class->default_style ?: E_GADCON_CLIENT_STYLE_INSET);
         gcc->style = eina_stringshare_ref(gcc->cf->style);
@@ -1015,64 +1015,67 @@ _attach_menu(void *data __UNUSED__, E_Gadcon_Client *gcc, E_Menu *menu)
    e_menu_item_callback_set(mi, on_menu_edit, gcc);
 
    /* plain / inset */
-   if (gcc->cf && (!gcc->cf->style))
-     gcc->cf->style = eina_stringshare_add(E_GADCON_CLIENT_STYLE_INSET);
+   if (gcc->cf)
+     {
+        if (!gcc->cf->style)
+          gcc->cf->style = eina_stringshare_add(E_GADCON_CLIENT_STYLE_INSET);
 
-   mn = e_menu_new();
-   mi = e_menu_item_new(mn);
-   e_menu_item_label_set(mi, _("Plain"));
-   e_menu_item_radio_set(mi, 1);
-   e_menu_item_radio_group_set(mi, 1);
-   if (gcc->cf && (!e_util_strcmp(gcc->cf->style, E_GADCON_CLIENT_STYLE_PLAIN)))
-     e_menu_item_toggle_set(mi, 1);
-   e_menu_item_callback_set(mi, on_menu_style_plain, gcc);
+        mn = e_menu_new();
+        mi = e_menu_item_new(mn);
+        e_menu_item_label_set(mi, _("Plain"));
+        e_menu_item_radio_set(mi, 1);
+        e_menu_item_radio_group_set(mi, 1);
+        if (!strcmp(gcc->cf->style, E_GADCON_CLIENT_STYLE_PLAIN))
+          e_menu_item_toggle_set(mi, 1);
+        e_menu_item_callback_set(mi, on_menu_style_plain, gcc);
 
-   mi = e_menu_item_new(mn);
-   e_menu_item_label_set(mi, _("Inset"));
-   e_menu_item_radio_set(mi, 1);
-   e_menu_item_radio_group_set(mi, 1);
-   if (!strcmp(gcc->cf->style, E_GADCON_CLIENT_STYLE_INSET))
-     e_menu_item_toggle_set(mi, 1);
-   e_menu_item_callback_set(mi, on_menu_style_inset, gcc);
+        mi = e_menu_item_new(mn);
+        e_menu_item_label_set(mi, _("Inset"));
+        e_menu_item_radio_set(mi, 1);
+        e_menu_item_radio_group_set(mi, 1);
+        if (!strcmp(gcc->cf->style, E_GADCON_CLIENT_STYLE_INSET))
+          e_menu_item_toggle_set(mi, 1);
+        e_menu_item_callback_set(mi, on_menu_style_inset, gcc);
 
-   mi = e_menu_item_new(mn);
-   e_menu_item_separator_set(mi, 1);
+        mi = e_menu_item_new(mn);
+        e_menu_item_separator_set(mi, 1);
 
-   /* orient */
-   mi = e_menu_item_new(mn);
-   e_menu_item_label_set(mi, _("Free"));
-   e_menu_item_radio_set(mi, 1);
-   e_menu_item_radio_group_set(mi, 2);
-   if (gcc->cf->orient == E_GADCON_ORIENT_FLOAT)
-     e_menu_item_toggle_set(mi, 1);
-   e_menu_item_callback_set(mi, on_menu_style_float, gcc);
+        /* orient */
+        mi = e_menu_item_new(mn);
+        e_menu_item_label_set(mi, _("Free"));
+        e_menu_item_radio_set(mi, 1);
+        e_menu_item_radio_group_set(mi, 2);
+        if (gcc->cf->orient == E_GADCON_ORIENT_FLOAT)
+          e_menu_item_toggle_set(mi, 1);
+        e_menu_item_callback_set(mi, on_menu_style_float, gcc);
 
-   mi = e_menu_item_new(mn);
-   e_menu_item_label_set(mi, _("Horizontal"));
-   e_menu_item_radio_set(mi, 1);
-   e_menu_item_radio_group_set(mi, 2);
-   if (gcc->cf->orient == E_GADCON_ORIENT_HORIZ)
-     e_menu_item_toggle_set(mi, 1);
-   e_menu_item_callback_set(mi, on_menu_style_horiz, gcc);
+        mi = e_menu_item_new(mn);
+        e_menu_item_label_set(mi, _("Horizontal"));
+        e_menu_item_radio_set(mi, 1);
+        e_menu_item_radio_group_set(mi, 2);
+        if (gcc->cf->orient == E_GADCON_ORIENT_HORIZ)
+          e_menu_item_toggle_set(mi, 1);
+        e_menu_item_callback_set(mi, on_menu_style_horiz, gcc);
 
-   mi = e_menu_item_new(mn);
-   e_menu_item_label_set(mi, _("Vertical"));
-   e_menu_item_radio_set(mi, 1);
-   e_menu_item_radio_group_set(mi, 2);
-   if (gcc->cf->orient == E_GADCON_ORIENT_VERT)
-     e_menu_item_toggle_set(mi, 1);
-   e_menu_item_callback_set(mi, on_menu_style_vert, gcc);
+        mi = e_menu_item_new(mn);
+        e_menu_item_label_set(mi, _("Vertical"));
+        e_menu_item_radio_set(mi, 1);
+        e_menu_item_radio_group_set(mi, 2);
+        if (gcc->cf->orient == E_GADCON_ORIENT_VERT)
+          e_menu_item_toggle_set(mi, 1);
+        e_menu_item_callback_set(mi, on_menu_style_vert, gcc);
 
-   mi = e_menu_item_new(menu);
-   e_menu_item_label_set(mi, _("Appearance"));
-   e_util_menu_item_theme_icon_set(mi, "preferences-look");
-   e_menu_item_submenu_set(mi, mn);
-   e_object_unref(E_OBJECT(mn));
+        mi = e_menu_item_new(menu);
+        e_menu_item_label_set(mi, _("Appearance"));
+        e_util_menu_item_theme_icon_set(mi, "preferences-look");
+        e_menu_item_submenu_set(mi, mn);
+        e_object_unref(E_OBJECT(mn));
 
-   mi = e_menu_item_new(menu);
-   e_menu_item_separator_set(mi, 1);
+        mi = e_menu_item_new(menu);
+        e_menu_item_separator_set(mi, 1);
 
-   e_gadcon_client_add_location_menu(gcc, menu);
+        e_gadcon_client_add_location_menu(gcc, menu);
+     }
 
    /* Remove this gadgets */
    mi = e_menu_item_new(menu);
