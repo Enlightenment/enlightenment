@@ -582,14 +582,16 @@ _e_fm_main_udisks_cb_vol_prop(void *data, const EDBus_Message *msg,
           }
         else if (!strcmp(key, "PartitionSlave"))
           {
-             char *partition_slave;
+             char *partition_slave, buf[4096];
              if (!edbus_message_iter_arguments_get(var, "o", &partition_slave))
                continue;
-             partition_slave = strdup(partition_slave);
-             sprintf(partition_slave, "/dev/%s",
-                     partition_slave + strlen("/org/freedesktop/UDisks/devices/"));
-             eina_stringshare_replace(&v->parent, partition_slave);
-             free(partition_slave);
+             if ((!partition_slave) || (strlen(partition_slave) < sizeof("/org/freedesktop/UDisks/devices/")))
+               eina_stringshare_replace(&v->parent, partition_slave);
+             else
+               {
+                  snprintf(buf, sizeof(buf), "/dev/%s", partition_slave + sizeof("/org/freedesktop/UDisks/devices/") - 1);
+                  eina_stringshare_replace(&v->parent, buf);
+               }
           }
 
      }
