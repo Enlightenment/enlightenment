@@ -204,54 +204,6 @@ _cb_channel_selected(void *data)
 }
 
 static int
-_channel_info_cmp(const void *data_a, const void *data_b)
-{
-   const E_Mixer_Channel_Info *a = data_a, *b = data_b;
-
-   if (a->has_capture < b->has_capture)
-     return -1;
-   else if (a->has_capture > b->has_capture)
-     return 1;
-
-   return strcmp(a->name, b->name);
-}
-
-static Eina_List *
-_channels_info_new(E_Mixer_System *sys)
-{
-   Eina_List *channels, *channels_infos, *l;
-
-   channels = e_mod_mixer_channels_get(sys);
-   channels_infos = NULL;
-   for (l = channels; l; l = l->next)
-     {
-        E_Mixer_Channel_Info *info;
-
-        info = malloc(sizeof(*info));
-        info->id = l->data;
-        info->name = e_mod_mixer_channel_name_get(sys, info->id);
-        info->has_capture = e_mod_mixer_capture_get(sys, info->id);
-
-        channels_infos = eina_list_append(channels_infos, info);
-     }
-   e_mod_mixer_channels_free(channels);
-
-   return eina_list_sort(channels_infos, -1, _channel_info_cmp);
-}
-
-static void
-_channels_info_free(Eina_List *list)
-{
-   E_Mixer_Channel_Info *info;
-
-   EINA_LIST_FREE(list, info)
-     {
-        eina_stringshare_del(info->name);
-        free(info);
-     }
-}
-
-static int
 _cb_system_update(void *data, E_Mixer_System *sys __UNUSED__)
 {
    E_Mixer_App_Dialog_Data *app = data;
@@ -289,8 +241,8 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
    app->channel_name = e_mod_mixer_channel_default_name_get(app->sys);
 
    if (app->channels_infos)
-     _channels_info_free(app->channels_infos);
-   app->channels_infos = _channels_info_new(app->sys);
+     e_mod_mixer_channels_info_free(app->channels_infos);
+   app->channels_infos = e_mod_mixer_channels_info_get(app->sys);
 
    if (app->channels_infos)
      {
@@ -490,7 +442,7 @@ _mixer_app_dialog_del(E_Dialog *dialog, E_Mixer_App_Dialog_Data *app)
    if (app->cards)
      e_mod_mixer_cards_free(app->cards);
    if (app->channels_infos)
-     _channels_info_free(app->channels_infos);
+     e_mod_mixer_channels_info_free(app->channels_infos);
    e_mod_mixer_del(app->sys);
 
    e_util_defer_object_del(E_OBJECT(dialog));

@@ -67,13 +67,14 @@ e_mixer_system_get_card_name(const char *card)
 Eina_List *
 e_mixer_system_get_channels(E_Mixer_System *self __UNUSED__)
 {
-   return eina_list_append(NULL, (void *)-2);
-}
+   E_Mixer_Channel_Info *ch_info;
 
-void
-e_mixer_system_free_channels(Eina_List *channels)
-{
-   eina_list_free(channels);
+   ch_info = malloc(sizeof(*ch_info));
+   ch_info->id = (void*)-2;
+   ch_info->name = eina_stringshare_ref(_name);
+   ch_info->has_capture = 0;
+
+   return eina_list_append(NULL, ch_info);
 }
 
 Eina_List *
@@ -81,13 +82,7 @@ e_mixer_system_get_channels_names(E_Mixer_System *self __UNUSED__)
 {
    _e_mixer_dummy_set();
 
-   return eina_list_append(NULL, _name);
-}
-
-void
-e_mixer_system_free_channels_names(Eina_List *channels_names)
-{
-   eina_list_free(channels_names);
+   return eina_list_append(NULL, eina_stringshare_ref(_name));
 }
 
 const char *

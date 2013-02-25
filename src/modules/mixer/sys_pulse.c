@@ -477,27 +477,20 @@ e_mixer_pulse_get_card_name(const char *card)
 Eina_List *
 e_mixer_pulse_get_channels(E_Mixer_System *self EINA_UNUSED)
 {
-   return eina_list_append(NULL, (void *)(1));
-}
+   E_Mixer_Channel_Info *ch_info;
 
-void
-e_mixer_pulse_free_channels(Eina_List *channels)
-{
-   eina_list_free(channels);
+   ch_info = malloc(sizeof(*ch_info));
+   ch_info->id = (void*)1;
+   ch_info->name = eina_stringshare_ref(_name);
+   ch_info->has_capture = 0;
+
+   return eina_list_append(NULL, ch_info);
 }
 
 Eina_List *
 e_mixer_pulse_get_channels_names(E_Mixer_System *self EINA_UNUSED)
 {
    return eina_list_append(NULL, eina_stringshare_ref(_name));
-}
-
-void
-e_mixer_pulse_free_channels_names(Eina_List *channels_names)
-{
-   const char *str;
-   EINA_LIST_FREE(channels_names, str)
-     eina_stringshare_del(str);
 }
 
 const char *
