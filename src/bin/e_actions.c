@@ -119,9 +119,7 @@ ACT_FN_GO_SIGNAL(window_move, )
           e_border_signal_move_end((E_Border *)obj, sig, src);
         else
           {
-             if (((E_Border *)obj)->moving)
-               e_border_signal_move_end((E_Border *)obj, sig, src);
-             else
+             if (!((E_Border *)obj)->moving)
                e_border_signal_move_begin((E_Border *)obj, sig, src);
           }
      }
@@ -2488,7 +2486,7 @@ ACT_FN_GO(pointer_resize_push, )
         if ((bd->lock_user_size) || (bd->shaded) || (bd->shading) ||
             (bd->fullscreen) || ((bd->maximized) && (!e_config->allow_manip)))
           return;
-        e_pointer_type_push(bd->pointer, bd, params);
+        e_pointer_type_push(e_comp_get(bd)->pointer, bd, params);
      }
 }
 
@@ -2504,7 +2502,7 @@ ACT_FN_GO(pointer_resize_pop, )
         if ((bd->lock_user_size) || (bd->shaded) || (bd->shading) ||
             (bd->fullscreen) || ((bd->maximized) && (!e_config->allow_manip)))
           return;
-        e_pointer_type_pop(bd->pointer, bd, params);
+        e_pointer_type_pop(e_comp_get(bd)->pointer, bd, params);
      }
 }
 

@@ -56,6 +56,7 @@ struct _E_Comp
    Evas_Object    *layout;
    Eina_List      *zones;
    E_Manager      *man;
+   E_Pointer      *pointer;
 
    Eina_List *debug_rects;
    Eina_List *ignore_wins;
@@ -248,6 +249,7 @@ EAPI void e_comp_win_moveresize(E_Comp_Win *cw, Evas_Coord x, Evas_Coord y, int 
 EAPI void e_comp_win_hide(E_Comp_Win *cw);
 EAPI void e_comp_win_show(E_Comp_Win *cw);
 EAPI void e_comp_win_del(E_Comp_Win *cw);
+EAPI void e_comp_win_reshadow(E_Comp_Win *cw);
 
 EAPI void e_comp_ignore_win_add(Ecore_X_Window win);
 
@@ -258,7 +260,7 @@ EAPI void e_comp_ignore_win_add(Ecore_X_Window win);
 #define E_LAYER_LAYOUT_ADD_UNDER(obj, layer) e_comp_canvas_layer_set(obj, E_COMP_CANVAS_LAYER_LAYOUT, layer, E_COMP_CANVAS_STACK_UNDER)
 #define E_LAYER_LAYOUT_ADD_ABOVE(obj, layer) e_comp_canvas_layer_set(obj, E_COMP_CANVAS_LAYER_LAYOUT, layer, E_COMP_CANVAS_STACK_ABOVE)
 
-EAPI void e_comp_canvas_layer_set(Evas_Object *obj, E_Comp_Canvas_Layer comp_layer, E_Layer layer, E_Comp_Canvas_Stack stack);
+EAPI E_Comp_Win *e_comp_canvas_layer_set(Evas_Object *obj, E_Comp_Canvas_Layer comp_layer, E_Layer layer, E_Comp_Canvas_Stack stack);
 EAPI unsigned int e_comp_e_object_layer_get(const E_Object *obj);
 
 static inline E_Comp *

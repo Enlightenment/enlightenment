@@ -2,7 +2,6 @@
 
 /* local subsystem functions */
 static void _e_win_free(E_Win *win);
-static void _e_win_del(void *obj);
 static void _e_win_prop_update(E_Win *win);
 static void _e_win_state_update(E_Win *win);
 static void _e_win_cb_move(Ecore_Evas *ee);
@@ -236,6 +235,17 @@ static const Elm_Win_Trap _elm_win_trap = {
 };
 #endif
 
+
+static void
+_e_win_hide(void *obj)
+{
+   E_Win *win = obj;
+
+   if (!win->border) return;
+   if (win->border->visible) e_border_hide(win->border, 1);
+   e_object_del(E_OBJECT(win->border));
+}
+
 /* externally accessible functions */
 EINTERN int
 e_win_init(void)
@@ -276,8 +286,7 @@ e_win_new(E_Container *con)
 
    win = E_OBJECT_ALLOC(E_Win, E_WIN_TYPE, _e_win_free);
    if (!win) return NULL;
-   e_object_del_func_set(E_OBJECT(win), _e_win_del);
-   e_object_delay_del_set(E_OBJECT(win), e_win_hide);
+   e_object_delay_del_set(E_OBJECT(win), _e_win_hide);
    win->container = con;
    win->ecore_evas = e_canvas_new(con->manager->root,
                                   0, 0, 1, 1, 1, 0,
@@ -682,24 +691,20 @@ _e_win_free(E_Win *win)
    if (win->pointer)
      e_object_del(E_OBJECT(win->pointer));
 
-   e_canvas_del(win->ecore_evas);
-   ecore_evas_free(win->ecore_evas);
    if (win->border)
      {
-        e_border_hide(win->border, 1);
-        e_object_del(E_OBJECT(win->border));
+        ecore_evas_callback_move_set(win->ecore_evas, NULL);
+        ecore_evas_callback_resize_set(win->ecore_evas, NULL);
+        ecore_evas_callback_delete_request_set(win->ecore_evas, NULL);
+        ecore_evas_callback_state_change_set(win->ecore_evas, NULL);
+     }
+   else
+     {
+        e_canvas_del(win->ecore_evas);
+        ecore_evas_free(win->ecore_evas);
      }
    wins = eina_list_remove(wins, win);
    free(win);
-}
-
-static void
-_e_win_del(void *obj)
-{
-   E_Win *win;
-
-   win = obj;
-   if (win->border) e_border_hide(win->border, 1);
 }
 
 static void
@@ -736,7 +741,10 @@ _e_win_cb_move(Ecore_Evas *ee)
 
    win = ecore_evas_data_get(ee, "E_Win");
    if (!win) return;
-   ecore_evas_geometry_get(win->ecore_evas, &win->x, &win->y, &win->w, &win->h);
+   if (win->border)
+     win->x = win->border->x, win->y = win->border->y;
+   else
+     ecore_evas_geometry_get(win->ecore_evas, &win->x, &win->y, NULL, NULL);
    if (win->cb_move) win->cb_move(win);
 }
 
@@ -747,7 +755,7 @@ _e_win_cb_resize(Ecore_Evas *ee)
 
    win = ecore_evas_data_get(ee, "E_Win");
    if (!win) return;
-   ecore_evas_geometry_get(win->ecore_evas, &win->x, &win->y, &win->w, &win->h);
+   ecore_evas_geometry_get(win->ecore_evas, NULL, NULL, &win->w, &win->h);
    if (win->cb_resize) win->cb_resize(win);
 }
 

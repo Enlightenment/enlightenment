@@ -611,13 +611,14 @@ _shot_now(E_Zone *zone, E_Border *bd)
    Evas_Object *o, *oa, *op, *ol;
    int x, y, w, h;
    Evas_Modifier_Mask mask;
-   Ecore_X_Window xwin, root;
+   Ecore_X_Window xwin;
    E_Radio_Group *rg;
    Ecore_X_Visual visual;
    Ecore_X_Display *display;
    Ecore_X_Screen *scr;
    Ecore_X_Window_Attributes watt;
    Ecore_X_Colormap colormap;
+   int depth;
 
    if ((!zone) && (!bd)) return;
    if (zone)
@@ -628,28 +629,24 @@ _shot_now(E_Zone *zone, E_Border *bd)
         w = sw = sman->w;
         h = sh = sman->h;
         x = y = 0;
+        if (!ecore_x_window_attributes_get(xwin, &watt)) return;
+        visual = watt.visual;
+        depth = watt.depth;
      }
    else
      {
-        root = bd->zone->container->manager->root;
-        xwin = bd->client.win;
-        while (xwin != root)
-          {
-             if (ecore_x_window_parent_get(xwin) == root) break;
-             xwin = ecore_x_window_parent_get(xwin);
-          }
-        ecore_x_window_geometry_get(xwin, &x, &y, &sw, &sh);
+        xwin = e_comp_get(bd)->ee_win;
+        x = bd->x, y = bd->y, sw = bd->w, sh = bd->h;
         w = sw;
         h = sh;
-        xwin = root;
-        x = E_CLAMP(bd->x, bd->zone->x, bd->zone->x + bd->zone->w);
-        y = E_CLAMP(bd->y, bd->zone->y, bd->zone->y + bd->zone->h);
+        x = E_CLAMP(x, bd->zone->x, bd->zone->x + bd->zone->w);
+        y = E_CLAMP(y, bd->zone->y, bd->zone->y + bd->zone->h);
         sw = E_CLAMP(sw, 0, bd->zone->x + bd->zone->w - x);
         sh = E_CLAMP(sh, 0, bd->zone->y + bd->zone->h - y);
+        visual = bd->client.initial_attributes.visual;
+        depth = bd->client.initial_attributes.depth;
      }
-   if (!ecore_x_window_attributes_get(xwin, &watt)) return;
-   visual = watt.visual;
-   img = ecore_x_image_new(w, h, visual, ecore_x_window_depth_get(xwin));
+   img = ecore_x_image_new(w, h, visual, depth);
    ecore_x_image_get(img, xwin, x, y, 0, 0, sw, sh);
    src = ecore_x_image_data_get(img, &bpl, &rows, &bpp);
    display = ecore_x_display_get();

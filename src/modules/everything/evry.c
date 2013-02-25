@@ -64,6 +64,7 @@ static void           _evry_view_hide(Evry_Window *win, Evry_View *v, int slide)
 static void           _evry_item_desel(Evry_State *s);
 static void           _evry_item_sel(Evry_State *s, Evry_Item *it);
 
+static Eina_Bool      _evry_cb_show(Evry_Window *win, int type __UNUSED__, Ecore_X_Event_Window_Show *ev);
 static Eina_Bool      _evry_cb_key_down(void *data, int type, void *event);
 static Eina_Bool      _evry_cb_selection_notify(void *data, int type, void *event);
 static Eina_Bool      _evry_cb_mouse(void *data, int type, void *event);
@@ -177,18 +178,16 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
 
    if (popup)
      {
-        e_win_layer_set(win->ewin, E_WIN_LAYER_ABOVE);
+        //e_win_layer_set(win->ewin, E_WIN_LAYER_ABOVE);
         ecore_x_netwm_window_type_set(win->ewin->evas_win,
                                       ECORE_X_WINDOW_TYPE_UTILITY);
 
         ecore_evas_name_class_set(win->ewin->ecore_evas, "E", "everything");
 
-        ecore_evas_show(win->ewin->ecore_evas);
+        e_win_show(win->ewin);
+        win->ewin->border->client.netwm.state.skip_taskbar = win->ewin->border->changed = 1;
 
-        if (e_grabinput_get(win->ewin->evas_win, 0, win->ewin->evas_win))
-          win->grab = 1;
-        else
-          ERR("could not acquire grab");
+        win->grab = 1;
      }
 
    evry_history_load();
@@ -203,51 +202,25 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
    _evry_selector_new(win, EVRY_PLUGIN_ACTION);
    _evry_selector_new(win, EVRY_PLUGIN_OBJECT);
 
-   win->handlers = eina_list_append
-       (win->handlers, ecore_event_handler_add
-         (ECORE_EVENT_KEY_DOWN,
-         _evry_cb_key_down, win));
+   E_LIST_HANDLER_APPEND(win->handlers, ECORE_EVENT_KEY_DOWN, _evry_cb_key_down, win);
 
-   win->handlers = eina_list_append
-       (win->handlers, ecore_event_handler_add
-         (ECORE_X_EVENT_SELECTION_NOTIFY,
-         _evry_cb_selection_notify, win));
+   E_LIST_HANDLER_APPEND(win->handlers, ECORE_X_EVENT_SELECTION_NOTIFY, _evry_cb_selection_notify, win);
+   E_LIST_HANDLER_APPEND(win->handlers, ECORE_X_EVENT_WINDOW_SHOW, _evry_cb_show, win);
 
-   win->handlers = eina_list_append
-       (win->handlers, evry_event_handler_add
-         (EVRY_EVENT_ITEM_CHANGED,
-         _evry_cb_item_changed, win));
+   E_LIST_HANDLER_APPEND(win->handlers, EVRY_EVENT_ITEM_CHANGED, _evry_cb_item_changed, win);
 
-   win->handlers = eina_list_append
-       (win->handlers, ecore_event_handler_add
-         (ECORE_EVENT_MOUSE_BUTTON_DOWN,
-         _evry_cb_mouse, win));
+   E_LIST_HANDLER_APPEND(win->handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _evry_cb_mouse, win);
 
-   win->handlers = eina_list_append
-       (win->handlers, ecore_event_handler_add
-         (ECORE_EVENT_MOUSE_BUTTON_UP,
-         _evry_cb_mouse, win));
+   E_LIST_HANDLER_APPEND(win->handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _evry_cb_mouse, win);
    E_LIST_HANDLER_APPEND(win->handlers, E_EVENT_DESKLOCK, _evry_cb_desklock, win);
 #if 0
-   win->handlers = eina_list_append
-       (win->handlers, ecore_event_handler_add
-         (ECORE_EVENT_MOUSE_MOVE,
-         _evry_cb_mouse, win));
+   E_LIST_HANDLER_APPEND(win->handlers, ECORE_EVENT_MOUSE_MOVE, _evry_cb_mouse, win);
 
-   win->handlers = eina_list_append
-       (win->handlers, ecore_event_handler_add
-         (ECORE_EVENT_MOUSE_WHEEL,
-         _evry_cb_mouse, win));
+   E_LIST_HANDLER_APPEND(win->handlers, ECORE_EVENT_MOUSE_WHEEL, _evry_cb_mouse, win);
 
-   win->handlers = eina_list_append
-       (win->handlers, ecore_event_handler_add
-         (ECORE_X_EVENT_MOUSE_IN,
-         _evry_cb_mouse_in, win));
+   E_LIST_HANDLER_APPEND(win->handlers, ECORE_X_EVENT_MOUSE_IN, _evry_cb_mouse_in, win);
 
-   win->handlers = eina_list_append
-       (win->handlers, ecore_event_handler_add
-         (ECORE_X_EVENT_MOUSE_OUT,
-         _evry_cb_mouse_out, win));
+   E_LIST_HANDLER_APPEND(win->handlers, ECORE_X_EVENT_MOUSE_OUT, _evry_cb_mouse_out, win);
 #endif
    _evry_selector_plugins_get(SUBJ_SEL, NULL, params);
    _evry_selector_update(SUBJ_SEL);
@@ -783,14 +756,12 @@ _evry_window_new(E_Zone *zone, E_Zone_Edge edge)
    Evas_Object *o;
    const char *tmp;
    int offset_s = 0;
-   const char *shape_option;
 
    win = E_NEW(Evry_Window, 1);
    win->ewin = e_win_new(zone->container);
    e_win_borderless_set(win->ewin, 1);
    e_win_no_remember_set(win->ewin, 1);
    e_win_placed_set(win->ewin, 1);
-   e_object_delay_del_set(E_OBJECT(win->ewin), NULL); //prevent deferred delete
    ecore_evas_override_set(win->ewin->ecore_evas, 1);
    win->evas = e_win_evas_get(win->ewin);
    win->zone = zone;
@@ -801,27 +772,13 @@ _evry_window_new(E_Zone *zone, E_Zone_Edge edge)
    e_theme_edje_object_set(o, "base/theme/modules/everything",
                            "e/modules/everything/main");
 
-   if ((shape_option = edje_object_data_get(o, "shaped")) &&
-       (!strcmp(shape_option, "1")))
-     {
-        win->shaped = EINA_TRUE;
+   edje_object_signal_emit(o, "e,state,composited", "e");
+   edje_object_signal_emit(o, "list:e,state,composited", "e");
+   edje_object_message_signal_process(o);
+   edje_object_calc_force(o);
 
-        if (!e_config->use_shaped_win)
-          {
-             ecore_evas_alpha_set(win->ewin->ecore_evas, 1);
-             win->ewin->evas_win = ecore_evas_software_x11_window_get(win->ewin->ecore_evas);
-             edje_object_signal_emit(o, "e,state,composited", "e");
-             edje_object_signal_emit(o, "list:e,state,composited", "e");
-             edje_object_message_signal_process(o);
-             edje_object_calc_force(o);
-
-             tmp = edje_object_data_get(o, "shadow_offset");
-             offset_s = tmp ? atoi(tmp) : 0;
-          }
-        else
-          ecore_evas_shaped_set(win->ewin->ecore_evas, 1);
-     }
-
+   tmp = edje_object_data_get(o, "shadow_offset");
+   offset_s = tmp ? atoi(tmp) : 0;
    edje_object_size_min_calc(o, &mw, &mh);
 
    if (edge == E_ZONE_EDGE_NONE)
@@ -895,8 +852,6 @@ _evry_window_new(E_Zone *zone, E_Zone_Edge edge)
    win->ewin->w = mw;
    win->ewin->h = mh;
 
-   o = win->o_main;
-   evas_object_move(o, 0, 0);
    evas_object_resize(o, mw, mh);
    evas_object_show(o);
 
@@ -1027,13 +982,7 @@ _evry_cb_mouse(void *data, int type, void *event)
 static void
 _evry_window_free(Evry_Window *win)
 {
-   if (win->ewin->border)
-     ecore_x_window_hide(win->ewin->border->win);
-   else
-     ecore_x_window_hide(win->ewin->evas_win);
-
    evas_event_freeze(win->evas);
-   evas_object_del(win->o_main);
    if (!e_object_is_del(E_OBJECT(win->ewin)))
      e_object_del(E_OBJECT(win->ewin));
    E_FREE(win);
@@ -1961,16 +1910,15 @@ _evry_cb_key_down(void *data, int type __UNUSED__, void *event)
         E_Win *ewin = win->ewin;
 
         e_grabinput_release(ewin->evas_win, ewin->evas_win);
-        if (!win->shaped)
-          e_win_borderless_set(ewin, 0);
-        ecore_evas_lower(ewin->ecore_evas);
-        ewin->border = e_border_new(ewin->container, ewin->evas_win, 1, 1);
-        // dont need this - special stuff - here it is needed
-        ewin->border->ignore_first_unmap = 1;
-        ewin->border->internal = 1;
-        ewin->border->internal_ecore_evas = ewin->ecore_evas;
+        e_border_layer_set(ewin->border, E_LAYER_NORMAL);
+        ecore_x_netwm_window_type_set(ewin->evas_win,
+                                      ECORE_X_WINDOW_TYPE_DIALOG);
+        ewin->border->client.netwm.fetch.type = 1;
+        ewin->border->client.netwm.state.skip_taskbar = 0;
+        ewin->border->changed = 1;
+        ewin->border->client.netwm.update.state = 1;
         ewin->border->internal_no_remember = 1;
-        e_border_show(ewin->border);
+        e_win_borderless_set(ewin, 0);
 
         win->grab = 0;
         return ECORE_CALLBACK_PASS_ON;
@@ -3057,6 +3005,15 @@ _evry_plugin_list_insert(Evry_State *s, Evry_Plugin *p)
      s->cur_plugins = eina_list_prepend_relative_list(s->cur_plugins, p, l);
    else
      s->cur_plugins = eina_list_append(s->cur_plugins, p);
+}
+
+static Eina_Bool
+_evry_cb_show(Evry_Window *win, int type __UNUSED__, Ecore_X_Event_Window_Show *ev)
+{
+   if (win->ewin->evas_win != ev->event_win) return ECORE_CALLBACK_RENEW;
+   if (win->grab)
+     e_grabinput_get(win->ewin->evas_win, 0, win->ewin->evas_win);
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool

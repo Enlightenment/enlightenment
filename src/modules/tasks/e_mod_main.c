@@ -846,11 +846,13 @@ _tasks_cb_item_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 static Eina_Bool
 _tasks_cb_event_border_add(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   E_Event_Border_Add *ev;
+   E_Event_Border_Add *ev = event;
 
-   ev = event;
-   tasks_config->borders = eina_list_append(tasks_config->borders, ev->border);
-   _tasks_refill_all();
+   if ((!tasks_config->borders) || (!eina_list_data_find(tasks_config->borders, ev->border)))
+     {
+        tasks_config->borders = eina_list_append(tasks_config->borders, ev->border);
+        _tasks_refill_all();
+     }
    return EINA_TRUE;
 }
 

@@ -907,7 +907,7 @@ _e_container_cb_mouse_in(E_Container *con EINA_UNUSED, Evas *e EINA_UNUSED, Evas
    E_Border *bd;
 
    bd = e_border_focused_get();
-   if (bd) e_focus_event_mouse_out(bd);
+   if (bd && (!bd->border_menu)) e_focus_event_mouse_out(bd);
 }
 
 static void

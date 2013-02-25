@@ -25,7 +25,6 @@ struct _Evry_Window
   E_Win *ewin;
   Evas *evas;
   E_Zone *zone;
-  Eina_Bool shaped;
   Evas_Object *o_main;
 
   Eina_Bool request_selection;

@@ -216,7 +216,6 @@ _del_func(void *data, void *obj __UNUSED__)
    Instance *inst = data;
 
    e_gadcon_locked_set(inst->gcc->gadcon, 0);
-   e_object_delfn_del(E_OBJECT(inst->win->ewin), inst->del_fn);
 
    if (inst->hide_animator) ecore_animator_del(inst->hide_animator);
    inst->del_fn = NULL;
@@ -320,28 +319,28 @@ _gadget_popup_show(Instance *inst)
       case E_GADCON_ORIENT_TOP:
       case E_GADCON_ORIENT_CORNER_TL:
       case E_GADCON_ORIENT_CORNER_TR:
-        e_win_move(ewin, x, y + h);
+        y += h;
         inst->hide_y = -1;
         break;
 
       case E_GADCON_ORIENT_BOTTOM:
       case E_GADCON_ORIENT_CORNER_BR:
       case E_GADCON_ORIENT_CORNER_BL:
-        e_win_move(ewin, x, y - ph);
+        y -= ph;
         inst->hide_y = 1;
         break;
 
       case E_GADCON_ORIENT_LEFT:
       case E_GADCON_ORIENT_CORNER_LT:
       case E_GADCON_ORIENT_CORNER_LB:
-        e_win_move(ewin, x + w, y);
+        x += w;
         inst->hide_x = -1;
         break;
 
       case E_GADCON_ORIENT_RIGHT:
       case E_GADCON_ORIENT_CORNER_RT:
       case E_GADCON_ORIENT_CORNER_RB:
-        e_win_move(ewin, x - pw, y);
+        x -= pw;
         inst->hide_x = 1;
         break;
 
@@ -353,10 +352,12 @@ _gadget_popup_show(Instance *inst)
      }
 
    if (ewin->x + pw > inst->win->zone->w)
-     e_win_move(ewin, inst->win->zone->w - pw, ewin->y);
+     x = inst->win->zone->w - pw;
 
    if (ewin->y + ph > inst->win->zone->h)
-     e_win_move(ewin, ewin->x, inst->win->zone->h - ph);
+     y = inst->win->zone->h - ph;
+
+   e_win_move(ewin, x, y);
 }
 
 static void

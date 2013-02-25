@@ -26,6 +26,8 @@ typedef void (*E_Container_Shape_Cb)(void *data, E_Container_Shape *es, E_Contai
 #define E_CONTAINER_TYPE (int) 0xE0b01003
 #define E_CONTAINER_SHAPE_TYPE (int) 0xE0b01004
 
+#define E_CONTAINER_LAYER_COUNT 12
+
 struct _E_Container
 {
    E_Object             e_obj_inherit;
@@ -52,7 +54,7 @@ struct _E_Container
    struct {
       Ecore_X_Window win;
       Eina_List *clients; /* E_Border */
-   } layers[12];
+   } layers[E_CONTAINER_LAYER_COUNT];
 
    Ecore_X_Window       scratch_win;
 };

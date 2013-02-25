@@ -244,6 +244,7 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, int popup, E
    else
      {
         evas_object_move(es->o_base, es->zone->x + es->x, es->zone->y + es->y);
+        evas_object_show(es->o_base);
         E_LAYER_SET(es->o_base, layer);
      }
 

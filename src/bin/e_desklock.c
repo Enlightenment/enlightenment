@@ -472,9 +472,9 @@ _e_desklock_popup_add(E_Zone *zone)
 
    evas_object_move(edp->bg_object, zone->x, zone->y);
    evas_object_resize(edp->bg_object, zone->w, zone->h);
+   evas_object_show(edp->bg_object);
    E_LAYER_SET_ABOVE(edp->bg_object, E_COMP_CANVAS_LAYER_DESKLOCK);
    evas_object_clip_set(edp->bg_object, edp->zone->bg_clip_object);
-   evas_object_show(edp->bg_object);
 
    _e_desklock_login_box_add(edp);
    evas_event_thaw(evas);
@@ -521,11 +521,11 @@ _e_desklock_login_box_add(E_Desklock_Popup_Data *edp)
         evas_object_move(edp->login_box,
                          zone->x + ((zone->w - mw) / 2),
                          zone->y + ((zone->h - mh) / 2));
+        evas_object_show(edp->login_box);
         E_LAYER_SET_ABOVE(edp->login_box, E_COMP_CANVAS_LAYER_DESKLOCK);
      }
 
    evas_object_clip_set(edp->login_box, edp->zone->bg_clip_object);
-   evas_object_show(edp->login_box);
 }
 
 static void

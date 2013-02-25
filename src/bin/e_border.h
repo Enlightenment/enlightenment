@@ -125,7 +125,7 @@ typedef struct _E_Event_Border_Simple        E_Event_Border_Move;
 typedef struct _E_Event_Border_Simple        E_Event_Border_Add;
 typedef struct _E_Event_Border_Simple        E_Event_Border_Remove;
 typedef struct _E_Event_Border_Simple        E_Event_Border_Show;
-typedef struct _E_Event_Border_Simple        E_Event_Border_Hide;
+typedef struct _E_Event_Border_Hide             E_Event_Border_Hide;
 typedef struct _E_Event_Border_Simple        E_Event_Border_Iconify;
 typedef struct _E_Event_Border_Simple        E_Event_Border_Uniconify;
 typedef struct _E_Event_Border_Simple        E_Event_Border_Stick;
@@ -170,12 +170,10 @@ struct _E_Border
       } down;
    } moveinfo;
 
-   Ecore_X_Window win;
    int            x, y, w, h;
    int            ref;
    E_Zone        *zone;
    E_Desk        *desk;
-   Eina_List     *handlers;
 
    struct
    {
@@ -190,26 +188,22 @@ struct _E_Border
    struct
    {
       int l, r, t, b;
+      Eina_Bool calc : 1; // inset has been calculated
    } client_inset;
 
    E_Comp_Win   *cw;
-   Ecore_Evas    *bg_ecore_evas;
-   Evas          *bg_evas;
-   Ecore_X_Window bg_win;
+   Ecore_X_Window win;
    Evas_Object   *bg_object;
    Evas_Object   *icon_object;
-   Ecore_X_Window event_win;
    Eina_Stringshare  *internal_icon;
    Eina_Stringshare  *internal_icon_key;
-   Eina_Bool      bg_evas_in : 1;
 
    struct
    {
-      Ecore_X_Window shell_win;
       Ecore_X_Window lock_win;
       Ecore_X_Window win;
 
-      int            x, y, w, h;
+      int            w, h;
 
       struct
       {
@@ -516,7 +510,6 @@ struct _E_Border
    unsigned int       iconic : 1;
    unsigned int       deskshow : 1;
    unsigned int       sticky : 1;
-   unsigned int       shaped : 1;
    unsigned int       shaped_input : 1;
    unsigned int       need_shape_merge : 1;
    unsigned int       need_shape_export : 1;
@@ -566,6 +559,7 @@ struct _E_Border
    unsigned int       internal_no_remember : 1;
    unsigned int       internal_no_reopen : 1;
    unsigned int       stolen : 1;
+   Eina_Bool          theme_shadow : 1;
 
    Ecore_Evas        *internal_ecore_evas;
 
@@ -659,7 +653,6 @@ struct _E_Border
    Eina_List                 *transients;
 
    Efreet_Desktop            *desktop;
-   E_Pointer                 *pointer;
 
    unsigned char              comp_hidden   : 1;
 
@@ -690,6 +683,12 @@ struct _E_Border_Hook
    void                (*func)(void *data, void *bd);
    void               *data;
    unsigned char       delete_me : 1;
+};
+
+struct _E_Event_Border_Hide
+{
+   E_Border *border;
+   int manage;
 };
 
 struct _E_Event_Border_Simple
@@ -762,7 +761,6 @@ EAPI void           e_border_pinned_set(E_Border *bd, int set);
 
 EAPI E_Border      *e_border_find_by_client_window(Ecore_X_Window win);
 EAPI E_Border      *e_border_find_all_by_client_window(Ecore_X_Window win);
-EAPI E_Border      *e_border_find_by_frame_window(Ecore_X_Window win);
 EAPI E_Border      *e_border_find_by_window(Ecore_X_Window win);
 EAPI E_Border      *e_border_find_by_alarm(Ecore_X_Sync_Alarm alarm);
 EAPI E_Border      *e_border_focused_get(void);
@@ -843,6 +841,13 @@ extern EAPI int E_EVENT_BORDER_FOCUS_OUT;
 extern EAPI int E_EVENT_BORDER_PROPERTY;
 extern EAPI int E_EVENT_BORDER_FULLSCREEN;
 extern EAPI int E_EVENT_BORDER_UNFULLSCREEN;
+
+/* macro for finding misuse of changed flag */
+#if 0
+# define BD_CHANGED(BD) BD->changed = 1; INF("%s:%d - BD CHANGED: %p", __FILE__, __LINE__, BD)
+#else
+# define BD_CHANGED(BD) BD->changed = 1
+#endif
 
 #endif
 #endif

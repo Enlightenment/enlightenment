@@ -489,6 +489,7 @@ e_fwin_zone_new(E_Zone *zone, void *p)
    evas_object_move(o, x, y);
    evas_object_resize(o, w, h);
    E_LAYER_SET_UNDER(o, E_COMP_CANVAS_LAYER_DESKTOP);
+   evas_object_hide(o);
    evas_object_show(o);
    page->scrollframe_obj = page->scr = o;
 
@@ -739,7 +740,6 @@ _e_fwin_free(E_Fwin *fwin)
    if (fwin->spring_parent) fwin->spring_parent->spring_child = NULL;
    if (fwin->win)
      {
-        e_object_delay_del_set(E_OBJECT(fwin->win), NULL);
         e_object_del(E_OBJECT(fwin->win));
      }
    free(fwin);

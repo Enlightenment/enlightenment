@@ -664,9 +664,6 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
              break;
 
            case E_BORDER_TYPE:
-             hwin = ((E_Border *)(h->obj))->event_win;
-             break;
-
            case E_ZONE_TYPE:
            case E_POPUP_TYPE:
              hwin = e_comp_get(h->obj)->ee_win;

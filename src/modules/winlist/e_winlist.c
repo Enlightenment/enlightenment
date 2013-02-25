@@ -259,8 +259,8 @@ e_winlist_hide(void)
    E_FREE_FUNC(_scroll_timer, ecore_timer_del);
    E_FREE_FUNC(_animator, ecore_animator_del);
 
-   ecore_x_window_free(_input_window);
    e_grabinput_release(_input_window, _input_window);
+   ecore_x_window_free(_input_window);
    _input_window = 0;
    if (bd)
      {
@@ -1334,10 +1334,11 @@ _e_winlist_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event
 
    ev = event;
    if (ev->window != _input_window) return ECORE_CALLBACK_PASS_ON;
-
-   evas_event_feed_mouse_move(_winlist->evas, ev->x - _winlist->x +
-                              _winlist->zone->x, ev->y - _winlist->y +
-                              _winlist->zone->y, ev->timestamp, NULL);
+   /* only feed mouse move if it's within the winlist popup */
+   if (E_INSIDE(ev->x - _winlist->zone->x, ev->y - _winlist->zone->y, _winlist->x, _winlist->y, _winlist->w, _winlist->h))
+     evas_event_feed_mouse_move(_winlist->evas, ev->x - _winlist->x +
+                                _winlist->zone->x, ev->y - _winlist->y +
+                                _winlist->zone->y, ev->timestamp, NULL);
 
    return ECORE_CALLBACK_PASS_ON;
 }

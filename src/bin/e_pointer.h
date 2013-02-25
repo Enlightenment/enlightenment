@@ -2,6 +2,22 @@
 
 typedef struct _E_Pointer E_Pointer;
 
+
+typedef enum
+{
+   /* These are compatible with netwm */
+   E_POINTER_RESIZE_TL = 0,
+   E_POINTER_RESIZE_T = 1,
+   E_POINTER_RESIZE_TR = 2,
+   E_POINTER_RESIZE_R = 3,
+   E_POINTER_RESIZE_BR = 4,
+   E_POINTER_RESIZE_B = 5,
+   E_POINTER_RESIZE_BL = 6,
+   E_POINTER_RESIZE_L = 7,
+   E_POINTER_MOVE = 8,
+   E_POINTER_RESIZE_NONE = 11
+} E_Pointer_Mode;
+
 #else
 #ifndef E_POINTER_H
 #define E_POINTER_H
@@ -44,6 +60,9 @@ EAPI void       e_pointer_type_push(E_Pointer *p, void *obj, const char *type);
 EAPI void       e_pointer_type_pop(E_Pointer *p, void *obj, const char *type);
 EAPI void       e_pointers_size_set(int size);
 EAPI void       e_pointer_idler_before(void);
+
+EAPI void e_pointer_mode_push(void *obj, E_Pointer_Mode mode);
+EAPI void e_pointer_mode_pop(void *obj, E_Pointer_Mode mode);
 
 #endif
 #endif

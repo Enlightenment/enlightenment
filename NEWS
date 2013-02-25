@@ -126,6 +126,7 @@ Improvements:
     * shelf gadcon can no longer resize smaller than 16x16, ensuring dnd success
     * Don't rely on bash or zsh behavior when starting enlightenment_init and tempget.
     * menus are now drawn directly on the compositor canvas
+    * window borders now drawn on compositor canvas
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.

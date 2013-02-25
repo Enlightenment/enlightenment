@@ -566,13 +566,23 @@ _e_manager_cb_window_configure(void *data, int ev_type __UNUSED__, void *ev)
 static Eina_Bool
 _e_manager_cb_key_down(void *data, int ev_type __UNUSED__, void *ev)
 {
-   E_Manager *man;
-   Ecore_Event_Key *e;
+   E_Manager *man = data;
+   Ecore_Event_Key *e = ev;
 
-   man = data;
-   e = ev;
+   if (e->event_window != man->root)
+     {
+        E_Border *bd;
 
-   if (e->event_window != man->root) return ECORE_CALLBACK_PASS_ON;
+        bd = e_border_focused_get();
+        /* *block actions when no border is focused (probably something else did a grab here so we'll play nice)
+         * *block actions when border menu is up
+         * *block actions when event (grab) window isn't comp window
+         * *other cases?
+         */
+        if (!bd) return ECORE_CALLBACK_RENEW;
+        if ((bd->border_menu) || (e->event_window != e_comp_get(bd)->ee_win))
+          return ECORE_CALLBACK_PASS_ON;
+     }
    if (e->root_window != man->root) man = _e_manager_get_for_root(e->root_window);
    if (e_bindings_key_down_event_handle(E_BINDING_CONTEXT_MANAGER, E_OBJECT(man), ev))
      return ECORE_CALLBACK_DONE;

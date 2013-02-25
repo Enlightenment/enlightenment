@@ -241,6 +241,97 @@ e_pointer_idler_before(void)
      }
 }
 
+
+EAPI void
+e_pointer_mode_push(void *obj, E_Pointer_Mode mode)
+{
+   switch (mode)
+     {
+      case E_POINTER_RESIZE_TL:
+        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_tl");
+        break;
+
+      case E_POINTER_RESIZE_T:
+        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_t");
+        break;
+
+      case E_POINTER_RESIZE_TR:
+        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_tr");
+        break;
+
+      case E_POINTER_RESIZE_R:
+        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_r");
+        break;
+
+      case E_POINTER_RESIZE_BR:
+        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_br");
+        break;
+
+      case E_POINTER_RESIZE_B:
+        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_b");
+        break;
+
+      case E_POINTER_RESIZE_BL:
+        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_bl");
+        break;
+
+      case E_POINTER_RESIZE_L:
+        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "resize_l");
+        break;
+
+      case E_POINTER_MOVE:
+        e_pointer_type_push(e_comp_get(obj)->pointer, obj, "move");
+        break;
+
+      default: break;
+     }
+}
+
+EAPI void
+e_pointer_mode_pop(void *obj, E_Pointer_Mode mode)
+{
+   switch (mode)
+     {
+      case E_POINTER_RESIZE_TL:
+        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_tl");
+        break;
+
+      case E_POINTER_RESIZE_T:
+        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_t");
+        break;
+
+      case E_POINTER_RESIZE_TR:
+        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_tr");
+        break;
+
+      case E_POINTER_RESIZE_R:
+        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_r");
+        break;
+
+      case E_POINTER_RESIZE_BR:
+        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_br");
+        break;
+
+      case E_POINTER_RESIZE_B:
+        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_b");
+        break;
+
+      case E_POINTER_RESIZE_BL:
+        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_bl");
+        break;
+
+      case E_POINTER_RESIZE_L:
+        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "resize_l");
+        break;
+
+      case E_POINTER_MOVE:
+        e_pointer_type_pop(e_comp_get(obj)->pointer, obj, "move");
+        break;
+
+      default: break;
+     }
+}
+
 /* local subsystem functions */
 static void
 _e_pointer_canvas_add(E_Pointer *p)
