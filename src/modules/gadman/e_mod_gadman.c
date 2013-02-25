@@ -660,7 +660,8 @@ static void
 _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
 {
    Evas_Object *mover;
-   int x, y;
+   E_Zone *zone;
+   int x, y, mx, my;
    int ox, oy, ow, oh;
 
    /* only use this for dragging gadcons around the desktop */
@@ -672,7 +673,11 @@ _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
 
    /* don't go out of the screen */
    x = MAX(x, gcc->dx), y = MAX(y, gcc->dy);
-   x = MIN(x, Man->width - ow + gcc->dx), y = MIN(y, Man->height - ow + gcc->dy);
+
+   /* adjust in case one screen is larger than another */
+   zone = e_gadcon_zone_get(gc);
+   mx = MIN(Man->width, zone->x + zone->w), my = MIN(Man->height, zone->y + zone->h);
+   x = MIN(x, mx - ow + gcc->dx), y = MIN(y, my - oh + gcc->dy);
 
    evas_object_move(gcc->o_frame, x - gcc->dx, y - gcc->dy);
    evas_object_move(mover, x - gcc->dx, y - gcc->dy);
@@ -1011,7 +1016,7 @@ _attach_menu(void *data __UNUSED__, E_Gadcon_Client *gcc, E_Menu *menu)
    e_menu_item_label_set(mi, _("Plain"));
    e_menu_item_radio_set(mi, 1);
    e_menu_item_radio_group_set(mi, 1);
-   if (!strcmp(gcc->cf->style, E_GADCON_CLIENT_STYLE_PLAIN))
+   if (gcc->cf && (!e_util_strcmp(gcc->cf->style, E_GADCON_CLIENT_STYLE_PLAIN)))
      e_menu_item_toggle_set(mi, 1);
    e_menu_item_callback_set(mi, on_menu_style_plain, gcc);
 
