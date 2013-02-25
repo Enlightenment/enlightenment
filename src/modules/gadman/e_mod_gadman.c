@@ -1298,6 +1298,7 @@ on_top(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const c
 
         evas_object_resize(drag_gcc->o_frame, ow, h);
         evas_object_move(drag_gcc->o_frame, ox, my - drag_gcc->dy);
+        _save_widget_position(drag_gcc);
      }
 }
 
@@ -1342,6 +1343,7 @@ on_right(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const
 
         evas_object_resize(mover, w, oh);
         evas_object_resize(drag_gcc->o_frame, w, oh);
+        _save_widget_position(drag_gcc);
      }
 }
 
@@ -1385,6 +1387,7 @@ on_down(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const 
 
         evas_object_resize(mover, ow, h);
         evas_object_resize(drag_gcc->o_frame, ow, h);
+        _save_widget_position(drag_gcc);
      }
 }
 
@@ -1439,6 +1442,7 @@ on_left(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const 
 
         evas_object_resize(drag_gcc->o_frame, w, oh);
         evas_object_move(drag_gcc->o_frame, mx - drag_gcc->dx, oy);
+        _save_widget_position(drag_gcc);
      }
 }
 
