@@ -5170,7 +5170,17 @@ e_comp_win_opacity_set(E_Comp_Win *cw, unsigned int opacity)
         if (cw->opacity_set_timer) ecore_timer_reset(cw->opacity_set_timer);
         else cw->opacity_set_timer = ecore_timer_add(5.0, (Ecore_Task_Cb)_e_comp_opacity_set_timer_cb, cw);
      }
-   evas_object_color_set(cw->shobj, cw->opacity, cw->opacity, cw->opacity, cw->opacity);
+   if (cw->opacity == 255)
+     {
+        edje_object_color_class_del(cw->shobj, "comp_alpha");
+     }
+   else
+     {
+        edje_object_color_class_set(cw->shobj, "comp_alpha",
+          255, 255, 255, cw->opacity,
+          255, 255, 255, cw->opacity,
+          255, 255, 255, cw->opacity);
+     }
 }
 
 EAPI void
