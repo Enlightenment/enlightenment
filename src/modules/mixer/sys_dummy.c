@@ -36,13 +36,7 @@ e_mixer_system_get_cards(void)
 {
    _e_mixer_dummy_set();
 
-   return eina_list_append(NULL, _name);
-}
-
-void
-e_mixer_system_free_cards(Eina_List *cards)
-{
-   eina_list_free(cards);
+   return eina_list_append(NULL, eina_stringshare_ref(_name));
 }
 
 const char *

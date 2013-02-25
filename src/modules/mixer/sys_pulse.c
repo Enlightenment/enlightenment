@@ -448,12 +448,6 @@ e_mixer_pulse_get_cards(void)
    return ret;
 }
 
-void
-e_mixer_pulse_free_cards(Eina_List *cards)
-{
-   E_FREE_LIST(cards, eina_stringshare_del);
-}
-
 const char *
 e_mixer_pulse_get_default_card(void)
 {

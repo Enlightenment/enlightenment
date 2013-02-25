@@ -245,15 +245,6 @@ e_mixer_system_get_cards(void)
    return cards;
 }
 
-void
-e_mixer_system_free_cards(Eina_List *cards)
-{
-   const char *card;
-
-   EINA_LIST_FREE(cards, card)
-     eina_stringshare_del(card);
-}
-
 const char *
 e_mixer_system_get_default_card(void)
 {

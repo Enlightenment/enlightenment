@@ -18,8 +18,7 @@ E_Mixer_Cb e_mod_mixer_channel_free;
 E_Mixer_Cb e_mod_mixer_channels_get;
 E_Mixer_Cb e_mod_mixer_channels_names_get;
 E_Mixer_Cb e_mod_mixer_card_name_get;
-E_Mixer_Cb e_mod_mixer_cards_get;
-E_Mixer_Cb e_mod_mixer_cards_free;
+E_Mixer_Cb e_mod_mixer_card_names_get;
 E_Mixer_Cb e_mod_mixer_card_default_get;
 
 void
@@ -41,8 +40,7 @@ e_mixer_default_setup(void)
    e_mod_mixer_channels_get = (void *)e_mixer_system_get_channels;
    e_mod_mixer_channels_names_get = (void *)e_mixer_system_get_channels_names;
    e_mod_mixer_card_name_get = (void *)e_mixer_system_get_card_name;
-   e_mod_mixer_cards_get = (void *)e_mixer_system_get_cards;
-   e_mod_mixer_cards_free = (void *)e_mixer_system_free_cards;
+   e_mod_mixer_card_names_get = (void *)e_mixer_system_get_cards;
    e_mod_mixer_card_default_get = (void *)e_mixer_system_get_default_card;
    _mixer_using_default = EINA_TRUE;
 }
@@ -66,8 +64,7 @@ e_mixer_pulse_setup()
    e_mod_mixer_channels_get = (void *)e_mixer_pulse_get_channels;
    e_mod_mixer_channels_names_get = (void *)e_mixer_pulse_get_channels_names;
    e_mod_mixer_card_name_get = (void *)e_mixer_pulse_get_card_name;
-   e_mod_mixer_cards_get = (void *)e_mixer_pulse_get_cards;
-   e_mod_mixer_cards_free = (void *)e_mixer_pulse_free_cards;
+   e_mod_mixer_card_names_get = (void *)e_mixer_pulse_get_cards;
    e_mod_mixer_card_default_get = (void *)e_mixer_pulse_get_default_card;
    _mixer_using_default = EINA_FALSE;
 }
@@ -105,6 +102,14 @@ e_mod_mixer_channels_info_free(Eina_List *list)
 
 void
 e_mod_mixer_channels_names_free(Eina_List *list)
+{
+   const char *str;
+   EINA_LIST_FREE(list, str)
+     eina_stringshare_del(str);
+}
+
+void
+e_mod_mixer_card_names_free(Eina_List *list)
 {
    const char *str;
    EINA_LIST_FREE(list, str)

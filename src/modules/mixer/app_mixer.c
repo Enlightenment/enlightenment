@@ -312,7 +312,7 @@ _create_cards(E_Dialog *dialog __UNUSED__, Evas *evas, E_Mixer_App_Dialog_Data *
    Eina_List *l;
 
    app->card = e_mod_mixer_card_default_get();
-   app->cards = e_mod_mixer_cards_get();
+   app->cards = e_mod_mixer_card_names_get();
    if (eina_list_count(app->cards) < 2)
      return;
 
@@ -440,7 +440,7 @@ _mixer_app_dialog_del(E_Dialog *dialog, E_Mixer_App_Dialog_Data *app)
    eina_stringshare_del(app->card);
    eina_stringshare_del(app->channel_name);
    if (app->cards)
-     e_mod_mixer_cards_free(app->cards);
+     e_mod_mixer_card_names_free(app->cards);
    if (app->channels_infos)
      e_mod_mixer_channels_info_free(app->channels_infos);
    e_mod_mixer_del(app->sys);
