@@ -12,6 +12,7 @@ E_Mixer_System *
 e_mixer_system_new(const char *name)
 {
    _e_mixer_dummy_set();
+
    if (!name) return NULL;
 
    if (name == _name || strcmp(name, _name) == 0)
@@ -61,6 +62,8 @@ e_mixer_system_get_card_name(const char *card)
 Eina_List *
 e_mixer_system_get_channels(E_Mixer_System *self __UNUSED__)
 {
+   _e_mixer_dummy_set();
+
    E_Mixer_Channel_Info *ch_info;
 
    ch_info = malloc(sizeof(*ch_info));
@@ -106,6 +109,8 @@ e_mixer_system_channel_del(E_Mixer_Channel *channel __UNUSED__)
 const char *
 e_mixer_system_get_channel_name(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel)
 {
+   _e_mixer_dummy_set();
+
    if (channel == (E_Mixer_Channel *)-2)
      return eina_stringshare_ref(_name);
    else
