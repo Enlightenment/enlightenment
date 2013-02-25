@@ -683,6 +683,7 @@ _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    evas_object_move(mover, x - gcc->dx, y - gcc->dy);
    evas_object_raise(gcc->o_frame);
    evas_object_raise(mover);
+   _save_widget_position(gcc);
 }
 
 static void
@@ -713,9 +714,10 @@ _gadman_gadcon_dnd_drop_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
         if (dst_gadcon)
           {
              dst_gadcon->cf->clients = eina_list_append(dst_gadcon->cf->clients, cf);
-             e_config_save_queue();
           }
      }
+   _save_widget_position(gcc);
+   e_config_save_queue();
 }
 
 static E_Gadcon *
@@ -912,15 +914,20 @@ _save_widget_position(E_Gadcon_Client *gcc)
 {
    int x, y, w, h;
 
-   if (!gcc->cf) return;
-
    evas_object_geometry_get(gcc->o_frame, &x, &y, &w, &h);
-   gcc->config.pos_x = gcc->cf->geom.pos_x = (double)x / (double)gcc->gadcon->zone->w;
-   gcc->config.pos_y = gcc->cf->geom.pos_y = (double)y / (double)gcc->gadcon->zone->h;
-   gcc->config.size_w = gcc->cf->geom.size_w = (double)w / (double)gcc->gadcon->zone->w;
-   gcc->config.size_h = gcc->cf->geom.size_h = (double)h / (double)gcc->gadcon->zone->h;
-
-   e_config_save_queue();
+   x -= gcc->gadcon->zone->x, y -= gcc->gadcon->zone->y;
+   gcc->config.pos_x = (double)x / (double)gcc->gadcon->zone->w;
+   gcc->config.pos_y = (double)y / (double)gcc->gadcon->zone->h;
+   gcc->config.size_w = (double)w / (double)gcc->gadcon->zone->w;
+   gcc->config.size_h = (double)h / (double)gcc->gadcon->zone->h;
+   if (gcc->cf)
+     {
+        gcc->cf->geom.pos_x = gcc->config.pos_x;
+        gcc->cf->geom.pos_y = gcc->config.pos_y;
+        gcc->cf->geom.size_w = gcc->config.size_w;
+        gcc->cf->geom.size_h = gcc->config.size_h;
+        e_config_save_queue();
+     }
 }
 
 static void
