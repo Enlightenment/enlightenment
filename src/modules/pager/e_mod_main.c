@@ -1953,6 +1953,7 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
                {
                   evas_object_show(oo);
                   edje_object_part_swallow(o, "e.swallow.icon", oo);
+                  e_popup_object_add(drag->pop, oo);
                }
 
              e_drag_object_set(drag, o);
@@ -2333,6 +2334,7 @@ _pager_desk_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
                {
                   evas_object_show(o_icon);
                   edje_object_part_swallow(o, "e.swallow.icon", o_icon);
+                  e_popup_object_add(drag->pop, o_icon);
                }
           }
         e_drag_resize(drag, w, h);
