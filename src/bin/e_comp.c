@@ -453,6 +453,12 @@ _e_comp_win_restack(E_Comp_Win *cw)
              cw->c->wins = eina_inlist_prepend_relative(cw->c->wins, EINA_INLIST_GET(tcw), EINA_INLIST_GET(cw));
           }
      }
+   EINA_LIST_FOREACH(cw->stack_below, l, cwp)
+     {
+        e_layout_child_lower_below(cwp->shobj, cw->shobj);
+        cw->c->wins = eina_inlist_remove(cw->c->wins, EINA_INLIST_GET(cwp));
+        cw->c->wins = eina_inlist_prepend_relative(cw->c->wins, EINA_INLIST_GET(cwp), EINA_INLIST_GET(cw));        
+     }
 }
 
 static void
@@ -2203,6 +2209,35 @@ _e_comp_win_del(E_Comp_Win *cw)
         cw->c->animating--;
      }
    cw->animating = 0;
+   if (cw->cw_above)
+     {
+        cw->cw_above->stack_below = eina_list_remove(cw->cw_above->stack_below, cw);
+        cw->cw_above = NULL;
+     }
+   if (cw->stack_below)
+     {
+        E_Comp_Win *cw2, *cwn = NULL;
+        Eina_List *l;
+
+        if (EINA_INLIST_GET(cw)->next)
+          cwn = EINA_INLIST_CONTAINER_GET(EINA_INLIST_GET(cw)->next, E_Comp_Win);
+        else if (EINA_INLIST_GET(cw)->prev)
+          cwn = EINA_INLIST_CONTAINER_GET(EINA_INLIST_GET(cw)->prev, E_Comp_Win);
+
+        if (cwn)
+          {
+             cwn->stack_below = cw->stack_below;
+             cw->stack_below = NULL;
+             EINA_LIST_FOREACH(cwn->stack_below, l, cw2)
+               cw2->cw_above = cwn;
+             _e_comp_win_restack(cwn);
+          }
+        else
+          {
+             EINA_LIST_FREE(cw->stack_below, cw2)
+               cw2->cw_above = NULL;
+          }
+     }
 
    E_FREE_FUNC(cw->up, e_comp_render_update_free);
    DBG("  [0x%x] del", cw->win);
@@ -2575,6 +2610,19 @@ _e_comp_win_raise(E_Comp_Win *cw)
    cw->c->wins_invalid = 1;
    cw->c->wins = eina_inlist_remove(cw->c->wins, EINA_INLIST_GET(cw));
    cw->c->wins = eina_inlist_append(cw->c->wins, EINA_INLIST_GET(cw));
+   _e_comp_win_restack(cw);
+   _e_comp_win_render_queue(cw);
+   cw->pending_count++;
+   _e_comp_event_source_configure(cw);
+}
+
+static void
+_e_comp_win_lower_below(E_Comp_Win *cw, E_Comp_Win *cw2)
+{
+   DBG("  [0x%x] below [0x%x]", cw->win, cw2->win);
+   cw->c->wins_invalid = 1;
+   cw->c->wins = eina_inlist_remove(cw->c->wins, EINA_INLIST_GET(cw));
+   cw->c->wins = eina_inlist_prepend_relative(cw->c->wins, EINA_INLIST_GET(cw), EINA_INLIST_GET(cw2));
    _e_comp_win_restack(cw);
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
@@ -5004,10 +5052,9 @@ e_comp_object_inject(E_Comp *c, Evas_Object *obj, E_Object *eobj, E_Layer layer)
 
    cwn = _e_comp_win_dummy_add(c, obj, eobj, 0);
 
-   if (EINA_INLIST_GET(cw)->prev)
-     _e_comp_win_raise_above(cwn, (E_Comp_Win*)EINA_INLIST_GET(cw)->prev);
-   else
-     _e_comp_win_lower(cwn);
+   _e_comp_win_lower_below(cwn, (E_Comp_Win*)EINA_INLIST_GET(cw));
+   cw->stack_below = eina_list_append(cw->stack_below, cwn);
+   cwn->cw_above = cw;
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_injected_win_del_cb, cwn);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _e_comp_injected_win_focus_in_cb, cwn);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _e_comp_injected_win_focus_out_cb, cwn);
