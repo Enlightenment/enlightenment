@@ -11,10 +11,8 @@ E_Mixer_Capture_Cb e_mod_mixer_capture_get;
 E_Mixer_Cb e_mod_mixer_new;
 E_Mixer_Cb e_mod_mixer_del;
 E_Mixer_Cb e_mod_mixer_channel_default_name_get;
-E_Mixer_Cb e_mod_mixer_channel_get_by_name;
+E_Mixer_Cb e_mod_mixer_channel_info_get_by_name;
 E_Mixer_Cb e_mod_mixer_channel_name_get;
-E_Mixer_Cb e_mod_mixer_channel_del;
-E_Mixer_Cb e_mod_mixer_channel_free;
 E_Mixer_Cb e_mod_mixer_channels_get;
 E_Mixer_Cb e_mod_mixer_channel_names_get;
 E_Mixer_Cb e_mod_mixer_card_name_get;
@@ -34,9 +32,8 @@ e_mixer_default_setup(void)
    e_mod_mixer_new = (void *)e_mixer_system_new;
    e_mod_mixer_del = (void *)e_mixer_system_del;
    e_mod_mixer_channel_default_name_get = (void *)e_mixer_system_get_default_channel_name;
-   e_mod_mixer_channel_get_by_name = (void *)e_mixer_system_get_channel_by_name;
+   e_mod_mixer_channel_info_get_by_name = (void *)e_mixer_system_get_channel_by_name;
    e_mod_mixer_channel_name_get = (void *)e_mixer_system_get_channel_name;
-   e_mod_mixer_channel_del = (void *)e_mixer_system_channel_del;
    e_mod_mixer_channels_get = (void *)e_mixer_system_get_channels;
    e_mod_mixer_channel_names_get = (void *)e_mixer_system_get_channel_names;
    e_mod_mixer_card_name_get = (void *)e_mixer_system_get_card_name;
@@ -58,9 +55,8 @@ e_mixer_pulse_setup()
    e_mod_mixer_new = (void *)e_mixer_pulse_new;
    e_mod_mixer_del = (void *)e_mixer_pulse_del;
    e_mod_mixer_channel_default_name_get = (void *)e_mixer_pulse_get_default_channel_name;
-   e_mod_mixer_channel_get_by_name = (void *)e_mixer_pulse_get_channel_by_name;
+   e_mod_mixer_channel_info_get_by_name = (void *)e_mixer_pulse_get_channel_by_name;
    e_mod_mixer_channel_name_get = (void *)e_mixer_pulse_get_channel_name;
-   e_mod_mixer_channel_del = (void *)e_mixer_pulse_channel_del;
    e_mod_mixer_channels_get = (void *)e_mixer_pulse_get_channels;
    e_mod_mixer_channel_names_get = (void *)e_mixer_pulse_get_channel_names;
    e_mod_mixer_card_name_get = (void *)e_mixer_pulse_get_card_name;
@@ -80,6 +76,13 @@ _channel_info_cmp(const void *data_a, const void *data_b)
      return 1;
 
    return strcmp(a->name, b->name);
+}
+
+void e_mod_mixer_channel_info_free(E_Mixer_Channel_Info* info)
+{
+   if (!info) return;
+   eina_stringshare_del(info->name);
+   free(info);
 }
 
 Eina_List *

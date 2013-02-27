@@ -65,7 +65,7 @@ _cb_changed_left(void *data, Evas_Object *obj __UNUSED__)
                                       state->right);
      }
 
-   e_mod_mixer_volume_set(app->sys, app->channel_info->id,
+   e_mod_mixer_volume_set(app->sys, app->channel_info,
                           state->left, state->right);
 }
 
@@ -83,7 +83,7 @@ _cb_changed_right(void *data, Evas_Object *obj __UNUSED__)
                                       state->left);
      }
 
-   e_mod_mixer_volume_set(app->sys, app->channel_info->id,
+   e_mod_mixer_volume_set(app->sys, app->channel_info,
                           state->left, state->right);
 }
 
@@ -92,7 +92,7 @@ _cb_changed_mute(void *data, Evas_Object *obj __UNUSED__)
 {
    E_Mixer_App_Dialog_Data *app = data;
 
-   e_mod_mixer_mute_set(app->sys, app->channel_info->id, app->state.mute);
+   e_mod_mixer_mute_set(app->sys, app->channel_info, app->state.mute);
 }
 
 static void
@@ -112,7 +112,7 @@ _cb_changed_lock_sliders(void *data, Evas_Object *obj __UNUSED__)
 
    e_widget_slider_value_int_set(app->ui.channel_editor.left, state->left);
    e_widget_slider_value_int_set(app->ui.channel_editor.right, state->right);
-   e_mod_mixer_volume_set(app->sys, app->channel_info->id,
+   e_mod_mixer_volume_set(app->sys, app->channel_info,
                           state->left, state->right);
 }
 
@@ -148,7 +148,7 @@ _update_channel_editor_state(E_Mixer_App_Dialog_Data *app, const E_Mixer_Channel
    e_widget_slider_value_int_set(ui->left, state.left);
    e_widget_slider_value_int_set(ui->right, state.right);
 
-   if (e_mod_mixer_mutable_get(app->sys, app->channel_info->id))
+   if (e_mod_mixer_mutable_get(app->sys, app->channel_info))
      {
         e_widget_disabled_set(ui->mute, 0);
         e_widget_check_checked_set(ui->mute, state.mute);
@@ -180,12 +180,12 @@ _populate_channel_editor(E_Mixer_App_Dialog_Data *app)
 
    e_widget_entry_text_set(ui->channel, app->channel_name);
 
-   if (e_mod_mixer_capture_get(app->sys, app->channel_info->id))
+   if (e_mod_mixer_capture_get(app->sys, app->channel_info))
      e_widget_entry_text_set(ui->type, _("Capture"));
    else
      e_widget_entry_text_set(ui->type, _("Playback"));
 
-   e_mod_mixer_state_get(app->sys, app->channel_info->id, &state);
+   e_mod_mixer_state_get(app->sys, app->channel_info, &state);
    _update_channel_editor_state(app, state);
 
    app->lock_sliders = (state.left == state.right);
@@ -212,7 +212,7 @@ _cb_system_update(void *data, E_Mixer_System *sys __UNUSED__)
    if ((!app->sys) || (!app->channel_info))
      return 1;
 
-   e_mod_mixer_state_get(app->sys, app->channel_info->id, &state);
+   e_mod_mixer_state_get(app->sys, app->channel_info, &state);
    _update_channel_editor_state(app, state);
 
    return 1;

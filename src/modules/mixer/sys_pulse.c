@@ -297,11 +297,12 @@ static Eina_Bool
 _pulse_queue_process(const Eina_Hash *h EINA_UNUSED, const char *key, E_Mixer_Channel_State *state, void *d EINA_UNUSED)
 {
    Eina_List *l, *list[2] = {sinks, sources};
-   void *s, *ch;
+   E_Mixer_Channel_Info ch;
+   void *s;
    int x;
 
    if ((state->mute == -1) && (state->left == -1) && (state->right == -1)) return EINA_TRUE;
-   ch = (void*)1;
+   ch.id = (void*)1;
    for (x = 0; x < 2; x++)
      EINA_LIST_FOREACH(list[x], l, s)
        {
@@ -493,26 +494,28 @@ e_mixer_pulse_get_default_channel_name(E_Mixer_System *self EINA_UNUSED)
    return eina_stringshare_ref(_name);
 }
 
-E_Mixer_Channel *
+E_Mixer_Channel_Info *
 e_mixer_pulse_get_channel_by_name(E_Mixer_System *self EINA_UNUSED, const char *name EINA_UNUSED)
 {
-   return (E_Mixer_Channel *)1;
-}
+   E_Mixer_Channel_Info *ch_info;
 
-void
-e_mixer_pulse_channel_del(E_Mixer_Channel *channel __UNUSED__)
-{
+   ch_info = malloc(sizeof(*ch_info));
+   ch_info->id = (void*)1;
+   ch_info->name = eina_stringshare_ref(_name);
+   ch_info->has_capture = 0;
+
+   return ch_info;
 }
 
 const char *
-e_mixer_pulse_get_channel_name(E_Mixer_System *self EINA_UNUSED, E_Mixer_Channel *channel)
+e_mixer_pulse_get_channel_name(E_Mixer_System *self EINA_UNUSED, E_Mixer_Channel_Info *channel)
 {
    if (!channel) return NULL;
    return eina_stringshare_ref(_name);
 }
 
 int
-e_mixer_pulse_get_volume(E_Mixer_System *self, E_Mixer_Channel *channel, int *left, int *right)
+e_mixer_pulse_get_volume(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int *left, int *right)
 {
    double volume;
    int x, n;
@@ -536,7 +539,7 @@ e_mixer_pulse_get_volume(E_Mixer_System *self, E_Mixer_Channel *channel, int *le
 }
 
 int
-e_mixer_pulse_set_volume(E_Mixer_System *self, E_Mixer_Channel *channel, int left, int right)
+e_mixer_pulse_set_volume(E_Mixer_System *self, E_Mixer_Channel_Info *channel, int left, int right)
 {
    uint32_t id = 0;
    int x, n;
@@ -573,20 +576,20 @@ e_mixer_pulse_set_volume(E_Mixer_System *self, E_Mixer_Channel *channel, int lef
 }
 
 int
-e_mixer_pulse_can_mute(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel __UNUSED__)
+e_mixer_pulse_can_mute(E_Mixer_System *self __UNUSED__, E_Mixer_Channel_Info *channel __UNUSED__)
 {
    return 1;
 }
 
 int
-e_mixer_pulse_get_mute(E_Mixer_System *self, E_Mixer_Channel *channel __UNUSED__, int *mute)
+e_mixer_pulse_get_mute(E_Mixer_System *self, E_Mixer_Channel_Info *channel __UNUSED__, int *mute)
 {
    if (mute) *mute = pulse_sink_muted_get((void *)self);
    return 1;
 }
 
 int
-e_mixer_pulse_set_mute(E_Mixer_System *self, E_Mixer_Channel *channel __UNUSED__, int mute)
+e_mixer_pulse_set_mute(E_Mixer_System *self, E_Mixer_Channel_Info *channel __UNUSED__, int mute)
 {
    uint32_t id;
    Eina_Bool source = EINA_FALSE;
@@ -605,7 +608,7 @@ e_mixer_pulse_set_mute(E_Mixer_System *self, E_Mixer_Channel *channel __UNUSED__
 }
 
 int
-e_mixer_pulse_get_state(E_Mixer_System *self, E_Mixer_Channel *channel, E_Mixer_Channel_State *state)
+e_mixer_pulse_get_state(E_Mixer_System *self, E_Mixer_Channel_Info *channel, E_Mixer_Channel_State *state)
 {
    if (!state) return 0;
    if (!channel) return 0;
@@ -615,7 +618,7 @@ e_mixer_pulse_get_state(E_Mixer_System *self, E_Mixer_Channel *channel, E_Mixer_
 }
 
 int
-e_mixer_pulse_set_state(E_Mixer_System *self, E_Mixer_Channel *channel, const E_Mixer_Channel_State *state)
+e_mixer_pulse_set_state(E_Mixer_System *self, E_Mixer_Channel_Info *channel, const E_Mixer_Channel_State *state)
 {
    e_mixer_pulse_set_volume(self, channel, state->left, state->right);
    e_mixer_pulse_set_mute(self, channel, state->mute);
@@ -623,7 +626,7 @@ e_mixer_pulse_set_state(E_Mixer_System *self, E_Mixer_Channel *channel, const E_
 }
 
 int
-e_mixer_pulse_has_capture(E_Mixer_System *self __UNUSED__, E_Mixer_Channel *channel __UNUSED__)
+e_mixer_pulse_has_capture(E_Mixer_System *self __UNUSED__, E_Mixer_Channel_Info *channel __UNUSED__)
 {
    return 0;
 }

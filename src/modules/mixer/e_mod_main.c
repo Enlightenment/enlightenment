@@ -783,7 +783,7 @@ _mixer_sys_setup(E_Mixer_Instance *inst)
         return 0;
      }
 
-   inst->channel = e_mod_mixer_channel_get_by_name(inst->sys, conf->channel_name);
+   inst->channel = e_mod_mixer_channel_info_get_by_name(inst->sys, conf->channel_name);
    return !!inst->channel;
 }
 
@@ -855,7 +855,7 @@ _mixer_sys_setup_default_channel(E_Mixer_Instance *inst)
    if (!channel_name)
      goto error;
 
-   inst->channel = e_mod_mixer_channel_get_by_name(inst->sys, channel_name);
+   inst->channel = e_mod_mixer_channel_info_get_by_name(inst->sys, channel_name);
    if (!inst->channel)
      goto system_error;
 
@@ -915,7 +915,7 @@ e_mod_mixer_pulse_ready(Eina_Bool ready)
      {
         EINA_LIST_FOREACH(ctxt->instances, l, inst)
           {
-             e_mod_mixer_channel_del(inst->channel);
+             e_mod_mixer_channel_info_free(inst->channel);
              e_mod_mixer_del(inst->sys);
              inst->channel = NULL;
              inst->sys = NULL;
@@ -1074,7 +1074,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    inst->conf->state.left = inst->mixer_state.left;
    inst->conf->state.right = inst->mixer_state.right;
    evas_object_del(inst->ui.gadget);
-   e_mod_mixer_channel_del(inst->channel);
+   e_mod_mixer_channel_info_free(inst->channel);
    e_mod_mixer_del(inst->sys);
 
    inst->conf->instance = NULL;

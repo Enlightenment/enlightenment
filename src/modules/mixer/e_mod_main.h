@@ -50,7 +50,7 @@ typedef struct E_Mixer_Instance
    } ui;
 
    E_Mixer_System *sys;
-   E_Mixer_Channel *channel;
+   E_Mixer_Channel_Info *channel;
    E_Mixer_Channel_State mixer_state;
    E_Mixer_Gadget_Config *conf;
 
