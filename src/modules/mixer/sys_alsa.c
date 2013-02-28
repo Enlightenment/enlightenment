@@ -12,10 +12,10 @@ struct e_mixer_callback_desc
    Eina_List      *handlers;
 };
 
-static int _mixer_callback_add(E_Mixer_System *self,
+static int _mixer_callback_add(const E_Mixer_System *self,
                                int (*func)(void *data, E_Mixer_System *self),
                                void *data);
-static int _mixer_callback_del(E_Mixer_System *self,
+static int _mixer_callback_del(const E_Mixer_System *self,
                                struct e_mixer_callback_desc *desc);
 
 static Eina_Bool
@@ -68,7 +68,7 @@ _cb_fd_handler(void *data,
 }
 
 static int
-_mixer_callback_add(E_Mixer_System *self,
+_mixer_callback_add(const E_Mixer_System *self,
                     int (*func)(void *data, E_Mixer_System *self),
                     void *data)
 {
@@ -76,7 +76,7 @@ _mixer_callback_add(E_Mixer_System *self,
    struct pollfd *pfds;
    int len;
 
-   len = snd_mixer_poll_descriptors_count(self);
+   len = snd_mixer_poll_descriptors_count((snd_mixer_t *)self);
    if (len <= 0)
      return 0;
 
@@ -86,12 +86,12 @@ _mixer_callback_add(E_Mixer_System *self,
 
    desc->func = func;
    desc->data = data;
-   desc->self = self;
+   desc->self = (E_Mixer_System *)self;
    desc->idler = NULL;
    desc->handlers = NULL;
 
    pfds = alloca(len * sizeof(struct pollfd));
-   len = snd_mixer_poll_descriptors(self, pfds, len);
+   len = snd_mixer_poll_descriptors((snd_mixer_t *)self, pfds, len);
    if (len <= 0)
      {
         free(desc);
@@ -108,13 +108,13 @@ _mixer_callback_add(E_Mixer_System *self,
         desc->handlers = eina_list_prepend(desc->handlers, fd_handler);
      }
 
-   snd_mixer_set_callback_private(self, desc);
+   snd_mixer_set_callback_private((snd_mixer_t *)self, desc);
 
    return 1;
 }
 
 static int
-_mixer_callback_del(E_Mixer_System *self,
+_mixer_callback_del(const E_Mixer_System *self,
                     struct e_mixer_callback_desc *desc)
 {
    Ecore_Fd_Handler *handler;
@@ -122,7 +122,7 @@ _mixer_callback_del(E_Mixer_System *self,
    EINA_LIST_FREE(desc->handlers, handler)
      ecore_main_fd_handler_del(handler);
 
-   snd_mixer_set_callback_private(self, NULL);
+   snd_mixer_set_callback_private((snd_mixer_t *)self, NULL);
 
    memset(desc, 0, sizeof(*desc));
    free(desc);
@@ -131,7 +131,7 @@ _mixer_callback_del(E_Mixer_System *self,
 }
 
 static int
-_mixer_callback_replace(E_Mixer_System *self __UNUSED__,
+_mixer_callback_replace(const E_Mixer_System *self __UNUSED__,
                         struct e_mixer_callback_desc *desc,
                         int (*func)(void *data, E_Mixer_System *self),
                         void *data)
@@ -192,7 +192,7 @@ e_mixer_system_del(E_Mixer_System *self)
 }
 
 int
-e_mixer_system_callback_set(E_Mixer_System *self,
+e_mixer_system_callback_set(const E_Mixer_System *self,
                             int (*func)(void *data, E_Mixer_System *self),
                             void *data)
 {
@@ -295,7 +295,7 @@ e_mixer_system_get_card_name(const char *card)
 }
 
 Eina_List *
-e_mixer_system_get_channels(E_Mixer_System *self)
+e_mixer_system_get_channels(const E_Mixer_System *self)
 {
    Eina_List *channels;
    snd_mixer_elem_t *elem;
@@ -305,7 +305,7 @@ e_mixer_system_get_channels(E_Mixer_System *self)
 
    channels = NULL;
 
-   elem = snd_mixer_first_elem(self);
+   elem = snd_mixer_first_elem((snd_mixer_t *)self);
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         if ((!snd_mixer_selem_is_active(elem)) ||
@@ -326,7 +326,7 @@ e_mixer_system_get_channels(E_Mixer_System *self)
 }
 
 Eina_List *
-e_mixer_system_get_channel_names(E_Mixer_System *self)
+e_mixer_system_get_channel_names(const E_Mixer_System *self)
 {
    Eina_List *channels;
    snd_mixer_elem_t *elem;
@@ -338,7 +338,7 @@ e_mixer_system_get_channel_names(E_Mixer_System *self)
    channels = NULL;
    snd_mixer_selem_id_alloca(&sid);
 
-   elem = snd_mixer_first_elem(self);
+   elem = snd_mixer_first_elem((snd_mixer_t *)self);
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         const char *name;
@@ -356,7 +356,7 @@ e_mixer_system_get_channel_names(E_Mixer_System *self)
 }
 
 const char *
-e_mixer_system_get_default_channel_name(E_Mixer_System *self)
+e_mixer_system_get_default_channel_name(const E_Mixer_System *self)
 {
    snd_mixer_elem_t *elem;
    snd_mixer_selem_id_t *sid;
@@ -366,7 +366,7 @@ e_mixer_system_get_default_channel_name(E_Mixer_System *self)
 
    snd_mixer_selem_id_alloca(&sid);
 
-   elem = snd_mixer_first_elem(self);
+   elem = snd_mixer_first_elem((snd_mixer_t *)self);
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         const char *name;
@@ -384,7 +384,7 @@ e_mixer_system_get_default_channel_name(E_Mixer_System *self)
 }
 
 E_Mixer_Channel_Info *
-e_mixer_system_get_channel_by_name(E_Mixer_System *self,
+e_mixer_system_get_channel_by_name(const E_Mixer_System *self,
                                    const char *name)
 {
    snd_mixer_elem_t *elem;
@@ -396,7 +396,7 @@ e_mixer_system_get_channel_by_name(E_Mixer_System *self,
 
    snd_mixer_selem_id_alloca(&sid);
 
-   elem = snd_mixer_first_elem(self);
+   elem = snd_mixer_first_elem((snd_mixer_t *)self);
    for (; elem; elem = snd_mixer_elem_next(elem))
      {
         const char *n;
@@ -421,8 +421,8 @@ e_mixer_system_get_channel_by_name(E_Mixer_System *self,
 }
 
 const char *
-e_mixer_system_get_channel_name(E_Mixer_System *self,
-                                E_Mixer_Channel_Info *channel)
+e_mixer_system_get_channel_name(const E_Mixer_System *self,
+                                const E_Mixer_Channel_Info *channel)
 {
    snd_mixer_selem_id_t *sid;
    const char *name;
@@ -438,8 +438,8 @@ e_mixer_system_get_channel_name(E_Mixer_System *self,
 }
 
 int
-e_mixer_system_get_volume(E_Mixer_System *self,
-                          E_Mixer_Channel_Info *channel,
+e_mixer_system_get_volume(const E_Mixer_System *self,
+                          const E_Mixer_Channel_Info *channel,
                           int *left,
                           int *right)
 {
@@ -448,7 +448,7 @@ e_mixer_system_get_volume(E_Mixer_System *self,
    if ((!self) || (!channel) || (!channel->id) || (!left) || (!right))
      return 0;
 
-   snd_mixer_handle_events(self);
+   snd_mixer_handle_events((snd_mixer_t *)self);
    snd_mixer_selem_get_playback_volume_range(channel->id, &min, &max);
    range = max - min;
    if (range < 1)
@@ -475,8 +475,8 @@ e_mixer_system_get_volume(E_Mixer_System *self,
 }
 
 int
-e_mixer_system_set_volume(E_Mixer_System *self,
-                          E_Mixer_Channel_Info *channel,
+e_mixer_system_set_volume(const E_Mixer_System *self,
+                          const E_Mixer_Channel_Info *channel,
                           int left,
                           int right)
 {
@@ -486,7 +486,7 @@ e_mixer_system_set_volume(E_Mixer_System *self,
    if ((!self) || (!channel) || (!channel->id))
      return 0;
 
-   snd_mixer_handle_events(self);
+   snd_mixer_handle_events((snd_mixer_t *)self);
    snd_mixer_selem_get_playback_volume_range(channel->id, &min, &max);
    divide = 100 + min;
    if (divide == 0)
@@ -527,26 +527,26 @@ e_mixer_system_set_volume(E_Mixer_System *self,
 }
 
 int
-e_mixer_system_can_mute(E_Mixer_System *self,
-                        E_Mixer_Channel_Info *channel)
+e_mixer_system_can_mute(const E_Mixer_System *self,
+                        const E_Mixer_Channel_Info *channel)
 {
    if ((!self) || (!channel) || (!channel->id))
      return 0;
 
-   snd_mixer_handle_events(self);
+   snd_mixer_handle_events((snd_mixer_t *)self);
    return snd_mixer_selem_has_playback_switch(channel->id) ||
           snd_mixer_selem_has_playback_switch_joined(channel->id);
 }
 
 int
-e_mixer_system_get_mute(E_Mixer_System *self,
-                        E_Mixer_Channel_Info *channel,
+e_mixer_system_get_mute(const E_Mixer_System *self,
+                        const E_Mixer_Channel_Info *channel,
                         int *mute)
 {
    if ((!self) || (!channel) || (!channel->id) || (!mute))
      return 0;
 
-   snd_mixer_handle_events(self);
+   snd_mixer_handle_events((snd_mixer_t *)self);
    if (snd_mixer_selem_has_playback_switch(channel->id) ||
        snd_mixer_selem_has_playback_switch_joined(channel->id))
      {
@@ -565,14 +565,14 @@ e_mixer_system_get_mute(E_Mixer_System *self,
 }
 
 int
-e_mixer_system_set_mute(E_Mixer_System *self,
-                        E_Mixer_Channel_Info *channel,
+e_mixer_system_set_mute(const E_Mixer_System *self,
+                        const E_Mixer_Channel_Info *channel,
                         int mute)
 {
    if ((!self) || (!channel) || (!channel->id))
      return 0;
 
-   snd_mixer_handle_events(self);
+   snd_mixer_handle_events((snd_mixer_t *)self);
    if (snd_mixer_selem_has_playback_switch(channel->id) ||
        snd_mixer_selem_has_playback_switch_joined(channel->id))
      return snd_mixer_selem_set_playback_switch_all(channel->id, !mute);
@@ -581,8 +581,8 @@ e_mixer_system_set_mute(E_Mixer_System *self,
 }
 
 int
-e_mixer_system_get_state(E_Mixer_System *self,
-                         E_Mixer_Channel_Info *channel,
+e_mixer_system_get_state(const E_Mixer_System *self,
+                         const E_Mixer_Channel_Info *channel,
                          E_Mixer_Channel_State *state)
 {
    int r;
@@ -596,8 +596,8 @@ e_mixer_system_get_state(E_Mixer_System *self,
 }
 
 int
-e_mixer_system_set_state(E_Mixer_System *self,
-                         E_Mixer_Channel_Info *channel,
+e_mixer_system_set_state(const E_Mixer_System *self,
+                         const E_Mixer_Channel_Info *channel,
                          const E_Mixer_Channel_State *state)
 {
    int r;
@@ -611,8 +611,8 @@ e_mixer_system_set_state(E_Mixer_System *self,
 }
 
 int
-e_mixer_system_has_capture(E_Mixer_System *self,
-                           E_Mixer_Channel_Info *channel)
+e_mixer_system_has_capture(const E_Mixer_System *self,
+                           const E_Mixer_Channel_Info *channel)
 {
    if ((!self) || (!channel) || (!channel->id))
      return 0;

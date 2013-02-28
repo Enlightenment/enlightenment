@@ -86,7 +86,7 @@ void e_mod_mixer_channel_info_free(E_Mixer_Channel_Info* info)
 }
 
 Eina_List *
-e_mod_mixer_channel_infos_get(E_Mixer_System *sys)
+e_mod_mixer_channel_infos_get(const E_Mixer_System *sys)
 {
    return eina_list_sort(e_mod_mixer_channels_get(sys), -1, _channel_info_cmp);
 }
