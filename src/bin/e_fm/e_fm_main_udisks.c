@@ -147,7 +147,6 @@ _e_fm_main_udisks_cb_dev_all(void *data __UNUSED__, const EDBus_Message *msg,
         edbus_connection_send(_e_fm_main_udisks_conn, new_msg,
                               _e_fm_main_udisks_cb_dev_verify,
                               eina_stringshare_add(path), -1);
-        edbus_message_unref(new_msg);
         INF("DB INIT DEV+: %s", path);
      }
 }
@@ -265,7 +264,6 @@ _e_fm_main_udisks_cb_dev_add(void *data __UNUSED__, const EDBus_Message *msg)
    edbus_connection_send(_e_fm_main_udisks_conn, new,
                          _e_fm_main_udisks_cb_dev_verify_added,
                          eina_stringshare_add(path), -1);
-   edbus_message_unref(new);
 }
 
 static void
