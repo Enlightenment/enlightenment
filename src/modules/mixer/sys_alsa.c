@@ -568,18 +568,6 @@ e_mixer_system_set_volume(const E_Mixer_System *self,
 }
 
 int
-e_mixer_system_can_mute(const E_Mixer_System *self,
-                        const E_Mixer_Channel_Info *channel)
-{
-   if ((!self) || (!channel) || (!channel->id))
-     return 0;
-
-   snd_mixer_handle_events((snd_mixer_t *)self);
-   return snd_mixer_selem_has_playback_switch(channel->id) ||
-          snd_mixer_selem_has_playback_switch_joined(channel->id);
-}
-
-int
 e_mixer_system_get_mute(const E_Mixer_System *self,
                         const E_Mixer_Channel_Info *channel,
                         int *mute)
@@ -650,14 +638,3 @@ e_mixer_system_set_state(const E_Mixer_System *self,
    r &= e_mixer_system_set_volume(self, channel, state->left, state->right);
    return r;
 }
-
-int
-e_mixer_system_has_capture(const E_Mixer_System *self,
-                           const E_Mixer_Channel_Info *channel)
-{
-   if ((!self) || (!channel) || (!channel->id))
-     return 0;
-
-   return snd_mixer_selem_has_capture_switch(channel->id) || snd_mixer_selem_has_capture_volume(channel->id);
-}
-

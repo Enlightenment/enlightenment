@@ -583,13 +583,6 @@ e_mixer_pulse_set_volume(const E_Mixer_System *self,
 }
 
 int
-e_mixer_pulse_can_mute(const E_Mixer_System *self __UNUSED__,
-                       const E_Mixer_Channel_Info *channel __UNUSED__)
-{
-   return 1;
-}
-
-int
 e_mixer_pulse_get_mute(const E_Mixer_System *self,
                        const E_Mixer_Channel_Info *channel __UNUSED__, int *mute)
 {
@@ -637,11 +630,4 @@ e_mixer_pulse_set_state(const E_Mixer_System *self,
    e_mixer_pulse_set_volume(self, channel, state->left, state->right);
    e_mixer_pulse_set_mute(self, channel, state->mute);
    return 1;
-}
-
-int
-e_mixer_pulse_has_capture(const E_Mixer_System *self __UNUSED__,
-                          const E_Mixer_Channel_Info *channel __UNUSED__)
-{
-   return 0;
 }
