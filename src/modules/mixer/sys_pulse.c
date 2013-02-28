@@ -480,7 +480,7 @@ e_mixer_pulse_get_channels(const E_Mixer_System *self EINA_UNUSED)
    ch_info = malloc(sizeof(*ch_info));
    ch_info->id = (void*)1;
    ch_info->name = eina_stringshare_ref(_name);
-   ch_info->has_capture = 0;
+   ch_info->capabilities= E_MIXER_CHANNEL_CAN_MUTE|E_MIXER_CHANNEL_HAS_PLAYBACK;
 
    return eina_list_append(NULL, ch_info);
 }
@@ -506,7 +506,7 @@ e_mixer_pulse_get_channel_by_name(const E_Mixer_System *self EINA_UNUSED,
    ch_info = malloc(sizeof(*ch_info));
    ch_info->id = (void*)1;
    ch_info->name = eina_stringshare_ref(_name);
-   ch_info->has_capture = 0;
+   ch_info->capabilities= E_MIXER_CHANNEL_CAN_MUTE|E_MIXER_CHANNEL_HAS_PLAYBACK;
 
    return ch_info;
 }

@@ -247,7 +247,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
    if (app->channel_infos)
      {
         E_Mixer_Channel_Info *info = app->channel_infos->data;
-        if (info->has_capture)
+        if (e_mod_mixer_channel_has_capture(info))
           {
              e_widget_ilist_header_append(ilist, NULL, _("Input"));
              header_input = 1;
@@ -265,7 +265,7 @@ _populate_channels(E_Mixer_App_Dialog_Data *app)
      {
         E_Mixer_Channel_Info *info = l->data;
 
-        if ((!header_input) && info->has_capture)
+        if ((!header_input) && e_mod_mixer_channel_has_capture(info))
           {
              e_widget_ilist_header_append(ilist, NULL, _("Input"));
              header_input = 1;
@@ -533,13 +533,13 @@ _find_channel_by_name(E_Mixer_App_Dialog_Data *app, const char *channel_name)
      {
         info = app->channel_infos->data;
 
-        header_input = !!info->has_capture;
+        header_input = !!e_mod_mixer_channel_has_capture(info);
         i = 1;
      }
 
    EINA_LIST_FOREACH(app->channel_infos, l, info)
      {
-        if ((!header_input) && info->has_capture)
+        if ((!header_input) && e_mod_mixer_channel_has_capture(info))
           {
              header_input = 1;
              i++;

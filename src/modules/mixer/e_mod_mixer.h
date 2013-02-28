@@ -14,9 +14,35 @@ typedef struct _E_Mixer_Channel_State
    int right;
 } E_Mixer_Channel_State;
 
+#define E_MIXER_CHANNEL_CAN_MUTE       0x01
+#define E_MIXER_CHANNEL_IS_MONO        0x02
+#define E_MIXER_CHANNEL_HAS_CAPTURE    0x04
+#define E_MIXER_CHANNEL_HAS_PLAYBACK   0x08
+#define E_MIXER_CHANNEL_GROUP_MASK     0xFC
+#define E_MIXER_CHANNEL_USABLE_MASK    0xFD
+
+#define e_mod_mixer_channel_is_mutable(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_CAN_MUTE )!=0 )
+#define e_mod_mixer_channel_is_mono(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_IS_MONO )!=0 )
+#define e_mod_mixer_channel_has_capture(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_CAPTURE )!=0 )
+#define e_mod_mixer_channel_has_playback(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_PLAYBACK )!=0 )
+#define e_mod_mixer_channel_is_boost(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_PLAYBACK )!=0 && \
+     ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_CAPTURE )!=0 )
+#define e_mod_mixer_channel_has_no_volume(_ch) \
+   ( ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_PLAYBACK )==0 && \
+     ((_ch)->capabilities & E_MIXER_CHANNEL_HAS_CAPTURE )==0 )
+#define e_mod_mixer_channel_group_get(_ch) \
+   ( (_ch)->capabilities & E_MIXER_CHANNEL_GROUP_MASK )
+#define e_mod_mixer_capabilities_usable(_capa) \
+   ( ((_capa) & E_MIXER_CHANNEL_USABLE_MASK)!=0 )
+
 typedef struct _E_Mixer_Channel_Info
 {
-   int                      has_capture;
+   int                      capabilities;
    const char              *name;
    E_Mixer_Channel         *id;
    E_Mixer_App             *app;

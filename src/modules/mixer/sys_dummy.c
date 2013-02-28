@@ -62,14 +62,14 @@ e_mixer_system_get_card_name(const char *card)
 Eina_List *
 e_mixer_system_get_channels(const E_Mixer_System *self __UNUSED__)
 {
-   _e_mixer_dummy_set();
-
    E_Mixer_Channel_Info *ch_info;
+
+   _e_mixer_dummy_set();
 
    ch_info = malloc(sizeof(*ch_info));
    ch_info->id = (void*)-2;
    ch_info->name = eina_stringshare_ref(_name);
-   ch_info->has_capture = 0;
+   ch_info->capabilities = E_MIXER_CHANNEL_CAN_MUTE|E_MIXER_CHANNEL_HAS_PLAYBACK;
 
    return eina_list_append(NULL, ch_info);
 }
@@ -102,7 +102,7 @@ e_mixer_system_get_channel_by_name(const E_Mixer_System *self __UNUSED__, const 
         ch_info = malloc(sizeof(*ch_info));
         ch_info->id = (void*)-2;
         ch_info->name = eina_stringshare_ref(_name);
-        ch_info->has_capture = 0;
+        ch_info->capabilities = E_MIXER_CHANNEL_CAN_MUTE|E_MIXER_CHANNEL_HAS_PLAYBACK;
 
         return ch_info;
      }
