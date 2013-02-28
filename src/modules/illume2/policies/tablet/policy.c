@@ -89,7 +89,7 @@ _policy_border_move(E_Border *bd, int x, int y)
    bd->x = x;
    bd->y = y;
    bd->changes.pos = 1;
-   bd->changed = 1;
+   BD_CHANGED(bd);
 }
 
 static void
@@ -102,7 +102,7 @@ _policy_border_resize(E_Border *bd, int w, int h)
    bd->client.w = (bd->w - (bd->client_inset.l + bd->client_inset.r));
    bd->client.h = (bd->h - (bd->client_inset.t + bd->client_inset.b));
    bd->changes.size = 1;
-   bd->changed = 1;
+   BD_CHANGED(bd);
 }
 
 static void
@@ -259,12 +259,13 @@ _policy_zone_layout_update(E_Zone *zone)
 	if (bd->zone != zone) continue;
 
 	/* skip special windows */
+ if (e_object_is_del(E_OBJECT(bd))) continue;
 	if (e_illume_border_is_keyboard(bd)) continue;
 	if (e_illume_border_is_quickpanel(bd)) continue;
 
 	/* signal a changed pos here so layout gets updated */
 	bd->changes.pos = 1;
-	bd->changed = 1;
+	BD_CHANGED(bd);
      }
 }
 
@@ -1165,7 +1166,7 @@ _policy_zone_move_resize(E_Zone *zone)
 	if (bd->zone != zone) continue;
 
 	bd->changes.pos = 1;
-	bd->changed = 1;
+	BD_CHANGED(bd);
      }
 }
 
@@ -1497,7 +1498,9 @@ _policy_property_change(Ecore_X_Event_Window_Property *event)
 
 	/* adjust Y for keyboard visibility because keyboard uses fx_offset */
 	y = 0;
-	if (kbd->border->fx.y <= 0) y = kbd->border->y;
+        if (kbd->border->cw &&
+          (!e_util_strcmp(edje_object_part_state_get(kbd->border->cw->effect_obj, "mover", NULL), "custom")))
+          y = kbd->border->y;
 
 	/* look for conformant borders */
 	EINA_LIST_FOREACH(e_border_client_list(), l, bd)

@@ -625,8 +625,8 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, icon_theme_overrides, UCHAR);
 
    E_CONFIG_VAL(D, T, desk_flip_animate_mode, INT);
+   E_CONFIG_VAL(D, T, desk_flip_animate_type, STR);
    E_CONFIG_VAL(D, T, desk_flip_animate_interpolation, INT);
-   E_CONFIG_VAL(D, T, desk_flip_animate_time, DOUBLE);
 
    E_CONFIG_VAL(D, T, wallpaper_import_last_dev, STR);
    E_CONFIG_VAL(D, T, wallpaper_import_last_path, STR);
@@ -1205,6 +1205,21 @@ e_config_load(void)
              CONFIG_VERSION_UPDATE_INFO(11);
              e_config->pointer_warp_speed = e_config->winlist_warp_speed;
              e_config->winlist_warp_speed = 0;
+          }
+        CONFIG_VERSION_CHECK(12)
+          {
+             CONFIG_VERSION_UPDATE_INFO(12);
+             switch (e_config->desk_flip_animate_mode)
+               {
+                case 1: //pane
+                  e_config->desk_flip_animate_type = eina_stringshare_add("auto/pane");
+                  break;
+                case 2: //zoom, now known as diagonal
+                  e_config->desk_flip_animate_type = eina_stringshare_add("auto/diagonal");
+                  break;
+                default:
+                  break;
+               }
           }
      }
    if (!e_config->remember_internal_fm_windows)
@@ -2145,6 +2160,7 @@ _e_config_free(E_Config *ecf)
    e_config_xkb_layout_free(ecf->xkb.current_layout);
    e_config_xkb_layout_free(ecf->xkb.sel_layout);
    e_config_xkb_layout_free(ecf->xkb.lock_layout);
+   eina_stringshare_del(ecf->desk_flip_animate_type);
    if (ecf->transition_start) eina_stringshare_del(ecf->transition_start);
    if (ecf->transition_desk) eina_stringshare_del(ecf->transition_desk);
    if (ecf->transition_change) eina_stringshare_del(ecf->transition_change);

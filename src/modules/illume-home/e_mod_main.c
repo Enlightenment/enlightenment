@@ -594,7 +594,7 @@ _il_home_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event)
              exe->border->x = exe->zone->x;
              exe->border->y = exe->zone->y;
              exe->border->changes.pos = 1;
-             exe->border->changed = 1;
+             BD_CHANGED(exe->border);
           }
         if (exe->handle) 
           {

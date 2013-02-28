@@ -608,8 +608,8 @@ _e_drag_coords_update(const E_Drop_Handler *h, int *dx, int *dy)
              break;
 
            case E_BORDER_TYPE:
-             px = ((E_Border *)(h->obj))->x + ((E_Border *)(h->obj))->fx.x;
-             py = ((E_Border *)(h->obj))->y + ((E_Border *)(h->obj))->fx.y;
+             px = ((E_Border *)(h->obj))->x;
+             py = ((E_Border *)(h->obj))->y;
              break;
 
            case E_POPUP_TYPE:

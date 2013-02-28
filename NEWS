@@ -33,6 +33,7 @@ Additions:
         * added E_LIST_REVERSE_FREE macro
         * added e_object_ref_debug_set
         * added e_gadcon_repopulate
+        * added e_comp_win_effect* api
     Config:
         * Added option for disabling icons in menus
         * Added option for disabling pointer warping when performing directional focus changes using winlist
@@ -127,6 +128,7 @@ Improvements:
     * Don't rely on bash or zsh behavior when starting enlightenment_init and tempget.
     * menus are now drawn directly on the compositor canvas
     * window borders now drawn on compositor canvas
+    * desk flip animations moved to edje
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.

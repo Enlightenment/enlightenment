@@ -126,6 +126,7 @@ struct _E_Comp_Win
    int                  depth;  // window depth
    Evas_Object         *obj;  // composite object
    Evas_Object         *shobj;  // shadow object
+   Evas_Object         *effect_obj; // effects object
    E_Object            *eobj; // internal e object
    E_Comp_Win          *cw_above; // comp win that should always be stacked above this one
    Eina_List           *stack_below; // list of objects to keep stacked below this one
@@ -189,6 +190,9 @@ struct _E_Comp_Win
    Eina_Bool            free_shape : 1; // container shape needs to be freed
    Eina_Bool            real_obj : 1;  // real object (for dummy comp wins)
    Eina_Bool            not_in_layout : 1; // object is a dummy not in comp layout
+
+   Eina_Bool            effect_clip : 1; //effect_obj is clipped
+   Eina_Bool            effect_clip_able : 1; //effect_obj will be clipped for effects
 };
 
 struct E_Event_Comp
@@ -226,6 +230,11 @@ EAPI void e_comp_zone_update(E_Comp_Zone *cz);
 
 EAPI void e_comp_override_del(E_Comp *c);
 EAPI void e_comp_override_add(E_Comp *c);
+
+EAPI void e_comp_win_effect_set(E_Comp_Win *cw, const char *effect);
+EAPI void e_comp_win_effect_params_set(E_Comp_Win *cw, int id, int *params, unsigned int count);
+EAPI void e_comp_win_effect_start(E_Comp_Win *cw, Edje_Signal_Cb end_cb, const void *end_data);
+EAPI void e_comp_win_effect_stop(E_Comp_Win *cw, Edje_Signal_Cb end_cb);
 
 EAPI E_Comp_Win *e_comp_win_find_client_win(Ecore_X_Window win);
 EAPI E_Comp_Win *e_comp_win_find(Ecore_X_Window win);

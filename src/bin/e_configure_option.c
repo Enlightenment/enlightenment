@@ -1825,8 +1825,6 @@ e_configure_option_init(void)
    co->info_cb = _e_configure_desk_flip_animate_mode_info_cb;
    OPT_ICON("preferences-desktop");
    //OPT_ADD(INT, desk_flip_animate_interpolation, _("vdesk"), _("animate"), _("flip")); //NOT USED?
-   OPT_ADD(DOUBLE, desk_flip_animate_time, _("Desk flip animation length"), _("vdesk"), _("animate"), _("flip"), _("speed"));
-   OPT_MINMAX_STEP_FMT(0, 5, 0.05, "%1.2f seconds");
 
    OPT_ADD(STR, theme_default_border_style, _("Default window border style"), _("border"), _("theme"));
    co->info_cb = _e_configure_border_style_info_cb;

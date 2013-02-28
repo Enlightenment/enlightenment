@@ -154,7 +154,9 @@ e_mod_kbd_show(void)
         /* show the border */
         if (_e_illume_kbd->border) 
           {
-             e_border_fx_offset(_e_illume_kbd->border, 0, 0);
+             e_comp_win_effect_set(_e_illume_kbd->border->cw, "move");
+             /* unuse location */
+             e_comp_win_effect_params_set(_e_illume_kbd->border->cw, 0, (int[]){0}, 1);
              if (!_e_illume_kbd->border->visible) 
                e_border_show(_e_illume_kbd->border);
              e_border_raise(_e_illume_kbd->border);
@@ -322,12 +324,12 @@ _e_mod_kbd_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, void 
    e_mod_kbd_hide();
 
    /* tell the focused border it changed so layout gets udpated */
-   if (_prev_focused_border) 
+   if (_prev_focused_border && (!e_object_is_del(E_OBJECT(_prev_focused_border)))) 
      {
         if (!e_illume_border_is_conformant(_prev_focused_border)) 
           {
              _prev_focused_border->changes.size = 1;
-             _prev_focused_border->changed = 1;
+             BD_CHANGED(_prev_focused_border);
           }
      }
 
@@ -461,8 +463,11 @@ _e_mod_kbd_hide(void)
      {
         if (_e_illume_kbd->border) 
           {
-             e_border_fx_offset(_e_illume_kbd->border, 0, 
-                                _e_illume_kbd->border->h);
+             e_comp_win_effect_set(_e_illume_kbd->border->cw, "move");
+             /* set location */
+             e_comp_win_effect_params_set(_e_illume_kbd->border->cw, 1, (int[]){0, _e_illume_kbd->border->h}, 2);
+             /* use location */
+             e_comp_win_effect_params_set(_e_illume_kbd->border->cw, 0, (int[]){1}, 1);
              e_border_hide(_e_illume_kbd->border, 2);
           }
      }
@@ -511,9 +516,15 @@ _e_mod_kbd_cb_animate(void *data __UNUSED__)
    _e_illume_kbd->adjust = ((_e_illume_kbd->adjust_end * v) + 
                             (_e_illume_kbd->adjust_start * (1.0 - v)));
 
-   if (_e_illume_kbd->border) 
-     e_border_fx_offset(_e_illume_kbd->border, 0, 
-                        (_e_illume_kbd->border->h - _e_illume_kbd->adjust));
+   if ((_e_illume_kbd->border && _e_illume_kbd->border->cw))
+     {
+        e_comp_win_effect_set(_e_illume_kbd->border->cw, "move");
+        /* set location */
+        e_comp_win_effect_params_set(_e_illume_kbd->border->cw, 1,
+          (int[]){0, _e_illume_kbd->border->h - _e_illume_kbd->adjust}, 2);
+        /* use location */
+        e_comp_win_effect_params_set(_e_illume_kbd->border->cw, 0, (int[]){1}, 1);
+     }
 
    if (t == _e_illume_kbd->len) 
      {
@@ -563,7 +574,17 @@ _e_mod_kbd_border_adopt(E_Border *bd)
 
    if (!_e_illume_kbd->visible) 
      {
-        e_border_fx_offset(bd, 0, bd->h);
+        E_Comp_Win *cw = bd->cw;
+
+        if (!cw) cw = e_comp_win_find(bd->win);
+        if (cw)
+          {
+             e_comp_win_effect_set(cw, "move");
+             /* set location */
+             e_comp_win_effect_params_set(cw, 1, (int[]){0, bd->h}, 2);
+             /* use location */
+             e_comp_win_effect_params_set(cw, 0, (int[]){1}, 1);
+          }
         _e_mod_kbd_layout_send();
      }
 }
@@ -656,7 +677,7 @@ _e_mod_kbd_changes_send(void)
              if (!e_illume_border_is_conformant(_prev_focused_border)) 
                {
                   _prev_focused_border->changes.size = 1;
-                  _prev_focused_border->changed = 1;
+                  BD_CHANGED(_prev_focused_border);
                }
           }
      }
@@ -669,7 +690,7 @@ _e_mod_kbd_changes_send(void)
         if (!e_illume_border_is_conformant(_focused_border)) 
           {
              _focused_border->changes.size = 1;
-             _focused_border->changed = 1;
+             BD_CHANGED(_focused_border);
           }
      }
 }

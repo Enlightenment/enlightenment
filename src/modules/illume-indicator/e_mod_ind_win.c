@@ -417,7 +417,7 @@ _e_mod_ind_win_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj
           {
              bd->y = ny;
              bd->changes.pos = 1;
-             bd->changed = 1;
+             BD_CHANGED(bd);
              e_win_move(iwin->win, iwin->win->x, ny);
           }
      }

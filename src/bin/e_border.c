@@ -1171,8 +1171,8 @@ _e_border_client_move_resize_send(E_Border *bd)
                              bd->client_inset.t);
 
    ecore_x_icccm_move_resize_send(bd->client.win,
-                                  bd->x + bd->fx.x + bd->client_inset.l,
-                                  bd->y + bd->fx.y + bd->client_inset.t,
+                                  bd->x + bd->client_inset.l,
+                                  bd->y + bd->client_inset.t,
                                   bd->client.w,
                                   bd->client.h);
 }
@@ -1364,24 +1364,6 @@ e_border_center_pos_get(E_Border *bd,
    e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
    if (x) *x = zx + (zw - bd->w) / 2;
    if (y) *y = zy + (zh - bd->h) / 2;
-}
-
-EAPI void
-e_border_fx_offset(E_Border *bd,
-                   int x,
-                   int y)
-{
-   E_OBJECT_CHECK(bd);
-   E_OBJECT_TYPE_CHECK(bd, E_BORDER_TYPE);
-
-   if ((x == bd->fx.x) && (y == bd->fx.y)) return;
-   bd->fx.x = x;
-   bd->fx.y = y;
-
-   bd->changes.pos = 1;
-   bd->changed = 1;
-
-   if (bd->moving) _e_border_move_update(bd);
 }
 
 static void
@@ -6551,15 +6533,15 @@ _e_border_cb_mouse_down_helper(E_Border *bd, int button, Evas_Point *output, E_B
      {
         bd->mouse.last_down[button - 1].mx = output->x;
         bd->mouse.last_down[button - 1].my = output->y;
-        bd->mouse.last_down[button - 1].x = bd->x + bd->fx.x;
-        bd->mouse.last_down[button - 1].y = bd->y + bd->fx.y;
+        bd->mouse.last_down[button - 1].x = bd->x;
+        bd->mouse.last_down[button - 1].y = bd->y;
         bd->mouse.last_down[button - 1].w = bd->w;
         bd->mouse.last_down[button - 1].h = bd->h;
      }
    else
      {
-        bd->moveinfo.down.x = bd->x + bd->fx.x;
-        bd->moveinfo.down.y = bd->y + bd->fx.y;
+        bd->moveinfo.down.x = bd->x;
+        bd->moveinfo.down.y = bd->y;
         bd->moveinfo.down.w = bd->w;
         bd->moveinfo.down.h = bd->h;
      }
@@ -6584,15 +6566,15 @@ _e_border_cb_mouse_down_helper(E_Border *bd, int button, Evas_Point *output, E_B
      {
         bd->mouse.last_down[button - 1].mx = output->x;
         bd->mouse.last_down[button - 1].my = output->y;
-        bd->mouse.last_down[button - 1].x = bd->x + bd->fx.x;
-        bd->mouse.last_down[button - 1].y = bd->y + bd->fx.y;
+        bd->mouse.last_down[button - 1].x = bd->x;
+        bd->mouse.last_down[button - 1].y = bd->y;
         bd->mouse.last_down[button - 1].w = bd->w;
         bd->mouse.last_down[button - 1].h = bd->h;
      }
    else
      {
-        bd->moveinfo.down.x = bd->x + bd->fx.x;
-        bd->moveinfo.down.y = bd->y + bd->fx.y;
+        bd->moveinfo.down.x = bd->x;
+        bd->moveinfo.down.y = bd->y;
         bd->moveinfo.down.w = bd->w;
         bd->moveinfo.down.h = bd->h;
      }
@@ -6649,8 +6631,8 @@ _e_border_cb_mouse_up_helper(E_Border *bd, int button, Evas_Point *output, E_Bin
      {
         bd->mouse.last_up[button - 1].mx = output->x;
         bd->mouse.last_up[button - 1].my = output->y;
-        bd->mouse.last_up[button - 1].x = bd->x + bd->fx.x;
-        bd->mouse.last_up[button - 1].y = bd->y + bd->fx.y;
+        bd->mouse.last_up[button - 1].x = bd->x;
+        bd->mouse.last_up[button - 1].y = bd->y;
      }
    bd->mouse.current.mx = output->x;
    bd->mouse.current.my = output->y;
@@ -6674,8 +6656,8 @@ _e_border_cb_mouse_up_helper(E_Border *bd, int button, Evas_Point *output, E_Bin
      {
         bd->mouse.last_up[button - 1].mx = output->x;
         bd->mouse.last_up[button - 1].my = output->y;
-        bd->mouse.last_up[button - 1].x = bd->x + bd->fx.x;
-        bd->mouse.last_up[button - 1].y = bd->y + bd->fx.y;
+        bd->mouse.last_up[button - 1].x = bd->x;
+        bd->mouse.last_up[button - 1].y = bd->y;
      }
 
    bd->drag.start = 0;
@@ -7000,11 +6982,9 @@ _e_border_post_move_resize_job(void *data)
           ecore_x_window_move(tmp->win,
                               bd->x +
                               bd->client_inset.l +
-                              bd->fx.x +
                               tmp->client.e.state.video_position.x,
                               bd->y +
                               bd->client_inset.t +
-                              bd->fx.y +
                               tmp->client.e.state.video_position.y);
      }
    if (bd->client.e.state.video)
@@ -7015,24 +6995,22 @@ _e_border_post_move_resize_job(void *data)
         ecore_x_window_move(bd->win,
                             parent->x +
                             parent->client_inset.l +
-                            parent->fx.x +
                             bd->client.e.state.video_position.x,
                             parent->y +
                             parent->client_inset.t +
-                            parent->fx.y +
                             bd->client.e.state.video_position.y);
      }
    else if ((bd->post_move) && (bd->post_resize))
      {
         ecore_x_window_move_resize(bd->win,
-                                   bd->x + bd->fx.x + bd->client_inset.l,
-                                   bd->y + bd->fx.y + bd->client_inset.t,
+                                   bd->x + bd->client_inset.l,
+                                   bd->y + bd->client_inset.t,
                                    bd->w - (bd->client_inset.l + bd->client_inset.r),
                                    bd->h - (bd->client_inset.t + bd->client_inset.b));
      }
    else if (bd->post_move)
      {
-        ecore_x_window_move(bd->win, bd->x + bd->fx.x + bd->client_inset.l, bd->y + bd->fx.y + bd->client_inset.t);
+        ecore_x_window_move(bd->win, bd->x + bd->client_inset.l, bd->y + bd->client_inset.t);
      }
    else if (bd->post_resize)
      {
@@ -7047,11 +7025,9 @@ _e_border_post_move_resize_job(void *data)
                 bd->win,
                 bd->client.e.state.video_parent_border->x +
                 bd->client.e.state.video_parent_border->client_inset.l +
-                bd->client.e.state.video_parent_border->fx.x +
                 bd->client.e.state.video_position.x,
                 bd->client.e.state.video_parent_border->y +
                 bd->client.e.state.video_parent_border->client_inset.t +
-                bd->client.e.state.video_parent_border->fx.y +
                 bd->client.e.state.video_position.y,
                 bd->w, bd->h);
      }
@@ -8691,11 +8667,9 @@ _e_border_eval(E_Border *bd)
                   ecore_x_window_move(bd->win,
                                       bd->client.e.state.video_parent_border->x +
                                       bd->client.e.state.video_parent_border->client_inset.l +
-                                      bd->client.e.state.video_parent_border->fx.x +
                                       bd->client.e.state.video_position.x,
                                       bd->client.e.state.video_parent_border->y +
                                       bd->client.e.state.video_parent_border->client_inset.t +
-                                      bd->client.e.state.video_parent_border->fx.y +
                                       bd->client.e.state.video_position.y);
                   bd->client.e.state.video_position.updated = 0;
                }
@@ -8713,8 +8687,8 @@ _e_border_eval(E_Border *bd)
 
              EINA_LIST_FOREACH(bd->client.e.state.video_child, l, tmp)
                ecore_x_window_move(tmp->win,
-                                   bd->x + bd->fx.x + bd->client_inset.l + tmp->client.e.state.video_position.x,
-                                   bd->y + bd->fx.y + bd->client_inset.t + tmp->client.e.state.video_position.y);
+                                   bd->x + bd->client_inset.l + tmp->client.e.state.video_position.x,
+                                   bd->y + bd->client_inset.t + tmp->client.e.state.video_position.y);
           }
 
         if ((!bd->shaded) || (bd->shading))
@@ -8744,7 +8718,7 @@ _e_border_eval(E_Border *bd)
         bd->post_job = ecore_idle_enterer_add(_e_border_post_move_resize_job, bd);
         bd->post_move = 1;
 
-        e_container_shape_move(bd->shape, bd->x + bd->fx.x + bd->client_inset.l, bd->y + bd->fx.y + bd->client_inset.t);
+        e_container_shape_move(bd->shape, bd->x + bd->client_inset.l, bd->y + bd->client_inset.t);
 
         _e_border_client_move_resize_send(bd);
 
@@ -8923,8 +8897,8 @@ _e_border_eval(E_Border *bd)
 
         if (bd->cur_mouse_action)
           {
-             bd->moveinfo.down.x = bd->x + bd->fx.x;
-             bd->moveinfo.down.y = bd->y + bd->fx.y;
+             bd->moveinfo.down.x = bd->x;
+             bd->moveinfo.down.y = bd->y;
              bd->moveinfo.down.w = bd->w;
              bd->moveinfo.down.h = bd->h;
              bd->mouse.current.mx = x;

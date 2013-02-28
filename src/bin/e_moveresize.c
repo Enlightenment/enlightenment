@@ -65,7 +65,7 @@ _e_resize_begin(void *data __UNUSED__, void *border)
      return;
 
    if (e_config->resize_info_follows)
-     _e_move_resize_object_coords_set(bd->x + bd->fx.x, bd->y + bd->fx.y, bd->w, bd->h);
+     _e_move_resize_object_coords_set(bd->x, bd->y, bd->w, bd->h);
    else
      _e_move_resize_object_coords_set(bd->zone->x, bd->zone->y, bd->zone->w, bd->zone->h);
 
@@ -120,7 +120,7 @@ _e_resize_update(void *data __UNUSED__, void *border)
    if (!_disp_pop) return;
 
    if (e_config->resize_info_follows)
-     _e_move_resize_object_coords_set(bd->x + bd->fx.x, bd->y + bd->fx.y, bd->w, bd->h);
+     _e_move_resize_object_coords_set(bd->x, bd->y, bd->w, bd->h);
 
    _e_resize_border_extents(bd, &w, &h);
 
@@ -176,7 +176,7 @@ _e_move_begin(void *data __UNUSED__, void *border)
      return;
 
    if (e_config->move_info_follows)
-     _e_move_resize_object_coords_set(bd->x + bd->fx.x, bd->y + bd->fx.y, bd->w, bd->h);
+     _e_move_resize_object_coords_set(bd->x, bd->y, bd->w, bd->h);
    else
      _e_move_resize_object_coords_set(bd->zone->x, bd->zone->y, bd->zone->w, bd->zone->h);
 
@@ -224,7 +224,7 @@ _e_move_update(void *data __UNUSED__, void *border)
    if (!_disp_pop) return;
 
    if (e_config->move_info_follows)
-     _e_move_resize_object_coords_set(bd->x + bd->fx.x, bd->y + bd->fx.y, bd->w, bd->h);
+     _e_move_resize_object_coords_set(bd->x, bd->y, bd->w, bd->h);
 
    if (!visible)
      {

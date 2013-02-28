@@ -17,13 +17,13 @@ struct _Instance
 
    int              mouse_down;
 
-   Ecore_Animator  *hide_animator;
    double           hide_start;
    int              hide_x, hide_y;
 
    Eina_List       *handlers;
 
    Eina_Bool        hidden;
+   Eina_Bool        animating;
    Eina_Bool        illume_mode;
 };
 
@@ -217,7 +217,6 @@ _del_func(void *data, void *obj __UNUSED__)
 
    e_gadcon_locked_set(inst->gcc->gadcon, 0);
 
-   if (inst->hide_animator) ecore_animator_del(inst->hide_animator);
    inst->del_fn = NULL;
    inst->win = NULL;
    edje_object_signal_emit(inst->o_button, "e,state,unfocused", "e");
@@ -229,39 +228,18 @@ _cb_menu_configure(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
    _conf_dialog(data);
 }
 
-static Eina_Bool
-_hide_animator(void *data)
+static void
+_hide_done(void *data, Evas_Object *obj EINA_UNUSED, const char *s EINA_UNUSED, const char *ss EINA_UNUSED)
 {
    Instance *inst = data;
-   E_Win *ewin = inst->win->ewin;
-   double val;
-   int finished = 0;
 
-   if (!inst->hide_start)
-     inst->hide_start = ecore_loop_time_get();
+   /* go bac to subject selector */
+   evry_selectors_switch(inst->win, -1, 0);
+   evry_selectors_switch(inst->win, -1, 0);
 
-   val = (ecore_loop_time_get() - inst->hide_start) / 0.4;
-   if (val > 0.99) finished = 1;
-
-   val = ecore_animator_pos_map(val, ECORE_POS_MAP_DECELERATE, 0.0, 0.0);
-
-   e_border_fx_offset(ewin->border,
-                      (val * (inst->hide_x * ewin->w)),
-                      (val * (inst->hide_y * ewin->h)));
-
-   if (finished)
-     {
-        /* go bac to subject selector */
-        evry_selectors_switch(inst->win, -1, 0);
-        evry_selectors_switch(inst->win, -1, 0);
-
-        inst->hide_animator = NULL;
-        e_border_iconify(ewin->border);
-        e_border_fx_offset(ewin->border, 0, 0);
-        return EINA_FALSE;
-     }
-
-   return EINA_TRUE;
+   e_border_iconify(inst->win->ewin->border);
+   e_comp_win_effect_set(inst->win->ewin->border->cw, "none");
+   inst->animating = 0;
 }
 
 static void
@@ -269,9 +247,16 @@ _evry_hide_func(Evry_Window *win, int finished __UNUSED__)
 {
    Instance *inst = win->data;
 
-   inst->hide_start = 0;
-   inst->hide_animator = ecore_animator_add(_hide_animator, inst);
-   inst->hidden = EINA_TRUE;
+   e_comp_win_effect_set(inst->win->ewin->border->cw, "pane");
+   /* set geoms */
+   e_comp_win_effect_params_set(inst->win->ewin->border->cw, 1,
+     (int[]){inst->win->ewin->x, inst->win->ewin->y,
+             inst->win->ewin->w, inst->win->ewin->h,
+             inst->win->ewin->border->zone->w, inst->win->ewin->border->zone->h,
+             inst->hide_x, inst->hide_y}, 8);
+   e_comp_win_effect_params_set(inst->win->ewin->border->cw, 0, (int[]){0}, 1);
+   e_comp_win_effect_start(inst->win->ewin->border->cw, _hide_done, inst);
+   inst->hidden = inst->animating = EINA_TRUE;
 }
 
 static Eina_Bool
@@ -286,9 +271,6 @@ _cb_focus_out(void *data, int type __UNUSED__, void *event)
      if (inst == data) break;
 
    if ((!inst) || (!inst->win))
-     return ECORE_CALLBACK_PASS_ON;
-
-   if (inst->hide_animator)
      return ECORE_CALLBACK_PASS_ON;
 
    if (inst->win->ewin->border != ev->border)
@@ -459,15 +441,11 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
              win = inst->win;
              bd = win->ewin->border;
 
-             if (inst->hide_animator)
-               {
-                  ecore_animator_del(inst->hide_animator);
-                  inst->hide_animator = NULL;
-               }
-
              if (inst->hidden || !bd->focused)
                {
-                  e_border_fx_offset(bd, 0, 0);
+                  if (inst->animating)
+                    e_comp_win_effect_stop(bd->cw, NULL);
+                  e_comp_win_effect_set(bd->cw, "none");
                   e_border_uniconify(bd);
                   e_border_raise(bd);
                   e_border_focus_set(bd, 1, 1);

@@ -135,16 +135,14 @@ e_mod_quickpanel_show(E_Illume_Quickpanel *qp)
         EINA_LIST_FOREACH(qp->borders, l, bd) 
           {
              if (!bd->visible) e_illume_border_show(bd);
-             if (qp->vert.dir == 0) 
-               {
-                  e_border_fx_offset(bd, 0, ny);
-                  ny += bd->h;
-               }
-             else 
-               {
-                  ny -= bd->h;
-                  e_border_fx_offset(bd, 0, ny);
-               }
+             
+             if (qp->vert.dir) ny -= bd->h;
+             e_comp_win_effect_set(bd->cw, "move");
+             /* set location */
+             e_comp_win_effect_params_set(bd->cw, 1, (int[]){0, ny}, 2);
+             /* use location */
+             e_comp_win_effect_params_set(bd->cw, 0, (int[]){1}, 1);
+             if (qp->vert.dir == 0) ny += bd->h;
           }
         qp->visible = 1;
         _e_mod_quickpanel_clickwin_show(qp);
@@ -458,7 +456,9 @@ _e_mod_quickpanel_hide(E_Illume_Quickpanel *qp)
         /* if we are not animating, hide the qp borders */
         EINA_LIST_REVERSE_FOREACH(qp->borders, l, bd) 
           {
-             e_border_fx_offset(bd, 0, 0);
+             e_comp_win_effect_set(bd->cw, "move");
+             /* unuse location */
+             e_comp_win_effect_params_set(bd->cw, 0, (int[]){0}, 1);
              if (bd->visible) e_illume_border_hide(bd);
           }
         qp->visible = 0;
@@ -543,20 +543,24 @@ _e_mod_quickpanel_animate_down(E_Illume_Quickpanel *qp)
      {
         /* don't adjust borders that are being deleted */
         if (e_object_is_del(E_OBJECT(bd))) continue;
-        if (bd->fx.y != (qp->vert.adjust + pbh)) 
-          e_border_fx_offset(bd, 0, (qp->vert.adjust + pbh));
+        e_comp_win_effect_set(bd->cw, "move");
+        /* set location */
+        e_comp_win_effect_params_set(bd->cw, 1,
+          (int[]){0, qp->vert.adjust + pbh}, 2);
+        /* use location */
+        e_comp_win_effect_params_set(bd->cw, 0, (int[]){1}, 1);
         pbh += bd->h;
 
         if (!qp->visible) 
           {
-             if (bd->fx.y > 0) 
+             if (qp->vert.adjust + pbh > 0) 
                {
                   if (!bd->visible) e_illume_border_show(bd);
                }
           }
         else 
           {
-             if (bd->fx.y <= 10) 
+             if (qp->vert.adjust + pbh <= 10) 
                {
                   if (bd->visible) e_illume_border_hide(bd);
                }
@@ -578,19 +582,23 @@ _e_mod_quickpanel_animate_up(E_Illume_Quickpanel *qp)
         /* don't adjust borders that are being deleted */
         if (e_object_is_del(E_OBJECT(bd))) continue;
         pbh -= bd->h;
-        if (bd->fx.y != (qp->vert.adjust + pbh)) 
-          e_border_fx_offset(bd, 0, (qp->vert.adjust + pbh));
+        e_comp_win_effect_set(bd->cw, "move");
+        /* set location */
+        e_comp_win_effect_params_set(bd->cw, 1,
+          (int[]){0, qp->vert.adjust + pbh}, 2);
+        /* use location */
+        e_comp_win_effect_params_set(bd->cw, 0, (int[]){1}, 1);
 
         if (!qp->visible) 
           {
-             if (bd->fx.y < 0) 
+             if (qp->vert.adjust + pbh < 0) 
                {
                   if (!bd->visible) e_illume_border_show(bd);
                }
           }
         else 
           {
-             if (bd->fx.y >= -10) 
+             if (qp->vert.adjust + pbh >= -10) 
                {
                   if (bd->visible) e_illume_border_hide(bd);
                }

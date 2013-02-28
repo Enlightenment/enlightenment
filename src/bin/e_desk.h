@@ -34,8 +34,7 @@ struct _E_Desk
 
    Evas_Object         *bg_object;
 
-   Ecore_Animator      *animator;
-   Eina_Bool            animating;
+   unsigned int animate_count;
 };
 
 struct _E_Event_Desk_Show

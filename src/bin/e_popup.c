@@ -66,7 +66,7 @@ _e_popup_autoclose_setup(E_Popup *pop)
    if (pop->comp_layer == E_COMP_CANVAS_LAYER_LAYOUT)
      {
         e_layout_pack(e_comp_get(pop)->layout, event_rect);
-        e_layout_child_lower_below(event_rect, pop->cw->shobj);
+        e_layout_child_lower_below(event_rect, pop->cw->effect_obj);
      }
    else
      evas_object_layer_set(event_rect, pop->comp_layer - 1);

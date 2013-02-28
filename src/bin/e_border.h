@@ -177,16 +177,6 @@ struct _E_Border
 
    struct
    {
-      int x, y;
-      struct
-      {
-         int    x, y;
-         double t;
-      } start;
-   } fx;
-
-   struct
-   {
       int l, r, t, b;
       Eina_Bool calc : 1; // inset has been calculated
    } client_inset;
@@ -733,7 +723,6 @@ EAPI void           e_border_move_intercept_cb_set(E_Border *bd, E_Border_Move_I
 EAPI void           e_border_move_without_border(E_Border *bd, int x, int y);
 EAPI void           e_border_center(E_Border *bd);
 EAPI void           e_border_center_pos_get(E_Border *bd, int *x, int *y);
-EAPI void           e_border_fx_offset(E_Border *bd, int x, int y);
 EAPI void           e_border_resize(E_Border *bd, int w, int h);
 EAPI void           e_border_resize_without_border(E_Border *bd, int w, int h);
 EAPI void           e_border_move_resize(E_Border *bd, int x, int y, int w, int h);

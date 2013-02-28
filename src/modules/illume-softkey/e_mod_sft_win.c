@@ -87,7 +87,8 @@ e_mod_sft_win_new(E_Zone *zone)
    _e_mod_sft_win_create_extra_buttons(swin);
 
    edje_object_size_min_calc(swin->o_base, &mw, &mh);
-   
+
+   mh = E_CLAMP(mh, 10, zone->h / 3);   
    /* set minimum size of this window */
    e_win_size_min_set(swin->win, zone->w, mh);
 

@@ -22,7 +22,6 @@ struct _E_Config_Dialog_Data
 #endif
    int flip_mode;
    int flip_interp;
-   double flip_speed;
 
    /*- GUI -*/
    Evas_Object *preview;
@@ -68,7 +67,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 #endif
    cfdata->flip_mode = e_config->desk_flip_animate_mode;
    cfdata->flip_interp = e_config->desk_flip_animate_interpolation;
-   cfdata->flip_speed = e_config->desk_flip_animate_time;
 }
 
 static void *
@@ -106,7 +104,6 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
    e_config->desk_flip_animate_mode = cfdata->flip_mode;
    e_config->desk_flip_animate_interpolation = cfdata->flip_interp;
-   e_config->desk_flip_animate_time = cfdata->flip_speed;
    
    e_config->edge_flip_dragging = cfdata->edge_flip_dragging;
    e_config->desk_flip_wrap = cfdata->flip_wrap;
@@ -143,7 +140,6 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 
    return ((e_config->desk_flip_animate_mode != cfdata->flip_mode) ||
 	   (e_config->desk_flip_animate_interpolation != cfdata->flip_interp) ||
-	   (e_config->desk_flip_animate_time != cfdata->flip_speed) ||
 	   (e_config->edge_flip_dragging != cfdata->edge_flip_dragging) ||
 	   (e_config->desk_flip_wrap != cfdata->flip_wrap)
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
@@ -220,14 +216,6 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
    e_widget_on_change_hook_set(ob, _cb_disable_flip_anim, cfdata);
    e_widget_list_object_append(o, ob, 1, 0, 0.5);
    
-   ob = e_widget_label_add(evas, _("Animation speed"));
-   cfdata->flip_anim_list = eina_list_append(cfdata->flip_anim_list, ob);
-   e_widget_list_object_append(o, ob, 1, 0, 0.5);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.1f s"), 0, 5, 0.05, 0, 
-                            &(cfdata->flip_speed), NULL, 150);
-   e_widget_disabled_set(ob, !cfdata->flip_mode);
-   cfdata->flip_anim_list = eina_list_append(cfdata->flip_anim_list, ob);
-   e_widget_list_object_append(o, ob, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Flip Animation"), o, 
                                  1, 0, 1, 0, 0.5, 0.0);
 

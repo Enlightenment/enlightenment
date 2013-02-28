@@ -48,7 +48,7 @@ typedef enum
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 11
+#define E_CONFIG_FILE_GENERATION 12
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -265,9 +265,14 @@ struct _E_Config
    const char               *icon_theme; // GUI
    unsigned char             icon_theme_overrides; // GUI
 
+   /* modes:
+    * 1-"pane") horizontal or vertical movement to/from next/previous "screen"
+    * 2-"zoom") 45degree diagonal movement based on border position
+    */
    int                       desk_flip_animate_mode; // GUI
+   /* types based on theme */
+   Eina_Stringshare        *desk_flip_animate_type; // GUI
    int                       desk_flip_animate_interpolation; // GUI
-   double                    desk_flip_animate_time; // GUI
 
    const char               *wallpaper_import_last_dev; // INTERNAL
    const char               *wallpaper_import_last_path; // INTERNAL
