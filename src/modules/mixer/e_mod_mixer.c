@@ -70,12 +70,15 @@ _channel_info_cmp(const void *data_a, const void *data_b)
 {
    const E_Mixer_Channel_Info *a = data_a, *b = data_b;
 
-   if (e_mod_mixer_channel_has_capture(a) < e_mod_mixer_channel_has_capture(b))
-     return -1;
-   else if (e_mod_mixer_channel_has_capture(a) > e_mod_mixer_channel_has_capture(b))
+   if (e_mod_mixer_channel_group_get(a) == e_mod_mixer_channel_group_get(b))
+     return strcmp(a->name, b->name);
+   if (e_mod_mixer_channel_is_boost(a))
      return 1;
-
-   return strcmp(a->name, b->name);
+   if (e_mod_mixer_channel_is_boost(b))
+     return -1;
+   if (e_mod_mixer_channel_group_get(a) < e_mod_mixer_channel_group_get(b))
+     return 1;
+   return -1;
 }
 
 void e_mod_mixer_channel_info_free(E_Mixer_Channel_Info* info)
