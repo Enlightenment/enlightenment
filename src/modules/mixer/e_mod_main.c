@@ -563,7 +563,8 @@ _mixer_popup_cb_mixer(void *data, void *data2 __UNUSED__)
    ctxt = mixer_mod->data;
    if (ctxt->mixer_dialog)
      {
-        _mixer_app_select_current(ctxt->mixer_dialog, inst);
+        /* maybe not update mixer dialog current selection */
+        /* _mixer_app_select_current(ctxt->mixer_dialog, inst); */
         e_dialog_show(ctxt->mixer_dialog);
         return;
      }
