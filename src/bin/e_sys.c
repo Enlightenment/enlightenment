@@ -878,22 +878,21 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
           }
         else
           {
-             ecore_event_add(E_EVENT_SYS_HIBERNATE, NULL, NULL, NULL);
-             if (_e_sys_hibernate_func)
+             if (raw)
                {
-                  _e_sys_hibernate_func();
-                  return 0;
+                  _e_sys_susp_hib_check();
+                  if (e_config->desklock_on_suspend)
+                    e_desklock_show(EINA_TRUE);
+                  _e_sys_begin_time = ecore_time_get();
+                  _e_sys_exe = ecore_exe_run(buf, NULL);
                }
              else
                {
-                  if (raw)
+                  ecore_event_add(E_EVENT_SYS_HIBERNATE, NULL, NULL, NULL);
+                  if (_e_sys_hibernate_func)
                     {
-                       if (e_config->desklock_on_suspend)
-                         e_desklock_show(EINA_TRUE);
-
-                       _e_sys_susp_hib_check();
-                       _e_sys_begin_time = ecore_time_get();
-                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       _e_sys_hibernate_func();
+                       return 0;
                     }
                   else
                     {

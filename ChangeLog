@@ -1,3 +1,7 @@
+2013-03-01 Sebastian Dransfeld
+
+        * Fix sys hibernate by checking raw condition first
+
 2013-02-22 Mike Blumenkrantz
 
         * compositor now allows user changing/remembering of object opacity
