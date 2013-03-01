@@ -461,23 +461,6 @@ e_mixer_system_get_channel_by_name(const E_Mixer_System *self,
    return NULL;
 }
 
-const char *
-e_mixer_system_get_channel_name(const E_Mixer_System *self,
-                                const E_Mixer_Channel_Info *channel)
-{
-   snd_mixer_selem_id_t *sid;
-   const char *name;
-
-   if ((!self) || (!channel) || (!channel->id) )
-     return NULL;
-
-   snd_mixer_selem_id_alloca(&sid);
-   snd_mixer_selem_get_id(channel->id, sid);
-   name = eina_stringshare_add(snd_mixer_selem_id_get_name(sid));
-
-   return name;
-}
-
 int
 e_mixer_system_get_volume(const E_Mixer_System *self,
                           const E_Mixer_Channel_Info *channel,
@@ -638,20 +621,5 @@ e_mixer_system_get_state(const E_Mixer_System *self,
 
    r = e_mixer_system_get_mute(self, channel, &state->mute);
    r &= e_mixer_system_get_volume(self, channel, &state->left, &state->right);
-   return r;
-}
-
-int
-e_mixer_system_set_state(const E_Mixer_System *self,
-                         const E_Mixer_Channel_Info *channel,
-                         const E_Mixer_Channel_State *state)
-{
-   int r;
-
-   if (!state)
-     return 0;
-
-   r = e_mixer_system_set_mute(self, channel, state->mute);
-   r &= e_mixer_system_set_volume(self, channel, state->left, state->right);
    return r;
 }

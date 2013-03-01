@@ -110,20 +110,6 @@ e_mixer_system_get_channel_by_name(const E_Mixer_System *self __UNUSED__, const 
      return NULL;
 }
 
-const char *
-e_mixer_system_get_channel_name(const E_Mixer_System *self __UNUSED__,
-                                const E_Mixer_Channel_Info *channel)
-{
-   _e_mixer_dummy_set();
-
-   if (!channel)
-     return NULL;
-   if (channel->id == (E_Mixer_Channel *)-2)
-     return eina_stringshare_ref(_name);
-   else
-     return NULL;
-}
-
 int
 e_mixer_system_get_volume(const E_Mixer_System *self __UNUSED__,
                           const E_Mixer_Channel_Info *channel __UNUSED__,
@@ -175,12 +161,4 @@ e_mixer_system_get_state(const E_Mixer_System *self __UNUSED__,
      *state = def;
 
    return 1;
-}
-
-int
-e_mixer_system_set_state(const E_Mixer_System *self __UNUSED__,
-                         const E_Mixer_Channel_Info *channel __UNUSED__,
-                         const E_Mixer_Channel_State *state __UNUSED__)
-{
-   return 0;
 }

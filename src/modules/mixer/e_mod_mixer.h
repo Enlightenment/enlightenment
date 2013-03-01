@@ -66,7 +66,6 @@ extern E_Mixer_Cb e_mod_mixer_new;
 extern E_Mixer_Cb e_mod_mixer_del;
 extern E_Mixer_Cb e_mod_mixer_channel_default_name_get;
 extern E_Mixer_Cb e_mod_mixer_channel_info_get_by_name;
-extern E_Mixer_Cb e_mod_mixer_channel_name_get;
 extern E_Mixer_Cb e_mod_mixer_channel_names_get;
 extern E_Mixer_Cb e_mod_mixer_card_name_get;
 extern E_Mixer_Cb e_mod_mixer_card_names_get;
@@ -90,7 +89,6 @@ void e_mixer_system_del(E_Mixer_System *self);
 Eina_List *e_mixer_system_get_cards(void);
 const char *e_mixer_system_get_default_card(void);
 const char *e_mixer_system_get_card_name(const char *card);
-const char *e_mixer_system_get_channel_name(const E_Mixer_System *self, const E_Mixer_Channel_Info *channel);
 
 Eina_List *e_mixer_system_get_channels(const E_Mixer_System *self);
 Eina_List *e_mixer_system_get_channel_names(const E_Mixer_System *self);
@@ -103,7 +101,6 @@ int e_mixer_system_set_volume(const E_Mixer_System *self, const E_Mixer_Channel_
 int e_mixer_system_get_mute(const E_Mixer_System *self, const E_Mixer_Channel_Info *channel, int *mute);
 int e_mixer_system_set_mute(const E_Mixer_System *self, const E_Mixer_Channel_Info *channel, int mute);
 int e_mixer_system_get_state(const E_Mixer_System *self, const E_Mixer_Channel_Info *channel, E_Mixer_Channel_State *state);
-int e_mixer_system_set_state(const E_Mixer_System *self, const E_Mixer_Channel_Info *channel, const E_Mixer_Channel_State *state);
 
 /* PULSE */
 int pulse_init(void);
@@ -117,7 +114,6 @@ void e_mixer_pulse_del(E_Mixer_System *self);
 Eina_List *e_mixer_pulse_get_cards(void);
 const char *e_mixer_pulse_get_default_card(void);
 const char *e_mixer_pulse_get_card_name(const char *card);
-const char *e_mixer_pulse_get_channel_name(const E_Mixer_System *self, const E_Mixer_Channel_Info *channel);
 
 Eina_List *e_mixer_pulse_get_channels(const E_Mixer_System *self);
 Eina_List *e_mixer_pulse_get_channel_names(const E_Mixer_System *self);
@@ -130,7 +126,6 @@ int e_mixer_pulse_set_volume(const E_Mixer_System *self, const E_Mixer_Channel_I
 int e_mixer_pulse_get_mute(const E_Mixer_System *self, const E_Mixer_Channel_Info *channel, int *mute);
 int e_mixer_pulse_set_mute(const E_Mixer_System *self, const E_Mixer_Channel_Info *channel, int mute);
 int e_mixer_pulse_get_state(const E_Mixer_System *self, const E_Mixer_Channel_Info *channel, E_Mixer_Channel_State *state);
-int e_mixer_pulse_set_state(const E_Mixer_System *self, const E_Mixer_Channel_Info *channel, const E_Mixer_Channel_State *state);
 
 /**
  * @addtogroup Optional_Devices

@@ -511,14 +511,6 @@ e_mixer_pulse_get_channel_by_name(const E_Mixer_System *self EINA_UNUSED,
    return ch_info;
 }
 
-const char *
-e_mixer_pulse_get_channel_name(const E_Mixer_System *self EINA_UNUSED,
-                               const E_Mixer_Channel_Info *channel)
-{
-   if (!channel) return NULL;
-   return eina_stringshare_ref(_name);
-}
-
 int
 e_mixer_pulse_get_volume(const E_Mixer_System *self,
                          const E_Mixer_Channel_Info *channel, int *left, int *right)
@@ -622,12 +614,3 @@ e_mixer_pulse_get_state(const E_Mixer_System *self,
    return 1;
 }
 
-int
-e_mixer_pulse_set_state(const E_Mixer_System *self,
-                        const E_Mixer_Channel_Info *channel,
-                        const E_Mixer_Channel_State *state)
-{
-   e_mixer_pulse_set_volume(self, channel, state->left, state->right);
-   e_mixer_pulse_set_mute(self, channel, state->mute);
-   return 1;
-}
