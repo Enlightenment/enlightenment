@@ -14,7 +14,6 @@ static Eina_Bool  _e_theme_mappings_free_cb(const Eina_Hash *hash, const void *k
 static Eina_Bool  _e_theme_mappings_quickfind_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 static void       _e_theme_category_register(const char *category);
 static Eina_List *_e_theme_collection_item_register(Eina_List *list, const char *name);
-static Eina_List *_e_theme_collection_items_find(const char *base, const char *collname);
 static void       e_theme_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
 static int        e_theme_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
 
@@ -83,6 +82,77 @@ e_theme_shutdown(void)
      eina_stringshare_del(str);
 
    return 1;
+}
+
+/**
+ * Return a list of all the groups matching a category and prefix
+ *
+ * @param base The category to look under
+ * @param collname The group to match
+ * @return A list of stringshared groups which must be freed
+ */
+
+EAPI Eina_List *
+e_theme_collection_items_find(const char *base, const char *collname)
+{
+   Eina_List *list = NULL;
+   E_Theme_Result *res;
+   char *category, *p;
+
+   category = alloca(strlen(base) + 1);
+   strcpy(category, base);
+   do
+     {
+        res = eina_hash_find(mappings, category);
+        if (res)
+          {
+             const char *str;
+
+             /* if found check cached path */
+             str = res->cache;
+             if (!str)
+               {
+                  /* no cached path */
+                  str = res->file;
+                  /* if its not an absolute path find it */
+                  if (str[0] != '/') str = e_path_find(path_themes, str);
+                  /* save cached value */
+                  if (str) res->cache = str;
+               }
+             if (str)
+               {
+                  Eina_List *coll;
+                  Eina_Stringshare *c;
+                  int collname_len;
+
+                  coll = edje_file_collection_list(str);
+                  if (coll) collname_len = strlen(collname);
+                  EINA_LIST_FREE(coll, c)
+                    {
+                       if (!strncmp(c, collname, collname_len))
+                         {
+                            char *trans, *p2;
+
+                            trans = strdupa(c);
+                            p = trans + collname_len + 1;
+                            if (*p)
+                              {
+                                 p2 = strchr(p, '/');
+                                 if (p2) *p2 = 0;
+                                 list = _e_theme_collection_item_register(list, p);
+                              }
+                         }
+                       eina_stringshare_del(c);
+                    }
+               }
+          }
+        p = strrchr(category, '/');
+        if (p) *p = 0;
+     }
+   while (p);
+
+   list = eina_list_sort(list, 0, EINA_COMPARE_CB(strcmp));
+   return list;
 }
 
 /**
@@ -419,7 +489,7 @@ e_theme_transition_find(const char *transition)
    const char *str;
 
    trans =
-     _e_theme_collection_items_find("base/theme/transitions", "e/transitions");
+     e_theme_collection_items_find("base/theme/transitions", "e/transitions");
 
    if (eina_list_search_sorted(trans, EINA_COMPARE_CB(strcmp), transition))
      found = 1;
@@ -433,7 +503,7 @@ e_theme_transition_find(const char *transition)
 EAPI Eina_List *
 e_theme_transition_list(void)
 {
-   return _e_theme_collection_items_find("base/theme/transitions",
+   return e_theme_collection_items_find("base/theme/transitions",
                                          "e/transitions");
 }
 
@@ -445,7 +515,7 @@ e_theme_border_find(const char *border)
    const char *str;
 
    bds =
-     _e_theme_collection_items_find("base/theme/borders", "e/widgets/border");
+     e_theme_collection_items_find("base/theme/borders", "e/widgets/border");
 
    if (eina_list_search_sorted(bds, EINA_COMPARE_CB(strcmp), border))
      found = 1;
@@ -459,7 +529,7 @@ e_theme_border_find(const char *border)
 EAPI Eina_List *
 e_theme_border_list(void)
 {
-   return _e_theme_collection_items_find("base/theme/borders",
+   return e_theme_collection_items_find("base/theme/borders",
                                          "e/widgets/border");
 }
 
@@ -471,7 +541,7 @@ e_theme_shelf_find(const char *shelf)
    const char *str;
 
    shelfs =
-     _e_theme_collection_items_find("base/theme/shelf", "e/shelf");
+     e_theme_collection_items_find("base/theme/shelf", "e/shelf");
 
    if (eina_list_search_sorted(shelfs, EINA_COMPARE_CB(strcmp), shelf))
      found = 1;
@@ -485,7 +555,7 @@ e_theme_shelf_find(const char *shelf)
 EAPI Eina_List *
 e_theme_shelf_list(void)
 {
-   return _e_theme_collection_items_find("base/theme/shelf", "e/shelf");
+   return e_theme_collection_items_find("base/theme/shelf", "e/shelf");
 }
 
 EAPI int
@@ -495,7 +565,7 @@ e_theme_comp_border_find(const char *comp)
    int found = 0;
    const char *str;
 
-   comps = _e_theme_collection_items_find("base/theme/borders", "e/comp/border");
+   comps = e_theme_collection_items_find("base/theme/borders", "e/comp/border");
 
    if (eina_list_search_sorted(comps, EINA_COMPARE_CB(strcmp), comp))
      found = 1;
@@ -509,7 +579,7 @@ e_theme_comp_border_find(const char *comp)
 EAPI Eina_List *
 e_theme_comp_border_list(void)
 {
-   return _e_theme_collection_items_find("base/theme/borders", "e/comp/border");
+   return e_theme_collection_items_find("base/theme/borders", "e/comp/border");
 }
 
 /* local subsystem functions */
@@ -625,67 +695,3 @@ _e_theme_collection_item_register(Eina_List *list, const char *name)
    list = eina_list_append(list, eina_stringshare_add(name));
    return list;
 }
-
-static Eina_List *
-_e_theme_collection_items_find(const char *base, const char *collname)
-{
-   Eina_List *list = NULL;
-   E_Theme_Result *res;
-   char *category, *p;
-
-   category = alloca(strlen(base) + 1);
-   strcpy(category, base);
-   do
-     {
-        res = eina_hash_find(mappings, category);
-        if (res)
-          {
-             const char *str;
-
-             /* if found check cached path */
-             str = res->cache;
-             if (!str)
-               {
-                  /* no cached path */
-                  str = res->file;
-                  /* if its not an absolute path find it */
-                  if (str[0] != '/') str = e_path_find(path_themes, str);
-                  /* save cached value */
-                  if (str) res->cache = str;
-               }
-             if (str)
-               {
-                  Eina_List *coll;
-                  Eina_Stringshare *c;
-                  int collname_len;
-
-                  coll = edje_file_collection_list(str);
-                  if (coll) collname_len = strlen(collname);
-                  EINA_LIST_FREE(coll, c)
-                    {
-                       if (!strncmp(c, collname, collname_len))
-                         {
-                            char *trans, *p2;
-
-                            trans = strdupa(c);
-                            p = trans + collname_len + 1;
-                            if (*p)
-                              {
-                                 p2 = strchr(p, '/');
-                                 if (p2) *p2 = 0;
-                                 list = _e_theme_collection_item_register(list, p);
-                              }
-                         }
-                       eina_stringshare_del(c);
-                    }
-               }
-          }
-        p = strrchr(category, '/');
-        if (p) *p = 0;
-     }
-   while (p);
-
-   list = eina_list_sort(list, 0, EINA_COMPARE_CB(strcmp));
-   return list;
-}
-
