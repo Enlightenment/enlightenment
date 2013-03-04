@@ -1762,14 +1762,14 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
                {
                   if (fast)
                     {
-                       snprintf(buf, sizeof(buf), "e/comp/%s/fast", m->shadow_style);
+                       snprintf(buf, sizeof(buf), "e/comp/border/%s/fast", m->shadow_style);
                        reshadow = ok = !e_util_strcmp(reshadow_group, buf);
                        if (!ok)
                          ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
                     }
                   if (!ok)
                     {
-                       snprintf(buf, sizeof(buf), "e/comp/%s", m->shadow_style);
+                       snprintf(buf, sizeof(buf), "e/comp/border/%s", m->shadow_style);
                        reshadow = ok = !e_util_strcmp(reshadow_group, buf);
                        if (!ok)
                          ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
@@ -1782,23 +1782,23 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
      {
         if (skip || (cw->bd && cw->bd->client.e.state.video))
           {
-             reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/none");
+             reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/border/none");
              if (!ok)
-               ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/none");
+               ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/border/none");
           }
         if (ok) break;
         if (conf->shadow_style)
           {
              if (fast)
                {
-                  snprintf(buf, sizeof(buf), "e/comp/%s/fast", conf->shadow_style);
+                  snprintf(buf, sizeof(buf), "e/comp/border/%s/fast", conf->shadow_style);
                   reshadow = ok = !e_util_strcmp(reshadow_group, buf);
                   if (!ok)
                     ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
                }
              if (!ok)
                {
-                  snprintf(buf, sizeof(buf), "e/comp/%s", conf->shadow_style);
+                  snprintf(buf, sizeof(buf), "e/comp/border/%s", conf->shadow_style);
                   reshadow = ok = !e_util_strcmp(reshadow_group, buf);
                   if (!ok)
                     ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", buf);
@@ -1808,15 +1808,15 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
           {
              if (fast)
                {
-                  reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/default/fast");
+                  reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/border/default/fast");
                   if (!ok)
-                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/default/fast");
+                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/border/default/fast");
                }
              if (!ok)
                {
-                  reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/default");
+                  reshadow = ok = !e_util_strcmp(reshadow_group, "e/comp/border/default");
                   if (!ok)
-                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/default");
+                    ok = e_theme_edje_object_set(cw->shobj, "base/theme/borders", "e/comp/border/default");
                }
           }
         break;
@@ -4431,7 +4431,7 @@ _e_comp_config_style_thumb_cb(E_Configure_Option_Info *oi, Evas *evas)
    evas_object_show(oly);
 
    oo = edje_object_add(e_livethumb_evas_get(ob));
-   snprintf(buf, sizeof(buf), "e/comp/%s", oi->name);
+   snprintf(buf, sizeof(buf), "e/comp/border/%s", oi->name);
    e_theme_edje_object_set(oo, "base/theme/borders", buf);
    e_layout_pack(oly, oo);
    e_layout_child_move(oo, 39, 39);
@@ -4474,7 +4474,7 @@ _e_comp_config_style_info_cb(E_Configure_Option *co)
    Eina_Stringshare *style;
    E_Configure_Option_Info *oi;
 
-   styles = e_theme_comp_list();
+   styles = e_theme_comp_border_list();
    EINA_LIST_FREE(styles, style)
      {
         oi = e_configure_option_info_new(co, style, style);

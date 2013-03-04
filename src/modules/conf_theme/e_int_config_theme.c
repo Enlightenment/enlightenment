@@ -125,7 +125,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    objs = eina_list_append(objs, o);
 
    o = edje_object_add(e);
-   _e_int_theme_edje_file_set(o, file, "e/comp/popup");
+   _e_int_theme_edje_file_set(o, file, "e/comp/border/popup");
    evas_object_move(o, (w - (400 * e_scale)) / 2, h - (40 * e_scale));
    evas_object_resize(o, 400 * e_scale, (40 * e_scale));
    evas_object_show(o);
@@ -233,7 +233,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    
    
    o = edje_object_add(e);
-   _e_int_theme_edje_file_set(o, file, "e/comp/default");
+   _e_int_theme_edje_file_set(o, file, "e/comp/border/default");
    evas_object_move(o, w / 2, h / 9);
    evas_object_resize(o, w / 3, h / 3);
    evas_object_show(o);
@@ -267,7 +267,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    
    
    o = edje_object_add(e);
-   _e_int_theme_edje_file_set(o, file, "e/comp/default");
+   _e_int_theme_edje_file_set(o, file, "e/comp/border/default");
    evas_object_move(o, w / 10, h / 5);
    evas_object_resize(o, w / 2, h / 3);
    evas_object_show(o);

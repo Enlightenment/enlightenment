@@ -133,7 +133,7 @@ _style_selector(Evas *evas, const char **source)
    evas_object_event_callback_add(oi, EVAS_CALLBACK_DEL,
                                   _style_selector_del, oi);
    sel = 0;
-   styles = e_theme_comp_list();
+   styles = e_theme_comp_border_list();
    n = 0;
    EINA_LIST_FOREACH(styles, l, style)
      {
@@ -154,7 +154,7 @@ _style_selector(Evas *evas, const char **source)
 
         oo = edje_object_add(e_livethumb_evas_get(ob));
         ds_it->preview = oo;
-        snprintf(buf, sizeof(buf), "e/comp/%s", style);
+        snprintf(buf, sizeof(buf), "e/comp/border/%s", style);
         e_theme_edje_object_set(oo, "base/theme/borders", buf);
         e_layout_pack(oly, oo);
         e_layout_child_move(oo, 39, 39);

@@ -71,7 +71,7 @@ _scale_preview_new(Evas *e, double sc, double *scp)
    evas_object_show(bg);
 
    cm = edje_object_add(e_widget_preview_evas_get(ob));
-   e_theme_edje_object_set(cm, "base/theme/borders", "e/comp/default");
+   e_theme_edje_object_set(cm, "base/theme/borders", "e/comp/border/default");
    evas_object_move(cm, 16, 16);
    evas_object_resize(cm, 180 * sc, 80);
    evas_object_show(cm);

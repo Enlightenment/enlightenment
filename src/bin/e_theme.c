@@ -489,13 +489,13 @@ e_theme_shelf_list(void)
 }
 
 EAPI int
-e_theme_comp_find(const char *comp)
+e_theme_comp_border_find(const char *comp)
 {
    Eina_List *comps = NULL;
    int found = 0;
    const char *str;
 
-   comps = _e_theme_collection_items_find("base/theme/borders", "e/comp");
+   comps = _e_theme_collection_items_find("base/theme/borders", "e/comp/border");
 
    if (eina_list_search_sorted(comps, EINA_COMPARE_CB(strcmp), comp))
      found = 1;
@@ -507,9 +507,9 @@ e_theme_comp_find(const char *comp)
 }
 
 EAPI Eina_List *
-e_theme_comp_list(void)
+e_theme_comp_border_list(void)
 {
-   return _e_theme_collection_items_find("base/theme/borders", "e/comp");
+   return _e_theme_collection_items_find("base/theme/borders", "e/comp/border");
 }
 
 /* local subsystem functions */
