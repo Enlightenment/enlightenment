@@ -946,23 +946,29 @@ _e_configure_clientlist_separate_iconified_apps_info_cb(E_Configure_Option *co)
 }
 
 static Eina_List *
-_e_configure_desk_flip_animate_mode_info_cb(E_Configure_Option *co)
+_e_configure_desk_flip_animate_type_info_cb(E_Configure_Option *co)
 {
-   Eina_List *ret = NULL;
+   Eina_List *l, *ret = NULL;
    E_Configure_Option_Info *oi;
-   int x;
-   const char *name[] =
-   {
-      "No animation",
-      "Pane",
-      "Zoom"
-   };
+   Eina_Stringshare *grp;
 
-   for (x = 0; x <= E_DESKFLIP_ANIMATION_MODE_ZOOM; x++)
+   l = e_theme_collection_items_find("base/theme/borders", "e/comp/effects/auto");
+   grp = eina_stringshare_add("none");
+   oi = e_configure_option_info_new(co, _("none"), grp);
+   oi->current = (*(Eina_Stringshare **)co->valptr == grp);
+   ret = eina_list_append(ret, oi);
+   EINA_LIST_FREE(l, grp)
      {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t *)(long)x);
-        oi->current = (*(int *)co->valptr == x);
+        char buf[1024];
+        Eina_Stringshare *s;
+
+        /* usable desk flip animations must have auto/ prefix */
+        snprintf(buf, sizeof(buf), "auto/%s", grp);
+        s = eina_stringshare_add(buf);
+        oi = e_configure_option_info_new(co, _(grp), s);
+        oi->current = (*(Eina_Stringshare **)co->valptr == s);
         ret = eina_list_append(ret, oi);
+        eina_stringshare_del(grp);
      }
    return ret;
 }
@@ -1821,8 +1827,8 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, fullscreen_flip, _("Enable desk flipping with fullscreen windows"), _("vdesk"), _("flip"), _("edge"), _("fullscreen"));
    OPT_ADD(BOOL, multiscreen_flip, _("Enable desk flipping with multiple monitors (DANGEROUS)"), _("vdesk"), _("flip"), _("edge"), _("screen"));
 
-   OPT_ADD(ENUM, desk_flip_animate_mode, _("Desk flip animation type"), _("vdesk"), _("animate"), _("flip")); //enum
-   co->info_cb = _e_configure_desk_flip_animate_mode_info_cb;
+   OPT_ADD(STR, desk_flip_animate_type, _("Desk flip animation type"), _("vdesk"), _("animate"), _("flip")); //str
+   co->info_cb = _e_configure_desk_flip_animate_type_info_cb;
    OPT_ICON("preferences-desktop");
    //OPT_ADD(INT, desk_flip_animate_interpolation, _("vdesk"), _("animate"), _("flip")); //NOT USED?
 
