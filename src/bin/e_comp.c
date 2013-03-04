@@ -4066,6 +4066,8 @@ _e_comp_del(E_Comp *c)
    E_Container *con;
 
    c->man->comp = NULL;
+   evas_event_freeze(c->evas);
+   edje_freeze();
    EINA_LIST_FOREACH(c->man->containers, l, con)
      e_container_shape_change_callback_del(con, _e_comp_shapes_update, c);
    EINA_LIST_FOREACH(e_border_client_list(), l, bd)
