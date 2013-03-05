@@ -7820,7 +7820,7 @@ _e_fm2_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event
                }
           }
      }
-   else if (!strcmp(ev->key, "Return"))
+   else if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
      {
         /* if selected - select callback.
          * typebuf mode: if nothing selected - run cmd
@@ -10273,7 +10273,7 @@ _e_fm2_icon_entry_widget_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object
 
    if (!strcmp(ev->key, "Escape"))
      _e_fm2_icon_entry_widget_del(ic);
-   else if (!strcmp(ev->key, "Return"))
+   else if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
      _e_fm2_icon_entry_widget_accept(ic);
 }
 
