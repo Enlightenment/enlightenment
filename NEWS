@@ -68,6 +68,7 @@ Removed:
     * HAL support for filemanager
 
 Improvements:
+    * mixer shows more channels when using alsa subsystem and correctly disable controls
     * Check changed added to several settings dialogs:
      - clientlist,
      - startup theme,

@@ -1,3 +1,8 @@
+2013-03-01 Jérémy Zurcher
+
+        * mixer shows more channels when using alsa subsystem and correctly disable controls
+        * mixer api extracted in e_mod_mixer and reduced
+
 2013-03-01 Sebastian Dransfeld
 
         * Fix sys hibernate by checking raw condition first
