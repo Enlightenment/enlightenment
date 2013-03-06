@@ -335,6 +335,16 @@ e_win_show(E_Win *win)
         win->border->internal_no_reopen = win->state.no_reopen;
      }
    _e_win_prop_update(win);
+   if (win->state.dialog)
+     {
+        ecore_x_icccm_transient_for_set(win->evas_win, win->container->manager->root);
+        ecore_x_netwm_window_type_set(win->evas_win, ECORE_X_WINDOW_TYPE_DIALOG);
+     }
+   else
+     {
+        ecore_x_icccm_transient_for_unset(win->evas_win);
+        ecore_x_netwm_window_type_set(win->evas_win, ECORE_X_WINDOW_TYPE_NORMAL);
+     }
    e_border_show(win->border);
 // done now by e_border specially
 //   ecore_evas_show(win->ecore_evas);
@@ -702,16 +712,6 @@ _e_win_prop_update(E_Win *win)
                                     win->base_w, win->base_h,
                                     win->step_x, win->step_y,
                                     win->min_aspect, win->max_aspect);
-   if (win->state.dialog)
-     {
-        ecore_x_icccm_transient_for_set(win->evas_win, win->container->manager->root);
-        ecore_x_netwm_window_type_set(win->evas_win, ECORE_X_WINDOW_TYPE_DIALOG);
-     }
-   else
-     {
-        ecore_x_icccm_transient_for_unset(win->evas_win);
-        ecore_x_netwm_window_type_set(win->evas_win, ECORE_X_WINDOW_TYPE_NORMAL);
-     }
 }
 
 static void
