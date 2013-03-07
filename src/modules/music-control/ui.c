@@ -108,7 +108,7 @@ _cfg_widgets_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfda
 
    o = e_widget_list_add(evas, 0, 0);
 
-   of = e_widget_framelist_add(evas, "Music Player", 0);
+   of = e_widget_framelist_add(evas, _("Music Player"), 0);
    e_widget_framelist_content_align_set(of, 0.0, 0.0);
    rg = e_widget_radio_group_new(&(cfdata->index));
    for (i = 0; music_player_players[i].dbus_name; i++)
@@ -118,7 +118,7 @@ _cfg_widgets_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfda
         if (i == player_selected)
           e_widget_radio_toggle_set(ob, EINA_TRUE);
      }
-   ob = e_widget_label_add(evas, "* Your player must be configured to export the DBus interface MPRIS2.");
+   ob = e_widget_label_add(evas, _("* Your player must be configured to export the DBus interface MPRIS2."));
    e_widget_framelist_object_append(of, ob);
 
    oc = e_widget_check_add(evas, _("Pause music when screen is locked"), &(cfdata->pause_on_desklock));
@@ -192,7 +192,7 @@ _cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
    v->basic.apply_cfdata = _cfg_data_apply;
    v->basic.check_changed = _cfg_check_changed;
 
-   e_config_dialog_new(m->zone->container, "Music control Settings", "E",
+   e_config_dialog_new(m->zone->container, _("Music control Settings"), "E",
                        "_e_mod_music_config_dialog",
                        NULL, 0, v, data);
 }
@@ -222,7 +222,7 @@ music_control_mouse_down_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj 
 
         m = e_menu_new();
         mi = e_menu_item_new(m);
-        e_menu_item_label_set(mi, "Settings");
+        e_menu_item_label_set(mi, _("Settings"));
         e_util_menu_item_theme_icon_set(mi, "configure");
         e_menu_item_callback_set(mi, _cb_menu_cfg, inst);
 
