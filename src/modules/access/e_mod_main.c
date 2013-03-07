@@ -66,6 +66,7 @@ static Ecore_X_Window target_win = 0;
 static Eina_List *covers = NULL;
 static Eina_List *handlers = NULL;
 static Ecore_Event_Handler *client_message_handler = NULL;
+static Ecore_Event_Handler *property_handler = NULL;
 static int multi_device[3];
 
 static void
@@ -923,6 +924,23 @@ _events_shutdown(void)
 }
 
 static Eina_Bool
+_cb_property_change(void *data __UNUSED__,
+                   int   type __UNUSED__,
+                   void *ev)
+{
+   E_Border *bd;
+   Ecore_X_Event_Window_Property *event = ev;
+
+   if (event->atom == ECORE_X_ATOM_NET_ACTIVE_WINDOW)
+     {
+        bd = e_border_focused_get();
+        if (bd) target_win = bd->client.win;
+	 }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
 _cb_client_message(void *data __UNUSED__,
                    int   type __UNUSED__,
                    void *ev)
@@ -977,6 +995,8 @@ e_modapi_init(E_Module *m)
                              (ECORE_X_EVENT_CLIENT_MESSAGE, _cb_client_message, NULL);
    ecore_x_event_mask_set(ecore_x_window_root_first_get(),
                           ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
+   property_handler = ecore_event_handler_add
+                       (ECORE_X_EVENT_WINDOW_PROPERTY, _cb_property_change, NULL);
 
    /* load config value */
    conf_edd = E_CONFIG_DD_NEW("Access_Config", Config);
@@ -993,6 +1013,7 @@ e_modapi_init(E_Module *m)
 
    if (access_config->window)
      {
+        _covers_shutdown();
         _covers_init();
         _events_init();
      }
@@ -1009,7 +1030,8 @@ EAPI int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    EINA_LOG_INFO("[access module] module shutdown");
-   ecore_event_handler_del(client_message_handler);
+   if (client_message_handler) ecore_event_handler_del(client_message_handler);
+   if (property_handler) ecore_event_handler_del(property_handler);
 
    _covers_shutdown();
    _events_shutdown();
