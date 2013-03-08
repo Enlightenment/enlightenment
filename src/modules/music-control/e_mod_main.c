@@ -33,21 +33,21 @@ _desklock_cb(void *data, int type, void *ev)
      {
         media_player2_player_play_pause_call(ctxt->mpris2_player);
         was_playing_before_lock = EINA_TRUE;
-        return ECORE_CALLBACK_DONE;
+        return ECORE_CALLBACK_PASS_ON;
      }
 
    /* Lock without music. Keep music off as state */
    if (event->on && (!ctxt->playing))
      {
         was_playing_before_lock = EINA_FALSE;
-        return ECORE_CALLBACK_DONE;
+        return ECORE_CALLBACK_PASS_ON;
      }
 
    /* Unlock with music pause and playing before lock. Turn it back on */
    if ((!event->on) && (!ctxt->playing) && was_playing_before_lock)
      media_player2_player_play_pause_call(ctxt->mpris2_player);
 
-   return ECORE_CALLBACK_DONE;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static void
