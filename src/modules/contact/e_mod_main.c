@@ -3,7 +3,7 @@
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Contact" };
 
 static void
-_cb_in_left(void *data, int d, double v)
+_cb_in_left(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 {
    // show PREV window in list from urrent focused window on top of current
    // window but in an inital "off to the right" state in comp
@@ -32,14 +32,14 @@ _cb_in_left(void *data, int d, double v)
 }
 
 static void
-_cb_in_left_go(void *data, int d, double v)
+_cb_in_left_go(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 {
    // as v > 0 (and heads towards 1.0) flip/slide new window in unbtil v > 1.0
    // and   once over 1.0 just do transition until end
 }
 
 static void
-_cb_in_right(void *data, int d, double v)
+_cb_in_right(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 {
    // show NEXT window in list from urrent focused window on top of current
    // window but in an inital "off to the right" state in comp
@@ -68,27 +68,27 @@ _cb_in_right(void *data, int d, double v)
 }
 
 static void
-_cb_in_right_go(void *data, int d, double v)
+_cb_in_right_go(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 {
    // as v > 0 (and heads towards 1.0) flip/slide new window in unbtil v > 1.0
    // and   once over 1.0 just do transition until end
 }
 
 static void
-_cb_in_top(void *data, int d, double v)
+_cb_in_top(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 {
    // show/populate top controls if not already there and start in offscreen
    // state and beign slide in anim and place controls at final spot
 }
 
 static void
-_cb_in_top_go(void *data, int d, double v)
+_cb_in_top_go(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 {
    // for now nothing - but animation would be nice for top controls
 }
 
 static void
-_cb_in_bottom(void *data, int d, double v)
+_cb_in_bottom(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 {
    // force kbd activation if no kbd
    e_policy_kbd_override_set(EINA_TRUE);
@@ -96,7 +96,7 @@ _cb_in_bottom(void *data, int d, double v)
 }
 
 static void
-_cb_in_bottom_go(void *data, int d, double v)
+_cb_in_bottom_go(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 {
    // for now nothing - but slide animation is nice
 }
