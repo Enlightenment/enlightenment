@@ -384,6 +384,11 @@ _on_removed(void *context, const EDBus_Message *msg)
    dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, path);
    fdev = eina_list_search_unsorted(ctxt->found_devices, _dev_addr_cmp,
                                     dev->addr);
+
+   if (dev->name && ebluez4_config->lock_dev_name &&
+       !strcmp(dev->name, ebluez4_config->lock_dev_name))
+     e_desklock_show(EINA_FALSE);
+
    _unset_dev(dev, &ctxt->devices);
    _unset_dev(fdev, &ctxt->found_devices);
 }
@@ -421,6 +426,10 @@ _on_device_found(void *context, const EDBus_Message *msg)
    if (icon) dev->type = _icon_to_type(icon);
    dev->paired = paired;
    ctxt->found_devices = eina_list_append(ctxt->found_devices, dev);
+
+   if (dev->name && ebluez4_config->unlock_dev_name &&
+       !strcmp(dev->name, ebluez4_config->unlock_dev_name))
+     e_desklock_hide();
 
    ebluez4_update_instances(ctxt->found_devices);
 }

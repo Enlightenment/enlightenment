@@ -13,6 +13,15 @@ struct _Instance
    E_Dialog *adapters_dialog;
 };
 
+typedef struct _Config Config;
+struct _Config
+{
+   const char *lock_dev_name;
+   const char *unlock_dev_name;
+};
+
+extern Config *ebluez4_config;
+
 EAPI extern E_Module_Api e_modapi;
 
 EAPI void *e_modapi_init(E_Module *m);

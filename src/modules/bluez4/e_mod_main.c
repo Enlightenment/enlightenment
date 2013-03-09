@@ -8,6 +8,10 @@ static Eina_List *instances = NULL;
 static E_Module *mod = NULL;
 static char tmpbuf[1024];
 
+/* Local config */
+static E_Config_DD *conf_edd = NULL;
+Config *ebluez4_config = NULL;
+
 EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Bluez4"};
 
 /* Local Functions */
@@ -250,6 +254,32 @@ _ebluez4_cb_forget(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 static void
+_ebluez4_cb_lock(void *data,
+		 E_Menu *m __UNUSED__,
+		 E_Menu_Item *mi)
+{
+   Device *dev = data;
+   int tog;
+
+   tog = e_menu_item_toggle_get(mi);
+   eina_stringshare_replace(&ebluez4_config->lock_dev_name,
+			    tog ? dev->name : NULL);
+}
+
+static void
+_ebluez4_cb_unlock(void *data,
+		   E_Menu *m __UNUSED__,
+		   E_Menu_Item *mi)
+{
+   Device *dev = data;
+   int tog;
+
+   tog = e_menu_item_toggle_get(mi);
+   eina_stringshare_replace(&ebluez4_config->unlock_dev_name,
+			    tog ? dev->name : NULL);
+}
+
+static void
 _menu_post_deactivate(void *data __UNUSED__, E_Menu *m)
 {
    Eina_List *iter;
@@ -290,7 +320,9 @@ _ebluez4_add_devices(Instance *inst)
    EINA_LIST_FOREACH(ctxt->devices, iter, dev)
      if (dev->paired)
        {
-          mi = e_menu_item_new(m);
+	  Eina_Bool chk;
+
+	  mi = e_menu_item_new(m);
           e_menu_item_label_set(mi, dev->name);
           e_menu_item_check_set(mi, 1);
           subm = e_menu_new();
@@ -313,6 +345,23 @@ _ebluez4_add_devices(Instance *inst)
           submi = e_menu_item_new(subm);
           e_menu_item_label_set(submi, "Forget");
           e_menu_item_callback_set(submi, _ebluez4_cb_forget, dev);
+
+	  /* Auto lock when away */
+	  submi = e_menu_item_new(subm);
+	  e_menu_item_check_set(submi, 1);
+	  e_menu_item_label_set(submi, "Lock on disconnect");
+	  e_menu_item_callback_set(submi, _ebluez4_cb_lock, dev);
+	  chk = ebluez4_config->lock_dev_name && dev->name &&
+	    !strcmp(dev->name, ebluez4_config->lock_dev_name);
+	  e_menu_item_toggle_set(submi, !!chk);
+
+	  submi = e_menu_item_new(subm);
+	  e_menu_item_check_set(submi, 1);
+	  e_menu_item_label_set(submi, "Unlock on disconnect");
+	  e_menu_item_callback_set(submi, _ebluez4_cb_unlock, dev);
+	  chk = ebluez4_config->unlock_dev_name && dev->name &&
+	    !strcmp(dev->name, ebluez4_config->unlock_dev_name);
+	  e_menu_item_toggle_set(submi, !!chk);
        }
 
    return ret;
@@ -475,6 +524,18 @@ e_modapi_init(E_Module *m)
 {
    mod = m;
 
+   conf_edd = E_CONFIG_DD_NEW("Config", Config);
+#undef T           
+#undef D           
+#define T Config   
+#define D conf_edd 
+   E_CONFIG_VAL(D, T, lock_dev_name, STR);
+   E_CONFIG_VAL(D, T, unlock_dev_name, STR);
+
+   ebluez4_config = e_config_domain_load("module.ebluez4", conf_edd);
+   if (!ebluez4_config)
+     ebluez4_config = E_NEW(Config, 1);
+
    ebluez4_edbus_init();
 
    e_gadcon_provider_register(&_gc_class);
@@ -485,6 +546,13 @@ e_modapi_init(E_Module *m)
 EAPI int
 e_modapi_shutdown(E_Module *m)
 {
+   E_CONFIG_DD_FREE(conf_edd);
+
+   eina_stringshare_del(ebluez4_config->lock_dev_name);
+   eina_stringshare_del(ebluez4_config->unlock_dev_name);
+   free(ebluez4_config);
+   ebluez4_config = NULL;
+
    ebluez4_edbus_shutdown();
    e_gadcon_provider_unregister(&_gc_class);
    return 1;
