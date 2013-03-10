@@ -264,6 +264,7 @@ _ebluez4_cb_lock(void *data,
    tog = e_menu_item_toggle_get(mi);
    eina_stringshare_replace(&ebluez4_config->lock_dev_name,
 			    tog ? dev->name : NULL);
+   e_config_save_queue();
 }
 
 static void
@@ -277,6 +278,7 @@ _ebluez4_cb_unlock(void *data,
    tog = e_menu_item_toggle_get(mi);
    eina_stringshare_replace(&ebluez4_config->unlock_dev_name,
 			    tog ? dev->name : NULL);
+   e_config_save_queue();
 }
 
 static void
@@ -561,6 +563,8 @@ e_modapi_shutdown(E_Module *m)
 EAPI int
 e_modapi_save(E_Module *m)
 {
+   e_config_domain_save("module.ebluez4",
+			conf_edd, ebluez4_config);
    return 1;
 }
 
