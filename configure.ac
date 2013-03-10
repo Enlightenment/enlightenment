@@ -197,6 +197,9 @@ CPPFLAGS="${PCPPFLAGS}"
 AC_SUBST(cf_cflags)
 AC_SUBST(cf_libs)
 
+AC_CHECK_HEADERS([bluetooth/bluetooth.h],
+	[have_bluetooth_h="yes"],
+	[have_bluetooth_h="no"])
 
 execinfo_libs=""
 AC_CHECK_HEADERS([execinfo.h], [have_execinfo="yes"], [have_execinfo="no"])
