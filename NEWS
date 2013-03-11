@@ -121,6 +121,7 @@ Improvements:
     * EFM toolbar now has its own gadcon location
     * DND canvas merged to compositor
     * shelf gadcon can no longer resize smaller than 16x16, ensuring dnd success
+    * Don't rely on bash or zsh behavior when starting enlightenment_init and tempget.
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.
