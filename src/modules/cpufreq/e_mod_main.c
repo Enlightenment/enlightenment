@@ -176,6 +176,7 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
         int cx, cy;
         char buf[256];
 
+        if (cpufreq_config->menu_poll) return;
         mo = e_menu_new();
         cpufreq_config->menu_poll = mo;
 
@@ -365,6 +366,8 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
                               e_util_zone_current_get(e_manager_current_get()),
                               cx + ev->output.x, cy + ev->output.y, 1, 1,
                               E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
+        evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button,
+                                 EVAS_BUTTON_NONE, ev->timestamp, NULL);
      }
    else if (ev->button == 3)
      {
