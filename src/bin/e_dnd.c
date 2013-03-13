@@ -140,7 +140,8 @@ e_drag_new(E_Container *container, int x, int y,
    e_object_ref(E_OBJECT(drag->container));
 
    drag->evas = e_comp_get(drag)->evas;
-   drag->pop = e_popup_new(e_zone_current_get(container), x, y, drag->w, drag->h);
+   /* use first zone to preserve location coords */
+   drag->pop = e_popup_new(eina_list_data_get(container->zones), x, y, drag->w, drag->h);
 
    e_popup_name_set(drag->pop, "E Drag");
    e_popup_layer_set(drag->pop, E_COMP_CANVAS_LAYER_POPUP, 0);
