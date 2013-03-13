@@ -250,6 +250,7 @@ e_menu_activate_key(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir
    E_OBJECT_TYPE_CHECK(m, E_MENU_TYPE);
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
+   if (_e_active_menus) e_menu_hide_all();
    _e_menu_activate_time = 0;
    _e_menu_activate_floating = 0;
    _e_menu_activate_internal(m, zone);
@@ -324,6 +325,7 @@ e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int d
    E_OBJECT_TYPE_CHECK(m, E_MENU_TYPE);
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
+   if (_e_active_menus) e_menu_hide_all();
    _e_menu_activate_time = activate_time;
    _e_menu_activate_floating = 0;
    _e_menu_activate_internal(m, zone);
@@ -388,6 +390,7 @@ e_menu_activate(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir)
    E_OBJECT_TYPE_CHECK(m, E_MENU_TYPE);
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
+   if (_e_active_menus) e_menu_hide_all();
    _e_menu_activate_time = 0;
    _e_menu_activate_floating = 0;
    _e_menu_activate_internal(m, zone);
