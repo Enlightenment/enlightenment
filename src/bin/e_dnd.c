@@ -1,15 +1,5 @@
 #include "e.h"
 
-/* FIXME: broken when drop areas intersect
- * (sub window has drop area on top of lower window or desktop)
- */
-/*
- * TODO:
- * - Let an internal drag work with several types.
- * - Let a drag be both internal and external, or allow internal xdnd
- *   (internal xdnd is unnecessary load)
- */
-
 /* local subsystem functions */
 
 static void           _e_drag_move(E_Drag *drag, int x, int y);
