@@ -379,6 +379,19 @@ e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int d
      }
    pmi = _e_menu_item_active_get();
    if (pmi) e_menu_item_active_set(pmi, 0);
+   {
+      int button_mask, i;
+      Evas *e;
+
+      e = e_comp_get(m)->evas;
+      button_mask = evas_pointer_button_down_mask_get(e);
+      for (i = 0; i < 32; i++)
+        {
+          if ((button_mask & (1 << i)))
+            evas_event_feed_mouse_up(e, i + 1, EVAS_BUTTON_NONE, activate_time, NULL);
+        }
+      
+   }
 }
 
 EAPI void
