@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-02-23 00:07+0900\n"
+"POT-Creation-Date: 2013-03-15 10:05+0900\n"
 "PO-Revision-Date: 2010-01-07 07:56+0000\n"
 "Last-Translator: René Pärts <Unknown>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -23,11 +23,11 @@ msgid "About Enlightenment"
 msgstr "Teave Enlightment'ist"
 
 #: src/bin/e_about.c:20 src/bin/e_actions.c:2992 src/bin/e_config_dialog.c:288
-#: src/bin/e_fm.c:1061 src/bin/e_int_border_menu.c:194
+#: src/bin/e_fm.c:1079 src/bin/e_int_border_menu.c:194
 #: src/bin/e_int_border_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:868
 #: src/modules/everything/evry_plug_windows.c:452
-#: src/modules/fileman/e_fwin.c:2510 src/modules/mixer/app_mixer.c:550
+#: src/modules/fileman/e_fwin.c:2510 src/modules/mixer/app_mixer.c:502
 msgid "Close"
 msgstr "Sulge"
 
@@ -74,7 +74,7 @@ msgstr "tapma"
 #: src/bin/e_actions.c:377 src/bin/e_actions.c:2128 src/bin/e_actions.c:2222
 #: src/bin/e_actions.c:2282 src/bin/e_actions.c:2342 src/bin/e_actions.c:2407
 #: src/bin/e_actions.c:2472 src/bin/e_confirm_dialog.c:53
-#: src/bin/e_desklock.c:1244 src/bin/e_fm.c:10429 src/bin/e_fm.c:10795
+#: src/bin/e_desklock.c:1244 src/bin/e_fm.c:10451 src/bin/e_fm.c:10817
 #: src/bin/e_screensaver.c:190
 #: src/modules/quickaccess/e_mod_quickaccess.c:1267
 msgid "No"
@@ -93,7 +93,7 @@ msgstr "Kas olete kindel, et soovite väljuda?"
 #: src/bin/e_actions.c:2126 src/bin/e_actions.c:2220 src/bin/e_actions.c:2280
 #: src/bin/e_actions.c:2340 src/bin/e_actions.c:2405 src/bin/e_actions.c:2470
 #: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:1242
-#: src/bin/e_fm.c:10432 src/bin/e_screensaver.c:188
+#: src/bin/e_fm.c:10454 src/bin/e_screensaver.c:188
 #: src/modules/quickaccess/e_mod_quickaccess.c:1267
 msgid "Yes"
 msgstr "Jah"
@@ -158,7 +158,7 @@ msgstr "Oled sa kindel, et soovid hibernate."
 msgid "Window : Actions"
 msgstr "Window; tegevused"
 
-#: src/bin/e_actions.c:2952 src/bin/e_fm.c:11561
+#: src/bin/e_actions.c:2952 src/bin/e_fm.c:11583
 #: src/bin/e_int_border_menu.c:669
 #, fuzzy
 msgid "Move"
@@ -933,7 +933,7 @@ msgstr "valimine"
 
 #: src/bin/e_color_dialog.c:47 src/bin/e_desktop_editor.c:858
 #: src/bin/e_desktop_editor.c:921 src/bin/e_entry_dialog.c:64
-#: src/bin/e_fm.c:9971 src/bin/e_fm_prop.c:625 src/bin/e_import_dialog.c:195
+#: src/bin/e_fm.c:9993 src/bin/e_fm_prop.c:625 src/bin/e_import_dialog.c:195
 #: src/bin/e_import_config_dialog.c:540
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:624
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
@@ -991,7 +991,7 @@ msgstr ""
 #: src/bin/e_config.c:1651 src/bin/e_config.c:2311
 #: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:856
 #: src/bin/e_desktop_editor.c:919 src/bin/e_entry_dialog.c:63
-#: src/bin/e_exec.c:615 src/bin/e_fm.c:9970 src/bin/e_fm.c:10701
+#: src/bin/e_exec.c:615 src/bin/e_fm.c:9992 src/bin/e_fm.c:10723
 #: src/bin/e_fm_prop.c:624 src/bin/e_import_config_dialog.c:539
 #: src/bin/e_int_border_remember.c:353 src/bin/e_int_border_remember.c:548
 #: src/bin/e_module.c:588 src/bin/e_module.c:994 src/bin/e_sys.c:619
@@ -999,8 +999,8 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:623
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
 #: src/modules/conf_theme/e_int_config_theme_import.c:119
-#: src/modules/cpufreq/e_mod_main.c:436 src/modules/cpufreq/e_mod_main.c:465
-#: src/modules/cpufreq/e_mod_main.c:492
+#: src/modules/cpufreq/e_mod_main.c:439 src/modules/cpufreq/e_mod_main.c:468
+#: src/modules/cpufreq/e_mod_main.c:495
 #: src/modules/fileman/e_int_config_mime_edit.c:315
 #: src/modules/xkbswitch/e_mod_config.c:498
 #, fuzzy
@@ -1142,7 +1142,7 @@ msgid "Apply"
 msgstr "kohaldama"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
-#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1238
+#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1247
 #: src/modules/connman/e_mod_main.c:591
 #: src/modules/notification/e_mod_main.c:181
 #, fuzzy
@@ -1347,7 +1347,7 @@ msgstr "Käivita Terminal"
 msgid "Show in Menus"
 msgstr "Kuva menüüd"
 
-#: src/bin/e_desktop_editor.c:787 src/bin/e_fm.c:8779 src/bin/e_fm.c:8939
+#: src/bin/e_desktop_editor.c:787 src/bin/e_fm.c:8801 src/bin/e_fm.c:8961
 #: src/bin/e_int_border_remember.c:818
 #: src/modules/xkbswitch/e_mod_config.c:316
 #, fuzzy
@@ -1364,7 +1364,7 @@ msgstr "ValiIcon"
 msgid "Select an Executable"
 msgstr "ValiTeostatavad"
 
-#: src/bin/e_entry.c:478 src/bin/e_fm.c:9124 src/bin/e_fm.c:10794
+#: src/bin/e_entry.c:478 src/bin/e_fm.c:9146 src/bin/e_fm.c:10816
 #: src/bin/e_shelf.c:1661 src/bin/e_shelf.c:2319
 #: src/modules/conf_dialogs/e_int_config_profiles.c:135
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
@@ -1384,17 +1384,17 @@ msgstr "ValiTeostatavad"
 msgid "Delete"
 msgstr "kustutama"
 
-#: src/bin/e_entry.c:488 src/bin/e_fm.c:9035
+#: src/bin/e_entry.c:488 src/bin/e_fm.c:9057
 #, fuzzy
 msgid "Cut"
 msgstr "lõigatud"
 
-#: src/bin/e_entry.c:497 src/bin/e_fm.c:9049 src/bin/e_fm.c:11556
+#: src/bin/e_entry.c:497 src/bin/e_fm.c:9071 src/bin/e_fm.c:11578
 #, fuzzy
 msgid "Copy"
 msgstr "Kopeeri"
 
-#: src/bin/e_entry.c:507 src/bin/e_fm.c:8840 src/bin/e_fm.c:9062
+#: src/bin/e_entry.c:507 src/bin/e_fm.c:8862 src/bin/e_fm.c:9084
 #, fuzzy
 msgid "Paste"
 msgstr "pasta"
@@ -1554,129 +1554,129 @@ msgstr "väljundandmed"
 msgid "There was no output."
 msgstr "Ei olnud toodangut."
 
-#: src/bin/e_fm.c:1063
+#: src/bin/e_fm.c:1081
 #, fuzzy
 msgid "Nonexistent path"
 msgstr "olematu tee"
 
-#: src/bin/e_fm.c:1066
+#: src/bin/e_fm.c:1084
 #, c-format
 msgid "%s doesn't exist."
 msgstr ""
 
-#: src/bin/e_fm.c:2835 src/bin/e_fm.c:3793
+#: src/bin/e_fm.c:2853 src/bin/e_fm.c:3811
 #, c-format
 msgid "%u file"
 msgid_plural "%u files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_fm.c:3054
+#: src/bin/e_fm.c:3072
 #, fuzzy
 msgid "Mount Error"
 msgstr "Mount viga"
 
-#: src/bin/e_fm.c:3054
+#: src/bin/e_fm.c:3072
 #, fuzzy
 msgid "Can't mount device"
 msgstr "Ei saa paigaldada seade"
 
-#: src/bin/e_fm.c:3070
+#: src/bin/e_fm.c:3088
 #, fuzzy
 msgid "Unmount Error"
 msgstr "lahutada viga"
 
-#: src/bin/e_fm.c:3070
+#: src/bin/e_fm.c:3088
 #, fuzzy
 msgid "Can't unmount device"
 msgstr "Ei saa lahutada seade"
 
-#: src/bin/e_fm.c:3085
+#: src/bin/e_fm.c:3103
 #, fuzzy
 msgid "Eject Error"
 msgstr "Eject viga"
 
-#: src/bin/e_fm.c:3085
+#: src/bin/e_fm.c:3103
 #, fuzzy
 msgid "Can't eject device"
 msgstr "Ei saa väljastada seade"
 
-#: src/bin/e_fm.c:6581 src/bin/e_fm.c:6614 src/bin/e_fm.c:9506
-#: src/bin/e_fm.c:9518 src/bin/e_fm.c:9622 src/bin/e_fm.c:9627
-#: src/bin/e_fm.c:9643 src/bin/e_fm.c:9648 src/bin/e_fm.c:10274
-#: src/bin/e_fm.c:10278 src/bin/e_fm.c:10282 src/bin/e_fm.c:10310
-#: src/bin/e_fm.c:10315 src/bin/e_fm.c:10319 src/bin/e_fm.c:10378
-#: src/bin/e_fm.c:10602 src/bin/e_fm_prop.c:254 src/bin/e_shelf.c:2187
+#: src/bin/e_fm.c:6602 src/bin/e_fm.c:6635 src/bin/e_fm.c:9528
+#: src/bin/e_fm.c:9540 src/bin/e_fm.c:9644 src/bin/e_fm.c:9649
+#: src/bin/e_fm.c:9665 src/bin/e_fm.c:9670 src/bin/e_fm.c:10296
+#: src/bin/e_fm.c:10300 src/bin/e_fm.c:10304 src/bin/e_fm.c:10332
+#: src/bin/e_fm.c:10337 src/bin/e_fm.c:10341 src/bin/e_fm.c:10400
+#: src/bin/e_fm.c:10624 src/bin/e_fm_prop.c:254 src/bin/e_shelf.c:2187
 #, fuzzy
 msgid "Error"
 msgstr "viga"
 
-#: src/bin/e_fm.c:6581 src/bin/e_fm.c:6614
+#: src/bin/e_fm.c:6602 src/bin/e_fm.c:6635
 #, c-format
 msgid "The recent DND operation requested for '%s' has failed."
 msgstr ""
 
-#: src/bin/e_fm.c:8697 src/modules/fileman/e_mod_config.c:360
+#: src/bin/e_fm.c:8719 src/modules/fileman/e_mod_config.c:360
 #, fuzzy
 msgid "Case Sensitive"
 msgstr "Case Sensitive"
 
-#: src/bin/e_fm.c:8703 src/modules/fileman/e_mod_config.c:363
+#: src/bin/e_fm.c:8725 src/modules/fileman/e_mod_config.c:363
 #, fuzzy
 msgid "Sort By Extension"
 msgstr "Show Icon pikendamine"
 
-#: src/bin/e_fm.c:8709 src/modules/fileman/e_mod_config.c:366
+#: src/bin/e_fm.c:8731 src/modules/fileman/e_mod_config.c:366
 msgid "Sort By Modification Time"
 msgstr ""
 
-#: src/bin/e_fm.c:8715 src/modules/fileman/e_mod_config.c:369
+#: src/bin/e_fm.c:8737 src/modules/fileman/e_mod_config.c:369
 msgid "Sort By Size"
 msgstr ""
 
-#: src/bin/e_fm.c:8724 src/modules/fileman/e_mod_config.c:377
+#: src/bin/e_fm.c:8746 src/modules/fileman/e_mod_config.c:377
 #, fuzzy
 msgid "Directories First"
 msgstr "otsing"
 
-#: src/bin/e_fm.c:8730 src/modules/fileman/e_mod_config.c:381
+#: src/bin/e_fm.c:8752 src/modules/fileman/e_mod_config.c:381
 #, fuzzy
 msgid "Directories Last"
 msgstr "otsing"
 
-#: src/bin/e_fm.c:8763 src/bin/e_fm.c:8923
+#: src/bin/e_fm.c:8785 src/bin/e_fm.c:8945
 #: src/modules/fileman/e_mod_config.c:305
 #, fuzzy
 msgid "View Mode"
 msgstr "Vaata režiim"
 
-#: src/bin/e_fm.c:8772 src/bin/e_fm.c:8932
+#: src/bin/e_fm.c:8794 src/bin/e_fm.c:8954
 #: src/modules/everything/evry_config.c:503
 #: src/modules/fileman/e_mod_config.c:385
 #, fuzzy
 msgid "Sorting"
 msgstr "sortimine"
 
-#: src/bin/e_fm.c:8790 src/bin/e_fm.c:8950
+#: src/bin/e_fm.c:8812 src/bin/e_fm.c:8972
 #, fuzzy
 msgid "Refresh View"
 msgstr "värskenda vaadet"
 
-#: src/bin/e_fm.c:8801 src/bin/e_fm.c:8962
+#: src/bin/e_fm.c:8823 src/bin/e_fm.c:8984
 msgid "New..."
 msgstr ""
 
-#: src/bin/e_fm.c:8821 src/bin/e_fm.c:8983 src/bin/e_fm.c:9014
+#: src/bin/e_fm.c:8843 src/bin/e_fm.c:9005 src/bin/e_fm.c:9036
 #, fuzzy
 msgid "Actions..."
 msgstr "tegevus"
 
-#: src/bin/e_fm.c:8848 src/bin/e_fm.c:9070 src/bin/e_fm.c:11569
+#: src/bin/e_fm.c:8870 src/bin/e_fm.c:9092 src/bin/e_fm.c:11591
 #, fuzzy
 msgid "Link"
 msgstr "link"
 
-#: src/bin/e_fm.c:9132 src/bin/e_fm.c:10431 src/bin/e_shelf.c:2314
+#: src/bin/e_fm.c:9154 src/bin/e_fm.c:10453 src/bin/e_shelf.c:2314
 #: src/modules/conf_shelves/e_int_config_shelf.c:140
 #: src/modules/quickaccess/e_mod_config.c:226
 #: src/modules/quickaccess/e_mod_config.c:274
@@ -1685,263 +1685,263 @@ msgstr "link"
 msgid "Rename"
 msgstr "Nimeta"
 
-#: src/bin/e_fm.c:9151
+#: src/bin/e_fm.c:9173
 #, fuzzy
 msgid "Unmount"
 msgstr "lahutada"
 
-#: src/bin/e_fm.c:9156
+#: src/bin/e_fm.c:9178
 #, fuzzy
 msgid "Mount"
 msgstr "Paigaldage"
 
-#: src/bin/e_fm.c:9161
+#: src/bin/e_fm.c:9183
 #, fuzzy
 msgid "Eject"
 msgstr "Eject"
 
-#: src/bin/e_fm.c:9175 src/bin/e_int_border_remember.c:796
+#: src/bin/e_fm.c:9197 src/bin/e_int_border_remember.c:796
 #: src/modules/ibar/e_mod_main.c:883
 #, fuzzy
 msgid "Properties"
 msgstr "omadused"
 
-#: src/bin/e_fm.c:9183
+#: src/bin/e_fm.c:9205
 #, fuzzy
 msgid "Application Properties"
 msgstr "taotlus omadused"
 
-#: src/bin/e_fm.c:9191 src/bin/e_fm_prop.c:115
+#: src/bin/e_fm.c:9213 src/bin/e_fm_prop.c:115
 #, fuzzy
 msgid "File Properties"
 msgstr "file Properties"
 
-#: src/bin/e_fm.c:9407
+#: src/bin/e_fm.c:9429
 #, fuzzy
 msgid "Use default"
 msgstr "Kasuta vaikimisi"
 
-#: src/bin/e_fm.c:9436 src/modules/fileman/e_mod_config.c:310
+#: src/bin/e_fm.c:9458 src/modules/fileman/e_mod_config.c:310
 #, fuzzy
 msgid "Grid Icons"
 msgstr "Grid Icons"
 
-#: src/bin/e_fm.c:9444 src/modules/fileman/e_mod_config.c:312
+#: src/bin/e_fm.c:9466 src/modules/fileman/e_mod_config.c:312
 #, fuzzy
 msgid "Custom Icons"
 msgstr "ikoone"
 
-#: src/bin/e_fm.c:9452 src/modules/everything/evry_config.c:430
+#: src/bin/e_fm.c:9474 src/modules/everything/evry_config.c:430
 #: src/modules/everything/evry_config.c:460
 #: src/modules/fileman/e_mod_config.c:320
 #, fuzzy
 msgid "List"
 msgstr "nimekiri"
 
-#: src/bin/e_fm.c:9460 src/modules/everything/evry_config.c:458
+#: src/bin/e_fm.c:9482 src/modules/everything/evry_config.c:458
 #, fuzzy
 msgid "Default View"
 msgstr "vaikimisi View"
 
-#: src/bin/e_fm.c:9481
+#: src/bin/e_fm.c:9503
 #, c-format
 msgid "Icon Size (%d)"
 msgstr ""
 
-#: src/bin/e_fm.c:9506
+#: src/bin/e_fm.c:9528
 #, fuzzy
 msgid "Could not create a directory!"
 msgstr "Viga laadimise moodul"
 
-#: src/bin/e_fm.c:9518
+#: src/bin/e_fm.c:9540
 #, fuzzy
 msgid "Could not create a file!"
 msgstr "Viga laadimise moodul"
 
-#: src/bin/e_fm.c:9532 src/bin/e_fm.c:9557
+#: src/bin/e_fm.c:9554 src/bin/e_fm.c:9579
 #: src/modules/conf_paths/e_int_config_paths.c:206
 #, fuzzy
 msgid "New Directory"
 msgstr "New Directory"
 
-#: src/bin/e_fm.c:9532 src/bin/e_fm.c:9557
+#: src/bin/e_fm.c:9554 src/bin/e_fm.c:9579
 #, fuzzy
 msgid "New File"
 msgstr "Faili:"
 
-#: src/bin/e_fm.c:9622 src/bin/e_fm.c:9643
+#: src/bin/e_fm.c:9644 src/bin/e_fm.c:9665
 msgid "Already creating a new file for this directory!"
 msgstr ""
 
-#: src/bin/e_fm.c:9627 src/bin/e_fm.c:9648
+#: src/bin/e_fm.c:9649 src/bin/e_fm.c:9670
 #, c-format
 msgid "%s can't be written to!"
 msgstr ""
 
-#: src/bin/e_fm.c:9667
+#: src/bin/e_fm.c:9689
 #, fuzzy
 msgid "Directory"
 msgstr "New Directory"
 
-#: src/bin/e_fm.c:9672
+#: src/bin/e_fm.c:9694
 #: src/modules/conf_applications/e_int_config_defapps.c:312
 #, fuzzy
 msgid "File"
 msgstr "Faili:"
 
-#: src/bin/e_fm.c:9703
+#: src/bin/e_fm.c:9725
 #, fuzzy
 msgid "Inherit parent settings"
 msgstr "Pärivad vanema seaded"
 
-#: src/bin/e_fm.c:9712
+#: src/bin/e_fm.c:9734
 #, fuzzy
 msgid "Show Hidden Files"
 msgstr "Näita peidetud faile"
 
-#: src/bin/e_fm.c:9724
+#: src/bin/e_fm.c:9746
 #, fuzzy
 msgid "Remember Ordering"
 msgstr "Pea meeles Tellimise"
 
-#: src/bin/e_fm.c:9733
+#: src/bin/e_fm.c:9755
 #, fuzzy
 msgid "Sort Now"
 msgstr "Sorteeri Now"
 
-#: src/bin/e_fm.c:9741
+#: src/bin/e_fm.c:9763
 #, fuzzy
 msgid "Single Click Activation"
 msgstr "Kasuta Single Click"
 
-#: src/bin/e_fm.c:9752 src/modules/fileman/e_mod_config.c:397
+#: src/bin/e_fm.c:9774 src/modules/fileman/e_mod_config.c:397
 #, fuzzy
 msgid "Secure Deletion"
 msgstr "Screen Resolution"
 
-#: src/bin/e_fm.c:9765 src/modules/fileman/e_mod_config.c:122
+#: src/bin/e_fm.c:9787 src/modules/fileman/e_mod_config.c:122
 #, fuzzy
 msgid "File Manager Settings"
 msgstr "piipar Settings"
 
-#: src/bin/e_fm.c:9770
+#: src/bin/e_fm.c:9792
 #, fuzzy
 msgid "File Icon Settings"
 msgstr "fondiseadistused"
 
-#: src/bin/e_fm.c:9847 src/bin/e_fm.c:10063
+#: src/bin/e_fm.c:9869 src/bin/e_fm.c:10085
 #, fuzzy
 msgid "Set background..."
 msgstr "Taust ..."
 
-#: src/bin/e_fm.c:9855
+#: src/bin/e_fm.c:9877
 #, fuzzy
 msgid "Clear background"
 msgstr "Taust ..."
 
-#: src/bin/e_fm.c:9862 src/bin/e_fm.c:10091
+#: src/bin/e_fm.c:9884 src/bin/e_fm.c:10113
 #, fuzzy
 msgid "Set overlay..."
 msgstr "Seadke kate ..."
 
-#: src/bin/e_fm.c:9868
+#: src/bin/e_fm.c:9890
 #, fuzzy
 msgid "Clear overlay"
 msgstr "Seadke kate ..."
 
-#: src/bin/e_fm.c:10185 src/bin/e_fm.c:10526
+#: src/bin/e_fm.c:10207 src/bin/e_fm.c:10548
 #, c-format
 msgid "Rename %s to:"
 msgstr ""
 
-#: src/bin/e_fm.c:10187 src/bin/e_fm.c:10527
+#: src/bin/e_fm.c:10209 src/bin/e_fm.c:10549
 #, fuzzy
 msgid "Rename File"
 msgstr "Nimeta fail"
 
-#: src/bin/e_fm.c:10274 src/bin/e_fm.c:10310
+#: src/bin/e_fm.c:10296 src/bin/e_fm.c:10332
 #, c-format
 msgid "%s already exists!"
 msgstr ""
 
-#: src/bin/e_fm.c:10278 src/bin/e_fm.c:10315
+#: src/bin/e_fm.c:10300 src/bin/e_fm.c:10337
 #, c-format
 msgid "%s could not be renamed because it is protected"
 msgstr ""
 
-#: src/bin/e_fm.c:10282 src/bin/e_fm.c:10319
+#: src/bin/e_fm.c:10304 src/bin/e_fm.c:10341
 #, fuzzy
 msgid "Internal filemanager error :("
 msgstr "Open failihaldaja mäel"
 
-#: src/bin/e_fm.c:10374 src/bin/e_fm.c:10594
+#: src/bin/e_fm.c:10396 src/bin/e_fm.c:10616
 #, fuzzy
 msgid "Retry"
 msgstr "Uuesti"
 
-#: src/bin/e_fm.c:10375 src/bin/e_fm.c:10595 src/bin/e_fm.c:11577
+#: src/bin/e_fm.c:10397 src/bin/e_fm.c:10617 src/bin/e_fm.c:11599
 #, fuzzy
 msgid "Abort"
 msgstr "Abort"
 
-#: src/bin/e_fm.c:10430
+#: src/bin/e_fm.c:10452
 #, fuzzy
 msgid "No to all"
 msgstr "Ei, kõik"
 
-#: src/bin/e_fm.c:10433
+#: src/bin/e_fm.c:10455
 #, fuzzy
 msgid "Yes to all"
 msgstr "Jah, kõik"
 
-#: src/bin/e_fm.c:10436
+#: src/bin/e_fm.c:10458
 #, fuzzy
 msgid "Warning"
 msgstr "hoiatus"
 
-#: src/bin/e_fm.c:10439
+#: src/bin/e_fm.c:10461
 #, c-format
 msgid "File already exists, overwrite?<br><hilight>%s</hilight>"
 msgstr ""
 
-#: src/bin/e_fm.c:10597
+#: src/bin/e_fm.c:10619
 #, fuzzy
 msgid "Move Source"
 msgstr "Minna"
 
-#: src/bin/e_fm.c:10598
+#: src/bin/e_fm.c:10620
 #, fuzzy
 msgid "Ignore this"
 msgstr "ignoreerib seda"
 
-#: src/bin/e_fm.c:10599
+#: src/bin/e_fm.c:10621
 #, fuzzy
 msgid "Ignore all"
 msgstr "eirata kõiki"
 
-#: src/bin/e_fm.c:10604
+#: src/bin/e_fm.c:10626
 #, c-format
 msgid "An error occurred while performing an operation.<br>%s"
 msgstr ""
 
-#: src/bin/e_fm.c:10797
+#: src/bin/e_fm.c:10819
 #, fuzzy
 msgid "Confirm Delete"
 msgstr "Kinnita kustutamine"
 
-#: src/bin/e_fm.c:10807
+#: src/bin/e_fm.c:10829
 #, fuzzy, c-format
 msgid "Are you sure you want to delete<br><hilight>%s</hilight>?"
 msgstr "Oled sa kindel, et soovite kustutada selle riiuli."
 
-#: src/bin/e_fm.c:10812
+#: src/bin/e_fm.c:10834
 #, c-format
 msgid ""
 "Are you sure you want to delete<br><hilight>all</hilight> the %d files "
 "in<br><hilight>%s</hilight>?"
 msgstr ""
 
-#: src/bin/e_fm.c:10822
+#: src/bin/e_fm.c:10844
 #, fuzzy, c-format
 msgid ""
 "Are you sure you want to delete<br>the %d selected file in<br><hilight>%s</"
@@ -2116,12 +2116,12 @@ msgstr "Minna"
 msgid "Automatically scroll contents"
 msgstr "Automaatselt leidke sisu"
 
-#: src/bin/e_gadcon.c:1763 src/modules/gadman/e_mod_gadman.c:1011
+#: src/bin/e_gadcon.c:1763 src/modules/gadman/e_mod_gadman.c:1025
 #, fuzzy
 msgid "Plain"
 msgstr "tavaline"
 
-#: src/bin/e_gadcon.c:1776 src/modules/gadman/e_mod_gadman.c:1019
+#: src/bin/e_gadcon.c:1776 src/modules/gadman/e_mod_gadman.c:1033
 #, fuzzy
 msgid "Inset"
 msgstr "vahetükk"
@@ -2139,7 +2139,7 @@ msgstr "Vaata"
 #: src/modules/conf_applications/e_int_config_apps.c:294
 #: src/modules/conf_applications/e_int_config_apps.c:314
 #: src/modules/conf_applications/e_int_config_apps_personal.c:97
-#: src/modules/gadman/e_mod_gadman.c:1067 src/modules/ibar/e_mod_main.c:888
+#: src/modules/gadman/e_mod_gadman.c:1082 src/modules/ibar/e_mod_main.c:888
 #: src/modules/xkbswitch/e_mod_config.c:258
 #, fuzzy
 msgid "Remove"
@@ -2563,10 +2563,10 @@ msgid "Window List"
 msgstr "Window List"
 
 #: src/bin/e_int_border_menu.c:1287 src/modules/pager/e_mod_main.c:265
-#: src/modules/pager/e_mod_main.c:2920 src/modules/pager/e_mod_main.c:2927
-#: src/modules/pager/e_mod_main.c:2934 src/modules/pager/e_mod_main.c:2936
-#: src/modules/pager/e_mod_main.c:2938 src/modules/pager/e_mod_main.c:2940
-#: src/modules/pager/e_mod_main.c:2942 src/modules/pager/e_mod_main.c:2944
+#: src/modules/pager/e_mod_main.c:2922 src/modules/pager/e_mod_main.c:2929
+#: src/modules/pager/e_mod_main.c:2936 src/modules/pager/e_mod_main.c:2938
+#: src/modules/pager/e_mod_main.c:2940 src/modules/pager/e_mod_main.c:2942
+#: src/modules/pager/e_mod_main.c:2944 src/modules/pager/e_mod_main.c:2946
 #, fuzzy
 msgid "Pager"
 msgstr "piipar"
@@ -2836,9 +2836,9 @@ msgstr "taotlus seisukoha"
 #: src/modules/ibar/e_mod_main.c:400 src/modules/ibar/e_mod_main.c:876
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
 #: src/modules/pager/e_mod_main.c:878 src/modules/temperature/e_mod_main.c:230
-#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:733
-#: src/modules/connman/e_mod_main.c:416 src/modules/tasks/e_mod_main.c:728
-#: src/modules/xkbswitch/e_mod_main.c:335
+#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:723
+#: src/modules/music-control/ui.c:225 src/modules/connman/e_mod_main.c:416
+#: src/modules/tasks/e_mod_main.c:728 src/modules/xkbswitch/e_mod_main.c:335
 #: src/modules/xkbswitch/e_mod_main.c:369
 #, fuzzy
 msgid "Settings"
@@ -3984,7 +3984,7 @@ msgstr ""
 #: src/bin/e_shelf.c:66
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:219
 #: src/modules/everything/evry_config.c:568
-#: src/modules/gadman/e_mod_gadman.c:1039
+#: src/modules/gadman/e_mod_gadman.c:1053
 #, fuzzy
 msgid "Horizontal"
 msgstr "horisontaalne"
@@ -3992,7 +3992,7 @@ msgstr "horisontaalne"
 #: src/bin/e_shelf.c:67
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:221
 #: src/modules/everything/evry_config.c:561
-#: src/modules/gadman/e_mod_gadman.c:1047
+#: src/modules/gadman/e_mod_gadman.c:1061
 #, fuzzy
 msgid "Vertical"
 msgstr "vertikaalne"
@@ -4283,12 +4283,12 @@ msgstr "peatatakse"
 msgid "Suspending.<br><hilight>Please wait.</hilight>"
 msgstr ""
 
-#: src/bin/e_sys.c:908
+#: src/bin/e_sys.c:907
 #, fuzzy
 msgid "Hibernating"
 msgstr "talveunes"
 
-#: src/bin/e_sys.c:911
+#: src/bin/e_sys.c:910
 msgid "Hibernating.<br><hilight>Please wait.</hilight>"
 msgstr ""
 
@@ -4607,7 +4607,7 @@ msgstr ""
 msgid "Mount status:"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:394 src/modules/mixer/app_mixer.c:424
+#: src/bin/e_widget_filepreview.c:394 src/modules/mixer/app_mixer.c:381
 #, fuzzy
 msgid "Type:"
 msgstr "tüüp;"
@@ -6219,7 +6219,6 @@ msgstr "Edge Seosed Settings"
 
 #: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/conf_interaction/e_mod_main.c:17
-#: src/modules/mixer/app_mixer.c:308 src/modules/mixer/app_mixer.c:326
 #: src/modules/xkbswitch/e_mod_main.c:71
 #, fuzzy
 msgid "Input"
@@ -7942,7 +7941,7 @@ msgstr "bytecode"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:685
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:269
-#: src/modules/cpufreq/e_mod_main.c:229 src/modules/cpufreq/e_mod_main.c:265
+#: src/modules/cpufreq/e_mod_main.c:230 src/modules/cpufreq/e_mod_main.c:266
 #, fuzzy
 msgid "Automatic"
 msgstr "automaatne"
@@ -8909,7 +8908,7 @@ msgid "Role:"
 msgstr "rolli:"
 
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:185
-#: src/modules/mixer/app_mixer.c:445
+#: src/modules/mixer/app_mixer.c:402
 #, fuzzy
 msgid "Edit"
 msgstr "Muuda"
@@ -8942,97 +8941,97 @@ msgstr "meeles pidama"
 msgid "Cpufreq"
 msgstr "cPUfreq"
 
-#: src/modules/cpufreq/e_mod_main.c:183
+#: src/modules/cpufreq/e_mod_main.c:184
 #, fuzzy
 msgid "Fast (4 ticks)"
 msgstr "Fast (4 puugid."
 
-#: src/modules/cpufreq/e_mod_main.c:190
+#: src/modules/cpufreq/e_mod_main.c:191
 #, fuzzy
 msgid "Medium (8 ticks)"
 msgstr "Medium (8 puugid."
 
-#: src/modules/cpufreq/e_mod_main.c:197
+#: src/modules/cpufreq/e_mod_main.c:198
 #, fuzzy
 msgid "Normal (32 ticks)"
 msgstr "Normaalne (32 puugid."
 
-#: src/modules/cpufreq/e_mod_main.c:204
+#: src/modules/cpufreq/e_mod_main.c:205
 #, fuzzy
 msgid "Slow (64 ticks)"
 msgstr "Aeglane (64 puugid."
 
-#: src/modules/cpufreq/e_mod_main.c:211
+#: src/modules/cpufreq/e_mod_main.c:212
 #, fuzzy
 msgid "Very Slow (256 ticks)"
 msgstr "Väga aeglaselt (256 puugid."
 
-#: src/modules/cpufreq/e_mod_main.c:227
+#: src/modules/cpufreq/e_mod_main.c:228
 #, fuzzy
 msgid "Manual"
 msgstr "käsiraamat"
 
-#: src/modules/cpufreq/e_mod_main.c:231 src/modules/cpufreq/e_mod_main.c:267
+#: src/modules/cpufreq/e_mod_main.c:232 src/modules/cpufreq/e_mod_main.c:268
 #, fuzzy
 msgid "Lower Power Automatic"
 msgstr "Väiksema võimsusega Automaatne"
 
-#: src/modules/cpufreq/e_mod_main.c:233 src/modules/cpufreq/e_mod_main.c:269
+#: src/modules/cpufreq/e_mod_main.c:234 src/modules/cpufreq/e_mod_main.c:270
 #, fuzzy
 msgid "Automatic Interactive"
 msgstr "automaatne powersaving"
 
-#: src/modules/cpufreq/e_mod_main.c:235 src/modules/cpufreq/e_mod_main.c:271
+#: src/modules/cpufreq/e_mod_main.c:236 src/modules/cpufreq/e_mod_main.c:272
 #, fuzzy
 msgid "Minimum Speed"
 msgstr "minimaalse kiirusega"
 
-#: src/modules/cpufreq/e_mod_main.c:237 src/modules/cpufreq/e_mod_main.c:273
+#: src/modules/cpufreq/e_mod_main.c:238 src/modules/cpufreq/e_mod_main.c:274
 #, fuzzy
 msgid "Maximum Speed"
 msgstr "maksimaalne kiirus"
 
-#: src/modules/cpufreq/e_mod_main.c:250
+#: src/modules/cpufreq/e_mod_main.c:251
 #, fuzzy
 msgid "Restore CPU Power Policy"
 msgstr "Taastada CPU võimsus Policy"
 
-#: src/modules/cpufreq/e_mod_main.c:288
+#: src/modules/cpufreq/e_mod_main.c:289
 #, fuzzy
 msgid "Automatic powersaving"
 msgstr "automaatne powersaving"
 
-#: src/modules/cpufreq/e_mod_main.c:311
+#: src/modules/cpufreq/e_mod_main.c:312
 #, c-format
 msgid "%i MHz"
 msgstr ""
 
-#: src/modules/cpufreq/e_mod_main.c:313
+#: src/modules/cpufreq/e_mod_main.c:314
 #, c-format
 msgid "%'.1f GHz"
 msgstr ""
 
-#: src/modules/cpufreq/e_mod_main.c:334
+#: src/modules/cpufreq/e_mod_main.c:335
 #, fuzzy
 msgid "Time Between Updates"
 msgstr "Vaheline aeg Updates"
 
-#: src/modules/cpufreq/e_mod_main.c:340
+#: src/modules/cpufreq/e_mod_main.c:341
 #, fuzzy
 msgid "Set CPU Power Policy"
 msgstr "Määra CPU võimsus Policy"
 
-#: src/modules/cpufreq/e_mod_main.c:347
+#: src/modules/cpufreq/e_mod_main.c:348
 #, fuzzy
 msgid "Set CPU Speed"
 msgstr "Määra CPU Speed"
 
-#: src/modules/cpufreq/e_mod_main.c:353
+#: src/modules/cpufreq/e_mod_main.c:354
 #, fuzzy
 msgid "Powersaving behavior"
 msgstr "Powersaving käitumine"
 
-#: src/modules/cpufreq/e_mod_main.c:433
+#: src/modules/cpufreq/e_mod_main.c:436
 #, fuzzy
 msgid ""
 "There was an error trying to set the<br>cpu frequency governor via the "
@@ -9041,7 +9040,7 @@ msgstr ""
 "Tekkis viga üritab seada<br>cpu sagedust kuberneri kaudumooduli<br>setfreq "
 "kasulikkust."
 
-#: src/modules/cpufreq/e_mod_main.c:461
+#: src/modules/cpufreq/e_mod_main.c:464
 #, fuzzy
 msgid ""
 "Your kernel does not support setting the<br>CPU frequency at all. You may be "
@@ -9051,7 +9050,7 @@ msgstr ""
 "Oma kernel ei toeta milles<br>CPU sagedus üldse. Teil võib puududa<br>Kernel "
 "mooduleid või omadused, või oma CPU<br>lihtsalt ei toeta seda funktsiooni."
 
-#: src/modules/cpufreq/e_mod_main.c:489
+#: src/modules/cpufreq/e_mod_main.c:492
 #, fuzzy
 msgid ""
 "There was an error trying to set the<br>cpu frequency setting via the "
@@ -9060,23 +9059,23 @@ msgstr ""
 "Tekkis viga üritab seada<br>cpu sagedusseadele kaudumooduli<br>setfreq "
 "kasulikkust."
 
-#: src/modules/cpufreq/e_mod_main.c:1157
+#: src/modules/cpufreq/e_mod_main.c:1160
 #, fuzzy
 msgid "Cpufreq Error"
 msgstr "cPUfreq"
 
-#: src/modules/cpufreq/e_mod_main.c:1158
+#: src/modules/cpufreq/e_mod_main.c:1161
 msgid ""
 "The freqset binary in the cpufreq module<br>directory cannot be found (stat "
 "failed)"
 msgstr ""
 
-#: src/modules/cpufreq/e_mod_main.c:1165
+#: src/modules/cpufreq/e_mod_main.c:1168
 #, fuzzy
 msgid "Cpufreq Permissions Error"
 msgstr "permissions"
 
-#: src/modules/cpufreq/e_mod_main.c:1166
+#: src/modules/cpufreq/e_mod_main.c:1169
 #, c-format
 msgid ""
 "The freqset binary in the cpufreq module<br>is not owned by root or does not "
@@ -9604,85 +9603,85 @@ msgstr "Kõik taotlused"
 msgid "Custom Command"
 msgstr "Custom Command"
 
-#: src/modules/fileman/e_fwin.c:2943
+#: src/modules/fileman/e_fwin.c:2944
 #: src/modules/fileman_opinfo/e_mod_main.c:105
 #, fuzzy, c-format
 msgid "Copying is aborted"
 msgstr "Kopeerimine on katkestatud"
 
-#: src/modules/fileman/e_fwin.c:2947
+#: src/modules/fileman/e_fwin.c:2948
 #: src/modules/fileman_opinfo/e_mod_main.c:109
 #, fuzzy, c-format
 msgid "Moving is aborted"
 msgstr "Liikumine on katkestatud"
 
-#: src/modules/fileman/e_fwin.c:2951
+#: src/modules/fileman/e_fwin.c:2952
 #: src/modules/fileman_opinfo/e_mod_main.c:113
 #, fuzzy, c-format
 msgid "Deleting is aborted"
 msgstr "Kustutamine on katkestatud"
 
-#: src/modules/fileman/e_fwin.c:2955
+#: src/modules/fileman/e_fwin.c:2956
 #: src/modules/fileman_opinfo/e_mod_main.c:117
 #, fuzzy, c-format
 msgid "Secure deletion is aborted"
 msgstr "Kustutamine on katkestatud"
 
-#: src/modules/fileman/e_fwin.c:2959
+#: src/modules/fileman/e_fwin.c:2960
 #: src/modules/fileman_opinfo/e_mod_main.c:121
 #, fuzzy, c-format
 msgid "Unknown operation from slave is aborted"
 msgstr "Tundmatu tehing ori on katkestatud"
 
-#: src/modules/fileman/e_fwin.c:2969
+#: src/modules/fileman/e_fwin.c:2970
 #: src/modules/fileman_opinfo/e_mod_main.c:131
 #, c-format
 msgid "Copy of %s done"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2971
+#: src/modules/fileman/e_fwin.c:2972
 #: src/modules/fileman_opinfo/e_mod_main.c:133
 #, c-format
 msgid "Copying %s (eta: %s)"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2976
+#: src/modules/fileman/e_fwin.c:2977
 #: src/modules/fileman_opinfo/e_mod_main.c:139
 #, c-format
 msgid "Move of %s done"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2978
+#: src/modules/fileman/e_fwin.c:2979
 #: src/modules/fileman_opinfo/e_mod_main.c:141
 #, c-format
 msgid "Moving %s (eta: %s)"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2983
+#: src/modules/fileman/e_fwin.c:2984
 #: src/modules/fileman_opinfo/e_mod_main.c:147
 #, fuzzy, c-format
 msgid "Delete done"
 msgstr "Kustuta teha"
 
-#: src/modules/fileman/e_fwin.c:2985
+#: src/modules/fileman/e_fwin.c:2986
 #: src/modules/fileman_opinfo/e_mod_main.c:149
 #, fuzzy, c-format
 msgid "Deleting files..."
 msgstr "Failide kustutamine ..."
 
-#: src/modules/fileman/e_fwin.c:2990
+#: src/modules/fileman/e_fwin.c:2991
 #: src/modules/fileman_opinfo/e_mod_main.c:154
 #, fuzzy, c-format
 msgid "Secure delete done"
 msgstr "Screen Resolution"
 
-#: src/modules/fileman/e_fwin.c:2992
+#: src/modules/fileman/e_fwin.c:2993
 #: src/modules/fileman_opinfo/e_mod_main.c:156
 #, fuzzy, c-format
 msgid "Securely deleting files..."
 msgstr "Failide kustutamine ..."
 
-#: src/modules/fileman/e_fwin.c:2996
+#: src/modules/fileman/e_fwin.c:2997
 #: src/modules/fileman_opinfo/e_mod_main.c:160
 #, fuzzy, c-format
 msgid "Unknown operation from slave %d"
@@ -10147,21 +10146,21 @@ msgstr "Animatsioonid"
 msgid "Background Options"
 msgstr "tausta valikud"
 
-#: src/modules/gadman/e_mod_gadman.c:1001
+#: src/modules/gadman/e_mod_gadman.c:1013
 msgid "Begin move/resize"
 msgstr ""
 
-#: src/modules/gadman/e_mod_gadman.c:1031
+#: src/modules/gadman/e_mod_gadman.c:1045
 #, fuzzy
 msgid "Free"
 msgstr "tasuta"
 
-#: src/modules/gadman/e_mod_gadman.c:1055
+#: src/modules/gadman/e_mod_gadman.c:1069
 #, fuzzy
 msgid "Appearance"
 msgstr "välimus"
 
-#: src/modules/gadman/e_mod_gadman.c:1076
+#: src/modules/gadman/e_mod_gadman.c:1091
 #, fuzzy
 msgid "Add other gadgets"
 msgstr "Lisada muid vidinaid"
@@ -10631,37 +10630,37 @@ msgstr ""
 "Te ei saa kasutada hiire paremat nuppu<br>riiulil , sest see on juba võetud "
 "sisemine<br>koodi konteksti menüüd.<br>See nupp töötab ainultpopup."
 
-#: src/modules/pager/e_mod_main.c:2927
+#: src/modules/pager/e_mod_main.c:2929
 #, fuzzy
 msgid "Show Pager Popup"
 msgstr "Näita piipari Popup"
 
-#: src/modules/pager/e_mod_main.c:2934
+#: src/modules/pager/e_mod_main.c:2936
 #, fuzzy
 msgid "Popup Desk Right"
 msgstr "Popup Desk Right"
 
-#: src/modules/pager/e_mod_main.c:2936
+#: src/modules/pager/e_mod_main.c:2938
 #, fuzzy
 msgid "Popup Desk Left"
 msgstr "Popup Desk Vasak"
 
-#: src/modules/pager/e_mod_main.c:2938
+#: src/modules/pager/e_mod_main.c:2940
 #, fuzzy
 msgid "Popup Desk Up"
 msgstr "Popup Desk Up"
 
-#: src/modules/pager/e_mod_main.c:2940
+#: src/modules/pager/e_mod_main.c:2942
 #, fuzzy
 msgid "Popup Desk Down"
 msgstr "Popup Desk Down"
 
-#: src/modules/pager/e_mod_main.c:2942
+#: src/modules/pager/e_mod_main.c:2944
 #, fuzzy
 msgid "Popup Desk Next"
 msgstr "Popup Desk Järgmine"
 
-#: src/modules/pager/e_mod_main.c:2944
+#: src/modules/pager/e_mod_main.c:2946
 #, fuzzy
 msgid "Popup Desk Previous"
 msgstr "Popup Desk Eelmine"
@@ -10977,57 +10976,60 @@ msgstr ""
 msgid "Enable Taskbar"
 msgstr "Taskbar"
 
-#: src/modules/mixer/app_mixer.c:192
-#, fuzzy
-msgid "Capture"
-msgstr "Pildista"
+#: src/modules/mixer/app_mixer.c:175 src/modules/mixer/app_mixer.c:282
+msgid "Boost"
+msgstr ""
 
-#: src/modules/mixer/app_mixer.c:194
+#: src/modules/mixer/app_mixer.c:177 src/modules/mixer/app_mixer.c:284
 #, fuzzy
 msgid "Playback"
 msgstr "taasesitus"
 
-#: src/modules/mixer/app_mixer.c:314
+#: src/modules/mixer/app_mixer.c:179 src/modules/mixer/app_mixer.c:286
 #, fuzzy
-msgid "Output"
-msgstr "väljund"
+msgid "Capture"
+msgstr "Pildista"
 
-#: src/modules/mixer/app_mixer.c:393
+#: src/modules/mixer/app_mixer.c:181 src/modules/mixer/app_mixer.c:288
+msgid "Switch"
+msgstr ""
+
+#: src/modules/mixer/app_mixer.c:350
 #, fuzzy
 msgid "Cards"
 msgstr "kaardid"
 
-#: src/modules/mixer/app_mixer.c:406 src/modules/mixer/conf_gadget.c:279
+#: src/modules/mixer/app_mixer.c:363 src/modules/mixer/conf_gadget.c:279
 #, fuzzy
 msgid "Channels"
 msgstr "kanalid"
 
-#: src/modules/mixer/app_mixer.c:416
+#: src/modules/mixer/app_mixer.c:373
 #, fuzzy
 msgid "Card:"
 msgstr "Card:"
 
-#: src/modules/mixer/app_mixer.c:420
+#: src/modules/mixer/app_mixer.c:377
 #, fuzzy
 msgid "Channel:"
 msgstr "Channel:"
 
-#: src/modules/mixer/app_mixer.c:428
+#: src/modules/mixer/app_mixer.c:385
 #, fuzzy
 msgid "Left:"
 msgstr "jäänud:"
 
-#: src/modules/mixer/app_mixer.c:433
+#: src/modules/mixer/app_mixer.c:390
 #, fuzzy
 msgid "Right:"
 msgstr "õigus:"
 
-#: src/modules/mixer/app_mixer.c:438 src/modules/mixer/e_mod_main.c:651
+#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:641
 #, fuzzy
 msgid "Mute"
 msgstr "vaigistamiseks"
 
-#: src/modules/mixer/app_mixer.c:441 src/modules/mixer/conf_gadget.c:195
+#: src/modules/mixer/app_mixer.c:398 src/modules/mixer/conf_gadget.c:195
 #, fuzzy
 msgid "Lock Sliders"
 msgstr "lukustage Liugurid"
@@ -11072,43 +11074,60 @@ msgstr "Käivitada segisti ..."
 msgid "Mixer Module Settings"
 msgstr "Mixer mooduli seadete"
 
-#: src/modules/mixer/e_mod_main.c:11 src/modules/mixer/e_mod_main.c:77
+#: src/modules/mixer/e_mod_main.c:11 src/modules/mixer/e_mod_main.c:55
 #, fuzzy
 msgid "Mixer"
 msgstr "mikser"
 
-#: src/modules/mixer/e_mod_main.c:64
+#: src/modules/mixer/e_mod_main.c:42
 #, fuzzy
 msgid "New volume"
 msgstr "New maht"
 
-#: src/modules/mixer/e_mod_main.c:80
+#: src/modules/mixer/e_mod_main.c:58
 #, fuzzy
 msgid "Volume changed"
 msgstr "mahu muutus"
 
-#: src/modules/mixer/e_mod_main.c:199
+#: src/modules/mixer/e_mod_main.c:177
 #, fuzzy
 msgid "Mixer Settings Updated"
 msgstr "Mixer Seaded uuendatud"
 
-#: src/modules/mixer/e_mod_main.c:1315
+#: src/modules/mixer/e_mod_main.c:1324
 #, fuzzy
 msgid "Mixer Module"
 msgstr "Mixer Module"
 
-#: src/modules/mixer/e_mod_main.c:1343
+#: src/modules/mixer/e_mod_main.c:1352
 msgid "Increase Volume"
 msgstr ""
 
-#: src/modules/mixer/e_mod_main.c:1344
+#: src/modules/mixer/e_mod_main.c:1353
 msgid "Decrease Volume"
 msgstr ""
 
-#: src/modules/mixer/e_mod_main.c:1345
+#: src/modules/mixer/e_mod_main.c:1354
 #, fuzzy
 msgid "Mute Volume"
 msgstr "New maht"
+
+#: src/modules/music-control/ui.c:111
+msgid "Music Player"
+msgstr ""
+
+#: src/modules/music-control/ui.c:121
+msgid "* Your player must be configured to export the DBus interface MPRIS2."
+msgstr ""
+
+#: src/modules/music-control/ui.c:124
+msgid "Pause music when screen is locked"
+msgstr ""
+
+#: src/modules/music-control/ui.c:195
+#, fuzzy
+msgid "Music control Settings"
+msgstr "fondiseadistused"
 
 #: src/modules/connman/e_mod_main.c:10
 #, fuzzy
@@ -12047,6 +12066,10 @@ msgstr ""
 #: src/modules/notification/e_mod_config.c:152
 msgid "Use multiple monitor geometry"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Output"
+#~ msgstr "väljund"
 
 #, fuzzy
 #~ msgid "Configure Shelves"
