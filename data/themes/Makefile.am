@@ -7,6 +7,7 @@ EDJE_FLAGS_VERBOSE_0 =
 EDJE_FLAGS_VERBOSE_1 = -v
 EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V)) \
 -id $(top_srcdir)/data/themes/img \
+-sd $(top_srcdir)/data/themes/snd \
 -fd $(top_srcdir)/data/themes/fnt \
 @EDJE_DEF@
 
@@ -723,7 +724,9 @@ img/O/wp-tb1.png \
 img/O/wp-tb2.png \
 img/O/wp-tb3.png \
 img/O/wp-tbs.png \
-img/outline_glow.png
+img/outline_glow.png \
+snd/boing.wav \
+snd/siren.wav
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

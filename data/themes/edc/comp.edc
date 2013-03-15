@@ -244,6 +244,16 @@ group { name: "e/comp/screen/overlay/noeffects";
 group { name: "e/comp/default";
    images.image: "win_shadow.png" COMP;
    images.image: "win_glow.png" COMP;
+   sounds {
+     sample {
+        name: "boing" RAW;
+        source: "boing.wav";
+     }
+     sample {
+        name: "siren" RAW;
+        source: "siren.wav";
+     }
+   }
    parts {
       part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
@@ -383,6 +393,10 @@ group { name: "e/comp/default";
          transition: SINUSOIDAL 0.1;
          target: "glow";
          target: "focus-clipper";
+         after: "focus_sound";
+      }
+      program { name: "focus_sound";
+         action: PLAY_SAMPLE "boing" 1.0;
          after: "focus2";
       }
       program { name: "focus2";
@@ -409,6 +423,10 @@ group { name: "e/comp/default";
          action: STATE_SET "focused" 0.0;
          transition: SINUSOIDAL 0.3;
          target: "glow";
+         after: "urgent_sound";
+      }
+      program { name: "urgent_sound";
+         action: PLAY_SAMPLE "siren" 1.0;
          after: "urgent2";
       }
       program { name: "urgent2";
