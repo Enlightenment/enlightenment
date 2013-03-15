@@ -13,6 +13,7 @@ AM_CPPFLAGS = \
 @VALGRIND_CFLAGS@ \
 @EDJE_DEF@ \
 @ELM_CFLAGS@ \
+@AZY_CFLAGS@ \
 @EMOTION_CFLAGS@ \
 @WAYLAND_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"@PACKAGE_BIN_DIR@\" \
@@ -393,7 +394,7 @@ e_main.c \
 $(enlightenment_src)
 
 enlightenment_LDFLAGS = -export-dynamic
-enlightenment_LDADD = @e_libs@ @ELM_LIBS@ @EMOTION_LIBS@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ -lm
+enlightenment_LDADD = @e_libs@ @ELM_LIBS@ @AZY_LIBS@ @EMOTION_LIBS@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ -lm
 
 enlightenment_imc_SOURCES = \
 e.h \

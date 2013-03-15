@@ -586,6 +586,25 @@ if test "x$want_emotion" != "xno"; then
    fi
 fi
 
+want_azy=auto
+have_azy=no
+AC_ARG_ENABLE(azy,
+  AC_HELP_STRING([--enable-azy], [enable azy support @<:@default=detect@:>@]),
+  [want_azy=$enableval],
+  [want_azy=auto]
+)
+if test "x$want_azy" != "xno"; then
+   PKG_CHECK_MODULES(AZY, [azy],
+                     [have_azy=yes], [have_azy=no])
+   if test "x$want_azy" = "xyes" -a "x$have_azy" = "xno"; then
+      AC_MSG_ERROR([azy support requested but it was not found])
+   fi
+   if test "x$have_azy" = "xyes"; then
+      AC_DEFINE([HAVE_AZY], 1, "Have azy support")
+      requirements_e="${requirements_e} azy"
+   fi
+fi
+
 PKG_CHECK_MODULES(E_OPEN, [
   eina >= ${efl_version}
   ecore >= ${efl_version}
