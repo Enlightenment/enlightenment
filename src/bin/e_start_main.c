@@ -254,6 +254,8 @@ main(int argc, char **argv)
    Eina_Bool restart = EINA_TRUE;
 #endif
 
+   unsetenv("NOTIFY_SOCKET");
+
    /* Setup USR1 to detach from the child process and let it get gdb by advanced users */
    action.sa_sigaction = _sigusr1;
    action.sa_flags = SA_RESETHAND;
