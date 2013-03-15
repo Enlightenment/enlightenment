@@ -10,7 +10,9 @@
  */
 #include "e.h"
 #include <time.h>
-
+#ifdef HAVE_AZY
+# include <Azy.h>
+#endif
 static E_Module *shot_module = NULL;
 
 static E_Action *border_act = NULL, *act = NULL;
@@ -33,7 +35,11 @@ static Evas_Object *o_label = NULL;
 static Evas_Object *o_entry = NULL;
 static unsigned char *fdata = NULL;
 static int fsize = 0;
+#ifdef HAVE_AZY
+static Azy_Client *client = NULL;
+#else
 static Ecore_Con_Url *url_up = NULL;
+#endif
 static Eina_List *handlers = NULL;
 static char *url_ret = NULL;
 static E_Dialog *fsel_dia = NULL;
@@ -307,9 +313,11 @@ _share_done(void)
    E_FREE_LIST(handlers, ecore_event_handler_del);
    o_label = NULL;
    E_FREE(url_ret);
-   if (!url_up) return;
-   ecore_con_url_free(url_up);
-   url_up = NULL;
+#ifdef HAVE_AZY
+   E_FREE_FUNC(client, azy_client_free);
+#else
+   E_FREE_FUNC(url_up, ecore_con_url_free);
+#endif
 }
 
 static void
@@ -336,6 +344,7 @@ _upload_cancel_cb(void *data __UNUSED__, E_Dialog *dia)
    _share_done();
 }
 
+#ifndef HAVE_AZY
 static Eina_Bool
 _upload_data_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
 {
@@ -370,19 +379,30 @@ _upload_data_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
      }
    return EINA_FALSE;
 }
+#endif
 
 static Eina_Bool
 _upload_progress_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
 {
+   size_t total, current;
+#ifdef HAVE_AZY
+   Azy_Event_Client_Transfer_Progress *ev = event;
+   if (ev->client != client) return ECORE_CALLBACK_RENEW;
+   total = azy_net_content_length_get(ev->net);
+   current = ev->current;
+#else
    Ecore_Con_Event_Url_Progress *ev = event;
-   if (ev->url_con != url_up) return EINA_TRUE;
+   if (ev->url_con != url_up) return ECORE_CALLBACK_RENEW;
+   total = ev->up.total;
+   current = ev->up.now;
+#endif
    if (o_label)
      {
         char buf[1024];
         char *buf_now, *buf_total;
 
-        buf_now = e_util_size_string_get(ev->up.now);
-        buf_total = e_util_size_string_get(ev->up.total);
+        buf_now = e_util_size_string_get(current);
+        buf_total = e_util_size_string_get(total);
         snprintf(buf, sizeof(buf),
                  _("Uploaded %s / %s"), 
                  buf_now, buf_total); 
@@ -390,31 +410,41 @@ _upload_progress_cb(void *data __UNUSED__, int ev_type __UNUSED__, void *event)
         E_FREE(buf_total);
         e_widget_label_text_set(o_label, buf);
      }
-   return EINA_FALSE;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
 _upload_complete_cb(void *data, int ev_type __UNUSED__, void *event)
 {
+   int status;
+#ifdef HAVE_AZY
+   Azy_Event_Client_Transfer_Complete *ev = event;
+   Eina_Binbuf *buf;
+   if (ev->client != client) return ECORE_CALLBACK_RENEW;
+   status = azy_net_code_get(azy_content_net_get(ev->content));
+   buf = azy_content_return_get(ev->content);
+   eina_binbuf_append_char(buf, 0);
+   url_ret = (char*)eina_binbuf_string_steal(buf);
+#else
    Ecore_Con_Event_Url_Complete *ev = event;
-   if (ev->url_con != url_up) return EINA_TRUE;
+   if (ev->url_con != url_up) return ECORE_CALLBACK_RENEW;
+   status = ev->status;
+#endif
 
    if (data)
      e_widget_disabled_set(data, 1);
-   if (ev->status != 200)
+   if (status != 200)
      {
-        e_util_dialog_show
-           (_("Error - Upload Failed"),
+        e_util_dialog_show(_("Error - Upload Failed"),
                _("Upload failed with status code:<br>"
-                 "%i"),
-               ev->status);
+                 "%i"), status);
         _share_done();
         return EINA_FALSE;
      }
    if ((o_entry) && (url_ret))
       e_widget_entry_text_set(o_entry, url_ret);
    _share_done();
-   return EINA_FALSE;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -506,17 +536,28 @@ _win_share_cb(void *data __UNUSED__, void *data2 __UNUSED__)
    ecore_file_unlink(buf);
    
    _share_done();
-   
+
+#ifdef HAVE_AZY
+   E_LIST_HANDLER_APPEND(handlers, AZY_EVENT_CLIENT_TRANSFER_PROGRESS, _upload_progress_cb, NULL);
+
+   client = azy_client_util_connect("http://www.enlightenment.org/shot.php");
+   // why use http 1.1? proxies like squid don't handle 1.1 posts with expect
+   // like curl uses by default, so go to 1.0 and this all works dandily
+   // out of the box
+   azy_net_protocol_set(azy_client_net_get(client), AZY_NET_PROTOCOL_HTTP_1_0);
+   azy_net_header_set(azy_client_net_get(client), "content-type", "application/x-e-shot");
+   azy_client_blank(client, AZY_NET_TYPE_POST, &(Azy_Net_Data){fdata, fsize}, NULL, NULL);
+#else   
    E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_DATA, _upload_data_cb, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_PROGRESS, _upload_progress_cb, NULL);
-   
+
    url_up = ecore_con_url_new("http://www.enlightenment.org/shot.php");
    // why use http 1.1? proxies like squid don't handle 1.1 posts with expect
    // like curl uses by default, so go to 1.0 and this all works dandily
    // out of the box
    ecore_con_url_http_version_set(url_up, ECORE_CON_URL_HTTP_VERSION_1_0);
    ecore_con_url_post(url_up, fdata, fsize, "application/x-e-shot");
-
+#endif
    dia = e_dialog_new(scon, "E", "_e_shot_share");
    e_dialog_resizable_set(dia, 1);
    e_dialog_title_set(dia, _("Uploading screenshot"));
@@ -540,8 +581,12 @@ _win_share_cb(void *data __UNUSED__, void *data2 __UNUSED__)
    e_dialog_content_set(dia, ol, mw, mh);
    e_dialog_button_add(dia, _("Hide"), NULL, _upload_ok_cb, NULL);
    e_dialog_button_add(dia, _("Cancel"), NULL, _upload_cancel_cb, NULL);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_COMPLETE, _upload_complete_cb, eina_list_last_data_get(dia->buttons));
    e_object_del_attach_func_set(E_OBJECT(dia), _win_share_del);
+#ifdef HAVE_AZY
+   E_LIST_HANDLER_APPEND(handlers, AZY_EVENT_CLIENT_TRANSFER_COMPLETE, _upload_complete_cb, eina_list_last_data_get(dia->buttons));
+#else
+   E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_COMPLETE, _upload_complete_cb, eina_list_last_data_get(dia->buttons));
+#endif
    e_win_centered_set(dia->win, 1);
    e_dialog_show(dia);
 }
@@ -961,8 +1006,11 @@ EAPI E_Module_Api e_modapi =
 EAPI void *
 e_modapi_init(E_Module *m)
 {
-
+#ifdef HAVE_AZY
+   if (!azy_init())
+#else
    if (!ecore_con_url_init())
+#endif
      {
         e_util_dialog_show(_("Shot Error"),
                            _("Cannot initialize network"));
@@ -1020,7 +1068,11 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
      }
    shot_module = NULL;
    e_int_border_menu_hook_del(border_hook);
+#ifdef HAVE_AZY
+   azy_shutdown();
+#else
    ecore_con_url_shutdown();
+#endif
    return 1;
 }
 
