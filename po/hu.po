@@ -9845,23 +9845,6 @@ msgstr ""
 msgid "Music control Settings"
 msgstr "RKonzol beállítások"
 
-#: src/modules/music-control/ui.c:111
-msgid "Music Player"
-msgstr ""
-
-#: src/modules/music-control/ui.c:121
-msgid "* Your player must be configured to export the DBus interface MPRIS2."
-msgstr ""
-
-#: src/modules/music-control/ui.c:124
-msgid "Pause music when screen is locked"
-msgstr ""
-
-#: src/modules/music-control/ui.c:195
-#, fuzzy
-msgid "Music control Settings"
-msgstr "Autoscroll beállítások"
-
 #: src/modules/connman/e_mod_main.c:10
 msgid "Connection Manager"
 msgstr "Csatlakozás kezelő"
@@ -10765,9 +10748,6 @@ msgstr "ID csere átugrása"
 #: src/modules/notification/e_mod_config.c:152
 msgid "Use multiple monitor geometry"
 msgstr "Többképernyős geometria használata"
-
-#~ msgid "Output"
-#~ msgstr "Kimenet"
 
 #~ msgid "Output"
 #~ msgstr "Kimenet"
