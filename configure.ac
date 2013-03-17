@@ -201,7 +201,7 @@ PKG_CHECK_MODULES([BLUEZ], [bluez],
 	[have_bluetooth="yes"],
 	[have_bluetooth="no"])
 AM_CONDITIONAL([HAVE_BLUETOOTH], [test "x${have_bluetooth}"])
-if test "x${have_bluetooth}"; then
+if test "x${have_bluetooth}" = "xyes"; then
    AC_DEFINE_UNQUOTED([HAVE_BLUETOOTH], [1], [Bluetooth is there])
 fi
 
