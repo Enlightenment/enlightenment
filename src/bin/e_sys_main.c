@@ -16,6 +16,8 @@
 #endif
 #include <Eina.h>
 
+double e_sys_l2ping(const char *bluetooth_mac);
+
 /* local subsystem functions */
 #ifdef HAVE_EEZE_MOUNT
 static Eina_Bool mountopts_check(const char *opts);
@@ -88,6 +90,11 @@ main(int argc,
 
              output = argv[3];
           }
+	else if (!strcmp(argv[1], "l2ping"))
+	  {
+	     action = argv[1];
+	     output = argv[2];
+	  }
 #ifdef HAVE_EEZE_MOUNT
         else
           {
@@ -172,6 +179,18 @@ main(int argc,
         r = system(buffer);
 
         exit(WEXITSTATUS(r));
+     }
+   else if (!test && !strcmp(action, "l2ping"))
+     {
+        char tmp[128];
+	double latency;
+
+	latency = e_sys_l2ping(output);
+
+	eina_convert_dtoa(latency, tmp);
+	fprintf(stdout, tmp);
+
+	return (latency < 0) ? 1 : 0;
      }
    if ((!test)
 #ifdef HAVE_EEZE_MOUNT

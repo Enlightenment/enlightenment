@@ -16,8 +16,8 @@ struct _Instance
 typedef struct _Config Config;
 struct _Config
 {
-   const char *lock_dev_name;
-   const char *unlock_dev_name;
+   const char *lock_dev_addr;
+   const char *unlock_dev_addr;
 };
 
 extern Config *ebluez4_config;

@@ -4,6 +4,14 @@
 #include "ebluez4.h"
 
 /* Local Variables */
+static Ecore_Exe *autolock_exe = NULL;
+static Ecore_Poller *autolock_poller = NULL;
+static Ecore_Event_Handler *autolock_die = NULL;
+static Ecore_Event_Handler *autolock_out = NULL;
+static Ecore_Event_Handler *autolock_desklock = NULL;
+static Eina_Bool autolock_initted = EINA_FALSE;
+static Eina_Bool autolock_waiting = EINA_TRUE;
+
 static Eina_List *instances = NULL;
 static E_Module *mod = NULL;
 static char tmpbuf[1024];
@@ -15,6 +23,42 @@ Config *ebluez4_config = NULL;
 EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Bluez4"};
 
 /* Local Functions */
+static Eina_Bool
+_ebluez_l2ping_poller(void *data EINA_UNUSED)
+{
+   Eina_Strbuf *buf;
+   const char *tmp = NULL;
+
+   autolock_poller = NULL;
+
+   buf = eina_strbuf_new();
+   if (e_desklock_state_get())
+     {
+	if (!autolock_waiting)
+	  tmp = ebluez4_config->unlock_dev_addr;
+	else
+	  tmp = ebluez4_config->lock_dev_addr;
+     }
+   else
+     {
+        if (!autolock_waiting)
+	  tmp = ebluez4_config->lock_dev_addr;
+	else
+	  tmp = ebluez4_config->unlock_dev_addr;
+     }
+
+   if (tmp)
+     {
+        eina_strbuf_append_printf(buf, "%s/enlightenment/utils/enlightenment_sys l2ping %s",
+				  e_prefix_lib_get(), tmp);
+	autolock_exe = ecore_exe_run(eina_strbuf_string_get(buf), NULL);
+     }
+
+   eina_strbuf_free(buf);
+
+   return 0;
+}
+
 static void
 _ebluez4_search_dialog_del(Instance *inst)
 {
@@ -262,9 +306,15 @@ _ebluez4_cb_lock(void *data,
    int tog;
 
    tog = e_menu_item_toggle_get(mi);
-   eina_stringshare_replace(&ebluez4_config->lock_dev_name,
-			    tog ? dev->name : NULL);
+   eina_stringshare_replace(&ebluez4_config->lock_dev_addr,
+			    tog ? dev->addr : NULL);
    e_config_save_queue();
+
+   if (autolock_exe)
+     ecore_exe_kill(autolock_exe);
+   autolock_exe = NULL;
+   if (!autolock_poller && (ebluez4_config->lock_dev_addr || ebluez4_config->unlock_dev_addr))
+     autolock_poller = ecore_poller_add(ECORE_POLLER_CORE, 32, _ebluez_l2ping_poller, NULL);
 }
 
 static void
@@ -276,9 +326,15 @@ _ebluez4_cb_unlock(void *data,
    int tog;
 
    tog = e_menu_item_toggle_get(mi);
-   eina_stringshare_replace(&ebluez4_config->unlock_dev_name,
-			    tog ? dev->name : NULL);
+   eina_stringshare_replace(&ebluez4_config->unlock_dev_addr,
+			    tog ? dev->addr : NULL);
    e_config_save_queue();
+
+   if (autolock_exe)
+     ecore_exe_kill(autolock_exe);
+   autolock_exe = NULL;
+   if (!autolock_poller && (ebluez4_config->lock_dev_addr || ebluez4_config->unlock_dev_addr))
+     autolock_poller = ecore_poller_add(ECORE_POLLER_CORE, 32, _ebluez_l2ping_poller, NULL);
 }
 
 static void
@@ -348,22 +404,27 @@ _ebluez4_add_devices(Instance *inst)
           e_menu_item_label_set(submi, "Forget");
           e_menu_item_callback_set(submi, _ebluez4_cb_forget, dev);
 
-	  /* Auto lock when away */
-	  submi = e_menu_item_new(subm);
-	  e_menu_item_check_set(submi, 1);
-	  e_menu_item_label_set(submi, "Lock on disconnect");
-	  e_menu_item_callback_set(submi, _ebluez4_cb_lock, dev);
-	  chk = ebluez4_config->lock_dev_name && dev->name &&
-	    !strcmp(dev->name, ebluez4_config->lock_dev_name);
-	  e_menu_item_toggle_set(submi, !!chk);
+#ifdef HAVE_BLUETOOTH
+	  if (autolock_initted)
+	    {
+	      /* Auto lock when away */
+	      submi = e_menu_item_new(subm);
+	      e_menu_item_check_set(submi, 1);
+	      e_menu_item_label_set(submi, "Lock on disconnect");
+	      e_menu_item_callback_set(submi, _ebluez4_cb_lock, dev);
+	      chk = ebluez4_config->lock_dev_addr && dev->addr &&
+		!strcmp(dev->addr, ebluez4_config->lock_dev_addr);
+	      e_menu_item_toggle_set(submi, !!chk);
 
-	  submi = e_menu_item_new(subm);
-	  e_menu_item_check_set(submi, 1);
-	  e_menu_item_label_set(submi, "Unlock on disconnect");
-	  e_menu_item_callback_set(submi, _ebluez4_cb_unlock, dev);
-	  chk = ebluez4_config->unlock_dev_name && dev->name &&
-	    !strcmp(dev->name, ebluez4_config->unlock_dev_name);
-	  e_menu_item_toggle_set(submi, !!chk);
+	      submi = e_menu_item_new(subm);
+	      e_menu_item_check_set(submi, 1);
+	      e_menu_item_label_set(submi, "Unlock on disconnect");
+	      e_menu_item_callback_set(submi, _ebluez4_cb_unlock, dev);
+	      chk = ebluez4_config->unlock_dev_addr && dev->addr &&
+		!strcmp(dev->addr, ebluez4_config->unlock_dev_addr);
+	      e_menu_item_toggle_set(submi, !!chk);
+	    }
+#endif
        }
 
    return ret;
@@ -520,10 +581,93 @@ static const E_Gadcon_Client_Class _gc_class =
    E_GADCON_CLIENT_STYLE_PLAIN
 };
 
+static Eina_Bool
+_ebluez_exe_die(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event_info)
+{
+   Ecore_Exe_Event_Del *ev = event_info;
+
+   if (ev->exe != autolock_exe)
+     return ECORE_CALLBACK_PASS_ON;
+
+   if (!autolock_initted)
+     {
+        if (ev->exit_code == 0)
+	  {
+	     autolock_initted = EINA_TRUE;
+	  }
+     }
+   else
+     {
+        if (e_desklock_state_get()) // Locked state ?
+	  {
+	     if (!autolock_waiting)
+	       {
+ 		  // Not waiting yet for the auto unlock device to appear before unlock
+		  if (ev->exit_code == 0 && ebluez4_config->unlock_dev_addr)
+		    {
+		       e_desklock_hide();
+		    }
+	       }
+	     else if (ev->exit_code == 1)
+	       {
+		  // The device just disapeared, now we can wait for it to disapear
+		  autolock_waiting = EINA_FALSE;
+	       }
+	  }
+	else
+	  {
+	    if (!autolock_waiting)
+	      {
+		 // Not waiting yet for the auto lock device to disappear before locking
+		 if (ev->exit_code == 1 && ebluez4_config->lock_dev_addr)
+		   {
+		      e_desklock_show(EINA_FALSE);
+		   }
+	      }
+	    else if (ev->exit_code == 0)
+	      {
+		 // The device just appeared, now we can wait for it to disapear
+		 autolock_waiting = EINA_FALSE;
+	      }
+	  }
+     }
+
+   if (autolock_initted)
+     autolock_poller = ecore_poller_add(ECORE_POLLER_CORE, 32, _ebluez_l2ping_poller, NULL);
+
+   autolock_exe = NULL;
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ebluez_exe_out(void *data, int ev_type, void *ev)
+{
+   /* FIXME: Need experiment, but we should be able to use latency to somehow estimate distance, right ? */
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ebluez_desklock(void *data, int ev_type, void *ev)
+{
+   if (autolock_exe)
+     ecore_exe_kill(autolock_exe);
+   autolock_exe = NULL;
+
+   if (!autolock_poller && autolock_initted && (ebluez4_config->lock_dev_addr || ebluez4_config->unlock_dev_addr))
+     autolock_poller = ecore_poller_add(ECORE_POLLER_CORE, 32, _ebluez_l2ping_poller, NULL);
+
+   autolock_waiting = EINA_TRUE;
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 /* Module Functions */
 EAPI void *
 e_modapi_init(E_Module *m)
 {
+   Eina_Strbuf *buf;
+
    mod = m;
 
    conf_edd = E_CONFIG_DD_NEW("Config", Config);
@@ -531,8 +675,8 @@ e_modapi_init(E_Module *m)
 #undef D           
 #define T Config   
 #define D conf_edd 
-   E_CONFIG_VAL(D, T, lock_dev_name, STR);
-   E_CONFIG_VAL(D, T, unlock_dev_name, STR);
+   E_CONFIG_VAL(D, T, lock_dev_addr, STR);
+   E_CONFIG_VAL(D, T, unlock_dev_addr, STR);
 
    ebluez4_config = e_config_domain_load("module.ebluez4", conf_edd);
    if (!ebluez4_config)
@@ -542,6 +686,16 @@ e_modapi_init(E_Module *m)
 
    e_gadcon_provider_register(&_gc_class);
 
+   autolock_die = ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _ebluez_exe_die, NULL);
+   autolock_out = ecore_event_handler_add(ECORE_EXE_EVENT_DATA, _ebluez_exe_out, NULL);
+   autolock_desklock = ecore_event_handler_add(E_EVENT_DESKLOCK, _ebluez_desklock, NULL);
+
+   buf = eina_strbuf_new();
+   eina_strbuf_append_printf(buf, "%s/enlightenment/utils/enlightenment_sys -t l2ping",
+			     e_prefix_lib_get());
+   autolock_exe = ecore_exe_run(eina_strbuf_string_get(buf), NULL);
+   eina_strbuf_free(buf);
+
    return m;
 }
 
@@ -550,8 +704,17 @@ e_modapi_shutdown(E_Module *m)
 {
    E_CONFIG_DD_FREE(conf_edd);
 
-   eina_stringshare_del(ebluez4_config->lock_dev_name);
-   eina_stringshare_del(ebluez4_config->unlock_dev_name);
+   if (autolock_exe) ecore_exe_kill(autolock_exe);
+   autolock_exe = NULL;
+   if (autolock_poller) ecore_timer_del(autolock_poller);
+   autolock_poller = NULL;
+
+   ecore_event_handler_del(autolock_die);
+   ecore_event_handler_del(autolock_out);
+   ecore_event_handler_del(autolock_desklock);
+
+   eina_stringshare_del(ebluez4_config->lock_dev_addr);
+   eina_stringshare_del(ebluez4_config->unlock_dev_addr);
    free(ebluez4_config);
    ebluez4_config = NULL;
 

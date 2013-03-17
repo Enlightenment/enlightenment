@@ -197,9 +197,13 @@ CPPFLAGS="${PCPPFLAGS}"
 AC_SUBST(cf_cflags)
 AC_SUBST(cf_libs)
 
-AC_CHECK_HEADERS([bluetooth/bluetooth.h],
-	[have_bluetooth_h="yes"],
-	[have_bluetooth_h="no"])
+PKG_CHECK_MODULES([BLUEZ], [bluez],
+	[have_bluetooth="yes"],
+	[have_bluetooth="no"])
+AM_CONDITIONAL([HAVE_BLUETOOTH], [test "x${have_bluetooth}"])
+if test "x${have_bluetooth}"; then
+   AC_DEFINE_UNQUOTED([HAVE_BLUETOOTH], [1], [Bluetooth is there])
+fi
 
 execinfo_libs=""
 AC_CHECK_HEADERS([execinfo.h], [have_execinfo="yes"], [have_execinfo="no"])
@@ -487,6 +491,7 @@ PKG_CHECK_MODULES(E_FM_OPEN, [
 
 PKG_CHECK_MODULES(E_SYS, [
   eina >= ${efl_version}
+  ecore >= ${efl_version}
 ])
 
 PKG_CHECK_MODULES(E_INIT, [

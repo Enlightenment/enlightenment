@@ -422,10 +422,10 @@ e_fm_op.c
 enlightenment_fm_op_LDADD = @E_FM_OP_LIBS@ -lm
 
 enlightenment_sys_SOURCES = \
-e_sys_main.c
+e_sys_main.c e_sys_l2ping.c
 
-enlightenment_sys_LDADD = @SUID_LDFLAGS@ @E_SYS_LIBS@
-enlightenment_sys_CFLAGS = @SUID_CFLAGS@ @E_SYS_CFLAGS@
+enlightenment_sys_LDADD = @SUID_LDFLAGS@ @E_SYS_LIBS@ @BLUEZ_LIBS@
+enlightenment_sys_CFLAGS = @SUID_CFLAGS@ @E_SYS_CFLAGS@ @BLUEZ_CFLAGS@
 
 if HAVE_EEZE
 enlightenment_backlight_SOURCES = \
