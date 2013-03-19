@@ -297,6 +297,7 @@ _ebluez4_cb_forget(void *data, E_Menu *m, E_Menu_Item *mi)
    ebluez4_remove_device(dev->obj);
 }
 
+#ifdef HAVE_BLUETOOTH
 static void
 _ebluez4_cb_lock(void *data,
 		 E_Menu *m __UNUSED__,
@@ -336,6 +337,7 @@ _ebluez4_cb_unlock(void *data,
    if (!autolock_poller && (ebluez4_config->lock_dev_addr || ebluez4_config->unlock_dev_addr))
      autolock_poller = ecore_poller_add(ECORE_POLLER_CORE, 32, _ebluez_l2ping_poller, NULL);
 }
+#endif
 
 static void
 _menu_post_deactivate(void *data __UNUSED__, E_Menu *m)
@@ -378,7 +380,9 @@ _ebluez4_add_devices(Instance *inst)
    EINA_LIST_FOREACH(ctxt->devices, iter, dev)
      if (dev->paired)
        {
+#ifdef HAVE_BLUETOOTH
 	  Eina_Bool chk;
+#endif
 
 	  mi = e_menu_item_new(m);
           e_menu_item_label_set(mi, dev->name);
