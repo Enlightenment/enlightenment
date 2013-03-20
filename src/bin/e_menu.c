@@ -81,6 +81,7 @@ static Eina_Bool    _e_menu_cb_mouse_wheel(void *data, int type, void *event);
 static Eina_Bool    _e_menu_cb_scroll_animator(void *data);
 static void         _e_menu_cb_item_submenu_post_default(void *data, E_Menu *m, E_Menu_Item *mi);
 static Eina_Bool    _e_menu_categories_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
+static void         _e_menu_cb_mouse_evas_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 /* local subsystem globals */
 static Ecore_X_Window _e_menu_win = 0;
@@ -107,6 +108,7 @@ static Ecore_Event_Handler *_e_menu_mouse_up_handler = NULL;
 static Ecore_Event_Handler *_e_menu_mouse_move_handler = NULL;
 static Ecore_Event_Handler *_e_menu_mouse_wheel_handler = NULL;
 static Eina_Bool _e_menu_lock = EINA_FALSE;
+static Evas_Object *_e_menu_event_rect = NULL;
 
 static Eina_List *
 _e_active_menus_copy_ref(void)
@@ -1243,6 +1245,7 @@ e_menu_idler_before(void)
           {
              e_grabinput_release(0, _e_menu_win);
              _e_menu_win = 0;
+             E_FREE_FUNC(_e_menu_event_rect, evas_object_del);
           }
      }
 }
@@ -2006,6 +2009,12 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
              _e_menu_win = 0;
              return;
           }
+        _e_menu_event_rect = evas_object_rectangle_add(e_comp_get(zone)->evas);
+        evas_object_color_set(_e_menu_event_rect, 0, 0, 0, 0);
+        evas_object_resize(_e_menu_event_rect, e_comp_get(zone)->man->w, e_comp_get(zone)->man->h);
+        evas_object_event_callback_add(_e_menu_event_rect, EVAS_CALLBACK_MOUSE_DOWN, _e_menu_cb_mouse_evas_down, NULL);
+        evas_object_layer_set(_e_menu_event_rect, E_COMP_CANVAS_LAYER_MENU - 1);
+        evas_object_show(_e_menu_event_rect);
      }
    if ((m->zone) && (m->zone->container != zone->container))
      {
@@ -2843,6 +2852,12 @@ _e_menu_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
  * keyboard and thus the normal event mechanism doesn't work, so we feed
  * events directly to the canvases from our grab window
  */
+
+static void
+_e_menu_cb_mouse_evas_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _e_menu_deactivate_all();
+}
 
 static Eina_Bool
 _e_menu_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
