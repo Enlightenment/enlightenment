@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-15 10:05+0900\n"
+"POT-Creation-Date: 2013-03-20 08:17+0900\n"
 "PO-Revision-Date: 2012-12-28 20:57+0900\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung2@gmali.com>\n"
 "Language-Team: Korean <KO@li.org>\n"
@@ -147,7 +147,7 @@ msgstr "정말로 컴퓨터를 최대 절전 모드로 전환하시겠습니까?
 #: src/bin/e_actions.c:2987 src/bin/e_actions.c:2992 src/bin/e_actions.c:2997
 #: src/bin/e_actions.c:3280 src/bin/e_actions.c:3284 src/bin/e_actions.c:3289
 #: src/bin/e_actions.c:3295 src/bin/e_actions.c:3301 src/bin/e_actions.c:3307
-#: src/modules/shot/e_mod_main.c:986
+#: src/modules/shot/e_mod_main.c:1034
 msgid "Window : Actions"
 msgstr "창 : 동작"
 
@@ -519,7 +519,7 @@ msgstr "다른 창으로 건너뛰거나 시작..."
 #: src/modules/backlight/e_mod_main.c:453
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:16 src/modules/ibox/e_mod_config.c:135
-#: src/modules/shot/e_mod_main.c:744 src/modules/shot/e_mod_main.c:979
+#: src/modules/shot/e_mod_main.c:789 src/modules/shot/e_mod_main.c:1027
 msgid "Screen"
 msgstr "화면"
 
@@ -805,8 +805,8 @@ msgstr "선택"
 #: src/modules/syscon/e_syscon.c:98
 #: src/modules/quickaccess/e_mod_quickaccess.c:319
 #: src/modules/quickaccess/e_mod_quickaccess.c:381
-#: src/modules/shot/e_mod_main.c:291 src/modules/shot/e_mod_main.c:542
-#: src/modules/shot/e_mod_main.c:568 src/modules/shot/e_mod_main.c:803
+#: src/modules/shot/e_mod_main.c:297 src/modules/shot/e_mod_main.c:583
+#: src/modules/shot/e_mod_main.c:613 src/modules/shot/e_mod_main.c:848
 #: src/modules/xkbswitch/e_mod_config.c:499
 msgid "Cancel"
 msgstr "취소"
@@ -2574,7 +2574,7 @@ msgstr "크기, 위치, 잠금"
 #: src/bin/e_int_border_remember.c:656
 #: src/modules/everything/evry_gadget.c:644
 #: src/modules/everything/evry_plug_aggregator.c:313
-#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:748
+#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:793
 msgid "All"
 msgstr "모두"
 
@@ -6546,13 +6546,13 @@ msgid "e.g. Saving to disk"
 msgstr "예: 디스크에 저장"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:235
-#: src/modules/shot/e_mod_main.c:730
+#: src/modules/shot/e_mod_main.c:775
 #: src/modules/notification/e_mod_config.c:102
 msgid "Low"
 msgstr "낮음"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:274
-#: src/modules/shot/e_mod_main.c:728
+#: src/modules/shot/e_mod_main.c:773
 msgid "Medium"
 msgstr "보통"
 
@@ -6564,7 +6564,7 @@ msgid "%.0f s"
 msgstr "%.0f초"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:313
-#: src/modules/shot/e_mod_main.c:726
+#: src/modules/shot/e_mod_main.c:771
 msgid "High"
 msgstr "높음"
 
@@ -10276,20 +10276,20 @@ msgid "Systray cannot set its background invisible to match its shelf."
 msgstr ""
 "시스템 표시줄의 서랍에 꼭 맞게 배경을 보이지 않도록 설정할 수 없습니다."
 
-#: src/modules/shot/e_mod_main.c:176 src/modules/shot/e_mod_main.c:210
+#: src/modules/shot/e_mod_main.c:182 src/modules/shot/e_mod_main.c:216
 msgid "Error saving screenshot file"
 msgstr "스크린샷 파일을 저장하는데 오류가 발생했습니다"
 
-#: src/modules/shot/e_mod_main.c:177 src/modules/shot/e_mod_main.c:211
+#: src/modules/shot/e_mod_main.c:183 src/modules/shot/e_mod_main.c:217
 #, c-format
 msgid "Path: %s"
 msgstr "경로: %s"
 
-#: src/modules/shot/e_mod_main.c:228
+#: src/modules/shot/e_mod_main.c:234
 msgid "Error - Unknown format"
 msgstr "오류 - 알 수 없는 형식"
 
-#: src/modules/shot/e_mod_main.c:229
+#: src/modules/shot/e_mod_main.c:235
 msgid ""
 "File has an unspecified extension.<br>Please use '.jpg' or '.png' "
 "extensions<br>only as other formats are not<br>supported currently."
@@ -10297,93 +10297,93 @@ msgstr ""
 "파일에 지정되지 않은 확장자가 있습니다.<br>현재 다른 형식은 지원하지 않으므"
 "로 '.jpg'나 '.png' 확장자만을 사용하십시오."
 
-#: src/modules/shot/e_mod_main.c:277
+#: src/modules/shot/e_mod_main.c:283
 msgid "Select screenshot save location"
 msgstr "스크린샷 저장 위치를 선택하십시오"
 
-#: src/modules/shot/e_mod_main.c:289 src/modules/shot/e_mod_main.c:799
+#: src/modules/shot/e_mod_main.c:295 src/modules/shot/e_mod_main.c:844
 msgid "Save"
 msgstr "저장"
 
-#: src/modules/shot/e_mod_main.c:387
+#: src/modules/shot/e_mod_main.c:407
 #, c-format
 msgid "Uploaded %s / %s"
 msgstr "%s / %s 업로드 완료"
 
-#: src/modules/shot/e_mod_main.c:407
+#: src/modules/shot/e_mod_main.c:438
 msgid "Error - Upload Failed"
 msgstr "오류 - 업로드 실패"
 
-#: src/modules/shot/e_mod_main.c:408
+#: src/modules/shot/e_mod_main.c:439
 #, c-format
 msgid "Upload failed with status code:<br>%i"
 msgstr "%i 상태 코드로 업로드에 실패했습니다"
 
-#: src/modules/shot/e_mod_main.c:452
+#: src/modules/shot/e_mod_main.c:482
 msgid "Error - Can't create file"
 msgstr "오류 - 파일을 만들 수 없음"
 
-#: src/modules/shot/e_mod_main.c:453
+#: src/modules/shot/e_mod_main.c:483
 #, c-format
 msgid "Cannot create temporary file '%s': %s"
 msgstr "'%s' 임시 파일을 만들 수 없습니다: %s"
 
-#: src/modules/shot/e_mod_main.c:471
+#: src/modules/shot/e_mod_main.c:501
 msgid "Error - Can't open file"
 msgstr "오류 - 파일을 열 수 없음"
 
-#: src/modules/shot/e_mod_main.c:472
+#: src/modules/shot/e_mod_main.c:502
 #, c-format
 msgid "Cannot open temporary file '%s': %s"
 msgstr "'%s' 임시 파일을 열 수 없습니다: %s"
 
-#: src/modules/shot/e_mod_main.c:480
+#: src/modules/shot/e_mod_main.c:510
 msgid "Error - Bad size"
 msgstr "오류 - 잘못된 크기"
 
-#: src/modules/shot/e_mod_main.c:481
+#: src/modules/shot/e_mod_main.c:511
 #, c-format
 msgid "Cannot get size of file '%s'"
 msgstr "'%s' 파일의 크기를 가져올 수 없습니다"
 
-#: src/modules/shot/e_mod_main.c:491
+#: src/modules/shot/e_mod_main.c:521
 msgid "Error - Can't allocate memory"
 msgstr "오류 - 메모리를 할당할 수 없음"
 
-#: src/modules/shot/e_mod_main.c:492
+#: src/modules/shot/e_mod_main.c:522
 #, c-format
 msgid "Cannot allocate memory for picture: %s"
 msgstr "그림을 열 메모리를 할당할 수 없습니다: %s"
 
-#: src/modules/shot/e_mod_main.c:499
+#: src/modules/shot/e_mod_main.c:529
 msgid "Error - Can't read picture"
 msgstr "오류 - 그림을 읽을 수 없음"
 
-#: src/modules/shot/e_mod_main.c:500
+#: src/modules/shot/e_mod_main.c:530
 msgid "Cannot read picture"
 msgstr "그림을 읽을 수 없습니다"
 
-#: src/modules/shot/e_mod_main.c:522
+#: src/modules/shot/e_mod_main.c:563
 msgid "Uploading screenshot"
 msgstr "스크린 샷 업로드 중"
 
-#: src/modules/shot/e_mod_main.c:527
+#: src/modules/shot/e_mod_main.c:568
 msgid "Uploading ..."
 msgstr "업로드 중 ..."
 
-#: src/modules/shot/e_mod_main.c:532
+#: src/modules/shot/e_mod_main.c:573
 msgid "Screenshot is available at this location:"
 msgstr "스크린샷은 다음 위치에서 찾을 수 있습니다:"
 
-#: src/modules/shot/e_mod_main.c:541
+#: src/modules/shot/e_mod_main.c:582
 msgid "Hide"
 msgstr "숨기기"
 
-#: src/modules/shot/e_mod_main.c:565
+#: src/modules/shot/e_mod_main.c:610
 msgid "Confirm Share"
 msgstr "공유 확인"
 
-#: src/modules/shot/e_mod_main.c:566
+#: src/modules/shot/e_mod_main.c:611
 msgid ""
 "This image will be uploaded<br>to enlightenment.org. It will be publicly "
 "visible."
@@ -10391,40 +10391,40 @@ msgstr ""
 "이 그림을 enlightenment.org<br>에 업로드할 것입니다. 여러 사람들이 볼 수 있습"
 "니다."
 
-#: src/modules/shot/e_mod_main.c:568
+#: src/modules/shot/e_mod_main.c:613
 msgid "Confirm"
 msgstr "확인"
 
-#: src/modules/shot/e_mod_main.c:668
+#: src/modules/shot/e_mod_main.c:713
 msgid "Where to put Screenshot..."
 msgstr "스크린샷 저장 위치..."
 
-#: src/modules/shot/e_mod_main.c:720
+#: src/modules/shot/e_mod_main.c:765
 msgid "Quality"
 msgstr "품질"
 
-#: src/modules/shot/e_mod_main.c:724
+#: src/modules/shot/e_mod_main.c:769
 msgid "Perfect"
 msgstr "완벽함"
 
-#: src/modules/shot/e_mod_main.c:801
+#: src/modules/shot/e_mod_main.c:846
 msgid "Share"
 msgstr "공유"
 
-#: src/modules/shot/e_mod_main.c:938 src/modules/shot/e_mod_main.c:986
+#: src/modules/shot/e_mod_main.c:983 src/modules/shot/e_mod_main.c:1034
 msgid "Take Shot"
 msgstr "찍기"
 
-#: src/modules/shot/e_mod_main.c:949 src/modules/shot/e_mod_main.c:979
-#: src/modules/shot/e_mod_main.c:990
+#: src/modules/shot/e_mod_main.c:994 src/modules/shot/e_mod_main.c:1027
+#: src/modules/shot/e_mod_main.c:1038
 msgid "Take Screenshot"
 msgstr "화면 찍기"
 
-#: src/modules/shot/e_mod_main.c:967
+#: src/modules/shot/e_mod_main.c:1015
 msgid "Shot Error"
 msgstr "샷 오류"
 
-#: src/modules/shot/e_mod_main.c:968
+#: src/modules/shot/e_mod_main.c:1016
 msgid "Cannot initialize network"
 msgstr "네트워크를 초기화 할 수 없습니다"
 

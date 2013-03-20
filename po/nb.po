@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-15 10:05+0900\n"
+"POT-Creation-Date: 2013-03-20 08:17+0900\n"
 "PO-Revision-Date: 2010-05-09 22:20+0100\n"
 "Last-Translator: Audun Gangsto <feitingen@gmail.com>\n"
 "Language-Team: E17-nb <LL@li.org>\n"
@@ -146,7 +146,7 @@ msgstr "Er du sikker på at du vil gå i hi."
 #: src/bin/e_actions.c:2987 src/bin/e_actions.c:2992 src/bin/e_actions.c:2997
 #: src/bin/e_actions.c:3280 src/bin/e_actions.c:3284 src/bin/e_actions.c:3289
 #: src/bin/e_actions.c:3295 src/bin/e_actions.c:3301 src/bin/e_actions.c:3307
-#: src/modules/shot/e_mod_main.c:986
+#: src/modules/shot/e_mod_main.c:1034
 msgid "Window : Actions"
 msgstr "Vindu : Handling"
 
@@ -534,7 +534,7 @@ msgstr ""
 #: src/modules/backlight/e_mod_main.c:453
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:16 src/modules/ibox/e_mod_config.c:135
-#: src/modules/shot/e_mod_main.c:744 src/modules/shot/e_mod_main.c:979
+#: src/modules/shot/e_mod_main.c:789 src/modules/shot/e_mod_main.c:1027
 msgid "Screen"
 msgstr "Skjerm"
 
@@ -844,8 +844,8 @@ msgstr "Velg en"
 #: src/modules/syscon/e_syscon.c:98
 #: src/modules/quickaccess/e_mod_quickaccess.c:319
 #: src/modules/quickaccess/e_mod_quickaccess.c:381
-#: src/modules/shot/e_mod_main.c:291 src/modules/shot/e_mod_main.c:542
-#: src/modules/shot/e_mod_main.c:568 src/modules/shot/e_mod_main.c:803
+#: src/modules/shot/e_mod_main.c:297 src/modules/shot/e_mod_main.c:583
+#: src/modules/shot/e_mod_main.c:613 src/modules/shot/e_mod_main.c:848
 #: src/modules/xkbswitch/e_mod_config.c:499
 msgid "Cancel"
 msgstr "Avbryt"
@@ -2726,7 +2726,7 @@ msgstr "Størrelse, posisjon og låser"
 #: src/bin/e_int_border_remember.c:656
 #: src/modules/everything/evry_gadget.c:644
 #: src/modules/everything/evry_plug_aggregator.c:313
-#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:748
+#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:793
 #, fuzzy
 msgid "All"
 msgstr "Tillat"
@@ -7045,13 +7045,13 @@ msgid "e.g. Saving to disk"
 msgstr ""
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:235
-#: src/modules/shot/e_mod_main.c:730
+#: src/modules/shot/e_mod_main.c:775
 #: src/modules/notification/e_mod_config.c:102
 msgid "Low"
 msgstr "Lav"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:274
-#: src/modules/shot/e_mod_main.c:728
+#: src/modules/shot/e_mod_main.c:773
 msgid "Medium"
 msgstr "Midt på treet"
 
@@ -7063,7 +7063,7 @@ msgid "%.0f s"
 msgstr "%1.0f sek"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:313
-#: src/modules/shot/e_mod_main.c:726
+#: src/modules/shot/e_mod_main.c:771
 msgid "High"
 msgstr "Høy"
 
@@ -11189,164 +11189,164 @@ msgstr "Systray"
 msgid "Systray cannot set its background invisible to match its shelf."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:176 src/modules/shot/e_mod_main.c:210
+#: src/modules/shot/e_mod_main.c:182 src/modules/shot/e_mod_main.c:216
 #, fuzzy
 msgid "Error saving screenshot file"
 msgstr "Feil ved lasting av modul"
 
-#: src/modules/shot/e_mod_main.c:177 src/modules/shot/e_mod_main.c:211
+#: src/modules/shot/e_mod_main.c:183 src/modules/shot/e_mod_main.c:217
 #, fuzzy, c-format
 msgid "Path: %s"
 msgstr "E Baner"
 
-#: src/modules/shot/e_mod_main.c:228
+#: src/modules/shot/e_mod_main.c:234
 #, fuzzy
 msgid "Error - Unknown format"
 msgstr "Feilinformasjon"
 
-#: src/modules/shot/e_mod_main.c:229
+#: src/modules/shot/e_mod_main.c:235
 msgid ""
 "File has an unspecified extension.<br>Please use '.jpg' or '.png' "
 "extensions<br>only as other formats are not<br>supported currently."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:277
+#: src/modules/shot/e_mod_main.c:283
 msgid "Select screenshot save location"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:289 src/modules/shot/e_mod_main.c:799
+#: src/modules/shot/e_mod_main.c:295 src/modules/shot/e_mod_main.c:844
 msgid "Save"
 msgstr "Lagre"
 
-#: src/modules/shot/e_mod_main.c:387
+#: src/modules/shot/e_mod_main.c:407
 #, c-format
 msgid "Uploaded %s / %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:407
+#: src/modules/shot/e_mod_main.c:438
 #, fuzzy
 msgid "Error - Upload Failed"
 msgstr "Feil ved lasting av modul"
 
-#: src/modules/shot/e_mod_main.c:408
+#: src/modules/shot/e_mod_main.c:439
 #, c-format
 msgid "Upload failed with status code:<br>%i"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:452
+#: src/modules/shot/e_mod_main.c:482
 #, fuzzy
 msgid "Error - Can't create file"
 msgstr "Feil ved lasting av modul"
 
-#: src/modules/shot/e_mod_main.c:453
+#: src/modules/shot/e_mod_main.c:483
 #, c-format
 msgid "Cannot create temporary file '%s': %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:471
+#: src/modules/shot/e_mod_main.c:501
 msgid "Error - Can't open file"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:472
+#: src/modules/shot/e_mod_main.c:502
 #, c-format
 msgid "Cannot open temporary file '%s': %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:480
+#: src/modules/shot/e_mod_main.c:510
 #, fuzzy
 msgid "Error - Bad size"
 msgstr "Feil ved lasting av modul"
 
-#: src/modules/shot/e_mod_main.c:481
+#: src/modules/shot/e_mod_main.c:511
 #, c-format
 msgid "Cannot get size of file '%s'"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:491
+#: src/modules/shot/e_mod_main.c:521
 msgid "Error - Can't allocate memory"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:492
+#: src/modules/shot/e_mod_main.c:522
 #, c-format
 msgid "Cannot allocate memory for picture: %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:499
+#: src/modules/shot/e_mod_main.c:529
 msgid "Error - Can't read picture"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:500
+#: src/modules/shot/e_mod_main.c:530
 #, fuzzy
 msgid "Cannot read picture"
 msgstr "Kan ikke legge til ikon"
 
-#: src/modules/shot/e_mod_main.c:522
+#: src/modules/shot/e_mod_main.c:563
 msgid "Uploading screenshot"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:527
+#: src/modules/shot/e_mod_main.c:568
 msgid "Uploading ..."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:532
+#: src/modules/shot/e_mod_main.c:573
 msgid "Screenshot is available at this location:"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:541
+#: src/modules/shot/e_mod_main.c:582
 #, fuzzy
 msgid "Hide"
 msgstr "auto Hide"
 
-#: src/modules/shot/e_mod_main.c:565
+#: src/modules/shot/e_mod_main.c:610
 #, fuzzy
 msgid "Confirm Share"
 msgstr "Bekreft Slett"
 
-#: src/modules/shot/e_mod_main.c:566
+#: src/modules/shot/e_mod_main.c:611
 msgid ""
 "This image will be uploaded<br>to enlightenment.org. It will be publicly "
 "visible."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:568
+#: src/modules/shot/e_mod_main.c:613
 #, fuzzy
 msgid "Confirm"
 msgstr "Kontrollpanel"
 
-#: src/modules/shot/e_mod_main.c:668
+#: src/modules/shot/e_mod_main.c:713
 msgid "Where to put Screenshot..."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:720
+#: src/modules/shot/e_mod_main.c:765
 msgid "Quality"
 msgstr "Kvalitet"
 
-#: src/modules/shot/e_mod_main.c:724
+#: src/modules/shot/e_mod_main.c:769
 msgid "Perfect"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:801
+#: src/modules/shot/e_mod_main.c:846
 #, fuzzy
 msgid "Share"
 msgstr "Skarp"
 
-#: src/modules/shot/e_mod_main.c:938 src/modules/shot/e_mod_main.c:986
+#: src/modules/shot/e_mod_main.c:983 src/modules/shot/e_mod_main.c:1034
 #, fuzzy
 msgid "Take Shot"
 msgstr "skjermbilder for oppsett"
 
-#: src/modules/shot/e_mod_main.c:949 src/modules/shot/e_mod_main.c:979
-#: src/modules/shot/e_mod_main.c:990
+#: src/modules/shot/e_mod_main.c:994 src/modules/shot/e_mod_main.c:1027
+#: src/modules/shot/e_mod_main.c:1038
 #, fuzzy
 msgid "Take Screenshot"
 msgstr "skjermbilder for oppsett"
 
-#: src/modules/shot/e_mod_main.c:967
+#: src/modules/shot/e_mod_main.c:1015
 #, fuzzy
 msgid "Shot Error"
 msgstr "Monteringsfeil"
 
-#: src/modules/shot/e_mod_main.c:968
+#: src/modules/shot/e_mod_main.c:1016
 #, fuzzy
 msgid "Cannot initialize network"
 msgstr "Enlightenment klarte ikke sette opp filbehandleren.\n"
