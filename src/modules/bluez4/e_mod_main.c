@@ -710,8 +710,7 @@ e_modapi_shutdown(E_Module *m)
 
    if (autolock_exe) ecore_exe_kill(autolock_exe);
    autolock_exe = NULL;
-   if (autolock_poller) ecore_timer_del(autolock_poller);
-   autolock_poller = NULL;
+   E_FREE_FUNC(autolock_poller, ecore_poller_del);
 
    ecore_event_handler_del(autolock_die);
    ecore_event_handler_del(autolock_out);

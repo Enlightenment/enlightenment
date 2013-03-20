@@ -188,7 +188,7 @@ main(int argc,
 	latency = e_sys_l2ping(output);
 
 	eina_convert_dtoa(latency, tmp);
-	fprintf(stdout, tmp);
+	fprintf(stdout, "%s\n", tmp);
 
 	return (latency < 0) ? 1 : 0;
      }

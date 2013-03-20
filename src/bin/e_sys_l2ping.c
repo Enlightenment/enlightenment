@@ -10,7 +10,7 @@
 #endif
 
 double
-e_sys_l2ping(const char *bluetooth_mac)
+e_sys_l2ping(const char *bluetooth_mac EINA_UNUSED)
 {
 #ifdef HAVE_BLUETOOTH
    char send_buf[L2CAP_CMD_HDR_SIZE + 1];
