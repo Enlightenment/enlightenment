@@ -2126,12 +2126,12 @@ e_configure_option_add(E_Configure_Option_Type type, const char *desc, const cha
 }
 
 EAPI void
-e_configure_option_tags_set(E_Configure_Option *co, const char **const tags, unsigned int num_tags)
+e_configure_option_tags_set(E_Configure_Option *co, const char * const *tags, unsigned int num_tags)
 {
    Eina_List *l, *ll;
    Eina_Stringshare *tag;
    unsigned int x;
-   const char **t;
+   const char * const *t;
 
    EINA_SAFETY_ON_NULL_RETURN(co);
    EINA_LIST_FOREACH_SAFE(co->tags, l, ll, tag)

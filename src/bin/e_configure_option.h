@@ -129,7 +129,7 @@ EAPI void e_configure_option_apply_all(void);
 EAPI void e_configure_option_reset_all(void);
 
 EAPI E_Configure_Option *e_configure_option_add(E_Configure_Option_Type type, const char *desc, const char *name, void *valptr, const void *data);
-EAPI void e_configure_option_tags_set(E_Configure_Option *co, const char const **tags, unsigned int num_tags);
+EAPI void e_configure_option_tags_set(E_Configure_Option *co, const char * const *tags, unsigned int num_tags);
 EAPI void e_configure_option_del(E_Configure_Option *eci);
 EAPI const Eina_List *e_configure_option_tag_list_options(const char *tag);
 EAPI void e_configure_option_changed(E_Configure_Option *co);
