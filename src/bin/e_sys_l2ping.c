@@ -10,7 +10,7 @@
 #endif
 
 double
-e_sys_l2ping(const char *bluetooth_mac EINA_UNUSED)
+e_sys_l2ping(const char *bluetooth_mac)
 {
 #ifdef HAVE_BLUETOOTH
    char send_buf[L2CAP_CMD_HDR_SIZE + 1];
@@ -95,6 +95,7 @@ e_sys_l2ping(const char *bluetooth_mac EINA_UNUSED)
 
    return ecore_time_get() - start;
 #else
+   (void) bluetooth_mac;
    fprintf(stderr, "e_sys_l2ping nop\n");
    return -1;
 #endif
