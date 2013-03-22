@@ -283,7 +283,6 @@ _e_wizard_main_new(E_Zone *zone)
    edje_object_part_text_set(o_bg, "e.text.title", _("Welcome to Enlightenment"));
    edje_object_signal_callback_add(o_bg, "e,action,next", "",
                                    _e_wizard_cb_next, popup);
-   o_bg = o_bg;
    e_popup_move_resize(popup, 0, 0, zone->w, zone->h);
    e_popup_layer_set(popup, E_COMP_CANVAS_LAYER_POPUP, 0);
    e_popup_content_set(popup, o_bg);
