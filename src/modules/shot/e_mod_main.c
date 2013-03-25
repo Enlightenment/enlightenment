@@ -422,7 +422,7 @@ _upload_complete_cb(void *data, int ev_type __UNUSED__, void *event)
    Eina_Binbuf *buf;
    if (ev->client != client) return ECORE_CALLBACK_RENEW;
    status = azy_net_code_get(azy_content_net_get(ev->content));
-   buf = azy_content_return_get(ev->content);
+   buf = azy_content_return_get(ev->content, NULL);
    eina_binbuf_append_char(buf, 0);
    url_ret = (char*)eina_binbuf_string_steal(buf);
 #else
