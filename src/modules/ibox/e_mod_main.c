@@ -983,30 +983,29 @@ atend:
 static Eina_Bool
 _ibox_cb_event_border_add(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   E_Event_Border_Add *ev;
+   E_Event_Border_Add *ev = event;
    IBox *b;
    IBox_Icon *ic;
    E_Desk *desk;
+   Eina_List *ibox;
 
-   ev = event;
    /* add if iconic */
+   if (!ev->border->iconic) return ECORE_CALLBACK_RENEW;
+   if (!ev->border->zone) return ECORE_CALLBACK_RENEW;
    desk = e_desk_current_get(ev->border->zone);
-   if (ev->border->iconic)
+        
+   ibox = _ibox_zone_find(ev->border->zone);
+   EINA_LIST_FREE(ibox, b)
      {
-        Eina_List *ibox;
-        ibox = _ibox_zone_find(ev->border->zone);
-        EINA_LIST_FREE(ibox, b)
-          {
-             if (_ibox_icon_find(b, ev->border)) continue;
-             if ((b->inst->ci->show_desk) && (ev->border->desk != desk) && (!ev->border->sticky)) continue;
-             ic = _ibox_icon_new(b, ev->border);
-             if (!ic) continue;
-             b->icons = eina_list_append(b->icons, ic);
-             e_box_pack_end(b->o_box, ic->o_holder);
-             _ibox_empty_handle(b);
-             _ibox_resize_handle(b);
-             _gc_orient(b->inst->gcc, -1);
-          }
+        if (_ibox_icon_find(b, ev->border)) continue;
+        if ((b->inst->ci->show_desk) && (ev->border->desk != desk) && (!ev->border->sticky)) continue;
+        ic = _ibox_icon_new(b, ev->border);
+        if (!ic) continue;
+        b->icons = eina_list_append(b->icons, ic);
+        e_box_pack_end(b->o_box, ic->o_holder);
+        _ibox_empty_handle(b);
+        _ibox_resize_handle(b);
+        _gc_orient(b->inst->gcc, -1);
      }
    return ECORE_CALLBACK_PASS_ON;
 }
