@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-20 08:17+0900\n"
+"POT-Creation-Date: 2013-03-27 21:29+0900\n"
 "PO-Revision-Date: 2012-12-21 16:23+0100\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: Galician <proxecto@trasno.net>\n"
@@ -147,7 +147,7 @@ msgstr "Está seguro de que quere hibernar o computador?"
 #: src/bin/e_actions.c:2987 src/bin/e_actions.c:2992 src/bin/e_actions.c:2997
 #: src/bin/e_actions.c:3280 src/bin/e_actions.c:3284 src/bin/e_actions.c:3289
 #: src/bin/e_actions.c:3295 src/bin/e_actions.c:3301 src/bin/e_actions.c:3307
-#: src/modules/shot/e_mod_main.c:1034
+#: src/modules/shot/e_mod_main.c:984
 msgid "Window : Actions"
 msgstr "Xanela : Accións"
 
@@ -519,7 +519,7 @@ msgstr "Saltar á xanela... ou iniciar..."
 #: src/modules/backlight/e_mod_main.c:453
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:16 src/modules/ibox/e_mod_config.c:135
-#: src/modules/shot/e_mod_main.c:789 src/modules/shot/e_mod_main.c:1027
+#: src/modules/shot/e_mod_main.c:743 src/modules/shot/e_mod_main.c:977
 msgid "Screen"
 msgstr "Pantalla"
 
@@ -805,8 +805,8 @@ msgstr "Seleccionar"
 #: src/modules/syscon/e_syscon.c:98
 #: src/modules/quickaccess/e_mod_quickaccess.c:319
 #: src/modules/quickaccess/e_mod_quickaccess.c:381
-#: src/modules/shot/e_mod_main.c:297 src/modules/shot/e_mod_main.c:583
-#: src/modules/shot/e_mod_main.c:613 src/modules/shot/e_mod_main.c:848
+#: src/modules/shot/e_mod_main.c:290 src/modules/shot/e_mod_main.c:541
+#: src/modules/shot/e_mod_main.c:567 src/modules/shot/e_mod_main.c:802
 #: src/modules/xkbswitch/e_mod_config.c:499
 msgid "Cancel"
 msgstr "Cancelar"
@@ -2597,7 +2597,7 @@ msgstr "Tamaño, posición e bloqueos"
 #: src/bin/e_int_border_remember.c:656
 #: src/modules/everything/evry_gadget.c:644
 #: src/modules/everything/evry_plug_aggregator.c:313
-#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:793
+#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:747
 msgid "All"
 msgstr "Todo"
 
@@ -6602,13 +6602,13 @@ msgid "e.g. Saving to disk"
 msgstr "por exemplo: Gardar no disco"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:235
-#: src/modules/shot/e_mod_main.c:775
+#: src/modules/shot/e_mod_main.c:729
 #: src/modules/notification/e_mod_config.c:102
 msgid "Low"
 msgstr "Baixo"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:274
-#: src/modules/shot/e_mod_main.c:773
+#: src/modules/shot/e_mod_main.c:727
 msgid "Medium"
 msgstr "Medio"
 
@@ -6620,7 +6620,7 @@ msgid "%.0f s"
 msgstr "%.0f s"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:313
-#: src/modules/shot/e_mod_main.c:771
+#: src/modules/shot/e_mod_main.c:725
 msgid "High"
 msgstr "Alto"
 
@@ -10354,20 +10354,20 @@ msgstr ""
 "Non se pode establecer o fondo da bandexa do sistema invisible para que "
 "coincida co panel."
 
-#: src/modules/shot/e_mod_main.c:182 src/modules/shot/e_mod_main.c:216
+#: src/modules/shot/e_mod_main.c:175 src/modules/shot/e_mod_main.c:209
 msgid "Error saving screenshot file"
 msgstr "Produciuse un erro gardando a captura de pantalla"
 
-#: src/modules/shot/e_mod_main.c:183 src/modules/shot/e_mod_main.c:217
+#: src/modules/shot/e_mod_main.c:176 src/modules/shot/e_mod_main.c:210
 #, c-format
 msgid "Path: %s"
 msgstr "Ruta: %s"
 
-#: src/modules/shot/e_mod_main.c:234
+#: src/modules/shot/e_mod_main.c:227
 msgid "Error - Unknown format"
 msgstr "Erro - Formato descoñecido"
 
-#: src/modules/shot/e_mod_main.c:235
+#: src/modules/shot/e_mod_main.c:228
 msgid ""
 "File has an unspecified extension.<br>Please use '.jpg' or '.png' "
 "extensions<br>only as other formats are not<br>supported currently."
@@ -10375,133 +10375,133 @@ msgstr ""
 "O ficheiro non ten ningunha extensión.<br>Por favor use só as extensións '."
 "jpg' ou '.png'<br>xa que non se admiten outros<br>formatos actualmente."
 
-#: src/modules/shot/e_mod_main.c:283
+#: src/modules/shot/e_mod_main.c:276
 msgid "Select screenshot save location"
 msgstr "Seleccione a localización para gardar a captura de pantalla"
 
-#: src/modules/shot/e_mod_main.c:295 src/modules/shot/e_mod_main.c:844
+#: src/modules/shot/e_mod_main.c:288 src/modules/shot/e_mod_main.c:798
 msgid "Save"
 msgstr "Gardar"
 
-#: src/modules/shot/e_mod_main.c:407
+#: src/modules/shot/e_mod_main.c:387
 #, c-format
 msgid "Uploaded %s / %s"
 msgstr "Subido %s / %s"
 
-#: src/modules/shot/e_mod_main.c:438
+#: src/modules/shot/e_mod_main.c:408
 msgid "Error - Upload Failed"
 msgstr "Erro - Envío fallido"
 
-#: src/modules/shot/e_mod_main.c:439
+#: src/modules/shot/e_mod_main.c:409
 #, c-format
 msgid "Upload failed with status code:<br>%i"
 msgstr "A subida fallou co código de estado:<br>%i"
 
-#: src/modules/shot/e_mod_main.c:482
+#: src/modules/shot/e_mod_main.c:452
 msgid "Error - Can't create file"
 msgstr "Erro - Non se pode crear o ficheiro"
 
-#: src/modules/shot/e_mod_main.c:483
+#: src/modules/shot/e_mod_main.c:453
 #, c-format
 msgid "Cannot create temporary file '%s': %s"
 msgstr "No se pode crear o ficheiro temporal '%s': %s"
 
-#: src/modules/shot/e_mod_main.c:501
+#: src/modules/shot/e_mod_main.c:471
 msgid "Error - Can't open file"
 msgstr "Erro - Non se pode abrir o ficheiro"
 
-#: src/modules/shot/e_mod_main.c:502
+#: src/modules/shot/e_mod_main.c:472
 #, c-format
 msgid "Cannot open temporary file '%s': %s"
 msgstr "Non se pode abrir temporalmente o ficheiro '%s': %s"
 
-#: src/modules/shot/e_mod_main.c:510
+#: src/modules/shot/e_mod_main.c:480
 msgid "Error - Bad size"
 msgstr "Erro - Mal tamaño"
 
-#: src/modules/shot/e_mod_main.c:511
+#: src/modules/shot/e_mod_main.c:481
 #, c-format
 msgid "Cannot get size of file '%s'"
 msgstr "Non se pode obter o tamaño do ficheiro '%s'"
 
-#: src/modules/shot/e_mod_main.c:521
+#: src/modules/shot/e_mod_main.c:491
 msgid "Error - Can't allocate memory"
 msgstr "Erro - Non se pode  asignar memoria"
 
-#: src/modules/shot/e_mod_main.c:522
+#: src/modules/shot/e_mod_main.c:492
 #, c-format
 msgid "Cannot allocate memory for picture: %s"
 msgstr "Non se pode asignar memoria para a imaxe: %s"
 
-#: src/modules/shot/e_mod_main.c:529
+#: src/modules/shot/e_mod_main.c:499
 msgid "Error - Can't read picture"
 msgstr "Erro - non se pode ler a imaxe"
 
-#: src/modules/shot/e_mod_main.c:530
+#: src/modules/shot/e_mod_main.c:500
 msgid "Cannot read picture"
 msgstr "Non se pode ler a imaxe"
 
-#: src/modules/shot/e_mod_main.c:563
+#: src/modules/shot/e_mod_main.c:521
 msgid "Uploading screenshot"
 msgstr "Subindo captura de pantalla"
 
-#: src/modules/shot/e_mod_main.c:568
+#: src/modules/shot/e_mod_main.c:526
 msgid "Uploading ..."
 msgstr "Enviando ..."
 
-#: src/modules/shot/e_mod_main.c:573
+#: src/modules/shot/e_mod_main.c:531
 msgid "Screenshot is available at this location:"
 msgstr "A captura de pantalla está dispoñíbel nesta localización:"
 
-#: src/modules/shot/e_mod_main.c:582
+#: src/modules/shot/e_mod_main.c:540
 msgid "Hide"
 msgstr "Agochar"
 
-#: src/modules/shot/e_mod_main.c:610
+#: src/modules/shot/e_mod_main.c:564
 msgid "Confirm Share"
 msgstr "Confirmar compartición"
 
-#: src/modules/shot/e_mod_main.c:611
+#: src/modules/shot/e_mod_main.c:565
 msgid ""
 "This image will be uploaded<br>to enlightenment.org. It will be publicly "
 "visible."
 msgstr ""
 "Esta imaxe enviarase a<br>enlightenment.org e ficará dispoñible publicamente."
 
-#: src/modules/shot/e_mod_main.c:613
+#: src/modules/shot/e_mod_main.c:567
 msgid "Confirm"
 msgstr "Confirmar"
 
-#: src/modules/shot/e_mod_main.c:713
+#: src/modules/shot/e_mod_main.c:667
 msgid "Where to put Screenshot..."
 msgstr "Onde poñer a Captura de pantalla..."
 
-#: src/modules/shot/e_mod_main.c:765
+#: src/modules/shot/e_mod_main.c:719
 msgid "Quality"
 msgstr "Calidade"
 
-#: src/modules/shot/e_mod_main.c:769
+#: src/modules/shot/e_mod_main.c:723
 msgid "Perfect"
 msgstr "Perfecto"
 
-#: src/modules/shot/e_mod_main.c:846
+#: src/modules/shot/e_mod_main.c:800
 msgid "Share"
 msgstr "Compartir"
 
-#: src/modules/shot/e_mod_main.c:983 src/modules/shot/e_mod_main.c:1034
+#: src/modules/shot/e_mod_main.c:937 src/modules/shot/e_mod_main.c:984
 msgid "Take Shot"
 msgstr "Facer unha captura"
 
-#: src/modules/shot/e_mod_main.c:994 src/modules/shot/e_mod_main.c:1027
-#: src/modules/shot/e_mod_main.c:1038
+#: src/modules/shot/e_mod_main.c:948 src/modules/shot/e_mod_main.c:977
+#: src/modules/shot/e_mod_main.c:988
 msgid "Take Screenshot"
 msgstr "Capturar pantalla"
 
-#: src/modules/shot/e_mod_main.c:1015
+#: src/modules/shot/e_mod_main.c:965
 msgid "Shot Error"
 msgstr "Erro de Shot"
 
-#: src/modules/shot/e_mod_main.c:1016
+#: src/modules/shot/e_mod_main.c:966
 msgid "Cannot initialize network"
 msgstr "Non se pode iniciar a rede"
 
