@@ -187,32 +187,35 @@ main(int argc, char **argv)
    /* trap deadly bug signals and allow some form of sane recovery */
    /* or ability to gdb attach and debug at this point - better than your */
    /* wm/desktop vanishing and not knowing what happened */
-   TS("Signal Trap");
-   action.sa_sigaction = e_sigseg_act;
-   action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
-   sigemptyset(&action.sa_mask);
-   sigaction(SIGSEGV, &action, NULL);
+   if (!getenv("NOTIFY_SOCKET"))
+     {
+        TS("Signal Trap");
+        action.sa_sigaction = e_sigseg_act;
+	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+	sigemptyset(&action.sa_mask);
+	sigaction(SIGSEGV, &action, NULL);
 
-   action.sa_sigaction = e_sigill_act;
-   action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
-   sigemptyset(&action.sa_mask);
-   sigaction(SIGILL, &action, NULL);
+	action.sa_sigaction = e_sigill_act;
+	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+	sigemptyset(&action.sa_mask);
+	sigaction(SIGILL, &action, NULL);
 
-   action.sa_sigaction = e_sigfpe_act;
-   action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
-   sigemptyset(&action.sa_mask);
-   sigaction(SIGFPE, &action, NULL);
+	action.sa_sigaction = e_sigfpe_act;
+	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+	sigemptyset(&action.sa_mask);
+	sigaction(SIGFPE, &action, NULL);
 
-   action.sa_sigaction = e_sigbus_act;
-   action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
-   sigemptyset(&action.sa_mask);
-   sigaction(SIGBUS, &action, NULL);
+	action.sa_sigaction = e_sigbus_act;
+	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+	sigemptyset(&action.sa_mask);
+	sigaction(SIGBUS, &action, NULL);
 
-   action.sa_sigaction = e_sigabrt_act;
-   action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
-   sigemptyset(&action.sa_mask);
-   sigaction(SIGABRT, &action, NULL);
-   TS("Signal Trap Done");
+	action.sa_sigaction = e_sigabrt_act;
+	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+	sigemptyset(&action.sa_mask);
+	sigaction(SIGABRT, &action, NULL);
+	TS("Signal Trap Done");
+     }
 
    t = ecore_time_unix_get();
    s = getenv("E_START_TIME");

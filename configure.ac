@@ -205,6 +205,12 @@ if test "x${have_bluetooth}" = "xyes"; then
    AC_DEFINE_UNQUOTED([HAVE_BLUETOOTH], [1], [Bluetooth is there])
 fi
 
+# Detect systemd user session directory properly
+EFL_PKG_CHECK_VAR([USER_SESSION_DIR], [systemd], [systemduserunitdir],
+	[have_systemd_user_session="yes"], [have_systemd_user_session="no"])
+AM_CONDITIONAL([HAVE_SYSTEMD_USER_SESSION], [test "x${have_systemd_user_session}" = "xyes"])
+AC_SUBST([USER_SESSION_DIR])
+
 execinfo_libs=""
 AC_CHECK_HEADERS([execinfo.h], [have_execinfo="yes"], [have_execinfo="no"])
 if test "x${have_execinfo}" = "xyes" ; then
@@ -1009,6 +1015,7 @@ data/etc/Makefile
 data/etc/sysactions.conf
 data/icons/Makefile
 data/backgrounds/Makefile
+data/units/Makefile
 doc/Makefile
 doc/Doxyfile
 doc/e.dox

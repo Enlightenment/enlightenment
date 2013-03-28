@@ -1,0 +1,27 @@
+[Unit]
+Description=Enlightenment 17 service
+Before=end.target
+After=xorg.target
+Requires=xorg.target
+Requires=dbus.socket
+Requires=pulseaudio.service
+Requires=ssh-agent.service
+AllowIsolate=true
+
+[Service]
+Type=notify
+#Environment=PATH=uncomment:to:override:your:PATH
+Environment=E_START=enlightenment
+ExecStart=/usr/bin/enlightenment
+Restart=always
+RestartPreventExitStatus=0
+RestartSec=2
+StartLimitInterval=30
+StartLimitBurst=7
+KillMode=process
+WatchdogSec=1
+TimeoutSec=1
+NotifyAccess=all
+
+[Install]
+WantedBy=wm.target
