@@ -2133,9 +2133,6 @@ _e_menu_reposition(E_Menu *m)
    m->cur.x = m->parent_item->menu->cur.x + m->parent_item->menu->cur.w;
 
    parent_item_bottom = m->parent_item->y;
-   printf("XXXXXXXXXX %i %i | %i | %i %i\n", 
-          m->cur.h, m->zone->h, parent_item_bottom,
-         m->container_y, m->container_h);
    if (m->cur.h > m->zone->h)
      {
 #if 0 // we can't win - we just flip back and forth, so let it go off and use scrolling
