@@ -2133,8 +2133,12 @@ _e_menu_reposition(E_Menu *m)
    m->cur.x = m->parent_item->menu->cur.x + m->parent_item->menu->cur.w;
 
    parent_item_bottom = m->parent_item->y;
+   printf("XXXXXXXXXX %i %i | %i | %i %i\n", 
+          m->cur.h, m->zone->h, parent_item_bottom,
+         m->container_y, m->container_h);
    if (m->cur.h > m->zone->h)
      {
+#if 0 // we can't win - we just flip back and forth, so let it go off and use scrolling
         /* menu is larger than screen */
         if (parent_item_bottom > (m->zone->h / 2))
           /* more is shown if menu goes up */
@@ -2142,6 +2146,7 @@ _e_menu_reposition(E_Menu *m)
         else
           /* more is shown if menu goes down */
           m->cur.y = parent_item_bottom - m->container_y;
+#endif        
      }
    else
      {
