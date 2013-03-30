@@ -905,16 +905,21 @@ case "$host_os" in
       AC_SUBST(HIBERNATE)
       ;;
    *)
-      AC_PATH_PROGS([SUSPEND], [sleep.sh pm-suspend],[/etc/acpi/sleep.sh], [/etc/acpi:/sbin:/usr/sbin:$PATH])
-      if test "$SUSPEND" = "/etc/acpi/sleep.sh" ; then
-         SUSPEND="/etc/acpi/sleep.sh force"
-         AC_MSG_NOTICE([use suspend method: $SUSPEND])
-      fi
+      if test "x{have_systemd_user_session}" = "xyes"; then
+         SUSPEND="/usr/bin/systemctl suspend"
+	 HIBERNATE="/usr/bin/systemctl hibernate"
+      else
+         AC_PATH_PROGS([SUSPEND], [sleep.sh pm-suspend],[/etc/acpi/sleep.sh], [/etc/acpi:/sbin:/usr/sbin:$PATH])
+      	 if test "$SUSPEND" = "/etc/acpi/sleep.sh" ; then
+            SUSPEND="/etc/acpi/sleep.sh force"
+            AC_MSG_NOTICE([use suspend method: $SUSPEND])
+         fi
 
-      AC_PATH_PROGS([HIBERNATE], [hibernate.sh pm-hibernate],[/etc/acpi/hibernate.sh], [/etc/acpi:/sbin:/usr/sbin:$PATH])
-      if test "$HIBERNATE" = "/etc/acpi/hibernate.sh" ; then
-         HIBERNATE="/etc/acpi/hibernate.sh force"
-         AC_MSG_NOTICE([use hibernate method: $HIBERNATE])
+         AC_PATH_PROGS([HIBERNATE], [hibernate.sh pm-hibernate],[/etc/acpi/hibernate.sh], [/etc/acpi:/sbin:/usr/sbin:$PATH])
+      	 if test "$HIBERNATE" = "/etc/acpi/hibernate.sh" ; then
+            HIBERNATE="/etc/acpi/hibernate.sh force"
+            AC_MSG_NOTICE([use hibernate method: $HIBERNATE])
+      	 fi
       fi
       ;;
 esac

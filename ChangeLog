@@ -1,6 +1,7 @@
 2013-03-28 Cedric Bail
 
 	* added support for systemd user session.
+	* added support for systemd hibernate and suspend.
 
 2013-03-11 Mike Blumenkrantz
 

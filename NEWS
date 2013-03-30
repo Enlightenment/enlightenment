@@ -46,6 +46,7 @@ Additions:
         * added option for preventing all keyboard layout changes
         * added option for remembering filemanager windows globally
 	* Added support for systemd user session
+	* Added support for systemd hibernate and suspend
 
 Changes:
     Modules:
