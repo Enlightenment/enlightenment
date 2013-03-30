@@ -1294,6 +1294,7 @@ _e_menu_free(E_Menu *m)
      }
    if (m->header.title) eina_stringshare_del(m->header.title);
    if (m->header.icon_file) eina_stringshare_del(m->header.icon_file);
+   if (m->dangling_job) ecore_job_del(m->dangling_job);
    free(m);
 }
 
