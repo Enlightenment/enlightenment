@@ -206,7 +206,7 @@ if test "x${have_bluetooth}" = "xyes"; then
 fi
 
 # Detect systemd user session directory properly
-EFL_PKG_CHECK_VAR([USER_SESSION_DIR], [systemd], [systemduserunitdir],
+EFL_PKG_CHECK_VAR([USER_SESSION_DIR], [systemd >= 192], [systemduserunitdir],
 	[have_systemd_user_session="yes"], [have_systemd_user_session="no"])
 AM_CONDITIONAL([HAVE_SYSTEMD_USER_SESSION], [test "x${have_systemd_user_session}" = "xyes"])
 AC_SUBST([USER_SESSION_DIR])
