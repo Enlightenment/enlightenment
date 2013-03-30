@@ -36,13 +36,13 @@ _e_popup_free(E_Popup *pop)
 }
 
 static Eina_Bool
-_e_popup_autoclose_key_down_cb(void *data, int type EINA_UNUSED, void *event)
+_e_popup_autoclose_key_down_cb(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_Event_Key *ev = event;
    Eina_Bool del = EINA_TRUE;
 
    if (autoclose_popup->key_cb)
-     del = !autoclose_popup->key_cb(data, ev);
+     del = !autoclose_popup->key_cb(autoclose_popup->key_data, ev);
    if (del) _e_popup_autoclose_cleanup();
    return ECORE_CALLBACK_RENEW;
 }

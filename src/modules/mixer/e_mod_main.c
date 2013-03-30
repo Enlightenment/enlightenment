@@ -467,7 +467,6 @@ _mixer_popup_key_down_cb(void *data, Ecore_Event_Key *ev)
    E_Mixer_Instance *inst = data;
    const char *keysym;
 
-   if (!inst) return ECORE_CALLBACK_PASS_ON;
    keysym = ev->key;
    if (strcmp(keysym, "Escape") == 0)
      _mixer_popup_del(inst);
