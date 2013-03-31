@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-27 21:29+0900\n"
+"POT-Creation-Date: 2013-03-31 12:24+0900\n"
 "PO-Revision-Date: 2013-01-22 20:49+0400\n"
 "Last-Translator: Igor Murzov <e-mail@date.by>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -35,7 +35,7 @@ msgid "Close"
 msgstr "Закрыть"
 
 #: src/bin/e_about.c:21 src/bin/e_actions.c:3364 src/bin/e_actions.c:3368
-#: src/bin/e_actions.c:3372 src/bin/e_int_menus.c:224 src/bin/e_main.c:632
+#: src/bin/e_actions.c:3372 src/bin/e_int_menus.c:224 src/bin/e_main.c:635
 #: src/modules/conf_interaction/e_int_config_mouse.c:176
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -1000,7 +1000,7 @@ msgid "Apply"
 msgstr "Применить"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
-#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1247
+#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1248
 #: src/modules/connman/e_mod_main.c:591
 #: src/modules/notification/e_mod_main.c:181
 msgid "Extensions"
@@ -2492,8 +2492,8 @@ msgstr "Запрос позиции"
 #: src/bin/e_int_border_prop.c:477 src/bin/e_int_border_prop.c:512
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:272
 #: src/bin/e_shelf.c:2285 src/modules/backlight/e_mod_main.c:254
-#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:361
-#: src/modules/clock/e_mod_main.c:604 src/modules/conf_dialogs/e_mod_main.c:17
+#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:374
+#: src/modules/clock/e_mod_main.c:617 src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf_interaction/e_int_config_mouse.c:155
 #: src/modules/conf_shelves/e_int_config_shelf.c:147
 #: src/modules/everything/evry_gadget.c:511
@@ -2502,7 +2502,7 @@ msgstr "Запрос позиции"
 #: src/modules/ibar/e_mod_main.c:400 src/modules/ibar/e_mod_main.c:876
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
 #: src/modules/pager/e_mod_main.c:878 src/modules/temperature/e_mod_main.c:230
-#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:723
+#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:724
 #: src/modules/music-control/ui.c:225 src/modules/connman/e_mod_main.c:416
 #: src/modules/tasks/e_mod_main.c:728 src/modules/xkbswitch/e_mod_main.c:335
 #: src/modules/xkbswitch/e_mod_main.c:369
@@ -2936,27 +2936,27 @@ msgstr "Показывать на всех столах"
 msgid "Show on specified Desktops"
 msgstr "Показывать на указанных столах"
 
-#: src/bin/e_main.c:233
+#: src/bin/e_main.c:236
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Enlightenment не может инициализировать Eina!\n"
 
-#: src/bin/e_main.c:239
+#: src/bin/e_main.c:242
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Enlightenment не может создать лог домен!\n"
 
-#: src/bin/e_main.c:286
+#: src/bin/e_main.c:289
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Enlightenment не может инициализировать Eet!\n"
 
-#: src/bin/e_main.c:295
+#: src/bin/e_main.c:298
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenment не может инициализировать Ecore!\n"
 
-#: src/bin/e_main.c:304
+#: src/bin/e_main.c:307
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Enlightenment не может инициализировать EIO!\n"
 
-#: src/bin/e_main.c:316
+#: src/bin/e_main.c:319
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2964,7 +2964,7 @@ msgstr ""
 "Enlightenment не может настроить указатель сигнала выхода.\n"
 "Возможно недостаточно памяти?"
 
-#: src/bin/e_main.c:323
+#: src/bin/e_main.c:326
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2972,7 +2972,7 @@ msgstr ""
 "Enlightenment не может настроить указатель сигнала HUP.\n"
 "Возможно недостаточно памяти?"
 
-#: src/bin/e_main.c:330
+#: src/bin/e_main.c:333
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2980,39 +2980,39 @@ msgstr ""
 "Enlightenment не может настроить указатель сигнала USER.\n"
 "Возможно недостаточно памяти?"
 
-#: src/bin/e_main.c:339
+#: src/bin/e_main.c:342
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Enlightenment не может инициализировать Ecore_File!\n"
 
-#: src/bin/e_main.c:348
+#: src/bin/e_main.c:351
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Enlightenment не может инициализировать Ecore_Con!\n"
 
-#: src/bin/e_main.c:357
+#: src/bin/e_main.c:360
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Enlightenment не может инициализировать Ecore_Ipc!\n"
 
-#: src/bin/e_main.c:368
+#: src/bin/e_main.c:371
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment не может инициализировать Ecore_X!\n"
 
-#: src/bin/e_main.c:380
+#: src/bin/e_main.c:383
 msgid "Enlightenment cannot initialize Ecore_IMF!\n"
 msgstr "Enlightenment не может инициализировать Ecore_IMF!\n"
 
-#: src/bin/e_main.c:390
+#: src/bin/e_main.c:393
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Enlightenment не может инициализировать Ecore_Evas!\n"
 
-#: src/bin/e_main.c:400
+#: src/bin/e_main.c:403
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Enlightenment не может инициализировать Elementary!\n"
 
-#: src/bin/e_main.c:411
+#: src/bin/e_main.c:414
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenment не может инициализировать Emotion!\n"
 
-#: src/bin/e_main.c:426
+#: src/bin/e_main.c:429
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3022,7 +3022,7 @@ msgstr ""
 "Software X11 в Evas. Пожалуйста, проверьте правильно ли установлены Evas и\n"
 "Ecore и убедитесь, что они поддерживают отрисовку через Software X11."
 
-#: src/bin/e_main.c:434
+#: src/bin/e_main.c:437
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3032,15 +3032,15 @@ msgstr ""
 "Software Buffer в Evas. Пожалуйста, проверьте правильно ли установлены Evas\n"
 "и Ecore и убедитесь, что они поддерживают отрисовку через Software Buffer."
 
-#: src/bin/e_main.c:444
+#: src/bin/e_main.c:447
 msgid "Enlightenment cannot initialize Edje!\n"
 msgstr "Enlightenment не может инициализировать Edje!\n"
 
-#: src/bin/e_main.c:456
+#: src/bin/e_main.c:459
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenment не может инициализировать E_Intl!\n"
 
-#: src/bin/e_main.c:466
+#: src/bin/e_main.c:469
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3048,11 +3048,11 @@ msgstr ""
 "Enlightenment не может инициализировать систему аварийных сообщений.\n"
 "Вы задали переменную DISPLAY?"
 
-#: src/bin/e_main.c:476
+#: src/bin/e_main.c:479
 msgid "Enlightenment cannot initialize E_Xinerama!\n"
 msgstr "Enlightenment не может инициализировать E_Xinerama!\n"
 
-#: src/bin/e_main.c:494
+#: src/bin/e_main.c:497
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3060,31 +3060,31 @@ msgstr ""
 "Enlightenment не может создавать каталоги в вашем домашнем каталоге.\n"
 "Возможно, у вас нет домашнего каталога или диск заполнен?"
 
-#: src/bin/e_main.c:504
+#: src/bin/e_main.c:507
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "Enlightenment не может настроить свою систему реестра файлов.\n"
 
-#: src/bin/e_main.c:513
+#: src/bin/e_main.c:516
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Enlightenment не может настроить свою систему настроек.\n"
 
-#: src/bin/e_main.c:531
+#: src/bin/e_main.c:534
 msgid "Enlightenment cannot initialize E_Randr!\n"
 msgstr "Enlightenment не может инициализировать E_Randr!\n"
 
-#: src/bin/e_main.c:540
+#: src/bin/e_main.c:543
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment не может настроить свою рабочую среду.\n"
 
-#: src/bin/e_main.c:556
+#: src/bin/e_main.c:559
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment не может настроить свою систему масштабирования.\n"
 
-#: src/bin/e_main.c:565
+#: src/bin/e_main.c:568
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenment не может настроить свою систему указателей.\n"
 
-#: src/bin/e_main.c:574
+#: src/bin/e_main.c:577
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3092,27 +3092,27 @@ msgstr ""
 "Enlightenment не может настроить пути для поиска файлов.\n"
 "Возможно недостаточно памяти?"
 
-#: src/bin/e_main.c:591
+#: src/bin/e_main.c:594
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenment не может настроить свою систему шрифтов.\n"
 
-#: src/bin/e_main.c:608
+#: src/bin/e_main.c:611
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenment не может настроить свою систему тем.\n"
 
-#: src/bin/e_main.c:624
+#: src/bin/e_main.c:627
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenment не может настроить свою систему заставки.\n"
 
-#: src/bin/e_main.c:639
+#: src/bin/e_main.c:642
 msgid "Starting International Support"
 msgstr "Запускается языковая поддержка"
 
-#: src/bin/e_main.c:643
+#: src/bin/e_main.c:646
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenment не может настроить свою систему интернационализации.\n"
 
-#: src/bin/e_main.c:652
+#: src/bin/e_main.c:655
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3122,19 +3122,19 @@ msgstr ""
 "Возможно, у вас недостаточно прав на каталог ~/.cache/efreet,\n"
 "или недостаточно памяти, или дискового пространства?"
 
-#: src/bin/e_main.c:677
+#: src/bin/e_main.c:680
 msgid "Setup Actions"
 msgstr "Настройка действий"
 
-#: src/bin/e_main.c:681
+#: src/bin/e_main.c:684
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment не может настроить свою систему действий.\n"
 
-#: src/bin/e_main.c:688
+#: src/bin/e_main.c:691
 msgid "Setup Screens"
 msgstr "Настройка экранов"
 
-#: src/bin/e_main.c:692
+#: src/bin/e_main.c:695
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3142,234 +3142,234 @@ msgstr ""
 "Настройка управления окнами для всех экранов на вашей системе не удалась.\n"
 "Возможно запущен другой менеджер окон?\n"
 
-#: src/bin/e_main.c:700
+#: src/bin/e_main.c:703
 msgid "Setup ACPI"
 msgstr "Настройка ACPI"
 
-#: src/bin/e_main.c:707
+#: src/bin/e_main.c:710
 msgid "Setup Backlight"
 msgstr "Настройка подсветки"
 
-#: src/bin/e_main.c:711
+#: src/bin/e_main.c:714
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Enlightenment не может настроить подсветку.\n"
 
-#: src/bin/e_main.c:718
+#: src/bin/e_main.c:721
 msgid "Setup Screensaver"
 msgstr "Настройка хранителя экрана"
 
-#: src/bin/e_main.c:722
+#: src/bin/e_main.c:725
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "Enlightenment не может настроить хранитель экрана.\n"
 
-#: src/bin/e_main.c:729
+#: src/bin/e_main.c:732
 msgid "Setup DPMS"
 msgstr "Настройка DPMS"
 
-#: src/bin/e_main.c:733
+#: src/bin/e_main.c:736
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Enlightenment не может настроить DPMS.\n"
 
-#: src/bin/e_main.c:740
+#: src/bin/e_main.c:743
 msgid "Setup Powersave Modes"
 msgstr "Настройка режима энергосбережения"
 
-#: src/bin/e_main.c:744
+#: src/bin/e_main.c:747
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Enlightenment не может настроить режим энергосбережения.\n"
 
-#: src/bin/e_main.c:751
+#: src/bin/e_main.c:754
 msgid "Setup Desklock"
 msgstr "Настройка блокировки"
 
-#: src/bin/e_main.c:755
+#: src/bin/e_main.c:758
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "Enlightenment не может настроить систему блокировки рабочего стола.\n"
 
-#: src/bin/e_main.c:762
+#: src/bin/e_main.c:765
 msgid "Setup Popups"
 msgstr "Настройка всплывающих окон"
 
-#: src/bin/e_main.c:766
+#: src/bin/e_main.c:769
 msgid "Enlightenment cannot set up its popup system.\n"
 msgstr "Enlightenment не может настроить свою систему всплывающих окон.\n"
 
-#: src/bin/e_main.c:778
+#: src/bin/e_main.c:781
 msgid "Setup Message Bus"
 msgstr "Настройка шины сообщений"
 
-#: src/bin/e_main.c:785
+#: src/bin/e_main.c:788
 msgid "Setup Paths"
 msgstr "Настройка путей"
 
-#: src/bin/e_main.c:791
+#: src/bin/e_main.c:794
 msgid "Setup System Controls"
 msgstr "Настройка системы управления"
 
-#: src/bin/e_main.c:795
+#: src/bin/e_main.c:798
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "Enlightenment не может настроить систему системных команд.\n"
 
-#: src/bin/e_main.c:802
+#: src/bin/e_main.c:805
 msgid "Setup Execution System"
 msgstr "Настройка системы запуска"
 
-#: src/bin/e_main.c:806
+#: src/bin/e_main.c:809
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Enlightenment не может настроить свою систему запуска.\n"
 
-#: src/bin/e_main.c:817
-msgid "Setup Filemanager"
-msgstr "Настройки файлового менеджера"
-
-#: src/bin/e_main.c:821
-msgid "Enlightenment cannot initialize the File manager.\n"
-msgstr "Enlightenment не может инициализировать файловый менеджер.\n"
-
-#: src/bin/e_main.c:828
-msgid "Setup Message System"
-msgstr "Настройка системы сообщений"
-
-#: src/bin/e_main.c:832
-msgid "Enlightenment cannot set up its msg system.\n"
-msgstr "Enlightenment не может настроить свою систему сообщений.\n"
-
-#: src/bin/e_main.c:839
+#: src/bin/e_main.c:820
 msgid "Setup DND"
 msgstr "Настройка DND"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:824
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Enlightenment не может настроить свою DND-систему.\n"
 
-#: src/bin/e_main.c:850
+#: src/bin/e_main.c:831
+msgid "Setup Filemanager"
+msgstr "Настройки файлового менеджера"
+
+#: src/bin/e_main.c:835
+msgid "Enlightenment cannot initialize the File manager.\n"
+msgstr "Enlightenment не может инициализировать файловый менеджер.\n"
+
+#: src/bin/e_main.c:842
+msgid "Setup Message System"
+msgstr "Настройка системы сообщений"
+
+#: src/bin/e_main.c:846
+msgid "Enlightenment cannot set up its msg system.\n"
+msgstr "Enlightenment не может настроить свою систему сообщений.\n"
+
+#: src/bin/e_main.c:853
 msgid "Setup Grab Input Handling"
 msgstr "Настройка обработчика захвата ввода"
 
-#: src/bin/e_main.c:854
+#: src/bin/e_main.c:857
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 "Enlightenment не может настроить свою систему захвата и обработки ввода.\n"
 
-#: src/bin/e_main.c:861
+#: src/bin/e_main.c:864
 msgid "Setup Modules"
 msgstr "Настройка модулей"
 
-#: src/bin/e_main.c:865 src/bin/e_main.c:1057
+#: src/bin/e_main.c:868 src/bin/e_main.c:1060
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenment не может настроить свою систему модулей.\n"
 
-#: src/bin/e_main.c:872
+#: src/bin/e_main.c:875
 msgid "Setup Remembers"
 msgstr "Настройка запоминаний"
 
-#: src/bin/e_main.c:876
+#: src/bin/e_main.c:879
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Enlightenment не может настроить запоминание настроек.\n"
 
-#: src/bin/e_main.c:883
+#: src/bin/e_main.c:886
 msgid "Setup Color Classes"
 msgstr "Настройка цветовых классов"
 
-#: src/bin/e_main.c:887
+#: src/bin/e_main.c:890
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr "Enlightenment не может настроить свою систему класса цветов.\n"
 
-#: src/bin/e_main.c:894
+#: src/bin/e_main.c:897
 msgid "Setup Gadcon"
 msgstr "Настройка контейнера гаджетов"
 
-#: src/bin/e_main.c:898
+#: src/bin/e_main.c:901
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenment не может настроить свою систему управления гаджетами.\n"
 
-#: src/bin/e_main.c:905
+#: src/bin/e_main.c:908
 #, fuzzy
 msgid "Setup Toolbars"
 msgstr "Установка содержимого панели инструментов"
 
-#: src/bin/e_main.c:909
+#: src/bin/e_main.c:912
 #, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenment не может настроить свою систему интернационализации.\n"
 
-#: src/bin/e_main.c:916
+#: src/bin/e_main.c:919
 msgid "Setup Wallpaper"
 msgstr "Настройка фона"
 
-#: src/bin/e_main.c:920
+#: src/bin/e_main.c:923
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Enlightenment не может настроить свою систему фона рабочего стола.\n"
 
-#: src/bin/e_main.c:927
+#: src/bin/e_main.c:930
 msgid "Setup Mouse"
 msgstr "Настройка мыши"
 
-#: src/bin/e_main.c:931
+#: src/bin/e_main.c:934
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Enlightenment не может настроить параметры мыши.\n"
 
-#: src/bin/e_main.c:938
+#: src/bin/e_main.c:941
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr "Enlightenment не может настроить раскладки клавиатуры XKB.\n"
 
-#: src/bin/e_main.c:944
+#: src/bin/e_main.c:947
 msgid "Setup Bindings"
 msgstr "Настройка привязок"
 
-#: src/bin/e_main.c:948
+#: src/bin/e_main.c:951
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenment не может настроить свою систему привязок.\n"
 
-#: src/bin/e_main.c:955
+#: src/bin/e_main.c:958
 msgid "Setup Thumbnailer"
 msgstr "Настройка генератора миниатюр"
 
-#: src/bin/e_main.c:959
+#: src/bin/e_main.c:962
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenment не может настроить систему Thumbnailing.\n"
 
-#: src/bin/e_main.c:968
+#: src/bin/e_main.c:971
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "Enlightenment не может настроить систему кэширования значков.\n"
 
-#: src/bin/e_main.c:977
+#: src/bin/e_main.c:980
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment не может настроить систему XSettings.\n"
 
-#: src/bin/e_main.c:986
+#: src/bin/e_main.c:989
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Enlightenment не может настроить систему обновлений.\n"
 
-#: src/bin/e_main.c:993
+#: src/bin/e_main.c:996
 msgid "Setup Desktop Environment"
 msgstr "Настройки графической рабочей среды"
 
-#: src/bin/e_main.c:997
+#: src/bin/e_main.c:1000
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Enlightenment не может инициализировать окружение рабочего среды.\n"
 
-#: src/bin/e_main.c:1004
+#: src/bin/e_main.c:1007
 msgid "Setup File Ordering"
 msgstr "Настрока очередности файлов"
 
-#: src/bin/e_main.c:1008
+#: src/bin/e_main.c:1011
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Enlightenment не может настроить свою систему очередей.\n"
 
-#: src/bin/e_main.c:1023
+#: src/bin/e_main.c:1026
 msgid "Load Modules"
 msgstr "Загрузка модулей"
 
-#: src/bin/e_main.c:1053
+#: src/bin/e_main.c:1056
 msgid "Setup Shelves"
 msgstr "Настройка полок"
 
-#: src/bin/e_main.c:1074
+#: src/bin/e_main.c:1077
 msgid "Almost Done"
 msgstr "Почти закончено"
 
-#: src/bin/e_main.c:1235
+#: src/bin/e_main.c:1238
 #, c-format
 msgid ""
 "Options:\n"
@@ -3422,7 +3422,7 @@ msgstr ""
 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
 "\t\tЕсли вам нужна эта подсказка, то вам не нужна эта опция.\n"
 
-#: src/bin/e_main.c:1288
+#: src/bin/e_main.c:1291
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -3438,11 +3438,11 @@ msgstr ""
 "запустить базовые службы прежде, чем стартует сам\n"
 "enlightenment.\n"
 
-#: src/bin/e_main.c:1569
+#: src/bin/e_main.c:1572
 msgid "Testing Format Support"
 msgstr "Проверка поддержки форматов"
 
-#: src/bin/e_main.c:1573
+#: src/bin/e_main.c:1576
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -3451,7 +3451,7 @@ msgstr ""
 "Пожалуйста, проверьте,\n"
 "что Evas поддерживает движок Software Buffer.\n"
 
-#: src/bin/e_main.c:1585
+#: src/bin/e_main.c:1588
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
@@ -3459,7 +3459,7 @@ msgstr ""
 "Enlightenment обнаружил, что Evas не может загружать файлы SVG. Проверьте,\n"
 "что Evas имеет поддержку загрузчика SVG.\n"
 
-#: src/bin/e_main.c:1595
+#: src/bin/e_main.c:1598
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -3467,7 +3467,7 @@ msgstr ""
 "Enlightenment обнаружил, что Evas не может загружать файлы JPEG. Проверьте,\n"
 "что Evas имеет поддержку загрузчика JPEG.\n"
 
-#: src/bin/e_main.c:1605
+#: src/bin/e_main.c:1608
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
@@ -3475,7 +3475,7 @@ msgstr ""
 "Enlightenment обнаружил, что Evas не может загружать файлы PNG. Проверьте,\n"
 "что Evas имеет поддержку загрузчика PNG.\n"
 
-#: src/bin/e_main.c:1615
+#: src/bin/e_main.c:1618
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
@@ -3483,7 +3483,7 @@ msgstr ""
 "Enlightenment обнаружил, что Evas не может загружать файлы EET. Проверьте,\n"
 "что Evas имеет поддержку загрузчика EET.\n"
 
-#: src/bin/e_main.c:1629
+#: src/bin/e_main.c:1632
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -3494,7 +3494,7 @@ msgstr ""
 "имеет ли Evas поддержку fontconfig, и определяет ли fontconfig шрифт "
 "'Sans'.\n"
 
-#: src/bin/e_main.c:1852
+#: src/bin/e_main.c:1855
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -3504,11 +3504,11 @@ msgstr ""
 "Enlightenment дал сбой при старте и был перезапущен.<br>Произошла ошибка "
 "загрузки модуля: %s.<br>Этот модуль был отключен и не будет загружен."
 
-#: src/bin/e_main.c:1857 src/bin/e_main.c:1873
+#: src/bin/e_main.c:1860 src/bin/e_main.c:1876
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment дал сбой при старте и был перезапущен"
 
-#: src/bin/e_main.c:1858
+#: src/bin/e_main.c:1861
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -3518,7 +3518,7 @@ msgstr ""
 "Enlightenment дал сбой при старте и был перезапущен.<br>Произошла ошибка "
 "загрузки модуля: %s.<br><br>Этот модуль был отключен и не будет загружен."
 
-#: src/bin/e_main.c:1866
+#: src/bin/e_main.c:1869
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -3530,7 +3530,7 @@ msgstr ""
 "проблему с модулями в вашей конфигурации.<br>Диалог конфигурации модулей "
 "позволит вам выбрать нужные<br>модули заново.\n"
 
-#: src/bin/e_main.c:1874
+#: src/bin/e_main.c:1877
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4446,8 +4446,8 @@ msgstr "Индикатор батареи"
 msgid "Clock Settings"
 msgstr "Настройки часов"
 
-#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:709
-#: src/modules/clock/e_mod_main.c:870
+#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:722
+#: src/modules/clock/e_mod_main.c:883
 msgid "Clock"
 msgstr "Часы"
 
@@ -4513,7 +4513,7 @@ msgstr ""
 msgid "%a, %x"
 msgstr ""
 
-#: src/modules/clock/e_mod_main.c:870
+#: src/modules/clock/e_mod_main.c:883
 msgid "Toggle calendar"
 msgstr "Переключить календарь"
 
@@ -9874,7 +9874,7 @@ msgstr "Левый:"
 msgid "Right:"
 msgstr "Правый:"
 
-#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:641
+#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:642
 msgid "Mute"
 msgstr "Без звука"
 
@@ -9930,19 +9930,19 @@ msgstr "Громкость изменена"
 msgid "Mixer Settings Updated"
 msgstr "Настройки микшера обновлены"
 
-#: src/modules/mixer/e_mod_main.c:1324
+#: src/modules/mixer/e_mod_main.c:1325
 msgid "Mixer Module"
 msgstr "Модуль Микшера"
 
-#: src/modules/mixer/e_mod_main.c:1352
+#: src/modules/mixer/e_mod_main.c:1353
 msgid "Increase Volume"
 msgstr "Прибавить звук"
 
-#: src/modules/mixer/e_mod_main.c:1353
+#: src/modules/mixer/e_mod_main.c:1354
 msgid "Decrease Volume"
 msgstr "Убавить звук"
 
-#: src/modules/mixer/e_mod_main.c:1354
+#: src/modules/mixer/e_mod_main.c:1355
 msgid "Mute Volume"
 msgstr "Без звука"
 

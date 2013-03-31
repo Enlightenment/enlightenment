@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-27 21:29+0900\n"
+"POT-Creation-Date: 2013-03-31 12:24+0900\n"
 "PO-Revision-Date: 2012-12-21 21:19+0200\n"
 "Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
@@ -37,7 +37,7 @@ msgid "Close"
 msgstr "Κλείσιμο"
 
 #: src/bin/e_about.c:21 src/bin/e_actions.c:3364 src/bin/e_actions.c:3368
-#: src/bin/e_actions.c:3372 src/bin/e_int_menus.c:224 src/bin/e_main.c:632
+#: src/bin/e_actions.c:3372 src/bin/e_int_menus.c:224 src/bin/e_main.c:635
 #: src/modules/conf_interaction/e_int_config_mouse.c:176
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -1012,7 +1012,7 @@ msgid "Apply"
 msgstr "Εφαρμογή"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
-#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1247
+#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1248
 #: src/modules/connman/e_mod_main.c:591
 #: src/modules/notification/e_mod_main.c:181
 msgid "Extensions"
@@ -2506,8 +2506,8 @@ msgstr "Αίτηση Θέσης"
 #: src/bin/e_int_border_prop.c:477 src/bin/e_int_border_prop.c:512
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:272
 #: src/bin/e_shelf.c:2285 src/modules/backlight/e_mod_main.c:254
-#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:361
-#: src/modules/clock/e_mod_main.c:604 src/modules/conf_dialogs/e_mod_main.c:17
+#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:374
+#: src/modules/clock/e_mod_main.c:617 src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf_interaction/e_int_config_mouse.c:155
 #: src/modules/conf_shelves/e_int_config_shelf.c:147
 #: src/modules/everything/evry_gadget.c:511
@@ -2516,7 +2516,7 @@ msgstr "Αίτηση Θέσης"
 #: src/modules/ibar/e_mod_main.c:400 src/modules/ibar/e_mod_main.c:876
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
 #: src/modules/pager/e_mod_main.c:878 src/modules/temperature/e_mod_main.c:230
-#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:723
+#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:724
 #: src/modules/music-control/ui.c:225 src/modules/connman/e_mod_main.c:416
 #: src/modules/tasks/e_mod_main.c:728 src/modules/xkbswitch/e_mod_main.c:335
 #: src/modules/xkbswitch/e_mod_main.c:369
@@ -2955,27 +2955,27 @@ msgstr "Εμφάνιση σε όλες τις Επιφάνειες Εργασί�
 msgid "Show on specified Desktops"
 msgstr "Εμφάνιση σε επιλεγμένες Επιφάνειες Εργασίας"
 
-#: src/bin/e_main.c:233
+#: src/bin/e_main.c:236
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Αδυναμία αρχικοποίησης Eina από το Enlightenment!\n"
 
-#: src/bin/e_main.c:239
+#: src/bin/e_main.c:242
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Αδυναμία δημιουργίας τομέα καταγραφής από το Enlightenment!\n"
 
-#: src/bin/e_main.c:286
+#: src/bin/e_main.c:289
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Αδυναμία αρχικοποίησης Eet από το Enlightenment!\n"
 
-#: src/bin/e_main.c:295
+#: src/bin/e_main.c:298
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Αδυναμία αρχικοποίησης Ecore από το Enlightenment!\n"
 
-#: src/bin/e_main.c:304
+#: src/bin/e_main.c:307
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Αδυναμία αρχικοποίησης EIO από το Enlightenment!\n"
 
-#: src/bin/e_main.c:316
+#: src/bin/e_main.c:319
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2983,7 +2983,7 @@ msgstr ""
 "Αδυναμία ρύθμισης διαχειριστή σήματος εξόδου από το Enlightenment.\n"
 "Ίσως δεν έχετε μνήμη;"
 
-#: src/bin/e_main.c:323
+#: src/bin/e_main.c:326
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2991,7 +2991,7 @@ msgstr ""
 "Αδυναμία ρύθμισης διαχειριστή σήματος HUP από το Enlightenment.\n"
 "Ίσως δεν έχετε μνήμη;"
 
-#: src/bin/e_main.c:330
+#: src/bin/e_main.c:333
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2999,39 +2999,39 @@ msgstr ""
 "Αδυναμία ρύθμισης διαχειριστή σήματος USER από το Enlightenment.\n"
 "Ίσως δεν έχετε μνήμη;"
 
-#: src/bin/e_main.c:339
+#: src/bin/e_main.c:342
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Αδυναμία αρχικοποίησης Ecore_File από το Enlightenment!\n"
 
-#: src/bin/e_main.c:348
+#: src/bin/e_main.c:351
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Αδυναμία αρχικοποίησης Ecore_Con από το Enlightenment!\n"
 
-#: src/bin/e_main.c:357
+#: src/bin/e_main.c:360
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Αδυναμία αρχικοποίησης Ecore_Ipc από το Enlightenment!\n"
 
-#: src/bin/e_main.c:368
+#: src/bin/e_main.c:371
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Αδυναμία αρχικοποίησης Ecore_X από το Enlightenment!\n"
 
-#: src/bin/e_main.c:380
+#: src/bin/e_main.c:383
 msgid "Enlightenment cannot initialize Ecore_IMF!\n"
 msgstr "Αδυναμία αρχικοποίησης του Ecore_IMF από το Enlightenment!\n"
 
-#: src/bin/e_main.c:390
+#: src/bin/e_main.c:393
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Αδυναμία αρχικοποίησης του Ecore_Evas από το Enlightenment!\n"
 
-#: src/bin/e_main.c:400
+#: src/bin/e_main.c:403
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Αδυναμία αρχικοποίησης του Elementary από το Enlightenment!\n"
 
-#: src/bin/e_main.c:411
+#: src/bin/e_main.c:414
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Αδυναμία αρχικοποίησης του Emotion από το Enlightenment!\n"
 
-#: src/bin/e_main.c:426
+#: src/bin/e_main.c:429
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3042,7 +3042,7 @@ msgstr ""
 "στο Evas. Παρακαλώ ελέγξτε την εγκατάσταση του Evas και του\n"
 "Ecore και βεβαιωθείτε ότι υποστηρίζουν την μηχανή απεικόνισης λογισμικού X11."
 
-#: src/bin/e_main.c:434
+#: src/bin/e_main.c:437
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3055,15 +3055,15 @@ msgstr ""
 "Ecore και βεβαιωθείτε ότι υποστηρίζουν την μηχανή απεικόνισης Λογισμικού με "
 "Ενδιάμεση Μνήμη."
 
-#: src/bin/e_main.c:444
+#: src/bin/e_main.c:447
 msgid "Enlightenment cannot initialize Edje!\n"
 msgstr "Αδυναμία αρχικοποίησης του Edje από το Enlightenment!\n"
 
-#: src/bin/e_main.c:456
+#: src/bin/e_main.c:459
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Αδυναμία αρχικοποίησης του E_Intl από το Enlightenment!\n"
 
-#: src/bin/e_main.c:466
+#: src/bin/e_main.c:469
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3071,11 +3071,11 @@ msgstr ""
 "Αδυναμία αρχικοποίησης συστήματος εκτάκτων ειδοποιήσεων.\n"
 "Έχετε ορίσει την μεταβλητή DISPLAY;"
 
-#: src/bin/e_main.c:476
+#: src/bin/e_main.c:479
 msgid "Enlightenment cannot initialize E_Xinerama!\n"
 msgstr "Αδυναμία αρχικοποίησης του E_Xinerama από το Enlightenment!\n"
 
-#: src/bin/e_main.c:494
+#: src/bin/e_main.c:497
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3084,31 +3084,31 @@ msgstr ""
 "Enlightenment.\n"
 "Πιθανόν δεν έχετε φάκελο home ή ο δίσκος είναι γεμάτος."
 
-#: src/bin/e_main.c:504
+#: src/bin/e_main.c:507
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος αρχείου μητρώου από το Enlightement.\n"
 
-#: src/bin/e_main.c:513
+#: src/bin/e_main.c:516
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος ρυθμίσεων από το Enlightenment.\n"
 
-#: src/bin/e_main.c:531
+#: src/bin/e_main.c:534
 msgid "Enlightenment cannot initialize E_Randr!\n"
 msgstr "Αδυναμία αρχικοποίησης του E_Randr από το Enlightenment!\n"
 
-#: src/bin/e_main.c:540
+#: src/bin/e_main.c:543
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Αδυναμία ρύθμισης του περιβάλλοντος από το Enlightenment.\n"
 
-#: src/bin/e_main.c:556
+#: src/bin/e_main.c:559
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος κλιμάκωσης από το Enlightenment.\n"
 
-#: src/bin/e_main.c:565
+#: src/bin/e_main.c:568
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος δείκτη από το Enlightenment.\n"
 
-#: src/bin/e_main.c:574
+#: src/bin/e_main.c:577
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3116,27 +3116,27 @@ msgstr ""
 "Αδυναμία ρύθμισης διαδρομών για εύρεση αρχείων από το Enlightenment.\n"
 "Πιθανόν να μην έχετε αρκετή μνήμη;"
 
-#: src/bin/e_main.c:591
+#: src/bin/e_main.c:594
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος γραμματοσειρών από το Enlightenment.\n"
 
-#: src/bin/e_main.c:608
+#: src/bin/e_main.c:611
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος θεμάτων από το Enlightenment.\n"
 
-#: src/bin/e_main.c:624
+#: src/bin/e_main.c:627
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Αδυναμία ρύθμισης αρχικής οθόνης από το Enlightenment.\n"
 
-#: src/bin/e_main.c:639
+#: src/bin/e_main.c:642
 msgid "Starting International Support"
 msgstr "Έναρξη πολυεθνικής υποστήριξης"
 
-#: src/bin/e_main.c:643
+#: src/bin/e_main.c:646
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Αδυναμία ρύθμισης εσωτερικού συστήματος από το Enlightenment.\n"
 
-#: src/bin/e_main.c:652
+#: src/bin/e_main.c:655
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3147,19 +3147,19 @@ msgstr ""
 "Ίσως να μην έχετε δικαιώματα στο ~/.cache/efreet ή\n"
 "να μην έχετε αρκετή μνήμη ή χώρο στο δίσκο;"
 
-#: src/bin/e_main.c:677
+#: src/bin/e_main.c:680
 msgid "Setup Actions"
 msgstr "Ρύθμιση Ενεργειών"
 
-#: src/bin/e_main.c:681
+#: src/bin/e_main.c:684
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος ενεργειών από το Enlightenment.\n"
 
-#: src/bin/e_main.c:688
+#: src/bin/e_main.c:691
 msgid "Setup Screens"
 msgstr "Ρύθμιση Οθονών"
 
-#: src/bin/e_main.c:692
+#: src/bin/e_main.c:695
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3167,251 +3167,251 @@ msgstr ""
 "Αποτυχία ρύθμισης διαχείρισης παραθύρων για όλες τις οθόνες του συστήματος\n"
 "από το Enlightenment. Ίσως εκτελείται άλλος διαχειριστής παραθύρων;\n"
 
-#: src/bin/e_main.c:700
+#: src/bin/e_main.c:703
 msgid "Setup ACPI"
 msgstr "Ρύθμιση ACPI"
 
-#: src/bin/e_main.c:707
+#: src/bin/e_main.c:710
 msgid "Setup Backlight"
 msgstr "Ρύθμιση Οπίσθιου Φωτισμού"
 
-#: src/bin/e_main.c:711
+#: src/bin/e_main.c:714
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Αδυναμία ρύθμισης οπίσθιου φωτισμού από το Enlightenment.\n"
 
-#: src/bin/e_main.c:718
+#: src/bin/e_main.c:721
 msgid "Setup Screensaver"
 msgstr "Ρύθμιση Προφύλαξης Οθόνης"
 
-#: src/bin/e_main.c:722
+#: src/bin/e_main.c:725
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr ""
 "Το Enlightenment δεν μπορεί να ρυθμίσει την προφύλαξη οθόνης για τον X.\n"
 
-#: src/bin/e_main.c:729
+#: src/bin/e_main.c:732
 msgid "Setup DPMS"
 msgstr "Ρύθμιση DPMS"
 
-#: src/bin/e_main.c:733
+#: src/bin/e_main.c:736
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Αδυναμία ρύθμισης των επιλογών DPMS από το Enlightenment.\n"
 
-#: src/bin/e_main.c:740
+#: src/bin/e_main.c:743
 msgid "Setup Powersave Modes"
 msgstr "Ρύθμιση Κατάστασης Εξοικονόμησης Ενέργειας"
 
-#: src/bin/e_main.c:744
+#: src/bin/e_main.c:747
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr ""
 "Αδυναμία ρύθμισης κατάστασης εξοικονόμησης ενέργειας από το Enlightenment.\n"
 
-#: src/bin/e_main.c:751
+#: src/bin/e_main.c:754
 msgid "Setup Desklock"
 msgstr "Ρύθμιση Κλειδώματος Οθόνης"
 
-#: src/bin/e_main.c:755
+#: src/bin/e_main.c:758
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr ""
 "Αδυναμία ρύθμισης του συστήματος κλειδώματος οθόνης από το Enlightenment.\n"
 
-#: src/bin/e_main.c:762
+#: src/bin/e_main.c:765
 msgid "Setup Popups"
 msgstr "Ρύθμιση Αναδυόμενων"
 
-#: src/bin/e_main.c:766
+#: src/bin/e_main.c:769
 msgid "Enlightenment cannot set up its popup system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος αναδυόμενων από το Enlightenment.\n"
 
-#: src/bin/e_main.c:778
+#: src/bin/e_main.c:781
 msgid "Setup Message Bus"
 msgstr "Ρύθμιση Διαύλου Μηνυμάτων"
 
-#: src/bin/e_main.c:785
+#: src/bin/e_main.c:788
 msgid "Setup Paths"
 msgstr "Ρύθμιση Διαδρομών"
 
-#: src/bin/e_main.c:791
+#: src/bin/e_main.c:794
 msgid "Setup System Controls"
 msgstr "Ρύθμιση Χειρισμών Συστήματος"
 
-#: src/bin/e_main.c:795
+#: src/bin/e_main.c:798
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr ""
 "Αδυναμία αρχικοποίησης συστήματος εντολών του υπολογιστή από το "
 "Enlightenment.\n"
 
-#: src/bin/e_main.c:802
+#: src/bin/e_main.c:805
 msgid "Setup Execution System"
 msgstr "Ρύθμιση Συστήματος Εκτέλεσης"
 
-#: src/bin/e_main.c:806
+#: src/bin/e_main.c:809
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Ασυναμία ρύθμισης συστήματος εκτελέσιμων από το Enlightenment.\n"
 
-#: src/bin/e_main.c:817
-msgid "Setup Filemanager"
-msgstr "Ρύθμιση Διαχειριστή αρχείων"
-
-#: src/bin/e_main.c:821
-msgid "Enlightenment cannot initialize the File manager.\n"
-msgstr "Αδυναμία αρχικοποίησης του διαχειριστή αρχείων από το Enlightenment.\n"
-
-#: src/bin/e_main.c:828
-msgid "Setup Message System"
-msgstr "Ρύθμιση Συστήματος Μηνυμάτων"
-
-#: src/bin/e_main.c:832
-msgid "Enlightenment cannot set up its msg system.\n"
-msgstr "Αδυναμία ρύθμισης συστήματος μηνυμάτων από το Enlightenment.\n"
-
-#: src/bin/e_main.c:839
+#: src/bin/e_main.c:820
 msgid "Setup DND"
 msgstr "Ρύθμιση DND"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:824
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Αδυναμία ρύθμισης του συστήματος dnd από το Enlightenment.\n"
 
-#: src/bin/e_main.c:850
+#: src/bin/e_main.c:831
+msgid "Setup Filemanager"
+msgstr "Ρύθμιση Διαχειριστή αρχείων"
+
+#: src/bin/e_main.c:835
+msgid "Enlightenment cannot initialize the File manager.\n"
+msgstr "Αδυναμία αρχικοποίησης του διαχειριστή αρχείων από το Enlightenment.\n"
+
+#: src/bin/e_main.c:842
+msgid "Setup Message System"
+msgstr "Ρύθμιση Συστήματος Μηνυμάτων"
+
+#: src/bin/e_main.c:846
+msgid "Enlightenment cannot set up its msg system.\n"
+msgstr "Αδυναμία ρύθμισης συστήματος μηνυμάτων από το Enlightenment.\n"
+
+#: src/bin/e_main.c:853
 msgid "Setup Grab Input Handling"
 msgstr "Ρύθμιση Διαχείρισης Εισαγωγής Grab"
 
-#: src/bin/e_main.c:854
+#: src/bin/e_main.c:857
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 "Αδυναμία ρύθμισης συστήματος διαχείρισης εισαγωγής grub από το "
 "Enlightenment.\n"
 
-#: src/bin/e_main.c:861
+#: src/bin/e_main.c:864
 msgid "Setup Modules"
 msgstr "Ρύθμιση Αρθρωμάτων"
 
-#: src/bin/e_main.c:865 src/bin/e_main.c:1057
+#: src/bin/e_main.c:868 src/bin/e_main.c:1060
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος αρθρωμάτων από το Enlightenment.\n"
 
-#: src/bin/e_main.c:872
+#: src/bin/e_main.c:875
 msgid "Setup Remembers"
 msgstr "Ρύθμιση Απομνημόνευσης"
 
-#: src/bin/e_main.c:876
+#: src/bin/e_main.c:879
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Αδυναμία ρύθμισης απομνημόνευσης ρυθμίσεων από το Enlightenment.\n"
 
-#: src/bin/e_main.c:883
+#: src/bin/e_main.c:886
 msgid "Setup Color Classes"
 msgstr "Ρύθμιση Κλάσεων Χρωμάτων"
 
-#: src/bin/e_main.c:887
+#: src/bin/e_main.c:890
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος κλάσεων χρωμάτων από το Enlightenment.\n"
 
-#: src/bin/e_main.c:894
+#: src/bin/e_main.c:897
 msgid "Setup Gadcon"
 msgstr "Ρύθμιση Gadcon"
 
-#: src/bin/e_main.c:898
+#: src/bin/e_main.c:901
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr ""
 "Αδυναμία ρύθμισης συστήματος ελέγχου συστατικών από το Enlightenment.\n"
 
-#: src/bin/e_main.c:905
+#: src/bin/e_main.c:908
 #, fuzzy
 msgid "Setup Toolbars"
 msgstr "Ορισμός Περιεχομένων Μπάρας Εργαλείων"
 
-#: src/bin/e_main.c:909
+#: src/bin/e_main.c:912
 #, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Αδυναμία ρύθμισης εσωτερικού συστήματος από το Enlightenment.\n"
 
-#: src/bin/e_main.c:916
+#: src/bin/e_main.c:919
 msgid "Setup Wallpaper"
 msgstr "Ρύθμιση Ταπετσαρίας"
 
-#: src/bin/e_main.c:920
+#: src/bin/e_main.c:923
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr ""
 "Το Enlightenment δεν μπορεί να εγκαταστήσει στο σύστημα παρασκηνίου "
 "επιφάνειας εργασίας.\n"
 
-#: src/bin/e_main.c:927
+#: src/bin/e_main.c:930
 msgid "Setup Mouse"
 msgstr "Ρύθμιση Ποντικιού"
 
-#: src/bin/e_main.c:931
+#: src/bin/e_main.c:934
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Αδυναμία ρύθμισης επιλογών ποντικιού από το Enlightenment.\n"
 
-#: src/bin/e_main.c:938
+#: src/bin/e_main.c:941
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr "Αδυναμία ρύθμισης διάταξης πληκτρολογίου XKB από το Enlightenment.\n"
 
-#: src/bin/e_main.c:944
+#: src/bin/e_main.c:947
 msgid "Setup Bindings"
 msgstr "Ρύθμιση Συνδυασμών"
 
-#: src/bin/e_main.c:948
+#: src/bin/e_main.c:951
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Αδυναμία ρύθμισης συστήματος συνδυασμών από το Enlightenment.\n"
 
-#: src/bin/e_main.c:955
+#: src/bin/e_main.c:958
 msgid "Setup Thumbnailer"
 msgstr "Ρύθμιση του Δημιουργού Μικρογραφιών Εικόνων"
 
-#: src/bin/e_main.c:959
+#: src/bin/e_main.c:962
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr ""
 "Αδυναμία αρχικοποίησης συστήματος δημιουργίας μικρογραφιών εικόνων από το "
 "Enlightenment.\n"
 
-#: src/bin/e_main.c:968
+#: src/bin/e_main.c:971
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr ""
 "Αδυναμία αρχικοποίησης συστήματος δημιουργίας Λανθάνουσας Μνήμης Εικόνων από "
 "το Enlightenment.\n"
 
-#: src/bin/e_main.c:977
+#: src/bin/e_main.c:980
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Αδυναμία αρχικοποίησης συστήματος XSettings από το Enlightenment.\n"
 
-#: src/bin/e_main.c:986
+#: src/bin/e_main.c:989
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr ""
 "Αδυναμία αρχικοποίησης του συστήματος Ενημέρωσης από το Enlightenment.\n"
 
-#: src/bin/e_main.c:993
+#: src/bin/e_main.c:996
 msgid "Setup Desktop Environment"
 msgstr "Ρύθμιση Περιβάλλοντος Εργασίας"
 
-#: src/bin/e_main.c:997
+#: src/bin/e_main.c:1000
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr ""
 "Αδυναμία αρχικοποίησης περιβάλλοντος επιφάνειας εργασίας από το "
 "Enlightenment.\n"
 
-#: src/bin/e_main.c:1004
+#: src/bin/e_main.c:1007
 msgid "Setup File Ordering"
 msgstr "Ρύθμιση Ταξινόμησης Αρχείων"
 
-#: src/bin/e_main.c:1008
+#: src/bin/e_main.c:1011
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr ""
 "Αδυναμία ρύθμισης συστήματος ταξινόμησης αρχείων από το Enlightenment.\n"
 
-#: src/bin/e_main.c:1023
+#: src/bin/e_main.c:1026
 msgid "Load Modules"
 msgstr "Φόρτωση Αρθρωμάτων"
 
-#: src/bin/e_main.c:1053
+#: src/bin/e_main.c:1056
 msgid "Setup Shelves"
 msgstr "Ρύθμιση Ραφιών"
 
-#: src/bin/e_main.c:1074
+#: src/bin/e_main.c:1077
 msgid "Almost Done"
 msgstr "Σχεδόν Ολοκληρώθηκε"
 
-#: src/bin/e_main.c:1235
+#: src/bin/e_main.c:1238
 #, c-format
 msgid ""
 "Options:\n"
@@ -3465,7 +3465,7 @@ msgstr ""
 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
 "\t\tΕάν χρειάζεστε αυτήν την βοήθεια, δεν χρειάζεστε αυτή την επιλογή.\n"
 
-#: src/bin/e_main.c:1288
+#: src/bin/e_main.c:1291
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -3481,11 +3481,11 @@ msgstr ""
 "τις διαδρομές και την εκκίνηση άλλων απαραιτούμενων\n"
 "υπηρεσιών κλπ. πριν εκκινήσει το enlightenment.\n"
 
-#: src/bin/e_main.c:1569
+#: src/bin/e_main.c:1572
 msgid "Testing Format Support"
 msgstr "Δοκιμή Υποστήριξης Διαμόρφωσης"
 
-#: src/bin/e_main.c:1573
+#: src/bin/e_main.c:1576
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -3494,7 +3494,7 @@ msgstr ""
 "ενδιάμεσης μνήμης. Παρακαλώ ελέγξτε\n"
 "ότι το Evas έχει υποστήριξη μηχανής Λογισμικού Ενδιάμεσης Μνήμης.\n"
 
-#: src/bin/e_main.c:1585
+#: src/bin/e_main.c:1588
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
@@ -3502,7 +3502,7 @@ msgstr ""
 "Το Enlightenment διαπίστωσε ότι το Evas δεν μπορεί να φορτώσει αρχεία SVG. "
 "Ελέγξτε αν το Evas έχει υποστήριξη για φόρτωση αρχείων SVG.\n"
 
-#: src/bin/e_main.c:1595
+#: src/bin/e_main.c:1598
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -3510,7 +3510,7 @@ msgstr ""
 "Το Enlightenment διαπίστωσε ότι το Evas δεν μπορεί να φορτώσει JPEG αρχεία. "
 "Ελέγξτε αν το Evas έχει υποστήριξη για φόρτωση JPEG.\n"
 
-#: src/bin/e_main.c:1605
+#: src/bin/e_main.c:1608
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
@@ -3518,7 +3518,7 @@ msgstr ""
 "Το Enlightenment διαπίστωσε ότι το Evas δεν μπορεί να φορτώσει PNG αρχεία. "
 "Ελέγξτε αν το Evas έχει υποστήριξη για φόρτωση PNG.\n"
 
-#: src/bin/e_main.c:1615
+#: src/bin/e_main.c:1618
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
@@ -3526,7 +3526,7 @@ msgstr ""
 "Το Enlightenment διαπίστωσε ότι το Evas δεν μπορεί να φορτώσει EET αρχεία. "
 "Ελέγξτε αν το Evas έχει υποστήριξη για φόρτωση EET.\n"
 
-#: src/bin/e_main.c:1629
+#: src/bin/e_main.c:1632
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -3537,7 +3537,7 @@ msgstr ""
 "Ελέγξτε αν το Evas έχει υποστήριξη για το fontconfig και το fontconfig του "
 "συστήματος καθορίζει την γραμματοσειρά 'Sans'.\n"
 
-#: src/bin/e_main.c:1852
+#: src/bin/e_main.c:1855
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -3548,12 +3548,12 @@ msgstr ""
 "έγινε<br>επανεκκίνηση. Υπήρξε σφάλμα στην φόρτωση του<br>αρθρώματος με "
 "όνομα: %s. Αυτό το άρθρωμα έχει απενεργοποιηθεί<br>και δεν θα φορτωθεί."
 
-#: src/bin/e_main.c:1857 src/bin/e_main.c:1873
+#: src/bin/e_main.c:1860 src/bin/e_main.c:1876
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr ""
 "Το Enlightenment κατέρρευσε νωρίς κατά την εκκίνηση και έγινε επανεκκίνηση"
 
-#: src/bin/e_main.c:1858
+#: src/bin/e_main.c:1861
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -3564,7 +3564,7 @@ msgstr ""
 "<br>Υπήρξε σφάλμα κατά την φόρτωση του αρθρώματος με όνομα %s<br><br>Αυτό το "
 "άρθρωμα απενεργοποιήθηκε και δεν θα φορτωθεί."
 
-#: src/bin/e_main.c:1866
+#: src/bin/e_main.c:1869
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -3577,7 +3577,7 @@ msgstr ""
 "παράθυρο<br>ρυθμίσεων αρθρωμάτων σας επιτρέπει να επιλέξετε<br>και πάλι "
 "αρθρώματά σας.\n"
 
-#: src/bin/e_main.c:1874
+#: src/bin/e_main.c:1877
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4492,8 +4492,8 @@ msgstr "Μετρητής Μπαταρίας"
 msgid "Clock Settings"
 msgstr "Ρυθμίσεις Ρολογιού"
 
-#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:709
-#: src/modules/clock/e_mod_main.c:870
+#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:722
+#: src/modules/clock/e_mod_main.c:883
 msgid "Clock"
 msgstr "Ρολόι"
 
@@ -4559,7 +4559,7 @@ msgstr ""
 msgid "%a, %x"
 msgstr ""
 
-#: src/modules/clock/e_mod_main.c:870
+#: src/modules/clock/e_mod_main.c:883
 msgid "Toggle calendar"
 msgstr "Εναλλαγή ημερολογίου"
 
@@ -9951,7 +9951,7 @@ msgstr "Αριστερά"
 msgid "Right:"
 msgstr "Δεξιά:"
 
-#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:641
+#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:642
 msgid "Mute"
 msgstr "Σίγαση"
 
@@ -10008,19 +10008,19 @@ msgstr "Η ένταση άλλαξε"
 msgid "Mixer Settings Updated"
 msgstr "Οι Ρυθμίσεις Μείκτη Ενημερώθηκαν"
 
-#: src/modules/mixer/e_mod_main.c:1324
+#: src/modules/mixer/e_mod_main.c:1325
 msgid "Mixer Module"
 msgstr "Άρθρωμα Μείκτη"
 
-#: src/modules/mixer/e_mod_main.c:1352
+#: src/modules/mixer/e_mod_main.c:1353
 msgid "Increase Volume"
 msgstr "Αύξηση Έντασης"
 
-#: src/modules/mixer/e_mod_main.c:1353
+#: src/modules/mixer/e_mod_main.c:1354
 msgid "Decrease Volume"
 msgstr "Ελάττωση Έντασης"
 
-#: src/modules/mixer/e_mod_main.c:1354
+#: src/modules/mixer/e_mod_main.c:1355
 msgid "Mute Volume"
 msgstr "Σίγαση Έντασης"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DR17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-27 21:29+0900\n"
+"POT-Creation-Date: 2013-03-31 12:24+0900\n"
 "PO-Revision-Date: 2012-12-21 20:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -33,7 +33,7 @@ msgid "Close"
 msgstr "Zavřít"
 
 #: src/bin/e_about.c:21 src/bin/e_actions.c:3364 src/bin/e_actions.c:3368
-#: src/bin/e_actions.c:3372 src/bin/e_int_menus.c:224 src/bin/e_main.c:632
+#: src/bin/e_actions.c:3372 src/bin/e_int_menus.c:224 src/bin/e_main.c:635
 #: src/modules/conf_interaction/e_int_config_mouse.c:176
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -999,7 +999,7 @@ msgid "Apply"
 msgstr "Použít"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
-#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1247
+#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1248
 #: src/modules/connman/e_mod_main.c:591
 #: src/modules/notification/e_mod_main.c:181
 msgid "Extensions"
@@ -2485,8 +2485,8 @@ msgstr "Získat pozici"
 #: src/bin/e_int_border_prop.c:477 src/bin/e_int_border_prop.c:512
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:272
 #: src/bin/e_shelf.c:2285 src/modules/backlight/e_mod_main.c:254
-#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:361
-#: src/modules/clock/e_mod_main.c:604 src/modules/conf_dialogs/e_mod_main.c:17
+#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:374
+#: src/modules/clock/e_mod_main.c:617 src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf_interaction/e_int_config_mouse.c:155
 #: src/modules/conf_shelves/e_int_config_shelf.c:147
 #: src/modules/everything/evry_gadget.c:511
@@ -2495,7 +2495,7 @@ msgstr "Získat pozici"
 #: src/modules/ibar/e_mod_main.c:400 src/modules/ibar/e_mod_main.c:876
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
 #: src/modules/pager/e_mod_main.c:878 src/modules/temperature/e_mod_main.c:230
-#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:723
+#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:724
 #: src/modules/music-control/ui.c:225 src/modules/connman/e_mod_main.c:416
 #: src/modules/tasks/e_mod_main.c:728 src/modules/xkbswitch/e_mod_main.c:335
 #: src/modules/xkbswitch/e_mod_main.c:369
@@ -2932,27 +2932,27 @@ msgstr "Zobrazit na všech plochách"
 msgid "Show on specified Desktops"
 msgstr "Zobrazit na vybraných plochách"
 
-#: src/bin/e_main.c:233
+#: src/bin/e_main.c:236
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Eina!\n"
 
-#: src/bin/e_main.c:239
+#: src/bin/e_main.c:242
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Enlightenmentu se nepodařilo začít logovat!\n"
 
-#: src/bin/e_main.c:286
+#: src/bin/e_main.c:289
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Eet!\n"
 
-#: src/bin/e_main.c:295
+#: src/bin/e_main.c:298
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Ecore!\n"
 
-#: src/bin/e_main.c:304
+#: src/bin/e_main.c:307
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat EIO!\n"
 
-#: src/bin/e_main.c:316
+#: src/bin/e_main.c:319
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2960,7 +2960,7 @@ msgstr ""
 "Enlightenmentu se nepodařilo nastavit obsluhu signálu exit.\n"
 "Nedošla paměť?"
 
-#: src/bin/e_main.c:323
+#: src/bin/e_main.c:326
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2968,7 +2968,7 @@ msgstr ""
 "Enlightenmentu se nepodařilo nastavit obsluhu signálu HUP.\n"
 "Nedošla paměť?"
 
-#: src/bin/e_main.c:330
+#: src/bin/e_main.c:333
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2976,39 +2976,39 @@ msgstr ""
 "Enlightenmentu se nepodařilo nastavit obsluhu signálu USER.\n"
 "Nedošla paměť?"
 
-#: src/bin/e_main.c:339
+#: src/bin/e_main.c:342
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Ecore_File!\n"
 
-#: src/bin/e_main.c:348
+#: src/bin/e_main.c:351
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Ecore_Con!\n"
 
-#: src/bin/e_main.c:357
+#: src/bin/e_main.c:360
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Ecore_Ipc!\n"
 
-#: src/bin/e_main.c:368
+#: src/bin/e_main.c:371
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Ecore_X!\n"
 
-#: src/bin/e_main.c:380
+#: src/bin/e_main.c:383
 msgid "Enlightenment cannot initialize Ecore_IMF!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Ecore_IMF!\n"
 
-#: src/bin/e_main.c:390
+#: src/bin/e_main.c:393
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Ecore_Evas!\n"
 
-#: src/bin/e_main.c:400
+#: src/bin/e_main.c:403
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Elementary!\n"
 
-#: src/bin/e_main.c:411
+#: src/bin/e_main.c:414
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Emotion!\n"
 
-#: src/bin/e_main.c:426
+#: src/bin/e_main.c:429
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3018,7 +3018,7 @@ msgstr ""
 "vykreslování v Evas-u. Prosím zkontrolujte, zda Evas a Ecore podporují\n"
 "softwarové X11 vykreslování."
 
-#: src/bin/e_main.c:434
+#: src/bin/e_main.c:437
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3028,15 +3028,15 @@ msgstr ""
 "vykreslování v Evas-u. Prosím zkontrolujte, zda Evas a Ecore podporují\n"
 "softwarové X11 vykreslování."
 
-#: src/bin/e_main.c:444
+#: src/bin/e_main.c:447
 msgid "Enlightenment cannot initialize Edje!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat Edje!\n"
 
-#: src/bin/e_main.c:456
+#: src/bin/e_main.c:459
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat E_intl!\n"
 
-#: src/bin/e_main.c:466
+#: src/bin/e_main.c:469
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3044,11 +3044,11 @@ msgstr ""
 "Enlightenmentu se nepodařilo spustit jeho pohotovostní varovný systém.\n"
 "Máte nastavenou proměnnou DISPLAY?"
 
-#: src/bin/e_main.c:476
+#: src/bin/e_main.c:479
 msgid "Enlightenment cannot initialize E_Xinerama!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat E_Xinerama!\n"
 
-#: src/bin/e_main.c:494
+#: src/bin/e_main.c:497
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3056,31 +3056,31 @@ msgstr ""
 "Enlightenment nemůže vytvářet adresáře ve vašem domovském adresáři.\n"
 "Možná žádný nemáte nebo je disk plný?"
 
-#: src/bin/e_main.c:504
+#: src/bin/e_main.c:507
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém registrů.\n"
 
-#: src/bin/e_main.c:513
+#: src/bin/e_main.c:516
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Enlightenmentu se nepodařilo spustit systém nastavení.\n"
 
-#: src/bin/e_main.c:531
+#: src/bin/e_main.c:534
 msgid "Enlightenment cannot initialize E_Randr!\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat E_Randr!\n"
 
-#: src/bin/e_main.c:540
+#: src/bin/e_main.c:543
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit prostředí.\n"
 
-#: src/bin/e_main.c:556
+#: src/bin/e_main.c:559
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment nemohl nastavit systém škálování.\n"
 
-#: src/bin/e_main.c:565
+#: src/bin/e_main.c:568
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém ukazatele.\n"
 
-#: src/bin/e_main.c:574
+#: src/bin/e_main.c:577
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3088,27 +3088,27 @@ msgstr ""
 "Enlightenmentu se nepodařilo nastavit cesty k vyhledávání souborů.\n"
 "Nedošla paměť?"
 
-#: src/bin/e_main.c:591
+#: src/bin/e_main.c:594
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém fontů.\n"
 
-#: src/bin/e_main.c:608
+#: src/bin/e_main.c:611
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém motivů.\n"
 
-#: src/bin/e_main.c:624
+#: src/bin/e_main.c:627
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit úvodní obrazovku.\n"
 
-#: src/bin/e_main.c:639
+#: src/bin/e_main.c:642
 msgid "Starting International Support"
 msgstr "Nastavuji mezinárodní podporu"
 
-#: src/bin/e_main.c:643
+#: src/bin/e_main.c:646
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém lokalizace.\n"
 
-#: src/bin/e_main.c:652
+#: src/bin/e_main.c:655
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3118,19 +3118,19 @@ msgstr ""
 "Možná nemáte oprávnění k ~/.cache/efreet nebo\n"
 "vám došla paměť či místo na disku?"
 
-#: src/bin/e_main.c:677
+#: src/bin/e_main.c:680
 msgid "Setup Actions"
 msgstr "Nastavuji akce"
 
-#: src/bin/e_main.c:681
+#: src/bin/e_main.c:684
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém akcí.\n"
 
-#: src/bin/e_main.c:688
+#: src/bin/e_main.c:691
 msgid "Setup Screens"
 msgstr "Nastavuji obrazovky"
 
-#: src/bin/e_main.c:692
+#: src/bin/e_main.c:695
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3138,235 +3138,235 @@ msgstr ""
 "Nastavení okenního manažeru na všech obrazovkách v systému selhalo.\n"
 "Neběží už jiný okenní manažer?\n"
 
-#: src/bin/e_main.c:700
+#: src/bin/e_main.c:703
 msgid "Setup ACPI"
 msgstr "Nastavuji ACPI"
 
-#: src/bin/e_main.c:707
+#: src/bin/e_main.c:710
 msgid "Setup Backlight"
 msgstr "Nastavuji posvícení"
 
-#: src/bin/e_main.c:711
+#: src/bin/e_main.c:714
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Enlightenment nemůže nastavit podsvícení.\n"
 
-#: src/bin/e_main.c:718
+#: src/bin/e_main.c:721
 msgid "Setup Screensaver"
 msgstr "Nastavuji spořič"
 
-#: src/bin/e_main.c:722
+#: src/bin/e_main.c:725
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit spořič obrazovky pro X.\n"
 
-#: src/bin/e_main.c:729
+#: src/bin/e_main.c:732
 msgid "Setup DPMS"
 msgstr "Nastavuji DPMS"
 
-#: src/bin/e_main.c:733
+#: src/bin/e_main.c:736
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit volby DPMS.\n"
 
-#: src/bin/e_main.c:740
+#: src/bin/e_main.c:743
 msgid "Setup Powersave Modes"
 msgstr "Nastavuji režimy úspory energie"
 
-#: src/bin/e_main.c:744
+#: src/bin/e_main.c:747
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit režimy správy napájení.\n"
 
-#: src/bin/e_main.c:751
+#: src/bin/e_main.c:754
 msgid "Setup Desklock"
 msgstr "Nastavuji zámek obrazovky"
 
-#: src/bin/e_main.c:755
+#: src/bin/e_main.c:758
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém zamykání plochy.\n"
 
 # zbavit se 'popupu'
-#: src/bin/e_main.c:762
+#: src/bin/e_main.c:765
 msgid "Setup Popups"
 msgstr "Nastavuji pop-upy"
 
-#: src/bin/e_main.c:766
+#: src/bin/e_main.c:769
 msgid "Enlightenment cannot set up its popup system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém pop-upů.\n"
 
-#: src/bin/e_main.c:778
+#: src/bin/e_main.c:781
 msgid "Setup Message Bus"
 msgstr "Nastavuji sběrnici zpráv"
 
-#: src/bin/e_main.c:785
+#: src/bin/e_main.c:788
 msgid "Setup Paths"
 msgstr "Nastavuji cesty"
 
-#: src/bin/e_main.c:791
+#: src/bin/e_main.c:794
 msgid "Setup System Controls"
 msgstr "Nastavuji systémové ovládací prvky"
 
-#: src/bin/e_main.c:795
+#: src/bin/e_main.c:798
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "Enlightenmentu se nepodařilo inicializovat System Command systém.\n"
 
-#: src/bin/e_main.c:802
+#: src/bin/e_main.c:805
 msgid "Setup Execution System"
 msgstr "Nastavuji spouštěcí systém"
 
-#: src/bin/e_main.c:806
+#: src/bin/e_main.c:809
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém exec.\n"
 
-#: src/bin/e_main.c:817
-msgid "Setup Filemanager"
-msgstr "Nastavuji správce souborů"
-
-#: src/bin/e_main.c:821
-msgid "Enlightenment cannot initialize the File manager.\n"
-msgstr "Enlightenmentu se nepodařilo inicializovat souborový manažer.\n"
-
-#: src/bin/e_main.c:828
-msgid "Setup Message System"
-msgstr "Nastavuji systém zpráv"
-
-#: src/bin/e_main.c:832
-msgid "Enlightenment cannot set up its msg system.\n"
-msgstr "Enlightenmentu se nepodařilo nastavit msg systém.\n"
-
-#: src/bin/e_main.c:839
+#: src/bin/e_main.c:820
 msgid "Setup DND"
 msgstr "Nastavuji DND"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:824
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém dnd.\n"
 
-#: src/bin/e_main.c:850
+#: src/bin/e_main.c:831
+msgid "Setup Filemanager"
+msgstr "Nastavuji správce souborů"
+
+#: src/bin/e_main.c:835
+msgid "Enlightenment cannot initialize the File manager.\n"
+msgstr "Enlightenmentu se nepodařilo inicializovat souborový manažer.\n"
+
+#: src/bin/e_main.c:842
+msgid "Setup Message System"
+msgstr "Nastavuji systém zpráv"
+
+#: src/bin/e_main.c:846
+msgid "Enlightenment cannot set up its msg system.\n"
+msgstr "Enlightenmentu se nepodařilo nastavit msg systém.\n"
+
+#: src/bin/e_main.c:853
 msgid "Setup Grab Input Handling"
 msgstr "Nastavit obsluhu zachytávání vstupu"
 
-#: src/bin/e_main.c:854
+#: src/bin/e_main.c:857
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit obsluhu zachytávání vstupu.\n"
 
-#: src/bin/e_main.c:861
+#: src/bin/e_main.c:864
 msgid "Setup Modules"
 msgstr "Nastavuji moduly"
 
-#: src/bin/e_main.c:865 src/bin/e_main.c:1057
+#: src/bin/e_main.c:868 src/bin/e_main.c:1060
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenmentu se nepodařilo spustit svůj systém modulů.\n"
 
-#: src/bin/e_main.c:872
+#: src/bin/e_main.c:875
 msgid "Setup Remembers"
 msgstr "Nastavuji systém zapamatovaného nastavení"
 
-#: src/bin/e_main.c:876
+#: src/bin/e_main.c:879
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr ""
 "Enlightenmentu se nepodařilo nastavit systém zapamatovaného nastavení.\n"
 
-#: src/bin/e_main.c:883
+#: src/bin/e_main.c:886
 msgid "Setup Color Classes"
 msgstr "Nastavuji třídy barev"
 
-#: src/bin/e_main.c:887
+#: src/bin/e_main.c:890
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém tříd barev.\n"
 
-#: src/bin/e_main.c:894
+#: src/bin/e_main.c:897
 msgid "Setup Gadcon"
 msgstr "Nastavuji gadget container"
 
-#: src/bin/e_main.c:898
+#: src/bin/e_main.c:901
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém ovládání gadgetů.\n"
 
-#: src/bin/e_main.c:905
+#: src/bin/e_main.c:908
 #, fuzzy
 msgid "Setup Toolbars"
 msgstr "Nastavit obsah panelu nástrojů"
 
-#: src/bin/e_main.c:909
+#: src/bin/e_main.c:912
 #, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém lokalizace.\n"
 
-#: src/bin/e_main.c:916
+#: src/bin/e_main.c:919
 msgid "Setup Wallpaper"
 msgstr "Nastavuji pozadí plochy"
 
-#: src/bin/e_main.c:920
+#: src/bin/e_main.c:923
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém pozadí plochy.\n"
 
-#: src/bin/e_main.c:927
+#: src/bin/e_main.c:930
 msgid "Setup Mouse"
 msgstr "Nastavuji myš"
 
-#: src/bin/e_main.c:931
+#: src/bin/e_main.c:934
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Enlightenment nemohl nastavit myš.\n"
 
-#: src/bin/e_main.c:938
+#: src/bin/e_main.c:941
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr "Enlightenment nemohl nastavit XKB rozložení klávesnice.\n"
 
-#: src/bin/e_main.c:944
+#: src/bin/e_main.c:947
 msgid "Setup Bindings"
 msgstr "Nastavuji vazby na akce"
 
-#: src/bin/e_main.c:948
+#: src/bin/e_main.c:951
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenmentu nemohl spustit systém vazeb na akce.\n"
 
-#: src/bin/e_main.c:955
+#: src/bin/e_main.c:958
 msgid "Setup Thumbnailer"
 msgstr "Nastavuji náhledy"
 
-#: src/bin/e_main.c:959
+#: src/bin/e_main.c:962
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenmentu nemohl spustit systém náhledů.\n"
 
-#: src/bin/e_main.c:968
+#: src/bin/e_main.c:971
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "Enlightenmentu nemohl spustit systém cache ikon.\n"
 
-#: src/bin/e_main.c:977
+#: src/bin/e_main.c:980
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit XSettings.\n"
 
-#: src/bin/e_main.c:986
+#: src/bin/e_main.c:989
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Enlightenmentu nemohl inicializovat systém aktualizace.\n"
 
-#: src/bin/e_main.c:993
+#: src/bin/e_main.c:996
 msgid "Setup Desktop Environment"
 msgstr "Nastavuji pracovní prostředí"
 
-#: src/bin/e_main.c:997
+#: src/bin/e_main.c:1000
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit pracovní prostředí.\n"
 
-#: src/bin/e_main.c:1004
+#: src/bin/e_main.c:1007
 msgid "Setup File Ordering"
 msgstr "Nastavuji řazení souborů"
 
-#: src/bin/e_main.c:1008
+#: src/bin/e_main.c:1011
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Enlightenmentu se nepodařilo nastavit systém řazení souborů.\n"
 
-#: src/bin/e_main.c:1023
+#: src/bin/e_main.c:1026
 msgid "Load Modules"
 msgstr "Nahrávám moduly"
 
-#: src/bin/e_main.c:1053
+#: src/bin/e_main.c:1056
 msgid "Setup Shelves"
 msgstr "Nastavuji panely"
 
-#: src/bin/e_main.c:1074
+#: src/bin/e_main.c:1077
 msgid "Almost Done"
 msgstr "Téměř dokončeno"
 
-#: src/bin/e_main.c:1235
+#: src/bin/e_main.c:1238
 #, c-format
 msgid ""
 "Options:\n"
@@ -3419,7 +3419,7 @@ msgstr ""
 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
 "\t\tPokud potřebujete tuto nápovědu, nepotřebujete tuto volbu.\n"
 
-#: src/bin/e_main.c:1288
+#: src/bin/e_main.c:1291
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -3435,11 +3435,11 @@ msgstr ""
 "a spuštění jakýchkoli dalších potřebných služeb atd.\n"
 "před tím, než bude sám Enlightenment spuštěn.\n"
 
-#: src/bin/e_main.c:1569
+#: src/bin/e_main.c:1572
 msgid "Testing Format Support"
 msgstr "Zkouším podporu formátů"
 
-#: src/bin/e_main.c:1573
+#: src/bin/e_main.c:1576
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -3448,7 +3448,7 @@ msgstr ""
 "zkontrolujte,\n"
 "jestli má Evas podporu Software Buffer Enginu.\n"
 
-#: src/bin/e_main.c:1585
+#: src/bin/e_main.c:1588
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
@@ -3456,7 +3456,7 @@ msgstr ""
 "Enlightenment zjistil, že Evas nemůže načíst soubory SVG. Zkontrolujte, zda "
 "má Evas podporu načítání SVG.\n"
 
-#: src/bin/e_main.c:1595
+#: src/bin/e_main.c:1598
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -3464,7 +3464,7 @@ msgstr ""
 "Enlightenment zjistil, že Evas nemůže načíst soubory JPEG. Zkontrolujte, zda "
 "má Evas podporu načítání JPEG.\n"
 
-#: src/bin/e_main.c:1605
+#: src/bin/e_main.c:1608
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
@@ -3472,7 +3472,7 @@ msgstr ""
 "Enlightenment zjistil, že Evas nemůže načíst soubory PNG. Zkontrolujte, zda "
 "má Evas podporu načítání PNG.\n"
 
-#: src/bin/e_main.c:1615
+#: src/bin/e_main.c:1618
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
@@ -3480,7 +3480,7 @@ msgstr ""
 "Enlightenment zjistil, že Evas nemůže načíst soubory EET. Zkontrolujte, zda "
 "má Evas podporu načítání EET.\n"
 
-#: src/bin/e_main.c:1629
+#: src/bin/e_main.c:1632
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -3490,7 +3490,7 @@ msgstr ""
 "jestli má Evas\n"
 "podporu fontconfig a jestli fontconfig zná písmo 'Sans'.\n"
 
-#: src/bin/e_main.c:1852
+#: src/bin/e_main.c:1855
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -3500,11 +3500,11 @@ msgstr ""
 "Enlightenment spadl brzy po startu a byl<br>restartován. Chybu způsobilo "
 "načtení modulu: %s.<br>Tento modul byl zakázán a nebude načten."
 
-#: src/bin/e_main.c:1857 src/bin/e_main.c:1873
+#: src/bin/e_main.c:1860 src/bin/e_main.c:1876
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment spadnul brzy po startu a byl restartován"
 
-#: src/bin/e_main.c:1858
+#: src/bin/e_main.c:1861
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -3514,7 +3514,7 @@ msgstr ""
 "Enlightenment spadl brzy po startu a byl<br>restartován. Chybu způsobilo "
 "načtení modulu: %s.<br><br>Tento modul byl zakázán a nebude načten."
 
-#: src/bin/e_main.c:1866
+#: src/bin/e_main.c:1869
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -3526,7 +3526,7 @@ msgstr ""
 "problém. Dialog<br>nastavení modulů vám pomůže aktivovat<br>vaše moduly "
 "znovu.\n"
 
-#: src/bin/e_main.c:1874
+#: src/bin/e_main.c:1877
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4442,8 +4442,8 @@ msgstr "Ukazatel baterie"
 msgid "Clock Settings"
 msgstr "Nastavení hodin"
 
-#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:709
-#: src/modules/clock/e_mod_main.c:870
+#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:722
+#: src/modules/clock/e_mod_main.c:883
 msgid "Clock"
 msgstr "Hodiny"
 
@@ -4509,7 +4509,7 @@ msgstr ""
 msgid "%a, %x"
 msgstr ""
 
-#: src/modules/clock/e_mod_main.c:870
+#: src/modules/clock/e_mod_main.c:883
 msgid "Toggle calendar"
 msgstr "Přepnout zobrazení kalendáře"
 
@@ -9879,7 +9879,7 @@ msgstr "Levý:"
 msgid "Right:"
 msgstr "Pravý:"
 
-#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:641
+#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:642
 msgid "Mute"
 msgstr "Ztlumit"
 
@@ -9935,19 +9935,19 @@ msgstr "Změněna hlasitost"
 msgid "Mixer Settings Updated"
 msgstr "Nastavení modulu Mixer aktualizováno"
 
-#: src/modules/mixer/e_mod_main.c:1324
+#: src/modules/mixer/e_mod_main.c:1325
 msgid "Mixer Module"
 msgstr "Modul Mixer"
 
-#: src/modules/mixer/e_mod_main.c:1352
+#: src/modules/mixer/e_mod_main.c:1353
 msgid "Increase Volume"
 msgstr "Zvýšit hlasitost"
 
-#: src/modules/mixer/e_mod_main.c:1353
+#: src/modules/mixer/e_mod_main.c:1354
 msgid "Decrease Volume"
 msgstr "Snížit hlasitost"
 
-#: src/modules/mixer/e_mod_main.c:1354
+#: src/modules/mixer/e_mod_main.c:1355
 msgid "Mute Volume"
 msgstr "Vypnout zvuk"
 

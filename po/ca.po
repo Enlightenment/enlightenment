@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-27 21:29+0900\n"
+"POT-Creation-Date: 2013-03-31 12:24+0900\n"
 "PO-Revision-Date: 2013-03-21 23:09+0100\n"
 "Last-Translator: JoanColl <jcoll2@gmail.com>\n"
 "Language-Team: Catalan\n"
@@ -34,7 +34,7 @@ msgid "Close"
 msgstr "Tanca"
 
 #: src/bin/e_about.c:21 src/bin/e_actions.c:3364 src/bin/e_actions.c:3368
-#: src/bin/e_actions.c:3372 src/bin/e_int_menus.c:224 src/bin/e_main.c:632
+#: src/bin/e_actions.c:3372 src/bin/e_int_menus.c:224 src/bin/e_main.c:635
 #: src/modules/conf_interaction/e_int_config_mouse.c:176
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -1008,7 +1008,7 @@ msgid "Apply"
 msgstr "Aplica"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
-#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1247
+#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1248
 #: src/modules/connman/e_mod_main.c:591
 #: src/modules/notification/e_mod_main.c:181
 msgid "Extensions"
@@ -2498,8 +2498,8 @@ msgstr "Demana posició"
 #: src/bin/e_int_border_prop.c:477 src/bin/e_int_border_prop.c:512
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:272
 #: src/bin/e_shelf.c:2285 src/modules/backlight/e_mod_main.c:254
-#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:361
-#: src/modules/clock/e_mod_main.c:604 src/modules/conf_dialogs/e_mod_main.c:17
+#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:374
+#: src/modules/clock/e_mod_main.c:617 src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf_interaction/e_int_config_mouse.c:155
 #: src/modules/conf_shelves/e_int_config_shelf.c:147
 #: src/modules/everything/evry_gadget.c:511
@@ -2508,7 +2508,7 @@ msgstr "Demana posició"
 #: src/modules/ibar/e_mod_main.c:400 src/modules/ibar/e_mod_main.c:876
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
 #: src/modules/pager/e_mod_main.c:878 src/modules/temperature/e_mod_main.c:230
-#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:723
+#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:724
 #: src/modules/music-control/ui.c:225 src/modules/connman/e_mod_main.c:416
 #: src/modules/tasks/e_mod_main.c:728 src/modules/xkbswitch/e_mod_main.c:335
 #: src/modules/xkbswitch/e_mod_main.c:369
@@ -2939,27 +2939,27 @@ msgstr "Mostra a tots els escriptoris"
 msgid "Show on specified Desktops"
 msgstr "Mostra als escriptoris especificats"
 
-#: src/bin/e_main.c:233
+#: src/bin/e_main.c:236
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Enlightenment no pot inicialitzar Eina!\n"
 
-#: src/bin/e_main.c:239
+#: src/bin/e_main.c:242
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Enlightenment no pot crear un domini d'inici de sessió!\n"
 
-#: src/bin/e_main.c:286
+#: src/bin/e_main.c:289
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Enlightenment no pot inicialitzar Eet.\n"
 
-#: src/bin/e_main.c:295
+#: src/bin/e_main.c:298
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenment no pot inicialitzar Ecore!\n"
 
-#: src/bin/e_main.c:304
+#: src/bin/e_main.c:307
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Enlightenment no pot inicialitzar EIO!\n"
 
-#: src/bin/e_main.c:316
+#: src/bin/e_main.c:319
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2967,7 +2967,7 @@ msgstr ""
 "Enlightenment no pot gestionar el senyal de sortida.\n"
 "Potser no hi ha prou memòria"
 
-#: src/bin/e_main.c:323
+#: src/bin/e_main.c:326
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2975,7 +2975,7 @@ msgstr ""
 "Enlightenment no pot gestionar el senyal de HUP.\n"
 "Potser no hi ha prou memòria"
 
-#: src/bin/e_main.c:330
+#: src/bin/e_main.c:333
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -2983,39 +2983,39 @@ msgstr ""
 "Enlightenment no pot gestionar un senyal d'USUARI.\n"
 "Potser no hi ha prou memòria"
 
-#: src/bin/e_main.c:339
+#: src/bin/e_main.c:342
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Enlightenment no pot inicialitzar Ecore_File!\n"
 
-#: src/bin/e_main.c:348
+#: src/bin/e_main.c:351
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Enlightenment no pot inicialitzar Ecore_Con!\n"
 
-#: src/bin/e_main.c:357
+#: src/bin/e_main.c:360
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Enlightenment no pot inicialitzar Ecore_Ipc!\n"
 
-#: src/bin/e_main.c:368
+#: src/bin/e_main.c:371
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment no pot inicialitzar Ecore_X!\n"
 
-#: src/bin/e_main.c:380
+#: src/bin/e_main.c:383
 msgid "Enlightenment cannot initialize Ecore_IMF!\n"
 msgstr "Enlightenment no pot inicialitzar Ecore_IMF!\n"
 
-#: src/bin/e_main.c:390
+#: src/bin/e_main.c:393
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Enlightenment no pot inicialitzar  Ecore_Evas!\n"
 
-#: src/bin/e_main.c:400
+#: src/bin/e_main.c:403
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Enlightenment no pot inicialitzar Elementary!\n"
 
-#: src/bin/e_main.c:411
+#: src/bin/e_main.c:414
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenment no pot inicialitzar  Emotion!\n"
 
-#: src/bin/e_main.c:426
+#: src/bin/e_main.c:429
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3025,7 +3025,7 @@ msgstr ""
 "a Evas. Si us plau, revisi la instal·lació d' Evas i\n"
 "Ecore i comprovi si admeten el motor de renderització per X11."
 
-#: src/bin/e_main.c:434
+#: src/bin/e_main.c:437
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3037,15 +3037,15 @@ msgstr ""
 "i comprovi que aquests siguin compatibles amb el motor de renderització de "
 "buffer per software."
 
-#: src/bin/e_main.c:444
+#: src/bin/e_main.c:447
 msgid "Enlightenment cannot initialize Edje!\n"
 msgstr "Enlightenment no pot inicialitzar  Edje!\n"
 
-#: src/bin/e_main.c:456
+#: src/bin/e_main.c:459
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenment no pot inicialitzar  E_Intl!\n"
 
-#: src/bin/e_main.c:466
+#: src/bin/e_main.c:469
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3053,11 +3053,11 @@ msgstr ""
 "Enlightenment no pot inicialitzar el sistema d'avisos d'emergència.\n"
 "Ha configurat la variable DISPLAY?"
 
-#: src/bin/e_main.c:476
+#: src/bin/e_main.c:479
 msgid "Enlightenment cannot initialize E_Xinerama!\n"
 msgstr "Enlightenment no pot inicialitzar E_Xinerama!\n"
 
-#: src/bin/e_main.c:494
+#: src/bin/e_main.c:497
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3065,32 +3065,32 @@ msgstr ""
 "Enlightenment no pot crear carpetes en  el seu directori personal.<br> "
 "Potser no té un directori personal o bé el disc està ple."
 
-#: src/bin/e_main.c:504
+#: src/bin/e_main.c:507
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr ""
 "Enlightenment no pot configurar el seu sistema de registre de fixers.\n"
 
-#: src/bin/e_main.c:513
+#: src/bin/e_main.c:516
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Enlightenment no pot iniciar el sistema de configuració.\n"
 
-#: src/bin/e_main.c:531
+#: src/bin/e_main.c:534
 msgid "Enlightenment cannot initialize E_Randr!\n"
 msgstr "Enlightenment no pot inicialitzar E_Randr!\n"
 
-#: src/bin/e_main.c:540
+#: src/bin/e_main.c:543
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment no pot configurar el seu entorn.\n"
 
-#: src/bin/e_main.c:556
+#: src/bin/e_main.c:559
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment no pot configurar el sistema d'escalat.\n"
 
-#: src/bin/e_main.c:565
+#: src/bin/e_main.c:568
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenment no pot configurar el sistema de punter.\n"
 
-#: src/bin/e_main.c:574
+#: src/bin/e_main.c:577
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3098,27 +3098,27 @@ msgstr ""
 "Enlightenment no pot establir les rutes de recerca de fitxers.\n"
 "Potser no disposa de prou memòria."
 
-#: src/bin/e_main.c:591
+#: src/bin/e_main.c:594
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenment no pot configurar les fonts de sistema.\n"
 
-#: src/bin/e_main.c:608
+#: src/bin/e_main.c:611
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenment no pot configurar el sistema de temes.\n"
 
-#: src/bin/e_main.c:624
+#: src/bin/e_main.c:627
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenment no pot configurar la pantalla d'inici.\n"
 
-#: src/bin/e_main.c:639
+#: src/bin/e_main.c:642
 msgid "Starting International Support"
 msgstr "Iniciant suport internacional"
 
-#: src/bin/e_main.c:643
+#: src/bin/e_main.c:646
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenment no pot configurar el sistema de suport internacional.\n"
 
-#: src/bin/e_main.c:652
+#: src/bin/e_main.c:655
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3128,19 +3128,19 @@ msgstr ""
 "Potser li manquen permisos a ~/.cache/efreet  o que\n"
 "no disposi de prou memòria o espai de disc."
 
-#: src/bin/e_main.c:677
+#: src/bin/e_main.c:680
 msgid "Setup Actions"
 msgstr "Configura accions"
 
-#: src/bin/e_main.c:681
+#: src/bin/e_main.c:684
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment no pot configurar el seu sistema d'accions.\n"
 
-#: src/bin/e_main.c:688
+#: src/bin/e_main.c:691
 msgid "Setup Screens"
 msgstr "Configura pantalles"
 
-#: src/bin/e_main.c:692
+#: src/bin/e_main.c:695
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3148,233 +3148,233 @@ msgstr ""
 "Enlightenment ha fallat quan intentava configurar les pantalles del sistema\n"
 "Potser hi ha un altre gestor de finestres actiu\n"
 
-#: src/bin/e_main.c:700
+#: src/bin/e_main.c:703
 msgid "Setup ACPI"
 msgstr "Configura ACPI"
 
-#: src/bin/e_main.c:707
+#: src/bin/e_main.c:710
 msgid "Setup Backlight"
 msgstr "Configura llum de fons"
 
-#: src/bin/e_main.c:711
+#: src/bin/e_main.c:714
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Enlightenment no pot configurar la llum de fons.\n"
 
-#: src/bin/e_main.c:718
+#: src/bin/e_main.c:721
 msgid "Setup Screensaver"
 msgstr "Configura estalvi de pantalla"
 
-#: src/bin/e_main.c:722
+#: src/bin/e_main.c:725
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "Enlightenment no pot configurar l'estalvi de pantalla.\n"
 
-#: src/bin/e_main.c:729
+#: src/bin/e_main.c:732
 msgid "Setup DPMS"
 msgstr "Configura DPMS "
 
-#: src/bin/e_main.c:733
+#: src/bin/e_main.c:736
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Enlightenment no pot configurar les opcions DPMS.\n"
 
-#: src/bin/e_main.c:740
+#: src/bin/e_main.c:743
 msgid "Setup Powersave Modes"
 msgstr "Configura modes d'estalvi d'energia"
 
-#: src/bin/e_main.c:744
+#: src/bin/e_main.c:747
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Enlightenment no pot configurar el mòdul d'estalvi d'energia.\n"
 
-#: src/bin/e_main.c:751
+#: src/bin/e_main.c:754
 msgid "Setup Desklock"
 msgstr "Configura bloqueig escriptori"
 
-#: src/bin/e_main.c:755
+#: src/bin/e_main.c:758
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "Enlightenment no pot configurar el sistema de bloqueig d'escriptori.\n"
 
-#: src/bin/e_main.c:762
+#: src/bin/e_main.c:765
 msgid "Setup Popups"
 msgstr "Configura finestres emergents"
 
-#: src/bin/e_main.c:766
+#: src/bin/e_main.c:769
 msgid "Enlightenment cannot set up its popup system.\n"
 msgstr "Enlightenment no pot configurar el sistema de finestres emergents.\n"
 
-#: src/bin/e_main.c:778
+#: src/bin/e_main.c:781
 msgid "Setup Message Bus"
 msgstr "Configura el bus de missatges"
 
-#: src/bin/e_main.c:785
+#: src/bin/e_main.c:788
 msgid "Setup Paths"
 msgstr "Configura rutes"
 
-#: src/bin/e_main.c:791
+#: src/bin/e_main.c:794
 msgid "Setup System Controls"
 msgstr "Configura controls del sistema"
 
-#: src/bin/e_main.c:795
+#: src/bin/e_main.c:798
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr ""
 "Enlightenment no pot inicialitzar el sistema de comandes del sistema.\n"
 
-#: src/bin/e_main.c:802
+#: src/bin/e_main.c:805
 msgid "Setup Execution System"
 msgstr "Configura sistema d'execució"
 
-#: src/bin/e_main.c:806
+#: src/bin/e_main.c:809
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Enlightenment no pot configurar el sistema d'execució.\n"
 
-#: src/bin/e_main.c:817
-msgid "Setup Filemanager"
-msgstr "Configura gestor de fitxers "
-
-#: src/bin/e_main.c:821
-msgid "Enlightenment cannot initialize the File manager.\n"
-msgstr "Enlightenment no pot inicialitzar el Gestor de fitxers.\n"
-
-#: src/bin/e_main.c:828
-msgid "Setup Message System"
-msgstr "Configura sistema de missatges"
-
-#: src/bin/e_main.c:832
-msgid "Enlightenment cannot set up its msg system.\n"
-msgstr "Enlightenment no pot configurar el sistema de missatges.\n"
-
-#: src/bin/e_main.c:839
+#: src/bin/e_main.c:820
 msgid "Setup DND"
 msgstr "Configura DND"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:824
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Enlightenment no pot utilitzar el sistema dnd.\n"
 
-#: src/bin/e_main.c:850
+#: src/bin/e_main.c:831
+msgid "Setup Filemanager"
+msgstr "Configura gestor de fitxers "
+
+#: src/bin/e_main.c:835
+msgid "Enlightenment cannot initialize the File manager.\n"
+msgstr "Enlightenment no pot inicialitzar el Gestor de fitxers.\n"
+
+#: src/bin/e_main.c:842
+msgid "Setup Message System"
+msgstr "Configura sistema de missatges"
+
+#: src/bin/e_main.c:846
+msgid "Enlightenment cannot set up its msg system.\n"
+msgstr "Enlightenment no pot configurar el sistema de missatges.\n"
+
+#: src/bin/e_main.c:853
 msgid "Setup Grab Input Handling"
 msgstr "Configura gestió de la captura d'entrades"
 
-#: src/bin/e_main.c:854
+#: src/bin/e_main.c:857
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr "Enlightenment no pot configurar la gestió de la captura d'entrada.\n"
 
-#: src/bin/e_main.c:861
+#: src/bin/e_main.c:864
 msgid "Setup Modules"
 msgstr "Configura mòduls"
 
-#: src/bin/e_main.c:865 src/bin/e_main.c:1057
+#: src/bin/e_main.c:868 src/bin/e_main.c:1060
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenment no pot configurar el sistema de mòduls.\n"
 
-#: src/bin/e_main.c:872
+#: src/bin/e_main.c:875
 msgid "Setup Remembers"
 msgstr "Configura memorització"
 
-#: src/bin/e_main.c:876
+#: src/bin/e_main.c:879
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Enlightenment no pot inicialitzar la configuració de memorització.\n"
 
-#: src/bin/e_main.c:883
+#: src/bin/e_main.c:886
 msgid "Setup Color Classes"
 msgstr "Configura classes de color"
 
-#: src/bin/e_main.c:887
+#: src/bin/e_main.c:890
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr "Enlightenment no pot configurar el sistema de classes de color.\n"
 
-#: src/bin/e_main.c:894
+#: src/bin/e_main.c:897
 msgid "Setup Gadcon"
 msgstr "Configura control de ginys"
 
-#: src/bin/e_main.c:898
+#: src/bin/e_main.c:901
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenment no pot configurar el sistema de control de ginys.\n"
 
-#: src/bin/e_main.c:905
+#: src/bin/e_main.c:908
 msgid "Setup Toolbars"
 msgstr "Configura barra d'eines"
 
-#: src/bin/e_main.c:909
+#: src/bin/e_main.c:912
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenment no pot configurar la barra d'eines.\n"
 
-#: src/bin/e_main.c:916
+#: src/bin/e_main.c:919
 msgid "Setup Wallpaper"
 msgstr "Configura fons de pantalla"
 
-#: src/bin/e_main.c:920
+#: src/bin/e_main.c:923
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Enlightenment no pot configurar el fons de pantalla d'escriptori.\n"
 
-#: src/bin/e_main.c:927
+#: src/bin/e_main.c:930
 msgid "Setup Mouse"
 msgstr "Configura ratolí"
 
-#: src/bin/e_main.c:931
+#: src/bin/e_main.c:934
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Enlightenment no pot configurar les preferències del ratolí.\n"
 
-#: src/bin/e_main.c:938
+#: src/bin/e_main.c:941
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr "Enlightenment no pot configurar la distribució del teclat XKB.\n"
 
-#: src/bin/e_main.c:944
+#: src/bin/e_main.c:947
 msgid "Setup Bindings"
 msgstr "Configura dreceres"
 
-#: src/bin/e_main.c:948
+#: src/bin/e_main.c:951
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenment no pot configurar el sistema de dreceres.\n"
 
-#: src/bin/e_main.c:955
+#: src/bin/e_main.c:958
 msgid "Setup Thumbnailer"
 msgstr "Configura miniatures"
 
-#: src/bin/e_main.c:959
+#: src/bin/e_main.c:962
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenment no pot configurar el sistema de miniatures.\n"
 
-#: src/bin/e_main.c:968
+#: src/bin/e_main.c:971
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "Enlightenment no pot establir el sistema d'icones memòria cau.\n"
 
-#: src/bin/e_main.c:977
+#: src/bin/e_main.c:980
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr ""
 "Enlightenment no pot inicialitzar les preferències del sistema XSettings.\n"
 
-#: src/bin/e_main.c:986
+#: src/bin/e_main.c:989
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Enlightenment no pot inicialitzar l'actualització del sistema.\n"
 
-#: src/bin/e_main.c:993
+#: src/bin/e_main.c:996
 msgid "Setup Desktop Environment"
 msgstr "Configura entorn escriptori"
 
-#: src/bin/e_main.c:997
+#: src/bin/e_main.c:1000
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Enlightenment no pot inicialitzar l'entorn d'escriptori.\n"
 
-#: src/bin/e_main.c:1004
+#: src/bin/e_main.c:1007
 msgid "Setup File Ordering"
 msgstr "Configura ordre fitxers"
 
-#: src/bin/e_main.c:1008
+#: src/bin/e_main.c:1011
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Enlightenment no pot configurar el sistema d'ordre de fitxers.\n"
 
-#: src/bin/e_main.c:1023
+#: src/bin/e_main.c:1026
 msgid "Load Modules"
 msgstr "Carrega mòduls "
 
-#: src/bin/e_main.c:1053
+#: src/bin/e_main.c:1056
 msgid "Setup Shelves"
 msgstr "Configura taulers"
 
-#: src/bin/e_main.c:1074
+#: src/bin/e_main.c:1077
 msgid "Almost Done"
 msgstr "Quasi Llest"
 
-#: src/bin/e_main.c:1235
+#: src/bin/e_main.c:1238
 #, c-format
 msgid ""
 "Options:\n"
@@ -3426,7 +3426,7 @@ msgstr ""
 "això\n"
 "\t\tSi ha necessitat ajuda aleshores aquesta opció no és per vostè.\n"
 
-#: src/bin/e_main.c:1288
+#: src/bin/e_main.c:1291
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -3442,11 +3442,11 @@ msgstr ""
 " i llançarà qualsevol altre servei que requereixi etc.\n"
 "abans que enlightenment comenci a executar-se.\n"
 
-#: src/bin/e_main.c:1569
+#: src/bin/e_main.c:1572
 msgid "Testing Format Support"
 msgstr "Provant el suport de format"
 
-#: src/bin/e_main.c:1573
+#: src/bin/e_main.c:1576
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -3454,14 +3454,14 @@ msgstr ""
 "Evas no pot crear el búfer canvas. Comprovi que Evas permet el motor de "
 "búfer per software.\n"
 
-#: src/bin/e_main.c:1585
+#: src/bin/e_main.c:1588
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
 msgstr ""
 "Evas no pot carregar fitxers SVG. Comprovi que Evas tingui suport per SVG.\n"
 
-#: src/bin/e_main.c:1595
+#: src/bin/e_main.c:1598
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -3469,21 +3469,21 @@ msgstr ""
 "Evas no pot carregar fitxers JPEG. Comprovi que Evas tingui suport per "
 "JPEG.\n"
 
-#: src/bin/e_main.c:1605
+#: src/bin/e_main.c:1608
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
 msgstr ""
 "Evas no pot carregar fitxers PNG. Comprovi que Evas tingui suport per PNG.\n"
 
-#: src/bin/e_main.c:1615
+#: src/bin/e_main.c:1618
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
 msgstr ""
 "Evas no pot carregar fitxers EET.  Comprovi que Evas tingui suport per EET.\n"
 
-#: src/bin/e_main.c:1629
+#: src/bin/e_main.c:1632
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -3492,7 +3492,7 @@ msgstr ""
 "Evas no pot carregar la font 'Sans'. Comprovi que Evas tingui suport per "
 "fontconfig i que el sistema de fontconfig defineixi 'Sans'.\n"
 
-#: src/bin/e_main.c:1852
+#: src/bin/e_main.c:1855
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -3503,11 +3503,11 @@ msgstr ""
 "un error carregant el<br> mòdul anomenat:%s.Aquest mòdul serà desactivat<br> "
 "i no tornarà a ser carregat."
 
-#: src/bin/e_main.c:1857 src/bin/e_main.c:1873
+#: src/bin/e_main.c:1860 src/bin/e_main.c:1876
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment ha fallat poc després d'arrencar i serà reiniciat."
 
-#: src/bin/e_main.c:1858
+#: src/bin/e_main.c:1861
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -3518,7 +3518,7 @@ msgstr ""
 "un error carregant el mòdul anomenat:%s<br><br>Aquest mòdul serà "
 "desactivat<br> i no tornarà a ser carregat."
 
-#: src/bin/e_main.c:1866
+#: src/bin/e_main.c:1869
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -3532,7 +3532,7 @@ msgstr ""
 "de mòduls hauria de permetre seleccionar\n"
 "els mòduls un altre cop.\n"
 
-#: src/bin/e_main.c:1874
+#: src/bin/e_main.c:1877
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4437,8 +4437,8 @@ msgstr "Mesurador bateria"
 msgid "Clock Settings"
 msgstr "Preferències rellotge"
 
-#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:709
-#: src/modules/clock/e_mod_main.c:870
+#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:722
+#: src/modules/clock/e_mod_main.c:883
 msgid "Clock"
 msgstr "Rellotge"
 
@@ -4504,7 +4504,7 @@ msgstr "%a, %e %b, %Y"
 msgid "%a, %x"
 msgstr "%a, %x"
 
-#: src/modules/clock/e_mod_main.c:870
+#: src/modules/clock/e_mod_main.c:883
 msgid "Toggle calendar"
 msgstr "Alternar calendari"
 
@@ -9758,7 +9758,7 @@ msgstr "Esquerra:"
 msgid "Right:"
 msgstr "Dreta:"
 
-#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:641
+#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:642
 msgid "Mute"
 msgstr "Silencia"
 
@@ -9815,19 +9815,19 @@ msgstr "Volum canviat"
 msgid "Mixer Settings Updated"
 msgstr "Preferències mesclador actualitzades"
 
-#: src/modules/mixer/e_mod_main.c:1324
+#: src/modules/mixer/e_mod_main.c:1325
 msgid "Mixer Module"
 msgstr "Mòdul mesclador"
 
-#: src/modules/mixer/e_mod_main.c:1352
+#: src/modules/mixer/e_mod_main.c:1353
 msgid "Increase Volume"
 msgstr "Pujar volum"
 
-#: src/modules/mixer/e_mod_main.c:1353
+#: src/modules/mixer/e_mod_main.c:1354
 msgid "Decrease Volume"
 msgstr "Baixar volum"
 
-#: src/modules/mixer/e_mod_main.c:1354
+#: src/modules/mixer/e_mod_main.c:1355
 msgid "Mute Volume"
 msgstr "Silenci"
 

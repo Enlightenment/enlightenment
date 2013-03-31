@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nl\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-27 21:29+0900\n"
+"POT-Creation-Date: 2013-03-31 12:24+0900\n"
 "PO-Revision-Date: 2011-12-06 00:23+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@gmail.com>\n"
 "Language-Team: Dutch <kde-i18n-doc@kde.org>\n"
@@ -34,7 +34,7 @@ msgid "Close"
 msgstr "Sluiten"
 
 #: src/bin/e_about.c:21 src/bin/e_actions.c:3364 src/bin/e_actions.c:3368
-#: src/bin/e_actions.c:3372 src/bin/e_int_menus.c:224 src/bin/e_main.c:632
+#: src/bin/e_actions.c:3372 src/bin/e_int_menus.c:224 src/bin/e_main.c:635
 #: src/modules/conf_interaction/e_int_config_mouse.c:176
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -1028,7 +1028,7 @@ msgid "Apply"
 msgstr "Toepassen"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
-#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1247
+#: src/modules/gadman/e_mod_main.c:23 src/modules/mixer/e_mod_main.c:1248
 #: src/modules/connman/e_mod_main.c:591
 #: src/modules/notification/e_mod_main.c:181
 msgid "Extensions"
@@ -2573,8 +2573,8 @@ msgstr "Verzoek positie"
 #: src/bin/e_int_border_prop.c:477 src/bin/e_int_border_prop.c:512
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:272
 #: src/bin/e_shelf.c:2285 src/modules/backlight/e_mod_main.c:254
-#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:361
-#: src/modules/clock/e_mod_main.c:604 src/modules/conf_dialogs/e_mod_main.c:17
+#: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:374
+#: src/modules/clock/e_mod_main.c:617 src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf_interaction/e_int_config_mouse.c:155
 #: src/modules/conf_shelves/e_int_config_shelf.c:147
 #: src/modules/everything/evry_gadget.c:511
@@ -2583,7 +2583,7 @@ msgstr "Verzoek positie"
 #: src/modules/ibar/e_mod_main.c:400 src/modules/ibar/e_mod_main.c:876
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
 #: src/modules/pager/e_mod_main.c:878 src/modules/temperature/e_mod_main.c:230
-#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:723
+#: src/modules/wizard/page_150.c:67 src/modules/mixer/e_mod_main.c:724
 #: src/modules/music-control/ui.c:225 src/modules/connman/e_mod_main.c:416
 #: src/modules/tasks/e_mod_main.c:728 src/modules/xkbswitch/e_mod_main.c:335
 #: src/modules/xkbswitch/e_mod_main.c:369
@@ -3024,29 +3024,29 @@ msgstr "Toon op alle bureaubladen"
 msgid "Show on specified Desktops"
 msgstr "Toon op gespecificeerde bureaubladen"
 
-#: src/bin/e_main.c:233
+#: src/bin/e_main.c:236
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Enlightenment Eina niet initialiseren!\n"
 
-#: src/bin/e_main.c:239
+#: src/bin/e_main.c:242
 #, fuzzy
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Enlightenment Eina niet initialiseren!\n"
 
-#: src/bin/e_main.c:286
+#: src/bin/e_main.c:289
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Enlightenment kan Eet niet initialiseren!\n"
 
-#: src/bin/e_main.c:295
+#: src/bin/e_main.c:298
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenment kan Ecore niet initialiseren!\n"
 
-#: src/bin/e_main.c:304
+#: src/bin/e_main.c:307
 #, fuzzy
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Enlightenment kan Eet niet initialiseren!\n"
 
-#: src/bin/e_main.c:316
+#: src/bin/e_main.c:319
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3054,7 +3054,7 @@ msgstr ""
 "Enlightenment kan het Exit-Signaalbeheer niet initialiseren.\n"
 "Misschien heeft u niet genoeg geheugen vrij?"
 
-#: src/bin/e_main.c:323
+#: src/bin/e_main.c:326
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3062,7 +3062,7 @@ msgstr ""
 "Enlightenment kan het HUP-Signaalbeheerder niet initialiseren.\n"
 "Misschien heeft u niet genoeg geheugen vrij?"
 
-#: src/bin/e_main.c:330
+#: src/bin/e_main.c:333
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3070,41 +3070,41 @@ msgstr ""
 "Enlightenment kan geen USER-Signaalbeheer instellen.\n"
 "Misschien heeft u niet genoeg geheugen vrij?"
 
-#: src/bin/e_main.c:339
+#: src/bin/e_main.c:342
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Enlightenment kan Ecore_File niet initialiseren!\n"
 
-#: src/bin/e_main.c:348
+#: src/bin/e_main.c:351
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Enlightenment kan Ecore_Con niet initialiseren!\n"
 
-#: src/bin/e_main.c:357
+#: src/bin/e_main.c:360
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Enlightenment kan Ecore_Ipc niet initialiseren!\n"
 
-#: src/bin/e_main.c:368
+#: src/bin/e_main.c:371
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment kan Ecore_X niet initialiseren!\n"
 
-#: src/bin/e_main.c:380
+#: src/bin/e_main.c:383
 msgid "Enlightenment cannot initialize Ecore_IMF!\n"
 msgstr "Enlightenment kan Ecore_IMF niet initialiseren!\n"
 
-#: src/bin/e_main.c:390
+#: src/bin/e_main.c:393
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Enlightenment kan Ecore_Evas niet initialiseren!\n"
 
-#: src/bin/e_main.c:400
+#: src/bin/e_main.c:403
 #, fuzzy
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Enlightenment kan Eet niet initialiseren!\n"
 
-#: src/bin/e_main.c:411
+#: src/bin/e_main.c:414
 #, fuzzy
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenment Eina niet initialiseren!\n"
 
-#: src/bin/e_main.c:426
+#: src/bin/e_main.c:429
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3114,7 +3114,7 @@ msgstr ""
 "ondersteund in Evas. Controleer alstublieft uw installatie van Evas en\n"
 "Ecore en controleer of ze het Software X11-weergave-engine ondersteunen."
 
-#: src/bin/e_main.c:434
+#: src/bin/e_main.c:437
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -3124,15 +3124,15 @@ msgstr ""
 "ondersteund in Evas. Controleer alstublieft uw installatie van Evas en\n"
 "Ecore en controleer of ze het Softwarebuffer-weergave-engine ondersteunen."
 
-#: src/bin/e_main.c:444
+#: src/bin/e_main.c:447
 msgid "Enlightenment cannot initialize Edje!\n"
 msgstr "Enlightenment kan Edje niet initialiseren!\n"
 
-#: src/bin/e_main.c:456
+#: src/bin/e_main.c:459
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenment kan E_Intl niet initialiseren!\n"
 
-#: src/bin/e_main.c:466
+#: src/bin/e_main.c:469
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3140,11 +3140,11 @@ msgstr ""
 "Enlightenment kan de nood meldingssysteem niet initialiseren.\n"
 "Heeft U de DISPLAY-Variabele ingesteld?"
 
-#: src/bin/e_main.c:476
+#: src/bin/e_main.c:479
 msgid "Enlightenment cannot initialize E_Xinerama!\n"
 msgstr "Enlightenment kan E_Xinerama niet initialiseren!\n"
 
-#: src/bin/e_main.c:494
+#: src/bin/e_main.c:497
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3152,36 +3152,36 @@ msgstr ""
 "Enlightenment kan geen mappen in uw Persoonlijke map creëren.\n"
 "Wellicht heeft u geen Persoonlijke map of is uw harde schijf vol?"
 
-#: src/bin/e_main.c:504
+#: src/bin/e_main.c:507
 #, fuzzy
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "Enlightenment kan haar bestandsregister-systeem niet instellen."
 
-#: src/bin/e_main.c:513
+#: src/bin/e_main.c:516
 #, fuzzy
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Enlightenment kan haar configuratiesysteem niet instellen."
 
-#: src/bin/e_main.c:531
+#: src/bin/e_main.c:534
 msgid "Enlightenment cannot initialize E_Randr!\n"
 msgstr "Enlightenment kan E_Randr niet initialiseren!\n"
 
-#: src/bin/e_main.c:540
+#: src/bin/e_main.c:543
 #, fuzzy
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment kan haar omgeving niet initialiseren."
 
-#: src/bin/e_main.c:556
+#: src/bin/e_main.c:559
 #, fuzzy
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment kan haar schaalsysteem niet instellen."
 
-#: src/bin/e_main.c:565
+#: src/bin/e_main.c:568
 #, fuzzy
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenment kan haar pointersysteem niet instellen."
 
-#: src/bin/e_main.c:574
+#: src/bin/e_main.c:577
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3189,31 +3189,31 @@ msgstr ""
 "Enlightenment kan haar zoekpaden niet instellen.\n"
 "Misschien heeft u niet genoeg geheugen vrij?"
 
-#: src/bin/e_main.c:591
+#: src/bin/e_main.c:594
 #, fuzzy
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenment kan haar lettertypesysteem niet instellen."
 
-#: src/bin/e_main.c:608
+#: src/bin/e_main.c:611
 #, fuzzy
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenment kan haar thema-systeem niet initialiseren."
 
-#: src/bin/e_main.c:624
+#: src/bin/e_main.c:627
 #, fuzzy
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenment kan haar intl-systeem niet instellen."
 
-#: src/bin/e_main.c:639
+#: src/bin/e_main.c:642
 msgid "Starting International Support"
 msgstr "Starten van internationale ondersteuning"
 
-#: src/bin/e_main.c:643
+#: src/bin/e_main.c:646
 #, fuzzy
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenment kan haar intl-systeem niet instellen."
 
-#: src/bin/e_main.c:652
+#: src/bin/e_main.c:655
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -3223,20 +3223,20 @@ msgstr ""
 "Wellicht heeftu niet voldoende rechten op ~/.cache/efreet of\n"
 "heeft u niet genoeg geheugen vrij?"
 
-#: src/bin/e_main.c:677
+#: src/bin/e_main.c:680
 msgid "Setup Actions"
 msgstr "Stel acties in"
 
-#: src/bin/e_main.c:681
+#: src/bin/e_main.c:684
 #, fuzzy
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment haar zijn actiesysteem niet instellen."
 
-#: src/bin/e_main.c:688
+#: src/bin/e_main.c:691
 msgid "Setup Screens"
 msgstr "Stel schermen in"
 
-#: src/bin/e_main.c:692
+#: src/bin/e_main.c:695
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3244,253 +3244,253 @@ msgstr ""
 "Enlightenment kon zich voor geen enkel beeldscherm als vensterbeheerder\n"
 "aanbieden. Wellicht loopt er al een andere vensterbeheerder?\n"
 
-#: src/bin/e_main.c:700
+#: src/bin/e_main.c:703
 msgid "Setup ACPI"
 msgstr "Stel ACPI in"
 
-#: src/bin/e_main.c:707
+#: src/bin/e_main.c:710
 msgid "Setup Backlight"
 msgstr "Stel achtergrondlicht in"
 
-#: src/bin/e_main.c:711
+#: src/bin/e_main.c:714
 #, fuzzy
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Enlightenment kan het achtergrondlicht niet instellen."
 
-#: src/bin/e_main.c:718
+#: src/bin/e_main.c:721
 msgid "Setup Screensaver"
 msgstr "Stel schermbeveiliging in"
 
-#: src/bin/e_main.c:722
+#: src/bin/e_main.c:725
 #, fuzzy
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "Enlightenment kan geen X-schermbeveiliging instellen."
 
-#: src/bin/e_main.c:729
+#: src/bin/e_main.c:732
 msgid "Setup DPMS"
 msgstr "Stel DPMS in"
 
-#: src/bin/e_main.c:733
+#: src/bin/e_main.c:736
 #, fuzzy
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Enlightenment kan de DPMS-instellingen niet instellen."
 
-#: src/bin/e_main.c:740
+#: src/bin/e_main.c:743
 msgid "Setup Powersave Modes"
 msgstr "Stel energiebesparings-modi in"
 
-#: src/bin/e_main.c:744
+#: src/bin/e_main.c:747
 #, fuzzy
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Enlightenment kan haar energiebesparings-modi niet instellen."
 
-#: src/bin/e_main.c:751
+#: src/bin/e_main.c:754
 msgid "Setup Desklock"
 msgstr "Stel bureaubladvergrendeling in"
 
-#: src/bin/e_main.c:755
+#: src/bin/e_main.c:758
 #, fuzzy
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "Enlightenment kan haar bureaubladvergrendelingssysteem niet instellen."
 
-#: src/bin/e_main.c:762
+#: src/bin/e_main.c:765
 msgid "Setup Popups"
 msgstr "Stel popups in"
 
-#: src/bin/e_main.c:766
+#: src/bin/e_main.c:769
 #, fuzzy
 msgid "Enlightenment cannot set up its popup system.\n"
 msgstr "Enlightenment kan het popup systeem niet instellen."
 
-#: src/bin/e_main.c:778
+#: src/bin/e_main.c:781
 msgid "Setup Message Bus"
 msgstr "Stel berichtensysteem in"
 
-#: src/bin/e_main.c:785
+#: src/bin/e_main.c:788
 msgid "Setup Paths"
 msgstr "Stel paden in"
 
-#: src/bin/e_main.c:791
+#: src/bin/e_main.c:794
 msgid "Setup System Controls"
 msgstr "Stel systeembediening in"
 
-#: src/bin/e_main.c:795
+#: src/bin/e_main.c:798
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "Enlightenment kan haar Systeemcommando-systeem niet initialiseren.\n"
 
-#: src/bin/e_main.c:802
+#: src/bin/e_main.c:805
 msgid "Setup Execution System"
 msgstr "Stel uitvoeringssysteem in"
 
-#: src/bin/e_main.c:806
+#: src/bin/e_main.c:809
 #, fuzzy
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Enlightenment kan haar uitvoeringssysteem niet instellen."
 
-#: src/bin/e_main.c:817
-msgid "Setup Filemanager"
-msgstr "Stel Bestandsbeheerder in"
-
-#: src/bin/e_main.c:821
-msgid "Enlightenment cannot initialize the File manager.\n"
-msgstr "Enlightenment kan de bestandsbeheerder niet initialiseren.\n"
-
-#: src/bin/e_main.c:828
-msgid "Setup Message System"
-msgstr "Stel berichtensysteem in"
-
-#: src/bin/e_main.c:832
-#, fuzzy
-msgid "Enlightenment cannot set up its msg system.\n"
-msgstr "Enlightenment kan het berichtensysteem niet instellen."
-
-#: src/bin/e_main.c:839
+#: src/bin/e_main.c:820
 msgid "Setup DND"
 msgstr "Stel DND in"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:824
 #, fuzzy
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Enlightenment kan het dnd-systeem niet instellen."
 
-#: src/bin/e_main.c:850
+#: src/bin/e_main.c:831
+msgid "Setup Filemanager"
+msgstr "Stel Bestandsbeheerder in"
+
+#: src/bin/e_main.c:835
+msgid "Enlightenment cannot initialize the File manager.\n"
+msgstr "Enlightenment kan de bestandsbeheerder niet initialiseren.\n"
+
+#: src/bin/e_main.c:842
+msgid "Setup Message System"
+msgstr "Stel berichtensysteem in"
+
+#: src/bin/e_main.c:846
+#, fuzzy
+msgid "Enlightenment cannot set up its msg system.\n"
+msgstr "Enlightenment kan het berichtensysteem niet instellen."
+
+#: src/bin/e_main.c:853
 msgid "Setup Grab Input Handling"
 msgstr "Stel grijpinvoerhandeling in"
 
-#: src/bin/e_main.c:854
+#: src/bin/e_main.c:857
 #, fuzzy
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr "Enlightenment kan haar grijpinvoerhandeling-systeem niet instellen."
 
-#: src/bin/e_main.c:861
+#: src/bin/e_main.c:864
 msgid "Setup Modules"
 msgstr "Stel modules in"
 
-#: src/bin/e_main.c:865 src/bin/e_main.c:1057
+#: src/bin/e_main.c:868 src/bin/e_main.c:1060
 #, fuzzy
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenment kan haar Module-systeem niet instellen."
 
-#: src/bin/e_main.c:872
+#: src/bin/e_main.c:875
 msgid "Setup Remembers"
 msgstr "Instellen onthoudt"
 
-#: src/bin/e_main.c:876
+#: src/bin/e_main.c:879
 #, fuzzy
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Enlightenment kan haar herinneringsinstellingen niet instellen."
 
-#: src/bin/e_main.c:883
+#: src/bin/e_main.c:886
 msgid "Setup Color Classes"
 msgstr "Stel kleurklassen in"
 
-#: src/bin/e_main.c:887
+#: src/bin/e_main.c:890
 #, fuzzy
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr "Enlightenment kan haar kleurklassen-systeem niet instellen."
 
-#: src/bin/e_main.c:894
+#: src/bin/e_main.c:897
 msgid "Setup Gadcon"
 msgstr "Stel gadgets in"
 
-#: src/bin/e_main.c:898
+#: src/bin/e_main.c:901
 #, fuzzy
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenment kan haar gadget-controlesysteem niet instellen."
 
-#: src/bin/e_main.c:905
+#: src/bin/e_main.c:908
 #, fuzzy
 msgid "Setup Toolbars"
 msgstr "Stel werkbalkinhoud in"
 
-#: src/bin/e_main.c:909
+#: src/bin/e_main.c:912
 #, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenment kan haar intl-systeem niet instellen."
 
-#: src/bin/e_main.c:916
+#: src/bin/e_main.c:919
 msgid "Setup Wallpaper"
 msgstr "Stel achtergrond in"
 
-#: src/bin/e_main.c:920
+#: src/bin/e_main.c:923
 #, fuzzy
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Enlightenment kan haar bureaubladachtergrond-systeem niet instellen."
 
-#: src/bin/e_main.c:927
+#: src/bin/e_main.c:930
 msgid "Setup Mouse"
 msgstr "Stel muis in"
 
-#: src/bin/e_main.c:931
+#: src/bin/e_main.c:934
 #, fuzzy
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Enlightenment kan de muisinstellingen niet instellen."
 
-#: src/bin/e_main.c:938
+#: src/bin/e_main.c:941
 #, fuzzy
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr "Enlightenment kan haar bestandssortering-systeem niet instellen."
 
-#: src/bin/e_main.c:944
+#: src/bin/e_main.c:947
 msgid "Setup Bindings"
 msgstr "Stel bindingen in"
 
-#: src/bin/e_main.c:948
+#: src/bin/e_main.c:951
 #, fuzzy
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenment kan haar bindingssysteem niet instellen."
 
-#: src/bin/e_main.c:955
+#: src/bin/e_main.c:958
 msgid "Setup Thumbnailer"
 msgstr "Stel miniaturen in"
 
-#: src/bin/e_main.c:959
+#: src/bin/e_main.c:962
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenment kan haar miniatuur-systeem niet instellen\n"
 
-#: src/bin/e_main.c:968
+#: src/bin/e_main.c:971
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "Enlightenment kan het Pictorgramcache-systeem niet initialiseren.\n"
 
-#: src/bin/e_main.c:977
+#: src/bin/e_main.c:980
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment kan het XSettings-systeem niet instellen.\n"
 
-#: src/bin/e_main.c:986
+#: src/bin/e_main.c:989
 #, fuzzy
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Enlightenment kan het Pictorgramcache-systeem niet initialiseren.\n"
 
-#: src/bin/e_main.c:993
+#: src/bin/e_main.c:996
 msgid "Setup Desktop Environment"
 msgstr "Stel werkomgeving in"
 
-#: src/bin/e_main.c:997
+#: src/bin/e_main.c:1000
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Enlightenment kan haar werkomgeving niet initialiseren.\n"
 
-#: src/bin/e_main.c:1004
+#: src/bin/e_main.c:1007
 msgid "Setup File Ordering"
 msgstr "Stel bestandssortering in"
 
-#: src/bin/e_main.c:1008
+#: src/bin/e_main.c:1011
 #, fuzzy
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Enlightenment kan haar bestandssortering-systeem niet instellen."
 
-#: src/bin/e_main.c:1023
+#: src/bin/e_main.c:1026
 msgid "Load Modules"
 msgstr "Laad modules"
 
-#: src/bin/e_main.c:1053
+#: src/bin/e_main.c:1056
 msgid "Setup Shelves"
 msgstr "Stel schelven in"
 
-#: src/bin/e_main.c:1074
+#: src/bin/e_main.c:1077
 msgid "Almost Done"
 msgstr "Bijna klaar"
 
-#: src/bin/e_main.c:1235
+#: src/bin/e_main.c:1238
 #, c-format
 msgid ""
 "Options:\n"
@@ -3543,7 +3543,7 @@ msgstr ""
 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
 "\t\tIndien u deze hulp nodig heeft, heeft u deze optie niet nodig.\n"
 
-#: src/bin/e_main.c:1288
+#: src/bin/e_main.c:1291
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -3559,11 +3559,11 @@ msgstr ""
 "en starten van elke andere benodigde services etc. afhandelen\n"
 "vooraleer Enlightenment zelf zal starten.\n"
 
-#: src/bin/e_main.c:1569
+#: src/bin/e_main.c:1572
 msgid "Testing Format Support"
 msgstr "Testen van formaat-ondersteuning"
 
-#: src/bin/e_main.c:1573
+#: src/bin/e_main.c:1576
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -3571,7 +3571,7 @@ msgstr ""
 "Enlightenment merkte op dat Evas geen buffercanvas kan creëren. Controleer\n"
 "alstublieft of Evas het Softwarebuffer-engine ondersteunt.\n"
 
-#: src/bin/e_main.c:1585
+#: src/bin/e_main.c:1588
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
@@ -3579,7 +3579,7 @@ msgstr ""
 "Enlightenment merkte op dat Evas geen SVG-bestanden kan laden. Controleer\n"
 "of Evas SVG-lader-ondersteuning heeft.\n"
 
-#: src/bin/e_main.c:1595
+#: src/bin/e_main.c:1598
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -3587,7 +3587,7 @@ msgstr ""
 "Enlightenment merkte op dat Evas geen JPEG-bestanden kan laden. Controleer\n"
 "of Evas JPEG-lader-ondersteuning heeft.\n"
 
-#: src/bin/e_main.c:1605
+#: src/bin/e_main.c:1608
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
@@ -3595,7 +3595,7 @@ msgstr ""
 "Enlightenment merkte op dat Evas geen PNG-bestanden kan laden. Controleer\n"
 "of Evas PNG-lader-ondersteuning heeft.\n"
 
-#: src/bin/e_main.c:1615
+#: src/bin/e_main.c:1618
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
@@ -3603,7 +3603,7 @@ msgstr ""
 "Enlightenment merkte op dat Evas geen EET-bestanden kan laden. Controleer\n"
 "of Evas EET-lader-ondersteuning heeft.\n"
 
-#: src/bin/e_main.c:1629
+#: src/bin/e_main.c:1632
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -3614,7 +3614,7 @@ msgstr ""
 "alstublieft of Evas lettertypeinstel-\n"
 "ondersteuning heeft en of dat het 'Sans'-lettertype definieert.\n"
 
-#: src/bin/e_main.c:1852
+#: src/bin/e_main.c:1855
 #, fuzzy, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -3625,11 +3625,11 @@ msgstr ""
 "een fout tijdens het laden van <br>de module genaamd: %s. Deze module is "
 "uitgeschakeld<br>en zal niet worden geladen."
 
-#: src/bin/e_main.c:1857 src/bin/e_main.c:1873
+#: src/bin/e_main.c:1860 src/bin/e_main.c:1876
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment crashte vroeg in het startstadium en is herstart"
 
-#: src/bin/e_main.c:1858
+#: src/bin/e_main.c:1861
 #, fuzzy, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -3640,7 +3640,7 @@ msgstr ""
 "een fout tijdens het laden van de module genaamd: %s<br><br> Deze module is "
 "uitgeschakeld en zal niet worden geladen."
 
-#: src/bin/e_main.c:1866
+#: src/bin/e_main.c:1869
 #, fuzzy
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
@@ -3654,7 +3654,7 @@ msgstr ""
 "<br>instellingen- dialoogvenster zou u uw<br>modules weer moeten laten "
 "selecteren."
 
-#: src/bin/e_main.c:1874
+#: src/bin/e_main.c:1877
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4589,8 +4589,8 @@ msgstr "Accu-meter"
 msgid "Clock Settings"
 msgstr "Focusinstellingen"
 
-#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:709
-#: src/modules/clock/e_mod_main.c:870
+#: src/modules/clock/e_mod_config.c:83 src/modules/clock/e_mod_main.c:722
+#: src/modules/clock/e_mod_main.c:883
 msgid "Clock"
 msgstr "Klok"
 
@@ -4660,7 +4660,7 @@ msgstr ""
 msgid "%a, %x"
 msgstr ""
 
-#: src/modules/clock/e_mod_main.c:870
+#: src/modules/clock/e_mod_main.c:883
 #, fuzzy
 msgid "Toggle calendar"
 msgstr "Toon kalender"
@@ -10191,7 +10191,7 @@ msgstr "Links:"
 msgid "Right:"
 msgstr "Rechts:"
 
-#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:641
+#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:642
 msgid "Mute"
 msgstr "Dempen"
 
@@ -10248,19 +10248,19 @@ msgstr "Volume veranderd"
 msgid "Mixer Settings Updated"
 msgstr "Mixer-instellingen geüpdate"
 
-#: src/modules/mixer/e_mod_main.c:1324
+#: src/modules/mixer/e_mod_main.c:1325
 msgid "Mixer Module"
 msgstr "Mixer-module"
 
-#: src/modules/mixer/e_mod_main.c:1352
+#: src/modules/mixer/e_mod_main.c:1353
 msgid "Increase Volume"
 msgstr ""
 
-#: src/modules/mixer/e_mod_main.c:1353
+#: src/modules/mixer/e_mod_main.c:1354
 msgid "Decrease Volume"
 msgstr ""
 
-#: src/modules/mixer/e_mod_main.c:1354
+#: src/modules/mixer/e_mod_main.c:1355
 #, fuzzy
 msgid "Mute Volume"
 msgstr "Nieuw volume"
