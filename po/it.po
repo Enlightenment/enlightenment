@@ -10695,7 +10695,7 @@ msgstr "Variante"
 
 #: src/modules/notification/e_mod_main.c:55
 msgid "Enter Presentation Mode"
-msgstr "Entra in modalità presentazione"
+msgstr "Ingresso in modalità presentazione"
 
 #: src/modules/notification/e_mod_main.c:56
 msgid ""
