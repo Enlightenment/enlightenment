@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-03-31 12:24+0900\n"
-"PO-Revision-Date: 2013-03-18 12:42-0000\n"
+"PO-Revision-Date: 2013-04-04 09:58-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: Portuguese\n"
 "Language: Portuguese\n"
@@ -2643,7 +2643,7 @@ msgstr "Ignorar lista de janelas"
 
 #: src/bin/e_int_border_remember.c:787
 msgid "Opacity"
-msgstr ""
+msgstr "Opacidade"
 
 #: src/bin/e_int_border_remember.c:790
 msgid "Application file or name (.desktop)"
@@ -3285,15 +3285,12 @@ msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "O Enlightenment não conseguiu configurar o sistema de gadgets!\n"
 
 #: src/bin/e_main.c:908
-#, fuzzy
 msgid "Setup Toolbars"
-msgstr "Definir conteúdo da barra de ferramentas"
+msgstr "Configurar barra de ferramentas"
 
 #: src/bin/e_main.c:912
-#, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
-msgstr ""
-"O Enlightenment não conseguiu configurar o sistema de internacionalização!\n"
+msgstr "O Enlightenment não conseguiu configurar as barras de ferramentas!\n"
 
 #: src/bin/e_main.c:919
 msgid "Setup Wallpaper"
@@ -9830,20 +9827,19 @@ msgstr "Silenciar"
 
 #: src/modules/music-control/ui.c:111
 msgid "Music Player"
-msgstr ""
+msgstr "Reprodutor de músicas"
 
 #: src/modules/music-control/ui.c:121
 msgid "* Your player must be configured to export the DBus interface MPRIS2."
-msgstr ""
+msgstr "* Tem que configurar o seu reprodutor para exortar a interface MPRIS2."
 
 #: src/modules/music-control/ui.c:124
 msgid "Pause music when screen is locked"
-msgstr ""
+msgstr "Colocar em pausa ao bloquear o ecrã"
 
 #: src/modules/music-control/ui.c:195
-#, fuzzy
 msgid "Music control Settings"
-msgstr "Definições syscon"
+msgstr "Definições de controlo musical"
 
 #: src/modules/connman/e_mod_main.c:10
 msgid "Connection Manager"
