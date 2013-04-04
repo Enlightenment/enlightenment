@@ -10721,7 +10721,7 @@ msgstr ""
 
 #: src/modules/notification/e_mod_main.c:78
 msgid "Enter Offline Mode"
-msgstr "Entra in modalità non in linea"
+msgstr "Ingresso in modalità non in linea"
 
 #: src/modules/notification/e_mod_main.c:79
 msgid ""
