@@ -1,3 +1,7 @@
+2013-04-05 Jérémy Zurcher
+
+        * added support for systemd halt and poweroff
+
 2013-03-28 Cedric Bail
 
 	* added support for systemd user session.

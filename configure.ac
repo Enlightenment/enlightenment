@@ -893,36 +893,43 @@ AC_E_OPTIONAL_MODULE([access], true)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([contact], true)
 
+HALT="/sbin/shutdown -h now"
+REBOOT="/sbin/shutdown -r now"
 SUSPEND=""
 HIBERNATE=""
 case "$host_os" in
    freebsd*|pcbsd*)
       SUSPEND="acpiconf -s3"
       AC_MSG_NOTICE([use suspend method: $SUSPEND])
-      AC_SUBST(SUSPEND)
       HIBERNATE="acpiconf -s4"
       AC_MSG_NOTICE([use hibernate method: $HIBERNATE])
-      AC_SUBST(HIBERNATE)
       ;;
    *)
-      if test "x{have_systemd_user_session}" = "xyes"; then
+      if test "x${have_systemd_user_session}" = "xyes"; then
+         HALT="/usr/bin/systemctl poweroff"
+         REBOOT="/usr/bin/systemctl reboot"
          SUSPEND="/usr/bin/systemctl suspend"
-	 HIBERNATE="/usr/bin/systemctl hibernate"
+         HIBERNATE="/usr/bin/systemctl hibernate"
+         AC_MSG_NOTICE([use systemctl for halt, reboot, suspend and hibernate])
       else
          AC_PATH_PROGS([SUSPEND], [sleep.sh pm-suspend],[/etc/acpi/sleep.sh], [/etc/acpi:/sbin:/usr/sbin:$PATH])
-      	 if test "$SUSPEND" = "/etc/acpi/sleep.sh" ; then
+         if test "$SUSPEND" = "/etc/acpi/sleep.sh" ; then
             SUSPEND="/etc/acpi/sleep.sh force"
             AC_MSG_NOTICE([use suspend method: $SUSPEND])
          fi
 
          AC_PATH_PROGS([HIBERNATE], [hibernate.sh pm-hibernate],[/etc/acpi/hibernate.sh], [/etc/acpi:/sbin:/usr/sbin:$PATH])
-      	 if test "$HIBERNATE" = "/etc/acpi/hibernate.sh" ; then
+         if test "$HIBERNATE" = "/etc/acpi/hibernate.sh" ; then
             HIBERNATE="/etc/acpi/hibernate.sh force"
             AC_MSG_NOTICE([use hibernate method: $HIBERNATE])
-      	 fi
+         fi
       fi
       ;;
 esac
+AC_SUBST(HALT)
+AC_SUBST(REBOOT)
+AC_SUBST(SUSPEND)
+AC_SUBST(HIBERNATE)
 
 m4_ifdef([v_mic],
    [
