@@ -47,6 +47,7 @@ Additions:
         * added option for remembering filemanager windows globally
 	* Added support for systemd user session
 	* Added support for systemd hibernate and suspend
+        * added support for systemd halt and poweroff
 
 Changes:
     Modules:
