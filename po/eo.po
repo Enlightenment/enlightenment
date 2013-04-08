@@ -9,18 +9,18 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-03-31 12:24+0900\n"
-"PO-Revision-Date: 2013-02-09 00:51+0000\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2013-04-07 19:55+0200\n"
+"PO-Revision-Date: 2013-04-07 20:17+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
-"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Launchpad-Export-Date: 2013-02-09 04:56+0000\n"
-"X-Generator: Launchpad (build 16482)\n"
+"X-Launchpad-Export-Date: 2013-04-08 05:17+0000\n"
+"X-Generator: Launchpad (build 16550)\n"
+"Language: \n"
 "X-Language-Team: Esperanto <translation-team-eo@lists.sourceforge.net>\n"
 "X-Poedit-SearchPath-0: /usr/portage/distfiles/cvs-src/e17/apps/e/src\n"
 "X-Poedit-Basepath: .\n"
@@ -49,15 +49,15 @@ msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
 msgid ""
-"<title>Copyright &copy; 2000-2013, by the Enlightenment Development Team</"
-"><br><br>We hope you enjoy using this software as much as we enjoyed writing "
-"it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
-"org</><br><br>"
+"<title>Copyright &copy; 2000-2013, by the Enlightenment Development "
+"Team</><br><br>We hope you enjoy using this software as much as we enjoyed "
+"writing it.<br><br>To contact us please "
+"visit:<br><hilight>http://www.enlightenment.org</><br><br>"
 msgstr ""
 "<title>Kopirajto &copy; 2000-2013; de la skipo de programado de "
 "Enlightenment</><br><br>Ni esperas, ke vi ĝuu uzadon de ĉi tiu programaro "
-"tiom, kiel ni ĝuis verki ĝin.<br><br>Por kontakti nin, bonvole visitu:"
-"<br><hilight>http://www.enlightenment.org</><br><br>"
+"tiom, kiel ni ĝuis verki ĝin.<br><br>Por kontakti nin, bonvole "
+"visitu:<br><hilight>http://www.enlightenment.org</><br><br>"
 
 #: src/bin/e_about.c:69
 msgid "<title>The Team</><br><br>"
@@ -70,10 +70,9 @@ msgid ""
 "window<br>which has not yet been saved will be lost!<br><br>Are you sure you "
 "want to kill this window?"
 msgstr ""
-"Vi estas mortiganta %s.<br><br>\r\n"
-"Sciu, ke ĉiuj datumoj el ĉi tiu fenestro, kiuj ne<br>\r\n"
-"estis konservitaj, perdiĝos!<br><br>\r\n"
-"Ĉu vi certe volas mortigi ĉi tiun fenestron?"
+"Vi estas mortiganta %s.<br><br>Sciu, ke ĉiuj datumoj el ĉi tiu fenestro, "
+"kiuj ne<br>estis konservitaj, perdiĝos!<br><br>Ĉu vi certe volas mortigi ĉi "
+"tiun fenestron?"
 
 #: src/bin/e_actions.c:372
 msgid "Are you sure you want to kill this window?"
@@ -845,17 +844,20 @@ msgid ""
 "to<br>defaults. Sorry for the inconvenience.<br>"
 msgstr ""
 "Viaj agordoj estas PLI NOVAJ ol Enlightenment. Tio estas<br> strangega. Tio "
-"ne devus okazi krom se vi malĝisdatigis<br>Enlightenement aŭ­ se vi kopiis la "
-"agordon el ejo kie pli nova<br>versio de modulo estis funciinta. Tio estas "
-"malbone kaj<br>kiel antaŭ­zorgo via agordo estis restaŭrita per aprioroj."
-"<br>Bonvole pardonu por la ĝeno.<br>"
+"ne devus okazi krom se vi malĝisdatigis<br>Enlightenement aŭ­ se vi kopiis "
+"la agordon el ejo kie pli nova<br>versio de modulo estis funciinta. Tio "
+"estas malbone kaj<br>kiel antaŭ­zorgo via agordo estis restaŭrita per "
+"aprioroj.<br>Bonvole pardonu por la ĝeno.<br>"
 
 #: src/bin/e_config.c:1104
 msgid ""
-"Your bindings settings version does not match the current settings version."
-"<br>As a result, all bindings have been reloaded from defaults.<br>Sorry for "
-"the inconvenience.<br>"
+"Your bindings settings version does not match the current settings "
+"version.<br>As a result, all bindings have been reloaded from "
+"defaults.<br>Sorry for the inconvenience.<br>"
 msgstr ""
+"Versio de viaj agordoj de bindo ne kongruas la nunan version de "
+"agordoj.<br>Tiel, ĉiuj bindoj estis pravalorigitaj.<br>Sorry for the "
+"inconvenience.<br>Bonvole pardonu por la ĝeno.<br>"
 
 #: src/bin/e_config.c:1638 src/bin/e_config.c:2298
 msgid "Enlightenment Settings Write Problems"
@@ -864,12 +866,13 @@ msgstr "Problemoj de skribado de agordoj de Enlightenment"
 #: src/bin/e_config.c:1641
 #, c-format
 msgid ""
-"Enlightenment has had an error while moving config files<br>from:<br>"
-"%s<br><br>to:<br>%s<br><br>The rest of the write has been aborted for safety."
-"<br>"
+"Enlightenment has had an error while moving config "
+"files<br>from:<br>%s<br><br>to:<br>%s<br><br>The rest of the write has been "
+"aborted for safety.<br>"
 msgstr ""
-"Enlightenment ricevis eraron dum movado de dosieroj<br>el:<br>%s<br><br>al:"
-"<br>%s<br><br>La cetero de skribo estis sekure ĉesigita.<br>"
+"Enlightenment ricevis eraron dum movado de "
+"dosieroj<br>el:<br>%s<br><br>al:<br>%s<br><br>La cetero de skribo estis "
+"sekure ĉesigita.<br>"
 
 #: src/bin/e_config.c:1651 src/bin/e_config.c:2311
 #: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:856
@@ -981,13 +984,14 @@ msgstr "Ĉi tiu eraro ne estas konata de Enlightenment."
 #: src/bin/e_config.c:2301
 #, c-format
 msgid ""
-"Enlightenment has had an error while writing<br>its config file.<br>"
-"%s<br><br>The file where the error occurred was:<br>%s<br><br>This file has "
-"been deleted to avoid corrupt data.<br>"
+"Enlightenment has had an error while writing<br>its config "
+"file.<br>%s<br><br>The file where the error occurred was:<br>%s<br><br>This "
+"file has been deleted to avoid corrupt data.<br>"
 msgstr ""
-"Enlightenment ricevis eraron dum skribado<br>de sia dosiero de agordoj.<br>"
-"%s<br><br>La dosiero, kie la eraro okazis, estis:<br>%s<br><br>Ĉi tiu "
-"dosiero estis forigita por eviti korupton de datumoj.<br>"
+"Enlightenment ricevis eraron dum skribado<br>de sia dosiero de "
+"agordoj.<br>%s<br><br>La dosiero, kie la eraro okazis, "
+"estis:<br>%s<br><br>Ĉi tiu dosiero estis forigita por eviti korupton de "
+"datumoj.<br>"
 
 #: src/bin/e_config_dialog.c:226 src/modules/battery/e_mod_main.c:810
 #: src/modules/conf_bindings/e_mod_main.c:37
@@ -1680,8 +1684,8 @@ msgstr "Averto"
 #, c-format
 msgid "File already exists, overwrite?<br><hilight>%s</hilight>"
 msgstr ""
-"La dosiero jam ekzistas. Ĉu vi volas anstataŭigi ĝin?<br><hilight>%s</"
-"hilight>"
+"La dosiero jam ekzistas. Ĉu vi volas anstataŭigi "
+"ĝin?<br><hilight>%s</hilight>"
 
 #: src/bin/e_fm.c:10619
 msgid "Move Source"
@@ -1689,11 +1693,11 @@ msgstr "Movi fonton"
 
 #: src/bin/e_fm.c:10620
 msgid "Ignore this"
-msgstr "Ignori ĉi tion"
+msgstr "Malatenti ĉi tion"
 
 #: src/bin/e_fm.c:10621
 msgid "Ignore all"
-msgstr "Ignori ĉion"
+msgstr "Malatenti ĉion"
 
 #: src/bin/e_fm.c:10626
 #, c-format
@@ -1721,17 +1725,17 @@ msgstr ""
 #: src/bin/e_fm.c:10844
 #, c-format
 msgid ""
-"Are you sure you want to delete<br>the %d selected file in<br><hilight>%s</"
-"hilight>?"
+"Are you sure you want to delete<br>the %d selected file "
+"in<br><hilight>%s</hilight>?"
 msgid_plural ""
-"Are you sure you want to delete<br>the %d selected files in<br><hilight>%s</"
-"hilight>?"
+"Are you sure you want to delete<br>the %d selected files "
+"in<br><hilight>%s</hilight>?"
 msgstr[0] ""
-"Ĉu vi certe volas forigi<br>la %d elektitan dosieron en<br><hilight>%s</"
-"hilight>?"
+"Ĉu vi certe volas forigi<br>la %d elektitan dosieron "
+"en<br><hilight>%s</hilight>?"
 msgstr[1] ""
-"Ĉu vi certe volas forigi<br>la %d elektitajn dosierojn en<br><hilight>%s</"
-"hilight>?"
+"Ĉu vi certe volas forigi<br>la %d elektitajn dosierojn "
+"en<br><hilight>%s</hilight>?"
 
 #: src/bin/e_fm_device.c:59
 #, c-format
@@ -1918,15 +1922,15 @@ msgstr "Modulo %s bezonas eltenon de %s"
 msgid ""
 "Please press key sequence,<br><br>or <hilight>Escape</hilight> to abort."
 msgstr ""
-"Bonvole premu klavan vicon<br><br>aŭ <br><br><hilight>eskapan klavon</"
-"hilight> por ĉesigi."
+"Bonvole premu klavan vicon<br><br>aŭ <br><br><hilight>eskapan "
+"klavon</hilight> por ĉesigi."
 
 #: src/bin/e_grab_dialog.c:5
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:7
 msgid ""
 "Please hold any modifier you want<br>and press any button on your mouse,<br> "
-"or roll a wheel, to assign mouse binding.<br>Press <hilight>Escape</"
-"highlight> to abort."
+"or roll a wheel, to assign mouse binding.<br>Press "
+"<hilight>Escape</highlight> to abort."
 msgstr ""
 "Bonvole tenu iun ajn modifilon, kiun vi volas,<br> kaj premi iun ajn butonon "
 "sur via muso aŭ<br> ruli la musradon, por difini musan bindon.<br> Premu "
@@ -2462,7 +2466,7 @@ msgstr "Nedaŭra por"
 
 #: src/bin/e_int_border_prop.c:466
 msgid "Client Leader"
-msgstr ""
+msgstr "Parenca fenestro"
 
 #: src/bin/e_int_border_prop.c:467
 msgid "Gravity"
@@ -2557,14 +2561,14 @@ msgid ""
 msgstr ""
 "Vi klopodis peti al Enlightenment por memorigi la aplikadon de<br>ecoj (kiel "
 "grando, loko, stilo de randoj, ktp) de<br>fenestro, kiu<hilight>ne havas "
-"solajn ecojn</hilight>.<br><br>Tio signifas, ke ĝi dividas la ecojn de nomo/"
-"klaso, forpasemo, rolo, ktp.<br>kun pli ol 1 alia fenestro en ekrano kaj "
-"memorigo de ecoj por ĉi tiu fenestro aplikos al ĉiuj aliaj fenestroj,<br> "
-"kiuj kongruas kun ĉi tiuj ecoj.<br><br>Tio estas nur averto se vi ne volas, "
-"ke tio okazas.<br>Se vi volas, simple alklaku sur <hilight>Apliki</hilight> "
-"aŭ <hilight>Konfirmi</hilight><br> kaj viaj agordoj estos akceptitaj. "
-"Alklaku <hilight>Nuligi</hilight> se vi<br>ne certas kaj nenio estos "
-"influita."
+"solajn ecojn</hilight>.<br><br>Tio signifas, ke ĝi dividas la ecojn de "
+"nomo/klaso, forpasemo, rolo, ktp.<br>kun pli ol 1 alia fenestro en ekrano "
+"kaj memorigo de ecoj por ĉi tiu fenestro aplikos al ĉiuj aliaj "
+"fenestroj,<br> kiuj kongruas kun ĉi tiuj ecoj.<br><br>Tio estas nur averto "
+"se vi ne volas, ke tio okazas.<br>Se vi volas, simple alklaku sur "
+"<hilight>Apliki</hilight> aŭ <hilight>Konfirmi</hilight><br> kaj viaj "
+"agordoj estos akceptitaj. Alklaku <hilight>Nuligi</hilight> se vi<br>ne "
+"certas kaj nenio estos influita."
 
 #: src/bin/e_int_border_remember.c:539
 msgid "No match properties set"
@@ -2924,7 +2928,7 @@ msgstr "%.2f sekundoj"
 
 #: src/bin/e_int_shelf_config.c:249
 msgid "Don't adjust windows when overlapping the shelf"
-msgstr ""
+msgstr "Ne ĝustigi fenestrojn dum kovrado de breto"
 
 #: src/bin/e_int_shelf_config.c:254
 msgid "Auto Hide"
@@ -3065,7 +3069,8 @@ msgstr ""
 
 #: src/bin/e_main.c:507
 msgid "Enlightenment cannot set up its file registry system.\n"
-msgstr "Enlightenment ne povas agordi sian sistemon de dosiero-registrejon.\n"
+msgstr ""
+"Enlightenment ne povas agordi sian sistemon de dosiero-registrejon.\n"
 
 #: src/bin/e_main.c:516
 msgid "Enlightenment cannot set up its config system.\n"
@@ -3290,14 +3295,12 @@ msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenment ne povas agordi sian kontrolsistemon de akcesoraĵoj.\n"
 
 #: src/bin/e_main.c:908
-#, fuzzy
 msgid "Setup Toolbars"
-msgstr "Difini la ilobretan enhavon"
+msgstr ""
 
 #: src/bin/e_main.c:912
-#, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
-msgstr "Enlightenment ne povas agordi sian sistemon de internaciigo.\n"
+msgstr ""
 
 #: src/bin/e_main.c:919
 msgid "Setup Wallpaper"
@@ -3439,6 +3442,12 @@ msgid ""
 "and launching any other required services etc.\n"
 "before enlightenment itself begins running.\n"
 msgstr ""
+"Vi estas rulumanta Enlightenment rekte. tio malbonas.\n"
+"Bonvole ne lanĉi la plenumeblon \"enlightenment\".\n"
+"Uzu la lanĉilon \"enlightenment_start\". Ĝi\n"
+"traktos agordadon de ĉirkaŭaĵaj variabloj, vojoj,\n"
+"kaj lanĉadon de aliaj bezonataj servoj, ktp.\n"
+"antaŭ la eko de enlightenment mem.\n"
 
 #: src/bin/e_main.c:1572
 msgid "Testing Format Support"
@@ -3557,6 +3566,7 @@ msgstr "Eraro de modulo"
 msgid ""
 "The composite module cannot be loaded;Enlightenment is already composited."
 msgstr ""
+"La kunmetada modulo ne ŝargeblas ; Enlightenment jam estas kunmetadigita."
 
 #: src/bin/e_module.c:309
 #, c-format
@@ -3602,7 +3612,7 @@ msgstr "Enlightenment-a \"%s\" Modulo"
 
 #: src/bin/e_module.c:723
 msgid "What action should be taken with this module?<br>"
-msgstr ""
+msgstr "Kiun agadon devus trakti tiun modulon?<br>"
 
 #: src/bin/e_module.c:729 src/bin/e_shelf.c:1661
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
@@ -3614,19 +3624,19 @@ msgstr "Teni"
 #: src/bin/e_module.c:979
 msgid ""
 "The following modules are not standard ones for<br>Enlightenment and may "
-"cause bugs and crashes.<br>Please remove them before reporting any bugs."
-"<br><br>The module list is as follows:<br><br>"
+"cause bugs and crashes.<br>Please remove them before reporting any "
+"bugs.<br><br>The module list is as follows:<br><br>"
 msgstr ""
 "La sekvaj moduloj ne estas aprioraj moduloj de<br>Enlightenment kaj povas "
-"kaŭzi cimojn kaj kraŝoj.<br>Bonvole forigu ilin antaŭ raporto de iu ajn cimo."
-"<br><br>Jen la listo de moduloj:<br><br>\r\n"
+"kaŭzi cimojn kaj kraŝoj.<br>Bonvole forigu ilin antaŭ raporto de iu ajn "
+"cimo.<br><br>Jen la listo de moduloj:<br><br>\r\n"
 "The following modules are not standard ones for<br>Enlightenment and may "
-"cause bugs and crashes.<br>Please remove them before reporting any bugs."
-"<br><br>The module list is as follows:<br><br>"
+"cause bugs and crashes.<br>Please remove them before reporting any "
+"bugs.<br><br>The module list is as follows:<br><br>"
 
 #: src/bin/e_module.c:991
 msgid "Unstable module tainting"
-msgstr ""
+msgstr "Defekto de nestabila modulo"
 
 #: src/bin/e_module.c:995
 msgid "I know"
@@ -3863,8 +3873,8 @@ msgid ""
 "Suspending.<br>Until suspend is complete you cannot perform<br>any other "
 "system actions."
 msgstr ""
-"Paŭzigado.<br>Vi ne povas fari iujn ajn aliajn sistemajn agadoj<br>antaŭ la "
-"paŭzigo ekos."
+"Prokrastado.<br>Vi ne povas fari iujn ajn aliajn sistemajn agadoj<br>antaŭ "
+"la paŭzigo ekos."
 
 #: src/bin/e_sys.c:610
 msgid ""
@@ -3888,7 +3898,7 @@ msgstr "La restartigo malsukcesis."
 
 #: src/bin/e_sys.c:649
 msgid "Suspend failed."
-msgstr "Paŭzigado malsukcesis."
+msgstr "Prokrastado malsukcesis."
 
 #: src/bin/e_sys.c:653
 msgid "Hibernate failed."
@@ -3908,11 +3918,11 @@ msgstr "Restartigante.<br><hilight>Bonvole atendu</hilight>"
 
 #: src/bin/e_sys.c:852
 msgid "Suspending"
-msgstr "Paŭzigante"
+msgstr "Prokrastante"
 
 #: src/bin/e_sys.c:855
 msgid "Suspending.<br><hilight>Please wait.</hilight>"
-msgstr "Paŭzigado.<br><hilight>Bonvole atendu</hilight>"
+msgstr "Prokrastado.<br><hilight>Bonvole atendu</hilight>"
 
 #: src/bin/e_sys.c:907
 msgid "Hibernating"
@@ -3932,11 +3942,11 @@ msgstr "Difini kiel etoson"
 
 #: src/bin/e_toolbar.c:343
 msgid "Stop Moving/Resizing Items"
-msgstr "Halti Movadon/GrandecŜanĝon de eroj"
+msgstr "Halti movadon/grandecŝanĝon de eroj"
 
 #: src/bin/e_toolbar.c:345
 msgid "Begin Moving/Resizing Items"
-msgstr "Komenci Movadon/GrandecŜanĝon de eroj"
+msgstr "Komenci movadon/gandecŝanĝon de eroj"
 
 #: src/bin/e_toolbar.c:358
 msgid "Set Toolbar Contents"
@@ -4066,7 +4076,8 @@ msgstr ""
 
 #: src/bin/e_utils.c:1012
 #, c-format
-msgid "Failed to create directory: %s .<br>A file of that name already exists."
+msgid ""
+"Failed to create directory: %s .<br>A file of that name already exists."
 msgstr "Malsukcesis krei dosierujon: %s.<br>Samnoma dosiero jam ekzistas."
 
 #: src/bin/e_utils.c:1170
@@ -4326,7 +4337,7 @@ msgstr "%1.0f tempunuoj"
 
 #: src/modules/battery/e_mod_config.c:242
 msgid "Suspend when below:"
-msgstr "Paŭzigi kiam sekvas:"
+msgstr "Prokrasti kiam sekvas:"
 
 #: src/modules/battery/e_mod_config.c:245
 msgid "Hibernate when below:"
@@ -4515,7 +4526,7 @@ msgstr "Agordoj pri kunmeto"
 
 #: src/modules/conf_comp/e_mod_config.c:188
 msgid "Edit window matches"
-msgstr ""
+msgstr "Redakti fenestrajn kongruojn"
 
 #: src/modules/conf_comp/e_mod_config.c:191
 #: src/modules/conf_comp/e_mod_config.c:567
@@ -4547,9 +4558,8 @@ msgid "Enable fast composite effects for popups"
 msgstr "Ŝalti rapidajn efektojn de kunmetado por ŝprucfenestoj"
 
 #: src/modules/conf_comp/e_mod_config.c:217
-#, fuzzy
 msgid "Enable fast composite effects for objects"
-msgstr "Ŝalti rapidajn efektojn de kunmetado por menuoj"
+msgstr ""
 
 #: src/modules/conf_comp/e_mod_config.c:220
 msgid "Enable fast composite effects for overrides"
@@ -4572,9 +4582,8 @@ msgid "Disable composite effects for popups"
 msgstr "Malŝalti efektojn de kunmetado por ŝprucfenestoj"
 
 #: src/modules/conf_comp/e_mod_config.c:235
-#, fuzzy
 msgid "Disable composite effects for objects"
-msgstr "Malŝalti efektojn de kunmetado por menuoj"
+msgstr ""
 
 #: src/modules/conf_comp/e_mod_config.c:238
 msgid "Disable composite effects for overrides"
@@ -4771,7 +4780,7 @@ msgstr ""
 
 #: src/modules/conf_comp/e_mod_main.c:259
 msgid "Advanced composite settings panel"
-msgstr ""
+msgstr "Panelo de detalaj agordoj de kunmetado"
 
 #: src/modules/conf_comp/e_mod_main.c:259
 msgid "composite"
@@ -4835,7 +4844,7 @@ msgstr "Aprioraj aplikaĵoj"
 
 #: src/modules/conf_applications/e_int_config_defapps.c:297
 msgid "Custom Browser Command"
-msgstr ""
+msgstr "Komando de propra retumilo"
 
 #: src/modules/conf_applications/e_int_config_defapps.c:310
 msgid "Browser"
@@ -4877,7 +4886,7 @@ msgstr "Nur lanĉi unuopajn instancojn"
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:111
 msgid "X11 Basics"
-msgstr ""
+msgstr "Bazaj agordoj de X11"
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:112
 msgid "Load X Resources"
@@ -5033,7 +5042,7 @@ msgstr "Elekti profilon"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:138
 msgid "Scratch"
-msgstr ""
+msgstr "Rekomenci"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:141
 msgid "Reset"
@@ -5255,7 +5264,7 @@ msgstr "Ŝlosi je starto"
 
 #: src/modules/conf_display/e_int_config_desklock.c:200
 msgid "Lock on Suspend"
-msgstr "Ŝlosi dum paŭzigado"
+msgstr "Ŝlosi dum prokrastado"
 
 #: src/modules/conf_display/e_int_config_desklock.c:204
 msgid "Custom Screenlock Command"
@@ -5291,7 +5300,7 @@ msgstr "Ensaluta skatolo"
 
 #: src/modules/conf_display/e_int_config_desklock.c:284
 msgid "Lock after X screensaver activates"
-msgstr ""
+msgstr "Ŝlosi post ŝalto de X ekrankurteno"
 
 #: src/modules/conf_display/e_int_config_desklock.c:289
 #: src/modules/conf_display/e_int_config_desklock.c:312
@@ -5319,7 +5328,7 @@ msgstr "Tempmezurilo"
 #: src/modules/conf_display/e_int_config_desklock.c:309
 #: src/modules/conf_display/e_int_config_screensaver.c:183
 msgid "Suggest if deactivated before"
-msgstr ""
+msgstr "Sugesti se malŝatita antaŭe"
 
 #: src/modules/conf_display/e_int_config_desklock.c:316
 msgid "Presentation Mode"
@@ -5344,7 +5353,7 @@ msgstr "Agordoj de ekrenkurteno"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:150
 msgid "Enable screen blanking"
-msgstr ""
+msgstr "Ŝalti ekranan malŝaton"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:154
 #: src/modules/syscon/e_int_config_syscon.c:167
@@ -5353,15 +5362,15 @@ msgstr "Tempolimo"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:162
 msgid "Suspend on blank"
-msgstr ""
+msgstr "Prokrasti kiam ekrano malŝaltas"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:166
 msgid "Suspend even if AC"
-msgstr "Paŭzigi eĉ se AK"
+msgstr "Prokrasti eĉ se AK"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:171
 msgid "Suspend delay"
-msgstr "Malfruo de paŭzigi"
+msgstr "Malfruo de prokrasto"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:179
 #: src/modules/conf_display/e_mod_main.c:32
@@ -5392,7 +5401,7 @@ msgstr "Malheligi fonan lumon"
 
 #: src/modules/conf_display/e_int_config_dpms.c:187
 msgid "Idle Fade Time"
-msgstr ""
+msgstr "Tempolimo antaŭ malpliigo"
 
 #: src/modules/conf_display/e_int_config_dpms.c:190
 #, c-format
@@ -5437,13 +5446,13 @@ msgstr "<Neniom>"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:5
 msgid ""
-"Please select an edge,<br>or click <hilight>Close</hilight> to abort."
-"<br><br>You can either specify a delay of this<br> action using the slider, "
-"or make it<br>respond to edge clicks:"
+"Please select an edge,<br>or click <hilight>Close</hilight> to "
+"abort.<br><br>You can either specify a delay of this<br> action using the "
+"slider, or make it<br>respond to edge clicks:"
 msgstr ""
-"Bonvole elektu randon,<br>aŭ klaku <hilight>Fermi</hilight> por ĉesigi."
-"<br><br>Por ŝanĝi la tempolimon de tiu agado,<br>uzu la ŝovilon, aŭ igi "
-"ĝin<br>respondi al randaj klakoj:"
+"Bonvole elektu randon,<br>aŭ klaku <hilight>Fermi</hilight> por "
+"ĉesigi.<br><br>Por ŝanĝi la tempolimon de tiu agado,<br>uzu la ŝovilon, aŭ "
+"igi ĝin<br>respondi al randaj klakoj:"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:106
 msgid "Edge Bindings Settings"
@@ -5517,7 +5526,7 @@ msgstr "Alklakebla rando"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:892
 msgid "Drag only"
-msgstr ""
+msgstr "Nur ŝovi"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
 msgid "Edge Binding Error"
@@ -5529,8 +5538,8 @@ msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
 "action.<br>Please choose another edge to bind."
 msgstr ""
-"La bindo de edje kiun vi elektis estis jam uzita de<br> agado de <hilight>"
-"%s</hilight>.<br>Bonvole elektu alian Edje por bindo."
+"La bindo de edje kiun vi elektis estis jam uzita de<br> agado de "
+"<hilight>%s</hilight>.<br>Bonvole elektu alian Edje por bindo."
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1359
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1105
@@ -5610,8 +5619,8 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:572
 #, c-format
 msgid ""
-"The signal and source that you entered are already used by<br><hilight>%s</"
-"hilight> action.<br>"
+"The signal and source that you entered are already used "
+"by<br><hilight>%s</hilight> action.<br>"
 msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:621
@@ -5837,7 +5846,7 @@ msgstr "Muso"
 
 #: src/modules/conf_interaction/e_mod_main.c:20
 msgid "Touch"
-msgstr ""
+msgstr "Tuŝebla interfaco"
 
 #: src/modules/conf_intl/e_int_config_imc.c:103
 #: src/modules/conf_intl/e_mod_main.c:28
@@ -5902,7 +5911,8 @@ msgstr ""
 #: src/modules/conf_intl/e_int_config_imc_import.c:300
 msgid ""
 "Enlightenment was unable to import the configuration<br>due to a copy error."
-msgstr "Argordo ne importeblas de Enlightenment<br>ĉar okazis eraro dum kopio."
+msgstr ""
+"Argordo ne importeblas de Enlightenment<br>ĉar okazis eraro dum kopio."
 
 #: src/modules/conf_intl/e_int_config_intl.c:600
 #: src/modules/conf_intl/e_mod_main.c:20
@@ -6028,7 +6038,7 @@ msgstr "Dormetiga butono"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:373
 msgid "Thermal"
-msgstr ""
+msgstr "Temperaturoj"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:375
 msgid "Video"
@@ -6056,7 +6066,7 @@ msgstr "Pli da brileco"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:389
 msgid "Assist"
-msgstr ""
+msgstr "Asisti"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:391
 msgid "S1"
@@ -6091,8 +6101,9 @@ msgstr "Eraro de klava bindo"
 #: src/modules/conf_bindings/e_int_config_keybindings.c:966
 #, c-format
 msgid ""
-"The binding key sequence, that you choose, is already used by <br><hilight>"
-"%s</hilight> action.<br>Please choose another binding key sequence."
+"The binding key sequence, that you choose, is already used by "
+"<br><hilight>%s</hilight> action.<br>Please choose another binding key "
+"sequence."
 msgstr ""
 "La bindo de klava sekvenco, kiun vi elektis, estas jam uzita de la agado "
 "\"<br><hilight>%s</hilight>\".<br>Bonvole elektu alian bindon de klava "
@@ -6438,7 +6449,7 @@ msgstr "Permesas prokraston de ŝargo de moduloj"
 
 #: src/modules/conf_performance/e_int_config_performance.c:126
 msgid "Cache flush interval"
-msgstr ""
+msgstr "Kaŝmemora elbufriga intervalo"
 
 #: src/modules/conf_performance/e_int_config_performance.c:132
 msgid "Font cache size"
@@ -6495,7 +6506,7 @@ msgstr "Permesataj niveloj"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:129
 msgid "Time to defer power-hungry tasks"
-msgstr ""
+msgstr "Tempo por prokrasti potenco-foruzantajn taskojn"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:140
 msgid "Min"
@@ -6517,7 +6528,7 @@ msgstr "ekz. registrado disken"
 #: src/modules/shot/e_mod_main.c:729
 #: src/modules/notification/e_mod_config.c:102
 msgid "Low"
-msgstr "Malalte"
+msgstr "Malalta"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:274
 #: src/modules/shot/e_mod_main.c:727
@@ -6554,9 +6565,8 @@ msgid "Screen Setup"
 msgstr "Agordoj de ekrano"
 
 #: src/modules/conf_randr/e_int_config_randr.c:114
-#, fuzzy
 msgid "Restore On Startup"
-msgstr "Ŝlosi je starto"
+msgstr ""
 
 #: src/modules/conf_randr/e_mod_main.c:31
 msgid "randr"
@@ -6564,7 +6574,7 @@ msgstr ""
 
 #: src/modules/conf_randr/e_mod_main.c:31
 msgid "Screen resolution and orientation settings"
-msgstr ""
+msgstr "Agordoj de ekrana rezolucio kaj orientiĝo"
 
 #: src/modules/conf_randr/e_mod_main.c:31 src/modules/fileman/e_mod_main.c:416
 #: src/modules/fileman/e_mod_main.c:438
@@ -6671,7 +6681,7 @@ msgstr "Erara teksto"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:83
 msgid "Menu Background Base"
-msgstr ""
+msgstr "Baza fono de menuo"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:84
 #: src/modules/conf_theme/e_int_config_fonts.c:61
@@ -6724,7 +6734,7 @@ msgstr "Fenestrolista Titolo"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:95
 msgid "Dialog Background Base"
-msgstr ""
+msgstr "Baza fono de dialogo"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:96
 msgid "Shelf Background Base"
@@ -6779,19 +6789,19 @@ msgstr "Teksto de listero (para)"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:112
 msgid "List Item Background Base (Even)"
-msgstr ""
+msgstr "Baza fono de para listero"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:113
 msgid "List Item Text (Odd)"
-msgstr ""
+msgstr "Teksto de nepara listero"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:114
 msgid "List Item Background Base (Odd)"
-msgstr ""
+msgstr "Baza fono de nepara listero"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:115
 msgid "List Header Text (Even)"
-msgstr ""
+msgstr "Teksto de para listero"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:116
 msgid "List Header Background Base (Even)"
@@ -7209,7 +7219,7 @@ msgstr "Tapeta Ŝanĝo"
 #: src/modules/conf_theme/e_int_config_transitions.c:191
 #: src/modules/conf_theme/e_mod_main.c:143
 msgid "Transitions"
-msgstr "Transiroj"
+msgstr "Transpasoj"
 
 #: src/modules/conf_theme/e_int_config_theme.c:369
 msgid "Theme Selector"
@@ -7276,7 +7286,7 @@ msgstr "Kongri etosan de Enlightenment se eblas"
 
 #: src/modules/conf_theme/e_int_config_xsettings.c:422
 msgid "Enable X Application Settings"
-msgstr ""
+msgstr "Ŝalti agordojn de X-aplikaĵoj"
 
 #: src/modules/conf_theme/e_int_config_xsettings.c:427
 msgid "GTK Applications"
@@ -7488,7 +7498,7 @@ msgstr "Lokigi mane per muso"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:178
 msgid "Group with windows of the same application"
-msgstr ""
+msgstr "Grupo kun fenestroj de sama aplikaĵo"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:182
 msgid "Switch to desktop of new window"
@@ -7615,7 +7625,7 @@ msgstr "Nur dialogoj"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:270
 msgid "Only dialogs with focused parent"
-msgstr "Nur dialogoj kun fokusigitaj  patroj"
+msgstr "Nur dialogoj kun fokusitaj  patroj"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:280
 msgid "Autoraise"
@@ -7643,7 +7653,7 @@ msgstr "Strategio de helpindikiloj de aktiva fenestro"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:308
 msgid "Ignore hint"
-msgstr "Malatenti helpindikilo"
+msgstr "Malatenti helpindikilon"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:310
 msgid "Animate on hint"
@@ -7667,7 +7677,7 @@ msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:329
 msgid "Slide pointer to a new window which is focused"
-msgstr ""
+msgstr "Ŝovi musmontrilon al nova fenestro kiu fokusiĝis"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:334
 msgid "Warp speed"
@@ -7705,7 +7715,7 @@ msgstr "Refokusigi lastan fenestron post labortabla ŝanĝo"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:360
 msgid "Focus last focused window on lost focus"
-msgstr "Fokusigi lastan fokusigitan fenestron post elfokusiĝo"
+msgstr "Fokusi lastan fokusitan fenestron post elfokusiĝo"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:64
 #: src/modules/conf_window_manipulation/e_mod_main.c:20
@@ -8040,8 +8050,8 @@ msgstr ""
 #, c-format
 msgid ""
 "The freqset binary in the cpufreq module<br>is not owned by root or does not "
-"have the<br>setuid bit set. Please ensure this is the<br>case. For example:"
-"<br><br>sudo chown root %s<br>sudo chmod u+s,a+x %s<br>"
+"have the<br>setuid bit set. Please ensure this is the<br>case. For "
+"example:<br><br>sudo chown root %s<br>sudo chmod u+s,a+x %s<br>"
 msgstr ""
 
 #: src/modules/everything/e_mod_main.c:49
@@ -8416,34 +8426,36 @@ msgid ""
 "<hilight>&lt;return&gt;</hilight>.<br> This page will not show up next time "
 "you run <hilight>everything</hilight>.<br>    <hilight>&lt;Esc&gt;</hilight> "
 "close this Dialog<br>    <hilight>&lt;?&gt;</hilight> show this page<br>    "
-"<hilight>&lt;return&gt;</hilight> run action<br>    <hilight>&lt;ctrl"
-"+return&gt;</hilight> run action and continue<br>    <hilight>&lt;tab&gt;</"
-"hilight> toggle between selectors<br>    <hilight>&lt;ctrl+tab&gt;</hilight> "
-"complete input (depends on plugin)<br>    <hilight>&lt;ctrl+'x'&gt;</"
-"hilight> jump to plugin beginning with 'x'<br>    <hilight>&lt;ctrl+left/"
-"right&gt;</hilight> cycle through plugins<br>    <hilight>&lt;ctrl+up/"
-"down&gt;</hilight> go to first/last item<br>    <hilight>&lt;ctrl+1&gt;</"
-"hilight> toggle view modes (exit this page ;)<br>    <hilight>&lt;ctrl+2&gt;"
-"</hilight> toggle list view modes<br>    <hilight>&lt;ctrl+3&gt;</hilight> "
-"toggle thumb view modes"
+"<hilight>&lt;return&gt;</hilight> run action<br>    "
+"<hilight>&lt;ctrl+return&gt;</hilight> run action and continue<br>    "
+"<hilight>&lt;tab&gt;</hilight> toggle between selectors<br>    "
+"<hilight>&lt;ctrl+tab&gt;</hilight> complete input (depends on plugin)<br>   "
+" <hilight>&lt;ctrl+'x'&gt;</hilight> jump to plugin beginning with 'x'<br>   "
+" <hilight>&lt;ctrl+left/right&gt;</hilight> cycle through plugins<br>    "
+"<hilight>&lt;ctrl+up/down&gt;</hilight> go to first/last item<br>    "
+"<hilight>&lt;ctrl+1&gt;</hilight> toggle view modes (exit this page ;)<br>   "
+" <hilight>&lt;ctrl+2&gt;</hilight> toggle list view modes<br>    "
+"<hilight>&lt;ctrl+3&gt;</hilight> toggle thumb view modes"
 msgstr ""
 "  Bone, ĉi tie alvenas klarigoj de <hilight>modulo Ĉio</hilight>...<br>  "
-"Simple tajpu literojn de aĵo kiun vi serĉas.<br>  Uzu movklavon <hilight>&lt;"
-"supren/suben&gt;</hilight> por elekti el la listo de aĵoj.<br>  Premu "
-"<hilight>&lt;tab&gt;</hilight> por elekti agadon, kaj premu <hilight>&lt;"
-"revenbutono&gt;</hilight>.<br> Tiu paĝo ne vidiĝos venontfoje kiam vi lanĉos "
-"<hilight>modulon Ĉio</hilight>.<br>    <hilight>&lt;Esk&gt;</hilight> fermas "
-"tiun dialogon<br>    <hilight>&lt;?&gt;</hilight> vidigas tiun paĝon<br>    "
-"<hilight>&lt;revenbutono&gt;</hilight> lanĉas agadon<br>    <hilight>&lt;ktrl"
-"+revevenbutono&gt;</hilight> lanĉas agadon kaj daŭras<br>    <hilight>&lt;"
-"tab&gt;</hilight> baskulas inter elektiloj<br>    <hilight>&lt;ktrl+tab&gt;</"
-"hilight> kompletigas enigon (laŭ etendilo)<br>    <hilight>&lt;ktrl+'x'&gt;</"
-"hilight> saltas al etendilo kies nomo ekas per  'x'<br>    <hilight>&lt;ktrl"
-"+maldekstro/dekstro&gt;</hilight> ciclas inter etendiloj<br>    <hilight>&lt;"
-"ktrl+supro/subo&gt;</hilight> iras al unua/lasta ero<br>    <hilight>&lt;ktrl"
-"+1&gt;</hilight> baskulas vidajn reĝimojn (fermas tiun paĝoj ;)<br>    "
-"<hilight>&lt;ktrl+2&gt;</hilight> baskulas vidajn moduloj de listo<br>    "
-"<hilight>&lt;ktrl+3&gt;</hilight> baskulas vidajn reĝimojn de bildetoj"
+"Simple tajpu literojn de aĵo kiun vi serĉas.<br>  Uzu movklavon "
+"<hilight>&lt;supren/suben&gt;</hilight> por elekti el la listo de aĵoj.<br>  "
+"Premu <hilight>&lt;tab&gt;</hilight> por elekti agadon, kaj premu "
+"<hilight>&lt;revenbutono&gt;</hilight>.<br> Tiu paĝo ne vidiĝos venontfoje "
+"kiam vi lanĉos <hilight>modulon Ĉio</hilight>.<br>    "
+"<hilight>&lt;Esk&gt;</hilight> fermas tiun dialogon<br>    "
+"<hilight>&lt;?&gt;</hilight> vidigas tiun paĝon<br>    "
+"<hilight>&lt;revenbutono&gt;</hilight> lanĉas agadon<br>    "
+"<hilight>&lt;ktrl+revevenbutono&gt;</hilight> lanĉas agadon kaj daŭras<br>   "
+" <hilight>&lt;tab&gt;</hilight> baskulas inter elektiloj<br>    "
+"<hilight>&lt;ktrl+tab&gt;</hilight> kompletigas enigon (laŭ etendilo)<br>    "
+"<hilight>&lt;ktrl+'x'&gt;</hilight> saltas al etendilo kies nomo ekas per  "
+"'x'<br>    <hilight>&lt;ktrl+maldekstro/dekstro&gt;</hilight> ciclas inter "
+"etendiloj<br>    <hilight>&lt;ktrl+supro/subo&gt;</hilight> iras al "
+"unua/lasta ero<br>    <hilight>&lt;ktrl+1&gt;</hilight> baskulas vidajn "
+"reĝimojn (fermas tiun paĝoj ;)<br>    <hilight>&lt;ktrl+2&gt;</hilight> "
+"baskulas vidajn moduloj de listo<br>    <hilight>&lt;ktrl+3&gt;</hilight> "
+"baskulas vidajn reĝimojn de bildetoj"
 
 #: src/modules/everything/evry_view_tabs.c:93
 msgid "Back"
@@ -9658,8 +9670,8 @@ msgid ""
 "when they happen. As a<br>result, Enlightenment will connect "
 "to<br>enlightenment.org and transmit some<br>information, much like any web "
 "browser<br>might do. No personal information such as<br>username, password "
-"or any personal files<br>will be transmitted. If you don't like this,"
-"<br>please disable this below. It is highly<br>advised that you do not "
+"or any personal files<br>will be transmitted. If you don't like "
+"this,<br>please disable this below. It is highly<br>advised that you do not "
 "disable this as it<br>may leave you vulnerable or having to live<br>with "
 "bugs."
 msgstr ""
@@ -9806,9 +9818,8 @@ msgid "Pause music when screen is locked"
 msgstr ""
 
 #: src/modules/music-control/ui.c:195
-#, fuzzy
 msgid "Music control Settings"
-msgstr "Agordoj de dosierpiktogramo"
+msgstr ""
 
 #: src/modules/connman/e_mod_main.c:10
 msgid "Connection Manager"
@@ -9823,8 +9834,8 @@ msgid ""
 "This module wants to execute an external application EConnMan that does not "
 "exist.<br>Please install <b>EConnMan</b> application."
 msgstr ""
-"Tiu modulo volas lanĉi eksteran aplikaĵon EConnMan kiu ne ekzistas."
-"<br>Bonvole instalu la aplikaĵon <b>EConnMan</b>."
+"Tiu modulo volas lanĉi eksteran aplikaĵon EConnMan kiu ne "
+"ekzistas.<br>Bonvole instalu la aplikaĵon <b>EConnMan</b>."
 
 #: src/modules/connman/e_mod_main.c:273
 msgid "Wifi On"
@@ -9996,8 +10007,8 @@ msgstr ""
 msgid ""
 "The selected window created with name:<br>%s<br>and class:<br>%s<br>could "
 "not be found in the Quickaccess app database<br>This means that either the "
-"app is unknown to us<br>or it is not intended for use with this option."
-"<br>Please choose an action to take:"
+"app is unknown to us<br>or it is not intended for use with this "
+"option.<br>Please choose an action to take:"
 msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:379
@@ -10054,12 +10065,12 @@ msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:936
 msgid ""
-"The options found in the Quickaccess menu are as follows:"
-"<br><hilight>Autohide</hilight> - hide the window whenever it loses "
+"The options found in the Quickaccess menu are as "
+"follows:<br><hilight>Autohide</hilight> - hide the window whenever it loses "
 "focus<br><hilight>Hide Instead of Raise</hilight> - Hide window when "
 "activated without focus<br><hilight>Jump Mode</hilight> - Switch to window's "
-"desk and raise instead of showing/hiding<br><hilight>Relaunch When Closed</"
-"hilight> - Run the entry's command again when its window "
+"desk and raise instead of showing/hiding<br><hilight>Relaunch When "
+"Closed</hilight> - Run the entry's command again when its window "
 "exits<br><hilight>Transient</hilight> - Remember only this instance of the "
 "window (not permanent)"
 msgstr ""
@@ -10108,8 +10119,8 @@ msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1227
 msgid ""
-"Quickaccess entries can be created from<br>the border menu of any window."
-"<br>Click Continue to see a demonstration."
+"Quickaccess entries can be created from<br>the border menu of any "
+"window.<br>Click Continue to see a demonstration."
 msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1248
@@ -10386,7 +10397,7 @@ msgstr ""
 
 #: src/modules/tiling/e_mod_tiling.c:3811
 msgid "Swap a window with an other"
-msgstr ""
+msgstr "Interŝanĝi fenestron kun alia"
 
 #: src/modules/tiling/e_mod_tiling.c:3815
 msgid "Move window"
@@ -10410,7 +10421,7 @@ msgstr "Movu fenestron malsupren"
 
 #: src/modules/tiling/e_mod_tiling.c:3831
 msgid "Adjust transitions"
-msgstr "Ĝustigi transirojn"
+msgstr "Ĝustigi transpasojn"
 
 #: src/modules/tiling/e_mod_tiling.c:3834
 msgid "Focus a particular window"
@@ -10619,7 +10630,7 @@ msgstr "Tempolimo deviga por ĉiuj sciigoj"
 
 #: src/modules/notification/e_mod_main.c:245
 msgid "Corner in which to display notifications"
-msgstr ""
+msgstr "Angulo kie vidigi sciigojn"
 
 #: src/modules/notification/e_mod_config.c:51
 msgid "Notification Settings"
@@ -10667,7 +10678,7 @@ msgstr "Sube dekstre"
 
 #: src/modules/notification/e_mod_config.c:150
 msgid "Ignore replace ID"
-msgstr "Malatenti anstataŭigo de ID"
+msgstr "Malatenti anstataŭigon de ID"
 
 #: src/modules/notification/e_mod_config.c:152
 msgid "Use multiple monitor geometry"
@@ -10679,19 +10690,16 @@ msgstr "Uzi geometrion por pluraj ekranoj"
 #~ msgid "Configure Shelves"
 #~ msgstr "Agordi bretojn"
 
-#~ msgid "Slide pointer to a new focused window"
-#~ msgstr "Ŝovi la kursoron en novan fokusigatan feneston"
-
 #~ msgid "Label only"
 #~ msgstr "Nur etikedo"
 
 #~ msgid ""
-#~ "<title>Copyright &copy; 2000-2012, by the Enlightenment Development Team</"
-#~ "><br><br>We hope you enjoy using this software as much as we enjoyed "
-#~ "writing it.<br><br>To contact us please visit:<br><hilight>http://www."
-#~ "enlightenment.org</><br><br>"
+#~ "<title>Copyright &copy; 2000-2012, by the Enlightenment Development "
+#~ "Team</><br><br>We hope you enjoy using this software as much as we enjoyed "
+#~ "writing it.<br><br>To contact us please "
+#~ "visit:<br><hilight>http://www.enlightenment.org</><br><br>"
 #~ msgstr ""
 #~ "<title>Kopirajto &copy; 2000-2012; de la skipo de programado de "
 #~ "Enlightenment</><br><br>Ni esperas, ke vi ĝuu uzadon de ĉi tiu programaro "
-#~ "tiom, kiel ni ĝuis verki ĝin.<br><br>Por kontakti nin, bonvole visitu:"
-#~ "<br><hilight>http://www.enlightenment.org</><br><br>"
+#~ "tiom, kiel ni ĝuis verki ĝin.<br><br>Por kontakti nin, bonvole "
+#~ "visitu:<br><hilight>http://www.enlightenment.org</><br><br>"
