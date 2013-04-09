@@ -866,7 +866,7 @@ fi
 AM_CONDITIONAL(WL_DESKTOP_SHELL, false)
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
-  AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version wayland-server], [], [WL_DESKTOP_SHELL=false])
+  AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version ], [], [WL_DESKTOP_SHELL=false])
 ])
 
 AC_E_OPTIONAL_MODULE([ibar], true)
