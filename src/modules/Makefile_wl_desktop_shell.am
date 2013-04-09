@@ -12,9 +12,9 @@ wl_desktop_shellpkgdir = $(MDIR)/wl_desktop_shell/$(MODULE_ARCH)
 wl_desktop_shellpkg_LTLIBRARIES = wl_desktop_shell/module.la
 
 wl_desktop_shell_module_la_DEPENDENCIES = $(MDEPENDENCIES)
-wl_desktop_shell_module_la_CFLAGS  = $(AM_CFLAGS) @WL_DESKTOP_SHELL_CFLAGS@
-wl_desktop_shell_module_la_LIBADD   = $(LIBS) @WL_DESKTOP_SHELL_LIBS@
-# wl_desktop_shell_module_la_LDFLAGS = $(AM_LDFLAGS) @WL_DESKTOP_SHELL_LDFLAGS@
+wl_desktop_shell_module_la_CFLAGS  = $(AM_CFLAGS) @WL_DESKTOP_SHELL_CFLAGS@ @WAYLAND_CFLAGS@
+wl_desktop_shell_module_la_LIBADD   = $(LIBS) @WL_DESKTOP_SHELL_LIBS@ @WAYLAND_LIBS@
+# wl_desktop_shell_module_la_LDFLAGS = $(AM_LDFLAGS) @WL_DESKTOP_SHELL_LDFLAGS@ @WAYLAND_LDFLAGS@
 wl_desktop_shell_module_la_SOURCES = wl_desktop_shell/e_mod_main.c \
 			    wl_desktop_shell/e_mod_main.h \
 			    wl_desktop_shell/e_desktop_shell_protocol.c
