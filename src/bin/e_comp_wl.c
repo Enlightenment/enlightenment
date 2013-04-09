@@ -96,7 +96,7 @@ static const struct wl_surface_interface _e_surface_interface =
 };
 
 /* local variables */
-static Ecore_Idler *_module_ilder = NULL;
+static Ecore_Idler *_module_idler = NULL;
 
 /* external variables */
 E_Wayland_Compositor *_e_wl_comp;
@@ -189,7 +189,7 @@ e_comp_wl_init(void)
    /* create basic shell interface */
 
    /* add an idler for deferred shell module loading */
-   _module_ilder = ecore_idler_add(_e_comp_wl_cb_module_idle, NULL);
+   _module_idler = ecore_idler_add(_e_comp_wl_cb_module_idle, NULL);
 
    /* get the displays event loop */
    _e_wl_comp->wl.loop = wl_display_get_event_loop(_e_wl_comp->wl.display);
