@@ -36,6 +36,26 @@ static void _e_comp_wl_pointer_unmap(E_Wayland_Surface *ews);
 /* pointer interface prototypes */
 static void _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *resource, unsigned int serial, struct wl_resource *surface_resource, int x, int y);
 
+/* region interface prototypes */
+static void _e_comp_wl_region_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
+static void _e_comp_wl_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h);
+static void _e_comp_wl_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h);
+
+/* surface function prototypes */
+static void _e_comp_wl_surface_cb_pending_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
+static void _e_comp_wl_surface_cb_frame_destroy(struct wl_resource *resource);
+static void _e_comp_wl_surface_buffer_reference(E_Wayland_Surface *ews, struct wl_buffer *buffer);
+static void _e_comp_wl_surface_buffer_reference_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
+
+/* surface interface prototypes */
+static void _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
+static void _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int x, int y);
+static void _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h);
+static void _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsigned int callback);
+static void _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource);
+static void _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource);
+static void _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
+
 /* local wayland interfaces */
 static const struct wl_compositor_interface _e_compositor_interface = 
 {
@@ -53,6 +73,25 @@ static const struct wl_seat_interface _e_input_interface =
 static const struct wl_pointer_interface _e_pointer_interface = 
 {
    _e_comp_wl_pointer_cb_cursor_set
+};
+
+static const struct wl_region_interface _e_region_interface = 
+{
+   _e_comp_wl_region_cb_destroy,
+   _e_comp_wl_region_cb_add,
+   _e_comp_wl_region_cb_subtract
+};
+
+static const struct wl_surface_interface _e_surface_interface = 
+{
+   _e_comp_wl_surface_cb_destroy,
+   _e_comp_wl_surface_cb_attach,
+   _e_comp_wl_surface_cb_damage,
+   _e_comp_wl_surface_cb_frame,
+   _e_comp_wl_surface_cb_opaque_region_set,
+   _e_comp_wl_surface_cb_input_region_set,
+   _e_comp_wl_surface_cb_commit,
+   NULL // cb_buffer_transform_set
 };
 
 /* local variables */
@@ -255,25 +294,146 @@ _e_comp_wl_cb_idle(void *data EINA_UNUSED)
 static void 
 _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
+   E_Wayland_Surface *ews = NULL;
 
+   /* try to allocate space for a new surface */
+   if (!(ews = E_NEW(E_Wayland_Surface, 1)))
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   /* initialize the destroy signal */
+   wl_signal_init(&ews->wl.surface.resource.destroy_signal);
+
+   /* initialize the link */
+   wl_list_init(&ews->wl.link);
+
+   /* initialize the lists of frames */
+   wl_list_init(&ews->wl.frames);
+   wl_list_init(&ews->pending.frames);
+
+   /* set destroy function for pending buffers */
+   ews->pending.buffer_destroy.notify = 
+     _e_comp_wl_surface_cb_pending_buffer_destroy;
+
+   /* initialize regions */
+   pixman_region32_init(&ews->region.opaque);
+   pixman_region32_init(&ews->region.damage);
+   pixman_region32_init(&ews->region.clip);
+   pixman_region32_init_rect(&ews->region.input, INT32_MIN, INT32_MIN, 
+                             UINT32_MAX, UINT32_MAX);
+
+   /* initialize pending regions */
+   pixman_region32_init(&ews->pending.opaque);
+   pixman_region32_init(&ews->pending.damage);
+   pixman_region32_init_rect(&ews->pending.input, INT32_MIN, INT32_MIN, 
+                             UINT32_MAX, UINT32_MAX);
+
+   /* set some properties of the surface */
+   ews->wl.surface.resource.destroy = _e_comp_wl_cb_surface_destroy;
+   ews->wl.surface.resource.object.id = id;
+   ews->wl.surface.resource.object.interface = &wl_surface_interface;
+   ews->wl.surface.resource.object.implementation = 
+     (void (**)(void))&_e_surface_interface;
+   ews->wl.surface.resource.data = ews;
+
+   /* add this surface to the client */
+   wl_client_add_resource(client, &ews->wl.surface.resource);
+
+   /* add this surface to the list of surfaces */
+   _e_wl_comp->surfaces = eina_list_append(_e_wl_comp->surfaces, ews);
 }
 
 static void 
 _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
 {
+   E_Wayland_Surface *ews = NULL;
+   E_Wayland_Surface_Frame_Callback *cb = NULL, *ncb = NULL;
 
+   /* try to get the surface from this resource */
+   if (!(ews = container_of(resource, E_Wayland_Surface, wl.surface.resource)))
+     return;
+
+   /* if this surface is mapped, unmap it */
+   if (ews->mapped)
+     {
+        if (ews->unmap) ews->unmap(ews);
+     }
+
+   /* loop any pending surface frame callbacks and destroy them */
+   wl_list_for_each_safe(cb, ncb, &ews->pending.frames, wl.link)
+     wl_resource_destroy(&cb->wl.resource);
+
+   /* clear any pending regions */
+   pixman_region32_fini(&ews->pending.damage);
+   pixman_region32_fini(&ews->pending.opaque);
+   pixman_region32_fini(&ews->pending.input);
+
+   /* remove the pending buffer from the list */
+   if (ews->pending.buffer)
+     wl_list_remove(&ews->pending.buffer_destroy.link);
+
+   /* dereference any existing buffers */
+   _e_comp_wl_surface_buffer_reference(ews, NULL);
+
+   /* clear any active regions */
+   pixman_region32_fini(&ews->region.damage);
+   pixman_region32_fini(&ews->region.opaque);
+   pixman_region32_fini(&ews->region.input);
+   pixman_region32_fini(&ews->region.clip);
+
+   /* loop any active surface frame callbacks and destroy them */
+   wl_list_for_each_safe(cb, ncb, &ews->wl.frames, wl.link)
+     wl_resource_destroy(&cb->wl.resource);
+
+   /* remove this surface from the compositor's list of surfaces */
+   _e_wl_comp->surfaces = eina_list_remove(_e_wl_comp->surfaces, ews);
+
+   /* free the allocated surface structure */
+   E_FREE(ews);
 }
 
 static void 
 _e_comp_wl_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
+   E_Wayland_Region *ewr = NULL;
 
+   /* try to allocate space for a new region */
+   if (!(ewr = E_NEW_RAW(E_Wayland_Region, 1)))
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   pixman_region32_init(&ewr->region);
+
+   /* set some properties of the region */
+   ewr->wl.resource.destroy = _e_comp_wl_cb_region_destroy;
+   ewr->wl.resource.object.id = id;
+   ewr->wl.resource.object.interface = &wl_region_interface;
+   ewr->wl.resource.object.implementation = 
+     (void (**)(void))&_e_region_interface;
+   ewr->wl.resource.data = ewr;
+
+   /* add this region to the client */
+   wl_client_add_resource(client, &ewr->wl.resource);
 }
 
 static void 
 _e_comp_wl_cb_region_destroy(struct wl_resource *resource)
 {
+   E_Wayland_Region *ewr = NULL;
 
+   /* try to get the region from this resource */
+   if (!(ewr = container_of(resource, E_Wayland_Region, wl.resource)))
+     return;
+
+   /* tell pixman we are finished with this region */
+   pixman_region32_fini(&ewr->region);
+
+   /* free the allocated region structure */
+   E_FREE(ewr);
 }
 
 /* input functions */
@@ -875,4 +1035,244 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
         /* configure the pointer surface */
         _e_comp_wl_pointer_configure(ews, 0, 0, bw, bh);
      }
+}
+
+/* region interface functions */
+static void 
+_e_comp_wl_region_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void 
+_e_comp_wl_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h)
+{
+   E_Wayland_Region *ewr = NULL;
+
+   /* try to cast the resource data to our region structure */
+   if (!(ewr = resource->data)) return;
+
+   /* tell pixman to union this region with any previous one */
+   pixman_region32_union_rect(&ewr->region, &ewr->region, x, y, w, h);
+}
+
+static void 
+_e_comp_wl_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h)
+{
+   E_Wayland_Region *ewr = NULL;
+   pixman_region32_t region;
+
+   /* try to cast the resource data to our region structure */
+   if (!(ewr = resource->data)) return;
+
+   /* ask pixman to create a new temporary rect */
+   pixman_region32_init_rect(&region, x, y, w, h);
+
+   /* ask pixman to subtract this temp rect from the existing region */
+   pixman_region32_subtract(&ewr->region, &ewr->region, &region);
+
+   /* tell pixman we are finished with the temporary rect */
+   pixman_region32_fini(&region);
+}
+
+/* surface functions */
+static void 
+_e_comp_wl_surface_cb_pending_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Wayland_Surface *ews = NULL;
+
+   /* try to get the surface from this listener */
+   if (!(ews = container_of(listener, E_Wayland_Surface, 
+                            pending.buffer_destroy)))
+     return;
+
+   /* set surface pending buffer to null */
+   ews->pending.buffer = NULL;
+}
+
+static void 
+_e_comp_wl_surface_cb_frame_destroy(struct wl_resource *resource)
+{
+   E_Wayland_Surface_Frame_Callback *cb = NULL;
+
+   /* try to cast the resource data to our surface frame callback structure */
+   if (!(cb = resource->data)) return;
+
+   wl_list_remove(&cb->wl.link);
+
+   /* free the allocated callback structure */
+   E_FREE(cb);
+}
+
+static void 
+_e_comp_wl_surface_buffer_reference(E_Wayland_Surface *ews, struct wl_buffer *buffer)
+{
+   /* check for valid surface */
+   if (!ews) return;
+
+   /* if the surface already has a buffer referenced and it is not the 
+    * same as the one passed in */
+   if ((ews->reference.buffer) && (buffer != ews->reference.buffer))
+     {
+        /* decrement the reference buffer busy count */
+        ews->reference.buffer->busy_count--;
+
+        /* if the compositor is finished with this referenced buffer, then 
+         * we need to release it */
+        if (ews->reference.buffer->busy_count == 0)
+          {
+             if (ews->reference.buffer->resource.client)
+               wl_resource_queue_event(&ews->reference.buffer->resource, 
+                                       WL_BUFFER_RELEASE);
+          }
+
+        /* remove the destroy link on the referenced buffer */
+        wl_list_remove(&ews->reference.buffer_destroy.link);
+     }
+
+   /* if we are passed in a buffer and it is not the one referenced */
+   if ((buffer) && (buffer != ews->reference.buffer))
+     {
+        /* increment busy count */
+        buffer->busy_count++;
+
+        /* setup destroy signal */
+        wl_signal_add(&buffer->resource.destroy_signal, 
+                      &ews->reference.buffer_destroy);
+     }
+
+   /* set buffer reference */
+   ews->reference.buffer = buffer;
+
+   /* setup destroy listener */
+   ews->reference.buffer_destroy.notify = 
+     _e_comp_wl_surface_buffer_reference_cb_destroy;
+}
+
+static void 
+_e_comp_wl_surface_buffer_reference_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Wayland_Surface *ews = NULL;
+
+   /* try to get the surface from this listener */
+   ews = container_of(listener, E_Wayland_Surface, reference.buffer_destroy);
+   if (!ews) return;
+
+   /* set referenced buffer to null */
+   ews->reference.buffer = NULL;
+}
+
+/* surface interface functionss */
+static void 
+_e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void 
+_e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int x, int y)
+{
+
+}
+
+static void 
+_e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h)
+{
+   E_Wayland_Surface *ews = NULL;
+
+   /* try to cast the resource data to our surface structure */
+   if (!(ews = resource->data)) return;
+
+   /* tell pixman to add this damage to pending */
+   pixman_region32_union_rect(&ews->pending.damage, &ews->pending.damage, 
+                              x, y, w, h);
+}
+
+static void 
+_e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsigned int callback)
+{
+   E_Wayland_Surface *ews = NULL;
+   E_Wayland_Surface_Frame_Callback *cb = NULL;
+
+   /* try to cast the resource data to our surface structure */
+   if (!(ews = resource->data)) return;
+
+   /* try to allocate space for a new frame callback */
+   if (!(cb = E_NEW(E_Wayland_Surface_Frame_Callback, 1)))
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   /* set some properties on the callback */
+   cb->wl.resource.object.interface = &wl_callback_interface;
+   cb->wl.resource.object.id = callback;
+   cb->wl.resource.destroy = _e_comp_wl_surface_cb_frame_destroy;
+   cb->wl.resource.client = client;
+   cb->wl.resource.data = cb;
+
+   /* add frame callback to client */
+   wl_client_add_resource(client, &cb->wl.resource);
+
+   /* add this callback to the surface list of pending frames */
+   wl_list_insert(ews->pending.frames.prev, &cb->wl.link);
+}
+
+static void 
+_e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
+{
+   E_Wayland_Surface *ews = NULL;
+
+   /* try to cast the resource data to our surface structure */
+   if (!(ews = resource->data)) return;
+
+   if (region_resource)
+     {
+        E_Wayland_Region *ewr = NULL;
+
+        /* copy this region to the pending opaque region */
+        if ((ewr = region_resource->data))
+          pixman_region32_copy(&ews->pending.opaque, &ewr->region);
+     }
+   else
+     {
+        /* tell pixman we are finished with this region */
+        pixman_region32_fini(&ews->pending.opaque);
+
+        /* reinitalize the pending opaque region */
+        pixman_region32_init(&ews->pending.opaque);
+     }
+}
+
+static void 
+_e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
+{
+   E_Wayland_Surface *ews = NULL;
+
+   /* try to cast the resource data to our surface structure */
+   if (!(ews = resource->data)) return;
+
+   if (region_resource)
+     {
+        E_Wayland_Region *ewr = NULL;
+
+        /* copy this region to the pending input region */
+        if ((ewr = region_resource->data))
+          pixman_region32_copy(&ews->pending.input, &ewr->region);
+     }
+   else
+     {
+        /* tell pixman we are finished with this region */
+        pixman_region32_fini(&ews->pending.input);
+
+        /* reinitalize the pending input region */
+        pixman_region32_init_rect(&ews->pending.input, INT32_MIN, INT32_MIN, 
+                                  UINT32_MAX, UINT32_MAX);
+     }
+}
+
+static void 
+_e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+
 }
