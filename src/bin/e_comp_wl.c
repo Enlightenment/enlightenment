@@ -9,7 +9,9 @@ static Eina_Bool _e_comp_wl_cb_idle(void *data EINA_UNUSED);
 
 /* compositor interface prototypes */
 static void _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void _e_comp_wl_cb_surface_destroy(struct wl_resource *resource);
 static void _e_comp_wl_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void _e_comp_wl_cb_region_destroy(struct wl_resource *resource);
 
 /* input function prototypes */
 static Eina_Bool _e_comp_wl_input_init(void);
@@ -257,7 +259,19 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
 }
 
 static void 
+_e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
+{
+
+}
+
+static void 
 _e_comp_wl_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id)
+{
+
+}
+
+static void 
+_e_comp_wl_cb_region_destroy(struct wl_resource *resource)
 {
 
 }
@@ -862,4 +876,3 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
         _e_comp_wl_pointer_configure(ews, 0, 0, bw, bh);
      }
 }
-
