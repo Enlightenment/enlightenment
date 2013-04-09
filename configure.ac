@@ -840,6 +840,28 @@ fi
 
 AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 
+if test "x${have_wayland_clients}" = "xyes"; then
+  AC_ARG_ENABLE([wayland-egl],
+    AS_HELP_STRING([--enable-wayland-egl],[enable wayland clients to render using EGL @<:@default=disabled@:>@]),
+    [e_cv_want_wayland_egl=$enableval],
+    [e_cv_want_wayland_egl=no])
+
+  AC_MSG_CHECKING([whether wayland client EGL support is enabled])
+  AC_MSG_RESULT([${e_cv_want_wayland_egl}])
+
+  if test "x$e_cv_want_wayland_egl" != "xno";then
+    PKG_CHECK_MODULES([WAYLAND_EGL], [egl >= 7.10],
+      [
+        have_wayland_egl=yes
+        AC_DEFINE_UNQUOTED([HAVE_WAYLAND_EGL],[1],[enable wayland client EGL support])
+      ],
+      [have_wayland_egl=no])
+  else
+    have_wayland_egl=no
+  fi
+
+  AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
+fi
 
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
