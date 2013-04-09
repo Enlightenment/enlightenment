@@ -242,9 +242,9 @@ endif
 #include Makefile_wl_drm.am
 #endif
 
-#if HAVE_WAYLAND_SHELL
-#include Makefile_wl_shell.am
-#endif
+if USE_MODULE_WL_DESKTOP_SHELL
+include Makefile_wl_desktop_shell.am
+endif
 
 #if HAVE_WAYLAND_SCREENSHOT
 #include Makefile_wl_screenshot.am
