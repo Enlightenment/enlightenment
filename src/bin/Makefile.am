@@ -206,14 +206,7 @@ e_zone.h
 
 if HAVE_WAYLAND_CLIENTS
 ENLIGHTENMENTHEADERS += \
-e_comp_wl.h \
-e_comp_wl_buffer.h \
-e_comp_wl_comp.h \
-e_comp_wl_input.h \
-e_comp_wl_output.h \
-e_comp_wl_region.h \
-e_comp_wl_shell.h \
-e_comp_wl_surface.h
+e_comp_wl.h
 endif
 
 
@@ -378,14 +371,7 @@ $(ENLIGHTENMENTHEADERS)
 
 if HAVE_WAYLAND_CLIENTS
 enlightenment_src += \
-e_comp_wl.c \
-e_comp_wl_buffer.c \
-e_comp_wl_comp.c \
-e_comp_wl_input.c \
-e_comp_wl_output.c \
-e_comp_wl_region.c \
-e_comp_wl_shell.c \
-e_comp_wl_surface.c
+e_comp_wl.c
 endif
 
 enlightenment_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@
