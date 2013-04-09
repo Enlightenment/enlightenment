@@ -93,7 +93,7 @@ struct _E_Wayland_Surface
 
    Ecore_Evas *ee;
    Evas_Object *img;
-   Evas_Object *input;
+   Evas_Object *input_rect;
 
    E_Wayland_Shell_Surface *shell_surface;
    Eina_Bool mapped : 1;
