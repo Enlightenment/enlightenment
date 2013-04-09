@@ -7,6 +7,22 @@
 #  include <wayland-server.h>
 #  include <xkbcommon/xkbcommon.h>
 
+#  ifdef __linux__
+#   include <linux/input.h>
+#  else
+#   define BTN_LEFT 0x110
+#   define BTN_RIGHT 0x111
+#   define BTN_MIDDLE 0x112
+#   define BTN_SIDE 0x113
+#   define BTN_EXTRA 0x114
+#   define BTN_FORWARD 0x115
+#   define BTN_BACK 0x116
+#  endif
+
+#  ifdef HAVE_WAYLAND_EGL
+#   include <EGL/egl.h>
+#  endif
+
 #  define container_of(ptr, type, member) ({ \
    const __typeof__(((type *)0)->member) *__mptr = (ptr); \
    (type *)((char *)__mptr - offsetof(type,member));})
@@ -216,6 +232,15 @@ struct _E_Wayland_Compositor
         struct xkb_rule_names names;
         struct xkb_context *context;
      } xkb;
+
+#ifdef HAVE_WAYLAND_EGL
+   struct 
+     {
+        EGLDisplay display;
+        EGLContext context;
+        EGLConfig config;
+     } egl;
+#endif
 
    E_Wayland_Shell_Interface shell_interface;
 
