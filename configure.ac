@@ -863,6 +863,12 @@ if test "x${have_wayland_clients}" = "xyes"; then
   AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 fi
 
+AM_CONDITIONAL(WL_DESKTOP_SHELL, false)
+define([CHECK_MODULE_WL_DESKTOP_SHELL],
+[
+  AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version wayland-server], [], [WL_DESKTOP_SHELL=false])
+])
+
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
 AC_E_OPTIONAL_MODULE([pager], true)
@@ -914,6 +920,10 @@ AC_E_OPTIONAL_MODULE([tiling], true)
 AC_E_OPTIONAL_MODULE([access], true)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([contact], true)
+
+if test "x${have_wayland_clients}" = "xyes"; then
+  AC_E_OPTIONAL_MODULE([wl_desktop_shell], true, [CHECK_MODULE_WL_DESKTOP_SHELL])
+fi
 
 HALT="/sbin/shutdown -h now"
 REBOOT="/sbin/shutdown -r now"
@@ -1035,6 +1045,7 @@ src/modules/tiling/module.desktop
 src/modules/access/module.desktop
 src/modules/music-control/module.desktop
 src/modules/contact/module.desktop
+src/modules/wl_desktop_shell/module.desktop
 data/Makefile
 data/images/Makefile
 data/flags/Makefile
