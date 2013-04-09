@@ -96,6 +96,7 @@ static const struct wl_surface_interface _e_surface_interface =
 };
 
 /* local variables */
+static Ecore_Idler *_module_ilder = NULL;
 
 /* external variables */
 E_Wayland_Compositor *_e_wl_comp;
@@ -313,7 +314,7 @@ _e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
    if (mod) 
      {
         e_module_enable(mod);
-        _idler = NULL;
+        _module_idler = NULL;
 
         /* flush any pending events
          * 
