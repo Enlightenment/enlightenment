@@ -2,10 +2,11 @@
 #include "e_comp_wl.h"
 #include <sys/mman.h>
 
-/* local function prototypes */
+/* compositor function prototypes */
 static void _e_comp_wl_cb_bind(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id);
 static Eina_Bool _e_comp_wl_cb_read(void *data EINA_UNUSED, Ecore_Fd_Handler *hdl EINA_UNUSED);
 static Eina_Bool _e_comp_wl_cb_idle(void *data EINA_UNUSED);
+static Eina_Bool _e_comp_wl_cb_module_idle(void *data EINA_UNUSED);
 
 /* compositor interface prototypes */
 static void _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
@@ -116,13 +117,6 @@ e_comp_wl_init(void)
         goto err;
      }
 
-   /* try to add a display socket */
-   if (wl_display_add_socket(_e_wl_comp->wl.display, NULL) < 0)
-     {
-        ERR("Could not add a Wayland Display socket: %m");
-        goto err;
-     }
-
    /* init compositor signals */
    wl_signal_init(&_e_wl_comp->signals.destroy);
    wl_signal_init(&_e_wl_comp->signals.activate);
@@ -191,7 +185,10 @@ e_comp_wl_init(void)
         goto err;
      }
 
-   /* TODO: module idler */
+   /* create basic shell interface */
+
+   /* add an idler for deferred shell module loading */
+   _module_ilder = ecore_idler_add(_e_comp_wl_cb_module_idle, NULL);
 
    /* get the displays event loop */
    _e_wl_comp->wl.loop = wl_display_get_event_loop(_e_wl_comp->wl.display);
@@ -209,13 +206,20 @@ e_comp_wl_init(void)
 
    /* TODO: event handlers ?? */
 
-   /* flush any pending events */
-   wl_event_loop_dispatch(_e_wl_comp->wl.loop, 0);
+   /* try to add a display socket */
+   if (wl_display_add_socket(_e_wl_comp->wl.display, NULL) < 0)
+     {
+        ERR("Could not add a Wayland Display socket: %m");
+        goto err;
+     }
 
    /* return success */
    return EINA_TRUE;
 
 err:
+   /* remove the module idler */
+   if (_module_idler) ecore_idler_del(_module_idler);
+
 #ifdef HAVE_WAYLAND_EGL
    /* terminate the egl display */
    if (_e_wl_comp->egl.display)
@@ -286,6 +290,39 @@ _e_comp_wl_cb_idle(void *data EINA_UNUSED)
 {
    /* flush any clients before we idle */
    wl_display_flush_clients(_e_wl_comp->wl.display);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool 
+_e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
+{
+   E_Module *mod = NULL;
+
+   /* if we are still in the process of loading modules, then we will wait */
+   if (e_module_loading_get()) return ECORE_CALLBACK_RENEW;
+
+   /* try to find the shell module, and create it if not found
+    * 
+    * TODO: we should have a config variable somewhere to store which 
+    * shell we want to load (tablet, mobile, etc) */
+   if (!(mod = e_module_find("wl_desktop_shell")))
+     mod = e_module_new("wl_desktop_shell");
+
+   /* if we have the module now, load it */
+   if (mod) 
+     {
+        e_module_enable(mod);
+        _idler = NULL;
+
+        /* flush any pending events
+         * 
+         * NB: This advertises out any globals so it needs to be deferred 
+         * until after the shell has been loaded */
+        wl_event_loop_dispatch(_e_wl_comp->wl.loop, 0);
+
+        return ECORE_CALLBACK_CANCEL;
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
