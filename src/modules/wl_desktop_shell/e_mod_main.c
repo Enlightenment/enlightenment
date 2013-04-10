@@ -30,6 +30,11 @@ static void _e_wl_shell_shell_surface_type_reset(E_Wayland_Shell_Surface *ewss);
 static void _e_wl_shell_shell_surface_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 static int _e_wl_shell_shell_surface_cb_ping_timeout(void *data);
 static void _e_wl_shell_shell_surface_cb_render_post(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_wl_shell_shell_surface_cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_wl_shell_shell_surface_cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_wl_shell_shell_surface_cb_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_wl_shell_shell_surface_cb_mouse_move(void *data, Evas_Object *obj EINA_UNUSED, void *event);
 
 /* shell surface interface prototypes */
 static void _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial);
@@ -382,7 +387,7 @@ _e_wl_shell_shell_surface_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_C
    else 
      return;
 
-   printf("Configure Surface: %d %d %d %d\n", x, y, w, h);
+   /* printf("Configure Surface: %d %d %d %d\n", x, y, w, h); */
 
    /* handle shell_surface type change */
    if ((ewss->next_type != E_WAYLAND_SHELL_SURFACE_TYPE_NONE) && 
@@ -467,8 +472,21 @@ _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y
    evas_object_resize(ews->obj, w, h);
    evas_object_show(ews->obj);
 
+   /* hook smart object callbacks */
+   evas_object_smart_callback_add(ews->obj, "mouse_in", 
+                                  _e_wl_shell_shell_surface_cb_mouse_in, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_out", 
+                                  _e_wl_shell_shell_surface_cb_mouse_out, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_move", 
+                                  _e_wl_shell_shell_surface_cb_mouse_move, ews);
+   evas_object_smart_callback_add(ews->obj, "focus_in", 
+                                  _e_wl_shell_shell_surface_cb_focus_in, ews);
+   evas_object_smart_callback_add(ews->obj, "focus_out", 
+                                  _e_wl_shell_shell_surface_cb_focus_out, ews);
+
    /* create the e border for this surface */
    ews->bd = e_border_new(con, ecore_evas_window_get(ews->ee), 1, 1);
+   e_surface_border_input_set(ews->obj, ews->bd);
    e_border_move_resize(ews->bd, x, y, w, h);
    e_border_show(ews->bd);
 
@@ -493,7 +511,24 @@ _e_wl_shell_shell_surface_unmap(E_Wayland_Surface *ews)
           wl_pointer_set_focus(input->wl.seat.pointer, NULL, 0, 0);
      }
 
-   if (ews->obj) evas_object_del(ews->obj);
+   if (ews->obj)
+     {
+        /* delete smart callbacks */
+        evas_object_smart_callback_del(ews->obj, "mouse_in", 
+                                       _e_wl_shell_shell_surface_cb_mouse_in);
+        evas_object_smart_callback_del(ews->obj, "mouse_out", 
+                                       _e_wl_shell_shell_surface_cb_mouse_out);
+        evas_object_smart_callback_del(ews->obj, "mouse_move", 
+                                       _e_wl_shell_shell_surface_cb_mouse_move);
+        evas_object_smart_callback_del(ews->obj, "focus_in", 
+                                       _e_wl_shell_shell_surface_cb_focus_in);
+        evas_object_smart_callback_del(ews->obj, "focus_out", 
+                                       _e_wl_shell_shell_surface_cb_focus_out);
+
+        /* delete the object */
+        evas_object_del(ews->obj);
+     }
+
    if (ews->ee) ecore_evas_free(ews->ee);
    if (ews->bd) e_object_del(E_OBJECT(ews->bd));
 
@@ -608,6 +643,149 @@ _e_wl_shell_shell_surface_cb_render_post(void *data, Evas *evas EINA_UNUSED, voi
      }
 }
 
+static void 
+_e_wl_shell_shell_surface_cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Wayland_Surface *ews = NULL;
+   E_Wayland_Input *input = NULL;
+   Eina_List *l = NULL;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   /* if this surface is not visible, get out */
+   if (!ews->mapped) return;
+
+   /* loop the list of inputs */
+   EINA_LIST_FOREACH(_e_wl_comp->seats, l, input)
+     {
+        /* set keyboard focus */
+        wl_keyboard_set_focus(input->wl.seat.keyboard, &ews->wl.surface);
+
+        /* update the keyboard focus in the data device */
+        wl_data_device_set_keyboard_focus(&input->wl.seat);
+     }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Wayland_Surface *ews = NULL;
+   E_Wayland_Input *input = NULL;
+   Eina_List *l = NULL;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   /* if this surface is not visible, get out */
+   if (!ews->mapped) return;
+
+   /* loop the list of inputs */
+   EINA_LIST_FOREACH(_e_wl_comp->seats, l, input)
+     {
+        /* set keyboard focus */
+        wl_keyboard_set_focus(input->wl.seat.keyboard, NULL);
+
+        /* end any keyboard grabs */
+        wl_keyboard_end_grab(input->wl.seat.keyboard);
+     }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Wayland_Surface *ews = NULL;
+   struct wl_pointer *ptr = NULL;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   /* if this surface is not visible, get out */
+   if (!ews->mapped) return;
+
+   /* if (!ews->input) return; */
+
+   /* try to get the pointer from this input */
+   if ((ptr = _e_wl_comp->input->wl.seat.pointer))
+//   if ((ptr = ews->input->wl.seat.pointer))
+     {
+        /* if the mouse entered this surface and it is not the current surface */
+        if (&ews->wl.surface != ptr->current)
+          {
+             const struct wl_pointer_grab_interface *grab;
+
+             /* set this surface as the current */
+             grab = ptr->grab->interface;
+             ptr->current = &ews->wl.surface;
+
+             /* send a pointer focus event */
+             grab->focus(ptr->grab, &ews->wl.surface, 
+                         ptr->current_x, ptr->current_y);
+          }
+     }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Wayland_Surface *ews = NULL;
+   struct wl_pointer *ptr = NULL;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   /* if (!ews->input) return; */
+
+   /* try to get the pointer from this input */
+   if ((ptr = _e_wl_comp->input->wl.seat.pointer))
+//   if ((ptr = ews->input->wl.seat.pointer))
+     {
+        /* if we have a pointer grab and this is the currently focused surface */
+        if ((ptr->grab) && (ptr->focus == ptr->current))
+          return;
+
+        /* set pointer focus */
+        ptr->current = NULL;
+
+        /* NB: Ideally, we should call this function to tell the 
+         * pointer that nothing has focus, HOWEVER, when we do 
+         * it breaks re-entrant focus of some wayland clients:
+         * 
+         * NB: I sent a patch for this already to the wayland devs */
+        wl_pointer_set_focus(ptr, NULL, 0, 0);
+     }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_mouse_move(void *data, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   E_Wayland_Surface *ews = NULL;
+   Evas_Event_Mouse_Move *ev;
+   struct wl_pointer *ptr = NULL;
+
+   ev = event;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   /* try to get the pointer from this input */
+   if ((ptr = _e_wl_comp->input->wl.seat.pointer))
+//   if ((ptr = ews->input->wl.seat.pointer))
+     {
+        ptr->x = wl_fixed_from_int(ev->cur.output.x);
+        ptr->y = wl_fixed_from_int(ev->cur.output.y);
+
+        ptr->current_x = ptr->x;
+        ptr->current_y = ptr->y;
+        ptr->grab->x = ptr->x;
+        ptr->grab->y = ptr->y;
+
+        /* send this mouse movement to wayland */
+        ptr->grab->interface->motion(ptr->grab, ev->timestamp, 
+                                     ptr->grab->x, ptr->grab->y);
+     }
+}
+
 /* shell surface interface functions */
 static void 
 _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial)
@@ -717,4 +895,3 @@ _e_wl_shell_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED, str
           ecore_evas_name_class_set(ews->ee, ewss->title, ewss->clas);
      }
 }
-
