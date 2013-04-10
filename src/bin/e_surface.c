@@ -38,6 +38,13 @@ static void _e_smart_hide(Evas_Object *obj);
 static void _e_smart_clip_set(Evas_Object *obj, Evas_Object *clip);
 static void _e_smart_clip_unset(Evas_Object *obj);
 
+/* local function prototypes */
+static void _e_surface_cb_focus_in(void *data, Evas *evas EINA_UNUSED, void *event);
+static void _e_surface_cb_focus_out(void *data, Evas *evas EINA_UNUSED, void *event);
+static void _e_surface_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_surface_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_surface_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+
 EAPI Evas_Object *
 e_surface_add(Evas *evas)
 {
@@ -83,6 +90,13 @@ e_surface_input_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, 
    sd->input.w = w;
    sd->input.h = h;
 
+   if ((w >= 0) && (h >= 0))
+     {
+        if (sd->o_img) evas_object_pass_events_set(sd->o_img, EINA_TRUE);
+     }
+   else
+     if (sd->o_img) evas_object_pass_events_set(sd->o_img, EINA_FALSE);
+
    /* update input rectangle geometry */
    if (sd->o_input)
      {
@@ -122,6 +136,18 @@ e_surface_image_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h, void *pixels)
      }
 }
 
+EAPI void 
+e_surface_border_input_set(Evas_Object *obj, E_Border *bd)
+{
+   E_Smart_Data *sd = NULL;
+
+   /* try to get the objects smart data */
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+
+   if (sd->o_input)
+     bd->input_object = sd->o_input;
+}
+
 /* smart functions */
 static void 
 _e_smart_add(Evas_Object *obj)
@@ -133,6 +159,21 @@ _e_smart_add(Evas_Object *obj)
 
    /* get a reference to the canvas */
    sd->evas = evas_object_evas_get(obj);
+   evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, 
+                           _e_surface_cb_focus_in, obj);
+   evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, 
+                           _e_surface_cb_focus_out, obj);
+
+   /* create the base input rectangle */
+   sd->o_input = evas_object_rectangle_add(sd->evas);
+   evas_object_color_set(sd->o_input, 0, 0, 0, 0);
+   evas_object_event_callback_add(sd->o_input, EVAS_CALLBACK_MOUSE_IN, 
+                                  _e_surface_cb_mouse_in, obj);
+   evas_object_event_callback_add(sd->o_input, EVAS_CALLBACK_MOUSE_OUT, 
+                                  _e_surface_cb_mouse_out, obj);
+   evas_object_event_callback_add(sd->o_input, EVAS_CALLBACK_MOUSE_MOVE, 
+                                  _e_surface_cb_mouse_move, obj);
+   evas_object_smart_member_add(sd->o_input, obj);
 
    /* create the image object */
    sd->o_img = evas_object_image_filled_add(sd->evas);
@@ -140,11 +181,6 @@ _e_smart_add(Evas_Object *obj)
    evas_object_image_alpha_set(sd->o_img, EINA_TRUE);
    evas_object_pass_events_set(sd->o_img, EINA_FALSE);
    evas_object_smart_member_add(sd->o_img, obj);
-
-   /* create the base input rectangle */
-   sd->o_input = evas_object_rectangle_add(sd->evas);
-   evas_object_color_set(sd->o_input, 255, 0, 0, 64);
-//   evas_object_smart_member_add(sd->o_input, obj);
 
    /* set the objects smart data */
    evas_object_smart_data_set(obj, sd);
@@ -162,7 +198,24 @@ _e_smart_del(Evas_Object *obj)
    if (sd->o_img) evas_object_del(sd->o_img);
 
    /* delete the input rectangle */
-   if (sd->o_input) evas_object_del(sd->o_input);
+   if (sd->o_input) 
+     {
+        /* delete the callbacks */
+        evas_object_event_callback_del(sd->o_input, EVAS_CALLBACK_MOUSE_IN, 
+                                       _e_surface_cb_mouse_in);
+        evas_object_event_callback_del(sd->o_input, EVAS_CALLBACK_MOUSE_OUT, 
+                                       _e_surface_cb_mouse_out);
+        evas_object_event_callback_del(sd->o_input, EVAS_CALLBACK_MOUSE_MOVE, 
+                                       _e_surface_cb_mouse_move);
+
+        evas_object_del(sd->o_input);
+     }
+
+   /* delete the event callbacks */
+   evas_event_callback_del(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN, 
+                           _e_surface_cb_focus_in);
+   evas_event_callback_del(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT, 
+                           _e_surface_cb_focus_out);
 
    /* free the allocated smart data structure */
    E_FREE(sd);
@@ -179,7 +232,7 @@ _e_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
 
-//   if ((sd->x == x) && (sd->y == y)) return;
+   if ((sd->x == x) && (sd->y == y)) return;
 
    sd->x = x;
    sd->y = y;
@@ -200,7 +253,7 @@ _e_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
 
-//   if ((sd->w == w) && (sd->h == h)) return;
+   if ((sd->w == w) && (sd->h == h)) return;
 
    sd->w = w;
    sd->h = h;
@@ -260,7 +313,7 @@ _e_smart_clip_set(Evas_Object *obj, Evas_Object *clip)
    /* TODO: Hmmm, set clip on the input rectangle ?? */
 
    /* set the clip on the image object */
-//   if (sd->o_img) evas_object_clip_set(sd->o_img, clip);
+   if (sd->o_img) evas_object_clip_set(sd->o_img, clip);
 }
 
 static void 
@@ -274,5 +327,36 @@ _e_smart_clip_unset(Evas_Object *obj)
    /* TODO: Hmmm, unset clip on the input rectangle ?? */
 
    /* unset the image object clip */
-//   if (sd->o_img) evas_object_clip_unset(sd->o_img);
+   if (sd->o_img) evas_object_clip_unset(sd->o_img);
+}
+
+/* local functions */
+static void 
+_e_surface_cb_focus_in(void *data, Evas *evas EINA_UNUSED, void *event)
+{
+   evas_object_smart_callback_call(data, "focus_in", NULL);
+}
+
+static void 
+_e_surface_cb_focus_out(void *data, Evas *evas EINA_UNUSED, void *event)
+{
+   evas_object_smart_callback_call(data, "focus_out", NULL);
+}
+
+static void 
+_e_surface_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   evas_object_smart_callback_call(data, "mouse_in", NULL);
+}
+
+static void 
+_e_surface_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   evas_object_smart_callback_call(data, "mouse_out", NULL);
+}
+
+static void 
+_e_surface_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   evas_object_smart_callback_call(data, "mouse_move", event);
 }
