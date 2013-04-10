@@ -105,11 +105,14 @@ struct _E_Wayland_Surface
         pixman_region32_t damage, clip;
      } region;
 
-   E_Border *bd;
+   /* smart object for this surface */
+   Evas_Object *obj;
 
    Ecore_Evas *ee;
-   Evas_Object *img;
-   Evas_Object *input_rect;
+   E_Border *bd;
+
+   /* Evas_Object *img; */
+   /* Evas_Object *input_rect; */
 
    E_Wayland_Shell_Surface *shell_surface;
    Eina_Bool mapped : 1;
