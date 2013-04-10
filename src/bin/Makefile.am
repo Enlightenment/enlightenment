@@ -207,7 +207,8 @@ e_zone.h
 
 if HAVE_WAYLAND_CLIENTS
 ENLIGHTENMENTHEADERS += \
-e_comp_wl.h
+e_comp_wl.h \
+e_surface.h
 endif
 
 
@@ -372,7 +373,8 @@ $(ENLIGHTENMENTHEADERS)
 
 if HAVE_WAYLAND_CLIENTS
 enlightenment_src += \
-e_comp_wl.c
+e_comp_wl.c \
+e_surface.c
 endif
 
 enlightenment_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@
