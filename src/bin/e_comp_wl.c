@@ -1,5 +1,6 @@
 #include "e.h"
 #include "e_comp_wl.h"
+#include "e_surface.h"
 #include <sys/mman.h>
 
 /* compositor function prototypes */
@@ -241,6 +242,8 @@ err:
 void 
 e_comp_wl_shutdown(void)
 {
+   E_Module *mod = NULL;
+
    /* remove the idler */
    if (_e_wl_comp->idler) ecore_idler_del(_e_wl_comp->idler);
 
@@ -264,7 +267,20 @@ e_comp_wl_shutdown(void)
    /* free the compositor */
    E_FREE(_e_wl_comp);
 
-   /* TODO: unload shell module */
+   /* disable the loaded shell module */
+   /* TODO: we should have a config variable somewhere to store which 
+    * shell we want to unload (tablet, mobile, etc) */
+   if ((mod = e_module_find("wl_desktop_shell")))
+     e_module_disable(mod);
+}
+
+unsigned int 
+e_comp_wl_time_get(void)
+{
+   struct timeval tm;
+
+   gettimeofday(&tm, NULL);
+   return (tm.tv_sec * 1000 + tm.tv_usec / 1000);
 }
 
 /* local functions */
@@ -350,6 +366,8 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
    /* initialize the lists of frames */
    wl_list_init(&ews->wl.frames);
    wl_list_init(&ews->pending.frames);
+
+   ews->wl.surface.resource.client = NULL;
 
    /* set destroy function for pending buffers */
    ews->pending.buffer_destroy.notify = 
@@ -846,7 +864,7 @@ _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *re
    if ((input->wl.seat.pointer->focus) && 
        (input->wl.seat.pointer->focus->resource.client == client))
      {
-        /* FIXME: what to pass to wl_pointer_set_focus (x/y) */
+        /* tell pointer which surface is focused */
         wl_pointer_set_focus(input->wl.seat.pointer, 
                              input->wl.seat.pointer->focus, 
                              input->wl.seat.pointer->x, 
@@ -960,31 +978,32 @@ _e_comp_wl_pointer_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y,
          * using the pixels from their cursor surface */
 
         /* is it mapped ? */
-        if ((focus->mapped) && (focus->ee))
-          {
-             Ecore_Window win;
+        /* FIXME !!! Use Smart Object */
+        /* if ((focus->mapped) && (focus->ee)) */
+        /*   { */
+        /*      Ecore_Window win; */
 
              /* try to get the ecore_window */
-             if ((win = ecore_evas_window_get(focus->ee)))
-               {
-                  void *pixels;
-                  Ecore_X_Cursor cur;
+             /* if ((win = ecore_evas_window_get(focus->ee))) */
+             /*   { */
+             /*      void *pixels; */
+             /*      Ecore_X_Cursor cur; */
 
                   /* grab the pixels from the cursor surface */
-                  pixels = wl_shm_buffer_get_data(ews->reference.buffer);
+                  /* pixels = wl_shm_buffer_get_data(ews->reference.buffer); */
 
                   /* create the new X cursor with this image */
-                  cur = ecore_x_cursor_new(win, pixels, w, h,
-                                           input->pointer.hot.x, 
-                                           input->pointer.hot.y);
+                  /* cur = ecore_x_cursor_new(win, pixels, w, h, */
+                  /*                          input->pointer.hot.x,  */
+                  /*                          input->pointer.hot.y); */
 
                   /* set the cursor on this window */
-                  ecore_x_window_cursor_set(win, cur);
+                  /* ecore_x_window_cursor_set(win, cur); */
 
                   /* free the cursor */
-                  ecore_x_cursor_free(cur);
-               }
-          }
+                  /* ecore_x_cursor_free(cur); */
+               /* } */
+          /* } */
      }
 }
 
@@ -1018,6 +1037,9 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
 
    /* if we were passed in a surface, try to cast it to our structure */
    if (surface_resource) ews = (E_Wayland_Surface *)surface_resource->data;
+
+   /* if this input has no pointer, get out */
+   if (!input->has_pointer) return;
 
    /* if the input has no current focus, get out */
    if (!input->wl.seat.pointer->focus) return;
@@ -1210,7 +1232,40 @@ _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
 static void 
 _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int x, int y)
 {
+   E_Wayland_Surface *ews = NULL;
+   struct wl_buffer *buffer = NULL;
 
+   /* try to cast the resource data to our surface structure */
+   if (!(ews = resource->data)) return;
+
+   if (buffer_resource) buffer = buffer_resource->data;
+
+   /* reference any existing buffers */
+   _e_comp_wl_surface_buffer_reference(ews, buffer);
+
+   /* if we are setting a null buffer, then unmap the surface */
+   if (!buffer)
+     {
+        if (ews->mapped)
+          {
+             if (ews->unmap) ews->unmap(ews);
+          }
+     }
+
+   /* if we already have a pending buffer, remove the listener */
+   if (ews->pending.buffer)
+     wl_list_remove(&ews->pending.buffer_destroy.link);
+
+   /* set some pending values */
+   ews->pending.x = x;
+   ews->pending.y = y;
+   ews->pending.buffer = buffer;
+   ews->pending.new_buffer = EINA_TRUE;
+
+   /* if we were given a buffer, initialize the destroy signal */
+   if (buffer)
+     wl_signal_add(&buffer->resource.destroy_signal, 
+                   &ews->pending.buffer_destroy);
 }
 
 static void 
@@ -1312,5 +1367,140 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
 static void 
 _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   E_Wayland_Surface *ews = NULL;
+   Evas_Coord bw = 0, bh = 0;
+   pixman_region32_t opaque;
+   pixman_box32_t *rects;
+   int n = 0;
 
+   /* FIXME */
+
+   /* try to cast the resource data to our surface structure */
+   if (!(ews = resource->data)) return;
+
+   /* if we have a pending buffer or a new pending buffer, attach it */
+   if ((ews->pending.buffer) || (ews->pending.new_buffer))
+     {
+        /* reference the pending buffer */
+        _e_comp_wl_surface_buffer_reference(ews, ews->pending.buffer);
+
+        /* if the pending buffer is NULL, unmap the surface */
+        if (!ews->pending.buffer)
+          {
+             if (ews->mapped)
+               {
+                  if (ews->unmap) ews->unmap(ews);
+               }
+          }
+        else
+          {
+             if (ews->obj)
+               {
+                  void *data;
+
+                  bw = ews->pending.buffer->width;
+                  bh = ews->pending.buffer->height;
+
+                  /* grab the pixel data from the buffer */
+                  data = wl_shm_buffer_get_data(ews->pending.buffer);
+
+                  /* send the pixel data to the smart object */
+                  e_surface_image_set(ews->obj, bw, bh, data);
+               }
+          }
+     }
+
+   /* if we have a reference to a buffer, get it's size */
+   if (ews->reference.buffer)
+     {
+        bw = ews->reference.buffer->width;
+        bh = ews->reference.buffer->height;
+     }
+
+   /* if we have a new pending buffer, call configure */
+   if ((ews->configure) && (ews->pending.new_buffer))
+     ews->configure(ews, ews->geometry.x, ews->geometry.y, bw, bh);
+
+   if (ews->pending.buffer)
+     wl_list_remove(&ews->pending.buffer_destroy.link);
+
+   /* set some pending values */
+   ews->pending.buffer = NULL;
+   ews->pending.x = 0;
+   ews->pending.y = 0;
+   ews->pending.new_buffer = EINA_FALSE;
+
+   /* set surface damage */
+   pixman_region32_union(&ews->region.damage, &ews->region.damage, 
+                         &ews->pending.damage);
+   pixman_region32_intersect_rect(&ews->region.damage, &ews->region.damage, 
+                                  0, 0, ews->geometry.w, ews->geometry.h);
+
+   /* empty any pending damage */
+   pixman_region32_fini(&ews->pending.damage);
+   pixman_region32_init(&ews->pending.damage);
+
+   /* get the extent of the damage region */
+   rects = pixman_region32_rectangles(&ews->region.damage, &n);
+   while (n--)
+     {
+        pixman_box32_t *r;
+
+        r = &rects[n];
+
+        /* send damages to the image */
+        e_surface_damage_add(ews->obj, r->x1, r->y1, r->x2, r->y2);
+     }
+
+   /* tell pixman we are finished with this region */
+   /* pixman_region32_fini(&ews->region.damage); */
+
+   /* reinitalize the damage region */
+   /* pixman_region32_init(&ews->region.damage); */
+
+   /* calculate new opaque region */
+   pixman_region32_init_rect(&opaque, 0, 0, ews->geometry.w, ews->geometry.h);
+   pixman_region32_intersect(&opaque, &opaque, &ews->pending.opaque);
+
+   /* if new opaque region is not equal to the current one, then update */
+   if (!pixman_region32_equal(&opaque, &ews->region.opaque))
+     {
+        pixman_region32_copy(&ews->region.opaque, &opaque);
+        ews->geometry.changed = EINA_TRUE;
+     }
+
+   /* tell pixman we are done with this temporary region */
+   pixman_region32_fini(&opaque);
+
+   /* clear any existing input region */
+   pixman_region32_fini(&ews->region.input);
+
+   /* initialize a new input region */
+   pixman_region32_init_rect(&ews->region.input, 0, 0, 
+                             ews->geometry.w, ews->geometry.h);
+
+   /* put pending input region into new input region */
+   pixman_region32_intersect(&ews->region.input, &ews->region.input, 
+                             &ews->pending.input);
+
+   /* check for valid input region */
+   if (pixman_region32_not_empty(&ews->region.input))
+     {
+        /* get the extent of the input region */
+        rects = pixman_region32_extents(&ews->region.input);
+
+        /* update the smart object's input region */
+        if (ews->obj)
+          e_surface_input_set(ews->obj, rects->x1, rects->y1, 
+                              (rects->x2 - rects->x1), 
+                              (rects->y2 - rects->y1));
+     }
+
+   /* put any pending frame callbacks into active list */
+   wl_list_insert_list(&ews->wl.frames, &ews->pending.frames);
+
+   /* clear list of pending frame callbacks */
+   wl_list_init(&ews->pending.frames);
+
+   /* TODO: schedule repaint ?? */
 }
