@@ -185,8 +185,11 @@ struct _E_Border
    Ecore_X_Window win;
    Evas_Object   *bg_object;
    Evas_Object   *icon_object;
+   Evas_Object   *input_object;
    Eina_Stringshare  *internal_icon;
    Eina_Stringshare  *internal_icon_key;
+
+   Eina_Bool callbacks_set : 1;
 
    struct
    {

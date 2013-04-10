@@ -6385,6 +6385,7 @@ _e_border_cb_mouse_x_in(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event
    if (grabbed) return ECORE_CALLBACK_RENEW;
    bd = e_border_find_by_window(ev->event_win);
    if (!bd) return ECORE_CALLBACK_RENEW;
+   if (bd->input_object) return ECORE_CALLBACK_RENEW;
    if ((bd == focused) || (bd == focusing)) return ECORE_CALLBACK_RENEW;
    if (focus_locked && (bd != warp_timer_border)) return ECORE_CALLBACK_RENEW;
    if (e_object_is_del(E_OBJECT(bd))) return ECORE_CALLBACK_RENEW;
@@ -6405,7 +6406,8 @@ _e_border_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if (bd->fullscreen) return;
    if ((bd != focused) && (bd == focusing)) return;
    if (e_object_is_del(E_OBJECT(bd))) return;
-   if (E_INSIDE(ev->output.x, ev->output.y, bd->x, bd->y, bd->w, bd->h)) return;
+   if (!bd->input_object)
+     if (E_INSIDE(ev->output.x, ev->output.y, bd->x, bd->y, bd->w, bd->h)) return;
    if (!bd->iconic)
      e_focus_event_mouse_out(bd);
    bd->mouse.current.mx = ev->output.x;
@@ -6420,6 +6422,7 @@ _e_border_cb_mouse_x_out(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
    if (grabbed) return ECORE_CALLBACK_RENEW;
    bd = e_border_find_by_window(ev->event_win);
    if (!bd) return ECORE_CALLBACK_RENEW;
+   if (bd->input_object) return ECORE_CALLBACK_RENEW;
    if (bd->fullscreen) return ECORE_CALLBACK_RENEW;
    if ((bd != focused) && (bd == focusing)) return ECORE_CALLBACK_RENEW;
    if (e_object_is_del(E_OBJECT(bd))) return ECORE_CALLBACK_RENEW;
@@ -8116,6 +8119,14 @@ _e_border_eval0(E_Border *bd)
                                               bd->client.icccm.title);
                   bd->theme_shadow = !!edje_object_data_get(o, "shadow");
                   _e_border_shadow(bd);
+
+                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, _e_border_cb_mouse_in, bd);
+                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, _e_border_cb_mouse_move, bd);
+                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_OUT, _e_border_cb_mouse_out, bd);
+                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, _e_border_cb_mouse_down, bd);
+                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, _e_border_cb_mouse_up, bd);
+                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL, _e_border_cb_mouse_wheel, bd);
+
                }
              else
                {
