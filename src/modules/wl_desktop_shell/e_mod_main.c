@@ -37,6 +37,8 @@ static void _e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj 
 static void _e_wl_shell_shell_surface_cb_mouse_move(void *data, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_wl_shell_shell_surface_cb_key_up(void *data, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, void *event);
 
 /* shell surface interface prototypes */
 static void _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial);
@@ -485,6 +487,10 @@ _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y
                                   _e_wl_shell_shell_surface_cb_mouse_up, ews);
    evas_object_smart_callback_add(ews->obj, "mouse_down", 
                                   _e_wl_shell_shell_surface_cb_mouse_down, ews);
+   evas_object_smart_callback_add(ews->obj, "key_up", 
+                                  _e_wl_shell_shell_surface_cb_key_up, ews);
+   evas_object_smart_callback_add(ews->obj, "key_down", 
+                                  _e_wl_shell_shell_surface_cb_key_down, ews);
    evas_object_smart_callback_add(ews->obj, "focus_in", 
                                   _e_wl_shell_shell_surface_cb_focus_in, ews);
    evas_object_smart_callback_add(ews->obj, "focus_out", 
@@ -530,6 +536,10 @@ _e_wl_shell_shell_surface_unmap(E_Wayland_Surface *ews)
                                        _e_wl_shell_shell_surface_cb_mouse_up);
         evas_object_smart_callback_del(ews->obj, "mouse_down", 
                                        _e_wl_shell_shell_surface_cb_mouse_down);
+        evas_object_smart_callback_del(ews->obj, "key_up", 
+                                       _e_wl_shell_shell_surface_cb_key_up);
+        evas_object_smart_callback_del(ews->obj, "key_down", 
+                                       _e_wl_shell_shell_surface_cb_key_down);
         evas_object_smart_callback_del(ews->obj, "focus_in", 
                                        _e_wl_shell_shell_surface_cb_focus_in);
         evas_object_smart_callback_del(ews->obj, "focus_out", 
@@ -880,6 +890,120 @@ _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED
         if (ptr->button_count == 1)
           ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
      }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_key_up(void *data, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   Evas_Event_Key_Up *ev;
+   E_Wayland_Surface *ews = NULL;
+   struct wl_keyboard *kbd;
+   struct wl_keyboard_grab *grab;
+   unsigned int key = 0, *end, *k;
+   unsigned int serial = 0;
+
+   ev = event;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   /* try to get a reference to the input's keyboard */
+   if (!(kbd = _e_wl_comp->input->wl.seat.keyboard)) return;
+
+   /* does this keyboard have a focused surface ? */
+   if (!kbd->focus) return;
+
+   /* is the focused surface actually This surface ? */
+   if (kbd->focus != &ews->wl.surface) return;
+
+   /* get the keycode for this key from X */
+   key = ecore_x_keysym_keycode_get(ev->keyname) - 8;
+
+   end = (kbd->keys.data + kbd->keys.size);
+   for (k = kbd->keys.data; k < end; k++)
+     if ((*k == key)) *k = *--end;
+
+   kbd->keys.size = (void *)end - kbd->keys.data;
+
+   /* try to get the current keyboard's grab interface. 
+    * Fallback to the default grab */
+   if (!(grab = kbd->grab)) grab = &kbd->default_grab;
+
+   /* if we have a grab, send this key to it */
+   if (grab)
+     grab->interface->key(grab, ev->timestamp, key, 
+                          WL_KEYBOARD_KEY_STATE_RELEASED);
+
+   /* update xkb key state */
+   xkb_state_update_key(_e_wl_comp->input->xkb.state, key + 8, XKB_KEY_DOWN);
+
+   /* update keyboard modifiers */
+   serial = wl_display_get_serial(_e_wl_comp->wl.display);
+   e_comp_wl_input_modifiers_update(serial);
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   Evas_Event_Key_Down *ev;
+   E_Wayland_Surface *ews = NULL;
+   struct wl_keyboard *kbd;
+   struct wl_keyboard_grab *grab;
+   unsigned int serial = 0, key = 0;
+   unsigned int *end, *k;
+
+   ev = event;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   /* try to get a reference to the input's keyboard */
+   if (!(kbd = _e_wl_comp->input->wl.seat.keyboard)) return;
+
+   /* does this keyboard have a focused surface ? */
+   if (!kbd->focus) return;
+
+   /* is the focused surface actually This surface ? */
+   if (kbd->focus != &ews->wl.surface) return;
+
+   serial = wl_display_next_serial(_e_wl_comp->wl.display);
+
+   /* if the compositor has a ping callback, call it on this surface */
+   if (_e_wl_comp->ping_cb) _e_wl_comp->ping_cb(ews, serial);
+
+   /* get the keycode for this key from X */
+   key = ecore_x_keysym_keycode_get(ev->keyname) - 8;
+
+   /* update the keyboards grab properties */
+   kbd->grab_key = key;
+   kbd->grab_time = ev->timestamp;
+
+   end = (kbd->keys.data + kbd->keys.size);
+   for (k = kbd->keys.data; k < end; k++)
+     {
+        /* ignore server generated key repeats */
+        if ((*k == key)) return;
+     }
+
+   kbd->keys.size = (void *)end - kbd->keys.data;
+   k = wl_array_add(&kbd->keys, sizeof(*k));
+   *k = key;
+
+   /* try to get the current keyboard's grab interface. 
+    * Fallback to the default grab */
+   if (!(grab = kbd->grab)) grab = &kbd->default_grab;
+
+   /* if we have a grab, send this key to it */
+   if (grab)
+     grab->interface->key(grab, ev->timestamp, key, 
+                          WL_KEYBOARD_KEY_STATE_PRESSED);
+
+   /* update xkb key state */
+   xkb_state_update_key(_e_wl_comp->input->xkb.state, key + 8, XKB_KEY_DOWN);
+
+   /* update keyboard modifiers */
+   serial = wl_display_get_serial(_e_wl_comp->wl.display);
+   e_comp_wl_input_modifiers_update(serial);
 }
 
 /* shell surface interface functions */
