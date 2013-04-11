@@ -35,6 +35,8 @@ static void _e_wl_shell_shell_surface_cb_focus_out(void *data, Evas_Object *obj 
 static void _e_wl_shell_shell_surface_cb_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_mouse_move(void *data, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 
 /* shell surface interface prototypes */
 static void _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial);
@@ -479,6 +481,10 @@ _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y
                                   _e_wl_shell_shell_surface_cb_mouse_out, ews);
    evas_object_smart_callback_add(ews->obj, "mouse_move", 
                                   _e_wl_shell_shell_surface_cb_mouse_move, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_up", 
+                                  _e_wl_shell_shell_surface_cb_mouse_up, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_down", 
+                                  _e_wl_shell_shell_surface_cb_mouse_down, ews);
    evas_object_smart_callback_add(ews->obj, "focus_in", 
                                   _e_wl_shell_shell_surface_cb_focus_in, ews);
    evas_object_smart_callback_add(ews->obj, "focus_out", 
@@ -520,6 +526,10 @@ _e_wl_shell_shell_surface_unmap(E_Wayland_Surface *ews)
                                        _e_wl_shell_shell_surface_cb_mouse_out);
         evas_object_smart_callback_del(ews->obj, "mouse_move", 
                                        _e_wl_shell_shell_surface_cb_mouse_move);
+        evas_object_smart_callback_del(ews->obj, "mouse_up", 
+                                       _e_wl_shell_shell_surface_cb_mouse_up);
+        evas_object_smart_callback_del(ews->obj, "mouse_down", 
+                                       _e_wl_shell_shell_surface_cb_mouse_down);
         evas_object_smart_callback_del(ews->obj, "focus_in", 
                                        _e_wl_shell_shell_surface_cb_focus_in);
         evas_object_smart_callback_del(ews->obj, "focus_out", 
@@ -783,6 +793,92 @@ _e_wl_shell_shell_surface_cb_mouse_move(void *data, Evas_Object *obj EINA_UNUSED
         /* send this mouse movement to wayland */
         ptr->grab->interface->motion(ptr->grab, ev->timestamp, 
                                      ptr->grab->x, ptr->grab->y);
+     }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Wayland_Surface *ews = NULL;
+   struct wl_pointer *ptr = NULL;
+   Evas_Event_Mouse_Up *ev;
+   int btn = 0;
+
+   ev = event;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   /* try to get the pointer from this input */
+   if ((ptr = _e_wl_comp->input->wl.seat.pointer))
+//   if ((ptr = ews->input->wl.seat.pointer))
+     {
+        if (ev->button == 1)
+          btn = ev->button + BTN_LEFT - 1;
+        else if (ev->button == 2)
+          btn = BTN_MIDDLE;
+        else if (ev->button == 3)
+          btn = BTN_RIGHT;
+
+        ptr->button_count--;
+
+        /* send this button press to the pointer */
+        ptr->grab->interface->button(ptr->grab, ev->timestamp, btn, 
+                                     WL_POINTER_BUTTON_STATE_RELEASED);
+
+        if (ptr->button_count == 1)
+          ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
+     }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Wayland_Surface *ews = NULL;
+   struct wl_pointer *ptr = NULL;
+   Evas_Event_Mouse_Down *ev;
+   int btn = 0;
+
+   ev = event;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   /* try to get the pointer from this input */
+   if ((ptr = _e_wl_comp->input->wl.seat.pointer))
+//   if ((ptr = ews->input->wl.seat.pointer))
+     {
+        unsigned int serial = 0;
+
+        if (ev->button == 1)
+          btn = ev->button + BTN_LEFT - 1;
+        else if (ev->button == 2)
+          btn = BTN_MIDDLE;
+        else if (ev->button == 3)
+          btn = BTN_RIGHT;
+
+        serial = wl_display_next_serial(_e_wl_comp->wl.display);
+
+        /* if the compositor has a ping callback, call it on this surface */
+        if (_e_wl_comp->ping_cb) _e_wl_comp->ping_cb(ews, serial);
+
+        /* update some pointer properties */
+        if (ptr->button_count == 0)
+          {
+             ptr->grab_x = ptr->x;
+             ptr->grab_y = ptr->y;
+             ptr->grab_button = btn;
+             ptr->grab_time = ev->timestamp;
+          }
+
+        ptr->button_count++;
+
+        /* send this button press to the pointer */
+        ptr->grab->interface->button(ptr->grab, ev->timestamp, btn, 
+                                     WL_POINTER_BUTTON_STATE_PRESSED);
+
+        if (ptr->button_count == 1)
+          ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
      }
 }
 
