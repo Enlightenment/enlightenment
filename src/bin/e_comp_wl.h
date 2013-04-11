@@ -111,9 +111,6 @@ struct _E_Wayland_Surface
    Ecore_Evas *ee;
    E_Border *bd;
 
-   /* Evas_Object *img; */
-   /* Evas_Object *input_rect; */
-
    E_Wayland_Shell_Surface *shell_surface;
    Eina_Bool mapped : 1;
 
