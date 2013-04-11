@@ -975,32 +975,35 @@ _e_comp_wl_pointer_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y,
          * using the pixels from their cursor surface */
 
         /* is it mapped ? */
-        /* FIXME !!! Use Smart Object */
-        /* if ((focus->mapped) && (focus->ee)) */
-        /*   { */
-        /*      Ecore_Window win; */
+        if ((focus->mapped) && (focus->ee))
+          {
+             Ecore_Window win;
 
              /* try to get the ecore_window */
-             /* if ((win = ecore_evas_window_get(focus->ee))) */
-             /*   { */
-             /*      void *pixels; */
-             /*      Ecore_X_Cursor cur; */
+             if ((win = ecore_evas_window_get(focus->ee)))
+               {
+                  void *pixels;
 
                   /* grab the pixels from the cursor surface */
-                  /* pixels = wl_shm_buffer_get_data(ews->reference.buffer); */
+                  if ((pixels = wl_shm_buffer_get_data(ews->reference.buffer)))
+                    {
+                       Ecore_X_Cursor cur;
 
-                  /* create the new X cursor with this image */
-                  /* cur = ecore_x_cursor_new(win, pixels, w, h, */
-                  /*                          input->pointer.hot.x,  */
-                  /*                          input->pointer.hot.y); */
+                       /* create the new X cursor with this image */
+                       cur = ecore_x_cursor_new(win, pixels, w, h,
+                                                input->pointer.hot.x, 
+                                                input->pointer.hot.y);
 
-                  /* set the cursor on this window */
-                  /* ecore_x_window_cursor_set(win, cur); */
+                       /* set the cursor on this window */
+                       ecore_x_window_cursor_set(win, cur);
 
-                  /* free the cursor */
-                  /* ecore_x_cursor_free(cur); */
-               /* } */
-          /* } */
+                       /* free the cursor */
+                       ecore_x_cursor_free(cur);
+                    }
+                  else
+                    ecore_x_window_cursor_set(win, 0);
+               }
+          }
      }
 }
 
@@ -1065,6 +1068,9 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
           input->pointer.surface->unmap(input->pointer.surface);
      }
 
+   input->pointer.surface = ews;
+
+   /* if we don't have a pointer surface, we are done here */
    if (!ews) return;
 
    /* set the destroy listener */
@@ -1077,7 +1083,6 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
    ews->input = input;
 
    /* update input structure with new values */
-   input->pointer.surface = ews;
    input->pointer.hot.x = x;
    input->pointer.hot.y = y;
 
