@@ -148,8 +148,7 @@ e_surface_border_input_set(Evas_Object *obj, E_Border *bd)
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
 
-   if (sd->o_input)
-     bd->input_object = sd->o_input;
+   e_border_input_object_set(bd, sd->o_input);
 }
 
 /* smart functions */
