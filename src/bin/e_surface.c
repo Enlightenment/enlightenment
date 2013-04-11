@@ -44,6 +44,8 @@ static void _e_surface_cb_focus_out(void *data, Evas *evas EINA_UNUSED, void *ev
 static void _e_surface_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_surface_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_surface_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_surface_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_surface_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 
 EAPI Evas_Object *
 e_surface_add(Evas *evas)
@@ -173,6 +175,10 @@ _e_smart_add(Evas_Object *obj)
                                   _e_surface_cb_mouse_out, obj);
    evas_object_event_callback_add(sd->o_input, EVAS_CALLBACK_MOUSE_MOVE, 
                                   _e_surface_cb_mouse_move, obj);
+   evas_object_event_callback_add(sd->o_input, EVAS_CALLBACK_MOUSE_DOWN, 
+                                  _e_surface_cb_mouse_down, obj);
+   evas_object_event_callback_add(sd->o_input, EVAS_CALLBACK_MOUSE_UP, 
+                                  _e_surface_cb_mouse_up, obj);
    evas_object_smart_member_add(sd->o_input, obj);
 
    /* create the image object */
@@ -207,7 +213,10 @@ _e_smart_del(Evas_Object *obj)
                                        _e_surface_cb_mouse_out);
         evas_object_event_callback_del(sd->o_input, EVAS_CALLBACK_MOUSE_MOVE, 
                                        _e_surface_cb_mouse_move);
-
+        evas_object_event_callback_del(sd->o_input, EVAS_CALLBACK_MOUSE_DOWN, 
+                                       _e_surface_cb_mouse_down);
+        evas_object_event_callback_del(sd->o_input, EVAS_CALLBACK_MOUSE_UP, 
+                                       _e_surface_cb_mouse_up);
         evas_object_del(sd->o_input);
      }
 
@@ -359,4 +368,16 @@ static void
 _e_surface_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    evas_object_smart_callback_call(data, "mouse_move", event);
+}
+
+static void 
+_e_surface_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   evas_object_smart_callback_call(data, "mouse_down", event);
+}
+
+static void 
+_e_surface_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   evas_object_smart_callback_call(data, "mouse_up", event);
 }
