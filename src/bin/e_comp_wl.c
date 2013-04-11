@@ -102,7 +102,7 @@ static Ecore_Idler *_module_idler = NULL;
 E_Wayland_Compositor *_e_wl_comp;
 
 /* external functions */
-Eina_Bool 
+EINTERN Eina_Bool 
 e_comp_wl_init(void)
 {
    int fd = 0;
@@ -238,7 +238,7 @@ err:
    return EINA_FALSE;
 }
 
-void 
+EINTERN void 
 e_comp_wl_shutdown(void)
 {
    E_Module *mod = NULL;
