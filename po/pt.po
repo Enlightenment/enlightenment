@@ -1,12 +1,11 @@
-# Portuguese translation of e17
 # This file is public domain.
-# Sérgio Marques <smarquespt@gmail.com>, 2010-2013.
+# Sérgio Marques &lt;smarquespt@gmail.com&gt;, 2010-2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-03-31 12:24+0900\n"
-"PO-Revision-Date: 2013-04-04 09:58-0000\n"
+"PO-Revision-Date: 2013-04-11 13:02-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: Portuguese\n"
 "Language: Portuguese\n"
@@ -39,30 +38,32 @@ msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
 msgid ""
-"<title>Copyright &copy; 2000-2013, by the Enlightenment Development Team</"
-"><br><br>We hope you enjoy using this software as much as we enjoyed writing "
-"it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
-"org</><br><br>"
+"&lt;title&gt;Copyright &amp;copy; 2000-2013, by the Enlightenment "
+"Development Team&lt;/&gt;&lt;br&gt;&lt;br&gt;We hope you enjoy using this "
+"software as much as we enjoyed writing it.&lt;br&gt;&lt;br&gt;To contact us "
+"please visit:&lt;br&gt;&lt;hilight&gt;http://www.enlightenment.org&lt;/&gt;"
+"&lt;br&gt;&lt;br&gt;"
 msgstr ""
-"<title>Direitos de autor &copy; 2000-2013, pela equipa de desenvolvimento do "
-"Enlightenment</><br><br>Esperamos que goste de utilizar esta aplicação, "
-"tanto como nós gostámos de a desenvolver.<br><br>Para nos contactar, aceda a:"
-"<br><hilight>http://www.enlightenment.org</><br><br>"
+"&lt;title&gt;Direitos de autor &amp;copy; 2000-2013, pela equipa de "
+"desenvolvimento do Enlightenment&lt;/&gt;&lt;br&gt;&lt;br&gt;Esperamos que "
+"goste de utilizar esta aplicação, tanto como nós gostámos de a desenvolver."
+"&lt;br&gt;&lt;br&gt;Para nos contactar, aceda a:&lt;br&gt;&lt;hilight&gt;"
+"http://www.enlightenment.org&lt;/&gt;&lt;br&gt;&lt;br&gt;"
 
 #: src/bin/e_about.c:69
-msgid "<title>The Team</><br><br>"
-msgstr "<title>A equipa</><br><br>"
+msgid "&lt;title&gt;The Team&lt;/&gt;&lt;br&gt;&lt;br&gt;"
+msgstr "&lt;title&gt;A equipa&lt;/&gt;&lt;br&gt;&lt;br&gt;"
 
 #: src/bin/e_actions.c:360
 #, c-format
 msgid ""
-"You are about to kill %s.<br><br>Please keep in mind that all data from this "
-"window<br>which has not yet been saved will be lost!<br><br>Are you sure you "
-"want to kill this window?"
+"You are about to kill %s.&lt;br&gt;&lt;br&gt;Please keep in mind that all "
+"data from this window&lt;br&gt;which has not yet been saved will be lost!&lt;"
+"br&gt;&lt;br&gt;Are you sure you want to kill this window?"
 msgstr ""
-"Está prestes a fechar %s.<br><br>Tenha em conta que todos os dados desta "
-"janela<br>que ainda não tenham sido gravados serão perdidos!<br><br>Tem a "
-"certeza que quer fechar a janela?"
+"Está prestes a fechar %s.&lt;br&gt;&lt;br&gt;Tenha em conta que todos os "
+"dados desta janela&lt;br&gt;que ainda não tenham sido gravados serão "
+"perdidos!&lt;br&gt;&lt;br&gt;Tem a certeza que quer fechar a janela?"
 
 #: src/bin/e_actions.c:372
 msgid "Are you sure you want to kill this window?"
@@ -809,45 +810,48 @@ msgstr "Cancelar"
 
 #: src/bin/e_config.c:972
 msgid ""
-"Settings data needed upgrading. Your old settings have<br>been wiped and a "
-"new set of defaults initialized. This<br>will happen regularly during "
-"development, so don't report a<br>bug. This simply means Enlightenment needs "
-"new settings<br>data by default for usable functionality that your "
-"old<br>settings simply lack. This new set of defaults will fix<br>that by "
-"adding it in. You can re-configure things now to your<br>liking. Sorry for "
-"the hiccup in your settings.<br>"
+"Settings data needed upgrading. Your old settings have&lt;br&gt;been wiped "
+"and a new set of defaults initialized. This&lt;br&gt;will happen regularly "
+"during development, so don't report a&lt;br&gt;bug. This simply means "
+"Enlightenment needs new settings&lt;br&gt;data by default for usable "
+"functionality that your old&lt;br&gt;settings simply lack. This new set of "
+"defaults will fix&lt;br&gt;that by adding it in. You can re-configure things "
+"now to your&lt;br&gt;liking. Sorry for the hiccup in your settings.&lt;br&gt;"
 msgstr ""
-"As definições precisam de ser atualizadas. As suas antigas<br>definições "
-"serão apagadas e serão iniciados novos<br>valores padrão. Isto irá ocorrer "
-"repetidamente durante o<br> desenvolvimento e não deve reportar qualquer "
-"erro.<br>Isto significa que o Enlightenment precisa de dados<br>que as suas "
-"antigas definições não possuem.<br>Este conjunto de valores corrige a "
-"situação. Mais tarde<br>poderá configurar o Enlightenment ao seu gosto."
-"<br>Desculpe qualquer inconveniente.<br>"
+"As definições precisam de ser atualizadas. As suas antigas&lt;br&gt;"
+"definições serão apagadas e serão iniciados novos&lt;br&gt;valores padrão. "
+"Isto irá ocorrer repetidamente durante o&lt;br&gt; desenvolvimento e não "
+"deve reportar qualquer erro.&lt;br&gt;Isto significa que o Enlightenment "
+"precisa de dados&lt;br&gt;que as suas antigas definições não possuem.&lt;"
+"br&gt;Este conjunto de valores corrige a situação. Mais tarde&lt;br&gt;"
+"poderá configurar o Enlightenment ao seu gosto.&lt;br&gt;Desculpe qualquer "
+"inconveniente.&lt;br&gt;"
 
 #: src/bin/e_config.c:989
 msgid ""
-"Your settings are NEWER than Enlightenment. This is very<br>strange. This "
-"should not happen unless you downgraded<br>Enlightenment or copied the "
-"settings from a place where<br>a newer version of Enlightenment was running. "
-"This is bad and<br>as a precaution your settings have been now restored "
-"to<br>defaults. Sorry for the inconvenience.<br>"
+"Your settings are NEWER than Enlightenment. This is very&lt;br&gt;strange. "
+"This should not happen unless you downgraded&lt;br&gt;Enlightenment or "
+"copied the settings from a place where&lt;br&gt;a newer version of "
+"Enlightenment was running. This is bad and&lt;br&gt;as a precaution your "
+"settings have been now restored to&lt;br&gt;defaults. Sorry for the "
+"inconvenience.&lt;br&gt;"
 msgstr ""
-"As suas definições são mais recentes que as do Enlightenment.<br>Isto é "
-"muito estranho e só acontece se reverter a<br>versão do Enlightenment ou se "
-"copiar as definições de<br>um local em que está instalada uma versão mais "
-"recente do Enlightenment.<br>Isto é mau e, por precaução, as definições "
-"originais<br>foram restauradas.<br>Desculpe qualquer inconveniente.<br>"
+"As suas definições são mais recentes que as do Enlightenment.&lt;br&gt;Isto "
+"é muito estranho e só acontece se reverter a&lt;br&gt;versão do "
+"Enlightenment ou se copiar as definições de&lt;br&gt;um local em que está "
+"instalada uma versão mais recente do Enlightenment.&lt;br&gt;Isto é mau e, "
+"por precaução, as definições originais&lt;br&gt;foram restauradas.&lt;br&gt;"
+"Desculpe qualquer inconveniente.&lt;br&gt;"
 
 #: src/bin/e_config.c:1104
 msgid ""
 "Your bindings settings version does not match the current settings version."
-"<br>As a result, all bindings have been reloaded from defaults.<br>Sorry for "
-"the inconvenience.<br>"
+"&lt;br&gt;As a result, all bindings have been reloaded from defaults.&lt;"
+"br&gt;Sorry for the inconvenience.&lt;br&gt;"
 msgstr ""
 "A versão das suas definições de associação não coincidem com as atuais "
-"versões<br>Todas as associações foram repostas para as originais."
-"<br>Desculpe qualquer inconveniente.<br>"
+"versões&lt;br&gt;Todas as associações foram repostas para as originais.&lt;"
+"br&gt;Desculpe qualquer inconveniente.&lt;br&gt;"
 
 #: src/bin/e_config.c:1638 src/bin/e_config.c:2298
 msgid "Enlightenment Settings Write Problems"
@@ -856,13 +860,13 @@ msgstr "Erro ao escrever as definições do Enlightenment."
 #: src/bin/e_config.c:1641
 #, c-format
 msgid ""
-"Enlightenment has had an error while moving config files<br>from:<br>"
-"%s<br><br>to:<br>%s<br><br>The rest of the write has been aborted for safety."
-"<br>"
+"Enlightenment has had an error while moving config files&lt;br&gt;from:&lt;"
+"br&gt;%s&lt;br&gt;&lt;br&gt;to:&lt;br&gt;%s&lt;br&gt;&lt;br&gt;The rest of "
+"the write has been aborted for safety.&lt;br&gt;"
 msgstr ""
-"O Enlightenment produziu um erro ao mover os ficheiros de configuração<br>de:"
-"<br>%s<br><br>para:<br>%s<br><br>A tarefa foi terminada para sua segurança."
-"<br>"
+"O Enlightenment produziu um erro ao mover os ficheiros de configuração&lt;"
+"br&gt;de:&lt;br&gt;%s&lt;br&gt;&lt;br&gt;para:&lt;br&gt;%s&lt;br&gt;&lt;"
+"br&gt;A tarefa foi terminada para sua segurança.&lt;br&gt;"
 
 #: src/bin/e_config.c:1651 src/bin/e_config.c:2311
 #: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:856
@@ -896,17 +900,18 @@ msgstr "O ficheiro está vazio."
 
 #: src/bin/e_config.c:2215
 msgid ""
-"The file is not writable. Perhaps the disk is read-only<br>or you lost "
+"The file is not writable. Perhaps the disk is read-only&lt;br&gt;or you lost "
 "permissions to your files."
 msgstr ""
-"Não pode escrever no ficheiro. Pode ser que o ficheiro<br>seja só de leitura "
-"ou que não tenha acesso aos ficheiros."
+"Não pode escrever no ficheiro. Pode ser que o ficheiro&lt;br&gt;seja só de "
+"leitura ou que não tenha acesso aos ficheiros."
 
 #: src/bin/e_config.c:2219
-msgid "Memory ran out while preparing the write.<br>Please free up memory."
+msgid ""
+"Memory ran out while preparing the write.&lt;br&gt;Please free up memory."
 msgstr ""
-"Ficou sem memória ao preparar o ficheiro.<br>Por favor liberte espaço de "
-"memória."
+"Ficou sem memória ao preparar o ficheiro.&lt;br&gt;Por favor liberte espaço "
+"de memória."
 
 #: src/bin/e_config.c:2223
 msgid "This is a generic error."
@@ -914,15 +919,16 @@ msgstr "Este é um erro genérico."
 
 #: src/bin/e_config.c:2227
 msgid ""
-"The settings file is too large.<br>It should be very small (a few hundred KB "
-"at most)."
+"The settings file is too large.&lt;br&gt;It should be very small (a few "
+"hundred KB at most)."
 msgstr ""
-"O ficheiro das definições é muito grande.<br>Em princípio seria pequeno "
-"(algumas centenas de KB)."
+"O ficheiro das definições é muito grande.&lt;br&gt;Em princípio seria "
+"pequeno (algumas centenas de KB)."
 
 #: src/bin/e_config.c:2231
-msgid "You have I/O errors on the disk.<br>Maybe it needs replacing?"
-msgstr "Possui erros de E/S no disco.<br>Talvez precise de ser substituído?"
+msgid "You have I/O errors on the disk.&lt;br&gt;Maybe it needs replacing?"
+msgstr ""
+"Possui erros de E/S no disco.&lt;br&gt;Talvez precise de ser substituído?"
 
 #: src/bin/e_config.c:2235
 msgid "You ran out of space while writing the file."
@@ -975,13 +981,15 @@ msgstr "O erro não é reconhecido pelo Enlightenment."
 #: src/bin/e_config.c:2301
 #, c-format
 msgid ""
-"Enlightenment has had an error while writing<br>its config file.<br>"
-"%s<br><br>The file where the error occurred was:<br>%s<br><br>This file has "
-"been deleted to avoid corrupt data.<br>"
+"Enlightenment has had an error while writing&lt;br&gt;its config file.&lt;"
+"br&gt;%s&lt;br&gt;&lt;br&gt;The file where the error occurred was:&lt;br&gt;"
+"%s&lt;br&gt;&lt;br&gt;This file has been deleted to avoid corrupt data.&lt;"
+"br&gt;"
 msgstr ""
-"O Enlightenment produziu um erro ao escrever<br>o ficheiro de configurações."
-"<br>%s<br>O erro ocorreu no ficheiro:<br>%s<br>.<br>Este ficheiro foi "
-"eliminado para evitar a danificação dos dados.<br>"
+"O Enlightenment produziu um erro ao escrever&lt;br&gt;o ficheiro de "
+"configurações.&lt;br&gt;%s&lt;br&gt;O erro ocorreu no ficheiro:&lt;br&gt;"
+"%s&lt;br&gt;.&lt;br&gt;Este ficheiro foi eliminado para evitar a danificação "
+"dos dados.&lt;br&gt;"
 
 #: src/bin/e_config_dialog.c:226 src/modules/battery/e_mod_main.c:810
 #: src/modules/conf_bindings/e_mod_main.c:37
@@ -1030,10 +1038,11 @@ msgstr "Erro - sem suporte PAM"
 
 #: src/bin/e_desklock.c:237
 msgid ""
-"No PAM support was built into Enlightenment, so<br>desk locking is disabled."
+"No PAM support was built into Enlightenment, so&lt;br&gt;desk locking is "
+"disabled."
 msgstr ""
-"O Enlightenment não foi compilado com suporte PAM<br>e o bloqueio não é "
-"permitido."
+"O Enlightenment não foi compilado com suporte PAM&lt;br&gt;e o bloqueio não "
+"é permitido."
 
 #: src/bin/e_desklock.c:302
 msgid "Lock Failed"
@@ -1041,11 +1050,13 @@ msgstr "Falha ao bloquear"
 
 #: src/bin/e_desklock.c:303
 msgid ""
-"Locking the desktop failed because some application<br>has grabbed either "
-"the keyboard or the mouse or both<br>and their grab is unable to be broken."
+"Locking the desktop failed because some application&lt;br&gt;has grabbed "
+"either the keyboard or the mouse or both&lt;br&gt;and their grab is unable "
+"to be broken."
 msgstr ""
-"O bloqueio da área de trabalho falhou pois uma aplicação<br> apoderou-se do "
-"teclado, do rato ou de ambos e<br>essa posse não pode ser quebrada."
+"O bloqueio da área de trabalho falhou pois uma aplicação&lt;br&gt; apoderou-"
+"se do teclado, do rato ou de ambos e&lt;br&gt;essa posse não pode ser "
+"quebrada."
 
 #: src/bin/e_desklock.c:511
 msgid "Please enter your unlock password"
@@ -1066,13 +1077,13 @@ msgstr "Erro de autenticação"
 #: src/bin/e_desklock.c:901
 #, c-format
 msgid ""
-"Authentication via PAM had errors setting up the<br>authentication session. "
-"The error code was <hilight>%i</hilight>.<br>This is bad and should not be "
-"happening. Please report this bug."
+"Authentication via PAM had errors setting up the&lt;br&gt;authentication "
+"session. The error code was &lt;hilight&gt;%i&lt;/hilight&gt;.&lt;br&gt;This "
+"is bad and should not be happening. Please report this bug."
 msgstr ""
-"Ocorreram erros durante a autenticação da sessão via PAM.<br>O código do "
-"erro foi <hilight>%i</hilight>.<br>Isto é mau e não deveria acontecer."
-"<br>Por favor reporte este erro."
+"Ocorreram erros durante a autenticação da sessão via PAM.&lt;br&gt;O código "
+"do erro foi &lt;hilight&gt;%i&lt;/hilight&gt;.&lt;br&gt;Isto é mau e não "
+"deveria acontecer.&lt;br&gt;Por favor reporte este erro."
 
 #: src/bin/e_desklock.c:1233 src/bin/e_screensaver.c:179
 msgid "Activate Presentation Mode?"
@@ -1080,13 +1091,13 @@ msgstr "Ativar modo de demonstração?"
 
 #: src/bin/e_desklock.c:1236
 msgid ""
-"You unlocked your desktop too fast.<br><br>Would you like to enable "
-"<b>presentation</b> mode and temporarily disable screen saver, lock and "
-"power saving?"
+"You unlocked your desktop too fast.&lt;br&gt;&lt;br&gt;Would you like to "
+"enable &lt;b&gt;presentation&lt;/b&gt; mode and temporarily disable screen "
+"saver, lock and power saving?"
 msgstr ""
-"Desbloqueou a área de trabalho muito depressa.<br><br>Pretende ativar o modo "
-"de <b>demonstração</b> e inativar temporariamente a proteção de ecrã, os "
-"bloqueios e a poupança de energia?"
+"Desbloqueou a área de trabalho muito depressa.&lt;br&gt;&lt;br&gt;Pretende "
+"ativar o modo de &lt;b&gt;demonstração&lt;/b&gt; e inativar temporariamente "
+"a proteção de ecrã, os bloqueios e a poupança de energia?"
 
 #: src/bin/e_desklock.c:1246 src/bin/e_screensaver.c:192
 msgid "No, but increase timeout"
@@ -1102,15 +1113,17 @@ msgstr "Propriedades incompletas da janela"
 
 #: src/bin/e_desktop_editor.c:178
 msgid ""
-"The window you are creating an icon for<br>does not contain window name and "
-"class<br>properties. Without these, you will have to<br>use the window title "
-"instead. This will only<br>work if the window title is the same at<br>the "
-"time the window starts up, and does not<br>change."
+"The window you are creating an icon for&lt;br&gt;does not contain window "
+"name and class&lt;br&gt;properties. Without these, you will have to&lt;br&gt;"
+"use the window title instead. This will only&lt;br&gt;work if the window "
+"title is the same at&lt;br&gt;the time the window starts up, and does not&lt;"
+"br&gt;change."
 msgstr ""
-"A janela para a qual está a criar um ícone<br>não contém o nome da janela "
-"nem as <br>propriedades da classe. Sem estes elementos<br>terá que utilizar "
-"o título da janela.<br>Isto só vai funcionar se o título da janela<br>for o "
-"mesmo no momento em que a janela<br>é iniciada e não for alterado."
+"A janela para a qual está a criar um ícone&lt;br&gt;não contém o nome da "
+"janela nem as &lt;br&gt;propriedades da classe. Sem estes elementos&lt;br&gt;"
+"terá que utilizar o título da janela.&lt;br&gt;Isto só vai funcionar se o "
+"título da janela&lt;br&gt;for o mesmo no momento em que a janela&lt;br&gt;é "
+"iniciada e não for alterado."
 
 #: src/bin/e_desktop_editor.c:230
 msgid "Desktop Entry Editor"
@@ -1249,18 +1262,22 @@ msgstr "O Enlightenment não conseguiu obter o diretório atual."
 
 #: src/bin/e_exec.c:409
 #, c-format
-msgid "Enlightenment was unable to change to directory:<br><br>%s"
-msgstr "O Enlightenment não conseguiu alterar para o diretório:<br><br>%s"
+msgid "Enlightenment was unable to change to directory:&lt;br&gt;&lt;br&gt;%s"
+msgstr ""
+"O Enlightenment não conseguiu alterar para o diretório:&lt;br&gt;&lt;br&gt;%s"
 
 #: src/bin/e_exec.c:420
 #, c-format
-msgid "Enlightenment was unable to restore to directory:<br><br>%s"
-msgstr "O Enlightenment não conseguiu restaurar para o diretório:<br><br>%s"
+msgid "Enlightenment was unable to restore to directory:&lt;br&gt;&lt;br&gt;%s"
+msgstr ""
+"O Enlightenment não conseguiu restaurar para o diretório:&lt;br&gt;&lt;br&gt;"
+"%s"
 
 #: src/bin/e_exec.c:469
 #, c-format
-msgid "Enlightenment was unable to fork a child process:<br><br>%s"
-msgstr "O Enlightenment não conseguiu derivar o processo:<br><br>%s"
+msgid "Enlightenment was unable to fork a child process:&lt;br&gt;&lt;br&gt;%s"
+msgstr ""
+"O Enlightenment não conseguiu derivar o processo:&lt;br&gt;&lt;br&gt;%s"
 
 #: src/bin/e_exec.c:606
 msgid "Application run error"
@@ -1269,11 +1286,11 @@ msgstr "Erro ao executar a aplicação."
 #: src/bin/e_exec.c:608
 #, c-format
 msgid ""
-"Enlightenment was unable to run the application:<br><br>%s<br><br>The "
-"application failed to start."
+"Enlightenment was unable to run the application:&lt;br&gt;&lt;br&gt;%s&lt;"
+"br&gt;&lt;br&gt;The application failed to start."
 msgstr ""
-"O Enlightenment não conseguiu executar a aplicação:<br><br>%s<br><br>Ocorreu "
-"um erro ao iniciar."
+"O Enlightenment não conseguiu executar a aplicação:&lt;br&gt;&lt;br&gt;%s&lt;"
+"br&gt;&lt;br&gt;Ocorreu um erro ao iniciar."
 
 #: src/bin/e_exec.c:715
 msgid "Application Execution Error"
@@ -1673,8 +1690,10 @@ msgstr "Aviso"
 
 #: src/bin/e_fm.c:10461
 #, c-format
-msgid "File already exists, overwrite?<br><hilight>%s</hilight>"
-msgstr "O ficheiro já existe. Substituir?<br><hilight>%s</hilight>"
+msgid ""
+"File already exists, overwrite?&lt;br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;"
+msgstr ""
+"O ficheiro já existe. Substituir?&lt;br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;"
 
 #: src/bin/e_fm.c:10619
 msgid "Move Source"
@@ -1690,8 +1709,8 @@ msgstr "Ignorar tudo"
 
 #: src/bin/e_fm.c:10626
 #, c-format
-msgid "An error occurred while performing an operation.<br>%s"
-msgstr "Ocorreu um erro ao executar a operação.<br>%s"
+msgid "An error occurred while performing an operation.&lt;br&gt;%s"
+msgstr "Ocorreu um erro ao executar a operação.&lt;br&gt;%s"
 
 #: src/bin/e_fm.c:10819
 msgid "Confirm Delete"
@@ -1699,32 +1718,34 @@ msgstr "Confirmação"
 
 #: src/bin/e_fm.c:10829
 #, c-format
-msgid "Are you sure you want to delete<br><hilight>%s</hilight>?"
-msgstr "Tem a certeza que quer eliminar<br><hilight>%s</hilight>?"
+msgid ""
+"Are you sure you want to delete&lt;br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;?"
+msgstr ""
+"Tem a certeza que quer eliminar&lt;br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;?"
 
 #: src/bin/e_fm.c:10834
 #, c-format
 msgid ""
-"Are you sure you want to delete<br><hilight>all</hilight> the %d files "
-"in<br><hilight>%s</hilight>?"
+"Are you sure you want to delete&lt;br&gt;&lt;hilight&gt;all&lt;/hilight&gt; "
+"the %d files in&lt;br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;?"
 msgstr ""
-"Tem a certeza que quer eliminar<br><hilight>estes</hilight> %d ficheiros "
-"de<br><hilight>%s</hilight>?"
+"Tem a certeza que quer eliminar&lt;br&gt;&lt;hilight&gt;estes&lt;/"
+"hilight&gt; %d ficheiros de&lt;br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;?"
 
 #: src/bin/e_fm.c:10844
 #, c-format
 msgid ""
-"Are you sure you want to delete<br>the %d selected file in<br><hilight>%s</"
-"hilight>?"
+"Are you sure you want to delete&lt;br&gt;the %d selected file in&lt;br&gt;"
+"&lt;hilight&gt;%s&lt;/hilight&gt;?"
 msgid_plural ""
-"Are you sure you want to delete<br>the %d selected files in<br><hilight>%s</"
-"hilight>?"
+"Are you sure you want to delete&lt;br&gt;the %d selected files in&lt;br&gt;"
+"&lt;hilight&gt;%s&lt;/hilight&gt;?"
 msgstr[0] ""
-"Tem a certeza que quer eliminar<br>%d ficheiro selecionado de:<br><hilight>"
-"%s</hilight>?"
+"Tem a certeza que quer eliminar&lt;br&gt;%d ficheiro selecionado de:&lt;"
+"br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;?"
 msgstr[1] ""
-"Tem a certeza que quer eliminar<br>os %d ficheiros selecionados de:"
-"<br><hilight>%s</hilight>?"
+"Tem a certeza que quer eliminar&lt;br&gt;os %d ficheiros selecionados de:&lt;"
+"br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;?"
 
 #: src/bin/e_fm_device.c:59
 #, c-format
@@ -1909,21 +1930,22 @@ msgstr "O módulo %s tem que suportar %s."
 #: src/bin/e_grab_dialog.c:3
 #: src/modules/conf_bindings/e_int_config_keybindings.c:4
 msgid ""
-"Please press key sequence,<br><br>or <hilight>Escape</hilight> to abort."
+"Please press key sequence,&lt;br&gt;&lt;br&gt;or &lt;hilight&gt;Escape&lt;/"
+"hilight&gt; to abort."
 msgstr ""
-"Por favor escolha a combinação<br><br>ou <hilight>Escape</hilight> para "
-"abortar."
+"Por favor escolha a combinação&lt;br&gt;&lt;br&gt;ou &lt;hilight&gt;"
+"Escape&lt;/hilight&gt; para abortar."
 
 #: src/bin/e_grab_dialog.c:5
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:7
 msgid ""
-"Please hold any modifier you want<br>and press any button on your mouse,<br> "
-"or roll a wheel, to assign mouse binding.<br>Press <hilight>Escape</"
-"highlight> to abort."
+"Please hold any modifier you want&lt;br&gt;and press any button on your "
+"mouse,&lt;br&gt; or roll a wheel, to assign mouse binding.&lt;br&gt;Press "
+"&lt;hilight&gt;Escape&lt;/highlight&gt; to abort."
 msgstr ""
-"Prima o modificador que quer utilizar<br>e prima qualquer botão do rato "
-"ou<br>mexa na roda para atribuir uma associação.<br>Prima <hilight>Escape</"
-"highlight> para abortar."
+"Prima o modificador que quer utilizar&lt;br&gt;e prima qualquer botão do "
+"rato ou&lt;br&gt;mexa na roda para atribuir uma associação.&lt;br&gt;Prima "
+"&lt;hilight&gt;Escape&lt;/highlight&gt; para abortar."
 
 #: src/bin/e_grab_dialog.c:128
 msgid "Mouse Binding Sequence"
@@ -1947,17 +1969,19 @@ msgid "Import Error"
 msgstr "Erro ao importar"
 
 #: src/bin/e_import_dialog.c:75 src/bin/e_import_config_dialog.c:352
-msgid "Enlightenment was unable to import the image<br>due to a copy error."
+msgid ""
+"Enlightenment was unable to import the image&lt;br&gt;due to a copy error."
 msgstr ""
-"O Enlightenment não conseguiu importar a<br>imagem devido a erros de cópia."
+"O Enlightenment não conseguiu importar a&lt;br&gt;imagem devido a erros de "
+"cópia."
 
 #: src/bin/e_import_dialog.c:85 src/bin/e_import_config_dialog.c:362
 msgid ""
-"Enlightenment was unable to import the image.<br><br>Are you sure this is a "
-"valid image?"
+"Enlightenment was unable to import the image.&lt;br&gt;&lt;br&gt;Are you "
+"sure this is a valid image?"
 msgstr ""
-"O Enlightenment não conseguiu importar a imagem.<br><br>Tem a certeza que é "
-"uma imagem válida?"
+"O Enlightenment não conseguiu importar a imagem.&lt;br&gt;&lt;br&gt;Tem a "
+"certeza que é uma imagem válida?"
 
 #: src/bin/e_import_dialog.c:162
 msgid "Select a Picture..."
@@ -1973,9 +1997,10 @@ msgstr "Erro ao importar imagem"
 
 #: src/bin/e_import_config_dialog.c:295
 msgid ""
-"Enlightenment was unable to import the picture<br>due to conversion errors."
+"Enlightenment was unable to import the picture&lt;br&gt;due to conversion "
+"errors."
 msgstr ""
-"O Enlightenment não conseguiu importar a imagem<br>devido a erros de "
+"O Enlightenment não conseguiu importar a imagem&lt;br&gt;devido a erros de "
 "conversão."
 
 #: src/bin/e_import_config_dialog.c:458
@@ -2540,27 +2565,30 @@ msgstr "As propriedades da janela não são exclusivas."
 
 #: src/bin/e_int_border_remember.c:339
 msgid ""
-"You are trying to ask Enlightenment to remember to apply<br>properties (such "
-"as size, location, border style etc.) to<br>a window that <hilight>does not "
-"have unique properties</hilight>.<br><br>This means it shares Name/Class, "
-"Transience, Role etc. properties<br>with more than 1 other window on the "
-"screen and remembering<br>properties for this window will apply to all other "
-"windows<br>that match these properties.<br><br>This is just a warning in "
-"case you did not intend this to happen.<br>If you did, simply press "
-"<hilight>Apply</hilight> or <hilight>OK</hilight> buttons<br>and your "
-"settings will be accepted. Press <hilight>Cancel</hilight> if you<br>are not "
-"sure and nothing will be affected."
+"You are trying to ask Enlightenment to remember to apply&lt;br&gt;properties "
+"(such as size, location, border style etc.) to&lt;br&gt;a window that &lt;"
+"hilight&gt;does not have unique properties&lt;/hilight&gt;.&lt;br&gt;&lt;"
+"br&gt;This means it shares Name/Class, Transience, Role etc. properties&lt;"
+"br&gt;with more than 1 other window on the screen and remembering&lt;br&gt;"
+"properties for this window will apply to all other windows&lt;br&gt;that "
+"match these properties.&lt;br&gt;&lt;br&gt;This is just a warning in case "
+"you did not intend this to happen.&lt;br&gt;If you did, simply press &lt;"
+"hilight&gt;Apply&lt;/hilight&gt; or &lt;hilight&gt;OK&lt;/hilight&gt; "
+"buttons&lt;br&gt;and your settings will be accepted. Press &lt;hilight&gt;"
+"Cancel&lt;/hilight&gt; if you&lt;br&gt;are not sure and nothing will be "
+"affected."
 msgstr ""
-"Está a tentar que o Enlightenment se recorde de aplicar <br>propriedades "
-"(tais como tamanho, localização, contornos...)<br>a uma janela que "
-"<hilight>não possui propriedades exclusivas</hilight>.<br><br>Isto significa "
-"que a janela partilha as propriedades nome<br>classe, transitoriedade... com "
-"as diversas janelas no ecrã e as<br>propriedades desta janela serão "
-"aplicáveis a todas as<br>outras que possuam as mesmas propriedades."
-"<br><br>Isto apenas serve como aviso caso você não tenha percebido o intuito "
-"da operação.<br>Se percebeu, prima <hilight>Aplicar</hilight> ou "
-"<hilight>Aceitar</hilight><br>e as suas definições serão aceites. Prima "
-"<hilight>Cancelar</hilight> se não tem a certeza."
+"Está a tentar que o Enlightenment se recorde de aplicar &lt;br&gt;"
+"propriedades (tais como tamanho, localização, contornos...)&lt;br&gt;a uma "
+"janela que &lt;hilight&gt;não possui propriedades exclusivas&lt;/hilight&gt;."
+"&lt;br&gt;&lt;br&gt;Isto significa que a janela partilha as propriedades "
+"nome&lt;br&gt;classe, transitoriedade... com as diversas janelas no ecrã e "
+"as&lt;br&gt;propriedades desta janela serão aplicáveis a todas as&lt;br&gt;"
+"outras que possuam as mesmas propriedades.&lt;br&gt;&lt;br&gt;Isto apenas "
+"serve como aviso caso você não tenha percebido o intuito da operação.&lt;"
+"br&gt;Se percebeu, prima &lt;hilight&gt;Aplicar&lt;/hilight&gt; ou &lt;"
+"hilight&gt;Aceitar&lt;/hilight&gt;&lt;br&gt;e as suas definições serão "
+"aceites. Prima &lt;hilight&gt;Cancelar&lt;/hilight&gt; se não tem a certeza."
 
 #: src/bin/e_int_border_remember.c:539
 msgid "No match properties set"
@@ -2568,15 +2596,15 @@ msgstr "Sem propriedades definidas."
 
 #: src/bin/e_int_border_remember.c:542
 msgid ""
-"You are trying to ask Enlightenment to remember to apply<br>properties (such "
-"as size, location, border style etc.) to<br>a window <hilight>without "
-"specifying how to remember it</hilight>.<br><br>You must specify at least 1 "
-"way of remembering this window."
+"You are trying to ask Enlightenment to remember to apply&lt;br&gt;properties "
+"(such as size, location, border style etc.) to&lt;br&gt;a window &lt;"
+"hilight&gt;without specifying how to remember it&lt;/hilight&gt;.&lt;br&gt;"
+"&lt;br&gt;You must specify at least 1 way of remembering this window."
 msgstr ""
-"Está a tentar que o Enlightenment se recorde de aplicar <br>propriedades "
-"(tais como tamanho, localização, contornos...)<br>a uma janela <hilight>sem "
-"especificar o método</hilight>.<br><br>Tem que especificar, pelo menos, 1 "
-"método de memorização desta janela."
+"Está a tentar que o Enlightenment se recorde de aplicar &lt;br&gt;"
+"propriedades (tais como tamanho, localização, contornos...)&lt;br&gt;a uma "
+"janela &lt;hilight&gt;sem especificar o método&lt;/hilight&gt;.&lt;br&gt;&lt;"
+"br&gt;Tem que especificar, pelo menos, 1 método de memorização desta janela."
 
 #: src/bin/e_int_border_remember.c:648
 msgid "Nothing"
@@ -2760,13 +2788,13 @@ msgstr "Método de introdução"
 
 #: src/bin/e_intl.c:354
 msgid ""
-"Error starting the input method executable<br><br>please make sure that your "
-"input<br>method configuration is correct and<br>that your "
-"configuration's<br>executable is in your PATH<br>"
+"Error starting the input method executable&lt;br&gt;&lt;br&gt;please make "
+"sure that your input&lt;br&gt;method configuration is correct and&lt;br&gt;"
+"that your configuration's&lt;br&gt;executable is in your PATH&lt;br&gt;"
 msgstr ""
-"Ocorreu um erro ao iniciar o executável do<br><br>método de "
-"introdução<br>Certifique-se que o método está bem configurado<br>e que o "
-"executável está no seu PATH.<br>"
+"Ocorreu um erro ao iniciar o executável do&lt;br&gt;&lt;br&gt;método de "
+"introdução&lt;br&gt;Certifique-se que o método está bem configurado&lt;br&gt;"
+"e que o executável está no seu PATH.&lt;br&gt;"
 
 #: src/bin/e_int_menus.c:135 src/modules/syscon/e_int_config_syscon.c:146
 msgid "Main"
@@ -3499,13 +3527,13 @@ msgstr ""
 #: src/bin/e_main.c:1855
 #, c-format
 msgid ""
-"Enlightenment crashed early on start and has<br>been restarted. There was an "
-"error loading the<br>module named: %s. This module has been disabled<br>and "
-"will not be loaded."
+"Enlightenment crashed early on start and has&lt;br&gt;been restarted. There "
+"was an error loading the&lt;br&gt;module named: %s. This module has been "
+"disabled&lt;br&gt;and will not be loaded."
 msgstr ""
-"O Enlightenment terminou ao iniciar a sessão e foi reiniciado.<br>Ocorreu um "
-"erro ao carregar o módulo: %s.<br>Este módulo foi desativado e não será "
-"carregado."
+"O Enlightenment terminou ao iniciar a sessão e foi reiniciado.&lt;br&gt;"
+"Ocorreu um erro ao carregar o módulo: %s.&lt;br&gt;Este módulo foi "
+"desativado e não será carregado."
 
 #: src/bin/e_main.c:1860 src/bin/e_main.c:1876
 msgid "Enlightenment crashed early on start and has been restarted"
@@ -3514,37 +3542,39 @@ msgstr "O Enlightenment terminou ao iniciar a sessão e foi reiniciado."
 #: src/bin/e_main.c:1861
 #, c-format
 msgid ""
-"Enlightenment crashed early on start and has been restarted.<br>There was an "
-"error loading the module named: %s<br><br>This module has been disabled and "
-"will not be loaded."
+"Enlightenment crashed early on start and has been restarted.&lt;br&gt;There "
+"was an error loading the module named: %s&lt;br&gt;&lt;br&gt;This module has "
+"been disabled and will not be loaded."
 msgstr ""
-"O Enlightenment terminou ao iniciar a sessão e foi reiniciado.<br> Ocorreu "
-"um erro ao carregar o módulo: %s.<br>Este módulo foi desativado e não será "
-"carregado."
+"O Enlightenment terminou ao iniciar a sessão e foi reiniciado.&lt;br&gt; "
+"Ocorreu um erro ao carregar o módulo: %s.&lt;br&gt;Este módulo foi "
+"desativado e não será carregado."
 
 #: src/bin/e_main.c:1869
 msgid ""
-"Enlightenment crashed early on start and has<br>been restarted. All modules "
-"have been disabled<br>and will not be loaded to help remove any "
-"problem<br>modules from your configuration. The module<br>configuration "
-"dialog should let you select your<br>modules again.\n"
+"Enlightenment crashed early on start and has&lt;br&gt;been restarted. All "
+"modules have been disabled&lt;br&gt;and will not be loaded to help remove "
+"any problem&lt;br&gt;modules from your configuration. The module&lt;br&gt;"
+"configuration dialog should let you select your&lt;br&gt;modules again.\n"
 msgstr ""
-"O Enlightenment terminou ao iniciar a sessão<br>e foi reiniciado.Todos os "
-"módulos foram desativados<br>e não serão carregados de modo a que você "
-"possa<br>corrigir os problemas. O diálogo de configuração<br>dos módulos "
-"deve permitir-lhe escolher<br>os módulos a carregar.\n"
+"O Enlightenment terminou ao iniciar a sessão&lt;br&gt;e foi reiniciado.Todos "
+"os módulos foram desativados&lt;br&gt;e não serão carregados de modo a que "
+"você possa&lt;br&gt;corrigir os problemas. O diálogo de configuração&lt;"
+"br&gt;dos módulos deve permitir-lhe escolher&lt;br&gt;os módulos a "
+"carregar.\n"
 
 #: src/bin/e_main.c:1877
 msgid ""
-"Enlightenment crashed early on start and has been restarted.<br>All modules "
-"have been disabled and will not be loaded to help<br>remove any problem "
-"modules from your configuration.<br><br>The module configuration dialog "
-"should let you select your<br>modules again."
+"Enlightenment crashed early on start and has been restarted.&lt;br&gt;All "
+"modules have been disabled and will not be loaded to help&lt;br&gt;remove "
+"any problem modules from your configuration.&lt;br&gt;&lt;br&gt;The module "
+"configuration dialog should let you select your&lt;br&gt;modules again."
 msgstr ""
-"O Enlightenment terminou ao iniciar a sessão e foi reiniciado.<br>Todos os "
-"módulos foram desativados e não serão carregados de<br>modo a que você possa "
-"corrigir os problemas.<br><br>O diálogo de configuração dos módulos deve "
-"permitir-lhe escolher<br>os módulos a carregar."
+"O Enlightenment terminou ao iniciar a sessão e foi reiniciado.&lt;br&gt;"
+"Todos os módulos foram desativados e não serão carregados de&lt;br&gt;modo a "
+"que você possa corrigir os problemas.&lt;br&gt;&lt;br&gt;O diálogo de "
+"configuração dos módulos deve permitir-lhe escolher&lt;br&gt;os módulos a "
+"carregar."
 
 #: src/bin/e_module.c:241
 #, c-format
@@ -3565,11 +3595,11 @@ msgstr ""
 #: src/bin/e_module.c:309
 #, c-format
 msgid ""
-"There was an error loading the module named: %s<br>No module named %s could "
-"be found in the<br>module search directories.<br>"
+"There was an error loading the module named: %s&lt;br&gt;No module named %s "
+"could be found in the&lt;br&gt;module search directories.&lt;br&gt;"
 msgstr ""
-"Ocorreu um erro ao carregar o módulo: %s<br>O módulo com o nome %s não foi "
-"encontrado nos diretórios de pesquisa dos módulos.<br>"
+"Ocorreu um erro ao carregar o módulo: %s&lt;br&gt;O módulo com o nome %s não "
+"foi encontrado nos diretórios de pesquisa dos módulos.&lt;br&gt;"
 
 #: src/bin/e_module.c:312 src/bin/e_module.c:325 src/bin/e_module.c:343
 msgid "Error loading Module"
@@ -3578,11 +3608,12 @@ msgstr "Erro ao carregar módulo"
 #: src/bin/e_module.c:320 src/bin/e_module.c:337
 #, c-format
 msgid ""
-"There was an error loading the module named: %s<br>The full path to this "
-"module is:<br>%s<br>The error reported was:<br>%s<br>"
+"There was an error loading the module named: %s&lt;br&gt;The full path to "
+"this module is:&lt;br&gt;%s&lt;br&gt;The error reported was:&lt;br&gt;%s&lt;"
+"br&gt;"
 msgstr ""
-"Ocorreu um erro ao carregar o módulo: %s<br>O caminho para o módulo é:<br>"
-"%s<br>O erro reportado foi:<br>%s.<br>"
+"Ocorreu um erro ao carregar o módulo: %s&lt;br&gt;O caminho para o módulo é:"
+"&lt;br&gt;%s&lt;br&gt;O erro reportado foi:&lt;br&gt;%s.&lt;br&gt;"
 
 #: src/bin/e_module.c:342
 msgid "Module does not contain all needed functions"
@@ -3591,12 +3622,13 @@ msgstr "O módulo não contém as funções necessárias"
 #: src/bin/e_module.c:357
 #, c-format
 msgid ""
-"Module API Error<br>Error initializing Module: %s<br>It requires a minimum "
-"module API version of: %i.<br>The module API advertized by Enlightenment is: "
-"%i.<br>"
+"Module API Error&lt;br&gt;Error initializing Module: %s&lt;br&gt;It requires "
+"a minimum module API version of: %i.&lt;br&gt;The module API advertized by "
+"Enlightenment is: %i.&lt;br&gt;"
 msgstr ""
-"Erro na API do módulo<br>Erro ao iniciar o módulo: %s<br>O módulo requer a "
-"versão mínima API: %i.<br>O módulo API com advertências é: %i.<br>"
+"Erro na API do módulo&lt;br&gt;Erro ao iniciar o módulo: %s&lt;br&gt;O "
+"módulo requer a versão mínima API: %i.&lt;br&gt;O módulo API com "
+"advertências é: %i.&lt;br&gt;"
 
 #: src/bin/e_module.c:362
 #, c-format
@@ -3604,8 +3636,8 @@ msgid "Enlightenment %s Module"
 msgstr "Módulo %s do Enlightenment"
 
 #: src/bin/e_module.c:723
-msgid "What action should be taken with this module?<br>"
-msgstr "Qual a ação que deve ser efetuada com este módulo?<br>"
+msgid "What action should be taken with this module?&lt;br&gt;"
+msgstr "Qual a ação que deve ser efetuada com este módulo?&lt;br&gt;"
 
 #: src/bin/e_module.c:729 src/bin/e_shelf.c:1661
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
@@ -3616,13 +3648,13 @@ msgstr "Manter"
 
 #: src/bin/e_module.c:979
 msgid ""
-"The following modules are not standard ones for<br>Enlightenment and may "
-"cause bugs and crashes.<br>Please remove them before reporting any bugs."
-"<br><br>The module list is as follows:<br><br>"
+"The following modules are not standard ones for&lt;br&gt;Enlightenment and "
+"may cause bugs and crashes.&lt;br&gt;Please remove them before reporting any "
+"bugs.&lt;br&gt;&lt;br&gt;The module list is as follows:&lt;br&gt;&lt;br&gt;"
 msgstr ""
-"Os módulos indicados não são parte integrante do<br>Enlightenment e podem "
-"causar erros. Por favor<br>remova-os antes de reportar qualquer "
-"erro<br><br>A lista dos módulos é a seguinte:<br><br>"
+"Os módulos indicados não são parte integrante do&lt;br&gt;Enlightenment e "
+"podem causar erros. Por favor&lt;br&gt;remova-os antes de reportar qualquer "
+"erro&lt;br&gt;&lt;br&gt;A lista dos módulos é a seguinte:&lt;br&gt;&lt;br&gt;"
 
 #: src/bin/e_module.c:991
 msgid "Unstable module tainting"
@@ -3634,13 +3666,13 @@ msgstr "Eu sei"
 
 #: src/bin/e_screensaver.c:182
 msgid ""
-"You disabled the screensaver too fast.<br><br>Would you like to enable "
-"<b>presentation</b> mode and temporarily disable screen saver, lock and "
-"power saving?"
+"You disabled the screensaver too fast.&lt;br&gt;&lt;br&gt;Would you like to "
+"enable &lt;b&gt;presentation&lt;/b&gt; mode and temporarily disable screen "
+"saver, lock and power saving?"
 msgstr ""
-"Desativou a proteção de ecrã muito rapidamente.<br><br>Pretende ativar o "
-"modo de <b>demonstração</b> e inativar temporariamente a proteção de ecrã, "
-"os bloqueios e a poupança de energia?"
+"Desativou a proteção de ecrã muito rapidamente.&lt;br&gt;&lt;br&gt;Pretende "
+"ativar o modo de &lt;b&gt;demonstração&lt;/b&gt; e inativar temporariamente "
+"a proteção de ecrã, os bloqueios e a poupança de energia?"
 
 #: src/bin/e_shelf.c:65
 msgid "Float"
@@ -3719,12 +3751,13 @@ msgstr "Erro de ocultação automática do painel"
 
 #: src/bin/e_shelf.c:842
 msgid ""
-"Shelf autohiding will not work properly<br>with the current configuration; "
-"set your shelf to<br>\"Below Everything\" or disable autohiding."
+"Shelf autohiding will not work properly&lt;br&gt;with the current "
+"configuration; set your shelf to&lt;br&gt;\"Below Everything\" or disable "
+"autohiding."
 msgstr ""
-"A ocultação do painel não vai funcionar<br>corretamente com a configuração "
-"atual.<br>Defina o painel para \"Por baixo de tudo\"<br>ou desative a "
-"ocultação automática."
+"A ocultação do painel não vai funcionar&lt;br&gt;corretamente com a "
+"configuração atual.&lt;br&gt;Defina o painel para \"Por baixo de tudo\"&lt;"
+"br&gt;ou desative a ocultação automática."
 
 #: src/bin/e_shelf.c:999
 msgid "Add New Shelf"
@@ -3752,10 +3785,11 @@ msgstr "Tem a certeza que quer eliminar este painel?"
 
 #: src/bin/e_shelf.c:1658
 msgid ""
-"You requested to delete this shelf.<br><br>Are you sure you want to delete "
-"it?"
+"You requested to delete this shelf.&lt;br&gt;&lt;br&gt;Are you sure you want "
+"to delete it?"
 msgstr ""
-"Solicitou a eliminação deste painel.<br><br>Tem a certeza que o quer fazer?"
+"Solicitou a eliminação deste painel.&lt;br&gt;&lt;br&gt;Tem a certeza que o "
+"quer fazer?"
 
 #: src/bin/e_shelf.c:2187
 msgid "A shelf with that name and id already exists!"
@@ -3799,13 +3833,15 @@ msgstr "Verificações terminadas"
 #: src/bin/e_sys.c:439
 #, c-format
 msgid ""
-"Logout is taking too long.<br>Some applications refuse to close.<br>Do you "
-"want to finish the logout<br>anyway without closing these<br>applications "
-"first?<br><br>Auto logout in %d seconds."
+"Logout is taking too long.&lt;br&gt;Some applications refuse to close.&lt;"
+"br&gt;Do you want to finish the logout&lt;br&gt;anyway without closing "
+"these&lt;br&gt;applications first?&lt;br&gt;&lt;br&gt;Auto logout in %d "
+"seconds."
 msgstr ""
-"Está a levar muito tempo para sair da sessão.<br>Algumas aplicações não "
-"querem ser fechadas.<br>Pretende continuar apesar das aplicações não terem "
-"sido fechadas?<br><br>A sessão será terminada em %d segundos."
+"Está a levar muito tempo para sair da sessão.&lt;br&gt;Algumas aplicações "
+"não querem ser fechadas.&lt;br&gt;Pretende continuar apesar das aplicações "
+"não terem sido fechadas?&lt;br&gt;&lt;br&gt;A sessão será terminada em %d "
+"segundos."
 
 #: src/bin/e_sys.c:499
 msgid "Logout problems"
@@ -3828,8 +3864,10 @@ msgid "Logout in progress"
 msgstr "A sair da sessão"
 
 #: src/bin/e_sys.c:551
-msgid "Logout in progress.<br><hilight>Please wait.</hilight>"
-msgstr "A sair da sessão.<br><hilight>Por favor aguarde.</hilight>"
+msgid ""
+"Logout in progress.&lt;br&gt;&lt;hilight&gt;Please wait.&lt;/hilight&gt;"
+msgstr ""
+"A sair da sessão.&lt;br&gt;&lt;hilight&gt;Por favor aguarde.&lt;/hilight&gt;"
 
 #: src/bin/e_sys.c:580 src/bin/e_sys.c:635
 msgid "Enlightenment is busy with another request"
@@ -3837,42 +3875,42 @@ msgstr "O Enlightenment está ocupado com outro pedido."
 
 #: src/bin/e_sys.c:585
 msgid ""
-"Logging out.<br>You cannot perform other system actions<br>once a logout has "
-"begun."
+"Logging out.&lt;br&gt;You cannot perform other system actions&lt;br&gt;once "
+"a logout has begun."
 msgstr ""
-"A sair da sessão.<br>Não pode executar quaisquer outras ações após iniciar o "
-"processo."
+"A sair da sessão.&lt;br&gt;Não pode executar quaisquer outras ações após "
+"iniciar o processo."
 
 #: src/bin/e_sys.c:592
 msgid ""
-"Powering off.<br>You cannot do any other system actions<br>once a shutdown "
-"has been started."
+"Powering off.&lt;br&gt;You cannot do any other system actions&lt;br&gt;once "
+"a shutdown has been started."
 msgstr ""
-"A desligar.<br>Não pode executar quaisquer outras ações após iniciar o "
+"A desligar.&lt;br&gt;Não pode executar quaisquer outras ações após iniciar o "
 "processo."
 
 #: src/bin/e_sys.c:598
 msgid ""
-"Resetting.<br>You cannot do any other system actions<br>once a reboot has "
-"begun."
+"Resetting.&lt;br&gt;You cannot do any other system actions&lt;br&gt;once a "
+"reboot has begun."
 msgstr ""
-"A restaurar.<br>Não pode executar quaisquer outras ações após iniciar o "
-"processo."
+"A restaurar.&lt;br&gt;Não pode executar quaisquer outras ações após iniciar "
+"o processo."
 
 #: src/bin/e_sys.c:604
 msgid ""
-"Suspending.<br>Until suspend is complete you cannot perform<br>any other "
-"system actions."
+"Suspending.&lt;br&gt;Until suspend is complete you cannot perform&lt;br&gt;"
+"any other system actions."
 msgstr ""
-"A suspender.<br>Não pode executar quaisquer outras ações após iniciar o "
-"processo."
+"A suspender.&lt;br&gt;Não pode executar quaisquer outras ações após iniciar "
+"o processo."
 
 #: src/bin/e_sys.c:610
 msgid ""
-"Hibernating.<br>You cannot perform any other system actions<br>until this is "
-"complete."
+"Hibernating.&lt;br&gt;You cannot perform any other system actions&lt;br&gt;"
+"until this is complete."
 msgstr ""
-"A hibernar.<br>Não pode executar quaisquer outras ações após iniciar o "
+"A hibernar.&lt;br&gt;Não pode executar quaisquer outras ações após iniciar o "
 "processo."
 
 #: src/bin/e_sys.c:616 src/bin/e_sys.c:657
@@ -3896,32 +3934,34 @@ msgid "Hibernate failed."
 msgstr "Falha ao hibernar."
 
 #: src/bin/e_sys.c:753
-msgid "Power off.<br><hilight>Please wait.</hilight>"
-msgstr "A desligar.<br><hilight>Por favor aguarde.</hilight>"
+msgid "Power off.&lt;br&gt;&lt;hilight&gt;Please wait.&lt;/hilight&gt;"
+msgstr "A desligar.&lt;br&gt;&lt;hilight&gt;Por favor aguarde.&lt;/hilight&gt;"
 
 #: src/bin/e_sys.c:797
 msgid "Resetting"
 msgstr "A restaurar"
 
 #: src/bin/e_sys.c:800
-msgid "Resetting.<br><hilight>Please wait.</hilight>"
-msgstr "A restaurar.<br><hilight>Por favor aguarde.</hilight>"
+msgid "Resetting.&lt;br&gt;&lt;hilight&gt;Please wait.&lt;/hilight&gt;"
+msgstr ""
+"A restaurar.&lt;br&gt;&lt;hilight&gt;Por favor aguarde.&lt;/hilight&gt;"
 
 #: src/bin/e_sys.c:852
 msgid "Suspending"
 msgstr "A suspender"
 
 #: src/bin/e_sys.c:855
-msgid "Suspending.<br><hilight>Please wait.</hilight>"
-msgstr "A suspender.<br><hilight>Por favor aguarde.</hilight>"
+msgid "Suspending.&lt;br&gt;&lt;hilight&gt;Please wait.&lt;/hilight&gt;"
+msgstr ""
+"A suspender.&lt;br&gt;&lt;hilight&gt;Por favor aguarde.&lt;/hilight&gt;"
 
 #: src/bin/e_sys.c:907
 msgid "Hibernating"
 msgstr "A hibernar"
 
 #: src/bin/e_sys.c:910
-msgid "Hibernating.<br><hilight>Please wait.</hilight>"
-msgstr "A hibernar.<br><hilight>Por favor aguarde.</hilight>"
+msgid "Hibernating.&lt;br&gt;&lt;hilight&gt;Please wait.&lt;/hilight&gt;"
+msgstr "A hibernar.&lt;br&gt;&lt;hilight&gt;Por favor aguarde.&lt;/hilight&gt;"
 
 #: src/bin/e_theme_about.c:25
 msgid "Select Theme"
@@ -3946,8 +3986,12 @@ msgstr "Definir conteúdo da barra de ferramentas"
 #: src/bin/e_utils.c:189 src/modules/conf_intl/e_int_config_imc.c:262
 #: src/modules/conf_intl/e_int_config_imc.c:511
 #, c-format
-msgid "Enlightenment was unable to fork a child process:<br><br>%s<br>"
-msgstr "O Enlightenment não conseguiu derivar o processo:<br><br>%s<br>"
+msgid ""
+"Enlightenment was unable to fork a child process:&lt;br&gt;&lt;br&gt;%s&lt;"
+"br&gt;"
+msgstr ""
+"O Enlightenment não conseguiu derivar o processo:&lt;br&gt;&lt;br&gt;%s&lt;"
+"br&gt;"
 
 #: src/bin/e_utils.c:245
 msgid "Cannot exit - immortal windows."
@@ -3956,12 +4000,13 @@ msgstr "Não pode sair - janelas não termináveis"
 #: src/bin/e_utils.c:246
 msgid ""
 "Some windows are left still around with the Lifespan lock enabled. This "
-"means<br>that Enlightenment will not allow itself to exit until these "
-"windows have<br>been closed or have the lifespan lock removed.<br>"
+"means&lt;br&gt;that Enlightenment will not allow itself to exit until these "
+"windows have&lt;br&gt;been closed or have the lifespan lock removed.&lt;"
+"br&gt;"
 msgstr ""
-"Ainda existem alguma janelas com o bloqueio \"lifespan\" ativo.<br>Isto "
-"significa<br>que não pode sair do Enlightenment até que essas janelas "
-"sejam<br>fechadas ou que o bloqueio seja removido.<br>"
+"Ainda existem alguma janelas com o bloqueio \"lifespan\" ativo.&lt;br&gt;"
+"Isto significa&lt;br&gt;que não pode sair do Enlightenment até que essas "
+"janelas sejam&lt;br&gt;fechadas ou que o bloqueio seja removido.&lt;br&gt;"
 
 #: src/bin/e_utils.c:858
 #, c-format
@@ -4059,36 +4104,39 @@ msgstr "Erro ao criar o diretório"
 #: src/bin/e_utils.c:1004
 #, c-format
 msgid ""
-"Failed to create directory: %s .<br>Check that you have correct permissions "
-"set."
+"Failed to create directory: %s .&lt;br&gt;Check that you have correct "
+"permissions set."
 msgstr ""
-"Ocorreu um erro ao criar o diretório: %s.<br>Verifique se tem as permissões "
-"necessárias."
+"Ocorreu um erro ao criar o diretório: %s.&lt;br&gt;Verifique se tem as "
+"permissões necessárias."
 
 #: src/bin/e_utils.c:1012
 #, c-format
-msgid "Failed to create directory: %s .<br>A file of that name already exists."
+msgid ""
+"Failed to create directory: %s .&lt;br&gt;A file of that name already exists."
 msgstr ""
-"Ocorreu um erro ao criar o diretório: %s.<br>Já existe um ficheiro com este "
-"nome."
+"Ocorreu um erro ao criar o diretório: %s.&lt;br&gt;Já existe um ficheiro com "
+"este nome."
 
 #: src/bin/e_utils.c:1170
 msgid ""
-"Configuration data needed upgrading. Your old configuration<br>has been "
-"wiped and a new set of defaults initialized. This<br>will happen regularly "
-"during development, so don't report a<br>bug. This means the module needs "
-"new configuration<br>data by default for usable functionality that your "
-"old<br>configuration lacked. This new set of defaults will fix<br>that by "
-"adding it in. You can re-configure things now to your<br>liking. Sorry for "
-"the hiccup in your configuration.<br>"
+"Configuration data needed upgrading. Your old configuration&lt;br&gt;has "
+"been wiped and a new set of defaults initialized. This&lt;br&gt;will happen "
+"regularly during development, so don't report a&lt;br&gt;bug. This means the "
+"module needs new configuration&lt;br&gt;data by default for usable "
+"functionality that your old&lt;br&gt;configuration lacked. This new set of "
+"defaults will fix&lt;br&gt;that by adding it in. You can re-configure things "
+"now to your&lt;br&gt;liking. Sorry for the hiccup in your configuration.&lt;"
+"br&gt;"
 msgstr ""
-"As definições precisam de ser atualizadas. As suas definições<br>serão "
-"apagadas e serão iniciados novos valores pré-definidos.<br>Isto irá ocorrer "
-"repetidamente durante o<br>desenvolvimento e não deve reportar qualquer erro."
-"<br>Isto significa que o Enlightenment precisa de dados que as<br>suas "
-"antigas definições não possuem. Este conjunto de valores<br>corrige a "
-"situação. Mais tarde poderá configurar o Enlightenment<br>ao seu gosto. "
-"Desculpe qualquer inconveniente.<br>"
+"As definições precisam de ser atualizadas. As suas definições&lt;br&gt;serão "
+"apagadas e serão iniciados novos valores pré-definidos.&lt;br&gt;Isto irá "
+"ocorrer repetidamente durante o&lt;br&gt;desenvolvimento e não deve reportar "
+"qualquer erro.&lt;br&gt;Isto significa que o Enlightenment precisa de dados "
+"que as&lt;br&gt;suas antigas definições não possuem. Este conjunto de "
+"valores&lt;br&gt;corrige a situação. Mais tarde poderá configurar o "
+"Enlightenment&lt;br&gt;ao seu gosto. Desculpe qualquer inconveniente.&lt;"
+"br&gt;"
 
 #: src/bin/e_utils.c:1179 src/bin/e_utils.c:1203
 #, c-format
@@ -4097,17 +4145,19 @@ msgstr "Configuração de %s atualizada"
 
 #: src/bin/e_utils.c:1192
 msgid ""
-"Your module configuration is NEWER than the module version. This is "
-"very<br>strange. This should not happen unless you downgraded<br>the module "
-"or copied the configuration from a place where<br>a newer version of the "
-"module was running. This is bad and<br>as a precaution your configuration "
-"has been now restored to<br>defaults. Sorry for the inconvenience.<br>"
+"Your module configuration is NEWER than the module version. This is very&lt;"
+"br&gt;strange. This should not happen unless you downgraded&lt;br&gt;the "
+"module or copied the configuration from a place where&lt;br&gt;a newer "
+"version of the module was running. This is bad and&lt;br&gt;as a precaution "
+"your configuration has been now restored to&lt;br&gt;defaults. Sorry for the "
+"inconvenience.&lt;br&gt;"
 msgstr ""
-"A configuração do seu módulo é mais recente que a versão do módulo.<br>Isto "
-"é muito estranho e só acontece se reverter o módulo ou se<br>tiver copiado a "
-"configuração de um local em que está instalada<br>uma versão mais recente do "
-"módulo. Isto é mau e por precaução<br>as suas definições originais foram "
-"restauradas.<b>Desculpe qualquer inconveniente.<br>"
+"A configuração do seu módulo é mais recente que a versão do módulo.&lt;br&gt;"
+"Isto é muito estranho e só acontece se reverter o módulo ou se&lt;br&gt;"
+"tiver copiado a configuração de um local em que está instalada&lt;br&gt;uma "
+"versão mais recente do módulo. Isto é mau e por precaução&lt;br&gt;as suas "
+"definições originais foram restauradas.&lt;b&gt;Desculpe qualquer "
+"inconveniente.&lt;br&gt;"
 
 #: src/bin/e_utils.c:1286
 #, c-format
@@ -5051,8 +5101,9 @@ msgstr "Adicionar novo perfil"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:336
 #, c-format
-msgid "You want to delete the \"%s\" profile.<br><br>Are you sure?"
-msgstr "Está prestes a eliminar o perfil \"%s\".<br><br>Tem a certeza?"
+msgid "You want to delete the \"%s\" profile.&lt;br&gt;&lt;br&gt;Are you sure?"
+msgstr ""
+"Está prestes a eliminar o perfil \"%s\".&lt;br&gt;&lt;br&gt;Tem a certeza?"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:338
 msgid "Are you sure you want to delete this profile?"
@@ -5431,18 +5482,20 @@ msgstr "Área de trabalho"
 #: src/modules/conf_bindings/e_int_config_keybindings.c:3
 #: src/modules/conf_bindings/e_int_config_keybindings.c:7
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:3
-msgid "<None>"
-msgstr "<Nenhuma>"
+msgid "&lt;None&gt;"
+msgstr "&lt;Nenhuma&gt;"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:5
 msgid ""
-"Please select an edge,<br>or click <hilight>Close</hilight> to abort."
-"<br><br>You can either specify a delay of this<br> action using the slider, "
-"or make it<br>respond to edge clicks:"
+"Please select an edge,&lt;br&gt;or click &lt;hilight&gt;Close&lt;/"
+"hilight&gt; to abort.&lt;br&gt;&lt;br&gt;You can either specify a delay of "
+"this&lt;br&gt; action using the slider, or make it&lt;br&gt;respond to edge "
+"clicks:"
 msgstr ""
-"Selecione uma margem<br>ou clique em <hilight>Fechar</hilight> para abortar."
-"<br><br>Pode também especificar<br>um atrasopara esta ação utilizando<br>o "
-"cursor ou fazê-lo responder aos cliques nas margens:"
+"Selecione uma margem&lt;br&gt;ou clique em &lt;hilight&gt;Fechar&lt;/"
+"hilight&gt; para abortar.&lt;br&gt;&lt;br&gt;Pode também especificar&lt;"
+"br&gt;um atrasopara esta ação utilizando&lt;br&gt;o cursor ou fazê-lo "
+"responder aos cliques nas margens:"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:106
 msgid "Edge Bindings Settings"
@@ -5525,11 +5578,12 @@ msgstr "Erro na associação da margem"
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1224
 #, c-format
 msgid ""
-"The edge binding that you chose is already used by<br><hilight>%s</hilight> "
-"action.<br>Please choose another edge to bind."
+"The edge binding that you chose is already used by&lt;br&gt;&lt;hilight&gt;"
+"%s&lt;/hilight&gt; action.&lt;br&gt;Please choose another edge to bind."
 msgstr ""
-"A associação da margem escolhida já está a ser<br>utilizada pela "
-"ação<br><hilight>%s</hilight>.<br>Por favor escolha outra margem."
+"A associação da margem escolhida já está a ser&lt;br&gt;utilizada pela "
+"ação&lt;br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;.&lt;br&gt;Por favor escolha "
+"outra margem."
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1359
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1105
@@ -5609,11 +5663,11 @@ msgstr "O sinal e a fonte não podem estar vazios!"
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:572
 #, c-format
 msgid ""
-"The signal and source that you entered are already used by<br><hilight>%s</"
-"hilight> action.<br>"
+"The signal and source that you entered are already used by&lt;br&gt;&lt;"
+"hilight&gt;%s&lt;/hilight&gt; action.&lt;br&gt;"
 msgstr ""
-"O sinal e a fonte que introduziu já estão a ser utilizados pela "
-"ação<br><hilight>%s</hilight>.<br>"
+"O sinal e a fonte que introduziu já estão a ser utilizados pela ação&lt;"
+"br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;.&lt;br&gt;"
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:621
 msgid "Add Signal Binding"
@@ -5894,18 +5948,19 @@ msgstr "Erro ao importar método de introdução"
 
 #: src/modules/conf_intl/e_int_config_imc_import.c:284
 msgid ""
-"Enlightenment was unable to import the configuration.<br><br>Are you sure "
-"this is really a valid configuration?"
+"Enlightenment was unable to import the configuration.&lt;br&gt;&lt;br&gt;Are "
+"you sure this is really a valid configuration?"
 msgstr ""
-"O Enlightenment não conseguiu importar a configuração.<br><br>Tem a certeza "
-"que esta é uma configuração válida?"
+"O Enlightenment não conseguiu importar a configuração.&lt;br&gt;&lt;br&gt;"
+"Tem a certeza que esta é uma configuração válida?"
 
 #: src/modules/conf_intl/e_int_config_imc_import.c:300
 msgid ""
-"Enlightenment was unable to import the configuration<br>due to a copy error."
+"Enlightenment was unable to import the configuration&lt;br&gt;due to a copy "
+"error."
 msgstr ""
-"O Enlightenment não conseguiu importar a configuração<br>devido a erros de "
-"cópia."
+"O Enlightenment não conseguiu importar a configuração&lt;br&gt;devido a "
+"erros de cópia."
 
 #: src/modules/conf_intl/e_int_config_intl.c:600
 #: src/modules/conf_intl/e_mod_main.c:20
@@ -5920,15 +5975,17 @@ msgstr "Definições de idioma do bloqueio do sistema"
 #: src/modules/conf_intl/e_int_config_intl.c:958
 #, c-format
 msgid ""
-"You have some extra locale environment<br>variables set that may interfere "
-"with<br>correct display of your chosen language.<br>If you don't want these "
-"affected, use the<br>Environment variable settings to unset them.<br>The "
-"variables that may affect you are<br>as follows:<br>%s"
+"You have some extra locale environment&lt;br&gt;variables set that may "
+"interfere with&lt;br&gt;correct display of your chosen language.&lt;br&gt;If "
+"you don't want these affected, use the&lt;br&gt;Environment variable "
+"settings to unset them.&lt;br&gt;The variables that may affect you are&lt;"
+"br&gt;as follows:&lt;br&gt;%s"
 msgstr ""
-"Definiu algumas variáveis de ambiente<br>que podem interferir com o idioma "
-"escolhido.<br>Se não as quiser afetar, utilize as<br>definições das "
-"variáveis de ambiente para <br>não as utilizar. <br>As variáveis de ambiente "
-"que podem afetar o seu idioma são:<br>%s."
+"Definiu algumas variáveis de ambiente&lt;br&gt;que podem interferir com o "
+"idioma escolhido.&lt;br&gt;Se não as quiser afetar, utilize as&lt;br&gt;"
+"definições das variáveis de ambiente para &lt;br&gt;não as utilizar. &lt;"
+"br&gt;As variáveis de ambiente que podem afetar o seu idioma são:&lt;br&gt;"
+"%s."
 
 #: src/modules/conf_intl/e_int_config_intl.c:966
 msgid "Possible Locale problems"
@@ -6079,11 +6136,11 @@ msgstr "Associação ACPI"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:500
 msgid ""
-"Please trigger the ACPI event you wish to bind to, <br><br>or "
-"<hilight>Escape</hilight> to abort."
+"Please trigger the ACPI event you wish to bind to, &lt;br&gt;&lt;br&gt;or "
+"&lt;hilight&gt;Escape&lt;/hilight&gt; to abort."
 msgstr ""
-"Por favor escolha o evento ACPI que pretende associar<br><br>ou "
-"<hilight>Escape</hilight> para cancelar."
+"Por favor escolha o evento ACPI que pretende associar&lt;br&gt;&lt;br&gt;ou "
+"&lt;hilight&gt;Escape&lt;/hilight&gt; para cancelar."
 
 #: src/modules/conf_bindings/e_int_config_keybindings.c:8
 msgid "Single key"
@@ -6100,11 +6157,13 @@ msgstr "Erro na associação do teclado"
 #: src/modules/conf_bindings/e_int_config_keybindings.c:966
 #, c-format
 msgid ""
-"The binding key sequence, that you choose, is already used by <br><hilight>"
-"%s</hilight> action.<br>Please choose another binding key sequence."
+"The binding key sequence, that you choose, is already used by &lt;br&gt;&lt;"
+"hilight&gt;%s&lt;/hilight&gt; action.&lt;br&gt;Please choose another binding "
+"key sequence."
 msgstr ""
 "A combinação da associação do teclado escolhida já está a ser utilizada pela "
-"ação<br><hilight>%s</hilight>.<br>Por favor escolha outra combinação."
+"ação&lt;br&gt;&lt;hilight&gt;%s&lt;/hilight&gt;.&lt;br&gt;Por favor escolha "
+"outra combinação."
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:109
 msgid "Mouse Bindings Settings"
@@ -6112,11 +6171,12 @@ msgstr "Definições da associação do rato"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:247
 msgid ""
-"Unable to set a mouse wheel binding without modifiers<br>on a window: "
-"conflict with existing edje signal bindings.<br>FIXME!!!"
+"Unable to set a mouse wheel binding without modifiers&lt;br&gt;on a window: "
+"conflict with existing edje signal bindings.&lt;br&gt;FIXME!!!"
 msgstr ""
-"Não foi possível definir a associação da rota do rato de<br>uma janela sem "
-"modificadores pois existe um conflito com<br>uma associação edje. Corrija!"
+"Não foi possível definir a associação da rota do rato de&lt;br&gt;uma janela "
+"sem modificadores pois existe um conflito com&lt;br&gt;uma associação edje. "
+"Corrija!"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:250
 msgid "Mouse Binding Error"
@@ -6421,11 +6481,13 @@ msgstr "Utilizar janelas personalizadas em vez de janelas ARGB"
 
 #: src/modules/conf_performance/e_int_config_engine.c:110
 msgid ""
-"You have chosen to use shaped windows<br>but your current screen is "
-"composited.<br><br>Are you really sure you wish to use<br>shaped windows?"
+"You have chosen to use shaped windows&lt;br&gt;but your current screen is "
+"composited.&lt;br&gt;&lt;br&gt;Are you really sure you wish to use&lt;br&gt;"
+"shaped windows?"
 msgstr ""
-"Optou por utilizar janelas personalizadas<br>mas a composição está ativa."
-"<br><br>Tem a certeza que que utilizar<br>as janelas personalizadas?"
+"Optou por utilizar janelas personalizadas&lt;br&gt;mas a composição está "
+"ativa.&lt;br&gt;&lt;br&gt;Tem a certeza que que utilizar&lt;br&gt;as janelas "
+"personalizadas?"
 
 #: src/modules/conf_performance/e_int_config_performance.c:36
 msgid "Performance Settings"
@@ -7266,16 +7328,18 @@ msgstr "Erro ao importar tema"
 
 #: src/modules/conf_theme/e_int_config_theme_import.c:284
 msgid ""
-"Enlightenment was unable to import the theme.<br><br>Are you sure this is "
-"really a valid theme?"
+"Enlightenment was unable to import the theme.&lt;br&gt;&lt;br&gt;Are you "
+"sure this is really a valid theme?"
 msgstr ""
-"O Enlightenment não conseguiu importar o tema.<br><br>Tem a certeza que é um "
-"tema válido?"
+"O Enlightenment não conseguiu importar o tema.&lt;br&gt;&lt;br&gt;Tem a "
+"certeza que é um tema válido?"
 
 #: src/modules/conf_theme/e_int_config_theme_import.c:293
-msgid "Enlightenment was unable to import the theme<br>due to a copy error."
+msgid ""
+"Enlightenment was unable to import the theme&lt;br&gt;due to a copy error."
 msgstr ""
-"O Enlightenment não conseguiu importar o tema<br>devido a erros de cópia."
+"O Enlightenment não conseguiu importar o tema&lt;br&gt;devido a erros de "
+"cópia."
 
 #: src/modules/conf_theme/e_int_config_xsettings.c:59
 msgid "Application Theme Settings"
@@ -8009,29 +8073,29 @@ msgstr "Comportamento da poupança de energia"
 
 #: src/modules/cpufreq/e_mod_main.c:436
 msgid ""
-"There was an error trying to set the<br>cpu frequency governor via the "
-"module's<br>setfreq utility."
+"There was an error trying to set the&lt;br&gt;cpu frequency governor via the "
+"module's&lt;br&gt;setfreq utility."
 msgstr ""
-"Ocorreu um erro ao tentar definir o<br>gestor de frequências do cpu através "
-"do<br>utilitário setfreq."
+"Ocorreu um erro ao tentar definir o&lt;br&gt;gestor de frequências do cpu "
+"através do&lt;br&gt;utilitário setfreq."
 
 #: src/modules/cpufreq/e_mod_main.c:464
 msgid ""
-"Your kernel does not support setting the<br>CPU frequency at all. You may be "
-"missing<br>Kernel modules or features, or your CPU<br>simply does not "
-"support this feature."
+"Your kernel does not support setting the&lt;br&gt;CPU frequency at all. You "
+"may be missing&lt;br&gt;Kernel modules or features, or your CPU&lt;br&gt;"
+"simply does not support this feature."
 msgstr ""
-"O seu kernel não permite a configurar a<br>frequência do CPU. Pode ser que "
-"não possua<br>todos os módulos ou funções do Kernel<br>ou então o seu CPU "
-"não permite esta opção."
+"O seu kernel não permite a configurar a&lt;br&gt;frequência do CPU. Pode ser "
+"que não possua&lt;br&gt;todos os módulos ou funções do Kernel&lt;br&gt;ou "
+"então o seu CPU não permite esta opção."
 
 #: src/modules/cpufreq/e_mod_main.c:492
 msgid ""
-"There was an error trying to set the<br>cpu frequency setting via the "
-"module's<br>setfreq utility."
+"There was an error trying to set the&lt;br&gt;cpu frequency setting via the "
+"module's&lt;br&gt;setfreq utility."
 msgstr ""
-"Ocorreu um erro ao tentar definir a<br>frequência do cpu através "
-"do<br>utilitário setfreq."
+"Ocorreu um erro ao tentar definir a&lt;br&gt;frequência do cpu através do&lt;"
+"br&gt;utilitário setfreq."
 
 #: src/modules/cpufreq/e_mod_main.c:1160
 msgid "Cpufreq Error"
@@ -8039,10 +8103,10 @@ msgstr "Erro Cpufreq"
 
 #: src/modules/cpufreq/e_mod_main.c:1161
 msgid ""
-"The freqset binary in the cpufreq module<br>directory cannot be found (stat "
-"failed)"
+"The freqset binary in the cpufreq module&lt;br&gt;directory cannot be found "
+"(stat failed)"
 msgstr ""
-"Não foi possível encontrar o binário freqset<br>no diretório do módulo "
+"Não foi possível encontrar o binário freqset&lt;br&gt;no diretório do módulo "
 "cpufreq."
 
 #: src/modules/cpufreq/e_mod_main.c:1168
@@ -8052,13 +8116,15 @@ msgstr "Erro de permissões do Cpufreq"
 #: src/modules/cpufreq/e_mod_main.c:1169
 #, c-format
 msgid ""
-"The freqset binary in the cpufreq module<br>is not owned by root or does not "
-"have the<br>setuid bit set. Please ensure this is the<br>case. For example:"
-"<br><br>sudo chown root %s<br>sudo chmod u+s,a+x %s<br>"
+"The freqset binary in the cpufreq module&lt;br&gt;is not owned by root or "
+"does not have the&lt;br&gt;setuid bit set. Please ensure this is the&lt;"
+"br&gt;case. For example:&lt;br&gt;&lt;br&gt;sudo chown root %s&lt;br&gt;sudo "
+"chmod u+s,a+x %s&lt;br&gt;"
 msgstr ""
-"O utilizador root não detém a posse do<br>binário freqset do módulo cpufreq "
-"ou então<br>não tem definido o conjunto setuid.<br>Execute o comando:"
-"<br><br>sudo chown root %s<br>ou<br>sudo chmod u+s,a+x %s<br>."
+"O utilizador root não detém a posse do&lt;br&gt;binário freqset do módulo "
+"cpufreq ou então&lt;br&gt;não tem definido o conjunto setuid.&lt;br&gt;"
+"Execute o comando:&lt;br&gt;&lt;br&gt;sudo chown root %s&lt;br&gt;ou&lt;"
+"br&gt;sudo chmod u+s,a+x %s&lt;br&gt;."
 
 #: src/modules/everything/e_mod_main.c:49
 #: src/modules/everything/evry_plugin.c:179
@@ -8425,42 +8491,54 @@ msgstr "Explorar %s"
 
 #: src/modules/everything/evry_view_help.c:67
 msgid ""
-"  Ok, here comes the explanation of <hilight>everything</hilight>...<br>  "
-"Just type a few letters of the thing you are looking for. <br>  Use cursor "
-"<hilight>&lt;up/down&gt;</hilight> to choose from the list of things.<br>  "
-"Press  <hilight>&lt;tab&gt;</hilight> to select an action, then press  "
-"<hilight>&lt;return&gt;</hilight>.<br> This page will not show up next time "
-"you run <hilight>everything</hilight>.<br>    <hilight>&lt;Esc&gt;</hilight> "
-"close this Dialog<br>    <hilight>&lt;?&gt;</hilight> show this page<br>    "
-"<hilight>&lt;return&gt;</hilight> run action<br>    <hilight>&lt;ctrl"
-"+return&gt;</hilight> run action and continue<br>    <hilight>&lt;tab&gt;</"
-"hilight> toggle between selectors<br>    <hilight>&lt;ctrl+tab&gt;</hilight> "
-"complete input (depends on plugin)<br>    <hilight>&lt;ctrl+'x'&gt;</"
-"hilight> jump to plugin beginning with 'x'<br>    <hilight>&lt;ctrl+left/"
-"right&gt;</hilight> cycle through plugins<br>    <hilight>&lt;ctrl+up/"
-"down&gt;</hilight> go to first/last item<br>    <hilight>&lt;ctrl+1&gt;</"
-"hilight> toggle view modes (exit this page ;)<br>    <hilight>&lt;ctrl+2&gt;"
-"</hilight> toggle list view modes<br>    <hilight>&lt;ctrl+3&gt;</hilight> "
+"  Ok, here comes the explanation of &lt;hilight&gt;everything&lt;/"
+"hilight&gt;...&lt;br&gt;  Just type a few letters of the thing you are "
+"looking for. &lt;br&gt;  Use cursor &lt;hilight&gt;&amp;lt;up/down&amp;gt;"
+"&lt;/hilight&gt; to choose from the list of things.&lt;br&gt;  Press  &lt;"
+"hilight&gt;&amp;lt;tab&amp;gt;&lt;/hilight&gt; to select an action, then "
+"press  &lt;hilight&gt;&amp;lt;return&amp;gt;&lt;/hilight&gt;.&lt;br&gt; This "
+"page will not show up next time you run &lt;hilight&gt;everything&lt;/"
+"hilight&gt;.&lt;br&gt;    &lt;hilight&gt;&amp;lt;Esc&amp;gt;&lt;/hilight&gt; "
+"close this Dialog&lt;br&gt;    &lt;hilight&gt;&amp;lt;?&amp;gt;&lt;/"
+"hilight&gt; show this page&lt;br&gt;    &lt;hilight&gt;&amp;lt;return&amp;gt;"
+"&lt;/hilight&gt; run action&lt;br&gt;    &lt;hilight&gt;&amp;lt;ctrl"
+"+return&amp;gt;&lt;/hilight&gt; run action and continue&lt;br&gt;    &lt;"
+"hilight&gt;&amp;lt;tab&amp;gt;&lt;/hilight&gt; toggle between selectors&lt;"
+"br&gt;    &lt;hilight&gt;&amp;lt;ctrl+tab&amp;gt;&lt;/hilight&gt; complete "
+"input (depends on plugin)&lt;br&gt;    &lt;hilight&gt;&amp;lt;ctrl+'x'&amp;"
+"gt;&lt;/hilight&gt; jump to plugin beginning with 'x'&lt;br&gt;    &lt;"
+"hilight&gt;&amp;lt;ctrl+left/right&amp;gt;&lt;/hilight&gt; cycle through "
+"plugins&lt;br&gt;    &lt;hilight&gt;&amp;lt;ctrl+up/down&amp;gt;&lt;/"
+"hilight&gt; go to first/last item&lt;br&gt;    &lt;hilight&gt;&amp;lt;ctrl"
+"+1&amp;gt;&lt;/hilight&gt; toggle view modes (exit this page ;)&lt;br&gt;    "
+"&lt;hilight&gt;&amp;lt;ctrl+2&amp;gt;&lt;/hilight&gt; toggle list view "
+"modes&lt;br&gt;    &lt;hilight&gt;&amp;lt;ctrl+3&amp;gt;&lt;/hilight&gt; "
 "toggle thumb view modes"
 msgstr ""
-"  Muito bem, aqui vem uma pequena explicação sobre o <hilight>Everything</"
-"hilight>...<br>Digite algumas letras do que está a procurar.<br>Utilize o "
-"cursor <hilight>&lt;cima/baixo&gt;</hilight> para escolher um item da lista."
-"<br>Prima <hilight>&lt;tab&gt;</hilight> para selecionar uma ação e prima "
-"<hilight>&lt;return&gt;</hilight>.<br>Esta página não será exibida na "
-"próxima vez que utilizar o <hilight>Everything</hilight>.<br><hilight>&lt;"
-"Esc&gt;</hilight> fecha este diálogo<br><hilight>&lt;?&gt;</hilight> mostra "
-"esta página<br><hilight>&lt;return&gt;</hilight> executa uma "
-"ação<br><hilight>&lt;ctrl+return&gt;</hilight> executa uma ação e "
-"continua<br><hilight>&lt;tab&gt;</hilight> alterna entre os "
-"seletores<br><hilight>&lt;ctrl+tab&gt;</hilight> conclui a entrada (depende "
-"do plugin)<br><hilight>&lt;ctrl+x&gt;</hilight> vai para o plugin que começa "
-"com \"x\"<br><hilight>&lt;ctrl+left/right&gt;</hilight> troca entre os "
-"\"plugins\"<br><hilight>&lt;ctrl+up/down&gt;</hilight> vai para o primeiro/"
-"último item<br><hilight>&lt;ctrl+1&gt;</hilight> alterna os modos de "
-"visualização (sai desta página)<br><hilight>&lt;ctrl+2&gt;</hilight> alterna "
-"os modos de visualização em lista<br><hilight>&lt;ctrl+3&gt;</hilight> "
-"alterna os modos de visualização em miniaturas."
+"  Muito bem, aqui vem uma pequena explicação sobre o &lt;hilight&gt;"
+"Everything&lt;/hilight&gt;...&lt;br&gt;Digite algumas letras do que está a "
+"procurar.&lt;br&gt;Utilize o cursor &lt;hilight&gt;&amp;lt;cima/baixo&amp;gt;"
+"&lt;/hilight&gt; para escolher um item da lista.&lt;br&gt;Prima &lt;"
+"hilight&gt;&amp;lt;tab&amp;gt;&lt;/hilight&gt; para selecionar uma ação e "
+"prima &lt;hilight&gt;&amp;lt;return&amp;gt;&lt;/hilight&gt;.&lt;br&gt;Esta "
+"página não será exibida na próxima vez que utilizar o &lt;hilight&gt;"
+"Everything&lt;/hilight&gt;.&lt;br&gt;&lt;hilight&gt;&amp;lt;Esc&amp;gt;&lt;/"
+"hilight&gt; fecha este diálogo&lt;br&gt;&lt;hilight&gt;&amp;lt;?&amp;gt;&lt;/"
+"hilight&gt; mostra esta página&lt;br&gt;&lt;hilight&gt;&amp;lt;return&amp;gt;"
+"&lt;/hilight&gt; executa uma ação&lt;br&gt;&lt;hilight&gt;&amp;lt;ctrl"
+"+return&amp;gt;&lt;/hilight&gt; executa uma ação e continua&lt;br&gt;&lt;"
+"hilight&gt;&amp;lt;tab&amp;gt;&lt;/hilight&gt; alterna entre os seletores&lt;"
+"br&gt;&lt;hilight&gt;&amp;lt;ctrl+tab&amp;gt;&lt;/hilight&gt; conclui a "
+"entrada (depende do plugin)&lt;br&gt;&lt;hilight&gt;&amp;lt;ctrl+x&amp;gt;"
+"&lt;/hilight&gt; vai para o plugin que começa com \"x\"&lt;br&gt;&lt;"
+"hilight&gt;&amp;lt;ctrl+left/right&amp;gt;&lt;/hilight&gt; troca entre os "
+"\"plugins\"&lt;br&gt;&lt;hilight&gt;&amp;lt;ctrl+up/down&amp;gt;&lt;/"
+"hilight&gt; vai para o primeiro/último item&lt;br&gt;&lt;hilight&gt;&amp;lt;"
+"ctrl+1&amp;gt;&lt;/hilight&gt; alterna os modos de visualização (sai desta "
+"página)&lt;br&gt;&lt;hilight&gt;&amp;lt;ctrl+2&amp;gt;&lt;/hilight&gt; "
+"alterna os modos de visualização em lista&lt;br&gt;&lt;hilight&gt;&amp;lt;"
+"ctrl+3&amp;gt;&lt;/hilight&gt; alterna os modos de visualização em "
+"miniaturas."
 
 #: src/modules/everything/evry_view_tabs.c:93
 msgid "Back"
@@ -9219,10 +9297,11 @@ msgstr "Indique o nome para esta fonte:"
 #: src/modules/ibar/e_mod_config.c:194
 #, c-format
 msgid ""
-"You requested to delete \"%s\".<br><br>Are you sure you want to delete this "
-"bar source?"
+"You requested to delete \"%s\".&lt;br&gt;&lt;br&gt;Are you sure you want to "
+"delete this bar source?"
 msgstr ""
-"Solicitou a eliminação de \"%s\".<br><br>Tem a certeza que o quer fazer?"
+"Solicitou a eliminação de \"%s\".&lt;br&gt;&lt;br&gt;Tem a certeza que o "
+"quer fazer?"
 
 #: src/modules/ibar/e_mod_config.c:198
 msgid "Are you sure you want to delete this bar source?"
@@ -9392,13 +9471,13 @@ msgstr "Atenção"
 
 #: src/modules/pager/e_mod_config.c:463
 msgid ""
-"You cannot use the right mouse button in the<br>shelf for this as it is "
-"already taken by internal<br>code for context menus.<br>This button only "
-"works in the popup."
+"You cannot use the right mouse button in the&lt;br&gt;shelf for this as it "
+"is already taken by internal&lt;br&gt;code for context menus.&lt;br&gt;This "
+"button only works in the popup."
 msgstr ""
-"Não pode utilizar o botão direito do rato neste<br>painel pois este já é "
-"objeto de manipulação<br>pelos menus de contexto.<br>Este botão só funciona "
-"nos alertas."
+"Não pode utilizar o botão direito do rato neste&lt;br&gt;painel pois este já "
+"é objeto de manipulação&lt;br&gt;pelos menus de contexto.&lt;br&gt;Este "
+"botão só funciona nos alertas."
 
 #: src/modules/pager/e_mod_main.c:2929
 msgid "Show Pager Popup"
@@ -9490,11 +9569,11 @@ msgstr "Física"
 
 #: src/modules/physics/e_mod_main.c:30
 msgid ""
-"Cowardly refusing to battle<br>with the Tiling module for control<br>of your "
-"windows. There can be only one!"
+"Cowardly refusing to battle&lt;br&gt;with the Tiling module for control&lt;"
+"br&gt;of your windows. There can be only one!"
 msgstr ""
-"Não pode utilizar este módulo<br>em conjunto com o módulo Lado a lado."
-"<br>Escolha apenas um dos dois!"
+"Não pode utilizar este módulo&lt;br&gt;em conjunto com o módulo Lado a lado."
+"&lt;br&gt;Escolha apenas um dos dois!"
 
 #: src/modules/physics/e_mod_main.c:67
 msgid "Physics Error"
@@ -9675,26 +9754,28 @@ msgstr "Procurar atualizações"
 
 #: src/modules/wizard/page_170.c:32
 msgid ""
-"Enlightenment can check for new<br>versions, updates, security "
-"and<br>bugfixes, as well as available add-ons.<br><br>This is very useful, "
-"because it lets<br>you know about available bug fixes and<br>security fixes "
-"when they happen. As a<br>result, Enlightenment will connect "
-"to<br>enlightenment.org and transmit some<br>information, much like any web "
-"browser<br>might do. No personal information such as<br>username, password "
-"or any personal files<br>will be transmitted. If you don't like this,"
-"<br>please disable this below. It is highly<br>advised that you do not "
-"disable this as it<br>may leave you vulnerable or having to live<br>with "
+"Enlightenment can check for new&lt;br&gt;versions, updates, security and&lt;"
+"br&gt;bugfixes, as well as available add-ons.&lt;br&gt;&lt;br&gt;This is "
+"very useful, because it lets&lt;br&gt;you know about available bug fixes "
+"and&lt;br&gt;security fixes when they happen. As a&lt;br&gt;result, "
+"Enlightenment will connect to&lt;br&gt;enlightenment.org and transmit "
+"some&lt;br&gt;information, much like any web browser&lt;br&gt;might do. No "
+"personal information such as&lt;br&gt;username, password or any personal "
+"files&lt;br&gt;will be transmitted. If you don't like this,&lt;br&gt;please "
+"disable this below. It is highly&lt;br&gt;advised that you do not disable "
+"this as it&lt;br&gt;may leave you vulnerable or having to live&lt;br&gt;with "
 "bugs."
 msgstr ""
-"O Enlightenment pode procurar novas<br>versões e atualizações para<br>o "
-"ambiente de trabalho e para os extras.<br><br>Esta funcionalidade pode ser "
-"útil<br>pois permite-lhe descobrir as<br>diversas correções à medida que são "
-"disponibilizadas<br>. Para o efeito, o Enlightenment<br>irá efetuar uma "
-"ligação ao enlightenment.org e<br>enviar algumas informações<br>tal como um "
-"navegador web faz.<br>Nenhuma informação pessoal (nome de utilizador,"
-"<br>senhas ou ficheiros) será enviada. Se não quiser<br>ativar a "
-"funcionalidade, desative-a agora.<br>No entanto, recomendamos "
-"que<br>mantenha esta opção ativa, pois se não o fizer<br>poderá ficar "
+"O Enlightenment pode procurar novas&lt;br&gt;versões e atualizações para&lt;"
+"br&gt;o ambiente de trabalho e para os extras.&lt;br&gt;&lt;br&gt;Esta "
+"funcionalidade pode ser útil&lt;br&gt;pois permite-lhe descobrir as&lt;br&gt;"
+"diversas correções à medida que são disponibilizadas&lt;br&gt;. Para o "
+"efeito, o Enlightenment&lt;br&gt;irá efetuar uma ligação ao enlightenment."
+"org e&lt;br&gt;enviar algumas informações&lt;br&gt;tal como um navegador web "
+"faz.&lt;br&gt;Nenhuma informação pessoal (nome de utilizador,&lt;br&gt;"
+"senhas ou ficheiros) será enviada. Se não quiser&lt;br&gt;ativar a "
+"funcionalidade, desative-a agora.&lt;br&gt;No entanto, recomendamos que&lt;"
+"br&gt;mantenha esta opção ativa, pois se não o fizer&lt;br&gt;poderá ficar "
 "vulnerável aos erros que possam existir no código."
 
 #: src/modules/wizard/page_170.c:53
@@ -9706,8 +9787,9 @@ msgid "Information"
 msgstr "Informações"
 
 #: src/modules/wizard/page_180.c:32
-msgid "A taskbar can be added to<br>show open windows and applications."
-msgstr "Uma barra de tarefas pode<br>mostrar as janelas e aplicações abertas."
+msgid "A taskbar can be added to&lt;br&gt;show open windows and applications."
+msgstr ""
+"Uma barra de tarefas pode&lt;br&gt;mostrar as janelas e aplicações abertas."
 
 #: src/modules/wizard/page_180.c:38
 msgid "Enable Taskbar"
@@ -9715,7 +9797,7 @@ msgstr "Ativar barra de tarefas"
 
 #: src/modules/mixer/app_mixer.c:175 src/modules/mixer/app_mixer.c:282
 msgid "Boost"
-msgstr ""
+msgstr "Amplificação"
 
 #: src/modules/mixer/app_mixer.c:177 src/modules/mixer/app_mixer.c:284
 msgid "Playback"
@@ -9727,7 +9809,7 @@ msgstr "Captura"
 
 #: src/modules/mixer/app_mixer.c:181 src/modules/mixer/app_mixer.c:288
 msgid "Switch"
-msgstr ""
+msgstr "Comutador"
 
 #: src/modules/mixer/app_mixer.c:350
 msgid "Cards"
@@ -9831,7 +9913,8 @@ msgstr "Reprodutor de músicas"
 
 #: src/modules/music-control/ui.c:121
 msgid "* Your player must be configured to export the DBus interface MPRIS2."
-msgstr "* Tem que configurar o seu reprodutor para exortar a interface MPRIS2."
+msgstr ""
+"* Tem que configurar o seu reprodutor para exportar a interface MPRIS2."
 
 #: src/modules/music-control/ui.c:124
 msgid "Pause music when screen is locked"
@@ -9852,10 +9935,10 @@ msgstr "Aplicação inexistente"
 #: src/modules/connman/e_mod_main.c:190
 msgid ""
 "This module wants to execute an external application EConnMan that does not "
-"exist.<br>Please install <b>EConnMan</b> application."
+"exist.&lt;br&gt;Please install &lt;b&gt;EConnMan&lt;/b&gt; application."
 msgstr ""
-"Este módulo quer executar a aplicação EConnMan que não está "
-"disponível<br>Por favor instale o <b>EConnMan</b>."
+"Este módulo quer executar a aplicação EConnMan que não está disponível&lt;"
+"br&gt;Por favor instale o &lt;b&gt;EConnMan&lt;/b&gt;."
 
 #: src/modules/connman/e_mod_main.c:273
 msgid "Wifi On"
@@ -9996,21 +10079,21 @@ msgstr "Não foi possível determinar o comando para abrir esta aplicação!"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:304
 msgid ""
-"The relaunch option is meant to be used<br>with terminal applications to "
-"create a persistent<br>terminal which reopens when closed, generally "
-"seen<br>in quake-style drop-down terminals.<br>Either the selected "
-"application is not a terminal<br>or the cmdline flag for changing the "
-"terminal's window<br>name is not known. Feel free to submit a bug report if "
-"this<br>is a terminal which can change its window name.<br>Alternatively, "
-"you can add a data.item to"
+"The relaunch option is meant to be used&lt;br&gt;with terminal applications "
+"to create a persistent&lt;br&gt;terminal which reopens when closed, "
+"generally seen&lt;br&gt;in quake-style drop-down terminals.&lt;br&gt;Either "
+"the selected application is not a terminal&lt;br&gt;or the cmdline flag for "
+"changing the terminal's window&lt;br&gt;name is not known. Feel free to "
+"submit a bug report if this&lt;br&gt;is a terminal which can change its "
+"window name.&lt;br&gt;Alternatively, you can add a data.item to"
 msgstr ""
-"Esta opção deve ser utilizada nas aplicações<br>de terminal que criam um "
-"terminal persistente<br>que pode ser reaberto logo após fechar, como "
-"os<br>terminais do tipo guake.<br>É possível que esta aplicação não seja um "
-"terminal ou que os parâmetros<br>da linha de comandos que alteram o "
-"nome<br>da janela não sejam conhecidos. Se este terminal puder<br> alterar o "
-"nome da janela, envie um relatório de erro.<br>Alternativamente pode "
-"adicionar um data.item em"
+"Esta opção deve ser utilizada nas aplicações&lt;br&gt;de terminal que criam "
+"um terminal persistente&lt;br&gt;que pode ser reaberto logo após fechar, "
+"como os&lt;br&gt;terminais do tipo guake.&lt;br&gt;É possível que esta "
+"aplicação não seja um terminal ou que os parâmetros&lt;br&gt;da linha de "
+"comandos que alteram o nome&lt;br&gt;da janela não sejam conhecidos. Se este "
+"terminal puder&lt;br&gt; alterar o nome da janela, envie um relatório de "
+"erro.&lt;br&gt;Alternativamente pode adicionar um data.item em"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:314
 msgid "Like so:"
@@ -10041,15 +10124,15 @@ msgstr "Não pode definir a opção para um diálogo do Enlightenment!"
 #: src/modules/quickaccess/e_mod_quickaccess.c:368
 #, c-format
 msgid ""
-"The selected window created with name:<br>%s<br>and class:<br>%s<br>could "
-"not be found in the Quickaccess app database<br>This means that either the "
-"app is unknown to us<br>or it is not intended for use with this option."
-"<br>Please choose an action to take:"
+"The selected window created with name:&lt;br&gt;%s&lt;br&gt;and class:&lt;"
+"br&gt;%s&lt;br&gt;could not be found in the Quickaccess app database&lt;"
+"br&gt;This means that either the app is unknown to us&lt;br&gt;or it is not "
+"intended for use with this option.&lt;br&gt;Please choose an action to take:"
 msgstr ""
-"A janela selecionada e criada com o nome: <br>%s<br>e classe:<br>%s<br>não "
-"foi encontrada na base de dados do acesso rápido.<br>Isto significa que a "
-"aplicação não é reconhecida<br>ou que não deve ser utilizada com esta opção."
-"<br>Por favor escolha uma ação:"
+"A janela selecionada e criada com o nome: &lt;br&gt;%s&lt;br&gt;e classe:&lt;"
+"br&gt;%s&lt;br&gt;não foi encontrada na base de dados do acesso rápido.&lt;"
+"br&gt;Isto significa que a aplicação não é reconhecida&lt;br&gt;ou que não "
+"deve ser utilizada com esta opção.&lt;br&gt;Por favor escolha uma ação:"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:379
 #: src/modules/quickaccess/e_mod_quickaccess.c:977
@@ -10105,27 +10188,28 @@ msgstr "Adicionar acesso rápido"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:936
 msgid ""
-"The options found in the Quickaccess menu are as follows:"
-"<br><hilight>Autohide</hilight> - hide the window whenever it loses "
-"focus<br><hilight>Hide Instead of Raise</hilight> - Hide window when "
-"activated without focus<br><hilight>Jump Mode</hilight> - Switch to window's "
-"desk and raise instead of showing/hiding<br><hilight>Relaunch When Closed</"
-"hilight> - Run the entry's command again when its window "
-"exits<br><hilight>Transient</hilight> - Remember only this instance of the "
-"window (not permanent)"
+"The options found in the Quickaccess menu are as follows:&lt;br&gt;&lt;"
+"hilight&gt;Autohide&lt;/hilight&gt; - hide the window whenever it loses "
+"focus&lt;br&gt;&lt;hilight&gt;Hide Instead of Raise&lt;/hilight&gt; - Hide "
+"window when activated without focus&lt;br&gt;&lt;hilight&gt;Jump Mode&lt;/"
+"hilight&gt; - Switch to window's desk and raise instead of showing/hiding&lt;"
+"br&gt;&lt;hilight&gt;Relaunch When Closed&lt;/hilight&gt; - Run the entry's "
+"command again when its window exits&lt;br&gt;&lt;hilight&gt;Transient&lt;/"
+"hilight&gt; - Remember only this instance of the window (not permanent)"
 msgstr ""
-"As opções de menu do Acesso rápido são as seguintes:<br><hilight>Ocultar "
-"automaticamente</hilight> - Oculta a janela sempre que esta perder "
-"foco<br><hilight>Ocultar em vez de mostrar</hilight> - Oculta a janela se "
-"esta for ativada sem foco<br><hilight>Trocar</hilight> - Acede à área de "
-"trabalho da janela em vez de mostrar/ocultar<br><hilight>Reiniciar ao "
-"fechar</hilight> - Abre novamente o comando da entrada ao fechar a "
-"janela<br><hilight>Transitoriedade</hilight> - Memoriza apenas esta "
+"As opções de menu do Acesso rápido são as seguintes:&lt;br&gt;&lt;hilight&gt;"
+"Ocultar automaticamente&lt;/hilight&gt; - Oculta a janela sempre que esta "
+"perder foco&lt;br&gt;&lt;hilight&gt;Ocultar em vez de mostrar&lt;/"
+"hilight&gt; - Oculta a janela se esta for ativada sem foco&lt;br&gt;&lt;"
+"hilight&gt;Trocar&lt;/hilight&gt; - Acede à área de trabalho da janela em "
+"vez de mostrar/ocultar&lt;br&gt;&lt;hilight&gt;Reiniciar ao fechar&lt;/"
+"hilight&gt; - Abre novamente o comando da entrada ao fechar a janela&lt;"
+"br&gt;&lt;hilight&gt;Transitoriedade&lt;/hilight&gt; - Memoriza apenas esta "
 "instância da janela (não permanente)"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:975
-msgid "You deleted it on your own, you rascal!<br>Way to go!"
-msgstr "Eliminou a entrada sozinho!<br>Assim é que é!"
+msgid "You deleted it on your own, you rascal!&lt;br&gt;Way to go!"
+msgstr "Eliminou a entrada sozinho!&lt;br&gt;Assim é que é!"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:977
 #: src/modules/quickaccess/e_mod_quickaccess.c:1018
@@ -10143,22 +10227,23 @@ msgid "Great! Activate the Quickaccess entry again to hide it!"
 msgstr "Agora, ative a entrada de acesso rápido para a ocultar!"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1016
-msgid "Well done.<br>Now to delete the entry we just made..."
-msgstr "Boa!<br>Agora elimine a entrada criada...."
+msgid "Well done.&lt;br&gt;Now to delete the entry we just made..."
+msgstr "Boa!&lt;br&gt;Agora elimine a entrada criada...."
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1032
 msgid ""
-"The demo dialog has been bound to the keys you pressed.<br>Try pressing the "
-"same keys!"
+"The demo dialog has been bound to the keys you pressed.&lt;br&gt;Try "
+"pressing the same keys!"
 msgstr ""
-"O diálogo de demonstração foi associado às teclas premidas.<br>Tente premi-"
-"las novamente!"
+"O diálogo de demonstração foi associado às teclas premidas.&lt;br&gt;Tente "
+"premi-las novamente!"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1197
 msgid ""
-"The newly displayed window will activate<br>the Quickaccess binding sequence."
+"The newly displayed window will activate&lt;br&gt;the Quickaccess binding "
+"sequence."
 msgstr ""
-"A janela exibida irá ativar a combinação<br>de atalho do módulo Acesso "
+"A janela exibida irá ativar a combinação&lt;br&gt;de atalho do módulo Acesso "
 "rápido."
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1204
@@ -10171,31 +10256,31 @@ msgstr "Esta é o diálogo de demonstração do módulo Acesso rápido."
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1227
 msgid ""
-"Quickaccess entries can be created from<br>the border menu of any window."
-"<br>Click Continue to see a demonstration."
+"Quickaccess entries can be created from&lt;br&gt;the border menu of any "
+"window.&lt;br&gt;Click Continue to see a demonstration."
 msgstr ""
-"As entradas de acesso rápido podem ser<br>criadas no menu de cada janela."
-"<br>Clique continuar para ver uma demonstração."
+"As entradas de acesso rápido podem ser&lt;br&gt;criadas no menu de cada "
+"janela.&lt;br&gt;Clique continuar para ver uma demonstração."
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1248
 msgid ""
-"Quickaccess is a way of binding user-selected<br>windows and applications to "
-"keyboard shortcuts.<br>Once a Quickaccess entry has been created,<br>the "
-"associated window can be returned to immediately<br>on demand by pushing the "
-"keyboard shortcut."
+"Quickaccess is a way of binding user-selected&lt;br&gt;windows and "
+"applications to keyboard shortcuts.&lt;br&gt;Once a Quickaccess entry has "
+"been created,&lt;br&gt;the associated window can be returned to "
+"immediately&lt;br&gt;on demand by pushing the keyboard shortcut."
 msgstr ""
-"O acesso rápido é um método para associar<br>janelas e aplicações aos "
-"atalhos de teclado.<br>Assim que criar uma entrada de acesso rápido, "
-"a<br>janela ou aplicação pode ser aberta imediatamente através<br>do seu "
-"atalho de teclado."
+"O acesso rápido é um método para associar&lt;br&gt;janelas e aplicações aos "
+"atalhos de teclado.&lt;br&gt;Assim que criar uma entrada de acesso rápido, "
+"a&lt;br&gt;janela ou aplicação pode ser aberta imediatamente através&lt;"
+"br&gt;do seu atalho de teclado."
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1265
 msgid ""
-"This appears to be your first time using the Quickaccess module.<br>Would "
-"you like some usage tips?"
+"This appears to be your first time using the Quickaccess module.&lt;br&gt;"
+"Would you like some usage tips?"
 msgstr ""
-"Parece que é a primeira vez que utiliza o módulo Acesso rápido.<br>Gostaria "
-"de ver uma pequena demonstração?"
+"Parece que é a primeira vez que utiliza o módulo Acesso rápido.&lt;br&gt;"
+"Gostaria de ver uma pequena demonstração?"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1312
 msgid "quick access name/identifier"
@@ -10240,11 +10325,12 @@ msgstr "Erro - Formato desconhecido"
 
 #: src/modules/shot/e_mod_main.c:228
 msgid ""
-"File has an unspecified extension.<br>Please use '.jpg' or '.png' "
-"extensions<br>only as other formats are not<br>supported currently."
+"File has an unspecified extension.&lt;br&gt;Please use '.jpg' or '.png' "
+"extensions&lt;br&gt;only as other formats are not&lt;br&gt;supported "
+"currently."
 msgstr ""
-"Não especificou uma extensão<br>Só pode utilizar a extensão .jpg ou .png "
-"se<br>outros formatos não forem suportados."
+"Não especificou uma extensão&lt;br&gt;Só pode utilizar a extensão .jpg ou ."
+"png se&lt;br&gt;outros formatos não forem suportados."
 
 #: src/modules/shot/e_mod_main.c:276
 msgid "Select screenshot save location"
@@ -10265,8 +10351,8 @@ msgstr "Erro - Falha ao enviar"
 
 #: src/modules/shot/e_mod_main.c:409
 #, c-format
-msgid "Upload failed with status code:<br>%i"
-msgstr "Ocorreu um erro ao enviar. Código:<br>%i"
+msgid "Upload failed with status code:&lt;br&gt;%i"
+msgstr "Ocorreu um erro ao enviar. Código:&lt;br&gt;%i"
 
 #: src/modules/shot/e_mod_main.c:452
 msgid "Error - Can't create file"
@@ -10334,11 +10420,11 @@ msgstr "Confirmação de partilha"
 
 #: src/modules/shot/e_mod_main.c:565
 msgid ""
-"This image will be uploaded<br>to enlightenment.org. It will be publicly "
-"visible."
+"This image will be uploaded&lt;br&gt;to enlightenment.org. It will be "
+"publicly visible."
 msgstr ""
-"Esta imagem será enviada<br>para o enlightenment.org<br>e ficará disponível "
-"publicamente."
+"Esta imagem será enviada&lt;br&gt;para o enlightenment.org&lt;br&gt;e ficará "
+"disponível publicamente."
 
 #: src/modules/shot/e_mod_main.c:567
 msgid "Confirm"
@@ -10594,13 +10680,13 @@ msgstr "Entrar no modo de demonstração"
 
 #: src/modules/notification/e_mod_main.c:56
 msgid ""
-"Enlightenment is in <b>presentation</b> mode.<br>During presentation mode, "
-"screen saver, lock and power saving will be disabled so you are not "
-"interrupted."
+"Enlightenment is in &lt;b&gt;presentation&lt;/b&gt; mode.&lt;br&gt;During "
+"presentation mode, screen saver, lock and power saving will be disabled so "
+"you are not interrupted."
 msgstr ""
-"O Enlightenment está no modo de <b>demostração</b>.<br>Durante este modo e "
-"para que não seja incomodado, os serviços de bloqueio, poupança de energia e "
-"proteção de ecrã estarão inativos."
+"O Enlightenment está no modo de &lt;b&gt;demostração&lt;/b&gt;.&lt;br&gt;"
+"Durante este modo e para que não seja incomodado, os serviços de bloqueio, "
+"poupança de energia e proteção de ecrã estarão inativos."
 
 #: src/modules/notification/e_mod_main.c:62
 msgid "Exited Presentation Mode"
@@ -10608,11 +10694,11 @@ msgstr "Saiu do modo de demonstração"
 
 #: src/modules/notification/e_mod_main.c:63
 msgid ""
-"Presentation mode is over.<br>Now screen saver, lock and power saving "
+"Presentation mode is over.&lt;br&gt;Now screen saver, lock and power saving "
 "settings will be restored."
 msgstr ""
-"Terminou o modo de demonstração.<br>Os serviços de bloqueio, poupança de "
-"energia e proteção de ecrã vão ser restaurados."
+"Terminou o modo de demonstração.&lt;br&gt;Os serviços de bloqueio, poupança "
+"de energia e proteção de ecrã vão ser restaurados."
 
 #: src/modules/notification/e_mod_main.c:78
 msgid "Enter Offline Mode"
@@ -10620,11 +10706,12 @@ msgstr "Entrar no modo offline"
 
 #: src/modules/notification/e_mod_main.c:79
 msgid ""
-"Enlightenment is in <b>offline</b> mode.<br>During offline mode, modules "
-"that use network will stop polling remote services."
+"Enlightenment is in &lt;b&gt;offline&lt;/b&gt; mode.&lt;br&gt;During offline "
+"mode, modules that use network will stop polling remote services."
 msgstr ""
-"O Enlightenment está no modo <b>offline</b>.<br>Neste modo, os módulos que "
-"utilizem a rede irão parar de analisar os serviços remotos."
+"O Enlightenment está no modo &lt;b&gt;offline&lt;/b&gt;.&lt;br&gt;Neste "
+"modo, os módulos que utilizem a rede irão parar de analisar os serviços "
+"remotos."
 
 #: src/modules/notification/e_mod_main.c:85
 msgid "Exited Offline Mode"
@@ -10632,11 +10719,11 @@ msgstr "Saiu do modo offline"
 
 #: src/modules/notification/e_mod_main.c:86
 msgid ""
-"Now in <b>online</b> mode.<br>Now modules that use network will resume "
-"regular tasks."
+"Now in &lt;b&gt;online&lt;/b&gt; mode.&lt;br&gt;Now modules that use network "
+"will resume regular tasks."
 msgstr ""
-"Terminou o modo <b>offline</b>.<br>Os módulos que utilizam a rede irão "
-"retomar os serviços."
+"Terminou o modo &lt;b&gt;offline&lt;/b&gt;.&lt;br&gt;Os módulos que utilizam "
+"a rede irão retomar os serviços."
 
 #: src/modules/notification/e_mod_main.c:184
 msgid "Notification"
@@ -10752,15 +10839,17 @@ msgstr "Utilizar geometria de monitores múltiplos"
 #~ msgstr "Saída"
 
 #~ msgid ""
-#~ "<title>Copyright &copy; 2000-2012, by the Enlightenment Development Team</"
-#~ "><br><br>We hope you enjoy using this software as much as we enjoyed "
-#~ "writing it.<br><br>To contact us please visit:<br><hilight>http://www."
-#~ "enlightenment.org</><br><br>"
+#~ "&lt;title&gt;Copyright &amp;copy; 2000-2012, by the Enlightenment "
+#~ "Development Team&lt;/&gt;&lt;br&gt;&lt;br&gt;We hope you enjoy using this "
+#~ "software as much as we enjoyed writing it.&lt;br&gt;&lt;br&gt;To contact "
+#~ "us please visit:&lt;br&gt;&lt;hilight&gt;http://www.enlightenment.org&lt;/"
+#~ "&gt;&lt;br&gt;&lt;br&gt;"
 #~ msgstr ""
-#~ "<title>Direitos de autor &copy; 2000-2012, pela equipa de desenvolvimento "
-#~ "do Enlightenment</><br><br>Esperamos que goste de utilizar esta aplicação "
-#~ "tanto quanto nós gostamos de a desenvolver<br><br>Para nos contactar, "
-#~ "consulte:<br><hilight>http://www.enlightenment.org</><br><br>"
+#~ "&lt;title&gt;Direitos de autor &amp;copy; 2000-2012, pela equipa de "
+#~ "desenvolvimento do Enlightenment&lt;/&gt;&lt;br&gt;&lt;br&gt;Esperamos "
+#~ "que goste de utilizar esta aplicação tanto quanto nós gostamos de a "
+#~ "desenvolver&lt;br&gt;&lt;br&gt;Para nos contactar, consulte:&lt;br&gt;&lt;"
+#~ "hilight&gt;http://www.enlightenment.org&lt;/&gt;&lt;br&gt;&lt;br&gt;"
 
 #~ msgid "Configure Shelves"
 #~ msgstr "Configurar painéis"
