@@ -261,9 +261,11 @@ struct _E_Wayland_Compositor
 /* external variables */
 extern E_Wayland_Compositor *_e_wl_comp;
 
-Eina_Bool e_comp_wl_init(void);
-void e_comp_wl_shutdown(void);
-unsigned int e_comp_wl_time_get(void);
+EINTERN Eina_Bool e_comp_wl_init(void);
+EINTERN void e_comp_wl_shutdown(void);
+
+EAPI unsigned int e_comp_wl_time_get(void);
+EAPI void e_comp_wl_input_modifiers_update(unsigned int serial);
 
 # endif
 #endif

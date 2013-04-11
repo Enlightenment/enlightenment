@@ -23,7 +23,6 @@ static void _e_comp_wl_input_cb_unbind(struct wl_resource *resource);
 static struct xkb_keymap *_e_comp_wl_input_keymap_get(void);
 static int _e_comp_wl_input_keymap_fd_get(off_t size);
 static E_Wayland_Keyboard_Info *_e_comp_wl_input_keyboard_info_get(struct xkb_keymap *keymap);
-static void _e_comp_wl_input_modifiers_update(unsigned int serial);
 
 /* input interface prototypes */
 static void _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *resource, unsigned int id);
@@ -274,13 +273,59 @@ e_comp_wl_shutdown(void)
      e_module_disable(mod);
 }
 
-unsigned int 
+EAPI unsigned int 
 e_comp_wl_time_get(void)
 {
    struct timeval tm;
 
    gettimeofday(&tm, NULL);
    return (tm.tv_sec * 1000 + tm.tv_usec / 1000);
+}
+
+EAPI void 
+e_comp_wl_input_modifiers_update(unsigned int serial)
+{
+   struct wl_keyboard *kbd;
+   struct wl_keyboard_grab *grab;
+   unsigned int pressed = 0, latched = 0, locked = 0, group = 0;
+   Eina_Bool changed = EINA_FALSE;
+
+   /* check for valid keyboard */
+   if (!(kbd = _e_wl_comp->input->wl.seat.keyboard)) 
+     return;
+
+   /* try to get the current keyboard's grab interface. 
+    * Fallback to the default grab */
+   if (!(grab = kbd->grab)) grab = &kbd->default_grab;
+
+   pressed = xkb_state_serialize_mods(_e_wl_comp->input->xkb.state, 
+                                      XKB_STATE_DEPRESSED);
+   latched = xkb_state_serialize_mods(_e_wl_comp->input->xkb.state, 
+                                      XKB_STATE_LATCHED);
+   locked = xkb_state_serialize_mods(_e_wl_comp->input->xkb.state, 
+                                     XKB_STATE_LOCKED);
+   group = xkb_state_serialize_group(_e_wl_comp->input->xkb.state, 
+                                     XKB_STATE_EFFECTIVE);
+
+   if ((pressed != kbd->modifiers.mods_depressed) || 
+       (latched != kbd->modifiers.mods_latched) || 
+       (locked != kbd->modifiers.mods_locked) || 
+       (group != kbd->modifiers.group))
+     changed = EINA_TRUE;
+
+   kbd->modifiers.mods_depressed = pressed;
+   kbd->modifiers.mods_latched = latched;
+   kbd->modifiers.mods_locked = locked;
+   kbd->modifiers.group = group;
+
+   /* TODO: update leds ? */
+
+   if (changed)
+     grab->interface->modifiers(grab, serial, 
+                                kbd->modifiers.mods_depressed, 
+                                kbd->modifiers.mods_latched, 
+                                kbd->modifiers.mods_locked,
+                                kbd->modifiers.group);
 }
 
 /* local functions */
@@ -708,10 +753,10 @@ _e_comp_wl_input_keymap_get(void)
           }
      }
 
-   /* printf("Names\n"); */
-   /* printf("\tRules: %s\n", names.rules); */
-   /* printf("\tModel: %s\n", names.model); */
-   /* printf("\tLayout: %s\n", names.layout); */
+   printf("Keymap\n");
+   printf("\tRules: %s\n", names.rules);
+   printf("\tModel: %s\n", names.model);
+   printf("\tLayout: %s\n", names.layout);
 
    return xkb_map_new_from_names(_e_wl_comp->xkb.context, &names, 0);
 }
@@ -791,52 +836,6 @@ _e_comp_wl_input_keyboard_info_get(struct xkb_keymap *keymap)
    free(tmp);
 
    return info;
-}
-
-static void 
-_e_comp_wl_input_modifiers_update(unsigned int serial)
-{
-   struct wl_keyboard *kbd;
-   struct wl_keyboard_grab *grab;
-   unsigned int pressed = 0, latched = 0, locked = 0, group = 0;
-   Eina_Bool changed = EINA_FALSE;
-
-   /* check for valid keyboard */
-   if (!(kbd = _e_wl_comp->input->wl.seat.keyboard)) 
-     return;
-
-   /* try to get the current keyboard's grab interface. 
-    * Fallback to the default grab */
-   if (!(grab = kbd->grab)) grab = &kbd->default_grab;
-
-   pressed = xkb_state_serialize_mods(_e_wl_comp->input->xkb.state, 
-                                      XKB_STATE_DEPRESSED);
-   latched = xkb_state_serialize_mods(_e_wl_comp->input->xkb.state, 
-                                      XKB_STATE_LATCHED);
-   locked = xkb_state_serialize_mods(_e_wl_comp->input->xkb.state, 
-                                     XKB_STATE_LOCKED);
-   group = xkb_state_serialize_group(_e_wl_comp->input->xkb.state, 
-                                     XKB_STATE_EFFECTIVE);
-
-   if ((pressed != kbd->modifiers.mods_depressed) || 
-       (latched != kbd->modifiers.mods_latched) || 
-       (locked != kbd->modifiers.mods_locked) || 
-       (group != kbd->modifiers.group))
-     changed = EINA_TRUE;
-
-   kbd->modifiers.mods_depressed = pressed;
-   kbd->modifiers.mods_latched = latched;
-   kbd->modifiers.mods_locked = locked;
-   kbd->modifiers.group = group;
-
-   /* TODO: update leds ? */
-
-   if (changed)
-     grab->interface->modifiers(grab, serial, 
-                                kbd->modifiers.mods_depressed, 
-                                kbd->modifiers.mods_latched, 
-                                kbd->modifiers.mods_locked,
-                                kbd->modifiers.group);
 }
 
 /* input interface functions */
@@ -1484,7 +1483,7 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
                              &ews->pending.input);
 
    /* check for valid input region */
-   if (pixman_region32_not_empty(&ews->region.input))
+//   if (pixman_region32_not_empty(&ews->region.input))
      {
         /* get the extent of the input region */
         rects = pixman_region32_extents(&ews->region.input);
