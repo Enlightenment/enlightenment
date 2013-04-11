@@ -811,7 +811,9 @@ EAPI void           e_border_tmp_input_hidden_pop(E_Border *bd);
 EAPI void           e_border_activate(E_Border *bd, Eina_Bool just_do_it);
 
 EAPI void           e_border_focus_lock_set(Eina_Bool lock);
-EAPI Eina_Bool     e_border_focus_lock_get(void);
+EAPI Eina_Bool      e_border_focus_lock_get(void);
+
+EAPI void           e_border_input_object_set(E_Border *bd, Evas_Object *input_obj);
 
 extern EAPI int E_EVENT_BORDER_RESIZE;
 extern EAPI int E_EVENT_BORDER_MOVE;
