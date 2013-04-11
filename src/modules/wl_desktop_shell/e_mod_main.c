@@ -786,8 +786,11 @@ _e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj EINA_UNUSED,
 //   if ((ptr = ews->input->wl.seat.pointer))
      {
         /* if we have a pointer grab and this is the currently focused surface */
-        if ((ptr->grab) && (ptr->focus == ptr->current))
-          return;
+        /* if ((ptr->grab) && (ptr->focus == ptr->current)) */
+        /*   return; */
+
+        /* unset the pointer image */
+        ecore_x_window_cursor_set(ecore_evas_window_get(ews->ee), 0);
 
         /* set pointer focus */
         ptr->current = NULL;
