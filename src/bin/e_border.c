@@ -174,6 +174,13 @@ static void      _e_border_shape_input_rectangle_set(E_Border *bd);
 static void      _e_border_show(E_Border *bd);
 static void      _e_border_hide(E_Border *bd);
 
+static void _e_border_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void _e_border_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void _e_border_cb_mouse_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void _e_border_cb_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void _e_border_cb_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+static void _e_border_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+
 static Eina_Bool _e_border_cb_mouse_x_wheel(void *d EINA_UNUSED, int t, Ecore_Event_Mouse_Wheel *ev);
 static Eina_Bool _e_border_cb_mouse_x_up(void *d EINA_UNUSED, int t, Ecore_Event_Mouse_Button *ev);
 static Eina_Bool _e_border_cb_mouse_x_down(void *d EINA_UNUSED, int t, Ecore_Event_Mouse_Button *ev);
@@ -184,6 +191,7 @@ static Eina_Bool _e_border_cb_mouse_x_out(void *d, int t EINA_UNUSED, Ecore_X_Ev
 static void      _e_border_move_lost_window_to_center(E_Border *bd);
 static void      _e_border_reset_lost_window(E_Border *bd);
 static Eina_Bool _e_border_pointer_warp_to_center_timer(void *data);
+
 /* local subsystem globals */
 static Eina_List *handlers = NULL;
 static Eina_List *borders = NULL;
@@ -4613,6 +4621,31 @@ e_border_resize_limit(E_Border *bd,
 
    *w += bd->client_inset.l + bd->client_inset.r;
    *h += bd->client_inset.t + bd->client_inset.b;
+}
+
+EAPI void 
+e_border_input_object_set(E_Border *bd, Evas_Object *input_obj)
+{
+   E_OBJECT_CHECK(bd);
+   E_OBJECT_TYPE_CHECK(bd, E_BORDER_TYPE);
+
+   bd->input_object = input_obj;
+   if (!bd->input_object) return;
+
+   evas_object_event_callback_add(bd->input_object, EVAS_CALLBACK_MOUSE_IN, 
+                                  _e_border_cb_mouse_in, bd);
+   evas_object_event_callback_add(bd->input_object, EVAS_CALLBACK_MOUSE_MOVE, 
+                                  _e_border_cb_mouse_move, bd);
+   evas_object_event_callback_add(bd->input_object, EVAS_CALLBACK_MOUSE_OUT, 
+                                  _e_border_cb_mouse_out, bd);
+   evas_object_event_callback_add(bd->input_object, EVAS_CALLBACK_MOUSE_DOWN, 
+                                  _e_border_cb_mouse_down, bd);
+   evas_object_event_callback_add(bd->input_object, EVAS_CALLBACK_MOUSE_UP, 
+                                  _e_border_cb_mouse_up, bd);
+   evas_object_event_callback_add(bd->input_object, EVAS_CALLBACK_MOUSE_WHEEL, 
+                                  _e_border_cb_mouse_wheel, bd);
+
+   bd->callbacks_set = EINA_TRUE;
 }
 
 /* local subsystem functions */
