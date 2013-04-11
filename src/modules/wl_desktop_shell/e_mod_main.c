@@ -29,6 +29,7 @@ static void _e_wl_shell_shell_surface_type_set(E_Wayland_Shell_Surface *ewss);
 static void _e_wl_shell_shell_surface_type_reset(E_Wayland_Shell_Surface *ewss);
 static void _e_wl_shell_shell_surface_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 static int _e_wl_shell_shell_surface_cb_ping_timeout(void *data);
+static void _e_wl_shell_shell_surface_cb_resize(Ecore_Evas *ee);
 static void _e_wl_shell_shell_surface_cb_render_post(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
@@ -461,7 +462,9 @@ _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y
    /* create an ecore evas to represent this 'window' */
    ews->ee = ecore_evas_new(NULL, x, y, w, h, NULL);
    ecore_evas_alpha_set(ews->ee, EINA_TRUE);
-   ecore_evas_borderless_set(ews->ee, EINA_FALSE);
+   ecore_evas_borderless_set(ews->ee, EINA_TRUE);
+   ecore_evas_callback_resize_set(ews->ee, _e_wl_shell_shell_surface_cb_resize);
+   ecore_evas_data_set(ews->ee, "surface", ews);
 
    /* get a reference to the canvas */
    evas = ecore_evas_get(ews->ee);
@@ -640,6 +643,28 @@ _e_wl_shell_shell_surface_cb_ping_timeout(void *data)
    /* TODO: handle busy grab */
 
    return 1;
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_resize(Ecore_Evas *ee)
+{
+   E_Wayland_Surface *ews = NULL;
+
+   /* try to get the surface structure of this ecore_evas */
+   if (!(ews = ecore_evas_data_get(ee, "surface")))
+     return;
+
+   /* if we have the surface smart object */
+   if (ews->obj)
+     {
+        int w = 0, h = 0;
+
+        /* grab the requested geometry */
+        ecore_evas_request_geometry_get(ee, NULL, NULL, &w, &h);
+
+        /* resize the surface smart object */
+        evas_object_resize(ews->obj, w, h);
+     }
 }
 
 static void 
@@ -1064,7 +1089,23 @@ _e_wl_shell_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED,
    /* try to cast the resource to our shell surface */
    if (!(ewss = resource->data)) return;
 
-   /* TODO */
+   /* check for valid border */
+   if (ewss->surface->bd)
+     {
+        unsigned int edges = 0;
+
+        edges = (WL_SHELL_SURFACE_RESIZE_TOP | WL_SHELL_SURFACE_RESIZE_LEFT);
+
+        /* tell E to maximize this window */
+        e_border_maximize(ewss->surface->bd, 
+                          (e_config->maximize_policy & E_MAXIMIZE_TYPE) | 
+                          E_MAXIMIZE_BOTH);
+
+        /* send configure message to the shell surface to inform of new size */
+        wl_shell_surface_send_configure(&ewss->wl.resource, edges, 
+                                        ewss->surface->bd->w, 
+                                        ewss->surface->bd->h);
+     }
 
    /* set next surface type */
    ewss->next_type = E_WAYLAND_SHELL_SURFACE_TYPE_MAXIMIZED;
