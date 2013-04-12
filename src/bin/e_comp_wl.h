@@ -165,7 +165,8 @@ struct _E_Wayland_Shell_Grab
 {
    struct wl_pointer_grab grab;
    struct wl_pointer *pointer;
-   Evas_Coord x, y;
+   Evas_Coord x, y, w, h;
+   unsigned int edges;
 
    E_Wayland_Shell_Surface *shell_surface;
    struct wl_listener shell_surface_destroy;
