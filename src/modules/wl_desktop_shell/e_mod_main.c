@@ -49,6 +49,7 @@ static void _e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj E
 /* shell surface interface prototypes */
 static void _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial);
 static void _e_wl_shell_shell_surface_cb_move(struct wl_client *client, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial);
+static void _e_wl_shell_shell_surface_cb_resize(struct wl_client *client, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, unsigned int edges);
 static void _e_wl_shell_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
 static void _e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int method, unsigned int framerate, struct wl_resource *output_resource);
 static void _e_wl_shell_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource EINA_UNUSED);
@@ -59,6 +60,11 @@ static void _e_wl_shell_shell_surface_cb_class_set(struct wl_client *client EINA
 static void _e_wl_shell_move_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
 static void _e_wl_shell_move_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y);
 static void _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
+
+/* shell resize_grab interface prototypes */
+static void _e_wl_shell_resize_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
+static void _e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y);
+static void _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
 
 /* shell busy_grab interface prototypes */
 static void _e_wl_shell_busy_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
@@ -84,7 +90,7 @@ static const struct wl_shell_surface_interface _e_shell_surface_interface =
 {
    _e_wl_shell_shell_surface_cb_pong,
    _e_wl_shell_shell_surface_cb_move,
-   NULL, // resize
+   _e_wl_shell_shell_surface_cb_resize,
    _e_wl_shell_shell_surface_cb_toplevel_set,
    NULL, // transient_set
    _e_wl_shell_shell_surface_cb_fullscreen_set,
@@ -99,6 +105,13 @@ static const struct wl_pointer_grab_interface _e_move_grab_interface =
    _e_wl_shell_move_grab_cb_focus,
    _e_wl_shell_move_grab_cb_motion,
    _e_wl_shell_move_grab_cb_button,
+};
+
+static const struct wl_pointer_grab_interface _e_resize_grab_interface = 
+{
+   _e_wl_shell_resize_grab_cb_focus,
+   _e_wl_shell_resize_grab_cb_motion,
+   _e_wl_shell_resize_grab_cb_button,
 };
 
 static const struct wl_pointer_grab_interface _e_busy_grab_interface = 
@@ -1275,6 +1288,61 @@ _e_wl_shell_shell_surface_cb_move(struct wl_client *client, struct wl_resource *
 }
 
 static void 
+_e_wl_shell_shell_surface_cb_resize(struct wl_client *client, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, unsigned int edges)
+{
+   E_Wayland_Input *input = NULL;
+   E_Wayland_Shell_Surface *ewss = NULL;
+   E_Wayland_Shell_Grab *grab = NULL;
+   E_Binding_Event_Mouse_Button *ev;
+
+   /* try to cast the seat resource to our input structure */
+   if (!(input = seat_resource->data)) return;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ewss = resource->data)) return;
+
+   /* if the shell surface is fullscreen or maximized, get out */
+   if ((ewss->type == E_WAYLAND_SHELL_SURFACE_TYPE_FULLSCREEN) || 
+       (ewss->type == E_WAYLAND_SHELL_SURFACE_TYPE_MAXIMIZED))
+     return;
+
+   /* check for valid move setup */
+   if ((input->wl.seat.pointer->button_count == 0) || 
+       (input->wl.seat.pointer->grab_serial != serial) || 
+       (input->wl.seat.pointer->focus != &ewss->surface->wl.surface))
+     return;
+
+   if ((edges == 0) || (edges > 15) || 
+       ((edges & 3) == 3) || ((edges & 12) == 12))
+     return;
+
+   /* try to allocate space for our grab structure */
+   if (!(grab = E_NEW(E_Wayland_Shell_Grab, 1))) return;
+
+   /* set grab properties */
+   grab->edges = edges;
+   grab->w = ewss->surface->geometry.w;
+   grab->h = ewss->surface->geometry.h;
+
+   /* start the resize grab */
+   _e_wl_shell_grab_start(grab, ewss, input->wl.seat.pointer, 
+                          &_e_resize_grab_interface, edges);
+
+   /* create a fake binding event for mouse button */
+   ev = E_NEW(E_Binding_Event_Mouse_Button, 1);
+
+   if (grab->pointer->grab_button == BTN_LEFT)
+     ev->button = 1;
+   else if (grab->pointer->grab_button == BTN_MIDDLE)
+     ev->button = 2;
+   else if (grab->pointer->grab_button == BTN_RIGHT)
+     ev->button = 3;
+
+   /* tell E to start resizing this border */
+   e_border_act_resize_begin(ewss->surface->bd, ev);
+}
+
+static void 
 _e_wl_shell_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Wayland_Shell_Surface *ewss = NULL;
@@ -1386,6 +1454,7 @@ _e_wl_shell_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED, str
      }
 }
 
+/* shell move_grab interface functions */
 static void 
 _e_wl_shell_move_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED)
 {
@@ -1402,25 +1471,25 @@ _e_wl_shell_move_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int times
    /* FIXME: This needs to become a no-op as the actual surface movement 
     * is handled by e_border now */
 
-   printf("Grab Motion: %d %d\n", x, y);
+   printf("Move Grab Motion: %d %d\n", x, y);
 
-   E_Wayland_Shell_Grab *ewsg = NULL;
-   E_Wayland_Shell_Surface *ewss = NULL;
-   struct wl_pointer *ptr;
+   /* E_Wayland_Shell_Grab *ewsg = NULL; */
+   /* E_Wayland_Shell_Surface *ewss = NULL; */
+   /* struct wl_pointer *ptr; */
    /* Evas_Coord nx = 0, ny = 0; */
 
    /* safety */
-   if (!grab) return;
+   /* if (!grab) return; */
 
    /* try to get the shell grab from the pointer grab */
-   if (!(ewsg = container_of(grab, E_Wayland_Shell_Grab, grab)))
-     return;
+   /* if (!(ewsg = container_of(grab, E_Wayland_Shell_Grab, grab))) */
+   /*   return; */
 
    /* try to get the pointer */
-   if (!(ptr = grab->pointer)) return;
+   /* if (!(ptr = grab->pointer)) return; */
 
    /* try to get the shell surface */
-   if (!(ewss = ewsg->shell_surface)) return;
+   /* if (!(ewss = ewsg->shell_surface)) return; */
 
 
    /* printf("\tGrab: %d %d\n", ewsg->x, ewsg->y); */
@@ -1482,6 +1551,71 @@ _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int times
      }
 }
 
+/* shell resize_grab interface functions */
+static void 
+_e_wl_shell_resize_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED)
+{
+   /* safety */
+   if (!grab) return;
+
+   /* remove focus */
+   grab->focus = NULL;
+}
+
+static void 
+_e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y)
+{
+   /* FIXME: This needs to become a no-op as the actual surface resize 
+    * is handled by e_border now */
+
+   printf("Resize Grab Motion: %d %d\n", x, y);
+}
+
+static void 
+_e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state)
+{
+   E_Wayland_Shell_Grab *ewsg = NULL;
+   struct wl_pointer *ptr;
+
+   printf("Resize Grab Button\n");
+
+   /* safety */
+   if (!grab) return;
+
+   /* try to get the shell grab from the pointer grab */
+   if (!(ewsg = container_of(grab, E_Wayland_Shell_Grab, grab)))
+     return;
+
+   /* try to get the pointer */
+   if (!(ptr = grab->pointer)) return;
+
+   printf("\tButton Count: %d\n", ptr->button_count);
+   printf("\tState: %d\n", state);
+
+   /* test if we are done with the grab */
+   if ((ptr->button_count == 0) && 
+       (state == WL_POINTER_BUTTON_STATE_RELEASED))
+     {
+        E_Wayland_Surface *ews = NULL;
+
+        printf("\tNO BUTTON DOWN\n");
+        ews = ewsg->shell_surface->surface;
+
+        /* tell E to end the border resize */
+        e_border_act_resize_end(ews->bd, NULL);
+
+        /* end the grab */
+        _e_wl_shell_grab_end(ewsg);
+        free(grab);
+
+        /* set surface geometry */
+        _e_wl_shell_shell_surface_configure(ews, ews->geometry.x, 
+                                            ews->geometry.y, ews->bd->w, 
+                                            ews->bd->h);
+     }
+}
+
+/* shell busy_grab interface functions */
 static void 
 _e_wl_shell_busy_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED)
 {
