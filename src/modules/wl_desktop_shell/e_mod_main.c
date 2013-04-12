@@ -29,12 +29,13 @@ static E_Wayland_Shell_Surface *_e_wl_shell_shell_surface_create(void *shell EIN
 static void _e_wl_shell_shell_surface_destroy(struct wl_resource *resource);
 static void _e_wl_shell_shell_surface_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 static void _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+static void _e_wl_shell_shell_surface_map_popup(E_Wayland_Surface *ews);
 static void _e_wl_shell_shell_surface_unmap(E_Wayland_Surface *ews);
 static void _e_wl_shell_shell_surface_type_set(E_Wayland_Shell_Surface *ewss);
 static void _e_wl_shell_shell_surface_type_reset(E_Wayland_Shell_Surface *ewss);
 static void _e_wl_shell_shell_surface_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 static int _e_wl_shell_shell_surface_cb_ping_timeout(void *data);
-static void _e_wl_shell_shell_surface_cb_resize(Ecore_Evas *ee);
+static void _e_wl_shell_shell_surface_cb_ee_resize(Ecore_Evas *ee);
 static void _e_wl_shell_shell_surface_cb_render_post(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
@@ -48,10 +49,11 @@ static void _e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj E
 
 /* shell surface interface prototypes */
 static void _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial);
-static void _e_wl_shell_shell_surface_cb_move(struct wl_client *client, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial);
-static void _e_wl_shell_shell_surface_cb_resize(struct wl_client *client, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, unsigned int edges);
+static void _e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial);
+static void _e_wl_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, unsigned int edges);
 static void _e_wl_shell_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
-static void _e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int method, unsigned int framerate, struct wl_resource *output_resource);
+static void _e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int method EINA_UNUSED, unsigned int framerate EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED);
+static void _e_wl_shell_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, struct wl_resource *parent_resource, int x, int y, unsigned int flags EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_title_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *title);
 static void _e_wl_shell_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *clas);
@@ -59,17 +61,25 @@ static void _e_wl_shell_shell_surface_cb_class_set(struct wl_client *client EINA
 /* shell move_grab interface prototypes */
 static void _e_wl_shell_move_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
 static void _e_wl_shell_move_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y);
-static void _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
+static void _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, unsigned int button EINA_UNUSED, unsigned int state);
 
 /* shell resize_grab interface prototypes */
 static void _e_wl_shell_resize_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
-static void _e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y);
-static void _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
+static void _e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab EINA_UNUSED, unsigned int timestamp EINA_UNUSED, wl_fixed_t x, wl_fixed_t y);
+static void _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, unsigned int button EINA_UNUSED, unsigned int state);
+
+/* shell popup_grab interface prototypes */
+static void _e_wl_shell_popup_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y);
+static void _e_wl_shell_popup_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y);
+static void _e_wl_shell_popup_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
+
+/* shell popup function prototypes */
+static void _e_wl_shell_popup_grab_end(struct wl_pointer *pointer);
 
 /* shell busy_grab interface prototypes */
 static void _e_wl_shell_busy_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
 static void _e_wl_shell_busy_grab_cb_motion(struct wl_pointer_grab *grab EINA_UNUSED, unsigned int timestamp EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
-static void _e_wl_shell_busy_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
+static void _e_wl_shell_busy_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, unsigned int button, unsigned int state);
 
 /* local wayland interfaces */
 static const struct wl_shell_interface _e_shell_interface = 
@@ -94,7 +104,7 @@ static const struct wl_shell_surface_interface _e_shell_surface_interface =
    _e_wl_shell_shell_surface_cb_toplevel_set,
    NULL, // transient_set
    _e_wl_shell_shell_surface_cb_fullscreen_set,
-   NULL, // popup_set
+   _e_wl_shell_shell_surface_cb_popup_set,
    _e_wl_shell_shell_surface_cb_maximized_set,
    _e_wl_shell_shell_surface_cb_title_set,
    _e_wl_shell_shell_surface_cb_class_set
@@ -112,6 +122,13 @@ static const struct wl_pointer_grab_interface _e_resize_grab_interface =
    _e_wl_shell_resize_grab_cb_focus,
    _e_wl_shell_resize_grab_cb_motion,
    _e_wl_shell_resize_grab_cb_button,
+};
+
+static const struct wl_pointer_grab_interface _e_popup_grab_interface = 
+{
+   _e_wl_shell_popup_grab_cb_focus,
+   _e_wl_shell_popup_grab_cb_motion,
+   _e_wl_shell_popup_grab_cb_button,
 };
 
 static const struct wl_pointer_grab_interface _e_busy_grab_interface = 
@@ -328,7 +345,8 @@ _e_wl_shell_grab_start(E_Wayland_Shell_Grab *grab, E_Wayland_Shell_Surface *ewss
    /* safety check */
    if ((!grab) || (!ewss)) return;
 
-   /* TODO: popup end grab ?? */
+   /* end any popup grabs */
+   _e_wl_shell_popup_grab_end(pointer);
 
    /* setup grab properties */
    grab->grab.interface = interface;
@@ -504,12 +522,27 @@ static void
 _e_wl_shell_shell_surface_destroy(struct wl_resource *resource)
 {
    E_Wayland_Shell_Surface *ewss = NULL;
+   E_Wayland_Ping_Timer *tmr = NULL;
 
    /* try to cast the resource to our shell surface */
    if (!(ewss = resource->data)) return;
 
+   /* if we have a popup grab, end it */
+   if (ewss->popup.grab.pointer)
+     wl_pointer_end_grab(ewss->popup.grab.pointer);
+
    wl_list_remove(&ewss->wl.surface_destroy.link);
    ewss->surface->configure = NULL;
+
+   /* try to cast the ping timer */
+   if ((tmr = (E_Wayland_Ping_Timer *)ewss->ping_timer))
+     {
+        if (tmr->source) wl_event_source_remove(tmr->source);
+
+        /* free the allocated space for ping timer */
+        E_FREE(tmr);
+        ewss->ping_timer = NULL;
+     }
 
    wl_list_remove(&ewss->wl.link);
 
@@ -594,6 +627,13 @@ _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y
    ews->geometry.w = w;
    ews->geometry.h = h;
 
+   /* handle special case of popup windows */
+   if (ews->shell_surface->type == E_WAYLAND_SHELL_SURFACE_TYPE_POPUP)
+     {
+        _e_wl_shell_shell_surface_map_popup(ews);
+        return;
+     }
+
    /* get the current container */
    con = e_container_current_get(e_manager_current_get());
 
@@ -602,7 +642,8 @@ _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y
    ecore_evas_alpha_set(ews->ee, EINA_TRUE);
    ecore_evas_borderless_set(ews->ee, EINA_TRUE);
    ecore_evas_input_event_unregister(ews->ee);
-   ecore_evas_callback_resize_set(ews->ee, _e_wl_shell_shell_surface_cb_resize);
+   ecore_evas_callback_resize_set(ews->ee, 
+                                  _e_wl_shell_shell_surface_cb_ee_resize);
    ecore_evas_data_set(ews->ee, "surface", ews);
 
    /* get a reference to the canvas */
@@ -645,6 +686,92 @@ _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y
    e_border_show(ews->bd);
 
    ews->mapped = EINA_TRUE;
+}
+
+static void 
+_e_wl_shell_shell_surface_map_popup(E_Wayland_Surface *ews)
+{
+   E_Wayland_Shell_Surface *ewss = NULL;
+   Ecore_X_Window parent = 0;
+   Evas *evas;
+   struct wl_seat *seat;
+   char opts[PATH_MAX];
+
+   /* try to get the shell surface */
+   if (!(ewss = ews->shell_surface)) return;
+
+   if (ewss->parent)
+     parent = ecore_evas_window_get(ewss->parent->ee);
+
+   snprintf(opts, sizeof(opts), "parent=%d", parent);
+
+   /* create an ecore evas to represent this 'window' */
+   ews->ee = ecore_evas_new(NULL, ewss->popup.x, ewss->popup.y, 
+                            ews->geometry.w, ews->geometry.h, opts);
+   ecore_evas_alpha_set(ews->ee, EINA_TRUE);
+   ecore_evas_borderless_set(ews->ee, EINA_TRUE);
+   ecore_evas_override_set(ews->ee, EINA_TRUE);
+//   ecore_evas_input_event_unregister(ews->ee);
+   ecore_evas_callback_resize_set(ews->ee, 
+                                  _e_wl_shell_shell_surface_cb_ee_resize);
+   ecore_evas_data_set(ews->ee, "surface", ews);
+
+   /* get a reference to the canvas */
+   evas = ecore_evas_get(ews->ee);
+
+   /* setup a post_render callback */
+   evas_event_callback_add(evas, EVAS_CALLBACK_RENDER_POST, 
+                           _e_wl_shell_shell_surface_cb_render_post, ews);
+
+   /* create a surface smart object */
+   ews->obj = e_surface_add(evas);
+   evas_object_move(ews->obj, 0, 0);
+   evas_object_resize(ews->obj, ews->geometry.w, ews->geometry.h);
+   evas_object_show(ews->obj);
+
+   /* hook smart object callbacks */
+   evas_object_smart_callback_add(ews->obj, "mouse_in", 
+                                  _e_wl_shell_shell_surface_cb_mouse_in, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_out", 
+                                  _e_wl_shell_shell_surface_cb_mouse_out, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_move", 
+                                  _e_wl_shell_shell_surface_cb_mouse_move, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_up", 
+                                  _e_wl_shell_shell_surface_cb_mouse_up, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_down", 
+                                  _e_wl_shell_shell_surface_cb_mouse_down, ews);
+   evas_object_smart_callback_add(ews->obj, "key_up", 
+                                  _e_wl_shell_shell_surface_cb_key_up, ews);
+   evas_object_smart_callback_add(ews->obj, "key_down", 
+                                  _e_wl_shell_shell_surface_cb_key_down, ews);
+   evas_object_smart_callback_add(ews->obj, "focus_in", 
+                                  _e_wl_shell_shell_surface_cb_focus_in, ews);
+   evas_object_smart_callback_add(ews->obj, "focus_out", 
+                                  _e_wl_shell_shell_surface_cb_focus_out, ews);
+
+   ecore_evas_show(ews->ee);
+   ews->mapped = EINA_TRUE;
+
+   seat = ewss->popup.seat;
+
+   /* set popup properties */
+   ewss->popup.grab.interface = &_e_popup_grab_interface;
+   ewss->popup.up = EINA_FALSE;
+
+   if (ewss->parent)
+     {
+        /* TODO */
+        /* ewss->popup.parent_destroy.notify = ; */
+
+        /* add a signal callback to be raised when the parent gets destroyed */
+        /* wl_signal_add(&ewss->parent->wl.surface.resource.destroy_signal,  */
+        /*               &ewss->popup.parent_destroy); */
+     }
+
+   if (seat->pointer->grab_serial == ewss->popup.serial)
+     wl_pointer_start_grab(seat->pointer, &ewss->popup.grab);
+   else
+     wl_shell_surface_send_popup_done(&ewss->wl.resource);
 }
 
 static void 
@@ -812,7 +939,7 @@ _e_wl_shell_shell_surface_cb_ping_timeout(void *data)
 }
 
 static void 
-_e_wl_shell_shell_surface_cb_resize(Ecore_Evas *ee)
+_e_wl_shell_shell_surface_cb_ee_resize(Ecore_Evas *ee)
 {
    E_Wayland_Surface *ews = NULL;
 
@@ -1239,7 +1366,7 @@ _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct w
 }
 
 static void 
-_e_wl_shell_shell_surface_cb_move(struct wl_client *client, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial)
+_e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial)
 {
    E_Wayland_Input *input = NULL;
    E_Wayland_Shell_Surface *ewss = NULL;
@@ -1288,7 +1415,7 @@ _e_wl_shell_shell_surface_cb_move(struct wl_client *client, struct wl_resource *
 }
 
 static void 
-_e_wl_shell_shell_surface_cb_resize(struct wl_client *client, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, unsigned int edges)
+_e_wl_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, unsigned int edges)
 {
    E_Wayland_Input *input = NULL;
    E_Wayland_Shell_Surface *ewss = NULL;
@@ -1355,7 +1482,7 @@ _e_wl_shell_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, 
 }
 
 static void 
-_e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int method, unsigned int framerate, struct wl_resource *output_resource)
+_e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int method EINA_UNUSED, unsigned int framerate EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED)
 {
    E_Wayland_Shell_Surface *ewss = NULL;
 
@@ -1376,6 +1503,29 @@ _e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED
                                         ewss->surface->bd->w, 
                                         ewss->surface->bd->h);
      }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, struct wl_resource *parent_resource, int x, int y, unsigned int flags EINA_UNUSED)
+{
+   E_Wayland_Shell_Surface *ewss = NULL;
+   E_Wayland_Input *input = NULL;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ewss = resource->data)) return;
+
+   /* cast the seat resource to our input structure */
+   input = seat_resource->data;
+
+   /* set surface type */
+   ewss->type = E_WAYLAND_SHELL_SURFACE_TYPE_POPUP;
+
+   /* set surface popup properties */
+   ewss->parent = parent_resource->data;
+   ewss->popup.seat = &input->wl.seat;
+   ewss->popup.serial = serial;
+   ewss->popup.x = x;
+   ewss->popup.y = y;
 }
 
 static void 
@@ -1508,7 +1658,7 @@ _e_wl_shell_move_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int times
 }
 
 static void 
-_e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state)
+_e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, unsigned int button EINA_UNUSED, unsigned int state)
 {
    E_Wayland_Shell_Grab *ewsg = NULL;
    struct wl_pointer *ptr;
@@ -1563,7 +1713,7 @@ _e_wl_shell_resize_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface
 }
 
 static void 
-_e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y)
+_e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab EINA_UNUSED, unsigned int timestamp EINA_UNUSED, wl_fixed_t x, wl_fixed_t y)
 {
    /* FIXME: This needs to become a no-op as the actual surface resize 
     * is handled by e_border now */
@@ -1572,7 +1722,7 @@ _e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int tim
 }
 
 static void 
-_e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state)
+_e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, unsigned int button EINA_UNUSED, unsigned int state)
 {
    E_Wayland_Shell_Grab *ewsg = NULL;
    struct wl_pointer *ptr;
@@ -1615,6 +1765,97 @@ _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int tim
      }
 }
 
+/* shell popup_grab interface prototypes */
+static void 
+_e_wl_shell_popup_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y)
+{
+   E_Wayland_Shell_Surface *ewss;
+   struct wl_pointer *ptr;
+   struct wl_client *client;
+
+   /* try to get the pointer */
+   if (!(ptr = grab->pointer)) return;
+
+   /* try to get the surface from the pointer grab */
+   ewss = container_of(grab, E_Wayland_Shell_Surface, popup.grab);
+   if (!ewss) return;
+
+   client = ewss->surface->wl.surface.resource.client;
+
+   if ((surface) && (surface->resource.client == client))
+     {
+        wl_pointer_set_focus(ptr, surface, x, y);
+        grab->focus = surface;
+     }
+   else
+     {
+        wl_pointer_set_focus(ptr, NULL, 0, 0);
+        grab->focus = NULL;
+     }
+}
+
+static void 
+_e_wl_shell_popup_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y)
+{
+   struct wl_resource *res;
+
+   if ((res = grab->pointer->focus_resource))
+     wl_pointer_send_motion(res, timestamp, x, y);
+}
+
+static void 
+_e_wl_shell_popup_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state)
+{
+   E_Wayland_Shell_Surface *ewss = NULL;
+   struct wl_resource *res;
+
+   /* try to get the shell surface */
+   ewss = container_of(grab, E_Wayland_Shell_Surface, popup.grab);
+   if (!ewss) return;
+
+   if ((res = grab->pointer->focus_resource))
+     {
+        struct wl_display *disp;
+        unsigned int serial;
+
+        disp = wl_client_get_display(res->client);
+        serial = wl_display_get_serial(disp);
+
+        wl_pointer_send_button(res, serial, timestamp, button, state);
+     }
+   else if ((state = WL_POINTER_BUTTON_STATE_RELEASED) && 
+            ((ewss->popup.up) || 
+                (timestamp - ewss->popup.seat->pointer->grab_time > 500)))
+     {
+        /* end the popup grab */
+        _e_wl_shell_popup_grab_end(grab->pointer);
+     }
+
+   if (state == WL_POINTER_BUTTON_STATE_RELEASED)
+     ewss->popup.up = EINA_TRUE;
+}
+
+/* shell popup functions */
+static void 
+_e_wl_shell_popup_grab_end(struct wl_pointer *pointer)
+{
+   E_Wayland_Shell_Surface *ewss = NULL;
+   struct wl_pointer_grab *grab;
+
+   grab = pointer->grab;
+
+   /* try to get the shell surface from this grab */
+   ewss = container_of(grab, E_Wayland_Shell_Surface, popup.grab);
+   if (!ewss) return;
+
+   if (pointer->grab->interface == &_e_popup_grab_interface)
+     {
+        wl_shell_surface_send_popup_done(&ewss->wl.resource);
+        wl_pointer_end_grab(grab->pointer);
+        ewss->popup.grab.pointer = NULL;
+     }
+}
+
 /* shell busy_grab interface functions */
 static void 
 _e_wl_shell_busy_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED)
@@ -1640,11 +1881,10 @@ _e_wl_shell_busy_grab_cb_motion(struct wl_pointer_grab *grab EINA_UNUSED, unsign
 }
 
 static void 
-_e_wl_shell_busy_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state)
+_e_wl_shell_busy_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, unsigned int button, unsigned int state)
 {
    E_Wayland_Shell_Grab *ewsg = NULL;
    E_Wayland_Shell_Surface *ewss = NULL;
-   E_Wayland_Surface *ews = NULL;
    E_Wayland_Input *input = NULL;
 
    /* try to cast the pointer grab to our structure */
