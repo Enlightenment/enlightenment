@@ -52,6 +52,7 @@ static void _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUS
 static void _e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial);
 static void _e_wl_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, unsigned int edges);
 static void _e_wl_shell_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
+static void _e_wl_shell_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource, int x, int y, unsigned int flags);
 static void _e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int method EINA_UNUSED, unsigned int framerate EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, struct wl_resource *parent_resource, int x, int y, unsigned int flags EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource EINA_UNUSED);
@@ -102,7 +103,7 @@ static const struct wl_shell_surface_interface _e_shell_surface_interface =
    _e_wl_shell_shell_surface_cb_move,
    _e_wl_shell_shell_surface_cb_resize,
    _e_wl_shell_shell_surface_cb_toplevel_set,
-   NULL, // transient_set
+   _e_wl_shell_shell_surface_cb_transient_set,
    _e_wl_shell_shell_surface_cb_fullscreen_set,
    _e_wl_shell_shell_surface_cb_popup_set,
    _e_wl_shell_shell_surface_cb_maximized_set,
@@ -637,8 +638,23 @@ _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y
    /* get the current container */
    con = e_container_current_get(e_manager_current_get());
 
-   /* create an ecore evas to represent this 'window' */
-   ews->ee = ecore_evas_new(NULL, x, y, w, h, NULL);
+   if (ews->shell_surface->parent)
+     {
+        Ecore_X_Window parent = 0;
+        char opts[PATH_MAX];
+
+        parent = ecore_evas_window_get(ews->shell_surface->parent->ee);
+        snprintf(opts, sizeof(opts), "parent=%d", parent);
+
+        /* create an ecore evas to represent this 'window' */
+        ews->ee = ecore_evas_new(NULL, x, y, w, h, opts);
+     }
+   else
+     {
+        /* create an ecore evas to represent this 'window' */
+        ews->ee = ecore_evas_new(NULL, x, y, w, h, NULL);
+     }
+
    ecore_evas_alpha_set(ews->ee, EINA_TRUE);
    ecore_evas_borderless_set(ews->ee, EINA_TRUE);
    ecore_evas_input_event_unregister(ews->ee);
@@ -838,6 +854,12 @@ _e_wl_shell_shell_surface_type_set(E_Wayland_Shell_Surface *ewss)
 
    switch (ewss->type)
      {
+      case E_WAYLAND_SHELL_SURFACE_TYPE_TRANSIENT:
+        ewss->surface->geometry.x = 
+          ewss->parent->geometry.x + ewss->transient.x;
+        ewss->surface->geometry.y = 
+          ewss->parent->geometry.y + ewss->transient.y;
+        break;
         /* record the current geometry so we can restore it */
       case E_WAYLAND_SHELL_SURFACE_TYPE_FULLSCREEN:
       case E_WAYLAND_SHELL_SURFACE_TYPE_MAXIMIZED:
@@ -1479,6 +1501,26 @@ _e_wl_shell_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, 
 
    /* set next surface type */
    ewss->next_type = E_WAYLAND_SHELL_SURFACE_TYPE_TOPLEVEL;
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource, int x, int y, unsigned int flags)
+{
+   E_Wayland_Shell_Surface *ewss = NULL;
+   E_Wayland_Surface *ews = NULL;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ewss = resource->data)) return;
+
+   ews = parent_resource->data;
+
+   ewss->parent = ews;
+   ewss->transient.x = x;
+   ewss->transient.y = y;
+   ewss->transient.flags = flags;
+
+   /* set next surface type */
+   ewss->next_type = E_WAYLAND_SHELL_SURFACE_TYPE_TRANSIENT;
 }
 
 static void 
