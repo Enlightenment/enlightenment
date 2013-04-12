@@ -137,7 +137,17 @@ struct _E_Wayland_Shell_Surface
         Eina_Bool valid : 1;
      } saved;
 
-   E_Wayland_Surface *surface;
+   struct 
+     {
+        struct wl_pointer_grab grab;
+        struct wl_seat *seat;
+        struct wl_listener parent_destroy;
+        int x, y;
+        Eina_Bool up : 1;
+        unsigned int serial;
+     } popup;
+
+   E_Wayland_Surface *surface, *parent;
    E_Wayland_Shell_Surface_Type type, next_type;
 
    char *title, *clas;
