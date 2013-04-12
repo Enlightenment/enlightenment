@@ -147,6 +147,12 @@ struct _E_Wayland_Shell_Surface
         unsigned int serial;
      } popup;
 
+   struct 
+     {
+        Evas_Coord x, y;
+        unsigned int flags;
+     } transient;
+
    E_Wayland_Surface *surface, *parent;
    E_Wayland_Shell_Surface_Type type, next_type;
 
