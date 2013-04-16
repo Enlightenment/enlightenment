@@ -234,12 +234,14 @@ _e_smart_del(Evas_Object *obj)
    INTERNAL_ENTRY;
    if (sd->child_obj)
      {
-        evas_object_event_callback_del(sd->child_obj, EVAS_CALLBACK_DEL,
-                                       _e_smart_child_del_hook);
-        evas_object_event_callback_del(sd->child_obj, EVAS_CALLBACK_RESIZE,
-                                       _e_smart_child_resize_hook);
-        evas_object_del(sd->child_obj);
+        Evas_Object *o = sd->child_obj;
+        
         sd->child_obj = NULL;
+        evas_object_event_callback_del(o, EVAS_CALLBACK_DEL,
+                                       _e_smart_child_del_hook);
+        evas_object_event_callback_del(o, EVAS_CALLBACK_RESIZE,
+                                       _e_smart_child_resize_hook);
+        evas_object_del(o);
      }
    E_FREE(sd);
 }
