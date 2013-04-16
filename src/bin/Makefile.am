@@ -201,6 +201,7 @@ e_win.h \
 e_xinerama.h \
 e_xkb.h \
 e_xsettings.h \
+e_zoomap.h \
 e_zone.h
 
 if HAVE_WAYLAND_CLIENTS
@@ -371,6 +372,7 @@ e_win.c \
 e_xinerama.c \
 e_xkb.c \
 e_xsettings.c \
+e_zoomap.c \
 e_zone.c \
 $(ENLIGHTENMENTHEADERS)
 

@@ -55,6 +55,7 @@
 #include "e_remember.h"
 #include "e_win.h"
 #include "e_pan.h"
+#include "e_zoomap.h"
 #include "e_dialog.h"
 #include "e_configure.h"
 #include "e_configure_option.h"

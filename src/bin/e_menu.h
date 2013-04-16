@@ -56,6 +56,7 @@ struct _E_Menu
    E_Container_Shape  *shape;
    Ecore_Job           *dangling_job;
    Evas                 *evas;
+   Evas_Object         *bg_object_wrap;
    Evas_Object         *bg_object;
    Evas_Object         *container_object;
    Evas_Coord           container_x, container_y, container_w, container_h;
