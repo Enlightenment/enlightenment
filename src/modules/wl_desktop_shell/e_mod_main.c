@@ -1041,10 +1041,6 @@ _e_wl_shell_shell_surface_cb_ee_resize(Ecore_Evas *ee)
         /* grab the requested geometry */
         ecore_evas_request_geometry_get(ee, NULL, NULL, &w, &h);
 
-        printf("EE Resize: %d %d\n", w, h);
-
-        evas_object_move(ews->obj, 0, 0);
-
         /* resize the surface smart object */
         evas_object_resize(ews->obj, w, h);
      }
