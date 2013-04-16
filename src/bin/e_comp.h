@@ -184,6 +184,7 @@ struct _E_Comp_Win
    Eina_Bool            real_hid : 1;  // last hide was a real window unmap
    Eina_Bool            inhash : 1;  // is in the windows hash
    Eina_Bool            show_ready : 1;  // is this window ready for its first show
+   Eina_Bool            geom_update : 1;  // window needs geometry updated
 
    Eina_Bool            show_anim : 1; // ran show animation
 

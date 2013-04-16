@@ -469,6 +469,11 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
 {
    int x, y, w, h;
 
+   if (cw->update)
+     {
+        cw->geom_update = 1;
+        return;
+     }
    if (cw->bd)
      x = cw->bd->x, y = cw->bd->y;
    else if (cw->visible)
@@ -492,6 +497,7 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
         e_layout_child_move(cw->effect_obj, x, y);
         e_layout_child_resize(cw->effect_obj, w, h);
      }
+   cw->geom_update = 0;
 }
 
 static void
@@ -501,12 +507,14 @@ _e_comp_win_update(E_Comp_Win *cw)
    Evas_Object *o;
    E_Comp_Render_Update_Rect *r;
    int i;
+   int pw, ph;
    int pshaped = cw->shaped;
 
    DBG("UPDATE [0x%x] pm = %x", cw->win, cw->pixmap);
    if (conf->grab) ecore_x_grab();
    cw->update = 0;
 
+   pw = cw->pw, ph = cw->ph;
    if (cw->argb)
      {
         if (cw->rects)
@@ -574,8 +582,6 @@ _e_comp_win_update(E_Comp_Win *cw)
                {
                   ecore_x_pixmap_geometry_get(cw->pixmap, NULL, NULL, &(cw->pw), &(cw->ph));
                   _e_comp_win_ready_timeout_setup(cw);
-                  if ((cw->pw > 0) && (cw->ph > 0))
-                    _e_comp_win_geometry_update(cw);
                }
              else
                {
@@ -641,8 +647,6 @@ _e_comp_win_update(E_Comp_Win *cw)
    //   evas_object_move(cw->effect_obj, cw->x, cw->y);
    // was cw->w / cw->h
    //   evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
-   _e_comp_win_geometry_update(cw);
-
    if ((cw->c->gl) && (conf->texture_from_pixmap) &&
        (!cw->shaped) && (!cw->rects) && (cw->pixmap))
      {
@@ -869,6 +873,7 @@ _e_comp_win_update(E_Comp_Win *cw)
                }
           }
      }
+   if (cw->geom_update || (cw->pw != pw) || (cw->ph != ph)) _e_comp_win_geometry_update(cw);
    if ((cw->shobj) && (cw->obj))
      {
         if (pshaped != cw->shaped)
