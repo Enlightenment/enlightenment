@@ -516,7 +516,9 @@ group { name: "e/comp/effects/auto/zoom";
       part { name: "clip"; type: RECT; insert_after: "mover";
          description { state: "default";
             rel1.to: "mover";
+            rel1.offset: -20 -20;
             rel2.to: "mover";
+            rel2.offset: 20 20;
             color: 255 255 255 255;
          }
          description { state: "hidden";
