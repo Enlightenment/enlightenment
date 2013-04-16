@@ -3277,60 +3277,7 @@ _e_border_shape_input_rectangle_set(E_Border *bd)
 {
    if (!bd) return;
 
-   if ((bd->visible) && (bd->shaped_input))
-     {
-        Ecore_X_Rectangle rects[4];
-        Ecore_X_Window twin, twin2;
-        int x, y;
-
-        twin = ecore_x_window_override_new(bd->zone->container->scratch_win,
-                                           0, 0, bd->w, bd->h);
-        rects[0].x = 0;
-        rects[0].y = 0;
-        rects[0].width = bd->w;
-        rects[0].height = bd->client_inset.t;
-        rects[1].x = 0;
-        rects[1].y = bd->client_inset.t;
-        rects[1].width = bd->client_inset.l;
-        rects[1].height = bd->h - bd->client_inset.t - bd->client_inset.b;
-        rects[2].x = bd->w - bd->client_inset.r;
-        rects[2].y = bd->client_inset.t;
-        rects[2].width = bd->client_inset.r;
-        rects[2].height = bd->h - bd->client_inset.t - bd->client_inset.b;
-        rects[3].x = 0;
-        rects[3].y = bd->h - bd->client_inset.b;
-        rects[3].width = bd->w;
-        rects[3].height = bd->client_inset.b;
-        ecore_x_window_shape_input_rectangles_set(twin, rects, 4);
-
-        twin2 = ecore_x_window_override_new
-            (bd->zone->container->scratch_win, 0, 0,
-            bd->w - bd->client_inset.l - bd->client_inset.r,
-            bd->h - bd->client_inset.t - bd->client_inset.b);
-        x = 0;
-        y = 0;
-        if ((bd->shading) || (bd->shaded))
-          {
-             if (bd->shade.dir == E_DIRECTION_UP)
-               y = bd->h - bd->client_inset.t - bd->client_inset.b -
-                 bd->client.h;
-             else if (bd->shade.dir == E_DIRECTION_LEFT)
-               x = bd->w - bd->client_inset.l - bd->client_inset.r -
-                 bd->client.w;
-          }
-        ecore_x_window_shape_input_window_set_xy(twin2, bd->client.win,
-                                                 x, y);
-        ecore_x_window_shape_input_rectangle_clip(twin2, 0, 0,
-                                                  bd->w - bd->client_inset.l - bd->client_inset.r,
-                                                  bd->h - bd->client_inset.t - bd->client_inset.b);
-        ecore_x_window_shape_input_window_add_xy(twin, twin2,
-                                                 bd->client_inset.l,
-                                                 bd->client_inset.t);
-        ecore_x_window_shape_input_window_set(bd->win, twin);
-        ecore_x_window_free(twin2);
-        ecore_x_window_free(twin);
-     }
-   else
+   if ((!bd->visible) || (!bd->shaped_input))
      {
         if (bd->visible) // not shaped input
           {
@@ -8748,59 +8695,7 @@ _e_border_eval(E_Border *bd)
    if (bd->need_shape_merge)
      {
         _e_border_shape_input_rectangle_set(bd);
-        if (bd->client.shaped)
-          {
-             Ecore_X_Window twin, twin2;
-             int x, y;
-             Ecore_X_Rectangle rects[4];
-
-             twin = ecore_x_window_override_new
-                 (bd->zone->container->scratch_win, 0, 0, bd->w, bd->h);
-                  
-
-             rects[0].x = 0;
-             rects[0].y = 0;
-             rects[0].width = bd->w;
-             rects[0].height = bd->client_inset.t;
-             rects[1].x = 0;
-             rects[1].y = bd->client_inset.t;
-             rects[1].width = bd->client_inset.l;
-             rects[1].height = bd->h - bd->client_inset.t - bd->client_inset.b;
-             rects[2].x = bd->w - bd->client_inset.r;
-             rects[2].y = bd->client_inset.t;
-             rects[2].width = bd->client_inset.r;
-             rects[2].height = bd->h - bd->client_inset.t - bd->client_inset.b;
-             rects[3].x = 0;
-             rects[3].y = bd->h - bd->client_inset.b;
-             rects[3].width = bd->w;
-             rects[3].height = bd->client_inset.b;
-             ecore_x_window_shape_rectangles_set(twin, rects, 4);
-             twin2 = ecore_x_window_override_new
-                 (bd->zone->container->scratch_win, 0, 0,
-                 bd->w - bd->client_inset.l - bd->client_inset.r,
-                 bd->h - bd->client_inset.t - bd->client_inset.b);
-             x = 0;
-             y = 0;
-             if ((bd->shading) || (bd->shaded))
-               {
-                  if (bd->shade.dir == E_DIRECTION_UP)
-                    y = bd->h - bd->client_inset.t - bd->client_inset.b - bd->client.h;
-                  else if (bd->shade.dir == E_DIRECTION_LEFT)
-                    x = bd->w - bd->client_inset.l - bd->client_inset.r - bd->client.w;
-               }
-             ecore_x_window_shape_window_set_xy(twin2, bd->client.win,
-                                                x, y);
-             ecore_x_window_shape_rectangle_clip(twin2, 0, 0,
-                                                 bd->w - bd->client_inset.l - bd->client_inset.r,
-                                                 bd->h - bd->client_inset.t - bd->client_inset.b);
-             ecore_x_window_shape_window_add_xy(twin, twin2,
-                                                bd->client_inset.l,
-                                                bd->client_inset.t);
-             ecore_x_window_free(twin2);
-             ecore_x_window_shape_window_set(bd->win, twin);
-             ecore_x_window_free(twin);
-          }
-        else
+        if (!bd->client.shaped)
           ecore_x_window_shape_mask_set(bd->win, 0);
         //	bd->need_shape_export = 1;
         bd->need_shape_merge = 0;
@@ -8854,8 +8749,6 @@ _e_border_eval(E_Border *bd)
                {
                   if (bd->client.shaped)
                     e_container_shape_solid_rect_set(bd->shape, 0, 0, 0, 0);
-                  else
-                    e_container_shape_solid_rect_set(bd->shape, bd->client_inset.l, bd->client_inset.t, bd->client.w, bd->client.h);
                   E_FREE(bd->shape_rects);
                   bd->shape_rects = rects;
                   bd->shape_rects_num = num;
