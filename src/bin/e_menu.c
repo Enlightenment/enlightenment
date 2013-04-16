@@ -1170,7 +1170,6 @@ e_menu_idler_before(void)
                   m->prev.h = m->cur.h;
                   w = m->cur.w;
                   h = m->cur.h;
-                  e_zoomap_child_resize(m->bg_object_wrap, w, h);
                   if (m->cw)
                     e_comp_win_resize(m->cw, w, h);
                }
@@ -1211,10 +1210,9 @@ e_menu_idler_before(void)
              m->prev.visible = m->cur.visible;
              if (!m->cw)
                {
-                  evas_object_move(m->bg_object_wrap, m->cur.x, m->cur.y);
-                  evas_object_resize(m->bg_object_wrap, m->cur.w, m->cur.h);
-                  e_zoomap_child_resize(m->bg_object_wrap, m->cur.w, m->cur.h);
-                  E_LAYER_SET(m->bg_object_wrap, E_COMP_CANVAS_LAYER_MENU);
+                  evas_object_move(m->bg_object, m->cur.x, m->cur.y);
+                  evas_object_resize(m->bg_object, m->cur.w, m->cur.h);
+                  E_LAYER_SET(m->bg_object, E_COMP_CANVAS_LAYER_MENU);
                }
              e_comp_win_show(m->cw);
           }
@@ -1271,7 +1269,6 @@ _e_menu_free(E_Menu *m)
    Eina_List *l, *l_next;
    E_Menu_Item *mi;
    E_Menu_Category *cat = NULL;
-   Evas_Object *o;
 
    /* the foreign menu items */
    if (m->category) cat = eina_hash_find(_e_menu_categories, m->category);
@@ -1287,9 +1284,7 @@ _e_menu_free(E_Menu *m)
    if (m->parent_item)
      m->parent_item->submenu = NULL;
    /* del callback causes this to unrealize the menu */
-   o = m->bg_object_wrap;
-   m->bg_object_wrap = NULL;
-   if (o) evas_object_del(o);
+   if (m->bg_object) evas_object_del(m->bg_object);
    EINA_LIST_FOREACH_SAFE(m->items, l, l_next, mi)
      e_object_del(E_OBJECT(mi));
    if (m->in_active_list)
@@ -1397,7 +1392,6 @@ _e_menu_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 {
    E_Menu *m = data;
 
-   m->bg_object_wrap = NULL;
    m->bg_object = NULL;
    _e_menu_unrealize(m);
 }
@@ -1694,7 +1688,6 @@ _e_menu_realize(E_Menu *m)
    Evas_Object *o;
    Eina_List *l;
    E_Menu_Item *mi;
-   const char *s;
 
    if (m->realized || (!m->items)) return;
    m->realized = 1;
@@ -1706,7 +1699,11 @@ _e_menu_realize(E_Menu *m)
    evas_event_freeze(m->evas);
 
    o = edje_object_add(m->evas);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_menu_del_cb, m);
    m->bg_object = o;
+   evas_object_name_set(o, "menu->bg_object");
+   evas_object_data_set(o, "e_menu", m);
+   evas_object_data_set(o, "eobj", m);
    e_theme_edje_object_set(o, "base/theme/menus", "e/widgets/menu/default/background");
    if (m->header.title)
      {
@@ -1714,18 +1711,6 @@ _e_menu_realize(E_Menu *m)
         edje_object_signal_emit(o, "e,action,show,title", "e");
         edje_object_message_signal_process(o);
      }
-
-   o = e_zoomap_add(m->evas);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_menu_del_cb, m);
-   evas_object_name_set(o, "menu->bg_object_wrap");
-   evas_object_data_set(o, "e_menu", m);
-   evas_object_data_set(o, "eobj", m);
-   m->bg_object_wrap = o;
-   s = edje_object_data_get(m->bg_object, "argb");
-   if (!s) s = edje_object_data_get(m->bg_object, "shaped");
-   if ((s) && (s[0] == '1')) e_zoomap_solid_set(o, EINA_FALSE);
-   else e_zoomap_solid_set(o, EINA_TRUE);
-   e_zoomap_child_set(o, m->bg_object);
 
    o = e_box_add(m->evas);
    evas_object_name_set(o, "menu->container_object");
@@ -1996,8 +1981,6 @@ _e_menu_unrealize(E_Menu *m)
    m->header.icon = NULL;
    if (m->bg_object) evas_object_del(m->bg_object);
    m->bg_object = NULL;
-   if (m->bg_object_wrap) evas_object_del(m->bg_object_wrap);
-   m->bg_object_wrap = NULL;
    if (m->container_object) evas_object_del(m->container_object);
    m->container_object = NULL;
    m->cur.visible = 0;
