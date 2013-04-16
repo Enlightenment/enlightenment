@@ -9989,7 +9989,7 @@ e_border_comp_hidden_set(E_Border *bd,
      }
    else
      {
-        _e_border_shape_input_rectangle_set(bd);
+        ecore_x_composite_window_events_enable(bd->win);
         ecore_x_window_ignore_set(bd->win, EINA_FALSE);
      }
 }
