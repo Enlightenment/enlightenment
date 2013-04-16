@@ -302,11 +302,8 @@ struct _E_Wayland_Output
 
    pixman_region32_t region, prev_damage;
 
-   struct 
-     {
-        Eina_Bool needed : 1;
-        Eina_Bool scheduled : 1;
-     } repaint;
+   Eina_Bool repaint_needed : 1;
+   Eina_Bool repaint_scheduled : 1;
 
    Eina_Bool dirty : 1;
 
