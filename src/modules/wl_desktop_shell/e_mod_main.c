@@ -26,10 +26,11 @@ static void _e_wl_desktop_shell_cb_shell_grab_surface_set(struct wl_client *clie
 
 /* shell surface function prototypes */
 static E_Wayland_Shell_Surface *_e_wl_shell_shell_surface_create(void *shell EINA_UNUSED, E_Wayland_Surface *ews, const void *client EINA_UNUSED);
+static void _e_wl_shell_shell_surface_create_toplevel(E_Wayland_Surface *ews);
+static void _e_wl_shell_shell_surface_create_popup(E_Wayland_Surface *ews);
 static void _e_wl_shell_shell_surface_destroy(struct wl_resource *resource);
 static void _e_wl_shell_shell_surface_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 static void _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
-static void _e_wl_shell_shell_surface_map_popup(E_Wayland_Surface *ews);
 static void _e_wl_shell_shell_surface_unmap(E_Wayland_Surface *ews);
 static void _e_wl_shell_shell_surface_type_set(E_Wayland_Shell_Surface *ewss);
 static void _e_wl_shell_shell_surface_type_reset(E_Wayland_Shell_Surface *ewss);
@@ -46,6 +47,12 @@ static void _e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj E
 static void _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_key_up(void *data, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_wl_shell_shell_surface_cb_bd_move_end(void *data, void *bd);
+static void _e_wl_shell_shell_surface_cb_bd_resize_update(void *data, void *bd);
+static void _e_wl_shell_shell_surface_cb_bd_resize_end(void *data, void *bd);
+
+static void _e_wl_shell_mouse_down_helper(E_Border *bd, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev, Eina_Bool move);
+static void _e_wl_shell_mouse_up_helper(E_Border *bd, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev EINA_UNUSED);
 
 /* shell surface interface prototypes */
 static void _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial);
@@ -61,17 +68,17 @@ static void _e_wl_shell_shell_surface_cb_class_set(struct wl_client *client EINA
 
 /* shell move_grab interface prototypes */
 static void _e_wl_shell_move_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
-static void _e_wl_shell_move_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y);
+static void _e_wl_shell_move_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, wl_fixed_t x, wl_fixed_t y);
 static void _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, unsigned int button EINA_UNUSED, unsigned int state);
 
 /* shell resize_grab interface prototypes */
 static void _e_wl_shell_resize_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
-static void _e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab EINA_UNUSED, unsigned int timestamp EINA_UNUSED, wl_fixed_t x, wl_fixed_t y);
+static void _e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab EINA_UNUSED, unsigned int timestamp EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
 static void _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, unsigned int button EINA_UNUSED, unsigned int state);
 
 /* shell popup_grab interface prototypes */
 static void _e_wl_shell_popup_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y);
-static void _e_wl_shell_popup_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y);
+static void _e_wl_shell_popup_grab_cb_motion(struct wl_pointer_grab *grab EINA_UNUSED, unsigned int timestamp EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
 static void _e_wl_shell_popup_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
 
 /* shell popup function prototypes */
@@ -476,8 +483,6 @@ _e_wl_desktop_shell_cb_shell_grab_surface_set(struct wl_client *client EINA_UNUS
 {
    E_Wayland_Desktop_Shell *shell = NULL;
 
-   printf("Shell Grab Surface Set\n");
-
    /* try to get the shell */
    if (!(shell = resource->data)) return;
 
@@ -517,6 +522,192 @@ _e_wl_shell_shell_surface_create(void *shell EINA_UNUSED, E_Wayland_Surface *ews
    ewss->next_type = E_WAYLAND_SHELL_SURFACE_TYPE_NONE;
 
    return ewss;
+}
+
+static void 
+_e_wl_shell_shell_surface_create_toplevel(E_Wayland_Surface *ews)
+{
+   E_Container *con;
+
+   /* get the current container */
+   con = e_container_current_get(e_manager_current_get());
+
+   /* create the ecore_evas */
+   ews->ee = ecore_evas_new(NULL, ews->geometry.x, ews->geometry.y, 
+                            ews->geometry.w, ews->geometry.h, NULL);
+   ecore_evas_alpha_set(ews->ee, EINA_TRUE);
+   /* ecore_evas_borderless_set(ews->ee, EINA_TRUE); */
+   ecore_evas_callback_resize_set(ews->ee, 
+                                  _e_wl_shell_shell_surface_cb_ee_resize);
+   ecore_evas_data_set(ews->ee, "surface", ews);
+
+   /* ecore_evas_input_event_unregister(ews->ee); */
+
+   ews->evas_win = ecore_evas_window_get(ews->ee);
+
+   /* get a reference to the canvas */
+   ews->evas = ecore_evas_get(ews->ee);
+
+   /* setup a post_render callback */
+   evas_event_callback_add(ews->evas, EVAS_CALLBACK_RENDER_POST, 
+                           _e_wl_shell_shell_surface_cb_render_post, ews);
+
+   /* create a surface smart object */
+   ews->obj = e_surface_add(ews->evas);
+   evas_object_move(ews->obj, 0, 0);
+   evas_object_resize(ews->obj, ews->geometry.w, ews->geometry.h);
+   evas_object_show(ews->obj);
+
+   /* hook smart object callbacks */
+   evas_object_smart_callback_add(ews->obj, "mouse_in", 
+                                  _e_wl_shell_shell_surface_cb_mouse_in, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_out", 
+                                  _e_wl_shell_shell_surface_cb_mouse_out, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_move", 
+                                  _e_wl_shell_shell_surface_cb_mouse_move, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_up", 
+                                  _e_wl_shell_shell_surface_cb_mouse_up, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_down", 
+                                  _e_wl_shell_shell_surface_cb_mouse_down, ews);
+   evas_object_smart_callback_add(ews->obj, "key_up", 
+                                  _e_wl_shell_shell_surface_cb_key_up, ews);
+   evas_object_smart_callback_add(ews->obj, "key_down", 
+                                  _e_wl_shell_shell_surface_cb_key_down, ews);
+   evas_object_smart_callback_add(ews->obj, "focus_in", 
+                                  _e_wl_shell_shell_surface_cb_focus_in, ews);
+   evas_object_smart_callback_add(ews->obj, "focus_out", 
+                                  _e_wl_shell_shell_surface_cb_focus_out, ews);
+
+   ecore_x_icccm_size_pos_hints_set(ews->evas_win, 0, ECORE_X_GRAVITY_NW, 
+                                    0, 0, 9999, 9999, 0, 0, 1, 1, 0.0, 0.0);
+   ecore_x_icccm_transient_for_unset(ews->evas_win);
+   ecore_x_netwm_window_type_set(ews->evas_win, ECORE_X_WINDOW_TYPE_NORMAL);
+
+   ecore_evas_lower(ews->ee);
+
+   /* create the e border for this surface */
+   ews->bd = e_border_new(con, ews->evas_win, 1, 1);
+   e_surface_border_input_set(ews->obj, ews->bd);
+   ews->bd->re_manage = 0;
+   ews->bd->internal = 1;
+   ews->bd->internal_ecore_evas = ews->ee;
+   ews->bd->internal_no_remember = 1;
+   ews->bd->internal_no_reopen = 1;
+
+   e_border_move_resize(ews->bd, ews->geometry.x, ews->geometry.y, 
+                        ews->geometry.w, ews->geometry.h);
+
+   e_border_show(ews->bd);
+
+   ews->bd_hooks = 
+     eina_list_append(ews->bd_hooks, 
+                      e_border_hook_add(E_BORDER_HOOK_MOVE_END, 
+                                        _e_wl_shell_shell_surface_cb_bd_move_end, ews));
+   ews->bd_hooks = 
+     eina_list_append(ews->bd_hooks, 
+                      e_border_hook_add(E_BORDER_HOOK_RESIZE_END, 
+                                        _e_wl_shell_shell_surface_cb_bd_resize_end, ews));
+   ews->bd_hooks = 
+     eina_list_append(ews->bd_hooks, 
+                      e_border_hook_add(E_BORDER_HOOK_RESIZE_UPDATE, 
+                                        _e_wl_shell_shell_surface_cb_bd_resize_update, ews));
+
+   ews->mapped = EINA_TRUE;
+}
+
+static void 
+_e_wl_shell_shell_surface_create_popup(E_Wayland_Surface *ews)
+{
+   E_Wayland_Shell_Surface *ewss = NULL;
+   Ecore_X_Window parent = 0;
+   struct wl_seat *seat;
+   char opts[PATH_MAX];
+
+   /* try to get the shell surface */
+   if (!(ewss = ews->shell_surface)) return;
+
+   if (ewss->parent)
+     parent = ecore_evas_window_get(ewss->parent->ee);
+
+   snprintf(opts, sizeof(opts), "parent=%d", parent);
+
+   /* create an ecore evas to represent this 'popup' */
+   ews->ee = ecore_evas_new(NULL, ewss->popup.x, ewss->popup.y, 
+                            ews->geometry.w, ews->geometry.h, opts);
+
+   ecore_evas_alpha_set(ews->ee, EINA_TRUE);
+   ecore_evas_borderless_set(ews->ee, EINA_TRUE);
+   ecore_evas_override_set(ews->ee, EINA_TRUE);
+   ecore_evas_callback_resize_set(ews->ee, 
+                                  _e_wl_shell_shell_surface_cb_ee_resize);
+   ecore_evas_data_set(ews->ee, "surface", ews);
+
+   ecore_evas_input_event_unregister(ews->ee);
+
+   ews->evas_win = ecore_evas_window_get(ews->ee);
+
+   /* get a reference to the canvas */
+   ews->evas = ecore_evas_get(ews->ee);
+
+   /* setup a post_render callback */
+   evas_event_callback_add(ews->evas, EVAS_CALLBACK_RENDER_POST, 
+                           _e_wl_shell_shell_surface_cb_render_post, ews);
+
+   /* create a surface smart object */
+   ews->obj = e_surface_add(ews->evas);
+   evas_object_move(ews->obj, 0, 0);
+   evas_object_resize(ews->obj, ews->geometry.w, ews->geometry.h);
+   evas_object_show(ews->obj);
+
+   /* hook smart object callbacks */
+   evas_object_smart_callback_add(ews->obj, "mouse_in", 
+                                  _e_wl_shell_shell_surface_cb_mouse_in, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_out", 
+                                  _e_wl_shell_shell_surface_cb_mouse_out, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_move", 
+                                  _e_wl_shell_shell_surface_cb_mouse_move, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_up", 
+                                  _e_wl_shell_shell_surface_cb_mouse_up, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_down", 
+                                  _e_wl_shell_shell_surface_cb_mouse_down, ews);
+   evas_object_smart_callback_add(ews->obj, "key_up", 
+                                  _e_wl_shell_shell_surface_cb_key_up, ews);
+   evas_object_smart_callback_add(ews->obj, "key_down", 
+                                  _e_wl_shell_shell_surface_cb_key_down, ews);
+   evas_object_smart_callback_add(ews->obj, "focus_in", 
+                                  _e_wl_shell_shell_surface_cb_focus_in, ews);
+   evas_object_smart_callback_add(ews->obj, "focus_out", 
+                                  _e_wl_shell_shell_surface_cb_focus_out, ews);
+
+   ecore_x_icccm_size_pos_hints_set(ews->evas_win, 0, ECORE_X_GRAVITY_NW, 
+                                    0, 0, 9999, 9999, 0, 0, 1, 1, 0.0, 0.0);
+
+   ecore_x_icccm_transient_for_set(ews->evas_win, parent);
+   ecore_x_netwm_window_type_set(ews->evas_win, ECORE_X_WINDOW_TYPE_POPUP_MENU);
+
+   /* ecore_evas_lower(ews->ee); */
+   ecore_evas_show(ews->ee);
+   ews->mapped = EINA_TRUE;
+
+   /* set popup properties */
+   ewss->popup.grab.interface = &_e_popup_grab_interface;
+   ewss->popup.up = EINA_FALSE;
+
+   if (ewss->parent)
+     {
+        /* TODO */
+        /* ewss->popup.parent_destroy.notify = ; */
+
+        /* add a signal callback to be raised when the parent gets destroyed */
+        /* wl_signal_add(&ewss->parent->wl.surface.resource.destroy_signal,  */
+        /*               &ewss->popup.parent_destroy); */
+     }
+
+   seat = ewss->popup.seat;
+   if (seat->pointer->grab_serial == ewss->popup.serial)
+     wl_pointer_start_grab(seat->pointer, &ewss->popup.grab);
+   else
+     wl_shell_surface_send_popup_done(&ewss->wl.resource);
 }
 
 static void 
@@ -564,8 +755,6 @@ _e_wl_shell_shell_surface_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_C
    else 
      return;
 
-   /* printf("Configure Surface: %d %d %d %d\n", x, y, w, h); */
-
    /* handle shell_surface type change */
    if ((ewss->next_type != E_WAYLAND_SHELL_SURFACE_TYPE_NONE) && 
        (ewss->type != ewss->next_type))
@@ -584,31 +773,35 @@ _e_wl_shell_shell_surface_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_C
         if (ews->map) ews->map(ews, x, y, w, h);
         else _e_wl_shell_shell_surface_map(ews, x, y, w, h);
      }
-   else if ((changed_type) || 
-            (ews->geometry.x != x) || (ews->geometry.y != y) || 
+   else if ((changed_type) || (x != 0) || (y != 0) || 
             (ews->geometry.w != w) || (ews->geometry.h != h))
      {
-        /* TODO */
-        if ((ews->geometry.x != x) || (ews->geometry.y != y))
+        Evas_Coord fx = 0, fy = 0;
+        Evas_Coord tx = 0, ty = 0;
+
+        fx += ews->geometry.x;
+        fy += ews->geometry.y;
+
+        tx = x + ews->geometry.x;
+        ty = y + ews->geometry.y;
+
+        ews->geometry.x = ews->geometry.x + tx - fx;
+        ews->geometry.y = ews->geometry.y + ty - fy;
+        ews->geometry.w = w;
+        ews->geometry.h = h;
+        ews->geometry.changed = EINA_TRUE;
+
+        printf("\tSurface Configured: %d %d %d %d\n", 
+               ews->geometry.x, ews->geometry.y, 
+               ews->geometry.w, ews->geometry.h);
+
+        if (ewss->type == E_WAYLAND_SHELL_SURFACE_TYPE_FULLSCREEN)
           {
-             ews->geometry.x = x;
-             ews->geometry.y = y;
-             ews->geometry.changed = EINA_FALSE;
-
-             if ((ews->bd) && 
-                 (ewss->type != E_WAYLAND_SHELL_SURFACE_TYPE_MAXIMIZED))
-               e_border_move(ews->bd, x, y);
-          }
-
-        if ((ews->geometry.w != w) || (ews->geometry.h != h))
-          {
-             ews->geometry.w = w;
-             ews->geometry.h = h;
-             ews->geometry.changed = EINA_FALSE;
-
-             if ((ews->bd) && 
-                 (ewss->type != E_WAYLAND_SHELL_SURFACE_TYPE_MAXIMIZED))
-               e_border_resize(ews->bd, w, h);
+             if (ews->obj)
+               {
+                  evas_object_move(ews->obj, 0, 0);
+                  evas_object_resize(ews->obj, w, h);
+               }
           }
      }
 }
@@ -616,178 +809,57 @@ _e_wl_shell_shell_surface_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_C
 static void 
 _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
-   E_Container *con = NULL;
-   Evas *evas;
-
    /* safety check */
    if (!ews) return;
 
    /* update surface geometry */
-   ews->geometry.x = x;
-   ews->geometry.y = y;
    ews->geometry.w = w;
    ews->geometry.h = h;
+   ews->geometry.changed = EINA_TRUE;
 
-   /* handle special case of popup windows */
-   if (ews->shell_surface->type == E_WAYLAND_SHELL_SURFACE_TYPE_POPUP)
+   /* starting position */
+   switch (ews->shell_surface->type)
      {
-        _e_wl_shell_shell_surface_map_popup(ews);
-        return;
+      case E_WAYLAND_SHELL_SURFACE_TYPE_TOPLEVEL:
+        ews->geometry.x = x;
+        ews->geometry.y = y;
+        ews->geometry.changed = EINA_TRUE;
+        break;
+      case E_WAYLAND_SHELL_SURFACE_TYPE_FULLSCREEN:
+        /* center */
+        /* map fullscreen */
+        break;
+      case E_WAYLAND_SHELL_SURFACE_TYPE_MAXIMIZED:
+        /* maximize */
+        break;
+      case E_WAYLAND_SHELL_SURFACE_TYPE_POPUP:
+        ews->geometry.x = x;
+        ews->geometry.y = y;
+        ews->geometry.changed = EINA_TRUE;
+        break;
+      case E_WAYLAND_SHELL_SURFACE_TYPE_NONE:
+        ews->geometry.x += x;
+        ews->geometry.y += y;
+        ews->geometry.changed = EINA_TRUE;
+        break;
+      default:
+        break;
      }
 
-   /* get the current container */
-   con = e_container_current_get(e_manager_current_get());
+   /* stacking */
 
-   if (ews->shell_surface->parent)
+   /* activate */
+   switch (ews->shell_surface->type)
      {
-        Ecore_X_Window parent = 0;
-        char opts[PATH_MAX];
-
-        parent = ecore_evas_window_get(ews->shell_surface->parent->ee);
-        snprintf(opts, sizeof(opts), "parent=%d", parent);
-
-        /* create an ecore evas to represent this 'window' */
-        ews->ee = ecore_evas_new(NULL, x, y, w, h, opts);
+      case E_WAYLAND_SHELL_SURFACE_TYPE_TOPLEVEL:
+        _e_wl_shell_shell_surface_create_toplevel(ews);
+        break;
+      case E_WAYLAND_SHELL_SURFACE_TYPE_POPUP:
+        _e_wl_shell_shell_surface_create_popup(ews);
+        break;
+      default:
+        break;
      }
-   else
-     {
-        /* create an ecore evas to represent this 'window' */
-        ews->ee = ecore_evas_new(NULL, x, y, w, h, NULL);
-     }
-
-   ecore_evas_alpha_set(ews->ee, EINA_TRUE);
-   ecore_evas_borderless_set(ews->ee, EINA_TRUE);
-   ecore_evas_input_event_unregister(ews->ee);
-   ecore_evas_callback_resize_set(ews->ee, 
-                                  _e_wl_shell_shell_surface_cb_ee_resize);
-   ecore_evas_data_set(ews->ee, "surface", ews);
-
-   /* get a reference to the canvas */
-   evas = ecore_evas_get(ews->ee);
-
-   /* setup a post_render callback */
-   evas_event_callback_add(evas, EVAS_CALLBACK_RENDER_POST, 
-                           _e_wl_shell_shell_surface_cb_render_post, ews);
-
-   /* create a surface smart object */
-   ews->obj = e_surface_add(evas);
-   evas_object_move(ews->obj, 0, 0);
-   evas_object_resize(ews->obj, w, h);
-   evas_object_show(ews->obj);
-
-   /* hook smart object callbacks */
-   evas_object_smart_callback_add(ews->obj, "mouse_in", 
-                                  _e_wl_shell_shell_surface_cb_mouse_in, ews);
-   evas_object_smart_callback_add(ews->obj, "mouse_out", 
-                                  _e_wl_shell_shell_surface_cb_mouse_out, ews);
-   evas_object_smart_callback_add(ews->obj, "mouse_move", 
-                                  _e_wl_shell_shell_surface_cb_mouse_move, ews);
-   evas_object_smart_callback_add(ews->obj, "mouse_up", 
-                                  _e_wl_shell_shell_surface_cb_mouse_up, ews);
-   evas_object_smart_callback_add(ews->obj, "mouse_down", 
-                                  _e_wl_shell_shell_surface_cb_mouse_down, ews);
-   evas_object_smart_callback_add(ews->obj, "key_up", 
-                                  _e_wl_shell_shell_surface_cb_key_up, ews);
-   evas_object_smart_callback_add(ews->obj, "key_down", 
-                                  _e_wl_shell_shell_surface_cb_key_down, ews);
-   evas_object_smart_callback_add(ews->obj, "focus_in", 
-                                  _e_wl_shell_shell_surface_cb_focus_in, ews);
-   evas_object_smart_callback_add(ews->obj, "focus_out", 
-                                  _e_wl_shell_shell_surface_cb_focus_out, ews);
-
-   /* create the e border for this surface */
-   ews->bd = e_border_new(con, ecore_evas_window_get(ews->ee), 1, 1);
-   e_surface_border_input_set(ews->obj, ews->bd);
-   e_border_move_resize(ews->bd, x, y, w, h);
-   e_border_show(ews->bd);
-
-   ews->mapped = EINA_TRUE;
-}
-
-static void 
-_e_wl_shell_shell_surface_map_popup(E_Wayland_Surface *ews)
-{
-   E_Wayland_Shell_Surface *ewss = NULL;
-   Ecore_X_Window parent = 0;
-   Evas *evas;
-   struct wl_seat *seat;
-   char opts[PATH_MAX];
-
-   /* try to get the shell surface */
-   if (!(ewss = ews->shell_surface)) return;
-
-   if (ewss->parent)
-     parent = ecore_evas_window_get(ewss->parent->ee);
-
-   snprintf(opts, sizeof(opts), "parent=%d", parent);
-
-   /* create an ecore evas to represent this 'window' */
-   ews->ee = ecore_evas_new(NULL, ewss->popup.x, ewss->popup.y, 
-                            ews->geometry.w, ews->geometry.h, opts);
-   ecore_evas_alpha_set(ews->ee, EINA_TRUE);
-   ecore_evas_borderless_set(ews->ee, EINA_TRUE);
-   ecore_evas_override_set(ews->ee, EINA_TRUE);
-//   ecore_evas_input_event_unregister(ews->ee);
-   ecore_evas_callback_resize_set(ews->ee, 
-                                  _e_wl_shell_shell_surface_cb_ee_resize);
-   ecore_evas_data_set(ews->ee, "surface", ews);
-
-   /* get a reference to the canvas */
-   evas = ecore_evas_get(ews->ee);
-
-   /* setup a post_render callback */
-   evas_event_callback_add(evas, EVAS_CALLBACK_RENDER_POST, 
-                           _e_wl_shell_shell_surface_cb_render_post, ews);
-
-   /* create a surface smart object */
-   ews->obj = e_surface_add(evas);
-   evas_object_move(ews->obj, 0, 0);
-   evas_object_resize(ews->obj, ews->geometry.w, ews->geometry.h);
-   evas_object_show(ews->obj);
-
-   /* hook smart object callbacks */
-   evas_object_smart_callback_add(ews->obj, "mouse_in", 
-                                  _e_wl_shell_shell_surface_cb_mouse_in, ews);
-   evas_object_smart_callback_add(ews->obj, "mouse_out", 
-                                  _e_wl_shell_shell_surface_cb_mouse_out, ews);
-   evas_object_smart_callback_add(ews->obj, "mouse_move", 
-                                  _e_wl_shell_shell_surface_cb_mouse_move, ews);
-   evas_object_smart_callback_add(ews->obj, "mouse_up", 
-                                  _e_wl_shell_shell_surface_cb_mouse_up, ews);
-   evas_object_smart_callback_add(ews->obj, "mouse_down", 
-                                  _e_wl_shell_shell_surface_cb_mouse_down, ews);
-   evas_object_smart_callback_add(ews->obj, "key_up", 
-                                  _e_wl_shell_shell_surface_cb_key_up, ews);
-   evas_object_smart_callback_add(ews->obj, "key_down", 
-                                  _e_wl_shell_shell_surface_cb_key_down, ews);
-   evas_object_smart_callback_add(ews->obj, "focus_in", 
-                                  _e_wl_shell_shell_surface_cb_focus_in, ews);
-   evas_object_smart_callback_add(ews->obj, "focus_out", 
-                                  _e_wl_shell_shell_surface_cb_focus_out, ews);
-
-   ecore_evas_show(ews->ee);
-   ews->mapped = EINA_TRUE;
-
-   seat = ewss->popup.seat;
-
-   /* set popup properties */
-   ewss->popup.grab.interface = &_e_popup_grab_interface;
-   ewss->popup.up = EINA_FALSE;
-
-   if (ewss->parent)
-     {
-        /* TODO */
-        /* ewss->popup.parent_destroy.notify = ; */
-
-        /* add a signal callback to be raised when the parent gets destroyed */
-        /* wl_signal_add(&ewss->parent->wl.surface.resource.destroy_signal,  */
-        /*               &ewss->popup.parent_destroy); */
-     }
-
-   if (seat->pointer->grab_serial == ewss->popup.serial)
-     wl_pointer_start_grab(seat->pointer, &ewss->popup.grab);
-   else
-     wl_shell_surface_send_popup_done(&ewss->wl.resource);
 }
 
 static void 
@@ -795,8 +867,12 @@ _e_wl_shell_shell_surface_unmap(E_Wayland_Surface *ews)
 {
    Eina_List *l = NULL;
    E_Wayland_Input *input;
+   E_Border_Hook *hook;
 
    if (!ews) return;
+
+   EINA_LIST_FREE(ews->bd_hooks, hook)
+     e_border_hook_del(hook);
 
    EINA_LIST_FOREACH(_e_wl_comp->seats, l, input)
      {
@@ -883,6 +959,7 @@ _e_wl_shell_shell_surface_type_reset(E_Wayland_Shell_Surface *ewss)
    switch (ewss->type)
      {
       case E_WAYLAND_SHELL_SURFACE_TYPE_FULLSCREEN:
+        /* ecore_evas_fullscreen_set(ewss->surface->ee, EINA_FALSE); */
         /* unfullscreen the border */
         if (ewss->surface->bd)
           e_border_unfullscreen(ewss->surface->bd);
@@ -977,6 +1054,10 @@ _e_wl_shell_shell_surface_cb_ee_resize(Ecore_Evas *ee)
         /* grab the requested geometry */
         ecore_evas_request_geometry_get(ee, NULL, NULL, &w, &h);
 
+        printf("EE Resize: %d %d\n", w, h);
+
+        evas_object_move(ews->obj, 0, 0);
+
         /* resize the surface smart object */
         evas_object_resize(ews->obj, w, h);
      }
@@ -1063,13 +1144,10 @@ _e_wl_shell_shell_surface_cb_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, 
    /* if this surface is not visible, get out */
    if (!ews->mapped) return;
 
-   /* if (!ews->input) return; */
-
    /* try to get the pointer from this input */
    if ((ptr = _e_wl_comp->input->wl.seat.pointer))
-//   if ((ptr = ews->input->wl.seat.pointer))
      {
-        /* if the mouse entered this surface and it is not the current surface */
+        /* if the mouse entered this surface & it is not the current surface */
         if (&ews->wl.surface != ptr->current)
           {
              const struct wl_pointer_grab_interface *grab;
@@ -1098,7 +1176,6 @@ _e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj EINA_UNUSED,
 
    /* try to get the pointer from this input */
    if ((ptr = _e_wl_comp->input->wl.seat.pointer))
-//   if ((ptr = ews->input->wl.seat.pointer))
      {
         /* if we have a pointer grab and this is the currently focused surface */
         /* if ((ptr->grab) && (ptr->focus == ptr->current)) */
@@ -1133,7 +1210,6 @@ _e_wl_shell_shell_surface_cb_mouse_move(void *data, Evas_Object *obj EINA_UNUSED
 
    /* try to get the pointer from this input */
    if ((ptr = _e_wl_comp->input->wl.seat.pointer))
-//   if ((ptr = ews->input->wl.seat.pointer))
      {
         ptr->x = wl_fixed_from_int(ev->cur.output.x);
         ptr->y = wl_fixed_from_int(ev->cur.output.y);
@@ -1162,16 +1238,11 @@ _e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, 
    /* try to cast data to our surface structure */
    if (!(ews = data)) return;
 
-   /* if ((ews->bd) && (ews->bd->moving)) return; */
-
    /* try to get the pointer from this input */
    if ((ptr = _e_wl_comp->input->wl.seat.pointer))
-//   if ((ptr = ews->input->wl.seat.pointer))
      {
-        /* ecore_x_pointer_ungrab(); */
-
         if (ev->button == 1)
-          btn = BTN_LEFT; //ev->button + BTN_LEFT - 1;
+          btn = ev->button + BTN_LEFT - 1; // BTN_LEFT
         else if (ev->button == 2)
           btn = BTN_MIDDLE;
         else if (ev->button == 3)
@@ -1203,14 +1274,11 @@ _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED
 
    /* try to get the pointer from this input */
    if ((ptr = _e_wl_comp->input->wl.seat.pointer))
-//   if ((ptr = ews->input->wl.seat.pointer))
      {
         unsigned int serial = 0;
 
-        /* ecore_x_pointer_confine_grab(ecore_evas_window_get(ews->ee)); */
-
         if (ev->button == 1)
-          btn = BTN_LEFT; //ev->button + BTN_LEFT - 1;
+          btn = ev->button + BTN_LEFT - 1; // BTN_LEFT
         else if (ev->button == 2)
           btn = BTN_MIDDLE;
         else if (ev->button == 3)
@@ -1224,6 +1292,9 @@ _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED
         /* update some pointer properties */
         if (ptr->button_count == 0)
           {
+             ptr->x = wl_fixed_from_int(ev->output.x);
+             ptr->y = wl_fixed_from_int(ev->output.y);
+
              ptr->grab_x = ptr->x;
              ptr->grab_y = ptr->y;
              ptr->grab_button = btn;
@@ -1355,6 +1426,93 @@ _e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, 
    e_comp_wl_input_modifiers_update(serial);
 }
 
+static void 
+_e_wl_shell_shell_surface_cb_bd_move_end(void *data, void *bd)
+{
+   E_Wayland_Surface *ews = NULL;
+   struct wl_pointer *ptr = NULL;
+   E_Border *border = NULL;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   border = bd;
+   if (border != ews->bd) return;
+
+   /* try to get the pointer from this input */
+   if ((ptr = _e_wl_comp->input->wl.seat.pointer))
+     {
+        ptr->button_count--;
+
+        /* send this button press to the pointer */
+        ptr->grab->interface->button(ptr->grab, 
+                                     ptr->grab_time,
+                                     ptr->grab_button, 
+                                     WL_POINTER_BUTTON_STATE_RELEASED);
+
+        if (ptr->button_count == 1)
+          ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
+     }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_bd_resize_update(void *data, void *bd)
+{
+   E_Wayland_Shell_Grab *grab = NULL;
+   E_Wayland_Surface *ews = NULL;
+   struct wl_pointer *ptr = NULL;
+   E_Border *border = NULL;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   border = bd;
+   if (border != ews->bd) return;
+
+   /* try to get the pointer from this input */
+   if ((ptr = _e_wl_comp->input->wl.seat.pointer))
+     {
+        Evas_Coord w = 0, h = 0;
+
+        if (!(grab = (E_Wayland_Shell_Grab *)ptr->grab)) return;
+
+        w = border->w;
+        h = border->h;
+
+        wl_shell_surface_send_configure(&ews->shell_surface->wl.resource, 
+                                        grab->edges, w, h);
+     }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_bd_resize_end(void *data, void *bd)
+{
+   E_Wayland_Surface *ews = NULL;
+   struct wl_pointer *ptr = NULL;
+   E_Border *border = NULL;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   border = bd;
+   if (border != ews->bd) return;
+
+   /* try to get the pointer from this input */
+   if ((ptr = _e_wl_comp->input->wl.seat.pointer))
+     {
+        ptr->button_count--;
+
+        /* send this button press to the pointer */
+        ptr->grab->interface->button(ptr->grab, 
+                                     ptr->grab_time,
+                                     ptr->grab_button, 
+                                     WL_POINTER_BUTTON_STATE_RELEASED);
+
+        if (ptr->button_count == 1)
+          ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
+     }
+}
+
 /* shell surface interface functions */
 static void 
 _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial)
@@ -1377,7 +1535,16 @@ _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct w
 
    if (!responsive)
      {
-        /* TODO: Handle busy grab */
+        E_Wayland_Surface *ews = NULL;
+        E_Wayland_Shell_Grab *grab = NULL;
+
+        ews = ewss->surface;
+        grab = (E_Wayland_Shell_Grab *)ews->input->wl.seat.pointer->grab;
+        if (grab->grab.interface == &_e_busy_grab_interface)
+          {
+             _e_wl_shell_grab_end(grab);
+             free(ews->input->wl.seat.pointer->grab);
+          }
      }
 
    if (tmr->source) wl_event_source_remove(tmr->source);
@@ -1387,6 +1554,96 @@ _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct w
    ewss->ping_timer = NULL;
 }
 
+static void
+_e_wl_shell_mouse_down_helper(E_Border *bd, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev, Eina_Bool move)
+{
+   if ((button >= 1) && (button <= 3))
+     {
+        bd->mouse.last_down[button - 1].mx = output->x;
+        bd->mouse.last_down[button - 1].my = output->y;
+        bd->mouse.last_down[button - 1].x = bd->x;
+        bd->mouse.last_down[button - 1].y = bd->y;
+        bd->mouse.last_down[button - 1].w = bd->w;
+        bd->mouse.last_down[button - 1].h = bd->h;
+     }
+   else
+     {
+        bd->moveinfo.down.x = bd->x;
+        bd->moveinfo.down.y = bd->y;
+        bd->moveinfo.down.w = bd->w;
+        bd->moveinfo.down.h = bd->h;
+     }
+   bd->mouse.current.mx = output->x;
+   bd->mouse.current.my = output->y;
+
+   if (move)
+     {
+        /* tell E to start moving the border */
+        e_border_act_move_begin(bd, ev);
+
+        /* we have to get a reference to the window_move action here, or else 
+         * when e_border stops the move we will never get notified */
+        bd->cur_mouse_action = e_action_find("window_move");
+        if (bd->cur_mouse_action)
+          e_object_ref(E_OBJECT(bd->cur_mouse_action));
+     }
+   else
+     {
+        /* tell E to start resizing the border */
+        e_border_act_resize_begin(bd, ev);
+
+        /* we have to get a reference to the window_resize action here, 
+         * or else when e_border stops the resize we will never get notified */
+        bd->cur_mouse_action = e_action_find("window_resize");
+        if (bd->cur_mouse_action)
+          e_object_ref(E_OBJECT(bd->cur_mouse_action));
+     }
+
+   e_focus_event_mouse_down(bd);
+
+   if ((button >= 1) && (button <= 3))
+     {
+        bd->mouse.last_down[button - 1].mx = output->x;
+        bd->mouse.last_down[button - 1].my = output->y;
+        bd->mouse.last_down[button - 1].x = bd->x;
+        bd->mouse.last_down[button - 1].y = bd->y;
+        bd->mouse.last_down[button - 1].w = bd->w;
+        bd->mouse.last_down[button - 1].h = bd->h;
+     }
+   else
+     {
+        bd->moveinfo.down.x = bd->x;
+        bd->moveinfo.down.y = bd->y;
+        bd->moveinfo.down.w = bd->w;
+        bd->moveinfo.down.h = bd->h;
+     }
+   bd->mouse.current.mx = output->x;
+   bd->mouse.current.my = output->y;
+}
+
+static void 
+_e_wl_shell_mouse_up_helper(E_Border *bd, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev EINA_UNUSED)
+{
+   if ((button >= 1) && (button <= 3))
+     {
+        bd->mouse.last_up[button - 1].mx = output->x;
+        bd->mouse.last_up[button - 1].my = output->y;
+        bd->mouse.last_up[button - 1].x = bd->x;
+        bd->mouse.last_up[button - 1].y = bd->y;
+     }
+   bd->mouse.current.mx = output->x;
+   bd->mouse.current.my = output->y;
+   if ((button >= 1) && (button <= 3))
+     {
+        bd->mouse.last_up[button - 1].mx = output->x;
+        bd->mouse.last_up[button - 1].my = output->y;
+        bd->mouse.last_up[button - 1].x = bd->x;
+        bd->mouse.last_up[button - 1].y = bd->y;
+     }
+
+   bd->drag.start = 0;
+}
+
 static void 
 _e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial)
 {
@@ -1394,6 +1651,7 @@ _e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct w
    E_Wayland_Shell_Surface *ewss = NULL;
    E_Wayland_Shell_Grab *grab = NULL;
    E_Binding_Event_Mouse_Button *ev;
+   struct wl_pointer *ptr = NULL;
 
    /* try to cast the seat resource to our input structure */
    if (!(input = seat_resource->data)) return;
@@ -1413,9 +1671,12 @@ _e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct w
    /* try to allocate space for our grab structure */
    if (!(grab = E_NEW(E_Wayland_Shell_Grab, 1))) return;
 
+   /* try to get the pointer from this input */
+   ptr = _e_wl_comp->input->wl.seat.pointer;
+
    /* set grab properties */
-   grab->x = input->wl.seat.pointer->grab_x;
-   grab->y = input->wl.seat.pointer->grab_y;
+   grab->x = ptr->grab_x;
+   grab->y = ptr->grab_y;
 
    /* start the movement grab */
    _e_wl_shell_grab_start(grab, ewss, input->wl.seat.pointer, 
@@ -1425,6 +1686,7 @@ _e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct w
    /* create a fake binding event for mouse button */
    ev = E_NEW(E_Binding_Event_Mouse_Button, 1);
 
+   /* set button property of the binding event */
    if (grab->pointer->grab_button == BTN_LEFT)
      ev->button = 1;
    else if (grab->pointer->grab_button == BTN_MIDDLE)
@@ -1432,8 +1694,16 @@ _e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct w
    else if (grab->pointer->grab_button == BTN_RIGHT)
      ev->button = 3;
 
-   /* tell E to start moving the border */
-   e_border_act_move_begin(ewss->surface->bd, ev);
+   /* set the clicked location in the binding event */
+   ev->canvas.x = wl_fixed_to_int(ptr->x) + 
+     (ewss->surface->bd->x + ewss->surface->bd->client_inset.l);
+   ev->canvas.y = wl_fixed_to_int(ptr->y) + 
+     (ewss->surface->bd->y + ewss->surface->bd->client_inset.t);
+
+   /* call our helper function to initiate a move */
+   _e_wl_shell_mouse_down_helper(ewss->surface->bd, ev->button, 
+                                 &(Evas_Point){ev->canvas.x, ev->canvas.y}, 
+                                 ev, EINA_TRUE);
 }
 
 static void 
@@ -1443,6 +1713,7 @@ _e_wl_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct
    E_Wayland_Shell_Surface *ewss = NULL;
    E_Wayland_Shell_Grab *grab = NULL;
    E_Binding_Event_Mouse_Button *ev;
+   struct wl_pointer *ptr = NULL;
 
    /* try to cast the seat resource to our input structure */
    if (!(input = seat_resource->data)) return;
@@ -1468,6 +1739,9 @@ _e_wl_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct
    /* try to allocate space for our grab structure */
    if (!(grab = E_NEW(E_Wayland_Shell_Grab, 1))) return;
 
+   /* try to get the pointer from this input */
+   ptr = _e_wl_comp->input->wl.seat.pointer;
+
    /* set grab properties */
    grab->edges = edges;
    grab->w = ewss->surface->geometry.w;
@@ -1487,8 +1761,16 @@ _e_wl_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct
    else if (grab->pointer->grab_button == BTN_RIGHT)
      ev->button = 3;
 
-   /* tell E to start resizing this border */
-   e_border_act_resize_begin(ewss->surface->bd, ev);
+   /* set the clicked location in the binding event */
+   ev->canvas.x = wl_fixed_to_int(ptr->x) + 
+     (ewss->surface->bd->x + ewss->surface->bd->client_inset.l);
+   ev->canvas.y = wl_fixed_to_int(ptr->y) + 
+     (ewss->surface->bd->y + ewss->surface->bd->client_inset.t);
+
+   /* call our helper function to initiate a resize */
+   _e_wl_shell_mouse_down_helper(ewss->surface->bd, ev->button, 
+                                 &(Evas_Point){ev->canvas.x, ev->canvas.y}, 
+                                 ev, EINA_FALSE);
 }
 
 static void 
@@ -1528,6 +1810,13 @@ _e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED
 {
    E_Wayland_Shell_Surface *ewss = NULL;
 
+   /* NB FIXME: Disable fullscreen support for right now.
+    * 
+    * Appears to be some recent issue with e_border...
+    * 
+    * Needs looking into */
+   return;
+
    /* try to cast the resource to our shell surface */
    if (!(ewss = resource->data)) return;
 
@@ -1537,6 +1826,8 @@ _e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED
    /* check for valid border */
    if (ewss->surface->bd)
      {
+        /* ecore_evas_fullscreen_set(ewss->surface->ee, EINA_TRUE); */
+
         /* tell E to fullscreen this window */
         e_border_fullscreen(ewss->surface->bd, E_FULLSCREEN_RESIZE);
 
@@ -1658,45 +1949,10 @@ _e_wl_shell_move_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface *
 }
 
 static void 
-_e_wl_shell_move_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y)
+_e_wl_shell_move_grab_cb_motion(struct wl_pointer_grab *grab EINA_UNUSED, unsigned int timestamp EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED)
 {
    /* FIXME: This needs to become a no-op as the actual surface movement 
     * is handled by e_border now */
-
-   printf("Move Grab Motion: %d %d\n", x, y);
-
-   /* E_Wayland_Shell_Grab *ewsg = NULL; */
-   /* E_Wayland_Shell_Surface *ewss = NULL; */
-   /* struct wl_pointer *ptr; */
-   /* Evas_Coord nx = 0, ny = 0; */
-
-   /* safety */
-   /* if (!grab) return; */
-
-   /* try to get the shell grab from the pointer grab */
-   /* if (!(ewsg = container_of(grab, E_Wayland_Shell_Grab, grab))) */
-   /*   return; */
-
-   /* try to get the pointer */
-   /* if (!(ptr = grab->pointer)) return; */
-
-   /* try to get the shell surface */
-   /* if (!(ewss = ewsg->shell_surface)) return; */
-
-
-   /* printf("\tGrab: %d %d\n", ewsg->x, ewsg->y); */
-
-   /* nx = wl_fixed_to_int(x - ewsg->x); */
-   /* ny = wl_fixed_to_int(y - ewsg->y); */
-
-   /* nx = wl_fixed_to_int(ptr->x); */
-   /* ny = wl_fixed_to_int(ptr->y); */
-   /* printf("\tMove Border: %d %d\n", ewss->surface->bd->x + nx,  */
-   /*        ewss->surface->bd->y + ny); */
-
-   /* _e_wl_shell_surface_configure(ewss->surface, nx, ny,  */
-   /*                               ewss->surface->geometry.w,  */
-   /*                               ewss->surface->geometry.h); */
 }
 
 static void 
@@ -1704,8 +1960,6 @@ _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int times
 {
    E_Wayland_Shell_Grab *ewsg = NULL;
    struct wl_pointer *ptr;
-
-   printf("Move Grab Button\n");
 
    /* safety */
    if (!grab) return;
@@ -1717,20 +1971,36 @@ _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int times
    /* try to get the pointer */
    if (!(ptr = grab->pointer)) return;
 
-   printf("\tButton Count: %d\n", ptr->button_count);
-   printf("\tState: %d\n", state);
-
    /* test if we are done with the grab */
    if ((ptr->button_count == 0) && 
        (state == WL_POINTER_BUTTON_STATE_RELEASED))
      {
         E_Wayland_Surface *ews = NULL;
+        E_Binding_Event_Mouse_Button *ev;
 
-        printf("\tNO BUTTON DOWN\n");
-        ews = ewsg->shell_surface->surface;
+        if (!(ews = ewsg->shell_surface->surface)) return;
 
-        /* tell E to end the border move */
-        e_border_act_move_end(ews->bd, NULL);
+        /* create a fake binding event for mouse button */
+        ev = E_NEW(E_Binding_Event_Mouse_Button, 1);
+
+        /* set button property of the binding event */
+        if (ptr->grab_button == BTN_LEFT)
+          ev->button = 1;
+        else if (ptr->grab_button == BTN_MIDDLE)
+          ev->button = 2;
+        else if (ptr->grab_button == BTN_RIGHT)
+          ev->button = 3;
+
+        /* set the clicked location in the binding event */
+        ev->canvas.x = wl_fixed_to_int(ptr->x) + 
+          (ews->bd->x + ews->bd->client_inset.l);
+        ev->canvas.y = wl_fixed_to_int(ptr->y) + 
+          (ews->bd->y + ews->bd->client_inset.t);
+
+        /* call our helper function to end a move */
+        _e_wl_shell_mouse_up_helper(ews->bd, ev->button, 
+                                    &(Evas_Point){ev->canvas.x, ev->canvas.y}, 
+                                    ev);
 
         /* end the grab */
         _e_wl_shell_grab_end(ewsg);
@@ -1755,12 +2025,10 @@ _e_wl_shell_resize_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_surface
 }
 
 static void 
-_e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab EINA_UNUSED, unsigned int timestamp EINA_UNUSED, wl_fixed_t x, wl_fixed_t y)
+_e_wl_shell_resize_grab_cb_motion(struct wl_pointer_grab *grab EINA_UNUSED, unsigned int timestamp EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED)
 {
    /* FIXME: This needs to become a no-op as the actual surface resize 
     * is handled by e_border now */
-
-   printf("Resize Grab Motion: %d %d\n", x, y);
 }
 
 static void 
@@ -1768,8 +2036,6 @@ _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int tim
 {
    E_Wayland_Shell_Grab *ewsg = NULL;
    struct wl_pointer *ptr;
-
-   printf("Resize Grab Button\n");
 
    /* safety */
    if (!grab) return;
@@ -1781,29 +2047,45 @@ _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int tim
    /* try to get the pointer */
    if (!(ptr = grab->pointer)) return;
 
-   printf("\tButton Count: %d\n", ptr->button_count);
-   printf("\tState: %d\n", state);
-
    /* test if we are done with the grab */
    if ((ptr->button_count == 0) && 
        (state == WL_POINTER_BUTTON_STATE_RELEASED))
      {
         E_Wayland_Surface *ews = NULL;
+        E_Binding_Event_Mouse_Button *ev;
 
-        printf("\tNO BUTTON DOWN\n");
-        ews = ewsg->shell_surface->surface;
+        if (!(ews = ewsg->shell_surface->surface)) return;
 
-        /* tell E to end the border resize */
-        e_border_act_resize_end(ews->bd, NULL);
+        /* create a fake binding event for mouse button */
+        ev = E_NEW(E_Binding_Event_Mouse_Button, 1);
+
+        /* set button property of the binding event */
+        if (ptr->grab_button == BTN_LEFT)
+          ev->button = 1;
+        else if (ptr->grab_button == BTN_MIDDLE)
+          ev->button = 2;
+        else if (ptr->grab_button == BTN_RIGHT)
+          ev->button = 3;
+
+        /* set the clicked location in the binding event */
+        ev->canvas.x = wl_fixed_to_int(ptr->x) + 
+          (ews->bd->x + ews->bd->client_inset.l);
+        ev->canvas.y = wl_fixed_to_int(ptr->y) + 
+          (ews->bd->y + ews->bd->client_inset.t);
+
+        /* call our helper function to end a move */
+        _e_wl_shell_mouse_up_helper(ews->bd, ev->button, 
+                                    &(Evas_Point){ev->canvas.x, ev->canvas.y}, 
+                                    ev);
 
         /* end the grab */
         _e_wl_shell_grab_end(ewsg);
         free(grab);
 
         /* set surface geometry */
-        _e_wl_shell_shell_surface_configure(ews, ews->geometry.x, 
-                                            ews->geometry.y, ews->bd->w, 
-                                            ews->bd->h);
+        _e_wl_shell_shell_surface_configure(ews, ews->bd->x, ews->bd->y, 
+                                            ews->geometry.w, 
+                                            ews->geometry.h);
      }
 }
 
@@ -1953,7 +2235,7 @@ _e_wl_shell_busy_grab_cb_button(struct wl_pointer_grab *grab, unsigned int times
 
         /* start the movement grab */
         _e_wl_shell_grab_start(mgrab, ewss, input->wl.seat.pointer, 
-                               &_e_move_grab_interface, 
+                               &_e_busy_grab_interface, 
                                E_DESKTOP_SHELL_CURSOR_MOVE);
      }
 }
