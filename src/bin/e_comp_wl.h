@@ -38,6 +38,8 @@ typedef struct _E_Wayland_Shell_Grab E_Wayland_Shell_Grab;
 typedef struct _E_Wayland_Keyboard_Info E_Wayland_Keyboard_Info;
 typedef struct _E_Wayland_Input E_Wayland_Input;
 typedef struct _E_Wayland_Compositor E_Wayland_Compositor;
+typedef struct _E_Wayland_Output E_Wayland_Output;
+typedef struct _E_Wayland_Ouput_Mode E_Wayland_Output_Mode;
 
 enum _E_Wayland_Shell_Surface_Type
 {
@@ -275,6 +277,72 @@ struct _E_Wayland_Compositor
    Eina_List *seats;
 
    void (*ping_cb) (E_Wayland_Surface *ews, unsigned int serial);
+};
+
+struct _E_Wayland_Output
+{
+   unsigned int id;
+
+   void *render_state;
+
+   struct 
+     {
+        struct wl_list link;
+        struct wl_list resources;
+        struct wl_global *global;
+     } wl;
+
+   E_Wayland_Compositor *compositor;
+
+   struct 
+     {
+        Evas_Coord x, y, w, h;
+        Evas_Coord mm_w, mm_h;
+     } geometry;
+
+   pixman_region32_t region, prev_damage;
+
+   struct 
+     {
+        Eina_Bool needed : 1;
+        Eina_Bool scheduled : 1;
+     } repaint;
+
+   Eina_Bool dirty : 1;
+
+   struct 
+     {
+        struct wl_signal sig;
+        unsigned int timestamp;
+     } frame;
+
+   char *make, *model;
+   unsigned int subpixel, transform;
+
+   struct 
+     {
+        E_Wayland_Output_Mode *current;
+        E_Wayland_Output_Mode *origin;
+        struct wl_list list;
+     } mode;
+
+   void (*repaint) (E_Wayland_Output *output, pixman_region32_t *damage);
+   void (*destroy) (E_Wayland_Output *output);
+   int (*switch_mode) (E_Wayland_Output *output, E_Wayland_Output_Mode *mode);
+
+   /* TODO: add backlight support */
+};
+
+struct _E_Wayland_Output_Mode
+{
+   struct 
+     {
+        struct wl_list link;
+     } wl;
+
+   unsigned int flags;
+   Evas_Coord w, h;
+   unsigned int refresh;
 };
 
 /* external variables */
