@@ -436,7 +436,6 @@ group { name: "e/widgets/border/default/border";
             image.normal: "win_shadow.png";
             image.border: 14 14 14 14;
             image.middle: 0;
-            rel1.relative: 0.0 1.0;
             rel1.to: "top";
             rel1.offset: -7 -3;
             rel2.to: "bottom";
