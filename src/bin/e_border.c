@@ -6298,6 +6298,7 @@ _e_border_cb_efreet_cache_update(void *data  __UNUSED__,
    /* mark all borders for desktop/icon updates */
    EINA_LIST_FOREACH(borders, l, bd)
      {
+        if (e_object_is_del(E_OBJECT(bd))) continue;
         if (bd->desktop)
           {
              efreet_desktop_free(bd->desktop);
