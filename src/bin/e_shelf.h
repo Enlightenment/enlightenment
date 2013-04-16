@@ -17,6 +17,7 @@ struct _E_Shelf
    E_Layer              layer;
    E_Popup             *popup; /* NULL if its within an existing canvas */
    E_Zone              *zone;
+   E_Comp_Win          *cw;
    Evas_Object         *o_base;
    Ecore_Evas          *ee;
    Evas                *evas;

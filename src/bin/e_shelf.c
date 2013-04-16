@@ -245,7 +245,7 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, int popup, E
      {
         evas_object_move(es->o_base, es->zone->x + es->x, es->zone->y + es->y);
         evas_object_show(es->o_base);
-        E_LAYER_SET(es->o_base, layer);
+        es->cw = E_LAYER_SET(es->o_base, layer);
      }
 
    es->gadcon =
@@ -495,7 +495,7 @@ e_shelf_move(E_Shelf *es, int x, int y)
    if (es->popup)
      e_popup_move(es->popup, es->x, es->y);
    else
-     evas_object_move(es->o_base, es->zone->x + es->x, es->zone->y + es->y);
+     e_comp_win_move(es->cw, es->zone->x + es->x, es->zone->y + es->y);
 }
 
 EAPI void
@@ -508,7 +508,7 @@ e_shelf_resize(E_Shelf *es, int w, int h)
    if (es->popup)
      e_popup_resize(es->popup, es->w, es->h);
    else
-     evas_object_resize(es->o_base, es->w, es->h);
+     e_comp_win_resize(es->cw, es->w, es->h);
 }
 
 EAPI void
@@ -523,10 +523,7 @@ e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h)
    if (es->popup)
      e_popup_move_resize(es->popup, es->x, es->y, es->w, es->h);
    else
-     {
-        evas_object_move(es->o_base, es->zone->x + es->x, es->zone->y + es->y);
-        evas_object_resize(es->o_base, es->w, es->h);
-     }
+     e_comp_win_moveresize(es->cw, es->zone->x + es->x, es->zone->y + es->y, es->w, es->h);
 }
 
 EAPI void

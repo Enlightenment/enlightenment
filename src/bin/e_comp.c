@@ -481,6 +481,7 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
      w = cw->bd->w, h = cw->bd->h;
    else
      w = cw->pw, h = cw->ph;
+   e_zoomap_child_resize(cw->zoomobj, w, h);
    if (cw->not_in_layout)
      {
         evas_object_resize(cw->effect_obj, w, h);
@@ -1824,7 +1825,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
    if (reshadow)
      {
         if (!cw->bd) return;
-        if (cw->bd->bg_object && (edje_object_part_swallow_get(cw->shobj, "e.swallow.content") == cw->bd->bg_object))
+        if (cw->bd->bg_object && (e_zoomap_child_get(cw->zoomobj) == cw->bd->bg_object))
           return;
      }
    if (_e_comp_win_do_shadow(cw) && (!no_shadow))
@@ -1848,17 +1849,19 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
    else
      edje_object_signal_emit(cw->shobj, "e,state,visible,off", "e");
 
+   e_zoomap_child_set(cw->zoomobj, NULL);
    if (cw->bd && cw->bd->bg_object)
      {
         edje_object_part_swallow(cw->bd->bg_object, "e.swallow.client", cw->obj);
-        edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->bd->bg_object);
+        e_zoomap_child_set(cw->zoomobj, cw->bd->bg_object);
         no_shadow = 1;
      }
    else
      {
-        edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
         if (cw->bd) no_shadow = 1;
+        e_zoomap_child_set(cw->zoomobj, cw->obj);
      }
+   edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->zoomobj);
 
    if (!cw->visible) return;
 
@@ -2008,6 +2011,7 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
    cw->effect_obj = edje_object_add(c->evas);
    e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none");
    cw->shobj = edje_object_add(c->evas);
+   cw->zoomobj = e_zoomap_add(c->evas);
    _e_comp_win_shadow_setup(cw);
    edje_object_part_swallow(cw->effect_obj, "e.swallow.content", cw->shobj);
 
@@ -2022,6 +2026,7 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
      {
         evas_object_data_set(cw->shobj, "popup", cw->pop);
         evas_object_data_set(cw->effect_obj, "popup", cw->pop);
+        evas_object_name_set(cw->zoomobj, "cw->zoomobj::POPUP");
         evas_object_name_set(cw->shobj, "cw->shobj::POPUP");
         evas_object_name_set(cw->effect_obj, "cw->effect_obj::POPUP");
      }
@@ -2029,6 +2034,7 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
      {
         evas_object_data_set(cw->shobj, "menu", cw->menu);
         evas_object_data_set(cw->effect_obj, "menu", cw->menu);
+        evas_object_name_set(cw->zoomobj, "cw->zoomobj::MENU");
         evas_object_name_set(cw->shobj, "cw->shobj::MENU");
         evas_object_name_set(cw->effect_obj, "cw->effect_obj::MENU");
      }
@@ -2163,6 +2169,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
         cw->effect_obj = edje_object_add(c->evas);
         e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none");
         cw->shobj = edje_object_add(c->evas);
+        cw->zoomobj = e_zoomap_add(c->evas);
         cw->obj = evas_object_image_filled_add(c->evas);
         evas_object_image_colorspace_set(cw->obj, EVAS_COLORSPACE_ARGB8888);
         if (cw->argb) evas_object_image_alpha_set(cw->obj, 1);
@@ -2197,11 +2204,13 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
           {
              evas_object_data_set(cw->shobj, "border", cw->bd);
              evas_object_data_set(cw->effect_obj, "border", cw->bd);
+             evas_object_name_set(cw->zoomobj, "cw->zoomobj::BORDER");
              evas_object_name_set(cw->shobj, "cw->shobj::BORDER");
              evas_object_name_set(cw->effect_obj, "cw->effect_obj::BORDER");
           }
         else
           {
+             evas_object_name_set(cw->zoomobj, "cw->zoomobj::WINDOW");
              evas_object_name_set(cw->shobj, "cw->shobj::WINDOW");
              evas_object_name_set(cw->effect_obj, "cw->effect_obj::WINDOW");
           }
@@ -2367,6 +2376,7 @@ _e_comp_win_del(E_Comp_Win *cw)
         evas_object_event_callback_del_full(cw->obj, EVAS_CALLBACK_FOCUS_OUT, _e_comp_injected_win_focus_out_cb, cw);
      }
    E_FREE_FUNC(cw->obj, evas_object_del);
+   E_FREE_FUNC(cw->zoomobj, evas_object_del);
    E_FREE_FUNC(cw->shobj, evas_object_del);
    E_FREE_FUNC(cw->effect_obj, evas_object_del);
 
@@ -3339,6 +3349,7 @@ _e_comp_bd_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
              _e_comp_win_bd_setup(cw, ev->border);
              evas_object_data_set(cw->shobj, "border", cw->bd);
              evas_object_data_set(cw->effect_obj, "border", cw->bd);
+             evas_object_name_set(cw->zoomobj, "cw->zoomobj::BORDER");
              evas_object_name_set(cw->shobj, "cw->shobj::BORDER");
              evas_object_name_set(cw->effect_obj, "cw->effect_obj::BORDER");
              e_comp_win_reshadow(cw);
@@ -3512,7 +3523,7 @@ _e_comp_bd_fullscreen(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (!cw) return ECORE_CALLBACK_PASS_ON;
    e_comp_win_reshadow(cw);
    /* bd->bg_object deletion pending */
-   edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
+   e_zoomap_child_set(cw->zoomobj, cw->obj);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -5431,13 +5442,6 @@ e_comp_win_effect_set(E_Comp_Win *cw, const char *effect)
         if (!e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", buf))
           if (!e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none")) return;
      }
-   if (cw->bd && cw->bd->bg_object)
-     {
-        edje_object_part_swallow(cw->bd->bg_object, "e.swallow.client", cw->obj);
-        edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->bd->bg_object);
-     }
-   else
-     edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
    edje_object_part_swallow(cw->effect_obj, "e.swallow.content", cw->shobj);
    if (cw->effect_clip)
      {

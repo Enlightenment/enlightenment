@@ -125,6 +125,7 @@ struct _E_Comp_Win
    Ecore_X_Colormap     cmap; // colormap of window
    int                  depth;  // window depth
    Evas_Object         *obj;  // composite object
+   Evas_Object         *zoomobj; // zoomap
    Evas_Object         *shobj;  // shadow object
    Evas_Object         *effect_obj; // effects object
    E_Object            *eobj; // internal e object

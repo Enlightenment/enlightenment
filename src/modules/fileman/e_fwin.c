@@ -488,9 +488,8 @@ e_fwin_zone_new(E_Zone *zone, void *p)
    e_zone_useful_geometry_get(zone, &x, &y, &w, &h);
    evas_object_move(o, x, y);
    evas_object_resize(o, w, h);
-   E_LAYER_SET_UNDER(o, E_COMP_CANVAS_LAYER_DESKTOP);
-   evas_object_hide(o);
    evas_object_show(o);
+   E_LAYER_SET_UNDER(o, E_COMP_CANVAS_LAYER_DESKTOP);
    page->scrollframe_obj = page->scr = o;
 
    e_fm2_window_object_set(page->fm_obj, E_OBJECT(fwin->zone));
@@ -1618,7 +1617,7 @@ _e_fwin_cb_resize(E_Win *win)
      }
    _e_fwin_toolbar_resize(fwin->cur_page);
    if (fwin->zone)
-     evas_object_resize(fwin->cur_page->scrollframe_obj, fwin->zone->w, fwin->zone->h);
+     e_comp_win_resize(evas_object_data_get(fwin->cur_page->scrollframe_obj, "comp_win"), fwin->zone->w, fwin->zone->h);
    /* _e_fwin_geom_save(fwin); */
 }
 
@@ -1927,6 +1926,7 @@ _e_fwin_zone_move_resize(void *data, int type __UNUSED__, void *event)
 {
    E_Event_Zone_Move_Resize *ev = event;
    E_Fwin *fwin = data;
+   E_Comp_Win *cw;
    int x, y, w, h, sx, sy, sw, sh;
 
    if (!fwin) return ECORE_CALLBACK_PASS_ON;
@@ -1936,8 +1936,8 @@ _e_fwin_zone_move_resize(void *data, int type __UNUSED__, void *event)
    evas_object_geometry_get(fwin->cur_page->scrollframe_obj, &sx, &sy, &sw, &sh);
    /* if same, do nothing */
    if ((sx == x) && (sy == y) && (sw == w) && (sh == h)) return ECORE_CALLBACK_RENEW;
-   evas_object_move(fwin->cur_page->scrollframe_obj, x, y);
-   evas_object_resize(fwin->cur_page->scrollframe_obj, w, h);
+   cw = evas_object_data_get(fwin->cur_page->scrollframe_obj, "comp_win");
+   e_comp_win_moveresize(cw, x, y, w, h);
    e_fm2_refresh(fwin->cur_page->fm_obj);
    return ECORE_CALLBACK_RENEW;
 }
