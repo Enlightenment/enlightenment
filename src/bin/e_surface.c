@@ -24,8 +24,7 @@ struct _E_Smart_Data
    /* input rectangle */
    Evas_Object *o_input;
 
-   /* reference to the surface */
-   /* E_Wayland_Surface *ews; */
+   double mouse_down_time;
 };
 
 /* smart function prototypes */
@@ -45,7 +44,7 @@ static void _e_surface_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Obje
 static void _e_surface_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_surface_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_surface_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
-static void _e_surface_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_surface_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event);
 static void _e_surface_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_surface_cb_key_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 
@@ -133,9 +132,7 @@ e_surface_image_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h, void *pixels)
    /* update the image damaged area */
    if (sd->o_img)
      {
-        evas_object_image_load_size_set(sd->o_img, w, h);
         evas_object_image_size_set(sd->o_img, w, h);
-        evas_object_image_fill_set(sd->o_img, 0, 0, w, h);
         evas_object_image_data_copy_set(sd->o_img, pixels);
      }
 }
@@ -170,6 +167,8 @@ _e_smart_add(Evas_Object *obj)
    /* create the base input rectangle */
    sd->o_input = evas_object_rectangle_add(sd->evas);
    evas_object_color_set(sd->o_input, 0, 0, 0, 0);
+   evas_object_propagate_events_set(sd->o_input, EINA_FALSE);
+   evas_object_repeat_events_set(sd->o_input, EINA_FALSE);
 
    /* we have to set focus to the input object first, or else Evas will 
     * never report any key events (up/down) to us */
@@ -194,9 +193,12 @@ _e_smart_add(Evas_Object *obj)
 
    /* create the image object */
    sd->o_img = evas_object_image_filled_add(sd->evas);
+   evas_object_image_content_hint_set(sd->o_img, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
+   evas_object_image_scale_hint_set(sd->o_img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
    evas_object_image_smooth_scale_set(sd->o_img, EINA_FALSE);
    evas_object_image_alpha_set(sd->o_img, EINA_TRUE);
    evas_object_pass_events_set(sd->o_img, EINA_FALSE);
+   evas_object_propagate_events_set(sd->o_img, EINA_FALSE);
    evas_object_smart_member_add(sd->o_img, obj);
 
    /* set the objects smart data */
@@ -288,13 +290,7 @@ _e_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
      evas_object_resize(sd->o_input, sd->input.w, sd->input.h);
 
    /* resize the image object */
-   if (sd->o_img) 
-     {
-        evas_object_image_load_size_set(sd->o_img, w, h);
-        evas_object_image_size_set(sd->o_img, w, h);
-        evas_object_image_fill_set(sd->o_img, 0, 0, w, h);
-        evas_object_resize(sd->o_img, w, h);
-     }
+   if (sd->o_img) evas_object_resize(sd->o_img, w, h);
 }
 
 static void 
@@ -389,12 +385,32 @@ _e_surface_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EI
 static void 
 _e_surface_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
+   E_Smart_Data *sd = NULL;
+
+   /* try to get the objects smart data */
+   if (!(sd = evas_object_smart_data_get(data))) return;
+
+   /* grab the loop time for this mouse down event
+    * 
+    * NB: we use this for comparison in the mouse_up callback due to 
+    * some e_border grab shenanigans. Basically, this lets us ignore the 
+    * spurious mouse_up that we get from e_border grabs */
+   sd->mouse_down_time = ecore_loop_time_get();
    evas_object_smart_callback_call(data, "mouse_down", event);
 }
 
 static void 
 _e_surface_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
+   E_Smart_Data *sd = NULL;
+   double timestamp;
+
+   /* try to get the objects smart data */
+   if (!(sd = evas_object_smart_data_get(data))) return;
+
+   timestamp = ecore_loop_time_get();
+   if (fabs(timestamp - sd->mouse_down_time) <= 0.001) return;
+
    evas_object_smart_callback_call(data, "mouse_up", event);
 }
 
