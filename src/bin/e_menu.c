@@ -1396,12 +1396,9 @@ static void
 _e_menu_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Menu *m = data;
-   Evas_Object *o;
 
-   m->bg_object = NULL;
-   o = m->bg_object_wrap;
    m->bg_object_wrap = NULL;
-   if (o) evas_object_del(o);
+   m->bg_object = NULL;
    _e_menu_unrealize(m);
 }
 
@@ -1709,7 +1706,6 @@ _e_menu_realize(E_Menu *m)
    evas_event_freeze(m->evas);
 
    o = edje_object_add(m->evas);
-   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_menu_del_cb, m);
    m->bg_object = o;
    e_theme_edje_object_set(o, "base/theme/menus", "e/widgets/menu/default/background");
    if (m->header.title)
@@ -1720,6 +1716,7 @@ _e_menu_realize(E_Menu *m)
      }
 
    o = e_zoomap_add(m->evas);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_menu_del_cb, m);
    evas_object_name_set(o, "menu->bg_object_wrap");
    evas_object_data_set(o, "e_menu", m);
    evas_object_data_set(o, "eobj", m);
