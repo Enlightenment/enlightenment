@@ -790,19 +790,6 @@ _e_wl_shell_shell_surface_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_C
         ews->geometry.w = w;
         ews->geometry.h = h;
         ews->geometry.changed = EINA_TRUE;
-
-        printf("\tSurface Configured: %d %d %d %d\n", 
-               ews->geometry.x, ews->geometry.y, 
-               ews->geometry.w, ews->geometry.h);
-
-        if (ewss->type == E_WAYLAND_SHELL_SURFACE_TYPE_FULLSCREEN)
-          {
-             if (ews->obj)
-               {
-                  evas_object_move(ews->obj, 0, 0);
-                  evas_object_resize(ews->obj, w, h);
-               }
-          }
      }
 }
 
