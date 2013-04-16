@@ -1170,7 +1170,7 @@ e_menu_idler_before(void)
                   m->prev.h = m->cur.h;
                   w = m->cur.w;
                   h = m->cur.h;
-                  evas_object_resize(m->bg_object, w, h);
+                  e_zoomap_child_resize(m->bg_object_wrap, w, h);
                   if (m->cw)
                     e_comp_win_resize(m->cw, w, h);
                }
@@ -1211,9 +1211,9 @@ e_menu_idler_before(void)
              m->prev.visible = m->cur.visible;
              if (!m->cw)
                {
-                  evas_object_resize(m->bg_object, m->cur.w, m->cur.h);
                   evas_object_move(m->bg_object_wrap, m->cur.x, m->cur.y);
                   evas_object_resize(m->bg_object_wrap, m->cur.w, m->cur.h);
+                  e_zoomap_child_resize(m->bg_object_wrap, m->cur.w, m->cur.h);
                   E_LAYER_SET(m->bg_object_wrap, E_COMP_CANVAS_LAYER_MENU);
                }
              e_comp_win_show(m->cw);
