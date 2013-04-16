@@ -109,7 +109,12 @@ struct _E_Wayland_Surface
    Evas_Object *obj;
 
    Ecore_Evas *ee;
+   Ecore_X_Window evas_win;
+   Evas *evas;
+
    E_Border *bd;
+   Eina_List *bd_hooks;
+   /* E_Border_Hook *bd_hook; */
 
    E_Wayland_Shell_Surface *shell_surface;
    Eina_Bool mapped : 1;
