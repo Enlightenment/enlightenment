@@ -12,6 +12,6 @@ EAPI void         e_zoomap_solid_set      (Evas_Object *obj, Eina_Bool solid);
 EAPI Eina_Bool    e_zoomap_solid_get      (Evas_Object *obj);
 EAPI void         e_zoomap_always_set     (Evas_Object *obj, Eina_Bool always);
 EAPI Eina_Bool    e_zoomap_always_get     (Evas_Object *obj);
-
+EAPI void         e_zoomap_child_resize(Evas_Object *zoomap, int w, int h);
 #endif
 #endif

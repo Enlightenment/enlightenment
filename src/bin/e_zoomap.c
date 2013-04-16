@@ -78,6 +78,13 @@ e_zoomap_child_set(Evas_Object *obj, Evas_Object *child)
      }
 }
 
+EAPI void
+e_zoomap_child_resize(Evas_Object *obj, int w, int h)
+{
+   API_ENTRY return;
+   evas_object_resize(sd->child_obj, w, h);
+}
+
 EAPI Evas_Object *
 e_zoomap_child_get(Evas_Object *obj)
 {
