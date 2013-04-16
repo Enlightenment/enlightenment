@@ -536,7 +536,7 @@ _e_wl_shell_shell_surface_create_toplevel(E_Wayland_Surface *ews)
    ews->ee = ecore_evas_new(NULL, ews->geometry.x, ews->geometry.y, 
                             ews->geometry.w, ews->geometry.h, NULL);
    ecore_evas_alpha_set(ews->ee, EINA_TRUE);
-   /* ecore_evas_borderless_set(ews->ee, EINA_TRUE); */
+   ecore_evas_borderless_set(ews->ee, EINA_TRUE);
    ecore_evas_callback_resize_set(ews->ee, 
                                   _e_wl_shell_shell_surface_cb_ee_resize);
    ecore_evas_data_set(ews->ee, "surface", ews);
