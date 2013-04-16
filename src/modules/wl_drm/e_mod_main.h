@@ -155,9 +155,10 @@ struct _E_Drm_Output
 
 struct _E_Evdev_Input
 {
-   E_Input_Device base;
+   E_Wayland_Input base;
    struct wl_list devices;
    struct udev_monitor *monitor;
+   struct wl_event_source *monitor_source;
    char *seat;
 };
 
@@ -166,7 +167,7 @@ struct _E_Evdev_Input_Device
    E_Evdev_Input *master;
    struct wl_list link;
    struct wl_event_source *source;
-   E_Output *output;
+   E_Wayland_Output *output;
    char *devnode;
    int fd;
    struct 
@@ -201,9 +202,9 @@ EAPI int e_modapi_shutdown(E_Module *m);
 EAPI int e_modapi_save(E_Module *m);
 
 EINTERN E_Sprite *e_sprite_create(E_Drm_Compositor *dcomp, drmModePlane *plane);
-EINTERN Eina_Bool e_sprite_crtc_supported(E_Output *output, unsigned int supported);
+EINTERN Eina_Bool e_sprite_crtc_supported(E_Wayland_Output *output, unsigned int supported);
 
-EINTERN E_Tty *e_tty_create(E_Compositor *comp, tty_vt_func_t vt_func, int tty);
+EINTERN E_Tty *e_tty_create(E_Wayland_Compositor *comp, tty_vt_func_t vt_func, int tty);
 EINTERN void e_tty_destroy(E_Tty *et);
 
 EINTERN int e_drm_output_subpixel_convert(int value);
@@ -211,23 +212,23 @@ EINTERN Eina_Bool e_drm_output_add_mode(E_Drm_Output *output, drmModeModeInfo *i
 EINTERN void e_drm_output_set_modes(E_Drm_Compositor *dcomp);
 EINTERN void e_drm_output_scanout_buffer_destroy(struct wl_listener *listener, void *data);
 EINTERN void e_drm_output_pending_scanout_buffer_destroy(struct wl_listener *listener, void *data);
-EINTERN void e_drm_output_repaint(E_Output *base, pixman_region32_t *damage);
-EINTERN void e_drm_output_destroy(E_Output *base);
-EINTERN void e_drm_output_assign_planes(E_Output *base);
-EINTERN void e_drm_output_set_dpms(E_Output *base, E_Dpms_Level level);
+EINTERN void e_drm_output_repaint(E_Wayland_Output *base, pixman_region32_t *damage);
+EINTERN void e_drm_output_destroy(E_Wayland_Output *base);
+EINTERN void e_drm_output_assign_planes(E_Wayland_Output *base);
+EINTERN void e_drm_output_set_dpms(E_Wayland_Output *base, E_Dpms_Level level);
 EINTERN Eina_Bool e_drm_output_prepare_scanout_surface(E_Drm_Output *output);
-EINTERN void e_drm_output_disable_sprites(E_Output *base);
+EINTERN void e_drm_output_disable_sprites(E_Wayland_Output *base);
 EINTERN drmModePropertyPtr e_drm_output_get_property(int fd, drmModeConnectorPtr conn, const char *name);
-EINTERN int e_drm_output_prepare_overlay_surface(E_Output *base, E_Surface *es, pixman_region32_t *overlap);
-EINTERN Eina_Bool e_drm_output_surface_transform_supported(E_Surface *es);
-EINTERN Eina_Bool e_drm_output_surface_overlap_supported(E_Output *base __UNUSED__, pixman_region32_t *overlap);
+EINTERN int e_drm_output_prepare_overlay_surface(E_Wayland_Output *base, E_Wayland_Surface *es, pixman_region32_t *overlap);
+EINTERN Eina_Bool e_drm_output_surface_transform_supported(E_Wayland_Surface *es);
+EINTERN Eina_Bool e_drm_output_surface_overlap_supported(E_Wayland_Output *base EINA_UNUSED, pixman_region32_t *overlap);
 EINTERN Eina_Bool e_drm_output_surface_format_supported(E_Sprite *s, unsigned int format);
-EINTERN void e_drm_output_set_cursor_region(E_Output *output, E_Input_Device *device, pixman_region32_t *overlap);
-EINTERN Eina_Bool e_drm_output_set_cursor(E_Output *output, E_Input_Device *device);
+EINTERN void e_drm_output_set_cursor_region(E_Wayland_Output *output, E_Wayland_Input *device, pixman_region32_t *overlap);
+EINTERN Eina_Bool e_drm_output_set_cursor(E_Wayland_Output *output, E_Wayland_Input *device);
 
-EINTERN void e_evdev_add_devices(struct udev *udev, E_Input_Device *base);
-EINTERN void e_evdev_remove_devices(E_Input_Device *base);
-EINTERN void e_evdev_input_create(E_Compositor *comp, struct udev *udev, const char *seat);
-EINTERN void e_evdev_input_destroy(E_Input_Device *base);
+EINTERN void e_evdev_add_devices(struct udev *udev, E_Wayland_Input *base);
+EINTERN void e_evdev_remove_devices(E_Wayland_Input *base);
+EINTERN void e_evdev_input_create(E_Wayland_Compositor *comp, struct udev *udev, const char *seat);
+EINTERN void e_evdev_input_destroy(E_Wayland_Input *base);
 
 #endif
