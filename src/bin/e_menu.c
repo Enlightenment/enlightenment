@@ -1171,7 +1171,6 @@ e_menu_idler_before(void)
                   w = m->cur.w;
                   h = m->cur.h;
                   evas_object_resize(m->bg_object, w, h);
-                  evas_object_resize(m->bg_object_wrap, w, h);
                   if (m->cw)
                     e_comp_win_resize(m->cw, w, h);
                }
