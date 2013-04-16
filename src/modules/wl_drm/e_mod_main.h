@@ -29,12 +29,31 @@ typedef struct _E_Drm_Compositor E_Drm_Compositor;
 typedef struct _E_Sprite E_Sprite;
 typedef struct _E_Drm_Output_Mode E_Drm_Output_Mode;
 typedef struct _E_Drm_Output E_Drm_Output;
+typedef struct _E_Drm_Fb E_Drm_Fb;
 typedef struct _E_Evdev_Input E_Evdev_Input;
 typedef struct _E_Evdev_Input_Device E_Evdev_Input_Device;
 
+struct _E_Drm_Fb
+{
+   E_Drm_Output *output;
+   unsigned int fb, stride, hdl, size;
+   int fd;
+   Eina_Bool client_buffer : 1;
+
+   struct 
+     {
+        struct wl_buffer *buffer;
+        struct wl_listener buffer_destroy;
+     } reference;
+
+   struct gbm_bo *bo;
+
+   void *map;
+};
+
 struct _E_Drm_Compositor
 {
-   E_Compositor base;
+   E_Wayland_Compositor base;
 
    struct udev *udev;
    struct wl_event_source *drm_source;
@@ -52,14 +71,19 @@ struct _E_Drm_Compositor
 
    E_Tty *tty;
 
+   struct 
+     {
+        unsigned int width, height;
+     } min, max;
+
    struct wl_list sprites;
    Eina_Bool sprites_broken;
-   E_Compositor_State prev_state;
+   unsigned int prev_state;
 };
 
 struct _E_Tty
 {
-   E_Compositor *comp;
+   E_Wayland_Compositor *comp;
 
    int fd;
    struct termios term_attribs;
@@ -68,20 +92,16 @@ struct _E_Tty
    tty_vt_func_t vt_func;
    int vt, start_vt;
    Eina_Bool has_vt : 1;
+   int kbd_mode;
 };
 
 struct _E_Sprite
 {
    struct wl_list link;
 
-   unsigned int fb_id;
-   unsigned int pending_fb_id;
-
-   E_Surface *surface, *pending_surface;
+   E_Drm_Output *output;
+   E_Drm_Fb *current_fb, *next_fb;
    E_Drm_Compositor *compositor;
-
-   struct wl_listener destroy_listener;
-   struct wl_listener pending_destroy_listener;
 
    unsigned int possible_crtcs;
    unsigned int plane_id;
@@ -96,30 +116,39 @@ struct _E_Sprite
 
 struct _E_Drm_Output_Mode
 {
-   E_Output_Mode base;
+   E_Wayland_Output_Mode base;
    drmModeModeInfo info;
 };
 
 struct _E_Drm_Output
 {
-   E_Output base;
+   E_Wayland_Output base;
 
    unsigned int crtc_id;
    unsigned int conn_id;
    drmModeCrtcPtr orig_crtc;
-   GLuint rbo[2];
-   unsigned int fb_id[2];
 
-   EGLImageKHR image[2];
-   struct gbm_bo *bo[2];
+   struct 
+     {
+        Eina_Bool vblank : 1;
+        Eina_Bool page_flip : 1;
+     } pending;
 
-   unsigned int current;
-   unsigned int fs_surf_fb_id;
-   unsigned int pending_fs_surf_fb_id;
+   struct gbm_surface *gsurface;
+   struct gbm_bo *gcursor[2];
 
-   struct wl_buffer *scanout_buffer, *pending_scanout_buffer;
-   struct wl_listener scanout_buffer_destroy_listener;
-   struct wl_listener pending_scanout_buffer_destroy_listener;
+   struct 
+     {
+        E_Wayland_Surface *surface;
+        int current;
+     } cursor;
+
+   E_Drm_Fb *current, *next, *dummy[2];
+
+   pixman_image_t *img[2];
+   int current_img;
+
+   pixman_region32_t prev_damage;
 
    /* TODO: backlight */
 };
