@@ -840,7 +840,6 @@ fi
 
 AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 
-AM_CONDITIONAL([HAVE_WAYLAND_EGL], false)
 have_wayland_egl=no
 if test "x${have_wayland_clients}" = "xyes"; then
   AC_ARG_ENABLE([wayland-egl],
@@ -865,15 +864,13 @@ fi
 
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
-AM_CONDITIONAL(HAVE_WL_DESKTOP_SHELL, false)
-AC_SUBST(HAVE_WL_DESKTOP_SHELL)
-AM_CONDITIONAL(USE_MODULE_WL_DESKTOP_SHELL, false)
-AC_SUBST(USE_MODULE_WL_DESKTOP_SHELL)
-
-AM_CONDITIONAL(WL_DESKTOP_SHELL, false)
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
-  AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version ], [], [HAVE_WL_DESKTOP_SHELL=false])
+  if test "x${have_wayland_clients}" = "xyes"; then
+    PKG_CHECK_EXISTS([ ecore >= $efl_version eina >= $efl_version ], [WL_DESKTOP_SHELL=true], [WL_DESKTOP_SHELL=false])
+  else
+    WL_DESKTOP_SHELL=false
+  fi
 ])
 
 AC_E_OPTIONAL_MODULE([ibar], true)
@@ -927,10 +924,7 @@ AC_E_OPTIONAL_MODULE([tiling], true)
 AC_E_OPTIONAL_MODULE([access], true)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([contact], true)
-
-if test "x${have_wayland_clients}" = "xyes"; then
-  AC_E_OPTIONAL_MODULE([wl_desktop_shell], true, [CHECK_MODULE_WL_DESKTOP_SHELL])
-fi
+AC_E_OPTIONAL_MODULE([wl_desktop_shell], true, [CHECK_MODULE_WL_DESKTOP_SHELL])
 
 HALT="/sbin/shutdown -h now"
 REBOOT="/sbin/shutdown -r now"
