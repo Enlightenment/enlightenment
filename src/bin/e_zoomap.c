@@ -222,8 +222,8 @@ _e_smart_add(Evas_Object *obj)
    if (!sd) return;
    sd->smart_obj = obj;
    sd->x = sd->y = sd->w = sd->h = 0;
-   sd->solid = EINA_TRUE;
-   sd->always = EINA_TRUE;
+   sd->solid = EINA_FALSE;
+   sd->always = EINA_FALSE;
    sd->smooth = EINA_TRUE;
    evas_object_smart_data_set(obj, sd);
 }
