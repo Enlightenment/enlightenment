@@ -1271,6 +1271,7 @@ _e_menu_free(E_Menu *m)
    Eina_List *l, *l_next;
    E_Menu_Item *mi;
    E_Menu_Category *cat = NULL;
+   Evas_Object *o;
 
    /* the foreign menu items */
    if (m->category) cat = eina_hash_find(_e_menu_categories, m->category);
@@ -1286,8 +1287,9 @@ _e_menu_free(E_Menu *m)
    if (m->parent_item)
      m->parent_item->submenu = NULL;
    /* del callback causes this to unrealize the menu */
-   if (m->bg_object_wrap) evas_object_del(m->bg_object_wrap);
+   o = m->bg_object_wrap;
    m->bg_object_wrap = NULL;
+   if (o) evas_object_del(o);
    EINA_LIST_FOREACH_SAFE(m->items, l, l_next, mi)
      e_object_del(E_OBJECT(mi));
    if (m->in_active_list)
@@ -1394,10 +1396,12 @@ static void
 _e_menu_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Menu *m = data;
+   Evas_Object *o;
 
    m->bg_object = NULL;
-   evas_object_del(m->bg_object_wrap);
+   o = m->bg_object_wrap;
    m->bg_object_wrap = NULL;
+   if (o) evas_object_del(o);
    _e_menu_unrealize(m);
 }
 
