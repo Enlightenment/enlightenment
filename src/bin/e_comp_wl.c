@@ -1262,6 +1262,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
    ews->pending.x = x;
    ews->pending.y = y;
    ews->pending.buffer = buffer;
+//   if (buffer)
    ews->pending.new_buffer = EINA_TRUE;
 
    /* if we were given a buffer, initialize the destroy signal */
@@ -1421,6 +1422,7 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 
    /* if we have a new pending buffer, call configure */
    if ((ews->configure) && (ews->pending.new_buffer))
+//     ews->configure(ews, ews->pending.x, ews->pending.y, bw, bh);
      ews->configure(ews, ews->geometry.x, ews->geometry.y, bw, bh);
 
    if (ews->pending.buffer)
