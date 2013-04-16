@@ -840,6 +840,7 @@ fi
 
 AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 
+AM_CONDITIONAL([HAVE_WAYLAND_EGL], false)
 if test "x${have_wayland_clients}" = "xyes"; then
   AC_ARG_ENABLE([wayland-egl],
     AS_HELP_STRING([--enable-wayland-egl],[enable wayland clients to render using EGL @<:@default=disabled@:>@]),
@@ -863,10 +864,11 @@ if test "x${have_wayland_clients}" = "xyes"; then
   AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 fi
 
-AM_CONDITIONAL(WL_DESKTOP_SHELL, false)
+AM_CONDITIONAL(HAVE_WL_DESKTOP_SHELL, false)
+AM_CONDITIONAL(USE_MODULE_WL_DESKTOP_SHELL, false)
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
-  AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version ], [], [WL_DESKTOP_SHELL=false])
+  AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version ], [], [HAVE_WL_DESKTOP_SHELL=false])
 ])
 
 AC_E_OPTIONAL_MODULE([ibar], true)
