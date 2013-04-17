@@ -143,6 +143,22 @@ e_zoomap_always_get(Evas_Object *obj)
    return sd->always;
 }
 
+EAPI void
+e_zoomap_child_edje_solid_setup(Evas_Object *obj)
+{
+   const char *s;
+   Eina_Bool solid;
+
+   API_ENTRY return;
+   if (!sd->child_obj) return;
+   s = edje_object_data_get(sd->child_obj, "argb");
+   if (!s) s = edje_object_data_get(sd->child_obj, "shaped");
+   solid = (!s) || (s[0] != '1');
+   if (sd->solid == solid) return;
+   sd->solid = solid;
+   _e_smart_reconfigure(sd);
+}
+
 /* local subsystem functions */
 static void
 _e_smart_child_del_hook(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
