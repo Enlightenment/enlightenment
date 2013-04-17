@@ -40,6 +40,7 @@ typedef struct _E_Wayland_Input E_Wayland_Input;
 typedef struct _E_Wayland_Compositor E_Wayland_Compositor;
 typedef struct _E_Wayland_Output E_Wayland_Output;
 typedef struct _E_Wayland_Ouput_Mode E_Wayland_Output_Mode;
+typedef struct _E_Wayland_Plane E_Wayland_Plane;
 
 enum _E_Wayland_Shell_Surface_Type
 {
@@ -340,6 +341,13 @@ struct _E_Wayland_Output_Mode
    unsigned int flags;
    Evas_Coord w, h;
    unsigned int refresh;
+};
+
+struct _E_Wayland_Plane
+{
+   pixman_region32_t damage, clip;
+   Evas_Coord x, y;
+   struct wl_list link;
 };
 
 /* external variables */
