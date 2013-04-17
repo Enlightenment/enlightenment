@@ -485,7 +485,7 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
    else if (cw->bd)
      w = cw->bd->w, h = cw->bd->h;
    else
-     w = cw->pw, h = cw->ph;
+     w = cw->pw ?: cw->w, h = cw->ph ?: cw->h;
    e_zoomap_child_resize(cw->zoomobj, w, h);
    if (cw->not_in_layout)
      {
@@ -640,6 +640,7 @@ _e_comp_win_update(E_Comp_Win *cw)
      }
    if (!((cw->pw > 0) && (cw->ph > 0)))
      {
+        if (cw->geom_update) _e_comp_win_geometry_update(cw);
         if (conf->grab) ecore_x_ungrab();
         return;
      }
