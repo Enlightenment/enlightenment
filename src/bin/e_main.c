@@ -1691,7 +1691,11 @@ _e_main_screens_init(void)
    TS("E_Xkb Init Done");
 
    TS("E_Comp Init");
-   e_comp_init();
+   if (!e_comp_init())
+     {
+        e_error_message_show(_("Enlightenment cannot setup compositing.\n"));
+        _e_main_shutdown(-1);
+     }
    TS("E_Comp Init Done");
    _e_main_shutdown_push(e_comp_shutdown);
      

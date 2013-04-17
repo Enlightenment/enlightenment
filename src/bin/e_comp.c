@@ -4717,18 +4717,18 @@ e_comp_init(void)
 {
    if (!ecore_x_composite_query())
      {
-        e_util_dialog_internal
-          (_("Compositor Error"), _("Your display server does not support XComposite,<br>"
-            "or Ecore-X was built without XComposite support.<br>"
-            "Note that for composite support you will also need<br>"
-            "XRender and XFixes support in X11 and Ecore."));
+        e_error_message_show
+          (_("Your display server does not support XComposite, "
+             "or Ecore-X was built without XComposite support. "
+             "Note that for composite support you will also need "
+             "XRender and XFixes support in X11 and Ecore."));
         return EINA_FALSE;
      }
    if (!ecore_x_damage_query())
      {
-        e_util_dialog_internal
-          (_("Compositor Error"), _("Your display server does not support XDamage<br>"
-            "or Ecore was built without XDamage support."));
+        e_error_message_show
+          (_("Your display server does not support XDamage "
+             "or Ecore was built without XDamage support."));
         return EINA_FALSE;
      }
 
@@ -4736,7 +4736,8 @@ e_comp_init(void)
    eina_log_domain_level_set("e_comp", EINA_LOG_LEVEL_INFO);
 
    e_sys_handlers_set(_e_comp_sys_suspend, _e_comp_sys_hibernate,
-     _e_comp_sys_reboot, _e_comp_sys_shutdown, _e_comp_sys_logout, _e_comp_sys_resume);
+                      _e_comp_sys_reboot, _e_comp_sys_shutdown,
+                      _e_comp_sys_logout, _e_comp_sys_resume);
 
    windows = eina_hash_string_superfast_new(NULL);
    borders = eina_hash_string_superfast_new(NULL);
