@@ -2178,6 +2178,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
         e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none");
         cw->shobj = edje_object_add(c->evas);
         cw->zoomobj = e_zoomap_add(c->evas);
+        e_zoomap_always_set(cw->zoomobj, 1);
         cw->obj = evas_object_image_filled_add(c->evas);
         evas_object_image_colorspace_set(cw->obj, EVAS_COLORSPACE_ARGB8888);
         if (cw->argb) evas_object_image_alpha_set(cw->obj, 1);
