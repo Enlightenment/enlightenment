@@ -72,7 +72,6 @@ struct _E_Menu
    Eina_Bool        pending_new_submenu : 1;
    Eina_Bool        have_submenu : 1;
    Eina_Bool        in_active_list : 1;
-   Eina_Bool        solid : 1; // theme has data.item: "solid" "1"
 };
 
 struct _E_Menu_Item
