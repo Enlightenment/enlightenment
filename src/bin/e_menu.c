@@ -1704,7 +1704,14 @@ _e_menu_realize(E_Menu *m)
    evas_object_name_set(o, "menu->bg_object");
    evas_object_data_set(o, "e_menu", m);
    evas_object_data_set(o, "eobj", m);
-   e_theme_edje_object_set(o, "base/theme/menus", "e/widgets/menu/default/background");
+   if (e_theme_edje_object_set(o, "base/theme/menus", "e/widgets/menu/default/background"))
+     {
+        const char *s;
+
+        s = edje_object_data_get(m->bg_object, "argb");
+        if (!s) s = edje_object_data_get(m->bg_object, "shaped");
+        if ((!s) || (s[0] != '1')) m->solid = 1;
+     }
    if (m->header.title)
      {
         edje_object_part_text_set(o, "e.text.title", m->header.title);

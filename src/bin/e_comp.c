@@ -1971,6 +1971,7 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
 {
    E_Comp_Win *cw;
    int x, y, w, h;
+   Eina_Bool solid = EINA_FALSE;
 
    cw = calloc(1, sizeof(E_Comp_Win));
    if (!cw) return NULL;
@@ -1992,6 +1993,7 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
              cw->shape = cw->menu->shape;
              cw->dfn = e_object_delfn_add(E_OBJECT(cw->menu), _e_comp_object_del, cw);
              cw->show_ready = cw->menu->cur.visible;
+             solid = cw->menu->solid;
              break;
            default:
              CRI("UNHANDLED");
@@ -2017,6 +2019,7 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
    e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none");
    cw->shobj = edje_object_add(c->evas);
    cw->zoomobj = e_zoomap_add(c->evas);
+   e_zoomap_solid_set(cw->zoomobj, solid);
    _e_comp_win_shadow_setup(cw);
    edje_object_part_swallow(cw->effect_obj, "e.swallow.content", cw->shobj);
 
