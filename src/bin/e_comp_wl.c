@@ -801,7 +801,11 @@ _e_comp_wl_input_keyboard_info_get(struct xkb_keymap *keymap)
    if (!(info = E_NEW(E_Wayland_Keyboard_Info, 1)))
      return NULL;
 
-   info->keymap = xkb_map_ref(keymap);
+   if (!(info->keymap = xkb_map_ref(keymap)))
+     {
+        E_FREE(info);
+        return NULL;
+     }
 
    /* init modifiers */
    info->mod_shift = xkb_map_mod_get_index(keymap, XKB_MOD_NAME_SHIFT);
@@ -813,7 +817,9 @@ _e_comp_wl_input_keyboard_info_get(struct xkb_keymap *keymap)
    /* try to get a string of this keymap */
    if (!(tmp = xkb_map_get_as_string(keymap)))
      {
-        printf("Could not map get as string\n");
+        printf("Could not get keymap as string\n");
+        E_FREE(info);
+        return NULL;
      }
 
    info->size = strlen(tmp) + 1;
@@ -823,6 +829,8 @@ _e_comp_wl_input_keyboard_info_get(struct xkb_keymap *keymap)
    if (info->fd < 0)
      {
         printf("Could not create keymap fd\n");
+        E_FREE(info);
+        return NULL;
      }
 
    info->area = 
@@ -830,8 +838,11 @@ _e_comp_wl_input_keyboard_info_get(struct xkb_keymap *keymap)
 
    /* TODO: error check mmap */
 
-   strcpy(info->area, tmp);
-   free(tmp);
+   if ((info->area) && (tmp))
+     {
+        strcpy(info->area, tmp);
+        free(tmp);
+     }
 
    return info;
 }
