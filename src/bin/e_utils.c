@@ -1326,18 +1326,22 @@ static void
 _e_util_size_debug_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    int x, y, w, h;
+   const char *name;
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   fprintf(stderr, "DEL %s OBJ[%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", obj, x, y, w, h);
+   name = evas_object_name_get(obj);
+   fprintf(stderr, "DEL %s OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", name ?: "", name ? "|" : "", obj, x, y, w, h);
 }
 
 static void
 _e_util_size_debug(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    int x, y, w, h;
+   const char *name;
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   fprintf(stderr, "%s OBJ[%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", obj, x, y, w, h);
+   name = evas_object_name_get(obj);
+   fprintf(stderr, "%s OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", name ?: "", name ? "|" : "", obj, x, y, w, h);
 }
 
 EAPI void
