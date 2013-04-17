@@ -3681,7 +3681,13 @@ _e_comp_shapes_update_comp_win_shape_comp_helper(E_Comp_Win *cw, Eina_Tiler *tb)
      {
         int num;
         Ecore_X_Rectangle *rect;
-      
+
+        /* add the frame */
+        if (cw->bd)
+          {
+             eina_tiler_rect_add(tb, &(Eina_Rectangle){cw->bd->x, cw->bd->y, cw->bd->w, cw->bd->h});
+             SHAPE_INF("ADD: %d,%d@%dx%d", cw->bd->x, cw->bd->y, cw->bd->w, cw->bd->h);
+          }
         for (num = 0, rect = cw->rects; num < cw->rects_num; num++, rect++)
           {
              x = rect->x, y = rect->y, w = rect->width, h = rect->height;
