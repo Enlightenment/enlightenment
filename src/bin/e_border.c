@@ -7694,6 +7694,7 @@ _e_border_eval0(E_Border *bd)
                        if (!bd->bordername)
                          bd->client.border.changed = 1;
                     }
+                  ecore_x_window_shape_rectangles_set(bd->win, rects, num);
                }
              free(rects);
           }
@@ -8742,7 +8743,7 @@ _e_border_eval(E_Border *bd)
         _e_border_shape_input_rectangle_set(bd);
         if (!bd->client.shaped)
           ecore_x_window_shape_mask_set(bd->win, 0);
-        bd->need_shape_export = 1;
+        //bd->need_shape_export = 1;
         bd->need_shape_merge = 0;
      }
 
@@ -8797,7 +8798,6 @@ _e_border_eval(E_Border *bd)
                   E_FREE(bd->shape_rects);
                   bd->shape_rects = rects;
                   bd->shape_rects_num = num;
-                  ecore_x_window_shape_rectangles_set(bd->win, rects, num);
                   e_container_shape_rects_set(bd->shape, rects, num);
                }
              else
