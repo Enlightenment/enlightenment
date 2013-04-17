@@ -8145,6 +8145,7 @@ _e_border_eval0(E_Border *bd)
              if (ok)
                {
                   bd->bg_object = o;
+                  evas_object_name_set(o, "bd->bg_object");
 
                   if (bd->client.netwm.name)
                     edje_object_part_text_set(o, "e.text.title",
