@@ -1,4 +1,5 @@
 #ifdef E_TYPEDEFS
+
 #else
 # ifndef E_COMP_WL_H
 #  define E_COMP_WL_H
@@ -6,6 +7,10 @@
 #  include <pixman.h>
 #  include <wayland-server.h>
 #  include <xkbcommon/xkbcommon.h>
+
+/* headers for terminal support */
+#  include <termios.h>
+#  include <linux/vt.h>
 
 #  ifdef __linux__
 #   include <linux/input.h>
@@ -39,7 +44,8 @@ typedef struct _E_Wayland_Keyboard_Info E_Wayland_Keyboard_Info;
 typedef struct _E_Wayland_Input E_Wayland_Input;
 typedef struct _E_Wayland_Compositor E_Wayland_Compositor;
 typedef struct _E_Wayland_Output E_Wayland_Output;
-typedef struct _E_Wayland_Ouput_Mode E_Wayland_Output_Mode;
+typedef struct _E_Wayland_Output_Mode E_Wayland_Output_Mode;
+typedef struct _E_Wayland_Terminal E_Wayland_Terminal;
 typedef struct _E_Wayland_Plane E_Wayland_Plane;
 
 enum _E_Wayland_Shell_Surface_Type
@@ -117,7 +123,6 @@ struct _E_Wayland_Surface
 
    E_Border *bd;
    Eina_List *bd_hooks;
-   /* E_Border_Hook *bd_hook; */
 
    E_Wayland_Shell_Surface *shell_surface;
    Eina_Bool mapped : 1;
@@ -341,6 +346,28 @@ struct _E_Wayland_Output_Mode
    unsigned int flags;
    Evas_Coord w, h;
    unsigned int refresh;
+};
+
+struct _E_Wayland_Terminal
+{
+   E_Wayland_Compositor *compositor;
+
+   int fd, kbd_mode;
+
+   struct termios attributes;
+
+   struct 
+     {
+        struct wl_event_source *input;
+        struct wl_event_source *vt;
+     } wl;
+
+   struct 
+     {
+        void (*func) (E_Wayland_Compositor *compositor, int event);
+        int current, starting;
+        Eina_Bool exists : 1;
+     } vt;
 };
 
 struct _E_Wayland_Plane
