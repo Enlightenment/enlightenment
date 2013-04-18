@@ -4946,17 +4946,8 @@ _e_border_del(E_Border *bd)
 
    if (bd->fullscreen) bd->desk->fullscreen_borders--;
 
-   if (bd->moving)
-     {
-        if (action_border) e_border_act_move_end(bd, NULL);
-        else _e_border_move_end(bd);
-     }
-
-   else if (bd->resize_mode != E_POINTER_RESIZE_NONE)
-     {
-        if (action_border) e_border_act_resize_end(bd, NULL);
-        else _e_border_resize_end(bd);
-     }
+   if (bd->moving) e_border_act_move_end(bd, NULL);
+   else if (bd->resize_mode != E_POINTER_RESIZE_NONE) e_border_act_resize_end(bd, NULL);
 
    if (warp_timer_border == bd)
      {
