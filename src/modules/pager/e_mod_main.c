@@ -2309,6 +2309,7 @@ _pager_desk_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
         oo = e_layout_add(drag->evas);
         e_layout_virtual_size_set(oo, pd->pager->zone->w, pd->pager->zone->h);
         edje_object_part_swallow(o, "e.swallow.content", oo);
+        e_popup_object_add(drag->pop, oo);
         evas_object_show(oo);
 
         EINA_LIST_FOREACH(pd->wins, l, pw)
@@ -2328,6 +2329,7 @@ _pager_desk_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
                                         &zx, &zy, NULL, NULL);
              e_layout_child_move(o, pw->border->x - zx, pw->border->y - zy);
              e_layout_child_resize(o, pw->border->w, pw->border->h);
+             e_popup_object_add(drag->pop, o);
              evas_object_show(o);
 
              if ((o_icon = e_border_icon_add(pw->border, drag->evas)))
