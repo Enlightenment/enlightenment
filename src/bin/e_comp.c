@@ -3471,7 +3471,8 @@ _e_comp_bd_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    E_Event_Border_Resize *ev = event;
    E_Comp_Win *cw = _e_comp_win_find(ev->border->win);
    if (!cw) return ECORE_CALLBACK_PASS_ON;
-   // fimxe: do resize here instead of conf notify
+   cw->geom_update = 1;
+   _e_comp_win_render_queue(cw);
    return ECORE_CALLBACK_PASS_ON;
 }
 
