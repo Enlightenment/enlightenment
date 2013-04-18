@@ -483,7 +483,12 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
    if (cw->real_obj)
      w = cw->w, h = cw->h;
    else if (cw->bd)
-     w = cw->bd->w, h = cw->bd->h;
+     {
+        if (cw->pw && cw->ph)
+          w = cw->pw + cw->bd->client_inset.l + cw->bd->client_inset.r, h = cw->ph + cw->bd->client_inset.t + cw->bd->client_inset.b;
+        else
+          w = cw->bd->w, h = cw->bd->h;
+     }
    else
      w = cw->pw ?: cw->w, h = cw->ph ?: cw->h;
    if (cw->zoomobj) e_zoomap_child_resize(cw->zoomobj, w, h);
