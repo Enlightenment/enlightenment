@@ -875,7 +875,7 @@ _e_comp_win_update(E_Comp_Win *cw)
                }
           }
      }
-   if (cw->geom_update || (cw->pw != pw) || (cw->ph != ph)) _e_comp_win_geometry_update(cw);
+   if (cw->geom_update) _e_comp_win_geometry_update(cw);
    if ((cw->shobj) && (cw->obj))
      {
         if (pshaped != cw->shaped)
