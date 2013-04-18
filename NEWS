@@ -129,6 +129,8 @@ Improvements:
     * menus are now drawn directly on the compositor canvas
     * window borders now drawn on compositor canvas
     * desk flip animations moved to edje
+    * startup splash screen moved to compositor canvas
+    * added new modes for notification display on multiple monitors
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.

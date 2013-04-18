@@ -7,7 +7,7 @@ struct _E_Config_Dialog_Data
    int    show_critical;
    int    force_timeout;
    int    ignore_replacement;
-   int    dual_screen;
+   Popup_Display_Policy dual_screen;
    double timeout;
    int    corner;
    Evas_Object *force_timeout_slider;
@@ -127,6 +127,18 @@ _basic_create(E_Config_Dialog      *cfd __UNUSED__,
     * e_widget_framelist_object_append(of, ow);
     * e_widget_list_object_append(o, of, 1, 1, 0.5); */
 
+   of = e_widget_framelist_add(evas, _("Screen Policy"), 0);
+   rg = e_widget_radio_group_new((int*)&cfdata->dual_screen);
+   ow = e_widget_radio_add(evas, _("Primary screen"), POPUP_DISPLAY_POLICY_FIRST, rg);
+   e_widget_framelist_object_append(of, ow);
+   ow = e_widget_radio_add(evas, _("Current screen"), POPUP_DISPLAY_POLICY_CURRENT, rg);
+   e_widget_framelist_object_append(of, ow);
+   ow = e_widget_radio_add(evas, _("All screens"), POPUP_DISPLAY_POLICY_ALL, rg);
+   e_widget_framelist_object_append(of, ow);
+   ow = e_widget_radio_add(evas, _("Xinerama"), POPUP_DISPLAY_POLICY_MULTI, rg);
+   e_widget_framelist_object_append(of, ow);
+   e_widget_list_object_append(o, of, 1, 1, 0.5);
+
    of = e_widget_framelist_add(evas, _("Popup Corner"), 0);
    rg = e_widget_radio_group_new(&(cfdata->corner));
    ow = e_widget_radio_add(evas, _("Top left"), CORNER_TL, rg);
@@ -148,8 +160,6 @@ _basic_create(E_Config_Dialog      *cfd __UNUSED__,
    * e_widget_list_object_append(o, of, 1, 1, 0.5); */
    of = e_widget_framelist_add(evas, _("Miscellaneous"), 0);
    ow = e_widget_check_add(evas, _("Ignore replace ID"), &(cfdata->ignore_replacement));
-   e_widget_framelist_object_append(of, ow);
-   ow = e_widget_check_add(evas, _("Use multiple monitor geometry"), &(cfdata->dual_screen));
    e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(o, of, 1, 1, 0.5);
 

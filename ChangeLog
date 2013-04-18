@@ -1,3 +1,8 @@
+2013-04-18 Mike Blumenkrantz
+
+        * startup splash screen moved to compositor canvas
+        * added new modes for notification display on multiple monitors
+
 2013-04-16 Chris Michael
 
 	* added support for the Enlightenment compositor to render Wayland Clients

@@ -6,7 +6,7 @@
 /* Increment for Major Changes */
 #define MOD_CONFIG_FILE_EPOCH      1
 /* Increment for Minor Changes (ie: user doesn't need a new config) */
-#define MOD_CONFIG_FILE_GENERATION 0
+#define MOD_CONFIG_FILE_GENERATION 1
 #define MOD_CONFIG_FILE_VERSION    ((MOD_CONFIG_FILE_EPOCH * 1000000) + MOD_CONFIG_FILE_GENERATION)
 
 typedef enum   _Popup_Corner Popup_Corner;
@@ -14,12 +14,20 @@ typedef struct _Config Config;
 typedef struct _Popup_Data Popup_Data;
 
 enum _Popup_Corner
-  {
-    CORNER_TL,
-    CORNER_TR,
-    CORNER_BL,
-    CORNER_BR
-  };
+ {
+   CORNER_TL,
+   CORNER_TR,
+   CORNER_BL,
+   CORNER_BR
+ };
+
+typedef enum
+{
+   POPUP_DISPLAY_POLICY_FIRST,
+   POPUP_DISPLAY_POLICY_CURRENT,
+   POPUP_DISPLAY_POLICY_ALL,
+   POPUP_DISPLAY_POLICY_MULTI
+} Popup_Display_Policy;
 
 struct _Config 
 {
@@ -31,7 +39,7 @@ struct _Config
   int show_critical;
   int force_timeout;
   int ignore_replacement;
-  int dual_screen;
+  Popup_Display_Policy dual_screen;
   float timeout;
   Popup_Corner corner;
 
@@ -53,12 +61,13 @@ struct _Popup_Data
   unsigned id;
   E_Notification_Notify *notif;
   E_Popup *win;
+  Eina_List *mirrors;
   Evas *e;
   Evas_Object *theme;
   const char  *app_name;
   Evas_Object *app_icon;
   Ecore_Timer *timer;
-  E_Zone *zone;
+  Eina_Bool pending : 1;
 };
 
 

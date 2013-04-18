@@ -12,7 +12,8 @@ static void        _notification_popup_del(unsigned int                 id,
 static void        _notification_popdown(Popup_Data                  *popup,
                                          E_Notification_Notify_Closed_Reason reason);
 
-#define POPUP_LIMIT 7
+#define POPUP_GAP 10
+#define POPUP_TO_EDGE 15
 static int popups_displayed = 0;
 
 /* Util function protos */
@@ -157,42 +158,67 @@ _notification_theme_cb_find(Popup_Data *popup,
      }
 }
 
+static void
+_notification_popup_place_coords_get(int zw, int zh, int ow, int oh, int pos, int *x, int *y)
+{
+   /* XXX for now ignore placement requests */
+
+   switch (notification_cfg->corner)
+     {
+      case CORNER_TL:
+        *x = 15, *y = 15 + pos;
+        break;
+      case CORNER_TR:
+        *x = zw - (ow + 15), *y = 15 + pos;
+        break;
+      case CORNER_BL:
+        *x = 15, *y = (zh - oh) - (15 + pos);
+        break;
+      case CORNER_BR:
+        *x = zw - (ow + 15), *y = (zh - oh) - (15 + pos);
+        break;
+     }
+}
+
 static Popup_Data *
 _notification_popup_new(E_Notification_Notify *n, unsigned id)
 {
    E_Container *con;
    Popup_Data *popup;
    char buf[PATH_MAX];
-   const Eina_List *l, *screens;
-   E_Screen *scr;
+   Eina_List *l;
+   int pos = next_pos;
+   E_Manager *man;
    E_Zone *zone = NULL;
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(popups_displayed > POPUP_LIMIT, NULL);
+   switch (notification_cfg->dual_screen)
+     {
+      case POPUP_DISPLAY_POLICY_FIRST:
+        man = eina_list_data_get(e_manager_list());
+        con = eina_list_data_get(man->containers);
+        zone = eina_list_data_get(con->zones);
+        break;
+      case POPUP_DISPLAY_POLICY_CURRENT:
+      case POPUP_DISPLAY_POLICY_ALL:
+        zone = e_util_zone_current_get(e_manager_current_get());
+        break;
+      case POPUP_DISPLAY_POLICY_MULTI:
+        if ((notification_cfg->corner == CORNER_BR) ||
+            (notification_cfg->corner == CORNER_TR))
+          zone = eina_list_last_data_get(e_util_container_current_get()->zones);
+        else
+          zone = eina_list_data_get(e_util_container_current_get()->zones);
+        break;
+     }
+
+   /* prevent popups if they would go offscreen
+    * FIXME: this can be improved...
+    */
+   if (next_pos + 30 >= zone->h) return NULL;
    popup = E_NEW(Popup_Data, 1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(popup, NULL);
    popup->notif = n;
    popup->id = id;
-
-   con = e_container_current_get(e_manager_current_get());
-   screens = e_xinerama_screens_get();
-   if (notification_cfg->dual_screen &&
-       ((notification_cfg->corner == CORNER_BR) ||
-       (notification_cfg->corner == CORNER_TR)))
-     l = eina_list_last(screens);
-   else
-     l = screens;
-   if (l)
-     {
-        scr = eina_list_data_get(l);
-        EINA_SAFETY_ON_NULL_GOTO(scr, error);
-        EINA_LIST_FOREACH(con->zones, l, zone)
-          if ((int)zone->num == scr->screen) break;
-        if (zone && ((int)zone->num != scr->screen)) goto error;
-     }
-   if (!zone)
-     zone = e_zone_current_get(con);
-   popup->zone = zone;
-
    /* Create the popup window */
    popup->win = e_popup_new(zone, 0, 0, 0, 0);
    e_popup_name_set(popup->win, "_e_popup_notification");
@@ -227,66 +253,45 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    _notification_popup_refresh(popup);
    next_pos = _notification_popup_place(popup, next_pos);
    e_popup_show(popup->win);
+   if (notification_cfg->dual_screen == POPUP_DISPLAY_POLICY_ALL)
+     {
+        EINA_LIST_FOREACH(popup->win->zone->container->zones, l, zone)
+          {
+             Evas_Object *o;
+             int x, y;
+
+             if (zone == popup->win->zone) continue;
+             o = e_comp_win_image_mirror_add(popup->win->cw);
+             evas_object_data_set(o, "zone", zone);
+             evas_object_resize(o, popup->win->w, popup->win->h);
+             _notification_popup_place_coords_get(zone->w, zone->h, popup->win->w, popup->win->h, pos, &x, &y);
+             evas_object_move(o, zone->x + x, zone->y + y);
+             evas_object_show(o);
+             popup->mirrors = eina_list_append(popup->mirrors, o);
+          }
+     }
    popups_displayed++;
 
    return popup;
-error:
-   free(popup);
-   return NULL;
 }
 
 static int
 _notification_popup_place(Popup_Data *popup,
                           int         pos)
 {
-   int w, h, sw, sh;
-   int gap = 10;
-   int to_edge = 15;
-
-   sw = popup->zone->w;
-   sh = popup->zone->h;
-   evas_object_geometry_get(popup->theme, NULL, NULL, &w, &h);
-
-   /* XXX for now ignore placement requests */
-
-   switch (notification_cfg->corner)
-     {
-      case CORNER_TL:
-        e_popup_move(popup->win,
-                     to_edge, to_edge + pos);
-        break;
-      case CORNER_TR:
-        e_popup_move(popup->win,
-                     sw - (w + to_edge),
-                     to_edge + pos);
-        break;
-      case CORNER_BL:
-        e_popup_move(popup->win,
-                     to_edge,
-                     (sh - h) - (to_edge + pos));
-        break;
-      case CORNER_BR:
-        e_popup_move(popup->win,
-                     sw - (w + to_edge),
-                     (sh - h) - (to_edge + pos));
-        break;
-      default:
-        break;
-     }
-   return pos + h + gap;
-}
-
-static void
-_notification_popups_place(void)
-{
-   Popup_Data *popup;
+   int x, y;
    Eina_List *l;
-   int pos = 0;
+   Evas_Object *o;
 
-   EINA_LIST_FOREACH(notification_cfg->popups, l, popup)
-     pos = _notification_popup_place(popup, pos);
-
-   next_pos = pos;
+   _notification_popup_place_coords_get(popup->win->zone->w, popup->win->zone->h, popup->win->w, popup->win->h, pos, &x, &y);
+   e_popup_move(popup->win, x, y);
+   EINA_LIST_FOREACH(popup->mirrors, l, o)
+     {
+        E_Zone *zone = evas_object_data_get(o, "zone");
+        _notification_popup_place_coords_get(zone->w, zone->h, popup->win->w, popup->win->h, pos, &x, &y);
+        evas_object_move(o, zone->x + x, zone->y + y);
+     }
+   return pos + popup->win->h + 10;
 }
 
 static void
@@ -302,6 +307,7 @@ _notification_popup_refresh(Popup_Data *popup)
 
    if (popup->app_icon)
      {
+        e_popup_object_remove(popup->win, popup->app_icon);
         evas_object_del(popup->app_icon);
         popup->app_icon = NULL;
      }
@@ -403,6 +409,7 @@ _notification_popup_refresh(Popup_Data *popup)
         h = height;
      }
 
+   e_popup_object_add(popup->win, popup->app_icon);
    if ((w > width) || (h > height))
      {
         int v;
@@ -413,7 +420,6 @@ _notification_popup_refresh(Popup_Data *popup)
    edje_extern_object_min_size_set(popup->app_icon, w, h);
    edje_extern_object_max_size_set(popup->app_icon, w, h);
 
-   edje_object_calc_force(popup->theme);
    edje_object_part_swallow(popup->theme, "notification.swallow.app_icon", 
                             popup->app_icon);
    edje_object_signal_emit(popup->theme, "notification,icon", "notification");
@@ -424,12 +430,9 @@ _notification_popup_refresh(Popup_Data *popup)
    /* Compute the new size of the popup */
    edje_object_calc_force(popup->theme);
    edje_object_size_min_calc(popup->theme, &w, &h);
-   w = MIN(w, popup->zone->w / 2);
-   h = MIN(h, popup->zone->h / 2);
+   w = MIN(w, popup->win->zone->w / 2);
+   h = MIN(h, popup->win->zone->h / 2);
    e_popup_resize(popup->win, w, h);
-   evas_object_resize(popup->theme, w, h);
-
-   _notification_popups_place();
 }
 
 static Popup_Data *
@@ -446,8 +449,7 @@ _notification_popup_find(unsigned int id)
 }
 
 static void
-_notification_popup_del(unsigned int                 id,
-                        E_Notification_Notify_Closed_Reason reason)
+_notification_reshuffle_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Popup_Data *popup;
    Eina_List *l, *l2;
@@ -455,30 +457,52 @@ _notification_popup_del(unsigned int                 id,
 
    EINA_LIST_FOREACH_SAFE(notification_cfg->popups, l, l2, popup)
      {
-        if (popup->id == id)
+        if (popup->theme == obj)
           {
-             _notification_popdown(popup, reason);
+             popup->pending = 0;
+             _notification_popdown(popup, 0);
              notification_cfg->popups = eina_list_remove_list(notification_cfg->popups, l);
           }
         else
           pos = _notification_popup_place(popup, pos);
      }
-
    next_pos = pos;
+}
+
+static void
+_notification_popup_del(unsigned int                 id,
+                        E_Notification_Notify_Closed_Reason reason)
+{
+   Popup_Data *popup;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(notification_cfg->popups, l, popup)
+     {
+        if (popup->id == id)
+          {
+             popup->pending = 1;
+             evas_object_event_callback_add(popup->theme, EVAS_CALLBACK_DEL, _notification_reshuffle_cb, NULL);
+             _notification_popdown(popup, reason);
+             break;
+          }
+     }
 }
 
 static void
 _notification_popdown(Popup_Data                  *popup,
                       E_Notification_Notify_Closed_Reason reason)
 {
-   if (popup->timer) ecore_timer_del(popup->timer);
-   e_popup_hide(popup->win);
-   popups_displayed--;
-   evas_object_del(popup->app_icon);
-   evas_object_del(popup->theme);
+   E_FREE_FUNC(popup->timer, ecore_timer_del);
+   popup->mirrors = eina_list_free(popup->mirrors);
    e_object_del(E_OBJECT(popup->win));
-   e_notification_notify_close(popup->notif, reason);
-   e_notification_notify_free(popup->notif);
+   if (popup->notif)
+     {
+        e_notification_notify_close(popup->notif, reason);
+        e_notification_notify_free(popup->notif);
+     }
+   popup->notif = NULL;
+   if (popup->pending) return;
+   popups_displayed--;
    free(popup);
 }
 

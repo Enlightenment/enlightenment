@@ -146,6 +146,29 @@ _notification_corner_info_cb(E_Configure_Option *co)
    return ret;
 }
 
+static Eina_List *
+_notification_screen_info_cb(E_Configure_Option *co)
+{
+   Eina_List *ret = NULL;
+   E_Configure_Option_Info *oi;
+   int x;
+   const char *name[] =
+   {
+    "Primary screen",
+    "Current screen",
+    "All screens",
+    "Xinerama",
+   };
+
+   for (x = 0; x <= POPUP_DISPLAY_POLICY_MULTI; x++)
+     {
+        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
+        oi->current = (*(int*)co->valptr == x);
+        ret = eina_list_append(ret, oi);
+     }
+   return ret;
+}
+
 /* Module Api Functions */
 EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Notification"};
 
@@ -212,6 +235,11 @@ e_modapi_init(E_Module *m)
 
    if (!notification_cfg)
      notification_cfg = _notification_cfg_new();
+   /* upgrades */
+   if (notification_cfg->version - (MOD_CONFIG_FILE_EPOCH * 1000000) < 1)
+     {
+        if (notification_cfg->dual_screen) notification_cfg->dual_screen = POPUP_DISPLAY_POLICY_MULTI;
+     }
    notification_cfg->version = MOD_CONFIG_FILE_VERSION;
 
    /* set up the notification daemon */
@@ -243,6 +271,9 @@ e_modapi_init(E_Module *m)
    E_CONFIGURE_OPTION_ADD(co, BOOL, force_timeout, notification_cfg, _("Force a specified timeout on all notifications"), _("notification"), _("delay"));
    E_CONFIGURE_OPTION_ADD(co, DOUBLE, timeout, notification_cfg, _("Timeout to force on notifications"), _("notification"), _("delay"));
    E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0.0, 15.0, 0.1, _("%.1f seconds"));
+   E_CONFIGURE_OPTION_ADD(co, ENUM, dual_screen, notification_cfg, _("Screen(s) on which to display notifications"), _("notification"), _("screen"));
+   co->info_cb = _notification_screen_info_cb;
+   E_CONFIGURE_OPTION_ICON(co, buf);
    E_CONFIGURE_OPTION_ADD(co, ENUM, corner, notification_cfg, _("Corner in which to display notifications"), _("notification"), _("screen"));
    co->info_cb = _notification_corner_info_cb;
    E_CONFIGURE_OPTION_ICON(co, buf);
@@ -301,7 +332,7 @@ _notification_cfg_new(void)
    cfg->timeout = 5.0;
    cfg->force_timeout = 0;
    cfg->ignore_replacement = 0;
-   cfg->dual_screen = 0;
+   cfg->dual_screen = POPUP_DISPLAY_POLICY_FIRST;
    cfg->corner = CORNER_TR;
 
    return cfg;
