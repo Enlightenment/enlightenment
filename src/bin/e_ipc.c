@@ -124,7 +124,6 @@ _e_ipc_cb_client_del(void *data __UNUSED__, int type __UNUSED__, void *event)
    /* delete client sruct */
    e_thumb_client_del(e);
    e_fm2_client_del(e);
-   e_init_client_del(e);
    ecore_ipc_client_del(e->client);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -202,10 +201,6 @@ _e_ipc_cb_client_data(void *data __UNUSED__, int type __UNUSED__, void *event)
 
       case E_IPC_DOMAIN_FM:
         e_fm2_client_data(e);
-        break;
-
-      case E_IPC_DOMAIN_INIT:
-        e_init_client_data(e);
         break;
 
       case E_IPC_DOMAIN_ALERT:

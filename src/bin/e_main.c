@@ -619,36 +619,6 @@ main(int argc, char **argv)
    TS("E_Moveresize Init Done");
    _e_main_shutdown_push(e_moveresize_shutdown);
 
-   if (e_config->show_splash)
-     {
-        TS("E_Splash Init");
-        if (!e_init_init())
-          {
-             e_error_message_show(_("Enlightenment cannot set up its init screen.\n"));
-             _e_main_shutdown(-1);
-          }
-        TS("E_Splash Init Done");
-        _e_main_shutdown_push(e_init_shutdown);
-     }
-   if (!((!e_config->show_splash) || (after_restart)))
-     {
-        e_init_title_set(_("Enlightenment"));
-        e_init_version_set(VERSION);
-        e_init_show();
-        pause();
-     }
-
-   if (e_config->show_splash)
-     e_init_status_set(_("Starting International Support"));
-   TS("E_Intl Post Init");
-   if (!e_intl_post_init())
-     {
-        e_error_message_show(_("Enlightenment cannot set up its intl system.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_Intl Post Init Done");
-   _e_main_shutdown_push(e_intl_post_shutdown);
-
    TS("Efreet Init");
    if (!efreet_init())
      {
@@ -659,20 +629,6 @@ main(int argc, char **argv)
      }
    TS("Efreet Init Done");
    _e_main_shutdown_push(efreet_shutdown);
-
-   if (!really_know)
-     {
-        TS("Test File Format Support");
-        _e_main_test_formats();
-        TS("Test File Format Support Done");
-     }
-   else
-     {
-        efreet_icon_extension_add(".svg");
-        efreet_icon_extension_add(".jpg");
-        efreet_icon_extension_add(".png");
-        efreet_icon_extension_add(".edj");
-     }
 
    e_screensaver_preinit();
 
@@ -698,6 +654,49 @@ main(int argc, char **argv)
      }
    TS("Screens Init Done");
    _e_main_shutdown_push(_e_main_screens_shutdown);
+
+   if (e_config->show_splash)
+     {
+        TS("E_Splash Init");
+        if (!e_init_init())
+          {
+             e_error_message_show(_("Enlightenment cannot set up its init screen.\n"));
+             _e_main_shutdown(-1);
+          }
+        TS("E_Splash Init Done");
+        _e_main_shutdown_push(e_init_shutdown);
+     }
+   if (!((!e_config->show_splash) || (after_restart)))
+     {
+        e_init_title_set(_("Enlightenment"));
+        e_init_version_set(VERSION);
+        e_init_show();
+     }
+
+   if (e_config->show_splash)
+     e_init_status_set(_("Starting International Support"));
+   TS("E_Intl Post Init");
+   if (!e_intl_post_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its intl system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Intl Post Init Done");
+   _e_main_shutdown_push(e_intl_post_shutdown);
+
+   if (!really_know)
+     {
+        TS("Test File Format Support");
+        _e_main_test_formats();
+        TS("Test File Format Support Done");
+     }
+   else
+     {
+        efreet_icon_extension_add(".svg");
+        efreet_icon_extension_add(".jpg");
+        efreet_icon_extension_add(".png");
+        efreet_icon_extension_add(".edj");
+     }
 
    if (e_config->show_splash)
      e_init_status_set(_("Setup ACPI"));
@@ -1675,6 +1674,15 @@ _e_main_screens_init(void)
         return 0;
      }
 
+   TS("E_Comp Init");
+   if (!e_comp_init())
+     {
+        e_error_message_show(_("Enlightenment cannot setup compositing.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Comp Init Done");
+   _e_main_shutdown_push(e_comp_shutdown);
+
    TS("\tscreens: win");
    if (!e_win_init())
      {
@@ -1689,15 +1697,6 @@ _e_main_screens_init(void)
         _e_main_shutdown(-1);
      }
    TS("E_Xkb Init Done");
-
-   TS("E_Comp Init");
-   if (!e_comp_init())
-     {
-        e_error_message_show(_("Enlightenment cannot setup compositing.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_Comp Init Done");
-   _e_main_shutdown_push(e_comp_shutdown);
      
    TS("\tscreens: manage roots");
    for (i = 0; i < num; i++)

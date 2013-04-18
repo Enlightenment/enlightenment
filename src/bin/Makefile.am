@@ -32,7 +32,6 @@ enlightenment_open
 internal_bindir = $(libdir)/enlightenment/utils
 internal_bin_PROGRAMS = \
 enlightenment_fm_op \
-enlightenment_init \
 enlightenment_sys \
 enlightenment_thumb \
 enlightenment_alert \
@@ -424,12 +423,6 @@ e_backlight_main.c
 enlightenment_backlight_CFLAGS = @SUID_CFLAGS@ @EEZE_CFLAGS@
 enlightenment_backlight_LDADD = @SUID_LDFLAGS@ @EEZE_LIBS@
 endif
-
-enlightenment_init_SOURCES = \
-e_init_main.c \
-e_xinerama.c
-
-enlightenment_init_LDADD = @E_INIT_LIBS@
 
 enlightenment_alert_SOURCES = \
 e_alert_main.c

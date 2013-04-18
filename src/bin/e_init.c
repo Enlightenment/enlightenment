@@ -2,28 +2,33 @@
 
 EAPI int E_EVENT_INIT_DONE = 0;
 
-/* local function prototypes */
-static Eina_Bool _e_init_cb_exe_event_del(void *data __UNUSED__, int type __UNUSED__, void *event);
-
 /* local variables */
-static const char *title = NULL;
-static const char *version = NULL;
-static Ecore_Exe *init_exe = NULL;
-static Ecore_Event_Handler *exe_del_handler = NULL;
-static Ecore_Ipc_Client *client = NULL;
 static int done = 0;
 static int undone = 0;
-static Eina_List *stats = NULL;
+static Evas_Object *_e_init_object = NULL;
+static Eina_List *splash_objs = NULL;
+static Ecore_Timer *_e_init_timeout_timer = NULL;
+
+static Eina_Bool
+_e_init_cb_timeout(void *data __UNUSED__)
+{
+   _e_init_timeout_timer = NULL;
+   e_init_hide();
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_e_init_cb_signal_done_ok(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   e_init_hide();
+}
 
 /* public functions */
 EINTERN int
 e_init_init(void)
 {
    E_EVENT_INIT_DONE = ecore_event_type_new();
-   exe_del_handler =
-     ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
-                             _e_init_cb_exe_event_del, NULL);
-   client = NULL;
+
    done = 0;
    return 1;
 }
@@ -33,86 +38,99 @@ e_init_shutdown(void)
 {
    /* if not killed, kill init */
    e_init_hide();
-   if (title) eina_stringshare_del(title);
-   if (version) eina_stringshare_del(version);
-   title = NULL;
-   version = NULL;
-   if (exe_del_handler) ecore_event_handler_del(exe_del_handler);
-   exe_del_handler = NULL;
    return 1;
 }
 
 EAPI void
 e_init_show(void)
 {
-   char buf[8192], *theme, *tit, *ver;
-   const char *s = NULL;
-
+   Eina_Stringshare *theme;
+   Evas_Object *o;
+   E_Manager *man;
+   E_Container *con;
+   E_Zone *zone;
+   Eina_List *l;
    /* exec init */
 
    if (!e_config->init_default_theme)
-     s = e_path_find(path_themes, "default.edj");
+     theme = e_path_find(path_themes, "default.edj");
    else if (e_config->init_default_theme[0] == '/')
-     s = eina_stringshare_add(e_config->init_default_theme);
+     theme = eina_stringshare_add(e_config->init_default_theme);
    else
-     s = e_path_find(path_themes, e_config->init_default_theme);
+     theme = e_path_find(path_themes, e_config->init_default_theme);
 
-   if (s) theme = strdup(e_util_filename_escape(s));
-   else theme = strdup("XdX");
-   if (s) eina_stringshare_del(s);
+   /* extra screens */
+   EINA_LIST_FOREACH(e_manager_list()->next, l, man)
+     {
+        o = edje_object_add(e_comp_get(man)->evas);
+        edje_object_file_set(o, theme, "e/init/extra_screen");
+        evas_object_name_set(o, "_e_init_extra_screen");
+        evas_object_move(o, 0, 0);
+        evas_object_resize(o, man->w, man->h);
+        evas_object_layer_set(o, E_COMP_CANVAS_LAYER_MAX);
+        evas_object_show(o);
+        splash_objs = eina_list_append(splash_objs, o);
+     }
 
-   if (title) tit = strdup(e_util_filename_escape(title));
-   else tit = strdup("XtX");
-
-   if (version) ver = strdup(e_util_filename_escape(version));
-   else ver = strdup("XvX");
-
-   snprintf(buf, sizeof(buf),
-            "exec %s/enlightenment/utils/enlightenment_init \'%s\' \'%i\' \'%s\' \'%s\'",
-            e_prefix_lib_get(), theme,
-            e_config->font_hinting, tit, ver);
-   printf("RUN INIT: %s\n", buf);
-   free(theme);
-   free(tit);
-   free(ver);
-   /* FIXME: add font path to cmd-line */
-   init_exe = ecore_exe_run(buf, NULL);
+   man = eina_list_data_get(e_manager_list());
+   con = eina_list_data_get(man->containers);
+   EINA_LIST_FOREACH(con->zones, l, zone)
+     {
+        o = edje_object_add(e_comp_get(man)->evas);
+        if (!zone->num)
+          {
+             edje_object_file_set(o, theme, "e/init/splash");
+             evas_object_name_set(o, "_e_init_object");
+             _e_init_object = o;
+          }
+        else
+          {
+             edje_object_file_set(o, theme, "e/init/extra_screen");
+             evas_object_name_set(o, "_e_init_extra_screen");
+          }
+        evas_object_clip_set(o, zone->bg_clip_object);
+        fprintf(stderr, "zone %p: %i %i   %ix%i\n", zone, zone->x, zone->y, zone->w, zone->h);
+        evas_object_move(o, zone->x, zone->y);
+        evas_object_resize(o, zone->w, zone->h);
+        evas_object_layer_set(o, E_COMP_CANVAS_LAYER_MAX);
+        evas_object_show(o);
+        splash_objs = eina_list_append(splash_objs, o);
+     }
+   edje_object_part_text_set(_e_init_object, "e.text.disable_text",
+                             "Disable splash screen");
+   edje_object_signal_callback_add(_e_init_object, "e,state,done_ok", "e",
+                                   _e_init_cb_signal_done_ok, NULL);
+   eina_stringshare_del(theme);
+   _e_init_timeout_timer = ecore_timer_add(240.0, _e_init_cb_timeout, NULL);
 }
 
 EAPI void
 e_init_hide(void)
 {
-   if (init_exe) ecore_exe_terminate(init_exe);
+   E_FREE_LIST(splash_objs, evas_object_del);
+   _e_init_object = NULL;
+   E_FREE_FUNC(_e_init_timeout_timer, ecore_timer_del);
 }
 
 EAPI void
 e_init_title_set(const char *str)
 {
-   if (title) eina_stringshare_del(title);
-   title = eina_stringshare_add(str);
+   if (!_e_init_object) return;
+   edje_object_part_text_set(_e_init_object, "e.text.title", str);
 }
 
 EAPI void
 e_init_version_set(const char *str)
 {
-   if (version) eina_stringshare_del(version);
-   version = eina_stringshare_add(str);
+   if (!_e_init_object) return;
+   edje_object_part_text_set(_e_init_object, "e.text.version", str);
 }
 
 EAPI void
 e_init_status_set(const char *str)
 {
-   if (!init_exe) return;
-//   printf("---STAT %p %s\n", client, str);
-   if (!client)
-     {
-        stats = eina_list_append(stats, eina_stringshare_add(str));
-        return;
-     }
-//   printf("---SEND\n");
-   ecore_ipc_client_send(client, E_IPC_DOMAIN_INIT, 1, 0, 0, 0, (void *)str,
-                         strlen(str) + 1);
-   ecore_ipc_client_flush(client);
+   if (!_e_init_object) return;
+   edje_object_part_text_set(_e_init_object, "e.text.status", str);
 }
 
 EAPI void
@@ -123,9 +141,7 @@ e_init_done(void)
    done = 1;
    ecore_event_add(E_EVENT_INIT_DONE, NULL, NULL, NULL);
 //   printf("---DONE %p\n", client);
-   if (!client) return;
-   ecore_ipc_client_send(client, E_IPC_DOMAIN_INIT, 2, 0, 0, 0, NULL, 0);
-   ecore_ipc_client_flush(client);
+   edje_object_signal_emit(_e_init_object, "e,state,done", "e");
 }
 
 EAPI void
@@ -134,90 +150,8 @@ e_init_undone(void)
    undone++;
 }
 
-EAPI void
-e_init_client_data(Ecore_Ipc_Event_Client_Data *e)
-{
-//   printf("---new init client\n");
-   if (!client) client = e->client;
-   if (e->minor == 1)
-     {
-        if (e->data)
-          {
-             int i, num;
-             Ecore_X_Window *initwins;
-
-             num = e->size / sizeof(Ecore_X_Window);
-             initwins = e->data;
-             for (i = 0; i < num; i += 2)
-               {
-                  Eina_List *l;
-                  E_Manager *man;
-
-                  EINA_LIST_FOREACH(e_manager_list(), l, man)
-                    {
-                       if (man->root == initwins[i + 0])
-                         {
-                            man->initwin = initwins[i + 1];
-                            ecore_x_window_raise(man->initwin);
-                         }
-                    }
-               }
-          }
-        while (stats)
-          {
-             const char *s;
-
-             s = stats->data;
-             stats = eina_list_remove_list(stats, stats);
-//	     printf("---SPOOL %s\n", s);
-             e_init_status_set(s);
-             eina_stringshare_del(s);
-          }
-     }
-   else if (e->minor == 2)
-     {
-        e_config->show_splash = e->ref;
-        e_config_save_queue();
-     }
-   if (done) e_init_done();
-}
-
-EAPI void
-e_init_client_del(Ecore_Ipc_Event_Client_Del *e)
-{
-//   printf("---del init client\n");
-   if (e->client == client)
-     {
-        Eina_List *l;
-        E_Manager *man;
-
-        client = NULL;
-        EINA_LIST_FOREACH(e_manager_list(), l, man)
-          {
-             man->initwin = 0;
-          }
-     }
-}
-
 EAPI int
 e_init_count_get(void)
 {
    return undone;
 }
-
-/* local functions */
-static Eina_Bool
-_e_init_cb_exe_event_del(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   Ecore_Exe_Event_Del *ev;
-
-   ev = event;
-   if (ev->exe == init_exe)
-     {
-        /* init exited */
-//	ecore_exe_free(init_exe);
-        init_exe = NULL;
-     }
-   return ECORE_CALLBACK_RENEW;
-}
-
