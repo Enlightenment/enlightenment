@@ -212,6 +212,7 @@ e_modapi_init(E_Module *m)
 
    if (!notification_cfg)
      notification_cfg = _notification_cfg_new();
+   notification_cfg->version = MOD_CONFIG_FILE_VERSION;
 
    /* set up the notification daemon */
    if (!e_notification_server_register(&server_info, _notification_cb_notify,
