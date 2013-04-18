@@ -484,7 +484,7 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
      w = cw->w, h = cw->h;
    else if (cw->bd)
      {
-        if (cw->pw && cw->ph)
+        if ((!cw->bd->shaded) && cw->pw && cw->ph)
           w = cw->pw + cw->bd->client_inset.l + cw->bd->client_inset.r, h = cw->ph + cw->bd->client_inset.t + cw->bd->client_inset.b;
         else
           w = cw->bd->w, h = cw->bd->h;
