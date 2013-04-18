@@ -1862,7 +1862,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
    else
      edje_object_signal_emit(cw->shobj, "e,state,visible,off", "e");
 
-   if (cw->zoomobj) e_zoomap_child_set(cw->zoomobj, NULL);
+   if (cw->eobj) e_zoomap_child_set(cw->zoomobj, NULL);
    if (cw->bd && cw->bd->bg_object)
      {
         edje_object_part_swallow(cw->bd->bg_object, "e.swallow.client", cw->obj);
