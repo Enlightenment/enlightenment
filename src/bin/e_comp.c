@@ -472,6 +472,7 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
    if (cw->update)
      {
         cw->geom_update = 1;
+        _e_comp_win_render_queue(cw);
         return;
      }
    if (cw->bd)
