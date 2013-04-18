@@ -582,6 +582,7 @@ _e_comp_win_update(E_Comp_Win *cw)
                {
                   ecore_x_pixmap_geometry_get(cw->pixmap, NULL, NULL, &(cw->pw), &(cw->ph));
                   _e_comp_win_ready_timeout_setup(cw);
+                  if ((cw->pw != pw) || (cw->ph != ph)) cw->geom_update = 1;
                }
              else
                {
@@ -2408,8 +2409,10 @@ _e_comp_win_show(E_Comp_Win *cw)
 {
    Eina_List *l;
    Evas_Object *o;
+   int pw, ph;
 
    if (cw->visible || cw->input_only || cw->invalid) return;
+   pw = cw->pw, ph = cw->ph;
    cw->visible = 1;
    DBG("  [0x%x] sho ++ [redir=%i, pm=%x, dmg_up=%i]",
        cw->win, cw->redirected, cw->pixmap, cw->dmg_updates);
@@ -2488,6 +2491,7 @@ _e_comp_win_show(E_Comp_Win *cw)
           {
              ecore_x_pixmap_geometry_get(cw->pixmap, NULL, NULL, &(cw->pw), &(cw->ph));
              _e_comp_win_ready_timeout_setup(cw);
+             if ((cw->pw != pw) || (cw->ph != ph)) cw->geom_update = 1;
           }
         else
           {
