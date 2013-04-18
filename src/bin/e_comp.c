@@ -5010,22 +5010,20 @@ e_comp_win_reshadow(E_Comp_Win *cw)
    _e_comp_win_shadow_setup(cw);
    //   evas_object_move(cw->effect_obj, cw->x, cw->y);
    //   evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
-   _e_comp_win_geometry_update(cw);
-   if (cw->visible)
+   if (!cw->visible) return;
+   cw->geom_update = 1;
+   evas_object_show(cw->effect_obj);
+   if (cw->show_ready)
      {
-        evas_object_show(cw->effect_obj);
-        if (cw->show_ready)
+        cw->defer_hide = 0;
+        if (!cw->hidden_override) _e_comp_child_show(cw);
+        edje_object_signal_emit(cw->shobj, "e,state,visible,on", "e");
+        if (!cw->animating)
           {
-             cw->defer_hide = 0;
-             if (!cw->hidden_override) _e_comp_child_show(cw);
-             edje_object_signal_emit(cw->shobj, "e,state,visible,on", "e");
-             if (!cw->animating)
-               {
-                  cw->c->animating++;
-               }
-             cw->animating = 1;
-             _e_comp_win_render_queue(cw);
+             cw->c->animating++;
           }
+        cw->animating = 1;
+        _e_comp_win_render_queue(cw);
      }
 }
 
