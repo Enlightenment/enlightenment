@@ -1975,7 +1975,7 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
      {
         /* FIXME!!! */
         evas_object_image_alpha_set(o, 1);
-        evas_object_image_source_set(o, cw->obj);
+        evas_object_image_source_set(o, cw->zoomobj);
      }
    return o;
 }
