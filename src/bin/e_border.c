@@ -8153,7 +8153,7 @@ _e_border_eval0(E_Border *bd)
                   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, _e_border_cb_mouse_down, bd);
                   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, _e_border_cb_mouse_up, bd);
                   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL, _e_border_cb_mouse_wheel, bd);
-
+                  if (!pbg) bd->changes.icon = 1;
                }
              else
                {
