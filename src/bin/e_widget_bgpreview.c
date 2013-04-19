@@ -64,7 +64,7 @@ e_widget_bgpreview_num_desks_set(Evas_Object *obj, int nx, int ny)
 }
 
 EAPI Evas_Object *
-e_widget_bgpreview_desk_add(Evas_Object *obj, E_Zone *zone, int x, int y, int w, int h)
+e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y, int w, int h)
 {
    E_Widget_Desk_Data *dd;
    const char *bgfile;
@@ -77,11 +77,11 @@ e_widget_bgpreview_desk_add(Evas_Object *obj, E_Zone *zone, int x, int y, int w,
    dd->x = x;
    dd->y = y;
 
-   dd->icon = edje_object_add(evas_object_evas_get(obj));
+   dd->icon = edje_object_add(e);
    e_theme_edje_object_set(dd->icon, "base/theme/widgets",
                            "e/widgets/bgpreview/desk");
 
-   dd->thumb = e_icon_add(evas_object_evas_get(obj));
+   dd->thumb = e_icon_add(e);
    e_icon_fill_inside_set(dd->thumb, EINA_FALSE);
    e_icon_file_edje_set(dd->thumb, bgfile, "e/desktop/background");
    eina_stringshare_del(bgfile);
@@ -207,7 +207,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
           {
              Evas_Object *dp;
 
-             dp = e_widget_bgpreview_desk_add(wd->obj, zone, x, y, mw, mh);
+             dp = e_widget_bgpreview_desk_add(evas_object_evas_get(wd->obj), zone, x, y, mw, mh);
              evas_object_size_hint_aspect_set(dp, EVAS_ASPECT_CONTROL_BOTH, zone->w, zone->h);
              evas_object_table_pack(wd->table, dp, x, y, 1, 1);
              wd->desks = eina_list_append(wd->desks, dp);

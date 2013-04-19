@@ -1,6 +1,7 @@
 2013-04-19 Mike Blumenkrantz
 
         * deskpreview renamed to bgpreview
+        * e_widget_bgpreview_desk_add now takes an evas instead of an evas object
 
 2013-04-18 Mike Blumenkrantz
 
