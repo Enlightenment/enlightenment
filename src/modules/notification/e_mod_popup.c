@@ -228,6 +228,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    snprintf(buf, sizeof(buf), "%s/e-module-notification.edj",
             notification_mod->dir);
    popup->theme = edje_object_add(popup->e);
+   evas_object_name_set(popup->theme, "notification");
 
    if (!e_theme_edje_object_set(popup->theme,
                                 "base/theme/modules/notification",
@@ -262,6 +263,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
 
              if (zone == popup->win->zone) continue;
              o = e_comp_win_image_mirror_add(popup->win->cw);
+             evas_object_name_set(o, "notification_mirror");
              evas_object_data_set(o, "zone", zone);
              evas_object_resize(o, popup->win->w, popup->win->h);
              _notification_popup_place_coords_get(zone->w, zone->h, popup->win->w, popup->win->h, pos, &x, &y);
