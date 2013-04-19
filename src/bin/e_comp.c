@@ -5500,10 +5500,16 @@ e_comp_win_effect_params_set(E_Comp_Win *cw, int id, int *params, unsigned int c
 }
 
 static void
-_e_comp_win_effect_end_cb(void *data, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
+_e_comp_win_effect_end_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *emission, const char *source)
 {
-   edje_object_signal_callback_del(obj, "e,action,done", "e", data);
-   edje_object_signal_callback_del_full(obj, "e,action,done", "e", _e_comp_win_effect_end_cb, data);
+   Edje_Signal_Cb end_cb;
+   void *end_data;
+
+   end_cb = evas_object_data_get(obj, "_e_comp.end_cb");
+   end_data = evas_object_data_get(obj, "_e_comp.end_data");
+   end_cb(end_data, obj, emission, source);
+
+   edje_object_signal_callback_del_full(obj, "e,action,done", "e", _e_comp_win_effect_end_cb, NULL);
 }
 
 EAPI void
@@ -5511,8 +5517,6 @@ e_comp_win_effect_start(E_Comp_Win *cw, Edje_Signal_Cb end_cb, const void *end_d
 {
    EINA_SAFETY_ON_NULL_RETURN(cw);
    EINA_SAFETY_ON_FALSE_RETURN(cw->bd); //FIXME
-   edje_object_signal_callback_del(cw->effect_obj, "e,action,done", "e", end_cb);
-   edje_object_signal_callback_del(cw->effect_obj, "e,action,done", "e", _e_comp_win_effect_end_cb);
    if (cw->effect_clip)
      {
         evas_object_clip_unset(cw->effect_obj);
@@ -5527,13 +5531,17 @@ e_comp_win_effect_start(E_Comp_Win *cw, Edje_Signal_Cb end_cb, const void *end_d
           }
      }
    /* this is a stack, so the callbacks added first will be called last */
-   edje_object_signal_callback_add(cw->effect_obj, "e,action,done", "e", _e_comp_win_effect_end_cb, end_cb);
-   edje_object_signal_callback_add(cw->effect_obj, "e,action,done", "e", end_cb, (void*)end_data);
+   edje_object_signal_callback_del_full(cw->effect_obj, "e,action,done", "e", _e_comp_win_effect_end_cb, NULL);
+
+   edje_object_signal_callback_add(cw->effect_obj, "e,action,done", "e", _e_comp_win_effect_end_cb, NULL);
+   evas_object_data_set(cw->effect_obj, "_e_comp.end_cb", end_cb);
+   evas_object_data_set(cw->effect_obj, "_e_comp.end_data", end_data);
+
    edje_object_signal_emit(cw->effect_obj, "e,action,go", "e");
 }
 
 EAPI void
-e_comp_win_effect_stop(E_Comp_Win *cw, Edje_Signal_Cb end_cb)
+e_comp_win_effect_stop(E_Comp_Win *cw, Edje_Signal_Cb end_cb EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN(cw);
    if (cw->effect_clip)
@@ -5542,8 +5550,7 @@ e_comp_win_effect_stop(E_Comp_Win *cw, Edje_Signal_Cb end_cb)
         cw->effect_clip = 0;
      }
    edje_object_signal_emit(cw->effect_obj, "e,action,stop", "e");
-   edje_object_signal_callback_del(cw->effect_obj, "e,action,done", "e", end_cb);
-   edje_object_signal_callback_del(cw->effect_obj, "e,action,done", "e", _e_comp_win_effect_end_cb);
+   edje_object_signal_callback_del_full(cw->effect_obj, "e,action,done", "e", _e_comp_win_effect_end_cb, NULL);
 }
 
 EAPI unsigned int
