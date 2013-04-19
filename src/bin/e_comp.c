@@ -1909,7 +1909,7 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
    Evas_Object *o;
    int w, h;
 
-   if (!cw->c) return NULL;
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(((!cw->pixmap) || (!cw->pw) || (!cw->ph)) && (!cw->real_obj), NULL);
 
    o = evas_object_image_filled_add(cw->c->evas);
    evas_object_image_colorspace_set(o, EVAS_COLORSPACE_ARGB8888);
