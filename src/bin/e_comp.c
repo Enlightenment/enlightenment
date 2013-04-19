@@ -43,6 +43,7 @@ EAPI int E_EVENT_COMP_SOURCE_VISIBILITY = -1;
 EAPI int E_EVENT_COMP_SOURCE_ADD = -1;
 EAPI int E_EVENT_COMP_SOURCE_DEL = -1;
 EAPI int E_EVENT_COMP_SOURCE_CONFIGURE = -1;
+EAPI int E_EVENT_COMP_SOURCE_STACK = -1;
 
 static int _e_comp_log_dom = -1;
 
@@ -148,6 +149,16 @@ _e_comp_event_source_configure(E_Comp_Win *cw)
    ev = E_NEW(E_Event_Comp, 1);
    ev->cw = cw;
    ecore_event_add(E_EVENT_COMP_SOURCE_CONFIGURE, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
+}
+
+static void
+_e_comp_event_source_stack(E_Comp_Win *cw)
+{
+   E_Event_Comp *ev;
+
+   ev = E_NEW(E_Event_Comp, 1);
+   ev->cw = cw;
+   ecore_event_add(E_EVENT_COMP_SOURCE_STACK, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
 }
 
 static void
@@ -2666,7 +2677,7 @@ _e_comp_win_raise_above(E_Comp_Win *cw, E_Comp_Win *cw2)
    _e_comp_win_restack(cw);
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
-   _e_comp_event_source_configure(cw);
+   _e_comp_event_source_stack(cw);
 }
 
 static void
@@ -2679,7 +2690,7 @@ _e_comp_win_raise(E_Comp_Win *cw)
    _e_comp_win_restack(cw);
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
-   _e_comp_event_source_configure(cw);
+   _e_comp_event_source_stack(cw);
 }
 
 static void
@@ -2692,7 +2703,7 @@ _e_comp_win_lower_below(E_Comp_Win *cw, E_Comp_Win *cw2)
    _e_comp_win_restack(cw);
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
-   _e_comp_event_source_configure(cw);
+   _e_comp_event_source_stack(cw);
 }
 
 static void
@@ -2705,7 +2716,7 @@ _e_comp_win_lower(E_Comp_Win *cw)
    _e_comp_win_restack(cw);
    _e_comp_win_render_queue(cw);
    cw->pending_count++;
-   _e_comp_event_source_configure(cw);
+   _e_comp_event_source_stack(cw);
 }
 
 static void
@@ -4802,6 +4813,7 @@ e_comp_init(void)
    E_EVENT_COMP_SOURCE_ADD = ecore_event_type_new();
    E_EVENT_COMP_SOURCE_DEL = ecore_event_type_new();
    E_EVENT_COMP_SOURCE_CONFIGURE = ecore_event_type_new();
+   E_EVENT_COMP_SOURCE_STACK = ecore_event_type_new();
 
    e_comp_cfdata_edd_init(&conf_edd, &conf_match_edd);
    conf = e_config_domain_load("e_comp", conf_edd);
