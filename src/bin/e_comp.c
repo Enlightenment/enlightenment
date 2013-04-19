@@ -1907,6 +1907,7 @@ static Evas_Object *
 _e_comp_win_mirror_add(E_Comp_Win *cw)
 {
    Evas_Object *o;
+   int w, h;
 
    if (!cw->c) return NULL;
 
@@ -1919,9 +1920,8 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
 
    if ((cw->pixmap) && (cw->pw > 0) && (cw->ph > 0))
      {
-        unsigned int *pix;
-        Eina_Bool alpha;
-        int w, h;
+        unsigned int *pix = NULL;
+        Eina_Bool alpha, argb = EINA_FALSE;
 
         alpha = evas_object_image_alpha_get(cw->obj);
         evas_object_image_size_get(cw->obj, &w, &h);
@@ -1929,13 +1929,7 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
         evas_object_image_alpha_set(o, alpha);
 
         if (cw->shaped)
-          {
-             pix = evas_object_image_data_get(cw->obj, 0);
-             evas_object_image_data_set(o, pix);
-             evas_object_image_size_set(o, w, h);
-             evas_object_image_data_set(o, pix);
-             evas_object_image_data_update_add(o, 0, 0, w, h);
-          }
+          pix = evas_object_image_data_get(cw->obj, 0);
         else
           {
              if (cw->native)
@@ -1946,37 +1940,32 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
                   ns.type = EVAS_NATIVE_SURFACE_X11;
                   ns.data.x11.visual = cw->vis;
                   ns.data.x11.pixmap = cw->pixmap;
-                  evas_object_image_size_set(o, w, h);
                   evas_object_image_native_surface_set(o, &ns);
-                  evas_object_image_data_update_add(o, 0, 0, w, h);
                }
              else if (cw->xim)
                {
-                  if (ecore_x_image_is_argb32_get(cw->xim))
-                    {
-                       pix = ecore_x_image_data_get(cw->xim, NULL, NULL, NULL);
-                       evas_object_image_data_set(o, pix);
-                       evas_object_image_size_set(o, w, h);
-                    }
+                  argb = ecore_x_image_is_argb32_get(cw->xim);
+                  if (argb)
+                    pix = ecore_x_image_data_get(cw->xim, NULL, NULL, NULL);
                   else
-                    {
-                       pix = evas_object_image_data_get(cw->obj, EINA_TRUE);
-                       evas_object_image_data_set(o, pix);
-                       evas_object_image_size_set(o, w, h);
-                       evas_object_image_data_set(cw->obj, pix);
-                    }
-                  evas_object_image_data_update_add(o, 0, 0, w, h);
+                    pix = evas_object_image_data_get(cw->obj, EINA_FALSE);
                }
           }
+        if (pix && (!argb))
+          {
+             evas_object_image_data_set(o, pix);
+             evas_object_image_data_set(cw->obj, pix);
+          }
         evas_object_image_size_set(o, w, h);
-        evas_object_image_data_update_add(o, 0, 0, w, h);
      }
    else if (cw->real_obj)
      {
-        /* FIXME!!! */
+        /* FIXME: the first mirror shown with vsync enabled won't render immediately */
         evas_object_image_alpha_set(o, 1);
+        evas_object_geometry_get(cw->zoomobj, NULL, NULL, &w, &h);
         evas_object_image_source_set(o, cw->zoomobj);
      }
+   evas_object_image_data_update_add(o, 0, 0, w, h);
    return o;
 }
 
