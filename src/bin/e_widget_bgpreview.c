@@ -79,7 +79,7 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y, int w, int h)
 
    dd->icon = edje_object_add(e);
    e_theme_edje_object_set(dd->icon, "base/theme/widgets",
-                           "e/widgets/bgpreview/desk");
+                           "e/widgets/deskpreview/desk");
 
    dd->thumb = e_icon_add(e);
    e_icon_fill_inside_set(dd->thumb, EINA_FALSE);
