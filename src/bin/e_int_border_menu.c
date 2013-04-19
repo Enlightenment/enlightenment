@@ -935,8 +935,8 @@ _e_border_menu_cb_sendto_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
              e_menu_item_disabled_set(submi, EINA_TRUE);
           }
 
-// FIXME: Remove labels and add deskpreview to menu.
-// Evas_Object *o = e_widget_deskpreview_add(m->evas, 4, 2);
+// FIXME: Remove labels and add bgpreview to menu.
+// Evas_Object *o = e_widget_bgpreview_add(m->evas, 4, 2);
 
         for (i = 0; i < zone->desk_x_count * zone->desk_y_count; i++)
           {

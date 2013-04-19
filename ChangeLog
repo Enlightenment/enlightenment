@@ -1,3 +1,7 @@
+2013-04-19 Mike Blumenkrantz
+
+        * deskpreview renamed to bgpreview
+
 2013-04-18 Mike Blumenkrantz
 
         * startup splash screen moved to compositor canvas

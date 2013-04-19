@@ -25,7 +25,7 @@ static void      _e_wid_cb_resize(void *data, Evas *evas, Evas_Object *obj, void
 static Eina_Bool _e_wid_cb_bg_update(void *data, int type, void *event);
 
 EAPI Evas_Object *
-e_widget_deskpreview_add(Evas *evas, int nx, int ny)
+e_widget_bgpreview_add(Evas *evas, int nx, int ny)
 {
    Evas_Object *obj;
    E_Widget_Data *wd;
@@ -45,7 +45,7 @@ e_widget_deskpreview_add(Evas *evas, int nx, int ny)
    evas_object_show(wd->table);
    e_widget_sub_object_add(wd->obj, wd->table);
 
-   e_widget_deskpreview_num_desks_set(obj, wd->dx, wd->dy);
+   e_widget_bgpreview_num_desks_set(obj, wd->dx, wd->dy);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
                                   _e_wid_cb_resize, NULL);
@@ -53,7 +53,7 @@ e_widget_deskpreview_add(Evas *evas, int nx, int ny)
 }
 
 EAPI void
-e_widget_deskpreview_num_desks_set(Evas_Object *obj, int nx, int ny)
+e_widget_bgpreview_num_desks_set(Evas_Object *obj, int nx, int ny)
 {
    E_Widget_Data *wd;
 
@@ -64,7 +64,7 @@ e_widget_deskpreview_num_desks_set(Evas_Object *obj, int nx, int ny)
 }
 
 EAPI Evas_Object *
-e_widget_deskpreview_desk_add(Evas_Object *obj, E_Zone *zone, int x, int y, int w, int h)
+e_widget_bgpreview_desk_add(Evas_Object *obj, E_Zone *zone, int x, int y, int w, int h)
 {
    E_Widget_Desk_Data *dd;
    const char *bgfile;
@@ -79,7 +79,7 @@ e_widget_deskpreview_desk_add(Evas_Object *obj, E_Zone *zone, int x, int y, int 
 
    dd->icon = edje_object_add(evas_object_evas_get(obj));
    e_theme_edje_object_set(dd->icon, "base/theme/widgets",
-                           "e/widgets/deskpreview/desk");
+                           "e/widgets/bgpreview/desk");
 
    dd->thumb = e_icon_add(evas_object_evas_get(obj));
    e_icon_fill_inside_set(dd->thumb, EINA_FALSE);
@@ -103,7 +103,7 @@ e_widget_deskpreview_desk_add(Evas_Object *obj, E_Zone *zone, int x, int y, int 
 }
 
 EAPI void
-e_widget_deskpreview_desk_configurable_set(Evas_Object *obj, Eina_Bool enable)
+e_widget_bgpreview_desk_configurable_set(Evas_Object *obj, Eina_Bool enable)
 {
    E_Widget_Desk_Data *dd;
 
@@ -207,7 +207,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
           {
              Evas_Object *dp;
 
-             dp = e_widget_deskpreview_desk_add(wd->obj, zone, x, y, mw, mh);
+             dp = e_widget_bgpreview_desk_add(wd->obj, zone, x, y, mw, mh);
              evas_object_size_hint_aspect_set(dp, EVAS_ASPECT_CONTROL_BOTH, zone->w, zone->h);
              evas_object_table_pack(wd->table, dp, x, y, 1, 1);
              wd->desks = eina_list_append(wd->desks, dp);

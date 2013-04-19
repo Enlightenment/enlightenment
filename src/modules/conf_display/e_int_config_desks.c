@@ -201,7 +201,7 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
    ob = e_widget_label_add(evas, _("Click to change wallpaper"));
    e_widget_frametable_object_append(of, ob, 0, 0, 1, 1, 1, 1, 1, 1);
 
-   ob = e_widget_deskpreview_add(evas, cfdata->x, cfdata->y);
+   ob = e_widget_bgpreview_add(evas, cfdata->x, cfdata->y);
    e_widget_frametable_object_append(of, ob, 0, 1, 1, 1, 1, 1, 1, 1);
    cfdata->preview = ob;
 
@@ -267,5 +267,5 @@ _cb_slider_change(void *data, Evas_Object *obj __UNUSED__)
 {
    E_Config_Dialog_Data *cfdata = data;
 
-   e_widget_deskpreview_num_desks_set(cfdata->preview, cfdata->x, cfdata->y);
+   e_widget_bgpreview_num_desks_set(cfdata->preview, cfdata->x, cfdata->y);
 }
