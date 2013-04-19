@@ -127,7 +127,7 @@ _e_comp_event_source_add(E_Comp_Win *cw)
 
    ev = E_NEW(E_Event_Comp, 1);
    ev->cw = cw;
-   ecore_event_add(E_EVENT_COMP_SOURCE_VISIBILITY, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
+   ecore_event_add(E_EVENT_COMP_SOURCE_ADD, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
 }
 
 static void
@@ -137,7 +137,7 @@ _e_comp_event_source_del(E_Comp_Win *cw)
 
    ev = E_NEW(E_Event_Comp, 1);
    ev->cw = cw;
-   ecore_event_add(E_EVENT_COMP_SOURCE_VISIBILITY, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
+   ecore_event_add(E_EVENT_COMP_SOURCE_DEL, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
 }
 
 static void
@@ -147,7 +147,7 @@ _e_comp_event_source_configure(E_Comp_Win *cw)
 
    ev = E_NEW(E_Event_Comp, 1);
    ev->cw = cw;
-   ecore_event_add(E_EVENT_COMP_SOURCE_VISIBILITY, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
+   ecore_event_add(E_EVENT_COMP_SOURCE_CONFIGURE, ev, (Ecore_End_Cb)_e_comp_event_end, NULL);
 }
 
 static void
