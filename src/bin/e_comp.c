@@ -5041,6 +5041,7 @@ e_comp_get(void *o)
    E_Popup *pop;
    E_Shelf *es;
    E_Menu *m;
+   E_Desk *desk;
    E_Menu_Item *mi;
    E_Object *obj = o;
    E_Zone *zone = NULL;
@@ -5055,6 +5056,11 @@ e_comp_get(void *o)
    /* try to get to zone type first */
    switch (obj->type)
      {
+      case E_DESK_TYPE:
+        desk = (E_Desk*)obj;
+        obj = (void*)desk->zone;
+        EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        break;
       case E_BORDER_TYPE:
         bd = (E_Border*)obj;
         obj = (void*)bd->zone;
