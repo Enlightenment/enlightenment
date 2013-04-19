@@ -2483,6 +2483,7 @@ _e_comp_win_show(E_Comp_Win *cw)
    else
      cw->dmg_updates = 1;
 
+   cw->geom_update = 1;
    if (cw->win && ((!cw->redirected) || (!cw->pixmap)))
      {
         // we redirect all subwindows anyway
@@ -5511,12 +5512,19 @@ _e_comp_win_effect_end_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *
 {
    Edje_Signal_Cb end_cb;
    void *end_data;
+   E_Comp_Win *cw;
 
    end_cb = evas_object_data_get(obj, "_e_comp.end_cb");
    end_data = evas_object_data_get(obj, "_e_comp.end_data");
    end_cb(end_data, obj, emission, source);
 
    edje_object_signal_callback_del_full(obj, "e,action,done", "e", _e_comp_win_effect_end_cb, NULL);
+   cw = evas_object_data_get(obj, "comp_win");
+   if (cw->effect_clip)
+     {
+        evas_object_clip_unset(cw->effect_obj);
+        cw->effect_clip = 0;
+     }
 }
 
 EAPI void
