@@ -1175,6 +1175,8 @@ _e_mod_action_add_stack_cb(E_Object   *obj __UNUSED__,
     end_special_input();
 
     check_tinfo(desk);
+    if (!_G.tinfo->conf)
+        return;
 
     _add_stack();
 
@@ -1190,6 +1192,8 @@ _e_mod_action_remove_stack_cb(E_Object   *obj __UNUSED__,
     end_special_input();
 
     check_tinfo(desk);
+    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks)
+        return;
 
     _remove_stack();
 
@@ -1205,6 +1209,8 @@ _e_mod_action_tg_stack_cb(E_Object   *obj __UNUSED__,
     end_special_input();
 
     check_tinfo(desk);
+    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks)
+        return;
 
     _toggle_rows_cols();
 
