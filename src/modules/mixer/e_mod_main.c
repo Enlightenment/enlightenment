@@ -590,9 +590,10 @@ _mixer_popup_new(E_Mixer_Instance *inst)
    state = &inst->mixer_state;
    e_mod_mixer_state_get(inst->sys, inst->channel, state);
 
-   if (e_mod_mixer_channel_has_no_volume(inst->channel) ||
-       e_mod_mixer_channel_is_mono(inst->channel) ||
-       (inst->conf->lock_sliders && !inst->conf->show_locked))
+   if ((inst->channel) &&
+       (e_mod_mixer_channel_has_no_volume(inst->channel) ||
+           e_mod_mixer_channel_is_mono(inst->channel) ||
+           (inst->conf->lock_sliders && !inst->conf->show_locked)))
      colspan = 1;
    else
      colspan = 2;
@@ -620,7 +621,8 @@ _mixer_popup_new(E_Mixer_Instance *inst)
      }
    else
      {
-        if (e_mod_mixer_channel_has_no_volume(inst->channel))
+        if ((inst->channel) &&
+            (e_mod_mixer_channel_has_no_volume(inst->channel)))
           {
              inst->ui.left = _mixer_popup_add_slider(inst, 0, NULL);
              e_widget_table_object_append(inst->ui.table, inst->ui.left,
@@ -637,7 +639,7 @@ _mixer_popup_new(E_Mixer_Instance *inst)
         inst->ui.right = NULL;
      }
 
-   if (e_mod_mixer_channel_is_mutable(inst->channel))
+   if ((inst->channel) && (e_mod_mixer_channel_is_mutable(inst->channel)))
      {
         inst->ui.mute = e_widget_check_add(evas, _("Mute"), &state->mute);
         evas_object_show(inst->ui.mute);
