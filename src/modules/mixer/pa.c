@@ -713,13 +713,37 @@ pulse_new(void)
    if (!prev)
      {
         struct stat st;
-        buf = eina_stringshare_add(STATEDIR "/run/pulse/native");
-        if (stat(buf, &st))
+        char *s;
+        
+        s = getenv("XDG_RUNTIME_DIR");
+        buf = eina_stringshare_add(s);
+        if ((!s) || ((buf) && (stat(buf, &st))))
           {
-             INF("could not locate local socket '%s'!", buf);
-             free(conn);
-             return NULL;
+             snprintf(h, sizeof(h), "/run/user/%i/pulse/native",
+                      (int)getuid()); 
+             if (stat(h, &st))
+               {
+                  snprintf(h, sizeof(h), "%s/run/user/%i/pulse/native",
+                           STATEDIR, (int)getuid()); 
+                  if (stat(h, &st))
+                    {
+                       buf = eina_stringshare_add(STATEDIR "/run/pulse/native");
+                       if (stat(buf, &st))
+                         {
+                            eina_stringshare_del(buf);
+                            INF("could not locate local socket '%s'!", buf);
+                            free(conn);
+                            return NULL;
+                         }
+                    }
+                  else
+                    buf = eina_stringshare_add(h);
+               }
+             else
+               buf = eina_stringshare_add(h);
           }
+        else
+          buf = eina_stringshare_add(h);
         conn->socket = buf;
      }
    else conn->socket = prev;
