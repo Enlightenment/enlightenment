@@ -716,8 +716,9 @@ pulse_new(void)
         char *s;
         
         s = getenv("XDG_RUNTIME_DIR");
-        buf = eina_stringshare_add(s);
-        if ((!s) || ((buf) && (stat(buf, &st))))
+        if (s) snprintf(h, sizeof(h), "%s/pulse/native", s); 
+        buf = eina_stringshare_add(h);
+        if ((!s) || (stat(h, &st)))
           {
              snprintf(h, sizeof(h), "/run/user/%i/pulse/native",
                       (int)getuid()); 
