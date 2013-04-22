@@ -238,6 +238,7 @@ EAPI void e_comp_win_effect_set(E_Comp_Win *cw, const char *effect);
 EAPI void e_comp_win_effect_params_set(E_Comp_Win *cw, int id, int *params, unsigned int count);
 EAPI void e_comp_win_effect_start(E_Comp_Win *cw, Edje_Signal_Cb end_cb, const void *end_data);
 EAPI void e_comp_win_effect_stop(E_Comp_Win *cw, Edje_Signal_Cb end_cb);
+EAPI void e_comp_win_effect_unclip(E_Comp_Win *cw);
 
 EAPI E_Comp_Win *e_comp_win_find_client_win(Ecore_X_Window win);
 EAPI E_Comp_Win *e_comp_win_find(Ecore_X_Window win);
