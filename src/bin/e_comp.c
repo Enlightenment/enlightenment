@@ -2106,6 +2106,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
    cw->real_hid = 1;
    cw->opacity = 255.0;
    if (conf->grab) ecore_x_grab();
+   if (!bd) bd = e_border_find_by_window(win);
    if (bd)
      {
         _e_comp_win_bd_setup(cw, bd);
