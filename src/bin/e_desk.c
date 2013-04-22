@@ -758,9 +758,9 @@ _e_desk_show_end(void *data, Evas_Object *obj EINA_UNUSED, const char *emission 
    bd->desk->animate_count--;
    e_border_comp_hidden_set(bd, EINA_FALSE);
    if (bd->desk != e_desk_current_get(bd->zone)) return;
+   e_comp_win_effect_unclip(bd->cw);
    if (!bd->visible) e_border_show(bd);
    if (bd->desk->animate_count) return;
-
    _e_desk_show_end_serious(bd->desk);
 }
 
