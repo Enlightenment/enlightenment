@@ -771,7 +771,7 @@ _e_desk_hide_end(void *data, Evas_Object *obj EINA_UNUSED, const char *emission 
 
    bd->desk->animate_count--;
    e_border_comp_hidden_set(bd, EINA_FALSE);
-   e_border_hide(bd, 1);
+   e_border_hide(bd, 2);
    if (bd->desk->animate_count) return;
    ecore_x_window_shadow_tree_flush();
 }
@@ -839,7 +839,7 @@ _e_desk_hide_begin(E_Desk *desk, int dx, int dy)
              e_border_comp_hidden_set(bd, EINA_TRUE);
           }
         else
-          e_border_hide(bd, 1);
+          e_border_hide(bd, 2);
      }
    if (!e_config->desk_flip_animate_type)
      ecore_x_window_shadow_tree_flush();
