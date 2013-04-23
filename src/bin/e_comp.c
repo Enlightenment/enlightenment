@@ -587,25 +587,22 @@ _e_comp_win_update(E_Comp_Win *cw)
         /*           pm = e_comp_wl_pixmap_get(cw->win); */
         /* #endif */
         if (!pm) pm = ecore_x_composite_name_window_pixmap_get(cw->win);
-        if (pm)
+        while (pm)
           {
              Ecore_X_Pixmap oldpm;
 
+             oldpm = cw->pixmap;
+             ecore_x_pixmap_geometry_get(pm, NULL, NULL, &(cw->pw), &(cw->ph));
+             if ((pw == cw->pw) && (ph == cw->ph))
+               {
+                  ecore_x_pixmap_free(pm);
+                  break;
+               }
+             cw->pixmap = pm;
              cw->needpix = 0;
              if (cw->xim) cw->needxim = 1;
-             oldpm = cw->pixmap;
-             cw->pixmap = pm;
-             if (cw->pixmap)
-               {
-                  ecore_x_pixmap_geometry_get(cw->pixmap, NULL, NULL, &(cw->pw), &(cw->ph));
-                  _e_comp_win_ready_timeout_setup(cw);
-                  if ((cw->pw != pw) || (cw->ph != ph)) cw->geom_update = 1;
-               }
-             else
-               {
-                  cw->pw = 0;
-                  cw->ph = 0;
-               }
+             _e_comp_win_ready_timeout_setup(cw);
+             if ((cw->pw != pw) || (cw->ph != ph)) cw->geom_update = 1;
              DBG("REND [0x%x] pixmap = [0x%x], %ix%i", cw->win, cw->pixmap, cw->pw, cw->ph);
              if ((cw->pw <= 0) || (cw->ph <= 0))
                {
@@ -654,6 +651,7 @@ _e_comp_win_update(E_Comp_Win *cw)
                    */
                   ecore_x_pixmap_free(oldpm);
                }
+             break;
           }
      }
    if (!((cw->pw > 0) && (cw->ph > 0)))
