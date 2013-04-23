@@ -246,7 +246,7 @@ _mixer_gadget_update(E_Mixer_Instance *inst)
 }
 
 static void
-_mixer_balance_left(E_Mixer_Instance *inst)
+_mixer_update_volume(E_Mixer_Instance *inst, int dl, int dr, Eina_Bool non_ui)
 {
    E_Mixer_Channel_State *state;
 
@@ -255,72 +255,18 @@ _mixer_balance_left(E_Mixer_Instance *inst)
                           &state->left, &state->right);
    if (state->left >= 0)
      {
-        if (state->left > 5)
-          state->left -= 5;
-        else
+        state->left += dl;
+        if (state->left < 0)
           state->left = 0;
-     }
-   if (state->right >= 0)
-     {
-        if (state->right < 95)
-          state->right += 5;
-        else
-          state->right = 100;
-     }
-
-   e_mod_mixer_volume_set(inst->sys, inst->channel,
-                          state->left, state->right);
-   _mixer_gadget_update(inst);
-}
-
-static void
-_mixer_balance_right(E_Mixer_Instance *inst)
-{
-   E_Mixer_Channel_State *state;
-
-   state = &inst->mixer_state;
-   e_mod_mixer_volume_get(inst->sys, inst->channel,
-                          &state->left, &state->right);
-   if (state->left >= 0)
-     {
-        if (state->left < 95)
-          state->left += 5;
-        else
+        else if (state->left > 100)
           state->left = 100;
      }
    if (state->right >= 0)
      {
-        if (state->right > 5)
-          state->right -= 5;
-        else
+        state->right += dr;
+        if (state->right < 0)
           state->right = 0;
-     }
-   e_mod_mixer_volume_set(inst->sys, inst->channel,
-                          state->left, state->right);
-   _mixer_gadget_update(inst);
-}
-
-static void
-_mixer_volume_increase(E_Mixer_Instance *inst, Eina_Bool non_ui)
-{
-   E_Mixer_Channel_State *state;
-
-   state = &inst->mixer_state;
-   e_mod_mixer_volume_get(inst->sys, inst->channel,
-                          &state->left, &state->right);
-   if (state->left >= 0)
-     {
-        if (state->left < 95)
-          state->left += 5;
-        else
-          state->left = 100;
-     }
-
-   if (state->right >= 0)
-     {
-        if (state->right < 95)
-          state->right += 5;
-        else
+        else if (state->right > 100)
           state->right = 100;
      }
 
@@ -332,33 +278,12 @@ _mixer_volume_increase(E_Mixer_Instance *inst, Eina_Bool non_ui)
 }
 
 static void
-_mixer_volume_decrease(E_Mixer_Instance *inst, Eina_Bool non_ui)
+_mixer_volume_change(E_Mixer_Instance *inst, Eina_Bool up, Eina_Bool non_ui)
 {
-   E_Mixer_Channel_State *state;
-
-   state = &inst->mixer_state;
-   e_mod_mixer_volume_get(inst->sys, inst->channel,
-                          &state->left, &state->right);
-   if (state->left >= 0)
-     {
-        if (state->left > 5)
-          state->left -= 5;
-        else
-          state->left = 0;
-     }
-   if (state->right >= 0)
-     {
-        if (state->right > 5)
-          state->right -= 5;
-        else
-          state->right = 0;
-     }
-
-   e_mod_mixer_volume_set(inst->sys, inst->channel,
-                          state->left, state->right);
-   _mixer_gadget_update(inst);
-   if (non_ui)
-     _mixer_notify(((float)state->left + (float)state->right) / 2.0, inst);
+   if (up)
+     _mixer_update_volume(inst,  5,  5, non_ui);
+   else
+     _mixer_update_volume(inst, -5, -5, non_ui);
 }
 
 static void
@@ -472,9 +397,9 @@ _mixer_popup_key_down_cb(void *data, Ecore_Event_Key *ev)
    if (strcmp(keysym, "Escape") == 0)
      _mixer_popup_del(inst);
    else if (strcmp(keysym, "Up") == 0)
-     _mixer_volume_increase(inst, EINA_FALSE);
+     _mixer_volume_change(inst, EINA_TRUE, EINA_FALSE);
    else if (strcmp(keysym, "Down") == 0)
-     _mixer_volume_decrease(inst, EINA_FALSE);
+     _mixer_volume_change(inst, EINA_FALSE, EINA_FALSE);
    else if ((strcmp(keysym, "Return") == 0) ||
             (strcmp(keysym, "KP_Enter") == 0))
      _mixer_toggle_mute(inst, EINA_FALSE);
@@ -761,16 +686,16 @@ _mixer_cb_mouse_wheel(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
    if (ev->direction == 0)
      {
         if (ev->z > 0)
-          _mixer_volume_decrease(inst, EINA_FALSE);
+          _mixer_volume_change(inst, EINA_FALSE, EINA_FALSE);
         else if (ev->z < 0)
-          _mixer_volume_increase(inst, EINA_FALSE);
+          _mixer_volume_change(inst, EINA_TRUE, EINA_FALSE);
      }
    else if (_mixer_using_default && (ev->direction == 1)) /* invalid with pulse */
      {
         if (ev->z > 0)
-          _mixer_balance_left(inst);
+          _mixer_update_volume(inst, -5, 5, EINA_FALSE);
         else if (ev->z < 0)
-          _mixer_balance_right(inst);
+          _mixer_update_volume(inst, 5, -5, EINA_FALSE);
      }
 }
 
@@ -1158,7 +1083,7 @@ static const E_Gadcon_Client_Class _gc_class =
 EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, _e_mixer_Name};
 
 static void
-_mixer_cb_volume_increase(E_Object *obj __UNUSED__, const char *params __UNUSED__)
+_mixer_cb_volume_modify(Eina_Bool up)
 {
    E_Mixer_Module_Context *ctxt;
 
@@ -1174,27 +1099,19 @@ _mixer_cb_volume_increase(E_Object *obj __UNUSED__, const char *params __UNUSED_
 
    if (ctxt->default_instance->conf->keybindings_popup)
      _mixer_popup_timer_new(ctxt->default_instance);
-   _mixer_volume_increase(ctxt->default_instance, EINA_TRUE);
+   _mixer_volume_change(ctxt->default_instance, up, EINA_TRUE);
+}
+
+static void
+_mixer_cb_volume_increase(E_Object *obj __UNUSED__, const char *params __UNUSED__)
+{
+   _mixer_cb_volume_modify(EINA_TRUE);
 }
 
 static void
 _mixer_cb_volume_decrease(E_Object *obj __UNUSED__, const char *params __UNUSED__)
 {
-   E_Mixer_Module_Context *ctxt;
-
-   if (!mixer_mod)
-     return;
-
-   ctxt = mixer_mod->data;
-   if (!ctxt->conf)
-     return;
-
-   if (!ctxt->default_instance)
-     return;
-
-   if (ctxt->default_instance->conf->keybindings_popup)
-     _mixer_popup_timer_new(ctxt->default_instance);
-   _mixer_volume_decrease(ctxt->default_instance, EINA_TRUE);
+   _mixer_cb_volume_modify(EINA_FALSE);
 }
 
 static void
