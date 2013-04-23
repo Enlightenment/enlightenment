@@ -73,6 +73,8 @@ EAPI char *e_util_string_append_quoted(char *str, size_t *size, size_t *len, con
 EAPI void e_util_evas_objects_above_print(Evas_Object *o);
 EAPI void e_util_evas_objects_above_print_smart(Evas_Object *o);
 
+EAPI Eina_Bool e_util_border_shadow_state_get(const E_Border *bd);
+
 static inline E_Container *
 e_util_container_current_get(void)
 {

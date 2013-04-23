@@ -1720,3 +1720,15 @@ e_util_evas_objects_above_print_smart(Evas_Object *o)
           fprintf(stderr, "[%p] - %s(%s) %s\n", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
      }
 }
+
+EAPI Eina_Bool
+e_util_border_shadow_state_get(const E_Border *bd)
+{
+   Eina_Bool on;
+   on = !bd->client.e.state.video;
+   if (on)
+     on = !bd->fullscreen;
+   if (on)
+     on = !!e_util_strcmp(bd->client.border.name, "borderless");
+   return on;
+}

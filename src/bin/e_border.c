@@ -4917,14 +4917,8 @@ _e_border_free(E_Border *bd)
 static void
 _e_border_shadow(E_Border *bd)
 {
-   Eina_Bool on = EINA_FALSE;
    if (!bd->bg_object) return;
-   on = !bd->client.e.state.video;
-   if (on)
-     on = !bd->fullscreen;
-   if (on)
-     on = !!e_util_strcmp(bd->client.border.name, "borderless");
-   if (on)
+   if (e_util_border_shadow_state_get(bd))
      edje_object_signal_emit(bd->bg_object, "e,state,shadow,on", "e");
    else
      edje_object_signal_emit(bd->bg_object, "e,state,shadow,off", "e");
