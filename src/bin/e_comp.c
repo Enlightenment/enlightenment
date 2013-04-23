@@ -3463,7 +3463,7 @@ _e_comp_bd_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    E_Event_Border_Move *ev = event;
    E_Comp_Win *cw = _e_comp_win_find(ev->border->win);
    if (!cw) return ECORE_CALLBACK_PASS_ON;
-   // fimxe: do move here for composited bd
+   _e_comp_win_configure(cw, ev->border->x, ev->border->y, cw->w, cw->h, cw->border);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -3473,7 +3473,7 @@ _e_comp_bd_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    E_Event_Border_Resize *ev = event;
    E_Comp_Win *cw = _e_comp_win_find(ev->border->win);
    if (!cw) return ECORE_CALLBACK_PASS_ON;
-   _e_comp_win_geometry_update(cw);
+   _e_comp_win_configure(cw, cw->x, cw->y, ev->border->w, ev->border->h, cw->border);
    return ECORE_CALLBACK_PASS_ON;
 }
 
