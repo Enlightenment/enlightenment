@@ -282,6 +282,8 @@ struct _E_Wayland_Compositor
    Eina_List *surfaces;
    Eina_List *seats;
 
+   struct wl_list outputs;
+
    void (*ping_cb) (E_Wayland_Surface *ews, unsigned int serial);
 };
 
