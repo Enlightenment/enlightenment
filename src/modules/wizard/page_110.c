@@ -1,7 +1,7 @@
 /* Setup if we need connman? */
 #include "e_wizard.h"
 #ifdef HAVE_ECONNMAN
-#include <EDBus.h>
+#include <Eldbus.h>
 #endif
 
 static void
@@ -38,8 +38,8 @@ _recommend_connman(E_Wizard_Page *pg)
    e_wizard_button_next_enable_set(1);
 }
 
-static EDBus_Connection *conn;
-static EDBus_Pending *pending_connman;
+static Eldbus_Connection *conn;
+static Eldbus_Pending *pending_connman;
 static Ecore_Timer *connman_timeout = NULL;
 
 static Eina_Bool
@@ -77,8 +77,8 @@ _page_next_call(void *data EINA_UNUSED)
 }
 
 static void
-_check_connman_owner(void *data, const EDBus_Message *msg,
-                     EDBus_Pending *pending __UNUSED__)
+_check_connman_owner(void *data, const Eldbus_Message *msg,
+                     Eldbus_Pending *pending __UNUSED__)
 {
    const char *id;
    pending_connman = NULL;
@@ -89,10 +89,10 @@ _check_connman_owner(void *data, const EDBus_Message *msg,
         connman_timeout = NULL;
      }
 
-   if (edbus_message_error_get(msg, NULL, NULL))
+   if (eldbus_message_error_get(msg, NULL, NULL))
      goto fail;
 
-   if (!edbus_message_arguments_get(msg, "s", &id))
+   if (!eldbus_message_arguments_get(msg, "s", &id))
      goto fail;
 
    if (id[0] != ':')
@@ -124,15 +124,15 @@ wizard_page_show(E_Wizard_Page *pg)
    Eina_Bool have_connman = EINA_FALSE;
 
 #ifdef HAVE_ECONNMAN
-   edbus_init();
-   conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SYSTEM);
+   eldbus_init();
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
 #endif
    if (conn)
      {
         if (pending_connman)
-          edbus_pending_cancel(pending_connman);
+          eldbus_pending_cancel(pending_connman);
 
-        pending_connman = edbus_name_owner_get(conn, "net.connman",
+        pending_connman = eldbus_name_owner_get(conn, "net.connman",
                                                _check_connman_owner, pg);
         if (connman_timeout)
           ecore_timer_del(connman_timeout);
@@ -168,7 +168,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
 {
    if (pending_connman)
      {
-        edbus_pending_cancel(pending_connman);
+        eldbus_pending_cancel(pending_connman);
         pending_connman = NULL;
      }
    if (connman_timeout)
@@ -177,11 +177,11 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
         connman_timeout = NULL;
      }
    if (conn)
-     edbus_connection_unref(conn);
+     eldbus_connection_unref(conn);
    conn = NULL;
 
 #ifdef HAVE_ECONNMAN
-   edbus_shutdown();
+   eldbus_shutdown();
 #endif
 
    return 1;

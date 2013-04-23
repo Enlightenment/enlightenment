@@ -10,12 +10,12 @@ static int _log_dom = -1;
 #define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
 
-static EDBus_Message *
-cb_virtual_desktops(const EDBus_Service_Interface *iface __UNUSED__,
-                    const EDBus_Message *msg)
+static Eldbus_Message *
+cb_virtual_desktops(const Eldbus_Service_Interface *iface __UNUSED__,
+                    const Eldbus_Message *msg)
 {
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
-   edbus_message_arguments_append(reply, "ii", e_config->zone_desks_x_count,
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
+   eldbus_message_arguments_append(reply, "ii", e_config->zone_desks_x_count,
                                   e_config->zone_desks_y_count);
    DBG("GetVirtualCount: %d %d",
        e_config->zone_desks_x_count, e_config->zone_desks_y_count);
@@ -23,15 +23,15 @@ cb_virtual_desktops(const EDBus_Service_Interface *iface __UNUSED__,
    return reply;
 }
 
-static EDBus_Message *
-cb_desktop_show(const EDBus_Service_Interface *iface __UNUSED__,
-                const EDBus_Message *msg)
+static Eldbus_Message *
+cb_desktop_show(const Eldbus_Service_Interface *iface __UNUSED__,
+                const Eldbus_Message *msg)
 {
    int x, y;
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
    E_Zone *zone;
 
-   if (!edbus_message_arguments_get(msg, "ii", &x, &y))
+   if (!eldbus_message_arguments_get(msg, "ii", &x, &y))
      {
         ERR("could not get Show arguments");
         return reply;
@@ -44,16 +44,16 @@ cb_desktop_show(const EDBus_Service_Interface *iface __UNUSED__,
    return reply;
 }
 
-static EDBus_Message *
-cb_desktop_show_by_name(const EDBus_Service_Interface *iface __UNUSED__,
-                        const EDBus_Message *msg)
+static Eldbus_Message *
+cb_desktop_show_by_name(const Eldbus_Service_Interface *iface __UNUSED__,
+                        const Eldbus_Message *msg)
 {
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
    const char *name;
    E_Zone *zone;
    unsigned int i, count;
 
-   if (!edbus_message_arguments_get(msg, "s", &name))
+   if (!eldbus_message_arguments_get(msg, "s", &name))
      {
         ERR("could not get Show arguments");
         return reply;
@@ -76,35 +76,35 @@ cb_desktop_show_by_name(const EDBus_Service_Interface *iface __UNUSED__,
    return reply;
 }
 
-static EDBus_Message *
-cb_desktop_lock(const EDBus_Service_Interface *iface __UNUSED__,
-                const EDBus_Message *msg)
+static Eldbus_Message *
+cb_desktop_lock(const Eldbus_Service_Interface *iface __UNUSED__,
+                const Eldbus_Message *msg)
 {
    DBG("desklock requested");
    e_desklock_show(EINA_FALSE);
 
-   return edbus_message_method_return_new(msg);
+   return eldbus_message_method_return_new(msg);
 }
 
-static EDBus_Message *
-cb_desktop_unlock(const EDBus_Service_Interface *iface __UNUSED__,
-                  const EDBus_Message *msg)
+static Eldbus_Message *
+cb_desktop_unlock(const Eldbus_Service_Interface *iface __UNUSED__,
+                  const Eldbus_Message *msg)
 {
    DBG("deskunlock requested");
    e_desklock_hide();
 
-   return edbus_message_method_return_new(msg);
+   return eldbus_message_method_return_new(msg);
 }
 
-static EDBus_Message *
-cb_desktop_bgadd(const EDBus_Service_Interface *iface __UNUSED__,
-                 const EDBus_Message *msg)
+static Eldbus_Message *
+cb_desktop_bgadd(const Eldbus_Service_Interface *iface __UNUSED__,
+                 const Eldbus_Message *msg)
 {
    int container, zone, desk_x, desk_y;
    const char *path;
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
-   if (!edbus_message_arguments_get(msg, "iiiis", &container, &zone, &desk_x,
+   if (!eldbus_message_arguments_get(msg, "iiiis", &container, &zone, &desk_x,
                                     &desk_y, &path))
      {
         ERR("could not get Add arguments");
@@ -120,14 +120,14 @@ cb_desktop_bgadd(const EDBus_Service_Interface *iface __UNUSED__,
    return reply;
 }
 
-static EDBus_Message *
-cb_desktop_bgdel(const EDBus_Service_Interface *iface __UNUSED__,
-                 const EDBus_Message *msg)
+static Eldbus_Message *
+cb_desktop_bgdel(const Eldbus_Service_Interface *iface __UNUSED__,
+                 const Eldbus_Message *msg)
 {
    int container, zone, desk_x, desk_y;
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
-   if (!edbus_message_arguments_get(msg, "iiii", &container, &zone, &desk_x,
+   if (!eldbus_message_arguments_get(msg, "iiii", &container, &zone, &desk_x,
                                     &desk_y))
      {
         ERR("could not get Del arguments");
@@ -143,28 +143,28 @@ cb_desktop_bgdel(const EDBus_Service_Interface *iface __UNUSED__,
    return reply;
 }
 
-static EDBus_Message *
-cb_desktop_bglist(const EDBus_Service_Interface *iface __UNUSED__,
-                  const EDBus_Message *msg)
+static Eldbus_Message *
+cb_desktop_bglist(const Eldbus_Service_Interface *iface __UNUSED__,
+                  const Eldbus_Message *msg)
 {
    Eina_List *list;
    E_Config_Desktop_Background *bg;
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
-   EDBus_Message_Iter *main_iter, *array;
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
+   Eldbus_Message_Iter *main_iter, *array;
 
    if (!reply)
      return NULL;
 
-   main_iter = edbus_message_iter_get(reply);
+   main_iter = eldbus_message_iter_get(reply);
    if (!main_iter)
      return reply;
 
-   if (!edbus_message_iter_arguments_append(main_iter, "a(iiiis)", &array))
+   if (!eldbus_message_iter_arguments_append(main_iter, "a(iiiis)", &array))
      return reply;
 
    EINA_LIST_FOREACH(e_config->desktop_backgrounds, list, bg)
      {
-        EDBus_Message_Iter *s;
+        Eldbus_Message_Iter *s;
 
         if (!bg || !bg->file)
           {
@@ -172,50 +172,50 @@ cb_desktop_bglist(const EDBus_Service_Interface *iface __UNUSED__,
           }
         DBG("Background container=%d zone=%d pos=%d,%d path=%s",
             bg->container, bg->zone, bg->desk_x, bg->desk_y, bg->file);
-        edbus_message_iter_arguments_append(array, "(iiiis)", &s);
+        eldbus_message_iter_arguments_append(array, "(iiiis)", &s);
         if (!s) continue;
-        edbus_message_iter_arguments_append(s, "iiiis", bg->container, bg->zone,
+        eldbus_message_iter_arguments_append(s, "iiiis", bg->container, bg->zone,
                                             bg->desk_x, bg->desk_y, bg->file);
-        edbus_message_iter_container_close(array, s);
+        eldbus_message_iter_container_close(array, s);
      }
-   edbus_message_iter_container_close(main_iter, array);
+   eldbus_message_iter_container_close(main_iter, array);
 
    return reply;
 }
 
-static const EDBus_Method desktop_methods[] = {
-   { "GetVirtualCount", NULL, EDBUS_ARGS({"i", "desk_x"}, {"i", "desk_y"}),
+static const Eldbus_Method desktop_methods[] = {
+   { "GetVirtualCount", NULL, ELDBUS_ARGS({"i", "desk_x"}, {"i", "desk_y"}),
       cb_virtual_desktops },
-   { "Show", EDBUS_ARGS({"i", "desk_x"}, {"i", "desk_y"}), NULL,
+   { "Show", ELDBUS_ARGS({"i", "desk_x"}, {"i", "desk_y"}), NULL,
       cb_desktop_show },
-   { "ShowByName", EDBUS_ARGS({"s", "desk_name"}), NULL,
+   { "ShowByName", ELDBUS_ARGS({"s", "desk_name"}), NULL,
       cb_desktop_show_by_name },
    { "Lock", NULL, NULL, cb_desktop_lock },
    { "Unlock", NULL, NULL, cb_desktop_unlock },
    { }
 };
 
-static const EDBus_Method background_methods[] = {
+static const Eldbus_Method background_methods[] = {
    { "Add",
-      EDBUS_ARGS({"i", "container"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}, {"s", "path"}),
+      ELDBUS_ARGS({"i", "container"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}, {"s", "path"}),
       NULL, cb_desktop_bgadd },
-   { "Del", EDBUS_ARGS({"i", "container"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}),
+   { "Del", ELDBUS_ARGS({"i", "container"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}),
       NULL, cb_desktop_bgdel },
-   { "List", EDBUS_ARGS({"a(iiiis)", "array_of_bg"}), NULL, cb_desktop_bglist },
+   { "List", ELDBUS_ARGS({"a(iiiis)", "array_of_bg"}), NULL, cb_desktop_bglist },
    { }
 };
 
-static const EDBus_Service_Interface_Desc desktop = {
+static const Eldbus_Service_Interface_Desc desktop = {
    "org.enlightenment.wm.Desktop", desktop_methods
 };
 
-static const EDBus_Service_Interface_Desc bg = {
+static const Eldbus_Service_Interface_Desc bg = {
    "org.enlightenment.wm.Desktop.Background", background_methods
 };
 
 void msgbus_desktop_init(Eina_Array *ifaces)
 {
-   EDBus_Service_Interface *iface;
+   Eldbus_Service_Interface *iface;
 
    if (_log_dom == -1)
      {

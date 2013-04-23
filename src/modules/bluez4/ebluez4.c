@@ -32,7 +32,7 @@ _adap_path_cmp(const void *d1, const void *d2)
    const Adapter *adap = d1;
    const char *path = d2;
 
-   return strcmp(edbus_object_path_get(adap->obj), path);
+   return strcmp(eldbus_object_path_get(adap->obj), path);
 }
 
 static struct icon_type
@@ -71,12 +71,12 @@ _icon_to_type(const char *icon)
 static void
 _free_dev(Device *dev)
 {
-   if (dev->proxy.input) edbus_proxy_unref(dev->proxy.input);
-   if (dev->proxy.audio_source) edbus_proxy_unref(dev->proxy.audio_source);
-   if (dev->proxy.audio_sink) edbus_proxy_unref(dev->proxy.audio_sink);
+   if (dev->proxy.input) eldbus_proxy_unref(dev->proxy.input);
+   if (dev->proxy.audio_source) eldbus_proxy_unref(dev->proxy.audio_source);
+   if (dev->proxy.audio_sink) eldbus_proxy_unref(dev->proxy.audio_sink);
 
    if (dev->obj)
-     edbus_object_unref(dev->obj);
+     eldbus_object_unref(dev->obj);
    eina_stringshare_del(dev->addr);
    dev->addr = NULL;
    eina_stringshare_del(dev->name);
@@ -87,8 +87,8 @@ _free_dev(Device *dev)
 static void
 _free_adap(Adapter *adap)
 {
-   edbus_proxy_unref(adap->proxy);
-   edbus_object_unref(adap->obj);
+   eldbus_proxy_unref(adap->proxy);
+   eldbus_object_unref(adap->obj);
    eina_stringshare_del(adap->name);
    adap->name = NULL;
    ebluez4_adapter_settings_del(adap->dialog);
@@ -127,25 +127,25 @@ _uuid_to_profile(const char *uuid)
 }
 
 static void
-_set_dev_services(Device *dev, EDBus_Message_Iter *uuids)
+_set_dev_services(Device *dev, Eldbus_Message_Iter *uuids)
 {
    const char *uuid;
 
-   while (edbus_message_iter_get_and_next(uuids, 's', &uuid))
+   while (eldbus_message_iter_get_and_next(uuids, 's', &uuid))
      switch (_uuid_to_profile(uuid))
        {
           case INPUT:
             if (!dev->proxy.input)
-              dev->proxy.input = edbus_proxy_get(dev->obj, INPUT_INTERFACE);
+              dev->proxy.input = eldbus_proxy_get(dev->obj, INPUT_INTERFACE);
             break;
           case AUDIO_SOURCE:
             if (!dev->proxy.audio_source)
-              dev->proxy.audio_source = edbus_proxy_get(dev->obj,
+              dev->proxy.audio_source = eldbus_proxy_get(dev->obj,
                                                    AUDIO_SOURCE_INTERFACE);
             break;
           case AUDIO_SINK:
             if (!dev->proxy.audio_sink)
-              dev->proxy.audio_sink = edbus_proxy_get(dev->obj,
+              dev->proxy.audio_sink = eldbus_proxy_get(dev->obj,
                                                     AUDIO_SINK_INTERFACE);
             break;
           default:
@@ -154,65 +154,65 @@ _set_dev_services(Device *dev, EDBus_Message_Iter *uuids)
 }
 
 static void
-_retrieve_properties(EDBus_Message_Iter *dict, const char **addr,
+_retrieve_properties(Eldbus_Message_Iter *dict, const char **addr,
                      const char **name, const char **icon, Eina_Bool *paired,
-                     Eina_Bool *connected, EDBus_Message_Iter **uuids)
+                     Eina_Bool *connected, Eldbus_Message_Iter **uuids)
 {
-   EDBus_Message_Iter *entry, *variant;
+   Eldbus_Message_Iter *entry, *variant;
    const char *key;
 
    *icon = NULL;
 
-   while (edbus_message_iter_get_and_next(dict, 'e', &entry))
+   while (eldbus_message_iter_get_and_next(dict, 'e', &entry))
      {
-        if (!edbus_message_iter_arguments_get(entry, "sv", &key, &variant))
+        if (!eldbus_message_iter_arguments_get(entry, "sv", &key, &variant))
            return;
 
         if (!strcmp(key, "Address"))
           {
-             if (!edbus_message_iter_arguments_get(variant, "s", addr))
+             if (!eldbus_message_iter_arguments_get(variant, "s", addr))
                return;
           }
         else if (!strcmp(key, "Name"))
           {
-             if (!edbus_message_iter_arguments_get(variant, "s", name))
+             if (!eldbus_message_iter_arguments_get(variant, "s", name))
                return;
           }
         else if (!strcmp(key, "Icon"))
           {
-             if (!edbus_message_iter_arguments_get(variant, "s", icon))
+             if (!eldbus_message_iter_arguments_get(variant, "s", icon))
                return;
           }
         else if (!strcmp(key, "Paired"))
           {
-             if (!edbus_message_iter_arguments_get(variant, "b", paired))
+             if (!eldbus_message_iter_arguments_get(variant, "b", paired))
                return;
           }
         else if (!strcmp(key, "Connected"))
           {
-             if (!edbus_message_iter_arguments_get(variant, "b", connected))
+             if (!eldbus_message_iter_arguments_get(variant, "b", connected))
                return;
           }
         else if (!strcmp(key, "UUIDs"))
           {
-             if (!edbus_message_iter_arguments_get(variant, "as", uuids))
+             if (!eldbus_message_iter_arguments_get(variant, "as", uuids))
                return;
           }
      }
 }
 
 static void
-_on_dev_property_changed(void *context, const EDBus_Message *msg)
+_on_dev_property_changed(void *context, const Eldbus_Message *msg)
 {
    const char *key, *name, *icon;
    char err_msg[4096];
    Eina_Bool paired, connected;
-   EDBus_Message_Iter *variant, *uuids;
+   Eldbus_Message_Iter *variant, *uuids;
    Device *dev = context;
    Device *found_dev = eina_list_search_unsorted(ctxt->found_devices,
                                                  _dev_addr_cmp, dev->addr);
 
-   if (!edbus_message_arguments_get(msg, "sv", &key, &variant))
+   if (!eldbus_message_arguments_get(msg, "sv", &key, &variant))
      {
         snprintf(err_msg, sizeof(err_msg),
                  "Property of %s changed, but could not be read", dev->name);
@@ -223,7 +223,7 @@ _on_dev_property_changed(void *context, const EDBus_Message *msg)
 
    if (!strcmp(key, "Name"))
      {
-        if (!edbus_message_iter_arguments_get(variant, "s", &name))
+        if (!eldbus_message_iter_arguments_get(variant, "s", &name))
           return;
         DBG("'%s' property of %s changed to %s", key, dev->name, name);
         eina_stringshare_replace(&dev->name, name);
@@ -236,7 +236,7 @@ _on_dev_property_changed(void *context, const EDBus_Message *msg)
      }
    else if (!strcmp(key, "Icon"))
      {
-        if (!edbus_message_iter_arguments_get(variant, "s", &icon))
+        if (!eldbus_message_iter_arguments_get(variant, "s", &icon))
           return;
         if (!found_dev) return;
         DBG("'%s' property of %s changed to %s", key, found_dev->name, icon);
@@ -245,7 +245,7 @@ _on_dev_property_changed(void *context, const EDBus_Message *msg)
      }
    else if (!strcmp(key, "Paired"))
      {
-        if (!edbus_message_iter_arguments_get(variant, "b", &paired))
+        if (!eldbus_message_iter_arguments_get(variant, "b", &paired))
           return;
         DBG("'%s' property of %s changed to %d", key, dev->name, paired);
         dev->paired = paired;
@@ -258,25 +258,25 @@ _on_dev_property_changed(void *context, const EDBus_Message *msg)
      }
    else if (!strcmp(key, "Connected"))
      {
-        if (!edbus_message_iter_arguments_get(variant, "b", &connected))
+        if (!eldbus_message_iter_arguments_get(variant, "b", &connected))
           return;
         DBG("'%s' property of %s changed to %d", key, dev->name, connected);
         dev->connected = connected;
      }
    else if (!strcmp(key, "UUIDs"))
      {
-        if (!edbus_message_iter_arguments_get(variant, "as", &uuids))
+        if (!eldbus_message_iter_arguments_get(variant, "as", &uuids))
           return;
         _set_dev_services(dev, uuids);
      }
 }
 
 static void
-_on_connected(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_connected(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    const char *err_name, *err_msg;
 
-   if (edbus_message_error_get(msg, &err_name, &err_msg))
+   if (eldbus_message_error_get(msg, &err_name, &err_msg))
      {
         ERR("%s: %s", err_name, err_msg);
         ebluez4_show_error(err_name, err_msg);
@@ -285,18 +285,18 @@ _on_connected(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_try_to_connect(EDBus_Proxy *proxy)
+_try_to_connect(Eldbus_Proxy *proxy)
 {
    if (proxy)
-     edbus_proxy_call(proxy, "Connect", _on_connected, NULL, -1, "");
+     eldbus_proxy_call(proxy, "Connect", _on_connected, NULL, -1, "");
 }
 
 static void
-_on_disconnected(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_disconnected(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    const char *err_name, *err_msg;
 
-   if (edbus_message_error_get(msg, &err_name, &err_msg))
+   if (eldbus_message_error_get(msg, &err_name, &err_msg))
      {
         ERR("%s: %s", err_name, err_msg);
         ebluez4_show_error(err_name, err_msg);
@@ -305,20 +305,20 @@ _on_disconnected(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_try_to_disconnect(EDBus_Proxy *proxy)
+_try_to_disconnect(Eldbus_Proxy *proxy)
 {
    if (proxy)
-     edbus_proxy_call(proxy, "Disconnect", _on_disconnected, NULL, -1, "");
+     eldbus_proxy_call(proxy, "Disconnect", _on_disconnected, NULL, -1, "");
 }
 
 static void
-_on_paired(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_paired(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    const char *err_name, *err_msg;
    Pair_Cb *d = data;
    Eina_Bool success = EINA_TRUE;
 
-   if (edbus_message_error_get(msg, &err_name, &err_msg))
+   if (eldbus_message_error_get(msg, &err_name, &err_msg))
      {
         ERR("%s: %s", err_name, err_msg);
         success = EINA_FALSE;
@@ -328,15 +328,15 @@ _on_paired(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
-_on_dev_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_dev_properties(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
-   EDBus_Message_Iter *dict, *uuids;
+   Eldbus_Message_Iter *dict, *uuids;
    const char *addr, *name, *icon;
    Eina_Bool paired;
    Eina_Bool connected;
    Device *dev = data;
 
-   if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
+   if (!eldbus_message_arguments_get(msg, "a{sv}", &dict))
      return;
 
    _retrieve_properties(dict, &addr, &name, &icon, &paired, &connected, &uuids);
@@ -363,22 +363,22 @@ _set_dev(const char *path)
 {
    Device *dev = calloc(1, sizeof(Device));
 
-   dev->obj = edbus_object_get(ctxt->conn, BLUEZ_BUS, path);
-   dev->proxy.dev = edbus_proxy_get(dev->obj, DEVICE_INTERFACE);
-   edbus_proxy_call(dev->proxy.dev, "GetProperties", _on_dev_properties, dev,
+   dev->obj = eldbus_object_get(ctxt->conn, BLUEZ_BUS, path);
+   dev->proxy.dev = eldbus_proxy_get(dev->obj, DEVICE_INTERFACE);
+   eldbus_proxy_call(dev->proxy.dev, "GetProperties", _on_dev_properties, dev,
                     -1, "");
-   edbus_proxy_signal_handler_add(dev->proxy.dev, "PropertyChanged",
+   eldbus_proxy_signal_handler_add(dev->proxy.dev, "PropertyChanged",
                                   _on_dev_property_changed, dev);
    ctxt->devices = eina_list_append(ctxt->devices, dev);
 }
 
 static void
-_on_removed(void *context, const EDBus_Message *msg)
+_on_removed(void *context, const Eldbus_Message *msg)
 {
    const char *path;
    Device *dev, *fdev;
 
-   if (!edbus_message_arguments_get(msg, "o", &path))
+   if (!eldbus_message_arguments_get(msg, "o", &path))
      return;
 
    dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, path);
@@ -390,25 +390,25 @@ _on_removed(void *context, const EDBus_Message *msg)
 }
 
 static void
-_on_created(void *context, const EDBus_Message *msg)
+_on_created(void *context, const Eldbus_Message *msg)
 {
    const char *path;
 
-   if (!edbus_message_arguments_get(msg, "o", &path))
+   if (!eldbus_message_arguments_get(msg, "o", &path))
      return;
 
    _set_dev(path);
 }
 
 static void
-_on_device_found(void *context, const EDBus_Message *msg)
+_on_device_found(void *context, const Eldbus_Message *msg)
 {
-   EDBus_Message_Iter *dict, *uuids;
+   Eldbus_Message_Iter *dict, *uuids;
    const char *addr, *name, *icon;
    Eina_Bool paired, connected;
    Device *dev;
 
-   if (!edbus_message_arguments_get(msg, "sa{sv}", &addr, &dict))
+   if (!eldbus_message_arguments_get(msg, "sa{sv}", &addr, &dict))
      return;
 
    if (eina_list_search_unsorted(ctxt->found_devices, _dev_addr_cmp, addr))
@@ -427,33 +427,33 @@ _on_device_found(void *context, const EDBus_Message *msg)
 }
 
 static void
-_on_list_devices(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_list_devices(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
-   EDBus_Message_Iter *array;
+   Eldbus_Message_Iter *array;
    const char *path;
    const char *err_msg = "Error reading list of devices";
 
-   if (!edbus_message_arguments_get(msg, "ao", &array))
+   if (!eldbus_message_arguments_get(msg, "ao", &array))
      {
         ERR("%s", err_msg);
         ebluez4_show_error("Bluez Error", err_msg);
         return;
      }
 
-   while (edbus_message_iter_get_and_next(array, 'o', &path))
+   while (eldbus_message_iter_get_and_next(array, 'o', &path))
      _set_dev(path);
 }
 
 static void
-_on_adap_property_changed(void *context, const EDBus_Message *msg)
+_on_adap_property_changed(void *context, const Eldbus_Message *msg)
 {
    const char *key, *name;
    char err_msg[1096];
    Eina_Bool visible, pairable, powered;
-   EDBus_Message_Iter *variant;
+   Eldbus_Message_Iter *variant;
    Adapter *adap = context;
 
-   if (!edbus_message_arguments_get(msg, "sv", &key, &variant))
+   if (!eldbus_message_arguments_get(msg, "sv", &key, &variant))
      {
         snprintf(err_msg, sizeof(err_msg),
                  "Property of %s changed, but could not be read", adap->name);
@@ -464,7 +464,7 @@ _on_adap_property_changed(void *context, const EDBus_Message *msg)
 
    if (!strcmp(key, "Name"))
      {
-        if (!edbus_message_iter_arguments_get(variant, "s", &name))
+        if (!eldbus_message_iter_arguments_get(variant, "s", &name))
           return;
         DBG("'%s' property of %s changed to %s", key, adap->name, name);
         eina_stringshare_del(adap->name);
@@ -474,21 +474,21 @@ _on_adap_property_changed(void *context, const EDBus_Message *msg)
      }
    else if (!strcmp(key, "Discoverable"))
      {
-        if (!edbus_message_iter_arguments_get(variant, "b", &visible))
+        if (!eldbus_message_iter_arguments_get(variant, "b", &visible))
           return;
         DBG("'%s' property of %s changed to %d", key, adap->name, visible);
         adap->visible = visible;
      }
    else if (!strcmp(key, "Pairable"))
      {
-        if (!edbus_message_iter_arguments_get(variant, "b", &pairable))
+        if (!eldbus_message_iter_arguments_get(variant, "b", &pairable))
           return;
         DBG("'%s' property of %s changed to %d", key, adap->name, pairable);
         adap->pairable = pairable;
      }
    else if (!strcmp(key, "Powered"))
      {
-        if (!edbus_message_iter_arguments_get(variant, "b", &powered))
+        if (!eldbus_message_iter_arguments_get(variant, "b", &powered))
           return;
         DBG("'%s' property of %s changed to %d", key, adap->name, powered);
         adap->powered = powered;
@@ -498,39 +498,39 @@ _on_adap_property_changed(void *context, const EDBus_Message *msg)
 }
 
 static void
-_on_adap_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_adap_properties(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
-   EDBus_Message_Iter *dict, *entry, *variant;
+   Eldbus_Message_Iter *dict, *entry, *variant;
    const char *name, *key;
    Eina_Bool visible, pairable, powered;
    Adapter *adap = data;
 
-   if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
+   if (!eldbus_message_arguments_get(msg, "a{sv}", &dict))
      return;
 
-   while (edbus_message_iter_get_and_next(dict, 'e', &entry))
+   while (eldbus_message_iter_get_and_next(dict, 'e', &entry))
      {
-        if (!edbus_message_iter_arguments_get(entry, "sv", &key, &variant))
+        if (!eldbus_message_iter_arguments_get(entry, "sv", &key, &variant))
            return;
 
         else if (!strcmp(key, "Name"))
           {
-             if (!edbus_message_iter_arguments_get(variant, "s", &name))
+             if (!eldbus_message_iter_arguments_get(variant, "s", &name))
                return;
           }
         else if (!strcmp(key, "Discoverable"))
           {
-             if (!edbus_message_iter_arguments_get(variant, "b", &visible))
+             if (!eldbus_message_iter_arguments_get(variant, "b", &visible))
                return;
           }
         else if (!strcmp(key, "Pairable"))
           {
-             if (!edbus_message_iter_arguments_get(variant, "b", &pairable))
+             if (!eldbus_message_iter_arguments_get(variant, "b", &pairable))
                return;
           }
         else if (!strcmp(key, "Powered"))
           {
-             if (!edbus_message_iter_arguments_get(variant, "b", &powered))
+             if (!eldbus_message_iter_arguments_get(variant, "b", &powered))
                return;
           }
      }
@@ -545,12 +545,12 @@ _on_adap_properties(void *data, const EDBus_Message *msg, EDBus_Pending *pending
 static void
 _unset_default_adapter(void)
 {
-   DBG("Remove default adapter %s", edbus_object_path_get(ctxt->adap_obj));
+   DBG("Remove default adapter %s", eldbus_object_path_get(ctxt->adap_obj));
    _free_dev_list(&ctxt->devices);
    ctxt->devices = NULL;
    _free_dev_list(&ctxt->found_devices);
    ctxt->found_devices = NULL;
-   edbus_object_unref(ctxt->adap_obj);
+   eldbus_object_unref(ctxt->adap_obj);
    ctxt->adap_obj = NULL;
    ebluez4_update_all_gadgets_visibility();
 }
@@ -564,7 +564,7 @@ _unset_adapter(const char *path)
    if (!adap)
      return;
 
-   if (!strcmp(edbus_object_path_get(ctxt->adap_obj), path))
+   if (!strcmp(eldbus_object_path_get(ctxt->adap_obj), path))
      _unset_default_adapter();
    ctxt->adapters = eina_list_remove(ctxt->adapters, adap);
    _free_adap(adap);
@@ -576,45 +576,45 @@ _set_adapter(const char *path)
 {
    Adapter *adap = calloc(1, sizeof(Adapter));
 
-   adap->obj = edbus_object_get(ctxt->conn, BLUEZ_BUS, path);
+   adap->obj = eldbus_object_get(ctxt->conn, BLUEZ_BUS, path);
    if (ctxt->adap_obj && adap->obj == ctxt->adap_obj)
      adap->is_default = EINA_TRUE;
    else
      adap->is_default = EINA_FALSE;
-   adap->proxy = edbus_proxy_get(adap->obj, ADAPTER_INTERFACE);
-   edbus_proxy_call(adap->proxy, "GetProperties", _on_adap_properties, adap, -1,
+   adap->proxy = eldbus_proxy_get(adap->obj, ADAPTER_INTERFACE);
+   eldbus_proxy_call(adap->proxy, "GetProperties", _on_adap_properties, adap, -1,
                     "");
-   edbus_proxy_signal_handler_add(adap->proxy, "PropertyChanged",
+   eldbus_proxy_signal_handler_add(adap->proxy, "PropertyChanged",
                                   _on_adap_property_changed, adap);
    ctxt->adapters = eina_list_append(ctxt->adapters, adap);
 }
 
 static void
-_on_list_adapters(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_on_list_adapters(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
-   EDBus_Message_Iter *array;
+   Eldbus_Message_Iter *array;
    const char *path;
    const char *err_msg = "Error reading list of adapters";
 
-   if (!edbus_message_arguments_get(msg, "ao", &array))
+   if (!eldbus_message_arguments_get(msg, "ao", &array))
      {
         ERR("%s", err_msg);
         ebluez4_show_error("Bluez Error", err_msg);
         return;
      }
 
-   while (edbus_message_iter_get_and_next(array, 'o', &path))
+   while (eldbus_message_iter_get_and_next(array, 'o', &path))
      _set_adapter(path);
 }
 
 static void
-_set_default_adapter(const EDBus_Message *msg)
+_set_default_adapter(const Eldbus_Message *msg)
 {
    Adapter *adap;
    const char *adap_path;
    const char *err_msg = "Error reading path of Default Adapter";
 
-   if (!edbus_message_arguments_get(msg, "o", &adap_path))
+   if (!eldbus_message_arguments_get(msg, "o", &adap_path))
      {
         ERR("%s", err_msg);
         ebluez4_show_error("Bluez Error", err_msg);
@@ -630,24 +630,24 @@ _set_default_adapter(const EDBus_Message *msg)
    if (adap)
      adap->is_default = EINA_TRUE;
 
-   ctxt->adap_obj = edbus_object_get(ctxt->conn, BLUEZ_BUS, adap_path);
-   ctxt->adap_proxy = edbus_proxy_get(ctxt->adap_obj, ADAPTER_INTERFACE);
+   ctxt->adap_obj = eldbus_object_get(ctxt->conn, BLUEZ_BUS, adap_path);
+   ctxt->adap_proxy = eldbus_proxy_get(ctxt->adap_obj, ADAPTER_INTERFACE);
 
-   edbus_proxy_signal_handler_add(ctxt->adap_proxy, "DeviceFound",
+   eldbus_proxy_signal_handler_add(ctxt->adap_proxy, "DeviceFound",
                                   _on_device_found, NULL);
-   edbus_proxy_signal_handler_add(ctxt->adap_proxy, "DeviceCreated",
+   eldbus_proxy_signal_handler_add(ctxt->adap_proxy, "DeviceCreated",
                                   _on_created, NULL);
-   edbus_proxy_signal_handler_add(ctxt->adap_proxy, "DeviceRemoved",
+   eldbus_proxy_signal_handler_add(ctxt->adap_proxy, "DeviceRemoved",
                                   _on_removed, NULL);
-   edbus_proxy_call(ctxt->adap_proxy, "ListDevices", _on_list_devices, NULL, -1,
+   eldbus_proxy_call(ctxt->adap_proxy, "ListDevices", _on_list_devices, NULL, -1,
                     "");
-   edbus_proxy_call(ctxt->adap_proxy, "RegisterAgent", NULL, NULL, -1, "os",
+   eldbus_proxy_call(ctxt->adap_proxy, "RegisterAgent", NULL, NULL, -1, "os",
                     REMOTE_AGENT_PATH, "KeyboardDisplay");
    ebluez4_update_all_gadgets_visibility();
 }
 
 static void
-_default_adapter_get(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+_default_adapter_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    const char *err_name, *err_msg;
 
@@ -655,7 +655,7 @@ _default_adapter_get(void *data, const EDBus_Message *msg, EDBus_Pending *pendin
     * If bluetoothd is starting up, we can fail here and wait for the
     * DefaultAdapterChanged signal later
     */
-   if (edbus_message_error_get(msg, &err_name, &err_msg))
+   if (eldbus_message_error_get(msg, &err_name, &err_msg))
      return;
 
    if (!ctxt->adap_obj)
@@ -663,18 +663,18 @@ _default_adapter_get(void *data, const EDBus_Message *msg, EDBus_Pending *pendin
 }
 
 static void
-_on_default_adapter_changed(void *context, const EDBus_Message *msg)
+_on_default_adapter_changed(void *context, const Eldbus_Message *msg)
 {
    _set_default_adapter(msg);
 }
 
 static void
-_on_adapter_removed(void *context, const EDBus_Message *msg)
+_on_adapter_removed(void *context, const Eldbus_Message *msg)
 {
    const char *adap_path;
    const char *err_msg = "Error reading path of Removed Adapter";
 
-   if (!edbus_message_arguments_get(msg, "o", &adap_path))
+   if (!eldbus_message_arguments_get(msg, "o", &adap_path))
      {
         ERR("%s", err_msg);
         ebluez4_show_error("Bluez Error", err_msg);
@@ -685,12 +685,12 @@ _on_adapter_removed(void *context, const EDBus_Message *msg)
 }
 
 static void
-_on_adapter_added(void *context, const EDBus_Message *msg)
+_on_adapter_added(void *context, const Eldbus_Message *msg)
 {
    const char *adap_path;
    const char *err_msg = "Error reading path of Added Adapter";
 
-   if (!edbus_message_arguments_get(msg, "o", &adap_path))
+   if (!eldbus_message_arguments_get(msg, "o", &adap_path))
      {
         ERR("%s", err_msg);
         ebluez4_show_error("Bluez Error", err_msg);
@@ -706,9 +706,9 @@ _bluez_monitor(void *data, const char *bus, const char *old_id, const char *new_
    if (!strcmp(old_id,"") && strcmp(new_id,""))
      {
         // Bluez up
-        edbus_proxy_call(ctxt->man_proxy, "DefaultAdapter",
+        eldbus_proxy_call(ctxt->man_proxy, "DefaultAdapter",
                          _default_adapter_get, NULL, -1, "");
-        edbus_proxy_call(ctxt->man_proxy, "ListAdapters",
+        eldbus_proxy_call(ctxt->man_proxy, "ListAdapters",
                          _on_list_adapters, NULL, -1, "");
      }
    else if (strcmp(old_id,"") && !strcmp(new_id,""))
@@ -721,42 +721,42 @@ _bluez_monitor(void *data, const char *bus, const char *old_id, const char *new_
 
 /* Public Functions */
 void
-ebluez4_edbus_init(void)
+ebluez4_eldbus_init(void)
 {
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
 
    ctxt = calloc(1, sizeof(Context));
 
-   edbus_init();
+   eldbus_init();
 
-   ctxt->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SYSTEM);
-   obj = edbus_object_get(ctxt->conn, BLUEZ_BUS, MANAGER_PATH);
-   ctxt->man_proxy = edbus_proxy_get(obj, MANAGER_INTERFACE);
+   ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   obj = eldbus_object_get(ctxt->conn, BLUEZ_BUS, MANAGER_PATH);
+   ctxt->man_proxy = eldbus_proxy_get(obj, MANAGER_INTERFACE);
 
    ebluez4_register_agent_interfaces(ctxt->conn);
 
-   edbus_proxy_signal_handler_add(ctxt->man_proxy, "DefaultAdapterChanged",
+   eldbus_proxy_signal_handler_add(ctxt->man_proxy, "DefaultAdapterChanged",
                                   _on_default_adapter_changed, NULL);
-   edbus_proxy_signal_handler_add(ctxt->man_proxy, "AdapterRemoved",
+   eldbus_proxy_signal_handler_add(ctxt->man_proxy, "AdapterRemoved",
                                   _on_adapter_removed, NULL);
-   edbus_proxy_signal_handler_add(ctxt->man_proxy, "AdapterAdded",
+   eldbus_proxy_signal_handler_add(ctxt->man_proxy, "AdapterAdded",
                                   _on_adapter_added, NULL);
 
-   edbus_name_owner_changed_callback_add(ctxt->conn, BLUEZ_BUS, _bluez_monitor,
+   eldbus_name_owner_changed_callback_add(ctxt->conn, BLUEZ_BUS, _bluez_monitor,
                                          NULL, EINA_TRUE);
 }
 
 void
-ebluez4_edbus_shutdown(void)
+ebluez4_eldbus_shutdown(void)
 {
    if (ctxt->adap_obj)
      _unset_default_adapter();
    _free_adap_list();
-   edbus_object_unref(edbus_proxy_object_get(ctxt->man_proxy));
-   edbus_connection_unref(ctxt->conn);
+   eldbus_object_unref(eldbus_proxy_object_get(ctxt->man_proxy));
+   eldbus_connection_unref(ctxt->conn);
    free(ctxt);
 
-   edbus_shutdown();
+   eldbus_shutdown();
 }
 
 void
@@ -764,13 +764,13 @@ ebluez4_start_discovery(void)
 {
    _free_dev_list(&ctxt->found_devices);
    ebluez4_update_instances(ctxt->found_devices);
-   edbus_proxy_call(ctxt->adap_proxy, "StartDiscovery", NULL, NULL, -1, "");
+   eldbus_proxy_call(ctxt->adap_proxy, "StartDiscovery", NULL, NULL, -1, "");
 }
 
 void
 ebluez4_stop_discovery(void)
 {
-   edbus_proxy_call(ctxt->adap_proxy, "StopDiscovery", NULL, NULL, -1, "");
+   eldbus_proxy_call(ctxt->adap_proxy, "StopDiscovery", NULL, NULL, -1, "");
 }
 
 void
@@ -796,15 +796,15 @@ ebluez4_pair_with_device(const char *addr, void (*cb)(void *, Eina_Bool, const c
    EINA_SAFETY_ON_NULL_RETURN(d);
    d->cb = cb;
    d->data = data;
-   edbus_proxy_call(ctxt->adap_proxy, "CreatePairedDevice", _on_paired, d,
+   eldbus_proxy_call(ctxt->adap_proxy, "CreatePairedDevice", _on_paired, d,
                     -1, "sos", addr, AGENT_PATH, "KeyboardDisplay");
 }
 
 void
-ebluez4_remove_device(EDBus_Object *obj)
+ebluez4_remove_device(Eldbus_Object *obj)
 {
-   edbus_proxy_call(ctxt->adap_proxy, "RemoveDevice", NULL, NULL, -1, "o",
-                    edbus_object_path_get(obj));
+   eldbus_proxy_call(ctxt->adap_proxy, "RemoveDevice", NULL, NULL, -1, "o",
+                    eldbus_object_path_get(obj));
 }
 
 int
@@ -813,22 +813,22 @@ ebluez4_dev_path_cmp(const void *d1, const void *d2)
    const Device *dev = d1;
    const char *path = d2;
 
-   return strcmp(edbus_object_path_get(dev->obj), path);
+   return strcmp(eldbus_object_path_get(dev->obj), path);
 }
 
 void
 ebluez4_adapter_property_set(Adapter *adap, const char *prop_name, Eina_Bool value)
 {
-   EDBus_Message_Iter *variant, *iter;
-   EDBus_Message *new_msg;
+   Eldbus_Message_Iter *variant, *iter;
+   Eldbus_Message *new_msg;
 
    if (!adap) return;
    if (!adap->obj) return;
-   new_msg = edbus_proxy_method_call_new(adap->proxy, "SetProperty");
-   iter = edbus_message_iter_get(new_msg);
-   edbus_message_iter_basic_append(iter, 's', prop_name);
-   variant = edbus_message_iter_container_new(iter, 'v', "b");
-   edbus_message_iter_basic_append(variant, 'b', value);
-   edbus_message_iter_container_close(iter, variant);
-   edbus_proxy_send(adap->proxy, new_msg, NULL, NULL, -1);
+   new_msg = eldbus_proxy_method_call_new(adap->proxy, "SetProperty");
+   iter = eldbus_message_iter_get(new_msg);
+   eldbus_message_iter_basic_append(iter, 's', prop_name);
+   variant = eldbus_message_iter_container_new(iter, 'v', "b");
+   eldbus_message_iter_basic_append(variant, 'b', value);
+   eldbus_message_iter_container_close(iter, variant);
+   eldbus_proxy_send(adap->proxy, new_msg, NULL, NULL, -1);
 }

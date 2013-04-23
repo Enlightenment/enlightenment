@@ -1,4 +1,4 @@
-#include "EDBus.h"
+#include "Eldbus.h"
 
 #define BLUEZ_BUS "org.bluez"
 #define MANAGER_PATH "/"
@@ -34,13 +34,13 @@ typedef struct _Device
    const char *type;
    Eina_Bool paired;
    Eina_Bool connected;
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
    struct
      {
-        EDBus_Proxy *dev;
-        EDBus_Proxy *input;
-        EDBus_Proxy *audio_sink;
-        EDBus_Proxy *audio_source;
+        Eldbus_Proxy *dev;
+        Eldbus_Proxy *input;
+        Eldbus_Proxy *audio_sink;
+        Eldbus_Proxy *audio_source;
      } proxy;
 } Device;
 
@@ -55,16 +55,16 @@ typedef struct _Adapter
    int powered_checked;
    Eina_Bool is_default;
    E_Dialog *dialog;
-   EDBus_Object *obj;
-   EDBus_Proxy *proxy;
+   Eldbus_Object *obj;
+   Eldbus_Proxy *proxy;
 } Adapter;
 
 typedef struct _Context
 {
-   EDBus_Connection *conn;
-   EDBus_Object *adap_obj;
-   EDBus_Proxy *man_proxy;
-   EDBus_Proxy *adap_proxy;
+   Eldbus_Connection *conn;
+   Eldbus_Object *adap_obj;
+   Eldbus_Proxy *man_proxy;
+   Eldbus_Proxy *adap_proxy;
    Eina_List *devices;
    Eina_List *found_devices;
    Eina_List *adapters;
@@ -72,13 +72,13 @@ typedef struct _Context
 
 Context *ctxt;
 
-void ebluez4_edbus_init(void);
-void ebluez4_edbus_shutdown(void);
+void ebluez4_eldbus_init(void);
+void ebluez4_eldbus_shutdown(void);
 void ebluez4_start_discovery(void);
 void ebluez4_stop_discovery(void);
 void ebluez4_connect_to_device(Device *dev);
 void ebluez4_disconnect_device(Device *dev);
 void ebluez4_pair_with_device(const char *addr, void (*cb)(void *, Eina_Bool, const char *), void *data);
-void ebluez4_remove_device(EDBus_Object *obj);
+void ebluez4_remove_device(Eldbus_Object *obj);
 int ebluez4_dev_path_cmp(const void *d1, const void *d2);
 void ebluez4_adapter_property_set(Adapter *adap, const char *prop_name, Eina_Bool value);

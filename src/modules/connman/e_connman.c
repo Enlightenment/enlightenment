@@ -9,7 +9,7 @@
 #define CONNMAN_CONNECTION_TIMEOUT 60 * MILLI_PER_SEC
 
 static unsigned int init_count;
-static EDBus_Connection *conn;
+static Eldbus_Connection *conn;
 static struct Connman_Manager *connman_manager;
 static E_Connman_Agent *agent;
 
@@ -30,16 +30,16 @@ static void _eina_str_array_clean(Eina_Array *array)
    eina_array_clean(array);
 }
 
-static void _dbus_str_array_to_eina(EDBus_Message_Iter *value, Eina_Array **old,
+static void _dbus_str_array_to_eina(Eldbus_Message_Iter *value, Eina_Array **old,
                                     unsigned nelem)
 {
-   EDBus_Message_Iter *itr_array;
+   Eldbus_Message_Iter *itr_array;
    Eina_Array *array;
    const char *s;
    EINA_SAFETY_ON_NULL_RETURN(value);
    EINA_SAFETY_ON_NULL_RETURN(old);
 
-   EINA_SAFETY_ON_FALSE_RETURN(edbus_message_iter_arguments_get(value, "as",
+   EINA_SAFETY_ON_FALSE_RETURN(eldbus_message_iter_arguments_get(value, "as",
                                                                 &itr_array));
 
    array = *old;
@@ -51,7 +51,7 @@ static void _dbus_str_array_to_eina(EDBus_Message_Iter *value, Eina_Array **old,
    else
      _eina_str_array_clean(array);
 
-   while (edbus_message_iter_get_and_next(itr_array, 's', &s))
+   while (eldbus_message_iter_get_and_next(itr_array, 's', &s))
      {
         eina_array_push(array, eina_stringshare_add(s));
         DBG("Push %s", s);
@@ -148,14 +148,14 @@ const char *econnman_service_type_to_str(enum Connman_Service_Type type)
 
 static void _service_parse_prop_changed(struct Connman_Service *cs,
                                         const char *prop_name,
-                                        EDBus_Message_Iter *value)
+                                        Eldbus_Message_Iter *value)
 {
    DBG("service %p %s prop %s", cs, cs->path, prop_name);
 
    if (strcmp(prop_name, "State") == 0)
      {
         const char *state;
-        EINA_SAFETY_ON_FALSE_RETURN(edbus_message_iter_arguments_get(value,
+        EINA_SAFETY_ON_FALSE_RETURN(eldbus_message_iter_arguments_get(value,
                                                                      "s",
                                                                      &state));
         cs->state = str_to_state(state);
@@ -164,7 +164,7 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
    else if (strcmp(prop_name, "Name") == 0)
      {
         const char *name;
-        EINA_SAFETY_ON_FALSE_RETURN(edbus_message_iter_arguments_get(value,
+        EINA_SAFETY_ON_FALSE_RETURN(eldbus_message_iter_arguments_get(value,
                                                                      "s",
                                                                      &name));
         free(cs->name);
@@ -174,7 +174,7 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
    else if (strcmp(prop_name, "Type") == 0)
      {
         const char *type;
-        EINA_SAFETY_ON_FALSE_RETURN(edbus_message_iter_arguments_get(value,
+        EINA_SAFETY_ON_FALSE_RETURN(eldbus_message_iter_arguments_get(value,
                                                                      "s",
                                                                      &type));
         cs->type = str_to_type(type);
@@ -183,7 +183,7 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
    else if (strcmp(prop_name, "Strength") == 0)
      {
         uint8_t strength;
-        EINA_SAFETY_ON_FALSE_RETURN(edbus_message_iter_arguments_get(value,
+        EINA_SAFETY_ON_FALSE_RETURN(eldbus_message_iter_arguments_get(value,
                                                                      "y",
                                                                      &strength));
         cs->strength = strength;
@@ -199,27 +199,27 @@ static void _service_parse_prop_changed(struct Connman_Service *cs,
 }
 
 static void _service_prop_dict_changed(struct Connman_Service *cs,
-                                       EDBus_Message_Iter *props)
+                                       Eldbus_Message_Iter *props)
 {
-   EDBus_Message_Iter *dict;
-   while (edbus_message_iter_get_and_next(props, 'e', &dict))
+   Eldbus_Message_Iter *dict;
+   while (eldbus_message_iter_get_and_next(props, 'e', &dict))
      {
         char *name;
-        EDBus_Message_Iter *var;
+        Eldbus_Message_Iter *var;
 
-        if (!edbus_message_iter_arguments_get(dict, "sv", &name, &var))
+        if (!eldbus_message_iter_arguments_get(dict, "sv", &name, &var))
           continue;
         _service_parse_prop_changed(cs, name, var);
      }
 }
 
-static void _service_prop_changed(void *data, const EDBus_Message *msg)
+static void _service_prop_changed(void *data, const Eldbus_Message *msg)
 {
    struct Connman_Service *cs = data;
-   EDBus_Message_Iter *var;
+   Eldbus_Message_Iter *var;
    const char *name;
 
-   if (!edbus_message_arguments_get(msg, "sv", &name, &var))
+   if (!eldbus_message_arguments_get(msg, "sv", &name, &var))
      return;
 
    _service_parse_prop_changed(cs, name, var);
@@ -233,18 +233,18 @@ struct connection_data {
 
 static void _service_free(struct Connman_Service *cs)
 {
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
    if (!cs)
      return;
 
    if (cs->pending.connect)
      {
-        edbus_pending_cancel(cs->pending.connect);
+        eldbus_pending_cancel(cs->pending.connect);
         free(cs->pending.data);
      }
    if (cs->pending.disconnect)
      {
-        edbus_pending_cancel(cs->pending.disconnect);
+        eldbus_pending_cancel(cs->pending.disconnect);
         free(cs->pending.data);
      }
 
@@ -252,17 +252,17 @@ static void _service_free(struct Connman_Service *cs)
    _eina_str_array_clean(cs->security);
    eina_array_free(cs->security);
    eina_stringshare_del(cs->path);
-   obj = edbus_proxy_object_get(cs->service_iface);
-   edbus_proxy_unref(cs->service_iface);
-   edbus_object_unref(obj);
+   obj = eldbus_proxy_object_get(cs->service_iface);
+   eldbus_proxy_unref(cs->service_iface);
+   eldbus_object_unref(obj);
 
    free(cs);
 }
 
-static struct Connman_Service *_service_new(const char *path, EDBus_Message_Iter *props)
+static struct Connman_Service *_service_new(const char *path, Eldbus_Message_Iter *props)
 {
    struct Connman_Service *cs;
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
@@ -271,24 +271,24 @@ static struct Connman_Service *_service_new(const char *path, EDBus_Message_Iter
 
    cs->path = eina_stringshare_add(path);
 
-   obj = edbus_object_get(conn, CONNMAN_BUS_NAME, path);
-   cs->service_iface = edbus_proxy_get(obj, CONNMAN_SERVICE_IFACE);
-   edbus_proxy_signal_handler_add(cs->service_iface, "PropertyChanged",
+   obj = eldbus_object_get(conn, CONNMAN_BUS_NAME, path);
+   cs->service_iface = eldbus_proxy_get(obj, CONNMAN_SERVICE_IFACE);
+   eldbus_proxy_signal_handler_add(cs->service_iface, "PropertyChanged",
                                   _service_prop_changed, cs);
 
    _service_prop_dict_changed(cs, props);
    return cs;
 }
 
-static void _service_connection_cb(void *data, const EDBus_Message *msg,
-                                   EDBus_Pending *pending)
+static void _service_connection_cb(void *data, const Eldbus_Message *msg,
+                                   Eldbus_Pending *pending)
 {
    struct connection_data *cd = data;
 
    if (cd->cb)
      {
         const char *s = NULL;
-        edbus_message_error_get(msg, NULL, &s);
+        eldbus_message_error_get(msg, NULL, &s);
         cd->cb(cd->user_data, s);
      }
 
@@ -320,7 +320,7 @@ bool econnman_service_connect(struct Connman_Service *cs,
    cd->cb = cb;
    cd->user_data = data;
 
-   cs->pending.connect = edbus_proxy_call(cs->service_iface, "Connect",
+   cs->pending.connect = eldbus_proxy_call(cs->service_iface, "Connect",
                                           _service_connection_cb, cd,
                                           CONNMAN_CONNECTION_TIMEOUT, "");
    return true;
@@ -350,7 +350,7 @@ bool econnman_service_disconnect(struct Connman_Service *cs,
    cd->cb = cb;
    cd->user_data = data;
 
-   cs->pending.connect = edbus_proxy_call(cs->service_iface, "Disconnect",
+   cs->pending.connect = eldbus_proxy_call(cs->service_iface, "Disconnect",
                                           _service_connection_cb, cd,
                                           -1, "");
    return true;
@@ -387,10 +387,10 @@ struct Connman_Service *econnman_manager_find_service(struct Connman_Manager *cm
 }
 
 static void _manager_services_remove(struct Connman_Manager *cm,
-                                     EDBus_Message_Iter *array)
+                                     Eldbus_Message_Iter *array)
 {
    const char *path;
-   while (edbus_message_iter_get_and_next(array, 'o', &path))
+   while (eldbus_message_iter_get_and_next(array, 'o', &path))
      {
         struct Connman_Service *cs;
         cs = econnman_manager_find_service(cm, path);
@@ -406,16 +406,16 @@ static void _manager_services_remove(struct Connman_Manager *cm,
      }
 }
 
-static void _manager_services_changed(void *data, const EDBus_Message *msg)
+static void _manager_services_changed(void *data, const Eldbus_Message *msg)
 {
    struct Connman_Manager *cm = data;
-   EDBus_Message_Iter *changed, *removed, *s;
+   Eldbus_Message_Iter *changed, *removed, *s;
    Eina_Inlist *tmp = NULL;
 
    if (cm->pending.get_services)
      return;
 
-   if (!edbus_message_arguments_get(msg, "a(oa{sv})ao", &changed, &removed))
+   if (!eldbus_message_arguments_get(msg, "a(oa{sv})ao", &changed, &removed))
      {
         ERR("Error getting arguments");
         return;
@@ -423,13 +423,13 @@ static void _manager_services_changed(void *data, const EDBus_Message *msg)
 
    _manager_services_remove(cm, removed);
 
-   while (edbus_message_iter_get_and_next(changed, 'r', &s))
+   while (eldbus_message_iter_get_and_next(changed, 'r', &s))
      {
         struct Connman_Service *cs;
         const char *path;
-        EDBus_Message_Iter *array;
+        Eldbus_Message_Iter *array;
 
-        if (!edbus_message_iter_arguments_get(s, "oa{sv}", &path, &array))
+        if (!eldbus_message_iter_arguments_get(s, "oa{sv}", &path, &array))
           continue;
 
         cs = econnman_manager_find_service(cm, path);
@@ -452,35 +452,35 @@ static void _manager_services_changed(void *data, const EDBus_Message *msg)
    econnman_mod_services_changed(cm);
 }
 
-static void _manager_get_services_cb(void *data, const EDBus_Message *msg,
-                                     EDBus_Pending *pending)
+static void _manager_get_services_cb(void *data, const Eldbus_Message *msg,
+                                     Eldbus_Pending *pending)
 {
    struct Connman_Manager *cm = data;
-   EDBus_Message_Iter *array, *s;
+   Eldbus_Message_Iter *array, *s;
    const char *name, *text;
 
    cm->pending.get_services = NULL;
 
-   if (edbus_message_error_get(msg, &name, &text))
+   if (eldbus_message_error_get(msg, &name, &text))
      {
         ERR("Could not get services. %s: %s", name, text);
         return;
      }
    DBG("cm->services=%p", cm->services);
 
-   if (!edbus_message_arguments_get(msg, "a(oa{sv})", &array))
+   if (!eldbus_message_arguments_get(msg, "a(oa{sv})", &array))
      {
         ERR("Error getting array");
         return;
      }
 
-   while (edbus_message_iter_get_and_next(array, 'r', &s))
+   while (eldbus_message_iter_get_and_next(array, 'r', &s))
      {
         struct Connman_Service *cs;
         const char *path;
-        EDBus_Message_Iter *inner_array;
+        Eldbus_Message_Iter *inner_array;
 
-        if (!edbus_message_iter_arguments_get(s, "oa{sv}", &path, &inner_array))
+        if (!eldbus_message_iter_arguments_get(s, "oa{sv}", &path, &inner_array))
           continue;
 
         cs = _service_new(path, inner_array);
@@ -495,19 +495,19 @@ static void _manager_get_services_cb(void *data, const EDBus_Message *msg,
 
 static bool _manager_parse_prop_changed(struct Connman_Manager *cm,
                                         const char *name,
-                                        EDBus_Message_Iter *value)
+                                        Eldbus_Message_Iter *value)
 {
    if (strcmp(name, "State") == 0)
      {
         const char *state;
-        if (!edbus_message_iter_arguments_get(value, "s", &state))
+        if (!eldbus_message_iter_arguments_get(value, "s", &state))
           return false;
         DBG("New state: %s", state);
         cm->state = str_to_state(state);
      }
    else if (strcmp(name, "OfflineMode") == 0)
      {
-        if (!edbus_message_iter_arguments_get(value, "b", &cm->offline_mode))
+        if (!eldbus_message_iter_arguments_get(value, "b", &cm->offline_mode))
           return false;
      }
    else
@@ -518,13 +518,13 @@ static bool _manager_parse_prop_changed(struct Connman_Manager *cm,
 }
 
 static void
-_manager_prop_changed(void *data, const EDBus_Message *msg)
+_manager_prop_changed(void *data, const Eldbus_Message *msg)
 {
    struct Connman_Manager *cm = data;
-   EDBus_Message_Iter *var;
+   Eldbus_Message_Iter *var;
    const char *name;
 
-   if (!edbus_message_arguments_get(msg, "sv", &name, &var))
+   if (!eldbus_message_arguments_get(msg, "sv", &name, &var))
      {
         ERR("Could not parse message %p", msg);
         return;
@@ -533,31 +533,31 @@ _manager_prop_changed(void *data, const EDBus_Message *msg)
    _manager_parse_prop_changed(cm, name, var);
 }
 
-static void _manager_get_prop_cb(void *data, const EDBus_Message *msg,
-                                 EDBus_Pending *pending)
+static void _manager_get_prop_cb(void *data, const Eldbus_Message *msg,
+                                 Eldbus_Pending *pending)
 {
    struct Connman_Manager *cm = data;
-   EDBus_Message_Iter *array, *dict;
+   Eldbus_Message_Iter *array, *dict;
    const char *name, *text;
 
-   if (edbus_message_error_get(msg, &name, &text))
+   if (eldbus_message_error_get(msg, &name, &text))
      {
         ERR("Could not get properties. %s: %s", name, text);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "a{sv}", &array))
+   if (!eldbus_message_arguments_get(msg, "a{sv}", &array))
      {
         ERR("Error getting arguments.");
         return;
      }
 
-   while (edbus_message_iter_get_and_next(array, 'e', &dict))
+   while (eldbus_message_iter_get_and_next(array, 'e', &dict))
      {
         const char *key;
-        EDBus_Message_Iter *var;
+        Eldbus_Message_Iter *var;
 
-        if (!edbus_message_iter_arguments_get(dict, "sv", &key, &var))
+        if (!eldbus_message_iter_arguments_get(dict, "sv", &key, &var))
           continue;
         _manager_parse_prop_changed(cm, key, var);
      }
@@ -565,10 +565,10 @@ static void _manager_get_prop_cb(void *data, const EDBus_Message *msg,
 
 static bool _manager_parse_wifi_prop_changed(struct Connman_Manager *cm,
                                              const char *name,
-                                             EDBus_Message_Iter *value)
+                                             Eldbus_Message_Iter *value)
 {
    if (!strcmp(name, "Powered"))
-     return edbus_message_iter_arguments_get(value, "b", &cm->powered);
+     return eldbus_message_iter_arguments_get(value, "b", &cm->powered);
    else
      return false;
    
@@ -576,13 +576,13 @@ static bool _manager_parse_wifi_prop_changed(struct Connman_Manager *cm,
    return true;
 }
 
-static void _manager_wifi_prop_changed(void *data, const EDBus_Message *msg)
+static void _manager_wifi_prop_changed(void *data, const Eldbus_Message *msg)
 {
    struct Connman_Manager *cm = data;
-   EDBus_Message_Iter *var;
+   Eldbus_Message_Iter *var;
    const char *name;
 
-   if (!edbus_message_arguments_get(msg, "sv", &name, &var))
+   if (!eldbus_message_arguments_get(msg, "sv", &name, &var))
      {
         ERR("Could not parse message %p", msg);
         return;
@@ -591,33 +591,33 @@ static void _manager_wifi_prop_changed(void *data, const EDBus_Message *msg)
    _manager_parse_wifi_prop_changed(cm, name, var);
 }
 
-static void _manager_get_wifi_prop_cb(void *data, const EDBus_Message *msg,
-                                      EDBus_Pending *pending)
+static void _manager_get_wifi_prop_cb(void *data, const Eldbus_Message *msg,
+                                      Eldbus_Pending *pending)
 {
    struct Connman_Manager *cm = data;
-   EDBus_Message_Iter *array, *dict;
+   Eldbus_Message_Iter *array, *dict;
    const char *name, *message;
 
    cm->pending.get_wifi_properties = NULL;
 
-   if (edbus_message_error_get(msg, &name, &message))
+   if (eldbus_message_error_get(msg, &name, &message))
      {
         ERR("Could not get properties. %s: %s", name, message);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "a{sv}", &array))
+   if (!eldbus_message_arguments_get(msg, "a{sv}", &array))
      {
         ERR("Error getting arguments.");
         return;
      }
 
-   while (edbus_message_iter_get_and_next(array, 'e', &dict))
+   while (eldbus_message_iter_get_and_next(array, 'e', &dict))
      {
-        EDBus_Message_Iter *var;
+        Eldbus_Message_Iter *var;
         const char *key;
 
-         if (!edbus_message_iter_arguments_get(dict, "sv", &key, &var))
+         if (!eldbus_message_iter_arguments_get(dict, "sv", &key, &var))
            continue;
         _manager_parse_wifi_prop_changed(cm, key, var);
      }
@@ -626,17 +626,17 @@ static void _manager_get_wifi_prop_cb(void *data, const EDBus_Message *msg,
 static void
 _manager_agent_unregister(struct Connman_Manager *cm)
 {
-   edbus_proxy_call(cm->manager_iface, "UnregisterAgent", NULL, NULL, -1, "o",
+   eldbus_proxy_call(cm->manager_iface, "UnregisterAgent", NULL, NULL, -1, "o",
                     AGENT_PATH);
 }
 
 static void
-_manager_agent_register_cb(void *data, const EDBus_Message *msg,
-                           EDBus_Pending *pending)
+_manager_agent_register_cb(void *data, const Eldbus_Message *msg,
+                           Eldbus_Pending *pending)
 {
    const char *name, *text;
 
-   if (edbus_message_error_get(msg, &name, &text))
+   if (eldbus_message_error_get(msg, &name, &text))
      {
         WRN("Could not register agent. %s: %s", name, text);
         return;
@@ -651,13 +651,13 @@ _manager_agent_register(struct Connman_Manager *cm)
    if (!cm)
      return;
 
-   edbus_proxy_call(cm->manager_iface, "RegisterAgent",
+   eldbus_proxy_call(cm->manager_iface, "RegisterAgent",
                     _manager_agent_register_cb, NULL, -1, "o", AGENT_PATH);
 }
 
 static void _manager_free(struct Connman_Manager *cm)
 {
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
    if (!cm)
      return;
 
@@ -670,61 +670,61 @@ static void _manager_free(struct Connman_Manager *cm)
      }
 
    if (cm->pending.get_services)
-     edbus_pending_cancel(cm->pending.get_services);
+     eldbus_pending_cancel(cm->pending.get_services);
 
    if (cm->pending.get_wifi_properties)
-     edbus_pending_cancel(cm->pending.get_wifi_properties);
+     eldbus_pending_cancel(cm->pending.get_wifi_properties);
 
    if (cm->pending.set_powered)
-     edbus_pending_cancel(cm->pending.set_powered);
+     eldbus_pending_cancel(cm->pending.set_powered);
 
    eina_stringshare_del(cm->path);
-   obj = edbus_proxy_object_get(cm->manager_iface);
-   edbus_proxy_unref(cm->manager_iface);
-   edbus_object_unref(obj);
-   obj = edbus_proxy_object_get(cm->technology_iface);
-   edbus_proxy_unref(cm->technology_iface);
-   edbus_object_unref(obj);
+   obj = eldbus_proxy_object_get(cm->manager_iface);
+   eldbus_proxy_unref(cm->manager_iface);
+   eldbus_object_unref(obj);
+   obj = eldbus_proxy_object_get(cm->technology_iface);
+   eldbus_proxy_unref(cm->technology_iface);
+   eldbus_object_unref(obj);
    free(cm);
 }
 
-static void _manager_powered_cb(void *data, const EDBus_Message *msg,
-                                EDBus_Pending *pending)
+static void _manager_powered_cb(void *data, const Eldbus_Message *msg,
+                                Eldbus_Pending *pending)
 {
-   EDBus_Pending *p;
+   Eldbus_Pending *p;
    struct Connman_Manager *cm = data;
    const char *error_name, *error_msg;
    
    cm->pending.set_powered = NULL;
 
-   if (edbus_message_error_get(msg, &error_name, &error_msg))
+   if (eldbus_message_error_get(msg, &error_name, &error_msg))
      {
         ERR("Error: %s %s", error_name, error_msg);
         return;
      }
    if (cm->pending.get_wifi_properties)
-     edbus_pending_cancel(cm->pending.get_wifi_properties);
-   p = edbus_proxy_call(cm->technology_iface, "GetProperties",
+     eldbus_pending_cancel(cm->pending.get_wifi_properties);
+   p = eldbus_proxy_call(cm->technology_iface, "GetProperties",
                         _manager_get_wifi_prop_cb, cm, -1, "");
    cm->pending.get_wifi_properties = p;
 }
 
 void econnman_powered_set(struct Connman_Manager *cm, Eina_Bool powered)
 {
-   EDBus_Message_Iter *main_iter, *var;
-   EDBus_Message *msg;
+   Eldbus_Message_Iter *main_iter, *var;
+   Eldbus_Message *msg;
 
    if (cm->pending.set_powered)
-     edbus_pending_cancel(cm->pending.set_powered);
+     eldbus_pending_cancel(cm->pending.set_powered);
 
-   msg = edbus_proxy_method_call_new(cm->technology_iface, "SetProperty");
-   main_iter = edbus_message_iter_get(msg);
-   edbus_message_iter_basic_append(main_iter, 's', "Powered");
-   var = edbus_message_iter_container_new(main_iter, 'v', "b");
-   edbus_message_iter_basic_append(var, 'b', powered);
-   edbus_message_iter_container_close(main_iter, var);
+   msg = eldbus_proxy_method_call_new(cm->technology_iface, "SetProperty");
+   main_iter = eldbus_message_iter_get(msg);
+   eldbus_message_iter_basic_append(main_iter, 's', "Powered");
+   var = eldbus_message_iter_container_new(main_iter, 'v', "b");
+   eldbus_message_iter_basic_append(var, 'b', powered);
+   eldbus_message_iter_container_close(main_iter, var);
 
-   cm->pending.set_powered = edbus_proxy_send(cm->technology_iface, msg,
+   cm->pending.set_powered = eldbus_proxy_send(cm->technology_iface, msg,
                                               _manager_powered_cb, cm, -1);
 }
 
@@ -732,25 +732,25 @@ static struct Connman_Manager *_manager_new(void)
 {
    const char *path = "/";
    struct Connman_Manager *cm;
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
 
    cm = calloc(1, sizeof(*cm));
    EINA_SAFETY_ON_NULL_RETURN_VAL(cm, NULL);
 
 
-   obj = edbus_object_get(conn, CONNMAN_BUS_NAME, "/");
-   cm->manager_iface = edbus_proxy_get(obj, CONNMAN_MANAGER_IFACE);
-   obj = edbus_object_get(conn, CONNMAN_BUS_NAME,
+   obj = eldbus_object_get(conn, CONNMAN_BUS_NAME, "/");
+   cm->manager_iface = eldbus_proxy_get(obj, CONNMAN_MANAGER_IFACE);
+   obj = eldbus_object_get(conn, CONNMAN_BUS_NAME,
                           "/net/connman/technology/wifi");
-   cm->technology_iface = edbus_proxy_get(obj, CONNMAN_TECHNOLOGY_IFACE);
+   cm->technology_iface = eldbus_proxy_get(obj, CONNMAN_TECHNOLOGY_IFACE);
 
    cm->path = eina_stringshare_add(path);
 
-   edbus_proxy_signal_handler_add(cm->manager_iface, "PropertyChanged",
+   eldbus_proxy_signal_handler_add(cm->manager_iface, "PropertyChanged",
                                   _manager_prop_changed, cm);
-   edbus_proxy_signal_handler_add(cm->manager_iface, "ServicesChanged",
+   eldbus_proxy_signal_handler_add(cm->manager_iface, "ServicesChanged",
                                   _manager_services_changed, cm);
-   edbus_proxy_signal_handler_add(cm->technology_iface, "PropertyChanged",
+   eldbus_proxy_signal_handler_add(cm->technology_iface, "PropertyChanged",
                                   _manager_wifi_prop_changed, cm);
    
    /*
@@ -758,13 +758,13 @@ static struct Connman_Manager *_manager_new(void)
     * after ServicesChanged above. So we only add the handler later, in a per
     * service manner.
     */
-   cm->pending.get_services = edbus_proxy_call(cm->manager_iface,
+   cm->pending.get_services = eldbus_proxy_call(cm->manager_iface,
                                                "GetServices",
                                                _manager_get_services_cb, cm,
                                                -1, "");
-   edbus_proxy_call(cm->manager_iface, "GetProperties", _manager_get_prop_cb, cm,
+   eldbus_proxy_call(cm->manager_iface, "GetProperties", _manager_get_prop_cb, cm,
                     -1, "");
-   cm->pending.get_wifi_properties = edbus_proxy_call(cm->technology_iface,
+   cm->pending.get_wifi_properties = eldbus_proxy_call(cm->technology_iface,
                                                       "GetProperties",
                                                       _manager_get_wifi_prop_cb,
                                                       cm, -1, "");
@@ -811,7 +811,7 @@ _e_connman_system_name_owner_changed(void *data, const char *bus, const char *fr
  *   - E_CONNMAN_EVENT_MANAGER_OUT: issued when connman connection is lost.
  */
 unsigned int
-e_connman_system_init(EDBus_Connection *edbus_conn)
+e_connman_system_init(Eldbus_Connection *eldbus_conn)
 {
    init_count++;
 
@@ -821,11 +821,11 @@ e_connman_system_init(EDBus_Connection *edbus_conn)
    E_CONNMAN_EVENT_MANAGER_IN = ecore_event_type_new();
    E_CONNMAN_EVENT_MANAGER_OUT = ecore_event_type_new();
 
-   conn = edbus_conn;
-   edbus_name_owner_changed_callback_add(conn, CONNMAN_BUS_NAME,
+   conn = eldbus_conn;
+   eldbus_name_owner_changed_callback_add(conn, CONNMAN_BUS_NAME,
                                          _e_connman_system_name_owner_changed,
                                          NULL, EINA_TRUE);
-   agent = econnman_agent_new(edbus_conn);
+   agent = econnman_agent_new(eldbus_conn);
 
    return init_count;
 }
@@ -849,14 +849,14 @@ e_connman_system_shutdown(void)
    if (init_count > 0)
       return init_count;
 
-   edbus_name_owner_changed_callback_del(conn, CONNMAN_BUS_NAME,
+   eldbus_name_owner_changed_callback_del(conn, CONNMAN_BUS_NAME,
                                          _e_connman_system_name_owner_changed,
                                          NULL);
    _e_connman_system_name_owner_exit();
    if (agent)
      econnman_agent_del(agent);
    if (conn)
-     edbus_connection_unref(conn);
+     eldbus_connection_unref(conn);
    agent = NULL;
    conn = NULL;
 

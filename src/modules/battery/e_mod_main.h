@@ -4,7 +4,7 @@
 #ifdef HAVE_EEZE
 # include <Eeze.h>
 #else
-# include <EDBus.h>
+# include <Eldbus.h>
 #endif
 
 typedef struct _Config       Config;
@@ -96,7 +96,7 @@ struct _Battery
    const char *model;
    const char *vendor;
    Eina_Bool got_prop:1;
-   EDBus_Proxy *proxy;
+   Eldbus_Proxy *proxy;
 #ifdef __OpenBSD__
    int * mib;
 #endif
@@ -107,7 +107,7 @@ struct _Ac_Adapter
    const char *udi;
    Eina_Bool present:1;
    const char *product;
-   EDBus_Proxy *proxy;
+   Eldbus_Proxy *proxy;
 #ifdef __OpenBSD__
    int * mib;
 #endif

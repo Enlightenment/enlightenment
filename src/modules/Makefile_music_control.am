@@ -14,8 +14,8 @@ music_control_module_la_SOURCES  = music-control/e_mod_main.h \
                                    music-control/e_mod_main.c \
                                    music-control/private.h \
                                    music-control/ui.c \
-                                   music-control/gen/edbus_utils.h \
-                                   music-control/gen/edbus_media_player2_player.c \
-                                   music-control/gen/edbus_media_player2_player.h \
-                                   music-control/gen/edbus_mpris_media_player2.c \
-                                   music-control/gen/edbus_mpris_media_player2.h
+                                   music-control/gen/eldbus_utils.h \
+                                   music-control/gen/eldbus_media_player2_player.c \
+                                   music-control/gen/eldbus_media_player2_player.h \
+                                   music-control/gen/eldbus_mpris_media_player2.c \
+                                   music-control/gen/eldbus_mpris_media_player2.h

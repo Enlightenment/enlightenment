@@ -208,7 +208,7 @@ static const E_Gadcon_Client_Class _gc_class =
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, _e_music_control_Name };
 
 static void
-cb_playback_status_get(void *data, EDBus_Pending *p, const char *propname, EDBus_Proxy *proxy, EDBus_Error_Info *error_info, const char *value)
+cb_playback_status_get(void *data, Eldbus_Pending *p, const char *propname, Eldbus_Proxy *proxy, Eldbus_Error_Info *error_info, const char *value)
 {
    E_Music_Control_Module_Context *ctxt = data;
 
@@ -226,9 +226,9 @@ cb_playback_status_get(void *data, EDBus_Pending *p, const char *propname, EDBus
 }
 
 static void
-prop_changed(void *data, EDBus_Proxy *proxy, void *event_info)
+prop_changed(void *data, Eldbus_Proxy *proxy, void *event_info)
 {
-   EDBus_Proxy_Event_Property_Changed *event = event_info;
+   Eldbus_Proxy_Event_Property_Changed *event = event_info;
    E_Music_Control_Module_Context *ctxt = data;
 
    if (!strcmp(event->name, "PlaybackStatus"))
@@ -248,14 +248,14 @@ prop_changed(void *data, EDBus_Proxy *proxy, void *event_info)
 Eina_Bool
 music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
 {
-   edbus_init();
-   ctxt->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   eldbus_init();
+   ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctxt->conn, EINA_FALSE);
 
    ctxt->mrpis2 = mpris_media_player2_proxy_get(ctxt->conn, bus, NULL);
    ctxt->mpris2_player = media_player2_player_proxy_get(ctxt->conn, bus, NULL);
    media_player2_player_playback_status_propget(ctxt->mpris2_player, cb_playback_status_get, ctxt);
-   edbus_proxy_event_callback_add(ctxt->mpris2_player, EDBUS_PROXY_EVENT_PROPERTY_CHANGED,
+   eldbus_proxy_event_callback_add(ctxt->mpris2_player, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
                                   prop_changed, ctxt);
    return EINA_TRUE;
 }
@@ -310,8 +310,8 @@ e_modapi_shutdown(E_Module *m)
 
    media_player2_player_proxy_unref(ctxt->mpris2_player);
    mpris_media_player2_proxy_unref(ctxt->mrpis2);
-   edbus_connection_unref(ctxt->conn);
-   edbus_shutdown();
+   eldbus_connection_unref(ctxt->conn);
+   eldbus_shutdown();
 
    e_gadcon_provider_unregister(&_gc_class);
 

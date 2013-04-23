@@ -2,7 +2,7 @@
 #define _E_DBUSMENU_H_
 
 #include <Eina.h>
-#include <EDBus.h>
+#include <Eldbus.h>
 
 typedef enum {
    E_DBUSMENU_ITEM_TYPE_STANDARD = 0,
@@ -61,7 +61,7 @@ struct _E_DBusMenu_Item
 typedef void (*E_DBusMenu_Pop_Request_Cb)(void *data, const E_DBusMenu_Item *item);
 typedef void (*E_DBusMenu_Update_Cb)(void *data, E_DBusMenu_Item *new_root_item);
 
-EAPI E_DBusMenu_Ctx * e_dbusmenu_load(EDBus_Connection *conn, const char *bus, const char *path, const void *data);
+EAPI E_DBusMenu_Ctx * e_dbusmenu_load(Eldbus_Connection *conn, const char *bus, const char *path, const void *data);
 EAPI void e_dbusmenu_unload(E_DBusMenu_Ctx *ctx);
 EAPI void e_dbusmenu_update_cb_set(E_DBusMenu_Ctx *menu_data, E_DBusMenu_Update_Cb cb);
 EAPI void e_dbusmenu_pop_request_cb_set(E_DBusMenu_Ctx *menu_data, E_DBusMenu_Pop_Request_Cb cb);

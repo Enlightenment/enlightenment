@@ -8,36 +8,36 @@ static const char E_FILEMAN_PATH[] = "/org/enlightenment/FileManager";
 typedef struct _E_Fileman_DBus_Daemon E_Fileman_DBus_Daemon;
 struct _E_Fileman_DBus_Daemon
 {
-   EDBus_Connection *conn;
-   EDBus_Service_Interface *iface;
+   Eldbus_Connection *conn;
+   Eldbus_Service_Interface *iface;
 };
 
-static EDBus_Message * _e_fileman_dbus_daemon_open_directory_cb(const EDBus_Service_Interface *iface, const EDBus_Message *msg);
-static EDBus_Message *_e_fileman_dbus_daemon_open_file_cb(const EDBus_Service_Interface *iface, const EDBus_Message *msg);
+static Eldbus_Message * _e_fileman_dbus_daemon_open_directory_cb(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg);
+static Eldbus_Message *_e_fileman_dbus_daemon_open_file_cb(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg);
 
-static EDBus_Message *
-_e_fileman_dbus_daemon_error(const EDBus_Message *msg,
+static Eldbus_Message *
+_e_fileman_dbus_daemon_error(const Eldbus_Message *msg,
                              const char  *error_msg)
 {
-   return edbus_message_error_new(msg, E_FILEMAN_ERROR, error_msg);
+   return eldbus_message_error_new(msg, E_FILEMAN_ERROR, error_msg);
 }
 
-static const EDBus_Method methods[] = {
-   { "OpenDirectory", EDBUS_ARGS({"s", "directory"}), NULL,
+static const Eldbus_Method methods[] = {
+   { "OpenDirectory", ELDBUS_ARGS({"s", "directory"}), NULL,
       _e_fileman_dbus_daemon_open_directory_cb },
-   { "OpenFile", EDBUS_ARGS({"s", "file"}), NULL,
+   { "OpenFile", ELDBUS_ARGS({"s", "file"}), NULL,
       _e_fileman_dbus_daemon_open_file_cb },
    { }
 };
 
-static const EDBus_Service_Interface_Desc desc = {
+static const Eldbus_Service_Interface_Desc desc = {
    E_FILEMAN_INTERFACE, methods
 };
 
 static void
 _e_fileman_dbus_daemon_object_init(E_Fileman_DBus_Daemon *d)
 {
-   d->iface = edbus_service_interface_register(d->conn, E_FILEMAN_PATH, &desc);
+   d->iface = eldbus_service_interface_register(d->conn, E_FILEMAN_PATH, &desc);
    if (!d->iface)
      {
         fprintf(stderr, "ERROR: cannot add object to %s\n", E_FILEMAN_PATH);
@@ -49,25 +49,25 @@ static void
 _e_fileman_dbus_daemon_free(E_Fileman_DBus_Daemon *d)
 {
    if (d->iface)
-     edbus_service_object_unregister(d->iface);
+     eldbus_service_object_unregister(d->iface);
    if (d->conn)
-     edbus_connection_unref(d->conn);
+     eldbus_connection_unref(d->conn);
 
    free(d);
 }
 
-static EDBus_Message *
-_e_fileman_dbus_daemon_open_directory_cb(const EDBus_Service_Interface *iface __UNUSED__,
-                                         const EDBus_Message *msg)
+static Eldbus_Message *
+_e_fileman_dbus_daemon_open_directory_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+                                         const Eldbus_Message *msg)
 {
    const char *directory = NULL, *p;
    char *dev, *to_free = NULL;
    E_Zone *zone;
 
-   if (!edbus_message_arguments_get(msg, "s", &directory))
+   if (!eldbus_message_arguments_get(msg, "s", &directory))
      {
         fprintf(stderr, "Error: getting arguments of OpenDirectory call.\n");
-        return edbus_message_method_return_new(msg);
+        return eldbus_message_method_return_new(msg);
      }
 
    if ((!directory) || (directory[0] == '\0'))
@@ -123,7 +123,7 @@ _e_fileman_dbus_daemon_open_directory_cb(const EDBus_Service_Interface *iface __
    e_fwin_new(zone->container, dev, directory);
    free(dev);
    free(to_free);
-   return edbus_message_method_return_new(msg);
+   return eldbus_message_method_return_new(msg);
 }
 
 static Eina_Bool
@@ -150,19 +150,19 @@ _mime_shell_script_check(const char *mime)
    return EINA_FALSE;
 }
 
-static EDBus_Message*
-_e_fileman_dbus_daemon_open_file_cb(const EDBus_Service_Interface *iface __UNUSED__,
-                                    const EDBus_Message *msg)
+static Eldbus_Message*
+_e_fileman_dbus_daemon_open_file_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+                                    const Eldbus_Message *msg)
 {
    Eina_List *handlers;
    const char *param_file = NULL, *mime, *errmsg = "unknow error";
    char *real_file, *to_free = NULL;
    E_Zone *zone;
 
-   if (!edbus_message_arguments_get(msg, "s", &param_file))
+   if (!eldbus_message_arguments_get(msg, "s", &param_file))
      {
         fprintf(stderr, "ERROR: getting arguments of OpenFile call.\n");
-        return edbus_message_method_return_new(msg);
+        return eldbus_message_method_return_new(msg);
      }
 
    if ((!param_file) || (param_file[0] == '\0'))
@@ -270,7 +270,7 @@ _e_fileman_dbus_daemon_open_file_cb(const EDBus_Service_Interface *iface __UNUSE
  end:
    free(real_file);
    free(to_free);
-   return edbus_message_method_return_new(msg);
+   return eldbus_message_method_return_new(msg);
 
  error:
    free(real_file);
@@ -290,13 +290,13 @@ _e_fileman_dbus_daemon_new(void)
         return NULL;
      }
 
-   d->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   d->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!d->conn)
      goto error;
 
    _e_fileman_dbus_daemon_object_init(d);
-   edbus_name_request(d->conn, E_FILEMAN_BUS_NAME,
-                      EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING, NULL, NULL);
+   eldbus_name_request(d->conn, E_FILEMAN_BUS_NAME,
+                      ELDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING, NULL, NULL);
    return d;
 
 error:
@@ -313,7 +313,7 @@ e_fileman_dbus_init(void)
    if (_daemon)
      return;
 
-   edbus_init();
+   eldbus_init();
    _daemon = _e_fileman_dbus_daemon_new();
 }
 
@@ -325,6 +325,6 @@ e_fileman_dbus_shutdown(void)
 
    _e_fileman_dbus_daemon_free(_daemon);
    _daemon = NULL;
-   edbus_shutdown();
+   eldbus_shutdown();
 }
 

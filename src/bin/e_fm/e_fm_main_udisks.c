@@ -45,7 +45,7 @@ void *alloca(size_t);
 #include <Ecore_Ipc.h>
 #include <Ecore_File.h>
 #include <Eet.h>
-#include <EDBus.h>
+#include <Eldbus.h>
 
 #include "e_fm_shared_device.h"
 #include "e_fm_shared_codec.h"
@@ -60,22 +60,22 @@ void *alloca(size_t);
 #define UDISKS_INTERFACE "org.freedesktop.UDisks"
 #define UDISKS_DEVICE_INTERFACE "org.freedesktop.UDisks.Device"
 
-static EDBus_Connection *_e_fm_main_udisks_conn = NULL;
-static EDBus_Proxy *_e_fm_main_udisks_proxy = NULL;
+static Eldbus_Connection *_e_fm_main_udisks_conn = NULL;
+static Eldbus_Proxy *_e_fm_main_udisks_proxy = NULL;
 static Eina_List *_e_stores = NULL;
 static Eina_List *_e_vols = NULL;
 
-static void _e_fm_main_udisks_cb_dev_all(void *data, const EDBus_Message *msg,
-                                         EDBus_Pending *pending);
-static void _e_fm_main_udisks_cb_dev_verify(void *data, const EDBus_Message *msg,
-                                            EDBus_Pending *pending);
-static void _e_fm_main_udisks_cb_dev_add(void *data, const EDBus_Message *msg);
-static void _e_fm_main_udisks_cb_dev_del(void *data, const EDBus_Message *msg);
-static void _e_fm_main_udisks_cb_prop_modified(void *data, const EDBus_Message *msg);
-static void _e_fm_main_udisks_cb_store_prop(void *data, const EDBus_Message *msg,
-                                            EDBus_Pending *pending);
-static void _e_fm_main_udisks_cb_vol_prop(void *data, const EDBus_Message *msg,
-                                          EDBus_Pending *pending);
+static void _e_fm_main_udisks_cb_dev_all(void *data, const Eldbus_Message *msg,
+                                         Eldbus_Pending *pending);
+static void _e_fm_main_udisks_cb_dev_verify(void *data, const Eldbus_Message *msg,
+                                            Eldbus_Pending *pending);
+static void _e_fm_main_udisks_cb_dev_add(void *data, const Eldbus_Message *msg);
+static void _e_fm_main_udisks_cb_dev_del(void *data, const Eldbus_Message *msg);
+static void _e_fm_main_udisks_cb_prop_modified(void *data, const Eldbus_Message *msg);
+static void _e_fm_main_udisks_cb_store_prop(void *data, const Eldbus_Message *msg,
+                                            Eldbus_Pending *pending);
+static void _e_fm_main_udisks_cb_vol_prop(void *data, const Eldbus_Message *msg,
+                                          Eldbus_Pending *pending);
 static void _e_fm_main_udisks_cb_vol_mounted(E_Volume *v);
 static void _e_fm_main_udisks_cb_vol_unmounted(E_Volume *v);
 static void _e_fm_main_udisks_cb_vol_unmounted_before_eject(E_Volume *v);
@@ -95,56 +95,56 @@ static E_Volume *_volume_find_by_dbus_path(const char *path);
 static void _volume_del(E_Volume *v);
 
 static void
-_e_fm_main_udisks_name_start(void *data __UNUSED__, const EDBus_Message *msg,
-                             EDBus_Pending *pending __UNUSED__)
+_e_fm_main_udisks_name_start(void *data __UNUSED__, const Eldbus_Message *msg,
+                             Eldbus_Pending *pending __UNUSED__)
 {
    unsigned flag = 0;
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
 
-   if (!edbus_message_arguments_get(msg, "u", &flag) || !flag)
+   if (!eldbus_message_arguments_get(msg, "u", &flag) || !flag)
      {
         _e_fm_main_udisks_catch(EINA_FALSE);
         return;
      }
-   obj = edbus_object_get(_e_fm_main_udisks_conn, UDISKS_BUS, UDISKS_PATH);
-   _e_fm_main_udisks_proxy = edbus_proxy_get(obj, UDISKS_INTERFACE);
+   obj = eldbus_object_get(_e_fm_main_udisks_conn, UDISKS_BUS, UDISKS_PATH);
+   _e_fm_main_udisks_proxy = eldbus_proxy_get(obj, UDISKS_INTERFACE);
 
-   edbus_proxy_call(_e_fm_main_udisks_proxy, "EnumerateDevices",
+   eldbus_proxy_call(_e_fm_main_udisks_proxy, "EnumerateDevices",
                     _e_fm_main_udisks_cb_dev_all, NULL, -1, "");
 
-   edbus_proxy_signal_handler_add(_e_fm_main_udisks_proxy, "DeviceAdded",
+   eldbus_proxy_signal_handler_add(_e_fm_main_udisks_proxy, "DeviceAdded",
                                   _e_fm_main_udisks_cb_dev_add, NULL);
-   edbus_proxy_signal_handler_add(_e_fm_main_udisks_proxy, "DeviceRemoved",
+   eldbus_proxy_signal_handler_add(_e_fm_main_udisks_proxy, "DeviceRemoved",
                                   _e_fm_main_udisks_cb_dev_del, NULL);
    _e_fm_main_udisks_catch(EINA_TRUE); /* signal usage of udisks for mounting */
 }
 
 static void
-_e_fm_main_udisks_cb_dev_all(void *data __UNUSED__, const EDBus_Message *msg,
-                             EDBus_Pending *pending __UNUSED__)
+_e_fm_main_udisks_cb_dev_all(void *data __UNUSED__, const Eldbus_Message *msg,
+                             Eldbus_Pending *pending __UNUSED__)
 {
    const char *name, *txt, *path;
-   EDBus_Message_Iter *array;
+   Eldbus_Message_Iter *array;
 
-   if (edbus_message_error_get(msg, &name, &txt))
+   if (eldbus_message_error_get(msg, &name, &txt))
      {
         ERR("Error %s %s.", name, txt);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "ao", &array))
+   if (!eldbus_message_arguments_get(msg, "ao", &array))
      {
         ERR("Error getting arguments.");
         return;
      }
 
-   while (edbus_message_iter_get_and_next(array, 'o', &path))
+   while (eldbus_message_iter_get_and_next(array, 'o', &path))
      {
-        EDBus_Message *new_msg;
-        new_msg = edbus_message_method_call_new(UDISKS_BUS, path,
-                                                EDBUS_FDO_INTERFACE_PROPERTIES, "Get");
-        edbus_message_arguments_append(new_msg, "ss", UDISKS_DEVICE_INTERFACE, "IdUsage");
-        edbus_connection_send(_e_fm_main_udisks_conn, new_msg,
+        Eldbus_Message *new_msg;
+        new_msg = eldbus_message_method_call_new(UDISKS_BUS, path,
+                                                ELDBUS_FDO_INTERFACE_PROPERTIES, "Get");
+        eldbus_message_arguments_append(new_msg, "ss", UDISKS_DEVICE_INTERFACE, "IdUsage");
+        eldbus_connection_send(_e_fm_main_udisks_conn, new_msg,
                               _e_fm_main_udisks_cb_dev_verify,
                               eina_stringshare_add(path), -1);
         INF("DB INIT DEV+: %s", path);
@@ -153,25 +153,25 @@ _e_fm_main_udisks_cb_dev_all(void *data __UNUSED__, const EDBus_Message *msg,
 
 
 static void
-_e_fm_main_udisks_cb_dev_verify(void *data, const EDBus_Message *msg,
-                                EDBus_Pending *pending __UNUSED__)
+_e_fm_main_udisks_cb_dev_verify(void *data, const Eldbus_Message *msg,
+                                Eldbus_Pending *pending __UNUSED__)
 {
    const char *name, *txt, *id_usage, *path = data;
-   EDBus_Message_Iter *variant;
+   Eldbus_Message_Iter *variant;
 
-   if (edbus_message_error_get(msg, &name, &txt))
+   if (eldbus_message_error_get(msg, &name, &txt))
      {
         ERR("Error %s %s.", name, txt);
         goto error;
      }
 
-   if (!edbus_message_arguments_get(msg, "v", &variant))
+   if (!eldbus_message_arguments_get(msg, "v", &variant))
      {
         ERR("Error getting arguments.");
         goto error;
      }
 
-   if (!edbus_message_iter_arguments_get(variant, "s", &id_usage))
+   if (!eldbus_message_iter_arguments_get(variant, "s", &id_usage))
      {
         ERR("Type of variant not expected");
         goto error;
@@ -189,25 +189,25 @@ error:
 }
 
 static void
-_e_fm_main_udisks_cb_dev_verify_added(void *data, const EDBus_Message *msg,
-                                EDBus_Pending *pending __UNUSED__)
+_e_fm_main_udisks_cb_dev_verify_added(void *data, const Eldbus_Message *msg,
+                                Eldbus_Pending *pending __UNUSED__)
 {
    const char *name, *txt, *id_usage, *path = data;
-   EDBus_Message_Iter *variant;
+   Eldbus_Message_Iter *variant;
 
-   if (edbus_message_error_get(msg, &name, &txt))
+   if (eldbus_message_error_get(msg, &name, &txt))
      {
         ERR("Error %s %s.", name, txt);
         goto error;
      }
 
-   if (!edbus_message_arguments_get(msg, "v", &variant))
+   if (!eldbus_message_arguments_get(msg, "v", &variant))
      {
         ERR("Error getting arguments.");
         goto error;
      }
 
-   if (!edbus_message_iter_arguments_get(variant, "s", &id_usage))
+   if (!eldbus_message_iter_arguments_get(variant, "s", &id_usage))
      {
         ERR("Type of variant not expected");
         goto error;
@@ -221,7 +221,7 @@ _e_fm_main_udisks_cb_dev_verify_added(void *data, const EDBus_Message *msg,
         if (!s)
           _e_fm_main_udisks_storage_add(path);
         else
-          edbus_proxy_property_get_all(s->proxy,
+          eldbus_proxy_property_get_all(s->proxy,
                                        _e_fm_main_udisks_cb_store_prop, s);
      }
    else if(!strcmp(id_usage, "filesystem"))
@@ -231,7 +231,7 @@ _e_fm_main_udisks_cb_dev_verify_added(void *data, const EDBus_Message *msg,
         if (!v)
           _e_fm_main_udisks_volume_add(path, EINA_TRUE);
         else
-          edbus_proxy_property_get_all(v->proxy,
+          eldbus_proxy_property_get_all(v->proxy,
                                        _e_fm_main_udisks_cb_vol_prop, v);
      }
    else
@@ -242,37 +242,37 @@ error:
 }
 
 static void
-_e_fm_main_udisks_cb_dev_add(void *data __UNUSED__, const EDBus_Message *msg)
+_e_fm_main_udisks_cb_dev_add(void *data __UNUSED__, const Eldbus_Message *msg)
 {
-   EDBus_Message *new;
+   Eldbus_Message *new;
    E_Volume *v;
    char *path;
 
-   if (!edbus_message_arguments_get(msg, "o", &path))
+   if (!eldbus_message_arguments_get(msg, "o", &path))
      return;
    DBG("DB DEV+: %s", path);
 
    v = _volume_find_by_dbus_path(path);
    if (v)
      {
-        edbus_proxy_property_get_all(v->proxy, _e_fm_main_udisks_cb_vol_prop, v);
+        eldbus_proxy_property_get_all(v->proxy, _e_fm_main_udisks_cb_vol_prop, v);
         return;
      }
 
-   new = edbus_message_method_call_new(UDISKS_BUS, path, EDBUS_FDO_INTERFACE_PROPERTIES, "Get");
-   edbus_message_arguments_append(new, "ss", UDISKS_DEVICE_INTERFACE, "IdUsage");
-   edbus_connection_send(_e_fm_main_udisks_conn, new,
+   new = eldbus_message_method_call_new(UDISKS_BUS, path, ELDBUS_FDO_INTERFACE_PROPERTIES, "Get");
+   eldbus_message_arguments_append(new, "ss", UDISKS_DEVICE_INTERFACE, "IdUsage");
+   eldbus_connection_send(_e_fm_main_udisks_conn, new,
                          _e_fm_main_udisks_cb_dev_verify_added,
                          eina_stringshare_add(path), -1);
 }
 
 static void
-_e_fm_main_udisks_cb_dev_del(void *data __UNUSED__, const EDBus_Message *msg)
+_e_fm_main_udisks_cb_dev_del(void *data __UNUSED__, const Eldbus_Message *msg)
 {
    char *path;
    E_Volume *v;
 
-   if (!edbus_message_arguments_get(msg, "o", &path))
+   if (!eldbus_message_arguments_get(msg, "o", &path))
      return;
    DBG("DB DEV-: %s", path);
    if ((v = _volume_find_by_dbus_path(path)))
@@ -286,10 +286,10 @@ _e_fm_main_udisks_cb_dev_del(void *data __UNUSED__, const EDBus_Message *msg)
 
 static void
 _e_fm_main_udisks_cb_prop_modified(void *data,
-                                   const EDBus_Message *msg __UNUSED__)
+                                   const Eldbus_Message *msg __UNUSED__)
 {
    E_Volume *v = data;
-   edbus_proxy_property_get_all(v->proxy, _e_fm_main_udisks_cb_vol_prop, v);
+   eldbus_proxy_property_get_all(v->proxy, _e_fm_main_udisks_cb_vol_prop, v);
 }
 
 static Eina_Bool
@@ -301,41 +301,41 @@ _storage_del(void *data)
 }
 
 static void
-_e_fm_main_udisks_cb_store_prop(void *data, const EDBus_Message *msg,
-                                EDBus_Pending *pending __UNUSED__)
+_e_fm_main_udisks_cb_store_prop(void *data, const Eldbus_Message *msg,
+                                Eldbus_Pending *pending __UNUSED__)
 {
    E_Storage *s = data;
    const char *name, *txt;
-   EDBus_Message_Iter *dict, *entry;
+   Eldbus_Message_Iter *dict, *entry;
 
-   if (edbus_message_error_get(msg, &name, &txt))
+   if (eldbus_message_error_get(msg, &name, &txt))
      {
         ERR("Error %s %s.", name, txt);
         return;
      }
-   if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
+   if (!eldbus_message_arguments_get(msg, "a{sv}", &dict))
      {
         ERR("Error getting arguments.");
         return;
      }
 
-   while (edbus_message_iter_get_and_next(dict, 'e', &entry))
+   while (eldbus_message_iter_get_and_next(dict, 'e', &entry))
      {
         char *key;
-        EDBus_Message_Iter *var;
+        Eldbus_Message_Iter *var;
 
-        if (!edbus_message_iter_arguments_get(entry, "sv", &key, &var))
+        if (!eldbus_message_iter_arguments_get(entry, "sv", &key, &var))
           continue;
         if (!strcmp(key, "DeviceFile"))
           {
              const char *udi;
-             if (edbus_message_iter_arguments_get(var, "s", &udi))
+             if (eldbus_message_iter_arguments_get(var, "s", &udi))
                eina_stringshare_replace(&s->udi, udi);
           }
         else if (!strcmp(key, "DriveConnectionInterface"))
           {
              const char *bus;
-             if (edbus_message_iter_arguments_get(var, "s", &bus))
+             if (eldbus_message_iter_arguments_get(var, "s", &bus))
                {
                   if (s->bus)
                     eina_stringshare_del(bus);
@@ -344,13 +344,13 @@ _e_fm_main_udisks_cb_store_prop(void *data, const EDBus_Message *msg,
           }
         else if (!strcmp(key, "DriveMediaCompatibility"))
           {
-             EDBus_Message_Iter *inner_array;
+             Eldbus_Message_Iter *inner_array;
              const char *media;
 
-             if (!edbus_message_iter_arguments_get(var, "as", &inner_array))
+             if (!eldbus_message_iter_arguments_get(var, "as", &inner_array))
                continue;
 
-             while(edbus_message_iter_get_and_next(inner_array, 's', &media))
+             while(eldbus_message_iter_get_and_next(inner_array, 's', &media))
                {
                   eina_stringshare_replace(&s->drive_type, media);
                   break;
@@ -359,13 +359,13 @@ _e_fm_main_udisks_cb_store_prop(void *data, const EDBus_Message *msg,
         else if (!strcmp(key, "DriveModel"))
           {
              const char *model;
-             if (edbus_message_iter_arguments_get(var, "s", &model))
+             if (eldbus_message_iter_arguments_get(var, "s", &model))
                eina_stringshare_replace(&s->model, model);
           }
         else if (!strcmp(key, "DriveVendor"))
            {
               const char *vendor;
-              if (edbus_message_iter_arguments_get(var, "s", &vendor))
+              if (eldbus_message_iter_arguments_get(var, "s", &vendor))
                 {
                    if (s->vendor)
                      eina_stringshare_del(s->vendor);
@@ -375,7 +375,7 @@ _e_fm_main_udisks_cb_store_prop(void *data, const EDBus_Message *msg,
         else if (!strcmp(key, "DriveSerial"))
            {
               const char *serial;
-              if (edbus_message_iter_arguments_get(var, "s", &serial))
+              if (eldbus_message_iter_arguments_get(var, "s", &serial))
                 {
                    if (s->serial)
                      eina_stringshare_del(s->serial);
@@ -383,21 +383,21 @@ _e_fm_main_udisks_cb_store_prop(void *data, const EDBus_Message *msg,
                 }
            }
         else if (!strcmp(key, "DeviceIsSystemInternal"))
-          edbus_message_iter_arguments_get(var, "b", &s->system_internal);
+          eldbus_message_iter_arguments_get(var, "b", &s->system_internal);
         else if (!strcmp(key, "DeviceIsMediaAvailable"))
-          edbus_message_iter_arguments_get(var, "b", &s->media_available);
+          eldbus_message_iter_arguments_get(var, "b", &s->media_available);
         else if (!strcmp(key, "DeviceSize"))
-          edbus_message_iter_arguments_get(var, "t", &s->media_size);
+          eldbus_message_iter_arguments_get(var, "t", &s->media_size);
         else if (!strcmp(key, "DriveIsMediaEjectable"))
-          edbus_message_iter_arguments_get(var, "b", &s->requires_eject);
+          eldbus_message_iter_arguments_get(var, "b", &s->requires_eject);
         else if (!strcmp(key, "DriveCanDetach"))
-          edbus_message_iter_arguments_get(var, "b", &s->hotpluggable);
+          eldbus_message_iter_arguments_get(var, "b", &s->hotpluggable);
         else if (!strcmp(key, "DeviceIsMediaChangeDetectionInhibited"))
-          edbus_message_iter_arguments_get(var, "b", &s->media_check_enabled);
+          eldbus_message_iter_arguments_get(var, "b", &s->media_check_enabled);
         else if (!strcmp(key, "DevicePresentationIconName"))
           {
              const char *icon;
-             if (edbus_message_iter_arguments_get(var, "s", &icon))
+             if (eldbus_message_iter_arguments_get(var, "s", &icon))
                {
                   if (s->icon.drive)
                     eina_stringshare_del(s->icon.drive);
@@ -450,39 +450,39 @@ _idler_volume_del(void *data)
 }
 
 static void
-_e_fm_main_udisks_cb_vol_prop(void *data, const EDBus_Message *msg,
-                              EDBus_Pending *pending __UNUSED__)
+_e_fm_main_udisks_cb_vol_prop(void *data, const Eldbus_Message *msg,
+                              Eldbus_Pending *pending __UNUSED__)
 {
    E_Volume *v = data;
    E_Storage *s = NULL;
    const char *txt, *message;
-   EDBus_Message_Iter *array, *dict;
+   Eldbus_Message_Iter *array, *dict;
 
    DBG("volume=%s",v->dbus_path);
 
-   if (edbus_message_error_get(msg, &txt, &message))
+   if (eldbus_message_error_get(msg, &txt, &message))
      {
         ERR("Error: %s %s\nVolume: %s", txt, message, v->udi);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "a{sv}", &array))
+   if (!eldbus_message_arguments_get(msg, "a{sv}", &array))
      {
         ERR("Error getting values.");
         return;
      }
 
-   while (edbus_message_iter_get_and_next(array, 'e', &dict))
+   while (eldbus_message_iter_get_and_next(array, 'e', &dict))
      {
-        EDBus_Message_Iter *var;
+        Eldbus_Message_Iter *var;
         const char *key;
 
-        if (!edbus_message_iter_arguments_get(dict, "sv", &key, &var))
+        if (!eldbus_message_iter_arguments_get(dict, "sv", &key, &var))
           continue;
         if (!strcmp(key, "DeviceFile"))
           {
              const char *udi;
-             if (!edbus_message_iter_arguments_get(var, "s", &udi))
+             if (!eldbus_message_iter_arguments_get(var, "s", &udi))
                continue;
              if (udi && v->first_time)
                eina_stringshare_replace(&v->udi, udi);
@@ -490,7 +490,7 @@ _e_fm_main_udisks_cb_vol_prop(void *data, const EDBus_Message *msg,
         else if (!strcmp(key, "DeviceIsSystemInternal"))
           {
              Eina_Bool internal;
-             edbus_message_iter_arguments_get(var, "b", &internal);
+             eldbus_message_iter_arguments_get(var, "b", &internal);
              if (internal)
                {
                   DBG("removing is internal %s", v->dbus_path);
@@ -501,7 +501,7 @@ _e_fm_main_udisks_cb_vol_prop(void *data, const EDBus_Message *msg,
         else if (!strcmp(key, "DeviceIsMediaChangeDetectionInhibited"))
           {
              Eina_Bool inibited;
-             edbus_message_iter_arguments_get(var, "b", &inibited);
+             eldbus_message_iter_arguments_get(var, "b", &inibited);
              if (inibited)
                {
                   /* skip volumes with volume.ignore set */
@@ -511,30 +511,30 @@ _e_fm_main_udisks_cb_vol_prop(void *data, const EDBus_Message *msg,
                }
           }
         else if (!strcmp(key, "DeviceIsLuks"))
-          edbus_message_iter_arguments_get(var, "b", &v->encrypted);
+          eldbus_message_iter_arguments_get(var, "b", &v->encrypted);
         else if (!strcmp(key, "IdUuid"))
           {
              const char *uuid;
-             if (!edbus_message_iter_arguments_get(var, "s", &uuid))
+             if (!eldbus_message_iter_arguments_get(var, "s", &uuid))
                continue;
              eina_stringshare_replace(&v->uuid, uuid);
           }
         else if (!strcmp(key, "IdLabel"))
           {
              const char *label;
-             if (!edbus_message_iter_arguments_get(var, "s", &label))
+             if (!eldbus_message_iter_arguments_get(var, "s", &label))
                continue;
              eina_stringshare_replace(&v->label, label);
           }
         else if (!strcmp(key, "DeviceMountPaths"))
           {
-             EDBus_Message_Iter *inner_array;
+             Eldbus_Message_Iter *inner_array;
              const char *path;
 
-             if (!edbus_message_iter_arguments_get(var, "as", &inner_array))
+             if (!eldbus_message_iter_arguments_get(var, "as", &inner_array))
                continue;
 
-             while (edbus_message_iter_get_and_next(inner_array, 's', &path))
+             while (eldbus_message_iter_get_and_next(inner_array, 's', &path))
                {
                   eina_stringshare_replace(&v->mount_point, path);
                   break;
@@ -543,24 +543,24 @@ _e_fm_main_udisks_cb_vol_prop(void *data, const EDBus_Message *msg,
         else if (!strcmp(key, "IdType"))
           {
              const char *type;
-             if (!edbus_message_iter_arguments_get(var, "s", &type))
+             if (!eldbus_message_iter_arguments_get(var, "s", &type))
                continue;
              eina_stringshare_replace(&v->fstype, type);
           }
         else if (!strcmp(key, "DeviceSize"))
-          edbus_message_iter_arguments_get(var, "t", &v->size);
+          eldbus_message_iter_arguments_get(var, "t", &v->size);
         else if (!strcmp(key, "DeviceIsMounted"))
-          edbus_message_iter_arguments_get(var, "b", &v->mounted);
+          eldbus_message_iter_arguments_get(var, "b", &v->mounted);
         else if (!strcmp(key, "DeviceIsLuksCleartext"))
-          edbus_message_iter_arguments_get(var, "b", &v->unlocked);
+          eldbus_message_iter_arguments_get(var, "b", &v->unlocked);
         else if (!strcmp(key, "DeviceIsPartition"))
-          edbus_message_iter_arguments_get(var, "b", &v->partition);
+          eldbus_message_iter_arguments_get(var, "b", &v->partition);
         else if (!strcmp(key, "PartitionNumber"))
-          edbus_message_iter_arguments_get(var, "i", &v->partition_number);
+          eldbus_message_iter_arguments_get(var, "i", &v->partition_number);
         else if (!strcmp(key, "PartitionLabel"))
           {
              const char *partition_label;
-             if (!edbus_message_iter_arguments_get(var, "s", &partition_label))
+             if (!eldbus_message_iter_arguments_get(var, "s", &partition_label))
                continue;
              eina_stringshare_replace(&v->partition_label, partition_label);
           }
@@ -568,7 +568,7 @@ _e_fm_main_udisks_cb_vol_prop(void *data, const EDBus_Message *msg,
           {
              const char *enc;
              E_Volume *venc;
-             if (!edbus_message_iter_arguments_get(var, "o", &enc))
+             if (!eldbus_message_iter_arguments_get(var, "o", &enc))
                continue;
              eina_stringshare_replace(&v->partition_label, enc);
              venc = _e_fm_main_udisks_volume_find(enc);
@@ -581,7 +581,7 @@ _e_fm_main_udisks_cb_vol_prop(void *data, const EDBus_Message *msg,
         else if (!strcmp(key, "PartitionSlave"))
           {
              char *partition_slave, buf[4096];
-             if (!edbus_message_iter_arguments_get(var, "o", &partition_slave))
+             if (!eldbus_message_iter_arguments_get(var, "o", &partition_slave))
                continue;
              if ((!partition_slave) || (strlen(partition_slave) < sizeof("/org/freedesktop/UDisks/devices/")))
                eina_stringshare_replace(&v->parent, partition_slave);
@@ -688,7 +688,7 @@ _e_fm_main_udisks_vol_mount_timeout(E_Volume *v)
    v->guard = NULL;
 
    if (v->op)
-     edbus_pending_cancel(v->op);
+     eldbus_pending_cancel(v->op);
    v->op = NULL;
    v->optype = E_VOLUME_OP_TYPE_NONE;
    size = _e_fm_main_udisks_format_error_msg(&buf, v,
@@ -737,7 +737,7 @@ _e_fm_main_udisks_vol_unmount_timeout(E_Volume *v)
 
    v->guard = NULL;
    if (v->op)
-     edbus_pending_cancel(v->op);
+     eldbus_pending_cancel(v->op);
    v->op = NULL;
    v->optype = E_VOLUME_OP_TYPE_NONE;
    size = _e_fm_main_udisks_format_error_msg(&buf, v,
@@ -788,7 +788,7 @@ _e_fm_main_udisks_vol_eject_timeout(E_Volume *v)
 
    v->guard = NULL;
    if (v->op)
-     edbus_pending_cancel(v->op);
+     eldbus_pending_cancel(v->op);
    v->op = NULL;
    v->optype = E_VOLUME_OP_TYPE_NONE;
    size = _e_fm_main_udisks_format_error_msg(&buf, v,
@@ -802,63 +802,63 @@ _e_fm_main_udisks_vol_eject_timeout(E_Volume *v)
 }
 
 static void
-_volume_task_cb(void *data __UNUSED__, const EDBus_Message *msg __UNUSED__,
-                EDBus_Pending *pending __UNUSED__)
+_volume_task_cb(void *data __UNUSED__, const Eldbus_Message *msg __UNUSED__,
+                Eldbus_Pending *pending __UNUSED__)
 {
    /**
-    * if edbus_proxy_send has callback == NULL it will return a NULL
-    * but we need a EDBus_Pending to be able to cancel it when timeout occurs
+    * if eldbus_proxy_send has callback == NULL it will return a NULL
+    * but we need a Eldbus_Pending to be able to cancel it when timeout occurs
     */
    /* FIXME: this should not matter. If we don't have a callback, there's no
-    * reason to cancel it... cancelling has no effect other than saying edbus we
+    * reason to cancel it... cancelling has no effect other than saying eldbus we
     * are not interested in the return anymore. I.e.: don't bother to  cancel it
     */
 }
 
-static EDBus_Pending *
-_volume_umount(EDBus_Proxy *proxy)
+static Eldbus_Pending *
+_volume_umount(Eldbus_Proxy *proxy)
 {
-   EDBus_Message *msg;
-   EDBus_Message_Iter *array, *main_iter;
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *array, *main_iter;
 
-   msg = edbus_proxy_method_call_new(proxy, "FilesystemUnmount");
-   main_iter = edbus_message_iter_get(msg);
-   edbus_message_iter_arguments_append(main_iter, "as", &array);
-   edbus_message_iter_container_close(main_iter, array);
+   msg = eldbus_proxy_method_call_new(proxy, "FilesystemUnmount");
+   main_iter = eldbus_message_iter_get(msg);
+   eldbus_message_iter_arguments_append(main_iter, "as", &array);
+   eldbus_message_iter_container_close(main_iter, array);
 
-   return edbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
+   return eldbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
 }
 
-static EDBus_Pending *
-_volume_eject(EDBus_Proxy *proxy)
+static Eldbus_Pending *
+_volume_eject(Eldbus_Proxy *proxy)
 {
-   EDBus_Message *msg;
-   EDBus_Message_Iter *array, *main_iter;
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *array, *main_iter;
 
-   msg = edbus_proxy_method_call_new(proxy, "DriveEject");
-   main_iter = edbus_message_iter_get(msg);
-   edbus_message_iter_arguments_append(main_iter, "as", &array);
-   edbus_message_iter_container_close(main_iter, array);
+   msg = eldbus_proxy_method_call_new(proxy, "DriveEject");
+   main_iter = eldbus_message_iter_get(msg);
+   eldbus_message_iter_arguments_append(main_iter, "as", &array);
+   eldbus_message_iter_container_close(main_iter, array);
 
-   return edbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
+   return eldbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
 }
 
-static EDBus_Pending *
-_volume_mount(EDBus_Proxy *proxy, const char *fstype, Eina_List *opt)
+static Eldbus_Pending *
+_volume_mount(Eldbus_Proxy *proxy, const char *fstype, Eina_List *opt)
 {
-   EDBus_Message *msg;
-   EDBus_Message_Iter *array, *main_iter;
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *array, *main_iter;
    Eina_List *l;
    const char *opt_txt;
 
-   msg = edbus_proxy_method_call_new(proxy, "FilesystemMount");
-   main_iter = edbus_message_iter_get(msg);
-   edbus_message_iter_arguments_append(main_iter, "sas", fstype, &array);
+   msg = eldbus_proxy_method_call_new(proxy, "FilesystemMount");
+   main_iter = eldbus_message_iter_get(msg);
+   eldbus_message_iter_arguments_append(main_iter, "sas", fstype, &array);
    EINA_LIST_FOREACH(opt, l, opt_txt)
-     edbus_message_iter_basic_append(array, 's', opt_txt);
-   edbus_message_iter_container_close(main_iter, array);
+     eldbus_message_iter_basic_append(array, 's', opt_txt);
+   eldbus_message_iter_container_close(main_iter, array);
 
-   return edbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
+   return eldbus_proxy_send(proxy, msg, _volume_task_cb, NULL, -1);
 }
 
 static Eina_Bool
@@ -907,7 +907,7 @@ _e_fm_main_udisks_volume_add(const char *path,
                              Eina_Bool   first_time)
 {
    E_Volume *v;
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
 
    if (!path) return NULL;
    if (_volume_find_by_dbus_path(path)) return NULL;
@@ -919,10 +919,10 @@ _e_fm_main_udisks_volume_add(const char *path,
    v->icon = NULL;
    v->first_time = first_time;
    _e_vols = eina_list_append(_e_vols, v);
-   obj = edbus_object_get(_e_fm_main_udisks_conn, UDISKS_BUS, path);
-   v->proxy = edbus_proxy_get(obj, UDISKS_DEVICE_INTERFACE);
-   edbus_proxy_property_get_all(v->proxy, _e_fm_main_udisks_cb_vol_prop, v);
-   edbus_proxy_signal_handler_add(v->proxy, "Changed",
+   obj = eldbus_object_get(_e_fm_main_udisks_conn, UDISKS_BUS, path);
+   v->proxy = eldbus_proxy_get(obj, UDISKS_DEVICE_INTERFACE);
+   eldbus_proxy_property_get_all(v->proxy, _e_fm_main_udisks_cb_vol_prop, v);
+   eldbus_proxy_signal_handler_add(v->proxy, "Changed",
                                   _e_fm_main_udisks_cb_prop_modified, v);
    v->guard = NULL;
 
@@ -962,9 +962,9 @@ _volume_del(E_Volume *v)
                                    */
    if (v->proxy)
      {
-        EDBus_Object *obj = edbus_proxy_object_get(v->proxy);
-        edbus_proxy_unref(v->proxy);
-        edbus_object_unref(obj);
+        Eldbus_Object *obj = eldbus_proxy_object_get(v->proxy);
+        eldbus_proxy_unref(v->proxy);
+        eldbus_object_unref(obj);
      }
    _e_vols = eina_list_remove(_e_vols, v);
    _e_fm_shared_device_volume_free(v);
@@ -1084,11 +1084,11 @@ _e_fm_main_udisks_volume_mount(E_Volume *v)
 void
 _e_fm_main_udisks_init(void)
 {
-   edbus_init();
-   _e_fm_main_udisks_conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SYSTEM);
+   eldbus_init();
+   _e_fm_main_udisks_conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    if (!_e_fm_main_udisks_conn) return;
 
-   edbus_name_start(_e_fm_main_udisks_conn, UDISKS_BUS, 0,
+   eldbus_name_start(_e_fm_main_udisks_conn, UDISKS_BUS, 0,
                     _e_fm_main_udisks_name_start, NULL);
 }
 
@@ -1097,21 +1097,21 @@ _e_fm_main_udisks_shutdown(void)
 {
    if (_e_fm_main_udisks_proxy)
      {
-        EDBus_Object *obj;
-        obj = edbus_proxy_object_get(_e_fm_main_udisks_proxy);
-        edbus_proxy_unref(_e_fm_main_udisks_proxy);
-        edbus_object_unref(obj);
+        Eldbus_Object *obj;
+        obj = eldbus_proxy_object_get(_e_fm_main_udisks_proxy);
+        eldbus_proxy_unref(_e_fm_main_udisks_proxy);
+        eldbus_object_unref(obj);
      }
    if (_e_fm_main_udisks_conn)
-     edbus_connection_unref(_e_fm_main_udisks_conn);
-   edbus_shutdown();
+     eldbus_connection_unref(_e_fm_main_udisks_conn);
+   eldbus_shutdown();
 }
 
 E_Storage *
 _e_fm_main_udisks_storage_add(const char *path)
 {
    E_Storage *s;
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
 
    if (!path) return NULL;
    if (_storage_find_by_dbus_path(path)) return NULL;
@@ -1121,9 +1121,9 @@ _e_fm_main_udisks_storage_add(const char *path)
    DBG("STORAGE+=%s", path);
    s->dbus_path = path;
    _e_stores = eina_list_append(_e_stores, s);
-   obj = edbus_object_get(_e_fm_main_udisks_conn, UDISKS_BUS, path);
-   s->proxy = edbus_proxy_get(obj, UDISKS_DEVICE_INTERFACE);
-   edbus_proxy_property_get_all(s->proxy, _e_fm_main_udisks_cb_store_prop, s);
+   obj = eldbus_object_get(_e_fm_main_udisks_conn, UDISKS_BUS, path);
+   s->proxy = eldbus_proxy_get(obj, UDISKS_DEVICE_INTERFACE);
+   eldbus_proxy_property_get_all(s->proxy, _e_fm_main_udisks_cb_store_prop, s);
    return s;
 }
 
@@ -1145,9 +1145,9 @@ _e_fm_main_udisks_storage_del(const char *path)
    _e_stores = eina_list_remove(_e_stores, s);
    if (s->proxy)
      {
-        EDBus_Object *obj = edbus_proxy_object_get(s->proxy);
-        edbus_proxy_unref(s->proxy);
-        edbus_object_unref(obj);
+        Eldbus_Object *obj = eldbus_proxy_object_get(s->proxy);
+        eldbus_proxy_unref(s->proxy);
+        eldbus_object_unref(obj);
      }
    _e_fm_shared_device_storage_free(s);
 }

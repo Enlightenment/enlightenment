@@ -34,23 +34,23 @@ struct _E_Connman_Agent_Input
 struct _E_Connman_Agent
 {
    E_Dialog *dialog;
-   EDBus_Service_Interface *iface;
-   EDBus_Message *msg;
-   EDBus_Connection *conn;
+   Eldbus_Service_Interface *iface;
+   Eldbus_Message *msg;
+   Eldbus_Connection *conn;
    Eina_Bool canceled:1;
 };
 
 static void
-_dict_append_basic(EDBus_Message_Iter *array, const char *key, void *val)
+_dict_append_basic(Eldbus_Message_Iter *array, const char *key, void *val)
 {
-   EDBus_Message_Iter *dict, *variant;
+   Eldbus_Message_Iter *dict, *variant;
 
-   edbus_message_iter_arguments_append(array, "{sv}", &dict);
-   edbus_message_iter_basic_append(dict, 's', key);
-   variant = edbus_message_iter_container_new(dict, 'v', "s");
-   edbus_message_iter_basic_append(variant, 's', val);
-   edbus_message_iter_container_close(dict, variant);
-   edbus_message_iter_container_close(array, dict);
+   eldbus_message_iter_arguments_append(array, "{sv}", &dict);
+   eldbus_message_iter_basic_append(dict, 's', key);
+   variant = eldbus_message_iter_container_new(dict, 'v', "s");
+   eldbus_message_iter_basic_append(variant, 's', val);
+   eldbus_message_iter_container_close(dict, variant);
+   eldbus_message_iter_container_close(array, dict);
 }
 
 static void
@@ -59,9 +59,9 @@ _dialog_ok_cb(void *data, E_Dialog *dialog)
    E_Connman_Agent *agent = data;
    E_Connman_Agent_Input *input;
    Evas_Object *toolbook, *list;
-   EDBus_Message_Iter *iter, *array;
+   Eldbus_Message_Iter *iter, *array;
    Eina_List *input_list, *l;
-   EDBus_Message *reply;
+   Eldbus_Message *reply;
 
    toolbook = agent->dialog->content_object;
 
@@ -81,15 +81,15 @@ _dialog_ok_cb(void *data, E_Dialog *dialog)
    agent->canceled = EINA_FALSE;
    input_list = evas_object_data_get(list, "input_list");
 
-   reply = edbus_message_method_return_new(agent->msg);
-   iter = edbus_message_iter_get(reply);
-   edbus_message_iter_arguments_append(iter, "a{sv}", &array);
+   reply = eldbus_message_method_return_new(agent->msg);
+   iter = eldbus_message_iter_get(reply);
+   eldbus_message_iter_arguments_append(iter, "a{sv}", &array);
 
    EINA_LIST_FOREACH(input_list, l, input)
      _dict_append_basic(array, input->key, input->value);
-   edbus_message_iter_container_close(iter, array);
+   eldbus_message_iter_container_close(iter, array);
 
-   edbus_connection_send(agent->conn, reply, NULL, NULL, -1);
+   eldbus_connection_send(agent->conn, reply, NULL, NULL, -1);
 
    e_object_del(E_OBJECT(dialog));
 }
@@ -118,12 +118,12 @@ _dialog_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__,
 static void
 _dialog_cancel(E_Connman_Agent *agent)
 {
-   EDBus_Message *reply;
+   Eldbus_Message *reply;
 
-   reply = edbus_message_error_new(agent->msg,
+   reply = eldbus_message_error_new(agent->msg,
                                   "net.connman.Agent.Error.Canceled",
                                   "User canceled dialog");
-   edbus_connection_send(agent->conn, reply, NULL, NULL, -1);
+   eldbus_connection_send(agent->conn, reply, NULL, NULL, -1);
 }
 
 static void
@@ -136,7 +136,7 @@ _dialog_del_cb(void *data)
      _dialog_cancel(agent);
 
    // FIXME need to mark cs->pending_connect = NULL;
-   edbus_message_unref(agent->msg);
+   eldbus_message_unref(agent->msg);
    agent->dialog = NULL;
 }
 
@@ -277,18 +277,18 @@ _dialog_new(E_Connman_Agent *agent)
    return dialog;
 }
 
-static EDBus_Message *
-_agent_release(const EDBus_Service_Interface *iface,
-               const EDBus_Message *msg)
+static Eldbus_Message *
+_agent_release(const Eldbus_Service_Interface *iface,
+               const Eldbus_Message *msg)
 {
    E_Connman_Agent *agent;
-   EDBus_Message *reply;
+   Eldbus_Message *reply;
 
    DBG("Agent released");
 
-   reply = edbus_message_method_return_new(msg);
+   reply = eldbus_message_method_return_new(msg);
 
-   agent = edbus_service_object_data_get(iface, AGENT_KEY);
+   agent = eldbus_service_object_data_get(iface, AGENT_KEY);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(agent, reply);
 
    if (agent->dialog)
@@ -297,35 +297,35 @@ _agent_release(const EDBus_Service_Interface *iface,
    return reply;
 }
 
-static EDBus_Message *
-_agent_report_error(const EDBus_Service_Interface *iface,
-                    const EDBus_Message *msg)
+static Eldbus_Message *
+_agent_report_error(const Eldbus_Service_Interface *iface,
+                    const Eldbus_Message *msg)
 {
    return NULL;
 }
 
-static EDBus_Message *
-_agent_request_browser(const EDBus_Service_Interface *iface,
-                       const EDBus_Message *msg)
+static Eldbus_Message *
+_agent_request_browser(const Eldbus_Service_Interface *iface,
+                       const Eldbus_Message *msg)
 {
    return NULL;
 }
 
 static Eina_Bool
 _parse_field_value(struct Connman_Field *field, const char *key,
-                   EDBus_Message_Iter *value, const char *signature)
+                   Eldbus_Message_Iter *value, const char *signature)
 {
    if (!strcmp(key, "Type"))
      {
         EINA_SAFETY_ON_FALSE_RETURN_VAL(signature[0] == 's', EINA_FALSE);
-        edbus_message_iter_basic_get(value, &field->type);
+        eldbus_message_iter_basic_get(value, &field->type);
         return EINA_TRUE;
      }
 
    if (!strcmp(key, "Requirement"))
      {
         EINA_SAFETY_ON_FALSE_RETURN_VAL(signature[0] == 's', EINA_FALSE);
-        edbus_message_iter_basic_get(value, &field->requirement);
+        eldbus_message_iter_basic_get(value, &field->requirement);
         return EINA_TRUE;
      }
 
@@ -339,7 +339,7 @@ _parse_field_value(struct Connman_Field *field, const char *key,
    if (!strcmp(key, "Value"))
      {
         EINA_SAFETY_ON_FALSE_RETURN_VAL(signature[0] == 's', EINA_FALSE);
-        edbus_message_iter_basic_get(value, &field->value);
+        eldbus_message_iter_basic_get(value, &field->value);
         return EINA_TRUE;
      }
 
@@ -348,23 +348,23 @@ _parse_field_value(struct Connman_Field *field, const char *key,
 }
 
 static Eina_Bool
-_parse_field(struct Connman_Field *field, EDBus_Message_Iter *value,
+_parse_field(struct Connman_Field *field, Eldbus_Message_Iter *value,
              const char *signature)
 {
-   EDBus_Message_Iter *array, *dict;
+   Eldbus_Message_Iter *array, *dict;
 
-   edbus_message_iter_arguments_get(value, "a{sv}", &array);
+   eldbus_message_iter_arguments_get(value, "a{sv}", &array);
    EINA_SAFETY_ON_NULL_RETURN_VAL(array, EINA_FALSE);
 
-   while (edbus_message_iter_get_and_next(array, 'e', &dict))
+   while (eldbus_message_iter_get_and_next(array, 'e', &dict))
      {
-        EDBus_Message_Iter *var;
+        Eldbus_Message_Iter *var;
         const char *key;
         char *sig2;
 
-        if (!edbus_message_iter_arguments_get(dict, "sv", &key, &var))
+        if (!eldbus_message_iter_arguments_get(dict, "sv", &key, &var))
           return EINA_FALSE;
-        sig2 = edbus_message_iter_signature_get(var);
+        sig2 = eldbus_message_iter_signature_get(var);
         if (!sig2)
           return EINA_FALSE;
 
@@ -379,26 +379,26 @@ _parse_field(struct Connman_Field *field, EDBus_Message_Iter *value,
    return EINA_TRUE;
 }
 
-static EDBus_Message *
-_agent_request_input(const EDBus_Service_Interface *iface,
-                     const EDBus_Message *msg)
+static Eldbus_Message *
+_agent_request_input(const Eldbus_Service_Interface *iface,
+                     const Eldbus_Message *msg)
 {
    E_Connman_Module_Context *ctxt = connman_mod->data;
    const Eina_List *l;
    E_Connman_Instance *inst;
-   EDBus_Message_Iter *array, *dict;
+   Eldbus_Message_Iter *array, *dict;
    E_Connman_Agent *agent;
    const char *path;
 
-   agent = edbus_service_object_data_get(iface, AGENT_KEY);
+   agent = eldbus_service_object_data_get(iface, AGENT_KEY);
 
    /* Discard previous requests */
    // if msg is the current agent msg? eek.
    if (agent->msg == msg) return NULL;
 
    if (agent->msg)
-     edbus_message_unref(agent->msg);
-   agent->msg = edbus_message_ref((EDBus_Message *)msg);
+     eldbus_message_unref(agent->msg);
+   agent->msg = eldbus_message_ref((Eldbus_Message *)msg);
 
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
      econnman_popup_del(inst);
@@ -408,18 +408,18 @@ _agent_request_input(const EDBus_Service_Interface *iface,
    agent->dialog = _dialog_new(agent);
    EINA_SAFETY_ON_NULL_GOTO(agent->dialog, err);
 
-   if (!edbus_message_arguments_get(msg, "oa{sv}", &path, &array))
+   if (!eldbus_message_arguments_get(msg, "oa{sv}", &path, &array))
      goto err;
 
-   while (edbus_message_iter_get_and_next(array, 'e', &dict))
+   while (eldbus_message_iter_get_and_next(array, 'e', &dict))
      {
-        EDBus_Message_Iter *var;
+        Eldbus_Message_Iter *var;
         char *signature;
         struct Connman_Field field = { NULL, NULL, NULL, NULL, NULL };
 
-        if (!edbus_message_iter_arguments_get(dict, "sv", &field.name, &var))
+        if (!eldbus_message_iter_arguments_get(dict, "sv", &field.name, &var))
           goto err;
-        signature = edbus_message_iter_signature_get(var);
+        signature = eldbus_message_iter_signature_get(var);
         if (!signature) goto err;
 
         if (!_parse_field(&field, var, signature))
@@ -443,22 +443,22 @@ _agent_request_input(const EDBus_Service_Interface *iface,
    return NULL;
 
 err:
-   edbus_message_unref((EDBus_Message *)msg);
+   eldbus_message_unref((Eldbus_Message *)msg);
    agent->msg = NULL;
    WRN("Failed to parse msg");
-   return edbus_message_method_return_new(msg);
+   return eldbus_message_method_return_new(msg);
 }
 
-static EDBus_Message *
-_agent_cancel(const EDBus_Service_Interface *iface,
-              const EDBus_Message *msg)
+static Eldbus_Message *
+_agent_cancel(const Eldbus_Service_Interface *iface,
+              const Eldbus_Message *msg)
 {
    E_Connman_Agent *agent;
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
 
    DBG("Agent canceled");
 
-   agent = edbus_service_object_data_get(iface, AGENT_KEY);
+   agent = eldbus_service_object_data_get(iface, AGENT_KEY);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(agent, reply);
 
    if (agent->dialog)
@@ -467,48 +467,48 @@ _agent_cancel(const EDBus_Service_Interface *iface,
    return reply;
 }
 
-static const EDBus_Method methods[] = {
+static const Eldbus_Method methods[] = {
    { "Release", NULL, NULL, _agent_release, 0 },
    {
-    "ReportError", EDBUS_ARGS({"o", "service"}, {"s", "error"}), NULL,
+    "ReportError", ELDBUS_ARGS({"o", "service"}, {"s", "error"}), NULL,
     _agent_report_error, 0
    },
    {
-    "RequestBrowser", EDBUS_ARGS({"o", "service"}, {"s", "url"}), NULL,
+    "RequestBrowser", ELDBUS_ARGS({"o", "service"}, {"s", "url"}), NULL,
      _agent_request_browser, 0
    },
    {
-    "RequestInput", EDBUS_ARGS({"o", "service"}, {"a{sv}", "fields"}),
-    EDBUS_ARGS({"a{sv}", ""}), _agent_request_input, 0
+    "RequestInput", ELDBUS_ARGS({"o", "service"}, {"a{sv}", "fields"}),
+    ELDBUS_ARGS({"a{sv}", ""}), _agent_request_input, 0
    },
    { "Cancel", NULL, NULL, _agent_cancel, 0 },
    { NULL, NULL, NULL, NULL, 0 }
 };
 
-static const EDBus_Service_Interface_Desc desc = {
+static const Eldbus_Service_Interface_Desc desc = {
    AGENT_IFACE, methods, NULL, NULL, NULL, NULL
 };
 
 E_Connman_Agent *
-econnman_agent_new(EDBus_Connection *edbus_conn)
+econnman_agent_new(Eldbus_Connection *eldbus_conn)
 {
-   EDBus_Service_Interface *iface;
+   Eldbus_Service_Interface *iface;
    E_Connman_Agent *agent;
 
    agent = E_NEW(E_Connman_Agent, 1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(agent, NULL);
 
-   iface = edbus_service_interface_register(edbus_conn, AGENT_PATH, &desc);
+   iface = eldbus_service_interface_register(eldbus_conn, AGENT_PATH, &desc);
    if (!iface)
      {
-        ERR("Failed to create edbus interface");
+        ERR("Failed to create eldbus interface");
         free(agent);
         return NULL;
      }
-   edbus_service_object_data_set(iface, AGENT_KEY, agent);
+   eldbus_service_object_data_set(iface, AGENT_KEY, agent);
 
    agent->iface = iface;
-   agent->conn = edbus_conn;
+   agent->conn = eldbus_conn;
 
    return agent;
 }
@@ -517,6 +517,6 @@ void
 econnman_agent_del(E_Connman_Agent *agent)
 {
    EINA_SAFETY_ON_NULL_RETURN(agent);
-   edbus_service_object_unregister(agent->iface);
+   eldbus_service_object_unregister(agent->iface);
    free(agent);
 }

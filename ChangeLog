@@ -303,9 +303,9 @@
 
 2013-01-03 José Roberto de Souza
 
-        * Modules ported to edbus: battery, connman, mixer, notification,
+        * Modules ported to eldbus: battery, connman, mixer, notification,
           illume-indicator
-        * Fileman and Wizard also ported to edbus
+        * Fileman and Wizard also ported to eldbus
         * HAL backend for EFM removed
         * Systray: added DBus notification
         * Added music-control module: control any mpris2-compatible music

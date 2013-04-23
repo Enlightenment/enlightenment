@@ -8,8 +8,8 @@ typedef struct _E_AppMenu_Window E_AppMenu_Window;
 typedef struct _E_AppMenu_Context
 {
    Eina_List *instances;
-   EDBus_Connection *conn;
-   EDBus_Service_Interface *iface;
+   Eldbus_Connection *conn;
+   Eldbus_Service_Interface *iface;
    Eina_List *windows;
    unsigned window_with_focus;
    E_AppMenu_Window *window;

@@ -16,7 +16,7 @@ void
 appmenu_application_monitor(void *data, const char *bus EINA_UNUSED, const char *old __UNUSED__, const char *new __UNUSED__)
 {
    E_AppMenu_Window *window = data;
-   edbus_service_signal_emit(window->ctxt->iface, SIGNAL_WINDOW_UNREGISTERED,
+   eldbus_service_signal_emit(window->ctxt->iface, SIGNAL_WINDOW_UNREGISTERED,
                              window->window_id);
    appmenu_window_free(window);
 }
@@ -38,16 +38,16 @@ menu_pop_cb(void *data EINA_UNUSED, const E_DBusMenu_Item *new_root_item EINA_UN
    //TODO
 }
 
-static EDBus_Message *
-_on_register_window(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+static Eldbus_Message *
+_on_register_window(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
-   EDBus_Connection *conn = edbus_service_connection_get(iface);
-   E_AppMenu_Context *ctxt = edbus_service_object_data_get(iface, "ctxt");
+   Eldbus_Connection *conn = eldbus_service_connection_get(iface);
+   E_AppMenu_Context *ctxt = eldbus_service_object_data_get(iface, "ctxt");
    unsigned window_id;
    const char *path, *bus_id;
    E_AppMenu_Window *window;
 
-   if (!edbus_message_arguments_get(msg, "uo", &window_id, &path))
+   if (!eldbus_message_arguments_get(msg, "uo", &window_id, &path))
      {
         ERR("Error reading message");
         return NULL;
@@ -57,7 +57,7 @@ _on_register_window(const EDBus_Service_Interface *iface, const EDBus_Message *m
    EINA_SAFETY_ON_NULL_RETURN_VAL(window, NULL);
 
 
-   bus_id = edbus_message_sender_get(msg);
+   bus_id = eldbus_message_sender_get(msg);
 
    window->window_id = window_id;
    window->dbus_menu = e_dbusmenu_load(conn, bus_id, path, window);
@@ -66,14 +66,14 @@ _on_register_window(const EDBus_Service_Interface *iface, const EDBus_Message *m
    window->bus_id = eina_stringshare_add(bus_id);
    window->path = eina_stringshare_add(path);
 
-   edbus_name_owner_changed_callback_add(conn, bus_id, appmenu_application_monitor,
+   eldbus_name_owner_changed_callback_add(conn, bus_id, appmenu_application_monitor,
                                          window, EINA_FALSE);
    ctxt->windows = eina_list_append(ctxt->windows, window);
    window->ctxt = ctxt;
 
-   edbus_service_signal_emit(iface, SIGNAL_WINDOW_REGISTERED, window_id,
+   eldbus_service_signal_emit(iface, SIGNAL_WINDOW_REGISTERED, window_id,
                              bus_id, path);
-   return edbus_message_method_return_new(msg);
+   return eldbus_message_method_return_new(msg);
 }
 
 static E_AppMenu_Window *
@@ -89,14 +89,14 @@ window_find(E_AppMenu_Context *ctxt, unsigned window_id)
    return NULL;
 }
 
-static EDBus_Message *
-_on_unregister_window(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+static Eldbus_Message *
+_on_unregister_window(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
-   E_AppMenu_Context *ctxt = edbus_service_object_data_get(iface, "ctxt");
+   E_AppMenu_Context *ctxt = eldbus_service_object_data_get(iface, "ctxt");
    E_AppMenu_Window *w;
    unsigned window_id;
 
-   if (!edbus_message_arguments_get(msg, "u", &window_id))
+   if (!eldbus_message_arguments_get(msg, "u", &window_id))
      {
         ERR("Error reading message.");
         return NULL;
@@ -105,19 +105,19 @@ _on_unregister_window(const EDBus_Service_Interface *iface, const EDBus_Message 
    w = window_find(ctxt, window_id);
    if (w)
      appmenu_window_free(w);
-   edbus_service_signal_emit(iface, SIGNAL_WINDOW_UNREGISTERED, window_id);
-   return edbus_message_method_return_new(msg);
+   eldbus_service_signal_emit(iface, SIGNAL_WINDOW_UNREGISTERED, window_id);
+   return eldbus_message_method_return_new(msg);
 }
 
-static EDBus_Message *
-_on_getmenu(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+static Eldbus_Message *
+_on_getmenu(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    unsigned window_id;
    Eina_List *l;
    E_AppMenu_Window *w;
-   E_AppMenu_Context *ctxt = edbus_service_object_data_get(iface, "ctxt");
+   E_AppMenu_Context *ctxt = eldbus_service_object_data_get(iface, "ctxt");
 
-   if (!edbus_message_arguments_get(msg, "u", &window_id))
+   if (!eldbus_message_arguments_get(msg, "u", &window_id))
      {
         ERR("Error reading message");
         return NULL;
@@ -126,80 +126,80 @@ _on_getmenu(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
      {
         if (w->window_id == window_id)
           {
-             EDBus_Message *reply;
-             reply = edbus_message_method_return_new(msg);
-             edbus_message_arguments_append(reply, "so", w->bus_id, w->path);
+             Eldbus_Message *reply;
+             reply = eldbus_message_method_return_new(msg);
+             eldbus_message_arguments_append(reply, "so", w->bus_id, w->path);
              return reply;
           }
      }
-   return edbus_message_error_new(msg, ERROR_WINDOW_NOT_FOUND, "");
+   return eldbus_message_error_new(msg, ERROR_WINDOW_NOT_FOUND, "");
 }
 
-static EDBus_Message *
-_on_getmenus(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+static Eldbus_Message *
+_on_getmenus(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 {
    Eina_List *l;
    E_AppMenu_Window *w;
-   E_AppMenu_Context *ctxt = edbus_service_object_data_get(iface, "ctxt");
-   EDBus_Message *reply;
-   EDBus_Message_Iter *array, *main_iter;
+   E_AppMenu_Context *ctxt = eldbus_service_object_data_get(iface, "ctxt");
+   Eldbus_Message *reply;
+   Eldbus_Message_Iter *array, *main_iter;
 
-   reply = edbus_message_method_return_new(msg);
-   main_iter = edbus_message_iter_get(reply);
-   edbus_message_iter_arguments_append(main_iter, "a(uso)", &array);
+   reply = eldbus_message_method_return_new(msg);
+   main_iter = eldbus_message_iter_get(reply);
+   eldbus_message_iter_arguments_append(main_iter, "a(uso)", &array);
 
    EINA_LIST_FOREACH(ctxt->windows, l, w)
      {
-        EDBus_Message_Iter *entry;
-        edbus_message_iter_arguments_append(array, "(uso)", &entry);
-        edbus_message_iter_arguments_append(entry, "uso", w->window_id,
+        Eldbus_Message_Iter *entry;
+        eldbus_message_iter_arguments_append(array, "(uso)", &entry);
+        eldbus_message_iter_arguments_append(entry, "uso", w->window_id,
                                             w->bus_id, w->path);
-        edbus_message_iter_container_close(array, entry);
+        eldbus_message_iter_container_close(array, entry);
      }
 
-   edbus_message_iter_container_close(main_iter, array);
+   eldbus_message_iter_container_close(main_iter, array);
    return reply;
 }
 
-static const EDBus_Method registrar_methods[] = {
-   { "RegisterWindow", EDBUS_ARGS({"u", "windowId"},{"o", "menuObjectPath"}),
+static const Eldbus_Method registrar_methods[] = {
+   { "RegisterWindow", ELDBUS_ARGS({"u", "windowId"},{"o", "menuObjectPath"}),
       NULL, _on_register_window },
-   { "UnregisterWindow", EDBUS_ARGS({"u", "windowId"}),
+   { "UnregisterWindow", ELDBUS_ARGS({"u", "windowId"}),
       NULL, _on_unregister_window },
-   { "GetMenuForWindow", EDBUS_ARGS({"u", "windowId"}),
-     EDBUS_ARGS({"s", "bus_id"},{"o", "menu_path"}), _on_getmenu },
-   { "GetMenus", NULL, EDBUS_ARGS({"a(uso)", "array_of_menu"}), _on_getmenus },
+   { "GetMenuForWindow", ELDBUS_ARGS({"u", "windowId"}),
+     ELDBUS_ARGS({"s", "bus_id"},{"o", "menu_path"}), _on_getmenu },
+   { "GetMenus", NULL, ELDBUS_ARGS({"a(uso)", "array_of_menu"}), _on_getmenus },
    { }
 };
 
-static const EDBus_Signal registrar_signals[] = {
+static const Eldbus_Signal registrar_signals[] = {
    [SIGNAL_WINDOW_REGISTERED] =
      { "WindowRegistered",
-        EDBUS_ARGS({"u", "windowId"}, {"s", "bus_id"}, {"o", "menu_path"}) },
+        ELDBUS_ARGS({"u", "windowId"}, {"s", "bus_id"}, {"o", "menu_path"}) },
    [SIGNAL_WINDOW_UNREGISTERED] =
-     { "WindowUnregistered", EDBUS_ARGS({"u", "windowId"}) },
+     { "WindowUnregistered", ELDBUS_ARGS({"u", "windowId"}) },
    { }
 };
 
-static const EDBus_Service_Interface_Desc registrar_iface = {
+static const Eldbus_Service_Interface_Desc registrar_iface = {
    REGISTRAR_IFACE, registrar_methods, registrar_signals
 };
 
 void
 appmenu_dbus_registrar_server_init(E_AppMenu_Context *ctx)
 {
-   ctx->iface = edbus_service_interface_register(ctx->conn,
+   ctx->iface = eldbus_service_interface_register(ctx->conn,
                                                  REGISTRAR_PATH,
                                                  &registrar_iface);
-   edbus_service_object_data_set(ctx->iface, "ctxt", ctx);
-   edbus_name_request(ctx->conn, REGISTRAR_BUS,
-                      EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING, NULL, NULL);
+   eldbus_service_object_data_set(ctx->iface, "ctxt", ctx);
+   eldbus_name_request(ctx->conn, REGISTRAR_BUS,
+                      ELDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING, NULL, NULL);
 }
 
 void
 appmenu_dbus_registrar_server_shutdown(E_AppMenu_Context *ctx)
 {
-   edbus_service_interface_unregister(ctx->iface);
-   edbus_name_release(ctx->conn, REGISTRAR_BUS, NULL, NULL);
+   eldbus_service_interface_unregister(ctx->iface);
+   eldbus_name_release(ctx->conn, REGISTRAR_BUS, NULL, NULL);
    ctx->iface = NULL;
 }

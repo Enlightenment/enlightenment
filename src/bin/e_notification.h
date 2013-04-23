@@ -1,7 +1,7 @@
 #ifndef _E_NOTIFICATION_H
 #define _E_NOTIFICATION_H
 
-#include <EDBus.h>
+#include <Eldbus.h>
 #include <Eina.h>
 
 typedef enum _E_Notification_Notify_Urgency

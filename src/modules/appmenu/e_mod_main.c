@@ -165,8 +165,8 @@ e_modapi_init(E_Module *m)
 
    appmenu_module = m;
 
-   edbus_init();
-   ctxt->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   eldbus_init();
+   ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
 
    event = ecore_event_handler_add(E_EVENT_BORDER_FOCUS_IN, cb_focus_in, ctxt);
    ctxt->events[0] = event;
@@ -199,8 +199,8 @@ e_modapi_shutdown(E_Module *m)
      appmenu_window_free(w);
 
    appmenu_dbus_registrar_server_shutdown(ctxt);
-   edbus_connection_unref(ctxt->conn);
-   edbus_shutdown();
+   eldbus_connection_unref(ctxt->conn);
+   eldbus_shutdown();
    free(ctxt);
    return 1;
 }
@@ -210,7 +210,7 @@ appmenu_window_free(E_AppMenu_Window *window)
 {
    window->ctxt->windows = eina_list_remove(window->ctxt->windows, window);
    e_dbusmenu_unload(window->dbus_menu);
-   edbus_name_owner_changed_callback_del(window->ctxt->conn, window->bus_id,
+   eldbus_name_owner_changed_callback_del(window->ctxt->conn, window->bus_id,
                                          appmenu_application_monitor, window);
    eina_stringshare_del(window->bus_id);
    eina_stringshare_del(window->path);

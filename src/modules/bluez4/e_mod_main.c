@@ -1,5 +1,5 @@
 #include <e.h>
-#include <EDBus.h>
+#include <Eldbus.h>
 #include "e_mod_main.h"
 #include "ebluez4.h"
 
@@ -686,7 +686,7 @@ e_modapi_init(E_Module *m)
    if (!ebluez4_config)
      ebluez4_config = E_NEW(Config, 1);
 
-   ebluez4_edbus_init();
+   ebluez4_eldbus_init();
 
    e_gadcon_provider_register(&_gc_class);
 
@@ -721,7 +721,7 @@ e_modapi_shutdown(E_Module *m)
    free(ebluez4_config);
    ebluez4_config = NULL;
 
-   ebluez4_edbus_shutdown();
+   ebluez4_eldbus_shutdown();
    e_gadcon_provider_unregister(&_gc_class);
    return 1;
 }

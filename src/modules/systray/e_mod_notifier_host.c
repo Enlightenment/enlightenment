@@ -20,8 +20,8 @@ static Context_Notifier_Host *ctx = NULL;
 void
 systray_notifier_item_free(Notifier_Item *item)
 {
-   EDBus_Object *obj;
-   EDBus_Signal_Handler *sig;
+   Eldbus_Object *obj;
+   Eldbus_Signal_Handler *sig;
    Instance_Notifier_Host *host_inst;
    EINA_INLIST_FOREACH(ctx->instances, host_inst)
      {
@@ -56,10 +56,10 @@ systray_notifier_item_free(Notifier_Item *item)
    if (item->title)
      eina_stringshare_del(item->title);
    EINA_LIST_FREE(item->signals, sig)
-     edbus_signal_handler_del(sig);
-   obj = edbus_proxy_object_get(item->proxy);
-   edbus_proxy_unref(item->proxy);
-   edbus_object_unref(obj);
+     eldbus_signal_handler_del(sig);
+   obj = eldbus_proxy_object_get(item->proxy);
+   eldbus_proxy_unref(item->proxy);
+   eldbus_object_unref(obj);
    ctx->item_list = eina_inlist_remove(ctx->item_list, EINA_INLIST_GET(item));
    free(item);
 }
@@ -334,9 +334,9 @@ systray_notifier_host_init(void)
 void
 systray_notifier_host_shutdown(void)
 {
-   EDBus_Pending *p;
+   Eldbus_Pending *p;
    
-   EINA_LIST_FREE(ctx->pending, p) edbus_pending_cancel(p);
+   EINA_LIST_FREE(ctx->pending, p) eldbus_pending_cancel(p);
    systray_notifier_dbus_shutdown(ctx);
    free(ctx);
    ctx = NULL;

@@ -10,35 +10,35 @@ static int _log_dom = -1;
 #define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
 #define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
 
-static EDBus_Message *
-cb_audit_timer_dump(const EDBus_Service_Interface *iface __UNUSED__,
-                    const EDBus_Message *msg)
+static Eldbus_Message *
+cb_audit_timer_dump(const Eldbus_Service_Interface *iface __UNUSED__,
+                    const Eldbus_Message *msg)
 {
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
    char *tmp;
 
    tmp = ecore_timer_dump();
    if (!tmp)
-     edbus_message_arguments_append(reply, "s",
+     eldbus_message_arguments_append(reply, "s",
                                     "Not enable, recompile Ecore with ecore_timer_dump.");
    else
-     edbus_message_arguments_append(reply, "s", tmp);
+     eldbus_message_arguments_append(reply, "s", tmp);
 
    return reply;
 }
 
-static const EDBus_Method methods[] = {
-   { "Timers", NULL, EDBUS_ARGS({"s", ""}), cb_audit_timer_dump },
+static const Eldbus_Method methods[] = {
+   { "Timers", NULL, ELDBUS_ARGS({"s", ""}), cb_audit_timer_dump },
    { }
 };
 
-static const EDBus_Service_Interface_Desc audit = {
+static const Eldbus_Service_Interface_Desc audit = {
   "org.enlightenment.wm.Audit", methods
 };
 
 void msgbus_audit_init(Eina_Array *ifaces)
 {
-   EDBus_Service_Interface *iface;
+   Eldbus_Service_Interface *iface;
 
    if (_log_dom == -1)
      {

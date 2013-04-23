@@ -57,78 +57,78 @@ id_find(const char *s, const char *names[])
 }
 
 static void
-item_prop_get(void *data, const void *key, EDBus_Message_Iter *var)
+item_prop_get(void *data, const void *key, Eldbus_Message_Iter *var)
 {
    Notifier_Item *item = data;
 
    if (!strcmp(key, "Category"))
      {
         const char *category;
-        edbus_message_iter_arguments_get(var, "s", &category);
+        eldbus_message_iter_arguments_get(var, "s", &category);
         item->category = id_find(category, Category_Names);
      }
    else if (!strcmp(key, "IconName"))
      {
         const char *name;
-        edbus_message_iter_arguments_get(var, "s", &name);
+        eldbus_message_iter_arguments_get(var, "s", &name);
         eina_stringshare_replace(&item->icon_name, name);
      }
    else if (!strcmp(key, "AttentionIconName"))
      {
         const char *name;
-        edbus_message_iter_arguments_get(var, "s", &name);
+        eldbus_message_iter_arguments_get(var, "s", &name);
         eina_stringshare_replace(&item->attention_icon_name, name);
      }
    else if (!strcmp(key, "IconThemePath"))
      {
         const char *path;
-        edbus_message_iter_arguments_get(var, "s", &path);
+        eldbus_message_iter_arguments_get(var, "s", &path);
         eina_stringshare_replace(&item->icon_path, path);
      }
    else if (!strcmp(key, "Menu"))
      {
         const char *path;
-        edbus_message_iter_arguments_get(var, "o", &path);
+        eldbus_message_iter_arguments_get(var, "o", &path);
         eina_stringshare_replace(&item->menu_path, path);
      }
    else if (!strcmp(key, "Status"))
      {
         const char *status;
-        edbus_message_iter_arguments_get(var, "s", &status);
+        eldbus_message_iter_arguments_get(var, "s", &status);
         item->status = id_find(status, Status_Names);
      }
    else if (!strcmp(key, "Id"))
      {
         const char *id;
-        edbus_message_iter_arguments_get(var, "s", &id);
+        eldbus_message_iter_arguments_get(var, "s", &id);
         eina_stringshare_replace(&item->id, id);
      }
    else if (!strcmp(key, "Title"))
      {
         const char *title;
-        edbus_message_iter_arguments_get(var, "s", &title);
+        eldbus_message_iter_arguments_get(var, "s", &title);
         eina_stringshare_replace(&item->title, title);
      }
 }
 
 static void
-props_changed(void *data, const EDBus_Message *msg)
+props_changed(void *data, const Eldbus_Message *msg)
 {
    Notifier_Item *item = data;
    const char *interface, *menu = item->menu_path;
-   EDBus_Message_Iter *changed, *invalidate;
+   Eldbus_Message_Iter *changed, *invalidate;
 
-   if (!edbus_message_arguments_get(msg, "sa{sv}as", &interface, &changed, &invalidate))
+   if (!eldbus_message_arguments_get(msg, "sa{sv}as", &interface, &changed, &invalidate))
      {
         ERR("Error reading message");
         return;
      }
 
-   edbus_message_iter_dict_iterate(changed, "sv", item_prop_get, item);
+   eldbus_message_iter_dict_iterate(changed, "sv", item_prop_get, item);
 
    if (menu != item->menu_path)
      {
-        EDBus_Connection *conn = edbus_object_connection_get(edbus_proxy_object_get(item->proxy));
+        Eldbus_Connection *conn = eldbus_object_connection_get(eldbus_proxy_object_get(item->proxy));
         item->dbus_item = NULL;
         e_dbusmenu_unload(item->menu_data);
         item->menu_data = e_dbusmenu_load(conn, item->bus_id, item->menu_path,
@@ -138,31 +138,31 @@ props_changed(void *data, const EDBus_Message *msg)
 }
 
 static void
-props_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
+props_get_all_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *error, *error_name;
-   EDBus_Message_Iter *dict;
+   Eldbus_Message_Iter *dict;
    Notifier_Item *item = data;
-   EDBus_Connection *conn;
+   Eldbus_Connection *conn;
 
-   if (edbus_message_error_get(msg, &error, &error_name))
+   if (eldbus_message_error_get(msg, &error, &error_name))
      {
         ERR("%s %s", error, error_name);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "a{sv}", &dict))
+   if (!eldbus_message_arguments_get(msg, "a{sv}", &dict))
      {
         ERR("Error getting arguments.");
         return;
      }
 
-   edbus_message_iter_dict_iterate(dict, "sv", item_prop_get, item);
+   eldbus_message_iter_dict_iterate(dict, "sv", item_prop_get, item);
 
    if (!item->menu_path)
      ERR("Notifier item %s dont have menu path.", item->menu_path);
 
-   conn = edbus_object_connection_get(edbus_proxy_object_get(item->proxy));
+   conn = eldbus_object_connection_get(eldbus_proxy_object_get(item->proxy));
    item->menu_data = e_dbusmenu_load(conn, item->bus_id, item->menu_path, item);
    e_dbusmenu_update_cb_set(item->menu_data, systray_notifier_update_menu);
 
@@ -170,18 +170,18 @@ props_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EI
 }
 
 static Eina_Bool
-basic_prop_get(const char *propname, void *data, const EDBus_Message *msg)
+basic_prop_get(const char *propname, void *data, const Eldbus_Message *msg)
 {
-   EDBus_Message_Iter *var;
+   Eldbus_Message_Iter *var;
    const char *error, *error_msg;
 
-   if (edbus_message_error_get(msg, &error, &error_msg))
+   if (eldbus_message_error_get(msg, &error, &error_msg))
      {
         ERR("%s %s", error, error_msg);
         return EINA_FALSE;
      }
 
-   if (!edbus_message_arguments_get(msg, "v", &var))
+   if (!eldbus_message_arguments_get(msg, "v", &var))
      {
         ERR("Error reading message.");
         return EINA_FALSE;
@@ -191,7 +191,7 @@ basic_prop_get(const char *propname, void *data, const EDBus_Message *msg)
 }
 
 static void
-attention_icon_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
+attention_icon_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    Notifier_Item *item = data;
    const char *propname = "AttentionIconName";
@@ -200,14 +200,14 @@ attention_icon_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pendi
 }
 
 static void
-new_attention_icon_cb(void *data, const EDBus_Message *msg EINA_UNUSED)
+new_attention_icon_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
 {
    Notifier_Item *item = data;
-   edbus_proxy_property_get(item->proxy, "AttentionIconName", attention_icon_get_cb, item);
+   eldbus_proxy_property_get(item->proxy, "AttentionIconName", attention_icon_get_cb, item);
 }
 
 static void
-icon_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
+icon_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    Notifier_Item *item = data;
    const char *propname = "IconName";
@@ -216,14 +216,14 @@ icon_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UN
 }
 
 static void
-new_icon_cb(void *data, const EDBus_Message *msg EINA_UNUSED)
+new_icon_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
 {
    Notifier_Item *item = data;
-   edbus_proxy_property_get(item->proxy, "IconName", icon_get_cb, item);
+   eldbus_proxy_property_get(item->proxy, "IconName", icon_get_cb, item);
 }
 
 static void
-title_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
+title_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    Notifier_Item *item = data;
    const char *propname = "Title";
@@ -232,18 +232,18 @@ title_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_U
 }
 
 static void
-new_title_cb(void *data, const EDBus_Message *msg EINA_UNUSED)
+new_title_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
 {
    Notifier_Item *item = data;
-   edbus_proxy_property_get(item->proxy, "Title", title_get_cb, item);
+   eldbus_proxy_property_get(item->proxy, "Title", title_get_cb, item);
 }
 
 static void
-new_icon_theme_path_cb(void *data, const EDBus_Message *msg)
+new_icon_theme_path_cb(void *data, const Eldbus_Message *msg)
 {
    Notifier_Item *item = data;
    const char *path;
-   if (!edbus_message_arguments_get(msg, "s", &path))
+   if (!eldbus_message_arguments_get(msg, "s", &path))
      {
         ERR("Error reading message.");
         return;
@@ -253,11 +253,11 @@ new_icon_theme_path_cb(void *data, const EDBus_Message *msg)
 }
 
 static void
-new_status_cb(void *data, const EDBus_Message *msg)
+new_status_cb(void *data, const Eldbus_Message *msg)
 {
    Notifier_Item *item = data;
    const char *status;
-   if (!edbus_message_arguments_get(msg, "s", &status))
+   if (!eldbus_message_arguments_get(msg, "s", &status))
      {
         ERR("Error reading message.");
         return;
@@ -269,9 +269,9 @@ new_status_cb(void *data, const EDBus_Message *msg)
 static void
 notifier_item_add(const char *path, const char *bus_id, Context_Notifier_Host *ctx)
 {
-   EDBus_Proxy *proxy;
+   Eldbus_Proxy *proxy;
    Notifier_Item *item = calloc(1, sizeof(Notifier_Item));
-   EDBus_Signal_Handler *s;
+   Eldbus_Signal_Handler *s;
    EINA_SAFETY_ON_NULL_RETURN(item);
 
    item->path = path;
@@ -279,34 +279,34 @@ notifier_item_add(const char *path, const char *bus_id, Context_Notifier_Host *c
    ctx->item_list = eina_inlist_append(ctx->item_list,
                                         EINA_INLIST_GET(item));
 
-   proxy = edbus_proxy_get(edbus_object_get(ctx->conn, bus_id, path),
+   proxy = eldbus_proxy_get(eldbus_object_get(ctx->conn, bus_id, path),
                            ITEM_IFACE);
    item->proxy = proxy;
-   edbus_proxy_property_get_all(proxy, props_get_all_cb, item);
-   s = edbus_proxy_properties_changed_callback_add(proxy, props_changed, item);
+   eldbus_proxy_property_get_all(proxy, props_get_all_cb, item);
+   s = eldbus_proxy_properties_changed_callback_add(proxy, props_changed, item);
    item->signals = eina_list_append(item->signals, s);
-   s = edbus_proxy_signal_handler_add(proxy, "NewAttentionIcon",
+   s = eldbus_proxy_signal_handler_add(proxy, "NewAttentionIcon",
                                       new_attention_icon_cb, item);
    item->signals = eina_list_append(item->signals, s);
-   s = edbus_proxy_signal_handler_add(proxy, "NewIcon",
+   s = eldbus_proxy_signal_handler_add(proxy, "NewIcon",
                                       new_icon_cb, item);
    item->signals = eina_list_append(item->signals, s);
-   s = edbus_proxy_signal_handler_add(proxy, "NewIconThemePath",
+   s = eldbus_proxy_signal_handler_add(proxy, "NewIconThemePath",
                                       new_icon_theme_path_cb, item);
    item->signals = eina_list_append(item->signals, s);
-   s = edbus_proxy_signal_handler_add(proxy, "NewStatus", new_status_cb, item);
+   s = eldbus_proxy_signal_handler_add(proxy, "NewStatus", new_status_cb, item);
    item->signals = eina_list_append(item->signals, s);
-   s = edbus_proxy_signal_handler_add(proxy, "NewTitle", new_title_cb, item);
+   s = eldbus_proxy_signal_handler_add(proxy, "NewTitle", new_title_cb, item);
    item->signals = eina_list_append(item->signals, s);
 }
 
 static void
-notifier_item_add_cb(void *data, const EDBus_Message *msg)
+notifier_item_add_cb(void *data, const Eldbus_Message *msg)
 {
    const char *item, *bus, *path;
    Context_Notifier_Host *ctx = data;
 
-   if (!edbus_message_arguments_get(msg, "s", &item))
+   if (!eldbus_message_arguments_get(msg, "s", &item))
      {
         ERR("Error getting arguments from msg.");
         return;
@@ -317,13 +317,13 @@ notifier_item_add_cb(void *data, const EDBus_Message *msg)
 }
 
 static void
-notifier_item_del_cb(void *data, const EDBus_Message *msg)
+notifier_item_del_cb(void *data, const Eldbus_Message *msg)
 {
    const char *service, *bus, *path;
    Notifier_Item *item;
    Context_Notifier_Host *ctx = data;
 
-   if (!edbus_message_arguments_get(msg, "s", &service))
+   if (!eldbus_message_arguments_get(msg, "s", &service))
      {
         ERR("Error getting arguments from msg.");
         return;
@@ -339,32 +339,32 @@ notifier_item_del_cb(void *data, const EDBus_Message *msg)
 }
 
 static void
-notifier_items_get_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
+notifier_items_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *item;
    const char *error, *error_msg;
-   EDBus_Message_Iter *array, *variant;
+   Eldbus_Message_Iter *array, *variant;
    Context_Notifier_Host *ctx = data;
 
-   if (edbus_message_error_get(msg, &error, &error_msg))
+   if (eldbus_message_error_get(msg, &error, &error_msg))
      {
         ERR("%s %s", error, error_msg);
         return;
      }
 
-   if (!edbus_message_arguments_get(msg, "v", &variant))
+   if (!eldbus_message_arguments_get(msg, "v", &variant))
      {
         ERR("Error getting arguments from msg.");
         return;
      }
 
-   if (!edbus_message_iter_arguments_get(variant, "as", &array))
+   if (!eldbus_message_iter_arguments_get(variant, "as", &array))
      {
         ERR("Error getting arguments from msg.");
         return;
      }
 
-   while (edbus_message_iter_get_and_next(array, 's', &item))
+   while (eldbus_message_iter_get_and_next(array, 's', &item))
      {
         const char *bus, *path;
         if (service_string_parse(item, &path, &bus))
@@ -398,27 +398,27 @@ item_unregistered_local_cb(void *data, const char *service)
 }
 
 static void
-name_request_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+name_request_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    const char *error, *error_msg;
    unsigned flag;
-   EDBus_Object *obj;
+   Eldbus_Object *obj;
    Context_Notifier_Host *ctx = data;
 
    ctx->pending = eina_list_remove(ctx->pending, pending);
-   if (edbus_message_error_get(msg, &error, &error_msg))
+   if (eldbus_message_error_get(msg, &error, &error_msg))
      {
         ERR("%s %s", error, error_msg);
         goto end;
      }
 
-   if (!edbus_message_arguments_get(msg, "u", &flag))
+   if (!eldbus_message_arguments_get(msg, "u", &flag))
      {
         ERR("Error reading message.");
         goto end;
      }
 
-   if (flag == EDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER)
+   if (flag == ELDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER)
      {
         systray_notifier_dbus_watcher_start(ctx->conn,
                                             item_registered_local_cb,
@@ -427,28 +427,28 @@ name_request_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
      }
 end:
    WRN("Bus name: %s already in use, getting data via dbus.\n", WATCHER_BUS);
-   obj = edbus_object_get(ctx->conn, WATCHER_BUS, WATCHER_PATH);
-   ctx->watcher = edbus_proxy_get(obj, WATCHER_IFACE);
-   edbus_proxy_call(ctx->watcher, "RegisterStatusNotifierHost", NULL, NULL, -1, "s",
+   obj = eldbus_object_get(ctx->conn, WATCHER_BUS, WATCHER_PATH);
+   ctx->watcher = eldbus_proxy_get(obj, WATCHER_IFACE);
+   eldbus_proxy_call(ctx->watcher, "RegisterStatusNotifierHost", NULL, NULL, -1, "s",
                     HOST_REGISTRER);
-   edbus_proxy_property_get(ctx->watcher, "RegisteredStatusNotifierItems",
+   eldbus_proxy_property_get(ctx->watcher, "RegisteredStatusNotifierItems",
                             notifier_items_get_cb, ctx);
-   edbus_proxy_signal_handler_add(ctx->watcher, "StatusNotifierItemRegistered",
+   eldbus_proxy_signal_handler_add(ctx->watcher, "StatusNotifierItemRegistered",
                                   notifier_item_add_cb, ctx);
-   edbus_proxy_signal_handler_add(ctx->watcher, "StatusNotifierItemUnregistered",
+   eldbus_proxy_signal_handler_add(ctx->watcher, "StatusNotifierItemUnregistered",
                                   notifier_item_del_cb, ctx);
 }
 
 void
 systray_notifier_dbus_init(Context_Notifier_Host *ctx)
 {
-   EDBus_Pending *p;
+   Eldbus_Pending *p;
    
-   edbus_init();
-   ctx->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   eldbus_init();
+   ctx->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!ctx->conn) return;
-   p = edbus_name_request(ctx->conn,
-                          WATCHER_BUS, EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING,
+   p = eldbus_name_request(ctx->conn,
+                          WATCHER_BUS, ELDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING,
                           name_request_cb, ctx);
    if (p) ctx->pending = eina_list_append(ctx->pending, p);
 }
@@ -467,12 +467,12 @@ void systray_notifier_dbus_shutdown(Context_Notifier_Host *ctx)
      systray_notifier_dbus_watcher_stop();
    else
      {
-        EDBus_Object *obj;
-        obj = edbus_proxy_object_get(ctx->watcher);
-        edbus_proxy_unref(ctx->watcher);
-        edbus_object_unref(obj);
+        Eldbus_Object *obj;
+        obj = eldbus_proxy_object_get(ctx->watcher);
+        eldbus_proxy_unref(ctx->watcher);
+        eldbus_object_unref(obj);
         ctx->watcher = NULL;
      }
-   edbus_connection_unref(ctx->conn);
-   edbus_shutdown();
+   eldbus_connection_unref(ctx->conn);
+   eldbus_shutdown();
 }

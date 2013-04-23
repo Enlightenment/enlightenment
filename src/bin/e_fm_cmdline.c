@@ -4,16 +4,16 @@
 
 #include "e.h"
 
-static EDBus_Connection *conn = NULL;
+static Eldbus_Connection *conn = NULL;
 static int retval = EXIT_SUCCESS;
 static int pending = 0;
 
 static void
-fm_open_reply(void *data __UNUSED__, const EDBus_Message *msg,
-              EDBus_Pending *dbus_pending __UNUSED__)
+fm_open_reply(void *data __UNUSED__, const Eldbus_Message *msg,
+              Eldbus_Pending *dbus_pending __UNUSED__)
 {
    const char *name, *txt;
-   if (edbus_message_error_get(msg, &name, &txt))
+   if (eldbus_message_error_get(msg, &name, &txt))
      {
         retval = EXIT_FAILURE;
         ERR("%s: %s", name, txt);
@@ -33,7 +33,7 @@ fm_error_quit_last(void *data __UNUSED__)
 static void
 fm_open(const char *path)
 {
-   EDBus_Message *msg;
+   Eldbus_Message *msg;
    const char *method;
    char *p;
 
@@ -87,7 +87,7 @@ fm_open(const char *path)
    else
      method = "OpenFile";
 
-   msg = edbus_message_method_call_new("org.enlightenment.FileManager",
+   msg = eldbus_message_method_call_new("org.enlightenment.FileManager",
                                        "/org/enlightenment/FileManager",
                                        "org.enlightenment.FileManager",
                                        method);
@@ -98,13 +98,13 @@ fm_open(const char *path)
         free(p);
         return;
      }
-   edbus_message_arguments_append(msg, "s", p);
+   eldbus_message_arguments_append(msg, "s", p);
    free(p);
 
-   if (!edbus_connection_send(conn, msg, fm_open_reply, NULL, -1))
+   if (!eldbus_connection_send(conn, msg, fm_open_reply, NULL, -1))
      {
         ERR("Could not send DBus Message");
-        edbus_message_unref(msg);
+        eldbus_message_unref(msg);
         ecore_idler_add(fm_error_quit_last, NULL);
      }
    else
@@ -152,9 +152,9 @@ main(int argc, char *argv[])
 
    ecore_init();
    ecore_file_init();
-   edbus_init();
+   eldbus_init();
 
-   conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!conn)
      {
         ERR("Could not DBus SESSION bus.");
@@ -172,9 +172,9 @@ main(int argc, char *argv[])
      }
 
    ecore_main_loop_begin();
-   edbus_connection_unref(conn);
+   eldbus_connection_unref(conn);
 end:
-   edbus_shutdown();
+   eldbus_shutdown();
    ecore_file_shutdown();
    ecore_shutdown();
    return retval;

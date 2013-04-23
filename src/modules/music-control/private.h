@@ -2,8 +2,8 @@
 #define MUSIC_CONTROL_PRIVATE_H
 
 #include "e_mod_main.h"
-#include "gen/edbus_media_player2_player.h"
-#include "gen/edbus_mpris_media_player2.h"
+#include "gen/eldbus_media_player2_player.h"
+#include "gen/eldbus_mpris_media_player2.h"
 
 static Ecore_Event_Handler *desklock_handler = NULL;
 
@@ -16,10 +16,10 @@ typedef struct _Music_Control_Config
 typedef struct _E_Music_Control_Module_Context
 {
    Eina_List *instances;
-   EDBus_Connection *conn;
+   Eldbus_Connection *conn;
    Eina_Bool playing:1;
-   EDBus_Proxy *mrpis2;
-   EDBus_Proxy *mpris2_player;
+   Eldbus_Proxy *mrpis2;
+   Eldbus_Proxy *mpris2_player;
    E_Config_DD *conf_edd;
    Music_Control_Config *config;
    Eina_Bool actions_set:1;

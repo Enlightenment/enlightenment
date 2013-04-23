@@ -606,7 +606,7 @@ EAPI void *
 e_modapi_init(E_Module *m)
 {
    E_Connman_Module_Context *ctxt;
-   EDBus_Connection *c;
+   Eldbus_Connection *c;
 
    if (_e_connman_log_dom < 0)
      {
@@ -622,8 +622,8 @@ e_modapi_init(E_Module *m)
    ctxt = E_NEW(E_Connman_Module_Context, 1);
    if (!ctxt)
      goto error_connman_context;
-   edbus_init();
-   c = edbus_connection_get(EDBUS_CONNECTION_TYPE_SYSTEM);
+   eldbus_init();
+   c = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    if (!c)
      goto error_dbus_bus_get;
    if (!e_connman_system_init(c))
@@ -638,7 +638,7 @@ e_modapi_init(E_Module *m)
    return ctxt;
 
 error_connman_system_init:
-   edbus_connection_unref(c);
+   eldbus_connection_unref(c);
 error_dbus_bus_get:
    E_FREE(ctxt);
 error_connman_context:
@@ -670,7 +670,7 @@ e_modapi_shutdown(E_Module *m)
      return 0;
 
    e_connman_system_shutdown();
-   edbus_shutdown();
+   eldbus_shutdown();
 
    _econnman_instances_free(ctxt);
    _econnman_configure_registry_unregister();

@@ -18,8 +18,8 @@ static Ecore_Poller *pulse_poller = NULL;
 static Eina_Hash *queue_states = NULL;
 static const char *_name = NULL;
 
-static EDBus_Connection *dbus = NULL;
-static EDBus_Signal_Handler *dbus_handler = NULL;
+static Eldbus_Connection *dbus = NULL;
+static Eldbus_Signal_Handler *dbus_handler = NULL;
 static Ecore_Timer *disc_timer = NULL;
 
 static unsigned int disc_count = 0;
@@ -38,10 +38,10 @@ _pulse_poller_cb(void *d __UNUSED__)
 }
 
 static void
-_dbus_poll(void *data EINA_UNUSED, const EDBus_Message *msg)
+_dbus_poll(void *data EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *name, *from, *to;
-   if (edbus_message_arguments_get(msg, "sss", &name, &from, &to))
+   if (eldbus_message_arguments_get(msg, "sss", &name, &from, &to))
      {
         if (!strcmp(name, PULSE_BUS))
           e_mixer_pulse_init();
@@ -49,32 +49,32 @@ _dbus_poll(void *data EINA_UNUSED, const EDBus_Message *msg)
 
    if (dbus_handler)
      {
-        edbus_signal_handler_del(dbus_handler);
+        eldbus_signal_handler_del(dbus_handler);
         dbus_handler = NULL;
      }
    if (dbus)
      {
-        edbus_connection_unref(dbus);
+        eldbus_connection_unref(dbus);
         dbus = NULL;
-        edbus_shutdown();
+        eldbus_shutdown();
      }
 }
 
 static void
-_dbus_test(void *data EINA_UNUSED, const EDBus_Message *msg, EDBus_Pending *pending EINA_UNUSED)
+_dbus_test(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
-   if (edbus_message_error_get(msg, NULL, NULL))
+   if (eldbus_message_error_get(msg, NULL, NULL))
      {
         if (dbus_handler)
           {
-             edbus_signal_handler_del(dbus_handler);
+             eldbus_signal_handler_del(dbus_handler);
              dbus_handler = NULL;
           }
         if (dbus)
           {
-             edbus_connection_unref(dbus);
+             eldbus_connection_unref(dbus);
              dbus = NULL;
-             edbus_shutdown();
+             eldbus_shutdown();
           }
         e_mod_mixer_pulse_ready(EINA_FALSE);
         return;
@@ -342,15 +342,15 @@ e_mixer_pulse_init(void)
    if (dbus) goto error;
    if ((!conn) || (!pulse_connect(conn)))
      {
-        EDBus_Message *msg;
+        Eldbus_Message *msg;
         double interval;
 
-        edbus_init();
-        dbus = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+        eldbus_init();
+        dbus = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
 
         if (!dbus)
           {
-             edbus_shutdown();
+             eldbus_shutdown();
              return EINA_FALSE;
           }
 
@@ -362,13 +362,13 @@ e_mixer_pulse_init(void)
                                              _pulse_poller_cb, NULL);
           }
         if (!dbus_handler)
-          dbus_handler = edbus_signal_handler_add(dbus, EDBUS_FDO_BUS,
-                                                  EDBUS_FDO_PATH,
-                                                  EDBUS_FDO_INTERFACE,
+          dbus_handler = eldbus_signal_handler_add(dbus, ELDBUS_FDO_BUS,
+                                                  ELDBUS_FDO_PATH,
+                                                  ELDBUS_FDO_INTERFACE,
                                                   "NameOwnerChanged", _dbus_poll, NULL);
 
-        msg = edbus_message_method_call_new(PULSE_BUS, PULSE_PATH, PULSE_INTERFACE, "suuuuuup");
-        edbus_connection_send(dbus, msg, _dbus_test, NULL, -1); /* test for not running pulse */
+        msg = eldbus_message_method_call_new(PULSE_BUS, PULSE_PATH, PULSE_INTERFACE, "suuuuuup");
+        eldbus_connection_send(dbus, msg, _dbus_test, NULL, -1); /* test for not running pulse */
         pulse_free(conn);
         conn = NULL;
         pulse_shutdown();
@@ -414,14 +414,14 @@ e_mixer_pulse_shutdown(void)
    queue_states = NULL;
    if (dbus_handler)
      {
-        edbus_signal_handler_del(dbus_handler);
+        eldbus_signal_handler_del(dbus_handler);
         dbus_handler = NULL;
      }
    if (dbus)
      {
-        edbus_connection_unref(dbus);
+        eldbus_connection_unref(dbus);
         dbus = NULL;
-        edbus_shutdown();
+        eldbus_shutdown();
      }
    pulse_shutdown();
    if (_name) eina_stringshare_del(_name);

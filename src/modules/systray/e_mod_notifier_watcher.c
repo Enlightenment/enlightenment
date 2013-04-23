@@ -7,8 +7,8 @@
 #define ERROR_HOST_ALREADY_REGISTERED "org.kde.StatusNotifierWatcher.Host.AlreadyRegistered"
 #define ERROR_ITEM_ALREADY_REGISTERED "org.kde.StatusNotifierWatcher.Item.AlreadyRegistered"
 
-static EDBus_Connection *conn = NULL;
-static EDBus_Service_Interface *iface = NULL;
+static Eldbus_Connection *conn = NULL;
+static Eldbus_Service_Interface *iface = NULL;
 static Eina_List *items;
 static const char *host_service = NULL;
 static E_Notifier_Watcher_Item_Registered_Cb registered_cb;
@@ -31,40 +31,40 @@ item_name_monitor_cb(void *data, const char *bus, const char *old_id EINA_UNUSED
    if (strcmp(new_id, ""))
      return;
 
-   edbus_service_signal_emit(iface, ITEM_UNREGISTERED, service);
+   eldbus_service_signal_emit(iface, ITEM_UNREGISTERED, service);
    items = eina_list_remove(items, service);
    if (unregistered_cb)
      unregistered_cb(user_data, service);
    eina_stringshare_del(service);
-   edbus_name_owner_changed_callback_del(conn, bus, item_name_monitor_cb, service);
+   eldbus_name_owner_changed_callback_del(conn, bus, item_name_monitor_cb, service);
 }
 
-static EDBus_Message *
-register_item_cb(const EDBus_Service_Interface *s_iface, const EDBus_Message *msg)
+static Eldbus_Message *
+register_item_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *msg)
 {
    const char *service;
    char buf[1024];
 
-   if (!edbus_message_arguments_get(msg, "s", &service))
+   if (!eldbus_message_arguments_get(msg, "s", &service))
      return NULL;
 
-   sprintf(buf, "%s%s", edbus_message_sender_get(msg), service);
+   sprintf(buf, "%s%s", eldbus_message_sender_get(msg), service);
    service = eina_stringshare_add(buf);
    if (eina_list_data_find(items, service))
      {
         eina_stringshare_del(service);
-        return edbus_message_error_new(msg, ERROR_ITEM_ALREADY_REGISTERED, "");
+        return eldbus_message_error_new(msg, ERROR_ITEM_ALREADY_REGISTERED, "");
      }
 
    items = eina_list_append(items, service);
-   edbus_service_signal_emit(s_iface, ITEM_REGISTERED, service);
-   edbus_name_owner_changed_callback_add(conn, edbus_message_sender_get(msg),
+   eldbus_service_signal_emit(s_iface, ITEM_REGISTERED, service);
+   eldbus_name_owner_changed_callback_add(conn, eldbus_message_sender_get(msg),
                                          item_name_monitor_cb, service,
                                          EINA_FALSE);
 
    if (registered_cb)
      registered_cb(user_data, service);
-   return edbus_message_method_return_new(msg);
+   return eldbus_message_method_return_new(msg);
 }
 
 static void
@@ -73,50 +73,50 @@ host_name_monitor_cb(void *data EINA_UNUSED, const char *bus, const char *old_id
    if (strcmp(new_id, ""))
      return;
 
-   edbus_service_signal_emit(iface, HOST_UNREGISTERED);
+   eldbus_service_signal_emit(iface, HOST_UNREGISTERED);
    eina_stringshare_del(host_service);
    host_service = NULL;
-   edbus_name_owner_changed_callback_del(conn, bus, host_name_monitor_cb, NULL);
+   eldbus_name_owner_changed_callback_del(conn, bus, host_name_monitor_cb, NULL);
 }
 
-static EDBus_Message *
-register_host_cb(const EDBus_Service_Interface *s_iface, const EDBus_Message *msg)
+static Eldbus_Message *
+register_host_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *msg)
 {
    if (host_service)
-     return edbus_message_error_new(msg, ERROR_HOST_ALREADY_REGISTERED, "");
+     return eldbus_message_error_new(msg, ERROR_HOST_ALREADY_REGISTERED, "");
 
-   if (!edbus_message_arguments_get(msg, "s", &host_service))
+   if (!eldbus_message_arguments_get(msg, "s", &host_service))
      return NULL;
 
    host_service = eina_stringshare_add(host_service);
-   edbus_service_signal_emit(s_iface, HOST_REGISTERED);
-   edbus_name_owner_changed_callback_add(conn, edbus_message_sender_get(msg),
+   eldbus_service_signal_emit(s_iface, HOST_REGISTERED);
+   eldbus_name_owner_changed_callback_add(conn, eldbus_message_sender_get(msg),
                                          host_name_monitor_cb, NULL, EINA_FALSE);
-   return edbus_message_method_return_new(msg);
+   return eldbus_message_method_return_new(msg);
 }
 
 static Eina_Bool
-properties_get(const EDBus_Service_Interface *s_iface EINA_UNUSED, const char *propname, EDBus_Message_Iter *iter, const EDBus_Message *request_msg EINA_UNUSED, EDBus_Message **error EINA_UNUSED)
+properties_get(const Eldbus_Service_Interface *s_iface EINA_UNUSED, const char *propname, Eldbus_Message_Iter *iter, const Eldbus_Message *request_msg EINA_UNUSED, Eldbus_Message **error EINA_UNUSED)
 {
    if (!strcmp(propname, "ProtocolVersion"))
-     edbus_message_iter_basic_append(iter, 'i', PROTOCOL_VERSION);
+     eldbus_message_iter_basic_append(iter, 'i', PROTOCOL_VERSION);
    else if (!strcmp(propname, "RegisteredStatusNotifierItems"))
      {
-        EDBus_Message_Iter *array;
+        Eldbus_Message_Iter *array;
         Eina_List *l;
         const char *service;
 
-        edbus_message_iter_arguments_append(iter, "as", &array);
+        eldbus_message_iter_arguments_append(iter, "as", &array);
         EINA_LIST_FOREACH(items, l, service)
-          edbus_message_iter_arguments_append(array, "s", service);
-        edbus_message_iter_container_close(iter, array);
+          eldbus_message_iter_arguments_append(array, "s", service);
+        eldbus_message_iter_container_close(iter, array);
      }
    else if (!strcmp(propname, "IsStatusNotifierHostRegistered"))
-     edbus_message_iter_arguments_append(iter, "b", host_service ? EINA_TRUE : EINA_FALSE);
+     eldbus_message_iter_arguments_append(iter, "b", host_service ? EINA_TRUE : EINA_FALSE);
    return EINA_TRUE;
 }
 
-static const EDBus_Property properties[] =
+static const Eldbus_Property properties[] =
 {
    { "RegisteredStatusNotifierItems", "as" },
    { "IsStatusNotifierHostRegistered", "b" },
@@ -124,33 +124,33 @@ static const EDBus_Property properties[] =
    { }
 };
 
-static const EDBus_Signal signals[] = {
-   { "StatusNotifierItemRegistered", EDBUS_ARGS({"s", "service"}) },
-   { "StatusNotifierItemUnregistered", EDBUS_ARGS({"s", "service"}) },
+static const Eldbus_Signal signals[] = {
+   { "StatusNotifierItemRegistered", ELDBUS_ARGS({"s", "service"}) },
+   { "StatusNotifierItemUnregistered", ELDBUS_ARGS({"s", "service"}) },
    { "StatusNotifierHostRegistered", NULL },
    { "StatusNotifierHostUnregistered", NULL },
    { }
 };
 
-static const EDBus_Method methods[] =
+static const Eldbus_Method methods[] =
 {
-   { "RegisterStatusNotifierItem", EDBUS_ARGS({"s", "service"}), NULL,
+   { "RegisterStatusNotifierItem", ELDBUS_ARGS({"s", "service"}), NULL,
       register_item_cb },
-   { "RegisterStatusNotifierHost", EDBUS_ARGS({"s", "service"}), NULL,
+   { "RegisterStatusNotifierHost", ELDBUS_ARGS({"s", "service"}), NULL,
       register_host_cb },
    { }
 };
 
-static const EDBus_Service_Interface_Desc iface_desc = {
+static const Eldbus_Service_Interface_Desc iface_desc = {
    IFACE, methods, signals, properties, properties_get, NULL
 };
 
 void
-systray_notifier_dbus_watcher_start(EDBus_Connection *connection, E_Notifier_Watcher_Item_Registered_Cb registered, E_Notifier_Watcher_Item_Unregistered_Cb unregistered, const void *data)
+systray_notifier_dbus_watcher_start(Eldbus_Connection *connection, E_Notifier_Watcher_Item_Registered_Cb registered, E_Notifier_Watcher_Item_Unregistered_Cb unregistered, const void *data)
 {
    EINA_SAFETY_ON_TRUE_RETURN(!!conn);
    conn = connection;
-   iface = edbus_service_interface_register(conn, PATH, &iface_desc);
+   iface = eldbus_service_interface_register(conn, PATH, &iface_desc);
    registered_cb = registered;
    unregistered_cb = unregistered;
    user_data = (void *)data;
@@ -162,7 +162,7 @@ systray_notifier_dbus_watcher_stop(void)
 {
    const char *txt;
 
-   edbus_service_interface_unregister(iface);
+   eldbus_service_interface_unregister(iface);
    EINA_LIST_FREE(items, txt)
      {
         char *bus;
@@ -172,7 +172,7 @@ systray_notifier_dbus_watcher_stop(void)
         i++;
         bus = malloc(sizeof(char) * i);
         snprintf(bus, i, "%s", txt);
-        edbus_name_owner_changed_callback_del(conn, bus, item_name_monitor_cb, txt);
+        eldbus_name_owner_changed_callback_del(conn, bus, item_name_monitor_cb, txt);
         free(bus);
         eina_stringshare_del(txt);
      }

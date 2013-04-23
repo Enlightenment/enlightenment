@@ -467,7 +467,7 @@ ecore-file >= $efl_version \
 ecore-ipc >= $efl_version \
 eet >= $efl_version \
 efreet >= $efl_version \
-edbus2 >= $efl_version \
+eldbus >= $efl_version \
 eina >= $efl_version"
 efm_requires="$efm_requires $eeze_mount $dbus_mount $udisks_mount"
 
@@ -477,7 +477,7 @@ PKG_CHECK_MODULES(E_FM_CMDLINE, [
   eina >= ${efl_version}
   ecore >= ${efl_version}
   ecore-file >= ${efl_version}
-  edbus2 >= ${efl_version}
+  eldbus >= ${efl_version}
   efreet >= ${efl_version}
 ])
 
@@ -535,7 +535,7 @@ PKG_CHECK_MODULES(E, [
   efreet-mime >= ${efl_version}
   efreet-trash >= ${efl_version}
   eina >= ${efl_version}
-  edbus2 >= ${efl_version}
+  eldbus >= ${efl_version}
   eio >= ${efl_version}
   $eeze_mount
   $udisks_mount
@@ -555,7 +555,7 @@ efreet >= ${efl_version} \
 efreet-mime >= ${efl_version} \
 efreet-trash >= ${efl_version} \
 eina >= ${efl_version} \
-edbus2 \
+eldbus \
 eio >= ${efl_version} \
 $udisks_mount \
 $eeze_mount \
@@ -688,7 +688,7 @@ define([CHECK_MODULE_TEMPERATURE],
 AM_CONDITIONAL(MUSIC_CONTROL, false)
 define([CHECK_MODULE_MUSIC_CONTROL],
 [
-  AC_E_CHECK_PKG(MUSIC_CONTROL, [ ecore >= $efl_version eina >= $efl_version edbus2 ], [], [MUSIC_CONTROL=false])
+  AC_E_CHECK_PKG(MUSIC_CONTROL, [ ecore >= $efl_version eina >= $efl_version eldbus ], [], [MUSIC_CONTROL=false])
 ])
 
 ##have_exchange=no
@@ -717,7 +717,7 @@ AC_ARG_ENABLE([enotify],
   AC_CACHE_VAL([e_cv_want_enotify], [e_cv_want_enotify=yes])
 )
 if test "x$e_cv_want_enotify" != "xno" ; then
-  AC_E_CHECK_PKG(ENOTIFY, [ edbus2 >= $efl_version ],
+  AC_E_CHECK_PKG(ENOTIFY, [ eldbus >= $efl_version ],
   [
     AC_DEFINE_UNQUOTED([HAVE_ENOTIFY], [1], [enable enotify])
   ], 
@@ -803,7 +803,7 @@ AM_CONDITIONAL(HAVE_ECONNMAN, false)
 AM_CONDITIONAL(HAVE_DUMMY, false)
 define([CHECK_MODULE_CONNMAN],
 [
-  AC_E_CHECK_PKG(ECONNMAN, [ edbus2 >= $efl_version ], [], [CONNMAN=false])
+  AC_E_CHECK_PKG(ECONNMAN, [ eldbus >= $efl_version ], [], [CONNMAN=false])
 dnl  AC_E_CHECK_PKG(DUMMY, [ connman >= 1.0 ], [], [CONNMAN=false])
 ])
 AC_SUBST(ECONNMAN_CFLAGS)
@@ -813,7 +813,7 @@ AM_CONDITIONAL(HAVE_BLUEZ4, false)
 AM_CONDITIONAL(HAVE_DUMMY, false)
 define([CHECK_MODULE_BLUEZ4],
 [
-  AC_E_CHECK_PKG(BLUEZ4, [ edbus2 ],)
+  AC_E_CHECK_PKG(BLUEZ4, [ eldbus ],)
 ])
 AC_SUBST(EBLUEZ4_CFLAGS)
 AC_SUBST(EBLUEZ4_LIBS)

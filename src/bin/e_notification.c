@@ -2,8 +2,8 @@
 
 typedef struct _Notification_Data
 {
-   EDBus_Connection                 *conn;
-   EDBus_Service_Interface          *iface;
+   Eldbus_Connection                 *conn;
+   Eldbus_Service_Interface          *iface;
    E_Notification_Notify_Cb          notify_cb;
    E_Notification_Close_Cb           close_cb;
    void                             *data;
@@ -13,22 +13,22 @@ typedef struct _Notification_Data
 static Notification_Data *n_data = NULL;
 
 static void
-hints_dict_iter(void *data, const void *key, EDBus_Message_Iter *var)
+hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
 {
    E_Notification_Notify *n = data;
    if (!strcmp(key, "image-data") || !strcmp(key, "image_data"))
      {
-        EDBus_Message_Iter *st, *data_iter;
+        Eldbus_Message_Iter *st, *data_iter;
         int w, h, r, bits, channels;
         Eina_Bool alpha;
         unsigned char *raw_data;
-        if (!edbus_message_iter_arguments_get(var, "(iiibiiay)", &st))
+        if (!eldbus_message_iter_arguments_get(var, "(iiibiiay)", &st))
           return;
-        if (!edbus_message_iter_arguments_get(st, "iiibiiay", &w, &h, &r,
+        if (!eldbus_message_iter_arguments_get(st, "iiibiiay", &w, &h, &r,
                                               &alpha, &bits, &channels,
                                               &data_iter))
           return;
-        edbus_message_iter_fixed_array_get(data_iter, 'y', &raw_data,
+        eldbus_message_iter_fixed_array_get(data_iter, 'y', &raw_data,
                                            &n->icon.raw.data_size);
         n->icon.raw.width = w;
         n->icon.raw.height = h;
@@ -43,23 +43,23 @@ hints_dict_iter(void *data, const void *key, EDBus_Message_Iter *var)
    else if (!strcmp(key, "urgency"))
      {
         unsigned char urgency;
-        edbus_message_iter_arguments_get(var, "y", &urgency);
+        eldbus_message_iter_arguments_get(var, "y", &urgency);
         if (urgency < 3)
           n->urgency = urgency;
      }
    else if (!strcmp(key, "image-path") || !strcmp(key, "image_path"))
      {
-        edbus_message_iter_arguments_get(var, "s", &n->icon.icon_path);
+        eldbus_message_iter_arguments_get(var, "s", &n->icon.icon_path);
         n->icon.icon_path = eina_stringshare_add(n->icon.icon_path);
      }
 }
 
-static EDBus_Message *
-notify_cb(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
+static Eldbus_Message *
+notify_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    E_Notification_Notify *n;
-   EDBus_Message_Iter *actions_iter, *hints_iter;
-   EDBus_Message *reply;
+   Eldbus_Message_Iter *actions_iter, *hints_iter;
+   Eldbus_Message *reply;
 
    if (!n_data->notify_cb)
      return NULL;
@@ -67,7 +67,7 @@ notify_cb(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message 
    n = calloc(1, sizeof(E_Notification_Notify));
    EINA_SAFETY_ON_NULL_RETURN_VAL(n, NULL);
 
-   if (!edbus_message_arguments_get(msg, "susssasa{sv}i", &n->app_name,
+   if (!eldbus_message_arguments_get(msg, "susssasa{sv}i", &n->app_name,
                                     &n->replaces_id, &n->icon.icon, &n->sumary,
                                     &n->body, &actions_iter, &hints_iter,
                                     &n->timeout))
@@ -76,66 +76,66 @@ notify_cb(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message 
         free(n);
         return NULL;
      }
-   edbus_message_iter_dict_iterate(hints_iter, "sv", hints_dict_iter, n);
+   eldbus_message_iter_dict_iterate(hints_iter, "sv", hints_dict_iter, n);
    n->app_name = eina_stringshare_add(n->app_name);
    n->icon.icon = eina_stringshare_add(n->icon.icon);
    n->sumary = eina_stringshare_add(n->sumary);
    n->body = eina_stringshare_add(n->body);
 
    n->id = n_data->notify_cb(n_data->data, n);
-   reply = edbus_message_method_return_new(msg);
-   edbus_message_arguments_append(reply, "u", n->id);
+   reply = eldbus_message_method_return_new(msg);
+   eldbus_message_arguments_append(reply, "u", n->id);
    return reply;
 }
 
-static EDBus_Message *
-close_notification_cb(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
+static Eldbus_Message *
+close_notification_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
    unsigned id;
-   if (!edbus_message_arguments_get(msg, "u", &id))
+   if (!eldbus_message_arguments_get(msg, "u", &id))
      return NULL;
    if (n_data->close_cb)
      n_data->close_cb(n_data->data, id);
-   return edbus_message_method_return_new(msg);
+   return eldbus_message_method_return_new(msg);
 }
 
-static EDBus_Message *
-capabilities_cb(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
+static Eldbus_Message *
+capabilities_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
    int i;
-   EDBus_Message_Iter *main_iter, *array;
+   Eldbus_Message_Iter *main_iter, *array;
 
-   main_iter = edbus_message_iter_get(reply);
-   edbus_message_iter_arguments_append(main_iter, "as", &array);
+   main_iter = eldbus_message_iter_get(reply);
+   eldbus_message_iter_arguments_append(main_iter, "as", &array);
 
    for (i = 0; n_data->server_info->capabilities[i]; i++)
-     edbus_message_iter_arguments_append(array, "s",
+     eldbus_message_iter_arguments_append(array, "s",
                                          n_data->server_info->capabilities[i]);
-   edbus_message_iter_container_close(main_iter, array);
+   eldbus_message_iter_container_close(main_iter, array);
    return reply;
 }
 
-static EDBus_Message *
-server_info_cb(const EDBus_Service_Interface *iface EINA_UNUSED, const EDBus_Message *msg)
+static Eldbus_Message *
+server_info_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Message *msg)
 {
-   EDBus_Message *reply = edbus_message_method_return_new(msg);
-   edbus_message_arguments_append(reply, "ssss", n_data->server_info->name,
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
+   eldbus_message_arguments_append(reply, "ssss", n_data->server_info->name,
                                   n_data->server_info->vendor,
                                   n_data->server_info->version,
                                   n_data->server_info->spec_version);
    return reply;
 }
 
-static const EDBus_Method methods[] = {
+static const Eldbus_Method methods[] = {
    { "Notify",
-     EDBUS_ARGS({"s", "app_name"}, {"u", "replaces_id"}, {"s", "app_icon"}, {"s", "summary"}, {"s", "body"}, {"as", "actions"}, {"a{sv}", "hints"}, {"i", "expire_timeout"}),
-     EDBUS_ARGS({"u", "id"}), notify_cb },
-   { "CloseNotification", EDBUS_ARGS({"u", "id"}), NULL, close_notification_cb },
-   { "GetCapabilities", NULL, EDBUS_ARGS({"as", "capabilities"}),
+     ELDBUS_ARGS({"s", "app_name"}, {"u", "replaces_id"}, {"s", "app_icon"}, {"s", "summary"}, {"s", "body"}, {"as", "actions"}, {"a{sv}", "hints"}, {"i", "expire_timeout"}),
+     ELDBUS_ARGS({"u", "id"}), notify_cb },
+   { "CloseNotification", ELDBUS_ARGS({"u", "id"}), NULL, close_notification_cb },
+   { "GetCapabilities", NULL, ELDBUS_ARGS({"as", "capabilities"}),
      capabilities_cb },
    { "GetServerInformation", NULL,
-     EDBUS_ARGS({"s", "name"}, {"s", "vendor"}, {"s", "version"}, {"s", "spec_version"}),
+     ELDBUS_ARGS({"s", "name"}, {"s", "vendor"}, {"s", "version"}, {"s", "spec_version"}),
      server_info_cb },
    { }
 };
@@ -146,11 +146,11 @@ enum
    SIGNAL_ACTION_INVOKED,
 };
 
-static const EDBus_Signal signals[] = {
+static const Eldbus_Signal signals[] = {
    [SIGNAL_NOTIFICATION_CLOSED] =
-   { "NotificationClosed", EDBUS_ARGS({"u", "id"}, {"u", "reason"}) },
+   { "NotificationClosed", ELDBUS_ARGS({"u", "id"}, {"u", "reason"}) },
    [SIGNAL_ACTION_INVOKED] =
-   { "ActionInvoked", EDBUS_ARGS({"u", "id"}, {"s", "action_key"}) },
+   { "ActionInvoked", ELDBUS_ARGS({"u", "id"}, {"s", "action_key"}) },
    { }
 };
 
@@ -158,7 +158,7 @@ static const EDBus_Signal signals[] = {
 #define BUS       "org.freedesktop.Notifications"
 #define INTERFACE "org.freedesktop.Notifications"
 
-static const EDBus_Service_Interface_Desc desc = {
+static const Eldbus_Service_Interface_Desc desc = {
    INTERFACE, methods, signals, NULL, NULL, NULL
 };
 
@@ -171,15 +171,15 @@ e_notification_server_register(const E_Notification_Server_Info *server_info, E_
    n_data = calloc(1, sizeof(Notification_Data));
    EINA_SAFETY_ON_NULL_RETURN_VAL(n_data, EINA_FALSE);
 
-   edbus_init();
-   n_data->conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
-   n_data->iface = edbus_service_interface_register(n_data->conn, PATH, &desc);
+   eldbus_init();
+   n_data->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
+   n_data->iface = eldbus_service_interface_register(n_data->conn, PATH, &desc);
    n_data->notify_cb = n_cb;
    n_data->close_cb = close_cb;
    n_data->data = (void *)data;
    n_data->server_info = server_info;
-   edbus_name_request(n_data->conn, BUS,
-                      EDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING, NULL, NULL);
+   eldbus_name_request(n_data->conn, BUS,
+                      ELDBUS_NAME_REQUEST_FLAG_REPLACE_EXISTING, NULL, NULL);
 
    return EINA_TRUE;
 }
@@ -188,9 +188,9 @@ EAPI void
 e_notification_server_unregister(void)
 {
    EINA_SAFETY_ON_NULL_RETURN(n_data);
-   edbus_service_interface_unregister(n_data->iface);
-   edbus_connection_unref(n_data->conn);
-   edbus_shutdown();
+   eldbus_service_interface_unregister(n_data->iface);
+   eldbus_connection_unref(n_data->conn);
+   eldbus_shutdown();
    free(n_data);
    n_data = NULL;
 }
@@ -216,7 +216,7 @@ e_notification_notify_close(E_Notification_Notify *notify, E_Notification_Notify
    EINA_SAFETY_ON_NULL_RETURN(n_data);
    EINA_SAFETY_ON_NULL_RETURN(notify);
    EINA_SAFETY_ON_FALSE_RETURN(reason <= E_NOTIFICATION_NOTIFY_CLOSED_REASON_UNDEFINED);
-   edbus_service_signal_emit(n_data->iface, SIGNAL_NOTIFICATION_CLOSED,
+   eldbus_service_signal_emit(n_data->iface, SIGNAL_NOTIFICATION_CLOSED,
                              notify->id, reason);
 }
 
@@ -277,40 +277,40 @@ error:
 /* client API */
 
 static void
-client_notify_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+client_notify_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    unsigned id = 0;
-   E_Notification_Client_Send_Cb cb = edbus_pending_data_del(pending, "cb");
-   EDBus_Connection *conn = edbus_pending_data_del(pending, "conn");
-   if (edbus_message_error_get(msg, NULL, NULL))
+   E_Notification_Client_Send_Cb cb = eldbus_pending_data_del(pending, "cb");
+   Eldbus_Connection *conn = eldbus_pending_data_del(pending, "conn");
+   if (eldbus_message_error_get(msg, NULL, NULL))
      goto end;
-   if (!edbus_message_arguments_get(msg, "u", &id))
+   if (!eldbus_message_arguments_get(msg, "u", &id))
      goto end;
 end:
    cb(data, id);
-   edbus_connection_unref(conn);
-   edbus_shutdown();
+   eldbus_connection_unref(conn);
+   eldbus_shutdown();
 }
 
 static Eina_Bool
 notification_client_dbus_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data)
 {
-   EDBus_Connection *conn;
-   EDBus_Message *msg;
-   EDBus_Message_Iter *main_iter, *actions, *hints;
-   EDBus_Message_Iter *entry, *var;
-   EDBus_Pending *p;
+   Eldbus_Connection *conn;
+   Eldbus_Message *msg;
+   Eldbus_Message_Iter *main_iter, *actions, *hints;
+   Eldbus_Message_Iter *entry, *var;
+   Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(notify, EINA_FALSE);
-   edbus_init();
-   conn = edbus_connection_get(EDBUS_CONNECTION_TYPE_SESSION);
+   eldbus_init();
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_FALSE);
 
-   msg = edbus_message_method_call_new(BUS, PATH, INTERFACE, "Notify");
+   msg = eldbus_message_method_call_new(BUS, PATH, INTERFACE, "Notify");
    EINA_SAFETY_ON_NULL_RETURN_VAL(msg, EINA_FALSE);
 
    //build message
-   main_iter = edbus_message_iter_get(msg);
-   if (!edbus_message_iter_arguments_append(main_iter, "susssas",
+   main_iter = eldbus_message_iter_get(msg);
+   if (!eldbus_message_iter_arguments_append(main_iter, "susssas",
                                             notify->app_name ? : "",
                                             notify->replaces_id,
                                             notify->icon.icon ? : "",
@@ -318,19 +318,19 @@ notification_client_dbus_send(E_Notification_Notify *notify, E_Notification_Clie
                                             notify->body ? : "",
                                             &actions))
      goto error;
-   edbus_message_iter_container_close(main_iter, actions);
-   if (!edbus_message_iter_arguments_append(main_iter, "a{sv}", &hints))
+   eldbus_message_iter_container_close(main_iter, actions);
+   if (!eldbus_message_iter_arguments_append(main_iter, "a{sv}", &hints))
      goto error;
 
    if (notify->icon.raw.data)
      {
-        EDBus_Message_Iter *st, *data_iter;
+        Eldbus_Message_Iter *st, *data_iter;
         int i;
-        edbus_message_iter_arguments_append(hints, "{sv}", &entry);
-        edbus_message_iter_arguments_append(entry, "s", "image-data");
-        var = edbus_message_iter_container_new(entry, 'v', "(iiibiiay)");
-        edbus_message_iter_arguments_append(var, "(iiibiiay)", &st);
-        edbus_message_iter_arguments_append(st, "iiibiiay",
+        eldbus_message_iter_arguments_append(hints, "{sv}", &entry);
+        eldbus_message_iter_arguments_append(entry, "s", "image-data");
+        var = eldbus_message_iter_container_new(entry, 'v', "(iiibiiay)");
+        eldbus_message_iter_arguments_append(var, "(iiibiiay)", &st);
+        eldbus_message_iter_arguments_append(st, "iiibiiay",
                                             notify->icon.raw.width,
                                             notify->icon.raw.height,
                                             notify->icon.raw.rowstride,
@@ -339,42 +339,42 @@ notification_client_dbus_send(E_Notification_Notify *notify, E_Notification_Clie
                                             notify->icon.raw.channels,
                                             &data_iter);
         for (i = 0; i < notify->icon.raw.data_size; i++)
-          edbus_message_iter_basic_append(data_iter, 'y', notify->icon.raw.data[i]);
-        edbus_message_iter_container_close(st, data_iter);
-        edbus_message_iter_container_close(var, st);
-        edbus_message_iter_container_close(entry, var);
-        edbus_message_iter_container_close(hints, entry);
+          eldbus_message_iter_basic_append(data_iter, 'y', notify->icon.raw.data[i]);
+        eldbus_message_iter_container_close(st, data_iter);
+        eldbus_message_iter_container_close(var, st);
+        eldbus_message_iter_container_close(entry, var);
+        eldbus_message_iter_container_close(hints, entry);
      }
    if (notify->icon.icon_path)
      {
-        edbus_message_iter_arguments_append(hints, "{sv}", &entry);
-        edbus_message_iter_arguments_append(entry, "s", "image-path");
-        var = edbus_message_iter_container_new(entry, 'v', "s");
-        edbus_message_iter_arguments_append(var, "s", notify->icon.icon_path);
-        edbus_message_iter_container_close(entry, var);
-        edbus_message_iter_container_close(hints, entry);
+        eldbus_message_iter_arguments_append(hints, "{sv}", &entry);
+        eldbus_message_iter_arguments_append(entry, "s", "image-path");
+        var = eldbus_message_iter_container_new(entry, 'v', "s");
+        eldbus_message_iter_arguments_append(var, "s", notify->icon.icon_path);
+        eldbus_message_iter_container_close(entry, var);
+        eldbus_message_iter_container_close(hints, entry);
      }
 
-   edbus_message_iter_arguments_append(hints, "{sv}", &entry);
-   edbus_message_iter_arguments_append(entry, "s", "urgency");
-   var = edbus_message_iter_container_new(entry, 'v', "y");
-   edbus_message_iter_arguments_append(var, "y", notify->urgency);
-   edbus_message_iter_container_close(entry, var);
-   edbus_message_iter_container_close(hints, entry);
+   eldbus_message_iter_arguments_append(hints, "{sv}", &entry);
+   eldbus_message_iter_arguments_append(entry, "s", "urgency");
+   var = eldbus_message_iter_container_new(entry, 'v', "y");
+   eldbus_message_iter_arguments_append(var, "y", notify->urgency);
+   eldbus_message_iter_container_close(entry, var);
+   eldbus_message_iter_container_close(hints, entry);
 
-   edbus_message_iter_container_close(main_iter, hints);
+   eldbus_message_iter_container_close(main_iter, hints);
 
-   edbus_message_iter_arguments_append(main_iter, "i", notify->timeout);
+   eldbus_message_iter_arguments_append(main_iter, "i", notify->timeout);
 
-   p = edbus_connection_send(conn, msg, client_notify_cb, data, 5000);
+   p = eldbus_connection_send(conn, msg, client_notify_cb, data, 5000);
    EINA_SAFETY_ON_NULL_GOTO(p, error);
-   edbus_pending_data_set(p, "cb", cb);
-   edbus_pending_data_set(p, "conn", conn);
+   eldbus_pending_data_set(p, "cb", cb);
+   eldbus_pending_data_set(p, "conn", conn);
 
    return EINA_TRUE;
 
 error:
-   edbus_message_unref(msg);
+   eldbus_message_unref(msg);
    return EINA_FALSE;
 }
 

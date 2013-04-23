@@ -60,7 +60,7 @@ const char *e_connman_theme_path(void);
 E_Config_Dialog *e_connman_config_dialog_new(E_Container *con,
                                              E_Connman_Module_Context *ctxt);
 
-E_Connman_Agent *econnman_agent_new(EDBus_Connection *edbus_conn) EINA_ARG_NONNULL(1);
+E_Connman_Agent *econnman_agent_new(Eldbus_Connection *eldbus_conn) EINA_ARG_NONNULL(1);
 void econnman_agent_del(E_Connman_Agent *agent);
 
 /**
