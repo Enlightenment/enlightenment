@@ -101,13 +101,12 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 "group { name: \"e/desktop/background\";\n"
                 "%s"
                 "data { item: \"style\" \"0\"; }\n"
-                "max: %i %i;\n"
                 "parts {\n"
                 "part { name: \"bg\"; mouse_events: 0;\n"
                 "description { state: \"default\" 0.0;\n"
                 "image { normal: \"%s\"; scale_hint: STATIC; }\n"
                 "} } } } }\n"
-                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n", w, h, fstrip);
+                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n", fstrip);
         break;
 
       case IMPORT_TILE:
@@ -117,7 +116,6 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 "group { name: \"e/desktop/background\";\n"
                 "data { item: \"style\" \"1\"; }\n"
                 "%s"
-                "max: %i %i;\n"
                 "parts {\n"
                 "part { name: \"bg\"; mouse_events: 0;\n"
                 "description { state: \"default\" 0.0;\n"
@@ -126,7 +124,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 "relative: 0.0 0.0;\n"
                 "offset: %i %i;\n"
                 "} } } } } } }\n"
-                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n", w, h, fstrip, w, h);
+                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n", fstrip, w, h);
         break;
 
       case IMPORT_CENTER:
@@ -136,7 +134,6 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 "group { name: \"e/desktop/background\";\n"
                 "data { item: \"style\" \"2\"; }\n"
                 "%s"
-                "max: %i %i;\n"
                 "parts {\n"
                 "part { name: \"col\"; type: RECT; mouse_events: 0;\n"
                 "description { state: \"default\" 0.0;\n"
@@ -147,7 +144,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 "min: %i %i; max: %i %i;\n"
                 "image { normal: \"%s\"; }\n"
                 "} } } } }\n"
-                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n", w, h, cr, cg, cb, ca, w, h, w, h, fstrip);
+                , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n", cr, cg, cb, ca, w, h, w, h, fstrip);
         break;
 
       case IMPORT_SCALE_ASPECT_IN:
@@ -159,7 +156,6 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 "group { name: \"e/desktop/background\";\n"
                 "data { item: \"style\" \"3\"; }\n"
                 "%s"
-                "max: %i %i;\n"
                 "parts {\n"
                 "part { name: \"col\"; type: RECT; mouse_events: 0;\n"
                 "description { state: \"default\" 0.0;\n"
@@ -171,7 +167,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 "image { normal: \"%s\";  scale_hint: STATIC; }\n"
                 "} } } } }\n"
                 , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n",
-                w, h, cr, cg, cb, ca, (double)w / (double)h, (double)w / (double)h, fstrip);
+                cr, cg, cb, ca, (double)w / (double)h, (double)w / (double)h, fstrip);
         setlocale(LC_NUMERIC, locale);
         break;
 
@@ -184,7 +180,6 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 "group { name: \"e/desktop/background\";\n"
                 "data { item: \"style\" \"4\"; }\n"
                 "%s"
-                "max: %i %i;\n"
                 "parts {\n"
                 "part { name: \"bg\"; mouse_events: 0;\n"
                 "description { state: \"default\" 0.0;\n"
@@ -192,7 +187,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 "image { normal: \"%s\";  scale_hint: STATIC; }\n"
                 "} } } } }\n"
                 , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n",
-                w, h, (double)w / (double)h, (double)w / (double)h, fstrip);
+                (double)w / (double)h, (double)w / (double)h, fstrip);
         setlocale(LC_NUMERIC, locale);
         break;
 
@@ -205,7 +200,6 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 "group { name: \"e/desktop/background\";\n"
                 "data { item: \"style\" \"4\"; }\n"
                 "%s"
-                "max: %i %i;\n"
                 "script {\n"
                 "public cur_anim; public cur_x; public cur_y; public prev_x;\n"
                 "public prev_y; public total_x; public total_y; \n"
@@ -256,7 +250,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
                 " set_float(prev_x, 0.0); set_float(prev_y, 0.0);\n"
                 "} } } } }\n"
                 , fstrip, enc, anim ? "" : "data.item: \"noanimation\" \"1\";\n",
-                w, h, (double)w / (double)h, (double)w / (double)h, fstrip);
+                (double)w / (double)h, (double)w / (double)h, fstrip);
         setlocale(LC_NUMERIC, locale);
         break;
 
