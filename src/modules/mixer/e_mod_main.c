@@ -785,7 +785,7 @@ _mixer_sys_setup(E_Mixer_Instance *inst)
    if (!conf->card)
      {
         ERR("conf->card in mixer sys setup is NULL");
-        return 1;
+        /* return 1; */
      }
 
    if (inst->sys)
@@ -842,6 +842,8 @@ _mixer_sys_setup_default_card(E_Mixer_Instance *inst)
    if (!card)
      goto error;
 
+   if (inst->sys)
+     e_mod_mixer_del(inst->sys);
    inst->sys = e_mod_mixer_new(card);
    if (!inst->sys)
      goto system_error;
