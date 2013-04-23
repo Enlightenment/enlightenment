@@ -1904,7 +1904,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
           edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->obj);
 #endif
      }
-   if (cw->eobj
+   if (cw->menu
 #ifdef BORDER_ZOOMAPS
    || cw->bd
 #endif
