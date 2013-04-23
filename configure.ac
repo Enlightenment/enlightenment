@@ -818,39 +818,47 @@ define([CHECK_MODULE_BLUEZ4],
 AC_SUBST(EBLUEZ4_CFLAGS)
 AC_SUBST(EBLUEZ4_LIBS)
 
+have_wayland_only=no
+AC_ARG_ENABLE([wayland-only],
+  AS_HELP_STRING([--enable-wayland-only],[enable wayland-only version of enlightenment @<:@default=disabled@:>@]),
+  [e_cv_want_wayland_only=$enableval],
+  [e_cv_want_wayland_only=no])
+AC_MSG_CHECKING([whether wayland-only version is enabled])
+AC_MSG_RESULT([${e_cv_want_wayland_only}])
+
 have_wayland_clients=no
 AC_ARG_ENABLE([wayland-clients],
   AS_HELP_STRING([--enable-wayland-clients],[enable wayland clients in composite module @<:@default=disabled@:>@]),
   [e_cv_want_wayland_clients=$enableval],
   [e_cv_want_wayland_clients=no])
-
 AC_MSG_CHECKING([whether wayland client support is enabled])
 AC_MSG_RESULT([${e_cv_want_wayland_clients}])
 
-if test "x$e_cv_want_wayland_clients" != "xno";then
+have_wayland_egl=no
+AC_ARG_ENABLE([wayland-egl],
+  AS_HELP_STRING([--enable-wayland-egl],[enable wayland to render using EGL @<:@default=disabled@:>@]),
+  [e_cv_want_wayland_egl=$enableval],
+  [e_cv_want_wayland_egl=no])
+AC_MSG_CHECKING([whether wayland EGL support is enabled])
+AC_MSG_RESULT([${e_cv_want_wayland_egl}])
+
+if test "x${e_cv_want_wayland_only}" != "xno" || test "x${e_cv_want_wayland_clients}" != "xno";then
   PKG_CHECK_MODULES([WAYLAND], [wayland-server pixman-1 xkbcommon],
     [
-      have_wayland_clients=yes
-      AC_DEFINE_UNQUOTED([HAVE_WAYLAND_CLIENTS],[1],[enable wayland client support])
+      have_wayland=yes
+      AC_DEFINE_UNQUOTED([HAVE_WAYLAND],[1],[enable wayland support])
     ],
-    [have_wayland_clients=no])
+    [have_wayland=no])
 else
-  have_wayland_clients=no
+  have_wayland=no
 fi
 
-AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
-
-have_wayland_egl=no
-if test "x${have_wayland_clients}" = "xyes"; then
-  AC_ARG_ENABLE([wayland-egl],
-    AS_HELP_STRING([--enable-wayland-egl],[enable wayland clients to render using EGL @<:@default=disabled@:>@]),
-    [e_cv_want_wayland_egl=$enableval],
-    [e_cv_want_wayland_egl=no])
-
-  AC_MSG_CHECKING([whether wayland client EGL support is enabled])
-  AC_MSG_RESULT([${e_cv_want_wayland_egl}])
-
-  if test "x$e_cv_want_wayland_egl" != "xno";then
+if test "x${have_wayland}" = "xyes"; then
+  if test "x${e_cv_want_wayland_clients}" != "xno"; then
+    have_wayland_clients=yes
+    AC_DEFINE_UNQUOTED([HAVE_WAYLAND_CLIENTS],[1],[enable wayland clients in composite module])
+  fi
+  if test "x${e_cv_want_wayland_egl}" != "xno";then
     PKG_CHECK_MODULES([WAYLAND_EGL], [egl >= 7.10],
       [
         have_wayland_egl=yes
@@ -862,6 +870,9 @@ if test "x${have_wayland_clients}" = "xyes"; then
   fi
 fi
 
+AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
+AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
+AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
