@@ -3481,9 +3481,12 @@ static Eina_Bool
 _e_comp_bd_hide(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    E_Event_Border_Hide *ev = event;
-   if (ev->manage == 2) return ECORE_CALLBACK_RENEW; //desk hide
    E_Comp_Win *cw = _e_comp_win_find(ev->border->win);
-   if (cw) _e_comp_win_hide(cw);
+   if (cw)
+     {
+        cw->force |= (ev->manage == 2);
+        _e_comp_win_hide(cw);
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
