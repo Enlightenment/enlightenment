@@ -272,12 +272,15 @@ void *alloca (size_t);
 # undef E_TYPEDEFS
 # include "e_includes.h"
 
+EAPI double e_main_ts(const char *str);
+
 extern EAPI Eina_Bool good;
 extern EAPI Eina_Bool evil;
 extern EAPI Eina_Bool starting;
 extern EAPI Eina_Bool stopping;
 extern EAPI Eina_Bool restart;
 extern EAPI Eina_Bool e_nopause;
+extern EAPI Eina_Bool wl_fatal;
 
 extern EAPI E_Path *path_data;
 extern EAPI E_Path *path_images;
