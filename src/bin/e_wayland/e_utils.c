@@ -46,3 +46,12 @@ e_util_strcmp(const char *s1, const char *s2)
      }
    return 0x7fffffff;
 }
+
+EAPI int 
+e_util_strcasecmp(const char *s1, const char *s2)
+{
+   if ((!s1) && (!s2)) return 0;
+   if (!s1) return -1;
+   if (!s2) return 1;
+   return strcasecmp(s1, s2);
+}
