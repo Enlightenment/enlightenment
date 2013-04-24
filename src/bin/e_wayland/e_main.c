@@ -288,6 +288,17 @@ main(int argc, char **argv)
    /*   } */
    TS("Ecore_Evas Engine Check Done");
 
+   TS("Efreet Init");
+   if (!efreet_init())
+     {
+        e_error_message_show(_("Enlightenment cannot initialize the FDO desktop system.\n"
+                               "Perhaps you lack permissions on ~/.cache/efreet or are\n"
+                               "out of memory or disk space?"));
+        _e_main_shutdown(-1);
+     }
+   TS("Efreet Init Done");
+   _e_main_shutdown_push(efreet_shutdown);
+
    TS("Edje Init");
    if (!edje_init())
      {
@@ -320,6 +331,17 @@ main(int argc, char **argv)
      }
    TS("E Directories Init Done");
    _e_main_shutdown_push(_e_main_dirs_shutdown);
+
+   TS("E_Filereg Init");
+   if (!e_filereg_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its file registry system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Filereg Init Done");
+   _e_main_shutdown_push(e_filereg_shutdown);
+
+
 
    /*** Main Loop ***/
 
