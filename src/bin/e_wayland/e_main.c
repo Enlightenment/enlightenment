@@ -49,7 +49,7 @@ static int (*_e_main_shutdown_func[MAX_LEVEL])(void);
 
 /* external variables */
 EAPI Eina_Bool e_precache_end = EINA_FALSE;
-EAPI Eina_Bool x_fatal = EINA_FALSE;
+EAPI Eina_Bool wl_fatal = EINA_FALSE;
 EAPI Eina_Bool good = EINA_FALSE;
 EAPI Eina_Bool evil = EINA_FALSE;
 EAPI Eina_Bool starting = EINA_TRUE;
@@ -378,6 +378,19 @@ main(int argc, char **argv)
    s = getenv("E_DESKLOCK_LOCKED");
    if ((s) && (!strcmp(s, "locked"))) waslocked = EINA_TRUE;
 
+   /* NB: We need to init the e_module subsystem first, then we can init 
+    * the "main" compositor subsytem. Reasoning is that the compositor 
+    * subsystem will load the specific compositor (x11, drm, etc) and that the 
+    * specific compositor will be an e_module */
+   TS("E_Module Init");
+   if (!e_module_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its module system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Module Init Done");
+   _e_main_shutdown_push(e_module_shutdown);
+
    /*** Main Loop ***/
 
    starting = EINA_FALSE;
@@ -408,6 +421,18 @@ main(int argc, char **argv)
    e_prefix_shutdown();
 
    return 0;
+}
+
+EAPI double
+e_main_ts(const char *str)
+{
+   double ret;
+
+   t1 = ecore_time_unix_get();
+   printf("ESTART: %1.5f [%1.5f] - %s\n", t1 - t0, t1 - t2, str);
+   ret = t1 - t2;
+   t2 = t1;
+   return ret;
 }
 
 /* local functions */
