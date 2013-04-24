@@ -43,7 +43,8 @@ ENLIGHTENMENTHEADERS = \
   e_font.h \
   e_int_menus.h \
   e_env.h \
-  e_module.h
+  e_module.h \
+  e_comp.h
 
 enlightenment_wl_src = \
   e_log.c \
@@ -60,6 +61,7 @@ enlightenment_wl_src = \
   e_powersave.c \
   e_env.c \
   e_module.c \
+  e_comp.c \
   $(ENLIGHTENMENTHEADERS)
 
 enlightenment_wl_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@
