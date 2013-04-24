@@ -1,6 +1,13 @@
+MAINTAINERCLEANFILES = Makefile.in
+
+if HAVE_WAYLAND_ONLY
+
+SUBDIRS = e_wayland
+
+else
+
 SUBDIRS = e_fm
 
-MAINTAINERCLEANFILES = Makefile.in
 DISTCLEANFILES = e_fm_shared_types.h
 
 AM_CPPFLAGS = \
@@ -458,3 +465,5 @@ install-data-hook:
 endif
 installed_headersdir = $(prefix)/include/enlightenment
 installed_headers_DATA = $(ENLIGHTENMENTHEADERS)
+
+endif
