@@ -868,6 +868,43 @@ if test "x${have_wayland}" = "xyes"; then
   else
     have_wayland_egl=no
   fi
+  if test "x${e_cv_want_wayland_only}" != "xno"; then
+    have_wayland_only=no
+    PKG_CHECK_MODULES(E_WL, [
+      evas >= ${efl_version}
+      ecore >= ${efl_version}
+      ecore-wayland >= ${efl_version}
+      ecore-evas >= ${efl_version}
+      ecore-input >= ${efl_version}
+      ecore-input-evas >= ${efl_version}
+      ecore-con >= ${efl_version}
+      ecore-ipc >= ${efl_version}
+      ecore-file >= ${efl_version}
+      eet >= ${efl_version}
+      edje >= ${efl_version}
+      efreet >= ${efl_version}
+      efreet-mime >= ${efl_version}
+      efreet-trash >= ${efl_version}
+      eina >= ${efl_version}
+      edbus2 >= ${efl_version}
+      eio >= ${efl_version}
+      $eeze_mount
+      $udisks_mount
+      $device_backend
+    ], 
+    [
+      have_wayland_only=yes
+      AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])
+    ])
+
+    e_wl_libs="$E_WL_LIBS $LIBINTL $fnmatch_libs $ECORE_IMF_LIBS $execinfo_libs"
+    e_wl_cflags="-DUSE_E_CONFIG_H $E_WL_CFLAGS $ECORE_IMF_CFLAGS"
+    e_configflags="-DUSE_E_CONFIG_H"
+
+    AC_SUBST(e_wl_libs)
+    AC_SUBST(e_wl_cflags)
+    AC_SUBST(e_configflags)
+  fi
 fi
 
 AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
@@ -997,6 +1034,7 @@ src/Makefile
 src/bin/Makefile
 src/bin/e_fm_shared_types.h
 src/bin/e_fm/Makefile
+src/bin/e_wayland/Makefile
 src/modules/Makefile
 src/modules/ibar/module.desktop
 src/modules/clock/module.desktop
