@@ -1649,8 +1649,10 @@ e_config_domain_system_load(const char *domain, E_Config_DD *edd)
 }
 
 static void
-_e_config_mv_error(const char *from, const char *to)
+_e_config_mv_error(const char *from EINA_UNUSED, const char *to EINA_UNUSED)
 {
+   /* FIXME: Wayland */
+
    /* if (!_e_config_error_dialog) */
    /*   { */
    /*      E_Dialog *dia; */
@@ -2216,7 +2218,7 @@ _e_config_free(E_Config *ecf)
 }
 
 static Eina_Bool
-_e_config_cb_timer(void *data)
+_e_config_cb_timer(void *data EINA_UNUSED)
 {
    /* FIXME: Wayland */
    /* e_util_dialog_show(_("Settings Upgraded"), "%s", (char *)data); */
