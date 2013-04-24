@@ -27,6 +27,14 @@ static double t0, t1, t2;
 #include <Emotion.h>
 #endif
 
+/* local function prototypes */
+static void _e_main_shutdown(int errcode);
+static void _e_main_shutdown_push(int (*func)(void));
+
+/* local variables */
+static int _e_main_lvl = 0;
+static int (*_e_main_shutdown_func[MAX_LEVEL])(void);
+
 /* externally accessible functions */
 int
 main(int argc, char **argv)
@@ -92,4 +100,38 @@ main(int argc, char **argv)
      e_util_env_set("MTRACK", NULL);
 
    return 0;
+}
+
+/* local functions */
+static void 
+_e_main_shutdown(int errcode)
+{
+   int i = 0;
+
+   printf("E17: Begin Shutdown Procedure!\n");
+
+   /* if (_idle_before) ecore_idle_enterer_del(_idle_before); */
+   /* _idle_before = NULL; */
+   /* if (_idle_after) ecore_idle_enterer_del(_idle_after); */
+   /* _idle_after = NULL; */
+   /* if (_idle_flush) ecore_idle_enterer_del(_idle_flush); */
+   /* _idle_flush = NULL; */
+
+   for (i = (_e_main_lvl - 1); i >= 0; i--)
+     (*_e_main_shutdown_func[i])();
+   if (errcode < 0) exit(errcode);
+}
+
+static void 
+_e_main_shutdown_push(int (*func)(void))
+{
+   _e_main_lvl++;
+   if (_e_main_lvl > MAX_LEVEL)
+     {
+        _e_main_lvl--;
+        e_error_message_show("WARNING: too many init levels. MAX = %i\n",
+                             MAX_LEVEL);
+        return;
+     }
+   _e_main_shutdown_func[_e_main_lvl - 1] = func;
 }
