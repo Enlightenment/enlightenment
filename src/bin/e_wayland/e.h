@@ -272,6 +272,13 @@ void *alloca (size_t);
 # undef E_TYPEDEFS
 # include "e_includes.h"
 
+extern EAPI Eina_Bool good;
+extern EAPI Eina_Bool evil;
+extern EAPI Eina_Bool starting;
+extern EAPI Eina_Bool stopping;
+extern EAPI Eina_Bool restart;
+extern EAPI Eina_Bool e_nopause;
+
 /**
  * @}
  */
