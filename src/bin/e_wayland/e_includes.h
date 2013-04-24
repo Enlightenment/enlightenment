@@ -7,3 +7,4 @@
 #include "e_prefix.h"
 #include "e_user.h"
 #include "e_filereg.h"
+#include "e_object.h"
