@@ -1,5 +1,12 @@
 #include "e.h"
 
+/* local variables */
+static Ecore_Timer *_e_util_dummy_timer = NULL;
+
+/* local function prototypes */
+static Eina_Bool _e_util_wakeup_cb(void *data);
+
+/* external variables */
 EAPI E_Path *path_data = NULL;
 EAPI E_Path *path_images = NULL;
 EAPI E_Path *path_fonts = NULL;
@@ -54,4 +61,19 @@ e_util_strcasecmp(const char *s1, const char *s2)
    if (!s1) return -1;
    if (!s2) return 1;
    return strcasecmp(s1, s2);
+}
+
+EAPI void 
+e_util_wakeup(void)
+{
+   if (_e_util_dummy_timer) return;
+   _e_util_dummy_timer = ecore_timer_add(0.0, _e_util_wakeup_cb, NULL);
+}
+
+/* local functions */
+static Eina_Bool
+_e_util_wakeup_cb(void *data EINA_UNUSED)
+{
+   _e_util_dummy_timer = NULL;
+   return ECORE_CALLBACK_CANCEL;
 }
