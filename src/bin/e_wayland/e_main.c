@@ -36,6 +36,8 @@ static Eina_Bool _e_main_cb_signal_hup(void *data EINA_UNUSED, int ev_type EINA_
 static Eina_Bool _e_main_cb_signal_user(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev);
 static int _e_main_dirs_init(void);
 static int _e_main_dirs_shutdown(void);
+static int _e_main_paths_init(void);
+static int _e_main_paths_shutdown(void);
 
 /* local variables */
 static Eina_Bool really_know = EINA_FALSE;
@@ -341,7 +343,24 @@ main(int argc, char **argv)
    TS("E_Filereg Init Done");
    _e_main_shutdown_push(e_filereg_shutdown);
 
+   TS("E_Config Init");
+   if (!e_config_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its config system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Config Init Done");
+   _e_main_shutdown_push(e_config_shutdown);
 
+   TS("E Paths Init");
+   if (!_e_main_paths_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up paths for finding files.\n"
+                               "Perhaps you are out of memory?"));
+        _e_main_shutdown(-1);
+     }
+   TS("E Paths Init Done");
+   _e_main_shutdown_push(_e_main_paths_shutdown);
 
    /*** Main Loop ***/
 
@@ -607,5 +626,165 @@ _e_main_dirs_init(void)
 static int
 _e_main_dirs_shutdown(void)
 {
+   return 1;
+}
+
+static int
+_e_main_paths_init(void)
+{
+   char buf[PATH_MAX];
+
+   /* setup data paths */
+   path_data = e_path_new();
+   if (!path_data)
+     {
+        e_error_message_show("Cannot allocate path for path_data\n");
+        return 0;
+     }
+   e_prefix_data_concat_static(buf, "data");
+   e_path_default_path_append(path_data, buf);
+   e_path_user_path_set(path_data, &(e_config->path_append_data));
+
+   /* setup image paths */
+   path_images = e_path_new();
+   if (!path_images)
+     {
+        e_error_message_show("Cannot allocate path for path_images\n");
+        return 0;
+     }
+   e_user_dir_concat_static(buf, "/images");
+   e_path_default_path_append(path_images, buf);
+   e_prefix_data_concat_static(buf, "data/images");
+   e_path_default_path_append(path_images, buf);
+   e_path_user_path_set(path_images, &(e_config->path_append_images));
+
+   /* setup font paths */
+   path_fonts = e_path_new();
+   if (!path_fonts)
+     {
+        e_error_message_show("Cannot allocate path for path_fonts\n");
+        return 0;
+     }
+   e_user_dir_concat_static(buf, "/fonts");
+   e_path_default_path_append(path_fonts, buf);
+   e_prefix_data_concat_static(buf, "data/fonts");
+   e_path_default_path_append(path_fonts, buf);
+   e_path_user_path_set(path_fonts, &(e_config->path_append_fonts));
+
+   /* setup theme paths */
+   path_themes = e_path_new();
+   if (!path_themes)
+     {
+        e_error_message_show("Cannot allocate path for path_themes\n");
+        return 0;
+     }
+   e_user_dir_concat_static(buf, "/themes");
+   e_path_default_path_append(path_themes, buf);
+   e_prefix_data_concat_static(buf, "data/themes");
+   e_path_default_path_append(path_themes, buf);
+   e_path_user_path_set(path_themes, &(e_config->path_append_themes));
+
+   /* setup icon paths */
+   path_icons = e_path_new();
+   if (!path_icons)
+     {
+        e_error_message_show("Cannot allocate path for path_icons\n");
+        return 0;
+     }
+   e_user_dir_concat_static(buf, "/icons");
+   e_path_default_path_append(path_icons, buf);
+   e_prefix_data_concat_static(buf, "data/icons");
+   e_path_default_path_append(path_icons, buf);
+   e_path_user_path_set(path_icons, &(e_config->path_append_icons));
+
+   /* setup module paths */
+   path_modules = e_path_new();
+   if (!path_modules)
+     {
+        e_error_message_show("Cannot allocate path for path_modules\n");
+        return 0;
+     }
+   e_user_dir_concat_static(buf, "/modules");
+   e_path_default_path_append(path_modules, buf);
+   snprintf(buf, sizeof(buf), "%s/enlightenment/modules", e_prefix_lib_get());
+   e_path_default_path_append(path_modules, buf);
+   /* FIXME: eventually this has to go - moduels should have installers that
+    * add appropriate install paths (if not installed to user homedir) to
+    * e's module search dirs
+    */
+   snprintf(buf, sizeof(buf), "%s/enlightenment/modules_extra", e_prefix_lib_get());
+   e_path_default_path_append(path_modules, buf);
+   e_path_user_path_set(path_modules, &(e_config->path_append_modules));
+
+   /* setup background paths */
+   path_backgrounds = e_path_new();
+   if (!path_backgrounds)
+     {
+        e_error_message_show("Cannot allocate path for path_backgrounds\n");
+        return 0;
+     }
+   e_user_dir_concat_static(buf, "/backgrounds");
+   e_path_default_path_append(path_backgrounds, buf);
+   e_prefix_data_concat_static(buf, "data/backgrounds");
+   e_path_default_path_append(path_backgrounds, buf);
+   e_path_user_path_set(path_backgrounds, &(e_config->path_append_backgrounds));
+
+   path_messages = e_path_new();
+   if (!path_messages)
+     {
+        e_error_message_show("Cannot allocate path for path_messages\n");
+        return 0;
+     }
+   e_user_dir_concat_static(buf, "/locale");
+   e_path_default_path_append(path_messages, buf);
+   e_path_default_path_append(path_messages, e_prefix_locale_get());
+   e_path_user_path_set(path_messages, &(e_config->path_append_messages));
+
+   return 1;
+}
+
+static int
+_e_main_paths_shutdown(void)
+{
+   if (path_data)
+     {
+        e_object_del(E_OBJECT(path_data));
+        path_data = NULL;
+     }
+   if (path_images)
+     {
+        e_object_del(E_OBJECT(path_images));
+        path_images = NULL;
+     }
+   if (path_fonts)
+     {
+        e_object_del(E_OBJECT(path_fonts));
+        path_fonts = NULL;
+     }
+   if (path_themes)
+     {
+        e_object_del(E_OBJECT(path_themes));
+        path_themes = NULL;
+     }
+   if (path_icons)
+     {
+        e_object_del(E_OBJECT(path_icons));
+        path_icons = NULL;
+     }
+   if (path_modules)
+     {
+        e_object_del(E_OBJECT(path_modules));
+        path_modules = NULL;
+     }
+   if (path_backgrounds)
+     {
+        e_object_del(E_OBJECT(path_backgrounds));
+        path_backgrounds = NULL;
+     }
+   if (path_messages)
+     {
+        e_object_del(E_OBJECT(path_messages));
+        path_messages = NULL;
+     }
    return 1;
 }
