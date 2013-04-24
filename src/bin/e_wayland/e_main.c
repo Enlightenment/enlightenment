@@ -391,6 +391,15 @@ main(int argc, char **argv)
    TS("E_Module Init Done");
    _e_main_shutdown_push(e_module_shutdown);
 
+   TS("E_Compositor Init");
+   if (!e_comp_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its compositor system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Compositor Init Done");
+   _e_main_shutdown_push(e_comp_shutdown);
+
    /*** Main Loop ***/
 
    starting = EINA_FALSE;
