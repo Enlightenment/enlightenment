@@ -17,3 +17,4 @@
 #include "e_font.h"
 #include "e_int_menus.h"
 #include "e_env.h"
+#include "e_module.h"
