@@ -25,14 +25,21 @@ bin_PROGRAMS = \
 ENLIGHTENMENTHEADERS = \
   e.h \
   e_includes.h \
+  e_intl.h \
+  e_log.h \
   e_error.h \
   e_signals.h \
-  e_utils.h
+  e_utils.h \
+  e_prefix.h \
+  e_user.h
 
 enlightenment_wl_src = \
+  e_log.c \
   e_error.c \
   e_signals.c \
   e_utils.c \
+  e_prefix.c \
+  e_user.c \
   $(ENLIGHTENMENTHEADERS)
 
 enlightenment_wl_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@
