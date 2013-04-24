@@ -362,6 +362,22 @@ main(int argc, char **argv)
    TS("E Paths Init Done");
    _e_main_shutdown_push(_e_main_paths_shutdown);
 
+   TS("E_Env Init");
+   if (!e_env_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its environment.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Env Init Done");
+   _e_main_shutdown_push(e_env_shutdown);
+
+   e_util_env_set("E_ICON_THEME", e_config->icon_theme);
+   ecore_exe_run_priority_set(e_config->priority);
+   locked |= e_config->desklock_start_locked;
+
+   s = getenv("E_DESKLOCK_LOCKED");
+   if ((s) && (!strcmp(s, "locked"))) waslocked = EINA_TRUE;
+
    /*** Main Loop ***/
 
    starting = EINA_FALSE;
