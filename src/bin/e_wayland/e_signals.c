@@ -6,10 +6,6 @@
  * to add backtrace support.
  */
 
-#ifdef HAVE_EXECINFO_H
-# include <execinfo.h>
-#endif
-
 EINTERN void 
 e_sigseg_act(int x EINA_UNUSED, siginfo_t *info EINA_UNUSED, void *data EINA_UNUSED)
 {
