@@ -279,6 +279,15 @@ extern EAPI Eina_Bool stopping;
 extern EAPI Eina_Bool restart;
 extern EAPI Eina_Bool e_nopause;
 
+extern EAPI E_Path *path_data;
+extern EAPI E_Path *path_images;
+extern EAPI E_Path *path_fonts;
+extern EAPI E_Path *path_themes;
+extern EAPI E_Path *path_icons;
+extern EAPI E_Path *path_modules;
+extern EAPI E_Path *path_backgrounds;
+extern EAPI E_Path *path_messages;
+
 /**
  * @}
  */
