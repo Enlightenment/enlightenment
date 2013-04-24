@@ -847,70 +847,71 @@ _e_module_whitelist_check(void)
    const char *s;
    const char *goodmods[] =
    {
-      "access",
-      "backlight",
-      "battery",
-      "bluez4",
-      "clock",
-      "conf",
-      "conf_applications",
-      "conf_comp",
-      "conf_dialogs",
-      "conf_display",
-      "conf_interaction",
-      "conf_intl",
-      "conf_bindings",
-      "conf_menus",
-      "conf_paths",
-      "conf_performance",
-      "conf_randr",
-      "conf_shelves",
-      "conf_theme",
-      "conf_wallpaper2",
-      "conf_window_manipulation",
-      "conf_window_remembers",
-      "connman",
-      "cpufreq",
-      "everything",
-      "fileman",
-      "fileman_opinfo",
-      "gadman",
-      "ibar",
-      "ibox",
-      "illume2",
-      "illume-bluetooth",
-      "illume-home",
-      "illume-home-toggle",
-      "illume-indicator",
-      "illume-kbd-toggle",
-      "illume-keyboard",
-      "illume-mode-toggle",
-      "illume-softkey",
-      "layout",
-      "mixer",
-      "msgbus",
-      "notification",
-      "ofono",
-      "pager",
-      "physics",
-      "quickaccess",
-      "shot",
-      "start",
-      "syscon",
-      "systray",
-      "tasks",
-      "temperature",
-      "tiling",
-      "winlist",
-      "wizard",
-      "wl_drm",
-      "wl_screenshot",
-      "wl_shell",
-      "xkbswitch",
-      "echievements",
-      "music-control",
-      "conf2",
-      "appmenu",
+      /* "access", */
+      /* "backlight", */
+      /* "battery", */
+      /* "bluez4", */
+      /* "clock", */
+      /* "conf", */
+      /* "conf_applications", */
+      /* "conf_comp", */
+      /* "conf_dialogs", */
+      /* "conf_display", */
+      /* "conf_interaction", */
+      /* "conf_intl", */
+      /* "conf_bindings", */
+      /* "conf_menus", */
+      /* "conf_paths", */
+      /* "conf_performance", */
+      /* "conf_randr", */
+      /* "conf_shelves", */
+      /* "conf_theme", */
+      /* "conf_wallpaper2", */
+      /* "conf_window_manipulation", */
+      /* "conf_window_remembers", */
+      /* "connman", */
+      /* "cpufreq", */
+      /* "everything", */
+      /* "fileman", */
+      /* "fileman_opinfo", */
+      /* "gadman", */
+      /* "ibar", */
+      /* "ibox", */
+      /* "illume2", */
+      /* "illume-bluetooth", */
+      /* "illume-home", */
+      /* "illume-home-toggle", */
+      /* "illume-indicator", */
+      /* "illume-kbd-toggle", */
+      /* "illume-keyboard", */
+      /* "illume-mode-toggle", */
+      /* "illume-softkey", */
+      /* "layout", */
+      /* "mixer", */
+      /* "msgbus", */
+      /* "notification", */
+      /* "ofono", */
+      /* "pager", */
+      /* "physics", */
+      /* "quickaccess", */
+      /* "shot", */
+      /* "start", */
+      /* "syscon", */
+      /* "systray", */
+      /* "tasks", */
+      /* "temperature", */
+      /* "tiling", */
+      /* "winlist", */
+      /* "wizard", */
+      "wl_x11",
+      /* "wl_drm", */
+      /* "wl_screenshot", */
+      /* "wl_shell", */
+      /* "xkbswitch", */
+      /* "echievements", */
+      /* "music-control", */
+      /* "conf2", */
+      /* "appmenu", */
       NULL   // end marker
    };
 
