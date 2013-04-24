@@ -99,6 +99,15 @@ main(int argc, char **argv)
    if (getenv("E_START_MTRACK"))
      e_util_env_set("MTRACK", NULL);
 
+   TS("Eina Init");
+   if (!eina_init())
+     {
+        e_error_message_show(_("Enlightenment cannot initialize Eina!\n"));
+        _e_main_shutdown(-1);
+     }
+   _e_main_shutdown_push(eina_shutdown);
+   TS("Eina Init Done");
+
    return 0;
 }
 
