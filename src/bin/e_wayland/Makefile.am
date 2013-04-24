@@ -33,7 +33,8 @@ ENLIGHTENMENTHEADERS = \
   e_prefix.h \
   e_user.h \
   e_filereg.h \
-  e_object.h
+  e_object.h \
+  e_path.h
 
 enlightenment_wl_src = \
   e_log.c \
@@ -44,6 +45,7 @@ enlightenment_wl_src = \
   e_user.c \
   e_filereg.c \
   e_object.c \
+  e_path.c \
   $(ENLIGHTENMENTHEADERS)
 
 enlightenment_wl_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@
