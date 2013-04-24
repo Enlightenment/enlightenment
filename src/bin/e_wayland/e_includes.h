@@ -18,3 +18,4 @@
 #include "e_int_menus.h"
 #include "e_env.h"
 #include "e_module.h"
+#include "e_comp.h"
