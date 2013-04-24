@@ -1,4 +1,8 @@
 #include "../e_mmx.h"
+#include "e_intl.h"
+#include "e_log.h"
 #include "e_error.h"
 #include "e_signals.h"
 #include "e_utils.h"
+#include "e_prefix.h"
+#include "e_user.h"
