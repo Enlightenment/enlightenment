@@ -1,4 +1,5 @@
 #include "e.h"
+
 #ifdef HAVE_ECORE_IMF
 # include <Ecore_IMF.h>
 #endif
@@ -48,7 +49,32 @@ main(int argc, char **argv)
    /* wm/desktop vanishing and not knowing what happened */
    if (!getenv("NOTIFY_SOCKET"))
      {
-        /* TODO: signals */
+        TS("Signal Trap");
+        action.sa_sigaction = e_sigseg_act;
+	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+	sigemptyset(&action.sa_mask);
+	sigaction(SIGSEGV, &action, NULL);
+
+	action.sa_sigaction = e_sigill_act;
+	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+	sigemptyset(&action.sa_mask);
+	sigaction(SIGILL, &action, NULL);
+
+	action.sa_sigaction = e_sigfpe_act;
+	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+	sigemptyset(&action.sa_mask);
+	sigaction(SIGFPE, &action, NULL);
+
+	action.sa_sigaction = e_sigbus_act;
+	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+	sigemptyset(&action.sa_mask);
+	sigaction(SIGBUS, &action, NULL);
+
+	action.sa_sigaction = e_sigabrt_act;
+	action.sa_flags = SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
+	sigemptyset(&action.sa_mask);
+	sigaction(SIGABRT, &action, NULL);
+	TS("Signal Trap Done");
      }
 
    t = ecore_time_unix_get();
