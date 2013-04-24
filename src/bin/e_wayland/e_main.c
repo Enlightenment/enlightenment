@@ -34,6 +34,8 @@ static void _e_main_parse_arguments(int argc, char **argv);
 static Eina_Bool _e_main_cb_signal_exit(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED);
 static Eina_Bool _e_main_cb_signal_hup(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED);
 static Eina_Bool _e_main_cb_signal_user(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev);
+static int _e_main_dirs_init(void);
+static int _e_main_dirs_shutdown(void);
 
 /* local variables */
 static Eina_Bool really_know = EINA_FALSE;
@@ -308,6 +310,19 @@ main(int argc, char **argv)
    /* TS("E Intl Init Done"); */
    /* _e_main_shutdown_push(e_intl_shutdown); */
 
+   TS("E Directories Init");
+   /* setup directories we will be using for configurations storage etc. */
+   if (!_e_main_dirs_init())
+     {
+        e_error_message_show(_("Enlightenment cannot create directories in your home directory.\n"
+                               "Perhaps you have no home directory or the disk is full?"));
+        _e_main_shutdown(-1);
+     }
+   TS("E Directories Init Done");
+   _e_main_shutdown_push(_e_main_dirs_shutdown);
+
+   /*** Main Loop ***/
+
    starting = EINA_FALSE;
    inloop = EINA_TRUE;
 
@@ -525,4 +540,50 @@ _e_main_cb_signal_user(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev
      }
 
    return ECORE_CALLBACK_RENEW;
+}
+
+static int
+_e_main_dirs_init(void)
+{
+   const char *base;
+   const char *dirs[] =
+   {
+      "images",
+      "fonts",
+      "themes",
+      "icons",
+      "backgrounds",
+      "applications",
+      "applications/menu",
+      "applications/menu/favorite",
+      "applications/menu/all",
+      "applications/bar",
+      "applications/bar/default",
+      "applications/startup",
+      "applications/restart",
+      "applications/trash",
+      "applications/desk-lock",
+      "applications/desk-unlock",
+      "modules",
+      "config",
+      "locale",
+      "input_methods",
+      NULL
+   };
+
+   base = e_user_dir_get();
+   if (ecore_file_mksubdirs(base, dirs) != sizeof(dirs) / sizeof(dirs[0]) - 1)
+     {
+        e_error_message_show("Could not create one of the required "
+                             "subdirectories of '%s'\n", base);
+        return 0;
+     }
+
+   return 1;
+}
+
+static int
+_e_main_dirs_shutdown(void)
+{
+   return 1;
 }
