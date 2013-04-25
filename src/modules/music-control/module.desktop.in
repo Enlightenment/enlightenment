@@ -3,4 +3,5 @@ Type=Link
 Name=Music Control
 Icon=e-module-music-control
 Comment=Control your music in your shelf
+Comment[it]=Per controllare la musica in esecuzione dalla mensola di sistema
 X-Enlightenment-ModuleType=utils

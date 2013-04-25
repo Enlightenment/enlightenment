@@ -1,13 +1,14 @@
 [Desktop Entry]
 Type=Link
 Name=Composite Settings
-Name[ru]=Композитный режим
+Name[de]=Composite-Grafik
 Name[eo]=Kunmetado
 Name[es]=Composición
 Name[gl]=Composición
-Name[de]=Composite-Grafik
-Name[tr]=Birleşiklik
+Name[it]=Compositing
 Name[pt]=Composição
+Name[ru]=Композитный режим
+Name[tr]=Birleşiklik
 Icon=preferences-composite
 Comment=Enlightenment Composite Manager Settings
 Comment[ru]=Композитный менеджер для Enlightenment

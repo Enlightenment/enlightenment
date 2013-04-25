@@ -3,4 +3,5 @@ Type=Link
 Name=Application Menu
 Icon=e-module-appmenu
 Comment=Gadget that hold the toolbar of the foreground application.
+Comment[it]=Gadget che contiene la barra degli strumenti dell'applicazione in primo piano.
 X-Enlightenment-ModuleType=utils

@@ -3,4 +3,5 @@ Type=Link
 Name=Configuration
 Icon=e-module-conf2
 Comment=Improved Enlightenment configuration panel.
+Comment[it]=Il nuovo pannello di configurazione potenziato di Enlightenment.
 X-Enlightenment-ModuleType=core
