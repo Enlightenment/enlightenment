@@ -1,6 +1,8 @@
 #ifndef E_H
 # define E_H
 
+# pragma GCC diagnostic ignored "-Wshadow"
+
 /**
  * @defgroup API Enlightenment API
  *
