@@ -912,6 +912,16 @@ AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
+define([CHECK_MODULE_WL_X11],
+[
+  if test "x${have_wayland_only}" = "xyes"; then
+    AC_E_CHECK_PKG(WL_X11, [ ecore-x >= $efl_version ], [WL_X11=true], [WL_X11=false])
+  else
+    WL_X11=false
+  fi
+])
+AM_CONDITIONAL([HAVE_WL_X11], [test "x${WL_X11}" = "xtrue"])
+
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
   if test "x${have_wayland_clients}" = "xyes"; then
@@ -973,6 +983,7 @@ AC_E_OPTIONAL_MODULE([tiling], true)
 AC_E_OPTIONAL_MODULE([access], true)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([contact], true)
+AC_E_OPTIONAL_MODULE([wl_x11], true, [CHECK_MODULE_WL_X11])
 AC_E_OPTIONAL_MODULE([wl_desktop_shell], true, [CHECK_MODULE_WL_DESKTOP_SHELL])
 
 HALT="/sbin/shutdown -h now"
