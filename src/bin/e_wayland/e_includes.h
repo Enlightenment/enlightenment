@@ -19,3 +19,4 @@
 #include "e_env.h"
 #include "e_module.h"
 #include "e_comp.h"
+#include "e_plane.h"
