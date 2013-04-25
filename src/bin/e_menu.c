@@ -2655,8 +2655,8 @@ _e_menu_item_ensure_onscreen(E_Menu_Item *mi)
 
    if (!mi->menu) return;
    if (!mi->menu->zone) return;
-   x = mi->x + mi->menu->cur.x;
-   y = mi->y + mi->menu->cur.y;
+   x = mi->x;
+   y = mi->y;
    w = mi->w;
    h = mi->h;
    if ((x + w) > (mi->menu->zone->x + mi->menu->zone->w))
