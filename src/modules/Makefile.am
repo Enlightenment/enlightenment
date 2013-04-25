@@ -8,6 +8,19 @@ INSTALL_DATA_HOOKS =
 
 MDIR = $(libdir)/enlightenment/modules
 AM_LDFLAGS = -module -avoid-version
+
+if HAVE_WAYLAND_ONLY
+
+AM_CPPFLAGS = -I. \
+	      -I$(top_srcdir) \
+	      -I$(top_srcdir)/src/bin/e_wayland \
+	      -I$(top_builddir)/src/bin/e_wayland \
+	      -I$(top_srcdir)/src/modules
+AM_CFLAGS = @e_wl_cflags@
+LIBS += @e_wl_libs@ @dlopen_libs@
+
+else
+
 AM_CPPFLAGS = -I. \
 	      -I$(top_srcdir) \
 	      -I$(top_srcdir)/src/bin \
@@ -15,6 +28,8 @@ AM_CPPFLAGS = -I. \
 	      -I$(top_srcdir)/src/modules
 AM_CFLAGS = @e_cflags@
 LIBS += @e_libs@ @dlopen_libs@
+
+endif
 
 EDJE_CC = $(EDJE_CC_$(V))
 EDJE_CC_ = $(EDJE_CC_$(AM_DEFAULT_VERBOSITY))
@@ -25,6 +40,15 @@ EDJE_FLAGS_VERBOSE_ = $(EDJE_FLAGS_VERBOSE_$(AM_DEFAULT_VERBOSITY))
 EDJE_FLAGS_VERBOSE_0 =
 EDJE_FLAGS_VERBOSE_1 = -v
 EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V)) @EDJE_DEF@
+
+
+if HAVE_WAYLAND_ONLY
+
+if USE_MODULE_WL_X11
+include Makefile_wl_x11.am
+endif
+
+else
 
 if USE_MODULE_CONNMAN
 include Makefile_connman.am
@@ -238,13 +262,17 @@ if USE_MODULE_CONTACT
 include Makefile_contact.am
 endif
 
+if USE_MODULE_WL_DESKTOP_SHELL
+include Makefile_wl_desktop_shell.am
+endif
+
+endif
+
+
 #if HAVE_WAYLAND_DRM
 #include Makefile_wl_drm.am
 #endif
 
-if USE_MODULE_WL_DESKTOP_SHELL
-include Makefile_wl_desktop_shell.am
-endif
 
 #if HAVE_WAYLAND_SCREENSHOT
 #include Makefile_wl_screenshot.am
