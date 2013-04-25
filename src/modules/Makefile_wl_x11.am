@@ -7,9 +7,9 @@ wl_x11pkgdir = $(MDIR)/wl_x11/$(MODULE_ARCH)
 wl_x11pkg_LTLIBRARIES = wl_x11/module.la
 
 wl_x11_module_la_DEPENDENCIES = $(MDEPENDENCIES)
-wl_x11_module_la_CFLAGS  = $(AM_CFLAGS) @WL_X11_CFLAGS@ @WAYLAND_CFLAGS@
-wl_x11_module_la_LIBADD   = $(LIBS) @WL_X11_LIBS@ @WAYLAND_LIBS@
-# wl_x11_module_la_LDFLAGS = $(AM_LDFLAGS) @WL_X11_LDFLAGS@ @WAYLAND_LDFLAGS@
+wl_x11_module_la_CFLAGS  = $(AM_CPPFLAGS) @e_wl_cflags@ @WL_X11_CFLAGS@ @WAYLAND_CFLAGS@
+wl_x11_module_la_LIBADD   = $(LIBS) @e_wl_libs@ @WL_X11_LIBS@ @WAYLAND_LIBS@
+# wl_x11_module_la_LDFLAGS = $(AM_LDFLAGS) @E_WL_LDFLAGS@ @WL_X11_LDFLAGS@
 wl_x11_module_la_SOURCES = wl_x11/e_mod_main.c \
 			    wl_x11/e_mod_main.h
 
