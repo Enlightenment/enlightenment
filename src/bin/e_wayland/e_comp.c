@@ -2,55 +2,92 @@
 
 /* local function prototypes */
 static void _e_comp_cb_bind(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id);
+static void _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 
 /* local interfaces */
 static const struct wl_compositor_interface _e_compositor_interface = 
 {
-   NULL, // surface_create
-   NULL // region_create
+   _e_comp_cb_surface_create,
+   _e_comp_cb_region_create
 };
 
 /* local variables */
-static E_Compositor *_e_comp;
 
 EINTERN int 
 e_comp_init(void)
 {
-   int fd = 0;
+   E_Module *mod = NULL;
+   const char *modname;
 
-   /* try to allocate space for a new compositor */
-   if (!(_e_comp = E_NEW(E_Compositor, 1)))
+   /* NB: Basically, this function needs to load the appropriate 
+    * compositor module (drm, fb, x11, etc) */
+
+   if (getenv("DISPLAY"))
+     modname = "wl_x11";
+   else
+     modname = "wl_drm";
+
+   if (!(mod = e_module_find(modname)))
+     mod = e_module_new(modname);
+
+   if (mod) 
      {
-        ERR("Could not allocate space for compositor");
-        return 0;
+        e_module_enable(mod);
+        return 1;
      }
 
+   return 0;
+}
+
+EINTERN int 
+e_comp_shutdown(void)
+{
+   E_Module *mod = NULL;
+   const char *modname;
+
+   /* NB: This function needs to unload the compositor module */
+
+   if (getenv("DISPLAY"))
+     modname = "wl_x11";
+   else
+     modname = "wl_drm";
+
+   if ((mod = e_module_find(modname)))
+     e_module_disable(mod);
+
+   return 1;
+}
+
+EAPI Eina_Bool 
+e_compositor_init(E_Compositor *comp)
+{
    /* try to create a wayland display */
-   if (!(_e_comp->wl.display = wl_display_create()))
+   if (!(comp->wl.display = wl_display_create()))
      {
         ERR("Could not create a wayland display: %m");
-        goto err;
+        return EINA_FALSE;
      }
 
    /* initialize signals */
-   wl_signal_init(&_e_comp->signals.destroy);
-   wl_signal_init(&_e_comp->signals.activate);
-   wl_signal_init(&_e_comp->signals.kill);
-   wl_signal_init(&_e_comp->signals.seat);
+   wl_signal_init(&comp->signals.destroy);
+   wl_signal_init(&comp->signals.activate);
+   wl_signal_init(&comp->signals.kill);
+   wl_signal_init(&comp->signals.seat);
 
    /* try to add the compositor to the displays global list */
-   if (!wl_display_add_global(_e_comp->wl.display, &wl_compositor_interface, 
-                              _e_comp, _e_comp_cb_bind))
+   if (!wl_display_add_global(comp->wl.display, &wl_compositor_interface, 
+                              comp, _e_comp_cb_bind))
      {
         ERR("Could not add compositor to globals: %m");
         goto global_err;
      }
 
    /* initialize the data device manager */
-   wl_data_device_manager_init(_e_comp->wl.display);
+   wl_data_device_manager_init(comp->wl.display);
 
    /* try to initialize the shm mechanism */
-   if (wl_display_init_shm(_e_comp->wl.display) < 0)
+   if (wl_display_init_shm(comp->wl.display) < 0)
      ERR("Could not initialize SHM mechanism: %m");
 
 #ifdef HAVE_WAYLAND_EGL
@@ -59,18 +96,19 @@ e_comp_init(void)
     * NB: This is interesting....if we try to eglGetDisplay and pass in the 
     * wayland display, then EGL fails due to XCB not owning the event queue.
     * If we pass it a NULL, it inits just fine */
-   _e_comp->egl.display = eglGetDisplay(NULL);
-   if (_e_comp->egl.display == EGL_NO_DISPLAY)
+   comp->egl.display = eglGetDisplay(NULL);
+   if (comp->egl.display == EGL_NO_DISPLAY)
      ERR("Could not get EGL display: %m");
    else
      {
         EGLint major, minor;
 
         /* try to initialize EGL */
-        if (!eglInitialize(_e_comp->egl.display, &major, &minor))
+        if (!eglInitialize(comp->egl.display, &major, &minor))
           {
              ERR("Could not initialize EGL: %m");
-             eglTerminate(_e_comp->egl.display);
+             eglTerminate(comp->egl.display);
+             eglReleaseThread();
           }
         else
           {
@@ -84,43 +122,37 @@ e_comp_init(void)
                };
 
              /* try to find a matching egl config */
-             if ((!eglChooseConfig(_e_comp->egl.display, attribs, 
-                                   &_e_comp->egl.config, 1, &n) || (n == 0)))
+             if ((!eglChooseConfig(comp->egl.display, attribs, 
+                                   &comp->egl.config, 1, &n) || (n == 0)))
                {
                   ERR("Could not choose EGL config: %m");
-                  eglTerminate(_e_comp->egl.display);
+                  eglTerminate(comp->egl.display);
+                  eglReleaseThread();
                }
           }
      }
 #endif
 
-   return 1;
+   return EINA_TRUE;
 
 global_err:
    /* destroy the previously created display */
-   if (_e_comp->wl.display) wl_display_destroy(_e_comp->wl.display);
-err:
-   /* free the compositor object */
-   E_FREE(_e_comp);
+   if (comp->wl.display) wl_display_destroy(comp->wl.display);
 
-   return 0;
+   return EINA_FALSE;
 }
 
-EINTERN int 
-e_comp_shutdown(void)
+EAPI Eina_Bool 
+e_compositor_shutdown(E_Compositor *comp)
 {
 #ifdef HAVE_WAYLAND_EGL
    /* destroy the egl display */
-   if (_e_comp->egl.display) eglTerminate(_e_comp->egl.display);
+   if (comp->egl.display) eglTerminate(comp->egl.display);
+   eglReleaseThread();
 #endif
 
    /* destroy the previously created display */
-   if (_e_comp->wl.display) wl_display_destroy(_e_comp->wl.display);
-
-   /* free the compositor object */
-   E_FREE(_e_comp);
-
-   return 1;
+   if (comp->wl.display) wl_display_destroy(comp->wl.display);
 }
 
 /* local functions */
@@ -130,4 +162,20 @@ _e_comp_cb_bind(struct wl_client *client, void *data EINA_UNUSED, unsigned int v
    /* add the compositor to the client */
    wl_client_add_object(client, &wl_compositor_interface, 
                         &_e_compositor_interface, id, _e_comp);
+}
+
+static void 
+_e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id)
+{
+   E_Compositor *comp;
+
+   if (!(comp = resource->data)) return;
+}
+
+static void 
+_e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id)
+{
+   E_Compositor *comp;
+
+   if (!(comp = resource->data)) return;
 }
