@@ -38,6 +38,7 @@ static int _e_main_dirs_init(void);
 static int _e_main_dirs_shutdown(void);
 static int _e_main_paths_init(void);
 static int _e_main_paths_shutdown(void);
+static Eina_Bool _e_main_xdg_dirs_check(void);
 
 /* local variables */
 static Eina_Bool really_know = EINA_FALSE;
@@ -377,6 +378,9 @@ main(int argc, char **argv)
 
    s = getenv("E_DESKLOCK_LOCKED");
    if ((s) && (!strcmp(s, "locked"))) waslocked = EINA_TRUE;
+
+   if (!_e_main_xdg_dirs_check())
+     _e_main_shutdown(-1);
 
    /* NB: We need to init the e_module subsystem first, then we can init 
     * the "main" compositor subsytem. Reasoning is that the compositor 
@@ -837,4 +841,49 @@ _e_main_paths_shutdown(void)
         path_messages = NULL;
      }
    return 1;
+}
+
+static Eina_Bool 
+_e_main_xdg_dirs_check(void)
+{
+   const char *s, *p;
+   char npath[PATH_MAX], buff[PATH_MAX];
+
+   if (!(p = e_prefix_get())) return EINA_FALSE;
+
+   snprintf(npath, sizeof(npath), "%s:%s/share", e_prefix_data_get(), p);
+   if ((s = getenv("XDG_DATA_DIRS")))
+     {
+        if (strncmp(s, npath, strlen(npath)))
+          {
+             snprintf(buff, sizeof(buff), "%s:%s", npath, s);
+             e_util_env_set("XDG_DATA_DIRS", buff);
+          }
+     }
+   else
+     {
+        snprintf(buff, sizeof(buff), "%s:/usr/local/share:/usr/share", npath);
+        e_util_env_set("XDG_DATA_DIRS", buff);
+     }
+
+   if ((s = getenv("XDG_RUNTIME_DIR")))
+     {
+        if (!ecore_file_is_dir(s))
+          {
+             ERR("XDG_RUNTIME_DIR %s is not a directory", s);
+             return EINA_FALSE;
+          }
+        if ((!ecore_file_can_read(s)) || (!ecore_file_can_write(s)))
+          {
+             ERR("Cannot read or write to XDG_RUNTIME_DIR: %s", s);
+             return EINA_FALSE;
+          }
+     }
+   else
+     {
+        ERR("XDG_RUNTIME_DIR Not Set");
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
