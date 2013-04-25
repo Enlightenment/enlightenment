@@ -7683,13 +7683,11 @@ _e_fm2_cb_icon_thumb_gen(void *data, Evas_Object *obj, void *event_info __UNUSED
 static void
 _e_fm2_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
-   Evas_Event_Key_Down *ev;
-   E_Fm2_Smart_Data *sd;
+   Evas_Event_Key_Down *ev = event_info;
+   E_Fm2_Smart_Data *sd = data;
    E_Fm2_Icon *ic;
 
-   sd = data;
-   ev = event_info;
-
+   if (e_menu_grab_window_get()) return;
    if (sd->iop_icon) return;
 
    if (evas_key_modifier_is_set(ev->modifiers, "Control"))
