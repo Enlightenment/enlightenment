@@ -244,8 +244,7 @@ e_modapi_init(E_Module *m)
 
    /* set up the notification daemon */
    if (!e_notification_server_register(&server_info, _notification_cb_notify,
-                                       _notification_cb_close,
-                                       notification_cfg))
+                                       _notification_cb_close, NULL))
      {
         e_util_dialog_show(_("Error during notification server initialization"),
                            _("Ensure there's no other module acting as a server"
