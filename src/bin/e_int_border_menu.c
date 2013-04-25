@@ -31,7 +31,6 @@ static void _e_border_menu_cb_fullscreen(void *data, E_Menu *m, E_Menu_Item *mi)
 static void _e_border_menu_cb_skip_winlist(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_border_menu_cb_skip_pager(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_border_menu_cb_skip_taskbar(void *data, E_Menu *m, E_Menu_Item *mi);
-static void _e_border_menu_cb_sendto_icon_pre(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_border_menu_cb_sendto_pre(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_border_menu_cb_sendto(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_border_menu_cb_pin(void *data, E_Menu *m, E_Menu_Item *mi);
@@ -881,7 +880,8 @@ _e_border_menu_cb_skip_taskbar(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi
    e_remember_update(bd);
 }
 
-static void
+#ifndef DESKMIRROR_TEST
+ static void
 _e_border_menu_cb_sendto_icon_pre(void *data, E_Menu *m, E_Menu_Item *mi)
 {
    E_Desk *desk = NULL;
@@ -903,6 +903,7 @@ _e_border_menu_cb_sendto_icon_pre(void *data, E_Menu *m, E_Menu_Item *mi)
    e_thumb_icon_begin(o);
    mi->icon_object = o;
 }
+#endif
 
 static void
 _e_border_menu_cb_sendto_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
@@ -935,24 +936,35 @@ _e_border_menu_cb_sendto_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
              e_menu_item_disabled_set(submi, EINA_TRUE);
           }
 
-// FIXME: Remove labels and add bgpreview to menu.
-// Evas_Object *o = e_widget_bgpreview_add(m->evas, 4, 2);
-
         for (i = 0; i < zone->desk_x_count * zone->desk_y_count; i++)
           {
              E_Desk *desk;
-
+#ifdef DESKMIRROR_TEST
+             int tw = 50, th;
+#endif
              desk = zone->desks[i];
+#ifdef DESKMIRROR_TEST
+             th = (tw * desk->zone->h) / desk->zone->w;
+#endif
              submi = e_menu_item_new(subm);
              e_menu_item_label_set(submi, desk->name);
              e_menu_item_radio_set(submi, 1);
              e_menu_item_radio_group_set(submi, 2);
+#ifdef DESKMIRROR_TEST
+             e_menu_item_icon_file_set(submi, "sup");
+#endif
              if ((bd->zone == zone) && (desk_cur == desk))
                e_menu_item_toggle_set(submi, 1);
              else
                e_menu_item_callback_set(submi, _e_border_menu_cb_sendto, desk);
+#ifdef DESKMIRROR_TEST
+             submi->icon_object = e_deskmirror_add(desk);
+             edje_extern_object_min_size_set(submi->icon_object, tw, th);
+             evas_object_show(submi->icon_object);
+#else
              e_menu_item_realize_callback_set(submi, _e_border_menu_cb_sendto_icon_pre,
                                               desk);
+#endif
           }
      }
 }

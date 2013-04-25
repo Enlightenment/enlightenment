@@ -71,6 +71,7 @@ e_dbusmenu.h \
 e_desk.h \
 e_deskenv.h \
 e_desklock.h \
+e_deskmirror.h \
 e_dialog.h \
 e_dnd.h \
 e_dpms.h \
@@ -241,6 +242,7 @@ e_dbusmenu.c \
 e_desk.c \
 e_deskenv.c \
 e_desklock.c \
+e_deskmirror.c \
 e_dialog.c \
 e_dnd.c \
 e_dpms.c \

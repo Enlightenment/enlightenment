@@ -120,6 +120,7 @@
 #include "e_filereg.h"
 #include "e_widget_aspect.h"
 #include "e_widget_bgpreview.h"
+#include "e_deskmirror.h"
 #include "e_fm_prop.h"
 #include "e_mouse.h"
 #include "e_order.h"

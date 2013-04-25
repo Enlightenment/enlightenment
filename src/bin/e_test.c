@@ -2,6 +2,25 @@
 
 static void _e_test_internal(E_Container *con);
 
+#ifdef DESKMIRROR_TEST
+
+static Eina_Bool
+deskmirror_test(void *d EINA_UNUSED)
+{
+   E_Zone *zone;
+   Evas_Object *o;
+   E_Popup *pop;
+
+   zone = e_util_zone_current_get(e_manager_current_get());
+   pop = e_popup_new(zone, zone->x + zone->w / 4, zone->y + zone->h / 4, zone->w / 2, zone->h / 2);
+   o = e_deskmirror_add(e_desk_current_get(zone));
+   e_popup_content_set(pop, o);
+   e_popup_show(pop);
+   return EINA_FALSE;
+}
+
+#endif
+
 EAPI void
 e_test(void)
 {
@@ -16,6 +35,10 @@ e_test(void)
              _e_test_internal(con);
           }
      }
+
+#ifdef DESKMIRROR_TEST
+   ecore_timer_add(2.0, deskmirror_test, NULL);
+#endif
 }
 
 #if 0
