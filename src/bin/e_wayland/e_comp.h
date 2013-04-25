@@ -44,5 +44,8 @@ struct _E_Compositor
 EINTERN int e_comp_init(void);
 EINTERN int e_comp_shutdown(void);
 
+EAPI Eina_Bool e_compositor_init(E_Compositor *comp);
+EAPI Eina_Bool e_compositor_shutdown(E_Compositor *comp);
+
 # endif
 #endif
