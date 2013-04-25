@@ -65,7 +65,7 @@ enlightenment_wl_src = \
   $(ENLIGHTENMENTHEADERS)
 
 enlightenment_wl_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@
-enlightenment_wl_CPPFLAGS = $(AM_CPPFLAGS) -DE_LOGGING=0
+enlightenment_wl_CPPFLAGS = $(AM_CPPFLAGS) -DE_LOGGING=1
 enlightenment_wl_SOURCES = \
   e_main.c \
   $(enlightenment_wl_src)
