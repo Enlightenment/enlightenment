@@ -1,0 +1,19 @@
+wl_x11dir = $(MDIR)/wl_x11
+
+# wl_x11_DATA = wl_x11/e-module-wl_x11.edj
+# EXTRA_DIST += wl_x11/e-module-wl_x11.edj
+
+wl_x11pkgdir = $(MDIR)/wl_x11/$(MODULE_ARCH)
+wl_x11pkg_LTLIBRARIES = wl_x11/module.la
+
+wl_x11_module_la_DEPENDENCIES = $(MDEPENDENCIES)
+wl_x11_module_la_CFLAGS  = $(AM_CFLAGS) @WL_X11_CFLAGS@ @WAYLAND_CFLAGS@
+wl_x11_module_la_LIBADD   = $(LIBS) @WL_X11_LIBS@ @WAYLAND_LIBS@
+# wl_x11_module_la_LDFLAGS = $(AM_LDFLAGS) @WL_X11_LDFLAGS@ @WAYLAND_LDFLAGS@
+wl_x11_module_la_SOURCES = wl_x11/e_mod_main.c \
+			    wl_x11/e_mod_main.h
+
+# TODO: incomplete
+#.PHONY: wl_x11 install-wl_x11
+#wl_x11: $(wl_x11pkg_LTLIBRARIES) $(wl_x11_DATA)
+#install-wl_x11: install-wl_x11DATA install-wl_x11pkgLTLIBRARIES
