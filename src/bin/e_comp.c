@@ -5377,7 +5377,19 @@ e_comp_canvas_layer_set(Evas_Object *obj, E_Comp_Canvas_Layer comp_layer, E_Laye
         cw = e_comp_object_add(c, obj, evas_object_data_get(obj, "eobj"));
         evas_object_layer_set(cw->effect_obj, comp_layer);
         if (comp_layer > E_COMP_CANVAS_LAYER_LAYOUT)
-          e_comp_override_add(c); 
+          e_comp_override_add(c);
+        else
+          {
+             E_Comp_Win *cwn;
+             E_Container *con;
+
+             con = eina_list_data_get(c->man->containers);
+             cwn = e_comp_win_find(con->layers[0].win);
+             cwn->stack_below = eina_list_append(cwn->stack_below, cw);
+             cw->cw_above = cwn;
+             c->wins = eina_inlist_remove(c->wins, EINA_INLIST_GET(cw));
+             c->wins = eina_inlist_prepend_relative(c->wins, EINA_INLIST_GET(cw), EINA_INLIST_GET(cwn));
+          }
      }
    if (stack == E_COMP_CANVAS_STACK_ABOVE)
      _e_comp_win_raise(cw);
