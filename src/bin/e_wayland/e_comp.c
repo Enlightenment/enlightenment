@@ -1,7 +1,7 @@
 #include "e.h"
 
 /* local function prototypes */
-static void _e_comp_cb_bind(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id);
+static void _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
 static void _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 static void _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 
@@ -83,6 +83,10 @@ e_compositor_init(E_Compositor *comp)
         goto global_err;
      }
 
+   /* TODO: e_plane */
+
+   /* TODO: init xkb */
+
    /* initialize the data device manager */
    wl_data_device_manager_init(comp->wl.display);
 
@@ -153,15 +157,21 @@ e_compositor_shutdown(E_Compositor *comp)
 
    /* destroy the previously created display */
    if (comp->wl.display) wl_display_destroy(comp->wl.display);
+
+   return EINA_TRUE;
 }
 
 /* local functions */
 static void 
-_e_comp_cb_bind(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id)
+_e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
 {
+   E_Compositor *comp;
+
+   if (!(comp = data)) return;
+
    /* add the compositor to the client */
    wl_client_add_object(client, &wl_compositor_interface, 
-                        &_e_compositor_interface, id, _e_comp);
+                        &_e_compositor_interface, id, comp);
 }
 
 static void 
