@@ -186,7 +186,7 @@ group { name: "e/widgets/border/default/border";
             fixed: 1 1;
             rel1.to: "knob";
             rel2.to: "knob";
-            image.normal: "glow_round_corners.png";
+            image.normal: "glow_round_corners_small.png";
             map.on: 1;
             map.smooth: 1;
             map.rotation.center: "knob";
