@@ -134,6 +134,7 @@ Improvements:
     * desk flip animations moved to edje
     * startup splash screen moved to compositor canvas
     * added new modes for notification display on multiple monitors
+    * improve efm mouse movement detection for icons
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.
