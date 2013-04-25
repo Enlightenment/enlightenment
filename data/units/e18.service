@@ -4,15 +4,15 @@ Before=end.target
 After=xorg.target
 Requires=xorg.target
 Requires=dbus.socket
-Requires=pulseaudio.service
-Requires=ssh-agent.service
+Wants=pulseaudio.service
+Wants=ssh-agent.service
 AllowIsolate=true
 
 [Service]
 Type=notify
 #Environment=PATH=uncomment:to:override:your:PATH
 Environment=E_START=enlightenment
-ExecStart=/usr/bin/enlightenment
+ExecStart=/usr/bin/enlightenment -locked
 Restart=always
 RestartPreventExitStatus=0
 RestartSec=2
