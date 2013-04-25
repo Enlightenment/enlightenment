@@ -12,6 +12,7 @@ struct _E_Compositor
      {
         struct wl_display *display;
         struct wl_event_loop *loop;
+        struct wl_event_loop *input_loop;
      } wl;
 
    struct 
@@ -31,9 +32,12 @@ struct _E_Compositor
      } egl;
 #endif
 
+   E_Plane plane; // primary plane
+
    Ecore_Fd_Handler *fd_hdlr;
    Ecore_Idler *idler;
 
+   Eina_List *planes;
    Eina_List *outputs;
    Eina_List *inputs;
    Eina_List *surfaces;
@@ -46,6 +50,7 @@ EINTERN int e_comp_shutdown(void);
 
 EAPI Eina_Bool e_compositor_init(E_Compositor *comp);
 EAPI Eina_Bool e_compositor_shutdown(E_Compositor *comp);
+EAPI void e_compositor_plane_stack(E_Compositor *comp, E_Plane *plane, E_Plane *above);
 
 # endif
 #endif
