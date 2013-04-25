@@ -58,7 +58,7 @@ _e_mod_notify_cb_add(void *data EINA_UNUSED, E_Notification_Notify *n)
    if (n->replaces_id && (nwin = _e_mod_notify_find(n->replaces_id)))
      {
         if (nwin->notify)
-          e_notification_notify_free(nwin->notify);
+          e_object_del(E_OBJECT(nwin->notify));
         nwin->notify = n;
         nwin->id = _notify_id;
         _e_mod_notify_refresh(nwin);
@@ -247,7 +247,7 @@ _e_mod_notify_cb_free(Ind_Notify_Win *nwin)
    nwin->win = NULL;
    e_notification_notify_close(nwin->notify,
                                E_NOTIFICATION_NOTIFY_CLOSED_REASON_REQUESTED);
-   e_notification_notify_free(nwin->notify);
+   e_object_del(E_OBJECT(nwin->notify));
    _nwins = eina_list_remove(_nwins, nwin);
    E_FREE(nwin);
 }

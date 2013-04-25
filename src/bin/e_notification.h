@@ -1,8 +1,9 @@
+#ifndef E_TYPEDEFS
+
 #ifndef _E_NOTIFICATION_H
 #define _E_NOTIFICATION_H
 
-#include <Eldbus.h>
-#include <Eina.h>
+#define E_NOTIFICATION_TYPE 0x12342166
 
 typedef enum _E_Notification_Notify_Urgency
 {
@@ -21,6 +22,7 @@ typedef enum _E_Notification_Notify_Closed_Reason
 
 typedef struct _E_Notification_Notify
 {
+   E_Object e_obj_inherit;
    unsigned int id;
    const char *app_name;
    unsigned replaces_id;
@@ -73,12 +75,13 @@ EAPI Eina_Bool e_notification_server_register(const E_Notification_Server_Info *
  */
 EAPI void e_notification_server_unregister(void);
 
-EAPI void e_notification_notify_free(E_Notification_Notify *notify);
 EAPI void e_notification_notify_close(E_Notification_Notify *notify, E_Notification_Notify_Closed_Reason reason);
 EAPI Evas_Object *e_notification_notify_raw_image_get(E_Notification_Notify *notify, Evas *evas);
 
 //client
 typedef void (*E_Notification_Client_Send_Cb)(void *data, unsigned int id);
 EAPI Eina_Bool e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_Send_Cb cb, const void *data);
+
+#endif
 
 #endif

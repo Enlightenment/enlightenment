@@ -14,18 +14,12 @@ static unsigned int
 _notification_notify(E_Notification_Notify *n)
 {
    unsigned int new_id;
-   int popuped;
 
    if (e_desklock_state_get()) return 0;
 
    notification_cfg->next_id++;
    new_id = notification_cfg->next_id;
-   popuped = notification_popup_notify(n, new_id);
-   if (!popuped)
-     {
-        n->urgency = 4;
-        notification_popup_notify(n, new_id);
-     }
+   notification_popup_notify(n, new_id);
 
    return new_id;
 }

@@ -13,6 +13,21 @@ typedef struct _Notification_Data
 static Notification_Data *n_data = NULL;
 
 static void
+_notification_free(E_Notification_Notify *notify)
+{
+   EINA_SAFETY_ON_NULL_RETURN(notify);
+   eina_stringshare_del(notify->app_name);
+   eina_stringshare_del(notify->body);
+   eina_stringshare_del(notify->icon.icon);
+   if (notify->icon.icon_path)
+     eina_stringshare_del(notify->icon.icon_path);
+   eina_stringshare_del(notify->sumary);
+   if (notify->icon.raw.data)
+     free(notify->icon.raw.data);
+   free(notify);
+}
+
+static void
 hints_dict_iter(void *data, const void *key, Eldbus_Message_Iter *var)
 {
    E_Notification_Notify *n = data;
@@ -64,8 +79,7 @@ notify_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Messag
    if (!n_data->notify_cb)
      return NULL;
 
-   n = calloc(1, sizeof(E_Notification_Notify));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(n, NULL);
+   n = E_OBJECT_ALLOC(E_Notification_Notify, E_NOTIFICATION_TYPE, _notification_free);
 
    if (!eldbus_message_arguments_get(msg, "susssasa{sv}i", &n->app_name,
                                     &n->replaces_id, &n->icon.icon, &n->sumary,
@@ -73,7 +87,7 @@ notify_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Messag
                                     &n->timeout))
      {
         ERR("Reading message.");
-        free(n);
+        e_object_del(E_OBJECT(n));
         return NULL;
      }
    eldbus_message_iter_dict_iterate(hints_iter, "sv", hints_dict_iter, n);
@@ -82,9 +96,11 @@ notify_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Messag
    n->sumary = eina_stringshare_add(n->sumary);
    n->body = eina_stringshare_add(n->body);
 
+   e_object_ref(E_OBJECT(n));
    n->id = n_data->notify_cb(n_data->data, n);
    reply = eldbus_message_method_return_new(msg);
    eldbus_message_arguments_append(reply, "u", n->id);
+   e_object_unref(E_OBJECT(n));
    return reply;
 }
 
@@ -193,21 +209,6 @@ e_notification_server_unregister(void)
    eldbus_shutdown();
    free(n_data);
    n_data = NULL;
-}
-
-EAPI void
-e_notification_notify_free(E_Notification_Notify *notify)
-{
-   EINA_SAFETY_ON_NULL_RETURN(notify);
-   eina_stringshare_del(notify->app_name);
-   eina_stringshare_del(notify->body);
-   eina_stringshare_del(notify->icon.icon);
-   if (notify->icon.icon_path)
-     eina_stringshare_del(notify->icon.icon_path);
-   eina_stringshare_del(notify->sumary);
-   if (notify->icon.raw.data)
-     free(notify->icon.raw.data);
-   free(notify);
 }
 
 EAPI void

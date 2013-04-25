@@ -28,7 +28,7 @@ _notification_timer_cb(Popup_Data *popup)
    return EINA_FALSE;
 }
 
-int
+void
 notification_popup_notify(E_Notification_Notify *n,
                           unsigned int id)
 {
@@ -37,13 +37,13 @@ notification_popup_notify(E_Notification_Notify *n,
    switch (n->urgency)
      {
       case E_NOTIFICATION_NOTIFY_URGENCY_LOW:
-        if (!notification_cfg->show_low) return 0;
+        if (!notification_cfg->show_low) return;
         break;
       case E_NOTIFICATION_NOTIFY_URGENCY_NORMAL:
-        if (!notification_cfg->show_normal) return 0;
+        if (!notification_cfg->show_normal) return;
         break;
       case E_NOTIFICATION_NOTIFY_URGENCY_CRITICAL:
-        if (!notification_cfg->show_critical) return 0;
+        if (!notification_cfg->show_critical) return;
         break;
       default:
         break;
@@ -54,7 +54,7 @@ notification_popup_notify(E_Notification_Notify *n,
    if (n->replaces_id && (popup = _notification_popup_find(n->replaces_id)))
      {
         if (popup->notif)
-          e_notification_notify_free(popup->notif);
+          e_object_del(E_OBJECT(popup->notif));
 
         popup->notif = n;
         popup->id = id;
@@ -66,9 +66,9 @@ notification_popup_notify(E_Notification_Notify *n,
         popup = _notification_popup_new(n, id);
         if (!popup)
           {
-             e_notification_notify_free(n);
+             e_object_del(E_OBJECT(n));
              ERR("Error creating popup");
-             return 0;
+             return;
           }
         notification_cfg->popups = eina_list_append(notification_cfg->popups, popup);
         edje_object_signal_emit(popup->theme, "notification,new", "notification");
@@ -87,8 +87,6 @@ notification_popup_notify(E_Notification_Notify *n,
 
    if (n->timeout > 0)
      popup->timer = ecore_timer_add(n->timeout, (Ecore_Task_Cb)_notification_timer_cb, popup);
-
-   return 1;
 }
 
 void
@@ -500,7 +498,7 @@ _notification_popdown(Popup_Data                  *popup,
    if (popup->notif)
      {
         e_notification_notify_close(popup->notif, reason);
-        e_notification_notify_free(popup->notif);
+        e_object_del(E_OBJECT(popup->notif));
      }
    popup->notif = NULL;
    if (popup->pending) return;

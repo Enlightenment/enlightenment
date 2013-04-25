@@ -71,7 +71,7 @@ struct _Popup_Data
 };
 
 
-int notification_popup_notify(E_Notification_Notify *n, unsigned int id);
+void notification_popup_notify(E_Notification_Notify *n, unsigned int id);
 void notification_popup_shutdown(void);
 void notification_popup_close(unsigned int id);
 
