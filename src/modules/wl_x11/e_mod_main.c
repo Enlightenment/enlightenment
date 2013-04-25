@@ -47,6 +47,12 @@ e_modapi_init(E_Module *m)
                                 "e_wayland/X11 Compositor");
    ecore_x_window_show(_e_comp->win);
 
+   /* flush any pending events
+    * 
+    * NB: This advertises out any globals so it needs to be deferred 
+    * until after the module has finished initialize */
+   /* wl_event_loop_dispatch(_e_comp->base.wl.loop, 0); */
+
    return m;
 
 err:
