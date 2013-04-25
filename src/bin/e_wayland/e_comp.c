@@ -4,6 +4,8 @@
 static void _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
 static void _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 static void _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static Eina_Bool _e_comp_cb_read(void *data, Ecore_Fd_Handler *hdl EINA_UNUSED);
+static Eina_Bool _e_comp_cb_idle(void *data);
 
 /* local interfaces */
 static const struct wl_compositor_interface _e_compositor_interface = 
@@ -62,6 +64,9 @@ e_comp_shutdown(void)
 EAPI Eina_Bool 
 e_compositor_init(E_Compositor *comp)
 {
+   E_Plane *p;
+   int fd = 0;
+
    /* try to create a wayland display */
    if (!(comp->wl.display = wl_display_create()))
      {
@@ -83,7 +88,9 @@ e_compositor_init(E_Compositor *comp)
         goto global_err;
      }
 
-   /* TODO: e_plane */
+   /* initialize hardware plane */
+   e_plane_init(&comp->plane, 0, 0);
+   e_compositor_plane_stack(comp, &comp->plane, NULL);
 
    /* TODO: init xkb */
 
@@ -137,7 +144,53 @@ e_compositor_init(E_Compositor *comp)
      }
 #endif
 
+   /* create the input loop */
+   comp->wl.input_loop = wl_event_loop_create();
+
+   /* get the display event loop */
+   comp->wl.loop = wl_display_get_event_loop(comp->wl.display);
+
+   /* get the event loop fd */
+   fd = wl_event_loop_get_fd(comp->wl.loop);
+
+   /* add the event loop fd to main ecore */
+   comp->fd_hdlr = 
+     ecore_main_fd_handler_add(fd, ECORE_FD_READ, 
+                               _e_comp_cb_read, comp, NULL, NULL);
+
+   /* add an idler for flushing clients */
+   comp->idler = ecore_idle_enterer_add(_e_comp_cb_idle, comp);
+
+   /* add the socket */
+   if (wl_display_add_socket(comp->wl.display, NULL))
+     {
+        ERR("Failed to add socket: %m");
+        goto sock_err;
+     }
+
+   wl_event_loop_dispatch(comp->wl.loop, 0);
+
    return EINA_TRUE;
+
+sock_err:
+   /* destroy the idler */
+   if (comp->idler) ecore_idler_del(comp->idler);
+
+   /* destroy the fd handler */
+   if (comp->fd_hdlr) ecore_main_fd_handler_del(comp->fd_hdlr);
+
+   /* destroy the input loop */
+   if (comp->wl.input_loop) wl_event_loop_destroy(comp->wl.input_loop);
+
+#ifdef HAVE_WAYLAND_EGL
+   /* destroy the egl display */
+   if (comp->egl.display) eglTerminate(comp->egl.display);
+   eglReleaseThread();
+#endif
+
+   /* free any planes */
+   EINA_LIST_FREE(comp->planes, p)
+     e_plane_shutdown(p);
 
 global_err:
    /* destroy the previously created display */
@@ -149,11 +202,23 @@ global_err:
 EAPI Eina_Bool 
 e_compositor_shutdown(E_Compositor *comp)
 {
+   E_Plane *p;
+
+   /* free any planes */
+   EINA_LIST_FREE(comp->planes, p)
+     e_plane_shutdown(p);
+
 #ifdef HAVE_WAYLAND_EGL
    /* destroy the egl display */
    if (comp->egl.display) eglTerminate(comp->egl.display);
    eglReleaseThread();
 #endif
+
+   /* destroy the input loop */
+   if (comp->wl.input_loop) wl_event_loop_destroy(comp->wl.input_loop);
+
+   /* destroy the fd handler */
+   if (comp->fd_hdlr) ecore_main_fd_handler_del(comp->fd_hdlr);
 
    /* destroy the previously created display */
    if (comp->wl.display) wl_display_destroy(comp->wl.display);
@@ -161,11 +226,20 @@ e_compositor_shutdown(E_Compositor *comp)
    return EINA_TRUE;
 }
 
+EAPI void 
+e_compositor_plane_stack(E_Compositor *comp, E_Plane *plane, E_Plane *above)
+{
+   /* add this plane to the compositors list */
+   comp->planes = eina_list_prepend_relative(comp->planes, plane, above);
+}
+
 /* local functions */
 static void 
 _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
 {
    E_Compositor *comp;
+
+   printf("Comp Bind\n");
 
    if (!(comp = data)) return;
 
@@ -188,4 +262,36 @@ _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource,
    E_Compositor *comp;
 
    if (!(comp = resource->data)) return;
+}
+
+static Eina_Bool 
+_e_comp_cb_read(void *data, Ecore_Fd_Handler *hdl EINA_UNUSED)
+{
+   E_Compositor *comp;
+
+   printf("Comp Read\n");
+
+   if ((comp = data))
+     {
+        wl_event_loop_dispatch(comp->wl.loop, 0);
+        wl_display_flush_clients(comp->wl.display);
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool 
+_e_comp_cb_idle(void *data)
+{
+   E_Compositor *comp;
+
+//   printf("Comp Idle\n");
+
+   if ((comp = data))
+     {
+        /* flush any clients before we idle */
+        wl_display_flush_clients(comp->wl.display);
+     }
+
+   return ECORE_CALLBACK_RENEW;
 }
