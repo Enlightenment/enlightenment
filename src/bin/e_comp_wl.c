@@ -8,6 +8,7 @@ static void _e_comp_wl_cb_bind(struct wl_client *client, void *data EINA_UNUSED,
 static Eina_Bool _e_comp_wl_cb_read(void *data EINA_UNUSED, Ecore_Fd_Handler *hdl EINA_UNUSED);
 static Eina_Bool _e_comp_wl_cb_idle(void *data EINA_UNUSED);
 static Eina_Bool _e_comp_wl_cb_module_idle(void *data EINA_UNUSED);
+static Eina_Bool _e_comp_wl_cb_keymap_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
 
 /* compositor interface prototypes */
 static void _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
@@ -186,6 +187,11 @@ e_comp_wl_init(void)
         goto err;
      }
 
+   /* setup keymap_change event handler */
+   _e_wl_comp->kbd_handler = 
+     ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, 
+                             _e_comp_wl_cb_keymap_changed, NULL);
+
    /* add an idler for deferred shell module loading */
    _module_idler = ecore_idler_add(_e_comp_wl_cb_module_idle, NULL);
 
@@ -216,6 +222,10 @@ e_comp_wl_init(void)
    return EINA_TRUE;
 
 err:
+   /* remove kbd handler */
+   if (_e_wl_comp->kbd_handler) 
+     ecore_event_handler_del(_e_wl_comp->kbd_handler);
+
    /* remove the module idler */
    if (_module_idler) ecore_idler_del(_module_idler);
 
@@ -348,8 +358,11 @@ _e_comp_wl_cb_read(void *data EINA_UNUSED, Ecore_Fd_Handler *hdl EINA_UNUSED)
 static Eina_Bool 
 _e_comp_wl_cb_idle(void *data EINA_UNUSED)
 {
-   /* flush any clients before we idle */
-   wl_display_flush_clients(_e_wl_comp->wl.display);
+   if (_e_wl_comp->wl.display)
+     {
+        /* flush any clients before we idle */
+        wl_display_flush_clients(_e_wl_comp->wl.display);
+     }
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -385,6 +398,71 @@ _e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
      }
 
    return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool 
+_e_comp_wl_cb_keymap_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   struct xkb_keymap *keymap;
+
+   printf("Kbd Changed\n");
+
+   /* try to fetch the keymap */
+   if (!(keymap = _e_comp_wl_input_keymap_get())) 
+     return ECORE_CALLBACK_PASS_ON;
+
+   /* destroy keyboard */
+   if (_e_wl_comp->input->xkb.info)
+     {
+        /* if we have a keymap, unreference it */
+        if (_e_wl_comp->input->xkb.info->keymap)
+          xkb_map_unref(_e_wl_comp->input->xkb.info->keymap);
+
+        /* if we have a keymap mmap'd area, unmap it */
+        if (_e_wl_comp->input->xkb.info->area)
+          munmap(_e_wl_comp->input->xkb.info->area, 
+                 _e_wl_comp->input->xkb.info->size);
+
+        /* if we created an fd for keyboard input, close it */
+        if (_e_wl_comp->input->xkb.info->fd) 
+          close(_e_wl_comp->input->xkb.info->fd);
+
+        /* free the allocated keyboard info structure */
+        E_FREE(_e_wl_comp->input->xkb.info);
+     }
+
+   /* unreference the xkb state we created */
+   if (_e_wl_comp->input->xkb.state) 
+     xkb_state_unref(_e_wl_comp->input->xkb.state);
+
+   /* unreference the xkb context we created */
+   if (_e_wl_comp->xkb.context)
+     xkb_context_unref(_e_wl_comp->xkb.context);
+
+   /* create the xkb context */
+   _e_wl_comp->xkb.context = xkb_context_new(0);
+
+   /* try to fetch the keymap */
+//   if ((keymap = _e_comp_wl_input_keymap_get()))
+     {
+        /* try to create new keyboard info */
+        _e_wl_comp->input->xkb.info = 
+          _e_comp_wl_input_keyboard_info_get(keymap);
+
+        /* create new xkb state */
+        _e_wl_comp->input->xkb.state = xkb_state_new(keymap);
+
+        /* unreference the keymap */
+        xkb_map_unref(keymap);
+     }
+
+   /* send the current keymap to the keyboard object */
+   wl_keyboard_send_keymap(_e_wl_comp->input->wl.keyboard_resource, 
+                           WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, 
+                           _e_wl_comp->input->xkb.info->fd, 
+                           _e_wl_comp->input->xkb.info->size);
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 /* compositor interface functions */
@@ -709,9 +787,15 @@ _e_comp_wl_input_cb_unbind(struct wl_resource *resource)
 static struct xkb_keymap *
 _e_comp_wl_input_keymap_get(void)
 {
+   E_Config_XKB_Layout *kbd_layout;
    struct xkb_rule_names names;
 
    memset(&names, 0, sizeof(names));
+
+   kbd_layout = e_xkb_layout_get();
+
+   names.model = strdup(kbd_layout->model);
+   names.layout = strdup(kbd_layout->name);
 
    /* if we are running under X11, try to get the xkb rule names atom */
    if (getenv("DISPLAY"))
@@ -730,11 +814,6 @@ _e_comp_wl_input_keymap_get(void)
          * 
          */
 
-        /* E_Config_XKB_Layout *kbd_layout; */
-        /* kbd_layout = e_xkb_layout_get(); */
-        /* names.model = strdup(kbd_layout->model); */
-        /* names.layout = strdup(kbd_layout->name); */
-
         root = ecore_x_window_root_first_get();
         rules = ecore_x_atom_get("_XKB_RULES_NAMES");
         ecore_x_window_prop_property_get(root, rules, ECORE_X_ATOM_STRING, 
@@ -744,9 +823,9 @@ _e_comp_wl_input_keymap_get(void)
           {
              names.rules = strdup((const char *)data);
              data += strlen((const char *)data) + 1;
-             names.model = strdup((const char *)data);
-             data += strlen((const char *)data) + 1;
-             names.layout = strdup((const char *)data);
+             /* names.model = strdup((const char *)data); */
+             /* data += strlen((const char *)data) + 1; */
+             /* names.layout = strdup((const char *)data); */
 //             free(data);
           }
      }
@@ -914,6 +993,8 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
         /* update the keyboard focus in the data device */
         wl_data_device_set_keyboard_focus(&input->wl.seat);
      }
+
+   input->wl.keyboard_resource = kbd;
 }
 
 static void 
