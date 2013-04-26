@@ -5388,10 +5388,18 @@ e_comp_canvas_layer_set(Evas_Object *obj, E_Comp_Canvas_Layer comp_layer, E_Laye
 
              con = eina_list_data_get(c->man->containers);
              cwn = e_comp_win_find(con->layers[0].win);
-             cwn->stack_below = eina_list_append(cwn->stack_below, cw);
-             cw->cw_above = cwn;
-             c->wins = eina_inlist_remove(c->wins, EINA_INLIST_GET(cw));
-             c->wins = eina_inlist_prepend_relative(c->wins, EINA_INLIST_GET(cw), EINA_INLIST_GET(cwn));
+             if (!cwn)
+               {
+                  ERR("Major error. Cannot find container layer 0 window marker");
+                  c->wins = eina_inlist_prepend(c->wins, EINA_INLIST_GET(cw));
+               }
+             else
+               {
+                  cwn->stack_below = eina_list_append(cwn->stack_below, cw);
+                  cw->cw_above = cwn;
+                  c->wins = eina_inlist_remove(c->wins, EINA_INLIST_GET(cw));
+                  c->wins = eina_inlist_prepend_relative(c->wins, EINA_INLIST_GET(cw), EINA_INLIST_GET(cwn));
+               }
           }
      }
    if (stack == E_COMP_CANVAS_STACK_ABOVE)
