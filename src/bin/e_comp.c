@@ -4215,9 +4215,6 @@ _e_comp_add(E_Manager *man)
    ecore_x_composite_redirect_subwindows
      (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
 
-   /* ensure we're in main loop so managers and containers have been set up */
-   ecore_job_add((Ecore_Cb)_e_comp_populate, c);
-
    ecore_x_window_key_grab(c->man->root, "Home", ECORE_EVENT_MODIFIER_SHIFT |
                            ECORE_EVENT_MODIFIER_CTRL |
                            ECORE_EVENT_MODIFIER_ALT, 0);
@@ -4226,6 +4223,12 @@ _e_comp_add(E_Manager *man)
                            ECORE_EVENT_MODIFIER_ALT, 0);
 
    return c;
+}
+
+EAPI void
+e_comp_populate(E_Comp *c)
+{
+   _e_comp_populate(c);
 }
 
 static void

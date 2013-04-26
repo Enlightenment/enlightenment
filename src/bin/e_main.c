@@ -1717,6 +1717,7 @@ _e_main_screens_init(void)
         con = e_container_new(man);
         if (con)
           {
+             e_comp_populate(man->comp);
              e_container_show(con);
              e_grabinput_focus(con->bg_win, E_FOCUS_METHOD_PASSIVE);
              e_hints_manager_init(man);

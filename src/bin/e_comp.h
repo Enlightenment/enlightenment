@@ -248,6 +248,7 @@ EAPI void e_comp_win_hidden_set(E_Comp_Win *cw, Eina_Bool hidden);
 EAPI void e_comp_win_opacity_set(E_Comp_Win *cw, unsigned int opacity);
 
 EAPI E_Comp *e_comp_get(void *o);
+EAPI void e_comp_populate(E_Comp *c);
 
 EAPI Ecore_X_Window e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y, Ecore_X_Window *ignore, unsigned int ignore_num);
 
