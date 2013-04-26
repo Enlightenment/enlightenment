@@ -26,6 +26,7 @@
 
 #  ifdef HAVE_WAYLAND_EGL
 #   include <EGL/egl.h>
+#   include <EGL/eglext.h>
 #  endif
 
 #  define container_of(ptr, type, member) ({ \
@@ -270,6 +271,9 @@ struct _E_Wayland_Compositor
         EGLDisplay display;
         EGLContext context;
         EGLConfig config;
+        PFNEGLBINDWAYLANDDISPLAYWL bind_display;
+        PFNEGLUNBINDWAYLANDDISPLAYWL unbind_display;
+        Eina_Bool bound : 1;
      } egl;
 #endif
 
