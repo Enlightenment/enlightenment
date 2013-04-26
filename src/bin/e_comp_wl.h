@@ -274,6 +274,7 @@ struct _E_Wayland_Compositor
 
    E_Wayland_Shell_Interface shell_interface;
 
+   Ecore_Event_Handler *kbd_handler;
    Ecore_Fd_Handler *fd_handler;
    Ecore_Idler *idler;
 
