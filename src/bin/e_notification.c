@@ -80,7 +80,7 @@ notify_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Messag
      return NULL;
 
    n = E_OBJECT_ALLOC(E_Notification_Notify, E_NOTIFICATION_TYPE, _notification_free);
-
+   n->urgency = E_NOTIFICATION_NOTIFY_URGENCY_NORMAL;
    if (!eldbus_message_arguments_get(msg, "susssasa{sv}i", &n->app_name,
                                     &n->replaces_id, &n->icon.icon, &n->sumary,
                                     &n->body, &actions_iter, &hints_iter,
