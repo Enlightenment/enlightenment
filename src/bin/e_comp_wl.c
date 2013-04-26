@@ -146,7 +146,7 @@ e_comp_wl_init(void)
     * NB: This is interesting....if we try to eglGetDisplay and pass in the 
     * wayland display, then EGL fails due to XCB not owning the event queue.
     * If we pass it a NULL, it inits just fine */
-   _e_wl_comp->egl.display = eglGetDisplay(NULL);
+   _e_wl_comp->egl.display = eglGetDisplay((EGLNativeDisplayType)ecore_x_display_get());
    if (_e_wl_comp->egl.display == EGL_NO_DISPLAY)
      ERR("Could not get EGL display: %m");
    else
@@ -169,6 +169,7 @@ e_comp_wl_init(void)
                   EGL_ALPHA_SIZE, 1, EGL_RENDERABLE_TYPE, 
                   EGL_OPENGL_ES2_BIT, EGL_NONE
                };
+             /* const char *exts; */
 
              if ((!eglChooseConfig(_e_wl_comp->egl.display, attribs, 
                                    &_e_wl_comp->egl.config, 1, &n) || (n == 0)))
@@ -176,6 +177,44 @@ e_comp_wl_init(void)
                   ERR("Could not choose EGL config: %m");
                   eglTerminate(_e_wl_comp->egl.display);
                }
+
+             /* if (!eglBindAPI(EGL_OPENGL_ES_API)) */
+             /*   { */
+             /*      ERR("Could not bind EGL API: %m"); */
+             /*      eglTerminate(_e_wl_comp->egl.display); */
+             /*   } */
+
+             /* exts = (const char *)eglQueryString(_e_wl_comp->egl.display, EGL_EXTENSIONS); */
+             /* if (!exts) */
+             /*   { */
+             /*      ERR("Could not get EGL Extensions: %m"); */
+             /*      eglTerminate(_e_wl_comp->egl.display); */
+             /*   } */
+             /* else */
+             /*   { */
+             /*      if (strstr(exts, "EGL_WL_bind_wayland_display")) */
+             /*        { */
+             /*           _e_wl_comp->egl.bind_display =  */
+             /*             (void *)eglGetProcAddress("eglBindWaylandDisplayWL"); */
+             /*           _e_wl_comp->egl.unbind_display =  */
+             /*             (void *)eglGetProcAddress("eglUnbindWaylandDisplayWL"); */
+             /*        } */
+             /*   } */
+
+             /* if (_e_wl_comp->egl.bind_display) */
+             /*   { */
+             /*      EGLBoolean ret; */
+
+             /*      ret = _e_wl_comp->egl.bind_display(_e_wl_comp->egl.display,  */
+             /*                                         _e_wl_comp->wl.display); */
+             /*      if (!ret) */
+             /*        { */
+             /*           ERR("Could not bind EGL Wayland Display: %m"); */
+             /*           _e_wl_comp->egl.bound = EINA_FALSE; */
+             /*        } */
+             /*      else */
+             /*        _e_wl_comp->egl.bound = EINA_TRUE; */
+             /*   } */
           }
      }
 #endif
@@ -230,9 +269,13 @@ err:
    if (_module_idler) ecore_idler_del(_module_idler);
 
 #ifdef HAVE_WAYLAND_EGL
+   /* unbind wayland display */
+   if (_e_wl_comp->egl.bound)
+     _e_wl_comp->egl.unbind_display(_e_wl_comp->egl.display, _e_wl_comp->wl.display);
+
    /* terminate the egl display */
-   if (_e_wl_comp->egl.display)
-     eglTerminate(_e_wl_comp->egl.display);
+   if (_e_wl_comp->egl.display) eglTerminate(_e_wl_comp->egl.display);
+
    eglReleaseThread();
 #endif
 
@@ -262,9 +305,13 @@ e_comp_wl_shutdown(void)
    _e_comp_wl_input_shutdown();
 
 #ifdef HAVE_WAYLAND_EGL
+   /* unbind wayland display */
+   if (_e_wl_comp->egl.bound)
+     _e_wl_comp->egl.unbind_display(_e_wl_comp->egl.display, _e_wl_comp->wl.display);
+
    /* terminate the egl display */
-   if (_e_wl_comp->egl.display)
-     eglTerminate(_e_wl_comp->egl.display);
+   if (_e_wl_comp->egl.display) eglTerminate(_e_wl_comp->egl.display);
+
    eglReleaseThread();
 #endif
 
