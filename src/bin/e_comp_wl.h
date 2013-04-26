@@ -217,6 +217,7 @@ struct _E_Wayland_Input
         struct wl_seat seat;
         struct wl_pointer pointer;
         struct wl_keyboard keyboard;
+        struct wl_resource *keyboard_resource;
         struct wl_list link;
      } wl;
 
