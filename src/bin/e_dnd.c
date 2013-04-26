@@ -509,14 +509,6 @@ e_dnd_util_text_uri_list_convert(char *data, int size)
    int i, is;
    Eina_List *ret = NULL;
 
-   if (data && data[size - 1])
-     {
-        /* Isn't nul terminated */
-        size++;
-        data = realloc(data, size);
-        data[size - 1] = 0;
-     }
-
    tmp = malloc(size);
    is = i = 0;
    while ((is < size) && (data[is]))
@@ -981,6 +973,18 @@ _e_drag_end(int x, int y)
                   for (i = 0; i < _drag_current->num_types; i++)
                     if (_drag_current->types[i] == _type_text_uri_list)
                       {
+                         char *data = _drag_current->data;
+                         int size = _drag_current->data_size;
+
+                         if (data && data[size - 1])
+                           {
+                              /* Isn't nul terminated */
+                              size++;
+                              data = realloc(data, size);
+                              data[size - 1] = 0;
+                           }
+                         _drag_current->data = data;
+                         _drag_current->data_size = size;
                          ev.data = e_dnd_util_text_uri_list_convert(_drag_current->data, _drag_current->data_size);
                          need_free = EINA_TRUE;
                          break;
