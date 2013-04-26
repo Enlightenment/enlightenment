@@ -207,3 +207,4 @@ Fixes:
     * fixed disable of input methods in input method config dialog
     * fixed pointer warp when pointer was inside warp window but not directly over it
     * toolbar gadgets no longer crash when trying to display a popup
+    * fixed theme bug which prevented windows from unshading correctly when animations were disabled
