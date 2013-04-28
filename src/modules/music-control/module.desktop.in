@@ -1,7 +1,9 @@
 [Desktop Entry]
 Type=Link
 Name=Music Control
+Name[ru]=Контроль музыки
 Icon=e-module-music-control
 Comment=Control your music in your shelf
 Comment[it]=Per controllare la musica in esecuzione dalla mensola di sistema
+Comment[ru]=Модуль для управления воспроизведением музыки
 X-Enlightenment-ModuleType=utils

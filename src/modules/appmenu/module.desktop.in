@@ -1,7 +1,9 @@
 [Desktop Entry]
 Type=Link
 Name=Application Menu
+Name[ru]=Меню управления приложениями
 Icon=e-module-appmenu
 Comment=Gadget that holds the menubar of the foreground application.
 Comment[it]=Gadget che contiene la barra degli strumenti dell'applicazione in primo piano.
+Comment[ru]=Гаджет отображающий меню активного приложения.
 X-Enlightenment-ModuleType=utils
