@@ -85,7 +85,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 static const char *
 _gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
-   return "Application Menu";
+   return _("Application Menu");
 }
 
 static char tmpbuf[1024]; /* general purpose buffer, just use immediately */

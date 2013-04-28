@@ -6,7 +6,7 @@ static E_Module *music_control_mod = NULL;
 
 static Eina_Bool was_playing_before_lock = EINA_FALSE;
 
-static const char _e_music_control_Name[] = "Music controller";
+static const char _e_music_control_Name[] = N_("Music controller");
 
 const Player music_player_players[] =
 {
@@ -166,7 +166,7 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 static const char *
 _gc_label(const E_Gadcon_Client_Class *client_class)
 {
-   return _e_music_control_Name;
+   return _(_e_music_control_Name);
 }
 
 static char tmpbuf[1024]; /* general purpose buffer, just use immediately */

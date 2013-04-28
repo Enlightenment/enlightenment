@@ -10,9 +10,11 @@ src/bin/e_canvas.c
 src/bin/e_color.c
 src/bin/e_color_class.c
 src/bin/e_color_dialog.c
+src/bin/e_comp.c
 src/bin/e_config.c
 src/bin/e_config_dialog.c
 src/bin/e_configure.c
+src/bin/e_configure_option.c
 src/bin/e_confirm_dialog.c
 src/bin/e_container.c
 src/bin/e_datastore.c
@@ -131,6 +133,7 @@ src/bin/e_xinerama.c
 src/bin/e_xkb.c
 src/bin/e_zone.c
 src/modules/access/e_mod_config.c
+src/modules/appmenu/e_mod_main.c
 src/modules/backlight/e_mod_main.c
 src/modules/battery/e_mod_config.c
 src/modules/battery/e_mod_main.c
@@ -139,6 +142,11 @@ src/modules/bluez4/e_mod_main.c
 src/modules/bluez4/ebluez4.c
 src/modules/clock/e_mod_config.c
 src/modules/clock/e_mod_main.c
+src/modules/conf/e_conf.c
+src/modules/conf/e_mod_config.c
+src/modules/conf/e_mod_main.c
+src/modules/conf2/e_mod_main.c
+src/modules/conf2/e_conf2.c
 src/modules/conf_comp/e_mod_config.c
 src/modules/conf_comp/e_mod_main.c
 src/modules/conf_comp/e_mod_config.c
@@ -197,6 +205,8 @@ src/modules/conf_theme/e_int_config_theme.c
 src/modules/conf_theme/e_int_config_theme_import.c
 src/modules/conf_theme/e_int_config_xsettings.c
 src/modules/conf_theme/e_mod_main.c
+src/modules/conf_wallpaper2/e_int_config_wallpaper.c
+src/modules/conf_wallpaper2/e_mod_main.c
 src/modules/conf_window_manipulation/e_int_config_clientlist.c
 src/modules/conf_window_manipulation/e_int_config_window_display.c
 src/modules/conf_window_manipulation/e_int_config_focus.c
