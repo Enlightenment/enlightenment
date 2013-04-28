@@ -134,6 +134,9 @@ src/modules/access/e_mod_config.c
 src/modules/backlight/e_mod_main.c
 src/modules/battery/e_mod_config.c
 src/modules/battery/e_mod_main.c
+src/modules/bluez4/agent.c
+src/modules/bluez4/e_mod_main.c
+src/modules/bluez4/ebluez4.c
 src/modules/clock/e_mod_config.c
 src/modules/clock/e_mod_main.c
 src/modules/conf_comp/e_mod_config.c

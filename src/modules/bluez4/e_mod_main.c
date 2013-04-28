@@ -88,7 +88,7 @@ _ebluez4_cb_paired(void *data, Eina_Bool success, const char *err_msg)
    if (success)
      _ebluez4_search_dialog_del(inst);
    else
-     ebluez4_show_error("Bluez Error", err_msg);
+     ebluez4_show_error(_("Bluez Error"), err_msg);
 }
 
 static void
@@ -116,7 +116,7 @@ _ebluez4_cb_search(void *data, E_Menu *m, E_Menu_Item *mi)
    con = e_container_current_get(e_manager_current_get());
 
    dialog = e_dialog_new(con, "Search Dialog", "search");
-   e_dialog_title_set(dialog, "Searching for Devices...");
+   e_dialog_title_set(dialog, _("Searching for Devices..."));
    e_dialog_resizable_set(dialog, EINA_TRUE);
    e_win_delete_callback_set(dialog->win, _ebluez4_cb_search_dialog_del);
 
@@ -187,7 +187,7 @@ _ebluez4_cb_adap_settings(void *data)
    con = e_container_current_get(e_manager_current_get());
 
    dialog = e_dialog_new(con, "Adapter Dialog", "adapter");
-   e_dialog_title_set(dialog, "Adapter Settings");
+   e_dialog_title_set(dialog, _("Adapter Settings"));
    e_dialog_resizable_set(dialog, EINA_TRUE);
    e_win_delete_callback_set(dialog->win, _ebluez4_cb_adap_settings_dialog_del);
 
@@ -195,11 +195,11 @@ _ebluez4_cb_adap_settings(void *data)
 
    list = e_widget_list_add(evas, 0, 0);
 
-   ck = e_widget_check_add(evas, "Default", NULL);
+   ck = e_widget_check_add(evas, _("Default"), NULL);
    e_widget_check_checked_set(ck, adap->is_default);
    e_widget_list_object_append(list, ck, 0, 0, 0);
 
-   ck = e_widget_check_add(evas, "Powered", &(adap->powered_checked));
+   ck = e_widget_check_add(evas, _("Powered"), &(adap->powered_checked));
    e_widget_check_checked_set(ck, adap->powered);
    e_widget_list_object_append(list, ck, 0, 0, 0);
    evas_object_smart_callback_add(ck, "changed", _ebluez4_powered_changed,
@@ -207,14 +207,14 @@ _ebluez4_cb_adap_settings(void *data)
    ck_list = eina_list_append(ck_list, ck);
 
 
-   ck = e_widget_check_add(evas, "Visible", &(adap->visible_checked));
+   ck = e_widget_check_add(evas, _("Visible"), &(adap->visible_checked));
    e_widget_check_checked_set(ck, adap->visible);
    e_widget_list_object_append(list, ck, 0, 0, 0);
    evas_object_smart_callback_add(ck, "changed",
                                   _ebluez4_visible_changed, adap);
    ck_list = eina_list_append(ck_list, ck);
 
-   ck = e_widget_check_add(evas, "Pairable", &(adap->pairable_checked));
+   ck = e_widget_check_add(evas, _("Pairable"), &(adap->pairable_checked));
    e_widget_check_checked_set(ck, adap->pairable);
    e_widget_list_object_append(list, ck, 0, 0, 0);
    evas_object_smart_callback_add(ck, "changed",
@@ -261,7 +261,7 @@ _ebluez4_cb_adap_list(void *data, E_Menu *m, E_Menu_Item *mi)
    con = e_container_current_get(e_manager_current_get());
 
    dialog = e_dialog_new(con, "Adapters Dialog", "adapters");
-   e_dialog_title_set(dialog, "Adapters Available");
+   e_dialog_title_set(dialog, _("Adapters Available"));
    e_dialog_resizable_set(dialog, EINA_TRUE);
    e_win_delete_callback_set(dialog->win, _ebluez4_cb_adap_list_dialog_del);
 
@@ -371,7 +371,7 @@ _ebluez4_add_devices(Instance *inst)
      if (dev->paired)
        {
           mi = e_menu_item_new(m);
-          e_menu_item_label_set(mi, "Paired Devices");
+          e_menu_item_label_set(mi, _("Paired Devices"));
           e_menu_item_disabled_set(mi, EINA_TRUE);
           ret = EINA_TRUE;
           break;
@@ -395,17 +395,17 @@ _ebluez4_add_devices(Instance *inst)
           if (dev->connected)
             {
                e_menu_item_toggle_set(mi, 1);
-               e_menu_item_label_set(submi, "Disconnect");
+               e_menu_item_label_set(submi, _("Disconnect"));
                e_menu_item_callback_set(submi, _ebluez4_cb_disconnect, dev);
             }
           else
             {
                e_menu_item_toggle_set(mi, 0);
-               e_menu_item_label_set(submi, "Connect");
+               e_menu_item_label_set(submi, _("Connect"));
                e_menu_item_callback_set(submi, _ebluez4_cb_connect, dev);
             }
           submi = e_menu_item_new(subm);
-          e_menu_item_label_set(submi, "Forget");
+          e_menu_item_label_set(submi, _("Forget"));
           e_menu_item_callback_set(submi, _ebluez4_cb_forget, dev);
 
 #ifdef HAVE_BLUETOOTH
@@ -414,7 +414,7 @@ _ebluez4_add_devices(Instance *inst)
 	      /* Auto lock when away */
 	      submi = e_menu_item_new(subm);
 	      e_menu_item_check_set(submi, 1);
-	      e_menu_item_label_set(submi, "Lock on disconnect");
+	      e_menu_item_label_set(submi, _("Lock on disconnect"));
 	      e_menu_item_callback_set(submi, _ebluez4_cb_lock, dev);
 	      chk = ebluez4_config->lock_dev_addr && dev->addr &&
 		!strcmp(dev->addr, ebluez4_config->lock_dev_addr);
@@ -422,7 +422,7 @@ _ebluez4_add_devices(Instance *inst)
 
 	      submi = e_menu_item_new(subm);
 	      e_menu_item_check_set(submi, 1);
-	      e_menu_item_label_set(submi, "Unlock on disconnect");
+	      e_menu_item_label_set(submi, _("Unlock on disconnect"));
 	      e_menu_item_callback_set(submi, _ebluez4_cb_unlock, dev);
 	      chk = ebluez4_config->unlock_dev_addr && dev->addr &&
 		!strcmp(dev->addr, ebluez4_config->unlock_dev_addr);
@@ -444,7 +444,7 @@ _ebluez4_menu_new(Instance *inst)
 
    m = e_menu_new();
    e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, inst);
-   e_menu_title_set(m, "Bluez4");
+   e_menu_title_set(m, _("Bluez4"));
    inst->menu = m;
 
    if (_ebluez4_add_devices(inst))
@@ -454,11 +454,11 @@ _ebluez4_menu_new(Instance *inst)
      }
 
    mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, "Search New Devices");
+   e_menu_item_label_set(mi, _("Search New Devices"));
    e_menu_item_callback_set(mi, _ebluez4_cb_search, inst);
 
    mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, "Adapter Settings");
+   e_menu_item_label_set(mi, _("Adapter Settings"));
    e_menu_item_callback_set(mi, _ebluez4_cb_adap_list, inst);
 
    zone = e_util_zone_current_get(e_manager_current_get());
@@ -559,7 +559,7 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 static const char *
 _gc_label(const E_Gadcon_Client_Class *client_class)
 {
-   return "Bluez4";
+   return _("Bluez4");
 }
 
 static Evas_Object *
@@ -805,7 +805,7 @@ void
 ebluez4_show_error(const char *err_name, const char *err_msg)
 {
    snprintf(tmpbuf, sizeof(tmpbuf), "%s: %s.", err_name, err_msg);
-   e_util_dialog_internal("An error has ocurred", tmpbuf);
+   e_util_dialog_internal(_("An error has ocurred"), tmpbuf);
 }
 
 void

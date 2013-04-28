@@ -57,7 +57,7 @@ _create_dialog(const char *title, const char *msg,
 
    con = e_container_current_get(e_manager_current_get());
    dialog = e_dialog_new(con, title, class);
-   e_dialog_title_set(dialog, title);
+   e_dialog_title_set(dialog, _(title));
    e_dialog_icon_set(dialog, icon, 64);
    e_dialog_text_set(dialog, msg);
    return dialog;
@@ -68,7 +68,7 @@ _display_msg(const char *title, const char *msg)
 {
    E_Dialog *dialog = _create_dialog(title, msg, "view-hidden-files",
                                      "display");
-   e_dialog_button_add(dialog, "OK", NULL, NULL, NULL);
+   e_dialog_button_add(dialog, _("OK"), NULL, NULL, NULL);
    e_dialog_show(dialog);
 }
 
@@ -113,7 +113,7 @@ _ask(const char *title, const char *ask_msg, const char *ok_label,
    dialog->data = eldbus_message;
    e_win_delete_callback_set(dialog->win, _close);
    e_dialog_button_add(dialog, ok_label, NULL, _ok, NULL);
-   e_dialog_button_add(dialog, "Reject", NULL, _reject, NULL);
+   e_dialog_button_add(dialog, _("Reject"), NULL, _reject, NULL);
    e_dialog_show(dialog);
 }
 
@@ -130,10 +130,10 @@ _agent_request_pin_code(const Eldbus_Service_Interface *iface, const Eldbus_Mess
 {
    Eldbus_Message *msg = (Eldbus_Message *)message;
    eldbus_message_ref(msg);
-   e_entry_dialog_show("Pin Code Requested", NULL,
-                       "Enter the PinCode above. It should have 1-16 "
-                       "characters and can be alphanumeric.", "0000",
-                       "OK", "Cancel", _pincode_ok, _cancel, msg);
+   e_entry_dialog_show(_("Pin Code Requested"), NULL,
+                       _("Enter the PinCode above. It should have 1-16 "
+                       "characters and can be alphanumeric."), "0000",
+                       _("OK"), _("Cancel"), _pincode_ok, _cancel, msg);
    return NULL;
 }
 
@@ -142,9 +142,10 @@ _agent_request_passkey(const Eldbus_Service_Interface *iface, const Eldbus_Messa
 {
    Eldbus_Message *msg = (Eldbus_Message *)message;
    eldbus_message_ref(msg);
-   e_entry_dialog_show("Passkey Requested", NULL, "Enter the Passkey above. "
-                       "It should be a numeric value between 0-999999.",
-                       "0", "OK", "Cancel", _passkey_ok, _cancel, msg);
+   e_entry_dialog_show(_("Passkey Requested"), NULL,
+                       _("Enter the Passkey above. "
+                       "It should be a numeric value between 0-999999."),
+                       "0", _("OK"), _("Cancel"), _passkey_ok, _cancel, msg);
    return NULL;
 }
 
@@ -159,9 +160,9 @@ _agent_display_passkey(const Eldbus_Service_Interface *iface, const Eldbus_Messa
    if(!eldbus_message_arguments_get(message, "ouq", &device, &passkey, &entered))
      return eldbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
    dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, device);
-   snprintf(buf, sizeof(buf), "%d keys were typed on %s. Passkey is %06d",
+   snprintf(buf, sizeof(buf), _("%d keys were typed on %s. Passkey is %06d"),
             entered, dev->name, passkey);
-   _display_msg("Display Passkey", buf);
+   _display_msg(N_("Display Passkey"), buf);
    return eldbus_message_method_return_new(message);
 }
 
@@ -174,8 +175,8 @@ _agent_display_pin_code(const Eldbus_Service_Interface *iface, const Eldbus_Mess
    if(!eldbus_message_arguments_get(message, "os", &device, &pincode))
      return eldbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
    dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, device);
-   snprintf(buf, sizeof(buf), "Pincode for %s is %s", dev->name, pincode);
-   _display_msg("Display Pincode", buf);
+   snprintf(buf, sizeof(buf), _("Pincode for %s is %s"), dev->name, pincode);
+   _display_msg(N_("Display Pincode"), buf);
    return eldbus_message_method_return_new(message);
 }
 
@@ -189,10 +190,10 @@ _agent_request_confirmation(const Eldbus_Service_Interface *iface, const Eldbus_
    if(!eldbus_message_arguments_get(message, "ou", &device, &passkey))
      return eldbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
    dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, device);
-   snprintf(buf, sizeof(buf), "%06d is the passkey presented in %s?",
+   snprintf(buf, sizeof(buf), _("%06d is the passkey presented in %s?"),
             passkey, dev->name);
    eldbus_message_ref((Eldbus_Message *)message);
-   _ask("Confirm Request", buf, "Confirm", (Eldbus_Message *)message);
+   _ask(N_("Confirm Request"), buf, _("Confirm"), (Eldbus_Message *)message);
    return NULL;
 }
 
@@ -205,10 +206,10 @@ _agent_authorize(const Eldbus_Service_Interface *iface, const Eldbus_Message *me
    if(!eldbus_message_arguments_get(message, "os", &device, &uuid))
      return eldbus_message_error_new(message, BLUEZ_ERROR_FAILED, GET_ERROR_MSG);
    dev = eina_list_search_unsorted(ctxt->devices, ebluez4_dev_path_cmp, device);
-   snprintf(buf, sizeof(buf), "Grant permission for %s to connect?",
+   snprintf(buf, sizeof(buf), _("Grant permission for %s to connect?"),
             dev->name);
    eldbus_message_ref((Eldbus_Message *)message);
-   _ask("Authorize Connection", buf, "Grant", (Eldbus_Message *)message);
+   _ask(N_("Authorize Connection"), buf, _("Grant"), (Eldbus_Message *)message);
    return NULL;
 }
 

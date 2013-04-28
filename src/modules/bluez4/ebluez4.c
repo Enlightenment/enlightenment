@@ -215,9 +215,10 @@ _on_dev_property_changed(void *context, const Eldbus_Message *msg)
    if (!eldbus_message_arguments_get(msg, "sv", &key, &variant))
      {
         snprintf(err_msg, sizeof(err_msg),
-                 "Property of %s changed, but could not be read", dev->name);
+                 _("Property of %s changed, but could not be read"),
+                 dev->name);
         ERR("%s", err_msg);
-        ebluez4_show_error("Bluez Error", err_msg);
+        ebluez4_show_error(_("Bluez Error"), err_msg);
         return;
      }
 
@@ -431,12 +432,12 @@ _on_list_devices(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 {
    Eldbus_Message_Iter *array;
    const char *path;
-   const char *err_msg = "Error reading list of devices";
+   const char *err_msg = _("Error reading list of devices");
 
    if (!eldbus_message_arguments_get(msg, "ao", &array))
      {
         ERR("%s", err_msg);
-        ebluez4_show_error("Bluez Error", err_msg);
+        ebluez4_show_error(_("Bluez Error"), err_msg);
         return;
      }
 
@@ -456,9 +457,9 @@ _on_adap_property_changed(void *context, const Eldbus_Message *msg)
    if (!eldbus_message_arguments_get(msg, "sv", &key, &variant))
      {
         snprintf(err_msg, sizeof(err_msg),
-                 "Property of %s changed, but could not be read", adap->name);
+                 _("Property of %s changed, but could not be read"), adap->name);
         ERR("%s", err_msg);
-        ebluez4_show_error("Bluez Error", err_msg);
+        ebluez4_show_error(_("Bluez Error"), err_msg);
         return;
      }
 
@@ -594,12 +595,12 @@ _on_list_adapters(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending
 {
    Eldbus_Message_Iter *array;
    const char *path;
-   const char *err_msg = "Error reading list of adapters";
+   const char *err_msg = _("Error reading list of adapters");
 
    if (!eldbus_message_arguments_get(msg, "ao", &array))
      {
         ERR("%s", err_msg);
-        ebluez4_show_error("Bluez Error", err_msg);
+        ebluez4_show_error(_("Bluez Error"), err_msg);
         return;
      }
 
@@ -612,12 +613,12 @@ _set_default_adapter(const Eldbus_Message *msg)
 {
    Adapter *adap;
    const char *adap_path;
-   const char *err_msg = "Error reading path of Default Adapter";
+   const char *err_msg = _("Error reading path of Default Adapter");
 
    if (!eldbus_message_arguments_get(msg, "o", &adap_path))
      {
         ERR("%s", err_msg);
-        ebluez4_show_error("Bluez Error", err_msg);
+        ebluez4_show_error(_("Bluez Error"), err_msg);
         return;
      }
 
@@ -672,12 +673,12 @@ static void
 _on_adapter_removed(void *context, const Eldbus_Message *msg)
 {
    const char *adap_path;
-   const char *err_msg = "Error reading path of Removed Adapter";
+   const char *err_msg = _("Error reading path of Removed Adapter");
 
    if (!eldbus_message_arguments_get(msg, "o", &adap_path))
      {
         ERR("%s", err_msg);
-        ebluez4_show_error("Bluez Error", err_msg);
+        ebluez4_show_error(_("Bluez Error"), err_msg);
         return;
      }
 
@@ -688,12 +689,12 @@ static void
 _on_adapter_added(void *context, const Eldbus_Message *msg)
 {
    const char *adap_path;
-   const char *err_msg = "Error reading path of Added Adapter";
+   const char *err_msg = _("Error reading path of Added Adapter");
 
    if (!eldbus_message_arguments_get(msg, "o", &adap_path))
      {
         ERR("%s", err_msg);
-        ebluez4_show_error("Bluez Error", err_msg);
+        ebluez4_show_error(_("Bluez Error"), err_msg);
         return;
      }
 
