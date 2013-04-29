@@ -4645,7 +4645,7 @@ _e_comp_cfg_init(void)
    /* FIXME: help text */
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    E_CONFIGURE_OPTION_ADD(co, DOUBLE, first_draw_delay, conf, _("Initial draw timeout for newly-mapped composited windows"), _("composite"), _("border"), _("delay"));
-   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0.01, 0.5, 0.01, _("1.2f seconds"));
+   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0.01, 0.5, 0.01, _("%1.2f seconds"));
    /* FIXME: help text */
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
 
@@ -4679,7 +4679,7 @@ _e_comp_cfg_init(void)
    E_CONFIGURE_OPTION_ADD(co, BOOL, fps_show, conf, _("Show framerate when compositing windows"), _("composite"), _("border"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    E_CONFIGURE_OPTION_ADD(co, DOUBLE_INT, fps_average_range, conf, _("Rolling average for fps display when compositing"), _("composite"), _("border"));
-   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 1, 120, 1, _("1.0f frames"));
+   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 1, 120, 1, _("%1.0f frames"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    E_CONFIGURE_OPTION_ADD(co, ENUM, fps_corner, conf, _("Composite framerate display corner"), _("composite"), _("border"));
    co->info_cb = _e_comp_fps_corner_info_cb;
