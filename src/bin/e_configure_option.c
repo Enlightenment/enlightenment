@@ -1674,7 +1674,7 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, move_info_follows, _("Window position info follows window when moving"), _("border"), _("placement"), _("move"));
    OPT_ADD(BOOL, resize_info_follows, _("Window geometry info follows window when resizing"), _("border"), _("placement"), _("resize"));
    OPT_ADD(BOOL, move_info_visible, _("Window position info visible when moving"), _("border"), _("placement"), _("move"));
-   OPT_ADD(BOOL, resize_info_visible, _("Window geometry info visible when moving"), _("border"), _("placement"), _("resize"));
+   OPT_ADD(BOOL, resize_info_visible, _("Window geometry info visible when resizing"), _("border"), _("placement"), _("resize"));
 
    /* FIXME */
    //OPT_ADD(CUSTOM, input_method, _("Input method"), _("input"), _("language"));
@@ -1937,7 +1937,7 @@ e_configure_option_init(void)
       OPT_ADD(DOUBLE_UINT, powersave.max, _("powersave"));
       OPT_MINMAX_STEP_FMT(E_POWERSAVE_MODE_NONE, E_POWERSAVE_MODE_EXTREME);
     */
-   OPT_ADD(BOOL, deskenv.load_xrdb, _("Load ~/.xrdb on startup"), _("environment"));
+   OPT_ADD(BOOL, deskenv.load_xrdb, _("Load ~/.Xresources on startup"), _("environment"));
    OPT_ADD(BOOL, deskenv.load_xmodmap, _("Load ~/.Xmodmap"), _("environment"));
    OPT_ADD(BOOL, deskenv.load_gnome, _("Run gnome-settings-daemon"), _("environment"));
    OPT_ADD(BOOL, deskenv.load_kde, _("Run kdeinit"), _("environment"));
