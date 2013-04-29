@@ -816,17 +816,6 @@ main(int argc, char **argv)
    TS("E_Container Freeze Done");
 
    if (e_config->show_splash)
-     e_init_status_set(_("Setup DND"));
-   TS("E_Dnd Init");
-   if (!e_dnd_init())
-     {
-        e_error_message_show(_("Enlightenment cannot set up its dnd system.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_Dnd Init Done");
-   _e_main_shutdown_push(e_dnd_shutdown);
-
-   if (e_config->show_splash)
      e_init_status_set(_("Setup Filemanager"));
    TS("E_Fm2 Init");
    if (!e_fm2_init())
@@ -1697,7 +1686,18 @@ _e_main_screens_init(void)
         _e_main_shutdown(-1);
      }
    TS("E_Xkb Init Done");
-     
+
+   if (e_config->show_splash)
+     e_init_status_set(_("Setup DND"));
+   TS("E_Dnd Init");
+   if (!e_dnd_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its dnd system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Dnd Init Done");
+   _e_main_shutdown_push(e_dnd_shutdown);
+
    TS("\tscreens: manage roots");
    for (i = 0; i < num; i++)
      {
