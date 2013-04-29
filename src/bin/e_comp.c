@@ -4035,22 +4035,7 @@ _e_comp_populate(E_Comp *c)
      {
         E_Comp_Win *cw;
         int x, y, w, h, border;
-        char *wname = NULL, *wclass = NULL;
 
-        ecore_x_icccm_name_class_get(wins[i], &wname, &wclass);
-        if ((c->man->initwin == wins[i]) ||
-            ((wname) && (wclass) && (!strcmp(wname, "E")) &&
-             (!strcmp(wclass, "Init_Window"))))
-          {
-             free(wname);
-             free(wclass);
-             ecore_x_window_reparent(wins[i], c->win, 0, 0);
-             ecore_x_sync();
-             continue;
-          }
-        free(wname);
-        free(wclass);
-        wname = wclass = NULL;
         if (e_comp_win_find(wins[i]) ||
             e_comp_win_find_client_win(wins[i]) ||
             e_border_find_by_client_window(wins[i])) continue;
