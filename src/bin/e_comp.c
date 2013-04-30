@@ -2064,6 +2064,7 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
 
    if (cw->pop)
      {
+        e_zoomap_always_set(cw->zoomobj, EINA_TRUE);
         evas_object_data_set(cw->shobj, "popup", cw->pop);
         evas_object_data_set(cw->effect_obj, "popup", cw->pop);
         evas_object_name_set(cw->zoomobj, "cw->zoomobj::POPUP");
@@ -2072,6 +2073,7 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
      }
    else if (cw->menu)
      {
+        e_zoomap_always_set(cw->zoomobj, EINA_TRUE);
         evas_object_data_set(cw->shobj, "menu", cw->menu);
         evas_object_data_set(cw->effect_obj, "menu", cw->menu);
         evas_object_name_set(cw->zoomobj, "cw->zoomobj::MENU");
