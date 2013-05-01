@@ -47,6 +47,7 @@ ENLIGHTENMENTHEADERS = \
   e_comp.h \
   e_plane.h \
   e_scale.h \
+  e_theme.h \
   e_pointer.h
 
 enlightenment_wl_src = \
@@ -67,6 +68,7 @@ enlightenment_wl_src = \
   e_comp.c \
   e_plane.c \
   e_scale.c \
+  e_theme.c \
   e_pointer.c \
   $(ENLIGHTENMENTHEADERS)
 
