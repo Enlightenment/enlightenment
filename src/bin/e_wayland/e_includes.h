@@ -21,3 +21,4 @@
 #include "e_module.h"
 #include "e_comp.h"
 #include "e_scale.h"
+#include "e_pointer.h"
