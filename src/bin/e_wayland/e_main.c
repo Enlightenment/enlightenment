@@ -408,6 +408,24 @@ main(int argc, char **argv)
    TS("E_Scale Init Done");
    _e_main_shutdown_push(e_scale_shutdown);
 
+   TS("E_Theme Init");
+   if (!e_theme_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its theme system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Theme Init Done");
+   _e_main_shutdown_push(e_theme_shutdown);
+
+   TS("E_Pointer Init");
+   if (!e_pointer_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its pointer system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Pointer Init Done");
+   _e_main_shutdown_push(e_pointer_shutdown);
+
    /*** Main Loop ***/
 
    starting = EINA_FALSE;
