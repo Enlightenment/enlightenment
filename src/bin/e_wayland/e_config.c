@@ -2032,11 +2032,15 @@ e_config_bindings_free(E_Config_Bindings *ecb)
 static void
 _e_config_save_cb(void *data __UNUSED__)
 {
-   e_config_profile_save();
    /* FIXME: Wayland */
+
+   /* NB: Commented these out right now as the actual save is crashing 
+    * due to bindings and some other things being NULL */
+
+   /* e_config_profile_save(); */
    /* e_module_save_all(); */
-   e_config_domain_save("e", _e_config_edd, e_config);
-   e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings);
+   /* e_config_domain_save("e", _e_config_edd, e_config); */
+   /* e_config_domain_save("e_bindings", _e_config_binding_edd, e_bindings); */
    _e_config_save_defer = NULL;
 }
 
