@@ -426,6 +426,10 @@ main(int argc, char **argv)
    TS("E_Pointer Init Done");
    _e_main_shutdown_push(e_pointer_shutdown);
 
+   TS("E_Canvas Recache");
+   e_canvas_recache();
+   TS("E_Canvas Recache Done");
+
    /*** Main Loop ***/
 
    starting = EINA_FALSE;
