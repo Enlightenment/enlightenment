@@ -46,7 +46,8 @@ ENLIGHTENMENTHEADERS = \
   e_module.h \
   e_comp.h \
   e_plane.h \
-  e_scale.h
+  e_scale.h \
+  e_pointer.h
 
 enlightenment_wl_src = \
   e_log.c \
@@ -66,6 +67,7 @@ enlightenment_wl_src = \
   e_comp.c \
   e_plane.c \
   e_scale.c \
+  e_pointer.c \
   $(ENLIGHTENMENTHEADERS)
 
 enlightenment_wl_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@
