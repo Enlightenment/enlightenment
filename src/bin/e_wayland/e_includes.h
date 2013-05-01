@@ -23,3 +23,4 @@
 #include "e_scale.h"
 #include "e_theme.h"
 #include "e_pointer.h"
+#include "e_canvas.h"
