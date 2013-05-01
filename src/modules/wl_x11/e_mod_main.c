@@ -43,6 +43,7 @@ e_modapi_init(E_Module *m)
    ecore_x_icccm_size_pos_hints_set(_e_comp->win, EINA_FALSE, 
                                     ECORE_X_GRAVITY_NW, w, h, w, h,
                                     0, 0, 1, 1, 0.0, 0.0);
+   ecore_x_icccm_title_set(_e_comp->win, "E Wayland X11 Compositor");
    ecore_x_icccm_name_class_set(_e_comp->win, "E Wayland X11 Compositor", 
                                 "e_wayland/X11 Compositor");
    ecore_x_window_show(_e_comp->win);
