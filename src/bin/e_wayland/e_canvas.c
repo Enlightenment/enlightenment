@@ -143,7 +143,7 @@ e_canvas_rehint(void)
 }
 
 EAPI Ecore_Evas *
-e_canvas_new(unsigned int parent, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool override, Eina_Bool frame, Ecore_Wl_Window *win_ret)
+e_canvas_new(unsigned int parent, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Eina_Bool override, Eina_Bool frame, Ecore_Wl_Window **win_ret)
 {
    Ecore_Evas *ee;
 
