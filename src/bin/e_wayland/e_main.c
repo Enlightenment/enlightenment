@@ -282,13 +282,6 @@ main(int argc, char **argv)
              _e_main_shutdown(-1);
           }
      }
-   /* if (!ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_SOFTWARE_BUFFER)) */
-   /*   { */
-   /*      e_error_message_show(_("Enlightenment found ecore_evas doesn't support the Software Buffer\n" */
-   /*                             "rendering in Evas. Please check your installation of Evas and\n" */
-   /*                             "Ecore and check they support the Software Buffer rendering engine.")); */
-   /*      _e_main_shutdown(-1); */
-   /*   } */
    TS("Ecore_Evas Engine Check Done");
 
    TS("Efreet Init");
@@ -382,6 +375,8 @@ main(int argc, char **argv)
    if (!_e_main_xdg_dirs_check())
      _e_main_shutdown(-1);
 
+   edje_frametime_set(1.0 / e_config->framerate);
+
    /* NB: We need to init the e_module subsystem first, then we can init 
     * the "main" compositor subsytem. Reasoning is that the compositor 
     * subsystem will load the specific compositor (x11, drm, etc) and that the 
@@ -403,6 +398,15 @@ main(int argc, char **argv)
      }
    TS("E_Compositor Init Done");
    _e_main_shutdown_push(e_comp_shutdown);
+
+   TS("E_Scale Init");
+   if (!e_scale_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its scale system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Scale Init Done");
+   _e_main_shutdown_push(e_scale_shutdown);
 
    /*** Main Loop ***/
 
