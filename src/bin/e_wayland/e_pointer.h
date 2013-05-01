@@ -33,6 +33,7 @@ struct _E_Pointer
 
    Evas *evas;
    Evas_Object *o_ptr, *o_hot;
+   void *obj;
 
    Evas_Coord x, y, w, h;
    const char *type;
