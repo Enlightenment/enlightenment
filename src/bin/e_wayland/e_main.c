@@ -39,6 +39,8 @@ static int _e_main_dirs_shutdown(void);
 static int _e_main_paths_init(void);
 static int _e_main_paths_shutdown(void);
 static Eina_Bool _e_main_xdg_dirs_check(void);
+static int _e_main_screens_init(void);
+static int _e_main_screens_shutdown(void);
 
 /* local variables */
 static Eina_Bool really_know = EINA_FALSE;
@@ -399,6 +401,15 @@ main(int argc, char **argv)
    TS("E_Compositor Init Done");
    _e_main_shutdown_push(e_comp_shutdown);
 
+   TS("Ecore_Wayland Init");
+   if (!ecore_wl_init(NULL))
+     {
+        e_error_message_show(_("Enlightenment cannot initialize Ecore_Wayland.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("Ecore_Wayland Init Done");
+   _e_main_shutdown_push(ecore_wl_shutdown);
+
    TS("E_Scale Init");
    if (!e_scale_init())
      {
@@ -429,6 +440,16 @@ main(int argc, char **argv)
    TS("E_Canvas Recache");
    e_canvas_recache();
    TS("E_Canvas Recache Done");
+
+   TS("Screens Init");
+   if (!_e_main_screens_init())
+     {
+        e_error_message_show(_("Enlightenment set up window management for all the screens on your system.\n"
+                               "Perhaps another window manager is running?\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("Screens Init Done");
+   _e_main_shutdown_push(_e_main_screens_shutdown);
 
    /*** Main Loop ***/
 
@@ -912,4 +933,30 @@ _e_main_xdg_dirs_check(void)
      }
 
    return EINA_TRUE;
+}
+
+static int 
+_e_main_screens_init(void)
+{
+   TS("\tScreens: manager");
+   if (!e_manager_init()) return 0;
+
+   TS("\tScreens: container");
+   TS("\tScreens: zone");
+   TS("\tScreens: desk");
+   TS("\tScreens: menu");
+   /* TODO: exehist */
+
+   return 1;
+}
+
+static int 
+_e_main_screens_shutdown(void)
+{
+   /* e_menu_shutdown(); */
+   /* e_desk_shutdown(); */
+   /* e_zone_shutdown(); */
+   /* e_container_shutdown(); */
+   /* e_manager_shutdown(); */
+   return 1;
 }
