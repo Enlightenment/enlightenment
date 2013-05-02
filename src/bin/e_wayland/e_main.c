@@ -41,6 +41,7 @@ static int _e_main_paths_shutdown(void);
 static Eina_Bool _e_main_xdg_dirs_check(void);
 static int _e_main_screens_init(void);
 static int _e_main_screens_shutdown(void);
+static Eina_Bool _e_main_cb_idle_before(void *data EINA_UNUSED);
 
 /* local variables */
 static Eina_Bool really_know = EINA_FALSE;
@@ -49,6 +50,8 @@ static Eina_Bool inloop = EINA_FALSE;
 static jmp_buf wl_fatal_buff;
 static int _e_main_lvl = 0;
 static int (*_e_main_shutdown_func[MAX_LEVEL])(void);
+/* static Eina_List *_idle_before_list = NULL; */
+static Ecore_Idle_Enterer *_idle_before = NULL;
 
 /* external variables */
 EAPI Eina_Bool e_precache_end = EINA_FALSE;
@@ -251,7 +254,7 @@ main(int argc, char **argv)
    TS("Ecore_Ipc Init Done");
    _e_main_shutdown_push(ecore_ipc_shutdown);
 
-   /* TODO: idler_before */
+   _idle_before = ecore_idle_enterer_before_add(_e_main_cb_idle_before, NULL);
 
 #ifdef HAVE_ECORE_IMF
    TS("Ecore_IMF Init");
@@ -468,6 +471,10 @@ main(int argc, char **argv)
    inloop = EINA_FALSE;
    stopping = EINA_TRUE;
 
+   /* TODO */
+   /* if (!wl_fatal) e_canvas_idle_flush(); */
+
+   e_config_save_flush();
    _e_main_shutdown(0);
 
    if (restart)
@@ -503,8 +510,8 @@ _e_main_shutdown(int errcode)
 
    printf("E17: Begin Shutdown Procedure!\n");
 
-   /* if (_idle_before) ecore_idle_enterer_del(_idle_before); */
-   /* _idle_before = NULL; */
+   if (_idle_before) ecore_idle_enterer_del(_idle_before);
+   _idle_before = NULL;
    /* if (_idle_after) ecore_idle_enterer_del(_idle_after); */
    /* _idle_after = NULL; */
    /* if (_idle_flush) ecore_idle_enterer_del(_idle_flush); */
@@ -653,6 +660,8 @@ _e_main_parse_arguments(int argc, char **argv)
 static Eina_Bool
 _e_main_cb_signal_exit(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
+   ecore_main_loop_quit();
+
    /* called on ctrl-c, kill (pid) (also SIGINT, SIGTERM and SIGQIT) */
    /* e_sys_action_do(E_SYS_EXIT, NULL); */
    return ECORE_CALLBACK_RENEW;
@@ -957,6 +966,17 @@ _e_main_screens_shutdown(void)
    /* e_desk_shutdown(); */
    /* e_zone_shutdown(); */
    /* e_container_shutdown(); */
-   /* e_manager_shutdown(); */
+   e_manager_shutdown();
    return 1;
+}
+
+static Eina_Bool 
+_e_main_cb_idle_before(void *data EINA_UNUSED)
+{
+   /* TODO: finish */
+   e_pointer_idler_before();
+
+   edje_thaw();
+
+   return ECORE_CALLBACK_RENEW;
 }
