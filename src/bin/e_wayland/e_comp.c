@@ -74,6 +74,8 @@ e_compositor_init(E_Compositor *comp)
         return EINA_FALSE;
      }
 
+   comp->output_pool = 0;
+
    /* initialize signals */
    wl_signal_init(&comp->signals.destroy);
    wl_signal_init(&comp->signals.activate);
