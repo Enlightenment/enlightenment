@@ -6,9 +6,11 @@ static Eina_Bool _output_init(void);
 static void _output_shutdown(E_Output_X11 *output);
 static int _output_cb_frame(void *data);
 static void _output_cb_destroy(E_Output *output);
+static Eina_Bool _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
 /* local variables */
 static E_Compositor_X11 *_e_comp;
+static Eina_List *_hdlrs = NULL;
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_X11" };
 
@@ -46,6 +48,9 @@ e_modapi_init(E_Module *m)
         goto output_err;
      }
 
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_X_EVENT_WINDOW_DELETE_REQUEST, 
+                         _output_cb_window_destroy, NULL);
+
    /* flush any pending events
     * 
     * NB: This advertises out any globals so it needs to be deferred 
@@ -73,6 +78,9 @@ EAPI int
 e_modapi_shutdown(E_Module *m)
 {
    E_Output_X11 *output;
+
+   /* destroy the list of handlers */
+   E_FREE_LIST(_hdlrs, ecore_event_handler_del);
 
    /* destroy the outputs */
    EINA_LIST_FREE(_e_comp->base.outputs, output)
@@ -122,6 +130,9 @@ _output_init(void)
 
    /* set window background color */
    ecore_x_window_background_color_set(output->win, 0, 0, 0);
+
+   ecore_x_icccm_protocol_set(output->win, 
+                              ECORE_X_WM_PROTOCOL_DELETE_REQUEST, EINA_TRUE);
 
    /* set window to not maximize */
    ecore_x_icccm_size_pos_hints_set(output->win, EINA_FALSE, 
@@ -197,4 +208,29 @@ _output_cb_destroy(E_Output *output)
 
    /* free the structure */
    E_FREE(xout);
+}
+
+static Eina_Bool 
+_output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Window_Delete_Request *ev;
+   E_Output_X11 *output;
+   Eina_List *l;
+
+   ev = event;
+
+   /* loop the existing outputs */
+   EINA_LIST_FOREACH(_e_comp->base.outputs, l, output)
+     {
+        /* try to match the output window */
+        if (ev->win == output->win)
+          {
+             /* output window being closed, quit */
+             /* NB: FIXME: This assumes we have only one output window */
+             ecore_main_loop_quit();
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
 }
