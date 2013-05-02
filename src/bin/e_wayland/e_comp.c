@@ -239,8 +239,6 @@ _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_
 {
    E_Compositor *comp;
 
-   printf("Comp Bind\n");
-
    if (!(comp = data)) return;
 
    /* add the compositor to the client */
@@ -269,8 +267,6 @@ _e_comp_cb_read(void *data, Ecore_Fd_Handler *hdl EINA_UNUSED)
 {
    E_Compositor *comp;
 
-   printf("Comp Read\n");
-
    if ((comp = data))
      {
         wl_event_loop_dispatch(comp->wl.loop, 0);
@@ -284,8 +280,6 @@ static Eina_Bool
 _e_comp_cb_idle(void *data)
 {
    E_Compositor *comp;
-
-//   printf("Comp Idle\n");
 
    if ((comp = data))
      {
