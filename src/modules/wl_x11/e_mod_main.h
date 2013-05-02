@@ -4,13 +4,23 @@
 # include <Ecore_X.h>
 
 typedef struct _E_Compositor_X11 E_Compositor_X11;
+typedef struct _E_Output_X11 E_Output_X11;
 
 struct _E_Compositor_X11
 {
    E_Compositor base;
 
    Ecore_X_Display *display;
+};
+
+struct _E_Output_X11
+{
+   E_Output base;
+   E_Output_Mode mode;
+
    Ecore_X_Window win;
+
+   struct wl_event_source *frame_timer;
 };
 
 EAPI extern E_Module_Api e_modapi;
