@@ -12,7 +12,9 @@ struct _E_Manager
 {
    E_Object e_obj_inherit;
 
+   int num;
    Evas_Coord x, y, w, h;
+   Eina_Bool visible : 1;
 
    Eina_List *containers;
 
