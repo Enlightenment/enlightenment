@@ -2,6 +2,10 @@
 #include "e_mod_main.h"
 
 /* local function prototypes */
+static Eina_Bool _output_init(void);
+static void _output_shutdown(E_Output_X11 *output);
+static int _output_cb_frame(void *data);
+static void _output_cb_destroy(E_Output *output);
 
 /* local variables */
 static E_Compositor_X11 *_e_comp;
@@ -11,16 +15,18 @@ EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_X11" };
 EAPI void *
 e_modapi_init(E_Module *m)
 {
-   Evas_Coord w, h;
-
-   /* try to init ecore_x */
-   if (!ecore_x_init(NULL)) return NULL;
-
    /* try to allocate space for comp structure */
    if (!(_e_comp = E_NEW(E_Compositor_X11, 1)))
      {
         ERR("Could not allocate space for compositor: %m");
-        goto err;
+        return NULL;
+     }
+
+   /* try to init ecore_x */
+   if (!ecore_x_init(NULL))
+     {
+        ERR("Could not initialize ecore_x: %m");
+        goto x_err;
      }
 
    /* get the X display */
@@ -30,23 +36,15 @@ e_modapi_init(E_Module *m)
    if (!e_compositor_init(&_e_comp->base))
      {
         ERR("Could not initialize compositor: %m");
-        goto err;
+        goto comp_err;
      }
 
-   /* FIXME: make these sizes configurable ? */
-   w = 1024;
-   h = 768;
-
-   /* try to create the output window */
-   _e_comp->win = ecore_x_window_new(0, 0, 0, w, h);
-   ecore_x_window_background_color_set(_e_comp->win, 0, 0, 0);
-   ecore_x_icccm_size_pos_hints_set(_e_comp->win, EINA_FALSE, 
-                                    ECORE_X_GRAVITY_NW, w, h, w, h,
-                                    0, 0, 1, 1, 0.0, 0.0);
-   ecore_x_icccm_title_set(_e_comp->win, "E Wayland X11 Compositor");
-   ecore_x_icccm_name_class_set(_e_comp->win, "E Wayland X11 Compositor", 
-                                "e_wayland/X11 Compositor");
-   ecore_x_window_show(_e_comp->win);
+   /* try to initialize output */
+   if (!_output_init())
+     {
+        ERR("Could not initialize output: %m");
+        goto output_err;
+     }
 
    /* flush any pending events
     * 
@@ -56,10 +54,15 @@ e_modapi_init(E_Module *m)
 
    return m;
 
-err:
+output_err:
+   /* shutdown the e_compositor */
+   e_compositor_shutdown(&_e_comp->base);
+
+comp_err:
    /* shutdown ecore_x */
    ecore_x_shutdown();
 
+x_err:
    /* free the structure */
    E_FREE(_e_comp);
 
@@ -69,8 +72,11 @@ err:
 EAPI int 
 e_modapi_shutdown(E_Module *m)
 {
-   /* destroy the window */
-   if (_e_comp->win) ecore_x_window_free(_e_comp->win);
+   E_Output_X11 *output;
+
+   /* destroy the outputs */
+   EINA_LIST_FREE(_e_comp->base.outputs, output)
+     _output_shutdown(output);
 
    /* shutdown generic compositor */
    if (&_e_comp->base) e_compositor_shutdown(&_e_comp->base);
@@ -82,4 +88,113 @@ e_modapi_shutdown(E_Module *m)
    E_FREE(_e_comp);
 
    return 1;
+}
+
+/* local functions */
+static Eina_Bool 
+_output_init(void)
+{
+   E_Output_X11 *output;
+   struct wl_event_loop *loop;
+
+   /* try to allocate space for our output structure */
+   if (!(output = E_NEW(E_Output_X11, 1))) 
+     {
+        ERR("Could not allocate space for output structure");
+        return EINA_FALSE;
+     }
+
+   output->mode.flags = (WL_OUTPUT_MODE_CURRENT | WL_OUTPUT_MODE_PREFERRED);
+   output->mode.w = 1024;
+   output->mode.h = 768;
+   output->mode.refresh = 60;
+
+   /* add this mode to the base outputs list of modes */
+   output->base.modes = eina_list_append(output->base.modes, &output->mode);
+
+   /* try to create the output window */
+   if (!(output->win = 
+         ecore_x_window_new(0, 0, 0, output->mode.w, output->mode.h)))
+     {
+        ERR("Failed to create ecore_x_window");
+        return EINA_FALSE;
+     }
+
+   /* set window background color */
+   ecore_x_window_background_color_set(output->win, 0, 0, 0);
+
+   /* set window to not maximize */
+   ecore_x_icccm_size_pos_hints_set(output->win, EINA_FALSE, 
+                                    ECORE_X_GRAVITY_NW, 
+                                    output->mode.w, output->mode.h, 
+                                    output->mode.w, output->mode.h,
+                                    0, 0, 1, 1, 0.0, 0.0);
+
+   /* set window title */
+   ecore_x_icccm_title_set(output->win, "E_Wayland X11 Compositor");
+   ecore_x_icccm_name_class_set(output->win, "E_Wayland X11 Compositor", 
+                                "e_wayland/X11 Compositor");
+
+   /* show the window */
+   ecore_x_window_show(output->win);
+
+   output->base.current = &output->mode;
+   output->base.original = output->base.current;
+   output->base.make = "e_wayland";
+   output->base.model = "none";
+   output->base.cb_destroy = _output_cb_destroy;
+
+   /* initialize base output */
+   e_output_init(&output->base, &_e_comp->base, 0, 0, 
+                 output->mode.w, output->mode.h, output->mode.flags);
+
+   /* TODO: deal with render */
+
+   /* get the wl event loop */
+   loop = wl_display_get_event_loop(_e_comp->base.wl.display);
+
+   /* add a timer to the event loop */
+   output->frame_timer = 
+     wl_event_loop_add_timer(loop, _output_cb_frame, output);
+
+   /* add this output to the base compositors output list */
+   _e_comp->base.outputs = eina_list_append(_e_comp->base.outputs, output);
+
+   return EINA_TRUE;
+}
+
+static void 
+_output_shutdown(E_Output_X11 *output)
+{
+   E_FREE(output);
+}
+
+static int 
+_output_cb_frame(void *data)
+{
+   E_Output_X11 *output;
+
+   if (!(output = data)) return 1;
+   /* TODO: start repaint loop */
+   return 1;
+}
+
+static void 
+_output_cb_destroy(E_Output *output)
+{
+   E_Output_X11 *xout;
+
+   xout = (E_Output_X11 *)output;
+
+   /* remove the frame timer */
+   wl_event_source_remove(xout->frame_timer);
+
+   /* destroy the window */
+   if (xout->win) ecore_x_window_free(xout->win);
+
+   /* destroy the base output */
+   e_output_shutdown(&xout->base);
+
+   /* free the structure */
+   E_FREE(xout);
 }
