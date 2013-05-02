@@ -55,16 +55,20 @@ _e_output_cb_bind(struct wl_client *client, void *data, unsigned int version EIN
    /* check for valid output */
    if (!(output = data)) return;
 
+   /* add this output to the client */
    resource = 
      wl_client_add_object(client, &wl_output_interface, NULL, id, output);
    wl_list_insert(&output->wl.resources, &resource->link);
 
+   /* setup destroy callback */
    resource->destroy = _e_output_cb_unbind;
 
+   /* send out this output's geometry */
    wl_output_send_geometry(resource, output->x, output->y, 
                            output->mm_w, output->mm_h, output->subpixel, 
                            output->make, output->model, output->transform);
 
+   /* send output mode */
    EINA_LIST_FOREACH(output->modes, l, mode)
      wl_output_send_mode(resource, mode->flags, mode->w, mode->h, 
                          mode->refresh);
