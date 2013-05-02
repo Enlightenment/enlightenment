@@ -37,6 +37,8 @@ struct _E_Compositor
    Ecore_Fd_Handler *fd_hdlr;
    Ecore_Idler *idler;
 
+   unsigned int output_pool;
+
    Eina_List *planes;
    Eina_List *outputs;
    Eina_List *inputs;
