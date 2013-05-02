@@ -30,22 +30,14 @@ static Eina_List *_hdlrs = NULL;
 EINTERN int 
 e_pointer_init(void)
 {
-   _hdlrs = 
-     eina_list_append(_hdlrs, 
-                      ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, 
-                                              _e_pointer_cb_mouse_down, NULL));
-   _hdlrs = 
-     eina_list_append(_hdlrs, 
-                      ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, 
-                                              _e_pointer_cb_mouse_up, NULL));
-   _hdlrs = 
-     eina_list_append(_hdlrs, 
-                      ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, 
-                                              _e_pointer_cb_mouse_move, NULL));
-   _hdlrs = 
-     eina_list_append(_hdlrs, 
-                      ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL, 
-                                              _e_pointer_cb_mouse_wheel, NULL));
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_BUTTON_DOWN, 
+                         _e_pointer_cb_mouse_down, NULL));
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_BUTTON_UP, 
+                         _e_pointer_cb_mouse_up, NULL));
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_MOVE, 
+                         _e_pointer_cb_mouse_move, NULL));
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_WHEEL, 
+                         _e_pointer_cb_mouse_wheel, NULL));
 
    return 1;
 }
