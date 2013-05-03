@@ -1,0 +1,22 @@
+wl_desktopdir = $(MDIR)/wl_desktop
+
+wl_desktop_DATA = wl_desktop/e-module-wl_desktop.edj \
+	       wl_desktop/module.desktop
+
+EXTRA_DIST += wl_desktop/e-module-wl_desktop.edj \
+	      wl_desktop/module.desktop.in
+
+wl_desktoppkgdir = $(MDIR)/wl_desktop/$(MODULE_ARCH)
+wl_desktoppkg_LTLIBRARIES = wl_desktop/module.la
+
+wl_desktop_module_la_DEPENDENCIES = $(MDEPENDENCIES)
+wl_desktop_module_la_CFLAGS  = $(AM_CPPFLAGS) @e_wl_cflags@ @WL_DESKTOP_CFLAGS@ @WAYLAND_CFLAGS@
+wl_desktop_module_la_LIBADD   = $(LIBS) @e_wl_libs@ @WL_DESKTOP_LIBS@ @WAYLAND_LIBS@
+# wl_desktop_module_la_LDFLAGS = $(AM_LDFLAGS) @E_WL_LDFLAGS@ @WL_DESKTOP_LDFLAGS@
+wl_desktop_module_la_SOURCES = wl_desktop/e_mod_main.c \
+			    wl_desktop/e_mod_main.h
+
+# TODO: incomplete
+#.PHONY: wl_desktop install-wl_desktop
+#wl_desktop: $(wl_desktoppkg_LTLIBRARIES) $(wl_desktop_DATA)
+#install-wl_desktop: install-wl_desktopDATA install-wl_desktoppkgLTLIBRARIES
