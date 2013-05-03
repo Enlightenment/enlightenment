@@ -22,6 +22,7 @@ static Eina_Bool _e_pointer_cb_mouse_down(void *data EINA_UNUSED, int type EINA_
 static Eina_Bool _e_pointer_cb_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
 static Eina_Bool _e_pointer_cb_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
 static Eina_Bool _e_pointer_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_pointer_cb_hot_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 
 /* local variables */
 static Eina_List *_ptrs = NULL;
@@ -202,7 +203,31 @@ _e_pointer_active_handle(E_Pointer *ptr)
 static void 
 _e_pointer_canvas_add(E_Pointer *ptr)
 {
-   /* TODO */
+   Evas_Coord x, y;
+
+   /* check for valid pointer */
+   if (!ptr) return;
+
+   ptr->w = e_config->cursor_size;
+   ptr->h = e_config->cursor_size;
+
+   ecore_wl_pointer_xy_get(&x, &y);
+
+   ptr->ee = 
+     e_canvas_new(0, x, y, ptr->w, ptr->h, EINA_TRUE, EINA_FALSE, NULL);
+   e_canvas_add(ptr->ee);
+
+   ptr->evas = ecore_evas_get(ptr->ee);
+
+   ptr->o_ptr = edje_object_add(ptr->evas);
+   evas_object_move(ptr->o_ptr, 0, 0);
+   evas_object_resize(ptr->o_ptr, ptr->w, ptr->h);
+   evas_object_show(ptr->o_ptr);
+
+   ptr->o_hot = evas_object_rectangle_add(ptr->evas);
+   evas_object_color_set(ptr->o_hot, 0, 0, 0, 0);
+   evas_object_event_callback_add(ptr->o_hot, EVAS_CALLBACK_MOVE, 
+                                  _e_pointer_cb_hot_move, ptr);
 }
 
 static void 
@@ -442,3 +467,25 @@ _e_pointer_cb_mouse_wheel(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void 
+_e_pointer_cb_hot_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Pointer *ptr;
+   Evas_Coord x, y;
+
+   /* check for valid pointer */
+   if (!(ptr = data)) return;
+
+   if (!e_config->show_cursor) return;
+   if (!ptr->e_cursor) return;
+
+   edje_object_part_geometry_get(ptr->o_ptr, "e.swallow.hotspot", 
+                                 &x, &y, NULL, NULL);
+
+   if ((ptr->hot.x != x) || (ptr->hot.y != y))
+     {
+        ptr->hot.x = x;
+        ptr->hot.y = y;
+        ptr->hot.update = EINA_TRUE;
+     }
+}
