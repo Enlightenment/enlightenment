@@ -15,6 +15,7 @@ static const struct wl_compositor_interface _e_compositor_interface =
 };
 
 /* local variables */
+static E_Compositor *_e_comp = NULL;
 
 EINTERN int 
 e_comp_init(void)
@@ -66,6 +67,12 @@ e_compositor_init(E_Compositor *comp)
 {
    E_Plane *p;
    int fd = 0;
+
+   if (_e_comp)
+     {
+        ERR("Compositor already exists");
+        return EINA_FALSE;
+     }
 
    /* try to create a wayland display */
    if (!(comp->wl.display = wl_display_create()))
@@ -171,6 +178,9 @@ e_compositor_init(E_Compositor *comp)
      }
 
    wl_event_loop_dispatch(comp->wl.loop, 0);
+
+   /* set a reference to the compositor */
+   _e_comp = comp;
 
    return EINA_TRUE;
 
