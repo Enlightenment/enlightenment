@@ -35,7 +35,7 @@ e_modapi_init(E_Module *m)
    _e_comp->display = ecore_x_display_get();
 
    /* try to initialize generic compositor */
-   if (!e_compositor_init(&_e_comp->base))
+   if (!e_compositor_init(&_e_comp->base, _e_comp->display))
      {
         ERR("Could not initialize compositor: %m");
         goto comp_err;
