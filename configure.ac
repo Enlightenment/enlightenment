@@ -922,6 +922,16 @@ define([CHECK_MODULE_WL_X11],
 ])
 AM_CONDITIONAL([HAVE_WL_X11], [test "x${WL_X11}" = "xtrue"])
 
+define([CHECK_MODULE_WL_DESKTOP],
+[
+  if test "x${have_wayland_only}" = "xyes"; then
+    AC_E_CHECK_PKG(WL_DESKTOP, [ ecore >= $efl_version ], [WL_DESKTOP=true], [WL_DESKTOP=false])
+  else
+    WL_DESKTOP=false
+  fi
+])
+AM_CONDITIONAL([HAVE_WL_DESKTOP], [test "x${WL_DESKTOP}" = "xtrue"])
+
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
   if test "x${have_wayland_clients}" = "xyes"; then
@@ -984,6 +994,7 @@ AC_E_OPTIONAL_MODULE([access], true)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([contact], true)
 AC_E_OPTIONAL_MODULE([wl_x11], true, [CHECK_MODULE_WL_X11])
+AC_E_OPTIONAL_MODULE([wl_desktop], true, [CHECK_MODULE_WL_DESKTOP])
 AC_E_OPTIONAL_MODULE([wl_desktop_shell], true, [CHECK_MODULE_WL_DESKTOP_SHELL])
 
 HALT="/sbin/shutdown -h now"
@@ -1107,6 +1118,7 @@ src/modules/tiling/module.desktop
 src/modules/access/module.desktop
 src/modules/music-control/module.desktop
 src/modules/contact/module.desktop
+src/modules/wl_desktop/module.desktop
 src/modules/wl_desktop_shell/module.desktop
 data/Makefile
 data/images/Makefile
