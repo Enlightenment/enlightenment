@@ -12,7 +12,7 @@ struct _E_Manager
 {
    E_Object e_obj_inherit;
 
-   int num;
+   unsigned int num;
    Evas_Coord x, y, w, h;
    Eina_Bool visible : 1;
 
@@ -25,7 +25,7 @@ EINTERN int e_manager_init(void);
 EINTERN int e_manager_shutdown(void);
 
 EAPI Eina_List *e_manager_list(void);
-EAPI E_Manager *e_manager_new(E_Output *output, int num);
+EAPI E_Manager *e_manager_new(E_Output *output, unsigned int num);
 EAPI E_Manager *e_manager_current_get(void);
 EAPI void e_manager_show(E_Manager *man);
 EAPI void e_manager_hide(E_Manager *man);
