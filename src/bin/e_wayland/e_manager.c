@@ -72,6 +72,36 @@ e_manager_current_get(void)
    return eina_list_data_get(_managers);
 }
 
+EAPI void 
+e_manager_show(E_Manager *man)
+{
+   /* check for valid manager */
+   E_OBJECT_CHECK(man);
+   E_OBJECT_TYPE_CHECK(man, E_MANAGER_TYPE);
+
+   /* check for already visible */
+   if (man->visible) return;
+
+   /* TODO: show containers */
+
+   man->visible = EINA_TRUE;
+}
+
+EAPI void 
+e_manager_hide(E_Manager *man)
+{
+   /* check for valid manager */
+   E_OBJECT_CHECK(man);
+   E_OBJECT_TYPE_CHECK(man, E_MANAGER_TYPE);
+
+   /* check for already invisible */
+   if (!man->visible) return;
+
+   /* TODO: hide containers */
+
+   man->visible = EINA_FALSE;
+}
+
 /* local functions */
 static void 
 _e_manager_cb_free(E_Manager *man)
