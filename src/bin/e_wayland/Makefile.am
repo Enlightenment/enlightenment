@@ -43,10 +43,11 @@ ENLIGHTENMENTHEADERS = \
   e_font.h \
   e_int_menus.h \
   e_env.h \
+  e_plane.h \
+  e_surface.h \
   e_module.h \
   e_comp.h \
   e_shell.h \
-  e_plane.h \
   e_scale.h \
   e_theme.h \
   e_pointer.h \
@@ -69,10 +70,11 @@ enlightenment_wl_src = \
   e_config.c \
   e_powersave.c \
   e_env.c \
+  e_plane.c \
+  e_surface.c \
   e_module.c \
   e_comp.c \
   e_shell.c \
-  e_plane.c \
   e_scale.c \
   e_theme.c \
   e_pointer.c \
