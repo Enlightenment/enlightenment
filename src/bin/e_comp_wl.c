@@ -839,10 +839,11 @@ _e_comp_wl_input_keymap_get(void)
 
    memset(&names, 0, sizeof(names));
 
-   kbd_layout = e_xkb_layout_get();
-
-   names.model = strdup(kbd_layout->model);
-   names.layout = strdup(kbd_layout->name);
+   if ((kbd_layout = e_xkb_layout_get()))
+     {
+        names.model = strdup(kbd_layout->model);
+        names.layout = strdup(kbd_layout->name);
+     }
 
    /* if we are running under X11, try to get the xkb rule names atom */
    if (getenv("DISPLAY"))
@@ -870,10 +871,11 @@ _e_comp_wl_input_keymap_get(void)
           {
              names.rules = strdup((const char *)data);
              data += strlen((const char *)data) + 1;
-             /* names.model = strdup((const char *)data); */
-             /* data += strlen((const char *)data) + 1; */
-             /* names.layout = strdup((const char *)data); */
-//             free(data);
+             if (!names.model)
+               names.model = strdup((const char *)data);
+             data += strlen((const char *)data) + 1;
+             if (!names.layout)
+               names.layout = strdup((const char *)data);
           }
      }
 
