@@ -26,6 +26,7 @@ EINTERN int e_manager_shutdown(void);
 
 EAPI Eina_List *e_manager_list(void);
 EAPI E_Manager *e_manager_new(E_Output *output, int num);
+EAPI E_Manager *e_manager_current_get(void);
 
 # endif
 #endif
