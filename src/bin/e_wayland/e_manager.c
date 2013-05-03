@@ -48,6 +48,30 @@ e_manager_new(E_Output *output, int num)
    return man;
 }
 
+EAPI E_Manager *
+e_manager_current_get(void)
+{
+   Eina_List *l;
+   E_Manager *man;
+   Evas_Coord x, y;
+
+   if (!_managers) return NULL;
+
+   /* get the current mouse position */
+   ecore_wl_pointer_xy_get(&x, &y);
+
+   /* loop the list of managers */
+   EINA_LIST_FOREACH(_managers, l, man)
+     {
+        /* test if the mouse is inside this manager */
+        if (E_INSIDE(x, y, man->x, man->y, man->w, man->h))
+          return man;
+     }
+
+   /* return the current manager pointed to by the list */
+   return eina_list_data_get(_managers);
+}
+
 /* local functions */
 static void 
 _e_manager_cb_free(E_Manager *man)
