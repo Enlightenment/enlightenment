@@ -68,6 +68,9 @@ _e_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *r
 
    /* try to cast the resource to our surface */
    if (!(es = resource->data)) return;
+
+   /* add this damage rectangle */
+   evas_damage_rectangle_add(es->evas, x, y, w, h);
 }
 
 static void 
