@@ -3,6 +3,7 @@
 /* local function prototypes */
 static void _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
 static void _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void _e_comp_cb_surface_destroy(struct wl_resource *resource);
 static void _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 static Eina_Bool _e_comp_cb_read(void *data, Ecore_Fd_Handler *hdl EINA_UNUSED);
 static Eina_Bool _e_comp_cb_idle(void *data);
@@ -268,8 +269,44 @@ static void
 _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    E_Compositor *comp;
+   E_Surface *es;
 
+   /* try to cast to our compositor */
    if (!(comp = resource->data)) return;
+
+   /* try to create a new surface */
+   if (!(es = e_surface_new(id)))
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   /* set destroy callback */
+   es->wl.surface.resource.destroy = _e_comp_cb_surface_destroy;
+
+   /* add this surface to the client */
+   wl_client_add_resource(client, &es->wl.surface.resource);
+
+   /* add this surface to the compositors list */
+   comp->surfaces = eina_list_append(comp->surfaces, es);
+}
+
+static void 
+_e_comp_cb_surface_destroy(struct wl_resource *resource)
+{
+   E_Surface *es;
+
+   /* try to get the surface from this resource */
+   if (!(es = container_of(resource, E_Surface, wl.surface.resource)))
+     return;
+
+   /* TODO: finish me */
+
+   /* remove this surface from the compositor */
+   _e_comp->surfaces = eina_list_remove(_e_comp->surfaces, es);
+
+   /* free the structure */
+   E_FREE(es);
 }
 
 static void 
