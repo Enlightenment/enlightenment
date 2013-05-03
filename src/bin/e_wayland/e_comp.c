@@ -238,6 +238,12 @@ e_compositor_shutdown(E_Compositor *comp)
    return EINA_TRUE;
 }
 
+EAPI E_Compositor *
+e_compositor_get(void)
+{
+   return _e_comp;
+}
+
 EAPI void 
 e_compositor_plane_stack(E_Compositor *comp, E_Plane *plane, E_Plane *above)
 {
