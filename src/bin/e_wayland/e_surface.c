@@ -2,17 +2,20 @@
 
 /* local function prototypes */
 static void _e_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
+static void _e_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int x, int y);
+static void _e_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h);
+static void _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
 
 /* local wayland interfaces */
 static const struct wl_surface_interface _e_surface_interface = 
 {
    _e_surface_cb_destroy,
-   NULL, // cb_attach
-   NULL, // cb_damage
+   _e_surface_cb_attach,
+   _e_surface_cb_damage,
    NULL, // cb_frame
    NULL, // cb_opaque_set
    NULL, // cb_input_set
-   NULL, // cb_commit
+   _e_surface_cb_commit,
    NULL // cb_buffer_transform_set
 };
 
@@ -47,4 +50,31 @@ static void
 _e_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    wl_resource_destroy(resource);
+}
+
+static void 
+_e_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int x, int y)
+{
+   E_Surface *es;
+
+   /* try to cast the resource to our surface */
+   if (!(es = resource->data)) return;
+}
+
+static void 
+_e_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h)
+{
+   E_Surface *es;
+
+   /* try to cast the resource to our surface */
+   if (!(es = resource->data)) return;
+}
+
+static void 
+_e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   E_Surface *es;
+
+   /* try to cast the resource to our surface */
+   if (!(es = resource->data)) return;
 }
