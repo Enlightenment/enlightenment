@@ -58,5 +58,7 @@ struct _E_Shell_Surface
    void *ping_timer;
 };
 
+EAPI E_Shell_Surface *e_shell_surface_new(unsigned int id);
+
 # endif
 #endif
