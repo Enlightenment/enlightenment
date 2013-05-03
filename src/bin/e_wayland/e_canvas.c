@@ -147,13 +147,15 @@ e_canvas_new(unsigned int parent, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
 {
    Ecore_Evas *ee;
 
+#ifdef HAVE_WAYLAND_EGL
    ee = ecore_evas_wayland_egl_new(NULL, parent, x, y, w, h, frame);
    if (!ee)
+#endif
      ee = ecore_evas_wayland_shm_new(NULL, parent, x, y, w, h, frame);
 
    if (!ee)
      {
-        EINA_LOG_ERR("Impossible to build any Ecore_Evas window !!");
+        ERR("Impossible to build any Ecore_Evas window !!");
         return NULL;
      }
 
