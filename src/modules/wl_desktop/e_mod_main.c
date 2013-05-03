@@ -117,7 +117,8 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
      {
         wl_resource_post_error(surface_resource, 
                                WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "");
+                               "Shell surface already requested for surface");
         return;
      }
+
 }
