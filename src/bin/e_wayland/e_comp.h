@@ -38,6 +38,8 @@ struct _E_Compositor
      } egl;
 #endif
 
+   E_Shell_Interface shell_interface;
+
    E_Plane plane; // primary plane
 
    Ecore_Fd_Handler *fd_hdlr;
