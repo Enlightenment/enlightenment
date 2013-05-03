@@ -9,7 +9,7 @@ static void _output_cb_destroy(E_Output *output);
 static Eina_Bool _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
 /* local variables */
-static E_Compositor_X11 *_e_comp;
+static E_Compositor_X11 *_e_x11_comp;
 static Eina_List *_hdlrs = NULL;
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_X11" };
@@ -18,7 +18,7 @@ EAPI void *
 e_modapi_init(E_Module *m)
 {
    /* try to allocate space for comp structure */
-   if (!(_e_comp = E_NEW(E_Compositor_X11, 1)))
+   if (!(_e_x11_comp = E_NEW(E_Compositor_X11, 1)))
      {
         ERR("Could not allocate space for compositor: %m");
         return NULL;
@@ -32,10 +32,10 @@ e_modapi_init(E_Module *m)
      }
 
    /* get the X display */
-   _e_comp->display = ecore_x_display_get();
+   _e_x11_comp->display = ecore_x_display_get();
 
    /* try to initialize generic compositor */
-   if (!e_compositor_init(&_e_comp->base, _e_comp->display))
+   if (!e_compositor_init(&_e_x11_comp->base, _e_x11_comp->display))
      {
         ERR("Could not initialize compositor: %m");
         goto comp_err;
@@ -55,13 +55,13 @@ e_modapi_init(E_Module *m)
     * 
     * NB: This advertises out any globals so it needs to be deferred 
     * until after the module has finished initialize */
-   /* wl_event_loop_dispatch(_e_comp->base.wl.loop, 0); */
+   /* wl_event_loop_dispatch(_e_x11_comp->base.wl.loop, 0); */
 
    return m;
 
 output_err:
    /* shutdown the e_compositor */
-   e_compositor_shutdown(&_e_comp->base);
+   e_compositor_shutdown(&_e_x11_comp->base);
 
 comp_err:
    /* shutdown ecore_x */
@@ -69,7 +69,7 @@ comp_err:
 
 x_err:
    /* free the structure */
-   E_FREE(_e_comp);
+   E_FREE(_e_x11_comp);
 
    return NULL;
 }
@@ -83,17 +83,17 @@ e_modapi_shutdown(E_Module *m)
    E_FREE_LIST(_hdlrs, ecore_event_handler_del);
 
    /* destroy the outputs */
-   EINA_LIST_FREE(_e_comp->base.outputs, output)
+   EINA_LIST_FREE(_e_x11_comp->base.outputs, output)
      _output_shutdown(output);
 
    /* shutdown generic compositor */
-   if (&_e_comp->base) e_compositor_shutdown(&_e_comp->base);
+   if (&_e_x11_comp->base) e_compositor_shutdown(&_e_x11_comp->base);
 
    /* shutdown ecore_x */
    ecore_x_shutdown();
 
    /* free the structure */
-   E_FREE(_e_comp);
+   E_FREE(_e_x11_comp);
 
    return 1;
 }
@@ -156,20 +156,20 @@ _output_init(void)
    output->base.cb_destroy = _output_cb_destroy;
 
    /* initialize base output */
-   e_output_init(&output->base, &_e_comp->base, 0, 0, 
+   e_output_init(&output->base, &_e_x11_comp->base, 0, 0, 
                  output->mode.w, output->mode.h, output->mode.flags);
 
    /* TODO: deal with render */
 
    /* get the wl event loop */
-   loop = wl_display_get_event_loop(_e_comp->base.wl.display);
+   loop = wl_display_get_event_loop(_e_x11_comp->base.wl.display);
 
    /* add a timer to the event loop */
    output->frame_timer = 
      wl_event_loop_add_timer(loop, _output_cb_frame, output);
 
    /* add this output to the base compositors output list */
-   _e_comp->base.outputs = eina_list_append(_e_comp->base.outputs, output);
+   _e_x11_comp->base.outputs = eina_list_append(_e_x11_comp->base.outputs, output);
 
    return EINA_TRUE;
 }
@@ -220,7 +220,7 @@ _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    ev = event;
 
    /* loop the existing outputs */
-   EINA_LIST_FOREACH(_e_comp->base.outputs, l, output)
+   EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
      {
         /* try to match the output window */
         if (ev->win == output->win)
