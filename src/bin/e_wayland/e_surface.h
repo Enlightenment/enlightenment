@@ -14,7 +14,17 @@ struct _E_Surface
         struct wl_list link;
      } wl;
 
+   struct 
+     {
+        Evas_Coord x, y;
+        Evas_Coord w, h;
+        Eina_Bool changed : 1;
+     } geometry;
+
    E_Shell_Surface *shell_surface;
+
+   Evas *evas;
+   Ecore_Evas *ee;
 
    Eina_Bool mapped : 1;
 
