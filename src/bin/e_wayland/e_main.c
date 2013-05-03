@@ -412,7 +412,13 @@ main(int argc, char **argv)
    _e_main_shutdown_push(e_comp_shutdown);
 
    TS("E_Shell Init");
+   if (!e_shell_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its shell system.\n"));
+        _e_main_shutdown(-1);
+     }
    TS("E_Shell Init Done");
+   _e_main_shutdown_push(e_shell_shutdown);
 
    TS("Ecore_Wayland Init");
    if (!ecore_wl_init(NULL))
