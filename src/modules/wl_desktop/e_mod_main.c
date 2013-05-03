@@ -5,7 +5,9 @@
 static void _e_desktop_shell_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 static void _e_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
 static void _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *surface_resource);
+static void _e_desktop_shell_shell_surface_cb_destroy_notify(struct wl_listener *listener, void *data EINA_UNUSED);
 static void _e_desktop_shell_shell_surface_cb_destroy(struct wl_resource *resource);
+static void _e_desktop_shell_shell_surface_configure(E_Surface *es, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
 /* local wayland interfaces */
 static const struct wl_shell_interface _e_desktop_shell_interface = 
@@ -26,8 +28,7 @@ _e_desktop_shell_surface_interface =
    NULL, // maximized
    NULL, // title
    NULL // class
-}
-
+};
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop" };
 
@@ -140,21 +141,44 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
      }
 
    /* try to create new shell surface */
-   if (!(ess = e_shell_surface_new(id)))
+   if (!(ess = e_shell_surface_new(es, id)))
      {
         wl_resource_post_no_memory(resource);
         return;
      }
 
+   es->configure = _e_desktop_shell_shell_surface_configure;
+   /* ess->map = ; */
+   /* ess->unmap = ; */
+
    /* setup shell surface destroy callback */
-   ess->wl.resource.destroy = _e_desktop_shell_shell_surface_cb_destroy;
+   ess->wl.surface_destroy.notify = 
+     _e_desktop_shell_shell_surface_cb_destroy_notify;
+   wl_signal_add(&es->wl.surface.resource.destroy_signal, 
+                 &ess->wl.surface_destroy);
 
    /* setup shell surface interface */
+   ess->wl.resource.destroy = _e_desktop_shell_shell_surface_cb_destroy;
    ess->wl.resource.object.implementation = 
      (void (**)(void))&_e_desktop_shell_surface_interface;
 
    /* add this shell surface to the client */
    wl_client_add_resource(client, &ess->wl.resource);
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_destroy_notify(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Shell_Surface *ess;
+
+   /* try to get the shell surface from the listener */
+   if (!(ess = container_of(listener, E_Shell_Surface, wl.surface_destroy)))
+     return;
+
+   if (ess->wl.resource.client)
+     wl_resource_destroy(&ess->wl.resource);
+   else
+     wl_signal_emit(&ess->wl.resource.destroy_signal, &ess->wl.resource);
 }
 
 static void 
@@ -177,4 +201,17 @@ _e_desktop_shell_shell_surface_cb_destroy(struct wl_resource *resource)
 
    /* free the allocated structure */
    E_FREE(ess);
+}
+
+static void 
+_e_desktop_shell_shell_surface_configure(E_Surface *es, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   E_Shell_Surface *ess;
+
+   if ((es->configure == _e_desktop_shell_shell_surface_configure))
+     {
+        if (!(ess = es->shell_surface)) return;
+     }
+
+   /* TODO: finish me */
 }
