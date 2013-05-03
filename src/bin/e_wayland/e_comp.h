@@ -52,6 +52,7 @@ EINTERN int e_comp_shutdown(void);
 
 EAPI Eina_Bool e_compositor_init(E_Compositor *comp);
 EAPI Eina_Bool e_compositor_shutdown(E_Compositor *comp);
+EAPI E_Compositor *e_compositor_get(void);
 EAPI void e_compositor_plane_stack(E_Compositor *comp, E_Plane *plane, E_Plane *above);
 
 # endif
