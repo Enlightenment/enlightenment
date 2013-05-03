@@ -6,6 +6,12 @@ typedef struct _E_Compositor E_Compositor;
 # ifndef E_COMP_H
 #  define E_COMP_H
 
+#  define container_of(ptr, type, mbr) \
+   ({ \
+      const __typeof__(((type *)0)->mbr) *__mptr = (ptr); \
+      (type *)((char *)__mptr - offsetof(type, mbr)); \
+   })
+
 struct _E_Compositor
 {
    struct 
