@@ -4,11 +4,12 @@
 /* local function prototypes */
 static void _e_desktop_shell_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 static void _e_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
+static void _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *surface_resource);
 
 /* local wayland interfaces */
 static const struct wl_shell_interface _e_desktop_shell_interface = 
 {
-   NULL // shell_surface_get
+   _e_desktop_shell_cb_shell_surface_get
 };
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop" };
@@ -31,7 +32,7 @@ e_modapi_init(E_Module *m)
    wl_signal_add(&_e_comp->signals.destroy, &shell->wl.destroy_listener);
 
    /* set a reference to this shell in the compositor */
-   _e_comp->shell_interface.shell = shell;
+   shell->compositor->shell_interface.shell = shell;
 
    /* try to add this shell to the globals */
    if (!(global = 
@@ -51,11 +52,12 @@ err:
    _e_comp->shell_interface.shell = NULL;
 
    /* remove the destroy signal */
-   wl_list_remove(&_e_comp->signals.destroy->listener_list, 
-                  &shell->wl.destroy_listener->link);
+   wl_list_remove(&shell->wl.destroy_listener.link);
 
    /* free the allocated structure */
    E_FREE(shell);
+
+   return NULL;
 }
 
 EAPI int 
@@ -74,11 +76,10 @@ _e_desktop_shell_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED
    shell = container_of(listener, E_Desktop_Shell, wl.destroy_listener);
 
    /* reset compositor shell interface */
-   _e_comp->shell_interface.shell = NULL;
+   shell->compositor->shell_interface.shell = NULL;
 
    /* remove the destroy signal */
-   wl_list_remove(&_e_comp->signals.destroy->listener_list, 
-                  &shell->wl.destroy_listener->link);
+   wl_list_remove(&shell->wl.destroy_listener.link);
 
    /* free the allocated structure */
    E_FREE(shell);
@@ -98,4 +99,15 @@ _e_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int vers
                         &_e_desktop_shell_interface, id, shell);
 
    /* TODO: finish */
+}
+
+static void 
+_e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *surface_resource)
+{
+   E_Surface *es;
+
+   printf("Desktop_Shell: Shell Surface Get\n");
+
+   /* try to cast the resource to our structure */
+   if (!(es = surface_resource->data)) return;
 }
