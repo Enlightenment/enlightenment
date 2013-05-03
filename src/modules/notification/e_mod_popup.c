@@ -178,6 +178,14 @@ _notification_popup_place_coords_get(int zw, int zh, int ow, int oh, int pos, in
      }
 }
 
+static void
+_notification_popup_del_cb(void *obj)
+{
+   Popup_Data *popup = e_object_data_get(obj);
+
+   popup->win = NULL;
+}
+
 static Popup_Data *
 _notification_popup_new(E_Notification_Notify *n, unsigned id)
 {
@@ -219,6 +227,8 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    popup->id = id;
    /* Create the popup window */
    popup->win = e_popup_new(zone, 0, 0, 0, 0);
+   E_OBJECT_DEL_SET(popup->win, _notification_popup_del_cb);
+   e_object_data_set(E_OBJECT(popup->win), popup);
    e_popup_name_set(popup->win, "_e_popup_notification");
    popup->e = popup->win->evas;
 
@@ -283,6 +293,7 @@ _notification_popup_place(Popup_Data *popup,
    Eina_List *l;
    Evas_Object *o;
 
+   if (!popup->win) return pos;
    _notification_popup_place_coords_get(popup->win->zone->w, popup->win->zone->h, popup->win->w, popup->win->h, pos, &x, &y);
    e_popup_move(popup->win, x, y);
    EINA_LIST_FOREACH(popup->mirrors, l, o)
@@ -494,7 +505,7 @@ _notification_popdown(Popup_Data                  *popup,
 {
    E_FREE_FUNC(popup->timer, ecore_timer_del);
    popup->mirrors = eina_list_free(popup->mirrors);
-   e_object_del(E_OBJECT(popup->win));
+   if (popup->win) e_object_del(E_OBJECT(popup->win));
    if (popup->notif)
      {
         e_notification_notify_close(popup->notif, reason);
