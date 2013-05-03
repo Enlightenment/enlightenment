@@ -45,6 +45,7 @@ ENLIGHTENMENTHEADERS = \
   e_env.h \
   e_module.h \
   e_comp.h \
+  e_shell.h \
   e_plane.h \
   e_scale.h \
   e_theme.h \
