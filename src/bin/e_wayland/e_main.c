@@ -947,6 +947,14 @@ _e_main_xdg_dirs_check(void)
 static int 
 _e_main_screens_init(void)
 {
+   E_Compositor *comp;
+   E_Output *output;
+   Eina_List *l;
+   int i = 0;
+
+   /* check for valid compositor */
+   if (!(comp = e_compositor_get())) return 0;
+
    TS("\tScreens: manager");
    if (!e_manager_init()) return 0;
 
@@ -955,6 +963,20 @@ _e_main_screens_init(void)
    TS("\tScreens: desk");
    TS("\tScreens: menu");
    /* TODO: exehist */
+
+   EINA_LIST_FOREACH(comp->outputs, l, output)
+     {
+        E_Manager *man;
+
+        /* try to create a new manager on this output */
+        if (!(man = e_manager_new(output, i)))
+          {
+             e_error_message_show(_("Cannot create manager object\n"));
+             return 0;
+          }
+
+        i++;
+     }
 
    return 1;
 }
