@@ -32,6 +32,7 @@ struct _E_Pointer
    Eina_Bool idle : 1;
 
    Evas *evas;
+   Ecore_Evas *ee;
    Evas_Object *o_ptr, *o_hot;
    void *obj;
 
