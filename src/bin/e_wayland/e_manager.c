@@ -27,7 +27,7 @@ e_manager_list(void)
 }
 
 EAPI E_Manager *
-e_manager_new(E_Output *output, int num)
+e_manager_new(E_Output *output, unsigned int num)
 {
    E_Manager *man;
 
@@ -75,6 +75,9 @@ e_manager_current_get(void)
 EAPI void 
 e_manager_show(E_Manager *man)
 {
+   E_Container *con;
+   Eina_List *l;
+
    /* check for valid manager */
    E_OBJECT_CHECK(man);
    E_OBJECT_TYPE_CHECK(man, E_MANAGER_TYPE);
@@ -82,7 +85,9 @@ e_manager_show(E_Manager *man)
    /* check for already visible */
    if (man->visible) return;
 
-   /* TODO: show containers */
+   /* show containers */
+   EINA_LIST_FOREACH(man->containers, l, con)
+     e_container_show(con);
 
    man->visible = EINA_TRUE;
 }
@@ -90,6 +95,9 @@ e_manager_show(E_Manager *man)
 EAPI void 
 e_manager_hide(E_Manager *man)
 {
+   E_Container *con;
+   Eina_List *l;
+
    /* check for valid manager */
    E_OBJECT_CHECK(man);
    E_OBJECT_TYPE_CHECK(man, E_MANAGER_TYPE);
@@ -97,7 +105,9 @@ e_manager_hide(E_Manager *man)
    /* check for already invisible */
    if (!man->visible) return;
 
-   /* TODO: hide containers */
+   /* hide containers */
+   EINA_LIST_FOREACH(man->containers, l, con)
+     e_container_hide(con);
 
    man->visible = EINA_FALSE;
 }
