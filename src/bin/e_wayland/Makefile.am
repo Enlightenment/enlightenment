@@ -51,6 +51,7 @@ ENLIGHTENMENTHEADERS = \
   e_pointer.h \
   e_canvas.h \
   e_manager.h \
+  e_container.h \
   e_output.h
 
 enlightenment_wl_src = \
@@ -75,6 +76,7 @@ enlightenment_wl_src = \
   e_pointer.c \
   e_canvas.c \
   e_manager.c \
+  e_container.c \
   e_output.c \
   $(ENLIGHTENMENTHEADERS)
 
