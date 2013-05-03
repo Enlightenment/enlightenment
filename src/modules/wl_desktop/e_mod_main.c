@@ -8,6 +8,24 @@ static void _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, stru
 static void _e_desktop_shell_shell_surface_cb_destroy_notify(struct wl_listener *listener, void *data EINA_UNUSED);
 static void _e_desktop_shell_shell_surface_cb_destroy(struct wl_resource *resource);
 static void _e_desktop_shell_shell_surface_configure(E_Surface *es, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+static void _e_desktop_shell_shell_surface_map(E_Surface *es, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+static void _e_desktop_shell_shell_surface_unmap(E_Surface *es);
+
+/* shell surface interface prototypes */
+static void _e_desktop_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial);
+static void _e_desktop_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial);
+static void _e_desktop_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, unsigned int edges);
+static void _e_desktop_shell_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
+static void _e_desktop_shell_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource, int x, int y, unsigned int flags);
+static void _e_desktop_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int method EINA_UNUSED, unsigned int framerate EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED);
+static void _e_desktop_shell_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, struct wl_resource *parent_resource, int x, int y, unsigned int flags EINA_UNUSED);
+static void _e_desktop_shell_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource EINA_UNUSED);
+static void _e_desktop_shell_shell_surface_cb_title_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *title);
+static void _e_desktop_shell_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *clas);
+static void _e_desktop_shell_shell_surface_type_set(E_Shell_Surface *ess);
+static void _e_desktop_shell_shell_surface_type_reset(E_Shell_Surface *ess);
+
+static void _e_desktop_shell_surface_create_toplevel(E_Surface *es);
 
 /* local wayland interfaces */
 static const struct wl_shell_interface _e_desktop_shell_interface = 
@@ -18,16 +36,16 @@ static const struct wl_shell_interface _e_desktop_shell_interface =
 static const struct wl_shell_surface_interface 
 _e_desktop_shell_surface_interface = 
 {
-   NULL, // pong
-   NULL, // move
-   NULL, // resize
-   NULL, // toplevel_set
-   NULL, // transient
-   NULL, // fullscreen
-   NULL, // popup
-   NULL, // maximized
-   NULL, // title
-   NULL // class
+   _e_desktop_shell_shell_surface_cb_pong,
+   _e_desktop_shell_shell_surface_cb_move,
+   _e_desktop_shell_shell_surface_cb_resize,
+   _e_desktop_shell_shell_surface_cb_toplevel_set,
+   _e_desktop_shell_shell_surface_cb_transient_set,
+   _e_desktop_shell_shell_surface_cb_fullscreen_set,
+   _e_desktop_shell_shell_surface_cb_popup_set,
+   _e_desktop_shell_shell_surface_cb_maximized_set,
+   _e_desktop_shell_shell_surface_cb_title_set,
+   _e_desktop_shell_shell_surface_cb_class_set
 };
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop" };
@@ -148,8 +166,8 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
      }
 
    es->configure = _e_desktop_shell_shell_surface_configure;
-   /* ess->map = ; */
-   /* ess->unmap = ; */
+   es->map = _e_desktop_shell_shell_surface_map;
+   es->unmap = _e_desktop_shell_shell_surface_unmap;
 
    /* setup shell surface destroy callback */
    ess->wl.surface_destroy.notify = 
@@ -207,11 +225,353 @@ static void
 _e_desktop_shell_shell_surface_configure(E_Surface *es, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    E_Shell_Surface *ess;
+   Eina_Bool changed = EINA_FALSE;
 
    if ((es->configure == _e_desktop_shell_shell_surface_configure))
      {
         if (!(ess = es->shell_surface)) return;
      }
+   else
+     return;
 
-   /* TODO: finish me */
+   /* handle surface type change */
+   if ((ess->ntype != E_SHELL_SURFACE_TYPE_NONE) && 
+       (ess->type != ess->ntype))
+     {
+        /* set the new surface type */
+        _e_desktop_shell_shell_surface_type_set(ess);
+
+        changed = EINA_TRUE;
+     }
+
+   /* check if surface has been mapped */
+   if (!es->mapped)
+     {
+        /* if we have a map function, then call it */
+        if (es->map) es->map(es, x, y, w, h);
+     }
+   else if ((changed) || (x != 0) || (y != 0) || 
+            (es->geometry.w != w) || (es->geometry.h != h))
+     {
+        Evas_Coord fx = 0, fy = 0, tx = 0, ty = 0;
+
+        fx += es->geometry.x;
+        fy += es->geometry.y;
+        tx = (x + es->geometry.x);
+        ty = (y + es->geometry.y);
+
+        es->geometry.x = (es->geometry.x + tx - fx);
+        es->geometry.y = (es->geometry.y + ty - fy);
+        es->geometry.w = w;
+        es->geometry.h = h;
+        es->geometry.changed = EINA_TRUE;
+     }
+}
+
+static void 
+_e_desktop_shell_shell_surface_map(E_Surface *es, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   /* safety check */
+   if (!es) return;
+
+   /* update surface geometry */
+   es->geometry.w = w;
+   es->geometry.h = h;
+   es->geometry.changed = EINA_TRUE;
+
+   /* starting position */
+   switch (es->shell_surface->type)
+     {
+      case E_SHELL_SURFACE_TYPE_TOPLEVEL:
+        es->geometry.x = x;
+        es->geometry.y = y;
+        es->geometry.changed = EINA_TRUE;
+        break;
+      case E_SHELL_SURFACE_TYPE_FULLSCREEN:
+        /* center */
+        /* map fullscreen */
+        break;
+      case E_SHELL_SURFACE_TYPE_MAXIMIZED:
+        /* maximize */
+        break;
+      case E_SHELL_SURFACE_TYPE_POPUP:
+        es->geometry.x = x;
+        es->geometry.y = y;
+        es->geometry.changed = EINA_TRUE;
+        break;
+      case E_SHELL_SURFACE_TYPE_NONE:
+        es->geometry.x += x;
+        es->geometry.y += y;
+        es->geometry.changed = EINA_TRUE;
+        break;
+      default:
+        break;
+     }
+
+   /* stacking */
+
+   /* activate */
+   switch (es->shell_surface->type)
+     {
+      case E_SHELL_SURFACE_TYPE_TOPLEVEL:
+        _e_desktop_shell_surface_create_toplevel(es);
+        break;
+   /*    case E_SHELL_SURFACE_TYPE_POPUP: */
+   /*      _e_wl_shell_shell_surface_create_popup(es); */
+   /*      break; */
+      default:
+        break;
+     }
+}
+
+static void 
+_e_desktop_shell_shell_surface_unmap(E_Surface *es)
+{
+   /* Eina_List *l = NULL; */
+   /* E_Wayland_Input *input; */
+
+   if (!es) return;
+
+   /* EINA_LIST_FOREACH(_e_wl_comp->seats, l, input) */
+   /*   { */
+   /*      if ((input->wl.seat.keyboard) &&  */
+   /*          (input->wl.seat.keyboard->focus == &es->wl.surface)) */
+   /*        wl_keyboard_set_focus(input->wl.seat.keyboard, NULL); */
+   /*      if ((input->wl.seat.pointer) &&  */
+   /*          (input->wl.seat.pointer->focus == &es->wl.surface)) */
+   /*        wl_pointer_set_focus(input->wl.seat.pointer, NULL, 0, 0); */
+   /*   } */
+
+   if (es->ee) ecore_evas_free(es->ee);
+
+   es->mapped = EINA_FALSE;
+}
+
+/* shell surface interface functions */
+static void 
+_e_desktop_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial)
+{
+   E_Shell_Surface *ess;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial)
+{
+   E_Shell_Surface *ess;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, unsigned int edges)
+{
+   E_Shell_Surface *ess;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   E_Shell_Surface *ess;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+
+   /* set next surface type */
+   ess->ntype = E_SHELL_SURFACE_TYPE_TOPLEVEL;
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource, int x, int y, unsigned int flags)
+{
+   E_Shell_Surface *ess;
+   E_Surface *es;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+
+   es = parent_resource->data;
+
+   ess->parent = es;
+   ess->transient.x = x;
+   ess->transient.y = y;
+   ess->transient.flags = flags;
+
+   /* set next surface type */
+   ess->ntype = E_SHELL_SURFACE_TYPE_TRANSIENT;
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int method EINA_UNUSED, unsigned int framerate EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED)
+{
+   E_Shell_Surface *ess;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+
+   /* set next surface type */
+   ess->ntype = E_SHELL_SURFACE_TYPE_FULLSCREEN;
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial, struct wl_resource *parent_resource, int x, int y, unsigned int flags EINA_UNUSED)
+{
+   E_Shell_Surface *ess;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+
+   /* set next surface type */
+   ess->ntype = E_SHELL_SURFACE_TYPE_POPUP;
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource EINA_UNUSED)
+{
+   E_Shell_Surface *ess;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+
+   /* set next surface type */
+   ess->ntype = E_SHELL_SURFACE_TYPE_MAXIMIZED;
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_title_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *title)
+{
+   E_Shell_Surface *ess;
+   E_Surface *es;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+
+   /* free any previous title */
+   free(ess->title);
+
+   ess->title = strdup(title);
+
+   if ((es = ess->surface))
+     {
+        /* TODO: Finish me */
+     }
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *clas)
+{
+   E_Shell_Surface *ess;
+   E_Surface *es;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+
+   /* free any previous title */
+   free(ess->clas);
+
+   ess->clas = strdup(clas);
+
+   if ((es = ess->surface))
+     {
+        /* TODO: Finish me */
+     }
+}
+
+static void 
+_e_desktop_shell_shell_surface_type_set(E_Shell_Surface *ess)
+{
+   /* safety check */
+   if (!ess) return;
+
+   /* reset the shell surface type */
+   _e_desktop_shell_shell_surface_type_reset(ess);
+
+   ess->type = ess->ntype;
+   ess->ntype = E_SHELL_SURFACE_TYPE_NONE;
+
+   switch (ess->type)
+     {
+      case E_SHELL_SURFACE_TYPE_TRANSIENT:
+        ess->surface->geometry.x = 
+          ess->parent->geometry.x + ess->transient.x;
+        ess->surface->geometry.y = 
+          ess->parent->geometry.y + ess->transient.y;
+        break;
+        /* record the current geometry so we can restore it */
+      case E_SHELL_SURFACE_TYPE_FULLSCREEN:
+      case E_SHELL_SURFACE_TYPE_MAXIMIZED:
+        ess->saved.x = ess->surface->geometry.x;
+        ess->saved.y = ess->surface->geometry.y;
+        ess->saved.w = ess->surface->geometry.w;
+        ess->saved.h = ess->surface->geometry.h;
+        ess->saved.valid = EINA_TRUE;
+        break;
+      default:
+        break;
+     }
+}
+
+static void 
+_e_desktop_shell_shell_surface_type_reset(E_Shell_Surface *ess)
+{
+   /* safety check */
+   if (!ess) return;
+
+   switch (ess->type)
+     {
+      case E_SHELL_SURFACE_TYPE_FULLSCREEN:
+        /* ecore_evas_fullscreen_set(ess->surface->ee, EINA_FALSE); */
+        /* unfullscreen the border */
+        /* if (ess->surface->bd) */
+        /*   e_border_unfullscreen(ess->surface->bd); */
+
+        /* restore the saved geometry */
+        ess->surface->geometry.x = ess->saved.x;
+        ess->surface->geometry.y = ess->saved.y;
+        ess->surface->geometry.w = ess->saved.w;
+        ess->surface->geometry.h = ess->saved.h;
+        ess->surface->geometry.changed = EINA_TRUE;
+        break;
+      case E_SHELL_SURFACE_TYPE_MAXIMIZED:
+        /* unmaximize the border */
+        /* if (ess->surface->bd) */
+        /*   e_border_unmaximize(ess->surface->bd,  */
+        /*                       (e_config->maximize_policy & E_MAXIMIZE_TYPE) |  */
+        /*                       E_MAXIMIZE_BOTH); */
+
+        /* restore the saved geometry */
+        ess->surface->geometry.x = ess->saved.x;
+        ess->surface->geometry.y = ess->saved.y;
+        ess->surface->geometry.w = ess->saved.w;
+        ess->surface->geometry.h = ess->saved.h;
+        ess->surface->geometry.changed = EINA_TRUE;
+        break;
+      default:
+        break;
+     }
+
+   /* reset the current type to none */
+   ess->type = E_SHELL_SURFACE_TYPE_NONE;
+}
+
+static void 
+_e_desktop_shell_surface_create_toplevel(E_Surface *es)
+{
+   if (!(es->ee = 
+         e_canvas_new(0, es->geometry.x, es->geometry.y, 
+                      es->geometry.w, es->geometry.h, EINA_FALSE, 
+                      EINA_FALSE, NULL)))
+     return;
+
+   e_canvas_add(es->ee);
+
+   ecore_evas_data_set(es->ee, "surface", es);
+
+   es->evas = ecore_evas_get(es->ee);
 }
