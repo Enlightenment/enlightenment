@@ -110,4 +110,14 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
 
    /* try to cast the resource to our structure */
    if (!(es = surface_resource->data)) return;
+
+   /* check if this surface has already been configured */
+   if ((es->configure) && 
+       (es->configure == _e_desktop_shell_shell_surface_configure))
+     {
+        wl_resource_post_error(surface_resource, 
+                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "");
+        return;
+     }
 }
