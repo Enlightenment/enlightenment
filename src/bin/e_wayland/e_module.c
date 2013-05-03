@@ -904,6 +904,7 @@ _e_module_whitelist_check(void)
       /* "winlist", */
       /* "wizard", */
       "wl_x11",
+      "wl_desktop",
       /* "wl_drm", */
       /* "wl_screenshot", */
       /* "wl_shell", */
