@@ -299,6 +299,8 @@ extern EAPI E_Path *path_modules;
 extern EAPI E_Path *path_backgrounds;
 extern EAPI E_Path *path_messages;
 
+extern EAPI E_Compositor *_e_comp;
+
 /**
  * @}
  */
