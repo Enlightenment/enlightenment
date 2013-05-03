@@ -19,6 +19,7 @@
 #include "e_env.h"
 #include "e_plane.h"
 #include "e_surface.h"
+#include "e_shell_surface.h"
 #include "e_shell.h"
 #include "e_module.h"
 #include "e_comp.h"
