@@ -26,12 +26,36 @@ struct _E_Shell_Surface
         struct wl_list link;
      } wl;
 
+   struct 
+     {
+        Evas_Coord x, y, w, h;
+        Eina_Bool valid : 1;
+     } saved;
+
+   struct 
+     {
+        struct wl_pointer_grab grab;
+        struct wl_seat *seat;
+        struct wl_listener parent_destroy;
+        Evas_Coord x, y;
+        Eina_Bool up : 1;
+        unsigned int serial;
+     } popup;
+
+   struct 
+     {
+        Evas_Coord x, y;
+        unsigned int flags;
+     } transient;
+
    E_Surface *surface, *parent;
    E_Shell_Surface_Type type, ntype;
 
    char *title, *clas;
 
    Eina_Bool active : 1;
+
+   void *ping_timer;
 };
 
 # endif
