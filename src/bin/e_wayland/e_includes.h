@@ -25,4 +25,5 @@
 #include "e_pointer.h"
 #include "e_canvas.h"
 #include "e_manager.h"
+#include "e_container.h"
 #include "e_output.h"
