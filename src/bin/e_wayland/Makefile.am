@@ -45,6 +45,7 @@ ENLIGHTENMENTHEADERS = \
   e_env.h \
   e_plane.h \
   e_surface.h \
+  e_shell_surface.h \
   e_module.h \
   e_comp.h \
   e_shell.h \
@@ -72,6 +73,7 @@ enlightenment_wl_src = \
   e_env.c \
   e_plane.c \
   e_surface.c \
+  e_shell_surface.c \
   e_module.c \
   e_comp.c \
   e_shell.c \
