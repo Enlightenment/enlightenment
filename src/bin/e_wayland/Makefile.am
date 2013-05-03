@@ -71,6 +71,7 @@ enlightenment_wl_src = \
   e_env.c \
   e_module.c \
   e_comp.c \
+  e_shell.c \
   e_plane.c \
   e_scale.c \
   e_theme.c \
