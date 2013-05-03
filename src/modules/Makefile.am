@@ -44,9 +44,13 @@ EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V)) @EDJE_DEF@
 
 if HAVE_WAYLAND_ONLY
 
-if USE_MODULE_WL_X11
-include Makefile_wl_x11.am
-endif
+  if USE_MODULE_WL_X11
+    include Makefile_wl_x11.am
+  endif
+
+  if USE_MODULE_WL_DESKTOP
+    include Makefile_wl_desktop.am
+  endif
 
 else
 
