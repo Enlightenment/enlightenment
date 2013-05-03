@@ -36,8 +36,8 @@ e_comp_init(void)
 
    if (mod) 
      {
-        e_module_enable(mod);
-        return 1;
+        if ((e_module_enable(mod)))
+          return 1;
      }
 
    return 0;
