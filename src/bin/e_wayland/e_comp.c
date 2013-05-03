@@ -15,7 +15,7 @@ static const struct wl_compositor_interface _e_compositor_interface =
 };
 
 /* local variables */
-static E_Compositor *_e_comp = NULL;
+EAPI E_Compositor *_e_comp = NULL;
 
 EINTERN int 
 e_comp_init(void)
@@ -63,7 +63,7 @@ e_comp_shutdown(void)
 }
 
 EAPI Eina_Bool 
-e_compositor_init(E_Compositor *comp)
+e_compositor_init(E_Compositor *comp, void *display)
 {
    E_Plane *p;
    int fd = 0;
@@ -116,7 +116,7 @@ e_compositor_init(E_Compositor *comp)
     * NB: This is interesting....if we try to eglGetDisplay and pass in the 
     * wayland display, then EGL fails due to XCB not owning the event queue.
     * If we pass it a NULL, it inits just fine */
-   comp->egl.display = eglGetDisplay(NULL);
+   comp->egl.display = eglGetDisplay((EGLNativeDisplayType)display);
    if (comp->egl.display == EGL_NO_DISPLAY)
      ERR("Could not get EGL display: %m");
    else
