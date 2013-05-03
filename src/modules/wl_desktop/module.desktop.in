@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Link
+Name=Wayland Desktop Shell
+Icon=e-module-wl_desktop
+Comment=Enlightenment Wayland Desktop Shell
+X-Enlightenment-ModuleType=look
