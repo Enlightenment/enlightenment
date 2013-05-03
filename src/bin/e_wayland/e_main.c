@@ -42,16 +42,23 @@ static Eina_Bool _e_main_xdg_dirs_check(void);
 static int _e_main_screens_init(void);
 static int _e_main_screens_shutdown(void);
 static Eina_Bool _e_main_cb_idle_before(void *data EINA_UNUSED);
+static Eina_Bool _e_main_cb_idle_after(void *data EINA_UNUSED);
+static Eina_Bool _e_main_cb_idle_flush(void *data EINA_UNUSED);
+static Eina_Bool _e_main_cb_bound(void *data, int type EINA_UNUSED, void *event);
 
 /* local variables */
 static Eina_Bool really_know = EINA_FALSE;
 static Eina_Bool locked = EINA_FALSE;
 static Eina_Bool inloop = EINA_FALSE;
+static Eina_Bool bound = EINA_FALSE;
 static jmp_buf wl_fatal_buff;
 static int _e_main_lvl = 0;
 static int (*_e_main_shutdown_func[MAX_LEVEL])(void);
 /* static Eina_List *_idle_before_list = NULL; */
 static Ecore_Idle_Enterer *_idle_before = NULL;
+static Ecore_Idle_Enterer *_idle_after = NULL;
+static Ecore_Idle_Enterer *_idle_flush = NULL;
+static Ecore_Event_Handler *_hdl_bound = NULL;
 
 /* external variables */
 EAPI Eina_Bool e_precache_end = EINA_FALSE;
@@ -404,6 +411,9 @@ main(int argc, char **argv)
    TS("E_Compositor Init Done");
    _e_main_shutdown_push(e_comp_shutdown);
 
+   TS("E_Shell Init");
+   TS("E_Shell Init Done");
+
    TS("Ecore_Wayland Init");
    if (!ecore_wl_init(NULL))
      {
@@ -431,6 +441,21 @@ main(int argc, char **argv)
    TS("E_Theme Init Done");
    _e_main_shutdown_push(e_theme_shutdown);
 
+   /* setup a handler to notify us when ecore_wl has bound the interfaces */
+   _hdl_bound = 
+     ecore_event_handler_add(ECORE_WL_EVENT_INTERFACES_BOUND, 
+                             _e_main_cb_bound, NULL);
+
+   /* while we are not bound, we need to iterate the main loop */
+   /* NB: All of this is needed because we cannot create containers until 
+    * we are able to create a canvas, and we cannot create a canvas until 
+    * we have the interfaces bound */
+   while (!bound)
+     {
+        wl_event_loop_dispatch(_e_comp->wl.loop, 0);
+        ecore_main_loop_iterate();
+     }
+
    TS("E_Pointer Init");
    if (!e_pointer_init())
      {
@@ -453,6 +478,20 @@ main(int argc, char **argv)
      }
    TS("Screens Init Done");
    _e_main_shutdown_push(_e_main_screens_shutdown);
+
+   TS("E_Container Freeze");
+   e_container_all_freeze();
+   TS("E_Container Freeze Done");
+
+   /* TODO: init other stuff */
+
+   _idle_flush = ecore_idle_enterer_add(_e_main_cb_idle_flush, NULL);
+
+   TS("E_Container Thaw");
+   e_container_all_thaw();
+   TS("E_Container Thaw Done");
+
+   _idle_after = ecore_idle_enterer_add(_e_main_cb_idle_after, NULL);
 
    /*** Main Loop ***/
 
@@ -512,10 +551,10 @@ _e_main_shutdown(int errcode)
 
    if (_idle_before) ecore_idle_enterer_del(_idle_before);
    _idle_before = NULL;
-   /* if (_idle_after) ecore_idle_enterer_del(_idle_after); */
-   /* _idle_after = NULL; */
-   /* if (_idle_flush) ecore_idle_enterer_del(_idle_flush); */
-   /* _idle_flush = NULL; */
+   if (_idle_after) ecore_idle_enterer_del(_idle_after);
+   _idle_after = NULL;
+   if (_idle_flush) ecore_idle_enterer_del(_idle_flush);
+   _idle_flush = NULL;
 
    for (i = (_e_main_lvl - 1); i >= 0; i--)
      (*_e_main_shutdown_func[i])();
@@ -950,7 +989,7 @@ _e_main_screens_init(void)
    E_Compositor *comp;
    E_Output *output;
    Eina_List *l;
-   int i = 0;
+   unsigned int i = 0;
 
    /* check for valid compositor */
    if (!(comp = e_compositor_get())) return 0;
@@ -959,6 +998,8 @@ _e_main_screens_init(void)
    if (!e_manager_init()) return 0;
 
    TS("\tScreens: container");
+   if (!e_container_init()) return 0;
+
    TS("\tScreens: zone");
    TS("\tScreens: desk");
    TS("\tScreens: menu");
@@ -967,6 +1008,7 @@ _e_main_screens_init(void)
    EINA_LIST_FOREACH(comp->outputs, l, output)
      {
         E_Manager *man;
+        E_Container *con;
 
         /* try to create a new manager on this output */
         if (!(man = e_manager_new(output, i)))
@@ -974,6 +1016,16 @@ _e_main_screens_init(void)
              e_error_message_show(_("Cannot create manager object\n"));
              return 0;
           }
+
+        /* try to create a new container on this manager */
+        if (!(con = e_container_new(man)))
+          {
+             e_error_message_show(_("Cannot create manager object\n"));
+             e_object_del(E_OBJECT(man));
+             return 0;
+          }
+
+        e_container_show(con);
 
         i++;
      }
@@ -987,7 +1039,7 @@ _e_main_screens_shutdown(void)
    /* e_menu_shutdown(); */
    /* e_desk_shutdown(); */
    /* e_zone_shutdown(); */
-   /* e_container_shutdown(); */
+   e_container_shutdown();
    e_manager_shutdown();
    return 1;
 }
@@ -1001,4 +1053,26 @@ _e_main_cb_idle_before(void *data EINA_UNUSED)
    edje_thaw();
 
    return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool 
+_e_main_cb_idle_after(void *data EINA_UNUSED)
+{
+   edje_freeze();
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool 
+_e_main_cb_idle_flush(void *data EINA_UNUSED)
+{
+   eet_clearcache();
+   ecore_wl_flush();
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool 
+_e_main_cb_bound(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+{
+   bound = EINA_TRUE;
+   return ECORE_CALLBACK_CANCEL;
 }
