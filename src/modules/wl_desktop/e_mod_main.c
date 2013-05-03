@@ -5,12 +5,29 @@
 static void _e_desktop_shell_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 static void _e_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
 static void _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *surface_resource);
+static void _e_desktop_shell_shell_surface_cb_destroy(struct wl_resource *resource);
 
 /* local wayland interfaces */
 static const struct wl_shell_interface _e_desktop_shell_interface = 
 {
    _e_desktop_shell_cb_shell_surface_get
 };
+
+static const struct wl_shell_surface_interface 
+_e_desktop_shell_surface_interface = 
+{
+   NULL, // pong
+   NULL, // move
+   NULL, // resize
+   NULL, // toplevel_set
+   NULL, // transient
+   NULL, // fullscreen
+   NULL, // popup
+   NULL, // maximized
+   NULL, // title
+   NULL // class
+}
+
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop" };
 
@@ -105,6 +122,7 @@ static void
 _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *surface_resource)
 {
    E_Surface *es;
+   E_Shell_Surface *ess;
 
    printf("Desktop_Shell: Shell Surface Get\n");
 
@@ -121,4 +139,42 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
         return;
      }
 
+   /* try to create new shell surface */
+   if (!(ess = e_shell_surface_new(id)))
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   /* setup shell surface destroy callback */
+   ess->wl.resource.destroy = _e_desktop_shell_shell_surface_cb_destroy;
+
+   /* setup shell surface interface */
+   ess->wl.resource.object.implementation = 
+     (void (**)(void))&_e_desktop_shell_surface_interface;
+
+   /* add this shell surface to the client */
+   wl_client_add_resource(client, &ess->wl.resource);
+}
+
+static void 
+_e_desktop_shell_shell_surface_cb_destroy(struct wl_resource *resource)
+{
+   E_Shell_Surface *ess;
+
+   /* try to cast the resource to our shell surface */
+   if (!(ess = resource->data)) return;
+
+   /* if we have a popup grab, end it */
+   if (ess->popup.grab.pointer) wl_pointer_end_grab(ess->popup.grab.pointer);
+
+   wl_list_remove(&ess->wl.surface_destroy.link);
+   ess->surface->configure = NULL;
+
+   /* TODO: handle ping timer */
+
+   wl_list_remove(&ess->wl.link);
+
+   /* free the allocated structure */
+   E_FREE(ess);
 }
