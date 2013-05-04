@@ -160,6 +160,9 @@ e_modapi_init(E_Module *m)
    E_Wayland_Input *input = NULL;
    Eina_List *l = NULL;
 
+   /* test for valid compositor */
+   if (!_e_wl_comp) return NULL;
+
    /* try to allocate space for the shell structure */
    if (!(shell = E_NEW(E_Wayland_Desktop_Shell, 1)))
      return NULL;
