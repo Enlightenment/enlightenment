@@ -405,7 +405,7 @@ _e_comp_wl_cb_read(void *data EINA_UNUSED, Ecore_Fd_Handler *hdl EINA_UNUSED)
 static Eina_Bool 
 _e_comp_wl_cb_idle(void *data EINA_UNUSED)
 {
-   if (_e_wl_comp->wl.display)
+   if ((_e_wl_comp) && (_e_wl_comp->wl.display))
      {
         /* flush any clients before we idle */
         wl_display_flush_clients(_e_wl_comp->wl.display);
