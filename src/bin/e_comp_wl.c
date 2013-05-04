@@ -294,32 +294,35 @@ e_comp_wl_shutdown(void)
 {
    E_Module *mod = NULL;
 
-   /* remove the idler */
-   if (_e_wl_comp->idler) ecore_idler_del(_e_wl_comp->idler);
+   if (_e_wl_comp)
+     {
+        /* remove the idler */
+        if (_e_wl_comp->idler) ecore_idler_del(_e_wl_comp->idler);
 
-   /* remove the fd handler */
-   if (_e_wl_comp->fd_handler)
-     ecore_main_fd_handler_del(_e_wl_comp->fd_handler);
+        /* remove the fd handler */
+        if (_e_wl_comp->fd_handler)
+          ecore_main_fd_handler_del(_e_wl_comp->fd_handler);
 
-   /* shutdown input */
-   _e_comp_wl_input_shutdown();
+        /* shutdown input */
+        _e_comp_wl_input_shutdown();
 
 #ifdef HAVE_WAYLAND_EGL
-   /* unbind wayland display */
-   if (_e_wl_comp->egl.bound)
-     _e_wl_comp->egl.unbind_display(_e_wl_comp->egl.display, _e_wl_comp->wl.display);
+        /* unbind wayland display */
+        if (_e_wl_comp->egl.bound)
+          _e_wl_comp->egl.unbind_display(_e_wl_comp->egl.display, _e_wl_comp->wl.display);
 
-   /* terminate the egl display */
-   if (_e_wl_comp->egl.display) eglTerminate(_e_wl_comp->egl.display);
+        /* terminate the egl display */
+        if (_e_wl_comp->egl.display) eglTerminate(_e_wl_comp->egl.display);
 
-   eglReleaseThread();
+        eglReleaseThread();
 #endif
 
-   /* if we have a display, destroy it */
-   if (_e_wl_comp->wl.display) wl_display_destroy(_e_wl_comp->wl.display);
+        /* if we have a display, destroy it */
+        if (_e_wl_comp->wl.display) wl_display_destroy(_e_wl_comp->wl.display);
 
-   /* free the compositor */
-   E_FREE(_e_wl_comp);
+        /* free the compositor */
+        E_FREE(_e_wl_comp);
+     }
 
    /* disable the loaded shell module */
    /* TODO: we should have a config variable somewhere to store which 
