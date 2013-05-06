@@ -18,6 +18,8 @@
 #include "e_int_menus.h"
 #include "e_env.h"
 #include "e_plane.h"
+#include "e_buffer.h"
+#include "e_region.h"
 #include "e_surface.h"
 #include "e_shell_surface.h"
 #include "e_shell.h"
