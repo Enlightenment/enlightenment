@@ -1,6 +1,7 @@
 #ifdef E_TYPEDEFS
 
 typedef struct _E_Surface E_Surface;
+typedef struct _E_Surface_Frame E_Surface_Frame;
 
 #else
 # ifndef E_SURFACE_H
@@ -13,6 +14,33 @@ struct _E_Surface
         struct wl_surface surface;
         struct wl_list link;
      } wl;
+
+   struct 
+     {
+        E_Buffer_Reference reference;
+        Eina_Bool keep : 1;
+     } buffer;
+
+   struct 
+     {
+        struct wl_buffer *buffer;
+        struct wl_listener buffer_destroy;
+        Eina_List *frames;
+
+        Eina_Rectangle damage;
+        Eina_Rectangle opaque;
+        Eina_Rectangle input;
+
+        Evas_Coord x, y;
+        Eina_Bool new_attach : 1;
+     } pending;
+
+   Eina_Rectangle *damage;
+   Eina_Rectangle *opaque;
+   Eina_Rectangle *input;
+
+   Eina_List *frames;
+   E_Plane *plane;
 
    struct 
      {
@@ -33,7 +61,17 @@ struct _E_Surface
    void (*configure)(E_Surface *surface, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 };
 
+struct _E_Surface_Frame
+{
+   E_Surface *surface;
+   struct wl_resource resource;
+};
+
 EAPI E_Surface *e_surface_new(unsigned int id);
+EAPI void e_surface_attach(E_Surface *es, struct wl_buffer *buffer);
+EAPI void e_surface_unmap(E_Surface *es);
+EAPI void e_surface_damage(E_Surface *es);
+EAPI void e_surface_destroy(E_Surface *es);
 
 # endif
 #endif
