@@ -5,8 +5,11 @@
 static Eina_Bool _output_init(void);
 static void _output_shutdown(E_Output_X11 *output);
 static int _output_cb_frame(void *data);
+static void _output_cb_repaint_start(E_Output *output);
+static void _output_cb_repaint(E_Output *output, E_Region *damages);
 static void _output_cb_destroy(E_Output *output);
 static Eina_Bool _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static void _comp_cb_attach(E_Surface *es, struct wl_buffer *buffer);
 
 /* local variables */
 static E_Compositor_X11 *_e_x11_comp;
@@ -40,6 +43,9 @@ e_modapi_init(E_Module *m)
         ERR("Could not initialize compositor: %m");
         goto comp_err;
      }
+
+   /* set the compositor attach function */
+   _e_x11_comp->base.attach = _comp_cb_attach;
 
    /* try to initialize output */
    if (!_output_init())
@@ -104,6 +110,7 @@ _output_init(void)
 {
    E_Output_X11 *output;
    struct wl_event_loop *loop;
+   unsigned int mask;
 
    /* try to allocate space for our output structure */
    if (!(output = E_NEW(E_Output_X11, 1))) 
@@ -149,11 +156,25 @@ _output_init(void)
    /* show the window */
    ecore_x_window_show(output->win);
 
+   /* output->pmap =  */
+   /*   ecore_x_pixmap_new(output->win, output->mode.w, output->mode.h,  */
+   /*                      ecore_x_window_depth_get(output->win)); */
+
+   /* output->gc =  */
+   /*   ecore_x_gc_new(output->pmap, (ECORE_X_GC_VALUE_MASK_PLANE_MASK |  */
+   /*                                 ECORE_X_GC_VALUE_MASK_FOREGROUND), &mask); */
+
+   /* ecore_x_window_pixmap_set(output->win, output->pmap); */
+
    output->base.current = &output->mode;
    output->base.original = output->base.current;
    output->base.make = "e_wayland";
    output->base.model = "none";
    output->base.cb_destroy = _output_cb_destroy;
+   output->base.cb_repaint_start = _output_cb_repaint_start;
+
+   /* FIXME: Change this based on software/gl */
+   output->base.cb_repaint = _output_cb_repaint;
 
    /* initialize base output */
    e_output_init(&output->base, &_e_x11_comp->base, 0, 0, 
@@ -186,8 +207,23 @@ _output_cb_frame(void *data)
    E_Output_X11 *output;
 
    if (!(output = data)) return 1;
-   /* TODO: start repaint loop */
+
+   /* start the repaint loop */
+   _output_cb_repaint_start(output);
+
    return 1;
+}
+
+static void 
+_output_cb_repaint_start(E_Output *output)
+{
+   /* TODO */
+}
+
+static void 
+_output_cb_repaint(E_Output *output, E_Region *damages)
+{
+   /* TODO */
 }
 
 static void 
@@ -199,6 +235,12 @@ _output_cb_destroy(E_Output *output)
 
    /* remove the frame timer */
    wl_event_source_remove(xout->frame_timer);
+
+   /* destroy the pixmap */
+   if (xout->pmap) ecore_x_pixmap_free(xout->pmap);
+
+   /* destroy the gc */
+   if (xout->gc) ecore_x_gc_free(xout->gc);
 
    /* destroy the window */
    if (xout->win) ecore_x_window_free(xout->win);
@@ -233,4 +275,10 @@ _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
      }
 
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static void 
+_comp_cb_attach(E_Surface *es, struct wl_buffer *buffer)
+{
+   printf("Wl_X11 Attach: %p\n", es);
 }
