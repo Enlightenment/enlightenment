@@ -143,8 +143,6 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
    E_Surface *es;
    E_Shell_Surface *ess;
 
-   printf("Desktop_Shell: Shell Surface Get\n");
-
    /* try to cast the resource to our structure */
    if (!(es = surface_resource->data)) return;
 
