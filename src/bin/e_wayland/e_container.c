@@ -67,11 +67,11 @@ e_container_new(E_Manager *man)
    /* get the background canvas */
    con->bg_evas = ecore_evas_get(con->bg_ee);
 
-   /* Evas_Object *o; */
-   /* o = evas_object_rectangle_add(con->bg_evas); */
-   /* evas_object_move(o, 0, 0); */
-   /* evas_object_resize(o, con->w, con->h); */
-   /* evas_object_show(o); */
+   Evas_Object *o;
+   o = evas_object_rectangle_add(con->bg_evas);
+   evas_object_move(o, 0, 0);
+   evas_object_resize(o, con->w, con->h);
+   evas_object_show(o);
 
    /* TODO: create zones */
 

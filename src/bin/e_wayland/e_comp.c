@@ -5,6 +5,7 @@ static void _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int v
 static void _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 static void _e_comp_cb_surface_destroy(struct wl_resource *resource);
 static void _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void _e_comp_cb_region_destroy(struct wl_resource *resource);
 static Eina_Bool _e_comp_cb_read(void *data, Ecore_Fd_Handler *hdl EINA_UNUSED);
 static Eina_Bool _e_comp_cb_idle(void *data);
 
@@ -281,6 +282,9 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
         return;
      }
 
+   /* set surface plane to compositor primary plane */
+   es->plane = &comp->plane;
+
    /* set destroy callback */
    es->wl.surface.resource.destroy = _e_comp_cb_surface_destroy;
 
@@ -313,8 +317,38 @@ static void
 _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    E_Compositor *comp;
+   E_Region *reg;
 
+   /* try to cast to our compositor */
    if (!(comp = resource->data)) return;
+
+   /* try to create a new region */
+   if (!(reg = e_region_new(id)))
+//   if (!(reg = E_NEW_RAW(E_Region, 1)))
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   reg->resource.destroy = _e_comp_cb_region_destroy;
+
+   wl_client_add_resource(client, &reg->resource);
+}
+
+static void 
+_e_comp_cb_region_destroy(struct wl_resource *resource)
+{
+   E_Region *reg;
+
+   /* try to get the region from this resource */
+   if (!(reg = container_of(resource, E_Region, resource)))
+     return;
+
+   /* free the rectangle */
+   eina_rectangle_free(reg->region);
+
+   /* free the structure */
+   E_FREE(reg);
 }
 
 static Eina_Bool 
