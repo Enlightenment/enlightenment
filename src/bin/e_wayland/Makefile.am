@@ -44,6 +44,8 @@ ENLIGHTENMENTHEADERS = \
   e_int_menus.h \
   e_env.h \
   e_plane.h \
+  e_buffer.h \
+  e_region.h \
   e_surface.h \
   e_shell_surface.h \
   e_module.h \
@@ -72,6 +74,8 @@ enlightenment_wl_src = \
   e_powersave.c \
   e_env.c \
   e_plane.c \
+  e_buffer.c \
+  e_region.c \
   e_surface.c \
   e_shell_surface.c \
   e_module.c \
