@@ -52,6 +52,7 @@ struct _E_Compositor
    Eina_List *inputs;
    Eina_List *surfaces;
 
+   void (*attach) (E_Surface *es, struct wl_buffer *buffer);
    void (*cb_ping) (void *surface, unsigned int serial);
 };
 
