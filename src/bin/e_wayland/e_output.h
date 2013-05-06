@@ -46,6 +46,8 @@ struct _E_Output
 
    /* TODO: add backlight and dpms support */
 
+   void (*cb_repaint_start)(E_Output *output);
+   void (*cb_repaint)(E_Output *output, E_Region *damage);
    void (*cb_destroy)(E_Output *output);
 };
 
