@@ -43,6 +43,18 @@ e_output_shutdown(E_Output *output)
    wl_display_remove_global(comp->wl.display, output->wl.global);
 }
 
+EAPI void 
+e_output_repaint(E_Output *output, unsigned int secs)
+{
+   E_Compositor *comp;
+
+   comp = output->compositor;
+
+   /* TODO: assign planes */
+
+   e_compositor_damage_calculate(comp);
+}
+
 /* local functions */
 static void 
 _e_output_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
