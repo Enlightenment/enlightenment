@@ -402,7 +402,7 @@ _e_fm_main_udisks_cb_store_prop(void *data, const Eldbus_Message *msg,
                   if (s->icon.drive)
                     eina_stringshare_del(s->icon.drive);
                   s->icon.drive = NULL;
-                  if (!icon[0])
+                  if (icon[0])
                     s->icon.drive = eina_stringshare_add(icon);
                   s->icon.volume = s->icon.drive;
                }

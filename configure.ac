@@ -350,7 +350,6 @@ test "x${device_backend}" = "xeeze" || AC_DEFINE_UNQUOTED([HAVE_HAL],[1],[enable
 
 DBUS_MOUNT_CONFIG=1
 dbus_mount="dbus-1"
-udisks_mount="eukit >= $efl_version"
 
 AC_ARG_ENABLE([mount-udisks],
   AS_HELP_STRING([--enable-mount-udisks],[enable udisks mounting support @<:@default=enabled@:>@]),
@@ -360,22 +359,10 @@ AC_ARG_ENABLE([mount-udisks],
 AC_MSG_CHECKING([whether the UDISKS mounting support is enabled])
 AC_MSG_RESULT([${e_cv_want_mount_udisks}])
 
-if test "x$e_cv_want_mount_udisks" != "xno";then
-  PKG_CHECK_EXISTS([eukit >= ${efl_version}],
-    [],[
-      udisks_mount=
-      AC_MSG_NOTICE([udisks mounting disabled])
-    ])
-else
-  udisks_mount=
-  AC_MSG_NOTICE([udisks mounting disabled])
-fi
-
 
 if test "x${e_cv_want_mount_udisks}" = "xno" ; then
   DBUS_MOUNT_CONFIG=0
   dbus_mount=
-  udisks_mount=
 fi
 
 AC_ARG_ENABLE([mount-eeze],
@@ -414,8 +401,8 @@ fi
 AC_SUBST([EEZE_MOUNT_CONFIG])
 AC_SUBST([DBUS_MOUNT_CONFIG])
 AM_CONDITIONAL([HAVE_EEZE_MOUNT], [false])
-test -n "$udisks_mount" && AC_DEFINE_UNQUOTED([HAVE_UDISKS_MOUNT], [1], [enable Udisks mounting])
-AM_CONDITIONAL([HAVE_UDISKS_MOUNT], [test -n "$udisks_mount"])
+test -n "$dbus_mount" && AC_DEFINE_UNQUOTED([HAVE_UDISKS_MOUNT], [1], [enable Udisks mounting])
+AM_CONDITIONAL([HAVE_UDISKS_MOUNT], [test -n "$dbus_mount"])
 AM_CONDITIONAL([HAVE_EEZE_MOUNT], [test -n "$eeze_mount"])
 
 # doxygen program for documentation building
