@@ -110,7 +110,7 @@ _output_init(void)
 {
    E_Output_X11 *output;
    struct wl_event_loop *loop;
-   unsigned int mask;
+   /* unsigned int mask; */
 
    /* try to allocate space for our output structure */
    if (!(output = E_NEW(E_Output_X11, 1))) 
@@ -217,7 +217,26 @@ _output_cb_frame(void *data)
 static void 
 _output_cb_repaint_start(E_Output *output)
 {
-   /* TODO */
+   int fd = 0;
+
+   /* check for valid output */
+   if (!output) return;
+
+   /* if a repaint is needed, do it */
+   if (output->repaint.needed)
+     {
+        e_output_repaint(output, ecore_loop_time_get());
+        return;
+     }
+
+   output->repaint.scheduled = EINA_FALSE;
+   if (output->compositor->wl.input_loop_source) return;
+
+   fd = wl_event_loop_get_fd(output->compositor->wl.input_loop);
+   output->compositor->wl.input_loop_source = 
+     wl_event_loop_add_fd(output->compositor->wl.loop, fd, 
+                          WL_EVENT_READABLE, 
+                          e_compositor_input_read, output->compositor);
 }
 
 static void 
