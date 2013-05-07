@@ -91,8 +91,8 @@ e_surface_damage(E_Surface *es)
    if (!es) return;
 
    /* add this damage rectangle */
-   pixman_region32_union(&es->damage, &es->damage, 
-                         0, 0, es->geometry.w, es->geometry.h);
+   pixman_region32_union_rect(&es->damage, &es->damage, 
+                              0, 0, es->geometry.w, es->geometry.h);
 
    /* TODO: schedule repaint */
 }
@@ -147,12 +147,26 @@ e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque)
    if (!es) return;
 
    /* check for referenced buffer */
-   if (es->buffer.reference)
+   if (&es->buffer.reference.buffer)
      {
         /* if this is an shm buffer, flush any pending damage */
-        if (wl_buffer_is_shm(es->buffer.reference->buffer))
+        if (wl_buffer_is_shm(es->buffer.reference.buffer))
           e_compositor_damage_flush(_e_comp, es);
      }
+
+   /* TODO: handle transforms */
+
+   pixman_region32_translate(&es->damage, 
+                             es->geometry.x - es->plane->x, 
+                             es->geometry.y - es->plane->y);
+
+   pixman_region32_subtract(&es->damage, &es->damage, opaque);
+   pixman_region32_union(&es->plane->damage, &es->plane->damage, &es->damage);
+
+   pixman_region32_fini(&es->damage);
+   pixman_region32_init(&es->damage);
+
+   pixman_region32_copy(&es->clip, opaque);
 }
 
 /* local functions */
@@ -202,7 +216,8 @@ _e_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    if (!(es = resource->data)) return;
 
    /* add this damage rectangle */
-   pixman_region32_union(&es->pending.damage, &es->pending.damage, x, y, w, h);
+   pixman_region32_union_rect(&es->pending.damage, &es->pending.damage, 
+                              x, y, w, h);
 }
 
 static void 
@@ -211,8 +226,7 @@ _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    E_Surface *es;
    E_Surface_Frame *cb;
    Evas_Coord bw = 0, bh = 0;
-   Eina_Rectangle *opaque;
-   Eina_Bool ret = EINA_FALSE;
+   pixman_region32_t opaque;
 
    /* try to cast the resource to our surface */
    if (!(es = resource->data)) return;
