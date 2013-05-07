@@ -26,7 +26,7 @@ e_region_new(unsigned int id)
    reg->resource.object.implementation = (void (**)(void))&_e_region_interface;
    reg->resource.data = reg;
 
-   reg->region = eina_rectangle_new(0, 0, 0, 0);
+   pixman_region32_init(&reg->region);
 
    return reg;
 }
