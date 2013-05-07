@@ -253,6 +253,16 @@ e_compositor_plane_stack(E_Compositor *comp, E_Plane *plane, E_Plane *above)
    comp->planes = eina_list_prepend_relative(comp->planes, plane, above);
 }
 
+EAPI int 
+e_compositor_input_read(int fd EINA_UNUSED, unsigned int mask EINA_UNUSED, void *data)
+{
+   E_Compositor *comp;
+
+   if (!(comp = data)) return 1;
+   wl_event_loop_dispatch(comp->wl.input_loop, 0);
+   return 1;
+}
+
 /* local functions */
 static void 
 _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
