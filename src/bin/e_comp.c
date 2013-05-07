@@ -2782,11 +2782,14 @@ _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, int border)
 #if 1
              cw->w = w;
              cw->h = h;
-             cw->needpix = 1;
-             // was cw->w / cw->h
-             //             evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
              resized = EINA_TRUE;
-             _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
+             if ((!cw->bd) || ((!cw->bd->shading) && (cw->bd->shaded)))
+               {
+                  cw->needpix = 1;
+                  // was cw->w / cw->h
+                  //             evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
+                  _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
+               }
 #else
              if (cw->bd)
                {
@@ -2827,11 +2830,14 @@ _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, int border)
              DBG("  [0x%x] rsz %4ix%4i", cw->win, w, h);
              cw->w = w;
              cw->h = h;
-             cw->needpix = 1;
-             // was cw->w / cw->h
-             //             evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
              resized = EINA_TRUE;
-             if (!cw->real_obj) _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
+             if ((!cw->bd) || ((!cw->bd->shading) && (cw->bd->shaded)))
+               {
+                  cw->needpix = 1;
+                  // was cw->w / cw->h
+                  //             evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
+                  if (!cw->real_obj) _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
+               }
           }
         if (cw->border != border)
           {
