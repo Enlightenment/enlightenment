@@ -9,7 +9,7 @@ typedef struct _E_Region E_Region;
 struct _E_Region
 {
    struct wl_resource resource;
-   Eina_Rectangle *region;
+   pixman_region32_t region;
 };
 
 EAPI E_Region *e_region_new(unsigned int id);
