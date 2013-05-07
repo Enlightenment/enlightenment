@@ -8,7 +8,7 @@ typedef struct _E_Plane E_Plane;
 
 struct _E_Plane
 {
-   Eina_Rectangle *damage, *clip;
+   pixman_region32_t damge, clip;
    Evas_Coord x, y;
    struct wl_list link;
 };
