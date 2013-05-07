@@ -19,6 +19,7 @@ struct _E_Compositor
         struct wl_display *display;
         struct wl_event_loop *loop;
         struct wl_event_loop *input_loop;
+        struct wl_event_source *input_loop_source;
      } wl;
 
    struct 
@@ -63,6 +64,7 @@ EAPI Eina_Bool e_compositor_init(E_Compositor *comp, void *display);
 EAPI Eina_Bool e_compositor_shutdown(E_Compositor *comp);
 EAPI E_Compositor *e_compositor_get(void);
 EAPI void e_compositor_plane_stack(E_Compositor *comp, E_Plane *plane, E_Plane *above);
+EAPI int e_compositor_input_read(int fd EINA_UNUSED, unsigned int mask EINA_UNUSED, void *data);
 
 # endif
 #endif
