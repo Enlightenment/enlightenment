@@ -6,6 +6,8 @@ static void _e_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl
 static void _e_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h);
 static void _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
 static void _e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void _e_surface_cb_opaque_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource);
+static void _e_surface_cb_input_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource);
 static void _e_surface_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 
 static void _e_surface_frame_cb_destroy(struct wl_resource *resource);
@@ -17,8 +19,8 @@ static const struct wl_surface_interface _e_surface_interface =
    _e_surface_cb_attach,
    _e_surface_cb_damage,
    _e_surface_cb_frame,
-   NULL, // cb_opaque_set
-   NULL, // cb_input_set
+   _e_surface_cb_opaque_set,
+   _e_surface_cb_input_set,
    _e_surface_cb_commit,
    NULL // cb_buffer_transform_set
 };
@@ -39,11 +41,18 @@ e_surface_new(unsigned int id)
 
    pixman_region32_init(&es->damage);
    pixman_region32_init(&es->opaque);
-   pixman_region32_init(&es->input);
+   pixman_region32_init(&es->clip);
+   pixman_region32_init_rect(&es->input, INT32_MIN, INT32_MIN, 
+                             UINT32_MAX, UINT32_MAX);
 
    /* TODO: finish me */
 
    es->pending.buffer_destroy.notify = _e_surface_cb_buffer_destroy;
+
+   pixman_region32_init(&es->pending.damage);
+   pixman_region32_init(&es->pending.opaque);
+   pixman_region32_init_rect(&es->pending.input, INT32_MIN, INT32_MIN, 
+                             UINT32_MAX, UINT32_MAX);
 
    /* setup the surface object */
    es->wl.surface.resource.object.id = id;
@@ -318,6 +327,53 @@ _e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsi
 
    /* append the callback to pending frames */
    es->pending.frames = eina_list_prepend(es->pending.frames, cb);
+}
+
+static void 
+_e_surface_cb_opaque_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
+{
+   E_Surface *es;
+
+   /* try to cast the resource to our surface */
+   if (!(es = resource->data)) return;
+
+   if (region_resource)
+     {
+        E_Region *reg;
+
+        /* try to cast this resource to our region */
+        reg = region_resource->data;
+        pixman_region32_copy(&es->pending.opaque, &reg->region);
+     }
+   else
+     {
+        pixman_region32_fini(&es->pending.opaque);
+        pixman_region32_init(&es->pending.opaque);
+     }
+}
+
+static void 
+_e_surface_cb_input_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
+{
+   E_Surface *es;
+
+   /* try to cast the resource to our surface */
+   if (!(es = resource->data)) return;
+
+   if (region_resource)
+     {
+        E_Region *reg;
+
+        /* try to cast this resource to our region */
+        reg = region_resource->data;
+        pixman_region32_copy(&es->pending.input, &reg->region);
+     }
+   else
+     {
+        pixman_region32_fini(&es->pending.input);
+        pixman_region32_init_rect(&es->pending.input, INT32_MIN, INT32_MIN, 
+                                  UINT32_MAX, UINT32_MAX);
+     }
 }
 
 static void 
