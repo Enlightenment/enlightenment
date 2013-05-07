@@ -119,6 +119,7 @@ void *alloca (size_t);
 # include <EDBus.h>
 # include <Eio.h>
 
+# include <pixman.h>
 # include <wayland-server.h>
 
 # ifdef HAVE_WAYLAND_EGL
