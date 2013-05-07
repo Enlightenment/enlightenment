@@ -269,25 +269,32 @@ e_compositor_damage_calculate(E_Compositor *comp)
    E_Plane *plane;
    E_Surface *es;
    Eina_List *l;
-   Eina_Rectangle *clip, *opaque;
+   pixman_region32_t clip, opaque;
 
    /* check for valid compositor */
    if (!comp) return;
 
-   clip = eina_rectangle_new(0, 0, 0, 0);
+   pixman_region32_init(&clip);
 
    /* loop the planes */
    EINA_LIST_FOREACH(comp->planes, l, plane)
      {
+        pixman_region32_copy(&plane->clip, &clip);
+
+        pixman_region32_init(&opaque);
+
         /* loop the surfaces */
         EINA_LIST_FOREACH(comp->surfaces, l, es)
           {
              if (es->plane != plane) continue;
-             e_surface_damage_calculate(es);
+             e_surface_damage_calculate(es, &opaque);
           }
+
+        pixman_region32_union(&clip, &clip, &opaque);
+        pixman_region32_fini(&opaque);
      }
 
-   eina_rectangle_free(clip);
+   pixman_region32_fini(&clip);
 
    /* loop the surfaces */
    EINA_LIST_FOREACH(comp->surfaces, l, es)
@@ -374,7 +381,6 @@ _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource,
 
    /* try to create a new region */
    if (!(reg = e_region_new(id)))
-//   if (!(reg = E_NEW_RAW(E_Region, 1)))
      {
         wl_resource_post_no_memory(resource);
         return;
@@ -394,8 +400,8 @@ _e_comp_cb_region_destroy(struct wl_resource *resource)
    if (!(reg = container_of(resource, E_Region, resource)))
      return;
 
-   /* free the rectangle */
-   eina_rectangle_free(reg->region);
+   /* free the region */
+   pixman_region32_fini(&reg->region);
 
    /* free the structure */
    E_FREE(reg);
