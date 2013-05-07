@@ -2311,18 +2311,6 @@ e_border_shade(E_Border *bd,
         bd->changes.shading = 1;
         BD_CHANGED(bd);
 
-        if (bd->shade.dir == E_DIRECTION_UP ||
-            bd->shade.dir == E_DIRECTION_LEFT)
-          {
-             ecore_x_window_gravity_set(bd->client.win, ECORE_X_GRAVITY_SW);
-             if (bd->client.lock_win) ecore_x_window_gravity_set(bd->client.lock_win, ECORE_X_GRAVITY_SW);
-          }
-        else
-          {
-             ecore_x_window_gravity_set(bd->client.win, ECORE_X_GRAVITY_NE);
-             if (bd->client.lock_win) ecore_x_window_gravity_set(bd->client.lock_win, ECORE_X_GRAVITY_NE);
-          }
-
         bd->shade.anim = ecore_animator_add(_e_border_shade_animator, bd);
         edje_object_signal_emit(bd->bg_object, "e,state,shading", "e");
      }
@@ -2414,28 +2402,6 @@ e_border_unshade(E_Border *bd,
         bd->shading = 1;
         bd->changes.shading = 1;
         BD_CHANGED(bd);
-
-        if (bd->shade.dir == E_DIRECTION_UP)
-          {
-             ecore_x_window_gravity_set(bd->client.win, ECORE_X_GRAVITY_SW);
-             if (bd->client.lock_win)
-               {
-                  ecore_x_window_gravity_set(bd->client.lock_win, ECORE_X_GRAVITY_SW);
-               }
-          }
-        else if (bd->shade.dir == E_DIRECTION_LEFT)
-          {
-             ecore_x_window_gravity_set(bd->client.win, ECORE_X_GRAVITY_SW);
-             if (bd->client.lock_win)
-               {
-                  ecore_x_window_gravity_set(bd->client.lock_win, ECORE_X_GRAVITY_SW);
-               }
-          }
-        else
-          {
-             ecore_x_window_gravity_set(bd->client.win, ECORE_X_GRAVITY_NE);
-             if (bd->client.lock_win) ecore_x_window_gravity_set(bd->client.lock_win, ECORE_X_GRAVITY_NE);
-          }
 
         bd->shade.anim = ecore_animator_add(_e_border_shade_animator, bd);
         edje_object_signal_emit(bd->bg_object, "e,state,unshading", "e");
