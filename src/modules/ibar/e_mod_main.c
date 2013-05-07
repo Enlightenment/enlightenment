@@ -1699,11 +1699,9 @@ _ibar_go_focus(void)
    if (_ibar_focus_win) return;
    man = e_manager_current_get();
    if (!man) return;
-   _ibar_focus_win = ecore_x_window_input_new(man->root, -10, -20, 1, 1);
-   ecore_x_window_show(_ibar_focus_win);
+   _ibar_focus_win = e_comp_get(man)->ee_win;
    if (!e_grabinput_get(0, 0, _ibar_focus_win))
      {
-        ecore_x_window_free(_ibar_focus_win);
         _ibar_focus_win = 0;
         return;
      }
@@ -1720,7 +1718,6 @@ err:
    if (_ibar_focus_win)
      {
         e_grabinput_release(0, _ibar_focus_win);
-        ecore_x_window_free(_ibar_focus_win);
      }
    _ibar_focus_win = 0;
 }
@@ -1734,7 +1731,6 @@ _ibar_go_unfocus(void)
    b = _ibar_focused_find();
    if (b) _ibar_unfocus(b);
    e_grabinput_release(0, _ibar_focus_win);
-   ecore_x_window_free(_ibar_focus_win);
    _ibar_focus_win = 0;
    ecore_event_handler_del(_ibar_key_down_handler);
    _ibar_key_down_handler = NULL;
