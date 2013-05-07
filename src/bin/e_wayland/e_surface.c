@@ -37,10 +37,11 @@ e_surface_new(unsigned int id)
    /* initialize the link */
    wl_list_init(&es->wl.link);
 
+   pixman_region32_init(&es->damage);
+   pixman_region32_init(&es->opaque);
+   pixman_region32_init(&es->input);
+
    /* TODO: finish me */
-   es->damage = eina_rectangle_new(0, 0, 0, 0);
-   es->opaque = eina_rectangle_new(0, 0, 0, 0);
-   es->input = eina_rectangle_new(0, 0, 0, 0);
 
    es->pending.buffer_destroy.notify = _e_surface_cb_buffer_destroy;
 
@@ -90,8 +91,8 @@ e_surface_damage(E_Surface *es)
    if (!es) return;
 
    /* add this damage rectangle */
-   eina_rectangle_union(es->damage, 
-                        &(Eina_Rectangle){ 0, 0, es->geometry.w, es->geometry.h });
+   pixman_region32_union(&es->damage, &es->damage, 
+                         0, 0, es->geometry.w, es->geometry.h);
 
    /* TODO: schedule repaint */
 }
@@ -115,6 +116,10 @@ e_surface_destroy(E_Surface *es)
    EINA_LIST_FREE(es->pending.frames, cb)
      wl_resource_destroy(&cb->resource);
 
+   pixman_region32_fini(&es->pending.damage);
+   pixman_region32_fini(&es->pending.opaque);
+   pixman_region32_fini(&es->pending.input);
+
    /* destroy pending buffer */
    if (es->pending.buffer)
      wl_list_remove(&es->pending.buffer_destroy.link);
@@ -122,10 +127,10 @@ e_surface_destroy(E_Surface *es)
    /* remove any buffer references */
    e_buffer_reference(&es->buffer.reference, NULL);
 
-   /* free rectangles */
-   eina_rectangle_free(es->damage);
-   eina_rectangle_free(es->opaque);
-   eina_rectangle_free(es->input);
+   /* free regions */
+   pixman_region32_fini(&es->damage);
+   pixman_region32_fini(&es->opaque);
+   pixman_region32_fini(&es->input);
 
    /* remove any active frame callbacks */
    EINA_LIST_FREE(es->frames, cb)
@@ -192,18 +197,12 @@ static void
 _e_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h)
 {
    E_Surface *es;
-   /* Eina_Rectangle *dmg; */
 
    /* try to cast the resource to our surface */
    if (!(es = resource->data)) return;
 
-   /* EINA_RECTANGLE_SET(dmg, x, y, w, h); */
-
    /* add this damage rectangle */
-   eina_rectangle_union(&es->pending.damage, &(Eina_Rectangle){ x, y, w, h });
-   /* evas_damage_rectangle_add(es->evas, x, y, w, h); */
-
-   /* eina_rectangle_free(dmg); */
+   pixman_region32_union(&es->pending.damage, &es->pending.damage, x, y, w, h);
 }
 
 static void 
@@ -243,30 +242,28 @@ _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    es->pending.new_attach = EINA_FALSE;
 
    /* combine any pending damage */
-   eina_rectangle_union(es->damage, &es->pending.damage);
-   ret = 
-     eina_rectangle_intersection(es->damage, 
-                                 &(Eina_Rectangle){ 0, 0, es->geometry.w, es->geometry.h});
+   pixman_region32_union(&es->damage, &es->damage, &es->pending.damage);
+   pixman_region32_intersect_rect(&es->damage, &es->damage, 
+                                  0, 0, es->geometry.w, es->geometry.h);
+   /* TODO: empty region */
 
    /* free any pending damage */
-   eina_rectangle_free(&es->pending.damage);
+   pixman_region32_fini(&es->pending.damage);
+   pixman_region32_init(&es->pending.damage);
 
    /* combine any pending opaque */
-   opaque = eina_rectangle_new(0, 0, es->geometry.w, es->geometry.h);
-   ret = eina_rectangle_intersection(opaque, &es->pending.opaque);
-   if (!((opaque->x == es->opaque->x) && (opaque->y == es->opaque->y) && 
-         (opaque->w == es->opaque->w) && (opaque->h == es->opaque->h)))
+   pixman_region32_init_rect(&opaque, 0, 0, es->geometry.w, es->geometry.h);
+   pixman_region32_intersect(&opaque, &opaque, &es->pending.opaque);
+   if (!pixman_region32_equal(&opaque, &es->opaque))
      {
-        /* copy opaque into surface */
-        EINA_RECTANGLE_SET(es->opaque, opaque->x, opaque->y, opaque->w, opaque->h);
-
-        /* mark dirty */
+        pixman_region32_copy(&es->opaque, &opaque);
         es->geometry.changed = EINA_TRUE;
      }
 
-   if (es->input) eina_rectangle_free(es->input);
-   es->input = eina_rectangle_new(0, 0, es->geometry.w, es->geometry.h);
-   ret = eina_rectangle_intersection(es->input, &es->pending.input);
+   /* combine any pending input */
+   pixman_region32_fini(&es->input);
+   pixman_region32_init_rect(&es->input, 0, 0, es->geometry.w, es->geometry.h);
+   pixman_region32_intersect(&es->input, &es->input, &es->pending.input);
 
    /* add any pending frame callbacks to main list and free pending */
    EINA_LIST_FREE(es->pending.frames, cb)
