@@ -242,7 +242,17 @@ _output_cb_repaint_start(E_Output *output)
 static void 
 _output_cb_repaint(E_Output *output, E_Region *damages)
 {
+   E_Output_X11 *xout;
+   E_Compositor *comp;
+   E_Compositor_X11 *xcomp;
+
+   xout = (E_Output_X11 *)output;
+   comp = output->compositor;
+   xcomp = (E_Compositor_X11 *)comp;
+
    /* TODO */
+
+   wl_event_source_timer_update(xout->finish_frame, 10);
 }
 
 static void 
