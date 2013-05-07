@@ -2164,7 +2164,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
         if (cw->override && !(att.event_mask.mine & ECORE_X_EVENT_MASK_WINDOW_PROPERTY))
           ecore_x_event_mask_set(cw->win, ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
      }
-   if ((!cw->bd) && (!cw->menu) && (!cw->input_only))
+   if ((!cw->bd) && (!cw->menu))
      {
         char *netwm_title = NULL;
 
@@ -2446,9 +2446,9 @@ _e_comp_win_show(E_Comp_Win *cw)
    Evas_Object *o;
    int pw, ph;
 
-   if (cw->visible || cw->input_only || cw->invalid) return;
-   pw = cw->pw, ph = cw->ph;
+   if (cw->visible || cw->invalid) return;
    cw->visible = 1;
+   pw = cw->pw, ph = cw->ph;
    DBG("  [0x%x] sho ++ [redir=%i, pm=%x, dmg_up=%i]",
        cw->win, cw->redirected, cw->pixmap, cw->dmg_updates);
    _e_comp_win_configure(cw, cw->hidden.x, cw->hidden.y, cw->w, cw->h, cw->border);
@@ -2456,8 +2456,10 @@ _e_comp_win_show(E_Comp_Win *cw)
    if (cw->input_only)
      {
         if (!cw->shape) return;
+        cw->real_hid = 0;
         cw->shape->visible = 0;
         e_container_shape_show(cw->shape);
+        return;
      }
    cw->show_anim = EINA_FALSE;
 
