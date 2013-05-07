@@ -209,7 +209,7 @@ _output_cb_frame(void *data)
    if (!(output = data)) return 1;
 
    /* start the repaint loop */
-   _output_cb_repaint_start(output);
+   _output_cb_repaint_start(&output->base);
 
    return 1;
 }
