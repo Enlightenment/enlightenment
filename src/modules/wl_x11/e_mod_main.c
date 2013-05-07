@@ -244,15 +244,18 @@ _output_cb_repaint(E_Output *output, E_Region *damages)
 {
    E_Output_X11 *xout;
    E_Compositor *comp;
-   E_Compositor_X11 *xcomp;
+   /* E_Compositor_X11 *xcomp; */
 
    xout = (E_Output_X11 *)output;
    comp = output->compositor;
-   xcomp = (E_Compositor_X11 *)comp;
+   /* xcomp = (E_Compositor_X11 *)comp; */
 
    /* TODO */
 
-   wl_event_source_timer_update(xout->finish_frame, 10);
+   pixman_region32_subtract(&comp->plane.damage, &comp->plane.damage, 
+                            &damages->region);
+
+   wl_event_source_timer_update(xout->frame_timer, 10);
 }
 
 static void 
@@ -309,5 +312,17 @@ _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
 static void 
 _comp_cb_attach(E_Surface *es, struct wl_buffer *buffer)
 {
+   e_buffer_reference(&es->buffer.reference, buffer);
+
+   if (!buffer) return;
+
+   if (!wl_buffer_is_shm(buffer))
+     {
+        e_buffer_reference(&es->buffer.reference, NULL);
+        return;
+     }
+
+   /* wl_shm_buffer_get_data(buffer); */
+
    printf("Wl_X11 Attach: %p\n", es);
 }
