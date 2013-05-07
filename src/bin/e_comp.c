@@ -1219,6 +1219,7 @@ _e_comp_cb_update(E_Comp *c)
           {
              new_updates = eina_list_append(new_updates, cw);
           }
+        if (cw->geom_update) _e_comp_win_geometry_update(cw);
      }
    _e_comp_fps_update(c);
    if (conf->fps_show)
