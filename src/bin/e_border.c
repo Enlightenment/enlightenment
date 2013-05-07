@@ -2336,7 +2336,6 @@ e_border_shade(E_Border *bd,
           {
              bd->h = bd->client_inset.t + bd->client_inset.b;
              bd->y = bd->y + bd->client.h;
-             bd->changes.pos = 1;
           }
         else if (bd->shade.dir == E_DIRECTION_LEFT)
           {
@@ -2346,7 +2345,6 @@ e_border_shade(E_Border *bd,
           {
              bd->w = bd->client_inset.l + bd->client_inset.r;
              bd->x = bd->x + bd->client.w;
-             bd->changes.pos = 1;
           }
 
         if (bd->client.shaped)
@@ -2359,7 +2357,6 @@ e_border_shade(E_Border *bd,
              bd->need_shape_merge = 1;
           }
 
-        bd->changes.size = 1;
         bd->shaded = 1;
         bd->changes.shaded = 1;
         BD_CHANGED(bd);
@@ -2421,33 +2418,17 @@ e_border_unshade(E_Border *bd,
         if (bd->shade.dir == E_DIRECTION_UP)
           {
              ecore_x_window_gravity_set(bd->client.win, ECORE_X_GRAVITY_SW);
-             ecore_x_window_move_resize(bd->client.win, 0,
-                                        bd->h - (bd->client_inset.t + bd->client_inset.b) -
-                                        bd->client.h,
-                                        bd->client.w, bd->client.h);
              if (bd->client.lock_win)
                {
                   ecore_x_window_gravity_set(bd->client.lock_win, ECORE_X_GRAVITY_SW);
-                  ecore_x_window_move_resize(bd->client.lock_win, 0,
-                                             bd->h - (bd->client_inset.t + bd->client_inset.b) -
-                                             bd->client.h,
-                                             bd->client.w, bd->client.h);
                }
           }
         else if (bd->shade.dir == E_DIRECTION_LEFT)
           {
              ecore_x_window_gravity_set(bd->client.win, ECORE_X_GRAVITY_SW);
-             ecore_x_window_move_resize(bd->client.win,
-                                        bd->w - (bd->client_inset.l + bd->client_inset.r) -
-                                        bd->client.w,
-                                        0, bd->client.w, bd->client.h);
              if (bd->client.lock_win)
                {
                   ecore_x_window_gravity_set(bd->client.lock_win, ECORE_X_GRAVITY_SW);
-                  ecore_x_window_move_resize(bd->client.lock_win,
-                                             bd->w - (bd->client_inset.l + bd->client_inset.r) -
-                                             bd->client.w,
-                                             0, bd->client.w, bd->client.h);
                }
           }
         else
@@ -2469,7 +2450,6 @@ e_border_unshade(E_Border *bd,
           {
              bd->h = bd->client_inset.t + bd->client.h + bd->client_inset.b;
              bd->y = bd->y - bd->client.h;
-             bd->changes.pos = 1;
           }
         else if (bd->shade.dir == E_DIRECTION_LEFT)
           {
@@ -2479,7 +2459,6 @@ e_border_unshade(E_Border *bd,
           {
              bd->w = bd->client_inset.l + bd->client.w + bd->client_inset.r;
              bd->x = bd->x - bd->client.w;
-             bd->changes.pos = 1;
           }
         if (bd->client.shaped)
           {
@@ -2491,7 +2470,6 @@ e_border_unshade(E_Border *bd,
              bd->need_shape_merge = 1;
           }
 
-        bd->changes.size = 1;
         bd->shaded = 0;
         bd->changes.shaded = 1;
         BD_CHANGED(bd);
@@ -4341,8 +4319,10 @@ e_border_resize_cancel(void)
 EAPI void
 e_border_frame_recalc(E_Border *bd)
 {
+   int w, h;
    if (!bd->bg_object) return;
 
+   w = bd->w, h = bd->h;
    bd->w -= (bd->client_inset.l + bd->client_inset.r);
    bd->h -= (bd->client_inset.t + bd->client_inset.b);
 
@@ -4351,18 +4331,22 @@ e_border_frame_recalc(E_Border *bd)
    bd->w += (bd->client_inset.l + bd->client_inset.r);
    bd->h += (bd->client_inset.t + bd->client_inset.b);
 
-   BD_CHANGED(bd);
-   bd->changes.size = 1;
-   if (bd->client.shaped)
+   if (bd->changes.shading || bd->changes.shaded) return;
+   if ((w != bd->w) || (h != bd->h))
      {
-        bd->need_shape_merge = 1;
-        bd->need_shape_export = 1;
+        BD_CHANGED(bd);
+        bd->changes.size = 1;
+        if (bd->client.shaped)
+          {
+             bd->need_shape_merge = 1;
+             bd->need_shape_export = 1;
+          }
+        if (bd->shaped_input)
+          {
+             bd->need_shape_merge = 1;
+          }
+        _e_border_client_move_resize_send(bd);
      }
-   if (bd->shaped_input)
-     {
-        bd->need_shape_merge = 1;
-     }
-   _e_border_client_move_resize_send(bd);
 }
 
 EAPI Eina_List *
@@ -8594,8 +8578,10 @@ _e_border_eval(E_Border *bd)
         //if (bd->shaded)
           //ecore_x_window_raise(bd->win);
         bd->changes.shading = 0;
+        send_event = 0;
         rem_change = 1;
      }
+   if (bd->changes.shaded) send_event = 0;
    if ((bd->changes.shaded) && (bd->changes.pos) && (bd->changes.size))
      {
         //if (bd->shaded)
@@ -8630,7 +8616,6 @@ _e_border_eval(E_Border *bd)
           //ecore_x_window_lower(bd->win);
         //else
           //ecore_x_window_raise(bd->win);
-        bd->changes.size = 1;
         bd->changes.shaded = 0;
         rem_change = 1;
      }
@@ -8690,22 +8675,23 @@ _e_border_eval(E_Border *bd)
                                    bd->y + bd->client_inset.t + tmp->client.e.state.video_position.y);
           }
 
-        if ((!bd->shaded) || (bd->shading))
-          ecore_x_window_move_resize(bd->win, x, y, w, h);
-
-        if (bd->internal_ecore_evas)
-          ecore_evas_move_resize(bd->internal_ecore_evas, 0, 0, w, h);
-        else if (!bd->client.e.state.video)
+        if ((!bd->shaded) && (!bd->shading))
           {
-             ecore_x_window_move_resize(bd->client.win, 0, 0, bd->client.w, bd->client.h);
-             ecore_x_window_move_resize(bd->client.lock_win, 0, 0, bd->client.w, bd->client.h);
+             ecore_x_window_move_resize(bd->win, x, y, w, h);
+
+             if (bd->internal_ecore_evas)
+               ecore_evas_move_resize(bd->internal_ecore_evas, 0, 0, w, h);
+             else if (!bd->client.e.state.video)
+               {
+                  ecore_x_window_move_resize(bd->client.win, 0, 0, bd->client.w, bd->client.h);
+                  ecore_x_window_move_resize(bd->client.lock_win, 0, 0, bd->client.w, bd->client.h);
+               }
+             _e_border_client_move_resize_send(bd);
           }
 
         e_container_shape_resize(bd->shape, w, h);
         if (bd->changes.pos)
           e_container_shape_move(bd->shape, x, y);
-
-        _e_border_client_move_resize_send(bd);
 
         bd->changes.pos = 0;
         bd->changes.size = 0;
@@ -9140,6 +9126,7 @@ static Eina_Bool
 _e_border_shade_animator(void *data)
 {
    E_Border *bd = data;
+   E_Event_Border_Resize *ev;
    double dt, val;
    double dur = bd->client.h / e_config->border_shade_speed;
 
@@ -9222,7 +9209,6 @@ _e_border_shade_animator(void *data)
      {
         bd->h = bd->client_inset.t + bd->client_inset.b + bd->client.h * bd->shade.val;
         bd->y = bd->shade.y + bd->client.h * (1 - bd->shade.val);
-        bd->changes.pos = 1;
      }
    else if (bd->shade.dir == E_DIRECTION_LEFT)
      bd->w = bd->client_inset.l + bd->client_inset.r + bd->client.w * bd->shade.val;
@@ -9230,7 +9216,6 @@ _e_border_shade_animator(void *data)
      {
         bd->w = bd->client_inset.l + bd->client_inset.r + bd->client.w * bd->shade.val;
         bd->x = bd->shade.x + bd->client.w * (1 - bd->shade.val);
-        bd->changes.pos = 1;
      }
 
    if (bd->client.shaped)
@@ -9242,17 +9227,13 @@ _e_border_shade_animator(void *data)
      {
         bd->need_shape_merge = 1;
      }
-   bd->changes.size = 1;
    BD_CHANGED(bd);
 
    /* we're done */
    if (val == 1)
      {
-        E_Event_Border_Resize *ev;
-
         bd->shading = 0;
         bd->shaded = !(bd->shaded);
-        bd->changes.size = 1;
         bd->changes.shaded = 1;
         bd->changes.shading = 1;
         BD_CHANGED(bd);
@@ -9267,14 +9248,13 @@ _e_border_shade_animator(void *data)
 
         ecore_x_window_gravity_set(bd->client.win, ECORE_X_GRAVITY_NW);
         if (bd->client.lock_win) ecore_x_window_gravity_set(bd->client.lock_win, ECORE_X_GRAVITY_NW);
-        ev = E_NEW(E_Event_Border_Resize, 1);
-        ev->border = bd;
-        e_object_ref(E_OBJECT(bd));
-//	e_object_breadcrumb_add(E_OBJECT(bd), "border_resize_event");
-        ecore_event_add(E_EVENT_BORDER_RESIZE, ev, _e_border_event_border_resize_free, NULL);
-        return ECORE_CALLBACK_CANCEL;
      }
-   return ECORE_CALLBACK_RENEW;
+   ev = E_NEW(E_Event_Border_Resize, 1);
+   ev->border = bd;
+   e_object_ref(E_OBJECT(bd));
+//	e_object_breadcrumb_add(E_OBJECT(bd), "border_resize_event");
+   ecore_event_add(E_EVENT_BORDER_RESIZE, ev, _e_border_event_border_resize_free, NULL);
+   return (val != 1);
 }
 
 static void
