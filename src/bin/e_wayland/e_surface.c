@@ -136,7 +136,7 @@ e_surface_destroy(E_Surface *es)
 }
 
 EAPI void 
-e_surface_damage_calculate(E_Surface *es)
+e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque)
 {
    /* check for valid surface */
    if (!es) return;
