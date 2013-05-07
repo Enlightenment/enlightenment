@@ -263,6 +263,46 @@ e_compositor_input_read(int fd EINA_UNUSED, unsigned int mask EINA_UNUSED, void 
    return 1;
 }
 
+EAPI void 
+e_compositor_damage_calculate(E_Compositor *comp)
+{
+   E_Plane *plane;
+   E_Surface *es;
+   Eina_List *l;
+   Eina_Rectangle *clip, *opaque;
+
+   /* check for valid compositor */
+   if (!comp) return;
+
+   clip = eina_rectangle_new(0, 0, 0, 0);
+
+   /* loop the planes */
+   EINA_LIST_FOREACH(comp->planes, l, plane)
+     {
+        /* loop the surfaces */
+        EINA_LIST_FOREACH(comp->surfaces, l, es)
+          {
+             if (es->plane != plane) continue;
+             e_surface_damage_calculate(es);
+          }
+     }
+
+   eina_rectangle_free(clip);
+
+   /* loop the surfaces */
+   EINA_LIST_FOREACH(comp->surfaces, l, es)
+     {
+        if (!es->buffer.keep)
+          e_buffer_reference(&es->buffer.reference, NULL);
+     }
+}
+
+EAPI void 
+e_compositor_damage_flush(E_Compositor *comp, E_Surface *es)
+{
+
+}
+
 /* local functions */
 static void 
 _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)

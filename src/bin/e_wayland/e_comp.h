@@ -65,6 +65,8 @@ EAPI Eina_Bool e_compositor_shutdown(E_Compositor *comp);
 EAPI E_Compositor *e_compositor_get(void);
 EAPI void e_compositor_plane_stack(E_Compositor *comp, E_Plane *plane, E_Plane *above);
 EAPI int e_compositor_input_read(int fd EINA_UNUSED, unsigned int mask EINA_UNUSED, void *data);
+EAPI void e_compositor_damage_calculate(E_Compositor *comp);
+EAPI void e_compositor_damage_flush(E_Compositor *comp, E_Surface *es);
 
 # endif
 #endif
