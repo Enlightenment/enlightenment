@@ -46,20 +46,19 @@ _e_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resource *resou
    /* try to cast resource to our region */
    if (!(reg = resource->data)) return;
 
-   eina_rectangle_union(reg->region, &(Eina_Rectangle){ x, y, w, h });
+   pixman_region32_union_rect(&reg->region, &reg->region, x, y, w, h);
 }
 
 static void 
 _e_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h)
 {
    E_Region *reg;
-   Eina_Rectangle *rect;
-   Eina_Bool ret = EINA_FALSE;
+   pixman_region32_t rect;
 
    /* try to cast resource to our region */
    if (!(reg = resource->data)) return;
 
-   rect = eina_rectangle_new(x, y, w, h);
-   ret = eina_rectangle_intersection(reg->region, rect);
-   eina_rectangle_free(rect);
+   pixman_region32_init_rect(&rect, x, y, w, h);
+   pixman_region32_subtract(&reg->region, &reg->region, &rect);
+   pixman_region32_init(&rect);
 }
