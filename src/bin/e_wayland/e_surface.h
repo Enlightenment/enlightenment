@@ -27,17 +27,16 @@ struct _E_Surface
         struct wl_listener buffer_destroy;
         Eina_List *frames;
 
-        Eina_Rectangle damage;
-        Eina_Rectangle opaque;
-        Eina_Rectangle input;
+        pixman_region32_t damage, opaque, input;
 
         Evas_Coord x, y;
         Eina_Bool new_attach : 1;
      } pending;
 
-   Eina_Rectangle *damage;
-   Eina_Rectangle *opaque;
-   Eina_Rectangle *input;
+   pixman_region32_t damage;
+   pixman_region32_t opaque;
+   pixman_region32_t clip;
+   pixman_region32_t input;
 
    Eina_List *frames;
    E_Plane *plane;
