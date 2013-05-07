@@ -53,6 +53,7 @@ struct _E_Output
 
 EAPI void e_output_init(E_Output *output, E_Compositor *comp, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, unsigned int transform);
 EAPI void e_output_shutdown(E_Output *output);
+EAPI void e_output_repaint(E_Output *output, unsigned int secs);
 
 # endif
 #endif
