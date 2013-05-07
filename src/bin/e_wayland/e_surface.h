@@ -72,6 +72,7 @@ EAPI void e_surface_attach(E_Surface *es, struct wl_buffer *buffer);
 EAPI void e_surface_unmap(E_Surface *es);
 EAPI void e_surface_damage(E_Surface *es);
 EAPI void e_surface_destroy(E_Surface *es);
+EAPI void e_surface_damage_calculate(E_Surface *es);
 
 # endif
 #endif

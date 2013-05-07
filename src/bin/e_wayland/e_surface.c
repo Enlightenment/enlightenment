@@ -135,6 +135,21 @@ e_surface_destroy(E_Surface *es)
    E_FREE(es);
 }
 
+EAPI void 
+e_surface_damage_calculate(E_Surface *es)
+{
+   /* check for valid surface */
+   if (!es) return;
+
+   /* check for referenced buffer */
+   if (es->buffer.reference)
+     {
+        /* if this is an shm buffer, flush any pending damage */
+        if (wl_buffer_is_shm(es->buffer.reference->buffer))
+          e_compositor_damage_flush(_e_comp, es);
+     }
+}
+
 /* local functions */
 static void 
 _e_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
