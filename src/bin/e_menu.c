@@ -110,6 +110,19 @@ static Ecore_Event_Handler *_e_menu_mouse_wheel_handler = NULL;
 static Eina_Bool _e_menu_lock = EINA_FALSE;
 static Evas_Object *_e_menu_event_rect = NULL;
 
+static void
+_mouse_up_feed(Evas *e, Ecore_X_Time activate_time)
+{
+   int button_mask, i;
+
+   button_mask = evas_pointer_button_down_mask_get(e);
+   for (i = 0; i < 32; i++)
+     {
+       if ((button_mask & (1 << i)))
+         evas_event_feed_mouse_up(e, i + 1, EVAS_BUTTON_NONE, activate_time, NULL);
+     }
+}
+
 static Eina_List *
 _e_active_menus_copy_ref(void)
 {
@@ -381,19 +394,7 @@ e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int d
      }
    pmi = _e_menu_item_active_get();
    if (pmi) e_menu_item_active_set(pmi, 0);
-   {
-      int button_mask, i;
-      Evas *e;
-
-      e = e_comp_get(m)->evas;
-      button_mask = evas_pointer_button_down_mask_get(e);
-      for (i = 0; i < 32; i++)
-        {
-          if ((button_mask & (1 << i)))
-            evas_event_feed_mouse_up(e, i + 1, EVAS_BUTTON_NONE, activate_time, NULL);
-        }
-      
-   }
+   _mouse_up_feed(e_comp_get(m)->evas, activate_time);
 }
 
 EAPI void
@@ -1245,6 +1246,7 @@ e_menu_idler_before(void)
           {
              e_grabinput_release(0, _e_menu_win);
              _e_menu_win = 0;
+             _mouse_up_feed(evas_object_evas_get(_e_menu_event_rect), 0); 
              E_FREE_FUNC(_e_menu_event_rect, evas_object_del);
           }
      }
