@@ -3,6 +3,7 @@
 static void _e_border_cb_border_menu_end(void *data, E_Menu *m);
 static void _e_border_menu_cb_locks(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_border_menu_cb_remember(void *data, E_Menu *m, E_Menu_Item *mi);
+static void _e_border_menu_cb_borderless(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_border_menu_cb_border(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_border_menu_cb_close(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_border_menu_cb_iconify(void *data, E_Menu *m, E_Menu_Item *mi);
@@ -99,6 +100,7 @@ e_int_border_menu_create(E_Border *bd)
    Eina_List *l;
    E_Border_Menu_Hook *h;
    char buf[128];
+   Eina_Bool borderless;
 
    if (bd->border_menu) return;
 
@@ -121,6 +123,7 @@ e_int_border_menu_create(E_Border *bd)
         if (bd->desktop)
           e_util_desktop_menu_item_icon_add(bd->desktop, 16, mi);
      }
+   borderless = bd->borderless || (!bd->client.border.name) || (!e_util_strcmp("borderless", bd->client.border.name));
 
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Window"));
@@ -171,7 +174,7 @@ e_int_border_menu_create(E_Border *bd)
      }
 
    if ((!bd->lock_user_shade) && (!bd->fullscreen) && (!bd->maximized) &&
-       ((!bd->client.border.name) || (strcmp("borderless", bd->client.border.name))))
+       ((!bd->client.border.name) || (!borderless)))
      {
         mi = e_menu_item_new(m);
         e_menu_item_label_set(mi, _("Shade"));
@@ -182,6 +185,19 @@ e_int_border_menu_create(E_Border *bd)
                                   e_theme_edje_file_get("base/theme/borders",
                                                         "e/widgets/border/default/shade"),
                                   "e/widgets/border/default/shade");
+     }
+
+   if ((!bd->fullscreen) && (!bd->lock_border) && (!bd->shading) && (!bd->shaded))
+     {
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, _("Borderless"));
+        e_menu_item_check_set(mi, 1);
+        e_menu_item_toggle_set(mi, borderless);
+        e_menu_item_callback_set(mi, _e_border_menu_cb_borderless, bd);
+        e_menu_item_icon_edje_set(mi,
+                                  e_theme_edje_file_get("base/theme/borders",
+                                                        "e/widgets/border/default/borderless"),
+                                  "e/widgets/border/default/borderless");
      }
 
    if (!bd->lock_close)
@@ -289,6 +305,16 @@ _e_border_menu_cb_border(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNU
      }
    snprintf(buf, sizeof(buf), "%p", bd);
    e_configure_registry_call("internal/borders_border", bd->zone->container, buf);
+}
+
+static void
+_e_border_menu_cb_borderless(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
+{
+   E_Border *bd = data;
+
+   BD_CHANGED(bd);
+   bd->client.border.changed = 1;
+   bd->borderless = mi->toggle;
 }
 
 static void
