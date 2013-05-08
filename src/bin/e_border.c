@@ -8005,7 +8005,7 @@ _e_border_eval0(E_Border *bd)
      {
         const char *bordername;
 
-        if (bd->fullscreen)
+        if (bd->fullscreen || bd->borderless)
           bordername = "borderless";
         else if (bd->bordername)
           bordername = bd->bordername;
