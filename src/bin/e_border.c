@@ -9210,9 +9210,6 @@ _e_border_shade_animator(void *data)
           edje_object_signal_emit(bd->bg_object, "e,state,unshaded", "e");
         edje_object_message_signal_process(bd->bg_object);
         e_border_frame_recalc(bd);
-
-        ecore_x_window_gravity_set(bd->client.win, ECORE_X_GRAVITY_NW);
-        if (bd->client.lock_win) ecore_x_window_gravity_set(bd->client.lock_win, ECORE_X_GRAVITY_NW);
      }
    ev = E_NEW(E_Event_Border_Resize, 1);
    ev->border = bd;
