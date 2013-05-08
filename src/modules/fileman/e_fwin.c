@@ -618,7 +618,7 @@ _e_fwin_bg_mouse_down(E_Fwin *fwin, Evas_Object *obj __UNUSED__, void *event __U
    int x, y, w, h, zx, zy, zw, zh;
    e_zone_useful_geometry_get(fwin->win->border->zone, &zx, &zy, &zw, &zh);
    x = fwin->win->border->x, y = fwin->win->border->y;
-   e_fm2_optimal_size_calc(fwin->cur_page->fm_obj, zw - x, zh - y, &w, &h);
+   if (!e_fm2_optimal_size_calc(fwin->cur_page->fm_obj, zw - x, zh - y, &w, &h)) return;
    if (x + w > zx + zw)
      w = zx + zw - x;
    if (y + x > zy + zh)

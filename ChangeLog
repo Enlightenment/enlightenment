@@ -1,6 +1,7 @@
 2013-05-08 Mike Blumenkrantz
 
         * e_fm2_optimal_size_calc returns bool to indicate whether the returned size can be used
+        * filemanager windows no longer resize to 0x0 when double clicked with no icons present
 
 2013-04-26 Mike Blumenkrantz
 
