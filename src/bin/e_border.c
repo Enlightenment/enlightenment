@@ -9202,7 +9202,6 @@ _e_border_shade_animator(void *data)
         bd->shaded = !(bd->shaded);
         bd->changes.shaded = 1;
         bd->changes.shading = 1;
-        BD_CHANGED(bd);
         bd->shade.anim = NULL;
 
         if (bd->shaded)
