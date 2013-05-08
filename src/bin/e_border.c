@@ -2316,6 +2316,8 @@ e_border_shade(E_Border *bd,
      }
    else
      {
+        Eina_Bool move = EINA_FALSE;
+
         if (bd->shade.dir == E_DIRECTION_UP)
           {
              bd->h = bd->client_inset.t + bd->client_inset.b;
@@ -2324,6 +2326,7 @@ e_border_shade(E_Border *bd,
           {
              bd->h = bd->client_inset.t + bd->client_inset.b;
              bd->y = bd->y + bd->client.h;
+             move = EINA_TRUE;
           }
         else if (bd->shade.dir == E_DIRECTION_LEFT)
           {
@@ -2333,6 +2336,7 @@ e_border_shade(E_Border *bd,
           {
              bd->w = bd->client_inset.l + bd->client_inset.r;
              bd->x = bd->x + bd->client.w;
+             move = EINA_TRUE;
           }
 
         if (bd->client.shaped)
@@ -2350,6 +2354,9 @@ e_border_shade(E_Border *bd,
         BD_CHANGED(bd);
         edje_object_signal_emit(bd->bg_object, "e,state,shaded", "e");
         e_border_frame_recalc(bd);
+        if (move) e_container_shape_move(bd->shape, bd->x, bd->y);
+        e_container_shape_resize(bd->shape, bd->w, bd->h);
+        e_border_comp_hidden_set(bd, EINA_TRUE);
         ev = E_NEW(E_Event_Border_Resize, 1);
         ev->border = bd;
         /* The resize is added in the animator when animation complete */
@@ -2408,6 +2415,8 @@ e_border_unshade(E_Border *bd,
      }
    else
      {
+        Eina_Bool move = EINA_FALSE;
+
         if (bd->shade.dir == E_DIRECTION_UP)
           {
              bd->h = bd->client_inset.t + bd->client.h + bd->client_inset.b;
@@ -2416,6 +2425,7 @@ e_border_unshade(E_Border *bd,
           {
              bd->h = bd->client_inset.t + bd->client.h + bd->client_inset.b;
              bd->y = bd->y - bd->client.h;
+             move = EINA_TRUE;
           }
         else if (bd->shade.dir == E_DIRECTION_LEFT)
           {
@@ -2425,6 +2435,7 @@ e_border_unshade(E_Border *bd,
           {
              bd->w = bd->client_inset.l + bd->client.w + bd->client_inset.r;
              bd->x = bd->x - bd->client.w;
+             move = EINA_TRUE;
           }
         if (bd->client.shaped)
           {
@@ -2441,6 +2452,9 @@ e_border_unshade(E_Border *bd,
         BD_CHANGED(bd);
         edje_object_signal_emit(bd->bg_object, "e,state,unshaded", "e");
         e_border_frame_recalc(bd);
+        if (move) e_container_shape_move(bd->shape, bd->x, bd->y);
+        e_container_shape_resize(bd->shape, bd->w, bd->h);
+        e_border_comp_hidden_set(bd, EINA_FALSE);
         ev = E_NEW(E_Event_Border_Resize, 1);
         ev->border = bd;
         /* The resize is added in the animator when animation complete */
@@ -9093,6 +9107,7 @@ _e_border_shade_animator(void *data)
 {
    E_Border *bd = data;
    E_Event_Border_Resize *ev;
+   Eina_Bool move = EINA_FALSE;
    double dt, val;
    double dur = bd->client.h / e_config->border_shade_speed;
 
@@ -9175,6 +9190,7 @@ _e_border_shade_animator(void *data)
      {
         bd->h = bd->client_inset.t + bd->client_inset.b + bd->client.h * bd->shade.val;
         bd->y = bd->shade.y + bd->client.h * (1 - bd->shade.val);
+        move = EINA_TRUE;
      }
    else if (bd->shade.dir == E_DIRECTION_LEFT)
      bd->w = bd->client_inset.l + bd->client_inset.r + bd->client.w * bd->shade.val;
@@ -9182,6 +9198,7 @@ _e_border_shade_animator(void *data)
      {
         bd->w = bd->client_inset.l + bd->client_inset.r + bd->client.w * bd->shade.val;
         bd->x = bd->shade.x + bd->client.w * (1 - bd->shade.val);
+        move = EINA_TRUE;
      }
 
    if (bd->client.shaped)
@@ -9210,7 +9227,10 @@ _e_border_shade_animator(void *data)
           edje_object_signal_emit(bd->bg_object, "e,state,unshaded", "e");
         edje_object_message_signal_process(bd->bg_object);
         e_border_frame_recalc(bd);
+        e_border_comp_hidden_set(bd, bd->shaded);
      }
+   if (move) e_container_shape_move(bd->shape, bd->x, bd->y);
+   e_container_shape_resize(bd->shape, bd->w, bd->h);
    ev = E_NEW(E_Event_Border_Resize, 1);
    ev->border = bd;
    e_object_ref(E_OBJECT(bd));
