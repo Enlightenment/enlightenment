@@ -6360,6 +6360,7 @@ _e_border_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    if ((bd == focused) || (bd == focusing)) return;
    if (focus_locked && (bd != warp_timer_border)) return;
    if (e_object_is_del(E_OBJECT(bd))) return;
+   if (bd->desk && bd->desk->animate_count) return;
    if (!bd->iconic)
      e_focus_event_mouse_in(bd);
    bd->mouse.current.mx = ev->output.x;
@@ -6379,6 +6380,7 @@ _e_border_cb_mouse_x_in(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event
    if ((bd == focused) || (bd == focusing)) return ECORE_CALLBACK_RENEW;
    if (focus_locked && (bd != warp_timer_border)) return ECORE_CALLBACK_RENEW;
    if (e_object_is_del(E_OBJECT(bd))) return ECORE_CALLBACK_RENEW;
+   if (bd->desk && bd->desk->animate_count) return ECORE_CALLBACK_RENEW;
    if (!bd->iconic)
      e_focus_event_mouse_in(bd);
    bd->mouse.current.mx = ev->root.x;
@@ -6396,6 +6398,7 @@ _e_border_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if (bd->fullscreen) return;
    if ((bd != focused) && (bd == focusing)) return;
    if (e_object_is_del(E_OBJECT(bd))) return;
+   if (bd->desk && bd->desk->animate_count) return;
    if (!bd->input_object)
      if (E_INSIDE(ev->output.x, ev->output.y, bd->x, bd->y, bd->w, bd->h)) return;
    if (!bd->iconic)
@@ -6416,8 +6419,8 @@ _e_border_cb_mouse_x_out(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
    if (bd->fullscreen) return ECORE_CALLBACK_RENEW;
    if ((bd != focused) && (bd == focusing)) return ECORE_CALLBACK_RENEW;
    if (e_object_is_del(E_OBJECT(bd))) return ECORE_CALLBACK_RENEW;
+   if (bd->desk && bd->desk->animate_count) return ECORE_CALLBACK_RENEW;
    if (E_INSIDE(ev->root.x, ev->root.y, bd->x, bd->y, bd->w, bd->h)) return ECORE_CALLBACK_RENEW;
-
    if ((ev->mode == ECORE_X_EVENT_MODE_UNGRAB) &&
        (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR))
      return ECORE_CALLBACK_PASS_ON;
