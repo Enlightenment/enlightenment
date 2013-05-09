@@ -67,7 +67,7 @@ e_modapi_init(E_Module *m)
       E_Configure_Option *co;
 
       e_configure_option_domain_current_set("everything");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("settings"), _("Everything launcher settings"), _("exec"), _("everything"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "settings", _("Everything launcher settings"), _("exec"), _("everything"));
       E_CONFIGURE_OPTION_ICON(co, module_icon);
       co->info = eina_stringshare_add("launcher/run_everything");
       e_configure_option_category_tag_add(_("everything"), _("everything"));

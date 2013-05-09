@@ -256,7 +256,7 @@ e_modapi_init(E_Module *m)
       E_Configure_Option *co;
 
       e_configure_option_domain_current_set("conf_comp");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("comp_settings"), _("Advanced composite settings panel"), _("composite"), _("border"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "comp_settings", _("Advanced composite settings panel"), _("composite"), _("border"));
       co->info = eina_stringshare_add("internal/comp_matches");
       E_CONFIGURE_OPTION_ICON(co, "preferences-composite");
    }

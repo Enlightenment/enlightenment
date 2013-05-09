@@ -637,15 +637,15 @@ _e_configure_border_shade_transition_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "Linear",
-      "Accelerate, then decelerate",
-      "Accelerate",
-      "Decelerate",
-      "Pronounced accelerate",
-      "Pronounced decelerate",
-      "Pronounced accelerate, then decelerate",
-      "Bounce",
-      "Bounce more"
+      N_("Linear"),
+      N_("Accelerate, then decelerate"),
+      N_("Accelerate"),
+      N_("Decelerate"),
+      N_("Pronounced accelerate"),
+      N_("Pronounced decelerate"),
+      N_("Pronounced accelerate, then decelerate"),
+      N_("Bounce"),
+      N_("Bounce more")
    };
 
    for (x = 0; x <= E_TRANSITION_BOUNCE_LOTS; x++)
@@ -665,10 +665,10 @@ _e_configure_window_placement_policy_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "Try not to cover other windows",
-      "Try not to cover gadgets",
-      "Place at mouse pointer (automatic)",
-      "Place at mouse pointer (interactive)"
+      N_("Try not to cover other windows"),
+      N_("Try not to cover gadgets"),
+      N_("Place at mouse pointer (automatic)"),
+      N_("Place at mouse pointer (interactive)")
    };
 
    for (x = 0; x <= E_WINDOW_PLACEMENT_MANUAL; x++)
@@ -688,9 +688,9 @@ _e_configure_focus_policy_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "Click",
-      "Pointer",
-      "Sloppy"
+      N_("Click"),
+      N_("Pointer"),
+      N_("Sloppy")
    };
 
    for (x = 0; x <= E_FOCUS_SLOPPY; x++)
@@ -710,10 +710,10 @@ _e_configure_focus_setting_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "Don't set focus on new windows",
-      "Set focus on all new windows",
-      "Set focus only on all new dialog windows",
-      "Set focus only on new dialog windows if dialog's parent window has focus"
+      N_("Don't set focus on new windows"),
+      N_("Set focus on all new windows"),
+      N_("Set focus only on all new dialog windows"),
+      N_("Set focus only on new dialog windows if dialog's parent window has focus")
    };
 
    for (x = 0; x <= E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED; x++)
@@ -733,9 +733,9 @@ _e_configure_window_activehint_policy_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "Ignore application",
-      "Animate application window",
-      "Raise and set focus to application window"
+      N_("Ignore application"),
+      N_("Animate application window"),
+      N_("Raise and set focus to application window")
    };
 
    for (x = 0; x <= E_ACTIVEHINT_POLICY_ACTIVATE; x++)
@@ -755,8 +755,8 @@ _e_configure_fullscreen_policy_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "Resize window, do not resize screen",
-      "Resize window and screen"
+      N_("Resize window, do not resize screen"),
+      N_("Resize window and screen")
    };
 
    for (x = 0; x <= E_FULLSCREEN_ZOOM; x++)
@@ -776,10 +776,10 @@ _e_configure_maximize_policy_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "Fullscreen", /* 1 */
-      "Expand to maximum size without covering shelves", /* 2 */
+      N_("Fullscreen"), /* 1 */
+      N_("Expand to maximum size without covering shelves"), /* 2 */
       NULL,
-      "Expand to maximum size ignoring shelves" /* 4 */
+      N_("Expand to maximum size ignoring shelves") /* 4 */
    };
 
    for (x = E_MAXIMIZE_FULLSCREEN; x <= E_MAXIMIZE_FILL; x++)
@@ -800,9 +800,9 @@ _e_configure_font_hinting_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "No hinting",
-      "Automatic hinting",
-      "Bytecode hinting"
+      N_("No hinting"),
+      N_("Automatic hinting"),
+      N_("Bytecode hinting")
    };
 
    for (x = 0; x <= EVAS_FONT_HINTING_BYTECODE; x++)
@@ -825,9 +825,9 @@ _e_configure_desklock_login_box_zone_info_cb(E_Configure_Option *co)
    Eina_List *ml;
    const char *name[] =
    {
-      "Show on all screens",
-      "Show on screen of pointer",
-      "Show on screen %d"
+      N_("Show on all screens"),
+      N_("Show on screen of pointer"),
+      N_("Show on screen %d")
    };
 
    EINA_LIST_FOREACH(e_manager_list(), ml, m)
@@ -864,9 +864,9 @@ _e_configure_clientlist_group_by_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "No grouping",
-      "Virtual desktop",
-      "Window class"
+      N_("No grouping"),
+      N_("Virtual desktop"),
+      N_("Window class")
    };
 
    for (x = 0; x <= E_CLIENTLIST_GROUP_CLASS; x++)
@@ -886,9 +886,9 @@ _e_configure_clientlist_separate_with_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "No separation",
-      "Separator bars",
-      "Separate menus"
+      N_("No separation"),
+      N_("Separator bars"),
+      N_("Separate menus")
    };
 
    for (x = 0; x <= E_CLIENTLIST_GROUP_SEP_MENU; x++)
@@ -908,10 +908,10 @@ _e_configure_clientlist_sort_by_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "No sorting",
-      "Alphabetical order",
-      "Window stacking layer",
-      "Recently used windows first"
+      N_("No sorting"),
+      N_("Alphabetical order"),
+      N_("Window stacking layer"),
+      N_("Recently used windows first")
    };
 
    for (x = 0; x <= E_CLIENTLIST_SORT_MOST_RECENT; x++)
@@ -931,9 +931,9 @@ _e_configure_clientlist_separate_iconified_apps_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "Group by owner virtual desktop",
-      "Group by current virtual desktop",
-      "Separate group"
+      N_("Group by owner virtual desktop"),
+      N_("Group by current virtual desktop"),
+      N_("Separate group")
    };
 
    for (x = 0; x <= E_CLIENTLIST_GROUPICONS_SEP; x++)
@@ -981,9 +981,9 @@ _e_configure_screen_limits_info_cb(E_Configure_Option *co)
    int x;
    const char *name[] =
    {
-      "Allow windows partly out of the screen limits",
-      "Allow windows completely out of the screen limits",
-      "Keep windows completely within the screen limits"
+      N_("Allow windows partly out of the screen limits"),
+      N_("Allow windows completely out of the screen limits"),
+      N_("Keep windows completely within the screen limits")
    };
 
    for (x = 0; x <= E_SCREEN_LIMITS_WITHIN; x++)
@@ -1447,14 +1447,14 @@ e_configure_option_init(void)
    tags_tag_alias_hash = eina_hash_stringshared_new((Eina_Free_Cb)_e_configure_option_tag_alias_list_free);
    tags_alias_hash = eina_hash_string_superfast_new(NULL);
    tags_alias_name_hash = eina_hash_string_superfast_new(NULL);
-#define OPT_ADD(TYPE, NAME, DESC, ...)                                                                         \
+#define OPT_ADD(TYPE, NAME, DESC, ...)                                                             \
   co = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_##TYPE, DESC, #NAME, &e_config->NAME, NULL); \
   e_configure_option_tags_set(co, (const char *[]){__VA_ARGS__, NULL}, 0)
 #define OPT_HELP(STR) \
   co->help = eina_stringshare_add(STR)
 #define OPT_MINMAX_STEP_FMT(MIN, MAX, STEP, FMT)                   \
   co->minmax[0] = (MIN), co->minmax[1] = (MAX), co->step = (STEP), \
-  co->info = eina_stringshare_add(_(FMT))
+  co->info = eina_stringshare_add(FMT)
 #define OPT_ICON(ICON) \
   e_configure_option_data_set(co, "icon", eina_stringshare_add(ICON))
 
@@ -1488,19 +1488,19 @@ e_configure_option_init(void)
    //OPT_ADD(STR, desktop_default_window_profile;
 
    OPT_ADD(DOUBLE, menus_scroll_speed, _("Menu scroll speed"), _("menu"), _("scroll"), _("speed"));
-   OPT_MINMAX_STEP_FMT(1.0, 20000.0, 100, "%5.0f pixels/s");
+   OPT_MINMAX_STEP_FMT(1.0, 20000.0, 100, _("%5.0f pixels/s"));
    OPT_HELP(_("Speed at which the menus move onto screen if offscreen"));
    OPT_ADD(DOUBLE, menus_fast_mouse_move_threshhold, _("Menu fast move threshold"), _("menu"), _("move"), _("speed"));
-   OPT_MINMAX_STEP_FMT(1.0, 2000.0, 10, "%4.0f pixels/s");
+   OPT_MINMAX_STEP_FMT(1.0, 2000.0, 10, _("%4.0f pixels/s"));
    OPT_HELP(_("Moving the mouse faster than this speed over a menu causes menu items to not be selected"));
    OPT_ADD(DOUBLE, menus_click_drag_timeout, _("Menu mouse deactivate delay"), _("menu"), _("drag"), _("delay"));
-   OPT_MINMAX_STEP_FMT(0.0, 10.0, 0.25, "%2.2f seconds");
+   OPT_MINMAX_STEP_FMT(0.0, 10.0, 0.25, _("%2.2f seconds"));
    OPT_HELP(_("The minimum time before a menu can be closed by clicking the mouse outside the menu"));
    OPT_ADD(DOUBLE_INT, menu_autoscroll_margin, _("Menu autoscroll margin"), _("menu"), _("scroll"));
-   OPT_MINMAX_STEP_FMT(0, 50, 1, "%2.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 50, 1, _("%2.0f pixels"));
    OPT_HELP(_("The distance from the edge of the screen before menus begin to move away from the edge"));
    OPT_ADD(DOUBLE_INT, menu_autoscroll_cursor_margin, _("Menu autoscroll cursor margin"), _("menu"), _("scroll"), _("mouse"), _("pointer"));
-   OPT_MINMAX_STEP_FMT(0, 50, 1, "%2.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 50, 1, _("%2.0f pixels"));
    OPT_HELP(_("The distance of the mouse pointer from the edge of the screen before menus begin to move away from the edge"));
 
    OPT_ADD(BOOL, border_shade_animate, _("Enable window shading animation"), _("border"), _("shade"), _("animate"));
@@ -1508,30 +1508,30 @@ e_configure_option_init(void)
    co->info_cb = _e_configure_border_shade_transition_info_cb;
    OPT_ICON("preferences-system-windows");
    OPT_ADD(DOUBLE, border_shade_speed, _("Window shade animation speed"), _("border"), _("shade"), _("animate"), _("speed"));
-   OPT_MINMAX_STEP_FMT(100, 9900, 100, "%4.0f pixels/s");
+   OPT_MINMAX_STEP_FMT(100, 9900, 100, _("%4.0f pixels/s"));
 
    /* advanced */
    OPT_ADD(DOUBLE, framerate, _("Framerate"), _("speed"), _("animate"));
-   OPT_MINMAX_STEP_FMT(5.0, 200.0, 1, "%1.0f frames/second");
+   OPT_MINMAX_STEP_FMT(5.0, 200.0, 1, _("%1.0f frames/second"));
    OPT_HELP(_("The framerate at which animations in Enlightenment occur"));
    co->funcs[0].none = _e_configure_framerate_changed;
    OPT_ADD(DOUBLE_INT, priority, _("Application exec priority"), _("application"), _("exec"), _("priority"));
-   OPT_MINMAX_STEP_FMT(0, 19, 1, "%1.0f");
+   OPT_MINMAX_STEP_FMT(0, 19, 1, _("%1.0f"));
    co->funcs[0].one = ecore_exe_run_priority_set;
    OPT_ADD(DOUBLE_INT, image_cache, _("Image cache size"), _("cache"), _("image"), _("size"));
-   OPT_MINMAX_STEP_FMT(0, 32 * 1024, 1024, "%4.0f KiB");
+   OPT_MINMAX_STEP_FMT(0, 32 * 1024, 1024, _("%4.0f KiB"));
    co->funcs[0].none = _e_configure_framerate_changed;
    OPT_ADD(DOUBLE_INT, font_cache, _("Font cache size"), _("cache"), _("font"), _("size"));
-   OPT_MINMAX_STEP_FMT(0, 4 * 1024, 128, "%3.0f KiB");
+   OPT_MINMAX_STEP_FMT(0, 4 * 1024, 128, _("%3.0f KiB"));
    co->funcs[0].none = _e_configure_framerate_changed;
    OPT_ADD(DOUBLE_INT, edje_cache, _("Edje cache size"), _("cache"), _("edje"), _("size"));
-   OPT_MINMAX_STEP_FMT(0, 256, 1, "%1.0f files");
+   OPT_MINMAX_STEP_FMT(0, 256, 1, _("%1.0f files"));
    co->funcs[0].none = _e_configure_framerate_changed;
    OPT_ADD(DOUBLE_INT, edje_collection_cache, _("Edje collection cache size"), _("cache"), _("edje"), _("size"));
-   OPT_MINMAX_STEP_FMT(0, 512, 2, "%1.0f collections");
+   OPT_MINMAX_STEP_FMT(0, 512, 2, _("%1.0f collections"));
    co->funcs[0].none = _e_configure_framerate_changed;
    OPT_ADD(DOUBLE_INT, cache_flush_poll_interval, _("Cache flushing interval"), _("cache"), _("delay")); //slider
-   OPT_MINMAX_STEP_FMT(8, 4096, 8, "%1.0f ticks");
+   OPT_MINMAX_STEP_FMT(8, 4096, 8, _("%1.0f ticks"));
    co->funcs[0].none = _e_configure_framerate_changed;
 
    OPT_ADD(DOUBLE_INT, zone_desks_x_count, _("Horizontal virtual desktop count"), _("vdesk"), _("desktop"), _("screen"));
@@ -1581,26 +1581,26 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, always_click_to_focus, _("Always focus window when clicked"), _("focus"), _("border"), _("click"));
    OPT_ADD(BOOL, use_auto_raise, _("Enable window autoraise"), _("focus"), _("border"), _("raise"));
    OPT_ADD(DOUBLE, auto_raise_delay, _("Window autoraise delay"), _("focus"), _("border"), _("raise"), _("delay"));
-   OPT_MINMAX_STEP_FMT(0.0, 9.9, 0.1, "%1.1f seconds");
+   OPT_MINMAX_STEP_FMT(0.0, 9.9, 0.1, _("%1.1f seconds"));
    OPT_ADD(BOOL, focus_last_focused_per_desktop, _("Revert window focus on desk switch"), _("border"), _("focus"), _("vdesk"));
    OPT_ADD(BOOL, focus_revert_on_hide_or_close, _("Revert window focus on window hide or close"), _("border"), _("focus"));
    OPT_ADD(BOOL, pointer_slide, _("Warp pointer to new windows and away from closed windows"), _("border"), _("focus"), _("warp"), _("pointer"));
    OPT_ADD(BOOL, disable_all_pointer_warps, _("Prevent all forms of pointer warping"), _("border"), _("focus"), _("warp"), _("pointer"));
    OPT_ADD(DOUBLE, pointer_warp_speed, _("Speed to move pointer when warping between windows"), _("border"), _("focus"), _("warp"), _("pointer"), _("speed"));
-   OPT_MINMAX_STEP_FMT(0.0, 1.0, 0.01, "%1.2f");
+   OPT_MINMAX_STEP_FMT(0.0, 1.0, 0.01, _("%1.2f"));
    OPT_ADD(BOOL, border_raise_on_mouse_action, _("Windows raise on mouse move/resize"), _("border"), _("raise"), _("focus"), _("mouse"), _("pointer"), _("move"), _("resize"));
    OPT_ADD(BOOL, border_raise_on_focus, _("Windows raise when focused"), _("border"), _("raise"), _("focus"), _("mouse"));
 
    OPT_ADD(DOUBLE_INT, drag_resist, _("Shelf gadget resistance"), _("gadget"), _("resist"), _("drag"), _("shelf"));
-   OPT_MINMAX_STEP_FMT(0, 100, 2, "%2.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 100, 2, _("%2.0f pixels"));
 
    OPT_ADD(BOOL, use_resist, _("Enable resistance when dragging windows"), _("border"), _("resist"), _("drag"));
    OPT_ADD(DOUBLE_INT, desk_resist, _("Window resistance against screen edges"), _("border"), _("resist"), _("vdesk"), _("screen"), _("drag"));
-   OPT_MINMAX_STEP_FMT(0, 100, 2, "%2.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 100, 2, _("%2.0f pixels"));
    OPT_ADD(DOUBLE_INT, window_resist, _("Window resistance against other windows"), _("border"), _("resist"), _("drag"));
-   OPT_MINMAX_STEP_FMT(0, 100, 2, "%2.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 100, 2, _("%2.0f pixels"));
    OPT_ADD(DOUBLE_INT, gadget_resist, _("Window resistance against desktop gadgets"), _("gadget"), _("resist"), _("desktop"), _("drag"));
-   OPT_MINMAX_STEP_FMT(0, 100, 2, "%2.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 100, 2, _("%2.0f pixels"));
 
    OPT_ADD(BOOL, geometry_auto_move, _("Ensure initial placement of windows inside useful geometry"), _("border"), _("placement"));
    OPT_HELP(_("Useful geometry is calculated as the screen size minus the geometry of any shelves which do not allow windows to overlap them."
@@ -1633,13 +1633,13 @@ e_configure_option_init(void)
    OPT_ADD(DOUBLE, winlist_pos_size_h, _("Winlist height"), _("border"), _("winlist"), _("placement"));
    OPT_MINMAX_STEP_FMT(0.0, 1.0, 0.01, "%1.2f");
    OPT_ADD(DOUBLE_INT, winlist_pos_min_w, _("Winlist minimum width"), _("border"), _("winlist"), _("placement"));
-   OPT_MINMAX_STEP_FMT(0, 4000, 10, "%4.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 4000, 10, _("%4.0f pixels"));
    OPT_ADD(DOUBLE_INT, winlist_pos_min_h, _("Winlist minimum height"), _("border"), _("winlist"), _("placement"));
-   OPT_MINMAX_STEP_FMT(0, 4000, 10, "%4.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 4000, 10, _("%4.0f pixels"));
    OPT_ADD(DOUBLE_INT, winlist_pos_max_w, _("Winlist maximum width"), _("border"), _("winlist"), _("placement"));
-   OPT_MINMAX_STEP_FMT(0, 4000, 10, "%4.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 4000, 10, _("%4.0f pixels"));
    OPT_ADD(DOUBLE_INT, winlist_pos_max_h, _("Winlist maximum height"), _("border"), _("winlist"), _("placement"));
-   OPT_MINMAX_STEP_FMT(0, 4000, 10, "%4.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 4000, 10, _("%4.0f pixels"));
 
    OPT_ADD(ENUM, fullscreen_policy, _("Fullscreen window policy"), _("fullscreen")); //enum
    co->info_cb = _e_configure_fullscreen_policy_info_cb;
@@ -1655,10 +1655,10 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, kill_if_close_not_possible, _("Kill window if process not responding to close"), _("border"), _("kill"));
    OPT_ADD(BOOL, kill_process, _("Kill process instead of client"), _("border"), _("kill"));
    OPT_ADD(DOUBLE, kill_timer_wait, _("Window kill delay"), _("border"), _("kill"), _("delay"));
-   OPT_MINMAX_STEP_FMT(1, 30, 1, "%1.0f seconds");
+   OPT_MINMAX_STEP_FMT(1, 30, 1, _("%1.0f seconds"));
    OPT_ADD(BOOL, ping_clients, _("Enable window client pinging"), _("border"), _("delay"));
    OPT_ADD(DOUBLE_INT, ping_clients_interval, _("Window client ping interval (CPU ticks)"), _("border"), _("delay")); //slider
-   OPT_MINMAX_STEP_FMT(1, 256, 1, "%1.0f seconds");
+   OPT_MINMAX_STEP_FMT(1, 256, 1, _("%1.0f seconds"));
 
    /* FIXME */
    //OPT_ADD(CUSTOM, remembers, _("Window remember settings"), _("border"), _("remember"));
@@ -1743,18 +1743,18 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, desklock_on_suspend, _("Desklock activates on resume from suspend"), _("desklock"));
    OPT_ADD(BOOL, desklock_autolock_screensaver, _("Desklock activates during screensaver"), _("desklock"), _("delay"), _("screensaver"));
    OPT_ADD(DOUBLE, desklock_post_screensaver_time, _("Desklock activates X seconds after screensaver activates"), _("desklock"), _("delay"), _("screensaver"));
-   OPT_MINMAX_STEP_FMT(0.0, 300.0, 10, "%2.0f seconds");
+   OPT_MINMAX_STEP_FMT(0.0, 300.0, 10, _("%2.0f seconds"));
    OPT_ADD(BOOL, desklock_autolock_idle, _("Desklock activates when idle"), _("desklock"), _("delay"));
    OPT_ADD(DOUBLE, desklock_autolock_idle_timeout, _("Desklock activates when idle for X seconds"), _("desklock"), _("delay"));
-   OPT_MINMAX_STEP_FMT(30, 5400.0, 60, "%2.0f seconds");
+   OPT_MINMAX_STEP_FMT(30, 5400.0, 60, _("%2.0f seconds"));
    OPT_ADD(BOOL, desklock_use_custom_desklock, _("Use custom desklock wallpaper"), _("desklock"), _("wallpaper"));
    OPT_ADD(BOOL, desklock_ask_presentation, _("Prompt for desklock timer delay if deactivated quickly"), _("desklock"), _("delay"));
    OPT_ADD(DOUBLE, desklock_ask_presentation_timeout, _("Desklock quick deactivation timer delay"), _("desklock"), _("delay"));
-   OPT_MINMAX_STEP_FMT(1.0, 300.0, 10, "%2.0f seconds");
+   OPT_MINMAX_STEP_FMT(1.0, 300.0, 10, _("%2.0f seconds"));
 
    OPT_ADD(BOOL, screensaver_enable, _("Enable screensaver"), _("screensaver"));
    OPT_ADD(DOUBLE_INT, screensaver_timeout, _("Screensaver activates when idle for X seconds"), _("screensaver"), _("delay")); //slider
-   OPT_MINMAX_STEP_FMT(30, 5400, 60, "%2.0f seconds");
+   OPT_MINMAX_STEP_FMT(30, 5400, 60, _("%2.0f seconds"));
 
    //OPT_ADD(INT, screensaver_interval, _("screensaver"), _("delay")); NOT USED?
    //OPT_ADD(INT, screensaver_blanking, _("screensaver"), _("delay")); NOT USED?
@@ -1762,14 +1762,14 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, screensaver_ask_presentation, _("Prompt for screensaver timer delay if deactivated quickly"), _("screensaver"));
    co->funcs[0].none = co->funcs[1].none = _e_configure_screensaver_changed;
    OPT_ADD(DOUBLE, screensaver_ask_presentation_timeout, _("Screensaver quick deactivation timer delay"), _("screensaver"), _("delay")); //slider
-   OPT_MINMAX_STEP_FMT(1.0, 300.0, 10, "%2.0f seconds");
+   OPT_MINMAX_STEP_FMT(1.0, 300.0, 10, _("%2.0f seconds"));
    co->funcs[0].none = co->funcs[1].none = _e_configure_screensaver_changed;
    OPT_ADD(BOOL, screensaver_suspend, _("Suspend when screensaver activates"), _("screensaver"));
    co->funcs[0].none = co->funcs[1].none = _e_configure_screensaver_changed;
    OPT_ADD(BOOL, screensaver_suspend_on_ac, _("Suspend when screensaver activates even if on AC"), _("screensaver"));
    co->funcs[0].none = co->funcs[1].none = _e_configure_screensaver_changed;
    OPT_ADD(DOUBLE, screensaver_suspend_delay, _("Screensaver suspend delay"), _("screensaver"), _("delay")); //slider
-   OPT_MINMAX_STEP_FMT(1.0, 20.0, 1, "%1.0f seconds");
+   OPT_MINMAX_STEP_FMT(1.0, 20.0, 1, _("%1.0f seconds"));
    co->funcs[0].none = co->funcs[1].none = _e_configure_screensaver_changed;
 
 /* appears to use screensaver values
@@ -1800,12 +1800,12 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, clientlist_warp_to_iconified_desktop, _("Window list menu warps to desktop of selected iconified window"), _("menu"), _("border"), _("warp"), _("vdesk"));
    OPT_ADD(BOOL, clientlist_limit_caption_len, _("Enable window list menu length limit"), _("menu"), _("border"), _("size"));
    OPT_ADD(DOUBLE_INT, clientlist_max_caption_len, _("Window list menu length limit (characters)"), _("menu"), _("border"), _("size")); //slider
-   OPT_MINMAX_STEP_FMT(2, E_CLIENTLIST_MAX_CAPTION_LEN, 2, "%1.0f characters");
+   OPT_MINMAX_STEP_FMT(2, E_CLIENTLIST_MAX_CAPTION_LEN, 2, _("%1.0f characters"));
 
    OPT_ADD(BOOL, use_e_cursor, _("Use Enlightenment theme cursor"), _("pointer"), _("theme"));
    co->funcs[0].none = co->funcs[1].none = _e_configure_pointer_changed;
    OPT_ADD(DOUBLE_INT, cursor_size, _("Mouse cursor size"), _("pointer"), _("size"), _("theme"));
-   OPT_MINMAX_STEP_FMT(8, 128, 4, "%1.0f pixels");
+   OPT_MINMAX_STEP_FMT(8, 128, 4, _("%1.0f pixels"));
    co->funcs[0].none = co->funcs[1].none = _e_configure_pointer_changed;
    OPT_ADD(BOOL, show_cursor, _("Show mouse cursor"), _("pointer"));
    co->funcs[0].none = co->funcs[1].none = _e_configure_pointer_changed;
@@ -1847,9 +1847,9 @@ e_configure_option_init(void)
 
    OPT_ADD(BOOL, thumbscroll_enable, _("Enable click-to-drag scrolling (thumbscrolling)"), _("scroll"));
    OPT_ADD(DOUBLE_INT, thumbscroll_threshhold, _("Thumbscroll threshold"), _("scroll"), _("speed")); //slider
-   OPT_MINMAX_STEP_FMT(0, 64, 4, "%1.0f pixels");
+   OPT_MINMAX_STEP_FMT(0, 64, 4, _("%1.0f pixels"));
    OPT_ADD(DOUBLE, thumbscroll_momentum_threshhold, _("Thumbscroll momentum threshold"), _("scroll"), _("speed")); //slider
-   OPT_MINMAX_STEP_FMT(0, 2000, 20, "%1.0f pixels/second");
+   OPT_MINMAX_STEP_FMT(0, 2000, 20, _("%1.0f pixels/second"));
    OPT_ADD(DOUBLE, thumbscroll_friction, _("Thumbscroll resistance"), _("scroll"), _("resist")); //slider
    OPT_MINMAX_STEP_FMT(0, 5.0, 0.1, "%1.0f");
 
@@ -1870,39 +1870,39 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, xkb.dont_touch_my_damn_keyboard, _("Do not apply any keyboard layout settings"), _("key"), _("settings"));
 
    OPT_ADD(DOUBLE, border_keyboard.timeout, _("Window change timeout when moving or resizing using keyboard"), _("border"), _("placement"), _("delay"), _("key")); //slider
-   OPT_MINMAX_STEP_FMT(1, 10, 1, "%1.0f seconds");
+   OPT_MINMAX_STEP_FMT(1, 10, 1, _("%1.0f seconds"));
    OPT_ADD(DOUBLE_UCHAR, border_keyboard.move.dx, _("Window horizontal movement speed when using keyboard"), _("border"), _("placement"), _("move"), _("key")); //slider
-   OPT_MINMAX_STEP_FMT(1, 255, 1, "%1.0f pixels");
+   OPT_MINMAX_STEP_FMT(1, 255, 1, _("%1.0f pixels"));
    OPT_ADD(DOUBLE_UCHAR, border_keyboard.move.dy, _("Window vertical movement speed when using keyboard"), _("border"), _("placement"), _("move"), _("key")); //slider
-   OPT_MINMAX_STEP_FMT(1, 255, 1, "%1.0f pixels");
+   OPT_MINMAX_STEP_FMT(1, 255, 1, _("%1.0f pixels"));
    OPT_ADD(DOUBLE_UCHAR, border_keyboard.resize.dx, _("Window horizontal resize speed when using keyboard"), _("border"), _("placement"), _("resize"), _("key")); //slider
-   OPT_MINMAX_STEP_FMT(1, 255, 1, "%1.0f pixels");
+   OPT_MINMAX_STEP_FMT(1, 255, 1, _("%1.0f pixels"));
    OPT_ADD(DOUBLE_UCHAR, border_keyboard.resize.dy, _("Window vertical movement speed when using keyboard"), _("border"), _("placement"), _("resize"), _("key")); //slider
-   OPT_MINMAX_STEP_FMT(1, 255, 1, "%1.0f pixels");
+   OPT_MINMAX_STEP_FMT(1, 255, 1, _("%1.0f pixels"));
 
    //OPT_ADD(DOUBLE, scale.min, _("Minimum scaling"), _("scale"), _("size"));
    //co->requires_restart = 1;
    //OPT_ADD(DOUBLE, scale.max, _("Maximum scaling"), _("scale"), _("size"));
    //co->requires_restart = 1;
    OPT_ADD(DOUBLE, scale.factor, _("Overall scaling factor"), _("scale"), _("size"));
-   OPT_MINMAX_STEP_FMT(0.25, 8.0, 0.25, "%1.2f pixels");
+   OPT_MINMAX_STEP_FMT(0.25, 8.0, 0.25, _("%1.2f pixels"));
    co->requires_restart = 1;
    OPT_ADD(BOOL, scale.use_dpi, _("Use screen DPI for scaling"), _("scale"), _("size"));
    co->requires_restart = 1;
    OPT_ADD(BOOL, scale.use_custom, _("Use custom DPI for scaling"), _("scale"), _("size"));
    co->requires_restart = 1;
    OPT_ADD(DOUBLE_INT, scale.base_dpi, _("Custom DPI to use when scaling"), _("scale"), _("size"));
-   OPT_MINMAX_STEP_FMT(30, 800, 1, "%1.0f DPI");
+   OPT_MINMAX_STEP_FMT(30, 800, 1, _("%1.0f DPI"));
    co->requires_restart = 1;
 
    OPT_ADD(DOUBLE_INT, syscon.main.icon_size, _("System Console primary action icon size"), _("syscon"), _("size"), _("image"));
-   OPT_MINMAX_STEP_FMT(16, 256, 4, "%1.0f pixels");
+   OPT_MINMAX_STEP_FMT(16, 256, 4, _("%1.0f pixels"));
    OPT_ADD(DOUBLE_INT, syscon.secondary.icon_size, _("System Console secondary action icon size"), _("syscon"), _("size"), _("image"));
-   OPT_MINMAX_STEP_FMT(16, 256, 4, "%1.0f pixels");
+   OPT_MINMAX_STEP_FMT(16, 256, 4, _("%1.0f pixels"));
    OPT_ADD(DOUBLE_INT, syscon.extra.icon_size, _("System Console extra action icon size"), _("syscon"), _("size"), _("image"));
-   OPT_MINMAX_STEP_FMT(16, 256, 4, "%1.0f pixels");
+   OPT_MINMAX_STEP_FMT(16, 256, 4, _("%1.0f pixels"));
    OPT_ADD(DOUBLE, syscon.timeout, _("System Console idle timeout"), _("syscon"), _("delay")); //slider
-   OPT_MINMAX_STEP_FMT(0, 60, 1, "%1.0f seconds");
+   OPT_MINMAX_STEP_FMT(0, 60, 1, _("%1.0f seconds"));
    OPT_ADD(BOOL, syscon.do_input, _("System Console performs default action after idle timeout"), _("syscon"), _("input"));
    //Eina_List    *actions
 
@@ -1913,12 +1913,12 @@ e_configure_option_init(void)
    OPT_MINMAX_STEP_FMT(0, 1.0, 0.01, "%1.2f");
    co->funcs[0].none = _e_configure_dpms_changed;
    OPT_ADD(DOUBLE, backlight.transition, _("Backlight transition length"), _("backlight"), _("animate"), _("speed")); //slider
-   OPT_MINMAX_STEP_FMT(0, 5.0, 0.1, "%1.1f seconds");
+   OPT_MINMAX_STEP_FMT(0, 5.0, 0.1, _("%1.1f seconds"));
    co->funcs[0].none = _e_configure_dpms_changed;
    OPT_ADD(BOOL, backlight.idle_dim, _("Backlight dims after idle"), _("backlight"));
    co->funcs[0].none = co->funcs[1].none = _e_configure_dpms_changed;
    OPT_ADD(DOUBLE, backlight.timer, _("Backlight idle delay"), _("backlight"), _("delay")); //slider
-   OPT_MINMAX_STEP_FMT(5, 300, 1, "%1.0f seconds");
+   OPT_MINMAX_STEP_FMT(5, 300, 1, _("%1.0f seconds"));
    co->funcs[0].none = _e_configure_dpms_changed;
 
    /* FIXME
@@ -2065,7 +2065,7 @@ e_configure_option_init(void)
    e_configure_option_tag_alias_add(_("image"), _("icon"));
    e_configure_option_tag_alias_add(_("theme"), _("style"));
    e_configure_option_tag_alias_add(_("pointer"), _("cursor"));
-   e_configure_option_tag_alias_add(_("minimize"), _("iconif"));
+   e_configure_option_tag_alias_add(_("minimize"), _("iconify"));
 
    event_block = EINA_FALSE;
 

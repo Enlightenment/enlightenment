@@ -165,19 +165,19 @@ e_modapi_init(E_Module *m)
 
       e_configure_option_domain_current_set("conf_theme");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("themes"), _("Enlightenment theme settings"), _("theme"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "themes", _("Enlightenment theme settings"), _("theme"));
       co->info = eina_stringshare_add("appearance/theme");
       E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-theme");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("wallpaper"), _("Desktop wallpaper settings"), _("wallpaper"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "wallpaper", _("Desktop wallpaper settings"), _("wallpaper"));
       co->info = eina_stringshare_add("appearance/wallpaper");
       E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-wallpaper");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("colors"), _("Enlightenment color settings"), _("theme"), _("color"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "colors", _("Enlightenment color settings"), _("theme"), _("color"));
       co->info = eina_stringshare_add("appearance/colors");
       E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-color");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("fonts"), _("Enlightenment font settings"), _("font"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "fonts", _("Enlightenment font settings"), _("font"));
       co->info = eina_stringshare_add("appearance/fonts");
       E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-font");
    }

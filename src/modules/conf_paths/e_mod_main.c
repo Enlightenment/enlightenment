@@ -32,10 +32,10 @@ e_modapi_init(E_Module *m)
 
       e_configure_option_domain_current_set("conf_paths");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("search directories"), _("Search directory settings"), _("environment"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "search directories", _("Search directory settings"), _("environment"));
       co->info = eina_stringshare_add("advanced/search_directories");
       E_CONFIGURE_OPTION_ICON(co, "preferences-directories");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("environment variables"), _("Environment variable settings"), _("environment"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "environment variables", _("Environment variable settings"), _("environment"));
       co->info = eina_stringshare_add("advanced/environment_variables");
       E_CONFIGURE_OPTION_ICON(co, "preferences-variables");
    }

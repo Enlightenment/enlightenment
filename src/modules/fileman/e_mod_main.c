@@ -445,7 +445,7 @@ _e_mod_fileman_config_load(void)
        E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 1, 10, 1, _("%1.0f seconds"));
        co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
 
-       E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("settings"), _("File icons"), _("files"), _("image"));
+       E_CONFIGURE_OPTION_ADD_CUSTOM(co, "settings", _("File icons"), _("files"), _("image"));
        co->info = eina_stringshare_add("fileman/file_icons");
        E_CONFIGURE_OPTION_ICON(co, "preferences-file-icons");
 

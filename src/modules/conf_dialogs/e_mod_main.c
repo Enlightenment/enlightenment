@@ -25,7 +25,7 @@ e_modapi_init(E_Module *m)
 
       e_configure_option_domain_current_set("conf_dialogs");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("profiles"), _("Enlightenment profile settings"), _("profile"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "profiles", _("Enlightenment profile settings"), _("profile"));
       co->info = eina_stringshare_add("settings/profiles");
       E_CONFIGURE_OPTION_ICON(co, "preferences-profiles");
    }

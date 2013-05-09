@@ -28,7 +28,7 @@ e_modapi_init(E_Module *m)
 
       e_configure_option_domain_current_set("conf_randr");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("randr"), _("Screen resolution and orientation settings"), _("screen"), _("size"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "randr", _("Screen resolution and orientation settings"), _("screen"), _("size"));
       co->info = eina_stringshare_add("screen/screen_setup");
       E_CONFIGURE_OPTION_ICON(co, "preferences-system-screen-resolution");
    }

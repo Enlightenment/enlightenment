@@ -27,10 +27,10 @@ typedef Evas_Object *(*E_Configure_Option_Info_Thumb_Cb)(E_Configure_Option_Info
    OPT = e_configure_option_add(E_CONFIGURE_OPTION_TYPE_CUSTOM, DESC, NAME, NULL, NULL);\
    e_configure_option_tags_set(OPT, (const char*[]){__VA_ARGS__, NULL}, 0)
 #define E_CONFIGURE_OPTION_HELP(OPT, STR) \
-   OPT->help = eina_stringshare_add(_(STR))
+   OPT->help = eina_stringshare_add(STR)
 #define E_CONFIGURE_OPTION_MINMAX_STEP_FMT(OPT, MIN, MAX, STEP, FMT) \
    OPT->minmax[0] = (MIN), OPT->minmax[1] = (MAX), OPT->step = (STEP),\
-   OPT->info = eina_stringshare_add(_(FMT))
+   OPT->info = eina_stringshare_add(FMT)
 #define E_CONFIGURE_OPTION_ICON(OPT, ICON) \
    e_configure_option_data_set(OPT, "icon", eina_stringshare_add(ICON))
 

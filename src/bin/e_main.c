@@ -519,11 +519,6 @@ main(int argc, char **argv)
    TS("E_Config Init Done");
    _e_main_shutdown_push(e_config_shutdown);
 
-   TS("E_Configure Option Init");
-   e_configure_option_init();
-   TS("E_Configure Option Init Done");
-   //configure_option_shutdown needs to be first
-
    _xdg_data_dirs_augment();
 
    _fix_user_default_edj();
@@ -683,6 +678,11 @@ main(int argc, char **argv)
      }
    TS("E_Intl Post Init Done");
    _e_main_shutdown_push(e_intl_post_shutdown);
+
+   TS("E_Configure Option Init");
+   e_configure_option_init();
+   TS("E_Configure Option Init Done");
+   //configure_option_shutdown needs to be first
 
    if (!really_know)
      {

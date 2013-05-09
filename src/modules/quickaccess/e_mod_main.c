@@ -65,7 +65,7 @@ e_modapi_init(E_Module *m)
 
    e_configure_option_domain_current_set("quickaccess");
 
-   E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("settings"), _("Quickaccess settings panel"), _("quickaccess"), _("border"));
+   E_CONFIGURE_OPTION_ADD_CUSTOM(co, "settings", _("Quickaccess settings panel"), _("quickaccess"), _("border"));
    co->info = eina_stringshare_add("launcher/quickaccess");
    E_CONFIGURE_OPTION_ICON(co, buf);
    E_CONFIGURE_OPTION_ADD(co, BOOL, hide_when_behind, qa_config, _("Hide windows on activate instead of raising"), _("quickaccess"), _("border"));

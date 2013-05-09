@@ -25,7 +25,7 @@ e_modapi_init(E_Module *m)
 
       e_configure_option_domain_current_set("conf_window_remembers");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("window remembers"), _("Window remember settings"), _("border"), _("remember"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "window remembers", _("Window remember settings"), _("border"), _("remember"));
       co->info = eina_stringshare_add("windows/window_remembers");
       E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-window-remember");
    }

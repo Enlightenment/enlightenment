@@ -35,14 +35,14 @@ e_modapi_init(E_Module *m)
 
       e_configure_option_domain_current_set("conf_intl");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("language"), _("Language settings"), _("language"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "language", _("Language settings"), _("language"));
       co->info = eina_stringshare_add("language/language_settings");
       E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-locale");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("desklock language"), _("Desklock language settings"), _("desklock"), _("language"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "desklock language", _("Desklock language settings"), _("desklock"), _("language"));
       co->info = eina_stringshare_add("language/desklock_language_settings");
       E_CONFIGURE_OPTION_ICON(co, "preferences-desklock-locale");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("input method"), _("Input method settings"), _("input"), _("language"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "input method", _("Input method settings"), _("input"), _("language"));
       co->info = eina_stringshare_add("language/input_method_settings");
       E_CONFIGURE_OPTION_ICON(co, "preferences-imc");
    }

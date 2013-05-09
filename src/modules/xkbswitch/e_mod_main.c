@@ -80,7 +80,7 @@ e_modapi_init(E_Module *m)
 
       e_configure_option_domain_current_set("xkbswitch");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("xkb layouts"), _("Keyboard layout settings"), _("input"), _("key"), _("language"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "xkb layouts", _("Keyboard layout settings"), _("input"), _("key"), _("language"));
       co->info = eina_stringshare_add("keyboard_and_mouse/xkbswitch");
       E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-keyboard");
    }

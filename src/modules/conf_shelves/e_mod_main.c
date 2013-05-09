@@ -35,7 +35,7 @@ e_modapi_init(E_Module *m)
 
       e_configure_option_domain_current_set("conf_shelves");
 
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, _("shelves"), _("Shelf settings"), _("shelf"), _("desktop"));
+      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "shelves", _("Shelf settings"), _("shelf"), _("desktop"));
       co->info = eina_stringshare_add("extensions/shelves");
       E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-shelf");
    }

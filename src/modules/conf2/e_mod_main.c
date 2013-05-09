@@ -365,7 +365,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    /* remove module-supplied action */
    if (act)
      {
-        e_action_predef_name_del(N_("Launch"), N_("Control Panel"));
+        e_action_predef_name_del("Launch", "Control Panel");
         e_action_del("configuration");
         act = NULL;
      }
