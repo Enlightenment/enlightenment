@@ -7706,6 +7706,7 @@ _e_border_eval0(E_Border *bd)
                        if (!bd->bordername)
                          bd->client.border.changed = 1;
                     }
+                  ecore_x_window_shape_input_rectangles_set(bd->win, rects, num);
                }
              free(rects);
           }
