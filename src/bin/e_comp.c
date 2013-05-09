@@ -3751,14 +3751,39 @@ _e_comp_shapes_update_comp_win_shape_comp_helper(E_Comp_Win *cw, Eina_Tiler *tb)
         /* add the frame */
         if (cw->bd)
           {
-             eina_tiler_rect_add(tb, &(Eina_Rectangle){cw->bd->x, cw->bd->y, cw->bd->w, cw->bd->h});
-             SHAPE_INF("ADD: %d,%d@%dx%d", cw->bd->x, cw->bd->y, cw->bd->w, cw->bd->h);
+             if (cw->bd->client_inset.calc)
+               {
+                  if (cw->bd->client_inset.t)
+                    {
+                       eina_tiler_rect_add(tb, &(Eina_Rectangle){cw->bd->x, cw->bd->y, cw->bd->w, cw->bd->client_inset.t});
+                       SHAPE_INF("ADD: %d,%d@%dx%d", cw->bd->x, cw->bd->y, cw->bd->w, cw->bd->client_inset.t);
+                    }
+                  if (cw->bd->client_inset.l)
+                    {
+                       eina_tiler_rect_add(tb, &(Eina_Rectangle){cw->bd->x, cw->bd->y, cw->bd->client_inset.l, cw->bd->h});
+                       SHAPE_INF("ADD: %d,%d@%dx%d", cw->bd->x, cw->bd->y, cw->bd->client_inset.l, cw->bd->h);
+                    }
+                  if (cw->bd->client_inset.r)
+                    {
+                       eina_tiler_rect_add(tb, &(Eina_Rectangle){cw->bd->x + cw->bd->client_inset.l + cw->bd->client.w, cw->bd->y, cw->bd->client_inset.r, cw->bd->h});
+                       SHAPE_INF("ADD: %d,%d@%dx%d", cw->bd->x + cw->bd->client_inset.l + cw->bd->client.w, cw->bd->y, cw->bd->client_inset.r, cw->bd->h);
+                    }
+                  if (cw->bd->client_inset.b)
+                    {
+                       eina_tiler_rect_add(tb, &(Eina_Rectangle){cw->bd->x, cw->bd->y + cw->bd->client_inset.t + cw->bd->client.h, cw->bd->w, cw->bd->client_inset.b});
+                       SHAPE_INF("ADD: %d,%d@%dx%d", cw->bd->x, cw->bd->y, cw->bd->w, cw->bd->h);
+                    }
+               }
           }
         for (num = 0, rect = cw->rects; num < cw->rects_num; num++, rect++)
           {
              x = rect->x, y = rect->y, w = rect->width, h = rect->height;
              if (cw->bd)
-               x += cw->bd->x, y += cw->bd->y;
+               {
+                  x += cw->bd->x, y += cw->bd->y;
+                  if (cw->bd->client_inset.calc)
+                    x += cw->bd->client_inset.l, y += cw->bd->client_inset.t;
+               }
              else
                x += cw->x, y += cw->y;
              E_RECTS_CLIP_TO_RECT(x, y, w, h, cw->c->man->x, cw->c->man->y, cw->c->man->w, cw->c->man->h);
