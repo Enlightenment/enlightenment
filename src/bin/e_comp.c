@@ -3761,6 +3761,8 @@ _e_comp_shapes_update_comp_win_shape_comp_helper(E_Comp_Win *cw, Eina_Tiler *tb)
                x += cw->bd->x, y += cw->bd->y;
              else
                x += cw->x, y += cw->y;
+             E_RECTS_CLIP_TO_RECT(x, y, w, h, cw->c->man->x, cw->c->man->y, cw->c->man->w, cw->c->man->h);
+             if ((w < 1) || (h < 1)) continue;
    //#ifdef SHAPE_DEBUG not sure we can shape check these?
              //r = E_NEW(Eina_Rectangle, 1);
              //EINA_RECTANGLE_SET(r, x, y, w, h);
@@ -5422,7 +5424,7 @@ e_comp_util_wins_print(const E_Comp *c)
         else if (cw->real_obj)
           fprintf(stderr, "COMP OBJ: %p - %s\n", cw, evas_object_name_get(cw->obj));
         else
-          fprintf(stderr, "COMP WIN: %p - %u%s\n", cw, cw->win, cw->input_only ? " INPUT" : "");
+          fprintf(stderr, "COMP WIN: %p - %u%s%s\n", cw, cw->win, cw->input_only ? " INPUT" : "", cw->override ? " OVERRIDE" : "");
      }
 }
 
