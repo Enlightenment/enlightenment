@@ -357,7 +357,9 @@ img/vertical_separated_bar_glow.png \
 img/vgrad_med_curved.png \
 img/vgrad_med_darker.png \
 img/vgrad_med_dark.png \
+img/vgrad_med_dark_sparkle.png \
 img/vgrad_med_lighter.png \
+img/vgrad_med_lighter_sparkle.png \
 img/vgrad_med.png \
 img/vgrad_shadow_bi.png \
 img/vgrad_tall.png \
