@@ -395,7 +395,6 @@ e_dbusmenu_event_send(E_DBusMenu_Item *m, E_DBusMenu_Item_Event event)
    eldbus_message_iter_arguments_append(main_iter, "u", timestamp);
 
    eldbus_proxy_send(m->ctx->proxy, msg, NULL, NULL, -1);
-   eldbus_message_unref(msg);
 }
 
 EAPI void
