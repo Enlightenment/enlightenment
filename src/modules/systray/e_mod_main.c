@@ -38,6 +38,9 @@ static Systray_Context *ctx = NULL;
 static Instance *instance = NULL; /* only one systray ever possible */
 static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 
+#define SYSTRAY_MIN_W 16
+#define SYSTRAY_MIN_H 8
+
 static Eina_Bool
 _systray_site_is_safe(E_Gadcon_Site site)
 {
@@ -288,7 +291,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         E_FREE(inst);
         return NULL;
      }
-   e_gadcon_client_min_size_set(inst->gcc, 8, 8);
+   e_gadcon_client_min_size_set(inst->gcc, SYSTRAY_MIN_W, SYSTRAY_MIN_H);
 
    inst->gcc->data = inst;
 
@@ -591,7 +594,7 @@ _systray_size_apply_do(Instance *inst)
 
    edje_object_message_signal_process(inst->ui.gadget);
    edje_object_size_min_calc(inst->ui.gadget, &w, &h);
-   e_gadcon_client_min_size_set(inst->gcc, w, h);
+   e_gadcon_client_min_size_set(inst->gcc, MAX(w, SYSTRAY_MIN_W), MAX(h, SYSTRAY_MIN_H));
 }
 
 static void
