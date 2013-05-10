@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-05-04 19:53+0200\n"
-"PO-Revision-Date: 2013-05-04 19:48+0200\n"
+"PO-Revision-Date: 2013-05-07 08:16+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: \n"
@@ -9632,7 +9632,7 @@ msgstr "Geometria ridimensionamento"
 #: src/modules/fileman/e_mod_config.c:355 src/modules/tasks/e_mod_config.c:86
 #: src/modules/winlist/e_int_config_winlist.c:197
 msgid "Display"
-msgstr "Visualizzazioni"
+msgstr "Mostra"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:164
 msgid "Placement"
