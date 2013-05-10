@@ -6371,7 +6371,7 @@ _e_border_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    E_Border *bd = data;
 
    if (grabbed) return;
-   if ((bd == focused) || (bd == focusing)) return;
+   if (bd == focusing) return;
    if (focus_locked && (bd != warp_timer_border)) return;
    if (e_object_is_del(E_OBJECT(bd))) return;
    if (bd->desk && bd->desk->animate_count) return;
@@ -6391,7 +6391,7 @@ _e_border_cb_mouse_x_in(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event
    bd = e_border_find_by_window(ev->event_win);
    if (!bd) return ECORE_CALLBACK_RENEW;
    if (bd->input_object) return ECORE_CALLBACK_RENEW;
-   if ((bd == focused) || (bd == focusing)) return ECORE_CALLBACK_RENEW;
+   if (bd == focusing) return ECORE_CALLBACK_RENEW;
    if (focus_locked && (bd != warp_timer_border)) return ECORE_CALLBACK_RENEW;
    if (e_object_is_del(E_OBJECT(bd))) return ECORE_CALLBACK_RENEW;
    if (bd->desk && bd->desk->animate_count) return ECORE_CALLBACK_RENEW;
