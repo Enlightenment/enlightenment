@@ -497,7 +497,17 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
    else if (cw->bd)
      {
         if (((!cw->bd->shaded) && (!cw->bd->shading)) && cw->pw && cw->ph)
-          w = cw->pw + cw->bd->client_inset.l + cw->bd->client_inset.r, h = cw->ph + cw->bd->client_inset.t + cw->bd->client_inset.b;
+          {
+             w = cw->pw + cw->bd->client_inset.l + cw->bd->client_inset.r, h = cw->ph + cw->bd->client_inset.t + cw->bd->client_inset.b;
+             if ((cw->pw != cw->bd->client.w) || (cw->ph != cw->bd->client.h))
+               {
+                  /* something fucked us and the pixmap came back with the wrong size
+                   * fix it by forcing a resize in e_border
+                   */
+                  BD_CHANGED(cw->bd);
+                  cw->bd->changes.size = 1;
+               }
+          }
         else
           w = cw->bd->w, h = cw->bd->h;
      }
