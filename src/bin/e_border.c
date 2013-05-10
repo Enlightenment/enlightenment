@@ -3819,7 +3819,7 @@ e_border_act_resize_begin(E_Border *bd,
 {
    E_OBJECT_CHECK(bd);
    E_OBJECT_TYPE_CHECK(bd, E_BORDER_TYPE);
-   if (bd->lock_user_size) return;
+   if (bd->lock_user_size || bd->shaded || bd->shading) return;
    if ((bd->resize_mode != E_POINTER_RESIZE_NONE) || (bd->moving)) return;
    if (!_e_border_resize_begin(bd))
      return;
