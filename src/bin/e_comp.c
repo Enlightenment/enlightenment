@@ -2797,10 +2797,8 @@ _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, int border)
                {
                   if ((cw->bd->shading) || (cw->bd->shaded))
                     {
-                       cw->needpix = 1;
-                       // was cw->w / cw->h
-                       //                       evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
                        resized = EINA_TRUE;
+                       /* don't need pixmap fetch! */
                        _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
                     }
                   else
