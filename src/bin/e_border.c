@@ -8298,9 +8298,10 @@ _e_border_eval(E_Border *bd)
 
         if (bd->re_manage)
           {
-             bd->x -= bd->client_inset.l;
-             bd->y -= bd->client_inset.t;
-             bd->changes.pos = 1;
+             int x = bd->x, y = bd->y;
+             if (bd->x) bd->x -= bd->client_inset.l;
+             if (bd->y) bd->y -= bd->client_inset.t;
+             if ((x != bd->x) || (y != bd->y)) bd->changes.pos = 1;
              bd->placed = 1;
           }
         else if ((!bd->placed) && (bd->client.icccm.request_pos))
