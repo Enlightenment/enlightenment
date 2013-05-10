@@ -2304,7 +2304,7 @@ e_border_shade(E_Border *bd,
    e_hints_window_shaded_set(bd, 1);
    e_hints_window_shade_direction_set(bd, dir);
 
-   if (e_config->border_shade_animate)
+   if (e_config->border_shade_animate && (!bd->new_client))
      {
         bd->shade.start = ecore_loop_time_get();
         bd->shading = 1;
