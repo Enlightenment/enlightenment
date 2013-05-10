@@ -17,10 +17,6 @@
 //   3. for unmapped windows - when window goes out of unmapped comp cache
 //      make a miniature copy (1/4 width+height?) and set property on window
 //      with pixmap id
-//   9. shortcut lots of stuff to draw inside the compositor - shelf,
-//      wallpaper, efm - hell even menus and anything else in e (this is what
-//      e18 was mostly about)
-//  10. fullscreen windows need to be able to bypass compositing *seems buggy*
 //
 //////////////////////////////////////////////////////////////////////////
 
