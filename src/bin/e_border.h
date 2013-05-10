@@ -118,6 +118,7 @@ typedef enum _E_Border_Hook_Point
 } E_Border_Hook_Point;
 
 typedef struct _E_Border                     E_Border;
+typedef struct _E_Event_Border_Simple        E_Event_Border_Simple;
 typedef struct _E_Border_Pending_Move_Resize E_Border_Pending_Move_Resize;
 typedef struct _E_Border_Hook                E_Border_Hook;
 typedef struct _E_Event_Border_Simple        E_Event_Border_Resize;
