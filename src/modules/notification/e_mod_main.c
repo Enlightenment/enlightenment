@@ -241,9 +241,9 @@ e_modapi_init(E_Module *m)
                                        _notification_cb_close, NULL))
      {
         e_util_dialog_show(_("Error during notification server initialization"),
-                           _("Ensure there's no other module acting as a server"
-                             " and that D-Bus is correctly installed and "
-                             " running"));
+                           _("Ensure there's no other module acting as a server "
+                             "and that D-Bus is correctly installed and "
+                             "running"));
         return NULL;
      }
 
