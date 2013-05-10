@@ -187,7 +187,6 @@ struct _E_Config
       int desktop;      // GUI
       int iconify;      // GUI
    } transient;
-   int                       modal_windows;
    int                       menu_eap_name_show; // GUI
    int                       menu_eap_generic_show; // GUI
    int                       menu_eap_comment_show; // GUI

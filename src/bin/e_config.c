@@ -549,7 +549,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, transient.layer, INT); /**/
    E_CONFIG_VAL(D, T, transient.desktop, INT); /**/
    E_CONFIG_VAL(D, T, transient.iconify, INT); /**/
-   E_CONFIG_VAL(D, T, modal_windows, INT); /**/
    E_CONFIG_VAL(D, T, menu_eap_name_show, INT); /**/
    E_CONFIG_VAL(D, T, menu_eap_generic_show, INT); /**/
    E_CONFIG_VAL(D, T, menu_eap_comment_show, INT); /**/

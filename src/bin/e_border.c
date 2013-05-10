@@ -7074,7 +7074,7 @@ _e_border_eval0(E_Border *bd)
              bd_leader->group = eina_list_append(bd_leader->group, bd);
              bd->leader = bd_leader;
              /* Only set the window modal to the leader it there is no parent */
-             if ((e_config->modal_windows) && (bd->client.netwm.state.modal) &&
+             if ((bd->client.netwm.state.modal) &&
                  ((!bd->parent) || (bd->parent->modal != bd)))
                {
                   bd->leader->modal = bd;
@@ -7432,7 +7432,7 @@ _e_border_eval0(E_Border *bd)
         if (bd->parent)
           {
              e_border_layer_set(bd, bd->parent->layer);
-             if ((e_config->modal_windows) && (bd->client.netwm.state.modal))
+             if (bd->client.netwm.state.modal)
                {
                   bd->parent->modal = bd;
                   bd->parent->lock_close = 1;
@@ -7826,7 +7826,7 @@ _e_border_eval0(E_Border *bd)
           }
         if (bd->parent)
           {
-             if ((e_config->modal_windows) && (bd->client.netwm.state.modal))
+             if (bd->client.netwm.state.modal)
                {
                   bd->parent->modal = bd;
                   if (bd->parent->focused)
@@ -7835,7 +7835,7 @@ _e_border_eval0(E_Border *bd)
           }
         else if (bd->leader)
           {
-             if ((e_config->modal_windows) && (bd->client.netwm.state.modal))
+             if (bd->client.netwm.state.modal)
                {
                   bd->leader->modal = bd;
                   if (bd->leader->focused)
