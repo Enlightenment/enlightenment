@@ -2281,7 +2281,7 @@ EAPI void
 e_border_shade(E_Border *bd,
                E_Direction dir)
 {
-   E_Event_Border_Resize *ev;
+   E_Event_Border_Simple *ev;
    Eina_List *l;
    E_Border *tmp;
 
@@ -2354,10 +2354,17 @@ e_border_shade(E_Border *bd,
         BD_CHANGED(bd);
         edje_object_signal_emit(bd->bg_object, "e,state,shaded", "e");
         e_border_frame_recalc(bd);
-        if (move) e_container_shape_move(bd->shape, bd->x, bd->y);
+        if (move)
+          {
+             ev = E_NEW(E_Event_Border_Simple, 1);
+             ev->border = bd;
+             e_object_ref(E_OBJECT(bd));
+             ecore_event_add(E_EVENT_BORDER_MOVE, ev, _e_border_event_border_move_free, NULL);
+             e_container_shape_move(bd->shape, bd->x, bd->y);
+          }
         e_container_shape_resize(bd->shape, bd->w, bd->h);
         e_border_comp_hidden_set(bd, EINA_TRUE);
-        ev = E_NEW(E_Event_Border_Resize, 1);
+        ev = E_NEW(E_Event_Border_Simple, 1);
         ev->border = bd;
         /* The resize is added in the animator when animation complete */
         /* For non-animated, we add it immediately with the new size */
@@ -2373,7 +2380,7 @@ EAPI void
 e_border_unshade(E_Border *bd,
                  E_Direction dir)
 {
-   E_Event_Border_Resize *ev;
+   E_Event_Border_Simple *ev;
    Eina_List *l;
    E_Border *tmp;
 
@@ -2452,10 +2459,17 @@ e_border_unshade(E_Border *bd,
         BD_CHANGED(bd);
         edje_object_signal_emit(bd->bg_object, "e,state,unshaded", "e");
         e_border_frame_recalc(bd);
-        if (move) e_container_shape_move(bd->shape, bd->x, bd->y);
+        if (move)
+          {
+             ev = E_NEW(E_Event_Border_Simple, 1);
+             ev->border = bd;
+             e_object_ref(E_OBJECT(bd));
+             ecore_event_add(E_EVENT_BORDER_MOVE, ev, _e_border_event_border_move_free, NULL);
+             e_container_shape_move(bd->shape, bd->x, bd->y);
+          }
         e_container_shape_resize(bd->shape, bd->w, bd->h);
         e_border_comp_hidden_set(bd, EINA_FALSE);
-        ev = E_NEW(E_Event_Border_Resize, 1);
+        ev = E_NEW(E_Event_Border_Simple, 1);
         ev->border = bd;
         /* The resize is added in the animator when animation complete */
         /* For non-animated, we add it immediately with the new size */
@@ -9111,7 +9125,7 @@ static Eina_Bool
 _e_border_shade_animator(void *data)
 {
    E_Border *bd = data;
-   E_Event_Border_Resize *ev;
+   E_Event_Border_Simple *ev;
    Eina_Bool move = EINA_FALSE;
    double dt, val;
    double dur = bd->client.h / e_config->border_shade_speed;
@@ -9234,9 +9248,16 @@ _e_border_shade_animator(void *data)
         e_border_frame_recalc(bd);
         e_border_comp_hidden_set(bd, bd->shaded);
      }
-   if (move) e_container_shape_move(bd->shape, bd->x, bd->y);
+   if (move)
+     {
+        ev = E_NEW(E_Event_Border_Simple, 1);
+        ev->border = bd;
+        e_object_ref(E_OBJECT(bd));
+        ecore_event_add(E_EVENT_BORDER_MOVE, ev, _e_border_event_border_move_free, NULL);
+        e_container_shape_move(bd->shape, bd->x, bd->y);
+     }
    e_container_shape_resize(bd->shape, bd->w, bd->h);
-   ev = E_NEW(E_Event_Border_Resize, 1);
+   ev = E_NEW(E_Event_Border_Simple, 1);
    ev->border = bd;
    e_object_ref(E_OBJECT(bd));
 //	e_object_breadcrumb_add(E_OBJECT(bd), "border_resize_event");
