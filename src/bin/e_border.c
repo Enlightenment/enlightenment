@@ -9895,10 +9895,10 @@ _e_border_pointer_warp_to_center_timer(void *data __UNUSED__)
 cleanup:
    if (warp_timer) ecore_timer_del(warp_timer);
    warp_timer = NULL;
+   e_border_focus_lock_set(EINA_FALSE);
    if (warp_timer_border)
      {
         warp_x[0] = warp_x[1] = warp_y[0] = warp_y[1] = -1;
-        e_border_focus_lock_set(EINA_FALSE);
         e_focus_event_mouse_in(warp_timer_border);
         if (warp_timer_border->iconic)
           {
