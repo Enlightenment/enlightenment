@@ -16,6 +16,7 @@ const Player music_player_players[] =
    {"VLC", "org.mpris.MediaPlayer2.vlc"},
    {"BMP", "org.mpris.MediaPlayer2.bmp"},
    {"XMMS2", "org.mpris.MediaPlayer2.xmms2"},
+   {"DeaDBeeF", "org.mpris.MediaPlayer2.deadbeef"},
    {NULL, NULL}
 };
 
