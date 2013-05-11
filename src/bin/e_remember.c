@@ -100,6 +100,7 @@ e_remember_internal_save(void)
      {
         EINA_LIST_FREE(remembers->list, rem)
           _e_remember_free(rem);
+        remember_idler_list = eina_list_free(remember_idler_list);
      }
 
    EINA_LIST_FOREACH(e_border_client_list(), l, bd)
@@ -653,6 +654,7 @@ _e_remember_cb_hook_pre_post_fetch(void *data __UNUSED__, void *border)
           {
              temporary = 1;
              remembers->list = eina_list_remove(remembers->list, rem);
+             remember_idler_list = eina_list_remove(remember_idler_list, rem);
              if (!remembers->list)
                e_config_domain_save("e_remember_restart",
                                     e_remember_list_edd, remembers);
