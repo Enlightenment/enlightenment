@@ -125,7 +125,7 @@ _e_toolbar_gadget_add(void *data EINA_UNUSED, E_Gadcon_Client *gcc, const E_Gadc
 EINTERN int
 e_toolbar_init(void)
 {
-   tb_location = e_gadcon_location_new("EFM Toolbar", E_GADCON_SITE_EFM_TOOLBAR,
+   tb_location = e_gadcon_location_new(_("EFM Toolbar"), E_GADCON_SITE_EFM_TOOLBAR,
                                     _e_toolbar_gadget_add, NULL,
                                     _e_toolbar_gadget_remove, NULL);
    e_gadcon_location_set_icon_name(tb_location, "configure-toolbars");
