@@ -9632,7 +9632,7 @@ msgstr "Geometria ridimensionamento"
 #: src/modules/fileman/e_mod_config.c:355 src/modules/tasks/e_mod_config.c:86
 #: src/modules/winlist/e_int_config_winlist.c:197
 msgid "Display"
-msgstr "Visualizzazioni"
+msgstr "Mostra"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:164
 msgid "Placement"
