@@ -742,7 +742,6 @@ _e_desk_show_end_serious(E_Desk *desk)
           e_desk_last_focused_focus(desk);
      }
 
-   ecore_x_window_shadow_tree_flush();
    ev = E_NEW(E_Event_Desk_After_Show, 1);
    ev->desk = desk;
    e_object_ref(E_OBJECT(ev->desk));
