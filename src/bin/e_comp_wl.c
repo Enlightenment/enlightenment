@@ -4,6 +4,59 @@
 #include <sys/mman.h>
 
 /* compositor function prototypes */
+static void _seat_send_updated_caps(struct wl_seat *seat);
+static void _lose_pointer_focus(struct wl_listener *listener, void *data EINA_UNUSED);
+static void _lose_keyboard_focus(struct wl_listener *listener, void *data EINA_UNUSED);
+static void _lose_touch_focus(struct wl_listener *listener, void *data EINA_UNUSED);
+
+static struct wl_resource *_find_resource_for_surface(struct wl_list *list, struct wl_resource *surface);
+static struct wl_resource *_find_resource_for_client(struct wl_list *list, struct wl_client *client);
+
+static void _default_grab_focus(struct wl_pointer_grab *grab, struct wl_resource *surface, wl_fixed_t x, wl_fixed_t y);
+static void _default_grab_motion(struct wl_pointer_grab *grab, uint32_t timestamp, wl_fixed_t x, wl_fixed_t y);
+static void _default_grab_button(struct wl_pointer_grab *grab, uint32_t timestamp, uint32_t button, uint32_t state_w);
+
+static void _default_grab_touch_down(struct wl_touch_grab *grab, uint32_t timestamp, int touch_id, wl_fixed_t sx, wl_fixed_t sy);
+static void _default_grab_touch_up(struct wl_touch_grab *grab, uint32_t timestamp, int touch_id);
+static void _default_grab_touch_motion(struct wl_touch_grab *grab, uint32_t timestamp, int touch_id, wl_fixed_t sx, wl_fixed_t sy);
+
+static void _data_offer_accept(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t serial, const char *mime_type);
+static void _data_offer_receive(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *mime_type, int32_t fd);
+static void _data_offer_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
+
+static void _destroy_data_offer(struct wl_resource *resource);
+static void _destroy_offer_data_source(struct wl_listener *listener, void *data EINA_UNUSED);
+
+static void _create_data_source(struct wl_client *client, struct wl_resource *resource, uint32_t id);
+static void _get_data_device(struct wl_client *client, struct wl_resource *manager_resource EINA_UNUSED, uint32_t id, struct wl_resource *seat_resource);
+
+static void _current_surface_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
+static void _bind_manager(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id);
+
+static void _default_grab_key(struct wl_keyboard_grab *grab, uint32_t timestamp, uint32_t key, uint32_t state);
+static void _default_grab_modifiers(struct wl_keyboard_grab *grab, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group);
+
+static void _data_device_start_drag(struct wl_client *client, struct wl_resource *resource, struct wl_resource *source_resource, struct wl_resource *origin_resource EINA_UNUSED, struct wl_resource *icon_resource, uint32_t serial EINA_UNUSED);
+static void _data_device_set_selection(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *source_resource, uint32_t serial);
+static void _destroy_data_device_icon(struct wl_listener *listener, void *data EINA_UNUSED);
+
+static void _destroy_selection_data_source(struct wl_listener *listener, void *data EINA_UNUSED);
+static void _data_source_offer(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *type);
+static void _data_source_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
+static void _destroy_data_source(struct wl_resource *resource);
+static void _destroy_data_device_source(struct wl_listener *listener, void *data EINA_UNUSED);
+static void _data_device_end_drag_grab(struct wl_seat *seat);
+
+static void _drag_grab_button(struct wl_pointer_grab *grab, uint32_t timestamp EINA_UNUSED, uint32_t button, uint32_t state_w);
+static void _drag_grab_motion(struct wl_pointer_grab *grab, uint32_t timestamp, wl_fixed_t x, wl_fixed_t y);
+
+static void _destroy_drag_focus(struct wl_listener *listener, void *data EINA_UNUSED);
+static void _drag_grab_focus(struct wl_pointer_grab *grab, struct wl_resource *surface, wl_fixed_t x, wl_fixed_t y);
+
+static void _client_source_accept(struct wl_data_source *source, uint32_t timestamp EINA_UNUSED, const char *mime_type);
+static void _client_source_send(struct wl_data_source *source, const char *mime_type, int32_t fd);
+static void _client_source_cancel(struct wl_data_source *source);
+
 static void _e_comp_wl_cb_bind(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id);
 static Eina_Bool _e_comp_wl_cb_read(void *data EINA_UNUSED, Ecore_Fd_Handler *hdl EINA_UNUSED);
 static Eina_Bool _e_comp_wl_cb_idle(void *data EINA_UNUSED);
@@ -94,6 +147,58 @@ static const struct wl_surface_interface _e_surface_interface =
    _e_comp_wl_surface_cb_input_region_set,
    _e_comp_wl_surface_cb_commit,
    NULL // cb_buffer_transform_set
+};
+
+static const struct wl_pointer_grab_interface _e_pointer_grab_interface = 
+{
+   _default_grab_focus,
+   _default_grab_motion,
+   _default_grab_button
+};
+
+static const struct wl_keyboard_grab_interface _e_default_keyboard_grab_interface = 
+{
+   _default_grab_key,
+   _default_grab_modifiers,
+};
+
+static const struct wl_data_offer_interface _e_data_offer_interface = 
+{
+   _data_offer_accept,
+   _data_offer_receive,
+   _data_offer_destroy,
+};
+
+static const struct wl_data_device_manager_interface _e_manager_interface = 
+{
+   _create_data_source,
+   _get_data_device
+};
+
+static const struct wl_data_device_interface _e_data_device_interface = 
+{
+   _data_device_start_drag,
+   _data_device_set_selection,
+};
+
+static const struct wl_touch_grab_interface _e_default_touch_grab_interface = 
+{
+   _default_grab_touch_down,
+   _default_grab_touch_up,
+   _default_grab_touch_motion
+};
+
+static struct wl_data_source_interface _e_data_source_interface = 
+{
+   _data_source_offer,
+   _data_source_destroy
+};
+
+static const struct wl_pointer_grab_interface _e_drag_grab_interface = 
+{
+   _drag_grab_focus,
+   _drag_grab_motion,
+   _drag_grab_button,
 };
 
 /* local variables */
@@ -331,6 +436,394 @@ e_comp_wl_shutdown(void)
      e_module_disable(mod);
 }
 
+EAPI void 
+wl_seat_init(struct wl_seat *seat)
+{
+   memset(seat, 0, sizeof *seat);
+
+   wl_signal_init(&seat->destroy_signal);
+
+   seat->selection_data_source = NULL;
+   wl_list_init(&seat->base_resource_list);
+   wl_signal_init(&seat->selection_signal);
+   wl_list_init(&seat->drag_resource_list);
+   wl_signal_init(&seat->drag_icon_signal);
+}
+
+EAPI void 
+wl_seat_release(struct wl_seat *seat)
+{
+   wl_signal_emit(&seat->destroy_signal, seat);
+
+   if (seat->pointer) wl_pointer_release(seat->pointer);
+   if (seat->keyboard) wl_keyboard_release(seat->keyboard);
+   if (seat->touch) wl_touch_release(seat->touch);
+}
+
+EAPI void 
+wl_seat_set_pointer(struct wl_seat *seat, struct wl_pointer *pointer)
+{
+   if (pointer && (seat->pointer || pointer->seat)) return; /* XXX: error? */
+   if (!pointer && !seat->pointer) return;
+
+   seat->pointer = pointer;
+   if (pointer) pointer->seat = seat;
+
+   _seat_send_updated_caps(seat);
+}
+
+EAPI void 
+wl_seat_set_keyboard(struct wl_seat *seat, struct wl_keyboard *keyboard)
+{
+   if (keyboard && (seat->keyboard || keyboard->seat)) return; /* XXX: error? */
+   if (!keyboard && !seat->keyboard) return;
+
+   seat->keyboard = keyboard;
+   if (keyboard) keyboard->seat = seat;
+
+   _seat_send_updated_caps(seat);
+}
+
+EAPI void 
+wl_seat_set_touch(struct wl_seat *seat, struct wl_touch *touch)
+{
+   if (touch && (seat->touch || touch->seat)) return; /* XXX: error? */
+   if (!touch && !seat->touch) return;
+
+   seat->touch = touch;
+   if (touch) touch->seat = seat;
+
+   _seat_send_updated_caps(seat);
+}
+
+EAPI void 
+wl_pointer_init(struct wl_pointer *pointer)
+{
+   memset(pointer, 0, sizeof *pointer);
+   wl_list_init(&pointer->resource_list);
+   pointer->focus_listener.notify = _lose_pointer_focus;
+   pointer->default_grab.interface = &_e_pointer_grab_interface;
+   pointer->default_grab.pointer = pointer;
+   pointer->grab = &pointer->default_grab;
+   wl_signal_init(&pointer->focus_signal);
+
+   pointer->x = wl_fixed_from_int(100);
+   pointer->y = wl_fixed_from_int(100);
+}
+
+EAPI void 
+wl_pointer_release(struct wl_pointer *pointer)
+{
+   if (pointer->focus_resource)
+     wl_list_remove(&pointer->focus_listener.link);
+}
+
+EAPI void 
+wl_pointer_set_focus(struct wl_pointer *pointer, struct wl_resource *surface, wl_fixed_t sx, wl_fixed_t sy)
+{
+   struct wl_keyboard *kbd = pointer->seat->keyboard;
+   struct wl_resource *resource, *kr;
+   uint32_t serial;
+
+   resource = pointer->focus_resource;
+   if (resource && pointer->focus != surface) 
+     {
+        struct wl_display *disp;
+
+        disp = wl_client_get_display(resource->client);
+        serial = wl_display_next_serial(disp);
+        wl_pointer_send_leave(resource, serial, pointer->focus);
+        wl_list_remove(&pointer->focus_listener.link);
+     }
+
+   resource = _find_resource_for_surface(&pointer->resource_list, surface);
+   if (resource &&
+       (pointer->focus != surface ||
+           pointer->focus_resource != resource)) 
+     {
+        struct wl_display *disp;
+
+        disp = wl_client_get_display(resource->client);
+        serial = wl_display_next_serial(disp);
+        if (kbd) 
+          {
+             kr = _find_resource_for_surface(&kbd->resource_list, surface);
+             if (kr) 
+               {
+                  wl_keyboard_send_modifiers(kr,
+                                             serial,
+                                             kbd->modifiers.mods_depressed,
+                                             kbd->modifiers.mods_latched,
+                                             kbd->modifiers.mods_locked,
+                                             kbd->modifiers.group);
+               }
+          }
+
+        wl_pointer_send_enter(resource, serial, surface, sx, sy);
+        wl_signal_add(&resource->destroy_signal, &pointer->focus_listener);
+        pointer->focus_serial = serial;
+     }
+
+   pointer->focus_resource = resource;
+   pointer->focus = surface;
+   pointer->default_grab.focus = surface;
+   wl_signal_emit(&pointer->focus_signal, pointer);
+}
+
+EAPI void 
+wl_pointer_start_grab(struct wl_pointer *pointer, struct wl_pointer_grab *grab)
+{
+   const struct wl_pointer_grab_interface *interface;
+
+   pointer->grab = grab;
+   interface = pointer->grab->interface;
+   grab->pointer = pointer;
+
+   if (pointer->current)
+     interface->focus(pointer->grab, pointer->current,
+                       pointer->current_x, pointer->current_y);
+}
+
+EAPI void 
+wl_pointer_end_grab(struct wl_pointer *pointer)
+{
+   const struct wl_pointer_grab_interface *interface;
+
+   pointer->grab = &pointer->default_grab;
+   interface = pointer->grab->interface;
+   interface->focus(pointer->grab, pointer->current,
+                    pointer->current_x, pointer->current_y);
+}
+
+EAPI void 
+wl_pointer_set_current(struct wl_pointer *pointer, struct wl_resource *surface)
+{
+   if (pointer->current)
+     wl_list_remove(&pointer->current_listener.link);
+
+   pointer->current = surface;
+
+   if (!surface) return;
+
+   wl_signal_add(&surface->destroy_signal, &pointer->current_listener);
+   pointer->current_listener.notify = _current_surface_destroy;
+}
+
+EAPI void 
+wl_keyboard_init(struct wl_keyboard *keyboard)
+{
+   memset(keyboard, 0, sizeof *keyboard);
+   wl_list_init(&keyboard->resource_list);
+   wl_array_init(&keyboard->keys);
+   keyboard->focus_listener.notify = _lose_keyboard_focus;
+   keyboard->default_grab.interface = &_e_default_keyboard_grab_interface;
+   keyboard->default_grab.keyboard = keyboard;
+   keyboard->grab = &keyboard->default_grab;
+   wl_signal_init(&keyboard->focus_signal);
+}
+
+EAPI void 
+wl_keyboard_release(struct wl_keyboard *keyboard)
+{
+   if (keyboard->focus_resource) 
+     wl_list_remove(&keyboard->focus_listener.link);
+   wl_array_release(&keyboard->keys);
+}
+
+EAPI void 
+wl_keyboard_set_focus(struct wl_keyboard *keyboard, struct wl_resource *surface)
+{
+   struct wl_resource *resource;
+   uint32_t serial;
+
+   if (keyboard->focus_resource && keyboard->focus != surface) 
+     {
+        struct wl_display *disp;
+
+        disp = wl_client_get_display(keyboard->focus_resource->client);
+        serial = wl_display_next_serial(disp);
+        resource = keyboard->focus_resource;
+        wl_keyboard_send_leave(resource, serial, keyboard->focus);
+        wl_list_remove(&keyboard->focus_listener.link);
+     }
+
+   resource = _find_resource_for_surface(&keyboard->resource_list,
+                                         surface);
+   if (resource &&
+       (keyboard->focus != surface ||
+           keyboard->focus_resource != resource)) 
+     {
+        struct wl_display *disp;
+
+        disp = wl_client_get_display(resource->client);
+        serial = wl_display_next_serial(disp);
+        wl_keyboard_send_modifiers(resource, serial,
+                                   keyboard->modifiers.mods_depressed,
+                                   keyboard->modifiers.mods_latched,
+                                   keyboard->modifiers.mods_locked,
+                                   keyboard->modifiers.group);
+        wl_keyboard_send_enter(resource, serial, surface, &keyboard->keys);
+        wl_signal_add(&resource->destroy_signal,
+                      &keyboard->focus_listener);
+        keyboard->focus_serial = serial;
+     }
+
+   keyboard->focus_resource = resource;
+   keyboard->focus = surface;
+   wl_signal_emit(&keyboard->focus_signal, keyboard);
+}
+
+EAPI void 
+wl_keyboard_start_grab(struct wl_keyboard *device, struct wl_keyboard_grab *grab)
+{
+   device->grab = grab;
+   grab->keyboard = device;
+}
+
+EAPI void 
+wl_keyboard_end_grab(struct wl_keyboard *keyboard)
+{
+   keyboard->grab = &keyboard->default_grab;
+}
+
+EAPI void 
+wl_touch_init(struct wl_touch *touch)
+{
+   memset(touch, 0, sizeof *touch);
+   wl_list_init(&touch->resource_list);
+   touch->focus_listener.notify = _lose_touch_focus;
+   touch->default_grab.interface = &_e_default_touch_grab_interface;
+   touch->default_grab.touch = touch;
+   touch->grab = &touch->default_grab;
+   wl_signal_init(&touch->focus_signal);
+}
+
+EAPI void 
+wl_touch_release(struct wl_touch *touch)
+{
+   if (touch->focus_resource)
+     wl_list_remove(&touch->focus_listener.link);
+}
+
+EAPI void 
+wl_touch_start_grab(struct wl_touch *device, struct wl_touch_grab *grab)
+{
+   device->grab = grab;
+   grab->touch = device;
+}
+
+EAPI void 
+wl_touch_end_grab(struct wl_touch *touch)
+{
+   touch->grab = &touch->default_grab;
+}
+
+EAPI void 
+wl_data_device_set_keyboard_focus(struct wl_seat *seat)
+{
+   struct wl_resource *data_device, *focus, *offer;
+   struct wl_data_source *source;
+
+   if (!seat->keyboard) return;
+
+   focus = seat->keyboard->focus_resource;
+   if (!focus) return;
+
+   data_device = 
+     _find_resource_for_client(&seat->drag_resource_list, focus->client);
+   if (!data_device) return;
+
+   source = seat->selection_data_source;
+   if (source) 
+     {
+        offer = wl_data_source_send_offer(source, data_device);
+        wl_data_device_send_selection(data_device, offer);
+     }
+}
+
+EAPI int 
+wl_data_device_manager_init(struct wl_display *display)
+{
+   if (wl_display_add_global(display,
+                             &wl_data_device_manager_interface,
+                             NULL, _bind_manager) == NULL)
+     return -1;
+   return 0;
+}
+
+EAPI struct wl_resource *
+wl_data_source_send_offer(struct wl_data_source *source, struct wl_resource *target)
+{
+   struct wl_data_offer *offer;
+   char **p;
+
+   offer = malloc(sizeof *offer);
+   if (offer == NULL) return NULL;
+
+   wl_resource_init(&offer->resource, &wl_data_offer_interface,
+                    &_e_data_offer_interface, 0, offer);
+   offer->resource.destroy = _destroy_data_offer;
+
+   offer->source = source;
+   offer->source_destroy_listener.notify = _destroy_offer_data_source;
+   wl_signal_add(&source->resource.destroy_signal,
+                 &offer->source_destroy_listener);
+
+   wl_client_add_resource(target->client, &offer->resource);
+   wl_data_device_send_data_offer(target, &offer->resource);
+   wl_array_for_each(p, &source->mime_types)
+     wl_data_offer_send_offer(&offer->resource, *p);
+
+   return &offer->resource;
+}
+
+EAPI void
+wl_seat_set_selection(struct wl_seat *seat, struct wl_data_source *source, uint32_t serial)
+{
+   struct wl_resource *data_device, *offer;
+   struct wl_resource *focus = NULL;
+
+   if (seat->selection_data_source &&
+       seat->selection_serial - serial < UINT32_MAX / 2)
+     return;
+
+   if (seat->selection_data_source) 
+     {
+        seat->selection_data_source->cancel(seat->selection_data_source);
+        wl_list_remove(&seat->selection_data_source_listener.link);
+        seat->selection_data_source = NULL;
+     }
+
+   seat->selection_data_source = source;
+   seat->selection_serial = serial;
+   if (seat->keyboard)
+     focus = seat->keyboard->focus_resource;
+   if (focus) 
+     {
+        data_device = _find_resource_for_client(&seat->drag_resource_list,
+                                                focus->client);
+        if (data_device && source) 
+          {
+             offer = wl_data_source_send_offer(seat->selection_data_source,
+                                               data_device);
+             wl_data_device_send_selection(data_device, offer);
+          }
+        else if (data_device) 
+          {
+             wl_data_device_send_selection(data_device, NULL);
+          }
+     }
+
+   wl_signal_emit(&seat->selection_signal, seat);
+   if (source) 
+     {
+        seat->selection_data_source_listener.notify =
+          _destroy_selection_data_source;
+        wl_signal_add(&source->resource.destroy_signal,
+                      &seat->selection_data_source_listener);
+     }
+}
+
 EAPI unsigned int 
 e_comp_wl_time_get(void)
 {
@@ -387,6 +880,553 @@ e_comp_wl_input_modifiers_update(unsigned int serial)
 }
 
 /* local functions */
+static void
+_seat_send_updated_caps(struct wl_seat *seat)
+{
+   struct wl_resource *r;
+   enum wl_seat_capability caps = 0;
+
+   if (seat->pointer)
+     caps |= WL_SEAT_CAPABILITY_POINTER;
+   if (seat->keyboard)
+     caps |= WL_SEAT_CAPABILITY_KEYBOARD;
+   if (seat->touch)
+     caps |= WL_SEAT_CAPABILITY_TOUCH;
+
+   wl_list_for_each(r, &seat->base_resource_list, link)
+     wl_seat_send_capabilities(r, caps);
+}
+
+static void
+_lose_pointer_focus(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   struct wl_pointer *pointer =
+     container_of(listener, struct wl_pointer, focus_listener);
+   pointer->focus_resource = NULL;
+}
+
+static void
+_lose_keyboard_focus(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   struct wl_keyboard *keyboard =
+     container_of(listener, struct wl_keyboard, focus_listener);
+   keyboard->focus_resource = NULL;
+}
+
+static void
+_lose_touch_focus(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   struct wl_touch *touch =
+     container_of(listener, struct wl_touch, focus_listener);
+   touch->focus_resource = NULL;
+}
+
+static struct wl_resource *
+_find_resource_for_surface(struct wl_list *list, struct wl_resource *surface)
+{
+   struct wl_resource *r;
+
+   if (!surface) return NULL;
+   wl_list_for_each(r, list, link) 
+     {
+        if (r->client == surface->client)
+          return r;
+     }
+
+   return NULL;
+}
+
+static struct wl_resource *
+_find_resource_for_client(struct wl_list *list, struct wl_client *client)
+{
+   struct wl_resource *r;
+
+   if (!client) return NULL;
+   wl_list_for_each(r, list, link) 
+     {
+        if (r->client == client)
+          return r;
+     }
+
+   return NULL;
+}
+
+static void
+_default_grab_focus(struct wl_pointer_grab *grab, struct wl_resource *surface, wl_fixed_t x, wl_fixed_t y)
+{
+   struct wl_pointer *pointer = grab->pointer;
+
+   if (pointer->button_count > 0) return;
+
+   wl_pointer_set_focus(pointer, surface, x, y);
+}
+
+static void
+_default_grab_motion(struct wl_pointer_grab *grab, uint32_t timestamp, wl_fixed_t x, wl_fixed_t y)
+{
+   struct wl_resource *resource;
+
+   resource = grab->pointer->focus_resource;
+   if (resource)
+     wl_pointer_send_motion(resource, timestamp, x, y);
+}
+
+static void
+_default_grab_button(struct wl_pointer_grab *grab, uint32_t timestamp, uint32_t button, uint32_t state_w)
+{
+   struct wl_pointer *pointer = grab->pointer;
+   struct wl_resource *resource;
+   uint32_t serial;
+   enum wl_pointer_button_state state = state_w;
+
+   resource = pointer->focus_resource;
+   if (resource) 
+     {
+        struct wl_display *disp;
+
+        disp = wl_client_get_display(resource->client);
+        serial = wl_display_next_serial(disp);
+        wl_pointer_send_button(resource, serial, timestamp, button, state_w);
+     }
+
+   if (pointer->button_count == 0 &&
+       state == WL_POINTER_BUTTON_STATE_RELEASED)
+     wl_pointer_set_focus(pointer, pointer->current,
+                          pointer->current_x, pointer->current_y);
+}
+
+static void 
+_default_grab_touch_down(struct wl_touch_grab *grab, uint32_t timestamp, int touch_id, wl_fixed_t sx, wl_fixed_t sy)
+{
+   struct wl_touch *touch = grab->touch;
+   uint32_t serial;
+
+   if (touch->focus_resource && touch->focus) 
+     {
+        struct wl_display *disp;
+
+        disp = wl_client_get_display(touch->focus_resource->client);
+        serial = wl_display_next_serial(disp);
+
+        wl_touch_send_down(touch->focus_resource, serial, timestamp,
+                           touch->focus, touch_id, sx, sy);
+     }
+}
+
+static void 
+_default_grab_touch_up(struct wl_touch_grab *grab, uint32_t timestamp, int touch_id)
+{
+   struct wl_touch *touch = grab->touch;
+   uint32_t serial;
+
+   if (touch->focus_resource) 
+     {
+        struct wl_display *disp;
+
+        disp = wl_client_get_display(touch->focus_resource->client);
+        serial = wl_display_next_serial(disp);
+
+        wl_touch_send_up(touch->focus_resource, serial, timestamp, touch_id);
+     }
+}
+
+static void 
+_default_grab_touch_motion(struct wl_touch_grab *grab, uint32_t timestamp, int touch_id, wl_fixed_t sx, wl_fixed_t sy)
+{
+   struct wl_touch *touch = grab->touch;
+
+   if (touch->focus_resource) 
+     {
+        wl_touch_send_motion(touch->focus_resource, timestamp,
+                             touch_id, sx, sy);
+     }
+}
+
+static void
+_data_offer_accept(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t serial, const char *mime_type)
+{
+   struct wl_data_offer *offer = resource->data;
+
+   if (offer->source)
+     offer->source->accept(offer->source, serial, mime_type);
+}
+
+static void
+_data_offer_receive(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *mime_type, int32_t fd)
+{
+   struct wl_data_offer *offer = resource->data;
+
+   if (offer->source)
+     offer->source->send(offer->source, mime_type, fd);
+   else
+     close(fd);
+}
+
+static void
+_data_offer_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_destroy_data_offer(struct wl_resource *resource)
+{
+   struct wl_data_offer *offer = resource->data;
+
+   if (offer->source)
+     wl_list_remove(&offer->source_destroy_listener.link);
+   free(offer);
+}
+
+static void
+_destroy_offer_data_source(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   struct wl_data_offer *offer;
+
+   offer = container_of(listener, struct wl_data_offer,
+                        source_destroy_listener);
+   offer->source = NULL;
+}
+
+static void
+_create_data_source(struct wl_client *client, struct wl_resource *resource, uint32_t id)
+{
+   struct wl_data_source *source;
+
+   source = malloc(sizeof *source);
+   if (source == NULL) 
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   wl_resource_init(&source->resource, &wl_data_source_interface,
+                    &_e_data_source_interface, id, source);
+   source->resource.destroy = _destroy_data_source;
+
+   source->accept = _client_source_accept;
+   source->send = _client_source_send;
+   source->cancel = _client_source_cancel;
+
+   wl_array_init(&source->mime_types);
+   wl_client_add_resource(client, &source->resource);
+}
+
+static void 
+_unbind_data_device(struct wl_resource *resource)
+{
+   wl_list_remove(&resource->link);
+   free(resource);
+}
+
+static void
+_get_data_device(struct wl_client *client, struct wl_resource *manager_resource EINA_UNUSED, uint32_t id, struct wl_resource *seat_resource)
+{
+   struct wl_seat *seat = seat_resource->data;
+   struct wl_resource *resource;
+
+   resource = wl_client_add_object(client, &wl_data_device_interface,
+                                   &_e_data_device_interface, id,
+                                   seat);
+
+   wl_list_insert(&seat->drag_resource_list, &resource->link);
+   resource->destroy = _unbind_data_device;
+}
+
+static void
+_current_surface_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   struct wl_pointer *pointer =
+     container_of(listener, struct wl_pointer, current_listener);
+   pointer->current = NULL;
+}
+
+static void
+_bind_manager(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id)
+{
+   wl_client_add_object(client, &wl_data_device_manager_interface,
+                        &_e_manager_interface, id, NULL);
+}
+
+static void
+_default_grab_key(struct wl_keyboard_grab *grab, uint32_t timestamp, uint32_t key, uint32_t state)
+{
+   struct wl_keyboard *keyboard = grab->keyboard;
+   struct wl_resource *resource;
+   uint32_t serial;
+
+   resource = keyboard->focus_resource;
+   if (resource) 
+     {
+        struct wl_display *disp;
+
+        disp = wl_client_get_display(resource->client);
+        serial = wl_display_next_serial(disp);
+        wl_keyboard_send_key(resource, serial, timestamp, key, state);
+     }
+}
+
+static void
+_default_grab_modifiers(struct wl_keyboard_grab *grab, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group)
+{
+   struct wl_keyboard *keyboard = grab->keyboard;
+   struct wl_pointer *pointer = keyboard->seat->pointer;
+   struct wl_resource *resource, *pr;
+
+   resource = keyboard->focus_resource;
+   if (!resource) return;
+
+   wl_keyboard_send_modifiers(resource, serial, mods_depressed,
+                              mods_latched, mods_locked, group);
+
+   if (pointer && pointer->focus && pointer->focus != keyboard->focus) 
+     {
+        pr = _find_resource_for_surface(&keyboard->resource_list,
+                                        pointer->focus);
+        if (pr) 
+          {
+             wl_keyboard_send_modifiers(pr,
+                                        serial,
+                                        keyboard->modifiers.mods_depressed,
+                                        keyboard->modifiers.mods_latched,
+                                        keyboard->modifiers.mods_locked,
+                                        keyboard->modifiers.group);
+          }
+     }
+}
+
+static void
+_data_device_start_drag(struct wl_client *client, struct wl_resource *resource, struct wl_resource *source_resource, struct wl_resource *origin_resource EINA_UNUSED, struct wl_resource *icon_resource, uint32_t serial EINA_UNUSED)
+{
+   struct wl_seat *seat = resource->data;
+
+   seat->drag_grab.interface = &_e_drag_grab_interface;
+   seat->drag_client = client;
+   seat->drag_data_source = NULL;
+
+   if (source_resource) 
+     {
+        seat->drag_data_source = source_resource->data;
+        seat->drag_data_source_listener.notify =
+          _destroy_data_device_source;
+        wl_signal_add(&source_resource->destroy_signal,
+                      &seat->drag_data_source_listener);
+       }
+
+   if (icon_resource) 
+     {
+        seat->drag_surface = icon_resource->data;
+        seat->drag_icon_listener.notify = _destroy_data_device_icon;
+        wl_signal_add(&icon_resource->destroy_signal,
+                      &seat->drag_icon_listener);
+        wl_signal_emit(&seat->drag_icon_signal, icon_resource);
+     }
+
+   wl_pointer_set_focus(seat->pointer, NULL,
+                        wl_fixed_from_int(0), wl_fixed_from_int(0));
+   wl_pointer_start_grab(seat->pointer, &seat->drag_grab);
+}
+
+static void
+_data_device_set_selection(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *source_resource, uint32_t serial)
+{
+   if (!source_resource) return;
+   wl_seat_set_selection(resource->data, source_resource->data,
+                         serial);
+}
+
+static void
+_destroy_data_device_icon(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   struct wl_seat *seat = 
+     container_of(listener, struct wl_seat, drag_icon_listener);
+
+   seat->drag_surface = NULL;
+}
+
+static void
+_destroy_selection_data_source(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   struct wl_seat *seat = 
+     container_of(listener, struct wl_seat, selection_data_source_listener);
+   struct wl_resource *data_device;
+   struct wl_resource *focus = NULL;
+
+   seat->selection_data_source = NULL;
+
+   if (seat->keyboard)
+     focus = seat->keyboard->focus_resource;
+   if (focus) 
+     {
+        data_device = _find_resource_for_client(&seat->drag_resource_list,
+                                                focus->client);
+        if (data_device)
+          wl_data_device_send_selection(data_device, NULL);
+     }
+
+   wl_signal_emit(&seat->selection_signal, seat);
+}
+
+static void
+_destroy_data_device_source(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   struct wl_seat *seat = 
+     container_of(listener, struct wl_seat, drag_data_source_listener);
+   _data_device_end_drag_grab(seat);
+}
+
+static void
+_data_source_offer(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *type)
+{
+   struct wl_data_source *source = resource->data;
+   char **p;
+
+   p = wl_array_add(&source->mime_types, sizeof *p);
+   if (p) *p = strdup(type);
+
+   if (!p || !*p) wl_resource_post_no_memory(resource);
+}
+
+static void
+_data_source_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void
+_destroy_data_source(struct wl_resource *resource)
+{
+   struct wl_data_source *source =
+     container_of(resource, struct wl_data_source, resource);
+   char **p;
+
+   wl_array_for_each(p, &source->mime_types)
+     free(*p);
+
+   wl_array_release(&source->mime_types);
+
+   source->resource.object.id = 0;
+}
+
+static void
+_data_device_end_drag_grab(struct wl_seat *seat)
+{
+   if (seat->drag_surface) 
+     {
+        seat->drag_surface = NULL;
+        wl_signal_emit(&seat->drag_icon_signal, NULL);
+        wl_list_remove(&seat->drag_icon_listener.link);
+     }
+
+   _drag_grab_focus(&seat->drag_grab, NULL,
+                    wl_fixed_from_int(0), wl_fixed_from_int(0));
+   wl_pointer_end_grab(seat->pointer);
+   seat->drag_data_source = NULL;
+   seat->drag_client = NULL;
+}
+
+static void
+_drag_grab_button(struct wl_pointer_grab *grab, uint32_t timestamp EINA_UNUSED, uint32_t button, uint32_t state_w)
+{
+   struct wl_seat *seat = container_of(grab, struct wl_seat, drag_grab);
+   enum wl_pointer_button_state state = state_w;
+
+   if (seat->drag_focus_resource &&
+       seat->pointer->grab_button == button &&
+       state == WL_POINTER_BUTTON_STATE_RELEASED)
+     wl_data_device_send_drop(seat->drag_focus_resource);
+
+   if (seat->pointer->button_count == 0 &&
+       state == WL_POINTER_BUTTON_STATE_RELEASED) 
+     {
+        if (seat->drag_data_source)
+          wl_list_remove(&seat->drag_data_source_listener.link);
+
+        _data_device_end_drag_grab(seat);
+     }
+}
+
+static void
+_drag_grab_motion(struct wl_pointer_grab *grab, uint32_t timestamp, wl_fixed_t x, wl_fixed_t y)
+{
+   struct wl_seat *seat = container_of(grab, struct wl_seat, drag_grab);
+
+   if (seat->drag_focus_resource)
+     wl_data_device_send_motion(seat->drag_focus_resource,
+                                timestamp, x, y);
+}
+
+static void
+_destroy_drag_focus(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   struct wl_seat *seat =
+     container_of(listener, struct wl_seat, drag_focus_listener);
+
+   seat->drag_focus_resource = NULL;
+}
+
+static void
+_drag_grab_focus(struct wl_pointer_grab *grab, struct wl_resource *surface, wl_fixed_t x, wl_fixed_t y)
+{
+   struct wl_seat *seat = container_of(grab, struct wl_seat, drag_grab);
+   struct wl_resource *resource, *offer = NULL;
+   struct wl_display *display;
+   uint32_t serial;
+
+   if (seat->drag_focus_resource) 
+     {
+        wl_data_device_send_leave(seat->drag_focus_resource);
+        wl_list_remove(&seat->drag_focus_listener.link);
+        seat->drag_focus_resource = NULL;
+        seat->drag_focus = NULL;
+     }
+
+   if (!surface) return;
+
+   if (!seat->drag_data_source &&
+       surface->client != seat->drag_client)
+     return;
+
+   resource = _find_resource_for_client(&seat->drag_resource_list,
+                                        surface->client);
+   if (!resource) return;
+
+   display = wl_client_get_display(resource->client);
+   serial = wl_display_next_serial(display);
+
+   if (seat->drag_data_source)
+     offer = wl_data_source_send_offer(seat->drag_data_source,
+                                       resource);
+
+   wl_data_device_send_enter(resource, serial, surface, x, y, offer);
+
+   seat->drag_focus = surface;
+   seat->drag_focus_listener.notify = _destroy_drag_focus;
+   wl_signal_add(&resource->destroy_signal,
+                 &seat->drag_focus_listener);
+   seat->drag_focus_resource = resource;
+   grab->focus = surface;
+}
+
+static void
+_client_source_accept(struct wl_data_source *source, uint32_t timestamp EINA_UNUSED, const char *mime_type)
+{
+   wl_data_source_send_target(&source->resource, mime_type);
+}
+
+static void
+_client_source_send(struct wl_data_source *source, const char *mime_type, int32_t fd)
+{
+   wl_data_source_send_send(&source->resource, mime_type, fd);
+   close(fd);
+}
+
+static void
+_client_source_cancel(struct wl_data_source *source)
+{
+   wl_data_source_send_cancelled(&source->resource);
+}
+
 static void 
 _e_comp_wl_cb_bind(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id)
 {
@@ -454,8 +1494,6 @@ static Eina_Bool
 _e_comp_wl_cb_keymap_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    struct xkb_keymap *keymap;
-
-   printf("Kbd Changed\n");
 
    /* try to fetch the keymap */
    if (!(keymap = _e_comp_wl_input_keymap_get())) 
@@ -529,7 +1567,7 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
      }
 
    /* initialize the destroy signal */
-   wl_signal_init(&ews->wl.surface.resource.destroy_signal);
+   wl_signal_init(&ews->wl.surface.destroy_signal);
 
    /* initialize the link */
    wl_list_init(&ews->wl.link);
@@ -538,7 +1576,7 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
    wl_list_init(&ews->wl.frames);
    wl_list_init(&ews->pending.frames);
 
-   ews->wl.surface.resource.client = NULL;
+   ews->wl.surface.client = NULL;
 
    /* set destroy function for pending buffers */
    ews->pending.buffer_destroy.notify = 
@@ -558,15 +1596,15 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
                              UINT32_MAX, UINT32_MAX);
 
    /* set some properties of the surface */
-   ews->wl.surface.resource.destroy = _e_comp_wl_cb_surface_destroy;
-   ews->wl.surface.resource.object.id = id;
-   ews->wl.surface.resource.object.interface = &wl_surface_interface;
-   ews->wl.surface.resource.object.implementation = 
+   ews->wl.surface.destroy = _e_comp_wl_cb_surface_destroy;
+   ews->wl.surface.object.id = id;
+   ews->wl.surface.object.interface = &wl_surface_interface;
+   ews->wl.surface.object.implementation = 
      (void (**)(void))&_e_surface_interface;
-   ews->wl.surface.resource.data = ews;
+   ews->wl.surface.data = ews;
 
    /* add this surface to the client */
-   wl_client_add_resource(client, &ews->wl.surface.resource);
+   wl_client_add_resource(client, &ews->wl.surface);
 
    /* add this surface to the list of surfaces */
    _e_wl_comp->surfaces = eina_list_append(_e_wl_comp->surfaces, ews);
@@ -579,7 +1617,7 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
    E_Wayland_Surface_Frame_Callback *cb = NULL, *ncb = NULL;
 
    /* try to get the surface from this resource */
-   if (!(ews = container_of(resource, E_Wayland_Surface, wl.surface.resource)))
+   if (!(ews = container_of(resource, E_Wayland_Surface, wl.surface)))
      return;
 
    /* if this surface is mapped, unmap it */
@@ -1001,7 +2039,7 @@ _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *re
 
    /* if the pointer has a focused surface, set it */
    if ((input->wl.seat.pointer->focus) && 
-       (input->wl.seat.pointer->focus->resource.client == client))
+       (input->wl.seat.pointer->focus->client == client))
      {
         /* tell pointer which surface is focused */
         wl_pointer_set_focus(input->wl.seat.pointer, 
@@ -1036,7 +2074,7 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
 
    /* test if keyboard has a focused client */
    if ((input->wl.seat.keyboard->focus) && 
-       (input->wl.seat.keyboard->focus->resource.client == client))
+       (input->wl.seat.keyboard->focus->client == client))
      {
         /* set keyboard focus */
         wl_keyboard_set_focus(input->wl.seat.keyboard, 
@@ -1188,7 +2226,7 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
    /* if the input has no current focus, get out */
    if (!input->wl.seat.pointer->focus) return;
 
-   if (input->wl.seat.pointer->focus->resource.client != client) return;
+   if (input->wl.seat.pointer->focus->client != client) return;
    if ((input->wl.seat.pointer->focus_serial - serial) > (UINT32_MAX / 2))
      return;
 
@@ -1197,7 +2235,7 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
      {
         if (ews->configure)
           {
-             wl_resource_post_error(&ews->wl.surface.resource, 
+             wl_resource_post_error(&ews->wl.surface, 
                                     WL_DISPLAY_ERROR_INVALID_OBJECT, 
                                     "Surface already configured");
              return;
@@ -1218,7 +2256,7 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
    if (!ews) return;
 
    /* set the destroy listener */
-   wl_signal_add(&ews->wl.surface.resource.destroy_signal, 
+   wl_signal_add(&ews->wl.surface.destroy_signal, 
                  &input->pointer.surface_destroy);
 
    /* set some properties on this surface */

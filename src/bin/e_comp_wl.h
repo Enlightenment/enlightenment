@@ -49,6 +49,176 @@ typedef struct _E_Wayland_Output_Mode E_Wayland_Output_Mode;
 typedef struct _E_Wayland_Terminal E_Wayland_Terminal;
 typedef struct _E_Wayland_Plane E_Wayland_Plane;
 
+/*
+ * NB: All of these structs and interfaces were recently removed from 
+ * wayland so for now, reimplement them here 
+ */
+struct wl_seat;
+struct wl_pointer;
+struct wl_keyboard;
+struct wl_touch;
+
+struct wl_pointer_grab;
+struct wl_pointer_grab_interface 
+{
+   void (*focus)(struct wl_pointer_grab *grab, struct wl_resource *surface, wl_fixed_t x, wl_fixed_t y);
+   void (*motion)(struct wl_pointer_grab *grab, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y);
+   void (*button)(struct wl_pointer_grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
+};
+struct wl_pointer_grab
+{
+   const struct wl_pointer_grab_interface *interface;
+   struct wl_pointer *pointer;
+   struct wl_resource *focus;
+   wl_fixed_t x, y;
+};
+
+struct wl_keyboard_grab;
+struct wl_keyboard_grab_interface
+{
+   void (*key)(struct wl_keyboard_grab *grab, unsigned int timestamp, unsigned int key, unsigned int state);
+   void (*modifiers)(struct wl_keyboard_grab *grab, unsigned int serial, unsigned int mods_depressed, unsigned int mods_latched, unsigned int mods_locked, unsigned int group);
+};
+struct wl_keyboard_grab
+{
+   const struct wl_keyboard_grab_interface *interface;
+   struct wl_keyboard *keyboard;
+   struct wl_resource *focus;
+   unsigned int key;
+};
+
+struct wl_touch_grab;
+struct wl_touch_grab_interface 
+{
+   void (*down)(struct wl_touch_grab *grab, unsigned int timestamp, int touch_id, wl_fixed_t sx, wl_fixed_t sy);
+   void (*up)(struct wl_touch_grab *grab, unsigned int timestamp, int touch_id);
+   void (*motion)(struct wl_touch_grab *grab, unsigned int timestamp, int touch_id, wl_fixed_t sx, wl_fixed_t sy);
+};
+struct wl_touch_grab
+{
+   const struct wl_touch_grab_interface *interface;
+   struct wl_touch *touch;
+   struct wl_resource *focus;
+};
+
+struct wl_pointer 
+{
+   struct wl_seat *seat;
+
+   struct wl_list resource_list;
+   struct wl_resource *focus;
+   struct wl_resource *focus_resource;
+   struct wl_listener focus_listener;
+   unsigned int focus_serial;
+   struct wl_signal focus_signal;
+
+   struct wl_pointer_grab *grab;
+   struct wl_pointer_grab default_grab;
+   wl_fixed_t grab_x, grab_y;
+   unsigned int grab_button;
+   unsigned int grab_serial;
+   unsigned int grab_time;
+
+   wl_fixed_t x, y;
+   struct wl_resource *current;
+   struct wl_listener current_listener;
+   wl_fixed_t current_x, current_y;
+
+   unsigned int button_count;
+};
+
+struct wl_keyboard 
+{
+   struct wl_seat *seat;
+
+   struct wl_list resource_list;
+   struct wl_resource *focus;
+   struct wl_resource *focus_resource;
+   struct wl_listener focus_listener;
+   unsigned int focus_serial;
+   struct wl_signal focus_signal;
+
+   struct wl_keyboard_grab *grab;
+   struct wl_keyboard_grab default_grab;
+   unsigned int grab_key;
+   unsigned int grab_serial;
+   unsigned int grab_time;
+
+   struct wl_array keys;
+
+   struct 
+     {
+        unsigned int mods_depressed;
+        unsigned int mods_latched;
+        unsigned int mods_locked;
+        unsigned int group;
+     } modifiers;
+};
+
+struct wl_touch 
+{
+   struct wl_seat *seat;
+
+   struct wl_list resource_list;
+   struct wl_resource *focus;
+   struct wl_resource *focus_resource;
+   struct wl_listener focus_listener;
+   unsigned int focus_serial;
+   struct wl_signal focus_signal;
+
+   struct wl_touch_grab *grab;
+   struct wl_touch_grab default_grab;
+   wl_fixed_t grab_x, grab_y;
+   unsigned int grab_serial;
+   unsigned int grab_time;
+};
+
+struct wl_data_offer 
+{
+   struct wl_resource resource;
+   struct wl_data_source *source;
+   struct wl_listener source_destroy_listener;
+};
+
+struct wl_data_source 
+{
+   struct wl_resource resource;
+   struct wl_array mime_types;
+
+   void (*accept)(struct wl_data_source *source,
+                  uint32_t serial, const char *mime_type);
+   void (*send)(struct wl_data_source *source,
+                const char *mime_type, int32_t fd);
+   void (*cancel)(struct wl_data_source *source);
+};
+
+struct wl_seat 
+{
+   struct wl_list base_resource_list;
+   struct wl_signal destroy_signal;
+
+   struct wl_pointer *pointer;
+   struct wl_keyboard *keyboard;
+   struct wl_touch *touch;
+
+   unsigned int selection_serial;
+   struct wl_data_source *selection_data_source;
+   struct wl_listener selection_data_source_listener;
+   struct wl_signal selection_signal;
+
+   struct wl_list drag_resource_list;
+   struct wl_client *drag_client;
+   struct wl_data_source *drag_data_source;
+   struct wl_listener drag_data_source_listener;
+   struct wl_resource *drag_focus;
+   struct wl_resource *drag_focus_resource;
+   struct wl_listener drag_focus_listener;
+   struct wl_pointer_grab drag_grab;
+   struct wl_resource *drag_surface;
+   struct wl_listener drag_icon_listener;
+   struct wl_signal drag_icon_signal;
+};
+
 enum _E_Wayland_Shell_Surface_Type
 {
    E_WAYLAND_SHELL_SURFACE_TYPE_NONE,
@@ -82,7 +252,8 @@ struct _E_Wayland_Surface
 {
    struct 
      {
-        struct wl_surface surface;
+        struct wl_resource surface;
+        /* struct wl_surface surface; */
         struct wl_list link, frames;
      } wl;
 
@@ -390,6 +561,36 @@ extern E_Wayland_Compositor *_e_wl_comp;
 
 EINTERN Eina_Bool e_comp_wl_init(void);
 EINTERN void e_comp_wl_shutdown(void);
+
+EAPI void wl_seat_init(struct wl_seat *seat);
+EAPI void wl_seat_release(struct wl_seat *seat);
+
+EAPI void wl_seat_set_pointer(struct wl_seat *seat, struct wl_pointer *pointer);
+EAPI void wl_seat_set_keyboard(struct wl_seat *seat, struct wl_keyboard *keyboard);
+EAPI void wl_seat_set_touch(struct wl_seat *seat, struct wl_touch *touch);
+
+EAPI void wl_pointer_init(struct wl_pointer *pointer);
+EAPI void wl_pointer_release(struct wl_pointer *pointer);
+EAPI void wl_pointer_set_focus(struct wl_pointer *pointer, struct wl_resource *surface, wl_fixed_t sx, wl_fixed_t sy);
+EAPI void wl_pointer_start_grab(struct wl_pointer *pointer, struct wl_pointer_grab *grab);
+EAPI void wl_pointer_end_grab(struct wl_pointer *pointer);
+EAPI void wl_pointer_set_current(struct wl_pointer *pointer, struct wl_resource *surface);
+
+EAPI void wl_keyboard_init(struct wl_keyboard *keyboard);
+EAPI void wl_keyboard_release(struct wl_keyboard *keyboard);
+EAPI void wl_keyboard_set_focus(struct wl_keyboard *keyboard, struct wl_resource *surface);
+EAPI void wl_keyboard_start_grab(struct wl_keyboard *device, struct wl_keyboard_grab *grab);
+EAPI void wl_keyboard_end_grab(struct wl_keyboard *keyboard);
+
+EAPI void wl_touch_init(struct wl_touch *touch);
+EAPI void wl_touch_release(struct wl_touch *touch);
+EAPI void wl_touch_start_grab(struct wl_touch *device, struct wl_touch_grab *grab);
+EAPI void wl_touch_end_grab(struct wl_touch *touch);
+
+EAPI void wl_data_device_set_keyboard_focus(struct wl_seat *seat);
+EAPI int wl_data_device_manager_init(struct wl_display *display);
+EAPI struct wl_resource *wl_data_source_send_offer(struct wl_data_source *source, struct wl_resource *target);
+EAPI void wl_seat_set_selection(struct wl_seat *seat, struct wl_data_source *source, uint32_t serial);
 
 EAPI unsigned int e_comp_wl_time_get(void);
 EAPI void e_comp_wl_input_modifiers_update(unsigned int serial);
