@@ -64,6 +64,7 @@ Changes:
         * deskpreview renamed to bgpreview
         * e_widget_bgpreview_desk_add now takes an evas instead of an evas object
         * e_fm2_optimal_size_calc returns bool to indicate whether the returned size can be used
+        * e_desk_last_focus now returns the border it tries to apply focus to
     Config:
         * move winlist_warp_speed option to pointer_warp_speed
         * bindings now use new E_Binding_Event structs for mouse events

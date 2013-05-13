@@ -1,3 +1,7 @@
+2013-05-14 Mike Blumenkrantz
+
+        * e_desk_last_focused now returns the border it wants to focus
+
 2013-05-08 Mike Blumenkrantz
 
         * e_fm2_optimal_size_calc returns bool to indicate whether the returned size can be used

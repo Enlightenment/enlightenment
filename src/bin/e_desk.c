@@ -369,7 +369,7 @@ e_desk_deskshow(E_Zone *zone)
                    _e_desk_event_desk_deskshow_free, NULL);
 }
 
-EAPI void
+EAPI E_Border *
 e_desk_last_focused_focus(E_Desk *desk)
 {
    Eina_List *l = NULL;
@@ -390,10 +390,11 @@ e_desk_last_focused_focus(E_Desk *desk)
              if (!bd->lock_focus_out)
                {
                   e_border_focus_set_with_pointer(bd);
-                  break;
+                  return bd;
                }
           }
      }
+   return NULL;
 }
 
 EAPI void

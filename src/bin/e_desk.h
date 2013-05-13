@@ -71,7 +71,7 @@ EAPI void         e_desk_name_del(int container, int zone, int desk_x, int desk_
 EAPI void         e_desk_name_update(void);
 EAPI void         e_desk_show(E_Desk *desk);
 EAPI void         e_desk_deskshow(E_Zone *zone);
-EAPI void         e_desk_last_focused_focus(E_Desk *desk);
+EAPI E_Border    *e_desk_last_focused_focus(E_Desk *desk);
 EAPI E_Desk      *e_desk_current_get(E_Zone *zone);
 EAPI E_Desk      *e_desk_at_xy_get(E_Zone *zone, int x, int y);
 EAPI E_Desk      *e_desk_at_pos_get(E_Zone *zone, int pos);
