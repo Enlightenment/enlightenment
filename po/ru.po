@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-05-11 11:45+0400\n"
+"POT-Creation-Date: 2013-05-13 13:08+0900\n"
 "PO-Revision-Date: 2013-05-11 11:45+0400\n"
 "Last-Translator: Игорь Мурзов <e-mail@date.by>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -316,7 +316,8 @@ msgstr "Переключить режим прикрепления"
 #: src/bin/e_actions.c:3438 src/bin/e_int_menus.c:186
 #: src/bin/e_int_shelf_config.c:269
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:118
-#: src/modules/fileman/e_mod_menu.c:425 src/modules/ibox/e_mod_config.c:166
+#: src/modules/fileman/e_mod_menu.c:425 src/modules/gadman/e_mod_gadman.c:117
+#: src/modules/ibox/e_mod_config.c:166
 msgid "Desktop"
 msgstr "Рабочий стол"
 
@@ -6234,6 +6235,11 @@ msgstr "Установить как тему"
 msgid "Select Theme"
 msgstr "Выбор темы"
 
+#: src/bin/e_toolbar.c:128
+#, fuzzy
+msgid "EFM Toolbar"
+msgstr "Панель инструментов"
+
 #: src/bin/e_toolbar.c:343
 msgid "Stop Moving/Resizing Items"
 msgstr "Закончить перемещения/изменения элементов"
@@ -11071,6 +11077,11 @@ msgstr "Анимация"
 #: src/modules/gadman/e_mod_config.c:302
 msgid "Background Options"
 msgstr "Настройки фона"
+
+#: src/modules/gadman/e_mod_gadman.c:124
+#, fuzzy
+msgid "Desktop Hover"
+msgstr "Файл .desktop"
 
 #: src/modules/gadman/e_mod_gadman.c:1013
 msgid "Begin move/resize"

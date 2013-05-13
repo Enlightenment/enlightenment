@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-05-06 11:45+0900\n"
+"POT-Creation-Date: 2013-05-13 13:08+0900\n"
 "PO-Revision-Date: 2009-11-09 18:07+0000\n"
 "Last-Translator: Miro Glavić <glavicmiro@gmail.com>\n"
 "Language-Team: Croatian <hr@li.org>\n"
@@ -22,7 +22,7 @@ msgid "About Enlightenment"
 msgstr "O Enlightenment"
 
 #: src/bin/e_about.c:20 src/bin/e_actions.c:2990 src/bin/e_config_dialog.c:288
-#: src/bin/e_fm.c:1079 src/bin/e_int_border_menu.c:193
+#: src/bin/e_fm.c:1079 src/bin/e_int_border_menu.c:209
 #: src/bin/e_int_border_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf/e_conf.c:179
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:868
@@ -33,7 +33,7 @@ msgid "Close"
 msgstr "Zatvori"
 
 #: src/bin/e_about.c:21 src/bin/e_actions.c:3362 src/bin/e_actions.c:3366
-#: src/bin/e_actions.c:3370 src/bin/e_int_menus.c:224 src/bin/e_main.c:671
+#: src/bin/e_actions.c:3370 src/bin/e_int_menus.c:224 src/bin/e_main.c:666
 #: src/modules/conf_interaction/e_int_config_mouse.c:176
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -69,7 +69,7 @@ msgid "Are you sure you want to kill this window?"
 msgstr "Jeste li sigurni da želite zatvoriti ovaj prozor?"
 
 #: src/bin/e_actions.c:373 src/bin/e_actions.c:2995
-#: src/bin/e_int_border_menu.c:748
+#: src/bin/e_int_border_menu.c:774
 msgid "Kill"
 msgstr "Zatvori"
 
@@ -154,12 +154,12 @@ msgstr "Jeste li sigurni da želite hibernirati?"
 msgid "Window : Actions"
 msgstr "Prozor: Akcije"
 
-#: src/bin/e_actions.c:2950 src/bin/e_fm.c:11604
-#: src/bin/e_int_border_menu.c:668
+#: src/bin/e_actions.c:2950 src/bin/e_fm.c:11606
+#: src/bin/e_int_border_menu.c:694
 msgid "Move"
 msgstr "Premjesti"
 
-#: src/bin/e_actions.c:2961 src/bin/e_int_border_menu.c:682
+#: src/bin/e_actions.c:2961 src/bin/e_int_border_menu.c:708
 msgid "Resize"
 msgstr "Promijeni veličinu"
 
@@ -173,12 +173,12 @@ msgstr "Izbornik"
 msgid "Window Menu"
 msgstr "Prozorni Izbornik"
 
-#: src/bin/e_actions.c:2980 src/bin/e_int_border_menu.c:1064
+#: src/bin/e_actions.c:2980 src/bin/e_int_border_menu.c:1090
 #: src/modules/winlist/e_int_config_winlist.c:203
 msgid "Raise"
 msgstr "Uzdigni"
 
-#: src/bin/e_actions.c:2985 src/bin/e_int_border_menu.c:1072
+#: src/bin/e_actions.c:2985 src/bin/e_int_border_menu.c:1098
 msgid "Lower"
 msgstr "Spusti"
 
@@ -221,25 +221,25 @@ msgstr "Preklopnik Moda Cijelog Zaslona"
 msgid "Fullscreen Mode Enable"
 msgstr "Preklopnik Moda Cijelog Zaslona"
 
-#: src/bin/e_actions.c:3027 src/bin/e_int_border_menu.c:383
-#: src/bin/e_int_border_menu.c:643
+#: src/bin/e_actions.c:3027 src/bin/e_int_border_menu.c:409
+#: src/bin/e_int_border_menu.c:669
 msgid "Maximize"
 msgstr "Maksimiziraj"
 
-#: src/bin/e_actions.c:3029 src/bin/e_int_border_menu.c:394
+#: src/bin/e_actions.c:3029 src/bin/e_int_border_menu.c:420
 msgid "Maximize Vertically"
 msgstr "Maksimiziraj Vertikalno"
 
-#: src/bin/e_actions.c:3032 src/bin/e_int_border_menu.c:405
+#: src/bin/e_actions.c:3032 src/bin/e_int_border_menu.c:431
 msgid "Maximize Horizontally"
 msgstr "Maksimiziraj horizontalno"
 
-#: src/bin/e_actions.c:3035 src/bin/e_int_border_menu.c:416
+#: src/bin/e_actions.c:3035 src/bin/e_int_border_menu.c:442
 #, fuzzy
 msgid "Maximize Left"
 msgstr "Maksimiziraj"
 
-#: src/bin/e_actions.c:3038 src/bin/e_int_border_menu.c:427
+#: src/bin/e_actions.c:3038 src/bin/e_int_border_menu.c:453
 #, fuzzy
 msgid "Maximize Right"
 msgstr "Maksimiziraj"
@@ -325,7 +325,8 @@ msgstr "Preklopnik Pribodenog Stanja"
 #: src/bin/e_actions.c:3438 src/bin/e_int_menus.c:186
 #: src/bin/e_int_shelf_config.c:269
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:118
-#: src/modules/fileman/e_mod_menu.c:425 src/modules/ibox/e_mod_config.c:166
+#: src/modules/fileman/e_mod_menu.c:425 src/modules/gadman/e_mod_gadman.c:117
+#: src/modules/ibox/e_mod_config.c:166
 msgid "Desktop"
 msgstr "Radna površina"
 
@@ -687,7 +688,6 @@ msgstr "Prikaži Izbornik..."
 
 #: src/bin/e_actions.c:3348 src/bin/e_actions.c:3353 src/bin/e_actions.c:3358
 #: src/modules/conf/e_mod_main.c:277 src/modules/conf2/e_mod_main.c:310
-#: src/modules/conf2/e_mod_main.c:368
 #: src/modules/everything/evry_plug_apps.c:1169
 #: src/modules/fileman/e_mod_main.c:59
 msgid "Launch"
@@ -698,7 +698,7 @@ msgid "Command"
 msgstr "Naredba"
 
 #: src/bin/e_actions.c:3353 src/bin/e_desktop_editor.c:694
-#: src/bin/e_int_border_menu.c:117
+#: src/bin/e_int_border_menu.c:119
 #, c-format
 msgid "Application"
 msgstr "Aplikacija"
@@ -850,86 +850,86 @@ msgstr "Odaberi Jedan"
 msgid "Cancel"
 msgstr "Poništi"
 
-#: src/bin/e_comp.c:4077
+#: src/bin/e_comp.c:4117
 #, fuzzy
 msgid "Compositor Warning"
 msgstr "Pozicija"
 
-#: src/bin/e_comp.c:4077
+#: src/bin/e_comp.c:4117
 msgid ""
 "Your display driver does not support OpenGL, or<br>no OpenGL engines were "
 "compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
 "engine."
 msgstr ""
 
-#: src/bin/e_comp.c:4096 src/bin/e_comp.c:4118
+#: src/bin/e_comp.c:4136 src/bin/e_comp.c:4158
 #, fuzzy
 msgid "Compositor Error"
 msgstr "Greška kod demontiranja"
 
-#: src/bin/e_comp.c:4096
+#: src/bin/e_comp.c:4136
 msgid "Another compositor is already running<br>on your display server."
 msgstr ""
 
-#: src/bin/e_comp.c:4118
+#: src/bin/e_comp.c:4158
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
 msgstr ""
 
-#: src/bin/e_comp.c:4454 src/modules/bluez4/e_mod_main.c:210
+#: src/bin/e_comp.c:4494 src/modules/bluez4/e_mod_main.c:210
 #: src/modules/conf_comp/e_mod_main.c:55
 msgid "Visible"
 msgstr ""
 
-#: src/bin/e_comp.c:4459 src/modules/conf_comp/e_mod_main.c:60
+#: src/bin/e_comp.c:4499 src/modules/conf_comp/e_mod_main.c:60
 #, fuzzy
 msgid "Focus-Out"
 msgstr "Fokus"
 
-#: src/bin/e_comp.c:4464 src/modules/conf_comp/e_mod_main.c:65
+#: src/bin/e_comp.c:4504 src/modules/conf_comp/e_mod_main.c:65
 #, fuzzy
 msgid "Focus-In"
 msgstr "Fokus"
 
-#: src/bin/e_comp.c:4469 src/bin/e_int_border_prop.c:510
+#: src/bin/e_comp.c:4509 src/bin/e_int_border_prop.c:510
 #: src/modules/conf_comp/e_mod_main.c:70
 msgid "Hidden"
 msgstr "Skriven"
 
-#: src/bin/e_comp.c:4518 src/bin/e_int_border_prop.c:444
+#: src/bin/e_comp.c:4558 src/bin/e_int_border_prop.c:444
 #: src/bin/e_int_border_remember.c:698 src/modules/conf_comp/e_mod_main.c:177
 #: src/modules/wizard/page_050.c:95
 msgid "Title"
 msgstr "Naslov"
 
-#: src/bin/e_comp.c:4601
+#: src/bin/e_comp.c:4641
 #, fuzzy
 msgid "Use fast composite effects for windows"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4601 src/bin/e_comp.c:4603 src/bin/e_comp.c:4605
-#: src/bin/e_comp.c:4607 src/bin/e_comp.c:4609 src/bin/e_comp.c:4612
-#: src/bin/e_comp.c:4614 src/bin/e_comp.c:4616 src/bin/e_comp.c:4618
-#: src/bin/e_comp.c:4620 src/bin/e_comp.c:4622 src/bin/e_comp.c:4626
-#: src/bin/e_comp.c:4630 src/bin/e_comp.c:4635 src/bin/e_comp.c:4638
-#: src/bin/e_comp.c:4641 src/bin/e_comp.c:4644 src/bin/e_comp.c:4647
-#: src/bin/e_comp.c:4654 src/bin/e_comp.c:4657 src/bin/e_comp.c:4664
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4676
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4684
-#: src/bin/e_comp.c:4688 src/bin/e_comp.c:4689 src/bin/e_comp.c:4690
-#: src/bin/e_comp.c:4916 src/bin/e_comp.c:4917
+#: src/bin/e_comp.c:4641 src/bin/e_comp.c:4643 src/bin/e_comp.c:4645
+#: src/bin/e_comp.c:4647 src/bin/e_comp.c:4649 src/bin/e_comp.c:4652
+#: src/bin/e_comp.c:4654 src/bin/e_comp.c:4656 src/bin/e_comp.c:4658
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4666
+#: src/bin/e_comp.c:4670 src/bin/e_comp.c:4675 src/bin/e_comp.c:4678
+#: src/bin/e_comp.c:4681 src/bin/e_comp.c:4684 src/bin/e_comp.c:4687
+#: src/bin/e_comp.c:4694 src/bin/e_comp.c:4697 src/bin/e_comp.c:4704
+#: src/bin/e_comp.c:4712 src/bin/e_comp.c:4714 src/bin/e_comp.c:4716
+#: src/bin/e_comp.c:4719 src/bin/e_comp.c:4721 src/bin/e_comp.c:4724
+#: src/bin/e_comp.c:4728 src/bin/e_comp.c:4729 src/bin/e_comp.c:4730
+#: src/bin/e_comp.c:4956 src/bin/e_comp.c:4957
 #: src/modules/conf_comp/e_mod_main.c:259
 #, fuzzy
 msgid "composite"
 msgstr "Pozicija"
 
-#: src/bin/e_comp.c:4601 src/bin/e_comp.c:4612 src/bin/e_comp.c:4626
-#: src/bin/e_comp.c:4630 src/bin/e_comp.c:4635 src/bin/e_comp.c:4638
-#: src/bin/e_comp.c:4641 src/bin/e_comp.c:4644 src/bin/e_comp.c:4647
-#: src/bin/e_comp.c:4654 src/bin/e_comp.c:4657 src/bin/e_comp.c:4664
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4676
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4684
+#: src/bin/e_comp.c:4641 src/bin/e_comp.c:4652 src/bin/e_comp.c:4666
+#: src/bin/e_comp.c:4670 src/bin/e_comp.c:4675 src/bin/e_comp.c:4678
+#: src/bin/e_comp.c:4681 src/bin/e_comp.c:4684 src/bin/e_comp.c:4687
+#: src/bin/e_comp.c:4694 src/bin/e_comp.c:4697 src/bin/e_comp.c:4704
+#: src/bin/e_comp.c:4712 src/bin/e_comp.c:4714 src/bin/e_comp.c:4716
+#: src/bin/e_comp.c:4719 src/bin/e_comp.c:4721 src/bin/e_comp.c:4724
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
 #: src/bin/e_configure_option.c:1510 src/bin/e_configure_option.c:1543
 #: src/bin/e_configure_option.c:1562 src/bin/e_configure_option.c:1566
@@ -992,10 +992,10 @@ msgstr "Pozicija"
 msgid "border"
 msgstr "Bordura"
 
-#: src/bin/e_comp.c:4601 src/bin/e_comp.c:4603 src/bin/e_comp.c:4605
-#: src/bin/e_comp.c:4607 src/bin/e_comp.c:4609 src/bin/e_comp.c:4612
-#: src/bin/e_comp.c:4614 src/bin/e_comp.c:4616 src/bin/e_comp.c:4618
-#: src/bin/e_comp.c:4620 src/bin/e_comp.c:4622 src/bin/e_comp.c:4630
+#: src/bin/e_comp.c:4641 src/bin/e_comp.c:4643 src/bin/e_comp.c:4645
+#: src/bin/e_comp.c:4647 src/bin/e_comp.c:4649 src/bin/e_comp.c:4652
+#: src/bin/e_comp.c:4654 src/bin/e_comp.c:4656 src/bin/e_comp.c:4658
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4670
 #: src/bin/e_configure_option.c:1464 src/bin/e_configure_option.c:1468
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1476
 #: src/bin/e_configure_option.c:1805 src/bin/e_configure_option.c:1807
@@ -1009,10 +1009,10 @@ msgstr "Bordura"
 msgid "theme"
 msgstr "Tema"
 
-#: src/bin/e_comp.c:4601 src/bin/e_comp.c:4603 src/bin/e_comp.c:4605
-#: src/bin/e_comp.c:4607 src/bin/e_comp.c:4609 src/bin/e_comp.c:4612
-#: src/bin/e_comp.c:4614 src/bin/e_comp.c:4616 src/bin/e_comp.c:4618
-#: src/bin/e_comp.c:4620 src/bin/e_comp.c:4622
+#: src/bin/e_comp.c:4641 src/bin/e_comp.c:4643 src/bin/e_comp.c:4645
+#: src/bin/e_comp.c:4647 src/bin/e_comp.c:4649 src/bin/e_comp.c:4652
+#: src/bin/e_comp.c:4654 src/bin/e_comp.c:4656 src/bin/e_comp.c:4658
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662
 #: src/bin/e_configure_option.c:1464 src/bin/e_configure_option.c:1468
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1476
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
@@ -1024,12 +1024,12 @@ msgstr "Tema"
 msgid "animate"
 msgstr "Animacije"
 
-#: src/bin/e_comp.c:4603
+#: src/bin/e_comp.c:4643
 #, fuzzy
 msgid "Use fast composite effects for menus"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4603 src/bin/e_comp.c:4614
+#: src/bin/e_comp.c:4643 src/bin/e_comp.c:4654
 #: src/bin/e_configure_option.c:1490 src/bin/e_configure_option.c:1493
 #: src/bin/e_configure_option.c:1496 src/bin/e_configure_option.c:1499
 #: src/bin/e_configure_option.c:1502 src/bin/e_configure_option.c:1693
@@ -1044,57 +1044,57 @@ msgstr "Dopustite iznad prozora preko cijelog prozora"
 msgid "menu"
 msgstr ""
 
-#: src/bin/e_comp.c:4605
+#: src/bin/e_comp.c:4645
 #, fuzzy
 msgid "Use fast composite effects for popups"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4605 src/bin/e_comp.c:4616
+#: src/bin/e_comp.c:4645 src/bin/e_comp.c:4656
 #, fuzzy
 msgid "popup"
 msgstr "Pop-up"
 
-#: src/bin/e_comp.c:4607
+#: src/bin/e_comp.c:4647
 #, fuzzy
 msgid "Use fast composite effects for objects"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4609
+#: src/bin/e_comp.c:4649
 #, fuzzy
 msgid ""
 "Use fast composite effects for override-redirect windows (tooltips and such)"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4612 src/modules/conf_comp/e_mod_config.c:226
+#: src/bin/e_comp.c:4652 src/modules/conf_comp/e_mod_config.c:226
 #, fuzzy
 msgid "Disable composite effects for windows"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4614 src/modules/conf_comp/e_mod_config.c:229
+#: src/bin/e_comp.c:4654 src/modules/conf_comp/e_mod_config.c:229
 msgid "Disable composite effects for menus"
 msgstr ""
 
-#: src/bin/e_comp.c:4616 src/modules/conf_comp/e_mod_config.c:232
+#: src/bin/e_comp.c:4656 src/modules/conf_comp/e_mod_config.c:232
 msgid "Disable composite effects for popups"
 msgstr ""
 
-#: src/bin/e_comp.c:4618 src/modules/conf_comp/e_mod_config.c:235
+#: src/bin/e_comp.c:4658 src/modules/conf_comp/e_mod_config.c:235
 #, fuzzy
 msgid "Disable composite effects for objects"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4620
+#: src/bin/e_comp.c:4660
 #, fuzzy
 msgid ""
 "Disable composite effects for override-redirect windows (tooltips and such)"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4622
+#: src/bin/e_comp.c:4662
 #, fuzzy
 msgid "Disable composite effects for the screen"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4622 src/bin/e_configure_option.c:1537
+#: src/bin/e_comp.c:4662 src/bin/e_configure_option.c:1537
 #: src/bin/e_configure_option.c:1539 src/bin/e_configure_option.c:1598
 #: src/bin/e_configure_option.c:1620 src/bin/e_configure_option.c:1622
 #: src/bin/e_configure_option.c:1739 src/bin/e_configure_option.c:1790
@@ -1112,44 +1112,44 @@ msgstr "Dopustite iznad prozora preko cijelog prozora"
 msgid "screen"
 msgstr "Zaslon"
 
-#: src/bin/e_comp.c:4623
+#: src/bin/e_comp.c:4663
 msgid ""
 "This option disables composite effects from themes, such as animating the "
 "screen fade when blanking"
 msgstr ""
 
-#: src/bin/e_comp.c:4626
+#: src/bin/e_comp.c:4666
 #, fuzzy
 msgid "Compositing engine"
 msgstr "Pozicija"
 
-#: src/bin/e_comp.c:4630
+#: src/bin/e_comp.c:4670
 msgid "Default window composite effect"
 msgstr ""
 
-#: src/bin/e_comp.c:4635
+#: src/bin/e_comp.c:4675
 msgid "Smooth scaling of composited window content"
 msgstr ""
 
-#: src/bin/e_comp.c:4638
+#: src/bin/e_comp.c:4678
 #, fuzzy
 msgid "Sync composited windows"
 msgstr "Prozori"
 
-#: src/bin/e_comp.c:4641
+#: src/bin/e_comp.c:4681
 #, fuzzy
 msgid "Loose sync composited windows"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4644
+#: src/bin/e_comp.c:4684
 msgid "Grab server during rendering of composited windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4647
+#: src/bin/e_comp.c:4687
 msgid "Initial draw timeout for newly-mapped composited windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4647 src/bin/e_configure_option.c:1496
+#: src/bin/e_comp.c:4687 src/bin/e_configure_option.c:1496
 #: src/bin/e_configure_option.c:1533 src/bin/e_configure_option.c:1548
 #: src/bin/e_configure_option.c:1583 src/bin/e_configure_option.c:1657
 #: src/bin/e_configure_option.c:1659 src/bin/e_configure_option.c:1660
@@ -1165,56 +1165,56 @@ msgstr ""
 msgid "delay"
 msgstr ""
 
-#: src/bin/e_comp.c:4648
+#: src/bin/e_comp.c:4688
 #, fuzzy, c-format
 msgid "%1.2f seconds"
 msgstr "%.2f sekunde"
 
-#: src/bin/e_comp.c:4654
+#: src/bin/e_comp.c:4694
 msgid "Tear-free compositing (VSYNC)"
 msgstr ""
 
-#: src/bin/e_comp.c:4657
+#: src/bin/e_comp.c:4697
 msgid "Texture from pixmap rendering for composite"
 msgstr ""
 
-#: src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4704
 #, fuzzy
 msgid "Composite swapping method"
 msgstr "Pozicija"
 
-#: src/bin/e_comp.c:4672 src/modules/conf_comp/e_mod_config.c:314
+#: src/bin/e_comp.c:4712 src/modules/conf_comp/e_mod_config.c:314
 #: src/modules/conf_comp/e_mod_config.c:549
 #, fuzzy
 msgid "Don't composite fullscreen windows"
 msgstr "Dopustite iznad prozora preko cijelog prozora"
 
-#: src/bin/e_comp.c:4674
+#: src/bin/e_comp.c:4714
 msgid "Send flush when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4676
+#: src/bin/e_comp.c:4716
 msgid "Send dump when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4679
+#: src/bin/e_comp.c:4719
 msgid "Show framerate when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4681
+#: src/bin/e_comp.c:4721
 msgid "Rolling average for fps display when compositing"
 msgstr ""
 
-#: src/bin/e_comp.c:4682
+#: src/bin/e_comp.c:4722
 #, fuzzy, c-format
 msgid "%1.0f frames"
 msgstr "%1.0f F"
 
-#: src/bin/e_comp.c:4684
+#: src/bin/e_comp.c:4724
 msgid "Composite framerate display corner"
 msgstr ""
 
-#: src/bin/e_comp.c:4688 src/bin/e_comp.c:4917
+#: src/bin/e_comp.c:4728 src/bin/e_comp.c:4957
 #: src/bin/e_configure_option.c:2031 src/bin/e_configure_option.c:2032
 #: src/bin/e_configure_option.c:2033 src/bin/e_configure_option.c:2034
 #: src/bin/e_configure_option.c:2035 src/bin/e_configure_option.c:2036
@@ -1228,33 +1228,33 @@ msgstr ""
 msgid "windows"
 msgstr "Prozori"
 
-#: src/bin/e_comp.c:4772
+#: src/bin/e_comp.c:4812
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
 "need XRender and XFixes support in X11 and Ecore."
 msgstr ""
 
-#: src/bin/e_comp.c:4781
+#: src/bin/e_comp.c:4821
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr ""
 
-#: src/bin/e_comp.c:4864 src/bin/e_comp.c:4870
+#: src/bin/e_comp.c:4904 src/bin/e_comp.c:4910
 #, fuzzy
 msgid "Compositor"
 msgstr "Pozicija"
 
-#: src/bin/e_comp.c:4865
+#: src/bin/e_comp.c:4905
 msgid "Change current window opacity"
 msgstr ""
 
-#: src/bin/e_comp.c:4871
+#: src/bin/e_comp.c:4911
 msgid "Set current window opacity"
 msgstr ""
 
-#: src/bin/e_config.c:972
+#: src/bin/e_config.c:971
 msgid ""
 "Settings data needed upgrading. Your old settings have<br>been wiped and a "
 "new set of defaults initialized. This<br>will happen regularly during "
@@ -1273,7 +1273,7 @@ msgstr ""
 "rekonfigurirati  stvari<br>po vašoj želji. Izvinjavamo se zbog problema sa "
 "vašim postavkama.<br>"
 
-#: src/bin/e_config.c:989
+#: src/bin/e_config.c:988
 msgid ""
 "Your settings are NEWER than Enlightenment. This is very<br>strange. This "
 "should not happen unless you downgraded<br>Enlightenment or copied the "
@@ -1287,18 +1287,18 @@ msgstr ""
 "i radi predostrožnosti vaše postavke su vraćene u<br>originalno stanje. "
 "Izvinjavamo se zbog neugodnosti.<br>"
 
-#: src/bin/e_config.c:1104
+#: src/bin/e_config.c:1103
 msgid ""
 "Your bindings settings version does not match the current settings version."
 "<br>As a result, all bindings have been reloaded from defaults.<br>Sorry for "
 "the inconvenience.<br>"
 msgstr ""
 
-#: src/bin/e_config.c:1653 src/bin/e_config.c:2314
+#: src/bin/e_config.c:1652 src/bin/e_config.c:2313
 msgid "Enlightenment Settings Write Problems"
 msgstr "Problemi Pisanja Enlightenment Postavki"
 
-#: src/bin/e_config.c:1656
+#: src/bin/e_config.c:1655
 #, fuzzy, c-format
 msgid ""
 "Enlightenment has had an error while moving config files<br>from:<br>"
@@ -1310,7 +1310,7 @@ msgstr ""
 "otkrivena:<br>%s<br><br>je uklonjena da bi se izbjegla korupcija podataka."
 "<br>"
 
-#: src/bin/e_config.c:1666 src/bin/e_config.c:2327
+#: src/bin/e_config.c:1665 src/bin/e_config.c:2326
 #: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:856
 #: src/bin/e_desktop_editor.c:919 src/bin/e_entry_dialog.c:63
 #: src/bin/e_exec.c:615 src/bin/e_fm.c:10013 src/bin/e_fm.c:10744
@@ -1330,21 +1330,21 @@ msgstr ""
 msgid "OK"
 msgstr "U redu"
 
-#: src/bin/e_config.c:2205
+#: src/bin/e_config.c:2204
 msgid "Settings Upgraded"
 msgstr "Postavke Unaprijeđene"
 
-#: src/bin/e_config.c:2223
+#: src/bin/e_config.c:2222
 #, fuzzy
 msgid "The EET file handle is bad."
 msgstr "EET file ručka je loše."
 
-#: src/bin/e_config.c:2227
+#: src/bin/e_config.c:2226
 #, fuzzy
 msgid "The file data is empty."
 msgstr "Datoteka podataka je prazna."
 
-#: src/bin/e_config.c:2231
+#: src/bin/e_config.c:2230
 #, fuzzy
 msgid ""
 "The file is not writable. Perhaps the disk is read-only<br>or you lost "
@@ -1353,18 +1353,18 @@ msgstr ""
 "Datoteka nije pisati. Moždaje disk samo za čitanje<br>ili ste izgubili "
 "dozvole za svojim datotekama."
 
-#: src/bin/e_config.c:2235
+#: src/bin/e_config.c:2234
 #, fuzzy
 msgid "Memory ran out while preparing the write.<br>Please free up memory."
 msgstr ""
 "Memorija je ponestalo , a pripreme pišem.<br>Molimo slobodnu memoriju gore."
 
-#: src/bin/e_config.c:2239
+#: src/bin/e_config.c:2238
 #, fuzzy
 msgid "This is a generic error."
 msgstr "To jeopćenito greška."
 
-#: src/bin/e_config.c:2243
+#: src/bin/e_config.c:2242
 #, fuzzy
 msgid ""
 "The settings file is too large.<br>It should be very small (a few hundred KB "
@@ -1373,71 +1373,71 @@ msgstr ""
 "Postavke datoteka je prevelika.<br>To bi trebao biti vrlo mali (nekoliko "
 "stotina KB najviše)."
 
-#: src/bin/e_config.c:2247
+#: src/bin/e_config.c:2246
 msgid "You have I/O errors on the disk.<br>Maybe it needs replacing?"
 msgstr ""
 
-#: src/bin/e_config.c:2251
+#: src/bin/e_config.c:2250
 #, fuzzy
 msgid "You ran out of space while writing the file."
 msgstr "Vi ponestalo prostora , a pisanje na datoteku"
 
-#: src/bin/e_config.c:2255
+#: src/bin/e_config.c:2254
 #, fuzzy
 msgid "The file was closed while writing."
 msgstr "File bio je zatvoren na njega dok je pisao."
 
-#: src/bin/e_config.c:2259
+#: src/bin/e_config.c:2258
 #, fuzzy
 msgid "Memory-mapping (mmap) of the file failed."
 msgstr "Memory - mapiranje (mmap) u datoteke nije uspjelo."
 
-#: src/bin/e_config.c:2263
+#: src/bin/e_config.c:2262
 #, fuzzy
 msgid "X509 Encoding failed."
 msgstr "X509 Kodiranje nije uspjelo."
 
-#: src/bin/e_config.c:2267
+#: src/bin/e_config.c:2266
 #, fuzzy
 msgid "Signature failed."
 msgstr "Hiberniranje nije uspjelo"
 
-#: src/bin/e_config.c:2271
+#: src/bin/e_config.c:2270
 #, fuzzy
 msgid "The signature was invalid."
 msgstr "Potpis je bio nevažeći."
 
-#: src/bin/e_config.c:2275
+#: src/bin/e_config.c:2274
 #, fuzzy
 msgid "Not signed."
 msgstr "(Nema Prozora)"
 
-#: src/bin/e_config.c:2279
+#: src/bin/e_config.c:2278
 #, fuzzy
 msgid "Feature not implemented."
 msgstr "Imaju ne provode."
 
-#: src/bin/e_config.c:2283
+#: src/bin/e_config.c:2282
 #, fuzzy
 msgid "PRNG was not seeded."
 msgstr "PRNG nije bio prepun."
 
-#: src/bin/e_config.c:2287
+#: src/bin/e_config.c:2286
 #, fuzzy
 msgid "Encryption failed."
 msgstr "Suspendiranje nije uspjelo"
 
-#: src/bin/e_config.c:2291
+#: src/bin/e_config.c:2290
 #, fuzzy
 msgid "Decryption failed."
 msgstr "Suspendiranje nije uspjelo"
 
-#: src/bin/e_config.c:2295
+#: src/bin/e_config.c:2294
 #, fuzzy
 msgid "The error is unknown to Enlightenment."
 msgstr "Dobrodošli u Enlightenment"
 
-#: src/bin/e_config.c:2317
+#: src/bin/e_config.c:2316
 #, fuzzy, c-format
 msgid ""
 "Enlightenment has had an error while writing<br>its config file.<br>"
@@ -1495,9 +1495,265 @@ msgstr "Postavke ikone"
 msgid "Preview"
 msgstr "Pregled"
 
+#: src/bin/e_configure_option.c:640
+#: src/modules/conf_window_manipulation/e_int_config_window_display.c:201
+msgid "Linear"
+msgstr "Linearno"
+
+#: src/bin/e_configure_option.c:641
+#: src/modules/conf_window_manipulation/e_int_config_window_display.c:205
+#, fuzzy
+msgid "Accelerate, then decelerate"
+msgstr "Ubrzati , onda usporavati"
+
+#: src/bin/e_configure_option.c:642
+#: src/modules/conf_window_manipulation/e_int_config_window_display.c:209
+msgid "Accelerate"
+msgstr "Ubrzaj"
+
+#: src/bin/e_configure_option.c:643
+#: src/modules/conf_window_manipulation/e_int_config_window_display.c:213
+msgid "Decelerate"
+msgstr "Uspori"
+
+#: src/bin/e_configure_option.c:644
+#, fuzzy
+msgid "Pronounced accelerate"
+msgstr "Ubrzanje Miša"
+
+#: src/bin/e_configure_option.c:645
+#, fuzzy
+msgid "Pronounced decelerate"
+msgstr "Uspori"
+
+#: src/bin/e_configure_option.c:646
+#, fuzzy
+msgid "Pronounced accelerate, then decelerate"
+msgstr "Izgovara Acceleratem onda usporavati"
+
+#: src/bin/e_configure_option.c:647
+#: src/modules/conf_window_manipulation/e_int_config_window_display.c:229
+#, fuzzy
+msgid "Bounce"
+msgstr "​​odskakivati"
+
+#: src/bin/e_configure_option.c:648
+#: src/modules/conf_window_manipulation/e_int_config_window_display.c:233
+#, fuzzy
+msgid "Bounce more"
+msgstr "Odskakivati ​​više"
+
+#: src/bin/e_configure_option.c:668
+#, fuzzy
+msgid "Try not to cover other windows"
+msgstr "Miš preko će fokusirati prozore"
+
+#: src/bin/e_configure_option.c:669
+#, fuzzy
+msgid "Try not to cover gadgets"
+msgstr "Dodaj ostale aparate"
+
+#: src/bin/e_configure_option.c:670
+#, fuzzy
+msgid "Place at mouse pointer (automatic)"
+msgstr "Položi kod pokazivača miša"
+
+#: src/bin/e_configure_option.c:671
+#, fuzzy
+msgid "Place at mouse pointer (interactive)"
+msgstr "Položi kod pokazivača miša"
+
+#: src/bin/e_configure_option.c:691
+#: src/modules/conf_window_manipulation/e_int_config_focus.c:254
+#: src/modules/wizard/page_060.c:33
+#, fuzzy
+msgid "Click"
+msgstr "Sat"
+
+#: src/bin/e_configure_option.c:692
+#: src/modules/conf_window_manipulation/e_int_config_focus.c:256
+#: src/modules/conf_window_manipulation/e_int_config_focus.c:342
+#, fuzzy
+msgid "Pointer"
+msgstr "Fokus pokazivača"
+
+#: src/bin/e_configure_option.c:693
+#: src/modules/conf_window_manipulation/e_int_config_focus.c:258
+#, fuzzy
+msgid "Sloppy"
+msgstr "Loš fokus"
+
+#: src/bin/e_configure_option.c:713
+#, fuzzy
+msgid "Don't set focus on new windows"
+msgstr "Dopustite iznad prozora preko cijelog prozora"
+
+#: src/bin/e_configure_option.c:714
+#, fuzzy
+msgid "Set focus on all new windows"
+msgstr "Uskladi samo jedan prozor"
+
+#: src/bin/e_configure_option.c:715
+msgid "Set focus only on all new dialog windows"
+msgstr ""
+
+#: src/bin/e_configure_option.c:716
+#, fuzzy
+msgid ""
+"Set focus only on new dialog windows if dialog's parent window has focus"
+msgstr "Samo novi dijalozi trebaju biti fokusirani ako je glavni fokusiran"
+
+#: src/bin/e_configure_option.c:736
+#, fuzzy
+msgid "Ignore application"
+msgstr "IBar Aplikacija"
+
+#: src/bin/e_configure_option.c:737
+#, fuzzy
+msgid "Animate application window"
+msgstr "Omiljene Aplikacije"
+
+#: src/bin/e_configure_option.c:738
+#, fuzzy
+msgid "Raise and set focus to application window"
+msgstr "Odabir Obruba Prozora"
+
+#: src/bin/e_configure_option.c:758
+#, fuzzy
+msgid "Resize window, do not resize screen"
+msgstr "Uvrsti prozore iz drugih ekrana"
+
+#: src/bin/e_configure_option.c:759
+#, fuzzy
+msgid "Resize window and screen"
+msgstr "Podizanje prozora na miša preko"
+
+#: src/bin/e_configure_option.c:779 src/bin/e_int_border_menu.c:396
+#: src/bin/e_int_border_prop.c:511
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:207
+msgid "Fullscreen"
+msgstr "Cijeli ekran"
+
+#: src/bin/e_configure_option.c:780
+msgid "Expand to maximum size without covering shelves"
+msgstr ""
+
+#: src/bin/e_configure_option.c:782
+msgid "Expand to maximum size ignoring shelves"
+msgstr ""
+
+#: src/bin/e_configure_option.c:803
+#, fuzzy
+msgid "No hinting"
+msgstr "Savjetovanje"
+
+#: src/bin/e_configure_option.c:804
+#, fuzzy
+msgid "Automatic hinting"
+msgstr "Automatsko Zaključavanje"
+
+#: src/bin/e_configure_option.c:805
+#, fuzzy
+msgid "Bytecode hinting"
+msgstr "Bajtkod"
+
+#: src/bin/e_configure_option.c:828
+#: src/modules/conf_display/e_int_config_desklock.c:259
+#, fuzzy
+msgid "Show on all screens"
+msgstr "Prikaži na svim ekranima"
+
+#: src/bin/e_configure_option.c:829
+#, fuzzy
+msgid "Show on screen of pointer"
+msgstr "Prikaži na zoni zaslona #:"
+
+#: src/bin/e_configure_option.c:830
+#, fuzzy, c-format
+msgid "Show on screen %d"
+msgstr "Prikaži na zoni zaslona #:"
+
+#: src/bin/e_configure_option.c:867
+#, fuzzy
+msgid "No grouping"
+msgstr "Grupiraj po"
+
+#: src/bin/e_configure_option.c:868
+#, fuzzy
+msgid "Virtual desktop"
+msgstr "Virtualna Radna Površina"
+
+#: src/bin/e_configure_option.c:869 src/bin/e_int_border_remember.c:686
+msgid "Window class"
+msgstr "Klasa prozora"
+
+#: src/bin/e_configure_option.c:889
+#, fuzzy
+msgid "No separation"
+msgstr "Odaberi Jedan"
+
+#: src/bin/e_configure_option.c:890
+#, fuzzy
+msgid "Separator bars"
+msgstr "Korištenje razdvojnih traka"
+
+#: src/bin/e_configure_option.c:891
+#, fuzzy
+msgid "Separate menus"
+msgstr "Posebna grupa"
+
+#: src/bin/e_configure_option.c:911
+#, fuzzy
+msgid "No sorting"
+msgstr "Početak"
+
+#: src/bin/e_configure_option.c:912
+#, fuzzy
+msgid "Alphabetical order"
+msgstr "Abecedno"
+
+#: src/bin/e_configure_option.c:913
+#: src/modules/conf_window_manipulation/e_int_config_clientlist.c:148
+msgid "Window stacking layer"
+msgstr "Sloj slaganja prozora"
+
+#: src/bin/e_configure_option.c:914
+msgid "Recently used windows first"
+msgstr ""
+
+#: src/bin/e_configure_option.c:934
+#, fuzzy
+msgid "Group by owner virtual desktop"
+msgstr "Ugrupiraj sa vlastiotm radnom površinom"
+
+#: src/bin/e_configure_option.c:935
+#, fuzzy
+msgid "Group by current virtual desktop"
+msgstr "Ugrupiraj sa aktivnom radnom površinom"
+
+#: src/bin/e_configure_option.c:936
+#: src/modules/conf_window_manipulation/e_int_config_clientlist.c:165
+msgid "Separate group"
+msgstr "Posebna grupa"
+
 #: src/bin/e_configure_option.c:957
 msgid "none"
 msgstr ""
+
+#: src/bin/e_configure_option.c:984
+#, fuzzy
+msgid "Allow windows partly out of the screen limits"
+msgstr "Dopustite iznad prozora preko cijelog prozora"
+
+#: src/bin/e_configure_option.c:985
+#, fuzzy
+msgid "Allow windows completely out of the screen limits"
+msgstr "Dopustite iznad prozora preko cijelog prozora"
+
+#: src/bin/e_configure_option.c:986
+#, fuzzy
+msgid "Keep windows completely within the screen limits"
+msgstr "Dopustite iznad prozora preko cijelog prozora"
 
 #: src/bin/e_configure_option.c:1074 src/bin/e_int_border_prop.c:298
 #: src/modules/clock/e_mod_config.c:103 src/modules/clock/e_mod_config.c:141
@@ -1622,6 +1878,12 @@ msgstr "Margina Autoklizanja"
 msgid "speed"
 msgstr "Brzina Uvijanja"
 
+#: src/bin/e_configure_option.c:1491
+#: src/modules/conf_menus/e_int_config_menus.c:306
+#, fuzzy, c-format
+msgid "%5.0f pixels/s"
+msgstr "%5.0f piksela/sek"
+
 #: src/bin/e_configure_option.c:1492
 msgid "Speed at which the menus move onto screen if offscreen"
 msgstr ""
@@ -1638,6 +1900,13 @@ msgstr "Granica Brzog Kretanja Miša"
 #, fuzzy
 msgid "move"
 msgstr "Ukloni"
+
+#: src/bin/e_configure_option.c:1494 src/bin/e_configure_option.c:1511
+#: src/modules/conf_menus/e_int_config_menus.c:311
+#: src/modules/conf_window_manipulation/e_int_config_window_display.c:193
+#, fuzzy, c-format
+msgid "%4.0f pixels/s"
+msgstr "%4.0f piksela/sek"
 
 #: src/bin/e_configure_option.c:1495
 msgid ""
@@ -1656,6 +1925,11 @@ msgstr ""
 msgid "drag"
 msgstr ""
 
+#: src/bin/e_configure_option.c:1497
+#, c-format
+msgid "%2.2f seconds"
+msgstr "%2.2f sekundi"
+
 #: src/bin/e_configure_option.c:1498
 msgid ""
 "The minimum time before a menu can be closed by clicking the mouse outside "
@@ -1665,6 +1939,20 @@ msgstr ""
 #: src/bin/e_configure_option.c:1499
 msgid "Menu autoscroll margin"
 msgstr ""
+
+#: src/bin/e_configure_option.c:1500 src/bin/e_configure_option.c:1503
+#: src/bin/e_configure_option.c:1595 src/bin/e_configure_option.c:1599
+#: src/bin/e_configure_option.c:1601 src/bin/e_configure_option.c:1603
+#: src/modules/conf_menus/e_int_config_menus.c:290
+#: src/modules/conf_menus/e_int_config_menus.c:295
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:182
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:189
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:196
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:246
+#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:251
+#, c-format
+msgid "%2.0f pixels"
+msgstr "%2.0f piksela"
 
 #: src/bin/e_configure_option.c:1501
 msgid ""
@@ -1727,6 +2015,11 @@ msgstr "Animacije"
 msgid "Framerate"
 msgstr "Frekvencija"
 
+#: src/bin/e_configure_option.c:1515
+#, fuzzy, c-format
+msgid "%1.0f frames/second"
+msgstr "%1.0f F"
+
 #: src/bin/e_configure_option.c:1516
 msgid "The framerate at which animations in Enlightenment occur"
 msgstr ""
@@ -1772,6 +2065,26 @@ msgstr ""
 msgid "priority"
 msgstr ""
 
+#: src/bin/e_configure_option.c:1519
+#: src/modules/conf_display/e_int_config_desklock.c:275
+#: src/modules/conf_display/e_int_config_desks.c:208
+#: src/modules/conf_display/e_int_config_desks.c:213
+#: src/modules/conf_interaction/e_int_config_mouse.c:207
+#: src/modules/conf_interaction/e_int_config_mouse.c:213
+#: src/modules/everything/evry_config.c:405
+#: src/modules/everything/evry_config.c:547
+#: src/modules/everything/evry_config.c:554
+#: src/modules/everything/evry_config.c:580
+#: src/modules/everything/evry_config.c:587
+#: src/modules/fileman/e_mod_config.c:326
+#: src/modules/syscon/e_int_config_syscon.c:148
+#: src/modules/syscon/e_int_config_syscon.c:153
+#: src/modules/syscon/e_int_config_syscon.c:158
+#: src/modules/tiling/e_mod_config.c:129
+#, c-format
+msgid "%1.0f"
+msgstr "%1.0f"
+
 #: src/bin/e_configure_option.c:1521
 #: src/modules/conf_performance/e_int_config_performance.c:138
 #, fuzzy
@@ -1809,6 +2122,11 @@ msgstr "Slike"
 msgid "size"
 msgstr "Promijeni veličinu"
 
+#: src/bin/e_configure_option.c:1522
+#, fuzzy, c-format
+msgid "%4.0f KiB"
+msgstr "%' .0f KB"
+
 #: src/bin/e_configure_option.c:1524
 #: src/modules/conf_performance/e_int_config_performance.c:132
 #, fuzzy
@@ -1820,6 +2138,11 @@ msgstr "Veličina slova Cache"
 msgid "font"
 msgstr ""
 
+#: src/bin/e_configure_option.c:1525
+#, fuzzy, c-format
+msgid "%3.0f KiB"
+msgstr "%' .0f KB"
+
 #: src/bin/e_configure_option.c:1527
 #, fuzzy
 msgid "Edje cache size"
@@ -1830,15 +2153,35 @@ msgstr "Slika predmemorija veličina"
 msgid "edje"
 msgstr ""
 
+#: src/bin/e_configure_option.c:1528
+#: src/modules/conf_performance/e_int_config_performance.c:150
+#, c-format
+msgid "%1.0f files"
+msgstr "%1.0f datoteke"
+
 #: src/bin/e_configure_option.c:1530
 #, fuzzy
 msgid "Edje collection cache size"
 msgstr "Broj Edje zbirki cachea"
 
+#: src/bin/e_configure_option.c:1531
+#: src/modules/conf_performance/e_int_config_performance.c:156
+#, c-format
+msgid "%1.0f collections"
+msgstr "%1.0f kolekcije"
+
 #: src/bin/e_configure_option.c:1533
 #, fuzzy
 msgid "Cache flushing interval"
 msgstr "Cache flush interval"
+
+#: src/bin/e_configure_option.c:1534 src/modules/battery/e_mod_config.c:237
+#: src/modules/conf_performance/e_int_config_performance.c:128
+#: src/modules/conf_window_manipulation/e_int_config_window_process.c:109
+#: src/modules/temperature/e_mod_config.c:233
+#, c-format
+msgid "%1.0f ticks"
+msgstr "%1.0f otkucaja"
 
 #: src/bin/e_configure_option.c:1537
 #, fuzzy
@@ -2024,6 +2367,12 @@ msgstr "Omogući ikona temu"
 msgid "Window autoraise delay"
 msgstr "Izlog Prozora"
 
+#: src/bin/e_configure_option.c:1584 src/bin/e_configure_option.c:1916
+#: src/modules/pager/e_mod_config.c:249 src/modules/pager/e_mod_config.c:286
+#, c-format
+msgid "%1.1f seconds"
+msgstr "%1.1f sekundi"
+
 #: src/bin/e_configure_option.c:1585
 #, fuzzy
 msgid "Revert window focus on desk switch"
@@ -2054,6 +2403,17 @@ msgstr ""
 #: src/bin/e_configure_option.c:1589
 msgid "Speed to move pointer when warping between windows"
 msgstr ""
+
+#: src/bin/e_configure_option.c:1590
+#: src/modules/conf_window_manipulation/e_int_config_focus.c:337
+#: src/modules/everything/evry_config.c:563
+#: src/modules/everything/evry_config.c:570
+#: src/modules/winlist/e_int_config_winlist.c:231
+#: src/modules/winlist/e_int_config_winlist.c:271
+#: src/modules/winlist/e_int_config_winlist.c:276
+#, c-format
+msgid "%1.2f"
+msgstr "%1.2f"
 
 #: src/bin/e_configure_option.c:1591
 #, fuzzy
@@ -2263,6 +2623,12 @@ msgstr "Winlist Naslov"
 msgid "Winlist minimum width"
 msgstr "Minimalna Širina"
 
+#: src/bin/e_configure_option.c:1636 src/bin/e_configure_option.c:1638
+#: src/bin/e_configure_option.c:1640 src/bin/e_configure_option.c:1642
+#, fuzzy, c-format
+msgid "%4.0f pixels"
+msgstr "%1.0f piksela"
+
 #: src/bin/e_configure_option.c:1637
 #, fuzzy
 msgid "Winlist minimum height"
@@ -2338,6 +2704,18 @@ msgstr ""
 #, fuzzy
 msgid "Window kill delay"
 msgstr "Izlog Prozora"
+
+#: src/bin/e_configure_option.c:1658 src/bin/e_configure_option.c:1661
+#: src/bin/e_configure_option.c:1772 src/bin/e_configure_option.c:1873
+#: src/bin/e_configure_option.c:1905 src/bin/e_configure_option.c:1921
+#: src/modules/conf_display/e_int_config_desklock.c:289
+#: src/modules/conf_display/e_int_config_desklock.c:312
+#: src/modules/conf_display/e_int_config_screensaver.c:174
+#: src/modules/conf_display/e_int_config_screensaver.c:187
+#: src/modules/fileman/e_mod_config.c:415 src/modules/fileman/e_mod_main.c:445
+#, c-format
+msgid "%1.0f seconds"
+msgstr "%1.0f sekundi"
 
 #: src/bin/e_configure_option.c:1659
 #, fuzzy
@@ -2552,9 +2930,7 @@ msgstr ""
 #: src/bin/e_configure_option.c:1720 src/bin/e_configure_option.c:1722
 #: src/bin/e_configure_option.c:1870 src/bin/e_configure_option.c:2058
 #: src/bin/e_configure_option.c:2059 src/bin/e_configure_option.c:2060
-#: src/bin/e_configure_option.c:2061 src/modules/everything/e_mod_main.c:70
-#: src/modules/fileman/e_mod_main.c:448
-#: src/modules/quickaccess/e_mod_main.c:68
+#: src/bin/e_configure_option.c:2061
 #, fuzzy
 msgid "settings"
 msgstr "Postavke"
@@ -2653,6 +3029,13 @@ msgstr "Čuvar Zaslona"
 msgid "Desklock activates X seconds after screensaver activates"
 msgstr "Zaključavanje se aktivira nakon X screensaver"
 
+#: src/bin/e_configure_option.c:1746 src/bin/e_configure_option.c:1749
+#: src/bin/e_configure_option.c:1753 src/bin/e_configure_option.c:1757
+#: src/bin/e_configure_option.c:1765
+#, fuzzy, c-format
+msgid "%2.0f seconds"
+msgstr "%1.0f sekundi"
+
 #: src/bin/e_configure_option.c:1747
 #, fuzzy
 msgid "Desklock activates when idle"
@@ -2743,6 +3126,11 @@ msgstr ""
 msgid "Window list menu length limit (characters)"
 msgstr ""
 
+#: src/bin/e_configure_option.c:1803
+#, fuzzy, c-format
+msgid "%1.0f characters"
+msgstr "%1.0f Karaktera"
+
 #: src/bin/e_configure_option.c:1805
 #, fuzzy
 msgid "Use Enlightenment theme cursor"
@@ -2752,6 +3140,18 @@ msgstr "Upotrijebi Enlightenment Pokazivač"
 #, fuzzy
 msgid "Mouse cursor size"
 msgstr "Pokazivač Miša"
+
+#: src/bin/e_configure_option.c:1808 src/bin/e_configure_option.c:1850
+#: src/bin/e_configure_option.c:1875 src/bin/e_configure_option.c:1877
+#: src/bin/e_configure_option.c:1879 src/bin/e_configure_option.c:1881
+#: src/bin/e_configure_option.c:1899 src/bin/e_configure_option.c:1901
+#: src/bin/e_configure_option.c:1903
+#: src/modules/conf_interaction/e_int_config_interaction.c:105
+#: src/modules/conf_interaction/e_int_config_mouse.c:162
+#: src/modules/fileman/e_mod_main.c:394
+#, c-format
+msgid "%1.0f pixels"
+msgstr "%1.0f piksela"
 
 #: src/bin/e_configure_option.c:1810
 #, fuzzy
@@ -2823,6 +3223,11 @@ msgstr "Listanje Sličica"
 #: src/bin/e_configure_option.c:1851
 msgid "Thumbscroll momentum threshold"
 msgstr ""
+
+#: src/bin/e_configure_option.c:1852
+#, fuzzy, c-format
+msgid "%1.0f pixels/second"
+msgstr "%1.0f piksela/sek"
 
 #: src/bin/e_configure_option.c:1853
 #, fuzzy
@@ -2908,6 +3313,11 @@ msgstr "Lični fakotr skaliranja"
 msgid "scale"
 msgstr "Prostor"
 
+#: src/bin/e_configure_option.c:1888
+#, fuzzy, c-format
+msgid "%1.2f pixels"
+msgstr "%1.0f piksela"
+
 #: src/bin/e_configure_option.c:1890
 msgid "Use screen DPI for scaling"
 msgstr ""
@@ -2919,6 +3329,12 @@ msgstr ""
 #: src/bin/e_configure_option.c:1894
 msgid "Custom DPI to use when scaling"
 msgstr ""
+
+#: src/bin/e_configure_option.c:1895
+#: src/modules/conf_theme/e_int_config_scale.c:314
+#, c-format
+msgid "%1.0f DPI"
+msgstr "%1.0f DPI"
 
 #: src/bin/e_configure_option.c:1898
 msgid "System Console primary action icon size"
@@ -3121,7 +3537,7 @@ msgstr "Prikaži Pokazivač"
 
 #: src/bin/e_configure_option.c:2068
 #, fuzzy
-msgid "iconif"
+msgid "iconify"
 msgstr "Ikonizirati"
 
 #: src/bin/e_container.c:84
@@ -3335,7 +3751,7 @@ msgstr "Izbriši"
 msgid "Cut"
 msgstr "Izreži"
 
-#: src/bin/e_entry.c:497 src/bin/e_fm.c:9092 src/bin/e_fm.c:11599
+#: src/bin/e_entry.c:497 src/bin/e_fm.c:9092 src/bin/e_fm.c:11601
 msgid "Copy"
 msgstr "Kopiraj"
 
@@ -3598,7 +4014,7 @@ msgstr ""
 msgid "Actions..."
 msgstr "Akcija"
 
-#: src/bin/e_fm.c:8891 src/bin/e_fm.c:9113 src/bin/e_fm.c:11612
+#: src/bin/e_fm.c:8891 src/bin/e_fm.c:9113 src/bin/e_fm.c:11614
 msgid "Link"
 msgstr "Link"
 
@@ -3786,7 +4202,7 @@ msgstr "Otvori upravitelja datoteka pri montiranju"
 msgid "Retry"
 msgstr "Ponovi"
 
-#: src/bin/e_fm.c:10418 src/bin/e_fm.c:10638 src/bin/e_fm.c:11620
+#: src/bin/e_fm.c:10418 src/bin/e_fm.c:10638 src/bin/e_fm.c:11622
 msgid "Abort"
 msgstr "Odustani"
 
@@ -3992,7 +4408,7 @@ msgstr "Upravitelj Aparata"
 msgid "%s does not support disabling autoscrolling"
 msgstr ""
 
-#: src/bin/e_gadcon.c:1682 src/bin/e_int_border_menu.c:139
+#: src/bin/e_gadcon.c:1682 src/bin/e_int_border_menu.c:142
 #, fuzzy
 msgid "Move to"
 msgstr "Premjesti Tekst"
@@ -4217,7 +4633,7 @@ msgid "Size"
 msgstr "Veličina"
 
 #: src/bin/e_int_border_locks.c:313 src/bin/e_int_border_locks.c:332
-#: src/bin/e_int_border_menu.c:696 src/bin/e_int_border_prop.c:501
+#: src/bin/e_int_border_menu.c:722 src/bin/e_int_border_prop.c:501
 #: src/bin/e_int_border_remember.c:748 src/bin/e_int_shelf_config.c:149
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:302
 msgid "Stacking"
@@ -4282,92 +4698,92 @@ msgstr "Ponašanje"
 msgid "Remember these Locks"
 msgstr "Zapamti ove Brave"
 
-#: src/bin/e_int_border_menu.c:126
+#: src/bin/e_int_border_menu.c:129
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:332
 #, fuzzy
 msgid "Window"
 msgstr "Prozori"
 
-#: src/bin/e_int_border_menu.c:148 src/bin/e_int_border_menu.c:1024
+#: src/bin/e_int_border_menu.c:151 src/bin/e_int_border_menu.c:1050
 #, fuzzy
 msgid "Always on Top"
 msgstr "Uvijek na vrhu"
 
-#: src/bin/e_int_border_menu.c:163 src/bin/e_int_border_prop.c:506
+#: src/bin/e_int_border_menu.c:166 src/bin/e_int_border_prop.c:506
 msgid "Sticky"
 msgstr "Ljepljivo"
 
-#: src/bin/e_int_border_menu.c:177
+#: src/bin/e_int_border_menu.c:180
 #, fuzzy
 msgid "Shade"
 msgstr "Sjenčeno"
 
-#: src/bin/e_int_border_menu.c:370 src/bin/e_int_border_prop.c:511
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:207
-msgid "Fullscreen"
-msgstr "Cijeli ekran"
+#: src/bin/e_int_border_menu.c:193
+#, fuzzy
+msgid "Borderless"
+msgstr "Bordure"
 
-#: src/bin/e_int_border_menu.c:438
+#: src/bin/e_int_border_menu.c:464
 msgid "Unmaximize"
 msgstr "Odmaksimiziraj"
 
-#: src/bin/e_int_border_menu.c:580
+#: src/bin/e_int_border_menu.c:606
 msgid "Edit Icon"
 msgstr "Uredi Ikonu"
 
-#: src/bin/e_int_border_menu.c:588
+#: src/bin/e_int_border_menu.c:614
 msgid "Create Icon"
 msgstr "Kreiraj Ikonu"
 
-#: src/bin/e_int_border_menu.c:596
+#: src/bin/e_int_border_menu.c:622
 #, fuzzy
 msgid "Add to Favorites Menu"
 msgstr "Dodaj u favorite Izbornik"
 
-#: src/bin/e_int_border_menu.c:601
+#: src/bin/e_int_border_menu.c:627
 #, fuzzy
 msgid "Add to IBar"
 msgstr "Dodaj u Ibra"
 
-#: src/bin/e_int_border_menu.c:609
+#: src/bin/e_int_border_menu.c:635
 #, fuzzy
 msgid "Create Keyboard Shortcut"
 msgstr "Stvoriti Prečac tipkovnice"
 
-#: src/bin/e_int_border_menu.c:655
+#: src/bin/e_int_border_menu.c:681
 #: src/modules/everything/evry_plug_windows.c:438
 msgid "Iconify"
 msgstr "Ikonizirati"
 
-#: src/bin/e_int_border_menu.c:705
+#: src/bin/e_int_border_menu.c:731
 msgid "Skip"
 msgstr "Preskoči"
 
-#: src/bin/e_int_border_menu.c:715 src/modules/conf_theme/e_mod_main.c:120
+#: src/bin/e_int_border_menu.c:741 src/modules/conf_theme/e_mod_main.c:120
 msgid "Border"
 msgstr "Bordura"
 
-#: src/bin/e_int_border_menu.c:727 src/bin/e_int_border_remember.c:652
+#: src/bin/e_int_border_menu.c:753 src/bin/e_int_border_remember.c:652
 #: src/bin/e_int_border_remember.c:751
 msgid "Locks"
 msgstr "Brave"
 
-#: src/bin/e_int_border_menu.c:735
+#: src/bin/e_int_border_menu.c:761
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:128
 msgid "Remember"
 msgstr "Zapamti"
 
-#: src/bin/e_int_border_menu.c:757
+#: src/bin/e_int_border_menu.c:783
 #, fuzzy
 msgid "ICCCM/NetWM"
 msgstr "NetWM"
 
-#: src/bin/e_int_border_menu.c:933
+#: src/bin/e_int_border_menu.c:959
 #, fuzzy, c-format
 msgid "Screen %d"
 msgstr "Zaslon"
 
-#: src/bin/e_int_border_menu.c:1035 src/bin/e_int_border_prop.c:157
+#: src/bin/e_int_border_menu.c:1061 src/bin/e_int_border_prop.c:157
 #: src/bin/e_int_border_prop.c:179
 #: src/modules/conf_theme/e_int_config_fonts.c:100
 #: src/modules/conf_theme/e_int_config_fonts.c:264
@@ -4376,46 +4792,46 @@ msgstr "Zaslon"
 msgid "Normal"
 msgstr "Normalno"
 
-#: src/bin/e_int_border_menu.c:1046
+#: src/bin/e_int_border_menu.c:1072
 msgid "Always Below"
 msgstr "Uvijek Ispod"
 
-#: src/bin/e_int_border_menu.c:1090
+#: src/bin/e_int_border_menu.c:1116
 msgid "Pin to Desktop"
 msgstr "Pribodi na Radnu Površinu"
 
-#: src/bin/e_int_border_menu.c:1101
+#: src/bin/e_int_border_menu.c:1127
 msgid "Unpin from Desktop"
 msgstr "Skini sa Radne Površine"
 
-#: src/bin/e_int_border_menu.c:1191
+#: src/bin/e_int_border_menu.c:1217
 msgid "Select Border Style"
 msgstr "Odaberi Vrstu Bordure"
 
-#: src/bin/e_int_border_menu.c:1203
+#: src/bin/e_int_border_menu.c:1229
 #, fuzzy
 msgid "Use Enlightenment Default Icon Preference"
 msgstr "Upotrijebi E17 Standardne Postavke Ikone"
 
-#: src/bin/e_int_border_menu.c:1211
+#: src/bin/e_int_border_menu.c:1237
 #, fuzzy
 msgid "Use Application Provided Icon"
 msgstr "Upotrijebi Ikonu Snabdjevenu Aplikacijom "
 
-#: src/bin/e_int_border_menu.c:1219
+#: src/bin/e_int_border_menu.c:1245
 msgid "Use User Defined Icon"
 msgstr "Upotrijebi Ikonu Definiranu od Korisnika"
 
-#: src/bin/e_int_border_menu.c:1228 src/bin/e_int_border_remember.c:784
+#: src/bin/e_int_border_menu.c:1254 src/bin/e_int_border_remember.c:784
 #, fuzzy
 msgid "Offer Resistance"
 msgstr "Otpor"
 
-#: src/bin/e_int_border_menu.c:1289
+#: src/bin/e_int_border_menu.c:1315
 msgid "Window List"
 msgstr "Lista Prozora"
 
-#: src/bin/e_int_border_menu.c:1299 src/modules/pager/e_mod_main.c:265
+#: src/bin/e_int_border_menu.c:1325 src/modules/pager/e_mod_main.c:265
 #: src/modules/pager/e_mod_main.c:2924 src/modules/pager/e_mod_main.c:2931
 #: src/modules/pager/e_mod_main.c:2938 src/modules/pager/e_mod_main.c:2940
 #: src/modules/pager/e_mod_main.c:2942 src/modules/pager/e_mod_main.c:2944
@@ -4423,7 +4839,7 @@ msgstr "Lista Prozora"
 msgid "Pager"
 msgstr "Preglednik"
 
-#: src/bin/e_int_border_menu.c:1309 src/modules/wizard/page_180.c:24
+#: src/bin/e_int_border_menu.c:1335 src/modules/wizard/page_180.c:24
 msgid "Taskbar"
 msgstr "Taskbar"
 
@@ -4740,10 +5156,6 @@ msgstr "Dozvoli"
 #: src/bin/e_int_border_remember.c:674
 msgid "Window name"
 msgstr "Ime prozora"
-
-#: src/bin/e_int_border_remember.c:686
-msgid "Window class"
-msgstr "Klasa prozora"
 
 #: src/bin/e_int_border_remember.c:710
 msgid "Window Role"
@@ -5243,27 +5655,27 @@ msgstr "Enlightenment ne može postaviti svoj sistem datotečnih registara."
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Enlightenment ne može postaviti svoj Config sistem."
 
-#: src/bin/e_main.c:534
+#: src/bin/e_main.c:529
 #, fuzzy
 msgid "Enlightenment cannot initialize E_Randr!\n"
 msgstr "Enlightenment ne može inicijalizirati svoj Datotečni Upravitelj.\n"
 
-#: src/bin/e_main.c:543
+#: src/bin/e_main.c:538
 #, fuzzy
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment ne može postaviti svoj sistem tema."
 
-#: src/bin/e_main.c:559
+#: src/bin/e_main.c:554
 #, fuzzy
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment ne može postaviti svoj sustav promjene veličine."
 
-#: src/bin/e_main.c:568
+#: src/bin/e_main.c:563
 #, fuzzy
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenment ne može postaviti svoj sustav pokazivača."
 
-#: src/bin/e_main.c:577
+#: src/bin/e_main.c:572
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -5271,17 +5683,17 @@ msgstr ""
 "Enlightenment ne može postaviti puteve za pronalaženje datoteka.\n"
 "Možda nemate dovoljno memorije?"
 
-#: src/bin/e_main.c:594
+#: src/bin/e_main.c:589
 #, fuzzy
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenment ne može postaviti svoj sistem pisma."
 
-#: src/bin/e_main.c:611
+#: src/bin/e_main.c:606
 #, fuzzy
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenment ne može postaviti svoj sistem tema."
 
-#: src/bin/e_main.c:625
+#: src/bin/e_main.c:620
 #, fuzzy
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
@@ -5291,20 +5703,20 @@ msgstr ""
 "Enlightenment ne može inicijalizirati sistem FDO radne površine,\n"
 "Možda vam nedostaje memorije?"
 
-#: src/bin/e_main.c:636
+#: src/bin/e_main.c:631
 msgid "Setup Actions"
 msgstr "Postavi Akcije"
 
-#: src/bin/e_main.c:640
+#: src/bin/e_main.c:635
 #, fuzzy
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment ne može postaviti svoj sistem akcija."
 
-#: src/bin/e_main.c:647
+#: src/bin/e_main.c:642
 msgid "Setup Screens"
 msgstr "Postavi Ekrane"
 
-#: src/bin/e_main.c:651
+#: src/bin/e_main.c:646
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -5313,16 +5725,16 @@ msgstr ""
 "sustavu\n"
 "nije uspio. Možda je neki drugi upravitelj prozora aktivan?\n"
 
-#: src/bin/e_main.c:663
+#: src/bin/e_main.c:658
 #, fuzzy
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenment ne može postaviti svoj intl sistem."
 
-#: src/bin/e_main.c:677
+#: src/bin/e_main.c:672
 msgid "Starting International Support"
 msgstr "Pokretanje Međunarodne Podrške"
 
-#: src/bin/e_main.c:681
+#: src/bin/e_main.c:676
 #, fuzzy
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenment ne može postaviti svoj intl sistem."
@@ -6161,6 +6573,11 @@ msgstr "Postavi Kao Temu"
 msgid "Select Theme"
 msgstr "Odaberi Temu..."
 
+#: src/bin/e_toolbar.c:128
+#, fuzzy
+msgid "EFM Toolbar"
+msgstr "Prikaži Alatnu Traku"
+
 #: src/bin/e_toolbar.c:343
 msgid "Stop Moving/Resizing Items"
 msgstr "Zaustavi Pomicanje/Promjenu Veličine Stvari"
@@ -6562,14 +6979,6 @@ msgstr "Koristite desktop promjene za upozorenje."
 #: src/modules/battery/e_mod_config.c:235
 msgid "Check every:"
 msgstr "Provjeri svaki:"
-
-#: src/modules/battery/e_mod_config.c:237
-#: src/modules/conf_performance/e_int_config_performance.c:128
-#: src/modules/conf_window_manipulation/e_int_config_window_process.c:109
-#: src/modules/temperature/e_mod_config.c:233
-#, c-format
-msgid "%1.0f ticks"
-msgstr "%1.0f otkucaja"
 
 #: src/modules/battery/e_mod_config.c:242
 #, fuzzy
@@ -6978,7 +7387,6 @@ msgid "Modes"
 msgstr "Načini"
 
 #: src/modules/conf2/e_conf2.c:1152 src/modules/conf2/e_mod_main.c:310
-#: src/modules/conf2/e_mod_main.c:368
 #, fuzzy
 msgid "Control Panel"
 msgstr "Konfiguriraj Zaglavlje"
@@ -7137,17 +7545,9 @@ msgid "IBar Other"
 msgstr "IBar Ostalo"
 
 #: src/modules/conf_applications/e_mod_main.c:71
-msgid "new app launcher"
-msgstr ""
-
-#: src/modules/conf_applications/e_mod_main.c:71
 #, fuzzy
 msgid "Create a new application launcher"
 msgstr "Pokreni"
-
-#: src/modules/conf_applications/e_mod_main.c:74
-msgid "apps"
-msgstr ""
 
 #: src/modules/conf_applications/e_mod_main.c:74
 #, fuzzy
@@ -7156,17 +7556,8 @@ msgstr "Pokreni"
 
 #: src/modules/conf_applications/e_mod_main.c:77
 #, fuzzy
-msgid "favorite apps"
-msgstr "Omiljeni"
-
-#: src/modules/conf_applications/e_mod_main.c:77
-#, fuzzy
 msgid "Favorite applications"
 msgstr "Omiljene Aplikacije"
-
-#: src/modules/conf_applications/e_mod_main.c:80
-msgid "ibar apps"
-msgstr ""
 
 #: src/modules/conf_applications/e_mod_main.c:80
 #, fuzzy
@@ -7175,18 +7566,8 @@ msgstr "IBar Aplikacija"
 
 #: src/modules/conf_applications/e_mod_main.c:83
 #, fuzzy
-msgid "desklock apps"
-msgstr "Lozinka Brave Radne Površine"
-
-#: src/modules/conf_applications/e_mod_main.c:83
-#, fuzzy
 msgid "Desk lock applications"
 msgstr "(Nema Aplikacija)"
-
-#: src/modules/conf_applications/e_mod_main.c:86
-#, fuzzy
-msgid "deskunlock apps"
-msgstr "Lozinka Brave Radne Površine"
 
 #: src/modules/conf_applications/e_mod_main.c:86
 #, fuzzy
@@ -7195,28 +7576,13 @@ msgstr "Odabrane Aplikacije"
 
 #: src/modules/conf_applications/e_mod_main.c:89
 #, fuzzy
-msgid "restart apps"
-msgstr "Ponovo pokreni"
-
-#: src/modules/conf_applications/e_mod_main.c:89
-#, fuzzy
 msgid "Enlightenment restart applications"
 msgstr "Koristite ikonu temu za aplikacije"
 
 #: src/modules/conf_applications/e_mod_main.c:92
 #, fuzzy
-msgid "startup apps"
-msgstr "Pokretanje"
-
-#: src/modules/conf_applications/e_mod_main.c:92
-#, fuzzy
 msgid "Enlightenment start applications"
 msgstr "Koristite ikonu temu za aplikacije"
-
-#: src/modules/conf_applications/e_mod_main.c:95
-#, fuzzy
-msgid "default apps"
-msgstr "Zadano"
 
 #: src/modules/conf_applications/e_mod_main.c:95
 #, fuzzy
@@ -7724,28 +8090,13 @@ msgstr "Unos"
 
 #: src/modules/conf_bindings/e_mod_main.c:50
 #, fuzzy
-msgid "key bindings"
-msgstr "Ključni Poveznici"
-
-#: src/modules/conf_bindings/e_mod_main.c:50
-#, fuzzy
 msgid "Key binding settings"
 msgstr "Postavke tipki"
 
 #: src/modules/conf_bindings/e_mod_main.c:53
 #, fuzzy
-msgid "mouse bindings"
-msgstr "Poveznici Miša"
-
-#: src/modules/conf_bindings/e_mod_main.c:53
-#, fuzzy
 msgid "Mouse binding settings"
 msgstr "Miš vezovi Postavke"
-
-#: src/modules/conf_bindings/e_mod_main.c:56
-#, fuzzy
-msgid "ACPI bindings"
-msgstr "Dodaj Poveznik"
 
 #: src/modules/conf_bindings/e_mod_main.c:56
 #, fuzzy
@@ -7758,18 +8109,8 @@ msgstr ""
 
 #: src/modules/conf_bindings/e_mod_main.c:60
 #, fuzzy
-msgid "edge bindings"
-msgstr "Povezivanje Ruba"
-
-#: src/modules/conf_bindings/e_mod_main.c:60
-#, fuzzy
 msgid "Screen edge binding settings"
 msgstr "Rubni vezovi Postavke"
-
-#: src/modules/conf_bindings/e_mod_main.c:63
-#, fuzzy
-msgid "signal bindings"
-msgstr "Povezivanje Ruba"
 
 #: src/modules/conf_bindings/e_mod_main.c:63
 #, fuzzy
@@ -8019,11 +8360,6 @@ msgstr "Pozicija"
 
 #: src/modules/conf_comp/e_mod_main.c:259
 #, fuzzy
-msgid "comp_settings"
-msgstr "Pozicija"
-
-#: src/modules/conf_comp/e_mod_main.c:259
-#, fuzzy
 msgid "Advanced composite settings panel"
 msgstr "Pozicija"
 
@@ -8119,11 +8455,6 @@ msgstr "Profili"
 
 #: src/modules/conf_dialogs/e_mod_main.c:28
 #, fuzzy
-msgid "profiles"
-msgstr "Profili"
-
-#: src/modules/conf_dialogs/e_mod_main.c:28
-#, fuzzy
 msgid "Enlightenment profile settings"
 msgstr "Enlightenment ne može postaviti postavke podsjetnika."
 
@@ -8190,11 +8521,6 @@ msgstr "Zaključaj"
 msgid "Keyboard Layout"
 msgstr "Tipkovnička Prečica"
 
-#: src/modules/conf_display/e_int_config_desklock.c:259
-#, fuzzy
-msgid "Show on all screens"
-msgstr "Prikaži na svim ekranima"
-
 #: src/modules/conf_display/e_int_config_desklock.c:264
 #, fuzzy
 msgid "Show on current screen"
@@ -8205,25 +8531,6 @@ msgstr "Prikaži na postojećem zaslonu"
 msgid "Show on screen #:"
 msgstr "Prikaži na zoni zaslona #:"
 
-#: src/modules/conf_display/e_int_config_desklock.c:275
-#: src/modules/conf_display/e_int_config_desks.c:208
-#: src/modules/conf_display/e_int_config_desks.c:213
-#: src/modules/conf_interaction/e_int_config_mouse.c:207
-#: src/modules/conf_interaction/e_int_config_mouse.c:213
-#: src/modules/everything/evry_config.c:405
-#: src/modules/everything/evry_config.c:547
-#: src/modules/everything/evry_config.c:554
-#: src/modules/everything/evry_config.c:580
-#: src/modules/everything/evry_config.c:587
-#: src/modules/fileman/e_mod_config.c:326
-#: src/modules/syscon/e_int_config_syscon.c:148
-#: src/modules/syscon/e_int_config_syscon.c:153
-#: src/modules/syscon/e_int_config_syscon.c:158
-#: src/modules/tiling/e_mod_config.c:129
-#, c-format
-msgid "%1.0f"
-msgstr "%1.0f"
-
 #: src/modules/conf_display/e_int_config_desklock.c:279
 #, fuzzy
 msgid "Login Box"
@@ -8233,15 +8540,6 @@ msgstr "Postavke Prijavne Kutije"
 #, fuzzy
 msgid "Lock after X screensaver activates"
 msgstr "Zaključavanje se aktivira nakon X screensaver"
-
-#: src/modules/conf_display/e_int_config_desklock.c:289
-#: src/modules/conf_display/e_int_config_desklock.c:312
-#: src/modules/conf_display/e_int_config_screensaver.c:174
-#: src/modules/conf_display/e_int_config_screensaver.c:187
-#: src/modules/fileman/e_mod_config.c:415 src/modules/fileman/e_mod_main.c:445
-#, c-format
-msgid "%1.0f seconds"
-msgstr "%1.0f sekundi"
 
 #: src/modules/conf_display/e_int_config_desklock.c:296
 msgid "Lock when idle time exceeded"
@@ -8449,13 +8747,6 @@ msgstr "Osposobi Listanje Sličica"
 msgid "Threshold for a thumb drag"
 msgstr "Granica povlačenja sličica"
 
-#: src/modules/conf_interaction/e_int_config_interaction.c:105
-#: src/modules/conf_interaction/e_int_config_mouse.c:162
-#: src/modules/fileman/e_mod_main.c:394
-#, c-format
-msgid "%1.0f pixels"
-msgstr "%1.0f piksela"
-
 #: src/modules/conf_interaction/e_int_config_interaction.c:110
 msgid "Threshold for applying drag momentum"
 msgstr "ko"
@@ -8649,31 +8940,21 @@ msgstr "Prostor"
 msgid "Language"
 msgstr "Jezik"
 
+#: src/modules/conf_intl/e_mod_main.c:38
+#, fuzzy
+msgid "Language settings"
+msgstr "Postavke Jezika"
+
 #: src/modules/conf_intl/e_mod_main.c:38 src/modules/conf_intl/e_mod_main.c:41
 #: src/modules/conf_intl/e_mod_main.c:45 src/modules/xkbswitch/e_mod_main.c:83
 #, fuzzy
 msgid "language"
 msgstr "Jezik"
 
-#: src/modules/conf_intl/e_mod_main.c:38
-#, fuzzy
-msgid "Language settings"
-msgstr "Postavke Jezika"
-
-#: src/modules/conf_intl/e_mod_main.c:41
-#, fuzzy
-msgid "desklock language"
-msgstr "Postavke Jezika"
-
 #: src/modules/conf_intl/e_mod_main.c:41
 #, fuzzy
 msgid "Desklock language settings"
 msgstr "Postavke Jezika"
-
-#: src/modules/conf_intl/e_mod_main.c:45
-#, fuzzy
-msgid "input method"
-msgstr "Greška u Metodu Unosa"
 
 #: src/modules/conf_intl/e_mod_main.c:45
 #, fuzzy
@@ -8743,17 +9024,6 @@ msgstr "Izbornici"
 msgid "Margin"
 msgstr "Glavni"
 
-#: src/modules/conf_menus/e_int_config_menus.c:290
-#: src/modules/conf_menus/e_int_config_menus.c:295
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:182
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:189
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:196
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:246
-#: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:251
-#, c-format
-msgid "%2.0f pixels"
-msgstr "%2.0f piksela"
-
 #: src/modules/conf_menus/e_int_config_menus.c:293
 #, fuzzy
 msgid "Cursor Margin"
@@ -8768,21 +9038,10 @@ msgstr "Margina Autoklizanja"
 msgid "Menu Scroll Speed"
 msgstr "Brzina Autoklizanja Izbornika"
 
-#: src/modules/conf_menus/e_int_config_menus.c:306
-#, fuzzy, c-format
-msgid "%5.0f pixels/s"
-msgstr "%5.0f piksela/sek"
-
 #: src/modules/conf_menus/e_int_config_menus.c:309
 #, fuzzy
 msgid "Fast Mouse Move Threshold"
 msgstr "Granica Brzog Kretanja Miša"
-
-#: src/modules/conf_menus/e_int_config_menus.c:311
-#: src/modules/conf_window_manipulation/e_int_config_window_display.c:193
-#, fuzzy, c-format
-msgid "%4.0f pixels/s"
-msgstr "%4.0f piksela/sek"
 
 #: src/modules/conf_menus/e_int_config_menus.c:314
 msgid "Click Drag Timeout"
@@ -8869,18 +9128,8 @@ msgstr "Pretraži Direktorije"
 
 #: src/modules/conf_paths/e_mod_main.c:35
 #, fuzzy
-msgid "search directories"
-msgstr "Pretraži Direktorije"
-
-#: src/modules/conf_paths/e_mod_main.c:35
-#, fuzzy
 msgid "Search directory settings"
 msgstr "Pretraži Direktorije"
-
-#: src/modules/conf_paths/e_mod_main.c:38
-#, fuzzy
-msgid "environment variables"
-msgstr "Izvežene Varijable Okruženja"
 
 #: src/modules/conf_paths/e_mod_main.c:38
 #, fuzzy
@@ -8945,20 +9194,10 @@ msgstr "Poništi"
 msgid "Number of Edje files to cache"
 msgstr "Broj Edje datoteka cachea"
 
-#: src/modules/conf_performance/e_int_config_performance.c:150
-#, c-format
-msgid "%1.0f files"
-msgstr "%1.0f datoteke"
-
 #: src/modules/conf_performance/e_int_config_performance.c:154
 #, fuzzy
 msgid "Number of Edje collections to cache"
 msgstr "Broj Edje zbirki cachea"
-
-#: src/modules/conf_performance/e_int_config_performance.c:156
-#, c-format
-msgid "%1.0f collections"
-msgstr "%1.0f kolekcije"
 
 #: src/modules/conf_performance/e_int_config_performance.c:159
 #, fuzzy
@@ -9052,10 +9291,6 @@ msgid "Restore On Startup"
 msgstr "Zaključavanje na pokretanje"
 
 #: src/modules/conf_randr/e_mod_main.c:31
-msgid "randr"
-msgstr ""
-
-#: src/modules/conf_randr/e_mod_main.c:31
 #, fuzzy
 msgid "Screen resolution and orientation settings"
 msgstr "Postavke Razlučivosti Ekrana"
@@ -9074,11 +9309,6 @@ msgstr "Jeste li sigurni da hoćete ukloniti ovu policu?"
 #, fuzzy
 msgid "Confirm Shelf Deletion"
 msgstr "Potvrda Brisanja"
-
-#: src/modules/conf_shelves/e_mod_main.c:38
-#, fuzzy
-msgid "shelves"
-msgstr "Police"
 
 #: src/modules/conf_shelves/e_mod_main.c:38
 #, fuzzy
@@ -9622,11 +9852,6 @@ msgstr "Skaliraj u srazmjeri na DPI zaslona"
 msgid "Base DPI (Currently %i DPI)"
 msgstr "Osnovni DPI (Trenutno %i DPI)"
 
-#: src/modules/conf_theme/e_int_config_scale.c:314
-#, c-format
-msgid "%1.0f DPI"
-msgstr "%1.0f DPI"
-
 #: src/modules/conf_theme/e_int_config_scale.c:318
 msgid "Custom scaling factor"
 msgstr "Posebni faktor skaliranja"
@@ -9833,11 +10058,6 @@ msgstr "Skaliranje"
 
 #: src/modules/conf_theme/e_mod_main.c:168
 #, fuzzy
-msgid "themes"
-msgstr "Teme"
-
-#: src/modules/conf_theme/e_mod_main.c:168
-#, fuzzy
 msgid "Enlightenment theme settings"
 msgstr "Enlightenment ne može postaviti postavke podsjetnika."
 
@@ -9848,11 +10068,6 @@ msgstr "Tapeta Radne Površine"
 
 #: src/modules/conf_theme/e_mod_main.c:176
 #, fuzzy
-msgid "colors"
-msgstr "Boje"
-
-#: src/modules/conf_theme/e_mod_main.c:176
-#, fuzzy
 msgid "Enlightenment color settings"
 msgstr "Enlightenment ne može postaviti postavke podsjetnika."
 
@@ -9860,11 +10075,6 @@ msgstr "Enlightenment ne može postaviti postavke podsjetnika."
 #, fuzzy
 msgid "color"
 msgstr "Boje"
-
-#: src/modules/conf_theme/e_mod_main.c:180
-#, fuzzy
-msgid "fonts"
-msgstr "Pisma"
 
 #: src/modules/conf_theme/e_mod_main.c:180
 #, fuzzy
@@ -9918,10 +10128,6 @@ msgstr "Grupiraj po"
 msgid "Alphabetical"
 msgstr "Abecedno"
 
-#: src/modules/conf_window_manipulation/e_int_config_clientlist.c:148
-msgid "Window stacking layer"
-msgstr "Sloj slaganja prozora"
-
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:151
 msgid "Most recently used"
 msgstr "Najskorije upotrijebljen"
@@ -9938,10 +10144,6 @@ msgstr "Ugrupiraj sa vlastiotm radnom površinom"
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:162
 msgid "Group with current desktop"
 msgstr "Ugrupiraj sa aktivnom radnom površinom"
-
-#: src/modules/conf_window_manipulation/e_int_config_clientlist.c:165
-msgid "Separate group"
-msgstr "Posebna grupa"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:168
 msgid "Warp to owning desktop"
@@ -9991,23 +10193,6 @@ msgstr "Podizanje prozora na miša preko"
 #, fuzzy
 msgid "Focus Policy"
 msgstr "Pravila"
-
-#: src/modules/conf_window_manipulation/e_int_config_focus.c:254
-#: src/modules/wizard/page_060.c:33
-#, fuzzy
-msgid "Click"
-msgstr "Sat"
-
-#: src/modules/conf_window_manipulation/e_int_config_focus.c:256
-#: src/modules/conf_window_manipulation/e_int_config_focus.c:342
-#, fuzzy
-msgid "Pointer"
-msgstr "Fokus pokazivača"
-
-#: src/modules/conf_window_manipulation/e_int_config_focus.c:258
-#, fuzzy
-msgid "Sloppy"
-msgstr "Loš fokus"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:262
 msgid "New Window Focus"
@@ -10093,16 +10278,6 @@ msgstr "Klizni pokazivač na novi fokusirani prozor"
 #, fuzzy
 msgid "Warp speed"
 msgstr "Brzina Uvijanja"
-
-#: src/modules/conf_window_manipulation/e_int_config_focus.c:337
-#: src/modules/everything/evry_config.c:563
-#: src/modules/everything/evry_config.c:570
-#: src/modules/winlist/e_int_config_winlist.c:231
-#: src/modules/winlist/e_int_config_winlist.c:271
-#: src/modules/winlist/e_int_config_winlist.c:276
-#, c-format
-msgid "%1.2f"
-msgstr "%1.2f"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:347
 msgid "Other Settings"
@@ -10219,23 +10394,6 @@ msgstr "Ispod Prozora"
 msgid "Animate"
 msgstr "Animacije"
 
-#: src/modules/conf_window_manipulation/e_int_config_window_display.c:201
-msgid "Linear"
-msgstr "Linearno"
-
-#: src/modules/conf_window_manipulation/e_int_config_window_display.c:205
-#, fuzzy
-msgid "Accelerate, then decelerate"
-msgstr "Ubrzati , onda usporavati"
-
-#: src/modules/conf_window_manipulation/e_int_config_window_display.c:209
-msgid "Accelerate"
-msgstr "Ubrzaj"
-
-#: src/modules/conf_window_manipulation/e_int_config_window_display.c:213
-msgid "Decelerate"
-msgstr "Uspori"
-
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:217
 #, fuzzy
 msgid "Pronounced Accelerate"
@@ -10250,16 +10408,6 @@ msgstr "Uspori"
 #, fuzzy
 msgid "Pronounced Accelerate, then decelerate"
 msgstr "Izgovara Acceleratem onda usporavati"
-
-#: src/modules/conf_window_manipulation/e_int_config_window_display.c:229
-#, fuzzy
-msgid "Bounce"
-msgstr "​​odskakivati"
-
-#: src/modules/conf_window_manipulation/e_int_config_window_display.c:233
-#, fuzzy
-msgid "Bounce more"
-msgstr "Odskakivati ​​više"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:237
 #, fuzzy
@@ -10502,11 +10650,6 @@ msgstr "Uredi"
 #, fuzzy
 msgid "No selection"
 msgstr "Odaberi Jedan"
-
-#: src/modules/conf_window_remembers/e_mod_main.c:28
-#, fuzzy
-msgid "window remembers"
-msgstr "Prozorni Podsjetnici"
 
 #: src/modules/conf_window_remembers/e_mod_main.c:28
 #, fuzzy
@@ -11659,6 +11802,11 @@ msgstr "Animacije"
 msgid "Background Options"
 msgstr "Paniranje Pozadine"
 
+#: src/modules/gadman/e_mod_gadman.c:124
+#, fuzzy
+msgid "Desktop Hover"
+msgstr "Datoteka Radne Površine"
+
 #: src/modules/gadman/e_mod_gadman.c:1013
 #, fuzzy
 msgid "Begin move/resize"
@@ -11742,7 +11890,7 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "Jeste li sigurni da hoćete ukloniti ovaj izvor trake?"
 
-#: src/modules/ibar/e_mod_main.c:285 src/modules/ibar/e_mod_main.c:1813
+#: src/modules/ibar/e_mod_main.c:285 src/modules/ibar/e_mod_main.c:1809
 msgid "IBar"
 msgstr "IBar"
 
@@ -11756,7 +11904,7 @@ msgstr "Otvori novu ikonu"
 msgid "Icon %s"
 msgstr "Ikone"
 
-#: src/modules/ibar/e_mod_main.c:1813
+#: src/modules/ibar/e_mod_main.c:1809
 #, fuzzy
 msgid "Focus IBar"
 msgstr "Fokus"
@@ -12104,7 +12252,7 @@ msgstr ""
 #, fuzzy
 msgid ""
 "Ensure there's no other module acting as a server and that D-Bus is "
-"correctly installed and  running"
+"correctly installed and running"
 msgstr ""
 "Greška Tijekom DBus Init! Molimo provjerite da je DBus ispravno instaliran i "
 "da funkcionira."
@@ -12218,11 +12366,6 @@ msgstr "Visina Pregledničkog Pop-upa"
 #, fuzzy
 msgid "Popup duration"
 msgstr "Sakrij trajanje"
-
-#: src/modules/pager/e_mod_config.c:249 src/modules/pager/e_mod_config.c:286
-#, c-format
-msgid "%1.1f seconds"
-msgstr "%1.1f sekundi"
 
 #: src/modules/pager/e_mod_config.c:256
 #, fuzzy
@@ -12881,25 +13024,25 @@ msgstr "Kontrole Sustava"
 msgid "Syscon"
 msgstr "Syscon"
 
-#: src/modules/systray/e_mod_main.c:255
+#: src/modules/systray/e_mod_main.c:258
 msgid "Another systray exists"
 msgstr "Postoji drugi systray"
 
-#: src/modules/systray/e_mod_main.c:256
+#: src/modules/systray/e_mod_main.c:259
 msgid "There can be only one systray gadget and another one already exists."
 msgstr "Može postojati samo jedan systray uređaj, i jedan već postoji."
 
-#: src/modules/systray/e_mod_main.c:264 src/modules/systray/e_mod_xembed.c:395
+#: src/modules/systray/e_mod_main.c:267 src/modules/systray/e_mod_xembed.c:395
 #, fuzzy
 msgid "Systray Error"
 msgstr "Systray"
 
-#: src/modules/systray/e_mod_main.c:265
+#: src/modules/systray/e_mod_main.c:268
 #, fuzzy
 msgid "Systray cannot work in a shelf that is set to below everything."
 msgstr "Traci ne može raditi u polici koja je postavljena ispod svega."
 
-#: src/modules/systray/e_mod_main.c:417
+#: src/modules/systray/e_mod_main.c:420
 msgid "Systray"
 msgstr "Systray"
 
@@ -13496,17 +13639,104 @@ msgstr ""
 
 #: src/modules/xkbswitch/e_mod_main.c:83
 #, fuzzy
-msgid "xkb layouts"
-msgstr "Stvoriti Prečac tipkovnice"
-
-#: src/modules/xkbswitch/e_mod_main.c:83
-#, fuzzy
 msgid "Keyboard layout settings"
 msgstr "IBAR Postavke"
 
 #: src/modules/xkbswitch/e_mod_main.c:207
 msgid "NONE"
 msgstr ""
+
+#, fuzzy
+#~ msgid "favorite apps"
+#~ msgstr "Omiljeni"
+
+#, fuzzy
+#~ msgid "desklock apps"
+#~ msgstr "Lozinka Brave Radne Površine"
+
+#, fuzzy
+#~ msgid "deskunlock apps"
+#~ msgstr "Lozinka Brave Radne Površine"
+
+#, fuzzy
+#~ msgid "restart apps"
+#~ msgstr "Ponovo pokreni"
+
+#, fuzzy
+#~ msgid "startup apps"
+#~ msgstr "Pokretanje"
+
+#, fuzzy
+#~ msgid "default apps"
+#~ msgstr "Zadano"
+
+#, fuzzy
+#~ msgid "key bindings"
+#~ msgstr "Ključni Poveznici"
+
+#, fuzzy
+#~ msgid "mouse bindings"
+#~ msgstr "Poveznici Miša"
+
+#, fuzzy
+#~ msgid "ACPI bindings"
+#~ msgstr "Dodaj Poveznik"
+
+#, fuzzy
+#~ msgid "edge bindings"
+#~ msgstr "Povezivanje Ruba"
+
+#, fuzzy
+#~ msgid "signal bindings"
+#~ msgstr "Povezivanje Ruba"
+
+#, fuzzy
+#~ msgid "comp_settings"
+#~ msgstr "Pozicija"
+
+#, fuzzy
+#~ msgid "profiles"
+#~ msgstr "Profili"
+
+#, fuzzy
+#~ msgid "desklock language"
+#~ msgstr "Postavke Jezika"
+
+#, fuzzy
+#~ msgid "input method"
+#~ msgstr "Greška u Metodu Unosa"
+
+#, fuzzy
+#~ msgid "search directories"
+#~ msgstr "Pretraži Direktorije"
+
+#, fuzzy
+#~ msgid "environment variables"
+#~ msgstr "Izvežene Varijable Okruženja"
+
+#, fuzzy
+#~ msgid "shelves"
+#~ msgstr "Police"
+
+#, fuzzy
+#~ msgid "themes"
+#~ msgstr "Teme"
+
+#, fuzzy
+#~ msgid "colors"
+#~ msgstr "Boje"
+
+#, fuzzy
+#~ msgid "fonts"
+#~ msgstr "Pisma"
+
+#, fuzzy
+#~ msgid "window remembers"
+#~ msgstr "Prozorni Podsjetnici"
+
+#, fuzzy
+#~ msgid "xkb layouts"
+#~ msgstr "Stvoriti Prečac tipkovnice"
 
 #~ msgid "Pane"
 #~ msgstr "Panel"
@@ -13585,10 +13815,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "On"
 #~ msgstr "Otvori"
-
-#, fuzzy
-#~ msgid "Borderless"
-#~ msgstr "Bordure"
 
 #, fuzzy
 #~ msgid "Virtual Keyboard"
@@ -14747,9 +14973,6 @@ msgstr ""
 #~ msgid "Focus mode"
 #~ msgstr "Foku mod"
 
-#~ msgid "Mouse over focuses windows"
-#~ msgstr "Miš preko će fokusirati prozore"
-
 #~ msgid "Select Icons to Add"
 #~ msgstr "Odaberi Ikone za Dodati"
 
@@ -14930,9 +15153,6 @@ msgstr ""
 #~ msgid "Add Application"
 #~ msgstr "Dodaj Aplikaciju"
 
-#~ msgid "Automatic Locking"
-#~ msgstr "Automatsko Zaključavanje"
-
 #~ msgid "Idle time to exceed"
 #~ msgstr "Vrijeme neaktivnosti za prekoračiti"
 
@@ -15055,9 +15275,6 @@ msgstr ""
 #~ msgid "Show Comment In Menu"
 #~ msgstr "Prikaži Komentar u Izborniku"
 
-#~ msgid "%2.2f seconds"
-#~ msgstr "%2.2f sekundi"
-
 #~ msgid "Restore Mouse and Wheel Binding Defaults"
 #~ msgstr "Obnovi Zadane Vrijednosti Poveznika Miša i Kotačića"
 
@@ -15114,9 +15331,6 @@ msgstr ""
 
 #~ msgid "All new windows get focus"
 #~ msgstr "Svi novi prozori trebaju biti fokusirani"
-
-#~ msgid "Only new dialogs get focus if the parent has focus"
-#~ msgstr "Samo novi dijalozi trebaju biti fokusirani ako je glavni fokusiran"
 
 #~ msgid "A click on a window always raises it"
 #~ msgstr "Klik na prozor ga uvijek uzdigne"

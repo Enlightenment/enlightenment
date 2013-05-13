@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-05-11 12:20+0400\n"
+"POT-Creation-Date: 2013-05-13 13:08+0900\n"
 "PO-Revision-Date: 2013-05-10 20:57+0200\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <српски <xfce-i18n@xfce.org>>\n"
@@ -317,7 +317,8 @@ msgstr "Мења стање причвршћености прозора"
 #: src/bin/e_actions.c:3438 src/bin/e_int_menus.c:186
 #: src/bin/e_int_shelf_config.c:269
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:118
-#: src/modules/fileman/e_mod_menu.c:425 src/modules/ibox/e_mod_config.c:166
+#: src/modules/fileman/e_mod_menu.c:425 src/modules/gadman/e_mod_gadman.c:117
+#: src/modules/ibox/e_mod_config.c:166
 msgid "Desktop"
 msgstr "Радна површ"
 
@@ -6245,6 +6246,11 @@ msgstr "Постави као тему"
 msgid "Select Theme"
 msgstr "Одаберите тему"
 
+#: src/bin/e_toolbar.c:128
+#, fuzzy
+msgid "EFM Toolbar"
+msgstr "Трака алата"
+
 #: src/bin/e_toolbar.c:343
 msgid "Stop Moving/Resizing Items"
 msgstr "Заустави померање/мењање величина ставки"
@@ -11076,6 +11082,11 @@ msgstr "Анимације"
 #: src/modules/gadman/e_mod_config.c:302
 msgid "Background Options"
 msgstr "Могућности позадине"
+
+#: src/modules/gadman/e_mod_gadman.c:124
+#, fuzzy
+msgid "Desktop Hover"
+msgstr "Датотека радне површи"
 
 #: src/modules/gadman/e_mod_gadman.c:1013
 msgid "Begin move/resize"
