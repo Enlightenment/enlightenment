@@ -733,37 +733,26 @@ _e_desk_show_end_serious(E_Desk *desk)
 {
    E_Event_Desk_After_Show *ev;
 
-   if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
-       (e_config->focus_policy == E_FOCUS_SLOPPY))
-     {
-        if (e_config->focus_last_focused_per_desktop)
-          {
-
-             if (desk->zone == e_zone_current_get(desk->zone->container))
-               e_desk_last_focused_focus(desk);
-             else
-               {
-                  /* block pointer warp if desk is not in current zone */
-                  E_Border *bd;
-
-                  nofocus = 1;
-                  bd = e_desk_last_focused_focus(desk);
-                  nofocus = 0;
-                  if (bd) e_border_focus_set(bd, 1, 1);
-               }
-          }
-     }
-   else
-     {
-        if (e_config->focus_last_focused_per_desktop)
-          e_desk_last_focused_focus(desk);
-     }
-
    ev = E_NEW(E_Event_Desk_After_Show, 1);
    ev->desk = desk;
    e_object_ref(E_OBJECT(ev->desk));
    ecore_event_add(E_EVENT_DESK_AFTER_SHOW, ev,
                    _e_desk_event_desk_after_show_free, NULL);
+
+   if (!e_config->focus_last_focused_per_desktop) return;
+   if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
+       (e_config->focus_policy == E_FOCUS_SLOPPY))
+     {
+             E_Border *bd;
+             
+             bd = e_border_focused_get();
+             /* only set focus/warp pointer if currently focused window
+              * is on same screen (user hasn't switched screens during transition)
+              */
+             if (bd && bd->desk && (bd->desk->zone != desk->zone))
+               return;
+     }
+   e_desk_last_focused_focus(desk);
 }
 
 static void
