@@ -4929,6 +4929,7 @@ _e_border_del(E_Border *bd)
         if (warp_timer) ecore_timer_del(warp_timer);
         warp_timer = NULL;
         warp_timer_border = NULL;
+        e_border_focus_lock_set(EINA_FALSE);
      }
 
    if ((drag_border) && (drag_border->data == bd))
