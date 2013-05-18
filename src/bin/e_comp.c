@@ -1989,10 +1989,11 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
                     pix = evas_object_image_data_get(cw->obj, EINA_FALSE);
                }
           }
-        if (pix && (!argb))
+        if (pix)
           {
              evas_object_image_data_set(o, pix);
-             evas_object_image_data_set(cw->obj, pix);
+             if (!argb)
+               evas_object_image_data_set(cw->obj, pix);
           }
         evas_object_image_size_set(o, w, h);
      }
