@@ -49,7 +49,6 @@ _e_gadcon_popup_free(E_Gadcon_Popup *pop)
    if (pop->gadcon_was_locked)
      _e_gadcon_popup_locked_set(pop, 0);
    pop->gcc = NULL;
-   evas_object_del(pop->content);
    if (pop->win)
      E_OBJECT_DEL_SET(pop->win, NULL);
    E_FREE_FUNC(pop->win, e_object_del);
@@ -228,6 +227,8 @@ e_gadcon_popup_content_set(E_Gadcon_Popup *pop, Evas_Object *o)
                                        _e_gadcon_popup_changed_size_hints_cb, pop);
      }
    pop->content = o;
+   if (old_o) e_popup_object_remove(pop->win, old_o);
+   if (o) e_popup_object_add(pop->win, o);
    _e_gadcon_popup_size_recalc(pop, o);
 }
 
