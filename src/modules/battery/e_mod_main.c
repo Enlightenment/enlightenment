@@ -486,6 +486,7 @@ _battery_warning_popup(Instance *inst, int t, double percent)
    else
      edje_object_part_swallow(popup_bg, "battery", inst->popup_battery);
 
+   e_popup_object_add(inst->warning->win, inst->popup_battery);
    edje_object_part_text_set(popup_bg, "e.text.title",
                              _("Your battery is low!"));
    edje_object_part_text_set(popup_bg, "e.text.label",
