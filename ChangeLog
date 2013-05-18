@@ -1,3 +1,7 @@
+2013-05-18 Mike Blumenkrantz
+
+        * add e_exec_desktop_instances_find
+
 2013-05-14 Mike Blumenkrantz
 
         * e_desk_last_focused now returns the border it wants to focus

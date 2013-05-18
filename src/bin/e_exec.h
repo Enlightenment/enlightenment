@@ -38,6 +38,6 @@ EAPI E_Exec_Instance *e_exec_startup_desktop_instance_find(Efreet_Desktop *deskt
 EAPI void e_exec_instance_found(E_Exec_Instance *inst);
 EAPI void e_exec_instance_watcher_add(E_Exec_Instance *inst, void (*func) (void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type), const void *data);
 EAPI void e_exec_instance_watcher_del(E_Exec_Instance *inst, void (*func) (void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type), const void *data);
-
+EAPI const Eina_List *e_exec_desktop_instances_find(const Efreet_Desktop *desktop);
 #endif
 #endif

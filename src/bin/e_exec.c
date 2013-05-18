@@ -1085,3 +1085,9 @@ _dialog_save_cb(void *data __UNUSED__, void *data2)
    fclose(f);
 }
 
+EAPI const Eina_List *
+e_exec_desktop_instances_find(const Efreet_Desktop *desktop)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, NULL);
+   return eina_hash_find(e_exec_instances, desktop->orig_path);
+}
