@@ -200,6 +200,64 @@ e_exec(E_Zone *zone, Efreet_Desktop *desktop, const char *exec,
    return inst;
 }
 
+EAPI void
+e_exec_phony_del(E_Exec_Instance *inst)
+{
+   if (!inst) return;
+   EINA_SAFETY_ON_TRUE_RETURN(!inst->phony);
+   _e_exec_instance_free(inst);
+}
+
+EAPI E_Exec_Instance *
+e_exec_phony(E_Border *bd)
+{
+   E_Exec_Instance *inst;
+   Eina_List *l, *lnew;
+
+   inst = E_NEW(E_Exec_Instance, 1);
+   inst->phony = 1;
+   inst->desktop = bd->desktop;
+   if (bd->desktop)
+     {
+        efreet_desktop_ref(bd->desktop);
+        inst->key = eina_stringshare_add(bd->desktop->orig_path);
+     }
+   else if (bd->client.icccm.command.argc)
+     {
+        Eina_Strbuf *buf;
+        int x;
+
+        buf = eina_strbuf_new();
+        for (x = 0; x < bd->client.icccm.command.argc; x++)
+          {
+             eina_strbuf_append(buf, bd->client.icccm.command.argv[x]);
+             if (x + 1 < bd->client.icccm.command.argc)
+               eina_strbuf_append_char(buf, ' ');
+          }
+        inst->key = eina_stringshare_add(eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
+     }
+   else
+     {
+        free(inst);
+        return NULL;
+     }
+   inst->used = 1;
+   bd->exe_inst = inst;
+   inst->bd = bd;
+   if (bd->zone) inst->screen = bd->zone->num;
+   if (bd->desk)
+     {
+        inst->desk_x = bd->desk->x;
+        inst->desk_y = bd->desk->y;
+     }
+   l = eina_hash_find(e_exec_instances, inst->key);
+   lnew = eina_list_append(l, inst);
+   if (l) eina_hash_modify(e_exec_instances, inst->key, lnew);
+   else eina_hash_add(e_exec_instances, inst->key, lnew);
+   return inst;
+}
+
 EAPI E_Exec_Instance *
 e_exec_startup_id_pid_instance_find(int id, pid_t pid)
 {

@@ -4921,7 +4921,10 @@ _e_border_del(E_Border *bd)
 
    if (bd->exe_inst)
      {
-        bd->exe_inst->bd = NULL;
+        if (bd->exe_inst->phony)
+          e_exec_phony_del(bd->exe_inst);
+        else
+          bd->exe_inst->bd = NULL;
         bd->exe_inst = NULL;
      }
 
@@ -7958,7 +7961,9 @@ _e_border_eval0(E_Border *bd)
                bd->client.netwm.pid = -1;
           }
 
-        if (!bd->re_manage)
+        if (bd->re_manage)
+          e_exec_phony(bd);
+        else
           {
              inst = e_exec_startup_id_pid_instance_find(bd->client.netwm.startup_id,
                                                         bd->client.netwm.pid);
