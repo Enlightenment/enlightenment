@@ -647,6 +647,7 @@ struct _E_Border
    Eina_List                 *transients;
 
    Efreet_Desktop            *desktop;
+   E_Exec_Instance           *exe_inst;
 
    unsigned char              comp_hidden   : 1;
 

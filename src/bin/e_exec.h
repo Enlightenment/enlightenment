@@ -9,6 +9,7 @@ typedef struct _E_Exec_Instance E_Exec_Instance;
 struct _E_Exec_Instance
 {
    Efreet_Desktop *desktop;
+   E_Border       *bd;
    const char     *key;
    Ecore_Exe      *exe;
    int             startup_id;

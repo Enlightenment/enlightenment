@@ -4919,6 +4919,12 @@ _e_border_del(E_Border *bd)
    focus_next = eina_list_remove(focus_next, bd);
    bd->changed = 0;
 
+   if (bd->exe_inst)
+     {
+        bd->exe_inst->bd = NULL;
+        bd->exe_inst = NULL;
+     }
+
    if (bd->fullscreen) bd->desk->fullscreen_borders--;
 
    if (bd->moving) e_border_act_move_end(bd, NULL);
@@ -7968,6 +7974,8 @@ _e_border_eval0(E_Border *bd)
                   desk = e_desk_at_xy_get(bd->zone, inst->desk_x,
                                           inst->desk_y);
                   if (desk) e_border_desk_set(bd, desk);
+                  inst->bd = bd;
+                  bd->exe_inst = inst;
                   e_exec_instance_found(inst);
                }
 
