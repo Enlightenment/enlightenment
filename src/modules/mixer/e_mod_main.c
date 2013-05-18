@@ -586,7 +586,7 @@ _mixer_popup_new(E_Mixer_Instance *inst)
    e_widget_size_min_set(inst->ui.table, mw, mh);
 
    e_gadcon_popup_content_set(inst->popup, inst->ui.table);
-   e_popup_autoclose(inst->popup->win, _mixer_popup_key_down_cb, inst);
+   e_popup_autoclose(inst->popup->win, NULL, _mixer_popup_key_down_cb, inst);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _mixer_popup_del_cb);

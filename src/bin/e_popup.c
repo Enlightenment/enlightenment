@@ -15,8 +15,12 @@ _e_popup_autoclose_cleanup(void)
      {
         e_grabinput_release(0, e_comp_get(autoclose_popup)->ee_win);
         autoclose_popup->autoclose = 0;
+        if (autoclose_popup->del_cb)
+          autoclose_popup->del_cb(autoclose_popup->cb_data, autoclose_popup);
+        else
+          E_FREE_FUNC(autoclose_popup, e_object_del);
      }
-   E_FREE_FUNC(autoclose_popup, e_object_del);
+   autoclose_popup = NULL;
    E_FREE_FUNC(event_rect, evas_object_del);
    E_FREE_FUNC(key_handler, ecore_event_handler_del);
 }
@@ -42,7 +46,7 @@ _e_popup_autoclose_key_down_cb(void *data EINA_UNUSED, int type EINA_UNUSED, voi
    Eina_Bool del = EINA_TRUE;
 
    if (autoclose_popup->key_cb)
-     del = !autoclose_popup->key_cb(autoclose_popup->key_data, ev);
+     del = !autoclose_popup->key_cb(autoclose_popup->cb_data, ev);
    if (del) _e_popup_autoclose_cleanup();
    return ECORE_CALLBACK_RENEW;
 }
@@ -271,13 +275,14 @@ e_popup_object_remove(E_Popup *pop, Evas_Object *obj)
 }
 
 EAPI void
-e_popup_autoclose(E_Popup *pop, E_Popup_Key_Cb cb, const void *data)
+e_popup_autoclose(E_Popup *pop, Ecore_End_Cb del_cb, E_Popup_Key_Cb cb, const void *data)
 {
    E_OBJECT_CHECK(pop);
    E_OBJECT_TYPE_CHECK(pop, E_POPUP_TYPE);
 
    pop->autoclose = 1;
+   pop->del_cb = del_cb;
    pop->key_cb = cb;
-   pop->key_data = (void*)data;
+   pop->cb_data = (void*)data;
    if (pop->visible) _e_popup_autoclose_setup(pop);
 }

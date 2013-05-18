@@ -206,7 +206,7 @@ _backlight_popup_new(Instance *inst)
                                       0, 1, 1, 1, 0, 0, 0, 0, 0.5, 1.0);
    
    e_gadcon_popup_content_set(inst->popup, inst->o_table);
-   e_popup_autoclose(inst->popup->win, _backlight_win_key_down_cb, inst);
+   e_popup_autoclose(inst->popup->win, NULL, _backlight_win_key_down_cb, inst);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _backlight_popup_del_cb);

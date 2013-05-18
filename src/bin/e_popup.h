@@ -26,7 +26,8 @@ struct _E_Popup
    Eina_List          *objects;
    Eina_Stringshare  *name;
    E_Popup_Key_Cb    key_cb;
-   void               *key_data;
+   Ecore_End_Cb          del_cb;
+   void               *cb_data;
 
    Eina_Bool           visible : 1;
    Eina_Bool           ignore_events : 1;
@@ -48,6 +49,6 @@ EAPI void        e_popup_layer_set(E_Popup *pop, E_Comp_Canvas_Layer comp_layer,
 EAPI void        e_popup_name_set(E_Popup *pop, const char *name);
 EAPI void        e_popup_object_add(E_Popup *pop, Evas_Object *obj);
 EAPI void        e_popup_object_remove(E_Popup *pop, Evas_Object *obj);
-EAPI void        e_popup_autoclose(E_Popup *pop, E_Popup_Key_Cb cb, const void *data);
+EAPI void        e_popup_autoclose(E_Popup *pop, Ecore_End_Cb del_cb, E_Popup_Key_Cb cb, const void *data);
 #endif
 #endif

@@ -285,7 +285,7 @@ _econnman_popup_new(E_Connman_Instance *inst)
    /* 30,40 % -- min vga, max uvga */
    _e_connman_widget_size_set(inst, list, 30, 40, 192, 192, 384, 384);
    e_gadcon_popup_content_set(inst->popup, list);
-   e_popup_autoclose(inst->popup->win, NULL, NULL);
+   e_popup_autoclose(inst->popup->win, NULL, NULL, NULL);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _econnman_popup_del_cb);

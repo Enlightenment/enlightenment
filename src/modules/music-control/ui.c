@@ -79,7 +79,7 @@ _popup_new(E_Music_Control_Instance *inst)
 
    _player_name_update(inst);
    _play_state_update(inst, EINA_TRUE);
-   e_popup_autoclose(inst->popup->win, NULL, NULL);
+   e_popup_autoclose(inst->popup->win, NULL, NULL, NULL);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);

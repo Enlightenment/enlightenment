@@ -88,7 +88,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
         input_window = 0;
         return 0;
      }
-   e_popup_autoclose(popup, _cb_key_down, NULL);
+   e_popup_autoclose(popup, NULL, _cb_key_down, NULL);
    evas_event_freeze(popup->evas);
 
    o = edje_object_add(popup->evas);
