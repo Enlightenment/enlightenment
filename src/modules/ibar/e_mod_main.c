@@ -67,7 +67,10 @@ struct _IBar_Icon
    Evas_Object     *o_holder2, *o_icon2;
    Efreet_Desktop  *app;
    Ecore_Timer     *reset_timer;
+   Ecore_Timer     *timer;
    E_Exec_Instance *exe_inst;
+   Eina_List       *exes; //all instances
+   E_Gadcon_Popup  *menu;
    int              mouse_down;
    struct
    {
@@ -460,7 +463,17 @@ _ibar_fill(IBar *b)
 
         EINA_LIST_FOREACH(b->io->eo->desktops, l, desktop)
           {
+             const Eina_List *ll, *lll;
              IBar_Icon *ic = _ibar_icon_new(b, desktop);
+             ll = e_exec_desktop_instances_find(desktop);
+             if (ll)
+               {
+                  E_Exec_Instance *exe;
+                  ic->exes = eina_list_clone(ll);
+                  EINA_LIST_FOREACH(ic->exes, lll, exe)
+                    e_exec_instance_watcher_add(exe, _ibar_instance_watch, ic);
+                  _ibar_icon_signal_emit(ic, "e,state,on", "e");
+               }
              b->icons = eina_list_append(b->icons, ic);
              e_box_pack_end(b->o_box, ic->o_holder);
           }
@@ -648,6 +661,9 @@ _ibar_icon_free(IBar_Icon *ic)
    if (ic->ibar->ic_drop_before == ic)
      ic->ibar->ic_drop_before = NULL;
    _ibar_icon_empty(ic);
+   eina_list_free(ic->exes);
+   E_FREE_FUNC(ic->menu, e_object_del);
+   E_FREE_FUNC(ic->timer, ecore_timer_del);
    evas_object_del(ic->o_holder);
    evas_object_del(ic->o_holder2);
    if (ic->exe_inst)
@@ -797,6 +813,152 @@ _ibar_cb_menu_configuration(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __
 }
 
 static void
+_ibar_cb_icon_menu_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   IBar_Icon *ic;
+   E_Border *bd = data;
+   Evas_Event_Mouse_Up *ev = event_info;
+
+   ic = evas_object_data_get(obj, "ibar_icon");
+   if (ev->button == 3)
+     {
+        e_int_border_menu_show(bd, ev->canvas.x, ev->canvas.y, 0, ev->timestamp);
+        return;
+     }
+   e_border_activate(bd, 1);
+   if (!ic) return;
+   edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
+}
+
+static void
+_ibar_cb_icon_menu_del(void *obj)
+{
+   IBar_Icon *ic = e_object_data_get(obj);
+   ic->menu = NULL;
+}
+
+static void
+_ibar_cb_icon_menu_autodel(void *data, void *pop EINA_UNUSED)
+{
+   IBar_Icon *ic = data;
+
+   edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
+}
+
+static void
+_ibar_cb_icon_menu_hidden(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   IBar_Icon *ic = data;
+
+   E_OBJECT_DEL_SET(ic->menu, NULL);
+   E_FREE_FUNC(ic->menu, e_object_del);
+}
+
+static void
+_ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int w, h;
+   IBar_Icon *ic = evas_object_data_del(data, "ibar_icon");
+
+   if (!ic) return; //menu is closing
+   edje_object_part_box_remove(ic->menu->o_bg, "e.box", data);
+   evas_object_del(data);
+   if (!ic->exes)
+     {
+        edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
+        return;
+     }
+   edje_object_calc_force(ic->menu->o_bg);
+   edje_object_size_min_calc(ic->menu->o_bg, &w, &h);
+   edje_extern_object_min_size_set(ic->menu->o_bg, w, h);
+   if (e_box_orientation_get(ic->ibar->o_box))
+     {
+        int ny;
+
+        if (ic->menu->win->y > (ic->menu->win->zone->h / 2))
+          ny = ic->menu->win->y - (h - ic->menu->win->h);
+        else
+          ny = ic->menu->win->y;
+        e_popup_move_resize(ic->menu->win, ic->menu->win->x, ny, w, h);
+     }
+   else
+     e_popup_resize(ic->menu->win, w, h);
+}
+
+static void
+_ibar_icon_menu(IBar_Icon *ic)
+{
+   Evas_Object *o, *it;
+   Eina_List *l;
+   E_Exec_Instance *exe;
+   Evas *e;
+   int w, h;
+
+   if (!ic->exes) return; //FIXME
+   ic->menu = e_gadcon_popup_new(ic->ibar->inst->gcc);
+   e_popup_name_set(ic->menu->win, "noshadow-ibarmenu");
+   e_object_data_set(E_OBJECT(ic->menu), ic);
+   E_OBJECT_DEL_SET(ic->menu, _ibar_cb_icon_menu_del);
+   e = e_comp_get(ic->menu)->evas;
+   o = edje_object_add(e);
+   e_theme_edje_object_set(o, "base/theme/modules/ibar", "e/modules/ibar/menu");
+   EINA_LIST_FOREACH(ic->exes, l, exe)
+     {
+        Evas_Object *img;
+        const char *txt;
+
+        if (!exe->bd) continue; //WTF
+        it = edje_object_add(e);
+        e_popup_object_add(ic->menu->win, it);
+        e_theme_edje_object_set(it, "base/theme/modules/ibar", "e/modules/ibar/menu/item");
+        img = e_comp_win_image_mirror_add(exe->bd->cw);
+        evas_object_event_callback_add(img, EVAS_CALLBACK_DEL, _ibar_cb_icon_menu_img_del, it);
+        txt = exe->bd->client.netwm.name ?:
+          (exe->bd->client.icccm.title ?: exe->bd->client.icccm.name);
+        w = exe->bd->cw->pw, h = exe->bd->cw->ph;
+        e_popup_object_add(ic->menu->win, img);
+        evas_object_show(img);
+        edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, w, h);
+        edje_object_part_swallow(it, "e.swallow.icon", img);
+        edje_object_part_text_set(it, "e.text.title", txt);
+        edje_object_calc_force(it);
+        edje_object_size_min_calc(it, &w, &h);
+        edje_extern_object_min_size_set(it, w, h);
+        evas_object_show(it);
+        evas_object_event_callback_add(it, EVAS_CALLBACK_MOUSE_UP,
+          _ibar_cb_icon_menu_mouse_up, exe->bd);
+        evas_object_data_set(it, "ibar_icon", ic);
+        edje_object_part_box_append(o, "e.box", it);
+     }
+   edje_object_calc_force(o);
+   edje_object_size_min_calc(o, &w, &h);
+   edje_extern_object_min_size_set(o, w, h);
+   /* gadcon popups don't really prevent this,
+    * so away we go!
+    */
+   evas_object_del(ic->menu->o_bg);
+   ic->menu->o_bg = o;
+   ic->menu->w = w, ic->menu->h = h;
+   edje_object_signal_callback_add(o, "e,action,hide,done", "*", _ibar_cb_icon_menu_hidden, ic);
+   e_popup_resize(ic->menu->win, w, h);
+   edje_object_signal_emit(o, "e,state,hidden", "e");
+   edje_object_message_signal_process(o);
+   e_gadcon_popup_show(ic->menu);
+   {
+      Evas_Coord x, y, iw, ih, ox, oy;
+      evas_object_geometry_get(ic->o_holder, &x, &y, &iw, &ih);
+      ox = ic->menu->win->x, oy = ic->menu->win->y;
+      if (e_box_orientation_get(ic->ibar->o_box))
+        ox = (x + (iw / 2)) - (w / 2);
+      else
+        oy = (y + (ih / 2)) - (h / 2);
+      e_popup_move(ic->menu->win, ox, oy);
+   }
+   edje_object_signal_emit(o, "e,action,show", "e");
+   e_popup_autoclose(ic->menu->win, _ibar_cb_icon_menu_autodel, NULL, ic);
+}
+
+static void
 _ibar_cb_icon_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    IBar_Icon *ic;
@@ -825,6 +987,19 @@ _ibar_cb_icon_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
      _ibar_icon_signal_emit(ic, "e,action,hide,label", "e");
 }
 
+static Eina_Bool
+_ibar_cb_icon_timer_cb(void *data)
+{
+   IBar_Icon *ic = data;
+
+   ic->timer = NULL;
+   ic->drag.start = 0;
+   ic->drag.dnd = 0;
+   ic->mouse_down = 0;
+   _ibar_icon_menu(ic);
+   return EINA_FALSE;
+}
+
 static void
 _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
@@ -840,6 +1015,8 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         ic->drag.start = 1;
         ic->drag.dnd = 0;
         ic->mouse_down = 1;
+        if (!ic->timer)
+          ic->timer = ecore_timer_add(0.35, _ibar_cb_icon_timer_cb, ic);
      }
    else if (ev->button == 3)
      {
@@ -930,15 +1107,16 @@ _ibar_instance_watch(void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type)
      
    switch (type)
      {
-      case E_EXEC_WATCH_STARTED:
       case E_EXEC_WATCH_STOPPED:
       case E_EXEC_WATCH_TIMEOUT:
-        if (ic->exe_inst == inst)
-          {
-             _ibar_icon_signal_emit(ic, "e,state,started", "e");
-             e_exec_instance_watcher_del(inst, _ibar_instance_watch, ic);
-             ic->exe_inst = NULL;
-          }
+        ic->exes = eina_list_remove(ic->exes, inst);
+        if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,off", "e");
+        break;
+      case E_EXEC_WATCH_STARTED:
+        _ibar_icon_signal_emit(ic, "e,state,started", "e");
+        if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,on", "e");
+        if (ic->exe_inst == inst) ic->exe_inst = NULL;
+        ic->exes = eina_list_append(ic->exes, inst);
         break;
       default:
         break;
@@ -998,6 +1176,7 @@ _ibar_cb_icon_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
         ic->drag.start = 0;
         ic->drag.dnd = 0;
         ic->mouse_down = 0;
+        E_FREE_FUNC(ic->timer, ecore_timer_del);
      }
 }
 
