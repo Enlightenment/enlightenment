@@ -471,6 +471,7 @@ e_menu_deactivate(E_Menu *m)
 {
    E_OBJECT_CHECK(m);
    E_OBJECT_TYPE_CHECK(m, E_MENU_TYPE);
+   if (!m->active) return;
    m->cur.visible = 0;
    m->active = 0;
    if (m->post_deactivate_cb.func)
