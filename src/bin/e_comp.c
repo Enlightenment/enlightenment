@@ -1655,7 +1655,9 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         // etc. etc.
         list = conf->match.popups;
         name = cw->pop->name;
-        skip = (conf->match.disable_popups);
+        skip = conf->match.disable_popups;
+        if (cw->pop->name && (!skip))
+          skip = (!strncmp(cw->pop->name, "noshadow", 8));
         fast = conf->fast_popups;
      }
    else if (cw->menu)
