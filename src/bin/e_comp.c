@@ -1962,7 +1962,7 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
         Eina_Bool alpha, argb = EINA_FALSE;
 
         alpha = evas_object_image_alpha_get(cw->obj);
-        evas_object_image_size_get(cw->obj, &w, &h);
+        w = cw->pw, h = cw->ph;
 
         evas_object_image_alpha_set(o, alpha);
 
