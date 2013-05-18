@@ -264,6 +264,7 @@ _e_exe_instance_watchers_call(E_Exec_Instance *inst, E_Exec_Watch_Type type)
 EAPI void
 e_exec_instance_found(E_Exec_Instance *inst)
 {
+   E_FREE_FUNC(inst->expire_timer, ecore_timer_del);
    _e_exe_instance_watchers_call(inst, E_EXEC_WATCH_STARTED);
 }
 
@@ -556,6 +557,11 @@ _e_exec_instance_free(E_Exec_Instance *inst)
      e_exec_start_pending = eina_list_remove(e_exec_start_pending,
                                              inst->desktop);
    if (inst->expire_timer) ecore_timer_del(inst->expire_timer);
+   if (inst->bd)
+     {
+        inst->bd->exe_inst = NULL;
+        inst->bd = NULL;
+     }
    if (inst->desktop) efreet_desktop_free(inst->desktop);
    free(inst);
 }
