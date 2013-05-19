@@ -19,9 +19,7 @@ e_sys_l2ping(const char *bluetooth_mac)
    l2cap_cmd_hdr *send_cmd;
    l2cap_cmd_hdr *recv_cmd;
    struct sockaddr_l2 addr;
-   struct timeval tv;
    socklen_t optlen;
-   fd_set rfds;
    double start;
    int fd;
 
