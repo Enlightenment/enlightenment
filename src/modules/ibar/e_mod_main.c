@@ -901,7 +901,8 @@ _ibar_icon_menu(IBar_Icon *ic)
    E_OBJECT_DEL_SET(ic->menu, _ibar_cb_icon_menu_del);
    e = e_comp_get(ic->menu)->evas;
    o = edje_object_add(e);
-   e_theme_edje_object_set(o, "base/theme/modules/ibar", "e/modules/ibar/menu");
+   e_theme_edje_object_set(o, "base/theme/modules/ibar",
+                           "e/modules/ibar/menu");
    EINA_LIST_FOREACH(ic->exes, l, exe)
      {
         Evas_Object *img;
@@ -910,12 +911,15 @@ _ibar_icon_menu(IBar_Icon *ic)
         if (!exe->bd) continue; //WTF
         it = edje_object_add(e);
         e_popup_object_add(ic->menu->win, it);
-        e_theme_edje_object_set(it, "base/theme/modules/ibar", "e/modules/ibar/menu/item");
+        e_theme_edje_object_set(it, "base/theme/modules/ibar",
+                                "e/modules/ibar/menu/item");
         img = e_comp_win_image_mirror_add(exe->bd->cw);
-        evas_object_event_callback_add(img, EVAS_CALLBACK_DEL, _ibar_cb_icon_menu_img_del, it);
+        evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
+                                       _ibar_cb_icon_menu_img_del, it);
         txt = exe->bd->client.netwm.name ?:
           (exe->bd->client.icccm.title ?: exe->bd->client.icccm.name);
-        w = exe->bd->cw->pw, h = exe->bd->cw->ph;
+        w = exe->bd->cw->pw;
+        h = exe->bd->cw->ph;
         e_popup_object_add(ic->menu->win, img);
         evas_object_show(img);
         edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, w, h);
@@ -924,6 +928,7 @@ _ibar_icon_menu(IBar_Icon *ic)
         edje_object_calc_force(it);
         edje_object_size_min_calc(it, &w, &h);
         edje_extern_object_min_size_set(it, w, h);
+        evas_object_size_hint_min_set(it, w, h);
         evas_object_show(it);
         evas_object_event_callback_add(it, EVAS_CALLBACK_MOUSE_UP,
           _ibar_cb_icon_menu_mouse_up, exe->bd);
@@ -939,7 +944,8 @@ _ibar_icon_menu(IBar_Icon *ic)
    evas_object_del(ic->menu->o_bg);
    ic->menu->o_bg = o;
    ic->menu->w = w, ic->menu->h = h;
-   edje_object_signal_callback_add(o, "e,action,hide,done", "*", _ibar_cb_icon_menu_hidden, ic);
+   edje_object_signal_callback_add(o, "e,action,hide,done", "*",
+                                   _ibar_cb_icon_menu_hidden, ic);
    e_popup_resize(ic->menu->win, w, h);
    edje_object_signal_emit(o, "e,state,hidden", "e");
    edje_object_message_signal_process(o);
@@ -1109,8 +1115,10 @@ _ibar_instance_watch(void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type)
      {
       case E_EXEC_WATCH_STOPPED:
       case E_EXEC_WATCH_TIMEOUT:
+        _ibar_icon_signal_emit(ic, "e,state,started", "e");
         ic->exes = eina_list_remove(ic->exes, inst);
         if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,off", "e");
+        ic->exe_inst = NULL;
         break;
       case E_EXEC_WATCH_STARTED:
         _ibar_icon_signal_emit(ic, "e,state,started", "e");
