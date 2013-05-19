@@ -1976,6 +1976,7 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
                {
                   Evas_Native_Surface ns;
 
+                  evas_object_image_size_set(o, w, h);
                   ns.version = EVAS_NATIVE_SURFACE_VERSION;
                   ns.type = EVAS_NATIVE_SURFACE_X11;
                   ns.data.x11.visual = cw->vis;
@@ -1996,8 +1997,8 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
              evas_object_image_data_set(o, pix);
              if (!argb)
                evas_object_image_data_set(cw->obj, pix);
+             evas_object_image_size_set(o, w, h);
           }
-        evas_object_image_size_set(o, w, h);
      }
    else if (cw->real_obj)
      {
