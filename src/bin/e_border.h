@@ -634,8 +634,6 @@ struct _E_Border
    Ecore_Poller              *ping_poller;
    Ecore_Timer               *kill_timer;
    E_Border_Move_Intercept_Cb move_intercept_cb;
-   int                        shape_rects_num;
-   Ecore_X_Rectangle         *shape_rects;
    E_Remember                *remember;
 
    E_Border                  *modal;

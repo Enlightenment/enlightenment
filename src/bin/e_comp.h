@@ -139,8 +139,6 @@ struct _E_Comp_Win
    Ecore_Timer         *update_timeout;  // max time between damage and "done" event
    Ecore_Timer         *ready_timeout;  // max time on show (new window draw) to wait for window contents to be ready if sync protocol not handled. this is fallback.
    int                  dmg_updates;  // num of damage event updates since a redirect
-   Ecore_X_Rectangle   *rects;  // shape rects... if shaped :(
-   int                  rects_num;  // num rects above
 
    Ecore_X_Pixmap       cache_pixmap;  // the cached pixmap (1/nth the dimensions)
    int                  cache_w, cache_h;  // cached pixmap size

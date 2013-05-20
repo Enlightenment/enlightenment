@@ -8,7 +8,8 @@ typedef enum _E_Container_Shape_Change
    E_CONTAINER_SHAPE_HIDE,
    E_CONTAINER_SHAPE_MOVE,
    E_CONTAINER_SHAPE_RESIZE,
-   E_CONTAINER_SHAPE_RECTS
+   E_CONTAINER_SHAPE_RECTS,
+   E_CONTAINER_SHAPE_INPUT_RECTS
 } E_Container_Shape_Change;
 
 typedef struct _E_Container                E_Container;
@@ -77,7 +78,10 @@ struct _E_Container_Shape
    struct {
       int x, y, w, h;
    } solid_rect;
-   Eina_List     *shape;
+   int                     shape_rects_num;
+   Eina_Rectangle         *shape_rects;
+   int                     shape_input_rects_num;
+   Eina_Rectangle         *shape_input_rects;
 };
 
 struct _E_Container_Shape_Callback
@@ -127,8 +131,8 @@ EAPI void               e_container_shape_geometry_get(E_Container_Shape *es, in
 EAPI E_Container       *e_container_shape_container_get(E_Container_Shape *es);
 EAPI void               e_container_shape_change_callback_add(E_Container *con, E_Container_Shape_Cb func, void *data);
 EAPI void               e_container_shape_change_callback_del(E_Container *con, E_Container_Shape_Cb func, void *data);
-EAPI Eina_List         *e_container_shape_rects_get(E_Container_Shape *es);
-EAPI void               e_container_shape_rects_set(E_Container_Shape *es, Ecore_X_Rectangle *rects, int num);
+EAPI void               e_container_shape_rects_set(E_Container_Shape *es, Eina_Rectangle *rects, int num);
+EAPI void               e_container_shape_input_rects_set(E_Container_Shape *es, Eina_Rectangle *rects, int num);
 EAPI void               e_container_shape_solid_rect_set(E_Container_Shape *es, int x, int y, int w, int h);
 EAPI void               e_container_shape_solid_rect_get(E_Container_Shape *es, int *x, int *y, int *w, int *h);
 

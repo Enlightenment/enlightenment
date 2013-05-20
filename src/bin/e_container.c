@@ -450,51 +450,50 @@ e_container_shape_change_callback_del(E_Container *con, E_Container_Shape_Cb fun
      }
 }
 
-EAPI Eina_List *
-e_container_shape_rects_get(E_Container_Shape *es)
-{
-   E_OBJECT_CHECK_RETURN(es, NULL);
-   E_OBJECT_TYPE_CHECK_RETURN(es, E_CONTAINER_SHAPE_TYPE, NULL);
-   return es->shape;
-}
-
 EAPI void
-e_container_shape_rects_set(E_Container_Shape *es, Ecore_X_Rectangle *rects, int num)
+e_container_shape_rects_set(E_Container_Shape *es, Eina_Rectangle *rects, int num)
 {
-   int i;
-   E_Rect *r;
-
    E_OBJECT_CHECK(es);
    E_OBJECT_TYPE_CHECK(es, E_CONTAINER_SHAPE_TYPE);
-   if (es->shape)
-     {
-        E_FREE_LIST(es->shape, free);
-        es->shape = NULL;
-     }
+   E_FREE(es->shape_rects);
+   es->shape_rects_num = 0;
    if ((rects) && (num == 1) &&
        (rects[0].x == 0) &&
        (rects[0].y == 0) &&
-       ((int)rects[0].width == es->w) &&
-       ((int)rects[0].height == es->h))
+       ((int)rects[0].w == es->w) &&
+       ((int)rects[0].h == es->h))
      {
         /* do nothing */
      }
    else if (rects)
      {
-        for (i = 0; i < num; i++)
-          {
-             r = malloc(sizeof(E_Rect));
-             if (r)
-               {
-                  r->x = rects[i].x;
-                  r->y = rects[i].y;
-                  r->w = rects[i].width;
-                  r->h = rects[i].height;
-                  es->shape = eina_list_append(es->shape, r);
-               }
-          }
+        es->shape_rects = rects;
+        es->shape_rects_num = num;
      }
    _e_container_shape_change_call(es, E_CONTAINER_SHAPE_RECTS);
+}
+
+EAPI void
+e_container_shape_input_rects_set(E_Container_Shape *es, Eina_Rectangle *rects, int num)
+{
+   E_OBJECT_CHECK(es);
+   E_OBJECT_TYPE_CHECK(es, E_CONTAINER_SHAPE_TYPE);
+   E_FREE(es->shape_input_rects);
+   es->shape_input_rects_num = 0;
+   if ((rects) && (num == 1) &&
+       (rects[0].x == 0) &&
+       (rects[0].y == 0) &&
+       ((int)rects[0].w == es->w) &&
+       ((int)rects[0].h == es->h))
+     {
+        /* do nothing */
+     }
+   else if (rects)
+     {
+        es->shape_input_rects = rects;
+        es->shape_input_rects_num = num;
+     }
+   _e_container_shape_change_call(es, E_CONTAINER_SHAPE_INPUT_RECTS);
 }
 
 EAPI void
@@ -939,7 +938,8 @@ static void
 _e_container_shape_free(E_Container_Shape *es)
 {
    es->con->shapes = eina_list_remove(es->con->shapes, es);
-   E_FREE_LIST(es->shape, free);
+   free(es->shape_rects);
+   free(es->shape_input_rects);
    free(es);
 }
 
