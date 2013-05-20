@@ -770,6 +770,7 @@ _pager_popup_new(E_Zone *zone, int keyaction)
 
    /* Show popup */
    pp->popup = e_popup_new(zone, 0, 0, 1, 1);
+   e_popup_ignore_events_set(pp->popup, 1);
    if (!pp->popup)
      {
         free(pp);
