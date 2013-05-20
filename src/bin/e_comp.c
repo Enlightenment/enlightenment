@@ -3732,7 +3732,7 @@ _e_comp_shapes_update_comp_win_shape_comp_helper(E_Comp_Win *cw, Eina_Tiler *tb)
         SHAPE_INF("IGNORING DELETED: %u", cw->win);
         return;
      }
-   if (cw->invalid || cw->real_hid || (!cw->visible) || (!cw->shape->visible))
+   if (cw->invalid || cw->real_hid || (!cw->visible) || (!cw->shape->visible) || evas_object_pass_events_get(cw->shobj))
      {
         SHAPE_DBG("SKIPPING SHAPE");
         return;
