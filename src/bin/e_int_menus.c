@@ -723,7 +723,13 @@ _e_int_menus_app_config_append(Efreet_Desktop *desktop)
    EINA_LIST_FOREACH_SAFE(e_config->menu_applications, l, l_next, ma)
      {
         if ((!strcmp(ma->orig_path, cma->orig_path)) && (ma->load_time == cma->load_time))
-          return ma->exec_valid;
+          {
+             eina_stringshare_del(cma->orig_path);
+             eina_stringshare_del(cma->try_exec);
+             eina_stringshare_del(cma->exec);
+             free(cma);
+             return ma->exec_valid;
+          }
 
         if ((!strcmp(ma->orig_path, cma->orig_path)) && (ma->load_time != cma->load_time))
           {
