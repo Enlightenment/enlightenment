@@ -661,7 +661,7 @@ _ibar_icon_free(IBar_Icon *ic)
    if (ic->ibar->ic_drop_before == ic)
      ic->ibar->ic_drop_before = NULL;
    _ibar_icon_empty(ic);
-   eina_list_free(ic->exes);
+   ic->exes = eina_list_free(ic->exes);
    E_FREE_FUNC(ic->menu, e_object_del);
    E_FREE_FUNC(ic->timer, ecore_timer_del);
    evas_object_del(ic->o_holder);
