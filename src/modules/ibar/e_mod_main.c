@@ -842,6 +842,7 @@ _ibar_cb_icon_menu_autodel(void *data, void *pop EINA_UNUSED)
 {
    IBar_Icon *ic = data;
 
+   if (!ic->menu) return;
    edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
 }
 
