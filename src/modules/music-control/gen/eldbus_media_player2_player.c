@@ -147,6 +147,7 @@ on_media_player2_player_seeked(void *data, const Eldbus_Message *msg)
    if (!eldbus_message_arguments_get(msg, "x", &s_data->arg0))
      {
         ERR("Error: Getting arguments from message.");
+        free(s_data);
         return;
      }
    ecore_event_add(MEDIA_PLAYER2_PLAYER_SEEKED_EVENT, s_data, media_player2_player_seeked_data_free, NULL);
