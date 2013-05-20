@@ -656,19 +656,21 @@ _ibar_icon_new(IBar *b, Efreet_Desktop *desktop)
 static void
 _ibar_icon_free(IBar_Icon *ic)
 {
+   E_Exec_Instance *inst;
+   
    if (ic->reset_timer) ecore_timer_del(ic->reset_timer);
    ic->reset_timer = NULL;
    if (ic->ibar->ic_drop_before == ic)
      ic->ibar->ic_drop_before = NULL;
    _ibar_icon_empty(ic);
-   ic->exes = eina_list_free(ic->exes);
+   EINA_LIST_FREE(ic->exes, inst)
+     e_exec_instance_watcher_del(inst, _ibar_instance_watch, ic);
    E_FREE_FUNC(ic->menu, e_object_del);
    E_FREE_FUNC(ic->timer, ecore_timer_del);
    evas_object_del(ic->o_holder);
    evas_object_del(ic->o_holder2);
    if (ic->exe_inst)
      {
-        e_exec_instance_watcher_del(ic->exe_inst, _ibar_instance_watch, ic);
         ic->exe_inst = NULL;
      }
    E_FREE(ic);
@@ -1117,6 +1119,7 @@ _ibar_instance_watch(void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type)
       case E_EXEC_WATCH_STOPPED:
       case E_EXEC_WATCH_TIMEOUT:
         _ibar_icon_signal_emit(ic, "e,state,started", "e");
+        e_exec_instance_watcher_del(inst, _ibar_instance_watch, ic);
         ic->exes = eina_list_remove(ic->exes, inst);
         if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,off", "e");
         ic->exe_inst = NULL;
