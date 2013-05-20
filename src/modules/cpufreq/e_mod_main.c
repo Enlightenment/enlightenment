@@ -679,7 +679,8 @@ _cpufreq_status_check_available(Status *s)
    if (f)
      {
         char *gov;
-
+        int len;
+        
         if (s->governors)
           {
              for (l = s->governors; l; l = l->next)
@@ -694,7 +695,16 @@ _cpufreq_status_check_available(Status *s)
              return;
           }
         fclose(f);
-
+        len = strlen(buf);
+        if (len > 0)
+          {
+             gov = buf + len - 1;
+             while ((gov > buf) && (isspace(*gov)))
+               {
+                  *gov = 0;
+                  gov--;
+               }
+          }
         gov = strtok(buf, " ");
         do
           {
