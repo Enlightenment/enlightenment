@@ -441,7 +441,6 @@ static Eina_Bool     _e_fm2_cb_live_timer(void *data);
 static int           _e_fm2_theme_edje_object_set(E_Fm2_Smart_Data *sd, Evas_Object *o, const char *category, const char *group);
 static int           _e_fm2_theme_edje_icon_object_set(E_Fm2_Smart_Data *sd, Evas_Object *o, const char *category, const char *group);
 
-static void          _e_fm2_mouse_1_handler(E_Fm2_Icon *ic, int up, void *evas_event);
 static void          _e_fm2_mouse_2_handler(E_Fm2_Icon *ic, void *evas_event);
 
 static void          _e_fm2_client_spawn(void);
@@ -7082,7 +7081,7 @@ _e_fm2_mouse_2_handler(E_Fm2_Icon *ic, void *evas_event)
 }
 
 /* FIXME: prototype */
-static void
+static int
 _e_fm2_mouse_1_handler(E_Fm2_Icon *ic, int up, void *evas_event)
 {
    Evas_Event_Mouse_Down *ed = NULL;
@@ -7091,7 +7090,7 @@ _e_fm2_mouse_1_handler(E_Fm2_Icon *ic, int up, void *evas_event)
    int multi_sel = 0, range_sel = 0, sel_change = 0;
    static unsigned int down_timestamp = 0;
 
-   if (!evas_event) return;
+   if (!evas_event) return 0;
 
    if (!up)
      {
@@ -7135,7 +7134,7 @@ _e_fm2_mouse_1_handler(E_Fm2_Icon *ic, int up, void *evas_event)
        (ic->sd->config->view.single_click) &&
        ((eu->timestamp - down_timestamp) > ic->sd->config->view.single_click_delay))
      {
-        if (_e_fm2_inplace_open(ic) == 1) return;
+        if (_e_fm2_inplace_open(ic) == 1) return 1;
      }
 
    if (range_sel)
@@ -7234,6 +7233,7 @@ _e_fm2_mouse_1_handler(E_Fm2_Icon *ic, int up, void *evas_event)
                evas_object_smart_callback_call(ic->sd->obj, "selected", NULL);
           }
      }
+   return 0;
 }
 
 static void
@@ -7285,7 +7285,10 @@ _e_fm2_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
      }
    else if (ev->button == 3)
      {
-        if (!ic->selected) _e_fm2_mouse_1_handler(ic, 0, ev);
+        if (!ic->selected)
+          {
+             if (_e_fm2_mouse_1_handler(ic, 0, ev)) return;
+          }
         _e_fm2_icon_menu(ic, ic->sd->obj, ev->timestamp);
      }
 }
@@ -7306,7 +7309,10 @@ _e_fm2_cb_icon_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
      {
         if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
           {
-             if (!ic->entry_widget) _e_fm2_mouse_1_handler(ic, 1, ev);
+             if (!ic->entry_widget)
+               {
+                  if (_e_fm2_mouse_1_handler(ic, 1, ev)) return;
+               }
           }
         ic->drag.start = EINA_FALSE;
         ic->drag.dnd = EINA_FALSE;
