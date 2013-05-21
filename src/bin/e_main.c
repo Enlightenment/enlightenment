@@ -1717,7 +1717,6 @@ _e_main_screens_init(void)
         con = e_container_new(man);
         if (con)
           {
-             e_comp_populate(man->comp);
              e_container_show(con);
              e_grabinput_focus(con->bg_win, E_FOCUS_METHOD_PASSIVE);
              e_hints_manager_init(man);
@@ -1895,7 +1894,10 @@ _e_main_manage_all(void)
    E_Manager *man;
 
    EINA_LIST_FOREACH(e_manager_list(), l, man)
-     e_manager_manage_windows(man);
+     {
+        e_manager_manage_windows(man);
+        e_comp_populate(man->comp);
+     }
 }
 
 static Eina_Bool
