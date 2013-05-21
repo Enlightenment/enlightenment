@@ -23,7 +23,7 @@ EAPI void         e_layout_child_geometry_get(Evas_Object *obj, Evas_Coord *x, E
 EAPI void         e_layout_unpack            (Evas_Object *obj);
 
 EAPI Eina_List *e_layout_children_get(Evas_Object *obj);
-EAPI Evas_Object *e_layout_top_child_at_xy_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, const Eina_List *ignore);
+EAPI Evas_Object *e_layout_top_child_at_xy_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Eina_Bool vis, const Eina_List *ignore);
 
 EAPI Evas_Object *e_layout_child_below_get(Evas_Object *obj);
 EAPI Evas_Object *e_layout_child_above_get(Evas_Object *obj);

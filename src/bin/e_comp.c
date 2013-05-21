@@ -5255,7 +5255,7 @@ e_comp_zone_update(E_Comp_Zone *cz)
 }
 
 EAPI Ecore_X_Window
-e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y, Ecore_X_Window *ignore, unsigned int ignore_num)
+e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y, Eina_Bool vis, Ecore_X_Window *ignore, unsigned int ignore_num)
 {
    E_Comp_Win *cw;
    Evas_Object *o;
@@ -5276,7 +5276,7 @@ e_comp_top_window_at_xy_get(E_Comp *c, Evas_Coord x, Evas_Coord y, Ecore_X_Windo
                ignore_list = eina_list_append(ignore_list, cw->effect_obj);
           }
      }
-   o = e_layout_top_child_at_xy_get(c->layout, x, y, ignore_list);
+   o = e_layout_top_child_at_xy_get(c->layout, x, y, vis, ignore_list);
    eina_list_free(ignore_list);
    cw = evas_object_data_get(o, "comp_win");
    if (!cw) return c->ee_win;

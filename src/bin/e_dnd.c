@@ -766,7 +766,7 @@ _e_drag_update(Ecore_X_Window root, int x, int y, Ecore_X_Atom action)
      {
         Ecore_X_Window ignore[1];
         ignore[0] = _drag_win;
-        win = e_comp_top_window_at_xy_get(e_comp_get(_drag_current), x, y, ignore, 1);
+        win = e_comp_top_window_at_xy_get(e_comp_get(_drag_current), x, y, 1, ignore, 1);
      }
    else
      win = root;
@@ -894,7 +894,7 @@ _e_drag_end(int x, int y)
 
    if (!_drag_current) return;
    ignore[0] = _drag_win;
-   win = e_comp_top_window_at_xy_get(e_comp_get(_drag_current), x, y, ignore, 1);
+   win = e_comp_top_window_at_xy_get(e_comp_get(_drag_current), x, y, 1, ignore, 1);
    zone = e_container_zone_at_point_get(_drag_current->container, x, y);
    /* Pass -1, -1, so that it is possible to drop at the edge. */
    if (zone) e_zone_flip_coords_handle(zone, -1, -1);

@@ -302,7 +302,7 @@ e_layout_children_get(Evas_Object *obj)
 }
 
 EAPI Evas_Object *
-e_layout_top_child_at_xy_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, const Eina_List *ignore)
+e_layout_top_child_at_xy_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Eina_Bool vis, const Eina_List *ignore)
 {
    E_Smart_Data *sd;
    E_Layout_Item *li;
@@ -314,7 +314,8 @@ e_layout_top_child_at_xy_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, const
      if (E_INSIDE(x, y, li->x, li->y, li->w, li->h))
        {
           if (eina_list_data_find(ignore, li->obj)) continue;
-          return li->obj;
+          if ((!vis) || evas_object_visible_get(li->obj))
+            return li->obj;
        }
    return NULL;
 }
