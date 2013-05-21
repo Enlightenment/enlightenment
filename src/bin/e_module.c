@@ -223,6 +223,14 @@ e_module_all_load(void)
    EINA_LIST_FOREACH_SAFE(e_config->modules, l, ll, em)
      {
         if (!em) continue;
+
+        if (!e_util_strcmp(em->name, "comp"))
+          {
+             e_config->modules = eina_list_remove_list(e_config->modules, l);
+             eina_stringshare_del(em->name);
+             free(em);
+             continue;
+          }
         if ((em->delayed) && (em->enabled) & (!e_config->no_module_delay))
           {
              if (!_e_module_idler)
@@ -276,14 +284,6 @@ e_module_new(const char *name)
    int in_list = 0;
 
    if (!name) return NULL;
-   if (!e_util_strcasecmp(name, "comp"))
-     {
-        e_util_dialog_show(_("Module Error"),
-                           _("The composite module cannot be loaded;"
-                             "Enlightenment is already composited."));
-        ERR("USER TRIED TO LOAD EXTERNAL COMP MODULE! MY TEARS FLOW LIKE VICTORIA FALLS!");
-        return NULL;
-     }
    m = E_OBJECT_ALLOC(E_Module, E_MODULE_TYPE, _e_module_free);
    if (name[0] != '/')
      {
