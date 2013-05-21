@@ -2224,6 +2224,8 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
         evas_object_image_colorspace_set(cw->obj, EVAS_COLORSPACE_ARGB8888);
         if (cw->argb) evas_object_image_alpha_set(cw->obj, 1);
         else evas_object_image_alpha_set(cw->obj, 0);
+        if (cw->override)
+          evas_object_pass_events_set(cw->effect_obj, EINA_TRUE);
 
         _e_comp_win_shadow_setup(cw);
         edje_object_part_swallow(cw->effect_obj, "e.swallow.content", cw->shobj);
