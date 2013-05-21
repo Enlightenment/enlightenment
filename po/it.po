@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-05-21 18:27+0200\n"
-"PO-Revision-Date: 2013-05-21 20:45+0200\n"
+"PO-Revision-Date: 2013-05-21 22:28+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: \n"
@@ -11082,7 +11082,7 @@ msgstr "Sfondo"
 
 #: src/modules/gadman/e_mod_config.c:22
 msgid "Hover (Key Toggle)"
-msgstr "Livello nascosto (tasti visualizzazione)"
+msgstr "Livello sovrapposto (tasto visualizzazione)"
 
 #: src/modules/gadman/e_mod_config.c:79 src/modules/gadman/e_mod_config.c:156
 #: src/modules/gadman/e_mod_main.c:163
@@ -11124,7 +11124,7 @@ msgstr "Opzioni dello sfondo"
 
 #: src/modules/gadman/e_mod_gadman.c:124
 msgid "Desktop Hover"
-msgstr "Sovrapposizione al desktop"
+msgstr "Livello sovrapposto al desktop"
 
 #: src/modules/gadman/e_mod_gadman.c:1013
 msgid "Begin move/resize"
