@@ -3240,7 +3240,7 @@ _e_comp_fade_handle(E_Comp_Zone *cz, int out, double tim)
 {
    if (out == 1)
      {
-        if (e_backlight_exists())
+        if ((e_backlight_exists()) && (!conf->nofade))
           {
              e_backlight_update();
              cz->bloff = EINA_TRUE;
@@ -3250,7 +3250,7 @@ _e_comp_fade_handle(E_Comp_Zone *cz, int out, double tim)
      }
    else
      {
-        if (e_backlight_exists())
+        if ((e_backlight_exists()) && (!conf->nofade))
           {
              cz->bloff = EINA_FALSE;
              e_backlight_update();
@@ -3326,9 +3326,12 @@ _e_comp_screens_eval(E_Comp *c)
         evas_object_del(cz->over);
         if (cz->bloff)
           {
-             if (e_backlight_mode_get(cz->zone) != E_BACKLIGHT_MODE_NORMAL)
-               e_backlight_mode_set(cz->zone, E_BACKLIGHT_MODE_NORMAL);
-             e_backlight_level_set(cz->zone, e_config->backlight.normal, 0.0);
+             if (!conf->nofade)
+               {
+                  if (e_backlight_mode_get(cz->zone) != E_BACKLIGHT_MODE_NORMAL)
+                    e_backlight_mode_set(cz->zone, E_BACKLIGHT_MODE_NORMAL);
+                  e_backlight_level_set(cz->zone, e_config->backlight.normal, 0.0);
+               }
           }
         if (cz->zone) cz->zone->comp_zone = NULL;
         free(cz);
@@ -4321,11 +4324,14 @@ _e_comp_del(E_Comp *c)
         if (cz->zone) cz->zone->comp_zone = NULL;
         evas_object_del(cz->base);
         evas_object_del(cz->over);
-        if (cz->bloff)
+        if (!conf->nofade)
           {
-             if (e_backlight_mode_get(cz->zone) != E_BACKLIGHT_MODE_NORMAL)
-               e_backlight_mode_set(cz->zone, E_BACKLIGHT_MODE_NORMAL);
-             e_backlight_level_set(cz->zone, e_config->backlight.normal, 0.0);
+             if (cz->bloff)
+               {
+                  if (e_backlight_mode_get(cz->zone) != E_BACKLIGHT_MODE_NORMAL)
+                    e_backlight_mode_set(cz->zone, E_BACKLIGHT_MODE_NORMAL);
+                  e_backlight_level_set(cz->zone, e_config->backlight.normal, 0.0);
+               }
           }
         free(cz);
      }
@@ -4724,6 +4730,8 @@ _e_comp_cfg_init(void)
 
 
    E_CONFIGURE_OPTION_ADD(co, BOOL, nocomp_fs, conf, _("Don't composite fullscreen windows"), _("composite"), _("border"));
+   co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
+   E_CONFIGURE_OPTION_ADD(co, BOOL, nofade, conf, _("Don't fade backlight"), _("composite"), _("border"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    E_CONFIGURE_OPTION_ADD(co, BOOL, send_flush, conf, _("Send flush when compositing windows"), _("composite"), _("border"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;

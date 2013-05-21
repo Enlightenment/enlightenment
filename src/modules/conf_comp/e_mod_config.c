@@ -36,6 +36,7 @@ struct _E_Config_Dialog_Data
    int          send_flush;
    int          send_dump;
    int          nocomp_fs;
+   int          nofade;
 
    int          fps_show;
    int          fps_corner;
@@ -135,6 +136,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    cfdata->send_flush = _comp_mod->conf->send_flush;
    cfdata->send_dump = _comp_mod->conf->send_dump;
    cfdata->nocomp_fs = _comp_mod->conf->nocomp_fs;
+   cfdata->nofade = _comp_mod->conf->nofade;
 
    cfdata->fps_show = _comp_mod->conf->fps_show;
    cfdata->fps_corner = _comp_mod->conf->fps_corner;
@@ -313,6 +315,8 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, ob, 1, 1, 0.5);
    ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
    e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   ob = e_widget_check_add(evas, _("Don't fade backlight"), &(cfdata->nofade));
+   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
 /*   
    ob = e_widget_check_add(evas, _("Keep hidden windows"), &(cfdata->keep_unmapped));
    e_widget_list_object_append(ol, ob, 1, 1, 0.5);
@@ -428,6 +432,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
        (cfdata->grab != _comp_mod->conf->grab) ||
        (cfdata->keep_unmapped != _comp_mod->conf->keep_unmapped) ||
        (cfdata->nocomp_fs != _comp_mod->conf->nocomp_fs) ||
+       (cfdata->nofade != _comp_mod->conf->nofade) ||
        (cfdata->shadow_style != _comp_mod->conf->shadow_style) ||
        (cfdata->max_unmapped_pixels != _comp_mod->conf->max_unmapped_pixels) ||
        (cfdata->max_unmapped_time != _comp_mod->conf->max_unmapped_time) ||
@@ -467,6 +472,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         _comp_mod->conf->grab = cfdata->grab;
         _comp_mod->conf->keep_unmapped = cfdata->keep_unmapped;
         _comp_mod->conf->nocomp_fs = cfdata->nocomp_fs;
+        _comp_mod->conf->nofade = cfdata->nofade;
         _comp_mod->conf->max_unmapped_pixels = cfdata->max_unmapped_pixels;
         _comp_mod->conf->max_unmapped_time = cfdata->max_unmapped_time;
         _comp_mod->conf->min_unmapped_time = cfdata->min_unmapped_time;
@@ -548,7 +554,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
 
    ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
-
+   
    cfdata->fast =
      (cfdata->fast_menus && cfdata->fast_menus && cfdata->fast_borders && cfdata->fast_popups && cfdata->fast_objects);
    cfdata->fast_ob = ob = e_widget_check_add(evas, _("Enable \"fast\" composite effects"), &(cfdata->fast));

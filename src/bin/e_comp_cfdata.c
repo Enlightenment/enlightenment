@@ -52,6 +52,7 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_VAL(D, T, send_flush, UCHAR);
    E_CONFIG_VAL(D, T, send_dump, UCHAR);
    E_CONFIG_VAL(D, T, nocomp_fs, UCHAR);
+   E_CONFIG_VAL(D, T, nofade, UCHAR);
    E_CONFIG_VAL(D, T, smooth_windows, UCHAR);
    E_CONFIG_VAL(D, T, first_draw_delay, DOUBLE);
    E_CONFIG_VAL(D, T, disable_screen_effects, UCHAR);
@@ -102,6 +103,7 @@ e_comp_cfdata_config_new(void)
    cfg->send_flush = 1; // implement
    cfg->send_dump = 1; // implement
    cfg->nocomp_fs = 1;
+   cfg->nofade = 0;
    cfg->smooth_windows = 0; // 1 if gl, 0 if not
    cfg->first_draw_delay = 0.15;
 
