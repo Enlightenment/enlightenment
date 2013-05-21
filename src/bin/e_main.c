@@ -625,6 +625,21 @@ main(int argc, char **argv)
    TS("Efreet Init Done");
    _e_main_shutdown_push(efreet_shutdown);
 
+   if (e_config->show_splash)
+     e_init_status_set(_("Starting International Support"));
+   TS("E_Intl Post Init");
+   if (!e_intl_post_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its intl system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Intl Post Init Done");
+   _e_main_shutdown_push(e_intl_post_shutdown);
+
+   TS("E_Configure Option Init");
+   e_configure_option_init();
+   TS("E_Configure Option Init Done");
+
    e_screensaver_preinit();
 
    if (e_config->show_splash)
@@ -668,20 +683,6 @@ main(int argc, char **argv)
         e_init_show();
      }
 
-   if (e_config->show_splash)
-     e_init_status_set(_("Starting International Support"));
-   TS("E_Intl Post Init");
-   if (!e_intl_post_init())
-     {
-        e_error_message_show(_("Enlightenment cannot set up its intl system.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_Intl Post Init Done");
-   _e_main_shutdown_push(e_intl_post_shutdown);
-
-   TS("E_Configure Option Init");
-   e_configure_option_init();
-   TS("E_Configure Option Init Done");
    //configure_option_shutdown needs to be first
 
    if (!really_know)
@@ -1049,9 +1050,6 @@ main(int argc, char **argv)
    TS("Manage all windows");
    _e_main_manage_all();
 
-   /* this needs to be the first function called on shutdown */
-   _e_main_shutdown_push(e_configure_option_shutdown);
-
    _idle_after = ecore_idle_enterer_add(_e_main_cb_idle_after, NULL);
 
    if (e_config->show_splash)
@@ -1138,6 +1136,8 @@ _e_main_shutdown(int errcode)
    _idle_after = NULL;
    if (_idle_flush) ecore_idle_enterer_del(_idle_flush);
    _idle_flush = NULL;
+
+   e_configure_option_shutdown();
 
    for (i = (_e_main_lvl - 1); i >= 0; i--)
      (*_e_main_shutdown_func[i])();
