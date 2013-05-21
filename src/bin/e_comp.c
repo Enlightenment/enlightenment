@@ -4731,7 +4731,7 @@ _e_comp_cfg_init(void)
 
    E_CONFIGURE_OPTION_ADD(co, BOOL, nocomp_fs, conf, _("Don't composite fullscreen windows"), _("composite"), _("border"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
-   E_CONFIGURE_OPTION_ADD(co, BOOL, nofade, conf, _("Don't fade backlight"), _("composite"), _("border"));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, nofade, conf, _("Don't fade backlight"), _("composite"), _("backlight"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
    E_CONFIGURE_OPTION_ADD(co, BOOL, send_flush, conf, _("Send flush when compositing windows"), _("composite"), _("border"));
    co->funcs[1].none = co->funcs[0].none = e_comp_shadows_reset;
