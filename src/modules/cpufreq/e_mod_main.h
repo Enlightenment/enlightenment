@@ -17,9 +17,13 @@ struct _Status
    int            cur_min_frequency;
    int            cur_max_frequency;
    int            can_set_frequency;
+   int            pstate_min;
+   int            pstate_max;
    char          *cur_governor;
    const char    *orig_governor;
    unsigned char  active;
+   unsigned char  pstate;
+   unsigned char  pstate_turbo;
 };
 
 struct _Config
@@ -31,6 +35,8 @@ struct _Config
    int           auto_powersave;
    const char   *powersave_governor;
    const char   *governor;
+   int           pstate_min;
+   int           pstate_max;
    /* just config state */
    E_Module     *module;
    Eina_List    *instances;
@@ -39,6 +45,8 @@ struct _Config
    E_Menu       *menu_governor;
    E_Menu       *menu_frequency;
    E_Menu       *menu_powersave;
+   E_Menu       *menu_pstate1;
+   E_Menu       *menu_pstate2;
    Status       *status;
    char         *set_exe_path;
    Ecore_Poller *frequency_check_poller;

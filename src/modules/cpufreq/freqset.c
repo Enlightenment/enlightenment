@@ -16,14 +16,16 @@
 
 static int sys_cpu_setall(const char *control, const char *value);
 static int sys_cpufreq_set(const char *control, const char *value);
+static int sys_cpu_pstate(int min, int max, int turbo);
 
 int
 main(int argc, char *argv[])
 {
-   if (argc != 3)
+   if (argc < 3)
      {
         fprintf(stderr, "Invalid command. Syntax:\n");
         fprintf(stderr, "\tfreqset <frequency|governor> <freq-level|governor-name>\n");
+        fprintf(stderr, "\tfreqset <pstate> <min> <max> <turbo>\n");
         return 1;
      }
 
@@ -99,6 +101,28 @@ main(int argc, char *argv[])
           sys_cpufreq_set("conservative/ignore_nice_load", "0");
         return 0;
      }
+   else if (!strcmp(argv[1], "pstate"))
+     {
+        int min, max, turbo;
+        
+        if (argc < 5)
+          {
+             fprintf(stderr, "Invalid number of arguments.\n");
+             return 1;
+          }
+        min = atoi(argv[2]);
+        max = atoi(argv[3]);
+        turbo = atoi(argv[4]);
+        if ((min < 0) || (min > 100) ||
+            (max < 0) || (max > 100) ||
+            (turbo < 0) || (turbo > 1))
+          {
+             fprintf(stderr, "Invalid pstate values.\n");
+             return 1;
+          }
+        sys_cpu_pstate(min, max, turbo);
+        return 0;
+     }
    else
      {
         fprintf(stderr, "Unknown command.\n");
@@ -156,3 +180,25 @@ sys_cpufreq_set(const char *control, const char *value)
    return 1;
 }
 
+static int
+sys_cpu_pstate(int min, int max, int turbo)
+{
+   FILE *f;
+
+   f = fopen("/sys/devices/system/cpu/intel_pstate/min_perf_pct", "w");
+   if (!f) return 0;
+   fprintf(f, "%i\n", min);
+   fclose(f);
+   
+   f = fopen("/sys/devices/system/cpu/intel_pstate/max_perf_pct", "w");
+   if (!f) return 0;
+   fprintf(f, "%i\n", max);
+   fclose(f);
+   
+   f = fopen("/sys/devices/system/cpu/intel_pstate/no_turbo", "w");
+   if (!f) return 0;
+   fprintf(f, "%i\n", turbo ? 0 : 1);
+   fclose(f);
+   
+   return 1;
+}
