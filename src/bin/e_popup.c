@@ -152,6 +152,7 @@ e_popup_show(E_Popup *pop)
 {
    E_OBJECT_CHECK(pop);
    E_OBJECT_TYPE_CHECK(pop, E_POPUP_TYPE);
+   EINA_SAFETY_ON_NULL_RETURN(pop->content);
 
    if (pop->visible) return;
 
