@@ -571,7 +571,7 @@ group { name: "e/comp/border/default";
             visible: 1;
          }
       }
-      part { name: "shadow";
+      part { name: "shadow"; mouse_events: 0;
          clip_to: "clipper";
          description { state: "default" 0.0;
             image.normal: "win_shadow.png";
@@ -588,7 +588,7 @@ group { name: "e/comp/border/default";
             visible: 0;
          }
       }
-      part { name: "glow";
+      part { name: "glow"; mouse_events: 0;
          clip_to: "clipper";
          description { state: "default" 0.0;
             image.normal: "win_glow.png";
@@ -1019,7 +1019,7 @@ group { name: "e/comp/border/fullscreen";
          description { state: "default" 0.0;
          }
       }
-      part { name: "scr_shadow";
+      part { name: "scr_shadow"; mouse_events: 0;
          clip_to: "clipper_all";
          description { state: "default" 0.0;
             rel1.relative: -1.0 -1.0;
@@ -1048,7 +1048,7 @@ group { name: "e/comp/border/fullscreen";
             visible: 1;
          }
       }
-      part { name: "shadow";
+      part { name: "shadow"; mouse_events: 0;
          clip_to: "clipper_sh";
          description { state: "default" 0.0;
             image.normal: "win_shadow.png";
