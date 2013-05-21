@@ -2145,9 +2145,6 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
         memset((&att), 0, sizeof(Ecore_X_Window_Attributes));
         if (!ecore_x_window_attributes_get(cw->win, &att))
           {
-             free(cw->name);
-             free(cw->clas);
-             free(cw->role);
              free(cw);
              if (conf->grab) ecore_x_ungrab();
              return NULL;
@@ -2158,6 +2155,12 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
              //        printf("WARNING: window 0x%x not 24/32bpp -> %ibpp", cw->win, att.depth);
              //        cw->invalid = 1;
           }
+        if (!att.override)
+          {
+             free(cw);
+             if (conf->grab) ecore_x_ungrab();
+             return NULL;
+          }
         cw->input_only = att.input_only;
         cw->override = att.override;
         cw->vis = att.visual;
@@ -2165,7 +2168,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
         cw->depth = att.depth;
         w = att.w, h = att.h;
 
-        if (cw->override && !(att.event_mask.mine & ECORE_X_EVENT_MASK_WINDOW_PROPERTY))
+        if (!(att.event_mask.mine & ECORE_X_EVENT_MASK_WINDOW_PROPERTY))
           ecore_x_event_mask_set(cw->win, ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
      }
    if ((!cw->bd) && (!cw->menu))
@@ -4077,9 +4080,8 @@ _e_comp_populate(E_Comp *c)
         E_Comp_Win *cw;
         int x, y, w, h, border;
 
-        if (e_comp_win_find(wins[i]) ||
-            e_comp_win_find_client_win(wins[i]) ||
-            e_border_find_by_client_window(wins[i])) continue;
+        if (e_border_find_by_client_window(wins[i]) ||
+            e_border_find_by_window(wins[i])) continue;
         cw = _e_comp_win_add(c, wins[i], NULL);
         if (!cw) continue;
         ecore_x_window_geometry_get(cw->win, &x, &y, &w, &h);
