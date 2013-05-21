@@ -96,7 +96,7 @@ next:
 }
 
 /* maximum number of arguments added above */
-#define VALGRIND_MAX_ARGS 10
+#define VALGRIND_MAX_ARGS 11
 /* bitmask with all supported bits set */
 #define VALGRIND_MODE_ALL 15
 
@@ -119,6 +119,7 @@ valgrind_append(char **dst, int valgrind_gdbserver, int valgrind_mode, int valgr
    if (valgrind_gdbserver) dst[i++] = "--db-attach=yes";
    if (!valgrind_mode) return 0;
    dst[i++] = valgrind_path;
+   dst[i++] = "--num-callers=40";
    dst[i++] = "--track-origins=yes";
    dst[i++] = "--malloc-fill=13"; /* invalid pointer, make it crash */
    if (valgrind_log)
