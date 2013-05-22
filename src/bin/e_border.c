@@ -83,7 +83,6 @@ static Eina_Bool _e_border_cb_config_icon_theme(void *data,
 static Eina_Bool _e_border_cb_config_mode(void *data,
                                           int ev_type,
                                           void *ev);
-
 static Eina_Bool _e_border_cb_pointer_warp(void *data,
                                            int ev_type,
                                            void *ev);
@@ -6379,15 +6378,14 @@ _e_border_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNU
    E_Border *bd = data;
 
    if (grabbed) return;
-   if (bd == focusing) return;
+   if ((bd == focusing) || (bd == focused)) return;
    if (focus_locked && (bd != warp_timer_border)) return;
    if (e_object_is_del(E_OBJECT(bd))) return;
    if (bd->desk && bd->desk->animate_count) return;
-   if (!bd->iconic)
-     e_focus_event_mouse_in(bd);
    bd->mouse.current.mx = ev->output.x;
    bd->mouse.current.my = ev->output.y;
-   return;
+   if (!bd->iconic)
+     e_focus_event_mouse_in(bd);
 }
 
 static Eina_Bool
@@ -6399,14 +6397,14 @@ _e_border_cb_mouse_x_in(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event
    bd = e_border_find_by_window(ev->event_win);
    if (!bd) return ECORE_CALLBACK_RENEW;
    if (bd->input_object) return ECORE_CALLBACK_RENEW;
-   if (bd == focusing) return ECORE_CALLBACK_RENEW;
+   if ((bd == focusing) || (bd == focused)) return ECORE_CALLBACK_RENEW;
    if (focus_locked && (bd != warp_timer_border)) return ECORE_CALLBACK_RENEW;
    if (e_object_is_del(E_OBJECT(bd))) return ECORE_CALLBACK_RENEW;
    if (bd->desk && bd->desk->animate_count) return ECORE_CALLBACK_RENEW;
-   if (!bd->iconic)
-     e_focus_event_mouse_in(bd);
    bd->mouse.current.mx = ev->root.x;
    bd->mouse.current.my = ev->root.y;
+   if (!bd->iconic)
+     e_focus_event_mouse_in(bd);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -6423,10 +6421,10 @@ _e_border_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if (bd->desk && bd->desk->animate_count) return;
    if (!bd->input_object)
      if (E_INSIDE(ev->output.x, ev->output.y, bd->x, bd->y, bd->w, bd->h)) return;
-   if (!bd->iconic)
-     e_focus_event_mouse_out(bd);
    bd->mouse.current.mx = ev->output.x;
    bd->mouse.current.my = ev->output.y;
+   if (!bd->iconic)
+     e_focus_event_mouse_out(bd);
 }
 
 static Eina_Bool
@@ -6451,10 +6449,10 @@ _e_border_cb_mouse_x_out(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Even
    if ((ev->mode == ECORE_X_EVENT_MODE_NORMAL) &&
        (ev->detail == ECORE_X_EVENT_DETAIL_INFERIOR))
      return ECORE_CALLBACK_PASS_ON;
-   if (!bd->iconic)
-     e_focus_event_mouse_out(bd);
    bd->mouse.current.mx = ev->root.x;
    bd->mouse.current.my = ev->root.y;
+   if (!bd->iconic)
+     e_focus_event_mouse_out(bd);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -7035,6 +7033,7 @@ _e_border_eval0(E_Border *bd)
 {
    int change_urgent = 0;
    int rem_change = 0;
+   Eina_Bool new_cw = !bd->cw;
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    Eina_Bool need_desk_set = EINA_FALSE;
 #endif
@@ -8145,12 +8144,6 @@ _e_border_eval0(E_Border *bd)
                   bd->theme_shadow = !!edje_object_data_get(o, "shadow");
                   _e_border_shadow(bd);
 
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, _e_border_cb_mouse_in, bd);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, _e_border_cb_mouse_move, bd);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_OUT, _e_border_cb_mouse_out, bd);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, _e_border_cb_mouse_down, bd);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, _e_border_cb_mouse_up, bd);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL, _e_border_cb_mouse_wheel, bd);
                   if (pbg)
                     {
                        if (bd->icon_object)
@@ -8175,26 +8168,6 @@ _e_border_eval0(E_Border *bd)
               * borderless window before its comp win has been set up;
               * E19 material imo
               */
-             if (o)
-               {
-                  if (bd->cw && (o == bd->cw->obj))
-                    {
-                       /* TODO: set these on cw->effect_obj...always. */
-                       evas_object_event_callback_del_full(o, EVAS_CALLBACK_MOUSE_IN, _e_border_cb_mouse_in, bd);
-                       evas_object_event_callback_del_full(o, EVAS_CALLBACK_MOUSE_MOVE, _e_border_cb_mouse_move, bd);
-                       evas_object_event_callback_del_full(o, EVAS_CALLBACK_MOUSE_OUT, _e_border_cb_mouse_out, bd);
-                       evas_object_event_callback_del_full(o, EVAS_CALLBACK_MOUSE_DOWN, _e_border_cb_mouse_down, bd);
-                       evas_object_event_callback_del_full(o, EVAS_CALLBACK_MOUSE_UP, _e_border_cb_mouse_up, bd);
-                       evas_object_event_callback_del_full(o, EVAS_CALLBACK_MOUSE_WHEEL, _e_border_cb_mouse_wheel, bd);
-                    }
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_IN, _e_border_cb_mouse_in, bd);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, _e_border_cb_mouse_move, bd);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_OUT, _e_border_cb_mouse_out, bd);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, _e_border_cb_mouse_down, bd);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP, _e_border_cb_mouse_up, bd);
-                  evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_WHEEL, _e_border_cb_mouse_wheel, bd);
-               }
-
              {
                 // previously calculated
                 Eina_Bool calc = bd->client_inset.calc;
@@ -8280,6 +8253,13 @@ _e_border_eval0(E_Border *bd)
      }
 
    _e_border_hook_call(E_BORDER_HOOK_EVAL_POST_BORDER_ASSIGN, bd);
+   if (!new_cw) return;
+   evas_object_event_callback_add(bd->cw->effect_obj, EVAS_CALLBACK_MOUSE_IN, _e_border_cb_mouse_in, bd);
+   evas_object_event_callback_add(bd->cw->effect_obj, EVAS_CALLBACK_MOUSE_MOVE, _e_border_cb_mouse_move, bd);
+   evas_object_event_callback_add(bd->cw->effect_obj, EVAS_CALLBACK_MOUSE_OUT, _e_border_cb_mouse_out, bd);
+   evas_object_event_callback_add(bd->cw->effect_obj, EVAS_CALLBACK_MOUSE_DOWN, _e_border_cb_mouse_down, bd);
+   evas_object_event_callback_add(bd->cw->effect_obj, EVAS_CALLBACK_MOUSE_UP, _e_border_cb_mouse_up, bd);
+   evas_object_event_callback_add(bd->cw->effect_obj, EVAS_CALLBACK_MOUSE_WHEEL, _e_border_cb_mouse_wheel, bd);
 }
 
 static void

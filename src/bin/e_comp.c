@@ -21,6 +21,7 @@
 //////////////////////////////////////////////////////////////////////////
 
 static Eina_List *handlers = NULL;
+static Eina_List *hooks = NULL;
 static Eina_List *compositors = NULL;
 static Eina_Hash *windows = NULL;
 static Eina_Hash *borders = NULL;
@@ -3399,36 +3400,33 @@ _e_comp_zonech(void *data EINA_UNUSED, int type EINA_UNUSED, EINA_UNUSED void *e
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static Eina_Bool
-_e_comp_bd_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+static void
+_e_comp_bd_add(void *data EINA_UNUSED, void *ev)
 {
-   E_Event_Border_Add *ev = event;
+   E_Border *bd = ev;
    E_Comp_Win *cw;
    E_Container *con;
    int x;
 
-   cw = ev->border->cw;
-   if (!cw)
+   if (bd->cw) return;
+   cw = _e_comp_win_find(bd->win);
+   if (cw)
      {
-        cw = _e_comp_win_find(ev->border->win);
-        if (cw)
-          {
-             _e_comp_win_bd_setup(cw, ev->border);
-             evas_object_data_set(cw->shobj, "border", cw->bd);
-             evas_object_data_set(cw->effect_obj, "border", cw->bd);
+        _e_comp_win_bd_setup(cw, bd);
+        evas_object_data_set(cw->shobj, "border", cw->bd);
+        evas_object_data_set(cw->effect_obj, "border", cw->bd);
 #ifdef BORDER_ZOOMAPS
-             evas_object_name_set(cw->zoomobj, "cw->zoomobj::BORDER");
+        evas_object_name_set(cw->zoomobj, "cw->zoomobj::BORDER");
 #endif
-             evas_object_name_set(cw->shobj, "cw->shobj::BORDER");
-             evas_object_name_set(cw->effect_obj, "cw->effect_obj::BORDER");
-             e_comp_win_reshadow(cw);
-          }
-        else
-          cw = _e_comp_win_add(e_comp_get(ev->border), ev->border->win, ev->border);
+        evas_object_name_set(cw->shobj, "cw->shobj::BORDER");
+        evas_object_name_set(cw->effect_obj, "cw->effect_obj::BORDER");
+        e_comp_win_reshadow(cw);
      }
-   _e_comp_win_configure(cw, ev->border->x, ev->border->y,
-                         ev->border->w, ev->border->h,
-                         ev->border->client.initial_attributes.border);
+   else
+     cw = _e_comp_win_add(e_comp_get(bd), bd->win, bd);
+   _e_comp_win_configure(cw, bd->x, bd->y,
+                         bd->w, bd->h,
+                         bd->client.initial_attributes.border);
    if (cw->shape) cw->shape->comp_win = cw;
    con = cw->bd->zone->container;
    /* we previously ignored potential stacking requests before the border setup,
@@ -3436,7 +3434,7 @@ _e_comp_bd_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    for (x = 0; x < E_CONTAINER_LAYER_COUNT; x++)
      {
         Eina_List *l;
-        E_Border *bd;
+        E_Border *bd2;
         E_Comp_Win *cw2;
 
         if (!con->layers[x].clients) continue;
@@ -3444,8 +3442,8 @@ _e_comp_bd_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         if (!l) continue;
         if (l->prev)
           {
-             bd = eina_list_data_get(l->prev);
-             cw2 = _e_comp_win_find(bd->win);
+             bd2 = eina_list_data_get(l->prev);
+             cw2 = _e_comp_win_find(bd2->win);
              if (cw2)
                {
                   _e_comp_win_raise_above(cw, cw2);
@@ -3454,8 +3452,8 @@ _e_comp_bd_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
           }
         if (l->next)
           {
-             bd = eina_list_data_get(l->next);
-             cw2 = _e_comp_win_find(bd->win);
+             bd2 = eina_list_data_get(l->next);
+             cw2 = _e_comp_win_find(bd2->win);
              if (cw2)
                {
                   _e_comp_win_lower_below(cw, cw2);
@@ -3470,7 +3468,6 @@ _e_comp_bd_add(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
      //{
         //_e_comp_win_show(cw);
      //}
-   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
@@ -4881,7 +4878,7 @@ e_comp_init(void)
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_ADD, _e_comp_zonech, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_ZONE_DEL, _e_comp_zonech, NULL);
 
-   E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_ADD, _e_comp_bd_add, NULL);
+   hooks = eina_list_append(hooks, e_border_hook_add(E_BORDER_HOOK_EVAL_POST_BORDER_ASSIGN, _e_comp_bd_add, NULL));
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_REMOVE, _e_comp_bd_del, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_SHOW, _e_comp_bd_show, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_HIDE, _e_comp_bd_hide, NULL);
@@ -4969,6 +4966,7 @@ e_comp_shutdown(void)
    E_FREE_LIST(compositors, _e_comp_del);
    E_FREE_LIST(handlers, ecore_event_handler_del);
    E_FREE_LIST(actions, e_object_del);
+   E_FREE_LIST(hooks, e_border_hook_del);
 
 #ifdef HAVE_WAYLAND_CLIENTS
    e_comp_wl_shutdown();
