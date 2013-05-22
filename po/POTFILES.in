@@ -100,6 +100,7 @@ src/bin/e_theme_about.c
 src/bin/e_thumb.c
 src/bin/e_thumb_main.c
 src/bin/e_toolbar.c
+src/bin/e_update.c
 src/bin/e_user.c
 src/bin/e_utils.c
 src/bin/e_widget.c
