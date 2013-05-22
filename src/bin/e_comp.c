@@ -2125,7 +2125,7 @@ static E_Comp_Win *
 _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd, Eina_Bool force)
 {
    E_Comp_Win *cw;
-   int w, h;
+   int x, y, w, h, border;
 
    cw = calloc(1, sizeof(E_Comp_Win));
    if (!cw) return NULL;
@@ -2164,12 +2164,11 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd, Eina_Bool force)
           }
         cw->input_only = att.input_only;
         cw->override = att.override;
-        cw->x = att.x, cw->y = att.y, cw->w = att.w, cw->h = att.h;
-        cw->border = att.border;
         cw->vis = att.visual;
         cw->cmap = att.colormap;
         cw->depth = att.depth;
-        w = att.w, h = att.h;
+        w = att.w, h = att.h, border = att.border;
+        x = att.x, y = att.y;
 
         if (cw->override && (!(att.event_mask.mine & ECORE_X_EVENT_MASK_WINDOW_PROPERTY)))
           ecore_x_event_mask_set(cw->win, ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
@@ -2290,7 +2289,13 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd, Eina_Bool force)
         // ecore_x_composite_redirect_window(cw->win, ECORE_X_COMPOSITE_UPDATE_MANUAL);
         cw->dmg_updates = 0;
      }
-   if (cw->bd) e_comp_win_opacity_set(cw, cw->opacity);
+   if (cw->bd)
+     {
+        e_comp_win_opacity_set(cw, cw->opacity);
+        border = cw->bd->client.initial_attributes.border;
+        x = bd->x, y = bd->y, w = bd->w, h = bd->h;
+     }
+   _e_comp_win_configure(cw, x, y, w, h, border);
    DBG("  [0x%x] add", cw->win);
    if (conf->grab) ecore_x_ungrab();
    return cw;
@@ -2959,7 +2964,6 @@ _e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (!ev->override) return ECORE_CALLBACK_PASS_ON;
    cw = _e_comp_win_add(c, ev->win, NULL, 0);
    if (!cw) return ECORE_CALLBACK_RENEW;
-   _e_comp_win_configure(cw, ev->x, ev->y, ev->w, ev->h, ev->border);
    if (cw->free_shape) _e_comp_win_shape_create(cw, ev->x, ev->y, ev->w, ev->h);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -2987,7 +2991,6 @@ _e_comp_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (!cw)
      {
         E_Manager *man;
-        int x, w;
 
         /* block root window and parents */
         if (ev->win <= ev->event_win) return ECORE_CALLBACK_RENEW;
@@ -2995,9 +2998,6 @@ _e_comp_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         if (!man) return ECORE_CALLBACK_RENEW;
         cw = _e_comp_win_add(man->comp, ev->win, NULL, 1);
         if (!cw) return ECORE_CALLBACK_RENEW;
-        x = cw->x, w = cw->w;
-        cw->x = cw->w = 0;
-        _e_comp_win_configure(cw, x, cw->y, w, cw->h, cw->border);
         if (cw->free_shape) _e_comp_win_shape_create(cw, cw->x, cw->y, cw->w, cw->h);
      }
    cw->defer_hide = 0;
@@ -3444,9 +3444,6 @@ _e_comp_bd_add(void *data EINA_UNUSED, void *ev)
      }
    else
      cw = _e_comp_win_add(e_comp_get(bd), bd->win, bd, 0);
-   _e_comp_win_configure(cw, bd->x, bd->y,
-                         bd->w, bd->h,
-                         bd->client.initial_attributes.border);
    if (cw->shape) cw->shape->comp_win = cw;
    con = cw->bd->zone->container;
    /* we previously ignored potential stacking requests before the border setup,
@@ -4100,17 +4097,13 @@ _e_comp_populate(E_Comp *c)
    for (i = 0; i < num; i++)
      {
         E_Comp_Win *cw;
-        int x, y, w, h, border;
 
+        if (wins[i] == c->win) continue;
         if (e_border_find_by_client_window(wins[i]) ||
             e_border_find_by_window(wins[i])) continue;
         cw = _e_comp_win_add(c, wins[i], NULL, 0);
         if (!cw) continue;
-        ecore_x_window_geometry_get(cw->win, &x, &y, &w, &h);
-        border = ecore_x_window_border_width_get(cw->win);
-        if (wins[i] == c->win) continue;
-        _e_comp_win_configure(cw, x, y, w, h, border);
-        if (cw->free_shape) _e_comp_win_shape_create(cw, x, y, w, h);
+        if (cw->free_shape) _e_comp_win_shape_create(cw, cw->hidden.x, cw->hidden.y, cw->hidden.w, cw->hidden.h);
         if ((!cw->bd) && (ecore_x_window_visible_get(wins[i])))
           _e_comp_win_show(cw);
      }
