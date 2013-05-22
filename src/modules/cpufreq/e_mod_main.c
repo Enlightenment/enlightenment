@@ -566,7 +566,7 @@ _cpufreq_set_pstate(int min, int max, int turbo)
 
    snprintf(buf, sizeof(buf),
             "%s %s %i %i %i", cpufreq_config->set_exe_path, "pstate", min, max, turbo);
-   fprintf(stderr, "%s", buf);
+   fprintf(stderr, "%s\n", buf);
    ret = system(buf);
    if (ret != 0)
      {
