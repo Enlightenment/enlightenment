@@ -2125,7 +2125,7 @@ static E_Comp_Win *
 _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd, Eina_Bool force)
 {
    E_Comp_Win *cw;
-   int x, y, w, h, border;
+   int x = 0, y = 0, w, h, border = 0;
 
    cw = calloc(1, sizeof(E_Comp_Win));
    if (!cw) return NULL;
