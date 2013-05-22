@@ -2994,6 +2994,7 @@ _e_comp_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 
         /* block root window and parents */
         if (ev->win <= ev->event_win) return ECORE_CALLBACK_RENEW;
+        if (e_border_find_all_by_client_window(ev->win)) return ECORE_CALLBACK_RENEW;
         man = e_manager_find_by_root(ev->event_win);
         if (!man) return ECORE_CALLBACK_RENEW;
         cw = _e_comp_win_add(man->comp, ev->win, NULL, 1);
