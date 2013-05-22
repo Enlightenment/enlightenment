@@ -201,8 +201,6 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    //////////////////////////////////////////////
 
    ol = e_widget_list_add(evas, 0, 0);
-   ob = e_widget_check_add(evas, _("Smooth scaling"), &(cfdata->smooth_windows));
-   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
    {
       Evas_Object *w, *m, *p, *o;
 
@@ -249,32 +247,28 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
 
    ///////////////////////////////////////////
    ol = e_widget_list_add(evas, 0, 0);
-   ob = e_widget_check_add(evas, _("Sync windows"), &(cfdata->efl_sync));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_check_add(evas, _("Loose sync"), &(cfdata->loose_sync));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_check_add(evas, _("Grab Server during draw"), &(cfdata->grab));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_label_add(evas, _("Initial draw timeout for newly mapped windows"));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f Seconds"), 0.01, 0.5, 0.01, 0, &(cfdata->first_draw_delay), NULL, 150);
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   e_widget_toolbook_page_append(otb, NULL, _("Sync"), ol, 0, 0, 0, 0, 0.5, 0.0);
+   of = e_widget_framelist_add(evas, _("Behavior"), 0);
+   ob = e_widget_check_add(evas, _("Smooth scaling"), &(cfdata->smooth_windows));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_check_add(evas, _("Don't fade backlight"), &(cfdata->nofade));
+   e_widget_framelist_object_append(of, ob);
+   e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
-   ///////////////////////////////////////////
-   ol = e_widget_list_add(evas, 0, 0);
+   of = e_widget_framelist_add(evas, _("Engine"), 0);
    rg = e_widget_radio_group_new(&(cfdata->engine));
    ob = e_widget_radio_add(evas, _("Software"), E_COMP_ENGINE_SW, rg);
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   e_widget_framelist_object_append(of, ob);
    if (!getenv("ECORE_X_NO_XLIB"))
      {
         if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
           {
              ob = e_widget_radio_add(evas, _("OpenGL"), E_COMP_ENGINE_GL, rg);
-             e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+             e_widget_framelist_object_append(of, ob);
 
-             of = e_widget_framelist_add(evas, _("OpenGL options"), 0);
-             e_widget_framelist_content_align_set(of, 0.5, 0.0);
+             ob = e_widget_label_add(evas, _("OpenGL options:"));
+             e_widget_framelist_object_append(of, ob);
              ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
              e_widget_framelist_object_append(of, ob);
              ob = e_widget_check_add(evas, _("Texture from pixmap"), &(cfdata->texture_from_pixmap));
@@ -302,21 +296,20 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
 // lets not offer this anymore             
 //             ob = e_widget_check_add(evas, _("Indirect OpenGL (EXPERIMENTAL)"), &(cfdata->indirect));
 //             e_widget_framelist_object_append(of, ob);
-             e_widget_list_object_append(ol, of, 1, 1, 0.5);
           }
      }
-   e_widget_toolbook_page_append(otb, NULL, _("Engine"), ol, 0, 0, 0, 0, 0.5, 0.0);
+   e_widget_list_object_append(ol, of, 1, 1, 0.5);
+   e_widget_toolbook_page_append(otb, NULL, _("Rendering"), ol, 0, 0, 0, 0, 0.5, 0.0);
 
    ///////////////////////////////////////////
    ol = e_widget_list_add(evas, 0, 0);
+   of = e_widget_framelist_add(evas, _("X Messages"), 0);
    ob = e_widget_check_add(evas, _("Send flush"), &(cfdata->send_flush));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   e_widget_framelist_object_append(of, ob);
    ob = e_widget_check_add(evas, _("Send dump"), &(cfdata->send_dump));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_check_add(evas, _("Don't fade backlight"), &(cfdata->nofade));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   e_widget_framelist_object_append(of, ob);
+   e_widget_list_object_append(ol, of, 1, 1, 0.5);
+
 /*   
    ob = e_widget_check_add(evas, _("Keep hidden windows"), &(cfdata->keep_unmapped));
    e_widget_list_object_append(ol, ob, 1, 1, 0.5);
@@ -343,7 +336,19 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_widget_frametable_object_append(of, ob, 2, 2, 1, 1, 1, 1, 0, 0);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
  */
-   e_widget_toolbook_page_append(otb, NULL, _("Memory"), ol, 0, 0, 0, 0, 0.5, 0.0);
+   of = e_widget_framelist_add(evas, _("Sync"), 0);
+   ob = e_widget_check_add(evas, _("Sync windows"), &(cfdata->efl_sync));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_check_add(evas, _("Loose sync"), &(cfdata->loose_sync));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_check_add(evas, _("Grab Server during draw"), &(cfdata->grab));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_label_add(evas, _("Initial draw timeout for newly mapped windows"));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.2f Seconds"), 0.01, 0.5, 0.01, 0, &(cfdata->first_draw_delay), NULL, 150);
+   e_widget_framelist_object_append(of, ob);
+   e_widget_list_object_append(ol, of, 1, 1, 0.5);
+   e_widget_toolbook_page_append(otb, NULL, _("Misc"), ol, 0, 0, 0, 0, 0.5, 0.0);
 
    ///////////////////////////////////////////
 /*   
@@ -545,14 +550,8 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
 
    ///////////////////////////////////////////
    ol = e_widget_list_add(evas, 0, 0);
-   
-   ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
-   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
-   
-   ob = e_widget_check_add(evas, _("Smooth scaling of window content"), &(cfdata->smooth_windows));
-   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
 
-   ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
+   ob = e_widget_check_add(evas, _("Don't fade backlight"), &(cfdata->nofade));
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
    
    cfdata->fast =
@@ -582,21 +581,38 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
 
    ///////////////////////////////////////////
    ol = e_widget_list_add(evas, 0, 0);
+
+   of = e_widget_framelist_add(evas, _("Behavior"), 0);
+
+   ob = e_widget_check_add(evas, _("Tear-free updates (VSynced)"), &(cfdata->vsync));
+   e_widget_framelist_object_append(of, ob);
+   
+   ob = e_widget_check_add(evas, _("Smooth scaling of window content"), &(cfdata->smooth_windows));
+   e_widget_framelist_object_append(of, ob);
+
+   ob = e_widget_check_add(evas, _("Don't composite fullscreen windows"), &(cfdata->nocomp_fs));
+   e_widget_framelist_object_append(of, ob);
+
+   e_widget_list_object_append(ol, of, 1, 0, 0.5);
+
+   of = e_widget_framelist_add(evas, _("Engine"), 0);
    rg = e_widget_radio_group_new(&(cfdata->engine));
    ob = e_widget_radio_add(evas, _("Software"), E_COMP_ENGINE_SW, rg);
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   e_widget_framelist_object_append(of, ob);
    if (!getenv("ECORE_X_NO_XLIB"))
      {
         if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
           {
              ob = e_widget_radio_add(evas, _("OpenGL"), E_COMP_ENGINE_GL, rg);
-             e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+             e_widget_framelist_object_append(of, ob);
           }
      }
    ob = e_widget_label_add(evas, _("To reset compositor:"));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   e_widget_framelist_object_append(of, ob);
    ob = e_widget_label_add(evas, _("Ctrl+Alt+Shift+Home"));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   e_widget_framelist_object_append(of, ob);
+
+   e_widget_list_object_append(ol, of, 1, 0, 0.5);
    
    e_widget_toolbook_page_append(otb, NULL, _("Rendering"), ol, 0, 0, 0, 0, 0.5, 0.0);
 
@@ -615,6 +631,7 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
        (cfdata->lock_fps != _comp_mod->conf->lock_fps) ||
        (cfdata->smooth_windows != _comp_mod->conf->smooth_windows) ||
        (cfdata->grab != _comp_mod->conf->grab) ||
+       (cfdata->nofade != _comp_mod->conf->nofade) ||
        (cfdata->keep_unmapped != _comp_mod->conf->keep_unmapped) ||
        (cfdata->nocomp_fs != _comp_mod->conf->nocomp_fs) ||
        (cfdata->shadow_style != _comp_mod->conf->shadow_style) ||
@@ -649,6 +666,7 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         _comp_mod->conf->lock_fps = cfdata->lock_fps;
         _comp_mod->conf->smooth_windows = cfdata->smooth_windows;
         _comp_mod->conf->grab = cfdata->grab;
+        _comp_mod->conf->nofade = cfdata->nofade;
         _comp_mod->conf->keep_unmapped = cfdata->keep_unmapped;
         _comp_mod->conf->nocomp_fs = cfdata->nocomp_fs;
         _comp_mod->conf->max_unmapped_pixels = cfdata->max_unmapped_pixels;
