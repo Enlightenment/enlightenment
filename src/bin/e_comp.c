@@ -2122,7 +2122,7 @@ _e_comp_win_shape_init(E_Comp_Win *cw, int w, int h)
 }
 
 static E_Comp_Win *
-_e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
+_e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd, Eina_Bool force)
 {
    E_Comp_Win *cw;
    int w, h;
@@ -2156,7 +2156,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
              //        printf("WARNING: window 0x%x not 24/32bpp -> %ibpp", cw->win, att.depth);
              //        cw->invalid = 1;
           }
-        if (!att.override)
+        if ((!att.override) && (!force))
           {
              free(cw);
              if (conf->grab) ecore_x_ungrab();
@@ -2164,12 +2164,14 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
           }
         cw->input_only = att.input_only;
         cw->override = att.override;
+        cw->x = att.x, cw->y = att.y, cw->w = att.w, cw->h = att.h;
+        cw->border = att.border;
         cw->vis = att.visual;
         cw->cmap = att.colormap;
         cw->depth = att.depth;
         w = att.w, h = att.h;
 
-        if (!(att.event_mask.mine & ECORE_X_EVENT_MASK_WINDOW_PROPERTY))
+        if (cw->override && (!(att.event_mask.mine & ECORE_X_EVENT_MASK_WINDOW_PROPERTY)))
           ecore_x_event_mask_set(cw->win, ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
      }
    if ((!cw->bd) && (!cw->menu))
@@ -2910,6 +2912,35 @@ _e_comp_win_reshape(E_Comp_Win *cw)
    _e_comp_win_render_queue(cw);
 }
 
+static void
+_e_comp_win_shape_create(E_Comp_Win *cw, int x, int y, int w, int h)
+{
+   Eina_List *l;
+   E_Container *con;
+   Eina_Rectangle *rects;
+   int num;
+
+   EINA_LIST_FOREACH(cw->c->man->containers, l, con)
+     {
+        if (!E_INSIDE(x, y, con->x, con->y, con->w, con->h)) continue;
+        cw->shape = e_container_shape_add(con);
+        break;
+     }
+   if (!cw->shape) cw->shape = e_container_shape_add(eina_list_data_get(cw->c->man->containers));
+   e_container_shape_resize(cw->shape, w, h);
+   rects = (Eina_Rectangle*)ecore_x_window_shape_rectangles_get(cw->win, &num);
+   e_container_shape_rects_set(cw->shape, rects, num);
+   if (cw->shape->shape_rects)
+     e_container_shape_input_rects_set(cw->shape, NULL, 0);
+   else
+     {
+        rects = (Eina_Rectangle*)ecore_x_window_shape_input_rectangles_get(cw->win, &num);
+        e_container_shape_input_rects_set(cw->shape, rects, num);
+     }
+   _e_comp_win_shape_init(cw, w, h);
+   cw->shape->comp_win = cw;
+}
+
 //////////////////////////////////////////////////////////////////////////
 static Eina_Bool
 _e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
@@ -2926,36 +2957,10 @@ _e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (_e_comp_ignore_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
    if (_e_comp_win_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
    if (!ev->override) return ECORE_CALLBACK_PASS_ON;
-   cw = _e_comp_win_add(c, ev->win, NULL);
+   cw = _e_comp_win_add(c, ev->win, NULL, 0);
    if (!cw) return ECORE_CALLBACK_RENEW;
    _e_comp_win_configure(cw, ev->x, ev->y, ev->w, ev->h, ev->border);
-   if (cw->free_shape)
-     {
-        Eina_List *l;
-        E_Container *con;
-        Eina_Rectangle *rects;
-        int num;
-
-        EINA_LIST_FOREACH(c->man->containers, l, con)
-          {
-             if (!E_INSIDE(ev->x, ev->y, con->x, con->y, con->w, con->h)) continue;
-             cw->shape = e_container_shape_add(con);
-             break;
-          }
-        if (!cw->shape) cw->shape = e_container_shape_add(eina_list_data_get(c->man->containers));
-        e_container_shape_resize(cw->shape, ev->w, ev->h);
-        rects = (Eina_Rectangle*)ecore_x_window_shape_rectangles_get(cw->win, &num);
-        e_container_shape_rects_set(cw->shape, rects, num);
-        if (cw->shape->shape_rects)
-          e_container_shape_input_rects_set(cw->shape, NULL, 0);
-        else
-          {
-             rects = (Eina_Rectangle*)ecore_x_window_shape_input_rectangles_get(cw->win, &num);
-             e_container_shape_input_rects_set(cw->shape, rects, num);
-          }
-        _e_comp_win_shape_init(cw, ev->w, ev->h);
-     }
-   if (cw->shape) cw->shape->comp_win = cw;
+   if (cw->free_shape) _e_comp_win_shape_create(cw, ev->x, ev->y, ev->w, ev->h);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2979,7 +2984,20 @@ _e_comp_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Window_Show *ev = event;
    E_Comp_Win *cw = _e_comp_win_find(ev->win);
-   if (!cw) return ECORE_CALLBACK_PASS_ON;
+   if (!cw)
+     {
+        E_Manager *man;
+        int x, w;
+
+        man = e_manager_find_by_root(ev->event_win);
+        if (!man) return ECORE_CALLBACK_RENEW;
+        cw = _e_comp_win_add(man->comp, ev->win, NULL, 1);
+        if (!cw) return ECORE_CALLBACK_RENEW;
+        x = cw->x, w = cw->w;
+        cw->x = cw->w = 0;
+        _e_comp_win_configure(cw, x, cw->y, w, cw->h, cw->border);
+        if (cw->free_shape) _e_comp_win_shape_create(cw, cw->x, cw->y, cw->w, cw->h);
+     }
    cw->defer_hide = 0;
    if (cw->visible) return ECORE_CALLBACK_PASS_ON;
    _e_comp_win_show(cw);
@@ -3423,7 +3441,7 @@ _e_comp_bd_add(void *data EINA_UNUSED, void *ev)
         e_comp_win_reshadow(cw);
      }
    else
-     cw = _e_comp_win_add(e_comp_get(bd), bd->win, bd);
+     cw = _e_comp_win_add(e_comp_get(bd), bd->win, bd, 0);
    _e_comp_win_configure(cw, bd->x, bd->y,
                          bd->w, bd->h,
                          bd->client.initial_attributes.border);
@@ -4084,39 +4102,13 @@ _e_comp_populate(E_Comp *c)
 
         if (e_border_find_by_client_window(wins[i]) ||
             e_border_find_by_window(wins[i])) continue;
-        cw = _e_comp_win_add(c, wins[i], NULL);
+        cw = _e_comp_win_add(c, wins[i], NULL, 0);
         if (!cw) continue;
         ecore_x_window_geometry_get(cw->win, &x, &y, &w, &h);
         border = ecore_x_window_border_width_get(cw->win);
         if (wins[i] == c->win) continue;
         _e_comp_win_configure(cw, x, y, w, h, border);
-        if (cw->free_shape)
-          {
-             EINA_LIST_FOREACH(c->man->containers, l, con)
-               {
-                  if (!E_INSIDE(x, y, con->x, con->y, con->w, con->h)) continue;
-                  cw->shape = e_container_shape_add(con);
-                  break;
-               }
-             if (!cw->shape) cw->shape = e_container_shape_add(eina_list_data_get(c->man->containers));
-          }
-        if (cw->shape)
-          {
-             cw->shape->comp_win = cw;
-             e_container_shape_move(cw->shape, x, y);
-             e_container_shape_resize(cw->shape, w, h);
-          }
-        if (cw->free_shape)
-          {
-             Eina_Rectangle *rects;
-             int rnum;
-
-             rects = (Eina_Rectangle*)ecore_x_window_shape_rectangles_get(cw->win, &rnum);
-             e_container_shape_rects_set(cw->shape, rects, rnum);
-             rects = (Eina_Rectangle*)ecore_x_window_shape_input_rectangles_get(cw->win, &rnum);
-             e_container_shape_input_rects_set(cw->shape, rects, rnum);
-             _e_comp_win_shape_init(cw, w, h);
-          }
+        if (cw->free_shape) _e_comp_win_shape_create(cw, x, y, w, h);
         if ((!cw->bd) && (ecore_x_window_visible_get(wins[i])))
           _e_comp_win_show(cw);
      }
