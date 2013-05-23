@@ -154,7 +154,7 @@ login_setup(Pulse *conn)
 
    tag = calloc(1, sizeof(Pulse_Tag));
    tag->dsize = 4 * PA_TAG_SIZE_U32 + sizeof(cookie);
-   tag->data = malloc(tag->dsize);
+   tag->data = calloc(1, tag->dsize);
    tag_simple_init(conn, tag, PA_COMMAND_AUTH, PA_TAG_U32);
    DBG("%zu bytes", tag->dsize);
 
