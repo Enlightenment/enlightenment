@@ -115,14 +115,14 @@ gadman_init(E_Module *m)
 
    /* create and register "desktop" location */
    location = Man->location[GADMAN_LAYER_BG] = e_gadcon_location_new(_("Desktop"), E_GADCON_SITE_DESKTOP,
-                                    _e_gadman_client_add, NULL,
+                                    _e_gadman_client_add, (intptr_t*)(long)GADMAN_LAYER_BG,
                                     _e_gadman_client_remove, NULL);
    e_gadcon_location_set_icon_name(location, "preferences-desktop");
    e_gadcon_location_register(location);
 
    /* create and register "desktop hover" location */
    location = Man->location[GADMAN_LAYER_TOP] = e_gadcon_location_new(_("Desktop Hover"), E_GADCON_SITE_DESKTOP,
-                                    _e_gadman_client_add, NULL,
+                                    _e_gadman_client_add, (intptr_t*)(long)GADMAN_LAYER_TOP,
                                     _e_gadman_client_remove, NULL);
    e_gadcon_location_set_icon_name(location, "preferences-desktop");
    e_gadcon_location_register(location);
@@ -1509,9 +1509,9 @@ on_hide_stop(void *data __UNUSED__, Evas_Object *o __UNUSED__, const char *em __
 }
 
 static int
-_e_gadman_client_add(void *data __UNUSED__, E_Gadcon_Client *gcc, const E_Gadcon_Client_Class *cc)
+_e_gadman_client_add(void *data, E_Gadcon_Client *gcc, const E_Gadcon_Client_Class *cc)
 {
-   return !!gadman_gadget_add(cc, gcc, GADMAN_LAYER_BG);
+   return !!gadman_gadget_add(cc, gcc, (intptr_t)data);
 }
 
 static void
