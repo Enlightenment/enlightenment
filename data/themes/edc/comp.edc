@@ -513,7 +513,8 @@ group { name: "e/comp/effects/auto/zoom";
       }
    }
    parts {
-      part { name: "clip"; type: RECT; insert_after: "mover";
+      part { name: "clip"; type: RECT; mouse_events: 0;
+         insert_after: "mover";
          description { state: "default";
             rel1.to: "mover";
             rel1.offset: -20 -20;
