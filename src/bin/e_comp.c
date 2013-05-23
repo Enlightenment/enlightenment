@@ -5465,7 +5465,17 @@ e_comp_util_wins_print(const E_Comp *c)
         else if (cw->real_obj)
           fprintf(stderr, "COMP OBJ: %p - %s\n", cw, evas_object_name_get(cw->obj));
         else
-          fprintf(stderr, "COMP WIN: %p - %u%s%s\n", cw, cw->win, cw->input_only ? " INPUT" : "", cw->override ? " OVERRIDE" : "");
+          {
+             fprintf(stderr, "COMP WIN: %p - %u", cw, cw->win);
+             if (cw->name || cw->title)
+               {
+                  fprintf(stderr, " '%s", cw->name ?: "");
+                  if (cw->title)
+                    fprintf(stderr, ":%s", cw->title);
+                  fprintf(stderr, "'");
+               }
+            fprintf(stderr, "%s%s\n", cw->input_only ? " INPUT" : "", cw->override ? " OVERRIDE" : "");
+          }
      }
 }
 
