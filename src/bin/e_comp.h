@@ -296,7 +296,7 @@ e_comp_win_ignore_events_set(E_Comp_Win *cw, Eina_Bool ignore)
 {
    EINA_SAFETY_ON_NULL_RETURN(cw);
    ignore = !!ignore;
-   evas_object_pass_events_set(cw->shobj, ignore);
+   evas_object_pass_events_set(cw->effect_obj, ignore);
 }
 
 static inline unsigned int
