@@ -2964,6 +2964,7 @@ _e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (c->man->root == ev->win) return ECORE_CALLBACK_PASS_ON;
    if (_e_comp_ignore_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
    if (_e_comp_win_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
+   if (e_border_find_by_window(ev->win)) return ECORE_CALLBACK_PASS_ON;
    if (!ev->override) return ECORE_CALLBACK_PASS_ON;
    cw = _e_comp_win_add(c, ev->win, NULL, 0);
    if (!cw) return ECORE_CALLBACK_RENEW;
