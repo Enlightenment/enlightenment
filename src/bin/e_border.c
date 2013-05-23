@@ -7720,6 +7720,7 @@ _e_border_eval0(E_Border *bd)
                        if (!bd->bordername)
                          bd->client.border.changed = 1;
                     }
+                  free(rects);
                }
              else
                {
@@ -7732,7 +7733,6 @@ _e_border_eval0(E_Border *bd)
                   ecore_x_window_shape_input_rectangles_set(bd->win, rects, num);
                   e_container_shape_input_rects_set(bd->shape, (Eina_Rectangle *)rects, num);
                }
-             free(rects);
           }
         else
           {

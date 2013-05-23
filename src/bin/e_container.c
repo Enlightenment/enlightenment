@@ -463,7 +463,7 @@ e_container_shape_rects_set(E_Container_Shape *es, Eina_Rectangle *rects, int nu
        ((int)rects[0].w == es->w) &&
        ((int)rects[0].h == es->h))
      {
-        /* do nothing */
+        free(rects);
      }
    else if (rects)
      {
@@ -486,7 +486,7 @@ e_container_shape_input_rects_set(E_Container_Shape *es, Eina_Rectangle *rects, 
        ((int)rects[0].w == es->w) &&
        ((int)rects[0].h == es->h))
      {
-        /* do nothing */
+        free(rects);
      }
    else if (rects)
      {
