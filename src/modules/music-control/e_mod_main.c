@@ -17,6 +17,7 @@ const Player music_player_players[] =
    {"BMP", "org.mpris.MediaPlayer2.bmp"},
    {"XMMS2", "org.mpris.MediaPlayer2.xmms2"},
    {"DeaDBeeF", "org.mpris.MediaPlayer2.deadbeef"},
+   {"Rhythmbox", "org.gnome.Rhythmbox3"},
    {NULL, NULL}
 };
 
