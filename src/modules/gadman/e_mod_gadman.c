@@ -749,16 +749,15 @@ _gadman_gadcon_new(const char *name, Gadman_Layer_Type layer, E_Zone *zone, E_Ga
      {
         if (!Man->top_ee)
           {
-             Man->top_ee = e_canvas_new(Man->container->win, 0, 0, 0, 0, 1, 1,
+             Man->top_ee = e_canvas_new(Man->container->win, 0, 0, 0, 0, 1, 0,
                                         &(Man->top_win));
+             ecore_evas_fullscreen_set(Man->top_ee, 1);
           }
 
         if (!Man->use_shaped_win)
           {
              ecore_evas_alpha_set(Man->top_ee, 1);
              Man->top_win = ecore_evas_software_x11_window_get(Man->top_ee);
-             ecore_x_window_shape_rectangle_set(Man->top_win, 0, 0,
-                                                Man->width, Man->height);
           }
         else
           ecore_evas_shaped_set(Man->top_ee, 1);
