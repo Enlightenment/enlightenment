@@ -4,6 +4,7 @@ collections {
 #include "colorclasses.edc"
 // desktop in general
 #include "edc/comp.edc"
+#include "edc/comp_effects.edc"
 #include "edc/deskmirror.edc"
 #include "edc/background.edc"
 #include "edc/shelf.edc"
