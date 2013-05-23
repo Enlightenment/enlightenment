@@ -2094,6 +2094,9 @@ _e_comp_win_bd_setup(E_Comp_Win *cw, E_Border *bd)
    cw->bd = bd;
    eina_hash_add(borders, e_util_winid_str_get(cw->bd->client.win), cw);
    cw->dfn = e_object_delfn_add(E_OBJECT(cw->bd), _e_comp_object_del, cw);
+   E_FREE_FUNC(cw->shape, e_object_del);
+   if (cw->effect_obj) evas_object_pass_events_set(cw->effect_obj, 0);
+   cw->free_shape = 0;
    cw->shape = cw->bd->shape;
    cw->bd->cw = cw;
    cw->opacity = cw->bd->client.netwm.opacity;
