@@ -545,14 +545,16 @@ _e_comp_win_update(E_Comp_Win *cw)
         if (cw->free_shape)
           {
              ecore_x_pixmap_geometry_get(cw->win, NULL, NULL, &(cw->w), &(cw->h));
-             rects = (Eina_Rectangle*)ecore_x_window_shape_rectangles_get(cw->win, &num);
+             rects = (Eina_Rectangle *)ecore_x_window_shape_rectangles_get(cw->win, &num);
              e_container_shape_rects_set(cw->shape, rects, num);
+             if (rects) free(rects);
              if (cw->shape->shape_rects)
                e_container_shape_input_rects_set(cw->shape, NULL, 0);
              else
                {
-                  rects = (Eina_Rectangle*)ecore_x_window_shape_input_rectangles_get(cw->win, &num);
+                  rects = (Eina_Rectangle *)ecore_x_window_shape_input_rectangles_get(cw->win, &num);
                   e_container_shape_input_rects_set(cw->shape, rects, num);
+                  if (rects) free(rects);
                }
           }
         if (cw->shape->shape_rects)
@@ -2936,14 +2938,16 @@ _e_comp_win_shape_create(E_Comp_Win *cw, int x, int y, int w, int h)
      }
    if (!cw->shape) cw->shape = e_container_shape_add(eina_list_data_get(cw->c->man->containers));
    e_container_shape_resize(cw->shape, w, h);
-   rects = (Eina_Rectangle*)ecore_x_window_shape_rectangles_get(cw->win, &num);
+   rects = (Eina_Rectangle *)ecore_x_window_shape_rectangles_get(cw->win, &num);
    e_container_shape_rects_set(cw->shape, rects, num);
+   if (rects) free(rects);
    if (cw->shape->shape_rects)
      e_container_shape_input_rects_set(cw->shape, NULL, 0);
    else
      {
         rects = (Eina_Rectangle*)ecore_x_window_shape_input_rectangles_get(cw->win, &num);
         e_container_shape_input_rects_set(cw->shape, rects, num);
+        if (rects) free(rects);
      }
    _e_comp_win_shape_init(cw, w, h);
    cw->shape->comp_win = cw;
