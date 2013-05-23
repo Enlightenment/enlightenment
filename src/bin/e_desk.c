@@ -721,7 +721,7 @@ _e_desk_transition_setup(E_Border *bd, int dx, int dy, int state)
    if (e_config->desk_flip_animate_type)
      {
         /* set geoms */
-        e_comp_win_effect_params_set(bd->cw, 1, (int[]){bd->x, bd->y, bd->w, bd->h, bd->zone->w, bd->zone->h, dx, dy}, 8);
+        e_comp_win_effect_params_set(bd->cw, 1, (int[]){bd->x - bd->zone->x, bd->y - bd->zone->y, bd->w, bd->h, bd->zone->w, bd->zone->h, dx, dy}, 8);
         e_comp_win_effect_params_set(bd->cw, 0, (int[]){state}, 1);
      }
 
