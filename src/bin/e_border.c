@@ -7730,8 +7730,9 @@ _e_border_eval0(E_Border *bd)
                          bd->client.border.changed = 1;
                     }
                   ecore_x_window_shape_input_rectangles_set(bd->win, rects, num);
-                  e_container_shape_input_rects_set(bd->shape, (Eina_Rectangle*)rects, num);
+                  e_container_shape_input_rects_set(bd->shape, (Eina_Rectangle *)rects, num);
                }
+             free(rects);
           }
         else
           {
