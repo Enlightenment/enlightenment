@@ -752,6 +752,7 @@ _gadman_gadcon_new(const char *name, Gadman_Layer_Type layer, E_Zone *zone, E_Ga
              Man->top_ee = e_canvas_new(Man->container->win, 0, 0, 0, 0, 1, 0,
                                         &(Man->top_win));
              ecore_evas_fullscreen_set(Man->top_ee, 1);
+             ecore_evas_name_class_set(Man->top_ee, "gadman", "gadgets");
           }
 
         if (!Man->use_shaped_win)
