@@ -1,3 +1,8 @@
+2013-05-24 Christopher Michael
+
+	* added support for hotplugging monitors in randr code
+        * added support for setting Primary Output used by randr protocol
+
 2013-05-18 Mike Blumenkrantz
 
         * add e_exec_desktop_instances_find
