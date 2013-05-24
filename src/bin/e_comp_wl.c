@@ -217,6 +217,9 @@ e_comp_wl_init(void)
    if (!(_e_wl_comp = E_NEW(E_Wayland_Compositor, 1)))
      return EINA_FALSE;
 
+   if (!getenv("XDG_RUNTIME_DIR"))
+     e_util_env_set("XDG_RUNTIME_DIR", "/tmp");
+
    /* try to create a wayland display */
    if (!(_e_wl_comp->wl.display = wl_display_create()))
      {
