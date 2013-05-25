@@ -3,15 +3,16 @@
 # Marc Furtià i Puig <marcfurtia@gmail.com>, 2007-2013.
 # Pau Bosch i Crespo <paubcrespo@hotmail.com>, 2007
 # Joan Coll <jcoll2@gmail.com>, 2013.
+# Oriol Pellicer i Sabrià <pellix@gmail.com>, 2013.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-05-21 22:01+0900\n"
-"PO-Revision-Date: 2013-03-21 23:09+0100\n"
-"Last-Translator: JoanColl <jcoll2@gmail.com>\n"
-"Language-Team: Catalan\n"
+"PO-Revision-Date: 2013-05-25 12:36+0200\n"
+"Last-Translator: Oriol Pellicer i Sabrià <pellix@gmail.com>\n"
+"Language-Team: Català <enlightenment-devel@lists.sourceforge.net>\n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -826,6 +827,9 @@ msgid ""
 "compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
 "engine."
 msgstr ""
+"El vostre controlador gràfic no suporta OpenGL, o<br>no s'han compilat o "
+"instal·lat motors OpenGL per a<br>Evas o Ecore-Evas. Es torna al motor de "
+"programari."
 
 #: src/bin/e_comp.c:4153 src/bin/e_comp.c:4175
 msgid "Compositor Error"
@@ -833,13 +837,15 @@ msgstr "Error compositor"
 
 #: src/bin/e_comp.c:4153
 msgid "Another compositor is already running<br>on your display server."
-msgstr ""
+msgstr "Hi ha un altre compositor corrent en<br>el vostre servidor de gràfics."
 
 #: src/bin/e_comp.c:4175
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
 msgstr ""
+"El vostre servidor de gràfics no suporta<br>el compositor de finestra "
+"superposada. Això és<br>necessari perquè funcioni."
 
 #: src/bin/e_comp.c:4514 src/modules/bluez4/e_mod_main.c:210
 #: src/modules/conf_comp/e_mod_main.c:55
@@ -1002,7 +1008,7 @@ msgstr "Activa efectes de composició ràpida per menús "
 #: src/bin/e_configure_option.c:1801 src/bin/e_configure_option.c:1802
 #: src/bin/e_configure_option.c:2044
 msgid "menu"
-msgstr ""
+msgstr "menú"
 
 #: src/bin/e_comp.c:4665
 #, fuzzy
@@ -1074,6 +1080,8 @@ msgid ""
 "This option disables composite effects from themes, such as animating the "
 "screen fade when blanking"
 msgstr ""
+"Aquesta opció desactiva els efectes de composite dels temes, com ara "
+"l'animació de la pantalla quan s'esborra."
 
 #: src/bin/e_comp.c:4686
 msgid "Compositing engine"
@@ -1101,7 +1109,7 @@ msgstr "No aplicar composició a finestres de pantalla completa"
 
 #: src/bin/e_comp.c:4704
 msgid "Grab server during rendering of composited windows"
-msgstr ""
+msgstr "Utilitza el servidor durant el renderitzat de finestres compostes"
 
 #: src/bin/e_comp.c:4707
 #, fuzzy
@@ -1156,15 +1164,15 @@ msgstr "No ocultis ginys"
 
 #: src/bin/e_comp.c:4736
 msgid "Send flush when compositing windows"
-msgstr ""
+msgstr "Envia flush quan es componguin les finestres"
 
 #: src/bin/e_comp.c:4738
 msgid "Send dump when compositing windows"
-msgstr ""
+msgstr "Envia dump quan es componguin les finestres"
 
 #: src/bin/e_comp.c:4741
 msgid "Show framerate when compositing windows"
-msgstr ""
+msgstr "Mostra els quadres per segon quan es componguin les finestres"
 
 #: src/bin/e_comp.c:4743
 #, fuzzy
@@ -1178,7 +1186,7 @@ msgstr "%1.0f frames"
 
 #: src/bin/e_comp.c:4746
 msgid "Composite framerate display corner"
-msgstr ""
+msgstr "Cantonada on es mostraran els quadres per segon del composite"
 
 #: src/bin/e_comp.c:4750 src/bin/e_comp.c:4979
 #: src/bin/e_configure_option.c:2031 src/bin/e_configure_option.c:2032
@@ -1199,12 +1207,18 @@ msgid ""
 "without XComposite support. Note that for composite support you will also "
 "need XRender and XFixes support in X11 and Ecore."
 msgstr ""
+"El vostre controlador gràfic no suporta XComposite, o bé Ecore-X s'ha "
+"compilat sense suport per a XComposite. Tingueu en compte que per al suport "
+"de composite també caldrà tenir suport de XRender i de XFixes a X11 i a "
+"Ecore."
 
 #: src/bin/e_comp.c:4843
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr ""
+"El vostre servidor de gràfics no suporta XDamage o bé Ecore s'ha compilat "
+"sense suport per a XDamage."
 
 #: src/bin/e_comp.c:4926 src/bin/e_comp.c:4932
 #, fuzzy
@@ -1213,11 +1227,11 @@ msgstr "Composició"
 
 #: src/bin/e_comp.c:4927
 msgid "Change current window opacity"
-msgstr ""
+msgstr "Canvia l'opacitat actual de les finestres"
 
 #: src/bin/e_comp.c:4933
 msgid "Set current window opacity"
-msgstr ""
+msgstr "Estableix l'opacitat actual de les finestres"
 
 #: src/bin/e_config.c:971
 msgid ""
@@ -1538,12 +1552,14 @@ msgstr "Coincideix només amb una finestra"
 
 #: src/bin/e_configure_option.c:715
 msgid "Set focus only on all new dialog windows"
-msgstr ""
+msgstr "Selecciona únicament totes les noves finestres de diàleg"
 
 #: src/bin/e_configure_option.c:716
 msgid ""
 "Set focus only on new dialog windows if dialog's parent window has focus"
 msgstr ""
+"Selecciona les finestres noves de diàleg només si la finestra pare estava "
+"seleccionada"
 
 #: src/bin/e_configure_option.c:736
 #, fuzzy
@@ -1578,11 +1594,11 @@ msgstr "Pantalla completa"
 
 #: src/bin/e_configure_option.c:780
 msgid "Expand to maximum size without covering shelves"
-msgstr ""
+msgstr "Expandeix a la grandària màxima sense cobrir els panells"
 
 #: src/bin/e_configure_option.c:782
 msgid "Expand to maximum size ignoring shelves"
-msgstr ""
+msgstr "Expandeix a la grandària màxima ignorant els panells"
 
 #: src/bin/e_configure_option.c:803
 #, fuzzy
@@ -1660,7 +1676,7 @@ msgstr "Capa d'agrupament de finestres"
 
 #: src/bin/e_configure_option.c:914
 msgid "Recently used windows first"
-msgstr ""
+msgstr "Primer les finestres usades recentment"
 
 #: src/bin/e_configure_option.c:934
 #, fuzzy
@@ -1679,7 +1695,7 @@ msgstr "Grup separat"
 
 #: src/bin/e_configure_option.c:957
 msgid "none"
-msgstr ""
+msgstr "cap"
 
 #: src/bin/e_configure_option.c:984
 #, fuzzy
@@ -1734,7 +1750,7 @@ msgstr "Aplicacions d'inici"
 
 #: src/bin/e_configure_option.c:1468
 msgid "Startup transition effect"
-msgstr ""
+msgstr "Efecte de transició de l'arrancada"
 
 #: src/bin/e_configure_option.c:1468 src/bin/e_configure_option.c:1472
 #: src/bin/e_configure_option.c:1476 src/bin/e_configure_option.c:2014
@@ -1744,7 +1760,7 @@ msgstr "Transicions"
 
 #: src/bin/e_configure_option.c:1472
 msgid "Desk change transition effect"
-msgstr ""
+msgstr "Efecte de transició del canvi d'escriptori"
 
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1537
 #: src/bin/e_configure_option.c:1539 src/bin/e_configure_option.c:1567
@@ -1760,7 +1776,7 @@ msgstr "escriptori"
 
 #: src/bin/e_configure_option.c:1476
 msgid "Wallpaper change transition effect"
-msgstr ""
+msgstr "Efecte de transició del canvi de fons d'escriptori"
 
 #: src/bin/e_configure_option.c:1476 src/bin/e_configure_option.c:1481
 #: src/bin/e_configure_option.c:1750 src/bin/e_configure_option.c:2010
@@ -1792,7 +1808,7 @@ msgstr "Canvia nom"
 
 #: src/bin/e_configure_option.c:1486
 msgid "Used in Pager displays"
-msgstr ""
+msgstr "S'utilitza per a mostrar el paginador"
 
 #: src/bin/e_configure_option.c:1490
 #, fuzzy
@@ -1824,7 +1840,7 @@ msgstr "%5.0f pixels/s"
 
 #: src/bin/e_configure_option.c:1492
 msgid "Speed at which the menus move onto screen if offscreen"
-msgstr ""
+msgstr "Velocitat a la que els menús es mouen per la pantalla si està apagada"
 
 #: src/bin/e_configure_option.c:1493
 #, fuzzy
@@ -1851,17 +1867,19 @@ msgid ""
 "Moving the mouse faster than this speed over a menu causes menu items to not "
 "be selected"
 msgstr ""
+"Si es mou el ratolí més ràpid que això sobre un menú farà que les opcions "
+"del menú no es seleccionin"
 
 #: src/bin/e_configure_option.c:1496
 msgid "Menu mouse deactivate delay"
-msgstr ""
+msgstr "El menú del ratolí desactiva el retard"
 
 #: src/bin/e_configure_option.c:1496 src/bin/e_configure_option.c:1541
 #: src/bin/e_configure_option.c:1594 src/bin/e_configure_option.c:1597
 #: src/bin/e_configure_option.c:1598 src/bin/e_configure_option.c:1600
 #: src/bin/e_configure_option.c:1602
 msgid "drag"
-msgstr ""
+msgstr "arrossegar"
 
 #: src/bin/e_configure_option.c:1497
 #, fuzzy, c-format
@@ -1873,10 +1891,12 @@ msgid ""
 "The minimum time before a menu can be closed by clicking the mouse outside "
 "the menu"
 msgstr ""
+"Temps mínim abans que un menú pugui ser tancat clicant amb el ratolí fora "
+"del menú"
 
 #: src/bin/e_configure_option.c:1499
 msgid "Menu autoscroll margin"
-msgstr ""
+msgstr "Marge del desplaçament automàtic del menú"
 
 #: src/bin/e_configure_option.c:1500 src/bin/e_configure_option.c:1503
 #: src/bin/e_configure_option.c:1595 src/bin/e_configure_option.c:1599
@@ -1897,10 +1917,12 @@ msgid ""
 "The distance from the edge of the screen before menus begin to move away "
 "from the edge"
 msgstr ""
+"Distància de la vora de la pantalla abans que els menús es comencin a "
+"allunyar de la vora"
 
 #: src/bin/e_configure_option.c:1502
 msgid "Menu autoscroll cursor margin"
-msgstr ""
+msgstr "Marge del cursor al desplaçament automàtic dels menús"
 
 #: src/bin/e_configure_option.c:1502 src/bin/e_configure_option.c:1591
 #: src/bin/e_configure_option.c:1592 src/bin/e_configure_option.c:1814
@@ -1926,10 +1948,12 @@ msgid ""
 "The distance of the mouse pointer from the edge of the screen before menus "
 "begin to move away from the edge"
 msgstr ""
+"Distància del punter del ratolí a la vora de la pantalla abans que els menús "
+"s'allunyin de la vora"
 
 #: src/bin/e_configure_option.c:1506
 msgid "Enable window shading animation"
-msgstr ""
+msgstr "Activa l'animació d'ombrejat de les finestres"
 
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
 #: src/bin/e_configure_option.c:1510
@@ -1939,7 +1963,7 @@ msgstr "Enrotlla"
 
 #: src/bin/e_configure_option.c:1507
 msgid "Window shade animation type"
-msgstr ""
+msgstr "Tipus d'animació d'ombrejat de les finestres"
 
 #: src/bin/e_configure_option.c:1510
 #, fuzzy
@@ -1958,7 +1982,7 @@ msgstr "%1.0f frames"
 
 #: src/bin/e_configure_option.c:1516
 msgid "The framerate at which animations in Enlightenment occur"
-msgstr ""
+msgstr "Imatges per segon de les animacions de l'Enlightenment"
 
 #: src/bin/e_configure_option.c:1518
 #, fuzzy
@@ -1998,7 +2022,7 @@ msgstr "execució"
 #: src/bin/e_configure_option.c:1518 src/bin/e_configure_option.c:1844
 #: src/bin/e_configure_option.c:2055
 msgid "priority"
-msgstr ""
+msgstr "prioritat"
 
 #: src/bin/e_configure_option.c:1519
 #: src/modules/conf_display/e_int_config_desklock.c:275
@@ -2126,7 +2150,7 @@ msgstr "Configura escriptoris virtuals"
 
 #: src/bin/e_configure_option.c:1541
 msgid "Edge flip while dragging"
-msgstr ""
+msgstr "Gira les vores en arrossegar"
 
 #: src/bin/e_configure_option.c:1541 src/bin/e_configure_option.c:1826
 #: src/bin/e_configure_option.c:1827 src/bin/e_configure_option.c:1828
@@ -2138,7 +2162,7 @@ msgstr "cantonada"
 #: src/bin/e_configure_option.c:1827 src/bin/e_configure_option.c:1828
 #: src/bin/e_configure_option.c:1830
 msgid "flip"
-msgstr ""
+msgstr "girar"
 
 #: src/bin/e_configure_option.c:1541 src/bin/e_configure_option.c:2050
 #: src/modules/conf_bindings/e_mod_main.c:50
@@ -2181,6 +2205,8 @@ msgid ""
 "If enabled, this causes E to load all modules at once during startup instead "
 "of loading them incrementally"
 msgstr ""
+"Activat, fa que E carregui tots els mòduls a l'inici en lloc de fer-ho "
+"progressivament"
 
 #: src/bin/e_configure_option.c:1562
 #, fuzzy
@@ -2209,7 +2235,7 @@ msgstr "disposició"
 
 #: src/bin/e_configure_option.c:1565
 msgid "Determines where and how new windows are placed when created"
-msgstr ""
+msgstr "Determina on i quan es col·loquen les noves finestres quan es creen"
 
 #: src/bin/e_configure_option.c:1566
 #, fuzzy
@@ -2262,14 +2288,16 @@ msgid ""
 "When clicking an unfocused window, pass this click through to the "
 "application instead of only using it to focus the window"
 msgstr ""
+"Quan es clica a una finestra no seleccionada, es passa el clic a l'aplicació "
+"enlloc de només seleccionar la finestra"
 
 #: src/bin/e_configure_option.c:1577
 msgid "Policy when applications request focus"
-msgstr ""
+msgstr "Política quan les aplicacions demanen ser seleccionades"
 
 #: src/bin/e_configure_option.c:1580
 msgid "Always raise window when clicked"
-msgstr ""
+msgstr "Eleva sempre la finestra quan s'hi faci clic"
 
 #: src/bin/e_configure_option.c:1580 src/bin/e_configure_option.c:1582
 #: src/bin/e_configure_option.c:1583 src/bin/e_configure_option.c:1591
@@ -2287,7 +2315,7 @@ msgstr "Sempre enfoca a l'inici"
 
 #: src/bin/e_configure_option.c:1582
 msgid "Enable window autoraise"
-msgstr ""
+msgstr "Activa l'autoelevació de les finestres"
 
 #: src/bin/e_configure_option.c:1583
 #, fuzzy
@@ -2307,7 +2335,7 @@ msgstr "Reenfoca la darrera finestra en el canvi d'escriptori"
 
 #: src/bin/e_configure_option.c:1586
 msgid "Revert window focus on window hide or close"
-msgstr ""
+msgstr "Reverteix la selecció de finestra quan s'amagui o es tanqui"
 
 #: src/bin/e_configure_option.c:1587
 #, fuzzy
@@ -2319,7 +2347,7 @@ msgstr "Llisca el punter a la nova finestra enfocada"
 #: src/bin/e_configure_option.c:1612 src/bin/e_configure_option.c:1613
 #: src/bin/e_configure_option.c:1800
 msgid "warp"
-msgstr ""
+msgstr "lliscar"
 
 #: src/bin/e_configure_option.c:1588
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:326
@@ -2328,7 +2356,7 @@ msgstr "Evita l'enviament del punter"
 
 #: src/bin/e_configure_option.c:1589
 msgid "Speed to move pointer when warping between windows"
-msgstr ""
+msgstr "Velocitat del punter en lliscar entre finestres"
 
 #: src/bin/e_configure_option.c:1590
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:337
@@ -2390,15 +2418,15 @@ msgstr "Resistència a l'arrossegar"
 
 #: src/bin/e_configure_option.c:1598
 msgid "Window resistance against screen edges"
-msgstr ""
+msgstr "Resistència de les finestres contra les vores de la pantalla"
 
 #: src/bin/e_configure_option.c:1600
 msgid "Window resistance against other windows"
-msgstr ""
+msgstr "Resistència de les finestres contra altres finestres"
 
 #: src/bin/e_configure_option.c:1602
 msgid "Window resistance against desktop gadgets"
-msgstr ""
+msgstr "Resistència de les finestres contra els ginys de l'escriptori"
 
 #: src/bin/e_configure_option.c:1605
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:263
@@ -2412,6 +2440,10 @@ msgid ""
 "non-user placement of windows will be inside the useful geometry of the "
 "current screen"
 msgstr ""
+"La geometria útil és la grandària de la pantalla menys la geometria dels "
+"taulers que no permeten que les finestres els superposin. Aquesta opció fa "
+"que la col·locació de finestres que no són de l'usuari es faci dins la "
+"geometria útil de la pantalla"
 
 #: src/bin/e_configure_option.c:1608
 #, fuzzy
@@ -2423,10 +2455,12 @@ msgid ""
 "Useful geometry is calculated as the screen size minus the geometry of any "
 "shelves which do not allow windows to overlap them"
 msgstr ""
+"La geometria útil es calcula com la grandària de la pantalla menys la "
+"geometria dels taulers que no permeten que les finestres s'hi superposin"
 
 #: src/bin/e_configure_option.c:1611
 msgid "Winlist moves pointer to currently selected window while selecting"
-msgstr ""
+msgstr "Winlist mou el punter a la finestra seleccionada en seleccionar"
 
 #: src/bin/e_configure_option.c:1611 src/bin/e_configure_option.c:1612
 #: src/bin/e_configure_option.c:1613 src/bin/e_configure_option.c:1615
@@ -2447,6 +2481,8 @@ msgstr "Element llista finestres"
 #: src/bin/e_configure_option.c:1612
 msgid "Winlist moves pointer to currently selected window after winlist closes"
 msgstr ""
+"Winlist mou el punter a la finestra seleccionada actualment després que es "
+"tanqui"
 
 #: src/bin/e_configure_option.c:1613
 #, fuzzy
@@ -2460,6 +2496,9 @@ msgid ""
 "This option, when enabled, disables pointer warping only when switching "
 "windows using a directional winlist action (up/down/left/right)"
 msgstr ""
+"Aquesta opció, si està habilitada, desactiva el lliscat del punter només "
+"quan es canvia de finestra fent servir una acció direccional (amunt/avall/"
+"esquerra/dreta)"
 
 #: src/bin/e_configure_option.c:1615
 #, fuzzy
@@ -2506,7 +2545,7 @@ msgstr "Finestres des d'altres pantalles"
 
 #: src/bin/e_configure_option.c:1623
 msgid "Winlist uniconifies and unshades windows while selecting"
-msgstr ""
+msgstr "Winlist iconifica i il·lumina les finestres en seleccionar"
 
 #: src/bin/e_configure_option.c:1624
 #, fuzzy
@@ -2605,6 +2644,9 @@ msgid ""
 "When using an autohiding shelf, this option causes maximized windows to "
 "expand and contract to fill the space that the shelf occupies when it hides"
 msgstr ""
+"Utilitzant un panell amb ocultació automàtica, aquesta opció fa que les "
+"finestres maximitzades s'expandeixin i es contraguin per omplir l'espai que "
+"el panell ocupa quan s'amaga"
 
 #: src/bin/e_configure_option.c:1653
 #, fuzzy
@@ -2619,7 +2661,7 @@ msgstr "Mata procés enlloc del client"
 #: src/bin/e_configure_option.c:1655 src/bin/e_configure_option.c:1656
 #: src/bin/e_configure_option.c:1657 src/bin/e_configure_option.c:2038
 msgid "kill"
-msgstr ""
+msgstr "matar"
 
 #: src/bin/e_configure_option.c:1656
 #: src/modules/conf_window_manipulation/e_int_config_window_process.c:97
@@ -2650,7 +2692,7 @@ msgstr "Activa l'aturada de pantalla"
 
 #: src/bin/e_configure_option.c:1660
 msgid "Window client ping interval (CPU ticks)"
-msgstr ""
+msgstr "Interval de ping a la finestra client (CPU ticks)"
 
 #: src/bin/e_configure_option.c:1667
 #, fuzzy
@@ -2668,6 +2710,8 @@ msgid ""
 "This option causes E to remember the geometry of its internal dialogs and "
 "windows, NOT including filemanager windows"
 msgstr ""
+"Aquesta opció fa que E recordi la geometria dels seus diàlegs i finestres "
+"interns, SENSE incloure les finestres del gestor de fitxers"
 
 #: src/bin/e_configure_option.c:1669
 #, fuzzy
@@ -2702,6 +2746,9 @@ msgid ""
 "windows, NOT including dialog windows, based on the directory the window is "
 "showing"
 msgstr ""
+"Aquesta opció fa que E recordi la geometria de les finestres del gestor de "
+"fitxers intern, SENSE incloure les finestres de diàleg, basat en el "
+"directori on la finestra es mostra"
 
 #: src/bin/e_configure_option.c:1671
 #, fuzzy
@@ -2713,26 +2760,30 @@ msgid ""
 "This option causes E to remember the geometry of its internal filemanager "
 "windows globally instead of using the target directory"
 msgstr ""
+"Aquesta opció fa que E recordi la geometria de les finestres del gestor de "
+"fitxers intern de manera global, en lloc de fer servir el directori de destí"
 
 #: src/bin/e_configure_option.c:1674
 msgid "Window position info follows window when moving"
-msgstr ""
+msgstr "La informació de la posició de la finestra la segueix quan es mou"
 
 #: src/bin/e_configure_option.c:1675
 msgid "Window geometry info follows window when resizing"
 msgstr ""
+"La informació de la geometria de la finestra la segueix quan es redimensiona"
 
 #: src/bin/e_configure_option.c:1676
 msgid "Window position info visible when moving"
-msgstr ""
+msgstr "La informació de la finestra és visible quan es mou"
 
 #: src/bin/e_configure_option.c:1677
 msgid "Window geometry info visible when resizing"
 msgstr ""
+"La informació de la geometria de la finestra és visible quan es redimensiona"
 
 #: src/bin/e_configure_option.c:1685
 msgid "Transient windows follow movement of their child"
-msgstr ""
+msgstr "Les finestres transitòries segueixen el moviment dels seus fills"
 
 #: src/bin/e_configure_option.c:1685 src/bin/e_configure_option.c:1686
 #: src/bin/e_configure_option.c:1687 src/bin/e_configure_option.c:1688
@@ -2745,26 +2796,28 @@ msgstr "Transicions"
 #: src/bin/e_configure_option.c:1686
 msgid "Transient windows follow resize of their child"
 msgstr ""
+"Les finestres transitòries segueixen el redimensionament dels seus fills"
 
 #: src/bin/e_configure_option.c:1687
 msgid "Transient windows follow raise of their child"
-msgstr ""
+msgstr "Les finestres transitòries segueixen l'elevació dels seus fills"
 
 #: src/bin/e_configure_option.c:1688
 msgid "Transient windows follow lower of their child"
-msgstr ""
+msgstr "Les finestres transitòries segueixen la baixada dels seus fills"
 
 #: src/bin/e_configure_option.c:1689
 msgid "Transient windows follow layer change of their child"
-msgstr ""
+msgstr "Les finestres transitòries segueixen el canvi de capa dels seus fills"
 
 #: src/bin/e_configure_option.c:1690
 msgid "Transient windows follow desk change of their child"
 msgstr ""
+"Les finestres transitòries segueixen el canvi d'escriptori dels seus fills"
 
 #: src/bin/e_configure_option.c:1691
 msgid "Transient windows follow iconification of their child"
-msgstr ""
+msgstr "Les finestres transitòries segueixen la iconificació dels seus fills"
 
 #: src/bin/e_configure_option.c:1693
 #: src/modules/conf_menus/e_int_config_menus.c:302
@@ -2779,15 +2832,15 @@ msgstr "Fitxer o nom d'aplicació (.desktop)"
 #: src/bin/e_configure_option.c:1695 src/bin/e_configure_option.c:1697
 #: src/bin/e_configure_option.c:1699
 msgid "This information is taken from the related .desktop file"
-msgstr ""
+msgstr "Aquesta informació prové del fitxer .desktop relacionat"
 
 #: src/bin/e_configure_option.c:1696
 msgid "Application menus shows Generic field"
-msgstr ""
+msgstr "Els menús d'aplicació mostren el camp Genèric"
 
 #: src/bin/e_configure_option.c:1698
 msgid "Application menus shows Comment field"
-msgstr ""
+msgstr "Els menús d'aplicació mostren el camp Comentari"
 
 #: src/bin/e_configure_option.c:1701
 #, fuzzy
@@ -2806,11 +2859,11 @@ msgstr "Mostra les preferències dels ginys al nivell superior"
 
 #: src/bin/e_configure_option.c:1706
 msgid "Launch commands with this command"
-msgstr ""
+msgstr "Executeu comandes amb aquesta comanda"
 
 #: src/bin/e_configure_option.c:1708
 msgid "Command used to launch files and applications"
-msgstr ""
+msgstr "Comanda utilitzada per a executar fitxers i aplicacions"
 
 #: src/bin/e_configure_option.c:1710
 #, fuzzy
@@ -2822,6 +2875,8 @@ msgid ""
 "Applications provide their own icons. If this option is not set, E will use "
 "internal theme icons instead of the application-provided icon"
 msgstr ""
+"L'aplicació té les seves pròpies icones. Si no es selecciona, E utilitzarà "
+"les icones del tema enlloc de les proporcionades per l'aplicació"
 
 #: src/bin/e_configure_option.c:1718
 #, fuzzy
@@ -2844,10 +2899,12 @@ msgid ""
 "This option suppresses all confirmation dialogs and assumes that the user "
 "has clicked the confirm option"
 msgstr ""
+"Aquesta opció suprimeix tots els diàlegs de confirmació i assumeix que "
+"l'usuari ha fet clic a l'opció de confirmar"
 
 #: src/bin/e_configure_option.c:1720
 msgid "Configuration dialogs automatically apply their changes"
-msgstr ""
+msgstr "Els diàlegs de configuració apliquen automàticament els canvis"
 
 #: src/bin/e_configure_option.c:1720 src/bin/e_configure_option.c:1722
 #: src/bin/e_configure_option.c:1870 src/bin/e_configure_option.c:2058
@@ -2861,30 +2918,36 @@ msgid ""
 "This option causes any configuration options to be applied immediately when "
 "changed instead of requiring the 'Apply' button to be clicked"
 msgstr ""
+"Aquesta opció fa que qualsevol canvi s'apliqui immediatament enlloc "
+"d'esperar a que es faci clic al botó 'Aplica'"
 
 #: src/bin/e_configure_option.c:1722
 msgid "Configuration dialogs show advanced view by default"
-msgstr ""
+msgstr "Els diàlegs de configuració mostren la vista avançada per defecte"
 
 #: src/bin/e_configure_option.c:1723
 msgid ""
 "Configurations dialogs can have basic and advanced views; this option causes "
 "all configuration dialogs to show the advanced view by default"
 msgstr ""
+"Els diàlegs de configuració poden tenir vistes bàsiques i avançades; aquesta "
+"opció fa que es mostri la vista avançada per defecte"
 
 #: src/bin/e_configure_option.c:1724
 msgid "Configuration dialog windows are normal windows"
-msgstr ""
+msgstr "Les finestres de diàlegs de configuració són finestres normals"
 
 #: src/bin/e_configure_option.c:1725
 msgid ""
 "This option causes configuration dialogs to be normal windows instead of "
 "dialog windows"
 msgstr ""
+"Aquesta opció fa que els diàlegs de configuració siguin finestres normals "
+"enlloc de finestres de diàleg"
 
 #: src/bin/e_configure_option.c:1727
 msgid "Set font hinting mode"
-msgstr ""
+msgstr "Mode de 'hinting' de fonts"
 
 #: src/bin/e_configure_option.c:1727
 #, fuzzy
@@ -2893,7 +2956,7 @@ msgstr "Optimització"
 
 #: src/bin/e_configure_option.c:1735
 msgid "Use custom command for desklock"
-msgstr ""
+msgstr "Utilitza comanda personalitzada per al bloqueig de pantalla"
 
 #: src/bin/e_configure_option.c:1735 src/bin/e_configure_option.c:1737
 #: src/bin/e_configure_option.c:1739 src/bin/e_configure_option.c:1742
@@ -2910,7 +2973,7 @@ msgstr "bloqueig escriptori "
 
 #: src/bin/e_configure_option.c:1736
 msgid "This option allows an external application to manage desklock"
-msgstr ""
+msgstr "Aquesta opció permet que una aplicació externa gestioni el desbloqueig"
 
 #: src/bin/e_configure_option.c:1737
 #, fuzzy
@@ -2919,7 +2982,7 @@ msgstr "Comanda personalitzada de bloqueig de pantalla"
 
 #: src/bin/e_configure_option.c:1739
 msgid "Desklock login box shows on which screen?"
-msgstr ""
+msgstr "A quina pantalla es mostra la caixa d'autenticació del bloqueig?"
 
 #: src/bin/e_configure_option.c:1742
 #, fuzzy
@@ -2928,11 +2991,11 @@ msgstr "Aplicacions bloqueig escriptori"
 
 #: src/bin/e_configure_option.c:1743
 msgid "Desklock activates on resume from suspend"
-msgstr ""
+msgstr "S'activa el bloqueig de pantalla en despertar de la suspensió"
 
 #: src/bin/e_configure_option.c:1744
 msgid "Desklock activates during screensaver"
-msgstr ""
+msgstr "S'activa el bloqueig de pantalla durant l'estalvi de pantalla"
 
 #: src/bin/e_configure_option.c:1744 src/bin/e_configure_option.c:1745
 #: src/bin/e_configure_option.c:1755 src/bin/e_configure_option.c:1756
@@ -2962,7 +3025,7 @@ msgstr "Títol bloqueig d'escriptori"
 
 #: src/bin/e_configure_option.c:1748
 msgid "Desklock activates when idle for X seconds"
-msgstr ""
+msgstr "S'activa el bloqueig de pantalla si no hi ha activitat en X segons"
 
 #: src/bin/e_configure_option.c:1750
 #, fuzzy
@@ -2971,11 +3034,11 @@ msgstr "Utilitza fons de pantalla del tema "
 
 #: src/bin/e_configure_option.c:1751
 msgid "Prompt for desklock timer delay if deactivated quickly"
-msgstr ""
+msgstr "Demanar pel retard del bloqueig si es desactiva ràpidament"
 
 #: src/bin/e_configure_option.c:1752
 msgid "Desklock quick deactivation timer delay"
-msgstr ""
+msgstr "Retard en el temporitzador de la desactivació ràpida del bloqueig"
 
 #: src/bin/e_configure_option.c:1755
 #, fuzzy
@@ -2984,15 +3047,15 @@ msgstr "Activa l'aturada de pantalla"
 
 #: src/bin/e_configure_option.c:1756
 msgid "Screensaver activates when idle for X seconds"
-msgstr ""
+msgstr "S'activa l'estalvi de pantalla amb una inactivitat de X segons"
 
 #: src/bin/e_configure_option.c:1762
 msgid "Prompt for screensaver timer delay if deactivated quickly"
-msgstr ""
+msgstr "Demanar pel retard de l'estalvi de pantalla si es desactiva ràpidament"
 
 #: src/bin/e_configure_option.c:1764
 msgid "Screensaver quick deactivation timer delay"
-msgstr ""
+msgstr "Retard en el temporitzador de la desactivació de l'estalvi de pantalla"
 
 #: src/bin/e_configure_option.c:1767
 #, fuzzy
@@ -3002,6 +3065,7 @@ msgstr "Bloqueja després de l'activació de l'estalvi de pantalla"
 #: src/bin/e_configure_option.c:1769
 msgid "Suspend when screensaver activates even if on AC"
 msgstr ""
+"Suspèn quan s'activa l'estalvi de pantalla, fins i tot si està endollat"
 
 #: src/bin/e_configure_option.c:1771
 #, fuzzy
@@ -3031,18 +3095,20 @@ msgstr "Preferències menú llista finestres"
 #: src/bin/e_configure_option.c:1797
 msgid "Window list menu iconified window grouping policy"
 msgstr ""
+"Política d'agrupació de finestres iconificades del menú Llista de finestres"
 
 #: src/bin/e_configure_option.c:1800
 msgid "Window list menu warps to desktop of selected iconified window"
 msgstr ""
+"El menú Llista de finestres desplaça a la finestra iconificada seleccionada"
 
 #: src/bin/e_configure_option.c:1801
 msgid "Enable window list menu length limit"
-msgstr ""
+msgstr "Activa "
 
 #: src/bin/e_configure_option.c:1802
 msgid "Window list menu length limit (characters)"
-msgstr ""
+msgstr "Límit de llargada del menú Llista de finestres (caràcters)"
 
 #: src/bin/e_configure_option.c:1803
 #, fuzzy, c-format
@@ -3093,7 +3159,7 @@ msgstr "Acceleració del ratolí "
 
 #: src/bin/e_configure_option.c:1826
 msgid "Enable desk flip between last and first desks"
-msgstr ""
+msgstr "Activa el desplaçament entre el primer i l'últim escriptori"
 
 #: src/bin/e_configure_option.c:1827
 #, fuzzy
@@ -3117,21 +3183,23 @@ msgstr "Estil de vora per defecte"
 
 #: src/bin/e_configure_option.c:1840
 msgid "Window screen limit policy"
-msgstr ""
+msgstr "Política de límit de les vores de la pantalla"
 
 #: src/bin/e_configure_option.c:1844
 msgid "Thumbnailing process priority"
-msgstr ""
+msgstr "Prioritat del procés de generació de miniatures"
 
 #: src/bin/e_configure_option.c:1846
 msgid ""
 "Enlightenment runs its own thumbnailing daemon in the background. This "
 "option configures the priority of that process"
 msgstr ""
+"Enlightenment executa el seu propi procés de miniatures en segon pla. "
+"Aquesta opció en configura la prioritat"
 
 #: src/bin/e_configure_option.c:1848
 msgid "Enable click-to-drag scrolling (thumbscrolling)"
-msgstr ""
+msgstr "Activa desplaçament clica-i-arrossega (thumbscrolling)"
 
 #: src/bin/e_configure_option.c:1849
 #, fuzzy
@@ -3140,7 +3208,7 @@ msgstr "Desplaçament amb dit"
 
 #: src/bin/e_configure_option.c:1851
 msgid "Thumbscroll momentum threshold"
-msgstr ""
+msgstr "Llindar d'impuls de Thumbscroll"
 
 #: src/bin/e_configure_option.c:1852
 #, fuzzy, c-format
@@ -3159,23 +3227,27 @@ msgstr "Mostra icones de dispositius a l'escriptori"
 
 #: src/bin/e_configure_option.c:1858
 msgid "Filemanager uses single click to activate"
-msgstr ""
+msgstr "El gestor de fitxers utilitza el clic únic per a activar"
 
 #: src/bin/e_configure_option.c:1860
 msgid "Filemanager shows removable devices on desktop"
-msgstr ""
+msgstr "El gestor de fitxers mostra els dispositius extraïbles a l'escriptori"
 
 #: src/bin/e_configure_option.c:1863
 msgid "Filemanager automatically mounts removable devices when attached"
 msgstr ""
+"El gestor de fitxers munta automàticament els dispositius extraïbles quan es "
+"connecten"
 
 #: src/bin/e_configure_option.c:1864
 msgid "Filemanager automatically opens removable devices when attached"
 msgstr ""
+"El gestor de fitxers obre automàticament els dispositius extraïbles quan es "
+"connecten"
 
 #: src/bin/e_configure_option.c:1865
 msgid "Filemanager always performs `cp+rm` instead of `mv`"
-msgstr ""
+msgstr "El gestor de fitxers sempre executa `cp+rm` enlloc de `mv`"
 
 #: src/bin/e_configure_option.c:1866
 #, fuzzy
@@ -3184,7 +3256,7 @@ msgstr "Gestor de fitxers inactiu"
 
 #: src/bin/e_configure_option.c:1868
 msgid "Only show label on keyboard gadgets instead of flags"
-msgstr ""
+msgstr "Només mostra l'etiqueta en els ginys de teclat enlloc de banderes"
 
 #: src/bin/e_configure_option.c:1868 src/bin/e_configure_option.c:1870
 #: src/bin/e_configure_option.c:1872 src/bin/e_configure_option.c:1874
@@ -3204,18 +3276,21 @@ msgstr "No aplicar mai la configuració del teclat"
 #: src/bin/e_configure_option.c:1872
 msgid "Window change timeout when moving or resizing using keyboard"
 msgstr ""
+"Temps d'espera de les finestres en moure o redimensionar utilitzant el teclat"
 
 #: src/bin/e_configure_option.c:1874
 msgid "Window horizontal movement speed when using keyboard"
-msgstr ""
+msgstr "Velocitat horitzontal de les finestres utilitzant el teclat"
 
 #: src/bin/e_configure_option.c:1876 src/bin/e_configure_option.c:1880
 msgid "Window vertical movement speed when using keyboard"
-msgstr ""
+msgstr "Velocitat vertical de les finestres utilitzant el teclat"
 
 #: src/bin/e_configure_option.c:1878
 msgid "Window horizontal resize speed when using keyboard"
 msgstr ""
+"Velocitat de redimensionament horitzontal de les finestres utilitzant el "
+"teclat"
 
 #: src/bin/e_configure_option.c:1887
 #, fuzzy
@@ -3236,15 +3311,15 @@ msgstr "%1.0f pixels"
 
 #: src/bin/e_configure_option.c:1890
 msgid "Use screen DPI for scaling"
-msgstr ""
+msgstr "Utilitza els punts per polzada del monitor per a escalar"
 
 #: src/bin/e_configure_option.c:1892
 msgid "Use custom DPI for scaling"
-msgstr ""
+msgstr "Utilitza punts per polzada personalitzats per a escalar"
 
 #: src/bin/e_configure_option.c:1894
 msgid "Custom DPI to use when scaling"
-msgstr ""
+msgstr "Punts per polzada personalitzats per a escalar"
 
 #: src/bin/e_configure_option.c:1895
 #: src/modules/conf_theme/e_int_config_scale.c:314
@@ -3254,7 +3329,7 @@ msgstr "%1.0f DPI"
 
 #: src/bin/e_configure_option.c:1898
 msgid "System Console primary action icon size"
-msgstr ""
+msgstr "Mida de la icona de l'acció primària de la consola del sistema"
 
 #: src/bin/e_configure_option.c:1898 src/bin/e_configure_option.c:1900
 #: src/bin/e_configure_option.c:1902 src/bin/e_configure_option.c:1904
@@ -3265,15 +3340,15 @@ msgstr "Syscon"
 
 #: src/bin/e_configure_option.c:1900
 msgid "System Console secondary action icon size"
-msgstr ""
+msgstr "Mida de la icona de l'acció secundària de la consola del sistema"
 
 #: src/bin/e_configure_option.c:1902
 msgid "System Console extra action icon size"
-msgstr ""
+msgstr "Mida de la icona de l'acció extra de la consola del sistema"
 
 #: src/bin/e_configure_option.c:1904
 msgid "System Console idle timeout"
-msgstr ""
+msgstr "Temps d'espera de la consola del sistema"
 
 #: src/bin/e_configure_option.c:1906
 #, fuzzy
@@ -3294,7 +3369,7 @@ msgstr "entrada"
 
 #: src/bin/e_configure_option.c:1909
 msgid "Backlight \"normal\" brightness"
-msgstr ""
+msgstr "Brillantor \"normal\" de la llum de fons"
 
 #: src/bin/e_configure_option.c:1909 src/bin/e_configure_option.c:1912
 #: src/bin/e_configure_option.c:1915 src/bin/e_configure_option.c:1918
@@ -3340,15 +3415,15 @@ msgstr "entorn"
 
 #: src/bin/e_configure_option.c:1941
 msgid "Load ~/.Xmodmap"
-msgstr ""
+msgstr "Carrega ~/.Xmodmap"
 
 #: src/bin/e_configure_option.c:1942
 msgid "Run gnome-settings-daemon"
-msgstr ""
+msgstr "Executa gnome-settings-daemon"
 
 #: src/bin/e_configure_option.c:1943
 msgid "Run kdeinit"
-msgstr ""
+msgstr "Executa kdeinit"
 
 #: src/bin/e_configure_option.c:1945
 #, fuzzy
@@ -3365,11 +3440,11 @@ msgstr "preferències"
 
 #: src/bin/e_configure_option.c:1947
 msgid "Try setting GTK theme to match E17 theme"
-msgstr ""
+msgstr "Intenta configurar el tema GTK per coincidir amb el tema E17"
 
 #: src/bin/e_configure_option.c:1949
 msgid "GTK theme name"
-msgstr ""
+msgstr "Nom del tema GTK"
 
 #: src/bin/e_configure_option.c:1955
 #, fuzzy
@@ -3383,7 +3458,7 @@ msgstr "Nom d'icona"
 
 #: src/bin/e_configure_option.c:1963
 msgid "Icon theme overrides E17 internal theme icons"
-msgstr ""
+msgstr "El tema de les icones sobreescriu les icones de l'E17"
 
 #: src/bin/e_configure_option.c:1966
 #, fuzzy
@@ -3436,7 +3511,7 @@ msgstr "Executa"
 
 #: src/bin/e_configure_option.c:2065
 msgid "icon"
-msgstr ""
+msgstr "icona"
 
 #: src/bin/e_configure_option.c:2066
 #, fuzzy
@@ -4962,13 +5037,13 @@ msgid ""
 "sure and nothing will be affected."
 msgstr ""
 "Li està demanant a Enlightenment que recordi aplicar a una finestra "
-"<br><hilight>que no té propietats úniques</hilight>, recordar "
-"propietats<br>(com mida, lloc, estil de vora, etc.) que afectaran a la resta "
-"de finestres<br>Això significa que comparteix Nom/Classe, Rol... amb més "
-"d'una finestra a la pantalla<br>És només un avís, per si no vol que sigui "
-"així. Si està d'acord,<br>premi <hilight>Aplica</hilight> o <hilight>OK</"
-"hilight>.Premi <hilight>Cancelar</hilight><br>si no està segur i no "
-"s'aplicarán els canvis."
+"<br><hilight>que no té propietats úniques</hilight>, recordar propietats<br>"
+"(com mida, lloc, estil de vora, etc.) que afectaran a la resta de "
+"finestres<br>Això significa que comparteix Nom/Classe, Rol... amb més d'una "
+"finestra a la pantalla<br>És només un avís, per si no vol que sigui així. Si "
+"està d'acord,<br>premi <hilight>Aplica</hilight> o <hilight>OK</hilight>."
+"Premi <hilight>Cancelar</hilight><br>si no està segur i no s'aplicarán els "
+"canvis."
 
 #: src/bin/e_int_border_remember.c:539
 msgid "No match properties set"
@@ -6849,26 +6924,30 @@ msgstr "Expulsa"
 
 #: src/modules/bluez4/agent.c:133
 msgid "Pin Code Requested"
-msgstr ""
+msgstr "Es sol·licita codi PIN"
 
 #: src/modules/bluez4/agent.c:134
 msgid ""
 "Enter the PinCode above. It should have 1-16 characters and can be "
 "alphanumeric."
 msgstr ""
+"Introduïu el codi PIN. Ha de tenir de 1 a 16 caràcters i poden ser "
+"alfanumèrics."
 
 #: src/modules/bluez4/agent.c:145
 msgid "Passkey Requested"
-msgstr ""
+msgstr "Es sol·licita paraula clau"
 
 #: src/modules/bluez4/agent.c:146
 msgid "Enter the Passkey above. It should be a numeric value between 0-999999."
 msgstr ""
+"Introduïu la contrasenya a sobre. Ha de ser un valor numèric entre 0 i "
+"999999."
 
 #: src/modules/bluez4/agent.c:163
 #, c-format
 msgid "%d keys were typed on %s. Passkey is %06d"
-msgstr ""
+msgstr "S'han premut %d tecles a %s. La contrasenya és %06d"
 
 #: src/modules/bluez4/agent.c:165
 #, fuzzy
@@ -6878,7 +6957,7 @@ msgstr "Mostra classe"
 #: src/modules/bluez4/agent.c:178
 #, c-format
 msgid "Pincode for %s is %s"
-msgstr ""
+msgstr "El codi pin per a %s és %s"
 
 #: src/modules/bluez4/agent.c:179
 #, fuzzy
@@ -6888,7 +6967,7 @@ msgstr "Mostra títol "
 #: src/modules/bluez4/agent.c:193
 #, c-format
 msgid "%06d is the passkey presented in %s?"
-msgstr ""
+msgstr "%06d és la contrasenya de %s?"
 
 #: src/modules/bluez4/agent.c:196
 #, fuzzy
@@ -6902,15 +6981,15 @@ msgstr "Confirma"
 #: src/modules/bluez4/agent.c:209
 #, c-format
 msgid "Grant permission for %s to connect?"
-msgstr ""
+msgstr "Concedir permís de connexió a %s?"
 
 #: src/modules/bluez4/agent.c:212
 msgid "Authorize Connection"
-msgstr ""
+msgstr "Autoritzeu connexió"
 
 #: src/modules/bluez4/agent.c:212
 msgid "Grant"
-msgstr ""
+msgstr "Concedeix"
 
 #: src/modules/bluez4/e_mod_main.c:91 src/modules/bluez4/ebluez4.c:221
 #: src/modules/bluez4/ebluez4.c:440 src/modules/bluez4/ebluez4.c:462
@@ -6922,7 +7001,7 @@ msgstr "Error d'execució"
 
 #: src/modules/bluez4/e_mod_main.c:119
 msgid "Searching for Devices..."
-msgstr ""
+msgstr "Cercant dispositius..."
 
 #: src/modules/bluez4/e_mod_main.c:190 src/modules/bluez4/e_mod_main.c:461
 #, fuzzy
@@ -6951,11 +7030,11 @@ msgstr "Dispositiu extraïble"
 
 #: src/modules/bluez4/e_mod_main.c:398
 msgid "Disconnect"
-msgstr ""
+msgstr "Desconnecta"
 
 #: src/modules/bluez4/e_mod_main.c:404
 msgid "Connect"
-msgstr ""
+msgstr "Connecta"
 
 #: src/modules/bluez4/e_mod_main.c:408
 #, fuzzy
@@ -6969,11 +7048,11 @@ msgstr "Bloqueja moviment d'icona"
 
 #: src/modules/bluez4/e_mod_main.c:425
 msgid "Unlock on disconnect"
-msgstr ""
+msgstr "Desbloca en desconnectar"
 
 #: src/modules/bluez4/e_mod_main.c:447 src/modules/bluez4/e_mod_main.c:562
 msgid "Bluez4"
-msgstr ""
+msgstr "Bluez4"
 
 #: src/modules/bluez4/e_mod_main.c:457
 #, fuzzy
@@ -6982,12 +7061,12 @@ msgstr "Directoris de cerca"
 
 #: src/modules/bluez4/e_mod_main.c:808
 msgid "An error has ocurred"
-msgstr ""
+msgstr "Ha ocorregut un error"
 
 #: src/modules/bluez4/ebluez4.c:218 src/modules/bluez4/ebluez4.c:460
 #, c-format
 msgid "Property of %s changed, but could not be read"
-msgstr ""
+msgstr "Ha canviat la propietat de %s, però no es pot llegir"
 
 #: src/modules/bluez4/ebluez4.c:435
 #, fuzzy
@@ -7001,15 +7080,15 @@ msgstr "Error creant directori"
 
 #: src/modules/bluez4/ebluez4.c:616
 msgid "Error reading path of Default Adapter"
-msgstr ""
+msgstr "Error llegint la ruta de l'adaptador per defecte"
 
 #: src/modules/bluez4/ebluez4.c:676
 msgid "Error reading path of Removed Adapter"
-msgstr ""
+msgstr "Error llegint la ruta de l'adaptador eliminat"
 
 #: src/modules/bluez4/ebluez4.c:692
 msgid "Error reading path of Added Adapter"
-msgstr ""
+msgstr "Error llegint la ruta de l'adaptador afegit"
 
 #: src/modules/clock/e_mod_config.c:36
 msgid "Clock Settings"
@@ -7126,11 +7205,11 @@ msgstr "Tauler de configuració"
 
 #: src/modules/conf2/e_conf2.c:1191
 msgid "Search: "
-msgstr ""
+msgstr "Cerca: "
 
 #: src/modules/conf2/e_conf2.c:1269
 msgid "Discard"
-msgstr ""
+msgstr "Descarta"
 
 #: src/modules/conf2/e_mod_main.c:287 src/modules/conf2/e_mod_main.c:314
 #, fuzzy
@@ -10230,7 +10309,7 @@ msgstr "Botó d'engegada"
 
 #: src/modules/cpufreq/e_mod_main.c:410
 msgid "Power State Max"
-msgstr ""
+msgstr "Power State Max"
 
 #: src/modules/cpufreq/e_mod_main.c:496
 msgid ""
@@ -11528,7 +11607,7 @@ msgstr "Pantalla completa"
 
 #: src/modules/notification/e_mod_config.c:138
 msgid "Xinerama"
-msgstr ""
+msgstr "Xinerama"
 
 #: src/modules/notification/e_mod_config.c:142
 msgid "Popup Corner"
