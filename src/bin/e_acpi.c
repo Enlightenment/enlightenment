@@ -52,10 +52,17 @@ static E_ACPI_Device_Simple _devices_simple[] =
    {"button/lid", E_ACPI_TYPE_LID},
    {"button/power", E_ACPI_TYPE_POWER},
    {"button/sleep", E_ACPI_TYPE_SLEEP},
+   {"button/volumedown", E_ACPI_TYPE_VOLUME_DOWN},
+   {"button/volumeup", E_ACPI_TYPE_VOLUME_UP},
+   {"button/mute", E_ACPI_TYPE_MUTE},
+   {"button/wlan", E_ACPI_TYPE_WIFI},
    {"fan", E_ACPI_TYPE_FAN},
    {"processor", E_ACPI_TYPE_PROCESSOR},
    {"thermal_zone", E_ACPI_TYPE_THERMAL},
    {"video", E_ACPI_TYPE_VIDEO},
+   {"video/brightnessdown", E_ACPI_TYPE_BRIGHTNESS_DOWN},
+   {"video/brightnessup", E_ACPI_TYPE_BRIGHTNESS_UP},
+   {"video/switchmode", E_ACPI_TYPE_VIDEO},
 
    {NULL, E_ACPI_TYPE_UNKNOWN}
 };

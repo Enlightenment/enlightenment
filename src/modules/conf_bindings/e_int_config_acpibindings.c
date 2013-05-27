@@ -391,6 +391,10 @@ _binding_label_get(E_Config_Binding_Acpi *binding)
      return _("S1");
    if (binding->type == E_ACPI_TYPE_VAIO)
      return _("Vaio");
+   if (binding->type == E_ACPI_TYPE_VOLUME_DOWN)
+     return _("Volume Down");
+   if (binding->type == E_ACPI_TYPE_VOLUME_UP)
+     return _("Volume Up");
 
    return _("Unknown");
 }
