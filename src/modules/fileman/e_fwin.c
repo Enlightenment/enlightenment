@@ -527,6 +527,13 @@ e_fwin_zone_shutdown(E_Zone *zone)
      }
 }
 
+static void
+_e_fwin_cb_toolbar_del(void *obj)
+{
+   E_Fwin_Page *page = e_object_data_get(obj);
+   page->tbar = NULL;
+}
+
 void
 e_fwin_reload_all(void)
 {
@@ -553,6 +560,8 @@ e_fwin_reload_all(void)
                          (e_win_evas_get(fwin->win), "toolbar",
                              fwin->win, fwin->cur_page->fm_obj);
                        e_toolbar_orient(fwin->cur_page->tbar, fileman_config->view.toolbar_orient);
+                       e_object_data_set(E_OBJECT(fwin->cur_page->tbar), fwin->cur_page);
+                       E_OBJECT_DEL_SET(fwin->cur_page->tbar, _e_fwin_cb_toolbar_del);
                     }
                }
              else
@@ -1028,6 +1037,8 @@ _e_fwin_page_create(E_Fwin *fwin)
         page->tbar = e_toolbar_new(evas, "toolbar",
                                    fwin->win, page->fm_obj);
         e_toolbar_orient(page->tbar, fileman_config->view.toolbar_orient);
+        e_object_data_set(E_OBJECT(page->tbar), page);
+        E_OBJECT_DEL_SET(page->tbar, _e_fwin_cb_toolbar_del);
      }
 
    page->fm_op_entry_add_handler =
@@ -1045,6 +1056,7 @@ _e_fwin_page_free(E_Fwin_Page *page)
    if (page->tbar)
      {
         fileman_config->view.toolbar_orient = page->tbar->gadcon->orient;
+        E_OBJECT_DEL_SET(E_OBJECT(page->tbar), NULL);
         e_object_del(E_OBJECT(page->tbar));
      }
    else evas_object_del(page->scrollframe_obj);
