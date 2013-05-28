@@ -471,6 +471,8 @@ static Eina_Bool     _e_fm2_sys_suspend_hibernate(void *, int, void *);
 static void          _e_fm2_favorites_thread_cb(void *d, Ecore_Thread *et);
 static void          _e_fm2_thread_cleanup_cb(void *d, Ecore_Thread *et);
 
+static void _e_fm2_new_file(void *data, E_Menu *m, E_Menu_Item *mi);
+
 static char *_e_fm2_meta_path = NULL;
 static Evas_Smart *_e_fm2_smart = NULL;
 static Eina_List *_e_fm2_list = NULL;
@@ -6742,6 +6744,19 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
                }
           }
      }
+   if (!fsel)
+     {
+        if (e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_COPY)
+          {
+             /* most likely someone is trying to dnd some text to us */
+             _e_fm2_new_file(sd, NULL, NULL);
+             EINA_LIST_FOREACH(ev->data, l, fp)
+               isel = eina_list_append(isel, strdup(fp));
+             ecore_thread_global_data_add("efm_text_uri_list", isel, (Eina_Free_Cb)e_util_string_list_free, 0);
+          }
+        /* no files, abort! */
+        return;
+     }
 
    isel = _e_fm2_uri_icon_list_get(fsel);
    ox = 0; oy = 0;
@@ -9576,10 +9591,11 @@ static void
 _e_fm2_new_thread_helper(Ecore_Thread *eth, Eina_Bool dir)
 {
    char buf[PATH_MAX];
-   const char *path;
+   char *path;
    struct stat st;
    unsigned int x;
    int fd;
+   Eina_List *texts, *l;
 
    path = ecore_thread_global_data_wait("path", 2.0);
    snprintf(buf, sizeof(buf), "%s/%s", path, dir ? _("New Directory") : _("New File"));
@@ -9599,6 +9615,12 @@ _e_fm2_new_thread_helper(Ecore_Thread *eth, Eina_Bool dir)
              fd = open(buf, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
              if (fd)
                {
+                  texts = ecore_thread_global_data_wait("efm_text_uri_list", 0.01);
+                  EINA_LIST_FOREACH(texts, l, path)
+                    {
+                       write(fd, path, strlen(path));
+                       write(fd, "\n", 1);
+                    }
                   close(fd);
                   ecore_thread_feedback(eth, strdup(buf));
                   return;
@@ -9627,6 +9649,12 @@ _e_fm2_new_thread_helper(Ecore_Thread *eth, Eina_Bool dir)
                   fd = open(buf, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
                   if (fd)
                     {
+                       texts = ecore_thread_global_data_wait("efm_text_uri_list", 0.01);
+                       EINA_LIST_FOREACH(texts, l, path)
+                         {
+                            write(fd, path, strlen(path));
+                            write(fd, "\n", 1);
+                         }
                        close(fd);
                        ecore_thread_feedback(eth, strdup(buf));
                        return;
@@ -9659,6 +9687,7 @@ _e_fm2_new_file_end(void *data, Ecore_Thread *eth __UNUSED__)
    E_Fm2_Smart_Data *sd = data;
    sd->new_file.thread = NULL;
    ecore_thread_global_data_del("path");
+   ecore_thread_global_data_del("efm_text_uri_list");
    evas_object_unref(sd->obj);
 }
 
@@ -9668,6 +9697,7 @@ _e_fm2_new_file_cancel(void *data, Ecore_Thread *eth __UNUSED__)
    E_Fm2_Smart_Data *sd = data;
    sd->new_file.thread = NULL;
    ecore_thread_global_data_del("path");
+   ecore_thread_global_data_del("efm_text_uri_list");
    evas_object_unref(sd->obj);
 }
 
