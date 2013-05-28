@@ -1667,7 +1667,7 @@ _e_comp_win_shadow_setup(E_Comp_Win *cw)
         clas = cw->clas;
         role = cw->role;
         primary_type = cw->primary_type;
-        skip = (conf->match.disable_overrides);
+        skip = conf->match.disable_overrides || (title && (!strncmp(title, "noshadow", 8)));
         fast = conf->fast_overrides;
      }
 
