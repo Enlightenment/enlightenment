@@ -285,7 +285,6 @@ _systray_xembed_icon_add(Instance_Xembed *xembed, const Ecore_X_Window win)
                                     1.0, (double)w / (double)h);
 
    ecore_x_window_reparent(win, xembed->win.base, 0, 0);
-   ecore_x_window_resize(win, w, h);
    ecore_x_window_raise(win);
    ecore_x_window_client_manage(win);
    ecore_x_window_save_set_add(win);
@@ -365,8 +364,6 @@ _systray_xembed_selection_owner_set_current(Instance_Xembed *xembed)
 static void
 _systray_xembed_deactivate(Instance_Xembed *xembed)
 {
-   Ecore_X_Window old;
-
    if (xembed->win.selection == 0) return;
 
    systray_edje_emit(xembed->inst, _sig_disable);
@@ -374,11 +371,9 @@ _systray_xembed_deactivate(Instance_Xembed *xembed)
    while (xembed->icons)
      _systray_xembed_icon_del_list(xembed, xembed->icons, xembed->icons->data);
 
-   old = xembed->win.selection;
    xembed->win.selection = 0;
    _systray_xembed_selection_owner_set_current(xembed);
    ecore_x_sync();
-   ecore_x_window_free(old);
    ecore_x_window_free(xembed->win.base);
    xembed->win.base = 0;
 }
@@ -390,21 +385,24 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
    Evas_Coord x, y, w, h;
    unsigned short r, g, b;
    const char *color;
+   Eina_Bool invis = EINA_FALSE;
 
    if (systray_gadcon_get(xembed->inst)->shelf &&
        (!e_util_strcmp(systray_gadcon_get(xembed->inst)->shelf->style, "invisible")))
-     e_util_dialog_internal (_("Systray Error"),
-                             _("Systray cannot set its background invisible to match its shelf."));
-   color = edje_object_data_get(ui, systray_style_get(xembed->inst));
-
-   if (color && (sscanf(color, "%hu %hu %hu", &r, &g, &b) == 3))
-     {
-        r = (65535 * (unsigned int)r) / 255;
-        g = (65535 * (unsigned int)g) / 255;
-        b = (65535 * (unsigned int)b) / 255;
-     }
+     invis = EINA_TRUE;
    else
-     r = g = b = (unsigned short)65535;
+     {
+        color = edje_object_data_get(ui, systray_style_get(xembed->inst));
+
+        if (color && (sscanf(color, "%hu %hu %hu", &r, &g, &b) == 3))
+          {
+             r = (65535 * (unsigned int)r) / 255;
+             g = (65535 * (unsigned int)g) / 255;
+             b = (65535 * (unsigned int)b) / 255;
+          }
+        else
+          r = g = b = (unsigned short)65535;
+     }
 
    o = edje_object_part_object_get(ui, _part_size);
    if (!o)
@@ -413,9 +411,13 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
    evas_object_geometry_get(o, &x, &y, &w, &h);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-   xembed->win.base = ecore_x_window_new(0, 0, 0, w, h);
+   xembed->win.base = ecore_x_window_new(0, x, y, w, h);
+   ecore_x_icccm_title_set(xembed->win.base, "noshadow_systray_base");
+   ecore_x_icccm_name_class_set(xembed->win.base, "systray", "holder");
+   ecore_x_netwm_name_set(xembed->win.base, "noshadow_systray_base");
    ecore_x_window_reparent(xembed->win.base, xembed->win.parent, x, y);
-   ecore_x_window_background_color_set(xembed->win.base, r, g, b);
+   if (!invis)
+     ecore_x_window_background_color_set(xembed->win.base, r, g, b);
    ecore_x_window_show(xembed->win.base);
    return EINA_TRUE;
 }
@@ -440,18 +442,9 @@ _systray_xembed_activate(Instance_Xembed *xembed)
           return 0;
      }
 
-   xembed->win.selection = ecore_x_window_input_new(xembed->win.base,
-                                                    0, 0, 1, 1);
-   if (xembed->win.selection == 0)
-     {
-        ecore_x_window_free(xembed->win.base);
-        xembed->win.base = 0;
-        return 0;
-     }
-
+   xembed->win.selection = e_comp_get(xembed->inst->con)->cm_selection;
    if (!_systray_xembed_selection_owner_set_current(xembed))
      {
-        ecore_x_window_free(xembed->win.selection);
         xembed->win.selection = 0;
         ecore_x_window_free(xembed->win.base);
         xembed->win.base = 0;
@@ -732,7 +725,6 @@ _systray_xembed_cb_selection_clear(void *data, int type __UNUSED__, void *event)
           _systray_xembed_icon_del_list(xembed, xembed->icons,
                                         xembed->icons->data);
 
-        ecore_x_window_free(xembed->win.selection);
         xembed->win.selection = 0;
         ecore_x_window_free(xembed->win.base);
         xembed->win.base = 0;
@@ -824,16 +816,13 @@ Instance_Xembed *
 systray_xembed_new(Instance *inst)
 {
    Evas_Object *ui = systray_edje_get(inst);
-   const E_Gadcon *gc = systray_gadcon_get(inst);
+   E_Gadcon *gc = inst->gcc->gadcon;
    Instance_Xembed *xembed = calloc(1, sizeof(Instance_Xembed));
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(xembed, NULL);
    xembed->inst = inst;
 
-   if ((gc->shelf) && (gc->shelf->popup))
-     xembed->win.parent = e_comp_get(gc->shelf)->win;
-   else
-     xembed->win.parent = (Ecore_X_Window)ecore_evas_window_get(gc->ecore_evas);
+   xembed->win.parent = e_comp_get(gc)->man->root;
 
    xembed->win.base = 0;
    xembed->win.selection = 0;
