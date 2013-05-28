@@ -9586,10 +9586,13 @@ _e_fm2_new_thread_helper(Ecore_Thread *eth, Eina_Bool dir)
    errno = 0;
    if (stat(buf, &st) && (errno == ENOENT))
      {
-        if (dir && ecore_file_mkdir(buf))
+        if (dir)
           {
-             ecore_thread_feedback(eth, strdup(buf));
-             return;
+             if (ecore_file_mkdir(buf))
+               {
+                  ecore_thread_feedback(eth, strdup(buf));
+                  return;
+               }
           }
         else
           {
@@ -9611,10 +9614,13 @@ _e_fm2_new_thread_helper(Ecore_Thread *eth, Eina_Bool dir)
         errno = 0;
         if (stat(buf, &st) && (errno == ENOENT))
           {
-             if (dir && ecore_file_mkdir(buf))
+             if (dir)
                {
-                  ecore_thread_feedback(eth, strdup(buf));
-                  return;
+                  if (ecore_file_mkdir(buf))
+                    {
+                       ecore_thread_feedback(eth, strdup(buf));
+                       return;
+                    }
                }
              else
                {
