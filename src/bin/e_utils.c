@@ -1390,6 +1390,15 @@ e_util_size_debug_set(Evas_Object *obj, Eina_Bool enable)
      }
 }
 
+EAPI void
+e_util_string_list_free(Eina_List *l)
+{
+   char *s;
+
+   EINA_LIST_FREE(l, s)
+     free(s);
+}
+
 static Efreet_Desktop *
 _e_util_default_terminal_get(const char *defaults_list)
 {
