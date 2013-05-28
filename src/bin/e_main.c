@@ -149,6 +149,9 @@ _xdg_data_dirs_augment(void)
         snprintf(buf, sizeof(buf), "%s:/usr/local/share:/usr/share", newpath);
         e_util_env_set("XDG_DATA_DIRS", buf);
      }
+
+   if (!getenv("XDG_RUNTIME_DIR"))
+     e_util_env_set("XDG_RUNTIME_DIR", "/tmp");
 }
 
 static void
