@@ -1,22 +1,5 @@
 #include "e_mod_main.h"
 
-struct _Instance
-{
-   E_Gadcon_Client *gcc;
-   E_Container     *con;
-   Evas            *evas;
-   Instance_Xembed *xembed;
-   Instance_Notifier_Host *notifier;
-   struct
-   {
-      Evas_Object *gadget;
-   } ui;
-   struct
-   {
-      Ecore_Job *size_apply;
-   } job;
-};
-
 struct _Systray_Context
 {
    Systray_Config *config;

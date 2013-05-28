@@ -17,6 +17,24 @@ typedef struct _Notifier_Item Notifier_Item;
 typedef struct _Systray_Context Systray_Context;
 typedef struct _E_Config_Dialog_Data Systray_Config;
 
+
+struct _Instance
+{
+   E_Gadcon_Client *gcc;
+   E_Container     *con;
+   Evas            *evas;
+   Instance_Xembed *xembed;
+   Instance_Notifier_Host *notifier;
+   struct
+   {
+      Evas_Object *gadget;
+   } ui;
+   struct
+   {
+      Ecore_Job *size_apply;
+   } job;
+};
+
 E_Gadcon_Orient systray_orient_get(const Instance *inst);
 const E_Gadcon *systray_gadcon_get(const Instance *inst);
 E_Gadcon_Client *systray_gadcon_client_get(const Instance *inst);
