@@ -130,23 +130,38 @@ EAPI const char *
 e_user_dir_get(void)
 {
    static char dir[PATH_MAX] = "";
-   static char buf[PATH_MAX] = "";
 
    if (!dir[0])
      {
-        char *e_home = getenv("E_HOME");
-        if (e_home)
+        char *d;
+        
+        if ((d = getenv("E_HOME")))
           {
-             snprintf(buf, sizeof(buf), "%s/e", e_home);
+             snprintf(dir, sizeof(dir), "%s/e", d);
+             _e_user_dir_len = strlen(dir);
           }
         else
           {
-             snprintf(buf, sizeof(buf), ".e/e");
+#ifdef DOXDG             
+             if ((d = getenv("XDG_CONFIG_HOME")))
+               {
+                  snprintf(dir, sizeof(dir), "%s/e", d);
+                  _e_user_dir_len = strlen(dir);
+               }
+             else
+#endif               
+               {
+#ifdef DOXDG             
+                  _e_user_dir_len = e_user_homedir_concat(dir, sizeof(dir),
+                                                          ".config/e");
+#else                  
+                  _e_user_dir_len = e_user_homedir_concat(dir, sizeof(dir),
+                                                          ".e/e");
+#endif                  
+               }
           }
-        _e_user_dir_len = e_user_homedir_concat(dir, sizeof(dir), buf);
         _e_user_dir = dir;
      }
-
    return dir;
 }
 
