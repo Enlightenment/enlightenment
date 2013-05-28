@@ -221,7 +221,7 @@ _systray_xembed_icon_add(Instance_Xembed *xembed, const Ecore_X_Window win)
 {
    Ecore_X_Gravity gravity;
    Evas_Object *o;
-   Evas_Coord w, h, sz;
+   Evas_Coord w, h, sz = 48;
    Icon *icon;
 
    edje_object_part_geometry_get(systray_edje_get(xembed->inst), _part_size,
@@ -251,8 +251,9 @@ _systray_xembed_icon_add(Instance_Xembed *xembed, const Ecore_X_Window win)
       case E_GADCON_ORIENT_CORNER_RT:
       case E_GADCON_ORIENT_CORNER_LB:
       case E_GADCON_ORIENT_CORNER_RB:
-      default:
         sz = systray_gadcon_get(xembed->inst)->shelf->w;
+      default:
+        break;
      }
    if ((w < 16) && (sz > 16))
      w = h = sz - 5;

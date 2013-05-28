@@ -47,12 +47,8 @@ _systray_site_is_safe(E_Gadcon_Site site)
    /* NB: filter out sites we know are not safe for a systray to sit.
     * This was done so that systray could be put into illume indicator
     * (or anywhere else really) that is 'safe' for systray to be.
-    * Pretty much, this is anywhere but Desktop and toolbars at the moment */
-   if (e_gadcon_site_is_desktop(site))
-     return EINA_FALSE;
-   else if (e_gadcon_site_is_any_toolbar(site))
-     return EINA_FALSE;
-   return EINA_TRUE;
+    * Pretty much, this is anywhere but toolbars at the moment */
+   return !e_gadcon_site_is_any_toolbar(site);
 }
 
 static const char *
