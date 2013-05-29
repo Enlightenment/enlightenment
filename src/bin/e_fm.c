@@ -6769,6 +6769,11 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
                }
              else
                snprintf(buf, sizeof(buf), "%s/Link to %s.desktop", sd->realpath, s);
+             if (ecore_file_exists(buf))
+               {
+                  e_util_dialog_show(_("Error"), _("A link to the requested URL already exists!"));
+                  continue;
+               }
              desktop = efreet_desktop_empty_new(buf);
              desktop->type = EFREET_DESKTOP_TYPE_LINK;
              snprintf(buf, sizeof(buf), "Link to %s", *name);
