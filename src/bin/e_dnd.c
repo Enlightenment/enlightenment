@@ -61,7 +61,7 @@ static Eina_Stringshare **_e_dnd_types[] =
 {
    &_type_text_uri_list,
    &_type_xds,
-   //&_type_text_x_moz_url,
+   &_type_text_x_moz_url,
    //&_type_enlightenment_x_file,
    NULL
 };
@@ -1430,42 +1430,16 @@ _e_dnd_cb_event_dnd_selection(void *data __UNUSED__, int type __UNUSED__, void *
      }
    else if (_type_text_x_moz_url == _xdnd->type)
      {
-        /* FIXME: Create a ecore x parser for this type */
-        Ecore_X_Selection_Data *sdata;
-        Eina_List *l = NULL;
-        char file[PATH_MAX];
-        char *text;
-        int size;
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+        Ecore_X_Selection_Data_X_Moz_Url *sel;
+        E_Dnd_X_Moz_Url moz;
 
-        sdata = ev->data;
-        text = (char *)sdata->data;
-        size = MIN(sdata->length, PATH_MAX - 1);
-        /* A moz url _shall_ contain a space */
-        /* FIXME: The data is two-byte unicode. Somewhere it
-         * is written that the url and the text is separated by
-         * a space, but it seems like they are separated by
-         * newline
-         */
-        for (i = 0; i < size; i++)
-          {
-             file[i] = text[i];
-//	     printf("'%d-%c' ", text[i], text[i]);
-             /*
-                if (text[i] == ' ')
-                {
-                  file[i] = '\0';
-                  break;
-                }
-              */
-          }
-//	printf("\n");
-        file[i] = '\0';
-//	printf("file: %d \"%s\"\n", i, file);
-        l = eina_list_append(l, file);
-
-        _xdnd->data = l;
+        sel = ev->data;
+        moz.links = sel->links;
+        moz.link_names = sel->link_names;
+        _xdnd->data = &moz;
         _e_drag_xdnd_end(ev->win, _xdnd->x, _xdnd->y);
-        eina_list_free(l);
+#endif
      }
    else
      _e_drag_xdnd_end(ev->win, _xdnd->x, _xdnd->y);

@@ -1,3 +1,7 @@
+2013-05-29 Mike Blumenkrantz
+
+        * added dnd support for text/x-moz-url
+
 2013-05-24 Christopher Michael
 
 	* added support for hotplugging monitors in randr code

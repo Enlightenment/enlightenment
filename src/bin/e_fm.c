@@ -488,6 +488,7 @@ static const char *_e_fm2_mime_inode_directory = NULL;
 static const char *_e_fm2_mime_app_desktop = NULL;
 static const char *_e_fm2_mime_app_edje = NULL;
 static const char *_e_fm2_mime_text_uri_list = NULL;
+static const char *_e_fm2_mime_xmozurl = NULL;
 static const char *_e_fm2_xds = NULL;
 
 static Eina_List *_e_fm_handlers = NULL;
@@ -496,6 +497,7 @@ static const char **_e_fm2_dnd_types[] =
 {
    &_e_fm2_mime_text_uri_list,
    &_e_fm2_xds,
+   &_e_fm2_mime_xmozurl,
    NULL
 };
 
@@ -843,6 +845,7 @@ e_fm2_init(void)
    _e_fm2_mime_app_edje = eina_stringshare_add("application/x-extension-edj");
    _e_fm2_mime_text_uri_list = eina_stringshare_add("text/uri-list");
    _e_fm2_xds = eina_stringshare_add("XdndDirectSave0");
+   _e_fm2_mime_xmozurl = eina_stringshare_add("text/x-moz-url");
 
    _e_fm2_favorites_thread = ecore_thread_run(_e_fm2_favorites_thread_cb,
                                               _e_fm2_thread_cleanup_cb,
@@ -871,6 +874,7 @@ e_fm2_shutdown(void)
    eina_stringshare_replace(&_e_fm2_mime_app_edje, NULL);
    eina_stringshare_replace(&_e_fm2_mime_text_uri_list, NULL);
    eina_stringshare_replace(&_e_fm2_xds, NULL);
+   eina_stringshare_replace(&_e_fm2_mime_xmozurl, NULL);
 
    E_FREE_LIST(_e_fm_handlers, ecore_event_handler_del);
 
@@ -1617,7 +1621,7 @@ e_fm2_window_object_get(Evas_Object *obj)
 EAPI void
 e_fm2_window_object_set(Evas_Object *obj, E_Object *eobj)
 {
-   const char *drop[] = {"text/uri-list", "XdndDirectSave0"};
+   const char *drop[] = {"text/uri-list", "text/x-moz-url", "XdndDirectSave0"};
 
    EFM_SMART_CHECK();
    sd->eobj = eobj;
@@ -1628,7 +1632,7 @@ e_fm2_window_object_set(Evas_Object *obj, E_Object *eobj)
                                          _e_fm2_cb_dnd_move,
                                          _e_fm2_cb_dnd_leave,
                                          _e_fm2_cb_dnd_selection_notify,
-                                         drop, 2,
+                                         drop, 3,
                                          sd->x, sd->y, sd->w, sd->h);
    e_drop_handler_responsive_set(sd->drop_handler);
    e_drop_handler_xds_set(sd->drop_handler, _e_fm2_cb_dnd_drop);
@@ -6701,14 +6705,14 @@ _e_fm2_cb_dnd_selection_notify_post_mount_timer(E_Fm2_Icon *ic)
 static void
 _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
 {
-   E_Fm2_Smart_Data *sd;
-   E_Event_Dnd_Drop *ev;
+   E_Fm2_Smart_Data *sd = data;
+   E_Event_Dnd_Drop *ev = event;
    E_Fm2_Icon *ic;
    Eina_List *fsel, *l, *ll, *il, *isel = NULL;
    char buf[PATH_MAX];
    const char *fp;
+   Evas_Coord ox, oy;
    Evas_Object *obj;
-   Evas_Coord ox, oy, x, y;
    int adjust_icons = 0;
    char dirpath[PATH_MAX];
    char *args = NULL;
@@ -6717,10 +6721,67 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
    Eina_Bool lnk = EINA_FALSE, memerr = EINA_FALSE, mnt = EINA_FALSE;
    E_Fm2_Device_Mount_Op *mop = NULL;
 
-   sd = data;
-   ev = event;
    if (!_e_fm2_dnd_type_implemented(type)) return;
+#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
+   if (type == _e_fm2_mime_xmozurl)
+     {
+        const char **name, *s;
+        Efreet_Desktop *desktop;
+        E_Dnd_X_Moz_Url *moz = ev->data;
+        unsigned int x = 0;
 
+        EINA_INARRAY_FOREACH(moz->link_names, name)
+          {
+             int p;
+
+             s = *name;
+             for (p = 0; p < 7; p++)
+               {
+                  Eina_Bool done = EINA_FALSE;
+
+                  if (!s[p]) break;
+                  if ((s[p] == ':') && (s[p + 1] == '/'))
+                    {
+                       s = ecore_file_file_get(s);
+                       done = EINA_TRUE;
+                    }
+                  if (done) break;
+               }
+             if (!s[0]) s = ecore_file_file_get(*name);
+             if (!s)
+               {
+                  s = *(char**)eina_inarray_nth(moz->links, x);
+                  s = ecore_file_file_get(s);
+               }
+             /* FIXME: should this filename be sanitized somehow? */
+             if (sd->drop_icon && sd->drop_after == -1)
+               {
+                  //into drop_icon
+                  if (S_ISDIR(sd->drop_icon->info.statinfo.st_mode))
+                    {
+                       if (sd->drop_icon->info.link)
+                         snprintf(dirpath, sizeof(dirpath), "%s/Link to %s.desktop", sd->drop_icon->info.link, s);
+                       else
+                         snprintf(dirpath, sizeof(dirpath), "%s/%s/Link to %s.desktop", sd->realpath, sd->drop_icon->info.file, s);
+                    }
+                  else
+                    snprintf(buf, sizeof(buf), "%s/Link to %s.desktop", sd->realpath, s);
+               }
+             else
+               snprintf(buf, sizeof(buf), "%s/Link to %s.desktop", sd->realpath, s);
+             desktop = efreet_desktop_empty_new(buf);
+             desktop->type = EFREET_DESKTOP_TYPE_LINK;
+             snprintf(buf, sizeof(buf), "Link to %s", *name);
+             desktop->name = strdup(buf);
+             desktop->icon = strdup("text-html");
+             desktop->url = strdup(*(char**)eina_inarray_nth(moz->links, x));
+             efreet_desktop_save(desktop);
+             efreet_desktop_free(desktop);
+             x++;
+          }
+        return;
+     }
+#endif
    fsel = e_fm2_uri_path_list_get(ev->data);
    fp = eina_list_data_get(fsel);
    if (fp && sd->realpath && ((sd->drop_all) || (!sd->drop_icon)))
@@ -6780,6 +6841,8 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
     */
    if (sd->drop_all) /* drop arbitrarily into the dir */
      {
+        Evas_Coord x, y;
+
         /* move file into this fm dir */
         for (ll = fsel, il = isel; ll; ll = eina_list_next(ll), il = eina_list_next(il))
           {

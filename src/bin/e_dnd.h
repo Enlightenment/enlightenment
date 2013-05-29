@@ -13,6 +13,7 @@ typedef struct _E_Event_Dnd_Enter E_Event_Dnd_Enter;
 typedef struct _E_Event_Dnd_Move  E_Event_Dnd_Move;
 typedef struct _E_Event_Dnd_Leave E_Event_Dnd_Leave;
 typedef struct _E_Event_Dnd_Drop  E_Event_Dnd_Drop;
+typedef struct E_Dnd_X_Moz_Url    E_Dnd_X_Moz_Url;
 
 #else
 #ifndef E_DND_H
@@ -97,6 +98,12 @@ struct _E_Event_Dnd_Drop
 {
    void *data;
    int   x, y;
+};
+
+struct E_Dnd_X_Moz_Url
+{
+   Eina_Inarray *links;
+   Eina_Inarray *link_names;
 };
 
 EINTERN int          e_dnd_init(void);
