@@ -38,6 +38,7 @@ struct _XDnd
 
 static Eina_List *_event_handlers = NULL;
 static Eina_List *_drop_handlers = NULL;
+static Eina_List *_active_handlers = NULL;
 static Eina_Hash *_drop_win_hash = NULL;
 
 static Ecore_X_Window _drag_win = 0;
@@ -50,10 +51,20 @@ static XDnd *_xdnd = NULL;
 #define XDS_ATOM "XdndDirectSave0"
 static Ecore_X_Atom _xds_atom = 0;
 static Ecore_X_Atom _text_atom = 0;
-static const char *_type_text_uri_list = NULL;
-static const char *_type_xds = NULL;
-static const char *_type_text_x_moz_url = NULL;
-static const char *_type_enlightenment_x_file = NULL;
+
+static Eina_Stringshare *_type_text_uri_list = NULL;
+static Eina_Stringshare *_type_xds = NULL;
+static Eina_Stringshare *_type_text_x_moz_url = NULL;
+static Eina_Stringshare *_type_enlightenment_x_file = NULL;
+
+static Eina_Stringshare **_e_dnd_types[] =
+{
+   &_type_text_uri_list,
+   &_type_xds,
+   //&_type_text_x_moz_url,
+   //&_type_enlightenment_x_file,
+   NULL
+};
 
 static Eina_Hash *_drop_handlers_responsives;
 static Ecore_X_Atom _action;
@@ -94,6 +105,7 @@ e_dnd_shutdown(void)
 {
    E_FREE_LIST(_drag_list, e_object_del);
 
+   _active_handlers = eina_list_free(_active_handlers);
    E_FREE_LIST(_drop_handlers, e_drop_handler_del);
 
    E_FREE_LIST(_event_handlers, ecore_event_handler_del);
@@ -239,13 +251,14 @@ e_drag_start(E_Drag *drag, int x, int y)
    drag->dx = x - drag->x;
    drag->dy = y - drag->y;
 
+   _active_handlers = eina_list_free(_active_handlers);
    EINA_LIST_FOREACH(_drop_handlers, l, h)
      {
         unsigned int i, j;
+        Eina_Bool active = h->active;
 
         h->active = 0;
-        eina_stringshare_del(h->active_type);
-        h->active_type = NULL;
+        eina_stringshare_replace(&h->active_type, NULL);
         for (i = 0; i < h->num_types; i++)
           {
              for (j = 0; j < drag->num_types; j++)
@@ -258,6 +271,13 @@ e_drag_start(E_Drag *drag, int x, int y)
                     }
                }
              if (h->active) break;
+          }
+        if (h->active != active)
+          {
+             if (h->active)
+               _active_handlers = eina_list_append(_active_handlers, h);
+             else
+               _active_handlers = eina_list_remove(_active_handlers, h);
           }
         h->entered = 0;
      }
@@ -295,14 +315,14 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
 
    drag->dx = x - drag->x;
    drag->dy = y - drag->y;
-
+   _active_handlers = eina_list_free(_active_handlers);
    EINA_LIST_FOREACH(_drop_handlers, l, h)
      {
         unsigned int i, j;
+        Eina_Bool active = h->active;
 
         h->active = 0;
-        eina_stringshare_del(h->active_type);
-        h->active_type = NULL;
+        eina_stringshare_replace(&h->active_type, NULL);
         for (i = 0; i < h->num_types; i++)
           {
              for (j = 0; j < drag->num_types; j++)
@@ -315,6 +335,13 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
                     }
                }
              if (h->active) break;
+          }
+        if (h->active != active)
+          {
+             if (h->active)
+               _active_handlers = eina_list_append(_active_handlers, h);
+             else
+               _active_handlers = eina_list_remove(_active_handlers, h);
           }
         h->entered = 0;
      }
@@ -431,6 +458,8 @@ e_drop_handler_del(E_Drop_Handler *handler)
      return;
 
    _drop_handlers = eina_list_remove(_drop_handlers, handler);
+   if (handler->active)
+     _active_handlers = eina_list_remove(_active_handlers, handler);
    for (i = 0; i < handler->num_types; i++)
      eina_stringshare_del(handler->types[i]);
    eina_stringshare_del(handler->active_type);
@@ -543,6 +572,19 @@ e_dnd_util_text_uri_list_convert(char *data, int size)
 }
 
 /* local subsystem functions */
+
+static Eina_Stringshare *
+_e_dnd_type_implemented(const char *type)
+{
+   const char ***t;
+
+   for (t = _e_dnd_types; *t; t++)
+     {
+        if (!strcmp(type, **t))
+          return **t;
+     }
+   return NULL;
+}
 
 static void
 _e_drag_move(E_Drag *drag, int x, int y)
@@ -777,9 +819,8 @@ _e_drag_update(Ecore_X_Window root, int x, int y, Ecore_X_Atom action)
         else e_popup_hide(_drag_current->pop);
         _e_drag_move(_drag_current, x, y);
      }
-   EINA_LIST_FOREACH(_drop_handlers, l, h)
+   EINA_LIST_FOREACH(_active_handlers, l, h)
      {
-        if (!h->active) continue;
         _e_drag_coords_update(h, &dx, &dy);
         enter_ev.x = x - dx;
         enter_ev.y = y - dy;
@@ -937,10 +978,8 @@ _e_drag_end(int x, int y)
         leave_ev.x = 0;
         leave_ev.y = 0;
 
-        EINA_LIST_FOREACH(_drop_handlers, l, h)
+        EINA_LIST_FOREACH(_active_handlers, l, h)
           {
-             if (!h->active) continue;
-
              if (h->entered)
                {
                   if (h->cb.leave)
@@ -950,9 +989,8 @@ _e_drag_end(int x, int y)
           }
      }
 
-   EINA_LIST_FOREACH(_drop_handlers, l, h)
+   EINA_LIST_FOREACH(_active_handlers, l, h)
      {
-        if (!h->active) continue;
         _e_drag_coords_update(h, &dx, &dy);
         ev.x = x - dx;
         ev.y = y - dy;
@@ -1022,9 +1060,8 @@ _e_drag_xdnd_end(Ecore_X_Window win, int x, int y)
      {
         E_Drop_Handler *h;
 
-        EINA_LIST_FOREACH(_drop_handlers, l, h)
+        EINA_LIST_FOREACH(_active_handlers, l, h)
           {
-             if (!h->active) continue;
              _e_drag_coords_update(h, &dx, &dy);
              ev.x = x - dx;
              ev.y = y - dy;
@@ -1045,10 +1082,8 @@ _e_drag_xdnd_end(Ecore_X_Window win, int x, int y)
         leave_ev.x = 0;
         leave_ev.y = 0;
 
-        EINA_LIST_FOREACH(_drop_handlers, l, h)
+        EINA_LIST_FOREACH(_active_handlers, l, h)
           {
-             if (!h->active) continue;
-
              if (h->entered)
                {
                   if (h->cb.leave)
@@ -1077,9 +1112,9 @@ _e_drag_free(E_Drag *drag)
 
         leave_ev.x = 0;
         leave_ev.y = 0;
-        EINA_LIST_FOREACH(_drop_handlers, l, h)
+        EINA_LIST_FOREACH(_active_handlers, l, h)
           {
-             if ((h->active) && (h->entered))
+             if (h->entered)
                {
                   if (h->cb.leave)
                     h->cb.leave(h->cb.data, h->active_type, &leave_ev);
@@ -1105,9 +1140,8 @@ _e_drag_free(E_Drag *drag)
 static Eina_Bool
 _e_dnd_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_Event_Key *ev;
+   Ecore_Event_Key *ev = event;
 
-   ev = event;
    if (ev->window != _drag_win) return ECORE_CALLBACK_PASS_ON;
 
    if (!_drag_current) return ECORE_CALLBACK_PASS_ON;
@@ -1121,9 +1155,8 @@ _e_dnd_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 static Eina_Bool
 _e_dnd_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_Event_Key *ev;
+   Ecore_Event_Key *ev = event;
 
-   ev = event;
    if (ev->window != _drag_win) return ECORE_CALLBACK_PASS_ON;
 
    if (!_drag_current) return ECORE_CALLBACK_PASS_ON;
@@ -1137,9 +1170,8 @@ _e_dnd_cb_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 static Eina_Bool
 _e_dnd_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_Event_Mouse_Button *ev;
+   Ecore_Event_Mouse_Button *ev = event;
 
-   ev = event;
    if (ev->window != _drag_win) return ECORE_CALLBACK_PASS_ON;
 
    _e_drag_end(ev->x, ev->y);
@@ -1150,9 +1182,8 @@ _e_dnd_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 static Eina_Bool
 _e_dnd_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_Event_Mouse_Move *ev;
+   Ecore_Event_Mouse_Move *ev = event;
 
-   ev = event;
    if (ev->window != _drag_win) return ECORE_CALLBACK_PASS_ON;
 
    if (!_xdnd)
@@ -1165,69 +1196,46 @@ _e_dnd_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 static Eina_Bool
 _e_dnd_cb_event_dnd_enter(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_X_Event_Xdnd_Enter *ev;
+   Ecore_X_Event_Xdnd_Enter *ev = event;
    E_Drop_Handler *h;
    const char *id;
    const Eina_List *l;
    unsigned int j;
    int i;
 
-   ev = event;
    id = e_util_winid_str_get(ev->win);
    if (!eina_hash_find(_drop_win_hash, id)) return ECORE_CALLBACK_PASS_ON;
 
-   EINA_LIST_FOREACH(_drop_handlers, l, h)
+   EINA_LIST_FREE(_active_handlers, h)
      {
         h->active = 0;
-        eina_stringshare_del(h->active_type);
-        h->active_type = NULL;
+        eina_stringshare_replace(&h->active_type, NULL);
         h->entered = 0;
      }
    for (i = 0; i < ev->num_types; i++)
      {
-        const char *t = NULL;
-        /* FIXME: Maybe we want to get something else then files dropped? */
-        if (!strcmp(_type_text_uri_list, ev->types[i]))
-          t = eina_stringshare_ref(_type_text_uri_list);
-        else if (!strcmp(_type_xds, ev->types[i]))
-          t = eina_stringshare_ref(_type_xds);
-        if (t)
-          {
-             _xdnd = E_NEW(XDnd, 1);
-             _xdnd->type = t;
-             EINA_LIST_FOREACH(_drop_handlers, l, h)
-               {
-                  h->active = 0;
-                  eina_stringshare_del(h->active_type);
-                  h->active_type = NULL;
-                  for (j = 0; j < h->num_types; j++)
-                    {
-                       if (h->types[j] == _xdnd->type)
-                         {
-                            h->active = 1;
-                            h->active_type = eina_stringshare_ref(_xdnd->type);
-                            break;
-                         }
-                    }
+        Eina_Stringshare *t;
 
-                  h->entered = 0;
-               }
-             break;
-          }
-#if 0
-        else if ((_type_text_x_moz_url == ev->types[i]) ||
-                 (!strcmp(_type_text_x_moz_url, ev->types[i])))  /* not sure it is stringshared */
+        t = eina_stringshare_ref(_e_dnd_type_implemented(ev->types[i]));
+        if (!t) continue;
+        _xdnd = E_NEW(XDnd, 1);
+        _xdnd->type = t;
+        EINA_LIST_FOREACH(_drop_handlers, l, h)
           {
-             _xdnd = E_NEW(XDnd, 1);
-             _xdnd->type = eina_stringshare_ref(_type_text_x_moz_url);
-             EINA_LIST_FOREACH(_drop_handlers, l, h)
+             for (j = 0; j < h->num_types; j++)
                {
-                  h->active = (h->type == _type_enlightenment_x_file);
-                  h->entered = 0;
+                  if (h->types[j] == _xdnd->type)
+                    {
+                       h->active = 1;
+                       h->active_type = eina_stringshare_ref(_xdnd->type);
+                       _active_handlers = eina_list_append(_active_handlers, h);
+                       break;
+                    }
                }
-             break;
+
+             h->entered = 0;
           }
-#endif
+        break;
      }
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1235,12 +1243,10 @@ _e_dnd_cb_event_dnd_enter(void *data __UNUSED__, int type __UNUSED__, void *even
 static Eina_Bool
 _e_dnd_cb_event_dnd_leave(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_X_Event_Xdnd_Leave *ev;
+   Ecore_X_Event_Xdnd_Leave *ev = event;
    E_Event_Dnd_Leave leave_ev;
    const char *id;
    const Eina_List *l;
-
-   ev = event;
 
    id = e_util_winid_str_get(ev->win);
    if (!eina_hash_find(_drop_win_hash, id)) return ECORE_CALLBACK_PASS_ON;
@@ -1252,10 +1258,8 @@ _e_dnd_cb_event_dnd_leave(void *data __UNUSED__, int type __UNUSED__, void *even
      {
         E_Drop_Handler *h;
 
-        EINA_LIST_FOREACH(_drop_handlers, l, h)
+        EINA_LIST_FOREACH(_active_handlers, l, h)
           {
-             if (!h->active) continue;
-
              if (h->entered)
                {
                   if (h->cb.leave)
@@ -1273,16 +1277,11 @@ _e_dnd_cb_event_dnd_leave(void *data __UNUSED__, int type __UNUSED__, void *even
 static Eina_Bool
 _e_dnd_cb_event_dnd_position(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_X_Event_Xdnd_Position *ev;
+   Ecore_X_Event_Xdnd_Position *ev = event;
    Ecore_X_Rectangle rect;
    const char *id;
-   const Eina_List *l;
-   E_Drop_Handler *h;
-
-   int active;
    int responsive;
 
-   ev = event;
 //   double t1 = ecore_time_get(); ////
    id = e_util_winid_str_get(ev->win);
    if (!eina_hash_find(_drop_win_hash, id))
@@ -1297,16 +1296,7 @@ _e_dnd_cb_event_dnd_position(void *data __UNUSED__, int type __UNUSED__, void *e
    rect.width = 0;
    rect.height = 0;
 
-   active = 0;
-   EINA_LIST_FOREACH(_drop_handlers, l, h)
-     {
-        if (h->active)
-          {
-             active = 1;
-             break;
-          }
-     }
-   if (!active)
+   if (!_active_handlers)
      ecore_x_dnd_send_status(0, 0, rect, ECORE_X_DND_ACTION_PRIVATE);
    else
      {
@@ -1324,9 +1314,8 @@ _e_dnd_cb_event_dnd_position(void *data __UNUSED__, int type __UNUSED__, void *e
 static Eina_Bool
 _e_dnd_cb_event_dnd_status(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_X_Event_Xdnd_Status *ev;
+   Ecore_X_Event_Xdnd_Status *ev = event;
 
-   ev = event;
    if (ev->win != _drag_win) return ECORE_CALLBACK_PASS_ON;
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1364,10 +1353,9 @@ _e_dnd_cb_event_dnd_finished(void *data __UNUSED__, int type __UNUSED__, void *e
 static Eina_Bool
 _e_dnd_cb_event_dnd_drop(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_X_Event_Xdnd_Drop *ev;
+   Ecore_X_Event_Xdnd_Drop *ev = event;
    const char *id;
 
-   ev = event;
    id = e_util_winid_str_get(ev->win);
    if (!eina_hash_find(_drop_win_hash, id)) return ECORE_CALLBACK_PASS_ON;
 
@@ -1377,9 +1365,8 @@ _e_dnd_cb_event_dnd_drop(void *data __UNUSED__, int type __UNUSED__, void *event
         Eina_Bool req = EINA_TRUE;
         Eina_List *l;
 
-        EINA_LIST_FOREACH(_drop_handlers, l, h)
+        EINA_LIST_FOREACH(_active_handlers, l, h)
           {
-             if (!h->active) continue;
              if (_e_drag_win_matches(h, ev->win, 1) && h->entered && h->cb.xds)
                {
                   req = h->cb.xds(h->cb.data, _xdnd->type);
@@ -1404,11 +1391,10 @@ _e_dnd_cb_event_dnd_drop(void *data __UNUSED__, int type __UNUSED__, void *event
 static Eina_Bool
 _e_dnd_cb_event_dnd_selection(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   Ecore_X_Event_Selection_Notify *ev;
+   Ecore_X_Event_Selection_Notify *ev = event;
    const char *id;
    int i;
 
-   ev = event;
    id = e_util_winid_str_get(ev->win);
    if (!eina_hash_find(_drop_win_hash, id)) return ECORE_CALLBACK_PASS_ON;
    if (ev->selection != ECORE_X_SELECTION_XDND) return ECORE_CALLBACK_PASS_ON;
