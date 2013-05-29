@@ -1,6 +1,7 @@
 2013-05-29 Mike Blumenkrantz
 
         * added dnd support for text/x-moz-url
+        * fixed e_exec to open .desktop url links
 
 2013-05-24 Christopher Michael
 

@@ -186,8 +186,13 @@ e_exec(E_Zone *zone, Efreet_Desktop *desktop, const char *exec,
         if (exec)
           inst = _e_exec_cb_exec(launch, NULL, strdup(exec), 0);
         else
-          inst = efreet_desktop_command_get
-              (desktop, files, (Efreet_Desktop_Command_Cb)_e_exec_cb_exec, launch);
+          {
+             if (desktop->exec)
+               inst = efreet_desktop_command_get(desktop, files,
+                 (Efreet_Desktop_Command_Cb)_e_exec_cb_exec, launch);
+             else
+               inst = _e_exec_cb_exec(launch, desktop, NULL, 0);
+          }
      }
    else
      inst = _e_exec_cb_exec(launch, NULL, strdup(exec), 0);
@@ -515,6 +520,18 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
              else
                exe = ecore_exe_run(exec, inst);
           }
+        else if (desktop && desktop->url)
+          {
+             Eina_Strbuf *sb;
+
+             sb = eina_strbuf_new();
+             eina_strbuf_append(sb, E_BINDIR "/enlightenment_open '");
+             eina_strbuf_append(sb, desktop->url);
+             eina_strbuf_append_char(sb, '\'');
+             exe = ecore_exe_run(eina_strbuf_string_get(sb),
+                                 inst);
+             eina_strbuf_free(sb);
+          }
         else
           exe = ecore_exe_run(exec, inst);
      }
@@ -557,7 +574,7 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
    lnew = eina_list_append(l, inst);
    if (l) eina_hash_modify(e_exec_instances, inst->key, lnew);
    else eina_hash_add(e_exec_instances, inst->key, lnew);
-   if (inst->desktop)
+   if (inst->desktop && inst->desktop->exec)
      {
         e_exec_start_pending = eina_list_append(e_exec_start_pending,
                                                 inst->desktop);
