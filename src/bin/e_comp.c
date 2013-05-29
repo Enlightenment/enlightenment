@@ -4088,7 +4088,6 @@ _e_comp_populate(E_Comp *c)
    evas_object_name_set(c->layout, "c->layout");
    evas_object_layer_set(c->layout, E_COMP_CANVAS_LAYER_LAYOUT);
    evas_object_show(c->layout);
-   e_drop_xdnd_register_set(c->win, 1);
 
    EINA_LIST_FOREACH(c->man->containers, l, con)
      {
@@ -4244,6 +4243,7 @@ _e_comp_add(E_Manager *man)
    ecore_evas_show(c->ee);
 
    c->ee_win = ecore_evas_window_get(c->ee);
+   e_drop_xdnd_register_set(c->win, 1);
    c->pointer = e_pointer_window_new(c->ee_win, 0);
    ecore_x_composite_redirect_subwindows
      (c->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
