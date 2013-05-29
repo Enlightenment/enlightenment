@@ -457,7 +457,6 @@ e_fwin_zone_new(E_Zone *zone, void *p)
    evas_object_show(o);
 
    o = e_scrollframe_add(zone->container->bg_evas);
-   e_drop_xdnd_register_set(zone->container->event_win, 1);
    e_scrollframe_custom_theme_set(o, "base/theme/fileman",
                                   "e/fileman/desktop/scrollframe");
    /* FIXME: this theme object will have more versions and options later
