@@ -965,9 +965,8 @@ _e_drag_end(int x, int y)
         /* Just leave */
         E_Event_Dnd_Leave leave_ev;
 
-        /* FIXME: We don't need x and y in leave */
-        leave_ev.x = 0;
-        leave_ev.y = 0;
+        leave_ev.x = x;
+        leave_ev.y = y;
 
         EINA_LIST_FOREACH(_active_handlers, l, h)
           {
