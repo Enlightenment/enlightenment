@@ -7121,6 +7121,10 @@ _e_border_eval0(E_Border *bd)
         eina_stringshare_replace(&bd->client.netwm.name, name);
         free(name);
 
+        bd->client.hacks.iconic_shading =
+          ((bd->client.netwm.icon_name == bd->client.netwm.name) &&
+           (!e_util_strcmp(bd->client.netwm.name, "QEMU")));
+
         if (bd->bg_object)
           edje_object_part_text_set(bd->bg_object, "e.text.title",
                                     bd->client.netwm.name);
@@ -7472,6 +7476,10 @@ _e_border_eval0(E_Border *bd)
         char *icon_name = ecore_x_icccm_icon_name_get(bd->client.win);
         eina_stringshare_replace(&bd->client.icccm.icon_name, icon_name);
         free(icon_name);
+
+        bd->client.hacks.iconic_shading =
+          ((bd->client.netwm.icon_name == bd->client.netwm.name) &&
+           (!e_util_strcmp(bd->client.netwm.icon_name, "QEMU")));
 
         bd->client.icccm.fetch.icon_name = 0;
         rem_change = 1;

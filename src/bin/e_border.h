@@ -202,6 +202,7 @@ struct _E_Border
       struct
       {
          Eina_Bool mapping_change : 1;
+         Eina_Bool iconic_shading : 1;
       } hacks;
 
       struct

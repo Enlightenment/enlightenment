@@ -1237,12 +1237,16 @@ e_hints_window_shaded_set(E_Border *bd,
      {
         bd->client.netwm.update.state = 1;
         bd->client.netwm.state.shaded = 1;
+        if (bd->client.hacks.iconic_shading)
+          e_hints_window_iconic_set(bd);
         bd->changed = 1;
      }
    else if ((bd->client.netwm.state.shaded) && (!on))
      {
         bd->client.netwm.update.state = 1;
         bd->client.netwm.state.shaded = 0;
+        if (bd->client.hacks.iconic_shading)
+          e_hints_window_visible_set(bd);
         bd->changed = 1;
      }
    _e_hints_process_wakeup(bd);
