@@ -269,6 +269,11 @@ e_winlist_hide(void)
              if (!bd->lock_user_shade)
                e_border_unshade(bd, bd->shade.dir);
           }
+        if (e_config->winlist_list_move_after_select)
+          {
+             e_border_zone_set(bd, e_zone_current_get(e_util_container_current_get()));
+             e_border_desk_set(bd, e_desk_current_get(bd->zone));
+          }
         else if (bd->desk)
           {
              if (!bd->sticky) e_desk_show(bd->desk);

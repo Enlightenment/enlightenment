@@ -505,6 +505,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, winlist_list_jump_desk_while_selecting, INT); /**/
    E_CONFIG_VAL(D, T, winlist_list_focus_while_selecting, INT); /**/
    E_CONFIG_VAL(D, T, winlist_list_raise_while_selecting, INT); /**/
+   E_CONFIG_VAL(D, T, winlist_list_move_after_select, INT); /**/
    E_CONFIG_VAL(D, T, winlist_pos_align_x, DOUBLE); /**/
    E_CONFIG_VAL(D, T, winlist_pos_align_y, DOUBLE); /**/
    E_CONFIG_VAL(D, T, winlist_pos_size_w, DOUBLE); /**/

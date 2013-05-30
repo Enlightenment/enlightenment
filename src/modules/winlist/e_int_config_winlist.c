@@ -21,6 +21,7 @@ struct _E_Config_Dialog_Data
    int    warp_at_end;
    int    no_warp_on_direction;
    int    jump_desk;
+   int    move_after_select;
 
    int    scroll_animate;
    double scroll_speed;
@@ -62,6 +63,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->raise = e_config->winlist_list_raise_while_selecting;
    cfdata->uncover = e_config->winlist_list_uncover_while_selecting;
    cfdata->jump_desk = e_config->winlist_list_jump_desk_while_selecting;
+   cfdata->move_after_select = e_config->winlist_list_move_after_select;
 
    cfdata->windows_other_desks =
      e_config->winlist_list_show_other_desk_windows;
@@ -119,6 +121,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    DO(list_show_other_screen_windows, windows_other_screens);
    DO(list_uncover_while_selecting, uncover);
    DO(list_jump_desk_while_selecting, jump_desk);
+   DO(list_move_after_select, move_after_select);
    DO(warp_while_selecting, warp_while_selecting);
    DO(warp_at_end, warp_at_end);
    DO(no_warp_on_direction, no_warp_on_direction);
@@ -152,6 +155,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
    DO(list_show_other_screen_windows, windows_other_screens);
    DO(list_uncover_while_selecting, uncover);
    DO(list_jump_desk_while_selecting, jump_desk);
+   DO(list_move_after_select, move_after_select);
    DO(warp_while_selecting, warp_while_selecting);
    DO(warp_at_end, warp_at_end);
    DO(no_warp_on_direction, no_warp_on_direction);
@@ -173,7 +177,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 static Evas_Object *
 _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *otb, *ol, *ob, *iconified, *scroll_animate;
+   Evas_Object *otb, *ol, *ob, *iconified, *scroll_animate, *ck;
 
    otb = e_widget_toolbook_add(evas, (48 * e_scale), (48 * e_scale));
 
@@ -216,7 +220,11 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                            &(cfdata->no_warp_on_direction));
    e_widget_disabled_set(ob, e_config->disable_all_pointer_warps);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_check_add(evas, _("Jump to desk"), &(cfdata->jump_desk));
+   ck = ob = e_widget_check_add(evas, _("Jump to desk"), &(cfdata->jump_desk));
+   e_widget_list_object_append(ol, ob, 1, 0, 0.0);
+   ob = e_widget_check_add(evas, _("Move to current desk after switch"), &(cfdata->move_after_select));
+   e_widget_check_widget_disable_on_checked_add(ck, ob);
+   e_widget_check_widget_disable_on_checked_add(ob, ck);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    e_widget_toolbook_page_append(otb, NULL, _("Selecting"), ol,
                                  0, 0, 1, 0, 0.5, 0.0);

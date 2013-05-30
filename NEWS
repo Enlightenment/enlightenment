@@ -53,6 +53,7 @@ Additions:
 	* Added support for systemd user session
 	* Added support for systemd hibernate and suspend
         * added support for systemd halt and poweroff
+        * new winlist config option for moving selected window to current desk
 
 Changes:
     Modules:
