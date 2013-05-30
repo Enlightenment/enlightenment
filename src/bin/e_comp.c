@@ -5627,6 +5627,16 @@ _e_comp_win_effect_end_cb(void *data EINA_UNUSED, Evas_Object *obj, const char *
 }
 
 EAPI void
+e_comp_win_effect_clip(E_Comp_Win *cw)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cw);
+   if (!cw->bd->zone) return;
+   if (cw->effect_clip) e_comp_win_effect_unclip(cw);
+   evas_object_clip_set(cw->effect_obj, cw->bd->zone->bg_clip_object);
+   cw->effect_clip = 1;
+}
+
+EAPI void
 e_comp_win_effect_unclip(E_Comp_Win *cw)
 {
    EINA_SAFETY_ON_NULL_RETURN(cw);
