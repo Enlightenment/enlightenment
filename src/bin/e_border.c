@@ -1429,8 +1429,8 @@ _e_border_move_resize_internal(E_Border *bd,
      {
         x -= bd->client_inset.l;
         y -= bd->client_inset.t;
-        w += (bd->client_inset.l + bd->client_inset.r);
-        h += (bd->client_inset.t + bd->client_inset.b);
+        w += e_border_inset_width_get(bd);
+        h += e_border_inset_height_get(bd);
      }
 
    if ((!move || ((x == bd->x) && (y == bd->y))) &&
@@ -1446,8 +1446,8 @@ _e_border_move_resize_internal(E_Border *bd,
      }
    bd->w = w;
    bd->h = h;
-   bd->client.w = bd->w - (bd->client_inset.l + bd->client_inset.r);
-   bd->client.h = bd->h - (bd->client_inset.t + bd->client_inset.b);
+   bd->client.w = bd->w - e_border_inset_width_get(bd);
+   bd->client.h = bd->h - e_border_inset_height_get(bd);
 
    if (bd->client.shaped)
      {
@@ -2319,21 +2319,21 @@ e_border_shade(E_Border *bd,
 
         if (bd->shade.dir == E_DIRECTION_UP)
           {
-             bd->h = bd->client_inset.t + bd->client_inset.b;
+             bd->h = e_border_inset_height_get(bd);
           }
         else if (bd->shade.dir == E_DIRECTION_DOWN)
           {
-             bd->h = bd->client_inset.t + bd->client_inset.b;
+             bd->h = e_border_inset_height_get(bd);
              bd->y = bd->y + bd->client.h;
              move = EINA_TRUE;
           }
         else if (bd->shade.dir == E_DIRECTION_LEFT)
           {
-             bd->w = bd->client_inset.l + bd->client_inset.r;
+             bd->w = e_border_inset_width_get(bd);
           }
         else if (bd->shade.dir == E_DIRECTION_RIGHT)
           {
-             bd->w = bd->client_inset.l + bd->client_inset.r;
+             bd->w = e_border_inset_width_get(bd);
              bd->x = bd->x + bd->client.w;
              move = EINA_TRUE;
           }
@@ -4316,13 +4316,13 @@ e_border_frame_recalc(E_Border *bd)
    if (!bd->bg_object) return;
 
    w = bd->w, h = bd->h;
-   bd->w -= (bd->client_inset.l + bd->client_inset.r);
-   bd->h -= (bd->client_inset.t + bd->client_inset.b);
+   bd->w -= e_border_inset_width_get(bd);
+   bd->h -= e_border_inset_height_get(bd);
 
    _e_border_client_inset_calc(bd);
 
-   bd->w += (bd->client_inset.l + bd->client_inset.r);
-   bd->h += (bd->client_inset.t + bd->client_inset.b);
+   bd->w += e_border_inset_width_get(bd);
+   bd->h += e_border_inset_height_get(bd);
 
    if (bd->changes.shading || bd->changes.shaded) return;
    if ((w != bd->w) || (h != bd->h))
@@ -4520,8 +4520,8 @@ e_border_resize_limit(E_Border *bd,
    E_OBJECT_TYPE_CHECK(bd, E_BORDER_TYPE);
 
    inc_h = (*h - bd->h > 0);
-   *w -= bd->client_inset.l + bd->client_inset.r;
-   *h -= bd->client_inset.t + bd->client_inset.b;
+   *w -= e_border_inset_width_get(bd);
+   *h -= e_border_inset_height_get(bd);
    if (*h < 1) *h = 1;
    if (*w < 1) *w = 1;
    if ((bd->client.icccm.base_w >= 0) &&
@@ -4599,8 +4599,8 @@ e_border_resize_limit(E_Border *bd,
    else if (*h < bd->client.icccm.min_h)
      *h = bd->client.icccm.min_h;
 
-   *w += bd->client_inset.l + bd->client_inset.r;
-   *h += bd->client_inset.t + bd->client_inset.b;
+   *w += e_border_inset_width_get(bd);
+   *h += e_border_inset_height_get(bd);
 }
 
 EAPI void 
@@ -5210,9 +5210,9 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
              h = bd->h;
              w = bd->w;
              if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W)
-               w = e->w + bd->client_inset.l + bd->client_inset.r;
+               w = e->w + e_border_inset_width_get(bd);
              if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H)
-               h = e->h + bd->client_inset.t + bd->client_inset.b;
+               h = e->h + e_border_inset_height_get(bd);
              if ((!bd->lock_client_location) && (!bd->lock_client_size))
                {
                   if ((bd->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE)
@@ -5289,9 +5289,9 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
         h = bd->h;
         w = bd->w;
         if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W)
-          w = e->w + bd->client_inset.l + bd->client_inset.r;
+          w = e->w + e_border_inset_width_get(bd);
         if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H)
-          h = e->h + bd->client_inset.t + bd->client_inset.b;
+          h = e->h + e_border_inset_height_get(bd);
         if (!bd->lock_client_size)
           {
              if ((bd->shaded) || (bd->shading))
@@ -5468,8 +5468,8 @@ _e_border_cb_window_resize_request(void *data  __UNUSED__,
    {
       int w, h;
 
-      w = e->w + bd->client_inset.l + bd->client_inset.r;
-      h = e->h + bd->client_inset.t + bd->client_inset.b;
+      w = e->w + e_border_inset_width_get(bd);
+      h = e->h + e_border_inset_height_get(bd);
       if ((bd->shaded) || (bd->shading))
         {
            int pw, ph;
@@ -6242,8 +6242,8 @@ _e_border_cb_sync_alarm(void *data  __UNUSED__,
              bd->y = pnd->y;
              bd->w = pnd->w;
              bd->h = pnd->h;
-             bd->client.w = bd->w - (bd->client_inset.l + bd->client_inset.r);
-             bd->client.h = bd->h - (bd->client_inset.t + bd->client_inset.b);
+             bd->client.w = bd->w - (e_border_inset_width_get(bd));
+             bd->client.h = bd->h - (e_border_inset_height_get(bd));
              E_FREE(pnd);
           }
      }
@@ -6979,8 +6979,8 @@ _e_border_post_move_resize_job(void *data)
         ecore_x_window_move_resize(bd->win,
                                    bd->x + bd->client_inset.l,
                                    bd->y + bd->client_inset.t,
-                                   bd->w - (bd->client_inset.l + bd->client_inset.r),
-                                   bd->h - (bd->client_inset.t + bd->client_inset.b));
+                                   bd->w - (e_border_inset_width_get(bd)),
+                                   bd->h - (e_border_inset_height_get(bd)));
      }
    else if (bd->post_move)
      {
@@ -6989,8 +6989,8 @@ _e_border_post_move_resize_job(void *data)
    else if (bd->post_resize)
      {
         ecore_x_window_resize(bd->win,
-                              bd->w - (bd->client_inset.l + bd->client_inset.r),
-                              bd->h - (bd->client_inset.t + bd->client_inset.b));
+                              bd->w - (e_border_inset_width_get(bd)),
+                              bd->h - (e_border_inset_height_get(bd)));
      }
 
    if (bd->client.e.state.video)
@@ -8112,8 +8112,8 @@ _e_border_eval0(E_Border *bd)
                   int w, h;
 
                   w = bd->w, h = bd->h;
-                  bd->w -= (bd->client_inset.l + bd->client_inset.r);
-                  bd->h -= (bd->client_inset.t + bd->client_inset.b);
+                  bd->w -= (e_border_inset_width_get(bd));
+                  bd->h -= (e_border_inset_height_get(bd));
                   if ((bd->w != w) || (h != bd->h)) bd->changes.size = 1;
                   evas_object_del(bd->bg_object);
                }
@@ -8182,10 +8182,10 @@ _e_border_eval0(E_Border *bd)
                 // previously calculated
                 Eina_Bool calc = bd->client_inset.calc;
                 // previously was borderless
-                Eina_Bool inset, pinset = !!(bd->client_inset.l + bd->client_inset.r + bd->client_inset.t + bd->client_inset.b);
+                Eina_Bool inset, pinset = !!(e_border_inset_width_get(bd) + e_border_inset_height_get(bd));
 
                 _e_border_client_inset_calc(bd);
-                inset = !!(bd->client_inset.l + bd->client_inset.r + bd->client_inset.t + bd->client_inset.b);
+                inset = !!(e_border_inset_width_get(bd) + e_border_inset_height_get(bd));
                 if (calc && (inset != pinset) && (pbg || (!bd->bg_object)))
                   {
                      if (inset)
@@ -8195,8 +8195,8 @@ _e_border_eval0(E_Border *bd)
                   }
              }
 
-             bd->w += (bd->client_inset.l + bd->client_inset.r);
-             bd->h += (bd->client_inset.t + bd->client_inset.b);
+             bd->w += (e_border_inset_width_get(bd));
+             bd->h += (e_border_inset_height_get(bd));
              bd->changes.size = 1;
 
              if (bd->maximized != E_MAXIMIZE_NONE)
@@ -8524,8 +8524,8 @@ _e_border_eval(E_Border *bd)
                }
              if ((!bd->lock_client_size) && (pnd->resize))
                {
-                  bd->w = pnd->w + (bd->client_inset.l + bd->client_inset.r);
-                  bd->h = pnd->h + (bd->client_inset.t + bd->client_inset.b);
+                  bd->w = pnd->w + (e_border_inset_width_get(bd));
+                  bd->h = pnd->h + (e_border_inset_height_get(bd));
                   bd->client.w = pnd->w;
                   bd->client.h = pnd->h;
                   bd->changes.size = 1;
@@ -8636,8 +8636,8 @@ _e_border_eval(E_Border *bd)
         y = bd->y + bd->client_inset.t;
         if ((!bd->shaded) || (bd->shading))
           {
-             w = bd->w - (bd->client_inset.l + bd->client_inset.r);
-             h = bd->h - (bd->client_inset.t + bd->client_inset.b);
+             w = bd->w - (e_border_inset_width_get(bd));
+             h = bd->h - (e_border_inset_height_get(bd));
 
              if (bd->shading)
                {
@@ -9207,18 +9207,18 @@ _e_border_shade_animator(void *data)
      bd->shade.val = 1.0;
 
    if (bd->shade.dir == E_DIRECTION_UP)
-     bd->h = bd->client_inset.t + bd->client_inset.b + bd->client.h * bd->shade.val;
+     bd->h = e_border_inset_height_get(bd) + bd->client.h * bd->shade.val;
    else if (bd->shade.dir == E_DIRECTION_DOWN)
      {
-        bd->h = bd->client_inset.t + bd->client_inset.b + bd->client.h * bd->shade.val;
+        bd->h = e_border_inset_height_get(bd) + bd->client.h * bd->shade.val;
         bd->y = bd->shade.y + bd->client.h * (1 - bd->shade.val);
         move = EINA_TRUE;
      }
    else if (bd->shade.dir == E_DIRECTION_LEFT)
-     bd->w = bd->client_inset.l + bd->client_inset.r + bd->client.w * bd->shade.val;
+     bd->w = e_border_inset_width_get(bd) + bd->client.w * bd->shade.val;
    else if (bd->shade.dir == E_DIRECTION_RIGHT)
      {
-        bd->w = bd->client_inset.l + bd->client_inset.r + bd->client.w * bd->shade.val;
+        bd->w = e_border_inset_width_get(bd) + bd->client.w * bd->shade.val;
         bd->x = bd->shade.x + bd->client.w * (1 - bd->shade.val);
         move = EINA_TRUE;
      }

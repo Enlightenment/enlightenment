@@ -495,7 +495,7 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
      {
         if (((!cw->bd->shaded) && (!cw->bd->shading)) && cw->pw && cw->ph)
           {
-             w = cw->pw + cw->bd->client_inset.l + cw->bd->client_inset.r, h = cw->ph + cw->bd->client_inset.t + cw->bd->client_inset.b;
+             w = cw->pw + e_border_inset_width_get(cw->bd), h = cw->ph + e_border_inset_height_get(cw->bd);
              if ((cw->pw != cw->bd->client.w) || (cw->ph != cw->bd->client.h))
                {
                   /* something fucked us and the pixmap came back with the wrong size
@@ -3091,12 +3091,8 @@ _e_comp_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
              int clw, clh;
 
              if ((cw->bd->shading) || (cw->bd->shaded)) force = 1;
-             clw = cw->hidden.w -
-               cw->bd->client_inset.l -
-               cw->bd->client_inset.r;
-             clh = cw->hidden.h -
-               cw->bd->client_inset.t -
-               cw->bd->client_inset.b;
+             clw = cw->hidden.w - e_border_inset_width_get(cw->bd);
+             clh = cw->hidden.h - e_border_inset_height_get(cw->bd);
              DBG("  [0x%x] sync draw done @%4ix%4i, bd %4ix%4i",
                  cw->win, w, h, cw->bd->client.w, cw->bd->client.h);
              if ((w != clw) || (h != clh))
