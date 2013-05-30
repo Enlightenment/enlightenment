@@ -37,6 +37,7 @@ Additions:
         * added deskmirror
         * add e_exec_desktop_instances_find
         * add e_exec_phony
+        * e_border_inset utility functions
     Config:
         * Added option for disabling icons in menus
         * Added option for disabling pointer warping when performing directional focus changes using winlist

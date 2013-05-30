@@ -1,5 +1,9 @@
 2013-05-29 Mike Blumenkrantz
 
+        * added e_border_inset utility functions
+
+2013-05-29 Mike Blumenkrantz
+
         * added dnd support for text/x-moz-url
         * fixed e_exec to open .desktop url links
 
