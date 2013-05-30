@@ -3022,9 +3022,9 @@ _e_comp_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
           }
      }
 
-   if (!((cw->x == ev->x) && (cw->y == ev->y) &&
+   if ((!cw->bd) && (!((cw->x == ev->x) && (cw->y == ev->y) &&
          (cw->w == ev->w) && (cw->h == ev->h) &&
-         (cw->border == ev->border)))
+         (cw->border == ev->border))))
      {
         _e_comp_win_configure(cw, ev->x, ev->y, ev->w, ev->h, ev->border);
         if (cw->free_shape)
