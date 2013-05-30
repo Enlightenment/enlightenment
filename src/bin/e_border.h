@@ -201,6 +201,11 @@ struct _E_Border
 
       struct
       {
+         Eina_Bool mapping_change : 1;
+      } hacks;
+
+      struct
+      {
          unsigned char changed : 1;
          unsigned char user_selected : 1;
          Eina_Stringshare *name;
