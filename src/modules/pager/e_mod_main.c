@@ -82,7 +82,6 @@ struct _Pager_Win
       Pager        *from_pager;
       unsigned char start : 1;
       unsigned char in_pager : 1;
-      unsigned char no_place : 1;
       unsigned char desktop  : 1;
       int           x, y, dx, dy, button;
    } drag;
@@ -1838,14 +1837,6 @@ _pager_window_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
         pw->drag.dy = oy - ev->canvas.y;
         pw->drag.start = 1;
         pw->drag.button = ev->button;
-#if 0
-        /* FIXME: disable move in pager for now, as dropping in between
-           desks causes lost window */
-        pw->drag.no_place = 0;
-        if (ev->button == pager_config->btn_noplace) pw->drag.no_place = 1;
-#else
-        pw->drag.no_place = 1;
-#endif
      }
 }
 
@@ -1869,6 +1860,8 @@ _pager_window_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
      {
         if (!pw->drag.from_pager)
           {
+             edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,out", "e");
+             e_comp_win_effect_unclip(pw->border->cw);
              if (!pw->drag.start) p->just_dragged = 1;
              pw->drag.in_pager = 0;
              pw->drag.start = 0;
@@ -1911,6 +1904,9 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
 
         pw->desk->pager->dragging = 1;
         pw->drag.start = 0;
+        e_comp_win_effect_clip(pw->border->cw);
+        edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,in", "e");
+        pw->desk->pager->active_drop_pd = pw->desk;
      }
 
    /* dragging this win around inside the pager */
@@ -1922,17 +1918,28 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
 
         /* find desk at pointer */
         pd = _pager_desk_at_coord(pw->desk->pager, mx, my);
-        if ((pd) && (!pw->drag.no_place))
+        if (pd)
           {
-             int zx, zy;
+             int zx, zy, zw, zh;
 
-             e_zone_useful_geometry_get(pd->desk->zone, &zx, &zy, NULL, NULL);
+             e_zone_useful_geometry_get(pd->desk->zone, &zx, &zy, &zw, &zh);
              e_layout_coord_canvas_to_virtual(pd->o_layout,
                                               mx + pw->drag.dx,
                                               my + pw->drag.dy, &vx, &vy);
              if (pd != pw->desk)
-               e_border_desk_set(pw->border, pd->desk);
-             e_border_move(pw->border, vx + zx, vy + zy);
+               {
+                  edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,out", "e");
+                  if (pd->desk != e_desk_current_get(pd->desk->zone))
+                    e_border_hide(pw->border, 2);
+                  else
+                    e_border_show(pw->border);
+                  e_border_desk_set(pw->border, pd->desk);
+                  edje_object_signal_emit(pd->o_desk, "e,action,drag,in", "e");
+                  pd->pager->active_drop_pd = pd;
+               }
+             mx = E_CLAMP(vx + zx, zx, zx + zw - pw->border->w);
+             my = E_CLAMP(vy + zy, zy, zy + zh - pw->border->h);
+             e_border_move(pw->border, mx, my);
           }
         else
           {
@@ -2033,9 +2040,14 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
 
         if (!(pw->border->lock_user_stacking)) e_border_raise(pw->border);
      }
+   if (pw->desk->pager->active_drop_pd)
+     {
+        edje_object_signal_emit(pw->desk->pager->active_drop_pd->o_desk, "e,action,drag,out", "e");
+        pw->desk->pager->active_drop_pd = NULL;
+     }
    if (pw->drag.from_pager) pw->drag.from_pager->dragging = 0;
    pw->drag.from_pager = NULL;
-
+   e_comp_win_effect_unclip(pw->border->cw);
    if (act_popup)
      {
         e_grabinput_get(input_window, 0, input_window);
@@ -2171,24 +2183,30 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              E_Maximize max = bd->maximized;
              E_Fullscreen fs = bd->fullscreen_policy;
              Eina_Bool fullscreen = bd->fullscreen;
+
              if (bd->iconic) e_border_uniconify(bd);
              if (bd->maximized)
                e_border_unmaximize(bd, E_MAXIMIZE_BOTH);
              if (fullscreen) e_border_unfullscreen(bd);
+             if (pd->desk != e_desk_current_get(pd->desk->zone))
+               e_border_hide(bd, 2);
              e_border_desk_set(bd, pd->desk);
              e_border_raise(bd);
-             if ((!pw) || ((pw) && (!pw->drag.no_place)))
+                  
+             if ((!max) && (!fullscreen))
                {
-                  int zx, zy;
+                  int zx, zy, zw, zh, mx, my;
 
                   e_layout_coord_canvas_to_virtual(pd->o_layout,
                                                    ev->x + dx,
                                                    ev->y + dy,
                                                    &nx, &ny);
                   e_zone_useful_geometry_get(pd->desk->zone,
-                                             &zx, &zy, NULL, NULL);
+                                             &zx, &zy, &zw, &zh);
 
-                  e_border_move(bd, nx + zx, ny + zy);
+                  mx = E_CLAMP(nx + zx, zx, zx + zw - bd->w);
+                  my = E_CLAMP(ny + zy, zy, zy + zh - bd->h);
+                  e_border_move(bd, mx, my);
                }
              if (max) e_border_maximize(bd, max);
              if (fullscreen) e_border_fullscreen(bd, fs);
@@ -2230,6 +2248,11 @@ _pager_desk_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
         pd->drag.y = ev->canvas.y;
         pd->drag.button = ev->button;
      }
+   else
+     {
+        pd->drag.dx = pd->drag.dy = pd->drag.x = pd->drag.y = 0;
+     }
+   pd->pager->just_dragged = 0;
 }
 
 static void
@@ -2253,8 +2276,8 @@ _pager_desk_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
         e_desk_show(pd->desk);
         pd->drag.start = 0;
         pd->drag.in_pager = 0;
+        p->active_drop_pd = NULL;
      }
-   pd->pager->just_dragged = 0;
 
    if ((p->popup) && (p->popup->urgent)) _pager_popup_free(p->popup);
 }
@@ -2378,6 +2401,11 @@ _pager_desk_cb_drag_finished(E_Drag *drag, int dropped)
      {
         pd->drag.from_pager->dragging = 0;
         pd->drag.from_pager->just_dragged = 0;
+     }
+   if (pd->pager->active_drop_pd)
+     {
+        edje_object_signal_emit(pd->pager->active_drop_pd->o_desk, "e,action,drag,out", "e");
+        pd->pager->active_drop_pd = NULL;
      }
    pd->drag.from_pager = NULL;
 
