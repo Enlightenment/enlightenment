@@ -842,6 +842,18 @@ extern EAPI int E_EVENT_BORDER_PROPERTY;
 extern EAPI int E_EVENT_BORDER_FULLSCREEN;
 extern EAPI int E_EVENT_BORDER_UNFULLSCREEN;
 
+static inline unsigned int
+e_border_inset_width_get(const E_Border *bd)
+{
+   return bd->client_inset.l + bd->client_inset.r;
+}
+
+static inline unsigned int
+e_border_inset_height_get(const E_Border *bd)
+{
+   return bd->client_inset.t + bd->client_inset.b;
+}
+
 /* macro for finding misuse of changed flag */
 #if 0
 # define BD_CHANGED(BD) BD->changed = 1; INF("%s:%d - BD CHANGED: %p", __FILE__, __LINE__, BD)
