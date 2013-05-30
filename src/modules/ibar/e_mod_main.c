@@ -1195,50 +1195,47 @@ _ibar_cb_icon_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
 static void
 _ibar_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Evas_Event_Mouse_Move *ev;
-   IBar_Icon *ic;
+   Evas_Event_Mouse_Move *ev = event_info;
+   IBar_Icon *ic = data;
+   int dx, dy;
 
-   ev = event_info;
-   ic = data;
-   if (ic->drag.start)
+   E_FREE_FUNC(ic->timer, ecore_timer_del);
+   if (!ic->drag.start) return;
+
+   dx = ev->cur.output.x - ic->drag.x;
+   dy = ev->cur.output.y - ic->drag.y;
+   if (((dx * dx) + (dy * dy)) >
+       (e_config->drag_resist * e_config->drag_resist))
      {
-        int dx, dy;
+        E_Drag *d;
+        Evas_Object *o;
+        Evas_Coord x, y, w, h;
+        unsigned int size;
+        const char *drag_types[] = { "enlightenment/desktop" };
+        E_Gadcon_Client *gc;
 
-        dx = ev->cur.output.x - ic->drag.x;
-        dy = ev->cur.output.y - ic->drag.y;
-        if (((dx * dx) + (dy * dy)) >
-            (e_config->drag_resist * e_config->drag_resist))
-          {
-             E_Drag *d;
-             Evas_Object *o;
-             Evas_Coord x, y, w, h;
-             unsigned int size;
-             const char *drag_types[] = { "enlightenment/desktop" };
-             E_Gadcon_Client *gc;
+        ic->drag.dnd = 1;
+        ic->drag.start = 0;
 
-             ic->drag.dnd = 1;
-             ic->drag.start = 0;
+        if (ic->ibar->inst->ci->lock_move) return;
 
-             if (ic->ibar->inst->ci->lock_move) return;
+        evas_object_geometry_get(ic->o_icon, &x, &y, &w, &h);
+        d = e_drag_new(ic->ibar->inst->gcc->gadcon->zone->container,
+                       x, y, drag_types, 1,
+                       ic->app, -1, NULL, _ibar_cb_drag_finished);
+        efreet_desktop_ref(ic->app);
+        size = MAX(w, h);
+        o = e_util_desktop_icon_add(ic->app, size, e_drag_evas_get(d));
+        e_drag_object_set(d, o);
 
-             evas_object_geometry_get(ic->o_icon, &x, &y, &w, &h);
-             d = e_drag_new(ic->ibar->inst->gcc->gadcon->zone->container,
-                            x, y, drag_types, 1,
-                            ic->app, -1, NULL, _ibar_cb_drag_finished);
-             efreet_desktop_ref(ic->app);
-             size = MAX(w, h);
-             o = e_util_desktop_icon_add(ic->app, size, e_drag_evas_get(d));
-             e_drag_object_set(d, o);
-
-             e_drag_resize(d, w, h);
-             e_drag_start(d, ic->drag.x, ic->drag.y);
-             ic->ibar->icons = eina_list_remove(ic->ibar->icons, ic);
-             _ibar_resize_handle(ic->ibar);
-             gc = ic->ibar->inst->gcc;
-             _gc_orient(gc, -1);
-             e_order_remove(ic->ibar->io->eo, ic->app);
-             _ibar_icon_free(ic);
-          }
+        e_drag_resize(d, w, h);
+        e_drag_start(d, ic->drag.x, ic->drag.y);
+        ic->ibar->icons = eina_list_remove(ic->ibar->icons, ic);
+        _ibar_resize_handle(ic->ibar);
+        gc = ic->ibar->inst->gcc;
+        _gc_orient(gc, -1);
+        e_order_remove(ic->ibar->io->eo, ic->app);
+        _ibar_icon_free(ic);
      }
 }
 
