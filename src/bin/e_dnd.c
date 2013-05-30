@@ -928,7 +928,6 @@ _e_drag_end(int x, int y)
    E_Event_Dnd_Drop ev;
    int dx, dy;
    Ecore_X_Window win;
-   E_Drag *tmp;
    E_Drop_Handler *h;
    int dropped;
    Ecore_X_Window ignore[1];
@@ -948,25 +947,17 @@ _e_drag_end(int x, int y)
         if (!(dropped = ecore_x_dnd_drop()))
           {
              if (win == e_comp_get(NULL)->ee_win) break;
-             ecore_x_window_free(_drag_win);
-             _drag_win = 0;
           }
         if (_drag_current->cb.finished)
           _drag_current->cb.finished(_drag_current, dropped);
+        _drag_current->cb.finished = NULL;
 
-        if (_drag_current && !_xdnd)
-          {
-             tmp = _drag_current;
-             _drag_current = NULL;
-             e_object_del(E_OBJECT(tmp));
-          }
+        if (_drag_current && (!_xdnd))
+          e_object_del(E_OBJECT(_drag_current));
         //e_grabinput_release(_drag_win, _drag_win);
-        ecore_x_window_hide(_drag_win);
         return;
      }
 
-   ecore_x_window_free(_drag_win);
-   _drag_win = 0;
    dropped = 0;
 
    if (!_drag_current->data)
@@ -1039,10 +1030,9 @@ _e_drag_end(int x, int y)
      }
    if (_drag_current->cb.finished)
      _drag_current->cb.finished(_drag_current, dropped);
+   _drag_current->cb.finished = NULL;
 
-   tmp = _drag_current;
-   _drag_current = NULL;
-   e_object_del(E_OBJECT(tmp));
+   e_object_del(E_OBJECT(_drag_current));
 }
 
 static void
@@ -1072,26 +1062,7 @@ _e_drag_xdnd_end(Ecore_X_Window win, int x, int y)
                }
           }
      }
-   else
-     {
-        /* Just leave */
-        E_Event_Dnd_Leave leave_ev;
-        E_Drop_Handler *h;
-
-        /* FIXME: We don't need x and y in leave */
-        leave_ev.x = 0;
-        leave_ev.y = 0;
-
-        EINA_LIST_FOREACH(_active_handlers, l, h)
-          {
-             if (h->entered)
-               {
-                  if (h->cb.leave)
-                    h->cb.leave(h->cb.data, h->active_type, &leave_ev);
-                  h->entered = 0;
-               }
-          }
-     }
+   if (_drag_current) e_object_del(E_OBJECT(_drag_current));
 }
 
 static void
@@ -1101,7 +1072,6 @@ _e_drag_free(E_Drag *drag)
 
    if (drag == _drag_current)
      {
-        const Eina_List *l;
         E_Event_Dnd_Leave leave_ev;
         E_Drop_Handler *h;
 
@@ -1112,7 +1082,7 @@ _e_drag_free(E_Drag *drag)
 
         leave_ev.x = 0;
         leave_ev.y = 0;
-        EINA_LIST_FOREACH(_active_handlers, l, h)
+        EINA_LIST_FREE(_active_handlers, h)
           {
              if (h->entered)
                {
@@ -1120,9 +1090,11 @@ _e_drag_free(E_Drag *drag)
                     h->cb.leave(h->cb.data, h->active_type, &leave_ev);
                   _e_drag_win_hide(h);
                }
+             h->active = 0;
           }
         if (drag->cb.finished)
           drag->cb.finished(drag, 0);
+        drag->cb.finished = NULL;
      }
 
    _drag_current = NULL;
@@ -1335,17 +1307,6 @@ _e_dnd_cb_event_dnd_finished(void *data __UNUSED__, int type __UNUSED__, void *e
 
    if (!ev->completed) return ECORE_CALLBACK_PASS_ON;
  */
-   if (_drag_current)
-     {
-        E_Drag *tmp;
-
-        tmp = _drag_current;
-        _drag_current = NULL;
-        e_object_del(E_OBJECT(tmp));
-     }
-
-   ecore_x_window_free(_drag_win);
-   _drag_win = 0;
 
    return ECORE_CALLBACK_PASS_ON;
 }
