@@ -2319,21 +2319,21 @@ e_border_shade(E_Border *bd,
 
         if (bd->shade.dir == E_DIRECTION_UP)
           {
-             bd->h = e_border_inset_height_get(bd);
+             bd->h = bd->client_inset.t;
           }
         else if (bd->shade.dir == E_DIRECTION_DOWN)
           {
-             bd->h = e_border_inset_height_get(bd);
+             bd->h = bd->client_inset.t;
              bd->y = bd->y + bd->client.h;
              move = EINA_TRUE;
           }
         else if (bd->shade.dir == E_DIRECTION_LEFT)
           {
-             bd->w = e_border_inset_width_get(bd);
+             bd->w = bd->client_inset.t;
           }
         else if (bd->shade.dir == E_DIRECTION_RIGHT)
           {
-             bd->w = e_border_inset_width_get(bd);
+             bd->w = bd->client_inset.t;
              bd->x = bd->x + bd->client.w;
              move = EINA_TRUE;
           }
@@ -9207,18 +9207,18 @@ _e_border_shade_animator(void *data)
      bd->shade.val = 1.0;
 
    if (bd->shade.dir == E_DIRECTION_UP)
-     bd->h = e_border_inset_height_get(bd) + bd->client.h * bd->shade.val;
+     bd->h = bd->client_inset.t + bd->client.h * bd->shade.val;
    else if (bd->shade.dir == E_DIRECTION_DOWN)
      {
-        bd->h = e_border_inset_height_get(bd) + bd->client.h * bd->shade.val;
+        bd->h = bd->client_inset.t + bd->client.h * bd->shade.val;
         bd->y = bd->shade.y + bd->client.h * (1 - bd->shade.val);
         move = EINA_TRUE;
      }
    else if (bd->shade.dir == E_DIRECTION_LEFT)
-     bd->w = e_border_inset_width_get(bd) + bd->client.w * bd->shade.val;
+     bd->w = bd->client_inset.t + bd->client.w * bd->shade.val;
    else if (bd->shade.dir == E_DIRECTION_RIGHT)
      {
-        bd->w = e_border_inset_width_get(bd) + bd->client.w * bd->shade.val;
+        bd->w = bd->client_inset.t + bd->client.w * bd->shade.val;
         bd->x = bd->shade.x + bd->client.w * (1 - bd->shade.val);
         move = EINA_TRUE;
      }
