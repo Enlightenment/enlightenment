@@ -1412,20 +1412,6 @@ _e_comp_win_render_queue(E_Comp_Win *cw)
    _e_comp_render_queue(cw->c);
 }
 
-static E_Comp *
-_e_comp_find(Ecore_X_Window root)
-{
-   Eina_List *l;
-   E_Comp *c;
-
-   // fixme: use hash if compositors list > 4
-   EINA_LIST_FOREACH(compositors, l, c)
-     {
-        if (c->man->root == root) return c;
-     }
-   return NULL;
-}
-
 static E_Comp_Win *
 _e_comp_win_find(Ecore_X_Window win)
 {
@@ -2950,28 +2936,6 @@ _e_comp_win_shape_create(E_Comp_Win *cw, int x, int y, int w, int h)
 }
 
 //////////////////////////////////////////////////////////////////////////
-static Eina_Bool
-_e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_X_Event_Window_Create *ev = event;
-   E_Comp_Win *cw;
-   E_Comp *c;
-
-   c = _e_comp_find(ev->parent);
-   if (!c) return ECORE_CALLBACK_PASS_ON;
-   if (c->win == ev->win) return ECORE_CALLBACK_PASS_ON;
-   if (c->ee_win == ev->win) return ECORE_CALLBACK_PASS_ON;
-   if (c->man->root == ev->win) return ECORE_CALLBACK_PASS_ON;
-   if (_e_comp_ignore_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
-   if (_e_comp_win_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
-   if (e_border_find_by_window(ev->win)) return ECORE_CALLBACK_PASS_ON;
-   if (!ev->override) return ECORE_CALLBACK_PASS_ON;
-   cw = _e_comp_win_add(c, ev->win, NULL, 0);
-   if (!cw) return ECORE_CALLBACK_RENEW;
-   if (cw->free_shape) _e_comp_win_shape_create(cw, ev->x, ev->y, ev->w, ev->h);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
 static Eina_Bool
 _e_comp_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -4846,7 +4810,6 @@ e_comp_init(void)
    damages = eina_hash_string_superfast_new(NULL);
    ignores = eina_hash_string_superfast_new(NULL);
 
-   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_CREATE, _e_comp_create, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_DESTROY, _e_comp_destroy, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_SHOW, _e_comp_show, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_HIDE, _e_comp_hide, NULL);
