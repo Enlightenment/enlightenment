@@ -3508,7 +3508,7 @@ _e_comp_bd_resize(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    E_Event_Border_Resize *ev = event;
    E_Comp_Win *cw = _e_comp_win_find(ev->border->win);
    if (!cw) return ECORE_CALLBACK_PASS_ON;
-   _e_comp_win_configure(cw, cw->x, cw->y, ev->border->w - e_border_inset_width_get(ev->border), ev->border->h - e_border_inset_height_get(ev->border), cw->border);
+   _e_comp_win_configure(cw, cw->x, cw->y, ev->border->w, ev->border->h, cw->border);
    return ECORE_CALLBACK_PASS_ON;
 }
 
