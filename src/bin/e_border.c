@@ -122,6 +122,8 @@ static void      _e_border_event_border_stack_free(void *data,
                                                    void *ev);
 static void      _e_border_event_border_icon_change_free(void *data,
                                                          void *ev);
+static void      _e_border_event_border_title_change_free(void *data,
+                                                         void *ev);
 static void      _e_border_event_border_urgent_change_free(void *data,
                                                            void *ev);
 static void      _e_border_event_border_focus_in_free(void *data,
@@ -239,6 +241,7 @@ EAPI int E_EVENT_BORDER_STICK = 0;
 EAPI int E_EVENT_BORDER_UNSTICK = 0;
 EAPI int E_EVENT_BORDER_STACK = 0;
 EAPI int E_EVENT_BORDER_ICON_CHANGE = 0;
+EAPI int E_EVENT_BORDER_TITLE_CHANGE = 0;
 EAPI int E_EVENT_BORDER_URGENT_CHANGE = 0;
 EAPI int E_EVENT_BORDER_FOCUS_IN = 0;
 EAPI int E_EVENT_BORDER_FOCUS_OUT = 0;
@@ -350,6 +353,7 @@ e_border_init(void)
    E_EVENT_BORDER_UNSTICK = ecore_event_type_new();
    E_EVENT_BORDER_STACK = ecore_event_type_new();
    E_EVENT_BORDER_ICON_CHANGE = ecore_event_type_new();
+   E_EVENT_BORDER_TITLE_CHANGE = ecore_event_type_new();
    E_EVENT_BORDER_URGENT_CHANGE = ecore_event_type_new();
    E_EVENT_BORDER_FOCUS_IN = ecore_event_type_new();
    E_EVENT_BORDER_FOCUS_OUT = ecore_event_type_new();
@@ -7032,6 +7036,7 @@ _e_border_eval0(E_Border *bd)
 {
    int change_urgent = 0;
    int rem_change = 0;
+   int title_change = 0;
    Eina_Bool new_cw = !bd->cw;
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    Eina_Bool need_desk_set = EINA_FALSE;
@@ -7111,8 +7116,10 @@ _e_border_eval0(E_Border *bd)
         if (bd->bg_object)
           edje_object_part_text_set(bd->bg_object, "e.text.title",
                                     bd->client.icccm.title);
+
         bd->client.icccm.fetch.title = 0;
         rem_change = 1;
+        title_change = 1;
      }
    if (bd->client.netwm.fetch.name)
      {
@@ -7128,9 +7135,20 @@ _e_border_eval0(E_Border *bd)
         if (bd->bg_object)
           edje_object_part_text_set(bd->bg_object, "e.text.title",
                                     bd->client.netwm.name);
+
         bd->client.netwm.fetch.name = 0;
         rem_change = 1;
+        title_change = 1;
      }
+   if (title_change)
+   {
+       E_Event_Border_Title_Change *ev;
+        ev = E_NEW(E_Event_Border_Title_Change, 1);
+        ev->border = bd;
+        e_object_ref(E_OBJECT(bd));
+        ecore_event_add(E_EVENT_BORDER_TITLE_CHANGE, ev,
+                           _e_border_event_border_title_change_free, NULL);
+   }
    if (bd->client.icccm.fetch.name_class)
      {
         const char *pname, *pclass;
@@ -9436,6 +9454,18 @@ _e_border_event_border_icon_change_free(void *data __UNUSED__,
                                         void *ev)
 {
    E_Event_Border_Icon_Change *e;
+
+   e = ev;
+//   e_object_breadcrumb_del(E_OBJECT(e->border), "border_icon_change_event");
+   e_object_unref(E_OBJECT(e->border));
+   E_FREE(e);
+}
+
+static void
+_e_border_event_border_title_change_free(void *data __UNUSED__,
+                                        void *ev)
+{
+   E_Event_Border_Title_Change *e;
 
    e = ev;
 //   e_object_breadcrumb_del(E_OBJECT(e->border), "border_icon_change_event");

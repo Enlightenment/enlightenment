@@ -78,11 +78,11 @@ static Eina_Bool    _tasks_cb_event_border_remove(void *data, int type, void *ev
 static Eina_Bool    _tasks_cb_event_border_iconify(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_border_uniconify(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_border_icon_change(void *data, int type, void *event);
+static Eina_Bool    _tasks_cb_event_border_title_change(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_border_zone_set(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_border_desk_set(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_window_focus_in(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_window_focus_out(void *data, int type, void *event);
-static Eina_Bool    _tasks_cb_event_border_property(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_desk_show(void *data, int type, void *event);
 static Eina_Bool    _tasks_cb_event_border_urgent_change(void *data, int type, void *event);
 
@@ -168,7 +168,7 @@ e_modapi_init(E_Module *m)
          (E_EVENT_BORDER_FOCUS_OUT, _tasks_cb_window_focus_out, NULL));
    tasks_config->handlers = eina_list_append
        (tasks_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_PROPERTY, _tasks_cb_event_border_property, NULL));
+         (E_EVENT_BORDER_TITLE_CHANGE, _tasks_cb_event_border_title_change, NULL));
    tasks_config->handlers = eina_list_append
        (tasks_config->handlers, ecore_event_handler_add
          (E_EVENT_DESK_SHOW, _tasks_cb_event_desk_show, NULL));
@@ -924,9 +924,9 @@ _tasks_cb_event_border_urgent_change(void *data __UNUSED__, int type __UNUSED__,
 }
 
 static Eina_Bool
-_tasks_cb_event_border_property(void *data __UNUSED__, int type __UNUSED__, void *event)
+_tasks_cb_event_border_title_change(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   E_Event_Border_Property *ev;
+   E_Event_Border_Title_Change *ev;
    E_Border *border;
 
    ev = event;
