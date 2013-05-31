@@ -1621,6 +1621,7 @@ e_configure_option_init(void)
    OPT_ADD(BOOL, winlist_list_show_other_desk_windows, _("Winlist shows windows from other desks"), _("border"), _("winlist"), _("vdesk"));
    OPT_ADD(BOOL, winlist_list_show_other_screen_windows, _("Winlist shows windows from other screens"), _("border"), _("winlist"), _("screen"));
    OPT_ADD(BOOL, winlist_list_uncover_while_selecting, _("Winlist uniconifies and unshades windows while selecting"), _("border"), _("winlist"), _("raise"));
+   OPT_ADD(BOOL, winlist_list_move_after_select, _("Winlist moves window to current screen+desk after selection"), _("border"), _("winlist"), _("vdesk"), _("screen"));
    OPT_ADD(BOOL, winlist_list_jump_desk_while_selecting, _("Winlist switches desks while selecting"), _("border"), _("winlist"), _("vdesk"));
    OPT_ADD(BOOL, winlist_list_focus_while_selecting, _("Winlist focuses windows while selecting"), _("border"), _("winlist"), _("focus"));
    OPT_ADD(BOOL, winlist_list_raise_while_selecting, _("Winlist raises windows while selecting"), _("border"), _("winlist"), _("raise"), _("focus"));
