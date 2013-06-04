@@ -1,12 +1,14 @@
 [Desktop Entry]
 Type=Link
 Name=IBar
+Name[ca]=IBar
 Name[cs]=Lišta spouštěčů
 Name[de]=IBar
 Name[eo]=Breto IBar
 Icon=e-module-ibar
 X-Enlightenment-ModuleType=utils
 Comment=Iconic application launcher.
+Comment[ca]=Barra d'icones per a executar aplicacions.
 Comment[cs]=Lišta se spouštěči.
 Comment[de]=Symbolbasierter Anwendungsstarter.
 Comment[eo]=Lanĉilo de piktograma aplikaĵo.

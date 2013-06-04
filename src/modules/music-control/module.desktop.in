@@ -1,10 +1,12 @@
 [Desktop Entry]
 Type=Link
 Name=Music Control
+Name[ca]=Control musical
 Name[ru]=Контроль музыки
 Name[sr]=Управљање музиком
 Icon=e-module-music-control
 Comment=Control your music in your shelf
+Comment[ca]=Per a controlar la música des del panell
 Comment[it]=Per controllare la musica in esecuzione dalla mensola di sistema
 Comment[ru]=Модуль для управления воспроизведением музыки
 Comment[sr]=Управљајте музиком са полице

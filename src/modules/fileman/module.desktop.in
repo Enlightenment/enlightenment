@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Link
 Name=EFM (Starter)
+Name[ca]=EFM (Llançador)
 Name[cs]=
 Name[de]=EFM (Starter)
 Name[eo]=
@@ -19,6 +20,7 @@ Name[zh_CN]=
 Name[zh_TW]=
 Icon=e-module-fileman
 Comment=Enlightenment's integrated file manager.
+Comment[ca]=Administrador de fitxers integrat a l'Enlightenment.
 Comment[cs]=Integrovaný správce souborů v Enlightenment.
 Comment[de]=Der eingebaute Dateimanager von Enlightenment.
 Comment[eo]=Integrita dosieradministrilo de Enlightenment.

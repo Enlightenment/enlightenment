@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Link
 Name=Window Switcher
+Name[ca]=Alternador de finestres
 Name[cs]=Přepínač oken
 Name[de]=Fensterwechsel-Liste
 Name[el]=Λίστα εναλλαγής παραθύρων
@@ -16,6 +17,7 @@ Name[sr]=Измењивач прозора
 Name[tr]=Pencere Değiştirici Listesi
 Icon=e-module-winlist
 Comment=A module to show the list of client applications presently running.
+Comment[ca]=Un mòdul que mostra la llista d'aplicacions que s'estan executant.
 Comment[cs]=Modul pro zobrazení seznamu běžících aplikací.
 Comment[de]=Zeigt eine Liste aktuell laufender Client-Anwendungen.
 Comment[el]=Ένα άρθρωμα που εμφανίζει τη λίστα των εφαρμογών που εκτελούνται.

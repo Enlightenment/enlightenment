@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Link
 Name=Temperature
+Name[ca]=Temperatura
 Name[cs]=Teplota
 Name[de]=Temperatur
 Name[eo]=Temperaturo
@@ -14,6 +15,7 @@ Name[sr]=Топлота
 Name[tr]=Sıcaklık
 Icon=e-module-temperature
 Comment=Temperature monitor.
+Comment[ca]=Monitor de la temperatura.
 Comment[cs]=Měřič teploty.
 Comment[de]=Temperaturmonitor.
 Comment[eo]=Elrigardi temperaturon.

@@ -1,14 +1,16 @@
 [Desktop Entry]
 Type=Link
 Name=Layout
+Name[ca]=Disposició
 Name[cs]=Rozvržení
 Name[de]=Anordnung
 Name[eo]=Aranĝo
 Name[hu]=Kimenet
-Name[tr]=Yerleşim
 Name[pt]=Disposição
+Name[tr]=Yerleşim
 Icon=e-module-layout
 Comment=Used to enforce layout policies. Generally not applicable for a desktop PC.
+Comment[ca]=Permet definir les regles de la disposició. Generalment no és útil per a equips d'escriptori.
 Comment[cs]=Použit k vynucení politiky rozvržení. Nepoužitelné na desktopovém PC.
 Comment[de]=Setzt die Vorgaben zur Anordnung um. Normalerweise nicht anwendbar auf Desktop-Rechnern.
 Comment[eo]=Efiikigi aranĝajn tiparojn. Kutime ne aplikebla por surtabla komputilo.

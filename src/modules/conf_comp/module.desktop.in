@@ -1,6 +1,7 @@
 [Desktop Entry]
 Type=Link
 Name=Composite Settings
+Name[ca]=Configuració del Composite
 #Name[de]=Composite-Grafik
 #Name[eo]=Kunmetado
 #Name[es]=Composición
@@ -11,12 +12,13 @@ Name[ru]=Настройка композитного режима
 #Name[tr]=Birleşiklik
 Icon=preferences-composite
 Comment=Enlightenment Composite Manager Settings
+Comment[ca]=Gestor de Composite per a Enlightenment
 #Comment[de]=Composite-Manager für Enlightenment
 #Comment[eo]=Administrilo de kunmetado por Enlightenment
 #Comment[es]=Administrador de composición de Enlightenment.
 #Comment[fr]=Gestionnaire de composite intégré.
 #Comment[gl]=Xestor de composición de Enlightenment.
-Comment[it]=Composite manager per Enlightenment.
+Comment[it]=Impostazioni composite manager per Enlightenment.
 #Comment[pt]=Gestão de composição integrada
 Comment[ru]=Настройки менеджера композитного режима
 #Comment[tr]=Enlightenment için birleşiklik yöneticisi
