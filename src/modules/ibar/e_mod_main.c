@@ -671,6 +671,7 @@ _ibar_icon_free(IBar_Icon *ic)
    evas_object_del(ic->o_holder2);
    if (ic->exe_inst)
      {
+        e_exec_instance_watcher_del(ic->exe_inst, _ibar_instance_watch, ic);
         ic->exe_inst = NULL;
      }
    E_FREE(ic);
@@ -1122,7 +1123,7 @@ _ibar_instance_watch(void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type)
         e_exec_instance_watcher_del(inst, _ibar_instance_watch, ic);
         ic->exes = eina_list_remove(ic->exes, inst);
         if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,off", "e");
-        ic->exe_inst = NULL;
+        if (ic->exe_inst == inst) ic->exe_inst = NULL;
         break;
       case E_EXEC_WATCH_STARTED:
         _ibar_icon_signal_emit(ic, "e,state,started", "e");
