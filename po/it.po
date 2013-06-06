@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-06-05 20:01+0900\n"
-"PO-Revision-Date: 2013-05-22 18:51+0200\n"
+"PO-Revision-Date: 2013-06-06 13:07+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: \n"
@@ -3744,9 +3744,8 @@ msgid "The recent DND operation requested for '%s' has failed."
 msgstr "La recente operazione di DND richiesta per '%s' è fallita."
 
 #: src/bin/e_fm.c:6774
-#, fuzzy
 msgid "A link to the requested URL already exists!"
-msgstr "Esiste già una mensola con lo stesso nome!"
+msgstr "Esiste già un collegamento alla URL richiesta!"
 
 #: src/bin/e_fm.c:8833 src/modules/fileman/e_mod_config.c:360
 msgid "Case Sensitive"
@@ -7370,14 +7369,12 @@ msgid "Vaio"
 msgstr "Vaio"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:395
-#, fuzzy
 msgid "Volume Down"
-msgstr "Sposta giù"
+msgstr "Abbassa volume"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:397
-#, fuzzy
 msgid "Volume Up"
-msgstr "Sposta su"
+msgstr "Alza volume"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:466
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:4
@@ -8858,7 +8855,7 @@ msgstr "Impostazioni schermo"
 
 #: src/modules/conf_randr/e_int_config_randr.c:119
 msgid "Primary Output"
-msgstr ""
+msgstr "Uscita primaria"
 
 #: src/modules/conf_randr/e_int_config_randr.c:135
 msgid "Restore On Startup"
@@ -12635,7 +12632,7 @@ msgstr "Salta al desktop"
 
 #: src/modules/winlist/e_int_config_winlist.c:225
 msgid "Move to current desk after switch"
-msgstr ""
+msgstr "Sposta al desktop attuale dopo il passaggio"
 
 #: src/modules/winlist/e_int_config_winlist.c:229
 msgid "Selecting"
@@ -12921,6 +12918,3 @@ msgstr "Impostazione layout della tastiera"
 #: src/modules/xkbswitch/e_mod_main.c:207
 msgid "NONE"
 msgstr "NESSUNA"
-
-#~ msgid "Systray cannot set its background invisible to match its shelf."
-#~ msgstr "Systray non può impostare uno sfondo invisibile come la mensola."
