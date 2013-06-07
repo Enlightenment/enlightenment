@@ -2,6 +2,7 @@
 
 /* local function prototypes */
 static void _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
+static void _e_comp_cb_bind_manager(struct wl_client *client, void *data, unsigned int version, unsigned int id);
 static void _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 static void _e_comp_cb_surface_destroy(struct wl_resource *resource);
 static void _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
@@ -14,6 +15,12 @@ static const struct wl_compositor_interface _e_compositor_interface =
 {
    _e_comp_cb_surface_create,
    _e_comp_cb_region_create
+};
+
+static const struct wl_data_device_manager_interface _e_manager_interface = 
+{
+   NULL, // create data source
+   NULL // get data device
 };
 
 /* local variables */
@@ -106,7 +113,15 @@ e_compositor_init(E_Compositor *comp, void *display)
    /* TODO: init xkb */
 
    /* initialize the data device manager */
-   wl_data_device_manager_init(comp->wl.display);
+   if (!wl_display_add_global(comp->wl.display, 
+                              &wl_data_device_manager_interface, NULL, 
+                              _e_comp_cb_bind_manager))
+     {
+        ERR("Could not add data device manager to globals: %m");
+        goto global_err;
+     }
+
+//   wl_data_device_manager_init(comp->wl.display);
 
    /* try to initialize the shm mechanism */
    if (wl_display_init_shm(comp->wl.display) < 0)
@@ -324,6 +339,14 @@ _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_
 }
 
 static void 
+_e_comp_cb_bind_manager(struct wl_client *client, void *data, unsigned int version, unsigned int id)
+{
+   /* add the data device manager to the client */
+   wl_client_add_object(client, &wl_data_device_manager_interface, 
+                        &_e_manager_interface, id, NULL);
+}
+
+static void 
 _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    E_Compositor *comp;
@@ -343,10 +366,10 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
    es->plane = &comp->plane;
 
    /* set destroy callback */
-   es->wl.surface.resource.destroy = _e_comp_cb_surface_destroy;
+   es->wl.resource.destroy = _e_comp_cb_surface_destroy;
 
    /* add this surface to the client */
-   wl_client_add_resource(client, &es->wl.surface.resource);
+   wl_client_add_resource(client, &es->wl.resource);
 
    /* add this surface to the compositors list */
    comp->surfaces = eina_list_append(comp->surfaces, es);
@@ -358,7 +381,7 @@ _e_comp_cb_surface_destroy(struct wl_resource *resource)
    E_Surface *es;
 
    /* try to get the surface from this resource */
-   if (!(es = container_of(resource, E_Surface, wl.surface.resource)))
+   if (!(es = container_of(resource, E_Surface, wl.resource)))
      return;
 
    /* TODO: finish me */
