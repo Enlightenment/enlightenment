@@ -11,7 +11,7 @@ struct _E_Surface
 {
    struct 
      {
-        struct wl_surface surface;
+        struct wl_resource resource;
         struct wl_list link;
      } wl;
 
