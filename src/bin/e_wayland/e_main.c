@@ -982,8 +982,8 @@ _e_main_xdg_dirs_check(void)
      }
    else
      {
-        ERR("XDG_RUNTIME_DIR Not Set");
-        return EINA_FALSE;
+        ERR("XDG_RUNTIME_DIR Not Set. Using '/tmp'");
+        e_util_env_set("XDG_RUNTIME_DIR", "/tmp");
      }
 
    return EINA_TRUE;
