@@ -34,7 +34,8 @@ struct _E_Shell_Surface
 
    struct 
      {
-        struct wl_pointer_grab *grab;
+        struct wl_list grabs;
+//        struct wl_pointer_grab *grab;
         struct wl_seat *seat;
         struct wl_listener parent_destroy;
         Evas_Coord x, y;
