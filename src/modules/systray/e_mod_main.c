@@ -72,7 +72,7 @@ _cfg_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialo
 {
    Evas_Object *o, *of;
    o = e_widget_list_add(evas, 0, 0);
-   of = e_widget_check_add(evas, "Enable Xembed?", &(cfdata->use_xembed));
+   of = e_widget_check_add(evas, "Enable Xembed", &(cfdata->use_xembed));
    e_widget_list_object_append(o, of, 1, 1, 0.5);
 
    return o;
