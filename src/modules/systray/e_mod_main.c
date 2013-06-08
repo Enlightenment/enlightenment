@@ -114,7 +114,7 @@ _cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
    v->basic.apply_cfdata = _cfg_data_apply;
 
    e_config_dialog_new(m->zone->container, "Systray Settings", "E",
-                       "_e_mod_music_config_dialog",
+                       "_e_mod_systray_config_dialog",
                        NULL, 0, v, data);
 }
 
