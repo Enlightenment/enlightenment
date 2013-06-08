@@ -170,7 +170,7 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
    /* setup shell surface destroy callback */
    ess->wl.surface_destroy.notify = 
      _e_desktop_shell_shell_surface_cb_destroy_notify;
-   wl_signal_add(&es->wl.surface.resource.destroy_signal, 
+   wl_signal_add(&es->wl.resource.destroy_signal, 
                  &ess->wl.surface_destroy);
 
    /* setup shell surface interface */
@@ -206,7 +206,12 @@ _e_desktop_shell_shell_surface_cb_destroy(struct wl_resource *resource)
    if (!(ess = resource->data)) return;
 
    /* if we have a popup grab, end it */
-   if (ess->popup.grab.pointer) wl_pointer_end_grab(ess->popup.grab.pointer);
+   if (!wl_list_empty(&ess->popup.grabs))
+     {
+        wl_list_remove(&ess->popup.grabs);
+        wl_list_init(&ess->popup.grabs);
+        /* TODO: finish me */
+     }
 
    wl_list_remove(&ess->wl.surface_destroy.link);
    ess->surface->configure = NULL;
