@@ -72,7 +72,7 @@ _cfg_widgets_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialo
 {
    Evas_Object *o, *of;
    o = e_widget_list_add(evas, 0, 0);
-   of = e_widget_check_add(evas, "Enable Xembed", &(cfdata->use_xembed));
+   of = e_widget_check_add(evas, _("Enable Xembed"), &(cfdata->use_xembed));
    e_widget_list_object_append(o, of, 1, 1, 0.5);
 
    return o;
@@ -113,7 +113,7 @@ _cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
    v->basic.create_widgets = _cfg_widgets_create;
    v->basic.apply_cfdata = _cfg_data_apply;
 
-   e_config_dialog_new(m->zone->container, "Systray Settings", "E",
+   e_config_dialog_new(m->zone->container, _("Systray Settings"), "E",
                        "_e_mod_systray_config_dialog",
                        NULL, 0, v, data);
 }
@@ -130,7 +130,7 @@ _systray_menu_new(Instance *inst, Evas_Event_Mouse_Down *ev)
 
    m = e_menu_new();
    mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, "Settings");
+   e_menu_item_label_set(mi, _("Settings"));
    e_util_menu_item_theme_icon_set(mi, "configure");
    e_menu_item_callback_set(mi, _cb_menu_cfg, inst);
    m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
