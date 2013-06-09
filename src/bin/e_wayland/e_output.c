@@ -20,6 +20,9 @@ e_output_init(E_Output *output, E_Compositor *comp, Evas_Coord x, Evas_Coord y, 
 
    wl_list_init(&output->wl.resources);
 
+   wl_signal_init(&output->signals.frame);
+   wl_signal_init(&output->signals.destroy);
+
    output->id = ffs(~comp->output_pool) - 1;
    comp->output_pool |= (1 << output->id);
 
