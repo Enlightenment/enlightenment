@@ -44,6 +44,12 @@ struct _E_Output
         struct wl_global *global;
      } wl;
 
+   struct 
+     {
+        struct wl_signal frame;
+        struct wl_signal destroy;
+     } signals;
+
    /* TODO: add backlight and dpms support */
 
    void (*cb_repaint_start)(E_Output *output);
