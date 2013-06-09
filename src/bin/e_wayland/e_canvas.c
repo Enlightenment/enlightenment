@@ -151,7 +151,7 @@ e_canvas_new(unsigned int parent, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
 /*    ee = ecore_evas_wayland_egl_new(NULL, parent, x, y, w, h, frame); */
 /*    if (!ee) */
 /* #endif */
-     ee = ecore_evas_wayland_shm_new(NULL, parent, x, y, w, h, frame);
+   ee = ecore_evas_wayland_shm_new(NULL, parent, x, y, w, h, frame);
 
    if (!ee)
      {
