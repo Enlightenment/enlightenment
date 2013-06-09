@@ -205,13 +205,13 @@ _e_desktop_shell_shell_surface_cb_destroy(struct wl_resource *resource)
    /* try to cast the resource to our shell surface */
    if (!(ess = resource->data)) return;
 
+   /* TODO: finish me */
    /* if we have a popup grab, end it */
-   if (!wl_list_empty(&ess->popup.grabs))
-     {
-        wl_list_remove(&ess->popup.grabs);
-        wl_list_init(&ess->popup.grabs);
-        /* TODO: finish me */
-     }
+   /* if (!wl_list_empty(&ess->popup.grabs)) */
+   /*   { */
+   /*      wl_list_remove(&ess->popup.grabs); */
+   /*      wl_list_init(&ess->popup.grabs); */
+   /* } */
 
    wl_list_remove(&ess->wl.surface_destroy.link);
    ess->surface->configure = NULL;
@@ -345,7 +345,7 @@ _e_desktop_shell_shell_surface_unmap(E_Surface *es)
    /*        wl_pointer_set_focus(input->wl.seat.pointer, NULL, 0, 0); */
    /*   } */
 
-   if (es->ee) ecore_evas_free(es->ee);
+   /* if (es->ee) ecore_evas_free(es->ee); */
 
    es->mapped = EINA_FALSE;
 }
@@ -566,15 +566,12 @@ _e_desktop_shell_shell_surface_type_reset(E_Shell_Surface *ess)
 static void 
 _e_desktop_shell_surface_create_toplevel(E_Surface *es)
 {
-   if (!(es->ee = 
-         e_canvas_new(0, es->geometry.x, es->geometry.y, 
-                      es->geometry.w, es->geometry.h, EINA_FALSE, 
-                      EINA_FALSE, NULL)))
-     return;
-
-   e_canvas_add(es->ee);
-
-   ecore_evas_data_set(es->ee, "surface", es);
-
-   es->evas = ecore_evas_get(es->ee);
+   /* if (!(es->ee =  */
+   /*       e_canvas_new(0, es->geometry.x, es->geometry.y,  */
+   /*                    es->geometry.w, es->geometry.h, EINA_FALSE,  */
+   /*                    EINA_FALSE, NULL))) */
+   /*   return; */
+   /* e_canvas_add(es->ee); */
+   /* ecore_evas_data_set(es->ee, "surface", es); */
+   /* es->evas = ecore_evas_get(es->ee); */
 }
