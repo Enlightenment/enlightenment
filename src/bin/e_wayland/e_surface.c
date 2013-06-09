@@ -109,44 +109,13 @@ e_surface_damage(E_Surface *es)
 EAPI void 
 e_surface_destroy(E_Surface *es)
 {
-   E_Surface_Frame *cb;
-
    /* check for valid surface */
    if (!es) return;
 
    /* emit the destroy signal */
-   wl_signal_emit(&es->wl.resource.destroy_signal, 
-                  &es->wl.resource);
+   wl_signal_emit(&es->wl.resource.destroy_signal, &es->wl.resource);
 
-   /* if this surface is mapped, unmap it */
-   if (es->mapped) e_surface_unmap(es);
-
-   /* remove any pending frame callbacks */
-   EINA_LIST_FREE(es->pending.frames, cb)
-     wl_resource_destroy(&cb->resource);
-
-   pixman_region32_fini(&es->pending.damage);
-   pixman_region32_fini(&es->pending.opaque);
-   pixman_region32_fini(&es->pending.input);
-
-   /* destroy pending buffer */
-   if (es->pending.buffer)
-     wl_list_remove(&es->pending.buffer_destroy.link);
-
-   /* remove any buffer references */
-   e_buffer_reference(&es->buffer.reference, NULL);
-
-   /* free regions */
-   pixman_region32_fini(&es->damage);
-   pixman_region32_fini(&es->opaque);
-   pixman_region32_fini(&es->input);
-
-   /* remove any active frame callbacks */
-   EINA_LIST_FREE(es->frames, cb)
-     wl_resource_destroy(&cb->resource);
-
-   /* free the surface structure */
-   E_FREE(es);
+   wl_resource_destroy(&es->wl.resource);
 }
 
 EAPI void 
@@ -176,6 +145,58 @@ e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque)
    pixman_region32_init(&es->damage);
 
    pixman_region32_copy(&es->clip, opaque);
+}
+
+EAPI void 
+e_surface_buffer_set(E_Surface *es, struct wl_buffer *buffer)
+{
+   pixman_format_code_t format;
+   Evas_Coord w = 0, h = 0;
+   int stride = 0;
+   void *pixels;
+
+   /* check for valid surface */
+   if (!es) return;
+
+   /* destory any existing image */
+   /* if (es->image) pixman_image_unref(es->image); */
+   /* es->image = NULL; */
+
+   /* check for valid buffer */
+   if (!buffer) return;
+
+   /* get buffer format */
+   switch (wl_shm_buffer_get_format(buffer))
+     {
+      case WL_SHM_FORMAT_XRGB8888:
+        format = PIXMAN_x8r8g8b8;
+        break;
+      case WL_SHM_FORMAT_ARGB8888:
+        format = PIXMAN_a8r8g8b8;
+        break;
+      default:
+        e_buffer_reference(&es->buffer.reference, NULL);
+        return;
+        break;
+     }
+
+   /* get buffer information */
+   w = wl_shm_buffer_get_width(buffer);
+   h = wl_shm_buffer_get_height(buffer);
+   pixels = wl_shm_buffer_get_data(buffer);
+   stride = wl_shm_buffer_get_stride(buffer);
+
+   /* create surface image */
+   /* es->image = pixman_image_create_bits(format, w, h, pixels, stride); */
+}
+
+EAPI void 
+e_surface_show(E_Surface *es)
+{
+   /* check for valid surface */
+   if (!es) return;
+
+   /* ecore_evas_show(es->ee); */
 }
 
 /* local functions */
