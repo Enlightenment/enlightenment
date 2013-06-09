@@ -121,8 +121,6 @@ e_compositor_init(E_Compositor *comp, void *display)
         goto global_err;
      }
 
-//   wl_data_device_manager_init(comp->wl.display);
-
    /* try to initialize the shm mechanism */
    if (wl_display_init_shm(comp->wl.display) < 0)
      ERR("Could not initialize SHM mechanism: %m");
@@ -231,7 +229,12 @@ global_err:
 EAPI Eina_Bool 
 e_compositor_shutdown(E_Compositor *comp)
 {
+   E_Surface *es;
    E_Plane *p;
+
+   /* free any surfaces */
+   EINA_LIST_FREE(comp->surfaces, es)
+     e_surface_destroy(es);
 
    /* free any planes */
    EINA_LIST_FREE(comp->planes, p)
@@ -352,6 +355,8 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
    E_Compositor *comp;
    E_Surface *es;
 
+   printf("E_Comp Surface Create\n");
+
    /* try to cast to our compositor */
    if (!(comp = resource->data)) return;
 
@@ -373,23 +378,56 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
 
    /* add this surface to the compositors list */
    comp->surfaces = eina_list_append(comp->surfaces, es);
+
+   printf("\tCreated: %p\n", es);
 }
 
 static void 
 _e_comp_cb_surface_destroy(struct wl_resource *resource)
 {
    E_Surface *es;
+   E_Surface_Frame *cb;
+
+   printf("E_Comp Surface Destroy\n");
 
    /* try to get the surface from this resource */
    if (!(es = container_of(resource, E_Surface, wl.resource)))
      return;
 
-   /* TODO: finish me */
+   printf("\tDestroyed: %p\n", es);
 
    /* remove this surface from the compositor */
    _e_comp->surfaces = eina_list_remove(_e_comp->surfaces, es);
 
-   /* free the structure */
+   /* if this surface is mapped, unmap it */
+   if (es->mapped) e_surface_unmap(es);
+
+   /* remove any pending frame callbacks */
+   EINA_LIST_FREE(es->pending.frames, cb)
+     wl_resource_destroy(&cb->resource);
+
+   pixman_region32_fini(&es->pending.damage);
+   pixman_region32_fini(&es->pending.opaque);
+   pixman_region32_fini(&es->pending.input);
+
+   /* destroy pending buffer */
+   if (es->pending.buffer)
+     wl_list_remove(&es->pending.buffer_destroy.link);
+
+   /* remove any buffer references */
+   e_buffer_reference(&es->buffer.reference, NULL);
+
+   /* free regions */
+   pixman_region32_fini(&es->damage);
+   pixman_region32_fini(&es->opaque);
+   pixman_region32_fini(&es->input);
+   pixman_region32_fini(&es->clip);
+
+   /* remove any active frame callbacks */
+   EINA_LIST_FREE(es->frames, cb)
+     wl_resource_destroy(&cb->resource);
+
+   /* free the surface structure */
    E_FREE(es);
 }
 
