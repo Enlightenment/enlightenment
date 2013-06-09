@@ -4,6 +4,8 @@
 /* local function prototypes */
 static Eina_Bool _output_init(void);
 static void _output_shutdown(E_Output_X11 *output);
+static void _output_surfaces_repaint(E_Output *output, E_Region *damages);
+
 static int _output_cb_frame(void *data);
 static void _output_cb_repaint_start(E_Output *output);
 static void _output_cb_repaint(E_Output *output, E_Region *damages);
@@ -47,6 +49,13 @@ e_modapi_init(E_Module *m)
    /* set the compositor attach function */
    _e_x11_comp->base.attach = _comp_cb_attach;
 
+   /* try to create a renderer */
+   /* if (!e_renderer_create(&_e_x11_comp->base)) */
+   /*   { */
+   /*      ERR("Could not initialize renderer: %m"); */
+   /*      goto output_err; */
+   /*   } */
+
    /* try to initialize output */
    if (!_output_init())
      {
@@ -81,7 +90,7 @@ x_err:
 }
 
 EAPI int 
-e_modapi_shutdown(E_Module *m)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Output_X11 *output;
 
@@ -190,7 +199,8 @@ _output_init(void)
      wl_event_loop_add_timer(loop, _output_cb_frame, output);
 
    /* add this output to the base compositors output list */
-   _e_x11_comp->base.outputs = eina_list_append(_e_x11_comp->base.outputs, output);
+   _e_x11_comp->base.outputs = 
+     eina_list_append(_e_x11_comp->base.outputs, output);
 
    return EINA_TRUE;
 }
@@ -252,10 +262,14 @@ _output_cb_repaint(E_Output *output, E_Region *damages)
 
    /* TODO */
 
+   /* repaint surfaces */
+   /* pixman_renderer_repaint_output */
+
+   /* copy to hw buffer */
+
    pixman_region32_subtract(&comp->plane.damage, &comp->plane.damage, 
                             &damages->region);
-
-   wl_event_source_timer_update(xout->frame_timer, 10);
+   wl_signal_emit(&xout->base.signals.frame, xout);
 }
 
 static void 
@@ -269,7 +283,7 @@ _output_cb_destroy(E_Output *output)
    wl_event_source_remove(xout->frame_timer);
 
    /* destroy the pixmap */
-   if (xout->pmap) ecore_x_pixmap_free(xout->pmap);
+   /* if (xout->pmap) ecore_x_pixmap_free(xout->pmap); */
 
    /* destroy the gc */
    if (xout->gc) ecore_x_gc_free(xout->gc);
@@ -293,6 +307,8 @@ _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
 
    ev = event;
 
+   printf("Output Window Destroy\n");
+
    /* loop the existing outputs */
    EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
      {
@@ -312,6 +328,8 @@ _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
 static void 
 _comp_cb_attach(E_Surface *es, struct wl_buffer *buffer)
 {
+   printf("Wl_X11 Attach: %p\n", es);
+
    e_buffer_reference(&es->buffer.reference, buffer);
 
    if (!buffer) return;
@@ -322,7 +340,5 @@ _comp_cb_attach(E_Surface *es, struct wl_buffer *buffer)
         return;
      }
 
-   /* wl_shm_buffer_get_data(buffer); */
-
-   printf("Wl_X11 Attach: %p\n", es);
+   e_surface_buffer_set(es, buffer);
 }
