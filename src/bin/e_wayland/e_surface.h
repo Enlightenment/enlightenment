@@ -37,6 +37,7 @@ struct _E_Surface
    pixman_region32_t opaque;
    pixman_region32_t clip;
    pixman_region32_t input;
+   /* pixman_image_t *image; */
 
    Eina_List *frames;
    E_Plane *plane;
@@ -49,9 +50,6 @@ struct _E_Surface
      } geometry;
 
    E_Shell_Surface *shell_surface;
-
-   Evas *evas;
-   Ecore_Evas *ee;
 
    Eina_Bool mapped : 1;
 
@@ -72,6 +70,8 @@ EAPI void e_surface_unmap(E_Surface *es);
 EAPI void e_surface_damage(E_Surface *es);
 EAPI void e_surface_destroy(E_Surface *es);
 EAPI void e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque);
+EAPI void e_surface_buffer_set(E_Surface *es, struct wl_buffer *buffer);
+EAPI void e_surface_show(E_Surface *es);
 
 # endif
 #endif
