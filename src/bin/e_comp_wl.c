@@ -1544,6 +1544,10 @@ _e_comp_wl_cb_keymap_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void 
         xkb_map_unref(keymap);
      }
 
+   /* check for valid keyboard */
+   if (!_e_wl_comp->input->wl.keyboard_resource) 
+     return ECORE_CALLBACK_PASS_ON;
+
    /* send the current keymap to the keyboard object */
    wl_keyboard_send_keymap(_e_wl_comp->input->wl.keyboard_resource, 
                            WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, 
