@@ -886,7 +886,7 @@ if test "x${have_wayland}" = "xyes"; then
       efreet-mime >= ${efl_version}
       efreet-trash >= ${efl_version}
       eina >= ${efl_version}
-      edbus2 >= ${efl_version}
+      eldbus >= ${efl_version}
       eio >= ${efl_version}
       $eeze_mount
       $udisks_mount
