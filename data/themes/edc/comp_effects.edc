@@ -383,3 +383,113 @@ group { name: "e/comp/effects/auto/blend";
       }
    }
 }
+
+group { name: "e/comp/effects/auto/grow";
+   inherit: "e/comp/effects/auto/pane";
+   //data.item: "noclip" "1"; //setting this prevents object from being clipped to its zone during effect
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+            if (st == 1)
+              set_state(PART:"mover", "custom", 0.0);
+            else
+              set_state(PART:"mover", "default", 0.0);
+         } else if ((type == MSG_INT_SET) && (id == 1)) {
+            /* border geom[4] / screen size[2] / desk change direction[2] */
+            new dx, dy;
+            new Float:r1x = 0.0, Float:r1y = 0.0, Float:r2x = 1.0, Float:r2y = 1.0;
+
+            dx = getarg(8);
+            dy = getarg(9);
+
+            custom_state(PART:"mover", "default", 0.0);
+            if (dx == 1) r1x = 1.0;
+            else if (dx == -1) r2x = 0.0;
+            if (dy == 1) r1y = 1.0;
+            else if (dy == -1) r2y = 0.0;
+            set_state_val(PART:"mover", STATE_REL1, r1x, r1y);
+            set_state_val(PART:"mover", STATE_REL2, r2x, r2y);
+         }
+      }
+   }
+}
+
+#if 0 //this is weirdly broken with proxy visibility somehow...
+group { name: "e/comp/effects/auto/rotate";
+   inherit: "e/comp/effects/auto/pane";
+   script {
+      public message(Msg_Type:type, id, ...) {
+         if ((type == MSG_INT_SET) && (id == 0)) {
+            /* set state */
+            new st;
+
+            st = getarg(2);
+
+            if (st == 1) {
+               set_state(PART:"mover", "custom", 0.0);
+               set_state(PART:"proxy", "hidden", 0.0);
+            } else {
+               set_state(PART:"mover", "default", 0.0);
+               set_state(PART:"proxy", "default", 0.0);
+            }
+         }
+#if 0
+         else if ((type == MSG_INT_SET) && (id == 1)) {
+            /* desk change direction */
+            new Float:mx, Float:my;
+            mx = get_float(getarg(8) * 180);
+            my = get_float(getarg(9) * 180);
+            custom_state(PART:"proxy", "hidden", 0.0);
+            set_state_val(PART:"proxy", STATE_MAP_ROT_Y, mx);
+            set_state_val(PART:"proxy", STATE_MAP_ROT_X, my);
+         }
+#endif
+      }
+   }
+   parts {
+      part { name: "proxy"; type: PROXY; mouse_events: 0;
+         insert_after: "e.swallow.content";
+         description { state: "default";
+            source: "e.swallow.content";
+            map {
+               on: 1;
+               perspective_on: 1;
+               perspective: "e.swallow.content";
+               smooth: 1;
+               rotation.y: 0;
+               rotation.x: 0;
+            }
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default";
+            map.rotation.y: -180;
+            map.rotation.x: -180;
+            proxy.source_visible: 0;
+            map.backface_cull: 1;
+         }
+      }
+   }
+   programs {
+      program {
+         name: "show2";
+         signal: "e,action,go";
+         source: "e";
+         action: STATE_SET "hidden" 0.0;
+         transition: DECELERATE 0.4 CURRENT;
+         target: "proxy";
+      }
+      program {
+         name: "hide2";
+         signal: "e,action,go";
+         source: "e";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.4 CURRENT;
+         target: "proxy";
+      }
+   }
+}
+#endif
