@@ -123,6 +123,8 @@ void *alloca (size_t);
 # include <wayland-server.h>
 
 # ifdef HAVE_WAYLAND_EGL
+#  include <GLES2/gl2.h>
+#  include <GLES2/gl2ext.h>
 #  include <EGL/egl.h>
 # endif
 
