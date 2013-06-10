@@ -41,6 +41,7 @@ struct _E_Compositor
 
    E_Shell_Interface shell_interface;
 
+   E_Renderer *renderer;
    E_Plane plane; // primary plane
 
    Ecore_Fd_Handler *fd_hdlr;
