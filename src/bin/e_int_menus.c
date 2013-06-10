@@ -883,12 +883,15 @@ _e_int_menus_apps_thread_new(E_Menu *m, const char *dir)
      ecore_timer_reset(_e_int_menus_app_cleaner); 
    else
      _e_int_menus_app_cleaner = ecore_timer_add(300, _e_int_menus_app_cleaner_cb, NULL);
-   eina_stringshare_del(dir);  
-   _e_int_menus_apps_scan(m, menu);           
-   e_menu_pre_activate_callback_set(m, NULL, NULL);   
-   e_object_data_set(E_OBJECT(m), menu);   
-   e_object_free_attach_func_set(E_OBJECT(m),        
-				 _e_int_menus_apps_free_hook2);
+   eina_stringshare_del(dir);
+   if (m)
+     {
+        _e_int_menus_apps_scan(m, menu);           
+        e_menu_pre_activate_callback_set(m, NULL, NULL);   
+        e_object_data_set(E_OBJECT(m), menu);   
+        e_object_free_attach_func_set(E_OBJECT(m),        
+          _e_int_menus_apps_free_hook2);
+     }
 
    if (!e_config->menu_apps_show) goto on_end;
 
