@@ -57,7 +57,9 @@ ENLIGHTENMENTHEADERS = \
   e_canvas.h \
   e_manager.h \
   e_container.h \
-  e_output.h
+  e_output.h \
+  e_shader.h \
+  e_renderer.h
 
 enlightenment_wl_src = \
   e_log.c \
@@ -88,6 +90,7 @@ enlightenment_wl_src = \
   e_manager.c \
   e_container.c \
   e_output.c \
+  e_renderer.c \
   $(ENLIGHTENMENTHEADERS)
 
 enlightenment_wl_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@
