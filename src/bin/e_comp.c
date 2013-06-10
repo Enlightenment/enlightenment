@@ -2282,7 +2282,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd, Eina_Bool force)
      {
         e_comp_win_opacity_set(cw, cw->opacity);
         border = cw->bd->client.initial_attributes.border;
-        x = bd->x, y = bd->y, w = bd->w, h = bd->h;
+        x = cw->bd->x, y = cw->bd->y, w = cw->bd->w, h = cw->bd->h;
      }
    _e_comp_win_configure(cw, x, y, w, h, border);
    DBG("  [0x%x] add", cw->win);
