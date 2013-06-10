@@ -1,3 +1,5 @@
+#define COMP_EFFECT_DURATION 0.4
+
 
 group { name: "e/comp/effects/none";
    parts {
@@ -53,7 +55,7 @@ group { name: "e/comp/effects/move";
          source: "e";
          filter: "mover" "default";
          action: STATE_SET "custom" 0.0;
-         transition: DECELERATE 0.4 CURRENT;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
          target: "mover";
          after: "done";
       }
@@ -63,7 +65,7 @@ group { name: "e/comp/effects/move";
          source: "e";
          filter: "mover" "custom";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.4 CURRENT;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
          target: "mover";
          after: "done";
       }
@@ -133,7 +135,7 @@ group { name: "e/comp/effects/auto/pane";
          source: "e";
          filter: "mover" "default";
          action: STATE_SET "custom" 0.0;
-         transition: DECELERATE 0.4 CURRENT;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
          target: "mover";
          after: "done";
       }
@@ -143,7 +145,7 @@ group { name: "e/comp/effects/auto/pane";
          source: "e";
          filter: "mover" "custom";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.4 CURRENT;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
          target: "mover";
          after: "done";
       }
@@ -296,7 +298,7 @@ group { name: "e/comp/effects/auto/zoom";
          source: "e";
          filter: "mover" "default";
          action: STATE_SET "hidden" 0.0;
-         transition: ACCELERATE 0.4 CURRENT;
+         transition: ACCELERATE COMP_EFFECT_DURATION CURRENT;
          target: "clip";
       }
       program {
@@ -305,7 +307,7 @@ group { name: "e/comp/effects/auto/zoom";
          source: "e";
          filter: "mover" "custom";
          action: STATE_SET "default" 0.0;
-         transition: ACCELERATE 0.4 CURRENT;
+         transition: ACCELERATE COMP_EFFECT_DURATION CURRENT;
          target: "clip";
       }
    }
@@ -355,7 +357,7 @@ group { name: "e/comp/effects/auto/blend";
          source: "e";
          filter: "clip" "default";
          action: STATE_SET "hidden" 0.0;
-         transition: LINEAR 0.4 CURRENT;
+         transition: LINEAR COMP_EFFECT_DURATION CURRENT;
          target: "clip";
          after: "done";
       }
@@ -365,7 +367,7 @@ group { name: "e/comp/effects/auto/blend";
          source: "e";
          filter: "clip" "hidden";
          action: STATE_SET "default" 0.0;
-         transition: LINEAR 0.4 CURRENT;
+         transition: LINEAR COMP_EFFECT_DURATION CURRENT;
          target: "clip";
          after: "done";
       }
@@ -479,7 +481,7 @@ group { name: "e/comp/effects/auto/rotate";
          signal: "e,action,go";
          source: "e";
          action: STATE_SET "hidden" 0.0;
-         transition: DECELERATE 0.4 CURRENT;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
          target: "proxy";
       }
       program {
@@ -487,7 +489,7 @@ group { name: "e/comp/effects/auto/rotate";
          signal: "e,action,go";
          source: "e";
          action: STATE_SET "default" 0.0;
-         transition: DECELERATE 0.4 CURRENT;
+         transition: DECELERATE COMP_EFFECT_DURATION CURRENT;
          target: "proxy";
       }
    }
