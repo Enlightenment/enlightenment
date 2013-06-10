@@ -32,3 +32,5 @@
 #include "e_manager.h"
 #include "e_container.h"
 #include "e_output.h"
+#include "e_shader.h"
+#include "e_renderer.h"
