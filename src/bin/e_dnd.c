@@ -630,8 +630,8 @@ _e_drag_coords_update(const E_Drop_Handler *h, int *dx, int *dy)
              break;
 
            case E_WIN_TYPE:
-             px = ((E_Win *)(h->obj))->x;
-             py = ((E_Win *)(h->obj))->y;
+             px = ((E_Win *)(h->obj))->border->x;
+             py = ((E_Win *)(h->obj))->border->y;
              break;
 
            case E_ZONE_TYPE:
