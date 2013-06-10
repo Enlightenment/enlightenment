@@ -218,3 +218,4 @@ Fixes:
     * fixed theme bug which prevented windows from unshading correctly when animations were disabled
     * filemanager windows no longer resize to 0x0 when double clicked with no icons present
     * fixed e_exec to open .desktop url links
+    * fix remember size/position apply

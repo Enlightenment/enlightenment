@@ -1,5 +1,9 @@
 2013-05-29 Mike Blumenkrantz
 
+        * fix remember size/position apply
+
+2013-05-29 Mike Blumenkrantz
+
         * added e_border_inset utility functions
         * new winlist config option for moving selected window to current desk
 
