@@ -2,16 +2,16 @@
 #include "e_mod_main.h"
 
 /* local function prototypes */
-static Eina_Bool _output_init(void);
+static Eina_Bool _output_init(E_Compositor_X11 *xcomp);
+static Eina_Bool _output_init_shm(E_Compositor_X11 *xcomp, E_Output_X11 *output, Evas_Coord w, Evas_Coord h);
 static void _output_shutdown(E_Output_X11 *output);
-static void _output_surfaces_repaint(E_Output *output, E_Region *damages);
 
 static int _output_cb_frame(void *data);
 static void _output_cb_repaint_start(E_Output *output);
-static void _output_cb_repaint(E_Output *output, E_Region *damages);
+static void _output_cb_repaint_shm(E_Output *output, pixman_region32_t *damage);
 static void _output_cb_destroy(E_Output *output);
+static Eina_Bool _output_cb_window_damage(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
-static void _comp_cb_attach(E_Surface *es, struct wl_buffer *buffer);
 
 /* local variables */
 static E_Compositor_X11 *_e_x11_comp;
@@ -46,9 +46,6 @@ e_modapi_init(E_Module *m)
         goto comp_err;
      }
 
-   /* set the compositor attach function */
-   _e_x11_comp->base.attach = _comp_cb_attach;
-
    /* try to create a renderer */
    if (!e_renderer_create(&_e_x11_comp->base))
      {
@@ -57,12 +54,14 @@ e_modapi_init(E_Module *m)
      }
 
    /* try to initialize output */
-   if (!_output_init())
+   if (!_output_init(_e_x11_comp))
      {
         ERR("Could not initialize output: %m");
         goto output_err;
      }
 
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_X_EVENT_WINDOW_DAMAGE, 
+                         _output_cb_window_damage, NULL);
    E_LIST_HANDLER_APPEND(_hdlrs, ECORE_X_EVENT_WINDOW_DELETE_REQUEST, 
                          _output_cb_window_destroy, NULL);
 
@@ -115,11 +114,10 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
 /* local functions */
 static Eina_Bool 
-_output_init(void)
+_output_init(E_Compositor_X11 *xcomp)
 {
    E_Output_X11 *output;
    struct wl_event_loop *loop;
-   /* unsigned int mask; */
 
    /* try to allocate space for our output structure */
    if (!(output = E_NEW(E_Output_X11, 1))) 
@@ -132,6 +130,10 @@ _output_init(void)
    output->mode.w = 1024;
    output->mode.h = 768;
    output->mode.refresh = 60;
+
+   output->base.original = output->base.current;
+   output->base.make = "X11_Wayland";
+   output->base.model = "none";
 
    /* add this mode to the base outputs list of modes */
    output->base.modes = eina_list_append(output->base.modes, &output->mode);
@@ -165,14 +167,6 @@ _output_init(void)
    /* show the window */
    ecore_x_window_show(output->win);
 
-   /* output->pmap =  */
-   /*   ecore_x_pixmap_new(output->win, output->mode.w, output->mode.h,  */
-   /*                      ecore_x_window_depth_get(output->win)); */
-
-   /* output->gc =  */
-   /*   ecore_x_gc_new(output->pmap, (ECORE_X_GC_VALUE_MASK_PLANE_MASK |  */
-   /*                                 ECORE_X_GC_VALUE_MASK_FOREGROUND), &mask); */
-
    /* ecore_x_window_pixmap_set(output->win, output->pmap); */
 
    output->base.current = &output->mode;
@@ -183,13 +177,24 @@ _output_init(void)
    output->base.cb_repaint_start = _output_cb_repaint_start;
 
    /* FIXME: Change this based on software/gl */
-   output->base.cb_repaint = _output_cb_repaint;
+   output->base.cb_repaint = _output_cb_repaint_shm;
 
    /* initialize base output */
    e_output_init(&output->base, &_e_x11_comp->base, 0, 0, 
                  output->mode.w, output->mode.h, output->mode.flags);
 
-   /* TODO: deal with render */
+   /* FIXME: deal with render based on software/gl */
+   if (!_output_init_shm(_e_x11_comp, output, output->mode.w, output->mode.h))
+     {
+        printf("Could not init shm\n");
+        return EINA_FALSE;
+     }
+
+   if (!xcomp->base.renderer->output_create(&output->base, output->win))
+     {
+        printf("Renderer Could not create Output\n");
+        return EINA_FALSE;
+     }
 
    /* get the wl event loop */
    loop = wl_display_get_event_loop(_e_x11_comp->base.wl.display);
@@ -201,6 +206,32 @@ _output_init(void)
    /* add this output to the base compositors output list */
    _e_x11_comp->base.outputs = 
      eina_list_append(_e_x11_comp->base.outputs, output);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool 
+_output_init_shm(E_Compositor_X11 *xcomp, E_Output_X11 *output, Evas_Coord w, Evas_Coord h)
+{
+   int bpp = 0;
+   unsigned int mask;
+   unsigned int *data;
+   Ecore_X_Visual vis;
+
+   vis = ecore_x_default_visual_get(xcomp->display, 
+                                    ecore_x_default_screen_get());
+
+   output->buffer = 
+     ecore_x_image_new(w, h, vis, ecore_x_window_depth_get(output->win));
+
+   data = ecore_x_image_data_get(output->buffer, NULL, NULL, &bpp);
+
+   output->hw_surface = 
+     pixman_image_create_bits(PIXMAN_x8r8g8b8, w, h, data, (w * bpp / 8));
+
+   output->gc = 
+     ecore_x_gc_new(output->win, (ECORE_X_GC_VALUE_MASK_PLANE_MASK | 
+                                  ECORE_X_GC_VALUE_MASK_FOREGROUND), &mask);
 
    return EINA_TRUE;
 }
@@ -218,6 +249,8 @@ _output_cb_frame(void *data)
 
    if (!(output = data)) return 1;
 
+   printf("Output Frame\n");
+
    /* start the repaint loop */
    _output_cb_repaint_start(&output->base);
 
@@ -232,9 +265,12 @@ _output_cb_repaint_start(E_Output *output)
    /* check for valid output */
    if (!output) return;
 
+   printf("Output Repaint Start\n");
+
    /* if a repaint is needed, do it */
    if (output->repaint.needed)
      {
+        printf("\tCalling Output Repaint\n");
         e_output_repaint(output, ecore_loop_time_get());
         return;
      }
@@ -250,26 +286,28 @@ _output_cb_repaint_start(E_Output *output)
 }
 
 static void 
-_output_cb_repaint(E_Output *output, E_Region *damages)
+_output_cb_repaint_shm(E_Output *output, pixman_region32_t *damage)
 {
-   E_Output_X11 *xout;
+   E_Output_X11 *xoutput;
    E_Compositor *comp;
-   /* E_Compositor_X11 *xcomp; */
 
-   xout = (E_Output_X11 *)output;
+   printf("Output Repaint Shm\n");
+
+   xoutput = (E_Output_X11 *)output;
    comp = output->compositor;
-   /* xcomp = (E_Compositor_X11 *)comp; */
 
-   /* TODO */
+   comp->renderer->output_buffer_set(output, xoutput->hw_surface);
+   comp->renderer->output_repaint(output, damage);
 
-   /* repaint surfaces */
-   /* pixman_renderer_repaint_output */
+   pixman_region32_subtract(&comp->plane.damage, &comp->plane.damage, damage);
 
-   /* copy to hw buffer */
+   /* TODO: set clip for output */
 
-   pixman_region32_subtract(&comp->plane.damage, &comp->plane.damage, 
-                            &damages->region);
-   wl_signal_emit(&xout->base.signals.frame, xout);
+   ecore_x_image_put(xoutput->buffer, xoutput->win, xoutput->gc, 
+                     0, 0, 0, 0, pixman_image_get_width(xoutput->hw_surface), 
+                     pixman_image_get_height(xoutput->hw_surface));
+
+   wl_event_source_timer_update(xoutput->frame_timer, 10);
 }
 
 static void 
@@ -285,6 +323,8 @@ _output_cb_destroy(E_Output *output)
    /* destroy the pixmap */
    /* if (xout->pmap) ecore_x_pixmap_free(xout->pmap); */
 
+   if (xout->buffer) ecore_x_image_free(xout->buffer);
+
    /* destroy the gc */
    if (xout->gc) ecore_x_gc_free(xout->gc);
 
@@ -296,6 +336,29 @@ _output_cb_destroy(E_Output *output)
 
    /* free the structure */
    E_FREE(xout);
+}
+
+static Eina_Bool 
+_output_cb_window_damage(void *data, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Window_Damage *ev;
+   E_Output_X11 *output;
+   Eina_List *l;
+
+   ev = event;
+
+   printf("Output Window Damage\n");
+
+   EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
+     {
+        if (ev->win == output->win)
+          {
+             e_output_repaint_schedule(&output->base);
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool 
@@ -323,22 +386,4 @@ _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
      }
 
    return ECORE_CALLBACK_PASS_ON;
-}
-
-static void 
-_comp_cb_attach(E_Surface *es, struct wl_buffer *buffer)
-{
-   printf("Wl_X11 Attach: %p\n", es);
-
-   e_buffer_reference(&es->buffer.reference, buffer);
-
-   if (!buffer) return;
-
-   if (!wl_buffer_is_shm(buffer))
-     {
-        e_buffer_reference(&es->buffer.reference, NULL);
-        return;
-     }
-
-   e_surface_buffer_set(es, buffer);
 }

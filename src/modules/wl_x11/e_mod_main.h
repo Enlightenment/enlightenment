@@ -19,8 +19,11 @@ struct _E_Output_X11
    E_Output_Mode mode;
 
    Ecore_X_Window win;
-   Ecore_X_Pixmap pmap;
+   Ecore_X_Image *buffer;
+   /* Ecore_X_Pixmap pmap; */
    Ecore_X_GC gc;
+
+   pixman_image_t *hw_surface;
 
    struct wl_event_source *frame_timer;
 };
