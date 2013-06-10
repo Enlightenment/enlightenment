@@ -7169,13 +7169,14 @@ _e_border_eval0(E_Border *bd)
 
         if (!((bd->client.icccm.name == pname) &&
               (bd->client.icccm.class == pclass)))
-          bd->changes.icon = 1;
+          {
+             bd->changes.icon = 1;
+             rem_change = 1;
+          }
 
-        if (pname) eina_stringshare_del(pname);
-        if (pclass) eina_stringshare_del(pclass);
+        eina_stringshare_del(pname);
+        eina_stringshare_del(pclass);
         bd->client.icccm.fetch.name_class = 0;
-        bd->changes.icon = 1;
-        rem_change = 1;
      }
    if (bd->changes.prop || bd->client.icccm.fetch.state)
      {
