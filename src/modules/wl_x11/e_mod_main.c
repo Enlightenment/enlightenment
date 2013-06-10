@@ -50,11 +50,11 @@ e_modapi_init(E_Module *m)
    _e_x11_comp->base.attach = _comp_cb_attach;
 
    /* try to create a renderer */
-   /* if (!e_renderer_create(&_e_x11_comp->base)) */
-   /*   { */
-   /*      ERR("Could not initialize renderer: %m"); */
-   /*      goto output_err; */
-   /*   } */
+   if (!e_renderer_create(&_e_x11_comp->base))
+     {
+        ERR("Could not initialize renderer: %m");
+        goto output_err;
+     }
 
    /* try to initialize output */
    if (!_output_init())
