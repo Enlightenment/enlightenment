@@ -82,14 +82,10 @@ static void
 _fill_data(E_Config_Dialog_Data *cfdata)
 {
    /* stacking */
-   if ((!cfdata->escfg->popup) && (cfdata->escfg->layer == 1))
-     cfdata->layer = 0;
-   else if ((cfdata->escfg->popup) && (cfdata->escfg->layer == 0))
-     cfdata->layer = 1;
-   else if ((cfdata->escfg->popup) && (cfdata->escfg->layer == E_LAYER_ABOVE))
-     cfdata->layer = 2;
+   if (cfdata->escfg->popup)
+     cfdata->layer = 1 + (!!cfdata->escfg->layer);
    else
-     cfdata->layer = 2;
+     cfdata->layer = 0;
    cfdata->overlap = cfdata->escfg->overlap;
 
    /* position */
