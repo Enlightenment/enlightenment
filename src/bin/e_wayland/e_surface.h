@@ -25,7 +25,7 @@ struct _E_Surface
      {
         struct wl_buffer *buffer;
         struct wl_listener buffer_destroy;
-        Eina_List *frames;
+        struct wl_list frames;
 
         pixman_region32_t damage, opaque, input;
 
@@ -37,10 +37,11 @@ struct _E_Surface
    pixman_region32_t opaque;
    pixman_region32_t clip;
    pixman_region32_t input;
-   /* pixman_image_t *image; */
 
-   Eina_List *frames;
+   struct wl_list frames;
+
    E_Plane *plane;
+   E_Output *output;
 
    struct 
      {
@@ -53,6 +54,8 @@ struct _E_Surface
 
    Eina_Bool mapped : 1;
 
+   void *state;
+
    void (*map)(E_Surface *surface, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
    void (*unmap)(E_Surface *surface);
    void (*configure)(E_Surface *surface, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
@@ -60,18 +63,19 @@ struct _E_Surface
 
 struct _E_Surface_Frame
 {
-   E_Surface *surface;
    struct wl_resource resource;
+   struct wl_list link;
 };
 
 EAPI E_Surface *e_surface_new(unsigned int id);
 EAPI void e_surface_attach(E_Surface *es, struct wl_buffer *buffer);
 EAPI void e_surface_unmap(E_Surface *es);
 EAPI void e_surface_damage(E_Surface *es);
+EAPI void e_surface_damage_below(E_Surface *es);
 EAPI void e_surface_destroy(E_Surface *es);
 EAPI void e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque);
-EAPI void e_surface_buffer_set(E_Surface *es, struct wl_buffer *buffer);
 EAPI void e_surface_show(E_Surface *es);
+EAPI void e_surface_repaint_schedule(E_Surface *es);
 
 # endif
 #endif

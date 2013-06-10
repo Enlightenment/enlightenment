@@ -38,6 +38,8 @@ e_surface_new(unsigned int id)
 
    /* initialize the link */
    wl_list_init(&es->wl.link);
+   wl_list_init(&es->frames);
+   wl_list_init(&es->pending.frames);
 
    pixman_region32_init(&es->damage);
    pixman_region32_init(&es->opaque);
@@ -84,7 +86,7 @@ e_surface_attach(E_Surface *es, struct wl_buffer *buffer)
      }
 
    /* call renderer attach */
-   if (_e_comp->attach) _e_comp->attach(es, buffer);
+   if (_e_comp->renderer->attach) _e_comp->renderer->attach(es, buffer);
 }
 
 EAPI void 
@@ -103,7 +105,18 @@ e_surface_damage(E_Surface *es)
    pixman_region32_union_rect(&es->damage, &es->damage, 
                               0, 0, es->geometry.w, es->geometry.h);
 
-   /* TODO: schedule repaint */
+   e_surface_repaint_schedule(es);
+}
+
+EAPI void 
+e_surface_damage_below(E_Surface *es)
+{
+   pixman_region32_t damage;
+
+   pixman_region32_init(&damage);
+   pixman_region32_subtract(&damage, &es->opaque, &es->clip);
+   pixman_region32_union(&es->plane->damage, &es->plane->damage, &damage);
+   pixman_region32_fini(&damage);
 }
 
 EAPI void 
@@ -129,7 +142,10 @@ e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque)
      {
         /* if this is an shm buffer, flush any pending damage */
         if (wl_buffer_is_shm(es->buffer.reference.buffer))
-          e_compositor_damage_flush(_e_comp, es);
+          {
+             if (_e_comp->renderer->damage_flush)
+               _e_comp->renderer->damage_flush(es);
+          }
      }
 
    /* TODO: handle transforms */
@@ -148,55 +164,27 @@ e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque)
 }
 
 EAPI void 
-e_surface_buffer_set(E_Surface *es, struct wl_buffer *buffer)
-{
-   pixman_format_code_t format;
-   Evas_Coord w = 0, h = 0;
-   int stride = 0;
-   void *pixels;
-
-   /* check for valid surface */
-   if (!es) return;
-
-   /* destory any existing image */
-   /* if (es->image) pixman_image_unref(es->image); */
-   /* es->image = NULL; */
-
-   /* check for valid buffer */
-   if (!buffer) return;
-
-   /* get buffer format */
-   switch (wl_shm_buffer_get_format(buffer))
-     {
-      case WL_SHM_FORMAT_XRGB8888:
-        format = PIXMAN_x8r8g8b8;
-        break;
-      case WL_SHM_FORMAT_ARGB8888:
-        format = PIXMAN_a8r8g8b8;
-        break;
-      default:
-        e_buffer_reference(&es->buffer.reference, NULL);
-        return;
-        break;
-     }
-
-   /* get buffer information */
-   w = wl_shm_buffer_get_width(buffer);
-   h = wl_shm_buffer_get_height(buffer);
-   pixels = wl_shm_buffer_get_data(buffer);
-   stride = wl_shm_buffer_get_stride(buffer);
-
-   /* create surface image */
-   /* es->image = pixman_image_create_bits(format, w, h, pixels, stride); */
-}
-
-EAPI void 
 e_surface_show(E_Surface *es)
 {
    /* check for valid surface */
    if (!es) return;
 
    /* ecore_evas_show(es->ee); */
+}
+
+EAPI void 
+e_surface_repaint_schedule(E_Surface *es)
+{
+   E_Output *output;
+   Eina_List *l;
+
+   printf("E_Surface Repaint Schedule\n");
+
+   EINA_LIST_FOREACH(_e_comp->outputs, l, output)
+     {
+        if (es->output == output)
+          e_output_repaint_schedule(output);
+     }
 }
 
 /* local functions */
@@ -310,12 +298,11 @@ _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    pixman_region32_intersect(&es->input, &es->input, &es->pending.input);
 
    /* add any pending frame callbacks to main list and free pending */
-   EINA_LIST_FREE(es->pending.frames, cb)
-     es->frames = eina_list_append(es->frames, cb);
+   wl_list_insert_list(&es->frames, &es->pending.frames);
+   wl_list_init(&es->pending.frames);
 
    /* schedule repaint */
-   /* evas_damage_rectangle_add(es->evas, es->damage->x, es->damage->y,  */
-   /*                           es->damage->w, es->damage->h); */
+   e_surface_repaint_schedule(es);
 }
 
 static void 
@@ -334,8 +321,6 @@ _e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsi
         return;
      }
 
-   cb->surface = es;
-
    /* setup the callback object */
    cb->resource.object.interface = &wl_callback_interface;
    cb->resource.object.id = id;
@@ -347,7 +332,7 @@ _e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsi
    wl_client_add_resource(client, &cb->resource);
 
    /* append the callback to pending frames */
-   es->pending.frames = eina_list_prepend(es->pending.frames, cb);
+   wl_list_insert(es->pending.frames.prev, &cb->link);
 }
 
 static void 
@@ -413,20 +398,12 @@ _e_surface_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSE
 static void 
 _e_surface_frame_cb_destroy(struct wl_resource *resource)
 {
-   E_Surface *es;
    E_Surface_Frame *cb;
 
    /* try to cast the resource to our callback */
    if (!(cb = resource->data)) return;
 
-   es = cb->surface;
+   wl_list_remove(&cb->link);
 
-   /* remove this callback from the pending frames callback list */
-   es->pending.frames = eina_list_remove(es->pending.frames, cb);
-
-   /* remove this callback from the frames callback list */
-   es->frames = eina_list_remove(es->frames, cb);
-
-   /* free the callback structure */
    E_FREE(cb);
 }

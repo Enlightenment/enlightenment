@@ -14,7 +14,7 @@ typedef struct _E_Renderer E_Renderer;
 #    define EGL_TEXTURE_Y_U_V_WL 0x31D7
 #    define EGL_TEXTURE_Y_UV_WL 0x31D8
 #    define EGL_TEXTURE_Y_XUXV_WL 0x31D9
-#    define EGL_TEXTURE_EXTERNAL_WL 0x31DA
+
 struct wl_display;
 struct wl_buffer;
 #    ifdef EGL_EGLEXT_PROTOTYPES
@@ -26,6 +26,15 @@ typedef EGLBoolean (EGLAPIENTRYP PFNEGLBINDWAYLANDDISPLAYWL) (EGLDisplay dpy, st
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLUNBINDWAYLANDDISPLAYWL) (EGLDisplay dpy, struct wl_display *display);
 typedef EGLBoolean (EGLAPIENTRYP PFNEGLQUERYWAYLANDBUFFERWL) (EGLDisplay dpy, struct wl_buffer *buffer, EGLint attribute, EGLint *value);
 #   endif
+
+#   ifndef EGL_TEXTURE_EXTERNAL_WL
+#    define EGL_TEXTURE_EXTERNAL_WL 0x31DA
+#   endif
+
+#    ifndef EGL_BUFFER_AGE_EXT
+#     define EGL_BUFFER_AGE_EXT 0x313D
+#    endif
+
 #  endif
 
 struct _E_Renderer
@@ -52,7 +61,7 @@ struct _E_Renderer
 
    Eina_Bool have_unpack : 1;
    Eina_Bool have_bind : 1;
-   Eina_bool have_external : 1;
+   Eina_Bool have_external : 1;
    Eina_Bool have_buffer_age : 1;
 
    struct 
@@ -69,11 +78,14 @@ struct _E_Renderer
      } shaders;
 #  endif
 
-   int (*pixels_read)(E_Output *output, int format, void *pixels, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+   Eina_Bool (*pixels_read)(E_Output *output, int format, void *pixels, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+   void (*output_buffer_set)(E_Output *output, pixman_image_t *buffer);
    void (*output_repaint)(E_Output *output, pixman_region32_t *damage);
    void (*damage_flush)(E_Surface *surface);
    void (*attach)(E_Surface *surface, struct wl_buffer *buffer);
-   int (*surface_create)(E_Surface *surface);
+   Eina_Bool (*output_create)(E_Output *output, unsigned int window);
+   void (*output_destroy)(E_Output *output);
+   Eina_Bool (*surface_create)(E_Surface *surface);
    void (*surface_destroy)(E_Surface *surface);
    void (*surface_color_set)(E_Surface *surface, int r, int g, int b, int a);
    void (*destroy)(E_Compositor *comp);

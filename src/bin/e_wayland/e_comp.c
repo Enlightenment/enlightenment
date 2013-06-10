@@ -289,6 +289,8 @@ e_compositor_damage_calculate(E_Compositor *comp)
    Eina_List *l;
    pixman_region32_t clip, opaque;
 
+   printf("E_Comp Damage Calculate\n");
+
    /* check for valid compositor */
    if (!comp) return;
 
@@ -367,6 +369,14 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
         return;
      }
 
+   /* ask the renderer to create any internal representation of this surface 
+    * that it may need */
+   if (!comp->renderer->surface_create(es))
+     {
+        e_surface_destroy(es);
+        return;
+     }
+
    /* set surface plane to compositor primary plane */
    es->plane = &comp->plane;
 
@@ -386,7 +396,7 @@ static void
 _e_comp_cb_surface_destroy(struct wl_resource *resource)
 {
    E_Surface *es;
-   E_Surface_Frame *cb;
+   E_Surface_Frame *cb, *cbnext;
 
    printf("E_Comp Surface Destroy\n");
 
@@ -403,7 +413,7 @@ _e_comp_cb_surface_destroy(struct wl_resource *resource)
    if (es->mapped) e_surface_unmap(es);
 
    /* remove any pending frame callbacks */
-   EINA_LIST_FREE(es->pending.frames, cb)
+   wl_list_for_each_safe(cb, cbnext, &es->pending.frames, link)
      wl_resource_destroy(&cb->resource);
 
    pixman_region32_fini(&es->pending.damage);
@@ -417,6 +427,9 @@ _e_comp_cb_surface_destroy(struct wl_resource *resource)
    /* remove any buffer references */
    e_buffer_reference(&es->buffer.reference, NULL);
 
+   if (_e_comp->renderer->surface_destroy)
+     _e_comp->renderer->surface_destroy(es);
+
    /* free regions */
    pixman_region32_fini(&es->damage);
    pixman_region32_fini(&es->opaque);
@@ -424,7 +437,7 @@ _e_comp_cb_surface_destroy(struct wl_resource *resource)
    pixman_region32_fini(&es->clip);
 
    /* remove any active frame callbacks */
-   EINA_LIST_FREE(es->frames, cb)
+   wl_list_for_each_safe(cb, cbnext, &es->frames, link)
      wl_resource_destroy(&cb->resource);
 
    /* free the surface structure */
