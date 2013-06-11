@@ -211,16 +211,16 @@ _output_init(E_Compositor_X11 *xcomp)
 static Eina_Bool 
 _output_init_shm(E_Compositor_X11 *xcomp, E_Output_X11 *output, Evas_Coord w, Evas_Coord h)
 {
-   int bpp = 0;
-   unsigned int mask;
+   int bpp = 0, depth = 0;
    unsigned int *data;
    Ecore_X_Visual vis;
 
    vis = ecore_x_default_visual_get(xcomp->display, 
                                     ecore_x_default_screen_get());
 
-   output->buffer = 
-     ecore_x_image_new(w, h, vis, ecore_x_window_depth_get(output->win));
+   depth = ecore_x_window_depth_get(output->win);
+
+   output->buffer = ecore_x_image_new(w, h, vis, depth);
 
    data = ecore_x_image_data_get(output->buffer, NULL, NULL, &bpp);
 
@@ -243,8 +243,6 @@ _output_cb_frame(void *data)
 
    if (!(output = data)) return 1;
 
-   printf("Output Frame\n");
-
    /* start the repaint loop */
    _output_cb_repaint_start(&output->base);
 
@@ -259,12 +257,9 @@ _output_cb_repaint_start(E_Output *output)
    /* check for valid output */
    if (!output) return;
 
-   printf("Output Repaint Start\n");
-
    /* if a repaint is needed, do it */
    if (output->repaint.needed)
      {
-        printf("\tCalling Output Repaint\n");
         e_output_repaint(output, ecore_loop_time_get());
         return;
      }
@@ -284,8 +279,6 @@ _output_cb_repaint_shm(E_Output *output, pixman_region32_t *damage)
 {
    E_Output_X11 *xoutput;
    E_Compositor *comp;
-
-   printf("Output Repaint Shm\n");
 
    xoutput = (E_Output_X11 *)output;
    comp = output->compositor;
@@ -336,8 +329,6 @@ _output_cb_window_damage(void *data, int type EINA_UNUSED, void *event)
 
    ev = event;
 
-   printf("Output Window Damage\n");
-
    EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
      {
         if (ev->win == output->win)
@@ -358,8 +349,6 @@ _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    Eina_List *l;
 
    ev = event;
-
-   printf("Output Window Destroy\n");
 
    /* loop the existing outputs */
    EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
