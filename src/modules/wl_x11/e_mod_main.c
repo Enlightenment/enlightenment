@@ -22,6 +22,8 @@ EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_X11" };
 EAPI void *
 e_modapi_init(E_Module *m)
 {
+   if (_e_x11_comp) return NULL;
+
    /* try to allocate space for comp structure */
    if (!(_e_x11_comp = E_NEW(E_Compositor_X11, 1)))
      {
