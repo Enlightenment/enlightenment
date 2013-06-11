@@ -11,8 +11,6 @@ typedef enum _E_Maximize
    E_MAXIMIZE_VERTICAL = 0x00000010,
    E_MAXIMIZE_HORIZONTAL = 0x00000020,
    E_MAXIMIZE_BOTH = 0x00000030,
-   E_MAXIMIZE_LEFT = 0x00000070,
-   E_MAXIMIZE_RIGHT = 0x000000b0,
    E_MAXIMIZE_DIRECTION = 0x000000f0
 } E_Maximize;
 
@@ -24,4 +22,28 @@ typedef enum _E_Window_Placement
    E_WINDOW_PLACEMENT_MANUAL
 } E_Window_Placement;
 
+typedef struct _E_Border E_Border;
+
+#else
+# ifndef E_BORDER_H
+#  define E_BORDER_H
+
+#  define E_BORDER_TYPE 0xE0b01002
+
+struct _E_Border
+{
+   E_Object e_obj_inherit;
+};
+
+EAPI void e_border_uniconify(void *bd);
+EAPI void e_border_unshade(void *bd, int dir);
+EAPI void e_border_focus_set(void *bd, int focus, int set);
+EAPI void e_border_desk_set(void *bd, E_Desk *desk);
+
+EAPI Eina_List *e_border_client_list(void);
+
+EAPI void e_border_activate(E_Border *bd, Eina_Bool just_do_it);
+EAPI void e_border_raise(E_Border *bd);
+
+# endif
 #endif

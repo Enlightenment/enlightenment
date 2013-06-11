@@ -68,8 +68,6 @@ e_output_repaint(E_Output *output, unsigned int secs)
    Eina_List *l;
    struct wl_list frames;
 
-   printf("Output Repaint\n");
-
    comp = output->compositor;
 
    EINA_LIST_FOREACH(comp->surfaces, l, es)
@@ -117,8 +115,6 @@ e_output_repaint_schedule(E_Output *output)
 {
    E_Compositor *comp;
    struct wl_event_loop *loop;
-
-   printf("Output Repaint Schedule\n");
 
    comp = output->compositor;
 

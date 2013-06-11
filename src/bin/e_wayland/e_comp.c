@@ -2,7 +2,7 @@
 
 /* local function prototypes */
 static void _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
-static void _e_comp_cb_bind_manager(struct wl_client *client, void *data, unsigned int version, unsigned int id);
+static void _e_comp_cb_bind_manager(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id);
 static void _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 static void _e_comp_cb_surface_destroy(struct wl_resource *resource);
 static void _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
@@ -289,8 +289,6 @@ e_compositor_damage_calculate(E_Compositor *comp)
    Eina_List *l;
    pixman_region32_t clip, opaque;
 
-   printf("E_Comp Damage Calculate\n");
-
    /* check for valid compositor */
    if (!comp) return;
 
@@ -324,10 +322,13 @@ e_compositor_damage_calculate(E_Compositor *comp)
      }
 }
 
-EAPI void 
-e_compositor_damage_flush(E_Compositor *comp, E_Surface *es)
+EAPI unsigned int 
+e_compositor_get_time(void)
 {
+   struct timeval tv;
 
+   gettimeofday(&tv, NULL);
+   return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
 /* local functions */
@@ -344,7 +345,7 @@ _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_
 }
 
 static void 
-_e_comp_cb_bind_manager(struct wl_client *client, void *data, unsigned int version, unsigned int id)
+_e_comp_cb_bind_manager(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id)
 {
    /* add the data device manager to the client */
    wl_client_add_object(client, &wl_data_device_manager_interface, 

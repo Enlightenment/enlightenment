@@ -89,11 +89,7 @@ _e_renderer_region_repaint(E_Surface *surface, E_Output *output, pixman_region32
    E_Renderer_Surface_State *surf_state;
    pixman_region32_t fregion;
    pixman_box32_t *ext;
-//   pixman_fixed_t fw = 0, fh = 0;
 
-   printf("E_Renderer Region Repaint\n");
-
-//   rend = output->compositor->renderer;
    out_state = output->state;
    surf_state = surface->state;
 
@@ -109,9 +105,9 @@ _e_renderer_region_repaint(E_Surface *surface, E_Output *output, pixman_region32
      pixman_region32_copy(&fregion, region);
 
    ext = pixman_region32_extents(&fregion);
-   printf("\tRepainting Region: %d %d %d %d\n", 
-          ext->x1, ext->y1, (ext->x2 - ext->x1), 
-          (ext->y2 - ext->y1));
+   /* printf("\tRepainting Region: %d %d %d %d\n",  */
+   /*        ext->x1, ext->y1, (ext->x2 - ext->x1),  */
+   /*        (ext->y2 - ext->y1)); */
 
    /* global to output ? */
 
@@ -133,16 +129,11 @@ _e_renderer_surfaces_repaint(E_Output *output, pixman_region32_t *damage)
    Eina_List *l;
    E_Surface *es;
 
-   printf("E_Renderer Surfaces Repaint\n");
-
    comp = output->compositor;
    EINA_LIST_FOREACH(comp->surfaces, l, es)
      {
         if (es->plane == &comp->plane)
-          {
-             printf("\tDraw Surface: %p\n", es);
-             _e_renderer_surface_draw(es, output, damage);
-          }
+          _e_renderer_surface_draw(es, output, damage);
      }
 }
 
@@ -169,8 +160,6 @@ _e_renderer_surface_draw(E_Surface *surface, E_Output *output, pixman_region32_t
         return;
      }
 
-   printf("E_Renderer Surface Draw: %p\n", surface);
-
    /* TODO: handle transforms ? */
 
    pixman_region32_init_rect(&blend, 0, 0, 
@@ -195,8 +184,6 @@ _e_renderer_cb_pixels_read(E_Output *output, int format, void *pixels, Evas_Coor
    E_Renderer_Output_State *state;
    pixman_image_t *buffer;
 
-   printf("E_Renderer Pixels Read\n");
-
    if (!(state = output->state)) return EINA_FALSE;
    if (!state->hw_buffer) return EINA_FALSE;
 
@@ -219,8 +206,6 @@ _e_renderer_cb_output_buffer_set(E_Output *output, pixman_image_t *buffer)
 {
    E_Renderer_Output_State *state;
 
-   printf("E_Renderer Output Buffer Set\n");
-
    state = output->state;
    if (state->hw_buffer) pixman_image_unref(state->hw_buffer);
    state->hw_buffer = buffer;
@@ -236,8 +221,6 @@ _e_renderer_cb_output_repaint(E_Output *output, pixman_region32_t *damage)
 {
    E_Renderer_Output_State *state;
    pixman_region32_t region;
-
-   printf("E_Renderer Output Repaint\n");
 
    state = output->state;
    if (!state->hw_buffer) return;
@@ -265,7 +248,7 @@ _e_renderer_cb_output_repaint(E_Output *output, pixman_region32_t *damage)
 static void 
 _e_renderer_cb_damage_flush(E_Surface *surface)
 {
-   printf("E_Renderer Damage Flush\n");
+
 }
 
 static void 
@@ -285,8 +268,6 @@ _e_renderer_cb_attach(E_Surface *surface, struct wl_buffer *buffer)
    state->image = NULL;
 
    if (!buffer) return;
-
-   printf("E_Renderer Attach\n");
 
    switch (wl_shm_buffer_get_format(buffer))
      {
@@ -340,7 +321,7 @@ _e_renderer_cb_output_create(E_Output *output, unsigned int window)
 static void 
 _e_renderer_cb_output_destroy(E_Output *output)
 {
-   printf("E_Renderer Output Destroy\n");
+
 }
 
 static Eina_Bool 
@@ -381,5 +362,5 @@ _e_renderer_cb_surface_color_set(E_Surface *surface, int r, int g, int b, int a)
 static void 
 _e_renderer_cb_destroy(E_Compositor *comp)
 {
-   printf("E_Renderer Destroy\n");
+
 }

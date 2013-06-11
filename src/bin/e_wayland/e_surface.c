@@ -179,15 +179,10 @@ e_surface_repaint_schedule(E_Surface *es)
    E_Output *output;
    Eina_List *l;
 
-   printf("E_Surface Repaint Schedule\n");
-
    EINA_LIST_FOREACH(_e_comp->outputs, l, output)
      {
         if ((es->output == output) || (es->output_mask & (1 << output->id)))
-          {
-             printf("\tSchedule Output Repaint\n");
-             e_output_repaint_schedule(output);
-          }
+          e_output_repaint_schedule(output);
      }
 }
 

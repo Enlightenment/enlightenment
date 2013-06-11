@@ -18,8 +18,11 @@ struct _E_Container
 
    Ecore_Wl_Window *win;
    E_Manager *man;
+
    Ecore_Evas *bg_ee;
    Evas *bg_evas;
+   Evas_Object *o_blank;
+
    E_Pointer *ptr;
 
    Eina_List *zones;
@@ -33,6 +36,9 @@ EAPI void e_container_show(E_Container *con);
 EAPI void e_container_hide(E_Container *con);
 EAPI void e_container_all_freeze(void);
 EAPI void e_container_all_thaw(void);
+EAPI E_Container *e_container_current_get(E_Manager *man);
+EAPI E_Container *e_container_number_get(E_Manager *man, int num);
+EAPI E_Zone *e_container_zone_number_get(E_Container *con, int num);
 
 # endif
 #endif

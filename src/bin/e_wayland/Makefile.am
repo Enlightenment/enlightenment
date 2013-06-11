@@ -57,6 +57,34 @@ ENLIGHTENMENTHEADERS = \
   e_canvas.h \
   e_manager.h \
   e_container.h \
+  e_zone.h \
+  e_desk.h \
+  e_bg.h \
+  e_box.h \
+  e_icon.h \
+  e_menu.h \
+  e_int_menus.h \
+  e_win.h \
+  e_dialog.h \
+  e_about.h \
+  e_theme_about.h \
+  e_actions.h \
+  e_acpi.h \
+  e_exec.h \
+  e_configure.h \
+  e_config_dialog.h \
+  e_thumb.h \
+  e_shelf.h \
+  e_gadcon.h \
+  e_popup.h \
+  e_obj_dialog.h \
+  e_border.h \
+  e_sys.h \
+  e_bindings.h \
+  e_ipc.h \
+  e_ipc_codec.h \
+  e_exehist.h \
+  e_alert.h \
   e_output.h \
   e_shader.h \
   e_renderer.h
@@ -89,6 +117,33 @@ enlightenment_wl_src = \
   e_canvas.c \
   e_manager.c \
   e_container.c \
+  e_zone.c \
+  e_desk.c \
+  e_bg.c \
+  e_box.c \
+  e_icon.c \
+  e_menu.c \
+  e_int_menus.c \
+  e_win.c \
+  e_dialog.c \
+  e_about.c \
+  e_theme_about.c \
+  e_actions.c \
+  e_acpi.c \
+  e_exec.c \
+  e_configure.c \
+  e_config_dialog.c \
+  e_thumb.c \
+  e_shelf.c \
+  e_gadcon.c \
+  e_popup.c \
+  e_obj_dialog.c \
+  e_border.c \
+  e_sys.c \
+  e_bindings.c \
+  e_ipc.c \
+  e_ipc_codec.c \
+  e_exehist.c \
   e_output.c \
   e_renderer.c \
   $(ENLIGHTENMENTHEADERS)

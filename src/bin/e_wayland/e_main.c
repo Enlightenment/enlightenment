@@ -45,12 +45,15 @@ static Eina_Bool _e_main_cb_idle_before(void *data EINA_UNUSED);
 static Eina_Bool _e_main_cb_idle_after(void *data EINA_UNUSED);
 static Eina_Bool _e_main_cb_idle_flush(void *data EINA_UNUSED);
 static Eina_Bool _e_main_cb_bound(void *data, int type EINA_UNUSED, void *event);
+static Eina_Bool _e_main_cb_timer(void *data EINA_UNUSED);
+static void _e_main_modules_load(Eina_Bool safe_mode);
 
 /* local variables */
 static Eina_Bool really_know = EINA_FALSE;
 static Eina_Bool locked = EINA_FALSE;
 static Eina_Bool inloop = EINA_FALSE;
 static Eina_Bool bound = EINA_FALSE;
+static Eina_Bool safe_mode = EINA_FALSE;
 static jmp_buf wl_fatal_buff;
 static int _e_main_lvl = 0;
 static int (*_e_main_shutdown_func[MAX_LEVEL])(void);
@@ -75,7 +78,6 @@ int
 main(int argc, char **argv)
 {
    Eina_Bool nostartup = EINA_FALSE;
-   Eina_Bool safe_mode = EINA_FALSE;
    Eina_Bool after_restart = EINA_FALSE;
    Eina_Bool waslocked = EINA_FALSE;
    double t = 0.0, tstart = 0.0;
@@ -489,6 +491,33 @@ main(int argc, char **argv)
    e_container_all_freeze();
    TS("E_Container Freeze Done");
 
+   TS("E_Bg Init");
+   if (!e_bg_init())
+     {
+        e_error_message_show(_("Enlightenment cannot setup its background subsystem"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Bg Init Done");
+   _e_main_shutdown_push(e_bg_shutdown);
+
+   TS("E_Popup Init");
+   if (!e_popup_init())
+     {
+        e_error_message_show(_("Enlightenment cannot setup its popup subsystem"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Popup Init Done");
+   _e_main_shutdown_push(e_popup_shutdown);
+
+   TS("E_Shelf Init");
+   if (!e_shelf_init())
+     {
+        e_error_message_show(_("Enlightenment cannot setup its shelf subsystem"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Shelf Init Done");
+   _e_main_shutdown_push(e_shelf_shutdown);
+
    /* TODO: init other stuff */
 
    _idle_flush = ecore_idle_enterer_add(_e_main_cb_idle_flush, NULL);
@@ -497,12 +526,18 @@ main(int argc, char **argv)
    e_container_all_thaw();
    TS("E_Container Thaw Done");
 
+   TS("E_Shelf Config Update");
+   e_shelf_config_update();
+   TS("E_Shelf Config Update Done");
+
    _idle_after = ecore_idle_enterer_add(_e_main_cb_idle_after, NULL);
 
    /*** Main Loop ***/
 
    starting = EINA_FALSE;
    inloop = EINA_TRUE;
+
+   ecore_timer_add(0.25, _e_main_cb_timer, NULL);
 
    e_util_env_set("E_RESTART", "1");
 
@@ -705,17 +740,17 @@ _e_main_parse_arguments(int argc, char **argv)
 static Eina_Bool
 _e_main_cb_signal_exit(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
-   ecore_main_loop_quit();
+   /* ecore_main_loop_quit(); */
 
    /* called on ctrl-c, kill (pid) (also SIGINT, SIGTERM and SIGQIT) */
-   /* e_sys_action_do(E_SYS_EXIT, NULL); */
+   e_sys_action_do(E_SYS_EXIT, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
 _e_main_cb_signal_hup(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *ev EINA_UNUSED)
 {
-   /* e_sys_action_do(E_SYS_RESTART, NULL); */
+   e_sys_action_do(E_SYS_RESTART, NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -1007,9 +1042,16 @@ _e_main_screens_init(void)
    if (!e_container_init()) return 0;
 
    TS("\tScreens: zone");
+   if (!e_zone_init()) return 0;
+
    TS("\tScreens: desk");
+   if (!e_desk_init()) return 0;
+
    TS("\tScreens: menu");
-   /* TODO: exehist */
+   if (!e_menu_init()) return 0;
+
+   TS("\tScreens: exehist");
+   if (!e_exehist_init()) return 0;
 
    EINA_LIST_FOREACH(comp->outputs, l, output)
      {
@@ -1031,8 +1073,6 @@ _e_main_screens_init(void)
              return 0;
           }
 
-        e_container_show(con);
-
         i++;
      }
 
@@ -1042,9 +1082,10 @@ _e_main_screens_init(void)
 static int 
 _e_main_screens_shutdown(void)
 {
-   /* e_menu_shutdown(); */
-   /* e_desk_shutdown(); */
-   /* e_zone_shutdown(); */
+   e_exehist_shutdown();
+   e_menu_shutdown();
+   e_desk_shutdown();
+   e_zone_shutdown();
    e_container_shutdown();
    e_manager_shutdown();
    return 1;
@@ -1054,8 +1095,8 @@ static Eina_Bool
 _e_main_cb_idle_before(void *data EINA_UNUSED)
 {
    /* TODO: finish */
+   e_menu_idler_before();
    e_pointer_idler_before();
-
    edje_thaw();
 
    return ECORE_CALLBACK_RENEW;
@@ -1081,4 +1122,29 @@ _e_main_cb_bound(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_
 {
    bound = EINA_TRUE;
    return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool 
+_e_main_cb_timer(void *data EINA_UNUSED)
+{
+   E_Manager *man;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(e_manager_list(), l, man)
+     e_manager_show(man);
+
+   _e_main_modules_load(safe_mode);
+
+   return EINA_FALSE;
+}
+
+static void 
+_e_main_modules_load(Eina_Bool safe_mode)
+{
+   if (!safe_mode)
+     e_module_all_load();
+   else
+     {
+
+     }
 }
