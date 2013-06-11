@@ -84,15 +84,16 @@ e_renderer_create(E_Compositor *comp)
 static void 
 _e_renderer_region_repaint(E_Surface *surface, E_Output *output, pixman_region32_t *region, pixman_region32_t *surf_region, pixman_op_t pixman_op)
 {
-   E_Renderer *rend;
+//   E_Renderer *rend;
    E_Renderer_Output_State *out_state;
    E_Renderer_Surface_State *surf_state;
    pixman_region32_t fregion;
-   pixman_fixed_t fw = 0, fh = 0;
+   pixman_box32_t *ext;
+//   pixman_fixed_t fw = 0, fh = 0;
 
    printf("E_Renderer Region Repaint\n");
 
-   rend = output->compositor->renderer;
+//   rend = output->compositor->renderer;
    out_state = output->state;
    surf_state = surface->state;
 
@@ -106,6 +107,13 @@ _e_renderer_region_repaint(E_Surface *surface, E_Output *output, pixman_region32
      }
    else
      pixman_region32_copy(&fregion, region);
+
+   ext = pixman_region32_extents(&fregion);
+   printf("\tRepainting Region: %d %d %d %d\n", 
+          ext->x1, ext->y1, (ext->x2 - ext->x1), 
+          (ext->y2 - ext->y1));
+
+   /* global to output ? */
 
    pixman_image_set_clip_region32(out_state->shadow, &fregion);
    pixman_image_set_filter(surf_state->image, PIXMAN_FILTER_NEAREST, NULL, 0);
@@ -131,7 +139,10 @@ _e_renderer_surfaces_repaint(E_Output *output, pixman_region32_t *damage)
    EINA_LIST_FOREACH(comp->surfaces, l, es)
      {
         if (es->plane == &comp->plane)
-          _e_renderer_surface_draw(es, output, damage);
+          {
+             printf("\tDraw Surface: %p\n", es);
+             _e_renderer_surface_draw(es, output, damage);
+          }
      }
 }
 
@@ -141,14 +152,11 @@ _e_renderer_surface_draw(E_Surface *surface, E_Output *output, pixman_region32_t
    E_Renderer_Surface_State *state;
    pixman_region32_t repaint, blend;
 
-   printf("E_Renderer Surface Draw\n");
-
    if (!surface) return;
    if (!surface->output) surface->output = output;
    if (surface->output != output) return;
 
    if (!(state = surface->state)) return;
-
    if (!state->image) return;
 
    pixman_region32_init(&repaint);
@@ -160,6 +168,8 @@ _e_renderer_surface_draw(E_Surface *surface, E_Output *output, pixman_region32_t
         pixman_region32_fini(&repaint);
         return;
      }
+
+   printf("E_Renderer Surface Draw: %p\n", surface);
 
    /* TODO: handle transforms ? */
 
@@ -247,8 +257,8 @@ _e_renderer_cb_output_repaint(E_Output *output, pixman_region32_t *damage)
                             pixman_image_get_width(state->hw_buffer), 
                             pixman_image_get_height(state->hw_buffer));
    pixman_image_set_clip_region32(state->hw_buffer, NULL);
-   pixman_region32_copy(&output->repaint.prev_damage, damage);
 
+   pixman_region32_copy(&output->repaint.prev_damage, damage);
    wl_signal_emit(&output->signals.frame, output);
 }
 
@@ -300,17 +310,21 @@ static Eina_Bool
 _e_renderer_cb_output_create(E_Output *output, unsigned int window)
 {
    E_Renderer_Output_State *state;
+   Evas_Coord w = 0, h = 0;
 
    /* try to allocate space for output state */
    if (!(state = E_NEW(E_Renderer_Output_State, 1)))
      return EINA_FALSE;
 
-   state->shadow_buffer = malloc(output->w * output->h * sizeof(int));
+   w = output->current->w;
+   h = output->current->h;
+
+   state->shadow_buffer = malloc(w * h * sizeof(int));
    if (!state->shadow_buffer) return EINA_FALSE;
 
    state->shadow = 
-     pixman_image_create_bits(PIXMAN_x8r8g8b8, output->w, output->h, 
-                             state->shadow_buffer, output->w * sizeof(int));
+     pixman_image_create_bits(PIXMAN_x8r8g8b8, w, h, state->shadow_buffer, 
+                              w * sizeof(int));
    if (!state->shadow)
      {
         free(state->shadow_buffer);
@@ -337,8 +351,6 @@ _e_renderer_cb_surface_create(E_Surface *surface)
    if (!(state = E_NEW(E_Renderer_Surface_State, 1)))
      return EINA_FALSE;
 
-   printf("E_Renderer Surface Create\n");
-
    surface->state = state;
 
    return EINA_TRUE;
@@ -348,8 +360,6 @@ static void
 _e_renderer_cb_surface_destroy(E_Surface *surface)
 {
    E_Renderer_Surface_State *state;
-
-   printf("E_Renderer Surface Destroy\n");
 
    if ((state = surface->state))
      {
@@ -373,4 +383,3 @@ _e_renderer_cb_destroy(E_Compositor *comp)
 {
    printf("E_Renderer Destroy\n");
 }
-
