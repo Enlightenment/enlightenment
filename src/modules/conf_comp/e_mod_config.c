@@ -202,7 +202,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
 
    ol = e_widget_list_add(evas, 0, 0);
    {
-      Evas_Object *w, *m, *p, *o;
+      Evas_Object *w, *m, *p, *o1, *o2;
 
       of = e_widget_framelist_add(evas, _("Fast Effects"), 0);
       w = ob = e_widget_check_add(evas, _("Enable fast composite effects for windows"), &(cfdata->fast_borders));
@@ -214,10 +214,10 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
       p = ob = e_widget_check_add(evas, _("Enable fast composite effects for popups"), &(cfdata->fast_popups));
       e_widget_disabled_set(ob, cfdata->match.disable_popups);
       e_widget_framelist_object_append(of, ob);
-      p = ob = e_widget_check_add(evas, _("Enable fast composite effects for objects"), &(cfdata->fast_objects));
+      o1 = ob = e_widget_check_add(evas, _("Enable fast composite effects for objects"), &(cfdata->fast_objects));
       e_widget_disabled_set(ob, cfdata->match.disable_objects);
       e_widget_framelist_object_append(of, ob);
-      o = ob = e_widget_check_add(evas, _("Enable fast composite effects for overrides"), &(cfdata->fast_overrides));
+      o2 = ob = e_widget_check_add(evas, _("Enable fast composite effects for overrides"), &(cfdata->fast_overrides));
       e_widget_disabled_set(ob, cfdata->match.disable_overrides);
       e_widget_framelist_object_append(of, ob);
       e_widget_list_object_append(ol, of, 1, 0, 0.5);
@@ -233,10 +233,10 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
       e_widget_on_change_hook_set(ob, _advanced_comp_style_toggle, p);
       e_widget_framelist_object_append(of, ob);
       ob = e_widget_check_add(evas, _("Disable composite effects for objects"), &(cfdata->match.disable_objects));
-      e_widget_on_change_hook_set(ob, _advanced_comp_style_toggle, p);
+      e_widget_on_change_hook_set(ob, _advanced_comp_style_toggle, o1);
       e_widget_framelist_object_append(of, ob);
       ob = e_widget_check_add(evas, _("Disable composite effects for overrides"), &(cfdata->match.disable_overrides));
-      e_widget_on_change_hook_set(ob, _advanced_comp_style_toggle, o);
+      e_widget_on_change_hook_set(ob, _advanced_comp_style_toggle, o2);
       e_widget_framelist_object_append(of, ob);
       ob = e_widget_check_add(evas, _("Disable composite effects for screen"), &(cfdata->disable_screen_effects));
       e_widget_framelist_object_append(of, ob);
