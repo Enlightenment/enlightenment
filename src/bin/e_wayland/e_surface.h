@@ -33,6 +33,7 @@ struct _E_Surface
         Eina_Bool new_attach : 1;
      } pending;
 
+   pixman_region32_t bounding;
    pixman_region32_t damage;
    pixman_region32_t opaque;
    pixman_region32_t clip;
@@ -42,6 +43,7 @@ struct _E_Surface
 
    E_Plane *plane;
    E_Output *output;
+   unsigned int output_mask;
 
    struct 
      {
@@ -76,6 +78,7 @@ EAPI void e_surface_destroy(E_Surface *es);
 EAPI void e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque);
 EAPI void e_surface_show(E_Surface *es);
 EAPI void e_surface_repaint_schedule(E_Surface *es);
+EAPI void e_surface_output_assign(E_Surface *es);
 
 # endif
 #endif
