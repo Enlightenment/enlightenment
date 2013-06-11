@@ -191,10 +191,10 @@ e_surface_repaint_schedule(E_Surface *es)
 EAPI void 
 e_surface_output_assign(E_Surface *es)
 {
-   E_Output *output, *noutput;
+   E_Output *output, *noutput = NULL;
    pixman_region32_t region;
    pixman_box32_t *box;
-   unsigned int area, mask, max = 0;
+   unsigned int area, mask = 0, max = 0;
    Eina_List *l;
 
    pixman_region32_fini(&es->bounding);
