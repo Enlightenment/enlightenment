@@ -313,6 +313,9 @@ _e_desktop_shell_shell_surface_map(E_Surface *es, Evas_Coord x, Evas_Coord y, Ev
 
    /* stacking */
 
+   if (es->shell_surface->type != E_SHELL_SURFACE_TYPE_NONE)
+     e_surface_output_assign(es);
+
    /* activate */
    switch (es->shell_surface->type)
      {
