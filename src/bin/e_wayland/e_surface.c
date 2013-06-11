@@ -41,6 +41,7 @@ e_surface_new(unsigned int id)
    wl_list_init(&es->frames);
    wl_list_init(&es->pending.frames);
 
+   pixman_region32_init(&es->bounding);
    pixman_region32_init(&es->damage);
    pixman_region32_init(&es->opaque);
    pixman_region32_init(&es->clip);
@@ -114,7 +115,7 @@ e_surface_damage_below(E_Surface *es)
    pixman_region32_t damage;
 
    pixman_region32_init(&damage);
-   pixman_region32_subtract(&damage, &es->opaque, &es->clip);
+   pixman_region32_subtract(&damage, &es->bounding, &es->clip);
    pixman_region32_union(&es->plane->damage, &es->plane->damage, &damage);
    pixman_region32_fini(&damage);
 }
@@ -138,7 +139,7 @@ e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque)
    if (!es) return;
 
    /* check for referenced buffer */
-   if (&es->buffer.reference.buffer)
+   if (es->buffer.reference.buffer)
      {
         /* if this is an shm buffer, flush any pending damage */
         if (wl_buffer_is_shm(es->buffer.reference.buffer))
@@ -182,9 +183,44 @@ e_surface_repaint_schedule(E_Surface *es)
 
    EINA_LIST_FOREACH(_e_comp->outputs, l, output)
      {
-        if (es->output == output)
-          e_output_repaint_schedule(output);
+        if ((es->output == output) || (es->output_mask & (1 << output->id)))
+          {
+             printf("\tSchedule Output Repaint\n");
+             e_output_repaint_schedule(output);
+          }
      }
+}
+
+EAPI void 
+e_surface_output_assign(E_Surface *es)
+{
+   E_Output *output, *noutput;
+   pixman_region32_t region;
+   pixman_box32_t *box;
+   unsigned int area, mask, max = 0;
+   Eina_List *l;
+
+   pixman_region32_fini(&es->bounding);
+   pixman_region32_init_rect(&es->bounding, es->geometry.x, es->geometry.y, 
+                             es->geometry.w, es->geometry.h);
+
+   pixman_region32_init(&region);
+   EINA_LIST_FOREACH(_e_comp->outputs, l, output)
+     {
+        pixman_region32_intersect(&region, &es->bounding, 
+                                  &output->repaint.region);
+        box = pixman_region32_extents(&region);
+        area = ((box->x2 - box->x1) * (box->y2 - box->y1));
+        if (area > 0) mask |= (1 << output->id);
+        if (area >= max)
+          {
+             noutput = output;
+             max = area;
+          }
+     }
+   pixman_region32_fini(&region);
+   es->output = noutput;
+   es->output_mask = mask;
 }
 
 /* local functions */
@@ -242,7 +278,6 @@ static void
 _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Surface *es;
-   E_Surface_Frame *cb;
    Evas_Coord bw = 0, bh = 0;
    pixman_region32_t opaque;
 
