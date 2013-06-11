@@ -167,8 +167,6 @@ _output_init(E_Compositor_X11 *xcomp)
    /* show the window */
    ecore_x_window_show(output->win);
 
-   /* ecore_x_window_pixmap_set(output->win, output->pmap); */
-
    output->base.current = &output->mode;
    output->base.original = output->base.current;
    output->base.make = "e_wayland";
@@ -227,11 +225,7 @@ _output_init_shm(E_Compositor_X11 *xcomp, E_Output_X11 *output, Evas_Coord w, Ev
    data = ecore_x_image_data_get(output->buffer, NULL, NULL, &bpp);
 
    output->hw_surface = 
-     pixman_image_create_bits(PIXMAN_x8r8g8b8, w, h, data, (w * bpp / 8));
-
-   output->gc = 
-     ecore_x_gc_new(output->win, (ECORE_X_GC_VALUE_MASK_PLANE_MASK | 
-                                  ECORE_X_GC_VALUE_MASK_FOREGROUND), &mask);
+     pixman_image_create_bits(PIXMAN_x8r8g8b8, w, h, data, w * bpp);
 
    return EINA_TRUE;
 }
@@ -303,7 +297,7 @@ _output_cb_repaint_shm(E_Output *output, pixman_region32_t *damage)
 
    /* TODO: set clip for output */
 
-   ecore_x_image_put(xoutput->buffer, xoutput->win, xoutput->gc, 
+   ecore_x_image_put(xoutput->buffer, xoutput->win, 0, 
                      0, 0, 0, 0, pixman_image_get_width(xoutput->hw_surface), 
                      pixman_image_get_height(xoutput->hw_surface));
 
@@ -320,13 +314,8 @@ _output_cb_destroy(E_Output *output)
    /* remove the frame timer */
    wl_event_source_remove(xout->frame_timer);
 
-   /* destroy the pixmap */
-   /* if (xout->pmap) ecore_x_pixmap_free(xout->pmap); */
-
+   /* destroy the output image */
    if (xout->buffer) ecore_x_image_free(xout->buffer);
-
-   /* destroy the gc */
-   if (xout->gc) ecore_x_gc_free(xout->gc);
 
    /* destroy the window */
    if (xout->win) ecore_x_window_free(xout->win);
