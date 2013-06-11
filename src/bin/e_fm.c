@@ -7383,12 +7383,10 @@ _e_fm2_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 static void
 _e_fm2_cb_icon_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Evas_Event_Mouse_Up *ev;
-   E_Fm2_Icon *ic;
+   Evas_Event_Mouse_Up *ev = event_info;
+   E_Fm2_Icon *ic = data;
 
-   ic = data;
-   ev = event_info;
-
+   if (ic->sd->selecting) return;
    edje_object_message_signal_process(ic->obj);
 
    _e_fm2_typebuf_hide(ic->sd->obj);
@@ -7574,6 +7572,13 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
    if (ic->entry_widget) return;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ic->sd->selecting)
+     {
+        /* happens when clicking precisely between icons */
+        ic->drag.x = ic->drag.y = 0;
+        ic->drag.start = ic->drag.dnd = ic->drag.src = EINA_FALSE;
+        return;
+     }
    if ((ic->drag.start) && (ic->sd->eobj))
      {
         int dx, dy;
