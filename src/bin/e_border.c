@@ -405,6 +405,7 @@ e_border_new(E_Container *con,
    unsigned int managed, desk[2];
    int deskx, desky;
 
+   if (eina_hash_find(borders_hash, e_util_winid_str_get(bd->client.win))) return NULL;
    bd = E_OBJECT_ALLOC(E_Border, E_BORDER_TYPE, _e_border_free);
    if (!bd) return NULL;
    ecore_x_window_shadow_tree_flush();
@@ -698,27 +699,6 @@ e_border_new(E_Container *con,
    bd->desk = e_desk_current_get(bd->zone);
    e_container_border_add(bd);
    borders = eina_list_append(borders, bd);
-   bd2 = eina_hash_find(borders_hash, e_util_winid_str_get(bd->client.win));
-   if (bd2)
-     {
-#ifdef E_LOGGING
-        WRN("EEEEK! 2 borders with same client window id in them! very bad!\n"
-            "optimisations failing due to bizarre client behavior. will\n"
-            "work around.\n"
-            "bd=%p, bd->references=%i, bd->deleted=%i, bd->client.win=%x",
-            bd2, bd2->e_obj_inherit.references, bd2->e_obj_inherit.deleted,
-            bd2->client.win);
-#else
-        printf("EEEEK! 2 borders with same client window id in them! very bad!\n");
-        printf("optimisations failing due to bizarre client behavior. will\n");
-        printf("work around.\n");
-        printf("bd=%p, bd->references=%i, bd->deleted=%i, bd->client.win=%x\n",
-               bd2, bd2->e_obj_inherit.references, bd2->e_obj_inherit.deleted,
-               bd2->client.win);
-#endif
-        eina_hash_del(borders_hash, e_util_winid_str_get(bd->client.win), bd2);
-        eina_hash_del(borders_hash, e_util_winid_str_get(bd2->win), bd2);
-     }
    eina_hash_add(borders_hash, e_util_winid_str_get(bd->client.win), bd);
    eina_hash_add(borders_hash, e_util_winid_str_get(bd->win), bd);
    managed = 1;
