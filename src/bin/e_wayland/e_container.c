@@ -69,9 +69,12 @@ e_container_new(E_Manager *man)
 
    Evas_Object *o;
    o = evas_object_rectangle_add(con->bg_evas);
+   evas_object_color_set(o, 255, 0, 0, 255);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, con->w, con->h);
    evas_object_show(o);
+   ecore_evas_object_associate(con->bg_ee, o, 
+                               ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
    /* TODO: create zones */
 
