@@ -1973,8 +1973,8 @@ _e_comp_win_mirror_add(E_Comp_Win *cw)
      {
         /* FIXME: the first mirror shown with vsync enabled won't render immediately */
         evas_object_image_alpha_set(o, 1);
-        evas_object_geometry_get(cw->zoomobj, NULL, NULL, &w, &h);
-        evas_object_image_source_set(o, cw->zoomobj);
+        evas_object_geometry_get(cw->zoomobj ?: cw->obj, NULL, NULL, &w, &h);
+        evas_object_image_source_set(o, cw->zoomobj ?: cw->obj);
      }
    evas_object_image_data_update_add(o, 0, 0, w, h);
    return o;
@@ -2030,8 +2030,11 @@ _e_comp_win_dummy_add(E_Comp *c, Evas_Object *obj, E_Object *eobj, Eina_Bool nol
    cw->effect_obj = edje_object_add(c->evas);
    e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none");
    cw->shobj = edje_object_add(c->evas);
-   cw->zoomobj = e_zoomap_add(c->evas);
-   e_zoomap_smooth_set(cw->zoomobj, conf->smooth_windows);
+   if (cw->eobj)
+     {
+        cw->zoomobj = e_zoomap_add(c->evas);
+        e_zoomap_smooth_set(cw->zoomobj, conf->smooth_windows);
+     }
    _e_comp_win_shadow_setup(cw);
    edje_object_part_swallow(cw->effect_obj, "e.swallow.content", cw->shobj);
 
