@@ -9939,10 +9939,6 @@ cleanup:
              if (!warp_timer_border->lock_user_shade)
                e_border_unshade(warp_timer_border, warp_timer_border->shade.dir);
           }
-        else if (warp_timer_border->desk)
-          {
-             if (!warp_timer_border->sticky) e_desk_show(warp_timer_border->desk);
-          }
         if (!warp_timer_border->lock_user_stacking)
           e_border_raise(warp_timer_border);
         
