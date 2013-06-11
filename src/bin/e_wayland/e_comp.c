@@ -41,13 +41,15 @@ e_comp_init(void)
      modname = "wl_drm";
 
    if (!(mod = e_module_find(modname)))
-     mod = e_module_new(modname);
-
-   if (mod) 
      {
-        if ((e_module_enable(mod)))
-          return 1;
+        if ((mod = e_module_new(modname)))
+          {
+             if (e_module_enable(mod))
+               return 1;
+          }
      }
+   else
+     return 1;
 
    return 0;
 }
