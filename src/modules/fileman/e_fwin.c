@@ -868,7 +868,6 @@ static void
 _e_fwin_icon_popup_del(E_Fwin *fwin)
 {
    E_FREE_FUNC(fwin->popup, e_object_del);
-   fwin->popup_icon = NULL;
    fwin->popup_del_job = NULL;
 }
 
