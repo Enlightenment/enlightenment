@@ -5483,8 +5483,14 @@ e_comp_util_wins_print(const E_Comp *c)
 EAPI void
 e_comp_ignore_win_add(Ecore_X_Window win)
 {
+   E_Comp_Win *cw;
+
    EINA_SAFETY_ON_TRUE_RETURN(_e_comp_ignore_find(win));
    eina_hash_add(ignores, e_util_winid_str_get(win), (void*)1);
+   cw = _e_comp_win_find(win);
+   if (!cw) return;
+   cw->invalid = 1;
+   _e_comp_win_del(cw);
 }
 
 EAPI void
