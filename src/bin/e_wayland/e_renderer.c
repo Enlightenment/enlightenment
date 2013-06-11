@@ -96,7 +96,7 @@ _e_renderer_region_repaint(E_Surface *surface, E_Output *output, pixman_region32
    E_Renderer_Output_State *out_state;
    E_Renderer_Surface_State *surf_state;
    pixman_region32_t fregion;
-   pixman_box32_t *ext;
+   /* pixman_box32_t *ext = NULL; */
 
    out_state = output->state;
    surf_state = surface->state;
@@ -112,7 +112,7 @@ _e_renderer_region_repaint(E_Surface *surface, E_Output *output, pixman_region32
    else
      pixman_region32_copy(&fregion, region);
 
-   ext = pixman_region32_extents(&fregion);
+   /* ext = pixman_region32_extents(&fregion); */
    /* printf("\tRepainting Region: %d %d %d %d\n",  */
    /*        ext->x1, ext->y1, (ext->x2 - ext->x1),  */
    /*        (ext->y2 - ext->y1)); */
@@ -263,7 +263,7 @@ static void
 _e_renderer_cb_attach(E_Surface *surface, struct wl_buffer *buffer)
 {
    E_Renderer_Surface_State *state;
-   pixman_format_code_t format;
+   pixman_format_code_t format = 0;
    Evas_Coord w = 0, h = 0;
    void *data;
    int stride = 0;
