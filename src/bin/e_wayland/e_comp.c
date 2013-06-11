@@ -431,6 +431,7 @@ _e_comp_cb_surface_destroy(struct wl_resource *resource)
      _e_comp->renderer->surface_destroy(es);
 
    /* free regions */
+   pixman_region32_fini(&es->bounding);
    pixman_region32_fini(&es->damage);
    pixman_region32_fini(&es->opaque);
    pixman_region32_fini(&es->input);
