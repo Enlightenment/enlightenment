@@ -1412,6 +1412,20 @@ _e_comp_win_render_queue(E_Comp_Win *cw)
    _e_comp_render_queue(cw->c);
 }
 
+static E_Comp *
+_e_comp_find(Ecore_X_Window root)
+{
+   Eina_List *l;
+   E_Comp *c;
+
+   // fixme: use hash if compositors list > 4
+   EINA_LIST_FOREACH(compositors, l, c)
+     {
+        if (c->man->root == root) return c;
+     }
+   return NULL;
+}
+
 static E_Comp_Win *
 _e_comp_win_find(Ecore_X_Window win)
 {
@@ -2086,6 +2100,7 @@ _e_comp_win_bd_setup(E_Comp_Win *cw, E_Border *bd)
    E_FREE_FUNC(cw->shape, e_object_del);
    if (cw->effect_obj) evas_object_pass_events_set(cw->effect_obj, 0);
    cw->free_shape = 0;
+   cw->win = bd->win;
    cw->shape = cw->bd->shape;
    cw->bd->cw = cw;
    cw->opacity = cw->bd->client.netwm.opacity;
@@ -2114,7 +2129,7 @@ _e_comp_win_shape_init(E_Comp_Win *cw, int w, int h)
 }
 
 static E_Comp_Win *
-_e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd, Eina_Bool force)
+_e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
 {
    E_Comp_Win *cw;
    int x = 0, y = 0, w, h, border = 0;
@@ -2147,12 +2162,6 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd, Eina_Bool force)
           {
              //        printf("WARNING: window 0x%x not 24/32bpp -> %ibpp", cw->win, att.depth);
              //        cw->invalid = 1;
-          }
-        if ((!att.override) && (!force))
-          {
-             free(cw);
-             if (conf->grab) ecore_x_ungrab();
-             return NULL;
           }
         cw->input_only = att.input_only;
         cw->override = att.override;
@@ -2940,6 +2949,26 @@ _e_comp_win_shape_create(E_Comp_Win *cw, int x, int y, int w, int h)
 
 //////////////////////////////////////////////////////////////////////////
 static Eina_Bool
+_e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Window_Create *ev = event;
+   E_Comp_Win *cw;
+   E_Comp *c;
+
+   c = _e_comp_find(ev->parent);
+   if (!c) return ECORE_CALLBACK_PASS_ON;
+   if (c->win == ev->win) return ECORE_CALLBACK_PASS_ON;
+   if (c->ee_win == ev->win) return ECORE_CALLBACK_PASS_ON;
+   if (c->man->root == ev->win) return ECORE_CALLBACK_PASS_ON;
+   if (_e_comp_ignore_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
+   if (e_border_find_by_client_window(ev->win)) return ECORE_CALLBACK_RENEW;
+   cw = _e_comp_win_add(c, ev->win, NULL);
+   if (!cw) return ECORE_CALLBACK_RENEW;
+   if (cw->free_shape) _e_comp_win_shape_create(cw, ev->x, ev->y, ev->w, ev->h);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
 _e_comp_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Window_Destroy *ev = event;
@@ -2968,7 +2997,7 @@ _e_comp_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         if (e_border_find_all_by_client_window(ev->win)) return ECORE_CALLBACK_RENEW;
         man = e_manager_find_by_root(ev->event_win);
         if (!man) return ECORE_CALLBACK_RENEW;
-        cw = _e_comp_win_add(man->comp, ev->win, NULL, 1);
+        cw = _e_comp_win_add(man->comp, ev->win, NULL);
         if (!cw) return ECORE_CALLBACK_RENEW;
         if (cw->free_shape) _e_comp_win_shape_create(cw, cw->x, cw->y, cw->w, cw->h);
      }
@@ -3420,7 +3449,7 @@ _e_comp_bd_add(void *data EINA_UNUSED, void *ev)
         e_comp_win_reshadow(cw);
      }
    else
-     cw = _e_comp_win_add(e_comp_get(bd), bd->win, bd, 0);
+     cw = _e_comp_win_add(e_comp_get(bd), bd->win, bd);
    if (cw->shape) cw->shape->comp_win = cw;
    con = cw->bd->zone->container;
    /* we previously ignored potential stacking requests before the border setup,
@@ -4077,7 +4106,7 @@ _e_comp_populate(E_Comp *c)
         if (wins[i] == c->win) continue;
         if (e_border_find_by_client_window(wins[i]) ||
             e_border_find_by_window(wins[i])) continue;
-        cw = _e_comp_win_add(c, wins[i], NULL, 0);
+        cw = _e_comp_win_add(c, wins[i], NULL);
         if (!cw) continue;
         if (cw->free_shape) _e_comp_win_shape_create(cw, cw->hidden.x, cw->hidden.y, cw->hidden.w, cw->hidden.h);
         if ((!cw->bd) && (ecore_x_window_visible_get(wins[i])))
@@ -4818,6 +4847,7 @@ e_comp_init(void)
    damages = eina_hash_string_superfast_new(NULL);
    ignores = eina_hash_string_superfast_new(NULL);
 
+   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_CREATE, _e_comp_create, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_DESTROY, _e_comp_destroy, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_SHOW, _e_comp_show, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_HIDE, _e_comp_hide, NULL);
