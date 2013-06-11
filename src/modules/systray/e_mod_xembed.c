@@ -412,6 +412,7 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    xembed->win.base = ecore_x_window_new(0, x, y, w, h);
+   e_comp_ignore_win_add(xembed->win.base);
    ecore_x_icccm_title_set(xembed->win.base, "noshadow_systray_base");
    ecore_x_icccm_name_class_set(xembed->win.base, "systray", "holder");
    ecore_x_netwm_name_set(xembed->win.base, "noshadow_systray_base");
@@ -419,6 +420,7 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
    if (!invis)
      ecore_x_window_background_color_set(xembed->win.base, r, g, b);
    ecore_x_window_show(xembed->win.base);
+   e_container_window_raise(xembed->inst->con, xembed->win.base, E_LAYER_ABOVE);
    return EINA_TRUE;
 }
 
