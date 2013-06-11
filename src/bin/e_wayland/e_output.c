@@ -19,12 +19,14 @@ e_output_init(E_Output *output, E_Compositor *comp, Evas_Coord x, Evas_Coord y, 
    output->dirty = EINA_TRUE;
    output->transform = transform;
 
+   pixman_region32_init(&output->repaint.prev_damage);
+   pixman_region32_init_rect(&output->repaint.region, x, y, w, h);
+
    pixman_region32_union(&comp->plane.damage, &comp->plane.damage, 
                          &output->repaint.region);
    e_output_repaint_schedule(output);
 
    wl_list_init(&output->wl.resources);
-
    wl_signal_init(&output->signals.frame);
    wl_signal_init(&output->signals.destroy);
 
@@ -44,6 +46,11 @@ e_output_shutdown(E_Output *output)
 
    /* check for valid output */
    if (!output) return;
+
+   wl_signal_emit(&output->signals.destroy, output);
+
+   pixman_region32_fini(&output->repaint.region);
+   pixman_region32_fini(&output->repaint.prev_damage);
 
    comp = output->compositor;
    comp->output_pool &= ~(1 << output->id);
@@ -89,6 +96,7 @@ e_output_repaint(E_Output *output, unsigned int secs)
    pixman_region32_subtract(&damage, &damage, &comp->plane.clip);
 
    if (output->cb_repaint) output->cb_repaint(output, &damage);
+
    pixman_region32_fini(&damage);
    output->repaint.needed = EINA_FALSE;
 
@@ -124,6 +132,17 @@ e_output_repaint_schedule(E_Output *output)
    if (comp->wl.input_loop_source) 
      wl_event_source_remove(comp->wl.input_loop_source);
    comp->wl.input_loop_source = NULL;
+}
+
+EAPI void 
+e_output_damage(E_Output *output)
+{
+   E_Compositor *comp;
+
+   comp = output->compositor;
+   pixman_region32_union(&comp->plane.damage, 
+                         &comp->plane.damage, &output->repaint.region);
+   e_output_repaint_schedule(output);
 }
 
 /* local functions */
