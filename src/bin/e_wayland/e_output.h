@@ -66,6 +66,7 @@ EAPI void e_output_init(E_Output *output, E_Compositor *comp, Evas_Coord x, Evas
 EAPI void e_output_shutdown(E_Output *output);
 EAPI void e_output_repaint(E_Output *output, unsigned int secs);
 EAPI void e_output_repaint_schedule(E_Output *output);
+EAPI void e_output_damage(E_Output *output);
 
 # endif
 #endif
