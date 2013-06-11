@@ -405,7 +405,7 @@ e_border_new(E_Container *con,
    unsigned int managed, desk[2];
    int deskx, desky;
 
-   if (eina_hash_find(borders_hash, e_util_winid_str_get(bd->client.win))) return NULL;
+   if (eina_hash_find(borders_hash, e_util_winid_str_get(win))) return NULL;
    bd = E_OBJECT_ALLOC(E_Border, E_BORDER_TYPE, _e_border_free);
    if (!bd) return NULL;
    ecore_x_window_shadow_tree_flush();
