@@ -26,14 +26,14 @@ wizard_page_show(E_Wizard_Page *pg)
    o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Window Focus"));
 
-   of = e_widget_framelist_add(pg->evas, _("Focus by ..."), 0);
+   of = e_widget_framelist_add(pg->evas, _("Focus:"), 0);
 
    rg = e_widget_radio_group_new(&focus_mode);
 
-   ob = e_widget_radio_add(pg->evas, _("Click"), 0, rg);
+   ob = e_widget_radio_add(pg->evas, _("Whenever a window is clicked"), 0, rg);
    e_widget_framelist_object_append(of, ob);
    evas_object_show(ob);
-   ob = e_widget_radio_add(pg->evas, _("Mouse Over"), 1, rg);
+   ob = e_widget_radio_add(pg->evas, _("Whenever the mouse enters a window"), 1, rg);
    e_widget_framelist_object_append(of, ob);
    evas_object_show(ob);
 
