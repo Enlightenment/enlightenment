@@ -7741,6 +7741,7 @@ _e_fm2_cb_icon_thumb_dnd_gen(void *data, Evas_Object *obj, void *event_info __UN
 
    o = data;
    e_icon_size_get(obj, &w, &h);
+   if (w + h == 0) return;
    have_alpha = e_icon_alpha_get(obj);
 //   if (_e_fm2_view_mode_get(ic->sd) == E_FM2_VIEW_MODE_LIST)
    {
@@ -7763,33 +7764,34 @@ _e_fm2_cb_icon_thumb_gen(void *data, Evas_Object *obj, void *event_info __UNUSED
 
    if (e_icon_file_get(obj, &file, NULL))
      {
-        Evas_Coord w = 0, h = 0;
-        int have_alpha;
+        int w = 0, h = 0;
 
         if (!ic->realized)
           return;
 
         e_icon_size_get(obj, &w, &h);
-        have_alpha = e_icon_alpha_get(obj);
-//	if (_e_fm2_view_mode_get(ic->sd) == E_FM2_VIEW_MODE_LIST)
-        {
-           edje_extern_object_aspect_set(obj,
-                                         EDJE_ASPECT_CONTROL_BOTH, w, h);
-        }
-        edje_object_part_swallow(ic->obj, "e.swallow.icon", obj);
-        if (have_alpha)
-          edje_object_signal_emit(ic->obj, "e,action,thumb,gen,alpha", "e");
-        else
-          edje_object_signal_emit(ic->obj, "e,action,thumb,gen", "e");
+        if (w && h)
+          {
+             Eina_Bool have_alpha;
+             have_alpha = e_icon_alpha_get(obj);
+     //	if (_e_fm2_view_mode_get(ic->sd) == E_FM2_VIEW_MODE_LIST)
+             {
+                edje_extern_object_aspect_set(obj,
+                                              EDJE_ASPECT_CONTROL_BOTH, w, h);
+             }
+             edje_object_part_swallow(ic->obj, "e.swallow.icon", obj);
+             if (have_alpha)
+               edje_object_signal_emit(ic->obj, "e,action,thumb,gen,alpha", "e");
+             else
+               edje_object_signal_emit(ic->obj, "e,action,thumb,gen", "e");
+             return;
+          }
      }
-   else
-     {
-        ic->thumb_failed = EINA_TRUE;
-        evas_object_del(obj);
+   ic->thumb_failed = EINA_TRUE;
+   evas_object_del(obj);
 
-        if (ic->realized)
-          _e_fm2_icon_icon_set(ic);
-     }
+   if (ic->realized)
+     _e_fm2_icon_icon_set(ic);
 }
 
 static void
