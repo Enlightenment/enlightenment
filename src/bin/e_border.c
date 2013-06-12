@@ -5860,7 +5860,10 @@ _e_border_cb_window_focus_in(void *data  __UNUSED__,
      }
    else if (e->mode == ECORE_X_EVENT_MODE_UNGRAB)
      {
-        if (e->detail == ECORE_X_EVENT_DETAIL_POINTER) return ECORE_CALLBACK_PASS_ON;
+        /* this seems to break winlist...
+        if (e->detail == ECORE_X_EVENT_DETAIL_POINTER)
+        */
+        return ECORE_CALLBACK_PASS_ON;
      }
 
    /* ignore focus in from !take_focus windows, we just gave it em */
