@@ -2962,6 +2962,7 @@ _e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (c->man->root == ev->win) return ECORE_CALLBACK_PASS_ON;
    if (_e_comp_ignore_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
    if (e_border_find_by_client_window(ev->win)) return ECORE_CALLBACK_RENEW;
+   if (e_border_find_by_window(ev->win)) return ECORE_CALLBACK_RENEW;
    cw = _e_comp_win_add(c, ev->win, NULL);
    if (!cw) return ECORE_CALLBACK_RENEW;
    if (cw->free_shape) _e_comp_win_shape_create(cw, ev->x, ev->y, ev->w, ev->h);
