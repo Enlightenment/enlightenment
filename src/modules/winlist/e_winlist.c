@@ -991,13 +991,14 @@ _e_winlist_activate(void)
      ok = 1;
    if (ok)
      {
-        if ((e_config->winlist_warp_while_selecting) &&
-            ((e_config->focus_policy != E_FOCUS_CLICK) ||
-            (e_config->winlist_warp_at_end) ||
-            (e_config->winlist_warp_while_selecting)))
+        int set = 1;
+        if (e_config->winlist_warp_while_selecting)
           {
-            if (!e_border_pointer_warp_to_center(ww->border))
-              e_border_focus_set(ww->border, 1, 1);
+            if (!e_border_pointer_warp_to_center_now(ww->border))
+              {
+                 e_border_focus_set(ww->border, 1, 1);
+                 set = 0;
+              }
             if (!_animator)
               _animator = ecore_animator_add(_e_winlist_animator, NULL);
           }
@@ -1011,7 +1012,10 @@ _e_winlist_activate(void)
           e_border_raise(ww->border);
         if ((!ww->border->lock_focus_out) &&
             (e_config->winlist_list_focus_while_selecting))
-          e_border_focus_set(ww->border, 1, 0);
+          {
+             e_border_focus_set(ww->border, 1, set);
+             if (set) e_border_focus_set(ww->border, 1, 0);
+          }
      }
    edje_object_part_text_set(_bg_object, "e.text.label",
                              e_border_name_get(ww->border));
