@@ -984,6 +984,7 @@ _e_drag_end(int x, int y)
 
    EINA_LIST_FOREACH(_active_handlers, l, h)
      {
+        if (!h->entered) continue;
         _e_drag_coords_update(h, &dx, &dy);
         ev.x = x - dx;
         ev.y = y - dy;
