@@ -5581,10 +5581,9 @@ e_comp_win_effect_set(E_Comp_Win *cw, const char *effect)
    Eina_Stringshare *grp;
 
    EINA_SAFETY_ON_NULL_RETURN(cw);
-   EINA_SAFETY_ON_NULL_RETURN(effect);
-   EINA_SAFETY_ON_TRUE_RETURN(!effect[0]);
    if (!cw->shobj) return; //input window
 
+   if (!effect) effect = "none";
    snprintf(buf, sizeof(buf), "e/comp/effects/%s", effect);
    edje_object_file_get(cw->effect_obj, NULL, &grp);
    if (!e_util_strcmp(buf, grp)) return;
