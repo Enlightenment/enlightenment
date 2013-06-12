@@ -73,7 +73,7 @@ struct _E_Drop_Handler
    unsigned char entered : 1;
    const char   *active_type;
    unsigned int  num_types;
-   const char   *types[];
+   Eina_Stringshare *types[];
 };
 
 struct _E_Event_Dnd_Enter
