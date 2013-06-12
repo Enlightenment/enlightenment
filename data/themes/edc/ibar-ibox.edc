@@ -3,7 +3,7 @@ group { name: "e/modules/ibox/icon";
    // 1 or 0 if u want an icon holder to raise when the mouse (or keyboard) hilights it
    data.item: "raise_on_hilight" "0";
 //   data.item: "item_list" "item item2 item3";
-   images.image: "led_tiny_green.png" COMP;
+   images.image: "led_tiny_blue.png" COMP;
    parts {
       part { name: "item_clip"; type: RECT;
          description { state: "default" 0.0;
@@ -41,7 +41,7 @@ group { name: "e/modules/ibox/icon";
             rel1.offset: -4 -4;
             rel2.relative: 1.0 1.0;
             rel2.offset: -3 -3;
-            image.normal: "led_tiny_green.png";
+            image.normal: "led_tiny_blue.png";
             color: 255 255 255 0;
             visible: 0;
          }
