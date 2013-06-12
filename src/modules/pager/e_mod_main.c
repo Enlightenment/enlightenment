@@ -2009,7 +2009,11 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
         desk = e_desk_current_get(zone);
 
         e_border_zone_set(pw->border, zone);
-        e_border_desk_set(pw->border, desk);
+        if ((pw->border->desk != desk) && (desk == e_desk_current_get(zone)))
+          {
+             e_border_desk_set(pw->border, desk);
+             e_comp_win_effect_set(pw->border->cw, NULL);
+          }
 
         ecore_x_pointer_last_xy_get(&x, &y);
 
