@@ -198,13 +198,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    if (e_config->winlist_warp_while_selecting)
      ecore_x_pointer_xy_get(_winlist->zone->container->win,
                             &_last_pointer_x, &_last_pointer_y);
-   if (_last_border)
-     {
-        if (!_last_border->lock_focus_out)
-          e_border_focus_set(_last_border, 0, 0);
-        else
-          _last_border = NULL;
-     }
+
    _e_winlist_activate_nth(1);
    if ((eina_list_count(_wins) > 1) && (eina_list_data_get(_win_selected) == _last_border))
      e_winlist_next();
