@@ -436,7 +436,7 @@ _systray_xembed_activate(Instance_Xembed *xembed)
 
    atom = _systray_xembed_atom_st_get(systray_manager_number_get(xembed->inst));
    old_win = ecore_x_selection_owner_get(atom);
-   if (old_win != 0) return 0;
+   if (old_win && (old_win != e_comp_get(xembed->inst->con)->cm_selection)) return 0;
 
    if (xembed->win.base == 0)
      {
@@ -445,6 +445,7 @@ _systray_xembed_activate(Instance_Xembed *xembed)
      }
 
    xembed->win.selection = e_comp_get(xembed->inst->con)->cm_selection;
+   if (old_win) return 1;
    if (!_systray_xembed_selection_owner_set_current(xembed))
      {
         xembed->win.selection = 0;
