@@ -96,18 +96,22 @@ _e_qa_entry_find_border(const E_Border *bd)
 }
 
 static E_Quick_Access_Entry *
-_e_qa_entry_find_match_stringshared(const char *name, const char *class)
+_e_qa_entry_find_match_stringshared(const char *name, const char *class, Eina_Bool nontrans)
 {
    E_Quick_Access_Entry *entry;
    const Eina_List *n;
-   EINA_LIST_FOREACH(qa_config->transient_entries, n, entry)
-     {
-        if (entry->win) continue;
-        if (entry->class != class) continue;
-        /* no entry name matches all */
-        if ((entry->name) && (entry->name != name)) continue;
 
-        return entry;
+   if (!nontrans)
+     {
+        EINA_LIST_FOREACH(qa_config->transient_entries, n, entry)
+          {
+             if (entry->win) continue;
+             if (entry->class != class) continue;
+             /* no entry name matches all */
+             if ((entry->name) && (entry->name != name)) continue;
+
+             return entry;
+          }
      }
    EINA_LIST_FOREACH(qa_config->entries, n, entry)
      {
@@ -123,14 +127,14 @@ _e_qa_entry_find_match_stringshared(const char *name, const char *class)
 }
 
 static E_Quick_Access_Entry *
-_e_qa_entry_find_match(const E_Border *bd)
+_e_qa_entry_find_match(const E_Border *bd, Eina_Bool nontrans)
 {
    const char *name, *class;
    E_Quick_Access_Entry *entry;
 
    name = bd->client.icccm.name;
    class = bd->client.icccm.class;
-   entry = _e_qa_entry_find_match_stringshared(name, class);
+   entry = _e_qa_entry_find_match_stringshared(name, class, nontrans);
 
    return entry;
 }
@@ -520,7 +524,7 @@ _e_qa_border_eval_pre_post_fetch_cb(void *data __UNUSED__, void *border)
    if ((!bd->client.icccm.class) || (!bd->client.icccm.class[0])) return;
    if ((!bd->client.icccm.name) || (!bd->client.icccm.name[0])) return;
 
-   entry = _e_qa_entry_find_match(bd);
+   entry = _e_qa_entry_find_match(bd, 0);
    if (!entry) return;
    DBG("border=%p matches entry %s", bd, entry->id);
    _e_qa_entry_border_associate(entry, bd);
@@ -542,6 +546,7 @@ _e_qa_event_module_init_end_cb(void *data __UNUSED__, int type __UNUSED__, void 
    Eina_List *l, *ll;
    E_Quick_Access_Entry *entry;
    unsigned int count;
+   E_Border *bd;
    /* assume that by now, e has successfully placed all windows */
    count = eina_list_count(qa_config->transient_entries);
    EINA_LIST_FOREACH_SAFE(qa_config->transient_entries, l, ll, entry)
@@ -559,12 +564,30 @@ _e_qa_event_module_init_end_cb(void *data __UNUSED__, int type __UNUSED__, void 
      }
    if (count != eina_list_count(qa_config->transient_entries)) e_bindings_reset();
    qa_running = EINA_TRUE;
+   count = 0;
    EINA_LIST_FOREACH(qa_config->entries, l, entry)
      {
         if (entry->config.relaunch && (!entry->border))
           {
              DBG("qa window for relaunch entry %s not present, starting", entry->id);
              _e_qa_border_new(entry);
+          }
+        if (entry->border) continue;
+        count++;
+     }
+   if (count)
+     {
+        /* some non-transient entries exist without assigned borders
+         * try assigning from existing borders
+         */
+        EINA_LIST_FOREACH(e_border_client_list(), l, bd)
+          {
+             entry = _e_qa_entry_find_match(bd, 1);
+             if ((!entry) || entry->border) continue;
+             DBG("border=%p matches entry %s", bd, entry->id);
+             _e_qa_entry_border_associate(entry, bd);
+             count--;
+             if (!count) break;
           }
      }
    return ECORE_CALLBACK_RENEW;
