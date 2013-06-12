@@ -910,11 +910,7 @@ _tasks_cb_window_focus_out(void *data __UNUSED__, int type __UNUSED__, void *eve
 static Eina_Bool
 _tasks_cb_event_border_urgent_change(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   E_Event_Border_Urgent_Change *ev;
-
-   ev = event;
-
-   if (ev->border->focused) return EINA_TRUE;
+   E_Event_Border_Urgent_Change *ev = event;
 
    if (ev->border->client.icccm.urgent)
      _tasks_signal_emit(ev->border, "e,state,urgent", "e");
