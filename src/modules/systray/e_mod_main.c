@@ -240,14 +240,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         return NULL;
      }
 
-   if ((gc->shelf) && (!gc->shelf->popup))
-     {
-        e_util_dialog_internal
-          (_("Systray Error"),
-          _("Systray cannot work in a shelf that is set to below everything."));
-        return NULL;
-     }
-
    inst = E_NEW(Instance, 1);
    if (!inst)
      return NULL;
