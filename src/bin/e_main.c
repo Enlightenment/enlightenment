@@ -164,10 +164,11 @@ _fix_user_default_edj(void)
    if (ecore_file_exists(buff)) ecore_file_unlink(buff);
 }
 
-static void
-_e_main_shelf_init_job(void *d EINA_UNUSED)
+static Eina_Bool
+_e_main_shelf_init_job(void *data EINA_UNUSED)
 {
    e_shelf_config_update();
+   return ECORE_CALLBACK_CANCEL;
 }
 
 /* externally accessible functions */
@@ -1048,7 +1049,7 @@ main(int argc, char **argv)
    TS("E_Shelf Init Done");
    _e_main_shutdown_push(e_shelf_shutdown);
 
-   ecore_job_add(_e_main_shelf_init_job, NULL);
+   ecore_idle_enterer_before_add(_e_main_shelf_init_job, NULL);
 
    TS("Manage all windows");
    _e_main_manage_all();
