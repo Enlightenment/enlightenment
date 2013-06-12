@@ -756,6 +756,14 @@ _pager_desk_window_find(Pager_Desk *pd, E_Border *border)
    return NULL;
 }
 
+static void
+_pager_popup_cb_del(void *obj)
+{
+   Pager_Popup *pp = e_object_data_get(obj);
+   _pager_free(pp->pager);
+   free(pp);
+}
+
 static Pager_Popup *
 _pager_popup_new(E_Zone *zone, int keyaction)
 {
@@ -777,6 +785,7 @@ _pager_popup_new(E_Zone *zone, int keyaction)
      }
 
    pp->pager = _pager_new(pp->popup->evas, zone, NULL);
+   
    pp->pager->popup = pp;
    pp->urgent = 0;
 
@@ -807,16 +816,13 @@ _pager_popup_new(E_Zone *zone, int keyaction)
    evas_object_move(pp->o_bg, 0, 0);
    evas_object_resize(pp->o_bg, w, h);
    e_popup_content_set(pp->popup, pp->o_bg);
-   //e_popup_ignore_events_set(pp->popup, 1);
    e_zone_useful_geometry_get(zone, &zx, &zy, &zw, &zh);
    zx -= zone->x;
    zy -= zone->y;
    e_popup_move_resize(pp->popup,
                        zx + ((zw - w) / 2), zy + ((zh - h) / 2), w, h);
-   /* FIXME: COMP */
-   //e_bindings_mouse_grab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
-   //e_bindings_wheel_grab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
-
+   E_OBJECT_DEL_SET(pp->popup, _pager_popup_cb_del);
+   e_object_data_set(E_OBJECT(pp->popup), pp);
    e_popup_show(pp->popup);
 
    pp->timer = NULL;
@@ -827,14 +833,8 @@ _pager_popup_new(E_Zone *zone, int keyaction)
 static void
 _pager_popup_free(Pager_Popup *pp)
 {
-   if (pp->timer) ecore_timer_del(pp->timer);
-   evas_object_del(pp->o_bg);
-   _pager_free(pp->pager);
-   /* FIXME: COMP */
-   //e_bindings_mouse_ungrab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
-   //e_bindings_wheel_ungrab(E_BINDING_CONTEXT_POPUP, pp->popup->evas_win);
+   E_FREE_FUNC(pp->timer, ecore_timer_del);
    e_object_del(E_OBJECT(pp->popup));
-   free(pp);
 }
 
 static Pager_Popup *
