@@ -69,9 +69,10 @@ struct _E_Drop_Handler
    Evas_Object *base;
    int           x, y, w, h;
 
-   unsigned char active : 1;
-   unsigned char entered : 1;
    const char   *active_type;
+   Eina_Bool active : 1;
+   Eina_Bool entered : 1;
+   Eina_Bool hidden : 1;
    unsigned int  num_types;
    Eina_Stringshare *types[];
 };

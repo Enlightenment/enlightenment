@@ -69,6 +69,34 @@ static Eina_Stringshare **_e_dnd_types[] =
 static Eina_Hash *_drop_handlers_responsives;
 static Ecore_X_Atom _action;
 
+static void
+_e_drop_handler_active_check(E_Drop_Handler *h, const E_Drag *drag, Eina_Stringshare *type)
+{
+   unsigned int i, j;
+
+   if (h->hidden) return;
+   for (i = 0; i < h->num_types; i++)
+     {
+        if (drag)
+          {
+             for (j = 0; j < drag->num_types; j++)
+               {
+                  if (h->types[i] != drag->types[j]) continue;
+                  h->active = 1;
+                  h->active_type = eina_stringshare_ref(h->types[i]);
+                  return;
+               }
+          }
+        else
+          {
+             if (h->types[i] != type) continue;
+             h->active = 1;
+             h->active_type = eina_stringshare_ref(h->types[i]);
+             return;
+          }
+     }
+}
+
 /* externally accessible functions */
 
 EINTERN int
@@ -254,24 +282,11 @@ e_drag_start(E_Drag *drag, int x, int y)
    _active_handlers = eina_list_free(_active_handlers);
    EINA_LIST_FOREACH(_drop_handlers, l, h)
      {
-        unsigned int i, j;
         Eina_Bool active = h->active;
 
         h->active = 0;
         eina_stringshare_replace(&h->active_type, NULL);
-        for (i = 0; i < h->num_types; i++)
-          {
-             for (j = 0; j < drag->num_types; j++)
-               {
-                  if (h->types[i] == drag->types[j])
-                    {
-                       h->active = 1;
-                       h->active_type = eina_stringshare_ref(h->types[i]);
-                       break;
-                    }
-               }
-             if (h->active) break;
-          }
+        _e_drop_handler_active_check(h, drag, NULL);
         if (h->active != active)
           {
              if (h->active)
@@ -318,24 +333,11 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
    _active_handlers = eina_list_free(_active_handlers);
    EINA_LIST_FOREACH(_drop_handlers, l, h)
      {
-        unsigned int i, j;
         Eina_Bool active = h->active;
 
         h->active = 0;
         eina_stringshare_replace(&h->active_type, NULL);
-        for (i = 0; i < h->num_types; i++)
-          {
-             for (j = 0; j < drag->num_types; j++)
-               {
-                  if (h->types[i] == drag->types[j])
-                    {
-                       h->active = 1;
-                       h->active_type = eina_stringshare_ref(h->types[i]);
-                       break;
-                    }
-               }
-             if (h->active) break;
-          }
+        _e_drop_handler_active_check(h, drag, NULL);
         if (h->active != active)
           {
              if (h->active)
@@ -1175,7 +1177,6 @@ _e_dnd_cb_event_dnd_enter(void *data __UNUSED__, int type __UNUSED__, void *even
    E_Drop_Handler *h;
    const char *id;
    const Eina_List *l;
-   unsigned int j;
    int i;
 
    id = e_util_winid_str_get(ev->win);
@@ -1197,17 +1198,9 @@ _e_dnd_cb_event_dnd_enter(void *data __UNUSED__, int type __UNUSED__, void *even
         _xdnd->type = t;
         EINA_LIST_FOREACH(_drop_handlers, l, h)
           {
-             for (j = 0; j < h->num_types; j++)
-               {
-                  if (h->types[j] == _xdnd->type)
-                    {
-                       h->active = 1;
-                       h->active_type = eina_stringshare_ref(_xdnd->type);
-                       _active_handlers = eina_list_append(_active_handlers, h);
-                       break;
-                    }
-               }
-
+             _e_drop_handler_active_check(h, NULL, _xdnd->type);
+             if (h->active)
+               _active_handlers = eina_list_append(_active_handlers, h);
              h->entered = 0;
           }
         break;
