@@ -1693,7 +1693,6 @@ _e_menu_realize(E_Menu *m)
    E_Menu_Item *mi;
 
    if (m->realized || (!m->items)) return;
-   m->realized = 1;
 
    if (m->parent_item && m->parent_item->menu)
      m->zone = m->parent_item->menu->zone;
@@ -1732,6 +1731,7 @@ _e_menu_realize(E_Menu *m)
    e_box_thaw(m->container_object);
 
    evas_event_thaw(m->evas);
+   m->realized = 1;
 }
 
 static void
@@ -2760,10 +2760,11 @@ _e_menu_auto_place(E_Menu *m, int x, int y, int w, int h)
 static void
 _e_menu_cb_item_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   E_Menu_Item *mi;
+   E_Menu_Item *mi = data;
 
    if (_e_menu_lock) return;
-   mi = data;
+   /* this can be triggered when creating menus if the new menu is on top of its parent */
+   if (!mi->menu->realized) return;
    e_menu_item_active_set(mi, 1);
 }
 
@@ -2771,6 +2772,8 @@ static void
 _e_menu_cb_item_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info EINA_UNUSED)
 {
    E_Menu_Item *mi = data;
+   /* this can be triggered when creating menus if the new menu is on top of its parent */
+   if (!mi->menu->realized) return;
    e_menu_item_active_set(mi, 0);
 }
 
@@ -2963,21 +2966,24 @@ _e_menu_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
          /* this is useless while the mouse is down */
          evas_event_feed_mouse_move(m->evas, ev->x, ev->y, ev->timestamp, NULL);
      }
-   if (_e_active_menu_item)
+   if (_e_menu_activate_maybe_drag)
      {
-        if (!E_INSIDE(ev->x, ev->y, _e_active_menu_item->x, _e_active_menu_item->y, _e_active_menu_item->w, _e_active_menu_item->h))
+        if (_e_active_menu_item)
           {
-             if (_e_active_menu_item->drag_cb.func)
+             if (!E_INSIDE(ev->x, ev->y, _e_active_menu_item->x, _e_active_menu_item->y, _e_active_menu_item->w, _e_active_menu_item->h))
                {
-                  /* User is dragging a draggable item elsewhere. */
-                  _e_active_menu_item->drag.x = ev->x - (ev->x - _e_active_menu_item->x);
-                  _e_active_menu_item->drag.y = ev->y - (ev->y - _e_active_menu_item->y);
-                  _e_menu_deactivate_all();
-                  _e_active_menu_item->drag_cb.func(_e_active_menu_item->drag_cb.data, _e_active_menu_item->menu, _e_active_menu_item);
+                  if (_e_active_menu_item->drag_cb.func)
+                    {
+                       /* User is dragging a draggable item elsewhere. */
+                       _e_active_menu_item->drag.x = ev->x - (ev->x - _e_active_menu_item->x);
+                       _e_active_menu_item->drag.y = ev->y - (ev->y - _e_active_menu_item->y);
+                       _e_menu_deactivate_all();
+                       _e_active_menu_item->drag_cb.func(_e_active_menu_item->drag_cb.data, _e_active_menu_item->menu, _e_active_menu_item);
+                    }
                }
-             /* Either way, the maybe drag stops here. */
-             _e_menu_activate_maybe_drag = 0;
           }
+        /* Either way, the maybe drag stops here. */
+        _e_menu_activate_maybe_drag = 0;
      }
 
    _e_menu_list_free_unref(tmp);
