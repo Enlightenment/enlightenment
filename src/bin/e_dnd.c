@@ -774,9 +774,12 @@ _e_drag_win_hide(E_Drop_Handler *h)
 }
 
 static unsigned int
-_e_dnd_object_layer_get(E_Object *obj)
+_e_dnd_object_layer_get(E_Drop_Handler *h)
 {
    unsigned int adjust = 0;
+   E_Object *obj = h->obj;
+
+   if (h->base) return evas_object_layer_get(h->base);
    if (!obj) return 0;
    switch (obj->type)
      {
@@ -858,7 +861,7 @@ _e_drag_update(Ecore_X_Window root, int x, int y, Ecore_X_Atom action)
         leave_ev.x = x - dx;
         leave_ev.y = y - dy;
 
-        layer = _e_dnd_object_layer_get(h->obj);
+        layer = _e_dnd_object_layer_get(h);
         if (!top)
           {
              top = h;
