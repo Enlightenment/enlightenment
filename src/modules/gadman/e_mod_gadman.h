@@ -54,6 +54,7 @@ struct _Manager
    Ecore_Timer *gadman_reset_timer;
    Evas_Object *movers[GADMAN_LAYER_COUNT];
    Evas_Object *full_bg;
+   Evas_Object *overlay_layer;
    const char  *icon_name;
    E_Gadcon_Client *drag_gcc[GADMAN_LAYER_COUNT];
 
@@ -63,12 +64,10 @@ struct _Manager
    Ecore_Event_Handler *add;
    
    int             visible;
-   int             use_shaped_win;
-   Ecore_X_Window  top_win;
-   Ecore_Evas     *top_ee;
+   E_Popup     *overlay;
    E_Container    *container;
 
-   Evas_Coord  width, height;
+   int  width, height;
    
    E_Module                *module;
    E_Config_Dialog         *config_dialog;
