@@ -964,7 +964,8 @@ _e_drag_end(int x, int y)
      }
 
    dropped = 0;
-
+   ecore_x_window_free(_drag_win);
+   _drag_win = 0;
    if (!_drag_current->data)
      {
         /* Just leave */
@@ -1081,8 +1082,6 @@ _e_drag_free(E_Drag *drag)
         E_Drop_Handler *h;
 
         e_grabinput_release(_drag_win, _drag_win);
-        ecore_x_window_free(_drag_win);
-        _drag_win = 0;
         _drag_win_root = 0;
 
         leave_ev.x = 0;
@@ -1304,6 +1303,8 @@ _e_dnd_cb_event_dnd_finished(void *data __UNUSED__, int type __UNUSED__, void *e
    if (!ev->completed) return ECORE_CALLBACK_PASS_ON;
  */
 
+   if (_drag_win) ecore_x_window_free(_drag_win);
+   _drag_win = 0;
    return ECORE_CALLBACK_PASS_ON;
 }
 
