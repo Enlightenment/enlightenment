@@ -121,7 +121,7 @@ gadman_init(E_Module *m)
    e_gadcon_location_register(location);
 
    /* create and register "desktop hover" location */
-   location = Man->location[GADMAN_LAYER_TOP] = e_gadcon_location_new(_("Desktop Hover"), E_GADCON_SITE_DESKTOP,
+   location = Man->location[GADMAN_LAYER_TOP] = e_gadcon_location_new(_("Desktop Overlay"), E_GADCON_SITE_DESKTOP,
                                     _e_gadman_client_add, (intptr_t*)(long)GADMAN_LAYER_TOP,
                                     _e_gadman_client_remove, NULL);
    e_gadcon_location_set_icon_name(location, "preferences-desktop");
