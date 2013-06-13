@@ -9,6 +9,11 @@ static void _e_input_cb_pointer_get(struct wl_client *client, struct wl_resource
 static void _e_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 static void _e_input_cb_touch_get(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 static void _e_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *resource, unsigned int serial, struct wl_resource *surface_resource, int x, int y);
+static void _e_input_pointer_grab_cb_focus(E_Input_Pointer_Grab *grab);
+static void _e_input_pointer_grab_cb_motion(E_Input_Pointer_Grab *grab, unsigned int timestamp);
+static void _e_input_pointer_grab_cb_button(E_Input_Pointer_Grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
+
+static struct wl_resource *_e_input_surface_resource_get(struct wl_list *list, E_Surface *surface);
 
 /* wayland interfaces */
 static const struct wl_seat_interface _e_input_interface = 
@@ -21,6 +26,13 @@ static const struct wl_seat_interface _e_input_interface =
 static const struct wl_pointer_interface _e_pointer_interface = 
 {
    _e_input_pointer_cb_cursor_set
+};
+
+static E_Input_Pointer_Grab_Interface _e_pointer_grab_interface = 
+{
+   _e_input_pointer_grab_cb_focus,
+   _e_input_pointer_grab_cb_motion,
+   _e_input_pointer_grab_cb_button
 };
 
 /* external functions */
@@ -39,6 +51,8 @@ e_input_init(E_Compositor *comp, E_Input *seat, const char *name)
                          _e_input_cb_bind);
 
    seat->name = strdup(name);
+
+   seat->compositor = comp;
 
    comp->inputs = eina_list_append(comp->inputs, seat);
 
@@ -75,6 +89,10 @@ e_input_pointer_init(E_Input *seat)
    wl_list_init(&ptr->resources);
    wl_signal_init(&ptr->signals.focus);
 
+   ptr->default_grab.interface = &_e_pointer_grab_interface;
+   ptr->default_grab.pointer = ptr;
+   ptr->grab = &ptr->default_grab;
+
    ptr->seat = seat;
    seat->pointer = ptr;
 
@@ -95,6 +113,65 @@ e_input_touch_init(E_Input *seat)
    return EINA_TRUE;
 }
 
+EAPI void 
+e_input_mouse_move_send(E_Input *input, Ecore_Event_Mouse_Move *ev)
+{
+   E_Input_Pointer *ptr;
+
+   if (!(ptr = input->pointer)) return;
+
+   ptr->x = ev->x;
+   ptr->y = ev->y;
+
+   if ((ptr->grab) && (ptr->grab->interface))
+     {
+        if (ptr->grab->interface->focus)
+          ptr->grab->interface->focus(ptr->grab);
+        if (ptr->grab->interface->motion)
+          ptr->grab->interface->motion(ptr->grab, ev->timestamp);
+     }
+}
+
+EAPI void 
+e_input_pointer_focus_set(E_Input_Pointer *pointer, E_Surface *surface, Evas_Coord x, Evas_Coord y)
+{
+   struct wl_resource *resource;
+   struct wl_display *disp;
+   unsigned int serial = 0;
+
+   resource = pointer->focus_resource;
+   if ((resource) && (pointer->focus != surface))
+     {
+        disp = wl_client_get_display(resource->client);
+        serial = e_compositor_get_time();
+//        serial = wl_display_next_serial(disp);
+        wl_pointer_send_leave(resource, serial, &pointer->focus->wl.resource);
+        /* wl_list_remove(&pointer->focus_listener.link); */
+     }
+
+   resource = _e_input_surface_resource_get(&pointer->resources, surface);
+
+//   resource = &surface->wl.resource;
+   if ((resource) && 
+       ((pointer->focus != surface) || 
+           (pointer->focus_resource != resource)))
+     {
+        disp = wl_client_get_display(resource->client);
+        serial = e_compositor_get_time();
+//        serial = wl_display_next_serial(disp);
+
+        wl_pointer_send_enter(resource, serial, &surface->wl.resource, 
+                              wl_fixed_from_int(pointer->x), 
+                              wl_fixed_from_int(pointer->y));
+        /* wl_signal_add(&resource->destroy_signal, &pointer->focus_listener); */
+        /* pointer->focus_serial = serial; */
+     }
+
+   pointer->focus_resource = resource;
+   pointer->focus = surface;
+   wl_signal_emit(&pointer->signals.focus, pointer);
+}
+
 /* local functions */
 static void 
 _e_input_capabilities_update(E_Input *seat)
@@ -102,12 +179,13 @@ _e_input_capabilities_update(E_Input *seat)
    struct wl_resource *res;
    enum wl_seat_capability caps = 0;
 
-   if (seat->base.pointer)
+   if (seat->pointer)
      caps |= WL_SEAT_CAPABILITY_POINTER;
-   if (seat->base.keyboard)
-     caps |= WL_SEAT_CAPABILITY_KEYBOARD;
-   if (seat->base.touch)
-     caps |= WL_SEAT_CAPABILITY_TOUCH;
+
+   /* if (seat->keyboard) */
+   /*   caps |= WL_SEAT_CAPABILITY_KEYBOARD; */
+   /* if (seat->touch) */
+   /*   caps |= WL_SEAT_CAPABILITY_TOUCH; */
 
    wl_list_for_each(res, &seat->resources, link)
      wl_seat_send_capabilities(res, caps);
@@ -129,12 +207,12 @@ _e_input_cb_bind(struct wl_client *client, void *data, unsigned int version, uns
 
    res->destroy = _e_input_cb_unbind;
 
-   if (seat->base.pointer)
+   if (seat->pointer)
      caps |= WL_SEAT_CAPABILITY_POINTER;
-   if (seat->base.keyboard)
-     caps |= WL_SEAT_CAPABILITY_KEYBOARD;
-   if (seat->base.touch)
-     caps |= WL_SEAT_CAPABILITY_TOUCH;
+   /* if (seat->keyboard) */
+   /*   caps |= WL_SEAT_CAPABILITY_KEYBOARD; */
+   /* if (seat->touch) */
+   /*   caps |= WL_SEAT_CAPABILITY_TOUCH; */
 
    wl_seat_send_capabilities(res, caps);
 
@@ -159,11 +237,20 @@ _e_input_cb_pointer_get(struct wl_client *client, struct wl_resource *resource, 
 
    res = wl_client_add_object(client, &wl_pointer_interface, 
                               &_e_pointer_interface, id, seat->pointer);
+
    wl_list_insert(&seat->pointer->resources, &res->link);
 
    res->destroy = _e_input_cb_unbind;
 
-   /* TODO handle focus */
+   if ((seat->pointer->focus) && 
+       (seat->pointer->focus->wl.resource.client == client))
+     {
+        E_Surface *es;
+
+        es = seat->pointer->focus;
+        e_input_pointer_focus_set(seat->pointer, es, 
+                                  seat->pointer->x, seat->pointer->y);
+     }
 }
 
 static void 
@@ -182,4 +269,50 @@ static void
 _e_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *resource, unsigned int serial, struct wl_resource *surface_resource, int x, int y)
 {
 
+}
+
+static void 
+_e_input_pointer_grab_cb_focus(E_Input_Pointer_Grab *grab)
+{
+   E_Input_Pointer *ptr;
+   E_Surface *es;
+
+   if (!(ptr = grab->pointer)) return;
+
+   es = e_compositor_surface_find(ptr->seat->compositor, ptr->x, ptr->y);
+   if (ptr->focus != es)
+     e_input_pointer_focus_set(ptr, es, ptr->x, ptr->y);
+}
+
+static void 
+_e_input_pointer_grab_cb_motion(E_Input_Pointer_Grab *grab, unsigned int timestamp)
+{
+   E_Input_Pointer *ptr;
+
+   if (!(ptr = grab->pointer)) return;
+
+   if (ptr->focus_resource)
+     wl_pointer_send_motion(ptr->focus_resource, timestamp, 
+                            wl_fixed_from_int(ptr->x), 
+                            wl_fixed_from_int(ptr->y));
+}
+
+static void 
+_e_input_pointer_grab_cb_button(E_Input_Pointer_Grab *grab, unsigned int timestamp, unsigned int button, unsigned int state)
+{
+
+}
+
+static struct wl_resource *
+_e_input_surface_resource_get(struct wl_list *list, E_Surface *surface)
+{
+   struct wl_resource *ret;
+
+   if (!surface) return NULL;
+
+   wl_list_for_each(ret, list, link)
+     if (ret->client == surface->wl.resource.client)
+       return ret;
+
+   return NULL;
 }
