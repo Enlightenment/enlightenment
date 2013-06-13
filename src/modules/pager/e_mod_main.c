@@ -2194,6 +2194,11 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              if (fullscreen) e_border_unfullscreen(bd);
              if (pd->desk != e_desk_current_get(pd->desk->zone))
                e_border_hide(bd, 2);
+             else
+               {
+                  if (pd->desk != bd->desk)
+                    e_comp_win_effect_set(pw->border->cw, NULL);
+               }
              e_border_desk_set(bd, pd->desk);
              e_border_raise(bd);
                   
