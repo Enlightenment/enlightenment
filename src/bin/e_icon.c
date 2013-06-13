@@ -496,6 +496,7 @@ e_icon_object_set(Evas_Object *obj, Evas_Object *o)
    sd->obj = o;
    evas_object_smart_member_add(sd->obj, obj);
    if (evas_object_visible_get(obj)) evas_object_show(sd->obj);
+   _handle_anim(sd);
    _e_icon_smart_reconfigure(sd);
 }
 
