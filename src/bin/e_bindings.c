@@ -591,8 +591,9 @@ e_bindings_key_grab(E_Binding_Context ctxt, Ecore_X_Window win)
      {
         if (_e_bindings_context_match(binding->ctxt, ctxt))
           {
-             ecore_x_window_key_grab(win, binding->key,
-                                     e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
+             if (e_bindings_key_allowed(binding->key))
+               ecore_x_window_key_grab(win, binding->key,
+                                       e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
           }
      }
 }
@@ -607,8 +608,9 @@ e_bindings_key_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
      {
         if (_e_bindings_context_match(binding->ctxt, ctxt))
           {
-             ecore_x_window_key_ungrab(win, binding->key,
-                                       e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
+             if (e_bindings_key_allowed(binding->key))
+               ecore_x_window_key_ungrab(win, binding->key,
+                                         e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
           }
      }
 }
@@ -728,6 +730,32 @@ e_bindings_key_up_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev)
      }
    return NULL;
 }
+
+EAPI Eina_Bool
+e_bindings_key_allowed(const char *key)
+{
+   if ((!strcmp(key, "Shift_L")) ||
+       (!strcmp(key, "Shift_R")) ||
+       (!strcmp(key, "Control_L")) ||
+       (!strcmp(key, "Control_R")) ||
+       (!strcmp(key, "Alt_L")) ||
+       (!strcmp(key, "Alt_R")) ||
+       (!strcmp(key, "Meta_L")) ||
+       (!strcmp(key, "Meta_R")) ||
+       (!strcmp(key, "Hyper_L")) ||
+       (!strcmp(key, "Hyper_R")) ||
+       (!strcmp(key, "Super_L")) ||
+       (!strcmp(key, "Super_R")) ||
+       (!strcmp(key, "AltGr")) ||
+       (!strcmp(key, "Caps_Lock")) ||
+       (!strcmp(key, "Shift_Lock")) ||
+       (!strcmp(key, "Kana_Lock")) ||
+       (!strcmp(key, "Num_Lock")) ||
+       (!strcmp(key, "Scroll_Lock")))
+     return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 
 EAPI void
 e_bindings_edge_add(E_Binding_Context ctxt, E_Zone_Edge edge, Eina_Bool drag_only, E_Binding_Modifier mod, int any_mod, const char *action, const char *params, float delay)

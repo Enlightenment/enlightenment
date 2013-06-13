@@ -854,6 +854,9 @@ _grab_key_down_cb(void *data,
         unsigned int mod = E_BINDING_MODIFIER_NONE;
         unsigned int n, found = 0;
 
+        if (!e_bindings_key_allowed(ev->keyname))
+          return ECORE_CALLBACK_PASS_ON;
+
         if (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT)
           mod |= E_BINDING_MODIFIER_SHIFT;
         if (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL)

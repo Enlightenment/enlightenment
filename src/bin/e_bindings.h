@@ -163,6 +163,8 @@ EAPI E_Action   *e_bindings_key_up_event_handle(E_Binding_Context ctxt, E_Object
 EAPI E_Action   *e_bindings_key_down_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev);
 EAPI E_Action   *e_bindings_key_up_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev);
 
+EAPI Eina_Bool   e_bindings_key_allowed(const char *key);
+
 EAPI void        e_bindings_edge_add(E_Binding_Context ctxt, E_Zone_Edge edge, Eina_Bool drag_only, E_Binding_Modifier mod, int any_mod, const char *action, const char *params, float delay);
 EAPI Eina_Bool   e_bindings_edge_flippable_get(E_Zone_Edge edge);
 EAPI Eina_Bool   e_bindings_edge_non_flippable_get(E_Zone_Edge edge);
