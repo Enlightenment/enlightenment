@@ -7,6 +7,9 @@ static Eina_Bool _output_init_shm(E_Compositor_X11 *xcomp, E_Output_X11 *output,
 static void _output_shutdown(E_Output_X11 *output);
 static Eina_Bool _input_init(E_Compositor_X11 *xcomp);
 static void _input_shutdown(E_Compositor_X11 *xcomp);
+static void _input_mouse_move_send(E_Input *input, Ecore_Event_Mouse_Move *ev);
+static void _input_mouse_down_send(E_Input *input, Ecore_Event_Mouse_Button *ev);
+static void _input_mouse_up_send(E_Input *input, Ecore_Event_Mouse_Button *ev);
 
 static int _output_cb_frame(void *data);
 static void _output_cb_repaint_start(E_Output *output);
@@ -442,7 +445,7 @@ _output_cb_window_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void 
         /* try to match the output window */
         if (ev->window == output->win)
           {
-             e_input_mouse_move_send(&_e_x11_comp->seat, ev);
+             _input_mouse_move_send(&_e_x11_comp->seat, ev);
              break;
           }
      }
@@ -465,7 +468,7 @@ _output_cb_window_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void 
         /* try to match the output window */
         if (ev->window == output->win)
           {
-             printf("Send Mouse Down !!\n");
+             _input_mouse_down_send(&_e_x11_comp->seat, ev);
              break;
           }
      }
@@ -488,10 +491,100 @@ _output_cb_window_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
         /* try to match the output window */
         if (ev->window == output->win)
           {
-             printf("Send Mouse Up !!\n");
+             _input_mouse_up_send(&_e_x11_comp->seat, ev);
              break;
           }
      }
 
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static void 
+_input_mouse_move_send(E_Input *input, Ecore_Event_Mouse_Move *ev)
+{
+   E_Input_Pointer *ptr;
+
+   if (!(ptr = input->pointer)) return;
+
+   ptr->x = ev->x;
+   ptr->y = ev->y;
+
+   if ((ptr->grab) && (ptr->grab->interface))
+     {
+        if (ptr->grab->interface->focus)
+          ptr->grab->interface->focus(ptr->grab);
+        if (ptr->grab->interface->motion)
+          ptr->grab->interface->motion(ptr->grab, ev->timestamp);
+     }
+}
+
+static void 
+_input_mouse_down_send(E_Input *input, Ecore_Event_Mouse_Button *ev)
+{
+   E_Input_Pointer *ptr;
+
+   if (!(ptr = input->pointer)) return;
+
+   /* TODO: ping handler */
+
+   if ((ptr->seat) && (ptr->seat->compositor))
+     {
+        if ((ptr->seat->compositor->cb_ping) && (ptr->focus))
+          {
+             unsigned int serial = 0;
+
+             serial = 
+               wl_display_next_serial(ptr->seat->compositor->wl.display);
+
+             ptr->seat->compositor->cb_ping(ptr->focus, serial);
+          }
+     }
+
+
+   if (ptr->button_count == 0)
+     {
+        ptr->grab_button = ev->buttons;
+        ptr->grab_time = ev->timestamp;
+        ptr->grab_x = ptr->x;
+        ptr->grab_y = ptr->y;
+     }
+
+   ptr->button_count++;
+
+   if ((ptr->grab) && (ptr->grab->interface))
+     {
+        if (ptr->grab->interface->button)
+          ptr->grab->interface->button(ptr->grab, ev->timestamp, ev->buttons, 
+                                       WL_POINTER_BUTTON_STATE_PRESSED);
+     }
+
+   if (ptr->button_count == 1)
+     {
+        ptr->grab_serial = 
+          wl_display_get_serial(ptr->seat->compositor->wl.display);
+     }
+}
+
+static void 
+_input_mouse_up_send(E_Input *input, Ecore_Event_Mouse_Button *ev)
+{
+   E_Input_Pointer *ptr;
+   unsigned int serial = 0;
+
+   if (!(ptr = input->pointer)) return;
+
+   ptr->button_count--;
+
+   if ((ptr->grab) && (ptr->grab->interface))
+     {
+        if (ptr->grab->interface->button)
+          ptr->grab->interface->button(ptr->grab, ev->timestamp, ev->buttons, 
+                                       WL_POINTER_BUTTON_STATE_RELEASED);
+     }
+
+   if (ptr->button_count == 1)
+     {
+        ptr->grab_serial = 
+          wl_display_get_serial(ptr->seat->compositor->wl.display);
+     }
 }
