@@ -7594,8 +7594,9 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              const char *drag_types[] = { "text/uri-list" }, *real_path;
              char buf[PATH_MAX + 8], *p, *sel = NULL;
              E_Container *con = NULL;
+             Eina_Binbuf *sbuf;
              Eina_List *sl;
-             int sel_length = 0, p_offset, p_length;
+             size_t sel_length = 0, p_offset, p_length;
 
              switch (ic->sd->eobj->type)
                {
@@ -7625,10 +7626,6 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
                }
              if (!con) return;
              ic->sd->drag = EINA_TRUE;
-             ic->drag.dnd = EINA_TRUE;
-             if (ic->obj) evas_object_hide(ic->obj);
-             if (ic->rect) evas_object_hide(ic->rect);
-             if (ic->obj_icon) evas_object_hide(ic->obj_icon);
              ic->drag.start = EINA_FALSE;
              evas_object_geometry_get(ic->obj, &x, &y, &w, &h);
              real_path = e_fm2_real_path_get(ic->sd->obj);
@@ -7643,28 +7640,19 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              p_length = sizeof(buf) - p_offset - 1;
 
              sl = e_fm2_selected_list_get(ic->sd->obj);
+             sbuf = eina_binbuf_new();
              EINA_LIST_FREE(sl, ici)
                {
-                  char *tmp;
                   const char *s;
-                  int s_len;
+                  size_t s_len;
 
-                  if ((int)eina_strlcpy(p, ici->file, p_length) >= p_length)
+                  if (eina_strlcpy(p, ici->file, p_length) >= p_length)
                     continue;
                   s = _e_fm2_uri_escape(buf);
                   if (!s) continue;
                   s_len = strlen(s);
-                  tmp = realloc(sel, sel_length + s_len + 2 + 1);
-                  if (!tmp)
-                    {
-                       free(sel);
-                       sel = NULL;
-                       break;
-                    }
-                  sel = tmp;
-                  memcpy(sel + sel_length, s, s_len);
-                  memcpy(sel + sel_length + s_len, "\r\n", 2);
-                  sel_length += s_len + 2;
+                  eina_binbuf_append_length(sbuf, (void*)s, s_len);
+                  eina_binbuf_append_length(sbuf, (void*)"\r\n", 2);
                   eina_stringshare_del(s);
 
                   ici->ic->drag.dnd = EINA_TRUE;
@@ -7672,8 +7660,10 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
                   if (ici->ic->rect) evas_object_hide(ici->ic->rect);
                   if (ici->ic->obj_icon) evas_object_hide(ici->ic->obj_icon);
                }
-             if (!sel) return;
-             sel[sel_length] = '\0';
+             eina_binbuf_append_char(sbuf, 0);
+             sel_length = eina_binbuf_length_get(sbuf) - 1;
+             sel = (char*)eina_binbuf_string_steal(sbuf);
+             eina_binbuf_free(sbuf);
 
              d = e_drag_new(con, x, y, drag_types, 1,
                             sel, sel_length, NULL, _e_fm2_cb_drag_finished);
