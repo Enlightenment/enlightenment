@@ -5,6 +5,8 @@
 static Eina_Bool _output_init(E_Compositor_X11 *xcomp);
 static Eina_Bool _output_init_shm(E_Compositor_X11 *xcomp, E_Output_X11 *output, Evas_Coord w, Evas_Coord h);
 static void _output_shutdown(E_Output_X11 *output);
+static Eina_Bool _input_init(E_Compositor_X11 *xcomp);
+static void _input_shutdown(E_Compositor_X11 *xcomp);
 
 static int _output_cb_frame(void *data);
 static void _output_cb_repaint_start(E_Output *output);
@@ -55,6 +57,13 @@ e_modapi_init(E_Module *m)
         goto renderer_err;
      }
 
+   /* try to initialize input */
+   if (!_input_init(_e_x11_comp))
+     {
+        ERR("Could not initialize input: %m");
+        goto input_err;
+     }
+
    /* try to initialize output */
    if (!_output_init(_e_x11_comp))
      {
@@ -76,6 +85,10 @@ e_modapi_init(E_Module *m)
    return m;
 
 output_err:
+   /* shutdown the inputs */
+   _input_shutdown(_e_x11_comp);
+
+input_err:
    /* shutdown the renderer */
    e_renderer_destroy(&_e_x11_comp->base);
 
@@ -105,6 +118,12 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    /* destroy the outputs */
    EINA_LIST_FREE(_e_x11_comp->base.outputs, output)
      _output_shutdown(output);
+
+   /* shutdown the inputs */
+   _input_shutdown(_e_x11_comp);
+
+   /* shutdown the renderer */
+   e_renderer_destroy(&_e_x11_comp->base);
 
    /* shutdown generic compositor */
    if (&_e_x11_comp->base) e_compositor_shutdown(&_e_x11_comp->base);
@@ -240,6 +259,33 @@ static void
 _output_shutdown(E_Output_X11 *output)
 {
    E_FREE(output);
+}
+
+static Eina_Bool 
+_input_init(E_Compositor_X11 *xcomp)
+{
+   if (!e_input_init(&xcomp->base, &xcomp->seat, "default"))
+     return EINA_FALSE;
+
+   if (!e_input_pointer_init(&xcomp->seat))
+     {
+        e_input_shutdown(&xcomp->seat);
+        return EINA_FALSE;
+     }
+
+   if (!e_input_keyboard_init(&xcomp->seat))
+     {
+        e_input_shutdown(&xcomp->seat);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static void 
+_input_shutdown(E_Compositor_X11 *xcomp)
+{
+   e_input_shutdown(&xcomp->seat);
 }
 
 static int 
