@@ -67,6 +67,7 @@ EAPI void e_compositor_plane_stack(E_Compositor *comp, E_Plane *plane, E_Plane *
 EAPI int e_compositor_input_read(int fd EINA_UNUSED, unsigned int mask EINA_UNUSED, void *data);
 EAPI void e_compositor_damage_calculate(E_Compositor *comp);
 EAPI unsigned int e_compositor_get_time(void);
+EAPI E_Surface *e_compositor_surface_find(E_Compositor *comp, Evas_Coord x, Evas_Coord y);
 
 # endif
 #endif

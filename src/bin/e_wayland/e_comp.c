@@ -264,7 +264,7 @@ e_compositor_shutdown(E_Compositor *comp)
    if (comp->fd_hdlr) ecore_main_fd_handler_del(comp->fd_hdlr);
 
    /* destroy the previously created display */
-   if (comp->wl.display) wl_display_destroy(comp->wl.display);
+   if (comp->wl.display) wl_display_terminate(comp->wl.display);
 
    return EINA_TRUE;
 }
@@ -342,6 +342,21 @@ e_compositor_get_time(void)
    return (tv.tv_sec * 1000 + tv.tv_usec / 1000);
 }
 
+EAPI E_Surface *
+e_compositor_surface_find(E_Compositor *comp, Evas_Coord x, Evas_Coord y)
+{
+   E_Surface *es;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(comp->surfaces, l, es)
+     {
+        if (pixman_region32_contains_point(&es->input, x, y, NULL))
+          return es;
+     }
+
+   return NULL;
+}
+
 /* local functions */
 static void 
 _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
@@ -369,7 +384,7 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
    E_Compositor *comp;
    E_Surface *es;
 
-   printf("E_Comp Surface Create\n");
+   printf("E_Comp Surface Create: %d\n", id);
 
    /* try to cast to our compositor */
    if (!(comp = resource->data)) return;
