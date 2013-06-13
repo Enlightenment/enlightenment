@@ -719,8 +719,9 @@ _systray_xembed_cb_selection_clear(void *data, int type __UNUSED__, void *event)
    Instance_Xembed *xembed = data;
    int manager = systray_manager_number_get(xembed->inst);
 
-   if ((ev->win == xembed->win.selection) && (xembed->win.selection != 0) &&
-       (ev->atom == _systray_xembed_atom_st_get(manager)))
+   if ((ev->win == xembed->win.selection) && (xembed->win.selection) &&
+       (ev->atom == _systray_xembed_atom_st_get(manager)) &&
+       (ecore_x_selection_owner_get(ev->atom) != xembed->win.selection))
      {
         systray_edje_emit(xembed->inst, _sig_disable);
 
