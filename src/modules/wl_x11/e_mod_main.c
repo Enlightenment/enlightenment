@@ -52,7 +52,7 @@ e_modapi_init(E_Module *m)
    if (!e_renderer_create(&_e_x11_comp->base))
      {
         ERR("Could not initialize renderer: %m");
-        goto output_err;
+        goto renderer_err;
      }
 
    /* try to initialize output */
@@ -76,6 +76,10 @@ e_modapi_init(E_Module *m)
    return m;
 
 output_err:
+   /* shutdown the renderer */
+   e_renderer_destroy(&_e_x11_comp->base);
+
+renderer_err:
    /* shutdown the e_compositor */
    e_compositor_shutdown(&_e_x11_comp->base);
 
