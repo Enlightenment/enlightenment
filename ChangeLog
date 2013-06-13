@@ -1,5 +1,9 @@
 2013-05-29 Mike Blumenkrantz
 
+        * filemanager dnd operations now show all files when dragging
+
+2013-05-29 Mike Blumenkrantz
+
         * fix remember size/position apply
 
 2013-05-29 Mike Blumenkrantz
