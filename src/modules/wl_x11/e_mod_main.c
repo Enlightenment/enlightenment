@@ -14,6 +14,7 @@ static void _output_cb_repaint_shm(E_Output *output, pixman_region32_t *damage);
 static void _output_cb_destroy(E_Output *output);
 static Eina_Bool _output_cb_window_damage(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _output_cb_window_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
 /* local variables */
 static E_Compositor_X11 *_e_x11_comp;
@@ -75,6 +76,8 @@ e_modapi_init(E_Module *m)
                          _output_cb_window_damage, NULL);
    E_LIST_HANDLER_APPEND(_hdlrs, ECORE_X_EVENT_WINDOW_DELETE_REQUEST, 
                          _output_cb_window_destroy, NULL);
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_MOVE, 
+                         _output_cb_window_mouse_move, NULL);
 
    /* flush any pending events
     * 
@@ -411,6 +414,29 @@ _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
              /* output window being closed, quit */
              /* NB: FIXME: This assumes we have only one output window */
              ecore_main_loop_quit();
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_output_cb_window_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_Event_Mouse_Move *ev;
+   E_Output_X11 *output;
+   Eina_List *l;
+
+   ev = event;
+
+   /* loop the existing outputs */
+   EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
+     {
+        /* try to match the output window */
+        if (ev->window == output->win)
+          {
+             e_input_mouse_move_send(&_e_x11_comp->seat, ev);
              break;
           }
      }
