@@ -25,6 +25,10 @@
 #include "e_shell.h"
 #include "e_module.h"
 #include "e_comp.h"
+#include "e_input.h"
+#include "e_output.h"
+#include "e_shader.h"
+#include "e_renderer.h"
 #include "e_scale.h"
 #include "e_theme.h"
 #include "e_pointer.h"
@@ -57,7 +61,3 @@
 #include "e_ipc_codec.h"
 #include "e_exehist.h"
 #include "e_alert.h"
-
-#include "e_output.h"
-#include "e_shader.h"
-#include "e_renderer.h"
