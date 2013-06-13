@@ -11,6 +11,7 @@ struct _E_Compositor_X11
    E_Compositor base;
 
    Ecore_X_Display *display;
+   E_Input seat;
 };
 
 struct _E_Output_X11
