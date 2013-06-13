@@ -35,8 +35,8 @@ struct _E_Shell_Surface
    struct 
      {
         struct wl_list grabs;
+        E_Input *seat;
 //        struct wl_pointer_grab *grab;
-        struct wl_seat *seat;
         struct wl_listener parent_destroy;
         Evas_Coord x, y;
         Eina_Bool up : 1;
