@@ -10,6 +10,9 @@ static void _e_comp_cb_region_destroy(struct wl_resource *resource);
 static Eina_Bool _e_comp_cb_read(void *data, Ecore_Fd_Handler *hdl EINA_UNUSED);
 static Eina_Bool _e_comp_cb_idle(void *data);
 
+static void _e_comp_data_device_cb_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *seat_resource);
+static void _e_comp_data_device_cb_unbind(struct wl_resource *resource);
+
 /* local interfaces */
 static const struct wl_compositor_interface _e_compositor_interface = 
 {
@@ -20,7 +23,13 @@ static const struct wl_compositor_interface _e_compositor_interface =
 static const struct wl_data_device_manager_interface _e_manager_interface = 
 {
    NULL, // create data source
-   NULL // get data device
+   _e_comp_data_device_cb_get
+};
+
+static const struct wl_data_device_interface _e_data_device_interface = 
+{
+   NULL, // start_drag
+   NULL, // set_selection
 };
 
 /* local variables */
@@ -511,4 +520,27 @@ _e_comp_cb_idle(void *data)
      }
 
    return ECORE_CALLBACK_RENEW;
+}
+
+static void 
+_e_comp_data_device_cb_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *seat_resource)
+{
+   E_Input *seat;
+   struct wl_resource *res;
+
+   if (!(seat = seat_resource->data)) return;
+
+   res = wl_client_add_object(client, &wl_data_device_interface, 
+                              &_e_data_device_interface, id, seat);
+
+   wl_list_insert(&seat->drag_resources, &res->link);
+
+   res->destroy = _e_comp_data_device_cb_unbind;
+}
+
+static void 
+_e_comp_data_device_cb_unbind(struct wl_resource *resource)
+{
+   wl_list_remove(&resource->link);
+   free(resource);
 }
