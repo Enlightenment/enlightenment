@@ -67,6 +67,10 @@ struct _E_Input_Pointer
 
    E_Input_Pointer_Grab *grab;
    E_Input_Pointer_Grab default_grab;
+
+   Evas_Coord grab_x, grab_y;
+   unsigned int grab_button, button_count;
+   unsigned int grab_serial, grab_time;
 };
 
 EAPI Eina_Bool e_input_init(E_Compositor *comp, E_Input *seat, const char *name);
