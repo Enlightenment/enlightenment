@@ -92,6 +92,7 @@ struct _E_Renderer
 };
 
 EAPI Eina_Bool e_renderer_create(E_Compositor *comp);
+EAPI void e_renderer_destroy(E_Compositor *comp);
 
 # endif
 #endif

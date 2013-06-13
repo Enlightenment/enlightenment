@@ -80,6 +80,14 @@ e_renderer_create(E_Compositor *comp)
    return EINA_TRUE;
 }
 
+EAPI void 
+e_renderer_destroy(E_Compositor *comp)
+{
+   /* check for valid renderer and call the destroy function */
+   if ((comp->renderer) && (comp->renderer->destroy))
+     comp->renderer->destroy(comp);
+}
+
 /* local functions */
 static void 
 _e_renderer_region_repaint(E_Surface *surface, E_Output *output, pixman_region32_t *region, pixman_region32_t *surf_region, pixman_op_t pixman_op)
