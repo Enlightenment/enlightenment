@@ -114,25 +114,6 @@ e_input_touch_init(E_Input *seat)
 }
 
 EAPI void 
-e_input_mouse_move_send(E_Input *input, Ecore_Event_Mouse_Move *ev)
-{
-   E_Input_Pointer *ptr;
-
-   if (!(ptr = input->pointer)) return;
-
-   ptr->x = ev->x;
-   ptr->y = ev->y;
-
-   if ((ptr->grab) && (ptr->grab->interface))
-     {
-        if (ptr->grab->interface->focus)
-          ptr->grab->interface->focus(ptr->grab);
-        if (ptr->grab->interface->motion)
-          ptr->grab->interface->motion(ptr->grab, ev->timestamp);
-     }
-}
-
-EAPI void 
 e_input_pointer_focus_set(E_Input_Pointer *pointer, E_Surface *surface, Evas_Coord x, Evas_Coord y)
 {
    struct wl_resource *resource;

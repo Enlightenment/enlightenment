@@ -77,7 +77,5 @@ EAPI Eina_Bool e_input_touch_init(E_Input *seat);
 
 EAPI void e_input_pointer_focus_set(E_Input_Pointer *pointer, E_Surface *surface, Evas_Coord x, Evas_Coord y);
 
-EAPI void e_input_mouse_move_send(E_Input *input, Ecore_Event_Mouse_Move *ev);
-
 # endif
 #endif
