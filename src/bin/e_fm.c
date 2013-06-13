@@ -7589,13 +7589,12 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
             (e_config->drag_resist * e_config->drag_resist))
           {
              E_Drag *d;
-             Evas_Object *o, *o2;
-             Evas_Coord x, y, w, h;
+             Evas_Object *o, *o2, *layout = NULL;
              const char *drag_types[] = { "text/uri-list" }, *real_path;
              char buf[PATH_MAX + 8], *p, *sel = NULL;
              E_Container *con = NULL;
              Eina_Binbuf *sbuf;
-             Eina_List *sl;
+             Eina_List *sl, *icons = NULL;
              size_t sel_length = 0, p_offset, p_length;
 
              switch (ic->sd->eobj->type)
@@ -7627,7 +7626,6 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              if (!con) return;
              ic->sd->drag = EINA_TRUE;
              ic->drag.start = EINA_FALSE;
-             evas_object_geometry_get(ic->obj, &x, &y, &w, &h);
              real_path = e_fm2_real_path_get(ic->sd->obj);
              p_offset = eina_strlcpy(buf, real_path, sizeof(buf));
              if ((p_offset < 1) || (p_offset >= (int)sizeof(buf) - 2)) return;
@@ -7640,6 +7638,12 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              p_length = sizeof(buf) - p_offset - 1;
 
              sl = e_fm2_selected_list_get(ic->sd->obj);
+             if (eina_list_count(sl) > 1)
+               {
+                  layout = e_layout_add(e_util_comp_current_get()->evas);
+                  e_layout_freeze(layout);
+                  e_layout_virtual_size_set(layout, ic->sd->w, ic->sd->h);
+               }
              sbuf = eina_binbuf_new();
              EINA_LIST_FREE(sl, ici)
                {
@@ -7659,62 +7663,83 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
                   if (ici->ic->obj) evas_object_hide(ici->ic->obj);
                   if (ici->ic->rect) evas_object_hide(ici->ic->rect);
                   if (ici->ic->obj_icon) evas_object_hide(ici->ic->obj_icon);
+
+                  o = edje_object_add(e_util_comp_current_get()->evas);
+                  if (_e_fm2_view_mode_get(ici->ic->sd) == E_FM2_VIEW_MODE_LIST)
+                    {
+                       if (ici->ic->sd->config->icon.fixed.w)
+                         {
+                            if (ici->ic->odd)
+                              _e_fm2_theme_edje_object_set(ici->ic->sd, o,
+                                                           "base/theme/widgets",
+                                                           "list_odd/fixed");
+                            else
+                              _e_fm2_theme_edje_object_set(ici->ic->sd, o,
+                                                           "base/theme/widgets",
+                                                           "list/fixed");
+                         }
+                       else
+                         {
+                            if (ici->ic->odd)
+                              _e_fm2_theme_edje_object_set(ici->ic->sd, o,
+                                                           "base/theme/widgets",
+                                                           "list_odd/variable");
+                            else
+                              _e_fm2_theme_edje_object_set(ici->ic->sd, o,
+                                                           "base/theme/widgets",
+                                                           "list/variable");
+                         }
+                    }
+                  else
+                    {
+                       if (ici->ic->sd->config->icon.fixed.w)
+                         _e_fm2_theme_edje_object_set(ici->ic->sd, o,
+                                                      "base/theme/fileman",
+                                                      "icon/fixed");
+                       else
+                         _e_fm2_theme_edje_object_set(ici->ic->sd, o,
+                                                      "base/theme/fileman",
+                                                      "icon/variable");
+                    }
+                  _e_fm2_icon_label_set(ici->ic, o);
+                  o2 = _e_fm2_icon_icon_direct_set(ici->ic, o,
+                                                   _e_fm2_cb_icon_thumb_dnd_gen, o,
+                                                   1);
+                  edje_object_signal_emit(o, "e,state,selected", "e");
+                  edje_object_signal_emit(o2, "e,state,selected", "e");
+                  edje_object_signal_emit(o, "e,state,move", "e");
+                  if (layout)
+                    {
+                       e_layout_pack(layout, o);
+                       e_layout_child_move(o, ici->ic->x, ici->ic->y);
+                       e_layout_child_resize(o, ici->ic->w, ici->ic->h);
+                       evas_object_show(o);
+                       icons = eina_list_append(icons, o);
+                    }
+                  icons = eina_list_append(icons, o2);
                }
              eina_binbuf_append_char(sbuf, 0);
              sel_length = eina_binbuf_length_get(sbuf) - 1;
              sel = (char*)eina_binbuf_string_steal(sbuf);
              eina_binbuf_free(sbuf);
 
-             d = e_drag_new(con, x, y, drag_types, 1,
+             d = e_drag_new(con, 0, 0, drag_types, 1,
                             sel, sel_length, NULL, _e_fm2_cb_drag_finished);
+             if (layout)
+               d->x = ic->sd->x, d->y = ic->sd->y;
+             else
+               d->x = ic->x + ic->sd->x - ic->sd->pos.x, d->y = ic->y + ic->sd->y - ic->sd->pos.y;
              e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
-             o = edje_object_add(e_drag_evas_get(d));
-             if (_e_fm2_view_mode_get(ic->sd) == E_FM2_VIEW_MODE_LIST)
+
+             e_drag_object_set(d, layout ?: o);
+             d->pop->objects = icons;
+             if (layout)
                {
-                  if (ic->sd->config->icon.fixed.w)
-                    {
-                       if (ic->odd)
-                         _e_fm2_theme_edje_object_set(ic->sd, o,
-                                                      "base/theme/widgets",
-                                                      "list_odd/fixed");
-                       else
-                         _e_fm2_theme_edje_object_set(ic->sd, o,
-                                                      "base/theme/widgets",
-                                                      "list/fixed");
-                    }
-                  else
-                    {
-                       if (ic->odd)
-                         _e_fm2_theme_edje_object_set(ic->sd, o,
-                                                      "base/theme/widgets",
-                                                      "list_odd/variable");
-                       else
-                         _e_fm2_theme_edje_object_set(ic->sd, o,
-                                                      "base/theme/widgets",
-                                                      "list/variable");
-                    }
+                  e_layout_thaw(layout);
+                  e_drag_resize(d, ic->sd->w, ic->sd->h);
                }
              else
-               {
-                  if (ic->sd->config->icon.fixed.w)
-                    _e_fm2_theme_edje_object_set(ic->sd, o,
-                                                 "base/theme/fileman",
-                                                 "icon/fixed");
-                  else
-                    _e_fm2_theme_edje_object_set(ic->sd, o,
-                                                 "base/theme/fileman",
-                                                 "icon/variable");
-               }
-             _e_fm2_icon_label_set(ic, o);
-             o2 = _e_fm2_icon_icon_direct_set(ic, o,
-                                              _e_fm2_cb_icon_thumb_dnd_gen, o,
-                                              1);
-             edje_object_signal_emit(o, "e,state,selected", "e");
-             edje_object_signal_emit(o2, "e,state,selected", "e");
-             e_drag_object_set(d, o);
-             e_popup_object_add(d->pop, o2);
-             edje_object_signal_emit(o, "e,state,move", "e");
-             e_drag_resize(d, w, h);
+               e_drag_resize(d, ic->w, ic->h);
              evas_object_smart_callback_call(ic->sd->obj, "dnd_begin", &ic->info);
 
              e_drag_key_down_cb_set(d, _e_fm_drag_key_down_cb);
