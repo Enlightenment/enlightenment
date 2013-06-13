@@ -50,6 +50,10 @@ ENLIGHTENMENTHEADERS = \
   e_shell_surface.h \
   e_module.h \
   e_comp.h \
+  e_input.h \
+  e_output.h \
+  e_shader.h \
+  e_renderer.h \
   e_shell.h \
   e_scale.h \
   e_theme.h \
@@ -84,10 +88,7 @@ ENLIGHTENMENTHEADERS = \
   e_ipc.h \
   e_ipc_codec.h \
   e_exehist.h \
-  e_alert.h \
-  e_output.h \
-  e_shader.h \
-  e_renderer.h
+  e_alert.h
 
 enlightenment_wl_src = \
   e_log.c \
@@ -110,6 +111,9 @@ enlightenment_wl_src = \
   e_shell_surface.c \
   e_module.c \
   e_comp.c \
+  e_input.c \
+  e_output.c \
+  e_renderer.c \
   e_shell.c \
   e_scale.c \
   e_theme.c \
@@ -144,8 +148,6 @@ enlightenment_wl_src = \
   e_ipc.c \
   e_ipc_codec.c \
   e_exehist.c \
-  e_output.c \
-  e_renderer.c \
   $(ENLIGHTENMENTHEADERS)
 
 enlightenment_wl_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@
