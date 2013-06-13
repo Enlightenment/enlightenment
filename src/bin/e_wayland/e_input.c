@@ -281,7 +281,29 @@ _e_input_pointer_grab_cb_motion(E_Input_Pointer_Grab *grab, unsigned int timesta
 static void 
 _e_input_pointer_grab_cb_button(E_Input_Pointer_Grab *grab, unsigned int timestamp, unsigned int button, unsigned int state)
 {
+   E_Input_Pointer *ptr;
+   struct wl_resource *res;
 
+   if (!(ptr = grab->pointer)) return;
+
+   if ((res = ptr->focus_resource))
+     {
+        struct wl_display *disp;
+        unsigned int serial = 0;
+
+        disp = wl_client_get_display(res->client);
+        serial = wl_display_next_serial(disp);
+        wl_pointer_send_button(res, serial, timestamp, button, state);
+     }
+
+   if ((ptr->button_count == 0) && (state == WL_POINTER_BUTTON_STATE_RELEASED))
+     {
+        E_Surface *es;
+
+        if ((es = e_compositor_surface_find(ptr->seat->compositor, 
+                                            ptr->x, ptr->y)))
+          e_input_pointer_focus_set(ptr, es, ptr->x, ptr->y);
+     }
 }
 
 static struct wl_resource *
