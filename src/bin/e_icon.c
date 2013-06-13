@@ -471,7 +471,7 @@ e_icon_fdo_icon_set(Evas_Object *obj, const char *icon)
 }
 
 EAPI void
-e_icon_object_set(Evas_Object *obj, Evas_Object *o)
+e_icon_image_object_set(Evas_Object *obj, Evas_Object *o)
 {
    E_Smart_Data *sd;
    const char *str;
