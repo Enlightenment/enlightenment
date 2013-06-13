@@ -58,6 +58,8 @@ e_surface_new(unsigned int id)
                              UINT32_MAX, UINT32_MAX);
 
    /* setup the surface object */
+   es->wl.resource.client = NULL;
+
    es->wl.resource.object.id = id;
    es->wl.resource.object.interface = &wl_surface_interface;
    es->wl.resource.object.implementation = 
