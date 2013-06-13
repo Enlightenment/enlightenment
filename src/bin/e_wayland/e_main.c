@@ -431,6 +431,21 @@ main(int argc, char **argv)
    TS("Ecore_Wayland Init Done");
    _e_main_shutdown_push(ecore_wl_shutdown);
 
+   /* setup a handler to notify us when ecore_wl has bound the interfaces */
+   _hdl_bound = 
+     ecore_event_handler_add(ECORE_WL_EVENT_INTERFACES_BOUND, 
+                             _e_main_cb_bound, NULL);
+
+   /* while we are not bound, we need to iterate the main loop */
+   /* NB: All of this is needed because we cannot create containers until 
+    * we are able to create a canvas, and we cannot create a canvas until 
+    * we have the interfaces bound */
+   while (!bound)
+     {
+        wl_event_loop_dispatch(_e_comp->wl.loop, 0);
+        ecore_main_loop_iterate();
+     }
+
    TS("E_Scale Init");
    if (!e_scale_init())
      {
@@ -448,21 +463,6 @@ main(int argc, char **argv)
      }
    TS("E_Theme Init Done");
    _e_main_shutdown_push(e_theme_shutdown);
-
-   /* setup a handler to notify us when ecore_wl has bound the interfaces */
-   _hdl_bound = 
-     ecore_event_handler_add(ECORE_WL_EVENT_INTERFACES_BOUND, 
-                             _e_main_cb_bound, NULL);
-
-   /* while we are not bound, we need to iterate the main loop */
-   /* NB: All of this is needed because we cannot create containers until 
-    * we are able to create a canvas, and we cannot create a canvas until 
-    * we have the interfaces bound */
-   while (!bound)
-     {
-        wl_event_loop_dispatch(_e_comp->wl.loop, 0);
-        ecore_main_loop_iterate();
-     }
 
    TS("E_Pointer Init");
    if (!e_pointer_init())
