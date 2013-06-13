@@ -25,7 +25,8 @@ static void _e_desktop_shell_shell_surface_cb_class_set(struct wl_client *client
 static void _e_desktop_shell_shell_surface_type_set(E_Shell_Surface *ess);
 static void _e_desktop_shell_shell_surface_type_reset(E_Shell_Surface *ess);
 
-static void _e_desktop_shell_surface_create_toplevel(E_Surface *es);
+static void _e_desktop_shell_surface_map_toplevel(E_Shell_Surface *ess);
+static void _e_desktop_shell_surface_map_popup(E_Shell_Surface *ess);
 
 /* local wayland interfaces */
 static const struct wl_shell_interface _e_desktop_shell_interface = 
@@ -320,11 +321,11 @@ _e_desktop_shell_shell_surface_map(E_Surface *es, Evas_Coord x, Evas_Coord y, Ev
    switch (es->shell_surface->type)
      {
       case E_SHELL_SURFACE_TYPE_TOPLEVEL:
-        _e_desktop_shell_surface_create_toplevel(es);
+        _e_desktop_shell_surface_map_toplevel(es->shell_surface);
         break;
-   /*    case E_SHELL_SURFACE_TYPE_POPUP: */
-   /*      _e_wl_shell_shell_surface_create_popup(es); */
-   /*      break; */
+      case E_SHELL_SURFACE_TYPE_POPUP:
+        _e_desktop_shell_surface_map_popup(es->shell_surface);
+        break;
       default:
         break;
      }
@@ -435,6 +436,11 @@ _e_desktop_shell_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED
 
    /* set next surface type */
    ess->ntype = E_SHELL_SURFACE_TYPE_POPUP;
+   ess->parent = parent_resource->data;
+   ess->popup.seat = seat_resource->data;
+   ess->popup.serial = serial;
+   ess->popup.x = x;
+   ess->popup.y = y;
 }
 
 static void 
@@ -567,7 +573,7 @@ _e_desktop_shell_shell_surface_type_reset(E_Shell_Surface *ess)
 }
 
 static void 
-_e_desktop_shell_surface_create_toplevel(E_Surface *es)
+_e_desktop_shell_surface_map_toplevel(E_Shell_Surface *ess)
 {
    /* if (!(es->ee =  */
    /*       e_canvas_new(0, es->geometry.x, es->geometry.y,  */
@@ -577,4 +583,31 @@ _e_desktop_shell_surface_create_toplevel(E_Surface *es)
    /* e_canvas_add(es->ee); */
    /* ecore_evas_data_set(es->ee, "surface", es); */
    /* es->evas = ecore_evas_get(es->ee); */
+}
+
+static void 
+_e_desktop_shell_surface_map_popup(E_Shell_Surface *ess)
+{
+   E_Surface *es, *parent;
+   E_Input *seat;
+
+   es = ess->surface;
+   parent = ess->parent;
+
+   seat = ess->popup.seat;
+
+   /* set popup position */
+   es->geometry.x = ess->popup.x;
+   es->geometry.y = ess->popup.y;
+   es->geometry.changed = EINA_TRUE;
+
+   if ((seat) && (seat->pointer->grab_serial == ess->popup.serial))
+     {
+        /* TODO: add popup grab */
+        printf("Add Popup Grab\n");
+     }
+   else
+     {
+        wl_shell_surface_send_popup_done(&ess->wl.resource);
+     }
 }
