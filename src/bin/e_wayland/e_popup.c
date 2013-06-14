@@ -47,7 +47,7 @@ e_popup_new(E_Zone *zone, int x, int y, int w, int h)
 
    p->ee = 
      e_canvas_new(parent, zone->x + p->x, zone->y + p->y, 
-                  p->w, p->h, EINA_TRUE, EINA_FALSE, NULL);
+                  p->w, p->h, EINA_TRUE, EINA_FALSE, &win);
    if (!p->ee)
      {
         free(p);
@@ -65,7 +65,7 @@ e_popup_new(E_Zone *zone, int x, int y, int w, int h)
    e_object_ref(E_OBJECT(p->zone));
    zone->popups = eina_list_append(zone->popups, p);
 
-   win = ecore_evas_wayland_window_get(p->ee);
+   /* win = ecore_evas_wayland_window_get(p->ee); */
    eina_hash_add(_popups, e_util_winid_str_get(win), p);
 
    return p;
