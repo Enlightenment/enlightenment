@@ -207,6 +207,10 @@ if USE_MODULE_QUICKACCESS
 include Makefile_quickaccess.am
 endif
 
+if USE_MODULE_TEAMWORK
+include Makefile_teamwork.am
+endif
+
 if USE_MODULE_SHOT
 include Makefile_shot.am
 endif

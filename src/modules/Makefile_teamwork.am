@@ -1,0 +1,19 @@
+teamworkdir = $(MDIR)/teamwork
+teamwork_DATA = teamwork/e-module-teamwork.edj \
+		   teamwork/module.desktop
+
+EXTRA_DIST += $(teamwork_DATA)
+
+teamworkpkgdir = $(MDIR)/teamwork/$(MODULE_ARCH)
+teamworkpkg_LTLIBRARIES = teamwork/module.la
+
+teamwork_module_la_SOURCES = teamwork/e_mod_main.c \
+				teamwork/e_mod_config.c \
+				teamwork/e_mod_main.h \
+				teamwork/e_mod_tw.c \
+				teamwork/sha1.c \
+				teamwork/sha1.h
+
+.PHONY: teamwork install-teamwork
+teamwork: $(teamworkpkg_LTLIBRARIES) $(teamwork_DATA)
+install-teamwork: install-teamworkDATA install-teamworkpkgLTLIBRARIES

@@ -903,6 +903,7 @@ AC_E_OPTIONAL_MODULE([systray], true)
 AC_E_OPTIONAL_MODULE([appmenu], true)
 AC_E_OPTIONAL_MODULE([physics], true, [CHECK_MODULE_PHYSICS])
 AC_E_OPTIONAL_MODULE([quickaccess], true)
+AC_E_OPTIONAL_MODULE([teamwork], true)
 AC_E_OPTIONAL_MODULE([shot], true)
 AC_E_OPTIONAL_MODULE([backlight], true)
 AC_E_OPTIONAL_MODULE([tasks], true)
@@ -1026,6 +1027,7 @@ src/modules/appmenu/module.desktop
 src/modules/conf_comp/module.desktop
 src/modules/physics/module.desktop
 src/modules/quickaccess/module.desktop
+src/modules/teamwork/module.desktop
 src/modules/shot/module.desktop
 src/modules/backlight/module.desktop
 src/modules/tasks/module.desktop

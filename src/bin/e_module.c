@@ -889,6 +889,7 @@ _e_module_whitelist_check(void)
       "syscon",
       "systray",
       "tasks",
+      "teamwork",
       "temperature",
       "tiling",
       "winlist",

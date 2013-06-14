@@ -9,6 +9,7 @@ Additions:
         * bluez4: control bluetoothd daemon
         * conf_comp: configuration dialogs for composite, like in previous comp
           module
+        * teamwork
     API:
         * Added action to reset filemanager
         * Added function to hide all active menus
