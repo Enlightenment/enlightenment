@@ -1674,7 +1674,6 @@ _e_main_screens_init(void)
         _e_main_shutdown(-1);
      }
    TS("E_Comp Init Done");
-   _e_main_shutdown_push(e_comp_shutdown);
 
    TS("\tscreens: win");
    if (!e_win_init())
@@ -1751,6 +1750,7 @@ static int
 _e_main_screens_shutdown(void)
 {
    e_win_shutdown();
+   e_comp_shutdown();
    e_border_shutdown();
    e_focus_shutdown();
    e_exehist_shutdown();
