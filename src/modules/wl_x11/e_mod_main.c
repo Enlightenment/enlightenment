@@ -525,8 +525,6 @@ _input_mouse_down_send(E_Input *input, Ecore_Event_Mouse_Button *ev)
 
    if (!(ptr = input->pointer)) return;
 
-   /* TODO: ping handler */
-
    if ((ptr->seat) && (ptr->seat->compositor))
      {
         if ((ptr->seat->compositor->cb_ping) && (ptr->focus))
@@ -541,15 +539,15 @@ _input_mouse_down_send(E_Input *input, Ecore_Event_Mouse_Button *ev)
      }
 
 
-   if (ptr->button_count == 0)
+   if (ptr->grab->button_count == 0)
      {
-        ptr->grab_button = ev->buttons;
-        ptr->grab_time = ev->timestamp;
-        ptr->grab_x = ptr->x;
-        ptr->grab_y = ptr->y;
+        ptr->grab->button = ev->buttons;
+        ptr->grab->timestamp = ev->timestamp;
+        ptr->grab->x = ptr->x;
+        ptr->grab->y = ptr->y;
      }
 
-   ptr->button_count++;
+   ptr->grab->button_count++;
 
    if ((ptr->grab) && (ptr->grab->interface))
      {
@@ -558,9 +556,9 @@ _input_mouse_down_send(E_Input *input, Ecore_Event_Mouse_Button *ev)
                                        WL_POINTER_BUTTON_STATE_PRESSED);
      }
 
-   if (ptr->button_count == 1)
+   if (ptr->grab->button_count == 1)
      {
-        ptr->grab_serial = 
+        ptr->grab->serial = 
           wl_display_get_serial(ptr->seat->compositor->wl.display);
      }
 }
@@ -569,22 +567,21 @@ static void
 _input_mouse_up_send(E_Input *input, Ecore_Event_Mouse_Button *ev)
 {
    E_Input_Pointer *ptr;
-   unsigned int serial = 0;
 
    if (!(ptr = input->pointer)) return;
 
-   ptr->button_count--;
-
    if ((ptr->grab) && (ptr->grab->interface))
      {
+        ptr->grab->button_count--;
+
         if (ptr->grab->interface->button)
           ptr->grab->interface->button(ptr->grab, ev->timestamp, ev->buttons, 
                                        WL_POINTER_BUTTON_STATE_RELEASED);
-     }
 
-   if (ptr->button_count == 1)
-     {
-        ptr->grab_serial = 
-          wl_display_get_serial(ptr->seat->compositor->wl.display);
+        if (ptr->grab->button_count == 1)
+          {
+             ptr->grab->serial = 
+               wl_display_get_serial(ptr->seat->compositor->wl.display);
+          }
      }
 }
