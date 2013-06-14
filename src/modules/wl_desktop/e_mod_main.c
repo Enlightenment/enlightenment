@@ -27,6 +27,12 @@ static void _e_desktop_shell_shell_surface_type_reset(E_Shell_Surface *ess);
 
 static void _e_desktop_shell_surface_map_toplevel(E_Shell_Surface *ess);
 static void _e_desktop_shell_surface_map_popup(E_Shell_Surface *ess);
+static void _e_desktop_shell_popup_grab_add(E_Shell_Surface *ess, E_Input *seat);
+
+static void _e_desktop_shell_popup_grab_focus(E_Input_Pointer_Grab *grab);
+static void _e_desktop_shell_popup_grab_motion(E_Input_Pointer_Grab *grab, unsigned int timestamp);
+static void _e_desktop_shell_popup_grab_button(E_Input_Pointer_Grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
+static void _e_desktop_shell_popup_grab_end(E_Input_Pointer *pointer);
 
 /* local wayland interfaces */
 static const struct wl_shell_interface _e_desktop_shell_interface = 
@@ -47,6 +53,13 @@ _e_desktop_shell_surface_interface =
    _e_desktop_shell_shell_surface_cb_maximized_set,
    _e_desktop_shell_shell_surface_cb_title_set,
    _e_desktop_shell_shell_surface_cb_class_set
+};
+
+static E_Input_Pointer_Grab_Interface _popup_grab_interface = 
+{
+   _e_desktop_shell_popup_grab_focus,
+   _e_desktop_shell_popup_grab_motion,
+   _e_desktop_shell_popup_grab_button,
 };
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Desktop" };
@@ -126,7 +139,6 @@ static void
 _e_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
 {
    E_Desktop_Shell *shell;
-   /* struct wl_resource *res; */
 
    /* try to cast data to our shell */
    if (!(shell = data)) return;
@@ -134,8 +146,6 @@ _e_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int vers
    /* try to add the shell to the client */
    wl_client_add_object(client, &wl_shell_interface, 
                         &_e_desktop_shell_interface, id, shell);
-
-   /* TODO: finish */
 }
 
 static void 
@@ -287,6 +297,7 @@ _e_desktop_shell_shell_surface_map(E_Surface *es, Evas_Coord x, Evas_Coord y, Ev
    switch (es->shell_surface->type)
      {
       case E_SHELL_SURFACE_TYPE_TOPLEVEL:
+      case E_SHELL_SURFACE_TYPE_POPUP:
         es->geometry.x = x;
         es->geometry.y = y;
         es->geometry.changed = EINA_TRUE;
@@ -297,11 +308,6 @@ _e_desktop_shell_shell_surface_map(E_Surface *es, Evas_Coord x, Evas_Coord y, Ev
         break;
       case E_SHELL_SURFACE_TYPE_MAXIMIZED:
         /* maximize */
-        break;
-      case E_SHELL_SURFACE_TYPE_POPUP:
-        es->geometry.x = x;
-        es->geometry.y = y;
-        es->geometry.changed = EINA_TRUE;
         break;
       case E_SHELL_SURFACE_TYPE_NONE:
         es->geometry.x += x;
@@ -362,6 +368,7 @@ _e_desktop_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, str
 
    /* try to cast the resource to our shell surface */
    if (!(ess = resource->data)) return;
+   printf("Shell Surface Pong\n");
 }
 
 static void 
@@ -371,6 +378,7 @@ _e_desktop_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, str
 
    /* try to cast the resource to our shell surface */
    if (!(ess = resource->data)) return;
+   printf("Shell Surface Move\n");
 }
 
 static void 
@@ -380,6 +388,7 @@ _e_desktop_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, s
 
    /* try to cast the resource to our shell surface */
    if (!(ess = resource->data)) return;
+   printf("Shell Surface Resize\n");
 }
 
 static void 
@@ -601,13 +610,99 @@ _e_desktop_shell_surface_map_popup(E_Shell_Surface *ess)
    es->geometry.y = ess->popup.y;
    es->geometry.changed = EINA_TRUE;
 
-   if ((seat) && (seat->pointer->grab_serial == ess->popup.serial))
-     {
-        /* TODO: add popup grab */
-        printf("Add Popup Grab\n");
-     }
+   if ((seat) && (seat->pointer->grab->serial == ess->popup.serial))
+     _e_desktop_shell_popup_grab_add(ess, seat);
    else
      {
         wl_shell_surface_send_popup_done(&ess->wl.resource);
+        seat->pointer->grab->client = NULL;
+     }
+}
+
+static void 
+_e_desktop_shell_popup_grab_add(E_Shell_Surface *ess, E_Input *seat)
+{
+   if (wl_list_empty(&seat->pointer->grab->surfaces))
+     {
+        seat->pointer->grab->client = ess->wl.resource.client;
+        seat->pointer->grab->interface = &_popup_grab_interface;
+
+        if (seat->pointer->grab->button_count > 0)
+          seat->pointer->grab->up = EINA_FALSE;
+
+        e_input_pointer_grab_start(seat->pointer);
+     }
+
+   wl_list_insert(&seat->pointer->grab->surfaces, &ess->wl.link);
+}
+
+static void 
+_e_desktop_shell_popup_grab_focus(E_Input_Pointer_Grab *grab)
+{
+   E_Input_Pointer *ptr;
+   E_Surface *es;
+   struct wl_client *client;
+
+   if (!(ptr = grab->pointer)) return;
+
+   es = e_compositor_surface_find(ptr->seat->compositor, ptr->x, ptr->y);
+
+   if ((es) && (es->wl.resource.client == grab->client))
+     e_input_pointer_focus_set(ptr, es, ptr->x, ptr->y);
+   else
+     e_input_pointer_focus_set(ptr, NULL, 0, 0);
+}
+
+static void 
+_e_desktop_shell_popup_grab_motion(E_Input_Pointer_Grab *grab, unsigned int timestamp)
+{
+   E_Input_Pointer *ptr;
+
+   ptr = grab->pointer;
+   if ((ptr) && (ptr->focus_resource))
+     wl_pointer_send_motion(ptr->focus_resource, timestamp, ptr->x, ptr->y);
+}
+
+static void 
+_e_desktop_shell_popup_grab_button(E_Input_Pointer_Grab *grab, unsigned int timestamp, unsigned int button, unsigned int state)
+{
+   struct wl_resource *res;
+
+   if ((res = grab->pointer->focus_resource))
+     {
+        struct wl_display *disp;
+        unsigned int serial = 0;
+
+        disp = wl_client_get_display(res->client);
+        serial = wl_display_get_serial(disp);
+        wl_pointer_send_button(res, serial, timestamp, button, state);
+     }
+   else if ((state == WL_POINTER_BUTTON_STATE_RELEASED) && 
+            ((grab->up) || ((timestamp - grab->timestamp) > 500)))
+     _e_desktop_shell_popup_grab_end(grab->pointer);
+
+   if (state == WL_POINTER_BUTTON_STATE_RELEASED)
+     grab->up = EINA_TRUE;
+}
+
+static void 
+_e_desktop_shell_popup_grab_end(E_Input_Pointer *pointer)
+{
+   E_Input_Pointer_Grab *grab;
+
+   if (!(grab = pointer->grab)) return;
+
+   if (grab->interface == &_popup_grab_interface)
+     {
+        E_Shell_Surface *ess;
+
+        e_input_pointer_grab_end(grab->pointer);
+        grab->client = NULL;
+        grab->interface = NULL;
+
+        wl_list_for_each(ess, &grab->surfaces, wl.link)
+          wl_shell_surface_send_popup_done(&ess->wl.resource);
+
+        wl_list_init(&grab->surfaces);
      }
 }
