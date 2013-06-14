@@ -11,6 +11,6 @@ EAPI int              e_widget_preview_file_set(Evas_Object *obj, const char *fi
 EAPI int	      e_widget_preview_thumb_set(Evas_Object *obj, const char *file, const char *key, int w, int h);
 EAPI int              e_widget_preview_edje_set(Evas_Object *obj, const char *file, const char *group);
 EAPI void             e_widget_preview_vsize_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
-
+EAPI void             e_widget_preview_size_set(Evas_Object *obj, int minw, int minh);
 #endif
 #endif

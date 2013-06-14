@@ -50,6 +50,19 @@ e_widget_preview_add(Evas *evas, int minw, int minh)
    return obj;
 }
 
+EAPI void
+e_widget_preview_size_set(Evas_Object *obj, int minw, int minh)
+{
+   E_Widget_Data *wd;
+   int mw, mh;
+
+   wd = e_widget_data_get(obj);
+   e_livethumb_vsize_set(wd->img, minw * 2, minh * 2);
+   edje_extern_object_min_size_set(wd->img, minw, minh);
+   edje_object_size_min_calc(wd->o_frame, &mw, &mh);
+   e_widget_size_min_set(obj, mw, mh);
+}
+
 EAPI Evas *
 e_widget_preview_evas_get(Evas_Object *obj)
 {
