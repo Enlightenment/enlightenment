@@ -247,6 +247,7 @@ img/led_dot_white.png \
 img/led_light.png \
 img/led_red_light.png \
 img/led_strobe.png \
+img/led_tiny_blue.png \
 img/led_tiny_green.png \
 img/led_tiny_orange.png \
 img/led_square_base.png \
