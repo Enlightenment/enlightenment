@@ -522,15 +522,14 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
           }
         else if (desktop && desktop->url)
           {
-             Eina_Strbuf *sb;
+             char *sb;
+             size_t size = 4096, len = sizeof(E_BINDIR "/enlightenment_open ") - 1;
 
-             sb = eina_strbuf_new();
-             eina_strbuf_append(sb, E_BINDIR "/enlightenment_open '");
-             eina_strbuf_append(sb, desktop->url);
-             eina_strbuf_append_char(sb, '\'');
-             exe = ecore_exe_run(eina_strbuf_string_get(sb),
-                                 inst);
-             eina_strbuf_free(sb);
+             sb = malloc(size);
+             memcpy(sb, E_BINDIR "/enlightenment_open ", len);
+             sb = e_util_string_append_quoted(sb, &size, &len, desktop->url);
+             exe = ecore_exe_run(sb, inst);
+             free(sb);
           }
         else
           exe = ecore_exe_run(exec, inst);
