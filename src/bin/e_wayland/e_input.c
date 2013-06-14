@@ -153,6 +153,31 @@ e_input_pointer_focus_set(E_Input_Pointer *pointer, E_Surface *surface, Evas_Coo
    wl_signal_emit(&pointer->signals.focus, pointer);
 }
 
+EAPI void 
+e_input_pointer_grab_start(E_Input_Pointer *pointer)
+{
+   if (!pointer) return;
+
+   if ((pointer->grab) && (pointer->grab->interface))
+     {
+        if (pointer->grab->interface->focus)
+          pointer->grab->interface->focus(pointer->grab);
+     }
+}
+
+EAPI void 
+e_input_pointer_grab_end(E_Input_Pointer *pointer)
+{
+   if (!pointer) return;
+
+   pointer->grab = &pointer->default_grab;
+   if ((pointer->grab) && (pointer->grab->interface))
+     {
+        if (pointer->grab->interface->focus)
+          pointer->grab->interface->focus(pointer->grab);
+     }
+}
+
 /* local functions */
 static void 
 _e_input_capabilities_update(E_Input *seat)
@@ -296,7 +321,8 @@ _e_input_pointer_grab_cb_button(E_Input_Pointer_Grab *grab, unsigned int timesta
         wl_pointer_send_button(res, serial, timestamp, button, state);
      }
 
-   if ((ptr->button_count == 0) && (state == WL_POINTER_BUTTON_STATE_RELEASED))
+   if ((ptr->grab->button_count == 0) && 
+       (state == WL_POINTER_BUTTON_STATE_RELEASED))
      {
         E_Surface *es;
 

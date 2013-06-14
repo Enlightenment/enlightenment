@@ -47,6 +47,14 @@ struct _E_Input_Pointer_Grab
 {
    E_Input_Pointer *pointer;
    E_Input_Pointer_Grab_Interface *interface;
+
+   Evas_Coord x, y;
+   unsigned int button, button_count;
+   unsigned int serial, timestamp;
+   Eina_Bool up : 1;
+
+   struct wl_client *client;
+   struct wl_list surfaces;
 };
 
 struct _E_Input_Pointer
@@ -67,10 +75,6 @@ struct _E_Input_Pointer
 
    E_Input_Pointer_Grab *grab;
    E_Input_Pointer_Grab default_grab;
-
-   Evas_Coord grab_x, grab_y;
-   unsigned int grab_button, button_count;
-   unsigned int grab_serial, grab_time;
 };
 
 EAPI Eina_Bool e_input_init(E_Compositor *comp, E_Input *seat, const char *name);
@@ -80,6 +84,8 @@ EAPI Eina_Bool e_input_keyboard_init(E_Input *seat);
 EAPI Eina_Bool e_input_touch_init(E_Input *seat);
 
 EAPI void e_input_pointer_focus_set(E_Input_Pointer *pointer, E_Surface *surface, Evas_Coord x, Evas_Coord y);
+EAPI void e_input_pointer_grab_start(E_Input_Pointer *pointer);
+EAPI void e_input_pointer_grab_end(E_Input_Pointer *pointer);
 
 # endif
 #endif
