@@ -93,6 +93,8 @@ e_input_pointer_init(E_Input *seat)
    ptr->default_grab.pointer = ptr;
    ptr->grab = &ptr->default_grab;
 
+   wl_list_init(&ptr->grab->surfaces);
+
    ptr->seat = seat;
    seat->pointer = ptr;
 
@@ -158,6 +160,8 @@ e_input_pointer_grab_start(E_Input_Pointer *pointer)
 {
    if (!pointer) return;
 
+   printf("Input Pointer Grab Start\n");
+
    if ((pointer->grab) && (pointer->grab->interface))
      {
         if (pointer->grab->interface->focus)
@@ -169,6 +173,8 @@ EAPI void
 e_input_pointer_grab_end(E_Input_Pointer *pointer)
 {
    if (!pointer) return;
+
+   printf("Input Pointer Grab End\n");
 
    pointer->grab = &pointer->default_grab;
    if ((pointer->grab) && (pointer->grab->interface))

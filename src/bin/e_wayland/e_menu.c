@@ -348,7 +348,7 @@ e_menu_idler_before(void)
           {
              if (!m->realized) _e_menu_realize(m);
              m->prev.visible = m->cur.visible;
-             ecore_evas_raise(m->ee);
+             /* ecore_evas_raise(m->ee); */
              ecore_evas_show(m->ee);
           }
      }
@@ -381,7 +381,6 @@ e_menu_idler_before(void)
              e_object_unref(E_OBJECT(m));
           }
      }
-
 }
 
 EAPI E_Menu_Item *
@@ -1127,16 +1126,17 @@ _e_menu_realize(E_Menu *m)
      }
    /* else */
    /*   { */
-        if ((win = ecore_evas_wayland_window_get(m->zone->container->bg_ee)))
-          parent = win->id;
+   if ((win = ecore_evas_wayland_window_get(m->zone->container->bg_ee)))
+     parent = win->id;
      /* } */
 
    m->ee = 
      e_canvas_new(parent, x, y, m->cur.w, m->cur.h, 
-                  EINA_TRUE, EINA_FALSE, NULL);
+                  EINA_TRUE, EINA_FALSE, &win);
    e_canvas_add(m->ee);
 
-   m->id = ecore_evas_wayland_window_get(m->ee)->id;
+   m->id = win->id;
+   /* m->id = ecore_evas_wayland_window_get(m->ee)->id; */
    printf("Menu Id: %d\n", m->id);
 
    ecore_evas_name_class_set(m->ee, "E", "_e_menu_window");
