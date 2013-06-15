@@ -998,7 +998,7 @@ _ibar_cb_icon_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 }
 
 static Eina_Bool
-_ibar_cb_icon_timer_cb(void *data)
+_ibar_cb_icon_menu_cb(void *data)
 {
    IBar_Icon *ic = data;
 
@@ -1026,11 +1026,11 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         ic->drag.dnd = 0;
         ic->mouse_down = 1;
         if (!ic->timer)
-          ic->timer = ecore_timer_add(0.35, _ibar_cb_icon_timer_cb, ic);
+          ic->timer = ecore_timer_add(0.35, _ibar_cb_icon_menu_cb, ic);
      }
    else if (ev->button == 2)
      {
-        _ibar_cb_icon_timer_cb(ic);
+        _ibar_cb_icon_menu_cb(ic);
      }
    else if (ev->button == 3)
      {
