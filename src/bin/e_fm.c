@@ -7589,7 +7589,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
             (e_config->drag_resist * e_config->drag_resist))
           {
              E_Drag *d;
-             Evas_Object *o, *o2, *layout = NULL;
+             Evas_Object *o = NULL, *o2, *layout = NULL;
              const char *drag_types[] = { "text/uri-list" }, *real_path;
              char buf[PATH_MAX + 8], *p, *sel = NULL;
              E_Container *con = NULL;
