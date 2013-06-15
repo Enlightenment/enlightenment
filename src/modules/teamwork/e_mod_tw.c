@@ -712,7 +712,7 @@ tw_show_helper(Evas_Object *o, int w, int h)
         pw = lround((double)(ph * w) / ((double)h));
      }
    e_widget_preview_size_set(o, pw, ph);
-   e_widget_preview_vsize_set(o, w, h);
+   e_widget_preview_vsize_set(o, pw, ph);
    e_popup_layer_set(tw_mod->pop, E_COMP_CANVAS_LAYER_POPUP, 0);
 
    if ((last_coords.x == last_coords.y) && (last_coords.x == -1))
