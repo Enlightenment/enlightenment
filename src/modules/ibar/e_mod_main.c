@@ -1028,6 +1028,10 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         if (!ic->timer)
           ic->timer = ecore_timer_add(0.35, _ibar_cb_icon_timer_cb, ic);
      }
+   else if (ev->button == 2)
+     {
+        _ibar_cb_icon_timer_cb(ic);
+     }
    else if (ev->button == 3)
      {
         E_Menu *m, *mo;
