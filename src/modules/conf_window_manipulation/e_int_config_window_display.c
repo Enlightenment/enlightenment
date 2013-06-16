@@ -214,15 +214,15 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
-   ow = e_widget_radio_add(evas, _("Pronounced Accelerate"), E_TRANSITION_ACCELERATE_LOTS, rg);
+   ow = e_widget_radio_add(evas, _("Pronounced accelerate"), E_TRANSITION_ACCELERATE_LOTS, rg);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
-   ow = e_widget_radio_add(evas, _("Pronounced Decelerate"), E_TRANSITION_DECELERATE_LOTS, rg);
+   ow = e_widget_radio_add(evas, _("Pronounced decelerate"), E_TRANSITION_DECELERATE_LOTS, rg);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
-   ow = e_widget_radio_add(evas, _("Pronounced Accelerate, then decelerate"), E_TRANSITION_SINUSOIDAL_LOTS, rg);
+   ow = e_widget_radio_add(evas, _("Pronounced accelerate, then decelerate"), E_TRANSITION_SINUSOIDAL_LOTS, rg);
    e_widget_check_widget_disable_on_unchecked_add(oc, ow);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
 
