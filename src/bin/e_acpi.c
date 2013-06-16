@@ -12,12 +12,22 @@
 
 /* local structures */
 /* for simple acpi device mapping */
-typedef struct _E_ACPI_Device_Simple      E_ACPI_Device_Simple;
-typedef struct _E_ACPI_Device_Multiplexed E_ACPI_Device_Multiplexed;
+typedef struct _E_ACPI_Device_Simple       E_ACPI_Device_Simple;
+typedef struct _E_ACPI_Device_Simple_State E_ACPI_Device_Simple_State;
+typedef struct _E_ACPI_Device_Multiplexed  E_ACPI_Device_Multiplexed;
 
 struct _E_ACPI_Device_Simple
 {
    const char *name;
+   // ->
+   int         type;
+};
+
+struct _E_ACPI_Device_Simple_State
+{
+   const char *name;
+   const char *bus;
+   const char *state;
    // ->
    int         type;
 };
@@ -65,6 +75,15 @@ static E_ACPI_Device_Simple _devices_simple[] =
    {"video/switchmode", E_ACPI_TYPE_VIDEO},
 
    {NULL, E_ACPI_TYPE_UNKNOWN}
+};
+
+static E_ACPI_Device_Simple_State _devices_simple_state[] =
+{
+   /* NB: DO NOT TRANSLATE THESE. */
+   {"video/tabletmode", "TBLT", "on", E_ACPI_TYPE_TABLET_ON},
+   {"video/tabletmode", "TBLT", "off", E_ACPI_TYPE_TABLET_OFF},
+
+   {NULL, NULL, NULL, E_ACPI_TYPE_UNKNOWN}
 };
 
 static E_ACPI_Device_Multiplexed _devices_multiplexed[] =
@@ -193,7 +212,7 @@ _e_acpi_cb_server_data(void *data __UNUSED__, int type __UNUSED__, void *event)
    Ecore_Con_Event_Server_Data *ev;
    E_Event_Acpi *acpi_event;
    int sig, status, i, done = 0;
-   char device[1024], bus[1024], *sdata;
+   char device[1024], bus[1024], state[1024], *sdata;
    const char *str, *p;
 
    ev = event;
@@ -213,6 +232,7 @@ _e_acpi_cb_server_data(void *data __UNUSED__, int type __UNUSED__, void *event)
    if (!p) return ECORE_CALLBACK_PASS_ON;
    while (p)
      {
+        device[0] = bus[0] = state[0] = 0;
         sdata = alloca(p - str + 1);
         strncpy(sdata, str, (int)(p - str));
         sdata[p - str] = 0;
@@ -223,7 +243,10 @@ _e_acpi_cb_server_data(void *data __UNUSED__, int type __UNUSED__, void *event)
              sig = -1;
              status = -1;
              if (sscanf(sdata, "%1023s %1023s", device, bus) != 2)
-               goto done_event;
+               {
+                  if (sscanf(sdata, "%1023s %1023s %1023s", device, bus, state) != 3)
+                    goto done_event;
+               }
           }
 
         /* create new event structure to raise */
@@ -247,6 +270,20 @@ _e_acpi_cb_server_data(void *data __UNUSED__, int type __UNUSED__, void *event)
                       (_devices_multiplexed[i].status == status))
                     {
                        acpi_event->type = _devices_multiplexed[i].type;
+                       done = 1;
+                       break;
+                    }
+               }
+          }
+        if ((!done) && (state[0]))
+          {
+             for (i = 0; _devices_simple_state[i].name; i++)
+               {
+                  if ((!strcmp(device, _devices_simple_state[i].name)) &&
+                      ((!_devices_simple_state[i].bus) || (!strcmp(bus, _devices_simple_state[i].bus))) &&
+                      (!strcmp(state, _devices_simple_state[i].state)))
+                    {
+                       acpi_event->type =  _devices_simple_state[i].type;
                        done = 1;
                        break;
                     }

@@ -395,6 +395,10 @@ _binding_label_get(E_Config_Binding_Acpi *binding)
      return _("Volume Down");
    if (binding->type == E_ACPI_TYPE_VOLUME_UP)
      return _("Volume Up");
+   if (binding->type == E_ACPI_TYPE_TABLET_ON)
+     return _("Tablet On");
+   if (binding->type == E_ACPI_TYPE_TABLET_OFF)
+     return _("Tablet Off");
 
    return _("Unknown");
 }

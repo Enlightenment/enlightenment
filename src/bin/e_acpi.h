@@ -28,7 +28,9 @@ typedef enum _E_Acpi_Type
    E_ACPI_TYPE_VOLUME, // 21
    E_ACPI_TYPE_BRIGHTNESS, // 22
    E_ACPI_TYPE_VOLUME_DOWN, // 23
-   E_ACPI_TYPE_VOLUME_UP // 24
+   E_ACPI_TYPE_VOLUME_UP, // 24
+   E_ACPI_TYPE_TABLET_ON, // 25
+   E_ACPI_TYPE_TABLET_OFF // 26
 } E_Acpi_Type;
 
 /* enum for acpi signals */
