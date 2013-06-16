@@ -73,6 +73,9 @@ static E_ACPI_Device_Simple _devices_simple[] =
    {"video/brightnessdown", E_ACPI_TYPE_BRIGHTNESS_DOWN},
    {"video/brightnessup", E_ACPI_TYPE_BRIGHTNESS_UP},
    {"video/switchmode", E_ACPI_TYPE_VIDEO},
+   {"button/zoom", E_ACPI_TYPE_ZOOM},
+   {"button/screenlock", E_ACPI_TYPE_SCREENLOCK},
+   {"button/battery", E_ACPI_TYPE_BATTERY_BUTTON},
 
    {NULL, E_ACPI_TYPE_UNKNOWN}
 };

@@ -399,6 +399,12 @@ _binding_label_get(E_Config_Binding_Acpi *binding)
      return _("Tablet On");
    if (binding->type == E_ACPI_TYPE_TABLET_OFF)
      return _("Tablet Off");
+   if (binding->type == E_ACPI_TYPE_ZOOM)
+     return _("Zoom");
+   if (binding->type == E_ACPI_TYPE_SCREENLOCK)
+     return _("Screenlock");
+   if (binding->type == E_ACPI_TYPE_BATTERY_BUTTON)
+     return _("Battery Button");
 
    return _("Unknown");
 }
