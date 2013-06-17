@@ -54,7 +54,8 @@ struct _IBar
    Evas_Object *o_drop_over, *o_empty;
    IBar_Icon   *ic_drop_before;
    int          drop_before;
-   Eina_List   *icons;
+   Eina_Inlist  *icons;
+   unsigned int icons_count;
    IBar_Order  *io;
    Evas_Coord   dnd_x, dnd_y;
    Eina_Bool    focused : 1;
@@ -62,6 +63,7 @@ struct _IBar
 
 struct _IBar_Icon
 {
+   EINA_INLIST;
    IBar            *ibar;
    Evas_Object     *o_holder, *o_icon;
    Evas_Object     *o_holder2, *o_icon2;
@@ -264,7 +266,7 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
       case E_GADCON_ORIENT_CORNER_BL:
       case E_GADCON_ORIENT_CORNER_BR:
         _ibar_orient_set(inst->ibar, 1);
-        e_gadcon_client_aspect_set(gcc, eina_list_count(inst->ibar->icons) * 16, 16);
+        e_gadcon_client_aspect_set(gcc, inst->ibar->icons_count * 16, 16);
         break;
 
       case E_GADCON_ORIENT_VERT:
@@ -275,7 +277,7 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
       case E_GADCON_ORIENT_CORNER_LB:
       case E_GADCON_ORIENT_CORNER_RB:
         _ibar_orient_set(inst->ibar, 0);
-        e_gadcon_client_aspect_set(gcc, 16, eina_list_count(inst->ibar->icons) * 16);
+        e_gadcon_client_aspect_set(gcc, 16, inst->ibar->icons_count * 16);
         break;
 
       default:
@@ -476,7 +478,8 @@ _ibar_fill(IBar *b)
                     e_exec_instance_watcher_add(exe, _ibar_instance_watch, ic);
                   _ibar_icon_signal_emit(ic, "e,state,on", "e");
                }
-             b->icons = eina_list_append(b->icons, ic);
+             b->icons = eina_inlist_append(b->icons, EINA_INLIST_GET(ic));
+             b->icons_count++;
              e_box_pack_end(b->o_box, ic->o_holder);
           }
      }
@@ -487,10 +490,8 @@ _ibar_fill(IBar *b)
 static void
 _ibar_empty(IBar *b)
 {
-   IBar_Icon *ic;
-
-   EINA_LIST_FREE(b->icons, ic)
-     _ibar_icon_free(ic);
+   while (b->icons)
+     _ibar_icon_free((IBar_Icon*)b->icons);
 
    _ibar_empty_handle(b);
 }
@@ -505,7 +506,6 @@ _ibar_orient_set(IBar *b, int horizontal)
 static void
 _ibar_resize_handle(IBar *b)
 {
-   const Eina_List *l;
    IBar_Icon *ic;
    Evas_Coord w, h;
 
@@ -515,7 +515,7 @@ _ibar_resize_handle(IBar *b)
    else
      h = w;
    e_box_freeze(b->o_box);
-   EINA_LIST_FOREACH(b->icons, l, ic)
+   EINA_INLIST_FOREACH(b->icons, ic)
      {
         e_box_pack_options_set(ic->o_holder,
                                1, 1, /* fill */
@@ -560,7 +560,6 @@ _ibar_config_update(Config_Item *ci)
 {
    const Eina_List *l;
    Instance *inst;
-   const Eina_List *i;
    IBar_Icon *ic;
 
    EINA_LIST_FOREACH(ibar_config->instances, l, inst)
@@ -579,7 +578,7 @@ _ibar_config_update(Config_Item *ci)
         _gc_orient(inst->gcc, -1);
      }
    EINA_LIST_FOREACH(ibar_config->instances, l, inst)
-     EINA_LIST_FOREACH(inst->ibar->icons, i, ic)
+     EINA_INLIST_FOREACH(inst->ibar->icons, ic)
           {
              switch (ci->eap_label)
                {
@@ -604,10 +603,9 @@ _ibar_config_update(Config_Item *ci)
 static IBar_Icon *
 _ibar_icon_at_coord(IBar *b, Evas_Coord x, Evas_Coord y)
 {
-   const Eina_List *l;
    IBar_Icon *ic;
 
-   EINA_LIST_FOREACH(b->icons, l, ic)
+   EINA_INLIST_FOREACH(b->icons, ic)
      {
         Evas_Coord dx, dy, dw, dh;
 
@@ -661,9 +659,10 @@ static void
 _ibar_icon_free(IBar_Icon *ic)
 {
    E_Exec_Instance *inst;
-   
-   if (ic->reset_timer) ecore_timer_del(ic->reset_timer);
-   ic->reset_timer = NULL;
+
+   ic->ibar->icons = eina_inlist_remove(ic->ibar->icons, EINA_INLIST_GET(ic));
+   ic->ibar->icons_count--;
+   E_FREE_FUNC(ic->reset_timer, ecore_timer_del);
    ic->exe_current = NULL;
    if (ic->ibar->ic_drop_before == ic)
      ic->ibar->ic_drop_before = NULL;
@@ -799,16 +798,14 @@ _ibar_cb_menu_icon_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi 
 static void
 _ibar_cb_menu_icon_remove(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
-   IBar_Icon *ic;
-   E_Gadcon_Client *gc;
+   IBar_Icon *ic = data;
+   IBar *i;
 
-   ic = data;
-   ic->ibar->icons = eina_list_remove(ic->ibar->icons, ic);
-   _ibar_resize_handle(ic->ibar);
-   gc = ic->ibar->inst->gcc;
-   _gc_orient(gc, -1);
-   e_order_remove(ic->ibar->io->eo, ic->app);
+   i = ic->ibar;
+   e_order_remove(i->io->eo, ic->app);
    _ibar_icon_free(ic);
+   _ibar_resize_handle(i);
+   _gc_orient(i->inst->gcc, -1);
 }
 
 static void
@@ -1255,8 +1252,8 @@ _ibar_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         Evas_Object *o;
         Evas_Coord x, y, w, h;
         unsigned int size;
+        IBar *i;
         const char *drag_types[] = { "enlightenment/desktop" };
-        E_Gadcon_Client *gc;
 
         ic->drag.dnd = 1;
         ic->drag.start = 0;
@@ -1274,12 +1271,11 @@ _ibar_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 
         e_drag_resize(d, w, h);
         e_drag_start(d, ic->drag.x, ic->drag.y);
-        ic->ibar->icons = eina_list_remove(ic->ibar->icons, ic);
-        _ibar_resize_handle(ic->ibar);
-        gc = ic->ibar->inst->gcc;
-        _gc_orient(gc, -1);
-        e_order_remove(ic->ibar->io->eo, ic->app);
+        i = ic->ibar;
+        e_order_remove(i->io->eo, ic->app);
         _ibar_icon_free(ic);
+        _ibar_resize_handle(i);
+        _gc_orient(i->inst->gcc, -1);
      }
 }
 
@@ -1485,15 +1481,14 @@ _ibar_inst_cb_drop(void *data, const char *type, void *event_info)
         /* Add new eapp before this icon */
         if (!inst->ibar->drop_before)
           {
-             const Eina_List *l;
              IBar_Icon *ic2;
 
-             EINA_LIST_FOREACH(inst->ibar->icons, l, ic2)
+             EINA_INLIST_FOREACH(inst->ibar->icons, ic2)
                {
                   if (ic2 == ic)
                     {
-                       if (l->next)
-                         ic = l->next->data;
+                       if (EINA_INLIST_GET(ic2)->next)
+                         ic = (IBar_Icon*)EINA_INLIST_GET(ic2)->next;
                        else
                          ic = NULL;
                        break;
@@ -1683,11 +1678,10 @@ static void
 _ibar_focus(IBar *b)
 {
    IBar_Icon *ic;
-   Eina_List *l;
    
    if (b->focused) return;
    b->focused = EINA_TRUE;
-   EINA_LIST_FOREACH(b->icons, l, ic)
+   EINA_INLIST_FOREACH(b->icons, ic)
      {
         if (ic->focused)
           {
@@ -1696,18 +1690,17 @@ _ibar_focus(IBar *b)
           }
      }
    if (b->icons)
-     _ibar_icon_unfocus_focus(NULL, b->icons->data);
+     _ibar_icon_unfocus_focus(NULL, (IBar_Icon*)b->icons);
 }
 
 static void
 _ibar_unfocus(IBar *b)
 {
    IBar_Icon *ic;
-   Eina_List *l;
 
    if (!b->focused) return;
    b->focused = EINA_FALSE;
-   EINA_LIST_FOREACH(b->icons, l, ic)
+   EINA_INLIST_FOREACH(b->icons, ic)
      {
         if (ic->focused)
           {
@@ -1721,11 +1714,10 @@ static void
 _ibar_focus_next(IBar *b)
 {
    IBar_Icon *ic, *ic1 = NULL, *ic2 = NULL;
-   Eina_List *l;
    
    if (!b->focused) return;
    if (!b->icons) return;
-   EINA_LIST_FOREACH(b->icons, l, ic)
+   EINA_INLIST_FOREACH(b->icons, ic)
      {
         if (!ic1)
           {
@@ -1738,7 +1730,7 @@ _ibar_focus_next(IBar *b)
           }
      }
    // wrap to start
-   if ((ic1) && (!ic2)) ic2 = b->icons->data;
+   if ((ic1) && (!ic2)) ic2 = (IBar_Icon*)b->icons;
    if ((ic1) && (ic2) && (ic1 != ic2))
      _ibar_icon_unfocus_focus(ic1, ic2);
 }
@@ -1747,11 +1739,10 @@ static void
 _ibar_focus_prev(IBar *b)
 {
    IBar_Icon *ic, *ic1 = NULL, *ic2 = NULL;
-   Eina_List *l;
    
    if (!b->focused) return;
    if (!b->icons) return;
-   EINA_LIST_FOREACH(b->icons, l, ic)
+   EINA_INLIST_FOREACH(b->icons, ic)
      {
         if (ic->focused)
           {
@@ -1761,7 +1752,7 @@ _ibar_focus_prev(IBar *b)
         ic2 = ic;
      }
    // wrap to end
-   if ((ic1) && (!ic2)) ic2 = eina_list_last_data_get(b->icons);
+   if ((ic1) && (!ic2)) ic2 = (IBar_Icon*)b->icons;
    if ((ic1) && (ic2) && (ic1 != ic2))
      _ibar_icon_unfocus_focus(ic1, ic2);
 }
@@ -1770,10 +1761,9 @@ static void
 _ibar_focus_launch(IBar *b)
 {
    IBar_Icon *ic;
-   Eina_List *l;
    
    if (!b->focused) return;
-   EINA_LIST_FOREACH(b->icons, l, ic)
+   EINA_INLIST_FOREACH(b->icons, ic)
      {
         if (ic->focused)
           {
@@ -2095,10 +2085,9 @@ _ibar_cb_config_icons(__UNUSED__ void *data, __UNUSED__ int ev_type, __UNUSED__ 
 
    EINA_LIST_FOREACH(ibar_config->instances, l, inst)
      {
-        const Eina_List *l2;
         IBar_Icon *icon;
 
-        EINA_LIST_FOREACH(inst->ibar->icons, l2, icon)
+        EINA_INLIST_FOREACH(inst->ibar->icons, icon)
           _ibar_icon_fill(icon);
      }
    return ECORE_CALLBACK_PASS_ON;
