@@ -70,6 +70,7 @@ struct _IBar_Icon
    Ecore_Timer     *timer;
    E_Exec_Instance *exe_inst;
    Eina_List       *exes; //all instances
+   Eina_List       *exe_current;
    E_Gadcon_Popup  *menu;
    int              mouse_down;
    struct
@@ -112,6 +113,7 @@ static void         _ibar_cb_icon_mouse_up(void *data, Evas *e, Evas_Object *obj
 static void         _ibar_cb_icon_mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void         _ibar_cb_icon_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void         _ibar_cb_icon_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void         _ibar_cb_icon_wheel(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void         _ibar_inst_cb_enter(void *data, const char *type, void *event_info);
 static void         _ibar_inst_cb_move(void *data, const char *type, void *event_info);
 static void         _ibar_inst_cb_leave(void *data, const char *type, void *event_info);
@@ -636,6 +638,8 @@ _ibar_icon_new(IBar *b, Efreet_Desktop *desktop)
                                   _ibar_cb_icon_mouse_up, ic);
    evas_object_event_callback_add(ic->o_holder, EVAS_CALLBACK_MOUSE_MOVE,
                                   _ibar_cb_icon_mouse_move, ic);
+   evas_object_event_callback_add(ic->o_holder, EVAS_CALLBACK_MOUSE_WHEEL,
+                                  _ibar_cb_icon_wheel, ic);
    evas_object_event_callback_add(ic->o_holder, EVAS_CALLBACK_MOVE,
                                   _ibar_cb_icon_move, ic);
    evas_object_event_callback_add(ic->o_holder, EVAS_CALLBACK_RESIZE,
@@ -660,6 +664,7 @@ _ibar_icon_free(IBar_Icon *ic)
    
    if (ic->reset_timer) ecore_timer_del(ic->reset_timer);
    ic->reset_timer = NULL;
+   ic->exe_current = NULL;
    if (ic->ibar->ic_drop_before == ic)
      ic->ibar->ic_drop_before = NULL;
    _ibar_icon_empty(ic);
@@ -1112,6 +1117,40 @@ _ibar_cb_icon_reset(void *data)
      }
    ic->reset_timer = NULL;
    return EINA_FALSE;
+}
+
+static void
+_ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Evas_Event_Mouse_Wheel *ev;
+   E_Exec_Instance *exe;
+   IBar_Icon *ic;
+
+   ev = event_info;
+   ic = data;
+
+   if (!ic->exes) return;
+
+   if (!ic->exe_current)
+     ic->exe_current = eina_list_nth_list(ic->exes, 0);
+
+   if (ev->z < 0)
+     {
+        ic->exe_current = eina_list_next(ic->exe_current);
+        if (!ic->exe_current)
+          ic->exe_current = eina_list_nth_list(ic->exes, 0);
+     }
+   else if (ev->z > 0)
+     {
+        ic->exe_current = eina_list_prev(ic->exe_current);
+        if (!ic->exe_current)
+          ic->exe_current = eina_list_last(ic->exes);
+     }
+
+   exe = eina_list_data_get(ic->exe_current);
+
+   if (!exe->bd) return;
+   e_border_activate(exe->bd, 1);
 }
 
 static void
