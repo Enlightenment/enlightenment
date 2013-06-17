@@ -10115,6 +10115,7 @@ e_border_activate(E_Border *bd, Eina_Bool just_do_it)
                 config dialogs when the main window gets focus.
                 causing the pointer to jump back and forth.  */
              if ((e_config->focus_policy != E_FOCUS_CLICK) && (!bd->new_client) &&
+                 (!e_config->disable_all_pointer_warps) &&
                  !(bd->client.icccm.name && !strcmp(bd->client.icccm.name, "VCLSalFrame")))
                ecore_x_pointer_warp(bd->zone->container->win,
                                     bd->x + (bd->w / 2), bd->y + (bd->h / 2));
