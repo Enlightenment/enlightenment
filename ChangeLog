@@ -1,3 +1,8 @@
+2013-06-17 Mike Blumenkrantz
+
+        * fixed bug where e widgets would not unset focus
+        * fixed bug with filemanager setting path with too many spaces when opened from menu
+
 2013-06-14 Mike Blumenkrantz
 
         * add teamwork module

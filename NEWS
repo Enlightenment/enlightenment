@@ -221,3 +221,5 @@ Fixes:
     * filemanager windows no longer resize to 0x0 when double clicked with no icons present
     * fixed e_exec to open .desktop url links
     * fix remember size/position apply
+    * fixed bug where e widgets would not unset focus
+    * fixed bug with filemanager setting path with too many spaces when opened from menu
