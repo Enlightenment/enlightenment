@@ -19,6 +19,7 @@ typedef struct Teamwork_Config
 
    Eina_Bool disable_media_fetch;
    long long int allowed_media_size;
+   long long int allowed_media_fetch_size;
    int allowed_media_age;
 
    double mouse_out_delay;

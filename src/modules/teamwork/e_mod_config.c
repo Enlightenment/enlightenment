@@ -4,6 +4,7 @@ struct _E_Config_Dialog_Data
 {
    int disable_media_fetch;
    double allowed_media_size;
+   double allowed_media_fetch_size;
    double allowed_media_age;
 
    double mouse_out_delay;
@@ -21,6 +22,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
   cfdata->X = tw_config->X
    SET(disable_media_fetch);
    SET(allowed_media_size);
+   SET(allowed_media_fetch_size);
    SET(allowed_media_age);
 
    SET(mouse_out_delay);
@@ -46,8 +48,9 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    CHECK(disable_media_fetch);
    if (lround(cfdata->allowed_media_age) != tw_config->allowed_media_age) return 1;
    if (lround(cfdata->allowed_media_size) != tw_config->allowed_media_size) return 1;
+   if (lround(cfdata->allowed_media_fetch_size) != tw_config->allowed_media_fetch_size) return 1;
 
-   if (fabs(cfdata->mouse_out_delay - tw_config->allowed_media_size) > 0.45) return 1;
+   if (fabs(cfdata->mouse_out_delay - tw_config->mouse_out_delay) > 0.45) return 1;
 
    if (fabs(cfdata->popup_size - tw_config->popup_size) > 0.9) return 1;
    if (fabs(cfdata->popup_opacity - tw_config->popup_opacity) > 0.9) return 1;
@@ -73,6 +76,11 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
 
    ob = e_widget_check_add(evas, _("Disable remote media fetching"), &cfdata->disable_media_fetch);
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+
+   ob = e_widget_label_add(evas, _("Maximum media size to fetch"));
+   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   ob = e_widget_slider_add(evas, 1, 0, _("%2.0f MiB"), 1, 50, 1, 0, &cfdata->allowed_media_fetch_size, NULL, 150);
+   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
 
    ob = e_widget_label_add(evas, _("Maximum media cache size in RAM"));
    e_widget_list_object_append(ol, ob, 1, 1, 0.5);
@@ -119,6 +127,7 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
 #define SET(X) tw_config->X = cfdata->X
    SET(disable_media_fetch);
    SET(allowed_media_size);
+   SET(allowed_media_fetch_size);
    SET(allowed_media_age);
 
    SET(mouse_out_delay);

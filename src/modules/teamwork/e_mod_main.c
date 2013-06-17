@@ -60,6 +60,7 @@ e_tw_config_new(void)
    cf->config_version = MOD_CONFIG_FILE_VERSION;
 
    cf->allowed_media_size = 10; // 10 megabytes
+   cf->allowed_media_fetch_size = 5; // 5 megabytes
    cf->allowed_media_age = 3; // 3 days
 
    cf->mouse_out_delay = 0.0;
@@ -81,6 +82,7 @@ e_tw_config_dd_new(void)
    E_CONFIG_VAL(D, T, config_version, UINT);
    E_CONFIG_VAL(D, T, disable_media_fetch, UCHAR);
    E_CONFIG_VAL(D, T, allowed_media_size, LL);
+   E_CONFIG_VAL(D, T, allowed_media_fetch_size, LL);
    E_CONFIG_VAL(D, T, allowed_media_age, INT);
 
    E_CONFIG_VAL(D, T, mouse_out_delay, DOUBLE);
@@ -127,6 +129,7 @@ e_modapi_init(E_Module *m)
         tw_config->mouse_out_delay = E_CLAMP(tw_config->mouse_out_delay, 0.0, 5.0);
         tw_config->popup_size = E_CLAMP(tw_config->popup_size, 10.0, 100.0);
         tw_config->popup_opacity = E_CLAMP(tw_config->popup_opacity, 10.0, 100.0);
+        tw_config->allowed_media_fetch_size = E_CLAMP(tw_config->allowed_media_fetch_size, 1, 50);
      }
    else
      tw_config = e_tw_config_new();
@@ -150,8 +153,10 @@ e_modapi_init(E_Module *m)
    co->info = eina_stringshare_add("applications/teamwork");
    E_CONFIGURE_OPTION_ICON(co, buf);
    E_CONFIGURE_OPTION_ADD(co, BOOL, disable_media_fetch, tw_config, _("Disable Teamwork remote media fetching"), _("teamwork"));
-   E_CONFIGURE_OPTION_ADD(co, DOUBLE, allowed_media_size, tw_config, _("Maximum total size of Teamwork  media to keep in RAM"), _("teamwork"), _("cache"));
+   E_CONFIGURE_OPTION_ADD(co, DOUBLE, allowed_media_size, tw_config, _("Maximum total size of Teamwork media to keep in RAM"), _("teamwork"), _("cache"));
    E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0, 1024, 16, _("%4.0f MiB"));
+   E_CONFIGURE_OPTION_ADD(co, DOUBLE, allowed_media_size, tw_config, _("Maximum size of remote media items to fetch with Teamwork"), _("teamwork"), _("cache"));
+   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 1, 50, 1, _("%2.0f MiB"));
    E_CONFIGURE_OPTION_HELP(co, _("This option determines how much memory will be used to cache recent media for faster loading."));
    E_CONFIGURE_OPTION_ADD(co, DOUBLE, allowed_media_age, tw_config, _("Maximum age for a disk-cached Teamwork media item"), _("teamwork"), _("cache"));
    E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, -1, 180, 1, _("%3.0f Days"));
