@@ -4462,6 +4462,11 @@ _e_comp_sys_logout(void)
 static void
 _e_comp_sys_resume(void)
 {
+   Eina_List *l;
+   E_Comp *c;
+
+   EINA_LIST_FOREACH(compositors, l, c)
+     evas_damage_rectangle_add(c->evas, 0, 0, c->man->w, c->man->h);
    _e_comp_sys_emit_cb_wait(E_SYS_SUSPEND, "e,state,sys,resume", NULL, EINA_FALSE);
 }
 
