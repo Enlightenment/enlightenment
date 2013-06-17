@@ -353,6 +353,7 @@ dbus_link_show_helper(const char *uri, Eina_Bool signal_open)
          break;
       }
      }
+   if (tw_mod->pop) tw_mod->force = signal_open;
 }
 
 static Eldbus_Message *
@@ -376,7 +377,10 @@ dbus_link_hide_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
    if (eldbus_message_arguments_get(msg, "s", &uri))
      {
         if (tw_mod->pop && (!tw_mod->sticky) && (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), uri)))
-          tw_hide(NULL);
+          {
+             tw_hide(NULL);
+             tw_mod->force = 0;
+          }
      }
    return eldbus_message_method_return_new(msg);
 }
@@ -409,6 +413,7 @@ dbus_link_mouse_out_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
                }
              else
                tw_hide(NULL);
+             tw_mod->force = 0;
           }
      }
    return eldbus_message_method_return_new(msg);

@@ -35,6 +35,7 @@ typedef struct Mod
    Eina_Hash *media;
    E_Popup *pop;
    Eina_Bool sticky : 1;
+   Eina_Bool force : 1;
 } Mod;
 
 extern Teamwork_Config *tw_config;
