@@ -810,6 +810,7 @@ focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Border_Focus_Out
 {
    if (!tw_mod->pop) return ECORE_CALLBACK_RENEW;
    if (e_config->focus_policy == E_FOCUS_CLICK) return ECORE_CALLBACK_RENEW;
+   if (tw_mod->force || tw_mod->sticky) return ECORE_CALLBACK_RENEW;
    if (tw_config->mouse_out_delay)
      {
         if (tw_hide_timer) ecore_timer_reset(tw_hide_timer);
