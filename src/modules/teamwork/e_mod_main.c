@@ -81,6 +81,7 @@ e_tw_config_dd_new(void)
 #define D conf_edd
    E_CONFIG_VAL(D, T, config_version, UINT);
    E_CONFIG_VAL(D, T, disable_media_fetch, UCHAR);
+   E_CONFIG_VAL(D, T, disable_video, UCHAR);
    E_CONFIG_VAL(D, T, allowed_media_size, LL);
    E_CONFIG_VAL(D, T, allowed_media_fetch_size, LL);
    E_CONFIG_VAL(D, T, allowed_media_age, INT);
@@ -153,6 +154,7 @@ e_modapi_init(E_Module *m)
    co->info = eina_stringshare_add("applications/teamwork");
    E_CONFIGURE_OPTION_ICON(co, buf);
    E_CONFIGURE_OPTION_ADD(co, BOOL, disable_media_fetch, tw_config, _("Disable Teamwork remote media fetching"), _("teamwork"));
+   E_CONFIGURE_OPTION_ADD(co, BOOL, disable_video, tw_config, _("Disable Teamwork video popups"), _("teamwork"));
    E_CONFIGURE_OPTION_ADD(co, DOUBLE, allowed_media_size, tw_config, _("Maximum total size of Teamwork media to keep in RAM"), _("teamwork"), _("cache"));
    E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0, 1024, 16, _("%4.0f MiB"));
    E_CONFIGURE_OPTION_ADD(co, DOUBLE, allowed_media_size, tw_config, _("Maximum size of remote media items to fetch with Teamwork"), _("teamwork"), _("cache"));

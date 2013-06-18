@@ -954,6 +954,7 @@ tw_show(Media *i)
         char buf[PATH_MAX];
         const char *tmp;
 
+        if (tw_config->disable_video) return;
         tmp = getenv("XDG_RUNTIME_DIR");
         if (!tmp) tmp = "/tmp";
         snprintf(buf, sizeof(buf), "%s/teamwork-%s-XXXXXX", tmp, ecore_file_file_get(i->addr));
@@ -1027,7 +1028,11 @@ tw_show_local_file(const char *uri)
 #ifdef HAVE_EMOTION
    video = emotion_object_extension_may_play_get(uri);
 #endif
-   if (!video)
+   if (video)
+     {
+        if (tw_config->disable_video) return;
+     }
+   else
      {
         if (!evas_object_image_extension_can_load_get(uri)) return;
      }

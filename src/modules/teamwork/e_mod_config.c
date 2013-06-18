@@ -3,6 +3,7 @@
 struct _E_Config_Dialog_Data
 {
    int disable_media_fetch;
+   int disable_video;
    double allowed_media_size;
    double allowed_media_fetch_size;
    double allowed_media_age;
@@ -21,6 +22,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
 #define SET(X) \
   cfdata->X = tw_config->X
    SET(disable_media_fetch);
+   SET(disable_video);
    SET(allowed_media_size);
    SET(allowed_media_fetch_size);
    SET(allowed_media_age);
@@ -46,6 +48,7 @@ _basic_check_changed(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfd
    if (cfdata->X != tw_config->X) return 1
 
    CHECK(disable_media_fetch);
+   CHECK(disable_video);
    if (lround(cfdata->allowed_media_age) != tw_config->allowed_media_age) return 1;
    if (lround(cfdata->allowed_media_size) != tw_config->allowed_media_size) return 1;
    if (lround(cfdata->allowed_media_fetch_size) != tw_config->allowed_media_fetch_size) return 1;
@@ -97,6 +100,9 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
 
    ol = e_widget_list_add(evas, 0, 0);
 
+   ob = e_widget_check_add(evas, _("Disable video previews"), &cfdata->disable_video);
+   e_widget_list_object_append(ol, ob, 1, 0, 0.5);
+
    ob = e_widget_label_add(evas, _("Mouse-out hide delay"));
    e_widget_list_object_append(ol, ob, 1, 1, 0.5);
    ob = e_widget_slider_add(evas, 1, 0, _("%1.1f seconds"), 0, 5, 0.5, 0, &cfdata->mouse_out_delay, NULL, 150);
@@ -126,6 +132,7 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
 
 #define SET(X) tw_config->X = cfdata->X
    SET(disable_media_fetch);
+   SET(disable_video);
    SET(allowed_media_size);
    SET(allowed_media_fetch_size);
    SET(allowed_media_age);
