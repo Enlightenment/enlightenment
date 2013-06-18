@@ -5,6 +5,10 @@
 
 #define IMAGE_FETCH_TRIES 5
 
+/**
+ * https://phab.enlightenment.org/w/teamwork_api/
+ */
+
 typedef struct
 {
    const char *sha1;
