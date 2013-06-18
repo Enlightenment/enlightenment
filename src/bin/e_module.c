@@ -759,7 +759,7 @@ _e_module_cb_idler(void *data __UNUSED__)
         if (name) m = e_module_new(name);
         if (m)
           {
-#ifndef E17_RELEASE_BUILD
+#ifndef E18_RELEASE_BUILD
              char buf[1024];
              snprintf(buf, sizeof(buf), "DELAYED MODULE LOAD: %s", name);
              e_main_ts(buf);
@@ -953,7 +953,7 @@ _e_module_whitelist_check(void)
       ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
                                      _x_tainted, &_e_tainted, 1);
 
-      e_env_set("E17_TAINTED", state);
+      e_env_set("E18_TAINTED", state);
    }
 
    if (eina_list_count(badl) != known)

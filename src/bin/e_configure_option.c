@@ -1945,7 +1945,7 @@ e_configure_option_init(void)
 
    OPT_ADD(BOOL, xsettings.enabled, _("Enable GTK application settings"), _("environment"), _("theme"), _("xsettings"));
    co->funcs[1].none = co->funcs[0].none = e_xsettings_config_update;
-   OPT_ADD(BOOL, xsettings.match_e17_theme, _("Try setting GTK theme to match E17 theme"), _("environment"), _("theme"), _("xsettings"));
+   OPT_ADD(BOOL, xsettings.match_e17_theme, _("Try setting GTK theme to match E18 theme"), _("environment"), _("theme"), _("xsettings"));
    co->funcs[1].none = co->funcs[0].none = e_xsettings_config_update;
    OPT_ADD(STR, xsettings.net_theme_name, _("GTK theme name"), _("environment"), _("theme"), _("name"), _("xsettings"));
    co->funcs[0].none = e_xsettings_config_update;
@@ -1961,7 +1961,7 @@ e_configure_option_init(void)
    co->thumb_cb = _e_configure_icon_theme_thumb_cb;
    co->event_type = E_EVENT_CONFIG_ICON_THEME;
    OPT_ICON("preferences-desktop-theme");
-   OPT_ADD(BOOL, icon_theme_overrides, _("Icon theme overrides E17 internal theme icons"), _("environment"), _("image"), _("theme"), _("xsettings")); //
+   OPT_ADD(BOOL, icon_theme_overrides, _("Icon theme overrides E18 internal theme icons"), _("environment"), _("image"), _("theme"), _("xsettings")); //
    co->funcs[1].none = co->funcs[0].none = e_xsettings_config_update;
 
    OPT_ADD(BOOL, exe_always_single_instance, _("Always launch applications as single-instance"), _("exec"));

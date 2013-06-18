@@ -1132,7 +1132,7 @@ _e_main_shutdown(int errcode)
 {
    int i = 0;
 
-   printf("E17: Begin Shutdown Procedure!\n");
+   printf("E18: Begin Shutdown Procedure!\n");
 
    if (_idle_before) ecore_idle_enterer_del(_idle_before);
    _idle_before = NULL;
@@ -1941,7 +1941,7 @@ _e_main_cb_idle_after(void *data __UNUSED__)
 
    edje_freeze();
 
-#ifdef E17_RELEASE_BUILD
+#ifdef E18_RELEASE_BUILD
    first_idle = 1;
    if (first_idle)
      {

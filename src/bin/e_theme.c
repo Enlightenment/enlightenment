@@ -327,7 +327,7 @@ e_theme_edje_icon_fallback_file_get(const char *group)
 }
 
 /*
- * this is used to set the theme for a CATEGORY of E17. "base" is always set
+ * this is used to set the theme for a CATEGORY of E18. "base" is always set
  * to the default theme - because if a selected theme wants "base/theme", but
  * does not provide theme elements, it can fall back to the default theme.
  *

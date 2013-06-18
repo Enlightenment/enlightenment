@@ -1,6 +1,6 @@
 #include "e.h"
 
-#if ((E17_PROFILE >= LOWRES_PDA) && (E17_PROFILE <= HIRES_PDA))
+#if ((E18_PROFILE >= LOWRES_PDA) && (E18_PROFILE <= HIRES_PDA))
 #define DEF_MENUCLICK             1.25
 #else
 #define DEF_MENUCLICK             0.25
