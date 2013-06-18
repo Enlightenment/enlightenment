@@ -1,10 +1,6 @@
 #include "e.h"
 #include "e_mod_main.h"
 
-/* TODO:
- * - Track execution status
- */
-
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
 static void             _gc_shutdown(E_Gadcon_Client *gcc);
