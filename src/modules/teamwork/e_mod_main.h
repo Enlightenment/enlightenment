@@ -38,6 +38,7 @@ typedef struct Mod
    E_Popup *pop;
    Eina_Bool sticky : 1;
    Eina_Bool force : 1;
+   Eina_Bool hidden : 1;
 } Mod;
 
 extern Teamwork_Config *tw_config;

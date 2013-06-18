@@ -27,6 +27,7 @@ typedef struct Media
    unsigned long long timestamp;
    unsigned int tries;
    Ecore_Thread *video_thread;
+   Eina_Stringshare *tmpfile;
    Eina_Bool video;
    Eina_Bool dummy : 1;
    Eina_Bool valid : 1;
@@ -295,6 +296,8 @@ download_media_free(Media *i)
    tw_mod->media_list = eina_inlist_remove(tw_mod->media_list, EINA_INLIST_GET(i));
    if (i->client) ecore_con_url_free(i->client);
    if (i->buf) eina_binbuf_free(i->buf);
+   if (i->tmpfile) ecore_file_unlink(i->tmpfile);
+   eina_stringshare_del(i->tmpfile);
    eina_stringshare_del(i->addr);
    free(i);
 }
@@ -440,7 +443,10 @@ dbus_link_mouse_in_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const E
    unsigned int t;
 
    if (eldbus_message_arguments_get(msg, "suii", &uri, &t, &last_coords.x, &last_coords.y))
-     dbus_link_show_helper(uri, 0);
+     {
+        dbus_link_show_helper(uri, 0);
+        tw_mod->hidden = 0;
+     }
    return eldbus_message_method_return_new(msg);
 }
 
@@ -465,6 +471,9 @@ dbus_link_mouse_out_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
                tw_hide(NULL);
              tw_mod->force = 0;
           }
+        else if (tw_tmpthread || tw_tmpfile)
+          tw_hide(NULL);
+        tw_mod->hidden = 1;
      }
    return eldbus_message_method_return_new(msg);
 }
@@ -818,6 +827,24 @@ tw_show_helper(Evas_Object *o, int w, int h)
 }
 
 #ifdef HAVE_EMOTION
+
+static Eina_Bool
+stupid_obj_del_workaround_hack(void *data)
+{
+   evas_object_del(data);
+   return EINA_FALSE;
+}
+
+static void
+tw_video_closed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   evas_object_hide(obj);
+   evas_object_hide(data);
+   ecore_timer_add(3.0, stupid_obj_del_workaround_hack, data);
+   if (!tw_tmpfile) return;
+   eina_stringshare_replace(&tw_tmpfile, NULL);
+}
+
 static void
 tw_video_opened_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
@@ -825,6 +852,11 @@ tw_video_opened_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    double ratio = tw_config->popup_size / 100.;
    E_Zone *zone;
 
+   if (tw_mod->hidden && (!tw_mod->sticky) && (!tw_mod->force))
+     {
+        tw_video_closed_cb(data, obj, NULL);
+        return;
+     }
    emotion_object_size_get(obj, &iw, &ih);
 
    zone = e_zone_current_get(e_util_container_current_get());
@@ -847,7 +879,6 @@ tw_video_del_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, v
 {
    if (emotion_object_file_get(obj) != tw_tmpfile) return;
    if (!tw_tmpfile) return;
-   ecore_file_unlink(tw_tmpfile);
    eina_stringshare_replace(&tw_tmpfile, NULL);
 }
 
@@ -857,6 +888,7 @@ tw_show_video(Evas_Object *prev, const char *uri)
    Evas_Object *o;
 
    o = emotion_object_add(e_widget_preview_evas_get(prev));
+   e_util_size_debug_set(o, 1);
 #if (EMOTION_VERSION_MAJOR > 1) || (EMOTION_VERSION_MINOR >= 8)
    emotion_object_init(o, "vlc");
 #else
@@ -865,6 +897,7 @@ tw_show_video(Evas_Object *prev, const char *uri)
    emotion_object_file_set(o, uri);
    emotion_object_play_set(o, EINA_TRUE);
    evas_object_smart_callback_add(o, "frame_decode", tw_video_opened_cb, prev);
+   evas_object_smart_callback_add(o, "decode_stop", tw_video_closed_cb, prev);
    evas_object_resize(o, 1, 1);
    if (uri == tw_tmpfile)
      evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, tw_video_del_cb, NULL);
@@ -896,6 +929,7 @@ tw_video_thread_done_cb(void *data, Ecore_Thread *eth)
    tw_tmpthread_media = NULL;
    close(tw_tmpfd);
    tw_tmpfd = -1;
+   i->tmpfile = eina_stringshare_ref(tw_tmpfile);
    prev = e_widget_preview_add(e_util_comp_current_get()->evas, 50, 50);
    tw_show_video(prev, tw_tmpfile);
    download_media_cleanup();
@@ -916,7 +950,7 @@ tw_video_thread_cb(void *data, Ecore_Thread *eth)
    if (ftruncate(fd, 0))
      {
         ERR("TRUNCATE FAILED: %s", strerror(errno));
-        ecore_thread_local_data_add(eth, "dead", (void*)1, NULL, 0);
+        ecore_thread_cancel(eth);
         return; //fail if file can't be zeroed
      }
    tot = eina_binbuf_length_get(i->buf);
@@ -927,7 +961,12 @@ tw_video_thread_cb(void *data, Ecore_Thread *eth)
 
         if (pos + num >= tot)
           num = tot - pos;
-        if (write(fd, buf + pos, num) < 0) break;
+        if (write(fd, buf + pos, num) < 0)
+          {
+             ERR("WRITE FAILED: %s", strerror(errno));
+             ecore_thread_cancel(eth);
+             return;
+          }
         pos += num;
         if (ecore_thread_local_data_find(eth, "dead")) break;
      }
@@ -955,19 +994,12 @@ tw_show(Media *i)
         const char *tmp;
 
         if (tw_config->disable_video) return;
-        tmp = getenv("XDG_RUNTIME_DIR");
-        if (!tmp) tmp = "/tmp";
-        snprintf(buf, sizeof(buf), "%s/teamwork-%s-XXXXXX", tmp, ecore_file_file_get(i->addr));
-        if (tw_tmpfile)
+        while (i->tmpfile)
           {
-             if (tw_tmpthread_media == i)
+             if (!ecore_file_exists(i->tmpfile))
                {
-                  if (!tw_tmpthread)
-                    {
-                       prev = e_widget_preview_add(e_util_comp_current_get()->evas, 50, 50);
-                       tw_show_video(prev, tw_tmpfile);
-                    }
-                  return;
+                  eina_stringshare_replace(&i->tmpfile, NULL);
+                  break;
                }
              if (tw_tmpthread)
                {
@@ -975,8 +1007,29 @@ tw_show(Media *i)
                   E_FREE_FUNC(tw_tmpthread, ecore_thread_cancel);
                   tw_tmpthread_media->video_thread = NULL;
                }
+             if (tw_tmpfd != -1)
+               {
+                  close(tw_tmpfd);
+                  tw_tmpfd = -1;
+               }
+             eina_stringshare_del(tw_tmpfile);
+             tw_tmpfile = eina_stringshare_ref(i->tmpfile);
+             prev = e_widget_preview_add(e_util_comp_current_get()->evas, 50, 50);
+             tw_show_video(prev, tw_tmpfile);
+             return;
+          }
+        tmp = getenv("XDG_RUNTIME_DIR");
+        if (!tmp) tmp = "/tmp";
+        snprintf(buf, sizeof(buf), "%s/teamwork-%s-XXXXXX", tmp, ecore_file_file_get(i->addr));
+        if (tw_tmpfile)
+          {
+             if (tw_tmpthread)
+               {
+                  ecore_thread_local_data_add(tw_tmpthread, "dead", (void*)1, NULL, 0);
+                  E_FREE_FUNC(tw_tmpthread, ecore_thread_cancel);
+                  tw_tmpthread_media->video_thread = NULL;
+               }
              close(tw_tmpfd);
-             ecore_file_unlink(tw_tmpfile);
           }
         tw_tmpfd = mkstemp(buf);
         eina_stringshare_replace(&tw_tmpfile, buf);
@@ -1077,6 +1130,21 @@ focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Border_Focus_Out
 EINTERN Eina_Bool
 tw_hide(void *d EINA_UNUSED)
 {
+   if (tw_tmpthread)
+     {
+        ecore_thread_local_data_add(tw_tmpthread, "dead", (void*)1, NULL, 0);
+        E_FREE_FUNC(tw_tmpthread, ecore_thread_cancel);
+        tw_tmpthread_media->video_thread = NULL;
+     }
+   if (tw_tmpfd != -1)
+     {
+        close(tw_tmpfd);
+        tw_tmpfd = -1;
+     }
+   if (tw_tmpfile)
+     {
+        eina_stringshare_replace(&tw_tmpfile, NULL);
+     }
    E_FREE_FUNC(tw_mod->pop, e_object_del);
    last_coords.x = last_coords.y = 0;
    E_FREE_FUNC(tw_hide_timer, ecore_timer_del);
@@ -1168,7 +1236,6 @@ e_tw_shutdown(void)
      {
         close(tw_tmpfd);
         tw_tmpfd = -1;
-        ecore_file_unlink(tw_tmpfile);
      }
    eina_stringshare_replace(&tw_tmpfile, NULL);
    E_FREE_FUNC(tw_tmpthread, ecore_thread_cancel);
