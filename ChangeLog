@@ -1,3 +1,7 @@
+2013-06-18 Mike Blumenkrantz
+
+        * fixed crash when multiple windows shared a remember
+
 2013-06-17 Mike Blumenkrantz
 
         * fixed bug where e widgets would not unset focus
