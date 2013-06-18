@@ -236,7 +236,7 @@ e_exec_phony(E_Border *bd)
    if (bd->desktop)
      {
         efreet_desktop_ref(bd->desktop);
-        inst->key = eina_stringshare_add(bd->desktop->orig_path);
+        inst->key = eina_stringshare_add(bd->desktop->orig_path ?: bd->desktop->name);
      }
    else if (bd->client.icccm.command.argc)
      {
@@ -574,7 +574,7 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
      {
         efreet_desktop_ref(desktop);
         inst->desktop = desktop;
-        inst->key = eina_stringshare_add(desktop->orig_path);
+        inst->key = eina_stringshare_add(desktop->orig_path ?: desktop->name);
      }
    else
      inst->key = eina_stringshare_add(exec);
@@ -1205,7 +1205,7 @@ EAPI const Eina_List *
 e_exec_desktop_instances_find(const Efreet_Desktop *desktop)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, NULL);
-   return eina_hash_find(e_exec_instances, desktop->orig_path);
+   return eina_hash_find(e_exec_instances, desktop->orig_path ?: desktop->name);
 }
 
 EAPI const Eina_Hash *
