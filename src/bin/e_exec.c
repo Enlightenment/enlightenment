@@ -50,7 +50,9 @@ struct _E_Config_Dialog_Data
 static E_Exec_Instance *_e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining);
 static Eina_Bool        _e_exec_cb_expire_timer(void *data);
 static Eina_Bool        _e_exec_cb_exit(void *data, int type, void *event);
-
+static void        _e_exec_cb_exec_new_free(void *data, void *event);
+static void        _e_exec_cb_exec_del_free(void *data, void *event);
+static void _e_exe_instance_watchers_call(E_Exec_Instance *inst, E_Exec_Watch_Type type);
 static Eina_Bool        _e_exec_startup_id_pid_find(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *value, void *data);
 
 static void             _e_exec_error_dialog(Efreet_Desktop *desktop, const char *exec, Ecore_Exe_Event_Del *event, Ecore_Exe_Event_Data *error, Ecore_Exe_Event_Data *read);
@@ -74,6 +76,9 @@ static Ecore_Event_Handler *_e_exec_border_add_handler = NULL;
 static E_Exec_Instance *(*_e_exec_executor_func)(void *data, E_Zone * zone, Efreet_Desktop * desktop, const char *exec, Eina_List *files, const char *launch_method) = NULL;
 static void *_e_exec_executor_data = NULL;
 
+EAPI int E_EVENT_EXEC_NEW = -1;
+EAPI int E_EVENT_EXEC_DEL = -1;
+
 /* externally accessible functions */
 EINTERN int
 e_exec_init(void)
@@ -86,6 +91,9 @@ e_exec_init(void)
    _e_exec_border_add_handler =
      ecore_event_handler_add(E_EVENT_BORDER_ADD, _e_exec_cb_event_border_add, NULL);
 #endif
+
+   E_EVENT_EXEC_NEW = ecore_event_type_new();
+   E_EVENT_EXEC_DEL = ecore_event_type_new();
    return 1;
 }
 
@@ -210,6 +218,8 @@ e_exec_phony_del(E_Exec_Instance *inst)
 {
    if (!inst) return;
    EINA_SAFETY_ON_TRUE_RETURN(!inst->phony);
+   inst->ref--;
+   _e_exe_instance_watchers_call(inst, E_EXEC_WATCH_STOPPED);
    _e_exec_instance_free(inst);
 }
 
@@ -220,6 +230,7 @@ e_exec_phony(E_Border *bd)
    Eina_List *l, *lnew;
 
    inst = E_NEW(E_Exec_Instance, 1);
+   inst->ref = 1;
    inst->phony = 1;
    inst->desktop = bd->desktop;
    if (bd->desktop)
@@ -260,6 +271,8 @@ e_exec_phony(E_Border *bd)
    lnew = eina_list_append(l, inst);
    if (l) eina_hash_modify(e_exec_instances, inst->key, lnew);
    else eina_hash_add(e_exec_instances, inst->key, lnew);
+   inst->ref++;
+   ecore_event_add(E_EVENT_EXEC_NEW, inst, _e_exec_cb_exec_new_free, inst);
    return inst;
 }
 
@@ -305,13 +318,13 @@ _e_exe_instance_watchers_call(E_Exec_Instance *inst, E_Exec_Watch_Type type)
    E_Exec_Watch *iw;
    Eina_List *l, *ln;
 
-   inst->walking++;
+   inst->ref++;
    EINA_LIST_FOREACH(inst->watchers, l, iw)
      {
-        if (iw->func) iw->func((void *)(iw->data), inst, type);
+        if (iw->func && (!iw->delete_me)) iw->func((void *)(iw->data), inst, type);
      }
-   inst->walking--;
-   if (inst->walking == 0)
+   inst->ref--;
+   if (inst->ref == 0)
      {
         EINA_LIST_FOREACH_SAFE(inst->watchers, l, ln, iw)
           {
@@ -353,7 +366,7 @@ e_exec_instance_watcher_del(E_Exec_Instance *inst, void (*func)(void *data, E_Ex
      {
         if ((iw->func == func) && (iw->data == data))
           {
-             if (inst->walking == 0)
+             if (inst->ref == 0)
                {
                   inst->watchers = eina_list_remove_list(inst->watchers, l);
                   free(iw);
@@ -382,6 +395,7 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
    launch = data;
    inst = E_NEW(E_Exec_Instance, 1);
    if (!inst) return NULL;
+   inst->ref = 1;
 
    if (startup_id == 0)
      {
@@ -587,6 +601,8 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
         free(launch);
      }
    free(exec);
+   inst->ref++;
+   ecore_event_add(E_EVENT_EXEC_NEW, inst, _e_exec_cb_exec_new_free, inst);
    return inst;
 }
 
@@ -608,12 +624,9 @@ static void
 _e_exec_instance_free(E_Exec_Instance *inst)
 {
    Eina_List *instances;
-   E_Exec_Watch *iw;
 
-   _e_exe_instance_watchers_call(inst, E_EXEC_WATCH_STOPPED);
-   EINA_LIST_FREE(inst->watchers, iw)
-     free(iw);
-
+   if (inst->ref) return;
+   E_FREE_LIST(inst->watchers, free);
    if (inst->key)
      {
         instances = eina_hash_find(e_exec_instances, inst->key);
@@ -625,7 +638,13 @@ _e_exec_instance_free(E_Exec_Instance *inst)
              else
                eina_hash_del_by_key(e_exec_instances, inst->key);
           }
-        eina_stringshare_del(inst->key);
+        eina_stringshare_replace(&inst->key, NULL);
+     }
+   if (!inst->deleted)
+     {
+        inst->deleted = 1;
+        ecore_event_add(E_EVENT_EXEC_DEL, inst, _e_exec_cb_exec_del_free, inst);
+        return;
      }
    if (inst->desktop)
      e_exec_start_pending = eina_list_remove(e_exec_start_pending,
@@ -648,6 +667,21 @@ _e_exec_instance_free(E_Exec_Instance *inst)
    return ECORE_CALLBACK_CANCEL;
    }
  */
+
+static void
+_e_exec_cb_exec_new_free(void *data, void *ev EINA_UNUSED)
+{
+   E_Exec_Instance *inst = data;
+
+   inst->ref--;
+   _e_exec_instance_free(inst);
+}
+
+static void
+_e_exec_cb_exec_del_free(void *data, void *ev EINA_UNUSED)
+{
+   _e_exec_instance_free(data);
+}
 
 static Eina_Bool
 _e_exec_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
@@ -731,6 +765,8 @@ _e_exec_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
      }
    else
  */
+   inst->ref--;
+   _e_exe_instance_watchers_call(inst, E_EXEC_WATCH_STOPPED);
    _e_exec_instance_free(inst);
 
    return ECORE_CALLBACK_PASS_ON;
