@@ -7,9 +7,14 @@ static Eina_Bool _output_init_shm(E_Compositor_X11 *xcomp, E_Output_X11 *output,
 static void _output_shutdown(E_Output_X11 *output);
 static Eina_Bool _input_init(E_Compositor_X11 *xcomp);
 static void _input_shutdown(E_Compositor_X11 *xcomp);
+static struct xkb_keymap *_input_keymap_get(E_Compositor_X11 *xcomp);
+
+static void _input_mouse_focus_send(E_Input *input, E_Output *output, Evas_Coord x, Evas_Coord y);
 static void _input_mouse_move_send(E_Input *input, Ecore_Event_Mouse_Move *ev);
 static void _input_mouse_down_send(E_Input *input, Ecore_Event_Mouse_Button *ev);
 static void _input_mouse_up_send(E_Input *input, Ecore_Event_Mouse_Button *ev);
+static void _input_keyboard_focus_in_send(E_Input *seat, struct wl_array *keys);
+static void _input_keyboard_focus_out_send(E_Input *seat);
 
 static int _output_cb_frame(void *data);
 static void _output_cb_repaint_start(E_Output *output);
@@ -20,6 +25,11 @@ static Eina_Bool _output_cb_window_destroy(void *data EINA_UNUSED, int type EINA
 static Eina_Bool _output_cb_window_mouse_move(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool _output_cb_window_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool _output_cb_window_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _output_cb_window_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _output_cb_window_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _output_cb_window_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _output_cb_window_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
+static Eina_Bool _output_cb_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 
 /* local variables */
 static E_Compositor_X11 *_e_x11_comp;
@@ -31,6 +41,7 @@ EAPI void *
 e_modapi_init(E_Module *m)
 {
    if (_e_x11_comp) return NULL;
+   printf("LOAD WL_X11 MODULE\n");
 
    /* try to allocate space for comp structure */
    if (!(_e_x11_comp = E_NEW(E_Compositor_X11, 1)))
@@ -83,10 +94,21 @@ e_modapi_init(E_Module *m)
                          _output_cb_window_destroy, NULL);
    E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_MOVE, 
                          _output_cb_window_mouse_move, NULL);
+   /* TODO: ECORE_EVENT_MOUSE_WHEEL */
    E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_BUTTON_DOWN, 
                          _output_cb_window_mouse_down, NULL);
    E_LIST_HANDLER_APPEND(_hdlrs, ECORE_EVENT_MOUSE_BUTTON_UP, 
                          _output_cb_window_mouse_up, NULL);
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_X_EVENT_MOUSE_IN, 
+                         _output_cb_window_mouse_in, NULL);
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_X_EVENT_MOUSE_OUT, 
+                         _output_cb_window_mouse_out, NULL);
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_X_EVENT_WINDOW_FOCUS_IN, 
+                         _output_cb_window_focus_in, NULL);
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_X_EVENT_WINDOW_FOCUS_OUT, 
+                         _output_cb_window_focus_out, NULL);
+   E_LIST_HANDLER_APPEND(_hdlrs, ECORE_X_EVENT_WINDOW_CONFIGURE, 
+                         _output_cb_window_configure, NULL);
 
    /* flush any pending events
     * 
@@ -276,6 +298,8 @@ _output_shutdown(E_Output_X11 *output)
 static Eina_Bool 
 _input_init(E_Compositor_X11 *xcomp)
 {
+   struct xkb_keymap *keymap;
+
    if (!e_input_init(&xcomp->base, &xcomp->seat, "default"))
      return EINA_FALSE;
 
@@ -285,11 +309,16 @@ _input_init(E_Compositor_X11 *xcomp)
         return EINA_FALSE;
      }
 
-   if (!e_input_keyboard_init(&xcomp->seat))
+   keymap = _input_keymap_get(xcomp);
+   if (!e_input_keyboard_init(&xcomp->seat, keymap))
      {
         e_input_shutdown(&xcomp->seat);
         return EINA_FALSE;
      }
+
+   if (keymap) xkb_map_unref(keymap);
+
+   /* setup xkb */
 
    return EINA_TRUE;
 }
@@ -298,6 +327,39 @@ static void
 _input_shutdown(E_Compositor_X11 *xcomp)
 {
    e_input_shutdown(&xcomp->seat);
+}
+
+static struct xkb_keymap *
+_input_keymap_get(E_Compositor_X11 *xcomp)
+{
+   Ecore_X_Atom rules = 0;
+   Ecore_X_Window root = 0;
+   int len = 0;
+   unsigned char *data;
+   struct xkb_rule_names names;
+   struct xkb_keymap *ret;
+
+   memset(&names, 0, sizeof(names));
+
+   root = ecore_x_window_root_first_get();
+   rules = ecore_x_atom_get("_XKB_RULES_NAMES");
+   ecore_x_window_prop_property_get(root, rules, ECORE_X_ATOM_STRING, 
+                                    1024, &data, &len);
+
+   if ((data) && (len > 0))
+     {
+        names.rules = strdup((const char *)data);
+        data += strlen((const char *)data) + 1;
+        if (!names.model)
+          names.model = strdup((const char *)data);
+        data += strlen((const char *)data) + 1;
+        if (!names.layout)
+          names.layout = strdup((const char *)data);
+     }
+
+   ret = xkb_map_new_from_names(xcomp->base.xkb_context, &names, 0);
+   xcomp->base.xkb_names = names;
+   return ret;
 }
 
 static int 
@@ -385,7 +447,7 @@ _output_cb_destroy(E_Output *output)
 }
 
 static Eina_Bool 
-_output_cb_window_damage(void *data, int type EINA_UNUSED, void *event)
+_output_cb_window_damage(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Window_Damage *ev;
    E_Output_X11 *output;
@@ -468,6 +530,7 @@ _output_cb_window_mouse_down(void *data EINA_UNUSED, int type EINA_UNUSED, void 
         /* try to match the output window */
         if (ev->window == output->win)
           {
+             /* ecore_x_pointer_confine_grab(output->win); */
              _input_mouse_down_send(&_e_x11_comp->seat, ev);
              break;
           }
@@ -491,12 +554,158 @@ _output_cb_window_mouse_up(void *data EINA_UNUSED, int type EINA_UNUSED, void *e
         /* try to match the output window */
         if (ev->window == output->win)
           {
+             /* ecore_x_pointer_ungrab(); */
              _input_mouse_up_send(&_e_x11_comp->seat, ev);
              break;
           }
      }
 
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_output_cb_window_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Window_Focus_In *ev;
+   E_Output_X11 *output;
+   Eina_List *l;
+
+   ev = event;
+   if (ev->mode == ECORE_X_EVENT_MODE_WHILE_GRABBED) 
+     return ECORE_CALLBACK_PASS_ON;
+
+   /* loop the existing outputs */
+   EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
+     {
+        /* try to match the output window */
+        if (ev->win == output->win)
+          {
+             E_Input_Keyboard *kbd;
+
+             _e_x11_comp->base.focus = EINA_TRUE;
+             kbd = _e_x11_comp->seat.keyboard;
+             /* _input_keyboard_focus_in_send(&_e_x11_comp->seat, &kbd->keys); */
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_output_cb_window_focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Window_Focus_Out *ev;
+   E_Output_X11 *output;
+   Eina_List *l;
+
+   ev = event;
+   if ((ev->mode == ECORE_X_EVENT_MODE_WHILE_GRABBED) || 
+       (ev->mode == ECORE_X_EVENT_MODE_UNGRAB)) 
+     return ECORE_CALLBACK_PASS_ON;
+
+   /* loop the existing outputs */
+   EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
+     {
+        /* try to match the output window */
+        if (ev->win == output->win)
+          {
+             _e_x11_comp->base.focus = EINA_FALSE;
+             /* _input_keyboard_focus_out_send(&_e_x11_comp->seat); */
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_output_cb_window_mouse_in(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Mouse_In *ev;
+   E_Output_X11 *output;
+   Eina_List *l;
+
+   ev = event;
+
+   /* loop the existing outputs */
+   EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
+     {
+        /* try to match the output window */
+        if (ev->win == output->win)
+          {
+             _input_mouse_focus_send(&_e_x11_comp->seat, &output->base, 
+                                     ev->x, ev->y);
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_output_cb_window_mouse_out(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Mouse_Out *ev;
+   E_Output_X11 *output;
+   Eina_List *l;
+
+   ev = event;
+
+   /* loop the existing outputs */
+   EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
+     {
+        /* try to match the output window */
+        if (ev->win == output->win)
+          {
+             _input_mouse_focus_send(&_e_x11_comp->seat, NULL, 0, 0);
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_output_cb_window_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   Ecore_X_Event_Window_Configure *ev;
+   E_Output_X11 *output;
+   Eina_List *l;
+
+   ev = event;
+
+   /* loop the existing outputs */
+   EINA_LIST_FOREACH(_e_x11_comp->base.outputs, l, output)
+     {
+        /* try to match the output window */
+        if (ev->win == output->win)
+          {
+             output->base.x = ev->x;
+             output->base.y = ev->y;
+             break;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static void 
+_input_mouse_focus_send(E_Input *input, E_Output *output, Evas_Coord x, Evas_Coord y)
+{
+   E_Compositor *comp;
+
+   comp = input->compositor;
+   if (output)
+     {
+        input->pointer->x = x;
+        input->pointer->y = y;
+        comp->focus = EINA_TRUE;
+     }
+   else
+     {
+        comp->focus = EINA_FALSE;
+     }
 }
 
 static void 
@@ -537,7 +746,6 @@ _input_mouse_down_send(E_Input *input, Ecore_Event_Mouse_Button *ev)
              ptr->seat->compositor->cb_ping(ptr->focus, serial);
           }
      }
-
 
    if (ptr->grab->button_count == 0)
      {
@@ -584,4 +792,64 @@ _input_mouse_up_send(E_Input *input, Ecore_Event_Mouse_Button *ev)
                wl_display_get_serial(ptr->seat->compositor->wl.display);
           }
      }
+}
+
+static void 
+_input_keyboard_focus_in_send(E_Input *seat, struct wl_array *keys)
+{
+   /* E_Compositor *comp; */
+   E_Input_Keyboard *kbd;
+   unsigned int *k;//, serial;
+
+   if (!seat) return;
+   /* comp = seat->compositor; */
+   kbd = seat->keyboard;
+
+   /* serial = wl_display_next_serial(comp->wl.display); */
+   wl_array_copy(&kbd->keys, keys);
+   wl_array_for_each(k, &kbd->keys)
+     {
+        /* TODO: update modifier state */
+     }
+
+   /* if (seat->kbd.saved_focus) */
+   /*   { */
+   /*      printf("X11 Input Keyboard Focus In. Set %p\n", seat->kbd.saved_focus); */
+   /*      wl_list_remove(&seat->kbd.focus_listener.link); */
+   /*      e_input_keyboard_focus_set(kbd, seat->kbd.saved_focus); */
+   /*      seat->kbd.saved_focus = NULL; */
+   /*   } */
+}
+
+static void 
+_input_keyboard_focus_out_send(E_Input *seat)
+{
+   /* E_Compositor *comp; */
+   E_Input_Keyboard *kbd;
+   unsigned int *k;//, serial;
+
+   if (!seat) return;
+   /* comp = seat->compositor; */
+   kbd = seat->keyboard;
+
+   /* serial = wl_display_next_serial(comp->wl.display); */
+   wl_array_for_each(k, &kbd->keys)
+     {
+        /* TODO: update modifier state */
+     }
+
+   printf("X11 Input Keyboard Focus Out. Set NULL\n");
+
+   /* TODO: */
+   if (kbd->focus)
+     {
+        printf("\tHave Kbd->Focus: %p\n", kbd->focus);
+        printf("\tSaved Focus: %p\n", seat->kbd.saved_focus);
+        seat->kbd.saved_focus = kbd->focus;
+        seat->kbd.focus_listener.notify = e_input_keyboard_focus_destroy;
+        wl_signal_add(&kbd->focus->signals.destroy, &seat->kbd.focus_listener);
+     }
+
+   e_input_keyboard_focus_set(kbd, NULL);
+   kbd->grab = &kbd->default_grab;
 }
