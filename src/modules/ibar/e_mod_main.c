@@ -40,11 +40,12 @@ struct _Instance
 typedef struct
 {
   E_Order *eo;
-  Eina_List *bars;
+  Eina_Inlist *bars;
 } IBar_Order;
 
 struct _IBar
 {
+   EINA_INLIST;
    Instance    *inst;
    Evas_Object *o_box, *o_drop;
    Evas_Object *o_drop_over, *o_empty;
@@ -137,14 +138,14 @@ _ibar_order_new(IBar *b, const char *path)
    io = eina_hash_find(ibar_orders, path);
    if (io)
      {
-        io->bars = eina_list_append(io->bars, b);
+        io->bars = eina_inlist_append(io->bars, EINA_INLIST_GET(b));
         return io;
      }
    io = E_NEW(IBar_Order, 1);
    io->eo = e_order_new(path);
    e_order_update_callback_set(io->eo, _ibar_cb_app_change, io);
    eina_hash_add(ibar_orders, path, io);
-   io->bars = eina_list_append(io->bars, b);
+   io->bars = eina_inlist_append(io->bars, EINA_INLIST_GET(b));
    return io;
 }
 
@@ -154,7 +155,7 @@ _ibar_order_del(IBar *b)
    IBar_Order *io;
    if (!b->io) return;
    io = b->io;
-   io->bars = eina_list_remove(io->bars, b);
+   io->bars = eina_inlist_remove(io->bars, EINA_INLIST_GET(b));
    b->io = NULL;
    if (io->bars) return;
    eina_hash_del_by_key(ibar_orders, io->eo->path);
@@ -168,7 +169,6 @@ static void
 _ibar_order_refresh(IBar *b, const char *path)
 {
    IBar_Order *io;
-   Eina_List *l;
    IBar *bar;
 
    io = eina_hash_find(ibar_orders, path);
@@ -178,14 +178,14 @@ _ibar_order_refresh(IBar *b, const char *path)
         if (io != b->io)
           {
              if (b->io) _ibar_order_del(b);
-             io->bars = eina_list_append(io->bars, b);
+             io->bars = eina_inlist_append(io->bars, EINA_INLIST_GET(b));
              b->io = io;
           }
         /* else same order, refresh all users */
      }
    else
      io = b->io = _ibar_order_new(b, path);
-   EINA_LIST_FOREACH(io->bars, l, bar)
+   EINA_INLIST_FOREACH(io->bars, bar)
      {
         _ibar_empty(bar);
         _ibar_fill(bar);
@@ -735,11 +735,10 @@ static void
 _ibar_cb_app_change(void *data, E_Order *eo __UNUSED__)
 {
    IBar *b;
-   IBar_Order *io;
-   Eina_List *l;
+   IBar_Order *io = data;
 
    io = data;
-   EINA_LIST_FOREACH(io->bars, l, b)
+   EINA_INLIST_FOREACH(io->bars, b)
      {
         _ibar_empty(b);
         _ibar_fill(b);
