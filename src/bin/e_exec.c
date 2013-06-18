@@ -1207,3 +1207,9 @@ e_exec_desktop_instances_find(const Efreet_Desktop *desktop)
    EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, NULL);
    return eina_hash_find(e_exec_instances, desktop->orig_path);
 }
+
+EAPI const Eina_Hash *
+e_exec_instances_get(void)
+{
+   return e_exec_instances;
+}

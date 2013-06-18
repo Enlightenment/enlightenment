@@ -45,6 +45,8 @@ EAPI void e_exec_instance_watcher_add(E_Exec_Instance *inst, void (*func) (void 
 EAPI void e_exec_instance_watcher_del(E_Exec_Instance *inst, void (*func) (void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type), const void *data);
 EAPI const Eina_List *e_exec_desktop_instances_find(const Efreet_Desktop *desktop);
 
+EAPI const Eina_Hash *e_exec_instances_get(void);
+
 /* sends E_Exec_Instance */
 EAPI extern int E_EVENT_EXEC_NEW;
 EAPI extern int E_EVENT_EXEC_DEL;
