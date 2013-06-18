@@ -11,6 +11,7 @@ struct _E_Desktop_Shell
      {
         struct wl_resource *resource;
         struct wl_listener destroy_listener;
+        struct wl_listener pointer_focus_listener;
      } wl;
 };
 

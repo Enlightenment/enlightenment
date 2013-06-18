@@ -5,11 +5,15 @@
 static void _e_desktop_shell_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 static void _e_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
 static void _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *surface_resource);
+static void _e_desktop_shell_cb_ping(E_Surface *es, unsigned int serial);
+static int _e_desktop_shell_cb_ping_timeout(void *data);
 static void _e_desktop_shell_shell_surface_cb_destroy_notify(struct wl_listener *listener, void *data EINA_UNUSED);
 static void _e_desktop_shell_shell_surface_cb_destroy(struct wl_resource *resource);
 static void _e_desktop_shell_shell_surface_configure(E_Surface *es, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+static void _e_desktop_shell_shell_surface_activate(E_Surface *es, E_Input *seat);
 static void _e_desktop_shell_shell_surface_map(E_Surface *es, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 static void _e_desktop_shell_shell_surface_unmap(E_Surface *es);
+static Eina_Bool _e_desktop_shell_shell_surface_move(E_Shell_Surface *ess, E_Input *seat);
 
 /* shell surface interface prototypes */
 static void _e_desktop_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial);
@@ -27,12 +31,15 @@ static void _e_desktop_shell_shell_surface_type_reset(E_Shell_Surface *ess);
 
 static void _e_desktop_shell_surface_map_toplevel(E_Shell_Surface *ess);
 static void _e_desktop_shell_surface_map_popup(E_Shell_Surface *ess);
-static void _e_desktop_shell_popup_grab_add(E_Shell_Surface *ess, E_Input *seat);
 
+static void _e_desktop_shell_popup_grab_add(E_Shell_Surface *ess, E_Input *seat);
 static void _e_desktop_shell_popup_grab_focus(E_Input_Pointer_Grab *grab);
 static void _e_desktop_shell_popup_grab_motion(E_Input_Pointer_Grab *grab, unsigned int timestamp);
 static void _e_desktop_shell_popup_grab_button(E_Input_Pointer_Grab *grab, unsigned int timestamp, unsigned int button, unsigned int state);
 static void _e_desktop_shell_popup_grab_end(E_Input_Pointer *pointer);
+
+static void _e_desktop_shell_pointer_focus_listener_add(E_Input *seat);
+static void _e_desktop_shell_pointer_cb_focus(struct wl_listener *listener, void *data);
 
 /* local wayland interfaces */
 static const struct wl_shell_interface _e_desktop_shell_interface = 
@@ -69,6 +76,8 @@ e_modapi_init(E_Module *m)
 {
    E_Desktop_Shell *shell;
    struct wl_global *global;
+   Eina_List *l;
+   E_Input *seat;
 
    /* try to allocate space for our shell */
    if (!(shell = E_NEW(E_Desktop_Shell, 1)))
@@ -84,6 +93,8 @@ e_modapi_init(E_Module *m)
    /* set a reference to this shell in the compositor */
    shell->compositor->shell_interface.shell = shell;
 
+   shell->compositor->cb_ping = _e_desktop_shell_cb_ping;
+
    /* try to add this shell to the globals */
    if (!(global = 
          wl_display_add_global(_e_comp->wl.display, &wl_shell_interface, 
@@ -94,6 +105,9 @@ e_modapi_init(E_Module *m)
      }
 
    /* TODO: finish me */
+
+   EINA_LIST_FOREACH(_e_comp->inputs, l, seat)
+     _e_desktop_shell_pointer_focus_listener_add(seat);
 
    return m;
 
@@ -181,8 +195,7 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
    /* setup shell surface destroy callback */
    ess->wl.surface_destroy.notify = 
      _e_desktop_shell_shell_surface_cb_destroy_notify;
-   wl_signal_add(&es->wl.resource.destroy_signal, 
-                 &ess->wl.surface_destroy);
+   wl_signal_add(&es->signals.destroy, &ess->wl.surface_destroy);
 
    /* setup shell surface interface */
    ess->wl.resource.destroy = _e_desktop_shell_shell_surface_cb_destroy;
@@ -191,6 +204,52 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
 
    /* add this shell surface to the client */
    wl_client_add_resource(client, &ess->wl.resource);
+}
+
+static void 
+_e_desktop_shell_cb_ping(E_Surface *es, unsigned int serial)
+{
+   E_Shell_Surface *ess;
+
+   if (!(ess = es->shell_surface)) return;
+   if (!ess->wl.resource.client) return;
+   /* FIXME */
+   if (!ess->ping_timer)
+     {
+        struct wl_event_loop *loop;
+
+        if (!(ess->ping_timer = E_NEW(E_Shell_Surface_Ping_Timer, 1)))
+          return;
+
+        ess->ping_timer->serial = serial;
+        loop = wl_display_get_event_loop(_e_comp->wl.display);
+        ess->ping_timer->source = 
+          wl_event_loop_add_timer(loop, _e_desktop_shell_cb_ping_timeout, ess);
+        wl_event_source_timer_update(ess->ping_timer->source, 200);
+        wl_shell_surface_send_ping(&ess->wl.resource, serial);
+     }
+}
+
+static int 
+_e_desktop_shell_cb_ping_timeout(void *data)
+{
+   E_Shell_Surface *ess;
+   E_Input *seat;
+   Eina_List *l;
+
+   if (!(ess = data)) return 0;
+
+   ess->active = EINA_FALSE;
+
+   EINA_LIST_FOREACH(_e_comp->inputs, l, seat)
+     {
+        if (seat->pointer->focus == ess->surface)
+          {
+             printf("Set Busy Cursor\n");
+          }
+     }
+
+   return 1;
 }
 
 static void 
@@ -283,8 +342,17 @@ _e_desktop_shell_shell_surface_configure(E_Surface *es, Evas_Coord x, Evas_Coord
 }
 
 static void 
+_e_desktop_shell_shell_surface_activate(E_Surface *es, E_Input *seat)
+{
+   e_surface_activate(es, seat);
+}
+
+static void 
 _e_desktop_shell_shell_surface_map(E_Surface *es, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
+   Eina_List *l;
+   E_Input *seat;
+
    /* safety check */
    if (!es) return;
 
@@ -323,7 +391,7 @@ _e_desktop_shell_shell_surface_map(E_Surface *es, Evas_Coord x, Evas_Coord y, Ev
    if (es->shell_surface->type != E_SHELL_SURFACE_TYPE_NONE)
      e_surface_output_assign(es);
 
-   /* activate */
+   /* map */
    switch (es->shell_surface->type)
      {
       case E_SHELL_SURFACE_TYPE_TOPLEVEL:
@@ -335,6 +403,21 @@ _e_desktop_shell_shell_surface_map(E_Surface *es, Evas_Coord x, Evas_Coord y, Ev
       default:
         break;
      }
+
+   /* activate */
+   switch (es->shell_surface->type)
+     {
+      case E_SHELL_SURFACE_TYPE_TOPLEVEL:
+      case E_SHELL_SURFACE_TYPE_FULLSCREEN:
+      case E_SHELL_SURFACE_TYPE_MAXIMIZED:
+        EINA_LIST_FOREACH(_e_comp->inputs, l, seat)
+          _e_desktop_shell_shell_surface_activate(es, seat);
+        break;
+      default:
+        break;
+     }
+
+   es->mapped = EINA_TRUE;
 }
 
 static void 
@@ -360,6 +443,12 @@ _e_desktop_shell_shell_surface_unmap(E_Surface *es)
    es->mapped = EINA_FALSE;
 }
 
+static Eina_Bool 
+_e_desktop_shell_shell_surface_move(E_Shell_Surface *ess, E_Input *seat)
+{
+   return EINA_FALSE;
+}
+
 /* shell surface interface functions */
 static void 
 _e_desktop_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial)
@@ -368,17 +457,39 @@ _e_desktop_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, str
 
    /* try to cast the resource to our shell surface */
    if (!(ess = resource->data)) return;
-   printf("Shell Surface Pong\n");
+   if (!ess->ping_timer) return;
+
+   if (ess->ping_timer->serial == serial)
+     {
+        ess->active = EINA_TRUE;
+
+        /* TODO: Unset busy cursor */
+
+        if (ess->ping_timer->source)
+          wl_event_source_remove(ess->ping_timer->source);
+
+        E_FREE(ess->ping_timer);
+     }
 }
 
 static void 
 _e_desktop_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource, unsigned int serial)
 {
    E_Shell_Surface *ess;
+   E_Input *seat;
 
    /* try to cast the resource to our shell surface */
    if (!(ess = resource->data)) return;
+   if (!(seat = seat_resource->data)) return;
+
    printf("Shell Surface Move\n");
+
+   if ((seat->pointer->grab->button_count == 0) || 
+       (seat->pointer->grab->serial != serial))
+     return;
+
+   if (!_e_desktop_shell_shell_surface_move(ess, seat))
+     wl_resource_post_no_memory(resource);
 }
 
 static void 
@@ -447,7 +558,8 @@ _e_desktop_shell_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED
    ess->ntype = E_SHELL_SURFACE_TYPE_POPUP;
    ess->parent = parent_resource->data;
    ess->popup.seat = seat_resource->data;
-   ess->popup.serial = serial;
+   /* FIXME: BIG GIAN HACK !!! */
+   ess->popup.serial = serial - 1;
    ess->popup.x = x;
    ess->popup.y = y;
 }
@@ -610,6 +722,9 @@ _e_desktop_shell_surface_map_popup(E_Shell_Surface *ess)
    es->geometry.y = ess->popup.y;
    es->geometry.changed = EINA_TRUE;
 
+   printf("Popup Serial: %d\n", ess->popup.serial);
+   printf("Grab Serial: %d\n", seat->pointer->grab->serial);
+
    if ((seat) && (seat->pointer->grab->serial == ess->popup.serial))
      _e_desktop_shell_popup_grab_add(ess, seat);
    else
@@ -641,13 +756,12 @@ _e_desktop_shell_popup_grab_focus(E_Input_Pointer_Grab *grab)
 {
    E_Input_Pointer *ptr;
    E_Surface *es;
-   struct wl_client *client;
 
    if (!(ptr = grab->pointer)) return;
 
    es = e_compositor_surface_find(ptr->seat->compositor, ptr->x, ptr->y);
 
-   if ((es) && (es->wl.resource.client == grab->client))
+   if ((es) && (wl_resource_get_client(es->wl.resource) == grab->client))
      e_input_pointer_focus_set(ptr, es, ptr->x, ptr->y);
    else
      e_input_pointer_focus_set(ptr, NULL, 0, 0);
@@ -675,6 +789,7 @@ _e_desktop_shell_popup_grab_button(E_Input_Pointer_Grab *grab, unsigned int time
 
         disp = wl_client_get_display(res->client);
         serial = wl_display_get_serial(disp);
+
         wl_pointer_send_button(res, serial, timestamp, button, state);
      }
    else if ((state == WL_POINTER_BUTTON_STATE_RELEASED) && 
@@ -704,5 +819,43 @@ _e_desktop_shell_popup_grab_end(E_Input_Pointer *pointer)
           wl_shell_surface_send_popup_done(&ess->wl.resource);
 
         wl_list_init(&grab->surfaces);
+     }
+}
+
+static void 
+_e_desktop_shell_pointer_focus_listener_add(E_Input *seat)
+{
+   struct wl_listener *listener;
+
+   if (!seat->pointer) return;
+
+   listener = malloc(sizeof(*listener));
+   listener->notify = _e_desktop_shell_pointer_cb_focus;
+   wl_signal_add(&seat->pointer->signals.focus, listener);
+}
+
+static void 
+_e_desktop_shell_pointer_cb_focus(struct wl_listener *listener, void *data)
+{
+   E_Input_Pointer *ptr;
+   E_Surface *es;
+   E_Shell_Surface *ess;
+   E_Compositor *comp;
+
+   if (!(ptr = data)) return;
+   if (!(es = ptr->focus)) return;
+   if (!(ess = es->shell_surface)) return;
+   if (!(comp = ptr->seat->compositor)) return;
+
+   if ((ess) && (!ess->active))
+     {
+        printf("\tShell Surface Not Active. Set Busy Cursor\n");
+     }
+   else
+     {
+        unsigned int serial = 0;
+
+        serial = wl_display_next_serial(comp->wl.display);
+        if (comp->cb_ping) comp->cb_ping(es, serial);
      }
 }
