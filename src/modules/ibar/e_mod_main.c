@@ -361,8 +361,8 @@ _ibar_free(IBar *b)
    if (b->o_drop_over) evas_object_del(b->o_drop_over);
    if (b->o_empty) evas_object_del(b->o_empty);
    _ibar_order_del(b);
-   E_FREE(b);
    ibars = eina_list_remove(ibars, b);
+   free(b);
 }
 
 static void
