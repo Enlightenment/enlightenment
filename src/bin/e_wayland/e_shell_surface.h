@@ -2,6 +2,7 @@
 
 typedef enum _E_Shell_Surface_Type E_Shell_Surface_Type;
 typedef struct _E_Shell_Surface E_Shell_Surface;
+typedef struct _E_Shell_Surface_Ping_Timer E_Shell_Surface_Ping_Timer;
 
 #else
 # ifndef E_SHELL_SURFACE_H
@@ -56,7 +57,13 @@ struct _E_Shell_Surface
 
    Eina_Bool active : 1;
 
-   void *ping_timer;
+   E_Shell_Surface_Ping_Timer *ping_timer;
+};
+
+struct _E_Shell_Surface_Ping_Timer
+{
+   struct wl_event_source *source;
+   unsigned int serial;
 };
 
 EAPI E_Shell_Surface *e_shell_surface_new(E_Surface *surface, unsigned int id);

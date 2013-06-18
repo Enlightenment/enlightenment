@@ -10,8 +10,10 @@ static void _e_comp_cb_region_destroy(struct wl_resource *resource);
 static Eina_Bool _e_comp_cb_read(void *data, Ecore_Fd_Handler *hdl EINA_UNUSED);
 static Eina_Bool _e_comp_cb_idle(void *data);
 
-static void _e_comp_data_device_cb_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *seat_resource);
+static void _e_comp_data_device_cb_get(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, unsigned int id, struct wl_resource *seat_resource);
 static void _e_comp_data_device_cb_unbind(struct wl_resource *resource);
+
+static Eina_Bool _e_comp_xkb_init(E_Compositor *comp);
 
 /* local interfaces */
 static const struct wl_compositor_interface _e_compositor_interface = 
@@ -121,7 +123,12 @@ e_compositor_init(E_Compositor *comp, void *display)
    e_plane_init(&comp->plane, 0, 0);
    e_compositor_plane_stack(comp, &comp->plane, NULL);
 
-   /* TODO: init xkb */
+   /* init xkb */
+   if (!_e_comp_xkb_init(comp))
+     {
+        ERR("Could not initialize xkb: %m");
+        goto global_err;
+     }
 
    /* initialize the data device manager */
    if (!wl_display_add_global(comp->wl.display, 
@@ -141,7 +148,10 @@ e_compositor_init(E_Compositor *comp, void *display)
     * 
     * NB: This is interesting....if we try to eglGetDisplay and pass in the 
     * wayland display, then EGL fails due to XCB not owning the event queue.
-    * If we pass it a NULL, it inits just fine */
+    * If we pass it a NULL, it inits just fine
+    * 
+    * NB: This is apparently a Mesa bug because it works now :/ Leaving this 
+    * note here in case it fails again in the future */
    comp->egl.display = eglGetDisplay((EGLNativeDisplayType)display);
    if (comp->egl.display == EGL_NO_DISPLAY)
      ERR("Could not get EGL display: %m");
@@ -348,13 +358,26 @@ e_compositor_surface_find(E_Compositor *comp, Evas_Coord x, Evas_Coord y)
    E_Surface *es;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(comp->surfaces, l, es)
+   /* loop the surfaces and try to find one which has these
+    * coordinates contained in it's input region */
+   EINA_LIST_REVERSE_FOREACH(comp->surfaces, l, es)
      {
         if (pixman_region32_contains_point(&es->input, x, y, NULL))
           return es;
      }
 
    return NULL;
+}
+
+EAPI void 
+e_compositor_repick(E_Compositor *comp)
+{
+   E_Input *seat;
+   Eina_List *l;
+
+   if (!comp->focus) return;
+   EINA_LIST_FOREACH(comp->inputs, l, seat)
+     e_input_repick(seat);
 }
 
 /* local functions */
@@ -384,17 +407,18 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
    E_Compositor *comp;
    E_Surface *es;
 
-   printf("E_Comp Surface Create: %d\n", id);
-
    /* try to cast to our compositor */
    if (!(comp = resource->data)) return;
 
    /* try to create a new surface */
-   if (!(es = e_surface_new(id)))
+   if (!(es = e_surface_new(client, id)))
      {
         wl_resource_post_no_memory(resource);
         return;
      }
+
+   /* set destroy callback */
+   wl_resource_set_destructor(es->wl.resource, _e_comp_cb_surface_destroy);
 
    /* ask the renderer to create any internal representation of this surface 
     * that it may need */
@@ -407,69 +431,25 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
    /* set surface plane to compositor primary plane */
    es->plane = &comp->plane;
 
-   /* set destroy callback */
-   es->wl.resource.destroy = _e_comp_cb_surface_destroy;
-
-   /* add this surface to the client */
-   wl_client_add_resource(client, &es->wl.resource);
-
    /* add this surface to the compositors list */
    comp->surfaces = eina_list_append(comp->surfaces, es);
-
-   printf("\tCreated: %p\n", es);
 }
 
 static void 
 _e_comp_cb_surface_destroy(struct wl_resource *resource)
 {
    E_Surface *es;
-   E_Surface_Frame *cb, *cbnext;
 
-   printf("E_Comp Surface Destroy\n");
-
-   /* try to get the surface from this resource */
-   if (!(es = container_of(resource, E_Surface, wl.resource)))
+   if (!(es = wl_resource_get_user_data(resource)))
      return;
 
-   printf("\tDestroyed: %p\n", es);
+   printf("Surface Destroy: %p\n", es);
 
    /* remove this surface from the compositor */
    _e_comp->surfaces = eina_list_remove(_e_comp->surfaces, es);
 
-   /* if this surface is mapped, unmap it */
-   if (es->mapped) e_surface_unmap(es);
-
-   /* remove any pending frame callbacks */
-   wl_list_for_each_safe(cb, cbnext, &es->pending.frames, link)
-     wl_resource_destroy(&cb->resource);
-
-   pixman_region32_fini(&es->pending.damage);
-   pixman_region32_fini(&es->pending.opaque);
-   pixman_region32_fini(&es->pending.input);
-
-   /* destroy pending buffer */
-   if (es->pending.buffer)
-     wl_list_remove(&es->pending.buffer_destroy.link);
-
-   /* remove any buffer references */
-   e_buffer_reference(&es->buffer.reference, NULL);
-
-   if (_e_comp->renderer->surface_destroy)
-     _e_comp->renderer->surface_destroy(es);
-
-   /* free regions */
-   pixman_region32_fini(&es->bounding);
-   pixman_region32_fini(&es->damage);
-   pixman_region32_fini(&es->opaque);
-   pixman_region32_fini(&es->input);
-   pixman_region32_fini(&es->clip);
-
-   /* remove any active frame callbacks */
-   wl_list_for_each_safe(cb, cbnext, &es->frames, link)
-     wl_resource_destroy(&cb->resource);
-
-   /* free the surface structure */
-   E_FREE(es);
+   es->wl.resource = NULL;
+   e_surface_destroy(es);
 }
 
 static void 
@@ -538,7 +518,7 @@ _e_comp_cb_idle(void *data)
 }
 
 static void 
-_e_comp_data_device_cb_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *seat_resource)
+_e_comp_data_device_cb_get(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, unsigned int id, struct wl_resource *seat_resource)
 {
    E_Input *seat;
    struct wl_resource *res;
@@ -558,4 +538,20 @@ _e_comp_data_device_cb_unbind(struct wl_resource *resource)
 {
    wl_list_remove(&resource->link);
    free(resource);
+}
+
+static Eina_Bool 
+_e_comp_xkb_init(E_Compositor *comp)
+{
+   if (!(comp->xkb_context = xkb_context_new(0)))
+     return EINA_FALSE;
+
+   if (!comp->xkb_names.rules)
+     comp->xkb_names.rules = strdup("evdev");
+   if (!comp->xkb_names.model)
+     comp->xkb_names.model = strdup("pc105");
+   if (!comp->xkb_names.layout)
+     comp->xkb_names.layout = strdup("us");
+
+   return EINA_TRUE;
 }

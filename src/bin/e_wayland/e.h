@@ -121,6 +121,7 @@ void *alloca (size_t);
 
 # include <pixman.h>
 # include <wayland-server.h>
+# include <xkbcommon/xkbcommon.h>
 
 # ifdef HAVE_WAYLAND_EGL
 #  include <GLES2/gl2.h>

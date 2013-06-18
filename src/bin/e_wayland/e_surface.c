@@ -26,15 +26,17 @@ static const struct wl_surface_interface _e_surface_interface =
 };
 
 EAPI E_Surface *
-e_surface_new(unsigned int id)
+e_surface_new(struct wl_client *client, unsigned int id)
 {
    E_Surface *es;
 
    /* try to allocate space for a new surface */
    if (!(es = E_NEW(E_Surface, 1))) return NULL;
 
+   es->wl.id = id;
+
    /* initialize the destroy signal */
-   wl_signal_init(&es->wl.resource.destroy_signal);
+   wl_signal_init(&es->signals.destroy);
 
    /* initialize the link */
    wl_list_init(&es->wl.link);
@@ -48,8 +50,6 @@ e_surface_new(unsigned int id)
    pixman_region32_init_rect(&es->input, INT32_MIN, INT32_MIN, 
                              UINT32_MAX, UINT32_MAX);
 
-   /* TODO: finish me */
-
    es->pending.buffer_destroy.notify = _e_surface_cb_buffer_destroy;
 
    pixman_region32_init(&es->pending.damage);
@@ -57,14 +57,9 @@ e_surface_new(unsigned int id)
    pixman_region32_init_rect(&es->pending.input, INT32_MIN, INT32_MIN, 
                              UINT32_MAX, UINT32_MAX);
 
-   /* setup the surface object */
-   es->wl.resource.client = NULL;
-
-   es->wl.resource.object.id = id;
-   es->wl.resource.object.interface = &wl_surface_interface;
-   es->wl.resource.object.implementation = 
-     (void (**)(void))&_e_surface_interface;
-   es->wl.resource.data = es;
+   es->wl.resource = 
+     wl_client_add_object(client, &wl_surface_interface, 
+                          &_e_surface_interface, id, es);
 
    return es;
 }
@@ -125,13 +120,65 @@ e_surface_damage_below(E_Surface *es)
 EAPI void 
 e_surface_destroy(E_Surface *es)
 {
+   E_Surface_Frame *cb, *cbnext;
+
    /* check for valid surface */
    if (!es) return;
 
-   /* emit the destroy signal */
-   wl_signal_emit(&es->wl.resource.destroy_signal, &es->wl.resource);
+   wl_signal_emit(&es->signals.destroy, &es->wl.resource);
 
-   wl_resource_destroy(&es->wl.resource);
+   /* if this surface is mapped, unmap it */
+   if (es->mapped) e_surface_unmap(es);
+
+   /* remove any pending frame callbacks */
+   wl_list_for_each_safe(cb, cbnext, &es->pending.frames, link)
+     wl_resource_destroy(&cb->resource);
+
+   pixman_region32_fini(&es->pending.damage);
+   pixman_region32_fini(&es->pending.opaque);
+   pixman_region32_fini(&es->pending.input);
+
+   /* destroy pending buffer */
+   if (es->pending.buffer)
+     wl_list_remove(&es->pending.buffer_destroy.link);
+
+   /* remove any buffer references */
+   e_buffer_reference(&es->buffer.reference, NULL);
+
+   if (_e_comp->renderer->surface_destroy)
+     _e_comp->renderer->surface_destroy(es);
+
+   /* free regions */
+   pixman_region32_fini(&es->bounding);
+   pixman_region32_fini(&es->damage);
+   pixman_region32_fini(&es->opaque);
+   pixman_region32_fini(&es->input);
+   pixman_region32_fini(&es->clip);
+
+   /* remove any active frame callbacks */
+   wl_list_for_each_safe(cb, cbnext, &es->frames, link)
+     wl_resource_destroy(&cb->resource);
+
+   /* EINA_LIST_FOREACH(_e_comp->inputs, l, seat) */
+   /*   { */
+   /*      kbd = seat->keyboard; */
+
+   /*      if (kbd->focus) printf("\tCurrently Focused: %p\n", kbd->focus); */
+
+   /*      if ((kbd->focus) && (kbd->focus == es)) */
+   /*        { */
+   /*           if (seat->kbd.saved_focus) */
+   /*             { */
+   /*                printf("\tSaved Focus: %p\n", seat->kbd.saved_focus); */
+   /*                wl_list_remove(&seat->kbd.focus_listener.link); */
+   /*                e_input_keyboard_focus_set(kbd, seat->kbd.saved_focus); */
+   /*                seat->kbd.saved_focus = NULL; */
+   /*             } */
+   /*        } */
+   /*   } */
+
+   /* free the surface structure */
+   E_FREE(es);
 }
 
 EAPI void 
@@ -218,6 +265,28 @@ e_surface_output_assign(E_Surface *es)
    pixman_region32_fini(&region);
    es->output = noutput;
    es->output_mask = mask;
+}
+
+EAPI void 
+e_surface_activate(E_Surface *es, E_Input *seat)
+{
+   E_Compositor *comp;
+
+   if (!(comp = seat->compositor)) return;
+
+   printf("Surface Activate: %p\n", es);
+
+   if ((seat->keyboard) && (comp->focus))
+     e_input_keyboard_focus_set(seat->keyboard, es);
+   else if (seat->keyboard)
+     {
+        seat->kbd.saved_focus = es;
+        seat->kbd.focus_listener.notify = e_input_keyboard_focus_destroy;
+        wl_signal_add(&seat->kbd.saved_focus->signals.destroy, 
+                      &seat->kbd.focus_listener);
+     }
+
+   wl_signal_emit(&comp->signals.activate, es);
 }
 
 /* local functions */

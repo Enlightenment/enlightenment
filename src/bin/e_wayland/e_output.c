@@ -98,8 +98,7 @@ e_output_repaint(E_Output *output, unsigned int secs)
    pixman_region32_fini(&damage);
    output->repaint.needed = EINA_FALSE;
 
-   /* TODO: comp repick ? */
-
+   e_compositor_repick(comp);
    wl_event_loop_dispatch(comp->wl.input_loop, 0);
 
    /* send surface frame callback done */

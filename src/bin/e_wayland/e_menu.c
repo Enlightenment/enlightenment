@@ -333,14 +333,14 @@ e_menu_idler_before(void)
    Eina_List *l;
    E_Menu *m;
 
-   /* EINA_LIST_FOREACH(_active_menus, l, m) */
-   /*   { */
-   /*      if ((!m->cur.visible) && (m->prev.visible)) */
-   /*        { */
-   /*           m->prev.visible = m->cur.visible; */
-   /*           ecore_evas_hide(m->ee); */
-   /*        } */
-   /*   } */
+   EINA_LIST_FOREACH(_active_menus, l, m)
+     {
+        if ((!m->cur.visible) && (m->prev.visible))
+          {
+             m->prev.visible = m->cur.visible;
+             ecore_evas_hide(m->ee);
+          }
+     }
 
    EINA_LIST_FOREACH(_active_menus, l, m)
      {
@@ -369,6 +369,7 @@ e_menu_idler_before(void)
                   m->prev.h = m->cur.h;
                   ecore_evas_resize(m->ee, m->cur.w, m->cur.h);
                }
+             ecore_evas_show(m->ee);
           }
      }
 
@@ -1092,6 +1093,7 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
                if (cb->create) cb->create(m, cat->data, cb->data);
           }
      }
+
    m->cur.visible = EINA_TRUE;
 }
 

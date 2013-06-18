@@ -11,9 +11,15 @@ struct _E_Surface
 {
    struct 
      {
-        struct wl_resource resource;
+        struct wl_resource *resource;
         struct wl_list link;
+        unsigned int id;
      } wl;
+
+   struct 
+     {
+        struct wl_signal destroy;
+     } signals;
 
    struct 
      {
@@ -69,7 +75,7 @@ struct _E_Surface_Frame
    struct wl_list link;
 };
 
-EAPI E_Surface *e_surface_new(unsigned int id);
+EAPI E_Surface *e_surface_new(struct wl_client *client, unsigned int id);
 EAPI void e_surface_attach(E_Surface *es, struct wl_buffer *buffer);
 EAPI void e_surface_unmap(E_Surface *es);
 EAPI void e_surface_damage(E_Surface *es);
@@ -79,6 +85,7 @@ EAPI void e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque);
 EAPI void e_surface_show(E_Surface *es);
 EAPI void e_surface_repaint_schedule(E_Surface *es);
 EAPI void e_surface_output_assign(E_Surface *es);
+EAPI void e_surface_activate(E_Surface *es, E_Input *seat);
 
 # endif
 #endif

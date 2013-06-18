@@ -47,6 +47,8 @@ struct _E_Compositor
    Ecore_Fd_Handler *fd_hdlr;
    Ecore_Idler *idler;
 
+   Eina_Bool focus : 1;
+
    unsigned int output_pool;
 
    Eina_List *planes;
@@ -54,7 +56,10 @@ struct _E_Compositor
    Eina_List *inputs;
    Eina_List *surfaces;
 
-   void (*cb_ping) (void *surface, unsigned int serial);
+   void (*cb_ping) (E_Surface *surface, unsigned int serial);
+
+   struct xkb_rule_names xkb_names;
+   struct xkb_context *xkb_context;
 };
 
 EINTERN int e_comp_init(void);
@@ -68,6 +73,7 @@ EAPI int e_compositor_input_read(int fd EINA_UNUSED, unsigned int mask EINA_UNUS
 EAPI void e_compositor_damage_calculate(E_Compositor *comp);
 EAPI unsigned int e_compositor_get_time(void);
 EAPI E_Surface *e_compositor_surface_find(E_Compositor *comp, Evas_Coord x, Evas_Coord y);
+EAPI void e_compositor_repick(E_Compositor *comp);
 
 # endif
 #endif
