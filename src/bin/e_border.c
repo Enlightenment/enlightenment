@@ -7994,6 +7994,8 @@ _e_border_eval0(E_Border *bd)
                   bd->exe_inst = inst;
                   e_exec_instance_found(inst);
                }
+             else if (!inst)
+               e_exec_phony(bd);
 
              if (e_config->window_grouping) // FIXME: We may want to make the border "urgent" so that the user knows it appeared.
                {
