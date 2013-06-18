@@ -51,8 +51,8 @@ struct _IBar
    Evas_Object *o_drop_over, *o_empty;
    IBar_Icon   *ic_drop_before;
    int          drop_before;
+   Eina_Hash    *icon_hash;
    Eina_Inlist  *icons;
-   unsigned int icons_count;
    IBar_Order  *io;
    Evas_Coord   dnd_x, dnd_y;
    Eina_Bool    focused : 1;
@@ -79,6 +79,7 @@ struct _IBar_Icon
       int           x, y;
    } drag;
    Eina_Bool       focused : 1;
+   Eina_Bool       not_in_order : 1;
 };
 
 static IBar        *_ibar_new(Evas *evas, Instance *inst);
@@ -262,7 +263,7 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
       case E_GADCON_ORIENT_CORNER_BL:
       case E_GADCON_ORIENT_CORNER_BR:
         _ibar_orient_set(inst->ibar, 1);
-        e_gadcon_client_aspect_set(gcc, inst->ibar->icons_count * 16, 16);
+        e_gadcon_client_aspect_set(gcc, eina_hash_population(inst->ibar->icon_hash) * 16, 16);
         break;
 
       case E_GADCON_ORIENT_VERT:
@@ -273,7 +274,7 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
       case E_GADCON_ORIENT_CORNER_LB:
       case E_GADCON_ORIENT_CORNER_RB:
         _ibar_orient_set(inst->ibar, 0);
-        e_gadcon_client_aspect_set(gcc, 16, inst->ibar->icons_count * 16);
+        e_gadcon_client_aspect_set(gcc, 16, eina_hash_population(inst->ibar->icon_hash) * 16);
         break;
 
       default:
@@ -337,6 +338,7 @@ _ibar_new(Evas *evas, Instance *inst)
    b = E_NEW(IBar, 1);
    inst->ibar = b;
    b->inst = inst;
+   b->icon_hash = eina_hash_string_superfast_new(NULL);
    b->o_box = e_box_add(evas);
    e_box_homogenous_set(b->o_box, 1);
    e_box_orientation_set(b->o_box, 1);
@@ -360,6 +362,7 @@ _ibar_free(IBar *b)
    if (b->o_drop) evas_object_del(b->o_drop);
    if (b->o_drop_over) evas_object_del(b->o_drop_over);
    if (b->o_empty) evas_object_del(b->o_empty);
+   eina_hash_free(b->icon_hash);
    _ibar_order_del(b);
    ibars = eina_list_remove(ibars, b);
    free(b);
@@ -475,7 +478,7 @@ _ibar_fill(IBar *b)
                   _ibar_icon_signal_emit(ic, "e,state,on", "e");
                }
              b->icons = eina_inlist_append(b->icons, EINA_INLIST_GET(ic));
-             b->icons_count++;
+             eina_hash_add(b->icon_hash, ic->app->orig_path, ic);
              e_box_pack_end(b->o_box, ic->o_holder);
           }
      }
@@ -657,7 +660,7 @@ _ibar_icon_free(IBar_Icon *ic)
    E_Exec_Instance *inst;
 
    ic->ibar->icons = eina_inlist_remove(ic->ibar->icons, EINA_INLIST_GET(ic));
-   ic->ibar->icons_count--;
+   eina_hash_del_by_key(ic->ibar->icon_hash, ic->app->orig_path);
    E_FREE_FUNC(ic->reset_timer, ecore_timer_del);
    ic->exe_current = NULL;
    if (ic->ibar->ic_drop_before == ic)
@@ -674,7 +677,7 @@ _ibar_icon_free(IBar_Icon *ic)
         e_exec_instance_watcher_del(ic->exe_inst, _ibar_instance_watch, ic);
         ic->exe_inst = NULL;
      }
-   E_FREE(ic);
+   free(ic);
 }
 
 static void
@@ -1152,19 +1155,12 @@ _ibar_instance_watch(void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type)
      
    switch (type)
      {
-      case E_EXEC_WATCH_STOPPED:
-      case E_EXEC_WATCH_TIMEOUT:
-        _ibar_icon_signal_emit(ic, "e,state,started", "e");
-        e_exec_instance_watcher_del(inst, _ibar_instance_watch, ic);
-        ic->exes = eina_list_remove(ic->exes, inst);
-        if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,off", "e");
-        if (ic->exe_inst == inst) ic->exe_inst = NULL;
-        break;
       case E_EXEC_WATCH_STARTED:
         _ibar_icon_signal_emit(ic, "e,state,started", "e");
         if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,on", "e");
         if (ic->exe_inst == inst) ic->exe_inst = NULL;
-        ic->exes = eina_list_append(ic->exes, inst);
+        if (!eina_list_data_find(ic->exes, inst))
+          ic->exes = eina_list_append(ic->exes, inst);
         break;
       default:
         break;
@@ -1959,6 +1955,53 @@ _ibar_cb_action_focus(E_Object *obj __UNUSED__, const char *params __UNUSED__, E
    _ibar_go_focus();
 }
 
+static Eina_Bool
+_ibar_cb_exec_del(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
+{
+   IBar *b;
+   Eina_List *l;
+
+   if (!exe->desktop) return ECORE_CALLBACK_RENEW; //can't do anything here :(
+   EINA_LIST_FOREACH(ibars, l, b)
+     {
+        IBar_Icon *ic;
+
+        ic = eina_hash_find(b->icon_hash, exe->desktop->orig_path);
+        if (ic)
+          {
+             _ibar_icon_signal_emit(ic, "e,state,started", "e");
+             ic->exes = eina_list_remove(ic->exes, exe);
+             if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,off", "e");
+             if (ic->exe_inst == exe) ic->exe_inst = NULL;
+             e_exec_instance_watcher_del(exe, _ibar_instance_watch, ic);
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_ibar_cb_exec_new(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
+{
+   IBar *b;
+   Eina_List *l;
+
+   if (!exe->desktop) return ECORE_CALLBACK_RENEW; //can't do anything here :(
+   EINA_LIST_FOREACH(ibars, l, b)
+     {
+        IBar_Icon *ic;
+
+        ic = eina_hash_find(b->icon_hash, exe->desktop->orig_path);
+        if (ic)
+          {
+             _ibar_icon_signal_emit(ic, "e,state,started", "e");
+             if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,on", "e");
+             if (!eina_list_data_find(ic->exes, exe))
+               ic->exes = eina_list_append(ic->exes, exe);
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
 /* module setup */
 EAPI E_Module_Api e_modapi =
 {
@@ -2011,6 +2054,10 @@ e_modapi_init(E_Module *m)
                          _ibar_cb_config_icons, NULL);
    E_LIST_HANDLER_APPEND(ibar_config->handlers, EFREET_EVENT_ICON_CACHE_UPDATE,
                          _ibar_cb_config_icons, NULL);
+   E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_EXEC_NEW,
+                         _ibar_cb_exec_new, NULL);
+   E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_EXEC_DEL,
+                         _ibar_cb_exec_del, NULL);
 
    e_gadcon_provider_register(&_gadcon_class);
    ibar_orders = eina_hash_string_superfast_new(NULL);
