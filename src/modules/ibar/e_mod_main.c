@@ -2007,14 +2007,10 @@ e_modapi_init(E_Module *m)
 
    ibar_config->module = m;
 
-   ibar_config->handlers =
-     eina_list_append(ibar_config->handlers,
-                      ecore_event_handler_add(E_EVENT_CONFIG_ICON_THEME,
-                                              _ibar_cb_config_icons, NULL));
-   ibar_config->handlers =
-     eina_list_append(ibar_config->handlers,
-                      ecore_event_handler_add(EFREET_EVENT_ICON_CACHE_UPDATE,
-                                              _ibar_cb_config_icons, NULL));
+   E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_CONFIG_ICON_THEME,
+                         _ibar_cb_config_icons, NULL);
+   E_LIST_HANDLER_APPEND(ibar_config->handlers, EFREET_EVENT_ICON_CACHE_UPDATE,
+                         _ibar_cb_config_icons, NULL);
 
    e_gadcon_provider_register(&_gadcon_class);
    ibar_orders = eina_hash_string_superfast_new(NULL);
