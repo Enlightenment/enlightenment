@@ -477,9 +477,6 @@ _ibar_fill(IBar *b)
                     e_exec_instance_watcher_add(exe, _ibar_instance_watch, ic);
                   _ibar_icon_signal_emit(ic, "e,state,on", "e");
                }
-             b->icons = eina_inlist_append(b->icons, EINA_INLIST_GET(ic));
-             eina_hash_add(b->icon_hash, ic->app->orig_path, ic);
-             e_box_pack_end(b->o_box, ic->o_holder);
           }
      }
    _ibar_empty_handle(b);
@@ -651,6 +648,9 @@ _ibar_icon_new(IBar *b, Efreet_Desktop *desktop)
    evas_object_show(ic->o_holder2);
 
    _ibar_icon_fill(ic);
+   b->icons = eina_inlist_append(b->icons, EINA_INLIST_GET(ic));
+   eina_hash_add(b->icon_hash, ic->app->orig_path, ic);
+   e_box_pack_end(b->o_box, ic->o_holder);
    return ic;
 }
 
