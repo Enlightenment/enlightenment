@@ -48,17 +48,13 @@ typedef enum
 struct _Manager
 {
    Eina_List   *gadcons[GADMAN_LAYER_COUNT];
-   E_Gadcon    *gc_top;
    E_Gadcon_Location *location[GADMAN_LAYER_COUNT];
    Eina_List   *gadgets[GADMAN_LAYER_COUNT];
-   Ecore_Timer *gadman_reset_timer;
    Evas_Object *movers[GADMAN_LAYER_COUNT];
    Evas_Object *full_bg;
    Evas_Object *overlay_layer;
    const char  *icon_name;
    E_Gadcon_Client *drag_gcc[GADMAN_LAYER_COUNT];
-
-   Eina_List *drag_handlers;
 
    Eina_List *waiting;
    Ecore_Event_Handler *add;
