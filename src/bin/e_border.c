@@ -400,7 +400,7 @@ e_border_new(E_Container *con,
              int first_map,
              int internal)
 {
-   E_Border *bd, *bd2;
+   E_Border *bd;
    Ecore_X_Window_Attributes *att;
    unsigned int managed, desk[2];
    int deskx, desky;
