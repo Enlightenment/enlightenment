@@ -397,7 +397,7 @@ e_border_focus_lock_get(void)
 EAPI E_Border *
 e_border_new(E_Container *con, Ecore_X_Window win, int first_map, int internal)
 {
-   E_Border *bd;
+   E_Border *bd, *bd2;
    Ecore_X_Window_Attributes *att;
    unsigned int managed, desk[2];
    int deskx, desky;
