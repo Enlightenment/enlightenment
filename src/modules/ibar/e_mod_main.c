@@ -524,6 +524,7 @@ _ibar_fill(IBar *b)
              EINA_LIST_FOREACH(l, ll, exe)
                {
                   if (!exe->desktop) continue;
+                  if (exe->bd && exe->bd->client.netwm.state.skip_taskbar) continue;
                   ic = eina_hash_find(b->icon_hash, _desktop_name_get(exe->desktop));
                   if (ic)
                     {
@@ -2131,6 +2132,59 @@ _ibar_cb_action_focus(E_Object *obj __UNUSED__, const char *params __UNUSED__, E
 }
 
 static Eina_Bool
+_ibar_cb_bd_prop(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Border_Property *ev)
+{
+   IBar *b;
+   Eina_List *l;
+   Eina_Bool skip;
+
+   skip = ev->border->client.netwm.state.skip_taskbar;
+   EINA_LIST_FOREACH(ibars, l, b)
+     {
+        IBar_Icon *ic;
+
+        ic = eina_hash_find(b->icon_hash, _desktop_name_get(ev->border->exe_inst->desktop));
+        if (skip && (!ic)) continue;
+        if (!skip)
+          {
+             if (ic)
+               {
+                  _ibar_icon_signal_emit(ic, "e,state,started", "e");
+                  if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,on", "e");
+                  if (!eina_list_data_find(ic->exes, ev->border->exe_inst))
+                    ic->exes = eina_list_append(ic->exes, ev->border->exe_inst);
+               }
+            else if (!b->inst->ci->dont_add_nonorder)
+              {
+                 _ibar_sep_create(b);
+                 ic = _ibar_icon_notinorder_new(b, ev->border->exe_inst);
+                 _ibar_resize_handle(b);
+              }
+          }
+        else
+          {
+             ic->exes = eina_list_remove(ic->exes, ev->border->exe_inst);
+             if (ic->exe_inst == ev->border->exe_inst) ic->exe_inst = NULL;
+             if (!ic->exes)
+               {
+                  if (ic->not_in_order)
+                    {
+                       _ibar_icon_free(ic);
+                       if (!b->not_in_order_count)
+                         {
+                            E_FREE_FUNC(b->o_sep, evas_object_del);
+                         }
+                       _ibar_resize_handle(b);
+                    }
+                  else
+                    _ibar_icon_signal_emit(ic, "e,state,off", "e");
+               }
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 _ibar_cb_exec_del(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
 {
    IBar *b;
@@ -2171,8 +2225,10 @@ _ibar_cb_exec_new(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
 {
    IBar *b;
    Eina_List *l;
+   Eina_Bool skip;
 
    if (!exe->desktop) return ECORE_CALLBACK_RENEW; //can't do anything here :(
+   skip = exe->bd && exe->bd->client.netwm.state.skip_taskbar;
    EINA_LIST_FOREACH(ibars, l, b)
      {
         IBar_Icon *ic;
@@ -2182,11 +2238,13 @@ _ibar_cb_exec_new(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
           {
              _ibar_icon_signal_emit(ic, "e,state,started", "e");
              if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,on", "e");
+             if (skip) continue;
              if (!eina_list_data_find(ic->exes, exe))
                ic->exes = eina_list_append(ic->exes, exe);
           }
         else if (!b->inst->ci->dont_add_nonorder)
           {
+             if (skip) continue;
              _ibar_sep_create(b);
              ic = _ibar_icon_notinorder_new(b, exe);
              _ibar_resize_handle(b);
@@ -2253,6 +2311,8 @@ e_modapi_init(E_Module *m)
                          _ibar_cb_exec_new, NULL);
    E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_EXEC_DEL,
                          _ibar_cb_exec_del, NULL);
+   E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_BORDER_PROPERTY,
+                         _ibar_cb_bd_prop, NULL);
 
    e_gadcon_provider_register(&_gadcon_class);
    ibar_orders = eina_hash_string_superfast_new(NULL);
