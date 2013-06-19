@@ -892,7 +892,6 @@ tw_show_video(Evas_Object *prev, const char *uri)
    Evas_Object *o;
 
    o = emotion_object_add(e_widget_preview_evas_get(prev));
-   e_util_size_debug_set(o, 1);
 #if (EMOTION_VERSION_MAJOR > 1) || (EMOTION_VERSION_MINOR >= 8)
    emotion_object_init(o, "vlc");
 #else
