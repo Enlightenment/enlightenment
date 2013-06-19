@@ -54,6 +54,8 @@ static Media_Cache_List *tw_cache_list[2] = {NULL};
 
 static Evas_Point last_coords = {0};
 
+static Ecore_Window tw_win = 0;
+
 static Ecore_Timer *tw_hide_timer = NULL;
 
 static Eldbus_Service_Interface *tw_dbus_iface = NULL;
@@ -122,7 +124,6 @@ dbus_signal_link_progress(Media *i, double pr)
 {
    unsigned int u = ecore_time_unix_get();
 
-   INF("media progress for '%s': %g%%", i->addr, pr);
    eldbus_service_signal_emit(tw_dbus_iface, TEAMWORK_SIGNAL_LINK_PROGRESS, i->addr, u, pr);
 }
 
@@ -148,7 +149,7 @@ download_media_complete(void *data, int type EINA_UNUSED, Ecore_Con_Event_Url_Co
    E_FREE_FUNC(i->client, ecore_con_url_free);
    dbus_signal_link_complete(i);
    download_media_cleanup();
-   INF("MEDIA CACHE: %zu bytes", tw_mod->media_size);
+   DBG("MEDIA CACHE: %zu bytes", tw_mod->media_size);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -418,6 +419,7 @@ dbus_link_show_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
 
    if (eldbus_message_arguments_get(msg, "s", &uri))
      {
+        tw_win = 0;
         last_coords.x = last_coords.y = -1;
         dbus_link_show_helper(uri, 1);
      }
@@ -445,9 +447,11 @@ dbus_link_mouse_in_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const E
 {
    const char *uri;
    unsigned int t;
+   int64_t win;
 
-   if (eldbus_message_arguments_get(msg, "suii", &uri, &t, &last_coords.x, &last_coords.y))
+   if (eldbus_message_arguments_get(msg, "suxii", &uri, &t, &win, &last_coords.x, &last_coords.y))
      {
+        tw_win = win;
         dbus_link_show_helper(uri, 0);
         tw_mod->hidden = 0;
      }
@@ -459,8 +463,9 @@ dbus_link_mouse_out_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
 {
    const char *uri;
    unsigned int t;
+   int64_t win;
 
-   if (eldbus_message_arguments_get(msg, "suii", &uri, &t, &last_coords.x, &last_coords.y))
+   if (eldbus_message_arguments_get(msg, "suxii", &uri, &t, &win, &last_coords.x, &last_coords.y))
      {
         if (tw_mod->pop && (!tw_mod->sticky) &&
             ((tw_tmpfile && (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), tw_tmpfile))) ||
@@ -504,8 +509,8 @@ dbus_link_open_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
 
 static const Eldbus_Method tw_methods[] = {
    { "LinkDetect", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}), NULL, dbus_link_detect_cb },
-   { "LinkMouseIn", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_in_cb },
-   { "LinkMouseOut", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_out_cb },
+   { "LinkMouseIn", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"x", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_in_cb },
+   { "LinkMouseOut", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"x", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_out_cb },
    { "LinkShow", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_show_cb },
    { "LinkHide", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_hide_cb },
    { "LinkOpen", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_open_cb },
@@ -635,7 +640,7 @@ tw_dummy_add(const char *url)
 {
    if (!dummies) return;
    eet_write(dummies, url, "0", 1, 0);
-   INF("Added new dummy for url %s", url);
+   DBG("Added new dummy for url %s", url);
 }
 
 static Eina_Bool
@@ -665,7 +670,7 @@ tw_media_add(const char *url, Eina_Binbuf *buf, unsigned long long timestamp, Ei
    if (!tw_config->allowed_media_age) return 0; //disk caching disabled
 
    sha1 = sha1_encode(eina_binbuf_string_get(buf), eina_binbuf_length_get(buf));
-   INF("Media: %s - %s", url, sha1);
+   DBG("Media: %s - %s", url, sha1);
 
    list = eet_list(media[video], url, &lsize);
    if (lsize)
@@ -679,7 +684,7 @@ tw_media_add(const char *url, Eina_Binbuf *buf, unsigned long long timestamp, Ei
      {
         eet_alias(media[video], url, sha1, 0);
         eet_sync(media[video]);
-        INF("Added new alias for media %s", sha1);
+        DBG("Added new alias for media %s", sha1);
         eina_stringshare_del(sha1);
         free(list);
         return 0;
@@ -689,7 +694,7 @@ tw_media_add(const char *url, Eina_Binbuf *buf, unsigned long long timestamp, Ei
    eet_alias(media[video], url, sha1, 0);
    eet_sync(media[video]);
    media_cache_add(sha1, timestamp, video);
-   INF("Added new media with length %zu: %s", eina_binbuf_length_get(buf), sha1);
+   DBG("Added new media with length %zu: %s", eina_binbuf_length_get(buf), sha1);
    eina_stringshare_del(sha1);
    return 1;
 }
@@ -792,7 +797,7 @@ tw_show_helper(Evas_Object *o, int w, int h)
    e_widget_preview_vsize_set(o, pw, ph);
    e_popup_layer_set(tw_mod->pop, E_COMP_CANVAS_LAYER_POPUP, 0);
 
-   if ((last_coords.x == last_coords.y) && (last_coords.x == -1))
+   if ((!tw_win) && (last_coords.x == last_coords.y) && (last_coords.x == -1))
      {
         px = lround(ratio * (double)tw_mod->pop->zone->w) - (pw / 2);
         py = lround(ratio * (double)tw_mod->pop->zone->h) - (ph / 2);
@@ -803,23 +808,24 @@ tw_show_helper(Evas_Object *o, int w, int h)
      }
    else
      {
+        E_Border *bd = e_border_find_by_client_window(tw_win);
         /* prefer tooltip left of last_coords */
-        px = last_coords.x - pw - 3;
+        px = bd->x + last_coords.x - pw - 3;
         /* if it's offscreen, try right of last_coords */
-        if (px < 0) px = last_coords.x + 3;
+        if (px < 0) px = bd->x + last_coords.x + 3;
         /* fuck this, stick it right on the last_coords */
         if (px + pw + 3 > tw_mod->pop->zone->w)
-          px = (last_coords.x / 2) - (pw / 2);
+          px = (bd->x + last_coords.x / 2) - (pw / 2);
         /* give up */
         if (px < 0) px = 0;
 
         /* prefer tooltip above last_coords */
-        py = last_coords.y - ph - 3;
+        py = bd->y + last_coords.y - ph - 3;
         /* if it's offscreen, try below last_coords */
-        if (py < 0) py = last_coords.y + 3;
+        if (py < 0) py = bd->y + last_coords.y + 3;
         /* fuck this, stick it right on the last_coords */
         if (py + ph + 3 > tw_mod->pop->zone->h)
-          py = (last_coords.y / 2) - (ph / 2);
+          py = (bd->y + last_coords.y / 2) - (ph / 2);
         /* give up */
         if (py < 0) py = 0;
      }
@@ -973,7 +979,6 @@ tw_video_thread_cb(void *data, Ecore_Thread *eth)
         pos += num;
         if (ecore_thread_local_data_find(eth, "dead")) break;
      }
-   INF("STATUS: %zu/%zu", pos, tot);
 }
 
 #endif
@@ -1038,7 +1043,7 @@ tw_show(Media *i)
         eina_stringshare_replace(&tw_tmpfile, buf);
         if (tw_tmpfd < 0)
           {
-             INF("ERROR: %s", strerror(errno));
+             ERR("ERROR: %s", strerror(errno));
              download_media_cleanup();
              eina_stringshare_replace(&tw_tmpfile, NULL);
              tw_tmpthread_media = NULL;
@@ -1148,6 +1153,7 @@ tw_hide(void *d EINA_UNUSED)
      {
         eina_stringshare_replace(&tw_tmpfile, NULL);
      }
+   tw_win = 0;
    E_FREE_FUNC(tw_mod->pop, e_object_del);
    last_coords.x = last_coords.y = 0;
    E_FREE_FUNC(tw_hide_timer, ecore_timer_del);
