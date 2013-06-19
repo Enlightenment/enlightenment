@@ -1245,13 +1245,13 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         mi = e_menu_item_new(mo);
         if (ic->not_in_order)
           {
-             e_menu_item_label_set(mi, _("Add"));
+             e_menu_item_label_set(mi, _("Add to bar"));
              e_util_menu_item_theme_icon_set(mi, "list-add");
              e_menu_item_callback_set(mi, _ibar_cb_menu_icon_stick, ic);
           }
         else
           {
-             e_menu_item_label_set(mi, _("Remove"));
+             e_menu_item_label_set(mi, _("Remove from bar"));
              e_util_menu_item_theme_icon_set(mi, "list-remove");
              e_menu_item_callback_set(mi, _ibar_cb_menu_icon_remove, ic);
           }
