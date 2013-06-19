@@ -395,10 +395,7 @@ e_border_focus_lock_get(void)
 }
 
 EAPI E_Border *
-e_border_new(E_Container *con,
-             Ecore_X_Window win,
-             int first_map,
-             int internal)
+e_border_new(E_Container *con, Ecore_X_Window win, int first_map, int internal)
 {
    E_Border *bd;
    Ecore_X_Window_Attributes *att;
