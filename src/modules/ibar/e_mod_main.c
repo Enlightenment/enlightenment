@@ -139,6 +139,7 @@ Config *ibar_config = NULL;
 static inline const char *
 _desktop_name_get(const Efreet_Desktop *desktop)
 {
+   if (!desktop) return NULL;
    return desktop->orig_path ?: desktop->name;
 }
 
@@ -2138,6 +2139,7 @@ _ibar_cb_bd_prop(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Border_Property
    Eina_List *l;
    Eina_Bool skip;
 
+   if ((!ev->border->exe_inst) || (!ev->border->exe_inst->desktop)) return ECORE_CALLBACK_RENEW;
    skip = ev->border->client.netwm.state.skip_taskbar;
    EINA_LIST_FOREACH(ibars, l, b)
      {
