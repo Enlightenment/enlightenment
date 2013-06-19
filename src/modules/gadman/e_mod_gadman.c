@@ -56,6 +56,7 @@ gadman_reset(void)
    E_Zone *zone;
 
    if (gadman_locked) return;
+   evas_event_freeze(e_comp_get(Man->container)->evas);
    E_FREE_LIST(Man->drag_handlers, ecore_event_handler_del);   
    for (layer = 0; layer < GADMAN_LAYER_COUNT; layer++)
      {
@@ -86,6 +87,15 @@ gadman_reset(void)
 
    _gadman_gadgets = eina_hash_string_superfast_new(NULL);
    gadman_update_bg();
+   Man->visible = !Man->visible;
+   {
+      int prev = Man->conf->anim_bg;
+      Man->conf->anim_bg = 0;
+      gadman_gadgets_toggle();
+      Man->conf->anim_bg = prev;
+   }
+   edje_object_message_signal_process(Man->full_bg);
+   evas_event_thaw(e_comp_get(Man->container)->evas);
 }
 
 void
