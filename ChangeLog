@@ -1,3 +1,7 @@
+2013-06-19 Mike Blumenkrantz
+
+        * added check changed to shelf config dialog
+
 2013-06-18 Mike Blumenkrantz
 
         * fixed crash when multiple windows shared a remember
