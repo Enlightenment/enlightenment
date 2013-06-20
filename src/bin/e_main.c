@@ -151,7 +151,15 @@ _xdg_data_dirs_augment(void)
      }
 
    if (!getenv("XDG_RUNTIME_DIR"))
-     e_util_env_set("XDG_RUNTIME_DIR", "/tmp");
+     {
+        char        buf[PATH_MAX];
+        const char *dir;
+
+        snprintf(buf, sizeof(buf), "/tmp/xdg_runtime_XXXXXX");
+        dir = mkdtemp(buf);
+        if (!dir) dir = "/tmp";
+        e_util_env_set("XDG_RUNTIME_DIR", dir);
+     }
 }
 
 static void
