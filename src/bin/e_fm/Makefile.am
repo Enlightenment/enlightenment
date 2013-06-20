@@ -22,7 +22,9 @@ enlightenment_fm
 if HAVE_UDISKS_MOUNT
 udisks_s = \
 e_fm_main_udisks.h \
-e_fm_main_udisks.c
+e_fm_main_udisks.c \
+e_fm_main_udisks2.h \
+e_fm_main_udisks2.c
 else
 udisks_s =
 endif

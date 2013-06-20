@@ -147,6 +147,7 @@ Improvements:
     * added dnd support for text/x-moz-url
     * filemanager dnd operations now show all files when dragging
     * added check changed to shelf config dialog
+    * udisks2 support
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.

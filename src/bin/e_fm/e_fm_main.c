@@ -56,6 +56,7 @@ void *alloca (size_t);
 #include "e_fm_shared_device.h"
 #ifdef HAVE_UDISKS_MOUNT
 # include "e_fm_main_udisks.h"
+# include "e_fm_main_udisks2.h"
 #endif
 #ifdef HAVE_EEZE_MOUNT
 # include "e_fm_main_eeze.h"
@@ -91,7 +92,7 @@ static void
 _e_fm_init(void)
 {
 # ifdef HAVE_UDISKS_MOUNT
-   _e_fm_main_udisks_init();
+   _e_fm_main_udisks2_init();
 # else
 #  ifdef HAVE_EEZE_MOUNT
    _e_fm_main_eeze_init();
@@ -104,6 +105,7 @@ static void
 _e_fm_shutdown(void)
 {
 # ifdef HAVE_UDISKS_MOUNT
+   _e_fm_main_udisks2_shutdown();
    _e_fm_main_udisks_shutdown();
 # else
 #  ifdef HAVE_EEZE_MOUNT
@@ -172,6 +174,18 @@ _e_fm_main_udisks_catch(Eina_Bool usable)
    mode = EFM_MODE_USING_EEZE_MOUNT;
 # endif
 }
+
+void
+_e_fm_main_udisks2_catch(Eina_Bool usable)
+{
+   if (usable)
+     {
+        mode = EFM_MODE_USING_UDISKS2_MOUNT;
+        return;
+     }
+   _e_fm_main_udisks_init();
+   mode = EFM_MODE_USING_UDISKS_MOUNT;
+}
 #endif
 
 void
@@ -197,6 +211,9 @@ e_volume_mount(E_Volume *v)
      case EFM_MODE_USING_UDISKS_MOUNT:
        _e_fm_main_udisks_volume_mount(v);
        break;
+     case EFM_MODE_USING_UDISKS2_MOUNT:
+       _e_fm_main_udisks2_volume_mount(v);
+       break;
 #endif
 #ifdef HAVE_EEZE_MOUNT
      case EFM_MODE_USING_EEZE_MOUNT:
@@ -219,6 +236,9 @@ e_volume_unmount(E_Volume *v)
      case EFM_MODE_USING_UDISKS_MOUNT:
        _e_fm_main_udisks_volume_unmount(v);
        break;
+     case EFM_MODE_USING_UDISKS2_MOUNT:
+       _e_fm_main_udisks2_volume_unmount(v);
+       break;
 #endif
 #ifdef HAVE_EEZE_MOUNT
      case EFM_MODE_USING_EEZE_MOUNT:
@@ -240,6 +260,9 @@ e_volume_eject(E_Volume *v)
      case EFM_MODE_USING_UDISKS_MOUNT:
        _e_fm_main_udisks_volume_eject(v);
        break;
+     case EFM_MODE_USING_UDISKS2_MOUNT:
+       _e_fm_main_udisks2_volume_eject(v);
+       break;
 #endif
 #ifdef HAVE_EEZE_MOUNT
      case EFM_MODE_USING_EEZE_MOUNT:
@@ -260,6 +283,8 @@ e_volume_find(const char *udi)
 #ifdef HAVE_UDISKS_MOUNT
       case EFM_MODE_USING_UDISKS_MOUNT:
         return _e_fm_main_udisks_volume_find(udi);
+      case EFM_MODE_USING_UDISKS2_MOUNT:
+        return _e_fm_main_udisks2_volume_find(udi);
 #endif
 #ifdef HAVE_EEZE_MOUNT
       case EFM_MODE_USING_EEZE_MOUNT:
@@ -281,6 +306,9 @@ e_storage_del(const char *udi)
      case EFM_MODE_USING_UDISKS_MOUNT:
        _e_fm_main_udisks_storage_del(udi);
        break;
+     case EFM_MODE_USING_UDISKS2_MOUNT:
+       _e_fm_main_udisks2_storage_del(udi);
+       break;
 #endif
 #ifdef HAVE_EEZE_MOUNT
      case EFM_MODE_USING_EEZE_MOUNT:
@@ -301,6 +329,8 @@ e_storage_find(const char *udi)
 #ifdef HAVE_UDISKS_MOUNT
      case EFM_MODE_USING_UDISKS_MOUNT:
        return _e_fm_main_udisks_storage_find(udi);
+     case EFM_MODE_USING_UDISKS2_MOUNT:
+       return _e_fm_main_udisks2_storage_find(udi);
 #endif
 #ifdef HAVE_EEZE_MOUNT
      case EFM_MODE_USING_EEZE_MOUNT:
