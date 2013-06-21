@@ -1224,8 +1224,10 @@ _e_fm_main_udisks2_shutdown(void)
         eldbus_object_unref(obj);
      }
    if (_e_fm_main_udisks2_conn)
-     eldbus_connection_unref(_e_fm_main_udisks2_conn);
-   eldbus_shutdown();
+     {
+        eldbus_connection_unref(_e_fm_main_udisks2_conn);
+        eldbus_shutdown();
+     }
 }
 
 E_Storage *
