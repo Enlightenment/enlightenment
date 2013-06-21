@@ -233,6 +233,7 @@ e_exec_phony(E_Border *bd)
    inst->ref = 1;
    inst->phony = 1;
    inst->desktop = bd->desktop;
+   inst->startup_id = bd->client.netwm.startup_id;
    if (bd->desktop)
      {
         efreet_desktop_ref(bd->desktop);
