@@ -818,7 +818,7 @@ _e_int_menus_apps_scan(E_Menu *m, Efreet_Menu *menu)
      }
 }
 
-#if (EFREET_VERSION_MINOR > 1) || (EFREET_VERSION_MINOR >= 8)
+#if (EFREET_VERSION_MAJOR > 1) || (EFREET_VERSION_MINOR >= 8)
 static void
 _e_int_menus_app_thread_notify_cb(void *data, Efreet_Menu *menu)
 {
