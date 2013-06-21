@@ -152,7 +152,6 @@ _xdg_data_dirs_augment(void)
 
    if (!getenv("XDG_RUNTIME_DIR"))
      {
-        char        buf[PATH_MAX];
         const char *dir;
 
         snprintf(buf, sizeof(buf), "/tmp/xdg_runtime_XXXXXX");
