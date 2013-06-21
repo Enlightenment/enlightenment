@@ -809,23 +809,27 @@ tw_show_helper(Evas_Object *o, int w, int h)
    else
      {
         E_Border *bd = e_border_find_by_client_window(tw_win);
+        int x, y;
+
+        x = bd->x + bd->client_inset.l + last_coords.x;
+        y = bd->y + bd->client_inset.t + last_coords.y;
         /* prefer tooltip left of last_coords */
-        px = bd->x + last_coords.x - pw - 3;
+        px = x - pw - 3;
         /* if it's offscreen, try right of last_coords */
-        if (px < 0) px = bd->x + last_coords.x + 3;
+        if (px < 0) px = x + 3;
         /* fuck this, stick it right on the last_coords */
         if (px + pw + 3 > tw_mod->pop->zone->w)
-          px = (bd->x + last_coords.x / 2) - (pw / 2);
+          px = (x / 2) - (pw / 2);
         /* give up */
         if (px < 0) px = 0;
 
         /* prefer tooltip above last_coords */
-        py = bd->y + last_coords.y - ph - 3;
+        py = y - ph - 3;
         /* if it's offscreen, try below last_coords */
-        if (py < 0) py = bd->y + last_coords.y + 3;
+        if (py < 0) py = y + 3;
         /* fuck this, stick it right on the last_coords */
         if (py + ph + 3 > tw_mod->pop->zone->h)
-          py = (bd->y + last_coords.y / 2) - (ph / 2);
+          py = (y / 2) - (ph / 2);
         /* give up */
         if (py < 0) py = 0;
      }
