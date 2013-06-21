@@ -1696,6 +1696,7 @@ _e_menu_realize(E_Menu *m)
 
    if (m->parent_item && m->parent_item->menu)
      m->zone = m->parent_item->menu->zone;
+   if (!m->zone) return; //menu not ready!
    m->evas = e_comp_get(m)->evas;
    m->shape = e_container_shape_add(m->zone->container);
    evas_event_freeze(m->evas);
