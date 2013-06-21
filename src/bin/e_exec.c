@@ -703,6 +703,7 @@ _e_exec_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
      return ECORE_CALLBACK_PASS_ON;
    inst = ecore_exe_data_get(ev->exe);
    if (!inst) return ECORE_CALLBACK_PASS_ON;
+   if (inst->phony) return ECORE_CALLBACK_RENEW;
 
    /* /bin/sh uses this if cmd not found */
    if ((ev->exited) &&
