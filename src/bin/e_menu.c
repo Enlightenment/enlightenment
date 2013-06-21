@@ -1161,45 +1161,43 @@ e_menu_idler_before(void)
      {
         if (m->frozen) continue;
         if (!m->realized) _e_menu_realize(m);
-        if (m->realized)
+        if (!m->realized) continue;
+        if (((m->cur.w) != (m->prev.w)) ||
+            ((m->cur.h) != (m->prev.h)))
           {
-             if (((m->cur.w) != (m->prev.w)) ||
-                 ((m->cur.h) != (m->prev.h)))
-               {
-                  int w, h;
+             int w, h;
 
-                  m->prev.w = m->cur.w;
-                  m->prev.h = m->cur.h;
-                  w = m->cur.w;
-                  h = m->cur.h;
-                  if (m->cw)
-                    e_comp_win_resize(m->cw, w, h);
-               }
-             if (((m->cur.x) != (m->prev.x)) ||
-                 ((m->cur.y) != (m->prev.y)))
+             m->prev.w = m->cur.w;
+             m->prev.h = m->cur.h;
+             w = m->cur.w;
+             h = m->cur.h;
+             if (m->cw)
+               e_comp_win_resize(m->cw, w, h);
+          }
+        if (((m->cur.x) != (m->prev.x)) ||
+            ((m->cur.y) != (m->prev.y)))
+          {
+             if (!m->parent_item)
                {
-                  if (!m->parent_item)
+                  int x, y, w, h;
+
+                  e_zone_useful_geometry_get(m->zone, &x, &y, &w, &h);
+                  if (m->cur.w <= w)
                     {
-                       int x, y, w, h;
-
-                       e_zone_useful_geometry_get(m->zone, &x, &y, &w, &h);
-                       if (m->cur.w <= w)
-                         {
-                            if ((m->cur.x + m->cur.w) > (x + w))
-                              m->cur.x = x + w - m->cur.w;
-                         }
-                       if (m->cur.h <= h)
-                         {
-                            if ((m->cur.y + m->cur.h) > (y + h))
-                              m->cur.y = y + h - m->cur.h;
-                         }
+                       if ((m->cur.x + m->cur.w) > (x + w))
+                         m->cur.x = x + w - m->cur.w;
                     }
-                  m->prev.x = m->cur.x;
-                  m->prev.y = m->cur.y;
-                  if (m->cw)
-                    e_comp_win_move(m->cw, m->cur.x, m->cur.y);
-
+                  if (m->cur.h <= h)
+                    {
+                       if ((m->cur.y + m->cur.h) > (y + h))
+                         m->cur.y = y + h - m->cur.h;
+                    }
                }
+             m->prev.x = m->cur.x;
+             m->prev.y = m->cur.y;
+             if (m->cw)
+               e_comp_win_move(m->cw, m->cur.x, m->cur.y);
+
           }
      }
    /* phase 3. show all the menus that want to be shown */
