@@ -84,6 +84,8 @@ _backlight_win_key_down_cb(void *data, Ecore_Event_Key *ev)
         inst->val = v;
         e_backlight_mode_set(inst->gcc->gadcon->zone, E_BACKLIGHT_MODE_NORMAL);
         e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
+        e_config->backlight.normal = v;
+        e_config_save_queue();
         _backlight_gadget_update(inst);
      }
    else if ((!strcmp(keysym, "Down")) ||
@@ -101,6 +103,8 @@ _backlight_win_key_down_cb(void *data, Ecore_Event_Key *ev)
         inst->val = v;
         e_backlight_mode_set(inst->gcc->gadcon->zone, E_BACKLIGHT_MODE_NORMAL);
         e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
+        e_config->backlight.normal = v;
+        e_config_save_queue();
         _backlight_gadget_update(inst);
      }
    else if ((!strcmp(keysym, "0")) ||
@@ -119,6 +123,8 @@ _backlight_win_key_down_cb(void *data, Ecore_Event_Key *ev)
         inst->val = v;
         e_backlight_mode_set(inst->gcc->gadcon->zone, E_BACKLIGHT_MODE_NORMAL);
         e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
+        e_config->backlight.normal = v;
+        e_config_save_queue();
         _backlight_gadget_update(inst);
      }
    else
@@ -127,7 +133,7 @@ _backlight_win_key_down_cb(void *data, Ecore_Event_Key *ev)
         E_Config_Binding_Key *binding;
         E_Binding_Modifier mod;
 
-	       EINA_LIST_FOREACH(e_bindings->key_bindings, l, binding)
+        EINA_LIST_FOREACH(e_bindings->key_bindings, l, binding)
           {
              if (binding->action && strcmp(binding->action, "backlight")) continue;
              
@@ -168,6 +174,8 @@ _slider_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Instance *inst = data;
    e_backlight_mode_set(inst->gcc->gadcon->zone, E_BACKLIGHT_MODE_NORMAL);
    e_backlight_level_set(inst->gcc->gadcon->zone, inst->val, 0.0);
+   e_config->backlight.normal = inst->val;
+   e_config_save_queue();
 }
 
 static void
@@ -271,6 +279,8 @@ _backlight_level_decrease(Instance *inst)
    double v = inst->val - 0.1;
    if (v < 0.0) v = 0.0;
    e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
+   e_config->backlight.normal = v;
+   e_config_save_queue();
 }
 
 static void
@@ -279,6 +289,8 @@ _backlight_level_increase(Instance *inst)
    double v = inst->val + 0.1;
    if (v > 1.0) v = 1.0;
    e_backlight_level_set(inst->gcc->gadcon->zone, v, 0.0);
+   e_config->backlight.normal = v;
+   e_config_save_queue();
 }
 
 static void
