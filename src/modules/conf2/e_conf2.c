@@ -1155,7 +1155,7 @@ e_conf2_show(E_Container *con EINA_UNUSED, const char *params)
    EXPAND(o);
    elm_win_resize_object_add(win, o);
    evas_object_show(o);
-   1 | evas_object_key_grab(win, "Escape", 0, 0, 1);
+   if (!evas_object_key_grab(win, "Escape", 0, 0, 1)) ERR("Grabbing Escape failed");
    evas_object_event_callback_add(win, EVAS_CALLBACK_KEY_DOWN, _e_conf2_key, NULL);
    /* FIXME this is insane */
    ecore_evas_name_class_set(ecore_evas_ecore_evas_get(evas_object_evas_get(win)), "conf2", "_configure");
