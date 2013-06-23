@@ -2,6 +2,7 @@
 Name=Root
 Name[eo]=Radiko
 Name[ru]=Корневой каталог
+Name[sr]=Корен
 Comment=The Root Filesystem base
 Comment[eo]=La radika dosiersistemo
 Comment[es]=El sistema de archivos root
@@ -10,6 +11,7 @@ Comment[gl]=O sistema de ficheiros root
 Comment[it]=Il filesystem principale
 Comment[pt]=O sistema de ficheiros root
 Comment[ru]=Корень файловой системы
+Comment[sr]=Корен, основа свих датотека
 Type=Link
 X-Enlightenment-Type=Mount
 URL=file:/
