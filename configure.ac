@@ -672,7 +672,7 @@ define([CHECK_MODULE_TEMPERATURE],
   AC_E_CHECK_PKG(TEMPERATURE, [ ecore >= $efl_version ecore-file >= $efl_version eina >= $efl_version ], [], [TEMPERATURE=false])
 ])
 
-AM_CONDITIONAL(MUSIC_CONTROL, false)
+AM_CONDITIONAL(HAVE_MUSIC_CONTROL, false)
 define([CHECK_MODULE_MUSIC_CONTROL],
 [
   AC_E_CHECK_PKG(MUSIC_CONTROL, [ ecore >= $efl_version eina >= $efl_version eldbus ], [], [MUSIC_CONTROL=false])
