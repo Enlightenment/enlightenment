@@ -1,10 +1,34 @@
 #include "e.h"
 
 /* local function prototypes */
-static void _e_buffer_cb_destroy(struct wl_listener *listener, void *data);
+static void _e_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
+static void _e_buffer_reference_cb_destroy(struct wl_listener *listener, void *data);
+
+EAPI E_Buffer *
+e_buffer_resource_get(struct wl_resource *resource)
+{
+   E_Buffer *buffer;
+   struct wl_listener *listener;
+
+   listener = wl_resource_get_destroy_listener(resource, _e_buffer_cb_destroy);
+   if (listener)
+     buffer = container_of(listener, E_Buffer, buffer_destroy);
+   else
+     {
+        if (!(buffer = E_NEW_RAW(E_Buffer, 1)))
+          return NULL;
+
+        buffer->wl.resource = resource;
+        wl_signal_init(&buffer->signals.destroy);
+        buffer->buffer_destroy.notify = _e_buffer_cb_destroy;
+        wl_resource_add_destroy_listener(resource, &buffer->buffer_destroy);
+     }
+
+   return buffer;
+}
 
 EAPI void 
-e_buffer_reference(E_Buffer_Reference *br, struct wl_buffer *buffer)
+e_buffer_reference(E_Buffer_Reference *br, E_Buffer *buffer)
 {
    /* check for valid buffer reference */
    if (!br) return;
@@ -17,7 +41,7 @@ e_buffer_reference(E_Buffer_Reference *br, struct wl_buffer *buffer)
         if (br->buffer->busy_count == 0)
           {
              /* queue a release event */
-             wl_resource_queue_event(&br->buffer->resource, 
+             wl_resource_queue_event(br->buffer->wl.resource, 
                                      WL_BUFFER_RELEASE);
           }
 
@@ -31,25 +55,37 @@ e_buffer_reference(E_Buffer_Reference *br, struct wl_buffer *buffer)
         buffer->busy_count++;
 
         /* setup destroy listener */
-        wl_signal_add(&buffer->resource.destroy_signal, &br->buffer_destroy);
+        wl_signal_add(&buffer->signals.destroy, &br->buffer_destroy);
      }
 
    br->buffer = buffer;
-   br->buffer_destroy.notify = _e_buffer_cb_destroy;
+   br->buffer_destroy.notify = _e_buffer_reference_cb_destroy;
 }
 
 /* local functions */
 static void 
-_e_buffer_cb_destroy(struct wl_listener *listener, void *data)
+_e_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Buffer *buffer;
+
+   /* try to get the buffer_reference structure from the listener */
+   if (!(buffer = container_of(listener, E_Buffer, buffer_destroy)))
+     return;
+
+   wl_signal_emit(&buffer->signals.destroy, buffer);
+
+   E_FREE(buffer);
+}
+
+static void 
+_e_buffer_reference_cb_destroy(struct wl_listener *listener, void *data)
 {
    E_Buffer_Reference *br;
 
-   /* try to get the buffer_reference structure from the listener */
    if (!(br = container_of(listener, E_Buffer_Reference, buffer_destroy)))
      return;
 
-   /* if this buffer is not equal to the one referenced, then get out */
-   if ((struct wl_buffer *)data != br->buffer) return;
+   if ((E_Buffer *)data != br->buffer) return;
 
    br->buffer = NULL;
 }
