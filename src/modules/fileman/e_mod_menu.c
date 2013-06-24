@@ -33,16 +33,17 @@ _e_mod_menu_gtk_cb(void           *data,
 static void
 _e_mod_menu_virtual_cb(void           *data,
                        E_Menu         *m,
-                       E_Menu_Item *mi __UNUSED__)
+                       E_Menu_Item *mi)
 {
    Evas_Object *fm;
+   Eina_Stringshare *path = e_object_data_get(E_OBJECT(mi));
 
    m = _e_mod_menu_top_get(m);
    fm = e_object_data_get(E_OBJECT(m));
    if (fm && ((fileman_config->view.open_dirs_in_place && evas_object_data_get(fm, "page_is_window")) ||
        (fileman_config->view.desktop_navigation && evas_object_data_get(fm, "page_is_zone"))))
-     e_fm2_path_set(fm, data, "/");
-   else if (m->zone) e_fwin_new(m->zone->container, data, "/");
+     e_fm2_path_set(fm, data, path ?: "/");
+   else if (m->zone) e_fwin_new(m->zone->container, data, path ?: "/");
 }
 
 static void
@@ -234,11 +235,17 @@ _e_mod_menu_populate_done(void *data, Eio_File *handler __UNUSED__)
    if (!m->items)
      {
         E_Menu_Item *mi;
+        Eina_Stringshare *dev, *path;
 
         mi = e_menu_item_new(m);
         e_menu_item_label_set(mi, _("No listable items"));
-        e_object_data_set(E_OBJECT(mi), eina_stringshare_ref(e_object_data_get(data)));
-        e_menu_item_callback_set(mi, _e_mod_menu_populate_cb, NULL);
+        dev = e_object_data_get(data);
+        path = e_object_data_get(E_OBJECT(e_menu_item_active_get()));
+        e_object_data_set(E_OBJECT(mi), eina_stringshare_ref(path));
+        if (dev && (dev[0] == '/'))
+          e_menu_item_callback_set(mi, _e_mod_menu_populate_cb, dev);
+        else
+          e_menu_item_callback_set(mi, _e_mod_menu_virtual_cb, dev);
      }
    else
      m->items = eina_list_sort(m->items, 0, (Eina_Compare_Cb)_e_mod_menu_populate_sort);
