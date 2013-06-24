@@ -501,8 +501,11 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
                   /* something fucked us and the pixmap came back with the wrong size
                    * fix it by forcing a resize in e_border
                    */
-                  BD_CHANGED(cw->bd);
-                  cw->bd->changes.size = 1;
+                  if (!e_object_is_del(E_OBJECT(cw->bd)))
+                    {
+                       BD_CHANGED(cw->bd);
+                       cw->bd->changes.size = 1;
+                    }
                }
           }
         else
