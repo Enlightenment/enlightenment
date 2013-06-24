@@ -267,6 +267,7 @@ _e_renderer_cb_attach(E_Surface *surface, struct wl_buffer *buffer)
    Evas_Coord w = 0, h = 0;
    void *data;
    int stride = 0;
+   struct wl_shm_buffer *shm_buffer;
 
    state = surface->state;
 
@@ -277,7 +278,13 @@ _e_renderer_cb_attach(E_Surface *surface, struct wl_buffer *buffer)
 
    if (!buffer) return;
 
-   switch (wl_shm_buffer_get_format(buffer))
+   if (!(shm_buffer = wl_shm_buffer_get(&buffer->resource)))
+     {
+        e_buffer_reference(&state->buffer_reference, NULL);
+        return;
+     }
+
+   switch (wl_shm_buffer_get_format(shm_buffer))
      {
       case WL_SHM_FORMAT_XRGB8888:
         format = PIXMAN_x8r8g8b8;
@@ -287,10 +294,10 @@ _e_renderer_cb_attach(E_Surface *surface, struct wl_buffer *buffer)
         break;
      }
 
-   w = wl_shm_buffer_get_width(buffer);
-   h = wl_shm_buffer_get_height(buffer);
-   data = wl_shm_buffer_get_data(buffer);
-   stride = wl_shm_buffer_get_stride(buffer);
+   w = wl_shm_buffer_get_width(shm_buffer);
+   h = wl_shm_buffer_get_height(shm_buffer);
+   data = wl_shm_buffer_get_data(shm_buffer);
+   stride = wl_shm_buffer_get_stride(shm_buffer);
 
    state->image = pixman_image_create_bits(format, w, h, data, stride);
 }

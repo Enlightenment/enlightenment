@@ -191,7 +191,7 @@ e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque)
    if (es->buffer.reference.buffer)
      {
         /* if this is an shm buffer, flush any pending damage */
-        if (wl_buffer_is_shm(es->buffer.reference.buffer))
+        if (wl_shm_buffer_get(es->buffer.reference.buffer))
           {
              if (_e_comp->renderer->damage_flush)
                _e_comp->renderer->damage_flush(es);
