@@ -8051,7 +8051,11 @@ _e_border_eval0(E_Border *bd)
              if ((bd->new_client) && (bd->internal) &&
                  (bd->internal_ecore_evas))
                ecore_evas_show(bd->internal_ecore_evas);
+          }
+        if (bd->new_client)
+          {
              ecore_x_window_show(bd->client.win);
+             _e_border_show(bd);
           }
         bd->need_reparent = 0;
      }
