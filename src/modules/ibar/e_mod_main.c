@@ -1346,6 +1346,11 @@ _ibar_instance_watch(void *data, E_Exec_Instance *inst, E_Exec_Watch_Type type)
 static void
 _ibar_icon_go(IBar_Icon *ic, Eina_Bool keep_going)
 {
+   if (ic->not_in_order)
+     {
+        ecore_job_add((Ecore_Cb)_ibar_cb_icon_menu_cb, ic);
+        return;
+     }
    if (ic->app->type == EFREET_DESKTOP_TYPE_APPLICATION)
      {
         if (ic->ibar->inst->ci->dont_track_launch)
