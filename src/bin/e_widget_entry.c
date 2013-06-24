@@ -196,9 +196,12 @@ static void
 _e_wid_del_hook(Evas_Object *obj)
 {
    E_Widget_Data *wd;
+   E_Pointer *p;
 
    if (!(obj) || (!(wd = e_widget_data_get(obj))))
      return;
+   p = e_widget_pointer_get(obj);
+   if (p) e_pointer_type_pop(p, obj, NULL);
    evas_object_del(wd->o_entry);
    evas_object_del(wd->o_inout);
    wd->o_entry = NULL;
