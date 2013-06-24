@@ -4276,7 +4276,6 @@ e_border_resize_cancel(void)
           }
         else
           {
-             bdresize->resize_mode = E_POINTER_RESIZE_NONE;
              _e_border_resize_end(bdresize);
           }
      }
