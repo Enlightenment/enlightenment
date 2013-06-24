@@ -29,7 +29,7 @@ struct _E_Surface
 
    struct 
      {
-        struct wl_buffer *buffer;
+        E_Buffer *buffer;
         struct wl_listener buffer_destroy;
         struct wl_list frames;
 
@@ -76,7 +76,7 @@ struct _E_Surface_Frame
 };
 
 EAPI E_Surface *e_surface_new(struct wl_client *client, unsigned int id);
-EAPI void e_surface_attach(E_Surface *es, struct wl_buffer *buffer);
+EAPI void e_surface_attach(E_Surface *es, E_Buffer *buffer);
 EAPI void e_surface_unmap(E_Surface *es);
 EAPI void e_surface_damage(E_Surface *es);
 EAPI void e_surface_damage_below(E_Surface *es);

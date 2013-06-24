@@ -82,7 +82,7 @@ struct _E_Renderer
    void (*output_buffer_set)(E_Output *output, pixman_image_t *buffer);
    void (*output_repaint)(E_Output *output, pixman_region32_t *damage);
    void (*damage_flush)(E_Surface *surface);
-   void (*attach)(E_Surface *surface, struct wl_buffer *buffer);
+   void (*attach)(E_Surface *surface, E_Buffer *buffer);
    Eina_Bool (*output_create)(E_Output *output, unsigned int window);
    void (*output_destroy)(E_Output *output);
    Eina_Bool (*surface_create)(E_Surface *surface);

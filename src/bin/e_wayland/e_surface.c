@@ -1,4 +1,4 @@
-#include "e.h"
+ #include "e.h"
 
 /* local function prototypes */
 static void _e_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
@@ -65,7 +65,7 @@ e_surface_new(struct wl_client *client, unsigned int id)
 }
 
 EAPI void 
-e_surface_attach(E_Surface *es, struct wl_buffer *buffer)
+e_surface_attach(E_Surface *es, E_Buffer *buffer)
 {
    /* check for valid surface */
    if (!es) return;
@@ -191,7 +191,7 @@ e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque)
    if (es->buffer.reference.buffer)
      {
         /* if this is an shm buffer, flush any pending damage */
-        if (wl_shm_buffer_get(&es->buffer.reference.buffer->resource))
+        if (wl_shm_buffer_get(es->buffer.reference.buffer->wl.resource))
           {
              if (_e_comp->renderer->damage_flush)
                _e_comp->renderer->damage_flush(es);
@@ -300,13 +300,13 @@ static void
 _e_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int x, int y)
 {
    E_Surface *es;
-   struct wl_buffer *buffer = NULL;
+   E_Buffer *buffer = NULL;
 
    /* try to cast the resource to our surface */
    if (!(es = wl_resource_get_user_data(resource))) return;
 
    /* if we have a buffer resource, get a wl_buffer from it */
-   if (buffer_resource) buffer = buffer_resource->data;
+   if (buffer_resource) buffer = e_buffer_resource_get(buffer_resource);
 
    /* if we have a previous pending buffer, remove it
     * 
@@ -323,8 +323,7 @@ _e_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *r
 
    /* if we have a valid pending buffer, setup a destroy listener */
    if (buffer) 
-     wl_signal_add(&buffer->resource.destroy_signal, 
-                   &es->pending.buffer_destroy);
+     wl_signal_add(&buffer->signals.destroy, &es->pending.buffer_destroy);
 }
 
 static void 
@@ -357,8 +356,8 @@ _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    /* if we have a referenced buffer, get it's size */
    if (es->buffer.reference.buffer)
      {
-        bw = es->buffer.reference.buffer->width;
-        bh = es->buffer.reference.buffer->height;
+        bw = es->buffer.reference.buffer->w;
+        bh = es->buffer.reference.buffer->h;
      }
 
    /* if we attached a new buffer, call the surface configure function */

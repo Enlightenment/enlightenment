@@ -43,7 +43,7 @@ static Eina_Bool _e_renderer_cb_pixels_read(E_Output *output, int format, void *
 static void _e_renderer_cb_output_buffer_set(E_Output *output, pixman_image_t *buffer);
 static void _e_renderer_cb_output_repaint(E_Output *output, pixman_region32_t *damage);
 static void _e_renderer_cb_damage_flush(E_Surface *surface);
-static void _e_renderer_cb_attach(E_Surface *surface, struct wl_buffer *buffer);
+static void _e_renderer_cb_attach(E_Surface *surface, E_Buffer *buffer);
 static Eina_Bool _e_renderer_cb_output_create(E_Output *output, unsigned int window);
 static void _e_renderer_cb_output_destroy(E_Output *output);
 static Eina_Bool _e_renderer_cb_surface_create(E_Surface *surface);
@@ -260,7 +260,7 @@ _e_renderer_cb_damage_flush(E_Surface *surface)
 }
 
 static void 
-_e_renderer_cb_attach(E_Surface *surface, struct wl_buffer *buffer)
+_e_renderer_cb_attach(E_Surface *surface, E_Buffer *buffer)
 {
    E_Renderer_Surface_State *state;
    pixman_format_code_t format = 0;
@@ -278,7 +278,7 @@ _e_renderer_cb_attach(E_Surface *surface, struct wl_buffer *buffer)
 
    if (!buffer) return;
 
-   if (!(shm_buffer = wl_shm_buffer_get(&buffer->resource)))
+   if (!(shm_buffer = wl_shm_buffer_get(buffer->wl.resource)))
      {
         e_buffer_reference(&state->buffer_reference, NULL);
         return;
@@ -294,12 +294,14 @@ _e_renderer_cb_attach(E_Surface *surface, struct wl_buffer *buffer)
         break;
      }
 
-   w = wl_shm_buffer_get_width(shm_buffer);
-   h = wl_shm_buffer_get_height(shm_buffer);
+   buffer->shm_buffer = shm_buffer;
+   buffer->w = wl_shm_buffer_get_width(shm_buffer);
+   buffer->h = wl_shm_buffer_get_height(shm_buffer);
    data = wl_shm_buffer_get_data(shm_buffer);
    stride = wl_shm_buffer_get_stride(shm_buffer);
 
-   state->image = pixman_image_create_bits(format, w, h, data, stride);
+   state->image = 
+     pixman_image_create_bits(format, buffer->w, buffer->h, data, stride);
 }
 
 static Eina_Bool 
