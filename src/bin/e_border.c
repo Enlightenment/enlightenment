@@ -4894,8 +4894,11 @@ _e_border_del(E_Border *bd)
 
    if (bd->fullscreen) bd->desk->fullscreen_borders--;
 
-   if (bd->moving) e_border_act_move_end(bd, NULL);
-   else if (bd->resize_mode != E_POINTER_RESIZE_NONE) e_border_act_resize_end(bd, NULL);
+   if (bd->cur_mouse_action)
+     {
+        if (bd->cur_mouse_action->func.end)
+          bd->cur_mouse_action->func.end(E_OBJECT(bd), "");
+     }
 
    if (warp_timer_border == bd)
      {
