@@ -1444,6 +1444,7 @@ _ibar_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         e_drag_resize(d, w, h);
         e_drag_start(d, ic->drag.x, ic->drag.y);
         i = ic->ibar;
+        e_object_data_set(E_OBJECT(d), i);
         if (!ic->not_in_order)
           e_order_remove(i->io->eo, ic->app);
         _ibar_icon_free(ic);
@@ -1499,9 +1500,17 @@ _ibar_cb_drop_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
 }
 
 static void
-_ibar_cb_drag_finished(E_Drag *drag, int dropped __UNUSED__)
+_ibar_cb_drag_finished(E_Drag *drag, int dropped)
 {
+   IBar *i = e_object_data_get(E_OBJECT(drag));
+
    efreet_desktop_unref(drag->data);
+   if (!dropped)
+     {
+        _ibar_empty(i);
+        _ibar_fill(i);
+        _ibar_resize_handle(i);
+     }
 }
 
 static void
