@@ -8,11 +8,11 @@ typedef struct _E_Region E_Region;
 
 struct _E_Region
 {
-   struct wl_resource resource;
+   struct wl_resource *resource;
    pixman_region32_t region;
 };
 
-EAPI E_Region *e_region_new(unsigned int id);
+EAPI E_Region *e_region_new(struct wl_client *client, unsigned int id);
 
 # endif
 #endif

@@ -14,19 +14,18 @@ static const struct wl_region_interface _e_region_interface =
 };
 
 EAPI E_Region *
-e_region_new(unsigned int id)
+e_region_new(struct wl_client *client, unsigned int id)
 {
    E_Region *reg;
 
    /* try to allocation space for a new region */
    if (!(reg = E_NEW_RAW(E_Region, 1))) return NULL;
 
-   reg->resource.object.id = id;
-   reg->resource.object.interface = &wl_region_interface;
-   reg->resource.object.implementation = (void (**)(void))&_e_region_interface;
-   reg->resource.data = reg;
-
    pixman_region32_init(&reg->region);
+
+   reg->resource = 
+     wl_client_add_object(client, &wl_region_interface, 
+                          &_e_region_interface, id, reg);
 
    return reg;
 }

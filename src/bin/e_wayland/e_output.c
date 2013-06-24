@@ -104,8 +104,8 @@ e_output_repaint(E_Output *output, unsigned int secs)
    /* send surface frame callback done */
    wl_list_for_each_safe(cb, cbnext, &frames, link)
      {
-        wl_callback_send_done(&cb->resource, secs);
-        wl_resource_destroy(&cb->resource);
+        wl_callback_send_done(cb->resource, secs);
+        wl_resource_destroy(cb->resource);
      }
 }
 

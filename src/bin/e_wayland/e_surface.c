@@ -5,7 +5,7 @@ static void _e_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct w
 static void _e_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int x, int y);
 static void _e_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h);
 static void _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
-static void _e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsigned int id);
+static void _e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsigned int callback);
 static void _e_surface_cb_opaque_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource);
 static void _e_surface_cb_input_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource);
 static void _e_surface_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
@@ -132,7 +132,7 @@ e_surface_destroy(E_Surface *es)
 
    /* remove any pending frame callbacks */
    wl_list_for_each_safe(cb, cbnext, &es->pending.frames, link)
-     wl_resource_destroy(&cb->resource);
+     wl_resource_destroy(cb->resource);
 
    pixman_region32_fini(&es->pending.damage);
    pixman_region32_fini(&es->pending.opaque);
@@ -157,7 +157,7 @@ e_surface_destroy(E_Surface *es)
 
    /* remove any active frame callbacks */
    wl_list_for_each_safe(cb, cbnext, &es->frames, link)
-     wl_resource_destroy(&cb->resource);
+     wl_resource_destroy(cb->resource);
 
    /* EINA_LIST_FOREACH(_e_comp->inputs, l, seat) */
    /*   { */
@@ -191,7 +191,7 @@ e_surface_damage_calculate(E_Surface *es, pixman_region32_t *opaque)
    if (es->buffer.reference.buffer)
      {
         /* if this is an shm buffer, flush any pending damage */
-        if (wl_shm_buffer_get(es->buffer.reference.buffer))
+        if (wl_shm_buffer_get(&es->buffer.reference.buffer->resource))
           {
              if (_e_comp->renderer->damage_flush)
                _e_comp->renderer->damage_flush(es);
@@ -303,7 +303,7 @@ _e_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    struct wl_buffer *buffer = NULL;
 
    /* try to cast the resource to our surface */
-   if (!(es = resource->data)) return;
+   if (!(es = wl_resource_get_user_data(resource))) return;
 
    /* if we have a buffer resource, get a wl_buffer from it */
    if (buffer_resource) buffer = buffer_resource->data;
@@ -407,13 +407,13 @@ _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *r
 }
 
 static void 
-_e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsigned int id)
+_e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsigned int callback)
 {
    E_Surface *es;
    E_Surface_Frame *cb;
 
    /* try to cast the resource to our surface */
-   if (!(es = resource->data)) return;
+   if (!(es = wl_resource_get_user_data(resource))) return;
 
    /* try to create a new frame callback */
    if (!(cb = E_NEW_RAW(E_Surface_Frame, 1)))
@@ -422,15 +422,10 @@ _e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsi
         return;
      }
 
-   /* setup the callback object */
-   cb->resource.object.interface = &wl_callback_interface;
-   cb->resource.object.id = id;
-   cb->resource.destroy = _e_surface_frame_cb_destroy;
-   cb->resource.client = client;
-   cb->resource.data = cb;
+   cb->resource = 
+     wl_client_add_object(client, &wl_callback_interface, NULL, callback, cb);
 
-   /* add this callback to the client */
-   wl_client_add_resource(client, &cb->resource);
+   wl_resource_set_destructor(cb->resource, _e_surface_frame_cb_destroy);
 
    /* append the callback to pending frames */
    wl_list_insert(es->pending.frames.prev, &cb->link);
@@ -502,7 +497,7 @@ _e_surface_frame_cb_destroy(struct wl_resource *resource)
    E_Surface_Frame *cb;
 
    /* try to cast the resource to our callback */
-   if (!(cb = resource->data)) return;
+   if (!(cb = wl_resource_get_user_data(resource))) return;
 
    wl_list_remove(&cb->link);
 

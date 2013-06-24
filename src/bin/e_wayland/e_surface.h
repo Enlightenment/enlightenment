@@ -71,7 +71,7 @@ struct _E_Surface
 
 struct _E_Surface_Frame
 {
-   struct wl_resource resource;
+   struct wl_resource *resource;
    struct wl_list link;
 };
 

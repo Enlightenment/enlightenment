@@ -462,15 +462,13 @@ _e_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource,
    if (!(comp = resource->data)) return;
 
    /* try to create a new region */
-   if (!(reg = e_region_new(id)))
+   if (!(reg = e_region_new(client, id)))
      {
         wl_resource_post_no_memory(resource);
         return;
      }
 
-   reg->resource.destroy = _e_comp_cb_region_destroy;
-
-   wl_client_add_resource(client, &reg->resource);
+   wl_resource_set_destructor(reg->resource, _e_comp_cb_region_destroy);
 }
 
 static void 
@@ -479,7 +477,7 @@ _e_comp_cb_region_destroy(struct wl_resource *resource)
    E_Region *reg;
 
    /* try to get the region from this resource */
-   if (!(reg = container_of(resource, E_Region, resource)))
+   if (!(reg = wl_resource_get_user_data(resource)))
      return;
 
    /* free the region */
