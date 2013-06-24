@@ -2144,7 +2144,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
    if (!cw) return NULL;
    cw->win = win;
    cw->c = c;
-   cw->real_hid = 1;
+   cw->real_hid = !bd;
    cw->opacity = 255.0;
    if (conf->grab) ecore_x_grab();
    if (bd)
