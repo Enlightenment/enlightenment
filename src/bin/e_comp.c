@@ -484,7 +484,10 @@ _e_comp_win_geometry_update(E_Comp_Win *cw)
         return;
      }
    if (cw->bd)
-     x = cw->bd->x, y = cw->bd->y;
+     {
+        if (!cw->pixmap) return;
+        x = cw->bd->x, y = cw->bd->y;
+     }
    else if (cw->visible)
      x = cw->x, y = cw->y;
    else
