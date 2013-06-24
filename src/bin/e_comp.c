@@ -3009,7 +3009,7 @@ _e_comp_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         if (cw->free_shape) _e_comp_win_shape_create(cw, cw->x, cw->y, cw->w, cw->h);
      }
    cw->defer_hide = 0;
-   if (cw->visible) return ECORE_CALLBACK_PASS_ON;
+   if (cw->visible || cw->bd) return ECORE_CALLBACK_PASS_ON;
    _e_comp_win_show(cw);
    return ECORE_CALLBACK_PASS_ON;
 }
