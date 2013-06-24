@@ -4899,6 +4899,7 @@ _e_border_del(E_Border *bd)
         if (bd->cur_mouse_action->func.end)
           bd->cur_mouse_action->func.end(E_OBJECT(bd), "");
      }
+   e_pointer_type_pop(e_comp_get(bd)->pointer, bd, NULL);
 
    if (warp_timer_border == bd)
      {
