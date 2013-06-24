@@ -992,11 +992,7 @@ e_border_hide(E_Border *bd,
    if (bd->moving)
      _e_border_move_end(bd);
    if (bd->resize_mode != E_POINTER_RESIZE_NONE)
-     {
-        e_pointer_mode_pop(bd, bd->resize_mode);
-        bd->resize_mode = E_POINTER_RESIZE_NONE;
-        _e_border_resize_end(bd);
-     }
+     _e_border_resize_end(bd);
 
    e_container_shape_hide(bd->shape);
    if (!bd->iconic) e_hints_window_hidden_set(bd);
@@ -3799,8 +3795,6 @@ e_border_act_move_end(E_Border *bd,
    E_OBJECT_CHECK(bd);
    E_OBJECT_TYPE_CHECK(bd, E_BORDER_TYPE);
    if (!bd->moving) return;
-   bd->moving = 0;
-   e_pointer_mode_pop(bd, E_POINTER_MOVE);
    e_zone_edge_enable();
    _e_border_move_end(bd);
    e_zone_flip_coords_handle(bd->zone, -1, -1);
@@ -3867,8 +3861,6 @@ e_border_act_resize_end(E_Border *bd,
    E_OBJECT_TYPE_CHECK(bd, E_BORDER_TYPE);
    if (bd->resize_mode != E_POINTER_RESIZE_NONE)
      {
-        e_pointer_mode_pop(bd, bd->resize_mode);
-        bd->resize_mode = E_POINTER_RESIZE_NONE;
         _e_border_resize_end(bd);
         bd->changes.reset_gravity = 1;
         BD_CHANGED(bd);
@@ -4384,8 +4376,6 @@ e_border_signal_move_end(E_Border *bd,
    E_OBJECT_CHECK(bd);
    E_OBJECT_TYPE_CHECK(bd, E_BORDER_TYPE);
    if (!bd->moving) return;
-   bd->moving = 0;
-   e_pointer_mode_pop(bd, E_POINTER_MOVE);
    e_zone_edge_enable();
    _e_border_move_end(bd);
    e_zone_flip_coords_handle(bd->zone, -1, -1);
@@ -4482,8 +4472,6 @@ e_border_signal_resize_end(E_Border *bd,
    E_OBJECT_TYPE_CHECK(bd, E_BORDER_TYPE);
    if (bd->resize_mode == E_POINTER_RESIZE_NONE) return;
    _e_border_resize_handle(bd);
-   e_pointer_mode_pop(bd, bd->resize_mode);
-   bd->resize_mode = E_POINTER_RESIZE_NONE;
    _e_border_resize_end(bd);
    bd->changes.reset_gravity = 1;
    BD_CHANGED(bd);
@@ -4676,7 +4664,7 @@ _e_border_free(E_Border *bd)
         bd->post_job = NULL;
      }
 
-   if (bdresize == bd)
+   if ((bdresize == bd) || (bd->resize_mode != E_POINTER_RESIZE_NONE))
      _e_border_resize_end(bd);
    if (bdmove == bd)
      _e_border_move_end(bd);
@@ -9615,7 +9603,8 @@ _e_border_resize_end(E_Border *bd)
         EINA_LIST_FREE(bd->pending_move_resize, pnd)
           E_FREE(pnd);
      }
-
+   e_pointer_mode_pop(bd, bd->resize_mode);
+   bd->resize_mode = E_POINTER_RESIZE_NONE;
    _e_border_hook_call(E_BORDER_HOOK_RESIZE_END, bd);
 
    bdresize = NULL;
@@ -9680,6 +9669,8 @@ _e_border_move_end(E_Border *bd)
         bd->client.netwm.sync.alarm = 0;
      }
 #endif
+   e_pointer_mode_pop(bd, E_POINTER_MOVE);
+   bd->moving = 0;
    _e_border_hook_call(E_BORDER_HOOK_MOVE_END, bd);
 
    bdmove = NULL;
