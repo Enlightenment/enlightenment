@@ -972,6 +972,8 @@ e_border_show(E_Border *bd)
    ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_MAPPED, &visible, 1);
    ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_MANAGED, &visible, 1);
 
+   if (bd->new_client) return;
+
    ev = E_NEW(E_Event_Border_Show, 1);
    ev->border = bd;
    e_object_ref(E_OBJECT(bd));
@@ -1058,6 +1060,7 @@ e_border_hide(E_Border *bd,
    bd->post_show = 0;
 
 send_event:
+   if (bd->new_client) return;
    if (!stopping)
      {
         E_Event_Border_Hide *ev;
@@ -8854,6 +8857,28 @@ _e_border_eval(E_Border *bd)
           }
         bd->changes.visible = 0;
         rem_change = 1;
+        {
+           E_Event_Border_Show *ev;
+
+           ev = E_NEW(E_Event_Border_Show, 1);
+           ev->border = bd;
+           e_object_ref(E_OBJECT(bd));
+        //   e_object_breadcrumb_add(E_OBJECT(bd), "border_show_event");
+           ecore_event_add(E_EVENT_BORDER_SHOW, ev, _e_border_event_border_show_free, NULL);
+        }
+     }
+   else if ((bd->changes.visible) && (bd->new_client))
+     {
+        bd->changes.visible = 0;
+        {
+           E_Event_Border_Hide *ev;
+
+           ev = E_NEW(E_Event_Border_Hide, 1);
+           ev->border = bd;
+           e_object_ref(E_OBJECT(bd));
+        //   e_object_breadcrumb_add(E_OBJECT(bd), "border_hide_event");
+           ecore_event_add(E_EVENT_BORDER_HIDE, ev, _e_border_event_border_hide_free, NULL);
+        }
      }
 
    if (bd->changes.icon)
