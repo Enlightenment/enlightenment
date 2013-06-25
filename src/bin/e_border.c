@@ -189,6 +189,8 @@ static Eina_Bool _e_border_cb_mouse_x_move(void *d, int t EINA_UNUSED, Ecore_Eve
 static Eina_Bool _e_border_cb_mouse_x_in(void *d, int t EINA_UNUSED, Ecore_X_Event_Mouse_In *ev);
 static Eina_Bool _e_border_cb_mouse_x_out(void *d, int t EINA_UNUSED, Ecore_X_Event_Mouse_Out *ev);
 
+static void _e_border_action_finish(void);
+
 static void      _e_border_move_lost_window_to_center(E_Border *bd);
 static void      _e_border_reset_lost_window(E_Border *bd);
 static Eina_Bool _e_border_pointer_warp_to_center_timer(void *data);
