@@ -1004,6 +1004,8 @@ e_border_hide(E_Border *bd,
      _e_border_move_end(bd);
    if (bd->resize_mode != E_POINTER_RESIZE_NONE)
      _e_border_resize_end(bd);
+   if (action_border == bd)
+     _e_border_action_finish();
 
    e_container_shape_hide(bd->shape);
    if (!bd->iconic) e_hints_window_hidden_set(bd);
@@ -4904,6 +4906,7 @@ _e_border_del(E_Border *bd)
         if (bd->cur_mouse_action->func.end)
           bd->cur_mouse_action->func.end(E_OBJECT(bd), "");
      }
+   if (action_border == bd) _e_border_action_finish();
    e_pointer_type_pop(e_comp_get(bd)->pointer, bd, NULL);
 
    if (warp_timer_border == bd)
