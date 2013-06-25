@@ -169,7 +169,7 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
    E_Shell_Surface *ess;
 
    /* try to cast the resource to our structure */
-   if (!(es = surface_resource->data)) return;
+   if (!(es = wl_resource_get_user_data(surface_resource))) return;
 
    /* check if this surface has already been configured */
    if ((es->configure) && 
@@ -193,17 +193,18 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
    es->unmap = _e_desktop_shell_shell_surface_unmap;
 
    /* setup shell surface destroy callback */
+   wl_signal_init(&ess->signals.destroy);
    ess->wl.surface_destroy.notify = 
      _e_desktop_shell_shell_surface_cb_destroy_notify;
    wl_signal_add(&es->signals.destroy, &ess->wl.surface_destroy);
 
    /* setup shell surface interface */
-   ess->wl.resource.destroy = _e_desktop_shell_shell_surface_cb_destroy;
-   ess->wl.resource.object.implementation = 
-     (void (**)(void))&_e_desktop_shell_surface_interface;
+   ess->wl.resource = 
+     wl_client_add_object(client, &wl_shell_surface_interface, 
+                          &_e_desktop_shell_surface_interface, id, ess);
 
-   /* add this shell surface to the client */
-   wl_client_add_resource(client, &ess->wl.resource);
+   wl_resource_set_destructor(ess->wl.resource, 
+                              _e_desktop_shell_shell_surface_cb_destroy);
 }
 
 static void 
@@ -212,8 +213,8 @@ _e_desktop_shell_cb_ping(E_Surface *es, unsigned int serial)
    E_Shell_Surface *ess;
 
    if (!(ess = es->shell_surface)) return;
-   if (!ess->wl.resource.client) return;
-   /* FIXME */
+   if (!ess->wl.resource) return;
+
    if (!ess->ping_timer)
      {
         struct wl_event_loop *loop;
@@ -226,7 +227,7 @@ _e_desktop_shell_cb_ping(E_Surface *es, unsigned int serial)
         ess->ping_timer->source = 
           wl_event_loop_add_timer(loop, _e_desktop_shell_cb_ping_timeout, ess);
         wl_event_source_timer_update(ess->ping_timer->source, 200);
-        wl_shell_surface_send_ping(&ess->wl.resource, serial);
+        wl_shell_surface_send_ping(ess->wl.resource, serial);
      }
 }
 
@@ -261,10 +262,10 @@ _e_desktop_shell_shell_surface_cb_destroy_notify(struct wl_listener *listener, v
    if (!(ess = container_of(listener, E_Shell_Surface, wl.surface_destroy)))
      return;
 
-   if (ess->wl.resource.client)
-     wl_resource_destroy(&ess->wl.resource);
+   if (ess->wl.resource)
+     wl_resource_destroy(ess->wl.resource);
    else
-     wl_signal_emit(&ess->wl.resource.destroy_signal, &ess->wl.resource);
+     e_shell_surface_destroy(ess);
 }
 
 static void 
@@ -273,25 +274,9 @@ _e_desktop_shell_shell_surface_cb_destroy(struct wl_resource *resource)
    E_Shell_Surface *ess;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
 
-   /* TODO: finish me */
-   /* if we have a popup grab, end it */
-   /* if (!wl_list_empty(&ess->popup.grabs)) */
-   /*   { */
-   /*      wl_list_remove(&ess->popup.grabs); */
-   /*      wl_list_init(&ess->popup.grabs); */
-   /* } */
-
-   wl_list_remove(&ess->wl.surface_destroy.link);
-   ess->surface->configure = NULL;
-
-   /* TODO: handle ping timer */
-
-   wl_list_remove(&ess->wl.link);
-
-   /* free the allocated structure */
-   E_FREE(ess);
+   e_shell_surface_destroy(ess);
 }
 
 static void 
@@ -456,7 +441,7 @@ _e_desktop_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, str
    E_Shell_Surface *ess;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
    if (!ess->ping_timer) return;
 
    if (ess->ping_timer->serial == serial)
@@ -479,8 +464,8 @@ _e_desktop_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, str
    E_Input *seat;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
-   if (!(seat = seat_resource->data)) return;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
+   if (!(seat = wl_resource_get_user_data(seat_resource))) return;
 
    printf("Shell Surface Move\n");
 
@@ -498,7 +483,7 @@ _e_desktop_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, s
    E_Shell_Surface *ess;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
    printf("Shell Surface Resize\n");
 }
 
@@ -508,7 +493,7 @@ _e_desktop_shell_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNU
    E_Shell_Surface *ess;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
 
    /* set next surface type */
    ess->ntype = E_SHELL_SURFACE_TYPE_TOPLEVEL;
@@ -521,9 +506,8 @@ _e_desktop_shell_shell_surface_cb_transient_set(struct wl_client *client EINA_UN
    E_Surface *es;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
-
-   es = parent_resource->data;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
+   es = wl_resource_get_user_data(parent_resource);
 
    ess->parent = es;
    ess->transient.x = x;
@@ -540,7 +524,7 @@ _e_desktop_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_U
    E_Shell_Surface *ess;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
 
    /* set next surface type */
    ess->ntype = E_SHELL_SURFACE_TYPE_FULLSCREEN;
@@ -552,12 +536,12 @@ _e_desktop_shell_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED
    E_Shell_Surface *ess;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
 
    /* set next surface type */
    ess->ntype = E_SHELL_SURFACE_TYPE_POPUP;
-   ess->parent = parent_resource->data;
-   ess->popup.seat = seat_resource->data;
+   ess->parent = wl_resource_get_user_data(parent_resource);
+   ess->popup.seat = wl_resource_get_user_data(seat_resource);
    /* FIXME: BIG GIAN HACK !!! */
    ess->popup.serial = serial - 1;
    ess->popup.x = x;
@@ -570,7 +554,7 @@ _e_desktop_shell_shell_surface_cb_maximized_set(struct wl_client *client EINA_UN
    E_Shell_Surface *ess;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
 
    /* set next surface type */
    ess->ntype = E_SHELL_SURFACE_TYPE_MAXIMIZED;
@@ -583,7 +567,7 @@ _e_desktop_shell_shell_surface_cb_title_set(struct wl_client *client EINA_UNUSED
    E_Surface *es;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
 
    /* free any previous title */
    free(ess->title);
@@ -603,7 +587,7 @@ _e_desktop_shell_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED
    E_Surface *es;
 
    /* try to cast the resource to our shell surface */
-   if (!(ess = resource->data)) return;
+   if (!(ess = wl_resource_get_user_data(resource))) return;
 
    /* free any previous title */
    free(ess->clas);
@@ -729,7 +713,7 @@ _e_desktop_shell_surface_map_popup(E_Shell_Surface *ess)
      _e_desktop_shell_popup_grab_add(ess, seat);
    else
      {
-        wl_shell_surface_send_popup_done(&ess->wl.resource);
+        wl_shell_surface_send_popup_done(ess->wl.resource);
         seat->pointer->grab->client = NULL;
      }
 }
@@ -739,7 +723,7 @@ _e_desktop_shell_popup_grab_add(E_Shell_Surface *ess, E_Input *seat)
 {
    if (wl_list_empty(&seat->pointer->grab->surfaces))
      {
-        seat->pointer->grab->client = ess->wl.resource.client;
+        seat->pointer->grab->client = wl_resource_get_client(ess->wl.resource);
         seat->pointer->grab->interface = &_popup_grab_interface;
 
         if (seat->pointer->grab->button_count > 0)
@@ -816,7 +800,7 @@ _e_desktop_shell_popup_grab_end(E_Input_Pointer *pointer)
         grab->interface = NULL;
 
         wl_list_for_each(ess, &grab->surfaces, wl.link)
-          wl_shell_surface_send_popup_done(&ess->wl.resource);
+          wl_shell_surface_send_popup_done(ess->wl.resource);
 
         wl_list_init(&grab->surfaces);
      }
