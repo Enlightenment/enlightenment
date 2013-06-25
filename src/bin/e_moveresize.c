@@ -73,6 +73,7 @@ _e_resize_begin(void *data __UNUSED__, void *border)
 
    _disp_pop = e_popup_new(bd->zone, 0, 0, 1, 1);
    if (!_disp_pop) return;
+   e_popup_ignore_events_set(_disp_pop, 1);
    o = edje_object_add(_disp_pop->evas);
    e_theme_edje_object_set(o, "base/theme/borders",
                            "e/widgets/border/default/resize");
@@ -181,6 +182,7 @@ _e_move_begin(void *data __UNUSED__, void *border)
      _e_move_resize_object_coords_set(bd->zone->x, bd->zone->y, bd->zone->w, bd->zone->h);
 
    _disp_pop = e_popup_new(bd->zone, 0, 0, 1, 1);
+   e_popup_ignore_events_set(_disp_pop, 1);
    o = edje_object_add(_disp_pop->evas);
    e_theme_edje_object_set(o, "base/theme/borders",
                            "e/widgets/border/default/move");
