@@ -42,8 +42,7 @@ _e_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resource *resou
 {
    E_Region *reg;
 
-   /* try to cast resource to our region */
-   if (!(reg = resource->data)) return;
+   if (!(reg = wl_resource_get_user_data(resource))) return;
 
    pixman_region32_union_rect(&reg->region, &reg->region, x, y, w, h);
 }
@@ -55,7 +54,7 @@ _e_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_resource *
    pixman_region32_t rect;
 
    /* try to cast resource to our region */
-   if (!(reg = resource->data)) return;
+   if (!(reg = wl_resource_get_user_data(resource))) return;
 
    pixman_region32_init_rect(&rect, x, y, w, h);
    pixman_region32_subtract(&reg->region, &reg->region, &rect);

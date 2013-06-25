@@ -19,12 +19,35 @@ e_shell_surface_new(E_Surface *surface, unsigned int id)
    ess->type = E_SHELL_SURFACE_TYPE_NONE;
    ess->ntype = E_SHELL_SURFACE_TYPE_NONE;
 
-   wl_signal_init(&ess->wl.resource.destroy_signal);
    wl_list_init(&ess->wl.link);
 
-   ess->wl.resource.object.id = id;
-   ess->wl.resource.object.interface = &wl_shell_surface_interface;
-   ess->wl.resource.data = ess;
-
    return ess;
+}
+
+EAPI void 
+e_shell_surface_destroy(E_Shell_Surface *ess)
+{
+   if (!ess) return;
+
+   wl_signal_emit(&ess->signals.destroy, ess);
+
+   /* TODO: handle popup */
+
+   wl_list_remove(&ess->wl.surface_destroy.link);
+   ess->surface->configure = NULL;
+
+   if (ess->ping_timer) 
+     {
+        if (ess->ping_timer->source)
+          wl_event_source_remove(ess->ping_timer->source);
+
+        E_FREE(ess->ping_timer);
+     }
+
+   free(ess->title);
+   free(ess->clas);
+
+   wl_list_remove(&ess->wl.link);
+
+   E_FREE(ess);
 }

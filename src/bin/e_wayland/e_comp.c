@@ -407,6 +407,8 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
    E_Compositor *comp;
    E_Surface *es;
 
+   printf("Comp Surface Create: %d\n", id);
+
    /* try to cast to our compositor */
    if (!(comp = resource->data)) return;
 
@@ -430,6 +432,8 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
 
    /* set surface plane to compositor primary plane */
    es->plane = &comp->plane;
+
+   printf("\tAdding Surface: %p\n", es);
 
    /* add this surface to the compositors list */
    comp->surfaces = eina_list_append(comp->surfaces, es);
@@ -521,20 +525,19 @@ _e_comp_data_device_cb_get(struct wl_client *client, struct wl_resource *resourc
    E_Input *seat;
    struct wl_resource *res;
 
-   if (!(seat = seat_resource->data)) return;
+   if (!(seat = wl_resource_get_user_data(seat_resource))) return;
 
    res = wl_client_add_object(client, &wl_data_device_interface, 
                               &_e_data_device_interface, id, seat);
 
-   wl_list_insert(&seat->drag_resources, &res->link);
-
-   res->destroy = _e_comp_data_device_cb_unbind;
+   wl_list_insert(&seat->drag_resources, wl_resource_get_link(res));
+   wl_resource_set_destructor(res, _e_comp_data_device_cb_unbind);
 }
 
 static void 
 _e_comp_data_device_cb_unbind(struct wl_resource *resource)
 {
-   wl_list_remove(&resource->link);
+   wl_list_remove(wl_resource_get_link(resource));
    free(resource);
 }
 

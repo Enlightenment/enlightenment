@@ -169,7 +169,7 @@ e_input_pointer_focus_set(E_Input_Pointer *pointer, E_Surface *surface, Evas_Coo
    resource = pointer->focus_resource;
    if ((resource) && (pointer->focus != surface))
      {
-        disp = wl_client_get_display(resource->client);
+        disp = wl_client_get_display(wl_resource_get_client(resource));
         serial = wl_display_next_serial(disp);
         wl_pointer_send_leave(resource, serial, pointer->focus->wl.resource);
 //        wl_list_remove(&pointer->focus_listener.link);
@@ -182,7 +182,7 @@ e_input_pointer_focus_set(E_Input_Pointer *pointer, E_Surface *surface, Evas_Coo
        ((pointer->focus != surface) || 
            (pointer->focus_resource != resource)))
      {
-        disp = wl_client_get_display(resource->client);
+        disp = wl_client_get_display(wl_resource_get_client(resource));
         serial = wl_display_next_serial(disp);
 
         if (kbd)
@@ -202,7 +202,7 @@ e_input_pointer_focus_set(E_Input_Pointer *pointer, E_Surface *surface, Evas_Coo
 
         wl_pointer_send_enter(resource, serial, surface->wl.resource, 
                               wl_fixed_from_int(x), wl_fixed_from_int(y));
-        wl_signal_add(&resource->destroy_signal, &pointer->focus_listener);
+        wl_resource_add_destroy_listener(resource, &pointer->focus_listener);
         pointer->focus_serial = serial;
      }
 
@@ -294,7 +294,7 @@ e_input_keyboard_focus_set(E_Input_Keyboard *keyboard, E_Surface *surface)
    if ((keyboard->focus_resource) && (keyboard->focus != surface))
      {
         res = keyboard->focus_resource;
-        disp = wl_client_get_display(res->client);
+        disp = wl_client_get_display(wl_resource_get_client(res));
         serial = wl_display_next_serial(disp);
         printf("Send Keyboard Leave: %p\n", keyboard->focus);
         if (surface) printf("\tSurface: %p\n", surface);
@@ -307,7 +307,7 @@ e_input_keyboard_focus_set(E_Input_Keyboard *keyboard, E_Surface *surface)
    if ((res) && 
        ((keyboard->focus != surface) || (keyboard->focus_resource != res)))
      {
-        disp = wl_client_get_display(res->client);
+        disp = wl_client_get_display(wl_resource_get_client(res));
         serial = wl_display_next_serial(disp);
         wl_keyboard_send_modifiers(res, serial, 
                                    keyboard->modifiers.pressed,
@@ -317,7 +317,7 @@ e_input_keyboard_focus_set(E_Input_Keyboard *keyboard, E_Surface *surface)
         printf("Send Keyboard Enter: %p\n", surface);
         wl_keyboard_send_enter(res, serial, 
                                surface->wl.resource, &keyboard->keys);
-        wl_signal_add(&res->destroy_signal, &keyboard->focus_listener);
+        wl_resource_add_destroy_listener(res, &keyboard->focus_listener);
         keyboard->focus_serial = serial;
      }
 
@@ -378,7 +378,7 @@ e_input_keyboard_focus_destroy(struct wl_listener *listener, void *data)
 static void 
 _e_input_capabilities_update(E_Input *seat)
 {
-   struct wl_resource *res;
+   struct wl_list *link;
    enum wl_seat_capability caps = 0;
 
    if (seat->pointer)
@@ -388,8 +388,11 @@ _e_input_capabilities_update(E_Input *seat)
    /* if (seat->touch) */
    /*   caps |= WL_SEAT_CAPABILITY_TOUCH; */
 
-   wl_list_for_each(res, &seat->resources, link)
-     wl_seat_send_capabilities(res, caps);
+   for (link = seat->resources.next; 
+        link != &seat->resources; link = link->next)
+     {
+        wl_seat_send_capabilities(wl_resource_from_link(link), caps);
+     }
 }
 
 static void 
@@ -404,9 +407,8 @@ _e_input_cb_bind(struct wl_client *client, void *data, unsigned int version, uns
    res = wl_client_add_object(client, &wl_seat_interface, 
                               &_e_input_interface, id, data);
 
-   wl_list_insert(&seat->resources, &res->link);
-
-   res->destroy = _e_input_cb_unbind;
+   wl_list_insert(&seat->resources, wl_resource_get_link(res));
+   wl_resource_set_destructor(res, _e_input_cb_unbind);
 
    if (seat->pointer)
      caps |= WL_SEAT_CAPABILITY_POINTER;
@@ -433,15 +435,14 @@ _e_input_cb_pointer_get(struct wl_client *client, struct wl_resource *resource, 
    E_Input *seat;
    struct wl_resource *res;
 
-   if (!(seat = resource->data)) return;
+   if (!(seat = wl_resource_get_user_data(resource))) return;
    if (!seat->pointer) return;
 
    res = wl_client_add_object(client, &wl_pointer_interface, 
                               &_e_pointer_interface, id, seat->pointer);
 
-   wl_list_insert(&seat->pointer->resources, &res->link);
-
-   res->destroy = _e_input_cb_unbind;
+   wl_list_insert(&seat->pointer->resources, wl_resource_get_link(res));
+   wl_resource_set_destructor(res, _e_input_cb_unbind);
 
    if ((seat->pointer->focus) && 
        (wl_resource_get_client(seat->pointer->focus->wl.resource) == client))
@@ -461,14 +462,13 @@ _e_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *resource,
    E_Input *seat;
    struct wl_resource *res;
 
-   if (!(seat = resource->data)) return;
+   if (!(seat = wl_resource_get_user_data(resource))) return;
    if (!seat->keyboard) return;
 
    res = wl_client_add_object(client, &wl_keyboard_interface, NULL, id, seat);
 
-   wl_list_insert(&seat->keyboard->resources, &res->link);
-
-   res->destroy = _e_input_cb_unbind;
+   wl_list_insert(&seat->keyboard->resources, wl_resource_get_link(res));
+   wl_resource_set_destructor(res, _e_input_cb_unbind);
 
    wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, 
                            seat->kbd_info.fd, seat->kbd_info.size);
@@ -496,9 +496,10 @@ _e_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *res
    E_Input_Pointer *ptr;
    E_Surface *es;
 
-   if (!(ptr = resource->data)) return;
-   if (surface_resource) es = surface_resource->data;
+   if (!(ptr = wl_resource_get_user_data(resource))) return;
+   if (surface_resource) es = wl_resource_get_user_data(surface_resource);
    if (!ptr->focus) return;
+   if (!ptr->focus->wl.resource) return;
    if (wl_resource_get_client(ptr->focus->wl.resource) != client) return;
    if (ptr->focus_serial - serial > UINT32_MAX / 2) return;
 
@@ -660,13 +661,7 @@ _e_input_keyboard_grab_cb_modifiers(E_Input_Keyboard_Grab *grab, unsigned int se
 static struct wl_resource *
 _e_input_surface_resource_get(struct wl_list *list, E_Surface *surface)
 {
-   struct wl_resource *ret;
-
    if (!surface) return NULL;
 
-   wl_list_for_each(ret, list, link)
-     if (ret->client == wl_resource_get_client(surface->wl.resource))
-       return ret;
-
-   return NULL;
+   return wl_resource_find_for_client(list, wl_resource_get_client(surface->wl.resource));
 }

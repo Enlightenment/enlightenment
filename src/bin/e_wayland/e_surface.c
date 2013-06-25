@@ -8,8 +8,8 @@ static void _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl
 static void _e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsigned int callback);
 static void _e_surface_cb_opaque_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource);
 static void _e_surface_cb_input_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource);
+static void _e_surface_cb_buffer_scale_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int scale);
 static void _e_surface_cb_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
-
 static void _e_surface_frame_cb_destroy(struct wl_resource *resource);
 
 /* local wayland interfaces */
@@ -22,7 +22,8 @@ static const struct wl_surface_interface _e_surface_interface =
    _e_surface_cb_opaque_set,
    _e_surface_cb_input_set,
    _e_surface_cb_commit,
-   NULL // cb_buffer_transform_set
+   NULL, // cb_buffer_transform_set
+   NULL // cb_buffer_scale_set
 };
 
 EAPI E_Surface *
@@ -34,6 +35,9 @@ e_surface_new(struct wl_client *client, unsigned int id)
    if (!(es = E_NEW(E_Surface, 1))) return NULL;
 
    es->wl.id = id;
+
+   es->scale = 1;
+   es->pending.scale = es->scale;
 
    /* initialize the destroy signal */
    wl_signal_init(&es->signals.destroy);
@@ -289,6 +293,18 @@ e_surface_activate(E_Surface *es, E_Input *seat)
    wl_signal_emit(&comp->signals.activate, es);
 }
 
+EAPI int 
+e_surface_buffer_width(E_Surface *es)
+{
+   return es->buffer.reference.buffer->w / es->scale;
+}
+
+EAPI int 
+e_surface_buffer_height(E_Surface *es)
+{
+   return es->buffer.reference.buffer->h / es->scale;
+}
+
 /* local functions */
 static void 
 _e_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
@@ -302,11 +318,27 @@ _e_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    E_Surface *es;
    E_Buffer *buffer = NULL;
 
+   printf("E_Surface Attach\n");
+
    /* try to cast the resource to our surface */
-   if (!(es = wl_resource_get_user_data(resource))) return;
+   if (!(es = wl_resource_get_user_data(resource)))
+     {
+        printf("\tCOULD NOT GET SURFACE FROM RESOURCE !!\n");
+        return;
+     }
+
+   printf("\tHave Surface: %p\n", es);
 
    /* if we have a buffer resource, get a wl_buffer from it */
    if (buffer_resource) buffer = e_buffer_resource_get(buffer_resource);
+
+   if (buffer) printf("\tHave Buffer\n");
+   else printf("\tNO BUFFER !!!\n");
+
+   if (buffer)
+     {
+        printf("\tBuffer Size: %d %d\n", buffer->w, buffer->h);
+     }
 
    /* if we have a previous pending buffer, remove it
     * 
@@ -332,7 +364,7 @@ _e_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    E_Surface *es;
 
    /* try to cast the resource to our surface */
-   if (!(es = resource->data)) return;
+   if (!(es = wl_resource_get_user_data(resource))) return;
 
    /* add this damage rectangle */
    pixman_region32_union_rect(&es->pending.damage, &es->pending.damage, 
@@ -346,8 +378,14 @@ _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    Evas_Coord bw = 0, bh = 0;
    pixman_region32_t opaque;
 
+   printf("Surface Commit\n");
+
    /* try to cast the resource to our surface */
-   if (!(es = resource->data)) return;
+   if (!(es = wl_resource_get_user_data(resource))) return;
+
+   printf("\tHave Surface: %p\n", es);
+
+   es->scale = es->pending.scale;
 
    /* if we have a pending buffer, attach it */
    if ((es->pending.buffer) || (es->pending.new_attach))
@@ -356,8 +394,8 @@ _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    /* if we have a referenced buffer, get it's size */
    if (es->buffer.reference.buffer)
      {
-        bw = es->buffer.reference.buffer->w;
-        bh = es->buffer.reference.buffer->h;
+        bw = e_surface_buffer_width(es);
+        bh = e_surface_buffer_height(es);
      }
 
    /* if we attached a new buffer, call the surface configure function */
@@ -377,7 +415,6 @@ _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *r
    pixman_region32_union(&es->damage, &es->damage, &es->pending.damage);
    pixman_region32_intersect_rect(&es->damage, &es->damage, 
                                   0, 0, es->geometry.w, es->geometry.h);
-   /* TODO: empty region */
 
    /* free any pending damage */
    pixman_region32_fini(&es->pending.damage);
@@ -391,6 +428,7 @@ _e_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *r
         pixman_region32_copy(&es->opaque, &opaque);
         es->geometry.changed = EINA_TRUE;
      }
+   pixman_region32_fini(&opaque);
 
    /* combine any pending input */
    pixman_region32_fini(&es->input);
@@ -436,14 +474,15 @@ _e_surface_cb_opaque_set(struct wl_client *client EINA_UNUSED, struct wl_resourc
    E_Surface *es;
 
    /* try to cast the resource to our surface */
-   if (!(es = resource->data)) return;
+   if (!(es = wl_resource_get_user_data(resource))) return;
 
    if (region_resource)
      {
         E_Region *reg;
 
         /* try to cast this resource to our region */
-        reg = region_resource->data;
+        if (!(reg = wl_resource_get_user_data(region_resource)))
+          return;
         pixman_region32_copy(&es->pending.opaque, &reg->region);
      }
    else
@@ -459,14 +498,15 @@ _e_surface_cb_input_set(struct wl_client *client EINA_UNUSED, struct wl_resource
    E_Surface *es;
 
    /* try to cast the resource to our surface */
-   if (!(es = resource->data)) return;
+   if (!(es = wl_resource_get_user_data(resource))) return;
 
    if (region_resource)
      {
         E_Region *reg;
 
         /* try to cast this resource to our region */
-        reg = region_resource->data;
+        if (!(reg = wl_resource_get_user_data(region_resource)))
+          return;
         pixman_region32_copy(&es->pending.input, &reg->region);
      }
    else
@@ -475,6 +515,15 @@ _e_surface_cb_input_set(struct wl_client *client EINA_UNUSED, struct wl_resource
         pixman_region32_init_rect(&es->pending.input, INT32_MIN, INT32_MIN, 
                                   UINT32_MAX, UINT32_MAX);
      }
+}
+
+static void 
+_e_surface_cb_buffer_scale_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int scale)
+{
+   E_Surface *es;
+
+   if (!(es = wl_resource_get_user_data(resource))) return;
+   es->pending.scale = scale;
 }
 
 static void 

@@ -37,6 +37,7 @@ struct _E_Surface
 
         Evas_Coord x, y;
         Eina_Bool new_attach : 1;
+        int scale;
      } pending;
 
    pixman_region32_t bounding;
@@ -50,6 +51,7 @@ struct _E_Surface
    E_Plane *plane;
    E_Output *output;
    unsigned int output_mask;
+   int scale;
 
    struct 
      {
@@ -86,6 +88,8 @@ EAPI void e_surface_show(E_Surface *es);
 EAPI void e_surface_repaint_schedule(E_Surface *es);
 EAPI void e_surface_output_assign(E_Surface *es);
 EAPI void e_surface_activate(E_Surface *es, E_Input *seat);
+EAPI int e_surface_buffer_width(E_Surface *es);
+EAPI int e_surface_buffer_height(E_Surface *es);
 
 # endif
 #endif

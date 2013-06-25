@@ -292,6 +292,10 @@ _e_renderer_cb_attach(E_Surface *surface, E_Buffer *buffer)
       case WL_SHM_FORMAT_ARGB8888:
         format = PIXMAN_a8r8g8b8;
         break;
+      default:
+        e_buffer_reference(&state->buffer_reference, NULL);
+        return;
+        break;
      }
 
    buffer->shm_buffer = shm_buffer;

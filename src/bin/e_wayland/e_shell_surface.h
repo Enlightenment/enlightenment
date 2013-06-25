@@ -22,10 +22,15 @@ struct _E_Shell_Surface
 {
    struct 
      {
-        struct wl_resource resource;
+        struct wl_resource *resource;
         struct wl_listener surface_destroy;
         struct wl_list link;
      } wl;
+
+   struct 
+     {
+        struct wl_signal destroy;
+     } signals;
 
    struct 
      {
@@ -67,6 +72,7 @@ struct _E_Shell_Surface_Ping_Timer
 };
 
 EAPI E_Shell_Surface *e_shell_surface_new(E_Surface *surface, unsigned int id);
+EAPI void e_shell_surface_destroy(E_Shell_Surface *ess);
 
 # endif
 #endif

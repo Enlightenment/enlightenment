@@ -155,10 +155,8 @@ _e_output_cb_bind(struct wl_client *client, void *data, unsigned int version EIN
    /* add this output to the client */
    resource = 
      wl_client_add_object(client, &wl_output_interface, NULL, id, output);
-   wl_list_insert(&output->wl.resources, &resource->link);
-
-   /* setup destroy callback */
-   resource->destroy = _e_output_cb_unbind;
+   wl_list_insert(&output->wl.resources, wl_resource_get_link(resource));
+   wl_resource_set_destructor(resource, _e_output_cb_unbind);
 
    /* send out this output's geometry */
    wl_output_send_geometry(resource, output->x, output->y, 
@@ -169,12 +167,14 @@ _e_output_cb_bind(struct wl_client *client, void *data, unsigned int version EIN
    EINA_LIST_FOREACH(output->modes, l, mode)
      wl_output_send_mode(resource, mode->flags, mode->w, mode->h, 
                          mode->refresh);
+
+   if (version >= 2) wl_output_send_done(resource);
 }
 
 static void 
 _e_output_cb_unbind(struct wl_resource *resource)
 {
-   wl_list_remove(&resource->link);
+   wl_list_remove(wl_resource_get_link(resource));
    free(resource);
 }
 
