@@ -858,7 +858,13 @@ e_border_inset_height_get(const E_Border *bd)
 
 /* macro for finding misuse of changed flag */
 #if 0
-# define BD_CHANGED(BD) BD->changed = 1; INF("%s:%d - BD CHANGED: %p", __FILE__, __LINE__, BD)
+# define BD_CHANGED(BD) \
+  do { \
+     if (e_object_is_del(E_OBJECT(BD))) \
+       EINA_LOG_CRIT("CHANGED SET ON DELETED BORDER!"); \
+     BD->changed = 1; \
+     INF("%s:%d - BD CHANGED: %p", __FILE__, __LINE__, BD); \
+  } while (0)
 #else
 # define BD_CHANGED(BD) BD->changed = 1
 #endif
