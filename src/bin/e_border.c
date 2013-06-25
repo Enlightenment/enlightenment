@@ -229,6 +229,13 @@ static int warp_y[2] = {0}; //{cur,prev}
 static Ecore_X_Window warp_to_win;
 static Ecore_Timer *warp_timer = NULL;
 
+static Ecore_X_Window action_input_win = 0;
+static E_Border *action_border = NULL;
+static Ecore_Event_Handler *action_handler_key = NULL;
+static Ecore_Event_Handler *action_handler_mouse = NULL;
+static Ecore_Timer *action_timer = NULL;
+static Ecore_X_Rectangle action_orig;
+
 EAPI int E_EVENT_BORDER_ADD = 0;
 EAPI int E_EVENT_BORDER_REMOVE = 0;
 EAPI int E_EVENT_BORDER_ZONE_SET = 0;
@@ -3386,13 +3393,6 @@ e_border_client_list(void)
    /* FIXME: This should be a somewhat ordered list */
    return borders;
 }
-
-static Ecore_X_Window action_input_win = 0;
-static E_Border *action_border = NULL;
-static Ecore_Event_Handler *action_handler_key = NULL;
-static Ecore_Event_Handler *action_handler_mouse = NULL;
-static Ecore_Timer *action_timer = NULL;
-static Ecore_X_Rectangle action_orig;
 
 static void
 _e_border_show(E_Border *bd)
