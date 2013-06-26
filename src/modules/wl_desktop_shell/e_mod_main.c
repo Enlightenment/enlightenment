@@ -303,7 +303,7 @@ _e_wl_shell_cb_ping(E_Wayland_Surface *ews, unsigned int serial)
         ewss->ping_timer = tmr;
 
         /* send the ping to the shell surface */
-        wl_shell_surface_send_ping(&ewss->wl.resource, serial);
+        wl_shell_surface_send_ping(ewss->wl.resource, serial);
      }
 }
 
@@ -364,10 +364,10 @@ _e_wl_shell_grab_start(E_Wayland_Shell_Grab *grab, E_Wayland_Shell_Surface *ewss
    grab->shell_surface = ewss;
    grab->shell_surface_destroy.notify = _e_wl_shell_grab_cb_surface_destroy;
    grab->pointer = pointer;
-   grab->grab.focus = &ewss->surface->wl.surface;
+   grab->grab.focus = ewss->surface->wl.surface;
 
    /* add a listener in case this surface gets destroyed */
-   wl_signal_add(&ewss->wl.resource.destroy_signal, 
+   wl_signal_add(&ewss->wl.destroy_signal, 
                  &grab->shell_surface_destroy);
 
    /* start the pointer grab */
@@ -380,7 +380,7 @@ _e_wl_shell_grab_start(E_Wayland_Shell_Grab *grab, E_Wayland_Shell_Surface *ewss
      e_desktop_shell_send_grab_cursor(shell->wl.resource, cursor);
 
    /* tell the pointer which surface is focused */
-   wl_pointer_set_focus(pointer, &ewss->surface->wl.surface, 0, 0);
+   wl_pointer_set_focus(pointer, ewss->surface->wl.surface, 0, 0);
 }
 
 static void 
@@ -437,15 +437,11 @@ _e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *r
         return;
      }
 
-   ewss->wl.resource.destroy = _e_wl_shell_shell_surface_destroy;
-   ewss->wl.resource.object.id = id;
-   ewss->wl.resource.object.interface = &wl_shell_surface_interface;
-   ewss->wl.resource.object.implementation = 
-     (void (**)(void))&_e_shell_surface_interface;
-   ewss->wl.resource.data = ewss;
-
-   /* add this shell surface to the client */
-   wl_client_add_resource(client, &ewss->wl.resource);
+   ewss->wl.resource = 
+     wl_client_add_object(client, &wl_shell_surface_interface, 
+                          &_e_shell_surface_interface, id, ewss);
+   wl_resource_set_destructor(ewss->wl.resource, 
+                              _e_wl_shell_shell_surface_destroy);
 }
 
 /* desktop shell functions */
@@ -512,10 +508,9 @@ _e_wl_shell_shell_surface_create(void *shell EINA_UNUSED, E_Wayland_Surface *ews
    ews->shell_surface = ewss;
 
    /* setup shell surface destroy */
-   wl_signal_init(&ewss->wl.resource.destroy_signal);
+   wl_signal_init(&ewss->wl.destroy_signal);
    ewss->wl.surface_destroy.notify = _e_wl_shell_shell_surface_cb_destroy;
-   wl_signal_add(&ews->wl.surface.destroy_signal, 
-                 &ewss->wl.surface_destroy);
+   wl_signal_add(&ews->wl.destroy_signal, &ewss->wl.surface_destroy);
 
    wl_list_init(&ewss->wl.link);
 
@@ -710,7 +705,7 @@ _e_wl_shell_shell_surface_create_popup(E_Wayland_Surface *ews)
    if (seat->pointer->grab_serial == ewss->popup.serial)
      wl_pointer_start_grab(seat->pointer, &ewss->popup.grab);
    else
-     wl_shell_surface_send_popup_done(&ewss->wl.resource);
+     wl_shell_surface_send_popup_done(ewss->wl.resource);
 }
 
 static void 
@@ -867,10 +862,10 @@ _e_wl_shell_shell_surface_unmap(E_Wayland_Surface *ews)
    EINA_LIST_FOREACH(_e_wl_comp->seats, l, input)
      {
         if ((input->wl.seat.keyboard) && 
-            (input->wl.seat.keyboard->focus == &ews->wl.surface))
+            (input->wl.seat.keyboard->focus == ews->wl.surface))
           wl_keyboard_set_focus(input->wl.seat.keyboard, NULL);
         if ((input->wl.seat.pointer) && 
-            (input->wl.seat.pointer->focus == &ews->wl.surface))
+            (input->wl.seat.pointer->focus == ews->wl.surface))
           wl_pointer_set_focus(input->wl.seat.pointer, NULL, 0, 0);
      }
 
@@ -992,10 +987,10 @@ _e_wl_shell_shell_surface_cb_destroy(struct wl_listener *listener, void *data EI
    ewss = container_of(listener, E_Wayland_Shell_Surface, wl.surface_destroy);
    if (!ewss) return;
 
-   if (ewss->wl.resource.client)
-     wl_resource_destroy(&ewss->wl.resource);
+   if (ewss->wl.resource)
+     wl_resource_destroy(ewss->wl.resource);
    else
-     wl_signal_emit(&ewss->wl.resource.destroy_signal, &ewss->wl.resource);
+     wl_signal_emit(&ewss->wl.destroy_signal, ewss->wl.resource);
 }
 
 static int 
@@ -1065,8 +1060,8 @@ _e_wl_shell_shell_surface_cb_render_post(void *data, Evas *evas EINA_UNUSED, voi
    /* for each frame callback in the surface, signal it is done */
    wl_list_for_each_safe(cb, ncb, &ews->wl.frames, wl.link)
      {
-        wl_callback_send_done(&cb->wl.resource, secs);
-        wl_resource_destroy(&cb->wl.resource);
+        wl_callback_send_done(cb->wl.resource, secs);
+        wl_resource_destroy(cb->wl.resource);
      }
 }
 
@@ -1087,7 +1082,7 @@ _e_wl_shell_shell_surface_cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, 
    EINA_LIST_FOREACH(_e_wl_comp->seats, l, input)
      {
         /* set keyboard focus */
-        wl_keyboard_set_focus(input->wl.seat.keyboard, &ews->wl.surface);
+        wl_keyboard_set_focus(input->wl.seat.keyboard, ews->wl.surface);
 
         /* update the keyboard focus in the data device */
         wl_data_device_set_keyboard_focus(&input->wl.seat);
@@ -1134,16 +1129,16 @@ _e_wl_shell_shell_surface_cb_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, 
    if ((ptr = _e_wl_comp->input->wl.seat.pointer))
      {
         /* if the mouse entered this surface & it is not the current surface */
-        if (&ews->wl.surface != ptr->current)
+        if (ews->wl.surface != ptr->current)
           {
              const struct wl_pointer_grab_interface *grab;
 
              /* set this surface as the current */
              grab = ptr->grab->interface;
-             ptr->current = &ews->wl.surface;
+             ptr->current = ews->wl.surface;
 
              /* send a pointer focus event */
-             grab->focus(ptr->grab, &ews->wl.surface, 
+             grab->focus(ptr->grab, ews->wl.surface, 
                          ptr->current_x, ptr->current_y);
           }
      }
@@ -1320,7 +1315,7 @@ _e_wl_shell_shell_surface_cb_key_up(void *data, Evas_Object *obj EINA_UNUSED, vo
    if (!kbd->focus) return;
 
    /* is the focused surface actually This surface ? */
-   if (kbd->focus != &ews->wl.surface) return;
+   if (kbd->focus != ews->wl.surface) return;
 
    /* get the keycode for this key from X */
    key = ecore_x_keysym_keycode_get(ev->keyname) - 8;
@@ -1370,7 +1365,7 @@ _e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, 
    if (!kbd->focus) return;
 
    /* is the focused surface actually This surface ? */
-   if (kbd->focus != &ews->wl.surface) return;
+   if (kbd->focus != ews->wl.surface) return;
 
    serial = wl_display_next_serial(_e_wl_comp->wl.display);
 
@@ -1465,7 +1460,7 @@ _e_wl_shell_shell_surface_cb_bd_resize_update(void *data, void *bd)
         w = border->w;
         h = border->h;
 
-        wl_shell_surface_send_configure(&ews->shell_surface->wl.resource, 
+        wl_shell_surface_send_configure(ews->shell_surface->wl.resource, 
                                         grab->edges, w, h);
      }
 }
@@ -1651,7 +1646,7 @@ _e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct w
    /* check for valid move setup */
    if ((input->wl.seat.pointer->button_count == 0) || 
        (input->wl.seat.pointer->grab_serial != serial) || 
-       (input->wl.seat.pointer->focus != &ewss->surface->wl.surface))
+       (input->wl.seat.pointer->focus != ewss->surface->wl.surface))
      return;
 
    /* try to allocate space for our grab structure */
@@ -1715,7 +1710,7 @@ _e_wl_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct
    /* check for valid move setup */
    if ((input->wl.seat.pointer->button_count == 0) || 
        (input->wl.seat.pointer->grab_serial != serial) || 
-       (input->wl.seat.pointer->focus != &ewss->surface->wl.surface))
+       (input->wl.seat.pointer->focus != ewss->surface->wl.surface))
      return;
 
    if ((edges == 0) || (edges > 15) || 
@@ -1818,7 +1813,7 @@ _e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED
         e_border_fullscreen(ewss->surface->bd, E_FULLSCREEN_RESIZE);
 
         /* send configure message to the shell surface to inform of new size */
-        wl_shell_surface_send_configure(&ewss->wl.resource, 0, 
+        wl_shell_surface_send_configure(ewss->wl.resource, 0, 
                                         ewss->surface->bd->w, 
                                         ewss->surface->bd->h);
      }
@@ -1871,7 +1866,7 @@ _e_wl_shell_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED,
                           E_MAXIMIZE_BOTH);
 
         /* send configure message to the shell surface to inform of new size */
-        wl_shell_surface_send_configure(&ewss->wl.resource, edges, 
+        wl_shell_surface_send_configure(ewss->wl.resource, edges, 
                                         ewss->surface->bd->w, 
                                         ewss->surface->bd->h);
      }
@@ -2090,7 +2085,7 @@ _e_wl_shell_popup_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_resource
    ewss = container_of(grab, E_Wayland_Shell_Surface, popup.grab);
    if (!ewss) return;
 
-   client = ewss->surface->wl.surface.client;
+   client = wl_resource_get_client(ewss->surface->wl.surface);
 
    if ((surface) && (surface->client == client))
      {
@@ -2160,7 +2155,7 @@ _e_wl_shell_popup_grab_end(struct wl_pointer *pointer)
 
    if (pointer->grab->interface == &_e_popup_grab_interface)
      {
-        wl_shell_surface_send_popup_done(&ewss->wl.resource);
+        wl_shell_surface_send_popup_done(ewss->wl.resource);
         wl_pointer_end_grab(grab->pointer);
         ewss->popup.grab.pointer = NULL;
      }
