@@ -48,6 +48,8 @@ typedef struct _E_Wayland_Output E_Wayland_Output;
 typedef struct _E_Wayland_Output_Mode E_Wayland_Output_Mode;
 typedef struct _E_Wayland_Terminal E_Wayland_Terminal;
 typedef struct _E_Wayland_Plane E_Wayland_Plane;
+typedef struct _E_Wayland_Buffer E_Wayland_Buffer;
+typedef struct _E_Wayland_Buffer_Reference E_Wayland_Buffer_Reference;
 
 /*
  * NB: All of these structs and interfaces were recently removed from 
@@ -175,15 +177,16 @@ struct wl_touch
 
 struct wl_data_offer 
 {
-   struct wl_resource resource;
+   struct wl_resource *resource;
    struct wl_data_source *source;
    struct wl_listener source_destroy_listener;
 };
 
 struct wl_data_source 
 {
-   struct wl_resource resource;
+   struct wl_resource *resource;
    struct wl_array mime_types;
+   struct wl_signal destroy_signal;
 
    void (*accept)(struct wl_data_source *source,
                   uint32_t serial, const char *mime_type);
@@ -233,7 +236,7 @@ struct _E_Wayland_Region
 {
    struct 
      {
-        struct wl_resource resource;
+        struct wl_resource *resource;
      } wl;
 
    pixman_region32_t region;
@@ -243,23 +246,47 @@ struct _E_Wayland_Surface_Frame_Callback
 {
    struct  
     {
-        struct wl_resource resource;
+        struct wl_resource *resource;
         struct wl_list link;
      } wl;
+};
+
+struct _E_Wayland_Buffer
+{
+   struct 
+     {
+        struct wl_resource *resource;
+        struct wl_signal destroy_signal;
+        struct wl_listener destroy_listener;
+        union 
+          {
+             struct wl_shm_buffer *shm_buffer;
+             struct wl_buffer *legacy_buffer;
+          };
+     } wl;
+
+   int w, h;
+   unsigned int busy_count;
+};
+
+struct _E_Wayland_Buffer_Reference
+{
+   E_Wayland_Buffer *buffer;
+   struct wl_listener destroy_listener;
 };
 
 struct _E_Wayland_Surface
 {
    struct 
      {
-        struct wl_resource surface;
-        /* struct wl_surface surface; */
+        struct wl_resource *surface;
+        struct wl_signal destroy_signal;
         struct wl_list link, frames;
      } wl;
 
    struct 
      {
-        struct wl_buffer *buffer;
+        E_Wayland_Buffer *buffer;
         struct wl_listener buffer_destroy;
         struct wl_list frames;
         Evas_Coord x, y;
@@ -267,11 +294,7 @@ struct _E_Wayland_Surface
         pixman_region32_t damage, opaque, input;
      } pending;
 
-   struct 
-     {
-        struct wl_buffer *buffer;
-        struct wl_listener buffer_destroy;
-     } reference;
+   E_Wayland_Buffer_Reference buffer_reference;
 
    struct 
      {
@@ -310,8 +333,9 @@ struct _E_Wayland_Shell_Surface
 {
    struct 
      {
-        struct wl_resource resource;
+        struct wl_resource *resource;
         struct wl_listener surface_destroy;
+        struct wl_signal destroy_signal;
         struct wl_list link;
      } wl;
 

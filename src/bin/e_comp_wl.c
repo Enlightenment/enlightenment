@@ -99,8 +99,10 @@ static void _e_comp_wl_region_cb_subtract(struct wl_client *client EINA_UNUSED, 
 /* surface function prototypes */
 static void _e_comp_wl_surface_cb_pending_buffer_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 static void _e_comp_wl_surface_cb_frame_destroy(struct wl_resource *resource);
-static void _e_comp_wl_surface_buffer_reference(E_Wayland_Surface *ews, struct wl_buffer *buffer);
+static void _e_comp_wl_surface_buffer_reference(E_Wayland_Buffer_Reference *ref, E_Wayland_Buffer *buffer);
 static void _e_comp_wl_surface_buffer_reference_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
+static E_Wayland_Buffer *_e_comp_wl_surface_buffer_resource(struct wl_resource *resource);
+static void _e_comp_wl_surface_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 
 /* surface interface prototypes */
 static void _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
@@ -530,7 +532,7 @@ wl_pointer_set_focus(struct wl_pointer *pointer, struct wl_resource *surface, wl
      {
         struct wl_display *disp;
 
-        disp = wl_client_get_display(resource->client);
+        disp = wl_client_get_display(wl_resource_get_client(resource));
         serial = wl_display_next_serial(disp);
         wl_pointer_send_leave(resource, serial, pointer->focus);
         wl_list_remove(&pointer->focus_listener.link);
@@ -543,7 +545,7 @@ wl_pointer_set_focus(struct wl_pointer *pointer, struct wl_resource *surface, wl
      {
         struct wl_display *disp;
 
-        disp = wl_client_get_display(resource->client);
+        disp = wl_client_get_display(wl_resource_get_client(resource));
         serial = wl_display_next_serial(disp);
         if (kbd) 
           {
@@ -560,7 +562,7 @@ wl_pointer_set_focus(struct wl_pointer *pointer, struct wl_resource *surface, wl
           }
 
         wl_pointer_send_enter(resource, serial, surface, sx, sy);
-        wl_signal_add(&resource->destroy_signal, &pointer->focus_listener);
+        wl_resource_add_destroy_listener(resource, &pointer->focus_listener);
         pointer->focus_serial = serial;
      }
 
@@ -640,7 +642,7 @@ wl_keyboard_set_focus(struct wl_keyboard *keyboard, struct wl_resource *surface)
      {
         struct wl_display *disp;
 
-        disp = wl_client_get_display(keyboard->focus_resource->client);
+        disp = wl_client_get_display(wl_resource_get_client(keyboard->focus_resource));
         serial = wl_display_next_serial(disp);
         resource = keyboard->focus_resource;
         wl_keyboard_send_leave(resource, serial, keyboard->focus);
@@ -655,7 +657,7 @@ wl_keyboard_set_focus(struct wl_keyboard *keyboard, struct wl_resource *surface)
      {
         struct wl_display *disp;
 
-        disp = wl_client_get_display(resource->client);
+        disp = wl_client_get_display(wl_resource_get_client(resource));
         serial = wl_display_next_serial(disp);
         wl_keyboard_send_modifiers(resource, serial,
                                    keyboard->modifiers.mods_depressed,
@@ -663,8 +665,7 @@ wl_keyboard_set_focus(struct wl_keyboard *keyboard, struct wl_resource *surface)
                                    keyboard->modifiers.mods_locked,
                                    keyboard->modifiers.group);
         wl_keyboard_send_enter(resource, serial, surface, &keyboard->keys);
-        wl_signal_add(&resource->destroy_signal,
-                      &keyboard->focus_listener);
+        wl_resource_add_destroy_listener(resource, &keyboard->focus_listener);
         keyboard->focus_serial = serial;
      }
 
@@ -730,7 +731,8 @@ wl_data_device_set_keyboard_focus(struct wl_seat *seat)
    if (!focus) return;
 
    data_device = 
-     _find_resource_for_client(&seat->drag_resource_list, focus->client);
+     wl_resource_find_for_client(&seat->drag_resource_list, 
+                                 wl_resource_get_client(focus));
    if (!data_device) return;
 
    source = seat->selection_data_source;
@@ -760,21 +762,23 @@ wl_data_source_send_offer(struct wl_data_source *source, struct wl_resource *tar
    offer = malloc(sizeof *offer);
    if (offer == NULL) return NULL;
 
-   wl_resource_init(&offer->resource, &wl_data_offer_interface,
-                    &_e_data_offer_interface, 0, offer);
-   offer->resource.destroy = _destroy_data_offer;
+   offer->resource = 
+     wl_client_new_object(wl_resource_get_client(target), 
+                          &wl_data_offer_interface, &_e_data_offer_interface, 
+                          offer);
+   wl_resource_set_destructor(offer->resource, _destroy_data_offer);
 
    offer->source = source;
    offer->source_destroy_listener.notify = _destroy_offer_data_source;
-   wl_signal_add(&source->resource.destroy_signal,
+   wl_signal_add(&source->destroy_signal,
                  &offer->source_destroy_listener);
 
-   wl_client_add_resource(target->client, &offer->resource);
-   wl_data_device_send_data_offer(target, &offer->resource);
-   wl_array_for_each(p, &source->mime_types)
-     wl_data_offer_send_offer(&offer->resource, *p);
+   wl_data_device_send_data_offer(target, offer->resource);
 
-   return &offer->resource;
+   wl_array_for_each(p, &source->mime_types)
+     wl_data_offer_send_offer(offer->resource, *p);
+
+   return offer->resource;
 }
 
 EAPI void
@@ -800,8 +804,9 @@ wl_seat_set_selection(struct wl_seat *seat, struct wl_data_source *source, uint3
      focus = seat->keyboard->focus_resource;
    if (focus) 
      {
-        data_device = _find_resource_for_client(&seat->drag_resource_list,
-                                                focus->client);
+        data_device = 
+          wl_resource_find_for_client(&seat->drag_resource_list, 
+                                      wl_resource_get_client(focus));
         if (data_device && source) 
           {
              offer = wl_data_source_send_offer(seat->selection_data_source,
@@ -819,7 +824,7 @@ wl_seat_set_selection(struct wl_seat *seat, struct wl_data_source *source, uint3
      {
         seat->selection_data_source_listener.notify =
           _destroy_selection_data_source;
-        wl_signal_add(&source->resource.destroy_signal,
+        wl_signal_add(&source->destroy_signal,
                       &seat->selection_data_source_listener);
      }
 }
@@ -1100,16 +1105,17 @@ _create_data_source(struct wl_client *client, struct wl_resource *resource, uint
         return;
      }
 
-   wl_resource_init(&source->resource, &wl_data_source_interface,
-                    &_e_data_source_interface, id, source);
-   source->resource.destroy = _destroy_data_source;
-
+   wl_signal_init(&source->destroy_signal);
    source->accept = _client_source_accept;
    source->send = _client_source_send;
    source->cancel = _client_source_cancel;
 
    wl_array_init(&source->mime_types);
-   wl_client_add_resource(client, &source->resource);
+
+   source->resource = 
+     wl_client_add_object(client, &wl_data_source_interface,
+                          &_e_data_source_interface, id, source);
+   wl_resource_set_destructor(source->resource, _destroy_data_source);
 }
 
 static void 
@@ -1122,15 +1128,17 @@ _unbind_data_device(struct wl_resource *resource)
 static void
 _get_data_device(struct wl_client *client, struct wl_resource *manager_resource EINA_UNUSED, uint32_t id, struct wl_resource *seat_resource)
 {
-   struct wl_seat *seat = seat_resource->data;
+   struct wl_seat *seat;
    struct wl_resource *resource;
+
+   seat = wl_resource_get_user_data(seat_resource);
 
    resource = wl_client_add_object(client, &wl_data_device_interface,
                                    &_e_data_device_interface, id,
                                    seat);
 
    wl_list_insert(&seat->drag_resource_list, &resource->link);
-   resource->destroy = _unbind_data_device;
+   wl_resource_set_destructor(resource, _unbind_data_device);
 }
 
 static void
@@ -1173,16 +1181,17 @@ _default_grab_modifiers(struct wl_keyboard_grab *grab, uint32_t serial, uint32_t
    struct wl_pointer *pointer = keyboard->seat->pointer;
    struct wl_resource *resource, *pr;
 
-   resource = keyboard->focus_resource;
-   if (!resource) return;
+   if (!(resource = wl_resource_get_user_data(keyboard->focus_resource)))
+     return;
 
    wl_keyboard_send_modifiers(resource, serial, mods_depressed,
                               mods_latched, mods_locked, group);
 
    if (pointer && pointer->focus && pointer->focus != keyboard->focus) 
      {
-        pr = _find_resource_for_surface(&keyboard->resource_list,
-                                        pointer->focus);
+        pr = 
+          wl_resource_find_for_client(&keyboard->resource_list, 
+                                      wl_resource_get_client(pointer->focus));
         if (pr) 
           {
              wl_keyboard_send_modifiers(pr,
@@ -1206,7 +1215,7 @@ _data_device_start_drag(struct wl_client *client, struct wl_resource *resource, 
 
    if (source_resource) 
      {
-        seat->drag_data_source = source_resource->data;
+        seat->drag_data_source = wl_resource_get_user_data(source_resource);
         seat->drag_data_source_listener.notify =
           _destroy_data_device_source;
         wl_signal_add(&source_resource->destroy_signal,
@@ -1215,7 +1224,7 @@ _data_device_start_drag(struct wl_client *client, struct wl_resource *resource, 
 
    if (icon_resource) 
      {
-        seat->drag_surface = icon_resource->data;
+        seat->drag_surface = wl_resource_get_user_data(icon_resource);
         seat->drag_icon_listener.notify = _destroy_data_device_icon;
         wl_signal_add(&icon_resource->destroy_signal,
                       &seat->drag_icon_listener);
@@ -1230,9 +1239,13 @@ _data_device_start_drag(struct wl_client *client, struct wl_resource *resource, 
 static void
 _data_device_set_selection(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *source_resource, uint32_t serial)
 {
-   if (!source_resource) return;
-   wl_seat_set_selection(resource->data, source_resource->data,
-                         serial);
+   struct wl_data_source *source;
+   struct wl_seat *seat;
+
+   if (!(seat = wl_resource_get_user_data(resource))) return;
+   source = wl_resource_get_user_data(source_resource);
+
+   wl_seat_set_selection(seat, source, serial);
 }
 
 static void
@@ -1258,8 +1271,9 @@ _destroy_selection_data_source(struct wl_listener *listener, void *data EINA_UNU
      focus = seat->keyboard->focus_resource;
    if (focus) 
      {
-        data_device = _find_resource_for_client(&seat->drag_resource_list,
-                                                focus->client);
+        data_device = 
+          wl_resource_find_for_client(&seat->drag_resource_list,
+                                    wl_resource_get_client(focus));
         if (data_device)
           wl_data_device_send_selection(data_device, NULL);
      }
@@ -1296,16 +1310,19 @@ _data_source_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *r
 static void
 _destroy_data_source(struct wl_resource *resource)
 {
-   struct wl_data_source *source =
-     container_of(resource, struct wl_data_source, resource);
+   struct wl_data_source *source;
    char **p;
+
+   source = wl_resource_get_user_data(resource);
+
+   wl_signal_emit(&source->destroy_signal, source);
 
    wl_array_for_each(p, &source->mime_types)
      free(*p);
 
    wl_array_release(&source->mime_types);
 
-   source->resource.object.id = 0;
+   source->resource = NULL;
 }
 
 static void
@@ -1411,20 +1428,20 @@ _drag_grab_focus(struct wl_pointer_grab *grab, struct wl_resource *surface, wl_f
 static void
 _client_source_accept(struct wl_data_source *source, uint32_t timestamp EINA_UNUSED, const char *mime_type)
 {
-   wl_data_source_send_target(&source->resource, mime_type);
+   wl_data_source_send_target(source->resource, mime_type);
 }
 
 static void
 _client_source_send(struct wl_data_source *source, const char *mime_type, int32_t fd)
 {
-   wl_data_source_send_send(&source->resource, mime_type, fd);
+   wl_data_source_send_send(source->resource, mime_type, fd);
    close(fd);
 }
 
 static void
 _client_source_cancel(struct wl_data_source *source)
 {
-   wl_data_source_send_cancelled(&source->resource);
+   wl_data_source_send_cancelled(source->resource);
 }
 
 static void 
@@ -1571,7 +1588,7 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
      }
 
    /* initialize the destroy signal */
-   wl_signal_init(&ews->wl.surface.destroy_signal);
+   wl_signal_init(&ews->wl.destroy_signal);
 
    /* initialize the link */
    wl_list_init(&ews->wl.link);
@@ -1580,7 +1597,7 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
    wl_list_init(&ews->wl.frames);
    wl_list_init(&ews->pending.frames);
 
-   ews->wl.surface.client = NULL;
+   ews->wl.surface = NULL;
 
    /* set destroy function for pending buffers */
    ews->pending.buffer_destroy.notify = 
@@ -1599,16 +1616,11 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
    pixman_region32_init_rect(&ews->pending.input, INT32_MIN, INT32_MIN, 
                              UINT32_MAX, UINT32_MAX);
 
-   /* set some properties of the surface */
-   ews->wl.surface.destroy = _e_comp_wl_cb_surface_destroy;
-   ews->wl.surface.object.id = id;
-   ews->wl.surface.object.interface = &wl_surface_interface;
-   ews->wl.surface.object.implementation = 
-     (void (**)(void))&_e_surface_interface;
-   ews->wl.surface.data = ews;
-
-   /* add this surface to the client */
-   wl_client_add_resource(client, &ews->wl.surface);
+   ews->wl.surface = 
+     wl_client_add_object(client, &wl_surface_interface, 
+                          &_e_surface_interface, id, ews);
+   wl_resource_set_destructor(ews->wl.surface, 
+                              _e_comp_wl_cb_surface_destroy);
 
    /* add this surface to the list of surfaces */
    _e_wl_comp->surfaces = eina_list_append(_e_wl_comp->surfaces, ews);
@@ -1619,10 +1631,18 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
 {
    E_Wayland_Surface *ews = NULL;
    E_Wayland_Surface_Frame_Callback *cb = NULL, *ncb = NULL;
+   struct wl_pointer *pointer;
 
    /* try to get the surface from this resource */
-   if (!(ews = container_of(resource, E_Wayland_Surface, wl.surface)))
+   if (!(ews = wl_resource_get_user_data(resource)))
      return;
+
+   pointer = &_e_wl_comp->input->wl.pointer;
+   if (pointer->focus == resource)
+     {
+        wl_pointer_set_focus(pointer, NULL,
+                             wl_fixed_from_int(0), wl_fixed_from_int(0));
+     }
 
    /* if this surface is mapped, unmap it */
    if (ews->mapped)
@@ -1632,7 +1652,7 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
 
    /* loop any pending surface frame callbacks and destroy them */
    wl_list_for_each_safe(cb, ncb, &ews->pending.frames, wl.link)
-     wl_resource_destroy(&cb->wl.resource);
+     wl_resource_destroy(cb->wl.resource);
 
    /* clear any pending regions */
    pixman_region32_fini(&ews->pending.damage);
@@ -1644,7 +1664,7 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
      wl_list_remove(&ews->pending.buffer_destroy.link);
 
    /* dereference any existing buffers */
-   _e_comp_wl_surface_buffer_reference(ews, NULL);
+   _e_comp_wl_surface_buffer_reference(&ews->buffer_reference, NULL);
 
    /* clear any active regions */
    pixman_region32_fini(&ews->region.damage);
@@ -1654,7 +1674,7 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
 
    /* loop any active surface frame callbacks and destroy them */
    wl_list_for_each_safe(cb, ncb, &ews->wl.frames, wl.link)
-     wl_resource_destroy(&cb->wl.resource);
+     wl_resource_destroy(cb->wl.resource);
 
    /* remove this surface from the compositor's list of surfaces */
    _e_wl_comp->surfaces = eina_list_remove(_e_wl_comp->surfaces, ews);
@@ -1677,16 +1697,12 @@ _e_comp_wl_cb_region_create(struct wl_client *client, struct wl_resource *resour
 
    pixman_region32_init(&ewr->region);
 
-   /* set some properties of the region */
-   ewr->wl.resource.destroy = _e_comp_wl_cb_region_destroy;
-   ewr->wl.resource.object.id = id;
-   ewr->wl.resource.object.interface = &wl_region_interface;
-   ewr->wl.resource.object.implementation = 
-     (void (**)(void))&_e_region_interface;
-   ewr->wl.resource.data = ewr;
+   ewr->wl.resource = 
+     wl_client_add_object(client, &wl_region_interface, 
+                          &_e_region_interface, id, ewr);
 
-   /* add this region to the client */
-   wl_client_add_resource(client, &ewr->wl.resource);
+   wl_resource_set_destructor(ewr->wl.resource,
+                              _e_comp_wl_cb_region_destroy);
 }
 
 static void 
@@ -1695,7 +1711,7 @@ _e_comp_wl_cb_region_destroy(struct wl_resource *resource)
    E_Wayland_Region *ewr = NULL;
 
    /* try to get the region from this resource */
-   if (!(ewr = container_of(resource, E_Wayland_Region, wl.resource)))
+   if (!(ewr = wl_resource_get_user_data(resource)))
      return;
 
    /* tell pixman we are finished with this region */
@@ -2168,10 +2184,16 @@ _e_comp_wl_pointer_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y,
              /* try to get the ecore_window */
              if ((win = ecore_evas_window_get(focus->ee)))
                {
+                  E_Wayland_Buffer_Reference *ref;
+                  struct wl_shm_buffer *shm_buffer;
                   void *pixels;
 
+                  ref = &ews->buffer_reference;
+
+                  shm_buffer = wl_shm_buffer_get(ref->buffer->wl.resource);
+
                   /* grab the pixels from the cursor surface */
-                  if ((pixels = wl_shm_buffer_get_data(ews->reference.buffer)))
+                  if ((pixels = wl_shm_buffer_get_data(shm_buffer)))
                     {
                        Ecore_X_Cursor cur;
 
@@ -2239,7 +2261,7 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
      {
         if (ews->configure)
           {
-             wl_resource_post_error(&ews->wl.surface, 
+             wl_resource_post_error(ews->wl.surface, 
                                     WL_DISPLAY_ERROR_INVALID_OBJECT, 
                                     "Surface already configured");
              return;
@@ -2260,7 +2282,7 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
    if (!ews) return;
 
    /* set the destroy listener */
-   wl_signal_add(&ews->wl.surface.destroy_signal, 
+   wl_signal_add(&ews->wl.destroy_signal, 
                  &input->pointer.surface_destroy);
 
    /* set some properties on this surface */
@@ -2272,16 +2294,20 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
    input->pointer.hot.x = x;
    input->pointer.hot.y = y;
 
-   if (ews->reference.buffer)
+   if (&ews->buffer_reference)
      {
-        Evas_Coord bw = 0, bh = 0;
+        E_Wayland_Buffer *buf;
 
-        /* grab the size of the buffer */
-        bw = ews->reference.buffer->width;
-        bh = ews->reference.buffer->height;
+        if ((buf = ews->buffer_reference.buffer))
+          {
+             Evas_Coord bw = 0, bh = 0;
 
-        /* configure the pointer surface */
-        _e_comp_wl_pointer_configure(ews, 0, 0, bw, bh);
+             bw = buf->w;
+             bh = buf->h;
+
+             /* configure the pointer surface */
+             _e_comp_wl_pointer_configure(ews, 0, 0, bw, bh);
+          }
      }
 }
 
@@ -2353,61 +2379,74 @@ _e_comp_wl_surface_cb_frame_destroy(struct wl_resource *resource)
 }
 
 static void 
-_e_comp_wl_surface_buffer_reference(E_Wayland_Surface *ews, struct wl_buffer *buffer)
+_e_comp_wl_surface_buffer_reference(E_Wayland_Buffer_Reference *ref, E_Wayland_Buffer *buffer)
 {
-   /* check for valid surface */
-   if (!ews) return;
-
-   /* if the surface already has a buffer referenced and it is not the 
-    * same as the one passed in */
-   if ((ews->reference.buffer) && (buffer != ews->reference.buffer))
+   if ((ref->buffer) && (buffer != ref->buffer))
      {
-        /* decrement the reference buffer busy count */
-        ews->reference.buffer->busy_count--;
-
-        /* if the compositor is finished with this referenced buffer, then 
-         * we need to release it */
-        if (ews->reference.buffer->busy_count == 0)
-          {
-             if (ews->reference.buffer->resource.client)
-               wl_resource_queue_event(&ews->reference.buffer->resource, 
-                                       WL_BUFFER_RELEASE);
-          }
-
-        /* remove the destroy link on the referenced buffer */
-        wl_list_remove(&ews->reference.buffer_destroy.link);
+        ref->buffer->busy_count--;
+        if (ref->buffer->busy_count == 0)
+          wl_resource_queue_event(ref->buffer->wl.resource, WL_BUFFER_RELEASE);
+        wl_list_remove(&ref->destroy_listener.link);
      }
 
-   /* if we are passed in a buffer and it is not the one referenced */
-   if ((buffer) && (buffer != ews->reference.buffer))
+   if ((buffer) && (buffer != ref->buffer))
      {
-        /* increment busy count */
         buffer->busy_count++;
-
-        /* setup destroy signal */
-        wl_signal_add(&buffer->resource.destroy_signal, 
-                      &ews->reference.buffer_destroy);
+        wl_signal_add(&buffer->wl.destroy_signal, &ref->destroy_listener);
      }
 
-   /* set buffer reference */
-   ews->reference.buffer = buffer;
-
-   /* setup destroy listener */
-   ews->reference.buffer_destroy.notify = 
+   ref->buffer = buffer;
+   ref->destroy_listener.notify = 
      _e_comp_wl_surface_buffer_reference_cb_destroy;
 }
 
 static void 
 _e_comp_wl_surface_buffer_reference_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 {
-   E_Wayland_Surface *ews = NULL;
+   E_Wayland_Buffer_Reference *ref;
 
    /* try to get the surface from this listener */
-   ews = container_of(listener, E_Wayland_Surface, reference.buffer_destroy);
-   if (!ews) return;
+   ref = container_of(listener, E_Wayland_Buffer_Reference, destroy_listener);
+   if (!ref) return;
 
    /* set referenced buffer to null */
-   ews->reference.buffer = NULL;
+   ref->buffer = NULL;
+}
+
+static E_Wayland_Buffer *
+_e_comp_wl_surface_buffer_resource(struct wl_resource *resource)
+{
+   E_Wayland_Buffer *buffer;
+   struct wl_listener *listener;
+
+   listener = 
+     wl_resource_get_destroy_listener(resource, 
+                                      _e_comp_wl_surface_buffer_cb_destroy);
+   if (listener)
+     buffer = container_of(listener, E_Wayland_Buffer, wl.destroy_listener);
+   else
+     {
+        buffer = E_NEW_RAW(E_Wayland_Buffer, 1);
+        memset(buffer, 0, sizeof(*buffer));
+        buffer->wl.resource = resource;
+        wl_signal_init(&buffer->wl.destroy_signal);
+        buffer->wl.destroy_listener.notify = 
+          _e_comp_wl_surface_buffer_cb_destroy;
+        wl_resource_add_destroy_listener(resource, 
+                                         &buffer->wl.destroy_listener);
+     }
+
+   return buffer;
+}
+
+static void 
+_e_comp_wl_surface_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Wayland_Buffer *buffer;
+
+   buffer = container_of(listener, E_Wayland_Buffer, wl.destroy_listener);
+   wl_signal_emit(&buffer->wl.destroy_signal, buffer);
+   E_FREE(buffer);
 }
 
 /* surface interface functionss */
@@ -2421,15 +2460,16 @@ static void
 _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int x, int y)
 {
    E_Wayland_Surface *ews = NULL;
-   struct wl_buffer *buffer = NULL;
+   E_Wayland_Buffer *buffer = NULL;
 
    /* try to cast the resource data to our surface structure */
-   if (!(ews = resource->data)) return;
+   if (!(ews = wl_resource_get_user_data(resource))) return;
 
-   if (buffer_resource) buffer = buffer_resource->data;
+   if (buffer_resource) 
+     buffer = _e_comp_wl_surface_buffer_resource(buffer_resource);
 
    /* reference any existing buffers */
-   _e_comp_wl_surface_buffer_reference(ews, buffer);
+   _e_comp_wl_surface_buffer_reference(&ews->buffer_reference, buffer);
 
    /* if we are setting a null buffer, then unmap the surface */
    if (!buffer)
@@ -2453,8 +2493,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
 
    /* if we were given a buffer, initialize the destroy signal */
    if (buffer)
-     wl_signal_add(&buffer->resource.destroy_signal, 
-                   &ews->pending.buffer_destroy);
+     wl_signal_add(&buffer->wl.destroy_signal, &ews->pending.buffer_destroy);
 }
 
 static void 
@@ -2486,15 +2525,10 @@ _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resour
         return;
      }
 
-   /* set some properties on the callback */
-   cb->wl.resource.object.interface = &wl_callback_interface;
-   cb->wl.resource.object.id = callback;
-   cb->wl.resource.destroy = _e_comp_wl_surface_cb_frame_destroy;
-   cb->wl.resource.client = client;
-   cb->wl.resource.data = cb;
-
-   /* add frame callback to client */
-   wl_client_add_resource(client, &cb->wl.resource);
+   cb->wl.resource = 
+     wl_client_add_object(client, &wl_callback_interface, NULL, callback, cb);
+   wl_resource_set_destructor(cb->wl.resource, 
+                              _e_comp_wl_surface_cb_frame_destroy);
 
    /* add this callback to the surface list of pending frames */
    wl_list_insert(ews->pending.frames.prev, &cb->wl.link);
@@ -2513,7 +2547,7 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
         E_Wayland_Region *ewr = NULL;
 
         /* copy this region to the pending opaque region */
-        if ((ewr = region_resource->data))
+        if ((ewr = wl_resource_get_user_data(region_resource)))
           pixman_region32_copy(&ews->pending.opaque, &ewr->region);
      }
    else
@@ -2539,7 +2573,7 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
         E_Wayland_Region *ewr = NULL;
 
         /* copy this region to the pending input region */
-        if ((ewr = region_resource->data))
+        if ((ewr = wl_resource_get_user_data(region_resource)))
           pixman_region32_copy(&ews->pending.input, &ewr->region);
      }
    else
@@ -2571,7 +2605,8 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    if ((ews->pending.buffer) || (ews->pending.new_buffer))
      {
         /* reference the pending buffer */
-        _e_comp_wl_surface_buffer_reference(ews, ews->pending.buffer);
+        _e_comp_wl_surface_buffer_reference(&ews->buffer_reference, 
+                                            ews->pending.buffer);
 
         /* if the pending buffer is NULL, unmap the surface */
         if (!ews->pending.buffer)
@@ -2585,13 +2620,19 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
           {
              if (ews->obj)
                {
+                  E_Wayland_Buffer *buff;
+                  struct wl_shm_buffer *shm_buffer;
                   void *data;
 
-                  bw = ews->pending.buffer->width;
-                  bh = ews->pending.buffer->height;
+                  buff = ews->pending.buffer;
+
+                  shm_buffer = wl_shm_buffer_get(buff->wl.resource);
+
+                  bw = wl_shm_buffer_get_width(shm_buffer);
+                  bh = wl_shm_buffer_get_height(shm_buffer);
 
                   /* grab the pixel data from the buffer */
-                  data = wl_shm_buffer_get_data(ews->pending.buffer);
+                  data = wl_shm_buffer_get_data(shm_buffer);
 
                   /* send the pixel data to the smart object */
                   e_surface_image_set(ews->obj, bw, bh, data);
@@ -2600,10 +2641,16 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
      }
 
    /* if we have a reference to a buffer, get it's size */
-   if (ews->reference.buffer)
+   if (&ews->buffer_reference)
      {
-        bw = ews->reference.buffer->width;
-        bh = ews->reference.buffer->height;
+        E_Wayland_Buffer *buff;
+        struct wl_shm_buffer *shm_buffer;
+
+        buff = ews->buffer_reference.buffer;
+
+        shm_buffer = wl_shm_buffer_get(buff->wl.resource);
+        bw = wl_shm_buffer_get_width(shm_buffer);
+        bh = wl_shm_buffer_get_height(shm_buffer);
      }
 
    /* if we have a new pending buffer, call configure */
