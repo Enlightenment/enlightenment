@@ -421,6 +421,7 @@ struct _E_Wayland_Input
      {
         E_Wayland_Keyboard_Info *info;
         struct xkb_state *state;
+        struct xkb_rule_names names;
      } xkb;
 
    struct 
