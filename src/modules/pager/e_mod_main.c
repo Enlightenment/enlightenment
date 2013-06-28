@@ -2196,12 +2196,12 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
                e_border_hide(bd, 2);
              else
                {
-                  if (pd->desk != bd->desk)
+                  if ((pd->desk != bd->desk) && (pw))
                     e_comp_win_effect_set(pw->border->cw, NULL);
                }
              e_border_desk_set(bd, pd->desk);
              e_border_raise(bd);
-                  
+
              if ((!max) && (!fullscreen))
                {
                   int zx, zy, zw, zh, mx, my;
