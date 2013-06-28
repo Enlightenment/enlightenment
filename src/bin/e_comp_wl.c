@@ -74,7 +74,7 @@ static Eina_Bool _e_comp_wl_input_init(void);
 static void _e_comp_wl_input_shutdown(void);
 static void _e_comp_wl_input_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
 static void _e_comp_wl_input_cb_unbind(struct wl_resource *resource);
-static struct xkb_keymap *_e_comp_wl_input_keymap_get(E_Wayland_Input *input);
+static struct xkb_keymap *_e_comp_wl_input_keymap_get(void);
 static int _e_comp_wl_input_keymap_fd_get(off_t size);
 static E_Wayland_Keyboard_Info *_e_comp_wl_input_keyboard_info_get(struct xkb_keymap *keymap);
 
@@ -1513,18 +1513,12 @@ _e_comp_wl_cb_keymap_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void 
    struct xkb_keymap *keymap;
 
    /* try to fetch the keymap */
-   if (!(keymap = _e_comp_wl_input_keymap_get(_e_wl_comp->input))) 
+   if (!(keymap = _e_comp_wl_input_keymap_get())) 
      return ECORE_CALLBACK_PASS_ON;
 
    /* destroy keyboard */
    if (_e_wl_comp->input->xkb.info)
      {
-        free((char *)_e_wl_comp->input->xkb.names.rules);
-        free((char *)_e_wl_comp->input->xkb.names.model);
-        free((char *)_e_wl_comp->input->xkb.names.layout);
-        free((char *)_e_wl_comp->input->xkb.names.variant);
-        free((char *)_e_wl_comp->input->xkb.names.options);
-
         /* if we have a keymap, unreference it */
         if (_e_wl_comp->input->xkb.info->keymap)
           xkb_map_unref(_e_wl_comp->input->xkb.info->keymap);
@@ -1768,7 +1762,7 @@ _e_comp_wl_input_init(void)
    _e_wl_comp->xkb.context = xkb_context_new(0);
 
    /* try to fetch the keymap */
-   if ((keymap = _e_comp_wl_input_keymap_get(_e_wl_comp->input)))
+   if ((keymap = _e_comp_wl_input_keymap_get()))
      {
         /* try to create new keyboard info */
         _e_wl_comp->input->xkb.info = 
@@ -1822,12 +1816,6 @@ _e_comp_wl_input_shutdown(void)
    /* destroy keyboard */
    if (_e_wl_comp->input->xkb.info)
      {
-        free((char *)_e_wl_comp->input->xkb.names.rules);
-        free((char *)_e_wl_comp->input->xkb.names.model);
-        free((char *)_e_wl_comp->input->xkb.names.layout);
-        free((char *)_e_wl_comp->input->xkb.names.variant);
-        free((char *)_e_wl_comp->input->xkb.names.options);
-
         /* if we have a keymap, unreference it */
         if (_e_wl_comp->input->xkb.info->keymap)
           xkb_map_unref(_e_wl_comp->input->xkb.info->keymap);
@@ -1905,7 +1893,7 @@ _e_comp_wl_input_cb_unbind(struct wl_resource *resource)
 }
 
 static struct xkb_keymap *
-_e_comp_wl_input_keymap_get(E_Wayland_Input *input)
+_e_comp_wl_input_keymap_get(void)
 {
    E_Config_XKB_Layout *kbd_layout;
    struct xkb_rule_names names;
@@ -1952,7 +1940,10 @@ _e_comp_wl_input_keymap_get(E_Wayland_Input *input)
           }
      }
 
-   input->xkb.names = names;
+   printf("Keymap\n");
+   printf("\tRules: %s\n", names.rules);
+   printf("\tModel: %s\n", names.model);
+   printf("\tLayout: %s\n", names.layout);
 
    return xkb_map_new_from_names(_e_wl_comp->xkb.context, &names, 0);
 }
