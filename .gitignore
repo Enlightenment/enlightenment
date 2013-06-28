@@ -18,7 +18,6 @@ Makefile.in
 *.gmo
 *~
 *.cfg
-*.desktop
 *.dirstamp
 default.edj
 /ABOUT-NLS
