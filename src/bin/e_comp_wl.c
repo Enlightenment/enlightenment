@@ -1122,7 +1122,6 @@ static void
 _unbind_data_device(struct wl_resource *resource)
 {
    wl_list_remove(wl_resource_get_link(resource));
-   free(resource);
 }
 
 static void
@@ -1886,16 +1885,14 @@ static void
 _e_comp_wl_input_cb_unbind(struct wl_resource *resource)
 {
    /* remove the link */
-   wl_list_remove(&resource->link);
-
-   /* free the resource */
-   free(resource);
+   wl_list_remove(wl_resource_get_link(resource));
 }
 
 static struct xkb_keymap *
 _e_comp_wl_input_keymap_get(void)
 {
    E_Config_XKB_Layout *kbd_layout;
+   struct xkb_keymap *keymap;
    struct xkb_rule_names names;
 
    memset(&names, 0, sizeof(names));
@@ -1945,7 +1942,13 @@ _e_comp_wl_input_keymap_get(void)
    printf("\tModel: %s\n", names.model);
    printf("\tLayout: %s\n", names.layout);
 
-   return xkb_map_new_from_names(_e_wl_comp->xkb.context, &names, 0);
+   keymap = xkb_map_new_from_names(_e_wl_comp->xkb.context, &names, 0);
+
+   free((char *)names.rules);
+   free((char *)names.model);
+   free((char *)names.layout);
+
+   return keymap;
 }
 
 static int 
