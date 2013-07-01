@@ -468,8 +468,12 @@ dbus_link_mouse_out_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
    if (eldbus_message_arguments_get(msg, "suxii", &uri, &t, &win, &last_coords.x, &last_coords.y))
      {
         if (tw_mod->pop && (!tw_mod->sticky) &&
-            ((tw_tmpfile && (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), tw_tmpfile))) ||
-            (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), uri))))
+           (
+#ifdef HAVE_EMOTION
+            (tw_tmpfile && (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), tw_tmpfile))) ||
+#endif
+            (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), uri))
+           ))
           {
              if (tw_config->mouse_out_delay)
                {
@@ -480,9 +484,11 @@ dbus_link_mouse_out_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
                tw_hide(NULL);
              tw_mod->force = 0;
           }
+#ifdef HAVE_EMOTION
         else if (tw_tmpthread || tw_tmpfile)
           tw_hide(NULL);
-        tw_mod->hidden = 1;
+#endif
+        tw_mod->hidden = !tw_mod->pop;
      }
    return eldbus_message_method_return_new(msg);
 }
@@ -1142,6 +1148,7 @@ focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Border_Focus_Out
 EINTERN Eina_Bool
 tw_hide(void *d EINA_UNUSED)
 {
+#ifdef HAVE_EMOTION
    if (tw_tmpthread)
      {
         ecore_thread_local_data_add(tw_tmpthread, "dead", (void*)1, NULL, 0);
@@ -1153,10 +1160,8 @@ tw_hide(void *d EINA_UNUSED)
         close(tw_tmpfd);
         tw_tmpfd = -1;
      }
-   if (tw_tmpfile)
-     {
-        eina_stringshare_replace(&tw_tmpfile, NULL);
-     }
+   eina_stringshare_replace(&tw_tmpfile, NULL);
+#endif
    tw_win = 0;
    E_FREE_FUNC(tw_mod->pop, e_object_del);
    last_coords.x = last_coords.y = 0;
