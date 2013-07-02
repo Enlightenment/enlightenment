@@ -1,11 +1,15 @@
 [Desktop Entry]
-Type=Link
-Name=Application Menu
-Name[ca]=Menú d'Aplicacions
-Name[ru]=Меню управления приложениями
-Icon=e-module-appmenu
 Comment=Gadget that holds the menubar of the foreground application.
 Comment[ca]=Giny que conté la barra de menú de les aplicacions executades en primer pla.
+Comment[eo]=Akcesoraĵo kiu tenas la menuo-breton de la dialoga aplikaĵo.
 Comment[it]=Gadget che contiene la barra degli strumenti dell'applicazione in primo piano.
 Comment[ru]=Гаджет отображающий меню активного приложения.
+Encoding=UTF-8
+Icon=e-module-appmenu
+Name=Application Menu
+Name[ca]=Menú d'Aplicacions
+Name[eo]=Aplikaĵomenuo
+Name[fr]=Menu des applications
+Name[ru]=Меню управления приложениями
+Type=Link
 X-Enlightenment-ModuleType=utils

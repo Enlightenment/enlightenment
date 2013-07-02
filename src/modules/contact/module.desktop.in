@@ -1,6 +1,9 @@
 [Desktop Entry]
-Type=Link
-Name=Contact
-Icon=e-module-contact
-X-Enlightenment-ModuleType=mobile
 Comment=
+Encoding=UTF-8
+Icon=e-module-contact
+Name=Contact
+Name[eo]=Kontakto
+Name[fr]=Contact
+Type=Link
+X-Enlightenment-ModuleType=mobile

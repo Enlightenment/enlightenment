@@ -1,6 +1,9 @@
 [Desktop Entry]
-Type=Link
-Name=Teamwork
-Icon=e-module-teamwork
 Comment=Enlightenment Is A Team Player
+Comment[eo]=Enlightenment estas skipa ludanto
+Comment[it]=Enlightenment è giocatore in un team
+Encoding=UTF-8
+Icon=e-module-teamwork
+Name=Teamwork
+Type=Link
 X-Enlightenment-ModuleType=core

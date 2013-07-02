@@ -1,6 +1,11 @@
 [Desktop Entry]
-Type=Link
-Name=Wayland Desktop Shell
-Icon=e-module-wl_desktop_shell
 Comment=Enlightenment Wayland Desktop Shell
+Comment[eo]=Labortabla ŝelo de Enlightenment por Wayland
+Comment[it]=Desktop shell per Wayland di Enlightenment
+Encoding=UTF-8
+Icon=e-module-wl_desktop_shell
+Name=Wayland Desktop Shell
+Name[eo]=Labortabla ĉelo de Wayland
+Name[it]=Desktop shell per Wayland
+Type=Link
 X-Enlightenment-ModuleType=look
