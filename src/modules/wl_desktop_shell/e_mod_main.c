@@ -328,12 +328,11 @@ _e_wl_shell_cb_pointer_focus(struct wl_listener *listener EINA_UNUSED, void *dat
         if (!(grab = E_NEW(E_Wayland_Shell_Grab, 1))) return;
 
         /* set grab properties */
-        grab->x = ews->input->wl.seat.pointer->grab_x;
-        grab->y = ews->input->wl.seat.pointer->grab_y;
+        grab->x = ptr->grab_x;
+        grab->y = ptr->grab_y;
 
         /* set busy cursor */
-        _e_wl_shell_grab_start(grab, ews->shell_surface, 
-                               ews->input->wl.seat.pointer, 
+        _e_wl_shell_grab_start(grab, ews->shell_surface, ptr,
                                &_e_busy_grab_interface, 
                                E_DESKTOP_SHELL_CURSOR_BUSY);
      }
@@ -418,7 +417,8 @@ _e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *r
    E_Wayland_Shell_Surface *ewss = NULL;
 
    /* try to cast the surface resource to our structure */
-   if (!(ews = surface_resource->data)) return;
+   if (!(ews = wl_resource_get_user_data(surface_resource)))
+     return;
 
    /* check if this surface already has a shell surface */
    if ((ews->configure) && 
@@ -483,9 +483,10 @@ _e_wl_desktop_shell_cb_shell_grab_surface_set(struct wl_client *client EINA_UNUS
    E_Wayland_Desktop_Shell *shell = NULL;
 
    /* try to get the shell */
-   if (!(shell = resource->data)) return;
+   if (!(shell = wl_resource_get_user_data(resource)))
+     return;
 
-   shell->grab_surface = surface_resource->data;
+   shell->grab_surface = wl_resource_get_user_data(surface_resource);
 }
 
 /* shell surface functions */
@@ -715,7 +716,8 @@ _e_wl_shell_shell_surface_destroy(struct wl_resource *resource)
    E_Wayland_Ping_Timer *tmr = NULL;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
    /* if we have a popup grab, end it */
    if (ewss->popup.grab.pointer)
@@ -737,7 +739,7 @@ _e_wl_shell_shell_surface_destroy(struct wl_resource *resource)
    wl_list_remove(&ewss->wl.link);
 
    /* try to free our allocated structure */
-   E_FREE(ewss);
+   /* E_FREE(ewss); */
 }
 
 static void 
@@ -1503,7 +1505,8 @@ _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct w
    Eina_Bool responsive = EINA_FALSE;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
    /* try to cast the ping timer */
    if (!(tmr = (E_Wayland_Ping_Timer *)ewss->ping_timer))
@@ -1635,10 +1638,12 @@ _e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct w
    struct wl_pointer *ptr = NULL;
 
    /* try to cast the seat resource to our input structure */
-   if (!(input = seat_resource->data)) return;
+   if (!(input = wl_resource_get_user_data(seat_resource)))
+     return;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
    /* if the shell surface is fullscreen, get out */
    if (ewss->type == E_WAYLAND_SHELL_SURFACE_TYPE_FULLSCREEN) return;
@@ -1697,10 +1702,12 @@ _e_wl_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct
    struct wl_pointer *ptr = NULL;
 
    /* try to cast the seat resource to our input structure */
-   if (!(input = seat_resource->data)) return;
+   if (!(input = wl_resource_get_user_data(seat_resource)))
+     return;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
    /* if the shell surface is fullscreen or maximized, get out */
    if ((ewss->type == E_WAYLAND_SHELL_SURFACE_TYPE_FULLSCREEN) || 
@@ -1760,7 +1767,8 @@ _e_wl_shell_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, 
    E_Wayland_Shell_Surface *ewss = NULL;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
    /* set next surface type */
    ewss->next_type = E_WAYLAND_SHELL_SURFACE_TYPE_TOPLEVEL;
@@ -1773,9 +1781,10 @@ _e_wl_shell_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED,
    E_Wayland_Surface *ews = NULL;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
-   ews = parent_resource->data;
+   ews = wl_resource_get_user_data(parent_resource);
 
    ewss->parent = ews;
    ewss->transient.x = x;
@@ -1799,7 +1808,8 @@ _e_wl_shell_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED
    return;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
    /* set next surface type */
    ewss->next_type = E_WAYLAND_SHELL_SURFACE_TYPE_TOPLEVEL;
@@ -1826,16 +1836,17 @@ _e_wl_shell_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, str
    E_Wayland_Input *input = NULL;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
    /* cast the seat resource to our input structure */
-   input = seat_resource->data;
+   input = wl_resource_get_user_data(seat_resource);
 
    /* set surface type */
    ewss->type = E_WAYLAND_SHELL_SURFACE_TYPE_POPUP;
 
    /* set surface popup properties */
-   ewss->parent = parent_resource->data;
+   ewss->parent = wl_resource_get_user_data(parent_resource);
    ewss->popup.seat = &input->wl.seat;
    ewss->popup.serial = serial;
    ewss->popup.x = x;
@@ -1848,7 +1859,8 @@ _e_wl_shell_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED,
    E_Wayland_Shell_Surface *ewss = NULL;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
    /* set next surface type */
    ewss->next_type = E_WAYLAND_SHELL_SURFACE_TYPE_MAXIMIZED;
@@ -1879,7 +1891,8 @@ _e_wl_shell_shell_surface_cb_title_set(struct wl_client *client EINA_UNUSED, str
    E_Wayland_Surface *ews = NULL;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
    /* free any previous title */
    free(ewss->title);
@@ -1902,7 +1915,8 @@ _e_wl_shell_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED, str
    E_Wayland_Surface *ews = NULL;
 
    /* try to cast the resource to our shell surface */
-   if (!(ewss = resource->data)) return;
+   if (!(ewss = wl_resource_get_user_data(resource)))
+     return;
 
    /* free any previous class */
    free(ewss->clas);
