@@ -9955,6 +9955,11 @@ cleanup:
    if (warp_timer_border)
      {
         warp_x[0] = warp_x[1] = warp_y[0] = warp_y[1] = -1;
+        if (warp_timer_border->modal)
+          {
+             warp_timer_border = NULL;
+             return ECORE_CALLBACK_CANCEL;
+          }
         e_focus_event_mouse_in(warp_timer_border);
         if (warp_timer_border->iconic)
           {
