@@ -861,7 +861,6 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
 
    cfdata->locals.dia = e_dialog_normal_win_new(NULL, "E", "_edgebind_getedge_dialog");
    if (!cfdata->locals.dia) return;
-   e_dialog_parent_set(cfdata->locals.dia, cfdata->cfd->dia->win);
    e_dialog_title_set(cfdata->locals.dia, _("Edge Binding Sequence"));
    e_dialog_icon_set(cfdata->locals.dia, "enlightenment/edges", 48);
    e_dialog_button_add(cfdata->locals.dia, _("Apply"), NULL, _edge_grab_wnd_cb_apply, cfdata);
@@ -932,8 +931,8 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
 
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _edge_grab_wnd_selected_edge_cb, cfdata);
-   e_dialog_parent_set(cfdata->locals.dia, cfdata->cfd->dia->win);
    e_dialog_show(cfdata->locals.dia);
+   e_dialog_parent_set(cfdata->locals.dia, cfdata->cfd->dia->win);
 }
 
 static void
