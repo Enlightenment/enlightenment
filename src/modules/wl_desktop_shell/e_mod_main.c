@@ -179,6 +179,8 @@ e_modapi_init(E_Module *m)
 
    /* setup compositor shell interface functions */
    _e_wl_comp->shell_interface.shell = shell;
+   _e_wl_comp->shell_interface.shell_surface_create = 
+     _e_wl_shell_shell_surface_create;
 
    /* try to add this shell to the display's global list */
    if (!(gshell = 
@@ -306,12 +308,15 @@ _e_wl_shell_cb_pointer_focus(struct wl_listener *listener EINA_UNUSED, void *dat
 
    if (!(ptr = data)) return;
 
+   if (!ptr->focus) return;
+
    /* try to cast the current pointer focus to a wayland surface */
-   if (!(ews = (E_Wayland_Surface *)ptr->focus)) return;
+   if (!(ews = wl_resource_get_user_data(ptr->focus)))
+     return;
 
    /* if this surface has a shell_surface and it is not active, then we 
     * should set the busy cursor on it */
-   if ((ews->shell_surface) && (!ews->shell_surface->active))
+   if ((ews->mapped) && (ews->shell_surface) && (!ews->shell_surface->active))
      {
         E_Wayland_Shell_Grab *grab = NULL;
 
@@ -402,7 +407,7 @@ _e_wl_shell_grab_cb_surface_destroy(struct wl_listener *listener, void *data EIN
 
 /* shell interface functions */
 static void 
-_e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *surface_resource)
+_e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, unsigned int id, struct wl_resource *surface_resource)
 {
    E_Wayland_Surface *ews = NULL;
    E_Wayland_Shell_Surface *ewss = NULL;
@@ -424,7 +429,7 @@ _e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *r
    /* try to create a shell surface for this surface */
    if (!(ewss = _e_wl_shell_shell_surface_create(NULL, ews, NULL)))
      {
-        wl_resource_post_no_memory(resource);
+        wl_resource_post_no_memory(surface_resource);
         return;
      }
 
@@ -489,6 +494,8 @@ _e_wl_shell_shell_surface_create(void *shell EINA_UNUSED, E_Wayland_Surface *ews
 {
    E_Wayland_Shell_Surface *ewss = NULL;
 
+   if (!ews) return NULL;
+
    /* try to allocate space for our shell surface structure */
    if (!(ewss = E_NEW(E_Wayland_Shell_Surface, 1)))
      return NULL;
@@ -506,6 +513,8 @@ _e_wl_shell_shell_surface_create(void *shell EINA_UNUSED, E_Wayland_Surface *ews
    wl_signal_init(&ewss->wl.destroy_signal);
    ewss->wl.surface_destroy.notify = _e_wl_shell_shell_surface_cb_destroy;
    wl_signal_add(&ews->wl.destroy_signal, &ewss->wl.surface_destroy);
+
+   /* wl_list_init(&ewss->wl.surface_destroy.link); */
 
    wl_list_init(&ewss->wl.link);
 
@@ -742,12 +751,23 @@ _e_wl_shell_shell_surface_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_C
    E_Wayland_Shell_Surface *ewss = NULL;
    Eina_Bool changed_type = EINA_FALSE;
 
-   if ((ews->configure == _e_wl_shell_shell_surface_configure))
-     {
-        if (!(ewss = ews->shell_surface)) return;
-     }
-   else 
-     return;
+   ewss = ews->shell_surface;
+
+   /* FIXME */
+   /* if ((!ews->mapped) &&  */
+   /*     (!wl_list_empty(&ewss->popup.grab_link)) */
+   /*   { */
+        
+   /*   } */
+
+   if (w == 0) return;
+
+   /* if ((ews->configure == _e_wl_shell_shell_surface_configure)) */
+   /*   { */
+   /*      if (!(ewss = ews->shell_surface)) return; */
+   /*   } */
+   /* else  */
+   /*   return; */
 
    /* handle shell_surface type change */
    if ((ewss->next_type != E_WAYLAND_SHELL_SURFACE_TYPE_NONE) && 
@@ -986,7 +1006,28 @@ _e_wl_shell_shell_surface_cb_destroy(struct wl_listener *listener, void *data EI
    if (ewss->wl.resource)
      wl_resource_destroy(ewss->wl.resource);
    else
-     wl_signal_emit(&ewss->wl.destroy_signal, ewss->wl.resource);
+     {
+        E_Wayland_Ping_Timer *tmr = NULL;
+
+        wl_signal_emit(&ewss->wl.destroy_signal, ewss);
+
+        /* TODO: FIXME: Popup->grab_link */
+
+        wl_list_remove(&ewss->wl.surface_destroy.link);
+        ewss->surface->configure = NULL;
+
+        /* destroy the ping timer */
+        if ((tmr = (E_Wayland_Ping_Timer *)ewss->ping_timer))
+          {
+             if (tmr->source) wl_event_source_remove(tmr->source);
+             E_FREE(tmr);
+             ewss->ping_timer = NULL;
+          }
+
+        free(ewss->title);
+        wl_list_remove(&ewss->wl.link);
+        free(ewss);
+     }
 }
 
 static int 
@@ -2095,7 +2136,7 @@ _e_wl_shell_popup_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_resource
 
    client = wl_resource_get_client(ewss->surface->wl.surface);
 
-   if ((surface) && (surface->client == client))
+   if ((surface) && (wl_resource_get_client(surface) == client))
      {
         wl_pointer_set_focus(ptr, surface, x, y);
         grab->focus = surface;
@@ -2131,7 +2172,7 @@ _e_wl_shell_popup_grab_cb_button(struct wl_pointer_grab *grab, unsigned int time
         struct wl_display *disp;
         unsigned int serial;
 
-        disp = wl_client_get_display(res->client);
+        disp = wl_client_get_display(wl_resource_get_client(res));
         serial = wl_display_get_serial(disp);
 
         wl_pointer_send_button(res, serial, timestamp, button, state);
