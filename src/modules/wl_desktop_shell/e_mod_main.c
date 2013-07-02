@@ -251,7 +251,6 @@ static void
 _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
 {
    E_Wayland_Desktop_Shell *shell = NULL;
-   struct wl_resource *res = NULL;
 
    /* try to cast data to our shell */
    if (!(shell = data)) return;
@@ -259,14 +258,6 @@ _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version E
    /* try to add the shell to the client */
    wl_client_add_object(client, &wl_shell_interface, 
                         &_e_shell_interface, id, shell);
-
-   res = wl_client_new_object(client, &e_desktop_shell_interface, 
-                              &_e_desktop_shell_interface, shell);
-
-   shell->wl.resource = res;
-
-   /* set desktop shell destroy callback */
-   res->destroy = _e_wl_desktop_shell_cb_unbind;
 }
 
 static void 
@@ -467,13 +458,16 @@ _e_wl_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int v
    shell->wl.resource = res;
 
    /* set desktop shell destroy callback */
-   res->destroy = _e_wl_desktop_shell_cb_unbind;
+   wl_resource_set_destructor(res, _e_wl_desktop_shell_cb_unbind);
 }
 
 static void 
 _e_wl_desktop_shell_cb_unbind(struct wl_resource *resource)
 {
-   free(resource);
+   E_Wayland_Desktop_Shell *shell = NULL;
+
+   shell = wl_resource_get_user_data(resource);
+   shell->wl.resource = NULL;
 }
 
 /* desktop shell interface functions */
