@@ -634,6 +634,58 @@ group "E_Config" struct {
             value "icon" string: "THUMB";
         }
         group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font-ttf";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font-type1";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font-afm";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font-snf";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font-otf";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/vnd.font-fontforge-sfd";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font-linux-psf";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font-ttx";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font-speedo";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font-pcf";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-font-bdf";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+            value "mime" string: "application/x-cisco-vpn-settings";
+            value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
             value "mime" string: "video/3gpp";
             value "icon" string: "THUMB";
         }
