@@ -437,17 +437,9 @@ _e_comp_win_restack(E_Comp_Win *cw)
    if (prev) cwp = EINA_INLIST_CONTAINER_GET(prev, E_Comp_Win);
 
    if (cwp)
-     {
-        e_layout_child_raise_above(cw->effect_obj, cwp->effect_obj);
-        cw->c->wins = eina_inlist_remove(cw->c->wins, EINA_INLIST_GET(cw));
-        cw->c->wins = eina_inlist_append_relative(cw->c->wins, EINA_INLIST_GET(cw), EINA_INLIST_GET(cwp));
-     }
+     e_layout_child_raise_above(cw->effect_obj, cwp->effect_obj);
    else if (cwn)
-     {
-        e_layout_child_raise_above(cw->effect_obj, cwn->effect_obj);
-        cw->c->wins = eina_inlist_remove(cw->c->wins, EINA_INLIST_GET(cw));
-        cw->c->wins = eina_inlist_append_relative(cw->c->wins, EINA_INLIST_GET(cw), EINA_INLIST_GET(cwn));
-     }
+     e_layout_child_lower_below(cw->effect_obj, cwn->effect_obj);
    if (cw->bd)
      {
         E_Border *tmp;
