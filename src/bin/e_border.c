@@ -1635,7 +1635,10 @@ e_border_layer_set(E_Border *bd,
         EINA_LIST_FREE(list, child)
           e_border_layer_set(child, layer);
      }
-   e_border_raise(bd);
+   if ((!bd->modal) || (bd->modal->layer > bd->layer))
+     e_border_raise(bd);
+   else
+     e_border_stack_below(bd, bd->modal);
    if (layer == E_LAYER_BELOW)
      e_hints_window_stacking_set(bd, E_STACKING_BELOW);
    else if (layer == E_LAYER_ABOVE)
@@ -9957,6 +9960,8 @@ cleanup:
         warp_x[0] = warp_x[1] = warp_y[0] = warp_y[1] = -1;
         if (warp_timer_border->modal)
           {
+             /* got a modal dialog during pointer warp...whoops */
+             e_border_raise(warp_timer_border->modal);
              warp_timer_border = NULL;
              return ECORE_CALLBACK_CANCEL;
           }
