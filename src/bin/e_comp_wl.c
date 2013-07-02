@@ -2172,7 +2172,10 @@ _e_comp_wl_pointer_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y,
    pixman_region32_init(&ews->pending.input);
 
    /* do we have a focused surface ? */
-   if ((focus = (E_Wayland_Surface *)input->wl.seat.pointer->focus))
+   if (!input->wl.seat.pointer->focus) return;
+
+   if ((focus = wl_resource_get_user_data(input->wl.seat.pointer->focus)))
+//   if ((focus = (E_Wayland_Surface *)input->wl.seat.pointer->focus))
      {
         /* NB: Ideally, I wanted to use the e_pointer methods here so that 
          * the cursor would match the E theme, however Wayland currently 
