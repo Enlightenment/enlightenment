@@ -5257,7 +5257,15 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
                        bd->saved.y = y - bd->zone->y;
                     }
                   else
-                    e_border_move(bd, x, y);
+                    {
+                       if ((e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY) && bd->zone &&
+                           (!E_INSIDE(x, y, 0, 0, bd->zone->w - 5, bd->zone->h - 5)) &&
+                           (!E_INSIDE(x, y, 0 - bd->w + 5, 0 - bd->h + 5, bd->zone->w - 5, bd->zone->h - 5))
+                          )
+                         _e_border_move_lost_window_to_center(bd);
+                       else
+                         e_border_move(bd, x, y);
+                    }
                }
           }
      }
