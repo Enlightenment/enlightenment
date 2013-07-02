@@ -3453,35 +3453,37 @@ _e_comp_bd_add(void *data EINA_UNUSED, void *ev)
     * so we have to manually stack it here */
    for (x = 0; x < E_CONTAINER_LAYER_COUNT; x++)
      {
-        Eina_List *l;
+        Eina_List *l, *ll;
         E_Border *bd2;
         E_Comp_Win *cw2;
 
         if (!con->layers[x].clients) continue;
         l = eina_list_data_find_list(con->layers[x].clients, cw->bd);
         if (!l) continue;
-        if (l->prev)
+        for (ll = l->prev; ll; ll = ll->prev)
           {
-             bd2 = eina_list_data_get(l->prev);
-             cw2 = _e_comp_win_find(bd2->win);
+             bd2 = eina_list_data_get(ll);
+             if (bd->desk != bd2->desk) continue;
+             cw2 = bd2->cw;
              if (cw2)
                {
                   _e_comp_win_raise_above(cw, cw2);
-                  break;
+                  return;
                }
           }
-        if (l->next)
+        for (ll = l->next; ll; ll = ll->next)
           {
-             bd2 = eina_list_data_get(l->next);
-             cw2 = _e_comp_win_find(bd2->win);
+             bd2 = eina_list_data_get(ll);
+             if (bd->desk != bd2->desk) continue;
+             cw2 = bd2->cw;
              if (cw2)
                {
                   _e_comp_win_lower_below(cw, cw2);
-                  break;
+                  return;
                }
           }
         cw2 = _e_comp_win_find(con->layers[x].win);
-        if (cw2) _e_comp_win_raise_above(cw, cw2);
+        if (cw2) _e_comp_win_lower_below(cw, cw2);
         break;
      }
    //if (cw->bd->visible)
