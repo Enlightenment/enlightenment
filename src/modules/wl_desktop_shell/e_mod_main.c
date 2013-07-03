@@ -18,14 +18,13 @@ static void _e_wl_shell_grab_cb_surface_destroy(struct wl_listener *listener, vo
 static void _e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *surface_resource);
 
 /* desktop shell function prototypes */
-static void _e_wl_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
 static void _e_wl_desktop_shell_cb_unbind(struct wl_resource *resource);
 
 /* desktop shell interface prototypes */
 static void _e_wl_desktop_shell_cb_shell_grab_surface_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *surface_resource);
 
 /* shell surface function prototypes */
-static E_Wayland_Shell_Surface *_e_wl_shell_shell_surface_create(void *shell EINA_UNUSED, E_Wayland_Surface *ews, const void *client EINA_UNUSED);
+static E_Wayland_Shell_Surface *_e_wl_shell_shell_surface_create(void *shell, E_Wayland_Surface *ews, const void *client EINA_UNUSED);
 static void _e_wl_shell_shell_surface_create_toplevel(E_Wayland_Surface *ews);
 static void _e_wl_shell_shell_surface_create_popup(E_Wayland_Surface *ews);
 static void _e_wl_shell_shell_surface_destroy(struct wl_resource *resource);
@@ -190,8 +189,7 @@ e_modapi_init(E_Module *m)
 
    /* try to add the desktop shell interface to the display's global list */
    if (!wl_display_add_global(_e_wl_comp->wl.display, 
-                              &e_desktop_shell_interface, shell, 
-                              _e_wl_desktop_shell_cb_bind))
+                              &e_desktop_shell_interface, shell, NULL))
      goto err;
 
    /* for each input, we need to create a pointer focus listener */
@@ -253,6 +251,7 @@ static void
 _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
 {
    E_Wayland_Desktop_Shell *shell = NULL;
+   struct wl_resource *res = NULL;
 
    /* try to cast data to our shell */
    if (!(shell = data)) return;
@@ -260,17 +259,38 @@ _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version E
    /* try to add the shell to the client */
    wl_client_add_object(client, &wl_shell_interface, 
                         &_e_shell_interface, id, shell);
+
+   /* try to add the desktop shell to the client */
+   if (!(res = wl_client_new_object(client, &e_desktop_shell_interface, 
+                                    &_e_desktop_shell_interface, shell)))
+     {
+        wl_resource_post_error(res, WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "Permission Denied");
+        wl_resource_destroy(res);
+        return;
+     }
+
+   /* set desktop shell destroy callback */
+   wl_resource_set_destructor(res, _e_wl_desktop_shell_cb_unbind);
+
+   shell->wl.resource = res;
 }
 
 static void 
 _e_wl_shell_cb_ping(E_Wayland_Surface *ews, unsigned int serial)
 {
    E_Wayland_Shell_Surface *ewss = NULL;
+   E_Wayland_Desktop_Shell *shell = NULL;
 
    if (!ews) return;
 
    /* try to cast to our shell surface */
    if (!(ewss = ews->shell_surface)) return;
+
+   shell = (E_Wayland_Desktop_Shell *)ewss->shell;
+
+   if ((ewss->surface) && (ewss->surface == shell->grab_surface))
+     return;
 
    /* if we do not have a ping timer yet, create one */
    if (!ewss->ping_timer)
@@ -351,6 +371,8 @@ _e_wl_shell_grab_start(E_Wayland_Shell_Grab *grab, E_Wayland_Shell_Surface *ewss
    /* safety check */
    if ((!grab) || (!ewss)) return;
 
+   shell = ewss->shell;
+
    /* end any popup grabs */
    _e_wl_shell_popup_grab_end(pointer);
 
@@ -358,17 +380,15 @@ _e_wl_shell_grab_start(E_Wayland_Shell_Grab *grab, E_Wayland_Shell_Surface *ewss
    grab->grab.interface = interface;
    grab->shell_surface = ewss;
    grab->shell_surface_destroy.notify = _e_wl_shell_grab_cb_surface_destroy;
-   grab->pointer = pointer;
-   grab->grab.focus = ewss->surface->wl.surface;
 
    /* add a listener in case this surface gets destroyed */
-   wl_signal_add(&ewss->wl.destroy_signal, 
-                 &grab->shell_surface_destroy);
+   wl_signal_add(&ewss->wl.destroy_signal, &grab->shell_surface_destroy);
+
+   grab->pointer = pointer;
+//   grab->grab.focus = ewss->surface->wl.surface;
 
    /* start the pointer grab */
    wl_pointer_start_grab(pointer, &grab->grab);
-
-   shell = (E_Wayland_Desktop_Shell *)_e_wl_comp->shell_interface.shell;
 
    /* set cursor */
    if (shell)
@@ -407,14 +427,17 @@ _e_wl_shell_grab_cb_surface_destroy(struct wl_listener *listener, void *data EIN
 
 /* shell interface functions */
 static void 
-_e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, unsigned int id, struct wl_resource *surface_resource)
+_e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *resource, unsigned int id, struct wl_resource *surface_resource)
 {
    E_Wayland_Surface *ews = NULL;
    E_Wayland_Shell_Surface *ewss = NULL;
+   E_Wayland_Desktop_Shell *shell = NULL;
 
    /* try to cast the surface resource to our structure */
    if (!(ews = wl_resource_get_user_data(surface_resource)))
      return;
+
+   shell = wl_resource_get_user_data(resource);
 
    /* check if this surface already has a shell surface */
    if ((ews->configure) && 
@@ -427,7 +450,7 @@ _e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *r
      }
 
    /* try to create a shell surface for this surface */
-   if (!(ewss = _e_wl_shell_shell_surface_create(NULL, ews, NULL)))
+   if (!(ewss = _e_wl_shell_shell_surface_create(shell, ews, NULL)))
      {
         wl_resource_post_no_memory(surface_resource);
         return;
@@ -441,31 +464,6 @@ _e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *r
 }
 
 /* desktop shell functions */
-static void 
-_e_wl_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
-{
-   E_Wayland_Desktop_Shell *shell = NULL;
-   struct wl_resource *res = NULL;
-
-   /* try to cast data to our shell */
-   if (!(shell = data)) return;
-
-   /* try to add the desktop shell to the client */
-   if (!(res = wl_client_add_object(client, &e_desktop_shell_interface, 
-                                    &_e_desktop_shell_interface, id, shell)))
-     {
-        wl_resource_post_error(res, WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "Permission Denied");
-        wl_resource_destroy(res);
-        return;
-     }
-
-   shell->wl.resource = res;
-
-   /* set desktop shell destroy callback */
-   wl_resource_set_destructor(res, _e_wl_desktop_shell_cb_unbind);
-}
-
 static void 
 _e_wl_desktop_shell_cb_unbind(struct wl_resource *resource)
 {
@@ -490,7 +488,7 @@ _e_wl_desktop_shell_cb_shell_grab_surface_set(struct wl_client *client EINA_UNUS
 
 /* shell surface functions */
 static E_Wayland_Shell_Surface *
-_e_wl_shell_shell_surface_create(void *shell EINA_UNUSED, E_Wayland_Surface *ews, const void *client EINA_UNUSED)
+_e_wl_shell_shell_surface_create(void *shell, E_Wayland_Surface *ews, const void *client EINA_UNUSED)
 {
    E_Wayland_Shell_Surface *ewss = NULL;
 
@@ -506,6 +504,7 @@ _e_wl_shell_shell_surface_create(void *shell EINA_UNUSED, E_Wayland_Surface *ews
    ews->unmap = _e_wl_shell_shell_surface_unmap;
 
    /* set some properties on the shell surface */
+   ewss->shell = (E_Wayland_Desktop_Shell *)shell;
    ewss->surface = ews;
    ews->shell_surface = ewss;
 
@@ -726,8 +725,8 @@ _e_wl_shell_shell_surface_destroy(struct wl_resource *resource)
    if (ewss->popup.grab.pointer)
      wl_pointer_end_grab(ewss->popup.grab.pointer);
 
-   wl_list_remove(&ewss->wl.surface_destroy.link);
-   ewss->surface->configure = NULL;
+//   wl_list_remove(&ewss->wl.surface_destroy.link);
+//   if (ewss->surface) ewss->surface->configure = NULL;
 
    /* try to cast the ping timer */
    if ((tmr = (E_Wayland_Ping_Timer *)ewss->ping_timer))
