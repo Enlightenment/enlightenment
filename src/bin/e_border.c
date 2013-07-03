@@ -6472,10 +6472,11 @@ _e_border_cb_mouse_x_wheel(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_M
      bd = action_border;
    else
      {
-        bd = e_border_find_by_window(ev->window);
+        bd = e_border_find_by_client_window(ev->window);
+        if (!bd) bd = e_border_find_by_window(ev->window);
         if (!bd) return ECORE_CALLBACK_RENEW;
         /* event_window here should be bd->win if it isn't the same as window, not sure if this can NOT happen */
-        if ((ev->window != ev->event_window) && (bd->win != ev->event_window))
+        if ((ev->window != ev->event_window) && (bd->win != ev->event_window) && (bd->client.lock_win != ev->event_window))
           return ECORE_CALLBACK_RENEW;
      }
    e_bindings_ecore_event_mouse_wheel_convert(ev, &ev2);
@@ -6570,10 +6571,11 @@ _e_border_cb_mouse_x_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mo
      bd = action_border;
    else
      {
-        bd = e_border_find_by_window(ev->window);
+        bd = e_border_find_by_client_window(ev->window);
+        if (!bd) bd = e_border_find_by_window(ev->window);
         if (!bd) return ECORE_CALLBACK_RENEW;
         /* event_window here should be bd->win if it isn't the same as window, not sure if this can NOT happen */
-        if ((ev->window != ev->event_window) && (bd->win != ev->event_window))
+        if ((ev->window != ev->event_window) && (bd->win != ev->event_window) && (bd->client.lock_win != ev->event_window))
           return ECORE_CALLBACK_RENEW;
      }
    e_bindings_ecore_event_mouse_button_convert(ev, &ev2);
@@ -6642,10 +6644,11 @@ _e_border_cb_mouse_x_up(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mous
      bd = action_border;
    else
      {
-        bd = e_border_find_by_window(ev->window);
+        bd = e_border_find_by_client_window(ev->window);
+        if (!bd) bd = e_border_find_by_window(ev->window);
         if (!bd) return ECORE_CALLBACK_RENEW;
         /* event_window here should be bd->win if it isn't the same as window, not sure if this can NOT happen */
-        if ((ev->window != ev->event_window) && (bd->win != ev->event_window))
+        if ((ev->window != ev->event_window) && (bd->win != ev->event_window) && (bd->client.lock_win != ev->event_window))
           return ECORE_CALLBACK_RENEW;
      }
    e_bindings_ecore_event_mouse_button_convert(ev, &ev2);
