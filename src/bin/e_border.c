@@ -3222,7 +3222,7 @@ e_border_find_by_window(Ecore_X_Window win)
 
    bd = eina_hash_find(borders_hash, e_util_winid_str_get(win));
    if ((bd) && (!e_object_is_del(E_OBJECT(bd))) &&
-       (bd->win == win))
+       ((bd->win == win) || (bd->client.lock_win == win)))
      return bd;
    return NULL;
 }
@@ -4982,6 +4982,7 @@ _e_border_del(E_Border *bd)
           {
              if (bd->parent->client.lock_win)
                {
+                  eina_hash_del_by_key(borders_hash, e_util_winid_str_get(bd->parent->client.lock_win));
                   ecore_x_window_hide(bd->parent->client.lock_win);
                   ecore_x_window_free(bd->parent->client.lock_win);
                   bd->parent->client.lock_win = 0;
@@ -7460,6 +7461,7 @@ _e_border_eval0(E_Border *bd)
                   if (!bd->parent->client.lock_win)
                     {
                        bd->parent->client.lock_win = ecore_x_window_input_new(bd->parent->win, 0, 0, bd->parent->client.w, bd->parent->client.h);
+                       eina_hash_add(borders_hash, e_util_winid_str_get(bd->parent->client.lock_win), bd->parent);
                        ecore_x_window_show(bd->parent->client.lock_win);
                     }
                }
