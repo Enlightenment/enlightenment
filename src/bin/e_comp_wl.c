@@ -2047,7 +2047,8 @@ _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *re
    struct wl_resource *ptr = NULL;
 
    /* try to cast the resource data to our input structure */
-   if (!(input = resource->data)) return;
+   if (!(input = wl_resource_get_user_data(resource)))
+     return;
 
    /* check that input has a pointer */
    if (!input->has_pointer) return;
@@ -2079,7 +2080,8 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
    struct wl_resource *kbd = NULL;
 
    /* try to cast the resource data to our input structure */
-   if (!(input = resource->data)) return;
+   if (!(input = wl_resource_get_user_data(resource)))
+     return;
 
    /* check that input has a keyboard */
    if (!input->has_keyboard) return;
@@ -2117,7 +2119,8 @@ _e_comp_wl_input_cb_touch_get(struct wl_client *client, struct wl_resource *reso
    struct wl_resource *tch = NULL;
 
    /* try to cast the resource data to our input structure */
-   if (!(input = resource->data)) return;
+   if (!(input = wl_resource_get_user_data(resource)))
+     return;
 
    /* check that input has a touch */
    if (!input->has_touch) return;
@@ -2247,7 +2250,8 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
    E_Wayland_Surface *ews = NULL;
 
    /* try to cast the resource data to our input structure */
-   if (!(input = resource->data)) return;
+   if (!(input = wl_resource_get_user_data(resource)))
+     return;
 
    /* if we were passed in a surface, try to cast it to our structure */
    if (surface_resource) ews = (E_Wayland_Surface *)surface_resource->data;
@@ -2330,7 +2334,7 @@ _e_comp_wl_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resourc
    E_Wayland_Region *ewr = NULL;
 
    /* try to cast the resource data to our region structure */
-   if (!(ewr = resource->data)) return;
+   if (!(ewr = wl_resource_get_user_data(resource))) return;
 
    /* tell pixman to union this region with any previous one */
    pixman_region32_union_rect(&ewr->region, &ewr->region, x, y, w, h);
@@ -2343,7 +2347,7 @@ _e_comp_wl_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_re
    pixman_region32_t region;
 
    /* try to cast the resource data to our region structure */
-   if (!(ewr = resource->data)) return;
+   if (!(ewr = wl_resource_get_user_data(resource))) return;
 
    /* ask pixman to create a new temporary rect */
    pixman_region32_init_rect(&region, x, y, w, h);
@@ -2376,7 +2380,7 @@ _e_comp_wl_surface_cb_frame_destroy(struct wl_resource *resource)
    E_Wayland_Surface_Frame_Callback *cb = NULL;
 
    /* try to cast the resource data to our surface frame callback structure */
-   if (!(cb = resource->data)) return;
+   if (!(cb = wl_resource_get_user_data(resource))) return;
 
    wl_list_remove(&cb->wl.link);
 
@@ -2508,7 +2512,7 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
    E_Wayland_Surface *ews = NULL;
 
    /* try to cast the resource data to our surface structure */
-   if (!(ews = resource->data)) return;
+   if (!(ews = wl_resource_get_user_data(resource))) return;
 
    /* tell pixman to add this damage to pending */
    pixman_region32_union_rect(&ews->pending.damage, &ews->pending.damage, 
@@ -2522,7 +2526,7 @@ _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resour
    E_Wayland_Surface_Frame_Callback *cb = NULL;
 
    /* try to cast the resource data to our surface structure */
-   if (!(ews = resource->data)) return;
+   if (!(ews = wl_resource_get_user_data(resource))) return;
 
    /* try to allocate space for a new frame callback */
    if (!(cb = E_NEW(E_Wayland_Surface_Frame_Callback, 1)))
@@ -2546,7 +2550,7 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
    E_Wayland_Surface *ews = NULL;
 
    /* try to cast the resource data to our surface structure */
-   if (!(ews = resource->data)) return;
+   if (!(ews = wl_resource_get_user_data(resource))) return;
 
    if (region_resource)
      {
@@ -2572,7 +2576,7 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
    E_Wayland_Surface *ews = NULL;
 
    /* try to cast the resource data to our surface structure */
-   if (!(ews = resource->data)) return;
+   if (!(ews = wl_resource_get_user_data(resource))) return;
 
    if (region_resource)
      {
@@ -2605,7 +2609,7 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    /* FIXME */
 
    /* try to cast the resource data to our surface structure */
-   if (!(ews = resource->data)) return;
+   if (!(ews = wl_resource_get_user_data(resource))) return;
 
    /* if we have a pending buffer or a new pending buffer, attach it */
    if ((ews->pending.buffer) || (ews->pending.new_buffer))
