@@ -9208,7 +9208,8 @@ _e_border_eval(E_Border *bd)
              bd->want_focus = 0;
              e_border_focus_set_with_pointer(bd);
           }
-        else if (bd->client.netwm.type == ECORE_X_WINDOW_TYPE_DIALOG)
+        else if ((bd->client.netwm.type == ECORE_X_WINDOW_TYPE_DIALOG) ||
+                 (bd->parent && (bd->parent->modal == bd)))
           {
              if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
                  ((e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED) &&
