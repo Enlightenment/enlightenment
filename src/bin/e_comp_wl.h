@@ -369,6 +369,7 @@ struct _E_Wayland_Shell_Surface
 
    Eina_Bool active : 1;
 
+   void *shell;
    void *ping_timer;
 };
 
