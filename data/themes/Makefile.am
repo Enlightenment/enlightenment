@@ -93,6 +93,7 @@ img/bat_shine.png \
 img/bat_top0.png \
 img/bat_top1.png \
 img/bevel_curved_horiz_out.png \
+img/bevel_dark_in.png \
 img/bevel_dark_out.png \
 img/bevel_horiz_out.png \
 img/bevel_in.png \
