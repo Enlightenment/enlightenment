@@ -7464,8 +7464,10 @@ _e_border_eval0(E_Border *bd)
                   if (!bd->parent->client.lock_win)
                     {
                        bd->parent->client.lock_win = ecore_x_window_input_new(bd->parent->win, 0, 0, bd->parent->client.w, bd->parent->client.h);
+                       e_comp_ignore_win_add(bd->parent->client.lock_win);
                        eina_hash_add(borders_hash, e_util_winid_str_get(bd->parent->client.lock_win), bd->parent);
                        ecore_x_window_show(bd->parent->client.lock_win);
+                       ecore_x_icccm_name_class_set(bd->parent->client.lock_win, "lock_win", "lock_win");
                     }
                }
 
