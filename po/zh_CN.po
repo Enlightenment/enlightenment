@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-28 14:41+0900\n"
+"POT-Creation-Date: 2013-07-05 08:26+0900\n"
 "PO-Revision-Date: 2012-12-20 22:40+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -30,7 +30,7 @@ msgstr "关于 Enlightenment"
 #: src/bin/e_fm.c:1084 src/bin/e_int_border_menu.c:209
 #: src/bin/e_int_border_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf/e_conf.c:179
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:868
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:867
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1201
 #: src/modules/everything/evry_plug_windows.c:452
 #: src/modules/fileman/e_fwin.c:2527 src/modules/mixer/app_mixer.c:502
@@ -817,11 +817,11 @@ msgstr "选择"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/bin/e_comp.c:4133
+#: src/bin/e_comp.c:4127
 msgid "Compositor Warning"
 msgstr "合成器告警"
 
-#: src/bin/e_comp.c:4133
+#: src/bin/e_comp.c:4127
 msgid ""
 "Your display driver does not support OpenGL, or<br>no OpenGL engines were "
 "compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
@@ -830,71 +830,71 @@ msgstr ""
 "您的显示服务器不支持 OpenGL<br> 或 Evas 及 Ecore-Evas 编译时没有开启任何"
 "<br>OpenGL 引擎。现在使用软件引擎。"
 
-#: src/bin/e_comp.c:4152 src/bin/e_comp.c:4174
+#: src/bin/e_comp.c:4146 src/bin/e_comp.c:4168
 msgid "Compositor Error"
 msgstr "合成器错误"
 
-#: src/bin/e_comp.c:4152
+#: src/bin/e_comp.c:4146
 msgid "Another compositor is already running<br>on your display server."
 msgstr "已有其他和称其运行在您的显示服务器上。。"
 
-#: src/bin/e_comp.c:4174
+#: src/bin/e_comp.c:4168
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
 msgstr "您的显示服务器不支持合成器覆盖窗口。<br>合成器必须此功能方可正常工作。"
 
-#: src/bin/e_comp.c:4519 src/modules/bluez4/e_mod_main.c:210
+#: src/bin/e_comp.c:4513 src/modules/bluez4/e_mod_main.c:210
 #: src/modules/conf_comp/e_mod_main.c:55
 msgid "Visible"
 msgstr "可见"
 
-#: src/bin/e_comp.c:4524 src/modules/conf_comp/e_mod_main.c:60
+#: src/bin/e_comp.c:4518 src/modules/conf_comp/e_mod_main.c:60
 msgid "Focus-Out"
 msgstr "失焦"
 
-#: src/bin/e_comp.c:4529 src/modules/conf_comp/e_mod_main.c:65
+#: src/bin/e_comp.c:4523 src/modules/conf_comp/e_mod_main.c:65
 msgid "Focus-In"
 msgstr "聚焦"
 
-#: src/bin/e_comp.c:4534 src/bin/e_int_border_prop.c:510
+#: src/bin/e_comp.c:4528 src/bin/e_int_border_prop.c:510
 #: src/modules/conf_comp/e_mod_main.c:70
 msgid "Hidden"
 msgstr "隐藏"
 
-#: src/bin/e_comp.c:4583 src/bin/e_int_border_prop.c:444
+#: src/bin/e_comp.c:4577 src/bin/e_int_border_prop.c:444
 #: src/bin/e_int_border_remember.c:698 src/modules/conf_comp/e_mod_main.c:177
 #: src/modules/wizard/page_050.c:95
 msgid "Title"
 msgstr "标题"
 
-#: src/bin/e_comp.c:4666
+#: src/bin/e_comp.c:4660
 #, fuzzy
 msgid "Use fast composite effects for windows"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687 src/bin/e_comp.c:4691
-#: src/bin/e_comp.c:4695 src/bin/e_comp.c:4700 src/bin/e_comp.c:4703
-#: src/bin/e_comp.c:4706 src/bin/e_comp.c:4709 src/bin/e_comp.c:4712
-#: src/bin/e_comp.c:4719 src/bin/e_comp.c:4722 src/bin/e_comp.c:4729
-#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4739 src/bin/e_comp.c:4741
-#: src/bin/e_comp.c:4743 src/bin/e_comp.c:4746 src/bin/e_comp.c:4748
-#: src/bin/e_comp.c:4751 src/bin/e_comp.c:4755 src/bin/e_comp.c:4756
-#: src/bin/e_comp.c:4757 src/bin/e_comp.c:4984 src/bin/e_comp.c:4985
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4689 src/bin/e_comp.c:4694 src/bin/e_comp.c:4697
+#: src/bin/e_comp.c:4700 src/bin/e_comp.c:4703 src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4713 src/bin/e_comp.c:4716 src/bin/e_comp.c:4723
+#: src/bin/e_comp.c:4731 src/bin/e_comp.c:4733 src/bin/e_comp.c:4735
+#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4740 src/bin/e_comp.c:4742
+#: src/bin/e_comp.c:4745 src/bin/e_comp.c:4749 src/bin/e_comp.c:4750
+#: src/bin/e_comp.c:4751 src/bin/e_comp.c:4978 src/bin/e_comp.c:4979
 #: src/modules/conf_comp/e_mod_main.c:259
 #, fuzzy
 msgid "composite"
 msgstr "混成"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4677 src/bin/e_comp.c:4691
-#: src/bin/e_comp.c:4695 src/bin/e_comp.c:4700 src/bin/e_comp.c:4703
-#: src/bin/e_comp.c:4706 src/bin/e_comp.c:4709 src/bin/e_comp.c:4712
-#: src/bin/e_comp.c:4719 src/bin/e_comp.c:4722 src/bin/e_comp.c:4729
-#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4741 src/bin/e_comp.c:4743
-#: src/bin/e_comp.c:4746 src/bin/e_comp.c:4748 src/bin/e_comp.c:4751
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4671 src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4689 src/bin/e_comp.c:4694 src/bin/e_comp.c:4697
+#: src/bin/e_comp.c:4700 src/bin/e_comp.c:4703 src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4713 src/bin/e_comp.c:4716 src/bin/e_comp.c:4723
+#: src/bin/e_comp.c:4731 src/bin/e_comp.c:4735 src/bin/e_comp.c:4737
+#: src/bin/e_comp.c:4740 src/bin/e_comp.c:4742 src/bin/e_comp.c:4745
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
 #: src/bin/e_configure_option.c:1510 src/bin/e_configure_option.c:1543
 #: src/bin/e_configure_option.c:1562 src/bin/e_configure_option.c:1566
@@ -958,10 +958,10 @@ msgstr "混成"
 msgid "border"
 msgstr "边框"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687 src/bin/e_comp.c:4695
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4689
 #: src/bin/e_configure_option.c:1464 src/bin/e_configure_option.c:1468
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1476
 #: src/bin/e_configure_option.c:1806 src/bin/e_configure_option.c:1808
@@ -975,10 +975,10 @@ msgstr "边框"
 msgid "theme"
 msgstr "主题"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681
 #: src/bin/e_configure_option.c:1464 src/bin/e_configure_option.c:1468
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1476
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
@@ -990,12 +990,12 @@ msgstr "主题"
 msgid "animate"
 msgstr "动画"
 
-#: src/bin/e_comp.c:4668
+#: src/bin/e_comp.c:4662
 #, fuzzy
 msgid "Use fast composite effects for menus"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4668 src/bin/e_comp.c:4679
+#: src/bin/e_comp.c:4662 src/bin/e_comp.c:4673
 #: src/bin/e_configure_option.c:1490 src/bin/e_configure_option.c:1493
 #: src/bin/e_configure_option.c:1496 src/bin/e_configure_option.c:1499
 #: src/bin/e_configure_option.c:1502 src/bin/e_configure_option.c:1694
@@ -1010,57 +1010,57 @@ msgstr "不混合全屏窗口"
 msgid "menu"
 msgstr ""
 
-#: src/bin/e_comp.c:4670
+#: src/bin/e_comp.c:4664
 #, fuzzy
 msgid "Use fast composite effects for popups"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4670 src/bin/e_comp.c:4681
+#: src/bin/e_comp.c:4664 src/bin/e_comp.c:4675
 #, fuzzy
 msgid "popup"
 msgstr "弹出"
 
-#: src/bin/e_comp.c:4672
+#: src/bin/e_comp.c:4666
 #, fuzzy
 msgid "Use fast composite effects for objects"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4674
+#: src/bin/e_comp.c:4668
 #, fuzzy
 msgid ""
 "Use fast composite effects for override-redirect windows (tooltips and such)"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4677 src/modules/conf_comp/e_mod_config.c:226
+#: src/bin/e_comp.c:4671 src/modules/conf_comp/e_mod_config.c:226
 #, fuzzy
 msgid "Disable composite effects for windows"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4679 src/modules/conf_comp/e_mod_config.c:229
+#: src/bin/e_comp.c:4673 src/modules/conf_comp/e_mod_config.c:229
 msgid "Disable composite effects for menus"
 msgstr ""
 
-#: src/bin/e_comp.c:4681 src/modules/conf_comp/e_mod_config.c:232
+#: src/bin/e_comp.c:4675 src/modules/conf_comp/e_mod_config.c:232
 msgid "Disable composite effects for popups"
 msgstr ""
 
-#: src/bin/e_comp.c:4683 src/modules/conf_comp/e_mod_config.c:235
+#: src/bin/e_comp.c:4677 src/modules/conf_comp/e_mod_config.c:235
 #, fuzzy
 msgid "Disable composite effects for objects"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4679
 #, fuzzy
 msgid ""
 "Disable composite effects for override-redirect windows (tooltips and such)"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4687
+#: src/bin/e_comp.c:4681
 #, fuzzy
 msgid "Disable composite effects for the screen"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4687 src/bin/e_configure_option.c:1537
+#: src/bin/e_comp.c:4681 src/bin/e_configure_option.c:1537
 #: src/bin/e_configure_option.c:1539 src/bin/e_configure_option.c:1598
 #: src/bin/e_configure_option.c:1620 src/bin/e_configure_option.c:1622
 #: src/bin/e_configure_option.c:1624 src/bin/e_configure_option.c:1740
@@ -1079,45 +1079,45 @@ msgstr "不混合全屏窗口"
 msgid "screen"
 msgstr "屏幕"
 
-#: src/bin/e_comp.c:4688
+#: src/bin/e_comp.c:4682
 msgid ""
 "This option disables composite effects from themes, such as animating the "
 "screen fade when blanking"
 msgstr ""
 
-#: src/bin/e_comp.c:4691
+#: src/bin/e_comp.c:4685
 #, fuzzy
 msgid "Compositing engine"
 msgstr "混成"
 
-#: src/bin/e_comp.c:4695
+#: src/bin/e_comp.c:4689
 msgid "Default window composite effect"
 msgstr ""
 
-#: src/bin/e_comp.c:4700
+#: src/bin/e_comp.c:4694
 #, fuzzy
 msgid "Smooth scaling of composited window content"
 msgstr "窗口内容平滑缩放"
 
-#: src/bin/e_comp.c:4703
+#: src/bin/e_comp.c:4697
 #, fuzzy
 msgid "Sync composited windows"
 msgstr "同步窗口"
 
-#: src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4700
 #, fuzzy
 msgid "Loose sync composited windows"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4709
+#: src/bin/e_comp.c:4703
 msgid "Grab server during rendering of composited windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4712
+#: src/bin/e_comp.c:4706
 msgid "Initial draw timeout for newly-mapped composited windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4712 src/bin/e_configure_option.c:1496
+#: src/bin/e_comp.c:4706 src/bin/e_configure_option.c:1496
 #: src/bin/e_configure_option.c:1533 src/bin/e_configure_option.c:1548
 #: src/bin/e_configure_option.c:1583 src/bin/e_configure_option.c:1658
 #: src/bin/e_configure_option.c:1660 src/bin/e_configure_option.c:1661
@@ -1133,70 +1133,70 @@ msgstr ""
 msgid "delay"
 msgstr ""
 
-#: src/bin/e_comp.c:4713
+#: src/bin/e_comp.c:4707
 #, fuzzy, c-format
 msgid "%1.2f seconds"
 msgstr "%.2f 秒"
 
-#: src/bin/e_comp.c:4719
+#: src/bin/e_comp.c:4713
 #, fuzzy
 msgid "Tear-free compositing (VSYNC)"
 msgstr "Tear-free 更新(VSynced)"
 
-#: src/bin/e_comp.c:4722
+#: src/bin/e_comp.c:4716
 #, fuzzy
 msgid "Texture from pixmap rendering for composite"
 msgstr "使用位图纹理"
 
-#: src/bin/e_comp.c:4729
+#: src/bin/e_comp.c:4723
 #, fuzzy
 msgid "Composite swapping method"
 msgstr "默认交换方法："
 
-#: src/bin/e_comp.c:4737 src/modules/conf_comp/e_mod_config.c:253
+#: src/bin/e_comp.c:4731 src/modules/conf_comp/e_mod_config.c:253
 #: src/modules/conf_comp/e_mod_config.c:593
 msgid "Don't composite fullscreen windows"
 msgstr "不混合全屏窗口"
 
-#: src/bin/e_comp.c:4739 src/modules/conf_comp/e_mod_config.c:255
+#: src/bin/e_comp.c:4733 src/modules/conf_comp/e_mod_config.c:255
 #: src/modules/conf_comp/e_mod_config.c:554
 #, fuzzy
 msgid "Don't fade backlight"
 msgstr "不隐藏组件"
 
-#: src/bin/e_comp.c:4739 src/bin/e_configure_option.c:1910
+#: src/bin/e_comp.c:4733 src/bin/e_configure_option.c:1910
 #: src/bin/e_configure_option.c:1913 src/bin/e_configure_option.c:1916
 #: src/bin/e_configure_option.c:1919 src/bin/e_configure_option.c:1921
 #, fuzzy
 msgid "backlight"
 msgstr "背光"
 
-#: src/bin/e_comp.c:4741
+#: src/bin/e_comp.c:4735
 msgid "Send flush when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4743
+#: src/bin/e_comp.c:4737
 msgid "Send dump when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4746
+#: src/bin/e_comp.c:4740
 msgid "Show framerate when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4748
+#: src/bin/e_comp.c:4742
 msgid "Rolling average for fps display when compositing"
 msgstr ""
 
-#: src/bin/e_comp.c:4749
+#: src/bin/e_comp.c:4743
 #, fuzzy, c-format
 msgid "%1.0f frames"
 msgstr "%1.0f 帧"
 
-#: src/bin/e_comp.c:4751
+#: src/bin/e_comp.c:4745
 msgid "Composite framerate display corner"
 msgstr ""
 
-#: src/bin/e_comp.c:4755 src/bin/e_comp.c:4985
+#: src/bin/e_comp.c:4749 src/bin/e_comp.c:4979
 #: src/bin/e_configure_option.c:2032 src/bin/e_configure_option.c:2033
 #: src/bin/e_configure_option.c:2034 src/bin/e_configure_option.c:2035
 #: src/bin/e_configure_option.c:2036 src/bin/e_configure_option.c:2037
@@ -1210,7 +1210,7 @@ msgstr ""
 msgid "windows"
 msgstr "窗口"
 
-#: src/bin/e_comp.c:4839
+#: src/bin/e_comp.c:4833
 #, fuzzy
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
@@ -1221,23 +1221,23 @@ msgstr ""
 "<br>请注意为支持混成，您还需要在<br>X11 和 Ecore 中开启 XRender 和 XFixes 支"
 "持。"
 
-#: src/bin/e_comp.c:4848
+#: src/bin/e_comp.c:4842
 #, fuzzy
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr "您的显示服务器不支持 XDamage<br>或 Ecore 编译时未开启 XDamage 支持。"
 
-#: src/bin/e_comp.c:4931 src/bin/e_comp.c:4937
+#: src/bin/e_comp.c:4925 src/bin/e_comp.c:4931
 #, fuzzy
 msgid "Compositor"
 msgstr "混成"
 
-#: src/bin/e_comp.c:4932
+#: src/bin/e_comp.c:4926
 msgid "Change current window opacity"
 msgstr ""
 
-#: src/bin/e_comp.c:4938
+#: src/bin/e_comp.c:4932
 msgid "Set current window opacity"
 msgstr ""
 
@@ -1415,7 +1415,7 @@ msgid "Basic"
 msgstr "基本"
 
 #: src/bin/e_config_dialog.c:280 src/modules/conf2/e_conf2.c:1279
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:867
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:866
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1195
 msgid "Apply"
 msgstr "应用"
@@ -4218,8 +4218,8 @@ msgstr "名字："
 msgid "Location:"
 msgstr "位置："
 
-#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:337
-#: src/bin/e_widget_filepreview.c:394 src/bin/e_widget_filepreview.c:446
+#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:340
+#: src/bin/e_widget_filepreview.c:397 src/bin/e_widget_filepreview.c:450
 msgid "Size:"
 msgstr "大小："
 
@@ -4698,10 +4698,10 @@ msgid "Window List"
 msgstr "窗口列表"
 
 #: src/bin/e_int_border_menu.c:1325 src/modules/pager/e_mod_main.c:264
-#: src/modules/pager/e_mod_main.c:2962 src/modules/pager/e_mod_main.c:2969
-#: src/modules/pager/e_mod_main.c:2976 src/modules/pager/e_mod_main.c:2978
+#: src/modules/pager/e_mod_main.c:2966 src/modules/pager/e_mod_main.c:2973
 #: src/modules/pager/e_mod_main.c:2980 src/modules/pager/e_mod_main.c:2982
 #: src/modules/pager/e_mod_main.c:2984 src/modules/pager/e_mod_main.c:2986
+#: src/modules/pager/e_mod_main.c:2988 src/modules/pager/e_mod_main.c:2990
 msgid "Pager"
 msgstr "分页器"
 
@@ -4712,7 +4712,7 @@ msgstr "任务栏"
 #: src/bin/e_int_border_prop.c:110 src/bin/e_int_border_prop.c:117
 #: src/bin/e_int_border_prop.c:124 src/bin/e_moveresize.c:84
 #: src/bin/e_moveresize.c:95 src/bin/e_moveresize.c:133
-#: src/bin/e_widget_filepreview.c:82
+#: src/bin/e_widget_filepreview.c:85
 #, c-format
 msgid "%i×%i"
 msgstr "%i×%i"
@@ -5304,7 +5304,7 @@ msgid "Hide duration"
 msgstr "隐藏持续时间"
 
 #: src/bin/e_int_shelf_config.c:268
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:879
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:878
 #, c-format
 msgid "%.2f seconds"
 msgstr "%.2f 秒"
@@ -6438,11 +6438,11 @@ msgid_plural "%li Minutes ago"
 msgstr[0] "1 分钟前"
 msgstr[1] "%li 分钟前"
 
-#: src/bin/e_utils.c:933 src/bin/e_widget_filepreview.c:601
-#: src/bin/e_widget_filepreview.c:602 src/bin/e_widget_filepreview.c:603
-#: src/bin/e_widget_filepreview.c:634 src/bin/e_widget_filepreview.c:645
+#: src/bin/e_utils.c:933 src/bin/e_widget_filepreview.c:605
+#: src/bin/e_widget_filepreview.c:606 src/bin/e_widget_filepreview.c:607
+#: src/bin/e_widget_filepreview.c:638 src/bin/e_widget_filepreview.c:649
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:409
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1227
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1226
 #: src/modules/conf_bindings/e_int_config_keybindings.c:973
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:574
 #: src/modules/conf_dialogs/e_int_config_profiles.c:298
@@ -6594,77 +6594,77 @@ msgstr "V"
 msgid "Alpha"
 msgstr "Alpha"
 
-#: src/bin/e_widget_filepreview.c:81 src/bin/e_widget_filepreview.c:445
+#: src/bin/e_widget_filepreview.c:84 src/bin/e_widget_filepreview.c:449
 msgid "Resolution:"
 msgstr "分辨率:"
 
-#: src/bin/e_widget_filepreview.c:89
+#: src/bin/e_widget_filepreview.c:92
 msgid "Mime-type:"
 msgstr "Mime 类型:"
 
-#: src/bin/e_widget_filepreview.c:330
+#: src/bin/e_widget_filepreview.c:333
 #, c-format
 msgid "%3.1f%%"
 msgstr "%3.1f%%"
 
-#: src/bin/e_widget_filepreview.c:336
+#: src/bin/e_widget_filepreview.c:339
 msgid "Length:"
 msgstr "长度："
 
-#: src/bin/e_widget_filepreview.c:393
+#: src/bin/e_widget_filepreview.c:396
 msgid "Used:"
 msgstr "用于:"
 
 # 不知道在那个位置，估计是
-#: src/bin/e_widget_filepreview.c:395
+#: src/bin/e_widget_filepreview.c:398
 msgid "Reserved:"
 msgstr "版权:"
 
-#: src/bin/e_widget_filepreview.c:396
+#: src/bin/e_widget_filepreview.c:399
 msgid "Mount status:"
 msgstr "挂载状态:"
 
-#: src/bin/e_widget_filepreview.c:398 src/modules/mixer/app_mixer.c:381
+#: src/bin/e_widget_filepreview.c:401 src/modules/mixer/app_mixer.c:381
 msgid "Type:"
 msgstr "类型："
 
-#: src/bin/e_widget_filepreview.c:448
+#: src/bin/e_widget_filepreview.c:452
 msgid "Owner:"
 msgstr "所有者："
 
-#: src/bin/e_widget_filepreview.c:449
+#: src/bin/e_widget_filepreview.c:453
 msgid "Permissions:"
 msgstr "权限："
 
-#: src/bin/e_widget_filepreview.c:450
+#: src/bin/e_widget_filepreview.c:454
 msgid "Modified:"
 msgstr "已修改："
 
-#: src/bin/e_widget_filepreview.c:588 src/bin/e_widget_filepreview.c:752
-#: src/bin/e_widget_filepreview.c:761 src/bin/e_widget_filepreview.c:770
+#: src/bin/e_widget_filepreview.c:592 src/bin/e_widget_filepreview.c:785
+#: src/bin/e_widget_filepreview.c:794 src/bin/e_widget_filepreview.c:803
 #, c-format
 msgid "Read Only"
 msgstr "只读"
 
-#: src/bin/e_widget_filepreview.c:590 src/bin/e_widget_filepreview.c:777
+#: src/bin/e_widget_filepreview.c:594 src/bin/e_widget_filepreview.c:810
 msgid "Read-Write"
 msgstr "读写"
 
-#: src/bin/e_widget_filepreview.c:593 src/bin/e_widget_filepreview.c:604
+#: src/bin/e_widget_filepreview.c:597 src/bin/e_widget_filepreview.c:608
 msgid "Unmounted"
 msgstr "已卸载"
 
-#: src/bin/e_widget_filepreview.c:701
+#: src/bin/e_widget_filepreview.c:734
 #, c-format
 msgid "You"
 msgstr "您"
 
-#: src/bin/e_widget_filepreview.c:750
+#: src/bin/e_widget_filepreview.c:783
 #, c-format
 msgid "Protected"
 msgstr "受保护"
 
-#: src/bin/e_widget_filepreview.c:759 src/bin/e_widget_filepreview.c:768
+#: src/bin/e_widget_filepreview.c:792 src/bin/e_widget_filepreview.c:801
 #, c-format
 msgid "Forbidden"
 msgstr "禁止"
@@ -7507,24 +7507,24 @@ msgstr "允许绑定以全屏窗口激活"
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
 msgstr "允许绑定以全屏窗口激活"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:865
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:864
 msgid "Edge Binding Sequence"
 msgstr "边缘绑定顺序"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:884
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:883
 msgid "Clickable edge"
 msgstr "可点击的边"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:892
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:891
 #, fuzzy
 msgid "Drag only"
 msgstr "拖动图标..."
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1222
 msgid "Edge Binding Error"
 msgstr "边缘绑定出错"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1224
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
 #, fuzzy, c-format
 msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
@@ -7533,68 +7533,68 @@ msgstr ""
 "您选择的按键绑定序列，<br>已经被<hilight>%s</hilight>动作使用。<br>请选择其他"
 "按键绑定序列。"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1359
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1358
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1108
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1140
 msgid "CTRL"
 msgstr "CTRL"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1364
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1363
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1113
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1145
 msgid "ALT"
 msgstr "ALT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1370
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1369
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1119
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1151
 msgid "SHIFT"
 msgstr "SHIFT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1376
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1375
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1125
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1157
 msgid "WIN"
 msgstr "WIN"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1386
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1385
 msgid "Left Edge"
 msgstr "左边缘"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1390
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1389
 msgid "Top Edge"
 msgstr "上边缘"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1394
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 msgid "Right Edge"
 msgstr "右边缘"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1398
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1397
 msgid "Bottom Edge"
 msgstr "下边缘"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1402
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1401
 msgid "Top Left Edge"
 msgstr "左上边缘"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1406
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1405
 msgid "Top Right Edge"
 msgstr "右上边缘"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1410
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1409
 msgid "Bottom Right Edge"
 msgstr "右下边缘"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1414
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1413
 msgid "Bottom Left Edge"
 msgstr "左下边缘"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1428
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1427
 #, c-format
 msgid "(left clickable)"
 msgstr "(左侧可点击)"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1430
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1429
 #, c-format
 msgid "(clickable)"
 msgstr "(可点击)"
@@ -11827,31 +11827,31 @@ msgstr ""
 "您不能在书架上使用鼠标右键，<br>因为右键已经被指定到上下文菜单。<br>此按键只"
 "能在弹出菜单工作。"
 
-#: src/modules/pager/e_mod_main.c:2969
+#: src/modules/pager/e_mod_main.c:2973
 msgid "Show Pager Popup"
 msgstr "显示分页器弹出窗口"
 
-#: src/modules/pager/e_mod_main.c:2976
+#: src/modules/pager/e_mod_main.c:2980
 msgid "Popup Desk Right"
 msgstr "弹出桌面向右"
 
-#: src/modules/pager/e_mod_main.c:2978
+#: src/modules/pager/e_mod_main.c:2982
 msgid "Popup Desk Left"
 msgstr "弹出桌面向左"
 
-#: src/modules/pager/e_mod_main.c:2980
+#: src/modules/pager/e_mod_main.c:2984
 msgid "Popup Desk Up"
 msgstr "弹出桌面向上"
 
-#: src/modules/pager/e_mod_main.c:2982
+#: src/modules/pager/e_mod_main.c:2986
 msgid "Popup Desk Down"
 msgstr "弹出桌面向下"
 
-#: src/modules/pager/e_mod_main.c:2984
+#: src/modules/pager/e_mod_main.c:2988
 msgid "Popup Desk Next"
 msgstr "弹出桌面向下一个"
 
-#: src/modules/pager/e_mod_main.c:2986
+#: src/modules/pager/e_mod_main.c:2990
 msgid "Popup Desk Previous"
 msgstr "弹出桌面向上一个"
 

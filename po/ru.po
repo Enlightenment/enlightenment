@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-28 14:41+0900\n"
+"POT-Creation-Date: 2013-07-05 08:26+0900\n"
 "PO-Revision-Date: 2013-05-11 11:45+0400\n"
 "Last-Translator: Игорь Мурзов <e-mail@date.by>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
@@ -29,7 +29,7 @@ msgstr "Об Enlightenment"
 #: src/bin/e_fm.c:1084 src/bin/e_int_border_menu.c:209
 #: src/bin/e_int_border_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf/e_conf.c:179
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:868
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:867
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1201
 #: src/modules/everything/evry_plug_windows.c:452
 #: src/modules/fileman/e_fwin.c:2527 src/modules/mixer/app_mixer.c:502
@@ -815,11 +815,11 @@ msgstr "Выбрать"
 msgid "Cancel"
 msgstr "Отменить"
 
-#: src/bin/e_comp.c:4133
+#: src/bin/e_comp.c:4127
 msgid "Compositor Warning"
 msgstr "Предупреждение композитного менеджера"
 
-#: src/bin/e_comp.c:4133
+#: src/bin/e_comp.c:4127
 msgid ""
 "Your display driver does not support OpenGL, or<br>no OpenGL engines were "
 "compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
@@ -829,15 +829,15 @@ msgstr ""
 "собран<br>или установлен для Evas или Ecore-Evas<br>Осуществляется возврат "
 "на программную отрисовку."
 
-#: src/bin/e_comp.c:4152 src/bin/e_comp.c:4174
+#: src/bin/e_comp.c:4146 src/bin/e_comp.c:4168
 msgid "Compositor Error"
 msgstr "Ошибка композитного менеджера"
 
-#: src/bin/e_comp.c:4152
+#: src/bin/e_comp.c:4146
 msgid "Another compositor is already running<br>on your display server."
 msgstr "На этом экране уже запущен другой<br>композитный менеджер."
 
-#: src/bin/e_comp.c:4174
+#: src/bin/e_comp.c:4168
 #, fuzzy
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
@@ -846,55 +846,55 @@ msgstr ""
 "Ваш X-сервер не поддерживает расширение XDamage<br>или Ecore был собран без "
 "поддержки XDamage."
 
-#: src/bin/e_comp.c:4519 src/modules/bluez4/e_mod_main.c:210
+#: src/bin/e_comp.c:4513 src/modules/bluez4/e_mod_main.c:210
 #: src/modules/conf_comp/e_mod_main.c:55
 msgid "Visible"
 msgstr "Видимый"
 
-#: src/bin/e_comp.c:4524 src/modules/conf_comp/e_mod_main.c:60
+#: src/bin/e_comp.c:4518 src/modules/conf_comp/e_mod_main.c:60
 msgid "Focus-Out"
 msgstr ""
 
-#: src/bin/e_comp.c:4529 src/modules/conf_comp/e_mod_main.c:65
+#: src/bin/e_comp.c:4523 src/modules/conf_comp/e_mod_main.c:65
 msgid "Focus-In"
 msgstr ""
 
-#: src/bin/e_comp.c:4534 src/bin/e_int_border_prop.c:510
+#: src/bin/e_comp.c:4528 src/bin/e_int_border_prop.c:510
 #: src/modules/conf_comp/e_mod_main.c:70
 msgid "Hidden"
 msgstr "Скрытое"
 
-#: src/bin/e_comp.c:4583 src/bin/e_int_border_prop.c:444
+#: src/bin/e_comp.c:4577 src/bin/e_int_border_prop.c:444
 #: src/bin/e_int_border_remember.c:698 src/modules/conf_comp/e_mod_main.c:177
 #: src/modules/wizard/page_050.c:95
 msgid "Title"
 msgstr "Заголовок"
 
-#: src/bin/e_comp.c:4666
+#: src/bin/e_comp.c:4660
 msgid "Use fast composite effects for windows"
 msgstr "Использовать быстрые композитные эффекты для окон"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687 src/bin/e_comp.c:4691
-#: src/bin/e_comp.c:4695 src/bin/e_comp.c:4700 src/bin/e_comp.c:4703
-#: src/bin/e_comp.c:4706 src/bin/e_comp.c:4709 src/bin/e_comp.c:4712
-#: src/bin/e_comp.c:4719 src/bin/e_comp.c:4722 src/bin/e_comp.c:4729
-#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4739 src/bin/e_comp.c:4741
-#: src/bin/e_comp.c:4743 src/bin/e_comp.c:4746 src/bin/e_comp.c:4748
-#: src/bin/e_comp.c:4751 src/bin/e_comp.c:4755 src/bin/e_comp.c:4756
-#: src/bin/e_comp.c:4757 src/bin/e_comp.c:4984 src/bin/e_comp.c:4985
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4689 src/bin/e_comp.c:4694 src/bin/e_comp.c:4697
+#: src/bin/e_comp.c:4700 src/bin/e_comp.c:4703 src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4713 src/bin/e_comp.c:4716 src/bin/e_comp.c:4723
+#: src/bin/e_comp.c:4731 src/bin/e_comp.c:4733 src/bin/e_comp.c:4735
+#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4740 src/bin/e_comp.c:4742
+#: src/bin/e_comp.c:4745 src/bin/e_comp.c:4749 src/bin/e_comp.c:4750
+#: src/bin/e_comp.c:4751 src/bin/e_comp.c:4978 src/bin/e_comp.c:4979
 #: src/modules/conf_comp/e_mod_main.c:259
 msgid "composite"
 msgstr "композитный режим"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4677 src/bin/e_comp.c:4691
-#: src/bin/e_comp.c:4695 src/bin/e_comp.c:4700 src/bin/e_comp.c:4703
-#: src/bin/e_comp.c:4706 src/bin/e_comp.c:4709 src/bin/e_comp.c:4712
-#: src/bin/e_comp.c:4719 src/bin/e_comp.c:4722 src/bin/e_comp.c:4729
-#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4741 src/bin/e_comp.c:4743
-#: src/bin/e_comp.c:4746 src/bin/e_comp.c:4748 src/bin/e_comp.c:4751
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4671 src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4689 src/bin/e_comp.c:4694 src/bin/e_comp.c:4697
+#: src/bin/e_comp.c:4700 src/bin/e_comp.c:4703 src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4713 src/bin/e_comp.c:4716 src/bin/e_comp.c:4723
+#: src/bin/e_comp.c:4731 src/bin/e_comp.c:4735 src/bin/e_comp.c:4737
+#: src/bin/e_comp.c:4740 src/bin/e_comp.c:4742 src/bin/e_comp.c:4745
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
 #: src/bin/e_configure_option.c:1510 src/bin/e_configure_option.c:1543
 #: src/bin/e_configure_option.c:1562 src/bin/e_configure_option.c:1566
@@ -957,10 +957,10 @@ msgstr "композитный режим"
 msgid "border"
 msgstr "рамка"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687 src/bin/e_comp.c:4695
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4689
 #: src/bin/e_configure_option.c:1464 src/bin/e_configure_option.c:1468
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1476
 #: src/bin/e_configure_option.c:1806 src/bin/e_configure_option.c:1808
@@ -973,10 +973,10 @@ msgstr "рамка"
 msgid "theme"
 msgstr "тема"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681
 #: src/bin/e_configure_option.c:1464 src/bin/e_configure_option.c:1468
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1476
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
@@ -988,11 +988,11 @@ msgstr "тема"
 msgid "animate"
 msgstr "Оживлять"
 
-#: src/bin/e_comp.c:4668
+#: src/bin/e_comp.c:4662
 msgid "Use fast composite effects for menus"
 msgstr "Использовать быстрые композитные эффекты для меню"
 
-#: src/bin/e_comp.c:4668 src/bin/e_comp.c:4679
+#: src/bin/e_comp.c:4662 src/bin/e_comp.c:4673
 #: src/bin/e_configure_option.c:1490 src/bin/e_configure_option.c:1493
 #: src/bin/e_configure_option.c:1496 src/bin/e_configure_option.c:1499
 #: src/bin/e_configure_option.c:1502 src/bin/e_configure_option.c:1694
@@ -1007,51 +1007,51 @@ msgstr "Использовать быстрые композитные эффе�
 msgid "menu"
 msgstr "меню"
 
-#: src/bin/e_comp.c:4670
+#: src/bin/e_comp.c:4664
 msgid "Use fast composite effects for popups"
 msgstr "Использовать быстрые композитные эффекты для всплывающих окон"
 
-#: src/bin/e_comp.c:4670 src/bin/e_comp.c:4681
+#: src/bin/e_comp.c:4664 src/bin/e_comp.c:4675
 msgid "popup"
 msgstr "всплывающее окно"
 
-#: src/bin/e_comp.c:4672
+#: src/bin/e_comp.c:4666
 msgid "Use fast composite effects for objects"
 msgstr "Использовать быстрые композитные эффекты для объектов"
 
-#: src/bin/e_comp.c:4674
+#: src/bin/e_comp.c:4668
 #, fuzzy
 msgid ""
 "Use fast composite effects for override-redirect windows (tooltips and such)"
 msgstr "Использовать быстрые композитные эффекты для окон"
 
-#: src/bin/e_comp.c:4677 src/modules/conf_comp/e_mod_config.c:226
+#: src/bin/e_comp.c:4671 src/modules/conf_comp/e_mod_config.c:226
 msgid "Disable composite effects for windows"
 msgstr "Отключить композитные эффекты для окон"
 
-#: src/bin/e_comp.c:4679 src/modules/conf_comp/e_mod_config.c:229
+#: src/bin/e_comp.c:4673 src/modules/conf_comp/e_mod_config.c:229
 msgid "Disable composite effects for menus"
 msgstr "Отключить композитные эффекты для меню"
 
-#: src/bin/e_comp.c:4681 src/modules/conf_comp/e_mod_config.c:232
+#: src/bin/e_comp.c:4675 src/modules/conf_comp/e_mod_config.c:232
 msgid "Disable composite effects for popups"
 msgstr "Отключить композитные эффекты для всплывающих окон"
 
-#: src/bin/e_comp.c:4683 src/modules/conf_comp/e_mod_config.c:235
+#: src/bin/e_comp.c:4677 src/modules/conf_comp/e_mod_config.c:235
 msgid "Disable composite effects for objects"
 msgstr "Отключить композитные эффекты для объектов"
 
-#: src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4679
 #, fuzzy
 msgid ""
 "Disable composite effects for override-redirect windows (tooltips and such)"
 msgstr "Отключить композитные эффекты для окон"
 
-#: src/bin/e_comp.c:4687
+#: src/bin/e_comp.c:4681
 msgid "Disable composite effects for the screen"
 msgstr "Отключить композитные эффекты для экрана"
 
-#: src/bin/e_comp.c:4687 src/bin/e_configure_option.c:1537
+#: src/bin/e_comp.c:4681 src/bin/e_configure_option.c:1537
 #: src/bin/e_configure_option.c:1539 src/bin/e_configure_option.c:1598
 #: src/bin/e_configure_option.c:1620 src/bin/e_configure_option.c:1622
 #: src/bin/e_configure_option.c:1624 src/bin/e_configure_option.c:1740
@@ -1069,44 +1069,44 @@ msgstr "Отключить композитные эффекты для экра
 msgid "screen"
 msgstr "экран"
 
-#: src/bin/e_comp.c:4688
+#: src/bin/e_comp.c:4682
 msgid ""
 "This option disables composite effects from themes, such as animating the "
 "screen fade when blanking"
 msgstr ""
 
-#: src/bin/e_comp.c:4691
+#: src/bin/e_comp.c:4685
 #, fuzzy
 msgid "Compositing engine"
 msgstr "Композитный отрисовщик"
 
-#: src/bin/e_comp.c:4695
+#: src/bin/e_comp.c:4689
 #, fuzzy
 msgid "Default window composite effect"
 msgstr "Композитные эффекты для окон по умолчанию"
 
-#: src/bin/e_comp.c:4700
+#: src/bin/e_comp.c:4694
 msgid "Smooth scaling of composited window content"
 msgstr "Гладкое масштабирование содержимого окон"
 
-#: src/bin/e_comp.c:4703
+#: src/bin/e_comp.c:4697
 msgid "Sync composited windows"
 msgstr "Синхронизировать окна"
 
-#: src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4700
 msgid "Loose sync composited windows"
 msgstr "Свободная синхронизация композитных окон"
 
-#: src/bin/e_comp.c:4709
+#: src/bin/e_comp.c:4703
 msgid "Grab server during rendering of composited windows"
 msgstr "Захватывать сервер при композитной отрисовке окон"
 
-#: src/bin/e_comp.c:4712
+#: src/bin/e_comp.c:4706
 #, fuzzy
 msgid "Initial draw timeout for newly-mapped composited windows"
 msgstr "Начальный тайм-аут для отрисовки новых окон"
 
-#: src/bin/e_comp.c:4712 src/bin/e_configure_option.c:1496
+#: src/bin/e_comp.c:4706 src/bin/e_configure_option.c:1496
 #: src/bin/e_configure_option.c:1533 src/bin/e_configure_option.c:1548
 #: src/bin/e_configure_option.c:1583 src/bin/e_configure_option.c:1658
 #: src/bin/e_configure_option.c:1660 src/bin/e_configure_option.c:1661
@@ -1122,67 +1122,67 @@ msgstr "Начальный тайм-аут для отрисовки новых 
 msgid "delay"
 msgstr "задержка"
 
-#: src/bin/e_comp.c:4713
+#: src/bin/e_comp.c:4707
 #, c-format
 msgid "%1.2f seconds"
 msgstr "%1.2f секунд"
 
-#: src/bin/e_comp.c:4719
+#: src/bin/e_comp.c:4713
 msgid "Tear-free compositing (VSYNC)"
 msgstr "Отрисовка без разрывов (VSync)"
 
-#: src/bin/e_comp.c:4722
+#: src/bin/e_comp.c:4716
 #, fuzzy
 msgid "Texture from pixmap rendering for composite"
 msgstr "Текстура из растрового изображения"
 
-#: src/bin/e_comp.c:4729
+#: src/bin/e_comp.c:4723
 msgid "Composite swapping method"
 msgstr "Метод смены буферов"
 
-#: src/bin/e_comp.c:4737 src/modules/conf_comp/e_mod_config.c:253
+#: src/bin/e_comp.c:4731 src/modules/conf_comp/e_mod_config.c:253
 #: src/modules/conf_comp/e_mod_config.c:593
 msgid "Don't composite fullscreen windows"
 msgstr "Не использовать композитный режим для полноэкранных окон"
 
-#: src/bin/e_comp.c:4739 src/modules/conf_comp/e_mod_config.c:255
+#: src/bin/e_comp.c:4733 src/modules/conf_comp/e_mod_config.c:255
 #: src/modules/conf_comp/e_mod_config.c:554
 #, fuzzy
 msgid "Don't fade backlight"
 msgstr "Не прятать гаджеты"
 
-#: src/bin/e_comp.c:4739 src/bin/e_configure_option.c:1910
+#: src/bin/e_comp.c:4733 src/bin/e_configure_option.c:1910
 #: src/bin/e_configure_option.c:1913 src/bin/e_configure_option.c:1916
 #: src/bin/e_configure_option.c:1919 src/bin/e_configure_option.c:1921
 msgid "backlight"
 msgstr "подсветка"
 
-#: src/bin/e_comp.c:4741
+#: src/bin/e_comp.c:4735
 msgid "Send flush when compositing windows"
 msgstr "Посылать flush при композитной отрисовке окон"
 
-#: src/bin/e_comp.c:4743
+#: src/bin/e_comp.c:4737
 msgid "Send dump when compositing windows"
 msgstr "Посылать dump при композитной отрисовке окон"
 
-#: src/bin/e_comp.c:4746
+#: src/bin/e_comp.c:4740
 msgid "Show framerate when compositing windows"
 msgstr "Показывать частоту кадров"
 
-#: src/bin/e_comp.c:4748
+#: src/bin/e_comp.c:4742
 msgid "Rolling average for fps display when compositing"
 msgstr "Показывать скользящее среднее частоты кадров"
 
-#: src/bin/e_comp.c:4749
+#: src/bin/e_comp.c:4743
 #, c-format
 msgid "%1.0f frames"
 msgstr "%1.0f кадров"
 
-#: src/bin/e_comp.c:4751
+#: src/bin/e_comp.c:4745
 msgid "Composite framerate display corner"
 msgstr "Угол для отображения частоты кадров"
 
-#: src/bin/e_comp.c:4755 src/bin/e_comp.c:4985
+#: src/bin/e_comp.c:4749 src/bin/e_comp.c:4979
 #: src/bin/e_configure_option.c:2032 src/bin/e_configure_option.c:2033
 #: src/bin/e_configure_option.c:2034 src/bin/e_configure_option.c:2035
 #: src/bin/e_configure_option.c:2036 src/bin/e_configure_option.c:2037
@@ -1195,7 +1195,7 @@ msgstr "Угол для отображения частоты кадров"
 msgid "windows"
 msgstr "окна"
 
-#: src/bin/e_comp.c:4839
+#: src/bin/e_comp.c:4833
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -1205,7 +1205,7 @@ msgstr ""
 "без поддержки XComposite.<br>Заметьте, что для поддержки композитного "
 "режима<br>вам также понадобится поддержка XRender и XFixes<br>в X11 и Ecore."
 
-#: src/bin/e_comp.c:4848
+#: src/bin/e_comp.c:4842
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -1213,15 +1213,15 @@ msgstr ""
 "Ваш X-сервер не поддерживает расширение XDamage<br>или Ecore был собран без "
 "поддержки XDamage."
 
-#: src/bin/e_comp.c:4931 src/bin/e_comp.c:4937
+#: src/bin/e_comp.c:4925 src/bin/e_comp.c:4931
 msgid "Compositor"
 msgstr "Композитный менеджер"
 
-#: src/bin/e_comp.c:4932
+#: src/bin/e_comp.c:4926
 msgid "Change current window opacity"
 msgstr "Изменить прозрачность текущего окна"
 
-#: src/bin/e_comp.c:4938
+#: src/bin/e_comp.c:4932
 msgid "Set current window opacity"
 msgstr "Задать прозрачность текущего окна"
 
@@ -1411,7 +1411,7 @@ msgid "Basic"
 msgstr "Базово"
 
 #: src/bin/e_config_dialog.c:280 src/modules/conf2/e_conf2.c:1279
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:867
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:866
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1195
 msgid "Apply"
 msgstr "Применить"
@@ -4131,8 +4131,8 @@ msgstr "Имя:"
 msgid "Location:"
 msgstr "Расположение:"
 
-#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:337
-#: src/bin/e_widget_filepreview.c:394 src/bin/e_widget_filepreview.c:446
+#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:340
+#: src/bin/e_widget_filepreview.c:397 src/bin/e_widget_filepreview.c:450
 msgid "Size:"
 msgstr "Размер:"
 
@@ -4619,10 +4619,10 @@ msgid "Window List"
 msgstr "Список окон"
 
 #: src/bin/e_int_border_menu.c:1325 src/modules/pager/e_mod_main.c:264
-#: src/modules/pager/e_mod_main.c:2962 src/modules/pager/e_mod_main.c:2969
-#: src/modules/pager/e_mod_main.c:2976 src/modules/pager/e_mod_main.c:2978
+#: src/modules/pager/e_mod_main.c:2966 src/modules/pager/e_mod_main.c:2973
 #: src/modules/pager/e_mod_main.c:2980 src/modules/pager/e_mod_main.c:2982
 #: src/modules/pager/e_mod_main.c:2984 src/modules/pager/e_mod_main.c:2986
+#: src/modules/pager/e_mod_main.c:2988 src/modules/pager/e_mod_main.c:2990
 msgid "Pager"
 msgstr "Пейджер"
 
@@ -4633,7 +4633,7 @@ msgstr "Панель задач"
 #: src/bin/e_int_border_prop.c:110 src/bin/e_int_border_prop.c:117
 #: src/bin/e_int_border_prop.c:124 src/bin/e_moveresize.c:84
 #: src/bin/e_moveresize.c:95 src/bin/e_moveresize.c:133
-#: src/bin/e_widget_filepreview.c:82
+#: src/bin/e_widget_filepreview.c:85
 #, c-format
 msgid "%i×%i"
 msgstr "%i×%i"
@@ -5229,7 +5229,7 @@ msgid "Hide duration"
 msgstr "Продолжительность скрытия"
 
 #: src/bin/e_int_shelf_config.c:268
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:879
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:878
 #, c-format
 msgid "%.2f seconds"
 msgstr "%.2f секунд"
@@ -6396,11 +6396,11 @@ msgstr[0] "%li минуту назад"
 msgstr[1] "%li минуты назад"
 msgstr[2] "%li минут назад"
 
-#: src/bin/e_utils.c:933 src/bin/e_widget_filepreview.c:601
-#: src/bin/e_widget_filepreview.c:602 src/bin/e_widget_filepreview.c:603
-#: src/bin/e_widget_filepreview.c:634 src/bin/e_widget_filepreview.c:645
+#: src/bin/e_utils.c:933 src/bin/e_widget_filepreview.c:605
+#: src/bin/e_widget_filepreview.c:606 src/bin/e_widget_filepreview.c:607
+#: src/bin/e_widget_filepreview.c:638 src/bin/e_widget_filepreview.c:649
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:409
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1227
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1226
 #: src/modules/conf_bindings/e_int_config_keybindings.c:973
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:574
 #: src/modules/conf_dialogs/e_int_config_profiles.c:298
@@ -6562,76 +6562,76 @@ msgstr "V"
 msgid "Alpha"
 msgstr "Альфа"
 
-#: src/bin/e_widget_filepreview.c:81 src/bin/e_widget_filepreview.c:445
+#: src/bin/e_widget_filepreview.c:84 src/bin/e_widget_filepreview.c:449
 msgid "Resolution:"
 msgstr "Разрешение:"
 
-#: src/bin/e_widget_filepreview.c:89
+#: src/bin/e_widget_filepreview.c:92
 msgid "Mime-type:"
 msgstr "Mime-тип:"
 
-#: src/bin/e_widget_filepreview.c:330
+#: src/bin/e_widget_filepreview.c:333
 #, c-format
 msgid "%3.1f%%"
 msgstr "%3.1f%%"
 
-#: src/bin/e_widget_filepreview.c:336
+#: src/bin/e_widget_filepreview.c:339
 msgid "Length:"
 msgstr "Длина:"
 
-#: src/bin/e_widget_filepreview.c:393
+#: src/bin/e_widget_filepreview.c:396
 msgid "Used:"
 msgstr "Использовано:"
 
-#: src/bin/e_widget_filepreview.c:395
+#: src/bin/e_widget_filepreview.c:398
 msgid "Reserved:"
 msgstr "Зарезервировано:"
 
-#: src/bin/e_widget_filepreview.c:396
+#: src/bin/e_widget_filepreview.c:399
 msgid "Mount status:"
 msgstr "Статус:"
 
-#: src/bin/e_widget_filepreview.c:398 src/modules/mixer/app_mixer.c:381
+#: src/bin/e_widget_filepreview.c:401 src/modules/mixer/app_mixer.c:381
 msgid "Type:"
 msgstr "Тип:"
 
-#: src/bin/e_widget_filepreview.c:448
+#: src/bin/e_widget_filepreview.c:452
 msgid "Owner:"
 msgstr "Владелец:"
 
-#: src/bin/e_widget_filepreview.c:449
+#: src/bin/e_widget_filepreview.c:453
 msgid "Permissions:"
 msgstr "Права доступа:"
 
-#: src/bin/e_widget_filepreview.c:450
+#: src/bin/e_widget_filepreview.c:454
 msgid "Modified:"
 msgstr "Модифицировался:"
 
-#: src/bin/e_widget_filepreview.c:588 src/bin/e_widget_filepreview.c:752
-#: src/bin/e_widget_filepreview.c:761 src/bin/e_widget_filepreview.c:770
+#: src/bin/e_widget_filepreview.c:592 src/bin/e_widget_filepreview.c:785
+#: src/bin/e_widget_filepreview.c:794 src/bin/e_widget_filepreview.c:803
 #, c-format
 msgid "Read Only"
 msgstr "Только чтение"
 
-#: src/bin/e_widget_filepreview.c:590 src/bin/e_widget_filepreview.c:777
+#: src/bin/e_widget_filepreview.c:594 src/bin/e_widget_filepreview.c:810
 msgid "Read-Write"
 msgstr "Чтение-Запись"
 
-#: src/bin/e_widget_filepreview.c:593 src/bin/e_widget_filepreview.c:604
+#: src/bin/e_widget_filepreview.c:597 src/bin/e_widget_filepreview.c:608
 msgid "Unmounted"
 msgstr "Отключен"
 
-#: src/bin/e_widget_filepreview.c:701
+#: src/bin/e_widget_filepreview.c:734
 #, c-format
 msgid "You"
 msgstr "Вы"
 
-#: src/bin/e_widget_filepreview.c:750
+#: src/bin/e_widget_filepreview.c:783
 #, c-format
 msgid "Protected"
 msgstr "Защищено"
 
-#: src/bin/e_widget_filepreview.c:759 src/bin/e_widget_filepreview.c:768
+#: src/bin/e_widget_filepreview.c:792 src/bin/e_widget_filepreview.c:801
 #, c-format
 msgid "Forbidden"
 msgstr "Запрещено"
@@ -7456,24 +7456,24 @@ msgstr "Разрешить вызов привязок при полноэкра
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
 msgstr "Разрешить вызов привязок при наличии нескольких экранов (ОПАСНО!)"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:865
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:864
 msgid "Edge Binding Sequence"
 msgstr "Последовательность привязок к краям"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:884
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:883
 msgid "Clickable edge"
 msgstr "Интерактивные края"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:892
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:891
 #, fuzzy
 msgid "Drag only"
 msgstr "Тащить значок..."
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1222
 msgid "Edge Binding Error"
 msgstr "Ошибка привязки по краю"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1224
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
 #, c-format
 msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
@@ -7483,68 +7483,68 @@ msgstr ""
 "<br><hilight>%s</hilight>.<br>Пожалуйста выберите другую последовательность "
 "по краю."
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1359
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1358
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1108
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1140
 msgid "CTRL"
 msgstr "CTRL"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1364
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1363
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1113
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1145
 msgid "ALT"
 msgstr "ALT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1370
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1369
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1119
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1151
 msgid "SHIFT"
 msgstr "SHIFT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1376
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1375
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1125
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1157
 msgid "WIN"
 msgstr "WIN"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1386
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1385
 msgid "Left Edge"
 msgstr "Левый край"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1390
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1389
 msgid "Top Edge"
 msgstr "Верхний край"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1394
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 msgid "Right Edge"
 msgstr "Правый край"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1398
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1397
 msgid "Bottom Edge"
 msgstr "Нижний край"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1402
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1401
 msgid "Top Left Edge"
 msgstr "Верхний левый край"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1406
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1405
 msgid "Top Right Edge"
 msgstr "Верхний правый край"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1410
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1409
 msgid "Bottom Right Edge"
 msgstr "Нижний правый край"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1414
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1413
 msgid "Bottom Left Edge"
 msgstr "Нижний левый край"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1428
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1427
 #, c-format
 msgid "(left clickable)"
 msgstr "(кликабельно левой)"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1430
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1429
 #, c-format
 msgid "(clickable)"
 msgstr "(кликабельно)"
@@ -11750,31 +11750,31 @@ msgstr ""
 "она уже занята внутренним<br>кодом для контекстных меню.<br>Эта кнопка "
 "работает только для всплывающих окон"
 
-#: src/modules/pager/e_mod_main.c:2969
+#: src/modules/pager/e_mod_main.c:2973
 msgid "Show Pager Popup"
 msgstr "Показывать всплывающее окно пейджера"
 
-#: src/modules/pager/e_mod_main.c:2976
+#: src/modules/pager/e_mod_main.c:2980
 msgid "Popup Desk Right"
 msgstr "Перенестись на стол справа"
 
-#: src/modules/pager/e_mod_main.c:2978
+#: src/modules/pager/e_mod_main.c:2982
 msgid "Popup Desk Left"
 msgstr "Перенестись на стол слева"
 
-#: src/modules/pager/e_mod_main.c:2980
+#: src/modules/pager/e_mod_main.c:2984
 msgid "Popup Desk Up"
 msgstr "Перенестись на стол сверху"
 
-#: src/modules/pager/e_mod_main.c:2982
+#: src/modules/pager/e_mod_main.c:2986
 msgid "Popup Desk Down"
 msgstr "Перенестись на стол снизу"
 
-#: src/modules/pager/e_mod_main.c:2984
+#: src/modules/pager/e_mod_main.c:2988
 msgid "Popup Desk Next"
 msgstr "Перенестись на след. стол"
 
-#: src/modules/pager/e_mod_main.c:2986
+#: src/modules/pager/e_mod_main.c:2990
 msgid "Popup Desk Previous"
 msgstr "Перенестись на пред. стол"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-28 14:41+0900\n"
+"POT-Creation-Date: 2013-07-05 08:26+0900\n"
 "PO-Revision-Date: 2009-12-31 01:44+0000\n"
 "Last-Translator: nanker <Unknown>\n"
 "Language-Team: Danish\n"
@@ -25,7 +25,7 @@ msgstr "Om Enlightenment"
 #: src/bin/e_fm.c:1084 src/bin/e_int_border_menu.c:209
 #: src/bin/e_int_border_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf/e_conf.c:179
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:868
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:867
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1201
 #: src/modules/everything/evry_plug_windows.c:452
 #: src/modules/fileman/e_fwin.c:2527 src/modules/mixer/app_mixer.c:502
@@ -897,87 +897,87 @@ msgstr "Vælg et vindue"
 msgid "Cancel"
 msgstr "Fortryd"
 
-#: src/bin/e_comp.c:4133
+#: src/bin/e_comp.c:4127
 #, fuzzy
 msgid "Compositor Warning"
 msgstr "Position"
 
-#: src/bin/e_comp.c:4133
+#: src/bin/e_comp.c:4127
 msgid ""
 "Your display driver does not support OpenGL, or<br>no OpenGL engines were "
 "compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
 "engine."
 msgstr ""
 
-#: src/bin/e_comp.c:4152 src/bin/e_comp.c:4174
+#: src/bin/e_comp.c:4146 src/bin/e_comp.c:4168
 #, fuzzy
 msgid "Compositor Error"
 msgstr "Afmontér Fejl"
 
-#: src/bin/e_comp.c:4152
+#: src/bin/e_comp.c:4146
 msgid "Another compositor is already running<br>on your display server."
 msgstr ""
 
-#: src/bin/e_comp.c:4174
+#: src/bin/e_comp.c:4168
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
 msgstr ""
 
-#: src/bin/e_comp.c:4519 src/modules/bluez4/e_mod_main.c:210
+#: src/bin/e_comp.c:4513 src/modules/bluez4/e_mod_main.c:210
 #: src/modules/conf_comp/e_mod_main.c:55
 msgid "Visible"
 msgstr ""
 
-#: src/bin/e_comp.c:4524 src/modules/conf_comp/e_mod_main.c:60
+#: src/bin/e_comp.c:4518 src/modules/conf_comp/e_mod_main.c:60
 #, fuzzy
 msgid "Focus-Out"
 msgstr "Fokuséring"
 
-#: src/bin/e_comp.c:4529 src/modules/conf_comp/e_mod_main.c:65
+#: src/bin/e_comp.c:4523 src/modules/conf_comp/e_mod_main.c:65
 #, fuzzy
 msgid "Focus-In"
 msgstr "Fokuséring"
 
-#: src/bin/e_comp.c:4534 src/bin/e_int_border_prop.c:510
+#: src/bin/e_comp.c:4528 src/bin/e_int_border_prop.c:510
 #: src/modules/conf_comp/e_mod_main.c:70
 #, fuzzy
 msgid "Hidden"
 msgstr "skjult"
 
-#: src/bin/e_comp.c:4583 src/bin/e_int_border_prop.c:444
+#: src/bin/e_comp.c:4577 src/bin/e_int_border_prop.c:444
 #: src/bin/e_int_border_remember.c:698 src/modules/conf_comp/e_mod_main.c:177
 #: src/modules/wizard/page_050.c:95
 msgid "Title"
 msgstr "Titel"
 
-#: src/bin/e_comp.c:4666
+#: src/bin/e_comp.c:4660
 #, fuzzy
 msgid "Use fast composite effects for windows"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687 src/bin/e_comp.c:4691
-#: src/bin/e_comp.c:4695 src/bin/e_comp.c:4700 src/bin/e_comp.c:4703
-#: src/bin/e_comp.c:4706 src/bin/e_comp.c:4709 src/bin/e_comp.c:4712
-#: src/bin/e_comp.c:4719 src/bin/e_comp.c:4722 src/bin/e_comp.c:4729
-#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4739 src/bin/e_comp.c:4741
-#: src/bin/e_comp.c:4743 src/bin/e_comp.c:4746 src/bin/e_comp.c:4748
-#: src/bin/e_comp.c:4751 src/bin/e_comp.c:4755 src/bin/e_comp.c:4756
-#: src/bin/e_comp.c:4757 src/bin/e_comp.c:4984 src/bin/e_comp.c:4985
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4689 src/bin/e_comp.c:4694 src/bin/e_comp.c:4697
+#: src/bin/e_comp.c:4700 src/bin/e_comp.c:4703 src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4713 src/bin/e_comp.c:4716 src/bin/e_comp.c:4723
+#: src/bin/e_comp.c:4731 src/bin/e_comp.c:4733 src/bin/e_comp.c:4735
+#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4740 src/bin/e_comp.c:4742
+#: src/bin/e_comp.c:4745 src/bin/e_comp.c:4749 src/bin/e_comp.c:4750
+#: src/bin/e_comp.c:4751 src/bin/e_comp.c:4978 src/bin/e_comp.c:4979
 #: src/modules/conf_comp/e_mod_main.c:259
 #, fuzzy
 msgid "composite"
 msgstr "Position"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4677 src/bin/e_comp.c:4691
-#: src/bin/e_comp.c:4695 src/bin/e_comp.c:4700 src/bin/e_comp.c:4703
-#: src/bin/e_comp.c:4706 src/bin/e_comp.c:4709 src/bin/e_comp.c:4712
-#: src/bin/e_comp.c:4719 src/bin/e_comp.c:4722 src/bin/e_comp.c:4729
-#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4741 src/bin/e_comp.c:4743
-#: src/bin/e_comp.c:4746 src/bin/e_comp.c:4748 src/bin/e_comp.c:4751
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4671 src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4689 src/bin/e_comp.c:4694 src/bin/e_comp.c:4697
+#: src/bin/e_comp.c:4700 src/bin/e_comp.c:4703 src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4713 src/bin/e_comp.c:4716 src/bin/e_comp.c:4723
+#: src/bin/e_comp.c:4731 src/bin/e_comp.c:4735 src/bin/e_comp.c:4737
+#: src/bin/e_comp.c:4740 src/bin/e_comp.c:4742 src/bin/e_comp.c:4745
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
 #: src/bin/e_configure_option.c:1510 src/bin/e_configure_option.c:1543
 #: src/bin/e_configure_option.c:1562 src/bin/e_configure_option.c:1566
@@ -1041,10 +1041,10 @@ msgstr "Position"
 msgid "border"
 msgstr "border"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687 src/bin/e_comp.c:4695
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4689
 #: src/bin/e_configure_option.c:1464 src/bin/e_configure_option.c:1468
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1476
 #: src/bin/e_configure_option.c:1806 src/bin/e_configure_option.c:1808
@@ -1058,10 +1058,10 @@ msgstr "border"
 msgid "theme"
 msgstr "Tema"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681
 #: src/bin/e_configure_option.c:1464 src/bin/e_configure_option.c:1468
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1476
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
@@ -1073,12 +1073,12 @@ msgstr "Tema"
 msgid "animate"
 msgstr "Animér"
 
-#: src/bin/e_comp.c:4668
+#: src/bin/e_comp.c:4662
 #, fuzzy
 msgid "Use fast composite effects for menus"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4668 src/bin/e_comp.c:4679
+#: src/bin/e_comp.c:4662 src/bin/e_comp.c:4673
 #: src/bin/e_configure_option.c:1490 src/bin/e_configure_option.c:1493
 #: src/bin/e_configure_option.c:1496 src/bin/e_configure_option.c:1499
 #: src/bin/e_configure_option.c:1502 src/bin/e_configure_option.c:1694
@@ -1093,57 +1093,57 @@ msgstr "Tillad vinduer over fullscreen vindue"
 msgid "menu"
 msgstr ""
 
-#: src/bin/e_comp.c:4670
+#: src/bin/e_comp.c:4664
 #, fuzzy
 msgid "Use fast composite effects for popups"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4670 src/bin/e_comp.c:4681
+#: src/bin/e_comp.c:4664 src/bin/e_comp.c:4675
 #, fuzzy
 msgid "popup"
 msgstr "Popup"
 
-#: src/bin/e_comp.c:4672
+#: src/bin/e_comp.c:4666
 #, fuzzy
 msgid "Use fast composite effects for objects"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4674
+#: src/bin/e_comp.c:4668
 #, fuzzy
 msgid ""
 "Use fast composite effects for override-redirect windows (tooltips and such)"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4677 src/modules/conf_comp/e_mod_config.c:226
+#: src/bin/e_comp.c:4671 src/modules/conf_comp/e_mod_config.c:226
 #, fuzzy
 msgid "Disable composite effects for windows"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4679 src/modules/conf_comp/e_mod_config.c:229
+#: src/bin/e_comp.c:4673 src/modules/conf_comp/e_mod_config.c:229
 msgid "Disable composite effects for menus"
 msgstr ""
 
-#: src/bin/e_comp.c:4681 src/modules/conf_comp/e_mod_config.c:232
+#: src/bin/e_comp.c:4675 src/modules/conf_comp/e_mod_config.c:232
 msgid "Disable composite effects for popups"
 msgstr ""
 
-#: src/bin/e_comp.c:4683 src/modules/conf_comp/e_mod_config.c:235
+#: src/bin/e_comp.c:4677 src/modules/conf_comp/e_mod_config.c:235
 #, fuzzy
 msgid "Disable composite effects for objects"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4679
 #, fuzzy
 msgid ""
 "Disable composite effects for override-redirect windows (tooltips and such)"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4687
+#: src/bin/e_comp.c:4681
 #, fuzzy
 msgid "Disable composite effects for the screen"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4687 src/bin/e_configure_option.c:1537
+#: src/bin/e_comp.c:4681 src/bin/e_configure_option.c:1537
 #: src/bin/e_configure_option.c:1539 src/bin/e_configure_option.c:1598
 #: src/bin/e_configure_option.c:1620 src/bin/e_configure_option.c:1622
 #: src/bin/e_configure_option.c:1624 src/bin/e_configure_option.c:1740
@@ -1162,44 +1162,44 @@ msgstr "Tillad vinduer over fullscreen vindue"
 msgid "screen"
 msgstr "Skærm"
 
-#: src/bin/e_comp.c:4688
+#: src/bin/e_comp.c:4682
 msgid ""
 "This option disables composite effects from themes, such as animating the "
 "screen fade when blanking"
 msgstr ""
 
-#: src/bin/e_comp.c:4691
+#: src/bin/e_comp.c:4685
 #, fuzzy
 msgid "Compositing engine"
 msgstr "Position"
 
-#: src/bin/e_comp.c:4695
+#: src/bin/e_comp.c:4689
 msgid "Default window composite effect"
 msgstr ""
 
-#: src/bin/e_comp.c:4700
+#: src/bin/e_comp.c:4694
 msgid "Smooth scaling of composited window content"
 msgstr ""
 
-#: src/bin/e_comp.c:4703
+#: src/bin/e_comp.c:4697
 #, fuzzy
 msgid "Sync composited windows"
 msgstr "Vinduer"
 
-#: src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4700
 #, fuzzy
 msgid "Loose sync composited windows"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4709
+#: src/bin/e_comp.c:4703
 msgid "Grab server during rendering of composited windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4712
+#: src/bin/e_comp.c:4706
 msgid "Initial draw timeout for newly-mapped composited windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4712 src/bin/e_configure_option.c:1496
+#: src/bin/e_comp.c:4706 src/bin/e_configure_option.c:1496
 #: src/bin/e_configure_option.c:1533 src/bin/e_configure_option.c:1548
 #: src/bin/e_configure_option.c:1583 src/bin/e_configure_option.c:1658
 #: src/bin/e_configure_option.c:1660 src/bin/e_configure_option.c:1661
@@ -1215,69 +1215,69 @@ msgstr ""
 msgid "delay"
 msgstr ""
 
-#: src/bin/e_comp.c:4713
+#: src/bin/e_comp.c:4707
 #, fuzzy, c-format
 msgid "%1.2f seconds"
 msgstr "%1.1f sek."
 
-#: src/bin/e_comp.c:4719
+#: src/bin/e_comp.c:4713
 msgid "Tear-free compositing (VSYNC)"
 msgstr ""
 
-#: src/bin/e_comp.c:4722
+#: src/bin/e_comp.c:4716
 msgid "Texture from pixmap rendering for composite"
 msgstr ""
 
-#: src/bin/e_comp.c:4729
+#: src/bin/e_comp.c:4723
 #, fuzzy
 msgid "Composite swapping method"
 msgstr "Position"
 
-#: src/bin/e_comp.c:4737 src/modules/conf_comp/e_mod_config.c:253
+#: src/bin/e_comp.c:4731 src/modules/conf_comp/e_mod_config.c:253
 #: src/modules/conf_comp/e_mod_config.c:593
 #, fuzzy
 msgid "Don't composite fullscreen windows"
 msgstr "Tillad vinduer over fullscreen vindue"
 
-#: src/bin/e_comp.c:4739 src/modules/conf_comp/e_mod_config.c:255
+#: src/bin/e_comp.c:4733 src/modules/conf_comp/e_mod_config.c:255
 #: src/modules/conf_comp/e_mod_config.c:554
 #, fuzzy
 msgid "Don't fade backlight"
 msgstr "Må ikke skjul Gadgets"
 
-#: src/bin/e_comp.c:4739 src/bin/e_configure_option.c:1910
+#: src/bin/e_comp.c:4733 src/bin/e_configure_option.c:1910
 #: src/bin/e_configure_option.c:1913 src/bin/e_configure_option.c:1916
 #: src/bin/e_configure_option.c:1919 src/bin/e_configure_option.c:1921
 #, fuzzy
 msgid "backlight"
 msgstr "Baggrundslys"
 
-#: src/bin/e_comp.c:4741
+#: src/bin/e_comp.c:4735
 msgid "Send flush when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4743
+#: src/bin/e_comp.c:4737
 msgid "Send dump when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4746
+#: src/bin/e_comp.c:4740
 msgid "Show framerate when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4748
+#: src/bin/e_comp.c:4742
 msgid "Rolling average for fps display when compositing"
 msgstr ""
 
-#: src/bin/e_comp.c:4749
+#: src/bin/e_comp.c:4743
 #, fuzzy, c-format
 msgid "%1.0f frames"
 msgstr "%2.0f pixels"
 
-#: src/bin/e_comp.c:4751
+#: src/bin/e_comp.c:4745
 msgid "Composite framerate display corner"
 msgstr ""
 
-#: src/bin/e_comp.c:4755 src/bin/e_comp.c:4985
+#: src/bin/e_comp.c:4749 src/bin/e_comp.c:4979
 #: src/bin/e_configure_option.c:2032 src/bin/e_configure_option.c:2033
 #: src/bin/e_configure_option.c:2034 src/bin/e_configure_option.c:2035
 #: src/bin/e_configure_option.c:2036 src/bin/e_configure_option.c:2037
@@ -1291,29 +1291,29 @@ msgstr ""
 msgid "windows"
 msgstr "Vinduer"
 
-#: src/bin/e_comp.c:4839
+#: src/bin/e_comp.c:4833
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
 "need XRender and XFixes support in X11 and Ecore."
 msgstr ""
 
-#: src/bin/e_comp.c:4848
+#: src/bin/e_comp.c:4842
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr ""
 
-#: src/bin/e_comp.c:4931 src/bin/e_comp.c:4937
+#: src/bin/e_comp.c:4925 src/bin/e_comp.c:4931
 #, fuzzy
 msgid "Compositor"
 msgstr "Position"
 
-#: src/bin/e_comp.c:4932
+#: src/bin/e_comp.c:4926
 msgid "Change current window opacity"
 msgstr ""
 
-#: src/bin/e_comp.c:4938
+#: src/bin/e_comp.c:4932
 msgid "Set current window opacity"
 msgstr ""
 
@@ -1506,7 +1506,7 @@ msgid "Basic"
 msgstr "Grundlæggende"
 
 #: src/bin/e_config_dialog.c:280 src/modules/conf2/e_conf2.c:1279
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:867
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:866
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1195
 msgid "Apply"
 msgstr "Anvend"
@@ -4392,8 +4392,8 @@ msgstr "Navn:"
 msgid "Location:"
 msgstr "Rotation"
 
-#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:337
-#: src/bin/e_widget_filepreview.c:394 src/bin/e_widget_filepreview.c:446
+#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:340
+#: src/bin/e_widget_filepreview.c:397 src/bin/e_widget_filepreview.c:450
 msgid "Size:"
 msgstr "Størrelse:"
 
@@ -4931,10 +4931,10 @@ msgid "Window List"
 msgstr "Window List"
 
 #: src/bin/e_int_border_menu.c:1325 src/modules/pager/e_mod_main.c:264
-#: src/modules/pager/e_mod_main.c:2962 src/modules/pager/e_mod_main.c:2969
-#: src/modules/pager/e_mod_main.c:2976 src/modules/pager/e_mod_main.c:2978
+#: src/modules/pager/e_mod_main.c:2966 src/modules/pager/e_mod_main.c:2973
 #: src/modules/pager/e_mod_main.c:2980 src/modules/pager/e_mod_main.c:2982
 #: src/modules/pager/e_mod_main.c:2984 src/modules/pager/e_mod_main.c:2986
+#: src/modules/pager/e_mod_main.c:2988 src/modules/pager/e_mod_main.c:2990
 #, fuzzy
 msgid "Pager"
 msgstr "Personsøger"
@@ -4947,7 +4947,7 @@ msgstr "proceslinjen"
 #: src/bin/e_int_border_prop.c:110 src/bin/e_int_border_prop.c:117
 #: src/bin/e_int_border_prop.c:124 src/bin/e_moveresize.c:84
 #: src/bin/e_moveresize.c:95 src/bin/e_moveresize.c:133
-#: src/bin/e_widget_filepreview.c:82
+#: src/bin/e_widget_filepreview.c:85
 #, c-format
 msgid "%i×%i"
 msgstr ""
@@ -5621,7 +5621,7 @@ msgid "Hide duration"
 msgstr "Skjul varighed"
 
 #: src/bin/e_int_shelf_config.c:268
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:879
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:878
 #, c-format
 msgid "%.2f seconds"
 msgstr ""
@@ -6841,11 +6841,11 @@ msgid_plural "%li Minutes ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:933 src/bin/e_widget_filepreview.c:601
-#: src/bin/e_widget_filepreview.c:602 src/bin/e_widget_filepreview.c:603
-#: src/bin/e_widget_filepreview.c:634 src/bin/e_widget_filepreview.c:645
+#: src/bin/e_utils.c:933 src/bin/e_widget_filepreview.c:605
+#: src/bin/e_widget_filepreview.c:606 src/bin/e_widget_filepreview.c:607
+#: src/bin/e_widget_filepreview.c:638 src/bin/e_widget_filepreview.c:649
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:409
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1227
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1226
 #: src/modules/conf_bindings/e_int_config_keybindings.c:973
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:574
 #: src/modules/conf_dialogs/e_int_config_profiles.c:298
@@ -7009,83 +7009,83 @@ msgstr ""
 msgid "Alpha"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:81 src/bin/e_widget_filepreview.c:445
+#: src/bin/e_widget_filepreview.c:84 src/bin/e_widget_filepreview.c:449
 #, fuzzy
 msgid "Resolution:"
 msgstr "Opløsning"
 
-#: src/bin/e_widget_filepreview.c:89
+#: src/bin/e_widget_filepreview.c:92
 #, fuzzy
 msgid "Mime-type:"
 msgstr "mimetyper"
 
-#: src/bin/e_widget_filepreview.c:330
+#: src/bin/e_widget_filepreview.c:333
 #, c-format
 msgid "%3.1f%%"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:336
+#: src/bin/e_widget_filepreview.c:339
 msgid "Length:"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:393
+#: src/bin/e_widget_filepreview.c:396
 msgid "Used:"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:395
+#: src/bin/e_widget_filepreview.c:398
 msgid "Reserved:"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:396
+#: src/bin/e_widget_filepreview.c:399
 msgid "Mount status:"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:398 src/modules/mixer/app_mixer.c:381
+#: src/bin/e_widget_filepreview.c:401 src/modules/mixer/app_mixer.c:381
 #, fuzzy
 msgid "Type:"
 msgstr "Type:"
 
-#: src/bin/e_widget_filepreview.c:448
+#: src/bin/e_widget_filepreview.c:452
 #, fuzzy
 msgid "Owner:"
 msgstr "Ejer:"
 
-#: src/bin/e_widget_filepreview.c:449
+#: src/bin/e_widget_filepreview.c:453
 msgid "Permissions:"
 msgstr "Rettigheder:"
 
-#: src/bin/e_widget_filepreview.c:450
+#: src/bin/e_widget_filepreview.c:454
 #, fuzzy
 msgid "Modified:"
 msgstr "Sidst ændret:"
 
-#: src/bin/e_widget_filepreview.c:588 src/bin/e_widget_filepreview.c:752
-#: src/bin/e_widget_filepreview.c:761 src/bin/e_widget_filepreview.c:770
+#: src/bin/e_widget_filepreview.c:592 src/bin/e_widget_filepreview.c:785
+#: src/bin/e_widget_filepreview.c:794 src/bin/e_widget_filepreview.c:803
 #, fuzzy, c-format
 msgid "Read Only"
 msgstr "Skrivebeskyttet"
 
-#: src/bin/e_widget_filepreview.c:590 src/bin/e_widget_filepreview.c:777
+#: src/bin/e_widget_filepreview.c:594 src/bin/e_widget_filepreview.c:810
 #, fuzzy
 msgid "Read-Write"
 msgstr "Læse-skrive"
 
-#: src/bin/e_widget_filepreview.c:593 src/bin/e_widget_filepreview.c:604
+#: src/bin/e_widget_filepreview.c:597 src/bin/e_widget_filepreview.c:608
 #, fuzzy
 msgid "Unmounted"
 msgstr "Afmontér"
 
-#: src/bin/e_widget_filepreview.c:701
+#: src/bin/e_widget_filepreview.c:734
 #, fuzzy, c-format
 msgid "You"
 msgstr "du"
 
-#: src/bin/e_widget_filepreview.c:750
+#: src/bin/e_widget_filepreview.c:783
 #, fuzzy, c-format
 msgid "Protected"
 msgstr "beskyttet"
 
-#: src/bin/e_widget_filepreview.c:759 src/bin/e_widget_filepreview.c:768
+#: src/bin/e_widget_filepreview.c:792 src/bin/e_widget_filepreview.c:801
 #, fuzzy, c-format
 msgid "Forbidden"
 msgstr "forbudt"
@@ -8019,100 +8019,100 @@ msgstr "Tillade binding aktivering med fuldskærm vinduer"
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
 msgstr "Tillade binding aktivering med fuldskærm vinduer"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:865
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:864
 #, fuzzy
 msgid "Edge Binding Sequence"
 msgstr "Kant bindingssekvens"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:884
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:883
 #, fuzzy
 msgid "Clickable edge"
 msgstr "klikbart kant"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:892
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:891
 #, fuzzy
 msgid "Drag only"
 msgstr "Opret ikon"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1222
 #, fuzzy
 msgid "Edge Binding Error"
 msgstr "musebindinger"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1224
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
 #, c-format
 msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
 "action.<br>Please choose another edge to bind."
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1359
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1358
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1108
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1140
 #, fuzzy
 msgid "CTRL"
 msgstr "CTRL"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1364
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1363
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1113
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1145
 #, fuzzy
 msgid "ALT"
 msgstr "ALT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1370
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1369
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1119
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1151
 #, fuzzy
 msgid "SHIFT"
 msgstr "SKIFT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1376
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1375
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1125
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1157
 #, fuzzy
 msgid "WIN"
 msgstr "VIND"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1386
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1385
 msgid "Left Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1390
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1389
 msgid "Top Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1394
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 #, fuzzy
 msgid "Right Edge"
 msgstr "Højre:"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1398
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1397
 msgid "Bottom Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1402
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1401
 msgid "Top Left Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1406
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1405
 msgid "Top Right Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1410
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1409
 msgid "Bottom Right Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1414
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1413
 msgid "Bottom Left Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1428
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1427
 #, c-format
 msgid "(left clickable)"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1430
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1429
 #, fuzzy, c-format
 msgid "(clickable)"
 msgstr "klikbart kant"
@@ -12962,37 +12962,37 @@ msgstr ""
 "Du kan ikke bruge højre museknap i<br>hylden for dette, da det allerede er "
 "taget af intern<br>koden for genvejsmenuer.<br>Denne knap virker kun i popup."
 
-#: src/modules/pager/e_mod_main.c:2969
+#: src/modules/pager/e_mod_main.c:2973
 #, fuzzy
 msgid "Show Pager Popup"
 msgstr "Vis Personsøger Popup"
 
-#: src/modules/pager/e_mod_main.c:2976
+#: src/modules/pager/e_mod_main.c:2980
 #, fuzzy
 msgid "Popup Desk Right"
 msgstr "Popup Desk Højre"
 
-#: src/modules/pager/e_mod_main.c:2978
+#: src/modules/pager/e_mod_main.c:2982
 #, fuzzy
 msgid "Popup Desk Left"
 msgstr "Popup Desk Venstre"
 
-#: src/modules/pager/e_mod_main.c:2980
+#: src/modules/pager/e_mod_main.c:2984
 #, fuzzy
 msgid "Popup Desk Up"
 msgstr "Popup Desk Up"
 
-#: src/modules/pager/e_mod_main.c:2982
+#: src/modules/pager/e_mod_main.c:2986
 #, fuzzy
 msgid "Popup Desk Down"
 msgstr "Popup Desk Down"
 
-#: src/modules/pager/e_mod_main.c:2984
+#: src/modules/pager/e_mod_main.c:2988
 #, fuzzy
 msgid "Popup Desk Next"
 msgstr "Popup Desk Næste"
 
-#: src/modules/pager/e_mod_main.c:2986
+#: src/modules/pager/e_mod_main.c:2990
 #, fuzzy
 msgid "Popup Desk Previous"
 msgstr "Popup Desk Forrige"

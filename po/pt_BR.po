@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: e17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-06-28 14:41+0900\n"
+"POT-Creation-Date: 2013-07-05 08:26+0900\n"
 "PO-Revision-Date: 2012-12-20 16:46-0300\n"
 "Last-Translator: Vinícius dos Santos Oliveira <vini.ipsmaker@gmail.com>\n"
 "Language-Team: Brazilian Portuguese\n"
@@ -27,7 +27,7 @@ msgstr "Sobre o Enlightenment"
 #: src/bin/e_fm.c:1084 src/bin/e_int_border_menu.c:209
 #: src/bin/e_int_border_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf/e_conf.c:179
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:868
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:867
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1201
 #: src/modules/everything/evry_plug_windows.c:452
 #: src/modules/fileman/e_fwin.c:2527 src/modules/mixer/app_mixer.c:502
@@ -815,11 +815,11 @@ msgstr "Selecionar"
 msgid "Cancel"
 msgstr "Cancelar"
 
-#: src/bin/e_comp.c:4133
+#: src/bin/e_comp.c:4127
 msgid "Compositor Warning"
 msgstr "Aviso de compositor"
 
-#: src/bin/e_comp.c:4133
+#: src/bin/e_comp.c:4127
 msgid ""
 "Your display driver does not support OpenGL, or<br>no OpenGL engines were "
 "compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
@@ -828,15 +828,15 @@ msgstr ""
 "O controlador gráfico não tem suporte OpenGL ou<br> o OpenGL não foi "
 "compilado ou instalado para<br>o Evas ou Ecore-Evas."
 
-#: src/bin/e_comp.c:4152 src/bin/e_comp.c:4174
+#: src/bin/e_comp.c:4146 src/bin/e_comp.c:4168
 msgid "Compositor Error"
 msgstr "Erro de compositor"
 
-#: src/bin/e_comp.c:4152
+#: src/bin/e_comp.c:4146
 msgid "Another compositor is already running<br>on your display server."
 msgstr "Já existe um gestor de composição<br>em execução na sua tela."
 
-#: src/bin/e_comp.c:4174
+#: src/bin/e_comp.c:4168
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
@@ -844,57 +844,57 @@ msgstr ""
 "A sua tela não tem suporte a janelas sobrepostas do compositor<br>Tal "
 "suporte é necessário para a função"
 
-#: src/bin/e_comp.c:4519 src/modules/bluez4/e_mod_main.c:210
+#: src/bin/e_comp.c:4513 src/modules/bluez4/e_mod_main.c:210
 #: src/modules/conf_comp/e_mod_main.c:55
 msgid "Visible"
 msgstr "Visível"
 
-#: src/bin/e_comp.c:4524 src/modules/conf_comp/e_mod_main.c:60
+#: src/bin/e_comp.c:4518 src/modules/conf_comp/e_mod_main.c:60
 msgid "Focus-Out"
 msgstr "Desfocar"
 
-#: src/bin/e_comp.c:4529 src/modules/conf_comp/e_mod_main.c:65
+#: src/bin/e_comp.c:4523 src/modules/conf_comp/e_mod_main.c:65
 msgid "Focus-In"
 msgstr "Focar"
 
-#: src/bin/e_comp.c:4534 src/bin/e_int_border_prop.c:510
+#: src/bin/e_comp.c:4528 src/bin/e_int_border_prop.c:510
 #: src/modules/conf_comp/e_mod_main.c:70
 msgid "Hidden"
 msgstr "Oculta"
 
-#: src/bin/e_comp.c:4583 src/bin/e_int_border_prop.c:444
+#: src/bin/e_comp.c:4577 src/bin/e_int_border_prop.c:444
 #: src/bin/e_int_border_remember.c:698 src/modules/conf_comp/e_mod_main.c:177
 #: src/modules/wizard/page_050.c:95
 msgid "Title"
 msgstr "Título"
 
-#: src/bin/e_comp.c:4666
+#: src/bin/e_comp.c:4660
 #, fuzzy
 msgid "Use fast composite effects for windows"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687 src/bin/e_comp.c:4691
-#: src/bin/e_comp.c:4695 src/bin/e_comp.c:4700 src/bin/e_comp.c:4703
-#: src/bin/e_comp.c:4706 src/bin/e_comp.c:4709 src/bin/e_comp.c:4712
-#: src/bin/e_comp.c:4719 src/bin/e_comp.c:4722 src/bin/e_comp.c:4729
-#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4739 src/bin/e_comp.c:4741
-#: src/bin/e_comp.c:4743 src/bin/e_comp.c:4746 src/bin/e_comp.c:4748
-#: src/bin/e_comp.c:4751 src/bin/e_comp.c:4755 src/bin/e_comp.c:4756
-#: src/bin/e_comp.c:4757 src/bin/e_comp.c:4984 src/bin/e_comp.c:4985
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4689 src/bin/e_comp.c:4694 src/bin/e_comp.c:4697
+#: src/bin/e_comp.c:4700 src/bin/e_comp.c:4703 src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4713 src/bin/e_comp.c:4716 src/bin/e_comp.c:4723
+#: src/bin/e_comp.c:4731 src/bin/e_comp.c:4733 src/bin/e_comp.c:4735
+#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4740 src/bin/e_comp.c:4742
+#: src/bin/e_comp.c:4745 src/bin/e_comp.c:4749 src/bin/e_comp.c:4750
+#: src/bin/e_comp.c:4751 src/bin/e_comp.c:4978 src/bin/e_comp.c:4979
 #: src/modules/conf_comp/e_mod_main.c:259
 #, fuzzy
 msgid "composite"
 msgstr "Composição"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4677 src/bin/e_comp.c:4691
-#: src/bin/e_comp.c:4695 src/bin/e_comp.c:4700 src/bin/e_comp.c:4703
-#: src/bin/e_comp.c:4706 src/bin/e_comp.c:4709 src/bin/e_comp.c:4712
-#: src/bin/e_comp.c:4719 src/bin/e_comp.c:4722 src/bin/e_comp.c:4729
-#: src/bin/e_comp.c:4737 src/bin/e_comp.c:4741 src/bin/e_comp.c:4743
-#: src/bin/e_comp.c:4746 src/bin/e_comp.c:4748 src/bin/e_comp.c:4751
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4671 src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4689 src/bin/e_comp.c:4694 src/bin/e_comp.c:4697
+#: src/bin/e_comp.c:4700 src/bin/e_comp.c:4703 src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4713 src/bin/e_comp.c:4716 src/bin/e_comp.c:4723
+#: src/bin/e_comp.c:4731 src/bin/e_comp.c:4735 src/bin/e_comp.c:4737
+#: src/bin/e_comp.c:4740 src/bin/e_comp.c:4742 src/bin/e_comp.c:4745
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
 #: src/bin/e_configure_option.c:1510 src/bin/e_configure_option.c:1543
 #: src/bin/e_configure_option.c:1562 src/bin/e_configure_option.c:1566
@@ -958,10 +958,10 @@ msgstr "Composição"
 msgid "border"
 msgstr "Contorno"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687 src/bin/e_comp.c:4695
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4689
 #: src/bin/e_configure_option.c:1464 src/bin/e_configure_option.c:1468
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1476
 #: src/bin/e_configure_option.c:1806 src/bin/e_configure_option.c:1808
@@ -975,10 +975,10 @@ msgstr "Contorno"
 msgid "theme"
 msgstr "Tema"
 
-#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4670
-#: src/bin/e_comp.c:4672 src/bin/e_comp.c:4674 src/bin/e_comp.c:4677
-#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681 src/bin/e_comp.c:4683
-#: src/bin/e_comp.c:4685 src/bin/e_comp.c:4687
+#: src/bin/e_comp.c:4660 src/bin/e_comp.c:4662 src/bin/e_comp.c:4664
+#: src/bin/e_comp.c:4666 src/bin/e_comp.c:4668 src/bin/e_comp.c:4671
+#: src/bin/e_comp.c:4673 src/bin/e_comp.c:4675 src/bin/e_comp.c:4677
+#: src/bin/e_comp.c:4679 src/bin/e_comp.c:4681
 #: src/bin/e_configure_option.c:1464 src/bin/e_configure_option.c:1468
 #: src/bin/e_configure_option.c:1472 src/bin/e_configure_option.c:1476
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
@@ -990,12 +990,12 @@ msgstr "Tema"
 msgid "animate"
 msgstr "Animação"
 
-#: src/bin/e_comp.c:4668
+#: src/bin/e_comp.c:4662
 #, fuzzy
 msgid "Use fast composite effects for menus"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4668 src/bin/e_comp.c:4679
+#: src/bin/e_comp.c:4662 src/bin/e_comp.c:4673
 #: src/bin/e_configure_option.c:1490 src/bin/e_configure_option.c:1493
 #: src/bin/e_configure_option.c:1496 src/bin/e_configure_option.c:1499
 #: src/bin/e_configure_option.c:1502 src/bin/e_configure_option.c:1694
@@ -1010,57 +1010,57 @@ msgstr "Não compor janelas em tela cheia"
 msgid "menu"
 msgstr ""
 
-#: src/bin/e_comp.c:4670
+#: src/bin/e_comp.c:4664
 #, fuzzy
 msgid "Use fast composite effects for popups"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4670 src/bin/e_comp.c:4681
+#: src/bin/e_comp.c:4664 src/bin/e_comp.c:4675
 #, fuzzy
 msgid "popup"
 msgstr "Alerta"
 
-#: src/bin/e_comp.c:4672
+#: src/bin/e_comp.c:4666
 #, fuzzy
 msgid "Use fast composite effects for objects"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4674
+#: src/bin/e_comp.c:4668
 #, fuzzy
 msgid ""
 "Use fast composite effects for override-redirect windows (tooltips and such)"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4677 src/modules/conf_comp/e_mod_config.c:226
+#: src/bin/e_comp.c:4671 src/modules/conf_comp/e_mod_config.c:226
 #, fuzzy
 msgid "Disable composite effects for windows"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4679 src/modules/conf_comp/e_mod_config.c:229
+#: src/bin/e_comp.c:4673 src/modules/conf_comp/e_mod_config.c:229
 msgid "Disable composite effects for menus"
 msgstr ""
 
-#: src/bin/e_comp.c:4681 src/modules/conf_comp/e_mod_config.c:232
+#: src/bin/e_comp.c:4675 src/modules/conf_comp/e_mod_config.c:232
 msgid "Disable composite effects for popups"
 msgstr ""
 
-#: src/bin/e_comp.c:4683 src/modules/conf_comp/e_mod_config.c:235
+#: src/bin/e_comp.c:4677 src/modules/conf_comp/e_mod_config.c:235
 #, fuzzy
 msgid "Disable composite effects for objects"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4685
+#: src/bin/e_comp.c:4679
 #, fuzzy
 msgid ""
 "Disable composite effects for override-redirect windows (tooltips and such)"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4687
+#: src/bin/e_comp.c:4681
 #, fuzzy
 msgid "Disable composite effects for the screen"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4687 src/bin/e_configure_option.c:1537
+#: src/bin/e_comp.c:4681 src/bin/e_configure_option.c:1537
 #: src/bin/e_configure_option.c:1539 src/bin/e_configure_option.c:1598
 #: src/bin/e_configure_option.c:1620 src/bin/e_configure_option.c:1622
 #: src/bin/e_configure_option.c:1624 src/bin/e_configure_option.c:1740
@@ -1079,46 +1079,46 @@ msgstr "Não compor janelas em tela cheia"
 msgid "screen"
 msgstr "Tela"
 
-#: src/bin/e_comp.c:4688
+#: src/bin/e_comp.c:4682
 msgid ""
 "This option disables composite effects from themes, such as animating the "
 "screen fade when blanking"
 msgstr ""
 
-#: src/bin/e_comp.c:4691
+#: src/bin/e_comp.c:4685
 #, fuzzy
 msgid "Compositing engine"
 msgstr "Composição"
 
-#: src/bin/e_comp.c:4695
+#: src/bin/e_comp.c:4689
 msgid "Default window composite effect"
 msgstr ""
 
-#: src/bin/e_comp.c:4700
+#: src/bin/e_comp.c:4694
 #, fuzzy
 msgid "Smooth scaling of composited window content"
 msgstr "Ajuste suave do conteúdo da janela"
 
-#: src/bin/e_comp.c:4703
+#: src/bin/e_comp.c:4697
 #, fuzzy
 msgid "Sync composited windows"
 msgstr "Sincronizar janelas"
 
-#: src/bin/e_comp.c:4706
+#: src/bin/e_comp.c:4700
 #, fuzzy
 msgid "Loose sync composited windows"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4709
+#: src/bin/e_comp.c:4703
 msgid "Grab server during rendering of composited windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4712
+#: src/bin/e_comp.c:4706
 #, fuzzy
 msgid "Initial draw timeout for newly-mapped composited windows"
 msgstr "Tempo limite inicial para criar novas janelas mapeadas"
 
-#: src/bin/e_comp.c:4712 src/bin/e_configure_option.c:1496
+#: src/bin/e_comp.c:4706 src/bin/e_configure_option.c:1496
 #: src/bin/e_configure_option.c:1533 src/bin/e_configure_option.c:1548
 #: src/bin/e_configure_option.c:1583 src/bin/e_configure_option.c:1658
 #: src/bin/e_configure_option.c:1660 src/bin/e_configure_option.c:1661
@@ -1134,71 +1134,71 @@ msgstr "Tempo limite inicial para criar novas janelas mapeadas"
 msgid "delay"
 msgstr ""
 
-#: src/bin/e_comp.c:4713
+#: src/bin/e_comp.c:4707
 #, fuzzy, c-format
 msgid "%1.2f seconds"
 msgstr "%.2f segundos"
 
-#: src/bin/e_comp.c:4719
+#: src/bin/e_comp.c:4713
 #, fuzzy
 msgid "Tear-free compositing (VSYNC)"
 msgstr "Atualizações livres de \"Screen tearing\" (sincronização vertical)"
 
-#: src/bin/e_comp.c:4722
+#: src/bin/e_comp.c:4716
 #, fuzzy
 msgid "Texture from pixmap rendering for composite"
 msgstr "Textura do pixmap"
 
-#: src/bin/e_comp.c:4729
+#: src/bin/e_comp.c:4723
 #, fuzzy
 msgid "Composite swapping method"
 msgstr "Assumir método de troca:"
 
-#: src/bin/e_comp.c:4737 src/modules/conf_comp/e_mod_config.c:253
+#: src/bin/e_comp.c:4731 src/modules/conf_comp/e_mod_config.c:253
 #: src/modules/conf_comp/e_mod_config.c:593
 msgid "Don't composite fullscreen windows"
 msgstr "Não compor janelas em tela cheia"
 
-#: src/bin/e_comp.c:4739 src/modules/conf_comp/e_mod_config.c:255
+#: src/bin/e_comp.c:4733 src/modules/conf_comp/e_mod_config.c:255
 #: src/modules/conf_comp/e_mod_config.c:554
 #, fuzzy
 msgid "Don't fade backlight"
 msgstr "Não ocultar gadgets"
 
-#: src/bin/e_comp.c:4739 src/bin/e_configure_option.c:1910
+#: src/bin/e_comp.c:4733 src/bin/e_configure_option.c:1910
 #: src/bin/e_configure_option.c:1913 src/bin/e_configure_option.c:1916
 #: src/bin/e_configure_option.c:1919 src/bin/e_configure_option.c:1921
 #, fuzzy
 msgid "backlight"
 msgstr "Iluminação"
 
-#: src/bin/e_comp.c:4741
+#: src/bin/e_comp.c:4735
 msgid "Send flush when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4743
+#: src/bin/e_comp.c:4737
 msgid "Send dump when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4746
+#: src/bin/e_comp.c:4740
 msgid "Show framerate when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4748
+#: src/bin/e_comp.c:4742
 #, fuzzy
 msgid "Rolling average for fps display when compositing"
 msgstr "Número médio de imagens"
 
-#: src/bin/e_comp.c:4749
+#: src/bin/e_comp.c:4743
 #, fuzzy, c-format
 msgid "%1.0f frames"
 msgstr "%1.0f imagens"
 
-#: src/bin/e_comp.c:4751
+#: src/bin/e_comp.c:4745
 msgid "Composite framerate display corner"
 msgstr ""
 
-#: src/bin/e_comp.c:4755 src/bin/e_comp.c:4985
+#: src/bin/e_comp.c:4749 src/bin/e_comp.c:4979
 #: src/bin/e_configure_option.c:2032 src/bin/e_configure_option.c:2033
 #: src/bin/e_configure_option.c:2034 src/bin/e_configure_option.c:2035
 #: src/bin/e_configure_option.c:2036 src/bin/e_configure_option.c:2037
@@ -1212,7 +1212,7 @@ msgstr ""
 msgid "windows"
 msgstr "Janelas"
 
-#: src/bin/e_comp.c:4839
+#: src/bin/e_comp.c:4833
 #, fuzzy
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
@@ -1223,7 +1223,7 @@ msgstr ""
 "sem o suporte a XComposite<br>Para ter suporte à extensão também precisa de "
 "suporte ao<br>XRender e XFixes no X11 e no Ecore"
 
-#: src/bin/e_comp.c:4848
+#: src/bin/e_comp.c:4842
 #, fuzzy
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
@@ -1232,16 +1232,16 @@ msgstr ""
 "Sua tela X não tem suporte à extensão XDamage<br>ou o Ecore foi compilado "
 "sem o suporte a XDamage"
 
-#: src/bin/e_comp.c:4931 src/bin/e_comp.c:4937
+#: src/bin/e_comp.c:4925 src/bin/e_comp.c:4931
 #, fuzzy
 msgid "Compositor"
 msgstr "Composição"
 
-#: src/bin/e_comp.c:4932
+#: src/bin/e_comp.c:4926
 msgid "Change current window opacity"
 msgstr ""
 
-#: src/bin/e_comp.c:4938
+#: src/bin/e_comp.c:4932
 msgid "Set current window opacity"
 msgstr ""
 
@@ -1434,7 +1434,7 @@ msgid "Basic"
 msgstr "Básico"
 
 #: src/bin/e_config_dialog.c:280 src/modules/conf2/e_conf2.c:1279
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:867
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:866
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1195
 msgid "Apply"
 msgstr "Aplicar"
@@ -4259,8 +4259,8 @@ msgstr "Nome:"
 msgid "Location:"
 msgstr "Localização:"
 
-#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:337
-#: src/bin/e_widget_filepreview.c:394 src/bin/e_widget_filepreview.c:446
+#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:340
+#: src/bin/e_widget_filepreview.c:397 src/bin/e_widget_filepreview.c:450
 msgid "Size:"
 msgstr "Tamanho:"
 
@@ -4746,10 +4746,10 @@ msgid "Window List"
 msgstr "Lista de janelas"
 
 #: src/bin/e_int_border_menu.c:1325 src/modules/pager/e_mod_main.c:264
-#: src/modules/pager/e_mod_main.c:2962 src/modules/pager/e_mod_main.c:2969
-#: src/modules/pager/e_mod_main.c:2976 src/modules/pager/e_mod_main.c:2978
+#: src/modules/pager/e_mod_main.c:2966 src/modules/pager/e_mod_main.c:2973
 #: src/modules/pager/e_mod_main.c:2980 src/modules/pager/e_mod_main.c:2982
 #: src/modules/pager/e_mod_main.c:2984 src/modules/pager/e_mod_main.c:2986
+#: src/modules/pager/e_mod_main.c:2988 src/modules/pager/e_mod_main.c:2990
 msgid "Pager"
 msgstr "Paginador"
 
@@ -4760,7 +4760,7 @@ msgstr "Barra de tarefas"
 #: src/bin/e_int_border_prop.c:110 src/bin/e_int_border_prop.c:117
 #: src/bin/e_int_border_prop.c:124 src/bin/e_moveresize.c:84
 #: src/bin/e_moveresize.c:95 src/bin/e_moveresize.c:133
-#: src/bin/e_widget_filepreview.c:82
+#: src/bin/e_widget_filepreview.c:85
 #, c-format
 msgid "%i×%i"
 msgstr "%i×%i"
@@ -5356,7 +5356,7 @@ msgid "Hide duration"
 msgstr "Intervalo da animação"
 
 #: src/bin/e_int_shelf_config.c:268
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:879
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:878
 #, c-format
 msgid "%.2f seconds"
 msgstr "%.2f segundos"
@@ -6531,11 +6531,11 @@ msgid_plural "%li Minutes ago"
 msgstr[0] "Um minuto atrás"
 msgstr[1] "%li minutos atrás"
 
-#: src/bin/e_utils.c:933 src/bin/e_widget_filepreview.c:601
-#: src/bin/e_widget_filepreview.c:602 src/bin/e_widget_filepreview.c:603
-#: src/bin/e_widget_filepreview.c:634 src/bin/e_widget_filepreview.c:645
+#: src/bin/e_utils.c:933 src/bin/e_widget_filepreview.c:605
+#: src/bin/e_widget_filepreview.c:606 src/bin/e_widget_filepreview.c:607
+#: src/bin/e_widget_filepreview.c:638 src/bin/e_widget_filepreview.c:649
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:409
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1227
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1226
 #: src/modules/conf_bindings/e_int_config_keybindings.c:973
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:574
 #: src/modules/conf_dialogs/e_int_config_profiles.c:298
@@ -6692,76 +6692,76 @@ msgstr "V (valor)"
 msgid "Alpha"
 msgstr "Alfa"
 
-#: src/bin/e_widget_filepreview.c:81 src/bin/e_widget_filepreview.c:445
+#: src/bin/e_widget_filepreview.c:84 src/bin/e_widget_filepreview.c:449
 msgid "Resolution:"
 msgstr "Resolução:"
 
-#: src/bin/e_widget_filepreview.c:89
+#: src/bin/e_widget_filepreview.c:92
 msgid "Mime-type:"
 msgstr "Tipo mime:"
 
-#: src/bin/e_widget_filepreview.c:330
+#: src/bin/e_widget_filepreview.c:333
 #, c-format
 msgid "%3.1f%%"
 msgstr "%3.1f%%"
 
-#: src/bin/e_widget_filepreview.c:336
+#: src/bin/e_widget_filepreview.c:339
 msgid "Length:"
 msgstr "Duração:"
 
-#: src/bin/e_widget_filepreview.c:393
+#: src/bin/e_widget_filepreview.c:396
 msgid "Used:"
 msgstr "Utilizado:"
 
-#: src/bin/e_widget_filepreview.c:395
+#: src/bin/e_widget_filepreview.c:398
 msgid "Reserved:"
 msgstr "Reservado:"
 
-#: src/bin/e_widget_filepreview.c:396
+#: src/bin/e_widget_filepreview.c:399
 msgid "Mount status:"
 msgstr "Estado:"
 
-#: src/bin/e_widget_filepreview.c:398 src/modules/mixer/app_mixer.c:381
+#: src/bin/e_widget_filepreview.c:401 src/modules/mixer/app_mixer.c:381
 msgid "Type:"
 msgstr "Tipo:"
 
-#: src/bin/e_widget_filepreview.c:448
+#: src/bin/e_widget_filepreview.c:452
 msgid "Owner:"
 msgstr "Dono:"
 
-#: src/bin/e_widget_filepreview.c:449
+#: src/bin/e_widget_filepreview.c:453
 msgid "Permissions:"
 msgstr "Permissões:"
 
-#: src/bin/e_widget_filepreview.c:450
+#: src/bin/e_widget_filepreview.c:454
 msgid "Modified:"
 msgstr "Modificado:"
 
-#: src/bin/e_widget_filepreview.c:588 src/bin/e_widget_filepreview.c:752
-#: src/bin/e_widget_filepreview.c:761 src/bin/e_widget_filepreview.c:770
+#: src/bin/e_widget_filepreview.c:592 src/bin/e_widget_filepreview.c:785
+#: src/bin/e_widget_filepreview.c:794 src/bin/e_widget_filepreview.c:803
 #, c-format
 msgid "Read Only"
 msgstr "Somente leitura"
 
-#: src/bin/e_widget_filepreview.c:590 src/bin/e_widget_filepreview.c:777
+#: src/bin/e_widget_filepreview.c:594 src/bin/e_widget_filepreview.c:810
 msgid "Read-Write"
 msgstr "Leitura/Escrita"
 
-#: src/bin/e_widget_filepreview.c:593 src/bin/e_widget_filepreview.c:604
+#: src/bin/e_widget_filepreview.c:597 src/bin/e_widget_filepreview.c:608
 msgid "Unmounted"
 msgstr "Não montado"
 
-#: src/bin/e_widget_filepreview.c:701
+#: src/bin/e_widget_filepreview.c:734
 #, c-format
 msgid "You"
 msgstr "Você"
 
-#: src/bin/e_widget_filepreview.c:750
+#: src/bin/e_widget_filepreview.c:783
 #, c-format
 msgid "Protected"
 msgstr "Protegido"
 
-#: src/bin/e_widget_filepreview.c:759 src/bin/e_widget_filepreview.c:768
+#: src/bin/e_widget_filepreview.c:792 src/bin/e_widget_filepreview.c:801
 #, c-format
 msgid "Forbidden"
 msgstr "Proibido"
@@ -7609,24 +7609,24 @@ msgstr "Permitir ativação de associações nas janelas em tela cheia"
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
 msgstr "Permitir ativação de associações em vários telas (PERIGOSO)"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:865
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:864
 msgid "Edge Binding Sequence"
 msgstr "Sequência da associação das margens"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:884
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:883
 msgid "Clickable edge"
 msgstr "Margem clicável"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:892
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:891
 #, fuzzy
 msgid "Drag only"
 msgstr "Arrastar ícone..."
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1222
 msgid "Edge Binding Error"
 msgstr "Erro na associação da margem"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1224
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
 #, c-format
 msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
@@ -7635,68 +7635,68 @@ msgstr ""
 "A associação da margem escolhida já está sendo utilizada pela "
 "ação<br><hilight>%s</hilight>.<br>Por favor escolha outra margem."
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1359
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1358
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1108
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1140
 msgid "CTRL"
 msgstr "CTRL"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1364
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1363
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1113
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1145
 msgid "ALT"
 msgstr "ALT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1370
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1369
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1119
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1151
 msgid "SHIFT"
 msgstr "SHIFT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1376
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1375
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1125
 #: src/modules/conf_bindings/e_int_config_keybindings.c:1157
 msgid "WIN"
 msgstr "WIN"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1386
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1385
 msgid "Left Edge"
 msgstr "Margem esquerda"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1390
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1389
 msgid "Top Edge"
 msgstr "Margem superior"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1394
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
 msgid "Right Edge"
 msgstr "Margem direita"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1398
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1397
 msgid "Bottom Edge"
 msgstr "Margem inferior"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1402
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1401
 msgid "Top Left Edge"
 msgstr "Margem superior esquerda"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1406
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1405
 msgid "Top Right Edge"
 msgstr "Margem superior direita"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1410
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1409
 msgid "Bottom Right Edge"
 msgstr "Margem inferior direita"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1414
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1413
 msgid "Bottom Left Edge"
 msgstr "Margem inferior esquerda"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1428
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1427
 #, c-format
 msgid "(left clickable)"
 msgstr "(clicável com botão esquerdo)"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1430
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1429
 #, c-format
 msgid "(clickable)"
 msgstr "(clicável)"
@@ -11965,31 +11965,31 @@ msgstr ""
 "objeto de manipulação pelos menus de contexto.<br>Este botão só funciona nos "
 "alertas."
 
-#: src/modules/pager/e_mod_main.c:2969
+#: src/modules/pager/e_mod_main.c:2973
 msgid "Show Pager Popup"
 msgstr "Mostrar alerta do paginador"
 
-#: src/modules/pager/e_mod_main.c:2976
+#: src/modules/pager/e_mod_main.c:2980
 msgid "Popup Desk Right"
 msgstr "Na área de trabalho à direita"
 
-#: src/modules/pager/e_mod_main.c:2978
+#: src/modules/pager/e_mod_main.c:2982
 msgid "Popup Desk Left"
 msgstr "Na área de trabalho à esquerda"
 
-#: src/modules/pager/e_mod_main.c:2980
+#: src/modules/pager/e_mod_main.c:2984
 msgid "Popup Desk Up"
 msgstr "Na área de trabalho em cima"
 
-#: src/modules/pager/e_mod_main.c:2982
+#: src/modules/pager/e_mod_main.c:2986
 msgid "Popup Desk Down"
 msgstr "Na área de trabalho em baixo"
 
-#: src/modules/pager/e_mod_main.c:2984
+#: src/modules/pager/e_mod_main.c:2988
 msgid "Popup Desk Next"
 msgstr "Na área de trabalho seguinte"
 
-#: src/modules/pager/e_mod_main.c:2986
+#: src/modules/pager/e_mod_main.c:2990
 msgid "Popup Desk Previous"
 msgstr "Na área de trabalho anterior"
 
