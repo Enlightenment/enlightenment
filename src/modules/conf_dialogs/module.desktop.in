@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Dialogs
 Name[ca]=Diàlegs
@@ -12,7 +13,6 @@ Name[it]=Finestre di dialogo
 Name[pt]=Diálogos
 Name[ru]=Диалоги
 Name[tr]=Diyaloglar
-Icon=e-module-conf_dialogs
 Comment=Configure default dialog properties.
 Comment[ca]=Configuració de les propietats predefinides dels diàlegs.
 Comment[cs]=Volby výchozích vlastností dialogů.
@@ -25,4 +25,5 @@ Comment[it]=Configura le proprietà predefinite per le finestre di dialogo.
 Comment[pt]=Permite-lhe configurar as propriedades dos diálogos
 Comment[ru]=Настройка стандартных параметров диалогов.
 Comment[tr]=Öntanımlı pencere özelliklerini yapılandırır.
+Icon=e-module-conf_dialogs
 X-Enlightenment-ModuleType=settings

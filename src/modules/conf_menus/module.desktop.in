@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Menu Settings
 Name[ca]=Preferències del menú
@@ -12,7 +13,6 @@ Name[it]=Impostazioni menù
 Name[pt]=Definições do menu
 Name[ru]=Настройки меню
 Name[tr]=Menü Ayarları
-Icon=e-module-conf_menus
 Comment=Configures menu behavior.
 Comment[ca]=Configura el comportament del menú.
 Comment[cs]=Volby chování menu.
@@ -25,4 +25,5 @@ Comment[it]=Configura il comportamento dei menù.
 Comment[pt]=Permite-lhe configurar o comportamento do menu
 Comment[ru]=Конфигурация настроек меню.
 Comment[tr]=Menü davranışını yapılandırır.
+Icon=e-module-conf_menus
 X-Enlightenment-ModuleType=settings

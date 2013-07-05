@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Clock
 Name[ca]=Rellotge
@@ -13,8 +14,6 @@ Name[hu]=Óra
 Name[pt]=Relógio
 Name[ru]=Часы
 Name[tr]=Saat
-Icon=e-module-clock
-X-Enlightenment-ModuleType=utils
 Comment=Nice clock gadget to show current time.
 Comment[ca]=Un bonic rellotge per a mostrar l'hora actual.
 Comment[cs]=Gadget pro zobrazení aktuálního času.
@@ -29,3 +28,5 @@ Comment[it]=Un simpatico orologio per mostrare l'ora attuale.
 Comment[pt]=Um relógio para exibir a hora atual
 Comment[ru]=Гаджет для отображения текущего времени.
 Comment[tr]=Şu anki saati gösteren şık bir alet.
+Icon=e-module-clock
+X-Enlightenment-ModuleType=utils

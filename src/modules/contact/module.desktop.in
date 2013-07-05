@@ -1,9 +1,9 @@
 [Desktop Entry]
-Comment=
 Encoding=UTF-8
-Icon=e-module-contact
+Type=Link
 Name=Contact
 Name[eo]=Kontakto
 Name[fr]=Contact
-Type=Link
+Comment=
+Icon=e-module-contact
 X-Enlightenment-ModuleType=mobile

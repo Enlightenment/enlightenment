@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Tasks
 Name[ca]=Tasques
@@ -8,8 +9,6 @@ Name[fr]=Tâches
 Name[gl]=Tarefas
 Name[pt]=Tarefas
 Name[ru]=Задачи
-Icon=e-module-tasks
-X-Enlightenment-ModuleType=utils
 Comment=Gadget to allow you to switch tasks
 Comment[ca]=Mòdul que permet el canvi entre tasques.
 Comment[eo]=Akcesoraĵo kiu permesas baskuli taskojn
@@ -19,3 +18,5 @@ Comment[gl]=Módulo que lle permite o troco de tarefas.
 Comment[it]=Gadget che permette di commutare tra i task.
 Comment[pt]=Módulo que lhe permite trocar entre tarefas
 Comment[ru]=Гаджет для переключения задач
+Icon=e-module-tasks
+X-Enlightenment-ModuleType=utils

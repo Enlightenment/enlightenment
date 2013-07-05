@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Window Manipulation
 Name[ca]=Manipulació de finestres
@@ -12,7 +13,6 @@ Name[it]=Manipolazione finestre
 Name[pt]=Manipulação de janelas
 Name[ru]=Манипуляции с окном
 Name[tr]=Pencere Manipülasyonu
-Icon=e-module-conf_winmanip
 Comment=Configures window raise, resistance, and maximize policies.
 Comment[ca]=Configura les regles per a la pujada, la resistència i la maximització de les finestres.
 Comment[cs]=Nasavení odolnosti okna, maximalizace aj.
@@ -25,4 +25,5 @@ Comment[it]=Configura le regole per l'elevazione, la resistenza e la massimizzaz
 Comment[pt]=Configurar políticas de maximização, resistência e aparecimento das janelas
 Comment[ru]=Позволяет настроить политику подъема, сопротивления и увеличения окон.
 Comment[tr]=Pencere yükseltmesi, direnci ve ekranı kaplama kurallarını yapılandırır.
+Icon=e-module-conf_winmanip
 X-Enlightenment-ModuleType=settings

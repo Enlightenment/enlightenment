@@ -1,7 +1,10 @@
 [Desktop Entry]
+Encoding=UTF-8
+Type=Link
 Name=Home
 Name[eo]=Hejmo
 Name[es]=Carpeta personal
+Name[fr]=Accueil
 Name[gl]=Cartafol persoal
 Name[pt]=Pasta pessoal
 Name[ru]=Домашний каталог
@@ -15,8 +18,7 @@ Comment[it]=La directory contenente i vostri file personali
 Comment[pt]=O diretório com os ficheiros do utilizador
 Comment[ru]=Каталог содержащий ваши личные файлы
 Comment[sr]=Фасцикла садржалац свих личних датотека
-Type=Link
-X-Enlightenment-Type=Mount
-URL=file:$HOME
 Icon=user-home
 NotShowIn=GNOME;KDE;LXDE;ROX;XFCE;
+URL=file:$HOME
+X-Enlightenment-Type=Mount

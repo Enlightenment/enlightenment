@@ -1,15 +1,15 @@
 [Desktop Entry]
-Comment=Improved Enlightenment configuration panel.
-Comment[ca]=El nou panell de configuració millorat d'Enlightenment.
-Comment[eo]=Plibonigata panelo de agordoj de Enlightenment
-Comment[it]=Il nuovo pannello di configurazione potenziato di Enlightenment.
-Comment[ru]=Улучшенная панель настройки Enlightenment.
 Encoding=UTF-8
-Icon=e-module-conf2
+Type=Link
 Name=Configuration
 Name[ca]=Configuració
 Name[eo]=Agordoj
 Name[fr]=Configuration
 Name[ru]=Настройки
-Type=Link
+Comment=Improved Enlightenment configuration panel.
+Comment[ca]=El nou panell de configuració millorat d'Enlightenment.
+Comment[eo]=Plibonigata panelo de agordoj de Enlightenment
+Comment[it]=Il nuovo pannello di configurazione potenziato di Enlightenment.
+Comment[ru]=Улучшенная панель настройки Enlightenment.
+Icon=e-module-conf2
 X-Enlightenment-ModuleType=core

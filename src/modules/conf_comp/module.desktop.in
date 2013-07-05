@@ -1,16 +1,16 @@
 [Desktop Entry]
-Comment=Enlightenment Composite Manager Settings
-Comment[ca]=Gestor de Composite per a Enlightenment
-Comment[eo]=Agordoj de administrilo de kunmetado de  Enlightenment
-Comment[it]=Impostazioni composite manager per Enlightenment.
-Comment[ru]=Настройки менеджера композитного режима
 Encoding=UTF-8
-Icon=preferences-composite
+Type=Link
 Name=Composite Settings
 Name[ca]=Configuració del Composite
 Name[eo]=Agordoj pri kunmeto
 Name[fr]=Paramètres de l'extension Composite
 Name[it]=Compositing
 Name[ru]=Настройка композитного режима
-Type=Link
+Comment=Enlightenment Composite Manager Settings
+Comment[ca]=Gestor de Composite per a Enlightenment
+Comment[eo]=Agordoj de administrilo de kunmetado de  Enlightenment
+Comment[it]=Impostazioni composite manager per Enlightenment.
+Comment[ru]=Настройки менеджера композитного режима
+Icon=preferences-composite
 X-Enlightenment-ModuleType=settings

@@ -1,4 +1,6 @@
 [Desktop Entry]
+Encoding=UTF-8
+Type=Link
 Name=Desktop
 Name[eo]=Labortablo
 Name[es]=Escritorio
@@ -16,8 +18,7 @@ Comment[it]=I file sul vostro desktop
 Comment[pt]=Os ficheiros da área de trabalho
 Comment[ru]=Файлы на рабочем столе
 Comment[sr]=Датотеке радне површи
-Type=Link
-X-Enlightenment-Type=Mount
-URL=file:$HOME/Desktop
 Icon=user-desktop
 NotShowIn=GNOME;KDE;LXDE;ROX;XFCE;
+URL=file:$HOME/Desktop
+X-Enlightenment-Type=Mount

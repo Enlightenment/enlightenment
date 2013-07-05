@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Wallpaper 2
 Name[ca]=Fons d'escriptori
@@ -12,7 +13,6 @@ Name[it]=Sfondo 2
 Name[pt]=Papel de parede 2
 Name[ru]=Обои 2
 Name[tr]=Duvarkağıdı 2
-Icon=preferences-desktop-wallpaper
 Comment=Used to pick a wallpaper.
 Comment[ca]=Permet seleccionar el fons d'escriptori.
 Comment[cs]=Použit k volbě pozadí.
@@ -25,4 +25,5 @@ Comment[it]=Usato per selezionare uno sfondo.
 Comment[pt]=Permite-lhe escolher o papel de parede
 Comment[ru]=Используется для выбора обоев.
 Comment[tr]=Duvarkağıdı seçiminde kullanılır.
+Icon=preferences-desktop-wallpaper
 X-Enlightenment-ModuleType=settings

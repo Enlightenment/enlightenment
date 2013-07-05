@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Pager
 Name[ca]=Paginador
@@ -6,13 +7,12 @@ Name[cs]=Přepínač ploch
 Name[de]=Pager
 Name[eo]=Tabulpaĝilo
 Name[es]=Paginador
+Name[fr]=Miniature des bureaux
 Name[gl]=Paxinador
 Name[hu]=Lapozó
 Name[pt]=Paginador
 Name[ru]=Пейджер
 Name[tr]=Sayfalayıcı
-Icon=e-module-pager
-X-Enlightenment-ModuleType=utils
 Comment=Gadget to allow you to visualize your virtual desktops and the windows they contain.
 Comment[ca]=Permet visualitzar els escriptoris virtuals i les finestres que contenen.
 Comment[cs]=Gadget pro zobrazení/přepínání virtuálních ploch a oken, které obsahují.
@@ -26,3 +26,5 @@ Comment[it]=Modulo che permette di visualizzare i desktop virtuali e le finestre
 Comment[pt]=Permite-lhe visualizar as áreas virtuais e as janelas que nelas existem
 Comment[ru]=Гаджет для отображения виртуальных столов и содержащихся на них окон.
 Comment[tr]=Sanal masaüstlerini ve içerisindeki pencereleri görselleştirmenizi sağlayan araç.
+Icon=e-module-pager
+X-Enlightenment-ModuleType=utils

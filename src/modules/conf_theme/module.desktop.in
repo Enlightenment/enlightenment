@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Theme
 Name[ca]=Tema
@@ -12,7 +13,6 @@ Name[it]=Temi
 Name[pt]=Tema
 Name[ru]=Тема
 Name[tr]=Tema
-Icon=preferences-desktop-theme
 Comment=Used to configure your theme preferences.
 Comment[ca]=Permet configurar les preferències del tema.
 Comment[cs]=Použit k nastavení vašeho tématu.
@@ -25,4 +25,5 @@ Comment[it]=Usato per configurare le preferenze per il vostro tema.
 Comment[pt]=Permite-lhe configurar as preferências do tema
 Comment[ru]=Используется для настройки темы.
 Comment[tr]=Tema seçimlerinizi yapılandırmakta kullanılır.
+Icon=preferences-desktop-theme
 X-Enlightenment-ModuleType=settings

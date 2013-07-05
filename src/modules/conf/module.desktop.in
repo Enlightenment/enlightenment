@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Settings Panel
 Name[ca]=Panell de control
@@ -14,7 +15,6 @@ Name[it]=Pannello di configurazione
 Name[pt]=Painel de definições
 Name[ru]=Панель настроек
 Name[tr]=Ayarlar Paneli
-Icon=e-module-conf
 Comment=General Enlightenment configuration panel.
 Comment[ca]=Panell de configuració general de Enlightenment.
 Comment[de]=Einstellungen an Enlightenment bequem vornehmen.
@@ -25,4 +25,5 @@ Comment[gl]=O panel da configuración xeral de Enlightenment.
 Comment[it]=Il pannello di configurazione di Enlightenment
 Comment[pt]=Painel de definições do Enlightenment
 Comment[ru]=Модуль панели настроек Enlightenment.
+Icon=e-module-conf
 X-Enlightenment-ModuleType=core

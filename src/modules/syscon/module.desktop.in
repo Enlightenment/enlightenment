@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=System Controls
 Name[ca]=Controls del sistema
@@ -13,7 +14,6 @@ Name[it]=Syscon
 Name[pt]=Controlos do sistema
 Name[ru]=Управление системой
 Name[tr]=Sistem Kontrolleri
-Icon=e-module-syscon
 Comment=This module provides a unified popup<br>dialog for all the system actions<br>in Enlightenment.
 Comment[ca]=Aquest mòdul proporciona una finestra emergent<br>unificada per a totes les accions del<br>sistema a l'Enlightenment.
 Comment[cs]=Poskytuje dialog pro všechny<br>systémové akce v Enlightenmentu.
@@ -27,4 +27,5 @@ Comment[it]=Questo modulo fornisce una finestra di dialogo popup<br>unificata pe
 Comment[pt]=Disponibiliza o acesso ao sistema de ações do Enlightenment
 Comment[ru]=Этот модуль обеспечивает единое<br>диалоговое окно для всех системных действий<br>в Enlightenment.
 Comment[tr]=Tüm sistem eylemleri için özelleştirilmiş<br>açılır pencere diyaloğu sunan Enlightenment modülü.
+Icon=e-module-syscon
 X-Enlightenment-ModuleType=core

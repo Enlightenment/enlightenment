@@ -1,8 +1,11 @@
 [Desktop Entry]
+Encoding=UTF-8
+Type=Application
 Name=Enlightenment
 Name[ca]=Enlightenment
 Name[el]=Enlightenment
 Name[eo]=Enlightenment
+Name[fr]=Enlightenment
 Name[ru]=Enlightenment
 Name[tr]=Enlightenment
 Comment=Log in using Enlightenment (Version @VERSION@)
@@ -17,7 +20,6 @@ Comment[ko]=Enlightenment 로그인(버전 @VERSION@)
 Comment[pt]=Iniciar sessão no Enlightenment (Versão @VERSION@)
 Comment[ru]=Войти используя Enlightenment (Версия @VERSION@)
 Comment[tr]=Enlightenment kullanarak giriş yaın (Version @VERSION@)
-Type=Application
 Icon=@prefix@/share/enlightenment/data/images/enlightenment.png
-Exec=@prefix@/bin/enlightenment_start
 TryExec=@prefix@/bin/enlightenment_start
+Exec=@prefix@/bin/enlightenment_start

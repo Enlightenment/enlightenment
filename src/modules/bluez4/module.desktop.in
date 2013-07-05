@@ -1,6 +1,6 @@
 [Desktop Entry]
 Encoding=UTF-8
-Icon=e-module-bluez4
-Name=Bluez4
 Type=Link
+Name=Bluez4
+Icon=e-module-bluez4
 X-Enlightenment-ModuleType=utils

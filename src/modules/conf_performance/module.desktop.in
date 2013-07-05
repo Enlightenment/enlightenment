@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Performance
 Name[ca]=Rendiment
@@ -13,7 +14,6 @@ Name[pt]=Desempenho
 Name[ru]=Быстродействие
 Name[sr]=Учинковитост
 Name[tr]=Performans
-Icon=e-module-conf_performance
 Comment=Used to configure certain performance related items as frame rates and cache settings.
 Comment[ca]=Per a configurar certes característiques de rendiment, com ara quadres per segon o paràmetres de memòria cau.
 Comment[cs]=Použit k nastavení framerate, cache aj.
@@ -27,4 +27,5 @@ Comment[pt]=Permite-lhe configurar alguns itens relacionados com o desempenho do
 Comment[ru]=Используется для конфигурации быстродействия, типа частоты кадров и настроек кэширования.
 Comment[sr]=Користи се за подешавање одређених ставки везаних за брзину извршавања, учесталост освежавања приказа и поставке прихватне меморије.
 Comment[tr]=Kare oranı ve önbellek ayarları gibi performans ile ilgili öğeleri yapılandırır.
+Icon=e-module-conf_performance
 X-Enlightenment-ModuleType=settings

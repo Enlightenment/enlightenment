@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Cpufreq
 Name[ca]=Freqüència de la CPU
@@ -9,7 +10,6 @@ Name[hu]=Processzor frekvencia
 Name[pt]=Frequência do cpu
 Name[ru]=Частота процессора
 Name[tr]=İşlemci ölçekleme
-Icon=e-module-cpufreq
 Comment=Gadget to monitor and change the CPU frequency.
 Comment[ca]=Mòdul per a monitoritzar i canviar la freqüència de la CPU.
 Comment[cs]=Gadget pro monitorování a změnu frekvence CPU.
@@ -22,4 +22,5 @@ Comment[it]=Modulo per il monitoraggio e la variazione della frequenza della CPU
 Comment[pt]=Permite-lhe vigiar e alterar a frequência do CPU
 Comment[ru]=Гаджет для отображения и смены частоты ЦПУ.
 Comment[tr]=İşlemci frekansını değiştiren ve izleyen bir araç.
+Icon=e-module-cpufreq
 X-Enlightenment-ModuleType=system

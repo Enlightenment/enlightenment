@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Window Remembers
 Name[ca]=Memòria de les finestres
@@ -13,7 +14,6 @@ Name[pt]=Memorização de janelas
 Name[ru]=Запоминание окон
 Name[sr]=Памћење прозора
 Name[tr]=Pencere Hatırlamaları
-Icon=e-module-conf_window_remembers
 Comment=Delete existing window remembers.
 Comment[ca]=Elimina l'opció de recordar de les finestres.
 Comment[cs]=K vymazání existujících zapamatovaných vlastností oken.
@@ -27,4 +27,5 @@ Comment[pt]=Apagar memorização das janelas
 Comment[ru]=Удаление запомненных настроек окон.
 Comment[sr]=Брише сачуване упамћене прозоре
 Comment[tr]=Mevcut pencere hatırlamalarını sil.
+Icon=e-module-conf_window_remembers
 X-Enlightenment-ModuleType=settings

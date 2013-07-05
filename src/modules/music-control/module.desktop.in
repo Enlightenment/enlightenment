@@ -1,16 +1,16 @@
 [Desktop Entry]
+Encoding=UTF-8
+Type=Link
+Name=Music Control
+Name[ca]=Control musical
+Name[eo]=Muziko-kontrolilo
+Name[ru]=Контроль музыки
+Name[sr]=Управљање музиком
 Comment=Control your music in your shelf
 Comment[ca]=Per a controlar la música des del panell
 Comment[eo]=Kontroli vian muzikon el via breto
 Comment[it]=Per controllare la musica in esecuzione dalla mensola di sistema
 Comment[ru]=Модуль для управления воспроизведением музыки
 Comment[sr]=Управљајте музиком са полице
-Encoding=UTF-8
 Icon=e-module-music-control
-Name=Music Control
-Name[ca]=Control musical
-Name[eo]=Muziko-kontrolilo
-Name[ru]=Контроль музыки
-Name[sr]=Управљање музиком
-Type=Link
 X-Enlightenment-ModuleType=utils

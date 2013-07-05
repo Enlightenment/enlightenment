@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Window Switcher
 Name[ca]=Alternador de finestres
@@ -15,7 +16,6 @@ Name[pt]=Alternador de janelas
 Name[ru]=Список переключения окон
 Name[sr]=Измењивач прозора
 Name[tr]=Pencere Değiştirici Listesi
-Icon=e-module-winlist
 Comment=A module to show the list of client applications presently running.
 Comment[ca]=Un mòdul que mostra la llista d'aplicacions que s'estan executant.
 Comment[cs]=Modul pro zobrazení seznamu běžících aplikací.
@@ -31,4 +31,5 @@ Comment[pt]=Módulo que exibe a lista de aplicações abertas
 Comment[ru]=Модуль для показа списка запущенных приложений (список клиентов).
 Comment[sr]=Једница која показује списак тренутно покренутих клијентских програма.
 Comment[tr]=Mevcut çalışan istemci uygulamaların listesini gösteren modül.
+Icon=e-module-winlist
 X-Enlightenment-ModuleType=core

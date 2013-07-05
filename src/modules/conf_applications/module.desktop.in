@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Applications
 Name[ca]=Aplicacions
@@ -13,7 +14,6 @@ Name[it]=Applicazioni
 Name[pt]=Aplicações
 Name[ru]=Приложения
 Name[tr]=Uygulamalar
-Icon=e-module-conf_applications
 Comment=Allows configuration of Ibar, Restart, and Startup applications.
 Comment[ca]=Permet configurar les aplicacions per a iniciar i reiniciar tasques, així com la barra Ibar.
 Comment[cs]=Umožňuje nastavit iBar spouštěče, aplikace při restartu a aplikace při startu.
@@ -27,4 +27,5 @@ Comment[it]=Consente la configurazione delle applicazioni per l'avvio, il riavvi
 Comment[pt]=Permite-lhe configurar as aplicações Ibar, Reiniciar e Arranque
 Comment[ru]=Позволяет настройку приложений для Ibar, Перезапуск и Стартовые.
 Comment[tr]=IBar, Açılış ve Yeniden Başlat uygulamalarının yapılandırılmasına izin verir.
+Icon=e-module-conf_applications
 X-Enlightenment-ModuleType=settings

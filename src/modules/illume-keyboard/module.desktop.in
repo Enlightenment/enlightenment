@@ -1,6 +1,9 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Illume-Keyboard
+Name[eo]=Illume-Klavaro
+Name[fr]=Clavier Illume
+Comment=
 Icon=e-module-illume-keyboard
 X-Enlightenment-ModuleType=mobile
-Comment=

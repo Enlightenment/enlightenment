@@ -1,14 +1,15 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Layout
 Name[ca]=Disposició
 Name[cs]=Rozvržení
 Name[de]=Anordnung
 Name[eo]=Aranĝo
+Name[fr]=Disposition
 Name[hu]=Kimenet
 Name[pt]=Disposição
 Name[tr]=Yerleşim
-Icon=e-module-layout
 Comment=Used to enforce layout policies. Generally not applicable for a desktop PC.
 Comment[ca]=Permet definir les regles de la disposició. Generalment no és útil per a equips d'escriptori.
 Comment[cs]=Použit k vynucení politiky rozvržení. Nepoužitelné na desktopovém PC.
@@ -20,3 +21,4 @@ Comment[hu]=A kimeneti szabályok kierőszakolása. Nem használható asztali PC
 Comment[it]=Usato per forzare delle regole di layout. In genere non applicabile ad un PC desktop.
 Comment[pt]=Permite-lhe definir as políticas de disposição. Normalmente não se aplica a computadores de secretária
 Comment[tr]=Yerleşim planını yapılandırır. Masaüstü bilgisayarlarda işlevi genellikle yoktur.
+Icon=e-module-layout

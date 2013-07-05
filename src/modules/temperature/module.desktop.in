@@ -1,4 +1,5 @@
 [Desktop Entry]
+Encoding=UTF-8
 Type=Link
 Name=Temperature
 Name[ca]=Temperatura
@@ -13,7 +14,6 @@ Name[pt]=Temperatura
 Name[ru]=Температура
 Name[sr]=Топлота
 Name[tr]=Sıcaklık
-Icon=e-module-temperature
 Comment=Temperature monitor.
 Comment[ca]=Monitor de la temperatura.
 Comment[cs]=Měřič teploty.
@@ -28,4 +28,5 @@ Comment[pt]=Monitorizador de temperatura
 Comment[ru]=Измеряет и показывает температуру системы.
 Comment[sr]=Прати топлотне вредности.
 Comment[tr]=Sıcaklık izleyici.
+Icon=e-module-temperature
 X-Enlightenment-ModuleType=system
