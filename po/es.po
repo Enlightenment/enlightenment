@@ -11,9 +11,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-07-05 08:26+0900\n"
-"PO-Revision-Date: 2013-05-25 10:52+0100\n"
-"Last-Translator: Adrian Arevalo <adri58@gmail.com>\n"
+"POT-Creation-Date: 2013-07-05 10:21+0200\n"
+"PO-Revision-Date: 2013-07-05 10:28+0100\n"
+"Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
 "Language-Team: Español; Castellano <>\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
@@ -1016,9 +1016,8 @@ msgid "Use fast composite effects for popups"
 msgstr "Usar efectos rápidos en las ventanas emergentes"
 
 #: src/bin/e_comp.c:4664 src/bin/e_comp.c:4675
-#, fuzzy
 msgid "popup"
-msgstr "Ventana Emergente"
+msgstr "ventana Emergente"
 
 #: src/bin/e_comp.c:4666
 msgid "Use fast composite effects for objects"
@@ -1913,7 +1912,7 @@ msgstr ""
 
 #: src/bin/e_configure_option.c:1506
 msgid "Enable window shading animation"
-msgstr ""
+msgstr "Activar animación al enrollar las ventanas"
 
 #: src/bin/e_configure_option.c:1506 src/bin/e_configure_option.c:1507
 #: src/bin/e_configure_option.c:1510
@@ -1923,7 +1922,7 @@ msgstr "Enrollar"
 
 #: src/bin/e_configure_option.c:1507
 msgid "Window shade animation type"
-msgstr ""
+msgstr "Tipo de animación"
 
 # Parece que no, pero hace referencia a la duración, no a la velocidad
 #: src/bin/e_configure_option.c:1510
@@ -3303,9 +3302,8 @@ msgid "xsettings"
 msgstr "xsettings"
 
 #: src/bin/e_configure_option.c:1948
-#, fuzzy
 msgid "Try setting GTK theme to match E18 theme"
-msgstr "Intentar que el tema GTK se ajuste al tema de E17"
+msgstr "Intentar que el tema GTK coincida con el tema E18"
 
 #: src/bin/e_configure_option.c:1950
 msgid "GTK theme name"
@@ -3320,9 +3318,8 @@ msgid "Icon theme"
 msgstr "Temas de iconos"
 
 #: src/bin/e_configure_option.c:1964
-#, fuzzy
 msgid "Icon theme overrides E18 internal theme icons"
-msgstr "El tema de los iconos prevalece sobre el de E17"
+msgstr "El tema de los iconos prevalece sobre el tema de E18"
 
 #: src/bin/e_configure_option.c:1967
 msgid "Always launch applications as single-instance"
@@ -3804,9 +3801,8 @@ msgid "The recent DND operation requested for '%s' has failed."
 msgstr "La operación DND solicitada a '%s' ha fallado."
 
 #: src/bin/e_fm.c:6774
-#, fuzzy
 msgid "A link to the requested URL already exists!"
-msgstr "Ya existe un panel con ese nombre!"
+msgstr "Ya existe un link a esa URL!"
 
 #: src/bin/e_fm.c:8855 src/modules/fileman/e_mod_config.c:360
 msgid "Case Sensitive"
@@ -6798,7 +6794,7 @@ msgstr "Rechazar"
 
 #: src/modules/bluez4/agent.c:133
 msgid "Pin Code Requested"
-msgstr ""
+msgstr "Código pin requerido"
 
 #: src/modules/bluez4/agent.c:134
 msgid ""
@@ -6810,7 +6806,7 @@ msgstr ""
 
 #: src/modules/bluez4/agent.c:145
 msgid "Passkey Requested"
-msgstr ""
+msgstr "Contraseña requerida"
 
 #: src/modules/bluez4/agent.c:146
 msgid "Enter the Passkey above. It should be a numeric value between 0-999999."
@@ -7344,14 +7340,12 @@ msgid "Vaio"
 msgstr "Vaio"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:395
-#, fuzzy
 msgid "Volume Down"
-msgstr "Mover abajo"
+msgstr "Bajar volumen"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:397
-#, fuzzy
 msgid "Volume Up"
-msgstr "Mover arriba"
+msgstr "Subir volumen"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:399
 msgid "Tablet On"
@@ -7367,7 +7361,6 @@ msgid "Zoom"
 msgstr "Aumentar zoom"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:405
-#, fuzzy
 msgid "Screenlock"
 msgstr "Bloqueo de pantalla"
 
@@ -8862,7 +8855,7 @@ msgstr "Resolución de pantalla"
 
 #: src/modules/conf_randr/e_int_config_randr.c:119
 msgid "Primary Output"
-msgstr ""
+msgstr "Salida principal"
 
 #: src/modules/conf_randr/e_int_config_randr.c:135
 msgid "Restore On Startup"
@@ -10678,9 +10671,10 @@ msgstr ""
 "+'x''&gt;</hilight> ir ar plugin que empieza por 'x'<br>    <hilight>&lt;"
 "CONTROL+izquiera/derecha&gt;</hilight> cambiar entre losplugins<br>    "
 "<hilight>&lt;CONTROL+arriba/debajo&gt;</hilight> ir al primer/último<br>    "
-"<hilight>&lt;CONTROL+1&gt;</hilight> cambiar vista (sale de está ventana ;)"
-"<br>    <hilight>&lt;CONTROL+2&gt;</hilight> cambiar modos de vista<br>    "
-"<hilight>&lt;CONTROL+3&gt;</hilight> cambiar modos de vista de miniaturas"
+"<hilight>&lt;CONTROL+1&gt;</hilight> cambiar vista (sale de está "
+"ventana ;)<br>    <hilight>&lt;CONTROL+2&gt;</hilight> cambiar modos de "
+"vista<br>    <hilight>&lt;CONTROL+3&gt;</hilight> cambiar modos de vista de "
+"miniaturas"
 
 #: src/modules/everything/evry_view_tabs.c:93
 msgid "Back"
@@ -12372,14 +12366,12 @@ msgid "Syscon"
 msgstr "Control del sistema"
 
 #: src/modules/systray/e_mod_main.c:75
-#, fuzzy
 msgid "Enable Xembed"
-msgstr "Activado"
+msgstr "Activar Xembed"
 
 #: src/modules/systray/e_mod_main.c:116
-#, fuzzy
 msgid "Systray Settings"
-msgstr "Opciones del control del sistema"
+msgstr "Opciones de la bandeja del sistema"
 
 #: src/modules/systray/e_mod_main.c:237
 msgid "Another systray exists"
@@ -12433,9 +12425,9 @@ msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:85
 #: src/modules/teamwork/e_mod_main.c:161
-#, fuzzy, c-format
+#, c-format
 msgid "%2.0f MiB"
-msgstr "%1.0f MiB"
+msgstr "%2.0f MiB"
 
 #: src/modules/teamwork/e_mod_config.c:88
 msgid "Maximum media cache size in RAM"
@@ -12443,9 +12435,9 @@ msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:90
 #: src/modules/teamwork/e_mod_main.c:159
-#, fuzzy, c-format
+#, c-format
 msgid "%4.0f MiB"
-msgstr "%1.0f MiB"
+msgstr "%4.0f MiB"
 
 #: src/modules/teamwork/e_mod_config.c:92
 msgid "Maximum media cache age on disk"
@@ -12453,19 +12445,17 @@ msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:94
 #: src/modules/teamwork/e_mod_main.c:164
-#, fuzzy, c-format
+#, c-format
 msgid "%3.0f Days"
-msgstr "%.0f s"
+msgstr "%3.0f Días"
 
 #: src/modules/teamwork/e_mod_config.c:97
-#, fuzzy
 msgid "Cache"
 msgstr "Caché"
 
 #: src/modules/teamwork/e_mod_config.c:103
-#, fuzzy
 msgid "Disable video previews"
-msgstr "Previsualizar en tiempo real"
+msgstr "Desactivar previsualización de vídeos"
 
 #: src/modules/teamwork/e_mod_config.c:106
 #, fuzzy
@@ -12474,22 +12464,20 @@ msgstr "Ruedas del ratón"
 
 #: src/modules/teamwork/e_mod_config.c:110
 msgid "Maximum size (Percentage of screens size)"
-msgstr ""
+msgstr "Tamaño máximo (% de pantalla)"
 
 #: src/modules/teamwork/e_mod_config.c:119
-#, fuzzy
 msgid "Popups"
-msgstr "Ventana Emergente"
+msgstr "Ventanas emergentes"
 
 #: src/modules/teamwork/e_mod_config.c:169
-#, fuzzy
 msgid "Teamwork Settings"
-msgstr "Opciones de escritorio"
+msgstr "Opciones"
 
 #: src/modules/teamwork/e_mod_main.c:14 src/modules/teamwork/e_mod_main.c:113
 #: src/modules/teamwork/e_mod_main.c:123
 msgid "Teamwork"
-msgstr ""
+msgstr "Trabajo en equipo"
 
 #: src/modules/teamwork/e_mod_main.c:15
 #, fuzzy
@@ -12497,9 +12485,8 @@ msgid "Toggle Popup Visibility"
 msgstr "Alternar visibilidad"
 
 #: src/modules/teamwork/e_mod_main.c:153
-#, fuzzy
 msgid "Teamwork settings panel"
-msgstr "Panel de opciones de acceso rápido"
+msgstr "Panel de opciones"
 
 #: src/modules/teamwork/e_mod_main.c:153 src/modules/teamwork/e_mod_main.c:156
 #: src/modules/teamwork/e_mod_main.c:157 src/modules/teamwork/e_mod_main.c:158
@@ -12509,16 +12496,15 @@ msgstr "Panel de opciones de acceso rápido"
 #: src/modules/teamwork/e_mod_main.c:177 src/modules/teamwork/e_mod_main.c:178
 #: src/modules/teamwork/e_mod_main.c:196 src/modules/teamwork/e_mod_main.c:197
 msgid "teamwork"
-msgstr ""
+msgstr "trabajo en equipo"
 
 #: src/modules/teamwork/e_mod_main.c:156
 msgid "Disable Teamwork remote media fetching"
 msgstr ""
 
 #: src/modules/teamwork/e_mod_main.c:157
-#, fuzzy
 msgid "Disable Teamwork video popups"
-msgstr "Desactivar efectos en las ventanas emergentes"
+msgstr "Desactivar ventanas emergentes de videos"
 
 #: src/modules/teamwork/e_mod_main.c:158
 msgid "Maximum total size of Teamwork media to keep in RAM"
@@ -12533,6 +12519,8 @@ msgid ""
 "This option determines how much memory will be used to cache recent media "
 "for faster loading."
 msgstr ""
+"Esta opción determina cuanta memoria se usará como cache para mejorar los "
+"tiempos de carga."
 
 #: src/modules/teamwork/e_mod_main.c:163
 msgid "Maximum age for a disk-cached Teamwork media item"
@@ -12544,18 +12532,21 @@ msgid ""
 "it is pruned.</ps>Set to -1 to never delete media, or to 0 to never cache "
 "media on disk."
 msgstr ""
+"Esta opción determina cuanto tiempo se almacenará en caché antes de que se "
+"elimine.</ps>-1 para que nunca se elimine, o 0 para que nunca se almacene en "
+"caché."
 
 #: src/modules/teamwork/e_mod_main.c:168
 msgid "Delay before closing a Teamwork popup on mouse-out"
-msgstr ""
+msgstr "Retardo ántes de cerrar una ventana emergente al mover el ratón fuera"
 
 #: src/modules/teamwork/e_mod_main.c:170
 msgid "Maximum percentage of screen to use for Teamwork popups"
-msgstr ""
+msgstr "% máximo de pantalla para las ventanas emergentes"
 
 #: src/modules/teamwork/e_mod_main.c:172
 msgid "Opacity to use for Teamwork popups"
-msgstr ""
+msgstr "Opacidad de las ventanas emergentes"
 
 #: src/modules/temperature/e_mod_config.c:56
 msgid "Temperature Settings"
@@ -12934,19 +12925,16 @@ msgid "Select preferred size"
 msgstr "Seleccione el tamaño preferido"
 
 #: src/modules/wizard/page_060.c:29
-#, fuzzy
 msgid "Focus:"
 msgstr "Foco"
 
 #: src/modules/wizard/page_060.c:33
-#, fuzzy
 msgid "Whenever a window is clicked"
-msgstr "Siempre elevar la ventana al hacer click"
+msgstr "Cuando se haga click en una ventana"
 
 #: src/modules/wizard/page_060.c:36
-#, fuzzy
 msgid "Whenever the mouse enters a window"
-msgstr "Recordar los bloqueos para esta ventana"
+msgstr "Cuando el ratón entre en la ventana"
 
 #: src/modules/wizard/page_110.c:13
 msgid "Network Management"
@@ -13090,11 +13078,3 @@ msgstr "Ninguna"
 
 #~ msgid "Focus by ..."
 #~ msgstr "Enfocar ..."
-
-# Sale en el asistente.
-# Hace referencia a como se enfocan las ventanas.
-#~ msgid "Mouse Over"
-#~ msgstr "Al pasar el ratón por encima"
-
-#~ msgid "Systray cannot set its background invisible to match its shelf."
-#~ msgstr "La bandeja del sistema no puede tener fondo invisible"
