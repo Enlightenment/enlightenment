@@ -4,6 +4,7 @@ Type=Link
 Name=Illume-Keyboard
 Name[eo]=Illume-Klavaro
 Name[fr]=Clavier Illume
+Name[sr]=Тастатура одсјаја
 Comment=
 Icon=e-module-illume-keyboard
 X-Enlightenment-ModuleType=mobile

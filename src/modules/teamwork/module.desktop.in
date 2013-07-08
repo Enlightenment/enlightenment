@@ -2,8 +2,10 @@
 Encoding=UTF-8
 Type=Link
 Name=Teamwork
+Name[sr]=Тимски рад
 Comment=Enlightenment Is A Team Player
 Comment[eo]=Enlightenment estas skipa ludanto
 Comment[it]=Enlightenment è giocatore in un team
+Comment[sr]=Просвећење је тимски играч
 Icon=e-module-teamwork
 X-Enlightenment-ModuleType=core

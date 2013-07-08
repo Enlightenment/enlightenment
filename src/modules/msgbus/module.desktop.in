@@ -13,6 +13,7 @@ Name[hu]=DBus kiterjesztés
 Name[it]=Estensione DBus
 Name[pt]=Extensão DBus
 Name[ru]=Расширение DBus
+Name[sr]=Проширење Д-сабирнице
 Name[tr]=DBus Uzantısı
 Icon=e-module-msgbus
 X-Enlightenment-ModuleType=system
