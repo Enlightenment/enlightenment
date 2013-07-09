@@ -5252,7 +5252,6 @@ e_comp_zone_update(E_Comp_Zone *cz)
 
    cz->over = o = edje_object_add(cz->comp->evas);
    evas_object_layer_set(o, E_COMP_CANVAS_LAYER_MAX);
-   evas_object_raise(o);
    evas_object_name_set(cz->over, "cz->over");
    evas_object_pass_events_set(o, 1);
    e_theme_edje_object_set(o, "base/theme/comp", over_styles[conf->disable_screen_effects]);
