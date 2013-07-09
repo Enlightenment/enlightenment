@@ -233,7 +233,7 @@ e_container_move_resize(E_Container *con, int x, int y, int w, int h)
      ecore_x_window_move_resize(con->win, con->x, con->y, con->w, con->h);
    ecore_x_window_move_resize(con->event_win, con->x, con->y, con->w, con->h);
    if (!e_config->null_container_win)
-     ecore_evas_resize(con->bg_ecore_evas, con->w, con->h);
+     ecore_evas_move_resize(con->bg_ecore_evas, x, y, w, h);
    evas_object_move(con->bg_blank_object, con->x, con->y);
    evas_object_resize(con->bg_blank_object, con->w, con->h);
    _e_container_resize_handle(con);
