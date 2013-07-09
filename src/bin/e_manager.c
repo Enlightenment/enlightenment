@@ -377,6 +377,7 @@ e_manager_resize(E_Manager *man, int w, int h)
 
    E_OBJECT_CHECK(man);
    E_OBJECT_TYPE_CHECK(man, E_MANAGER_TYPE);
+   if ((man->w == w) && (man->h == h)) return;
    man->w = w;
    man->h = h;
    if (man->root != man->win)
