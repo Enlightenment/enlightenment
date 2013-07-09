@@ -542,7 +542,7 @@ _e_comp_win_update(E_Comp_Win *cw)
      {
         if (cw->free_shape)
           {
-             ecore_x_pixmap_geometry_get(cw->win, NULL, NULL, &(cw->w), &(cw->h));
+             ecore_x_window_geometry_get(cw->win, NULL, NULL, &(cw->w), &(cw->h));
              rects = (Eina_Rectangle*)ecore_x_window_shape_rectangles_get(cw->win, &num);
              e_container_shape_rects_set(cw->shape, rects, num);
              if (cw->shape->shape_rects)
