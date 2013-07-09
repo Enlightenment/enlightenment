@@ -56,7 +56,7 @@ static void _client_source_accept(struct wl_data_source *source, uint32_t timest
 static void _client_source_send(struct wl_data_source *source, const char *mime_type, int32_t fd);
 static void _client_source_cancel(struct wl_data_source *source);
 
-static void _e_comp_wl_cb_bind(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id);
+static void _e_comp_wl_cb_bind(struct wl_client *client, void *data, unsigned int version, unsigned int id);
 static Eina_Bool _e_comp_wl_cb_read(void *data EINA_UNUSED, Ecore_Fd_Handler *hdl EINA_UNUSED);
 static Eina_Bool _e_comp_wl_cb_idle(void *data EINA_UNUSED);
 static Eina_Bool _e_comp_wl_cb_module_idle(void *data EINA_UNUSED);
@@ -762,10 +762,10 @@ wl_data_source_send_offer(struct wl_data_source *source, struct wl_resource *tar
    if (offer == NULL) return NULL;
 
    offer->resource = 
-     wl_client_new_object(wl_resource_get_client(target), 
-                          &wl_data_offer_interface, &_e_data_offer_interface, 
-                          offer);
-   wl_resource_set_destructor(offer->resource, _destroy_data_offer);
+     wl_resource_create(wl_resource_get_client(target),
+                        &wl_data_offer_interface, 1, 0);
+   wl_resource_set_implementation(offer->resource, &_e_data_offer_interface, 
+                                  offer, _destroy_data_offer);
 
    offer->source = source;
    offer->source_destroy_listener.notify = _destroy_offer_data_source;
@@ -1097,9 +1097,11 @@ _create_data_source(struct wl_client *client, struct wl_resource *resource, uint
    wl_array_init(&source->mime_types);
 
    source->resource = 
-     wl_client_add_object(client, &wl_data_source_interface,
-                          &_e_data_source_interface, id, source);
-   wl_resource_set_destructor(source->resource, _destroy_data_source);
+     wl_resource_create(client, &wl_data_source_interface, 1, id);
+
+   wl_resource_set_implementation(source->resource, 
+                                  &_e_data_source_interface, source, 
+                                  _destroy_data_source);
 }
 
 static void 
@@ -1116,12 +1118,14 @@ _get_data_device(struct wl_client *client, struct wl_resource *manager_resource 
 
    seat = wl_resource_get_user_data(seat_resource);
 
-   resource = wl_client_add_object(client, &wl_data_device_interface,
-                                   &_e_data_device_interface, id,
-                                   seat);
+   resource = 
+     wl_resource_create(client, &wl_data_device_interface, 1, id);
 
    wl_list_insert(&seat->drag_resource_list, &resource->link);
-   wl_resource_set_destructor(resource, _unbind_data_device);
+
+   wl_resource_set_implementation(resource, &_e_data_device_interface, seat, 
+                                  _unbind_data_device);
+
 }
 
 static void
@@ -1135,8 +1139,11 @@ _current_surface_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 static void
 _bind_manager(struct wl_client *client, void *data EINA_UNUSED, uint32_t version EINA_UNUSED, uint32_t id)
 {
-   wl_client_add_object(client, &wl_data_device_manager_interface,
-                        &_e_manager_interface, id, NULL);
+   struct wl_resource *res;
+
+   res = wl_resource_create(client, &wl_data_device_manager_interface, 1, id);
+   if (res) 
+     wl_resource_set_implementation(res, &_e_manager_interface, NULL, NULL);
 }
 
 static void
@@ -1428,11 +1435,17 @@ _client_source_cancel(struct wl_data_source *source)
 }
 
 static void 
-_e_comp_wl_cb_bind(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id)
+_e_comp_wl_cb_bind(struct wl_client *client, void *data, unsigned int version, unsigned int id)
 {
-   /* add the compositor object to the client */
-   wl_client_add_object(client, &wl_compositor_interface, 
-                        &_e_compositor_interface, id, _e_wl_comp);
+   E_Wayland_Compositor *comp;
+   struct wl_resource *res;
+
+   if (!(comp = data)) return;
+
+   res = 
+     wl_resource_create(client, &wl_compositor_interface, MIN(version, 3), id);
+   if (res)
+     wl_resource_set_implementation(res, &_e_compositor_interface, comp, NULL);
 }
 
 static Eina_Bool 
@@ -1600,10 +1613,10 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
                              UINT32_MAX, UINT32_MAX);
 
    ews->wl.surface = 
-     wl_client_add_object(client, &wl_surface_interface, 
-                          &_e_surface_interface, id, ews);
-   wl_resource_set_destructor(ews->wl.surface, 
-                              _e_comp_wl_cb_surface_destroy);
+     wl_resource_create(client, &wl_surface_interface, 
+                        wl_resource_get_version(resource), id);
+   wl_resource_set_implementation(ews->wl.surface, &_e_surface_interface, 
+                                  ews, _e_comp_wl_cb_surface_destroy);
 
    /* add this surface to the list of surfaces */
    _e_wl_comp->surfaces = eina_list_append(_e_wl_comp->surfaces, ews);
@@ -1681,11 +1694,10 @@ _e_comp_wl_cb_region_create(struct wl_client *client, struct wl_resource *resour
    pixman_region32_init(&ewr->region);
 
    ewr->wl.resource = 
-     wl_client_add_object(client, &wl_region_interface, 
-                          &_e_region_interface, id, ewr);
-
-   wl_resource_set_destructor(ewr->wl.resource,
-                              _e_comp_wl_cb_region_destroy);
+     wl_resource_create(client, &wl_region_interface, 
+                        wl_resource_get_version(resource), id);
+   wl_resource_set_implementation(ewr->wl.resource, &_e_region_interface, ewr, 
+                                  _e_comp_wl_cb_region_destroy);
 }
 
 static void 
@@ -1838,7 +1850,7 @@ _e_comp_wl_input_shutdown(void)
 }
 
 static void 
-_e_comp_wl_input_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
+_e_comp_wl_input_cb_bind(struct wl_client *client, void *data, unsigned int version, unsigned int id)
 {
    struct wl_seat *seat = NULL;
    struct wl_resource *resource = NULL;
@@ -1849,12 +1861,12 @@ _e_comp_wl_input_cb_bind(struct wl_client *client, void *data, unsigned int vers
 
    /* add the seat object to the client */
    resource = 
-     wl_client_add_object(client, &wl_seat_interface, 
-                          &_e_input_interface, id, data);
+     wl_resource_create(client, &wl_seat_interface, MIN(version, 2), id);
+
    wl_list_insert(&seat->base_resource_list, &resource->link);
 
-   /* set resource destroy callback */
-   wl_resource_set_destructor(resource, _e_comp_wl_input_cb_unbind);
+   wl_resource_set_implementation(resource, &_e_input_interface, data, 
+                                  _e_comp_wl_input_cb_unbind);
 
    /* set capabilities based on seat */
    if (seat->pointer) caps |= WL_SEAT_CAPABILITY_POINTER;
@@ -2038,12 +2050,11 @@ _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *re
    if (!input->has_pointer) return;
 
    /* add a pointer object to the client */
-   ptr = wl_client_add_object(client, &wl_pointer_interface, 
-                              &_e_pointer_interface, id, input);
+   ptr = wl_resource_create(client, &wl_pointer_interface, 
+                            wl_resource_get_version(resource), id);
    wl_list_insert(&input->wl.seat.pointer->resource_list, &ptr->link);
-
-   /* set pointer destroy callback */
-   wl_resource_set_destructor(ptr, _e_comp_wl_input_cb_unbind);
+   wl_resource_set_implementation(ptr, &_e_pointer_interface, 
+                                  input, _e_comp_wl_input_cb_unbind);
 
    /* if the pointer has a focused surface, set it */
    if ((input->wl.seat.pointer->focus) && 
@@ -2071,11 +2082,11 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
    if (!input->has_keyboard) return;
 
    /* add a keyboard object to the client */
-   kbd = wl_client_add_object(client, &wl_keyboard_interface, NULL, id, input);
+   kbd = wl_resource_create(client, &wl_keyboard_interface, 
+                            wl_resource_get_version(resource), id);
    wl_list_insert(&input->wl.seat.keyboard->resource_list, &kbd->link);
-
-   /* set keyboard destroy callback */
-   wl_resource_set_destructor(kbd, _e_comp_wl_input_cb_unbind);
+   wl_resource_set_implementation(kbd, NULL, input, 
+                                  _e_comp_wl_input_cb_unbind);
 
    /* send the current keymap to the keyboard object */
    wl_keyboard_send_keymap(kbd, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, 
@@ -2110,11 +2121,10 @@ _e_comp_wl_input_cb_touch_get(struct wl_client *client, struct wl_resource *reso
    if (!input->has_touch) return;
 
    /* add a touch object to the client */
-   tch = wl_client_add_object(client, &wl_touch_interface, NULL, id, input);
+   tch = wl_resource_create(client, &wl_touch_interface, 
+                            wl_resource_get_version(resource), id);
    wl_list_insert(&input->wl.seat.touch->resource_list, &tch->link);
-
-   /* set touch destroy callback */
-   wl_resource_set_destructor(tch, _e_comp_wl_input_cb_unbind);
+   wl_resource_set_implementation(tch, NULL, input, _e_comp_wl_input_cb_unbind);
 }
 
 /* pointer functions */
@@ -2520,9 +2530,9 @@ _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resour
      }
 
    cb->wl.resource = 
-     wl_client_add_object(client, &wl_callback_interface, NULL, callback, cb);
-   wl_resource_set_destructor(cb->wl.resource, 
-                              _e_comp_wl_surface_cb_frame_destroy);
+     wl_resource_create(client, &wl_callback_interface, 1, callback);
+   wl_resource_set_implementation(cb->wl.resource, NULL, cb, 
+                                  _e_comp_wl_surface_cb_frame_destroy);
 
    /* add this callback to the surface list of pending frames */
    wl_list_insert(ews->pending.frames.prev, &cb->wl.link);
