@@ -6,7 +6,7 @@
 
 /* shell function prototypes */
 static void _e_wl_shell_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
-static void _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
+static void _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version, unsigned int id);
 static void _e_wl_shell_cb_ping(E_Wayland_Surface *ews, unsigned int serial);
 static void _e_wl_shell_cb_pointer_focus(struct wl_listener *listener EINA_UNUSED, void *data);
 
@@ -248,7 +248,7 @@ _e_wl_shell_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 }
 
 static void 
-_e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
+_e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version, unsigned int id)
 {
    E_Wayland_Desktop_Shell *shell = NULL;
    struct wl_resource *res = NULL;
@@ -257,21 +257,22 @@ _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version E
    if (!(shell = data)) return;
 
    /* try to add the shell to the client */
-   wl_client_add_object(client, &wl_shell_interface, 
-                        &_e_shell_interface, id, shell);
+   res = wl_resource_create(client, &wl_shell_interface, 1, id);
+   if (res)
+     wl_resource_set_implementation(res, &_e_shell_interface, shell, NULL);
 
    /* try to add the desktop shell to the client */
-   if (!(res = wl_client_new_object(client, &e_desktop_shell_interface, 
-                                    &_e_desktop_shell_interface, shell)))
+   if (!(res = 
+         wl_resource_create(client, &e_desktop_shell_interface, 
+                            MIN(version, 2), id)))
      {
         wl_resource_post_error(res, WL_DISPLAY_ERROR_INVALID_OBJECT, 
                                "Permission Denied");
         wl_resource_destroy(res);
         return;
      }
-
-   /* set desktop shell destroy callback */
-   wl_resource_set_destructor(res, _e_wl_desktop_shell_cb_unbind);
+   wl_resource_set_implementation(res, &_e_desktop_shell_interface, shell, 
+                                  _e_wl_desktop_shell_cb_unbind);
 
    shell->wl.resource = res;
 }
@@ -457,10 +458,10 @@ _e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *r
      }
 
    ewss->wl.resource = 
-     wl_client_add_object(client, &wl_shell_surface_interface, 
-                          &_e_shell_surface_interface, id, ewss);
-   wl_resource_set_destructor(ewss->wl.resource, 
-                              _e_wl_shell_shell_surface_destroy);
+     wl_resource_create(client, &wl_shell_surface_interface, 1, id);
+   wl_resource_set_implementation(ewss->wl.resource, 
+                                  &_e_shell_surface_interface, ewss, 
+                                  _e_wl_shell_shell_surface_destroy);
 }
 
 /* desktop shell functions */
