@@ -5737,7 +5737,7 @@ e_comp_e_object_layer_get(const E_Object *obj)
         return E_COMP_CANVAS_LAYER_DESKTOP;
 
       case E_BORDER_TYPE:
-        return E_COMP_CANVAS_LAYER_LAYOUT + ((E_Win *)(obj))->border->layer;
+        return E_COMP_CANVAS_LAYER_LAYOUT + ((E_Border *)(obj))->layer;
 
       case E_POPUP_TYPE:
         return ((E_Popup *)(obj))->comp_layer + ((E_Popup *)(obj))->layer;
