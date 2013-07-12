@@ -261,7 +261,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
 
    fclose(f);
 
-   snprintf(cmd, sizeof(cmd), "edje_cc -v %s %s %s",
+   snprintf(cmd, sizeof(cmd), "%s/edje_cc -v %s %s %s", e_prefix_bin_get(),
             ipart, tmpn, e_util_filename_escape(buf));
 
    import->tmpf = strdup(tmpn);
