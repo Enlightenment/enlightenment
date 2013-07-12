@@ -754,14 +754,9 @@ _e_comp_win_update(E_Comp_Win *cw)
                     {
                        unsigned int *pix;
 
-                       pix = ecore_x_image_data_get(cw->xim, NULL, NULL, NULL);
-                       evas_object_image_data_set(cw->obj, pix);
                        evas_object_image_size_set(cw->obj, cw->pw, cw->ph);
                        EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-                         {
-                            evas_object_image_data_set(o, pix);
-                            evas_object_image_size_set(o, cw->pw, cw->ph);
-                         }
+                         evas_object_image_size_set(o, cw->pw, cw->ph);
 
                        e_comp_render_update_clear(cw->up);
                        for (i = 0; r[i].w > 0; i++)
@@ -778,17 +773,18 @@ _e_comp_win_update(E_Comp_Win *cw)
                               }
                             else
                               {
-                                 // why do we neeed these 2? this smells wrong
-                                 pix = ecore_x_image_data_get(cw->xim, NULL, NULL, NULL);
-                                 DBG("UPDATE [0x%x] %i %i %ix%i -- pix = %p", cw->win, x, y, w, h, pix);
-                                 evas_object_image_data_set(cw->obj, pix);
+                                 DBG("UPDATE [0x%x] %i %i %ix%i", cw->win, x, y, w, h);
                                  evas_object_image_data_update_add(cw->obj, x, y, w, h);
                                  EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-                                   {
-                                      evas_object_image_data_set(o, pix);
-                                      evas_object_image_data_update_add(o, x, y, w, h);
-                                   }
+                                   evas_object_image_data_update_add(o, x, y, w, h);
                               }
+                         }
+                       if (!cw->update)
+                         {
+                            pix = ecore_x_image_data_get(cw->xim, NULL, NULL, NULL);
+                            evas_object_image_data_set(cw->obj, pix);
+                            EINA_LIST_FOREACH(cw->obj_mirror, l, o)
+                              evas_object_image_data_set(o, pix);
                          }
                     }
                   else
