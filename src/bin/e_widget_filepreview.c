@@ -527,32 +527,50 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
                        unsigned long long blknum, blkused, blkres;
                        double mbsize, mbused, mbres;
                        Eina_Bool rdonly = EINA_FALSE;
-                       char buf[PATH_MAX], mpoint[4096], fstype[4096];
+                       Eina_Bool f_is_dir = EINA_FALSE;
+                       Eina_Bool f_is_dev = EINA_FALSE;
+                       char buf[PATH_MAX], mdev[4096], mpoint[4096], fstype[4096];
                        FILE *f;
-
-                       fragsz = stfs.f_frsize;
-                       blknum = stfs.f_blocks;
-                       blkused = stfs.f_blocks - stfs.f_bfree;
-                       blkres = stfs.f_bfree - stfs.f_bavail;
 
                        fstype[0] = 0;
                        mpoint[0] = 0;
+                       mdev[0] = 0;
                        f = fopen("/etc/mtab", "r");
                        if (f)
                          {
                             while (fgets(buf, sizeof(buf), f))
                               {
-                                 if (sscanf(buf, "%*s %4000s %4000s %*s",
-                                            mpoint, fstype) == 2)
+                                 if (sscanf(buf, "%4000s %4000s %4000s %*s",
+                                            mdev, mpoint, fstype) == 3)
                                    {
-                                      if (!strcmp(mpoint, file)) break;
+                                      if (!strcmp(mdev, file))
+                                        {
+                                           f_is_dev = EINA_TRUE;
+                                           break;
+                                        }
+                                      if (!strcmp(mpoint, file))
+                                        {
+                                           f_is_dir = EINA_TRUE;
+                                           break;
+                                        }
                                    }
                                  fstype[0] = 0;
                                  mpoint[0] = 0;
+                                 mdev[0] = 0;
                               }
                             fclose(f);
                          }
-                       if (blknum > blkres)
+                       if ((f_is_dev) && (!f_is_dir))
+                         {
+                            if (statvfs(mpoint, &stfs) != 0) ok = EINA_FALSE;
+                         }
+                       
+                       fragsz = stfs.f_frsize;
+                       blknum = stfs.f_blocks;
+                       blkused = stfs.f_blocks - stfs.f_bfree;
+                       blkres = stfs.f_bfree - stfs.f_bavail;
+
+                       if ((ok) && (mpoint[0]) && (blknum > blkres))
                          {
                             is_fs = EINA_TRUE;
 
