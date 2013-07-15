@@ -182,14 +182,13 @@ e_modapi_init(E_Module *m)
      _e_wl_shell_shell_surface_create;
 
    /* try to add this shell to the display's global list */
-   if (!(gshell = 
-         wl_display_add_global(_e_wl_comp->wl.display, &wl_shell_interface, 
-                               shell, _e_wl_shell_cb_bind)))
+   if (!(gshell = wl_global_create(_e_wl_comp->wl.display, &wl_shell_interface, 
+                                   1, shell, _e_wl_shell_cb_bind)))
      goto err;
 
    /* try to add the desktop shell interface to the display's global list */
-   if (!wl_display_add_global(_e_wl_comp->wl.display, 
-                              &e_desktop_shell_interface, shell, NULL))
+   if (!wl_global_create(_e_wl_comp->wl.display, &e_desktop_shell_interface, 
+                         2, shell, NULL))
      goto err;
 
    /* for each input, we need to create a pointer focus listener */
@@ -214,7 +213,7 @@ e_modapi_init(E_Module *m)
 
 err:
    /* remove previously added shell global */
-   if (gshell) wl_display_remove_global(_e_wl_comp->wl.display, gshell);
+   if (gshell) wl_global_destroy(gshell);
 
    /* reset compositor shell interface */
    _e_wl_comp->shell_interface.shell = NULL;

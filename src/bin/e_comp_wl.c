@@ -232,8 +232,8 @@ e_comp_wl_init(void)
    wl_signal_init(&_e_wl_comp->signals.seat);
 
    /* try to add compositor to the displays globals */
-   if (!wl_display_add_global(_e_wl_comp->wl.display, &wl_compositor_interface,
-                              _e_wl_comp, _e_comp_wl_cb_bind))
+   if (!wl_global_create(_e_wl_comp->wl.display, &wl_compositor_interface, 3, 
+                         _e_wl_comp, _e_comp_wl_cb_bind))
      {
         ERR("Could not add compositor to globals: %m");
         goto err;
@@ -745,9 +745,8 @@ wl_data_device_set_keyboard_focus(struct wl_seat *seat)
 EAPI int 
 wl_data_device_manager_init(struct wl_display *display)
 {
-   if (wl_display_add_global(display,
-                             &wl_data_device_manager_interface,
-                             NULL, _bind_manager) == NULL)
+   if (!wl_global_create(display, &wl_data_device_manager_interface, 1, 
+                         NULL, _bind_manager))
      return -1;
    return 0;
 }
@@ -1730,8 +1729,8 @@ _e_comp_wl_input_init(void)
    wl_seat_init(&_e_wl_comp->input->wl.seat);
 
    /* try to add this input to the diplay's list of globals */
-   if (!wl_display_add_global(_e_wl_comp->wl.display, &wl_seat_interface, 
-                              _e_wl_comp->input, _e_comp_wl_input_cb_bind))
+   if (!wl_global_create(_e_wl_comp->wl.display, &wl_seat_interface, 2, 
+                         _e_wl_comp->input, _e_comp_wl_input_cb_bind))
      {
         ERR("Could not add Input to Wayland Display Globals: %m");
         goto err;
