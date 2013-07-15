@@ -1271,7 +1271,7 @@ _e_fwin_desktop_run(Efreet_Desktop *desktop,
    if (!selected) return;
 
    if (!getcwd(pcwd, sizeof(pcwd))) return;
-   if (0 > chdir(e_fm2_real_path_get(page->fm_obj))) return;
+   if (chdir(e_fm2_real_path_get(page->fm_obj)) < 0) return;
 
    EINA_LIST_FOREACH(selected, l, ici)
      {
@@ -1311,7 +1311,7 @@ _e_fwin_desktop_run(Efreet_Desktop *desktop,
 
    EINA_LIST_FREE(files, file) free(file);
 
-   chdir(pcwd);
+   if (chdir(pcwd) < 0) perror("chdir");
 }
 
 static E_Fwin_Exec_Type
@@ -1989,9 +1989,9 @@ _e_fwin_cb_dir_handler(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const
 
    if (!getcwd(buf, sizeof(buf))) return;
 
-   chdir(path);
+   if (chdir(path) < 0) perror("chdir");
    e_exec(e_util_zone_current_get(e_manager_current_get()), tdesktop, NULL, NULL, "fileman");
-   chdir(buf);
+   if (chdir(buf) < 0) perror("chdir");
    /* FIXME: if info != null then check mime type and offer options based
     * on that
     */
@@ -2461,8 +2461,8 @@ _e_fwin_file_open_dialog(E_Fwin_Page *page,
              if ((has_default) && (apps)) desk = apps->data;
              else if (mlist) desk = e_exehist_mime_desktop_get(mlist->data);
              //fprintf(stderr, "mlist = %p\n", mlist);
-             getcwd(pcwd, sizeof(pcwd));
-             chdir(e_fm2_real_path_get(page->fm_obj));
+             if (!getcwd(pcwd, sizeof(pcwd))) perror("getcwd");
+             if (chdir(e_fm2_real_path_get(page->fm_obj)) < 0) perror("chdir");
 
              files_list = NULL;
              EINA_LIST_FOREACH(files, l, ici)
@@ -2500,7 +2500,7 @@ _e_fwin_file_open_dialog(E_Fwin_Page *page,
              EINA_LIST_FREE(files_list, file)
                free(file);
 
-             chdir(pcwd);
+             if (chdir(pcwd) < 0) perror("chdir");
              if (!need_dia)
                {
                   EINA_LIST_FREE(apps, desk) efreet_desktop_free(desk);

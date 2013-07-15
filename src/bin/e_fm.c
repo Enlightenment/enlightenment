@@ -9708,8 +9708,10 @@ _e_fm2_new_thread_helper(Ecore_Thread *eth, Eina_Bool dir)
                   texts = ecore_thread_global_data_wait("efm_text_uri_list", 0.01);
                   EINA_LIST_FOREACH(texts, l, path)
                     {
-                       write(fd, path, strlen(path));
-                       write(fd, "\n", 1);
+                       if (write(fd, path, strlen(path)) < 0)
+                         perror("write");
+                       if (write(fd, "\n", 1) < 0)
+                         perror("write");
                     }
                   close(fd);
                   ecore_thread_feedback(eth, strdup(buf));
@@ -9742,8 +9744,10 @@ _e_fm2_new_thread_helper(Ecore_Thread *eth, Eina_Bool dir)
                        texts = ecore_thread_global_data_wait("efm_text_uri_list", 0.01);
                        EINA_LIST_FOREACH(texts, l, path)
                          {
-                            write(fd, path, strlen(path));
-                            write(fd, "\n", 1);
+                            if (write(fd, path, strlen(path)) < 0)
+                              perror("write");
+                            if (write(fd, "\n", 1) < 0)
+                              perror("write");
                          }
                        close(fd);
                        ecore_thread_feedback(eth, strdup(buf));

@@ -738,7 +738,7 @@ _e_fm_main_udisks2_format_error_msg(char     **buf,
                                    const char *name,
                                    const char *message)
 {
-   int size, vu, vm, en;
+   int size, vu, vm = 1, en;
    char *tmp;
 
    vu = strlen(v->udi) + 1;
@@ -752,6 +752,11 @@ _e_fm_main_udisks2_format_error_msg(char     **buf,
    if (v->mount_point)
      {
         strcpy(tmp, v->mount_point);
+        tmp += vm;
+     }
+   else
+     {
+        *tmp = 0;
         tmp += vm;
      }
    strcpy(tmp, name);
