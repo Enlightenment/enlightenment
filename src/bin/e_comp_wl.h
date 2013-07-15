@@ -261,7 +261,7 @@ struct _E_Wayland_Buffer
         union 
           {
              struct wl_shm_buffer *shm_buffer;
-             struct wl_buffer *legacy_buffer;
+             void *legacy_buffer;
           };
      } wl;
 
