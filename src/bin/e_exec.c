@@ -100,11 +100,7 @@ e_exec_init(void)
 EINTERN int
 e_exec_shutdown(void)
 {
-   char buf[256];
-
-   snprintf(buf, sizeof(buf), "%i", startup_id);
-   e_util_env_set("E_STARTUP_ID", buf);
-
+   e_exehist_startup_id_set(startup_id);
    if (_e_exec_exit_handler) ecore_event_handler_del(_e_exec_exit_handler);
    if (_e_exec_border_add_handler)
      ecore_event_handler_del(_e_exec_border_add_handler);
@@ -400,11 +396,8 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
 
    if (startup_id == 0)
      {
-        const char *p;
-
-        p = getenv("E_STARTUP_ID");
-        if (p) startup_id = atoi(p);
-        e_util_env_set("E_STARTUP_ID", NULL);
+        startup_id = e_exehist_startup_id_get();
+        if (startup_id < 0) startup_id = 0;
      }
    if (++startup_id < 1) startup_id = 1;
    /* save previous env vars we need to save */

@@ -11,6 +11,7 @@ struct _E_Exehist
 {
    Eina_List *history;
    Eina_List *mimes;
+   int startup_id;
 };
 
 struct _E_Exehist_Item
@@ -60,6 +61,7 @@ e_exehist_init(void)
 #define D _e_exehist_config_edd
    E_CONFIG_LIST(D, T, history, _e_exehist_config_item_edd);
    E_CONFIG_LIST(D, T, mimes, _e_exehist_config_item_edd);
+   E_CONFIG_VAL(D, T, startup_id, INT);
 
    E_EVENT_EXEHIST_UPDATE = ecore_event_type_new();
 
@@ -78,6 +80,27 @@ e_exehist_shutdown(void)
    E_CONFIG_DD_FREE(_e_exehist_config_item_edd);
    E_CONFIG_DD_FREE(_e_exehist_config_edd);
    return 1;
+}
+
+EAPI void
+e_exehist_startup_id_set(int id)
+{
+   _e_exehist_load();
+   if (!_e_exehist) return;
+   _e_exehist->startup_id = id;
+   _e_exehist_changes++;
+   _e_exehist_unload_queue();
+}
+
+EAPI int
+e_exehist_startup_id_get(void)
+{
+   int id;
+   _e_exehist_load();
+   if (!_e_exehist) return 0;
+   id = _e_exehist->startup_id;
+   _e_exehist_unload_queue();
+   return id;
 }
 
 EAPI void
