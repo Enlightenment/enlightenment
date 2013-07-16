@@ -1,6 +1,7 @@
 #include "e.h"
 
 /* local function prototypes */
+static void _e_region_destroy(struct wl_resource *resource);
 static void _e_region_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
 static void _e_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h);
 static void _e_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h);
@@ -24,13 +25,24 @@ e_region_new(struct wl_client *client, unsigned int id)
    pixman_region32_init(&reg->region);
 
    reg->resource = 
-     wl_client_add_object(client, &wl_region_interface, 
-                          &_e_region_interface, id, reg);
+     wl_resource_create(client, &wl_region_interface, 1, id);
+   wl_resource_set_implementation(reg->resource, &_e_region_interface, 
+                                  reg, _e_region_destroy);
 
    return reg;
 }
 
 /* local functions */
+static void 
+_e_region_destroy(struct wl_resource *resource)
+{
+   E_Region *reg;
+
+   if (!(reg = wl_resource_get_user_data(resource))) return;
+   pixman_region32_fini(&reg->region);
+   E_FREE(reg);
+}
+
 static void 
 _e_region_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {

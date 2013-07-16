@@ -77,7 +77,7 @@ struct _E_Surface_Frame
    struct wl_list link;
 };
 
-EAPI E_Surface *e_surface_new(struct wl_client *client, unsigned int id);
+EAPI E_Surface *e_surface_new(struct wl_client *client, struct wl_resource *resource, unsigned int id);
 EAPI void e_surface_attach(E_Surface *es, E_Buffer *buffer);
 EAPI void e_surface_unmap(E_Surface *es);
 EAPI void e_surface_damage(E_Surface *es);

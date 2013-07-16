@@ -24,7 +24,7 @@ struct _E_Buffer
    union
      {
         struct wl_shm_buffer *shm_buffer;
-        struct wl_buffer *legacy_buffer;
+        void *legacy_buffer;
      };
 
    Evas_Coord w, h;

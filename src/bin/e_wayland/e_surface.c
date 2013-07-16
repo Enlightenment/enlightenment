@@ -27,7 +27,7 @@ static const struct wl_surface_interface _e_surface_interface =
 };
 
 EAPI E_Surface *
-e_surface_new(struct wl_client *client, unsigned int id)
+e_surface_new(struct wl_client *client, struct wl_resource *resource, unsigned int id)
 {
    E_Surface *es;
 
@@ -62,8 +62,10 @@ e_surface_new(struct wl_client *client, unsigned int id)
                              UINT32_MAX, UINT32_MAX);
 
    es->wl.resource = 
-     wl_client_add_object(client, &wl_surface_interface, 
-                          &_e_surface_interface, id, es);
+     wl_resource_create(client, &wl_surface_interface, 
+                        wl_resource_get_version(resource), id);
+   wl_resource_set_implementation(es->wl.resource, 
+                                  &_e_surface_interface, es, NULL);
 
    return es;
 }
@@ -460,9 +462,10 @@ _e_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, unsi
      }
 
    cb->resource = 
-     wl_client_add_object(client, &wl_callback_interface, NULL, callback, cb);
+     wl_resource_create(client, &wl_callback_interface, 1, callback);
 
-   wl_resource_set_destructor(cb->resource, _e_surface_frame_cb_destroy);
+   wl_resource_set_implementation(cb->resource, NULL, cb, 
+                                  _e_surface_frame_cb_destroy);
 
    /* append the callback to pending frames */
    wl_list_insert(es->pending.frames.prev, &cb->link);

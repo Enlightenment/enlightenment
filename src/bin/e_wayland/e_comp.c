@@ -112,8 +112,8 @@ e_compositor_init(E_Compositor *comp, void *display)
    wl_signal_init(&comp->signals.seat);
 
    /* try to add the compositor to the displays global list */
-   if (!wl_display_add_global(comp->wl.display, &wl_compositor_interface, 
-                              comp, _e_comp_cb_bind))
+   if (!wl_global_create(comp->wl.display, &wl_compositor_interface, 
+                         3, comp, _e_comp_cb_bind))
      {
         ERR("Could not add compositor to globals: %m");
         goto global_err;
@@ -131,9 +131,8 @@ e_compositor_init(E_Compositor *comp, void *display)
      }
 
    /* initialize the data device manager */
-   if (!wl_display_add_global(comp->wl.display, 
-                              &wl_data_device_manager_interface, NULL, 
-                              _e_comp_cb_bind_manager))
+   if (!wl_global_create(comp->wl.display, &wl_data_device_manager_interface, 
+                         1, NULL, _e_comp_cb_bind_manager))
      {
         ERR("Could not add data device manager to globals: %m");
         goto global_err;
@@ -385,20 +384,24 @@ static void
 _e_comp_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
 {
    E_Compositor *comp;
+   struct wl_resource *res;
 
    if (!(comp = data)) return;
 
-   /* add the compositor to the client */
-   wl_client_add_object(client, &wl_compositor_interface, 
-                        &_e_compositor_interface, id, comp);
+   res = wl_resource_create(client, &wl_compositor_interface, 
+                            MIN(version, 3), id);
+   if (res)
+     wl_resource_set_implementation(res, &_e_compositor_interface, comp, NULL);
 }
 
 static void 
 _e_comp_cb_bind_manager(struct wl_client *client, void *data EINA_UNUSED, unsigned int version EINA_UNUSED, unsigned int id)
 {
-   /* add the data device manager to the client */
-   wl_client_add_object(client, &wl_data_device_manager_interface, 
-                        &_e_manager_interface, id, NULL);
+   struct wl_resource *res;
+
+   res = wl_resource_create(client, &wl_data_device_manager_interface, 1, id);
+   if (res)
+     wl_resource_set_implementation(res, &_e_manager_interface, NULL, NULL);
 }
 
 static void 
@@ -413,7 +416,7 @@ _e_comp_cb_surface_create(struct wl_client *client, struct wl_resource *resource
    if (!(comp = resource->data)) return;
 
    /* try to create a new surface */
-   if (!(es = e_surface_new(client, id)))
+   if (!(es = e_surface_new(client, resource, id)))
      {
         wl_resource_post_no_memory(resource);
         return;
@@ -527,11 +530,11 @@ _e_comp_data_device_cb_get(struct wl_client *client, struct wl_resource *resourc
 
    if (!(seat = wl_resource_get_user_data(seat_resource))) return;
 
-   res = wl_client_add_object(client, &wl_data_device_interface, 
-                              &_e_data_device_interface, id, seat);
+   res = wl_resource_create(client, &wl_data_device_interface, 1, id);
 
    wl_list_insert(&seat->drag_resources, wl_resource_get_link(res));
-   wl_resource_set_destructor(res, _e_comp_data_device_cb_unbind);
+   wl_resource_set_implementation(res, &_e_data_device_interface, 
+                                  seat, _e_comp_data_device_cb_unbind);
 }
 
 static void 
