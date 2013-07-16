@@ -97,8 +97,8 @@ e_modapi_init(E_Module *m)
 
    /* try to add this shell to the globals */
    if (!(global = 
-         wl_display_add_global(_e_comp->wl.display, &wl_shell_interface, 
-                               shell, _e_desktop_shell_cb_bind)))
+         wl_global_create(_e_comp->wl.display, &wl_shell_interface, 1, 
+                          shell, _e_desktop_shell_cb_bind)))
      {
         ERR("Could not add shell to globals: %m");
         goto err;
@@ -153,13 +153,15 @@ static void
 _e_desktop_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
 {
    E_Desktop_Shell *shell;
+   struct wl_resource *res;
 
    /* try to cast data to our shell */
    if (!(shell = data)) return;
 
-   /* try to add the shell to the client */
-   wl_client_add_object(client, &wl_shell_interface, 
-                        &_e_desktop_shell_interface, id, shell);
+   res = wl_resource_create(client, &wl_shell_interface, 1, id);
+   if (res)
+     wl_resource_set_implementation(res, &_e_desktop_shell_interface, 
+                                    shell, NULL);
 }
 
 static void 
@@ -200,11 +202,10 @@ _e_desktop_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resour
 
    /* setup shell surface interface */
    ess->wl.resource = 
-     wl_client_add_object(client, &wl_shell_surface_interface, 
-                          &_e_desktop_shell_surface_interface, id, ess);
-
-   wl_resource_set_destructor(ess->wl.resource, 
-                              _e_desktop_shell_shell_surface_cb_destroy);
+     wl_resource_create(client, &wl_shell_surface_interface, 1, id);
+   wl_resource_set_implementation(ess->wl.resource, 
+                                  &_e_desktop_shell_surface_interface, 
+                                  ess, _e_desktop_shell_shell_surface_cb_destroy);
 }
 
 static void 
