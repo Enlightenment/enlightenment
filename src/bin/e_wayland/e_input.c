@@ -60,8 +60,8 @@ e_input_init(E_Compositor *comp, E_Input *seat, const char *name)
    wl_signal_init(&seat->signals.selection);
    wl_signal_init(&seat->signals.destroy);
 
-   wl_display_add_global(comp->wl.display, &wl_seat_interface, seat, 
-                         _e_input_cb_bind);
+   wl_global_create(comp->wl.display, &wl_seat_interface, 2, 
+                    seat, _e_input_cb_bind);
 
    seat->name = strdup(name);
 
@@ -404,11 +404,10 @@ _e_input_cb_bind(struct wl_client *client, void *data, unsigned int version, uns
 
    if (!(seat = data)) return;
 
-   res = wl_client_add_object(client, &wl_seat_interface, 
-                              &_e_input_interface, id, data);
-
+   res = wl_resource_create(client, &wl_seat_interface, MIN(version, 2), id);
    wl_list_insert(&seat->resources, wl_resource_get_link(res));
-   wl_resource_set_destructor(res, _e_input_cb_unbind);
+   wl_resource_set_implementation(res, &_e_input_interface, data, 
+                                  _e_input_cb_unbind);
 
    if (seat->pointer)
      caps |= WL_SEAT_CAPABILITY_POINTER;
@@ -438,11 +437,11 @@ _e_input_cb_pointer_get(struct wl_client *client, struct wl_resource *resource, 
    if (!(seat = wl_resource_get_user_data(resource))) return;
    if (!seat->pointer) return;
 
-   res = wl_client_add_object(client, &wl_pointer_interface, 
-                              &_e_pointer_interface, id, seat->pointer);
-
+   res = wl_resource_create(client, &wl_pointer_interface, 
+                            wl_resource_get_version(resource), id);
    wl_list_insert(&seat->pointer->resources, wl_resource_get_link(res));
-   wl_resource_set_destructor(res, _e_input_cb_unbind);
+   wl_resource_set_implementation(res, &_e_pointer_interface, 
+                                  seat->pointer, _e_input_cb_unbind);
 
    if ((seat->pointer->focus) && 
        (wl_resource_get_client(seat->pointer->focus->wl.resource) == client))
@@ -465,10 +464,11 @@ _e_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *resource,
    if (!(seat = wl_resource_get_user_data(resource))) return;
    if (!seat->keyboard) return;
 
-   res = wl_client_add_object(client, &wl_keyboard_interface, NULL, id, seat);
+   res = wl_resource_create(client, &wl_keyboard_interface, 
+                            wl_resource_get_version(resource), id);
 
    wl_list_insert(&seat->keyboard->resources, wl_resource_get_link(res));
-   wl_resource_set_destructor(res, _e_input_cb_unbind);
+   wl_resource_set_implementation(res, NULL, seat, _e_input_cb_unbind);
 
    wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, 
                            seat->kbd_info.fd, seat->kbd_info.size);
