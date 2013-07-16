@@ -1,7 +1,7 @@
 #include "e.h"
 
 /* local function prototypes */
-static void _e_output_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
+static void _e_output_cb_bind(struct wl_client *client, void *data, unsigned int version, unsigned int id);
 static void _e_output_cb_unbind(struct wl_resource *resource);
 static void _e_output_cb_idle_repaint(void *data);
 
@@ -35,8 +35,8 @@ e_output_init(E_Output *output, E_Compositor *comp, Evas_Coord x, Evas_Coord y, 
 
    /* add this output to the registry */
    output->wl.global = 
-     wl_display_add_global(comp->wl.display, &wl_output_interface, 
-                           output, _e_output_cb_bind);
+     wl_global_create(comp->wl.display, &wl_output_interface, 2, output, 
+                      _e_output_cb_bind);
 }
 
 EAPI void 
@@ -55,7 +55,7 @@ e_output_shutdown(E_Output *output)
    comp = output->compositor;
    comp->output_pool &= ~(1 << output->id);
 
-   wl_display_remove_global(comp->wl.display, output->wl.global);
+   wl_global_destroy(output->wl.global);
 }
 
 EAPI void 
@@ -142,7 +142,7 @@ e_output_damage(E_Output *output)
 
 /* local functions */
 static void 
-_e_output_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
+_e_output_cb_bind(struct wl_client *client, void *data, unsigned int version, unsigned int id)
 {
    E_Output *output;
    E_Output_Mode *mode;
@@ -154,9 +154,9 @@ _e_output_cb_bind(struct wl_client *client, void *data, unsigned int version EIN
 
    /* add this output to the client */
    resource = 
-     wl_client_add_object(client, &wl_output_interface, NULL, id, output);
+     wl_resource_create(client, &wl_output_interface, MIN(version, 2), id);
    wl_list_insert(&output->wl.resources, wl_resource_get_link(resource));
-   wl_resource_set_destructor(resource, _e_output_cb_unbind);
+   wl_resource_set_implementation(resource, NULL, data, _e_output_cb_unbind);
 
    /* send out this output's geometry */
    wl_output_send_geometry(resource, output->x, output->y, 
