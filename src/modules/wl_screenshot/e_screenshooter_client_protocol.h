@@ -11,8 +11,23 @@ extern "C" {
 
 struct wl_client;
 struct wl_resource;
+struct screenshooter;
 
 extern const struct wl_interface screenshooter_interface;
+
+struct screenshooter_listener 
+{
+   /** done event */
+   void (*done)(void *data, struct screenshooter *screenshooter);
+};
+
+static inline int
+screenshooter_add_listener(struct screenshooter *screenshooter,
+			   const struct screenshooter_listener *listener, void *data)
+{
+	return wl_proxy_add_listener((struct wl_proxy *) screenshooter,
+				     (void (**)(void)) listener, data);
+}
 
 #define SCREENSHOOTER_SHOOT	0
 

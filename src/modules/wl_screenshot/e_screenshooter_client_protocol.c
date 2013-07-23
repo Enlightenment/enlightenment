@@ -14,9 +14,14 @@ static const struct wl_message screenshooter_requests[] = {
 	{ "shoot", "oo", types + 0 },
 };
 
+static const struct wl_message screenshooter_events[] = 
+{
+	{ "done", "", types + 0 },
+};
+
 WL_EXPORT const struct wl_interface screenshooter_interface = {
 	"screenshooter", 1,
 	ARRAY_LENGTH(screenshooter_requests), screenshooter_requests,
-	0, NULL,
+	ARRAY_LENGTH(screenshooter_events), screenshooter_events,
 };
 
