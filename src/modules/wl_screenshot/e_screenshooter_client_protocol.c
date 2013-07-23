@@ -21,7 +21,7 @@ static const struct wl_message screenshooter_events[] =
 
 WL_EXPORT const struct wl_interface screenshooter_interface = {
 	"screenshooter", 1,
-	ARRAY_LENGTH(screenshooter_requests), screenshooter_requests,
-	ARRAY_LENGTH(screenshooter_events), screenshooter_events,
+	1, screenshooter_requests,
+	1, screenshooter_events,
 };
 
