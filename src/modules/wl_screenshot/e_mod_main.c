@@ -1,5 +1,7 @@
 #include "e.h"
 #include <wayland-client.h>
+#include <Ecore_Wayland.h>
+#include <sys/mman.h>
 #include "e_screenshooter_client_protocol.h"
 
 typedef struct _Instance Instance;
@@ -16,9 +18,10 @@ static const char *_gc_label(const E_Gadcon_Client_Class *cc);
 static Evas_Object *_gc_icon(const E_Gadcon_Client_Class *cc, Evas *evas);
 static const char *_gc_id_new(const E_Gadcon_Client_Class *cc);
 static void _cb_btn_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event);
-static void _cb_handle_global(struct wl_display *disp, unsigned int id, const char *interface, unsigned int version __UNUSED__, void *data);
+static void _cb_handle_global(void *data, struct wl_registry *registry, unsigned int name, const char *interface, unsigned int version);
+static void _cb_handle_global_remove(void *data __UNUSED__, struct wl_registry *registry __UNUSED__, unsigned int name __UNUSED__);
 static struct wl_buffer *_create_shm_buffer(struct wl_shm *_shm, int width, int height, void **data_out);
-static void _cb_handle_geometry(void *data, struct wl_output *wl_output, int x, int y, int w, int h, int subpixel, const char *make, const char *model);
+static void _cb_handle_geometry(void *data __UNUSED__, struct wl_output *wl_output __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__, int transform __UNUSED__);
 static void _cb_handle_mode(void *data, struct wl_output *wl_output, unsigned int flags, int w, int h, int refresh);
 static void _save_png(int w, int h, void *data);
 static Eina_Bool _cb_timer(void *data __UNUSED__);
@@ -39,8 +42,14 @@ static const struct wl_output_listener _output_listener =
    _cb_handle_mode
 };
 
+static const struct wl_registry_listener _registry_listener = 
+{
+   _cb_handle_global,
+   _cb_handle_global_remove
+};
+
 static E_Module *_mod = NULL;
-static E_Screenshooter *_shooter = NULL;
+static struct screenshooter *_shooter = NULL;
 static struct wl_output *_output;
 static int ow = 0, oh = 0;
 static Ecore_Timer *_timer = NULL;
@@ -51,28 +60,36 @@ EAPI void *
 e_modapi_init(E_Module *m)
 {
    struct wl_display *disp;
+   struct wl_registry *reg;
 
-   /* if (!ecore_wl_init(NULL)) return NULL; */
+   if (!ecore_wl_init(NULL)) return NULL;
 
-   disp = ecore_wl_display_get();
+   if (!(disp = ecore_wl_display_get()))
+     {
+        ecore_wl_shutdown();
+        return NULL;
+     }
+
+   if (!(reg = ecore_wl_registry_get()))
+     {
+        ecore_wl_shutdown();
+        return NULL;
+     }
 
    _mod = m;
    e_gadcon_provider_register(&_gc);
 
-   /* e_module_delayed_set(m, 1); */
-   /* e_module_priority_set(m, 1000); */
-
-   wl_display_add_global_listener(disp, _cb_handle_global, NULL);
+   wl_registry_add_listener(reg, &_registry_listener, NULL);
 
    return m;
 }
 
 EAPI int 
-e_modapi_shutdown(E_Module *m)
+e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    _mod = NULL;
    e_gadcon_provider_unregister(&_gc);
-   /* ecore_wl_shutdown(); */
+   ecore_wl_shutdown();
    return 1;
 }
 
@@ -121,7 +138,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void 
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 {
    Instance *inst;
    Evas_Coord mw, mh;
@@ -138,13 +155,13 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *cc)
+_gc_label(const E_Gadcon_Client_Class *cc __UNUSED__)
 {
    return _("Screenshooter");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *cc, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *cc __UNUSED__, Evas *evas)
 {
    Evas_Object *o;
    char buf[PATH_MAX];
@@ -156,18 +173,16 @@ _gc_icon(const E_Gadcon_Client_Class *cc, Evas *evas)
 }
 
 static const char *
-_gc_id_new(const E_Gadcon_Client_Class *cc)
+_gc_id_new(const E_Gadcon_Client_Class *cc __UNUSED__)
 {
    return _gc.name;
 }
 
 static void 
-_cb_btn_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_cb_btn_down(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
-   Instance *inst;
    Evas_Event_Mouse_Down *ev;
 
-   inst = data;
    ev = event;
    if (ev->button == 1)
      {
@@ -177,21 +192,34 @@ _cb_btn_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, voi
 }
 
 static void 
-_cb_handle_global(struct wl_display *disp, unsigned int id, const char *interface, unsigned int version __UNUSED__, void *data)
+_cb_handle_global(void *data __UNUSED__, struct wl_registry *registry, unsigned int name, const char *interface, unsigned int version __UNUSED__)
 {
    if (!strcmp(interface, "screenshooter"))
-     _shooter = wl_display_bind(disp, id, &screenshooter_interface);
+     {
+        _shooter = wl_registry_bind(registry, name, &screenshooter_interface, 1);
+        /* FIXME: When we handle shots from multiple outputs, then we will 
+         * need to setup the listener here */
+        /* screenshooter_add_listener(_shooter, &, _shooter); */
+     }
    else if (!strcmp(interface, "wl_output"))
      {
-        _output = wl_display_bind(disp, id, &wl_output_interface);
+        _output = wl_registry_bind(registry, name, &wl_output_interface, 1);
         wl_output_add_listener(_output, &_output_listener, NULL);
      }
+
+}
+
+static void 
+_cb_handle_global_remove(void *data __UNUSED__, struct wl_registry *registry __UNUSED__, unsigned int name __UNUSED__)
+{
+   /* no-op */
 }
 
 static struct wl_buffer *
 _create_shm_buffer(struct wl_shm *_shm, int width, int height, void **data_out)
 {
    char filename[] = "/tmp/wayland-shm-XXXXXX";
+   struct wl_shm_pool *pool;
    struct wl_buffer *buffer;
    int fd, size, stride;
    void *data;
@@ -222,10 +250,13 @@ _create_shm_buffer(struct wl_shm *_shm, int width, int height, void **data_out)
         return NULL;
      }
 
-   buffer = wl_shm_create_buffer(_shm, fd, width, height, stride,
-                                 WL_SHM_FORMAT_ARGB8888);
-
+   pool = wl_shm_create_pool(_shm, fd, size);
    close(fd);
+
+   buffer = 
+     wl_shm_pool_create_buffer(pool, 0, width, height, stride,
+                               WL_SHM_FORMAT_ARGB8888);
+   wl_shm_pool_destroy(pool);
 
    *data_out = data;
 
@@ -233,13 +264,13 @@ _create_shm_buffer(struct wl_shm *_shm, int width, int height, void **data_out)
 }
 
 static void 
-_cb_handle_geometry(void *data, struct wl_output *wl_output, int x, int y, int w, int h, int subpixel, const char *make, const char *model)
+_cb_handle_geometry(void *data __UNUSED__, struct wl_output *wl_output __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__, int transform __UNUSED__)
 {
-
+   /* no-op */
 }
 
 static void 
-_cb_handle_mode(void *data, struct wl_output *wl_output, unsigned int flags, int w, int h, int refresh)
+_cb_handle_mode(void *data __UNUSED__, struct wl_output *wl_output __UNUSED__, unsigned int flags __UNUSED__, int w, int h, int refresh __UNUSED__)
 {
    if (ow == 0) ow = w;
    if (oh == 0) oh = h;
@@ -282,12 +313,12 @@ _cb_timer(void *data __UNUSED__)
 
    if (!_shooter) return EINA_FALSE;
 
+   /* FIXME: ow and oh should probably be the size of all outputs */
    buffer = _create_shm_buffer(ecore_wl_shm_get(), ow, oh, &d);
    screenshooter_shoot(_shooter, _output, buffer);
 
    ecore_wl_sync();
 
-   printf("Saving Png\n");
    _save_png(ow, oh, d);
 
    return EINA_FALSE;
