@@ -251,8 +251,8 @@ if USE_MODULE_WL_DESKTOP_SHELL
 include Makefile_wl_desktop_shell.am
 endif
 
-#if HAVE_WAYLAND_SCREENSHOT
-#include Makefile_wl_screenshot.am
-#endif
+if USE_MODULE_WL_SCREENSHOT
+include Makefile_wl_screenshot.am
+endif
 
 install-data-hook: $(INSTALL_DATA_HOOKS)
