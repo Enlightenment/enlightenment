@@ -2,7 +2,7 @@
 #ifdef HAVE_WAYLAND_CLIENTS
 #include "e_comp_wl.h"
 #endif
-
+ 
 #define ACTION_TIMEOUT 30.0
 #define OVER_FLOW 1
 //#define SHAPE_DEBUG
