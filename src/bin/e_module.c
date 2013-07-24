@@ -33,6 +33,8 @@ static Eina_Hash *_e_module_path_hash = NULL;
 EAPI int E_EVENT_MODULE_UPDATE = 0;
 EAPI int E_EVENT_MODULE_INIT_END = 0;
 
+static Eina_Stringshare *mod_src_path = NULL;
+
 static Eina_Bool
 _module_filter_cb(void *d EINA_UNUSED, Eio_File *ls EINA_UNUSED, const Eina_File_Direct_Info *info)
 {
@@ -139,21 +141,33 @@ e_module_init(void)
 {
    Eina_List *module_paths;
    E_Path_Dir *epd;
+   Eio_Monitor *mon;
+   Eio_File *ls;
 
+   if (_e_modules_hash) return 1;
    E_EVENT_MODULE_UPDATE = ecore_event_type_new();
    E_EVENT_MODULE_INIT_END = ecore_event_type_new();
    _e_module_path_hash = eina_hash_string_superfast_new((Eina_Free_Cb)eina_stringshare_del);
    _e_modules_hash = eina_hash_string_superfast_new(NULL);
 
+   if (!mod_src_path)
+     mod_src_path = eina_stringshare_add(getenv("E_MODULE_SRC_PATH"));
+
    E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_DIRECTORY_CREATED, _module_monitor_dir_create, NULL);
    E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_DIRECTORY_DELETED, _module_monitor_dir_del, NULL);
    E_LIST_HANDLER_APPEND(handlers, EIO_MONITOR_ERROR, _module_monitor_error, NULL);
 
+   if (mod_src_path)
+     {
+        mon = eio_monitor_stringshared_add(mod_src_path);
+        ls = eio_file_direct_ls(mod_src_path, _module_filter_cb, _module_main_cb, _module_done_cb, _module_error_cb, NULL);
+        _e_module_path_monitors = eina_list_append(_e_module_path_monitors, mon);
+        _e_module_path_lists = eina_list_append(_e_module_path_lists, ls);
+        return 1;
+     }
    module_paths = e_path_dir_list_get(path_modules);
    EINA_LIST_FREE(module_paths, epd)
      {
-        Eio_Monitor *mon;
-        Eio_File *ls;
         void *data = NULL;
 
         mon = eio_monitor_stringshared_add(epd->dir);
@@ -242,6 +256,7 @@ e_module_all_load(void)
              E_Module *m;
 
              if (!em->name) continue;
+             if (eina_hash_find(_e_modules_hash, em->name)) continue;
 
              e_util_env_set("E_MODULE_LOAD", em->name);
              snprintf(buf, sizeof(buf), _("Loading Module: %s"), em->name);
@@ -285,15 +300,23 @@ e_module_new(const char *name)
    m = E_OBJECT_ALLOC(E_Module, E_MODULE_TYPE, _e_module_free);
    if (name[0] != '/')
      {
-        Eina_Stringshare *path;
+        Eina_Stringshare *path = NULL;
 
-        path = eina_hash_find(_e_module_path_hash, name);
+        if (!mod_src_path)
+          mod_src_path = eina_stringshare_add(getenv("E_MODULE_SRC_PATH"));
+        if (mod_src_path)
+          {
+             snprintf(buf, sizeof(buf), "%s/%s/.libs/module.so", mod_src_path, name);
+             modpath = eina_stringshare_add(buf);
+          }
+        if (!modpath)
+          path = eina_hash_find(_e_module_path_hash, name);
         if (path)
           {
              snprintf(buf, sizeof(buf), "%s/%s/module.so", path, MODULE_ARCH);
              modpath = eina_stringshare_add(buf);
           }
-        else
+        else if (!modpath)
           {
              snprintf(buf, sizeof(buf), "%s/%s/module.so", name, MODULE_ARCH);
              modpath = e_path_find(path_modules, buf);
@@ -745,7 +768,7 @@ _e_module_cb_dialog_disable(void *data, E_Dialog *dia)
 static Eina_Bool
 _e_module_cb_idler(void *data __UNUSED__)
 {
-   if (_e_modules_delayed)
+   while (_e_modules_delayed)
      {
         const char *name;
         E_Module *m;
@@ -753,6 +776,11 @@ _e_module_cb_idler(void *data __UNUSED__)
         name = eina_list_data_get(_e_modules_delayed);
         _e_modules_delayed =
           eina_list_remove_list(_e_modules_delayed, _e_modules_delayed);
+        if (eina_hash_find(_e_modules_hash, name))
+          {
+             eina_stringshare_del(name);
+             break;
+          }
         m = NULL;
         if (name) m = e_module_new(name);
         if (m)
@@ -765,6 +793,7 @@ _e_module_cb_idler(void *data __UNUSED__)
              e_module_enable(m);
           }
         eina_stringshare_del(name);
+        break;
      }
    if (_e_modules_delayed)
      {
