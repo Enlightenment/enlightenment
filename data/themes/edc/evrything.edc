@@ -393,6 +393,7 @@ group { name: "e/modules/everything/list";
       part { name: "bar_base"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
+            fixed: 0 1;
             rel1.relative: 0.0 1.0;
             align: 0.5 1.0;
             min: 32 28;
