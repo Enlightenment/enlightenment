@@ -1,4 +1,8 @@
-#include "e.h"
+# ifdef HAVE_CONFIG_H
+#  include "config.h"
+# endif
+
+#include <Eet.h>
 
 typedef struct _E_Static_Grab        E_Static_Grab;
 typedef struct _E_Static_Grab_Module E_Static_Grab_Module;

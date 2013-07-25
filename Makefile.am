@@ -1,12 +1,18 @@
-SUBDIRS = src data doc config
-
 ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
+AUTOMAKE_OPTIONS = subdir-objects
+
+SUBDIRS = .
 
 if HAVE_PO
 
 SUBDIRS += po
 
 endif
+
+CLEANFILES =
+DISTCLEANFILES =
+INSTALL_DATA_HOOKS =
+PHONIES =
 
 MAINTAINERCLEANFILES = \
 ABOUT-NLS* \
@@ -25,52 +31,45 @@ ltmain.sh \
 missing \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
 $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
-$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2 \
-m4/libtool.m4 \
-m4/lt~obsolete.m4 \
-m4/ltoptions.m4 \
-m4/ltsugar.m4 \
-m4/ltversion.m4 \
-m4/codeset.m4 \
-m4/gettext.m4 \
-m4/glibc21.m4 \
-m4/iconv.m4 \
-m4/intdiv0.m4 \
-m4/inttypes_h.m4 \
-m4/inttypes.m4 \
-m4/inttypes-pri.m4 \
-m4/isc-posix.m4 \
-m4/lcmessage.m4 \
-m4/lib-ld.m4 \
-m4/lib-link.m4 \
-m4/lib-prefix.m4 \
-m4/nls.m4 \
-m4/po.m4 \
-m4/progtest.m4 \
-m4/stdint_h.m4 \
-m4/uintmax_t.m4 \
-m4/ulonglong.m4
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2
+
+EXTRA_DIST = \
+config.rpath \
+README \
+AUTHORS \
+COPYING \
+enlightenment.spec.in \
+enlightenment.spec \
+enlightenment.pc \
+pkgbuild/PKGBUILD \
+pkgbuild/enlightenment.install
+
+EDJE_CC = $(EDJE_CC_$(V))
+EDJE_CC_ = $(EDJE_CC_$(AM_DEFAULT_VERBOSITY))
+EDJE_CC_0 = @echo "  EDJE_CC " $@; @edje_cc@
+EDJE_CC_1 = @edje_cc@
+
+EDJE_FLAGS_VERBOSE_ = $(EDJE_FLAGS_VERBOSE_$(AM_DEFAULT_VERBOSITY))
+EDJE_FLAGS_VERBOSE_0 = 
+EDJE_FLAGS_VERBOSE_1 = -v
+EDJE_FLAGS = $(EDJE_FLAGS_VERBOSE_$(V)) \
+@EDJE_DEF@
+
+include m4/Makefile.mk
 
 if HAVE_PO
 
-MAINTAINERCLEANFILES += \
-po/boldquot.sed \
-po/en@boldquot.header \
-po/en@quot.header \
-po/insert-header.sin \
-po/Makefile.in.in \
-po/Makevars.template \
-po/quot.sed \
-po/remove-potcdate.sin \
-po/Rules-quot
+include po/Makefile.mk
 
 endif
 
 DISTCHECK_CONFIGURE_FLAGS = --disable-systemd
 
-EXTRA_DIST = config.rpath  README AUTHORS COPYING \
-             enlightenment.spec.in enlightenment.spec enlightenment.pc \
-             pkgbuild/PKGBUILD pkgbuild/enlightenment.install
+include config/Makefile.mk
+
+include data/Makefile.mk
+
+include src/Makefile.mk
 
 filesdir = $(datadir)/enlightenment/
 files_DATA = AUTHORS COPYING 
@@ -78,8 +77,15 @@ files_DATA = AUTHORS COPYING
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = enlightenment.pc
 
-.PHONY: doc
+include doc/Makefile.mk
 
-doc:
-	@echo "entering doc/"
-	$(MAKE) -C doc doc
+.PHONY: $(PHONIES)
+
+clean-local: doc-clean
+	rm -rf config/*.cfg config/*~
+	rm -rf config/standard/*.cfg config/standard/*~
+	rm -rf config/mobile/*.cfg config/mobile/*~
+	rm -rf config/default/*.cfg config/default/*~
+	rm -f data/themes/*.edj
+
+install-data-hook: $(INSTALL_DATA_HOOKS)

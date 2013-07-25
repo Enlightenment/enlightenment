@@ -1,0 +1,17 @@
+startdir = $(MDIR)/start
+start_DATA = src/modules/start/e-module-start.edj \
+	     src/modules/start/module.desktop
+
+EXTRA_DIST += $(start_DATA)
+
+startpkgdir = $(MDIR)/start/$(MODULE_ARCH)
+startpkg_LTLIBRARIES = src/modules/start/module.la
+
+src_modules_start_module_la_LIBADD = $(MOD_LIBS)
+src_modules_start_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
+src_modules_start_module_la_LDFLAGS = $(MOD_LDFLAGS)
+src_modules_start_module_la_SOURCES = src/modules/start/e_mod_main.c
+
+PHONIES += start install-start
+start: $(startpkg_LTLIBRARIES) $(start_DATA)
+install-start: install-startDATA install-startpkgLTLIBRARIES
