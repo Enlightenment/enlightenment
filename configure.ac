@@ -2,11 +2,11 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [0])
 m4_define([v_min], [18])
-m4_define([v_mic], [0])
-dnl m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))dnl
+m4_define([v_mic], [99])
+m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))dnl
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
-m4_define([relname], [0.17.99])
+m4_define([relname], [0.18.99])
 ##--   When doing snapshots - change soname. remove dnl on below line
 m4_define([relname], [ver-pre-01])
 dnl m4_define([v_rel], [-release relname])
@@ -24,7 +24,6 @@ AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
-AC_ISC_POSIX
 
 AC_CONFIG_HEADERS([config.h])
 AH_TOP([
@@ -36,14 +35,13 @@ AH_BOTTOM([
 ])
 
 AM_INIT_AUTOMAKE([1.11 dist-bzip2 -Wno-portability])
-m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
+AM_SILENT_RULES([yes])
 
-AC_GNU_SOURCE
+AC_USE_SYSTEM_EXTENSIONS
 AC_PROG_MKDIR_P
 AC_C_BIGENDIAN
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
-AC_C_CONST
 AC_FUNC_ALLOCA
 AC_C___ATTRIBUTE__
 
@@ -59,13 +57,13 @@ AC_DEFINE_UNQUOTED(VMIC, [v_mic], [Micro version])
 AC_DEFINE_UNQUOTED(VREV, [v_rev], [Revison])
 version_info="lt_cur:lt_rev:lt_age"
 release_info="v_rel"
-AC_SUBST(version_info)
-AC_SUBST(release_info)
+AC_SUBST([version_info])
+AC_SUBST([release_info])
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
 release=relname
-AC_SUBST(release)
+AC_SUBST([release])
 
 PKG_PROG_PKG_CONFIG
 
@@ -93,7 +91,7 @@ extern char **environ;
 AC_DEFINE(HAVE_ENVIRON, 1, [Have environ var])
     ])
 
-efl_version="1.8.0"
+efl_version="1.8.99"
 AC_SUBST(efl_version)
 
 AC_CHECK_HEADERS([sys/timerfd.h sys/ptrace.h arpa/inet.h netinet/in.h])
@@ -112,11 +110,11 @@ if test "x$res" = "xno"; then
   fi
 fi
 
-AC_SUBST(fnmatch_libs)
+AC_SUBST([fnmatch_libs])
 
 have_pam=no
 AC_ARG_ENABLE(pam,
-  AC_HELP_STRING([--enable-pam], [enable PAM support @<:@default=detect@:>@]),
+  AS_HELP_STRING([--enable-pam], [enable PAM support @<:@default=detect@:>@]),
   [want_pam=$enableval],
   [want_pam=auto]
 )
@@ -131,11 +129,11 @@ if test "x$want_pam" != "xno" ; then
 fi
 
 dnl AC_E_CHECK_PKG(VALGRIND, [valgrind >= 2.4.0], [], [:])
-AC_SUBST(VALGRIND_CFLAGS)
-AC_SUBST(VALGRIND_LIBS)
+AC_SUBST([VALGRIND_CFLAGS])
+AC_SUBST([VALGRIND_LIBS])
 
 MODULE_ARCH="$host_os-$host_cpu-relname"
-AC_SUBST(MODULE_ARCH)
+AC_SUBST([MODULE_ARCH])
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
 if test "x${bindir}" = 'xNONE'; then
@@ -147,7 +145,7 @@ if test "x${bindir}" = 'xNONE'; then
 else
   PACKAGE_BIN_DIR="${bindir}"
 fi
-AC_SUBST(PACKAGE_BIN_DIR)
+AC_SUBST([PACKAGE_BIN_DIR])
 
 if test "x${libdir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
@@ -158,7 +156,7 @@ if test "x${libdir}" = 'xNONE'; then
 else
   PACKAGE_LIB_DIR="${libdir}"
 fi
-AC_SUBST(PACKAGE_LIB_DIR)
+AC_SUBST([PACKAGE_LIB_DIR])
 
 if test "x${prefix}" = "xNONE"; then
   PACKAGE_DATA_DIR="${ac_default_prefix}/share/${PACKAGE}"
@@ -169,15 +167,15 @@ else
   LOCALE_DIR="${prefix}/share/locale"
   PACKAGE_SYSCONF_DIR="${sysconfdir}"
 fi
-AC_SUBST(PACKAGE_DATA_DIR)
-AC_SUBST(LOCALE_DIR)
-AC_SUBST(PACKAGE_SYSCONF_DIR)
+AC_SUBST([PACKAGE_DATA_DIR])
+AC_SUBST([LOCALE_DIR])
+AC_SUBST([PACKAGE_SYSCONF_DIR])
 
 #######################################
 ## Simple X11 build/link
 
 AC_ARG_ENABLE(simple-x11,
-  AC_HELP_STRING([--enable-simple-x11], [enable simple x11 linking]),
+  AS_HELP_STRING([--enable-simple-x11], [enable simple x11 linking]),
   [ want_evas_simple_x11=$enableval ]
 )
     
@@ -198,8 +196,8 @@ dnl   ],[
 dnl     AC_MSG_ERROR([Cannot find X headers and libraries.])
 dnl   ]
 dnl )
-dnl AC_SUBST(x_cflags)
-dnl AC_SUBST(x_libs)
+dnl AC_SUBST([x_cflags])
+dnl AC_SUBST([x_libs])
 
 cf_cflags=""
 cf_libs=""
@@ -213,8 +211,8 @@ AC_CHECK_HEADERS(CFBase.h,
   ]
 )
 CPPFLAGS="${PCPPFLAGS}"
-AC_SUBST(cf_cflags)
-AC_SUBST(cf_libs)
+AC_SUBST([cf_cflags])
+AC_SUBST([cf_libs])
 
 PKG_CHECK_MODULES([BLUEZ], [bluez],
 	[have_bluetooth="yes"],
@@ -296,7 +294,7 @@ dnl fi
 #ALL_LINGUAS="bg de eo es fi fr ja pt ru zh_CN hu sl it cs da sk sv nb nl zh_TW"
 # a lot of .po's are broken
 ALL_LINGUAS="bg ca cs da de el eo es fi fr fr_CH he hu it ja ko nb nl pl pt_BR ru sk sl sv tr zh_CN zh_TW"
-AC_SUBST(ALL_LINGUAS)
+AC_SUBST([ALL_LINGUAS])
 
 m4_ifdef([AM_GNU_GETTEXT_VERSION], [
 AM_GNU_GETTEXT_VERSION([0.17])
@@ -315,7 +313,7 @@ have_po="yes"
 have_po="no"
 ])
 ])
-AC_SUBST(LTLIBINTL)
+AC_SUBST([LTLIBINTL])
 if test "x$LIBINTL" = "x"; then
   LIBINTL="$INTLLIBS"
 fi
@@ -327,7 +325,7 @@ fi
 AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
 
 AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
-AC_SUBST(dlopen_libs)
+AC_SUBST([dlopen_libs])
 
 AC_MSG_CHECKING([whether to install sysactions.conf])
 AC_ARG_ENABLE([install-sysactions],
@@ -480,10 +478,7 @@ PKG_CHECK_MODULES(E_THUMB, [
 
 PKG_CHECK_MODULES(E_GRABBER, [
   eina >= ${efl_version}
-  ecore >= ${efl_version}
   eet >= ${efl_version}
-  efreet >= ${efl_version}
-  ecore-x >= ${efl_version}
 ])
 
 efm_requires="\
@@ -591,10 +586,10 @@ e_libs="$E_LIBS $LIBINTL $fnmatch_libs $execinfo_libs"
 e_cflags="-DUSE_E_CONFIG_H $E_CFLAGS"
 e_configflags="-DUSE_E_CONFIG_H"
 
-AC_SUBST(e_libs)
-AC_SUBST(e_cflags)
-AC_SUBST(e_configflags)
-AC_SUBST(requirements_e)
+AC_SUBST([e_libs])
+AC_SUBST([e_cflags])
+AC_SUBST([e_configflags])
+AC_SUBST([requirements_e])
 
 PKG_CHECK_EXISTS([xkeyboard-config],[
   xkb_base=`$PKG_CONFIG --variable=xkb_base xkeyboard-config 2>/dev/null`
@@ -610,7 +605,7 @@ AC_ARG_WITH(profile,
 AC_MSG_NOTICE([Enlightenment build profile set to $profile])
 EDJE_DEF="-DLOWRES_PDA=1 -DMEDIUMRES_PDA=2 -DHIRES_PDA=3 -DSLOW_PC=4 -DMEDIUM_PC=5 -DFAST_PC=6"
 EDJE_DEF=$EDJE_DEF" -DE18_PROFILE"=$profile
-AC_SUBST(EDJE_DEF)
+AC_SUBST([EDJE_DEF])
 
 AC_ARG_WITH(edje-cc,
 [  --with-edje-cc=PATH              specify a specific path to edje_cc],
@@ -621,7 +616,7 @@ AC_ARG_WITH(edje-cc,
 ],[
   edje_cc=$(pkg-config --variable=prefix edje)/bin/edje_cc
 ])
-AC_SUBST(edje_cc)
+AC_SUBST([edje_cc])
 
 PKG_CHECK_MODULES(EET, [eet >= ${efl_version}])
 AC_ARG_WITH(eet-eet,
@@ -633,7 +628,7 @@ AC_ARG_WITH(eet-eet,
 ],[
   eet_eet=$(pkg-config --variable=prefix eet)/bin/eet
 ])
-AC_SUBST(eet_eet)
+AC_SUBST([eet_eet])
 
 AC_DEFINE(E_INTERNAL, 1, "This define can be used to wrap internal E stuff, as config.h isn't exported")
 
@@ -654,7 +649,7 @@ case "$host_os" in
   ;;
 esac
 
-AC_SUBST(BATTERY_LDFLAGS)
+AC_SUBST([BATTERY_LDFLAGS])
 AM_CONDITIONAL([HAVE_OPENBSD], [test "x${have_openbsd}" = "xyes"])
 
 AM_CONDITIONAL(HAVE_TEMPERATURE, false)
@@ -671,7 +666,7 @@ define([CHECK_MODULE_MUSIC_CONTROL],
 
 ##have_exchange=no
 ##AC_ARG_ENABLE(exchange,
-##  AC_HELP_STRING([--disable-exchange], [disable Exchange support @<:@default=detect@:>@]),
+##  AS_HELP_STRING([--disable-exchange], [disable Exchange support @<:@default=detect@:>@]),
 ##  [want_exchange=$enableval],
 ##  [want_exchange=auto]
 ##)
@@ -690,7 +685,7 @@ AM_CONDITIONAL(HAVE_EXCHANGE, false)
 have_enotify=no
 AM_CONDITIONAL([HAVE_ENOTIFY], [false])
 AC_ARG_ENABLE([enotify],
-  AC_HELP_STRING([--disable-enotify], [disable Enotify support @<:@default=detect@:>@]),
+  AS_HELP_STRING([--disable-enotify], [disable Enotify support @<:@default=detect@:>@]),
   [e_cv_want_enotify=$enableval],
   AC_CACHE_VAL([e_cv_want_enotify], [e_cv_want_enotify=yes])
 )
@@ -718,6 +713,7 @@ define([CHECK_MODULE_NOTIFICATION],
   fi
 ])
 
+
 AM_CONDITIONAL(HAVE_ALSA, false)
 define([CHECK_MODULE_MIXER],
 [
@@ -743,8 +739,8 @@ define([CHECK_MODULE_MIXER],
   fi
 ])
 
-AC_SUBST(SOUND_CFLAGS)
-AC_SUBST(SOUND_LIBS)
+AC_SUBST([SOUND_CFLAGS])
+AC_SUBST([SOUND_LIBS])
 
 AM_CONDITIONAL(HAVE_ECONNMAN, false)
 AM_CONDITIONAL(HAVE_DUMMY, false)
@@ -753,8 +749,8 @@ define([CHECK_MODULE_CONNMAN],
   AC_E_CHECK_PKG(ECONNMAN, [ eldbus >= $efl_version ], [], [CONNMAN=false])
 dnl  AC_E_CHECK_PKG(DUMMY, [ connman >= 1.0 ], [], [CONNMAN=false])
 ])
-AC_SUBST(ECONNMAN_CFLAGS)
-AC_SUBST(ECONNMAN_LIBS)
+AC_SUBST([ECONNMAN_CFLAGS])
+AC_SUBST([ECONNMAN_LIBS])
 
 AM_CONDITIONAL(HAVE_BLUEZ4, false)
 AM_CONDITIONAL(HAVE_DUMMY, false)
@@ -762,8 +758,8 @@ define([CHECK_MODULE_BLUEZ4],
 [
   AC_E_CHECK_PKG(BLUEZ4, [ eldbus ],)
 ])
-AC_SUBST(EBLUEZ4_CFLAGS)
-AC_SUBST(EBLUEZ4_LIBS)
+AC_SUBST([EBLUEZ4_CFLAGS])
+AC_SUBST([EBLUEZ4_LIBS])
 
 have_wayland_clients=no
 AC_ARG_ENABLE([wayland-clients],
@@ -917,10 +913,10 @@ case "$host_os" in
       fi
       ;;
 esac
-AC_SUBST(HALT)
-AC_SUBST(REBOOT)
-AC_SUBST(SUSPEND)
-AC_SUBST(HIBERNATE)
+AC_SUBST([HALT])
+AC_SUBST([REBOOT])
+AC_SUBST([SUSPEND])
+AC_SUBST([HIBERNATE])
 
 m4_ifdef([v_mic],
    [
@@ -939,11 +935,7 @@ AC_OUTPUT([
 Makefile
 enlightenment.spec
 enlightenment.pc
-src/Makefile
-src/bin/Makefile
 src/bin/e_fm_shared_types.h
-src/bin/e_fm/Makefile
-src/modules/Makefile
 src/modules/ibar/module.desktop
 src/modules/clock/module.desktop
 src/modules/pager/module.desktop
@@ -1005,28 +997,11 @@ src/modules/music-control/module.desktop
 src/modules/contact/module.desktop
 src/modules/wl_desktop_shell/module.desktop
 src/modules/wl_screenshot/module.desktop
-data/Makefile
-data/images/Makefile
-data/flags/Makefile
-data/favorites/Makefile
-data/desktop/Makefile
-data/input_methods/Makefile
-data/xsession/Makefile
 data/xsession/enlightenment.desktop
-data/tools/Makefile
-data/etc/Makefile
 data/etc/sysactions.conf
-data/icons/Makefile
-data/backgrounds/Makefile
-data/units/Makefile
 data/units/e18.service
-doc/Makefile
 doc/Doxyfile
 doc/e.dox
-config/Makefile
-config/default/Makefile
-config/standard/Makefile
-config/mobile/Makefile
 $po_makefile_in
 ])
 

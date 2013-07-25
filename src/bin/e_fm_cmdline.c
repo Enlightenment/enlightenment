@@ -2,7 +2,15 @@
 #  include "config.h"
 # endif
 
-#include "e.h"
+#ifdef __linux__
+# include <features.h>
+#endif
+#include <unistd.h>
+#include <Ecore.h>
+#include <Ecore_Getopt.h>
+#include <Ecore_File.h>
+#include <Efreet.h>
+#include <Eldbus.h>
 
 static Eldbus_Connection *conn = NULL;
 static int retval = EXIT_SUCCESS;
@@ -16,7 +24,7 @@ fm_open_reply(void *data __UNUSED__, const Eldbus_Message *msg,
    if (eldbus_message_error_get(msg, &name, &txt))
      {
         retval = EXIT_FAILURE;
-        ERR("%s: %s", name, txt);
+        EINA_LOG_ERR("%s: %s", name, txt);
      }
 
    pending--;
@@ -44,7 +52,7 @@ fm_open(const char *path)
         Efreet_Uri *uri = efreet_uri_decode(path);
         if ((!uri) || (!uri->protocol) || (strcmp(uri->protocol, "file") != 0))
           {
-             ERR("Invalid URI '%s'", path);
+             EINA_LOG_ERR("Invalid URI '%s'", path);
              ecore_idler_add(fm_error_quit_last, NULL);
              if (uri)
                efreet_uri_free(uri);
@@ -59,7 +67,7 @@ fm_open(const char *path)
         char buf[PATH_MAX];
         if (!getcwd(buf, sizeof(buf)))
           {
-             ERR("Could not get current working directory: %s", strerror(errno));
+             EINA_LOG_ERR("Could not get current working directory: %s", strerror(errno));
              ecore_idler_add(fm_error_quit_last, NULL);
              return;
           }
@@ -73,10 +81,10 @@ fm_open(const char *path)
           }
      }
 
-   DBG("'%s' -> '%s'", path, p);
+   EINA_LOG_DBG("'%s' -> '%s'", path, p);
    if ((!p) || (p[0] == '\0'))
      {
-        ERR("Could not get path '%s'", path);
+        EINA_LOG_ERR("Could not get path '%s'", path);
         ecore_idler_add(fm_error_quit_last, NULL);
         free(p);
         return;
@@ -93,7 +101,7 @@ fm_open(const char *path)
                                        method);
    if (!msg)
      {
-        ERR("Could not create DBus Message");
+        EINA_LOG_ERR("Could not create DBus Message");
         ecore_idler_add(fm_error_quit_last, NULL);
         free(p);
         return;
@@ -103,7 +111,7 @@ fm_open(const char *path)
 
    if (!eldbus_connection_send(conn, msg, fm_open_reply, NULL, -1))
      {
-        ERR("Could not send DBus Message");
+        EINA_LOG_ERR("Could not send DBus Message");
         eldbus_message_unref(msg);
         ecore_idler_add(fm_error_quit_last, NULL);
      }
@@ -144,7 +152,7 @@ main(int argc, char *argv[])
    args = ecore_getopt_parse(&options, values, argc, argv);
    if (args < 0)
      {
-        ERR("Could not parse command line options.");
+        EINA_LOG_ERR("Could not parse command line options.");
         return EXIT_FAILURE;
      }
 
@@ -157,7 +165,7 @@ main(int argc, char *argv[])
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
    if (!conn)
      {
-        ERR("Could not DBus SESSION bus.");
+        EINA_LOG_ERR("Could not DBus SESSION bus.");
         retval = EXIT_FAILURE;
         goto end;
      }
