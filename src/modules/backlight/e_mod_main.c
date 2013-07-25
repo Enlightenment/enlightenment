@@ -164,7 +164,7 @@ _backlight_settings_cb(void *d1, void *d2 __UNUSED__)
 {
    Instance *inst = d1;
    e_configure_registry_call("screen/power_management",
-                             inst->gcc->gadcon->zone->container, NULL);
+                             inst->gcc->gadcon->zone->comp, NULL);
    _backlight_popup_free(inst);
 }
 
@@ -185,6 +185,12 @@ _backlight_popup_del_cb(void *obj)
 }
 
 static void
+_backlight_popup_comp_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   _backlight_popup_free(data);
+}
+
+static void
 _backlight_popup_new(Instance *inst)
 {
    Evas *evas;
@@ -197,8 +203,8 @@ _backlight_popup_new(Instance *inst)
    inst->val = e_backlight_level_get(inst->gcc->gadcon->zone);
    _backlight_gadget_update(inst);
    
-   inst->popup = e_gadcon_popup_new(inst->gcc);
-   evas = inst->popup->win->evas;
+   inst->popup = e_gadcon_popup_new(inst->gcc, 0);
+   evas = e_comp_get(inst->popup)->evas;
    
    inst->o_table = e_widget_table_add(evas, 0);
 
@@ -214,8 +220,9 @@ _backlight_popup_new(Instance *inst)
                                       0, 1, 1, 1, 0, 0, 0, 0, 0.5, 1.0);
    
    e_gadcon_popup_content_set(inst->popup, inst->o_table);
-   e_popup_autoclose(inst->popup->win, NULL, _backlight_win_key_down_cb, inst);
    e_gadcon_popup_show(inst->popup);
+   e_comp_object_util_autoclose(inst->popup->comp_object, _backlight_popup_comp_del_cb,
+     _backlight_win_key_down_cb, inst);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _backlight_popup_del_cb);
 }
@@ -233,7 +240,7 @@ _backlight_menu_cb_cfg(void *data, E_Menu *menu __UNUSED__, E_Menu_Item *mi __UN
 
    _backlight_popup_free(inst);
    e_configure_registry_call("screen/power_management",
-                             inst->gcc->gadcon->zone->container, NULL);
+                             inst->gcc->gadcon->zone->comp, NULL);
 }
 
 static void

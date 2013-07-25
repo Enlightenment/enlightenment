@@ -30,7 +30,7 @@ struct _E_Desk
    int                  x, y;
    unsigned char        visible : 1;
    unsigned int         deskshow_toggle : 1;
-   int                  fullscreen_borders;
+   Eina_List            *fullscreen_clients;
 
    Evas_Object         *bg_object;
 
@@ -66,12 +66,12 @@ EINTERN int          e_desk_init(void);
 EINTERN int          e_desk_shutdown(void);
 EAPI E_Desk      *e_desk_new(E_Zone *zone, int x, int y);
 EAPI void         e_desk_name_set(E_Desk *desk, const char *name);
-EAPI void         e_desk_name_add(int container, int zone, int desk_x, int desk_y, const char *name);
-EAPI void         e_desk_name_del(int container, int zone, int desk_x, int desk_y);
+EAPI void         e_desk_name_add(int manager, int zone, int desk_x, int desk_y, const char *name);
+EAPI void         e_desk_name_del(int manager, int zone, int desk_x, int desk_y);
 EAPI void         e_desk_name_update(void);
 EAPI void         e_desk_show(E_Desk *desk);
 EAPI void         e_desk_deskshow(E_Zone *zone);
-EAPI E_Border    *e_desk_last_focused_focus(E_Desk *desk);
+EAPI E_Client    *e_desk_last_focused_focus(E_Desk *desk);
 EAPI E_Desk      *e_desk_current_get(E_Zone *zone);
 EAPI E_Desk      *e_desk_at_xy_get(E_Zone *zone, int x, int y);
 EAPI E_Desk      *e_desk_at_pos_get(E_Zone *zone, int pos);
@@ -82,21 +82,17 @@ EAPI void         e_desk_row_add(E_Zone *zone);
 EAPI void         e_desk_row_remove(E_Zone *zone);
 EAPI void         e_desk_col_add(E_Zone *zone);
 EAPI void         e_desk_col_remove(E_Zone *zone);
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
 EAPI void         e_desk_window_profile_set(E_Desk *desk, const char *profile);
-EAPI void         e_desk_window_profile_add(int container, int zone, int desk_x, int desk_y, const char *profile);
-EAPI void         e_desk_window_profile_del(int container, int zone, int desk_x, int desk_y);
+EAPI void         e_desk_window_profile_add(int manager, int zone, int desk_x, int desk_y, const char *profile);
+EAPI void         e_desk_window_profile_del(int manager, int zone, int desk_x, int desk_y);
 EAPI void         e_desk_window_profile_update(void);
-#endif
 
 extern EAPI int E_EVENT_DESK_SHOW;
 extern EAPI int E_EVENT_DESK_BEFORE_SHOW;
 extern EAPI int E_EVENT_DESK_AFTER_SHOW;
 extern EAPI int E_EVENT_DESK_DESKSHOW;
 extern EAPI int E_EVENT_DESK_NAME_CHANGE;
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
 extern EAPI int E_EVENT_DESK_WINDOW_PROFILE_CHANGE;
-#endif
 
 #endif
 #endif

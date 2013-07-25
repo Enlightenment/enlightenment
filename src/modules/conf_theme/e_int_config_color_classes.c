@@ -146,7 +146,7 @@ static Eina_Bool    _fill_data_delayed(void *data);
 static Eina_Bool    _color_changed_delay(void *data);
 
 E_Config_Dialog *
-e_int_config_color_classes(E_Container *con, const char *params __UNUSED__)
+e_int_config_color_classes(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -160,7 +160,7 @@ e_int_config_color_classes(E_Container *con, const char *params __UNUSED__)
    v->basic.apply_cfdata = _basic_apply_data;
    v->basic.create_widgets = _basic_create_widgets;
 
-   cfd = e_config_dialog_new(con, _("Colors"), "E", "appearance/colors",
+   cfd = e_config_dialog_new(comp, _("Colors"), "E", "appearance/colors",
                              "preferences-desktop-color", 0, v, NULL);
    return cfd;
 }

@@ -23,7 +23,7 @@ static void _randr_cb_changed(void *data, Evas_Object *obj, void *event EINA_UNU
 
 /* public functions */
 E_Config_Dialog *
-e_int_config_randr(E_Container *con, const char *params EINA_UNUSED)
+e_int_config_randr(E_Comp *comp, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -45,7 +45,7 @@ e_int_config_randr(E_Container *con, const char *params EINA_UNUSED)
    v->override_auto_apply = EINA_TRUE;
 
    /* create new dialog */
-   cfd = e_config_dialog_new(con, _("Screen Setup"), 
+   cfd = e_config_dialog_new(comp, _("Screen Setup"), 
                              "E", "screen/screen_setup",
                              "preferences-system-screen-resolution", 
                              0, v, NULL);

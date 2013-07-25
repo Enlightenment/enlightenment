@@ -48,7 +48,7 @@ _create_data(E_Config_Dialog *dialog)
 }
 
 E_Config_Dialog *
-e_connman_config_dialog_new(E_Container *con,
+e_connman_config_dialog_new(E_Comp *comp,
                             E_Connman_Module_Context *ctxt)
 {
    E_Config_Dialog *dialog;
@@ -66,7 +66,7 @@ e_connman_config_dialog_new(E_Container *con,
    view->basic.apply_cfdata = _basic_apply;
 
    dialog = e_config_dialog_new
-       (con, _("Connection Manager"),
+       (comp, _("Connection Manager"),
        _e_connman_Name, "e_connman_config_dialog_new",
        e_connman_theme_path(), 0, view, ctxt);
 

@@ -480,7 +480,7 @@ static void
 _e_xkb_cb_menu_configure(void *data __UNUSED__, E_Menu *mn, E_Menu_Item *mi __UNUSED__)
 {
    if (_xkb.cfd) return;
-   _xkb_cfg_dialog(mn->zone->container, NULL);
+   _xkb_cfg_dialog(mn->zone->comp, NULL);
 }
 
 static void

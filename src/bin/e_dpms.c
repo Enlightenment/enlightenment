@@ -113,22 +113,22 @@ e_dpms_init(void)
        (E_EVENT_CONFIG_MODE_CHANGED, _e_dpms_handler_config_mode_cb, NULL);
 
    _e_dpms_handler_border_fullscreen = ecore_event_handler_add
-       (E_EVENT_BORDER_FULLSCREEN, _e_dpms_handler_border_fullscreen_check_cb, NULL);
+       (E_EVENT_CLIENT_FULLSCREEN, _e_dpms_handler_border_fullscreen_check_cb, NULL);
 
    _e_dpms_handler_border_unfullscreen = ecore_event_handler_add
-       (E_EVENT_BORDER_UNFULLSCREEN, _e_dpms_handler_border_fullscreen_check_cb, NULL);
+       (E_EVENT_CLIENT_UNFULLSCREEN, _e_dpms_handler_border_fullscreen_check_cb, NULL);
 
    _e_dpms_handler_border_remove = ecore_event_handler_add
-       (E_EVENT_BORDER_REMOVE, _e_dpms_handler_border_fullscreen_check_cb, NULL);
+       (E_EVENT_CLIENT_REMOVE, _e_dpms_handler_border_fullscreen_check_cb, NULL);
 
    _e_dpms_handler_border_iconify = ecore_event_handler_add
-       (E_EVENT_BORDER_ICONIFY, _e_dpms_handler_border_fullscreen_check_cb, NULL);
+       (E_EVENT_CLIENT_ICONIFY, _e_dpms_handler_border_fullscreen_check_cb, NULL);
 
    _e_dpms_handler_border_uniconify = ecore_event_handler_add
-       (E_EVENT_BORDER_UNICONIFY, _e_dpms_handler_border_fullscreen_check_cb, NULL);
+       (E_EVENT_CLIENT_UNICONIFY, _e_dpms_handler_border_fullscreen_check_cb, NULL);
 
    _e_dpms_handler_border_desk_set = ecore_event_handler_add
-       (E_EVENT_BORDER_DESK_SET, _e_dpms_handler_border_desk_set_cb, NULL);
+       (E_EVENT_CLIENT_DESK_SET, _e_dpms_handler_border_desk_set_cb, NULL);
 
    _e_dpms_handler_desk_show = ecore_event_handler_add
        (E_EVENT_DESK_SHOW, _e_dpms_handler_desk_show_cb, NULL);

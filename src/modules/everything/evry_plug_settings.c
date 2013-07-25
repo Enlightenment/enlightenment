@@ -165,7 +165,7 @@ _action(Evry_Action *action)
 
    snprintf(buf, sizeof(buf), "%s/%s", it->ecat->cat, it->eci->item);
 
-   e_configure_registry_call(buf, e_container_current_get(e_manager_current_get()), NULL);
+   e_configure_registry_call(buf, NULL, NULL);
 
    return EVRY_ACTION_FINISHED;
 }

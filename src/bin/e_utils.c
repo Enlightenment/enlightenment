@@ -54,19 +54,9 @@ e_util_env_set(const char *var, const char *val)
 EAPI E_Zone *
 e_util_zone_current_get(E_Manager *man)
 {
-   E_Container *con;
-
    E_OBJECT_CHECK_RETURN(man, NULL);
    E_OBJECT_TYPE_CHECK_RETURN(man, E_MANAGER_TYPE, NULL);
-   con = e_container_current_get(man);
-   if (con)
-     {
-        E_Zone *zone;
-
-        zone = e_zone_current_get(con);
-        return zone;
-     }
-   return NULL;
+   return e_zone_current_get(man->comp);
 }
 
 EAPI int
@@ -107,40 +97,25 @@ e_util_glob_case_match(const char *str, const char *pattern)
    return 0;
 }
 
-EAPI E_Container *
-e_util_container_number_get(int num)
+
+EAPI E_Zone *
+e_util_comp_zone_number_get(int c_num, int zone_num)
 {
-   Eina_List *l;
-   E_Manager *man;
+   E_Comp *c;
 
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
-     {
-        E_Container *con;
-
-        con = e_container_number_get(man, num);
-        if (con) return con;
-     }
-   return NULL;
+   c = e_comp_number_get(c_num);
+   if (!c) return NULL;
+   return e_comp_zone_number_get(c, zone_num);
 }
 
 EAPI E_Zone *
-e_util_container_zone_number_get(int con_num, int zone_num)
+e_util_comp_zone_id_get(int c_num, int id)
 {
-   E_Container *con;
+   E_Comp *c;
 
-   con = e_util_container_number_get(con_num);
-   if (!con) return NULL;
-   return e_container_zone_number_get(con, zone_num);
-}
-
-EAPI E_Zone *
-e_util_container_zone_id_get(int con_num, int id)
-{
-   E_Container *con;
-
-   con = e_util_container_number_get(con_num);
-   if (!con) return NULL;
-   return e_container_zone_id_get(con, id);
+   c = e_comp_number_get(c_num);
+   if (!c) return NULL;
+   return e_comp_zone_id_get(c, id);
 }
 
 EAPI int
@@ -225,7 +200,7 @@ e_util_immortal_check(void)
 {
    Eina_List *wins;
 
-   wins = e_border_immortal_windows_get();
+   wins = e_clients_immortal_list(NULL);
    if (wins)
      {
         e_util_dialog_show(_("Cannot exit - immortal windows."),
@@ -526,127 +501,48 @@ e_util_mime_icon_get(const char *mime, unsigned int size)
    return efreet_mime_type_icon_get(mime, e_config->icon_theme, e_util_icon_size_normalize(size));
 }
 
-EAPI E_Container *
-e_util_container_window_find(Ecore_X_Window win)
-{
-   Eina_List *l, *ll;
-   E_Manager *man;
-   E_Container *con;
-
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
-     {
-        EINA_LIST_FOREACH(man->containers, ll, con)
-          {
-             if ((con->win == win) || (con->bg_win == win) ||
-                 (con->event_win == win))
-               return con;
-          }
-     }
-   return NULL;
-}
-
 EAPI E_Zone *
 e_util_zone_window_find(Ecore_X_Window win)
 {
-   Eina_List *l, *ll, *lll;
-   E_Manager *man;
-   E_Container *con;
+   const Eina_List *l, *ll;
+   E_Comp *c;
    E_Zone *zone;
 
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
-     EINA_LIST_FOREACH(man->containers, ll, con)
-       EINA_LIST_FOREACH(con->zones, lll, zone)
-         if (zone->black_win == win) return zone;
+   EINA_LIST_FOREACH(e_comp_list(), l, c)
+     EINA_LIST_FOREACH(c->zones, ll, zone)
+       if (zone->black_win == win) return zone;
 
    return NULL;
 }
 
-static int
-_e_util_layer_map(int layer)
+EAPI E_Client *
+e_util_desk_client_above(E_Client *ec)
 {
-   int pos = 0;
+   E_Client *ec2;
 
-   if (layer < 0) layer = 0;
-   pos = 1 + (layer / 50);
-   if (pos > 10) pos = 10;
-   return pos;
+   E_OBJECT_CHECK_RETURN(ec, NULL);
+   E_OBJECT_TYPE_CHECK_RETURN(ec, E_CLIENT_TYPE, NULL);
+
+   for (ec2 = e_client_above_get(ec); ec2; ec2 = e_client_above_get(ec2))
+     {
+        if ((ec2->desk == ec->desk) || (ec2->sticky)) return ec2;
+     }
+   return NULL;
 }
 
-EAPI E_Border *
-e_util_desk_border_above(E_Border *bd)
+EAPI E_Client *
+e_util_desk_client_below(E_Client *ec)
 {
-   E_Border *bd2, *above = NULL;
-   Eina_List *l;
-   int pos, i;
+   E_Client *ec2;
 
-   E_OBJECT_CHECK_RETURN(bd, NULL);
-   E_OBJECT_TYPE_CHECK_RETURN(bd, E_BORDER_TYPE, NULL);
+   E_OBJECT_CHECK_RETURN(ec, NULL);
+   E_OBJECT_TYPE_CHECK_RETURN(ec, E_CLIENT_TYPE, NULL);
 
-   pos = _e_util_layer_map(bd->layer);
-
-   EINA_LIST_FOREACH(eina_list_data_find_list(bd->zone->container->layers[pos].clients, bd), l, bd2)
+   for (ec2 = e_client_below_get(ec); ec2; ec2 = e_client_below_get(ec2))
      {
-        if (!eina_list_next(l) || above) break;
-        above = eina_list_data_get(eina_list_next(l));
-        if ((above->desk != bd->desk) && (!above->sticky))
-          above = NULL;
+        if ((ec2->desk == ec->desk) || (ec2->sticky)) return ec2;
      }
-   if (!above)
-     {
-        /* Need to check the layers above */
-        for (i = pos + 1; (i < 7) && (!above); i++)
-          {
-             EINA_LIST_FOREACH(bd->zone->container->layers[i].clients, l, bd2)
-               {
-                  if (above) break;
-                  above = bd2;
-                  if ((above->desk != bd->desk) && (!above->sticky))
-                    above = NULL;
-               }
-          }
-     }
-   return above;
-}
-
-EAPI E_Border *
-e_util_desk_border_below(E_Border *bd)
-{
-   E_Border *below = NULL, *bd2;
-   Eina_List *l;
-   int pos, i;
-
-   E_OBJECT_CHECK_RETURN(bd, NULL);
-   E_OBJECT_TYPE_CHECK_RETURN(bd, E_BORDER_TYPE, NULL);
-
-   pos = _e_util_layer_map(bd->layer);
-
-   for (l = eina_list_data_find_list(bd->zone->container->layers[pos].clients, bd); l; l = l->prev)
-     {
-        if (!eina_list_prev(l) || below) break;
-        below = eina_list_data_get(eina_list_prev(l));
-        if ((below->desk != bd->desk) && (!below->sticky))
-          below = NULL;
-     }
-   if (!below)
-     {
-        /* Need to check the layers below */
-        for (i = pos - 1; (i >= 0) && (!below); i--)
-          {
-             if (bd->zone->container->layers[i].clients)
-               {
-                  l = eina_list_data_find_list(bd->zone->container->layers[pos].clients, bd);
-                  for (; l && !below; l = l->prev)
-                    {
-                       bd2 = l->data;
-                       below = bd2;
-                       if ((below->desk != bd->desk) && (!below->sticky))
-                         below = NULL;
-                    }
-               }
-          }
-     }
-
-   return below;
+   return NULL;
 }
 
 EAPI int
@@ -671,7 +567,7 @@ e_util_dialog_internal(const char *title, const char *txt)
 {
    E_Dialog *dia;
 
-   dia = e_dialog_new(e_container_current_get(e_manager_current_get()), "E", "_error_dialog");
+   dia = e_dialog_new(NULL, "E", "_error_dialog");
    if (!dia) return NULL;
    e_dialog_title_set(dia, title);
    e_dialog_text_set(dia, txt);
@@ -1074,10 +970,10 @@ e_util_win_auto_resize_fill(E_Win *win)
 {
    E_Zone *zone = NULL;
 
-   if (win->border)
-     zone = win->border->zone;
-   if ((!zone) && (win->container))
-     zone = e_util_zone_current_get(win->container->manager);
+   if (win->client)
+     zone = win->client->zone;
+   if ((!zone) && (win->comp))
+     zone = e_zone_current_get(win->comp);
 
    if (zone)
      {
@@ -1092,15 +988,15 @@ e_util_win_auto_resize_fill(E_Win *win)
 }
 
 EAPI int
-e_util_container_desk_count_get(E_Container *con)
+e_util_comp_desk_count_get(E_Comp *c)
 {
    Eina_List *zl;
    E_Zone *zone;
    int count = 0;
 
-   E_OBJECT_CHECK_RETURN(con, 0);
-   E_OBJECT_TYPE_CHECK_RETURN(con, E_CONTAINER_TYPE, 0);
-   EINA_LIST_FOREACH(con->zones, zl, zone)
+   E_OBJECT_CHECK_RETURN(c, 0);
+   E_OBJECT_TYPE_CHECK_RETURN(c, E_COMP_TYPE, 0);
+   EINA_LIST_FOREACH(c->zones, zl, zone)
      {
         int x, y;
         int cx = 0, cy = 0;
@@ -1230,51 +1126,46 @@ e_util_module_config_check(const char *module_name, int loaded, int current)
 }
 
 /**
- * Checks whenever the current manager/container/zone have fullscreen windows.
+ * Checks whenever the current manager/comp/zone have fullscreen windows.
  */
 EAPI Eina_Bool
 e_util_fullscreen_current_any(void)
 {
    E_Manager *man = e_manager_current_get();
-   E_Container *con = e_container_current_get(man);
-   E_Zone *zone = e_zone_current_get(con);
+   E_Zone *zone = e_util_zone_current_get(man);
    E_Desk *desk;
 
    if ((zone) && (zone->fullscreen > 0)) return EINA_TRUE;
    desk = e_desk_current_get(zone);
-   if ((desk) && (desk->fullscreen_borders > 0)) return EINA_TRUE;
+   if ((desk) && (desk->fullscreen_clients)) return EINA_TRUE;
    return EINA_FALSE;
 }
 
 /**
- * Checks whenever any manager/container/zone have fullscreen windows.
+ * Checks whenever any manager/comp/zone have fullscreen windows.
  */
 EAPI Eina_Bool
 e_util_fullscreen_any(void)
 {
    E_Zone *zone;
-   Eina_List *lm, *lc, *lz;
-   E_Container *con;
-   E_Manager *man;
+   const Eina_List *lc, *lz;
+   E_Comp *c;
    E_Desk *desk;
    int x, y;
 
-   EINA_LIST_FOREACH(e_manager_list(), lm, man)
+   EINA_LIST_FOREACH(e_comp_list(), lc, c)
      {
-        EINA_LIST_FOREACH(man->containers, lc, con)
+        EINA_LIST_FOREACH(c->zones, lz, zone)
           {
-             EINA_LIST_FOREACH(con->zones, lz, zone)
-               {
-                  if (zone->fullscreen > 0) return EINA_TRUE;
+             if (zone->fullscreen > 0) return EINA_TRUE;
 
-                  for (x = 0; x < zone->desk_x_count; x++)
-                    for (y = 0; y < zone->desk_y_count; y++)
-                      {
-                         desk = e_desk_at_xy_get(zone, x, y);
-                         if ((desk) && (desk->fullscreen_borders > 0))
-                           return EINA_TRUE;
-                      }
-               }
+             for (x = 0; x < zone->desk_x_count; x++)
+               for (y = 0; y < zone->desk_y_count; y++)
+                 {
+                    desk = e_desk_at_xy_get(zone, x, y);
+                    if ((desk) && (desk->fullscreen_clients))
+                      return EINA_TRUE;
+                 }
           }
      }
    return EINA_FALSE;
@@ -1334,7 +1225,7 @@ _e_util_size_debug_free(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    name = evas_object_name_get(obj);
-   fprintf(stderr, "FREE %s OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", name ?: "", name ? "|" : "", obj, x, y, w, h);
+   fprintf(stderr, "FREE %s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
 }
 
 static void
@@ -1345,7 +1236,18 @@ _e_util_size_debug_del(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    name = evas_object_name_get(obj);
-   fprintf(stderr, "DEL %s OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", name ?: "", name ? "|" : "", obj, x, y, w, h);
+   fprintf(stderr, "DEL %s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
+}
+
+static void
+_e_util_size_debug_stack(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   int x, y, w, h;
+   const char *name;
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   name = evas_object_name_get(obj);
+   fprintf(stderr, "RESTACK %s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
 }
 
 static void
@@ -1356,7 +1258,7 @@ _e_util_size_debug(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, 
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    name = evas_object_name_get(obj);
-   fprintf(stderr, "%s OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", name ?: "", name ? "|" : "", obj, x, y, w, h);
+   fprintf(stderr, "%s %d OBJ[%s%s%p]: (%d,%d) - %dx%d\n", evas_object_visible_get(obj) ? "VIS" : "HID", evas_object_layer_get(obj), name ?: "", name ? "|" : "", obj, x, y, w, h);
 }
 
 EAPI void
@@ -1372,6 +1274,8 @@ e_util_size_debug_set(Evas_Object *obj, Eina_Bool enable)
                                        _e_util_size_debug, NULL);
         evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE,
                                        _e_util_size_debug, NULL);
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_RESTACK,
+                                       _e_util_size_debug_stack, NULL);
         evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                        _e_util_size_debug_del, NULL);
         evas_object_event_callback_add(obj, EVAS_CALLBACK_FREE,
@@ -1749,13 +1653,13 @@ e_util_evas_objects_above_print_smart(Evas_Object *o)
 }
 
 EAPI Eina_Bool
-e_util_border_shadow_state_get(const E_Border *bd)
+e_util_client_shadow_state_get(const E_Client *ec)
 {
    Eina_Bool on;
-   on = !bd->client.e.state.video;
+   on = !ec->e.state.video;
    if (on)
-     on = !bd->fullscreen;
+     on = !ec->fullscreen;
    if (on)
-     on = !!e_util_strcmp(bd->client.border.name, "borderless");
+     on = !!e_util_strcmp(ec->border.name, "borderless");
    return on;
 }

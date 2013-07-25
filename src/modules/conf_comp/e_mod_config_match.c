@@ -843,7 +843,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 EINTERN E_Config_Dialog *
-e_int_config_comp_match(E_Container *con, const char *params __UNUSED__)
+e_int_config_comp_match(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -857,7 +857,7 @@ e_int_config_comp_match(E_Container *con, const char *params __UNUSED__)
    v->basic.apply_cfdata = _basic_apply_data;
    v->basic.create_widgets = _basic_create_widgets;
    
-   cfd = e_config_dialog_new(con, _("Composite Match Settings"),
+   cfd = e_config_dialog_new(comp, _("Composite Match Settings"),
                              "E", "_comp_matches", "preferences-composite", 0, v, mod);
    mod->match_config_dialog = cfd;
    e_dialog_resizable_set(cfd->dia, 1);

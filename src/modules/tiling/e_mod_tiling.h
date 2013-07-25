@@ -2,14 +2,10 @@
 #define E_MOD_TILING_H
 
 #include <e.h>
-#include <e_border.h>
-#include <e_shelf.h>
 
 #include <stdbool.h>
 
 #include <assert.h>
-
-#include "config.h"
 
 typedef struct _Config      Config;
 typedef struct _Tiling_Info Tiling_Info;
@@ -72,7 +68,7 @@ struct _E_Config_Dialog_Data
    Evas        *evas;
 };
 
-E_Config_Dialog *e_int_config_tiling_module(E_Container *con,
+E_Config_Dialog *e_int_config_tiling_module(E_Comp *comp,
                                             const char  *params);
 
 EAPI extern E_Module_Api e_modapi;

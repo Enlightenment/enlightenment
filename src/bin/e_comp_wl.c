@@ -1,6 +1,5 @@
 #include "e.h"
 #include "e_comp_wl.h"
-#include "e_surface.h"
 #include <sys/mman.h>
 
 /* compositor function prototypes */
@@ -224,8 +223,6 @@ static const struct wl_pointer_grab_interface _e_drag_grab_interface =
 
 /* local variables */
 static Ecore_Idler *_module_idler = NULL;
-
-static Eina_Hash *_e_wl_border_hash = NULL;
 
 /* external variables */
 EAPI E_Wayland_Compositor *_e_wl_comp;
@@ -452,35 +449,11 @@ e_comp_wl_shutdown(void)
         E_FREE(_e_wl_comp);
      }
 
-   E_FREE_FUNC(_e_wl_border_hash, eina_hash_free);
-
    /* disable the loaded shell module */
    /* TODO: we should have a config variable somewhere to store which 
     * shell we want to unload (tablet, mobile, etc) */
    if ((mod = e_module_find("wl_desktop_shell")))
      e_module_disable(mod);
-}
-
-EAPI void
-e_comp_wl_border_surface_add(Ecore_Window win, const E_Border *bd)
-{
-   if (!_e_wl_border_hash)
-     _e_wl_border_hash = eina_hash_int32_new(NULL);
-   eina_hash_add(_e_wl_border_hash, &win, bd);
-}
-
-EAPI void
-e_comp_wl_border_surface_del(Ecore_Window win)
-{
-   if (!_e_wl_border_hash) return;
-   eina_hash_del_by_key(_e_wl_border_hash, &win);
-}
-
-EAPI E_Border *
-e_comp_wl_border_surface_find(Ecore_Window win)
-{
-   if (!_e_wl_border_hash) return NULL;
-   return eina_hash_find(_e_wl_border_hash, &win);
 }
 
 EAPI void 
@@ -1679,8 +1652,11 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
         wl_resource_post_no_memory(resource);
         return;
      }
-   ews->id = id;
 
+   ews->wl.client = client;
+   ews->pixmap = e_pixmap_new(E_PIXMAP_TYPE_WL, ews);
+   e_pixmap_parent_window_set(ews->pixmap, ews);
+   e_pixmap_usable_set(ews->pixmap, 1);
    /* initialize the destroy signal */
    wl_signal_init(&ews->wl.destroy_signal);
 
@@ -1745,6 +1721,10 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
      {
         if (ews->unmap) ews->unmap(ews);
      }
+   if (ews->buffer_reference.buffer)
+     ews->buffer_reference.buffer->ews = NULL;
+   if (ews->pending.buffer)
+     ews->pending.buffer->ews = NULL;
 
    /* loop any pending surface frame callbacks and destroy them */
    wl_list_for_each_safe(cb, ncb, &ews->pending.frames, wl.link)
@@ -1772,11 +1752,14 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
    wl_list_for_each_safe(cb, ncb, &ews->wl.frames, wl.link)
      wl_resource_destroy(cb->wl.resource);
 
+   e_pixmap_parent_window_set(ews->pixmap, NULL);
+   e_pixmap_free(ews->pixmap);
+
    /* remove this surface from the compositor's list of surfaces */
    _e_wl_comp->surfaces = eina_inlist_remove(_e_wl_comp->surfaces, EINA_INLIST_GET(ews));
 
    /* free the allocated surface structure */
-   E_FREE(ews);
+   free(ews);
 }
 
 static void 
@@ -2314,11 +2297,13 @@ _e_comp_wl_pointer_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y,
          * using the pixels from their cursor surface */
 
         /* is it mapped ? */
-        if ((focus->mapped) && (focus->ee))
+        if ((focus->mapped) && (focus->ec))
           {
              Ecore_Window win;
 
              /* try to get the ecore_window */
+#warning CURSOR BROKEN
+#if 0
              if ((win = ecore_evas_window_get(focus->ee)))
                {
                   E_Wayland_Buffer_Reference *ref;
@@ -2348,6 +2333,7 @@ _e_comp_wl_pointer_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y,
                   else
                     ecore_x_window_cursor_set(win, 0);
                }
+#endif
           }
      }
 }
@@ -2566,6 +2552,7 @@ _e_comp_wl_surface_buffer_reference(E_Wayland_Buffer_Reference *ref, E_Wayland_B
         wl_signal_add(&buffer->wl.destroy_signal, &ref->destroy_listener);
      }
 
+   //INF("CURRENT BUFFER SWAP");
    ref->buffer = buffer;
    ref->destroy_listener.notify = 
      _e_comp_wl_surface_buffer_reference_cb_destroy;
@@ -2611,12 +2598,29 @@ _e_comp_wl_surface_buffer_resource(struct wl_resource *resource)
 }
 
 static void 
-_e_comp_wl_surface_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+_e_comp_wl_surface_buffer_cb_destroy(struct wl_listener *listener, void *data)
 {
    E_Wayland_Buffer *buffer;
 
    buffer = container_of(listener, E_Wayland_Buffer, wl.destroy_listener);
    wl_signal_emit(&buffer->wl.destroy_signal, buffer);
+   if (buffer->ews && buffer->ews->pixmap && (e_pixmap_resource_get(buffer->ews->pixmap) == data))
+     {
+        if (buffer->ews->ec)
+          {
+             INF("DESTROYED CURRENT BUFFER: %s", e_pixmap_dirty_get(buffer->ews->pixmap) ? "DIRTY" : "CLEAN");
+             e_pixmap_usable_set(buffer->ews->pixmap, 0);
+             if (!e_pixmap_image_exists(buffer->ews->pixmap))
+               {
+                  e_pixmap_image_refresh(buffer->ews->pixmap);
+               }
+             
+             e_pixmap_image_clear(buffer->ews->pixmap, 0);
+             e_comp_object_damage(buffer->ews->ec->frame, 0, 0, buffer->ews->ec->client.w, buffer->ews->ec->client.h);
+             e_comp_object_render(buffer->ews->ec->frame);
+             e_comp_object_render_update_del(buffer->ews->ec->frame);
+          }
+     }
    E_FREE(buffer);
 }
 
@@ -2637,13 +2641,26 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
    if (!(ews = wl_resource_get_user_data(resource))) return;
 
    if (buffer_resource) 
-     buffer = _e_comp_wl_surface_buffer_resource(buffer_resource);
+     {
+        buffer = _e_comp_wl_surface_buffer_resource(buffer_resource);
+        if (ews->ec && (!ews->buffer_reference.buffer))
+          {
+             e_pixmap_usable_set(ews->pixmap, 1);
+          }
+     }
 
    /* reference any existing buffers */
    _e_comp_wl_surface_buffer_reference(&ews->buffer_reference, buffer);
+   //INF("ATTACHED NEW BUFFER");
+   e_pixmap_dirty(ews->pixmap);
+   //if (ews->ec)
+     //e_comp_object_damage(ews->ec->frame, 0, 0, ews->ec->client.w, ews->ec->client.h);
+     
 
    /* if we are setting a null buffer, then unmap the surface */
-   if (!buffer)
+   if (buffer)
+     buffer->ews = ews;
+   else
      {
         if (ews->mapped)
           {
@@ -2674,6 +2691,7 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
 
    /* try to cast the resource data to our surface structure */
    if (!(ews = wl_resource_get_user_data(resource))) return;
+   e_pixmap_image_clear(ews->pixmap, 1);
 
    /* tell pixman to add this damage to pending */
    pixman_region32_union_rect(&ews->pending.damage, &ews->pending.damage, 
@@ -2780,49 +2798,19 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
                                             ews->pending.buffer);
 
         /* if the pending buffer is NULL, unmap the surface */
-        if (!ews->pending.buffer)
+        if (ews->pending.buffer)
+          ews->pending.buffer->ews = ews;
+        else
           {
              if (ews->mapped)
                {
                   if (ews->unmap) ews->unmap(ews);
                }
           }
-        else
-          {
-             if (ews->obj)
-               {
-                  E_Wayland_Buffer *buff;
-                  struct wl_shm_buffer *shm_buffer;
-                  void *data;
-
-                  buff = ews->pending.buffer;
-
-                  shm_buffer = wl_shm_buffer_get(buff->wl.resource);
-
-                  bw = wl_shm_buffer_get_width(shm_buffer);
-                  bh = wl_shm_buffer_get_height(shm_buffer);
-
-                  /* grab the pixel data from the buffer */
-                  data = wl_shm_buffer_get_data(shm_buffer);
-
-                  /* send the pixel data to the smart object */
-                  e_surface_image_set(ews->obj, bw, bh, data);
-               }
-          }
      }
-
-   /* if we have a reference to a buffer, get it's size */
-   if (&ews->buffer_reference)
-     {
-        E_Wayland_Buffer *buff;
-        struct wl_shm_buffer *shm_buffer;
-
-        buff = ews->buffer_reference.buffer;
-
-        shm_buffer = wl_shm_buffer_get(buff->wl.resource);
-        bw = wl_shm_buffer_get_width(shm_buffer);
-        bh = wl_shm_buffer_get_height(shm_buffer);
-     }
+   e_pixmap_dirty(ews->pixmap);
+   e_pixmap_refresh(ews->pixmap);
+   e_pixmap_size_get(ews->pixmap, &bw, &bh);
 
    /* if we have a new pending buffer, call configure */
    if ((ews->configure) && (ews->pending.new_buffer))
@@ -2849,15 +2837,18 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    pixman_region32_init(&ews->pending.damage);
 
    /* get the extent of the damage region */
-   rects = pixman_region32_rectangles(&ews->region.damage, &n);
-   while (n--)
+   if (ews->ec)
      {
-        pixman_box32_t *r;
+        rects = pixman_region32_rectangles(&ews->region.damage, &n);
+        while (n--)
+          {
+             pixman_box32_t *r;
 
-        r = &rects[n];
+             r = &rects[n];
 
-        /* send damages to the image */
-        e_surface_damage_add(ews->obj, r->x1, r->y1, r->x2, r->y2);
+             /* send damages to the image */
+             e_comp_object_damage(ews->ec->frame, r->x1, r->y1, r->x2, r->y2);
+          }
      }
 
    /* tell pixman we are finished with this region */
@@ -2898,9 +2889,9 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
         rects = pixman_region32_extents(&ews->region.input);
 
         /* update the smart object's input region */
-        if (ews->obj)
-          e_surface_input_set(ews->obj, rects->x1, rects->y1, 
-                              rects->x2, rects->y2);
+        if (ews->ec)
+          e_comp_object_input_area_set(ews->ec->frame, rects->x1, rects->y1, 
+                                       rects->x2, rects->y2); 
      }
 
    /* put any pending frame callbacks into active list */
@@ -2908,6 +2899,10 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 
    /* clear list of pending frame callbacks */
    wl_list_init(&ews->pending.frames);
+
+   ews->updates = 1;
+
+   _e_wl_comp->surfaces = eina_inlist_promote(_e_wl_comp->surfaces, EINA_INLIST_GET(ews));
 
    /* TODO: schedule repaint ?? */
 }

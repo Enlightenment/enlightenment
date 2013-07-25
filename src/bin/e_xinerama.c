@@ -11,7 +11,6 @@ static Eina_List *fake_screens = NULL;
 EINTERN int
 e_xinerama_init(void)
 {
-   _e_xinerama_update();
    return 1;
 }
 
@@ -44,6 +43,15 @@ e_xinerama_screens_all_get(void)
 }
 
 EAPI void
+e_xinerama_screens_set(Eina_List *screens)
+{
+   E_FREE_LIST(all_screens, free);
+   chosen_screens = eina_list_free(chosen_screens);
+   all_screens = screens;
+   _e_xinerama_update();
+}
+
+EAPI void
 e_xinerama_fake_screen_add(int x, int y, int w, int h)
 {
    E_Screen *scr;
@@ -68,78 +76,18 @@ e_xinerama_fake_screens_exist(void)
 static void
 _e_xinerama_clean(void)
 {
-   E_FREE_LIST(all_screens, E_FREE);
+   E_FREE_LIST(all_screens, free);
    chosen_screens = eina_list_free(chosen_screens);
-   E_FREE_LIST(fake_screens, E_FREE);
+   E_FREE_LIST(fake_screens, free);
 }
 
 static void
 _e_xinerama_update(void)
 {
-   int n;
-   Ecore_X_Window *roots;
    Eina_List *l;
    E_Screen *scr;
+   unsigned int n = 0;
 
-   roots = ecore_x_window_root_list(&n);
-   if (roots)
-     {
-        int i;
-        int rw, rh;
-        Ecore_X_Window root;
-
-        /* more than 1 root window - xinerama wont be active */
-        if (n > 1)
-          {
-             free(roots);
-             return;
-          }
-        /* first (and only) root window */
-        root = roots[0];
-        free(roots);
-        /* get root size */
-        ecore_x_window_size_get(root, &rw, &rh);
-        /* get number of xinerama screens */
-        n = ecore_x_xinerama_screen_count_get();
-        if (n < 1)
-          {
-             E_Screen *screen;
-
-             screen = E_NEW(E_Screen, 1);
-             screen->screen = 0;
-             screen->escreen = screen->screen;
-             screen->x = 0;
-             screen->y = 0;
-             screen->w = rw;
-             screen->h = rh;
-             all_screens = eina_list_append(all_screens, screen);
-          }
-        else
-          {
-             for (i = 0; i < n; i++)
-               {
-                  int x, y, w, h;
-
-                  /* get each xinerama screen geometry */
-                  if (ecore_x_xinerama_screen_geometry_get(i, &x, &y, &w, &h))
-                    {
-                       E_Screen *screen;
-
-                       INF("E18 INIT: XINERAMA SCREEN: [%i][%i], %ix%i+%i+%i",
-                           i, i, w, h, x, y);
-                       /* add it to our list */
-                       screen = E_NEW(E_Screen, 1);
-                       screen->screen = i;
-                       screen->escreen = screen->screen;
-                       screen->x = x;
-                       screen->y = y;
-                       screen->w = w;
-                       screen->h = h;
-                       all_screens = eina_list_append(all_screens, screen);
-                    }
-               }
-          }
-     }
    /* now go through all_screens... and build a list of chosen screens */
    EINA_LIST_FOREACH(all_screens, l, scr)
      {
@@ -182,11 +130,10 @@ _e_xinerama_update(void)
                                    eina_list_count(chosen_screens),
                                    _e_xinerama_cb_screen_sort);
    INF("======================= screens:");
-   n = 0;
    EINA_LIST_FOREACH(chosen_screens, l, scr)
      {
         scr->escreen = n;
-        INF("E18 INIT: XINERAMA CHOSEN: [%i][%i], %ix%i+%i+%i",
+        INF("E19 INIT: XINERAMA CHOSEN: [%i][%i], %ix%i+%i+%i",
             scr->screen, scr->escreen, scr->w, scr->h, scr->x, scr->y);
         n++;
      }

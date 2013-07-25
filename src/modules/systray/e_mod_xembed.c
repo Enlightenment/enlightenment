@@ -65,12 +65,16 @@ struct _Instance_Xembed
       Ecore_Event_Handler *reparent;
       Ecore_Event_Handler *sel_clear;
       Ecore_Event_Handler *configure;
+      Ecore_Event_Handler *client;
    } handler;
    struct
    {
       Ecore_Timer *retry;
    } timer;
    Eina_List *icons;
+
+   E_Client *ec;
+   Ecore_Timer *visibility_timer;
 };
 
 static Ecore_X_Atom _atom_manager = 0;
@@ -104,18 +108,53 @@ _xembed_win_resize(Instance_Xembed *xembed)
    ecore_x_window_move_resize(xembed->win.base, last_x, last_y,
                               (first_x+first_w) - last_x,
                               (first_y+first_h) - last_y);
+   evas_object_geometry_set(xembed->ec->frame, last_x, last_y,
+                              (first_x+first_w) - last_x,
+                              (first_y+first_h) - last_y);
+}
+
+static void
+_systray_xembed_restack(Instance_Xembed *xembed)
+{
+   E_Layer layer;
+   E_Shelf *es = xembed->inst->gcc->gadcon->shelf;
+
+   if (es)
+     {
+        layer = e_comp_canvas_layer_map_to(e_comp_canvas_layer_map(es->cfg->layer) + 1);
+     }
+   else
+     layer = E_LAYER_CLIENT_DESKTOP;
+   layer = E_CLAMP(layer, E_LAYER_CLIENT_DESKTOP, E_LAYER_CLIENT_ABOVE);
+   evas_object_layer_set(xembed->ec->frame, layer);
+}
+
+static Eina_Bool
+_systray_xembed_visible_check(Instance_Xembed *xembed)
+{
+   if (eina_list_count(xembed->icons) == 0)
+     {
+        evas_object_hide(xembed->ec->frame);
+        e_pixmap_dirty(xembed->ec->pixmap);
+     }
+   else
+     {
+        _xembed_win_resize(xembed);
+        _systray_xembed_restack(xembed);
+        evas_object_show(xembed->ec->frame);
+     }
+   xembed->visibility_timer = NULL;
+   return EINA_FALSE;
 }
 
 void
 systray_xembed_size_updated(Instance_Xembed *xembed)
 {
-   if (eina_list_count(xembed->icons) == 0)
-     {
-        ecore_x_window_hide(xembed->win.base);
-        return;
-     }
-   ecore_x_window_show(xembed->win.base);
-   _xembed_win_resize(xembed);
+
+   if (xembed->visibility_timer)
+     ecore_timer_reset(xembed->visibility_timer);
+   else
+     xembed->visibility_timer = ecore_timer_add(0.15, (Ecore_Task_Cb)_systray_xembed_visible_check, xembed);
 }
 
 static void
@@ -130,6 +169,22 @@ _systray_xembed_cb_resize(void *data, Evas *evas __UNUSED__, Evas_Object *o __UN
 {
    Instance_Xembed *xembed = data;
    systray_size_updated(xembed->inst);
+}
+
+static void
+_systray_xembed_cb_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Instance_Xembed *xembed = data;
+   if (xembed->ec)
+     evas_object_hide(xembed->ec->frame);
+}
+
+static void
+_systray_xembed_cb_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Instance_Xembed *xembed = data;
+   if (xembed->ec && eina_list_count(xembed->icons))
+     evas_object_show(xembed->ec->frame);
 }
 
 static void
@@ -277,7 +332,6 @@ _systray_xembed_icon_add(Instance_Xembed *xembed, const Ecore_X_Window win)
                                     1.0, (double)w / (double)h);
 
    ecore_x_window_reparent(win, xembed->win.base, 0, 0);
-   ecore_x_window_raise(win);
    ecore_x_window_client_manage(win);
    ecore_x_window_save_set_add(win);
    ecore_x_window_shape_events_select(win, 1);
@@ -398,30 +452,15 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
      return EINA_FALSE;
 
    evas_object_geometry_get(box, &x, &y, NULL, NULL);
-   xembed->win.base = ecore_x_window_new(0, x, y, 1, 1);
+   xembed->win.base = ecore_x_window_override_new(0, x, y, 1, 1);
+   //fprintf(stderr, "xembed->win.base = %u\n", xembed->win.base);
    ecore_x_icccm_title_set(xembed->win.base, "noshadow_systray_base");
    ecore_x_icccm_name_class_set(xembed->win.base, "systray", "holder");
    ecore_x_netwm_name_set(xembed->win.base, "noshadow_systray_base");
-   ecore_x_window_reparent(xembed->win.base, xembed->win.parent, x, y);
    if (!invis)
      ecore_x_window_background_color_set(xembed->win.base, r, g, b);
    ecore_x_window_show(xembed->win.base);
-   if (xembed->inst->gcc->gadcon->shelf)
-     {
-        E_Shelf *es = xembed->inst->gcc->gadcon->shelf;
 
-        if (es->popup)
-          {
-             if (es->layer)
-               e_container_window_raise(xembed->inst->con, xembed->win.base, E_LAYER_ABOVE);
-             else
-               e_container_window_raise(xembed->inst->con, xembed->win.base, E_LAYER_BELOW);
-          }
-        else
-          e_container_window_raise(xembed->inst->con, xembed->win.base, E_LAYER_DESKTOP);
-     }
-   else
-     e_container_window_raise(xembed->inst->con, xembed->win.base, E_LAYER_DESKTOP);
    return EINA_TRUE;
 }
 
@@ -437,7 +476,7 @@ _systray_xembed_activate(Instance_Xembed *xembed)
 
    atom = _systray_xembed_atom_st_get(systray_manager_number_get(xembed->inst));
    old_win = ecore_x_selection_owner_get(atom);
-   if (old_win && (old_win != e_comp_get(xembed->inst->con)->cm_selection)) return 0;
+   if (old_win && (old_win != xembed->inst->comp->cm_selection)) return 0;
 
    if (xembed->win.base == 0)
      {
@@ -445,7 +484,7 @@ _systray_xembed_activate(Instance_Xembed *xembed)
           return 0;
      }
 
-   xembed->win.selection = e_comp_get(xembed->inst->con)->cm_selection;
+   xembed->win.selection = xembed->inst->comp->cm_selection;
    if (old_win) return 1;
    if (!_systray_xembed_selection_owner_set_current(xembed))
      {
@@ -527,7 +566,6 @@ _systray_xembed_handle_request_dock(Instance_Xembed *xembed, Ecore_X_Event_Clien
 {
    Ecore_X_Window win = (Ecore_X_Window)ev->data.l[2];
    Ecore_X_Time t;
-   Ecore_X_Window_Attributes attr;
    const Eina_List *l;
    Icon *icon;
    unsigned int val[2];
@@ -536,12 +574,6 @@ _systray_xembed_handle_request_dock(Instance_Xembed *xembed, Ecore_X_Event_Clien
    EINA_LIST_FOREACH(xembed->icons, l, icon)
      if (icon->win == win)
        return;
-
-   if (!ecore_x_window_attributes_get(win, &attr))
-     {
-        fprintf(stderr, "SYSTRAY: could not get attributes of win %#x\n", win);
-        return;
-     }
 
    icon = _systray_xembed_icon_add(xembed, win);
    if (!icon)
@@ -811,6 +843,27 @@ systray_xembed_orient_set(Instance_Xembed *xembed, E_Gadcon_Orient orient)
    systray_size_updated(xembed->inst);
 }
 
+static Eina_Bool
+_systray_xembed_client_add(Instance_Xembed *xembed, int t EINA_UNUSED, E_Event_Client *ev)
+{
+   if (e_client_util_win_get(ev->ec) == xembed->win.base)
+     {
+        /* this is some bullshit. */
+        xembed->ec = ev->ec;
+        ev->ec->internal_no_remember = ev->ec->borderless = ev->ec->visible = ev->ec->internal = 1;
+        ev->ec->border.changed = 1;
+        _xembed_win_resize(xembed);
+        ev->ec->icccm.take_focus = ev->ec->icccm.accepts_focus = 0;
+        EC_CHANGED(ev->ec);
+        if (eina_list_count(xembed->icons) == 0)
+          evas_object_hide(xembed->ec->frame);
+        else
+          evas_object_show(xembed->ec->frame);
+        _systray_xembed_restack(xembed);
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
 Instance_Xembed *
 systray_xembed_new(Instance *inst)
 {
@@ -837,7 +890,13 @@ systray_xembed_new(Instance *inst)
                                   _systray_xembed_cb_move, xembed);
    evas_object_event_callback_add(ui, EVAS_CALLBACK_RESIZE,
                                   _systray_xembed_cb_resize, xembed);
+   if (inst->gcc->gadcon->shelf)
+     {
+        evas_object_event_callback_add(inst->gcc->gadcon->shelf->comp_object, EVAS_CALLBACK_HIDE, _systray_xembed_cb_hide, xembed);
+        evas_object_event_callback_add(inst->gcc->gadcon->shelf->comp_object, EVAS_CALLBACK_SHOW, _systray_xembed_cb_show, xembed);
+     }
 
+   xembed->handler.client = ecore_event_handler_add(E_EVENT_CLIENT_ADD, (Ecore_Event_Handler_Cb)_systray_xembed_client_add, xembed);
    xembed->handler.message = ecore_event_handler_add
        (ECORE_X_EVENT_CLIENT_MESSAGE, _systray_xembed_cb_client_message,
         xembed);
@@ -870,8 +929,14 @@ systray_xembed_free(Instance_Xembed *xembed)
                                   _systray_xembed_cb_move);
    evas_object_event_callback_del(ui, EVAS_CALLBACK_RESIZE,
                                   _systray_xembed_cb_resize);
+   if (xembed->inst->gcc->gadcon->shelf)
+     {
+        evas_object_event_callback_add(xembed->inst->gcc->gadcon->shelf->comp_object, EVAS_CALLBACK_HIDE, _systray_xembed_cb_hide, xembed);
+        evas_object_event_callback_add(xembed->inst->gcc->gadcon->shelf->comp_object, EVAS_CALLBACK_SHOW, _systray_xembed_cb_show, xembed);
+     }
 
    _systray_xembed_deactivate(xembed);
+   ecore_timer_del(xembed->visibility_timer);
 
    if (xembed->handler.message)
      ecore_event_handler_del(xembed->handler.message);
@@ -885,6 +950,7 @@ systray_xembed_free(Instance_Xembed *xembed)
      ecore_event_handler_del(xembed->handler.sel_clear);
    if (xembed->handler.configure)
      ecore_event_handler_del(xembed->handler.configure);
+   ecore_event_handler_del(xembed->handler.client);
    if (xembed->timer.retry)
      ecore_timer_del(xembed->timer.retry);
 

@@ -78,7 +78,7 @@ e_modapi_save(E_Module *m __UNUSED__)
 static void
 _e_mod_run_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
 {
-   e_configure_registry_call("appearance/wallpaper2", m->zone->container, NULL);
+   e_configure_registry_call("appearance/wallpaper2", m->zone->comp, NULL);
 }
 
 /* menu item add hook */

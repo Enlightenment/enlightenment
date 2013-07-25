@@ -39,7 +39,7 @@ struct _E_Config_Dialog_Data
 static E_Config_Dialog_Data *_cfdata;
 
 E_Config_Dialog *
-e_int_config_shelf(E_Container *con, const char *params __UNUSED__)
+e_int_config_shelf(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -52,7 +52,7 @@ e_int_config_shelf(E_Container *con, const char *params __UNUSED__)
    v->free_cfdata = _free_data;
    v->basic.create_widgets = _basic_create;
 
-   cfd = e_config_dialog_new(con, _("Shelf Settings"), "E",
+   cfd = e_config_dialog_new(comp, _("Shelf Settings"), "E",
                              "extensions/shelves",
                              "preferences-desktop-shelf", 0, v, NULL);
    return cfd;
@@ -78,8 +78,8 @@ _shelf_handler_cb(E_Config_Dialog_Data *cfdata, int type __UNUSED__, E_Event_She
 {
    E_Zone *zone;
 
-   if (!cfdata->cfd->dia->win->border) return ECORE_CALLBACK_RENEW;
-   zone = cfdata->cfd->dia->win->border->zone;
+   if (!cfdata->cfd->dia->win->client) return ECORE_CALLBACK_RENEW;
+   zone = cfdata->cfd->dia->win->client->zone;
    if (ev->shelf->zone == zone)
    _ilist_item_new(cfdata, 1, ev->shelf);
    return ECORE_CALLBACK_RENEW;
@@ -125,7 +125,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_dialog_resizable_set(cfd->dia, 1);
    
    ol = e_widget_list_add(evas, 0, 0);
-   zone = cfdata->cfd->dia->win->border ? cfdata->cfd->dia->win->border->zone : e_zone_current_get(cfdata->cfd->con);
+   zone = cfdata->cfd->dia->win->client ? cfdata->cfd->dia->win->client->zone : e_zone_current_get(cfdata->cfd->comp);
    snprintf(buf, sizeof(buf), _("Configured Shelves: Display %d"), zone->num);
    of = e_widget_framelist_add(evas, buf, 0);
    cfdata->o_list = e_widget_ilist_add(evas, 24, 24, &(cfdata->cur_shelf));
@@ -212,10 +212,10 @@ _ilist_empty(E_Config_Dialog_Data *cfdata)
    E_Desk *desk;
    E_Zone *zone;
 
-   if ((!cfdata) || (!cfdata->cfd) || (!cfdata->cfd->con) || (!cfdata->cfd->con->manager)) return;
-   zone = cfdata->cfd->dia->win->border ? cfdata->cfd->dia->win->border->zone : e_zone_current_get(cfdata->cfd->con);
+   if ((!cfdata) || (!cfdata->cfd) || (!cfdata->cfd->comp) || (!cfdata->cfd->comp->man)) return;
+   zone = cfdata->cfd->dia->win->client ? cfdata->cfd->dia->win->client->zone : e_zone_current_get(cfdata->cfd->comp);
    if (!zone) return;
-   desk = cfdata->cfd->dia->win->border ? cfdata->cfd->dia->win->border->desk : e_desk_current_get(zone);
+   desk = cfdata->cfd->dia->win->client ? cfdata->cfd->dia->win->client->desk : e_desk_current_get(zone);
    EINA_LIST_FOREACH(e_shelf_list(), l, es)
      {
         if (es->zone != zone) continue;
@@ -265,7 +265,7 @@ _ilist_fill(E_Config_Dialog_Data *cfdata)
    e_widget_ilist_freeze(cfdata->o_list);
    e_widget_ilist_clear(cfdata->o_list);
    e_widget_ilist_go(cfdata->o_list);
-   zone = cfdata->cfd->dia->win->border ? cfdata->cfd->dia->win->border->zone : e_zone_current_get(cfdata->cfd->con);
+   zone = cfdata->cfd->dia->win->client ? cfdata->cfd->dia->win->client->zone : e_zone_current_get(cfdata->cfd->comp);
    desk = e_desk_current_get(zone);
 
    EINA_LIST_FOREACH(e_shelf_list(), l, es)
@@ -346,7 +346,7 @@ _cb_add(void *data, void *data2 __UNUSED__)
    cfdata = data;
    if (!cfdata) return;
 
-   zone = cfdata->cfd->dia->win->border ? cfdata->cfd->dia->win->border->zone : e_zone_current_get(cfdata->cfd->con);
+   zone = cfdata->cfd->dia->win->client ? cfdata->cfd->dia->win->client->zone : e_zone_current_get(cfdata->cfd->comp);
    cfdata->dia_new_shelf = e_shelf_new_dialog(zone);
    e_object_data_set(E_OBJECT(cfdata->dia_new_shelf), cfdata);
    e_object_del_attach_func_set(E_OBJECT(cfdata->dia_new_shelf), _new_shelf_cb_close);

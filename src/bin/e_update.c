@@ -60,17 +60,11 @@ _never_tell_me_cb(void *data __UNUSED__, E_Dialog *dia __UNUSED__)
 static void
 _new_version(const char *ver)
 {
-   E_Manager *man;
-   E_Container *con;
    char text[2048];
 
    if (dialog) return;
-   man = e_manager_current_get();
-   if (!man) return;
-   con = e_container_current_get(man);
-   if (!con) return;
 
-   dialog = e_dialog_new(con, "E", "_update_available");
+   dialog = e_dialog_new(NULL, "E", "_update_available");
 
    e_object_del_attach_func_set(E_OBJECT(dialog), _delete_cb);
    e_dialog_button_add(dialog, _("OK"), NULL,

@@ -16,7 +16,7 @@ static void _e_mod_sft_win_cb_forward(void *data, void *data2 __UNUSED__);
 static void _e_mod_sft_win_cb_win_pos(void *data, void *data2 __UNUSED__);
 static void _e_mod_sft_win_pos_toggle_top(Sft_Win *swin);
 static void _e_mod_sft_win_pos_toggle_left(Sft_Win *swin);
-static E_Border *_e_mod_sft_win_border_get(E_Zone *zone, int x, int y);
+static E_Client *_e_mod_sft_win_border_get(E_Zone *zone, int x, int y);
 
 Sft_Win *
 e_mod_sft_win_new(E_Zone *zone) 
@@ -45,7 +45,7 @@ e_mod_sft_win_new(E_Zone *zone)
                                               swin));
 
    /* create new window */
-   swin->win = e_win_new(zone->container);
+   swin->win = e_win_new(zone->comp);
    swin->win->data = swin;
 
    /* set some properties on the window */
@@ -100,15 +100,15 @@ e_mod_sft_win_new(E_Zone *zone)
    /* show the window */
    e_win_show(swin->win);
 
-   e_border_zone_set(swin->win->border, zone);
-   swin->win->border->user_skip_winlist = 1;
+   e_client_zone_set(swin->win->client, zone);
+   swin->win->client->user_skip_winlist = 1;
 
-   swin->win->border->lock_focus_in = 1;
-   swin->win->border->lock_focus_out = 1;
+   swin->win->client->lock_focus_in = 1;
+   swin->win->client->lock_focus_out = 1;
 
    /* set this window to be a dock window. This needs to be done after show 
     * as E will sometimes reset the window type */
-   ecore_x_netwm_window_type_set(swin->win->evas_win, ECORE_X_WINDOW_TYPE_DOCK);
+   ecore_x_netwm_window_type_set(swin->win->evas_win, E_WINDOW_TYPE_DOCK);
 
    /* tell conformant apps our position and size */
    ecore_x_e_illume_softkey_geometry_set(zone->black_win, 
@@ -179,7 +179,7 @@ _e_mod_sft_win_cb_win_prop(void *data, int type __UNUSED__, void *event)
    ev = event;
 
    if (!(swin = data)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != swin->win->container->manager->root) 
+   if (ev->win != swin->win->comp->man->root) 
      return ECORE_CALLBACK_PASS_ON;
    if (ev->atom != ATM_ENLIGHTENMENT_SCALE) return ECORE_CALLBACK_PASS_ON;
 
@@ -189,7 +189,7 @@ _e_mod_sft_win_cb_win_prop(void *data, int type __UNUSED__, void *event)
    /* NB: Not sure why, but we need to tell this border to fetch icccm 
     * size position hints now :( (NOTE: This was not needed a few days ago) 
     * If we do not do this, than softkey does not change w/ scale anymore */
-   swin->win->border->client.icccm.fetch.size_pos_hints = 1;
+   swin->win->client->icccm.fetch.size_pos_hints = 1;
 
    /* resize this window */
    e_win_resize(swin->win, swin->zone->w, (il_sft_cfg->height * e_scale));
@@ -393,7 +393,7 @@ _e_mod_sft_win_cb_win_pos(void *data, void *data2 __UNUSED__)
 static void 
 _e_mod_sft_win_pos_toggle_top(Sft_Win *swin) 
 {
-   E_Border *t, *b;
+   E_Client *t, *b;
    int y, h, tpos, bpos;
 
    if (!swin) return;
@@ -415,14 +415,14 @@ _e_mod_sft_win_pos_toggle_top(Sft_Win *swin)
    t = _e_mod_sft_win_border_get(swin->zone, swin->zone->x, tpos);
    b = _e_mod_sft_win_border_get(swin->zone, swin->zone->x, bpos);
 
-   if (t) e_border_move(t, t->x, bpos);
-   if (b) e_border_move(b, b->x, tpos);
+   if (t) evas_object_move(t->frame, t->x, bpos);
+   if (b) evas_object_move(b->frame, b->x, tpos);
 }
 
 static void 
 _e_mod_sft_win_pos_toggle_left(Sft_Win *swin) 
 {
-   E_Border *l, *r;
+   E_Client *l, *r;
    int h, lpos, rpos;
 
    if (!swin) return;
@@ -437,25 +437,26 @@ _e_mod_sft_win_pos_toggle_left(Sft_Win *swin)
    l = _e_mod_sft_win_border_get(swin->zone, lpos, h);
    r = _e_mod_sft_win_border_get(swin->zone, rpos, h);
 
-   if (l) e_border_move(l, rpos, l->y);
-   if (r) e_border_move(r, lpos, r->y);
+   if (l) evas_object_move(l->frame, rpos, l->y);
+   if (r) evas_object_move(r->frame, lpos, r->y);
 }
 
-static E_Border *
+static E_Client *
 _e_mod_sft_win_border_get(E_Zone *zone, int x, int y) 
 {
    Eina_List *l;
-   E_Border *bd;
+   E_Client *ec;
 
    if (!zone) return NULL;
-   EINA_LIST_REVERSE_FOREACH(e_border_client_list(), l, bd) 
+   EINA_LIST_REVERSE_FOREACH(zone->comp->clients, l, ec)
      {
-        if (bd->zone != zone) continue;
-        if (!bd->visible) continue;
-        if ((bd->x != x) || (bd->y != y)) continue;
-        if (bd->client.illume.quickpanel.quickpanel) continue;
+        if (e_client_util_ignored_get(ec)) continue;
+        if (ec->zone != zone) continue;
+        if (!ec->visible) continue;
+        if ((ec->x != x) || (ec->y != y)) continue;
+        if (ec->illume.quickpanel.quickpanel) continue;
 
-        return bd;
+        return ec;
      }
    return NULL;
 }

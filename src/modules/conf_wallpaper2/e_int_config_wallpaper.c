@@ -24,7 +24,7 @@ struct _Info
    Eina_Iterator *dir;
    Ecore_Idler *idler;
    int scans;
-   int con_num, zone_num, desk_x, desk_y;
+   int man_num, zone_num, desk_x, desk_y;
    int use_theme_bg;
    int mode;
 };
@@ -989,7 +989,7 @@ _apply(void *data, void *data2 __UNUSED__)
              E_Config_Desktop_Background *cfbg;
 
              cfbg = e_config->desktop_backgrounds->data;
-             e_bg_del(cfbg->container, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
+             e_bg_del(cfbg->manager, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
           }
         if ((info->use_theme_bg) || (!info->bg_file))
           e_bg_default_set(NULL);
@@ -999,8 +999,8 @@ _apply(void *data, void *data2 __UNUSED__)
    else if (info->mode == 1)
      {
         /* specific desk */
-        e_bg_del(info->con_num, info->zone_num, info->desk_x, info->desk_y);
-        e_bg_add(info->con_num, info->zone_num, info->desk_x, info->desk_y,
+        e_bg_del(info->man_num, info->zone_num, info->desk_x, info->desk_y);
+        e_bg_add(info->man_num, info->zone_num, info->desk_x, info->desk_y,
                  info->bg_file);
      }
    else
@@ -1015,8 +1015,8 @@ _apply(void *data, void *data2 __UNUSED__)
                dlist = eina_list_append(dlist, cfbg);
           }
         EINA_LIST_FREE(dlist, cfbg)
-          e_bg_del(cfbg->container, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
-        e_bg_add(info->con_num, info->zone_num, -1, -1, info->bg_file);
+          e_bg_del(cfbg->manager, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
+        e_bg_add(info->man_num, info->zone_num, -1, -1, info->bg_file);
      }
    e_bg_update();
    e_config_save_queue();
@@ -1114,7 +1114,7 @@ _scan(Info *info)
 }
 
 Info *
-wp_browser_new(E_Container *con)
+wp_browser_new(E_Comp *comp)
 {
    Info *info;
    E_Win *win;
@@ -1129,17 +1129,17 @@ wp_browser_new(E_Container *con)
    info = calloc(1, sizeof(Info));
    if (!info) return NULL;
 
-   zone = e_util_zone_current_get(con->manager);
+   zone = e_zone_current_get(comp);
    desk = e_desk_current_get(zone);
-   info->con_num = con->num;
+   info->man_num = comp->num;
    info->zone_num = zone->num;
    info->desk_x = desk->x;
    info->desk_y = desk->y;
    info->mode = 0;
-   cfbg = e_bg_config_get(con->num, zone->num, desk->x, desk->y);
+   cfbg = e_bg_config_get(comp->num, zone->num, desk->x, desk->y);
    if (cfbg)
      {
-        if ((cfbg->container >= 0) && (cfbg->zone >= 0))
+        if ((cfbg->manager >= 0) && (cfbg->zone >= 0))
           {
              if ((cfbg->desk_x >= 0) && (cfbg->desk_y >= 0))
                info->mode = 1;
@@ -1156,7 +1156,7 @@ wp_browser_new(E_Container *con)
    info->iw = (120 * e_scale);
    info->ih = (zone->h * info->iw) / (zone->w);
 
-   win = e_win_new(con);
+   win = e_win_new(comp);
    if (!win)
      {
         eina_stringshare_del(info->bg_file);
@@ -1176,7 +1176,7 @@ wp_browser_new(E_Container *con)
    e_win_resize_callback_set(win, _resize);
    e_win_delete_callback_set(win, _delete);
 
-   // bg + container
+   // bg + manager
    info->bg = edje_object_add(info->win->evas);
    e_theme_edje_object_set(info->bg, "base/theme/widgets",
                            "e/conf/wallpaper/main/window");
@@ -1252,7 +1252,7 @@ wp_browser_new(E_Container *con)
    o2 = e_widget_radio_add(info->win->evas, _("All Desktops"), 0, rg);
    evas_object_smart_callback_add(o2, "changed", _wp_changed, info);
    e_widget_list_object_append(o, o2, 1, 0, 0.5);
-   e_widget_disabled_set(o2, (e_util_container_desk_count_get(con) < 2));
+   e_widget_disabled_set(o2, (e_util_comp_desk_count_get(comp) < 2));
    evas_object_show(o2);
 
    o2 = e_widget_radio_add(info->win->evas, _("This Desktop"), 1, rg);
@@ -1263,8 +1263,8 @@ wp_browser_new(E_Container *con)
    o2 = e_widget_radio_add(info->win->evas, _("This Screen"), 2, rg);
    evas_object_smart_callback_add(o2, "changed", _wp_changed, info);
    e_widget_list_object_append(o, o2, 1, 0, 0.5);
-   if (!(e_util_container_zone_number_get(0, 1) ||
-         (e_util_container_zone_number_get(1, 0))))
+   if (!(e_util_comp_zone_number_get(0, 1) ||
+         (e_util_comp_zone_number_get(1, 0))))
      e_widget_disabled_set(o2, EINA_TRUE);
    evas_object_show(o2);
 
@@ -1299,7 +1299,7 @@ wp_browser_new(E_Container *con)
    e_win_resize(win, mw, mh);
    e_win_centered_set(win, 1);
    e_win_show(win);
-   e_win_border_icon_set(win, "preferences-desktop-wallpaper");
+   e_win_client_icon_set(win, "preferences-desktop-wallpaper");
 
    evas_object_resize(info->bg, info->win->w, info->win->h);
    evas_object_show(info->bg);
@@ -1329,14 +1329,14 @@ wp_broser_free(Info *info)
 }
 
 E_Config_Dialog *
-wp_conf_show(E_Container *con, const char *params __UNUSED__)
+wp_conf_show(E_Comp *comp, const char *params __UNUSED__)
 {
    if (global_info)
      {
         e_win_show(global_info->win);
         e_win_raise(global_info->win);
      }
-   global_info = wp_browser_new(con);
+   global_info = wp_browser_new(comp);
 
    return NULL;
 }

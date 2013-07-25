@@ -11,7 +11,7 @@ static Eina_Bool _e_mod_illume_config_animation_timeout(void *data);
 Ecore_Timer *_anim_change_timer = NULL;
 
 void 
-e_mod_illume_config_animation_show(E_Container *con, const char *params __UNUSED__) 
+e_mod_illume_config_animation_show(E_Comp *comp, const char *params __UNUSED__) 
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -28,7 +28,7 @@ e_mod_illume_config_animation_show(E_Container *con, const char *params __UNUSED
    v->normal_win = 1;
    v->scroll = 1;
 
-   cfd = e_config_dialog_new(con, _("Animation Settings"), "E", 
+   cfd = e_config_dialog_new(comp, _("Animation Settings"), "E", 
                              "illume/animation", 
                              "enlightenment/animation_settings", 0, v, NULL);
    if (!cfd) return;

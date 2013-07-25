@@ -11,7 +11,7 @@ struct _E_Configure
 {
    E_Object             e_obj_inherit;
 
-   E_Container         *con;
+   E_Comp              *comp;
    E_Win               *win;
    Evas                *evas;
    Evas_Object         *edje;
@@ -62,10 +62,9 @@ static Eina_Bool             _e_configure_module_update_cb(void *data, int type,
 static E_Configure *_e_configure = NULL;
 
 void
-e_configure_show(E_Container *con, const char *params)
+e_configure_show(E_Comp *comp, const char *params)
 {
    E_Configure *eco;
-   E_Manager *man;
    Evas_Coord ew, eh, mw, mh;
    Evas_Object *o;
    Evas_Modifier_Mask mask;
@@ -80,22 +79,22 @@ e_configure_show(E_Container *con, const char *params)
 
         eco = _e_configure;
         z = e_util_zone_current_get(e_manager_current_get());
-        z2 = eco->win->border->zone;
+        z2 = eco->win->client->zone;
         e_win_show(eco->win);
         e_win_raise(eco->win);
-        if (z->container == z2->container)
-          e_border_desk_set(eco->win->border, e_desk_current_get(z));
+        if (z->comp == z2->comp)
+          e_client_desk_set(eco->win->client, e_desk_current_get(z));
         else
           {
-             if (!eco->win->border->sticky)
-               e_desk_show(eco->win->border->desk);
-             ecore_x_pointer_warp(z2->container->win,
+             if (!eco->win->client->sticky)
+               e_desk_show(eco->win->client->desk);
+             ecore_evas_pointer_warp(z2->comp->ee,
                                   z2->x + (z2->w / 2), z2->y + (z2->h / 2));
           }
-        e_border_unshade(eco->win->border, eco->win->border->shade.dir);
+        e_client_unshade(eco->win->client, eco->win->client->shade_dir);
         if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
             (e_config->focus_setting == E_FOCUS_NEW_WINDOW))
-          e_border_focus_set(eco->win->border, 1, 1);
+          evas_object_focus_set(eco->win->client->frame, 1);
         EINA_LIST_FOREACH(e_widget_toolbar_items_get(eco->cat_list), l, it)
           {
              if (e_widget_toolbar_item_label_get(it) == params)
@@ -108,25 +107,16 @@ e_configure_show(E_Container *con, const char *params)
         return;
      }
 
-   if (!con)
-     {
-        man = e_manager_current_get();
-        if (!man) return;
-        con = e_container_current_get(man);
-        if (!con) con = e_container_number_get(man, 0);
-        if (!con) return;
-     }
-
    eco = E_OBJECT_ALLOC(E_Configure, E_CONFIGURE_TYPE, _e_configure_free);
    if (!eco) return;
-   eco->win = e_win_new(con);
+   eco->win = e_win_new(comp);
    if (!eco->win)
      {
         free(eco);
         return;
      }
    eco->win->data = eco;
-   eco->con = con;
+   eco->comp = comp;
    eco->evas = e_win_evas_get(eco->win);
 
    /* Event Handler for Module Updates */
@@ -188,7 +178,7 @@ e_configure_show(E_Container *con, const char *params)
 
    evas_object_show(eco->edje);
    e_win_show(eco->win);
-   e_win_border_icon_set(eco->win, "preferences-system");
+   e_win_client_icon_set(eco->win, "preferences-system");
 
    /* Preselect "Appearance" */
    e_widget_focus_set(eco->cat_list, 1);
@@ -377,7 +367,7 @@ _e_configure_item_cb(void *data)
 
    if (!(ci = data)) return;
    cb = ci->cb;
-   if (cb->path) e_configure_registry_call(cb->path, cb->eco->con, NULL);
+   if (cb->path) e_configure_registry_call(cb->path, cb->eco->comp, NULL);
 }
 
 static void

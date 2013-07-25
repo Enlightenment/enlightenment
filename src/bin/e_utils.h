@@ -17,9 +17,8 @@ EAPI void         e_util_env_set(const char *var, const char *val);
 EAPI E_Zone      *e_util_zone_current_get(E_Manager *man);
 EAPI int          e_util_glob_match(const char *str, const char *glob);
 EAPI int          e_util_glob_case_match(const char *str, const char *glob);
-EAPI E_Container *e_util_container_number_get(int num);
-EAPI E_Zone      *e_util_container_zone_id_get(int con_num, int id);
-EAPI E_Zone      *e_util_container_zone_number_get(int con_num, int zone_num);
+EAPI E_Zone      *e_util_comp_zone_id_get(int con_num, int id);
+EAPI E_Zone      *e_util_comp_zone_number_get(int con_num, int zone_num);
 EAPI int          e_util_head_exec(int head, const char *cmd);
 EAPI int          e_util_strcasecmp(const char *s1, const char *s2);
 EAPI int          e_util_strcmp(const char *s1, const char *s2);
@@ -34,10 +33,9 @@ EAPI int          e_util_icon_theme_set(Evas_Object *obj, const char *icon);
 EAPI unsigned int e_util_icon_size_normalize(unsigned int desired);
 EAPI int          e_util_menu_item_theme_icon_set(E_Menu_Item *mi, const char *icon);
 EAPI const char *e_util_mime_icon_get(const char *mime, unsigned int size);
-EAPI E_Container *e_util_container_window_find(Ecore_X_Window win);
 EAPI E_Zone      *e_util_zone_window_find(Ecore_X_Window win);
-EAPI E_Border    *e_util_desk_border_above(E_Border *bd);
-EAPI E_Border    *e_util_desk_border_below(E_Border *bd);
+EAPI E_Client    *e_util_desk_client_above(E_Client *ec);
+EAPI E_Client    *e_util_desk_client_below(E_Client *ec);
 EAPI int          e_util_edje_collection_exists(const char *file, const char *coll);
 EAPI E_Dialog     *e_util_dialog_internal(const char *title, const char *txt);
 EAPI const char  *e_util_filename_escape(const char *filename);
@@ -57,7 +55,7 @@ EAPI void         e_util_win_auto_resize_fill(E_Win *win);
    dialog warning if loaded version is older or newer than current */
 EAPI Eina_Bool    e_util_module_config_check(const char *module_name, int loaded, int current);
 
-EAPI int e_util_container_desk_count_get(E_Container *con);
+EAPI int e_util_comp_desk_count_get(E_Comp *con);
 EAPI E_Config_Binding_Key *e_util_binding_match(const Eina_List *bindlist, Ecore_Event_Key *ev, unsigned int *num, const E_Config_Binding_Key *skip);
 EAPI Eina_Bool e_util_fullscreen_current_any(void);
 EAPI Eina_Bool e_util_fullscreen_any(void);
@@ -73,20 +71,27 @@ EAPI char *e_util_string_append_quoted(char *str, size_t *size, size_t *len, con
 EAPI void e_util_evas_objects_above_print(Evas_Object *o);
 EAPI void e_util_evas_objects_above_print_smart(Evas_Object *o);
 
-EAPI Eina_Bool e_util_border_shadow_state_get(const E_Border *bd);
+EAPI Eina_Bool e_util_client_shadow_state_get(const E_Client *ec);
 
 EAPI void e_util_string_list_free(Eina_List *l);
-
-static inline E_Container *
-e_util_container_current_get(void)
-{
-   return e_container_current_get(e_manager_current_get());
-}
 
 static inline E_Comp *
 e_util_comp_current_get(void)
 {
    return e_manager_current_get()->comp;
+}
+
+static inline void
+e_util_pointer_center(const E_Client *ec)
+{
+   int x = 0, y = 0;
+
+   if (ec->zone)
+     x = ec->zone->x, y = ec->zone->y;
+   if ((e_config->focus_policy != E_FOCUS_CLICK) && (!e_config->disable_all_pointer_warps))
+     ecore_evas_pointer_warp(ec->comp->ee,
+                             x + ec->x + (ec->w / 2),
+                             y + ec->y + (ec->h / 2));
 }
 
 #endif

@@ -45,30 +45,28 @@ EAPI void
 e_init_show(void)
 {
    Evas_Object *o;
-   E_Manager *man;
-   E_Container *con;
+   E_Comp *c;
    E_Zone *zone;
    Eina_List *l;
    /* exec init */
 
    /* extra screens */
-   EINA_LIST_FOREACH(e_manager_list()->next, l, man)
+   EINA_LIST_FOREACH(e_comp_list()->next, l, c)
      {
-        o = edje_object_add(e_comp_get(man)->evas);
+        o = edje_object_add(c->evas);
         e_theme_edje_object_set(o, NULL, "e/init/extra_screen");
         evas_object_name_set(o, "_e_init_extra_screen");
         evas_object_move(o, 0, 0);
-        evas_object_resize(o, man->w, man->h);
-        evas_object_layer_set(o, E_COMP_CANVAS_LAYER_MAX);
+        evas_object_resize(o, c->man->w, c->man->h);
+        evas_object_layer_set(o, E_LAYER_MAX);
         evas_object_show(o);
         splash_objs = eina_list_append(splash_objs, o);
      }
 
-   man = eina_list_data_get(e_manager_list());
-   con = eina_list_data_get(man->containers);
-   EINA_LIST_FOREACH(con->zones, l, zone)
+   c = eina_list_data_get(e_comp_list());
+   EINA_LIST_FOREACH(c->zones, l, zone)
      {
-        o = edje_object_add(e_comp_get(man)->evas);
+        o = edje_object_add(c->evas);
         if (!zone->num)
           {
              e_theme_edje_object_set(o, NULL, "e/init/splash");
@@ -84,7 +82,7 @@ e_init_show(void)
         fprintf(stderr, "zone %p: %i %i   %ix%i\n", zone, zone->x, zone->y, zone->w, zone->h);
         evas_object_move(o, zone->x, zone->y);
         evas_object_resize(o, zone->w, zone->h);
-        evas_object_layer_set(o, E_COMP_CANVAS_LAYER_MAX);
+        evas_object_layer_set(o, E_LAYER_MAX);
         evas_object_show(o);
         splash_objs = eina_list_append(splash_objs, o);
      }
@@ -99,6 +97,7 @@ EAPI void
 e_init_hide(void)
 {
    E_FREE_LIST(splash_objs, evas_object_del);
+   E_LIST_FOREACH(e_comp_list(), e_comp_shape_queue);
    _e_init_object = NULL;
    E_FREE_FUNC(_e_init_timeout_timer, ecore_timer_del);
 }

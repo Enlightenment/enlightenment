@@ -21,7 +21,7 @@ static Eina_List *_e_config_dialog_list = NULL;
 /**
  * Creates a new dialog
  *
- * @param con the container the dialog will be added too
+ * @param c the compositor the dialog will be added to
  * @param title to display for the dialog
  * @param name the name used to register the window in e
  * @param class the call used to register the window in e
@@ -32,14 +32,14 @@ static Eina_List *_e_config_dialog_list = NULL;
  * @return returns the created dialog. Null on failure
  */
 EAPI E_Config_Dialog *
-e_config_dialog_new(E_Container *con, const char *title, const char *name, const char *class, const char *icon, int icon_size, E_Config_Dialog_View *view, void *data)
+e_config_dialog_new(E_Comp *c, const char *title, const char *name, const char *class, const char *icon, int icon_size, E_Config_Dialog_View *view, void *data)
 {
    E_Config_Dialog *cfd;
 
    cfd = E_OBJECT_ALLOC(E_Config_Dialog, E_CONFIG_DIALOG_TYPE,
                         _e_config_dialog_free);
    cfd->view = view;
-   cfd->con = con;
+   cfd->comp = c;
    cfd->title = eina_stringshare_add(title);
    cfd->name = eina_stringshare_add(name);
    cfd->class = eina_stringshare_add(class);
@@ -106,22 +106,21 @@ e_config_dialog_find(const char *name, const char *class)
              E_Zone *z;
 
              z = e_util_zone_current_get(e_manager_current_get());
-             e_border_uniconify(cfd->dia->win->border);
+             e_client_uniconify(cfd->dia->win->client);
              e_win_raise(cfd->dia->win);
-             if (z->container == cfd->dia->win->border->zone->container)
-               e_border_desk_set(cfd->dia->win->border, e_desk_current_get(z));
+             if (z->comp == cfd->dia->win->client->zone->comp)
+               e_client_desk_set(cfd->dia->win->client, e_desk_current_get(z));
              else
                {
-                  if (!cfd->dia->win->border->sticky)
-                    e_desk_show(cfd->dia->win->border->desk);
-                  ecore_x_pointer_warp(cfd->dia->win->border->zone->container->win,
-                                       cfd->dia->win->border->zone->x + (cfd->dia->win->border->zone->w / 2),
-                                       cfd->dia->win->border->zone->y + (cfd->dia->win->border->zone->h / 2));
+                  if (!cfd->dia->win->client->sticky)
+                    e_desk_show(cfd->dia->win->client->desk);
+                  e_util_pointer_center(cfd->dia->win->client);
                }
-             e_border_unshade(cfd->dia->win->border, cfd->dia->win->border->shade.dir);
+             if (cfd->dia->win->client->shaded || cfd->dia->win->client->shading)
+               e_client_unshade(cfd->dia->win->client, cfd->dia->win->client->shade_dir);
              if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
                  (e_config->focus_setting == E_FOCUS_NEW_WINDOW))
-               e_border_focus_set(cfd->dia->win->border, 1, 1);
+               evas_object_focus_set(cfd->dia->win->client->frame, 1);
              return 1;
           }
      }
@@ -192,9 +191,9 @@ _e_config_dialog_go(E_Config_Dialog *cfd, E_Config_Dialog_CFData_Type type)
    if (!pdia)  /* creating window for the first time */
      {
         if ((cfd->view->normal_win) || (e_config->cfgdlg_normal_wins))
-          cfd->dia = e_dialog_normal_win_new(cfd->con, cfd->name, buf);
+          cfd->dia = e_dialog_normal_win_new(cfd->comp, cfd->name, buf);
         else
-          cfd->dia = e_dialog_new(cfd->con, cfd->name, buf);
+          cfd->dia = e_dialog_new(cfd->comp, cfd->name, buf);
         e_object_del_attach_func_set(E_OBJECT(cfd->dia),
                                      _e_config_dialog_cb_dialog_del);
      } /* window was created before - deleting content only */

@@ -8,12 +8,12 @@
 #define BORDER_CLOSE      5
 
 typedef struct _Plugin      Plugin;
-typedef struct _Border_Item Border_Item;
+typedef struct _Border_Item Client_Item;
 
 struct _Plugin
 {
    Evry_Plugin base;
-   Eina_List  *borders;
+   Eina_List  *clients;
    Eina_List  *handlers;
    const char *input;
 };
@@ -21,7 +21,7 @@ struct _Plugin
 struct _Border_Item
 {
    Evry_Item base;
-   E_Border *border;
+   E_Client *client;
 };
 
 static const Evry_API *evry = NULL;
@@ -33,41 +33,43 @@ static Evas_Object *_icon_get(Evry_Item *it, Evas *e);
 
 /***************************************************************************/
 
-#define GET_BORDER(_bd, _it) Border_Item * _bd = (Border_Item *)_it;
+#define GET_BORDER(_bd, _it) Client_Item * _bd = (Client_Item *)_it;
 
 static void
-_border_item_free(Evry_Item *it)
+_client_item_free(Evry_Item *it)
 {
    GET_BORDER(bi, it);
 
-   e_object_unref(E_OBJECT(bi->border));
+   e_object_unref(E_OBJECT(bi->client));
 
    E_FREE(bi);
 }
 
 static int
-_border_item_add(Plugin *p, E_Border *bd)
+_client_item_add(Plugin *p, E_Client *ec)
 {
-   Border_Item *bi;
+   Client_Item *bi;
    char buf[1024];
 
-   if (bd->client.netwm.state.skip_taskbar)
+   if (ec->netwm.state.skip_taskbar)
      return 0;
-   if (bd->client.netwm.state.skip_pager)
+   if (ec->netwm.state.skip_pager)
+     return 0;
+   if (e_client_util_ignored_get(ec))
      return 0;
 
-   bi = EVRY_ITEM_NEW(Border_Item, p, e_border_name_get(bd),
-                      _icon_get, _border_item_free);
+   bi = EVRY_ITEM_NEW(Client_Item, p, e_client_name_get(ec),
+                      _icon_get, _client_item_free);
 
    snprintf(buf, sizeof(buf), "%d:%d %s",
-            bd->desk->x, bd->desk->y,
-            (bd->desktop ? bd->desktop->name : ""));
+            ec->desk->x, ec->desk->y,
+            (ec->desktop ? ec->desktop->name : ""));
    EVRY_ITEM_DETAIL_SET(bi, buf);
 
-   bi->border = bd;
-   e_object_ref(E_OBJECT(bd));
+   bi->client = ec;
+   e_object_ref(E_OBJECT(ec));
 
-   p->borders = eina_list_append(p->borders, bi);
+   p->clients = eina_list_append(p->clients, bi);
 
    return 1;
 }
@@ -75,23 +77,23 @@ _border_item_add(Plugin *p, E_Border *bd)
 static Eina_Bool
 _cb_border_remove(void *data, __UNUSED__ int type, void *event)
 {
-   E_Event_Border_Remove *ev = event;
-   Border_Item *bi;
+   E_Event_Client *ev = event;
+   Client_Item *bi;
    Eina_List *l;
    Plugin *p = data;
 
-   EINA_LIST_FOREACH (p->borders, l, bi)
-     if (bi->border == ev->border)
+   EINA_LIST_FOREACH(p->clients, l, bi)
+     if (bi->client == ev->ec)
        break;
 
    if (!bi) return ECORE_CALLBACK_PASS_ON;
 
    EVRY_PLUGIN_ITEMS_CLEAR(p);
 
-   p->borders = eina_list_remove(p->borders, bi);
+   p->clients = eina_list_remove(p->clients, bi);
    EVRY_ITEM_FREE(bi);
 
-   EVRY_PLUGIN_ITEMS_ADD(p, p->borders, p->input, 1, 0);
+   EVRY_PLUGIN_ITEMS_ADD(p, p->clients, p->input, 1, 0);
 
    EVRY_PLUGIN_UPDATE(p, EVRY_UPDATE_ADD);
 
@@ -99,17 +101,18 @@ _cb_border_remove(void *data, __UNUSED__ int type, void *event)
 }
 
 static Eina_Bool
-_cb_border_add(void *data, __UNUSED__ int type, void *event)
+_cb_client_add(void *data, __UNUSED__ int type, void *event)
 {
-   E_Event_Border_Add *ev = event;
+   E_Event_Client *ev = event;
    Plugin *p = data;
 
-   if (!_border_item_add(p, ev->border))
+   if (e_client_util_ignored_get(ev->ec)) return ECORE_CALLBACK_RENEW;
+   if (!_client_item_add(p, ev->ec))
      return ECORE_CALLBACK_PASS_ON;
 
    EVRY_PLUGIN_ITEMS_CLEAR(p);
 
-   EVRY_PLUGIN_ITEMS_ADD(p, p->borders, p->input, 1, 0);
+   EVRY_PLUGIN_ITEMS_ADD(p, p->clients, p->input, 1, 0);
 
    EVRY_PLUGIN_UPDATE(p, EVRY_UPDATE_ADD);
 
@@ -120,21 +123,21 @@ static Evry_Plugin *
 _begin(Evry_Plugin *plugin, const Evry_Item *item __UNUSED__)
 {
    Plugin *p;
-   E_Border *bd;
+   E_Client *ec;
    Eina_List *l;
 
    EVRY_PLUGIN_INSTANCE(p, plugin);
 
    p->handlers = eina_list_append
        (p->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_REMOVE, _cb_border_remove, p));
+         (E_EVENT_CLIENT_REMOVE, _cb_border_remove, p));
 
    p->handlers = eina_list_append
        (p->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_ADD, _cb_border_add, p));
+         (E_EVENT_CLIENT_ADD, _cb_client_add, p));
 
-   EINA_LIST_FOREACH (e_border_focus_stack_get(), l, bd)
-     _border_item_add(p, bd);
+   EINA_LIST_FOREACH (e_client_focus_stack_get(), l, ec)
+     _client_item_add(p, ec);
 
    return EVRY_PLUGIN(p);
 }
@@ -143,7 +146,7 @@ static void
 _finish(Evry_Plugin *plugin)
 {
    Ecore_Event_Handler *h;
-   Border_Item *bi;
+   Client_Item *bi;
 
    GET_PLUGIN(p, plugin);
 
@@ -151,7 +154,7 @@ _finish(Evry_Plugin *plugin)
 
    EVRY_PLUGIN_ITEMS_CLEAR(p);
 
-   EINA_LIST_FREE (p->borders, bi)
+   EINA_LIST_FREE (p->clients, bi)
      EVRY_ITEM_FREE(bi);
 
    EINA_LIST_FREE (p->handlers, h)
@@ -174,7 +177,7 @@ _fetch(Evry_Plugin *plugin, const char *input)
       if (input)
         p->input = eina_stringshare_add(input);
 
-      return EVRY_PLUGIN_ITEMS_ADD(p, p->borders, input, 1, 0);
+      return EVRY_PLUGIN_ITEMS_ADD(p, p->clients, input, 1, 0);
    }
 
    return 0;
@@ -186,87 +189,87 @@ _icon_get(Evry_Item *it, Evas *e)
    GET_BORDER(bi, it);
 
    Evas_Object *o = NULL;
-   E_Border *bd = bi->border;
+   E_Client *ec = bi->client;
 
-   if (bd->internal)
+   if (ec->internal)
      {
-        if (!bd->internal_icon)
+        if (!ec->internal_icon)
           {
              o = e_icon_add(e);
              e_util_icon_theme_set(o, "enlightenment");
           }
-        else if (!bd->internal_icon_key)
+        else if (!ec->internal_icon_key)
           {
              char *ext;
-             ext = strrchr(bd->internal_icon, '.');
+             ext = strrchr(ec->internal_icon, '.');
              if ((ext) && ((!strcmp(ext, ".edj"))))
                {
                   o = edje_object_add(e);
-                  if (!edje_object_file_set(o, bd->internal_icon, "icon"))
+                  if (!edje_object_file_set(o, ec->internal_icon, "icon"))
                     e_util_icon_theme_set(o, "enlightenment");
                }
              else if (ext)
                {
                   o = e_icon_add(e);
-                  e_icon_file_set(o, bd->internal_icon);
+                  e_icon_file_set(o, ec->internal_icon);
                }
              else
                {
                   o = e_icon_add(e);
                   e_icon_scale_size_set(o, 128);
-                  if (!e_util_icon_theme_set(o, bd->internal_icon))
+                  if (!e_util_icon_theme_set(o, ec->internal_icon))
                     e_util_icon_theme_set(o, "enlightenment");
                }
           }
         else
           {
              o = edje_object_add(e);
-             edje_object_file_set(o, bd->internal_icon, bd->internal_icon_key);
+             edje_object_file_set(o, ec->internal_icon, ec->internal_icon_key);
           }
 
         return o;
      }
 
-   if (bd->client.netwm.icons)
+   if (ec->netwm.icons)
      {
         if (e_config->use_app_icon)
           goto _use_netwm_icon;
 
-        if (bd->remember && (bd->remember->prop.icon_preference == E_ICON_PREF_NETWM))
+        if (ec->remember && (ec->remember->prop.icon_preference == E_ICON_PREF_NETWM))
           goto _use_netwm_icon;
      }
 
-   if (bd->desktop)
+   if (ec->desktop)
      {
-        o = e_util_desktop_icon_add(bd->desktop, 128, e);
+        o = e_util_desktop_icon_add(ec->desktop, 128, e);
         if (o) return o;
      }
 
 _use_netwm_icon:
-   if (bd->client.netwm.icons)
+   if (ec->netwm.icons)
      {
         int i, size, tmp, found = 0;
         o = e_icon_add(e);
 
-        size = bd->client.netwm.icons[0].width;
+        size = ec->netwm.icons[0].width;
 
-        for (i = 1; i < bd->client.netwm.num_icons; i++)
+        for (i = 1; i < ec->netwm.num_icons; i++)
           {
-             if ((tmp = bd->client.netwm.icons[i].width) > size)
+             if ((tmp = ec->netwm.icons[i].width) > size)
                {
                   size = tmp;
                   found = i;
                }
           }
 
-        e_icon_data_set(o, bd->client.netwm.icons[found].data,
-                        bd->client.netwm.icons[found].width,
-                        bd->client.netwm.icons[found].height);
+        e_icon_data_set(o, ec->netwm.icons[found].data,
+                        ec->netwm.icons[found].width,
+                        ec->netwm.icons[found].height);
         e_icon_alpha_set(o, 1);
         return o;
      }
 
-   o = e_border_icon_add(bd, e);
+   o = e_client_icon_add(ec, e);
    if (o) return o;
 
    o = edje_object_add(e);
@@ -283,39 +286,39 @@ _check_border(Evry_Action *act, const Evry_Item *it)
    GET_BORDER(bi, it);
 
    int action = EVRY_ITEM_DATA_INT_GET(act);
-   E_Border *bd = bi->border;
+   E_Client *ec = bi->client;
    E_Zone *zone = e_util_zone_current_get(e_manager_current_get());
 
-   if (!bd)
+   if (!ec)
      {
-        ERR("no border");
+        ERR("no client");
         return 0;
      }
 
    switch (action)
      {
       case BORDER_CLOSE:
-        if (bd->lock_close)
+        if (ec->lock_close)
           return 0;
         break;
 
       case BORDER_SHOW:
-        if (bd->lock_focus_in)
+        if (ec->lock_focus_in)
           return 0;
         break;
 
       case BORDER_HIDE:
-        if (bd->lock_user_iconify)
+        if (ec->lock_user_iconify)
           return 0;
         break;
 
       case BORDER_FULLSCREEN:
-        if (!bd->lock_user_fullscreen)
+        if (!ec->lock_user_fullscreen)
           return 0;
         break;
 
       case BORDER_TODESK:
-        if (bd->desk == (e_desk_current_get(zone)))
+        if (ec->desk == (e_desk_current_get(zone)))
           return 0;
         break;
      }
@@ -329,42 +332,42 @@ _act_border(Evry_Action *act)
    GET_BORDER(bi, act->it1.item);
 
    int action = EVRY_ITEM_DATA_INT_GET(act);
-   E_Border *bd = bi->border;
+   E_Client *ec = bi->client;
    E_Zone *zone = e_util_zone_current_get(e_manager_current_get());
    int focus = 0;
 
-   if (!bd)
+   if (!ec)
      {
-        ERR("no border");
+        ERR("no client");
         return 0;
      }
 
    switch (action)
      {
       case BORDER_CLOSE:
-        e_border_act_close_begin(bd);
+        e_client_act_close_begin(ec);
         break;
 
       case BORDER_SHOW:
-        if (bd->desk != (e_desk_current_get(zone)))
-          e_desk_show(bd->desk);
+        if (ec->desk != (e_desk_current_get(zone)))
+          e_desk_show(ec->desk);
         focus = 1;
         break;
 
       case BORDER_HIDE:
-        e_border_iconify(bd);
+        e_client_iconify(ec);
         break;
 
       case BORDER_FULLSCREEN:
-        if (!bd->fullscreen)
-          e_border_fullscreen(bd, E_FULLSCREEN_RESIZE);
+        if (!ec->fullscreen)
+          e_client_fullscreen(ec, E_FULLSCREEN_RESIZE);
         else
-          e_border_unfullscreen(bd);
+          e_client_unfullscreen(ec);
         break;
 
       case BORDER_TODESK:
-        if (bd->desk != (e_desk_current_get(zone)))
-          e_border_desk_set(bd, e_desk_current_get(zone));
+        if (ec->desk != (e_desk_current_get(zone)))
+          e_client_desk_set(ec, e_desk_current_get(zone));
         focus = 1;
         break;
 
@@ -374,39 +377,39 @@ _act_border(Evry_Action *act)
 
    if (focus)
      {
-        if (bd->shaded)
-          e_border_unshade(bd, bd->shade.dir);
+        if (ec->shaded)
+          e_client_unshade(ec, ec->shade_dir);
 
-        if (bd->iconic)
-          e_border_uniconify(bd);
+        if (ec->iconic)
+          e_client_uniconify(ec);
         else
-          e_border_raise(bd);
+          evas_object_raise(ec->frame);
 
-        if (!bd->lock_focus_out)
+        if (!ec->lock_focus_out)
           {
-             e_border_focus_set(bd, 1, 1);
-             e_border_focus_latest_set(bd);
+             evas_object_focus_set(ec->frame, 1);
+             e_client_focus_latest_set(ec);
           }
 
         if ((e_config->focus_policy != E_FOCUS_CLICK) ||
             (e_config->winlist_warp_at_end) ||
             (e_config->winlist_warp_while_selecting))
           {
-             int warp_to_x = bd->x + (bd->w / 2);
-             if (warp_to_x < (bd->zone->x + 1))
-               warp_to_x = bd->zone->x + ((bd->x + bd->w - bd->zone->x) / 2);
-             else if (warp_to_x >= (bd->zone->x + bd->zone->w - 1))
-               warp_to_x = (bd->zone->x + bd->zone->w + bd->x) / 2;
+             int warp_to_x = ec->x + (ec->w / 2);
+             if (warp_to_x < (ec->zone->x + 1))
+               warp_to_x = ec->zone->x + ((ec->x + ec->w - ec->zone->x) / 2);
+             else if (warp_to_x >= (ec->zone->x + ec->zone->w - 1))
+               warp_to_x = (ec->zone->x + ec->zone->w + ec->x) / 2;
 
-             int warp_to_y = bd->y + (bd->h / 2);
-             if (warp_to_y < (bd->zone->y + 1))
-               warp_to_y = bd->zone->y + ((bd->y + bd->h - bd->zone->y) / 2);
-             else if (warp_to_y >= (bd->zone->y + bd->zone->h - 1))
-               warp_to_y = (bd->zone->y + bd->zone->h + bd->y) / 2;
+             int warp_to_y = ec->y + (ec->h / 2);
+             if (warp_to_y < (ec->zone->y + 1))
+               warp_to_y = ec->zone->y + ((ec->y + ec->h - ec->zone->y) / 2);
+             else if (warp_to_y >= (ec->zone->y + ec->zone->h - 1))
+               warp_to_y = (ec->zone->y + ec->zone->h + ec->y) / 2;
 
-             ecore_x_pointer_warp(bd->zone->container->win, warp_to_x, warp_to_y);
+             ecore_x_pointer_warp(ec->zone->comp->win, warp_to_x, warp_to_y);
           }
-        /* e_border_focus_set_with_pointer(bd); */
+        /* e_client_focus_set_with_pointer(ec); */
      }
 
    return 1;
@@ -423,12 +426,12 @@ _plugins_init(const Evry_API *_api)
      return EINA_FALSE;
 
    _plug = EVRY_PLUGIN_BASE(N_("Windows"), "preferences-system-windows",
-                            EVRY_TYPE_BORDER, _begin, _finish, _fetch);
+                            EVRY_TYPE_CLIENT, _begin, _finish, _fetch);
    _plug->transient = EINA_TRUE;
    evry->plugin_register(_plug, EVRY_PLUGIN_SUBJECT, 2);
 
    act = EVRY_ACTION_NEW(N_("Switch to Window"),
-                         EVRY_TYPE_BORDER, 0, "go-next",
+                         EVRY_TYPE_CLIENT, 0, "go-next",
                          _act_border, _check_border);
    EVRY_ITEM_DATA_INT_SET(act, BORDER_SHOW);
    evry->action_register(act, 1);
@@ -436,28 +439,28 @@ _plugins_init(const Evry_API *_api)
    _actions = eina_list_append(_actions, act);
 
    act = EVRY_ACTION_NEW(N_("Iconify"),
-                         EVRY_TYPE_BORDER, 0, "go-down",
+                         EVRY_TYPE_CLIENT, 0, "go-down",
                          _act_border, _check_border);
    EVRY_ITEM_DATA_INT_SET(act, BORDER_HIDE);
    _actions = eina_list_append(_actions, act);
    evry->action_register(act, 2);
 
    act = EVRY_ACTION_NEW(N_("Toggle Fullscreen"),
-                         EVRY_TYPE_BORDER, 0, "view-fullscreen",
+                         EVRY_TYPE_CLIENT, 0, "view-fullscreen",
                          _act_border, _check_border);
    EVRY_ITEM_DATA_INT_SET(act, BORDER_FULLSCREEN);
    _actions = eina_list_append(_actions, act);
    evry->action_register(act, 4);
 
    act = EVRY_ACTION_NEW(N_("Close"),
-                         EVRY_TYPE_BORDER, 0, "list-remove",
+                         EVRY_TYPE_CLIENT, 0, "list-remove",
                          _act_border, _check_border);
    EVRY_ITEM_DATA_INT_SET(act, BORDER_CLOSE);
    _actions = eina_list_append(_actions, act);
    evry->action_register(act, 3);
 
    act = EVRY_ACTION_NEW(N_("Send to Desktop"),
-                         EVRY_TYPE_BORDER, 0, "go-previous",
+                         EVRY_TYPE_CLIENT, 0, "go-previous",
                          _act_border, _check_border);
    EVRY_ITEM_DATA_INT_SET(act, BORDER_TODESK);
    _actions = eina_list_append(_actions, act);

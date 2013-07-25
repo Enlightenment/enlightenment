@@ -27,7 +27,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_mouse(E_Container *con, const char *params __UNUSED__)
+e_int_config_mouse(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -43,7 +43,7 @@ e_int_config_mouse(E_Container *con, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create_widgets;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(con, _("Mouse Settings"), "E",
+   cfd = e_config_dialog_new(comp, _("Mouse Settings"), "E",
 			     "keyboard_and_mouse/mouse_settings",
 			     "preferences-desktop-mouse", 0, v, NULL);
    return cfd;
@@ -98,8 +98,8 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 static int
 _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   Eina_List *l;
-   E_Manager *man;
+   const Eina_List *l;
+   E_Comp *comp;
 
    e_config->use_e_cursor = cfdata->use_e_cursor;
    e_config->show_cursor = cfdata->show_cursor;
@@ -113,15 +113,15 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    e_config_save_queue();
 
    /* Apply the above settings */
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
      {
-        if (man->pointer && !e_config->show_cursor)
+        if (comp->pointer && !e_config->show_cursor)
           {
-             e_pointer_hide(man->pointer);
+             e_pointer_hide(comp->pointer);
              continue;
           }
-        if (man->pointer) e_object_del(E_OBJECT(man->pointer));
-        man->pointer = e_pointer_window_new(man->root, 1);
+        if (comp->pointer) e_object_del(E_OBJECT(comp->pointer));
+        comp->pointer = e_pointer_window_new(comp->man->root, 1);
      }
 
    e_mouse_update();

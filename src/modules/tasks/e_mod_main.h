@@ -8,7 +8,7 @@ struct _Config
 {
    E_Module *module;
    Eina_List *tasks;
-   Eina_List *borders;
+   Eina_List *clients;
    Eina_List *items;
    E_Menu *menu;
    Eina_List *handlers;

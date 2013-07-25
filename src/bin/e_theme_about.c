@@ -6,7 +6,7 @@ _cb_settings_theme(void *data, Evas_Object *obj __UNUSED__, const char *emission
 {
    E_Obj_Dialog *od = data;
 
-   e_configure_registry_call("appearance/theme", od->win->container, NULL);
+   e_configure_registry_call("appearance/theme", od->win->comp, NULL);
 }
 
 /* local subsystem globals */
@@ -14,11 +14,11 @@ _cb_settings_theme(void *data, Evas_Object *obj __UNUSED__, const char *emission
 /* externally accessible functions */
 
 EAPI E_Theme_About *
-e_theme_about_new(E_Container *con)
+e_theme_about_new(E_Comp *c)
 {
    E_Obj_Dialog *od;
 
-   od = e_obj_dialog_new(con, _("About Theme"), "E", "_theme_about");
+   od = e_obj_dialog_new(c, _("About Theme"), "E", "_theme_about");
    if (!od) return NULL;
    e_obj_dialog_obj_theme_set(od, "base/theme", "e/theme/about");
    e_obj_dialog_obj_part_text_set(od, "e.text.label", _("Close"));

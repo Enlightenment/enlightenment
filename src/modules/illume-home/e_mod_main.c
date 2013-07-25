@@ -24,7 +24,7 @@ struct _Il_Home_Exec
    E_Busycover *cover;
    Efreet_Desktop *desktop;
    Ecore_Exe *exec;
-   E_Border *border;
+   E_Client *client;
    E_Zone *zone;
    Ecore_Timer *timeout;
    int startup_id;
@@ -37,7 +37,7 @@ static void _il_home_apps_populate(void);
 static void _il_home_apps_unpopulate(void);
 static void _il_home_desks_populate(void);
 static void _il_home_desktop_run(Il_Home_Win *hwin, Efreet_Desktop *desktop);
-static E_Border *_il_home_desktop_find_border(E_Zone *zone, Efreet_Desktop *desktop);
+static E_Client *_il_home_desktop_find_border(E_Zone *zone, Efreet_Desktop *desktop);
 static void _il_home_win_new(E_Zone *zone);
 static void _il_home_win_cb_free(Il_Home_Win *hwin);
 static void _il_home_win_cb_resize(E_Win *win);
@@ -70,8 +70,8 @@ EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume Home" };
 EAPI void *
 e_modapi_init(E_Module *m) 
 {
-   E_Manager *man;
-   Eina_List *ml;
+   const Eina_List *l;
+   E_Comp *comp;
 
    if (!il_home_config_init(m)) return NULL;
 
@@ -86,11 +86,11 @@ e_modapi_init(E_Module *m)
 
    hdls = 
      eina_list_append(hdls, 
-                      ecore_event_handler_add(E_EVENT_BORDER_ADD, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_ADD, 
                                               _il_home_cb_border_add, NULL));
    hdls = 
      eina_list_append(hdls, 
-                      ecore_event_handler_add(E_EVENT_BORDER_REMOVE, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_REMOVE, 
                                               _il_home_cb_border_del, NULL));
    hdls = 
      eina_list_append(hdls, 
@@ -111,25 +111,19 @@ e_modapi_init(E_Module *m)
                       ecore_event_handler_add(E_EVENT_BG_UPDATE, 
                                               _il_home_cb_bg_change, NULL));
 
-   EINA_LIST_FOREACH(e_manager_list(), ml, man) 
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
      {
-        E_Container *con;
-        Eina_List *cl;
+        E_Zone *zone;
+        Eina_List *zl;
 
-        EINA_LIST_FOREACH(man->containers, cl, con) 
+        EINA_LIST_FOREACH(comp->zones, zl, zone) 
           {
-             E_Zone *zone;
-             Eina_List *zl;
+             Ecore_X_Illume_Mode mode;
 
-             EINA_LIST_FOREACH(con->zones, zl, zone) 
-               {
-                  Ecore_X_Illume_Mode mode;
-
-                  mode = ecore_x_e_illume_mode_get(zone->black_win);
-                  _il_home_win_new(zone);
-                  if (mode > ECORE_X_ILLUME_MODE_SINGLE)
-                    _il_home_win_new(zone);
-               }
+             mode = ecore_x_e_illume_mode_get(zone->black_win);
+             _il_home_win_new(zone);
+             if (mode > ECORE_X_ILLUME_MODE_SINGLE)
+               _il_home_win_new(zone);
           }
      }
 
@@ -284,26 +278,26 @@ _il_home_desktop_run(Il_Home_Win *hwin, Efreet_Desktop *desktop)
    E_Exec_Instance *eins;
    Il_Home_Exec *exec;
    Eina_List *l;
-   E_Border *bd;
+   E_Client *ec;
    char buff[4096];
 
    if ((!hwin) || (!desktop) || (!desktop->exec)) return;
    EINA_LIST_FOREACH(exes, l, exec) 
      {
         if (exec->desktop != desktop) continue;
-        if ((exec->border) && (exec->border->zone == hwin->zone)) 
+        if ((exec->client) && (exec->client->zone == hwin->zone)) 
           {
-             e_border_uniconify(exec->border);
-             e_border_raise(exec->border);
-             e_border_focus_set(exec->border, 1, 1);
+             e_client_uniconify(exec->client);
+             evas_object_raise(exec->client->frame);
+             evas_object_focus_set(exec->client->frame, 1);
              return;
           }
      }
-   if ((bd = _il_home_desktop_find_border(hwin->zone, desktop))) 
+   if ((ec = _il_home_desktop_find_border(hwin->zone, desktop))) 
      {
-        e_border_uniconify(bd);
-        e_border_raise(bd);
-        e_border_focus_set(bd, 1, 1);
+        e_client_uniconify(ec);
+        evas_object_raise(ec->frame);
+        evas_object_focus_set(ec->frame, 1);
         return;
      }
 
@@ -326,11 +320,11 @@ _il_home_desktop_run(Il_Home_Win *hwin, Efreet_Desktop *desktop)
    exes = eina_list_append(exes, exec);
 }
 
-static E_Border *
+static E_Client *
 _il_home_desktop_find_border(E_Zone *zone, Efreet_Desktop *desktop) 
 {
    Eina_List *l;
-   E_Border *bd;
+   E_Client *ec;
    char *exe = NULL, *p;
 
    if (!desktop) return NULL;
@@ -350,34 +344,35 @@ _il_home_desktop_find_border(E_Zone *zone, Efreet_Desktop *desktop)
         if (p) strcpy(exe, p + 1);
      }
 
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd) 
+   EINA_LIST_FOREACH(zone->comp->clients, l, ec)
      {
-        if (bd->zone != zone) continue;
-        if (e_exec_startup_id_pid_find(bd->client.netwm.pid, 
-                                       bd->client.netwm.startup_id) == desktop) 
+        if (e_client_util_ignored_get(ec)) continue;
+        if (ec->zone != zone) continue;
+        if (e_exec_startup_id_pid_find(ec->netwm.pid, 
+                                       ec->netwm.startup_id) == desktop) 
           {
              free(exe);
-             return bd;
+             return ec;
           }
         if (exe) 
           {
-             if (bd->client.icccm.command.argv) 
+             if (ec->icccm.command.argv) 
                {
                   char *pp;
 
-                  pp = strrchr(bd->client.icccm.command.argv[0], '/');
-                  if (!pp) pp = bd->client.icccm.command.argv[0];
+                  pp = strrchr(ec->icccm.command.argv[0], '/');
+                  if (!pp) pp = ec->icccm.command.argv[0];
                   if (!strcmp(exe, pp)) 
                     {
                        free(exe);
-                       return bd;
+                       return ec;
                     }
                }
-             if ((bd->client.icccm.name) && 
-                 (!strcasecmp(bd->client.icccm.name, exe))) 
+             if ((ec->icccm.name) && 
+                 (!strcasecmp(ec->icccm.name, exe))) 
                {
                   free(exe);
-                  return bd;
+                  return ec;
                }
           }
      }
@@ -398,7 +393,7 @@ _il_home_win_new(E_Zone *zone)
    if (!hwin) return;
 
    hwin->zone = zone;
-   hwin->win = e_win_new(zone->container);
+   hwin->win = e_win_new(zone->comp);
    if (!hwin->win) 
      {
         e_object_del(E_OBJECT(hwin));
@@ -417,9 +412,9 @@ _il_home_win_new(E_Zone *zone)
 
    desk = e_desk_current_get(zone);
    if (desk)
-     bgfile = e_bg_file_get(zone->container->num, zone->num, desk->x, desk->y);
+     bgfile = e_bg_file_get(zone->comp->num, zone->num, desk->x, desk->y);
    else
-     bgfile = e_bg_file_get(zone->container->num, zone->num, -1, -1);
+     bgfile = e_bg_file_get(zone->comp->num, zone->num, -1, -1);
 
    hwin->o_bg = edje_object_add(evas);
    edje_object_file_set(hwin->o_bg, bgfile, "e/desktop/background");
@@ -453,7 +448,7 @@ _il_home_win_new(E_Zone *zone)
 
    e_win_move_resize(hwin->win, zone->x, zone->y, zone->w, (zone->h / 2));
    e_win_show(hwin->win);
-   e_border_zone_set(hwin->win->border, zone);
+   e_client_zone_set(hwin->win->client, zone);
    if (hwin->win->evas_win) 
      e_drop_xdnd_register_set(hwin->win->evas_win, EINA_TRUE);
 
@@ -572,29 +567,29 @@ _il_home_desktop_cache_update(void *data __UNUSED__, int type __UNUSED__, void *
 static Eina_Bool
 _il_home_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Add *ev;
+   E_Event_Client *ev;
    Il_Home_Exec *exe;
    Eina_List *l;
 
    ev = event;
    EINA_LIST_FOREACH(exes, l, exe) 
      {
-        if (!exe->border) 
+        if (!exe->client) 
           {
-             if ((exe->startup_id == ev->border->client.netwm.startup_id) || 
-                 (exe->pid == ev->border->client.netwm.pid)) 
+             if ((exe->startup_id == ev->ec->netwm.startup_id) || 
+                 (exe->pid == ev->ec->netwm.pid)) 
                {
-                  exe->border = ev->border;
+                  exe->client = ev->ec;
                }
           }
-        if (!exe->border) continue;
-        if (exe->border->zone != exe->zone) 
+        if (!exe->client) continue;
+        if (exe->client->zone != exe->zone) 
           {
-             exe->border->zone = exe->zone;
-             exe->border->x = exe->zone->x;
-             exe->border->y = exe->zone->y;
-             exe->border->changes.pos = 1;
-             BD_CHANGED(exe->border);
+             exe->client->zone = exe->zone;
+             exe->client->x = exe->zone->x;
+             exe->client->y = exe->zone->y;
+             exe->client->changes.pos = 1;
+             EC_CHANGED(exe->client);
           }
         if (exe->handle) 
           {
@@ -610,19 +605,19 @@ _il_home_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event)
 static Eina_Bool
 _il_home_cb_border_del(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Remove *ev;
+   E_Event_Client *ev;
    Il_Home_Exec *exe;
    Eina_List *l;
 
    ev = event;
    EINA_LIST_FOREACH(exes, l, exe) 
      {
-        if (exe->border == ev->border) 
+        if (exe->client == ev->ec) 
           {
              exe->exec = NULL;
              if (exe->handle) e_busycover_pop(exe->cover, exe->handle);
              exe->handle = NULL;
-             exe->border = NULL;
+             exe->client = NULL;
              exes = eina_list_remove(exes, exe);
              E_FREE(exe);
              break;
@@ -666,7 +661,7 @@ _il_home_cb_exe_timeout(void *data)
    if (!(exe = data)) return ECORE_CALLBACK_CANCEL;
    if (exe->handle) e_busycover_pop(exe->cover, exe->handle);
    exe->handle = NULL;
-   if (!exe->border) 
+   if (!exe->client) 
      {
         exes = eina_list_remove(exes, exe);
         if (exe->desktop) efreet_desktop_free(exe->desktop);
@@ -693,14 +688,14 @@ _il_home_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *eve
      }
    else if (ev->message_type == ECORE_X_ATOM_E_ILLUME_HOME_DEL) 
      {
-        E_Border *bd;
+        E_Client *ec;
         Eina_List *l;
         Il_Home_Win *hwin;
 
-        if (!(bd = e_border_find_by_client_window(ev->win))) return ECORE_CALLBACK_PASS_ON;
+        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->win))) return ECORE_CALLBACK_PASS_ON;
         EINA_LIST_FOREACH(hwins, l, hwin) 
           {
-             if (hwin->win->border == bd) 
+             if (hwin->win->client == ec) 
                {
                   hwins = eina_list_remove_list(hwins, hwins);
                   e_object_del(E_OBJECT(hwin));
@@ -747,9 +742,9 @@ _il_home_cb_bg_change(void *data __UNUSED__, int type, void *event __UNUSED__)
         zone = hwin->zone;
         desk = e_desk_current_get(zone);
         if (desk)
-          bgfile = e_bg_file_get(zone->container->num, zone->num, desk->x, desk->y);
+          bgfile = e_bg_file_get(zone->comp->num, zone->num, desk->x, desk->y);
         else
-          bgfile = e_bg_file_get(zone->container->num, zone->num, -1, -1);
+          bgfile = e_bg_file_get(zone->comp->num, zone->num, -1, -1);
         edje_object_file_set(hwin->o_bg, bgfile, "e/desktop/background");
         eina_stringshare_del(bgfile);
      }

@@ -44,7 +44,7 @@ struct _E_Fwin
    Ecore_Job *popup_del_job;
    Eina_List *popup_handlers;
    E_Fm2_Icon_Info *popup_icon;
-   E_Popup *popup;
+   Evas_Object *popup;
 
    Ecore_Timer *spring_timer;
    Ecore_Timer *spring_close_timer;
@@ -104,7 +104,7 @@ static void _e_fwin_page_favorites_add(E_Fwin_Page *page);
 static void _e_fwin_icon_mouse_out(void *data, Evas_Object *obj __UNUSED__, void *event_info);
 static void _e_fwin_icon_mouse_in(void *data, Evas_Object *obj __UNUSED__, void *event_info);
 static E_Fwin *_e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, Eina_Bool force, int *need_dia);
-static E_Fwin          *_e_fwin_new(E_Container *con,
+static E_Fwin          *_e_fwin_new(E_Comp *comp,
                                     const char *dev,
                                     const char *path);
 static void             _e_fwin_free(E_Fwin *fwin);
@@ -229,16 +229,31 @@ static void             _e_fwin_op_registry_abort_cb(void *data,
 
 static E_Fwin *drag_fwin = NULL;
 
+static E_Client_Hook *focus_out_hook = NULL;
+
 /* local subsystem globals */
 static Eina_List *fwins = NULL;
 static E_Fm2_Mime_Handler *dir_handler = NULL;
 static Efreet_Desktop *tdesktop = NULL;
 static Eina_Stringshare *fwin_class = NULL;
 
+static void
+_e_fwin_client_hook_focus_unset(void *d EINA_UNUSED, E_Client *ec)
+{
+   E_Fwin *fwin;
+
+   /* if there is no new focused, set focus to zone fwin */
+   if (e_client_focused_get()) return;
+   fwin = e_fwin_zone_find(ec->zone);
+   if (fwin)
+     evas_object_focus_set(fwin->cur_page->fm_obj, 1);
+}
+
 /* externally accessible functions */
 int
 e_fwin_init(void)
 {
+   focus_out_hook = e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, _e_fwin_client_hook_focus_unset, NULL);
    fwin_class = eina_stringshare_add("e_fwin");
    tdesktop = e_util_terminal_desktop_get();
    if (!tdesktop) return 1;
@@ -276,11 +291,11 @@ e_fwin_shutdown(void)
  * "fwin" window
  */
 void
-e_fwin_new(E_Container *con,
+e_fwin_new(E_Comp *comp,
            const char *dev,
            const char *path)
 {
-   _e_fwin_new(con, dev, path);
+   _e_fwin_new(comp, dev, path);
 }
 
 static Eina_Bool
@@ -434,7 +449,7 @@ e_fwin_zone_new(E_Zone *zone, void *p)
 
    fwins = eina_list_append(fwins, fwin);
 
-   o = e_fm2_add(zone->container->bg_evas);
+   o = e_fm2_add(zone->comp->evas);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_fwin_zone_shutdown, fwin);
    page->fm_obj = o;
    _e_fwin_config_set(page);
@@ -462,9 +477,10 @@ e_fwin_zone_new(E_Zone *zone, void *p)
    evas_object_smart_callback_add(o, "icon_mouse_out", (Evas_Smart_Cb)_e_fwin_icon_mouse_out, fwin);
    e_fm2_icon_menu_start_extend_callback_set(o, _e_fwin_cb_menu_extend_start, page);
    e_fm2_underlay_hide(o);
+   evas_object_focus_set(o, !e_client_focused_get());
    evas_object_show(o);
 
-   o = e_scrollframe_add(zone->container->bg_evas);
+   o = e_scrollframe_add(zone->comp->evas);
    e_scrollframe_custom_theme_set(o, "base/theme/fileman",
                                   "e/fileman/desktop/scrollframe");
    /* FIXME: this theme object will have more versions and options later
@@ -496,12 +512,11 @@ e_fwin_zone_new(E_Zone *zone, void *p)
    evas_object_move(o, x, y);
    evas_object_resize(o, w, h);
    evas_object_show(o);
-   E_LAYER_SET_UNDER(o, E_COMP_CANVAS_LAYER_DESKTOP);
+   evas_object_layer_set(o, E_LAYER_DESKTOP);
+   evas_object_lower(o);
    page->scrollframe_obj = page->scr = o;
 
    e_fm2_window_object_set(page->fm_obj, E_OBJECT(fwin->zone));
-
-   evas_object_focus_set(page->fm_obj, 1);
 
    e_fm2_path_set(page->fm_obj, path->dev, path->path);
 
@@ -544,9 +559,8 @@ _e_fwin_cb_toolbar_del(void *obj)
 void
 e_fwin_reload_all(void)
 {
-   Eina_List *l, *ll, *lll;
-   E_Container *con;
-   E_Manager *man;
+   const Eina_List *l, *ll;
+   E_Comp *comp;
    E_Fwin *fwin;
    E_Zone *zone;
 
@@ -607,25 +621,24 @@ e_fwin_reload_all(void)
      }
 
    /* Hook into zones */
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
-     EINA_LIST_FOREACH(man->containers, ll, con)
-       EINA_LIST_FOREACH(con->zones, lll, zone)
-         {
-            if (e_fwin_zone_find(zone)) continue;
-            if (e_config->show_desktop_icons)
-              e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
-         }
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+     EINA_LIST_FOREACH(comp->zones, ll, zone)
+       {
+          if (e_fwin_zone_find(zone)) continue;
+          if (e_config->show_desktop_icons)
+            e_fwin_zone_new(zone, e_mod_fileman_path_find(zone));
+       }
 }
 
-int
+void *
 e_fwin_zone_find(E_Zone *zone)
 {
    Eina_List *f;
    E_Fwin *win;
 
    EINA_LIST_FOREACH(fwins, f, win)
-     if (win->zone == zone) return 1;
-   return 0;
+     if (win->zone == zone) return win;
+   return NULL;
 }
 
 /* local subsystem functions */
@@ -634,10 +647,10 @@ _e_fwin_bg_mouse_down(E_Fwin *fwin, Evas_Object *obj __UNUSED__, void *event __U
 {
    int x, y, w, h, zx, zy, zw, zh, cx, cy, cw, ch;
 
-   if (fwin->win->border->maximized) e_border_unmaximize(fwin->win->border, fwin->win->border->maximized);
-   if (fwin->win->border->fullscreen) e_border_unfullscreen(fwin->win->border);
-   e_zone_useful_geometry_get(fwin->win->border->zone, &zx, &zy, &zw, &zh);
-   x = fwin->win->border->x, y = fwin->win->border->y;
+   if (fwin->win->client->maximized) e_client_unmaximize(fwin->win->client, fwin->win->client->maximized);
+   if (fwin->win->client->fullscreen) e_client_unfullscreen(fwin->win->client);
+   e_zone_useful_geometry_get(fwin->win->client->zone, &zx, &zy, &zw, &zh);
+   x = fwin->win->client->x, y = fwin->win->client->y;
    if (!e_fm2_optimal_size_calc(fwin->cur_page->fm_obj, zw - x, zh - y, &w, &h)) return;
    evas_object_geometry_get(fwin->cur_page->fm_obj, &cx, &cy, &cw, &ch);
    if (x + w > zx + zw)
@@ -650,7 +663,7 @@ _e_fwin_bg_mouse_down(E_Fwin *fwin, Evas_Object *obj __UNUSED__, void *event __U
 }
 
 static E_Fwin *
-_e_fwin_new(E_Container *con,
+_e_fwin_new(E_Comp *comp,
             const char *dev,
             const char *path)
 {
@@ -661,7 +674,7 @@ _e_fwin_new(E_Container *con,
 
    fwin = E_OBJECT_ALLOC(E_Fwin, E_FWIN_TYPE, _e_fwin_free);
    if (!fwin) return NULL;
-   fwin->win = e_win_new(con);
+   fwin->win = e_win_new(comp);
    if (!fwin->win)
      {
         free(fwin);
@@ -719,8 +732,8 @@ _e_fwin_new(E_Container *con,
    e_win_show(fwin->win);
    if (fwin->win->evas_win)
      e_drop_xdnd_register_set(fwin->win->evas_win, 1);
-   if (fwin->win->border)
-     eina_stringshare_replace(&fwin->win->border->internal_icon,
+   if (fwin->win->client)
+     eina_stringshare_replace(&fwin->win->client->internal_icon,
                               "system-file-manager");
 
    return fwin;
@@ -756,7 +769,7 @@ _e_fwin_free(E_Fwin *fwin)
         fwin->fad = NULL;
      }
    if (fwin->popup_del_job) ecore_job_del(fwin->popup_del_job);
-   if (fwin->popup) e_object_del(E_OBJECT(fwin->popup));
+   if (fwin->popup) evas_object_del(fwin->popup);
    if (fwin->popup_timer) ecore_timer_del(fwin->popup_timer);
    fwin->popup_timer = NULL;
    E_FREE_LIST(fwin->popup_handlers, ecore_event_handler_del);
@@ -774,19 +787,19 @@ _e_fwin_icon_popup_handler(void *data, int type, void *event)
    E_Fwin *fwin = data;
    Ecore_Event_Mouse_IO *ev = event;
 
-   if (type == ECORE_X_EVENT_MOUSE_IN)
+   if (type == ECORE_EVENT_MOUSE_IN)
      {
         if (fwin->zone)
           {
-             if (ev->event_window == fwin->zone->container->event_win) return ECORE_CALLBACK_RENEW;
+             if (ev->event_window == fwin->zone->comp->ee_win) return ECORE_CALLBACK_RENEW;
           }
         else
           {
-             if (ev->event_window == fwin->win->border->client.win) return ECORE_CALLBACK_RENEW;
+             if (ev->event_window == e_client_util_win_get(fwin->win->client)) return ECORE_CALLBACK_RENEW;
           }
      }
    if (fwin->popup_timer) ecore_timer_del(fwin->popup_timer);
-   if (fwin->popup) e_object_del(E_OBJECT(fwin->popup));
+   if (fwin->popup) evas_object_del(fwin->popup);
    E_FREE_LIST(fwin->popup_handlers, ecore_event_handler_del);
    fwin->popup_icon = NULL;
    fwin->popup_timer = NULL;
@@ -807,23 +820,15 @@ _e_fwin_icon_popup(void *data)
    if (!fwin->popup_icon) return EINA_FALSE;
    snprintf(buf, sizeof(buf), "%s/%s", e_fm2_real_path_get(fwin->cur_page->fm_obj), fwin->popup_icon->file);
    if (!ecore_file_can_read(buf)) return EINA_FALSE;
-   if (fwin->popup) e_object_del(E_OBJECT(fwin->popup));
-   zone = fwin->zone ?: fwin->win->border->zone;
+   if (fwin->popup) evas_object_del(fwin->popup);
+   zone = fwin->zone ?: fwin->win->client->zone;
    e_fm2_icon_geometry_get(fwin->popup_icon->ic, &x, &y, &w, &h);
    if (fwin->zone)
-     {
-        evas_object_geometry_get(fwin->popup_icon->fm, &fx, &fy, NULL, NULL);
-        fx -= fwin->zone->x;
-        x -= fwin->zone->x;
-        fy -= fwin->zone->y;
-        y -= fwin->zone->y;
-     }
+     evas_object_geometry_get(fwin->popup_icon->fm, &fx, &fy, NULL, NULL);
    else
-     fx = fwin->win->border->x, fy = fwin->win->border->y;
-   fwin->popup = e_popup_new(eina_list_data_get(zone->container->zones), 0, 0, 1, 1);
-   e_popup_ignore_events_set(fwin->popup, 1);
+     fx = fwin->win->client->x, fy = fwin->win->client->y;
    
-   bg = edje_object_add(fwin->popup->evas);
+   bg = edje_object_add(e_comp_get(zone)->evas);
    e_theme_edje_object_set(bg, "base/theme/fileman",
                            "e/fileman/popup/default");
    mw = zone->w * fileman_config->tooltip.size / 100.0;
@@ -833,9 +838,9 @@ _e_fwin_icon_popup(void *data)
                              fwin->popup_icon->label ?
                              fwin->popup_icon->label : fwin->popup_icon->file);
    
-   list = e_widget_list_add(fwin->popup->evas, 0, 0);
+   list = e_widget_list_add(e_comp_get(zone)->evas, 0, 0);
    
-   o = e_widget_filepreview_add(fwin->popup->evas, mw, mh, 0);
+   o = e_widget_filepreview_add(e_comp_get(zone)->evas, mw, mh, 0);
    e_widget_filepreview_path_set(o, buf, fwin->popup_icon->mime);
    e_widget_list_object_append(list, o, 1, 0, 0.5);
    e_widget_size_min_get(list, &mw, &mh);
@@ -843,7 +848,6 @@ _e_fwin_icon_popup(void *data)
    edje_object_part_swallow(bg, "e.swallow.content", list);
    
    edje_object_size_min_calc(bg, &mw, &mh);
-   e_popup_object_add(fwin->popup, list);
 
    /* prefer tooltip left of icon */
    px = (fx + x) - mw - 3;
@@ -864,8 +868,12 @@ _e_fwin_icon_popup(void *data)
      py = (y + h / 2) - (mh / 2);
    /* give up */
    if (py < 0) py = 0;
-   e_popup_move_resize(fwin->popup, px, py, mw, mh);
-   e_popup_content_set(fwin->popup, bg);
+   fwin->popup = e_comp_object_util_add(bg, E_COMP_OBJECT_TYPE_POPUP);
+   evas_object_layer_set(fwin->popup, E_LAYER_POPUP);
+   evas_object_geometry_set(fwin->popup, px, py, mw, mh);
+   e_comp_object_util_del_list_append(fwin->popup, list);
+   e_comp_object_util_del_list_append(fwin->popup, o);
+   evas_object_pass_events_set(fwin->popup, 1);
    if (!fwin->popup_handlers)
      {
         E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_ENTER, _e_fwin_icon_popup_handler, fwin);
@@ -874,14 +882,15 @@ _e_fwin_icon_popup(void *data)
         E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_fwin_icon_popup_handler, fwin);
         E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_MOUSE_OUT, _e_fwin_icon_popup_handler, fwin);
      }
-   e_popup_show(fwin->popup);
+   evas_object_show(fwin->popup);
    return EINA_FALSE;
 }
 
 static void
 _e_fwin_icon_popup_del(E_Fwin *fwin)
 {
-   E_FREE_FUNC(fwin->popup, e_object_del);
+   evas_object_hide(fwin->popup);
+   E_FREE_FUNC(fwin->popup, evas_object_del);
    fwin->popup_del_job = NULL;
 }
 
@@ -1313,7 +1322,7 @@ _e_fwin_desktop_run(Efreet_Desktop *desktop,
      }
    if ((fwin->win) && (desktop))
      {
-        e_exec(fwin->win->border->zone, desktop, NULL, files, "fwin");
+        e_exec(fwin->win->client->zone, desktop, NULL, files, "fwin");
         ici = selected->data;
         if ((ici) && (ici->mime) && (desktop) && !(skip_history))
           e_exehist_mime_desktop_add(ici->mime, desktop);
@@ -1415,7 +1424,7 @@ _e_fwin_file_exec(E_Fwin_Page *page,
       case E_FWIN_EXEC_DIRECT:
         snprintf(buf, sizeof(buf), "%s/%s", e_fm2_real_path_get(fwin->cur_page->fm_obj), ici->file);
         if (fwin->win)
-          e_exec(fwin->win->border->zone, NULL, buf, NULL, "fwin");
+          e_exec(fwin->win->client->zone, NULL, buf, NULL, "fwin");
         else if (fwin->zone)
           e_exec(fwin->zone, NULL, buf, NULL, "fwin");
         break;
@@ -1423,7 +1432,7 @@ _e_fwin_file_exec(E_Fwin_Page *page,
       case E_FWIN_EXEC_SH:
         snprintf(buf, sizeof(buf), "/bin/sh %s", e_util_filename_escape(ici->file));
         if (fwin->win)
-          e_exec(fwin->win->border->zone, NULL, buf, NULL, "fwin");
+          e_exec(fwin->win->client->zone, NULL, buf, NULL, "fwin");
         else if (fwin->zone)
           e_exec(fwin->zone, NULL, buf, NULL, "fwin");
         break;
@@ -1431,7 +1440,7 @@ _e_fwin_file_exec(E_Fwin_Page *page,
       case E_FWIN_EXEC_TERMINAL_DIRECT:
         snprintf(buf, sizeof(buf), "%s %s", e_config->exebuf_term_cmd, e_util_filename_escape(ici->file));
         if (fwin->win)
-          e_exec(fwin->win->border->zone, NULL, buf, NULL, "fwin");
+          e_exec(fwin->win->client->zone, NULL, buf, NULL, "fwin");
         else if (fwin->zone)
           e_exec(fwin->zone, NULL, buf, NULL, "fwin");
         break;
@@ -1439,7 +1448,7 @@ _e_fwin_file_exec(E_Fwin_Page *page,
       case E_FWIN_EXEC_TERMINAL_SH:
         snprintf(buf, sizeof(buf), "%s /bin/sh %s", e_config->exebuf_term_cmd, e_util_filename_escape(ici->file));
         if (fwin->win)
-          e_exec(fwin->win->border->zone, NULL, buf, NULL, "fwin");
+          e_exec(fwin->win->client->zone, NULL, buf, NULL, "fwin");
         else if (fwin->zone)
           e_exec(fwin->zone, NULL, buf, NULL, "fwin");
         break;
@@ -1450,7 +1459,7 @@ _e_fwin_file_exec(E_Fwin_Page *page,
         if (desktop)
           {
              if (fwin->win)
-               e_exec(fwin->win->border->zone, desktop, NULL, NULL, "fwin");
+               e_exec(fwin->win->client->zone, desktop, NULL, NULL, "fwin");
              else if (fwin->zone)
                e_exec(fwin->zone, desktop, NULL, NULL, "fwin");
              e_exehist_mime_desktop_add(ici->mime, desktop);
@@ -1645,7 +1654,7 @@ _e_fwin_cb_resize(E_Win *win)
      }
    _e_fwin_toolbar_resize(fwin->cur_page);
    if (fwin->zone)
-     e_comp_win_resize(evas_object_data_get(fwin->cur_page->scrollframe_obj, "comp_win"), fwin->zone->w, fwin->zone->h);
+     evas_object_resize(fwin->cur_page->scrollframe_obj, fwin->zone->w, fwin->zone->h);
    /* _e_fwin_geom_save(fwin); */
 }
 
@@ -1891,12 +1900,12 @@ _e_fwin_cb_key_down(void *data,
      {
         if (!strcmp(ev->key, "n"))
           {
-             E_Container *con;
+             E_Comp *comp;
              const char *dev, *path;
 
-             con = e_container_current_get(e_manager_current_get());
+             comp = e_util_comp_current_get();
              e_fm2_path_get(page->fm_obj, &dev, &path);
-             e_fwin_new(con, dev, path);
+             e_fwin_new(comp, dev, path);
              return;
           }
         if (!strcmp(ev->key, "w"))
@@ -1954,7 +1963,6 @@ _e_fwin_zone_move_resize(void *data, int type __UNUSED__, void *event)
 {
    E_Event_Zone_Move_Resize *ev = event;
    E_Fwin *fwin = data;
-   E_Comp_Win *cw;
    int x, y, w, h, sx, sy, sw, sh;
 
    if (!fwin) return ECORE_CALLBACK_PASS_ON;
@@ -1964,8 +1972,7 @@ _e_fwin_zone_move_resize(void *data, int type __UNUSED__, void *event)
    evas_object_geometry_get(fwin->cur_page->scrollframe_obj, &sx, &sy, &sw, &sh);
    /* if same, do nothing */
    if ((sx == x) && (sy == y) && (sw == w) && (sh == h)) return ECORE_CALLBACK_RENEW;
-   cw = evas_object_data_get(fwin->cur_page->scrollframe_obj, "comp_win");
-   e_comp_win_moveresize(cw, x, y, w, h);
+   evas_object_geometry_set(fwin->cur_page->scrollframe_obj, x, y, w, h);
    e_fm2_refresh(fwin->cur_page->fm_obj);
    return ECORE_CALLBACK_RENEW;
 }
@@ -2092,9 +2099,9 @@ _e_fwin_path(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
    path = e_fm2_real_path_get(data);
    page = evas_object_data_get(data, "fm_page");
    if (page->fwin->win)
-     xwin = page->fwin->win->border->client.win;
+     xwin = e_client_util_win_get(page->fwin->win->client);
    else
-     xwin = page->fwin->zone->container->event_win;
+     xwin = page->fwin->zone->comp->ee_win;
    ecore_x_selection_clipboard_set(xwin, path, strlen(path) + 1);
 }
 
@@ -2107,7 +2114,7 @@ _e_fwin_clone(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
    /* path of least resistance! */
    act_fm = e_action_find("fileman");
    if (!act_fm) return;
-   act_fm->func.go(NULL, fwin->win->border->client.icccm.class + 8);
+   act_fm->func.go(NULL, fwin->win->client->icccm.class + 8);
 }
 
 static void
@@ -2243,28 +2250,28 @@ _e_fwin_border_set(E_Fwin_Page *page, E_Fwin *fwin, E_Fm2_Icon_Info *ici)
                         ici->ic, NULL, NULL, 0, &itype);
    if (!oic) return;
 
-   eina_stringshare_replace(&fwin->win->border->internal_icon, NULL);
-   eina_stringshare_replace(&fwin->win->border->internal_icon_key, NULL);
+   eina_stringshare_replace(&fwin->win->client->internal_icon, NULL);
+   eina_stringshare_replace(&fwin->win->client->internal_icon_key, NULL);
    if (!strcmp(evas_object_type_get(oic), "edje"))
      {
         edje_object_file_get(oic, &file, &group);
-        fwin->win->border->internal_icon = eina_stringshare_ref(file);
-        fwin->win->border->internal_icon_key = eina_stringshare_ref(group);
+        fwin->win->client->internal_icon = eina_stringshare_ref(file);
+        fwin->win->client->internal_icon_key = eina_stringshare_ref(group);
      }
    else
      {
         e_icon_file_get(oic, &file, &group);
-        fwin->win->border->internal_icon = eina_stringshare_ref(file);
-        fwin->win->border->internal_icon_key = eina_stringshare_ref(group);
+        fwin->win->client->internal_icon = eina_stringshare_ref(file);
+        fwin->win->client->internal_icon_key = eina_stringshare_ref(group);
      }
    evas_object_del(oic);
-   if (fwin->win->border->placed) return;
+   if (fwin->win->client->placed) return;
 
    if (e_config->remember_internal_fm_windows_globally)
      class = fwin_class;
    else
      class = eina_stringshare_printf("e_fwin::%s", e_fm2_real_path_get(fwin->cur_page->fm_obj));
-   e_zone_useful_geometry_get(fwin->win->border->zone,
+   e_zone_useful_geometry_get(fwin->win->client->zone,
                               NULL, NULL, &zw, &zh);
    EINA_LIST_FOREACH(e_config->remembers, ll, rem)
      if (rem->class == class)
@@ -2303,13 +2310,13 @@ _e_fwin_border_set(E_Fwin_Page *page, E_Fwin *fwin, E_Fm2_Icon_Info *ici)
      h = zh;
 
    /* iff going out of zone - adjust to be in */
-   if ((fwin->win->border->zone->x + fwin->win->border->zone->w) < (w + nx))
+   if ((fwin->win->client->zone->x + fwin->win->client->zone->w) < (w + nx))
      nx -= w;
-   if ((fwin->win->border->zone->y + fwin->win->border->zone->h) < (h + ny))
+   if ((fwin->win->client->zone->y + fwin->win->client->zone->h) < (h + ny))
      ny -= h;
 
    e_win_move_resize(fwin->win, nx, ny, w, h);
-   fwin->win->border->placed = 1;
+   fwin->win->client->placed = 1;
 }
 
 static E_Fwin *
@@ -2326,9 +2333,9 @@ _e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, Eina_Bool force, int *need
         if (new_fwin)
           {
              if (page->fwin->win)
-               fwin = _e_fwin_new(page->fwin->win->container, ici->link, "/");
+               fwin = _e_fwin_new(page->fwin->win->comp, ici->link, "/");
              else if (page->fwin->zone)
-               fwin = _e_fwin_new(page->fwin->zone->container, ici->link, "/");
+               fwin = _e_fwin_new(page->fwin->zone->comp, ici->link, "/");
           }
         else
           {
@@ -2343,9 +2350,9 @@ _e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, Eina_Bool force, int *need
         if (new_fwin)
           {
              if (page->fwin->win)
-               fwin = _e_fwin_new(page->fwin->win->container, buf, "/");
+               fwin = _e_fwin_new(page->fwin->win->comp, buf, "/");
              else if (page->fwin->zone)
-               fwin = _e_fwin_new(page->fwin->zone->container, buf, "/");
+               fwin = _e_fwin_new(page->fwin->zone->comp, buf, "/");
           }
         else
           {
@@ -2361,9 +2368,9 @@ _e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, Eina_Bool force, int *need
              if (new_fwin)
                {
                   if (page->fwin->win)
-                    fwin = _e_fwin_new(page->fwin->win->container, NULL, ici->real_link);
+                    fwin = _e_fwin_new(page->fwin->win->comp, NULL, ici->real_link);
                   else if (page->fwin->zone)
-                    fwin = _e_fwin_new(page->fwin->zone->container, NULL, ici->real_link);
+                    fwin = _e_fwin_new(page->fwin->zone->comp, NULL, ici->real_link);
                }
              else
                {
@@ -2385,9 +2392,9 @@ _e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, Eina_Bool force, int *need
              if (new_fwin)
                {
                   if (page->fwin->win)
-                    fwin = _e_fwin_new(page->fwin->win->container, NULL, ici->link ?: buf);
+                    fwin = _e_fwin_new(page->fwin->win->comp, NULL, ici->link ?: buf);
                   else if (page->fwin->zone)
-                    fwin = _e_fwin_new(page->fwin->zone->container, NULL, ici->link ?: buf);
+                    fwin = _e_fwin_new(page->fwin->zone->comp, NULL, ici->link ?: buf);
                }
              else
                {
@@ -2402,7 +2409,7 @@ _e_fwin_open(E_Fwin_Page *page, E_Fm2_Icon_Info *ici, Eina_Bool force, int *need
           }
      }
    if (!fwin) return NULL;
-   if ((!fwin->win) || (!fwin->win->border))
+   if ((!fwin->win) || (!fwin->win->client))
      {
         _e_fwin_free(fwin);
         return NULL;
@@ -2503,7 +2510,7 @@ _e_fwin_file_open_dialog(E_Fwin_Page *page,
                {
                   if (fwin->win)
                     {
-                       if (e_exec(fwin->win->border->zone, desk, NULL, files_list, "fwin"))
+                       if (e_exec(fwin->win->client->zone, desk, NULL, files_list, "fwin"))
                          need_dia = 0;
                     }
                   else if (fwin->zone)
@@ -2531,10 +2538,10 @@ _e_fwin_file_open_dialog(E_Fwin_Page *page,
      }
 
    if (fwin->win)
-     dia = e_dialog_new(fwin->win->border->zone->container,
+     dia = e_dialog_new(fwin->win->comp,
                         "E", "_fwin_open_apps");
    else if (fwin->zone)
-     dia = e_dialog_new(fwin->zone->container,
+     dia = e_dialog_new(fwin->zone->comp,
                         "E", "_fwin_open_apps");
    else return;  /* make clang happy */
    

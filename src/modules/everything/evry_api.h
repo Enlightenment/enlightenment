@@ -33,7 +33,7 @@
 #define EVRY_TYPE_APP	     3
 #define EVRY_TYPE_ACTION     4
 #define EVRY_TYPE_PLUGIN     5
-#define EVRY_TYPE_BORDER     6
+#define EVRY_TYPE_CLIENT     6
 #define EVRY_TYPE_TEXT	     7
 #define NUM_EVRY_TYPES	     8
 

@@ -106,16 +106,13 @@ static void
 _ebluez4_cb_search(void *data, E_Menu *m, E_Menu_Item *mi)
 {
    Instance *inst = data;
-   E_Container *con;
    E_Dialog *dialog;
    Evas *evas;
 
    if (inst->search_dialog)
      _ebluez4_search_dialog_del(inst);
 
-   con = e_container_current_get(e_manager_current_get());
-
-   dialog = e_dialog_new(con, "Search Dialog", "search");
+   dialog = e_dialog_new(NULL, "Search Dialog", "search");
    e_dialog_title_set(dialog, _("Searching for Devices..."));
    e_dialog_resizable_set(dialog, EINA_TRUE);
    e_win_delete_callback_set(dialog->win, _ebluez4_cb_search_dialog_del);
@@ -173,7 +170,6 @@ static void
 _ebluez4_cb_adap_settings(void *data)
 {
    Adapter *adap = data;
-   E_Container *con;
    E_Dialog *dialog;
    Evas *evas;
    Evas_Object *list;
@@ -184,9 +180,7 @@ _ebluez4_cb_adap_settings(void *data)
    if (adap->dialog)
       ebluez4_adapter_settings_del(adap->dialog);
 
-   con = e_container_current_get(e_manager_current_get());
-
-   dialog = e_dialog_new(con, "Adapter Dialog", "adapter");
+   dialog = e_dialog_new(NULL, "Adapter Dialog", "adapter");
    e_dialog_title_set(dialog, _("Adapter Settings"));
    e_dialog_resizable_set(dialog, EINA_TRUE);
    e_win_delete_callback_set(dialog->win, _ebluez4_cb_adap_settings_dialog_del);
@@ -251,16 +245,13 @@ static void
 _ebluez4_cb_adap_list(void *data, E_Menu *m, E_Menu_Item *mi)
 {
    Instance *inst = data;
-   E_Container *con;
    E_Dialog *dialog;
    Evas *evas;
 
    if (inst->adapters_dialog)
       _ebluez4_adap_list_dialog_del(inst);
 
-   con = e_container_current_get(e_manager_current_get());
-
-   dialog = e_dialog_new(con, "Adapters Dialog", "adapters");
+   dialog = e_dialog_new(NULL, "Adapters Dialog", "adapters");
    e_dialog_title_set(dialog, _("Adapters Available"));
    e_dialog_resizable_set(dialog, EINA_TRUE);
    e_win_delete_callback_set(dialog->win, _ebluez4_cb_adap_list_dialog_del);
@@ -461,8 +452,8 @@ _ebluez4_menu_new(Instance *inst)
    e_menu_item_label_set(mi, _("Adapter Settings"));
    e_menu_item_callback_set(mi, _ebluez4_cb_adap_list, inst);
 
-   zone = e_util_zone_current_get(e_manager_current_get());
-   ecore_x_pointer_xy_get(zone->container->win, &x, &y);
+   ecore_evas_pointer_xy_get(e_comp_get(inst->gcc)->ee, &x, &y);
+   zone = e_comp_zone_xy_get(e_comp_get(inst->gcc), x, y);
    e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN,
                          ecore_x_current_time_get());
 }

@@ -28,7 +28,7 @@ EAPI int il_kbd_config_init(E_Module *m);
 EAPI int il_kbd_config_shutdown(void);
 EAPI int il_kbd_config_save(void);
 
-EAPI void il_kbd_config_show(E_Container *con, const char *params);
+EAPI void il_kbd_config_show(E_Comp *comp, const char *params);
 
 extern EAPI Il_Kbd_Config *il_kbd_cfg;
 

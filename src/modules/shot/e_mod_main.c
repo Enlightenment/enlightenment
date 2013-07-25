@@ -20,7 +20,7 @@ E_Confirm_Dialog *cd = NULL;
 static Evas_Object *o_bg = NULL, *o_box = NULL, *o_content = NULL;
 static Evas_Object *o_event = NULL, *o_img = NULL, *o_hlist = NULL;
 static E_Manager *sman = NULL;
-static E_Container *scon = NULL;
+static E_Comp *scomp = NULL;
 static int quality = 90;
 static int screen = -1;
 #define MAXZONES 64
@@ -36,7 +36,7 @@ static Ecore_Con_Url *url_up = NULL;
 static Eina_List *handlers = NULL;
 static char *url_ret = NULL;
 static E_Dialog *fsel_dia = NULL;
-static E_Border_Menu_Hook *border_hook = NULL;
+static E_Client_Menu_Hook *border_hook = NULL;
 
 static void _file_select_ok_cb(void *data __UNUSED__, E_Dialog *dia);
 static void _file_select_cancel_cb(void *data __UNUSED__, E_Dialog *dia);
@@ -148,7 +148,7 @@ _screen_change_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    Eina_List *l;
    E_Zone *z;
    
-   EINA_LIST_FOREACH(scon->zones, l, z)
+   EINA_LIST_FOREACH(scomp->zones, l, z)
      {
         if (screen == -1)
            evas_object_color_set(o_rectdim[z->num], 0, 0, 0, 0);
@@ -181,7 +181,7 @@ _save_to(const char *file)
         Eina_List *l;
         E_Zone *z = NULL;
         
-        EINA_LIST_FOREACH(scon->zones, l, z)
+        EINA_LIST_FOREACH(scomp->zones, l, z)
           {
              if (screen == (int)z->num) break;
              z = NULL;
@@ -271,7 +271,7 @@ _win_save_cb(void *data __UNUSED__, void *data2 __UNUSED__)
      strftime(buf, sizeof(buf), "shot-%Y-%m-%d_%H-%M-%S.png", tm);
    else
      strftime(buf, sizeof(buf), "shot-%Y-%m-%d_%H-%M-%S.jpg", tm);
-   fsel_dia = dia = e_dialog_new(scon, "E", "_e_shot_fsel");
+   fsel_dia = dia = e_dialog_new(scomp, "E", "_e_shot_fsel");
    e_dialog_resizable_set(dia, 1);
    e_dialog_title_set(dia, _("Select screenshot save location"));
    o = e_widget_fsel_add(dia->win->evas, "desktop", "/", 
@@ -516,7 +516,7 @@ _win_share_cb(void *data __UNUSED__, void *data2 __UNUSED__)
    // out of the box
    ecore_con_url_http_version_set(url_up, ECORE_CON_URL_HTTP_VERSION_1_0);
    ecore_con_url_post(url_up, fdata, fsize, "application/x-e-shot");
-   dia = e_dialog_new(scon, "E", "_e_shot_share");
+   dia = e_dialog_new(scomp, "E", "_e_shot_share");
    e_dialog_resizable_set(dia, 1);
    e_dialog_title_set(dia, _("Uploading screenshot"));
    
@@ -578,7 +578,7 @@ _rect_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    if (ev->button != 1) return;
    
    e_widget_radio_toggle_set(o_radio_all, 0);
-   EINA_LIST_FOREACH(scon->zones, l, z)
+   EINA_LIST_FOREACH(scomp->zones, l, z)
      {
         if (obj == o_rectdim[z->num])
           {
@@ -589,7 +589,7 @@ _rect_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
            e_widget_radio_toggle_set(o_radio[z->num], 0);
      }
    
-   EINA_LIST_FOREACH(scon->zones, l, z)
+   EINA_LIST_FOREACH(scomp->zones, l, z)
      {
         if (screen == -1)
            evas_object_color_set(o_rectdim[z->num], 0, 0, 0, 0);
@@ -601,7 +601,7 @@ _rect_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_shot_now(E_Zone *zone, E_Border *bd)
+_shot_now(E_Zone *zone, E_Client *ec)
 {
    Ecore_X_Image *img;
    unsigned char *src;
@@ -620,11 +620,11 @@ _shot_now(E_Zone *zone, E_Border *bd)
    Ecore_X_Colormap colormap;
    int depth;
 
-   if ((!zone) && (!bd)) return;
+   if ((!zone) && (!ec)) return;
    if (zone)
      {
-        sman = zone->container->manager;
-        scon = zone->container;
+        sman = zone->comp->man;
+        scomp = zone->comp;
         xwin = sman->root;
         w = sw = sman->w;
         h = sh = sman->h;
@@ -635,16 +635,16 @@ _shot_now(E_Zone *zone, E_Border *bd)
      }
    else
      {
-        xwin = e_comp_get(bd)->ee_win;
-        x = bd->x, y = bd->y, sw = bd->w, sh = bd->h;
+        xwin = e_comp_get(ec)->ee_win;
+        x = ec->x, y = ec->y, sw = ec->w, sh = ec->h;
         w = sw;
         h = sh;
-        x = E_CLAMP(x, bd->zone->x, bd->zone->x + bd->zone->w);
-        y = E_CLAMP(y, bd->zone->y, bd->zone->y + bd->zone->h);
-        sw = E_CLAMP(sw, 0, bd->zone->x + bd->zone->w - x);
-        sh = E_CLAMP(sh, 0, bd->zone->y + bd->zone->h - y);
-        visual = bd->client.initial_attributes.visual;
-        depth = bd->client.initial_attributes.depth;
+        x = E_CLAMP(x, ec->zone->x, ec->zone->x + ec->zone->w);
+        y = E_CLAMP(y, ec->zone->y, ec->zone->y + ec->zone->h);
+        sw = E_CLAMP(sw, 0, ec->zone->x + ec->zone->w - x);
+        sh = E_CLAMP(sh, 0, ec->zone->y + ec->zone->h - y);
+        visual = e_pixmap_visual_get(ec->pixmap);
+        depth = ec->depth;
      }
    img = ecore_x_image_new(w, h, visual, depth);
    ecore_x_image_get(img, xwin, x, y, 0, 0, sw, sh);
@@ -658,7 +658,7 @@ _shot_now(E_Zone *zone, E_Border *bd)
                                  dst, (sw * sizeof(int)), 0, 0);
    
    if (win) e_object_del(E_OBJECT(win));
-   win = e_win_new(e_container_current_get(e_manager_current_get()));
+   win = e_win_new(e_util_comp_current_get());
    
    evas = e_win_evas_get(win);
    e_win_title_set(win, _("Where to put Screenshot..."));
@@ -731,7 +731,7 @@ _shot_now(E_Zone *zone, E_Border *bd)
    if (zone)
      {
         screen = -1;
-        if (eina_list_count(scon->zones) > 1)
+        if (eina_list_count(scomp->zones) > 1)
           {
              Eina_List *l;
              E_Zone *z;
@@ -746,7 +746,7 @@ _shot_now(E_Zone *zone, E_Border *bd)
              evas_object_smart_callback_add(o, "changed", _screen_change_cb, NULL);
              e_widget_framelist_object_append(ol, o);
              i = 0;
-             EINA_LIST_FOREACH(scon->zones, l, z)
+             EINA_LIST_FOREACH(scomp->zones, l, z)
                {
                   char buf[32];
 
@@ -826,7 +826,7 @@ _shot_now(E_Zone *zone, E_Border *bd)
    e_win_size_min_set(win, w, h);
    e_win_size_max_set(win, 99999, 99999);
    e_win_show(win);
-   e_win_border_icon_set(win, "screenshot");
+   e_win_client_icon_set(win, "screenshot");
    
    if (!e_widget_focus_get(o_bg)) e_widget_focus_set(o_box, 1);
 }
@@ -848,10 +848,10 @@ _shot_delay_border(void *data)
 }
 
 static void
-_shot_border(E_Border *bd)
+_shot_border(E_Client *ec)
 {
    if (border_timer) ecore_timer_del(border_timer);
-   border_timer = ecore_timer_add(1.0, _shot_delay_border, bd);
+   border_timer = ecore_timer_add(1.0, _shot_delay_border, ec);
 }
 
 static void
@@ -876,15 +876,15 @@ _e_mod_menu_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
 static void
 _e_mod_action_border_cb(E_Object *obj __UNUSED__, const char *params __UNUSED__)
 {
-   E_Border *bd;
-   bd = e_border_focused_get();
-   if (!bd) return;
+   E_Client *ec;
+   ec = e_client_focused_get();
+   if (!ec) return;
    if (border_timer)
       {
          ecore_timer_del(border_timer);
          border_timer = NULL;
       }
-   _shot_now(NULL, bd);
+   _shot_now(NULL, ec);
 }
 
 static void
@@ -896,8 +896,8 @@ _e_mod_action_cb(E_Object *obj, const char *params __UNUSED__)
      {
         if (obj->type == E_MANAGER_TYPE)
            zone = e_util_zone_current_get((E_Manager *)obj);
-        else if (obj->type == E_CONTAINER_TYPE)
-           zone = e_util_zone_current_get(((E_Container *)obj)->manager);
+        else if (obj->type == E_COMP_TYPE)
+           zone = e_zone_current_get((E_Comp *)obj);
         else if (obj->type == E_ZONE_TYPE)
            zone = ((E_Zone *)obj);
         else
@@ -905,23 +905,19 @@ _e_mod_action_cb(E_Object *obj, const char *params __UNUSED__)
      }
    if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
    if (!zone) return;
-   if (timer)
-      {
-         ecore_timer_del(timer);
-         timer = NULL;
-      }
+   E_FREE_FUNC(timer, ecore_timer_del);
    _shot_now(zone, NULL);
 }
 
 static void
-_bd_hook(void *d __UNUSED__, E_Border *bd)
+_bd_hook(void *d __UNUSED__, E_Client *ec)
 {
    E_Menu_Item *mi;
    E_Menu *m;
    Eina_List *l;
-   if (!bd->border_menu) return;
-   if (bd->iconic || (bd->desk != e_desk_current_get(bd->zone))) return;
-   m = bd->border_menu;
+   if (!ec->border_menu) return;
+   if (ec->iconic || (ec->desk != e_desk_current_get(ec->zone))) return;
+   m = ec->border_menu;
 
    /* position menu item just before first separator */
    EINA_LIST_FOREACH(m->items, l, mi)
@@ -934,7 +930,7 @@ _bd_hook(void *d __UNUSED__, E_Border *bd)
    mi = e_menu_item_new_relative(m, mi);
    e_menu_item_label_set(mi, _("Take Shot"));
    e_util_menu_item_theme_icon_set(mi, "screenshot");
-   e_menu_item_callback_set(mi, _e_mod_menu_border_cb, bd);
+   e_menu_item_callback_set(mi, _e_mod_menu_border_cb, ec);
 }
 
 static void
@@ -984,7 +980,7 @@ e_modapi_init(E_Module *m)
      }
    maug = e_int_menus_menu_augmentation_add_sorted
       ("main/2",  _("Take Screenshot"), _e_mod_menu_add, NULL, NULL, NULL);
-   border_hook = e_int_border_menu_hook_add(_bd_hook, NULL);
+   border_hook = e_int_client_menu_hook_add(_bd_hook, NULL);
    return m;
 }
 
@@ -1015,7 +1011,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
         act = NULL;
      }
    shot_module = NULL;
-   e_int_border_menu_hook_del(border_hook);
+   e_int_client_menu_hook_del(border_hook);
    ecore_con_url_shutdown();
    return 1;
 }

@@ -18,8 +18,8 @@ EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume-Indicator" };
 EAPI void *
 e_modapi_init(E_Module *m) 
 {
-   E_Manager *man;
-   Eina_List *ml;
+   const Eina_List *l;
+   E_Comp *comp;
 
    /* set module priority so we load before others */
    e_module_priority_set(m, 90);
@@ -49,30 +49,22 @@ e_modapi_init(E_Module *m)
      }
 #endif
 
-   /* loop through the managers (root windows) */
-   EINA_LIST_FOREACH(e_manager_list(), ml, man) 
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
      {
-        E_Container *con;
-        Eina_List *cl;
+        E_Zone *zone;
+        Eina_List *zl;
 
-        /* loop through containers */
-        EINA_LIST_FOREACH(man->containers, cl, con) 
+        /* TODO: Make this configurable so illume2 can be run
+         * on just one zone/screen/etc */
+
+        /* for each zone, create an indicator window */
+        EINA_LIST_FOREACH(comp->zones, zl, zone) 
           {
-             E_Zone *zone;
-             Eina_List *zl;
+             Ind_Win *iwin;
 
-             /* TODO: Make this configurable so illume2 can be run
-              * on just one zone/screen/etc */
-
-             /* for each zone, create an indicator window */
-             EINA_LIST_FOREACH(con->zones, zl, zone) 
-               {
-                  Ind_Win *iwin;
-
-                  /* try to create new indicator window */
-                  if (!(iwin = e_mod_ind_win_new(zone))) continue;
-                  iwins = eina_list_append(iwins, iwin);
-               }
+             /* try to create new indicator window */
+             if (!(iwin = e_mod_ind_win_new(zone))) continue;
+             iwins = eina_list_append(iwins, iwin);
           }
      }
 

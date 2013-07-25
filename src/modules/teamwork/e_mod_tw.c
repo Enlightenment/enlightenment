@@ -373,7 +373,7 @@ dbus_link_show_helper(const char *uri, Eina_Bool signal_open)
 {
    Teamwork_Link_Type type;
 
-   if (tw_mod->pop && (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), uri))) return;
+   if (tw_mod->pop && (!e_util_strcmp(evas_object_data_get(tw_mod->pop, "uri"), uri))) return;
    type = dbus_link_uri_type_get(uri);
    switch (type)
      {
@@ -428,7 +428,7 @@ dbus_link_hide_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
 
    if (eldbus_message_arguments_get(msg, "s", &uri))
      {
-        if (tw_mod->pop && (!tw_mod->sticky) && (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), uri)))
+        if (tw_mod->pop && (!tw_mod->sticky) && (!e_util_strcmp(evas_object_data_get(tw_mod->pop, "uri"), uri)))
           {
              tw_hide(NULL);
              tw_mod->force = 0;
@@ -463,10 +463,8 @@ dbus_link_mouse_out_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
    if (eldbus_message_arguments_get(msg, "suxii", &uri, &t, &win, &last_coords.x, &last_coords.y))
      {
         if (tw_mod->pop && (!tw_mod->sticky) &&
-           (
-            (tw_tmpfile && (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), tw_tmpfile))) ||
-            (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), uri))
-           ))
+            ((tw_tmpfile && (!e_util_strcmp(evas_object_data_get(tw_mod->pop, "uri"), tw_tmpfile))) ||
+            (!e_util_strcmp(evas_object_data_get(tw_mod->pop, "uri"), uri))))
           {
              if (tw_config->mouse_out_delay)
                {
@@ -758,16 +756,17 @@ tw_idler_start(void)
 }
 
 static void
-tw_popup_del(void *obj)
+tw_popup_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   eina_stringshare_del(e_object_data_get(obj));
+   eina_stringshare_del(evas_object_data_get(obj, "uri"));
 }
 
 EINTERN void
 tw_popup_opacity_set(void)
 {
-   if (tw_mod->pop && tw_mod->pop->cw)
-     e_comp_win_opacity_set(tw_mod->pop->cw, lround((double)255 * (tw_config->popup_opacity / 100.)));
+   int c = lround((double)255 * (tw_config->popup_opacity / 100.));
+   if (tw_mod->pop)
+     evas_object_color_set(tw_mod->pop, c, c, c, c);
 }
 
 static void
@@ -775,46 +774,51 @@ tw_show_helper(Evas_Object *o, int w, int h)
 {
    int px, py, pw, ph;
    double ratio = tw_config->popup_size / 100.;
-   E_Border *bd = NULL;
+   E_Client *ec = NULL;
+   E_Zone *zone = e_zone_current_get(e_util_comp_current_get());
 
-   E_FREE_FUNC(tw_mod->pop, e_object_del);
+   evas_object_hide(tw_mod->pop);
+   evas_object_del(tw_mod->pop);
    tw_mod->sticky = 0;
-   tw_mod->pop = e_popup_new(e_zone_current_get(e_util_container_current_get()), 0, 0, 1, 1);
-   e_popup_ignore_events_set(tw_mod->pop, 1);
-   pw = MIN(w, (ratio * (double)tw_mod->pop->zone->w));
-   pw = MIN(pw, tw_mod->pop->zone->w);
+   tw_mod->pop = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_POPUP);
+   evas_object_pass_events_set(tw_mod->pop, 1);
+   pw = MIN(w, (ratio * (double)zone->w));
+   pw = MIN(pw, zone->w);
    if (pw == w) ph = h;
    else
      ph = lround((double)(pw * h) / ((double)w));
-   if (ph > tw_mod->pop->zone->h)
+   if (ph > zone->h)
      {
-        ph = tw_mod->pop->zone->h;
+        ph = zone->h;
         pw = lround((double)(ph * w) / ((double)h));
      }
    e_livethumb_vsize_set(o, pw, ph);
-   e_popup_layer_set(tw_mod->pop, E_COMP_CANVAS_LAYER_POPUP, 0);
+   evas_object_layer_set(tw_mod->pop, E_LAYER_POPUP);
+   evas_object_resize(tw_mod->pop, pw, ph);
 
    if ((!tw_win) && (last_coords.x == last_coords.y) && (last_coords.x == -1))
      {
-        px = lround(ratio * (double)tw_mod->pop->zone->w) - (pw / 2);
-        py = lround(ratio * (double)tw_mod->pop->zone->h) - (ph / 2);
-        if (px + pw > tw_mod->pop->zone->w)
-          px = tw_mod->pop->zone->w - pw;
-        if (py + ph > tw_mod->pop->zone->h)
-          py = tw_mod->pop->zone->h - ph;
+        px = lround(ratio * (double)zone->w) - (pw / 2);
+        py = lround(ratio * (double)zone->h) - (ph / 2);
+        if (px + pw > zone->w)
+          px = zone->w - pw;
+        if (py + ph > zone->h)
+          py = zone->h - ph;
+        evas_object_move(tw_mod->pop, px, py);
      }
-   else if (tw_win && ((bd = e_border_find_by_client_window(tw_win))))
+   else if (tw_win && (((ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, tw_win))) ||
+                       ((ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, tw_win)))))
      {
         int x, y;
 
-        x = bd->x + bd->client_inset.l + last_coords.x;
-        y = bd->y + bd->client_inset.t + last_coords.y;
+        x = ec->client.x + last_coords.x;
+        y = ec->client.y + last_coords.y;
         /* prefer tooltip left of last_coords */
         px = x - pw - 3;
         /* if it's offscreen, try right of last_coords */
         if (px < 0) px = x + 3;
         /* fuck this, stick it right on the last_coords */
-        if (px + pw + 3 > tw_mod->pop->zone->w)
+        if (px + pw + 3 > zone->w)
           px = (x / 2) - (pw / 2);
         /* give up */
         if (px < 0) px = 0;
@@ -824,21 +828,19 @@ tw_show_helper(Evas_Object *o, int w, int h)
         /* if it's offscreen, try below last_coords */
         if (py < 0) py = y + 3;
         /* fuck this, stick it right on the last_coords */
-        if (py + ph + 3 > tw_mod->pop->zone->h)
+        if (py + ph + 3 > zone->h)
           py = (y / 2) - (ph / 2);
         /* give up */
         if (py < 0) py = 0;
+        evas_object_move(tw_mod->pop, px, py);
      }
    else
      {
-        px = (tw_mod->pop->zone->w / 2) - (pw / 2);
-        py = (tw_mod->pop->zone->h / 2) - (pw / 2);
+        e_comp_object_util_center(tw_mod->pop);
      }
-   e_popup_move_resize(tw_mod->pop, px, py, pw, ph);
-   e_popup_content_set(tw_mod->pop, o);
-   e_popup_show(tw_mod->pop);
+   evas_object_show(tw_mod->pop);
    tw_popup_opacity_set();
-   E_OBJECT_DEL_SET(tw_mod->pop, tw_popup_del);
+   evas_object_event_callback_add(tw_mod->pop, EVAS_CALLBACK_DEL, tw_popup_del, NULL);
 }
 
 static Eina_Bool
@@ -872,7 +874,7 @@ tw_video_opened_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
      }
    emotion_object_size_get(obj, &iw, &ih);
 
-   zone = e_zone_current_get(e_util_container_current_get());
+   zone = e_zone_current_get(e_util_comp_current_get());
    w = MIN(zone->w, (ratio * (double)zone->w));
    ratio = emotion_object_ratio_get(obj);
    if (ratio > 0.0) iw = (ih * ratio) + 0.5;
@@ -882,8 +884,8 @@ tw_video_opened_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    h = (w * ih) / iw;
    e_livethumb_thumb_set(data, obj);
    tw_show_helper(data, w, h);
-   e_popup_object_add(tw_mod->pop, obj);
-   e_object_data_set(E_OBJECT(tw_mod->pop), eina_stringshare_add(emotion_object_file_get(obj)));
+   e_comp_object_util_del_list_append(tw_mod->pop, obj);
+   evas_object_data_set(tw_mod->pop, "uri", eina_stringshare_add(emotion_object_file_get(obj)));
    evas_object_smart_callback_del_full(obj, "frame_decode", tw_video_opened_cb, data);
 }
 
@@ -1065,8 +1067,8 @@ tw_show(Media *i)
      }
    e_livethumb_thumb_set(prev, ic);
    tw_show_helper(prev, w, h);
-   e_object_data_set(E_OBJECT(tw_mod->pop), eina_stringshare_ref(i->addr));
-   e_popup_object_add(tw_mod->pop, ic);
+   evas_object_data_set(tw_mod->pop, "uri", eina_stringshare_ref(i->addr));
+   e_comp_object_util_del_list_append(tw_mod->pop, ic);
 }
 
 static void
@@ -1109,8 +1111,7 @@ tw_show_local_file(const char *uri)
      }
    e_livethumb_thumb_set(prev, o);
    tw_show_helper(prev, w, h);
-   e_popup_object_add(tw_mod->pop, o);
-   e_object_data_set(E_OBJECT(tw_mod->pop), eina_stringshare_add(uri));
+   evas_object_data_set(tw_mod->pop, "uri", eina_stringshare_add(uri));
 }
 
 static void
@@ -1128,14 +1129,14 @@ tw_handler_hide(void)
 }
 
 static Eina_Bool
-desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Border_Focus_Out *ev EINA_UNUSED)
+desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Desk_Show *ev EINA_UNUSED)
 {
    if (tw_mod->pop) tw_handler_hide();
    return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
-focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Border_Focus_Out *ev EINA_UNUSED)
+focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *ev EINA_UNUSED)
 {
    if (e_config->focus_policy == E_FOCUS_CLICK) return ECORE_CALLBACK_RENEW;
    if (tw_mod->pop) tw_handler_hide();
@@ -1158,7 +1159,8 @@ tw_hide(void *d EINA_UNUSED)
      }
    eina_stringshare_replace(&tw_tmpfile, NULL);
    tw_win = 0;
-   E_FREE_FUNC(tw_mod->pop, e_object_del);
+   evas_object_hide(tw_mod->pop);
+   E_FREE_FUNC(tw_mod->pop, evas_object_del);
    last_coords.x = last_coords.y = 0;
    E_FREE_FUNC(tw_hide_timer, ecore_timer_del);
    download_media_cleanup();
@@ -1211,7 +1213,7 @@ e_tw_init(void)
    E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_COMPLETE, download_media_complete, tw_mod);
    E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_PROGRESS, download_media_status, tw_mod);
    E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_DATA, download_media_data, tw_mod);
-   E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_FOCUS_OUT, focus_out, tw_mod);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_FOCUS_OUT, focus_out, tw_mod);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_DESK_SHOW, desk_show, tw_mod);
 
    tw_mod->media = eina_hash_string_superfast_new((Eina_Free_Cb)download_media_free);
@@ -1256,7 +1258,8 @@ e_tw_shutdown(void)
    tw_hide(NULL);
    last_coords.x = last_coords.y = 0;
    eina_hash_free(tw_mod->media);
-   E_FREE_FUNC(tw_mod->pop, e_object_del);
+   evas_object_hide(tw_mod->pop);
+   E_FREE_FUNC(tw_mod->pop, evas_object_del);
 }
 
 EINTERN void

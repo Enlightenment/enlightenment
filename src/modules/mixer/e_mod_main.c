@@ -367,7 +367,7 @@ _mixer_popup_cb_mute_change(void *data, Evas_Object *obj, void *event __UNUSED__
 static Evas_Object *
 _mixer_popup_add_slider(E_Mixer_Instance *inst, int value, void (*cb)(void *data, Evas_Object *obj, void *event_info))
 {
-   Evas_Object *slider = e_slider_add(inst->popup->win->evas);
+   Evas_Object *slider = e_slider_add(e_comp_get(inst->popup)->evas);
    evas_object_show(slider);
    e_slider_orientation_set(slider, 0);
    e_slider_value_set(slider, value);
@@ -451,23 +451,28 @@ _mixer_popup_key_down_cb(void *data, Ecore_Event_Key *ev)
 static void
 _mixer_popup_del(E_Mixer_Instance *inst)
 {
-   e_object_del(E_OBJECT(inst->popup));
    inst->ui.label = NULL;
    inst->ui.left = NULL;
    inst->ui.right = NULL;
    inst->ui.mute = NULL;
    inst->ui.table = NULL;
    inst->ui.button = NULL;
-   inst->popup = NULL;
-   if (inst->popup_timer)
-     ecore_timer_del(inst->popup_timer);
-   inst->popup_timer = NULL;
+   E_FREE_FUNC(inst->popup, e_object_del);
+   E_FREE_FUNC(inst->popup_timer, ecore_timer_del);
 }
 
 static void
 _mixer_popup_del_cb(void *obj)
 {
    _mixer_popup_del(e_object_data_get(obj));
+}
+
+static void
+_mixer_popup_comp_del_cb(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   E_Mixer_Instance *inst = data;
+
+   E_FREE_FUNC(inst->popup, e_object_del);
 }
 
 static void
@@ -483,7 +488,6 @@ _mixer_popup_cb_mixer(void *data, void *data2 __UNUSED__)
 {
    E_Mixer_Instance *inst = data;
    E_Mixer_Module_Context *ctxt;
-   E_Container *con;
 
    _mixer_popup_del(inst);
 
@@ -496,8 +500,7 @@ _mixer_popup_cb_mixer(void *data, void *data2 __UNUSED__)
         return;
      }
 
-   con = e_container_current_get(e_manager_current_get());
-   ctxt->mixer_dialog = e_mixer_app_dialog_new(con, _mixer_app_cb_del, ctxt);
+   ctxt->mixer_dialog = e_mixer_app_dialog_new(NULL, _mixer_app_cb_del, ctxt);
 
    _mixer_app_select_current(ctxt->mixer_dialog, inst);
 }
@@ -524,8 +527,8 @@ _mixer_popup_new(E_Mixer_Instance *inst)
    else
      colspan = 2;
 
-   inst->popup = e_gadcon_popup_new(inst->gcc);
-   evas = inst->popup->win->evas;
+   inst->popup = e_gadcon_popup_new(inst->gcc, 0);
+   evas = e_comp_get(inst->gcc)->evas;
 
    inst->ui.table = e_widget_table_add(evas, 0);
 
@@ -587,7 +590,8 @@ _mixer_popup_new(E_Mixer_Instance *inst)
    e_widget_size_min_set(inst->ui.table, mw, mh);
 
    e_gadcon_popup_content_set(inst->popup, inst->ui.table);
-   e_popup_autoclose(inst->popup->win, NULL, _mixer_popup_key_down_cb, inst);
+   e_comp_object_util_autoclose(inst->popup->comp_object,
+     _mixer_popup_comp_del_cb, _mixer_popup_key_down_cb, inst);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _mixer_popup_del_cb);
@@ -628,12 +632,10 @@ static void
 _mixer_menu_cb_cfg(void *data, E_Menu *menu __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
    E_Mixer_Instance *inst = data;
-   E_Container *con;
 
    if (inst->popup)
      _mixer_popup_del(inst);
-   con = e_container_current_get(e_manager_current_get());
-   inst->conf->dialog = e_mixer_config_dialog_new(con, inst->conf);
+   inst->conf->dialog = e_mixer_config_dialog_new(NULL, inst->conf);
 }
 
 static void
@@ -1146,7 +1148,7 @@ _mixer_cb_volume_mute(E_Object *obj __UNUSED__, const char *params __UNUSED__)
 }
 
 static E_Config_Dialog *
-_mixer_module_config(E_Container *con, const char *params __UNUSED__)
+_mixer_module_config(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Mixer_Module_Context *ctxt;
 
@@ -1167,7 +1169,7 @@ _mixer_module_config(E_Container *con, const char *params __UNUSED__)
           return NULL;
      }
 
-   ctxt->conf_dialog = e_mixer_config_module_dialog_new(con, ctxt);
+   ctxt->conf_dialog = e_mixer_config_module_dialog_new(comp, ctxt);
    return ctxt->conf_dialog;
 }
 

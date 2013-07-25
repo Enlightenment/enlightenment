@@ -2,17 +2,17 @@
 
 /* local subsystem functions */
 static Eina_Bool _e_grabinput_focus_check(void *data);
-static void      _e_grabinput_focus_do(Ecore_X_Window win, E_Focus_Method method);
-static void      _e_grabinput_focus(Ecore_X_Window win, E_Focus_Method method);
+static void      _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method);
+static void      _e_grabinput_focus(Ecore_Window win, E_Focus_Method method);
 
 /* local subsystem globals */
-static Ecore_X_Window grab_mouse_win = 0;
-static Ecore_X_Window grab_key_win = 0;
-static Ecore_X_Window focus_win = 0;
+static Ecore_Window grab_mouse_win = 0;
+static Ecore_Window grab_key_win = 0;
+static Ecore_Window focus_win = 0;
 static E_Focus_Method focus_method = E_FOCUS_METHOD_NO_INPUT;
 static double last_focus_time = 0.0;
 
-static Ecore_X_Window focus_fix_win = 0;
+static Ecore_Window focus_fix_win = 0;
 static Ecore_Timer *focus_fix_timer = NULL;
 static E_Focus_Method focus_fix_method = E_FOCUS_METHOD_NO_INPUT;
 
@@ -35,7 +35,7 @@ e_grabinput_shutdown(void)
 }
 
 EAPI int
-e_grabinput_get(Ecore_X_Window mouse_win, int confine_mouse, Ecore_X_Window key_win)
+e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
 {
    if (grab_mouse_win)
      {
@@ -79,7 +79,7 @@ e_grabinput_get(Ecore_X_Window mouse_win, int confine_mouse, Ecore_X_Window key_
 }
 
 EAPI void
-e_grabinput_release(Ecore_X_Window mouse_win, Ecore_X_Window key_win)
+e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
 {
    if (mouse_win == grab_mouse_win)
      {
@@ -101,7 +101,7 @@ e_grabinput_release(Ecore_X_Window mouse_win, Ecore_X_Window key_win)
 }
 
 EAPI void
-e_grabinput_focus(Ecore_X_Window win, E_Focus_Method method)
+e_grabinput_focus(Ecore_Window win, E_Focus_Method method)
 {
    if (grab_key_win != 0)
      {
@@ -122,13 +122,13 @@ e_grabinput_last_focus_time_get(void)
    return last_focus_time;
 }
 
-EAPI Ecore_X_Window
+EAPI Ecore_Window
 e_grabinput_last_focus_win_get(void)
 {
    return focus_fix_win;
 }
 
-EAPI Ecore_X_Window
+EAPI Ecore_Window
 e_grabinput_key_win_get(void)
 {
    return grab_key_win;
@@ -147,7 +147,7 @@ _e_grabinput_focus_check(void *data __UNUSED__)
 }
 
 static void
-_e_grabinput_focus_do(Ecore_X_Window win, E_Focus_Method method)
+_e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
 {
    /* fprintf(stderr, "focus to %x method %i\n", win, method); */
    switch (method)
@@ -174,7 +174,7 @@ _e_grabinput_focus_do(Ecore_X_Window win, E_Focus_Method method)
 }
 
 static void
-_e_grabinput_focus(Ecore_X_Window win, E_Focus_Method method)
+_e_grabinput_focus(Ecore_Window win, E_Focus_Method method)
 {
    focus_fix_win = win;
    focus_fix_method = method;

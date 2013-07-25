@@ -63,21 +63,21 @@ struct _E_Kbd_Int
       unsigned char     zoom : 1;
    } down;
    struct {
-      E_Popup          *popup;
+      Evas_Object          *popup;
       Evas_Object      *base_obj, *ilist_obj;
    } layoutlist;
    struct {
-      E_Popup          *popup;
+      Evas_Object          *popup;
       Evas_Object      *base_obj, *ilist_obj;
       Eina_List        *matches;
    } matchlist;
    struct {
-      E_Popup          *popup;
+      Evas_Object          *popup;
       Evas_Object      *base_obj, *ilist_obj;
       Eina_List        *matches;
    } dictlist;
    struct {
-      E_Popup          *popup;
+      Evas_Object          *popup;
       Evas_Object      *base_obj, *layout_obj, *sublayout_obj;
       E_Kbd_Int_Key    *pressed;
    } zoomkey;

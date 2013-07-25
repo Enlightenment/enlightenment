@@ -7,23 +7,23 @@ static Eina_Bool _e_mod_kbd_cb_border_remove(void *data __UNUSED__, int type __U
 static Eina_Bool _e_mod_kbd_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _e_mod_kbd_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _e_mod_kbd_cb_border_property(void *data __UNUSED__, int type __UNUSED__, void *event);
-static void _e_mod_kbd_cb_border_pre_post_fetch(void *data __UNUSED__, void *data2);
+static void _e_mod_kbd_cb_border_pre_post_fetch(void *data __UNUSED__, E_Client *ec);
 static void _e_mod_kbd_cb_free(E_Illume_Keyboard *kbd);
 static Eina_Bool _e_mod_kbd_cb_delay_hide(void *data __UNUSED__);
 static void _e_mod_kbd_hide(void);
 static void _e_mod_kbd_slide(int visible, double len);
 static Eina_Bool _e_mod_kbd_cb_animate(void *data __UNUSED__);
-static E_Illume_Keyboard *_e_mod_kbd_by_border_get(E_Border *bd);
-static void _e_mod_kbd_border_adopt(E_Border *bd);
+static E_Illume_Keyboard *_e_mod_kbd_by_border_get(E_Client *ec);
+static void _e_mod_kbd_border_adopt(E_Client *ec);
 static void _e_mod_kbd_layout_send(void);
 static void _e_mod_kbd_geometry_send(void);
 static void _e_mod_kbd_changes_send(void);
 
 /* local variables */
 static Eina_List *_kbd_hdls = NULL;
-static E_Border_Hook *_kbd_hook = NULL;
+static E_Client_Hook *_kbd_hook = NULL;
 static Ecore_X_Atom _focused_state = 0;
-static E_Border *_focused_border = NULL, *_prev_focused_border = NULL;
+static E_Client *_focused_border = NULL, *_prev_focused_border = NULL;
 
 int 
 e_mod_kbd_init(void) 
@@ -36,17 +36,17 @@ e_mod_kbd_init(void)
                                               NULL));
    _kbd_hdls = 
      eina_list_append(_kbd_hdls, 
-                      ecore_event_handler_add(E_EVENT_BORDER_REMOVE, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_REMOVE, 
                                               _e_mod_kbd_cb_border_remove, 
                                               NULL));
    _kbd_hdls = 
      eina_list_append(_kbd_hdls, 
-                      ecore_event_handler_add(E_EVENT_BORDER_FOCUS_IN, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_FOCUS_IN, 
                                               _e_mod_kbd_cb_border_focus_in, 
                                               NULL));
    _kbd_hdls = 
      eina_list_append(_kbd_hdls, 
-                      ecore_event_handler_add(E_EVENT_BORDER_FOCUS_OUT, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_FOCUS_OUT, 
                                               _e_mod_kbd_cb_border_focus_out, 
                                               NULL));
    _kbd_hdls = 
@@ -56,7 +56,7 @@ e_mod_kbd_init(void)
                                               NULL));
 
    /* add hooks for events we are interested in */
-   _kbd_hook = e_border_hook_add(E_BORDER_HOOK_EVAL_PRE_POST_FETCH, 
+   _kbd_hook = e_client_hook_add(E_CLIENT_HOOK_EVAL_PRE_POST_FETCH, 
                                  _e_mod_kbd_cb_border_pre_post_fetch, NULL);
 
    /* initialize the device subsystem */
@@ -74,7 +74,7 @@ e_mod_kbd_shutdown(void)
    e_mod_kbd_device_shutdown();
 
    /* destroy the hook */
-   e_border_hook_del(_kbd_hook);
+   e_client_hook_del(_kbd_hook);
 
    /* destroy the handlers and free the list */
    EINA_LIST_FREE(_kbd_hdls, hdl)
@@ -137,10 +137,10 @@ e_mod_kbd_show(void)
    if (_e_illume_kbd->animator) ecore_animator_del(_e_illume_kbd->animator);
    _e_illume_kbd->animator = NULL;
 
-   if ((_focused_border) && (_e_illume_kbd->border))
+   if ((_focused_border) && (_e_illume_kbd->client))
      {
-        if (_e_illume_kbd->border->zone != _focused_border->zone) 
-          e_border_zone_set(_e_illume_kbd->border, _focused_border->zone);
+        if (_e_illume_kbd->client->zone != _focused_border->zone) 
+          e_client_zone_set(_e_illume_kbd->client, _focused_border->zone);
      }
 
    /* if it's disabled, get out */
@@ -152,14 +152,14 @@ e_mod_kbd_show(void)
    if (_e_illume_cfg->animation.vkbd.duration <= 0) 
      {
         /* show the border */
-        if (_e_illume_kbd->border) 
+        if (_e_illume_kbd->client) 
           {
-             e_comp_win_effect_set(_e_illume_kbd->border->cw, "move");
+             e_comp_object_effect_set(_e_illume_kbd->client->frame, "move");
              /* unuse location */
-             e_comp_win_effect_params_set(_e_illume_kbd->border->cw, 0, (int[]){0}, 1);
-             if (!_e_illume_kbd->border->visible) 
-               e_border_show(_e_illume_kbd->border);
-             e_border_raise(_e_illume_kbd->border);
+             e_comp_object_effect_params_set(_e_illume_kbd->client->frame, 0, (int[]){0}, 1);
+             if (!_e_illume_kbd->client->visible) 
+               evas_object_show(_e_illume_kbd->client->frame);
+             evas_object_raise(_e_illume_kbd->client->frame);
           }
         _e_illume_kbd->visible = 1;
 
@@ -170,11 +170,11 @@ e_mod_kbd_show(void)
    else 
      {
         /* show the border */
-        if (_e_illume_kbd->border) 
+        if (_e_illume_kbd->client) 
           {
-             if (!_e_illume_kbd->border->visible) 
-               e_border_show(_e_illume_kbd->border);
-             e_border_raise(_e_illume_kbd->border);
+             if (!_e_illume_kbd->client->visible) 
+               evas_object_show(_e_illume_kbd->client->frame);
+             evas_object_raise(_e_illume_kbd->client->frame);
           }
 
         /* animate it */
@@ -207,8 +207,8 @@ e_mod_kbd_toggle(void)
 void 
 e_mod_kbd_fullscreen_set(E_Zone *zone, int fullscreen) 
 {
-   if (!_e_illume_kbd->border) return;
-   if (_e_illume_kbd->border->zone != zone) return;
+   if (!_e_illume_kbd->client) return;
+   if (_e_illume_kbd->client->zone != zone) return;
    if ((!!fullscreen) != _e_illume_kbd->fullscreen) 
      _e_illume_kbd->fullscreen = fullscreen;
 }
@@ -216,7 +216,7 @@ e_mod_kbd_fullscreen_set(E_Zone *zone, int fullscreen)
 void 
 e_mod_kbd_layout_set(E_Illume_Keyboard_Layout layout) 
 {
-   if (!_e_illume_kbd->border) return;
+   if (!_e_illume_kbd->client) return;
    _e_illume_kbd->layout = layout;
    _e_mod_kbd_layout_send();
 }
@@ -245,15 +245,15 @@ _e_mod_kbd_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *e
 static Eina_Bool
 _e_mod_kbd_cb_border_remove(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Remove *ev;
+   E_Event_Client *ev;
    E_Illume_Keyboard *kbd;
 
    ev = event;
 
    /* if we removed the focused border, reset some variables */
-   if ((_prev_focused_border) && (_prev_focused_border == ev->border)) 
+   if ((_prev_focused_border) && (_prev_focused_border == ev->ec)) 
       _prev_focused_border = NULL;
-   if ((_focused_border) && (_focused_border == ev->border)) 
+   if ((_focused_border) && (_focused_border == ev->ec)) 
      {
         e_mod_kbd_hide();
         _focused_border = NULL;
@@ -262,30 +262,30 @@ _e_mod_kbd_cb_border_remove(void *data __UNUSED__, int type __UNUSED__, void *ev
      }
 
    /* try to find the keyboard for this border */
-   if (!(kbd = _e_mod_kbd_by_border_get(ev->border))) 
+   if (!(kbd = _e_mod_kbd_by_border_get(ev->ec))) 
      return ECORE_CALLBACK_PASS_ON;
 
-   if ((kbd->border) && (kbd->border == ev->border)) 
+   if ((kbd->client) && (kbd->client == ev->ec)) 
      {
-        kbd->border = NULL;
+        kbd->client = NULL;
         if (kbd->waiting_borders) 
           {
-             E_Border *bd;
+             E_Client *ec;
 
-             bd = kbd->waiting_borders->data;
+             ec = kbd->waiting_borders->data;
              kbd->waiting_borders = 
                eina_list_remove_list(kbd->waiting_borders, kbd->waiting_borders);
 
-             _e_mod_kbd_border_adopt(bd);
+             _e_mod_kbd_border_adopt(ec);
           }
         if (kbd->visible) 
           {
-             e_border_hide(ev->border, 2);
+             evas_object_hide(ev->ec->frame);
              e_mod_kbd_hide();
           }
      }
-   else if (!kbd->border) 
-     kbd->waiting_borders = eina_list_remove(kbd->waiting_borders, ev->border);
+   else if (!kbd->client) 
+     kbd->waiting_borders = eina_list_remove(kbd->waiting_borders, ev->ec);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -293,14 +293,14 @@ _e_mod_kbd_cb_border_remove(void *data __UNUSED__, int type __UNUSED__, void *ev
 static Eina_Bool
 _e_mod_kbd_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Focus_In *ev;
+   E_Event_Client *ev;
 
    ev = event;
-   if (_e_mod_kbd_by_border_get(ev->border)) return ECORE_CALLBACK_PASS_ON;
+   if (_e_mod_kbd_by_border_get(ev->ec)) return ECORE_CALLBACK_PASS_ON;
 
    /* set focused border for kbd */
-   _focused_border = ev->border;
-   _focused_state = ev->border->client.vkbd.state;
+   _focused_border = ev->ec;
+   _focused_state = ev->ec->vkbd.state;
 
    if (_focused_state <= ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF) 
      e_mod_kbd_hide();
@@ -313,10 +313,10 @@ _e_mod_kbd_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, void *
 static Eina_Bool
 _e_mod_kbd_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Focus_Out *ev;
+   E_Event_Client *ev;
 
    ev = event;
-   if (_e_mod_kbd_by_border_get(ev->border)) return ECORE_CALLBACK_PASS_ON;
+   if (_e_mod_kbd_by_border_get(ev->ec)) return ECORE_CALLBACK_PASS_ON;
 
    _prev_focused_border = _focused_border;
 
@@ -326,10 +326,10 @@ _e_mod_kbd_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, void 
    /* tell the focused border it changed so layout gets udpated */
    if (_prev_focused_border && (!e_object_is_del(E_OBJECT(_prev_focused_border)))) 
      {
-        if (!e_illume_border_is_conformant(_prev_focused_border)) 
+        if (!e_illume_client_is_conformant(_prev_focused_border)) 
           {
              _prev_focused_border->changes.size = 1;
-             BD_CHANGED(_prev_focused_border);
+             EC_CHANGED(_prev_focused_border);
           }
      }
 
@@ -344,7 +344,7 @@ static Eina_Bool
 _e_mod_kbd_cb_border_property(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
    Ecore_X_Event_Window_Property *ev;
-   E_Border *bd;
+   E_Client *ec;
    int fullscreen = 0;
 
    ev = event;
@@ -354,36 +354,36 @@ _e_mod_kbd_cb_border_property(void *data __UNUSED__, int type __UNUSED__, void *
      return ECORE_CALLBACK_PASS_ON;
 
    /* make sure we have a border */
-   if (!(bd = e_border_find_by_client_window(ev->win))) 
+   if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->win))) 
      return ECORE_CALLBACK_PASS_ON;
 
-//   printf("Kbd Border Property Change: %s\n", bd->client.icccm.name);
+//   printf("Kbd Border Property Change: %s\n", ec->icccm.name);
 
    /* if it's not focused, we don't care */
-   if ((!bd->focused) || (_e_mod_kbd_by_border_get(bd))) 
+   if ((!ec->focused) || (_e_mod_kbd_by_border_get(ec))) 
      return ECORE_CALLBACK_PASS_ON;
 
    /* NB: Not sure why, but we seem to need to fetch kbd state here. This could 
     * be a result of filtering the container_hook_layout. Not real happy 
     * with this because it is an X round-trip, but it is here because this 
     * needs more time to investigate. */
-   e_hints_window_virtual_keyboard_state_get(bd);
+   e_hints_window_virtual_keyboard_state_get(ec);
 
-   if ((_focused_border) && (_focused_border == bd)) 
+   if ((_focused_border) && (_focused_border == ec)) 
      {
         /* if focused state is the same, get out */
-        if (_focused_state == bd->client.vkbd.state) 
+        if (_focused_state == ec->vkbd.state) 
           return ECORE_CALLBACK_PASS_ON;
      }
 
    /* set our variables */
-   _focused_border = bd;
-   _focused_state = bd->client.vkbd.state;
+   _focused_border = ec;
+   _focused_state = ec->vkbd.state;
 
    /* handle a border needing fullscreen keyboard */
-   if ((bd->need_fullscreen) || (bd->fullscreen)) fullscreen = 1;
+   if ((ec->need_fullscreen) || (ec->fullscreen)) fullscreen = 1;
    if (_e_illume_kbd->fullscreen != fullscreen)
-     e_mod_kbd_fullscreen_set(bd->zone, fullscreen);
+     e_mod_kbd_fullscreen_set(ec->zone, fullscreen);
 
    if (_focused_state <= ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF) 
      e_mod_kbd_hide();
@@ -394,30 +394,27 @@ _e_mod_kbd_cb_border_property(void *data __UNUSED__, int type __UNUSED__, void *
 }
 
 static void 
-_e_mod_kbd_cb_border_pre_post_fetch(void *data __UNUSED__, void *data2) 
+_e_mod_kbd_cb_border_pre_post_fetch(void *data __UNUSED__, E_Client *ec) 
 {
-   E_Border *bd;
-
-   if (!(bd = data2)) return;
-   if (!bd->new_client) return;
-   if (_e_mod_kbd_by_border_get(bd)) return;
-   if (e_illume_border_is_keyboard(bd)) 
+   if (!ec->new_client) return;
+   if (_e_mod_kbd_by_border_get(ec)) return;
+   if (e_illume_client_is_keyboard(ec)) 
      {
-        if (!_e_illume_kbd->border) 
-          _e_mod_kbd_border_adopt(bd);
+        if (!_e_illume_kbd->client) 
+          _e_mod_kbd_border_adopt(ec);
         else 
           {
              _e_illume_kbd->waiting_borders = 
-               eina_list_append(_e_illume_kbd->waiting_borders, bd);
+               eina_list_append(_e_illume_kbd->waiting_borders, ec);
           }
-        bd->stolen = 1;
+        ec->stolen = 1;
      }
 }
 
 static void 
 _e_mod_kbd_cb_free(E_Illume_Keyboard *kbd) 
 {
-   E_Border *bd;
+   E_Client *ec;
 
    /* destroy the animator if it exists */
    if (kbd->animator) ecore_animator_del(kbd->animator);
@@ -428,8 +425,8 @@ _e_mod_kbd_cb_free(E_Illume_Keyboard *kbd)
    kbd->timer = NULL;
 
    /* free the list of waiting borders */
-   EINA_LIST_FREE(kbd->waiting_borders, bd)
-     bd->stolen = 0;
+   EINA_LIST_FREE(kbd->waiting_borders, ec)
+     ec->stolen = 0;
 
    /* free the keyboard structure */
    E_FREE(kbd);
@@ -461,14 +458,14 @@ _e_mod_kbd_hide(void)
    /* if we are not animating, just hide it */
    if (_e_illume_cfg->animation.vkbd.duration <= 0) 
      {
-        if (_e_illume_kbd->border) 
+        if (_e_illume_kbd->client) 
           {
-             e_comp_win_effect_set(_e_illume_kbd->border->cw, "move");
+             e_comp_object_effect_set(_e_illume_kbd->client->frame, "move");
              /* set location */
-             e_comp_win_effect_params_set(_e_illume_kbd->border->cw, 1, (int[]){0, _e_illume_kbd->border->h}, 2);
+             e_comp_object_effect_params_set(_e_illume_kbd->client->frame, 1, (int[]){0, _e_illume_kbd->client->h}, 2);
              /* use location */
-             e_comp_win_effect_params_set(_e_illume_kbd->border->cw, 0, (int[]){1}, 1);
-             e_border_hide(_e_illume_kbd->border, 2);
+             e_comp_object_effect_params_set(_e_illume_kbd->client->frame, 0, (int[]){1}, 1);
+             evas_object_hide(_e_illume_kbd->client->frame);
           }
      }
    else  
@@ -488,8 +485,8 @@ _e_mod_kbd_slide(int visible, double len)
    _e_illume_kbd->len = len;
    _e_illume_kbd->adjust_start = _e_illume_kbd->adjust;
    _e_illume_kbd->adjust_end = 0;
-   if ((visible) && (_e_illume_kbd->border)) 
-     _e_illume_kbd->adjust_end = _e_illume_kbd->border->h;
+   if ((visible) && (_e_illume_kbd->client)) 
+     _e_illume_kbd->adjust_end = _e_illume_kbd->client->h;
    if (!_e_illume_kbd->animator) 
      _e_illume_kbd->animator = ecore_animator_add(_e_mod_kbd_cb_animate, NULL);
 }
@@ -516,14 +513,14 @@ _e_mod_kbd_cb_animate(void *data __UNUSED__)
    _e_illume_kbd->adjust = ((_e_illume_kbd->adjust_end * v) + 
                             (_e_illume_kbd->adjust_start * (1.0 - v)));
 
-   if ((_e_illume_kbd->border && _e_illume_kbd->border->cw))
+   if (_e_illume_kbd->client)
      {
-        e_comp_win_effect_set(_e_illume_kbd->border->cw, "move");
+        e_comp_object_effect_set(_e_illume_kbd->client->frame, "move");
         /* set location */
-        e_comp_win_effect_params_set(_e_illume_kbd->border->cw, 1,
-          (int[]){0, _e_illume_kbd->border->h - _e_illume_kbd->adjust}, 2);
+        e_comp_object_effect_params_set(_e_illume_kbd->client->frame, 1,
+          (int[]){0, _e_illume_kbd->client->h - _e_illume_kbd->adjust}, 2);
         /* use location */
-        e_comp_win_effect_params_set(_e_illume_kbd->border->cw, 0, (int[]){1}, 1);
+        e_comp_object_effect_params_set(_e_illume_kbd->client->frame, 0, (int[]){1}, 1);
      }
 
    if (t == _e_illume_kbd->len) 
@@ -531,8 +528,8 @@ _e_mod_kbd_cb_animate(void *data __UNUSED__)
         _e_illume_kbd->animator = NULL;
         if (_focused_state <= ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF)
           {
-             if (_e_illume_kbd->border) 
-               e_border_hide(_e_illume_kbd->border, 2);
+             if (_e_illume_kbd->client) 
+               evas_object_hide(_e_illume_kbd->client->frame);
              _e_illume_kbd->visible = 0;
           }
         else 
@@ -548,43 +545,37 @@ _e_mod_kbd_cb_animate(void *data __UNUSED__)
 }
 
 static E_Illume_Keyboard *
-_e_mod_kbd_by_border_get(E_Border *bd) 
+_e_mod_kbd_by_border_get(E_Client *ec) 
 {
    Eina_List *l;
-   E_Border *over;
+   E_Client *over;
 
-   if ((!bd) || (!bd->stolen)) return NULL;
+   if ((!ec) || (!ec->stolen)) return NULL;
 
    /* if this border is the one that vkbd is working with, return the kbd */
-   if (_e_illume_kbd->border == bd) return _e_illume_kbd;
+   if (_e_illume_kbd->client == ec) return _e_illume_kbd;
 
    /* loop the waiting borders */
    EINA_LIST_FOREACH(_e_illume_kbd->waiting_borders, l, over)
-     if (over == bd) return _e_illume_kbd;
+     if (over == ec) return _e_illume_kbd;
 
    return NULL;
 }
 
 static void 
-_e_mod_kbd_border_adopt(E_Border *bd) 
+_e_mod_kbd_border_adopt(E_Client *ec) 
 {
-   if ((!_e_illume_kbd) || (!bd)) return;
+   if ((!_e_illume_kbd) || (!ec)) return;
 
-   _e_illume_kbd->border = bd;
+   _e_illume_kbd->client = ec;
 
    if (!_e_illume_kbd->visible) 
      {
-        E_Comp_Win *cw = bd->cw;
-
-        if (!cw) cw = e_comp_win_find(bd->win);
-        if (cw)
-          {
-             e_comp_win_effect_set(cw, "move");
-             /* set location */
-             e_comp_win_effect_params_set(cw, 1, (int[]){0, bd->h}, 2);
-             /* use location */
-             e_comp_win_effect_params_set(cw, 0, (int[]){1}, 1);
-          }
+        e_comp_object_effect_set(ec->frame, "move");
+        /* set location */
+        e_comp_object_effect_params_set(ec->frame, 1, (int[]){0, ec->h}, 2);
+        /* use location */
+        e_comp_object_effect_params_set(ec->frame, 0, (int[]){1}, 1);
         _e_mod_kbd_layout_send();
      }
 }
@@ -629,8 +620,8 @@ _e_mod_kbd_layout_send(void)
         else if (_e_illume_kbd->layout == E_ILLUME_KEYBOARD_LAYOUT_NONE) 
           type = ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF;
      }
-   if (_e_illume_kbd->border) 
-     ecore_x_e_virtual_keyboard_state_send(_e_illume_kbd->border->client.win, type);
+   if (_e_illume_kbd->client) 
+     ecore_x_e_virtual_keyboard_state_send(e_client_util_win_get(_e_illume_kbd->client), type);
 }
 
 static void 
@@ -640,28 +631,28 @@ _e_mod_kbd_geometry_send(void)
    int y = 0;
 
    /* make sure we have a keyboard border */
-   if (!_e_illume_kbd->border) return;
+   if (!_e_illume_kbd->client) return;
 
    /* no need. we send geometry only when kbd is visible or invisible */
    /* adjust Y for keyboard visibility */
-   //if (_e_illume_kbd->border->fx.y <= 0) 
-   y = _e_illume_kbd->border->y;
+   //if (_e_illume_kbd->client->fx.y <= 0) 
+   y = _e_illume_kbd->client->y;
 
    if (_focused_border) zone = _focused_border->zone;
-   else zone = _e_illume_kbd->border->zone;
+   else zone = _e_illume_kbd->client->zone;
 
    if (_e_illume_kbd->visible)
      ecore_x_e_illume_keyboard_geometry_set(zone->black_win, 
-                                            _e_illume_kbd->border->x,
+                                            _e_illume_kbd->client->x,
                                             y, 
-                                            _e_illume_kbd->border->w, 
-                                            _e_illume_kbd->border->h);
+                                            _e_illume_kbd->client->w, 
+                                            _e_illume_kbd->client->h);
    else
      ecore_x_e_illume_keyboard_geometry_set(zone->black_win, 
-                                            _e_illume_kbd->border->x,
-                                            _e_illume_kbd->border->h + y, 
-                                            _e_illume_kbd->border->w, 
-                                            _e_illume_kbd->border->h);     
+                                            _e_illume_kbd->client->x,
+                                            _e_illume_kbd->client->h + y, 
+                                            _e_illume_kbd->client->w, 
+                                            _e_illume_kbd->client->h);     
 }
 
 static void 
@@ -671,26 +662,26 @@ _e_mod_kbd_changes_send(void)
        (_prev_focused_border != _focused_border))
      {
         /* tell previous focused border it changed so layout udpates */
-        if (_prev_focused_border->client.vkbd.state > 
+        if (_prev_focused_border->vkbd.state > 
             ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN)
           {
-             if (!e_illume_border_is_conformant(_prev_focused_border)) 
+             if (!e_illume_client_is_conformant(_prev_focused_border)) 
                {
                   _prev_focused_border->changes.size = 1;
-                  BD_CHANGED(_prev_focused_border);
+                  EC_CHANGED(_prev_focused_border);
                }
           }
      }
 
    /* tell the focused border it changed so layout gets udpated */
    if ((_focused_border) && 
-       (_focused_border->client.vkbd.state > 
+       (_focused_border->vkbd.state > 
            ECORE_X_VIRTUAL_KEYBOARD_STATE_UNKNOWN))
      {
-        if (!e_illume_border_is_conformant(_focused_border)) 
+        if (!e_illume_client_is_conformant(_focused_border)) 
           {
              _focused_border->changes.size = 1;
-             BD_CHANGED(_focused_border);
+             EC_CHANGED(_focused_border);
           }
      }
 }

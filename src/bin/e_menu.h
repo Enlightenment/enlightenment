@@ -52,10 +52,9 @@ struct _E_Menu
    E_Menu_Item         *parent_item;
 
    /* only useful if realized != 0 (ie menu is ACTUALLY realized) */
-   E_Comp_Win          *cw;
-   E_Container_Shape  *shape;
    Ecore_Job           *dangling_job;
    Evas                 *evas;
+   Evas_Object         *comp_object;
    Evas_Object         *bg_object;
    Evas_Object         *container_object;
    Evas_Coord           container_x, container_y, container_w, container_h;

@@ -89,7 +89,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_edgebindings(E_Container *con, const char *params)
+e_int_config_edgebindings(E_Comp *comp, const char *params)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -103,7 +103,7 @@ e_int_config_edgebindings(E_Container *con, const char *params)
    v->basic.create_widgets = _basic_create_widgets;
    v->override_auto_apply = 1;
 
-   cfd = e_config_dialog_new(con, _("Edge Bindings Settings"), "E",
+   cfd = e_config_dialog_new(comp, _("Edge Bindings Settings"), "E",
                              "keyboard_and_mouse/edge_bindings",
                              "enlightenment/edges", 0, v, NULL);
    if ((params) && (params[0]))
@@ -187,9 +187,8 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 static int
 _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   Eina_List *l, *ll, *lll;
-   E_Manager *man;
-   E_Container *con;
+   const Eina_List *l, *ll;
+   E_Comp *comp;
    E_Zone *zone;
    E_Config_Binding_Edge *bi, *bi2;
    E_Layer layer;
@@ -228,17 +227,14 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    if (cfdata->fullscreen_flip != e_config->fullscreen_flip)
      {
         if (cfdata->fullscreen_flip)
-          layer = E_LAYER_EDGE_FULLSCREEN;
+          layer = E_LAYER_CLIENT_EDGE_FULLSCREEN;
         else
-          layer = E_LAYER_EDGE;
+          layer = E_LAYER_CLIENT_EDGE;
 
-        EINA_LIST_FOREACH(e_manager_list(), l, man)
+        EINA_LIST_FOREACH(e_comp_list(), l, comp)
           {
-             EINA_LIST_FOREACH(man->containers, ll, con)
-               {
-                  EINA_LIST_FOREACH(con->zones, lll, zone)
-                    e_zone_edge_win_layer_set(zone, layer);
-               }
+             EINA_LIST_FOREACH(comp->zones, ll, zone)
+               e_zone_edge_win_layer_set(zone, layer);
           }
      }
 

@@ -191,7 +191,7 @@ _gadman_desktop_menu(void *d __UNUSED__, E_Menu *m, void *icon)
 static void
 _gadman_maug_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
 {
-   e_configure_registry_call("extensions/gadman", m->zone->container, NULL);
+   e_configure_registry_call("extensions/gadman", m->zone->comp, NULL);
 }
 
 static void

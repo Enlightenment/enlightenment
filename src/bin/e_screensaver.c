@@ -166,15 +166,11 @@ _e_screensaver_ask_presentation_key_down(void *data, Evas *e __UNUSED__, Evas_Ob
 static void
 _e_screensaver_ask_presentation_mode(void)
 {
-   E_Manager *man;
-   E_Container *con;
    E_Dialog *dia;
 
    if (_e_screensaver_ask_presentation_dia) return;
 
-   if (!(man = e_manager_current_get())) return;
-   if (!(con = e_container_current_get(man))) return;
-   if (!(dia = e_dialog_new(con, "E", "_screensaver_ask_presentation"))) return;
+   if (!(dia = e_dialog_new(NULL, "E", "_screensaver_ask_presentation"))) return;
 
    e_dialog_title_set(dia, _("Activate Presentation Mode?"));
    e_dialog_icon_set(dia, "dialog-ask", 64);
@@ -397,17 +393,17 @@ e_screensaver_init(void)
        (E_EVENT_CONFIG_MODE_CHANGED, _e_screensaver_handler_config_mode_cb, NULL);
 
    _e_screensaver_handler_border_fullscreen = ecore_event_handler_add
-       (E_EVENT_BORDER_FULLSCREEN, _e_screensaver_handler_border_fullscreen_check_cb, NULL);
+       (E_EVENT_CLIENT_FULLSCREEN, _e_screensaver_handler_border_fullscreen_check_cb, NULL);
    _e_screensaver_handler_border_unfullscreen = ecore_event_handler_add
-       (E_EVENT_BORDER_UNFULLSCREEN, _e_screensaver_handler_border_fullscreen_check_cb, NULL);
+       (E_EVENT_CLIENT_UNFULLSCREEN, _e_screensaver_handler_border_fullscreen_check_cb, NULL);
    _e_screensaver_handler_border_remove = ecore_event_handler_add
-       (E_EVENT_BORDER_REMOVE, _e_screensaver_handler_border_fullscreen_check_cb, NULL);
+       (E_EVENT_CLIENT_REMOVE, _e_screensaver_handler_border_fullscreen_check_cb, NULL);
    _e_screensaver_handler_border_iconify = ecore_event_handler_add
-       (E_EVENT_BORDER_ICONIFY, _e_screensaver_handler_border_fullscreen_check_cb, NULL);
+       (E_EVENT_CLIENT_ICONIFY, _e_screensaver_handler_border_fullscreen_check_cb, NULL);
    _e_screensaver_handler_border_uniconify = ecore_event_handler_add
-       (E_EVENT_BORDER_UNICONIFY, _e_screensaver_handler_border_fullscreen_check_cb, NULL);
+       (E_EVENT_CLIENT_UNICONIFY, _e_screensaver_handler_border_fullscreen_check_cb, NULL);
    _e_screensaver_handler_border_desk_set = ecore_event_handler_add
-       (E_EVENT_BORDER_DESK_SET, _e_screensaver_handler_border_desk_set_cb, NULL);
+       (E_EVENT_CLIENT_DESK_SET, _e_screensaver_handler_border_desk_set_cb, NULL);
    _e_screensaver_handler_desk_show = ecore_event_handler_add
        (E_EVENT_DESK_SHOW, _e_screensaver_handler_desk_show_cb, NULL);
 

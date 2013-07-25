@@ -74,11 +74,7 @@ notification_popup_notify(E_Notification_Notify *n,
         edje_object_signal_emit(popup->theme, "notification,new", "notification");
      }
 
-   if (popup->timer)
-     {
-        ecore_timer_del(popup->timer);
-        popup->timer = NULL;
-     }
+   E_FREE_FUNC(popup->timer, ecore_timer_del);
 
    if (n->timeout < 0 || notification_cfg->force_timeout)
       n->timeout = notification_cfg->timeout;
@@ -129,31 +125,37 @@ _notification_theme_cb_find(Popup_Data *popup,
                             const char  *emission __UNUSED__,
                             const char  *source __UNUSED__)
 {
-   Eina_List *l;
-   E_Border *bd;
+   const Eina_List *l, *ll;
+   E_Client *ec;
+   E_Comp *comp;
 
    if (!popup->app_name) return;
 
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd)
-     {
-        size_t len, test;
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+     EINA_LIST_FOREACH(comp->clients, ll, ec)
+       {
+          size_t len, test;
+          const char *name;
 
-        len = strlen(popup->app_name);
-        test = eina_strlen_bounded(bd->client.icccm.name, len + 1);
+          if (e_client_util_ignored_get(ec)) continue;
+          len = strlen(popup->app_name);
+          name = e_client_name_get(ec);
+          if (!name) continue;
+          test = eina_strlen_bounded(name, len + 1);
 
-        /* We can't be sure that the app_name really match the application name.
-         * Some plugin put their name instead. But this search gives some good
-         * results.
-         */
-        if (strncasecmp(bd->client.icccm.name, popup->app_name, (test < len) ? test : len))
-          continue;
+          /* We can't be sure that the app_name really match the application name.
+           * Some plugin put their name instead. But this search gives some good
+           * results.
+           */
+          if (strncasecmp(name, popup->app_name, (test < len) ? test : len))
+            continue;
 
-        e_desk_show(bd->desk);
-        e_border_show(bd);
-        e_border_raise(bd);
-        e_border_focus_set_with_pointer(bd);
-        break;
-     }
+          e_desk_show(ec->desk);
+          evas_object_show(ec->frame);
+          evas_object_raise(ec->frame);
+          e_client_focus_set_with_pointer(ec);
+          break;
+       }
 }
 
 static void
@@ -179,9 +181,9 @@ _notification_popup_place_coords_get(int zw, int zh, int ow, int oh, int pos, in
 }
 
 static void
-_notification_popup_del_cb(void *obj)
+_notification_popup_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Popup_Data *popup = e_object_data_get(obj);
+   Popup_Data *popup = data;
 
    popup->win = NULL;
 }
@@ -189,20 +191,18 @@ _notification_popup_del_cb(void *obj)
 static Popup_Data *
 _notification_popup_new(E_Notification_Notify *n, unsigned id)
 {
-   E_Container *con;
+   E_Comp *comp;
    Popup_Data *popup;
    char buf[PATH_MAX];
    Eina_List *l;
    int pos = next_pos;
-   E_Manager *man;
    E_Zone *zone = NULL;
 
    switch (notification_cfg->dual_screen)
      {
       case POPUP_DISPLAY_POLICY_FIRST:
-        man = eina_list_data_get(e_manager_list());
-        con = eina_list_data_get(man->containers);
-        zone = eina_list_data_get(con->zones);
+        comp = e_comp_get(NULL);
+        zone = eina_list_data_get(comp->zones);
         break;
       case POPUP_DISPLAY_POLICY_CURRENT:
       case POPUP_DISPLAY_POLICY_ALL:
@@ -211,9 +211,9 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
       case POPUP_DISPLAY_POLICY_MULTI:
         if ((notification_cfg->corner == CORNER_BR) ||
             (notification_cfg->corner == CORNER_TR))
-          zone = eina_list_last_data_get(e_util_container_current_get()->zones);
+          zone = eina_list_last_data_get(e_util_comp_current_get()->zones);
         else
-          zone = eina_list_data_get(e_util_container_current_get()->zones);
+          zone = eina_list_data_get(e_util_comp_current_get()->zones);
         break;
      }
 
@@ -225,18 +225,13 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    EINA_SAFETY_ON_NULL_RETURN_VAL(popup, NULL);
    popup->notif = n;
    popup->id = id;
-   /* Create the popup window */
-   popup->win = e_popup_new(zone, 0, 0, 0, 0);
-   E_OBJECT_DEL_SET(popup->win, _notification_popup_del_cb);
-   e_object_data_set(E_OBJECT(popup->win), popup);
-   e_popup_name_set(popup->win, "_e_popup_notification");
-   popup->e = popup->win->evas;
+   popup->e = e_comp_get(zone)->evas;
 
    /* Setup the theme */
    snprintf(buf, sizeof(buf), "%s/e-module-notification.edj",
             notification_mod->dir);
    popup->theme = edje_object_add(popup->e);
-   evas_object_name_set(popup->theme, "notification");
+   evas_object_name_set(popup->theme, "noshadow_notification");
 
    if (!e_theme_edje_object_set(popup->theme,
                                 "base/theme/modules/notification",
@@ -246,9 +241,11 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
                                   "modules/notification/main"))
        edje_object_file_set(popup->theme, buf, "modules/notification/main");
 
-   e_popup_content_set(popup->win, popup->theme);
+   /* Create the popup window */
+   popup->win = e_comp_object_util_add(popup->theme, E_COMP_OBJECT_TYPE_POPUP);
+   evas_object_layer_set(popup->win, E_LAYER_POPUP);
+   evas_object_event_callback_add(popup->win, EVAS_CALLBACK_DEL, _notification_popup_del_cb, popup);
 
-   evas_object_show(popup->theme);
    edje_object_signal_callback_add
      (popup->theme, "notification,deleted", "theme",
      (Edje_Signal_Cb)_notification_theme_cb_deleted, popup);
@@ -261,20 +258,22 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
 
    _notification_popup_refresh(popup);
    next_pos = _notification_popup_place(popup, next_pos);
-   e_popup_show(popup->win);
+   evas_object_show(popup->win);
    if (notification_cfg->dual_screen == POPUP_DISPLAY_POLICY_ALL)
      {
-        EINA_LIST_FOREACH(popup->win->zone->container->zones, l, zone)
+        EINA_LIST_FOREACH(e_comp_evas_find(evas_object_evas_get(popup->win))->zones, l, zone)
           {
              Evas_Object *o;
-             int x, y;
+             int x, y, w, h;
 
-             if (zone == popup->win->zone) continue;
-             o = e_comp_win_image_mirror_add(popup->win->cw);
+             if (zone == e_comp_object_util_zone_get(popup->win)) continue;
+             o = e_comp_object_util_mirror_add(popup->win);
              evas_object_name_set(o, "notification_mirror");
              evas_object_data_set(o, "zone", zone);
-             evas_object_resize(o, popup->win->w, popup->win->h);
-             _notification_popup_place_coords_get(zone->w, zone->h, popup->win->w, popup->win->h, pos, &x, &y);
+             evas_object_geometry_get(popup->win, NULL, NULL, &w, &h);
+             evas_object_resize(o, w, h);
+             evas_object_layer_set(o, E_LAYER_POPUP);
+             _notification_popup_place_coords_get(zone->w, zone->h, w, h, pos, &x, &y);
              evas_object_move(o, zone->x + x, zone->y + y);
              evas_object_show(o);
              popup->mirrors = eina_list_append(popup->mirrors, o);
@@ -286,23 +285,25 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
 }
 
 static int
-_notification_popup_place(Popup_Data *popup,
-                          int         pos)
+_notification_popup_place(Popup_Data *popup, int pos)
 {
-   int x, y;
+   int x, y, w, h;
    Eina_List *l;
    Evas_Object *o;
+   E_Zone *zone;
 
    if (!popup->win) return pos;
-   _notification_popup_place_coords_get(popup->win->zone->w, popup->win->zone->h, popup->win->w, popup->win->h, pos, &x, &y);
-   e_popup_move(popup->win, x, y);
+   evas_object_geometry_get(popup->win, NULL, NULL, &w, &h);
+   zone = e_comp_object_util_zone_get(popup->win);
+   _notification_popup_place_coords_get(zone->w, zone->h, w, h, pos, &x, &y);
+   evas_object_move(popup->win, x, y);
    EINA_LIST_FOREACH(popup->mirrors, l, o)
      {
-        E_Zone *zone = evas_object_data_get(o, "zone");
-        _notification_popup_place_coords_get(zone->w, zone->h, popup->win->w, popup->win->h, pos, &x, &y);
+        zone = evas_object_data_get(o, "zone");
+        _notification_popup_place_coords_get(zone->w, zone->h, w, h, pos, &x, &y);
         evas_object_move(o, zone->x + x, zone->y + y);
      }
-   return pos + popup->win->h + 10;
+   return pos + h + 10;
 }
 
 static void
@@ -311,6 +312,7 @@ _notification_popup_refresh(Popup_Data *popup)
    const char *icon_path;
    const char *app_icon_max;
    int w, h, width = 80, height = 80;
+   E_Zone *zone;
 
    if (!popup) return;
 
@@ -318,9 +320,8 @@ _notification_popup_refresh(Popup_Data *popup)
 
    if (popup->app_icon)
      {
-        e_popup_object_remove(popup->win, popup->app_icon);
-        evas_object_del(popup->app_icon);
-        popup->app_icon = NULL;
+        e_comp_object_util_del_list_remove(popup->win, popup->app_icon);
+        E_FREE_FUNC(popup->app_icon, evas_object_del);
      }
 
    app_icon_max = edje_object_data_get(popup->theme, "app_icon_max");
@@ -420,7 +421,7 @@ _notification_popup_refresh(Popup_Data *popup)
         h = height;
      }
 
-   e_popup_object_add(popup->win, popup->app_icon);
+   e_comp_object_util_del_list_append(popup->win, popup->app_icon);
    if ((w > width) || (h > height))
      {
         int v;
@@ -441,9 +442,10 @@ _notification_popup_refresh(Popup_Data *popup)
    /* Compute the new size of the popup */
    edje_object_calc_force(popup->theme);
    edje_object_size_min_calc(popup->theme, &w, &h);
-   w = MIN(w, popup->win->zone->w / 2);
-   h = MIN(h, popup->win->zone->h / 2);
-   e_popup_resize(popup->win, w, h);
+   zone = e_comp_object_util_zone_get(popup->win);
+   w = MIN(w, zone->w / 2);
+   h = MIN(h, zone->h / 2);
+   evas_object_resize(popup->win, w, h);
 }
 
 static Popup_Data *
@@ -505,7 +507,11 @@ _notification_popdown(Popup_Data                  *popup,
 {
    E_FREE_FUNC(popup->timer, ecore_timer_del);
    popup->mirrors = eina_list_free(popup->mirrors);
-   if (popup->win) e_object_del(E_OBJECT(popup->win));
+   if (popup->win)
+     {
+        evas_object_hide(popup->win);
+        evas_object_del(popup->win);
+     }
    if (popup->notif)
      {
         e_notification_notify_close(popup->notif, reason);

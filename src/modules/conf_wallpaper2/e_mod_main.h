@@ -1,7 +1,7 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-E_Config_Dialog *wp_conf_show(E_Container *con, const char *params);
+E_Config_Dialog *wp_conf_show(E_Comp *comp, const char *params);
 void wp_conf_hide(void);
 
 /**

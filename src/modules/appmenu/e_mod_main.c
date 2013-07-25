@@ -119,14 +119,14 @@ static Eina_Bool
 cb_focus_in(void *data, int type __UNUSED__, void *event)
 {
    E_AppMenu_Context *ctxt = data;
-   E_Event_Border_Focus_In *ev = event;
+   E_Event_Client *ev = event;
    Eina_List *l;
    E_AppMenu_Window *w, *found = NULL;
-   ctxt->window_with_focus = ev->border->client.win;
+   ctxt->window_with_focus = e_client_util_win_get(ev->ec);
 
    EINA_LIST_FOREACH(ctxt->windows, l, w)
      {
-        if (w->window_id == ev->border->client.win)
+        if (w->window_id == ctxt->window_with_focus)
           {
              found = w;
              break;
@@ -168,9 +168,9 @@ e_modapi_init(E_Module *m)
    eldbus_init();
    ctxt->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
 
-   event = ecore_event_handler_add(E_EVENT_BORDER_FOCUS_IN, cb_focus_in, ctxt);
+   event = ecore_event_handler_add(E_EVENT_CLIENT_FOCUS_IN, cb_focus_in, ctxt);
    ctxt->events[0] = event;
-   event = ecore_event_handler_add(E_EVENT_BORDER_FOCUS_OUT, cb_focus_out, ctxt);
+   event = ecore_event_handler_add(E_EVENT_CLIENT_FOCUS_OUT, cb_focus_out, ctxt);
    ctxt->events[1] = event;
 
    e_gadcon_provider_register(&_gc_class);

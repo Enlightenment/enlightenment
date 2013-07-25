@@ -1,3 +1,5 @@
+#warning FIXME
+#if 0
 #include "e.h"
 
 #define INTERNAL_ENTRY E_Smart_Data * sd; sd = evas_object_smart_data_get(obj); if (!sd) return;
@@ -406,7 +408,7 @@ _mirror_border_new(Mirror *m)
    else
      edje_object_signal_emit(mb->frame, "e,state,shadow,off", "e");
    edje_object_signal_callback_add(mb->m->cw->bd->bg_object, "*", "*", _mirror_border_signal_cb, mb);
-   if (e_border_focused_get() == mb->m->cw->bd)
+   if (e_client_focused_get() == mb->m->cw->bd)
      edje_object_signal_emit(mb->frame, "e,state,focused", "e");
    if (mb->m->cw->bd->shaded)
      edje_object_signal_emit(mb->frame, "e,state,shaded", "e");
@@ -625,3 +627,4 @@ e_deskmirror_util_wins_print(Evas_Object *obj)
           fprintf(stderr, "MIRROR WIN: %p - %u%s\n", m->cw, m->cw->win, m->cw->input_only ? " INPUT" : "");
      }
 }
+#endif

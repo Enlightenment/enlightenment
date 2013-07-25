@@ -411,8 +411,9 @@ static Eldbus_Message *
 _e_msgbus_window_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
                          const Eldbus_Message *msg)
 {
-   Eina_List *l;
-   E_Border *bd;
+   const Eina_List *l, *ll;
+   E_Comp *c;
+   E_Client *ec;
    Eldbus_Message *reply;
    Eldbus_Message_Iter *main_iter, *array;
 
@@ -425,16 +426,19 @@ _e_msgbus_window_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
    eldbus_message_iter_arguments_append(main_iter, "a(si)", &array);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(array, reply);
 
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd)
-     {
-        Eldbus_Message_Iter *s;
+   EINA_LIST_FOREACH(e_comp_list(), l, c)
+     EINA_LIST_FOREACH(c->clients, ll, ec)
+       {
+          Eldbus_Message_Iter *s;
 
-        eldbus_message_iter_arguments_append(array, "(si)", &s);
-        if (!s) continue;
-        eldbus_message_iter_arguments_append(s, "si", bd->client.icccm.name,
-                                            bd->client.win);
-        eldbus_message_iter_container_close(array, s);
-     }
+          if (e_client_util_ignored_get(ec)) continue;
+
+          eldbus_message_iter_arguments_append(array, "(si)", &s);
+          if (!s) continue;
+          eldbus_message_iter_arguments_append(s, "si", ec->icccm.name,
+                                              e_client_util_win_get(ec));
+          eldbus_message_iter_container_close(array, s);
+       }
    eldbus_message_iter_container_close(main_iter, array);
 
    return reply;
@@ -445,13 +449,13 @@ _e_msgbus_window_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
   _e_msgbus_window_##NAME##_cb(const Eldbus_Service_Interface * iface __UNUSED__, \
                                const Eldbus_Message * msg)                        \
   {                                                                              \
-     E_Border *bd;                                                               \
+     E_Client *ec;                                                               \
      int xwin;                                                                   \
                                                                                  \
      if (!eldbus_message_arguments_get(msg, "i", &xwin))                          \
        return eldbus_message_method_return_new(msg);                              \
-     bd = e_border_find_by_client_window(xwin);                                  \
-     if (bd)                                                                     \
+     ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, xwin);                                  \
+     if (ec)                                                                     \
        {
 #define E_MSGBUS_WIN_ACTION_CB_END             \
   }                                            \
@@ -460,29 +464,29 @@ _e_msgbus_window_list_cb(const Eldbus_Service_Interface *iface __UNUSED__,
   }
 
  E_MSGBUS_WIN_ACTION_CB_BEGIN(close)
- e_border_act_close_begin(bd);
+ e_client_act_close_begin(ec);
  E_MSGBUS_WIN_ACTION_CB_END
 
   E_MSGBUS_WIN_ACTION_CB_BEGIN(kill)
- e_border_act_kill_begin(bd);
+ e_client_act_kill_begin(ec);
  E_MSGBUS_WIN_ACTION_CB_END
 
   E_MSGBUS_WIN_ACTION_CB_BEGIN(focus)
- e_border_activate(bd, 1);
+ e_client_activate(ec, 1);
  E_MSGBUS_WIN_ACTION_CB_END
 
   E_MSGBUS_WIN_ACTION_CB_BEGIN(iconify)
- e_border_iconify(bd);
+ e_client_iconify(ec);
  E_MSGBUS_WIN_ACTION_CB_END
 
   E_MSGBUS_WIN_ACTION_CB_BEGIN(uniconify)
- e_border_uniconify(bd);
+ e_client_uniconify(ec);
  E_MSGBUS_WIN_ACTION_CB_END
 
   E_MSGBUS_WIN_ACTION_CB_BEGIN(maximize)
- e_border_maximize(bd, e_config->maximize_policy);
+ e_client_maximize(ec, e_config->maximize_policy);
  E_MSGBUS_WIN_ACTION_CB_END
 
   E_MSGBUS_WIN_ACTION_CB_BEGIN(unmaximize)
- e_border_unmaximize(bd, E_MAXIMIZE_BOTH);
+ e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
  E_MSGBUS_WIN_ACTION_CB_END

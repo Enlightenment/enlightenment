@@ -29,7 +29,7 @@ static void _force_timeout_changed(void        *data,
                                    Evas_Object *obj __UNUSED__);
 
 E_Config_Dialog *
-e_int_config_notification_module(E_Container *con,
+e_int_config_notification_module(E_Comp *comp,
                                  const char  *params __UNUSED__)
 {
    E_Config_Dialog *cfd = NULL;
@@ -48,7 +48,7 @@ e_int_config_notification_module(E_Container *con,
    v->basic.check_changed = _basic_check_changed;
 
    snprintf(buf, sizeof(buf), "%s/e-module-notification.edj", notification_mod->dir);
-   cfd = e_config_dialog_new(con, _("Notification Settings"), "Notification",
+   cfd = e_config_dialog_new(comp, _("Notification Settings"), "Notification",
                              "extensions/notification", buf, 0, v, NULL);
    notification_cfg->cfd = cfd;
    return cfd;

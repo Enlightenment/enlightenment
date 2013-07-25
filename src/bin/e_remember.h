@@ -4,7 +4,7 @@ EAPI extern int E_EVENT_REMEMBER_UPDATE;
 
 typedef struct E_Event_Remember_Update
 {
-   void *border;
+   E_Client *ec;
 } E_Event_Remember_Update;
 typedef struct _E_Remember E_Remember;
 
@@ -116,11 +116,11 @@ EAPI int         e_remember_usable_get(E_Remember *rem);
 EAPI void        e_remember_use(E_Remember *rem);
 EAPI void        e_remember_unuse(E_Remember *rem);
 EAPI void        e_remember_del(E_Remember *rem);
-EAPI E_Remember *e_remember_find(E_Border *bd);
-EAPI E_Remember *e_remember_find_usable(E_Border *bd);
+EAPI E_Remember *e_remember_find(E_Client *ec);
+EAPI E_Remember *e_remember_find_usable(E_Client *ec);
 EAPI void        e_remember_match_update(E_Remember *rem);
-EAPI void        e_remember_update(E_Border *bd);
-EAPI int         e_remember_default_match_set(E_Remember *rem, E_Border *bd);
+EAPI void        e_remember_update(E_Client *ec);
+EAPI int         e_remember_default_match_set(E_Remember *rem, E_Client *ec);
 EAPI void        e_remember_internal_save(void);
 #endif
 #endif

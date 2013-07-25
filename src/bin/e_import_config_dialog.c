@@ -430,7 +430,7 @@ _e_import_config_dialog_win_del(E_Win *win)
 ///////////////////////////////////////////////////////////////////////////////////
 
 EAPI E_Import_Config_Dialog *
-e_import_config_dialog_show(E_Container *con, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
+e_import_config_dialog_show(E_Comp *c, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
 {
    Evas *evas;
    E_Dialog *dia;
@@ -444,7 +444,7 @@ e_import_config_dialog_show(E_Container *con, const char *path, Ecore_End_Cb ok,
    import = E_OBJECT_ALLOC(E_Import_Config_Dialog, E_IMPORT_CONFIG_DIALOG_TYPE, _e_import_config_dialog_del);
    if (!import) return NULL;
 
-   dia = e_dialog_new(con, "E", "_import_config_dialog");
+   dia = e_dialog_new(c, "E", "_import_config_dialog");
    if (!dia)
      {
         e_object_del(E_OBJECT(import));

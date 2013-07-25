@@ -168,11 +168,11 @@ _basic_create_widgets(E_Config_Dialog      *cfd __UNUSED__,
                       E_Config_Dialog_Data *cfdata)
 {
     Evas_Object *o, *oc, *of;
-    E_Container *con;
+    E_Comp *comp;
     E_Zone *zone;
     Eina_List *l;
 
-    con = e_container_current_get(e_manager_current_get());
+    comp = e_comp_get(NULL);
 
     o = e_widget_list_add(evas, 0, 0);
 
@@ -207,7 +207,7 @@ _basic_create_widgets(E_Config_Dialog      *cfd __UNUSED__,
     e_widget_ilist_multi_select_set(cfdata->o_zonelist, false);
     e_widget_size_min_set(cfdata->o_zonelist, 100, 100);
     e_widget_on_change_hook_set(cfdata->o_zonelist, _cb_zone_change, cfdata);
-    for (l = con->zones; l; l = l->next) {
+    for (l = comp->zones; l; l = l->next) {
         if (!(zone = l->data))
             continue;
         e_widget_ilist_append(cfdata->o_zonelist, NULL, zone->name, NULL, zone, NULL);
@@ -220,7 +220,7 @@ _basic_create_widgets(E_Config_Dialog      *cfd __UNUSED__,
     /* List of individual tiling modes */
     cfdata->evas = evas;
 
-    _fill_zone_config(eina_list_data_get(con->zones), cfdata);
+    _fill_zone_config(eina_list_data_get(comp->zones), cfdata);
 
     e_widget_ilist_selected_set(cfdata->o_zonelist, 0);
 
@@ -331,7 +331,7 @@ _basic_apply_data(E_Config_Dialog      *cfd __UNUSED__,
 }
 
 E_Config_Dialog *
-e_int_config_tiling_module(E_Container *con,
+e_int_config_tiling_module(E_Comp *comp,
                            const char  *params __UNUSED__)
 {
     E_Config_Dialog *cfd;
@@ -350,7 +350,7 @@ e_int_config_tiling_module(E_Container *con,
 
     snprintf(buf, sizeof(buf), "%s/e-module-tiling.edj",
              e_module_dir_get(tiling_g.module));
-    cfd = e_config_dialog_new(con,
+    cfd = e_config_dialog_new(comp,
                               _("Tiling Configuration"),
                               "E", "windows/tiling",
                               buf, 0, v, NULL);

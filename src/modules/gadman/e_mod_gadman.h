@@ -52,7 +52,6 @@ struct _Manager
    Eina_List   *gadgets[GADMAN_LAYER_COUNT];
    Evas_Object *movers[GADMAN_LAYER_COUNT];
    Evas_Object *full_bg;
-   Evas_Object *overlay_layer;
    const char  *icon_name;
    E_Gadcon_Client *drag_gcc[GADMAN_LAYER_COUNT];
 
@@ -60,8 +59,8 @@ struct _Manager
    Ecore_Event_Handler *add;
    
    int             visible;
-   E_Popup     *overlay;
-   E_Container    *container;
+   Evas_Object     *overlay;
+   E_Comp    *comp;
 
    int  width, height;
    
@@ -86,7 +85,7 @@ void             gadman_gadgets_toggle(void);
 void             gadman_update_bg(void);
 Eina_Bool gadman_gadget_add_handler(void *d, int type, E_Event_Gadcon_Client_Add *ev);
 
-E_Config_Dialog *_config_gadman_module(E_Container *con, const char *params __UNUSED__);
+E_Config_Dialog *_config_gadman_module(E_Comp *comp, const char *params __UNUSED__);
 
 /**
  * @addtogroup Optional_Gadgets

@@ -14,8 +14,8 @@ EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Illume-Softkey" };
 EAPI void *
 e_modapi_init(E_Module *m) 
 {
-   E_Manager *man;
-   Eina_List *ml;
+   const Eina_List *l;
+   E_Comp *comp;
 
    /* set module priority so we load before others */
    e_module_priority_set(m, 85);
@@ -32,27 +32,19 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
-   /* loop through the managers (root windows) */
-   EINA_LIST_FOREACH(e_manager_list(), ml, man) 
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
      {
-        E_Container *con;
-        Eina_List *cl;
+        E_Zone *zone;
+        Eina_List *zl;
 
-        /* loop through containers */
-        EINA_LIST_FOREACH(man->containers, cl, con) 
+        /* for each zone, create a softkey window */
+        EINA_LIST_FOREACH(comp->zones, zl, zone) 
           {
-             E_Zone *zone;
-             Eina_List *zl;
+             Sft_Win *swin;
 
-             /* for each zone, create a softkey window */
-             EINA_LIST_FOREACH(con->zones, zl, zone) 
-               {
-                  Sft_Win *swin;
-
-                  /* try to create new softkey window */
-                  if (!(swin = e_mod_sft_win_new(zone))) continue;
-                  swins = eina_list_append(swins, swin);
-               }
+             /* try to create new softkey window */
+             if (!(swin = e_mod_sft_win_new(zone))) continue;
+             swins = eina_list_append(swins, swin);
           }
      }
 

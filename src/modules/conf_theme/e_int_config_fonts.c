@@ -149,7 +149,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_fonts(E_Container *con, const char *params __UNUSED__)
+e_int_config_fonts(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -164,7 +164,7 @@ e_int_config_fonts(E_Container *con, const char *params __UNUSED__)
    v->advanced.create_widgets = _advanced_create_widgets;
    v->advanced.apply_cfdata = _advanced_apply_data;
 
-   cfd = e_config_dialog_new(con, _("Font Settings"),
+   cfd = e_config_dialog_new(comp, _("Font Settings"),
                              "E", "appearance/fonts",
                              "preferences-desktop-font", 0, v, NULL);
    return cfd;

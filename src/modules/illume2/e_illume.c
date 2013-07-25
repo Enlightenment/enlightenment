@@ -56,32 +56,32 @@ e_illume_zone_config_get(int id)
 /**
  * Determine if a given border is an Indicator window.
  * 
- * @param bd The border to test.
+ * @param ec The border to test.
  * @return EINA_TRUE if it is an Indicator window, EINA_FALSE otherwise.
  * 
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  * 
  * @note It is assumed that Indicator windows are of type 
- * ECORE_X_WINDOW_TYPE_DOCK.
+ * E_WINDOW_TYPE_DOCK.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_indicator(E_Border *bd) 
+e_illume_client_is_indicator(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
    /* indicator windows should be set to dock type, so check for that */
-   if (bd->client.netwm.type != ECORE_X_WINDOW_TYPE_DOCK) return EINA_FALSE;
+   if (ec->netwm.type != E_WINDOW_TYPE_DOCK) return EINA_FALSE;
 
    /* we have a dock window, check against any matches in config */
 
    /* check if we are matching on name */
    if (_e_illume_cfg->policy.indicator.match.name) 
      {
-        if ((bd->client.icccm.name) && 
-            (!strcmp(bd->client.icccm.name, 
+        if ((ec->icccm.name) && 
+            (!strcmp(ec->icccm.name, 
                      _e_illume_cfg->policy.indicator.name)))
           return EINA_TRUE;
      }
@@ -89,8 +89,8 @@ e_illume_border_is_indicator(E_Border *bd)
    /* check if we are matching on class */
    if (_e_illume_cfg->policy.indicator.match.class) 
      {
-        if ((bd->client.icccm.class) && 
-            (!strcmp(bd->client.icccm.class, 
+        if ((ec->icccm.class) && 
+            (!strcmp(ec->icccm.class, 
                      _e_illume_cfg->policy.indicator.class)))
           return EINA_TRUE;
      }
@@ -100,7 +100,7 @@ e_illume_border_is_indicator(E_Border *bd)
      {
         const char *title;
 
-        if ((title = e_border_name_get(bd)))
+        if ((title = e_client_name_get(ec)))
           if (!strcmp(title, _e_illume_cfg->policy.indicator.title))
             return EINA_TRUE;
      }
@@ -112,35 +112,35 @@ e_illume_border_is_indicator(E_Border *bd)
 /**
  * Determine if a given border is a Softkey window.
  * 
- * @param bd The border to test.
+ * @param ec The border to test.
  * @return EINA_TRUE if it is a Softkey window, EINA_FALSE otherwise.
  * 
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  * 
  * @note It is assumed that Softkey windows are of type 
- * ECORE_X_WINDOW_TYPE_DOCK.
+ * E_WINDOW_TYPE_DOCK.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_softkey(E_Border *bd) 
+e_illume_client_is_softkey(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
    /* legacy code from illume 1 */
-   if (bd->client.qtopia.soft_menu) return EINA_TRUE;
+   if (ec->qtopia.soft_menu) return EINA_TRUE;
 
    /* softkey windows should be set to dock type, so check for that */
-   if (bd->client.netwm.type != ECORE_X_WINDOW_TYPE_DOCK) return EINA_FALSE;
+   if (ec->netwm.type != E_WINDOW_TYPE_DOCK) return EINA_FALSE;
 
    /* we have a softkey window, check against any matches in config */
 
    /* check if we are matching on name */
    if (_e_illume_cfg->policy.softkey.match.name) 
      {
-        if ((bd->client.icccm.name) && 
-            (!strcmp(bd->client.icccm.name, 
+        if ((ec->icccm.name) && 
+            (!strcmp(ec->icccm.name, 
                      _e_illume_cfg->policy.softkey.name)))
           return EINA_TRUE;
      }
@@ -148,8 +148,8 @@ e_illume_border_is_softkey(E_Border *bd)
    /* check if we are matching on class */
    if (_e_illume_cfg->policy.softkey.match.class) 
      {
-        if ((bd->client.icccm.class) && 
-            (!strcmp(bd->client.icccm.class, 
+        if ((ec->icccm.class) && 
+            (!strcmp(ec->icccm.class, 
                      _e_illume_cfg->policy.softkey.class)))
           return EINA_TRUE;
      }
@@ -159,7 +159,7 @@ e_illume_border_is_softkey(E_Border *bd)
      {
         const char *title;
 
-        if ((title = e_border_name_get(bd)))
+        if ((title = e_client_name_get(ec)))
           if (!strcmp(title, _e_illume_cfg->policy.softkey.title))
             return EINA_TRUE;
      }
@@ -171,34 +171,34 @@ e_illume_border_is_softkey(E_Border *bd)
 /**
  * Determine if a given border is a Keyboard window.
  * 
- * @param bd The border to test.
+ * @param ec The border to test.
  * @return EINA_TRUE if it is a Keyboard window, EINA_FALSE otherwise.
  * 
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_keyboard(E_Border *bd) 
+e_illume_client_is_keyboard(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
    /* check for specific flag first */
-   if (bd->client.vkbd.vkbd) return EINA_TRUE;
+   if (ec->vkbd.vkbd) return EINA_TRUE;
 
    /* legacy code from illume 1 */
-   if ((bd->client.icccm.name) && 
-       ((!strcmp(bd->client.icccm.name, "multitap-pad"))) && 
-       (bd->client.netwm.state.skip_taskbar) && 
-       (bd->client.netwm.state.skip_pager))
+   if ((ec->icccm.name) && 
+       ((!strcmp(ec->icccm.name, "multitap-pad"))) && 
+       (ec->netwm.state.skip_taskbar) && 
+       (ec->netwm.state.skip_pager))
      return EINA_TRUE;
 
    /* check if we are matching on name */
    if (_e_illume_cfg->policy.vkbd.match.name) 
      {
-        if ((bd->client.icccm.name) && 
-            (!strcmp(bd->client.icccm.name, 
+        if ((ec->icccm.name) && 
+            (!strcmp(ec->icccm.name, 
                      _e_illume_cfg->policy.vkbd.name)))
           return EINA_TRUE;
      }
@@ -206,8 +206,8 @@ e_illume_border_is_keyboard(E_Border *bd)
    /* check if we are matching on class */
    if (_e_illume_cfg->policy.vkbd.match.class) 
      {
-        if ((bd->client.icccm.class) && 
-            (!strcmp(bd->client.icccm.class, 
+        if ((ec->icccm.class) && 
+            (!strcmp(ec->icccm.class, 
                      _e_illume_cfg->policy.vkbd.class)))
           return EINA_TRUE;
      }
@@ -217,7 +217,7 @@ e_illume_border_is_keyboard(E_Border *bd)
      {
         const char *title;
 
-        if ((title = e_border_name_get(bd)))
+        if ((title = e_client_name_get(ec)))
           if (!strcmp(title, _e_illume_cfg->policy.vkbd.title))
             return EINA_TRUE;
      }
@@ -229,30 +229,30 @@ e_illume_border_is_keyboard(E_Border *bd)
 /**
  * Determine if a given border is a Home window.
  * 
- * @param bd The border to test.
+ * @param ec The border to test.
  * @return EINA_TRUE if it is a Home window, EINA_FALSE otherwise.
  * 
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_home(E_Border *bd) 
+e_illume_client_is_home(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
    /* skip windows which are not either 'normal' windows, or 'unknown' windows
     * NB: Let 'unknown' windows pass through as a safety */
-   if ((bd->client.netwm.type != ECORE_X_WINDOW_TYPE_NORMAL) && 
-       (bd->client.netwm.type != ECORE_X_WINDOW_TYPE_UNKNOWN))
+   if ((ec->netwm.type != E_WINDOW_TYPE_NORMAL) && 
+       (ec->netwm.type != E_WINDOW_TYPE_UNKNOWN))
      return EINA_FALSE;
 
    /* check if we are matching on name */
    if (_e_illume_cfg->policy.home.match.name) 
      {
-        if ((bd->client.icccm.name) && 
-            (!strcmp(bd->client.icccm.name, 
+        if ((ec->icccm.name) && 
+            (!strcmp(ec->icccm.name, 
                      _e_illume_cfg->policy.home.name)))
           return EINA_TRUE;
      }
@@ -260,8 +260,8 @@ e_illume_border_is_home(E_Border *bd)
    /* check if we are matching on class */
    if (_e_illume_cfg->policy.home.match.class) 
      {
-        if ((bd->client.icccm.class) && 
-            (!strcmp(bd->client.icccm.class, 
+        if ((ec->icccm.class) && 
+            (!strcmp(ec->icccm.class, 
                      _e_illume_cfg->policy.home.class)))
           return EINA_TRUE;
      }
@@ -271,7 +271,7 @@ e_illume_border_is_home(E_Border *bd)
      {
         const char *title;
 
-        if ((title = e_border_name_get(bd)))
+        if ((title = e_client_name_get(ec)))
           if (!strcmp(title, _e_illume_cfg->policy.home.title))
             return EINA_TRUE;
      }
@@ -283,28 +283,28 @@ e_illume_border_is_home(E_Border *bd)
 /**
  * Determine if a given border is a splash screen.
  * 
- * @param bd The border to test.
+ * @param ec The border to test.
  * @return EINA_TRUE if it is a splash screen, EINA_FALSE otherwise.
  * 
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_splash(E_Border *bd) 
+e_illume_client_is_splash(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
    /* check actual type */
-   if (bd->client.netwm.type == ECORE_X_WINDOW_TYPE_SPLASH) return EINA_TRUE;
+   if (ec->netwm.type == E_WINDOW_TYPE_SPLASH) return EINA_TRUE;
 
    /* check for transient flag */
-//   if (bd->client.icccm.transient_for != 0) return EINA_TRUE;
+//   if (ec->icccm.transient_for != 0) return EINA_TRUE;
 
    /* NB: may or may not need to handle these. Needs Testing
-   if (bd->client.netwm.extra_types) 
-     printf("\t\tBorder has extra types: %s\n", bd->client.icccm.class);
+   if (ec->netwm.extra_types) 
+     printf("\t\tBorder has extra types: %s\n", ec->icccm.class);
    */
 
    /* return a fallback */
@@ -314,33 +314,33 @@ e_illume_border_is_splash(E_Border *bd)
 /**
  * Determine if a given border is a dialog.
  * 
- * @param bd The border to test.
+ * @param ec The border to test.
  * @return EINA_TRUE if it is a dialog, EINA_FALSE otherwise.
  * 
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_dialog(E_Border *bd) 
+e_illume_client_is_dialog(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
    /* check actual type */
-   if (bd->client.netwm.type == ECORE_X_WINDOW_TYPE_DIALOG) return EINA_TRUE;
+   if (ec->netwm.type == E_WINDOW_TYPE_DIALOG) return EINA_TRUE;
 
    /* check for transient flag */
-   if (bd->client.icccm.transient_for != 0) return EINA_TRUE;
+   if (ec->icccm.transient_for != 0) return EINA_TRUE;
 
    /* check for client leader */
    /* NB: disabled currently as some GTK windows set this even tho they are 
     * not a dialog. */
-//   if (bd->client.icccm.client_leader) return EINA_TRUE;
+//   if (ec->icccm.client_leader) return EINA_TRUE;
 
    /* NB: may or may not need to handle these. Needs Testing
-   if (bd->client.netwm.extra_types) 
-     printf("\t\tBorder has extra types: %s\n", bd->client.icccm.class);
+   if (ec->netwm.extra_types) 
+     printf("\t\tBorder has extra types: %s\n", ec->icccm.class);
    */
 
    /* return a fallback */
@@ -350,22 +350,22 @@ e_illume_border_is_dialog(E_Border *bd)
 /**
  * Determine if a given border is a QT VCLSalFrame.
  * 
- * @param bd The border to test.
+ * @param ec The border to test.
  * @return EINA_TRUE if it is a VCLSalFrame, EINA_FALSE otherwise.
  * 
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_qt_frame(E_Border *bd) 
+e_illume_client_is_qt_frame(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
    /* make sure we have the icccm name and compare it */
-   if ((bd->client.icccm.name) && 
-       (!strncmp(bd->client.icccm.name, "VCLSalFrame", 11)))
+   if ((ec->icccm.name) && 
+       (!strncmp(ec->icccm.name, "VCLSalFrame", 11)))
      return EINA_TRUE;
 
    /* return a fallback */
@@ -375,21 +375,21 @@ e_illume_border_is_qt_frame(E_Border *bd)
 /**
  * Determine if a given border is a fullscreen window.
  * 
- * @param bd The border to test.
+ * @param ec The border to test.
  * @return EINA_TRUE if it is fullscreen, EINA_FALSE otherwise.
  * 
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_fullscreen(E_Border *bd) 
+e_illume_client_is_fullscreen(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
    /* check for fullscreen */
-   if ((bd->fullscreen) || (bd->need_fullscreen)) return EINA_TRUE;
+   if ((ec->fullscreen) || (ec->need_fullscreen)) return EINA_TRUE;
 
    /* return a fallback */
    return EINA_FALSE;
@@ -398,67 +398,67 @@ e_illume_border_is_fullscreen(E_Border *bd)
 /**
  * Determine if a given border is an illume conformant window.
  * 
- * @param bd The border to test.
+ * @param ec The border to test.
  * @return EINA_TRUE if it is conformant, EINA_FALSE otherwise.
  * 
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_conformant(E_Border *bd) 
+e_illume_client_is_conformant(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
    /* return if it is conformant or not */
-   return bd->client.illume.conformant.conformant;
+   return ec->illume.conformant.conformant;
 }
 
 /**
  * Determine if a given border is a quickpanel window.
  * 
- * @param bd The border to test.
+ * @param ec The border to test.
  * @return EINA_TRUE if it is a quickpanel, EINA_FALSE otherwise.
  * 
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_quickpanel(E_Border *bd) 
+e_illume_client_is_quickpanel(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
    /* return if it is a quickpanel or not */
-   return bd->client.illume.quickpanel.quickpanel;
+   return ec->illume.quickpanel.quickpanel;
 }
 
 /**
  * Determine if the border request a fixed size.
  * 
- * @param bd The border to get the minium space for.
+ * @param ec The border to get the minium space for.
  * @return EINA_TRUE if border requested fixed size, EINA_FALSE otherwise.
  *
- * @note If @p bd is NULL then this function will return EINA_FALSE.
+ * @note If @p ec is NULL then this function will return EINA_FALSE.
  *
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_Bool 
-e_illume_border_is_fixed_size(E_Border *bd)
+e_illume_client_is_fixed_size(E_Client *ec)
 {
    /* make sure we have a border */
-   if (!bd) return EINA_FALSE;
+   if (!ec) return EINA_FALSE;
 
-   if ((bd->client.icccm.min_w == bd->client.icccm.max_w) &&
-       (bd->client.icccm.min_h == bd->client.icccm.max_h))
+   if ((ec->icccm.min_w == ec->icccm.max_w) &&
+       (ec->icccm.min_h == ec->icccm.max_h))
      return EINA_TRUE;
    
-   if ((bd->client.mwm.exists) && 
-       !((bd->client.mwm.func & ECORE_X_MWM_HINT_FUNC_ALL) ||
-         (bd->client.mwm.func & ECORE_X_MWM_HINT_FUNC_MAXIMIZE) ||
-         (bd->client.mwm.func & ECORE_X_MWM_HINT_FUNC_RESIZE)))
+   if ((ec->mwm.exists) && 
+       !((ec->mwm.func & ECORE_X_MWM_HINT_FUNC_ALL) ||
+         (ec->mwm.func & ECORE_X_MWM_HINT_FUNC_MAXIMIZE) ||
+         (ec->mwm.func & ECORE_X_MWM_HINT_FUNC_RESIZE)))
      return EINA_TRUE;
 
    return EINA_FALSE;
@@ -467,34 +467,34 @@ e_illume_border_is_fixed_size(E_Border *bd)
 /**
  * Retrieves the minimum space required to display this border.
  * 
- * @param bd The border to get the minium space for.
+ * @param ec The border to get the minium space for.
  * @param w Pointer to an integer into which the width is to be stored.
  * @param h Pointer to an integer into which the height is to be stored.
  * 
- * @note if @p bd is NULL then @p w and @p h will return @c 0.
+ * @note if @p ec is NULL then @p w and @p h will return @c 0.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI void 
-e_illume_border_min_get(E_Border *bd, int *w, int *h) 
+e_illume_client_min_get(E_Client *ec, int *w, int *h) 
 {
    if (w) *w = 0;
    if (h) *h = 0;
-   if (!bd) return;
+   if (!ec) return;
 
    if (w) 
      {
-        if (bd->client.icccm.base_w > bd->client.icccm.min_w) 
-          *w = bd->client.icccm.base_w;
+        if (ec->icccm.base_w > ec->icccm.min_w) 
+          *w = ec->icccm.base_w;
         else
-          *w = bd->client.icccm.min_w;
+          *w = ec->icccm.min_w;
      }
    if (h) 
      {
-        if (bd->client.icccm.base_h > bd->client.icccm.min_h)
-          *h = bd->client.icccm.base_h;
+        if (ec->icccm.base_h > ec->icccm.min_h)
+          *h = ec->icccm.base_h;
         else
-          *h = bd->client.icccm.min_h;
+          *h = ec->icccm.min_h;
      }
 }
 
@@ -511,39 +511,38 @@ e_illume_border_min_get(E_Border *bd, int *w, int *h)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI E_Border *
-e_illume_border_at_xy_get(E_Zone *zone, int x, int y) 
+EAPI E_Client *
+e_illume_client_at_xy_get(E_Zone *zone, int x, int y) 
 {
    Eina_List *l;
-   E_Border *bd;
+   E_Client *ec;
 
    /* make sure we have a zone */
    if (!zone) return NULL;
 
    /* loop the border client list */
-   /* NB: We use e_border_client_list here, rather than 
-    * e_container_border_list, because e_border_client_list is faster.
-    * This is done in reverse order so we get the most recent border first */
-   EINA_LIST_REVERSE_FOREACH(e_border_client_list(), l, bd) 
+    /* This is done in reverse order so we get the most recent border first */
+   EINA_LIST_REVERSE_FOREACH(zone->comp->clients, l, ec) 
      {
+        if (e_client_util_ignored_get(ec)) continue;
         /* check zone and skip borders not on this zone */
-        if (bd->zone != zone) continue;
+        if (ec->zone != zone) continue;
 
         /* skip invisibles */
-        if (!bd->visible) continue;
+        if (!ec->visible) continue;
 
         /* check position against given coordinates */
-        if ((bd->x != x) || (bd->y != y)) continue;
+        if ((ec->x != x) || (ec->y != y)) continue;
 
         /* filter out borders we don't want */
-        if (e_illume_border_is_indicator(bd)) continue;
-        if (e_illume_border_is_softkey(bd)) continue;
-        if (e_illume_border_is_keyboard(bd)) continue;
-        if (e_illume_border_is_quickpanel(bd)) continue;
-        if (e_illume_border_is_home(bd)) continue;
+        if (e_illume_client_is_indicator(ec)) continue;
+        if (e_illume_client_is_softkey(ec)) continue;
+        if (e_illume_client_is_keyboard(ec)) continue;
+        if (e_illume_client_is_quickpanel(ec)) continue;
+        if (e_illume_client_is_home(ec)) continue;
 
         /* found one, return it */
-        return bd;
+        return ec;
      }
 
    /* return a fallback */
@@ -553,36 +552,36 @@ e_illume_border_at_xy_get(E_Zone *zone, int x, int y)
 /**
  * Retrieve the parent of a given dialog.
  * 
- * @param bd The border to get the parent of.
+ * @param ec The border to get the parent of.
  * @return The border's parent, or NULL if no parent exists.
  * 
- * @note If @p bd is NULL then this function will return NULL.
+ * @note If @p ec is NULL then this function will return NULL.
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI E_Border *
-e_illume_border_parent_get(E_Border *bd) 
+EAPI E_Client *
+e_illume_client_parent_get(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return NULL;
+   if (!ec) return NULL;
 
    /* check for border's parent */
-   if (bd->parent) return bd->parent;
+   if (ec->parent) return ec->parent;
 
-   /* NB: TEST CODE - may need to check bd->leader here */
-   if (bd->leader) 
-     printf("\tDialog Has Leader: %s\n", bd->client.icccm.name);
+   /* NB: TEST CODE - may need to check ec->leader here */
+   if (ec->leader) 
+     printf("\tDialog Has Leader: %s\n", ec->icccm.name);
 
    /* check for transient */
-   if (bd->client.icccm.transient_for) 
+   if (ec->icccm.transient_for) 
      {
         /* try to find this borders parent */
-        return e_border_find_by_client_window(bd->client.icccm.transient_for);
+        return e_pixmap_find_client(E_PIXMAP_TYPE_X, ec->icccm.transient_for);
      }
-   else if (bd->client.icccm.client_leader) 
+   else if (ec->icccm.client_leader) 
      {
         /* NB: using client_leader as parent. THIS NEEDS THOROUGH TESTING !! */
-        return e_border_find_by_client_window(bd->client.icccm.client_leader);
+        return e_pixmap_find_client(E_PIXMAP_TYPE_X, ec->icccm.client_leader);
      }
 
    /* return a fallback */
@@ -592,67 +591,67 @@ e_illume_border_parent_get(E_Border *bd)
 /**
  * Show a given border.
  * 
- * @param bd The border to show.
+ * @param ec The border to show.
  * 
- * @note If @p bd is NULL then this function will return.
+ * @note If @p ec is NULL then this function will return.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI void 
-e_illume_border_show(E_Border *bd) 
+e_illume_client_show(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return;
+   if (!ec) return;
 
-   e_border_uniconify(bd);
-   e_border_raise(bd);
-   e_border_show(bd);
+   e_client_uniconify(ec);
+   evas_object_raise(ec->frame);
+   evas_object_show(ec->frame);
    return;
 
 #if 0   
    unsigned int visible = 1;
-
+#error this is totally fucked
    /* NB: We handle shows this way so we don't get extra layout events from 
     * the e_border calls */
-   e_container_border_lower(bd);
-   e_container_shape_show(bd->shape);
-   if (!bd->need_reparent) ecore_x_window_show(bd->client.win);
-   e_hints_window_visible_set(bd);
-   bd->visible = 1;
-   bd->changes.visible = 1;
-   ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_MAPPED, &visible, 1);
-   ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_MANAGED, &visible, 1);
+   evas_object_lower(ec->frame);
+   e_container_shape_show(ec->shape);
+   if (!ec->need_reparent) ecore_x_window_show(e_client_util_win_get(ec));
+   e_hints_window_visible_set(ec);
+   ec->visible = 1;
+   ec->changes.visible = 1;
+   ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_MAPPED, &visible, 1);
+   ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_MANAGED, &visible, 1);
 #endif   
 }
 
 /**
  * Hide a given border.
  * 
- * @param bd The border to hide.
+ * @param ec The border to hide.
  * 
- * @note If @p bd is NULL then this function will return.
+ * @note If @p ec is NULL then this function will return.
  * 
  * @ingroup E_Illume_Main_Group
  */
 EAPI void 
-e_illume_border_hide(E_Border *bd) 
+e_illume_client_hide(E_Client *ec) 
 {
    /* make sure we have a border */
-   if (!bd) return;
+   if (!ec) return;
 
-   e_border_iconify(bd);
+   e_client_iconify(ec);
    return;
 
 #if 0   
    unsigned int visible = 0;
-
+#error this is totally fucked
    /* NB: We handle hides this way so we don't get extra layout events from 
     * the e_border calls */
-   e_container_shape_hide(bd->shape);
-   if (!bd->iconic) e_hints_window_hidden_set(bd);
-   bd->visible = 0;
-   bd->changes.visible = 1;
-   ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_MAPPED, &visible, 1);
+   e_container_shape_hide(ec->shape);
+   if (!ec->iconic) e_hints_window_hidden_set(ec);
+   ec->visible = 0;
+   ec->changes.visible = 1;
+   ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_MAPPED, &visible, 1);
 #endif   
 }
 
@@ -666,28 +665,27 @@ e_illume_border_hide(E_Border *bd)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI E_Border *
-e_illume_border_indicator_get(E_Zone *zone) 
+EAPI E_Client *
+e_illume_client_indicator_get(E_Zone *zone) 
 {
    Eina_List *l;
-   E_Border *bd;
+   E_Client *ec;
 
    /* make sure we have a zone */
    if (!zone) return NULL;
 
-   /* loop the border client list */
-   /* NB: We use e_border_client_list here, rather than 
-    * e_container_border_list, because e_border_client_list is faster */
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd) 
+   /* loop the client list */
+   EINA_LIST_FOREACH(zone->comp->clients, l, ec) 
      {
+        if (e_client_util_ignored_get(ec)) continue;
         /* check zone and skip borders not on this zone */
-        if (bd->zone != zone) continue;
+        if (ec->zone != zone) continue;
 
         /* skip borders that are not indicators */
-        if (!e_illume_border_is_indicator(bd)) continue;
+        if (!e_illume_client_is_indicator(ec)) continue;
 
         /* found one, return it */
-        return bd;
+        return ec;
      }
 
    /* return a fallback */
@@ -706,9 +704,9 @@ e_illume_border_indicator_get(E_Zone *zone)
  * @ingroup E_Illume_Main_Group
  */
 EAPI void 
-e_illume_border_indicator_pos_get(E_Zone *zone, int *x, int *y) 
+e_illume_client_indicator_pos_get(E_Zone *zone, int *x, int *y) 
 {
-   E_Border *ind;
+   E_Client *ind;
 
    if (x) *x = 0;
    if (y) *y = 0;
@@ -721,7 +719,7 @@ e_illume_border_indicator_pos_get(E_Zone *zone, int *x, int *y)
    if (y) *y = zone->y;
 
    /* try and get the Indicator on this zone */
-   if (!(ind = e_illume_border_indicator_get(zone))) return;
+   if (!(ind = e_illume_client_indicator_get(zone))) return;
 
    /* return Indicator position(s) */
    if (x) *x = ind->x;
@@ -738,28 +736,27 @@ e_illume_border_indicator_pos_get(E_Zone *zone, int *x, int *y)
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI E_Border *
-e_illume_border_softkey_get(E_Zone *zone) 
+EAPI E_Client *
+e_illume_client_softkey_get(E_Zone *zone) 
 {
    Eina_List *l;
-   E_Border *bd;
+   E_Client *ec;
 
    /* make sure we have a zone */
    if (!zone) return NULL;
 
    /* loop the border client list */
-   /* NB: We use e_border_client_list here, rather than 
-    * e_container_border_list, because e_border_client_list is faster */
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd) 
+   EINA_LIST_FOREACH(zone->comp->clients, l, ec) 
      {
+        if (e_client_util_ignored_get(ec)) continue;
         /* check zone and skip borders not on this zone */
-        if (bd->zone != zone) continue;
+        if (ec->zone != zone) continue;
 
         /* skip borders that are not indicators */
-        if (!e_illume_border_is_softkey(bd)) continue;
+        if (!e_illume_client_is_softkey(ec)) continue;
 
         /* found one, return it */
-        return bd;
+        return ec;
      }
 
    /* return a fallback */
@@ -778,9 +775,9 @@ e_illume_border_softkey_get(E_Zone *zone)
  * @ingroup E_Illume_Main_Group
  */
 EAPI void 
-e_illume_border_softkey_pos_get(E_Zone *zone, int *x, int *y) 
+e_illume_client_softkey_pos_get(E_Zone *zone, int *x, int *y) 
 {
-   E_Border *sft;
+   E_Client *sft;
 
    if (x) *x = 0;
    if (y) *y = 0;
@@ -793,7 +790,7 @@ e_illume_border_softkey_pos_get(E_Zone *zone, int *x, int *y)
    if (y) *y = zone->y;
 
    /* try and get the Softkey on this zone */
-   if (!(sft = e_illume_border_softkey_get(zone))) return;
+   if (!(sft = e_illume_client_softkey_get(zone))) return;
 
    /* return Indicator position(s) */
    if (x) *x = sft->x;
@@ -856,16 +853,16 @@ e_illume_keyboard_safe_app_region_get(E_Zone *zone, int *x, int *y, int *w, int 
    /* if we don't have a border, get out */
    /* NB: This basically means that we have the vkbd structure, but no 
     * app or module present to act as the vkbd */
-   if (!_e_illume_kbd->border) return;
+   if (!_e_illume_kbd->client) return;
 
    /* if the keyboard border is not on this zone, get out */
-   if (_e_illume_kbd->border->zone != zone) return;
+   if (_e_illume_kbd->client->zone != zone) return;
 
    if (!_e_illume_kbd->animator) 
      {
         if (h) 
           {
-             *h -= _e_illume_kbd->border->h;
+             *h -= _e_illume_kbd->client->h;
              if (*h < 0) *h = 0;
           }
      }
@@ -881,28 +878,27 @@ e_illume_keyboard_safe_app_region_get(E_Zone *zone, int *x, int *y, int *w, int 
  * 
  * @ingroup E_Illume_Main_Group
  */
-EAPI E_Border *
-e_illume_border_home_get(E_Zone *zone) 
+EAPI E_Client *
+e_illume_client_home_get(E_Zone *zone) 
 {
-   E_Border *bd;
+   E_Client *ec;
    Eina_List *l;
 
    /* make sure we have a zone */
    if (!zone) return NULL;
 
    /* loop the border client list */
-   /* NB: We use e_border_client_list here, rather than 
-    * e_container_border_list, because e_border_client_list is faster */
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd) 
+   EINA_LIST_FOREACH(zone->comp->clients, l, ec) 
      {
+        if (e_client_util_ignored_get(ec)) continue;
         /* check zone and skip borders not on this zone */
-        if (bd->zone != zone) continue;
+        if (ec->zone != zone) continue;
 
         /* skip borders that are not home windows */
-        if (!e_illume_border_is_home(bd)) continue;
+        if (!e_illume_client_is_home(ec)) continue;
 
         /* found one, return it */
-        return bd;
+        return ec;
      }
 
    /* return a fallback */
@@ -920,27 +916,26 @@ e_illume_border_home_get(E_Zone *zone)
  * @ingroup E_Illume_Main_Group
  */
 EAPI Eina_List *
-e_illume_border_home_borders_get(E_Zone *zone) 
+e_illume_client_home_borders_get(E_Zone *zone) 
 {
    Eina_List *ret = NULL, *l;
-   E_Border *bd;
+   E_Client *ec;
 
    /* make sure we have a zone */
    if (!zone) return NULL;
 
    /* loop the border client list */
-   /* NB: We use e_border_client_list here, rather than 
-    * e_container_border_list, because e_border_client_list is faster */
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd) 
+   EINA_LIST_FOREACH(zone->comp->clients, l, ec) 
      {
+        if (e_client_util_ignored_get(ec)) continue;
         /* check zone and skip borders not on this zone */
-        if (bd->zone != zone) continue;
+        if (ec->zone != zone) continue;
 
         /* skip borders that are not home windows */
-        if (!e_illume_border_is_home(bd)) continue;
+        if (!e_illume_client_is_home(ec)) continue;
 
         /* found one, append it to the list */
-        ret = eina_list_append(ret, bd);
+        ret = eina_list_append(ret, ec);
      }
 
    /* return the list */

@@ -452,8 +452,6 @@ _e_entry_mouse_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o
    if (event->button == 3)
      {
         E_Menu_Item *mi;
-        E_Manager *man;
-        E_Container *con;
         Evas_Coord x, y;
         int s_enabled, s_selecting, s_passwd, s_empty;
 
@@ -464,9 +462,7 @@ _e_entry_mouse_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o
 
         if (!s_selecting && !s_enabled && s_empty) return;
 
-        man = e_manager_current_get();
-        con = e_container_current_get(man);
-        ecore_x_pointer_xy_get(con->win, &x, &y);
+        ecore_evas_pointer_xy_get(e_util_comp_current_get()->ee, &x, &y);
 
         /* Popup a menu */
         sd->popup = e_menu_new();
@@ -524,7 +520,7 @@ _e_entry_mouse_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o
              e_menu_item_callback_set(mi, _e_entry_cb_select_all, sd);
           }
 
-        e_menu_activate_mouse(sd->popup, e_util_zone_current_get(man),
+        e_menu_activate_mouse(sd->popup, e_util_zone_current_get(e_manager_current_get()),
                               x, y, 1, 1,
                               E_MENU_POP_DIRECTION_DOWN, event->timestamp);
      }
@@ -572,9 +568,9 @@ static void
 _e_entry_x_selection_update(Evas_Object *entry)
 {
    E_Entry_Smart_Data *sd;
-   Ecore_X_Window xwin;
+   Ecore_Window xwin;
    E_Win *win;
-   E_Container *con;
+   E_Comp *c;
    const char *text;
 
    if ((!entry) || (!(sd = evas_object_smart_data_get(entry))))
@@ -584,9 +580,9 @@ _e_entry_x_selection_update(Evas_Object *entry)
         xwin = e_grabinput_key_win_get();
         if (!xwin)
           {
-             con = e_container_evas_object_container_get(sd->entry_object);
-             if (!con) return;
-             xwin = ecore_evas_window_get(con->bg_ecore_evas);
+             c = e_comp_util_evas_object_comp_get(sd->entry_object);
+             if (!c) return;
+             xwin = c->ee_win;
           }
      }
    else
@@ -606,18 +602,18 @@ _entry_paste_request_signal_cb(void *data,
                                const char *emission,
                                const char *source EINA_UNUSED)
 {
-   Ecore_X_Window xwin;
+   Ecore_Window xwin;
    E_Win *win;
-   E_Container *con;
+   E_Comp *c;
 
    if (!(win = e_win_evas_object_win_get(data)))
      {
         xwin = e_grabinput_key_win_get();
         if (!xwin)
           {
-             con = e_container_evas_object_container_get(data);
-             if (!con) return;
-             xwin = ecore_evas_window_get(con->bg_ecore_evas);
+             c = e_comp_util_evas_object_comp_get(data);
+             if (!c) return;
+             xwin = c->ee_win;
           }
      }
    else
@@ -969,11 +965,11 @@ _e_entry_cb_copy(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
              xwin = e_grabinput_key_win_get();
              if (!xwin)
                {
-                  E_Container *con;
+                  E_Comp *c;
 
-                  con = e_container_evas_object_container_get(sd->entry_object);
-                  if (!con) return;
-                  xwin = ecore_evas_window_get(con->bg_ecore_evas);
+                  c = e_comp_util_evas_object_comp_get(sd->entry_object);
+                  if (!c) return;
+                  xwin = c->ee_win;
                }
           }
         ecore_x_selection_clipboard_set(xwin, range, strlen(range) + 1);
@@ -998,11 +994,11 @@ _e_entry_cb_paste(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
         xwin = e_grabinput_key_win_get();
         if (!xwin)
           {
-             E_Container *con;
+             E_Comp *c;
 
-             con = e_container_evas_object_container_get(sd->entry_object);
-             if (!con) return;
-             xwin = ecore_evas_window_get(con->bg_ecore_evas);
+             c = e_comp_util_evas_object_comp_get(sd->entry_object);
+             if (!c) return;
+             xwin = c->ee_win;
           }
      }
    ecore_x_selection_clipboard_request(xwin, ECORE_X_SELECTION_TARGET_UTF8_STRING);

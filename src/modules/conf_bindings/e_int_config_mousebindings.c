@@ -91,7 +91,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_mousebindings(E_Container *con, const char *params __UNUSED__)
+e_int_config_mousebindings(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -105,7 +105,7 @@ e_int_config_mousebindings(E_Container *con, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create_widgets;
    v->override_auto_apply = 0;
 
-   cfd = e_config_dialog_new(con,
+   cfd = e_config_dialog_new(comp,
                              _("Mouse Bindings Settings"),
                              "E", "keyboard_and_mouse/mouse_bindings",
                              "preferences-desktop-mouse", 0, v, NULL);
@@ -204,7 +204,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
    _auto_apply_changes(cfdata);
 
-   e_border_button_bindings_ungrab_all();
+   e_comp_button_bindings_ungrab_all();
    e_managers_keys_ungrab();
 
    EINA_LIST_FREE(e_bindings->mouse_bindings, eb)
@@ -268,7 +268,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
         e_bindings_wheel_add(bw2->context, bw2->direction, bw2->z, bw2->modifiers,
                              bw2->any_mod, bw2->action, bw2->params);
      }
-   e_border_button_bindings_grab_all();
+   e_comp_button_bindings_grab_all();
    e_managers_keys_grab();
 
    e_config_save_queue();
@@ -349,7 +349,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    cfdata->gui.context.o_zone = ob;
    e_widget_disabled_set(ob, 1);
    e_widget_frametable_object_append(of, ob, 1, 2, 1, 1, 1, 1, 1, 1);
-   ob = e_widget_radio_add(evas, _("Container"), E_BINDING_CONTEXT_CONTAINER, rg);
+   ob = e_widget_radio_add(evas, _("Container"), E_BINDING_CONTEXT_COMPOSITOR, rg);
    cfdata->gui.context.o_container = ob;
    e_widget_disabled_set(ob, 1);
    e_widget_frametable_object_append(of, ob, 2, 0, 1, 1, 1, 1, 1, 1);
@@ -967,7 +967,7 @@ _update_binding_context(E_Config_Dialog_Data *cfdata)
      e_widget_radio_toggle_set(cfdata->gui.context.o_popup, 1);
    else if (ctxt == E_BINDING_CONTEXT_ZONE)
      e_widget_radio_toggle_set(cfdata->gui.context.o_zone, 1);
-   else if (ctxt == E_BINDING_CONTEXT_CONTAINER)
+   else if (ctxt == E_BINDING_CONTEXT_COMPOSITOR)
      e_widget_radio_toggle_set(cfdata->gui.context.o_container, 1);
    else if (ctxt == E_BINDING_CONTEXT_MANAGER)
      e_widget_radio_toggle_set(cfdata->gui.context.o_manager, 1);

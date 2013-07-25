@@ -38,7 +38,7 @@ struct _E_Config_Dialog_Data
 
 /* local subsystem functions */
 
-static int          _e_desktop_edit_view_create(E_Desktop_Edit *editor, E_Container *con);
+static int          _e_desktop_edit_view_create(E_Desktop_Edit *editor, E_Comp *c);
 static void         _e_desktop_edit_free(E_Desktop_Edit *editor);
 static void        *_e_desktop_edit_create_data(E_Config_Dialog *cfd);
 static void         _e_desktop_edit_free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *data);
@@ -64,18 +64,18 @@ static void         _e_desktop_editor_icon_entry_changed(void *data, Evas_Object
 /* externally accessible functions */
 
 EAPI Efreet_Desktop *
-e_desktop_border_create(E_Border *bd)
+e_desktop_client_create(E_Client *ec)
 {
    Efreet_Desktop *desktop = NULL;
    const char *desktop_dir, *icon_dir;
    const char *bname, *bclass, *btitle;
    char path[PATH_MAX];
 
-   bname = bd->client.icccm.name;
+   bname = ec->icccm.name;
    if ((bname) && (bname[0] == 0)) bname = NULL;
-   bclass = bd->client.icccm.class;
+   bclass = ec->icccm.class;
    if ((bclass) && (bclass[0] == 0)) bclass = NULL;
-   btitle = e_border_name_get(bd);
+   btitle = e_client_name_get(ec);
 
    desktop_dir = e_user_desktop_dir_get();
 
@@ -125,15 +125,15 @@ e_desktop_border_create(E_Border *bd)
    if (btitle) desktop->comment = strdup(btitle);
 
    if (bclass) desktop->startup_wm_class = strdup(bclass);
-   if (bd->client.icccm.command.argc > 0)
+   if (ec->icccm.command.argc > 0)
      // FIXME this should concat the entire argv array together
-     desktop->exec = strdup(bd->client.icccm.command.argv[0]);
+     desktop->exec = strdup(ec->icccm.command.argv[0]);
    else if (bname)
      desktop->exec = strdup(bname);
 
 // disable this
-//   if (bd->client.netwm.startup_id > 0) desktop->startup_notify = 1;
-   if (bd->client.netwm.icons)
+//   if (ec->netwm.startup_id > 0) desktop->startup_notify = 1;
+   if (ec->netwm.icons)
      {
         /* FIXME
          * - Find the icon with the best size
@@ -143,7 +143,7 @@ e_desktop_border_create(E_Border *bd)
 
         snprintf(file, sizeof(file), "%s-%.6f.png", bname ?: "", ecore_time_get());
         snprintf(path, sizeof(path), "%s/%s", icon_dir, file);
-        if (e_util_icon_save(&(bd->client.netwm.icons[0]), path))
+        if (e_util_icon_save(&(ec->netwm.icons[0]), path))
           desktop->icon = strdup(file);
         else
           fprintf(stderr, "Could not save file from ARGB: %s\n", path);
@@ -152,22 +152,21 @@ e_desktop_border_create(E_Border *bd)
 }
 
 EAPI E_Desktop_Edit *
-e_desktop_border_edit(E_Container *con, E_Border *bd)
+e_desktop_border_edit(E_Comp *c, E_Client *ec)
 {
    E_Desktop_Edit *editor;
    int new_desktop = 0;
 
-   if (!con) return NULL;
    editor = E_OBJECT_ALLOC(E_Desktop_Edit, E_DESKTOP_EDIT_TYPE, _e_desktop_edit_free);
    if (!editor) return NULL;
-   if (bd->desktop)
-     editor->desktop = bd->desktop;
+   if (ec->desktop)
+     editor->desktop = ec->desktop;
 
    /* the border does not yet have a desktop entry. add one and pre-populate
       it with values from the border */
    if (!editor->desktop)
      {
-        editor->desktop = e_desktop_border_create(bd);
+        editor->desktop = e_desktop_client_create(ec);
         if ((editor->desktop) && (editor->desktop->icon))
           editor->tmp_image_path = strdup(editor->desktop->icon);
         new_desktop = 1;
@@ -186,7 +185,7 @@ e_desktop_border_edit(E_Container *con, E_Border *bd)
                              "change."));
      }
 #endif
-   if (!_e_desktop_edit_view_create(editor, con))
+   if (!_e_desktop_edit_view_create(editor, c))
      {
         e_object_del(E_OBJECT(editor));
         editor = NULL;
@@ -198,14 +197,14 @@ e_desktop_border_edit(E_Container *con, E_Border *bd)
 }
 
 EAPI E_Desktop_Edit *
-e_desktop_edit(E_Container *con, Efreet_Desktop *desktop)
+e_desktop_edit(E_Comp *c, Efreet_Desktop *desktop)
 {
    E_Desktop_Edit *editor;
 
    editor = E_OBJECT_ALLOC(E_Desktop_Edit, E_DESKTOP_EDIT_TYPE, _e_desktop_edit_free);
    if (!editor) return NULL;
    if (desktop) editor->desktop = desktop;
-   if (!_e_desktop_edit_view_create(editor, con))
+   if (!_e_desktop_edit_view_create(editor, c))
      {
         e_object_del(E_OBJECT(editor));
         editor = NULL;
@@ -214,7 +213,7 @@ e_desktop_edit(E_Container *con, Efreet_Desktop *desktop)
 }
 
 static int
-_e_desktop_edit_view_create(E_Desktop_Edit *editor, E_Container *con)
+_e_desktop_edit_view_create(E_Desktop_Edit *editor, E_Comp *c)
 {
    E_Config_Dialog_View *v;
 
@@ -229,7 +228,7 @@ _e_desktop_edit_view_create(E_Desktop_Edit *editor, E_Container *con)
    v->basic.check_changed = _e_desktop_edit_basic_check_changed;
 
    editor->cfd =
-     e_config_dialog_new(con, _("Desktop Entry Editor"), "E",
+     e_config_dialog_new(c, _("Desktop Entry Editor"), "E",
                          "applications/new_application",
                          "preferences-applications", 0, v, editor);
 
@@ -813,7 +812,7 @@ _e_desktop_editor_cb_icon_select(void *data1, void *data2)
 
    if (editor->icon_fsel_dia) return;
 
-   dia = e_dialog_new(cfdata->editor->cfd->con, "E", "_eap_icon_select_dialog");
+   dia = e_dialog_new(cfdata->editor->cfd->comp, "E", "_eap_icon_select_dialog");
    if (!dia) return;
    e_object_del_attach_func_set(E_OBJECT(dia),
                                 _e_desktop_edit_cb_icon_select_destroy);
@@ -879,7 +878,7 @@ _e_desktop_editor_cb_exec_select(void *data1, void *data2)
 
    if (editor->exec_fsel_dia) return;
 
-   dia = e_dialog_new(cfdata->editor->cfd->con, "E", "_eap_exec_select_dialog");
+   dia = e_dialog_new(cfdata->editor->cfd->comp, "E", "_eap_exec_select_dialog");
    if (!dia) return;
    e_object_del_attach_func_set(E_OBJECT(dia),
                                 _e_desktop_edit_cb_exec_select_destroy);

@@ -25,8 +25,9 @@ EAPI void
 e_font_apply(void)
 {
    char buf[1024];
-   Eina_List *l;
-   E_Border *bd;
+   const Eina_List *l, *ll;
+   E_Client *ec;
+   E_Comp *c;
    E_Font_Default *efd;
    E_Font_Fallback *eff;
    int blen, len;
@@ -71,11 +72,10 @@ e_font_apply(void)
         edje_text_class_set(efd->text_class, efd->font, efd->size);
      }
 
-   /* Update borders */
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd)
-     {
-        e_border_frame_recalc(bd);
-     }
+   /* Update clients */
+   EINA_LIST_FOREACH(e_comp_list(), l, c)
+     EINA_LIST_FOREACH(c->clients, ll, ec)
+       e_client_frame_recalc(ec);
 }
 
 EAPI Eina_List *
@@ -85,16 +85,11 @@ e_font_available_list(void)
    Eina_List *e_fonts;
    Eina_List *l;
    const char *evas_font;
-   E_Manager *man;
-   E_Container *con;
+   E_Comp *c;
 
-   man = e_manager_current_get();
-   if (!man) return NULL;
-   con = e_container_current_get(man);
-   if (!con) con = e_container_number_get(man, 0);
-   if (!con) return NULL;
+   c = e_util_comp_current_get();
 
-   evas_fonts = evas_font_available_list(con->bg_evas);
+   evas_fonts = evas_font_available_list(c->evas);
 
    e_fonts = NULL;
    EINA_LIST_FOREACH(evas_fonts, l, evas_font)
@@ -106,7 +101,7 @@ e_font_available_list(void)
         e_fonts = eina_list_append(e_fonts, efa);
      }
 
-   evas_font_available_list_free(con->bg_evas, evas_fonts);
+   evas_font_available_list_free(c->evas, evas_fonts);
 
    return e_fonts;
 }

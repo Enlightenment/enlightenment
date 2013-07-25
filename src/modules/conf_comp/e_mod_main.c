@@ -154,7 +154,7 @@ _style_selector(Evas *evas, const char **source)
 
         oo = edje_object_add(e_livethumb_evas_get(ob));
         ds_it->preview = oo;
-        snprintf(buf, sizeof(buf), "e/comp/border/%s", style);
+        snprintf(buf, sizeof(buf), "e/comp/frame/%s", style);
         e_theme_edje_object_set(oo, "base/theme/borders", buf);
         e_layout_pack(oly, oo);
         e_layout_child_move(oo, 39, 39);

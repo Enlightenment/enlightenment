@@ -7,28 +7,28 @@ _cb_in_left(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 {
    // show PREV window in list from urrent focused window on top of current
    // window but in an inital "off to the right" state in comp
-   Eina_List *borders = (Eina_List *)e_policy_borders_get();
-   E_Border *bd_active = (E_Border *)e_polict_border_active_get();
-   E_Border *bd = NULL;
-   Eina_List *bd_active_l = NULL;
-   if (!bd_active)
+   Eina_List *clients = (Eina_List *)e_policy_clients_get();
+   E_Client *ec_active = (E_Client *)e_policy_client_active_get();
+   E_Client *ec = NULL;
+   Eina_List *ec_active_l = NULL;
+   if (!ec_active)
      {
-        if (!borders) return;
-        bd = eina_list_last(borders)->data;
+        if (!clients) return;
+        ec = eina_list_last(clients)->data;
      }
-   if (!bd)
+   if (!ec)
      {
-        if (bd_active)
-          bd_active_l = eina_list_data_find_list(borders, bd_active);
-        if ((bd_active_l) && (bd_active_l->prev)) bd = bd_active_l->prev->data;
+        if (ec_active)
+          ec_active_l = eina_list_data_find_list(clients, ec_active);
+        if ((ec_active_l) && (ec_active_l->prev)) ec = ec_active_l->prev->data;
      }
-   if ((!bd) && (bd_active))
+   if ((!ec) && (ec_active))
      {
-        e_border_iconify(bd_active);
+        e_client_iconify(ec_active);
         return;
      }
-   if (!bd) return;
-   e_border_activate(bd, EINA_TRUE);
+   if (!ec) return;
+   e_client_activate(ec, EINA_TRUE);
 }
 
 static void
@@ -43,28 +43,28 @@ _cb_in_right(void *data __UNUSED__, int d __UNUSED__, double v __UNUSED__)
 {
    // show NEXT window in list from urrent focused window on top of current
    // window but in an inital "off to the right" state in comp
-   Eina_List *borders = (Eina_List *)e_policy_borders_get();
-   E_Border *bd_active = (E_Border *)e_polict_border_active_get();
-   E_Border *bd = NULL;
-   Eina_List *bd_active_l = NULL;
-   if (!bd_active)
+   Eina_List *clients = (Eina_List *)e_policy_clients_get();
+   E_Client *ec_active = (E_Client *)e_policy_client_active_get();
+   E_Client *ec = NULL;
+   Eina_List *ec_active_l = NULL;
+   if (!ec_active)
      {
-        if (!borders) return;
-        bd = borders->data;
+        if (!clients) return;
+        ec = clients->data;
      }
-   if (!bd)
+   if (!ec)
      {
-        if (bd_active)
-          bd_active_l = eina_list_data_find_list(borders, bd_active);
-        if ((bd_active_l) && (bd_active_l->next)) bd = bd_active_l->next->data;
+        if (ec_active)
+          ec_active_l = eina_list_data_find_list(clients, ec_active);
+        if ((ec_active_l) && (ec_active_l->next)) ec = ec_active_l->next->data;
      }
-   if ((!bd) && (bd_active))
+   if ((!ec) && (ec_active))
      {
-        e_border_iconify(bd_active);
+        e_client_iconify(ec_active);
         return;
      }
-   if (!bd) return;
-   e_border_activate(bd, EINA_TRUE);
+   if (!ec) return;
+   e_client_activate(ec, EINA_TRUE);
 }
 
 static void

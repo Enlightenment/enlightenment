@@ -28,6 +28,7 @@ struct _Settings_Manger
    Ecore_Timer   *timer_retry;
    unsigned long  serial;
    Ecore_X_Atom   _atom_xsettings_screen;
+   Eina_Bool enabled : 1;
 };
 
 struct _Setting
@@ -90,14 +91,14 @@ _e_xsettings_selection_owner_set(Settings_Manager *sm)
    Eina_Bool ret;
 
    atom = _e_xsettings_atom_screen_get(sm->man->num);
-   ecore_x_selection_owner_set(sm->selection, atom, ecore_x_current_time_get());
+   ecore_x_selection_owner_set(sm->man->comp->cm_selection, atom, ecore_x_current_time_get());
    ecore_x_sync();
    cur_selection = ecore_x_selection_owner_get(atom);
 
-   ret = (cur_selection == sm->selection);
+   ret = (cur_selection == sm->man->comp->cm_selection);
    if (!ret)
      ERR("XSETTINGS: tried to set selection to %#x, but got %#x",
-         sm->selection, cur_selection);
+         (unsigned int)sm->man->comp->cm_selection, cur_selection);
 
    return ret;
 }
@@ -105,15 +106,12 @@ _e_xsettings_selection_owner_set(Settings_Manager *sm)
 static void
 _e_xsettings_deactivate(Settings_Manager *sm)
 {
-   Ecore_X_Window old;
+   Ecore_X_Atom atom;
 
-   if (sm->selection == 0) return;
-
-   old = sm->selection;
-   sm->selection = 0;
-   _e_xsettings_selection_owner_set(sm);
+   atom = _e_xsettings_atom_screen_get(sm->man->num);
+   ecore_x_selection_owner_set(0, atom, ecore_x_current_time_get());
    ecore_x_sync();
-   ecore_x_window_free(old);
+   sm->enabled = 0;
 }
 
 static Eina_Bool
@@ -122,29 +120,22 @@ _e_xsettings_activate(Settings_Manager *sm)
    Ecore_X_Atom atom;
    Ecore_X_Window old_win;
 
-   if (sm->selection != 0) return 1;
+   if (sm->enabled) return 1;
 
    atom = _e_xsettings_atom_screen_get(sm->man->num);
    old_win = ecore_x_selection_owner_get(atom);
    if (old_win != 0) return 0;
 
-   sm->selection = ecore_x_window_input_new(0, 0, 0, 1, 1);
-   if (sm->selection == 0)
+   if (!_e_xsettings_selection_owner_set(sm))
      return 0;
 
-   if (!_e_xsettings_selection_owner_set(sm))
-     {
-        ecore_x_window_free(sm->selection);
-        sm->selection = 0;
-        return 0;
-     }
-
-   ecore_x_client_message32_send(e_manager_current_get()->root, _atom_manager,
+   ecore_x_client_message32_send(sm->man->root, _atom_manager,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  ecore_x_current_time_get(), atom,
-                                 sm->selection, 0, 0);
+                                 sm->man->comp->cm_selection, 0, 0);
 
    if (settings) _e_xsettings_apply(sm);
+   sm->enabled = 1;
 
    return 1;
 }
@@ -361,7 +352,7 @@ _e_xsettings_apply(Settings_Manager *sm)
    EINA_LIST_FOREACH(settings, l, s)
      pos = _e_xsettings_copy(pos, s);
 
-   ecore_x_window_prop_property_set(sm->selection,
+   ecore_x_window_prop_property_set(sm->man->comp->cm_selection,
                                     _atom_xsettings,
                                     _atom_xsettings,
                                     8, data, len);
@@ -375,27 +366,33 @@ _e_xsettings_update(void)
    Eina_List *l;
 
    EINA_LIST_FOREACH(managers, l, sm)
-     if (sm->selection) _e_xsettings_apply(sm);
+     if (sm->man->comp->cm_selection) _e_xsettings_apply(sm);
 }
 
 static void
 _e_xsettings_gtk_icon_update(void)
 {
-   Eina_List *l;
-   E_Border *bd;
+   const Eina_List *l, *ll;
+   E_Client *ec;
+   E_Comp *c;
 
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd)
-     if (bd->client.icccm.state) ecore_x_client_message8_send(bd->client.win, _atom_gtk_iconthemes, NULL, 0);
+   EINA_LIST_FOREACH(e_comp_list(), l, c)
+     EINA_LIST_FOREACH(c->clients, ll, ec)
+       if (ec->icccm.state)
+         ecore_x_client_message8_send(e_client_util_win_get(ec), _atom_gtk_iconthemes, NULL, 0);
 }
 
 static void
 _e_xsettings_gtk_rcfiles_update(void)
 {
-   Eina_List *l;
-   E_Border *bd;
+   const Eina_List *l, *ll;
+   E_Client *ec;
+   E_Comp *c;
 
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd)
-     if (bd->client.icccm.state) ecore_x_client_message8_send(bd->client.win, _atom_gtk_rcfiles, NULL, 0);
+   EINA_LIST_FOREACH(e_comp_list(), l, c)
+     EINA_LIST_FOREACH(c->clients, ll, ec)
+       if (ec->icccm.state)
+         ecore_x_client_message8_send(e_client_util_win_get(ec), _atom_gtk_rcfiles, NULL, 0);
 }
 
 static void

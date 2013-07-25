@@ -26,7 +26,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_syscon(E_Container *con, const char *params __UNUSED__)
+e_int_config_syscon(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -40,7 +40,7 @@ e_int_config_syscon(E_Container *con, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(con, _("Syscon Settings"),
+   cfd = e_config_dialog_new(comp, _("Syscon Settings"),
                              "E", "windows/conf_syscon",
                              "system-shutdown", 0, v, NULL);
    return cfd;

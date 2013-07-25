@@ -4,51 +4,48 @@ EAPI void
 e_place_zone_region_smart_cleanup(E_Zone *zone)
 {
    E_Desk *desk;
-   Eina_List *borders = NULL;
-   E_Border_List *bl;
-   E_Border *border;
+   Eina_List *clients = NULL;
+   E_Client *ec;
 
    E_OBJECT_CHECK(zone);
    desk = e_desk_current_get(zone);
-   bl = e_container_border_list_first(desk->zone->container);
-   while ((border = e_container_border_list_next(bl)))
+   E_CLIENT_FOREACH(zone->comp, ec)
      {
         /* Build a list of windows on this desktop and not iconified. */
-        if ((border->desk == desk) && (!border->iconic) &&
-            (!border->lock_user_location))
+        if ((ec->desk == desk) && (!ec->iconic) &&
+            (!ec->lock_user_location))
           {
              int area;
              Eina_List *ll;
-             E_Border *bd;
+             E_Client *ec2;
 
              /* Ordering windows largest to smallest gives better results */
-             area = border->w * border->h;
-             EINA_LIST_FOREACH(borders, ll, bd)
+             area = ec->w * ec->h;
+             EINA_LIST_FOREACH(clients, ll, ec2)
                {
                   int testarea;
 
-                  testarea = bd->w * bd->h;
-                  /* Insert the border if larger than the current border */
+                  testarea = ec2->w * ec2->h;
+                  /* Insert the ec if larger than the current ec */
                   if (area >= testarea)
                     {
-                       borders = eina_list_prepend_relative(borders, border, bd);
+                       clients = eina_list_prepend_relative(clients, ec2, ec);
                        break;
                     }
                }
-             /* Looped over all borders without placing, so place at end */
-             if (!ll) borders = eina_list_append(borders, border);
+             /* Looped over all clients without placing, so place at end */
+             if (!ll) clients = eina_list_append(clients, ec2);
           }
      }
-   e_container_border_list_free(bl);
 
-   /* Loop over the borders moving each one using the smart placement */
-   EINA_LIST_FREE(borders, border)
+   /* Loop over the clients moving each one using the smart placement */
+   EINA_LIST_FREE(clients, ec)
      {
         int new_x, new_y;
 
-        e_place_zone_region_smart(zone, borders, border->x, border->y,
-                                  border->w, border->h, &new_x, &new_y);
-        e_border_move(border, new_x, new_y);
+        e_place_zone_region_smart(zone, clients, ec->x, ec->y,
+                                  ec->w, ec->h, &new_x, &new_y);
+        evas_object_move(ec->frame, new_x, new_y);
      }
 }
 
@@ -59,33 +56,20 @@ _e_place_cb_sort_cmp(const void *v1, const void *v2)
 }
 
 static int
-_e_place_coverage_border_add(E_Desk *desk, Eina_List *skiplist, int ar, int x, int y, int w, int h)
+_e_place_coverage_client_add(E_Desk *desk, Eina_List *skiplist, int ar, int x, int y, int w, int h)
 {
-   Eina_List *ll;
-   E_Border_List *bl;
-   E_Border *bd, *bd2;
+   E_Client *ec;
    int x2, y2, w2, h2;
-   int ok;
    int iw, ih;
    int x0, x00, yy0, y00;
 
-   bl = e_container_border_list_first(desk->zone->container);
-   while ((bd = e_container_border_list_next(bl)))
+   E_CLIENT_FOREACH(desk->zone->comp, ec)
      {
-        ok = 1;
-        x2 = (bd->x - desk->zone->x); y2 = (bd->y - desk->zone->y); w2 = bd->w; h2 = bd->h;
-        EINA_LIST_FOREACH(skiplist, ll, bd2)
-          {
-             if (bd2 == bd)
-               {
-                  ok = 0;
-                  break;
-               }
-          }
-        if ((ok) &&
-            E_INTERSECTS(x, y, w, h, x2, y2, w2, h2) &&
-            ((bd->sticky) || (bd->desk == desk)) &&
-            (!bd->iconic) && (bd->visible))
+        if (eina_list_data_find(skiplist, ec)) continue;
+        x2 = (ec->x - desk->zone->x); y2 = (ec->y - desk->zone->y); w2 = ec->w; h2 = ec->h;
+        if (E_INTERSECTS(x, y, w, h, x2, y2, w2, h2) &&
+            ((ec->sticky) || (ec->desk == desk)) &&
+            (!ec->iconic) && (ec->visible))
           {
              x0 = x;
              if (x < x2) x0 = x2;
@@ -100,7 +84,6 @@ _e_place_coverage_border_add(E_Desk *desk, Eina_List *skiplist, int ar, int x, i
              ar += (iw * ih);
           }
      }
-   e_container_border_list_free(bl);
    return ar;
 }
 
@@ -144,9 +127,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
    int *a_x = NULL, *a_y = NULL;
    int zw, zh;
    char *u_x = NULL, *u_y = NULL;
-   Eina_List *ll;
-   E_Border_List *bl;
-   E_Border *bd, *bd2;
+   E_Client *ec;
 
    *rx = x;
    *ry = y;
@@ -263,29 +244,18 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
           }
      }
 
-   bl = e_container_border_list_first(desk->zone->container);
-   while ((bd = e_container_border_list_next(bl)))
+   E_CLIENT_FOREACH(desk->zone->comp, ec)
      {
-        int ok;
         int bx, by, bw, bh;
 
-        ok = 1;
-        EINA_LIST_FOREACH(skiplist, ll, bd2)
-          {
-             if (bd2 == bd)
-               {
-                  ok = 0;
-                  break;
-               }
-          }
-        if (!ok) continue;
+        if (eina_list_data_find(skiplist, ec)) continue;
 
-        if (!((bd->sticky) || (bd->desk == desk))) continue;
+        if (!((ec->sticky) || (ec->desk == desk))) continue;
 
-        bx = bd->x - desk->zone->x;
-        by = bd->y - desk->zone->y;
-        bw = bd->w;
-        bh = bd->h;
+        bx = ec->x - desk->zone->x;
+        by = ec->y - desk->zone->y;
+        bw = ec->w;
+        bh = ec->h;
 
         if (E_INTERSECTS(bx, by, bw, bh, 0, 0, zw, zh))
           {
@@ -351,7 +321,6 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
      }
    qsort(a_x, a_w, sizeof(int), _e_place_cb_sort_cmp);
    qsort(a_y, a_h, sizeof(int), _e_place_cb_sort_cmp);
-   e_container_border_list_free(bl);
    free(u_x);
    free(u_y);
 
@@ -368,7 +337,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                   {
                      int ar = 0;
 
-                     ar = _e_place_coverage_border_add(desk, skiplist, ar,
+                     ar = _e_place_coverage_client_add(desk, skiplist, ar,
                                                        a_x[i], a_y[j],
                                                        w, h);
                      if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
@@ -387,7 +356,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                   {
                      int ar = 0;
 
-                     ar = _e_place_coverage_border_add(desk, skiplist, ar,
+                     ar = _e_place_coverage_client_add(desk, skiplist, ar,
                                                        a_x[i + 1] - w, a_y[j],
                                                        w, h);
                      if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
@@ -406,7 +375,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                   {
                      int ar = 0;
 
-                     ar = _e_place_coverage_border_add(desk, skiplist, ar,
+                     ar = _e_place_coverage_client_add(desk, skiplist, ar,
                                                        a_x[i + 1] - w, a_y[j + 1] - h,
                                                        w, h);
                      if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
@@ -425,7 +394,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                   {
                      int ar = 0;
 
-                     ar = _e_place_coverage_border_add(desk, skiplist, ar,
+                     ar = _e_place_coverage_client_add(desk, skiplist, ar,
                                                        a_x[i], a_y[j + 1] - h,
                                                        w, h);
                      if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
@@ -474,7 +443,7 @@ e_place_zone_cursor(E_Zone *zone, int x __UNUSED__, int y __UNUSED__, int w, int
 
    E_OBJECT_CHECK_RETURN(zone, 0);
 
-   ecore_x_pointer_xy_get(zone->container->win, &cursor_x, &cursor_y);
+   ecore_evas_pointer_xy_get(zone->comp->ee, &cursor_x, &cursor_y);
    *rx = cursor_x - (w >> 1);
    *ry = cursor_y - (it >> 1);
 
@@ -503,7 +472,7 @@ e_place_zone_manual(E_Zone *zone, int w, int h, int *rx, int *ry)
 
    E_OBJECT_CHECK_RETURN(zone, 0);
 
-   ecore_x_pointer_xy_get(zone->container->win, &cursor_x, &cursor_y);
+   ecore_evas_pointer_xy_get(zone->comp->ee, &cursor_x, &cursor_y);
    if (rx) *rx = cursor_x - (w >> 1);
    if (ry) *ry = cursor_y - (h >> 1);
 

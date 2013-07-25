@@ -21,7 +21,7 @@ typedef struct _E_Config_Dialog_Data Systray_Config;
 struct _Instance
 {
    E_Gadcon_Client *gcc;
-   E_Container     *con;
+   E_Comp     *comp;
    Evas            *evas;
    Instance_Xembed *xembed;
    Instance_Notifier_Host *notifier;

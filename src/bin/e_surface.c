@@ -139,14 +139,14 @@ e_surface_image_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h, void *pixels)
 }
 
 EAPI void 
-e_surface_border_input_set(Evas_Object *obj, E_Border *bd)
+e_surface_border_input_set(Evas_Object *obj, E_Client *ec)
 {
    E_Smart_Data *sd = NULL;
 
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
 
-   e_border_input_object_set(bd, sd->o_input);
+   //e_client_input_object_set(bd, sd->o_input);
 }
 
 /* smart functions */

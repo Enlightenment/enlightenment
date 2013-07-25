@@ -60,23 +60,23 @@ gadman_reset(void *d EINA_UNUSED)
 
    E_FREE_FUNC(gadman_reset_job, ecore_job_del);
    if (gadman_locked) return;
-   evas_event_freeze(e_comp_get(Man->container)->evas);
+   evas_event_freeze(Man->comp->evas);
    for (layer = 0; layer < GADMAN_LAYER_COUNT; layer++)
      {
         E_FREE_LIST(Man->gadcons[layer], e_object_del);
         Man->gadgets[layer] = eina_list_free(Man->gadgets[layer]);
         E_FREE_FUNC(Man->movers[layer], evas_object_del);
      }
-   E_FREE_FUNC(Man->overlay, e_object_del);
+   evas_object_hide(Man->overlay);
+   E_FREE_FUNC(Man->overlay, evas_object_del);
    E_FREE_FUNC(Man->full_bg, evas_object_del);
-   E_FREE_FUNC(Man->overlay_layer, evas_object_del);
    if (_gadman_gadgets)
      {
         eina_hash_free_cb_set(_gadman_gadgets, EINA_FREE_CB(eina_list_free));
         eina_hash_free(_gadman_gadgets);
      }
    /* iterating through zones - and making gadmans on each */
-   EINA_LIST_FOREACH(Man->container->zones, l, zone)
+   EINA_LIST_FOREACH(Man->comp->zones, l, zone)
      {
         const char *layer_name[] = {"gadman", "gadman_top"};
 
@@ -98,7 +98,7 @@ gadman_reset(void *d EINA_UNUSED)
       Man->conf->anim_bg = prev;
    }
    edje_object_message_signal_process(Man->full_bg);
-   evas_event_thaw(e_comp_get(Man->container)->evas);
+   evas_event_thaw(Man->comp->evas);
 }
 
 void
@@ -112,9 +112,9 @@ gadman_init(E_Module *m)
 
    Man->module = m;
    gadman_locked = e_module_loading_get();
-   Man->container = e_container_current_get(e_manager_current_get());
-   Man->width = Man->container->w;
-   Man->height = Man->container->h;
+   Man->comp = e_util_comp_current_get();
+   Man->width = Man->comp->man->w;
+   Man->height = Man->comp->man->h;
 
    /* create and register "desktop" location */
    location = Man->location[GADMAN_LAYER_BG] = e_gadcon_location_new(_("Desktop"), E_GADCON_SITE_DESKTOP,
@@ -156,8 +156,8 @@ gadman_shutdown(void)
    eina_stringshare_del(Man->icon_name);
 
    /* free manager */
-   E_FREE_FUNC(Man->overlay, e_object_del);
-   E_FREE_FUNC(Man->overlay_layer, evas_object_del);
+   evas_object_hide(Man->overlay);
+   E_FREE_FUNC(Man->overlay, evas_object_del);
    if (_gadman_gadgets)
      {
         eina_hash_free_cb_set(_gadman_gadgets, EINA_FREE_CB(eina_list_free));
@@ -325,10 +325,10 @@ gadman_gadget_place(E_Gadcon_Client *gcc, const E_Gadcon_Client_Class *cc, E_Con
    if (gcc->gadcon->id == ID_GADMAN_LAYER_TOP)
      {
         edje_object_signal_emit(gcc->o_frame, "e,state,visibility,hide", "e");
-        evas_object_layer_set(gcc->o_frame, E_COMP_CANVAS_LAYER_POPUP);
+        evas_object_layer_set(gcc->o_frame, E_LAYER_POPUP);
      }
    else
-     evas_object_layer_set(gcc->o_frame, E_COMP_CANVAS_LAYER_DESKTOP);
+     evas_object_layer_set(gcc->o_frame, E_LAYER_DESKTOP);
    if (cc->name)
      {
         l = eina_hash_find(_gadman_gadgets, cc->name);
@@ -505,7 +505,7 @@ gadman_gadgets_show(void)
    Eina_Bool editing = EINA_FALSE;
 
    Man->visible = 1;
-   e_popup_show(Man->overlay);
+   evas_object_show(Man->overlay);
 
    if (Man->conf->bg_type == BG_STD)
      {
@@ -631,7 +631,7 @@ gadman_update_bg(void)
            r = (double)Man->conf->color_r * (200. / 255.);
            g = (double)Man->conf->color_g * (200. / 255.);
            b = (double)Man->conf->color_b * (200. / 255.);
-           obj = evas_object_rectangle_add(e_comp_get(Man->container)->evas);
+           obj = evas_object_rectangle_add(Man->comp->evas);
            evas_object_color_set(obj, lround(r), lround(g), lround(b), 200);
            edje_object_part_swallow(Man->full_bg, "e.swallow.bg", obj);
         }
@@ -641,18 +641,18 @@ gadman_update_bg(void)
         ext = strrchr(Man->conf->custom_bg, '.');
         if (!strcmp(ext, ".edj") || !strcmp(ext, ".EDJ"))
           {
-             //THIS IS FOR E18 backgrounds
-             obj = edje_object_add(e_comp_get(Man->container)->evas);
+             //THIS IS FOR E19 backgrounds
+             obj = edje_object_add(Man->comp->evas);
              edje_object_file_set(obj, Man->conf->custom_bg,
                                   "e/desktop/background");
           }
         else
           {
              //THIS IS FOR A NORMAL IMAGE
-             obj = evas_object_image_add(e_comp_get(Man->container)->evas);
+             obj = evas_object_image_add(Man->comp->evas);
              evas_object_image_file_set(obj, Man->conf->custom_bg, NULL);
-             evas_object_image_fill_set(obj, 0, 0, Man->container->w,
-                                        Man->container->h);
+             evas_object_image_fill_set(obj, 0, 0, Man->comp->man->w,
+                                        Man->comp->man->h);
           }
         edje_object_part_swallow(Man->full_bg, "e.swallow.bg", obj);
         break;
@@ -776,7 +776,7 @@ _gadman_gadcon_dnd_drop_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    /* checking if zone was changed for dragged gadget */
    mover = _get_mover(gcc);
    evas_object_geometry_get(mover, &gx, &gy, NULL, NULL);
-   dst_zone = e_container_zone_at_point_get(e_container_current_get(e_manager_current_get()), gx, gy);
+   dst_zone = e_comp_zone_xy_get(e_util_comp_current_get(), gx, gy);
    if (dst_zone && (gcc->gadcon->zone != dst_zone))
      {
         unsigned int layer = gcc->gadcon->id - ID_GADMAN_LAYER_BASE;
@@ -798,12 +798,9 @@ _gadman_overlay_create(void)
    Eina_List *l;
    E_Gadcon *gc;
 
-   Man->overlay = e_popup_new(eina_list_data_get(Man->container->zones), 0, 0, Man->container->w, Man->container->h);
-   e_popup_name_set(Man->overlay, "noshadow_gadman");
-   e_popup_layer_set(Man->overlay, E_COMP_CANVAS_LAYER_LAYOUT, E_LAYER_FULLSCREEN);
-
    /* create full background object */
-   Man->full_bg = edje_object_add(e_comp_get(Man->container)->evas);
+   Man->full_bg = edje_object_add(Man->comp->evas);
+   evas_object_geometry_set(Man->full_bg, 0, 0, Man->comp->man->w, Man->comp->man->h);
    e_theme_edje_object_set(Man->full_bg, "base/theme/gadman",
                            "e/gadman/full_bg");
    edje_object_signal_callback_add(Man->full_bg, "mouse,down,*",
@@ -811,14 +808,13 @@ _gadman_overlay_create(void)
    edje_object_signal_callback_add(Man->full_bg, "e,action,hide,stop",
                                    "", on_hide_stop, NULL);
 
-   e_popup_content_set(Man->overlay, Man->full_bg);
+   Man->overlay = e_comp_object_util_add(Man->full_bg, E_COMP_OBJECT_TYPE_NONE);
+   evas_object_layer_set(Man->overlay, E_LAYER_CLIENT_FULLSCREEN);
 
    /* create placeholder rect to maintain our dnd stacking layer */
-   Man->overlay_layer = evas_object_rectangle_add(e_comp_get(Man->container)->evas);
-   evas_object_layer_set(Man->overlay_layer, E_COMP_CANVAS_LAYER_LAYOUT + E_LAYER_FULLSCREEN);
    EINA_LIST_FOREACH(Man->gadcons[GADMAN_LAYER_TOP], l, gc)
      {
-        gc->drop_handler->base = Man->overlay_layer;
+        gc->drop_handler->base = Man->overlay;
         gc->drop_handler->hidden = 1;
      }
 }
@@ -839,10 +835,10 @@ _gadman_gadcon_new(const char *name, Gadman_Layer_Type layer, E_Zone *zone, E_Ga
    gc->orient = E_GADCON_ORIENT_FLOAT;
    gc->location = loc;
 
-   gc->evas = e_comp_get(Man->container)->evas;
-   e_gadcon_ecore_evas_set(gc, e_comp_get(Man->container)->ee);
-   e_gadcon_xdnd_window_set(gc, e_comp_get(Man->container)->ee_win);
-   e_gadcon_dnd_window_set(gc, e_comp_get(Man->container)->ee_win);
+   gc->evas = Man->comp->evas;
+   e_gadcon_ecore_evas_set(gc, Man->comp->ee);
+   e_gadcon_xdnd_window_set(gc, Man->comp->ee_win);
+   e_gadcon_dnd_window_set(gc, Man->comp->ee_win);
 
    e_gadcon_drop_handler_add(gc, _gadman_gadcon_dnd_enter_cb, _gadman_gadcon_dnd_leave_cb,
                              _gadman_gadcon_dnd_move_cb, _gadman_gadcon_dnd_drop_cb,
@@ -916,11 +912,11 @@ _create_mover(E_Gadcon *gc)
    mover = edje_object_add(gc->evas);
    if (gc->id == ID_GADMAN_LAYER_BG)
      {
-        evas_object_layer_set(mover, E_COMP_CANVAS_LAYER_DESKTOP);
+        evas_object_layer_set(mover, E_LAYER_DESKTOP);
         evas_object_event_callback_add(mover, EVAS_CALLBACK_DEL, _mover_del, NULL);
      }
    else
-     evas_object_layer_set(mover, E_COMP_CANVAS_LAYER_MENU);
+     evas_object_layer_set(mover, E_LAYER_MENU);
    e_theme_edje_object_set(mover, "base/theme/gadman", "e/gadman/control");
 
    edje_object_signal_callback_add(mover, "e,action,move,start", "",
@@ -1235,7 +1231,7 @@ on_menu_add(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
 {
    if (Man->visible)
      gadman_gadgets_hide();
-   e_configure_registry_call("extensions/gadman", m->zone->container, NULL);
+   e_configure_registry_call("extensions/gadman", m->zone->comp, NULL);
 }
 
 static void
@@ -1540,7 +1536,7 @@ on_move(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const 
    drag_gcc->dx = mx - ox;
    drag_gcc->dy = my - oy;
 
-   drag_gcc->drag.drag = drag = e_drag_new(gc->zone->container, mx, my,
+   drag_gcc->drag.drag = drag = e_drag_new(gc->zone->comp, mx, my,
                      drag_types, 1, drag_gcc, -1, NULL,
                      e_gadcon_drag_finished_cb);
    if (!drag) return;
@@ -1569,7 +1565,7 @@ on_bg_click(void *data __UNUSED__, Evas_Object *o __UNUSED__, const char *em __U
 static void
 on_hide_stop(void *data __UNUSED__, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const char *src __UNUSED__)
 {
-   e_popup_hide(Man->overlay);
+   evas_object_hide(Man->overlay);
 }
 
 static int
@@ -1666,10 +1662,10 @@ _e_gadman_cb_zone_change(void *data __UNUSED__, int type, void *event)
                   break;
                }
           }
-        if (ev->zone == Man->overlay->zone)
+        if (ev->zone->comp == Man->comp)
           {
-             E_FREE_FUNC(Man->overlay, e_object_del);
-             E_FREE_FUNC(Man->overlay_layer, evas_object_del);
+             evas_object_hide(Man->overlay);
+             E_FREE_FUNC(Man->overlay, evas_object_del);
              _gadman_overlay_create();
           }
         return ECORE_CALLBACK_RENEW;
@@ -1687,7 +1683,7 @@ _e_gadman_cb_zone_change(void *data __UNUSED__, int type, void *event)
         if (found) continue;
         gc = _gadman_gadcon_new(layer_name[layer], layer, ev->zone, Man->location[layer]);
         Man->gadcons[layer] = eina_list_append(Man->gadcons[layer], gc);
-        gc->drop_handler->base = Man->overlay_layer;
+        gc->drop_handler->base = Man->overlay;
         gc->drop_handler->hidden = 1;
      }
    return ECORE_CALLBACK_PASS_ON;

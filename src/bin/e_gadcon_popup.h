@@ -12,7 +12,7 @@ struct _E_Gadcon_Popup
 {
    E_Object             e_obj_inherit;
 
-   E_Popup	       *win;
+   Evas_Object	       *comp_object;
    E_Gadcon_Client     *gcc;
    Evas_Coord		w, h;
    Evas_Object	       *o_bg;
@@ -22,9 +22,10 @@ struct _E_Gadcon_Popup
    Eina_Bool            pinned : 1;
    Eina_Bool            gadcon_lock : 1;
    Eina_Bool            gadcon_was_locked : 1;
+   Eina_Bool            visible : 1;
 };
 
-EAPI E_Gadcon_Popup *e_gadcon_popup_new(E_Gadcon_Client *gcc);
+EAPI E_Gadcon_Popup *e_gadcon_popup_new(E_Gadcon_Client *gcc, Eina_Bool noshadow);
 EAPI void e_gadcon_popup_content_set(E_Gadcon_Popup *pop, Evas_Object *o);
 EAPI void e_gadcon_popup_show(E_Gadcon_Popup *pop);
 EAPI void e_gadcon_popup_hide(E_Gadcon_Popup *pop);

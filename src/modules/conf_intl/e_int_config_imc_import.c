@@ -50,7 +50,7 @@ e_int_config_imc_import(E_Config_Dialog *parent)
    import = E_NEW(Import, 1);
    if (!import) return NULL;
 
-   win = e_win_new(parent->con);
+   win = e_win_new(parent->comp);
    if (!win)
      {
         E_FREE(import);
@@ -140,7 +140,7 @@ e_int_config_imc_import(E_Config_Dialog *parent)
    e_win_size_min_set(win, w, h);
    e_win_size_max_set(win, 99999, 99999);
    e_win_show(win);
-   e_win_border_icon_set(win, "preferences-imc");
+   e_win_client_icon_set(win, "preferences-imc");
 
    win->data = import;
 

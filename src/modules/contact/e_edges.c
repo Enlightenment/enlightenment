@@ -36,21 +36,17 @@ static Eina_List *handlers = NULL;
 void
 e_edges_init(void)
 {
-   Eina_List *l, *ll, *lll;
-   E_Manager *man;
-   E_Container *con;
+   const Eina_List *l, *ll;
+   E_Comp *comp;
    E_Zone *zone;
    
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
      {
-        EINA_LIST_FOREACH(man->containers, ll, con)
+        EINA_LIST_FOREACH(comp->zones, ll, zone)
           {
-             EINA_LIST_FOREACH(con->zones, lll, zone)
-               {
-                  Edgeset *es = _edgeset_new(zone);
-                  
-                  if (es) edges = eina_list_append(edges, es);
-               }
+             Edgeset *es = _edgeset_new(zone);
+             
+             if (es) edges = eina_list_append(edges, es);
           }
      }
 }
@@ -112,7 +108,7 @@ _handler_call(E_Edges_Event event, int d, double v)
 static Evas_Object *
 _input_obj(Edgeset *es, int x, int y, int w, int h)
 {
-   E_Comp *c = es->zone->container->manager->comp;
+   E_Comp *c = e_comp_get(es->zone);
    Evas_Object *o = evas_object_rectangle_add(c->evas);
    evas_object_color_set(o, 0, 0, 0, 0);
    evas_object_move(o, x, y);

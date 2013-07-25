@@ -48,7 +48,7 @@ typedef enum
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 13
+#define E_CONFIG_FILE_GENERATION 14
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -546,7 +546,7 @@ struct _E_Config_Binding_Acpi
 
 struct _E_Config_Desktop_Background
 {
-   int         container;
+   int         manager;
    int         zone;
    int         desk_x;
    int         desk_y;
@@ -555,7 +555,7 @@ struct _E_Config_Desktop_Background
 
 struct _E_Config_Desktop_Name
 {
-   int         container;
+   int         manager;
    int         zone;
    int         desk_x;
    int         desk_y;
@@ -564,7 +564,7 @@ struct _E_Config_Desktop_Name
 
 struct _E_Config_Desktop_Window_Profile
 {
-   int         container;
+   int         manager;
    int         zone;
    int         desk_x;
    int         desk_y;
@@ -603,9 +603,9 @@ struct _E_Config_Shelf
 {
    const char   *name;
    int           id;
-   int           container, zone;
-   int           layer;
-   unsigned char popup;
+   int           manager, zone;
+   int           layer; //E_Layer
+   unsigned char popup; //DEAD
    int           orient;
    unsigned char fit_along;
    unsigned char fit_size;

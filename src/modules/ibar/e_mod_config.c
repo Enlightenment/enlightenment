@@ -51,7 +51,7 @@ _config_ibar_module(Config_Item *ci)
             e_module_dir_get(ibar_config->module));
 
    /* Create The Dialog */
-   cfd = e_config_dialog_new(e_container_current_get(e_manager_current_get()),
+   cfd = e_config_dialog_new(NULL,
                              _("IBar Settings"),
                              "E", "_e_mod_ibar_config_dialog",
                              buf, 0, v, ci);
@@ -217,8 +217,7 @@ _cb_config(void *data, void *data2 __UNUSED__)
    e_user_dir_snprintf(path, sizeof(path), "applications/bar/%s/.order",
                        cfdata->dir);
    e_configure_registry_call("internal/ibar_other",
-                             e_container_current_get(e_manager_current_get()),
-                             path);
+                             NULL, path);
 }
 
 static void

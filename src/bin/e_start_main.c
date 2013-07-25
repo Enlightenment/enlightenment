@@ -559,7 +559,7 @@ main(int argc, char **argv)
                               }
 #ifdef HAVE_SYS_PTRACE_H
                             if (!really_know)
-                              /* E18 should be in pause, we can detach */
+                              /* E19 should be in pause, we can detach */
                               ptrace(PT_DETACH, child, NULL, back);
 #endif
                             /* And call gdb if available */

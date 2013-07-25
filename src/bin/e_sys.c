@@ -589,14 +589,16 @@ _e_sys_logout_confirm_dialog_update(int remaining)
 static Eina_Bool
 _e_sys_cb_logout_timer(void *data __UNUSED__)
 {
-   Eina_List *l;
-   E_Border *bd;
+   const Eina_List *l, *ll;
+   E_Comp *c;
+   E_Client *ec;
    int pending = 0;
 
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd)
-     {
-        if (!bd->internal) pending++;
-     }
+   EINA_LIST_FOREACH(e_comp_list(), l, c)
+     EINA_LIST_FOREACH(c->clients, ll, ec)
+       {
+          if (!ec->internal) pending++;
+       }
    if (pending == 0) goto after;
    else if (_e_sys_logout_confirm_dialog)
      {
@@ -632,7 +634,7 @@ _e_sys_cb_logout_timer(void *data __UNUSED__)
           {
              E_Dialog *dia;
 
-             dia = e_dialog_new(e_container_current_get(e_manager_current_get()), "E", "_sys_error_logout_slow");
+             dia = e_dialog_new(NULL, "E", "_sys_error_logout_slow");
              if (dia)
                {
                   _e_sys_logout_confirm_dialog = dia;
@@ -677,14 +679,15 @@ _e_sys_logout_after(void)
 static void
 _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw)
 {
-   Eina_List *l;
-   E_Border *bd;
+   const Eina_List *l, *ll;
+   E_Comp *c;
+   E_Client *ec;
    E_Obj_Dialog *od;
 
    /* start logout - at end do the a_after action */
    if (!raw)
      {
-        od = e_obj_dialog_new(e_container_current_get(e_manager_current_get()),
+        od = e_obj_dialog_new(e_util_comp_current_get(),
                               _("Logout in progress"), "E", "_sys_logout");
         e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/logout");
         e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
@@ -697,10 +700,11 @@ _e_sys_logout_begin(E_Sys_Action a_after, Eina_Bool raw)
      }
    _e_sys_action_after = a_after;
    _e_sys_action_after_raw = raw;
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd)
-     {
-        e_border_act_close_begin(bd);
-     }
+   EINA_LIST_FOREACH(e_comp_list(), l, c)
+     EINA_LIST_FOREACH(c->clients, ll, ec)
+       {
+          e_client_act_close_begin(ec);
+       }
    /* and poll to see if all pending windows are gone yet every 0.5 sec */
    _e_sys_logout_begin_time = ecore_time_get();
    if (_e_sys_logout_timer) ecore_timer_del(_e_sys_logout_timer);
@@ -713,7 +717,7 @@ _e_sys_current_action(void)
    /* display dialog that currently an action is in progress */
    E_Dialog *dia;
 
-   dia = e_dialog_new(e_container_current_get(e_manager_current_get()),
+   dia = e_dialog_new(NULL,
                       "E", "_sys_error_action_busy");
    if (!dia) return;
 
@@ -768,7 +772,7 @@ _e_sys_action_failed(void)
    /* display dialog that the current action failed */
    E_Dialog *dia;
 
-   dia = e_dialog_new(e_container_current_get(e_manager_current_get()),
+   dia = e_dialog_new(NULL,
                       "E", "_sys_error_action_failed");
    if (!dia) return;
 
@@ -899,7 +903,7 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                             _e_sys_exe = ecore_exe_run(buf, NULL);
                             ret = 1;
                          }
-                       od = e_obj_dialog_new(e_container_current_get(e_manager_current_get()),
+                       od = e_obj_dialog_new(NULL,
                                              _("Power off"), "E", "_sys_halt");
                        e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/halt");
                        e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
@@ -958,7 +962,7 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                             _e_sys_exe = ecore_exe_run(buf, NULL);
                             ret = 1;
                          }
-                       od = e_obj_dialog_new(e_container_current_get(e_manager_current_get()),
+                       od = e_obj_dialog_new(NULL,
                                              _("Resetting"), "E", "_sys_reboot");
                        e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/reboot");
                        e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
@@ -1025,7 +1029,7 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                             _e_sys_exe = ecore_exe_run(buf, NULL);
                             ret = 1;
                          }
-                       od = e_obj_dialog_new(e_container_current_get(e_manager_current_get()),
+                       od = e_obj_dialog_new(NULL,
                                              _("Suspending"), "E", "_sys_suspend");
                        e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/suspend");
                        e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
@@ -1092,7 +1096,7 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                             _e_sys_exe = ecore_exe_run(buf, NULL);
                             ret = 1;
                          }
-                       od = e_obj_dialog_new(e_container_current_get(e_manager_current_get()),
+                       od = e_obj_dialog_new(NULL,
                                              _("Hibernating"), "E", "_sys_hibernate");
                        e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/hibernate");
                        e_obj_dialog_obj_part_text_set(od, "e.textblock.message",

@@ -526,13 +526,13 @@ _ibar_fill(IBar *b)
           {
              EINA_LIST_FOREACH(l, ll, exe)
                {
-                  E_Border *bd;
+                  E_Client *ec;
                   Eina_List *lll;
                   Eina_Bool skip = EINA_TRUE;
 
                   if (!exe->desktop) continue;
-                  EINA_LIST_FOREACH(exe->borders, lll, bd)
-                    if (!bd->client.netwm.state.skip_taskbar)
+                  EINA_LIST_FOREACH(exe->clients, lll, ec)
+                    if (!ec->netwm.state.skip_taskbar)
                       {
                          skip = EINA_FALSE;
                          break;
@@ -934,11 +934,8 @@ _ibar_cb_obj_moveresize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 static void
 _ibar_cb_menu_icon_new(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
-   E_Container *con;
-
    if (!e_configure_registry_exists("applications/new_application")) return;
-   con = e_container_current_get(e_manager_current_get());
-   e_configure_registry_call("applications/new_application", con, NULL);
+   e_configure_registry_call("applications/new_application", e_comp_get(NULL), NULL);
 }
 
 static void
@@ -951,8 +948,7 @@ _ibar_cb_menu_icon_add(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSE
    e_user_dir_snprintf(path, sizeof(path), "applications/bar/%s/.order",
                        b->inst->ci->dir);
    e_configure_registry_call("internal/ibar_other",
-                             e_container_current_get(e_manager_current_get()),
-                             path);
+                             NULL, path);
 }
 
 static void
@@ -961,7 +957,7 @@ _ibar_cb_menu_icon_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi 
    IBar_Icon *ic;
 
    ic = data;
-   e_desktop_edit(ic->ibar->inst->gcc->gadcon->zone->container, ic->app);
+   e_desktop_edit(e_comp_get(ic->ibar->inst->gcc), ic->app);
 }
 
 static void
@@ -998,16 +994,16 @@ static void
 _ibar_cb_icon_menu_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    IBar_Icon *ic;
-   E_Border *bd = data;
+   E_Client *ec = data;
    Evas_Event_Mouse_Up *ev = event_info;
 
    ic = evas_object_data_get(obj, "ibar_icon");
    if (ev->button == 3)
      {
-        e_int_border_menu_show(bd, ev->canvas.x, ev->canvas.y, 0, ev->timestamp);
+        e_int_client_menu_show(ec, ev->canvas.x, ev->canvas.y, 0, ev->timestamp);
         return;
      }
-   e_border_activate(bd, 1);
+   e_client_activate(ec, 1);
    if (!ic) return;
    edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
 }
@@ -1020,7 +1016,7 @@ _ibar_cb_icon_menu_del(void *obj)
 }
 
 static void
-_ibar_cb_icon_menu_autodel(void *data, void *pop EINA_UNUSED)
+_ibar_cb_icon_menu_autodel(void *data, Evas_Object *obj EINA_UNUSED)
 {
    IBar_Icon *ic = data;
 
@@ -1057,16 +1053,19 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    edje_extern_object_min_size_set(ic->menu->o_bg, w, h);
    if (e_box_orientation_get(ic->ibar->o_box))
      {
-        int ny;
+        int cx, cy, cw, ch, ny;
+        E_Zone *zone;
 
-        if (ic->menu->win->y > (ic->menu->win->zone->h / 2))
-          ny = ic->menu->win->y - (h - ic->menu->win->h);
+        evas_object_geometry_get(ic->menu->comp_object, &cx, &cy, &cw, &ch);
+        zone = e_comp_zone_xy_get(e_comp_get(ic->menu), cx, cy);
+        if (cy > (zone->h / 2))
+          ny = cy - (h - ch);
         else
-          ny = ic->menu->win->y;
-        e_popup_move_resize(ic->menu->win, ic->menu->win->x, ny, w, h);
+          ny = cy;
+        evas_object_geometry_set(ic->menu->comp_object, cx, ny, w, h);
      }
    else
-     e_popup_resize(ic->menu->win, w, h);
+      evas_object_resize(ic->menu->comp_object, w, h);
 }
 
 static void
@@ -1077,37 +1076,44 @@ _ibar_icon_menu(IBar_Icon *ic)
    E_Exec_Instance *exe;
    Evas *e;
    int w, h;
+   Eina_Bool empty = EINA_TRUE;
 
    if (!ic->exes) return; //FIXME
-   ic->menu = e_gadcon_popup_new(ic->ibar->inst->gcc);
-   e_popup_name_set(ic->menu->win, "noshadow-ibarmenu");
+   ic->menu = e_gadcon_popup_new(ic->ibar->inst->gcc, 1);
    e_object_data_set(E_OBJECT(ic->menu), ic);
    E_OBJECT_DEL_SET(ic->menu, _ibar_cb_icon_menu_del);
    e = e_comp_get(ic->menu)->evas;
    o = edje_object_add(e);
    e_theme_edje_object_set(o, "base/theme/modules/ibar",
                            "e/modules/ibar/menu");
+   /* gadcon popups don't really prevent this,
+    * so away we go!
+    */
+   evas_object_del(ic->menu->comp_object);
+   ic->menu->o_bg = o;
+   ic->menu->comp_object = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_NONE);
+   evas_object_layer_set(ic->menu->comp_object, E_LAYER_POPUP);
    EINA_LIST_FOREACH(ic->exes, l, exe)
      {
         Evas_Object *img;
         const char *txt;
         Eina_List *ll;
-        E_Border *bd;
+        E_Client *ec;
 
-        EINA_LIST_FOREACH(exe->borders, ll, bd)
+        EINA_LIST_FOREACH(exe->clients, ll, ec)
           {
-             if (bd->client.netwm.state.skip_taskbar) continue;
+             if (ec->netwm.state.skip_taskbar) continue;
              it = edje_object_add(e);
-             e_popup_object_add(ic->menu->win, it);
+             e_comp_object_util_del_list_append(ic->menu->comp_object, it);
              e_theme_edje_object_set(it, "base/theme/modules/ibar",
                                      "e/modules/ibar/menu/item");
-             img = e_comp_win_image_mirror_add(bd->cw);
+             img = e_comp_object_util_mirror_add(ec->frame);
              evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
                                             _ibar_cb_icon_menu_img_del, it);
-             txt = e_border_name_get(bd);
-             w = bd->cw->pw;
-             h = bd->cw->ph;
-             e_popup_object_add(ic->menu->win, img);
+             txt = e_client_name_get(ec);
+             w = ec->client.w;
+             h = ec->client.h;
+             e_comp_object_util_del_list_append(ic->menu->comp_object, img);
              evas_object_show(img);
              edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, w, h);
              edje_object_part_swallow(it, "e.swallow.icon", img);
@@ -1118,12 +1124,13 @@ _ibar_icon_menu(IBar_Icon *ic)
              evas_object_size_hint_min_set(it, w, h);
              evas_object_show(it);
              evas_object_event_callback_add(it, EVAS_CALLBACK_MOUSE_UP,
-               _ibar_cb_icon_menu_mouse_up, bd);
+               _ibar_cb_icon_menu_mouse_up, ec);
              evas_object_data_set(it, "ibar_icon", ic);
              edje_object_part_box_append(o, "e.box", it);
+             empty = EINA_FALSE;
           }
      }
-   if (!ic->menu->win->objects)
+   if (empty)
      {
         /* something crazy happened */
         evas_object_del(o);
@@ -1133,32 +1140,26 @@ _ibar_icon_menu(IBar_Icon *ic)
    edje_object_calc_force(o);
    edje_object_size_min_calc(o, &w, &h);
    edje_extern_object_min_size_set(o, w, h);
-   /* gadcon popups don't really prevent this,
-    * so away we go!
-    */
-   evas_object_del(ic->menu->o_bg);
-   ic->menu->o_bg = o;
+
    ic->menu->w = w, ic->menu->h = h;
    edje_object_signal_callback_add(o, "e,action,hide,done", "*",
                                    _ibar_cb_icon_menu_hidden, ic);
-   e_popup_resize(ic->menu->win, w, h);
+   evas_object_resize(ic->menu->comp_object, w, h);
    edje_object_signal_emit(o, "e,state,hidden", "e");
    edje_object_message_signal_process(o);
    e_gadcon_popup_show(ic->menu);
    {
       Evas_Coord x, y, iw, ih, ox, oy;
       evas_object_geometry_get(ic->o_holder, &x, &y, &iw, &ih);
-      x -= ic->menu->win->zone->x;
-      y -= ic->menu->win->zone->y;
-      ox = ic->menu->win->x, oy = ic->menu->win->y;
+      evas_object_geometry_get(ic->menu->comp_object, &ox, &oy, NULL, NULL);
       if (e_box_orientation_get(ic->ibar->o_box))
         ox = (x + (iw / 2)) - (w / 2);
       else
         oy = (y + (ih / 2)) - (h / 2);
-      e_popup_move(ic->menu->win, ox, oy);
+      evas_object_move(ic->menu->comp_object, ox, oy);
    }
    edje_object_signal_emit(o, "e,action,show", "e");
-   e_popup_autoclose(ic->menu->win, _ibar_cb_icon_menu_autodel, NULL, ic);
+   e_comp_object_util_autoclose(ic->menu->comp_object, _ibar_cb_icon_menu_autodel, NULL, ic);
 }
 
 static void
@@ -1321,12 +1322,12 @@ _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    Evas_Event_Mouse_Wheel *ev = event_info;
    E_Exec_Instance *exe;
    IBar_Icon *ic = data;
-   E_Border *cur, *sel = NULL;
+   E_Client *cur, *sel = NULL;
    Eina_List *l;
 
    if (!ic->exes) return;
 
-   cur = e_border_focused_get();
+   cur = e_client_focused_get();
    if (!ic->exe_current)
      ic->exe_current = ic->exes;
 
@@ -1335,7 +1336,7 @@ _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
      {
         if (cur && (cur->exe_inst == exe))
           {
-             l = eina_list_data_find_list(exe->borders, cur);
+             l = eina_list_data_find_list(exe->clients, cur);
              if (l) sel = eina_list_data_get(eina_list_next(l));
           }
         if (!sel)
@@ -1349,7 +1350,7 @@ _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
      {
         if (cur && (cur->exe_inst == exe))
           {
-             l = eina_list_data_find_list(exe->borders, cur);
+             l = eina_list_data_find_list(exe->clients, cur);
              if (l) sel = eina_list_data_get(eina_list_prev(l));
           }
         if (!sel)
@@ -1363,11 +1364,11 @@ _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    if (!sel)
      {
         exe = eina_list_data_get(ic->exe_current);
-        sel = eina_list_data_get(exe->borders);
+        sel = eina_list_data_get(exe->clients);
      }
 
    if (sel)
-     e_border_activate(sel, 1);
+     e_client_activate(sel, 1);
 }
 
 static void
@@ -1396,12 +1397,12 @@ _ibar_icon_go(IBar_Icon *ic, Eina_Bool keep_going)
      {
         Eina_List *l, *ll;
         E_Exec_Instance *exe;
-        E_Border *bd, *bdlast = NULL;
+        E_Client *ec, *eclast = NULL;
         unsigned int count = 0;
 
         EINA_LIST_FOREACH(ic->exes, l, exe)
           {
-             EINA_LIST_FOREACH(exe->borders, ll, bd)
+             EINA_LIST_FOREACH(exe->clients, ll, ec)
                {
                   count++;
                   if (count > 1)
@@ -1409,11 +1410,11 @@ _ibar_icon_go(IBar_Icon *ic, Eina_Bool keep_going)
                        ecore_job_add((Ecore_Cb)_ibar_cb_icon_menu_cb, ic);
                        return;
                     }
-                  bdlast = bd;
+                  eclast = ec;
                }
           }
-        if (bdlast)
-          e_border_activate(bdlast, 1);
+        if (eclast)
+          e_client_activate(eclast, 1);
         return;
      }
    if (ic->app->type == EFREET_DESKTOP_TYPE_APPLICATION)
@@ -1425,7 +1426,6 @@ _ibar_icon_go(IBar_Icon *ic, Eina_Bool keep_going)
           {
              E_Exec_Instance *einst;
              
-             if (ic->exe_inst) return;
              einst = e_exec(ic->ibar->inst->gcc->gadcon->zone,
                             ic->app, NULL, NULL, "ibar");
              if (einst)
@@ -1498,7 +1498,7 @@ _ibar_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         if (ic->ibar->inst->ci->lock_move) return;
 
         evas_object_geometry_get(ic->o_icon, &x, &y, &w, &h);
-        d = e_drag_new(ic->ibar->inst->gcc->gadcon->zone->container,
+        d = e_drag_new(ic->ibar->inst->gcc->gadcon->zone->comp,
                        x, y, drag_types, 1,
                        ic->app, -1, NULL, _ibar_cb_drag_finished);
         efreet_desktop_ref(ic->app);
@@ -1707,16 +1707,15 @@ _ibar_inst_cb_drop(void *data, const char *type, void *event_info)
      app = ev->data;
    else if (!strcmp(type, "enlightenment/border"))
      {
-        E_Border *bd;
+        E_Client *ec;
 
-        bd = ev->data;
-        app = bd->desktop;
+        ec = ev->data;
+        app = ec->desktop;
         if (!app)
           {
-             app = e_desktop_border_create(bd);
+             app = e_desktop_client_create(ec);
              efreet_desktop_save(app);
-             e_desktop_edit(e_container_current_get(e_manager_current_get()),
-                            app);
+             e_desktop_edit(NULL, app);
           }
      }
    else if (!strcmp(type, "text/uri-list"))
@@ -1846,8 +1845,8 @@ _ibar_cb_sort(IBar *b1, IBar *b2)
      {
         int id1, id2;
         
-        id1 = z1->id + (z1->container->num * 100) + (z1->container->manager->num * 10000);
-        id2 = z2->id + (z2->container->num * 100) + (z2->container->manager->num * 10000);
+        id1 = z1->id + (z1->comp->num * 100) + (z1->comp->num * 10000);
+        id2 = z2->id + (z2->comp->num * 100) + (z2->comp->num * 10000);
         return id2 - id1;
      }
    return 0;
@@ -2212,19 +2211,20 @@ _ibar_cb_action_focus(E_Object *obj __UNUSED__, const char *params __UNUSED__, E
 }
 
 static Eina_Bool
-_ibar_cb_bd_prop(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Border_Property *ev)
+_ibar_cb_client_prop(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Client_Property *ev)
 {
    IBar *b;
    Eina_List *l;
    Eina_Bool skip;
 
-   if ((!ev->border->exe_inst) || (!ev->border->exe_inst->desktop)) return ECORE_CALLBACK_RENEW;
-   skip = ev->border->client.netwm.state.skip_taskbar;
+   if (e_client_util_ignored_get(ev->ec) || (!ev->ec->exe_inst) || (!ev->ec->exe_inst->desktop)) return ECORE_CALLBACK_RENEW;
+   if (!(ev->property & E_CLIENT_PROPERTY_NETWM_STATE)) return ECORE_CALLBACK_RENEW;
+   skip = ev->ec->netwm.state.skip_taskbar;
    EINA_LIST_FOREACH(ibars, l, b)
      {
         IBar_Icon *ic;
 
-        ic = eina_hash_find(b->icon_hash, _desktop_name_get(ev->border->exe_inst->desktop));
+        ic = eina_hash_find(b->icon_hash, _desktop_name_get(ev->ec->exe_inst->desktop));
         if (skip && (!ic)) continue;
         if (!skip)
           {
@@ -2232,20 +2232,20 @@ _ibar_cb_bd_prop(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Border_Property
                {
                   _ibar_icon_signal_emit(ic, "e,state,started", "e");
                   if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,on", "e");
-                  if (!eina_list_data_find(ic->exes, ev->border->exe_inst))
-                    ic->exes = eina_list_append(ic->exes, ev->border->exe_inst);
+                  if (!eina_list_data_find(ic->exes, ev->ec->exe_inst))
+                    ic->exes = eina_list_append(ic->exes, ev->ec->exe_inst);
                }
             else if (!b->inst->ci->dont_add_nonorder)
               {
                  _ibar_sep_create(b);
-                 ic = _ibar_icon_notinorder_new(b, ev->border->exe_inst);
+                 ic = _ibar_icon_notinorder_new(b, ev->ec->exe_inst);
                  _ibar_resize_handle(b);
               }
           }
         else
           {
-             ic->exes = eina_list_remove(ic->exes, ev->border->exe_inst);
-             if (ic->exe_inst == ev->border->exe_inst) ic->exe_inst = NULL;
+             ic->exes = eina_list_remove(ic->exes, ev->ec->exe_inst);
+             if (ic->exe_inst == ev->ec->exe_inst) ic->exe_inst = NULL;
              if (!ic->exes)
                {
                   if (ic->not_in_order)
@@ -2305,14 +2305,14 @@ static Eina_Bool
 _ibar_cb_exec_new_client(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
 {
    IBar *b;
-   E_Border *bd;
+   E_Client *ec;
    Eina_List *l;
    Eina_Bool skip;
 
    if (!exe->desktop) return ECORE_CALLBACK_RENEW; //can't do anything here :(
    if (!exe->desktop->icon) return ECORE_CALLBACK_RENEW;
-   bd = eina_list_last_data_get(exe->borders); //only care about last (new) one
-   skip = bd->client.netwm.state.skip_taskbar;
+   ec = eina_list_last_data_get(exe->clients); //only care about last (new) one
+   skip = ec->netwm.state.skip_taskbar;
    EINA_LIST_FOREACH(ibars, l, b)
      {
         IBar_Icon *ic;
@@ -2341,14 +2341,14 @@ static Eina_Bool
 _ibar_cb_exec_new(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
 {
    IBar *b;
-   E_Border *bd;
+   E_Client *ec;
    Eina_List *l;
    Eina_Bool skip = EINA_TRUE;
 
    if (!exe->desktop) return ECORE_CALLBACK_RENEW; //can't do anything here :(
    if (!exe->desktop->icon) return ECORE_CALLBACK_RENEW;
-   EINA_LIST_FOREACH(exe->borders, l, bd)
-     if (!bd->client.netwm.state.skip_taskbar)
+   EINA_LIST_FOREACH(exe->clients, l, ec)
+     if (!ec->netwm.state.skip_taskbar)
        skip = EINA_FALSE;
    EINA_LIST_FOREACH(ibars, l, b)
      {
@@ -2434,8 +2434,8 @@ e_modapi_init(E_Module *m)
                          _ibar_cb_exec_new_client, NULL);
    E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_EXEC_DEL,
                          _ibar_cb_exec_del, NULL);
-   E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_BORDER_PROPERTY,
-                         _ibar_cb_bd_prop, NULL);
+   E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_CLIENT_PROPERTY,
+                         _ibar_cb_client_prop, NULL);
 
    e_gadcon_provider_register(&_gadcon_class);
    ibar_orders = eina_hash_string_superfast_new(NULL);

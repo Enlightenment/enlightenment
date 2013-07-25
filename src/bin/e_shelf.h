@@ -15,9 +15,8 @@ struct _E_Shelf
    int                  id;
    int                  x, y, w, h;
    E_Layer              layer;
-   E_Popup             *popup; /* NULL if its within an existing canvas */
+   Evas_Object         *comp_object;
    E_Zone              *zone;
-   E_Comp_Win          *cw;
    Evas_Object         *o_base;
    Ecore_Evas          *ee;
    Evas                *evas;
@@ -71,7 +70,7 @@ EAPI void             e_shelf_config_update(void);
 EAPI E_Entry_Dialog *e_shelf_new_dialog(E_Zone *zone);
 EAPI Eina_List       *e_shelf_list(void);
 EAPI Eina_List       *e_shelf_list_all(void); // includes dummy shelves
-EAPI E_Shelf         *e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, int popup, E_Layer layer, int id);
+EAPI E_Shelf         *e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer layer, int id);
 EAPI E_Shelf         *e_shelf_zone_dummy_new(E_Zone *zone, Evas_Object *obj, int id);
 EAPI void             e_shelf_zone_move_resize_handle(E_Zone *zone);
 EAPI void             e_shelf_populate(E_Shelf *es);

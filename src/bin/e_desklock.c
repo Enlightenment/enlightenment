@@ -22,6 +22,7 @@ typedef struct _E_Desklock_Run E_Desklock_Run;
 struct _E_Desklock_Popup_Data
 {
    E_Zone *zone;
+   Evas_Object *comp_object;
    Evas_Object *bg_object;
    Evas_Object *login_box;
 };
@@ -183,7 +184,7 @@ _user_wallpaper_get(E_Zone *zone)
    desk = e_desk_current_get(zone);
    EINA_LIST_FOREACH(e_config->desktop_backgrounds, l, cdbg)
      {
-        if ((cdbg->container > -1) && (cdbg->container != (int)zone->container->num)) continue;
+        if ((cdbg->manager > -1) && (cdbg->manager != (int)zone->comp->num)) continue;
         if ((cdbg->zone > -1) && (cdbg->zone != (int)zone->num)) continue;
         if ((cdbg->desk_x > -1) && (cdbg->desk_x != desk->x)) continue;
         if ((cdbg->desk_y > -1) && (cdbg->desk_y != desk->y)) continue;
@@ -207,7 +208,7 @@ e_desklock_show_autolocked(void)
 EAPI int
 e_desklock_show(Eina_Bool suspend)
 {
-   Eina_List *managers, *l, *l2, *l3;
+   Eina_List *managers, *l, *l3;
    E_Manager *man;
    int total_zone_num;
    E_Event_Desklock *ev;
@@ -251,7 +252,7 @@ e_desklock_show(Eina_Bool suspend)
 
         zone = e_util_zone_current_get(e_manager_current_get());
         if (zone)
-          e_configure_registry_call("screen/screen_lock", zone->container, NULL);
+          e_configure_registry_call("screen/screen_lock", zone->comp, NULL);
         return 0;
      }
 #ifdef HAVE_PAM
@@ -310,7 +311,7 @@ e_desklock_show(Eina_Bool suspend)
 works:
    //e_comp_block_window_add();
    E_LIST_FOREACH(e_comp_list(), e_comp_override_add);
-   e_comp_ignore_win_add(edd->elock_wnd);
+   e_comp_ignore_win_add(E_PIXMAP_TYPE_X, edd->elock_wnd);
    if (e_config->desklock_language)
      e_intl_language_set(e_config->desklock_language);
 
@@ -320,14 +321,9 @@ works:
    total_zone_num = _e_desklock_zone_num_get();
    EINA_LIST_FOREACH(managers, l, man)
      {
-        E_Container *con;
-
-        EINA_LIST_FOREACH(man->containers, l2, con)
-          {
-             E_Zone *zone;
-             EINA_LIST_FOREACH(con->zones, l3, zone)
-               _e_desklock_popup_add(zone);
-          }
+        E_Zone *zone;
+        EINA_LIST_FOREACH(man->comp->zones, l3, zone)
+          _e_desklock_popup_add(zone);
      }
 
    /* handlers */
@@ -476,8 +472,9 @@ _e_desklock_popup_add(E_Zone *zone)
    evas_object_move(edp->bg_object, zone->x, zone->y);
    evas_object_resize(edp->bg_object, zone->w, zone->h);
    evas_object_show(edp->bg_object);
-   E_LAYER_SET_ABOVE(edp->bg_object, E_COMP_CANVAS_LAYER_DESKLOCK);
-   evas_object_clip_set(edp->bg_object, edp->zone->bg_clip_object);
+   edp->comp_object = e_comp_object_util_add(edp->bg_object, 0);
+   evas_object_layer_set(edp->comp_object, E_LAYER_DESKLOCK);
+   evas_object_clip_set(edp->comp_object, edp->zone->bg_clip_object);
 
    _e_desklock_login_box_add(edp);
    evas_event_thaw(evas);
@@ -521,11 +518,10 @@ _e_desklock_login_box_add(E_Desklock_Popup_Data *edp)
    else
      {
         evas_object_resize(edp->login_box, mw, mh);
-        evas_object_move(edp->login_box,
-                         zone->x + ((zone->w - mw) / 2),
-                         zone->y + ((zone->h - mh) / 2));
+        e_comp_object_util_center_on(edp->login_box, edp->comp_object);
         evas_object_show(edp->login_box);
-        E_LAYER_SET_ABOVE(edp->login_box, E_COMP_CANVAS_LAYER_DESKLOCK);
+        evas_object_layer_set(edp->login_box, E_LAYER_DESKLOCK);
+        evas_object_stack_above(edp->login_box, edp->comp_object);
      }
 
    evas_object_clip_set(edp->login_box, edp->zone->bg_clip_object);
@@ -536,6 +532,8 @@ _e_desklock_popup_free(E_Desklock_Popup_Data *edp)
 {
    if (!edp) return;
 
+   evas_object_hide(edp->comp_object);
+   evas_object_del(edp->comp_object);
    evas_object_del(edp->bg_object);
    evas_object_del(edp->login_box);
 
@@ -580,7 +578,7 @@ _e_desklock_cb_zone_del(void *data __UNUSED__,
    E_Event_Zone_Del *ev = event;
    Eina_List *l;
    if (!edd) return ECORE_CALLBACK_PASS_ON;
-   if ((eina_list_count(e_container_current_get(e_manager_current_get())->zones) == 1) && (e_config->desklock_login_box_zone == -2))
+   if ((eina_list_count(e_util_comp_current_get()->zones) == 1) && (e_config->desklock_login_box_zone == -2))
      edd->move_handler = ecore_event_handler_del(edd->move_handler);
 
    l = _e_desklock_popup_find(ev->zone);
@@ -605,13 +603,8 @@ _e_desklock_cb_zone_move_resize(void *data __UNUSED__,
    EINA_LIST_FOREACH(edd->elock_wnd_list, l, edp)
      if (edp->zone == ev->zone)
        {
-          int w, h;
-
           evas_object_resize(edp->bg_object, ev->zone->w, ev->zone->h);
-          evas_object_geometry_get(edp->login_box, NULL, NULL, &w, &h);
-          evas_object_move(edp->login_box,
-                           edp->zone->x + ((edp->zone->w - w) / 2),
-                           edp->zone->y + ((edp->zone->h - h) / 2));
+          e_comp_object_util_center_on(edp->login_box, edp->comp_object);
           break;
        }
    return ECORE_CALLBACK_PASS_ON;
@@ -794,16 +787,12 @@ static int
 _e_desklock_zone_num_get(void)
 {
    int num;
-   Eina_List *l, *l2;
+   Eina_List *l;
    E_Manager *man;
 
    num = 0;
    EINA_LIST_FOREACH(e_manager_list(), l, man)
-     {
-        E_Container *con;
-        EINA_LIST_FOREACH(man->containers, l2, con)
-          num += eina_list_count(con->zones);
-     }
+     num += eina_list_count(man->comp->zones);
 
    return num;
 }
@@ -870,8 +859,6 @@ _e_desklock_state_set(int state)
 
    EINA_LIST_FOREACH(edd->elock_wnd_list, l, edp)
      {
-        edje_object_signal_emit(edp->login_box, signal_desklock, "e.desklock"); // compat
-        edje_object_signal_emit(edp->bg_object, signal_desklock, "e.desklock"); // compat
         edje_object_signal_emit(edp->login_box, signal_desklock, "e");
         edje_object_signal_emit(edp->bg_object, signal_desklock, "e");
         edje_object_part_text_set(edp->login_box, "e.text.title", text);
@@ -1223,15 +1210,11 @@ _e_desklock_ask_presentation_key_down(void *data, Evas *e __UNUSED__, Evas_Objec
 static void
 _e_desklock_ask_presentation_mode(void)
 {
-   E_Manager *man;
-   E_Container *con;
    E_Dialog *dia;
 
    if (_e_desklock_ask_presentation_dia) return;
 
-   if (!(man = e_manager_current_get())) return;
-   if (!(con = e_container_current_get(man))) return;
-   if (!(dia = e_dialog_new(con, "E", "_desklock_ask_presentation"))) return;
+   if (!(dia = e_dialog_new(NULL, "E", "_desklock_ask_presentation"))) return;
 
    e_dialog_title_set(dia, _("Activate Presentation Mode?"));
    e_dialog_icon_set(dia, "dialog-ask", 64);

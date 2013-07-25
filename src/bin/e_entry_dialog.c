@@ -30,7 +30,7 @@ e_entry_dialog_show(const char *title, const char *icon, const char *text,
    if (initial_text)
      ed->text = strdup(initial_text);
 
-   dia = e_dialog_new(e_container_current_get(e_manager_current_get()), "E", "_entry_dialog");
+   dia = e_dialog_new(NULL, "E", "_entry_dialog");
    if (!dia)
      {
         e_object_del(E_OBJECT(ed));
@@ -76,6 +76,7 @@ _e_entry_dia_del(void *data)
 {
    E_Dialog *dia = data;
 
+   e_win_delete_callback_set(dia->win, _e_entry_dialog_delete);
    e_object_del(dia->data);
 }
 
