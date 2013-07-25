@@ -431,6 +431,8 @@ main(int argc, char **argv)
    TS("Ecore_Wayland Init Done");
    _e_main_shutdown_push(ecore_wl_shutdown);
 
+   ecore_wl_server_mode_set(EINA_TRUE);
+
    /* setup a handler to notify us when ecore_wl has bound the interfaces */
    _hdl_bound = 
      ecore_event_handler_add(ECORE_WL_EVENT_INTERFACES_BOUND, 
