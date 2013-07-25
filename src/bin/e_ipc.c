@@ -103,6 +103,7 @@ retry:
         return 0;
      }
 
+   INF("E_IPC_SOCKET=%s", buf3);
    e_util_env_set("E_IPC_SOCKET", buf3);
    ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_ADD,
                            _e_ipc_cb_client_add, NULL);
