@@ -15,7 +15,6 @@ wl_screenshot_module_la_CFLAGS  = $(AM_CFLAGS) @WL_SCREENSHOT_CFLAGS@ @WAYLAND_C
 wl_screenshot_module_la_LIBADD   = $(LIBS) @WL_SCREENSHOT_LIBS@ @WAYLAND_LIBS@
 # wl_screenshot_module_la_LDFLAGS = $(AM_LDFLAGS) @WL_SCREENSHOT_LDFLAGS@ @WAYLAND_LDFLAGS@
 wl_screenshot_module_la_SOURCES = wl_screenshot/e_mod_main.c \
-			    wl_screenshot/e_mod_main.h \
                             wl_screenshot/e_screenshooter_client_protocol.h \
                             wl_screenshot/e_screenshooter_client_protocol.c
 # TODO: incomplete
