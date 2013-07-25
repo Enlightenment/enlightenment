@@ -18,6 +18,8 @@ e_buffer_resource_get(struct wl_resource *resource)
         if (!(buffer = E_NEW_RAW(E_Buffer, 1)))
           return NULL;
 
+        buffer->w = 0;
+        buffer->h = 0;
         buffer->wl.resource = resource;
         wl_signal_init(&buffer->signals.destroy);
         buffer->buffer_destroy.notify = _e_buffer_cb_destroy;
