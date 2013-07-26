@@ -1549,6 +1549,14 @@ _e_comp_done_defer(E_Comp_Win *cw)
         cw->c->animating--;
      }
    cw->animating = 0;
+   if (cw->visible && cw->win && cw->real_hid)
+     {
+        /* window show event occurred during hide animation */
+        //INF("UNSETTING real_hid %p:%u", cw, cw->win);
+        _e_comp_win_damage(cw, cw->x, cw->y, cw->w, cw->h, 0);
+        _e_comp_child_hide(cw);
+        cw->real_hid = 0;
+     }
    _e_comp_win_render_queue(cw);
    cw->force = 1;
    if (cw->defer_hide) _e_comp_win_hide(cw);
@@ -2468,7 +2476,7 @@ _e_comp_win_show(E_Comp_Win *cw)
    if (cw->real_hid)
      {
         DBG("  [0x%x] real hid - fix", cw->win);
-        cw->real_hid = 0;
+        cw->real_hid = cw->animating;
         if (cw->native)
           {
              evas_object_image_native_surface_set(cw->obj, NULL);
