@@ -634,6 +634,7 @@ _gadman_gadcon_dnd_enter_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    if ((!eina_list_data_find(Man->gadcons[GADMAN_LAYER_BG], gc)) &&
        (!eina_list_data_find(Man->gadcons[GADMAN_LAYER_TOP], gc)))
      return;
+   if (gc != gcc->gadcon) return;
    //INF("ENTER: %u", e_object_ref_get((void*)gcc));
    gadman_gadget_edit_start(gcc);
 }
@@ -648,6 +649,7 @@ _gadman_gadcon_dnd_leave_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    if ((!eina_list_data_find(Man->gadcons[GADMAN_LAYER_BG], gc)) &&
        (!eina_list_data_find(Man->gadcons[GADMAN_LAYER_TOP], gc)))
      return;
+   if (gc != gcc->gadcon) return;
    //INF("LEAVE: %u", e_object_ref_get((void*)gcc));
    Man->drag_gcc[gcc->gadcon->id - ID_GADMAN_LAYER_BASE] = NULL;
    for (layer = 0; layer < GADMAN_LAYER_COUNT; layer++)
@@ -676,6 +678,7 @@ _gadman_gadcon_dnd_move_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    int x, y, mx, my;
    int ox, oy, ow, oh;
 
+   if (gc != gcc->gadcon) return;
    /* only use this for dragging gadcons around the desktop */
    if ((!eina_list_data_find(Man->gadcons[GADMAN_LAYER_BG], gc)) &&
        (!eina_list_data_find(Man->gadcons[GADMAN_LAYER_TOP], gc)))
@@ -709,6 +712,7 @@ _gadman_gadcon_dnd_drop_cb(E_Gadcon *gc, E_Gadcon_Client *gcc)
    Evas_Object *mover;
    int gx, gy;
 
+   if (gc != gcc->gadcon) return;
    /* only use this for dragging gadcons around the desktop */
    if ((!eina_list_data_find(Man->gadcons[GADMAN_LAYER_BG], gc)) &&
        (!eina_list_data_find(Man->gadcons[GADMAN_LAYER_TOP], gc)))
