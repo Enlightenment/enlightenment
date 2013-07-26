@@ -387,6 +387,8 @@ main(int argc, char **argv)
 
    ecore_x_io_error_handler_set(_e_main_cb_x_fatal, NULL);
 
+   _xdg_data_dirs_augment();
+
 #ifdef HAVE_ECORE_IMF
    TS("Ecore_IMF Init");
    if (!ecore_imf_init())
@@ -520,8 +522,6 @@ main(int argc, char **argv)
      }
    TS("E_Config Init Done");
    _e_main_shutdown_push(e_config_shutdown);
-
-   _xdg_data_dirs_augment();
 
    _fix_user_default_edj();
 
