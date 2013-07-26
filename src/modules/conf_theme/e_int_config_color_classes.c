@@ -79,6 +79,7 @@ static const CFColor_Class_Description _color_classes_wm[] =
    CCDESC_T("border_title_active", N_("Border Title Active")),
    CCDESC_T("border_frame", N_("Border Frame")),
    CCDESC_T("border_frame_active", N_("Border Frame Active")),
+   CCDESC_S("comp_focus-out_color", N_("Composite Focus-out Color")),
    CCDESC_T("error_text", N_("Error Text")),
    CCDESC_S("menu_base", N_("Menu Background Base")),
    CCDESC_T("menu_title", N_("Menu Title")),
@@ -128,7 +129,6 @@ static const CFColor_Class_Description _color_classes_widgets[] =
 static const CFColor_Class_Description _color_classes_modules[] =
 {
    CCDESC_T("module_label", N_("Module Label")),
-   CCDESC_S("comp_focus-out_color", N_("Composite Focus-out Color")),
    {NULL, 0, NULL, COLOR_CLASS_UNKNOWN}
 };
 #undef CCDESC_S
