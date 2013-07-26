@@ -4959,7 +4959,7 @@ _e_border_del(E_Border *bd)
         ecore_timer_del(bd->raise_timer);
         bd->raise_timer = NULL;
      }
-   if (!bd->already_unparented)
+   if ((!bd->already_unparented) && (!bd->destroyed))
      {
         ecore_x_window_reparent(bd->client.win,
                                 bd->zone->container->manager->root,
@@ -5069,7 +5069,7 @@ _e_border_cb_window_destroy(void *data  __UNUSED__,
    e = ev;
    bd = e_border_find_by_client_window(e->win);
    if (!bd) return ECORE_CALLBACK_PASS_ON;
-   e_border_hide(bd, 0);
+   bd->destroyed = 1;
    e_object_del(E_OBJECT(bd));
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -5130,6 +5130,9 @@ _e_border_cb_window_hide(void *data  __UNUSED__,
    else
      {
 //             printf("  hide2\n");
+
+        if (bd->delete_requested)
+          bd->destroyed = 1;
         e_border_hide(bd, 0);
         e_object_del(E_OBJECT(bd));
      }

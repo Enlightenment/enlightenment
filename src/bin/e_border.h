@@ -561,6 +561,7 @@ struct _E_Border
    unsigned int       internal_no_reopen : 1;
    unsigned int       stolen : 1;
    Eina_Bool          theme_shadow : 1;
+   Eina_Bool          destroyed : 1;
 
    Ecore_Evas        *internal_ecore_evas;
 
