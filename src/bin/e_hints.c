@@ -125,15 +125,13 @@ e_hints_init(void)
              nwins = ecore_x_window_prop_window_get(roots[i],
                                                     ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
                                                     &win, 1);
+             twin = win;
              if (nwins > 0)
                {
                   for (;; )
                     {
-                       nwins = ecore_x_window_prop_window_get(win,
-                                                              ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
-                                                              &twin, 1);
-                       if (nwins < 1) break;
                        if (twin != win) break;
+                       if (ecore_x_error_code_get()) break; //some dead window has the atom
                        if (ecore_x_netwm_name_get(win, &name))
                          {
                             if (name)
@@ -153,6 +151,10 @@ e_hints_init(void)
                                                    "on this screen. Aborting startup.\n"));
                             exit(1);
                          }
+                       nwins = ecore_x_window_prop_window_get(roots[i],
+                                                              ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
+                                                              &twin, 1);
+                       if (nwins < 1) break;
                     }
                }
 
