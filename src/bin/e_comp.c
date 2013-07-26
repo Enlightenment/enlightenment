@@ -2785,7 +2785,7 @@ _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, int border)
              cw->w = w;
              cw->h = h;
              resized = EINA_TRUE;
-             if ((!cw->bd) || ((!cw->bd->shading) && (!cw->bd->shaded)))
+             if (cw->visible && ((!cw->bd) || ((!cw->bd->shading) && (!cw->bd->shaded))))
                {
                   cw->needpix = 1;
                   // was cw->w / cw->h
