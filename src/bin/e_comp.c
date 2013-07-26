@@ -2506,8 +2506,8 @@ _e_comp_win_show(E_Comp_Win *cw)
              cw->pw = 0;
              cw->ph = 0;
           }
-        if (!cw->win)
-          cw->dmg_updates = 1;
+        if (cw->win) return;
+        cw->dmg_updates = 1;
      }
    else
      cw->dmg_updates = 1;
