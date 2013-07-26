@@ -226,3 +226,4 @@ Fixes:
     * fixed bug where e widgets would not unset focus
     * fixed bug with filemanager setting path with too many spaces when opened from menu
     * fixed crash when multiple windows shared a remember
+    * fixed bug where double clicking filemanager windows would not correctly autosize
