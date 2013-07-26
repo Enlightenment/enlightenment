@@ -2627,15 +2627,18 @@ _e_comp_win_hide(E_Comp_Win *cw)
      }
    if (conf->keep_unmapped && cw->win)
      {
-        if (conf->send_flush)
+        if (!cw->delete_me)
           {
-             if (cw->bd) ecore_x_e_comp_flush_send(cw->bd->client.win);
-             else ecore_x_e_comp_flush_send(cw->win);
-          }
-        if (conf->send_dump)
-          {
-             if (cw->bd) ecore_x_e_comp_dump_send(cw->bd->client.win);
-             else ecore_x_e_comp_dump_send(cw->win);
+             if (conf->send_flush)
+               {
+                  if (cw->bd) ecore_x_e_comp_flush_send(cw->bd->client.win);
+                  else ecore_x_e_comp_flush_send(cw->win);
+               }
+             if (conf->send_dump)
+               {
+                  if (cw->bd) ecore_x_e_comp_dump_send(cw->bd->client.win);
+                  else ecore_x_e_comp_dump_send(cw->win);
+               }
           }
         return;
      }
