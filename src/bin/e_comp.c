@@ -4096,12 +4096,8 @@ _e_comp_populate(E_Comp *c)
    evas_object_show(c->layout);
 
    EINA_LIST_FOREACH(c->man->containers, l, con)
-     {
-        e_container_shape_change_callback_add(con, _e_comp_shapes_update, c);
-        ecore_x_window_configure(c->ee_win,
-          ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING | ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE,
-          0, 0, 0, 0, 0, con->layers[0].win, ECORE_X_WINDOW_STACK_BELOW);
-     }
+     e_container_shape_change_callback_add(con, _e_comp_shapes_update, c);
+   ecore_evas_lower(c->ee);
    wins = ecore_x_window_children_get(c->man->root, &num);
    if (!wins) return;
    for (i = 0; i < num; i++)
