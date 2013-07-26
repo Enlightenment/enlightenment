@@ -1064,10 +1064,13 @@ e_border_hide(E_Border *bd,
           }
      }
 
-   visible = 0;
-   ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_MAPPED, &visible, 1);
-   if (!manage)
-     ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_MANAGED, &visible, 1);
+   if (!bd->delete_requested)
+     {
+        visible = 0;
+        ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_MAPPED, &visible, 1);
+        if (!manage)
+          ecore_x_window_prop_card32_set(bd->client.win, E_ATOM_MANAGED, &visible, 1);
+     }
 
    bd->post_show = 0;
 
