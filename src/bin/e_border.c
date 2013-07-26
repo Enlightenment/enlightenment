@@ -8723,7 +8723,8 @@ _e_border_eval(E_Border *bd)
              else if (!bd->client.e.state.video)
                {
                   ecore_x_window_move_resize(bd->client.win, 0, 0, bd->client.w, bd->client.h);
-                  ecore_x_window_move_resize(bd->client.lock_win, 0, 0, bd->client.w, bd->client.h);
+                  if (bd->client.lock_win)
+                    ecore_x_window_move_resize(bd->client.lock_win, 0, 0, bd->client.w, bd->client.h);
                }
              _e_border_client_move_resize_send(bd);
           }
