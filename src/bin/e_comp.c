@@ -2946,11 +2946,11 @@ _e_comp_win_shape_create(E_Comp_Win *cw, int x, int y, int w, int h)
 }
 
 //////////////////////////////////////////////////////////////////////////
+
 static Eina_Bool
-_e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+_e_comp_show_request(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
-   Ecore_X_Event_Window_Create *ev = event;
-   E_Comp_Win *cw;
+   Ecore_X_Event_Window_Show_Request *ev = event;
    E_Comp *c;
 
    c = _e_comp_find(ev->parent);
@@ -2961,9 +2961,9 @@ _e_comp_create(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (_e_comp_ignore_find(ev->win)) return ECORE_CALLBACK_PASS_ON;
    if (e_border_find_by_client_window(ev->win)) return ECORE_CALLBACK_RENEW;
    if (e_border_find_by_window(ev->win)) return ECORE_CALLBACK_RENEW;
-   cw = _e_comp_win_add(c, ev->win, NULL);
-   if (!cw) return ECORE_CALLBACK_RENEW;
-   if (cw->free_shape) _e_comp_win_shape_create(cw, ev->x, ev->y, ev->w, ev->h);
+   if (_e_comp_win_find(ev->win)) return ECORE_CALLBACK_RENEW;
+   //INF("SHOW_REQUEST: %u", ev->win);
+   _e_comp_win_add(c, ev->win, NULL);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -4863,7 +4863,7 @@ e_comp_init(void)
    damages = eina_hash_string_superfast_new(NULL);
    ignores = eina_hash_string_superfast_new(NULL);
 
-   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_CREATE, _e_comp_create, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_SHOW_REQUEST, _e_comp_show_request, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_DESTROY, _e_comp_destroy, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_SHOW, _e_comp_show, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_HIDE, _e_comp_hide, NULL);
