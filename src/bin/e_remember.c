@@ -456,6 +456,8 @@ _e_remember_update(E_Border *bd, E_Remember *rem)
      rem->prop.offer_resistance = bd->offer_resistance;
    if (rem->apply & E_REMEMBER_APPLY_OPACITY)
      rem->prop.opacity = bd->client.netwm.opacity;
+   if (rem->apply & E_REMEMBER_APPLY_BORDER)
+     eina_stringshare_replace(&rem->prop.border, bd->bordername);
    rem->no_reopen = bd->internal_no_reopen;
    {
       E_Event_Remember_Update *ev;
@@ -844,12 +846,11 @@ _e_remember_cb_hook_pre_post_fetch(void *data __UNUSED__, void *border)
      }
    if (rem->apply & E_REMEMBER_APPLY_BORDER)
      {
-        if (rem->prop.border)
-          {
-             eina_stringshare_replace(&bd->bordername, NULL);
-             bd->bordername = eina_stringshare_ref(rem->prop.border);
-             bd->client.border.changed = 1;
-          }
+        eina_stringshare_replace(&bd->bordername, NULL);
+        bd->bordername = eina_stringshare_ref(rem->prop.border);
+        if (!bd->bordername) bd->borderless = 1;
+        bd->client.border.changed = 1;
+        BD_CHANGED(bd);
      }
    if (rem->apply & E_REMEMBER_APPLY_FULLSCREEN)
      {

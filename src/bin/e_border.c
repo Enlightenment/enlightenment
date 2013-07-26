@@ -8272,6 +8272,7 @@ _e_border_eval0(E_Border *bd)
                   //	     edje_object_message_signal_process(bd->bg_object);
                   //	     e_border_frame_recalc(bd);
                }
+             rem_change = 1;
           }
         bd->client.border.changed = 0;
      }
