@@ -2890,6 +2890,7 @@ _e_comp_win_damage(E_Comp_Win *cw, int x, int y, int w, int h, Eina_Bool dmg)
      }
    if (!cw->update)
      {
+        //INF("RENDER QUEUE: %p:%u", cw, cw->win);
         cw->update = 1;
         cw->c->updates = eina_list_append(cw->c->updates, cw);
      }
@@ -2971,6 +2972,7 @@ _e_comp_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Window_Destroy *ev = event;
    E_Comp_Win *cw = _e_comp_win_find(ev->win);
+   //INF("DESTROY: %p %u:%u", cw, ev->win, ev->event_win);
    if (!cw)
      {
         eina_hash_del_by_key(ignores, e_util_winid_str_get(ev->win));
@@ -2997,8 +2999,13 @@ _e_comp_show(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         if (!man) return ECORE_CALLBACK_RENEW;
         cw = _e_comp_win_add(man->comp, ev->win, NULL);
         if (!cw) return ECORE_CALLBACK_RENEW;
+        //INF("SHOW: %p %u:%u", cw, ev->win, ev->event_win);
         if (cw->free_shape) _e_comp_win_shape_create(cw, cw->x, cw->y, cw->w, cw->h);
      }
+   else
+     //INF("SHOW: %p %u:%u || %d", cw, ev->win, ev->event_win, cw->animating);
+   //if (cw->animating)
+     //INF("ANIMATING!");
    cw->defer_hide = 0;
    if (cw->visible || cw->bd) return ECORE_CALLBACK_PASS_ON;
    _e_comp_win_show(cw);
@@ -3010,6 +3017,7 @@ _e_comp_hide(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Window_Hide *ev = event;
    E_Comp_Win *cw = _e_comp_win_find(ev->win);
+   //INF("HIDE: %p %u:%u", cw, ev->win, ev->event_win);
    if (!cw) return ECORE_CALLBACK_PASS_ON;
    if (!cw->visible) return ECORE_CALLBACK_PASS_ON;
    _e_comp_win_real_hide(cw);
@@ -3034,6 +3042,7 @@ _e_comp_configure(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
    Ecore_X_Event_Window_Configure *ev = event;
    E_Comp_Win *cw = _e_comp_win_find(ev->win);
+   //INF("CFG: %p %u:%u", cw, ev->win, ev->event_win);
    if (!cw) return ECORE_CALLBACK_PASS_ON;
 
    if (ev->abovewin == 0)
@@ -3209,6 +3218,7 @@ _e_comp_damage(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    Ecore_X_Event_Damage *ev = event;
    E_Comp_Win *cw = _e_comp_win_damage_find(ev->damage);
    if (!cw) return ECORE_CALLBACK_PASS_ON;
+   //INF("DAMAGE: %p %u", cw, cw->win);
    _e_comp_win_damage(cw, ev->area.x, ev->area.y, ev->area.width, ev->area.height, 1);
    return ECORE_CALLBACK_PASS_ON;
 }
