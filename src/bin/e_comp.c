@@ -92,7 +92,7 @@ static void _e_comp_win_real_hide(E_Comp_Win *cw);
 static void _e_comp_win_hide(E_Comp_Win *cw);
 static void _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, int border);
 static void _e_comp_shapes_update(void *data, E_Container_Shape *es, E_Container_Shape_Change ch);
-
+static void _e_comp_win_shape_create(E_Comp_Win *cw, int x, int y, int w, int h);
 static void _e_comp_injected_win_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void _e_comp_injected_win_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void _e_comp_injected_win_focus_in_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
@@ -2148,6 +2148,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
    else
      {
         Ecore_X_Window_Attributes att;
+        char *netwm_title = NULL;
 
         memset((&att), 0, sizeof(Ecore_X_Window_Attributes));
         if (!ecore_x_window_attributes_get(cw->win, &att))
@@ -2172,10 +2173,6 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
 
         if (cw->override && (!(att.event_mask.mine & ECORE_X_EVENT_MASK_WINDOW_PROPERTY)))
           ecore_x_event_mask_set(cw->win, ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
-     }
-   if ((!cw->bd) && (!cw->menu))
-     {
-        char *netwm_title = NULL;
 
         cw->title = ecore_x_icccm_title_get(cw->win);
         if (ecore_x_netwm_name_get(cw->win, &netwm_title))
@@ -2196,6 +2193,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
         cw->free_shape = 1;
         // setup on show
         // _e_comp_win_sync_setup(cw, cw->win);
+        _e_comp_win_shape_create(cw, x, y, w, h);
      }
 
    if (!cw->counter)
