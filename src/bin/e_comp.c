@@ -572,8 +572,8 @@ _e_comp_win_update(E_Comp_Win *cw)
         cw->shaped = _e_comp_win_shaped_check(cw, cw->shape->shape_rects, cw->shape->shape_rects_num);
      }
 
-   if (((!cw->pixmap) || (cw->needpix)) &&
-       (!cw->real_hid) && (!cw->nocomp) && (!cw->c->nocomp))
+   if (cw->dmg_updates && (((!cw->pixmap) || (cw->needpix)) &&
+       (!cw->real_hid) && (!cw->nocomp) && (!cw->c->nocomp)))
      {
         Ecore_X_Pixmap pm = 0;
 
