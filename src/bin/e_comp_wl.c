@@ -2083,7 +2083,8 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
    /* add a keyboard object to the client */
    kbd = wl_resource_create(client, &wl_keyboard_interface, 
                             wl_resource_get_version(resource), id);
-   wl_list_insert(&input->wl.seat.keyboard->resource_list, &kbd->link);
+   wl_list_insert(&input->wl.seat.keyboard->resource_list, 
+                  wl_resource_get_link(kbd));
    wl_resource_set_implementation(kbd, NULL, input, 
                                   _e_comp_wl_input_cb_unbind);
 
