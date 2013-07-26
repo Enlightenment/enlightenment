@@ -9,7 +9,7 @@ typedef struct _E_Exec_Instance E_Exec_Instance;
 struct _E_Exec_Instance
 {
    Efreet_Desktop *desktop;
-   E_Border       *bd;
+   Eina_List      *borders;
    const char     *key;
    Ecore_Exe      *exe;
    int             startup_id;
@@ -46,9 +46,11 @@ EAPI void e_exec_instance_watcher_del(E_Exec_Instance *inst, void (*func) (void 
 EAPI const Eina_List *e_exec_desktop_instances_find(const Efreet_Desktop *desktop);
 
 EAPI const Eina_Hash *e_exec_instances_get(void);
+EAPI void e_exec_instance_client_add(E_Exec_Instance *inst, E_Border *bd);
 
 /* sends E_Exec_Instance */
 EAPI extern int E_EVENT_EXEC_NEW;
+EAPI extern int E_EVENT_EXEC_NEW_CLIENT;
 EAPI extern int E_EVENT_EXEC_DEL;
 
 #endif

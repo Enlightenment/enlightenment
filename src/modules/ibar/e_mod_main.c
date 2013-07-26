@@ -524,8 +524,18 @@ _ibar_fill(IBar *b)
           {
              EINA_LIST_FOREACH(l, ll, exe)
                {
+                  E_Border *bd;
+                  Eina_List *lll;
+                  Eina_Bool skip = EINA_TRUE;
+
                   if (!exe->desktop) continue;
-                  if (exe->bd && exe->bd->client.netwm.state.skip_taskbar) continue;
+                  EINA_LIST_FOREACH(exe->borders, lll, bd)
+                    if (!bd->client.netwm.state.skip_taskbar)
+                      {
+                         skip = EINA_FALSE;
+                         break;
+                      }
+                  if (skip) continue;
                   ic = eina_hash_find(b->icon_hash, _desktop_name_get(exe->desktop));
                   if (ic)
                     {
@@ -1025,6 +1035,7 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    IBar_Icon *ic = evas_object_data_del(data, "ibar_icon");
 
    if (!ic) return; //menu is closing
+   if (!ic->menu) return; //who knows
    edje_object_part_box_remove(ic->menu->o_bg, "e.box", data);
    evas_object_del(data);
    if (eina_list_count(ic->exes) < 2)
@@ -1071,33 +1082,37 @@ _ibar_icon_menu(IBar_Icon *ic)
      {
         Evas_Object *img;
         const char *txt;
+        Eina_List *ll;
+        E_Border *bd;
 
-        if (!exe->bd) continue; //WTF
-        it = edje_object_add(e);
-        e_popup_object_add(ic->menu->win, it);
-        e_theme_edje_object_set(it, "base/theme/modules/ibar",
-                                "e/modules/ibar/menu/item");
-        img = e_comp_win_image_mirror_add(exe->bd->cw);
-        evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
-                                       _ibar_cb_icon_menu_img_del, it);
-        txt = exe->bd->client.netwm.name ?:
-          (exe->bd->client.icccm.title ?: exe->bd->client.icccm.name);
-        w = exe->bd->cw->pw;
-        h = exe->bd->cw->ph;
-        e_popup_object_add(ic->menu->win, img);
-        evas_object_show(img);
-        edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, w, h);
-        edje_object_part_swallow(it, "e.swallow.icon", img);
-        edje_object_part_text_set(it, "e.text.title", txt);
-        edje_object_calc_force(it);
-        edje_object_size_min_calc(it, &w, &h);
-        edje_extern_object_min_size_set(it, w, h);
-        evas_object_size_hint_min_set(it, w, h);
-        evas_object_show(it);
-        evas_object_event_callback_add(it, EVAS_CALLBACK_MOUSE_UP,
-          _ibar_cb_icon_menu_mouse_up, exe->bd);
-        evas_object_data_set(it, "ibar_icon", ic);
-        edje_object_part_box_append(o, "e.box", it);
+        EINA_LIST_FOREACH(exe->borders, ll, bd)
+          {
+             if (bd->client.netwm.state.skip_taskbar) continue;
+             it = edje_object_add(e);
+             e_popup_object_add(ic->menu->win, it);
+             e_theme_edje_object_set(it, "base/theme/modules/ibar",
+                                     "e/modules/ibar/menu/item");
+             img = e_comp_win_image_mirror_add(bd->cw);
+             evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
+                                            _ibar_cb_icon_menu_img_del, it);
+             txt = e_border_name_get(bd);
+             w = bd->cw->pw;
+             h = bd->cw->ph;
+             e_popup_object_add(ic->menu->win, img);
+             evas_object_show(img);
+             edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, w, h);
+             edje_object_part_swallow(it, "e.swallow.icon", img);
+             edje_object_part_text_set(it, "e.text.title", txt);
+             edje_object_calc_force(it);
+             edje_object_size_min_calc(it, &w, &h);
+             edje_extern_object_min_size_set(it, w, h);
+             evas_object_size_hint_min_set(it, w, h);
+             evas_object_show(it);
+             evas_object_event_callback_add(it, EVAS_CALLBACK_MOUSE_UP,
+               _ibar_cb_icon_menu_mouse_up, bd);
+             evas_object_data_set(it, "ibar_icon", ic);
+             edje_object_part_box_append(o, "e.box", it);
+          }
      }
    if (!ic->menu->win->objects)
      {
@@ -1293,35 +1308,56 @@ _ibar_cb_icon_reset(void *data)
 static void
 _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Evas_Event_Mouse_Wheel *ev;
+   Evas_Event_Mouse_Wheel *ev = event_info;
    E_Exec_Instance *exe;
-   IBar_Icon *ic;
-
-   ev = event_info;
-   ic = data;
+   IBar_Icon *ic = data;
+   E_Border *cur, *sel = NULL;
+   Eina_List *l;
 
    if (!ic->exes) return;
 
+   cur = e_border_focused_get();
    if (!ic->exe_current)
-     ic->exe_current = eina_list_nth_list(ic->exes, 0);
+     ic->exe_current = ic->exes;
 
+   exe = eina_list_data_get(ic->exe_current);
    if (ev->z < 0)
      {
-        ic->exe_current = eina_list_next(ic->exe_current);
-        if (!ic->exe_current)
-          ic->exe_current = eina_list_nth_list(ic->exes, 0);
+        if (cur->exe_inst == exe)
+          {
+             l = eina_list_data_find_list(exe->borders, cur);
+             if (l) sel = eina_list_data_get(eina_list_next(l));
+          }
+        if (!sel)
+          {
+             ic->exe_current = eina_list_next(ic->exe_current);
+             if (!ic->exe_current)
+               ic->exe_current = ic->exes;
+          }
      }
    else if (ev->z > 0)
      {
-        ic->exe_current = eina_list_prev(ic->exe_current);
-        if (!ic->exe_current)
-          ic->exe_current = eina_list_last(ic->exes);
+        if (cur->exe_inst == exe)
+          {
+             l = eina_list_data_find_list(exe->borders, cur);
+             if (l) sel = eina_list_data_get(eina_list_prev(l));
+          }
+        if (!sel)
+          {
+             ic->exe_current = eina_list_prev(ic->exe_current);
+             if (!ic->exe_current)
+               ic->exe_current = eina_list_last(ic->exes);
+          }
      }
 
-   exe = eina_list_data_get(ic->exe_current);
+   if (!sel)
+     {
+        exe = eina_list_data_get(ic->exe_current);
+        sel = eina_list_data_get(exe->borders);
+     }
 
-   if (!exe->bd) return;
-   e_border_activate(exe->bd, 1);
+   if (sel)
+     e_border_activate(sel, 1);
 }
 
 static void
@@ -2237,14 +2273,52 @@ _ibar_cb_exec_del(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
 }
 
 static Eina_Bool
-_ibar_cb_exec_new(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
+_ibar_cb_exec_new_client(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
 {
    IBar *b;
+   E_Border *bd;
    Eina_List *l;
    Eina_Bool skip;
 
    if (!exe->desktop) return ECORE_CALLBACK_RENEW; //can't do anything here :(
-   skip = exe->bd && exe->bd->client.netwm.state.skip_taskbar;
+   bd = eina_list_last_data_get(exe->borders); //only care about last (new) one
+   skip = bd->client.netwm.state.skip_taskbar;
+   EINA_LIST_FOREACH(ibars, l, b)
+     {
+        IBar_Icon *ic;
+
+        ic = eina_hash_find(b->icon_hash, _desktop_name_get(exe->desktop));
+        if (ic)
+          {
+             _ibar_icon_signal_emit(ic, "e,state,started", "e");
+             if (!ic->exes) _ibar_icon_signal_emit(ic, "e,state,on", "e");
+             if (skip) continue;
+             if (!eina_list_data_find(ic->exes, exe))
+               ic->exes = eina_list_append(ic->exes, exe);
+          }
+        else if (!b->inst->ci->dont_add_nonorder)
+          {
+             if (skip) continue;
+             _ibar_sep_create(b);
+             ic = _ibar_icon_notinorder_new(b, exe);
+             _ibar_resize_handle(b);
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_ibar_cb_exec_new(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
+{
+   IBar *b;
+   E_Border *bd;
+   Eina_List *l;
+   Eina_Bool skip = EINA_TRUE;
+
+   if (!exe->desktop) return ECORE_CALLBACK_RENEW; //can't do anything here :(
+   EINA_LIST_FOREACH(exe->borders, l, bd)
+     if (!bd->client.netwm.state.skip_taskbar)
+       skip = EINA_FALSE;
    EINA_LIST_FOREACH(ibars, l, b)
      {
         IBar_Icon *ic;
@@ -2325,6 +2399,8 @@ e_modapi_init(E_Module *m)
                          _ibar_cb_config_icons, NULL);
    E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_EXEC_NEW,
                          _ibar_cb_exec_new, NULL);
+   E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_EXEC_NEW_CLIENT,
+                         _ibar_cb_exec_new_client, NULL);
    E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_EXEC_DEL,
                          _ibar_cb_exec_del, NULL);
    E_LIST_HANDLER_APPEND(ibar_config->handlers, E_EVENT_BORDER_PROPERTY,

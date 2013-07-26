@@ -77,6 +77,7 @@ static E_Exec_Instance *(*_e_exec_executor_func)(void *data, E_Zone * zone, Efre
 static void *_e_exec_executor_data = NULL;
 
 EAPI int E_EVENT_EXEC_NEW = -1;
+EAPI int E_EVENT_EXEC_NEW_CLIENT = -1;
 EAPI int E_EVENT_EXEC_DEL = -1;
 
 /* externally accessible functions */
@@ -93,6 +94,7 @@ e_exec_init(void)
 #endif
 
    E_EVENT_EXEC_NEW = ecore_event_type_new();
+   E_EVENT_EXEC_NEW_CLIENT = ecore_event_type_new();
    E_EVENT_EXEC_DEL = ecore_event_type_new();
    return 1;
 }
@@ -257,7 +259,7 @@ e_exec_phony(E_Border *bd)
      }
    inst->used = 1;
    bd->exe_inst = inst;
-   inst->bd = bd;
+   inst->borders = eina_list_append(inst->borders, bd);
    if (bd->zone) inst->screen = bd->zone->num;
    if (bd->desk)
      {
@@ -339,6 +341,15 @@ e_exec_instance_found(E_Exec_Instance *inst)
 {
    E_FREE_FUNC(inst->expire_timer, ecore_timer_del);
    _e_exe_instance_watchers_call(inst, E_EXEC_WATCH_STARTED);
+}
+
+EAPI void
+e_exec_instance_client_add(E_Exec_Instance *inst, E_Border *bd)
+{
+   inst->borders = eina_list_append(inst->borders, bd);
+   bd->exe_inst = inst;
+   inst->ref++;
+   ecore_event_add(E_EVENT_EXEC_NEW_CLIENT, inst, _e_exec_cb_exec_new_free, inst);
 }
 
 EAPI void
@@ -618,6 +629,7 @@ static void
 _e_exec_instance_free(E_Exec_Instance *inst)
 {
    Eina_List *instances;
+   E_Border *bd;
 
    if (inst->ref) return;
    E_FREE_LIST(inst->watchers, free);
@@ -644,11 +656,8 @@ _e_exec_instance_free(E_Exec_Instance *inst)
      e_exec_start_pending = eina_list_remove(e_exec_start_pending,
                                              inst->desktop);
    if (inst->expire_timer) ecore_timer_del(inst->expire_timer);
-   if (inst->bd)
-     {
-        inst->bd->exe_inst = NULL;
-        inst->bd = NULL;
-     }
+   EINA_LIST_FREE(inst->borders, bd)
+     bd->exe_inst = NULL;
    if (inst->desktop) efreet_desktop_free(inst->desktop);
    free(inst);
 }

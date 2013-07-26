@@ -4899,10 +4899,10 @@ _e_border_del(E_Border *bd)
 
    if (bd->exe_inst)
      {
-        if (bd->exe_inst->phony)
+        if (bd->exe_inst->phony && (eina_list_count(bd->exe_inst->borders) == 1))
           e_exec_phony_del(bd->exe_inst);
         else
-          bd->exe_inst->bd = NULL;
+          bd->exe_inst->borders = eina_list_remove(bd->exe_inst->borders, bd);
         bd->exe_inst = NULL;
      }
 
@@ -7999,30 +7999,35 @@ _e_border_eval0(E_Border *bd)
           {
              inst = e_exec_startup_id_pid_instance_find(bd->client.netwm.startup_id,
                                                         bd->client.netwm.pid);
-             if ((inst) && (inst->used == 0))
+             if (inst)
                {
-                  E_Zone *zone;
-                  E_Desk *desk;
-
-                  inst->used++;
-                  zone = e_container_zone_number_get(bd->zone->container,
-                                                     inst->screen);
-                  if (zone) e_border_zone_set(bd, zone);
-                  desk = e_desk_at_xy_get(bd->zone, inst->desk_x,
-                                          inst->desk_y);
-                  if (desk) e_border_desk_set(bd, desk);
-                  if (bd->client.netwm.pid != ecore_exe_pid_get(inst->exe))
+                  Eina_Bool found;
+                  if (inst->used == 0)
                     {
-                       /* most likely what has happened here is that the .desktop launcher
-                        * has spawned a process which then created this border, meaning the
-                        * E_Exec instance will be deleted in a moment, and we will be unable to track it.
-                        * to prevent this, we convert our instance to a phony
-                        */
-                        inst->phony = 1;
+                       E_Zone *zone;
+                       E_Desk *desk;
+
+                       inst->used++;
+                       zone = e_container_zone_number_get(bd->zone->container,
+                                                          inst->screen);
+                       if (zone) e_border_zone_set(bd, zone);
+                       desk = e_desk_at_xy_get(bd->zone, inst->desk_x,
+                                               inst->desk_y);
+                       if (desk) e_border_desk_set(bd, desk);
+                       if (bd->client.netwm.pid != ecore_exe_pid_get(inst->exe))
+                         {
+                            /* most likely what has happened here is that the .desktop launcher
+                             * has spawned a process which then created this border, meaning the
+                             * E_Exec instance will be deleted in a moment, and we will be unable to track it.
+                             * to prevent this, we convert our instance to a phony
+                             */
+                             inst->phony = 1;
+                         }
                     }
-                  inst->bd = bd;
-                  bd->exe_inst = inst;
-                  e_exec_instance_found(inst);
+                  found = !!inst->borders;
+                  e_exec_instance_client_add(inst, bd);
+                  if (!found)
+                    e_exec_instance_found(inst);
                }
              else if (!inst)
                e_exec_phony(bd);
