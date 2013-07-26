@@ -876,6 +876,11 @@ _e_comp_win_update(E_Comp_Win *cw)
                   _e_comp_event_source_visibility(cw);
                   cw->show_anim = EINA_TRUE;
                }
+             if (cw->shape)
+               {
+                  cw->shape->visible = 0;
+                  e_container_shape_show(cw->shape);
+               }
           }
      }
    if (cw->geom_update) _e_comp_win_geometry_update(cw);
