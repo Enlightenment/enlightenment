@@ -2595,6 +2595,7 @@ _e_comp_win_hide(E_Comp_Win *cw)
         return;
      }
    DBG("  [0x%x] hid --", cw->win);
+   cw->dmg_updates = 0;
    if (!cw->force)
      {
         cw->defer_hide = 1;
