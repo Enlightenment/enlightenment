@@ -2505,10 +2505,8 @@ _e_comp_win_show(E_Comp_Win *cw)
              cw->ph = 0;
           }
         if (cw->win) return;
-        cw->dmg_updates = 1;
      }
-   else
-     cw->dmg_updates = 1;
+   cw->dmg_updates = 1;
 
    cw->geom_update = 1;
    if (cw->win && ((!cw->redirected) || (!cw->pixmap)))
