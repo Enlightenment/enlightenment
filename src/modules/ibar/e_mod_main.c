@@ -1139,6 +1139,8 @@ _ibar_icon_menu(IBar_Icon *ic)
    {
       Evas_Coord x, y, iw, ih, ox, oy;
       evas_object_geometry_get(ic->o_holder, &x, &y, &iw, &ih);
+      x -= ic->menu->win->zone->x;
+      y -= ic->menu->win->zone->y;
       ox = ic->menu->win->x, oy = ic->menu->win->y;
       if (e_box_orientation_get(ic->ibar->o_box))
         ox = (x + (iw / 2)) - (w / 2);
