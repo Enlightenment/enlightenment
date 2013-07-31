@@ -4,7 +4,6 @@ Type=Link
 Name=Illume-Bluetooth
 Name[eo]=Bludento Illume
 Name[fr]=Bluetooth Illume
-Name[sr]=Блутут одсјај
 Comment=
 Icon=e-module-illume-bluetooth
 X-Enlightenment-ModuleType=mobile
