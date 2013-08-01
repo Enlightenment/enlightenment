@@ -111,6 +111,8 @@ EAPI Eina_Bool starting = EINA_TRUE;
 EAPI Eina_Bool stopping = EINA_FALSE;
 EAPI Eina_Bool restart = EINA_FALSE;
 EAPI Eina_Bool e_nopause = EINA_FALSE;
+EINTERN const char *e_first_frame = NULL;
+EINTERN double e_first_frame_start_time = -1;
 
 static void
 _xdg_data_dirs_augment(void)
@@ -168,7 +170,6 @@ main(int argc, char **argv)
 #ifdef TS_DO
    t0 = t1 = t2 = ecore_time_unix_get();
 #endif
-
    TS("Begin Startup");
 
    /* trap deadly bug signals and allow some form of sane recovery */
@@ -287,6 +288,12 @@ main(int argc, char **argv)
      }
    TS("Ecore Init Done");
    _e_main_shutdown_push(ecore_shutdown);
+
+   e_first_frame = getenv("E_FIRST_FRAME");
+   if (e_first_frame && (!e_first_frame[0]))
+     e_first_frame = NULL;
+   else
+     e_first_frame_start_time = ecore_time_get();
 
    TS("EIO Init");
    if (!eio_init())

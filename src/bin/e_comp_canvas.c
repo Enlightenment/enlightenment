@@ -12,6 +12,24 @@ _e_comp_canvas_event_compositor_resize_free(void *data EINA_UNUSED, void *event)
 ///////////////////////////////////
 
 static void
+_e_comp_canvas_cb_first_frame(void *data, Evas *e, void *event_info EINA_UNUSED)
+{
+   E_Comp *c = data;
+   double now = ecore_time_get();
+
+   switch (e_first_frame[0])
+     {
+      case 'A': abort();
+      case 'E':
+      case 'D': exit(-1);
+      case 'T': fprintf(stderr, "Startup time: '%f' - '%f' = '%f'\n", now, e_first_frame_start_time, now - e_first_frame_start_time);
+         break;
+     }
+
+   evas_event_callback_del_full(e, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, c);
+}
+
+static void
 _e_comp_canvas_render_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Comp *c = data;
@@ -85,6 +103,9 @@ e_comp_canvas_init(E_Comp *c)
    unsigned int layer;
 
    c->evas = ecore_evas_get(c->ee);
+
+   if (e_first_frame)
+     evas_event_callback_add(c->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_cb_first_frame, c);
    ecore_evas_data_set(c->ee, "comp", c);
    o = evas_object_rectangle_add(c->evas);
    c->bg_blank_object = o;
