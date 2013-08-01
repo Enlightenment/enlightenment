@@ -4546,6 +4546,8 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
    ecore_x_e_window_profile_supported_set(root, e_config->use_desktop_window_profile);
    c->cm_selection = ecore_x_window_input_new(root, 0, 0, 1, 1);
    if (!c->cm_selection) return EINA_FALSE;
+   ecore_x_icccm_name_class_set(c->cm_selection, "comp", "cm_selection");
+   e_comp_ignore_win_add(E_PIXMAP_TYPE_X, c->cm_selection);
    e_hints_init(root, c->cm_selection);
    ecore_x_window_background_color_set(root, 0, 0, 0);
    ecore_x_screen_is_composited_set(c->num, c->cm_selection);
