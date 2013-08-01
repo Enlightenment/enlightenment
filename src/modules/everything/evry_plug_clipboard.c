@@ -29,6 +29,7 @@ evry_plug_clipboard_init(void)
    Ecore_X_Window win = ecore_x_window_input_new(0, 0, 0, 1, 1);
    if (!win) return EINA_FALSE;
    ecore_x_icccm_name_class_set(win, "evry", "clipboard");
+   e_comp_ignore_win_add(E_PIXMAP_TYPE_X, win);
 
 //FIXME: Icon name doesn't follow FDO Spec
    act = EVRY_ACTION_NEW(N_("Copy to Clipboard"),
