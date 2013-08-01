@@ -308,6 +308,9 @@ extern EAPI Eina_Bool e_nopause;
 extern EAPI Eina_Bool e_precache_end;
 extern EAPI Eina_Bool x_fatal;
 
+extern EINTERN const char *e_first_frame;
+extern EINTERN double e_first_frame_start_time;
+
 EAPI void e_alert_composite_win(Ecore_X_Window root, Ecore_X_Window win);
 
 //#define SMARTERR(args...) abort()
