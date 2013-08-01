@@ -26,7 +26,7 @@ evry_plug_clipboard_init(void)
    if (!evry_api_version_check(EVRY_API_VERSION))
      return EINA_FALSE;
 
-   Ecore_X_Window win = ecore_x_window_new(0, 0, 0, 1, 1);
+   Ecore_X_Window win = ecore_x_window_input_new(0, 0, 0, 1, 1);
    if (!win) return EINA_FALSE;
 
 //FIXME: Icon name doesn't follow FDO Spec
