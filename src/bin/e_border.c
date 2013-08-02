@@ -3295,8 +3295,8 @@ e_border_idler_before(void)
 
              // pass 1 - eval0. fetch properties on new or on change and
              // call hooks to decide what to do - maybe move/resize
-             bl = e_container_border_list_last(con);
-             while ((bd = e_container_border_list_prev(bl)))
+             bl = e_container_border_list_first(con);
+             while ((bd = e_container_border_list_next(bl)))
                {
                   if (bd->changed) _e_border_eval0(bd);
                }
@@ -3307,8 +3307,8 @@ e_border_idler_before(void)
              _e_border_container_layout_hook(con);
 
              // pass 2 - show windows needing show
-             bl = e_container_border_list_last(con);
-             while ((bd = e_container_border_list_prev(bl)))
+             bl = e_container_border_list_first(con);
+             while ((bd = e_container_border_list_next(bl)))
                {
                   if ((bd->changes.visible) && (bd->visible) &&
                       (!bd->new_client) && (!bd->changes.pos) &&
