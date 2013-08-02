@@ -7463,7 +7463,8 @@ _e_border_eval0(E_Border *bd)
           }
         if (bd->parent)
           {
-             e_border_layer_set(bd, bd->parent->layer);
+             if (bd->parent->layer != bd->layer)
+               e_border_layer_set(bd, bd->parent->layer);
              if (bd->client.netwm.state.modal)
                {
                   bd->parent->modal = bd;
