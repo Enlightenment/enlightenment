@@ -841,7 +841,6 @@ AC_E_OPTIONAL_MODULE([fileman], true)
 AC_E_OPTIONAL_MODULE([fileman_opinfo], true)
 AC_E_OPTIONAL_MODULE([wizard], true)
 AC_E_OPTIONAL_MODULE([conf], true)
-AC_E_OPTIONAL_MODULE([conf_comp], true)
 AC_E_OPTIONAL_MODULE([conf_wallpaper2], true)
 AC_E_OPTIONAL_MODULE([conf_theme], true, true)
 AC_E_OPTIONAL_MODULE([conf_intl], true)
@@ -984,7 +983,6 @@ src/modules/everything/module.desktop
 src/modules/everything/everything.pc
 src/modules/systray/module.desktop
 src/modules/appmenu/module.desktop
-src/modules/conf_comp/module.desktop
 src/modules/quickaccess/module.desktop
 src/modules/teamwork/module.desktop
 src/modules/shot/module.desktop

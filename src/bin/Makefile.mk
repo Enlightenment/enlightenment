@@ -275,6 +275,8 @@ src/bin/e_int_client_menu.c \
 src/bin/e_int_client_prop.c \
 src/bin/e_int_client_remember.c \
 src/bin/e_int_config_modules.c \
+src/bin/e_int_config_comp.c \
+src/bin/e_int_config_comp_match.c \
 src/bin/e_int_gadcon_config.c \
 src/bin/e_intl.c \
 src/bin/e_intl_data.c \

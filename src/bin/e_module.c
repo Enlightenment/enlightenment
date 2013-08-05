@@ -238,10 +238,12 @@ e_module_all_load(void)
      {
         if (!em) continue;
 
-        if (!e_util_strcmp(em->name, "comp"))
+        if ((!e_util_strcmp(em->name, "comp")) || (!e_util_strcmp(em->name, "conf_comp")))
           {
-             eina_stringshare_replace(&em->name, "conf_comp");
-             em->enabled = 1;
+             eina_stringshare_del(em->name);
+             e_config->modules = eina_list_remove_list(e_config->modules, l);
+             free(em);
+             continue;
           }
         if ((em->delayed) && (em->enabled) && (!e_config->no_module_delay))
           {

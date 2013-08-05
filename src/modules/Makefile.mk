@@ -74,10 +74,6 @@ if USE_MODULE_CONF
 include src/modules/Makefile_conf.mk
 endif
 
-if USE_MODULE_CONF_COMP
-include src/modules/Makefile_conf_comp.mk
-endif
-
 if USE_MODULE_CONF_WALLPAPER2
 include src/modules/Makefile_conf_wallpaper2.mk
 endif

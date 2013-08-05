@@ -53,6 +53,8 @@ src/bin/e_int_client_remember.c
 src/bin/e_int_config_modules.c
 src/bin/e_int_gadcon_config.c
 src/bin/e_int_menus.c
+src/bin/e_int_config_comp.c
+src/bin/e_int_config_comp_match.c
 src/bin/e_int_shelf_config.c
 src/bin/e_int_toolbar_config.c
 src/bin/e_intl.c
@@ -154,9 +156,6 @@ src/modules/conf_bindings/e_int_config_keybindings.c
 src/modules/conf_bindings/e_int_config_mousebindings.c
 src/modules/conf_bindings/e_int_config_signalbindings.c
 src/modules/conf_bindings/e_mod_main.c
-src/modules/conf_comp/e_mod_config.c
-src/modules/conf_comp/e_mod_config_match.c
-src/modules/conf_comp/e_mod_main.c
 src/modules/conf_dialogs/e_int_config_dialogs.c
 src/modules/conf_dialogs/e_int_config_profiles.c
 src/modules/conf_dialogs/e_mod_main.c
