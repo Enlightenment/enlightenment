@@ -1098,6 +1098,12 @@ _e_int_menus_virtuals_icon_cb(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 static void
+_e_e_int_menus_conf_comp_cb(void *data EINA_UNUSED, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
+{
+   e_int_config_comp(e_comp_get(m), NULL);
+}
+
+static void
 _e_int_menus_config_pre_cb(void *data __UNUSED__, E_Menu *m)
 {
    E_Menu_Item *mi;
@@ -1115,6 +1121,11 @@ _e_int_menus_config_pre_cb(void *data __UNUSED__, E_Menu *m)
              e_menu_item_separator_set(mi, 1);
           }
      }
+
+   mi = e_menu_item_new(m);
+   e_menu_item_label_set(mi, _("Composite"));
+   e_util_menu_item_theme_icon_set(mi, "preferences-composite");
+   e_menu_item_callback_set(mi, _e_e_int_menus_conf_comp_cb, NULL);
 
    l = _e_int_menus_augmentation_find("config/1");
    if (l) _e_int_menus_augmentation_add(m, l);

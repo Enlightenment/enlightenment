@@ -1,5 +1,4 @@
 #include "e.h"
-#include "e_mod_main.h"
 
 
 typedef struct _Match_Config
@@ -529,7 +528,7 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
    e_widget_toolbook_page_append(tb, NULL, _("Flags"), tab2,
                                  1, 1, 1, 1, 0.5, 0.0);
 
-   oi = _style_selector(evas, &(m->match.shadow_style));
+   oi = e_comp_style_selector_create(evas, &(m->match.shadow_style));
    e_widget_toolbook_page_append(tb, NULL, _("Style"), oi,
                                  1, 1, 1, 1, 0.5, 0.0);
 
@@ -736,37 +735,38 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    Eina_List *l;
    E_Comp_Match *m;
    Match_Config *m2;
+   E_Comp_Config *conf = e_comp_config_get();
 
    if (!cfdata->changed) return 0;
 
-   E_FREE_LIST(_comp_mod->conf->match.popups, e_comp_cfdata_match_free);
-   E_FREE_LIST(_comp_mod->conf->match.borders, e_comp_cfdata_match_free);
-   E_FREE_LIST(_comp_mod->conf->match.overrides, e_comp_cfdata_match_free);
-   E_FREE_LIST(_comp_mod->conf->match.menus, e_comp_cfdata_match_free);
+   E_FREE_LIST(conf->match.popups, e_comp_cfdata_match_free);
+   E_FREE_LIST(conf->match.borders, e_comp_cfdata_match_free);
+   E_FREE_LIST(conf->match.overrides, e_comp_cfdata_match_free);
+   E_FREE_LIST(conf->match.menus, e_comp_cfdata_match_free);
 
    EINA_LIST_FOREACH(cfdata->popups, l, m2)
      {
         m = E_NEW(E_Comp_Match, 1);
         _match_dup2(m2, m);
-        _comp_mod->conf->match.popups = eina_list_append(_comp_mod->conf->match.popups, m);
+        conf->match.popups = eina_list_append(conf->match.popups, m);
      }
    EINA_LIST_FOREACH(cfdata->borders, l, m2)
      {
         m = E_NEW(E_Comp_Match, 1);
         _match_dup2(m2, m);
-        _comp_mod->conf->match.borders = eina_list_append(_comp_mod->conf->match.borders, m);
+        conf->match.borders = eina_list_append(conf->match.borders, m);
      }
    EINA_LIST_FOREACH(cfdata->overrides, l, m2)
      {
         m = E_NEW(E_Comp_Match, 1);
         _match_dup2(m2, m);
-        _comp_mod->conf->match.overrides = eina_list_append(_comp_mod->conf->match.overrides, m);
+        conf->match.overrides = eina_list_append(conf->match.overrides, m);
      }
    EINA_LIST_FOREACH(cfdata->menus, l, m2)
      {
         m = E_NEW(E_Comp_Match, 1);
         _match_dup2(m2, m);
-        _comp_mod->conf->match.menus = eina_list_append(_comp_mod->conf->match.menus, m);
+        conf->match.menus = eina_list_append(conf->match.menus, m);
      }
    cfdata->changed = 0;
    e_comp_shadows_reset();
@@ -788,7 +788,6 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 static void
 _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-   _comp_mod->match_config_dialog = NULL;
    E_FREE_LIST(cfdata->popups, _match_free);
    E_FREE_LIST(cfdata->borders, _match_free);
    E_FREE_LIST(cfdata->menus, _match_free);
@@ -803,11 +802,11 @@ _create_data(E_Config_Dialog *cfd)
    Eina_List *l;
    E_Comp_Match *m;
    Match_Config *m2;
+   E_Comp_Config *conf = e_comp_config_get();
 
-   _comp_mod->match_config_dialog = cfd;
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
 
-   EINA_LIST_FOREACH(_comp_mod->conf->match.popups, l, m)
+   EINA_LIST_FOREACH(conf->match.popups, l, m)
      {
         m2 = E_NEW(Match_Config, 1);
         _match_dup(m, m2);
@@ -815,7 +814,7 @@ _create_data(E_Config_Dialog *cfd)
         cfdata->popups = eina_list_append(cfdata->popups, m2);
      }
 
-   EINA_LIST_FOREACH(_comp_mod->conf->match.borders, l, m)
+   EINA_LIST_FOREACH(conf->match.borders, l, m)
      {
         m2 = E_NEW(Match_Config, 1);
         _match_dup(m, m2);
@@ -823,7 +822,7 @@ _create_data(E_Config_Dialog *cfd)
         cfdata->borders = eina_list_append(cfdata->borders, m2);
      }
 
-   EINA_LIST_FOREACH(_comp_mod->conf->match.overrides, l, m)
+   EINA_LIST_FOREACH(conf->match.overrides, l, m)
      {
         m2 = E_NEW(Match_Config, 1);
         _match_dup(m, m2);
@@ -831,7 +830,7 @@ _create_data(E_Config_Dialog *cfd)
         cfdata->overrides = eina_list_append(cfdata->overrides, m2);
      }
 
-   EINA_LIST_FOREACH(_comp_mod->conf->match.menus, l, m)
+   EINA_LIST_FOREACH(conf->match.menus, l, m)
      {
         m2 = E_NEW(Match_Config, 1);
         _match_dup(m, m2);
@@ -842,12 +841,11 @@ _create_data(E_Config_Dialog *cfd)
    return cfdata;
 }
 
-EINTERN E_Config_Dialog *
+EAPI E_Config_Dialog *
 e_int_config_comp_match(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   Mod *mod = _comp_mod;
 
    if (e_config_dialog_find("E", "internal/comp_matches")) return NULL;
    v = E_NEW(E_Config_Dialog_View, 1);
@@ -858,8 +856,7 @@ e_int_config_comp_match(E_Comp *comp, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create_widgets;
    
    cfd = e_config_dialog_new(comp, _("Composite Match Settings"),
-                             "E", "_comp_matches", "preferences-composite", 0, v, mod);
-   mod->match_config_dialog = cfd;
+                             "E", "_comp_matches", "preferences-composite", 0, v, NULL);
    e_dialog_resizable_set(cfd->dia, 1);
    return cfd;
 }

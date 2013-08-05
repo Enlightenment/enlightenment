@@ -1,5 +1,4 @@
 #include "e.h"
-#include "e_mod_main.h"
 
 struct _E_Config_Dialog_Data
 {
@@ -67,12 +66,11 @@ static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd,
 static int          _advanced_apply_data(E_Config_Dialog *cfd,
                                       E_Config_Dialog_Data *cfdata);
 
-EINTERN E_Config_Dialog *
-e_int_config_comp_module(E_Comp *comp, const char *params __UNUSED__)
+EAPI E_Config_Dialog *
+e_int_config_comp(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   Mod *mod = _comp_mod;
 
    if (e_config_dialog_find("E", "appearance/comp")) return NULL;
    v = E_NEW(E_Config_Dialog_View, 1);
@@ -85,8 +83,7 @@ e_int_config_comp_module(E_Comp *comp, const char *params __UNUSED__)
    v->advanced.create_widgets = _advanced_create_widgets;
    
    cfd = e_config_dialog_new(comp, _("Composite Settings"),
-                             "E", "appearance/comp", "preferences-composite", 0, v, mod);
-   mod->config_dialog = cfd;
+                             "E", "appearance/comp", "preferences-composite", 0, v, NULL);
    e_dialog_resizable_set(cfd->dia, 1);
    return cfd;
 }
@@ -95,52 +92,53 @@ static void *
 _create_data(E_Config_Dialog *cfd EINA_UNUSED)
 {
    E_Config_Dialog_Data *cfdata;
+   E_Comp_Config *conf = e_comp_config_get();
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
 
-   cfdata->engine = _comp_mod->conf->engine;
+   cfdata->engine = conf->engine;
    if ((cfdata->engine != E_COMP_ENGINE_SW) &&
        (cfdata->engine != E_COMP_ENGINE_GL))
      cfdata->engine = E_COMP_ENGINE_SW;
 
-   cfdata->fast_popups = _comp_mod->conf->fast_popups;
-   cfdata->fast_borders = _comp_mod->conf->fast_borders;
-   cfdata->fast_overrides = _comp_mod->conf->fast_overrides;
-   cfdata->fast_menus = _comp_mod->conf->fast_menus;
-   cfdata->fast_objects = _comp_mod->conf->fast_objects;
-   cfdata->match.disable_popups = _comp_mod->conf->match.disable_popups;
-   cfdata->match.disable_borders = _comp_mod->conf->match.disable_borders;
-   cfdata->match.disable_overrides = _comp_mod->conf->match.disable_overrides;
-   cfdata->match.disable_menus = _comp_mod->conf->match.disable_menus;
-   cfdata->match.disable_objects = _comp_mod->conf->match.disable_objects;
-   cfdata->disable_screen_effects = _comp_mod->conf->disable_screen_effects;
+   cfdata->fast_popups = conf->fast_popups;
+   cfdata->fast_borders = conf->fast_borders;
+   cfdata->fast_overrides = conf->fast_overrides;
+   cfdata->fast_menus = conf->fast_menus;
+   cfdata->fast_objects = conf->fast_objects;
+   cfdata->match.disable_popups = conf->match.disable_popups;
+   cfdata->match.disable_borders = conf->match.disable_borders;
+   cfdata->match.disable_overrides = conf->match.disable_overrides;
+   cfdata->match.disable_menus = conf->match.disable_menus;
+   cfdata->match.disable_objects = conf->match.disable_objects;
+   cfdata->disable_screen_effects = conf->disable_screen_effects;
 
-   cfdata->indirect = _comp_mod->conf->indirect;
-   cfdata->texture_from_pixmap = _comp_mod->conf->texture_from_pixmap;
-   cfdata->smooth_windows = _comp_mod->conf->smooth_windows;
-   cfdata->lock_fps = _comp_mod->conf->lock_fps;
-   cfdata->grab = _comp_mod->conf->grab;
-   cfdata->vsync = _comp_mod->conf->vsync;
-   cfdata->swap_mode = _comp_mod->conf->swap_mode;
-   if (_comp_mod->conf->shadow_style)
-     cfdata->shadow_style = eina_stringshare_add(_comp_mod->conf->shadow_style);
+   cfdata->indirect = conf->indirect;
+   cfdata->texture_from_pixmap = conf->texture_from_pixmap;
+   cfdata->smooth_windows = conf->smooth_windows;
+   cfdata->lock_fps = conf->lock_fps;
+   cfdata->grab = conf->grab;
+   cfdata->vsync = conf->vsync;
+   cfdata->swap_mode = conf->swap_mode;
+   cfdata->shadow_style = eina_stringshare_add(conf->shadow_style);
 
-   cfdata->keep_unmapped = _comp_mod->conf->keep_unmapped;
-   cfdata->max_unmapped_pixels = _comp_mod->conf->max_unmapped_pixels;
-   cfdata->max_unmapped_time = _comp_mod->conf->max_unmapped_time;
-   cfdata->min_unmapped_time = _comp_mod->conf->min_unmapped_time;
-   cfdata->send_flush = _comp_mod->conf->send_flush;
-   cfdata->send_dump = _comp_mod->conf->send_dump;
-   cfdata->nocomp_fs = _comp_mod->conf->nocomp_fs;
-   cfdata->nofade = _comp_mod->conf->nofade;
+   cfdata->keep_unmapped = conf->keep_unmapped;
+   cfdata->max_unmapped_pixels = conf->max_unmapped_pixels;
+   cfdata->max_unmapped_time = conf->max_unmapped_time;
+   cfdata->min_unmapped_time = conf->min_unmapped_time;
+   cfdata->send_flush = conf->send_flush;
+   cfdata->send_dump = conf->send_dump;
+   cfdata->nocomp_fs = conf->nocomp_fs;
+   cfdata->nofade = conf->nofade;
 
-   cfdata->fps_show = _comp_mod->conf->fps_show;
-   cfdata->fps_corner = _comp_mod->conf->fps_corner;
-   cfdata->fps_average_range = _comp_mod->conf->fps_average_range;
+   cfdata->fps_show = conf->fps_show;
+   cfdata->fps_corner = conf->fps_corner;
+   cfdata->fps_average_range = conf->fps_average_range;
+
    if (cfdata->fps_average_range < 1) cfdata->fps_average_range = 12;
    else if (cfdata->fps_average_range > 120)
      cfdata->fps_average_range = 120;
-   cfdata->first_draw_delay = _comp_mod->conf->first_draw_delay;
+   cfdata->first_draw_delay = conf->first_draw_delay;
 
    return cfdata;
 }
@@ -149,7 +147,6 @@ static void
 _free_data(E_Config_Dialog *cfd  __UNUSED__,
            E_Config_Dialog_Data *cfdata)
 {
-   _comp_mod->config_dialog = NULL;
    eina_stringshare_del(cfdata->shadow_style);
    free(cfdata);
 }
@@ -188,7 +185,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
 
    of = e_widget_frametable_add(evas, _("Select default style"), 0);
    e_widget_frametable_content_align_set(of, 0.5, 0.5);
-   cfdata->styles_il = oi = _style_selector(evas, &(cfdata->shadow_style));
+   cfdata->styles_il = oi = e_comp_style_selector_create(evas, &(cfdata->shadow_style));
    e_widget_frametable_object_append(of, oi, 0, 0, 1, 1, 1, 1, 1, 1);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
@@ -424,79 +421,81 @@ static int
 _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
                      E_Config_Dialog_Data *cfdata)
 {
-   if ((cfdata->lock_fps != _comp_mod->conf->lock_fps) ||
-       (cfdata->smooth_windows != _comp_mod->conf->smooth_windows) ||
-       (cfdata->grab != _comp_mod->conf->grab) ||
-       (cfdata->keep_unmapped != _comp_mod->conf->keep_unmapped) ||
-       (cfdata->nocomp_fs != _comp_mod->conf->nocomp_fs) ||
-       (cfdata->nofade != _comp_mod->conf->nofade) ||
-       (cfdata->shadow_style != _comp_mod->conf->shadow_style) ||
-       (cfdata->max_unmapped_pixels != _comp_mod->conf->max_unmapped_pixels) ||
-       (cfdata->max_unmapped_time != _comp_mod->conf->max_unmapped_time) ||
-       (cfdata->min_unmapped_time != _comp_mod->conf->min_unmapped_time) ||
-       (cfdata->send_flush != _comp_mod->conf->send_flush) ||
-       (cfdata->send_dump != _comp_mod->conf->send_dump) ||
-       (cfdata->fps_show != _comp_mod->conf->fps_show) ||
-       (cfdata->fps_corner != _comp_mod->conf->fps_corner) ||
-       (cfdata->fps_average_range != _comp_mod->conf->fps_average_range) ||
-       (cfdata->first_draw_delay != _comp_mod->conf->first_draw_delay) ||
-       (_comp_mod->conf->match.disable_popups != cfdata->match.disable_popups) ||
-       (_comp_mod->conf->match.disable_borders != cfdata->match.disable_borders) ||
-       (_comp_mod->conf->match.disable_overrides != cfdata->match.disable_overrides) ||
-       (_comp_mod->conf->match.disable_menus != cfdata->match.disable_menus) ||
-       (_comp_mod->conf->match.disable_objects != cfdata->match.disable_objects) ||
-       (_comp_mod->conf->disable_screen_effects != cfdata->disable_screen_effects) ||
-       (_comp_mod->conf->fast_popups != cfdata->fast_popups) ||
-       (_comp_mod->conf->fast_borders != cfdata->fast_borders) ||
-       (_comp_mod->conf->fast_overrides != cfdata->fast_overrides) ||
-       (_comp_mod->conf->fast_menus != cfdata->fast_menus) ||
-       (_comp_mod->conf->fast_objects != cfdata->fast_objects)
+   E_Comp_Config *conf = e_comp_config_get();
+
+   if ((cfdata->lock_fps != conf->lock_fps) ||
+       (cfdata->smooth_windows != conf->smooth_windows) ||
+       (cfdata->grab != conf->grab) ||
+       (cfdata->keep_unmapped != conf->keep_unmapped) ||
+       (cfdata->nocomp_fs != conf->nocomp_fs) ||
+       (cfdata->nofade != conf->nofade) ||
+       (cfdata->shadow_style != conf->shadow_style) ||
+       (cfdata->max_unmapped_pixels != conf->max_unmapped_pixels) ||
+       (cfdata->max_unmapped_time != conf->max_unmapped_time) ||
+       (cfdata->min_unmapped_time != conf->min_unmapped_time) ||
+       (cfdata->send_flush != conf->send_flush) ||
+       (cfdata->send_dump != conf->send_dump) ||
+       (cfdata->fps_show != conf->fps_show) ||
+       (cfdata->fps_corner != conf->fps_corner) ||
+       (cfdata->fps_average_range != conf->fps_average_range) ||
+       (cfdata->first_draw_delay != conf->first_draw_delay) ||
+       (conf->match.disable_popups != cfdata->match.disable_popups) ||
+       (conf->match.disable_borders != cfdata->match.disable_borders) ||
+       (conf->match.disable_overrides != cfdata->match.disable_overrides) ||
+       (conf->match.disable_menus != cfdata->match.disable_menus) ||
+       (conf->match.disable_objects != cfdata->match.disable_objects) ||
+       (conf->disable_screen_effects != cfdata->disable_screen_effects) ||
+       (conf->fast_popups != cfdata->fast_popups) ||
+       (conf->fast_borders != cfdata->fast_borders) ||
+       (conf->fast_overrides != cfdata->fast_overrides) ||
+       (conf->fast_menus != cfdata->fast_menus) ||
+       (conf->fast_objects != cfdata->fast_objects)
        )
      {
-        _comp_mod->conf->fast_popups = cfdata->fast_popups;
-        _comp_mod->conf->fast_borders = cfdata->fast_borders;
-        _comp_mod->conf->fast_overrides = cfdata->fast_overrides;
-        _comp_mod->conf->fast_menus = cfdata->fast_menus;
-        _comp_mod->conf->fast_objects = cfdata->fast_objects;
-        _comp_mod->conf->match.disable_popups = cfdata->match.disable_popups;
-        _comp_mod->conf->match.disable_borders = cfdata->match.disable_borders;
-        _comp_mod->conf->match.disable_overrides = cfdata->match.disable_overrides;
-        _comp_mod->conf->match.disable_menus = cfdata->match.disable_menus;
-        _comp_mod->conf->match.disable_objects = cfdata->match.disable_objects;
-        _comp_mod->conf->disable_screen_effects = cfdata->disable_screen_effects;
-        _comp_mod->conf->lock_fps = cfdata->lock_fps;
-        _comp_mod->conf->smooth_windows = cfdata->smooth_windows;
-        _comp_mod->conf->grab = cfdata->grab;
-        _comp_mod->conf->keep_unmapped = cfdata->keep_unmapped;
-        _comp_mod->conf->nocomp_fs = cfdata->nocomp_fs;
-        _comp_mod->conf->nofade = cfdata->nofade;
-        _comp_mod->conf->max_unmapped_pixels = cfdata->max_unmapped_pixels;
-        _comp_mod->conf->max_unmapped_time = cfdata->max_unmapped_time;
-        _comp_mod->conf->min_unmapped_time = cfdata->min_unmapped_time;
-        _comp_mod->conf->send_flush = cfdata->send_flush;
-        _comp_mod->conf->send_dump = cfdata->send_dump;
-        _comp_mod->conf->fps_show = cfdata->fps_show;
-        _comp_mod->conf->fps_corner = cfdata->fps_corner;
-        _comp_mod->conf->fps_average_range = cfdata->fps_average_range;
-        _comp_mod->conf->first_draw_delay = cfdata->first_draw_delay;
-        if (_comp_mod->conf->shadow_style)
-          eina_stringshare_del(_comp_mod->conf->shadow_style);
-        _comp_mod->conf->shadow_style = eina_stringshare_ref(cfdata->shadow_style);
+        conf->fast_popups = cfdata->fast_popups;
+        conf->fast_borders = cfdata->fast_borders;
+        conf->fast_overrides = cfdata->fast_overrides;
+        conf->fast_menus = cfdata->fast_menus;
+        conf->fast_objects = cfdata->fast_objects;
+        conf->match.disable_popups = cfdata->match.disable_popups;
+        conf->match.disable_borders = cfdata->match.disable_borders;
+        conf->match.disable_overrides = cfdata->match.disable_overrides;
+        conf->match.disable_menus = cfdata->match.disable_menus;
+        conf->match.disable_objects = cfdata->match.disable_objects;
+        conf->disable_screen_effects = cfdata->disable_screen_effects;
+        conf->lock_fps = cfdata->lock_fps;
+        conf->smooth_windows = cfdata->smooth_windows;
+        conf->grab = cfdata->grab;
+        conf->keep_unmapped = cfdata->keep_unmapped;
+        conf->nocomp_fs = cfdata->nocomp_fs;
+        conf->nofade = cfdata->nofade;
+        conf->max_unmapped_pixels = cfdata->max_unmapped_pixels;
+        conf->max_unmapped_time = cfdata->max_unmapped_time;
+        conf->min_unmapped_time = cfdata->min_unmapped_time;
+        conf->send_flush = cfdata->send_flush;
+        conf->send_dump = cfdata->send_dump;
+        conf->fps_show = cfdata->fps_show;
+        conf->fps_corner = cfdata->fps_corner;
+        conf->fps_average_range = cfdata->fps_average_range;
+        conf->first_draw_delay = cfdata->first_draw_delay;
+        if (conf->shadow_style)
+          eina_stringshare_del(conf->shadow_style);
+        conf->shadow_style = eina_stringshare_ref(cfdata->shadow_style);
         e_comp_shadows_reset();
      }
-   if ((cfdata->engine != _comp_mod->conf->engine) ||
-       (cfdata->indirect != _comp_mod->conf->indirect) ||
-       (cfdata->texture_from_pixmap != _comp_mod->conf->texture_from_pixmap) ||
-       (cfdata->vsync != _comp_mod->conf->vsync) ||
-       (cfdata->swap_mode != _comp_mod->conf->swap_mode))
+   if ((cfdata->engine != conf->engine) ||
+       (cfdata->indirect != conf->indirect) ||
+       (cfdata->texture_from_pixmap != conf->texture_from_pixmap) ||
+       (cfdata->vsync != conf->vsync) ||
+       (cfdata->swap_mode != conf->swap_mode))
      {
         E_Action *a;
 
-        _comp_mod->conf->engine = cfdata->engine;
-        _comp_mod->conf->indirect = cfdata->indirect;
-        _comp_mod->conf->texture_from_pixmap = cfdata->texture_from_pixmap;
-        _comp_mod->conf->vsync = cfdata->vsync;
-        _comp_mod->conf->swap_mode = cfdata->swap_mode;
+        conf->engine = cfdata->engine;
+        conf->indirect = cfdata->indirect;
+        conf->texture_from_pixmap = cfdata->texture_from_pixmap;
+        conf->vsync = cfdata->vsync;
+        conf->swap_mode = cfdata->swap_mode;
 
         a = e_action_find("restart");
         if ((a) && (a->func.go)) a->func.go(NULL, NULL);
@@ -559,7 +558,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
 
    of = e_widget_frametable_add(evas, _("Select default style"), 0);
    e_widget_frametable_content_align_set(of, 0.5, 0.5);
-   cfdata->styles_il = oi = _style_selector(evas, &(cfdata->shadow_style));
+   cfdata->styles_il = oi = e_comp_style_selector_create(evas, &(cfdata->shadow_style));
    e_widget_frametable_object_append(of, oi, 0, 0, 1, 1, 1, 1, 1, 1);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
@@ -615,75 +614,77 @@ static int
 _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
                   E_Config_Dialog_Data *cfdata)
 {
+   E_Comp_Config *conf = e_comp_config_get();
+
    if (cfdata->match.toggle_changed || cfdata->fast_changed ||
-       (cfdata->lock_fps != _comp_mod->conf->lock_fps) ||
-       (cfdata->smooth_windows != _comp_mod->conf->smooth_windows) ||
-       (cfdata->grab != _comp_mod->conf->grab) ||
-       (cfdata->nofade != _comp_mod->conf->nofade) ||
-       (cfdata->keep_unmapped != _comp_mod->conf->keep_unmapped) ||
-       (cfdata->nocomp_fs != _comp_mod->conf->nocomp_fs) ||
-       (cfdata->shadow_style != _comp_mod->conf->shadow_style) ||
-       (cfdata->max_unmapped_pixels != _comp_mod->conf->max_unmapped_pixels) ||
-       (cfdata->max_unmapped_time != _comp_mod->conf->max_unmapped_time) ||
-       (cfdata->min_unmapped_time != _comp_mod->conf->min_unmapped_time) ||
-       (cfdata->send_flush != _comp_mod->conf->send_flush) ||
-       (cfdata->send_dump != _comp_mod->conf->send_dump) ||
-       (cfdata->fps_show != _comp_mod->conf->fps_show) ||
-       (cfdata->fps_corner != _comp_mod->conf->fps_corner) ||
-       (cfdata->fps_average_range != _comp_mod->conf->fps_average_range) ||
-       (cfdata->first_draw_delay != _comp_mod->conf->first_draw_delay)
+       (cfdata->lock_fps != conf->lock_fps) ||
+       (cfdata->smooth_windows != conf->smooth_windows) ||
+       (cfdata->grab != conf->grab) ||
+       (cfdata->nofade != conf->nofade) ||
+       (cfdata->keep_unmapped != conf->keep_unmapped) ||
+       (cfdata->nocomp_fs != conf->nocomp_fs) ||
+       (cfdata->shadow_style != conf->shadow_style) ||
+       (cfdata->max_unmapped_pixels != conf->max_unmapped_pixels) ||
+       (cfdata->max_unmapped_time != conf->max_unmapped_time) ||
+       (cfdata->min_unmapped_time != conf->min_unmapped_time) ||
+       (cfdata->send_flush != conf->send_flush) ||
+       (cfdata->send_dump != conf->send_dump) ||
+       (cfdata->fps_show != conf->fps_show) ||
+       (cfdata->fps_corner != conf->fps_corner) ||
+       (cfdata->fps_average_range != conf->fps_average_range) ||
+       (cfdata->first_draw_delay != conf->first_draw_delay)
        )
      {
         if (cfdata->match.toggle_changed)
           {
-             _comp_mod->conf->match.disable_popups = cfdata->match.disable_popups = cfdata->match.disable_all;
-             _comp_mod->conf->match.disable_borders = cfdata->match.disable_borders = cfdata->match.disable_all;
-             _comp_mod->conf->match.disable_overrides = cfdata->match.disable_overrides = cfdata->match.disable_all;
-             _comp_mod->conf->match.disable_menus = cfdata->match.disable_menus = cfdata->match.disable_all;
-             _comp_mod->conf->match.disable_objects = cfdata->match.disable_objects = cfdata->match.disable_all;
-             _comp_mod->conf->disable_screen_effects = cfdata->disable_screen_effects = cfdata->match.disable_all;
+             conf->match.disable_popups = cfdata->match.disable_popups = cfdata->match.disable_all;
+             conf->match.disable_borders = cfdata->match.disable_borders = cfdata->match.disable_all;
+             conf->match.disable_overrides = cfdata->match.disable_overrides = cfdata->match.disable_all;
+             conf->match.disable_menus = cfdata->match.disable_menus = cfdata->match.disable_all;
+             conf->match.disable_objects = cfdata->match.disable_objects = cfdata->match.disable_all;
+             conf->disable_screen_effects = cfdata->disable_screen_effects = cfdata->match.disable_all;
           }
         if (cfdata->fast_changed)
           {
-             _comp_mod->conf->fast_borders = cfdata->fast_borders = cfdata->fast;
-             _comp_mod->conf->fast_popups = cfdata->fast_popups = cfdata->fast;
-             _comp_mod->conf->fast_menus = cfdata->fast_menus = cfdata->fast;
-             _comp_mod->conf->fast_objects = cfdata->fast_objects = cfdata->fast;
-             _comp_mod->conf->fast_overrides = cfdata->fast_overrides = cfdata->fast;
+             conf->fast_borders = cfdata->fast_borders = cfdata->fast;
+             conf->fast_popups = cfdata->fast_popups = cfdata->fast;
+             conf->fast_menus = cfdata->fast_menus = cfdata->fast;
+             conf->fast_objects = cfdata->fast_objects = cfdata->fast;
+             conf->fast_overrides = cfdata->fast_overrides = cfdata->fast;
           }
-        _comp_mod->conf->lock_fps = cfdata->lock_fps;
-        _comp_mod->conf->smooth_windows = cfdata->smooth_windows;
-        _comp_mod->conf->grab = cfdata->grab;
-        _comp_mod->conf->nofade = cfdata->nofade;
-        _comp_mod->conf->keep_unmapped = cfdata->keep_unmapped;
-        _comp_mod->conf->nocomp_fs = cfdata->nocomp_fs;
-        _comp_mod->conf->max_unmapped_pixels = cfdata->max_unmapped_pixels;
-        _comp_mod->conf->max_unmapped_time = cfdata->max_unmapped_time;
-        _comp_mod->conf->min_unmapped_time = cfdata->min_unmapped_time;
-        _comp_mod->conf->send_flush = cfdata->send_flush;
-        _comp_mod->conf->send_dump = cfdata->send_dump;
-        _comp_mod->conf->fps_show = cfdata->fps_show;
-        _comp_mod->conf->fps_corner = cfdata->fps_corner;
-        _comp_mod->conf->fps_average_range = cfdata->fps_average_range;
-        _comp_mod->conf->first_draw_delay = cfdata->first_draw_delay;
-        if (_comp_mod->conf->shadow_style)
-          eina_stringshare_del(_comp_mod->conf->shadow_style);
-        _comp_mod->conf->shadow_style = NULL;
+        conf->lock_fps = cfdata->lock_fps;
+        conf->smooth_windows = cfdata->smooth_windows;
+        conf->grab = cfdata->grab;
+        conf->nofade = cfdata->nofade;
+        conf->keep_unmapped = cfdata->keep_unmapped;
+        conf->nocomp_fs = cfdata->nocomp_fs;
+        conf->max_unmapped_pixels = cfdata->max_unmapped_pixels;
+        conf->max_unmapped_time = cfdata->max_unmapped_time;
+        conf->min_unmapped_time = cfdata->min_unmapped_time;
+        conf->send_flush = cfdata->send_flush;
+        conf->send_dump = cfdata->send_dump;
+        conf->fps_show = cfdata->fps_show;
+        conf->fps_corner = cfdata->fps_corner;
+        conf->fps_average_range = cfdata->fps_average_range;
+        conf->first_draw_delay = cfdata->first_draw_delay;
+        if (conf->shadow_style)
+          eina_stringshare_del(conf->shadow_style);
+        conf->shadow_style = NULL;
         if (cfdata->shadow_style)
-          _comp_mod->conf->shadow_style = eina_stringshare_add(cfdata->shadow_style);
+          conf->shadow_style = eina_stringshare_add(cfdata->shadow_style);
         e_comp_shadows_reset();
      }
-   if ((cfdata->engine != _comp_mod->conf->engine) ||
-       (cfdata->indirect != _comp_mod->conf->indirect) ||
-       (cfdata->texture_from_pixmap != _comp_mod->conf->texture_from_pixmap) ||
-       (cfdata->vsync != _comp_mod->conf->vsync))
+   if ((cfdata->engine != conf->engine) ||
+       (cfdata->indirect != conf->indirect) ||
+       (cfdata->texture_from_pixmap != conf->texture_from_pixmap) ||
+       (cfdata->vsync != conf->vsync))
      {
         E_Action *a;
 
-        _comp_mod->conf->engine = cfdata->engine;
-        _comp_mod->conf->indirect = cfdata->indirect;
-        _comp_mod->conf->texture_from_pixmap = cfdata->texture_from_pixmap;
-        _comp_mod->conf->vsync = cfdata->vsync;
+        conf->engine = cfdata->engine;
+        conf->indirect = cfdata->indirect;
+        conf->texture_from_pixmap = cfdata->texture_from_pixmap;
+        conf->vsync = cfdata->vsync;
 
         a = e_action_find("restart");
         if ((a) && (a->func.go)) a->func.go(NULL, NULL);

@@ -2,6 +2,7 @@
 typedef struct _E_Comp      E_Comp;
 typedef struct _E_Comp_Data      E_Comp_Data;
 typedef struct E_Comp_Client_Data E_Comp_Client_Data;
+typedef struct _E_Comp_Demo_Style_Item E_Comp_Demo_Style_Item;
 
 #define E_COMP_TYPE (int) 0xE0b01003
 
@@ -111,6 +112,17 @@ struct _E_Comp
    Eina_Bool       saver : 1;
 };
 
+
+struct _E_Comp_Demo_Style_Item
+{
+   Evas_Object *preview;
+   Evas_Object *frame;
+   Evas_Object *livethumb;
+   Evas_Object *layout;
+   Evas_Object *border;
+   Evas_Object *client;
+};
+
 typedef enum
 {
    E_COMP_ENGINE_NONE = 0,
@@ -148,6 +160,10 @@ EAPI E_Comp *e_comp_evas_find(const Evas *e);
 
 EAPI void e_comp_button_bindings_grab_all(void);
 EAPI void e_comp_button_bindings_ungrab_all(void);
+
+EINTERN Evas_Object *e_comp_style_selector_create(Evas *evas, const char **source);
+EAPI E_Config_Dialog *e_int_config_comp(E_Comp *comp, const char *params);
+EAPI E_Config_Dialog *e_int_config_comp_match(E_Comp *comp, const char *params);
 
 static inline E_Comp *
 e_comp_util_evas_object_comp_get(Evas_Object *obj)
