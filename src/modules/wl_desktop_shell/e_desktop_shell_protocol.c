@@ -34,17 +34,18 @@ static const struct wl_message e_desktop_shell_requests[] = {
 	{ "set_lock_surface", "o", types + 5 },
 	{ "unlock", "", types + 0 },
 	{ "set_grab_surface", "o", types + 6 },
+	{ "desktop_ready", "2", types + 0 },
 };
 
 static const struct wl_message e_desktop_shell_events[] = {
-	{ "configure", "uoii", types + 7 },
-	{ "prepare_lock_surface", "", types + 0 },
-	{ "grab_cursor", "u", types + 0 },
+	{ "configure", "2uoii", types + 7 },
+	{ "prepare_lock_surface", "2", types + 0 },
+	{ "grab_cursor", "2u", types + 0 },
 };
 
 WL_EXPORT const struct wl_interface e_desktop_shell_interface = {
-	"e_desktop_shell", 1,
-	5, e_desktop_shell_requests,
+	"e_desktop_shell", 2,
+	6, e_desktop_shell_requests,
 	3, e_desktop_shell_events,
 };
 
