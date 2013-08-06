@@ -1,6 +1,6 @@
 <protocol name="desktop">
 
-  <interface name="e_desktop_shell" version="1">
+  <interface name="e_desktop_shell" version="2">
     <request name="set_background">
       <arg name="output" type="object" interface="wl_output"/>
       <arg name="surface" type="object" interface="wl_surface"/>
@@ -19,6 +19,17 @@
 
     <request name="set_grab_surface">
       <arg name="surface" type="object" interface="wl_surface"/>
+    </request>
+
+    <request name="desktop_ready" since="2">
+      <description summary="desktop is ready to be shown">
+	Tell the server, that enough desktop elements have been drawn
+	to make the desktop look ready for use. During start-up, the
+	server can wait for this request with a black screen before
+	starting to fade in the desktop, for instance. If the client
+	parts of a desktop take a long time to initialize, we avoid
+	showing temporary garbage.
+      </description>
     </request>
 
     <!-- We'll fold most of wl_shell into this interface and then
