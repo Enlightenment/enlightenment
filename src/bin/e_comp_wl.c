@@ -111,6 +111,8 @@ static void _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_reso
 static void _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource);
 static void _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource);
 static void _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
+static void _e_comp_wl_surface_cb_buffer_transform_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int transform EINA_UNUSED);
+static void _e_comp_wl_surface_cb_buffer_scale_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int scale EINA_UNUSED);
 
 /* local wayland interfaces */
 static const struct wl_compositor_interface _e_compositor_interface = 
@@ -147,7 +149,8 @@ static const struct wl_surface_interface _e_surface_interface =
    _e_comp_wl_surface_cb_opaque_region_set,
    _e_comp_wl_surface_cb_input_region_set,
    _e_comp_wl_surface_cb_commit,
-   NULL // cb_buffer_transform_set
+   _e_comp_wl_surface_cb_buffer_transform_set,
+   _e_comp_wl_surface_cb_buffer_scale_set
 };
 
 static const struct wl_pointer_grab_interface _e_pointer_grab_interface = 
@@ -2744,4 +2747,16 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    wl_list_init(&ews->pending.frames);
 
    /* TODO: schedule repaint ?? */
+}
+
+static void 
+_e_comp_wl_surface_cb_buffer_transform_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int transform EINA_UNUSED)
+{
+
+}
+
+static void 
+_e_comp_wl_surface_cb_buffer_scale_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int scale EINA_UNUSED)
+{
+
 }
