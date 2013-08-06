@@ -7,6 +7,7 @@
 /* shell function prototypes */
 static void _e_wl_shell_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
 static void _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version, unsigned int id);
+static void _e_wl_shell_cb_bind_desktop(struct wl_client *client, void *data, unsigned int version, unsigned int id);
 static void _e_wl_shell_cb_ping(E_Wayland_Surface *ews, unsigned int serial);
 static void _e_wl_shell_cb_pointer_focus(struct wl_listener *listener EINA_UNUSED, void *data);
 
@@ -96,11 +97,12 @@ static const struct wl_shell_interface _e_shell_interface =
 
 static const struct e_desktop_shell_interface _e_desktop_shell_interface = 
 {
-   NULL, // desktop_background_set
+   NULL, // desktop_background_set,
    NULL, // desktop_panel_set
    NULL, // desktop_lock_surface_set
    NULL, // desktop_unlock
-   _e_wl_desktop_shell_cb_shell_grab_surface_set
+   _e_wl_desktop_shell_cb_shell_grab_surface_set,
+   NULL // desktop_ready
 };
 
 static const struct wl_shell_surface_interface _e_shell_surface_interface = 
@@ -182,13 +184,14 @@ e_modapi_init(E_Module *m)
      _e_wl_shell_shell_surface_create;
 
    /* try to add this shell to the display's global list */
-   if (!(gshell = wl_global_create(_e_wl_comp->wl.display, &wl_shell_interface, 
-                                   1, shell, _e_wl_shell_cb_bind)))
+   if (!(gshell = 
+         wl_global_create(_e_wl_comp->wl.display, &wl_shell_interface, 
+                          1, shell, _e_wl_shell_cb_bind)))
      goto err;
 
    /* try to add the desktop shell interface to the display's global list */
    if (!wl_global_create(_e_wl_comp->wl.display, &e_desktop_shell_interface, 
-                         2, shell, NULL))
+                         2, shell, _e_wl_shell_cb_bind_desktop))
      goto err;
 
    /* for each input, we need to create a pointer focus listener */
@@ -259,21 +262,26 @@ _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version, 
    res = wl_resource_create(client, &wl_shell_interface, 1, id);
    if (res)
      wl_resource_set_implementation(res, &_e_shell_interface, shell, NULL);
+}
 
-   /* try to add the desktop shell to the client */
-   if (!(res = 
-         wl_resource_create(client, &e_desktop_shell_interface, 
-                            MIN(version, 2), id)))
+static void 
+_e_wl_shell_cb_bind_desktop(struct wl_client *client, void *data, unsigned int version, unsigned int id)
+{
+   E_Wayland_Desktop_Shell *shell = NULL;
+   struct wl_resource *res = NULL;
+
+   /* try to cast data to our shell */
+   if (!(shell = data)) return;
+
+   /* try to add the shell to the client */
+   res = wl_resource_create(client, &e_desktop_shell_interface, 
+                            MIN(version, 2), id);
+   if (res)
      {
-        wl_resource_post_error(res, WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "Permission Denied");
-        wl_resource_destroy(res);
-        return;
+        wl_resource_set_implementation(res, &_e_desktop_shell_interface, 
+                                       shell, _e_wl_desktop_shell_cb_unbind);
+        shell->wl.resource = res;
      }
-   wl_resource_set_implementation(res, &_e_desktop_shell_interface, shell, 
-                                  _e_wl_desktop_shell_cb_unbind);
-
-   shell->wl.resource = res;
 }
 
 static void 
