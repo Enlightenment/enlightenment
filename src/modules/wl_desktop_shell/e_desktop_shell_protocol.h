@@ -74,6 +74,20 @@ struct e_desktop_shell_interface {
 	void (*set_grab_surface)(struct wl_client *client,
 				 struct wl_resource *resource,
 				 struct wl_resource *surface);
+
+	/**
+	 * desktop_ready - desktop is ready to be shown
+	 *
+	 * Tell the server, that enough desktop elements have been drawn
+	 * to make the desktop look ready for use. During start-up, the
+	 * server can wait for this request with a black screen before
+	 * starting to fade in the desktop, for instance. If the client
+	 * parts of a desktop take a long time to initialize, we avoid
+	 * showing temporary garbage.
+	 * @since: 2
+	 */
+	void (*desktop_ready)(struct wl_client *client,
+			      struct wl_resource *resource);
 };
 
 #define E_DESKTOP_SHELL_CONFIGURE	0
