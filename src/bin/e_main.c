@@ -154,7 +154,7 @@ _xdg_data_dirs_augment(void)
      {
         const char *dir;
 
-        snprintf(buf, sizeof(buf), "/tmp/xdg_runtime_XXXXXX");
+        snprintf(buf, sizeof(buf), "/tmp/xdg-XXXXXX");
         dir = mkdtemp(buf);
         if (!dir) dir = "/tmp";
         e_util_env_set("XDG_RUNTIME_DIR", dir);
