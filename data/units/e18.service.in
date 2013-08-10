@@ -12,7 +12,7 @@ AllowIsolate=true
 Type=notify
 #Environment=PATH=uncomment:to:override:your:PATH
 Environment=E_START=enlightenment
-ExecStart=/usr/bin/enlightenment -locked
+ExecStart=@prefix@/bin/enlightenment
 Restart=always
 RestartPreventExitStatus=0
 RestartSec=2

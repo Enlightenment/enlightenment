@@ -205,9 +205,22 @@ if test "x${have_bluetooth}" = "xyes"; then
    AC_DEFINE_UNQUOTED([HAVE_BLUETOOTH], [1], [Bluetooth is there])
 fi
 
-# Detect systemd user session directory properly
-EFL_PKG_CHECK_VAR([USER_SESSION_DIR], [systemd >= 192], [systemduserunitdir],
+AC_ARG_ENABLE([systemd],
+  AC_HELP_STRING([--disable-systemd], [disable systemd support @<:@default=detect@:>@]),
+  [want_systemd=${enableval}], [want_systemd=auto])
+
+if test "$want_systemd" == "no"; then
+  have_systemd_user_session="no"
+else
+  # Detect systemd user session directory properly
+  EFL_PKG_CHECK_VAR([USER_SESSION_DIR], [systemd >= 192], [systemduserunitdir],
 	[have_systemd_user_session="yes"], [have_systemd_user_session="no"])
+
+  if test "$want_systemd" = "yes" -a "$have_systemd_user_session" = "no"; then
+     AC_MSG_ERROR([systemd support wanted, but systemd was not found.])
+  fi
+fi
+
 AM_CONDITIONAL([HAVE_SYSTEMD_USER_SESSION], [test "x${have_systemd_user_session}" = "xyes"])
 AC_SUBST([USER_SESSION_DIR])
 
@@ -1054,6 +1067,7 @@ data/etc/sysactions.conf
 data/icons/Makefile
 data/backgrounds/Makefile
 data/units/Makefile
+data/units/e18.service
 doc/Makefile
 doc/Doxyfile
 doc/e.dox
