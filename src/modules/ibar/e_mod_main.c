@@ -222,6 +222,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    if (!ci->dir) ci->dir = eina_stringshare_add("default");
    b = _ibar_new(gc->evas, inst);
    gcc = e_gadcon_client_new(gc, name, id, style, b->o_outerbox);
+   e_gadcon_client_min_size_set(gcc, 16, 16);
    gcc->data = inst;
 
    inst->gcc = gcc;
@@ -233,9 +234,9 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
                         _ibar_inst_cb_enter, _ibar_inst_cb_move,
                         _ibar_inst_cb_leave, _ibar_inst_cb_drop,
                         drop, 3, x, y, w, h);
-   evas_object_event_callback_add(b->o_box, EVAS_CALLBACK_MOVE,
+   evas_object_event_callback_add(b->o_outerbox, EVAS_CALLBACK_MOVE,
                                   _ibar_cb_obj_moveresize, inst);
-   evas_object_event_callback_add(b->o_box, EVAS_CALLBACK_RESIZE,
+   evas_object_event_callback_add(b->o_outerbox, EVAS_CALLBACK_RESIZE,
                                   _ibar_cb_obj_moveresize, inst);
    ibar_config->instances = eina_list_append(ibar_config->instances, inst);
    return gcc;
@@ -631,7 +632,7 @@ _ibar_resize_handle(IBar *b)
                           );
    if (!b->inst->gcc) return;
    e_box_size_min_get(b->o_outerbox, &w, &h);
-   e_gadcon_client_min_size_set(b->inst->gcc, w, h);
+   e_gadcon_client_aspect_set(b->inst->gcc, w, h);
 }
 
 static void
