@@ -241,8 +241,17 @@ _gadman_gadget_size_hints_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
    int w, h;
 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   w = MAX(w, gcc->min.w);
-   h = MAX(h, gcc->min.h);
+   /* size hints change for either min or aspect */
+   if (gcc->min.w || gcc->min.h)
+     {
+        w = MAX(w, gcc->min.w);
+        h = MAX(h, gcc->min.h);
+     }
+   if (gcc->aspect.w && gcc->aspect.h)
+     {
+        w = MAX(w, gcc->aspect.w);
+        h = MAX(h, gcc->aspect.h);
+     }
    evas_object_resize(gcc->o_frame, w, h);
    _save_widget_position(gcc);
 }
