@@ -1320,9 +1320,15 @@ on_top(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const c
              my = drag_gcc->dy;
           }
 
+        if (drag_gcc->aspect.w && drag_gcc->aspect.h)
+          {
+             ow = h * drag_gcc->aspect.w / drag_gcc->aspect.h;
+          }
+
         evas_object_resize(mover, ow, h);
         evas_object_move(mover, ox, my - drag_gcc->dy);
 
+        drag_gcc->max.w = ow, drag_gcc->max.h = h;
         evas_object_resize(drag_gcc->o_frame, ow, h);
         evas_object_move(drag_gcc->o_frame, ox, my - drag_gcc->dy);
         _save_widget_position(drag_gcc);
@@ -1370,6 +1376,11 @@ on_right(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const
         /* don't go out of the screen */
         if (w > (Man->width - ox)) w = Man->width - ox;
 
+        if (drag_gcc->aspect.w && drag_gcc->aspect.h)
+          {
+             oh = w * drag_gcc->aspect.h / drag_gcc->aspect.w;
+          }
+        drag_gcc->max.w = w, drag_gcc->max.h = oh;
         evas_object_resize(mover, w, oh);
         evas_object_resize(drag_gcc->o_frame, w, oh);
         _save_widget_position(drag_gcc);
@@ -1415,8 +1426,12 @@ on_down(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const 
         if (h < drag_gcc->min.h) h = drag_gcc->min.h;
         /* don't go out of the screen */
         if (h > (Man->height - oy)) h = Man->height - oy;
-
+        if (drag_gcc->aspect.w && drag_gcc->aspect.h)
+          {
+             ow = h * drag_gcc->aspect.w / drag_gcc->aspect.h;
+          }
         evas_object_resize(mover, ow, h);
+        drag_gcc->max.w = ow, drag_gcc->max.h = h;
         evas_object_resize(drag_gcc->o_frame, ow, h);
         _save_widget_position(drag_gcc);
      }
@@ -1469,10 +1484,14 @@ on_left(void *data, Evas_Object *o __UNUSED__, const char *em __UNUSED__, const 
              w += mx - drag_gcc->dx;
              mx = drag_gcc->dx;
           }
-
+        if (drag_gcc->aspect.w && drag_gcc->aspect.h)
+          {
+             oh = w * drag_gcc->aspect.h / drag_gcc->aspect.w;
+          }
         evas_object_resize(mover, w, oh);
         evas_object_move(mover, mx - drag_gcc->dx, oy);
 
+        drag_gcc->max.w = w, drag_gcc->max.h = oh;
         evas_object_resize(drag_gcc->o_frame, w, oh);
         evas_object_move(drag_gcc->o_frame, mx - drag_gcc->dx, oy);
         _save_widget_position(drag_gcc);
