@@ -1091,7 +1091,8 @@ _attach_menu(void *data __UNUSED__, E_Gadcon_Client *gcc, E_Menu *menu)
         e_menu_item_radio_group_set(mi, 2);
         if (gcc->cf->orient == E_GADCON_ORIENT_FLOAT)
           e_menu_item_toggle_set(mi, 1);
-        e_menu_item_callback_set(mi, on_menu_style_float, gcc);
+        if (!mi->toggle)
+          e_menu_item_callback_set(mi, on_menu_style_float, gcc);
 
         mi = e_menu_item_new(mn);
         e_menu_item_label_set(mi, _("Horizontal"));
@@ -1099,7 +1100,8 @@ _attach_menu(void *data __UNUSED__, E_Gadcon_Client *gcc, E_Menu *menu)
         e_menu_item_radio_group_set(mi, 2);
         if (gcc->cf->orient == E_GADCON_ORIENT_HORIZ)
           e_menu_item_toggle_set(mi, 1);
-        e_menu_item_callback_set(mi, on_menu_style_horiz, gcc);
+        if (!mi->toggle)
+          e_menu_item_callback_set(mi, on_menu_style_horiz, gcc);
 
         mi = e_menu_item_new(mn);
         e_menu_item_label_set(mi, _("Vertical"));
@@ -1107,7 +1109,8 @@ _attach_menu(void *data __UNUSED__, E_Gadcon_Client *gcc, E_Menu *menu)
         e_menu_item_radio_group_set(mi, 2);
         if (gcc->cf->orient == E_GADCON_ORIENT_VERT)
           e_menu_item_toggle_set(mi, 1);
-        e_menu_item_callback_set(mi, on_menu_style_vert, gcc);
+        if (!mi->toggle)
+          e_menu_item_callback_set(mi, on_menu_style_vert, gcc);
 
         mi = e_menu_item_new(menu);
         e_menu_item_label_set(mi, _("Appearance"));
