@@ -1169,39 +1169,30 @@ on_menu_style_inset(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__
 static void
 _menu_style_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
 {
-   int w, h;
+   int ow, oh, w, h;
+   Eina_Bool same;
+
+   same = (((orient == E_GADCON_ORIENT_LEFT) && (gcc->cf->orient == E_GADCON_ORIENT_FLOAT)) ||
+       ((orient == E_GADCON_ORIENT_FLOAT) && (gcc->cf->orient == E_GADCON_ORIENT_LEFT)));
    gcc->cf->orient = orient;
+   evas_object_geometry_get(gcc->o_frame, NULL, NULL, &ow, &oh);
 
    if (gcc->client_class->func.orient)
      gcc->client_class->func.orient(gcc, orient);
 
-   if (orient == E_GADCON_ORIENT_VERT)
+   if (same)
      {
-        w = DEFAULT_SIZE_W * Man->width;
-        if (w < gcc->min.w) w = gcc->min.w;
-
-        if (gcc->aspect.w && gcc->aspect.h)
-          h = ((float)gcc->aspect.h / (float)gcc->aspect.w) * w;
-        else
-          {
-             h = DEFAULT_SIZE_H * Man->height;
-             if (h < gcc->min.h) h = gcc->min.h;
-          }
+        w = ow, h = oh;
      }
-   else
+   else 
      {
-        h = DEFAULT_SIZE_H * Man->height;
-        if (h < gcc->min.h) h = gcc->min.h;
-
-        if (gcc->aspect.w && gcc->aspect.h)
-          w = ((float)gcc->aspect.w / (float)gcc->aspect.h) * h;
-        else
-          {
-             w = DEFAULT_SIZE_W * Man->width;
-             if (w < gcc->min.w) w = gcc->min.w;
-          }
+        /* just flip aspect */
+        w = oh;
+        h = ow;
      }
 
+   gcc->max.w = w;
+   gcc->max.h = h;
    evas_object_resize(gcc->o_frame, w, h);
    _save_widget_position(gcc);
 }
