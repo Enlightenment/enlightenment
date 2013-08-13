@@ -3678,7 +3678,12 @@ e_gadcon_layout_pack_min_size_set(Evas_Object *obj, int w, int h)
 
    if (!obj) return;
    bi = evas_object_data_get(obj, "e_gadcon_layout_data");
-   if (!bi) return;
+   if (!bi)
+     {
+        evas_object_size_hint_min_set(obj, w, h);
+        edje_extern_object_min_size_set(obj, w, h);
+        return;
+     }
    if (bi->sd->horizontal)
      {
         bi->min.w = w;

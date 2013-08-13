@@ -1,5 +1,9 @@
 2013-07-26 Mike Blumenkrantz
 
+        * fixed bug where setting min size on a gadget would not be passed to desktop gadgets
+
+2013-07-26 Mike Blumenkrantz
+
         * fixed bug where double clicking filemanager windows would not correctly autosize
 
 2013-06-20 Mike Blumenkrantz
