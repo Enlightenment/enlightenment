@@ -6,8 +6,8 @@
 
 /* shell function prototypes */
 static void _e_wl_shell_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED);
-static void _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version, unsigned int id);
-static void _e_wl_shell_cb_bind_desktop(struct wl_client *client, void *data, unsigned int version, unsigned int id);
+static void _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
+static void _e_wl_shell_cb_bind_desktop(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id);
 static void _e_wl_shell_cb_ping(E_Wayland_Surface *ews, unsigned int serial);
 static void _e_wl_shell_cb_pointer_focus(struct wl_listener *listener EINA_UNUSED, void *data);
 
@@ -22,7 +22,12 @@ static void _e_wl_shell_cb_shell_surface_get(struct wl_client *client, struct wl
 static void _e_wl_desktop_shell_cb_unbind(struct wl_resource *resource);
 
 /* desktop shell interface prototypes */
+static void _e_wl_desktop_shell_cb_background_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED, struct wl_resource *surface_resource EINA_UNUSED);
+static void _e_wl_desktop_shell_cb_panel_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED, struct wl_resource *surface_resource EINA_UNUSED);
+static void _e_wl_desktop_shell_cb_lock_surface_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *surface_resource EINA_UNUSED);
+static void _e_wl_desktop_shell_cb_unlock(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED);
 static void _e_wl_desktop_shell_cb_shell_grab_surface_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *surface_resource);
+static void _e_wl_desktop_shell_cb_ready(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED);
 
 /* shell surface function prototypes */
 static E_Wayland_Shell_Surface *_e_wl_shell_shell_surface_create(void *shell, E_Wayland_Surface *ews, const void *client EINA_UNUSED);
@@ -97,12 +102,12 @@ static const struct wl_shell_interface _e_shell_interface =
 
 static const struct e_desktop_shell_interface _e_desktop_shell_interface = 
 {
-   NULL, // desktop_background_set,
-   NULL, // desktop_panel_set
-   NULL, // desktop_lock_surface_set
-   NULL, // desktop_unlock
+   _e_wl_desktop_shell_cb_background_set,
+   _e_wl_desktop_shell_cb_panel_set,
+   _e_wl_desktop_shell_cb_lock_surface_set,
+   _e_wl_desktop_shell_cb_unlock,
    _e_wl_desktop_shell_cb_shell_grab_surface_set,
-   NULL // desktop_ready
+   _e_wl_desktop_shell_cb_ready
 };
 
 static const struct wl_shell_surface_interface _e_shell_surface_interface = 
@@ -250,7 +255,7 @@ _e_wl_shell_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 }
 
 static void 
-_e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version, unsigned int id)
+_e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
 {
    E_Wayland_Desktop_Shell *shell = NULL;
    struct wl_resource *res = NULL;
@@ -261,11 +266,24 @@ _e_wl_shell_cb_bind(struct wl_client *client, void *data, unsigned int version, 
    /* try to add the shell to the client */
    res = wl_resource_create(client, &wl_shell_interface, 1, id);
    if (res)
-     wl_resource_set_implementation(res, &_e_shell_interface, shell, NULL);
+     {
+        struct wl_resource *dres = NULL;
+
+        wl_resource_set_implementation(res, &_e_shell_interface, shell, NULL);
+
+        dres = wl_resource_create(client, &e_desktop_shell_interface, -1, 0);
+        if (dres)
+          {
+             wl_resource_set_implementation(dres, &_e_desktop_shell_interface, 
+                                            shell, _e_wl_desktop_shell_cb_unbind);
+
+             shell->wl.resource = dres;
+          }
+     }
 }
 
 static void 
-_e_wl_shell_cb_bind_desktop(struct wl_client *client, void *data, unsigned int version, unsigned int id)
+_e_wl_shell_cb_bind_desktop(struct wl_client *client, void *data, unsigned int version EINA_UNUSED, unsigned int id)
 {
    E_Wayland_Desktop_Shell *shell = NULL;
    struct wl_resource *res = NULL;
@@ -274,8 +292,7 @@ _e_wl_shell_cb_bind_desktop(struct wl_client *client, void *data, unsigned int v
    if (!(shell = data)) return;
 
    /* try to add the shell to the client */
-   res = wl_resource_create(client, &e_desktop_shell_interface, 
-                            MIN(version, 2), id);
+   res = wl_resource_create(client, &e_desktop_shell_interface, 2, id);
    if (res)
      {
         wl_resource_set_implementation(res, &_e_desktop_shell_interface, 
@@ -379,7 +396,7 @@ _e_wl_shell_grab_start(E_Wayland_Shell_Grab *grab, E_Wayland_Shell_Surface *ewss
    /* safety check */
    if ((!grab) || (!ewss)) return;
 
-   shell = ewss->shell;
+   shell = (E_Wayland_Desktop_Shell *)ewss->shell;
 
    /* end any popup grabs */
    _e_wl_shell_popup_grab_end(pointer);
@@ -483,6 +500,30 @@ _e_wl_desktop_shell_cb_unbind(struct wl_resource *resource)
 
 /* desktop shell interface functions */
 static void 
+_e_wl_desktop_shell_cb_background_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED, struct wl_resource *surface_resource EINA_UNUSED)
+{
+
+}
+
+static void 
+_e_wl_desktop_shell_cb_panel_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED, struct wl_resource *surface_resource EINA_UNUSED)
+{
+
+}
+
+static void 
+_e_wl_desktop_shell_cb_lock_surface_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *surface_resource EINA_UNUSED)
+{
+
+}
+
+static void 
+_e_wl_desktop_shell_cb_unlock(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED)
+{
+
+}
+
+static void 
 _e_wl_desktop_shell_cb_shell_grab_surface_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *surface_resource)
 {
    E_Wayland_Desktop_Shell *shell = NULL;
@@ -492,6 +533,12 @@ _e_wl_desktop_shell_cb_shell_grab_surface_set(struct wl_client *client EINA_UNUS
      return;
 
    shell->grab_surface = wl_resource_get_user_data(surface_resource);
+}
+
+static void 
+_e_wl_desktop_shell_cb_ready(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED)
+{
+
 }
 
 /* shell surface functions */
