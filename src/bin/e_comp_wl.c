@@ -340,9 +340,6 @@ e_comp_wl_init(void)
      ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, 
                              _e_comp_wl_cb_keymap_changed, NULL);
 
-   /* add an idler for deferred shell module loading */
-   _module_idler = ecore_idler_add(_e_comp_wl_cb_module_idle, NULL);
-
    /* get the displays event loop */
    _e_wl_comp->wl.loop = wl_display_get_event_loop(_e_wl_comp->wl.display);
 
@@ -365,6 +362,9 @@ e_comp_wl_init(void)
         ERR("Could not add a Wayland Display socket: %m");
         goto err;
      }
+
+   /* add an idler for deferred shell module loading */
+   _module_idler = ecore_idler_add(_e_comp_wl_cb_module_idle, NULL);
 
    /* return success */
    return EINA_TRUE;
@@ -1173,7 +1173,7 @@ _default_grab_modifiers(struct wl_keyboard_grab *grab, uint32_t serial, uint32_t
    struct wl_pointer *pointer = keyboard->seat->pointer;
    struct wl_resource *resource, *pr;
 
-   if (!(resource = wl_resource_get_user_data(keyboard->focus_resource)))
+   if (!(resource = keyboard->focus_resource))
      return;
 
    wl_keyboard_send_modifiers(resource, serial, mods_depressed,
@@ -1454,8 +1454,8 @@ static Eina_Bool
 _e_comp_wl_cb_read(void *data EINA_UNUSED, Ecore_Fd_Handler *hdl EINA_UNUSED)
 {
    /* flush any events before we sleep */
-   wl_event_loop_dispatch(_e_wl_comp->wl.loop, 0);
    wl_display_flush_clients(_e_wl_comp->wl.display);
+   wl_event_loop_dispatch(_e_wl_comp->wl.loop, 0);
 
    return ECORE_CALLBACK_RENEW;
 }
