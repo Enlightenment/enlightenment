@@ -3705,7 +3705,11 @@ e_gadcon_layout_pack_aspect_set(Evas_Object *obj, int w, int h)
 
    if (!obj) return;
    bi = evas_object_data_get(obj, "e_gadcon_layout_data");
-   if (!bi) return;
+   if (!bi)
+     {
+        evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_BOTH, w, h);
+        return;
+     }
    if (bi->sd->horizontal)
      {
         bi->aspect.w = w;
