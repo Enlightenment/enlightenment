@@ -590,6 +590,13 @@ _ibar_resize_handle(IBar *b)
    Evas_Coord w, h;
 
    evas_object_geometry_get(b->o_box, NULL, NULL, &w, &h);
+   if (b->inst->gcc)
+     {
+        if (b->inst->gcc->max.w)
+          w = MIN(w, b->inst->gcc->max.w);
+        if (b->inst->gcc->max.h)
+          h = MIN(h, b->inst->gcc->max.h);
+     }
    if (e_box_orientation_get(b->o_box))
      w = h;
    else
