@@ -1693,17 +1693,6 @@ _pager_cb_event_desk_show(void *data __UNUSED__, int type __UNUSED__, void *even
           {
              pp->timer = ecore_timer_add(pager_config->popup_speed,
                                          _pager_popup_cb_timeout, pp);
-
-             pd = _pager_desk_find(pp->pager, ev->desk);
-             if (pd)
-               {
-                  _pager_desk_select(pd);
-                  edje_object_part_text_set(pp->o_bg, "e.text.label",
-                                            ev->desk->name);
-               }
-             ecore_timer_del(pp->timer);
-             pp->timer = ecore_timer_add(pager_config->popup_speed,
-                                         _pager_popup_cb_timeout, pp);
           }
      }
 
