@@ -2862,68 +2862,28 @@ e_modapi_init(E_Module *m)
    E_CONFIG_LIMIT(pager_config->btn_desk, 0, 32);
    E_CONFIG_LIMIT(pager_config->disable_live_preview, 0, 1);
 
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_RESIZE, _pager_cb_event_border_resize, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_MOVE, _pager_cb_event_border_move, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_ADD, _pager_cb_event_border_add, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_REMOVE, _pager_cb_event_border_remove, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_ICONIFY, _pager_cb_event_border_iconify, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_UNICONIFY, _pager_cb_event_border_uniconify, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_STICK, _pager_cb_event_border_stick, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_UNSTICK, _pager_cb_event_border_unstick, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_DESK_SET, _pager_cb_event_border_desk_set, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_STACK, _pager_cb_event_border_stack, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_ICON_CHANGE, _pager_cb_event_border_icon_change, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_URGENT_CHANGE, _pager_cb_event_border_urgent_change, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_FOCUS_IN,
-         _pager_cb_event_border_focus_in, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_FOCUS_OUT,
-         _pager_cb_event_border_focus_out, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BORDER_PROPERTY, _pager_cb_event_border_property, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_ZONE_DESK_COUNT_SET, _pager_cb_event_zone_desk_count_set, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_DESK_SHOW, _pager_cb_event_desk_show, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_DESK_NAME_CHANGE, _pager_cb_event_desk_name_change, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_CONTAINER_RESIZE, _pager_cb_event_container_resize, NULL));
-   pager_config->handlers = eina_list_append
-       (pager_config->handlers, ecore_event_handler_add
-         (E_EVENT_BG_UPDATE, _pager_cb_event_bg_update, NULL));
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_RESIZE, _pager_cb_event_border_resize, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_MOVE, _pager_cb_event_border_move, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_ADD, _pager_cb_event_border_add, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_REMOVE, _pager_cb_event_border_remove, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_ICONIFY, _pager_cb_event_border_iconify, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_UNICONIFY, _pager_cb_event_border_uniconify, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_STICK, _pager_cb_event_border_stick, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_UNSTICK, _pager_cb_event_border_unstick, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_DESK_SET, _pager_cb_event_border_desk_set, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_STACK, _pager_cb_event_border_stack, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_ICON_CHANGE, _pager_cb_event_border_icon_change, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_URGENT_CHANGE, _pager_cb_event_border_urgent_change, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_FOCUS_IN,
+         _pager_cb_event_border_focus_in, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_FOCUS_OUT,
+         _pager_cb_event_border_focus_out, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BORDER_PROPERTY, _pager_cb_event_border_property, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_ZONE_DESK_COUNT_SET, _pager_cb_event_zone_desk_count_set, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_DESK_SHOW, _pager_cb_event_desk_show, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_DESK_NAME_CHANGE, _pager_cb_event_desk_name_change, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CONTAINER_RESIZE, _pager_cb_event_container_resize, NULL);
+      E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_BG_UPDATE, _pager_cb_event_bg_update, NULL);
 
    pager_config->module = m;
 
@@ -2967,12 +2927,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 
    if (pager_config->config_dialog)
      e_object_del(E_OBJECT(pager_config->config_dialog));
-   while (pager_config->handlers)
-     {
-        ecore_event_handler_del(pager_config->handlers->data);
-        pager_config->handlers =
-          eina_list_remove_list(pager_config->handlers, pager_config->handlers);
-     }
+   E_FREE_LIST(pager_config->handlers, ecore_event_handler_del);
 
    e_configure_registry_item_del("extensions/pager");
 
