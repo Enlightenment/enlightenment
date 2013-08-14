@@ -1427,7 +1427,7 @@ _e_wl_shell_shell_surface_cb_key_up(void *data, Evas_Object *obj EINA_UNUSED, vo
                           WL_KEYBOARD_KEY_STATE_RELEASED);
 
    /* update xkb key state */
-   xkb_state_update_key(_e_wl_comp->input->xkb.state, key + 8, XKB_KEY_DOWN);
+   xkb_state_update_key(_e_wl_comp->input->xkb.state, key + 8, XKB_KEY_UP);
 
    /* update keyboard modifiers */
    serial = wl_display_get_serial(_e_wl_comp->wl.display);
