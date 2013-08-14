@@ -1505,6 +1505,7 @@ _e_wl_shell_shell_surface_cb_bd_move_end(void *data, void *bd)
    struct wl_pointer *ptr = NULL;
    E_Border *border = NULL;
 
+   /* FIXME: wayland move/resize with keyboard ? */return;
    /* try to cast data to our surface structure */
    if (!(ews = data)) return;
 
@@ -1563,6 +1564,7 @@ _e_wl_shell_shell_surface_cb_bd_resize_end(void *data, void *bd)
    struct wl_pointer *ptr = NULL;
    E_Border *border = NULL;
 
+   /* FIXME: wayland move/resize with keyboard ? */return;
    /* try to cast data to our surface structure */
    if (!(ews = data)) return;
 
