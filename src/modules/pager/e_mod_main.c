@@ -2523,16 +2523,6 @@ _pager_popup_show(void)
                       _pager_drop_cb_leave, _pager_drop_cb_drop,
                       drop, 3, x, y, w, h);
 
-   /* FIXME: COMP */
-   //e_bindings_key_grab(E_BINDING_CONTEXT_POPUP, act_popup->popup->evas_win);
-
-   evas_event_freeze(act_popup->popup->evas);
-   evas_event_feed_mouse_in(act_popup->popup->evas,
-                            ecore_x_current_time_get(), NULL);
-   evas_event_feed_mouse_move(act_popup->popup->evas, -1000000, -1000000,
-                              ecore_x_current_time_get(), NULL);
-   evas_event_thaw(act_popup->popup->evas);
-
    current_desk = e_desk_current_get(zone);
 
    return 1;
@@ -2541,8 +2531,6 @@ _pager_popup_show(void)
 static void
 _pager_popup_hide(int switch_desk)
 {
-   /* FIXME: COMP */
-   //e_bindings_key_ungrab(E_BINDING_CONTEXT_POPUP, act_popup->popup->evas_win);
    hold_count = 0;
    hold_mod = 0;
    while (handlers)
