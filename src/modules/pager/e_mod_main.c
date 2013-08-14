@@ -44,6 +44,7 @@ struct _Pager
    E_Zone         *zone;
    int             xnum, ynum;
    Eina_List      *desks;
+   Pager_Desk     *active_pd;
    unsigned char   dragging : 1;
    unsigned char   just_dragged : 1;
    Evas_Coord      dnd_x, dnd_y;
@@ -518,28 +519,16 @@ _pager_desk_at_coord(Pager *p, Evas_Coord x, Evas_Coord y)
 static void
 _pager_desk_select(Pager_Desk *pd)
 {
-   Eina_List *l;
-   Pager_Desk *pd2;
-
    if (pd->current) return;
-
-   EINA_LIST_FOREACH(pd->pager->desks, l, pd2)
+   if (pd->pager->active_pd)
      {
-        if (pd == pd2)
-          {
-             pd2->current = 1;
-             evas_object_raise(pd2->o_desk);
-             edje_object_signal_emit(pd2->o_desk, "e,state,selected", "e");
-          }
-        else
-          {
-             if (pd2->current)
-               {
-                  pd2->current = 0;
-                  edje_object_signal_emit(pd2->o_desk, "e,state,unselected", "e");
-               }
-          }
+        pd->pager->active_pd->current = 0;
+        edje_object_signal_emit(pd->pager->active_pd->o_desk, "e,state,unselected", "e");
      }
+   pd->current = 1;
+   evas_object_raise(pd->o_desk);
+   edje_object_signal_emit(pd->o_desk, "e,state,selected", "e");
+   pd->pager->active_pd = pd;
 }
 
 static Pager_Desk *
