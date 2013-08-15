@@ -2243,6 +2243,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
 
         edje_object_signal_callback_add(cw->shobj, "e,action,show,done", "e", _e_comp_show_done, cw);
         edje_object_signal_callback_add(cw->shobj, "e,action,hide,done", "e", _e_comp_hide_done, cw);
+        if (cw->shaped) evas_object_precise_is_inside_set(cw->effect_obj, 1);
 
         _e_comp_win_layout_populate(cw);
 
@@ -3774,11 +3775,7 @@ _e_comp_shapes_update_comp_win_shape_comp_helper(E_Comp_Win *cw, Eina_Tiler *tb)
         SHAPE_INF("IGNORING DELETED: %u", cw->win);
         return;
      }
-   if (cw->override && cw->shaped)
-     {
-        ERR("SHAPED OVERRIDE WINDOW DETECTED: INPUT SHAPE CUTTING BROKEN!");
-        return;
-     }
+
    if (cw->invalid || cw->real_hid || (!cw->visible) || (!cw->shape->visible) ||
        evas_object_pass_events_get(cw->effect_obj) || evas_object_repeat_events_get(cw->effect_obj))
      {
