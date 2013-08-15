@@ -582,7 +582,7 @@ struct _E_Wayland_Plane
 };
 
 /* external variables */
-extern E_Wayland_Compositor *_e_wl_comp;
+extern EAPI E_Wayland_Compositor *_e_wl_comp;
 
 EINTERN Eina_Bool e_comp_wl_init(void);
 EINTERN void e_comp_wl_shutdown(void);

@@ -209,7 +209,7 @@ static const struct wl_pointer_grab_interface _e_drag_grab_interface =
 static Ecore_Idler *_module_idler = NULL;
 
 /* external variables */
-E_Wayland_Compositor *_e_wl_comp;
+EAPI E_Wayland_Compositor *_e_wl_comp;
 
 /* external functions */
 EINTERN Eina_Bool 
