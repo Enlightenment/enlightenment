@@ -43,18 +43,18 @@ static void (*_e_sys_logout_func)(void) = NULL;
 static void (*_e_sys_resume_func)(void) = NULL;
 
 static void _e_sys_systemd_handle_inhibit(void);
-static void _e_sys_systemd_works_check(void);
 static void _e_sys_systemd_poweroff(void);
 static void _e_sys_systemd_reboot(void);
 static void _e_sys_systemd_suspend(void);
 static void _e_sys_systemd_hibernate(void);
+static void _e_sys_systemd_exists_cb(void *data, const Eldbus_Message *m, Eldbus_Pending *p);
 
 static Eina_Bool systemd_works = EINA_FALSE;
 
 static const int E_LOGOUT_AUTO_TIME = 60;
 static const int E_LOGOUT_WAIT_TIME = 15;
 
-static Eldbus_Connection *conn = NULL;
+static Eldbus_Proxy *login1_manger_proxy = NULL;
 
 EAPI int E_EVENT_SYS_SUSPEND = -1;
 EAPI int E_EVENT_SYS_HIBERNATE = -1;
@@ -64,8 +64,17 @@ EAPI int E_EVENT_SYS_RESUME = -1;
 EINTERN int
 e_sys_init(void)
 {
+   Eldbus_Connection *conn;
+   Eldbus_Object *obj;
+
    eldbus_init();
    conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   obj = eldbus_object_get(conn, "org.freedesktop.login1",
+                           "/org/freedesktop/login1");
+   login1_manger_proxy = eldbus_proxy_get(obj,
+                                          "org.freedesktop.login1.Manager");
+   eldbus_name_owner_get(conn, "org.freedesktop.login1",
+                         _e_sys_systemd_exists_cb, NULL);
    _e_sys_systemd_handle_inhibit();
    
    E_EVENT_SYS_SUSPEND = ecore_event_type_new();
@@ -74,7 +83,6 @@ e_sys_init(void)
    /* this is not optimal - but it does work cleanly */
    _e_sys_exe_exit_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                      _e_sys_cb_exit, NULL);
-   _e_sys_systemd_works_check();
    return 1;
 }
 
@@ -88,8 +96,18 @@ e_sys_shutdown(void)
    _e_sys_reboot_check_exe = NULL;
    _e_sys_suspend_check_exe = NULL;
    _e_sys_hibernate_check_exe = NULL;
-   if (conn) eldbus_connection_unref(conn);
-   conn = NULL;
+   if (login1_manger_proxy)
+     {
+         Eldbus_Connection *conn;
+         Eldbus_Object *obj;
+
+         obj = eldbus_proxy_object_get(login1_manger_proxy);
+         conn = eldbus_object_connection_get(obj);
+         eldbus_proxy_unref(login1_manger_proxy);
+         eldbus_object_unref(obj);
+         eldbus_connection_unref(conn);
+         login1_manger_proxy = NULL;
+     }
    eldbus_shutdown();
    return 1;
 }
@@ -270,22 +288,14 @@ e_sys_handlers_set(void (*suspend_func)(void),
    _e_sys_resume_func = resume_func;
 }
 
-static Eldbus_Message *
-_e_sys_systemd_login_manager_msg(const char *method)
-{
-   return eldbus_message_method_call_new("org.freedesktop.login1",
-                                      "/org/freedesktop/login1",
-                                      "org.freedesktop.login1.Manager",
-                                      method);
-}
-
 static void
 _e_sys_systemd_handle_inhibit(void)
 {
    Eldbus_Message *m;
    
-   if (!conn) return;
-   if (!(m = _e_sys_systemd_login_manager_msg("Inhibit"))) return;
+   if (!login1_manger_proxy) return;
+   if (!(m = eldbus_proxy_method_call_new(login1_manger_proxy, "Inhibit")))
+     return;
    eldbus_message_arguments_append
      (m, "ssss",
          "handle-power-key:"
@@ -295,7 +305,7 @@ _e_sys_systemd_handle_inhibit(void)
          "Enlightenment", // who (string)
          "Normal Execution", // why (string)
          "block");
-   eldbus_connection_send(conn, m, NULL, NULL, -1);
+   eldbus_proxy_send(login1_manger_proxy, m, NULL, NULL, -1);
 }
 
 static void
@@ -312,17 +322,19 @@ _e_sys_systemd_check_cb(void *data, const Eldbus_Message *m, Eldbus_Pending *p _
 static void
 _e_sys_systemd_check(void)
 {
-   Eldbus_Message *m;
-   
-   if (!conn) return;
-   if (!(m = _e_sys_systemd_login_manager_msg("CanPowerOff"))) return;
-   eldbus_connection_send(conn, m, _e_sys_systemd_check_cb, &_e_sys_can_halt, -1);
-   if (!(m = _e_sys_systemd_login_manager_msg("CanReboot"))) return;
-   eldbus_connection_send(conn, m, _e_sys_systemd_check_cb, &_e_sys_can_reboot, -1);
-   if (!(m = _e_sys_systemd_login_manager_msg("CanSuspend"))) return;
-   eldbus_connection_send(conn, m, _e_sys_systemd_check_cb, &_e_sys_can_suspend, -1);
-   if (!(m = _e_sys_systemd_login_manager_msg("CanHibernate"))) return;
-   eldbus_connection_send(conn, m, _e_sys_systemd_check_cb, &_e_sys_can_hibernate, -1);
+   if (!login1_manger_proxy) return;
+   if (!eldbus_proxy_call(login1_manger_proxy, "CanPowerOff",
+                          _e_sys_systemd_check_cb, &_e_sys_can_halt, -1, ""))
+     return;
+   if (!eldbus_proxy_call(login1_manger_proxy, "CanReboot",
+                          _e_sys_systemd_check_cb, &_e_sys_can_reboot, -1, ""))
+     return;
+   if (!eldbus_proxy_call(login1_manger_proxy, "CanSuspend",
+                          _e_sys_systemd_check_cb, &_e_sys_can_suspend, -1, ""))
+     return;
+   if (!eldbus_proxy_call(login1_manger_proxy, "CanHibernate",
+                          _e_sys_systemd_check_cb, &_e_sys_can_hibernate, -1, ""))
+     return;
 }
 
 static void
@@ -343,51 +355,27 @@ fail:
 }
 
 static void
-_e_sys_systemd_works_check(void)
-{
-   if (!conn)
-     {
-        /* delay this for 1.0 seconds while the rest of e starts up */
-        ecore_timer_add(1.0, _e_sys_cb_timer, NULL);
-        return;
-     }
-   eldbus_name_owner_get(conn, "org.freedesktop.login1",
-                         _e_sys_systemd_exists_cb, NULL);
-}
-
-static void
-_e_sys_systemd_login_manager_power_call(const char *method)
-{
-   Eldbus_Message *m;
-   
-   if (!conn) return;
-   if (!(m = _e_sys_systemd_login_manager_msg(method))) return;
-   eldbus_message_arguments_append(m, "b", 0);
-   eldbus_connection_send(conn, m, NULL, NULL, -1);
-}
-
-static void
 _e_sys_systemd_poweroff(void)
 {
-   _e_sys_systemd_login_manager_power_call("PowerOff");
+   eldbus_proxy_call(login1_manger_proxy, "PowerOff", NULL, NULL, -1, "b", 0);
 }
 
 static void
 _e_sys_systemd_reboot(void)
 {
-   _e_sys_systemd_login_manager_power_call("Reboot");
+   eldbus_proxy_call(login1_manger_proxy, "Reboot", NULL, NULL, -1, "b", 0);
 }
 
 static void
 _e_sys_systemd_suspend(void)
 {
-   _e_sys_systemd_login_manager_power_call("Suspend");
+   eldbus_proxy_call(login1_manger_proxy, "Suspend", NULL, NULL, -1, "b", 0);
 }
 
 static void
 _e_sys_systemd_hibernate(void)
 {
-   _e_sys_systemd_login_manager_power_call("Hibernate");
+   eldbus_proxy_call(login1_manger_proxy, "Hibernate", NULL, NULL, -1, "b", 0);
 }
 
 static Eina_Bool
