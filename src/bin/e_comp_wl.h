@@ -73,6 +73,7 @@ struct wl_pointer_grab
    struct wl_pointer *pointer;
    struct wl_resource *focus;
    wl_fixed_t x, y;
+   unsigned int edges;
 };
 
 struct wl_keyboard_grab;
