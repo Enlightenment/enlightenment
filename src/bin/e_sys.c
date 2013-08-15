@@ -42,8 +42,19 @@ static void (*_e_sys_shutdown_func)(void) = NULL;
 static void (*_e_sys_logout_func)(void) = NULL;
 static void (*_e_sys_resume_func)(void) = NULL;
 
+static void _e_sys_systemd_handle_inhibit(void);
+static void _e_sys_systemd_works_check(void);
+static void _e_sys_systemd_poweroff(void);
+static void _e_sys_systemd_reboot(void);
+static void _e_sys_systemd_suspend(void);
+static void _e_sys_systemd_hibernate(void);
+
+static Eina_Bool systemd_works = EINA_FALSE;
+
 static const int E_LOGOUT_AUTO_TIME = 60;
 static const int E_LOGOUT_WAIT_TIME = 15;
+
+static Eldbus_Connection *conn = NULL;
 
 EAPI int E_EVENT_SYS_SUSPEND = -1;
 EAPI int E_EVENT_SYS_HIBERNATE = -1;
@@ -53,14 +64,17 @@ EAPI int E_EVENT_SYS_RESUME = -1;
 EINTERN int
 e_sys_init(void)
 {
+   eldbus_init();
+   conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   _e_sys_systemd_handle_inhibit();
+   
    E_EVENT_SYS_SUSPEND = ecore_event_type_new();
    E_EVENT_SYS_HIBERNATE = ecore_event_type_new();
    E_EVENT_SYS_RESUME = ecore_event_type_new();
    /* this is not optimal - but it does work cleanly */
    _e_sys_exe_exit_handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                                      _e_sys_cb_exit, NULL);
-   /* delay this for 1.0 seconds while the rest of e starts up */
-   ecore_timer_add(1.0, _e_sys_cb_timer, NULL);
+   _e_sys_systemd_works_check();
    return 1;
 }
 
@@ -74,6 +88,9 @@ e_sys_shutdown(void)
    _e_sys_reboot_check_exe = NULL;
    _e_sys_suspend_check_exe = NULL;
    _e_sys_hibernate_check_exe = NULL;
+   if (conn) eldbus_connection_unref(conn);
+   conn = NULL;
+   eldbus_shutdown();
    return 1;
 }
 
@@ -251,6 +268,126 @@ e_sys_handlers_set(void (*suspend_func)(void),
    _e_sys_shutdown_func = shutdown_func;
    _e_sys_logout_func = logout_func;
    _e_sys_resume_func = resume_func;
+}
+
+static Eldbus_Message *
+_e_sys_systemd_login_manager_msg(const char *method)
+{
+   return eldbus_message_method_call_new("org.freedesktop.login1",
+                                      "/org/freedesktop/login1",
+                                      "org.freedesktop.login1.Manager",
+                                      method);
+}
+
+static void
+_e_sys_systemd_handle_inhibit(void)
+{
+   Eldbus_Message *m;
+   
+   if (!conn) return;
+   if (!(m = _e_sys_systemd_login_manager_msg("Inhibit"))) return;
+   eldbus_message_arguments_append
+     (m, "ssss",
+         "handle-power-key:"
+         "handle-suspend-key:"
+         "handle-hibernate-key:"
+         "handle-lid-switch", // what
+         "Enlightenment", // who (string)
+         "Normal Execution", // why (string)
+         "block");
+   eldbus_connection_send(conn, m, NULL, NULL, -1);
+}
+
+static void
+_e_sys_systemd_check_cb(void *data, const Eldbus_Message *m, Eldbus_Pending *p __UNUSED__)
+{
+   int *dest = data;
+   char *s = NULL;
+   if (!eldbus_message_arguments_get(m, "s", &s)) return;
+   if (!s) return;
+   if (!strcmp(s, "yes")) *dest = 1;
+   else *dest = 1;
+}
+
+static void
+_e_sys_systemd_check(void)
+{
+   Eldbus_Message *m;
+   
+   if (!conn) return;
+   if (!(m = _e_sys_systemd_login_manager_msg("CanPowerOff"))) return;
+   eldbus_connection_send(conn, m, _e_sys_systemd_check_cb, &_e_sys_can_halt, -1);
+   if (!(m = _e_sys_systemd_login_manager_msg("CanReboot"))) return;
+   eldbus_connection_send(conn, m, _e_sys_systemd_check_cb, &_e_sys_can_reboot, -1);
+   if (!(m = _e_sys_systemd_login_manager_msg("CanSuspend"))) return;
+   eldbus_connection_send(conn, m, _e_sys_systemd_check_cb, &_e_sys_can_suspend, -1);
+   if (!(m = _e_sys_systemd_login_manager_msg("CanHibernate"))) return;
+   eldbus_connection_send(conn, m, _e_sys_systemd_check_cb, &_e_sys_can_hibernate, -1);
+}
+
+static void
+_e_sys_systemd_exists_cb(void *data __UNUSED__, const Eldbus_Message *m, Eldbus_Pending *p __UNUSED__)
+{
+   const char *id = NULL;
+   
+   if (eldbus_message_error_get(m, NULL, NULL)) goto fail;
+   if (!eldbus_message_arguments_get(m, "s", &id)) goto fail;
+   if ((!id) || (id[0] != ':')) goto fail;
+   systemd_works = EINA_TRUE;
+   _e_sys_systemd_check();
+   return;
+fail:
+   systemd_works = EINA_FALSE;
+   /* delay this for 1.0 seconds while the rest of e starts up */
+   ecore_timer_add(1.0, _e_sys_cb_timer, NULL);
+}
+
+static void
+_e_sys_systemd_works_check(void)
+{
+   if (!conn)
+     {
+        /* delay this for 1.0 seconds while the rest of e starts up */
+        ecore_timer_add(1.0, _e_sys_cb_timer, NULL);
+        return;
+     }
+   eldbus_name_owner_get(conn, "org.freedesktop.login1",
+                         _e_sys_systemd_exists_cb, NULL);
+}
+
+static void
+_e_sys_systemd_login_manager_power_call(const char *method)
+{
+   Eldbus_Message *m;
+   
+   if (!conn) return;
+   if (!(m = _e_sys_systemd_login_manager_msg(method))) return;
+   eldbus_message_arguments_append(m, "b", 0);
+   eldbus_connection_send(conn, m, NULL, NULL, -1);
+}
+
+static void
+_e_sys_systemd_poweroff(void)
+{
+   _e_sys_systemd_login_manager_power_call("PowerOff");
+}
+
+static void
+_e_sys_systemd_reboot(void)
+{
+   _e_sys_systemd_login_manager_power_call("Reboot");
+}
+
+static void
+_e_sys_systemd_suspend(void)
+{
+   _e_sys_systemd_login_manager_power_call("Suspend");
+}
+
+static void
+_e_sys_systemd_hibernate(void)
+{
+   _e_sys_systemd_login_manager_power_call("Hibernate");
 }
 
 static Eina_Bool
@@ -668,6 +805,7 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
 {
    char buf[PATH_MAX];
    E_Obj_Dialog *od;
+   int ret = 0;
 
    switch (a)
      {
@@ -733,7 +871,13 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
              if (raw)
                {
                   _e_sys_begin_time = ecore_time_get();
-                  _e_sys_exe = ecore_exe_run(buf, NULL);
+                  if (systemd_works)
+                    _e_sys_systemd_poweroff();
+                  else
+                    {
+                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       ret = 1;
+                    }
                }
              else
                {
@@ -745,7 +889,13 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                   else
                     {
                        _e_sys_begin_time = ecore_time_get();
-                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       if (systemd_works)
+                         _e_sys_systemd_hibernate();
+                       else
+                         {
+                            _e_sys_exe = ecore_exe_run(buf, NULL);
+                            ret = 1;
+                         }
                        od = e_obj_dialog_new(e_container_current_get(e_manager_current_get()),
                                              _("Power off"), "E", "_sys_halt");
                        e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/halt");
@@ -780,7 +930,13 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
              if (raw)
                {
                   _e_sys_begin_time = ecore_time_get();
-                  _e_sys_exe = ecore_exe_run(buf, NULL);
+                  if (systemd_works)
+                    _e_sys_systemd_reboot();
+                  else
+                    {
+                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       ret = 1;
+                    }
                }
              else
                {
@@ -792,7 +948,13 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                   else
                     {
                        _e_sys_begin_time = ecore_time_get();
-                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       if (systemd_works)
+                         _e_sys_systemd_reboot();
+                       else
+                         {
+                            _e_sys_exe = ecore_exe_run(buf, NULL);
+                            ret = 1;
+                         }
                        od = e_obj_dialog_new(e_container_current_get(e_manager_current_get()),
                                              _("Resetting"), "E", "_sys_reboot");
                        e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/reboot");
@@ -829,7 +991,13 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                   if (e_config->desklock_on_suspend)
                     e_desklock_show(EINA_TRUE);
                   _e_sys_begin_time = ecore_time_get();
-                  _e_sys_exe = ecore_exe_run(buf, NULL);
+                  if (systemd_works)
+                    _e_sys_systemd_suspend();
+                  else
+                    {
+                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       ret = 1;
+                    }
                }
              else
                {
@@ -847,7 +1015,13 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                        _e_sys_susp_hib_check();
 
                        _e_sys_begin_time = ecore_time_get();
-                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       if (systemd_works)
+                         _e_sys_systemd_suspend();
+                       else
+                         {
+                            _e_sys_exe = ecore_exe_run(buf, NULL);
+                            ret = 1;
+                         }
                        od = e_obj_dialog_new(e_container_current_get(e_manager_current_get()),
                                              _("Suspending"), "E", "_sys_suspend");
                        e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/suspend");
@@ -884,7 +1058,13 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                   if (e_config->desklock_on_suspend)
                     e_desklock_show(EINA_TRUE);
                   _e_sys_begin_time = ecore_time_get();
-                  _e_sys_exe = ecore_exe_run(buf, NULL);
+                  if (systemd_works)
+                    _e_sys_systemd_hibernate();
+                  else
+                    {
+                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       ret = 1;
+                    }
                }
              else
                {
@@ -902,7 +1082,13 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                        _e_sys_susp_hib_check();
 
                        _e_sys_begin_time = ecore_time_get();
-                       _e_sys_exe = ecore_exe_run(buf, NULL);
+                       if (systemd_works)
+                         _e_sys_systemd_hibernate();
+                       else
+                         {
+                            _e_sys_exe = ecore_exe_run(buf, NULL);
+                            ret = 1;
+                         }
                        od = e_obj_dialog_new(e_container_current_get(e_manager_current_get()),
                                              _("Hibernating"), "E", "_sys_hibernate");
                        e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/hibernate");
@@ -923,7 +1109,7 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
       default:
         return 0;
      }
-   return 1;
+   return ret;
 }
 
 static void
