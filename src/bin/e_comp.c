@@ -3779,7 +3779,8 @@ _e_comp_shapes_update_comp_win_shape_comp_helper(E_Comp_Win *cw, Eina_Tiler *tb)
         ERR("SHAPED OVERRIDE WINDOW DETECTED: INPUT SHAPE CUTTING BROKEN!");
         return;
      }
-   if (cw->invalid || cw->real_hid || (!cw->visible) || (!cw->shape->visible) || evas_object_pass_events_get(cw->effect_obj))
+   if (cw->invalid || cw->real_hid || (!cw->visible) || (!cw->shape->visible) ||
+       evas_object_pass_events_get(cw->effect_obj) || evas_object_repeat_events_get(cw->effect_obj))
      {
         SHAPE_DBG("SKIPPING SHAPE");
         return;
@@ -3945,7 +3946,7 @@ _e_comp_shapes_update_job(E_Comp *c)
                                                                      ,&rl
 #endif
                                                                     );
-                  else if (evas_object_visible_get(ch) && (!evas_object_pass_events_get(ch)))
+                  else if (evas_object_visible_get(ch) && (!evas_object_pass_events_get(ch)) && (!evas_object_repeat_events_get(ch)))
                     {
                        SHAPE_INF("COMP OBJ: %p", ch);
                        e_layout_child_geometry_get(ch, &x, &y, &w, &h);
@@ -3954,7 +3955,7 @@ _e_comp_shapes_update_job(E_Comp *c)
                     }
                }
           }
-        else if (layout && evas_object_visible_get(o) && (!evas_object_pass_events_get(o)))
+        else if (layout && evas_object_visible_get(o) && (!evas_object_pass_events_get(o)) && (!evas_object_repeat_events_get(o)))
           {
              E_Comp_Win *cw;
 
