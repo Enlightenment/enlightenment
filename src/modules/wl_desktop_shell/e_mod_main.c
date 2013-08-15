@@ -965,7 +965,6 @@ _e_wl_shell_shell_surface_unmap(E_Wayland_Surface *ews)
         evas_object_del(ews->obj);
      }
 
-   if (ews->ee) ecore_evas_free(ews->ee);
    if (ews->bd) e_object_del(E_OBJECT(ews->bd));
 
    ews->mapped = EINA_FALSE;
@@ -1505,7 +1504,8 @@ _e_wl_shell_shell_surface_cb_bd_move_end(void *data, void *bd)
    struct wl_pointer *ptr = NULL;
    E_Border *border = NULL;
 
-   /* FIXME: wayland move/resize with keyboard ? */return;
+   /* FIXME: wayland move/resize with keyboard ? */
+
    /* try to cast data to our surface structure */
    if (!(ews = data)) return;
 
@@ -1515,6 +1515,19 @@ _e_wl_shell_shell_surface_cb_bd_move_end(void *data, void *bd)
    /* try to get the pointer from this input */
    if ((ptr = _e_wl_comp->input->wl.seat.pointer))
      {
+        /* do we have a valid pointer grab ? */
+        if (!ptr->grab) return;
+
+        /* is this grab the 'move' interface ? */
+        if (ptr->grab->interface != &_e_move_grab_interface)
+          return;
+
+        /* does this shell have a valid shell surface ? */
+        if (!ews->shell_surface) return;
+
+        /* is the shell surface the same one in the grab ? */
+        if ((ptr->current) && (ptr->current != ews->wl.surface)) return;
+
         ptr->button_count--;
 
         /* send this button press to the pointer */
@@ -1531,7 +1544,7 @@ _e_wl_shell_shell_surface_cb_bd_move_end(void *data, void *bd)
 static void 
 _e_wl_shell_shell_surface_cb_bd_resize_update(void *data, void *bd)
 {
-   E_Wayland_Shell_Grab *grab = NULL;
+   /* E_Wayland_Shell_Grab *grab = NULL; */
    E_Wayland_Surface *ews = NULL;
    struct wl_pointer *ptr = NULL;
    E_Border *border = NULL;
@@ -1547,13 +1560,22 @@ _e_wl_shell_shell_surface_cb_bd_resize_update(void *data, void *bd)
      {
         Evas_Coord w = 0, h = 0;
 
-        if (!(grab = (E_Wayland_Shell_Grab *)ptr->grab)) return;
+        if (!ptr->grab) return;
+
+        if (ptr->grab->interface != &_e_resize_grab_interface)
+          return;
+
+        if (!ews->shell_surface) return;
+
+        if ((ptr->current) && (ptr->current != ews->wl.surface)) return;
+
+        /* if (!(grab = (E_Wayland_Shell_Grab *)ptr->grab)) return; */
 
         w = border->w;
         h = border->h;
 
         wl_shell_surface_send_configure(ews->shell_surface->wl.resource, 
-                                        grab->edges, w, h);
+                                        ptr->grab->edges, w, h);
      }
 }
 
@@ -1564,7 +1586,8 @@ _e_wl_shell_shell_surface_cb_bd_resize_end(void *data, void *bd)
    struct wl_pointer *ptr = NULL;
    E_Border *border = NULL;
 
-   /* FIXME: wayland move/resize with keyboard ? */return;
+   /* FIXME: wayland move/resize with keyboard ? */
+
    /* try to cast data to our surface structure */
    if (!(ews = data)) return;
 
@@ -1574,6 +1597,19 @@ _e_wl_shell_shell_surface_cb_bd_resize_end(void *data, void *bd)
    /* try to get the pointer from this input */
    if ((ptr = _e_wl_comp->input->wl.seat.pointer))
      {
+        /* do we have a valid pointer grab ? */
+        if (!ptr->grab) return;
+
+        /* is this grab the 'move' interface ? */
+        if (ptr->grab->interface != &_e_resize_grab_interface)
+          return;
+
+        /* does this shell have a valid shell surface ? */
+        if (!ews->shell_surface) return;
+
+        /* is the shell surface the same one in the grab ? */
+        if ((ptr->current) && (ptr->current != ews->wl.surface)) return;
+
         ptr->button_count--;
 
         /* send this button press to the pointer */
@@ -1823,6 +1859,7 @@ _e_wl_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct
 
    /* set grab properties */
    grab->edges = edges;
+   grab->grab.edges = edges;
    grab->w = ewss->surface->geometry.w;
    grab->h = ewss->surface->geometry.h;
 
