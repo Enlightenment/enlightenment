@@ -241,8 +241,6 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
         snprintf(buf, sizeof(buf), "e/transitions/%s", trans);
         e_theme_edje_object_set(o, "base/theme/transitions", buf);
         edje_object_signal_callback_add(o, "e,state,done", "*", _e_bg_signal, zone);
-        evas_object_move(o, zone->x, zone->y);
-        evas_object_resize(o, zone->w, zone->h);
         evas_object_layer_set(o, E_COMP_CANVAS_LAYER_BG);
         evas_object_clip_set(o, zone->bg_clip_object);
         evas_object_show(o);
@@ -288,6 +286,8 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
    if (zone->prev_bg_object) evas_object_name_set(zone->prev_bg_object, "zone->prev_bg_object");
    if (zone->transition_object) evas_object_name_set(zone->transition_object, "zone->transition_object");
    if (zone->comp_zone) e_comp_zone_update(zone->comp_zone);
+   evas_object_move(zone->transition_object, zone->x, zone->y);
+   evas_object_resize(zone->transition_object, zone->w, zone->h);
 end:
    eina_stringshare_del(bgfile);
 }
