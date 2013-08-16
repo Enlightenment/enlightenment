@@ -1526,16 +1526,11 @@ _e_wl_shell_shell_surface_cb_bd_move_end(void *data, void *bd)
         /* is the shell surface the same one in the grab ? */
         if ((ptr->current) && (ptr->current != ews->wl.surface)) return;
 
-        ptr->button_count--;
-
         /* send this button press to the pointer */
         ptr->grab->interface->button(ptr->grab, 
                                      ptr->grab_time,
                                      ptr->grab_button, 
                                      WL_POINTER_BUTTON_STATE_RELEASED);
-
-        if (ptr->button_count == 1)
-          ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
      }
 }
 
@@ -1608,16 +1603,11 @@ _e_wl_shell_shell_surface_cb_bd_resize_end(void *data, void *bd)
         /* is the shell surface the same one in the grab ? */
         if ((ptr->current) && (ptr->current != ews->wl.surface)) return;
 
-        ptr->button_count--;
-
         /* send this button press to the pointer */
         ptr->grab->interface->button(ptr->grab, 
                                      ptr->grab_time,
                                      ptr->grab_button, 
                                      WL_POINTER_BUTTON_STATE_RELEASED);
-
-        if (ptr->button_count == 1)
-          ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
      }
 }
 
@@ -2092,6 +2082,14 @@ _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int times
    /* try to get the pointer */
    if (!(ptr = grab->pointer)) return;
 
+   if (state == WL_POINTER_BUTTON_STATE_RELEASED)
+     ptr->button_count--;
+   else
+     ptr->button_count++;
+
+   if (ptr->button_count == 1)
+     ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
+
    /* test if we are done with the grab */
    if ((ptr->button_count == 0) && 
        (state == WL_POINTER_BUTTON_STATE_RELEASED))
@@ -2167,6 +2165,14 @@ _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int tim
 
    /* try to get the pointer */
    if (!(ptr = grab->pointer)) return;
+
+   if (state == WL_POINTER_BUTTON_STATE_RELEASED)
+     ptr->button_count--;
+   else
+     ptr->button_count++;
+
+   if (ptr->button_count == 1)
+     ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
 
    /* test if we are done with the grab */
    if ((ptr->button_count == 0) && 
