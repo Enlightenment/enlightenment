@@ -2076,11 +2076,6 @@ _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int times
    /* try to get the pointer */
    if (!(ptr = grab->pointer)) return;
 
-   if (state == WL_POINTER_BUTTON_STATE_RELEASED)
-     ptr->button_count--;
-   else
-     ptr->button_count++;
-
    if (ptr->button_count == 1)
      ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
 
@@ -2159,11 +2154,6 @@ _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int tim
 
    /* try to get the pointer */
    if (!(ptr = grab->pointer)) return;
-
-   if (state == WL_POINTER_BUTTON_STATE_RELEASED)
-     ptr->button_count--;
-   else
-     ptr->button_count++;
 
    if (ptr->button_count == 1)
      ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
