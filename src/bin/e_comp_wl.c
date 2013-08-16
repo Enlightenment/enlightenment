@@ -1636,10 +1636,14 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
      return;
 
    pointer = &_e_wl_comp->input->wl.pointer;
-   if (pointer->focus == resource)
+   if ((pointer->focus == resource) || 
+       (pointer->focus_resource == resource))
      {
         wl_pointer_set_focus(pointer, NULL,
                              wl_fixed_from_int(0), wl_fixed_from_int(0));
+
+//        if (_e_wl_comp->input->pointer.surface == ews)
+          _e_wl_comp->input->pointer.surface = NULL;
      }
 
    /* if this surface is mapped, unmap it */
@@ -2257,7 +2261,20 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
    if (!input->has_pointer) return;
 
    /* if the input has no current focus, get out */
-   if (!input->wl.seat.pointer->focus) return;
+   if (!input->wl.seat.pointer->focus) 
+     {
+        /* if we have an existing pointer surface, unmap it */
+        if (input->pointer.surface) 
+          {
+             /* call the unmap function */
+             if (input->pointer.surface->unmap)
+               input->pointer.surface->unmap(input->pointer.surface);
+          }
+
+        input->pointer.surface = NULL;
+
+        return;
+     }
 
    if (wl_resource_get_client(input->wl.seat.pointer->focus) != client) return;
    if ((input->wl.seat.pointer->focus_serial - serial) > (UINT32_MAX / 2))
