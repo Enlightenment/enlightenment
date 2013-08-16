@@ -363,19 +363,12 @@ _e_wl_shell_cb_pointer_focus(struct wl_listener *listener EINA_UNUSED, void *dat
     * should set the busy cursor on it */
    if ((ews->mapped) && (ews->shell_surface) && (!ews->shell_surface->active))
      {
-        E_Wayland_Shell_Grab *grab = NULL;
         E_Wayland_Desktop_Shell *shell;
-
-        /* try to allocate space for our grab structure */
-        if (!(grab = E_NEW(E_Wayland_Shell_Grab, 1))) return;
-
-        /* set grab properties */
-        grab->x = ptr->grab_x;
-        grab->y = ptr->grab_y;
 
         /* set busy cursor */
         shell = ews->shell_surface->shell;
-        e_desktop_shell_send_grab_cursor(shell->wl.resource, E_DESKTOP_SHELL_CURSOR_BUSY);
+        e_desktop_shell_send_grab_cursor(shell->wl.resource, 
+                                         E_DESKTOP_SHELL_CURSOR_BUSY);
      }
    else
      {
