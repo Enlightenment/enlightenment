@@ -1100,14 +1100,12 @@ _e_wl_shell_shell_surface_cb_ping_timeout(void *data)
    if (!(grab = E_NEW(E_Wayland_Shell_Grab, 1))) return 1;
 
    /* set grab properties */
-   grab->x = ewss->surface->input->wl.seat.pointer->grab_x;
-   grab->y = ewss->surface->input->wl.seat.pointer->grab_y;
+   grab->x = _e_wl_comp->input->wl.seat.pointer->grab_x;
+   grab->y = _e_wl_comp->input->wl.seat.pointer->grab_y;
 
    /* set busy cursor */
-   _e_wl_shell_grab_start(grab, ewss, 
-                          ewss->surface->input->wl.seat.pointer, 
-                          &_e_busy_grab_interface, 
-                          E_DESKTOP_SHELL_CURSOR_BUSY);
+   _e_wl_shell_grab_start(grab, ewss, _e_wl_comp->input->wl.seat.pointer,
+                          &_e_busy_grab_interface, E_DESKTOP_SHELL_CURSOR_BUSY);
 
    return 1;
 }
