@@ -2251,7 +2251,7 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
      return;
 
    /* if we were passed in a surface, try to cast it to our structure */
-   if (surface_resource) ews = (E_Wayland_Surface *)surface_resource->data;
+   if (surface_resource) ews = wl_resource_get_user_data(surface_resource);
 
    /* if this input has no pointer, get out */
    if (!input->has_pointer) return;
