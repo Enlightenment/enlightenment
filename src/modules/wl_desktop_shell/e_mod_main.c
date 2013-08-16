@@ -1631,7 +1631,8 @@ _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct w
         E_Wayland_Shell_Grab *grab = NULL;
 
         ews = ewss->surface;
-        grab = (E_Wayland_Shell_Grab *)ews->input->wl.seat.pointer->grab;
+
+        grab = (E_Wayland_Shell_Grab *)_e_wl_comp->input->wl.seat.pointer->grab;
         if (grab->grab.interface == &_e_busy_grab_interface)
           {
              _e_wl_shell_grab_end(grab);
