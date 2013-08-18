@@ -50,6 +50,7 @@ static void _e_sys_systemd_hibernate(void);
 static void _e_sys_systemd_exists_cb(void *data, const Eldbus_Message *m, Eldbus_Pending *p);
 
 static Eina_Bool systemd_works = EINA_FALSE;
+static int _e_sys_systemd_inhibit_fd = -1;
 
 static const int E_LOGOUT_AUTO_TIME = 60;
 static const int E_LOGOUT_WAIT_TIME = 15;
@@ -107,6 +108,11 @@ e_sys_shutdown(void)
          eldbus_object_unref(obj);
          eldbus_connection_unref(conn);
          login1_manger_proxy = NULL;
+     }
+   if (_e_sys_systemd_inhibit_fd >= 0)
+     {
+        close(_e_sys_systemd_inhibit_fd);
+        _e_sys_systemd_inhibit_fd = -1;
      }
    eldbus_shutdown();
    return 1;
@@ -289,6 +295,15 @@ e_sys_handlers_set(void (*suspend_func)(void),
 }
 
 static void
+_e_sys_systemd_inhibit_cb(void *data __UNUSED__, const Eldbus_Message *m, Eldbus_Pending *p __UNUSED__)
+{
+   int fd = -1;
+   if (eldbus_message_error_get(m, NULL, NULL)) return;
+   if (!eldbus_message_arguments_get(m, "h", &fd))
+     _e_sys_systemd_inhibit_fd = fd;
+}
+
+static void
 _e_sys_systemd_handle_inhibit(void)
 {
    Eldbus_Message *m;
@@ -305,7 +320,7 @@ _e_sys_systemd_handle_inhibit(void)
          "Enlightenment", // who (string)
          "Normal Execution", // why (string)
          "block");
-   eldbus_proxy_send(login1_manger_proxy, m, NULL, NULL, -1);
+   eldbus_proxy_send(login1_manger_proxy, m, _e_sys_systemd_inhibit_cb, NULL, -1);
 }
 
 static void
