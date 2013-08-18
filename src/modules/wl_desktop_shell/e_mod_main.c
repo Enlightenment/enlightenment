@@ -336,7 +336,7 @@ _e_wl_shell_cb_ping(E_Wayland_Surface *ews, unsigned int serial)
 
         /* update timer source interval */
         wl_event_source_timer_update(tmr->source, 
-                                     e_config->ping_clients_interval * 32);
+                                     e_config->ping_clients_interval * (1000 / 8));
 
         ewss->ping_timer = tmr;
 
