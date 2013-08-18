@@ -17,17 +17,44 @@ e_ipc_init(void)
 #ifdef USE_IPC
    char buf[4096], buf2[128], buf3[4096];
    char *tmp, *user, *disp, *base;
-   int pid, trynum = 0;
+   int pid, trynum = 0, id1 = 0;
+   struct stat st;
 
    tmp = getenv("TMPDIR");
    if (!tmp) tmp = "/tmp";
    base = tmp;
 
    tmp = getenv("XDG_RUNTIME_DIR");
-   if (tmp) base = tmp;
+   if (tmp)
+     {
+        if (stat(tmp, &st) == 0)
+          {
+             if ((st.st_uid == getuid()) &&
+                 ((st.st_mode & (S_IFDIR | S_IRWXU | S_IRWXG | S_IRWXO)) ==
+                  (S_IRWXU | S_IFDIR)))
+               base = tmp;
+             else
+               ERR("XDG_RUNTIME_DIR of '%s' failed permissions check", tmp);
+          }
+        else
+          ERR("XDG_RUNTIME_DIR of '%s' cannot be accessed", tmp);
+     }
+   
    tmp = getenv("SD_USER_SOCKETS_DIR");
-   if (tmp) base = tmp;
-     
+   if (tmp)
+     {
+        if (stat(tmp, &st) == 0)
+          {
+             if ((st.st_uid == getuid()) &&
+                 ((st.st_mode & (S_IFDIR | S_IRWXU | S_IRWXG | S_IRWXO)) ==
+                  (S_IRWXU | S_IFDIR)))
+               base = tmp;
+             else
+               ERR("SD_USER_SOCKETS_DIR of '%s' failed permissions check", tmp);
+          }
+        else
+          ERR("SD_USER_SOCKETS_DIR of '%s' cannot be accessed", tmp);
+     }
    user = getenv("USER");
    if (!user)
      {
@@ -50,9 +77,6 @@ e_ipc_init(void)
    pid = (int)getpid();
    for (trynum = 0; trynum <= 4096; trynum++)
      {
-        struct stat st;
-        int id1 = 0;
-        
         snprintf(buf, sizeof(buf), "%s/e-%s@%x",
                  base, user, id1);
         if (mkdir(buf, S_IRWXU) < 0)
@@ -73,7 +97,11 @@ e_ipc_init(void)
 retry:
         id1 = rand();
      }
-   if (!_e_ipc_server) return 0;
+   if (!_e_ipc_server)
+     {
+        ERR("Gave up after 4096 sockets in '%s'. All failed", base);
+        return 0;
+     }
 
    e_util_env_set("E_IPC_SOCKET", buf3);
    ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_ADD,
