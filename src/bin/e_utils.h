@@ -39,7 +39,6 @@ EAPI E_Client    *e_util_desk_client_below(E_Client *ec);
 EAPI int          e_util_edje_collection_exists(const char *file, const char *coll);
 EAPI E_Dialog     *e_util_dialog_internal(const char *title, const char *txt);
 EAPI const char  *e_util_filename_escape(const char *filename);
-EAPI int          e_util_icon_save(Ecore_X_Icon *icon, const char *filename);
 EAPI char        *e_util_shell_env_path_eval(const char *path);
 EAPI char        *e_util_size_string_get(off_t size);
 EAPI char        *e_util_file_time_get(time_t ftime);

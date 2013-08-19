@@ -61,6 +61,38 @@ static void         _e_desktop_editor_icon_entry_changed(void *data, Evas_Object
 #define IFDUP(src, dst) if (src) dst = strdup(src); else \
     dst = NULL
 
+
+static int
+_e_util_icon_save(Ecore_X_Icon *icon, const char *filename)
+{
+   Ecore_Evas *ee;
+   Evas *evas;
+   Evas_Object *im;
+   int ret;
+
+   ee = ecore_evas_buffer_new(icon->width, icon->height);
+   if (!ee) return 0;
+   evas = ecore_evas_get(ee);
+   evas_image_cache_set(evas, 0);
+   evas_font_cache_set(evas, 0);
+
+   im = evas_object_image_add(evas);
+   if (!im)
+     {
+        ecore_evas_free(ee);
+        return 0;
+     }
+   evas_object_move(im, 0, 0);
+   evas_object_resize(im, icon->width, icon->height);
+   evas_object_image_size_set(im, icon->width, icon->height);
+   evas_object_image_data_copy_set(im, icon->data);
+   evas_object_image_alpha_set(im, 1);
+   evas_object_show(im);
+   ret = evas_object_image_save(im, filename, NULL, NULL);
+   evas_object_del(im);
+   ecore_evas_free(ee);
+   return ret;
+}
 /* externally accessible functions */
 
 EAPI Efreet_Desktop *
@@ -143,7 +175,7 @@ e_desktop_client_create(E_Client *ec)
 
         snprintf(file, sizeof(file), "%s-%.6f.png", bname ?: "", ecore_time_get());
         snprintf(path, sizeof(path), "%s/%s", icon_dir, file);
-        if (e_util_icon_save(&(ec->netwm.icons[0]), path))
+        if (_e_util_icon_save(&(ec->netwm.icons[0]), path))
           desktop->icon = strdup(file);
         else
           fprintf(stderr, "Could not save file from ARGB: %s\n", path);
