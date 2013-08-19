@@ -278,6 +278,7 @@ struct _E_Wayland_Buffer_Reference
 
 struct _E_Wayland_Surface
 {
+   EINA_INLIST;
    struct 
      {
         struct wl_resource *surface;
@@ -482,7 +483,7 @@ struct _E_Wayland_Compositor
 
    E_Wayland_Input *input;
 
-   Eina_List *surfaces;
+   Eina_Inlist *surfaces;
    Eina_List *seats;
 
    struct wl_list outputs;

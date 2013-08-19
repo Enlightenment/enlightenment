@@ -1621,7 +1621,7 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
                                   ews, _e_comp_wl_cb_surface_destroy);
 
    /* add this surface to the list of surfaces */
-   _e_wl_comp->surfaces = eina_list_append(_e_wl_comp->surfaces, ews);
+   _e_wl_comp->surfaces = eina_inlist_append(_e_wl_comp->surfaces, EINA_INLIST_GET(ews));
 }
 
 static void 
@@ -1679,7 +1679,7 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
      wl_resource_destroy(cb->wl.resource);
 
    /* remove this surface from the compositor's list of surfaces */
-   _e_wl_comp->surfaces = eina_list_remove(_e_wl_comp->surfaces, ews);
+   _e_wl_comp->surfaces = eina_inlist_remove(_e_wl_comp->surfaces, EINA_INLIST_GET(ews));
 
    /* free the allocated surface structure */
    E_FREE(ews);
