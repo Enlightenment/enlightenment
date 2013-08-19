@@ -20,12 +20,17 @@ group { name: "e/widgets/border/default/border";
    images.image: "glow_round_corners_small.png" COMP;
    images.image: "knob_round_small_busy.png" COMP;
    images.image: "screen_circular_shadow.png" COMP;
+   images.image: "win_shadow.png" COMP;
    data.item: "shadow" "1";
    parts {
       part { name: "client_clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.to_y: "e.swallow.client";
             rel2.to_y: "e.swallow.client";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default";
+            visible: 0;
          }
       }
       part { name: "e.swallow.client"; type: SWALLOW; mouse_events: 0;
@@ -618,10 +623,15 @@ group { name: "e/widgets/border/default/border";
          action: STATE_SET "default" 0.0;
          target: "knob_spinner";
       }
+      program { name: "shade_hide";
+         action: STATE_SET "hidden" 0.0;
+         target: "client_clip";
+      }
       program {
          signal: "e,state,shaded"; source: "e";
          action: STATE_SET "shaded" 0.0;
          target: "shadow";
+         after: "shade_hide";
          after: "shading";
       }
       program { name: "shading";
@@ -642,6 +652,7 @@ group { name: "e/widgets/border/default/border";
          target: "e.event.resize.bl";
          target: "e.event.resize.b";
          target: "e.event.resize.br";
+         target: "client_clip";
          after: "unshading";
       }
       program { name: "unshading";
@@ -649,6 +660,7 @@ group { name: "e/widgets/border/default/border";
          action: STATE_SET "default" 0.0;
          target: "e.swallow.client";
          target: "shadow";
+         target: "client_clip";
       }
 //      program {
 //         signal: "e,action,maximize"; source: "e";
