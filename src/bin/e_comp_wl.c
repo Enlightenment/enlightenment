@@ -2753,8 +2753,7 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
         /* update the smart object's input region */
         if (ews->obj)
           e_surface_input_set(ews->obj, rects->x1, rects->y1, 
-                              (rects->x2 - rects->x1), 
-                              (rects->y2 - rects->y1));
+                              rects->x2, rects->y2);
      }
 
    /* put any pending frame callbacks into active list */
