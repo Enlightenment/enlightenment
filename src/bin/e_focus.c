@@ -126,6 +126,11 @@ e_focus_event_focus_in(E_Border *bd)
         e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, bd->win);
         bd->button_grabbed = 0;
      }
+   if (!bd->lock_user_stacking)
+     {
+        if (e_config->border_raise_on_focus)
+          e_border_raise(bd);
+     }
 }
 
 EAPI void
