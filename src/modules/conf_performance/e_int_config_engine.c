@@ -102,19 +102,16 @@ _cb_shaped_change(void *data, Evas_Object *obj __UNUSED__)
    if (!(cfdata = data)) return;
    if (cfdata->use_shaped_win)
      {
-        if (ecore_x_screen_is_composited(0))
-          {
-             /* pop dialog */
-             e_confirm_dialog_show(_("Use shaped windows instead of ARGB"),
-                                   "preferences-engine",
-                                   _("You have chosen to use shaped windows<br>"
-                                     "but your current screen is composited."
-                                     "<br><br>"
-                                     "Are you really sure you wish to use<br>"
-                                     "shaped windows?"),
-                                   NULL, NULL, _cb_confirm_yes,
-                                   _cb_confirm_no, cfdata, cfdata, NULL, NULL);
-          }
+        /* pop dialog */
+        e_confirm_dialog_show(_("Use shaped windows instead of ARGB"),
+                              "preferences-engine",
+                              _("You have chosen to use shaped windows<br>"
+                                "but your current screen is composited."
+                                "<br><br>"
+                                "Are you really sure you wish to use<br>"
+                                "shaped windows?"),
+                              NULL, NULL, _cb_confirm_yes,
+                              _cb_confirm_no, cfdata, cfdata, NULL, NULL);
      }
 }
 
