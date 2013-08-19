@@ -10,11 +10,17 @@ static E_Fm2_Mime_Handler *theme_hdl = NULL;
 EINTERN int
 e_theme_init(void)
 {
+   const char *theme_override;
+
    /* Register mime handler */
    theme_hdl = e_fm2_mime_handler_new(_("Set As Theme"), "preferences-desktop-theme",
                                       e_theme_handler_set, NULL,
                                       e_theme_handler_test, NULL);
    if (theme_hdl) e_fm2_mime_handler_glob_add(theme_hdl, "*.edj");
+
+   theme_override = getenv("E_THEME_OVERRIDE");
+   if (theme_override) elm_theme_overlay_add(NULL, theme_override);
+
    return 1;
 }
 
