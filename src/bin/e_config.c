@@ -1062,7 +1062,8 @@ e_config_load(void)
 #define CONFIG_VERSION_UPDATE_INFO(VERSION) \
   INF("Performing config upgrade for %d.%d", E_CONFIG_FILE_EPOCH, VERSION);
 
-   CONFIG_VERSION_CHECK(6)
+   /* this should be 6, an xkb fix fucked up the ordering and this is now really broken */
+   CONFIG_VERSION_CHECK(8)
      {
         /* e_bindings config domain didn't exist before this version, so we have to do this
          * check before we load or else we wipe configs :(
@@ -1070,7 +1071,7 @@ e_config_load(void)
 #undef SET
 #define SET(X) e_bindings->X = e_config->X, e_config->X = NULL
 
-        CONFIG_VERSION_UPDATE_INFO(6);
+        //CONFIG_VERSION_UPDATE_INFO(6);
         if (e_config->mouse_bindings || e_config->key_bindings || e_config->edge_bindings ||
             e_config->signal_bindings || e_config->wheel_bindings || e_config->acpi_bindings)
           {
