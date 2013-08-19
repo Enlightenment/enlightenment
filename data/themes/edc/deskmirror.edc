@@ -1,5 +1,6 @@
 group { name: "e/deskmirror/frame/default";
    alias: "e/deskmirror/frame/dialog";
+   images.image: "win_shadow.png" COMP;
    script {
       public message(Msg_Type:type, id, ...) {
          /* set scale */
