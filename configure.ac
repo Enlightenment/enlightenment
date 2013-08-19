@@ -487,16 +487,6 @@ PKG_CHECK_MODULES(E_SYS, [
   ecore >= ${efl_version}
 ])
 
-PKG_CHECK_MODULES(E_INIT, [
-  evas >= ${efl_version}
-  ecore >= ${efl_version}
-  ecore-evas >= ${efl_version}
-  ecore-x >= ${efl_version}
-  edje >= ${efl_version}
-  ecore-ipc >= ${efl_version}
-  eina >= ${efl_version}
-])
-
 PKG_CHECK_MODULES(E_ALERT, [
   xcb
   xcb-shape
