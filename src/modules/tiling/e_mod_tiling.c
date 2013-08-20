@@ -2004,7 +2004,7 @@ _move_right_rows_or_down_cols(E_Client *ec, Eina_Bool check_moving_anims)
     if (check_moving_anims)
         _check_moving_anims(ec_1, extra_1, stack);
 
-    ecore_x_pointer_warp(_G.tinfo->desk->zone->comp->win,
+    ecore_evas_pointer_warp(_G.tinfo->desk->zone->comp->ee,
                          extra_1->expected.x + extra_1->expected.w/2,
                          extra_1->expected.y + extra_1->expected.h/2);
 }
@@ -2064,7 +2064,7 @@ _move_left_rows_or_up_cols(E_Client *ec, Eina_Bool check_moving_anims)
     if (check_moving_anims)
         _check_moving_anims(ec_1, extra_1, stack);
 
-    ecore_x_pointer_warp(_G.tinfo->desk->zone->comp->win,
+    ecore_evas_pointer_warp(_G.tinfo->desk->zone->comp->ee,
                          extra_1->expected.x + extra_1->expected.w/2,
                          extra_1->expected.y + extra_1->expected.h/2);
 }
@@ -2150,7 +2150,7 @@ _move_up_rows_or_left_cols(E_Client *ec, Eina_Bool check_moving_anims)
         }
         if (check_moving_anims)
             _check_moving_anims(ec, extra, 0);
-        ecore_x_pointer_warp(_G.tinfo->desk->zone->comp->win,
+        ecore_evas_pointer_warp(_G.tinfo->desk->zone->comp->ee,
                              extra->expected.x + extra->expected.w/2,
                              extra->expected.y + extra->expected.h/2);
         return;
@@ -2197,7 +2197,7 @@ _move_up_rows_or_left_cols(E_Client *ec, Eina_Bool check_moving_anims)
     if (check_moving_anims)
         _check_moving_anims(ec, extra, stack - 1);
 
-    ecore_x_pointer_warp(_G.tinfo->desk->zone->comp->win,
+    ecore_evas_pointer_warp(_G.tinfo->desk->zone->comp->ee,
                          extra->expected.x + extra->expected.w/2,
                          extra->expected.y + extra->expected.h/2);
 }
@@ -2328,7 +2328,7 @@ _move_down_rows_or_right_cols(E_Client *ec, Eina_Bool check_moving_anims)
             _check_moving_anims(ec, extra, stack);
     }
 
-    ecore_x_pointer_warp(_G.tinfo->desk->zone->comp->win,
+    ecore_evas_pointer_warp(_G.tinfo->desk->zone->comp->ee,
                          extra->expected.x + extra->expected.w/2,
                          extra->expected.y + extra->expected.h/2);
 }
@@ -3081,7 +3081,7 @@ _warp_timer(void *data __UNUSED__)
         _G.warp_x = (_G.warp_x * (1.0 - spd)) + (_G.warp_to_x * spd);
         _G.warp_y = (_G.warp_y * (1.0 - spd)) + (_G.warp_to_y * spd);
 
-        ecore_x_pointer_warp(_G.tinfo->desk->zone->comp->win,
+        ecore_evas_pointer_warp(_G.tinfo->desk->zone->comp->ee,
                              _G.warp_x, _G.warp_y);
 
         if (abs(_G.warp_x - _G.old_warp_x) <= 1
@@ -3104,7 +3104,7 @@ _action_go(E_Client *data __UNUSED__,
 
     _G.warp_to_x = ec->x + (ec->w / 2);
     _G.warp_to_y = ec->y + (ec->h / 2);
-    ecore_x_pointer_xy_get(_G.tinfo->desk->zone->comp->win,
+    ecore_evas_pointer_xy_get(_G.tinfo->desk->zone->comp->ee,
                            &_G.warp_x, &_G.warp_y);
     e_client_focus_latest_set(ec);
     _G.warp_timer = ecore_timer_add(0.01, _warp_timer, NULL);

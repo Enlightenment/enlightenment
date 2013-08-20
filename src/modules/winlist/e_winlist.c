@@ -1092,7 +1092,7 @@ _e_winlist_restore_desktop(void)
         e_config->winlist_list_show_other_screen_windows))
      e_desk_show(_last_desk);
    if (e_config->winlist_warp_while_selecting)
-     ecore_x_pointer_warp(_winlist_zone->comp->win,
+     ecore_evas_pointer_warp(_winlist_zone->comp->ee,
                           _last_pointer_x, _last_pointer_y);
    _e_winlist_deactivate();
    _win_selected = NULL;
