@@ -284,13 +284,14 @@ static void
 _e_backlight_update(E_Zone *zone)
 {
    double x_bl = -1.0;
+#ifndef WAYLAND_ONLY
    Ecore_X_Window root;
    Ecore_X_Randr_Output *out;
    int i, num = 0;
 
    root = zone->comp->man->root;
    // try randr
-   if (ecore_x_randr_output_backlight_available())
+   if (root && ecore_x_randr_output_backlight_available())
      {
         out = ecore_x_randr_window_outputs_get(root, &num);
         if ((out) && (num > 0))
@@ -324,6 +325,7 @@ _e_backlight_update(E_Zone *zone)
         sysmode = MODE_RANDR;
         return;
      }
+#endif
 #ifdef HAVE_EEZE
    _bl_sys_find();
    if (bl_sysval)
@@ -338,6 +340,9 @@ _e_backlight_update(E_Zone *zone)
 static void
 _e_backlight_set(E_Zone *zone, double val)
 {
+#ifdef WAYLAND_ONLY
+   if (0)
+#else
    if (sysmode == MODE_RANDR)
      {
         Ecore_X_Window root;
@@ -372,6 +377,7 @@ _e_backlight_set(E_Zone *zone, double val)
           }
         free(out);
      }
+#endif
 #ifdef HAVE_EEZE
    else if (sysmode == MODE_SYS)
      {
