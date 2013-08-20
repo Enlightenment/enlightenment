@@ -3,8 +3,7 @@
 #ifndef E_HINTS_H
 #define E_HINTS_H
 
-EINTERN void e_hints_init(Ecore_X_Window win, Ecore_X_Window propwin);
-EAPI void e_hints_e16_comms_pretend(Ecore_X_Window root, Ecore_X_Window propwin);
+EINTERN void e_hints_init(Ecore_Window win, Ecore_Window propwin);
 EINTERN void e_hints_manager_init(E_Manager *man);
 EAPI void e_hints_client_list_set(void);
 EAPI void e_hints_client_stacking_set(void);
@@ -16,9 +15,6 @@ EAPI void e_hints_window_state_set(E_Client *ec);
 EAPI void e_hints_window_state_get(E_Client *ec);
 EAPI void e_hints_window_type_set(E_Client *ec);
 EAPI void e_hints_window_type_get(E_Client *ec);
-
-EAPI void e_hints_window_state_update(E_Client *ec, Ecore_X_Window_State state,
-				      Ecore_X_Window_State_Action action);
 
 EAPI void e_hints_window_visible_set(E_Client *ec);
 EAPI void e_hints_window_iconic_set(E_Client *ec);
@@ -47,17 +43,18 @@ EAPI void e_hints_window_qtopia_soft_menus_get(E_Client *ec);
 EAPI void e_hints_window_virtual_keyboard_state_get(E_Client *ec);
 EAPI void e_hints_window_virtual_keyboard_get(E_Client *ec);
 
-EAPI void e_hints_openoffice_gnome_fake(Ecore_X_Window root);
-EAPI void e_hints_openoffice_kde_fake(Ecore_X_Window root);
 
 EAPI void e_hints_scale_update(void);
 
+
+#ifdef E_COMP_X_H
+EAPI void e_hints_window_state_update(E_Client *ec, Ecore_X_Window_State state, Ecore_X_Window_State_Action action);
 extern EAPI Ecore_X_Atom ATM__QTOPIA_SOFT_MENU;
 extern EAPI Ecore_X_Atom ATM__QTOPIA_SOFT_MENUS;
 extern EAPI Ecore_X_Atom ATM_GNOME_SM_PROXY;
 extern EAPI Ecore_X_Atom ATM_ENLIGHTENMENT_COMMS;
 extern EAPI Ecore_X_Atom ATM_ENLIGHTENMENT_VERSION;
 extern EAPI Ecore_X_Atom ATM_ENLIGHTENMENT_SCALE;
-
+#endif
 #endif
 #endif
