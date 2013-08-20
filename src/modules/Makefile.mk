@@ -146,17 +146,17 @@ if USE_MODULE_MIXER
 include src/modules/Makefile_mixer.mk
 endif
 
-if USE_MODULE_ILLUME2
-include src/modules/Makefile_illume2.mk
-include src/modules/Makefile_illume-home.mk
-include src/modules/Makefile_illume-home-toggle.mk
-include src/modules/Makefile_illume-softkey.mk
-include src/modules/Makefile_illume-keyboard.mk
-include src/modules/Makefile_illume-indicator.mk
-include src/modules/Makefile_illume-kbd-toggle.mk
-include src/modules/Makefile_illume-mode-toggle.mk
-include src/modules/Makefile_illume-bluetooth.mk
-endif
+#if USE_MODULE_ILLUME2
+#include src/modules/Makefile_illume2.mk
+#include src/modules/Makefile_illume-home.mk
+#include src/modules/Makefile_illume-home-toggle.mk
+#include src/modules/Makefile_illume-softkey.mk
+#include src/modules/Makefile_illume-keyboard.mk
+#include src/modules/Makefile_illume-indicator.mk
+#include src/modules/Makefile_illume-kbd-toggle.mk
+#include src/modules/Makefile_illume-mode-toggle.mk
+#include src/modules/Makefile_illume-bluetooth.mk
+#endif
 
 if USE_MODULE_SYSCON
 include src/modules/Makefile_syscon.mk
