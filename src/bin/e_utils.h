@@ -33,7 +33,6 @@ EAPI int          e_util_icon_theme_set(Evas_Object *obj, const char *icon);
 EAPI unsigned int e_util_icon_size_normalize(unsigned int desired);
 EAPI int          e_util_menu_item_theme_icon_set(E_Menu_Item *mi, const char *icon);
 EAPI const char *e_util_mime_icon_get(const char *mime, unsigned int size);
-EAPI E_Zone      *e_util_zone_window_find(Ecore_X_Window win);
 EAPI E_Client    *e_util_desk_client_above(E_Client *ec);
 EAPI E_Client    *e_util_desk_client_below(E_Client *ec);
 EAPI int          e_util_edje_collection_exists(const char *file, const char *coll);

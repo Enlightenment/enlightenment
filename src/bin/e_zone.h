@@ -81,10 +81,6 @@ struct _E_Zone
    E_Action      *cur_mouse_action;
    Eina_List     *popups;
 
-   Ecore_Evas    *black_ecore_evas;
-   Evas          *black_evas;
-   Ecore_Window black_win;
-   int            black_need;
    int            id;
 
    struct

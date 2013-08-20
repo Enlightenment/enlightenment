@@ -501,20 +501,6 @@ e_util_mime_icon_get(const char *mime, unsigned int size)
    return efreet_mime_type_icon_get(mime, e_config->icon_theme, e_util_icon_size_normalize(size));
 }
 
-EAPI E_Zone *
-e_util_zone_window_find(Ecore_X_Window win)
-{
-   const Eina_List *l, *ll;
-   E_Comp *c;
-   E_Zone *zone;
-
-   EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->zones, ll, zone)
-       if (zone->black_win == win) return zone;
-
-   return NULL;
-}
-
 EAPI E_Client *
 e_util_desk_client_above(E_Client *ec)
 {
