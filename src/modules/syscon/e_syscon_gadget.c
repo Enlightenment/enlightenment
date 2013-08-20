@@ -74,7 +74,7 @@ _cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    e_menu_item_toggle_set(mi, syscon_config->menu);
    e_menu_item_callback_set(mi, _cb_menu_change, inst);
    m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
-   ecore_x_pointer_xy_get(zone->comp->win, &x, &y);
+   ecore_evas_pointer_xy_get(zone->comp->ee, &x, &y);
    e_menu_activate_mouse(m, zone, x, y, 1, 1,
                          E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
    evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button,
@@ -221,8 +221,7 @@ _cb_shutdown_show(void *data, Evas_Object *obj __UNUSED__, const char *emission 
              break;
           }
         e_gadcon_locked_set(inst->gcc->gadcon, EINA_TRUE);
-        e_menu_activate_mouse(inst->menu, zone, x, y, w, h, dir,
-                              ecore_x_current_time_get());
+        e_menu_activate_mouse(inst->menu, zone, x, y, w, h, dir, 0);
      }
 }
 

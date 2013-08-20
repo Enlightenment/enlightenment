@@ -48,6 +48,8 @@ wizard_page_show(E_Wizard_Page *pg)
 {
    Evas_Object *o, *of, *ob;
    Ecore_Evas *ee;
+
+#ifndef WAYLAND_ONLY
    Ecore_X_Window_Attributes att;
 
    if (!ecore_x_composite_query()) return 0;
@@ -57,11 +59,11 @@ wizard_page_show(E_Wizard_Page *pg)
    ecore_x_window_attributes_get(ecore_x_window_root_first_get(), &att);
    if ((att.depth <= 8)) return 0;
 
+   gl_avail = ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11);
+#endif
+
    o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Compositing"));
-
-
-   gl_avail = ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11);
 
 
    of = e_widget_framelist_add(pg->evas, _("Settings"), 0);

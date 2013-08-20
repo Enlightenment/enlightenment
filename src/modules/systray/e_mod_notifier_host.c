@@ -157,9 +157,8 @@ _item_menu_new(Notifier_Item_Icon *ii)
    e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, gadcon);
 
    zone = e_util_zone_current_get(e_manager_current_get());
-   ecore_x_pointer_xy_get(zone->comp->win, &x, &y);
-   e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN,
-                         ecore_x_current_time_get());
+   ecore_evas_pointer_xy_get(zone->comp->ee, &x, &y);
+   e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
 }
 
 void

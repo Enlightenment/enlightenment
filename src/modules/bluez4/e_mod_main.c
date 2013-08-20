@@ -454,8 +454,7 @@ _ebluez4_menu_new(Instance *inst)
 
    ecore_evas_pointer_xy_get(e_comp_get(inst->gcc)->ee, &x, &y);
    zone = e_comp_zone_xy_get(e_comp_get(inst->gcc), x, y);
-   e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN,
-                         ecore_x_current_time_get());
+   e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
 }
 
 static void
