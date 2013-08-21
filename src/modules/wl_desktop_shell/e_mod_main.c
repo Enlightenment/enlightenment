@@ -1438,7 +1438,7 @@ _e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, 
    struct wl_keyboard_grab *grab;
    unsigned int serial = 0, key = 0;
    unsigned int *end, *k;
-   xkb_keysym_t sym = XKB_KEY_NoSymbol;
+
    ev = event;
 
    /* try to cast data to our surface structure */
@@ -1459,11 +1459,7 @@ _e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, 
    if (_e_wl_comp->ping_cb) _e_wl_comp->ping_cb(ews, serial);
 
    /* get the keycode for this key from X */
-   sym = xkb_keysym_from_name(ev->keyname, 0);
-   if (!sym) 
-     sym = xkb_keysym_from_name(ev->keyname, XKB_KEYSYM_CASE_INSENSITIVE);
-
-   key = sym - 8;
+   key = ecore_x_keysym_keycode_get(ev->keyname) - 8;
 
    /* update the keyboards grab properties */
    kbd->grab_key = key;
