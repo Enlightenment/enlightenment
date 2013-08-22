@@ -4355,7 +4355,6 @@ e_border_signal_move_begin(E_Border *bd,
 
    if ((bd->resize_mode != E_POINTER_RESIZE_NONE) || (bd->moving)) return;
    if (!_e_border_move_begin(bd)) return;
-   _e_border_action_init(bd);
    bd->moving = 1;
    e_pointer_mode_push(bd, E_POINTER_MOVE);
    e_zone_edge_disable();
@@ -4410,7 +4409,6 @@ e_border_signal_resize_begin(E_Border *bd,
    if ((bd->resize_mode != E_POINTER_RESIZE_NONE) || (bd->moving)) return;
    if (!_e_border_resize_begin(bd))
      return;
-   _e_border_action_init(bd);
    if (!strcmp(dir, "tl"))
      {
         resize_mode = E_POINTER_RESIZE_TL;
