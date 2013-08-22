@@ -6104,10 +6104,17 @@ _e_border_cb_window_move_resize_request(void *data  __UNUSED__,
           }
         return ECORE_CALLBACK_PASS_ON;
      }
+   bd->cur_mouse_action = e_action_find("window_resize");
+   if (bd->cur_mouse_action)
+     {
+        if ((!bd->cur_mouse_action->func.end_mouse) &&
+            (!bd->cur_mouse_action->func.end))
+          bd->cur_mouse_action = NULL;
+     }
+   if (!bd->cur_mouse_action) return ECORE_CALLBACK_RENEW;
 
-   if (!_e_border_resize_begin(bd))
-     return ECORE_CALLBACK_PASS_ON;
-
+   e_object_ref(E_OBJECT(bd->cur_mouse_action));
+   bd->cur_mouse_action->func.go(E_OBJECT(bd), NULL);
    switch (e->direction)
      {
       case E_POINTER_RESIZE_TL:
@@ -6153,16 +6160,6 @@ _e_border_cb_window_move_resize_request(void *data  __UNUSED__,
       default:
         return ECORE_CALLBACK_PASS_ON;
      }
-
-   bd->cur_mouse_action = e_action_find("window_resize");
-   if (bd->cur_mouse_action)
-     {
-        if ((!bd->cur_mouse_action->func.end_mouse) &&
-            (!bd->cur_mouse_action->func.end))
-          bd->cur_mouse_action = NULL;
-     }
-   if (bd->cur_mouse_action)
-     e_object_ref(E_OBJECT(bd->cur_mouse_action));
 
    return ECORE_CALLBACK_PASS_ON;
 }
