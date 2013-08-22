@@ -6633,7 +6633,7 @@ _e_border_cb_mouse_x_up(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mous
    E_Border *bd;
    E_Binding_Event_Mouse_Button ev2;
 
-   if (action_input_win)
+   if (action_border)
      bd = action_border;
    else
      {
