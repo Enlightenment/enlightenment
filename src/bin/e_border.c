@@ -3755,12 +3755,6 @@ e_border_act_resize_keyboard(E_Border *bd)
    if (!_e_border_resize_begin(bd))
      return;
 
-   if (!_e_border_action_input_win_new(bd))
-     {
-        _e_border_resize_end(bd);
-        return;
-     }
-
    _e_border_action_init(bd);
    _e_border_action_resize_timeout_add();
    _e_border_resize_update(bd);
@@ -3825,11 +3819,6 @@ e_border_act_resize_begin(E_Border *bd,
    if ((bd->resize_mode != E_POINTER_RESIZE_NONE) || (bd->moving)) return;
    if (!_e_border_resize_begin(bd))
      return;
-   if (!_e_border_action_input_win_new(bd))
-     {
-        _e_border_resize_end(bd);
-        return;
-     }
    _e_border_action_init(bd);
    if (bd->mouse.current.mx < (bd->x + bd->w / 2))
      {
@@ -4364,6 +4353,7 @@ e_border_signal_move_begin(E_Border *bd,
 
    if ((bd->resize_mode != E_POINTER_RESIZE_NONE) || (bd->moving)) return;
    if (!_e_border_move_begin(bd)) return;
+   _e_border_action_init(bd);
    bd->moving = 1;
    e_pointer_mode_push(bd, E_POINTER_MOVE);
    e_zone_edge_disable();
@@ -4418,6 +4408,7 @@ e_border_signal_resize_begin(E_Border *bd,
    if ((bd->resize_mode != E_POINTER_RESIZE_NONE) || (bd->moving)) return;
    if (!_e_border_resize_begin(bd))
      return;
+   _e_border_action_init(bd);
    if (!strcmp(dir, "tl"))
      {
         resize_mode = E_POINTER_RESIZE_TL;
@@ -6863,7 +6854,7 @@ _e_border_cb_mouse_move_helper(E_Border *bd, Evas_Point *output)
 static Eina_Bool
 _e_border_cb_mouse_x_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_Move *ev)
 {
-   if (!action_input_win) return ECORE_CALLBACK_RENEW;
+   if (!action_border) return ECORE_CALLBACK_RENEW;
    _e_border_cb_mouse_move_helper(action_border, (Evas_Point*)&ev->root);
    return ECORE_CALLBACK_RENEW;
 }
@@ -9628,7 +9619,7 @@ _e_border_resize_begin(E_Border *bd)
        (bd->fullscreen) || (bd->lock_user_size))
      return 0;
 
-   if (grabbed && !e_grabinput_get(bd->win, 0, bd->win))
+   if (!_e_border_action_input_win_new(bd))
      {
         grabbed = 0;
         return 0;
