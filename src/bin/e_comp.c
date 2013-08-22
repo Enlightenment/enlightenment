@@ -3658,6 +3658,30 @@ _e_comp_bd_unfullscreen(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static Eina_Bool
+_e_comp_bd_stack(void *data EINA_UNUSED, int t EINA_UNUSED, E_Event_Border_Stack *ev)
+{
+   if (!ev->border->cw) return ECORE_CALLBACK_RENEW;
+   switch (ev->type)
+     {
+      case E_STACKING_ABOVE:
+        if (ev->stack && ev->stack->cw)
+          _e_comp_win_raise_above(ev->border->cw, ev->stack->cw);
+        else
+          _e_comp_win_raise(ev->border->cw);
+        break;
+      case E_STACKING_BELOW:
+        if (ev->stack && ev->stack->cw)
+          _e_comp_win_lower_below(ev->border->cw, ev->stack->cw);
+        else
+          _e_comp_win_lower(ev->border->cw);
+        break;
+      case E_STACKING_NONE:
+      default: break;
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _e_comp_injected_win_focus_out_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -4913,6 +4937,7 @@ e_comp_init(void)
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_PROPERTY, _e_comp_bd_property, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_FULLSCREEN, _e_comp_bd_fullscreen, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_UNFULLSCREEN, _e_comp_bd_unfullscreen, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_STACK, _e_comp_bd_stack, NULL);
 
    E_EVENT_COMP_SOURCE_VISIBILITY = ecore_event_type_new();
    E_EVENT_COMP_SOURCE_ADD = ecore_event_type_new();
