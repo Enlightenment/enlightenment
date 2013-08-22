@@ -8729,6 +8729,8 @@ _e_border_eval(E_Border *bd)
                }
              _e_border_client_move_resize_send(bd);
           }
+        else if (bd->changes.pos)
+          ecore_x_window_move(bd->win, x, y);
 
         e_container_shape_resize(bd->shape, w, h);
         if (bd->changes.pos)
