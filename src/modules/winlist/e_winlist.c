@@ -284,6 +284,10 @@ e_winlist_hide(void)
           }
         else if (!bd->lock_focus_out)
           {
+             if (bd->iconic)
+               e_border_uniconify(bd);
+             if (bd->shaded)
+               e_border_unshade(bd, bd->shade.dir);
              e_border_focus_set(bd, 1, 1);
              e_border_focus_latest_set(bd);
           }
