@@ -48,8 +48,9 @@ static void _e_wl_shell_shell_surface_cb_focus_out(void *data, Evas_Object *obj 
 static void _e_wl_shell_shell_surface_cb_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_mouse_move(void *data, Evas_Object *obj EINA_UNUSED, void *event);
-static void _e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
-static void _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_wl_shell_shell_surface_cb_mouse_wheel(void *data, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_wl_shell_shell_surface_cb_key_up(void *data, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_wl_shell_shell_surface_cb_bd_move_end(void *data, void *bd);
@@ -618,6 +619,8 @@ _e_wl_shell_shell_surface_create_toplevel(E_Wayland_Surface *ews)
                                   _e_wl_shell_shell_surface_cb_mouse_up, ews);
    evas_object_smart_callback_add(ews->obj, "mouse_down", 
                                   _e_wl_shell_shell_surface_cb_mouse_down, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_wheel", 
+                                  _e_wl_shell_shell_surface_cb_mouse_wheel, ews);
    evas_object_smart_callback_add(ews->obj, "key_up", 
                                   _e_wl_shell_shell_surface_cb_key_up, ews);
    evas_object_smart_callback_add(ews->obj, "key_down", 
@@ -719,6 +722,8 @@ _e_wl_shell_shell_surface_create_popup(E_Wayland_Surface *ews)
                                   _e_wl_shell_shell_surface_cb_mouse_up, ews);
    evas_object_smart_callback_add(ews->obj, "mouse_down", 
                                   _e_wl_shell_shell_surface_cb_mouse_down, ews);
+   evas_object_smart_callback_add(ews->obj, "mouse_wheel", 
+                                  _e_wl_shell_shell_surface_cb_mouse_wheel, ews);
    evas_object_smart_callback_add(ews->obj, "key_up", 
                                   _e_wl_shell_shell_surface_cb_key_up, ews);
    evas_object_smart_callback_add(ews->obj, "key_down", 
@@ -945,6 +950,8 @@ _e_wl_shell_shell_surface_unmap(E_Wayland_Surface *ews)
                                        _e_wl_shell_shell_surface_cb_mouse_up);
         evas_object_smart_callback_del(ews->obj, "mouse_down", 
                                        _e_wl_shell_shell_surface_cb_mouse_down);
+        evas_object_smart_callback_del(ews->obj, "mouse_wheel", 
+                                       _e_wl_shell_shell_surface_cb_mouse_wheel);
         evas_object_smart_callback_del(ews->obj, "key_up", 
                                        _e_wl_shell_shell_surface_cb_key_up);
         evas_object_smart_callback_del(ews->obj, "key_down", 
@@ -1288,7 +1295,7 @@ _e_wl_shell_shell_surface_cb_mouse_move(void *data, Evas_Object *obj EINA_UNUSED
 }
 
 static void 
-_e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    E_Wayland_Surface *ews = NULL;
    struct wl_pointer *ptr = NULL;
@@ -1322,7 +1329,7 @@ _e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, 
 }
 
 static void 
-_e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    E_Wayland_Surface *ews = NULL;
    struct wl_pointer *ptr = NULL;
@@ -1371,6 +1378,47 @@ _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED
 
         if (ptr->button_count == 1)
           ptr->grab_serial = wl_display_get_serial(_e_wl_comp->wl.display);
+     }
+}
+
+static void 
+_e_wl_shell_shell_surface_cb_mouse_wheel(void *data, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   E_Wayland_Surface *ews = NULL;
+   struct wl_pointer *ptr = NULL;
+   Evas_Event_Mouse_Wheel *ev;
+   int btn = 0;
+
+   ev = event;
+
+   /* try to cast data to our surface structure */
+   if (!(ews = data)) return;
+
+   /* try to get the pointer from this input */
+   if ((ptr = _e_wl_comp->input->wl.seat.pointer))
+     {
+        unsigned int serial = 0;
+
+        serial = wl_display_next_serial(_e_wl_comp->wl.display);
+
+        /* if the compositor has a ping callback, call it on this surface */
+        if (_e_wl_comp->ping_cb) _e_wl_comp->ping_cb(ews, serial);
+
+        switch (ev->direction)
+          {
+           case 0:
+             if (ev->z == -1) btn = 4;
+             else if (ev->z == 1) btn = 5;
+             break;
+           case 1:
+             if (ev->z == -1) btn = 6;
+             else if (ev->z == 1) btn = 7;
+             break;
+          }
+
+        /* send this wheel event to the pointer as a button press */
+        ptr->grab->interface->button(ptr->grab, ev->timestamp, btn, 
+                                     WL_POINTER_BUTTON_STATE_PRESSED);
      }
 }
 
@@ -1430,7 +1478,7 @@ _e_wl_shell_shell_surface_cb_key_up(void *data, Evas_Object *obj EINA_UNUSED, vo
 }
 
 static void 
-_e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_e_wl_shell_shell_surface_cb_key_down(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Key_Down *ev;
    E_Wayland_Surface *ews = NULL;
