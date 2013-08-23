@@ -45,6 +45,7 @@ static void _e_surface_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Obj
 static void _e_surface_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_surface_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_surface_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event);
+static void _e_surface_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event);
 static void _e_surface_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_surface_cb_key_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 
@@ -185,6 +186,8 @@ _e_smart_add(Evas_Object *obj)
                                   _e_surface_cb_mouse_down, obj);
    evas_object_event_callback_add(sd->o_input, EVAS_CALLBACK_MOUSE_UP, 
                                   _e_surface_cb_mouse_up, obj);
+   evas_object_event_callback_add(sd->o_input, EVAS_CALLBACK_MOUSE_WHEEL, 
+                                  _e_surface_cb_mouse_wheel, obj);
    evas_object_event_callback_add(sd->o_input, EVAS_CALLBACK_KEY_DOWN, 
                                   _e_surface_cb_key_down, obj);
    evas_object_event_callback_add(sd->o_input, EVAS_CALLBACK_KEY_UP, 
@@ -230,6 +233,8 @@ _e_smart_del(Evas_Object *obj)
                                        _e_surface_cb_mouse_down);
         evas_object_event_callback_del(sd->o_input, EVAS_CALLBACK_MOUSE_UP, 
                                        _e_surface_cb_mouse_up);
+        evas_object_event_callback_del(sd->o_input, EVAS_CALLBACK_MOUSE_WHEEL, 
+                                       _e_surface_cb_mouse_wheel);
         evas_object_event_callback_del(sd->o_input, EVAS_CALLBACK_KEY_DOWN, 
                                        _e_surface_cb_key_down);
         evas_object_event_callback_del(sd->o_input, EVAS_CALLBACK_KEY_UP, 
@@ -412,6 +417,12 @@ _e_surface_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
    if (fabs(timestamp - sd->mouse_down_time) <= 0.001) return;
 
    evas_object_smart_callback_call(data, "mouse_up", event);
+}
+
+static void 
+_e_surface_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   evas_object_smart_callback_call(data, "mouse_wheel", event);
 }
 
 static void 
