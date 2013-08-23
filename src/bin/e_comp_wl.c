@@ -977,7 +977,40 @@ _default_grab_button(struct wl_pointer_grab *grab, uint32_t timestamp, uint32_t 
 
         disp = wl_client_get_display(wl_resource_get_client(resource));
         serial = wl_display_next_serial(disp);
-        wl_pointer_send_button(resource, serial, timestamp, button, state_w);
+
+        switch (button)
+          {
+           case BTN_LEFT:
+           case BTN_MIDDLE:
+           case BTN_RIGHT:
+             wl_pointer_send_button(resource, serial, timestamp, 
+                                    button, state_w);
+             break;
+           case 4:
+             if (state_w)
+               wl_pointer_send_axis(resource, timestamp, 
+                                    WL_POINTER_AXIS_VERTICAL_SCROLL, 
+                                    -wl_fixed_from_int(1));
+             break;
+           case 5:
+             if (state_w)
+               wl_pointer_send_axis(resource, timestamp, 
+                                    WL_POINTER_AXIS_VERTICAL_SCROLL, 
+                                    wl_fixed_from_int(1));
+             break;
+           case 6:
+             if (state_w)
+               wl_pointer_send_axis(resource, timestamp, 
+                                    WL_POINTER_AXIS_HORIZONTAL_SCROLL, 
+                                    -wl_fixed_from_int(1));
+             break;
+           case 7:
+             if (state_w)
+               wl_pointer_send_axis(resource, timestamp, 
+                                    WL_POINTER_AXIS_HORIZONTAL_SCROLL, 
+                                    wl_fixed_from_int(1));
+             break;
+          }
      }
 
    if (pointer->button_count == 0 &&
