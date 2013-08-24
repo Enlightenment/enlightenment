@@ -6461,7 +6461,7 @@ _e_border_cb_mouse_x_wheel(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_M
    E_Border *bd;
    E_Binding_Event_Wheel ev2;
 
-   if (action_input_win)
+   if (action_border)
      bd = action_border;
    else
      {
@@ -6560,7 +6560,7 @@ _e_border_cb_mouse_x_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mo
    E_Border *bd;
    E_Binding_Event_Mouse_Button ev2;
 
-   if (action_input_win)
+   if (action_border)
      bd = action_border;
    else
      {
