@@ -251,7 +251,7 @@ main(int argc, char **argv)
    pid_t cs_child = -1;
 #endif
 #if !defined(__OpenBSD__) && !defined(__NetBSD__) && !defined(__FreeBSD__) && \
-   !(defined (__MACH__) && defined (__APPLE__))
+   !defined(__FreeBSD_kernel__) && !(defined (__MACH__) && defined (__APPLE__))
    Eina_Bool restart = EINA_TRUE;
 #endif
 
@@ -416,14 +416,14 @@ main(int argc, char **argv)
      really_know = EINA_TRUE;
 
 #if defined(__OpenBSD__) || defined(__NetBSD__) || defined(__FreeBSD__) || \
-   (defined (__MACH__) && defined (__APPLE__))
+   defined(__FreeBSD_kernel__) || (defined (__MACH__) && defined (__APPLE__))
    execv(args[0], args);
 #endif
 
    /* not run at the moment !! */
 
 #if !defined(__OpenBSD__) && !defined(__NetBSD__) && !defined(__FreeBSD__) && \
-   !(defined (__MACH__) && defined (__APPLE__))
+   !defined(__FreeBSD_kernel__) && !(defined (__MACH__) && defined (__APPLE__))
    /* Now looping until */
    while (restart)
      {
