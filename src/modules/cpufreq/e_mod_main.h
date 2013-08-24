@@ -51,6 +51,7 @@ struct _Config
    char         *set_exe_path;
    Ecore_Poller *frequency_check_poller;
    Ecore_Event_Handler *handler;
+   E_Config_Dialog *config_dialog;
 };
 
 EAPI extern E_Module_Api e_modapi;
@@ -59,6 +60,12 @@ EAPI void *e_modapi_init     (E_Module *m);
 EAPI int   e_modapi_shutdown (E_Module *m);
 EAPI int   e_modapi_save     (E_Module *m);
 
+E_Config_Dialog *e_int_config_cpufreq_module(E_Container *con, const char *params);
+void _cpufreq_poll_interval_update(void);
+void _cpufreq_set_governor(const char *governor);
+void _cpufreq_set_pstate(int min, int max, int turbo);
+
+extern Config *cpufreq_config;
 
 /**
  * @addtogroup Optional_Gadgets
