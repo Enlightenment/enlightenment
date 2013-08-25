@@ -2694,6 +2694,21 @@ _pager_popup_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event
      _pager_popup_desk_switch(1, 0);
    else if (!strcmp(ev->key, "Escape"))
      _pager_popup_hide(0);
+   else if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")) ||
+            (!strcmp(ev->key, "space")))
+     {
+        Pager_Popup *pp = act_popup;
+
+        if (pp)
+          {
+             E_Desk *desk;
+             
+             desk = e_desk_at_xy_get(pp->pager->zone,
+                                     current_desk->x, current_desk->y);
+             if (desk) e_desk_show(desk);
+          }
+        _pager_popup_hide(0);
+     }
    else
      {
         E_Config_Binding_Key *binding;
