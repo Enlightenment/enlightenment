@@ -825,12 +825,6 @@ else
    ecore_x=false
 fi
 
-if test "x${have_wayland}" = "xyes" ; then
-   allow_wl_x11=true
-else
-   allow_wl_x11=false
-fi
-
 if test "x${ecore_x}" = "xtrue" && test -n "$WAYLAND_CFLAGS" ; then
    wl_x11=true
 else
@@ -846,6 +840,16 @@ define([CHECK_MODULE_WL_DESKTOP_SHELL],
   fi
 ])
 AM_CONDITIONAL([HAVE_WL_DESKTOP_SHELL], [test "x${WL_DESKTOP_SHELL}" = "xtrue"])
+
+define([CHECK_MODULE_WL_FB],
+[
+  if test "x${have_wayland_clients}" = "xyes"; then
+    AC_E_CHECK_PKG(WL_FB, [ ecore-fb >= $efl_version ecore >= $efl_version eina >= $efl_version ], [WL_FB=true], [WL_FB=false])
+  else
+    WL_FB=false
+  fi
+])
+AM_CONDITIONAL([HAVE_WL_FB], [test "x${WL_FB}" = "xtrue"])
 
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
@@ -897,7 +901,8 @@ AC_E_OPTIONAL_MODULE([access], false, $ecore_x)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([contact], false)
 AC_E_OPTIONAL_MODULE([wl_desktop_shell], true, [CHECK_MODULE_WL_DESKTOP_SHELL])
-AC_E_OPTIONAL_MODULE([wl_x11], $allow_wl_x11, $wl_x11)
+AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, $wl_x11)
+AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
 #AC_E_OPTIONAL_MODULE([wl_screenshot], true, [CHECK_MODULE_WL_SCREENSHOT])
 
 HALT="/sbin/shutdown -h now"
