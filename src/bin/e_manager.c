@@ -48,6 +48,7 @@ EAPI int E_EVENT_MANAGER_COMP_SET = -1;
 static Eina_List *managers = NULL;
 static Eina_Hash *frame_extents = NULL;
 static Ecore_Timer *timer_post_screensaver_lock = NULL;
+static Ecore_Event_Handler *_show_request_handler = NULL;
 
 /* externally accessible functions */
 EINTERN int
@@ -57,6 +58,8 @@ e_manager_init(void)
    frame_extents = eina_hash_string_superfast_new(NULL);
    E_EVENT_MANAGER_KEYS_GRAB = ecore_event_type_new();
    E_EVENT_MANAGER_COMP_SET = ecore_event_type_new();
+   _show_request_handler = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_SHOW_REQUEST,
+                                                   _e_manager_cb_window_show_request, NULL);
    return 1;
 }
 
@@ -64,6 +67,7 @@ EINTERN int
 e_manager_shutdown(void)
 {
    E_FREE_LIST(managers, e_object_del);
+   E_FREE_FUNC(_show_request_handler, ecore_event_handler_del);
 
    if (frame_extents)
      {
@@ -106,8 +110,6 @@ e_manager_new(Ecore_X_Window root, int num)
      }
    managers = eina_list_append(managers, man);
 
-   E_LIST_HANDLER_APPEND(man->handlers, ECORE_X_EVENT_WINDOW_SHOW_REQUEST,
-                         _e_manager_cb_window_show_request, man);
    E_LIST_HANDLER_APPEND(man->handlers, ECORE_X_EVENT_WINDOW_CONFIGURE,
                          _e_manager_cb_window_configure, man);
    E_LIST_HANDLER_APPEND(man->handlers, ECORE_EVENT_KEY_DOWN,
@@ -530,10 +532,10 @@ _e_manager_cb_window_show_request(void *data, int ev_type __UNUSED__, void *ev)
    E_Manager *man;
    Ecore_X_Event_Window_Show_Request *e;
 
-   man = data;
    e = ev;
    if (e_stolen_win_get(e->win)) return 1;
-   if (ecore_x_window_parent_get(e->win) != man->root)
+   man = e_manager_find_by_root(ecore_x_window_parent_get(e->win));
+   if (!man)
      return ECORE_CALLBACK_PASS_ON;  /* try other handlers for this */
 
    {
