@@ -115,13 +115,10 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    /* Apply the above settings */
    EINA_LIST_FOREACH(e_comp_list(), l, comp)
      {
-        if (comp->pointer && !e_config->show_cursor)
-          {
-             e_pointer_hide(comp->pointer);
-             continue;
-          }
-        if (comp->pointer) e_object_del(E_OBJECT(comp->pointer));
-        comp->pointer = e_pointer_window_new(comp->man->root, 1);
+        if ((comp->comp_type == E_PIXMAP_TYPE_X) && (!e_config->show_cursor))
+          e_pointer_hide(comp->pointer);
+        else
+          e_pointers_size_set(e_config->cursor_size);
      }
 
    e_mouse_update();

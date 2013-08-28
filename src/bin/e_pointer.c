@@ -611,6 +611,10 @@ e_pointer_image_set(E_Pointer *p, E_Pixmap *cp, int w, int h, int hot_x, int hot
              _e_pointer_type_set(p, type);
              eina_stringshare_del(type);
           }
+        evas_object_image_size_set(p->pointer_image, 1, 1);
+        evas_object_image_data_set(p->pointer_image, NULL);
+        E_FREE_FUNC(p->pointer_image, evas_object_del);
+        return;
      }
    _e_pointer_hot_update(p, hot_x, hot_y);
           
