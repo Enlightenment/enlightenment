@@ -414,7 +414,7 @@ _e_surface_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA
    if (!(sd = evas_object_smart_data_get(data))) return;
 
    timestamp = ecore_loop_time_get();
-   if (fabs(timestamp - sd->mouse_down_time) <= 0.001) return;
+   if (fabs(timestamp - sd->mouse_down_time) <= 0.010) return;
 
    evas_object_smart_callback_call(data, "mouse_up", event);
 }
