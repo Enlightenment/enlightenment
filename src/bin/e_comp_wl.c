@@ -1186,15 +1186,13 @@ _default_grab_key(struct wl_keyboard_grab *grab, uint32_t timestamp, uint32_t ke
 {
    struct wl_keyboard *keyboard = grab->keyboard;
    struct wl_resource *resource;
-   uint32_t serial;
 
    resource = keyboard->focus_resource;
    if (resource) 
      {
-        struct wl_display *disp;
+        uint32_t serial;
 
-        disp = wl_client_get_display(wl_resource_get_client(resource));
-        serial = wl_display_next_serial(disp);
+        serial = wl_display_next_serial(_e_wl_comp->wl.display);
         wl_keyboard_send_key(resource, serial, timestamp, key, state);
      }
 }
