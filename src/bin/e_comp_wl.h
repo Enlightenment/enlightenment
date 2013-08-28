@@ -392,7 +392,6 @@ struct _E_Wayland_Shell_Interface
 struct _E_Wayland_Shell_Grab
 {
    struct wl_pointer_grab grab;
-   struct wl_pointer *pointer;
    Evas_Coord x, y, w, h;
    unsigned int edges;
 
