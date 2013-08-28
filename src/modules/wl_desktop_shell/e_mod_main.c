@@ -1428,7 +1428,6 @@ _e_wl_shell_shell_surface_cb_key_up(void *data, Evas_Object *obj EINA_UNUSED, vo
    struct wl_keyboard_grab *grab;
    unsigned int key = 0, *end, *k;
    unsigned int serial = 0;
-   xkb_keysym_t sym = XKB_KEY_NoSymbol;
 
    ev = event;
 
@@ -1445,11 +1444,7 @@ _e_wl_shell_shell_surface_cb_key_up(void *data, Evas_Object *obj EINA_UNUSED, vo
    if (kbd->focus != ews->wl.surface) return;
 
    /* get the keycode for this key from X */
-   sym = xkb_keysym_from_name(ev->keyname, 0);
-   if (!sym) 
-     sym = xkb_keysym_from_name(ev->keyname, XKB_KEYSYM_CASE_INSENSITIVE);
-
-   key = sym - 8;
+   key = ecore_x_keysym_keycode_get(ev->keyname) - 8;
 
    end = (kbd->keys.data + kbd->keys.size);
    for (k = kbd->keys.data; k < end; k++)
