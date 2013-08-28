@@ -403,9 +403,6 @@ _e_wl_shell_grab_start(E_Wayland_Shell_Grab *grab, E_Wayland_Shell_Surface *ewss
    /* add a listener in case this surface gets destroyed */
    wl_signal_add(&ewss->wl.destroy_signal, &grab->shell_surface_destroy);
 
-   grab->pointer = pointer;
-//   grab->grab.focus = ewss->surface->wl.surface;
-
    /* start the pointer grab */
    wl_pointer_start_grab(pointer, &grab->grab);
 
@@ -428,7 +425,7 @@ _e_wl_shell_grab_end(E_Wayland_Shell_Grab *ewsg)
      wl_list_remove(&ewsg->shell_surface_destroy.link);
 
    /* end the grab */
-   wl_pointer_end_grab(ewsg->pointer);
+   wl_pointer_end_grab(ewsg->grab.pointer);
 }
 
 static void 
@@ -1317,7 +1314,7 @@ _e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, 
         else if (ev->button == 3)
           btn = BTN_RIGHT;
 
-        ptr->button_count--;
+        if (ptr->button_count > 0) ptr->button_count--;
 
         /* send this button press to the pointer */
         ptr->grab->interface->button(ptr->grab, ev->timestamp, btn, 
@@ -1680,16 +1677,14 @@ _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct w
 
    if (!responsive)
      {
-        E_Wayland_Surface *ews = NULL;
         E_Wayland_Shell_Grab *grab = NULL;
 
-        ews = ewss->surface;
-
         grab = (E_Wayland_Shell_Grab *)_e_wl_comp->input->wl.seat.pointer->grab;
-        if (grab->grab.interface == &_e_busy_grab_interface)
+        if ((grab->grab.interface == &_e_busy_grab_interface) && 
+            (grab->shell_surface == ewss))
           {
              _e_wl_shell_grab_end(grab);
-             free(ews->input->wl.seat.pointer->grab);
+             free(grab);
           }
      }
 
@@ -1835,11 +1830,11 @@ _e_wl_shell_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct w
    ev = E_NEW(E_Binding_Event_Mouse_Button, 1);
 
    /* set button property of the binding event */
-   if (grab->pointer->grab_button == BTN_LEFT)
+   if (grab->grab.pointer->grab_button == BTN_LEFT)
      ev->button = 1;
-   else if (grab->pointer->grab_button == BTN_MIDDLE)
+   else if (grab->grab.pointer->grab_button == BTN_MIDDLE)
      ev->button = 2;
-   else if (grab->pointer->grab_button == BTN_RIGHT)
+   else if (grab->grab.pointer->grab_button == BTN_RIGHT)
      ev->button = 3;
 
    /* set the clicked location in the binding event */
@@ -1905,11 +1900,11 @@ _e_wl_shell_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct
    /* create a fake binding event for mouse button */
    ev = E_NEW(E_Binding_Event_Mouse_Button, 1);
 
-   if (grab->pointer->grab_button == BTN_LEFT)
+   if (grab->grab.pointer->grab_button == BTN_LEFT)
      ev->button = 1;
-   else if (grab->pointer->grab_button == BTN_MIDDLE)
+   else if (grab->grab.pointer->grab_button == BTN_MIDDLE)
      ev->button = 2;
-   else if (grab->pointer->grab_button == BTN_RIGHT)
+   else if (grab->grab.pointer->grab_button == BTN_RIGHT)
      ev->button = 3;
 
    /* set the clicked location in the binding event */
@@ -2130,7 +2125,9 @@ _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int times
    if (!(ptr = grab->pointer)) return;
 
    if (state == WL_POINTER_BUTTON_STATE_RELEASED)
-     ptr->button_count--;
+     {
+        if (ptr->button_count > 0) ptr->button_count--;
+     }
    else
      ptr->button_count++;
 
@@ -2214,7 +2211,9 @@ _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int tim
    if (!(ptr = grab->pointer)) return;
 
    if (state == WL_POINTER_BUTTON_STATE_RELEASED)
-     ptr->button_count--;
+     {
+        if (ptr->button_count > 0) ptr->button_count--;
+     }
    else
      ptr->button_count++;
 
@@ -2364,7 +2363,8 @@ _e_wl_shell_busy_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_resource 
    if (!(ewsg = (E_Wayland_Shell_Grab *)grab)) return;
 
    /* if the grab's focus is not this surface, then end the grab */
-   if ((ewsg->grab.focus != surface))
+   if ((!ewsg->shell_surface) || 
+       (ewsg->shell_surface->surface->wl.surface != surface))
      {
         /* end the grab */
         _e_wl_shell_grab_end(ewsg);
