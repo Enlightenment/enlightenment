@@ -1850,7 +1850,7 @@ _e_client_eval(E_Client *ec)
           }
         if (!ec->desktop)
           {
-             if ((ec->icccm.name) && (ec->icccm.class))
+             if ((ec->icccm.name) || (ec->icccm.class))
                ec->desktop = efreet_util_desktop_wm_class_find(ec->icccm.name,
                                                                ec->icccm.class);
           }
