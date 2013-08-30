@@ -51,6 +51,7 @@ static void _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas *e EINA_UNU
 static void _e_wl_shell_shell_surface_cb_mouse_wheel(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_wl_shell_shell_surface_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_wl_shell_shell_surface_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static Eina_Bool _e_wl_shell_shell_surface_cb_client_prop(void *data, int type, void *event);
 static void _e_wl_shell_shell_surface_cb_ec_hook_focus_set(void *data, E_Client *ec);
 static void _e_wl_shell_shell_surface_cb_ec_hook_focus_unset(void *data, E_Client *ec);
 static void _e_wl_shell_shell_surface_cb_ec_hook_move_end(void *data, E_Client *ec);
@@ -156,6 +157,7 @@ static const struct wl_pointer_grab_interface _e_busy_grab_interface =
 /* local variables */
 
 static Eina_List *ec_hooks = NULL;
+static Ecore_Event_Handler *prop_handler = NULL;
 
 /* external variables */
 
@@ -238,6 +240,7 @@ e_modapi_init(E_Module *m)
                       e_client_hook_add(E_CLIENT_HOOK_RESIZE_UPDATE, 
                                         _e_wl_shell_shell_surface_cb_ec_hook_resize_update, NULL));
 
+   prop_handler = ecore_event_handler_add(E_EVENT_CLIENT_PROPERTY, _e_wl_shell_shell_surface_cb_client_prop, NULL);
    EINA_LIST_FOREACH(e_comp_list(), l, comp)
      evas_event_callback_add(comp->evas, EVAS_CALLBACK_RENDER_POST,
                              _e_wl_shell_render_post, NULL);
@@ -264,6 +267,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    E_Comp *comp;
 
    E_FREE_LIST(ec_hooks, e_client_hook_del);
+   E_FREE_FUNC(prop_handler, ecore_event_handler_del);
    EINA_LIST_FOREACH(e_comp_list(), l, comp)
      evas_event_callback_del_full(comp->evas, EVAS_CALLBACK_RENDER_POST,
                              _e_wl_shell_render_post, NULL);
@@ -623,6 +627,7 @@ _e_wl_shell_shell_surface_create_toplevel(E_Wayland_Surface *ews)
    ews->ec->comp_data = (E_Comp_Client_Data*)ews;
    ews->ec->icccm.title = eina_stringshare_ref(ews->shell_surface->title);
    ews->ec->icccm.class = eina_stringshare_ref(ews->shell_surface->clas);
+   ews->ec->changes.icon = !!ews->ec->icccm.class;
    EC_CHANGED(ews->ec);
 
    /* hook object callbacks */
@@ -686,6 +691,7 @@ _e_wl_shell_shell_surface_create_popup(E_Wayland_Surface *ews)
    ews->ec->comp_data = (E_Comp_Client_Data*)ews;
    ews->ec->icccm.title = eina_stringshare_ref(ewss->title);
    ews->ec->icccm.class = eina_stringshare_ref(ewss->clas);
+   ews->ec->changes.icon = !!ews->ec->icccm.class;
    EC_CHANGED(ews->ec);
 
    /* hook object callbacks */
@@ -1458,6 +1464,21 @@ _e_wl_shell_shell_surface_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Obje
    e_comp_wl_input_modifiers_update(serial);
 }
 
+static Eina_Bool
+_e_wl_shell_shell_surface_cb_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
+{
+   E_Event_Client_Property *ev = event;
+
+   if (e_pixmap_type_get(ev->ec->pixmap) != E_PIXMAP_TYPE_WL) return ECORE_CALLBACK_RENEW;
+   if (!(ev->property & E_CLIENT_PROPERTY_ICON)) return ECORE_CALLBACK_RENEW;
+   if (ev->ec->desktop)
+     {
+        if (!ev->ec->exe_inst)
+          e_exec_phony(ev->ec);
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void 
 _e_wl_shell_shell_surface_cb_ec_hook_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 {
@@ -2045,6 +2066,8 @@ _e_wl_shell_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED, str
    eina_stringshare_replace(&ewss->clas, clas);
    if (!ewss->surface->ec) return;
    eina_stringshare_refplace(&ewss->surface->ec->icccm.class, ewss->clas);
+   ewss->surface->ec->changes.icon = 1;
+   EC_CHANGED(ewss->surface->ec);
 }
 
 /* shell move_grab interface functions */
