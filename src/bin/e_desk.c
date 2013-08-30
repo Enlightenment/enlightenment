@@ -813,7 +813,7 @@ _e_desk_show_begin(E_Desk *desk, int dx, int dy)
           }
         e_border_show(bd);
      }
-   if (!e_config->desk_flip_animate_type)
+   if ((!e_config->desk_flip_animate_type) || (!desk->animate_count))
      _e_desk_show_end_serious(desk);
    e_container_border_list_free(bl);
 }
