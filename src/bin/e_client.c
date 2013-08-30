@@ -2262,7 +2262,7 @@ e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal)
    EC_CHANGED(ec);
 
    c->clients = eina_list_append(c->clients, ec);
-   eina_hash_direct_add(clients_hash, &ec->pixmap, ec);
+   eina_hash_add(clients_hash, &ec->pixmap, ec);
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_ADD);
    e_comp_object_client_add(ec);

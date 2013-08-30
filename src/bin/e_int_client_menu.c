@@ -982,7 +982,7 @@ _e_client_menu_cb_sendto_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
              else
                e_menu_item_callback_set(submi, _e_client_menu_cb_sendto, desk);
 #ifdef DESKMIRROR_TEST
-             submi->icon_object = e_deskmirror_add(desk);
+             submi->icon_object = e_deskmirror_add(desk, 0, 0);
              edje_extern_object_min_size_set(submi->icon_object, tw, th);
              evas_object_show(submi->icon_object);
 #else

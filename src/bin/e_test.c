@@ -8,15 +8,20 @@ static Eina_Bool
 deskmirror_test(void *d EINA_UNUSED)
 {
    E_Zone *zone;
-   Evas_Object *o, *com;
+   Evas_Object *o;
 
    zone = e_util_zone_current_get(e_manager_current_get());
-   o = e_deskmirror_add(e_desk_current_get(zone));
-   com = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_POPUP);
-   evas_object_move(com, zone->x + zone->w / 4, zone->y + zone->h / 4);
-   evas_object_resize(com, zone->w / 2, zone->h / 2);
-   evas_object_layer_set(com, E_LAYER_POPUP);
-   evas_object_show(com);
+   o = e_deskmirror_add(e_desk_current_get(zone), 0, 0);
+   evas_object_move(o, zone->x + zone->w - (zone->w / 4), zone->y + zone->h / 2);
+   evas_object_resize(o, zone->w / 4, zone->h / 4);
+   evas_object_layer_set(o, E_LAYER_POPUP);
+   evas_object_show(o);
+
+   o = e_deskmirror_add(e_desk_current_get(zone), 0, 0);
+   evas_object_move(o, zone->x, zone->y);
+   evas_object_resize(o, zone->w / 2, zone->h / 2);
+   evas_object_layer_set(o, E_LAYER_POPUP);
+   evas_object_show(o);
    return EINA_FALSE;
 }
 
