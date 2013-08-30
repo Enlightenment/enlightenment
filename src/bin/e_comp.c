@@ -2275,6 +2275,11 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
 
         cw->pending_count++;
         _e_comp_event_source_add(cw);
+        cw->up = e_comp_render_update_new();
+        e_comp_render_update_tile_size_set(cw->up, 32, 32);
+        // for software:
+        e_comp_render_update_policy_set
+          (cw->up, E_COMP_RENDER_UPDATE_POLICY_HALF_WIDTH_OR_MORE_ROUND_UP_TO_FULL_WIDTH);
      }
    else
      {
@@ -2288,11 +2293,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
 
    c->wins_invalid = 1;
    c->wins = eina_inlist_append(c->wins, EINA_INLIST_GET(cw));
-   cw->up = e_comp_render_update_new();
-   e_comp_render_update_tile_size_set(cw->up, 32, 32);
-   // for software:
-   e_comp_render_update_policy_set
-     (cw->up, E_COMP_RENDER_UPDATE_POLICY_HALF_WIDTH_OR_MORE_ROUND_UP_TO_FULL_WIDTH);
+
    if (((!cw->input_only) && (!cw->invalid)) && (cw->override))
      {
         cw->redirected = 1;
