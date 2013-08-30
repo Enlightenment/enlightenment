@@ -570,6 +570,7 @@ _e_comp_win_update(E_Comp_Win *cw)
                }
           }
         cw->shaped = _e_comp_win_shaped_check(cw, cw->shape->shape_rects, cw->shape->shape_rects_num);
+        evas_object_precise_is_inside_set(cw->obj, cw->shaped);
      }
 
    if (cw->dmg_updates && (((!cw->pixmap) || (cw->needpix)) &&
@@ -2243,7 +2244,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
 
         edje_object_signal_callback_add(cw->shobj, "e,action,show,done", "e", _e_comp_show_done, cw);
         edje_object_signal_callback_add(cw->shobj, "e,action,hide,done", "e", _e_comp_hide_done, cw);
-        if (cw->shaped) evas_object_precise_is_inside_set(cw->effect_obj, 1);
+        evas_object_precise_is_inside_set(cw->obj, cw->shaped);
 
         _e_comp_win_layout_populate(cw);
 
