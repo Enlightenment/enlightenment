@@ -2468,6 +2468,7 @@ _e_comp_win_show(E_Comp_Win *cw)
    if (cw->input_only)
      {
         if (!cw->shape) return;
+        evas_object_show(cw->effect_obj);
         cw->real_hid = 0;
         cw->shape->visible = 0;
         e_container_shape_show(cw->shape);
