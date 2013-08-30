@@ -773,6 +773,7 @@ _e_exec_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
    else
  */
    inst->ref--;
+   inst->exe = NULL;
    _e_exe_instance_watchers_call(inst, E_EXEC_WATCH_STOPPED);
    _e_exec_instance_free(inst);
    inst->exe = NULL;
