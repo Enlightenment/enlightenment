@@ -1,3 +1,7 @@
+2013-08-30 Mike Blumenkrantz
+
+        * Navigate menu item now opens $HOME
+
 2013-07-26 Mike Blumenkrantz
 
         * fixed bug where setting min size on a gadget would not be passed to desktop gadgets

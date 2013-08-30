@@ -482,6 +482,13 @@ _e_mod_menu_generate(void *data, E_Menu *m)
    e_menu_pre_activate_callback_set(m, NULL, NULL);
 }
 
+static void
+_e_mod_menu_navigate_cb(void *d EINA_UNUSED, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
+{
+   if (m->zone)
+     e_fwin_new(m->zone->container, "~/", "/");
+}
+
 /* returns submenu so we can add Go to Parent */
 E_Menu *
 e_mod_menu_add(E_Menu *m, const char *path)
@@ -493,6 +500,7 @@ e_mod_menu_add(E_Menu *m, const char *path)
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Navigate..."));
    e_util_menu_item_theme_icon_set(mi, "system-file-manager");
+   e_menu_item_callback_set(mi, _e_mod_menu_navigate_cb, NULL);
    sub = e_menu_new();
    e_menu_item_submenu_set(mi, sub);
    e_object_unref(E_OBJECT(sub)); //allow deletion whenever main menu deletes

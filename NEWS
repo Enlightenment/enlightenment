@@ -148,6 +148,7 @@ Improvements:
     * filemanager dnd operations now show all files when dragging
     * added check changed to shelf config dialog
     * udisks2 support
+    * Navigate menu item now opens $HOME
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.
