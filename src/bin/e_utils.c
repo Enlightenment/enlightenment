@@ -1421,7 +1421,6 @@ e_util_terminal_desktop_get(void)
    const char *terms[] =
    {
       "terminology.desktop",
-      "xterm.desktop",
       "rxvt.desktop",
       "gnome-terminal.desktop",
       "konsole.desktop",
