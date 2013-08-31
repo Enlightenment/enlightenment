@@ -425,7 +425,6 @@ _e_randr_config_restore(void)
              else
                {
                   /* this crtc is not in our config. get values from X */
-#if ((ECORE_VERSION_MAJOR >= 1) && (ECORE_VERSION_MINOR >= 8))
                   Ecore_X_Randr_Crtc_Info *cinfo;
 
                   /* get crtc info from X */
@@ -440,17 +439,6 @@ _e_randr_config_restore(void)
 
                        ecore_x_randr_crtc_info_free(cinfo);
                     }
-#else
-                  /* get geometry of this crtc */
-                  ecore_x_randr_crtc_geometry_get(root, crtcs[c], 
-                                                  &x, &y, &w, &h);
-
-                  /* get mode */
-                  mode = ecore_x_randr_crtc_mode_get(root, crtcs[c]);
-
-                  /* get orientation */
-                  orient = ecore_x_randr_crtc_orientation_get(root, crtcs[c]);
-#endif
                }
 
              /* at this point, we should have geometry, mode and orientation.
@@ -893,12 +881,10 @@ _e_randr_config_crtc_update(E_Randr_Crtc_Config *cfg)
 {
    Ecore_X_Window root = 0;
    Eina_Bool ret = EINA_FALSE;
+   Ecore_X_Randr_Crtc_Info *cinfo;
 
    /* grab the root window */
    root = ecore_x_window_root_first_get();
-
-#if ((ECORE_VERSION_MAJOR >= 1) && (ECORE_VERSION_MINOR >= 8))
-   Ecore_X_Randr_Crtc_Info *cinfo;
 
    /* get crtc info from X */
    if ((cinfo = ecore_x_randr_crtc_info_get(root, cfg->xid)))
@@ -920,39 +906,6 @@ _e_randr_config_crtc_update(E_Randr_Crtc_Config *cfg)
 
         ecore_x_randr_crtc_info_free(cinfo);
      }
-#else
-   Evas_Coord x, y, w, h;
-   unsigned int orient, mode;
-
-   /* get geometry of this crtc */
-   ecore_x_randr_crtc_geometry_get(root, ev->crtc, &x, &y, &w, &h);
-   if ((cfg->x != x) || (cfg->y != y) || 
-       (cfg->width != w) || (cfg->height != h))
-     {
-        cfg->x = x;
-        cfg->y = y;
-        cfg->width = w;
-        cfg->height = h;
-
-        ret = EINA_TRUE;
-     }
-
-   /* get orientation */
-   orient = ecore_x_randr_crtc_orientation_get(root, cfg->xid);
-   if (cfg->orient != orient)
-     {
-        cfg->orient = orient;
-        ret = EINA_TRUE;
-     }
-
-   /* get mode */
-   mode = ecore_x_randr_crtc_mode_get(root, cfg->xid);
-   if (cfg->mode != mode)
-     {
-        cfg->mode = mode;
-        ret = EINA_TRUE;
-     }
-#endif
 
    return ret;
 }
@@ -1215,11 +1168,9 @@ _e_randr_config_screen_size_calculate(int *sw, int *sh)
              if ((!w) || (!h))
                {
                   Ecore_X_Randr_Crtc crtc = 0;
+                  Ecore_X_Randr_Crtc_Info *cinfo;
 
                   crtc = ecore_x_randr_output_crtc_get(root, outputs[i]);
-
-#if ((ECORE_VERSION_MAJOR >= 1) && (ECORE_VERSION_MINOR >= 8))
-                  Ecore_X_Randr_Crtc_Info *cinfo;
 
                   /* get crtc info from X */
                   if ((cinfo = ecore_x_randr_crtc_info_get(root, crtc)))
@@ -1233,16 +1184,6 @@ _e_randr_config_screen_size_calculate(int *sw, int *sh)
 
                        ecore_x_randr_crtc_info_free(cinfo);
                     }
-#else
-                  /* get geometry of this crtc */
-                  ecore_x_randr_crtc_geometry_get(root, crtc, &x, &y, &w, &h);
-
-                  /* get mode */
-                  mode = ecore_x_randr_crtc_mode_get(root, crtc);
-
-                  /* get orientation */
-                  orient = ecore_x_randr_crtc_orientation_get(root, crtc);
-#endif
                }
 
              /* at this point, we should have geometry, mode and orientation.
