@@ -209,14 +209,6 @@ _handle_anim(E_Smart_Data *sd)
    sd->frame = 0;
    sd->frame_count = 0;
    if (!evas_object_image_animated_get(sd->obj)) return 0;
-   // FIXME: hack around jiyouns BUG!!!!!!!!
-   {
-      const char *file;
-      char buf[256];
-      snprintf(buf, sizeof(buf), "%ld", (long)sd);
-      evas_object_image_file_get(sd->obj, &file, NULL);
-      evas_object_image_file_set(sd->obj, file, buf);
-   }
    sd->frame_count = evas_object_image_animated_frame_count_get(sd->obj);
    if (sd->frame_count < 2) return 0;
    evas_object_show(sd->obj);
