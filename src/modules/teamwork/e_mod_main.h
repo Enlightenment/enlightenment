@@ -55,6 +55,7 @@ EINTERN int e_tw_init(void);
 EINTERN void e_tw_shutdown(void);
 EINTERN Eina_Bool tw_hide(void *d EINA_UNUSED);
 EINTERN void tw_popup_opacity_set(void);
+EINTERN void tw_uri_show(const char *uri);
 
 EINTERN E_Config_Dialog *e_int_config_teamwork_module(E_Container *con, const char *params EINA_UNUSED); 
 

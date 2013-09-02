@@ -812,7 +812,7 @@ tw_show_helper(Evas_Object *o, int w, int h)
         if (py + ph > tw_mod->pop->zone->h)
           py = tw_mod->pop->zone->h - ph;
      }
-   else
+   else if (tw_win)
      {
         E_Border *bd = e_border_find_by_client_window(tw_win);
         int x, y;
@@ -838,6 +838,11 @@ tw_show_helper(Evas_Object *o, int w, int h)
           py = (y / 2) - (ph / 2);
         /* give up */
         if (py < 0) py = 0;
+     }
+   else
+     {
+        px = (tw_mod->pop->zone->w / 2) - (pw / 2);
+        py = (tw_mod->pop->zone->h / 2) - (pw / 2);
      }
    e_popup_move_resize(tw_mod->pop, px, py, pw, ph);
    e_popup_content_set(tw_mod->pop, o);
@@ -1263,4 +1268,10 @@ e_tw_shutdown(void)
    last_coords.x = last_coords.y = 0;
    eina_hash_free(tw_mod->media);
    E_FREE_FUNC(tw_mod->pop, e_object_del);
+}
+
+EINTERN void
+tw_uri_show(const char *uri)
+{
+   dbus_link_show_helper(uri, 1);
 }

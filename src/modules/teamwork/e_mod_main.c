@@ -93,12 +93,20 @@ e_tw_config_dd_new(void)
 }
 //////////////////////////////
 static void
-e_tw_act_toggle_cb(E_Object *obj EINA_UNUSED, const char *params EINA_UNUSED)
+e_tw_act_toggle_cb(E_Object *obj EINA_UNUSED, const char *params)
 {
-   if (!tw_mod->pop) return;
-   if (tw_mod->sticky)
-     tw_hide(NULL);
-   tw_mod->sticky = !tw_mod->sticky;
+   if (tw_mod->pop)
+     {
+        if (tw_mod->sticky)
+          tw_hide(NULL);
+        tw_mod->sticky = !tw_mod->sticky;
+        return;
+     }
+   if (params && params[0])
+     {
+        tw_uri_show(params);
+        tw_mod->sticky = 1;
+     }
 }
 //////////////////////////////
 EAPI void *
@@ -146,7 +154,7 @@ e_modapi_init(E_Module *m)
      }
    e_tw_toggle = e_action_add(_act_toggle);
    e_tw_toggle->func.go = e_tw_act_toggle_cb;
-   e_action_predef_name_set(_e_tw_name, _lbl_toggle, _act_toggle, NULL, NULL, 0);
+   e_action_predef_name_set(_e_tw_name, _lbl_toggle, _act_toggle, NULL, NULL, 1);
 
    e_configure_option_domain_current_set("teamwork");
 
