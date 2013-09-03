@@ -784,6 +784,7 @@ tw_show_helper(Evas_Object *o, int w, int h)
 {
    int px, py, pw, ph;
    double ratio = tw_config->popup_size / 100.;
+   E_Border *bd = NULL;
 
    E_FREE_FUNC(tw_mod->pop, e_object_del);
    tw_mod->sticky = 0;
@@ -812,9 +813,8 @@ tw_show_helper(Evas_Object *o, int w, int h)
         if (py + ph > tw_mod->pop->zone->h)
           py = tw_mod->pop->zone->h - ph;
      }
-   else if (tw_win)
+   else if (tw_win && ((bd = e_border_find_by_client_window(tw_win))))
      {
-        E_Border *bd = e_border_find_by_client_window(tw_win);
         int x, y;
 
         x = bd->x + bd->client_inset.l + last_coords.x;
