@@ -523,7 +523,7 @@ main(int argc, char **argv)
                             if (r != 0 ||
                                 (sig.si_signo != SIGSEGV &&
                                  sig.si_signo != SIGFPE &&
-                                 sig.si_signo != SIGBUS &&
+//                                 sig.si_signo != SIGBUS &&
                                  sig.si_signo != SIGABRT))
                               {
 #ifdef HAVE_SYS_PTRACE_H
