@@ -1,5 +1,4 @@
 MAINTAINERCLEANFILES = Makefile.in
-AUTOMAKE_OPTIONS = subdir-objects
 
 AM_CFLAGS = \
 -I$(top_builddir) \
