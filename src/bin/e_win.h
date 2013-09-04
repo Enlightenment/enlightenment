@@ -9,6 +9,8 @@ typedef enum _E_Win_Layer
 
 typedef struct _E_Win E_Win;
 
+typedef void (*E_Win_Cb)(E_Win*);
+
 #else
 #ifndef E_WIN_H
 #define E_WIN_H
@@ -29,9 +31,9 @@ struct _E_Win
    int                  min_w, min_h, max_w, max_h, base_w, base_h;
    int                  step_x, step_y;
    double               min_aspect, max_aspect;
-   void               (*cb_move) (E_Win *win);
-   void               (*cb_resize) (E_Win *win);
-   void               (*cb_delete) (E_Win *win);
+   E_Win_Cb             cb_move;
+   E_Win_Cb             cb_resize;
+   E_Win_Cb             cb_delete;
    void                *data;
 
    struct {

@@ -228,7 +228,7 @@ static void
 _e_win_hide(void *obj)
 {
    E_Win *win = obj;
-   Ecore_Cb cb;
+   E_Win_Cb cb;
 
    if (!win->client) return;
    e_object_ref(E_OBJECT(win));
