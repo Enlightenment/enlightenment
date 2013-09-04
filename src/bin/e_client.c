@@ -2084,11 +2084,6 @@ e_client_idler_before(void)
              _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
           }
 
-        // layout hook - this is where a hook gets to figure out what to
-        // do if anything.
-#warning FIXME: this should be...better :/
-        _e_client_hook_call(E_CLIENT_HOOK_CANVAS_LAYOUT, (void*)c);
-
         E_CLIENT_FOREACH(c, ec)
           {
              // pass 2 - show windows needing show
