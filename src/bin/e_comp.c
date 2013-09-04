@@ -597,6 +597,7 @@ _e_comp_win_update(E_Comp_Win *cw)
              cw->pixmap = pm;
              cw->needpix = 0;
              if (cw->xim) cw->needxim = 1;
+             cw->show_ready = 0;
              _e_comp_win_ready_timeout_setup(cw);
              if ((cw->pw != pw) || (cw->ph != ph)) cw->geom_update = 1;
              DBG("REND [0x%x] pixmap = [0x%x], %ix%i", cw->win, cw->pixmap, cw->pw, cw->ph);
@@ -2539,6 +2540,7 @@ _e_comp_win_show(E_Comp_Win *cw)
         if (cw->pixmap)
           {
              ecore_x_pixmap_geometry_get(cw->pixmap, NULL, NULL, &(cw->pw), &(cw->ph));
+             cw->show_ready = 1;
              _e_comp_win_ready_timeout_setup(cw);
              if ((cw->pw != pw) || (cw->ph != ph)) cw->geom_update = 1;
           }
