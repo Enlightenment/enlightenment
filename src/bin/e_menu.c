@@ -238,6 +238,8 @@ e_menu_hide_all(void)
 
    EINA_LIST_FREE(_e_active_menus, m)
      {
+        if (m->post_deactivate_cb.func)
+          m->post_deactivate_cb.func(m->post_deactivate_cb.data, m);
         m->active = 0;
         _e_menu_unrealize(m);
         m->in_active_list = 0;
