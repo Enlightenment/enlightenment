@@ -231,6 +231,7 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
    if (layer == E_LAYER_DESKTOP)
      type = E_COMP_OBJECT_TYPE_NONE;
    es->comp_object = e_comp_object_util_add(es->o_base, type);
+   evas_object_data_set(es->comp_object, "E_Shelf", es);
    evas_object_name_set(es->comp_object, es->name);
    evas_object_layer_set(es->comp_object, layer);
 
