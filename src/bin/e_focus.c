@@ -81,15 +81,9 @@ EAPI void
 e_focus_event_mouse_down(E_Border *bd)
 {
    if (e_config->focus_policy == E_FOCUS_CLICK)
-     {
-        e_border_focus_set(bd, 1, 1);
-
-        if (!bd->lock_user_stacking)
-          {
-             if (e_config->border_raise_on_focus)
-               e_border_raise(bd);
-          }
-     }
+     e_border_focus_set(bd, 1, 1);
+   else if (e_config->always_click_to_focus)
+     e_border_focus_set(bd, 1, 1);
    else if (e_config->always_click_to_raise)
      {
         if (!bd->lock_user_stacking)
@@ -97,10 +91,6 @@ e_focus_event_mouse_down(E_Border *bd)
              if (e_config->border_raise_on_focus)
                e_border_raise(bd);
           }
-     }
-   else if (e_config->always_click_to_focus)
-     {
-        e_border_focus_set(bd, 1, 1);
      }
 }
 
