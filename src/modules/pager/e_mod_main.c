@@ -810,7 +810,7 @@ _pager_popup_new(E_Zone *zone, int keyaction)
    zy -= zone->y;
    e_popup_move_resize(pp->popup,
                        zx + ((zw - w) / 2), zy + ((zh - h) / 2), w, h);
-   E_OBJECT_DEL_SET(pp->popup, _pager_popup_cb_del);
+   e_object_free_attach_func_set(pp->popup, _pager_popup_cb_del);
    e_object_data_set(E_OBJECT(pp->popup), pp);
    e_popup_show(pp->popup);
 
