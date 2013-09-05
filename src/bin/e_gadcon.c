@@ -611,7 +611,7 @@ e_gadcon_unpopulate(E_Gadcon *gc)
    if (gc->awaiting_classes)
      eina_hash_free(gc->awaiting_classes);
    gc->awaiting_classes = NULL;
-   if (gc->o_container) e_gadcon_layout_thaw(gc->o_container);
+   if (gc->o_container && (!stopping)) e_gadcon_layout_thaw(gc->o_container);
 }
 
 EAPI void
@@ -3765,7 +3765,8 @@ e_gadcon_layout_unpack(Evas_Object *obj)
    if (!sd) return;
    sd->items = eina_list_remove(sd->items, obj);
    _e_gadcon_layout_smart_disown(obj);
-   _e_gadcon_layout_smart_reconfigure(sd);
+   if (!stopping)
+     _e_gadcon_layout_smart_reconfigure(sd);
 }
 
 /* local subsystem functions */
