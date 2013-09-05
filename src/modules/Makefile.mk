@@ -30,6 +30,10 @@ if USE_MODULE_PAGER
 include src/modules/Makefile_pager.mk
 endif
 
+if USE_MODULE_PAGER16
+include src/modules/Makefile_pager16.mk
+endif
+
 if USE_MODULE_BATTERY
 include src/modules/Makefile_battery.mk
 endif
