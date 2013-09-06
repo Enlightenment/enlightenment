@@ -749,6 +749,7 @@ static void
 _pager_popup_cb_del(void *obj)
 {
    Pager_Popup *pp = e_object_data_get(obj);
+   E_FREE_FUNC(pp->timer, ecore_timer_del);
    _pager_free(pp->pager);
    free(pp);
 }
