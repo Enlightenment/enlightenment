@@ -239,7 +239,7 @@ _cb_menu_post(void *data, E_Menu *m __UNUSED__)
 }
 
 static void
-_cb_menu_sel(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_cb_menu_sel(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
    E_Config_Syscon_Action *sca;
    E_Action *act;
