@@ -76,6 +76,7 @@ static E_ACPI_Device_Simple _devices_simple[] =
    {"button/zoom", E_ACPI_TYPE_ZOOM},
    {"button/screenlock", E_ACPI_TYPE_SCREENLOCK},
    {"button/battery", E_ACPI_TYPE_BATTERY_BUTTON},
+   {"video/tabletmode", E_ACPI_TYPE_TABLET},
 
    {NULL, E_ACPI_TYPE_UNKNOWN}
 };

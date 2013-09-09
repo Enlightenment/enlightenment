@@ -391,6 +391,12 @@ _binding_label_get(E_Config_Binding_Acpi *binding)
      return _("S1");
    if (binding->type == E_ACPI_TYPE_VAIO)
      return _("Vaio");
+   if (binding->type == E_ACPI_TYPE_MUTE)
+     return _("Mute");
+   if (binding->type == E_ACPI_TYPE_VOLUME)
+     return _("Volume");
+   if (binding->type == E_ACPI_TYPE_BRIGHTNESS)
+     return _("Brightness");
    if (binding->type == E_ACPI_TYPE_VOLUME_DOWN)
      return _("Volume Down");
    if (binding->type == E_ACPI_TYPE_VOLUME_UP)
@@ -405,6 +411,12 @@ _binding_label_get(E_Config_Binding_Acpi *binding)
      return _("Screenlock");
    if (binding->type == E_ACPI_TYPE_BATTERY_BUTTON)
      return _("Battery Button");
+   if (binding->type == E_ACPI_TYPE_TABLET)
+     {
+        if (binding->status == 0) return _("Tablet Enabled");
+        if (binding->status == 1) return _("Tablet Disabled");
+        return _("Tablet");
+     }
 
    return _("Unknown");
 }
