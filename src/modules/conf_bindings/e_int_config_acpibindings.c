@@ -413,8 +413,8 @@ _binding_label_get(E_Config_Binding_Acpi *binding)
      return _("Battery Button");
    if (binding->type == E_ACPI_TYPE_TABLET)
      {
-        if (binding->status == 0) return _("Tablet Enabled");
-        if (binding->status == 1) return _("Tablet Disabled");
+        if (binding->status == 0) return _("Tablet Disabled");
+        if (binding->status == 1) return _("Tablet Enabled");
         return _("Tablet");
      }
 
