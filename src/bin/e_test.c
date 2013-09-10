@@ -18,7 +18,7 @@ deskmirror_test(void *d EINA_UNUSED)
    evas_object_show(o);
 
    o = e_deskmirror_add(e_desk_current_get(zone), 0, 0);
-   evas_object_move(o, zone->x, zone->y);
+   evas_object_move(o, zone->x, zone->y + zone->h / 2);
    evas_object_resize(o, zone->w / 2, zone->h / 2);
    evas_object_layer_set(o, E_LAYER_POPUP);
    evas_object_show(o);
