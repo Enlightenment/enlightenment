@@ -4,6 +4,8 @@
 # ifndef E_COMP_WL_H
 #  define E_COMP_WL_H
 
+#  define WL_HIDE_DEPRECATED
+
 #  include <pixman.h>
 #  include <wayland-server.h>
 #  include <xkbcommon/xkbcommon.h>
@@ -601,20 +603,16 @@ EAPI void wl_seat_set_keyboard(struct wl_seat *seat, struct wl_keyboard *keyboar
 EAPI void wl_seat_set_touch(struct wl_seat *seat, struct wl_touch *touch);
 
 EAPI void wl_pointer_init(struct wl_pointer *pointer);
-EAPI void wl_pointer_release(struct wl_pointer *pointer);
 EAPI void wl_pointer_set_focus(struct wl_pointer *pointer, struct wl_resource *surface, wl_fixed_t sx, wl_fixed_t sy);
 EAPI void wl_pointer_start_grab(struct wl_pointer *pointer, struct wl_pointer_grab *grab);
 EAPI void wl_pointer_end_grab(struct wl_pointer *pointer);
-EAPI void wl_pointer_set_current(struct wl_pointer *pointer, struct wl_resource *surface);
 
 EAPI void wl_keyboard_init(struct wl_keyboard *keyboard);
-EAPI void wl_keyboard_release(struct wl_keyboard *keyboard);
 EAPI void wl_keyboard_set_focus(struct wl_keyboard *keyboard, struct wl_resource *surface);
 EAPI void wl_keyboard_start_grab(struct wl_keyboard *device, struct wl_keyboard_grab *grab);
 EAPI void wl_keyboard_end_grab(struct wl_keyboard *keyboard);
 
 EAPI void wl_touch_init(struct wl_touch *touch);
-EAPI void wl_touch_release(struct wl_touch *touch);
 EAPI void wl_touch_start_grab(struct wl_touch *device, struct wl_touch_grab *grab);
 EAPI void wl_touch_end_grab(struct wl_touch *touch);
 
