@@ -208,6 +208,8 @@ static const struct wl_pointer_grab_interface _e_drag_grab_interface =
 /* local variables */
 static Ecore_Idler *_module_idler = NULL;
 
+static Eina_Hash *_e_wl_border_hash = NULL;
+
 /* external variables */
 EAPI E_Wayland_Compositor *_e_wl_comp;
 
@@ -433,11 +435,35 @@ e_comp_wl_shutdown(void)
         E_FREE(_e_wl_comp);
      }
 
+   E_FREE_FUNC(_e_wl_border_hash, eina_hash_free);
+
    /* disable the loaded shell module */
    /* TODO: we should have a config variable somewhere to store which 
     * shell we want to unload (tablet, mobile, etc) */
    if ((mod = e_module_find("wl_desktop_shell")))
      e_module_disable(mod);
+}
+
+EAPI void
+e_comp_wl_border_surface_add(Ecore_Window win, const E_Border *bd)
+{
+   if (!_e_wl_border_hash)
+     _e_wl_border_hash = eina_hash_int32_new(NULL);
+   eina_hash_add(_e_wl_border_hash, &win, bd);
+}
+
+EAPI void
+e_comp_wl_border_surface_del(Ecore_Window win)
+{
+   if (!_e_wl_border_hash) return;
+   eina_hash_del_by_key(_e_wl_border_hash, &win);
+}
+
+EAPI E_Border *
+e_comp_wl_border_surface_find(Ecore_Window win)
+{
+   if (!_e_wl_border_hash) return NULL;
+   return eina_hash_find(_e_wl_border_hash, &win);
 }
 
 EAPI void 
@@ -1615,6 +1641,7 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
         wl_resource_post_no_memory(resource);
         return;
      }
+   ews->id = id;
 
    /* initialize the destroy signal */
    wl_signal_init(&ews->wl.destroy_signal);

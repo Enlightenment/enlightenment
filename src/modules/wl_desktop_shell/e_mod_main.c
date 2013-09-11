@@ -910,6 +910,8 @@ _e_wl_shell_shell_surface_map(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y
       default:
         break;
      }
+   if (ews->bd)
+     e_comp_wl_border_surface_add(ews->id, ews->bd);
 }
 
 static void 
@@ -962,7 +964,11 @@ _e_wl_shell_shell_surface_unmap(E_Wayland_Surface *ews)
         evas_object_del(ews->obj);
      }
 
-   if (ews->bd) e_object_del(E_OBJECT(ews->bd));
+   if (ews->bd)
+     {
+        e_comp_wl_border_surface_del(ews->id);
+        e_object_del(E_OBJECT(ews->bd));
+     }
 
    ews->mapped = EINA_FALSE;
 }

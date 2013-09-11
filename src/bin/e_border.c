@@ -1,4 +1,7 @@
 #include "e.h"
+#ifdef HAVE_WAYLAND_CLIENTS
+#include "e_comp_wl.h"
+#endif
 
 //#define INOUTDEBUG_MOUSE 1
 //#define INOUTDEBUG_FOCUS 1
@@ -3207,6 +3210,10 @@ e_border_find_by_client_window(Ecore_X_Window win)
    if ((bd) && (!e_object_is_del(E_OBJECT(bd))) &&
        (bd->client.win == win))
      return bd;
+#ifdef HAVE_WAYLAND_CLIENTS
+   bd = e_comp_wl_border_surface_find(win);
+   if (bd && (!e_object_is_del(E_OBJECT(bd)))) return bd;
+#endif
    return NULL;
 }
 
@@ -3218,6 +3225,9 @@ e_border_find_all_by_client_window(Ecore_X_Window win)
    bd = eina_hash_find(borders_hash, e_util_winid_str_get(win));
    if ((bd) && (bd->client.win == win))
      return bd;
+#ifdef HAVE_WAYLAND_CLIENTS
+   return e_comp_wl_border_surface_find(win);
+#endif
    return NULL;
 }
 
