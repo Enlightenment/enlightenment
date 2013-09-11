@@ -1,7 +1,7 @@
 #ifdef E_TYPEDEFS
 typedef struct _E_Comp      E_Comp;
 typedef struct _E_Comp_Data      E_Comp_Data;
-typedef struct E_Comp_Client_Data E_Comp_Client_Data;
+typedef struct _E_Comp_Client_Data E_Comp_Client_Data;
 typedef struct _E_Comp_Demo_Style_Item E_Comp_Demo_Style_Item;
 
 #define E_COMP_TYPE (int) 0xE0b01003
@@ -55,6 +55,7 @@ struct _E_Comp
    unsigned int new_clients;
 
    E_Comp_Data *comp_data;
+   E_Pixmap_Type comp_type; //for determining X/Wayland/
 
    unsigned int num;
    Eina_Stringshare *name;

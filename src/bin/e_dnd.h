@@ -81,13 +81,13 @@ struct _E_Event_Dnd_Enter
 {
    void        *data;
    int          x, y;
-   Ecore_X_Atom action;
+   unsigned int action;
 };
 
 struct _E_Event_Dnd_Move
 {
    int          x, y;
-   Ecore_X_Atom action;
+   unsigned int action;
 };
 
 struct _E_Event_Dnd_Leave
@@ -142,11 +142,11 @@ EAPI E_Drop_Handler *e_drop_handler_add(E_Object *obj,
 EAPI void         e_drop_handler_geometry_set(E_Drop_Handler *handler, int x, int y, int w, int h);
 EAPI int          e_drop_inside(const E_Drop_Handler *handler, int x, int y);
 EAPI void         e_drop_handler_del(E_Drop_Handler *handler);
-EAPI int          e_drop_xdnd_register_set(Ecore_X_Window win, int reg);
+EAPI int          e_drop_xdnd_register_set(Ecore_Window win, int reg);
 EAPI void         e_drop_handler_responsive_set(E_Drop_Handler *handler);
 EAPI int          e_drop_handler_responsive_get(const E_Drop_Handler *handler);
-EAPI void         e_drop_handler_action_set(Ecore_X_Atom action);
-EAPI Ecore_X_Atom e_drop_handler_action_get(void);
+EAPI void         e_drop_handler_action_set(unsigned int action);
+EAPI unsigned int e_drop_handler_action_get(void);
 EAPI Eina_List *e_dnd_util_text_uri_list_convert(char *data, int size);
 
 

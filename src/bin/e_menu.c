@@ -83,13 +83,13 @@ static void         _e_menu_category_free_cb(E_Menu_Category *cat);
 static void         _e_menu_cb_mouse_evas_down(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED);
 
 /* local subsystem globals */
-static Ecore_X_Window _e_menu_win = 0;
+static Ecore_Window _e_menu_win = 0;
 static Eina_List *_e_active_menus = NULL;
 static E_Menu_Item *_e_active_menu_item = NULL;
 static E_Menu_Item *_e_prev_active_menu_item = NULL;
 /*static Eina_Hash	   *_e_menu_category_items	= NULL;*/
 static Eina_Hash *_e_menu_categories = NULL;
-static Ecore_X_Time _e_menu_activate_time = 0;
+static unsigned int _e_menu_activate_time = 0;
 static int _e_menu_activate_floating = 0;
 static int _e_menu_activate_maybe_drag = 0;
 static int _e_menu_activate_dragging = 0;
@@ -97,14 +97,14 @@ static Ecore_Animator *_e_menu_scroll_animator = NULL;
 static double _e_menu_scroll_start = 0.0;
 static int _e_menu_x = 0;
 static int _e_menu_y = 0;
-static Ecore_X_Time _e_menu_time = 0;
+static unsigned int _e_menu_time = 0;
 static int _e_menu_autoscroll_x = 0;
 static int _e_menu_autoscroll_y = 0;
 static Eina_List *handlers = NULL;
 static Eina_Bool _e_menu_lock = EINA_FALSE;
 
 static void
-_mouse_up_feed(Evas *e, Ecore_X_Time activate_time)
+_mouse_up_feed(Evas *e, unsigned int activate_time)
 {
    int button_mask, i;
 
@@ -295,7 +295,7 @@ e_menu_activate_key(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir
 }
 
 EAPI void
-e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir, Ecore_X_Time activate_time)
+e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir, unsigned int activate_time)
 {
    E_Menu_Item *pmi;
 
@@ -1214,7 +1214,7 @@ e_menu_idler_before(void)
      }
 }
 
-EAPI Ecore_X_Window
+EAPI Ecore_Window
 e_menu_grab_window_get(void)
 {
    return _e_menu_win;
@@ -2842,7 +2842,7 @@ static Eina_Bool
 _e_menu_cb_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Event_Mouse_Button *ev;
-   Ecore_X_Time t;
+   unsigned int t;
    int ret = 0;
 
    ev = event;

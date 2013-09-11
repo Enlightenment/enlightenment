@@ -3,8 +3,6 @@
 #include "e_comp_wl.h"
 #endif
 
-#include "e_comp_x.h"
-
 #define ACTION_TIMEOUT 30.0
 #define OVER_FLOW 1
 //#define SHAPE_DEBUG
@@ -1369,6 +1367,7 @@ e_comp_shape_queue(E_Comp *c)
 {
    EINA_SAFETY_ON_NULL_RETURN(c);
 
+   if (c->comp_type != E_PIXMAP_TYPE_X) return;
    if (!c->shape_job)
      c->shape_job = ecore_job_add((Ecore_Cb)_e_comp_shapes_update_job, c);
 }

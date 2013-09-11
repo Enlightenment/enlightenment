@@ -81,6 +81,7 @@ e_pointer_window_new(Ecore_X_Window win,
 {
    E_Pointer *p = NULL;
 
+   if (!win) return NULL;
    p = E_OBJECT_ALLOC(E_Pointer, E_POINTER_TYPE, _e_pointer_free);
    if (!p) return NULL;
 
@@ -225,6 +226,7 @@ e_pointer_idler_before(void)
 
         if (!p->e_cursor) continue;
         if (!p->evas) continue;
+        if (!p->win) continue;
 
         updates = evas_render_updates(p->evas);
         if ((updates) || (p->hot.update))

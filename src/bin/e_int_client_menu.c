@@ -218,7 +218,7 @@ e_int_client_menu_create(E_Client *ec)
 }
 
 EAPI void
-e_int_client_menu_show(E_Client *ec, Evas_Coord x, Evas_Coord y, int key, Ecore_X_Time timestamp)
+e_int_client_menu_show(E_Client *ec, Evas_Coord x, Evas_Coord y, int key, unsigned int timestamp)
 {
    e_int_client_menu_create(ec);
    if (key)

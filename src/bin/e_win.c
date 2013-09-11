@@ -1,4 +1,9 @@
 #include "e.h"
+#ifdef HAVE_WAYLAND_CLIENTS
+# include <Ecore_Wayland.h>
+# include "e_comp_wl.h"
+#endif
+
 
 /* local subsystem functions */
 static void _e_win_free(E_Win *win);
@@ -283,7 +288,7 @@ e_win_new(E_Comp *c)
    win->comp = c;
    win->ecore_evas = e_canvas_new(c->man->root,
                                   0, 0, 1, 1, 1, 0,
-                                  (Ecore_X_Window*)&win->evas_win);
+                                  &win->evas_win);
    e_canvas_add(win->ecore_evas);
    ecore_evas_data_set(win->ecore_evas, "E_Win", win);
    ecore_evas_callback_move_set(win->ecore_evas, _e_win_cb_move);
@@ -314,7 +319,9 @@ e_win_new(E_Comp *c)
    win->max_aspect = 0.0;
    wins = eina_list_append(wins, win);
 
-   win->pointer = e_pointer_window_new(win->evas_win, 1);
+#warning FIXME WL POINTERS
+   if (c->man->root)
+     win->pointer = e_pointer_window_new(win->evas_win, 1);
    return win;
 }
 
@@ -323,22 +330,37 @@ e_win_show(E_Win *win)
 {
    E_OBJECT_CHECK(win);
    E_OBJECT_TYPE_CHECK(win, E_WIN_TYPE);
+   ecore_evas_show(win->ecore_evas);
    if (!win->client)
      {
-        win->client = e_client_new(win->comp, e_pixmap_new(E_PIXMAP_TYPE_X, win->evas_win), 1, 1);
-// dont need this - special stuff
-//        win->client->ignore_first_unmap = 1;
+#ifdef HAVE_WAYLAND_CLIENTS
+        if (!strncmp(ecore_evas_engine_name_get(win->ecore_evas), "wayland", 7))
+          {
+             Ecore_Wl_Window *wl_win;
+             uint64_t id;
+
+             wl_win = ecore_evas_wayland_window_get(win->ecore_evas);
+             id = e_comp_wl_id_get(getpid(), ecore_wl_window_surface_id_get(wl_win));
+             win->client = e_client_new(win->comp, e_pixmap_new(E_PIXMAP_TYPE_WL, id), 1, 1);
+          }
+        else
+#endif
+          win->client = e_client_new(win->comp, e_pixmap_new(E_PIXMAP_TYPE_X, win->evas_win), 1, 1);
+        EINA_SAFETY_ON_NULL_RETURN(win->client);
         if (!win->placed)
           win->client->re_manage = 0;
         if (win->ecore_evas)
           win->client->internal_ecore_evas = win->ecore_evas;
         if (win->state.no_remember) win->client->internal_no_remember = 1;
         win->client->internal_no_reopen = win->state.no_reopen;
-        win->client->changes.size = win->client->changes.pos = 1;
+        win->client->client.w = win->client->w = win->w;
+        win->client->client.h = win->client->h = win->h;
+        win->client->take_focus = win->client->changes.size = win->client->changes.pos = 1;
         EC_CHANGED(win->client);
      }
    _e_win_prop_update(win);
-   ecore_evas_show(win->ecore_evas);
+   if (win->state.centered)
+     e_comp_object_util_center(win->client->frame);
 }
 
 EAPI void

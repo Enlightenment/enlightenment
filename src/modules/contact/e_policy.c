@@ -236,7 +236,8 @@ _cb_hook_layout(void *data __UNUSED__, E_Comp *comp)
           }
         else
           {
-             if (ec->illume.conformant.conformant)
+#warning X ONLY! SPANK! SPANK! SPANK!!!
+             if (ec->comp_data->illume.conformant.conformant)
                {
                   if (kbd_on != want_kbd)
                     {

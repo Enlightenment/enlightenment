@@ -17,8 +17,6 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_VAL(D, T, borderless, CHAR);
    E_CONFIG_VAL(D, T, dialog, CHAR);
    E_CONFIG_VAL(D, T, accepts_focus, CHAR);
-   E_CONFIG_VAL(D, T, vkbd, CHAR);
-   E_CONFIG_VAL(D, T, quickpanel, CHAR);
    E_CONFIG_VAL(D, T, argb, CHAR);
    E_CONFIG_VAL(D, T, fullscreen, CHAR);
    E_CONFIG_VAL(D, T, modal, CHAR);

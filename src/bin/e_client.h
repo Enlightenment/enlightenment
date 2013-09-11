@@ -244,7 +244,7 @@ struct E_Client
 
    E_Direction               shade_dir;
 
-   E_Comp_Client_Data               *comp_data; //private for the compositor engine (X, Wayland) ONLY
+   E_Comp_Client_Data       *comp_data; //private for the compositor engine (X, Wayland) ONLY
 
    Evas_Object *input_object; //for running wayland clients in X
 
@@ -322,15 +322,17 @@ struct E_Client
       int                       step_w, step_h;
       int                       start_x, start_y;
       double                    min_aspect, max_aspect;
+      Ecore_Window            icon_window;
+      Ecore_Window            window_group;
+      Ecore_Window            transient_for;
+      Ecore_Window            client_leader;
+#ifdef E_COMP_X_H
       Ecore_X_Window_State_Hint initial_state;
       Ecore_X_Window_State_Hint state;
       Ecore_X_Pixmap            icon_pixmap;
       Ecore_X_Pixmap            icon_mask;
-      Ecore_X_Window            icon_window;
-      Ecore_X_Window            window_group;
-      Ecore_X_Window            transient_for;
-      Ecore_X_Window            client_leader;
       Ecore_X_Gravity           gravity;
+#endif
       Eina_Stringshare         *window_role;
       unsigned char             take_focus : 1;
       unsigned char             accepts_focus : 1;
@@ -362,9 +364,11 @@ struct E_Client
    /* MWM */
    struct
    {
+#ifdef E_COMP_X_H
       Ecore_X_MWM_Hint_Func  func;
       Ecore_X_MWM_Hint_Decor decor;
       Ecore_X_MWM_Hint_Input input;
+#endif
       unsigned char          exists : 1;
       unsigned char          borderless : 1;
       struct
@@ -380,7 +384,9 @@ struct E_Client
       unsigned int  desktop;
       Eina_Stringshare *name;
       Eina_Stringshare *icon_name;
+#ifdef E_COMP_X_H
       Ecore_X_Icon *icons;
+#endif
       int           num_icons;
       unsigned int  user_time;
       unsigned char opacity;
@@ -404,9 +410,8 @@ struct E_Client
       struct
       {
          unsigned char        request : 1;
+         unsigned char        alarm : 1;
          unsigned int         wait;
-         Ecore_X_Sync_Alarm   alarm;
-         Ecore_X_Sync_Counter counter;
          unsigned int         serial;
          double               send_time;
       } sync;
@@ -440,7 +445,6 @@ struct E_Client
          unsigned char change_desktop : 1;
          unsigned char close : 1;
       } action;
-
       E_Window_Type  type;
       E_Window_Type *extra_types;
       int                  extra_types_num;
@@ -525,62 +529,12 @@ struct E_Client
          unsigned char state : 1;
          unsigned char vkbd : 1;
       } fetch;
+#ifdef E_COMP_X_H
       Ecore_X_Virtual_Keyboard_State state;
+#endif
       unsigned char                  have_property : 1;
       unsigned char                  vkbd : 1;
    } vkbd;
-
-   struct
-   {
-      struct
-      {
-         struct
-         {
-            unsigned char conformant : 1;
-         } fetch;
-         unsigned char conformant : 1;
-      } conformant;
-      struct
-      {
-         struct
-         {
-            unsigned char state : 1;
-            struct
-            {
-               unsigned int major : 1;
-               unsigned int minor : 1;
-            } priority;
-            unsigned char quickpanel : 1;
-            unsigned char zone : 1;
-         } fetch;
-         Ecore_X_Illume_Quickpanel_State state;
-         struct
-         {
-            unsigned int major : 1;
-            unsigned int minor : 1;
-         } priority;
-         unsigned char                   quickpanel : 1;
-         int                             zone;
-      } quickpanel;
-      struct
-      {
-         struct
-         {
-            unsigned char drag : 1;
-            unsigned char locked : 1;
-         } fetch;
-         unsigned char drag : 1;
-         unsigned char locked : 1;
-      } drag;
-      struct
-      {
-         struct
-         {
-            unsigned char state : 1;
-         } fetch;
-         Ecore_X_Illume_Window_State state;
-      } win_state;
-   } illume;
 
    struct
    {

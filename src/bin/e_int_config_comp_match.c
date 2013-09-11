@@ -6,8 +6,8 @@ typedef struct _Match_Config
    E_Comp_Match            match;
    E_Config_Dialog *cfd;
    char            *title, *name, *clas, *role;
-   int              borderless, dialog, accepts_focus, vkbd;
-   int              quickpanel, argb, fullscreen, modal;
+   int              borderless, dialog, accepts_focus;
+   int              argb, fullscreen, modal;
 } Match_Config;
 
 struct _E_Config_Dialog_Data
@@ -261,8 +261,6 @@ _edit_ok(void *d1, void *d2)
         m->match.borderless = m->borderless;
         m->match.dialog = m->dialog;
         m->match.accepts_focus = m->accepts_focus;
-        m->match.vkbd = m->vkbd;
-        m->match.quickpanel = m->quickpanel;
         m->match.argb = m->argb;
         m->match.fullscreen = m->fullscreen;
         m->match.modal = m->modal;
@@ -408,8 +406,6 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
    m->borderless = m->match.borderless;
    m->dialog = m->match.dialog;
    m->accepts_focus = m->match.accepts_focus;
-   m->vkbd = m->match.vkbd;
-   m->quickpanel = m->match.quickpanel;
    m->argb = m->match.argb;
    m->fullscreen = m->match.fullscreen;
    m->modal = m->match.modal;
@@ -455,32 +451,6 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
         lb = e_widget_label_add(evas, _("Accepts Focus"));
         e_widget_table_object_append(tab2, lb, 0, row, 1, 1, 1, 0, 1, 0);
         rg = e_widget_radio_group_new(&m->accepts_focus);
-        o = e_widget_radio_add(evas, NULL, 0, rg);
-        e_widget_table_object_append(tab2, o, 1, row, 1, 1, 0, 0, 0, 0);
-        o = e_widget_radio_add(evas, NULL, 1, rg);
-        e_widget_table_object_append(tab2, o, 2, row, 1, 1, 0, 0, 0, 0);
-        o = e_widget_radio_add(evas, NULL, -1, rg);
-        e_widget_table_object_append(tab2, o, 3, row, 1, 1, 0, 0, 0, 0);
-        row++;
-     }
-   if (cfdata->edit_il == cfdata->borders_il)
-     {
-        lb = e_widget_label_add(evas, _("Virtual Keyboard"));
-        e_widget_table_object_append(tab2, lb, 0, row, 1, 1, 1, 0, 1, 0);
-        rg = e_widget_radio_group_new(&m->vkbd);
-        o = e_widget_radio_add(evas, NULL, 0, rg);
-        e_widget_table_object_append(tab2, o, 1, row, 1, 1, 0, 0, 0, 0);
-        o = e_widget_radio_add(evas, NULL, 1, rg);
-        e_widget_table_object_append(tab2, o, 2, row, 1, 1, 0, 0, 0, 0);
-        o = e_widget_radio_add(evas, NULL, -1, rg);
-        e_widget_table_object_append(tab2, o, 3, row, 1, 1, 0, 0, 0, 0);
-        row++;
-     }
-   if (cfdata->edit_il == cfdata->borders_il)
-     {
-        lb = e_widget_label_add(evas, _("Quick Panel"));
-        e_widget_table_object_append(tab2, lb, 0, row, 1, 1, 1, 0, 1, 0);
-        rg = e_widget_radio_group_new(&m->quickpanel);
         o = e_widget_radio_add(evas, NULL, 0, rg);
         e_widget_table_object_append(tab2, o, 1, row, 1, 1, 0, 0, 0, 0);
         o = e_widget_radio_add(evas, NULL, 1, rg);

@@ -195,19 +195,19 @@ _create_data(E_Dialog *cfd, E_Client *ec)
    if (cfdata->client->icccm.window_group != 0)
      {
         snprintf(buf, sizeof(buf), "0x%08x",
-                 cfdata->client->icccm.window_group);
+                 (unsigned int)cfdata->client->icccm.window_group);
         cfdata->icccm.window_group = strdup(buf);
      }
    if (cfdata->client->icccm.transient_for != 0)
      {
         snprintf(buf, sizeof(buf), "0x%08x",
-                 cfdata->client->icccm.transient_for);
+                 (unsigned int)cfdata->client->icccm.transient_for);
         cfdata->icccm.transient_for = strdup(buf);
      }
    if (cfdata->client->icccm.client_leader != 0)
      {
         snprintf(buf, sizeof(buf), "0x%08x",
-                 cfdata->client->icccm.client_leader);
+                 (unsigned int)cfdata->client->icccm.client_leader);
         cfdata->icccm.client_leader = strdup(buf);
      }
    switch (cfdata->client->icccm.gravity)

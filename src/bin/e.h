@@ -105,7 +105,6 @@ void *alloca (size_t);
 # include <Evas_Engine_Buffer.h>
 # include <Ecore.h>
 # include <Ecore_Getopt.h>
-# include <Ecore_X.h>
 # include <Ecore_Evas.h>
 # include <Ecore_Input.h>
 # include <Ecore_Input_Evas.h>
@@ -310,8 +309,6 @@ extern EAPI Eina_Bool x_fatal;
 
 extern EINTERN const char *e_first_frame;
 extern EINTERN double e_first_frame_start_time;
-
-EAPI void e_alert_composite_win(Ecore_X_Window root, Ecore_X_Window win);
 
 //#define SMARTERR(args...) abort()
 #define SMARTERRNR() return

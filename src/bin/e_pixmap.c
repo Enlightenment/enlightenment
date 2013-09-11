@@ -10,7 +10,7 @@ struct _E_Pixmap
 {
    unsigned int refcount;
    E_Pixmap_Type type;
-   Ecore_Window win;
+   uint64_t win;
    void *visual;
    void *image;
    Eina_List *images_cache;
@@ -122,7 +122,7 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
    Ecore_X_Window xwin;
 #endif
 #ifdef HAVE_WAYLAND_CLIENTS
-   unsigned int id;
+   uint64_t id;
 #endif
    
    if (!pixmaps[type]) return NULL;
@@ -135,7 +135,7 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
 #endif
 #ifdef HAVE_WAYLAND_CLIENTS
       case E_PIXMAP_TYPE_WL:
-        id = va_arg(*l, unsigned int);
+        id = va_arg(*l, uint64_t);
         return eina_hash_find(pixmaps[type], &id);
 #endif
       default: break;
@@ -151,16 +151,16 @@ e_pixmap_free(E_Pixmap *cp)
    e_pixmap_image_clear(cp, 0);
    switch (cp->type)
      {
-#ifndef WAYLAND_ONLY
       case E_PIXMAP_TYPE_X:
+#ifndef WAYLAND_ONLY
         if (cp->parent) eina_hash_set(pixmaps[cp->type], &cp->parent, NULL);
-        break;
 #endif
-#ifdef HAVE_WAYLAND_CLIENTS
+        break;
       case E_PIXMAP_TYPE_WL:
+#ifdef HAVE_WAYLAND_CLIENTS
         if (cp->parent) eina_hash_set(pixmaps[cp->type], &cp->parent, NULL);
-        break;
 #endif
+        break;
      }
    eina_hash_del_by_key(pixmaps[cp->type], &cp->win);
    return 0;
@@ -183,15 +183,15 @@ e_pixmap_new(E_Pixmap_Type type, ...)
    Ecore_X_Window xwin;
 #endif
 #ifdef HAVE_WAYLAND_CLIENTS
-   unsigned int id;
+   uint64_t id;
 #endif
 
    EINA_SAFETY_ON_TRUE_RETURN_VAL((type != E_PIXMAP_TYPE_WL) && (type != E_PIXMAP_TYPE_X), NULL);
    va_start(l, type);
    switch (type)
      {
-#ifndef WAYLAND_ONLY
       case E_PIXMAP_TYPE_X:
+#ifndef WAYLAND_ONLY
         xwin = va_arg(l, uint32_t);
         if (pixmaps[type])
           {
@@ -207,11 +207,11 @@ e_pixmap_new(E_Pixmap_Type type, ...)
         cp = _e_pixmap_new(type);
         cp->win = xwin;
         eina_hash_add(pixmaps[type], &xwin, cp);
-        break;
 #endif
-#ifdef HAVE_WAYLAND_CLIENTS
+        break;
       case E_PIXMAP_TYPE_WL:
-        id = va_arg(l, unsigned int);
+#ifdef HAVE_WAYLAND_CLIENTS
+        id = va_arg(l, uint64_t);
         if (pixmaps[type])
           {
              cp = eina_hash_find(pixmaps[type], &id);
@@ -222,12 +222,12 @@ e_pixmap_new(E_Pixmap_Type type, ...)
                }
           }
         else
-          pixmaps[type] = eina_hash_int32_new((Eina_Free_Cb)_e_pixmap_free);
+          pixmaps[type] = eina_hash_int64_new((Eina_Free_Cb)_e_pixmap_free);
         cp = _e_pixmap_new(type);
         cp->win = id;
         eina_hash_add(pixmaps[type], &id, cp);
-        break;
 #endif
+        break;
      }
    va_end(l);
    return cp;
@@ -319,8 +319,8 @@ e_pixmap_refresh(E_Pixmap *cp)
    if (!cp->dirty) return EINA_TRUE;
    switch (cp->type)
      {
-#ifndef WAYLAND_ONLY
       case E_PIXMAP_TYPE_X:
+#ifndef WAYLAND_ONLY
         {
            uint32_t pixmap;
 
@@ -347,10 +347,10 @@ e_pixmap_refresh(E_Pixmap *cp)
            else
              ecore_x_pixmap_free(pixmap);
         }
-        break;
 #endif
-#ifdef HAVE_WAYLAND_CLIENTS
+        break;
       case E_PIXMAP_TYPE_WL:
+#ifdef HAVE_WAYLAND_CLIENTS
       {
          E_Wayland_Surface *ews;
          E_Wayland_Buffer *buff;
@@ -364,9 +364,9 @@ e_pixmap_refresh(E_Pixmap *cp)
          cp->w = wl_shm_buffer_get_width(shm_buffer);
          cp->h = wl_shm_buffer_get_height(shm_buffer);
          success = (cp->w > 0) && (cp->h > 0);
-         break;
       }
 #endif
+         break;
       default: break;
      }
    if (success)
@@ -434,7 +434,7 @@ e_pixmap_find_client(E_Pixmap_Type type, ...)
    return (!cp) ? NULL : cp->client;
 }
 
-EAPI Ecore_Window
+EAPI uint64_t
 e_pixmap_window_get(E_Pixmap *cp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, 0);
@@ -470,27 +470,27 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
    ns->version = EVAS_NATIVE_SURFACE_VERSION;
    switch (cp->type)
      {
-#ifndef WAYLAND_ONLY
       case E_PIXMAP_TYPE_X:
+#ifndef WAYLAND_ONLY
         ns->type = EVAS_NATIVE_SURFACE_X11;
         ns->data.x11.visual = cp->visual;
         ns->data.x11.pixmap = cp->pixmap;
-        break;
 #endif
-#ifdef HAVE_WAYLAND_CLIENTS
+        break;
       case E_PIXMAP_TYPE_WL:
         return EINA_FALSE;
+#ifdef HAVE_WAYLAND_CLIENTS
 #warning FIXME WL NATIVE SURFACES!
         ns->type = EVAS_NATIVE_SURFACE_OPENGL;
         ns->version = EVAS_NATIVE_SURFACE_VERSION;
-        ns->data.opengl.texture_id = NULL;
-        ns->data.opengl.framebuffer_id = NULL;
+        ns->data.opengl.texture_id = 0;
+        ns->data.opengl.framebuffer_id = 0;
         ns->data.opengl.x = 0;
         ns->data.opengl.y = 0;
         ns->data.opengl.w = cp->w;
         ns->data.opengl.h = cp->h;
-        break;
 #endif
+        break;
       default:
         break;
      }
@@ -506,8 +506,8 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
    cp->failures = 0;
    switch (cp->type)
      {
-#ifndef WAYLAND_ONLY
       case E_PIXMAP_TYPE_X:
+#ifndef WAYLAND_ONLY
         if (cache)
           {
              void *i;
@@ -520,10 +520,10 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
              cp->images_cache = eina_list_append(cp->images_cache, cp->image);
              cp->image = NULL;
           }
-        break;
 #endif
-#ifdef HAVE_WAYLAND_CLIENTS
+        break;
       case E_PIXMAP_TYPE_WL: //lel wayland
+#ifdef HAVE_WAYLAND_CLIENTS
         if (cache)
           {
              if (cp->copy_image)
@@ -547,6 +547,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
              cp->copy_image = 1;
           }
 #endif
+        break;
       default:
         break;
      }
@@ -565,16 +566,16 @@ e_pixmap_image_refresh(E_Pixmap *cp)
      }
    switch (cp->type)
      {
-#ifndef WAYLAND_ONLY
       case E_PIXMAP_TYPE_X:
+#ifndef WAYLAND_ONLY
         if ((!cp->visual) || (!cp->client->depth)) return EINA_FALSE;
         cp->image = ecore_x_image_new(cp->w, cp->h, cp->visual, cp->client->depth);
         if (cp->image)
           cp->image_argb = ecore_x_image_is_argb32_get(cp->image);
-        break;
 #endif
-#ifdef HAVE_WAYLAND_CLIENTS
+        break;
       case E_PIXMAP_TYPE_WL:
+#ifdef HAVE_WAYLAND_CLIENTS
       {
          struct wl_shm_buffer *shm_buffer;
 
@@ -586,9 +587,9 @@ e_pixmap_image_refresh(E_Pixmap *cp)
          if (cp->h != wl_shm_buffer_get_height(shm_buffer))
            CRI("ACK!");
          cp->image = wl_shm_buffer_get_data(shm_buffer);
-         break;
       }
 #endif
+         break;
       default:
         break;
      }
@@ -616,15 +617,17 @@ e_pixmap_image_data_get(E_Pixmap *cp)
    if (!cp->image) return NULL;
    switch (cp->type)
      {
-#ifndef WAYLAND_ONLY
       case E_PIXMAP_TYPE_X:
+#ifndef WAYLAND_ONLY
         return ecore_x_image_data_get(cp->image, &cp->ibpl, NULL, &cp->ibpp);
 #endif
-#ifdef HAVE_WAYLAND_CLIENTS
+        break;
       case E_PIXMAP_TYPE_WL:
+#ifdef HAVE_WAYLAND_CLIENTS
         cp->copy_image = 0;
         return cp->image;
 #endif
+        break;
       default:
         break;
      }
