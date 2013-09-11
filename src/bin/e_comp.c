@@ -200,6 +200,96 @@ _e_comp_child_hide(E_Comp_Win *cw)
      }
 }
 
+static Eina_Bool
+_e_comp_visible_object_clip_is(Evas_Object *obj)
+{
+   Evas_Object *clip;
+   int a;
+   
+   clip = evas_object_clip_get(obj);
+   if (!evas_object_visible_get(clip)) return EINA_FALSE;
+   evas_object_color_get(clip, NULL, NULL, NULL, &a);
+   if (a <= 0) return EINA_FALSE;
+   if (evas_object_clip_get(clip))
+     return _e_comp_visible_object_clip_is(clip);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_e_comp_visible_object_is(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   const char *type = evas_object_type_get(obj);
+   Evas_Coord xx, yy, ww, hh;
+
+   if (!type) return EINA_FALSE;
+   evas_object_geometry_get(obj, &xx, &yy, &ww, &hh);
+   if (E_INTERSECTS(x, y, w, h, xx, yy, ww, hh))
+     {
+        if ((evas_object_visible_get(obj))
+            && (!evas_object_clipees_get(obj))
+           )
+          {
+             int a;
+             
+             evas_object_color_get(obj, NULL, NULL, NULL, &a);
+             if (a > 0)
+               {
+                  if ((!strcmp(type, "rectangle")) ||
+                      (!strcmp(type, "image")) ||
+                      (!strcmp(type, "text")) ||
+                      (!strcmp(type, "textblock")) ||
+                      (!strcmp(type, "textgrid")) ||
+                      (!strcmp(type, "polygon")) ||
+                      (!strcmp(type, "line")))
+                    {
+                       if (evas_object_clip_get(obj))
+                         return _e_comp_visible_object_clip_is(obj);
+                       return EINA_TRUE;
+                    }
+                  else
+                    {
+                       Eina_List *children;
+                       
+                       if ((children = evas_object_smart_members_get(obj)))
+                         {
+                            Eina_List *l;
+                            Evas_Object *o;
+                            
+                            EINA_LIST_FOREACH(children, l, o)
+                              {
+                                 if (_e_comp_visible_object_is(o, x, y, w, h))
+                                   {
+                                      if (evas_object_clip_get(o))
+                                        {
+                                           children = eina_list_free(children);
+                                           return _e_comp_visible_object_clip_is(o);
+                                        }
+                                      children = eina_list_free(children);
+                                      return EINA_TRUE;
+                                   }
+                              }
+                            eina_list_free(children);
+                         }
+                    }
+               }
+          }
+     }
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_comp_visible_object_is_above(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+   Evas_Object *above;
+   
+   for (above = evas_object_above_get(obj); above;
+        above = evas_object_above_get(above))
+     {
+        if (_e_comp_visible_object_is(above, x, y, w, h)) return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static E_Comp_Win *
 _e_comp_fullscreen_check(E_Comp *c)
 {
@@ -212,11 +302,25 @@ _e_comp_fullscreen_check(E_Comp *c)
           continue;
         if (!cw->bd) continue;
         if ((cw->x == 0) && (cw->y == 0) &&
-            ((cw->bd->client.w) >= c->man->w) &&
-            ((cw->bd->client.h) >= c->man->h) &&
+            ((cw->bd->client.w) == c->man->w) &&
+            ((cw->bd->client.h) == c->man->h) &&
+            (cw->bd->client_inset.l == 0) && (cw->bd->client_inset.r == 0) &&
+            (cw->bd->client_inset.t == 0) && (cw->bd->client_inset.b == 0) &&
             (!cw->argb) && (!cw->shaped) && (!cw->bg_win)
             )
           {
+             // check for objects above...
+             Evas_Object *parent = NULL, *o = NULL;
+
+             o = cw->obj;
+             do
+               {
+                  if (_e_comp_visible_object_is_above
+                      (o, 0, 0, c->man->w, c->man->h)) return NULL;
+                  parent = evas_object_smart_parent_get(o);
+                  if (parent) o = parent;
+               }
+             while (parent);
              return cw;
           }
         return NULL;
