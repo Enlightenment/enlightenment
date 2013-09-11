@@ -89,6 +89,7 @@ static void _e_comp_wl_pointer_unmap(E_Wayland_Surface *ews);
 
 /* pointer interface prototypes */
 static void _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *resource, unsigned int serial, struct wl_resource *surface_resource, int x, int y);
+static void _e_comp_wl_pointer_cb_release(struct wl_client *client, struct wl_resource *resource);
 
 /* region interface prototypes */
 static void _e_comp_wl_region_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
@@ -130,7 +131,8 @@ static const struct wl_seat_interface _e_input_interface =
 
 static const struct wl_pointer_interface _e_pointer_interface = 
 {
-   _e_comp_wl_pointer_cb_cursor_set
+   _e_comp_wl_pointer_cb_cursor_set,
+   _e_comp_wl_pointer_cb_release
 };
 
 static const struct wl_region_interface _e_region_interface = 
@@ -539,13 +541,6 @@ wl_pointer_init(struct wl_pointer *pointer)
 
    pointer->x = wl_fixed_from_int(100);
    pointer->y = wl_fixed_from_int(100);
-}
-
-EAPI void 
-wl_pointer_release(struct wl_pointer *pointer)
-{
-   if (pointer->focus_resource)
-     wl_list_remove(&pointer->focus_listener.link);
 }
 
 EAPI void 
@@ -2391,6 +2386,12 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
              _e_comp_wl_pointer_configure(ews, 0, 0, bw, bh);
           }
      }
+}
+
+static void 
+_e_comp_wl_pointer_cb_release(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
 }
 
 /* region interface functions */
