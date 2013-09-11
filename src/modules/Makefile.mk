@@ -222,6 +222,10 @@ if USE_MODULE_WL_DESKTOP_SHELL
 include src/modules/Makefile_wl_desktop_shell.mk
 endif
 
+if USE_MODULE_WL_X11
+include src/modules/Makefile_wl_x11.mk
+endif
+
 #if HAVE_WAYLAND_SCREENSHOT
 #include src/modules/Makefile_wl_screenshot.mk
 #endif

@@ -761,39 +761,47 @@ define([CHECK_MODULE_BLUEZ4],
 AC_SUBST([EBLUEZ4_CFLAGS])
 AC_SUBST([EBLUEZ4_LIBS])
 
+have_wayland_only=no
+AC_ARG_ENABLE([wayland-only],
+  AS_HELP_STRING([--enable-wayland-only],[enable wayland-only version of enlightenment @<:@default=disabled@:>@]),
+  [e_cv_want_wayland_only=$enableval],
+  [e_cv_want_wayland_only=no])
+AC_MSG_CHECKING([whether wayland-only version is enabled])
+AC_MSG_RESULT([${e_cv_want_wayland_only}])
+
 have_wayland_clients=no
 AC_ARG_ENABLE([wayland-clients],
   AS_HELP_STRING([--enable-wayland-clients],[enable wayland clients in composite module @<:@default=disabled@:>@]),
   [e_cv_want_wayland_clients=$enableval],
   [e_cv_want_wayland_clients=no])
-
 AC_MSG_CHECKING([whether wayland client support is enabled])
 AC_MSG_RESULT([${e_cv_want_wayland_clients}])
 
-if test "x$e_cv_want_wayland_clients" != "xno";then
-  PKG_CHECK_MODULES([WAYLAND], [wayland-server >= 1.2.90 pixman-1 >= 0.3 xkbcommon >= 0.3.0],
+have_wayland_egl=no
+AC_ARG_ENABLE([wayland-egl],
+  AS_HELP_STRING([--enable-wayland-egl],[enable wayland to render using EGL @<:@default=disabled@:>@]),
+  [e_cv_want_wayland_egl=$enableval],
+  [e_cv_want_wayland_egl=no])
+AC_MSG_CHECKING([whether wayland EGL support is enabled])
+AC_MSG_RESULT([${e_cv_want_wayland_egl}])
+
+if test "x${e_cv_want_wayland_only}" != "xno" || test "x${e_cv_want_wayland_clients}" != "xno";then
+  PKG_CHECK_MODULES([WAYLAND], [ecore-wayland wayland-server pixman-1 xkbcommon],
     [
-      have_wayland_clients=yes
-      AC_DEFINE_UNQUOTED([HAVE_WAYLAND_CLIENTS],[1],[enable wayland client support])
+      have_wayland=yes
+      AC_DEFINE_UNQUOTED([HAVE_WAYLAND],[1],[enable wayland support])
     ],
-    [have_wayland_clients=no])
+    [have_wayland=no])
 else
-  have_wayland_clients=no
+  have_wayland=no
 fi
 
-AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
-
-have_wayland_egl=no
-if test "x${have_wayland_clients}" = "xyes"; then
-  AC_ARG_ENABLE([wayland-egl],
-    AS_HELP_STRING([--enable-wayland-egl],[enable wayland clients to render using EGL @<:@default=disabled@:>@]),
-    [e_cv_want_wayland_egl=$enableval],
-    [e_cv_want_wayland_egl=no])
-
-  AC_MSG_CHECKING([whether wayland client EGL support is enabled])
-  AC_MSG_RESULT([${e_cv_want_wayland_egl}])
-
-  if test "x$e_cv_want_wayland_egl" != "xno";then
+if test "x${have_wayland}" = "xyes"; then
+  if test "x${e_cv_want_wayland_clients}" != "xno"; then
+    have_wayland_clients=yes
+    AC_DEFINE_UNQUOTED([HAVE_WAYLAND_CLIENTS],[1],[enable wayland clients in composite module])
+  fi
+  if test "x${e_cv_want_wayland_egl}" != "xno";then
     PKG_CHECK_MODULES([WAYLAND_EGL], [egl >= 7.10],
       [
         have_wayland_egl=yes
@@ -805,7 +813,29 @@ if test "x${have_wayland_clients}" = "xyes"; then
   fi
 fi
 
+AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
+AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
+AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
+
+PKG_CHECK_MODULES([ECORE_X], [ecore-x >= ${efl_version}])
+if test -n "$ECORE_X_CFLAGS" ; then
+   ecore_x=true
+else
+   ecore_x=false
+fi
+
+if test "x${have_wayland}" = "xyes" ; then
+   allow_wl_x11=true
+else
+   allow_wl_x11=false
+fi
+
+if test "x${ecore_x}" = "xtrue" && test -n "$WAYLAND_CFLAGS" ; then
+   wl_x11=true
+else
+   wl_x11=false
+fi
 
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
@@ -816,16 +846,6 @@ define([CHECK_MODULE_WL_DESKTOP_SHELL],
   fi
 ])
 AM_CONDITIONAL([HAVE_WL_DESKTOP_SHELL], [test "x${WL_DESKTOP_SHELL}" = "xtrue"])
-
-define([CHECK_MODULE_WL_SCREENSHOT],
-[
-  if test "x${have_wayland_clients}" = "xyes"; then
-    AC_E_CHECK_PKG(WL_SCREENSHOT, [ ecore >= $efl_version ecore-wayland >= $efl_version eina >= $efl_version ], [WL_SCREENSHOT=true], [WL_SCREENSHOT=false])
-  else
-    WL_SCREENSHOT=false
-  fi
-])
-AM_CONDITIONAL([HAVE_WL_SCREENSHOT], [test "x${WL_SCREENSHOT}" = "xtrue"])
 
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
@@ -867,17 +887,18 @@ AC_E_OPTIONAL_MODULE([systray], true)
 AC_E_OPTIONAL_MODULE([appmenu], true)
 AC_E_OPTIONAL_MODULE([quickaccess], true)
 AC_E_OPTIONAL_MODULE([teamwork], true)
-AC_E_OPTIONAL_MODULE([shot], true)
+AC_E_OPTIONAL_MODULE([shot], true, $ecore_x)
 AC_E_OPTIONAL_MODULE([backlight], true)
 AC_E_OPTIONAL_MODULE([tasks], true)
-AC_E_OPTIONAL_MODULE([conf_randr], true)
-AC_E_OPTIONAL_MODULE([xkbswitch], true)
+AC_E_OPTIONAL_MODULE([conf_randr], true, $ecore_x)
+AC_E_OPTIONAL_MODULE([xkbswitch], true, $ecore_x)
 AC_E_OPTIONAL_MODULE([tiling], true)
-AC_E_OPTIONAL_MODULE([access], true)
+AC_E_OPTIONAL_MODULE([access], false, $ecore_x)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
-AC_E_OPTIONAL_MODULE([contact], true)
+AC_E_OPTIONAL_MODULE([contact], false)
 AC_E_OPTIONAL_MODULE([wl_desktop_shell], true, [CHECK_MODULE_WL_DESKTOP_SHELL])
-AC_E_OPTIONAL_MODULE([wl_screenshot], true, [CHECK_MODULE_WL_SCREENSHOT])
+AC_E_OPTIONAL_MODULE([wl_x11], $allow_wl_x11, $wl_x11)
+#AC_E_OPTIONAL_MODULE([wl_screenshot], true, [CHECK_MODULE_WL_SCREENSHOT])
 
 HALT="/sbin/shutdown -h now"
 REBOOT="/sbin/shutdown -r now"

@@ -238,7 +238,9 @@ e_module_all_load(void)
      {
         if (!em) continue;
 
-        if ((!e_util_strcmp(em->name, "comp")) || (!e_util_strcmp(em->name, "conf_comp")))
+        if ((!e_util_strcmp(em->name, "comp")) || (!e_util_strcmp(em->name, "conf_comp")) ||
+            (e_comp_get(NULL) && (!strcmp(em->name, "wl_x11"))) //block wl_x11 if we've already created a compositor
+           )
           {
              eina_stringshare_del(em->name);
              e_config->modules = eina_list_remove_list(e_config->modules, l);
@@ -399,6 +401,12 @@ e_module_new(const char *name)
 init_done:
 
    _e_modules = eina_list_append(_e_modules, m);
+   if (!_e_modules_hash)
+     {
+        /* wayland module preloading */
+        if (!e_module_init())
+          CRI("WTFFFFF");
+     }
    eina_hash_add(_e_modules_hash, name, m);
    m->name = eina_stringshare_add(name);
    if (modpath)
@@ -912,6 +920,8 @@ _e_module_whitelist_check(void)
       "tiling",
       "winlist",
       "wizard",
+      "wl_desktop_shell",
+      "wl_x11",
       "wl_drm",
       "wl_screenshot",
       "wl_shell",
