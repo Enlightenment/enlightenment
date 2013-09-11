@@ -318,9 +318,13 @@ e_win_new(E_Comp *c)
    win->max_aspect = 0.0;
    wins = eina_list_append(wins, win);
 
-#warning FIXME WL POINTERS
-   if (c->man->root)
-     win->pointer = e_pointer_window_new(win->evas_win, 1);
+#ifndef WAYLAND_ONLY
+   if (c->comp_type == E_PIXMAP_TYPE_X)
+     {
+        win->pointer = e_pointer_window_new(win->evas_win, 1);
+        win->pointer->color = c->pointer->color;
+     }
+#endif
    return win;
 }
 

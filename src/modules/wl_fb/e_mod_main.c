@@ -42,6 +42,7 @@ e_modapi_init(E_Module *m)
    e_comp_wl_init();
    e_comp_canvas_init(comp);
    e_comp_canvas_fake_layers_init(comp);
+   comp->pointer = e_pointer_canvas_new(comp->evas, 1);
 
    ecore_wl_init(NULL);
    ecore_wl_server_mode_set(1);

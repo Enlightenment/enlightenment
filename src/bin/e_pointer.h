@@ -31,16 +31,20 @@ struct _E_Pointer
    unsigned char     e_cursor : 1;
    unsigned char     color : 1;
    unsigned char     idle : 1;
+   unsigned char     canvas : 1;
 
    Evas             *evas;
+   E_Pixmap         *pixmap;
    Evas_Object      *pointer_object;
+   Evas_Object      *pointer_image;
    Evas_Object      *hot_object;
    int              *pixels;
-   Ecore_X_Window    win;
+   Ecore_Window      win;
    int               w, h;
    Ecore_Timer      *idle_timer;
    Ecore_Poller     *idle_poller;
    int               x, y;
+   unsigned int     blocks;
 
    const char       *type;
    void             *obj;
@@ -54,8 +58,10 @@ struct _E_Pointer
 
 EINTERN int        e_pointer_init(void);
 EINTERN int        e_pointer_shutdown(void);
-EAPI E_Pointer *e_pointer_window_new(Ecore_X_Window win, int filled);
+EAPI E_Pointer *e_pointer_window_new(Ecore_Window win, int filled);
 EAPI void	e_pointer_hide(E_Pointer *p);
+EAPI E_Pointer *e_pointer_canvas_new(Evas *e, int filled);
+EAPI void       e_pointer_image_set(E_Pointer *p, E_Pixmap *cp, int w, int h, int hot_x, int hot_y);
 EAPI void       e_pointer_type_push(E_Pointer *p, void *obj, const char *type);
 EAPI void       e_pointer_type_pop(E_Pointer *p, void *obj, const char *type);
 EAPI void       e_pointers_size_set(int size);
@@ -63,6 +69,9 @@ EAPI void       e_pointer_idler_before(void);
 
 EAPI void e_pointer_mode_push(void *obj, E_Pointer_Mode mode);
 EAPI void e_pointer_mode_pop(void *obj, E_Pointer_Mode mode);
+
+EAPI void e_pointer_block_add(E_Pointer *p);
+EAPI void e_pointer_block_del(E_Pointer *p);
 
 #endif
 #endif

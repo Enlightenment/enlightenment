@@ -128,7 +128,6 @@ e_comp_canvas_init(E_Comp *c)
    evas_event_callback_add(c->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_render_post, c);
 
    c->ee_win = ecore_evas_window_get(c->ee);
-   c->pointer = e_pointer_window_new(c->man->root, 1);
 
    for (layer = 0; layer <= e_comp_canvas_layer_map(E_LAYER_MAX); layer++)
      {

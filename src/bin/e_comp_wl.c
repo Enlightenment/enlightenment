@@ -1738,6 +1738,10 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
         buffer->ews = NULL;
         ews->buffers = eina_inlist_remove(ews->buffers, EINA_INLIST_GET(buffer));
      }
+   if (e_comp_get(NULL)->pointer->pixmap == ews->pixmap)
+     {
+        e_pointer_image_set(e_comp_get(NULL)->pointer, NULL, 0, 0, 0, 0);
+     }
    e_pixmap_parent_window_set(ews->pixmap, NULL);
    e_pixmap_free(ews->pixmap);
 
@@ -2277,53 +2281,17 @@ _e_comp_wl_pointer_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y,
    /* do we have a focused surface ? */
    if (!input->wl.seat.pointer->focus) return;
 
-   if ((focus = wl_resource_get_user_data(input->wl.seat.pointer->focus)))
-     {
-        /* NB: Ideally, I wanted to use the e_pointer methods here so that 
-         * the cursor would match the E theme, however Wayland currently 
-         * provides NO Method to get the cursor name :( so we are stuck 
-         * using the pixels from their cursor surface */
+   focus = wl_resource_get_user_data(input->wl.seat.pointer->focus);
+   if (!focus) return;
+   /* NB: Ideally, I wanted to use the e_pointer methods here so that 
+    * the cursor would match the E theme, however Wayland currently 
+    * provides NO Method to get the cursor name :( so we are stuck 
+    * using the pixels from their cursor surface */
 
-        /* is it mapped ? */
-        if ((focus->mapped) && (focus->ec))
-          {
-             Ecore_Window win;
-
-             /* try to get the ecore_window */
-#warning CURSOR BROKEN
-#if 0
-             if ((win = ecore_evas_window_get(focus->ee)))
-               {
-                  E_Wayland_Buffer_Reference *ref;
-                  struct wl_shm_buffer *shm_buffer;
-                  void *pixels;
-
-                  ref = &ews->buffer_reference;
-
-                  shm_buffer = wl_shm_buffer_get(ref->buffer->wl.resource);
-
-                  /* grab the pixels from the cursor surface */
-                  if ((pixels = wl_shm_buffer_get_data(shm_buffer)))
-                    {
-                       Ecore_X_Cursor cur;
-
-                       /* create the new X cursor with this image */
-                       cur = ecore_x_cursor_new(win, pixels, w, h,
-                                                input->pointer.hot.x, 
-                                                input->pointer.hot.y);
-
-                       /* set the cursor on this window */
-                       ecore_x_window_cursor_set(win, cur);
-
-                       /* free the cursor */
-                       ecore_x_cursor_free(cur);
-                    }
-                  else
-                    ecore_x_window_cursor_set(win, 0);
-               }
-#endif
-          }
-     }
+   /* is it mapped ? */
+   if ((!focus->mapped) || (!focus->ec)) return;
+   e_pixmap_dirty(ews->pixmap);
+   e_pointer_image_set(focus->ec->comp->pointer, ews->pixmap, w, h, input->pointer.hot.x, input->pointer.hot.y);
 }
 
 static void 
@@ -2404,7 +2372,11 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
    input->pointer.surface = ews;
 
    /* if we don't have a pointer surface, we are done here */
-   if (!ews) return;
+   if (!ews)
+     {
+        e_pointer_hide(e_comp_get(NULL)->pointer);
+        return;
+     }
 
    /* set the destroy listener */
    wl_signal_add(&ews->wl.destroy_signal, 

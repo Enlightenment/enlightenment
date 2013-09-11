@@ -44,10 +44,10 @@ e_modapi_init(E_Module *m)
         e_xinerama_screens_set(eina_list_append(NULL, screen));
      }
    comp->man = e_manager_new(0, comp, SCREEN_W, SCREEN_H);
-   comp->pointer = e_pointer_window_new(comp->man->root, 1);
    e_comp_wl_init();
    e_comp_canvas_init(comp);
    e_comp_canvas_fake_layers_init(comp);
+   comp->pointer = e_pointer_canvas_new(comp->evas, 1);
 
    ecore_evas_callback_delete_request_set(ee, _cb_delete_request);
 
