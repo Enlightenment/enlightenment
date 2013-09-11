@@ -157,7 +157,7 @@ EINTERN int          e_menu_shutdown(void);
 EAPI void         e_menu_hide_all(void);
 EAPI E_Menu      *e_menu_new(void);
 EAPI void         e_menu_activate_key(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir);
-EAPI void         e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir, Ecore_X_Time activate_time);
+EAPI void         e_menu_activate_mouse(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir, unsigned int activate_time);
 EAPI void         e_menu_activate(E_Menu *m, E_Zone *zone, int x, int y, int w, int h, int dir);
 EAPI void         e_menu_deactivate(E_Menu *m);
 EAPI int          e_menu_freeze(E_Menu *m);
@@ -203,7 +203,7 @@ EAPI void         e_menu_item_disabled_set(E_Menu_Item *mi, int disable);
 
 EAPI void         e_menu_idler_before(void);
 
-EAPI Ecore_X_Window e_menu_grab_window_get(void);
+EAPI Ecore_Window e_menu_grab_window_get(void);
 
 #endif
 #endif

@@ -210,7 +210,6 @@ endif
 enlightenment_src = \
 src/bin/e_about.c \
 src/bin/e_acpi.c \
-src/bin/e_alert.c \
 src/bin/e_actions.c \
 src/bin/e_atoms.c \
 src/bin/e_backlight.c \
@@ -226,7 +225,6 @@ src/bin/e_comp.c \
 src/bin/e_comp_canvas.c \
 src/bin/e_comp_cfdata.c \
 src/bin/e_comp_object.c \
-src/bin/e_comp_x.c \
 src/bin/e_config.c \
 src/bin/e_config_data.c \
 src/bin/e_config_dialog.c \
@@ -307,7 +305,6 @@ src/bin/e_place.c \
 src/bin/e_pointer.c \
 src/bin/e_powersave.c \
 src/bin/e_prefix.c \
-src/bin/e_randr.c \
 src/bin/e_remember.c \
 src/bin/e_resist.c \
 src/bin/e_scale.c \
@@ -362,25 +359,31 @@ src/bin/e_widget_toolbar.c \
 src/bin/e_widget_toolbook.c \
 src/bin/e_win.c \
 src/bin/e_xinerama.c \
-src/bin/e_xkb.c \
-src/bin/e_xsettings.c \
 src/bin/e_zoomap.c \
 src/bin/e_zone.c \
 $(ENLIGHTENMENTHEADERS)
+
+if ! HAVE_WAYLAND_ONLY
+enlightenment_src += \
+src/bin/e_alert.c \
+src/bin/e_comp_x.c \
+src/bin/e_randr.c \
+src/bin/e_xkb.c \
+src/bin/e_xsettings.c
+endif
 
 if HAVE_WAYLAND_CLIENTS
 enlightenment_src += \
 src/bin/e_comp_wl.c
 endif
 
-src_bin_enlightenment_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@
-src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DE_LOGGING=1
+src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DE_LOGGING=1 @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@ @ECORE_X_CFLAGS@ -DNEED_X=1
 src_bin_enlightenment_SOURCES = \
 src/bin/e_main.c \
 $(enlightenment_src)
 
 src_bin_enlightenment_LDFLAGS = -export-dynamic
-src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WAYLAND_EGL_LIBS@ -lm
+src_bin_enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WAYLAND_EGL_LIBS@ -lm @ECORE_X_LIBS@
 
 src_bin_enlightenment_imc_SOURCES = \
 src/bin/e.h \

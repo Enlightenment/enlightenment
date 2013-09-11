@@ -5,7 +5,6 @@
 #  define E_COMP_WL_H
 
 #  define WL_HIDE_DEPRECATED
-
 #  include <pixman.h>
 #  include <wayland-server.h>
 #  include <xkbcommon/xkbcommon.h>
@@ -253,6 +252,7 @@ struct _E_Wayland_Surface_Frame_Callback
 
 struct _E_Wayland_Buffer
 {
+   EINA_INLIST;
    struct 
      {
         struct wl_resource *resource;
@@ -315,6 +315,7 @@ struct _E_Wayland_Surface
 
    E_Client *ec;
    E_Pixmap *pixmap;
+   Eina_Inlist *buffers;
 
    E_Wayland_Shell_Surface *shell_surface;
    Eina_Bool mapped : 1;
@@ -472,6 +473,15 @@ struct _E_Wayland_Compositor
 
    E_Wayland_Shell_Interface shell_interface;
 
+#ifdef WAYLAND_ONLY
+   Eina_Bool focus : 1;
+
+   unsigned int output_pool;
+
+   struct xkb_rule_names xkb_names;
+   struct xkb_context *xkb_context;
+#endif
+
    Ecore_Event_Handler *kbd_handler;
    Ecore_Fd_Handler *fd_handler;
    Ecore_Idler *idler;
@@ -480,9 +490,7 @@ struct _E_Wayland_Compositor
 
    Eina_Inlist *surfaces;
    Eina_List *seats;
-
-   struct wl_list outputs;
-
+   
    void (*ping_cb) (E_Wayland_Surface *ews, unsigned int serial);
 };
 
@@ -581,8 +589,12 @@ struct _E_Wayland_Plane
 /* external variables */
 extern EAPI E_Wayland_Compositor *_e_wl_comp;
 
-EINTERN Eina_Bool e_comp_wl_init(void);
+EAPI Eina_Bool e_comp_wl_init(void);
 EINTERN void e_comp_wl_shutdown(void);
+
+#ifdef WAYLAND_ONLY
+EAPI int e_comp_wl_input_read(int fd EINA_UNUSED, unsigned int mask EINA_UNUSED, void *data);
+#endif
 
 EAPI void wl_seat_init(struct wl_seat *seat);
 EAPI void wl_seat_release(struct wl_seat *seat);
@@ -612,6 +624,9 @@ EAPI void wl_seat_set_selection(struct wl_seat *seat, struct wl_data_source *sou
 
 EAPI unsigned int e_comp_wl_time_get(void);
 EAPI void e_comp_wl_input_modifiers_update(unsigned int serial);
+
+EAPI void e_comp_wl_mouse_button(struct wl_resource *resource, uint32_t serial, uint32_t timestamp, uint32_t button, uint32_t state_w);
+EAPI Eina_Bool e_comp_wl_cb_keymap_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
 
 # endif
 #endif

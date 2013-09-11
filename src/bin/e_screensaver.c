@@ -3,7 +3,6 @@
 static Ecore_Event_Handler *_e_screensaver_handler_on = NULL;
 static Ecore_Event_Handler *_e_screensaver_handler_off = NULL;
 static Ecore_Event_Handler *_e_screensaver_handler_config_mode = NULL;
-static Ecore_Event_Handler *_e_screensaver_handler_screensaver_notify = NULL;
 static Ecore_Event_Handler *_e_screensaver_handler_border_fullscreen = NULL;
 static Ecore_Event_Handler *_e_screensaver_handler_border_unfullscreen = NULL;
 static Ecore_Event_Handler *_e_screensaver_handler_border_remove = NULL;
@@ -83,14 +82,19 @@ e_screensaver_update(void)
         changed = EINA_TRUE;
      }
 
-   if (changed) ecore_x_screensaver_set(timeout, interval, blanking, expose);
+   if (changed)
+#ifdef WAYLAND_ONLY
+#else
+     ecore_x_screensaver_set(timeout, interval, blanking, expose);
+#endif
 }
 
 EAPI void
 e_screensaver_force_update(void)
 {
    int timeout = e_screensaver_timeout_get(EINA_TRUE);
-
+#ifdef WAYLAND_ONLY
+#else
    ecore_x_screensaver_set(timeout + 10,
                            0,
 //                           e_config->screensaver_interval,
@@ -101,6 +105,7 @@ e_screensaver_force_update(void)
 //                           e_config->screensaver_interval,
                            e_config->screensaver_blanking,
                            e_config->screensaver_expose);
+#endif
 }
 
 static Eina_Bool
@@ -274,80 +279,6 @@ _e_screensaver_handler_screensaver_off_cb(void *data __UNUSED__, int type __UNUS
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static Ecore_Timer *idle_timer = NULL;
-static Eina_Bool saver_on = EINA_FALSE;
-static Eina_Bool dimmed = EINA_FALSE;
-
-static Eina_Bool
-_e_screensaver_idle_timer_cb(void *d __UNUSED__)
-{
-   ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
-   idle_timer = NULL;
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_e_screensaver_handler_screensaver_notify_cb(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   Ecore_X_Event_Screensaver_Notify *e = event;
-
-   if ((e->on) && (!saver_on))
-     {
-        saver_on = EINA_TRUE;
-        if (e_config->backlight.idle_dim)
-          {
-             double t = e_config->screensaver_timeout -
-               e_config->backlight.timer;
-
-             if (t < 1.0) t = 1.0;
-             if (idle_timer)
-               {
-                  ecore_timer_del(idle_timer);
-                  idle_timer = NULL;
-               }
-             if (e_config->screensaver_enable)
-               idle_timer = ecore_timer_add
-                   (t, _e_screensaver_idle_timer_cb, NULL);
-             if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_DIM)
-               {
-                  e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_DIM);
-                  dimmed = EINA_TRUE;
-               }
-          }
-        else
-          {
-             if (!_e_screensaver_on)
-               ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
-          }
-     }
-   else if ((!e->on) && (saver_on))
-     {
-        saver_on = EINA_FALSE;
-        if (idle_timer)
-          {
-             ecore_timer_del(idle_timer);
-             idle_timer = NULL;
-             if (e_config->backlight.idle_dim)
-               {
-                  if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_NORMAL)
-                    e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
-               }
-          }
-        else
-          {
-             if (dimmed)
-               {
-                  if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_NORMAL)
-                    e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
-                  dimmed = EINA_FALSE;
-               }
-             if (_e_screensaver_on)
-               ecore_event_add(E_EVENT_SCREENSAVER_OFF, NULL, NULL, NULL);
-          }
-     }
-   return ECORE_CALLBACK_PASS_ON;
-}
-
 static Eina_Bool
 _e_screensaver_handler_border_fullscreen_check_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
@@ -379,16 +310,10 @@ e_screensaver_preinit(void)
 EINTERN int
 e_screensaver_init(void)
 {
-   ecore_x_screensaver_custom_blanking_enable();
-
    _e_screensaver_handler_on = ecore_event_handler_add
        (E_EVENT_SCREENSAVER_ON, _e_screensaver_handler_screensaver_on_cb, NULL);
    _e_screensaver_handler_off = ecore_event_handler_add
        (E_EVENT_SCREENSAVER_OFF, _e_screensaver_handler_screensaver_off_cb, NULL);
-
-   _e_screensaver_handler_screensaver_notify = ecore_event_handler_add
-       (ECORE_X_EVENT_SCREENSAVER_NOTIFY, _e_screensaver_handler_screensaver_notify_cb, NULL);
-
    _e_screensaver_handler_config_mode = ecore_event_handler_add
        (E_EVENT_CONFIG_MODE_CHANGED, _e_screensaver_handler_config_mode_cb, NULL);
 
@@ -409,11 +334,6 @@ e_screensaver_init(void)
 
    _e_screensaver_handler_powersave = ecore_event_handler_add
        (E_EVENT_POWERSAVE_UPDATE, _e_screensaver_handler_powersave_cb, NULL);
-
-   _e_screensaver_timeout = ecore_x_screensaver_timeout_get();
-//   _e_screensaver_interval = ecore_x_screensaver_interval_get();
-   _e_screensaver_blanking = ecore_x_screensaver_blank_get();
-   _e_screensaver_expose = ecore_x_screensaver_expose_get();
 
    e_screensaver_force_update();
 
@@ -441,8 +361,6 @@ e_screensaver_shutdown(void)
         _e_screensaver_suspend_timer = NULL;
      }
 
-   ecore_x_screensaver_custom_blanking_disable();
-
    if (_e_screensaver_handler_powersave)
      {
         ecore_event_handler_del(_e_screensaver_handler_powersave);
@@ -453,12 +371,6 @@ e_screensaver_shutdown(void)
      {
         ecore_event_handler_del(_e_screensaver_handler_config_mode);
         _e_screensaver_handler_config_mode = NULL;
-     }
-
-   if (_e_screensaver_handler_screensaver_notify)
-     {
-        ecore_event_handler_del(_e_screensaver_handler_screensaver_notify);
-        _e_screensaver_handler_screensaver_notify = NULL;
      }
 
    if (_e_screensaver_handler_border_fullscreen)
@@ -506,3 +418,17 @@ e_screensaver_shutdown(void)
    return 1;
 }
 
+EAPI void
+e_screensaver_attrs_set(int timeout, int blanking, int expose)
+{
+   _e_screensaver_timeout = timeout;
+//   _e_screensaver_interval = ecore_x_screensaver_interval_get();
+   _e_screensaver_blanking = blanking;
+   _e_screensaver_expose = expose;
+}
+
+EAPI Eina_Bool
+e_screensaver_on_get(void)
+{
+   return _e_screensaver_on;
+}

@@ -2,6 +2,8 @@
 #include "e_comp_wl.h"
 #include <sys/mman.h>
 
+#define e_pixmap_parent_window_set(X, Y) e_pixmap_parent_window_set(X, (Ecore_Window)(uintptr_t)Y)
+
 /* compositor function prototypes */
 static void _seat_send_updated_caps(struct wl_seat *seat);
 static void _move_resources(struct wl_list *dest, struct wl_list *src);
@@ -58,7 +60,6 @@ static void _e_comp_wl_cb_bind(struct wl_client *client, void *data, unsigned in
 static Eina_Bool _e_comp_wl_cb_read(void *data EINA_UNUSED, Ecore_Fd_Handler *hdl EINA_UNUSED);
 static Eina_Bool _e_comp_wl_cb_idle(void *data EINA_UNUSED);
 static Eina_Bool _e_comp_wl_cb_module_idle(void *data EINA_UNUSED);
-static Eina_Bool _e_comp_wl_cb_keymap_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED);
 
 /* compositor interface prototypes */
 static void _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resource, unsigned int id);
@@ -228,7 +229,7 @@ static Ecore_Idler *_module_idler = NULL;
 EAPI E_Wayland_Compositor *_e_wl_comp;
 
 /* external functions */
-EINTERN Eina_Bool 
+EAPI Eina_Bool 
 e_comp_wl_init(void)
 {
    int fd = 0;
@@ -271,7 +272,7 @@ e_comp_wl_init(void)
     * NB: This is interesting....if we try to eglGetDisplay and pass in the 
     * wayland display, then EGL fails due to XCB not owning the event queue.
     * If we pass it a NULL, it inits just fine */
-   _e_wl_comp->egl.display = eglGetDisplay((EGLNativeDisplayType)ecore_x_display_get());
+   _e_wl_comp->egl.display = eglGetDisplay(NULL);
    if (_e_wl_comp->egl.display == EGL_NO_DISPLAY)
      ERR("Could not get EGL display: %m");
    else
@@ -302,44 +303,6 @@ e_comp_wl_init(void)
                   ERR("Could not choose EGL config: %m");
                   eglTerminate(_e_wl_comp->egl.display);
                }
-
-             /* if (!eglBindAPI(EGL_OPENGL_ES_API)) */
-             /*   { */
-             /*      ERR("Could not bind EGL API: %m"); */
-             /*      eglTerminate(_e_wl_comp->egl.display); */
-             /*   } */
-
-             /* exts = (const char *)eglQueryString(_e_wl_comp->egl.display, EGL_EXTENSIONS); */
-             /* if (!exts) */
-             /*   { */
-             /*      ERR("Could not get EGL Extensions: %m"); */
-             /*      eglTerminate(_e_wl_comp->egl.display); */
-             /*   } */
-             /* else */
-             /*   { */
-             /*      if (strstr(exts, "EGL_WL_bind_wayland_display")) */
-             /*        { */
-             /*           _e_wl_comp->egl.bind_display =  */
-             /*             (void *)eglGetProcAddress("eglBindWaylandDisplayWL"); */
-             /*           _e_wl_comp->egl.unbind_display =  */
-             /*             (void *)eglGetProcAddress("eglUnbindWaylandDisplayWL"); */
-             /*        } */
-             /*   } */
-
-             /* if (_e_wl_comp->egl.bind_display) */
-             /*   { */
-             /*      EGLBoolean ret; */
-
-             /*      ret = _e_wl_comp->egl.bind_display(_e_wl_comp->egl.display,  */
-             /*                                         _e_wl_comp->wl.display); */
-             /*      if (!ret) */
-             /*        { */
-             /*           ERR("Could not bind EGL Wayland Display: %m"); */
-             /*           _e_wl_comp->egl.bound = EINA_FALSE; */
-             /*        } */
-             /*      else */
-             /*        _e_wl_comp->egl.bound = EINA_TRUE; */
-             /*   } */
           }
      }
 #endif
@@ -351,11 +314,12 @@ e_comp_wl_init(void)
         goto err;
      }
 
+#ifndef WAYLAND_ONLY
    /* setup keymap_change event handler */
    _e_wl_comp->kbd_handler = 
      ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, 
-                             _e_comp_wl_cb_keymap_changed, NULL);
-
+                             e_comp_wl_cb_keymap_changed, NULL);
+#endif
    /* get the displays event loop */
    _e_wl_comp->wl.loop = wl_display_get_event_loop(_e_wl_comp->wl.display);
 
@@ -379,9 +343,11 @@ e_comp_wl_init(void)
         goto err;
      }
 
+   wl_event_loop_dispatch(_e_wl_comp->wl.loop, 0);
+#ifndef WAYLAND_ONLY
    /* add an idler for deferred shell module loading */
    _module_idler = ecore_idler_add(_e_comp_wl_cb_module_idle, NULL);
-
+#endif
    /* return success */
    return EINA_TRUE;
 
@@ -389,9 +355,10 @@ err:
    /* remove kbd handler */
    if (_e_wl_comp->kbd_handler) 
      ecore_event_handler_del(_e_wl_comp->kbd_handler);
-
+#ifndef WAYLAND_ONLY
    /* remove the module idler */
    if (_module_idler) ecore_idler_del(_module_idler);
+#endif
 
 #ifdef HAVE_WAYLAND_EGL
    /* unbind wayland display */
@@ -455,6 +422,17 @@ e_comp_wl_shutdown(void)
    if ((mod = e_module_find("wl_desktop_shell")))
      e_module_disable(mod);
 }
+
+#ifdef WAYLAND_ONLY
+EAPI int 
+e_comp_wl_input_read(int fd EINA_UNUSED, unsigned int mask EINA_UNUSED, void *data)
+{
+   E_Wayland_Compositor *wl_comp = data;
+
+   wl_event_loop_dispatch(wl_comp->wl.input_loop, 0);
+   return 1;
+}
+#endif
 
 EAPI void 
 wl_seat_init(struct wl_seat *seat)
@@ -845,6 +823,44 @@ e_comp_wl_time_get(void)
    return (tm.tv_sec * 1000 + tm.tv_usec / 1000);
 }
 
+EAPI void
+e_comp_wl_mouse_button(struct wl_resource *resource, uint32_t serial, uint32_t timestamp, uint32_t button, uint32_t state_w)
+{
+   switch (button)
+     {
+      case BTN_LEFT:
+      case BTN_MIDDLE:
+      case BTN_RIGHT:
+        wl_pointer_send_button(resource, serial, timestamp, 
+                               button, state_w);
+        break;
+      case 4:
+        if (state_w)
+          wl_pointer_send_axis(resource, timestamp, 
+                               WL_POINTER_AXIS_VERTICAL_SCROLL, 
+                               -wl_fixed_from_int(1));
+        break;
+      case 5:
+        if (state_w)
+          wl_pointer_send_axis(resource, timestamp, 
+                               WL_POINTER_AXIS_VERTICAL_SCROLL, 
+                               wl_fixed_from_int(1));
+        break;
+      case 6:
+        if (state_w)
+          wl_pointer_send_axis(resource, timestamp, 
+                               WL_POINTER_AXIS_HORIZONTAL_SCROLL, 
+                               -wl_fixed_from_int(1));
+        break;
+      case 7:
+        if (state_w)
+          wl_pointer_send_axis(resource, timestamp, 
+                               WL_POINTER_AXIS_HORIZONTAL_SCROLL, 
+                               wl_fixed_from_int(1));
+        break;
+     }
+}
+
 EAPI void 
 e_comp_wl_input_modifiers_update(unsigned int serial)
 {
@@ -976,47 +992,8 @@ _default_grab_button(struct wl_pointer_grab *grab, uint32_t timestamp, uint32_t 
         serial = wl_display_next_serial(_e_wl_comp->wl.display);
 
         wl_resource_for_each(res, lst)
-          {
-             switch (button)
-               {
-                case BTN_LEFT:
-                case BTN_MIDDLE:
-                case BTN_RIGHT:
-                  wl_pointer_send_button(res, serial, timestamp, 
-                                         button, state_w);
-                  break;
-                case 4:
-                  if (state_w)
-                    wl_pointer_send_axis(res, timestamp, 
-                                         WL_POINTER_AXIS_VERTICAL_SCROLL, 
-                                         -wl_fixed_from_int(1));
-                  break;
-                case 5:
-                  if (state_w)
-                    wl_pointer_send_axis(res, timestamp, 
-                                         WL_POINTER_AXIS_VERTICAL_SCROLL, 
-                                         wl_fixed_from_int(1));
-                  break;
-                case 6:
-                  if (state_w)
-                    wl_pointer_send_axis(res, timestamp, 
-                                         WL_POINTER_AXIS_HORIZONTAL_SCROLL, 
-                                         -wl_fixed_from_int(1));
-                  break;
-                case 7:
-                  if (state_w)
-                    wl_pointer_send_axis(res, timestamp, 
-                                         WL_POINTER_AXIS_HORIZONTAL_SCROLL, 
-                                         wl_fixed_from_int(1));
-                  break;
-               }
-          }
+          e_comp_wl_mouse_button(res, serial, timestamp, button, state_w);
      }
-
-   if (pointer->button_count == 0 &&
-       state == WL_POINTER_BUTTON_STATE_RELEASED)
-     wl_pointer_set_focus(pointer, pointer->current,
-                          pointer->current_x, pointer->current_y);
 }
 
 static void 
@@ -1573,8 +1550,8 @@ _e_comp_wl_cb_module_idle(void *data EINA_UNUSED)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool 
-_e_comp_wl_cb_keymap_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+EAPI Eina_Bool 
+e_comp_wl_cb_keymap_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    struct xkb_keymap *keymap;
 
@@ -1654,7 +1631,9 @@ _e_comp_wl_cb_surface_create(struct wl_client *client, struct wl_resource *resou
      }
 
    ews->wl.client = client;
-   ews->pixmap = e_pixmap_new(E_PIXMAP_TYPE_WL, ews);
+   ews->pixmap = e_pixmap_find(E_PIXMAP_TYPE_WL, id);
+   if (!ews->pixmap)
+     ews->pixmap = e_pixmap_new(E_PIXMAP_TYPE_WL, id);
    e_pixmap_parent_window_set(ews->pixmap, ews);
    e_pixmap_usable_set(ews->pixmap, 1);
    /* initialize the destroy signal */
@@ -1702,6 +1681,8 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
    E_Wayland_Surface *ews = NULL;
    E_Wayland_Surface_Frame_Callback *cb = NULL, *ncb = NULL;
    struct wl_pointer *pointer;
+   Eina_Inlist *l;
+   E_Wayland_Buffer *buffer;
 
    /* try to get the surface from this resource */
    if (!(ews = wl_resource_get_user_data(resource)))
@@ -1752,6 +1733,11 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
    wl_list_for_each_safe(cb, ncb, &ews->wl.frames, wl.link)
      wl_resource_destroy(cb->wl.resource);
 
+   EINA_INLIST_FOREACH_SAFE(ews->buffers, l, buffer)
+     {
+        buffer->ews = NULL;
+        ews->buffers = eina_inlist_remove(ews->buffers, EINA_INLIST_GET(buffer));
+     }
    e_pixmap_parent_window_set(ews->pixmap, NULL);
    e_pixmap_free(ews->pixmap);
 
@@ -1982,6 +1968,7 @@ _e_comp_wl_input_keymap_get(void)
         names.layout = strdup(kbd_layout->name);
      }
 
+#ifndef WAYLAND_ONLY
    /* if we are running under X11, try to get the xkb rule names atom */
    if (getenv("DISPLAY"))
      {
@@ -2006,7 +1993,7 @@ _e_comp_wl_input_keymap_get(void)
 
         if ((data) && (len > 0))
           {
-             names.rules = strdup((const char *)data);
+             names.rules = (char*)data;
              data += strlen((const char *)data) + 1;
              if (!names.model)
                names.model = strdup((const char *)data);
@@ -2015,6 +2002,7 @@ _e_comp_wl_input_keymap_get(void)
                names.layout = strdup((const char *)data);
           }
      }
+#endif
 
    printf("Keymap\n");
    printf("\tRules: %s\n", names.rules);
@@ -2552,7 +2540,7 @@ _e_comp_wl_surface_buffer_reference(E_Wayland_Buffer_Reference *ref, E_Wayland_B
         wl_signal_add(&buffer->wl.destroy_signal, &ref->destroy_listener);
      }
 
-   //INF("CURRENT BUFFER SWAP");
+   //INF("CURRENT BUFFER SWAP: %p->%p", ref->buffer, buffer);
    ref->buffer = buffer;
    ref->destroy_listener.notify = 
      _e_comp_wl_surface_buffer_reference_cb_destroy;
@@ -2603,12 +2591,14 @@ _e_comp_wl_surface_buffer_cb_destroy(struct wl_listener *listener, void *data)
    E_Wayland_Buffer *buffer;
 
    buffer = container_of(listener, E_Wayland_Buffer, wl.destroy_listener);
+
    wl_signal_emit(&buffer->wl.destroy_signal, buffer);
-   if (buffer->ews && buffer->ews->pixmap && (e_pixmap_resource_get(buffer->ews->pixmap) == data))
+   if (buffer->ews)
      {
-        if (buffer->ews->ec)
+        if (buffer->ews->ec && buffer->ews->pixmap && (e_pixmap_resource_get(buffer->ews->pixmap) == data) &&
+            evas_object_visible_get(buffer->ews->ec->frame))
           {
-             INF("DESTROYED CURRENT BUFFER: %s", e_pixmap_dirty_get(buffer->ews->pixmap) ? "DIRTY" : "CLEAN");
+             //INF("DESTROYED CURRENT BUFFER: %s", e_pixmap_dirty_get(buffer->ews->pixmap) ? "DIRTY" : "CLEAN");
              e_pixmap_usable_set(buffer->ews->pixmap, 0);
              if (!e_pixmap_image_exists(buffer->ews->pixmap))
                {
@@ -2620,6 +2610,7 @@ _e_comp_wl_surface_buffer_cb_destroy(struct wl_listener *listener, void *data)
              e_comp_object_render(buffer->ews->ec->frame);
              e_comp_object_render_update_del(buffer->ews->ec->frame);
           }
+        buffer->ews->buffers = eina_inlist_remove(buffer->ews->buffers, EINA_INLIST_GET(buffer));
      }
    E_FREE(buffer);
 }
@@ -2651,6 +2642,12 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
 
    /* reference any existing buffers */
    _e_comp_wl_surface_buffer_reference(&ews->buffer_reference, buffer);
+   if (buffer)
+     {
+        if (!buffer->ews)
+          ews->buffers = eina_inlist_append(ews->buffers, EINA_INLIST_GET(buffer));
+        buffer->ews = ews;
+     }
    //INF("ATTACHED NEW BUFFER");
    e_pixmap_dirty(ews->pixmap);
    //if (ews->ec)
@@ -2658,9 +2655,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
      
 
    /* if we are setting a null buffer, then unmap the surface */
-   if (buffer)
-     buffer->ews = ews;
-   else
+   if (!buffer)
      {
         if (ews->mapped)
           {
@@ -2798,9 +2793,7 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
                                             ews->pending.buffer);
 
         /* if the pending buffer is NULL, unmap the surface */
-        if (ews->pending.buffer)
-          ews->pending.buffer->ews = ews;
-        else
+        if (!ews->pending.buffer)
           {
              if (ews->mapped)
                {

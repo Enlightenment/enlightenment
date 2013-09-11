@@ -184,7 +184,8 @@ e_managers_keys_grab(void)
 
    EINA_LIST_FOREACH(managers, l, man)
      {
-        e_bindings_key_grab(E_BINDING_CONTEXT_ANY, man->root);
+        if (man->root)
+          e_bindings_key_grab(E_BINDING_CONTEXT_ANY, man->root);
      }
    ecore_event_add(E_EVENT_MANAGER_KEYS_GRAB, NULL, NULL, NULL);
 }
@@ -197,6 +198,7 @@ e_managers_keys_ungrab(void)
 
    EINA_LIST_FOREACH(managers, l, man)
      {
-        e_bindings_key_ungrab(E_BINDING_CONTEXT_ANY, man->root);
+        if (man->root)
+          e_bindings_key_ungrab(E_BINDING_CONTEXT_ANY, man->root);
      }
 }

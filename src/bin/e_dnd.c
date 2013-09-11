@@ -481,7 +481,7 @@ e_drop_handler_del(E_Drop_Handler *handler)
 }
 
 EAPI int
-e_drop_xdnd_register_set(Ecore_X_Window win, int reg)
+e_drop_xdnd_register_set(Ecore_Window win, int reg)
 {
    if (reg)
      {
@@ -518,12 +518,12 @@ e_drop_handler_responsive_get(const E_Drop_Handler *handler)
 }
 
 EAPI void
-e_drop_handler_action_set(Ecore_X_Atom action)
+e_drop_handler_action_set(unsigned int action)
 {
    _action = action;
 }
 
-EAPI Ecore_X_Atom
+EAPI unsigned int
 e_drop_handler_action_get(void)
 {
    return _action;

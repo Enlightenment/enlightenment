@@ -1,8 +1,8 @@
-#include "e.h"
-#include <Ecore_X.h>
-
 #define COMP_X_SHAPE_INPUT_ERROR_CATCH
 #define COMP_X_SHAPE_INPUT_ERROR_CATCH_TOL 3
+
+#include "e.h"
+#include <Ecore_X.h>
 
 #define GRAV_SET(ec, grav)                                                         \
   ecore_x_window_gravity_set(e_client_util_pwin_get(ec), grav);                          \
@@ -30,46 +30,7 @@ struct _E_Comp_Data
    Eina_Bool restack : 1;
 };
 
-struct E_Comp_Client_Data
-{
-   Ecore_X_Window lock_win;
-
-   Ecore_X_Damage       damage;  // damage region
-   Ecore_X_Visual       vis;  // window visual
-   Ecore_X_Colormap     cmap; // colormap of window
-
-#if 0 //NOT USED
-   Ecore_X_Pixmap       cache_pixmap;  // the cached pixmap (1/nth the dimensions)
-   int                  cache_w, cache_h;  // cached pixmap size
-#endif
-
-   Ecore_X_Image       *xim;  // x image - software fallback
-
-   unsigned char        misses; // number of sync misses
-
-   Ecore_X_Window_Attributes initial_attributes;
-
-   unsigned int move_counter; //reduce X calls when moving a window
-   unsigned int internal_props_set; //don't need to refetch our own internal props
-
-#ifdef COMP_X_SHAPE_INPUT_ERROR_CATCH
-   double last_input_time;
-   unsigned last_input_within_10;
-#endif
-
-   Eina_Bool moving : 1;
-   Eina_Bool first_map : 1;
-   Eina_Bool change_icon : 1;
-   Eina_Bool need_reparent : 1;
-   Eina_Bool reparented : 1;
-   Eina_Bool deleted : 1;
-   Eina_Bool button_grabbed : 1;
-   Eina_Bool fetch_exe : 1;
-   Eina_Bool set_win_type : 1;
-   Eina_Bool frame_update : 1;
-};
-
-static Ecore_X_Time focus_time = 0;
+static unsigned int focus_time = 0;
 static Eina_List *handlers = NULL;
 static Eina_Hash *clients_win_hash = NULL;
 static Eina_Hash *damages_hash = NULL;
@@ -80,6 +41,10 @@ static Ecore_Idle_Enterer *_e_comp_x_post_client_idler = NULL;
 static Eina_List *post_clients = NULL;
 
 static int _e_comp_x_mapping_change_disabled = 0;
+
+
+static Ecore_Timer *screensaver_idle_timer = NULL;
+static Eina_Bool screensaver_dimmed = EINA_FALSE;
 
 static void
 _e_comp_x_client_damage_add(E_Client *ec)
@@ -333,23 +298,23 @@ _e_comp_x_client_new_helper(E_Client *ec)
                ec->vkbd.fetch.vkbd = 1;
              /* loop to check for illume atoms */
              else if (atoms[i] == ECORE_X_ATOM_E_ILLUME_CONFORMANT)
-               ec->illume.conformant.fetch.conformant = 1;
+               ec->comp_data->illume.conformant.fetch.conformant = 1;
              else if (atoms[i] == ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE)
-               ec->illume.quickpanel.fetch.state = 1;
+               ec->comp_data->illume.quickpanel.fetch.state = 1;
              else if (atoms[i] == ECORE_X_ATOM_E_ILLUME_QUICKPANEL)
-               ec->illume.quickpanel.fetch.quickpanel = 1;
+               ec->comp_data->illume.quickpanel.fetch.quickpanel = 1;
              else if (atoms[i] == ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR)
-               ec->illume.quickpanel.fetch.priority.major = 1;
+               ec->comp_data->illume.quickpanel.fetch.priority.major = 1;
              else if (atoms[i] == ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR)
-               ec->illume.quickpanel.fetch.priority.minor = 1;
+               ec->comp_data->illume.quickpanel.fetch.priority.minor = 1;
              else if (atoms[i] == ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE)
-               ec->illume.quickpanel.fetch.zone = 1;
+               ec->comp_data->illume.quickpanel.fetch.zone = 1;
              else if (atoms[i] == ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED)
-               ec->illume.drag.fetch.locked = 1;
+               ec->comp_data->illume.drag.fetch.locked = 1;
              else if (atoms[i] == ECORE_X_ATOM_E_ILLUME_DRAG)
-               ec->illume.drag.fetch.drag = 1;
+               ec->comp_data->illume.drag.fetch.drag = 1;
              else if (atoms[i] == ECORE_X_ATOM_E_ILLUME_WINDOW_STATE)
-               ec->illume.win_state.fetch.state = 1;
+               ec->comp_data->illume.win_state.fetch.state = 1;
              else if (atoms[i] == ECORE_X_ATOM_E_VIDEO_PARENT)
                video_parent = EINA_TRUE;
              else if (atoms[i] == ECORE_X_ATOM_E_VIDEO_POSITION)
@@ -1727,47 +1692,47 @@ _e_comp_x_property(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CONFORMANT)
      {
-        ec->illume.conformant.fetch.conformant = 1;
+        ec->comp_data->illume.conformant.fetch.conformant = 1;
         EC_CHANGED(ec);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_QUICKPANEL_STATE)
      {
-        ec->illume.quickpanel.fetch.state = 1;
+        ec->comp_data->illume.quickpanel.fetch.state = 1;
         EC_CHANGED(ec);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_QUICKPANEL)
      {
-        ec->illume.quickpanel.fetch.quickpanel = 1;
+        ec->comp_data->illume.quickpanel.fetch.quickpanel = 1;
         EC_CHANGED(ec);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MAJOR)
      {
-        ec->illume.quickpanel.fetch.priority.major = 1;
+        ec->comp_data->illume.quickpanel.fetch.priority.major = 1;
         EC_CHANGED(ec);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_QUICKPANEL_PRIORITY_MINOR)
      {
-        ec->illume.quickpanel.fetch.priority.minor = 1;
+        ec->comp_data->illume.quickpanel.fetch.priority.minor = 1;
         EC_CHANGED(ec);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_QUICKPANEL_ZONE)
      {
-        ec->illume.quickpanel.fetch.zone = 1;
+        ec->comp_data->illume.quickpanel.fetch.zone = 1;
         EC_CHANGED(ec);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED)
      {
-        ec->illume.drag.fetch.locked = 1;
+        ec->comp_data->illume.drag.fetch.locked = 1;
         EC_CHANGED(ec);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_DRAG)
      {
-        ec->illume.drag.fetch.drag = 1;
+        ec->comp_data->illume.drag.fetch.drag = 1;
         EC_CHANGED(ec);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_WINDOW_STATE)
      {
-        ec->illume.win_state.fetch.state = 1;
+        ec->comp_data->illume.win_state.fetch.state = 1;
         EC_CHANGED(ec);
      }
    /*
@@ -2049,13 +2014,13 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
 {
    E_Client *ec;
 
-   if (!e_client_comp_grabbed_get()) return ECORE_CALLBACK_RENEW;
    ec = e_client_action_get();
    if (!ec) return ECORE_CALLBACK_RENEW;
+   E_COMP_X_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
    if (e_client_resizing_get(ec) &&
        ec->netwm.sync.request &&
-       ec->netwm.sync.alarm
+       ec->comp_data->alarm
       )
      {
         if ((ecore_loop_time_get() - ec->netwm.sync.send_time) > 0.5)
@@ -2076,8 +2041,8 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
               * when no new resize-request was added by sync-alarm cb.
               */
           }
-        e_client_mouse_move(ec, (Evas_Point*)&ev->root);
      }
+   e_client_mouse_move(ec, (Evas_Point*)&ev->root);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -2178,7 +2143,7 @@ _e_comp_x_sync_alarm(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
    if (ec->netwm.sync.wait)
      ec->netwm.sync.wait--;
 
-   if (ecore_x_sync_counter_query(ec->netwm.sync.counter, &serial))
+   if (ecore_x_sync_counter_query(ec->comp_data->sync_counter, &serial))
      {
         E_Client_Pending_Resize *pnd = NULL;
 
@@ -2686,7 +2651,6 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
                     ecore_x_netwm_window_type_set(win, ECORE_X_WINDOW_TYPE_NORMAL);
                }
              ec->comp_data->set_win_type = 0;
-             ecore_evas_show(ec->internal_ecore_evas);
           }
      }
    if (ec->re_manage || ec->visible)
@@ -3040,8 +3004,8 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                     &ec->icccm.initial_state,
                                     &ec->icccm.icon_pixmap,
                                     &ec->icccm.icon_mask,
-                                    &ec->icccm.icon_window,
-                                    &ec->icccm.window_group,
+                                    (Ecore_X_Window*)&ec->icccm.icon_window,
+                                    (Ecore_X_Window*)&ec->icccm.window_group,
                                     &is_urgent))
           {
              ec->icccm.accepts_focus = accepts_focus;
@@ -3132,7 +3096,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                     {
                        ec->netwm.sync.request = 1;
                        if (!ecore_x_netwm_sync_counter_get(win,
-                                                           &ec->netwm.sync.counter))
+                                                           &ec->comp_data->sync_counter))
                          ec->netwm.sync.request = 0;
                     }
                }
@@ -3330,59 +3294,59 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         ec->vkbd.fetch.vkbd = 0;
         rem_change = 1;
      }
-   if (ec->illume.conformant.fetch.conformant)
+   if (ec->comp_data->illume.conformant.fetch.conformant)
      {
-        ec->illume.conformant.conformant =
+        ec->comp_data->illume.conformant.conformant =
           ecore_x_e_illume_conformant_get(win);
-        ec->illume.conformant.fetch.conformant = 0;
+        ec->comp_data->illume.conformant.fetch.conformant = 0;
      }
-   if (ec->illume.quickpanel.fetch.state)
+   if (ec->comp_data->illume.quickpanel.fetch.state)
      {
-        ec->illume.quickpanel.state =
+        ec->comp_data->illume.quickpanel.state =
           ecore_x_e_illume_quickpanel_state_get(win);
-        ec->illume.quickpanel.fetch.state = 0;
+        ec->comp_data->illume.quickpanel.fetch.state = 0;
      }
-   if (ec->illume.quickpanel.fetch.quickpanel)
+   if (ec->comp_data->illume.quickpanel.fetch.quickpanel)
      {
-        ec->illume.quickpanel.quickpanel =
+        ec->comp_data->illume.quickpanel.quickpanel =
           ecore_x_e_illume_quickpanel_get(win);
-        ec->illume.quickpanel.fetch.quickpanel = 0;
+        ec->comp_data->illume.quickpanel.fetch.quickpanel = 0;
      }
-   if (ec->illume.quickpanel.fetch.priority.major)
+   if (ec->comp_data->illume.quickpanel.fetch.priority.major)
      {
-        ec->illume.quickpanel.priority.major =
+        ec->comp_data->illume.quickpanel.priority.major =
           ecore_x_e_illume_quickpanel_priority_major_get(win);
-        ec->illume.quickpanel.fetch.priority.major = 0;
+        ec->comp_data->illume.quickpanel.fetch.priority.major = 0;
      }
-   if (ec->illume.quickpanel.fetch.priority.minor)
+   if (ec->comp_data->illume.quickpanel.fetch.priority.minor)
      {
-        ec->illume.quickpanel.priority.minor =
+        ec->comp_data->illume.quickpanel.priority.minor =
           ecore_x_e_illume_quickpanel_priority_minor_get(win);
-        ec->illume.quickpanel.fetch.priority.minor = 0;
+        ec->comp_data->illume.quickpanel.fetch.priority.minor = 0;
      }
-   if (ec->illume.quickpanel.fetch.zone)
+   if (ec->comp_data->illume.quickpanel.fetch.zone)
      {
-        ec->illume.quickpanel.zone =
+        ec->comp_data->illume.quickpanel.zone =
           ecore_x_e_illume_quickpanel_zone_get(win);
-        ec->illume.quickpanel.fetch.zone = 0;
+        ec->comp_data->illume.quickpanel.fetch.zone = 0;
      }
-   if (ec->illume.drag.fetch.drag)
+   if (ec->comp_data->illume.drag.fetch.drag)
      {
-        ec->illume.drag.drag =
+        ec->comp_data->illume.drag.drag =
           ecore_x_e_illume_drag_get(win);
-        ec->illume.drag.fetch.drag = 0;
+        ec->comp_data->illume.drag.fetch.drag = 0;
      }
-   if (ec->illume.drag.fetch.locked)
+   if (ec->comp_data->illume.drag.fetch.locked)
      {
-        ec->illume.drag.locked =
+        ec->comp_data->illume.drag.locked =
           ecore_x_e_illume_drag_locked_get(win);
-        ec->illume.drag.fetch.locked = 0;
+        ec->comp_data->illume.drag.fetch.locked = 0;
      }
-   if (ec->illume.win_state.fetch.state)
+   if (ec->comp_data->illume.win_state.fetch.state)
      {
-        ec->illume.win_state.state =
+        ec->comp_data->illume.win_state.state =
           ecore_x_e_illume_window_state_get(win);
-        ec->illume.win_state.fetch.state = 0;
+        ec->comp_data->illume.win_state.fetch.state = 0;
      }
    if (ec->changes.shape)
      {
@@ -3874,8 +3838,12 @@ _e_comp_x_hook_client_focus_unset(void *d EINA_UNUSED, E_Client *ec)
 static void
 _e_comp_x_hook_client_focus_set(void *d EINA_UNUSED, E_Client *ec)
 {
-   E_COMP_X_PIXMAP_CHECK;
    focus_time = ecore_x_current_time_get();
+   if ((e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X))
+     {
+        e_grabinput_focus(ec->comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+        return;
+     }
 
    if ((ec->icccm.take_focus) && (ec->icccm.accepts_focus))
      {
@@ -4009,9 +3977,10 @@ static void
 _e_comp_x_hook_client_resize_end(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
-   if (!ec->netwm.sync.alarm) return;
-   eina_hash_del_by_key(alarm_hash, &ec->netwm.sync.alarm);
-   ecore_x_sync_alarm_free(ec->netwm.sync.alarm);
+   if (!ec->comp_data->alarm) return;
+   eina_hash_del_by_key(alarm_hash, &ec->comp_data->alarm);
+   ecore_x_sync_alarm_free(ec->comp_data->alarm);
+   ec->comp_data->alarm = 0;
    ec->netwm.sync.alarm = 0;
    /* resize to last geometry if sync alarm for it was not yet handled */
    if (ec->pending_resize)
@@ -4029,9 +3998,9 @@ _e_comp_x_hook_client_resize_begin(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
    if (!ec->netwm.sync.request) return;
-   eina_hash_add(alarm_hash, &ec->netwm.sync.alarm, ec);
-   ec->netwm.sync.alarm = ecore_x_sync_alarm_new(ec->netwm.sync.counter);
-   ec->netwm.sync.serial = 1;
+   ec->netwm.sync.alarm = ecore_x_sync_alarm_new(ec->comp_data->sync_counter);
+   eina_hash_add(alarm_hash, &ec->comp_data->alarm, ec);
+   ec->netwm.sync.alarm = ec->netwm.sync.serial = 1;
    ec->netwm.sync.wait = 0;
    ec->netwm.sync.send_time = ecore_loop_time_get();
 }
@@ -4055,6 +4024,70 @@ _e_comp_x_cb_ping(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_X_Event
 
    ec = _e_comp_x_client_find_by_window(ev->event_win);
    if (ec) ec->ping_ok = 1;
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_comp_x_screensaver_idle_timer_cb(void *d __UNUSED__)
+{
+   ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
+   screensaver_idle_timer = NULL;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_comp_x_screensaver_notify_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_X_Event_Screensaver_Notify *ev)
+{
+   static Eina_Bool saver_on = EINA_FALSE;
+   if ((ev->on) && (!saver_on))
+     {
+        saver_on = EINA_TRUE;
+        if (e_config->backlight.idle_dim)
+          {
+             double t = e_config->screensaver_timeout -
+               e_config->backlight.timer;
+
+             if (t < 1.0) t = 1.0;
+             E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
+             if (e_config->screensaver_enable)
+               screensaver_idle_timer = ecore_timer_add
+                   (t, _e_comp_x_screensaver_idle_timer_cb, NULL);
+             if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_DIM)
+               {
+                  e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_DIM);
+                  screensaver_dimmed = EINA_TRUE;
+               }
+          }
+        else
+          {
+             if (!e_screensaver_on_get())
+               ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
+          }
+     }
+   else if ((!ev->on) && (saver_on))
+     {
+        saver_on = EINA_FALSE;
+        if (screensaver_idle_timer)
+          {
+             E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
+             if (e_config->backlight.idle_dim)
+               {
+                  if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_NORMAL)
+                    e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
+               }
+          }
+        else
+          {
+             if (screensaver_dimmed)
+               {
+                  if (e_backlight_mode_get(NULL) != E_BACKLIGHT_MODE_NORMAL)
+                    e_backlight_mode_set(NULL, E_BACKLIGHT_MODE_NORMAL);
+                  screensaver_dimmed = EINA_FALSE;
+               }
+             if (e_screensaver_on_get())
+               ecore_event_add(E_EVENT_SCREENSAVER_OFF, NULL, NULL, NULL);
+          }
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -4653,6 +4686,7 @@ _e_comp_x_screens_setup(void)
           }
         if (!success) break;
         c = e_comp_new();
+        c->comp_type = E_PIXMAP_TYPE_X;
         success = _e_comp_x_setup(c, root, rw, rh);
         if (!success) break;
      }
@@ -4753,7 +4787,13 @@ e_comp_x_init(void)
                          _e_comp_x_cb_frame_extents_request, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_PING,
                          _e_comp_x_cb_ping, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SCREENSAVER_NOTIFY, _e_comp_x_screensaver_notify_cb, NULL);;
 
+   ecore_x_screensaver_custom_blanking_enable();
+
+   e_screensaver_attrs_set(ecore_x_screensaver_timeout_get(),
+                           ecore_x_screensaver_blank_get(),
+                           ecore_x_screensaver_expose_get());
    ecore_x_passive_grab_replay_func_set(_e_comp_x_grab_replay, NULL);
 
    e_client_hook_add(E_CLIENT_HOOK_DESK_SET, _e_comp_x_hook_client_desk_set, NULL);
@@ -4772,6 +4812,8 @@ e_comp_x_init(void)
    e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, _e_comp_x_hook_client_focus_unset, NULL);
    e_client_hook_add(E_CLIENT_HOOK_EVAL_END, _e_comp_x_hook_client_eval_end, NULL);
 
+
+   if (!e_randr_init()) return 0;
    if (!e_atoms_init()) return 0;
    if (!_e_comp_x_screens_setup()) return EINA_FALSE;
    if (!e_xsettings_init())
@@ -4791,8 +4833,10 @@ e_comp_x_shutdown(void)
    E_FREE_FUNC(alarm_hash, eina_hash_free);
    E_FREE_FUNC(frame_extents, eina_hash_free);
    e_xsettings_shutdown();
+   ecore_x_screensaver_custom_blanking_disable();
    if (x_fatal) return;
    e_atoms_shutdown();
+   e_randr_shutdown();
    /* ecore_x_ungrab(); */
    ecore_x_focus_reset();
    ecore_x_events_allow_all();

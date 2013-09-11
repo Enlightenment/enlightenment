@@ -476,15 +476,6 @@ main(int argc, char **argv)
    TS("E_Config Init Done");
    _e_main_shutdown_push(e_config_shutdown);
 
-   TS("E_Randr Init");
-   if (!e_randr_init())
-     {
-        e_error_message_show(_("Enlightenment cannot initialize E_Randr!\n"));
-     }
-   else
-     _e_main_shutdown_push(e_randr_shutdown);
-   TS("E_Randr Init Done");
-
    TS("E_Env Init");
    if (!e_env_init())
      {
@@ -608,6 +599,18 @@ main(int argc, char **argv)
    e_menu_init();
    e_exehist_init();
 
+
+   if (e_config->show_splash)
+     e_init_status_set(_("Setup Screensaver"));
+   TS("E_Screensaver Init");
+   if (!e_screensaver_init())
+     {
+        e_error_message_show(_("Enlightenment cannot configure the X screensaver.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Screensaver Init Done");
+   _e_main_shutdown_push(e_screensaver_shutdown);
+
    if (e_config->show_splash)
      e_init_status_set(_("Setup Screens"));
    TS("Screens Init");
@@ -678,17 +681,6 @@ main(int argc, char **argv)
         _e_main_shutdown(-1);
      }
    TS("E_Backlight Init Done");
-
-   if (e_config->show_splash)
-     e_init_status_set(_("Setup Screensaver"));
-   TS("E_Screensaver Init");
-   if (!e_screensaver_init())
-     {
-        e_error_message_show(_("Enlightenment cannot configure the X screensaver.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_Screensaver Init Done");
-   _e_main_shutdown_push(e_screensaver_shutdown);
 
    if (e_config->show_splash)
      e_init_status_set(_("Setup DPMS"));

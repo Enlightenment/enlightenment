@@ -37,6 +37,7 @@ e_grabinput_shutdown(void)
 EAPI int
 e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
 {
+   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return 1;
    if (grab_mouse_win)
      {
         ecore_x_pointer_ungrab();
@@ -81,6 +82,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
 EAPI void
 e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
 {
+   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return;
    if (mouse_win == grab_mouse_win)
      {
         ecore_x_pointer_ungrab();
@@ -103,6 +105,7 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
 EAPI void
 e_grabinput_focus(Ecore_Window win, E_Focus_Method method)
 {
+   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return;
    if (grab_key_win != 0)
      {
         /* fprintf(stderr, "while grabbed focus changed to %x\n", win); */
