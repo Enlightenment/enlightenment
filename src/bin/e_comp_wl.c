@@ -91,6 +91,12 @@ static void _e_comp_wl_pointer_unmap(E_Wayland_Surface *ews);
 static void _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *resource, unsigned int serial, struct wl_resource *surface_resource, int x, int y);
 static void _e_comp_wl_pointer_cb_release(struct wl_client *client, struct wl_resource *resource);
 
+/* keyboard interface prototypes */
+static void _e_comp_wl_keyboard_cb_release(struct wl_client *client, struct wl_resource *resource);
+
+/* touch interface prototypes */
+static void _e_comp_wl_touch_cb_release(struct wl_client *client, struct wl_resource *resource);
+
 /* region interface prototypes */
 static void _e_comp_wl_region_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource);
 static void _e_comp_wl_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int x, int y, int w, int h);
@@ -133,6 +139,16 @@ static const struct wl_pointer_interface _e_pointer_interface =
 {
    _e_comp_wl_pointer_cb_cursor_set,
    _e_comp_wl_pointer_cb_release
+};
+
+static const struct wl_keyboard_interface _e_keyboard_interface = 
+{
+   _e_comp_wl_keyboard_cb_release
+};
+
+static const struct wl_touch_interface _e_touch_interface = 
+{
+   _e_comp_wl_touch_cb_release
 };
 
 static const struct wl_region_interface _e_region_interface = 
@@ -648,14 +664,6 @@ wl_keyboard_init(struct wl_keyboard *keyboard)
 }
 
 EAPI void 
-wl_keyboard_release(struct wl_keyboard *keyboard)
-{
-   if (keyboard->focus_resource) 
-     wl_list_remove(&keyboard->focus_listener.link);
-   wl_array_release(&keyboard->keys);
-}
-
-EAPI void 
 wl_keyboard_set_focus(struct wl_keyboard *keyboard, struct wl_resource *surface)
 {
    struct wl_resource *resource;
@@ -720,13 +728,6 @@ wl_touch_init(struct wl_touch *touch)
    touch->default_grab.touch = touch;
    touch->grab = &touch->default_grab;
    wl_signal_init(&touch->focus_signal);
-}
-
-EAPI void 
-wl_touch_release(struct wl_touch *touch)
-{
-   if (touch->focus_resource)
-     wl_list_remove(&touch->focus_listener.link);
 }
 
 EAPI void 
@@ -2145,7 +2146,7 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
                             wl_resource_get_version(resource), id);
    wl_list_insert(&input->wl.seat.keyboard->resource_list, 
                   wl_resource_get_link(kbd));
-   wl_resource_set_implementation(kbd, NULL, input, 
+   wl_resource_set_implementation(kbd, &_e_keyboard_interface, input, 
                                   _e_comp_wl_input_cb_unbind);
 
    /* send the current keymap to the keyboard object */
@@ -2184,7 +2185,8 @@ _e_comp_wl_input_cb_touch_get(struct wl_client *client, struct wl_resource *reso
    tch = wl_resource_create(client, &wl_touch_interface, 
                             wl_resource_get_version(resource), id);
    wl_list_insert(&input->wl.seat.touch->resource_list, &tch->link);
-   wl_resource_set_implementation(tch, NULL, input, _e_comp_wl_input_cb_unbind);
+   wl_resource_set_implementation(tch, &_e_touch_interface, input, 
+                                  _e_comp_wl_input_cb_unbind);
 }
 
 /* pointer functions */
@@ -2390,6 +2392,20 @@ _e_comp_wl_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *r
 
 static void 
 _e_comp_wl_pointer_cb_release(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+/* keyboard interface functions */
+static void 
+_e_comp_wl_keyboard_cb_release(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+/* touch interface functions */
+static void 
+_e_comp_wl_touch_cb_release(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    wl_resource_destroy(resource);
 }
