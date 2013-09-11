@@ -1090,16 +1090,29 @@ e_comp_init(void)
       actions = eina_list_append(actions, act);
    }
 
+
+#ifdef HAVE_WAYLAND_CLIENTS
+   {
+      const char *eng;
+      
+      eng = getenv("E_WL_FORCE");
+      if (eng)
+        {
+           char buf[128];
+
+           snprintf(buf, sizeof(buf), "wl_%s", eng);
+           if (e_module_enable(e_module_new(buf)))
+             return EINA_TRUE;
+        }
+   }
+#endif
 #ifndef WAYLAND_ONLY
    if (!e_comp_x_init()) return EINA_FALSE;
 #endif
 #ifdef HAVE_WAYLAND_CLIENTS
-   if (!e_comp_wl_init())
-     {
-        EINA_LOG_ERR("Failed to initialize Wayland Client Support !!");
-        return EINA_FALSE;
-     }
+   e_comp_wl_init();
 #endif
+
    return EINA_TRUE;
 }
 
