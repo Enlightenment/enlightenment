@@ -63,9 +63,9 @@ e_tw_config_new(void)
    cf->allowed_media_fetch_size = 5; // 5 megabytes
    cf->allowed_media_age = 3; // 3 days
 
-   cf->mouse_out_delay = 0.0;
-   cf->popup_size = 10.0;
-   cf->popup_opacity = 90.0;
+   cf->mouse_out_delay = 0.0; // hide instantly
+   cf->popup_size = 60.0; // 60% screen size
+   cf->popup_opacity = 90.0; // 90% opacity
 
    return cf;
 }
