@@ -46,7 +46,7 @@ static void _e_wl_shell_shell_surface_cb_render_post(void *data, Evas *evas EINA
 static void _e_wl_shell_shell_surface_cb_focus_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_wl_shell_shell_surface_cb_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
-static void _e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_wl_shell_shell_surface_cb_mouse_move(void *data, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_wl_shell_shell_surface_cb_mouse_up(void *data, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_wl_shell_shell_surface_cb_mouse_down(void *data, Evas_Object *obj EINA_UNUSED, void *event);
@@ -58,7 +58,7 @@ static void _e_wl_shell_shell_surface_cb_bd_resize_update(void *data, void *bd);
 static void _e_wl_shell_shell_surface_cb_bd_resize_end(void *data, void *bd);
 
 static void _e_wl_shell_mouse_down_helper(E_Border *bd, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev, Eina_Bool move);
-static void _e_wl_shell_mouse_up_helper(E_Border *bd, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev EINA_UNUSED);
+static void _e_wl_shell_mouse_up_helper(E_Border *bd, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev);
 
 /* shell surface interface prototypes */
 static void _e_wl_shell_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, unsigned int serial);
@@ -73,7 +73,7 @@ static void _e_wl_shell_shell_surface_cb_title_set(struct wl_client *client EINA
 static void _e_wl_shell_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *clas);
 
 /* shell move_grab interface prototypes */
-static void _e_wl_shell_move_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_resource *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
+static void _e_wl_shell_move_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_resource *surface, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED);
 static void _e_wl_shell_move_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, wl_fixed_t x, wl_fixed_t y);
 static void _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int timestamp EINA_UNUSED, unsigned int button EINA_UNUSED, unsigned int state);
 
@@ -1186,12 +1186,19 @@ _e_wl_shell_shell_surface_cb_focus_out(void *data, Evas_Object *obj EINA_UNUSED,
    E_Wayland_Surface *ews = NULL;
    E_Wayland_Input *input = NULL;
    Eina_List *l = NULL;
+   struct wl_pointer *ptr;
 
    /* try to cast data to our surface structure */
    if (!(ews = data)) return;
 
    /* if this surface is not visible, get out */
    if (!ews->mapped) return;
+
+   if ((ptr = _e_wl_comp->input->wl.seat.pointer))
+     {
+        if (ews->wl.surface == ptr->current)
+          return;
+     }
 
    /* loop the list of inputs */
    EINA_LIST_FOREACH(_e_wl_comp->seats, l, input)
@@ -1236,13 +1243,20 @@ _e_wl_shell_shell_surface_cb_mouse_in(void *data, Evas_Object *obj EINA_UNUSED, 
 }
 
 static void 
-_e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_e_wl_shell_shell_surface_cb_mouse_out(void *data, Evas_Object *obj EINA_UNUSED, void *event)
 {
    E_Wayland_Surface *ews = NULL;
    struct wl_pointer *ptr = NULL;
+   Evas_Event_Mouse_Out *ev;
+
+   ev = event;
 
    /* try to cast data to our surface structure */
    if (!(ews = data)) return;
+
+   if (E_INSIDE(ev->canvas.x, ev->canvas.y, ews->geometry.x, ews->geometry.y, 
+                ews->geometry.w, ews->geometry.h))
+     return;
 
    /* if (!ews->input) return; */
 
@@ -2093,13 +2107,15 @@ _e_wl_shell_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED, str
 
 /* shell move_grab interface functions */
 static void 
-_e_wl_shell_move_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_resource *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED)
+_e_wl_shell_move_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_resource *surface, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED)
 {
+   struct wl_pointer *ptr;
+
    /* safety */
    if (!grab) return;
 
-   /* remove focus */
-   grab->focus = NULL;
+   ptr = grab->pointer;
+   ptr->current = surface;
 }
 
 static void 
@@ -2140,31 +2156,27 @@ _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int times
        (state == WL_POINTER_BUTTON_STATE_RELEASED))
      {
         E_Wayland_Surface *ews = NULL;
-        E_Binding_Event_Mouse_Button *ev;
+        int btn, x, y;
 
         if (!(ews = ewsg->shell_surface->surface)) return;
 
-        /* create a fake binding event for mouse button */
-        ev = E_NEW(E_Binding_Event_Mouse_Button, 1);
-
         /* set button property of the binding event */
         if (ptr->grab_button == BTN_LEFT)
-          ev->button = 1;
+          btn = 1;
         else if (ptr->grab_button == BTN_MIDDLE)
-          ev->button = 2;
+          btn = 2;
         else if (ptr->grab_button == BTN_RIGHT)
-          ev->button = 3;
+          btn = 3;
 
         /* set the clicked location in the binding event */
-        ev->canvas.x = wl_fixed_to_int(ptr->x) + 
+        x = wl_fixed_to_int(ptr->x) + 
           (ews->bd->x + ews->bd->client_inset.l);
-        ev->canvas.y = wl_fixed_to_int(ptr->y) + 
+        y = wl_fixed_to_int(ptr->y) + 
           (ews->bd->y + ews->bd->client_inset.t);
 
         /* call our helper function to end a move */
-        _e_wl_shell_mouse_up_helper(ews->bd, ev->button, 
-                                    &(Evas_Point){ev->canvas.x, ev->canvas.y}, 
-                                    ev);
+        _e_wl_shell_mouse_up_helper(ews->bd, btn, 
+                                    &(Evas_Point){x, y}, NULL);
 
         /* end the grab */
         _e_wl_shell_grab_end(ewsg);
@@ -2181,11 +2193,13 @@ _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int times
 static void 
 _e_wl_shell_resize_grab_cb_focus(struct wl_pointer_grab *grab, struct wl_resource *surface EINA_UNUSED, wl_fixed_t x EINA_UNUSED, wl_fixed_t y EINA_UNUSED)
 {
+   struct wl_pointer *ptr;
+
    /* safety */
    if (!grab) return;
 
-   /* remove focus */
-   grab->focus = NULL;
+   ptr = grab->pointer;
+   ptr->current = surface;
 }
 
 static void 
@@ -2226,31 +2240,27 @@ _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int tim
        (state == WL_POINTER_BUTTON_STATE_RELEASED))
      {
         E_Wayland_Surface *ews = NULL;
-        E_Binding_Event_Mouse_Button *ev;
+        int btn, x, y;
 
         if (!(ews = ewsg->shell_surface->surface)) return;
 
-        /* create a fake binding event for mouse button */
-        ev = E_NEW(E_Binding_Event_Mouse_Button, 1);
-
         /* set button property of the binding event */
         if (ptr->grab_button == BTN_LEFT)
-          ev->button = 1;
+          btn = 1;
         else if (ptr->grab_button == BTN_MIDDLE)
-          ev->button = 2;
+          btn = 2;
         else if (ptr->grab_button == BTN_RIGHT)
-          ev->button = 3;
+          btn = 3;
 
         /* set the clicked location in the binding event */
-        ev->canvas.x = wl_fixed_to_int(ptr->x) + 
+        x = wl_fixed_to_int(ptr->x) + 
           (ews->bd->x + ews->bd->client_inset.l);
-        ev->canvas.y = wl_fixed_to_int(ptr->y) + 
+        y = wl_fixed_to_int(ptr->y) + 
           (ews->bd->y + ews->bd->client_inset.t);
 
         /* call our helper function to end a move */
-        _e_wl_shell_mouse_up_helper(ews->bd, ev->button, 
-                                    &(Evas_Point){ev->canvas.x, ev->canvas.y}, 
-                                    ev);
+        _e_wl_shell_mouse_up_helper(ews->bd, btn, 
+                                    &(Evas_Point){x, y}, NULL);
 
         /* end the grab */
         _e_wl_shell_grab_end(ewsg);
