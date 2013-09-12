@@ -40,8 +40,8 @@ static void _e_smart_clip_unset(Evas_Object *obj);
 /* local function prototypes */
 static void _e_surface_cb_focus_in(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_surface_cb_focus_out(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNUSED);
-static void _e_surface_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
-static void _e_surface_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
+static void _e_surface_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_surface_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_surface_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_surface_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_surface_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event);
@@ -370,15 +370,15 @@ _e_surface_cb_focus_out(void *data, Evas *evas EINA_UNUSED, void *event EINA_UNU
 }
 
 static void 
-_e_surface_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_e_surface_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
-   evas_object_smart_callback_call(data, "mouse_in", NULL);
+   evas_object_smart_callback_call(data, "mouse_in", event);
 }
 
 static void 
-_e_surface_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+_e_surface_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
-   evas_object_smart_callback_call(data, "mouse_out", NULL);
+   evas_object_smart_callback_call(data, "mouse_out", event);
 }
 
 static void 
