@@ -592,9 +592,7 @@ wl_pointer_set_focus(struct wl_pointer *pointer, struct wl_resource *surface, wl
      }
 
    resource = _find_resource_for_surface(&pointer->resource_list, surface);
-   if (resource &&
-       (pointer->focus != surface ||
-           pointer->focus_resource != resource)) 
+   if (resource)
      {
         struct wl_display *disp;
 
@@ -2249,7 +2247,6 @@ _e_comp_wl_pointer_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y,
    if (!input->wl.seat.pointer->focus) return;
 
    if ((focus = wl_resource_get_user_data(input->wl.seat.pointer->focus)))
-//   if ((focus = (E_Wayland_Surface *)input->wl.seat.pointer->focus))
      {
         /* NB: Ideally, I wanted to use the e_pointer methods here so that 
          * the cursor would match the E theme, however Wayland currently 
