@@ -88,6 +88,7 @@ struct _E_Fm2_Smart_Data
    } new_file;
 
    E_Fm2_Icon      *last_selected;
+   E_Fm2_Icon      *range_selected;
    Eina_List       *selected_icons;
    Eina_List       *icons_place;
    Eina_List       *queue;
@@ -310,6 +311,7 @@ static void          _e_fm2_icon_sel_prev(Evas_Object *obj, Eina_Bool add);
 static void          _e_fm2_icon_sel_next(Evas_Object *obj, Eina_Bool add);
 static void          _e_fm2_icon_sel_down(Evas_Object *obj, Eina_Bool add);
 static void          _e_fm2_icon_sel_up(Evas_Object *obj, Eina_Bool add);
+static void          _e_fm2_icon_range_select(E_Fm2_Icon *ic);
 
 static void          _e_fm2_typebuf_show(Evas_Object *obj);
 static void          _e_fm2_typebuf_hide(Evas_Object *obj);
@@ -5031,6 +5033,7 @@ _e_fm2_icon_select(E_Fm2_Icon *ic)
 {
    E_Fm2_Icon *prev;
    if (ic->selected) return;
+   ic->sd->range_selected = NULL;
    prev = eina_list_last_data_get(ic->sd->selected_icons);
    if (prev) prev->last_selected = EINA_FALSE;
    ic->selected = EINA_TRUE;
@@ -5059,6 +5062,7 @@ static void
 _e_fm2_icon_deselect(E_Fm2_Icon *ic)
 {
    if (!ic->selected) return;
+   ic->sd->range_selected = NULL;
    ic->selected = EINA_FALSE;
    ic->last_selected = EINA_FALSE;
    if (ic->sd->last_selected == ic) ic->sd->last_selected = NULL;
@@ -5430,25 +5434,19 @@ _e_fm2_icon_next_find(Evas_Object *obj, int next, int (*match_func)(E_Fm2_Icon *
      custom = 1;
 
    ic_next = NULL;
-   /* find selected item / current position */
-   EINA_LIST_FOREACH(sd->icons, l, ic)
+  
+   if (custom || match_func)
      {
-        if (ic->selected)
+        EINA_LIST_FOREACH(sd->icons, l, ic)
           {
-             if (!custom && !match_func)
-               {
-                  ic_next = ic;
-               }
-             else
+             if (ic->selected)
                {
                   x = ic->x;
                   y = ic->y;
+                  break;
                }
-             break;
           }
-     }
-   if (next && (custom || match_func))
-     {
+     
         /* find next item in custom grid, or list/grid when match
            func is given */
         if (next == 1)
@@ -5520,10 +5518,19 @@ _e_fm2_icon_next_find(Evas_Object *obj, int next, int (*match_func)(E_Fm2_Icon *
           }
      }
    /* not custom, items are arranged in list order */
-   else if (ic_next)
+   else
      {
+        l = eina_list_data_find_list(sd->icons, (sd->range_selected) ?
+                                     sd->range_selected :
+                                     sd->last_selected);
+        
+        if (next == 0)
+          {
+             if (l) ic_next = eina_list_data_get(l);
+          }
         if (next == 1)
           {
+             if (!l) return eina_list_data_get(sd->icons);
              if (!eina_list_next(l)) return NULL;
              ic_next = eina_list_data_get(eina_list_next(l));
           }
@@ -5544,15 +5551,18 @@ _e_fm2_icon_sel_prev(Evas_Object *obj, Eina_Bool add)
 
    ic_prev = _e_fm2_icon_next_find(obj, -1, NULL, NULL);
 
-   if (!ic_prev)
-     {
-        /* FIXME this is not the bottomright item for custom grid */
-        _e_fm2_icon_sel_last(obj, add);
-        return;
-     }
+   if (!ic_prev) return;
+
    if ((!add) || ic_prev->sd->config->selection.single)
-     _e_fm2_icon_desel_any(obj);
-   _e_fm2_icon_select(ic_prev);
+     {
+        _e_fm2_icon_desel_any(obj);
+        _e_fm2_icon_select(ic_prev);
+     }
+   else
+     {
+         _e_fm2_icon_range_select(ic_prev);
+     }
+   
    evas_object_smart_callback_call(obj, "selection_change", NULL); /*XXX sd->obj*/
    _e_fm2_icon_make_visible(ic_prev);
 }
@@ -5563,15 +5573,18 @@ _e_fm2_icon_sel_next(Evas_Object *obj, Eina_Bool add)
    E_Fm2_Icon *ic_next;
 
    ic_next = _e_fm2_icon_next_find(obj, 1, NULL, NULL);
-   if (!ic_next)
-     {
-        /* FIXME this is not the topleft item for custom grid */
-        _e_fm2_icon_sel_first(obj, add);
-        return;
-     }
+   
+   if (!ic_next) return;
+
    if ((!add) || ic_next->sd->config->selection.single)
-     _e_fm2_icon_desel_any(obj);
-   _e_fm2_icon_select(ic_next);
+      {
+        _e_fm2_icon_desel_any(obj);
+        _e_fm2_icon_select(ic_next);
+     }
+   else
+     {
+         _e_fm2_icon_range_select(ic_next);
+     }
    evas_object_smart_callback_call(obj, "selection_change", NULL);
    _e_fm2_icon_make_visible(ic_next);
 }
@@ -5582,7 +5595,7 @@ _e_fm2_icon_sel_down(Evas_Object *obj, Eina_Bool add)
    E_Fm2_Smart_Data *sd;
    Eina_List *l;
    E_Fm2_Icon *ic, *ic_down;
-   int found, x = -1, y = -1, custom = 0;
+   int x = -1, y = -1, custom = 0;
    int dist, min = 65535;
    char view_mode;
 
@@ -5597,21 +5610,18 @@ _e_fm2_icon_sel_down(Evas_Object *obj, Eina_Bool add)
      custom = 1;
 
    ic_down = NULL;
-   found = 0;
+  
+   ic = (sd->range_selected) ? sd->range_selected : sd->last_selected;
+   
+   if (ic)
+     {
+       x = ic->x;
+       y = ic->y; 
+     }
 
    EINA_LIST_FOREACH(sd->icons, l, ic)
      {
-        if (!found)
-          {
-             if (ic->selected)
-               {
-                  found = 1;
-                  x = ic->x;
-                  y = ic->y;
-                  if (custom) break;
-               }
-          }
-        else if (ic->y > y)
+        if (ic->y > y)
           {
              dist = (abs(ic->x - x)) + (ic->y - y) * 2;
              if (dist < min)
@@ -5645,8 +5655,14 @@ _e_fm2_icon_sel_down(Evas_Object *obj, Eina_Bool add)
         return;
      }
    if ((!add) || ic_down->sd->config->selection.single)
-     _e_fm2_icon_desel_any(obj);
-   _e_fm2_icon_select(ic_down);
+       {
+        _e_fm2_icon_desel_any(obj);
+        _e_fm2_icon_select(ic_down);
+     }
+   else
+     {
+         _e_fm2_icon_range_select(ic_down);
+     }
    evas_object_smart_callback_call(sd->obj, "selection_change", NULL);
    _e_fm2_icon_make_visible(ic_down);
 }
@@ -5674,19 +5690,17 @@ _e_fm2_icon_sel_up(Evas_Object *obj, Eina_Bool add)
 
    ic_up = NULL;
 
+   ic = (sd->range_selected) ? sd->range_selected : sd->last_selected;
+   
+   if (ic)
+     {
+       x = ic->x;
+       y = ic->y; 
+     }
+
    EINA_LIST_REVERSE_FOREACH(sd->icons, l, ic)
      {
-        if (!found)
-          {
-             if (ic->selected)
-               {
-                  found = 1;
-                  x = ic->x;
-                  y = ic->y;
-                  if (custom) break;
-               }
-          }
-        else if (ic->y < y)
+        if (ic->y < y)
           {
              dist = (abs(ic->x - x)) + (y - ic->y) * 2;
              if (dist < min)
@@ -5720,10 +5734,38 @@ _e_fm2_icon_sel_up(Evas_Object *obj, Eina_Bool add)
         return;
      }
    if ((!add) || ic_up->sd->config->selection.single)
-     _e_fm2_icon_desel_any(obj);
-   _e_fm2_icon_select(ic_up);
+       {
+        _e_fm2_icon_desel_any(obj);
+        _e_fm2_icon_select(ic_up);
+     }
+   else
+     {
+         _e_fm2_icon_range_select(ic_up);
+     }
    evas_object_smart_callback_call(sd->obj, "selection_change", NULL);
    _e_fm2_icon_make_visible(ic_up);
+}
+
+static void
+_e_fm2_icon_range_select(E_Fm2_Icon *ic)
+{
+    E_Fm2_Icon *last = ic->sd->last_selected;
+    int trig = 2;
+    _e_fm2_icon_desel_any(ic->sd->obj);
+    
+    const Eina_List *l;
+    E_Fm2_Icon *ic2;
+    if ((last) && (last != ic))
+      {
+         EINA_LIST_FOREACH(ic->sd->icons, l, ic2)
+           {
+              if ((ic2 == last) || (ic2 == ic)) trig--;
+              if ((trig < 2) && (ic2 != last)) _e_fm2_icon_select(ic2);
+              if (!trig) break;
+           }
+      }
+    _e_fm2_icon_select((last) ? last : ic);
+    ic->sd->range_selected = ic;
 }
 
 /* FIXME: prototype */
@@ -7240,39 +7282,7 @@ _e_fm2_mouse_1_handler(E_Fm2_Icon *ic, int up, void *evas_event)
 
    if (range_sel)
      {
-        const Eina_List *l, *l2;
-        E_Fm2_Icon *ic2;
-        Eina_Bool seen = 0;
-        /* find last selected - if any, and select all icons between */
-        EINA_LIST_FOREACH(ic->sd->icons, l, ic2)
-          {
-             if (ic2 == ic) seen = 1;
-             if (ic2->last_selected)
-               {
-                  ic2->last_selected = 0;
-                  if (seen)
-                    {
-                       for (l2 = l, ic2 = l2->data; l2; l2 = l2->prev, ic2 = l2->data)
-                         {
-                            if (ic == ic2) break;
-                            if (!ic2->selected) sel_change = 1;
-                            _e_fm2_icon_select(ic2);
-                            ic2->last_selected = 0;
-                         }
-                    }
-                  else
-                    {
-                       EINA_LIST_FOREACH(l, l2, ic2)
-                         {
-                            if (ic == ic2) break;
-                            if (!ic2->selected) sel_change = 1;
-                            _e_fm2_icon_select(ic2);
-                            ic2->last_selected = 0;
-                         }
-                    }
-                  break;
-               }
-          }
+        if (!up) _e_fm2_icon_range_select(ic);
      }
    else if ((!multi_sel) && ((up) || ((!up) && (!ic->selected))))
      {
