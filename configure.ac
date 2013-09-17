@@ -824,7 +824,7 @@ AC_MSG_CHECKING([whether wayland client support is enabled])
 AC_MSG_RESULT([${e_cv_want_wayland_clients}])
 
 if test "x$e_cv_want_wayland_clients" != "xno";then
-  PKG_CHECK_MODULES([WAYLAND], [wayland-server >= 1.2.0 pixman-1 >= 0.3 xkbcommon >= 0.3.0],
+  PKG_CHECK_MODULES([WAYLAND], [wayland-server >= 1.2.90 pixman-1 >= 0.3 xkbcommon >= 0.3.0],
     [
       have_wayland_clients=yes
       AC_DEFINE_UNQUOTED([HAVE_WAYLAND_CLIENTS],[1],[enable wayland client support])
