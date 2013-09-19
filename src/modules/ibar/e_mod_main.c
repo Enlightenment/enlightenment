@@ -2290,6 +2290,7 @@ _ibar_cb_exec_new_client(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance
    Eina_Bool skip;
 
    if (!exe->desktop) return ECORE_CALLBACK_RENEW; //can't do anything here :(
+   if (!exe->desktop->icon) return ECORE_CALLBACK_RENEW;
    bd = eina_list_last_data_get(exe->borders); //only care about last (new) one
    skip = bd->client.netwm.state.skip_taskbar;
    EINA_LIST_FOREACH(ibars, l, b)
@@ -2325,6 +2326,7 @@ _ibar_cb_exec_new(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
    Eina_Bool skip = EINA_TRUE;
 
    if (!exe->desktop) return ECORE_CALLBACK_RENEW; //can't do anything here :(
+   if (!exe->desktop->icon) return ECORE_CALLBACK_RENEW;
    EINA_LIST_FOREACH(exe->borders, l, bd)
      if (!bd->client.netwm.state.skip_taskbar)
        skip = EINA_FALSE;
