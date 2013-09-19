@@ -6365,7 +6365,7 @@ _e_border_cb_signal_bind(void *data,
    E_Border *bd;
 
    bd = data;
-   if (e_dnd_active()) return;
+   if (e_dnd_active() || e_object_is_del(E_OBJECT(bd))) return;
    e_bindings_signal_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(bd),
                             emission, source);
 }
