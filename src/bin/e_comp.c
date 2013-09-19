@@ -2736,9 +2736,10 @@ _e_comp_win_hide(E_Comp_Win *cw)
         return;
      }
    cw->defer_hide = 0;
-   cw->force = 0;
    _e_comp_child_hide(cw);
-   edje_object_signal_emit(cw->shobj, "e,state,visible,off", "e");
+   if (!cw->force)
+     edje_object_signal_emit(cw->shobj, "e,state,visible,off", "e");
+   cw->force = 0;
 
    if (cw->update_timeout)
      {
