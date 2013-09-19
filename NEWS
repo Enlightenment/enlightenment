@@ -229,3 +229,4 @@ Fixes:
     * fixed crash when multiple windows shared a remember
     * fixed bug where double clicking filemanager windows would not correctly autosize
     * fixed bug where setting min size on a gadget would not be passed to desktop gadgets
+    * fixed bug where new files could not be created repeatedly
