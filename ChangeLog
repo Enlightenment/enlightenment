@@ -1,6 +1,7 @@
 2013-09-19 Mike Blumenkrantz
 
         * Fix bug where new files could not be created repeatedly
+        * Clicking in the filemanager when renaming cancels the rename
 
 2013-08-30 Mike Blumenkrantz
 

@@ -8041,6 +8041,8 @@ _e_fm2_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    sd = data;
    ev = event_info;
    _e_fm2_typebuf_hide(sd->obj);
+   if (sd->iop_icon)
+     _e_fm2_icon_entry_widget_del(sd->iop_icon);
    if (ev->button == 1)
      {
         Eina_List *l;
