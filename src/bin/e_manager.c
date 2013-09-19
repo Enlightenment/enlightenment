@@ -527,7 +527,7 @@ _e_manager_free(E_Manager *man)
 }
 
 static Eina_Bool
-_e_manager_cb_window_show_request(void *data, int ev_type __UNUSED__, void *ev)
+_e_manager_cb_window_show_request(void *data EINA_UNUSED, int ev_type __UNUSED__, void *ev)
 {
    E_Manager *man;
    Ecore_X_Event_Window_Show_Request *e;
