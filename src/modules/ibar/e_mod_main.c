@@ -1393,7 +1393,26 @@ _ibar_icon_go(IBar_Icon *ic, Eina_Bool keep_going)
 {
    if (ic->not_in_order)
      {
-        ecore_job_add((Ecore_Cb)_ibar_cb_icon_menu_cb, ic);
+        Eina_List *l, *ll;
+        E_Exec_Instance *exe;
+        E_Border *bd, *bdlast = NULL;
+        unsigned int count = 0;
+
+        EINA_LIST_FOREACH(ic->exes, l, exe)
+          {
+             EINA_LIST_FOREACH(exe->borders, ll, bd)
+               {
+                  count++;
+                  if (count > 1)
+                    {
+                       ecore_job_add((Ecore_Cb)_ibar_cb_icon_menu_cb, ic);
+                       return;
+                    }
+                  bdlast = bd;
+               }
+          }
+        if (bdlast)
+          e_border_activate(bdlast, 1);
         return;
      }
    if (ic->app->type == EFREET_DESKTOP_TYPE_APPLICATION)
