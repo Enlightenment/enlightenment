@@ -5191,9 +5191,9 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
         x = bd->x;
         y = bd->y;
         if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X)
-          x = e->x;
+          x = e->x - e_border_inset_width_get(bd);
         if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y)
-          y = e->y;
+          y = e->y - e_border_inset_height_get(bd);
         if ((e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W) ||
             (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H))
           {
