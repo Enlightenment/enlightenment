@@ -540,15 +540,17 @@ group { name: "e/comp/border/default/fast";
       }
       program {
          name: "focus_on";
-         transition: SINUSOIDAL 0.1;
-         target: "glow";
-         after: "focus2";
-      }
-      program {
-         name: "focus_on2";
          signal: "e,state,focus,on"; source: "e";
          action: STATE_SET "focused" 0.0;
+         transition: SINUSOIDAL 0.1;
+         target: "glow";
          target: "focus-clipper";
+         after: "focus2";
+      }
+      program { name: "focus2";
+         action: STATE_SET "default" 0.0;
+         transition: SINUSOIDAL 0.1;
+         target: "glow";
       }
       program {
          name: "focus_off";
