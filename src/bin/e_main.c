@@ -726,7 +726,6 @@ main(int argc, char **argv)
         _e_main_shutdown(-1);
      }
    TS("E_Backlight Init Done");
-   _e_main_shutdown_push(e_backlight_shutdown);
 
    if (e_config->show_splash)
      e_init_status_set(_("Setup Screensaver"));
@@ -1762,6 +1761,7 @@ _e_main_screens_shutdown(void)
    e_focus_shutdown();
    e_exehist_shutdown();
    e_menu_shutdown();
+   e_backlight_shutdown();
 // ecore_evas closes evas - deletes objs - deletes fm widgets which tries to
 // ipc to slave to stop monitoring - but ipc has been shut down. dont shut
 // down.
