@@ -211,26 +211,22 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
      val = 1.0;
    if ((val == bl_val) && (!bl_anim)) return;
    if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
+   ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
    bl_now = bl_val;
    bl_val = val;
+   if (fabs(tim) < DBL_EPSILON)
+     {
+        _e_backlight_set(zone, val);
+        return;
+     }
 //   if (e_config->backlight.mode != E_BACKLIGHT_MODE_NORMAL) return;
    if (e_config->backlight.mode == E_BACKLIGHT_MODE_NORMAL)
      tim = 0.5;
    else
    if (tim < 0.0)
      tim = e_config->backlight.transition;
-   ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
-   if (tim == 0.0)
-     {
-        if (bl_anim)
-          {
-             ecore_animator_del(bl_anim);
-             bl_anim = NULL;
-          }
-        _e_backlight_set(zone, val);
-        return;
-     }
-   if (bl_anim) ecore_animator_del(bl_anim);
+
+   E_FREE_FUNC(bl_anim, ecore_animator_del);
    bl_anim = ecore_animator_timeline_add(tim, _bl_anim, zone);
    bl_animval = bl_now;
 }
