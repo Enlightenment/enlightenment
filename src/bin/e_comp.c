@@ -3490,7 +3490,7 @@ _e_comp_screens_eval(E_Comp *c)
                {
                   if (e_backlight_mode_get(cz->zone) != E_BACKLIGHT_MODE_NORMAL)
                     e_backlight_mode_set(cz->zone, E_BACKLIGHT_MODE_NORMAL);
-                  e_backlight_level_set(cz->zone, e_config->backlight.normal, 0.0);
+                  e_backlight_level_set(cz->zone, e_config->backlight.normal, -1.0);
                }
           }
         if (cz->zone) cz->zone->comp_zone = NULL;
