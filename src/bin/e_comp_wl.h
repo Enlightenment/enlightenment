@@ -111,9 +111,8 @@ struct wl_pointer
    struct wl_seat *seat;
 
    struct wl_list resource_list;
+   struct wl_list focus_resource_list;
    struct wl_resource *focus;
-   struct wl_resource *focus_resource;
-   struct wl_listener focus_listener;
    unsigned int focus_serial;
    struct wl_signal focus_signal;
 
@@ -137,9 +136,8 @@ struct wl_keyboard
    struct wl_seat *seat;
 
    struct wl_list resource_list;
+   struct wl_list focus_resource_list;
    struct wl_resource *focus;
-   struct wl_resource *focus_resource;
-   struct wl_listener focus_listener;
    unsigned int focus_serial;
    struct wl_signal focus_signal;
 
@@ -165,9 +163,8 @@ struct wl_touch
    struct wl_seat *seat;
 
    struct wl_list resource_list;
+   struct wl_list focus_resource_list;
    struct wl_resource *focus;
-   struct wl_resource *focus_resource;
-   struct wl_listener focus_listener;
    unsigned int focus_serial;
    struct wl_signal focus_signal;
 
