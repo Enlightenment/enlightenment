@@ -2307,7 +2307,7 @@ _e_wl_shell_popup_grab_cb_motion(struct wl_pointer_grab *grab, unsigned int time
 {
    struct wl_resource *res;
 
-   if ((res = grab->pointer->focus_resource))
+   wl_resource_for_each(res, &grab->pointer->focus_resource_list)
      wl_pointer_send_motion(res, timestamp, x, y);
 }
 
@@ -2316,20 +2316,21 @@ _e_wl_shell_popup_grab_cb_button(struct wl_pointer_grab *grab, unsigned int time
 {
    E_Wayland_Shell_Surface *ewss = NULL;
    struct wl_resource *res;
+   struct wl_list *lst;
 
    /* try to get the shell surface */
    ewss = container_of(grab, E_Wayland_Shell_Surface, popup.grab);
    if (!ewss) return;
 
-   if ((res = grab->pointer->focus_resource))
+   lst = &grab->pointer->focus_resource_list;
+   if (!wl_list_empty(lst))
      {
-        struct wl_display *disp;
-        unsigned int serial;
+        uint32_t serial;
 
-        disp = wl_client_get_display(wl_resource_get_client(res));
-        serial = wl_display_get_serial(disp);
+        serial = wl_display_get_serial(_e_wl_comp->wl.display);
 
-        wl_pointer_send_button(res, serial, timestamp, button, state);
+        wl_resource_for_each(res, lst)
+          wl_pointer_send_button(res, serial, timestamp, button, state);
      }
    else if ((state = WL_POINTER_BUTTON_STATE_RELEASED) && 
             ((ewss->popup.up) || 
