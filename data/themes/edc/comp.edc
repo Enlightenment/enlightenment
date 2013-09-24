@@ -718,11 +718,10 @@ group { name: "e/comp/border/fullscreen";
             visible: 1;
          }
       }
-      part { name: "shower"; type: RECT;
+      part { name: "shower"; type: SPACER;
          description { state: "default" 0.0;
             rel1.relative: 0.5 0.5;
             rel2.relative: 0.5 0.5;
-            visible: 0;
          }
          description { state: "visible1" 0.0;
             inherit: "default" 0.0;
