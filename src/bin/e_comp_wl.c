@@ -909,7 +909,7 @@ e_comp_wl_input_modifiers_update(unsigned int serial)
 static void
 _seat_send_updated_caps(struct wl_seat *seat)
 {
-   struct wl_list *lst;
+   struct wl_resource *res;
    enum wl_seat_capability caps = 0;
 
    if (seat->pointer)
@@ -919,9 +919,8 @@ _seat_send_updated_caps(struct wl_seat *seat)
    if (seat->touch)
      caps |= WL_SEAT_CAPABILITY_TOUCH;
 
-   for (lst = seat->base_resource_list.next; 
-        lst != &seat->base_resource_list; lst = lst->next)
-     wl_seat_send_capabilities(wl_resource_from_link(lst), caps);
+   wl_resource_for_each(res, &seat->base_resource_list)
+     wl_seat_send_capabilities(res, caps);
 }
 
 static void
