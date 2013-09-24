@@ -5,9 +5,8 @@
 
 /* compositor function prototypes */
 static void _seat_send_updated_caps(struct wl_seat *seat);
-static void _lose_pointer_focus(struct wl_listener *listener, void *data EINA_UNUSED);
-static void _lose_keyboard_focus(struct wl_listener *listener, void *data EINA_UNUSED);
-static void _lose_touch_focus(struct wl_listener *listener, void *data EINA_UNUSED);
+static void _move_resources(struct wl_list *dest, struct wl_list *src);
+static void _move_resources_for_client(struct wl_list *dest, struct wl_list *src, struct wl_client *client);
 
 static struct wl_resource *_find_resource_for_surface(struct wl_list *list, struct wl_resource *surface);
 
@@ -501,25 +500,25 @@ wl_seat_init(struct wl_seat *seat)
 EAPI void 
 wl_seat_release(struct wl_seat *seat)
 {
+   /* if (seat->pointer) */
+   /*   { */
+   /*      if (seat->pointer->focus) */
+   /*        wl_list_remove(&seat->pointer->focus_listener.link); */
+   /*   } */
+
+   /* if (seat->keyboard) */
+   /*   { */
+   /*      if (seat->keyboard->focus) */
+   /*        wl_list_remove(&seat->keyboard->focus_listener.link); */
+   /*   } */
+
+   /* if (seat->touch) */
+   /*   { */
+   /*      if (seat->touch->focus) */
+   /*        wl_list_remove(&seat->touch->focus_listener.link); */
+   /*   } */
+
    wl_signal_emit(&seat->destroy_signal, seat);
-
-   if (seat->pointer)
-     {
-        if (seat->pointer->focus_resource)
-          wl_list_remove(&seat->pointer->focus_listener.link);
-     }
-
-   if (seat->keyboard)
-     {
-        if (seat->keyboard->focus_resource)
-          wl_list_remove(&seat->keyboard->focus_listener.link);
-     }
-
-   if (seat->touch)
-     {
-        if (seat->touch->focus_resource)
-          wl_list_remove(&seat->touch->focus_listener.link);
-     }
 }
 
 EAPI void 
@@ -563,7 +562,7 @@ wl_pointer_init(struct wl_pointer *pointer)
 {
    memset(pointer, 0, sizeof *pointer);
    wl_list_init(&pointer->resource_list);
-   pointer->focus_listener.notify = _lose_pointer_focus;
+   wl_list_init(&pointer->focus_resource_list);
    pointer->default_grab.interface = &_e_pointer_grab_interface;
    pointer->default_grab.pointer = pointer;
    pointer->grab = &pointer->default_grab;
@@ -577,47 +576,51 @@ EAPI void
 wl_pointer_set_focus(struct wl_pointer *pointer, struct wl_resource *surface, wl_fixed_t sx, wl_fixed_t sy)
 {
    struct wl_keyboard *kbd = pointer->seat->keyboard;
-   struct wl_resource *resource, *kr;
+   struct wl_resource *res;
+   struct wl_list *lst;
    uint32_t serial;
 
-   resource = pointer->focus_resource;
-   if (resource && pointer->focus != surface) 
+   lst = &pointer->focus_resource_list;
+   if ((!wl_list_empty(lst)) && (pointer->focus != surface))
      {
-        struct wl_display *disp;
+        serial = wl_display_next_serial(_e_wl_comp->wl.display);
+        wl_resource_for_each(res, lst)
+          wl_pointer_send_leave(res, serial, pointer->focus);
 
-        disp = wl_client_get_display(wl_resource_get_client(resource));
-        serial = wl_display_next_serial(disp);
-        wl_pointer_send_leave(resource, serial, pointer->focus);
-        wl_list_remove(&pointer->focus_listener.link);
+        _move_resources(&pointer->resource_list, lst);
      }
 
-   resource = _find_resource_for_surface(&pointer->resource_list, surface);
-   if (resource)
+   if ((_find_resource_for_surface(&pointer->resource_list, surface)) && 
+       (pointer->focus != surface))
      {
-        struct wl_display *disp;
+        struct wl_client *client;
 
-        disp = wl_client_get_display(wl_resource_get_client(resource));
-        serial = wl_display_next_serial(disp);
-        if (kbd) 
-          {
-             kr = _find_resource_for_surface(&kbd->resource_list, surface);
-             if (kr) 
-               {
-                  wl_keyboard_send_modifiers(kr,
-                                             serial,
-                                             kbd->modifiers.mods_depressed,
-                                             kbd->modifiers.mods_latched,
-                                             kbd->modifiers.mods_locked,
-                                             kbd->modifiers.group);
-               }
-          }
+        client = wl_resource_get_client(surface);
+        _move_resources_for_client(lst, &pointer->resource_list, client);
 
-        wl_pointer_send_enter(resource, serial, surface, sx, sy);
-        wl_resource_add_destroy_listener(resource, &pointer->focus_listener);
+        wl_resource_for_each(res, lst)
+          wl_pointer_send_enter(res, serial, surface, sx, sy);
+
         pointer->focus_serial = serial;
      }
 
-   pointer->focus_resource = resource;
+   if ((kbd) && (surface) && (kbd->focus != pointer->focus))
+     {
+        struct wl_client *client;
+
+        client = wl_resource_get_client(surface);
+
+        wl_resource_for_each(res, &kbd->resource_list)
+          {
+             if (wl_resource_get_client(res) == client)
+               wl_keyboard_send_modifiers(res, serial,
+                                          kbd->modifiers.mods_depressed,
+                                          kbd->modifiers.mods_latched,
+                                          kbd->modifiers.mods_locked,
+                                          kbd->modifiers.group);
+          }
+     }
+
    pointer->focus = surface;
    pointer->default_grab.focus = surface;
    wl_signal_emit(&pointer->focus_signal, pointer);
@@ -654,7 +657,7 @@ wl_keyboard_init(struct wl_keyboard *keyboard)
    memset(keyboard, 0, sizeof *keyboard);
    wl_list_init(&keyboard->resource_list);
    wl_array_init(&keyboard->keys);
-   keyboard->focus_listener.notify = _lose_keyboard_focus;
+   wl_list_init(&keyboard->focus_resource_list);
    keyboard->default_grab.interface = &_e_default_keyboard_grab_interface;
    keyboard->default_grab.keyboard = keyboard;
    keyboard->grab = &keyboard->default_grab;
@@ -664,41 +667,45 @@ wl_keyboard_init(struct wl_keyboard *keyboard)
 EAPI void 
 wl_keyboard_set_focus(struct wl_keyboard *keyboard, struct wl_resource *surface)
 {
-   struct wl_resource *resource;
+   struct wl_resource *res;
+   struct wl_list *lst;
    uint32_t serial;
 
-   if (keyboard->focus_resource && keyboard->focus != surface) 
-     {
-        struct wl_display *disp;
+   lst = &keyboard->focus_resource_list;
 
-        disp = wl_client_get_display(wl_resource_get_client(keyboard->focus_resource));
-        serial = wl_display_next_serial(disp);
-        resource = keyboard->focus_resource;
-        wl_keyboard_send_leave(resource, serial, keyboard->focus);
-        wl_list_remove(&keyboard->focus_listener.link);
+   if ((!wl_list_empty(lst)) && (keyboard->focus != surface))
+     {
+        serial = wl_display_next_serial(_e_wl_comp->wl.display);
+
+        wl_resource_for_each(res, lst)
+          wl_keyboard_send_leave(res, serial, keyboard->focus);
+
+        _move_resources(&keyboard->resource_list, lst);
      }
 
-   resource = _find_resource_for_surface(&keyboard->resource_list,
-                                         surface);
-   if (resource &&
-       (keyboard->focus != surface ||
-           keyboard->focus_resource != resource)) 
-     {
-        struct wl_display *disp;
+   if ((_find_resource_for_surface(&keyboard->resource_list, surface)) && 
+       (keyboard->focus != surface))
+     {       
+        struct wl_client *client;
 
-        disp = wl_client_get_display(wl_resource_get_client(resource));
-        serial = wl_display_next_serial(disp);
-        wl_keyboard_send_modifiers(resource, serial,
-                                   keyboard->modifiers.mods_depressed,
-                                   keyboard->modifiers.mods_latched,
-                                   keyboard->modifiers.mods_locked,
-                                   keyboard->modifiers.group);
-        wl_keyboard_send_enter(resource, serial, surface, &keyboard->keys);
-        wl_resource_add_destroy_listener(resource, &keyboard->focus_listener);
+        client = wl_resource_get_client(surface);
+        serial = wl_display_next_serial(_e_wl_comp->wl.display);
+
+        _move_resources_for_client(lst, &keyboard->resource_list, client);
+
+        wl_resource_for_each(res, lst)
+          {
+             wl_keyboard_send_modifiers(res, serial,
+                                        keyboard->modifiers.mods_depressed,
+                                        keyboard->modifiers.mods_latched,
+                                        keyboard->modifiers.mods_locked,
+                                        keyboard->modifiers.group);
+             wl_keyboard_send_enter(res, serial, surface, &keyboard->keys);
+          }
+
         keyboard->focus_serial = serial;
      }
 
-   keyboard->focus_resource = resource;
    keyboard->focus = surface;
    wl_signal_emit(&keyboard->focus_signal, keyboard);
 }
@@ -721,7 +728,7 @@ wl_touch_init(struct wl_touch *touch)
 {
    memset(touch, 0, sizeof *touch);
    wl_list_init(&touch->resource_list);
-   touch->focus_listener.notify = _lose_touch_focus;
+   wl_list_init(&touch->focus_resource_list);
    touch->default_grab.interface = &_e_default_touch_grab_interface;
    touch->default_grab.touch = touch;
    touch->grab = &touch->default_grab;
@@ -749,7 +756,7 @@ wl_data_device_set_keyboard_focus(struct wl_seat *seat)
 
    if (!seat->keyboard) return;
 
-   focus = seat->keyboard->focus_resource;
+   focus = seat->keyboard->focus;
    if (!focus) return;
 
    data_device = 
@@ -822,7 +829,7 @@ wl_seat_set_selection(struct wl_seat *seat, struct wl_data_source *source, uint3
    seat->selection_data_source = source;
    seat->selection_serial = serial;
    if (seat->keyboard)
-     focus = seat->keyboard->focus_resource;
+     focus = seat->keyboard->focus;
    if (focus) 
      {
         data_device = 
@@ -923,28 +930,26 @@ _seat_send_updated_caps(struct wl_seat *seat)
      wl_seat_send_capabilities(res, caps);
 }
 
-static void
-_lose_pointer_focus(struct wl_listener *listener, void *data EINA_UNUSED)
+static void 
+_move_resources(struct wl_list *dest, struct wl_list *src)
 {
-   struct wl_pointer *pointer =
-     container_of(listener, struct wl_pointer, focus_listener);
-   pointer->focus_resource = NULL;
+   wl_list_insert_list(dest, src);
+   wl_list_init(src);
 }
 
-static void
-_lose_keyboard_focus(struct wl_listener *listener, void *data EINA_UNUSED)
+static void 
+_move_resources_for_client(struct wl_list *dest, struct wl_list *src, struct wl_client *client)
 {
-   struct wl_keyboard *keyboard =
-     container_of(listener, struct wl_keyboard, focus_listener);
-   keyboard->focus_resource = NULL;
-}
+   struct wl_resource *res, *tmp;
 
-static void
-_lose_touch_focus(struct wl_listener *listener, void *data EINA_UNUSED)
-{
-   struct wl_touch *touch =
-     container_of(listener, struct wl_touch, focus_listener);
-   touch->focus_resource = NULL;
+   wl_resource_for_each_safe(res, tmp, src)
+     {
+        if (wl_resource_get_client(res) == client)
+          {
+             wl_list_remove(wl_resource_get_link(res));
+             wl_list_insert(dest, wl_resource_get_link(res));
+          }
+     }
 }
 
 static struct wl_resource *
@@ -968,61 +973,64 @@ _default_grab_focus(struct wl_pointer_grab *grab, struct wl_resource *surface, w
 static void
 _default_grab_motion(struct wl_pointer_grab *grab, uint32_t timestamp, wl_fixed_t x, wl_fixed_t y)
 {
-   struct wl_resource *resource;
+   struct wl_list *lst;
+   struct wl_resource *res;
 
-   resource = grab->pointer->focus_resource;
-   if (resource)
-     wl_pointer_send_motion(resource, timestamp, x, y);
+   lst = &grab->pointer->focus_resource_list;
+   wl_resource_for_each(res, lst)
+     wl_pointer_send_motion(res, timestamp, x, y);
 }
 
 static void
 _default_grab_button(struct wl_pointer_grab *grab, uint32_t timestamp, uint32_t button, uint32_t state_w)
 {
    struct wl_pointer *pointer = grab->pointer;
-   struct wl_resource *resource;
-   uint32_t serial;
+   struct wl_list *lst;
+   struct wl_resource *res;
    enum wl_pointer_button_state state = state_w;
 
-   resource = pointer->focus_resource;
-   if (resource) 
+   lst = &pointer->focus_resource_list;
+   if (!wl_list_empty(lst))
      {
-        struct wl_display *disp;
+        uint32_t serial;
 
-        disp = wl_client_get_display(wl_resource_get_client(resource));
-        serial = wl_display_next_serial(disp);
+        serial = wl_display_next_serial(_e_wl_comp->wl.display);
 
-        switch (button)
+        wl_resource_for_each(res, lst)
           {
-           case BTN_LEFT:
-           case BTN_MIDDLE:
-           case BTN_RIGHT:
-             wl_pointer_send_button(resource, serial, timestamp, 
-                                    button, state_w);
-             break;
-           case 4:
-             if (state_w)
-               wl_pointer_send_axis(resource, timestamp, 
-                                    WL_POINTER_AXIS_VERTICAL_SCROLL, 
-                                    -wl_fixed_from_int(1));
-             break;
-           case 5:
-             if (state_w)
-               wl_pointer_send_axis(resource, timestamp, 
-                                    WL_POINTER_AXIS_VERTICAL_SCROLL, 
-                                    wl_fixed_from_int(1));
-             break;
-           case 6:
-             if (state_w)
-               wl_pointer_send_axis(resource, timestamp, 
-                                    WL_POINTER_AXIS_HORIZONTAL_SCROLL, 
-                                    -wl_fixed_from_int(1));
-             break;
-           case 7:
-             if (state_w)
-               wl_pointer_send_axis(resource, timestamp, 
-                                    WL_POINTER_AXIS_HORIZONTAL_SCROLL, 
-                                    wl_fixed_from_int(1));
-             break;
+             switch (button)
+               {
+                case BTN_LEFT:
+                case BTN_MIDDLE:
+                case BTN_RIGHT:
+                  wl_pointer_send_button(res, serial, timestamp, 
+                                         button, state_w);
+                  break;
+                case 4:
+                  if (state_w)
+                    wl_pointer_send_axis(res, timestamp, 
+                                         WL_POINTER_AXIS_VERTICAL_SCROLL, 
+                                         -wl_fixed_from_int(1));
+                  break;
+                case 5:
+                  if (state_w)
+                    wl_pointer_send_axis(res, timestamp, 
+                                         WL_POINTER_AXIS_VERTICAL_SCROLL, 
+                                         wl_fixed_from_int(1));
+                  break;
+                case 6:
+                  if (state_w)
+                    wl_pointer_send_axis(res, timestamp, 
+                                         WL_POINTER_AXIS_HORIZONTAL_SCROLL, 
+                                         -wl_fixed_from_int(1));
+                  break;
+                case 7:
+                  if (state_w)
+                    wl_pointer_send_axis(res, timestamp, 
+                                         WL_POINTER_AXIS_HORIZONTAL_SCROLL, 
+                                         wl_fixed_from_int(1));
+                  break;
+               }
           }
      }
 
@@ -1035,48 +1043,50 @@ _default_grab_button(struct wl_pointer_grab *grab, uint32_t timestamp, uint32_t 
 static void 
 _default_grab_touch_down(struct wl_touch_grab *grab, uint32_t timestamp, int touch_id, wl_fixed_t sx, wl_fixed_t sy)
 {
+   struct wl_resource *res;
+   struct wl_list *lst;
    struct wl_touch *touch = grab->touch;
-   uint32_t serial;
 
-   if (touch->focus_resource && touch->focus) 
+   lst = &touch->focus_resource_list;
+   if (!wl_list_empty(lst) && (touch->focus))
      {
-        struct wl_display *disp;
+        uint32_t serial;
 
-        disp = wl_client_get_display(wl_resource_get_client(touch->focus_resource));
-        serial = wl_display_next_serial(disp);
-
-        wl_touch_send_down(touch->focus_resource, serial, timestamp,
-                           touch->focus, touch_id, sx, sy);
+        serial = wl_display_next_serial(_e_wl_comp->wl.display);
+        wl_resource_for_each(res, lst)
+          wl_touch_send_down(res, serial, timestamp,
+                             touch->focus, touch_id, sx, sy);
      }
 }
 
 static void 
 _default_grab_touch_up(struct wl_touch_grab *grab, uint32_t timestamp, int touch_id)
 {
+   struct wl_resource *res;
+   struct wl_list *lst;
    struct wl_touch *touch = grab->touch;
-   uint32_t serial;
 
-   if (touch->focus_resource) 
+   lst = &touch->focus_resource_list;
+   if (!wl_list_empty(lst) && (touch->focus))
      {
-        struct wl_display *disp;
+        uint32_t serial;
 
-        disp = wl_client_get_display(wl_resource_get_client(touch->focus_resource));
-        serial = wl_display_next_serial(disp);
-
-        wl_touch_send_up(touch->focus_resource, serial, timestamp, touch_id);
+        serial = wl_display_next_serial(_e_wl_comp->wl.display);
+        wl_resource_for_each(res, lst)
+          wl_touch_send_up(res, serial, timestamp, touch_id);
      }
 }
 
 static void 
 _default_grab_touch_motion(struct wl_touch_grab *grab, uint32_t timestamp, int touch_id, wl_fixed_t sx, wl_fixed_t sy)
 {
+   struct wl_resource *res;
+   struct wl_list *lst;
    struct wl_touch *touch = grab->touch;
 
-   if (touch->focus_resource) 
-     {
-        wl_touch_send_motion(touch->focus_resource, timestamp,
-                             touch_id, sx, sy);
-     }
+   lst = &touch->focus_resource_list;
+   wl_resource_for_each(res, lst)
+     wl_touch_send_motion(res, timestamp, touch_id, sx, sy);
 }
 
 static void
@@ -1204,15 +1214,17 @@ static void
 _default_grab_key(struct wl_keyboard_grab *grab, uint32_t timestamp, uint32_t key, uint32_t state)
 {
    struct wl_keyboard *keyboard = grab->keyboard;
-   struct wl_resource *resource;
+   struct wl_resource *res;
+   struct wl_list *lst;
 
-   resource = keyboard->focus_resource;
-   if (resource) 
+   lst = &keyboard->focus_resource_list;
+   if (!wl_list_empty(lst))
      {
         uint32_t serial;
 
         serial = wl_display_next_serial(_e_wl_comp->wl.display);
-        wl_keyboard_send_key(resource, serial, timestamp, key, state);
+        wl_resource_for_each(res, lst)
+          wl_keyboard_send_key(res, serial, timestamp, key, state);
      }
 }
 
@@ -1221,27 +1233,25 @@ _default_grab_modifiers(struct wl_keyboard_grab *grab, uint32_t serial, uint32_t
 {
    struct wl_keyboard *keyboard = grab->keyboard;
    struct wl_pointer *pointer = keyboard->seat->pointer;
-   struct wl_resource *resource, *pr;
+   struct wl_resource *res;
+   struct wl_list *lst;
 
-   if (!(resource = keyboard->focus_resource))
-     return;
-
-   wl_keyboard_send_modifiers(resource, serial, mods_depressed,
-                              mods_latched, mods_locked, group);
+   lst = &keyboard->focus_resource_list;
+   wl_resource_for_each(res, lst)
+     wl_keyboard_send_modifiers(res, serial, mods_depressed, mods_latched,
+                                mods_locked, group);
 
    if (pointer && pointer->focus && pointer->focus != keyboard->focus) 
      {
-        pr = 
-          wl_resource_find_for_client(&keyboard->resource_list, 
-                                      wl_resource_get_client(pointer->focus));
-        if (pr) 
+        struct wl_client *client;
+
+        lst = &keyboard->resource_list;
+        client = wl_resource_get_client(pointer->focus);
+        wl_resource_for_each(res, lst)
           {
-             wl_keyboard_send_modifiers(pr,
-                                        serial,
-                                        keyboard->modifiers.mods_depressed,
-                                        keyboard->modifiers.mods_latched,
-                                        keyboard->modifiers.mods_locked,
-                                        keyboard->modifiers.group);
+             if (wl_resource_get_client(res) == client)
+               wl_keyboard_send_modifiers(res, serial, mods_depressed, 
+                                          mods_latched, mods_locked, group);
           }
      }
 }
@@ -1319,8 +1329,9 @@ _destroy_selection_data_source(struct wl_listener *listener, void *data EINA_UNU
    seat->selection_data_source = NULL;
 
    if (seat->keyboard)
-     focus = seat->keyboard->focus_resource;
-   if (focus) 
+     focus = seat->keyboard->focus;
+
+   if (focus)
      {
         data_device = 
           wl_resource_find_for_client(&seat->drag_resource_list,
@@ -1700,14 +1711,12 @@ _e_comp_wl_cb_surface_destroy(struct wl_resource *resource)
      return;
 
    pointer = &_e_wl_comp->input->wl.pointer;
-   if ((pointer->focus == resource) || 
-       (pointer->focus_resource == resource))
+   if (pointer->focus == resource)
      {
         wl_pointer_set_focus(pointer, NULL,
                              wl_fixed_from_int(0), wl_fixed_from_int(0));
 
-//        if (_e_wl_comp->input->pointer.surface == ews)
-          _e_wl_comp->input->pointer.surface = NULL;
+        _e_wl_comp->input->pointer.surface = NULL;
      }
 
    /* if this surface is mapped, unmap it */
@@ -2132,10 +2141,14 @@ _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *re
        (wl_resource_get_client(input->wl.seat.pointer->focus) == client))
      {
         /* tell pointer which surface is focused */
-        wl_pointer_set_focus(input->wl.seat.pointer, 
-                             input->wl.seat.pointer->focus, 
-                             input->wl.seat.pointer->x, 
-                             input->wl.seat.pointer->y);
+        wl_list_remove(wl_resource_get_link(ptr));
+        wl_list_insert(&input->wl.seat.pointer->focus_resource_list, 
+                       wl_resource_get_link(ptr));
+
+        wl_pointer_send_enter(ptr, input->wl.seat.pointer->focus_serial, 
+                              input->wl.seat.pointer->focus, 
+                              input->wl.seat.pointer->x, 
+                              input->wl.seat.pointer->y);
      }
 }
 
@@ -2164,16 +2177,35 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
    wl_keyboard_send_keymap(kbd, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, 
                            input->xkb.info->fd, input->xkb.info->size);
 
+   if (((input->wl.seat.keyboard) && (input->wl.seat.keyboard->focus) && 
+        (wl_resource_get_client(input->wl.seat.keyboard->focus) == client)) || 
+       ((input->wl.seat.pointer) && (input->wl.seat.pointer->focus) && 
+           (wl_resource_get_client(input->wl.seat.pointer->focus) == client)))
+     {
+        wl_keyboard_send_modifiers(kbd, input->wl.seat.keyboard->focus_serial,
+                                   input->wl.seat.keyboard->modifiers.mods_depressed,
+                                   input->wl.seat.keyboard->modifiers.mods_latched,
+                                   input->wl.seat.keyboard->modifiers.mods_locked,
+                                   input->wl.seat.keyboard->modifiers.group);
+     }
+
    /* test if keyboard has a focused client */
    if ((input->wl.seat.keyboard->focus) && 
        (wl_resource_get_client(input->wl.seat.keyboard->focus) == client))
      {
-        /* set keyboard focus */
-        wl_keyboard_set_focus(input->wl.seat.keyboard, 
-                              input->wl.seat.keyboard->focus);
+        wl_list_remove(wl_resource_get_link(kbd));
+        wl_list_insert(&input->wl.seat.keyboard->focus_resource_list, 
+                       wl_resource_get_link(kbd));
+        wl_keyboard_send_enter(kbd, input->wl.seat.keyboard->focus_serial, 
+                               input->wl.seat.keyboard->focus, 
+                               &input->wl.seat.keyboard->keys);
 
-        /* update the keyboard focus in the data device */
-        wl_data_device_set_keyboard_focus(&input->wl.seat);
+        if (input->wl.seat.keyboard->focus_resource_list.prev == 
+            wl_resource_get_link(kbd))
+          {
+             /* update the keyboard focus in the data device */
+             wl_data_device_set_keyboard_focus(&input->wl.seat);
+          }
      }
 
    input->wl.keyboard_resource = kbd;
@@ -2195,8 +2227,16 @@ _e_comp_wl_input_cb_touch_get(struct wl_client *client, struct wl_resource *reso
    /* add a touch object to the client */
    tch = wl_resource_create(client, &wl_touch_interface, 
                             wl_resource_get_version(resource), id);
-   wl_list_insert(&input->wl.seat.touch->resource_list, 
-                  wl_resource_get_link(tch));
+   if ((input->wl.seat.touch->focus) && 
+       (wl_resource_get_client(input->wl.seat.touch->focus) == client))
+     {
+        wl_list_insert(&input->wl.seat.touch->resource_list, 
+                       wl_resource_get_link(tch));
+     }
+   else
+     wl_list_insert(&input->wl.seat.touch->focus_resource_list, 
+                    wl_resource_get_link(tch));
+
    wl_resource_set_implementation(tch, &_e_touch_interface, input, 
                                   _e_comp_wl_input_cb_unbind);
 }
