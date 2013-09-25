@@ -373,6 +373,7 @@ _pager_fill(Pager *p, E_Gadcon *gc)
 static void
 _pager_empty(Pager *p)
 {
+   p->active_pd = NULL;
    while (p->desks)
      {
         _pager_desk_free(p->desks->data);
