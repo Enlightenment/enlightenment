@@ -84,7 +84,7 @@ e_focus_event_mouse_down(E_Border *bd)
      e_border_focus_set(bd, 1, 1);
    else if (e_config->always_click_to_focus)
      e_border_focus_set(bd, 1, 1);
-   else if (e_config->always_click_to_raise)
+   if (e_config->always_click_to_raise)
      {
         if (!bd->lock_user_stacking)
           e_border_raise(bd);
