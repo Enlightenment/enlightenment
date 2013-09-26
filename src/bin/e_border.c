@@ -5163,26 +5163,6 @@ _e_border_cb_window_reparent(void *data  __UNUSED__,
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static void
-_e_border_xy_place_helper(E_Border *bd, int *x, int *y)
-{
-   Eina_List *skiplist;
-
-   if ((e_config->window_placement_policy != E_WINDOW_PLACEMENT_SMART) &&
-       (e_config->window_placement_policy != E_WINDOW_PLACEMENT_ANTIGADGET))
-     return;
-   skiplist = eina_list_append(NULL, bd);
-   if (bd->desk)
-     e_place_desk_region_smart(bd->desk, skiplist,
-                               bd->x, bd->y, bd->w, bd->h,
-                               x, y);
-   else
-     e_place_zone_region_smart(bd->zone, skiplist,
-                               bd->x, bd->y, bd->w, bd->h,
-                               x, y);
-   eina_list_free(skiplist);
-}
-
 static Eina_Bool
 _e_border_cb_window_configure_request(void *data  __UNUSED__,
                                       int ev_type __UNUSED__,
@@ -5224,7 +5204,6 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
              y = e->y;
              if (y - bd->client_inset.t >= zy) y -= bd->client_inset.t;
           }
-        _e_border_xy_place_helper(bd, &x, &y);
         if ((e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W) ||
             (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H))
           {
@@ -5370,15 +5349,12 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
                               }
                          }
                        e_border_resize(bd, w, h);
-
-                       if (e_config->geometry_auto_move == 1)
-                         {
-                            int new_x = bd->x, new_y = bd->y;
-                            _e_border_xy_place_helper(bd, &new_x, &new_y);
-                            e_border_move(bd, new_x, new_y);
-                         }
                     }
                }
+            /* note: we USED to forcibly apply a window placement policy here
+             * this is WRONG. the geometry_auto_move option is ONLY for
+             * new clients, in which case we will autocorrect the positioning anyway.
+             */
           }
      }
    if (!bd->lock_client_stacking)
