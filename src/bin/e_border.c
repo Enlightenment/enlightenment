@@ -5196,13 +5196,29 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
           e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
         if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X)
           {
-             x = e->x;
-             if (x - bd->client_inset.l >= zx) x -= bd->client_inset.l;
+             /* ignore moves (usually from wine clients)
+              * which would cause the window to jump
+              * by the size of the frame
+              */
+             if (bd->x + bd->client_inset.l == e->x)
+               x = bd->x;
+             else if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+               x = E_CLAMP(e->x, zx, zx + zw - bd->w);
+             else
+               x = e->x;
           }
         if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y)
           {
-             y = e->y;
-             if (y - bd->client_inset.t >= zy) y -= bd->client_inset.t;
+             /* ignore moves (usually from wine clients)
+              * which would cause the window to jump
+              * by the size of the frame
+              */
+             if (bd->y + bd->client_inset.t == e->y)
+               y = bd->y;
+             else if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+               y = E_CLAMP(e->y, zy, zy + zh - bd->h);
+             else
+               y = e->y;
           }
         if ((e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W) ||
             (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H))
