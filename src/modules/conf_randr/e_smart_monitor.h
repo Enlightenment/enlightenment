@@ -11,7 +11,8 @@ enum _E_Smart_Monitor_Changes
    E_SMART_MONITOR_CHANGED_POSITION = (1 << 1),
    E_SMART_MONITOR_CHANGED_ORIENTATION = (1 << 2),
    E_SMART_MONITOR_CHANGED_ENABLED = (1 << 3),
-   E_SMART_MONITOR_CHANGED_PRIMARY = (1 << 4)
+   E_SMART_MONITOR_CHANGED_PRIMARY = (1 << 4),
+   E_SMART_MONITOR_CHANGED_CLONE = (1 << 5)
 };
 
 Evas_Object *e_smart_monitor_add(Evas *evas);
