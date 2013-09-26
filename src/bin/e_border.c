@@ -5163,6 +5163,26 @@ _e_border_cb_window_reparent(void *data  __UNUSED__,
    return ECORE_CALLBACK_PASS_ON;
 }
 
+static void
+_e_border_xy_place_helper(E_Border *bd, int *x, int *y)
+{
+   Eina_List *skiplist;
+
+   if ((e_config->window_placement_policy != E_WINDOW_PLACEMENT_SMART) &&
+       (e_config->window_placement_policy != E_WINDOW_PLACEMENT_ANTIGADGET))
+     return;
+   skiplist = eina_list_append(NULL, bd);
+   if (bd->desk)
+     e_place_desk_region_smart(bd->desk, skiplist,
+                               bd->x, bd->y, bd->w, bd->h,
+                               x, y);
+   else
+     e_place_zone_region_smart(bd->zone, skiplist,
+                               bd->x, bd->y, bd->w, bd->h,
+                               x, y);
+   eina_list_free(skiplist);
+}
+
 static Eina_Bool
 _e_border_cb_window_configure_request(void *data  __UNUSED__,
                                       int ev_type __UNUSED__,
@@ -5187,13 +5207,24 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
        (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y))
      {
         int x, y;
+        int zx = 0, zy = 0, zw = 0, zh = 0;
 
         x = bd->x;
         y = bd->y;
+
+        if (bd->zone)
+          e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
         if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X)
-          x = e->x - bd->client_inset.l;
+          {
+             x = e->x;
+             if (x - bd->client_inset.l >= zx) x -= bd->client_inset.l;
+          }
         if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y)
-          y = e->y - bd->client_inset.t;
+          {
+             y = e->y;
+             if (y - bd->client_inset.t >= zy) y -= bd->client_inset.t;
+          }
+        _e_border_xy_place_helper(bd, &x, &y);
         if ((e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W) ||
             (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H))
           {
@@ -5317,8 +5348,6 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
                   if ((bd->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_NONE)
                     {
                        int zx, zy, zw, zh;
-                       int rx = bd->x;
-                       int ry = bd->y;
                        zx = zy = zw = zh = 0;
 
                        /*
@@ -5344,22 +5373,9 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
 
                        if (e_config->geometry_auto_move == 1)
                          {
-                            /* z{x,y,w,h} are only set here; FIXME! */
-                            if (bd->zone)
-                              {
-                                 // move window horizontal if resize to not useful geometry
-                                 if (bd->x + bd->w > zx + zw)
-                                   rx = zx + zw - bd->w;
-                                 else if (bd->x < zx)
-                                   rx = zx;
-
-                                 // move window vertical if resize to not useful geometry
-                                 if (bd->y + bd->h > zy + zh)
-                                   ry = zy + zh - bd->h;
-                                 else if (bd->y < zy)
-                                   ry = zy;
-                              }
-                            e_border_move(bd, rx, ry);
+                            int new_x = bd->x, new_y = bd->y;
+                            _e_border_xy_place_helper(bd, &new_x, &new_y);
+                            e_border_move(bd, new_x, new_y);
                          }
                     }
                }
