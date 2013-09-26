@@ -848,7 +848,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 
 	     if (ocfg)
 	       {
-		  Ecore_X_Randr_Mode mode;
+		  Ecore_X_Randr_Mode mode = 0;
 		  int x = 0, y = 0, orient = 0;
 
 		  printf("\t\t\tHave Primary Output Config %d\n", ocfg->xid);
