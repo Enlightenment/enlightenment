@@ -832,7 +832,7 @@ _e_manager_cb_client_message(void *data __UNUSED__, int ev_type __UNUSED__, void
         break;
 
       default:
-        if (!bd->focused) e_border_activate(bd, EINA_TRUE);
+        if ((!starting) && (!bd->focused)) e_border_activate(bd, EINA_TRUE);
         else e_border_raise(bd);
      }
 
