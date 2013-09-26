@@ -164,8 +164,8 @@ static void _e_smart_monitor_mode_refresh_rates_fill(Evas_Object *obj);
 
 static void _e_smart_monitor_thumb_cb_mouse_in(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED);
 static void _e_smart_monitor_thumb_cb_mouse_out(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED);
-static void _e_smart_monitor_thumb_cb_mouse_up(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event);
-static void _e_smart_monitor_thumb_cb_mouse_down(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event);
+static void _e_smart_monitor_thumb_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
+static void _e_smart_monitor_thumb_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 
 static void _e_smart_monitor_frame_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event);
 static void _e_smart_monitor_frame_cb_resize_in(void *data EINA_UNUSED, Evas_Object *obj, const char *emission EINA_UNUSED, const char *source EINA_UNUSED);
@@ -523,6 +523,7 @@ void
 e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
 {
    E_Smart_Data *sd, *psd = NULL;
+   Eina_Bool cloned = EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -533,13 +534,20 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
    if (parent)
      if (!(psd = evas_object_smart_data_get(parent))) return;
 
-   sd->cloned = ((parent != NULL) ? EINA_TRUE : EINA_FALSE);
+   cloned = (parent != NULL);
+   if (sd->cloned != cloned)
+     {
+	sd->cloned = cloned;
+	sd->changes |= E_SMART_MONITOR_CHANGED_CLONE;
+     }
+
    sd->parent = parent;
 
    if (sd->cloned)
      {
         Evas_Coord fw = 0, fh = 0;
         Evas_Object *box;
+	Ecore_X_Randr_Mode_Info *mode_info = NULL;
 
         evas_object_hide(obj);
 
@@ -552,16 +560,29 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
               * larger, then we need to resize the parent down and set the mode */
 
              /* set the parent mode to this mode */
-             if ((psd->current.mode != sd->current.mode) || 
-                 (psd->current.refresh_rate != sd->current.refresh_rate) || 
-                 (psd->current.w != sd->current.w) || 
-                 (psd->current.h != sd->current.h))
+             /* if ((psd->current.refresh_rate != sd->current.refresh_rate) ||  */
+             /*     (psd->current.w != sd->current.w) ||  */
+             /*     (psd->current.h != sd->current.h)) */
                {
-                  psd->current.w = sd->current.w;
-                  psd->current.h = sd->current.h;
-                  psd->current.refresh_rate = sd->current.refresh_rate;
-                  psd->current.mode = sd->current.mode;
-                  psd->changes |= E_SMART_MONITOR_CHANGED_MODE;
+		  if ((mode_info = 
+		       _e_smart_monitor_mode_find(psd, sd->current.w, 
+						  sd->current.h, EINA_TRUE)))
+		    {
+		       psd->current.w = mode_info->width;
+		       psd->current.h = mode_info->height;
+		       psd->current.mode = mode_info->xid;
+		       psd->current.refresh_rate = 
+			 _e_smart_monitor_mode_refresh_rate_get(mode_info);
+
+		       psd->changes |= E_SMART_MONITOR_CHANGED_MODE;
+
+		       ecore_x_randr_mode_info_free(mode_info);
+		    }
+		  else
+		    {
+		       /* we could not find a mode that matches this size */
+		       /* FIXME */
+		    }
                }
 
              if (psd->current.orient != sd->current.orient)
@@ -579,22 +600,37 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
         else if ((sd->current.w > psd->current.w) || 
                  (sd->current.h > psd->current.h))
           {
-             if ((sd->current.mode != psd->current.mode) || 
-                 (sd->current.refresh_rate != psd->current.refresh_rate) || 
-                 (sd->current.w != psd->current.w) || 
-                 (sd->current.h != psd->current.h))
+             /* if ((sd->current.refresh_rate != psd->current.refresh_rate) ||  */
+             /*     (sd->current.w != psd->current.w) ||  */
+             /*     (sd->current.h != psd->current.h)) */
                {
-                  sd->current.w = psd->current.w;
-                  sd->current.h = psd->current.h;
-                  sd->current.refresh_rate = psd->current.refresh_rate;
-                  sd->current.mode = psd->current.mode;
+		  if ((mode_info = 
+		       _e_smart_monitor_mode_find(sd, psd->current.w, 
+						  psd->current.h, EINA_TRUE)))
+		    {
+		       sd->current.w = mode_info->width;
+		       sd->current.h = mode_info->height;
+		       sd->current.mode = mode_info->xid;
+		       sd->current.refresh_rate = 
+			 _e_smart_monitor_mode_refresh_rate_get(mode_info);
+
+		       sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
+
+		       ecore_x_randr_mode_info_free(mode_info);
+		    }
+		  else
+		    {
+		       /* we could not find a mode that matches this size */
+		       /* FIXME */
+		    }
+
                   sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
                }
 
              if (sd->current.orient != psd->current.orient)
                {
                   sd->current.orient = psd->current.orient;
-                  sd->changes |= E_SMART_MONITOR_CHANGED_ORIENTATION;
+		  sd->changes |= E_SMART_MONITOR_CHANGED_ORIENTATION;
                }
 
              _e_smart_monitor_resolution_set(sd, sd->current.w, sd->current.h);
@@ -606,10 +642,16 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
         else
           {
              /* sizes are equal */
-             sd->current.mode = psd->current.mode;
-             sd->current.refresh_rate = psd->current.refresh_rate;
+
+	     /* NB: We cannot explicitly just match to the parent mode 
+	      * as the monitor we are cloning may not support that mode, 
+	      * so we need to match mode to size */
+	     printf("Setting Clone. Current Mode: %d\n", sd->current.mode);
+
+//             sd->current.mode = psd->current.mode;
+//             sd->current.refresh_rate = psd->current.refresh_rate;
              sd->current.orient = psd->current.orient;
-             sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
+	     sd->changes |= E_SMART_MONITOR_CHANGED_ORIENTATION;
           }
 
         _e_smart_monitor_coord_virtual_to_canvas(sd, sd->current.w, sd->current.h, &fw, &fh);
@@ -756,7 +798,7 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
    Ecore_X_Window root = 0;
    Ecore_X_Randr_Output *outputs, primary = 0;
    int noutputs = 0;
-   Ecore_X_Randr_Mode_Info *mode_info;
+   /* Ecore_X_Randr_Mode_Info *mode_info; */
    Ecore_X_Randr_Mode mode;
    Evas_Coord cx, cy, cw, ch;
    Ecore_X_Randr_Orientation orient;
@@ -836,17 +878,20 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
           {
              cx = psd->current.x;
              cy = psd->current.y;
-             cw = psd->current.w;
-             ch = psd->current.h;
-             mode = psd->current.mode;
+             /* cw = psd->current.w; */
+             /* ch = psd->current.h; */
+             /* mode = psd->current.mode; */
              orient = psd->current.orient;
 
              ecore_x_randr_crtc_clone_set(root, psd->crtc.id, sd->crtc.id);
           }
      }
-   else
+
+//   else
      {
         /* try to apply the settings */
+	printf("Applying Settings: %d %d %d %d\n", sd->crtc.id, cx, cy, mode);
+
         if (!ecore_x_randr_crtc_settings_set(root, sd->crtc.id, outputs, 
                                              noutputs, cx, cy, mode, orient))
           printf("FAILED TO APPLY MONITOR SETTINGS !!!\n");
@@ -864,16 +909,17 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
    sd->crtc.mode = mode;
    sd->crtc.orient = orient;
    sd->crtc.enabled = sd->current.enabled;
+   sd->crtc.refresh_rate = sd->current.refresh_rate;
 
-   if ((sd->crtc.mode) && 
-       (mode_info = ecore_x_randr_mode_info_get(root, sd->crtc.mode)))
-     {
-        sd->crtc.refresh_rate = 
-          _e_smart_monitor_mode_refresh_rate_get(mode_info);
-        ecore_x_randr_mode_info_free(mode_info);
-     }
-   else
-     sd->crtc.refresh_rate = 60.0;
+   /* if ((sd->crtc.mode) &&  */
+   /*     (mode_info = ecore_x_randr_mode_info_get(root, sd->crtc.mode))) */
+   /*   { */
+   /*      sd->crtc.refresh_rate =  */
+   /*        _e_smart_monitor_mode_refresh_rate_get(mode_info); */
+   /*      ecore_x_randr_mode_info_free(mode_info); */
+   /*   } */
+   /* else */
+   /*   sd->crtc.refresh_rate = 60.0; */
 
    /* reset changes */
    sd->changes = E_SMART_MONITOR_CHANGED_NONE;
@@ -984,9 +1030,9 @@ _e_smart_add(Evas_Object *obj)
 
    /* add callbacks for thumbnail events */
    evas_object_event_callback_add(sd->o_thumb, EVAS_CALLBACK_MOUSE_IN, 
-                                  _e_smart_monitor_thumb_cb_mouse_in, NULL);
+                                  _e_smart_monitor_thumb_cb_mouse_in, sd);
    evas_object_event_callback_add(sd->o_thumb, EVAS_CALLBACK_MOUSE_OUT, 
-                                  _e_smart_monitor_thumb_cb_mouse_out, NULL);
+                                  _e_smart_monitor_thumb_cb_mouse_out, sd);
    evas_object_event_callback_add(sd->o_thumb, EVAS_CALLBACK_MOUSE_UP, 
                                   _e_smart_monitor_thumb_cb_mouse_up, obj);
    evas_object_event_callback_add(sd->o_thumb, EVAS_CALLBACK_MOUSE_DOWN, 
@@ -1079,6 +1125,7 @@ _e_smart_del(Evas_Object *obj)
         evas_object_del(sd->o_frame);
      }
 
+   /* reset to default cursor */
    _e_smart_monitor_pointer_pop(obj, NULL);
 
    /* delete the base object */
@@ -1401,13 +1448,16 @@ _e_smart_monitor_pointer_push(Evas_Object *obj, const char *ptr)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* try to find the E_Win for this object */
    if (!(ow = evas_object_name_find(evas_object_evas_get(obj), "E_Win")))
      return;
-   if (!(win = evas_object_data_get(ow, "E_Win"))) return;
+   if (!(win = evas_object_data_get(ow, "E_Win")))
+     return;
 
    /* tell E to set the pointer type */
-   e_pointer_type_push(win->pointer, obj, ptr);
+   if (ptr)
+     e_pointer_type_push(win->pointer, obj, ptr);
+   else
+     e_pointer_type_pop(win->pointer, obj, "default");
 }
 
 static void 
@@ -1418,13 +1468,16 @@ _e_smart_monitor_pointer_pop(Evas_Object *obj, const char *ptr)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* try to find the E_Win for this object */
    if (!(ow = evas_object_name_find(evas_object_evas_get(obj), "E_Win")))
      return;
-   if (!(win = evas_object_data_get(ow, "E_Win"))) return;
+   if (!(win = evas_object_data_get(ow, "E_Win")))
+     return;
 
-   /* tell E to unset the pointer type */
-   e_pointer_type_pop(win->pointer, obj, ptr);
+   /* tell E to set the pointer type */
+   if (ptr)
+     e_pointer_type_pop(win->pointer, obj, ptr);
+   else
+     e_pointer_type_pop(win->pointer, obj, "default");
 }
 
 static inline void 
@@ -1585,7 +1638,7 @@ _e_smart_monitor_thumb_cb_mouse_out(void *data EINA_UNUSED, Evas *evas EINA_UNUS
 }
 
 static void 
-_e_smart_monitor_thumb_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event)
+_e_smart_monitor_thumb_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Up *ev;
    Evas_Object *mon, *below;
@@ -1601,6 +1654,9 @@ _e_smart_monitor_thumb_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Obje
 
    /* try to get the monitor smart data */
    if (!(sd = evas_object_smart_data_get(mon))) return;
+
+   /* set mouse pointer */
+   _e_smart_monitor_pointer_pop(sd->o_thumb, "move");
 
    if (sd->cloned)
      {
@@ -1618,9 +1674,6 @@ _e_smart_monitor_thumb_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Obje
 
    /* reset moving flag */
    sd->moving = EINA_FALSE;
-
-   /* reset mouse pointer */
-   _e_smart_monitor_pointer_pop(obj, "move");
 
    if ((sd->current.x == sd->prev.x) && 
        (sd->current.y == sd->prev.y)) 
@@ -1685,7 +1738,7 @@ _e_smart_monitor_thumb_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Obje
 }
 
 static void 
-_e_smart_monitor_thumb_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event)
+_e_smart_monitor_thumb_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
 {
    Evas_Event_Mouse_Down *ev;
    Evas_Object *mon;
@@ -1703,7 +1756,7 @@ _e_smart_monitor_thumb_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Ob
    if (!(sd = evas_object_smart_data_get(mon))) return;
 
    /* set mouse pointer */
-   _e_smart_monitor_pointer_push(obj, "move");
+   _e_smart_monitor_pointer_push(sd->o_thumb, "move");
 
    /* set moving flag */
    sd->moving = EINA_TRUE;
