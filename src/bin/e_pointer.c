@@ -241,7 +241,10 @@ e_pointer_idler_before(void)
      }
 }
 
-
+/**
+ * mode_{push,pop} functions are ONLY for use with compositor objects.
+ * these functions should NEVER be used for setting internal window pointers!!!!
+ */
 EAPI void
 e_pointer_mode_push(void *obj, E_Pointer_Mode mode)
 {
