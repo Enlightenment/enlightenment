@@ -9,12 +9,13 @@ static void _e_randr_config_restore(void);
 static Eina_Bool _e_randr_config_crtc_update(E_Randr_Crtc_Config *cfg);
 static Eina_Bool _e_randr_config_output_update(E_Randr_Output_Config *cfg);
 static E_Randr_Crtc_Config *_e_randr_config_output_crtc_find(E_Randr_Output_Config *cfg);
-static Ecore_X_Randr_Mode _e_randr_config_output_preferred_mode_get(E_Randr_Output_Config *cfg);
+static Ecore_X_Randr_Mode _e_randr_config_output_preferred_mode_get(unsigned int xid);
 static E_Randr_Output_Config *_e_randr_config_output_new(unsigned int id);
 static E_Randr_Crtc_Config *_e_randr_config_crtc_find(Ecore_X_Randr_Crtc crtc);
 static E_Randr_Output_Config *_e_randr_config_output_find(Ecore_X_Randr_Output output);
 static void _e_randr_config_screen_size_calculate(int *sw, int *sh);
 static void _e_randr_config_mode_geometry(Ecore_X_Randr_Mode mode, Ecore_X_Randr_Orientation orient, Eina_Rectangle *rect);
+static void _e_randr_config_primary_update(void);
 
 static Eina_Bool _e_randr_event_cb_screen_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static Eina_Bool _e_randr_event_cb_crtc_change(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
@@ -729,7 +730,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
              output_found = EINA_TRUE;
 
              /* is this output still on the same crtc ? */
-             if (output_cfg->crtc != ev->crtc)
+             if ((output_cfg->crtc != ev->crtc) && (ev->crtc != 0))
                {
                   printf("\t\t\t\tOutput Moved Crtc or Removed\n");
 
@@ -744,35 +745,37 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
                    * overwrite any of our saved config
                    * 
                    * So for now, just disable it in config by setting exists == FALSE */
-                  if (!ev->crtc)
+                  if (ev->connection == 1)
                     {
-                       /* free this output_cfg */
-                       /* if (output_cfg->clones) free(output_cfg->clones); */
-                       /* if (output_cfg->edid) free(output_cfg->edid); */
-                       /* E_FREE(output_cfg); */
-
-                       /* remove from this crtc */
-                       /* crtc_cfg->outputs = eina_list_remove_list(crtc_cfg->outputs, ll); */
-
                        /* just mark it as not existing */
                        output_cfg->exists = EINA_FALSE;
 
                        /* set flag */
-                       output_removed = EINA_TRUE;
+		       printf("\t\t\t\t\tOutput Removed\n");
+		       output_removed = EINA_TRUE;
+
+		       /* if this output was set to be the primary when it was unplugged, then 
+			* we need to reset the primary monitor in our config */
+		       if (e_randr_cfg->primary == (int)output_cfg->crtc)
+			 _e_randr_config_primary_update();
                     }
-                  else
+                  else if (ev->connection == 0)
                     {
                        /* output moved to new crtc */
-                       printf("\t\t\tOutput Moved to New Crtc\n");
+                       printf("\t\t\tOutput Moved to New Crtc or Reconnected\n");
                     }
                }
-             else
+             else if ((ev->crtc != 0) && (output_cfg->crtc == ev->crtc))
                {
                   printf("\t\t\t\tOutput On Same Crtc\n");
 
                   /* check (and update if needed) our output config */
                   output_changed = _e_randr_config_output_update(output_cfg);
                }
+	     else if (ev->crtc == 0)
+	       {
+                  printf("\t\t\t\tOutput Has No Crtc Assigned\n");
+	       }
 
              if (output_found) break;
           }
@@ -784,19 +787,186 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
     * then we need to create a new one */
    if ((!output_found) && (ev->connection == 0))
      {
-        printf("\tOutput Not Found In Config: %d\n", ev->output);
+        printf("\tOutput %d Not Found In Our Config\n", ev->output);
         printf("\t\tCreate New Output Config\n");
 
         if ((output_cfg = _e_randr_config_output_new(ev->output)))
           {
+	     E_Randr_Output_Config *ocfg;
+
              output_new = EINA_TRUE;
+
+	     printf("\t\t\tNew Output Config Created: %d\n", output_cfg->xid);
 
              /* since this is a new output cfg, the above 
               * output_update function (inside new) will set 'exists' to false 
               * because no crtc has been assigned yet.
               * 
               * We need to find a valid crtc for this output and set the 
-              * 'crtc' and 'exists' properties */
+              * 'crtc' and 'exists' properties
+	      * 
+	      * As most users (I think) would expect a newly plugged output to 
+	      * be a clone of the current desktop, we need to setup this 
+	      * output to be a clone of the current primary output */
+
+	     /* try to find the config for the primary output */
+	     if (!(ocfg = _e_randr_config_output_find(e_randr_cfg->primary)))
+	       {
+		  E_Randr_Crtc_Config *ccfg;
+		  Eina_Bool primary_found = EINA_FALSE;
+
+		  /* failed to find config for primary output */
+		  printf("\t\t\t\tFailed to find Primary Output Config\n");
+
+		  /* try to find the first crtc config */
+		  EINA_LIST_FOREACH(e_randr_cfg->crtcs, l, ccfg)
+		    {
+		       Eina_List *ll;
+
+		       /* skip if this crtc does not exist */
+		       if (!ccfg->exists) continue;
+
+		       /* skip if no mode set */
+		       if (!ccfg->mode) continue;
+
+		       /* loop the outputs in our crtc cfg and 
+			* try to find the first one that exists */
+		       EINA_LIST_FOREACH(ccfg->outputs, ll, ocfg)
+			 {
+			    if (!ocfg->exists) continue;
+			    if (ocfg->connected)
+			      {
+				 printf("\t\t\t\t\tFound Primary Output %d\n", ocfg->xid);
+				 primary_found = EINA_TRUE;
+				 break;
+			      }
+			 }
+
+		       if (primary_found) break;
+		    }
+	       }
+
+	     if (ocfg)
+	       {
+		  Ecore_X_Randr_Mode mode;
+		  int x = 0, y = 0, orient = 0;
+
+		  printf("\t\t\tHave Primary Output Config %d\n", ocfg->xid);
+
+		  /* grab the important settings we need from the primary */
+		  if ((crtc_cfg = _e_randr_config_crtc_find(ocfg->crtc)))
+		    {
+		       x = crtc_cfg->x;
+		       y = crtc_cfg->y;
+		       mode = crtc_cfg->mode;
+		       orient = crtc_cfg->orient;
+		    }
+
+		  /* find a crtc for this output */
+		  if ((crtc_cfg = _e_randr_config_output_crtc_find(output_cfg)))
+		    {
+		       Ecore_X_Randr_Mode *modes;
+		       int ocount, c = 0;
+		       int num = 0, pref = 0;
+		       Eina_Bool can_clone = EINA_FALSE;
+
+		       /* append this output_cfg to the crtc_cfg list of outputs */
+		       crtc_cfg->outputs = 
+			 eina_list_append(crtc_cfg->outputs, output_cfg);
+
+		       printf("\t\t\tUsing Crtc Config %d for Cloning\n", 
+			      crtc_cfg->xid);
+
+		       /* we found a valid crtc for this output */
+		       output_cfg->crtc = crtc_cfg->xid;
+		       output_cfg->exists = (output_cfg->crtc != 0);
+		       output_cfg->connected = EINA_TRUE;
+
+		       /* We need to verify that the new output can use this 
+			* crtc's mode for cloning
+			* 
+			* NB: Hmmm, what to do if it Cannot use this mode ?? */
+		       modes = 
+			 ecore_x_randr_output_modes_get(ev->win, 
+							output_cfg->xid, 
+							&num, &pref);
+		       if (modes)
+			 {
+			    for (c = 0; c < num; c++)
+			      {
+				 if (modes[c] == mode)
+				   {
+				      can_clone = EINA_TRUE;
+				      break;
+				   }
+			      }
+			 }
+
+		       if (!can_clone)
+			 {
+			    int mw = 0, mh = 0;
+
+			    /* if we can't clone, then we need to find a 
+			     * mode of the same size */
+			    ecore_x_randr_mode_size_get(ev->win, mode, 
+							&mw, &mh);
+
+			    for (c = 0; c < num; c++)
+			      {
+				 int cw, ch;
+
+				 ecore_x_randr_mode_size_get(ev->win, 
+							     modes[c], 
+							     &cw, &ch);
+				 if ((cw == mw) && (ch == mh))
+				   {
+				      mode = modes[c];
+				      break;
+				   }
+			      }
+			 }
+
+		       if (modes) free(modes);
+
+		       /* tell X about this new output */
+		       ocount = eina_list_count(crtc_cfg->outputs);
+		       printf("\t\t\tNum Outputs: %d\n", ocount);
+
+		       if (ocount > 0)
+			 {
+			    Ecore_X_Randr_Output *couts;
+			    Eina_List *o;
+			    E_Randr_Output_Config *out;
+
+			    couts = malloc(ocount * sizeof(Ecore_X_Randr_Output));
+			    EINA_LIST_FOREACH(crtc_cfg->outputs, o, out)
+			      {
+				 couts[c] = out->xid;
+				 c++;
+			      }
+
+			    printf("\tCrtc Settings: %d %d %d %d\n", 
+				   crtc_cfg->xid, x, y, mode);
+
+			    ecore_x_randr_crtc_settings_set(ev->win, 
+							    crtc_cfg->xid, 
+							    couts, ocount, 
+							    x, y, mode, orient);
+			    free(couts);
+			 }
+		    }
+	       }
+	     else
+	       printf("NO MAIN OUTPUT CONFIG TO CLONE TO !!!\n");
+          }
+     }
+   else if ((output_found) && (ev->crtc == 0))
+     {
+	if (ev->connection == 0)
+	  {
+	     /* previously configured output as been replugged */
+
+	     printf("\t\t\t\tOutput Replugged: %d\n", output_cfg->xid);
              if ((crtc_cfg = _e_randr_config_output_crtc_find(output_cfg)))
                {
                   Ecore_X_Randr_Mode mode;
@@ -809,7 +979,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
                   printf("\t\t\tOutput Crtc Is: %d\n", output_cfg->crtc);
 
                   /* get the preferred mode for this output */
-                  if ((mode = _e_randr_config_output_preferred_mode_get(output_cfg)))
+                  if ((mode = _e_randr_config_output_preferred_mode_get(output_cfg->xid)))
                     {
                        Evas_Coord mw = 0, mh = 0;
 
@@ -821,10 +991,16 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
                        crtc_cfg->width = mw;
                        crtc_cfg->height = mh;
                     }
+		  else
+		    printf("\t\tNo Mode Found\n");
 
                   /* append this output_cfg to the crtc_cfg list of outputs */
-                  crtc_cfg->outputs = 
-                    eina_list_append(crtc_cfg->outputs, output_cfg);
+		  if (eina_list_count(crtc_cfg->outputs) == 0)
+		    {
+		       crtc_cfg->outputs = 
+			 eina_list_append(crtc_cfg->outputs, output_cfg);
+		       output_changed = EINA_TRUE;
+		    }
 
                   /* tell X about this new output */
                   ocount = eina_list_count(crtc_cfg->outputs);
@@ -839,6 +1015,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
                        couts = malloc(ocount * sizeof(Ecore_X_Randr_Output));
                        EINA_LIST_FOREACH(crtc_cfg->outputs, o, out)
                          {
+			    printf("\t\tOutput: %d\n", out->xid);
                             couts[c] = out->xid;
                             c++;
                          }
@@ -855,7 +1032,18 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
                        free(couts);
                     }
                }
-          }
+	  }
+	else
+	  {
+	     /* output without a crtc asssigned has been unplugged. Nothing to do in this case */
+	     printf("\t\t\t\tOutput Unplugged\n");
+
+	     /* just mark it as not existing */
+	     output_cfg->exists = EINA_FALSE;
+
+	     /* set flag */
+	     output_removed = EINA_TRUE;
+	  }
      }
 
    /* save the config if anything changed or we added a new one */
@@ -974,10 +1162,13 @@ _e_randr_config_output_crtc_find(E_Randr_Output_Config *cfg)
 {
    Ecore_X_Window root = 0;
    E_Randr_Crtc_Config *crtc_cfg = NULL;
+   E_Randr_Output_Config *ocfg = NULL;
    Ecore_X_Randr_Crtc *possible;
    int num = 0, i = 0;
    Eina_List *l;
    Eina_Bool crtc_found = EINA_FALSE;
+
+   printf("Find Crtc For Output: %d\n", cfg->xid);
 
    /* grab the root window */
    root = ecore_x_window_root_first_get();
@@ -985,7 +1176,10 @@ _e_randr_config_output_crtc_find(E_Randr_Output_Config *cfg)
    /* get a list of possible crtcs for this output */
    if (!(possible = 
          ecore_x_randr_output_possible_crtcs_get(root, cfg->xid, &num)))
-     return NULL;
+     {
+	printf("\tNo Possible Crtcs Found From X\n");
+	return NULL;
+     }
 
    if (num == 0)
      {
@@ -993,24 +1187,95 @@ _e_randr_config_output_crtc_find(E_Randr_Output_Config *cfg)
         return NULL;
      }
 
+   printf("\tLooping Possible Crtcs\n");
+
    /* loop the possible crtcs */
    for (i = 0; i < num; i++)
      {
-        /* loop our crtc configs and try to find this one */
-        EINA_LIST_FOREACH(e_randr_cfg->crtcs, l, crtc_cfg)
-          {
-             /* skip if not the one we are looking for */
-             if (crtc_cfg->xid != possible[i]) continue;
+	if ((crtc_cfg = _e_randr_config_crtc_find(possible[i])))
+	  {
+	     printf("\tFound Possible Crtc %d in Config\n", crtc_cfg->xid);
 
-             /* check if this crtc already has outputs assigned.
-              * skip if it does because we are trying to find a free crtc */
-             if (eina_list_count(crtc_cfg->outputs) > 0) continue;
+	     /* try to find this output in this crtc config */
+	     EINA_LIST_FOREACH(crtc_cfg->outputs, l, ocfg)
+	       {
+		  printf("\t\tCrtc Has Output %d\n", ocfg->xid);
+		  if (ocfg->xid == cfg->xid)
+		    {
+		       printf("\t\t\tFound Output %d in Crtc Config\n", cfg->xid);
+		       crtc_found = EINA_TRUE;
+		       break;
+		    }
+	       }
+	  }
 
-             crtc_found = EINA_TRUE;
-             break;
-          }
+	if (crtc_found) break;
+     }
 
-        if (crtc_found) break;
+   if (!crtc_found)
+     {
+	/* no existing crtc config was found which contained this output */
+
+	printf("\tChecking %d for Clone: %d\n", e_randr_cfg->primary, cfg->xid);
+
+	/* loop our config and try to find something we can clone to.
+	 * starting with the primary output */
+	if (e_randr_cfg->primary != (int)cfg->xid)
+	  {
+	     /* E_Randr_Crtc_Config *pcfg = NULL; */
+
+	     printf("\t\tTrying to get Primary Crtc Config\n");
+	     if ((crtc_cfg = _e_randr_config_crtc_find(e_randr_cfg->primary)))
+	       {
+		  printf("\t\t\tFound Primary Config\n");
+		  /* found the crtc config for the primary monitor */
+		  crtc_found = EINA_TRUE;
+	       }
+	  }
+     }
+
+   if (!crtc_found)
+     {
+	printf("\tNo Crtc Found Yet\n");
+
+	/* no existing crtc config was found which contained this output */
+
+	/* loop our config and see if we have a crtc which has no outputs existing */
+
+	/* loop the possible crtcs */
+	for (i = 0; i < num; i++)
+	  {
+	     if ((crtc_cfg = _e_randr_config_crtc_find(possible[i])))
+	       {
+		  printf("\tFound Possible Crtc %d in Config\n", crtc_cfg->xid);
+		  if (eina_list_count(crtc_cfg->outputs) == 0)
+		    {
+		       printf("\t\tCrtc Config has No Outputs\n");
+		       crtc_found = EINA_TRUE;
+
+		       if (!crtc_cfg->mode)
+			 {
+			    Ecore_X_Randr_Mode mode;
+
+			    /* get the preferred mode for this output */
+			    if ((mode = _e_randr_config_output_preferred_mode_get(cfg->xid)))
+			      {
+				 Evas_Coord mw = 0, mh = 0;
+
+				 ecore_x_randr_mode_size_get(root, mode, &mw, &mh);
+
+				 crtc_cfg->mode = mode;
+				 crtc_cfg->width = mw;
+				 crtc_cfg->height = mh;
+			      }
+			    else
+			      printf("\t\tNo Mode Found\n");
+			 }
+
+		       break;
+		    }
+	       }
+	  }
      }
 
    free(possible);
@@ -1021,19 +1286,24 @@ _e_randr_config_output_crtc_find(E_Randr_Output_Config *cfg)
 }
 
 static Ecore_X_Randr_Mode 
-_e_randr_config_output_preferred_mode_get(E_Randr_Output_Config *cfg)
+_e_randr_config_output_preferred_mode_get(unsigned int xid)
 {
    Ecore_X_Window root = 0;
    Ecore_X_Randr_Mode *modes;
    Ecore_X_Randr_Mode mode;
    int n = 0, p = 0;
 
+   printf("Get Preferred Mode for Output %d\n", xid);
+
    /* grab the root window */
    root = ecore_x_window_root_first_get();
 
    /* get the list of modes for this output */
-   if (!(modes = ecore_x_randr_output_modes_get(root, cfg->xid, &n, &p)))
-     return 0;
+   if (!(modes = ecore_x_randr_output_modes_get(root, xid, &n, &p)))
+     {
+	printf("\tNo Modes returned from X\n");
+	return 0;
+     }
 
    if (n == 0)
      {
@@ -1041,7 +1311,15 @@ _e_randr_config_output_preferred_mode_get(E_Randr_Output_Config *cfg)
         return 0;
      }
 
-   mode = modes[p - 1];
+   printf("\tNum Modes: %d\n", n);
+   printf("\tP: %d\n", p);
+   if (p > 0)
+     mode = modes[p - 1];
+   else
+     mode = modes[0];
+
+   printf("\tFound Preferred Mode: %d\n", mode);
+
    free(modes);
 
    return mode;
@@ -1277,5 +1555,33 @@ _e_randr_config_mode_geometry(Ecore_X_Randr_Mode mode, Ecore_X_Randr_Orientation
              if (tmp.w > rect->w) rect->w = tmp.w;
              if (tmp.h > rect->h) rect->h = tmp.h;
           }
+     }
+}
+
+static void 
+_e_randr_config_primary_update(void)
+{
+   Eina_List *l, *ll;
+   E_Randr_Crtc_Config *crtc_cfg;
+   E_Randr_Output_Config *output_cfg;
+
+   /* unmark all existing outputs as the primary */
+   EINA_LIST_FOREACH(e_randr_cfg->crtcs, l, crtc_cfg)
+     {
+	EINA_LIST_FOREACH(crtc_cfg->outputs, ll, output_cfg)
+	  output_cfg->primary = EINA_FALSE;
+     }
+
+   /* find the first existing output and mark it as primary */
+   EINA_LIST_FOREACH(e_randr_cfg->crtcs, l, crtc_cfg)
+     {
+	if (!crtc_cfg->exists) continue;
+	EINA_LIST_FOREACH(crtc_cfg->outputs, ll, output_cfg)
+	  {
+	     if (!output_cfg->exists) continue;
+	     e_randr_cfg->primary = output_cfg->xid;
+	     output_cfg->primary = EINA_TRUE;
+	     return;
+	  }
      }
 }
