@@ -5418,10 +5418,10 @@ _e_fm2_icon_next_find(Evas_Object *obj, int next, int (*match_func)(E_Fm2_Icon *
 {
    E_Fm2_Smart_Data *sd;
    Eina_List *l;
-   E_Fm2_Icon *ic, *ic_next, *ic_vert, *ic_horz;
+   E_Fm2_Icon *ic, *ic_next;
    char view_mode;
    int x = 0, y = 0, custom = 0;
-   int dist = 0, min_horz = 65535, min_vert = 65535;
+   int dist = 0, min = 65535;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return NULL;
@@ -5442,8 +5442,6 @@ _e_fm2_icon_next_find(Evas_Object *obj, int next, int (*match_func)(E_Fm2_Icon *
    if (!next) return eina_list_data_get(l);
    
    ic_next = NULL;
-   ic_vert = NULL;
-   ic_horz = NULL;
    
    if (custom || match_func)
      {
@@ -5458,29 +5456,17 @@ _e_fm2_icon_next_find(Evas_Object *obj, int next, int (*match_func)(E_Fm2_Icon *
              int dx = (ic->x - x);
              int dy = (ic->y - y);
              int sgnx = (dx) ? dx / abs(dx) : 0;
-             int sgny = (dy) ? dy / abs(dy) : 0;
              
-             if ((next == sgnx) && (abs(dx) >= abs(dy)) && ((sgny*sgnx) >= 0))
+             if ((next == sgnx) && (abs(dx) >= abs(dy)))
                {
                   dist = abs(dy) + abs(dx);
-                  if (dist < min_horz)
+                  if (dist < min)
                     {
-                       min_horz = dist;
-                       ic_horz = ic;
+                       min = dist;
+                       ic_next = ic;
                     }
                }
-             
-             if (!ic_horz && (next == sgny))
-               {
-                  dist = abs(dy) + ic->x * next;
-                  if (dist < min_vert)
-                    {
-                       min_vert = dist;
-                       ic_vert = ic;
-                    } 
-               }
           }
-        ic_next = (ic_horz) ? ic_horz : ic_vert;
      }
    else
      {
@@ -5563,9 +5549,12 @@ _e_fm2_icon_sel_down(Evas_Object *obj, Eina_Bool add)
 
    EINA_LIST_FOREACH(sd->icons, l, ic2)
      {
-        if (ic2->y > ic->y)
+        int dx = (ic2->x - ic->x);
+        int dy = (ic2->y - ic->y);
+        
+        if ((dy > 0) && (abs(dy) > abs(dx)))
           {
-             dist = (abs(ic2->x - ic->x)) + (ic2->y - ic->y) * 2;
+             dist = abs(dx)+abs(dy);
              if (dist < min)
                {
                   min = dist;
@@ -5607,9 +5596,13 @@ _e_fm2_icon_sel_up(Evas_Object *obj, Eina_Bool add)
 
    EINA_LIST_FOREACH(sd->icons, l, ic2)
      {
-        if (ic2->y < ic->y)
+        int dx = (ic2->x - ic->x);
+        int dy = (ic2->y - ic->y);
+        
+        if ((dy < 0) && (abs(dy) > abs(dx)))
           {
-             dist = (abs(ic2->x - ic->x)) + (ic->y - ic2->y) * 2;
+             dist = abs(dx)+abs(dy);
+
              if (dist < min)
                {
                   min = dist;
