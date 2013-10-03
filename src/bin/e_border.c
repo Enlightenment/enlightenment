@@ -8928,12 +8928,12 @@ _e_border_eval(E_Border *bd)
 
    if (bd->changes.icon)
      {
-        if (bd->desktop)
+        if (bd->desktop && (!bd->new_client))
           {
              efreet_desktop_free(bd->desktop);
              bd->desktop = NULL;
           }
-        if (bd->icon_object)
+        if (bd->icon_object && (!bd->new_client))
           {
              evas_object_del(bd->icon_object);
              bd->icon_object = NULL;
