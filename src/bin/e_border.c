@@ -8948,6 +8948,11 @@ _e_border_eval(E_Border *bd)
           }
         if (!bd->desktop)
           {
+             if (bd->internal && (bd->client.icccm.class && (!strncmp(bd->client.icccm.class, "e_fwin::", 8))))
+               bd->desktop = efreet_util_desktop_exec_find("enlightenment_filemanager");
+          }
+        if (!bd->desktop)
+          {
              if ((bd->client.icccm.name) && (bd->client.icccm.class))
                bd->desktop = efreet_util_desktop_wm_class_find(bd->client.icccm.name,
                                                                bd->client.icccm.class);
