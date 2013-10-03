@@ -7,6 +7,8 @@ typedef struct _E_Event_Desk_After_Show E_Event_Desk_After_Show;
 typedef struct _E_Event_Desk_Name_Change E_Event_Desk_Name_Change;
 typedef struct _E_Event_Desk_Window_Profile_Change E_Event_Desk_Window_Profile_Change;
 
+typedef void (*E_Desk_Flip_Cb)(void *data, E_Desk *desk, int dx, int dy, Eina_Bool show);
+
 #else
 #ifndef E_DESK_H
 #define E_DESK_H
@@ -86,6 +88,9 @@ EAPI void         e_desk_window_profile_set(E_Desk *desk, const char *profile);
 EAPI void         e_desk_window_profile_add(int manager, int zone, int desk_x, int desk_y, const char *profile);
 EAPI void         e_desk_window_profile_del(int manager, int zone, int desk_x, int desk_y);
 EAPI void         e_desk_window_profile_update(void);
+
+EAPI void         e_desk_flip_cb_set(E_Desk_Flip_Cb cb, const void *data);
+EAPI void         e_desk_flip_end(E_Desk *desk);
 
 extern EAPI int E_EVENT_DESK_SHOW;
 extern EAPI int E_EVENT_DESK_BEFORE_SHOW;
