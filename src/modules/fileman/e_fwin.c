@@ -321,7 +321,14 @@ _e_fwin_dnd_end_cb(E_Fwin *fwin, Evas_Object *obj __UNUSED__, void *event_info _
 
    /* NOTE: closing the drop target window here WILL break things */
    fwin = drag_fwin->spring_parent;
-   if (!fwin) return;
+   if (!fwin)
+     {
+        if (!drag_fwin->zone) return;
+        //dragging from desktop, we'll never have a parent here
+        if (drag_fwin->spring_child)
+          _e_fwin_free(drag_fwin->spring_child);
+        return;
+     }
 
    fwin->spring_child->spring_parent = NULL;
    fwin->spring_child = NULL;
