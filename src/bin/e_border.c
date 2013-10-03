@@ -7970,9 +7970,10 @@ _e_border_eval0(E_Border *bd)
         {
            char *str = NULL;
 
-           if ((ecore_x_netwm_startup_id_get(bd->client.win, &str) && (str)) ||
+           if ((!bd->internal) &&
+               ((ecore_x_netwm_startup_id_get(bd->client.win, &str) && (str)) ||
                ((bd->client.icccm.client_leader > 0) &&
-                ecore_x_netwm_startup_id_get(bd->client.icccm.client_leader, &str) && (str))
+                ecore_x_netwm_startup_id_get(bd->client.icccm.client_leader, &str) && (str)))
                )
              {
                 if (!strncmp(str, "E_START|", 8))
