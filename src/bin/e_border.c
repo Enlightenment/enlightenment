@@ -7999,9 +7999,7 @@ _e_border_eval0(E_Border *bd)
                bd->client.netwm.pid = -1;
           }
 
-        if (bd->re_manage)
-          e_exec_phony(bd);
-        else
+        if (!bd->re_manage)
           {
              inst = e_exec_startup_id_pid_instance_find(bd->client.netwm.startup_id,
                                                         bd->client.netwm.pid);
@@ -8035,8 +8033,6 @@ _e_border_eval0(E_Border *bd)
                   if (!found)
                     e_exec_instance_found(inst);
                }
-             else if (!inst)
-               e_exec_phony(bd);
 
              if (e_config->window_grouping) // FIXME: We may want to make the border "urgent" so that the user knows it appeared.
                {
@@ -9016,6 +9012,8 @@ _e_border_eval(E_Border *bd)
            ecore_event_add(E_EVENT_BORDER_ICON_CHANGE, ev,
                            _e_border_event_border_icon_change_free, NULL);
         }
+        if ((bd->new_client || bd->re_manage) && bd->desktop && (!bd->exe_inst))
+          e_exec_phony(bd);
         bd->changes.icon = 0;
      }
 
