@@ -24,6 +24,7 @@ static Eina_Bool      _e_dnd_cb_event_dnd_status(void *data, int type, void *eve
 static Eina_Bool      _e_dnd_cb_event_dnd_finished(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_drop(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_selection(void *data, int type, void *event);
+static Eina_Bool      _e_dnd_cb_event_hide(void *data, int type, Ecore_X_Event_Window_Hide *ev);
 
 /* local subsystem globals */
 
@@ -121,6 +122,7 @@ e_dnd_init(void)
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_FINISHED, _e_dnd_cb_event_dnd_finished, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_DROP, _e_dnd_cb_event_dnd_drop, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_SELECTION_NOTIFY, _e_dnd_cb_event_dnd_selection, NULL);
+   E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_WINDOW_HIDE, _e_dnd_cb_event_hide, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_DOWN, _e_dnd_cb_key_down, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_UP, _e_dnd_cb_key_up, NULL);
 
@@ -1239,6 +1241,43 @@ _e_dnd_cb_event_dnd_leave(void *data __UNUSED__, int type __UNUSED__, void *even
         E_FREE(_xdnd);
      }
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_e_dnd_cb_event_hide(void *data __UNUSED__, int type __UNUSED__, Ecore_X_Event_Window_Hide *ev)
+{
+   E_Event_Dnd_Leave leave_ev;
+   const char *id;
+   const Eina_List *l;
+
+   id = e_util_winid_str_get(ev->win);
+   if (!eina_hash_find(_drop_win_hash, id)) return ECORE_CALLBACK_PASS_ON;
+   leave_ev.x = 0;
+   leave_ev.y = 0;
+
+   if (_xdnd)
+     {
+        unsigned int entered = 0;
+        E_Drop_Handler *h;
+
+        EINA_LIST_FOREACH(_active_handlers, l, h)
+          {
+             if (h->entered && (_e_drag_win_get(h, 1) == ev->win))
+               {
+                  if (h->cb.leave)
+                    h->cb.leave(h->cb.data, h->active_type, &leave_ev);
+                  h->entered = 0;
+               }
+             entered += h->entered;
+          }
+
+        if (!entered)
+          {
+             eina_stringshare_del(_xdnd->type);
+             E_FREE(_xdnd);
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool

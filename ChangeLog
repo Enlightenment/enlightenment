@@ -1,6 +1,7 @@
 2013-10-03 Mike Blumenkrantz
 
         * Fix filemanager spring window closing when dragging from desktop
+        * Catch XWindow closes during DND operations on those windows
 
 2013-09-19 Mike Blumenkrantz
 

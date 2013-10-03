@@ -232,3 +232,4 @@ Fixes:
     * fixed bug where setting min size on a gadget would not be passed to desktop gadgets
     * fixed bug where new files could not be created repeatedly
     * fixed filemanager spring window closing when dragging from desktop
+    * fixed catching XWindow closes during DND operations on those windows
