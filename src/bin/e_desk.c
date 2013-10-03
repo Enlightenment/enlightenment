@@ -16,6 +16,9 @@ static void      _e_desk_hide_begin(E_Desk *desk, int dx, int dy);
 static void      _e_desk_event_desk_window_profile_change_free(void *data, void *ev);
 static void      _e_desk_window_profile_change_protocol_set(void);
 
+static E_Desk_Flip_Cb _e_desk_flip_cb = NULL;
+static void *_e_desk_flip_data = NULL;
+
 EAPI int E_EVENT_DESK_SHOW = 0;
 EAPI int E_EVENT_DESK_BEFORE_SHOW = 0;
 EAPI int E_EVENT_DESK_AFTER_SHOW = 0;
@@ -636,6 +639,58 @@ e_desk_window_profile_update(void)
      }
 }
 
+EAPI void
+e_desk_flip_cb_set(E_Desk_Flip_Cb cb, const void *data)
+{
+   _e_desk_flip_cb = cb;
+   _e_desk_flip_data = (void*)data;
+}
+
+EAPI void
+e_desk_flip_end(E_Desk *desk)
+{
+   E_Event_Desk_After_Show *ev;
+   E_Client *ec;
+
+   ev = E_NEW(E_Event_Desk_After_Show, 1);
+   ev->desk = desk;
+   e_object_ref(E_OBJECT(ev->desk));
+   ecore_event_add(E_EVENT_DESK_AFTER_SHOW, ev,
+                   _e_desk_event_desk_after_show_free, NULL);
+
+   e_comp_shape_queue(e_comp_get(desk));
+   if (!e_config->focus_last_focused_per_desktop) return;
+   if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
+       (e_config->focus_policy == E_FOCUS_SLOPPY))
+     {
+             ec = e_client_focused_get();
+             /* only set focus/warp pointer if currently focused window
+              * is on same screen (user hasn't switched screens during transition)
+              */
+             if (ec && ec->desk && (ec->desk->zone != desk->zone))
+               return;
+     }
+   if (starting) return;
+   ec = e_desk_last_focused_focus(desk);
+   if ((e_config->focus_policy != E_FOCUS_MOUSE) && (!ec))
+     {
+        /* we didn't previously have a focused window on this desk
+         * but we should, so this is probably the first time the
+         * user has flipped to this desk. let's be helpful and
+         * focus a random window!
+         */
+         E_CLIENT_REVERSE_FOREACH(e_comp_get(desk), ec)
+           {
+              /* start with top and go down... */
+              if (e_client_util_ignored_get(ec)) continue;
+              if (!e_client_util_desk_visible(ec, desk)) continue;
+              if (ec->iconic) continue;
+              evas_object_focus_set(ec->frame, 1);
+              return;
+           }
+     }
+}
+
 static void
 _e_desk_free(E_Desk *desk)
 {
@@ -715,49 +770,6 @@ _e_desk_transition_setup(E_Client *ec, int dx, int dy, int state)
 }
 
 static void
-_e_desk_show_end_serious(E_Desk *desk)
-{
-   E_Event_Desk_After_Show *ev;
-   E_Client *ec;
-
-   ev = E_NEW(E_Event_Desk_After_Show, 1);
-   ev->desk = desk;
-   e_object_ref(E_OBJECT(ev->desk));
-   ecore_event_add(E_EVENT_DESK_AFTER_SHOW, ev,
-                   _e_desk_event_desk_after_show_free, NULL);
-
-   if (!e_config->focus_last_focused_per_desktop) return;
-   if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
-       (e_config->focus_policy == E_FOCUS_SLOPPY))
-     {
-             ec = e_client_focused_get();
-             /* only set focus/warp pointer if currently focused window
-              * is on same screen (user hasn't switched screens during transition)
-              */
-             if (ec && ec->desk && (ec->desk->zone != desk->zone))
-               return;
-     }
-   if (starting) return;
-   ec = e_desk_last_focused_focus(desk);
-   if ((e_config->focus_policy != E_FOCUS_MOUSE) && (!ec))
-     {
-        /* we didn't previously have a focused window on this desk
-         * but we should, so this is probably the first time the
-         * user has flipped to this desk. let's be helpful and
-         * focus a random window!
-         */
-         E_CLIENT_REVERSE_FOREACH(e_comp_get(desk), ec)
-           {
-              /* start with top and go down... */
-              if (e_client_util_ignored_get(ec)) continue;
-              if (!e_client_util_desk_visible(ec, desk)) continue;
-              evas_object_focus_set(ec->frame, 1);
-              break;
-           }
-     }
-}
-
-static void
 _e_desk_show_end(void *data, Evas_Object *obj EINA_UNUSED, const char *emission EINA_UNUSED, const char *source EINA_UNUSED)
 {
    E_Client *ec = data;
@@ -768,7 +780,7 @@ _e_desk_show_end(void *data, Evas_Object *obj EINA_UNUSED, const char *emission 
    ec->hidden = 0;
    if (!ec->visible) evas_object_show(ec->frame);
    if (ec->desk != e_desk_current_get(ec->zone)) return;
-   if (!ec->desk->animate_count) _e_desk_show_end_serious(ec->desk);
+   if (!ec->desk->animate_count) e_desk_flip_end(ec->desk);
 }
 
 static void
@@ -792,6 +804,11 @@ _e_desk_show_begin(E_Desk *desk, int dx, int dy)
    if (dy > 0) dy = 1;
 
    desk->animate_count = 0;
+   if (_e_desk_flip_cb && e_config->desk_flip_animate_type)
+     {
+        _e_desk_flip_cb(_e_desk_flip_data, desk, dx, dy, 1);
+        return;
+     }
    E_CLIENT_FOREACH(desk->zone->comp, ec)
      {
         if ((ec->desk->zone != desk->zone) || (ec->iconic) || e_client_util_ignored_get(ec)) continue;
@@ -817,7 +834,7 @@ _e_desk_show_begin(E_Desk *desk, int dx, int dy)
         evas_object_show(ec->frame);
      }
    if ((!e_config->desk_flip_animate_type) || (!desk->animate_count))
-     _e_desk_show_end_serious(desk);
+     e_desk_flip_end(desk);
 }
 
 static void
@@ -831,6 +848,11 @@ _e_desk_hide_begin(E_Desk *desk, int dx, int dy)
    if (dy > 0) dy = 1;
 
    desk->animate_count = 0;
+   if (_e_desk_flip_cb && e_config->desk_flip_animate_type)
+     {
+        _e_desk_flip_cb(_e_desk_flip_data, desk, dx, dy, 0);
+        return;
+     }
    E_CLIENT_FOREACH(desk->zone->comp, ec)
      {
         if ((ec->desk->zone != desk->zone) || (ec->iconic) || e_client_util_ignored_get(ec)) continue;
