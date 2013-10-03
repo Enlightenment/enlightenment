@@ -135,8 +135,8 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
    CHECK(autohide_show_action);
    CHECK(desk_show_mode);
    CHECK(desk_list);
-   if (fabs(cfdata->hide_timeout - cfdata->escfg->hide_timeout > 0.19)) return 1;
-   if (fabs(cfdata->hide_timeout - cfdata->escfg->hide_timeout > 0.04)) return 1;
+   if (fabs(cfdata->hide_timeout - cfdata->escfg->hide_timeout) > 0.19) return 1;
+   if (fabs(cfdata->hide_duration - cfdata->escfg->hide_duration) > 0.04) return 1;
    return 0;
 }
 
