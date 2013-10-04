@@ -8963,11 +8963,12 @@ _e_border_eval(E_Border *bd)
                   snprintf(buf, sizeof(buf), "%s.desktop", bd->client.icccm.class);
                   bd->desktop = efreet_util_desktop_file_id_find(buf);
                }
-             if (!bd->desktop)
+             if ((!bd->desktop) && (bd->client.icccm.class))
                {
-                  char buf[4096] = {0}, *s;
+                  char buf[4096], *s;
 
-                  strncpy(buf, bd->client.icccm.class, sizeof(buf));
+                  strncpy(buf, bd->client.icccm.class, sizeof(buf) - 1);
+                  buf[sizeof(buf) - 1] = 0;
                   s = buf;
                   eina_str_tolower(&s);
                   if (strcmp(s, bd->client.icccm.class))
