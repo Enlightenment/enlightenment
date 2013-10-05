@@ -5,6 +5,5 @@ Name=Illume-Indicator
 Name[eo]=Illume-Indikilo
 Name[fr]=Indicateur Illume
 Name[sr]=Указивач одсјаја
-Comment=
 Icon=e-module-illume-indicator
 X-Enlightenment-ModuleType=mobile

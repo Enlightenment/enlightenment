@@ -5,6 +5,5 @@ Name=Illume-Keyboard-Toggle
 Name[eo]=Baskulo de klavaro Illume
 Name[fr]=Bascule clavier Illume
 Name[sr]=Прекидач тастатуре одјсаја
-Comment=
 Icon=e-module-illume-kbd-toggle
 X-Enlightenment-ModuleType=mobile

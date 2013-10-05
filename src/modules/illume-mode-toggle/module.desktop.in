@@ -4,6 +4,5 @@ Type=Link
 Name=Illume-Mode-Toggle
 Name[eo]=Baskulilo de reĝimo Illume
 Name[sr]=Прекидач одсјаја
-Comment=
 Icon=e-module-illume-mode-toggle
 X-Enlightenment-ModuleType=mobile
