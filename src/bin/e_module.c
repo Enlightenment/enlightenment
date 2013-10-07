@@ -897,6 +897,7 @@ _e_module_whitelist_check(void)
       "wl_drm",
       "wl_screenshot",
       "wl_shell",
+      "wl_desktop_shell",
       "xkbswitch",
       "echievements",
       "music-control",
