@@ -1653,8 +1653,8 @@ _e_gadman_cb_zone_change(void *data __UNUSED__, int type, void *event)
                {
                   if (e_gadcon_zone_get(gc) != ev->zone) continue;
                   e_object_del(E_OBJECT(gc));
-                  if (!Man->gadcons[layer])
-                    E_FREE_FUNC(Man->movers[layer], evas_object_del);
+                  Man->gadcons[layer] = eina_list_remove_list(Man->gadcons[layer], l);
+                  E_FREE_FUNC(Man->movers[layer], evas_object_del);
                   break;
                }
           }
