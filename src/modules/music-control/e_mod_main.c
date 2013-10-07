@@ -12,6 +12,7 @@ const Player music_player_players[] =
 {
    {"gmusicbrowser", "org.mpris.MediaPlayer2.gmusicbrowser"},
    {"Banshee", "org.mpris.MediaPlayer2.banshee"},
+   {"Clementine", "org.mpris.MediaPlayer2.clementine"},
    {"Audacious", "org.mpris.MediaPlayer2.audacious"},
    {"VLC", "org.mpris.MediaPlayer2.vlc"},
    {"BMP", "org.mpris.MediaPlayer2.bmp"},
