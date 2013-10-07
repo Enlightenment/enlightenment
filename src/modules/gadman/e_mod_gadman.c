@@ -1627,9 +1627,8 @@ static Eina_Bool
 _e_gadman_cb_zone_change(void *data __UNUSED__, int type, void *event)
 {
    E_Gadcon *gc;
-   Eina_List *l;
+   Eina_List *l, *ll;
    E_Event_Zone_Move_Resize *ev = event;
-   Eina_List *ll;
    const char *layer_name[] = {"gadman", "gadman_top"};
    int layer;
    E_Gadcon_Client *gcc;
