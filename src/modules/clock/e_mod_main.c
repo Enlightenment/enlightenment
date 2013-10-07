@@ -756,9 +756,9 @@ _conf_item_get(const char *id)
    ci->weekend.start = 6;
    ci->weekend.len = 2;
    ci->week.start = 1;
-   ci->digital_clock = 0;
+   ci->digital_clock = 1;
    ci->digital_24h = 0;
-   ci->show_seconds = 1;
+   ci->show_seconds = 0;
    ci->show_date = 0;
 
    clock_config->items = eina_list_append(clock_config->items, ci);
