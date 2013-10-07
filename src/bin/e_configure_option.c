@@ -1589,7 +1589,6 @@ e_configure_option_init(void)
    OPT_ADD(DOUBLE, pointer_warp_speed, _("Speed to move pointer when warping between windows"), _("border"), _("focus"), _("warp"), _("pointer"), _("speed"));
    OPT_MINMAX_STEP_FMT(0.0, 1.0, 0.01, _("%1.2f"));
    OPT_ADD(BOOL, border_raise_on_mouse_action, _("Windows raise on mouse move/resize"), _("border"), _("raise"), _("focus"), _("mouse"), _("pointer"), _("move"), _("resize"));
-   OPT_ADD(BOOL, border_raise_on_focus, _("Windows raise when focused"), _("border"), _("raise"), _("focus"), _("mouse"));
 
    OPT_ADD(DOUBLE_INT, drag_resist, _("Shelf gadget resistance"), _("gadget"), _("resist"), _("drag"), _("shelf"));
    OPT_MINMAX_STEP_FMT(0, 100, 2, _("%2.0f pixels"));

@@ -80,6 +80,7 @@ Deprecations:
 Removed:
     * e_manager_comp namespace
     * HAL support for filemanager
+    * "raise on focus" config option
 
 Improvements:
     * mixer shows more channels when using alsa subsystem and correctly disable controls

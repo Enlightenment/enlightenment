@@ -149,7 +149,6 @@ group "E_Config" struct {
     value "mouse_accel_denominator" int: 1;
     value "mouse_accel_threshold" int: 4;
     value "border_raise_on_mouse_action" int: 1;
-    value "border_raise_on_focus" int: 0;
     value "desk_flip_wrap" int: 0;
     value "fullscreen_flip" int: 1;
     value "icon_theme" string: "Tango";

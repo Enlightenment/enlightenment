@@ -257,7 +257,6 @@ struct _E_Config
    int                       mouse_accel_threshold; // GUI
 
    int                       border_raise_on_mouse_action; // GUI
-   int                       border_raise_on_focus; // GUI
    int                       desk_flip_wrap; // GUI
    int                       fullscreen_flip; // GUI
    int                       multiscreen_flip; // GUI

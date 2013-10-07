@@ -1,3 +1,7 @@
+2013-10-07 Mike Blumenkrantz
+
+        * removed "raise on focus" config option
+
 2013-10-03 Mike Blumenkrantz
 
         * Fix filemanager spring window closing when dragging from desktop

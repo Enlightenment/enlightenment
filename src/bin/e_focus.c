@@ -39,10 +39,7 @@ e_focus_event_mouse_in(E_Border *bd)
         if (e_config->auto_raise_delay == 0.0)
           {
              if (!bd->lock_user_stacking)
-               {
-                  if (e_config->border_raise_on_focus)
-                    e_border_raise(bd);
-               }
+               e_border_raise(bd);
           }
         else
           bd->raise_timer = ecore_timer_add(e_config->auto_raise_delay, _e_focus_raise_timer, bd);
@@ -98,11 +95,6 @@ e_focus_event_focus_in(E_Border *bd)
         e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, bd->win);
         e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, bd->win);
         bd->button_grabbed = 0;
-     }
-   if (!bd->lock_user_stacking)
-     {
-        if (e_config->border_raise_on_focus)
-          e_border_raise(bd);
      }
 }
 
