@@ -455,6 +455,8 @@ e_manager_current_get(void)
    int x, y;
 
    if (!managers) return NULL;
+   if (eina_list_count(managers) == 1)
+     return eina_list_data_get(managers);
    EINA_LIST_FOREACH(managers, l, man)
      {
         ecore_x_pointer_xy_get(man->win, &x, &y);
