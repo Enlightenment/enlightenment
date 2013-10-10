@@ -118,8 +118,8 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
         e_config->focus_setting = E_FOCUS_NEW_WINDOW;
         e_config->pass_click_on = 1;
         e_config->window_activehint_policy = 2;
-        e_config->always_click_to_raise = 0;
-        e_config->always_click_to_focus = 0;
+        e_config->always_click_to_raise = 1;
+        e_config->always_click_to_focus = 1;
         e_config->focus_last_focused_per_desktop = 1;
         e_config->focus_revert_on_hide_or_close = 1;
         e_config->pointer_slide = 0;
