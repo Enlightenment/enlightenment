@@ -77,27 +77,18 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
    dd->x = x;
    dd->y = y;
 
-   dd->icon = edje_object_add(e);
-   e_theme_edje_object_set(dd->icon, "base/theme/widgets",
-                           "e/widgets/deskpreview/desk");
-
    dd->thumb = e_icon_add(e);
    e_icon_fill_inside_set(dd->thumb, EINA_FALSE);
    e_icon_file_edje_set(dd->thumb, bgfile, "e/desktop/background");
    eina_stringshare_del(bgfile);
-   evas_object_show(dd->thumb);
-   edje_object_part_swallow(dd->icon, "e.swallow.content", dd->thumb);
 
-   evas_object_show(dd->icon);
-   evas_object_data_set(dd->icon, "desk_data", dd);
-   dd->configurable = EINA_TRUE;
-   evas_object_event_callback_add(dd->icon, EVAS_CALLBACK_FREE, _e_wid_data_del, dd);
-   evas_object_event_callback_add(dd->icon, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _e_wid_desk_cb_config, dd);
+   evas_object_data_set(dd->thumb, "desk_data", dd);
+   evas_object_event_callback_add(dd->thumb, EVAS_CALLBACK_FREE, _e_wid_data_del, dd);
+
    dd->bg_upd_hdl = ecore_event_handler_add(E_EVENT_BG_UPDATE,
                                             _e_wid_cb_bg_update, dd);
 
-   return dd->icon;
+   return dd->thumb;
 }
 
 EAPI void
@@ -204,8 +195,22 @@ _e_wid_reconfigure(E_Widget_Data *wd)
         for (x = sx; x < wd->dx; x++)
           {
              Evas_Object *dp;
+             Evas *e;
 
-             dp = e_widget_bgpreview_desk_add(evas_object_evas_get(wd->obj), zone, x, y);
+             e = evas_object_evas_get(wd->obj);
+             dp = e_widget_bgpreview_desk_add(e, zone, x, y);
+
+             dd = evas_object_data_get(dp, "desk_data");
+             dp = dd->icon = edje_object_add(e);
+             e_theme_edje_object_set(dd->icon, "base/theme/widgets",
+                                     "e/widgets/deskpreview/desk");
+
+             edje_object_part_swallow(dd->icon, "e.swallow.content", dd->thumb);
+             dd->configurable = EINA_TRUE;
+             evas_object_event_callback_add(dd->icon, EVAS_CALLBACK_MOUSE_DOWN,
+                                            _e_wid_desk_cb_config, dd);
+             evas_object_show(dd->icon);
+             evas_object_data_set(dd->icon, "desk_data", dd);
              evas_object_size_hint_min_set(dp, mw, mh);
              evas_object_size_hint_max_set(dp, mw, mh);
              evas_object_size_hint_aspect_set(dp, EVAS_ASPECT_CONTROL_BOTH, zone->w, zone->h);
