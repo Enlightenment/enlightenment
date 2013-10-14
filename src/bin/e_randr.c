@@ -876,7 +876,6 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 
 		       printf("\t\t\tUsing Crtc Config %d for Cloning\n", 
 			      crtc_cfg->xid);
-
 		       /* we found a valid crtc for this output */
 		       output_cfg->crtc = crtc_cfg->xid;
 		       output_cfg->exists = (output_cfg->crtc != 0);
@@ -896,6 +895,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 			      {
 				 if (modes[c] == mode)
 				   {
+                                      printf("\t\t\t\tMode: %d\n", mode);
 				      can_clone = EINA_TRUE;
 				      break;
 				   }
@@ -911,6 +911,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 			    ecore_x_randr_mode_size_get(ev->win, mode, 
 							&mw, &mh);
 
+                            printf("\t\t\t\tMode: %d - %d x %d\n", mode, mw, mh);
 			    for (c = 0; c < num; c++)
 			      {
 				 int cw, ch;
@@ -918,11 +919,22 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 				 ecore_x_randr_mode_size_get(ev->win, 
 							     modes[c], 
 							     &cw, &ch);
+
 				 if ((cw == mw) && (ch == mh))
 				   {
 				      mode = modes[c];
 				      break;
 				   }
+                                 else
+                                   {
+                                      /* trap for dumb non-standard TV 
+                                       * resolution of 1360 x 768 */
+                                      if (((cw + 6) == mw) && (ch == mh))
+                                        {
+                                           mode = modes[c];
+                                           break;
+                                        }
+                                   }
 			      }
 			 }
 
