@@ -672,6 +672,7 @@ struct E_Client
    Eina_Bool tooltip : 1;
    Eina_Bool redirected : 1;
    Eina_Bool shape_changed : 1;
+   Eina_Bool layer_block : 1; // client is doing crazy stuff and should not be relayered in protocol
    Eina_Bool ignored : 1; // client is comp-ignored
    Eina_Bool no_shape_cut : 1; // client shape should not be cut
 };

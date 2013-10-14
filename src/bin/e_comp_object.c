@@ -818,8 +818,16 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
    unsigned int l = e_comp_canvas_layer_map(layer);
    int oldraise;
 
+   if (cw->ec->layer_block)
+     {
+        evas_object_layer_set(obj, layer);
+        if (layer == cw->ec->layer) //trying to put layer back
+          evas_object_stack_below(obj, cw->comp->layers[cw->layer].obj);
+        return;
+     }
    if (cw->layer == l) return;
-   if (e_comp_canvas_client_layer_map(layer) == 9999) return; //invalid layer for clients
+   if (e_comp_canvas_client_layer_map(layer) == 9999)
+     return; //invalid layer for clients not doing comp effects
    if (cw->ec->fullscreen)
      {
         cw->ec->saved.layer = layer;
@@ -896,6 +904,11 @@ _e_comp_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
 
    EINA_SAFETY_ON_TRUE_RETURN(obj == above);
    if (evas_object_below_get(obj) == above) return;
+   if (cw->ec->layer_block)
+     {
+        evas_object_stack_above(obj, above);
+        return;
+     }
    if (cw->ec->new_client)
      layer = cw->ec->layer;
    else
@@ -982,6 +995,11 @@ _e_comp_intercept_stack_below(void *data, Evas_Object *obj, Evas_Object *below)
 
    EINA_SAFETY_ON_TRUE_RETURN(obj == below);
    if (evas_object_above_get(obj) == below) return;
+   if (cw->ec->layer_block)
+     {
+        evas_object_stack_below(obj, below);
+        return;
+     }
    if (cw->ec->new_client)
      layer = cw->ec->layer;
    else
@@ -1064,6 +1082,11 @@ _e_comp_intercept_lower(void *data, Evas_Object *obj)
    E_Comp_Object *cw = data;
    Evas_Object *o;
 
+   if (cw->ec->layer_block)
+     {
+        evas_object_lower(obj);
+        return;
+     }
    if (!EINA_INLIST_GET(cw->ec)->prev) return; //already lowest on layer
    o = evas_object_below_get(obj);
    _e_comp_object_layers_remove(cw);
@@ -1081,6 +1104,11 @@ _e_comp_intercept_raise(void *data, Evas_Object *obj)
    E_Comp_Object *cw = data;
    Evas_Object *o;
 
+   if (cw->ec->layer_block)
+     {
+        evas_object_raise(obj);
+        return;
+     }
    if (!EINA_INLIST_GET(cw->ec)->next) return;//already highest on layer
    {
       E_Client *ecabove = e_client_above_get(cw->ec);
