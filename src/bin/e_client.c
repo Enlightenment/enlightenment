@@ -1337,7 +1337,8 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 
    _e_client_zone_update(ec);
 
-   _e_client_hook_call(E_CLIENT_HOOK_RESIZE_UPDATE, ec);
+   if (e_client_resizing_get(ec))
+     _e_client_hook_call(E_CLIENT_HOOK_RESIZE_UPDATE, ec);
 }
 
 static void
@@ -1360,6 +1361,7 @@ _e_client_cb_evas_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 {
    E_Client *ec = data;
 
+   if (ec->layer_block) return;
    if (e_config->transient.raise && ec->transients)
      {
         Eina_List *list = eina_list_clone(ec->transients);
