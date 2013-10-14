@@ -575,8 +575,6 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
 			 _e_smart_monitor_mode_refresh_rate_get(mode_info);
 
 		       psd->changes |= E_SMART_MONITOR_CHANGED_MODE;
-
-		       ecore_x_randr_mode_info_free(mode_info);
 		    }
 		  else
 		    {
@@ -615,8 +613,6 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
 			 _e_smart_monitor_mode_refresh_rate_get(mode_info);
 
 		       sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
-
-		       ecore_x_randr_mode_info_free(mode_info);
 		    }
 		  else
 		    {
