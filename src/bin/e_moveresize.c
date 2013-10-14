@@ -13,6 +13,8 @@ static Evas_Object *_disp_content = NULL;
 static Eina_List *hooks = NULL;
 static int visible = 0;
 
+static Eina_Bool _e_moveresize_enabled = EINA_TRUE;
+
 EINTERN int
 e_moveresize_init(void)
 {
@@ -42,7 +44,15 @@ e_moveresize_shutdown(void)
    EINA_LIST_FREE(hooks, h)
      e_client_hook_del(h);
 
+   _e_moveresize_enabled = EINA_TRUE;
+
    return 1;
+}
+
+EAPI void
+e_moveresize_replace(Eina_Bool enable)
+{
+   _e_moveresize_enabled = !enable;
 }
 
 static void
@@ -56,7 +66,7 @@ _e_resize_begin(void *data __UNUSED__, E_Client *ec)
    if (_disp_obj) evas_object_hide(_disp_obj);
    E_FREE_FUNC(_disp_obj, evas_object_del);
 
-   if (!e_config->resize_info_visible)
+   if ((!e_config->resize_info_visible) || (!_e_moveresize_enabled))
      return;
 
    _e_resize_client_extents(ec, &w, &h);
@@ -165,7 +175,7 @@ _e_move_begin(void *data __UNUSED__, E_Client *ec)
      }
    _disp_obj = NULL;
 
-   if (!e_config->move_info_visible)
+   if ((!e_config->move_info_visible) || (!_e_moveresize_enabled))
      return;
 
    _disp_content = o = edje_object_add(e_comp_get(ec)->evas);
