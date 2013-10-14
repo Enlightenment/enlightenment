@@ -886,15 +886,21 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 			* crtc's mode for cloning
 			* 
 			* NB: Hmmm, what to do if it Cannot use this mode ?? */
+
+                       /* get the modes that this output supports */
 		       modes = 
 			 ecore_x_randr_output_modes_get(ev->win, 
 							output_cfg->xid, 
 							&num, &pref);
+
 		       if (modes)
 			 {
+                            /* loop the outputs modes */
 			    for (c = 0; c < num; c++)
 			      {
-				 if (modes[c] == mode)
+				 if ((modes[c] == mode) && 
+                                     ((modes[c]->width == mode->width) && 
+                                         (modes[c]->height == mode->height)))
 				   {
 				      can_clone = EINA_TRUE;
 				      break;
@@ -915,14 +921,35 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 			      {
 				 int cw, ch;
 
-				 ecore_x_randr_mode_size_get(ev->win, 
-							     modes[c], 
+				 ecore_x_randr_mode_size_get(ev->win, modes[c], 
 							     &cw, &ch);
 				 if ((cw == mw) && (ch == mh))
 				   {
 				      mode = modes[c];
 				      break;
 				   }
+                                 else
+                                   {
+                                      /* Grrrr, stupid TVs with their 
+                                       * non-standard resolution of 
+                                       * 1360x768 ... need to account for that */
+                                      if (ch == mh)
+                                        {
+                                           if (cw <= (mw - 6))
+                                             {
+                                                mode = modes[c];
+                                                break;
+                                             }
+                                        }
+                                      else if (cw == mw)
+                                        {
+                                           if (ch <= (mh - 6))
+                                             {
+                                                mode = modes[c];
+                                                break;
+                                             }
+                                        }
+                                   }
 			      }
 			 }
 
