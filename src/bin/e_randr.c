@@ -929,7 +929,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
                                    {
                                       /* trap for dumb non-standard TV 
                                        * resolution of 1360 x 768 */
-                                      if (((cw + 6) == mw) && (ch == mh))
+                                      if ((abs(cw - mw) <= 10) && (ch == mh))
                                         {
                                            mode = modes[c];
                                            break;
@@ -950,6 +950,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 			    Eina_List *o;
 			    E_Randr_Output_Config *out;
 
+                            c = 0;
 			    couts = malloc(ocount * sizeof(Ecore_X_Randr_Output));
 			    EINA_LIST_FOREACH(crtc_cfg->outputs, o, out)
 			      {
