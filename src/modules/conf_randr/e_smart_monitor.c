@@ -551,23 +551,45 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
 
         evas_object_hide(obj);
 
-        /* check if parent is larger */
-        if ((psd->current.w > sd->current.w) || 
-            (psd->current.h > sd->current.h))
+        /* see if this monitor has a mode where the size is equal to the 
+         * parent monitor */
+        if ((mode_info = 
+             _e_smart_monitor_mode_find(sd, psd->current.w, 
+                                        psd->current.h, EINA_TRUE)))
           {
-             /* NB: X RandR does not allow clones of different size or mode.
-              * They both must match. Because of that, if the parent is 
-              * larger, then we need to resize the parent down and set the mode */
+             /* this monitor Can support parents size */
+             sd->current.w = mode_info->width;
+             sd->current.h = mode_info->height;
+             sd->current.mode = mode_info->xid;
+             sd->current.refresh_rate = 
+               _e_smart_monitor_mode_refresh_rate_get(mode_info);
 
-             /* set the parent mode to this mode */
-             /* if ((psd->current.refresh_rate != sd->current.refresh_rate) ||  */
-             /*     (psd->current.w != sd->current.w) ||  */
-             /*     (psd->current.h != sd->current.h)) */
+             sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
+          }
+        else
+          {
+             Eina_List *l;
+             Ecore_X_Randr_Mode_Info *pmode = NULL;
+
+             /* this monitor Cannot support parents size.
+              * We need to find a mode that they Both can support */
+
+             /* loop through parent modes (largest to smallest) */
+             EINA_LIST_REVERSE_FOREACH(psd->modes, l, pmode)
                {
-		  if ((mode_info = 
-		       _e_smart_monitor_mode_find(psd, sd->current.w, 
-						  sd->current.h, EINA_TRUE)))
-		    {
+                  if ((mode_info = 
+                       _e_smart_monitor_mode_find(sd, pmode->width, 
+                                                  pmode->height, EINA_TRUE)))
+                    {
+                       sd->current.w = pmode->width;
+                       sd->current.h = pmode->height;
+                       sd->current.mode = pmode->xid;
+                       sd->current.refresh_rate = 
+                         _e_smart_monitor_mode_refresh_rate_get(pmode);
+
+                       sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
+
+                       /* update parent mode */
 		       psd->current.w = mode_info->width;
 		       psd->current.h = mode_info->height;
 		       psd->current.mode = mode_info->xid;
@@ -575,82 +597,38 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
 			 _e_smart_monitor_mode_refresh_rate_get(mode_info);
 
 		       psd->changes |= E_SMART_MONITOR_CHANGED_MODE;
-		    }
-		  else
-		    {
-		       /* we could not find a mode that matches this size */
-		       /* FIXME */
-		    }
-               }
 
-             if (psd->current.orient != sd->current.orient)
-               {
-                  psd->current.orient = sd->current.orient;
-                  psd->changes |= E_SMART_MONITOR_CHANGED_ORIENTATION;
+                       break;
+                    }
                }
+          }
 
-             _e_smart_monitor_resolution_set(psd, psd->current.w, psd->current.h);
+        /* update parent */
+        if (psd->changes & E_SMART_MONITOR_CHANGED_MODE)
+          {
+             _e_smart_monitor_resolution_set(psd, psd->current.w, 
+                                             psd->current.h);
 
              evas_object_grid_pack(psd->grid.obj, parent, 
                                    psd->current.x, psd->current.y, 
                                    psd->current.w, psd->current.h);
           }
-        else if ((sd->current.w > psd->current.w) || 
-                 (sd->current.h > psd->current.h))
+
+        /* update orientation */
+        if (sd->current.orient != psd->current.orient)
           {
-             /* if ((sd->current.refresh_rate != psd->current.refresh_rate) ||  */
-             /*     (sd->current.w != psd->current.w) ||  */
-             /*     (sd->current.h != psd->current.h)) */
-               {
-		  if ((mode_info = 
-		       _e_smart_monitor_mode_find(sd, psd->current.w, 
-						  psd->current.h, EINA_TRUE)))
-		    {
-		       sd->current.w = mode_info->width;
-		       sd->current.h = mode_info->height;
-		       sd->current.mode = mode_info->xid;
-		       sd->current.refresh_rate = 
-			 _e_smart_monitor_mode_refresh_rate_get(mode_info);
-
-		       sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
-		    }
-		  else
-		    {
-		       /* we could not find a mode that matches this size */
-		       /* FIXME */
-		    }
-
-                  sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
-               }
-
-             if (sd->current.orient != psd->current.orient)
-               {
-                  sd->current.orient = psd->current.orient;
-		  sd->changes |= E_SMART_MONITOR_CHANGED_ORIENTATION;
-               }
-
-             _e_smart_monitor_resolution_set(sd, sd->current.w, sd->current.h);
-
-             evas_object_grid_pack(sd->grid.obj, obj, 
-                                   sd->current.x, sd->current.y, 
-                                   sd->current.w, sd->current.h);
-          }
-        else
-          {
-             /* sizes are equal */
-
-	     /* NB: We cannot explicitly just match to the parent mode 
-	      * as the monitor we are cloning may not support that mode, 
-	      * so we need to match mode to size */
-	     printf("Setting Clone. Current Mode: %d\n", sd->current.mode);
-
-//             sd->current.mode = psd->current.mode;
-//             sd->current.refresh_rate = psd->current.refresh_rate;
              sd->current.orient = psd->current.orient;
-	     sd->changes |= E_SMART_MONITOR_CHANGED_ORIENTATION;
+             sd->changes |= E_SMART_MONITOR_CHANGED_ORIENTATION;
           }
 
-        _e_smart_monitor_coord_virtual_to_canvas(sd, sd->current.w, sd->current.h, &fw, &fh);
+        _e_smart_monitor_resolution_set(sd, sd->current.w, sd->current.h);
+
+        evas_object_grid_pack(sd->grid.obj, obj, 
+                              sd->current.x, sd->current.y, 
+                              sd->current.w, sd->current.h);
+
+        _e_smart_monitor_coord_virtual_to_canvas(sd, sd->current.w, 
+                                                 sd->current.h, &fw, &fh);
         if (fw < 1) fw = (sd->current.w / 10);
         if (fh < 1) fh = (sd->current.h / 10);
 
@@ -709,6 +687,7 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
      }
    else
      {
+        /* uncloned */
         if (sd->o_clone)
           {
              evas_object_smart_member_del(sd->o_clone);
