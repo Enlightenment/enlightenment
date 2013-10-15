@@ -3,7 +3,6 @@
 static void _e_resize_begin(void *data, E_Client *ec);
 static void _e_resize_update(void *data, E_Client *ec);
 static void _e_resize_end(void *data, E_Client *ec);
-static void _e_resize_client_extents(E_Client *ec, int *w, int *h);
 static void _e_move_begin(void *data, E_Client *ec);
 static void _e_move_update(void *data, E_Client *ec);
 static void _e_move_end(void *data, E_Client *ec);
@@ -55,6 +54,34 @@ e_moveresize_replace(Eina_Bool enable)
    _e_moveresize_enabled = !enable;
 }
 
+EAPI void
+e_moveresize_client_extents(const E_Client *ec, int *w, int *h)
+{
+   if ((ec->icccm.base_w >= 0) &&
+       (ec->icccm.base_h >= 0))
+     {
+        if (ec->icccm.step_w > 0)
+          *w = (ec->client.w - ec->icccm.base_w) / ec->icccm.step_w;
+        else
+          *w = ec->client.w;
+        if (ec->icccm.step_h > 0)
+          *h = (ec->client.h - ec->icccm.base_h) / ec->icccm.step_h;
+        else
+          *h = ec->client.h;
+     }
+   else
+     {
+        if (ec->icccm.step_w > 0)
+          *w = (ec->client.w - ec->icccm.min_w) / ec->icccm.step_w;
+        else
+          *w = ec->client.w;
+        if (ec->icccm.step_h > 0)
+          *h = (ec->client.h - ec->icccm.min_h) / ec->icccm.step_h;
+        else
+          *h = ec->client.h;
+     }
+}
+
 static void
 _e_resize_begin(void *data __UNUSED__, E_Client *ec)
 {
@@ -69,7 +96,7 @@ _e_resize_begin(void *data __UNUSED__, E_Client *ec)
    if ((!e_config->resize_info_visible) || (!_e_moveresize_enabled))
      return;
 
-   _e_resize_client_extents(ec, &w, &h);
+   e_moveresize_client_extents(ec, &w, &h);
 
    _disp_content = o = edje_object_add(e_comp_get(ec)->evas);
    evas_object_name_set(o, "resizeinfo->_disp_content");
@@ -122,7 +149,7 @@ _e_resize_update(void *data __UNUSED__, E_Client *ec)
    if (e_config->resize_info_follows)
      e_comp_object_util_center_on(_disp_obj, ec->frame);
 
-   _e_resize_client_extents(ec, &w, &h);
+   e_moveresize_client_extents(ec, &w, &h);
 
    if (!visible)
      {
@@ -131,34 +158,6 @@ _e_resize_update(void *data __UNUSED__, E_Client *ec)
      }
    snprintf(buf, sizeof(buf), _("%i×%i"), w, h);
    edje_object_part_text_set(_disp_content, "e.text.label", buf);
-}
-
-static void
-_e_resize_client_extents(E_Client *ec, int *w, int *h)
-{
-   if ((ec->icccm.base_w >= 0) &&
-       (ec->icccm.base_h >= 0))
-     {
-        if (ec->icccm.step_w > 0)
-          *w = (ec->client.w - ec->icccm.base_w) / ec->icccm.step_w;
-        else
-          *w = ec->client.w;
-        if (ec->icccm.step_h > 0)
-          *h = (ec->client.h - ec->icccm.base_h) / ec->icccm.step_h;
-        else
-          *h = ec->client.h;
-     }
-   else
-     {
-        if (ec->icccm.step_w > 0)
-          *w = (ec->client.w - ec->icccm.min_w) / ec->icccm.step_w;
-        else
-          *w = ec->client.w;
-        if (ec->icccm.step_h > 0)
-          *h = (ec->client.h - ec->icccm.min_h) / ec->icccm.step_h;
-        else
-          *h = ec->client.h;
-     }
 }
 
 static void
