@@ -2177,6 +2177,12 @@ _e_smart_monitor_resize_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
        (e_config->drag_resist * e_config->drag_resist))
      return;
 
+   if ((ev->cur.output.x > (sd->x + sd->w + (RESIZE_FUZZ / 2))) || 
+       (ev->cur.output.x < sd->x)) return;
+
+   if ((ev->cur.output.y > (sd->y + sd->h + (RESIZE_FUZZ / 2))) || 
+       (ev->cur.output.y < sd->y)) return;
+
    dx = (ev->cur.canvas.x - ev->prev.canvas.x);
    dy = (ev->cur.canvas.y - ev->prev.canvas.y);
 
