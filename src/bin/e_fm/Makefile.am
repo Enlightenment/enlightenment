@@ -34,12 +34,16 @@ if HAVE_EEZE_MOUNT
 AM_CFLAGS += @EEZE_CFLAGS@ @EET_CFLAGS@
 LIBS += @EEZE_LIBS@ @EET_LIBS@
 eeze_s = \
-../e_prefix.c \
 e_fm_main_eeze.h \
 e_fm_main_eeze.c
 else
 eeze_s =
 endif
+
+shared_sources = \
+e_fm_shared_codec.c \
+e_fm_shared_device.c \
+e_user.c
 
 enlightenment_fm_SOURCES = \
 e_fm_main.h \
@@ -48,9 +52,11 @@ e_fm_main.c \
 e_fm_ipc.c \
 $(udisks_s) \
 $(eeze_s) \
-../e_fm_shared_codec.c \
-../e_fm_shared_device.c \
-../e_user.c \
-../e_sha1.c
+$(shared_sources)
+
+$(shared_sources): %.c: $(abs_top_srcdir)/src/bin/%.c
+	$(AM_V_GEN) $(LN_S) -f $< $@
+
+CLEANFILES = $(shared_sources)
 
 enlightenment_fm_LDADD = @E_FM_LIBS@
