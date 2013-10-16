@@ -111,6 +111,7 @@ struct _E_Comp
    Eina_Bool       nocomp : 1;
    Eina_Bool       nocomp_want : 1;
    Eina_Bool       saver : 1;
+   Eina_Bool       shape_queue_blocked : 1;
 };
 
 
@@ -137,6 +138,7 @@ EAPI int e_comp_internal_save(void);
 EINTERN int e_comp_shutdown(void);
 EAPI void e_comp_render_queue(E_Comp *c);
 EAPI void e_comp_shape_queue(E_Comp *c);
+EAPI void e_comp_shape_queue_block(E_Comp *c, Eina_Bool block);
 EAPI E_Comp_Config *e_comp_config_get(void);
 EAPI const Eina_List *e_comp_list(void);
 EAPI void e_comp_shadows_reset(void);
