@@ -1385,6 +1385,18 @@ e_comp_shape_queue(E_Comp *c)
      c->shape_job = ecore_job_add((Ecore_Cb)_e_comp_shapes_update_job, c);
 }
 
+EAPI void
+e_comp_shape_queue_block(E_Comp *c, Eina_Bool block)
+{
+   EINA_SAFETY_ON_NULL_RETURN(c);
+
+   c->shape_queue_blocked = !!block;
+   if (block)
+     E_FREE_FUNC(c->shape_job, ecore_job_del);
+   else
+     e_comp_shape_queue(c);
+}
+
 EAPI E_Comp_Config *
 e_comp_config_get(void)
 {
