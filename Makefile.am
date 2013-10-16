@@ -66,6 +66,8 @@ po/Rules-quot
 
 endif
 
+DISTCHECK_CONFIGURE_FLAGS = --disable-systemd
+
 EXTRA_DIST = config.rpath  README AUTHORS COPYING \
              enlightenment.spec.in enlightenment.spec enlightenment.pc
 
