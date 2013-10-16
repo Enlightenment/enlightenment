@@ -27,6 +27,8 @@ struct _Frame_Extents
 
 struct _E_Comp_Data
 {
+   Eina_List *retry_clients;
+   Ecore_Timer *retry_timer;
    Eina_Bool restack : 1;
 };
 
@@ -1031,7 +1033,20 @@ _e_comp_x_destroy(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Wi
    //INF("X DESTROY: %u", ev->win);
    e_comp_ignore_win_del(E_PIXMAP_TYPE_X, ev->win);
    ec = _e_comp_x_client_find_by_window(ev->win);
-   if (!ec) return ECORE_CALLBACK_RENEW;
+   if (!ec)
+     {
+        const Eina_List *l;
+        E_Comp *c;
+
+        EINA_LIST_FOREACH(e_comp_list(), l, c)
+          {
+             if (!c->comp_data->retry_clients) continue;
+             c->comp_data->retry_clients = eina_list_remove(c->comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
+             if (!c->comp_data->retry_clients)
+               E_FREE_FUNC(c->comp_data->retry_timer, ecore_timer_del);
+          }
+        return ECORE_CALLBACK_PASS_ON;
+     }
    if (ec->comp_data)
      {
         if (ec->comp_data->reparented)
@@ -1142,28 +1157,9 @@ _e_comp_x_show_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Eve
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool
-_e_comp_x_show(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Show *ev)
+static void
+_e_comp_x_show_helper(E_Client *ec)
 {
-   E_Client *ec;
-   E_Comp *c;
-
-   //INF("X SHOW: %u", ev->win);
-   ec = _e_comp_x_client_find_by_window(ev->win);
-   if (!ec)
-     {
-        if (e_comp_ignore_win_find(ev->win)) return ECORE_CALLBACK_RENEW;
-        c = e_comp_find_by_window(ev->event_win);
-        if (!c) return ECORE_CALLBACK_RENEW;
-        if (ev->event_win != c->man->root) return ECORE_CALLBACK_RENEW;
-        if ((c->win == ev->win) || (c->ee_win == ev->win) ||
-            (c->man->root == ev->win) || (c->cm_selection == ev->win)) return ECORE_CALLBACK_RENEW;
-        /* some window which we haven't made a client for yet but need to */
-        ec = _e_comp_x_client_new(c, ev->win, 0);
-        if (!ec) return ECORE_CALLBACK_RENEW;
-     }
-   else if (e_object_is_del(E_OBJECT(ec)) || ec->already_unparented)
-     return ECORE_CALLBACK_RENEW;
    if ((!ec->override) && (!ec->re_manage) && (!ec->comp_data->first_map) &&
        (!ec->comp_data->reparented) && (!ec->comp_data->need_reparent))
      {
@@ -1203,9 +1199,60 @@ _e_comp_x_show(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
              ec->comp->comp_data->restack = 1;
           }
      }
+}
+
+static Eina_Bool
+_e_comp_x_show_retry(void *data)
+{
+   E_Comp *c = data;
+   uintptr_t *win;
+
+   EINA_LIST_FREE(c->comp_data->retry_clients, win)
+     {
+        E_Client *ec;
+
+        ec = _e_comp_x_client_new(c, (Ecore_X_Window)(uintptr_t)win, 0);
+        if (ec) _e_comp_x_show_helper(ec);
+     }
+
+   c->comp_data->retry_timer = NULL;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_comp_x_show(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Show *ev)
+{
+   E_Client *ec;
+   E_Comp *c;
+
+   //INF("X SHOW: %u", ev->win);
+   ec = _e_comp_x_client_find_by_window(ev->win);
+   if (!ec)
+     {
+        if (e_comp_ignore_win_find(ev->win)) return ECORE_CALLBACK_RENEW;
+        c = e_comp_find_by_window(ev->event_win);
+        if (!c) return ECORE_CALLBACK_RENEW;
+        if (ev->event_win != c->man->root) return ECORE_CALLBACK_RENEW;
+        if ((c->win == ev->win) || (c->ee_win == ev->win) ||
+            (c->man->root == ev->win) || (c->cm_selection == ev->win)) return ECORE_CALLBACK_RENEW;
+        /* some window which we haven't made a client for yet but need to */
+        ec = _e_comp_x_client_new(c, ev->win, 0);
+        if (!ec)
+          {
+             if (c->comp_data->retry_timer)
+               ecore_timer_reset(c->comp_data->retry_timer);
+             else
+               c->comp_data->retry_timer = ecore_timer_add(0.02, _e_comp_x_show_retry, c);
+             c->comp_data->retry_clients = eina_list_append(c->comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
+             return ECORE_CALLBACK_RENEW;
+          }
+     }
+   else if (e_object_is_del(E_OBJECT(ec)) || ec->already_unparented)
+     return ECORE_CALLBACK_RENEW;
+   _e_comp_x_show_helper(ec);
    if (!ec->override)
      _e_comp_x_client_stack(ec);
-   return ECORE_CALLBACK_PASS_ON;
+   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -1216,7 +1263,20 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
 
    //INF("X HIDE: %u", ev->win);
    ec = _e_comp_x_client_find_by_window(ev->win);
-   if (!ec) return ECORE_CALLBACK_PASS_ON;
+   if (!ec)
+     {
+        const Eina_List *l;
+        E_Comp *c;
+
+        EINA_LIST_FOREACH(e_comp_list(), l, c)
+          {
+             if (!c->comp_data->retry_clients) continue;
+             c->comp_data->retry_clients = eina_list_remove(c->comp_data->retry_clients, (uintptr_t*)(unsigned long)ev->win);
+             if (!c->comp_data->retry_clients)
+               E_FREE_FUNC(c->comp_data->retry_timer, ecore_timer_del);
+          }
+        return ECORE_CALLBACK_PASS_ON;
+     }
    if (!ec->visible)
      {
         //INF("IGNORED");
@@ -4330,6 +4390,8 @@ _e_comp_x_del(E_Comp *c)
    ecore_x_window_free(c->cm_selection);
    ecore_x_screen_is_composited_set(c->man->num, 0);
 
+   eina_list_free(c->comp_data->retry_clients);
+   ecore_timer_del(c->comp_data->retry_timer);
    free(c->comp_data);
 }
 
