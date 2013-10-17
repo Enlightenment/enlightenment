@@ -393,8 +393,8 @@ _e_layout_smart_move_resize_item(E_Layout_Item *li)
                     li->sd->x + ((li->x * li->sd->w) / li->sd->vw),
                     li->sd->y + ((li->y * li->sd->h) / li->sd->vh));
    evas_object_resize(li->obj,
-                      (li->w * li->sd->w) / li->sd->vw,
-                      (li->h * li->sd->h) / li->sd->vh);
+                      MAX((li->w * li->sd->w) / li->sd->vw, 1),
+                      MAX((li->h * li->sd->h) / li->sd->vh, 1));
 }
 
 static void
