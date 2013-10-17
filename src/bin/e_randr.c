@@ -690,6 +690,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    Eina_Bool output_found = EINA_FALSE;
    Eina_Bool output_changed = EINA_FALSE;
    Eina_Bool output_removed = EINA_FALSE;
+   Eina_Bool skip_output = EINA_FALSE;
 
    ev = event;
 
@@ -776,6 +777,11 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 	     else if (ev->crtc == 0)
 	       {
                   printf("\t\t\t\tOutput Has No Crtc Assigned\n");
+                  if (!crtc_cfg->mode) 
+                    {
+                       output_found = EINA_TRUE;
+                       skip_output = EINA_TRUE;
+                    }
 	       }
 
              if (output_found) break;
@@ -974,7 +980,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 	       printf("NO MAIN OUTPUT CONFIG TO CLONE TO !!!\n");
           }
      }
-   else if ((output_found) && (ev->crtc == 0))
+   else if ((output_found) && (ev->crtc == 0) && (!skip_output))
      {
 	if (ev->connection == 0)
 	  {
