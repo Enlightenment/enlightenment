@@ -381,6 +381,9 @@ _e_randr_config_restore(void)
     * any randr event updates until we are done */
    ecore_x_grab();
 
+   /* get the root window */
+   root = ecore_x_window_root_first_get();
+
    /* get existing primary output */
    /* primary = ecore_x_randr_primary_output_get(root); */
 
@@ -390,9 +393,6 @@ _e_randr_config_restore(void)
    /* calculate new screen size */
    _e_randr_config_screen_size_calculate(&sw, &sh);
    printf("\tCalculated Screen Size: %d %d\n", sw, sh);
-
-   /* get the root window */
-   root = ecore_x_window_root_first_get();
 
    /* get a list of crtcs from X */
    if ((crtcs = ecore_x_randr_crtcs_get(root, &ncrtcs)))
