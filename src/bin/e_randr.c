@@ -495,6 +495,7 @@ _e_randr_config_restore(void)
                        /* append to the list of valid outputs */
                        valid = eina_list_append(valid, output_cfg);
                     }
+                  if (!valid) continue;
 
                   count = eina_list_count(valid);
 
