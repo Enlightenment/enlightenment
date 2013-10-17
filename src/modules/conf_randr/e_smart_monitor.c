@@ -836,6 +836,7 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
         noutputs = 0;
         if (outputs) free(outputs);
         outputs = NULL;
+        sd->current.mode = 0;
      }
 
    cx = sd->current.x;
@@ -862,15 +863,12 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
           }
      }
 
-//   else
-     {
-        /* try to apply the settings */
-	printf("Applying Settings: %d %d %d %d\n", sd->crtc.id, cx, cy, mode);
+   /* try to apply the settings */
+   printf("Applying Settings: %d %d %d %d\n", sd->crtc.id, cx, cy, mode);
 
-        if (!ecore_x_randr_crtc_settings_set(root, sd->crtc.id, outputs, 
-                                             noutputs, cx, cy, mode, orient))
-          printf("FAILED TO APPLY MONITOR SETTINGS !!!\n");
-     }
+   if (!ecore_x_randr_crtc_settings_set(root, sd->crtc.id, outputs, 
+                                        noutputs, cx, cy, mode, orient))
+     printf("FAILED TO APPLY MONITOR SETTINGS !!!\n");
 
    /* free any allocated memory from ecore_x_randr */
    if (outputs) free(outputs);
@@ -1556,8 +1554,8 @@ _e_smart_monitor_mode_refresh_rates_fill(Evas_Object *obj)
    /* loop the modes and find the current one */
    EINA_LIST_FOREACH(sd->modes, m, mode)
      {
-        /* compare mode names */
-        if (!strcmp(cmode->name, mode->name))
+        /* compare mode IDs */
+        if (cmode->xid == mode->xid)
           {
              Evas_Object *ow;
              double rate = 0.0;
