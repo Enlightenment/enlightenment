@@ -1245,7 +1245,7 @@ e_menu_idler_before(void)
      {
         if (_e_menu_win)
           {
-             e_grabinput_release(0, _e_menu_win);
+             e_grabinput_release(_e_menu_win, _e_menu_win);
              _e_menu_win = 0;
              _mouse_up_feed(evas_object_evas_get(_e_menu_event_rect), 0); 
              E_FREE_FUNC(_e_menu_event_rect, evas_object_del);
@@ -2009,7 +2009,7 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
    if (!_e_menu_win)
      {
         _e_menu_win = e_comp_get(zone)->ee_win;
-        if (!e_grabinput_get(0, 0, _e_menu_win))
+        if (!e_grabinput_get(_e_menu_win, 0, _e_menu_win))
           {
              _e_menu_win = 0;
              return;
