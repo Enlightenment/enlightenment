@@ -178,11 +178,11 @@ e_pointer_type_pop(E_Pointer *p,
                    void *obj,
                    const char *type)
 {
-   Eina_List *l;
+   Eina_List *l, *l_next;
    E_Pointer_Stack *stack;
 
    if (!p) return;
-   EINA_LIST_FOREACH(p->stack, l, stack)
+   EINA_LIST_FOREACH_SAFE(p->stack, l, l_next, stack)
      {
         if ((stack->obj == obj) && ((!type) || (!strcmp(stack->type, type))))
           {
