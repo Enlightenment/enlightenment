@@ -106,6 +106,19 @@ e_desk_new(E_Zone *zone, int x, int y)
    return desk;
 }
 
+EAPI E_Client *
+e_desk_client_top_visible_get(const E_Desk *desk)
+{
+   E_Client *ec;
+
+   E_OBJECT_CHECK_RETURN(desk, NULL);
+   E_OBJECT_TYPE_CHECK_RETURN(desk, E_DESK_TYPE, NULL);
+
+   E_CLIENT_REVERSE_FOREACH(e_comp_get(desk), ec)
+     if (e_client_util_desk_visible(ec, desk) && evas_object_visible_get(ec->frame)) return ec;
+   return NULL;
+}
+
 EAPI void
 e_desk_name_set(E_Desk *desk, const char *name)
 {
