@@ -800,8 +800,7 @@ tw_show_helper(Evas_Object *o, int w, int h)
         ph = tw_mod->pop->zone->h;
         pw = lround((double)(ph * w) / ((double)h));
      }
-   e_widget_preview_size_set(o, pw, ph);
-   e_widget_preview_vsize_set(o, pw, ph);
+   e_livethumb_vsize_set(o, pw, ph);
    e_popup_layer_set(tw_mod->pop, E_COMP_CANVAS_LAYER_POPUP, 0);
 
    if ((!tw_win) && (last_coords.x == last_coords.y) && (last_coords.x == -1))
@@ -892,7 +891,7 @@ tw_video_opened_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    if (ih < 1) ih = 1;
 
    h = (w * ih) / iw;
-   e_widget_preview_extern_object_set(data, obj);
+   e_livethumb_thumb_set(data, obj);
    tw_show_helper(data, w, h);
    e_popup_object_add(tw_mod->pop, obj);
    e_object_data_set(E_OBJECT(tw_mod->pop), eina_stringshare_add(emotion_object_file_get(obj)));
@@ -912,7 +911,7 @@ tw_show_video(Evas_Object *prev, const char *uri)
 {
    Evas_Object *o;
 
-   o = emotion_object_add(e_widget_preview_evas_get(prev));
+   o = emotion_object_add(e_livethumb_evas_get(prev));
 #if (EMOTION_VERSION_MAJOR > 1) || (EMOTION_VERSION_MINOR >= 8)
    emotion_object_init(o, "vlc");
 #else
@@ -954,7 +953,7 @@ tw_video_thread_done_cb(void *data, Ecore_Thread *eth)
    close(tw_tmpfd);
    tw_tmpfd = -1;
    i->tmpfile = eina_stringshare_ref(tw_tmpfile);
-   prev = e_widget_preview_add(e_util_comp_current_get()->evas, 50, 50);
+   prev = e_livethumb_add(e_util_comp_current_get()->evas);
    tw_show_video(prev, tw_tmpfile);
    download_media_cleanup();
 }
@@ -1037,7 +1036,7 @@ tw_show(Media *i)
                }
              eina_stringshare_del(tw_tmpfile);
              tw_tmpfile = eina_stringshare_ref(i->tmpfile);
-             prev = e_widget_preview_add(e_util_comp_current_get()->evas, 50, 50);
+             prev = e_livethumb_add(e_util_comp_current_get()->evas);
              tw_show_video(prev, tw_tmpfile);
              return;
           }
@@ -1072,14 +1071,14 @@ tw_show(Media *i)
    else
 #endif
      {
-        prev = e_widget_preview_add(e_util_comp_current_get()->evas, 50, 50);
-        o = evas_object_image_filled_add(e_widget_preview_evas_get(prev));
+        prev = e_livethumb_add(e_util_comp_current_get()->evas);
+        o = evas_object_image_filled_add(e_livethumb_evas_get(prev));
         evas_object_image_memfile_set(o, (void*)eina_binbuf_string_get(i->buf), eina_binbuf_length_get(i->buf), NULL, NULL);
         evas_object_image_size_get(o, &w, &h);
-        ic = e_icon_add(e_widget_preview_evas_get(prev));
+        ic = e_icon_add(e_livethumb_evas_get(prev));
         e_icon_image_object_set(ic, o);
      }
-   e_widget_preview_extern_object_set(prev, ic);
+   e_livethumb_thumb_set(prev, ic);
    tw_show_helper(prev, w, h);
    e_object_data_set(E_OBJECT(tw_mod->pop), eina_stringshare_ref(i->addr));
    e_popup_object_add(tw_mod->pop, ic);
@@ -1112,7 +1111,7 @@ tw_show_local_file(const char *uri)
      {
         if (!evas_object_image_extension_can_load_get(uri)) return;
      }
-   prev = e_widget_preview_add(e_util_comp_current_get()->evas, 50, 50);
+   prev = e_livethumb_add(e_util_comp_current_get()->evas);
 #ifdef HAVE_EMOTION
    if (video)
      {
@@ -1122,12 +1121,12 @@ tw_show_local_file(const char *uri)
    else
 #endif
      {
-        o = e_icon_add(e_widget_preview_evas_get(prev));
+        o = e_icon_add(e_livethumb_evas_get(prev));
         e_icon_file_set(o, uri);
         e_icon_preload_set(o, 1);
         e_icon_size_get(o, &w, &h);
      }
-   e_widget_preview_extern_object_set(prev, o);
+   e_livethumb_thumb_set(prev, o);
    tw_show_helper(prev, w, h);
    e_popup_object_add(tw_mod->pop, o);
    e_object_data_set(E_OBJECT(tw_mod->pop), eina_stringshare_add(uri));
