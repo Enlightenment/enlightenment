@@ -386,9 +386,9 @@ bool econnman_service_remove(struct Connman_Service *cs,
    cd->cb = cb;
    cd->user_data = data;
 
-   cs->pending.connect = eldbus_proxy_call(cs->service_iface, "Remove",
-                                          _service_connection_cb, cd,
-                                          -1, "");
+   cs->pending.remov = eldbus_proxy_call(cs->service_iface, "Remove",
+                                         _service_connection_cb, cd,
+                                         -1, "");
    return true;
 
 fail:
