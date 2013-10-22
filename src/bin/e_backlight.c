@@ -239,8 +239,11 @@ e_backlight_level_get(E_Zone *zone __UNUSED__)
 EAPI void
 e_backlight_mode_set(E_Zone *zone, E_Backlight_Mode mode)
 {
+   E_Backlight_Mode pmode;
+   
    // zone == NULL == everything
    if (e_config->backlight.mode == mode) return;
+   pmode = e_config->backlight.mode;
    e_config->backlight.mode = mode;
    if      (e_config->backlight.mode == E_BACKLIGHT_MODE_NORMAL)
      {
@@ -252,7 +255,10 @@ e_backlight_mode_set(E_Zone *zone, E_Backlight_Mode mode)
      }
    else if (e_config->backlight.mode == E_BACKLIGHT_MODE_DIM)
      {
-        e_backlight_level_set(zone, e_config->backlight.dim, -1.0);
+        if ((pmode != E_BACKLIGHT_MODE_NORMAL) ||
+            ((pmode == E_BACKLIGHT_MODE_NORMAL) &&
+             (e_config->backlight.normal > e_config->backlight.dim)))
+          e_backlight_level_set(zone, e_config->backlight.dim, -1.0);
      }
    else if (e_config->backlight.mode == E_BACKLIGHT_MODE_MAX)
       e_backlight_level_set(zone, 1.0, -1.0);
