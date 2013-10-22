@@ -69,6 +69,7 @@ struct Connman_Service
      {
         Eldbus_Pending *connect;
         Eldbus_Pending *disconnect;
+        Eldbus_Pending *remov;
         void *data;
      } pending;
 };
@@ -93,6 +94,7 @@ typedef void (*Econnman_Simple_Cb)(void *data, const char *error);
 
 bool econnman_service_connect(struct Connman_Service *cs, Econnman_Simple_Cb cb, void *data);
 bool econnman_service_disconnect(struct Connman_Service *cs, Econnman_Simple_Cb cb, void *data);
+bool econnman_service_remove(struct Connman_Service *cs, Econnman_Simple_Cb cb, void *data);
 
 void econnman_powered_set(struct Connman_Manager *cm, Eina_Bool powered);
 

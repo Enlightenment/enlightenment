@@ -247,6 +247,11 @@ static void _service_free(struct Connman_Service *cs)
         eldbus_pending_cancel(cs->pending.disconnect);
         free(cs->pending.data);
      }
+   if (cs->pending.remov)
+     {
+        eldbus_pending_cancel(cs->pending.remov);
+        free(cs->pending.data);
+     }
 
    free(cs->name);
    _eina_str_array_clean(cs->security);
@@ -294,6 +299,7 @@ static void _service_connection_cb(void *data, const Eldbus_Message *msg,
 
    cd->cs->pending.connect = NULL;
    cd->cs->pending.disconnect = NULL;
+   cd->cs->pending.remov = NULL;
    cd->cs->pending.data = NULL;
 
    free(cd);
@@ -306,10 +312,10 @@ bool econnman_service_connect(struct Connman_Service *cs,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cs, false);
 
-   if (cs->pending.connect || cs->pending.disconnect)
+   if (cs->pending.connect || cs->pending.disconnect || cs->pending.remov)
      {
-        ERR("Pending connection: connect=%p disconnect=%p", cs->pending.connect,
-            cs->pending.disconnect);
+        ERR("Pending connection: connect=%p disconnect=%p remov=%p", cs->pending.connect,
+            cs->pending.disconnect, cs->pending.remov);
         return false;
      }
 
@@ -336,10 +342,10 @@ bool econnman_service_disconnect(struct Connman_Service *cs,
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cs, false);
 
-   if (cs->pending.connect || cs->pending.disconnect)
+   if (cs->pending.connect || cs->pending.disconnect || cs->pending.remov)
      {
-        ERR("Pending connection: connect=%p disconnect=%p", cs->pending.connect,
-            cs->pending.disconnect);
+        ERR("Pending connection: connect=%p disconnect=%p remov=%p", cs->pending.connect,
+            cs->pending.disconnect, cs->pending.remov);
         return false;
      }
 
@@ -351,6 +357,36 @@ bool econnman_service_disconnect(struct Connman_Service *cs,
    cd->user_data = data;
 
    cs->pending.connect = eldbus_proxy_call(cs->service_iface, "Disconnect",
+                                          _service_connection_cb, cd,
+                                          -1, "");
+   return true;
+
+fail:
+   return false;
+}
+
+bool econnman_service_remove(struct Connman_Service *cs,
+                             Econnman_Simple_Cb cb, void *data)
+{
+   struct connection_data *cd;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(cs, false);
+
+   if (cs->pending.connect || cs->pending.disconnect || cs->pending.remov)
+     {
+        ERR("Pending connection: connect=%p disconnect=%p remov=%p", cs->pending.connect,
+            cs->pending.disconnect, cs->pending.remov);
+        return false;
+     }
+   
+   cd = calloc(1, sizeof(*cd));
+   EINA_SAFETY_ON_NULL_GOTO(cd, fail);
+
+   cd->cs = cs;
+   cd->cb = cb;
+   cd->user_data = data;
+
+   cs->pending.connect = eldbus_proxy_call(cs->service_iface, "Remove",
                                           _service_connection_cb, cd,
                                           -1, "");
    return true;
