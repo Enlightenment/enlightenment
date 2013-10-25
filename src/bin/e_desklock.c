@@ -30,10 +30,8 @@ struct _E_Desklock_Popup_Data
 struct _E_Desklock_Data
 {
    Eina_List           *elock_wnd_list;
-   Ecore_X_Window       elock_wnd;
    Eina_List           *handlers;
    Ecore_Event_Handler *move_handler;
-   Ecore_X_Window       elock_grab_break_wnd;
    char                 passwd[PASSWD_LEN];
    int                  state;
    Eina_Bool            selected : 1;
@@ -76,6 +74,9 @@ static int _e_desklock_ask_presentation_count = 0;
 static Ecore_Event_Handler *_e_desklock_run_handler = NULL;
 static Ecore_Job *job = NULL;
 static Eina_List *tasks = NULL;
+
+static Eina_List *show_cbs = NULL;
+static Eina_List *hide_cbs = NULL;
 
 /***********************************************************************/
 
@@ -197,6 +198,34 @@ _user_wallpaper_get(E_Zone *zone)
    return e_theme_edje_file_get("base/theme/desklock", "e/desklock/background");
 }
 
+EAPI void
+e_desklock_show_hook_add(E_Desklock_Show_Cb cb)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cb);
+   show_cbs = eina_list_append(show_cbs, cb);
+}
+
+EAPI void
+e_desklock_show_hook_del(E_Desklock_Show_Cb cb)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cb);
+   show_cbs = eina_list_remove(show_cbs, cb);
+}
+
+EAPI void
+e_desklock_hide_hook_add(E_Desklock_Hide_Cb cb)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cb);
+   hide_cbs = eina_list_append(hide_cbs, cb);
+}
+
+EAPI void
+e_desklock_hide_hook_del(E_Desklock_Hide_Cb cb)
+{
+   EINA_SAFETY_ON_NULL_RETURN(cb);
+   hide_cbs = eina_list_remove(hide_cbs, cb);
+}
+
 EAPI int
 e_desklock_show_autolocked(void)
 {
@@ -208,10 +237,12 @@ e_desklock_show_autolocked(void)
 EAPI int
 e_desklock_show(Eina_Bool suspend)
 {
-   Eina_List *managers, *l, *l3;
+   Eina_List *l, *l3;
    E_Manager *man;
    int total_zone_num;
    E_Event_Desklock *ev;
+   E_Desklock_Show_Cb show_cb;
+   E_Desklock_Hide_Cb hide_cb;
 
    if (_e_custom_desklock_exe) return 0;
 
@@ -260,58 +291,14 @@ e_desklock_show(Eina_Bool suspend)
 
 #endif
 
+   e_menu_hide_all();
+   EINA_LIST_FOREACH(show_cbs, l, show_cb)
+     {
+        if (!show_cb()) goto fail;
+     }
    edd = E_NEW(E_Desklock_Data, 1);
    if (!edd) return 0;
-   edd->elock_wnd = ecore_x_window_input_new(e_manager_current_get()->root, 0, 0, 1, 1);
-   ecore_x_window_show(edd->elock_wnd);
-   managers = e_manager_list();
-   e_menu_hide_all();
-   if (!e_grabinput_get(edd->elock_wnd, 0, edd->elock_wnd))
-     {
-        EINA_LIST_FOREACH(managers, l, man)
-          {
-             Ecore_X_Window *windows;
-             int wnum;
-
-             windows = ecore_x_window_children_get(man->root, &wnum);
-             if (windows)
-               {
-                  int i;
-
-                  for (i = 0; i < wnum; i++)
-                    {
-                       Ecore_X_Window_Attributes att;
-
-                       memset(&att, 0, sizeof(Ecore_X_Window_Attributes));
-                       ecore_x_window_attributes_get(windows[i], &att);
-                       if (att.visible)
-                         {
-                            ecore_x_window_hide(windows[i]);
-                            if (e_grabinput_get(edd->elock_wnd, 0, edd->elock_wnd))
-                              {
-                                 edd->elock_grab_break_wnd = windows[i];
-                                 free(windows);
-                                 goto works;
-                              }
-                            ecore_x_window_show(windows[i]);
-                         }
-                    }
-                  free(windows);
-               }
-          }
-        /* everything failed - can't lock */
-        e_util_dialog_show(_("Lock Failed"),
-                           _("Locking the desktop failed because some application<br>"
-                             "has grabbed either the keyboard or the mouse or both<br>"
-                             "and their grab is unable to be broken."));
-        ecore_x_window_free(edd->elock_wnd);
-        E_FREE(edd);
-        return 0;
-     }
-works:
    //e_comp_block_window_add();
-   E_LIST_FOREACH(e_comp_list(), e_comp_override_add);
-   e_comp_ignore_win_add(E_PIXMAP_TYPE_X, edd->elock_wnd);
    if (e_config->desklock_language)
      e_intl_language_set(e_config->desklock_language);
 
@@ -319,7 +306,7 @@ works:
      e_xkb_layout_set(e_config->xkb.lock_layout);
 
    total_zone_num = _e_desklock_zone_num_get();
-   EINA_LIST_FOREACH(managers, l, man)
+   EINA_LIST_FOREACH(e_manager_list(), l, man)
      {
         E_Zone *zone;
         EINA_LIST_FOREACH(man->comp->zones, l3, zone)
@@ -346,12 +333,19 @@ works:
    e_util_env_set("E_DESKLOCK_LOCKED", "locked");
    _e_desklock_state = EINA_TRUE;
    return 1;
+fail:
+   EINA_LIST_FOREACH(hide_cbs, l, hide_cb)
+     hide_cb();
+   E_FREE(edd);
+   return 0;
 }
 
 EAPI void
 e_desklock_hide(void)
 {
+   Eina_List *l;
    E_Event_Desklock *ev;
+   E_Desklock_Hide_Cb hide_cb;
 
    if ((!edd) && (!_e_custom_desklock_exe)) return;
 
@@ -380,15 +374,13 @@ e_desklock_hide(void)
      }
 
    if (!edd) return;
-   if (edd->elock_grab_break_wnd)
-     ecore_x_window_show(edd->elock_grab_break_wnd);
+
+   EINA_LIST_FOREACH(hide_cbs, l, hide_cb)
+     hide_cb();
 
    E_FREE_LIST(edd->elock_wnd_list, _e_desklock_popup_free);
    E_FREE_LIST(edd->handlers, ecore_event_handler_del);
    if (edd->move_handler) ecore_event_handler_del(edd->move_handler);
-
-   e_grabinput_release(edd->elock_wnd, edd->elock_wnd);
-   ecore_x_window_free(edd->elock_wnd);
 
    E_FREE(edd);
 
@@ -615,8 +607,7 @@ _e_desklock_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Event_Key *ev = event;
 
-   if ((ev->window != edd->elock_wnd) ||
-       (edd->state == E_DESKLOCK_STATE_CHECKING)) return 1;
+   if (edd->state == E_DESKLOCK_STATE_CHECKING) return ECORE_CALLBACK_DONE;
 
    if (!strcmp(ev->key, "Escape"))
      {

@@ -27,6 +27,10 @@ struct _Frame_Extents
 
 struct _E_Comp_Data
 {
+   Ecore_X_Window lock_win;
+   Ecore_X_Window lock_grab_break_wnd;
+   Ecore_Event_Handler *lock_key_handler;
+
    Eina_List *retry_clients;
    Ecore_Timer *retry_timer;
    Eina_Bool restack : 1;
@@ -4567,6 +4571,91 @@ _e_comp_x_grab_cb(E_Comp *c)
 }
 
 static Eina_Bool
+_e_comp_x_desklock_key_down(E_Comp *comp, int t EINA_UNUSED, Ecore_Event_Key *ev)
+{
+   return (ev->window == comp->comp_data->lock_win);
+}
+
+static void
+_e_comp_x_desklock_hide(void)
+{
+   E_Comp *comp;
+   const Eina_List *l;
+
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+     {
+        if (comp->comp_data->lock_win)
+          {
+             e_grabinput_release(comp->comp_data->lock_win, comp->comp_data->lock_win);
+             ecore_x_window_free(comp->comp_data->lock_win);
+             comp->comp_data->lock_win = 0;
+          }
+
+        if (comp->comp_data->lock_grab_break_wnd)
+          ecore_x_window_show(comp->comp_data->lock_grab_break_wnd);
+        comp->comp_data->lock_grab_break_wnd = 0;
+        E_FREE_FUNC(comp->comp_data->lock_key_handler, ecore_event_handler_del);
+        e_comp_override_del(comp);
+     }
+}
+
+static Eina_Bool
+_e_comp_x_desklock_show(void)
+{
+   E_Comp *comp;
+   const Eina_List *l;
+
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+     {
+        Ecore_X_Window win;
+
+        win = comp->comp_data->lock_win =
+          ecore_x_window_input_new(comp->man->root, 0, 0, 1, 1);
+        ecore_x_window_show(win);
+        if (!e_grabinput_get(win, 0, win))
+          {
+             Ecore_X_Window *windows;
+             int wnum, i;
+
+             windows = ecore_x_window_children_get(comp->man->root, &wnum);
+             if (!windows) goto fail;
+             for (i = 0; i < wnum; i++)
+               {
+                  Ecore_X_Window_Attributes att;
+
+                  memset(&att, 0, sizeof(Ecore_X_Window_Attributes));
+                  ecore_x_window_attributes_get(windows[i], &att);
+                  if (att.visible)
+                    {
+                       ecore_x_window_hide(windows[i]);
+                       if (e_grabinput_get(win, 0, win))
+                         {
+                            comp->comp_data->lock_grab_break_wnd = windows[i];
+                            free(windows);
+                            goto works;
+                         }
+                       ecore_x_window_show(windows[i]);
+                    }
+               }
+             free(windows);
+          }
+works:
+        e_comp_override_add(comp);
+        e_comp_ignore_win_add(E_PIXMAP_TYPE_X, comp->comp_data->lock_win);
+        comp->comp_data->lock_key_handler =
+          ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, (Ecore_Event_Handler_Cb)_e_comp_x_desklock_key_down, comp);
+     }
+   return EINA_TRUE;
+fail:
+   /* everything failed - can't lock */
+   e_util_dialog_show(_("Lock Failed"),
+                      _("Locking the desktop failed because some application<br>"
+                        "has grabbed either the keyboard or the mouse or both<br>"
+                        "and their grab is unable to be broken."));
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
 {
    Ecore_X_Window_Attributes att;
@@ -4876,7 +4965,8 @@ e_comp_x_init(void)
    e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, _e_comp_x_hook_client_focus_unset, NULL);
    e_client_hook_add(E_CLIENT_HOOK_EVAL_END, _e_comp_x_hook_client_eval_end, NULL);
 
-
+   e_desklock_show_hook_add(_e_comp_x_desklock_show);
+   e_desklock_hide_hook_add(_e_comp_x_desklock_hide);
    if (!e_randr_init()) return 0;
    if (!e_atoms_init()) return 0;
    if (!_e_comp_x_screens_setup()) return EINA_FALSE;
