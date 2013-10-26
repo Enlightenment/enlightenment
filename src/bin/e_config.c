@@ -570,6 +570,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_LIST(D, T, shelves, _e_config_shelf_edd);
    E_CONFIG_VAL(D, T, font_hinting, INT); /**/
    E_CONFIG_VAL(D, T, desklock_passwd, INT);
+   E_CONFIG_VAL(D, T, desklock_pin, INT);
    E_CONFIG_LIST(D, T, desklock_backgrounds, _e_config_desklock_bg_edd); /**/
    E_CONFIG_VAL(D, T, desklock_auth_method, INT);
    E_CONFIG_VAL(D, T, desklock_login_box_zone, INT);

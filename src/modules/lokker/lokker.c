@@ -34,6 +34,14 @@ static E_Zone *last_active_zone = NULL;
 
 static Lokker_Data *edd = NULL;
 
+static int _lokker_check_auth(void);
+
+static Eina_Bool
+lokker_is_pin(void)
+{
+   return e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PIN;
+}
+
 static int
 _zone_count_get(void)
 {
@@ -156,6 +164,147 @@ _lokker_delete(void)
    _lokker_backspace();
 }
 
+static Eina_Bool
+_pin_mouse_button_down(Lokker_Popup *lp, int t EINA_UNUSED, Ecore_Event_Mouse_Button *ev)
+{
+   Evas *e;
+
+   if (ev->buttons != 1) return ECORE_CALLBACK_DONE;
+   e = e_comp_get(lp->zone)->evas;
+   evas_event_feed_mouse_move(e,
+     e_comp_canvas_x_root_adjust(lp->zone->comp, ev->root.x),
+     e_comp_canvas_y_root_adjust(lp->zone->comp, ev->root.y),
+     0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_pin_mouse_button_up(Lokker_Popup *lp, int t EINA_UNUSED, Ecore_Event_Mouse_Button *ev)
+{
+   if (ev->buttons != 1) return ECORE_CALLBACK_DONE;
+   evas_event_feed_mouse_up(evas_object_evas_get(lp->comp_object), 1, 0, 0, NULL);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_pin_click(void *data EINA_UNUSED, Evas_Object *obj, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   const char *name;
+   int num;
+
+   name = edje_object_part_text_get(obj, "e.text.label");
+   if (!name) //wtf
+     return;
+   if (!e_util_strcmp(name, "Login"))
+     {
+        _lokker_check_auth();
+        return;
+     }
+   if (!e_util_strcmp(name, "Delete"))
+     {
+        _lokker_backspace();
+        return;
+     }
+   num = strtol(name, NULL, 10);
+   if (num < 0) return;
+   if (num > 9) return;
+   if (edd->selected)
+     {
+        _lokker_null();
+        _lokker_unselect();
+     }
+   if ((strlen(edd->passwd) < (PASSWD_LEN - strlen(name))))
+     {
+        strcat(edd->passwd, name);
+        _text_passwd_update();
+     }
+}
+
+static void
+_pin_box_add(Lokker_Popup *lp)
+{
+   int mw, mh;
+   Evas *evas;
+   Evas_Object *table, *o, *o2;
+   int x, a = 0, b = 0;
+
+   evas = evas_object_evas_get(lp->bg_object);
+   lp->login_box = edje_object_add(evas);
+   evas_object_name_set(lp->login_box, "desklock->login_box");
+   e_theme_edje_object_set(lp->login_box,
+                           "base/theme/desklock",
+                           "e/desklock/pin_box");
+   edje_object_part_text_set(lp->login_box, "e.text.title",
+                             _("Please enter your PIN"));
+   table = e_table_add(evas);
+   e_comp_object_util_del_list_append(lp->login_box, table);
+   e_table_homogenous_set(table, 1);
+   e_table_freeze(table);
+   for (x = 1; x < 11; x++)
+     {
+        char buf[8];
+
+        o = edje_object_add(evas);
+        e_comp_object_util_del_list_append(lp->login_box, o);
+        e_theme_edje_object_set(o, "base/theme/desklock", "e/desklock/pin_button");
+        snprintf(buf, sizeof(buf), "%d", x % 10);
+        edje_object_part_text_set(o, "e.text.label", buf);
+        evas_object_show(o);
+        edje_object_signal_callback_add(o, "e,action,click", "*", _pin_click, lp);
+        if (x == 10) a = 1;
+        e_table_pack(table, o, a, b, 1, 1);
+        e_table_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5,
+          48 * e_scale, 48 * e_scale, 48 * e_scale, 48 * e_scale);
+        if (++a >= 3)
+          {
+             a = 0;
+             b++;
+          }
+     }
+
+   /* delete */
+   o = edje_object_add(evas);
+   e_comp_object_util_del_list_append(lp->login_box, o);
+   e_theme_edje_object_set(o, "base/theme/desklock", "e/desklock/pin_button");
+   edje_object_part_text_set(o, "e.text.label", "Delete");
+   o2 = e_icon_add(evas);
+   e_comp_object_util_del_list_append(lp->login_box, o2);
+   e_util_icon_theme_set(o2, "list-remove");
+   edje_object_part_swallow(o, "e.swallow.icon", o2);
+   evas_object_show(o2);
+   evas_object_show(o);
+   edje_object_signal_callback_add(o, "e,action,click", "*", _pin_click, lp);
+   e_table_pack(table, o, 0, 3, 1, 1);
+   e_table_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5,
+     48 * e_scale, 48 * e_scale, 48 * e_scale, 48 * e_scale);
+
+   /* login */
+   o = edje_object_add(evas);
+   e_comp_object_util_del_list_append(lp->login_box, o);
+   e_theme_edje_object_set(o, "base/theme/desklock", "e/desklock/pin_button");
+   edje_object_part_text_set(o, "e.text.label", "Login");
+   o2 = e_icon_add(evas);
+   e_comp_object_util_del_list_append(lp->login_box, o2);
+   e_util_icon_theme_set(o2, "preferences-applications-screen-unlock");
+   edje_object_part_swallow(o, "e.swallow.icon", o2);
+   evas_object_show(o2);
+   evas_object_show(o);
+   edje_object_signal_callback_add(o, "e,action,click", "*", _pin_click, lp);
+   e_table_pack(table, o, 2, 3, 1, 1);
+   e_table_pack_options_set(o, 1, 1, 0, 0, 0.5, 0.5,
+     48 * e_scale, 48 * e_scale, 48 * e_scale, 48 * e_scale);
+
+   e_table_thaw(table);
+   evas_object_show(table);
+   e_table_size_min_get(table, &mw, &mh);
+   edje_extern_object_min_size_set(table, mw, mh);
+   edje_extern_object_max_size_set(table, mw, mh);
+   edje_object_part_swallow(lp->login_box, "e.swallow.buttons", table);
+   edje_object_size_min_calc(lp->login_box, &mw, &mh);
+   edje_extern_object_min_size_set(lp->login_box, mw, mh);
+   edje_extern_object_max_size_set(lp->login_box, mw, mh);
+}
 
 static void
 _text_login_box_add(Lokker_Popup *lp)
@@ -205,10 +354,13 @@ _text_login_box_add(Lokker_Popup *lp)
 static void
 _lokker_popup_add(E_Zone *zone)
 {
+   E_Zone *current_zone;
+   int total_zone_num;
    Lokker_Popup *lp;
    E_Config_Desklock_Background *cbg;
    Eina_Stringshare *bg;
    Evas *evas;
+   int nocreate = 0;
 
    lp = E_NEW(Lokker_Popup, 1);
    cbg = eina_list_nth(e_config->desklock_backgrounds, zone->num);
@@ -265,7 +417,37 @@ _lokker_popup_add(E_Zone *zone)
    evas_object_layer_set(lp->comp_object, E_LAYER_DESKLOCK);
    evas_object_clip_set(lp->comp_object, lp->zone->bg_clip_object);
 
-   _text_login_box_add(lp);
+   last_active_zone = current_zone = e_util_zone_current_get(e_manager_current_get());
+   total_zone_num = _zone_count_get();
+   if (total_zone_num > 1)
+     {
+        if ((e_config->desklock_login_box_zone == -2) && (zone != current_zone))
+          nocreate = 1;
+        else if ((e_config->desklock_login_box_zone > -1) && (e_config->desklock_login_box_zone != (int)eina_list_count(edd->elock_wnd_list)))
+          nocreate = 1;
+     }
+
+   if (!nocreate)
+     {
+        switch (e_config->desklock_auth_method)
+          {
+           case E_DESKLOCK_AUTH_METHOD_SYSTEM:
+           case E_DESKLOCK_AUTH_METHOD_PERSONAL:
+             _text_login_box_add(lp);
+             break;
+           case E_DESKLOCK_AUTH_METHOD_PIN:
+             _pin_box_add(lp);
+             edje_object_part_swallow(lp->bg_object, "e.swallow.login_box", lp->login_box);
+
+             evas_object_clip_set(lp->login_box, lp->zone->bg_clip_object);
+
+             E_LIST_HANDLER_APPEND(edd->handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _pin_mouse_button_down, lp);
+             E_LIST_HANDLER_APPEND(edd->handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _pin_mouse_button_up, lp);
+             break;
+           case E_DESKLOCK_AUTH_METHOD_EXTERNAL: //handled by e_desklock
+           default: break;
+          }
+     }
 
    evas_event_thaw(evas);
 
@@ -436,8 +618,7 @@ static int
 _lokker_check_auth(void)
 {
    if (!edd) return 0;
-#ifdef HAVE_PAM
-   if (e_config->desklock_auth_method == 0)
+   if (e_desklock_is_system())
      {
         int ret;
 
@@ -446,22 +627,32 @@ _lokker_check_auth(void)
         _lokker_null();
         return ret;
      }
-   else if (e_config->desklock_auth_method == 1)
+   else if (e_desklock_is_personal())
      {
-#endif
-   if ((e_config->desklock_passwd) && (edd->passwd && edd->passwd[0]) &&
-       (e_config->desklock_passwd == eina_hash_djb2(edd->passwd, strlen(edd->passwd))))
-     {
-        /* password ok */
-        /* security - null out passwd string once we are done with it */
-        _lokker_null();
-        e_desklock_hide();
-        return 1;
+        if ((e_config->desklock_passwd) && (edd->passwd && edd->passwd[0]) &&
+            (e_config->desklock_passwd == eina_hash_djb2(edd->passwd, strlen(edd->passwd))))
+          {
+             /* password ok */
+             /* security - null out passwd string once we are done with it */
+             _lokker_null();
+             e_desklock_hide();
+             return 1;
+          }
      }
-#ifdef HAVE_PAM
-}
+   else if (lokker_is_pin())
+     {
+        if (edd->passwd && edd->passwd[0])
+          {
+             if (eina_hash_djb2(edd->passwd, strlen(edd->passwd)) ==
+                 e_config->desklock_pin)
+               {
+                  _lokker_null();
+                  e_desklock_hide();
+                  return 1;
+               }
+          }
+     }
 
-#endif
    /* password is definitely wrong */
    _lokker_state_set(LOKKER_STATE_INVALID);
    _lokker_null();
@@ -518,6 +709,16 @@ _lokker_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
         /* here we have to grab a password */
         if (ev->compose)
           {
+             if (lokker_is_pin())
+               {
+                  /* block non-digits */
+                  const char *c;
+
+                  for (c = ev->compose; c[0]; c++)
+                    {
+                       if (!isdigit(c[0])) return ECORE_CALLBACK_RENEW;
+                    }
+               }
              if (edd->selected)
                {
                   _lokker_null();
@@ -542,6 +743,15 @@ lokker_lock(void)
    E_Comp *comp;
 
    if (edd) return EINA_TRUE;
+
+   if (lokker_is_pin())
+     {
+        if (!e_config->desklock_pin)
+          {
+             e_configure_registry_call("screen/screen_lock", NULL, NULL);
+             return EINA_FALSE;
+          }
+     }
    edd = E_NEW(Lokker_Data, 1);
    if (!edd) return EINA_FALSE;
 
