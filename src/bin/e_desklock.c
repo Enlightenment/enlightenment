@@ -128,8 +128,6 @@ e_desklock_init(void)
    _e_desklock_idle_poller = ecore_poller_add(ECORE_POLLER_CORE, 256,
                                               _e_desklock_cb_idle_poller, NULL);
 
-   if (e_config->desklock_background)
-     e_filereg_register(e_config->desklock_background);
    EINA_LIST_FOREACH(e_config->desklock_backgrounds, l, bg)
      e_filereg_register(bg->file);
 
@@ -152,8 +150,6 @@ e_desklock_shutdown(void)
    if (edd) waslocked = EINA_TRUE;
    if (!x_fatal)
      e_desklock_hide();
-   if (e_config->desklock_background)
-     e_filereg_deregister(e_config->desklock_background);
 
    if (waslocked) e_util_env_set("E_DESKLOCK_LOCKED", "locked");
 
@@ -163,8 +159,6 @@ e_desklock_shutdown(void)
    if (job) ecore_job_del(job);
    job = NULL;
 
-   if (e_config->desklock_background)
-     e_filereg_deregister(e_config->desklock_background);
    EINA_LIST_FOREACH(e_config->desklock_backgrounds, l, bg)
      e_filereg_deregister(bg->file);
 
@@ -249,7 +243,7 @@ e_desklock_show(Eina_Bool suspend)
 
    if (_e_custom_desklock_exe) return 0;
 
-   if (e_config->desklock_use_custom_desklock && e_config->desklock_custom_desklock_cmd && e_config->desklock_custom_desklock_cmd[0])
+   if (e_desklock_is_external() && e_config->desklock_custom_desklock_cmd && e_config->desklock_custom_desklock_cmd[0])
      {
         e_menu_hide_all();
         _e_custom_desklock_exe_handler =
@@ -268,19 +262,22 @@ e_desklock_show(Eina_Bool suspend)
      }
 
 #ifndef HAVE_PAM
-   e_util_dialog_show(_("Error - no PAM support"),
-                      _("No PAM support was built into Enlightenment, so<br>"
-                        "desk locking is disabled."));
-   return 0;
+   if (e_desklock_is_system())
+     {
+        e_util_dialog_show(_("Error - no PAM support"),
+                           _("No PAM support was built into Enlightenment, so<br>"
+                             "desk locking is disabled."));
+        return 0;
+     }
 #endif
 
    if (edd) return 0;
 
 #ifdef HAVE_PAM
-   if (e_config->desklock_auth_method == 1)
+   if (e_desklock_is_personal())
      {
 #endif
-   if (!e_config->desklock_personal_passwd)
+   if (!e_config->desklock_passwd)
      {
         E_Zone *zone;
 
@@ -381,7 +378,7 @@ e_desklock_hide(void)
    ev->suspend = 1;
    ecore_event_add(E_EVENT_DESKLOCK, ev, NULL, NULL);
 
-   if (e_config->desklock_use_custom_desklock)
+   if (e_desklock_is_external())
      {
         _e_custom_desklock_exe = NULL;
         return;
@@ -819,10 +816,8 @@ _e_desklock_check_auth(void)
    else if (e_config->desklock_auth_method == 1)
      {
 #endif
-   if ((e_config->desklock_personal_passwd) &&
-       (!strcmp(!edd->passwd ? "" : edd->passwd,
-                !e_config->desklock_personal_passwd ? "" :
-                e_config->desklock_personal_passwd)))
+   if ((e_config->desklock_passwd) && (edd->passwd && edd->passwd[0]) &&
+       (e_config->desklock_passwd == eina_hash_djb2(edd->passwd, strlen(edd->passwd))))
      {
         /* password ok */
         /* security - null out passwd string once we are done with it */

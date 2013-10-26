@@ -48,7 +48,7 @@ typedef enum
 /* increment this whenever a new set of config values are added but the users
  * config doesn't need to be wiped - simply new values need to be put in
  */
-#define E_CONFIG_FILE_GENERATION 14
+#define E_CONFIG_FILE_GENERATION 15
 #define E_CONFIG_FILE_VERSION    ((E_CONFIG_FILE_EPOCH * 1000000) + E_CONFIG_FILE_GENERATION)
 
 #define E_CONFIG_BINDINGS_VERSION 0 // DO NOT INCREMENT UNLESS YOU WANT TO WIPE ALL BINDINGS!!!!!
@@ -206,8 +206,7 @@ struct _E_Config
    Eina_List                *shelves; // GUI
    int                       font_hinting; // GUI
 
-   const char               *desklock_personal_passwd; // GUI
-   const char               *desklock_background; // OLD DON'T USE
+   int                       desklock_passwd; // GUI // hashed
    Eina_List                *desklock_backgrounds; // GUI
    int                       desklock_auth_method; // GUI
    int                       desklock_login_box_zone; // GUI

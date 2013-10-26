@@ -1,6 +1,6 @@
 #include "e.h"
 
-#if ((E19_PROFILE >= LOWRES_PDA) && (E19_PROFILE <= HIRES_PDA))
+#if ((E18_PROFILE >= LOWRES_PDA) && (E18_PROFILE <= HIRES_PDA))
 #define DEF_MENUCLICK             1.25
 #else
 #define DEF_MENUCLICK             0.25
@@ -173,8 +173,7 @@ _e_config_edd_init(Eina_Bool old)
 #define D _e_config_shelf_edd
    E_CONFIG_VAL(D, T, name, STR);
    E_CONFIG_VAL(D, T, id, INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(D, T, "container", manager, EET_T_INT);
-   E_CONFIG_VAL(D, T, manager /*container */, INT);
+   E_CONFIG_VAL(D, T, container, INT);
    E_CONFIG_VAL(D, T, zone, INT);
    E_CONFIG_VAL(D, T, layer, INT);
    E_CONFIG_VAL(D, T, popup, UCHAR);
@@ -203,8 +202,7 @@ _e_config_edd_init(Eina_Bool old)
 #undef D
 #define T E_Config_Desktop_Background
 #define D _e_config_desktop_bg_edd
-   EET_DATA_DESCRIPTOR_ADD_BASIC(D, T, "container", manager, EET_T_INT);
-   E_CONFIG_VAL(D, T, manager /*container */, INT);
+   E_CONFIG_VAL(D, T, container, INT);
    E_CONFIG_VAL(D, T, zone, INT);
    E_CONFIG_VAL(D, T, desk_x, INT);
    E_CONFIG_VAL(D, T, desk_y, INT);
@@ -215,8 +213,7 @@ _e_config_edd_init(Eina_Bool old)
 #undef D
 #define T E_Config_Desktop_Name
 #define D _e_config_desktop_name_edd
-   EET_DATA_DESCRIPTOR_ADD_BASIC(D, T, "container", manager, EET_T_INT);
-   E_CONFIG_VAL(D, T, manager /*container */, INT);
+   E_CONFIG_VAL(D, T, container, INT);
    E_CONFIG_VAL(D, T, zone, INT);
    E_CONFIG_VAL(D, T, desk_x, INT);
    E_CONFIG_VAL(D, T, desk_y, INT);
@@ -227,7 +224,7 @@ _e_config_edd_init(Eina_Bool old)
 #undef D
 #define T E_Config_Desktop_Window_Profile
 #define D _e_config_desktop_window_profile_edd
-   E_CONFIG_VAL(D, T, manager, INT);
+   E_CONFIG_VAL(D, T, container, INT);
    E_CONFIG_VAL(D, T, zone, INT);
    E_CONFIG_VAL(D, T, desk_x, INT);
    E_CONFIG_VAL(D, T, desk_y, INT);
@@ -568,7 +565,8 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_LIST(D, T, gadcons, _e_config_gadcon_edd);
    E_CONFIG_LIST(D, T, shelves, _e_config_shelf_edd);
    E_CONFIG_VAL(D, T, font_hinting, INT); /**/
-   E_CONFIG_VAL(D, T, desklock_passwd, INT);
+   E_CONFIG_VAL(D, T, desklock_personal_passwd, STR);
+   E_CONFIG_VAL(D, T, desklock_background, STR);
    E_CONFIG_LIST(D, T, desklock_backgrounds, _e_config_desklock_bg_edd); /**/
    E_CONFIG_VAL(D, T, desklock_auth_method, INT);
    E_CONFIG_VAL(D, T, desklock_login_box_zone, INT);
@@ -618,7 +616,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, mouse_accel_threshold, INT);
 
    E_CONFIG_VAL(D, T, border_raise_on_mouse_action, INT);
-   E_CONFIG_VAL(D, T, border_raise_on_focus, INT);
    E_CONFIG_VAL(D, T, desk_flip_wrap, INT);
    E_CONFIG_VAL(D, T, fullscreen_flip, INT);
    E_CONFIG_VAL(D, T, multiscreen_flip, INT);
@@ -1208,16 +1205,6 @@ e_config_load(void)
              CONFIG_VERSION_UPDATE_INFO(11);
              e_config->pointer_warp_speed = e_config->winlist_warp_speed;
              e_config->winlist_warp_speed = 0;
-
-             if (e_config->focus_policy == E_FOCUS_CLICK)
-               {
-                  if (e_config->border_raise_on_focus)
-                    {
-                       /* approximate expected behavior from removed option */
-                       e_config->always_click_to_focus = 1;
-                       e_config->always_click_to_raise = 1;
-                    }
-               }
           }
         CONFIG_VERSION_CHECK(12)
           {
@@ -1234,50 +1221,29 @@ e_config_load(void)
                   break;
                }
           }
-        CONFIG_VERSION_CHECK(14)
+        CONFIG_VERSION_CHECK(13)
           {
              E_Config_Theme *et;
              E_Path_Dir *epd;
              char buf[PATH_MAX], buf2[PATH_MAX], *f;
-             Eina_List *files, *l;
+             Eina_List *files;
              Eina_Bool fail = EINA_FALSE;
-             E_Config_Shelf *cf_es;
-             E_Remember *rem;
 
-             CONFIG_VERSION_UPDATE_INFO(14);
-
-             EINA_LIST_FOREACH(e_config->shelves, l, cf_es)
-               {
-                  if (cf_es->popup)
-                    {
-                       if (cf_es->layer)
-                         cf_es->layer = E_LAYER_CLIENT_ABOVE;
-                       else
-                         cf_es->layer = E_LAYER_CLIENT_DESKTOP;
-                    }
-                  else if (!cf_es->layer)
-                    cf_es->layer = E_LAYER_DESKTOP; //redundant, but whatever
-                  cf_es->popup = 0;
-               }
-
+             CONFIG_VERSION_UPDATE_INFO(13);
              // empty out theme elements of config
-             eina_stringshare_replace(&e_config->init_default_theme, NULL);
+             eina_stringshare_del(e_config->init_default_theme);
+             e_config->init_default_theme = NULL;
              EINA_LIST_FREE(e_config->themes, et)
                {
-                  eina_stringshare_del(et->category);
-                  eina_stringshare_del(et->file);
-                  free(et);
+                  if (et->category) eina_stringshare_del(et->category);
+                  if (et->file) eina_stringshare_del(et->file);
+                  E_FREE(et);
                }
              EINA_LIST_FREE(e_config->path_append_themes, epd)
                {
-                  eina_stringshare_del(epd->dir);
-                  free(epd);
+                  if (epd->dir) eina_stringshare_del(epd->dir);
+                  E_FREE(epd);
                }
-             /* E19 layer values are higher */
-             EINA_LIST_FOREACH(e_config->remembers, l, rem)
-               if (rem->apply & E_REMEMBER_APPLY_LAYER)
-                 rem->prop.layer += 100;
-
              // copy all of ~/.e/e/themes/* into ~/.elementary/themes
              // and delete original data in ~/.e/e/themes
              ecore_file_mkpath(elm_theme_user_dir_get());
@@ -1296,12 +1262,6 @@ e_config_load(void)
                   snprintf(buf, sizeof(buf), "%s/themes", e_user_dir_get());
                   ecore_file_recursive_rm(buf);
                }
-          }
-        CONFIG_VERSION_CHECK(15)
-          {
-             CONFIG_VERSION_UPDATE_INFO(15);
-             if (e_config->desklock_use_custom_desklock)
-               e_config->desklock_auth_method = E_DESKLOCK_AUTH_METHOD_EXTERNAL;
           }
      }
    if (!e_config->remember_internal_fm_windows)
@@ -1403,11 +1363,9 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->desklock_autolock_idle, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_autolock_idle_timeout, 1.0, 5400.0);
    E_CONFIG_LIMIT(e_config->desklock_use_custom_desklock, 0, 1);
-   E_CONFIG_LIMIT(e_config->desklock_auth_method, 0, E_DESKLOCK_AUTH_METHOD_LAST);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation_timeout, 1.0, 300.0);
    E_CONFIG_LIMIT(e_config->border_raise_on_mouse_action, 0, 1);
-   E_CONFIG_LIMIT(e_config->border_raise_on_focus, 0, 1);
    E_CONFIG_LIMIT(e_config->desk_flip_wrap, 0, 1);
    E_CONFIG_LIMIT(e_config->fullscreen_flip, 0, 1);
    E_CONFIG_LIMIT(e_config->icon_theme_overrides, 0, 1);
@@ -1479,15 +1437,16 @@ e_config_load(void)
 
    E_CONFIG_LIMIT(e_config->multiscreen_flip, 0, 1);
 
-   E_CONFIG_LIMIT(e_config->backlight.normal, 0.1, 1.0);
-   E_CONFIG_LIMIT(e_config->backlight.dim, 0.1, 1.0);
-   E_CONFIG_LIMIT(e_config->backlight.idle_dim, 0.1, 1.0);
-
    if (!e_config->icon_theme)
      e_config->icon_theme = eina_stringshare_add("hicolor");  // FDO default
 
    /* FIXME: disabled auto apply because it causes problems */
    e_config->cfgdlg_auto_apply = 0;
+   /* FIXME: desklock personalized password id disabled for security reasons */
+   e_config->desklock_auth_method = 0;
+   if (e_config->desklock_personal_passwd)
+     eina_stringshare_del(e_config->desklock_personal_passwd);
+   e_config->desklock_personal_passwd = NULL;
 
    ecore_event_add(E_EVENT_CONFIG_LOADED, NULL, NULL, NULL);
 }
@@ -1722,34 +1681,38 @@ e_config_domain_system_load(const char *domain, E_Config_DD *edd)
 static void
 _e_config_mv_error(const char *from, const char *to)
 {
-   E_Dialog *dia;
-   char buf[8192];
+   if (!_e_config_error_dialog)
+     {
+        E_Dialog *dia;
 
-   if (_e_config_error_dialog) return;
+        dia = e_dialog_new(e_container_current_get(e_manager_current_get()),
+                           "E", "_sys_error_logout_slow");
+        if (dia)
+          {
+             char buf[8192];
 
-   dia = e_dialog_new(NULL, "E", "_sys_error_logout_slow");
-   EINA_SAFETY_ON_NULL_RETURN(dia);
-
-   e_dialog_title_set(dia, _("Enlightenment Settings Write Problems"));
-   e_dialog_icon_set(dia, "dialog-error", 64);
-   snprintf(buf, sizeof(buf),
-            _("Enlightenment has had an error while moving config files<br>"
-              "from:<br>"
-              "%s<br>"
-              "<br>"
-              "to:<br>"
-              "%s<br>"
-              "<br>"
-              "The rest of the write has been aborted for safety.<br>"),
-            from, to);
-   e_dialog_text_set(dia, buf);
-   e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-   e_dialog_button_focus_num(dia, 0);
-   e_win_centered_set(dia->win, 1);
-   e_object_del_attach_func_set(E_OBJECT(dia),
-                                _e_config_error_dialog_cb_delete);
-   e_dialog_show(dia);
-   _e_config_error_dialog = dia;
+             e_dialog_title_set(dia, _("Enlightenment Settings Write Problems"));
+             e_dialog_icon_set(dia, "dialog-error", 64);
+             snprintf(buf, sizeof(buf),
+                      _("Enlightenment has had an error while moving config files<br>"
+                        "from:<br>"
+                        "%s<br>"
+                        "<br>"
+                        "to:<br>"
+                        "%s<br>"
+                        "<br>"
+                        "The rest of the write has been aborted for safety.<br>"),
+                      from, to);
+             e_dialog_text_set(dia, buf);
+             e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
+             e_dialog_button_focus_num(dia, 0);
+             e_win_centered_set(dia->win, 1);
+             e_object_del_attach_func_set(E_OBJECT(dia),
+                                          _e_config_error_dialog_cb_delete);
+             e_dialog_show(dia);
+             _e_config_error_dialog = dia;
+          }
+     }
 }
 
 EAPI int
@@ -2244,6 +2207,8 @@ _e_config_free(E_Config *ecf)
    if (ecf->transition_change) eina_stringshare_del(ecf->transition_change);
    if (ecf->input_method) eina_stringshare_del(ecf->input_method);
    if (ecf->exebuf_term_cmd) eina_stringshare_del(ecf->exebuf_term_cmd);
+   if (ecf->desklock_personal_passwd) eina_stringshare_del(ecf->desklock_personal_passwd);
+   if (ecf->desklock_background) eina_stringshare_del(ecf->desklock_background);
    if (ecf->icon_theme) eina_stringshare_del(ecf->icon_theme);
    if (ecf->wallpaper_import_last_dev) eina_stringshare_del(ecf->wallpaper_import_last_dev);
    if (ecf->wallpaper_import_last_path) eina_stringshare_del(ecf->wallpaper_import_last_path);
@@ -2381,7 +2346,8 @@ _e_config_eet_close_handle(Eet_File *ef, char *file)
           {
              E_Dialog *dia;
 
-             dia = e_dialog_new(NULL, "E", "_sys_error_logout_slow");
+             dia = e_dialog_new(e_container_current_get(e_manager_current_get()),
+                                "E", "_sys_error_logout_slow");
              if (dia)
                {
                   char buf[8192];
