@@ -78,6 +78,8 @@ static Eina_List *tasks = NULL;
 static Eina_List *show_cbs = NULL;
 static Eina_List *hide_cbs = NULL;
 
+static Eina_List *block_rects = NULL;
+
 /***********************************************************************/
 
 static Eina_Bool _e_desklock_cb_key_down(void *data, int type, void *event);
@@ -237,7 +239,8 @@ e_desklock_show_autolocked(void)
 EAPI int
 e_desklock_show(Eina_Bool suspend)
 {
-   Eina_List *l, *l3;
+   const Eina_List *l, *l3;
+   E_Comp *comp;
    E_Manager *man;
    int total_zone_num;
    E_Event_Desklock *ev;
@@ -298,7 +301,17 @@ e_desklock_show(Eina_Bool suspend)
      }
    edd = E_NEW(E_Desklock_Data, 1);
    if (!edd) return 0;
-   //e_comp_block_window_add();
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+     {
+        Evas_Object *o;
+
+        o = evas_object_rectangle_add(comp->evas);
+        block_rects = eina_list_append(block_rects, o);
+        evas_object_color_set(o, 0, 0, 0, 255);
+        evas_object_resize(o, comp->man->w, comp->man->h);
+        evas_object_layer_set(o, E_LAYER_DESKLOCK);
+        evas_object_show(o);
+     }
    if (e_config->desklock_language)
      e_intl_language_set(e_config->desklock_language);
 
@@ -351,6 +364,7 @@ e_desklock_hide(void)
 
    E_LIST_FOREACH(e_comp_list(), e_comp_override_del);
    E_LIST_FOREACH(e_comp_list(), e_comp_shape_queue);
+   E_FREE_LIST(block_rects, evas_object_del);
    //e_comp_block_window_del();
    if (e_config->desklock_language)
      e_intl_language_set(e_config->language);
