@@ -207,6 +207,7 @@ struct _E_Config
    int                       font_hinting; // GUI
 
    int                       desklock_passwd; // GUI // hashed
+   int                       desklock_pin; // GUI // hashed
    Eina_List                *desklock_backgrounds; // GUI
    int                       desklock_auth_method; // GUI
    int                       desklock_login_box_zone; // GUI

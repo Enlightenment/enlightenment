@@ -17,7 +17,7 @@ static void         _cb_bg_mouse_down(void *data, Evas *evas, Evas_Object *obj, 
 
 struct _E_Config_Dialog_Data
 {
-   Evas_Object *lock_cmd_entry, *passwd_entry;
+   Evas_Object *lock_cmd_entry, *passwd_entry, *pin_entry;
    E_Config_Dialog *cfd, *bg_fsel;
 
    /* Common vars */
@@ -32,6 +32,7 @@ struct _E_Config_Dialog_Data
    int              login_zone;
    int              zone;
    char            *desklock_personal_passwd;
+   char            *pin_str;
    char            *custom_lock_cmd;
 
    /* Layout */
@@ -173,6 +174,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
      e_object_del(E_OBJECT(cfdata->bg_fsel));
    E_FREE(cfdata->custom_lock_cmd);
    E_FREE(cfdata->desklock_personal_passwd);
+   E_FREE(cfdata->pin_str);
    EINA_LIST_FREE(cfdata->bgs, bg)
      eina_stringshare_del(bg);
    E_FREE(cfdata);
@@ -210,6 +212,9 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    ow = e_widget_radio_add(evas, _("Use Personal Screenlock Password"), E_DESKLOCK_AUTH_METHOD_PERSONAL, rg);
    evas_object_smart_callback_add(ow, "changed", _login_method_change, cfdata);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
+   ow = e_widget_radio_add(evas, _("Use PIN"), E_DESKLOCK_AUTH_METHOD_PIN, rg);
+   evas_object_smart_callback_add(ow, "changed", _login_method_change, cfdata);
+   e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    ow = e_widget_radio_add(evas, _("Use External Screenlock Command"), E_DESKLOCK_AUTH_METHOD_EXTERNAL, rg);
    evas_object_smart_callback_add(ow, "changed", _login_method_change, cfdata);
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
@@ -220,12 +225,20 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
+   of = e_widget_framelist_add(evas, _("PIN Entry"), 0);
+   cfdata->pin_entry = ow = e_widget_entry_add(evas, &(cfdata->pin_str), NULL, NULL, NULL);
+   e_widget_entry_password_set(ow, 1);
+   e_widget_framelist_object_append(of, ow);
+   e_widget_list_object_append(ol, of, 1, 1, 0.5);
+
    of = e_widget_framelist_add(evas, _("External Screenlock Command"), 0);
    cfdata->lock_cmd_entry = ow = e_widget_entry_add(evas, &(cfdata->custom_lock_cmd), NULL, NULL, NULL);
    e_widget_framelist_object_append(of, ow);
 
    e_widget_disabled_set(cfdata->passwd_entry,
      (cfdata->desklock_auth_method != E_DESKLOCK_AUTH_METHOD_PERSONAL));
+   e_widget_disabled_set(cfdata->pin_entry,
+     (cfdata->desklock_auth_method != E_DESKLOCK_AUTH_METHOD_PIN));
    e_widget_disabled_set(cfdata->lock_cmd_entry,
      (cfdata->desklock_auth_method != E_DESKLOCK_AUTH_METHOD_EXTERNAL));
 
@@ -397,6 +410,24 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
           eina_hash_djb2(cfdata->desklock_personal_passwd,
           strlen(cfdata->desklock_personal_passwd));
      }
+   else if (cfdata->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PIN)
+     {
+        if (cfdata->pin_str && cfdata->pin_str[0])
+          {
+             int test;
+             char *pp;
+
+             errno = 0;
+             test = strtol(cfdata->pin_str, &pp, 10);
+             if (errno) return 0; //NAN
+             if (pp && pp[0]) return 0;
+             if (test < 1) return 0;
+             e_config->desklock_pin = eina_hash_djb2(cfdata->pin_str, strlen(cfdata->pin_str));
+          }
+        else
+          /* dumb, but let them do what they want... */
+          e_config->desklock_pin = 0;
+     }
    e_config->desklock_start_locked = cfdata->start_locked;
    e_config->desklock_on_suspend = cfdata->lock_on_suspend;
    e_config->desklock_autolock_idle = cfdata->auto_lock;
@@ -478,6 +509,13 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
         if (e_config->desklock_passwd !=
           eina_hash_djb2(cfdata->desklock_personal_passwd,
           strlen(cfdata->desklock_personal_passwd)))
+          return 1;
+     }
+   if (e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PIN)
+     {
+        if (e_config->desklock_pin !=
+          eina_hash_djb2(cfdata->pin_str,
+          strlen(cfdata->pin_str)))
           return 1;
      }
 
@@ -643,6 +681,13 @@ _login_method_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info 
      {
         e_widget_entry_select_all(cfdata->passwd_entry);
         e_widget_focus_set(cfdata->passwd_entry, 1);
+     }
+   e_widget_disabled_set(cfdata->pin_entry,
+     (cfdata->desklock_auth_method != E_DESKLOCK_AUTH_METHOD_PIN));
+   if (!e_widget_disabled_get(cfdata->pin_entry))
+     {
+        e_widget_entry_select_all(cfdata->pin_entry);
+        e_widget_focus_set(cfdata->pin_entry, 1);
      }
    e_widget_disabled_set(cfdata->lock_cmd_entry,
      (cfdata->desklock_auth_method != E_DESKLOCK_AUTH_METHOD_EXTERNAL));

@@ -18,7 +18,13 @@
 #define ERR(...)  EINA_LOG_DOM_ERR(_e_lokker_log_dom, __VA_ARGS__)
 #define CRIT(...) EINA_LOG_DOM_CRIT(_e_lokker_log_dom, __VA_ARGS__)
 
+
+typedef enum
+{
+   E_DESKLOCK_AUTH_METHOD_LINES = 4,
+} E_Desklock_Auth_Method2;
+
 EINTERN Eina_Bool lokker_lock(void);
 EINTERN void lokker_unlock(void);
-
+EAPI E_Config_Dialog *e_int_config_lokker(E_Comp *comp, const char *params EINA_UNUSED);
 #endif
