@@ -569,8 +569,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_LIST(D, T, gadcons, _e_config_gadcon_edd);
    E_CONFIG_LIST(D, T, shelves, _e_config_shelf_edd);
    E_CONFIG_VAL(D, T, font_hinting, INT); /**/
-   E_CONFIG_VAL(D, T, desklock_personal_passwd, STR);
-   E_CONFIG_VAL(D, T, desklock_background, STR);
+   E_CONFIG_VAL(D, T, desklock_passwd, INT);
    E_CONFIG_LIST(D, T, desklock_backgrounds, _e_config_desklock_bg_edd); /**/
    E_CONFIG_VAL(D, T, desklock_auth_method, INT);
    E_CONFIG_VAL(D, T, desklock_login_box_zone, INT);
@@ -1299,6 +1298,12 @@ e_config_load(void)
                   ecore_file_recursive_rm(buf);
                }
           }
+        CONFIG_VERSION_CHECK(15)
+          {
+             CONFIG_VERSION_UPDATE_INFO(15);
+             if (e_config->desklock_use_custom_desklock)
+               e_config->desklock_auth_method = E_DESKLOCK_AUTH_METHOD_EXTERNAL;
+          }
      }
    if (!e_config->remember_internal_fm_windows)
      e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
@@ -1399,6 +1404,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->desklock_autolock_idle, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_autolock_idle_timeout, 1.0, 5400.0);
    E_CONFIG_LIMIT(e_config->desklock_use_custom_desklock, 0, 1);
+   E_CONFIG_LIMIT(e_config->desklock_auth_method, 0, E_DESKLOCK_AUTH_METHOD_LAST);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation_timeout, 1.0, 300.0);
    E_CONFIG_LIMIT(e_config->border_raise_on_mouse_action, 0, 1);
@@ -1483,11 +1489,6 @@ e_config_load(void)
 
    /* FIXME: disabled auto apply because it causes problems */
    e_config->cfgdlg_auto_apply = 0;
-   /* FIXME: desklock personalized password id disabled for security reasons */
-   e_config->desklock_auth_method = 0;
-   if (e_config->desklock_personal_passwd)
-     eina_stringshare_del(e_config->desklock_personal_passwd);
-   e_config->desklock_personal_passwd = NULL;
 
    ecore_event_add(E_EVENT_CONFIG_LOADED, NULL, NULL, NULL);
 }
@@ -2244,8 +2245,6 @@ _e_config_free(E_Config *ecf)
    if (ecf->transition_change) eina_stringshare_del(ecf->transition_change);
    if (ecf->input_method) eina_stringshare_del(ecf->input_method);
    if (ecf->exebuf_term_cmd) eina_stringshare_del(ecf->exebuf_term_cmd);
-   if (ecf->desklock_personal_passwd) eina_stringshare_del(ecf->desklock_personal_passwd);
-   if (ecf->desklock_background) eina_stringshare_del(ecf->desklock_background);
    if (ecf->icon_theme) eina_stringshare_del(ecf->icon_theme);
    if (ecf->wallpaper_import_last_dev) eina_stringshare_del(ecf->wallpaper_import_last_dev);
    if (ecf->wallpaper_import_last_path) eina_stringshare_del(ecf->wallpaper_import_last_path);
