@@ -10,7 +10,7 @@ _temperature_cb_exe_data(void *data, __UNUSED__ int type, void *event)
 
    ev = event;
    inst = data;
-   if (ev->exe != inst->tempget_exe) return ECORE_CALLBACK_PASS_ON;
+   if ((!inst->tempget_exe) || (ev->exe != inst->tempget_exe)) return ECORE_CALLBACK_PASS_ON;
    temp = -999;
    if ((ev->lines) && (ev->lines[0].line))
      {
@@ -70,7 +70,7 @@ _temperature_cb_exe_del(void *data, __UNUSED__ int type, void *event)
 
    ev = event;
    inst = data;
-   if (ev->exe != inst->tempget_exe) return ECORE_CALLBACK_PASS_ON;
+   if ((!inst->tempget_exe) || (ev->exe != inst->tempget_exe)) return ECORE_CALLBACK_PASS_ON;
    inst->tempget_exe = NULL;
    return ECORE_CALLBACK_DONE;
 }
