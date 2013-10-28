@@ -18,6 +18,10 @@ typedef struct _E_Music_Control_Module_Context
    Eina_List *instances;
    Eldbus_Connection *conn;
    Eina_Bool playing:1;
+   Eina_Stringshare *meta_artist;
+   Eina_Stringshare *meta_album;
+   Eina_Stringshare *meta_title;
+   Eina_Stringshare *meta_cover;
    Eldbus_Proxy *mrpis2;
    Eldbus_Proxy *mpris2_player;
    E_Config_DD *conf_edd;
@@ -38,6 +42,7 @@ void music_control_mouse_down_cb(void *data, Evas *evas, Evas_Object *obj, void 
 const char *music_control_edj_path_get(void);
 void music_control_popup_del(E_Music_Control_Instance *inst);
 void music_control_state_update_all(E_Music_Control_Module_Context *ctxt);
+void music_control_metadata_update_all(E_Music_Control_Module_Context *ctxt);
 Eina_Bool music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus);
 Eina_Bool _desklock_cb(void *data, int type, void *ev);
 

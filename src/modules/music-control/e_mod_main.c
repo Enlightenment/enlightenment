@@ -211,6 +211,60 @@ static const E_Gadcon_Client_Class _gc_class =
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, _e_music_control_Name };
 
 static void
+parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
+{
+   unsigned i;
+
+   E_FREE_FUNC(ctxt->meta_title, eina_stringshare_del);
+   E_FREE_FUNC(ctxt->meta_album, eina_stringshare_del);
+   E_FREE_FUNC(ctxt->meta_artist, eina_stringshare_del);
+   E_FREE_FUNC(ctxt->meta_cover, eina_stringshare_del);
+   // DBG("Metadata: %s", eina_value_to_string(array));
+
+   for (i = 0; i < eina_value_array_count(array); i++)
+     {
+        const char *key, *str_val;
+        Eina_Value st, subst;
+
+        eina_value_array_value_get(array, i, &st);
+        eina_value_struct_get(&st, "arg0", &key);
+        if (!strcmp(key, "xesam:title"))
+          {
+             eina_value_struct_value_get(&st, "arg1", &subst);
+             eina_value_struct_get(&subst, "arg0", &str_val);
+             ctxt->meta_title = eina_stringshare_add(str_val);
+             eina_value_flush(&subst);
+          }
+        else if (!strcmp(key, "xesam:album"))
+          {
+             eina_value_struct_value_get(&st, "arg1", &subst);
+             eina_value_struct_get(&subst, "arg0", &str_val);
+             ctxt->meta_album = eina_stringshare_add(str_val);
+             eina_value_flush(&subst);
+          }
+        else if (!strcmp(key, "xesam:artist"))
+          {
+             Eina_Value arr;
+             eina_value_struct_value_get(&st, "arg1", &subst);
+             eina_value_struct_value_get(&subst, "arg0", &arr);
+             eina_value_array_get(&arr, 0, &str_val);
+             ctxt->meta_artist = eina_stringshare_add(str_val);
+             eina_value_flush(&arr);
+             eina_value_flush(&subst);
+          }
+        else if (!strcmp(key, "mpris:artUrl"))
+          {
+             eina_value_struct_value_get(&st, "arg1", &subst);
+             eina_value_struct_get(&subst, "arg0", &str_val);
+             if (!strncmp(str_val, "file://", 7))
+               ctxt->meta_cover = eina_stringshare_add(str_val + 7);
+             eina_value_flush(&subst);
+          }
+        eina_value_flush(&st);
+     }
+}
+
+static void
 cb_playback_status_get(void *data, Eldbus_Pending *p, const char *propname, Eldbus_Proxy *proxy, Eldbus_Error_Info *error_info, const char *value)
 {
    E_Music_Control_Module_Context *ctxt = data;
@@ -226,6 +280,14 @@ cb_playback_status_get(void *data, Eldbus_Pending *p, const char *propname, Eldb
    else
      ctxt->playing = EINA_FALSE;
    music_control_state_update_all(ctxt);
+}
+
+static void
+cb_metadata_get(void *data, Eldbus_Pending *p, const char *propname, Eldbus_Proxy *proxy, Eldbus_Error_Info *error_info, Eina_Value *value)
+{
+   E_Music_Control_Module_Context *ctxt = data;
+   parse_metadata(ctxt, value);
+   music_control_metadata_update_all(ctxt);
 }
 
 static void
@@ -246,6 +308,11 @@ prop_changed(void *data, Eldbus_Proxy *proxy, void *event_info)
           ctxt->playing = EINA_FALSE;
         music_control_state_update_all(ctxt);
      }
+   else if (!strcmp(event->name, "Metadata"))
+     {
+        parse_metadata(ctxt, (Eina_Value*)event->value);
+        music_control_metadata_update_all(ctxt);
+     }
 }
 
 Eina_Bool
@@ -258,6 +325,7 @@ music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
    ctxt->mrpis2 = mpris_media_player2_proxy_get(ctxt->conn, bus, NULL);
    ctxt->mpris2_player = media_player2_player_proxy_get(ctxt->conn, bus, NULL);
    media_player2_player_playback_status_propget(ctxt->mpris2_player, cb_playback_status_get, ctxt);
+   media_player2_player_metadata_propget(ctxt->mpris2_player, cb_metadata_get, ctxt);
    eldbus_proxy_event_callback_add(ctxt->mpris2_player, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
                                   prop_changed, ctxt);
    return EINA_TRUE;
@@ -305,6 +373,11 @@ e_modapi_shutdown(E_Module *m)
    E_Music_Control_Module_Context *ctxt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(music_control_mod, 0);
    ctxt = music_control_mod->data;
+
+   E_FREE_FUNC(ctxt->meta_title, eina_stringshare_del);
+   E_FREE_FUNC(ctxt->meta_album, eina_stringshare_del);
+   E_FREE_FUNC(ctxt->meta_artist, eina_stringshare_del);
+   E_FREE_FUNC(ctxt->meta_cover, eina_stringshare_del);
 
    free(ctxt->config);
    E_CONFIG_DD_FREE(ctxt->conf_edd);

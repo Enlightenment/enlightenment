@@ -49,62 +49,97 @@ group {
       image: "pause.png" COMP;
       image: "play.png" COMP;
    }
+   styles {
+      style { name: "music_control_metadata_style";
+         base: "font=Sans font_size=10 align=left text_class=tb_plain color=#ffff style=shadow,bottom shadow_color=#00000080";
+         tag: "title" "+ font_size=12 font=Sans:style=Bold text_class=tb_big";
+         tag: "tag" "+ font_size=8 color=#888f";
+         tag: "br" "\n";
+      }
+   }
    parts {
-      part {
-         name: "player_name";
-         type: TEXT;
-         description {
-            state: "default" 0;
-            text.size: 12;
-            text.text: "Music player";
-            text.font: "Sans";
+      part { name: "cover_bg";
+         type: IMAGE;
+         description {  state: "default" 0;
+            min: 90 90;
             rel1.relative: 0.0 0.0;
-            rel2.relative: 1.0 0.0;
-            rel2.offset: 0 16;
+            rel2.relative: 0.35 1.0;
+            image.normal: "music_control_icon.png";
          }
       }
-      part {
-         type: IMAGE;
-         name: "previous_btn";
-         description {
-            state: "default" 0;
-            aspect: 1.0 1.0;
-            aspect_preference: BOTH;
+      part { name: "cover_swallow";
+         type: SWALLOW;
+         description {  state: "default" 0;
+            rel1.to: "cover_bg";
+            rel2.to: "cover_bg";
+         }
+      }
+      part { name: "player_name";
+         type: TEXT;
+         effect: GLOW;
+         description { state: "default" 0;
+            color: 51 153 255 255;
+            color2: 51 153 255 24;
+            color3: 51 153 255 18;
+            text {
+               size: 12;
+               text: "Music player";
+               font: "Sans:style=Bold";
+            }
+            rel1.to: "cover_bg";
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: 0 12;
+         }
+      }
+      part { name: "metadata";
+         type: TEXTBLOCK;
+         description { state: "default" 0;
+            text {
+               style: "music_control_metadata_style";
+               text: "Song Title";
+               align: 0.0 0.0;
+            }
             rel1.to: "player_name";
             rel1.relative: 0.0 1.0;
-            rel2.relative: 0.33 1.0;
+            rel1.offset: 3 0;
+         }
+      }
+      part { name: "previous_btn";
+         type: IMAGE;
+         description { state: "default" 0;
+            max: 32 32;
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+            align: 0.1 1.0;
+            rel1.relative: 0.35 0.0;
             image.normal: "previous.png";
          }
       }
-      part {
+      part { name: "play_btn";
          type: IMAGE;
-         name: "play_btn";
-         description {
-            state: "default" 0;
-               aspect: 1.0 1.0;
-               aspect_preference: BOTH;
-               rel1.to: "player_name";
-               rel1.relative: 0.33 1.0;
-               rel2.relative: 0.66 1.0;
-               image.normal: "pause.png";
+         description { state: "default" 0;
+            max: 32 32;
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+            align: 0.5 1.0;
+            rel1.relative: 0.35 0.0;
+            image.normal: "pause.png";
          }
-         description {
-             state: "play" 0.0;
-             inherit: "default" 0.0;
-             image.normal: "play.png";
+         description { state: "play" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "play.png";
          }
       }
-      part {
+      part {  name: "next_btn";
          type: IMAGE;
-         name: "next_btn";
-         description {
-            state: "default" 0;
-               aspect: 1.0 1.0;
-               aspect_preference: BOTH;
-               rel1.to: "player_name";
-               rel1.relative: 0.66 1.0;
-               rel2.relative: 1.0 1.0;
-               image.normal: "next.png";
+         description { state: "default" 0;
+            max: 32 32;
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+            align: 0.9 1.0;
+            rel1.relative: 0.35 0.0;
+            image.normal: "next.png";
          }
       }
    }

@@ -29,6 +29,46 @@ music_control_state_update_all(E_Music_Control_Module_Context *ctxt)
 }
 
 static void
+_metadata_update(E_Music_Control_Instance *inst)
+{
+   Eina_Strbuf *str;
+   Evas_Object *img;
+
+   if (!inst->popup) return;
+
+   str = eina_strbuf_new();
+
+   if (inst->ctxt->meta_title)
+     eina_strbuf_append_printf(str, "<title>%s</><br>", inst->ctxt->meta_title);
+   if (inst->ctxt->meta_artist)
+     eina_strbuf_append_printf(str, "<tag>by</> %s<br>", inst->ctxt->meta_artist);
+   if (inst->ctxt->meta_album)
+     eina_strbuf_append_printf(str, "<tag>from</> %s<br>", inst->ctxt->meta_album);
+   edje_object_part_text_set(inst->content_popup, "metadata", eina_strbuf_string_get(str));
+   eina_strbuf_free(str);
+
+   img = edje_object_part_swallow_get(inst->content_popup, "cover_swallow");
+   E_FREE_FUNC(img, evas_object_del);
+
+   if (inst->ctxt->meta_cover)
+     {
+        img = evas_object_image_filled_add(evas_object_evas_get(inst->content_popup));
+        evas_object_image_file_set(img, inst->ctxt->meta_cover, NULL);
+        edje_object_part_swallow(inst->content_popup, "cover_swallow", img);
+     }
+}
+
+void
+music_control_metadata_update_all(E_Music_Control_Module_Context *ctxt)
+{
+   E_Music_Control_Instance *inst;
+   Eina_List *list;
+
+   EINA_LIST_FOREACH(ctxt->instances, list, inst)
+     _metadata_update(inst);
+}
+
+static void
 _btn_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source)
 {
    E_Music_Control_Instance *inst = data;
@@ -79,6 +119,7 @@ _popup_new(E_Music_Control_Instance *inst)
 
    _player_name_update(inst);
    _play_state_update(inst, EINA_TRUE);
+   _metadata_update(inst);
    e_popup_autoclose(inst->popup->win, NULL, NULL, NULL);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
@@ -88,6 +129,11 @@ _popup_new(E_Music_Control_Instance *inst)
 void
 music_control_popup_del(E_Music_Control_Instance *inst)
 {
+   Evas_Object *cover;
+
+   cover = edje_object_part_swallow_get(inst->content_popup, "cover_swallow");
+   E_FREE_FUNC(cover, evas_object_del);
+
    E_FREE_FUNC(inst->popup, e_object_del);
 }
 
