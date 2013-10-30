@@ -351,11 +351,11 @@ e_module_new(const char *name)
         m->error = 1;
         goto init_done;
      }
-   if (m->api->version < E_MODULE_API_VERSION)
+   if (m->api->version != E_MODULE_API_VERSION)
      {
         snprintf(body, sizeof(body),
                  _("Module API Error<br>Error initializing Module: %s<br>"
-                   "It requires a minimum module API version of: %i.<br>"
+                   "It requires a module API version of: %i.<br>"
                    "The module API advertized by Enlightenment is: %i.<br>"),
                  _(m->api->name), m->api->version, E_MODULE_API_VERSION);
 
