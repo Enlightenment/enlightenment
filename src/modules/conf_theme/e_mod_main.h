@@ -25,8 +25,6 @@ E_Config_Dialog *e_int_config_fonts(E_Container *con, const char *params __UNUSE
 
 E_Config_Dialog *e_int_config_scale(E_Container *con, const char *params __UNUSED__);
 
-E_Config_Dialog *e_int_config_startup(E_Container *con, const char *params __UNUSED__);
-
 E_Config_Dialog *e_int_config_theme(E_Container *con, const char *params __UNUSED__);
 
 void             e_int_config_theme_import_done(E_Config_Dialog *dia);

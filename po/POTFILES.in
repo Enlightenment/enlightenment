@@ -196,7 +196,6 @@ src/modules/conf_theme/e_int_config_borders.c
 src/modules/conf_theme/e_int_config_color_classes.c
 src/modules/conf_theme/e_int_config_fonts.c
 src/modules/conf_theme/e_int_config_scale.c
-src/modules/conf_theme/e_int_config_startup.c
 src/modules/conf_theme/e_int_config_theme.c
 src/modules/conf_theme/e_int_config_theme_import.c
 src/modules/conf_theme/e_int_config_transitions.c

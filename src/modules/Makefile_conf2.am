@@ -5,10 +5,25 @@ CLEANFILES += conf2/e-module-conf2.edj
 EXTRA_DIST += $(conf2_DATA) \
 conf2/e-module-conf2.edc \
 conf2/module.desktop.in \
-conf2/images/volume_knob_ledsoff.png \
-conf2/images/volume_knob_move.png \
+conf2/images/sym_check_alum.png \
+conf2/images/bevel_curved_horiz_out.png \
+conf2/images/sym_radio_alum.png \
 conf2/images/volume_knob.png \
-conf2/images/volume_led_01.png
+conf2/images/vgrad_med_dark.png \
+conf2/images/bevel_in.png \
+conf2/images/inset_shadow_tiny.png \
+conf2/images/bevel_horiz_out.png \
+conf2/images/white_bar_vert_glow.png \
+conf2/images/vgrad_med_curved.png \
+conf2/images/shine.png \
+conf2/images/volume_knob_ledsoff.png \
+conf2/images/inset_circle_tiny.png \
+conf2/images/volume_knob_move.png \
+conf2/images/shadow_rounded_horiz.png \
+conf2/images/inset_shadow_circle_tiny.png \
+conf2/images/volume_led_01.png \
+conf2/images/button_normal.png \
+conf2/images/button_clicked.png
 
 conf2pkgdir = $(MDIR)/conf2/$(MODULE_ARCH)
 conf2pkg_LTLIBRARIES = conf2/module.la

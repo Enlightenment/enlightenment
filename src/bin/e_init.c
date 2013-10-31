@@ -1,4 +1,5 @@
 #include "e.h"
+#include <Elementary.h>
 
 EAPI int E_EVENT_INIT_DONE = 0;
 
@@ -44,7 +45,6 @@ e_init_shutdown(void)
 EAPI void
 e_init_show(void)
 {
-   Eina_Stringshare *theme;
    Evas_Object *o;
    E_Manager *man;
    E_Container *con;
@@ -52,18 +52,11 @@ e_init_show(void)
    Eina_List *l;
    /* exec init */
 
-   if (!e_config->init_default_theme)
-     theme = e_path_find(path_themes, "default.edj");
-   else if (e_config->init_default_theme[0] == '/')
-     theme = eina_stringshare_add(e_config->init_default_theme);
-   else
-     theme = e_path_find(path_themes, e_config->init_default_theme);
-
    /* extra screens */
    EINA_LIST_FOREACH(e_manager_list()->next, l, man)
      {
         o = edje_object_add(e_comp_get(man)->evas);
-        edje_object_file_set(o, theme, "e/init/extra_screen");
+        e_theme_edje_object_set(o, NULL, "e/init/extra_screen");
         evas_object_name_set(o, "_e_init_extra_screen");
         evas_object_move(o, 0, 0);
         evas_object_resize(o, man->w, man->h);
@@ -79,13 +72,13 @@ e_init_show(void)
         o = edje_object_add(e_comp_get(man)->evas);
         if (!zone->num)
           {
-             edje_object_file_set(o, theme, "e/init/splash");
+             e_theme_edje_object_set(o, NULL, "e/init/splash");
              evas_object_name_set(o, "_e_init_object");
              _e_init_object = o;
           }
         else
           {
-             edje_object_file_set(o, theme, "e/init/extra_screen");
+             e_theme_edje_object_set(o, NULL, "e/init/extra_screen");
              evas_object_name_set(o, "_e_init_extra_screen");
           }
         evas_object_clip_set(o, zone->bg_clip_object);
@@ -100,7 +93,6 @@ e_init_show(void)
                              "Disable splash screen");
    edje_object_signal_callback_add(_e_init_object, "e,state,done_ok", "e",
                                    _e_init_cb_signal_done_ok, NULL);
-   eina_stringshare_del(theme);
    _e_init_timeout_timer = ecore_timer_add(240.0, _e_init_cb_timeout, NULL);
 }
 

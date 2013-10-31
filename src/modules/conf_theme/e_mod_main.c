@@ -1,5 +1,6 @@
 #include "e.h"
 #include "e_mod_main.h"
+#include <Elementary.h>
 
 static const char *cur_theme = NULL;
 
@@ -41,12 +42,20 @@ static void
 _theme_set(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
    E_Action *a;
+   const char *file;
+   char *name;
 
-   e_theme_config_set("theme", data);
-   e_config_save_queue();
-
-   a = e_action_find("restart");
-   if ((a) && (a->func.go)) a->func.go(NULL, NULL);
+   file = ecore_file_file_get(data);
+   name = ecore_file_strip_ext(file);
+   if (name)
+     {
+        elm_theme_set(NULL, name);
+        elm_config_all_flush();
+        elm_config_save();
+        free(name);
+        a = e_action_find("restart");
+        if ((a) && (a->func.go)) a->func.go(NULL, NULL);
+     }
 }
 
 static void
@@ -82,18 +91,20 @@ static void
 _e_mod_menu_theme_add(void *data __UNUSED__, E_Menu *m)
 {
    E_Menu_Item *mi;
-   E_Config_Theme *ct;
    Eina_Stringshare *file;
    const Eina_List *themes, *sthemes, *l;
+   const char *theme;
+   static char buf[PATH_MAX];
 
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Theme"));
    e_util_menu_item_theme_icon_set(mi, "preferences-desktop-theme");
    e_menu_item_callback_set(mi, _e_mod_run_theme_cb, NULL);
-   ct = e_theme_config_get("theme");
-   if (!ct) return;
+   theme = elm_theme_get(NULL);
+   if (!theme) return;
 
-   cur_theme = (char*)ecore_file_file_get(ct->file);   
+   snprintf(buf, sizeof(buf), "%s.edj", theme);
+   cur_theme = buf;
    m = e_menu_new();
    e_object_del_attach_func_set(E_OBJECT(m), _e_mod_menu_theme_del);
    e_menu_title_set(m, _("Themes"));
@@ -146,9 +157,6 @@ e_modapi_init(E_Module *m)
    e_configure_registry_item_add("appearance/scale", 70, _("Scaling"), NULL,
                                  "preferences-scale",
                                  e_int_config_scale);
-   e_configure_registry_item_add("appearance/startup", 80, _("Startup"), NULL,
-                                 "preferences-startup",
-                                 e_int_config_startup);
 
    maug[0] =
      e_int_menus_menu_augmentation_add_sorted("config/1", _("Wallpaper"),
@@ -204,8 +212,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 
    cur_theme = NULL;
 
-   while ((cfd = e_config_dialog_get("E", "appearance/startup")))
-     e_object_del(E_OBJECT(cfd));
    while ((cfd = e_config_dialog_get("E", "appearance/scale")))
      e_object_del(E_OBJECT(cfd));
    while ((cfd = e_config_dialog_get("E", "appearance/transitions")))
@@ -223,7 +229,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    while ((cfd = e_config_dialog_get("E", "appearance/xsettings")))
      e_object_del(E_OBJECT(cfd));
 
-   e_configure_registry_item_del("appearance/startup");
    e_configure_registry_item_del("appearance/scale");
    e_configure_registry_item_del("appearance/transitions");
    e_configure_registry_item_del("appearance/borders");

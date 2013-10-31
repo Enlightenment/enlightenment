@@ -1176,9 +1176,7 @@ _e_configure_background_info_cb(E_Configure_Option *co)
    cur = *(Eina_Stringshare **)co->valptr;
    if (!cur)
      {
-        E_Config_Theme *ct;
-        ct = e_theme_config_get("theme");
-        cur = ct->file;
+        cur = e_theme_edje_file_get(NULL, "e/desktop/background");
      }
    EINA_LIST_FOREACH(themes, l, file)
      {

@@ -1,5 +1,6 @@
 #include "e.h"
 #include "e_mod_main.h"
+#include <Elementary.h>
 
 typedef struct _Import Import;
 
@@ -248,7 +249,7 @@ _theme_import_cb_ok(void *data, void *data2 __UNUSED__)
    E_Win *win;
    const char *path;
    const char *file;
-   char buf[4096];
+   char buf[PATH_MAX];
 
    win = data;
    import = win->data;
@@ -264,7 +265,7 @@ _theme_import_cb_ok(void *data, void *data2 __UNUSED__)
         char *strip;
 
         file = ecore_file_file_get(import->cfdata->file);
-        e_user_dir_snprintf(buf, sizeof(buf), "themes/%s", file);
+        snprintf(buf, sizeof(buf), "%s/%s", elm_theme_user_dir_get(), file);
 
         if (ecore_file_exists(buf))
           ecore_file_unlink(buf);

@@ -12,7 +12,6 @@ conf_theme_module_la_SOURCES = conf_theme/e_mod_main.c \
 			       conf_theme/e_int_config_color_classes.c \
 			       conf_theme/e_int_config_fonts.c \
 			       conf_theme/e_int_config_scale.c \
-			       conf_theme/e_int_config_startup.c \
 			       conf_theme/e_int_config_theme.c \
 			       conf_theme/e_int_config_theme_import.c \
 			       conf_theme/e_int_config_transitions.c \

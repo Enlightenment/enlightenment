@@ -152,16 +152,6 @@ _xdg_data_dirs_augment(void)
      }
 }
 
-static void
-_fix_user_default_edj(void)
-{
-   char buff[PATH_MAX];
-
-   /* fix for FOOLS that keep cp'ing default.edj into ~/.e/e/themes */
-   e_user_dir_concat_static(buff, "themes/default.edj");
-   if (ecore_file_exists(buff)) ecore_file_unlink(buff);
-}
-
 static Eina_Bool
 _e_main_shelf_init_job(void *data EINA_UNUSED)
 {
@@ -498,8 +488,6 @@ main(int argc, char **argv)
      }
    TS("E_Config Init Done");
    _e_main_shutdown_push(e_config_shutdown);
-
-   _fix_user_default_edj();
 
    TS("E_Randr Init");
    if (!e_randr_init())

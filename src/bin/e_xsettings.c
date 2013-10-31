@@ -470,10 +470,12 @@ _e_xsettings_theme_set(void)
 {
    if (e_config->xsettings.match_e17_theme)
      {
-        E_Config_Theme *ct;
-        if ((ct = e_theme_config_get("theme")))
+        const char *file;
+        
+        file = e_theme_edje_file_get(NULL, "e/desktop/background");
+        if (file)
           {
-             if ((_setting_theme = edje_file_data_get(ct->file, "gtk-theme")))
+             if ((_setting_theme = edje_file_data_get(file, "gtk-theme")))
                {
                   char buf[PATH_MAX];
 

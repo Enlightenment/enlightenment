@@ -1027,7 +1027,6 @@ data/flags/Makefile
 data/favorites/Makefile
 data/desktop/Makefile
 data/input_methods/Makefile
-data/themes/Makefile
 data/xsession/Makefile
 data/xsession/enlightenment.desktop
 data/tools/Makefile
