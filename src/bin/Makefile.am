@@ -12,8 +12,6 @@ AM_CPPFLAGS = \
 @cf_cflags@ \
 @VALGRIND_CFLAGS@ \
 @EDJE_DEF@ \
-@ELM_CFLAGS@ \
-@EMOTION_CFLAGS@ \
 @WAYLAND_CFLAGS@ \
 @WAYLAND_EGL_CFLAGS@ \
 -DE_BINDIR=\"$(bindir)\" \
@@ -386,7 +384,7 @@ e_main.c \
 $(enlightenment_src)
 
 enlightenment_LDFLAGS = -export-dynamic
-enlightenment_LDADD = @e_libs@ @ELM_LIBS@ @EMOTION_LIBS@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WAYLAND_EGL_LIBS@ -lm
+enlightenment_LDADD = @e_libs@ @dlopen_libs@ @cf_libs@ @VALGRIND_LIBS@ @WAYLAND_LIBS@ @WAYLAND_EGL_LIBS@ -lm
 
 enlightenment_imc_SOURCES = \
 e.h \

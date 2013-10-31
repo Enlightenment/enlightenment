@@ -7,10 +7,8 @@ EXTRA_DIST += $(teamwork_DATA)
 teamworkpkgdir = $(MDIR)/teamwork/$(MODULE_ARCH)
 teamworkpkg_LTLIBRARIES = teamwork/module.la
 
-teamwork_module_la_CPPFLAGS = $(AM_CPPFLAGS) \
-@EMOTION_CFLAGS@
-teamwork_module_la_LIBADD = $(LIBS) \
-@EMOTION_LIBS@
+teamwork_module_la_CPPFLAGS = $(AM_CPPFLAGS)
+teamwork_module_la_LIBADD = $(LIBS)
 
 teamwork_module_la_SOURCES = teamwork/e_mod_main.c \
 				teamwork/e_mod_config.c \

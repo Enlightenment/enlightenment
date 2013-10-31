@@ -17,8 +17,8 @@ conf2_module_la_SOURCES = conf2/e_mod_main.c \
 			 conf2/e_mod_main.h \
 			 conf2/e_conf2.c
 
-conf2_module_la_CFLAGS = $(AM_CFLAGS) @ELM_CFLAGS@
-conf2_module_la_LIBADD = @ELM_LIBS@
+conf2_module_la_CFLAGS = $(AM_CFLAGS)
+conf2_module_la_LIBADD =
 
 CONF2_EDJE_FLAGS = $(EDJE_FLAGS) -id $(srcdir)/conf2/images -id $(top_srcdir)/data/themes/img
 

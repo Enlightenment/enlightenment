@@ -12,9 +12,6 @@ static void _e_win_cb_state(Ecore_Evas *ee);
 /* local subsystem globals */
 static Eina_List *wins = NULL;
 
-#ifdef HAVE_ELEMENTARY
-/* intercept elm_win operations so we talk directly to e_border */
-
 #include <Elementary.h>
 
 typedef struct _Elm_Win_Trap_Ctx
@@ -233,8 +230,6 @@ static const Elm_Win_Trap _elm_win_trap = {
    /* urgent_set */ NULL,
    /* withdrawn_set */ NULL
 };
-#endif
-
 
 static void
 _e_win_hide(void *obj)
@@ -250,9 +245,7 @@ _e_win_hide(void *obj)
 EINTERN int
 e_win_init(void)
 {
-#ifdef HAVE_ELEMENTARY
    if (!elm_win_trap_set(&_elm_win_trap)) return 0;
-#endif
    return 1;
 }
 
@@ -271,11 +264,7 @@ e_win_shutdown(void)
 EAPI Eina_Bool
 e_win_elm_available(void)
 {
-#ifdef HAVE_ELEMENTARY
    return EINA_TRUE;
-#else
-   return EINA_FALSE;
-#endif
 }
 
 EAPI E_Win *

@@ -1,7 +1,5 @@
 #include "e_mod_main.h"
-#ifdef HAVE_EMOTION
-# include <Emotion.h>
-#endif
+#include <Emotion.h>
 
 #define IMAGE_FETCH_TRIES 5
 
@@ -60,12 +58,10 @@ static Ecore_Timer *tw_hide_timer = NULL;
 
 static Eldbus_Service_Interface *tw_dbus_iface = NULL;
 
-#ifdef HAVE_EMOTION
 static Eina_Stringshare *tw_tmpfile = NULL;
 static int tw_tmpfd = -1;
 static Ecore_Thread *tw_tmpthread = NULL;
 static Media *tw_tmpthread_media = NULL;
-#endif
 
 typedef enum
 {
@@ -469,9 +465,7 @@ dbus_link_mouse_out_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
      {
         if (tw_mod->pop && (!tw_mod->sticky) &&
            (
-#ifdef HAVE_EMOTION
             (tw_tmpfile && (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), tw_tmpfile))) ||
-#endif
             (!e_util_strcmp(e_object_data_get(E_OBJECT(tw_mod->pop)), uri))
            ))
           {
@@ -484,10 +478,8 @@ dbus_link_mouse_out_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
                tw_hide(NULL);
              tw_mod->force = 0;
           }
-#ifdef HAVE_EMOTION
         else if (tw_tmpthread || tw_tmpfile)
           tw_hide(NULL);
-#endif
         tw_mod->hidden = !tw_mod->pop;
      }
    return eldbus_message_method_return_new(msg);
@@ -850,8 +842,6 @@ tw_show_helper(Evas_Object *o, int w, int h)
    E_OBJECT_DEL_SET(tw_mod->pop, tw_popup_del);
 }
 
-#ifdef HAVE_EMOTION
-
 static Eina_Bool
 stupid_obj_del_workaround_hack(void *data)
 {
@@ -995,8 +985,6 @@ tw_video_thread_cb(void *data, Ecore_Thread *eth)
      }
 }
 
-#endif
-
 static void
 tw_show(Media *i)
 {
@@ -1009,7 +997,6 @@ tw_show(Media *i)
         download_media_add(i->addr);
         return;
      }
-#ifdef HAVE_EMOTION
    if (i->video)
      {
         char buf[PATH_MAX];
@@ -1069,7 +1056,6 @@ tw_show(Media *i)
         return;
      }
    else
-#endif
      {
         prev = e_livethumb_add(e_util_comp_current_get()->evas);
         o = evas_object_image_filled_add(e_livethumb_evas_get(prev));
@@ -1100,9 +1086,7 @@ tw_show_local_file(const char *uri)
    int w, h;
    Eina_Bool video = EINA_FALSE;
 
-#ifdef HAVE_EMOTION
    video = emotion_object_extension_may_play_get(uri);
-#endif
    if (video)
      {
         if (tw_config->disable_video) return;
@@ -1112,14 +1096,12 @@ tw_show_local_file(const char *uri)
         if (!evas_object_image_extension_can_load_get(uri)) return;
      }
    prev = e_livethumb_add(e_util_comp_current_get()->evas);
-#ifdef HAVE_EMOTION
    if (video)
      {
         tw_show_video(prev, uri);
         return;
      }
    else
-#endif
      {
         o = e_icon_add(e_livethumb_evas_get(prev));
         e_icon_file_set(o, uri);
@@ -1152,7 +1134,6 @@ focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Border_Focus_Out
 EINTERN Eina_Bool
 tw_hide(void *d EINA_UNUSED)
 {
-#ifdef HAVE_EMOTION
    if (tw_tmpthread)
      {
         ecore_thread_local_data_add(tw_tmpthread, "dead", (void*)1, NULL, 0);
@@ -1165,7 +1146,6 @@ tw_hide(void *d EINA_UNUSED)
         tw_tmpfd = -1;
      }
    eina_stringshare_replace(&tw_tmpfile, NULL);
-#endif
    tw_win = 0;
    E_FREE_FUNC(tw_mod->pop, e_object_del);
    last_coords.x = last_coords.y = 0;
@@ -1253,7 +1233,6 @@ e_tw_shutdown(void)
    E_FREE_FUNC(dummies, eet_close);
    E_FREE_FUNC(cleaner_edd, eet_data_descriptor_free);
    E_FREE_FUNC(cache_edd, eet_data_descriptor_free);
-#ifdef HAVE_EMOTION
    if (tw_tmpfd != -1)
      {
         close(tw_tmpfd);
@@ -1262,7 +1241,6 @@ e_tw_shutdown(void)
    eina_stringshare_replace(&tw_tmpfile, NULL);
    E_FREE_FUNC(tw_tmpthread, ecore_thread_cancel);
    tw_tmpthread_media = NULL;
-#endif
    tw_hide(NULL);
    last_coords.x = last_coords.y = 0;
    eina_hash_free(tw_mod->media);

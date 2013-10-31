@@ -533,6 +533,8 @@ PKG_CHECK_MODULES(E, [
   eina >= ${efl_version}
   eldbus >= ${efl_version}
   eio >= ${efl_version}
+  elementary >= ${efl_version}
+  emotion >= ${efl_version}
   $eeze_mount
   $udisks_mount
   $device_backend
@@ -551,50 +553,13 @@ efreet >= ${efl_version} \
 efreet-mime >= ${efl_version} \
 efreet-trash >= ${efl_version} \
 eina >= ${efl_version} \
-eldbus \
+eldbus >= ${efl_version} \
 eio >= ${efl_version} \
+elementary >= ${efl_version} \
+emotion >= ${efl_version} \
 $udisks_mount \
 $eeze_mount \
 $device_backend"
-
-
-want_elementary=auto
-have_elementary=no
-AC_ARG_ENABLE(elementary,
-  AC_HELP_STRING([--enable-elementary], [enable Elementary support @<:@default=detect@:>@]),
-  [want_elementary=$enableval],
-  [want_elementary=auto]
-)
-if test "x$want_elementary" != "xno"; then
-   PKG_CHECK_MODULES(ELM, [elementary >= ${efl_version}],
-                     [have_elementary=yes], [have_elementary=no])
-   if test "x$want_elementary" = "xyes" -a "x$have_elementary" = "xno"; then
-      AC_MSG_ERROR([Elementary support requested but it was not found])
-   fi
-   if test "x$have_elementary" = "xyes"; then
-      AC_DEFINE([HAVE_ELEMENTARY], 1, "Have Elementary support")
-      requirements_e="${requirements_e} elementary > 1.6.9.0"
-   fi
-fi
-
-want_emotion=auto
-have_emotion=no
-AC_ARG_ENABLE(emotion,
-  AC_HELP_STRING([--enable-emotion], [enable emotion support @<:@default=detect@:>@]),
-  [want_emotion=$enableval],
-  [want_emotion=auto]
-)
-if test "x$want_emotion" != "xno"; then
-   PKG_CHECK_MODULES(EMOTION, [emotion >= ${efl_version}],
-                     [have_emotion=yes], [have_emotion=no])
-   if test "x$want_emotion" = "xyes" -a "x$have_emotion" = "xno"; then
-      AC_MSG_ERROR([emotion support requested but it was not found])
-   fi
-   if test "x$have_emotion" = "xyes"; then
-      AC_DEFINE([HAVE_EMOTION], 1, "Have emotion support")
-      requirements_e="${requirements_e} emotion >= ${efl_version}"
-   fi
-fi
 
 PKG_CHECK_MODULES(E_OPEN, [
   eina >= ${efl_version}
@@ -603,10 +568,8 @@ PKG_CHECK_MODULES(E_OPEN, [
   efreet-mime >= ${efl_version}
 ])
 
-AC_E_CHECK_PKG(ECORE_IMF, [ ecore-imf >= ${efl_version} ecore-imf-evas >= ${efl_version} ], [], [:])
-
-e_libs="$E_LIBS $LIBINTL $fnmatch_libs $ECORE_IMF_LIBS $execinfo_libs"
-e_cflags="-DUSE_E_CONFIG_H $E_CFLAGS $ECORE_IMF_CFLAGS"
+e_libs="$E_LIBS $LIBINTL $fnmatch_libs $execinfo_libs"
+e_cflags="-DUSE_E_CONFIG_H $E_CFLAGS"
 e_configflags="-DUSE_E_CONFIG_H"
 
 AC_SUBST(e_libs)
@@ -894,7 +857,7 @@ AC_E_OPTIONAL_MODULE([fileman], true)
 AC_E_OPTIONAL_MODULE([fileman_opinfo], true)
 AC_E_OPTIONAL_MODULE([wizard], true)
 AC_E_OPTIONAL_MODULE([conf], true)
-AC_E_OPTIONAL_MODULE([conf2], $have_elementary)
+AC_E_OPTIONAL_MODULE([conf2], true)
 AC_E_OPTIONAL_MODULE([conf_comp], true)
 AC_E_OPTIONAL_MODULE([conf_wallpaper2], true)
 AC_E_OPTIONAL_MODULE([conf_theme], true, true)

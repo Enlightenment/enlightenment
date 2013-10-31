@@ -1,7 +1,6 @@
 #include "e.h"
-#ifdef HAVE_ECORE_IMF
-# include <Ecore_IMF.h>
-#endif
+#include <Elementary.h>
+#include <Emotion.h>
 
 #define MAX_LEVEL 80
 
@@ -16,14 +15,6 @@
 static double t0, t1, t2;
 #else
 # define TS(x)
-#endif
-
-#ifdef HAVE_ELEMENTARY
-#include <Elementary.h>
-#endif
-
-#ifdef HAVE_EMOTION
-#include <Emotion.h>
 #endif
 
 /*
@@ -389,17 +380,6 @@ main(int argc, char **argv)
 
    _xdg_data_dirs_augment();
 
-#ifdef HAVE_ECORE_IMF
-   TS("Ecore_IMF Init");
-   if (!ecore_imf_init())
-     {
-        e_error_message_show(_("Enlightenment cannot initialize Ecore_IMF!\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("Ecore_IMF Init Done");
-   _e_main_shutdown_push(ecore_imf_shutdown);
-#endif
-
    TS("Ecore_Evas Init");
    if (!ecore_evas_init())
      {
@@ -409,7 +389,6 @@ main(int argc, char **argv)
    TS("Ecore_Evas Init Done");
 //   _e_main_shutdown_push(ecore_evas_shutdown);
 
-#ifdef HAVE_ELEMENTARY
    TS("Elementary Init");
    if (!elm_init(argc, argv))
      {
@@ -418,9 +397,7 @@ main(int argc, char **argv)
      }
    TS("Elementary Init Done");
    _e_main_shutdown_push(elm_shutdown);
-#endif
 
-#ifdef HAVE_EMOTION
    TS("Emotion Init");
    if (!emotion_init())
      {
@@ -429,7 +406,6 @@ main(int argc, char **argv)
      }
    TS("Emotion Init Done");
    _e_main_shutdown_push((void *)emotion_shutdown);
-#endif
 
    /* e doesn't sync to compositor - it should be one */
    ecore_evas_app_comp_sync_set(0);

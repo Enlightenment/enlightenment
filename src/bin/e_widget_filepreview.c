@@ -1,9 +1,7 @@
 #include "e.h"
 #include "e_fm_device.h"
 #include <sys/statvfs.h>
-#ifdef HAVE_EMOTION
-# include <Emotion.h>
-#endif
+#include <Emotion.h>
 
 #define FILEPREVIEW_TEXT_PREVIEW_SIZE 2048
 
@@ -216,8 +214,6 @@ _e_wid_fprev_clear_widgets(E_Widget_Data *wd)
    wd->preview_text_file_thread = NULL;
 }
 
-#ifdef HAVE_EMOTION
-
 static void
 _e_wid_fprev_preview_video_position(E_Widget_Data *wd, Evas_Object *obj, void *event_info __UNUSED__)
 {
@@ -361,8 +357,6 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
    wd->prev_is_video = EINA_TRUE;
 #undef WIDROW
 }
-
-#endif
 
 static void
 _e_wid_fprev_preview_fs_widgets(E_Widget_Data *wd, Eina_Bool mount_point)
@@ -647,7 +641,6 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
           }
         if (desktop) efreet_desktop_free(desktop);
      }
-#ifdef HAVE_EMOTION
    else if (wd->mime && (emotion_object_extension_may_play_get(wd->path)))
      {
         size_t sz;
@@ -667,7 +660,6 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
           e_widget_entry_text_set(wd->o_preview_size_entry, _("Unknown"));
         is_fs = EINA_TRUE;
      }
-#endif
    if (is_fs) return;
 
    wd->mime_icon = EINA_FALSE;
