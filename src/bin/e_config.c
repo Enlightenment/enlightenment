@@ -1221,6 +1221,48 @@ e_config_load(void)
                   break;
                }
           }
+        CONFIG_VERSION_CHECK(13)
+          {
+             E_Config_Theme *et;
+             E_Path_Dir *epd;
+             char buf[PATH_MAX], buf2[PATH_MAX], *f;
+             Eina_List *files;
+             Eina_Bool fail = EINA_FALSE;
+
+             CONFIG_VERSION_UPDATE_INFO(13);
+             // empty out theme elements of config
+             eina_stringshare_del(e_config->init_default_theme);
+             e_config->init_default_theme = NULL;
+             EINA_LIST_FREE(e_config->themes, et)
+               {
+                  if (et->category) eina_stringshare_del(et->category);
+                  if (et->file) eina_stringshare_del(et->file);
+                  E_FREE(et);
+               }
+             EINA_LIST_FREE(e_config->path_append_themes, epd)
+               {
+                  if (epd->dir) eina_stringshare_del(epd->dir);
+                  E_FREE(epd);
+               }
+             // copy all of ~/.e/e/themes/* into ~/.elementary/themes
+             // and delete original data in ~/.e/e/themes
+             ecore_file_mkpath(elm_theme_user_dir_get());
+             snprintf(buf, sizeof(buf), "%s/themes", e_user_dir_get());
+             files = ecore_file_ls(buf);
+             EINA_LIST_FREE(files, f)
+               {
+                  snprintf(buf, sizeof(buf), "%s/themes/%s",
+                           e_user_dir_get(), f);
+                  snprintf(buf2, sizeof(buf2), "%s/%s",
+                           elm_theme_user_dir_get(), f);
+                  if (!ecore_file_cp(buf, buf2)) fail = EINA_TRUE;
+               }
+             if (!fail)
+               {
+                  snprintf(buf, sizeof(buf), "%s/themes", e_user_dir_get());
+                  ecore_file_recursive_rm(buf);
+               }
+          }
      }
    if (!e_config->remember_internal_fm_windows)
      e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);

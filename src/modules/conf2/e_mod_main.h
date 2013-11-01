@@ -1,8 +1,6 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-#include <Elementary.h>
-
 #define WEIGHT evas_object_size_hint_weight_set
 #define ALIGN evas_object_size_hint_align_set
 #define EXPAND(X) WEIGHT((X), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND)

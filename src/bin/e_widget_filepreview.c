@@ -1,7 +1,6 @@
 #include "e.h"
 #include "e_fm_device.h"
 #include <sys/statvfs.h>
-#include <Emotion.h>
 
 #define FILEPREVIEW_TEXT_PREVIEW_SIZE 2048
 

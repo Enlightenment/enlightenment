@@ -1,5 +1,4 @@
 #include "e.h"
-#include <Elementary.h>
 
 EAPI int E_EVENT_INIT_DONE = 0;
 

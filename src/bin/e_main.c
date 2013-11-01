@@ -1,6 +1,4 @@
 #include "e.h"
-#include <Elementary.h>
-#include <Emotion.h>
 
 #define MAX_LEVEL 80
 
@@ -1396,19 +1394,6 @@ _e_main_path_init(void)
    e_path_default_path_append(path_fonts, buf);
    e_path_user_path_set(path_fonts, &(e_config->path_append_fonts));
 
-   /* setup theme paths */
-   path_themes = e_path_new();
-   if (!path_themes)
-     {
-        e_error_message_show("Cannot allocate path for path_themes\n");
-        return 0;
-     }
-   e_user_dir_concat_static(buf, "/themes");
-   e_path_default_path_append(path_themes, buf);
-   e_prefix_data_concat_static(buf, "data/themes");
-   e_path_default_path_append(path_themes, buf);
-   e_path_user_path_set(path_themes, &(e_config->path_append_themes));
-
    /* setup icon paths */
    path_icons = e_path_new();
    if (!path_icons)
@@ -1485,11 +1470,6 @@ _e_main_path_shutdown(void)
      {
         e_object_del(E_OBJECT(path_fonts));
         path_fonts = NULL;
-     }
-   if (path_themes)
-     {
-        e_object_del(E_OBJECT(path_themes));
-        path_themes = NULL;
      }
    if (path_icons)
      {

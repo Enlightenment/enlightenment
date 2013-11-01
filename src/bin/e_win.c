@@ -12,8 +12,6 @@ static void _e_win_cb_state(Ecore_Evas *ee);
 /* local subsystem globals */
 static Eina_List *wins = NULL;
 
-#include <Elementary.h>
-
 typedef struct _Elm_Win_Trap_Ctx
 {
    E_Border      *border;

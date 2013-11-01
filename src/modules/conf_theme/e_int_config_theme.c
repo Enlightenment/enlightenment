@@ -1,6 +1,5 @@
 #include "e.h"
 #include "e_mod_main.h"
-#include <Elementary.h>
 
 static void        *_create_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
@@ -45,14 +44,7 @@ static void
 _e_int_theme_edje_file_set(Evas_Object *o, const char *file, const char *group)
 {
    if (!edje_object_file_set(o, file, group))
-     {
-        file = e_path_find(path_themes, "default.edj");
-        if (file)
-          {
-             edje_object_file_set(o, file, group);
-             eina_stringshare_del(file);
-          }
-     }
+     e_theme_edje_object_set(o, NULL, group);
 }
 
 static Eina_Bool

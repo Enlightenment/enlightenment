@@ -1,6 +1,5 @@
 #include "e.h"
 #include "e_mod_main.h"
-#include <Elementary.h>
 
 static const char *cur_theme = NULL;
 

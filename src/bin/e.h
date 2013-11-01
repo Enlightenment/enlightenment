@@ -98,6 +98,7 @@ void *alloca (size_t);
 # endif
 
 # include <setjmp.h>
+# include <Elementary.h>
 # include <Eina.h>
 # include <Eet.h>
 # include <Evas.h>
@@ -116,6 +117,7 @@ void *alloca (size_t);
 # include <Edje.h>
 # include <Eldbus.h>
 # include <Eio.h>
+# include <Emotion.h>
 
 # ifdef HAVE_HAL
 #  include <E_Hal.h>

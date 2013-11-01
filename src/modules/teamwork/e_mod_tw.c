@@ -1,5 +1,4 @@
 #include "e_mod_main.h"
-#include <Emotion.h>
 
 #define IMAGE_FETCH_TRIES 5
 

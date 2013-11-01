@@ -1,5 +1,4 @@
 #include "e.h"
-#include <Elementary.h>
 
 static void       e_theme_handler_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
 static int        e_theme_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path);
