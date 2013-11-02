@@ -48,13 +48,17 @@ _metadata_update(E_Music_Control_Instance *inst)
    eina_strbuf_free(str);
 
    img = edje_object_part_swallow_get(inst->content_popup, "cover_swallow");
-   E_FREE_FUNC(img, evas_object_del);
-
+   if (img)
+     {
+        e_popup_object_remove(inst->popup->win, img);
+        evas_object_del(img);
+     }
    if (inst->ctxt->meta_cover)
      {
         img = evas_object_image_filled_add(evas_object_evas_get(inst->content_popup));
         evas_object_image_file_set(img, inst->ctxt->meta_cover, NULL);
         edje_object_part_swallow(inst->content_popup, "cover_swallow", img);
+        e_popup_object_add(inst->popup->win, img);
      }
 }
 
@@ -129,11 +133,6 @@ _popup_new(E_Music_Control_Instance *inst)
 void
 music_control_popup_del(E_Music_Control_Instance *inst)
 {
-   Evas_Object *cover;
-
-   cover = edje_object_part_swallow_get(inst->content_popup, "cover_swallow");
-   E_FREE_FUNC(cover, evas_object_del);
-
    E_FREE_FUNC(inst->popup, e_object_del);
 }
 
