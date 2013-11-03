@@ -345,6 +345,8 @@ e_intl_input_method_set(const char *imc_path)
 
                   if (E_EXE_IS_VALID(imc->e_im_exec))
                     {
+                       // if you see valgrind complain about memory
+                       // definitely lost here... it's wrong.
                        _e_intl_input_method_exec = ecore_exe_run(imc->e_im_exec, NULL);
                        ecore_exe_tag_set(_e_intl_input_method_exec, "E/im_exec");
 
@@ -414,11 +416,8 @@ _e_intl_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
 
    ev = event;
    if (!ev->exe) return ECORE_CALLBACK_PASS_ON;
-
-   if (!(ecore_exe_tag_get(ev->exe) &&
-         (!strcmp(ecore_exe_tag_get(ev->exe), "E/im_exec")))) return 1;
-
-   _e_intl_input_method_exec = NULL;
+   if (ev->exe == _e_intl_input_method_exec)
+     _e_intl_input_method_exec = NULL;
    return ECORE_CALLBACK_PASS_ON;
 }
 
