@@ -553,7 +553,7 @@ _e_alert_draw_text(void)
                       "on. We were not able to generate a backtrace, check \n"
                       "if your 'sysactions.conf' has an 'gdb' action line.\n"
                       "\n"
-                      "Please compile latest svn E18 and EFL with\n"
+                      "Please compile latest Git E18 and EFL with\n"
                       "-g and -ggdb3 in your CFLAGS.\n");
           }
         else if (backtrace_str)
@@ -564,7 +564,7 @@ _e_alert_draw_text(void)
                       "on. You will find an backtrace of E18 (%d) in :\n"
                       "'%s'\n"
                       "Before reporting issue, compile latest E18 and EFL\n"
-                      "from svn with '-g -ggdb3' in your CFLAGS.\n"
+                      "from Git with '-g -ggdb3' in your CFLAGS.\n"
                       "You can then report this crash on :\n"
                       "http://trac.enlightenment.org/e/.\n",
                       pid, backtrace_str);
@@ -579,7 +579,7 @@ _e_alert_draw_text(void)
                       "recover to try and get your desktop back the way \n"
                       "it was.\n"
                       "\n"
-                      "Please compile latest svn E18 and EFL with\n"
+                      "Please compile latest Git E18 and EFL with\n"
                       "-g and -ggdb3 in your CFLAGS.\n", pid);
           }
      }
@@ -590,7 +590,7 @@ _e_alert_draw_text(void)
                  "a sign of a bug, but you are using unsupported\n"
                  "modules; before reporting this issue, please\n"
                  "unload them and try to see if the bug is still\n"
-                 "there. Also update to latest svn and be sure to\n"
+                 "there. Also update to latest Git and be sure to\n"
                  "compile E18 and EFL with -g and -ggdb3 in your CFLAGS");
      }
 
