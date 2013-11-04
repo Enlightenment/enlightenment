@@ -1720,31 +1720,38 @@ _e_smart_monitor_thumb_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Ob
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   if (ev->button != 1) return;
 
    /* try to get the monitor object */
    if (!(mon = data)) return;
 
-   /* try to get the monitor smart data */
-   if (!(sd = evas_object_smart_data_get(mon))) return;
+   if (ev->button == 1)
+     {
+        /* try to get the monitor smart data */
+        if (!(sd = evas_object_smart_data_get(mon))) return;
 
-   /* set mouse pointer */
-   _e_smart_monitor_pointer_push(sd->o_thumb, "move");
+        /* set mouse pointer */
+        _e_smart_monitor_pointer_push(sd->o_thumb, "move");
 
-   /* set moving flag */
-   sd->moving = EINA_TRUE;
+        /* set moving flag */
+        sd->moving = EINA_TRUE;
 
-   /* record the clicked position */
-   sd->mx = ev->canvas.x;
-   sd->my = ev->canvas.y;
+        /* record the clicked position */
+        sd->mx = ev->canvas.x;
+        sd->my = ev->canvas.y;
 
-   /* record current size of monitor */
-   evas_object_grid_pack_get(sd->grid.obj, mon, 
-                             &sd->prev.x, &sd->prev.y, 
-                             &sd->prev.w, &sd->prev.h);
+        /* record current size of monitor */
+        evas_object_grid_pack_get(sd->grid.obj, mon, 
+                                  &sd->prev.x, &sd->prev.y, 
+                                  &sd->prev.w, &sd->prev.h);
 
-   /* raise the monitor */
-   evas_object_raise(mon);
+        /* raise the monitor */
+        evas_object_raise(mon);
+     }
+   else if (ev->button == 2)
+     {
+        /* lower the monitor */
+        evas_object_lower(mon);
+     }
 }
 
 static void 
