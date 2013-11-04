@@ -659,6 +659,7 @@ _e_exec_instance_free(E_Exec_Instance *inst)
    EINA_LIST_FREE(inst->borders, bd)
      bd->exe_inst = NULL;
    if (inst->desktop) efreet_desktop_free(inst->desktop);
+   if (inst->exe) ecore_exe_data_set(inst->exe, NULL);
    free(inst);
 }
 
