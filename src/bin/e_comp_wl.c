@@ -793,6 +793,12 @@ wl_data_source_send_offer(struct wl_data_source *source, struct wl_resource *tar
    offer->resource = 
      wl_resource_create(wl_resource_get_client(target),
                         &wl_data_offer_interface, 1, 0);
+   if (!offer->resource)
+     {
+        free(offer);
+        return NULL;
+     }
+
    wl_resource_set_implementation(offer->resource, &_e_data_offer_interface, 
                                   offer, _destroy_data_offer);
 
