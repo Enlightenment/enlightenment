@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-10-31 23:34+0900\n"
+"POT-Creation-Date: 2013-11-05 16:26+0900\n"
 "PO-Revision-Date: 2010-01-07 07:56+0000\n"
 "Last-Translator: René Pärts <Unknown>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -34,7 +34,7 @@ msgid "Close"
 msgstr "Sulge"
 
 #: src/bin/e_about.c:21 src/bin/e_actions.c:3361 src/bin/e_actions.c:3365
-#: src/bin/e_actions.c:3369 src/bin/e_int_menus.c:223 src/bin/e_main.c:656
+#: src/bin/e_actions.c:3369 src/bin/e_int_menus.c:223 src/bin/e_main.c:654
 #: src/modules/conf_interaction/e_int_config_mouse.c:176
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -844,7 +844,7 @@ msgstr ""
 #: src/modules/conf_applications/e_int_config_apps.c:278
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:87
 #: src/modules/conf_intl/e_int_config_imc.c:808
-#: src/modules/conf_theme/e_int_config_theme.c:677
+#: src/modules/conf_theme/e_int_config_theme.c:669
 #: src/modules/conf_theme/e_int_config_wallpaper.c:427
 #: src/modules/conf_theme/e_int_config_wallpaper.c:581
 #: src/modules/gadman/e_mod_config.c:252 src/modules/syscon/e_mod_main.c:31
@@ -939,7 +939,7 @@ msgstr "valimine"
 #: src/modules/bluez4/agent.c:136 src/modules/bluez4/agent.c:148
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:624
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
-#: src/modules/conf_theme/e_int_config_theme_import.c:124
+#: src/modules/conf_theme/e_int_config_theme_import.c:123
 #: src/modules/fileman/e_int_config_mime_edit.c:316
 #: src/modules/quickaccess/e_mod_quickaccess.c:323
 #: src/modules/quickaccess/e_mod_quickaccess.c:385
@@ -1105,8 +1105,8 @@ msgstr "piir"
 #: src/bin/e_configure_option.c:1945 src/bin/e_configure_option.c:1947
 #: src/bin/e_configure_option.c:1953 src/bin/e_configure_option.c:1955
 #: src/bin/e_configure_option.c:1961 src/bin/e_configure_option.c:2064
-#: src/modules/conf_theme/e_mod_main.c:176
-#: src/modules/conf_theme/e_mod_main.c:184
+#: src/modules/conf_theme/e_mod_main.c:175
+#: src/modules/conf_theme/e_mod_main.c:183
 #, fuzzy
 msgid "theme"
 msgstr "teema"
@@ -1397,11 +1397,11 @@ msgid ""
 "the inconvenience.<br>"
 msgstr ""
 
-#: src/bin/e_config.c:1652 src/bin/e_config.c:2313
+#: src/bin/e_config.c:1694 src/bin/e_config.c:2355
 msgid "Enlightenment Settings Write Problems"
 msgstr ""
 
-#: src/bin/e_config.c:1655
+#: src/bin/e_config.c:1697
 #, c-format
 msgid ""
 "Enlightenment has had an error while moving config files<br>from:<br>"
@@ -1409,19 +1409,19 @@ msgid ""
 "<br>"
 msgstr ""
 
-#: src/bin/e_config.c:1665 src/bin/e_config.c:2326
+#: src/bin/e_config.c:1707 src/bin/e_config.c:2368
 #: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:856
 #: src/bin/e_desktop_editor.c:919 src/bin/e_entry_dialog.c:63
-#: src/bin/e_exec.c:733 src/bin/e_fm.c:10109 src/bin/e_fm.c:10840
+#: src/bin/e_exec.c:734 src/bin/e_fm.c:10109 src/bin/e_fm.c:10840
 #: src/bin/e_fm_prop.c:624 src/bin/e_import_config_dialog.c:533
 #: src/bin/e_int_border_remember.c:353 src/bin/e_int_border_remember.c:548
 #: src/bin/e_module.c:588 src/bin/e_module.c:996 src/bin/e_sys.c:759
-#: src/bin/e_sys.c:800 src/bin/e_update.c:76 src/bin/e_utils.c:690
+#: src/bin/e_sys.c:800 src/bin/e_update.c:76 src/bin/e_utils.c:689
 #: src/modules/bluez4/agent.c:71 src/modules/bluez4/agent.c:136
 #: src/modules/bluez4/agent.c:148
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:623
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
-#: src/modules/conf_theme/e_int_config_theme_import.c:120
+#: src/modules/conf_theme/e_int_config_theme_import.c:119
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1189
 #: src/modules/cpufreq/e_mod_main.c:511 src/modules/cpufreq/e_mod_main.c:540
 #: src/modules/cpufreq/e_mod_main.c:567 src/modules/cpufreq/e_mod_main.c:595
@@ -1431,22 +1431,22 @@ msgstr ""
 msgid "OK"
 msgstr "OK"
 
-#: src/bin/e_config.c:2204
+#: src/bin/e_config.c:2246
 #, fuzzy
 msgid "Settings Upgraded"
 msgstr "seaded Täiendatud"
 
-#: src/bin/e_config.c:2222
+#: src/bin/e_config.c:2264
 #, fuzzy
 msgid "The EET file handle is bad."
 msgstr "EET file handle on halb."
 
-#: src/bin/e_config.c:2226
+#: src/bin/e_config.c:2268
 #, fuzzy
 msgid "The file data is empty."
 msgstr "Faili andmed on tühi."
 
-#: src/bin/e_config.c:2230
+#: src/bin/e_config.c:2272
 #, fuzzy
 msgid ""
 "The file is not writable. Perhaps the disk is read-only<br>or you lost "
@@ -1455,17 +1455,17 @@ msgstr ""
 "Fail ei ole kirjutatav. Ehk ketas on read-only<br>või olete kaotanud õigusi "
 "faile."
 
-#: src/bin/e_config.c:2234
+#: src/bin/e_config.c:2276
 #, fuzzy
 msgid "Memory ran out while preparing the write.<br>Please free up memory."
 msgstr "Mälu otsa koostamise ajal kirjutada.<br>Palun vaba mälu."
 
-#: src/bin/e_config.c:2238
+#: src/bin/e_config.c:2280
 #, fuzzy
 msgid "This is a generic error."
 msgstr "See on üldine viga."
 
-#: src/bin/e_config.c:2242
+#: src/bin/e_config.c:2284
 #, fuzzy
 msgid ""
 "The settings file is too large.<br>It should be very small (a few hundred KB "
@@ -1474,70 +1474,70 @@ msgstr ""
 "Seadete fail on liiga suur.<br>See peaks olema väga väikesed (paarsada KB "
 "kõige rohkem)."
 
-#: src/bin/e_config.c:2246
+#: src/bin/e_config.c:2288
 msgid "You have I/O errors on the disk.<br>Maybe it needs replacing?"
 msgstr ""
 
-#: src/bin/e_config.c:2250
+#: src/bin/e_config.c:2292
 #, fuzzy
 msgid "You ran out of space while writing the file."
 msgstr "Sa otsa ruumi kirjutamise ajal faili"
 
-#: src/bin/e_config.c:2254
+#: src/bin/e_config.c:2296
 #, fuzzy
 msgid "The file was closed while writing."
 msgstr "Toimiku sulgemise kohta see kirjutamise ajal."
 
-#: src/bin/e_config.c:2258
+#: src/bin/e_config.c:2300
 #, fuzzy
 msgid "Memory-mapping (mmap) of the file failed."
 msgstr "Mälu kaardistamine (mmap) toimiku ebaõnnestus."
 
-#: src/bin/e_config.c:2262
+#: src/bin/e_config.c:2304
 #, fuzzy
 msgid "X509 Encoding failed."
 msgstr "X509 Encoding ebaõnnestus."
 
-#: src/bin/e_config.c:2266
+#: src/bin/e_config.c:2308
 #, fuzzy
 msgid "Signature failed."
 msgstr "Allkiri ei õnnestunud."
 
-#: src/bin/e_config.c:2270
+#: src/bin/e_config.c:2312
 #, fuzzy
 msgid "The signature was invalid."
 msgstr "Allkiri on kehtetu."
 
-#: src/bin/e_config.c:2274
+#: src/bin/e_config.c:2316
 #, fuzzy
 msgid "Not signed."
 msgstr "Pole sisse."
 
-#: src/bin/e_config.c:2278
+#: src/bin/e_config.c:2320
 #, fuzzy
 msgid "Feature not implemented."
 msgstr "Funktsiooni ei rakendata."
 
-#: src/bin/e_config.c:2282
+#: src/bin/e_config.c:2324
 #, fuzzy
 msgid "PRNG was not seeded."
 msgstr "PRNG ei külvatud."
 
-#: src/bin/e_config.c:2286
+#: src/bin/e_config.c:2328
 #, fuzzy
 msgid "Encryption failed."
 msgstr "Krüpteerimine ebaõnnestus."
 
-#: src/bin/e_config.c:2290
+#: src/bin/e_config.c:2332
 #, fuzzy
 msgid "Decryption failed."
 msgstr "Dekodeerimiseks ebaõnnestus."
 
-#: src/bin/e_config.c:2294
+#: src/bin/e_config.c:2336
 msgid "The error is unknown to Enlightenment."
 msgstr ""
 
-#: src/bin/e_config.c:2316
+#: src/bin/e_config.c:2358
 #, c-format
 msgid ""
 "Enlightenment has had an error while writing<br>its config file.<br>"
@@ -1575,7 +1575,7 @@ msgid "Extensions"
 msgstr "Extensions"
 
 #: src/bin/e_configure.c:30 src/bin/e_configure.c:33 src/bin/e_configure.c:280
-#: src/modules/conf_paths/e_int_config_paths.c:80
+#: src/modules/conf_paths/e_int_config_paths.c:78
 #: src/modules/conf_theme/e_int_config_color_classes.c:862
 #: src/modules/conf_theme/e_int_config_fonts.c:98
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:257
@@ -1935,7 +1935,7 @@ msgstr ""
 
 #: src/bin/e_configure_option.c:1474 src/bin/e_configure_option.c:1479
 #: src/bin/e_configure_option.c:1748 src/bin/e_configure_option.c:2008
-#: src/modules/conf_theme/e_mod_main.c:180
+#: src/modules/conf_theme/e_mod_main.c:179
 #, fuzzy
 msgid "wallpaper"
 msgstr "tapeet"
@@ -2247,7 +2247,7 @@ msgid "Font cache size"
 msgstr "Font cache suurus"
 
 #: src/bin/e_configure_option.c:1522 src/bin/e_configure_option.c:1725
-#: src/bin/e_configure_option.c:2010 src/modules/conf_theme/e_mod_main.c:188
+#: src/bin/e_configure_option.c:2010 src/modules/conf_theme/e_mod_main.c:187
 msgid "font"
 msgstr ""
 
@@ -3881,7 +3881,7 @@ msgid "Select All"
 msgstr "vali kõik"
 
 #: src/bin/e_exec.c:483 src/bin/e_exec.c:491 src/bin/e_exec.c:502
-#: src/bin/e_exec.c:562 src/bin/e_utils.c:185
+#: src/bin/e_exec.c:562 src/bin/e_utils.c:184
 #: src/modules/conf_intl/e_int_config_imc.c:261
 #: src/modules/conf_intl/e_int_config_imc.c:510
 #, fuzzy
@@ -3907,125 +3907,125 @@ msgstr ""
 msgid "Enlightenment was unable to fork a child process:<br><br>%s"
 msgstr ""
 
-#: src/bin/e_exec.c:724
+#: src/bin/e_exec.c:725
 #, fuzzy
 msgid "Application run error"
 msgstr "Taotlus run viga"
 
-#: src/bin/e_exec.c:726
+#: src/bin/e_exec.c:727
 #, c-format
 msgid ""
 "Enlightenment was unable to run the application:<br><br>%s<br><br>The "
 "application failed to start."
 msgstr ""
 
-#: src/bin/e_exec.c:835
+#: src/bin/e_exec.c:836
 #, fuzzy
 msgid "Application Execution Error"
 msgstr "Taotluse täitmine Viga"
 
-#: src/bin/e_exec.c:848 src/bin/e_exec.c:850
+#: src/bin/e_exec.c:849 src/bin/e_exec.c:851
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr ""
 
-#: src/bin/e_exec.c:856
+#: src/bin/e_exec.c:857
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr ""
 
-#: src/bin/e_exec.c:864
+#: src/bin/e_exec.c:865
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr ""
 
-#: src/bin/e_exec.c:867
+#: src/bin/e_exec.c:868
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr ""
 
-#: src/bin/e_exec.c:871
+#: src/bin/e_exec.c:872
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr ""
 
-#: src/bin/e_exec.c:874
+#: src/bin/e_exec.c:875
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr ""
 
-#: src/bin/e_exec.c:878
+#: src/bin/e_exec.c:879
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr ""
 
-#: src/bin/e_exec.c:882
+#: src/bin/e_exec.c:883
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr ""
 
-#: src/bin/e_exec.c:886
+#: src/bin/e_exec.c:887
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr ""
 
-#: src/bin/e_exec.c:889
+#: src/bin/e_exec.c:890
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr ""
 
-#: src/bin/e_exec.c:893
+#: src/bin/e_exec.c:894
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr ""
 
-#: src/bin/e_exec.c:896
+#: src/bin/e_exec.c:897
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr ""
 
-#: src/bin/e_exec.c:952
+#: src/bin/e_exec.c:953
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr ""
 
-#: src/bin/e_exec.c:1011 src/bin/e_exec.c:1089 src/bin/e_exec.c:1096
+#: src/bin/e_exec.c:1012 src/bin/e_exec.c:1090 src/bin/e_exec.c:1097
 #, fuzzy
 msgid "Error Logs"
 msgstr "viga Logid"
 
-#: src/bin/e_exec.c:1017 src/bin/e_exec.c:1097
+#: src/bin/e_exec.c:1018 src/bin/e_exec.c:1098
 #, fuzzy
 msgid "There was no error message."
 msgstr "Puudus veateate."
 
-#: src/bin/e_exec.c:1021 src/bin/e_exec.c:1104
+#: src/bin/e_exec.c:1022 src/bin/e_exec.c:1105
 #, fuzzy
 msgid "Save This Message"
 msgstr "Salvesta see sõnum"
 
-#: src/bin/e_exec.c:1026 src/bin/e_exec.c:1029 src/bin/e_exec.c:1109
-#: src/bin/e_exec.c:1112
+#: src/bin/e_exec.c:1027 src/bin/e_exec.c:1030 src/bin/e_exec.c:1110
+#: src/bin/e_exec.c:1113
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr ""
 
-#: src/bin/e_exec.c:1055
+#: src/bin/e_exec.c:1056
 #, fuzzy
 msgid "Error Information"
 msgstr "Error Information"
 
-#: src/bin/e_exec.c:1063
+#: src/bin/e_exec.c:1064
 #, fuzzy
 msgid "Error Signal Information"
 msgstr "Viga Signal Information"
 
-#: src/bin/e_exec.c:1073 src/bin/e_exec.c:1080
+#: src/bin/e_exec.c:1074 src/bin/e_exec.c:1081
 #, fuzzy
 msgid "Output Data"
 msgstr "väljundandmed"
 
-#: src/bin/e_exec.c:1081
+#: src/bin/e_exec.c:1082
 #, fuzzy
 msgid "There was no output."
 msgstr "Ei olnud toodangut."
@@ -4241,7 +4241,7 @@ msgid "Could not create a file!"
 msgstr "Viga laadimise moodul"
 
 #: src/bin/e_fm.c:9643 src/bin/e_fm.c:9681
-#: src/modules/conf_paths/e_int_config_paths.c:206
+#: src/modules/conf_paths/e_int_config_paths.c:204
 #, fuzzy
 msgid "New Directory"
 msgstr "New Directory"
@@ -4476,8 +4476,8 @@ msgstr "nimi;"
 msgid "Location:"
 msgstr "pöörlemine"
 
-#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:336
-#: src/bin/e_widget_filepreview.c:391 src/bin/e_widget_filepreview.c:444
+#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:335
+#: src/bin/e_widget_filepreview.c:390 src/bin/e_widget_filepreview.c:443
 #, fuzzy
 msgid "Size:"
 msgstr "suurus:"
@@ -4602,7 +4602,7 @@ msgstr "vahetükk"
 
 #: src/bin/e_gadcon.c:1789 src/bin/e_int_config_modules.c:53
 #: src/modules/conf_comp/e_mod_main.c:231
-#: src/modules/conf_theme/e_mod_main.c:134
+#: src/modules/conf_theme/e_mod_main.c:133
 #: src/modules/conf_wallpaper2/e_mod_main.c:22
 #: src/modules/physics/e_mod_main.c:45
 #, fuzzy
@@ -4957,7 +4957,7 @@ msgstr "Iconify"
 msgid "Skip"
 msgstr "Jäta vahele"
 
-#: src/bin/e_int_border_menu.c:741 src/modules/conf_theme/e_mod_main.c:131
+#: src/bin/e_int_border_menu.c:741 src/modules/conf_theme/e_mod_main.c:130
 #, fuzzy
 msgid "Border"
 msgstr "piir"
@@ -5054,7 +5054,7 @@ msgstr "Taskbar"
 #: src/bin/e_int_border_prop.c:110 src/bin/e_int_border_prop.c:117
 #: src/bin/e_int_border_prop.c:124 src/bin/e_moveresize.c:84
 #: src/bin/e_moveresize.c:95 src/bin/e_moveresize.c:133
-#: src/bin/e_widget_filepreview.c:83
+#: src/bin/e_widget_filepreview.c:82
 #, c-format
 msgid "%i×%i"
 msgstr ""
@@ -5292,7 +5292,7 @@ msgstr "taotlus seisukoha"
 #: src/modules/everything/evry_plug_settings.c:183
 #: src/modules/ibar/e_mod_main.c:441 src/modules/ibar/e_mod_main.c:1259
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
-#: src/modules/mixer/e_mod_main.c:651 src/modules/music-control/ui.c:271
+#: src/modules/mixer/e_mod_main.c:651 src/modules/music-control/ui.c:270
 #: src/modules/pager/e_mod_main.c:870 src/modules/systray/e_mod_main.c:133
 #: src/modules/tasks/e_mod_main.c:728 src/modules/temperature/e_mod_main.c:230
 #: src/modules/wizard/page_150.c:67 src/modules/xkbswitch/e_mod_main.c:335
@@ -5766,12 +5766,12 @@ msgstr "tööriistariba seaded"
 msgid "Layout"
 msgstr "Layout"
 
-#: src/bin/e_intl.c:353
+#: src/bin/e_intl.c:355
 #, fuzzy
 msgid "Input Method Error"
 msgstr "Input Method viga"
 
-#: src/bin/e_intl.c:354
+#: src/bin/e_intl.c:356
 #, fuzzy
 msgid ""
 "Error starting the input method executable<br><br>please make sure that your "
@@ -5782,430 +5782,430 @@ msgstr ""
 "panus<br>meetod konfiguratsioon on õige ja<br>et konfiguratsiooni "
 "oma<br>käivitatava on oma teed<br>"
 
-#: src/bin/e_main.c:228
+#: src/bin/e_main.c:226
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr ""
 
-#: src/bin/e_main.c:234
+#: src/bin/e_main.c:232
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr ""
 
-#: src/bin/e_main.c:281
+#: src/bin/e_main.c:279
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr ""
 
-#: src/bin/e_main.c:290
+#: src/bin/e_main.c:288
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr ""
 
-#: src/bin/e_main.c:299
+#: src/bin/e_main.c:297
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr ""
 
-#: src/bin/e_main.c:311
+#: src/bin/e_main.c:309
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
 msgstr ""
 
-#: src/bin/e_main.c:318
+#: src/bin/e_main.c:316
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
 msgstr ""
 
-#: src/bin/e_main.c:325
+#: src/bin/e_main.c:323
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
 msgstr ""
 
-#: src/bin/e_main.c:334
+#: src/bin/e_main.c:332
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr ""
 
-#: src/bin/e_main.c:343
+#: src/bin/e_main.c:341
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr ""
 
-#: src/bin/e_main.c:352
+#: src/bin/e_main.c:350
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr ""
 
-#: src/bin/e_main.c:363
+#: src/bin/e_main.c:361
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr ""
 
-#: src/bin/e_main.c:376
+#: src/bin/e_main.c:374
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr ""
 
-#: src/bin/e_main.c:385
+#: src/bin/e_main.c:383
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr ""
 
-#: src/bin/e_main.c:394
+#: src/bin/e_main.c:392
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr ""
 
-#: src/bin/e_main.c:408
+#: src/bin/e_main.c:406
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
 "Ecore and check they support the Software X11 rendering engine."
 msgstr ""
 
-#: src/bin/e_main.c:416
+#: src/bin/e_main.c:414
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
 "Ecore and check they support the Software Buffer rendering engine."
 msgstr ""
 
-#: src/bin/e_main.c:426
+#: src/bin/e_main.c:424
 msgid "Enlightenment cannot initialize Edje!\n"
 msgstr ""
 
-#: src/bin/e_main.c:438
+#: src/bin/e_main.c:436
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr ""
 
-#: src/bin/e_main.c:448
+#: src/bin/e_main.c:446
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
 msgstr ""
 
-#: src/bin/e_main.c:467
+#: src/bin/e_main.c:465
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
 msgstr ""
 
-#: src/bin/e_main.c:477
+#: src/bin/e_main.c:475
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:486
+#: src/bin/e_main.c:484
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:495
+#: src/bin/e_main.c:493
 msgid "Enlightenment cannot initialize E_Randr!\n"
 msgstr ""
 
-#: src/bin/e_main.c:504
+#: src/bin/e_main.c:502
 msgid "Enlightenment cannot initialize E_Xinerama!\n"
 msgstr ""
 
-#: src/bin/e_main.c:513
+#: src/bin/e_main.c:511
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr ""
 
-#: src/bin/e_main.c:529
+#: src/bin/e_main.c:527
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:538
+#: src/bin/e_main.c:536
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:547
+#: src/bin/e_main.c:545
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
 msgstr ""
 
-#: src/bin/e_main.c:564
+#: src/bin/e_main.c:562
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:581
+#: src/bin/e_main.c:579
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:595
+#: src/bin/e_main.c:593
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
 "out of memory or disk space?"
 msgstr ""
 
-#: src/bin/e_main.c:604
+#: src/bin/e_main.c:602
 #, fuzzy
 msgid "Starting International Support"
 msgstr "Alates International Support"
 
-#: src/bin/e_main.c:608
+#: src/bin/e_main.c:606
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:621
+#: src/bin/e_main.c:619
 #, fuzzy
 msgid "Setup Actions"
 msgstr "Setup tegevused"
 
-#: src/bin/e_main.c:625
+#: src/bin/e_main.c:623
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:632
+#: src/bin/e_main.c:630
 #, fuzzy
 msgid "Setup Screens"
 msgstr "Setup ekraanid"
 
-#: src/bin/e_main.c:636
+#: src/bin/e_main.c:634
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
 msgstr ""
 
-#: src/bin/e_main.c:648
+#: src/bin/e_main.c:646
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr ""
 
-#: src/bin/e_main.c:678
+#: src/bin/e_main.c:676
 #, fuzzy
 msgid "Setup ACPI"
 msgstr "Setup ACPI"
 
-#: src/bin/e_main.c:685
+#: src/bin/e_main.c:683
 #, fuzzy
 msgid "Setup Backlight"
 msgstr "Setup Backlight"
 
-#: src/bin/e_main.c:689
+#: src/bin/e_main.c:687
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr ""
 
-#: src/bin/e_main.c:695
+#: src/bin/e_main.c:693
 #, fuzzy
 msgid "Setup Screensaver"
 msgstr "Setup Screensaver"
 
-#: src/bin/e_main.c:699
+#: src/bin/e_main.c:697
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr ""
 
-#: src/bin/e_main.c:706
+#: src/bin/e_main.c:704
 #, fuzzy
 msgid "Setup DPMS"
 msgstr "Setup DPMS"
 
-#: src/bin/e_main.c:710
+#: src/bin/e_main.c:708
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr ""
 
-#: src/bin/e_main.c:717
+#: src/bin/e_main.c:715
 #, fuzzy
 msgid "Setup Powersave Modes"
 msgstr "Setup Energiasääst Modes"
 
-#: src/bin/e_main.c:721
+#: src/bin/e_main.c:719
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr ""
 
-#: src/bin/e_main.c:728
+#: src/bin/e_main.c:726
 #, fuzzy
 msgid "Setup Desklock"
 msgstr "Setup Desklock"
 
-#: src/bin/e_main.c:732
+#: src/bin/e_main.c:730
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:739
+#: src/bin/e_main.c:737
 #, fuzzy
 msgid "Setup Popups"
 msgstr "Setup hüpikaknad"
 
-#: src/bin/e_main.c:743
+#: src/bin/e_main.c:741
 msgid "Enlightenment cannot set up its popup system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:755
+#: src/bin/e_main.c:753
 #, fuzzy
 msgid "Setup Message Bus"
 msgstr "Setup Sõnum Bus"
 
-#: src/bin/e_main.c:762
+#: src/bin/e_main.c:760
 #, fuzzy
 msgid "Setup Paths"
 msgstr "Setup Paths"
 
-#: src/bin/e_main.c:768
+#: src/bin/e_main.c:766
 #, fuzzy
 msgid "Setup System Controls"
 msgstr "Setup süsteem Controls"
 
-#: src/bin/e_main.c:772
+#: src/bin/e_main.c:770
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:779
+#: src/bin/e_main.c:777
 #, fuzzy
 msgid "Setup Execution System"
 msgstr "Setup Execution System"
 
-#: src/bin/e_main.c:783
+#: src/bin/e_main.c:781
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:794
+#: src/bin/e_main.c:792
 #, fuzzy
 msgid "Setup Filemanager"
 msgstr "Setup failihalduri"
 
-#: src/bin/e_main.c:798
+#: src/bin/e_main.c:796
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr ""
 
-#: src/bin/e_main.c:805
+#: src/bin/e_main.c:803
 #, fuzzy
 msgid "Setup Message System"
 msgstr "Setup Sõnum süsteemi"
 
-#: src/bin/e_main.c:809
+#: src/bin/e_main.c:807
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:816
+#: src/bin/e_main.c:814
 #, fuzzy
 msgid "Setup Grab Input Handling"
 msgstr "Setup Grab Sisend käitlemine"
 
-#: src/bin/e_main.c:820
+#: src/bin/e_main.c:818
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:827
+#: src/bin/e_main.c:825
 #, fuzzy
 msgid "Setup Modules"
 msgstr "Setup Modules"
 
-#: src/bin/e_main.c:831 src/bin/e_main.c:1016
+#: src/bin/e_main.c:829 src/bin/e_main.c:1014
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:838
+#: src/bin/e_main.c:836
 #, fuzzy
 msgid "Setup Remembers"
 msgstr "Setup Remembers"
 
-#: src/bin/e_main.c:842
+#: src/bin/e_main.c:840
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr ""
 
-#: src/bin/e_main.c:849
+#: src/bin/e_main.c:847
 #, fuzzy
 msgid "Setup Color Classes"
 msgstr "Setup Color klass"
 
-#: src/bin/e_main.c:853
+#: src/bin/e_main.c:851
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:860
+#: src/bin/e_main.c:858
 #, fuzzy
 msgid "Setup Gadcon"
 msgstr "Setup Gadcon"
 
-#: src/bin/e_main.c:864
+#: src/bin/e_main.c:862
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:871
+#: src/bin/e_main.c:869
 #, fuzzy
 msgid "Setup Toolbars"
 msgstr "Määra tööriistariba näitamine"
 
-#: src/bin/e_main.c:875
+#: src/bin/e_main.c:873
 #, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenment"
 
-#: src/bin/e_main.c:882
+#: src/bin/e_main.c:880
 #, fuzzy
 msgid "Setup Wallpaper"
 msgstr "Setup Wallpaper"
 
-#: src/bin/e_main.c:886
+#: src/bin/e_main.c:884
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:893
+#: src/bin/e_main.c:891
 #, fuzzy
 msgid "Setup Mouse"
 msgstr "Setup Mouse"
 
-#: src/bin/e_main.c:897
+#: src/bin/e_main.c:895
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr ""
 
-#: src/bin/e_main.c:903
+#: src/bin/e_main.c:901
 #, fuzzy
 msgid "Setup Bindings"
 msgstr "Setup Sidemed"
 
-#: src/bin/e_main.c:907
+#: src/bin/e_main.c:905
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:914
+#: src/bin/e_main.c:912
 #, fuzzy
 msgid "Setup Thumbnailer"
 msgstr "Setup Thumbnailer"
 
-#: src/bin/e_main.c:918
+#: src/bin/e_main.c:916
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:927
+#: src/bin/e_main.c:925
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:936
+#: src/bin/e_main.c:934
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:945
+#: src/bin/e_main.c:943
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:952
+#: src/bin/e_main.c:950
 #, fuzzy
 msgid "Setup Desktop Environment"
 msgstr "Setup Desktop Environment"
 
-#: src/bin/e_main.c:956
+#: src/bin/e_main.c:954
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr ""
 
-#: src/bin/e_main.c:963
+#: src/bin/e_main.c:961
 #, fuzzy
 msgid "Setup File Ordering"
 msgstr "Installifaili Tellimise"
 
-#: src/bin/e_main.c:967
+#: src/bin/e_main.c:965
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:982
+#: src/bin/e_main.c:980
 #, fuzzy
 msgid "Load Modules"
 msgstr "Load Modules"
 
-#: src/bin/e_main.c:1012
+#: src/bin/e_main.c:1010
 #, fuzzy
 msgid "Setup Shelves"
 msgstr "Setup Riiulid"
 
-#: src/bin/e_main.c:1030
+#: src/bin/e_main.c:1028
 #, fuzzy
 msgid "Almost Done"
 msgstr "peaaegu valmis"
 
-#: src/bin/e_main.c:1193
+#: src/bin/e_main.c:1191
 #, c-format
 msgid ""
 "Options:\n"
@@ -6234,7 +6234,7 @@ msgid ""
 "\t\tIf you need this help, you don't need this option.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1246
+#: src/bin/e_main.c:1244
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -6244,67 +6244,67 @@ msgid ""
 "before enlightenment itself begins running.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1527
+#: src/bin/e_main.c:1507
 #, fuzzy
 msgid "Testing Format Support"
 msgstr "Testimine Format Support"
 
-#: src/bin/e_main.c:1531
+#: src/bin/e_main.c:1511
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1543
+#: src/bin/e_main.c:1523
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1553
+#: src/bin/e_main.c:1533
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1563
+#: src/bin/e_main.c:1543
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1573
+#: src/bin/e_main.c:1553
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1587
+#: src/bin/e_main.c:1567
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
 "support and system fontconfig defines a 'Sans' font.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1643
+#: src/bin/e_main.c:1623
 #, fuzzy
 msgid "Enlightenment cannot setup compositing.\n"
 msgstr "Enlightenment"
 
-#: src/bin/e_main.c:1658
+#: src/bin/e_main.c:1638
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1664
+#: src/bin/e_main.c:1644
 #, fuzzy
 msgid "Setup DND"
 msgstr "Setup DND"
 
-#: src/bin/e_main.c:1668
+#: src/bin/e_main.c:1648
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1833
+#: src/bin/e_main.c:1813
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -6312,11 +6312,11 @@ msgid ""
 "will not be loaded."
 msgstr ""
 
-#: src/bin/e_main.c:1838 src/bin/e_main.c:1854
+#: src/bin/e_main.c:1818 src/bin/e_main.c:1834
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr ""
 
-#: src/bin/e_main.c:1839
+#: src/bin/e_main.c:1819
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -6324,7 +6324,7 @@ msgid ""
 "will not be loaded."
 msgstr ""
 
-#: src/bin/e_main.c:1847
+#: src/bin/e_main.c:1827
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -6332,7 +6332,7 @@ msgid ""
 "dialog should let you select your<br>modules again.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1855
+#: src/bin/e_main.c:1835
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -6731,7 +6731,7 @@ msgstr "talveunes"
 msgid "Hibernating.<br><hilight>Please wait.</hilight>"
 msgstr ""
 
-#: src/bin/e_theme.c:15
+#: src/bin/e_theme.c:14
 #, fuzzy
 msgid "Set As Theme"
 msgstr "Määra teemaks"
@@ -6780,104 +6780,104 @@ msgid ""
 "update your system packages<br>to get a new version."
 msgstr ""
 
-#: src/bin/e_utils.c:186 src/modules/conf_intl/e_int_config_imc.c:262
+#: src/bin/e_utils.c:185 src/modules/conf_intl/e_int_config_imc.c:262
 #: src/modules/conf_intl/e_int_config_imc.c:511
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<br><br>%s<br>"
 msgstr ""
 
-#: src/bin/e_utils.c:242
+#: src/bin/e_utils.c:241
 #, fuzzy
 msgid "Cannot exit - immortal windows."
 msgstr "Ei saa väljuda - surematu aknad."
 
-#: src/bin/e_utils.c:243
+#: src/bin/e_utils.c:242
 msgid ""
 "Some windows are left still around with the Lifespan lock enabled. This "
 "means<br>that Enlightenment will not allow itself to exit until these "
 "windows have<br>been closed or have the lifespan lock removed.<br>"
 msgstr ""
 
-#: src/bin/e_utils.c:855
+#: src/bin/e_utils.c:854
 #, c-format
 msgid "%'.0f bytes"
 msgstr ""
 
-#: src/bin/e_utils.c:859
+#: src/bin/e_utils.c:858
 #, c-format
 msgid "%'.0f KiB"
 msgstr ""
 
-#: src/bin/e_utils.c:863
+#: src/bin/e_utils.c:862
 #, c-format
 msgid "%'.1f MiB"
 msgstr ""
 
-#: src/bin/e_utils.c:867
+#: src/bin/e_utils.c:866
 #, c-format
 msgid "%'.1f GiB"
 msgstr ""
 
-#: src/bin/e_utils.c:871
+#: src/bin/e_utils.c:870
 #, c-format
 msgid "%'.1f TiB"
 msgstr ""
 
-#: src/bin/e_utils.c:890
+#: src/bin/e_utils.c:889
 #, fuzzy, c-format
 msgid "In the future"
 msgstr "Tulevikus"
 
-#: src/bin/e_utils.c:894
+#: src/bin/e_utils.c:893
 #, fuzzy, c-format
 msgid "In the last minute"
 msgstr "Viimase hetke"
 
-#: src/bin/e_utils.c:898
+#: src/bin/e_utils.c:897
 #, fuzzy, c-format
 msgid "Last year"
 msgid_plural "%li Years ago"
 msgstr[0] "viimati kasutatud"
 msgstr[1] "viimati kasutatud"
 
-#: src/bin/e_utils.c:903
+#: src/bin/e_utils.c:902
 #, c-format
 msgid "Last month"
 msgid_plural "%li Months ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:908
+#: src/bin/e_utils.c:907
 #, fuzzy, c-format
 msgid "Last week"
 msgid_plural "%li Weeks ago"
 msgstr[0] "viimati kasutatud"
 msgstr[1] "viimati kasutatud"
 
-#: src/bin/e_utils.c:913
+#: src/bin/e_utils.c:912
 #, c-format
 msgid "Yesterday"
 msgid_plural "%li Days ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:918
+#: src/bin/e_utils.c:917
 #, c-format
 msgid "An hour ago"
 msgid_plural "%li Hours ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:923
+#: src/bin/e_utils.c:922
 #, c-format
 msgid "A minute ago"
 msgid_plural "%li Minutes ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:930 src/bin/e_widget_filepreview.c:617
-#: src/bin/e_widget_filepreview.c:618 src/bin/e_widget_filepreview.c:619
-#: src/bin/e_widget_filepreview.c:649 src/bin/e_widget_filepreview.c:660
+#: src/bin/e_utils.c:929 src/bin/e_widget_filepreview.c:616
+#: src/bin/e_widget_filepreview.c:617 src/bin/e_widget_filepreview.c:618
+#: src/bin/e_widget_filepreview.c:648 src/bin/e_widget_filepreview.c:659
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:421
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1226
 #: src/modules/conf_bindings/e_int_config_keybindings.c:973
@@ -6888,24 +6888,24 @@ msgstr[1] ""
 msgid "Unknown"
 msgstr "tundmatu"
 
-#: src/bin/e_utils.c:1001 src/bin/e_utils.c:1009
+#: src/bin/e_utils.c:1000 src/bin/e_utils.c:1008
 #, fuzzy
 msgid "Error creating directory"
 msgstr "Viga laadimise moodul"
 
-#: src/bin/e_utils.c:1001
+#: src/bin/e_utils.c:1000
 #, c-format
 msgid ""
 "Failed to create directory: %s .<br>Check that you have correct permissions "
 "set."
 msgstr ""
 
-#: src/bin/e_utils.c:1009
+#: src/bin/e_utils.c:1008
 #, c-format
 msgid "Failed to create directory: %s .<br>A file of that name already exists."
 msgstr ""
 
-#: src/bin/e_utils.c:1167
+#: src/bin/e_utils.c:1166
 #, fuzzy
 msgid ""
 "Configuration data needed upgrading. Your old configuration<br>has been "
@@ -6924,12 +6924,12 @@ msgstr ""
 "lisades selle sisse saab uuesti seadistada asju nüüd oma<br>maitse järgi. "
 "Vabandame ebamugavuste pärast.<br>"
 
-#: src/bin/e_utils.c:1176 src/bin/e_utils.c:1200
+#: src/bin/e_utils.c:1175 src/bin/e_utils.c:1199
 #, c-format
 msgid "%s Configuration Updated"
 msgstr ""
 
-#: src/bin/e_utils.c:1189
+#: src/bin/e_utils.c:1188
 #, fuzzy
 msgid ""
 "Your module configuration is NEWER than the module version. This is "
@@ -6944,54 +6944,54 @@ msgstr ""
 "ja<br>ettevaatusabinõuna konfiguratsioonifailis on nüüd "
 "taastatud<br>vaikeseaded. Vabandame ebamugavuste pärast.<br>"
 
-#: src/bin/e_utils.c:1283
+#: src/bin/e_utils.c:1282
 #, c-format
 msgid "Never"
 msgstr ""
 
-#: src/bin/e_utils.c:1287
+#: src/bin/e_utils.c:1286
 #, c-format
 msgid "A second"
 msgid_plural "%li Seconds"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:1291
+#: src/bin/e_utils.c:1290
 #, c-format
 msgid "One year"
 msgid_plural "%li Years"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:1296
+#: src/bin/e_utils.c:1295
 #, c-format
 msgid "One month"
 msgid_plural "%li Months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:1301
+#: src/bin/e_utils.c:1300
 #, c-format
 msgid "One week"
 msgid_plural "%li Weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:1306
+#: src/bin/e_utils.c:1305
 #, c-format
 msgid "One day"
 msgid_plural "%li Days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:1311
+#: src/bin/e_utils.c:1310
 #, c-format
 msgid "An hour"
 msgid_plural "%li Hours"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:1316
+#: src/bin/e_utils.c:1315
 #, c-format
 msgid "A minute"
 msgid_plural "%li Minutes"
@@ -7041,84 +7041,84 @@ msgstr ""
 msgid "Alpha"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:82 src/bin/e_widget_filepreview.c:443
+#: src/bin/e_widget_filepreview.c:81 src/bin/e_widget_filepreview.c:442
 #, fuzzy
 msgid "Resolution:"
 msgstr "resolutsiooni:"
 
-#: src/bin/e_widget_filepreview.c:90
+#: src/bin/e_widget_filepreview.c:89
 #, fuzzy
 msgid "Mime-type:"
 msgstr "Mime tüübid"
 
-#: src/bin/e_widget_filepreview.c:329
+#: src/bin/e_widget_filepreview.c:328
 #, c-format
 msgid "%3.1f%%"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:335
+#: src/bin/e_widget_filepreview.c:334
 msgid "Length:"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:390
+#: src/bin/e_widget_filepreview.c:389
 msgid "Used:"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:392
+#: src/bin/e_widget_filepreview.c:391
 msgid "Reserved:"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:393
+#: src/bin/e_widget_filepreview.c:392
 msgid "Mount status:"
 msgstr ""
 
-#: src/bin/e_widget_filepreview.c:395 src/modules/mixer/app_mixer.c:381
+#: src/bin/e_widget_filepreview.c:394 src/modules/mixer/app_mixer.c:381
 #, fuzzy
 msgid "Type:"
 msgstr "tüüp;"
 
-#: src/bin/e_widget_filepreview.c:446
+#: src/bin/e_widget_filepreview.c:445
 #, fuzzy
 msgid "Owner:"
 msgstr "Omanik:"
 
-#: src/bin/e_widget_filepreview.c:447
+#: src/bin/e_widget_filepreview.c:446
 #, fuzzy
 msgid "Permissions:"
 msgstr "õigused:"
 
-#: src/bin/e_widget_filepreview.c:448
+#: src/bin/e_widget_filepreview.c:447
 #, fuzzy
 msgid "Modified:"
 msgstr "Viimati muudetud:"
 
-#: src/bin/e_widget_filepreview.c:604 src/bin/e_widget_filepreview.c:795
-#: src/bin/e_widget_filepreview.c:804 src/bin/e_widget_filepreview.c:813
+#: src/bin/e_widget_filepreview.c:603 src/bin/e_widget_filepreview.c:794
+#: src/bin/e_widget_filepreview.c:803 src/bin/e_widget_filepreview.c:812
 #, fuzzy, c-format
 msgid "Read Only"
 msgstr "Read Only"
 
-#: src/bin/e_widget_filepreview.c:606 src/bin/e_widget_filepreview.c:820
+#: src/bin/e_widget_filepreview.c:605 src/bin/e_widget_filepreview.c:819
 #, fuzzy
 msgid "Read-Write"
 msgstr "Kirjutatavuse"
 
-#: src/bin/e_widget_filepreview.c:609 src/bin/e_widget_filepreview.c:620
+#: src/bin/e_widget_filepreview.c:608 src/bin/e_widget_filepreview.c:619
 #, fuzzy
 msgid "Unmounted"
 msgstr "lahutada"
 
-#: src/bin/e_widget_filepreview.c:744
+#: src/bin/e_widget_filepreview.c:743
 #, fuzzy, c-format
 msgid "You"
 msgstr "te"
 
-#: src/bin/e_widget_filepreview.c:793
+#: src/bin/e_widget_filepreview.c:792
 #, fuzzy, c-format
 msgid "Protected"
 msgstr "kaitstud"
 
-#: src/bin/e_widget_filepreview.c:802 src/bin/e_widget_filepreview.c:811
+#: src/bin/e_widget_filepreview.c:801 src/bin/e_widget_filepreview.c:810
 #, fuzzy, c-format
 msgid "Forbidden"
 msgstr "keelatud"
@@ -7131,7 +7131,7 @@ msgstr "Lisa eelistustesse"
 #: src/bin/e_widget_fsel.c:339
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:91
 #: src/modules/conf_intl/e_int_config_imc.c:815
-#: src/modules/conf_theme/e_int_config_theme.c:684
+#: src/modules/conf_theme/e_int_config_theme.c:676
 #: src/modules/gadman/e_mod_config.c:256
 #, fuzzy
 msgid "Go up a Directory"
@@ -7244,7 +7244,7 @@ msgstr "Auto Detect"
 #: src/modules/conf_applications/e_mod_main.c:60
 #: src/modules/conf_comp/e_mod_main.c:236
 #: src/modules/conf_display/e_mod_main.c:40
-#: src/modules/conf_theme/e_mod_main.c:127
+#: src/modules/conf_theme/e_mod_main.c:126
 #: src/modules/conf_wallpaper2/e_mod_main.c:24
 #: src/modules/temperature/e_mod_config.c:269
 #, fuzzy
@@ -8805,10 +8805,10 @@ msgstr "profiil"
 
 #: src/modules/conf_display/e_int_config_desk.c:200
 #: src/modules/conf_display/e_int_config_desklock.c:357
-#: src/modules/conf_theme/e_mod_main.c:30
-#: src/modules/conf_theme/e_mod_main.c:129
-#: src/modules/conf_theme/e_mod_main.c:136
-#: src/modules/conf_theme/e_mod_main.c:162
+#: src/modules/conf_theme/e_mod_main.c:29
+#: src/modules/conf_theme/e_mod_main.c:128
+#: src/modules/conf_theme/e_mod_main.c:135
+#: src/modules/conf_theme/e_mod_main.c:161
 #, fuzzy
 msgid "Wallpaper"
 msgstr "tapeet"
@@ -8925,7 +8925,7 @@ msgstr "Valitaust ..."
 
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:84
 #: src/modules/conf_intl/e_int_config_imc.c:803
-#: src/modules/conf_theme/e_int_config_theme.c:673
+#: src/modules/conf_theme/e_int_config_theme.c:665
 #: src/modules/conf_theme/e_int_config_wallpaper.c:423
 #: src/modules/conf_theme/e_int_config_wallpaper.c:577
 #: src/modules/gadman/e_mod_config.c:248
@@ -9133,9 +9133,9 @@ msgid "Show Cursor"
 msgstr "Näita Cursor"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:167
-#: src/modules/conf_theme/e_mod_main.c:100
-#: src/modules/conf_theme/e_mod_main.c:139
-#: src/modules/conf_theme/e_mod_main.c:165
+#: src/modules/conf_theme/e_mod_main.c:99
+#: src/modules/conf_theme/e_mod_main.c:138
+#: src/modules/conf_theme/e_mod_main.c:164
 #, fuzzy
 msgid "Theme"
 msgstr "teema"
@@ -9471,18 +9471,12 @@ msgstr "pilte"
 
 #: src/modules/conf_paths/e_int_config_paths.c:74
 #: src/modules/conf_theme/e_int_config_fonts.c:433
-#: src/modules/conf_theme/e_mod_main.c:148
+#: src/modules/conf_theme/e_mod_main.c:147
 #, fuzzy
 msgid "Fonts"
 msgstr "fondid"
 
 #: src/modules/conf_paths/e_int_config_paths.c:76
-#: src/modules/conf_theme/e_mod_main.c:110
-#, fuzzy
-msgid "Themes"
-msgstr "Teemad"
-
-#: src/modules/conf_paths/e_int_config_paths.c:78
 #: src/modules/conf_theme/e_int_config_xsettings.c:467
 #: src/modules/everything/evry_config.c:438
 #: src/modules/everything/evry_config.c:464
@@ -9490,27 +9484,27 @@ msgstr "Teemad"
 msgid "Icons"
 msgstr "ikoonid"
 
-#: src/modules/conf_paths/e_int_config_paths.c:82
+#: src/modules/conf_paths/e_int_config_paths.c:80
 #, fuzzy
 msgid "Backgrounds"
 msgstr "taustaga"
 
-#: src/modules/conf_paths/e_int_config_paths.c:84
+#: src/modules/conf_paths/e_int_config_paths.c:82
 #, fuzzy
 msgid "Messages"
 msgstr "Sõnumid"
 
-#: src/modules/conf_paths/e_int_config_paths.c:166
+#: src/modules/conf_paths/e_int_config_paths.c:164
 #, fuzzy
 msgid "Enlightenment Paths"
 msgstr "Enlightenment"
 
-#: src/modules/conf_paths/e_int_config_paths.c:197
+#: src/modules/conf_paths/e_int_config_paths.c:195
 #, fuzzy
 msgid "Default Directories"
 msgstr "vaikimisi kataloogid"
 
-#: src/modules/conf_paths/e_int_config_paths.c:204
+#: src/modules/conf_paths/e_int_config_paths.c:202
 #, fuzzy
 msgid "User Defined Directories"
 msgstr "Kasutaja määratud kataloogid"
@@ -9968,7 +9962,7 @@ msgid "Module Label"
 msgstr "moodul Label"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:163
-#: src/modules/conf_theme/e_mod_main.c:145
+#: src/modules/conf_theme/e_mod_main.c:144
 #, fuzzy
 msgid "Colors"
 msgstr "värvid"
@@ -10370,44 +10364,44 @@ msgstr "maksimaalne"
 msgid "Constraints"
 msgstr "piirangud"
 
-#: src/modules/conf_theme/e_int_config_theme.c:318
+#: src/modules/conf_theme/e_int_config_theme.c:310
 #, fuzzy
 msgid "Theme Selector"
 msgstr "theme Selector"
 
-#: src/modules/conf_theme/e_int_config_theme.c:564
+#: src/modules/conf_theme/e_int_config_theme.c:556
 #, fuzzy
 msgid "Theme File Error"
 msgstr "Theme Import viga"
 
-#: src/modules/conf_theme/e_int_config_theme.c:565
+#: src/modules/conf_theme/e_int_config_theme.c:557
 #, c-format
 msgid "%s is probably not an E17 theme!"
 msgstr ""
 
-#: src/modules/conf_theme/e_int_config_theme.c:718
+#: src/modules/conf_theme/e_int_config_theme.c:710
 #, fuzzy
 msgid " Import..."
 msgstr " Import ..."
 
-#: src/modules/conf_theme/e_int_config_theme_import.c:67
+#: src/modules/conf_theme/e_int_config_theme_import.c:66
 #, fuzzy
 msgid "Select a Theme..."
 msgstr "Vali teema ..."
 
-#: src/modules/conf_theme/e_int_config_theme_import.c:284
-#: src/modules/conf_theme/e_int_config_theme_import.c:293
+#: src/modules/conf_theme/e_int_config_theme_import.c:283
+#: src/modules/conf_theme/e_int_config_theme_import.c:292
 #, fuzzy
 msgid "Theme Import Error"
 msgstr "Theme Import viga"
 
-#: src/modules/conf_theme/e_int_config_theme_import.c:285
+#: src/modules/conf_theme/e_int_config_theme_import.c:284
 msgid ""
 "Enlightenment was unable to import the theme.<br><br>Are you sure this is "
 "really a valid theme?"
 msgstr ""
 
-#: src/modules/conf_theme/e_int_config_theme_import.c:294
+#: src/modules/conf_theme/e_int_config_theme_import.c:293
 msgid "Enlightenment was unable to import the theme<br>due to a copy error."
 msgstr ""
 
@@ -10437,7 +10431,7 @@ msgid "Background Change"
 msgstr "tausta muutmine"
 
 #: src/modules/conf_theme/e_int_config_transitions.c:191
-#: src/modules/conf_theme/e_mod_main.c:154
+#: src/modules/conf_theme/e_mod_main.c:153
 #, fuzzy
 msgid "Transitions"
 msgstr "üleminekud"
@@ -10518,42 +10512,47 @@ msgstr "Kasuta ikooniteema taotluste"
 msgid "Enable icon theme for Enlightenment"
 msgstr "Luba ikooniteema"
 
-#: src/modules/conf_theme/e_mod_main.c:142
+#: src/modules/conf_theme/e_mod_main.c:109
+#, fuzzy
+msgid "Themes"
+msgstr "Teemad"
+
+#: src/modules/conf_theme/e_mod_main.c:141
 #, fuzzy
 msgid "Application Theme"
 msgstr "taotlus"
 
-#: src/modules/conf_theme/e_mod_main.c:151
+#: src/modules/conf_theme/e_mod_main.c:150
 #, fuzzy
 msgid "Borders"
 msgstr "piirid"
 
-#: src/modules/conf_theme/e_mod_main.c:157
+#: src/modules/conf_theme/e_mod_main.c:156
 #, fuzzy
 msgid "Scaling"
 msgstr "Scaling"
 
-#: src/modules/conf_theme/e_mod_main.c:176
+#: src/modules/conf_theme/e_mod_main.c:175
 #, fuzzy
 msgid "Enlightenment theme settings"
 msgstr "Enlightenment"
 
-#: src/modules/conf_theme/e_mod_main.c:180
+#: src/modules/conf_theme/e_mod_main.c:179
 #, fuzzy
 msgid "Desktop wallpaper settings"
 msgstr "Desktop Wallpaper"
 
-#: src/modules/conf_theme/e_mod_main.c:184
+#: src/modules/conf_theme/e_mod_main.c:183
 #, fuzzy
 msgid "Enlightenment color settings"
 msgstr "Enlightenment"
 
-#: src/modules/conf_theme/e_mod_main.c:184
+#: src/modules/conf_theme/e_mod_main.c:183
 #, fuzzy
 msgid "color"
 msgstr "värvid"
 
-#: src/modules/conf_theme/e_mod_main.c:188
+#: src/modules/conf_theme/e_mod_main.c:187
 #, fuzzy
 msgid "Enlightenment font settings"
 msgstr "Enlightenment"
@@ -12718,19 +12717,19 @@ msgstr "New maht"
 msgid "Music controller"
 msgstr "fondiseadistused"
 
-#: src/modules/music-control/ui.c:157
+#: src/modules/music-control/ui.c:156
 msgid "Music Player"
 msgstr ""
 
-#: src/modules/music-control/ui.c:167
+#: src/modules/music-control/ui.c:166
 msgid "* Your player must be configured to export the DBus interface MPRIS2."
 msgstr ""
 
-#: src/modules/music-control/ui.c:170
+#: src/modules/music-control/ui.c:169
 msgid "Pause music when screen is locked"
 msgstr ""
 
-#: src/modules/music-control/ui.c:241
+#: src/modules/music-control/ui.c:240
 #, fuzzy
 msgid "Music control Settings"
 msgstr "fondiseadistused"

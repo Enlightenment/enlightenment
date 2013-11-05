@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-10-31 23:34+0900\n"
+"POT-Creation-Date: 2013-11-05 16:26+0900\n"
 "PO-Revision-Date: 2013-06-30 21:31+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: American English <kde-i18n-doc@kde.org>\n"
@@ -42,7 +42,7 @@ msgid "Close"
 msgstr "Fermi"
 
 #: src/bin/e_about.c:21 src/bin/e_actions.c:3361 src/bin/e_actions.c:3365
-#: src/bin/e_actions.c:3369 src/bin/e_int_menus.c:223 src/bin/e_main.c:656
+#: src/bin/e_actions.c:3369 src/bin/e_int_menus.c:223 src/bin/e_main.c:654
 #: src/modules/conf_interaction/e_int_config_mouse.c:176
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -729,7 +729,7 @@ msgstr "Baskuligi la nomatan modulon"
 #: src/modules/conf_applications/e_int_config_apps.c:278
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:87
 #: src/modules/conf_intl/e_int_config_imc.c:808
-#: src/modules/conf_theme/e_int_config_theme.c:677
+#: src/modules/conf_theme/e_int_config_theme.c:669
 #: src/modules/conf_theme/e_int_config_wallpaper.c:427
 #: src/modules/conf_theme/e_int_config_wallpaper.c:581
 #: src/modules/gadman/e_mod_config.c:252 src/modules/syscon/e_mod_main.c:31
@@ -808,7 +808,7 @@ msgstr "Elekti"
 #: src/modules/bluez4/agent.c:136 src/modules/bluez4/agent.c:148
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:624
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
-#: src/modules/conf_theme/e_int_config_theme_import.c:124
+#: src/modules/conf_theme/e_int_config_theme_import.c:123
 #: src/modules/fileman/e_int_config_mime_edit.c:316
 #: src/modules/quickaccess/e_mod_quickaccess.c:323
 #: src/modules/quickaccess/e_mod_quickaccess.c:385
@@ -969,8 +969,8 @@ msgstr "rqndo"
 #: src/bin/e_configure_option.c:1945 src/bin/e_configure_option.c:1947
 #: src/bin/e_configure_option.c:1953 src/bin/e_configure_option.c:1955
 #: src/bin/e_configure_option.c:1961 src/bin/e_configure_option.c:2064
-#: src/modules/conf_theme/e_mod_main.c:176
-#: src/modules/conf_theme/e_mod_main.c:184
+#: src/modules/conf_theme/e_mod_main.c:175
+#: src/modules/conf_theme/e_mod_main.c:183
 msgid "theme"
 msgstr "etoso"
 
@@ -1264,11 +1264,11 @@ msgstr ""
 "<br>Tiel, ĉiuj bindoj estis pravalorigitaj.<br>Sorry for the inconvenience."
 "<br>Bonvole pardonu por la ĝeno.<br>"
 
-#: src/bin/e_config.c:1652 src/bin/e_config.c:2313
+#: src/bin/e_config.c:1694 src/bin/e_config.c:2355
 msgid "Enlightenment Settings Write Problems"
 msgstr "Problemoj de skribado de agordoj de Enlightenment"
 
-#: src/bin/e_config.c:1655
+#: src/bin/e_config.c:1697
 #, c-format
 msgid ""
 "Enlightenment has had an error while moving config files<br>from:<br>"
@@ -1278,19 +1278,19 @@ msgstr ""
 "Enlightenment ricevis eraron dum movado de dosieroj<br>el:<br>%s<br><br>al:"
 "<br>%s<br><br>La cetero de skribo estis sekure ĉesigita.<br>"
 
-#: src/bin/e_config.c:1665 src/bin/e_config.c:2326
+#: src/bin/e_config.c:1707 src/bin/e_config.c:2368
 #: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:856
 #: src/bin/e_desktop_editor.c:919 src/bin/e_entry_dialog.c:63
-#: src/bin/e_exec.c:733 src/bin/e_fm.c:10109 src/bin/e_fm.c:10840
+#: src/bin/e_exec.c:734 src/bin/e_fm.c:10109 src/bin/e_fm.c:10840
 #: src/bin/e_fm_prop.c:624 src/bin/e_import_config_dialog.c:533
 #: src/bin/e_int_border_remember.c:353 src/bin/e_int_border_remember.c:548
 #: src/bin/e_module.c:588 src/bin/e_module.c:996 src/bin/e_sys.c:759
-#: src/bin/e_sys.c:800 src/bin/e_update.c:76 src/bin/e_utils.c:690
+#: src/bin/e_sys.c:800 src/bin/e_update.c:76 src/bin/e_utils.c:689
 #: src/modules/bluez4/agent.c:71 src/modules/bluez4/agent.c:136
 #: src/modules/bluez4/agent.c:148
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:623
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
-#: src/modules/conf_theme/e_int_config_theme_import.c:120
+#: src/modules/conf_theme/e_int_config_theme_import.c:119
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1189
 #: src/modules/cpufreq/e_mod_main.c:511 src/modules/cpufreq/e_mod_main.c:540
 #: src/modules/cpufreq/e_mod_main.c:567 src/modules/cpufreq/e_mod_main.c:595
@@ -1299,19 +1299,19 @@ msgstr ""
 msgid "OK"
 msgstr "Bone"
 
-#: src/bin/e_config.c:2204
+#: src/bin/e_config.c:2246
 msgid "Settings Upgraded"
 msgstr "Agordoj ĝisdatigitaj"
 
-#: src/bin/e_config.c:2222
+#: src/bin/e_config.c:2264
 msgid "The EET file handle is bad."
 msgstr "La priskribo de EET-dosiero nekorektas."
 
-#: src/bin/e_config.c:2226
+#: src/bin/e_config.c:2268
 msgid "The file data is empty."
 msgstr "La datumo de dosiero malplenas."
 
-#: src/bin/e_config.c:2230
+#: src/bin/e_config.c:2272
 msgid ""
 "The file is not writable. Perhaps the disk is read-only<br>or you lost "
 "permissions to your files."
@@ -1319,15 +1319,15 @@ msgstr ""
 "La dosiero ne skribeblas. Eble la disko estas nurlega<br>aŭ vi perdis "
 "permesojn por viaj dosieroj."
 
-#: src/bin/e_config.c:2234
+#: src/bin/e_config.c:2276
 msgid "Memory ran out while preparing the write.<br>Please free up memory."
 msgstr "Memoro ne sufiĉas por skribi.<br>Bonvole liberigu memoron."
 
-#: src/bin/e_config.c:2238
+#: src/bin/e_config.c:2280
 msgid "This is a generic error."
 msgstr "Tio estas komuna eraro."
 
-#: src/bin/e_config.c:2242
+#: src/bin/e_config.c:2284
 msgid ""
 "The settings file is too large.<br>It should be very small (a few hundred KB "
 "at most)."
@@ -1335,60 +1335,60 @@ msgstr ""
 "La dosiero de agordoj tro grandas.<br>Tio estus tre malpeza (kelkaj centoj "
 "da KB maksimume)."
 
-#: src/bin/e_config.c:2246
+#: src/bin/e_config.c:2288
 msgid "You have I/O errors on the disk.<br>Maybe it needs replacing?"
 msgstr ""
 "Vi havis erarojn de en/eligo sur la disko.<br>Ĉu vi eble bezonas anstatŭigon?"
 
-#: src/bin/e_config.c:2250
+#: src/bin/e_config.c:2292
 msgid "You ran out of space while writing the file."
 msgstr "Vi atingis limon de spaco dum skribado de dosiero."
 
-#: src/bin/e_config.c:2254
+#: src/bin/e_config.c:2296
 msgid "The file was closed while writing."
 msgstr "La dosiero estis fermita dum skribado."
 
-#: src/bin/e_config.c:2258
+#: src/bin/e_config.c:2300
 msgid "Memory-mapping (mmap) of the file failed."
 msgstr "Mapigo de memoro (mmap) de la dosiero fiaskis."
 
-#: src/bin/e_config.c:2262
+#: src/bin/e_config.c:2304
 msgid "X509 Encoding failed."
 msgstr "Kodado de X509 fiaskis."
 
-#: src/bin/e_config.c:2266
+#: src/bin/e_config.c:2308
 msgid "Signature failed."
 msgstr "Subskribo fiaskis."
 
-#: src/bin/e_config.c:2270
+#: src/bin/e_config.c:2312
 msgid "The signature was invalid."
 msgstr "Subskribo nevalidas."
 
-#: src/bin/e_config.c:2274
+#: src/bin/e_config.c:2316
 msgid "Not signed."
 msgstr "Ne subskribata."
 
-#: src/bin/e_config.c:2278
+#: src/bin/e_config.c:2320
 msgid "Feature not implemented."
 msgstr "Trajto ne realigita."
 
-#: src/bin/e_config.c:2282
+#: src/bin/e_config.c:2324
 msgid "PRNG was not seeded."
 msgstr "Kkvazaŭstokasta nombro ne kreeblas."
 
-#: src/bin/e_config.c:2286
+#: src/bin/e_config.c:2328
 msgid "Encryption failed."
 msgstr "Ĉifrado fiaskis."
 
-#: src/bin/e_config.c:2290
+#: src/bin/e_config.c:2332
 msgid "Decryption failed."
 msgstr "Malĉifrado fiaskis."
 
-#: src/bin/e_config.c:2294
+#: src/bin/e_config.c:2336
 msgid "The error is unknown to Enlightenment."
 msgstr "Ĉi tiu eraro ne estas konata de Enlightenment."
 
-#: src/bin/e_config.c:2316
+#: src/bin/e_config.c:2358
 #, c-format
 msgid ""
 "Enlightenment has had an error while writing<br>its config file.<br>"
@@ -1425,7 +1425,7 @@ msgid "Extensions"
 msgstr "Etendaĵoj"
 
 #: src/bin/e_configure.c:30 src/bin/e_configure.c:33 src/bin/e_configure.c:280
-#: src/modules/conf_paths/e_int_config_paths.c:80
+#: src/modules/conf_paths/e_int_config_paths.c:78
 #: src/modules/conf_theme/e_int_config_color_classes.c:862
 #: src/modules/conf_theme/e_int_config_fonts.c:98
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:257
@@ -1733,7 +1733,7 @@ msgstr "Transira efekto de ekranfono"
 
 #: src/bin/e_configure_option.c:1474 src/bin/e_configure_option.c:1479
 #: src/bin/e_configure_option.c:1748 src/bin/e_configure_option.c:2008
-#: src/modules/conf_theme/e_mod_main.c:180
+#: src/modules/conf_theme/e_mod_main.c:179
 msgid "wallpaper"
 msgstr "ekranfono"
 
@@ -2023,7 +2023,7 @@ msgid "Font cache size"
 msgstr "Grandeco de tipara kaŝmemoro"
 
 #: src/bin/e_configure_option.c:1522 src/bin/e_configure_option.c:1725
-#: src/bin/e_configure_option.c:2010 src/modules/conf_theme/e_mod_main.c:188
+#: src/bin/e_configure_option.c:2010 src/modules/conf_theme/e_mod_main.c:187
 msgid "font"
 msgstr "tiparo"
 
@@ -3506,7 +3506,7 @@ msgid "Select All"
 msgstr "Elekti ĉion"
 
 #: src/bin/e_exec.c:483 src/bin/e_exec.c:491 src/bin/e_exec.c:502
-#: src/bin/e_exec.c:562 src/bin/e_utils.c:185
+#: src/bin/e_exec.c:562 src/bin/e_utils.c:184
 #: src/modules/conf_intl/e_int_config_imc.c:261
 #: src/modules/conf_intl/e_int_config_imc.c:510
 msgid "Run Error"
@@ -3531,11 +3531,11 @@ msgstr "Dosierujo ne restaŭreblas de Enlightenment:<br><br>%s"
 msgid "Enlightenment was unable to fork a child process:<br><br>%s"
 msgstr "Ida proceso ne forkeblas de Enlightenment:<br><br>%s"
 
-#: src/bin/e_exec.c:724
+#: src/bin/e_exec.c:725
 msgid "Application run error"
 msgstr "Eraro dum rulado de aplikaĵo"
 
-#: src/bin/e_exec.c:726
+#: src/bin/e_exec.c:727
 #, c-format
 msgid ""
 "Enlightenment was unable to run the application:<br><br>%s<br><br>The "
@@ -3544,107 +3544,107 @@ msgstr ""
 "Ĉi tiu aplikaĵo ne lanĉeblas de Enlightenment:<br><br>%s<br><br>La aplikaĵo "
 "fiaskis dum komencado."
 
-#: src/bin/e_exec.c:835
+#: src/bin/e_exec.c:836
 msgid "Application Execution Error"
 msgstr "Eraro dum rulado de aplikaĵo"
 
-#: src/bin/e_exec.c:848 src/bin/e_exec.c:850
+#: src/bin/e_exec.c:849 src/bin/e_exec.c:851
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "%s haltis ruladon neatendite."
 
-#: src/bin/e_exec.c:856
+#: src/bin/e_exec.c:857
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "Kodo de elirsignalo %i sendita de %s."
 
-#: src/bin/e_exec.c:864
+#: src/bin/e_exec.c:865
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "%s estis interrompita per interrompsignalo."
 
-#: src/bin/e_exec.c:867
+#: src/bin/e_exec.c:868
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "%s estis interrompita per elirsignalo."
 
-#: src/bin/e_exec.c:871
+#: src/bin/e_exec.c:872
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "%s estis interrompita per ĉesigsignalo."
 
-#: src/bin/e_exec.c:874
+#: src/bin/e_exec.c:875
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "%s estis interrompita per glitpunkta eraro."
 
-#: src/bin/e_exec.c:878
+#: src/bin/e_exec.c:879
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr "%s estis interrompita per neinterrompebla mortigsignalo"
 
-#: src/bin/e_exec.c:882
+#: src/bin/e_exec.c:883
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "%s estis interrompita per segmenta misfunkcio."
 
-#: src/bin/e_exec.c:886
+#: src/bin/e_exec.c:887
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "%s estis interrompita per rompita dukto."
 
-#: src/bin/e_exec.c:889
+#: src/bin/e_exec.c:890
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "%s estis interrompita per finiĝsignalo."
 
-#: src/bin/e_exec.c:893
+#: src/bin/e_exec.c:894
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "%s estis interrompita per busa eraro."
 
-#: src/bin/e_exec.c:896
+#: src/bin/e_exec.c:897
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%s estis interrompita per signalo %i."
 
-#: src/bin/e_exec.c:952
+#: src/bin/e_exec.c:953
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr ""
 "*** la restanta eligo estis distranĉita. Konservu la eligon por rigardi.***\n"
 
-#: src/bin/e_exec.c:1011 src/bin/e_exec.c:1089 src/bin/e_exec.c:1096
+#: src/bin/e_exec.c:1012 src/bin/e_exec.c:1090 src/bin/e_exec.c:1097
 msgid "Error Logs"
 msgstr "Protokoloj de eraroj"
 
-#: src/bin/e_exec.c:1017 src/bin/e_exec.c:1097
+#: src/bin/e_exec.c:1018 src/bin/e_exec.c:1098
 msgid "There was no error message."
 msgstr "Neniu mesaĝo de eraro ĉeestas."
 
-#: src/bin/e_exec.c:1021 src/bin/e_exec.c:1104
+#: src/bin/e_exec.c:1022 src/bin/e_exec.c:1105
 msgid "Save This Message"
 msgstr "Konservi ĉi tiun mesaĝon"
 
-#: src/bin/e_exec.c:1026 src/bin/e_exec.c:1029 src/bin/e_exec.c:1109
-#: src/bin/e_exec.c:1112
+#: src/bin/e_exec.c:1027 src/bin/e_exec.c:1030 src/bin/e_exec.c:1110
+#: src/bin/e_exec.c:1113
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "La protokolo de eraro estos konservata kiel %s/%s.log"
 
-#: src/bin/e_exec.c:1055
+#: src/bin/e_exec.c:1056
 msgid "Error Information"
 msgstr "Informoj pri la eraro"
 
-#: src/bin/e_exec.c:1063
+#: src/bin/e_exec.c:1064
 msgid "Error Signal Information"
 msgstr "Informoj pri la signalo de eraro"
 
-#: src/bin/e_exec.c:1073 src/bin/e_exec.c:1080
+#: src/bin/e_exec.c:1074 src/bin/e_exec.c:1081
 msgid "Output Data"
 msgstr "Eligitaj datumoj"
 
-#: src/bin/e_exec.c:1081
+#: src/bin/e_exec.c:1082
 msgid "There was no output."
 msgstr "Neniu eligo ĉeestas."
 
@@ -3828,7 +3828,7 @@ msgid "Could not create a file!"
 msgstr "Dosiero ne kreeblas!"
 
 #: src/bin/e_fm.c:9643 src/bin/e_fm.c:9681
-#: src/modules/conf_paths/e_int_config_paths.c:206
+#: src/modules/conf_paths/e_int_config_paths.c:204
 msgid "New Directory"
 msgstr "Nova dosierujo"
 
@@ -4041,8 +4041,8 @@ msgstr "Nomo:"
 msgid "Location:"
 msgstr "Loko:"
 
-#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:336
-#: src/bin/e_widget_filepreview.c:391 src/bin/e_widget_filepreview.c:444
+#: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:335
+#: src/bin/e_widget_filepreview.c:390 src/bin/e_widget_filepreview.c:443
 msgid "Size:"
 msgstr "Grando:"
 
@@ -4147,7 +4147,7 @@ msgstr "Eniga"
 
 #: src/bin/e_gadcon.c:1789 src/bin/e_int_config_modules.c:53
 #: src/modules/conf_comp/e_mod_main.c:231
-#: src/modules/conf_theme/e_mod_main.c:134
+#: src/modules/conf_theme/e_mod_main.c:133
 #: src/modules/conf_wallpaper2/e_mod_main.c:22
 #: src/modules/physics/e_mod_main.c:45
 msgid "Look"
@@ -4457,7 +4457,7 @@ msgstr "Piktogramigi"
 msgid "Skip"
 msgstr "Preterpasi"
 
-#: src/bin/e_int_border_menu.c:741 src/modules/conf_theme/e_mod_main.c:131
+#: src/bin/e_int_border_menu.c:741 src/modules/conf_theme/e_mod_main.c:130
 msgid "Border"
 msgstr "Rando"
 
@@ -4540,7 +4540,7 @@ msgstr "Taskopleto"
 #: src/bin/e_int_border_prop.c:110 src/bin/e_int_border_prop.c:117
 #: src/bin/e_int_border_prop.c:124 src/bin/e_moveresize.c:84
 #: src/bin/e_moveresize.c:95 src/bin/e_moveresize.c:133
-#: src/bin/e_widget_filepreview.c:83
+#: src/bin/e_widget_filepreview.c:82
 #, c-format
 msgid "%i×%i"
 msgstr "%i×%i"
@@ -4751,7 +4751,7 @@ msgstr "Peti pozicion"
 #: src/modules/everything/evry_plug_settings.c:183
 #: src/modules/ibar/e_mod_main.c:441 src/modules/ibar/e_mod_main.c:1259
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
-#: src/modules/mixer/e_mod_main.c:651 src/modules/music-control/ui.c:271
+#: src/modules/mixer/e_mod_main.c:651 src/modules/music-control/ui.c:270
 #: src/modules/pager/e_mod_main.c:870 src/modules/systray/e_mod_main.c:133
 #: src/modules/tasks/e_mod_main.c:728 src/modules/temperature/e_mod_main.c:230
 #: src/modules/wizard/page_150.c:67 src/modules/xkbswitch/e_mod_main.c:335
@@ -5165,11 +5165,11 @@ msgstr "Agordoj de ilobreto"
 msgid "Layout"
 msgstr "Aranĝo"
 
-#: src/bin/e_intl.c:353
+#: src/bin/e_intl.c:355
 msgid "Input Method Error"
 msgstr "Eraro de metodo de enigo"
 
-#: src/bin/e_intl.c:354
+#: src/bin/e_intl.c:356
 msgid ""
 "Error starting the input method executable<br><br>please make sure that your "
 "input<br>method configuration is correct and<br>that your "
@@ -5179,27 +5179,27 @@ msgstr ""
 "certigu, ke viaj agordoj de la enigmetodo<br>estas korektaj kaj ke<br>la "
 "prenumeblo de viaj agordoj estas en<br>via VOJO<br>"
 
-#: src/bin/e_main.c:228
+#: src/bin/e_main.c:226
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Eina ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:234
+#: src/bin/e_main.c:232
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Domajno de protokolado ne kreeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:281
+#: src/bin/e_main.c:279
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Eet ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:290
+#: src/bin/e_main.c:288
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Ecore ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:299
+#: src/bin/e_main.c:297
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "EIO ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:311
+#: src/bin/e_main.c:309
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -5207,7 +5207,7 @@ msgstr ""
 "Traktilo de elirsignalo ne agordeblas de Enlightenment.\n"
 "Ĉu eble la memoro finiĝis?"
 
-#: src/bin/e_main.c:318
+#: src/bin/e_main.c:316
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -5215,7 +5215,7 @@ msgstr ""
 "Traktilo de HUP-signalo ne agordeblas de Enlightenment.\n"
 "Ĉu eble la memoro finiĝis?"
 
-#: src/bin/e_main.c:325
+#: src/bin/e_main.c:323
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
 "Perhaps you are out of memory?"
@@ -5223,35 +5223,35 @@ msgstr ""
 "Traktilo de uzantsignalo ne agordeblas de Enlightenment.\n"
 "Ĉu eble la memoro finiĝis?"
 
-#: src/bin/e_main.c:334
+#: src/bin/e_main.c:332
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Ecore_File ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:343
+#: src/bin/e_main.c:341
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Ecore_Con ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:352
+#: src/bin/e_main.c:350
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Ecore_Ipc ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:363
+#: src/bin/e_main.c:361
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Ecore_X ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:376
+#: src/bin/e_main.c:374
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Ecore_Evas ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:385
+#: src/bin/e_main.c:383
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Elementary ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:394
+#: src/bin/e_main.c:392
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Emotion ne pravalorizeblas de Enlightenment!\n"
 
-#: src/bin/e_main.c:408
+#: src/bin/e_main.c:406
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -5262,7 +5262,7 @@ msgstr ""
 "en Evas. Bonvole kontrolu vian instaladon de Evas kaj Ecore\n"
 "kaj kontrolu, ke ili subtenas la modulon de bildigo de X11-programaroj."
 
-#: src/bin/e_main.c:416
+#: src/bin/e_main.c:414
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
@@ -5272,15 +5272,15 @@ msgstr ""
 "Evas. Bonvole kontrolu vian instalon de Evas kaj Ecore kaj kontrolu\n"
 "ke ili eltenas la modulon de bildigo de Software Buffer."
 
-#: src/bin/e_main.c:426
+#: src/bin/e_main.c:424
 msgid "Enlightenment cannot initialize Edje!\n"
 msgstr "Enlightenment ne povis pravalorizi Edje!\n"
 
-#: src/bin/e_main.c:438
+#: src/bin/e_main.c:436
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenment ne povis pravalorizi E_intl!\n"
 
-#: src/bin/e_main.c:448
+#: src/bin/e_main.c:446
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -5288,7 +5288,7 @@ msgstr ""
 "Enlienghtenment ne povas difini sian averto-sistemon.\n"
 "Ĉu vi difinis vian variablon DISPLAY?"
 
-#: src/bin/e_main.c:467
+#: src/bin/e_main.c:465
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -5296,35 +5296,35 @@ msgstr ""
 "Dosierujoj ne kreeblas de Enlightenment en via hejma dosierujo.\n"
 "Eble vi ne havas hejman dosierujon aŭ via disko estas plena?"
 
-#: src/bin/e_main.c:477
+#: src/bin/e_main.c:475
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de dosiero-registrejon.\n"
 
-#: src/bin/e_main.c:486
+#: src/bin/e_main.c:484
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de agordoj.\n"
 
-#: src/bin/e_main.c:495
+#: src/bin/e_main.c:493
 msgid "Enlightenment cannot initialize E_Randr!\n"
 msgstr "Enlightenment ne povis pravalorizi E_Randr!\n"
 
-#: src/bin/e_main.c:504
+#: src/bin/e_main.c:502
 msgid "Enlightenment cannot initialize E_Xinerama!\n"
 msgstr "Enlightenment ne povis pravalorizi E_Xinerama!\n"
 
-#: src/bin/e_main.c:513
+#: src/bin/e_main.c:511
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment ne povas agordi sian medion.\n"
 
-#: src/bin/e_main.c:529
+#: src/bin/e_main.c:527
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de skalado.\n"
 
-#: src/bin/e_main.c:538
+#: src/bin/e_main.c:536
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de kursoroj.\n"
 
-#: src/bin/e_main.c:547
+#: src/bin/e_main.c:545
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -5332,15 +5332,15 @@ msgstr ""
 "Vojoj ne agordeblas de Enlightenment por trovi dosierojn.\n"
 "Eble memoro ne sufiĉas?"
 
-#: src/bin/e_main.c:564
+#: src/bin/e_main.c:562
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de tiparoj.\n"
 
-#: src/bin/e_main.c:581
+#: src/bin/e_main.c:579
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenment ne povas agordi sian etosan sistemon.\n"
 
-#: src/bin/e_main.c:595
+#: src/bin/e_main.c:593
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
@@ -5350,27 +5350,27 @@ msgstr ""
 "Eble vi ne havas permesojn pri ~/.cache/efreet aŭ mankas memoron\n"
 "aŭ diskospacon?"
 
-#: src/bin/e_main.c:604
+#: src/bin/e_main.c:602
 msgid "Starting International Support"
 msgstr "Komencante eltenon de internaciigo"
 
-#: src/bin/e_main.c:608
+#: src/bin/e_main.c:606
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de internaciigo.\n"
 
-#: src/bin/e_main.c:621
+#: src/bin/e_main.c:619
 msgid "Setup Actions"
 msgstr "Agordi agadojn"
 
-#: src/bin/e_main.c:625
+#: src/bin/e_main.c:623
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de agadoj.\n"
 
-#: src/bin/e_main.c:632
+#: src/bin/e_main.c:630
 msgid "Setup Screens"
 msgstr "Agordi ekranojn"
 
-#: src/bin/e_main.c:636
+#: src/bin/e_main.c:634
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -5379,227 +5379,227 @@ msgstr ""
 "de\n"
 "via sistemo malsukcesis. Eble alia fenestradministrilo funkcias?\n"
 
-#: src/bin/e_main.c:648
+#: src/bin/e_main.c:646
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de pravalorizoj.\n"
 
-#: src/bin/e_main.c:678
+#: src/bin/e_main.c:676
 msgid "Setup ACPI"
 msgstr "Agordi ACPI"
 
-#: src/bin/e_main.c:685
+#: src/bin/e_main.c:683
 msgid "Setup Backlight"
 msgstr "Agordi fonan lumon"
 
-#: src/bin/e_main.c:689
+#: src/bin/e_main.c:687
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Enlightenment ne povas agordi la fonan lumon.\n"
 
-#: src/bin/e_main.c:695
+#: src/bin/e_main.c:693
 msgid "Setup Screensaver"
 msgstr "Ebligi ekrankurtenon"
 
-#: src/bin/e_main.c:699
+#: src/bin/e_main.c:697
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "Enlightenment ne povas agordi la ekrankurtenon X.\n"
 
-#: src/bin/e_main.c:706
+#: src/bin/e_main.c:704
 msgid "Setup DPMS"
 msgstr "Agordi DPMS (administrado de energi-ŝparo de ekrano)"
 
-#: src/bin/e_main.c:710
+#: src/bin/e_main.c:708
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr ""
 "Enlightenment no povas agordi DPMS (administrado de energi-ŝparo de "
 "ekrano).\n"
 
-#: src/bin/e_main.c:717
+#: src/bin/e_main.c:715
 msgid "Setup Powersave Modes"
 msgstr "Agordi energisparadajn reĝimojn"
 
-#: src/bin/e_main.c:721
+#: src/bin/e_main.c:719
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Enlightenment ne povas agordi la reĝimojn de energiŝparado.\n"
 
-#: src/bin/e_main.c:728
+#: src/bin/e_main.c:726
 msgid "Setup Desklock"
 msgstr "Agordi Labortablan Ŝloson"
 
-#: src/bin/e_main.c:732
+#: src/bin/e_main.c:730
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de labortabla ŝlosado.\n"
 
-#: src/bin/e_main.c:739
+#: src/bin/e_main.c:737
 msgid "Setup Popups"
 msgstr "Agordi ŝprucfenestrojn"
 
-#: src/bin/e_main.c:743
+#: src/bin/e_main.c:741
 msgid "Enlightenment cannot set up its popup system.\n"
 msgstr "Enlightenment ne povas agordi sian ŝprucfenetran sistemon.\n"
 
-#: src/bin/e_main.c:755
+#: src/bin/e_main.c:753
 msgid "Setup Message Bus"
 msgstr "Agordi buson de mesaĝoj"
 
-#: src/bin/e_main.c:762
+#: src/bin/e_main.c:760
 msgid "Setup Paths"
 msgstr "Agordi vojojn"
 
-#: src/bin/e_main.c:768
+#: src/bin/e_main.c:766
 msgid "Setup System Controls"
 msgstr "Agordi Sistemajn Kontrolojn"
 
-#: src/bin/e_main.c:772
+#: src/bin/e_main.c:770
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "Sistema komanda sistemo ne pravalorizeblas de Enlightenment.\n"
 
-#: src/bin/e_main.c:779
+#: src/bin/e_main.c:777
 msgid "Setup Execution System"
 msgstr "Agordi la sistemon de lanĉo"
 
-#: src/bin/e_main.c:783
+#: src/bin/e_main.c:781
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de lanĉado.\n"
 
-#: src/bin/e_main.c:794
+#: src/bin/e_main.c:792
 msgid "Setup Filemanager"
 msgstr "Agordi dosieradministrilon"
 
-#: src/bin/e_main.c:798
+#: src/bin/e_main.c:796
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Enlightenment ne povis pravalorizi la dosieradministrilon.\n"
 
-#: src/bin/e_main.c:805
+#: src/bin/e_main.c:803
 msgid "Setup Message System"
 msgstr "Agordi Mesaĝan Sistemon"
 
-#: src/bin/e_main.c:809
+#: src/bin/e_main.c:807
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de mesaĝoj.\n"
 
-#: src/bin/e_main.c:816
+#: src/bin/e_main.c:814
 msgid "Setup Grab Input Handling"
 msgstr "Agordi traktadon de enigo-aparato"
 
-#: src/bin/e_main.c:820
+#: src/bin/e_main.c:818
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 "Enlightenment ne povas agordi sian sistemon de traktado de uzanta enigo.\n"
 
-#: src/bin/e_main.c:827
+#: src/bin/e_main.c:825
 msgid "Setup Modules"
 msgstr "Agordi modulojn"
 
-#: src/bin/e_main.c:831 src/bin/e_main.c:1016
+#: src/bin/e_main.c:829 src/bin/e_main.c:1014
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de modulo.\n"
 
-#: src/bin/e_main.c:838
+#: src/bin/e_main.c:836
 msgid "Setup Remembers"
 msgstr "Agordi memorojn"
 
-#: src/bin/e_main.c:842
+#: src/bin/e_main.c:840
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Enlightenment ne povas agordi memoradon.\n"
 
-#: src/bin/e_main.c:849
+#: src/bin/e_main.c:847
 msgid "Setup Color Classes"
 msgstr "Agordi Kolorajn Klasojn"
 
-#: src/bin/e_main.c:853
+#: src/bin/e_main.c:851
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de kolorklasoj.\n"
 
-#: src/bin/e_main.c:860
+#: src/bin/e_main.c:858
 msgid "Setup Gadcon"
 msgstr "Agordi Gadcon"
 
-#: src/bin/e_main.c:864
+#: src/bin/e_main.c:862
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenment ne povas agordi sian kontrolsistemon de akcesoraĵoj.\n"
 
-#: src/bin/e_main.c:871
+#: src/bin/e_main.c:869
 msgid "Setup Toolbars"
 msgstr "Agordi ilobretojn"
 
-#: src/bin/e_main.c:875
+#: src/bin/e_main.c:873
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenment ne povas pravalorizi siajn ilobretojn.\n"
 
-#: src/bin/e_main.c:882
+#: src/bin/e_main.c:880
 msgid "Setup Wallpaper"
 msgstr "Agordi ekranfonon"
 
-#: src/bin/e_main.c:886
+#: src/bin/e_main.c:884
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Enlightenment ne povas agordi sian ekranfonan sistemon.\n"
 
-#: src/bin/e_main.c:893
+#: src/bin/e_main.c:891
 msgid "Setup Mouse"
 msgstr "Agordi muson"
 
-#: src/bin/e_main.c:897
+#: src/bin/e_main.c:895
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Enlightenment ne povas difini sian sistemon de muso.\n"
 
-#: src/bin/e_main.c:903
+#: src/bin/e_main.c:901
 msgid "Setup Bindings"
 msgstr "Agordi bindojn"
 
-#: src/bin/e_main.c:907
+#: src/bin/e_main.c:905
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de bindoj.\n"
 
-#: src/bin/e_main.c:914
+#: src/bin/e_main.c:912
 msgid "Setup Thumbnailer"
 msgstr "Agordi bildetilon"
 
-#: src/bin/e_main.c:918
+#: src/bin/e_main.c:916
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenment ne povas pravalorizi la bildetigan sistemon.\n"
 
-#: src/bin/e_main.c:927
+#: src/bin/e_main.c:925
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr ""
 "Enlightenment ne povas pravalorizi la kaŝmemoran sistemon de piktogramoj.\n"
 
-#: src/bin/e_main.c:936
+#: src/bin/e_main.c:934
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment ne povas pravalorizi la sistemon XSettings.\n"
 
-#: src/bin/e_main.c:945
+#: src/bin/e_main.c:943
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Enlightenment ne povas pravalorizi la ĝisdatigan sistemon.\n"
 
-#: src/bin/e_main.c:952
+#: src/bin/e_main.c:950
 msgid "Setup Desktop Environment"
 msgstr "Agordi medion de labortabloj"
 
-#: src/bin/e_main.c:956
+#: src/bin/e_main.c:954
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Enlightenment ne povas pravalorizi sian labortablan medion.\n"
 
-#: src/bin/e_main.c:963
+#: src/bin/e_main.c:961
 msgid "Setup File Ordering"
 msgstr "Agordi ordigon de dosieroj"
 
-#: src/bin/e_main.c:967
+#: src/bin/e_main.c:965
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de ordigo de dosieroj.\n"
 
-#: src/bin/e_main.c:982
+#: src/bin/e_main.c:980
 msgid "Load Modules"
 msgstr "Ŝargi Modulojn"
 
-#: src/bin/e_main.c:1012
+#: src/bin/e_main.c:1010
 msgid "Setup Shelves"
 msgstr "Agordi bretojn"
 
-#: src/bin/e_main.c:1030
+#: src/bin/e_main.c:1028
 msgid "Almost Done"
 msgstr "Preskaŭ Finita"
 
-#: src/bin/e_main.c:1193
+#: src/bin/e_main.c:1191
 #, c-format
 msgid ""
 "Options:\n"
@@ -5653,7 +5653,7 @@ msgstr ""
 "\t\t(Mi ja scias kion mi farantas kaj akcesptas plenan respondecon por tio)\n"
 "\t\tSe vi bezonas tiun helpon, vi ne bezonas tiun elekteblon.\n"
 
-#: src/bin/e_main.c:1246
+#: src/bin/e_main.c:1244
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -5669,11 +5669,11 @@ msgstr ""
 "kaj lanĉadon de aliaj bezonataj servoj, ktp.\n"
 "antaŭ la eko de enlightenment mem.\n"
 
-#: src/bin/e_main.c:1527
+#: src/bin/e_main.c:1507
 msgid "Testing Format Support"
 msgstr "Provado de elteno de formato"
 
-#: src/bin/e_main.c:1531
+#: src/bin/e_main.c:1511
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -5681,7 +5681,7 @@ msgstr ""
 "Laŭ Enlightenment, Evas ne povas krei bufro-areaĵon. Bonvole kontrolu\n"
 "ke Evas enhavas eltenon de programa bufrilo-modulo.\n"
 
-#: src/bin/e_main.c:1543
+#: src/bin/e_main.c:1523
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
@@ -5689,7 +5689,7 @@ msgstr ""
 "Enlightenment trovis ke Evas ne povas ŝargi SVG-dosierojn. BV kontroli ĉu "
 "Evas eltenas SVG-ŝargilon.\n"
 
-#: src/bin/e_main.c:1553
+#: src/bin/e_main.c:1533
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -5697,7 +5697,7 @@ msgstr ""
 "Enlightenment trovis ke Evas ne povas ŝargi JPEG-dosierojn. BV kontroli ĉu "
 "Evas eltenas JPEG-ŝargilon.\n"
 
-#: src/bin/e_main.c:1563
+#: src/bin/e_main.c:1543
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
@@ -5705,7 +5705,7 @@ msgstr ""
 "Enlightenment trovis ke Evas ne povas ŝargi PNG-dosierojn. BV kontroli ĉu "
 "Evas eltenas PNG-ŝargilon.\n"
 
-#: src/bin/e_main.c:1573
+#: src/bin/e_main.c:1553
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
@@ -5713,7 +5713,7 @@ msgstr ""
 "Enlightenment trovis ke Evas ne povas ŝargi EET-dosierojn. BV kontroli ĉu "
 "Evas eltenas EET-ŝargilon.\n"
 
-#: src/bin/e_main.c:1587
+#: src/bin/e_main.c:1567
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -5723,23 +5723,23 @@ msgstr ""
 "ĉu Evas eltenas \"fontconfig\"\n"
 "kaj la sistema \"fontconfig\" difinas iun tiparon 'Sans'.\n"
 
-#: src/bin/e_main.c:1643
+#: src/bin/e_main.c:1623
 msgid "Enlightenment cannot setup compositing.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1658
+#: src/bin/e_main.c:1638
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr "Enlightenment ne povas agordi aranĝojn XKB de klavaroj.\n"
 
-#: src/bin/e_main.c:1664
+#: src/bin/e_main.c:1644
 msgid "Setup DND"
 msgstr "Agordi ŝovon kaj demeton"
 
-#: src/bin/e_main.c:1668
+#: src/bin/e_main.c:1648
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Enlightenment ne povas agordi sian sistemon de ŝovo-demeto.\n"
 
-#: src/bin/e_main.c:1833
+#: src/bin/e_main.c:1813
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -5750,11 +5750,11 @@ msgstr ""
 "dum ŝargo de modulo<br>nomata: %s. Tiu modulo estis malŝaltita kaj ne "
 "estos<br>ŝargita."
 
-#: src/bin/e_main.c:1838 src/bin/e_main.c:1854
+#: src/bin/e_main.c:1818 src/bin/e_main.c:1834
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment fuŝis frue dum komenco kaj restartiĝis."
 
-#: src/bin/e_main.c:1839
+#: src/bin/e_main.c:1819
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -5765,7 +5765,7 @@ msgstr ""
 "dum ŝargo de modulo nomata: %s.<br><br>Tiu modulo estis malŝaltita kaj ne "
 "estos ŝargita."
 
-#: src/bin/e_main.c:1847
+#: src/bin/e_main.c:1827
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -5777,7 +5777,7 @@ msgstr ""
 "de via agordo. La modulo de<br><br>agordo permesos elekti viajn modulojn de "
 "nove.\n"
 
-#: src/bin/e_main.c:1855
+#: src/bin/e_main.c:1835
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -6157,7 +6157,7 @@ msgstr "Pasivumigante"
 msgid "Hibernating.<br><hilight>Please wait.</hilight>"
 msgstr "Pasivumigado.<br><hilight>Bonvole atendu.</hilight>"
 
-#: src/bin/e_theme.c:15
+#: src/bin/e_theme.c:14
 msgid "Set As Theme"
 msgstr "Difini kiel etoson"
 
@@ -6204,17 +6204,17 @@ msgstr ""
 "estas:<br><br>%s<br><br>Bonvole vizitu www.enlightenment.org<br>aŭ ĝisdatigu "
 "vian pakaĵo-sistemon<br>por akiri novan version."
 
-#: src/bin/e_utils.c:186 src/modules/conf_intl/e_int_config_imc.c:262
+#: src/bin/e_utils.c:185 src/modules/conf_intl/e_int_config_imc.c:262
 #: src/modules/conf_intl/e_int_config_imc.c:511
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<br><br>%s<br>"
 msgstr "Enlightenment ne povis forki idan procezo:<br><br>%s<br>"
 
-#: src/bin/e_utils.c:242
+#: src/bin/e_utils.c:241
 msgid "Cannot exit - immortal windows."
 msgstr "Ne elireblas - senmortaj fenestroj"
 
-#: src/bin/e_utils.c:243
+#: src/bin/e_utils.c:242
 msgid ""
 "Some windows are left still around with the Lifespan lock enabled. This "
 "means<br>that Enlightenment will not allow itself to exit until these "
@@ -6224,86 +6224,86 @@ msgstr ""
 "Enlightenment ne permesos sin ĉesigi ĝis tiuj fenestoj<br>estos fermitaj aŭ "
 "kies la ŝlosilo foriĝis.<br>"
 
-#: src/bin/e_utils.c:855
+#: src/bin/e_utils.c:854
 #, c-format
 msgid "%'.0f bytes"
 msgstr "%'.0f bajtoj"
 
-#: src/bin/e_utils.c:859
+#: src/bin/e_utils.c:858
 #, c-format
 msgid "%'.0f KiB"
 msgstr "%'.0f KiB"
 
-#: src/bin/e_utils.c:863
+#: src/bin/e_utils.c:862
 #, c-format
 msgid "%'.1f MiB"
 msgstr "%'.1f MiB"
 
-#: src/bin/e_utils.c:867
+#: src/bin/e_utils.c:866
 #, c-format
 msgid "%'.1f GiB"
 msgstr "%'.1f GiB"
 
-#: src/bin/e_utils.c:871
+#: src/bin/e_utils.c:870
 #, c-format
 msgid "%'.1f TiB"
 msgstr "%'1.f TiB"
 
-#: src/bin/e_utils.c:890
+#: src/bin/e_utils.c:889
 #, c-format
 msgid "In the future"
 msgstr "En la estonteco"
 
-#: src/bin/e_utils.c:894
+#: src/bin/e_utils.c:893
 #, c-format
 msgid "In the last minute"
 msgstr "Lasteminute"
 
-#: src/bin/e_utils.c:898
+#: src/bin/e_utils.c:897
 #, c-format
 msgid "Last year"
 msgid_plural "%li Years ago"
 msgstr[0] "Lastjare"
 msgstr[1] "Antaŭ %li jaroj"
 
-#: src/bin/e_utils.c:903
+#: src/bin/e_utils.c:902
 #, c-format
 msgid "Last month"
 msgid_plural "%li Months ago"
 msgstr[0] "Lastmonate"
 msgstr[1] "Antaŭ %li monatoj"
 
-#: src/bin/e_utils.c:908
+#: src/bin/e_utils.c:907
 #, c-format
 msgid "Last week"
 msgid_plural "%li Weeks ago"
 msgstr[0] "Lastsemajne"
 msgstr[1] "Antaŭ %li semajnoj"
 
-#: src/bin/e_utils.c:913
+#: src/bin/e_utils.c:912
 #, c-format
 msgid "Yesterday"
 msgid_plural "%li Days ago"
 msgstr[0] "Hieraŭ"
 msgstr[1] "Antaŭ %li tagoj"
 
-#: src/bin/e_utils.c:918
+#: src/bin/e_utils.c:917
 #, c-format
 msgid "An hour ago"
 msgid_plural "%li Hours ago"
 msgstr[0] "Lasthore"
 msgstr[1] "Antaŭ %li horoj"
 
-#: src/bin/e_utils.c:923
+#: src/bin/e_utils.c:922
 #, c-format
 msgid "A minute ago"
 msgid_plural "%li Minutes ago"
 msgstr[0] "Lastminute"
 msgstr[1] "Antaŭ %li minutoj"
 
-#: src/bin/e_utils.c:930 src/bin/e_widget_filepreview.c:617
-#: src/bin/e_widget_filepreview.c:618 src/bin/e_widget_filepreview.c:619
-#: src/bin/e_widget_filepreview.c:649 src/bin/e_widget_filepreview.c:660
+#: src/bin/e_utils.c:929 src/bin/e_widget_filepreview.c:616
+#: src/bin/e_widget_filepreview.c:617 src/bin/e_widget_filepreview.c:618
+#: src/bin/e_widget_filepreview.c:648 src/bin/e_widget_filepreview.c:659
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:421
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1226
 #: src/modules/conf_bindings/e_int_config_keybindings.c:973
@@ -6313,11 +6313,11 @@ msgstr[1] "Antaŭ %li minutoj"
 msgid "Unknown"
 msgstr "Nekonata"
 
-#: src/bin/e_utils.c:1001 src/bin/e_utils.c:1009
+#: src/bin/e_utils.c:1000 src/bin/e_utils.c:1008
 msgid "Error creating directory"
 msgstr "Eraro dum kreado de dosiero"
 
-#: src/bin/e_utils.c:1001
+#: src/bin/e_utils.c:1000
 #, c-format
 msgid ""
 "Failed to create directory: %s .<br>Check that you have correct permissions "
@@ -6326,12 +6326,12 @@ msgstr ""
 "Malsukcesis krei dosierujon: %s.<br>Kontrolu ke vi havas kongruajn "
 "difinitajn permesojn."
 
-#: src/bin/e_utils.c:1009
+#: src/bin/e_utils.c:1008
 #, c-format
 msgid "Failed to create directory: %s .<br>A file of that name already exists."
 msgstr "Malsukcesis krei dosierujon: %s.<br>Samnoma dosiero jam ekzistas."
 
-#: src/bin/e_utils.c:1167
+#: src/bin/e_utils.c:1166
 msgid ""
 "Configuration data needed upgrading. Your old configuration<br>has been "
 "wiped and a new set of defaults initialized. This<br>will happen regularly "
@@ -6349,12 +6349,12 @@ msgstr ""
 "Vi povas de nove agordi nun kiel vi volas.<br>Pardonon pro la momenta "
 "problemeto en via agordo.<br>"
 
-#: src/bin/e_utils.c:1176 src/bin/e_utils.c:1200
+#: src/bin/e_utils.c:1175 src/bin/e_utils.c:1199
 #, c-format
 msgid "%s Configuration Updated"
 msgstr "Agordoj de %s ĝisdatigitaj"
 
-#: src/bin/e_utils.c:1189
+#: src/bin/e_utils.c:1188
 msgid ""
 "Your module configuration is NEWER than the module version. This is "
 "very<br>strange. This should not happen unless you downgraded<br>the module "
@@ -6368,54 +6368,54 @@ msgstr ""
 "funciinta. Tio estas malbone kaj<br>kiel antaŭ­zorgo via agordo estis "
 "restaŭrita per aprioroj.<br>Bonvole pardonu por la ĝeno.<br>"
 
-#: src/bin/e_utils.c:1283
+#: src/bin/e_utils.c:1282
 #, c-format
 msgid "Never"
 msgstr "Neniam"
 
-#: src/bin/e_utils.c:1287
+#: src/bin/e_utils.c:1286
 #, c-format
 msgid "A second"
 msgid_plural "%li Seconds"
 msgstr[0] "Unu sekundo"
 msgstr[1] "%li sekundoj"
 
-#: src/bin/e_utils.c:1291
+#: src/bin/e_utils.c:1290
 #, c-format
 msgid "One year"
 msgid_plural "%li Years"
 msgstr[0] "Unu jaro"
 msgstr[1] "%li jaroj"
 
-#: src/bin/e_utils.c:1296
+#: src/bin/e_utils.c:1295
 #, c-format
 msgid "One month"
 msgid_plural "%li Months"
 msgstr[0] "Unu monato"
 msgstr[1] "%li monatoj"
 
-#: src/bin/e_utils.c:1301
+#: src/bin/e_utils.c:1300
 #, c-format
 msgid "One week"
 msgid_plural "%li Weeks"
 msgstr[0] "Unu semajno"
 msgstr[1] "%li semajnoj"
 
-#: src/bin/e_utils.c:1306
+#: src/bin/e_utils.c:1305
 #, c-format
 msgid "One day"
 msgid_plural "%li Days"
 msgstr[0] "Unu tago"
 msgstr[1] "%li tagoj"
 
-#: src/bin/e_utils.c:1311
+#: src/bin/e_utils.c:1310
 #, c-format
 msgid "An hour"
 msgid_plural "%li Hours"
 msgstr[0] "Unu horo"
 msgstr[1] "%li horoj"
 
-#: src/bin/e_utils.c:1316
+#: src/bin/e_utils.c:1315
 #, c-format
 msgid "A minute"
 msgid_plural "%li Minutes"
@@ -6462,76 +6462,76 @@ msgstr "V"
 msgid "Alpha"
 msgstr "Alfo"
 
-#: src/bin/e_widget_filepreview.c:82 src/bin/e_widget_filepreview.c:443
+#: src/bin/e_widget_filepreview.c:81 src/bin/e_widget_filepreview.c:442
 msgid "Resolution:"
 msgstr "Distingivo:"
 
-#: src/bin/e_widget_filepreview.c:90
+#: src/bin/e_widget_filepreview.c:89
 msgid "Mime-type:"
 msgstr "MIME-tipo:"
 
-#: src/bin/e_widget_filepreview.c:329
+#: src/bin/e_widget_filepreview.c:328
 #, c-format
 msgid "%3.1f%%"
 msgstr "%3.1f%%"
 
-#: src/bin/e_widget_filepreview.c:335
+#: src/bin/e_widget_filepreview.c:334
 msgid "Length:"
 msgstr "Longeco:"
 
-#: src/bin/e_widget_filepreview.c:390
+#: src/bin/e_widget_filepreview.c:389
 msgid "Used:"
 msgstr "Uzata:"
 
-#: src/bin/e_widget_filepreview.c:392
+#: src/bin/e_widget_filepreview.c:391
 msgid "Reserved:"
 msgstr "Rezervata:"
 
-#: src/bin/e_widget_filepreview.c:393
+#: src/bin/e_widget_filepreview.c:392
 msgid "Mount status:"
 msgstr "Stato de surmeto"
 
-#: src/bin/e_widget_filepreview.c:395 src/modules/mixer/app_mixer.c:381
+#: src/bin/e_widget_filepreview.c:394 src/modules/mixer/app_mixer.c:381
 msgid "Type:"
 msgstr "Tipo:"
 
-#: src/bin/e_widget_filepreview.c:446
+#: src/bin/e_widget_filepreview.c:445
 msgid "Owner:"
 msgstr "Posedanto:"
 
-#: src/bin/e_widget_filepreview.c:447
+#: src/bin/e_widget_filepreview.c:446
 msgid "Permissions:"
 msgstr "Permesoj:"
 
-#: src/bin/e_widget_filepreview.c:448
+#: src/bin/e_widget_filepreview.c:447
 msgid "Modified:"
 msgstr "Modifita:"
 
-#: src/bin/e_widget_filepreview.c:604 src/bin/e_widget_filepreview.c:795
-#: src/bin/e_widget_filepreview.c:804 src/bin/e_widget_filepreview.c:813
+#: src/bin/e_widget_filepreview.c:603 src/bin/e_widget_filepreview.c:794
+#: src/bin/e_widget_filepreview.c:803 src/bin/e_widget_filepreview.c:812
 #, c-format
 msgid "Read Only"
 msgstr "Nurlega"
 
-#: src/bin/e_widget_filepreview.c:606 src/bin/e_widget_filepreview.c:820
+#: src/bin/e_widget_filepreview.c:605 src/bin/e_widget_filepreview.c:819
 msgid "Read-Write"
 msgstr "Lege skribe"
 
-#: src/bin/e_widget_filepreview.c:609 src/bin/e_widget_filepreview.c:620
+#: src/bin/e_widget_filepreview.c:608 src/bin/e_widget_filepreview.c:619
 msgid "Unmounted"
 msgstr "Demetita"
 
-#: src/bin/e_widget_filepreview.c:744
+#: src/bin/e_widget_filepreview.c:743
 #, c-format
 msgid "You"
 msgstr "Vi"
 
-#: src/bin/e_widget_filepreview.c:793
+#: src/bin/e_widget_filepreview.c:792
 #, c-format
 msgid "Protected"
 msgstr "Protektita"
 
-#: src/bin/e_widget_filepreview.c:802 src/bin/e_widget_filepreview.c:811
+#: src/bin/e_widget_filepreview.c:801 src/bin/e_widget_filepreview.c:810
 #, c-format
 msgid "Forbidden"
 msgstr "Malpermesita"
@@ -6543,7 +6543,7 @@ msgstr "Aldoni al Preferata Menuo"
 #: src/bin/e_widget_fsel.c:339
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:91
 #: src/modules/conf_intl/e_int_config_imc.c:815
-#: src/modules/conf_theme/e_int_config_theme.c:684
+#: src/modules/conf_theme/e_int_config_theme.c:676
 #: src/modules/gadman/e_mod_config.c:256
 msgid "Go up a Directory"
 msgstr "Iri al Patra Dosierujo"
@@ -6638,7 +6638,7 @@ msgstr "Aŭtomate detekti"
 #: src/modules/conf_applications/e_mod_main.c:60
 #: src/modules/conf_comp/e_mod_main.c:236
 #: src/modules/conf_display/e_mod_main.c:40
-#: src/modules/conf_theme/e_mod_main.c:127
+#: src/modules/conf_theme/e_mod_main.c:126
 #: src/modules/conf_wallpaper2/e_mod_main.c:24
 #: src/modules/temperature/e_mod_config.c:269
 msgid "Internal"
@@ -8018,10 +8018,10 @@ msgstr "Nomo de profilo"
 
 #: src/modules/conf_display/e_int_config_desk.c:200
 #: src/modules/conf_display/e_int_config_desklock.c:357
-#: src/modules/conf_theme/e_mod_main.c:30
-#: src/modules/conf_theme/e_mod_main.c:129
-#: src/modules/conf_theme/e_mod_main.c:136
-#: src/modules/conf_theme/e_mod_main.c:162
+#: src/modules/conf_theme/e_mod_main.c:29
+#: src/modules/conf_theme/e_mod_main.c:128
+#: src/modules/conf_theme/e_mod_main.c:135
+#: src/modules/conf_theme/e_mod_main.c:161
 msgid "Wallpaper"
 msgstr "Ekranfono"
 
@@ -8118,7 +8118,7 @@ msgstr "Elekti ekranfonon..."
 
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:84
 #: src/modules/conf_intl/e_int_config_imc.c:803
-#: src/modules/conf_theme/e_int_config_theme.c:673
+#: src/modules/conf_theme/e_int_config_theme.c:665
 #: src/modules/conf_theme/e_int_config_wallpaper.c:423
 #: src/modules/conf_theme/e_int_config_wallpaper.c:577
 #: src/modules/gadman/e_mod_config.c:248
@@ -8294,9 +8294,9 @@ msgid "Show Cursor"
 msgstr "Montri kursoron"
 
 #: src/modules/conf_interaction/e_int_config_mouse.c:167
-#: src/modules/conf_theme/e_mod_main.c:100
-#: src/modules/conf_theme/e_mod_main.c:139
-#: src/modules/conf_theme/e_mod_main.c:165
+#: src/modules/conf_theme/e_mod_main.c:99
+#: src/modules/conf_theme/e_mod_main.c:138
+#: src/modules/conf_theme/e_mod_main.c:164
 msgid "Theme"
 msgstr "Etoso"
 
@@ -8577,39 +8577,34 @@ msgstr "Bildoj"
 
 #: src/modules/conf_paths/e_int_config_paths.c:74
 #: src/modules/conf_theme/e_int_config_fonts.c:433
-#: src/modules/conf_theme/e_mod_main.c:148
+#: src/modules/conf_theme/e_mod_main.c:147
 msgid "Fonts"
 msgstr "Tiparoj"
 
 #: src/modules/conf_paths/e_int_config_paths.c:76
-#: src/modules/conf_theme/e_mod_main.c:110
-msgid "Themes"
-msgstr "Etosoj"
-
-#: src/modules/conf_paths/e_int_config_paths.c:78
 #: src/modules/conf_theme/e_int_config_xsettings.c:467
 #: src/modules/everything/evry_config.c:438
 #: src/modules/everything/evry_config.c:464
 msgid "Icons"
 msgstr "Piktogramoj"
 
-#: src/modules/conf_paths/e_int_config_paths.c:82
+#: src/modules/conf_paths/e_int_config_paths.c:80
 msgid "Backgrounds"
 msgstr "Tapetoj"
 
-#: src/modules/conf_paths/e_int_config_paths.c:84
+#: src/modules/conf_paths/e_int_config_paths.c:82
 msgid "Messages"
 msgstr "Mesaĝoj"
 
-#: src/modules/conf_paths/e_int_config_paths.c:166
+#: src/modules/conf_paths/e_int_config_paths.c:164
 msgid "Enlightenment Paths"
 msgstr "Vojoj de Enlightenment"
 
-#: src/modules/conf_paths/e_int_config_paths.c:197
+#: src/modules/conf_paths/e_int_config_paths.c:195
 msgid "Default Directories"
 msgstr "Aprioraj dosierujoj"
 
-#: src/modules/conf_paths/e_int_config_paths.c:204
+#: src/modules/conf_paths/e_int_config_paths.c:202
 msgid "User Defined Directories"
 msgstr "Dosierujoj Definita de Uzanto"
 
@@ -8992,7 +8987,7 @@ msgid "Module Label"
 msgstr "Modula Etikedo"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:163
-#: src/modules/conf_theme/e_mod_main.c:145
+#: src/modules/conf_theme/e_mod_main.c:144
 msgid "Colors"
 msgstr "Koloroj"
 
@@ -9326,33 +9321,33 @@ msgstr "Maksimume"
 msgid "Constraints"
 msgstr "Limigoj"
 
-#: src/modules/conf_theme/e_int_config_theme.c:318
+#: src/modules/conf_theme/e_int_config_theme.c:310
 msgid "Theme Selector"
 msgstr "Etosa elektilo"
 
-#: src/modules/conf_theme/e_int_config_theme.c:564
+#: src/modules/conf_theme/e_int_config_theme.c:556
 msgid "Theme File Error"
 msgstr "Eraro de etosa dosiero"
 
-#: src/modules/conf_theme/e_int_config_theme.c:565
+#: src/modules/conf_theme/e_int_config_theme.c:557
 #, c-format
 msgid "%s is probably not an E17 theme!"
 msgstr "%s eble ne estas etoso de E17!"
 
-#: src/modules/conf_theme/e_int_config_theme.c:718
+#: src/modules/conf_theme/e_int_config_theme.c:710
 msgid " Import..."
 msgstr " Enporti..."
 
-#: src/modules/conf_theme/e_int_config_theme_import.c:67
+#: src/modules/conf_theme/e_int_config_theme_import.c:66
 msgid "Select a Theme..."
 msgstr "Elekti etoson..."
 
-#: src/modules/conf_theme/e_int_config_theme_import.c:284
-#: src/modules/conf_theme/e_int_config_theme_import.c:293
+#: src/modules/conf_theme/e_int_config_theme_import.c:283
+#: src/modules/conf_theme/e_int_config_theme_import.c:292
 msgid "Theme Import Error"
 msgstr "Eraro de importado de etoso"
 
-#: src/modules/conf_theme/e_int_config_theme_import.c:285
+#: src/modules/conf_theme/e_int_config_theme_import.c:284
 msgid ""
 "Enlightenment was unable to import the theme.<br><br>Are you sure this is "
 "really a valid theme?"
@@ -9360,7 +9355,7 @@ msgstr ""
 "Etoso ne importeblas de Enlightenment.<br>Ĉu vi certas ke ŋi ja estas valida "
 "etoso?"
 
-#: src/modules/conf_theme/e_int_config_theme_import.c:294
+#: src/modules/conf_theme/e_int_config_theme_import.c:293
 msgid "Enlightenment was unable to import the theme<br>due to a copy error."
 msgstr ""
 "Etoso ne importeblas de Enlightenment<br>kial okazis eraroj dum kopiado."
@@ -9386,7 +9381,7 @@ msgid "Background Change"
 msgstr "Tapeta Ŝanĝo"
 
 #: src/modules/conf_theme/e_int_config_transitions.c:191
-#: src/modules/conf_theme/e_mod_main.c:154
+#: src/modules/conf_theme/e_mod_main.c:153
 msgid "Transitions"
 msgstr "Transpasoj"
 
@@ -9453,35 +9448,39 @@ msgstr "Ŝalti piktograman etoson por aplikaĵoj"
 msgid "Enable icon theme for Enlightenment"
 msgstr "Ŝalti piktograman etoson por Enlightenment"
 
-#: src/modules/conf_theme/e_mod_main.c:142
+#: src/modules/conf_theme/e_mod_main.c:109
+msgid "Themes"
+msgstr "Etosoj"
+
+#: src/modules/conf_theme/e_mod_main.c:141
 msgid "Application Theme"
 msgstr "Aplikaĵa etoso"
 
-#: src/modules/conf_theme/e_mod_main.c:151
+#: src/modules/conf_theme/e_mod_main.c:150
 msgid "Borders"
 msgstr "Randoj"
 
-#: src/modules/conf_theme/e_mod_main.c:157
+#: src/modules/conf_theme/e_mod_main.c:156
 msgid "Scaling"
 msgstr "Skalado"
 
-#: src/modules/conf_theme/e_mod_main.c:176
+#: src/modules/conf_theme/e_mod_main.c:175
 msgid "Enlightenment theme settings"
 msgstr "Agordoj de Enlightenment-etosoj"
 
-#: src/modules/conf_theme/e_mod_main.c:180
+#: src/modules/conf_theme/e_mod_main.c:179
 msgid "Desktop wallpaper settings"
 msgstr "Agordoj de labortabla ekranfono"
 
-#: src/modules/conf_theme/e_mod_main.c:184
+#: src/modules/conf_theme/e_mod_main.c:183
 msgid "Enlightenment color settings"
 msgstr "Agordoj de Enlightenment-koloroj"
 
-#: src/modules/conf_theme/e_mod_main.c:184
+#: src/modules/conf_theme/e_mod_main.c:183
 msgid "color"
 msgstr "koloro"
 
-#: src/modules/conf_theme/e_mod_main.c:188
+#: src/modules/conf_theme/e_mod_main.c:187
 msgid "Enlightenment font settings"
 msgstr "Agordoj de Enlightenment-tiparoj"
 
@@ -11323,19 +11322,19 @@ msgstr "Mutigi la laŭtecon"
 msgid "Music controller"
 msgstr ""
 
-#: src/modules/music-control/ui.c:157
+#: src/modules/music-control/ui.c:156
 msgid "Music Player"
 msgstr "Muzikludilo"
 
-#: src/modules/music-control/ui.c:167
+#: src/modules/music-control/ui.c:166
 msgid "* Your player must be configured to export the DBus interface MPRIS2."
 msgstr ""
 
-#: src/modules/music-control/ui.c:170
+#: src/modules/music-control/ui.c:169
 msgid "Pause music when screen is locked"
 msgstr ""
 
-#: src/modules/music-control/ui.c:241
+#: src/modules/music-control/ui.c:240
 msgid "Music control Settings"
 msgstr ""
 
