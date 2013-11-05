@@ -1181,7 +1181,7 @@ _unbind_data_device(struct wl_resource *resource)
 }
 
 static void
-_get_data_device(struct wl_client *client, struct wl_resource *manager_resource EINA_UNUSED, uint32_t id, struct wl_resource *seat_resource)
+_get_data_device(struct wl_client *client, struct wl_resource *manager_resource, uint32_t id, struct wl_resource *seat_resource)
 {
    struct wl_seat *seat;
    struct wl_resource *resource;
@@ -1190,6 +1190,11 @@ _get_data_device(struct wl_client *client, struct wl_resource *manager_resource 
 
    resource = 
      wl_resource_create(client, &wl_data_device_interface, 1, id);
+   if (!resource)
+     {
+        wl_resource_post_no_memory(manager_resource);
+        return;
+     }
 
    wl_list_insert(&seat->drag_resource_list, wl_resource_get_link(resource));
 
@@ -1263,11 +1268,16 @@ _default_grab_modifiers(struct wl_keyboard_grab *grab, uint32_t serial, uint32_t
 }
 
 static void
-_data_device_start_drag(struct wl_client *client, struct wl_resource *resource, struct wl_resource *source_resource, struct wl_resource *origin_resource EINA_UNUSED, struct wl_resource *icon_resource, uint32_t serial EINA_UNUSED)
+_data_device_start_drag(struct wl_client *client, struct wl_resource *resource, struct wl_resource *source_resource, struct wl_resource *origin_resource, struct wl_resource *icon_resource, uint32_t serial EINA_UNUSED)
 {
    struct wl_seat *seat;
 
    seat = wl_resource_get_user_data(resource);
+
+   if ((seat->pointer->button_count == 0) || 
+       (seat->pointer->grab_serial != serial) || 
+       (seat->pointer->focus != wl_resource_get_user_data(origin_resource)))
+     return;
 
    seat->drag_grab.interface = &_e_drag_grab_interface;
    seat->drag_client = client;
@@ -1295,7 +1305,7 @@ _data_device_start_drag(struct wl_client *client, struct wl_resource *resource, 
         seat->drag_icon_listener.notify = _destroy_data_device_icon;
         wl_signal_add(&icon->wl.destroy_signal,
                       &seat->drag_icon_listener);
-        wl_signal_emit(&seat->drag_icon_signal, icon_resource);
+        /* wl_signal_emit(&seat->drag_icon_signal, icon_resource); */
      }
 
    wl_pointer_set_focus(seat->pointer, NULL,
