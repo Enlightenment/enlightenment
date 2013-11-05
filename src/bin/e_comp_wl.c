@@ -1217,8 +1217,13 @@ _bind_manager(struct wl_client *client, void *data EINA_UNUSED, uint32_t version
    struct wl_resource *res;
 
    res = wl_resource_create(client, &wl_data_device_manager_interface, 1, id);
-   if (res) 
-     wl_resource_set_implementation(res, &_e_manager_interface, NULL, NULL);
+   if (!res)
+     {
+        wl_client_post_no_memory(client);
+        return;
+     }
+
+   wl_resource_set_implementation(res, &_e_manager_interface, NULL, NULL);
 }
 
 static void
