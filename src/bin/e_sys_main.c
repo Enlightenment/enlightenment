@@ -168,10 +168,11 @@ main(int argc,
 
         snprintf(buffer, 4096,
                  "%s --pid=%i "
+                 "-batch "
                  "-ex 'set logging file %s' "
                  "-ex 'set logging on' "
                  "-ex 'thread apply all backtrace full' "
-                 "-ex detach -ex quit > /dev/null 2> /dev/null",
+                 "-ex detach &> /dev/null < /dev/zero",
                  cmd,
                  pid,
                  output ?: "e-output.txt");

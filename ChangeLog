@@ -1,3 +1,6 @@
+2013-11-05 Tom Hacohen
+	* wsod: Fixed gdb hangs when generating backtraces.
+
 2013-10-07 Mike Blumenkrantz
 
         * removed "raise on focus" config option
