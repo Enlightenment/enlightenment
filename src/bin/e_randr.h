@@ -14,36 +14,42 @@ typedef struct _E_Randr_Config E_Randr_Config;
 #define E_RANDR_VERSION_1_4 ((1 << 16) | 4)
 
 #define E_RANDR_CONFIG_FILE_EPOCH 3
-#define E_RANDR_CONFIG_FILE_GENERATION 1
+#define E_RANDR_CONFIG_FILE_GENERATION 3
 #define E_RANDR_CONFIG_FILE_VERSION \
    ((E_RANDR_CONFIG_FILE_EPOCH * 1000000) + E_RANDR_CONFIG_FILE_GENERATION)
 
 struct _E_Randr_Output_Config
 {
+   /* Stored values */
    unsigned int xid; // ecore_x_randr output id (xid)
    unsigned int crtc; // ecore_x_randr crtc id (xid)
-   unsigned int policy; // value of the ecore_x_randr_output_policy
-   unsigned char primary; // flag to indicate if primary output
-   unsigned long edid_count; // monitor's edid length
-   unsigned char *edid; // monitor's edid
-   unsigned int *clones; // array of clones (each element of type ecore_x_randr output id (xid)
-   unsigned long clone_count; // number of clones
-   unsigned char connected; // connection status 0 == connected, 1 == disconnected
-   unsigned char exists; // is this output present in X ?
+   unsigned int orient; // value of the ecore_x_randr_orientation
+   Eina_Rectangle geo; // geometry
+   Eina_Bool connected; // connection status
+
+   /* Runtime values */
+   Eina_Bool exists; // is this output present in X ?
+   unsigned int mode; // ecore_x_randr mode id (xid)
+   char *name; // Name of output
+   Eina_Bool is_lid; // Is this a laptop panel
 };
 
 struct _E_Randr_Crtc_Config
 {
+   /* Stored values */
    unsigned int xid; // ecore_x_randr crtc id (xid)
-   int x, y, width, height; // geometry
+
+   /* Runtime values */
+   Eina_Rectangle geo; // geometry
    unsigned int orient; // value of the ecore_x_randr_orientation
    unsigned int mode; // ecore_x_randr mode id (xid)
-   unsigned char exists; // is this crtc present in X ?
+   Eina_Bool exists; // is this crtc present in X ?
    Eina_List *outputs; // list of outputs for this crtc
 };
 
 struct _E_Randr_Config
 {
+   /* Store values */
    int version; // INTERNAL CONFIG VERSION
 
    struct
@@ -52,11 +58,15 @@ struct _E_Randr_Config
      } screen;
 
    Eina_List *crtcs;
+   Eina_List *outputs;
 
    int poll_interval;
    unsigned char restore;
    unsigned long config_timestamp;
-   int primary;
+   unsigned int primary;
+
+   /* Runtime values */
+   int connected;
 };
 
 EINTERN Eina_Bool e_randr_init(void);
