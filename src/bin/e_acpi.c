@@ -174,6 +174,23 @@ e_acpi_shutdown(void)
    return 1;
 }
 
+EINTERN E_Acpi_Lid_Status
+e_acpi_lid_status_get(void)
+{
+   int i;
+
+   for (i = 0; _devices_simple[i].name; i++)
+     {
+        if (_devices_simple[i].type == E_ACPI_TYPE_LID)
+          {
+             /* TODO: Can bus be anything other than LID? */
+             return _e_acpi_lid_status_get(_devices_simple[i].name, "LID");
+          }
+     }
+
+   return E_ACPI_LID_UNKNOWN;
+}
+
 EAPI void
 e_acpi_events_freeze(void)
 {

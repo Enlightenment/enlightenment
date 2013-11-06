@@ -71,6 +71,8 @@ struct _E_Event_Acpi
 EINTERN int e_acpi_init(void);
 EINTERN int e_acpi_shutdown(void);
 
+EINTERN E_Acpi_Lid_Status e_acpi_lid_status_get(void);
+
 EAPI void e_acpi_events_freeze(void);
 EAPI void e_acpi_events_thaw(void);
 
