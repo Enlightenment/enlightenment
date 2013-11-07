@@ -69,7 +69,8 @@ endif
 DISTCHECK_CONFIGURE_FLAGS = --disable-systemd
 
 EXTRA_DIST = config.rpath  README AUTHORS COPYING \
-             enlightenment.spec.in enlightenment.spec enlightenment.pc
+             enlightenment.spec.in enlightenment.spec enlightenment.pc \
+             pkgbuild/PKGBUILD pkgbuild/enlightenment.install
 
 filesdir = $(datadir)/enlightenment/
 files_DATA = AUTHORS COPYING 
