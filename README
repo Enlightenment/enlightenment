@@ -1,5 +1,4 @@
-Enlightenment 0.17.99
- - Development on the way to 0.18.
+Enlightenment 0.18.0
 
 Requirements:
 -------------
@@ -12,12 +11,12 @@ Must:
   engine in evas, buffer engine in evas]
 
 NOTE: Users of DR16 will need to rename the $prefix/bin/enlightenment
-file prior to installing DR17 or it will be overwritten.
+file prior to installing DR18 or it will be overwritten.
 
 You can also use the configure --prefix option to put e17 in a separate tree
 of its own (recommended) like:
 
-  ./configure --prefix=/usr/local/e17
+  ./configure --prefix=/usr/local/e18
 
 You will, as usual, need to add the subsequent bin dir to your $PATH etc.
 
