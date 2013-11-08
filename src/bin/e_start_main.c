@@ -22,6 +22,10 @@
 #include <Eina.h>
 #include <Evas.h>
 
+#if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
+# define E_CSERVE
+#endif
+
 static Eina_Bool stop_ptrace = EINA_FALSE;
 
 static void env_set(const char *var, const char *val);
@@ -235,6 +239,32 @@ _sigusr1(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
    sigaction(SIGUSR1, &action, NULL);
 }
 
+#ifdef E_CSERVE
+static pid_t
+_cserve2_start()
+{
+   pid_t cs_child;
+   cs_child = fork();
+   if (cs_child == 0)
+     {
+        char *cs_args[2] = { NULL, NULL };
+
+        cs_args[0] = (char *)evas_cserve_path_get();
+        execv(cs_args[0], cs_args);
+        exit(-1);
+     }
+   else if (cs_child > 0)
+     {
+        putenv("EVAS_CSERVE2=1");
+     }
+   else
+     {
+        unsetenv("EVAS_CSERVE2");
+     }
+   return cs_child;
+}
+#endif
+
 int
 main(int argc, char **argv)
 {
@@ -247,8 +277,9 @@ main(int argc, char **argv)
    Eina_Bool really_know = EINA_FALSE;
    struct sigaction action;
    pid_t child = -1;
-#if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
+#ifdef E_CSERVE
    pid_t cs_child = -1;
+   Eina_Bool cs_use = EINA_FALSE;
 #endif
 #if !defined(__OpenBSD__) && !defined(__NetBSD__) && !defined(__FreeBSD__) && \
    !defined(__FreeBSD_kernel__) && !(defined (__MACH__) && defined (__APPLE__))
@@ -424,31 +455,19 @@ main(int argc, char **argv)
 
 #if !defined(__OpenBSD__) && !defined(__NetBSD__) && !defined(__FreeBSD__) && \
    !defined(__FreeBSD_kernel__) && !(defined (__MACH__) && defined (__APPLE__))
+
+#ifdef E_CSERVE
+   if (getenv("E_CSERVE"))
+     {
+        cs_use = EINA_TRUE;
+        cs_child = _cserve2_start();
+     }
+#endif
+
    /* Now looping until */
    while (restart)
      {
         stop_ptrace = EINA_FALSE;
-#if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
-        if (getenv("E_CSERVE"))
-          {
-             if (cs_child < 0)
-               {             
-                  cs_child = fork();
-                  if (cs_child == 0) 
-                    {
-                       char *cs_args[2] = { NULL, NULL };
-                       
-                       cs_args[0] = (char *)evas_cserve_path_get();
-                       execv(cs_args[0], cs_args);
-                       exit(-1);
-                    }
-                  else if (cs_child > 0)
-                    {
-                       putenv("EVAS_CSERVE2=1");
-                    }
-               }
-          }
-#endif
 
         child = fork();
 
@@ -487,7 +506,12 @@ main(int argc, char **argv)
                   Eina_Bool remember_sigill = EINA_FALSE;
                   Eina_Bool remember_sigusr1 = EINA_FALSE;
 
-                  result = waitpid(child, &status, 0);
+                  result = waitpid(child, &status, WNOHANG);
+                  if (!result)
+                    {
+                       /* Wait for evas_cserve2 and E */
+                       result = waitpid(-1, &status, 0);
+                    }
 
                   if (result == child)
                     {
@@ -609,7 +633,41 @@ main(int argc, char **argv)
                               }
                          }
                     }
+#ifdef E_CSERVE
+                  else if (cs_use && (result == cs_child))
+                    {
+                       if (WIFSIGNALED(status))
+                         {
+                            printf("E - cserve2 terminated with signal %d\n",
+                                   WTERMSIG(status));
+                            cs_child = _cserve2_start();
+                         }
+                       else if (WIFEXITED(status))
+                         {
+                            printf("E - cserve2 exited with code %d\n",
+                                   WEXITSTATUS(status));
+                            cs_child = -1;
+                         }
+                    }
+#endif
                }
+          }
+     }
+#endif
+
+#ifdef E_CSERVE
+   if (cs_child > 0)
+     {
+        pid_t result;
+        int status;
+
+        alarm(2);
+        kill(cs_child, SIGINT);
+        result = waitpid(cs_child, &status, 0);
+        if (result != cs_child)
+          {
+             printf("E - cserve2 did not shutdown in 2 seconds, killing!\n");
+             kill(cs_child, SIGKILL);
           }
      }
 #endif
