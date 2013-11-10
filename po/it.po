@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-11-05 16:26+0900\n"
-"PO-Revision-Date: 2013-06-23 18:23+0200\n"
+"PO-Revision-Date: 2013-11-10 13:45+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: \n"
@@ -5938,14 +5938,11 @@ msgid "Module does not contain all needed functions"
 msgstr "Il modulo non contiene tutte le funzioni necessarie"
 
 #: src/bin/e_module.c:357
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Module API Error<br>Error initializing Module: %s<br>It requires a module "
 "API version of: %i.<br>The module API advertized by Enlightenment is: %i.<br>"
-msgstr ""
-"Errore dell'API dei moduli<br>Errore inizializzazione modulo: %s<br>Questo "
-"richiede una versione minima dell'API dei moduli di: %i.<br>L'API dei moduli "
-"dichiarata da Enlightenment è: %i.<br>"
+msgstr "Errore dell'API dei moduli<br>Errore inizializzazione modulo: %s<br>Questo richiede una versione minima dell'API di: %i.<br>L'API dichiarata da Enlightenment è: %i.<br>"
 
 #: src/bin/e_module.c:362
 #, c-format
@@ -7375,14 +7372,12 @@ msgid "Mute"
 msgstr "Muto"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:397
-#, fuzzy
 msgid "Volume"
-msgstr "Alza volume"
+msgstr "Volume"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:399
-#, fuzzy
 msgid "Brightness"
-msgstr "Aumenta luminosità"
+msgstr "Luminosità"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:401
 msgid "Volume Down"
@@ -7413,19 +7408,16 @@ msgid "Battery Button"
 msgstr "Pulsante batteria"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:416
-#, fuzzy
 msgid "Tablet Disabled"
-msgstr "Testo casella di spunta disabilitata"
+msgstr "Tablet disabilitato"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:417
-#, fuzzy
 msgid "Tablet Enabled"
-msgstr "Attiva tablet"
+msgstr "Tablet abilitato"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:418
-#, fuzzy
 msgid "Tablet"
-msgstr "Attiva tablet"
+msgstr "Tablet"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:488
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:4
@@ -10292,29 +10284,24 @@ msgstr ""
 "%s<br>"
 
 #: src/modules/cpufreq/e_mod_main.c:1383
-#, fuzzy
 msgid "CPU Frequency"
-msgstr "Urgenza"
+msgstr "Frequenza CPU"
 
 #: src/modules/cpufreq/e_mod_config.c:38
-#, fuzzy
 msgid "Cpu Frequency Control Settings"
-msgstr "Impostazioni controllo musicale"
+msgstr "Impostazioni controllo frequenza CPU"
 
 #: src/modules/cpufreq/e_mod_config.c:91
-#, fuzzy
 msgid "Update poll interval"
-msgstr "Frequenza svuotamento cache"
+msgstr "Intervallo campionamento"
 
 #: src/modules/cpufreq/e_mod_config.c:107
-#, fuzzy
 msgid "Minimum Power State"
 msgstr "Stato energetico minimo"
 
 #: src/modules/cpufreq/e_mod_config.c:113
-#, fuzzy
 msgid "Maximum Power State"
-msgstr "Stato energetico minimo"
+msgstr "Stato energetico massimo"
 
 #: src/modules/everything/e_mod_main.c:49
 #: src/modules/everything/evry_plugin.c:179
@@ -13096,30 +13083,3 @@ msgstr "Impostazione layout della tastiera"
 #: src/modules/xkbswitch/e_mod_main.c:207
 msgid "NONE"
 msgstr "NESSUNA"
-
-#~ msgid "Windows raise when focused"
-#~ msgstr "Eleva finestre quando dai il fuoco"
-
-#~ msgid "Enlightenment cannot initialize Ecore_IMF!\n"
-#~ msgstr "Enlightenment non riesce ad inizializzare Ecore_IMF!\n"
-
-#~ msgid "Startup Settings"
-#~ msgstr "Avvio di Enlightenment"
-
-#~ msgid "Show Splash Screen on Login"
-#~ msgstr "Mostra splash screen al login"
-
-#~ msgid "Theme Categories"
-#~ msgstr "Categorie dei temi"
-
-#~ msgid "Assign"
-#~ msgstr "Assegna"
-
-#~ msgid "Clear"
-#~ msgstr "Pulisci"
-
-#~ msgid "Clear All"
-#~ msgstr "Pulisci tutto"
-
-#~ msgid "Raise when focusing"
-#~ msgstr "Eleva quando dai il fuoco"
