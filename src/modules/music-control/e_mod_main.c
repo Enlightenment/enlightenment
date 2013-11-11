@@ -319,6 +319,25 @@ prop_changed(void *data, Eldbus_Proxy *proxy, void *event_info)
      }
 }
 
+static void
+cb_name_owner_has(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+{
+   E_Music_Control_Module_Context *ctxt = data;
+   Eina_Bool owner_exists;
+
+   if (eldbus_message_error_get(msg, NULL, NULL))
+     return;
+   if (!eldbus_message_arguments_get(msg, "b", &owner_exists))
+     return;
+   if (owner_exists)
+     {
+        media_player2_player_playback_status_propget(ctxt->mpris2_player,
+                                                  cb_playback_status_get, ctxt);
+        media_player2_player_metadata_propget(ctxt->mpris2_player,
+                                              cb_metadata_get, ctxt);
+     }
+}
+
 Eina_Bool
 music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
 {
@@ -328,10 +347,9 @@ music_control_dbus_init(E_Music_Control_Module_Context *ctxt, const char *bus)
 
    ctxt->mrpis2 = mpris_media_player2_proxy_get(ctxt->conn, bus, NULL);
    ctxt->mpris2_player = media_player2_player_proxy_get(ctxt->conn, bus, NULL);
-   media_player2_player_playback_status_propget(ctxt->mpris2_player, cb_playback_status_get, ctxt);
-   media_player2_player_metadata_propget(ctxt->mpris2_player, cb_metadata_get, ctxt);
    eldbus_proxy_event_callback_add(ctxt->mpris2_player, ELDBUS_PROXY_EVENT_PROPERTY_CHANGED,
                                   prop_changed, ctxt);
+   eldbus_name_owner_has(ctxt->conn, bus, cb_name_owner_has, ctxt);
    return EINA_TRUE;
 }
 
