@@ -226,6 +226,7 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
      {
         const char *key, *str_val;
         Eina_Value st, subst;
+        Efreet_Uri *uri;
 
         eina_value_array_value_get(array, i, &st);
         eina_value_struct_get(&st, "arg0", &key);
@@ -257,8 +258,10 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
           {
              eina_value_struct_value_get(&st, "arg1", &subst);
              eina_value_struct_get(&subst, "arg0", &str_val);
-             if (!strncmp(str_val, "file://", 7))
-               ctxt->meta_cover = eina_stringshare_add(str_val + 7);
+             uri = efreet_uri_decode(str_val);
+             if (uri && !strncmp(uri->protocol, "file", 4))
+               ctxt->meta_cover = eina_stringshare_add(uri->path);
+             E_FREE_FUNC(uri, efreet_uri_free);
              eina_value_flush(&subst);
           }
         eina_value_flush(&st);
