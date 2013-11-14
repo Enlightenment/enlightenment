@@ -82,6 +82,9 @@ struct _E_Smart_Data
    /* coordinates where the user clicked to start resizing */
    Evas_Coord rx, ry;
 
+   /* size when user clicked for resize */
+   Evas_Coord rw, rh;
+
    /* coordinates where the user clicked to start moving */
    Evas_Coord mx, my;
 
@@ -1295,7 +1298,7 @@ _e_smart_monitor_modes_fill(E_Smart_Data *sd)
      {
         Ecore_X_Randr_Mode_Info *mode;
 
-        /* try to get the mode info */
+         /* try to get the mode info */
         if (!(mode = ecore_x_randr_mode_info_get(root, modes[i])))
           continue;
 
@@ -1308,7 +1311,8 @@ _e_smart_monitor_modes_fill(E_Smart_Data *sd)
 
    /* sort the list of modes (smallest to largest) */
    if (sd->modes)
-     sd->modes = eina_list_sort(sd->modes, 0, _e_smart_monitor_modes_sort);
+     sd->modes = eina_list_sort(sd->modes, eina_list_count(sd->modes),
+                                _e_smart_monitor_modes_sort);
 }
 
 static int 
@@ -1472,36 +1476,42 @@ _e_smart_monitor_coord_canvas_to_virtual(E_Smart_Data *sd, Evas_Coord cx, Evas_C
 static Ecore_X_Randr_Mode_Info *
 _e_smart_monitor_mode_find(E_Smart_Data *sd, Evas_Coord w, Evas_Coord h, Eina_Bool skip_refresh)
 {
-   Ecore_X_Randr_Mode_Info *mode = NULL;
+   Ecore_X_Randr_Mode_Info *mode = NULL, *chosen = NULL;
    Eina_List *l = NULL;
+   int maxdiff = 0x7fffffff, a1, a2, diff;
 
    /* loop the modes */
+   if (w < 0) h = 0;
+   if (h < 0) h = 0;
+   a1 = w * h;
    EINA_LIST_REVERSE_FOREACH(sd->modes, l, mode)
      {
-        if ((((int)mode->width - RESIZE_FUZZ) <= w) || 
-            (((int)mode->width + RESIZE_FUZZ) <= w))
+        a2 = mode->width * mode->height;
+        diff = abs(a2 - a1);
+        if (diff < maxdiff)
           {
-             if ((((int)mode->height - RESIZE_FUZZ) <= h) || 
-                 (((int)mode->height + RESIZE_FUZZ) <= h))
+             if (!skip_refresh)
                {
-                  if (!skip_refresh)
+                  double rate = 0.0;
+                  
+                  /* get the refresh rate for this mode */
+                  rate = _e_smart_monitor_mode_refresh_rate_get(mode);
+                  
+                  /* compare mode rate to "current" rate */
+                  if ((int)rate == sd->current.refresh_rate)
                     {
-                       double rate = 0.0;
-
-                       /* get the refresh rate for this mode */
-                       rate = _e_smart_monitor_mode_refresh_rate_get(mode);
-
-                       /* compare mode rate to "current" rate */
-                       if ((int)rate == sd->current.refresh_rate)
-                         return mode;
+                       maxdiff = diff;
+                       chosen = mode;
                     }
-                  else
-                    return mode;
+               }
+             else
+               {
+                  maxdiff = diff;
+                  chosen = mode;
                }
           }
      }
-
-   return NULL;
+   return chosen;
 }
 
 static inline double 
@@ -1850,6 +1860,9 @@ _e_smart_monitor_frame_cb_resize_start(void *data, Evas_Object *obj EINA_UNUSED,
 
    /* record current position of mouse */
    evas_pointer_canvas_xy_get(sd->evas, &sd->rx, &sd->ry);
+   
+   sd->rw = sd->current.w;
+   sd->rh = sd->current.h;
 
    /* record current size of monitor */
    evas_object_grid_pack_get(sd->grid.obj, mon, 
@@ -2174,25 +2187,16 @@ _e_smart_monitor_resize_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
      return;
 
    /* calculate difference in mouse movement */
-   dx = (sd->rx - ev->cur.canvas.x);
-   dy = (sd->ry - ev->cur.canvas.y);
+   dx = (ev->cur.canvas.x - sd->rx);
+   dy = (ev->cur.canvas.y - sd->ry);
 
    /* factor in drag resistance to measure movement */
    if (((dx * dx) + (dy * dy)) < 
        (e_config->drag_resist * e_config->drag_resist))
      return;
-
-   if ((ev->cur.output.x > (sd->x + sd->w + (RESIZE_FUZZ / 2))) || 
-       (ev->cur.output.x < sd->x)) return;
-
-   if ((ev->cur.output.y > (sd->y + sd->h + (RESIZE_FUZZ / 2))) || 
-       (ev->cur.output.y < sd->y)) return;
-
-   dx = (ev->cur.canvas.x - ev->prev.canvas.x);
-   dy = (ev->cur.canvas.y - ev->prev.canvas.y);
-
+   
    /* convert monitor size to canvas size */
-   _e_smart_monitor_coord_virtual_to_canvas(sd, sd->current.w, sd->current.h, 
+   _e_smart_monitor_coord_virtual_to_canvas(sd, sd->rw, sd->rh,
                                             &cw, &ch);
 
    /* factor in resize difference and convert to virtual */
