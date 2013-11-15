@@ -50,8 +50,8 @@ _import_edj_gen(E_Import_Config_Dialog *import)
         return;
      }
 
-   strcpy(tmpn, "/tmp/e_bgdlg_new.edc-tmp-XXXXXX");
-   fd = mkstemp(tmpn);
+   strcpy(tmpn, "e_bgdlg_new.edc-tmp-XXXXXX");
+   fd = eina_file_mkstemp(tmpn, NULL);
    if (fd < 0)
      {
         printf("Error Creating tmp file: %s\n", strerror(errno));

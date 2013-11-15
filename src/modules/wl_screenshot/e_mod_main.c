@@ -218,13 +218,13 @@ _cb_handle_global_remove(void *data __UNUSED__, struct wl_registry *registry __U
 static struct wl_buffer *
 _create_shm_buffer(struct wl_shm *_shm, int width, int height, void **data_out)
 {
-   char filename[] = "/tmp/wayland-shm-XXXXXX";
+   char filename[] = "wayland-shm-XXXXXX";
    struct wl_shm_pool *pool;
    struct wl_buffer *buffer;
    int fd, size, stride;
    void *data;
 
-   fd = mkstemp(filename);
+   fd = eina_file_mkstemp(filename, NULL);
    if (fd < 0) 
      {
         fprintf(stderr, "open %s failed: %m\n", filename);
