@@ -734,7 +734,7 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
    else
      psd->changes &= ~(E_SMART_MONITOR_CHANGED_POSITION);
 
-   if (psd->crtc.mode != sd->current.mode)
+   if (psd->crtc.mode != psd->current.mode)
      psd->changes |= E_SMART_MONITOR_CHANGED_MODE;
    else
      psd->changes &= ~(E_SMART_MONITOR_CHANGED_MODE);
