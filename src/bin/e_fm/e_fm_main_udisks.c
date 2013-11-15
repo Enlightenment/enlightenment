@@ -417,7 +417,7 @@ _e_fm_main_udisks_cb_store_prop(void *data, const Eldbus_Message *msg,
    if (s->system_internal)
      {
         DBG("removing storage internal %s", s->udi);
-        ecore_idler_add(_storage_del, s->dbus_path);
+        ecore_idler_add(_storage_del, s->udi);
         return;
      }
    /* force it to be removable if it passed the above tests */
