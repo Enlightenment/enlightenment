@@ -719,7 +719,6 @@ EINTERN int         e_border_init(void);
 EINTERN int         e_border_shutdown(void);
 
 EAPI E_Border      *e_border_new(E_Container *con, Ecore_X_Window win, int first_map, int internal);
-EAPI void           e_border_free(E_Border *bd);
 EAPI void           e_border_ref(E_Border *bd);
 EAPI void           e_border_unref(E_Border *bd);
 EAPI void           e_border_res_change_geometry_save(E_Border *bd);
