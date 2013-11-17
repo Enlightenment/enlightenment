@@ -2,7 +2,7 @@
 #include "e_fm_device.h"
 #include <sys/statvfs.h>
 
-#define FILEPREVIEW_TEXT_PREVIEW_SIZE 2048
+#define FILEPREVIEW_TEXT_PREVIEW_SIZE 8192
 
 typedef struct _E_Widget_Data E_Widget_Data;
 struct _E_Widget_Data
