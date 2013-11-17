@@ -914,12 +914,15 @@ _e_wid_fprev_preview_txt_read_notify(void *data, Ecore_Thread *eth __UNUSED__, v
 {
    E_Widget_Data *wd = data;
    char *buf;
-
+   Evas_Coord mw, mh;
+   
    //INF("text='%s'", (char*)msg);
    buf = alloca(strlen(msg) + 4096);
    strcpy(buf, "<align=left>");
    strcat(buf, msg);
    edje_object_part_text_set(wd->o_preview_preview, "e.textblock.message", buf);
+   edje_object_size_min_calc(wd->o_preview_preview, &mw, &mh);
+   evas_object_resize(wd->o_preview_preview, mw, mh);
    free(msg);
 }
 
@@ -957,7 +960,7 @@ _e_wid_fprev_preview_txt(E_Widget_Data *wd)
    if (!wd->o_preview_preview)
      {
         Evas *evas;
-
+        
         evas = evas_object_evas_get(wd->obj);
         o = edje_object_add(evas);
         /* using dialog theme for now because it's simple, common, and doesn't require all
