@@ -566,7 +566,7 @@ _e_alert_draw_text(void)
                       "Before reporting issue, compile latest E18 and EFL\n"
                       "from Git with '-g -ggdb3' in your CFLAGS.\n"
                       "You can then report this crash on :\n"
-                      "http://trac.enlightenment.org/e/.\n",
+                      "https://phab.enlightenment.org/maniphest/.\n",
                       pid, backtrace_str);
           }
         else
