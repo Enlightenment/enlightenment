@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: trunk.HEAD\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-05 16:26+0900\n"
+"POT-Creation-Date: 2013-11-19 17:09+0900\n"
 "PO-Revision-Date: 2011-03-28 12:04+0100\n"
 "Last-Translator: Renato Rener <renato.rener@gmail.com>\n"
 "Language-Team: Slovenian <sl@li.org>\n"
@@ -3129,7 +3129,7 @@ msgstr "Miškini kazalci"
 #: src/bin/e_configure_option.c:1873 src/bin/e_configure_option.c:1875
 #: src/bin/e_configure_option.c:1877 src/bin/e_configure_option.c:1879
 #: src/bin/e_configure_option.c:1897 src/bin/e_configure_option.c:1899
-#: src/bin/e_configure_option.c:1901
+#: src/bin/e_configure_option.c:1901 src/bin/e_int_shelf_config.c:220
 #: src/modules/conf_interaction/e_int_config_interaction.c:105
 #: src/modules/conf_interaction/e_int_config_mouse.c:162
 #: src/modules/fileman/e_mod_main.c:394
@@ -3779,107 +3779,107 @@ msgstr ""
 "Enlightenment ni uspelo zagnati programa:<br><br>%s<br><br>Program se ni "
 "uspel zagnati."
 
-#: src/bin/e_exec.c:836
+#: src/bin/e_exec.c:837
 msgid "Application Execution Error"
 msgstr "Napaka pri zagonu programa"
 
-#: src/bin/e_exec.c:849 src/bin/e_exec.c:851
+#: src/bin/e_exec.c:850 src/bin/e_exec.c:852
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "%s se je nepričakovano zaustavil"
 
-#: src/bin/e_exec.c:857
+#: src/bin/e_exec.c:858
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "Javljena je bila izhodna koda %i iz %s"
 
-#: src/bin/e_exec.c:865
+#: src/bin/e_exec.c:866
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "%s je bil prekinjen z Interrupt signalom"
 
-#: src/bin/e_exec.c:868
+#: src/bin/e_exec.c:869
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "%s je bil prekinjen s Quit signalom"
 
-#: src/bin/e_exec.c:872
+#: src/bin/e_exec.c:873
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "%s je bil prekinjen z Abort signalom"
 
-#: src/bin/e_exec.c:875
+#: src/bin/e_exec.c:876
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "%s je bil prekinjen z napako plavajoče vejice"
 
-#: src/bin/e_exec.c:879
+#: src/bin/e_exec.c:880
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr "%s je bil prekinjen z neprekinitvenim Kill signalom"
 
-#: src/bin/e_exec.c:883
+#: src/bin/e_exec.c:884
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "%s je bil prekinjen s segmentacijsko napako"
 
-#: src/bin/e_exec.c:887
+#: src/bin/e_exec.c:888
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "%s je bil prekinjen s prekinjeno cevjo"
 
-#: src/bin/e_exec.c:890
+#: src/bin/e_exec.c:891
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "%s je bil prekinjen s Termination signalom"
 
-#: src/bin/e_exec.c:894
+#: src/bin/e_exec.c:895
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "%s je bil prekinjen z napako vodila"
 
-#: src/bin/e_exec.c:897
+#: src/bin/e_exec.c:898
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%s je bil prekinjen s signalom Št. %i"
 
-#: src/bin/e_exec.c:953
+#: src/bin/e_exec.c:954
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr ""
 "***Preostali signal je bil prisilno prekinjen. Shrani signal za pregled.***\n"
 
-#: src/bin/e_exec.c:1012 src/bin/e_exec.c:1090 src/bin/e_exec.c:1097
+#: src/bin/e_exec.c:1013 src/bin/e_exec.c:1091 src/bin/e_exec.c:1098
 msgid "Error Logs"
 msgstr "Dnevniki Napak"
 
-#: src/bin/e_exec.c:1018 src/bin/e_exec.c:1098
+#: src/bin/e_exec.c:1019 src/bin/e_exec.c:1099
 msgid "There was no error message."
 msgstr "Ni bilo poročila o napaki"
 
-#: src/bin/e_exec.c:1022 src/bin/e_exec.c:1105
+#: src/bin/e_exec.c:1023 src/bin/e_exec.c:1106
 msgid "Save This Message"
 msgstr "Shrani to sporočilo"
 
-#: src/bin/e_exec.c:1027 src/bin/e_exec.c:1030 src/bin/e_exec.c:1110
-#: src/bin/e_exec.c:1113
+#: src/bin/e_exec.c:1028 src/bin/e_exec.c:1031 src/bin/e_exec.c:1111
+#: src/bin/e_exec.c:1114
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "To poročilo o napaki bo shranjeno kot %s/%s.log"
 
-#: src/bin/e_exec.c:1056
+#: src/bin/e_exec.c:1057
 msgid "Error Information"
 msgstr "Informacija o napaki"
 
-#: src/bin/e_exec.c:1064
+#: src/bin/e_exec.c:1065
 msgid "Error Signal Information"
 msgstr "Informacija o napaki signala"
 
-#: src/bin/e_exec.c:1074 src/bin/e_exec.c:1081
+#: src/bin/e_exec.c:1075 src/bin/e_exec.c:1082
 msgid "Output Data"
 msgstr "Izhodni podatki"
 
-#: src/bin/e_exec.c:1082
+#: src/bin/e_exec.c:1083
 msgid "There was no output."
 msgstr "Ni bilo izhodnih podatkov"
 
@@ -5387,11 +5387,6 @@ msgstr "Pod okni"
 #: src/bin/e_int_shelf_config.c:171
 msgid "Below Everything"
 msgstr "Pod vsem"
-
-#: src/bin/e_int_shelf_config.c:220
-#, c-format
-msgid "Height (%3.0f pixels)"
-msgstr "Višina (%3.0f pik.)"
 
 #: src/bin/e_int_shelf_config.c:223
 msgid "Shrink to Content Width"
@@ -13691,6 +13686,9 @@ msgstr "Nastavitev modula IBar"
 #: src/modules/xkbswitch/e_mod_main.c:207
 msgid "NONE"
 msgstr ""
+
+#~ msgid "Height (%3.0f pixels)"
+#~ msgstr "Višina (%3.0f pik.)"
 
 #, fuzzy
 #~ msgid "Windows raise when focused"

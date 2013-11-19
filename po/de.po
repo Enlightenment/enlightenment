@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-05 16:26+0900\n"
+"POT-Creation-Date: 2013-11-19 17:09+0900\n"
 "PO-Revision-Date: 2012-12-21 13:52+0100\n"
 "Last-Translator: Thomas Gstädtner <thomas@gstaedtner.net>\n"
 "Language-Team: E17-de\n"
@@ -3142,7 +3142,7 @@ msgstr "Mauszeiger"
 #: src/bin/e_configure_option.c:1873 src/bin/e_configure_option.c:1875
 #: src/bin/e_configure_option.c:1877 src/bin/e_configure_option.c:1879
 #: src/bin/e_configure_option.c:1897 src/bin/e_configure_option.c:1899
-#: src/bin/e_configure_option.c:1901
+#: src/bin/e_configure_option.c:1901 src/bin/e_int_shelf_config.c:220
 #: src/modules/conf_interaction/e_int_config_interaction.c:105
 #: src/modules/conf_interaction/e_int_config_mouse.c:162
 #: src/modules/fileman/e_mod_main.c:394
@@ -3793,108 +3793,108 @@ msgstr ""
 "Enlightenment konnte die Anwendung nicht ausführen:<br><br>%s<br><br>Der "
 "Anwendungsstart schlug fehl."
 
-#: src/bin/e_exec.c:836
+#: src/bin/e_exec.c:837
 msgid "Application Execution Error"
 msgstr "Fehler beim Ausführen der Anwendung"
 
-#: src/bin/e_exec.c:849 src/bin/e_exec.c:851
+#: src/bin/e_exec.c:850 src/bin/e_exec.c:852
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "%s wurde unerwartet beendet."
 
-#: src/bin/e_exec.c:857
+#: src/bin/e_exec.c:858
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "Ein Fehlercode von %i wurde durch %s wiedergegeben."
 
-#: src/bin/e_exec.c:865
+#: src/bin/e_exec.c:866
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "%s wurde durch ein Unterbrechungssignal unterbrochen."
 
-#: src/bin/e_exec.c:868
+#: src/bin/e_exec.c:869
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "%s wurde durch ein Endesignal unterbrochen."
 
-#: src/bin/e_exec.c:872
+#: src/bin/e_exec.c:873
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "%s wurde durch ein Abbruchssignal unterbrochen."
 
-#: src/bin/e_exec.c:875
+#: src/bin/e_exec.c:876
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "%s wurde durch einen Fließkommafehler unterbrochen."
 
-#: src/bin/e_exec.c:879
+#: src/bin/e_exec.c:880
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr "%s wurde durch ein ununterbrechbares Kill-Signal unterbrochen."
 
-#: src/bin/e_exec.c:883
+#: src/bin/e_exec.c:884
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "%s wurde durch einen Segmentierungsfehler unterbrochen."
 
-#: src/bin/e_exec.c:887
+#: src/bin/e_exec.c:888
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "%s wurde durch eine defekte Weiterleitung unterbrochen."
 
-#: src/bin/e_exec.c:890
+#: src/bin/e_exec.c:891
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "%s wurde durch ein Terminierungssignal unterbrochen."
 
-#: src/bin/e_exec.c:894
+#: src/bin/e_exec.c:895
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "%s wurde durch einen Bus-Fehler unterbrochen."
 
-#: src/bin/e_exec.c:897
+#: src/bin/e_exec.c:898
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%s wurde durch das Signal %i unterbrochen."
 
-#: src/bin/e_exec.c:953
+#: src/bin/e_exec.c:954
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr ""
 "***Die verbleibende Ausgabe wurde ausgeblendet. Ausgabe zum Betrachten "
 "speichern.***\n"
 
-#: src/bin/e_exec.c:1012 src/bin/e_exec.c:1090 src/bin/e_exec.c:1097
+#: src/bin/e_exec.c:1013 src/bin/e_exec.c:1091 src/bin/e_exec.c:1098
 msgid "Error Logs"
 msgstr "Fehlerprotokolle"
 
-#: src/bin/e_exec.c:1018 src/bin/e_exec.c:1098
+#: src/bin/e_exec.c:1019 src/bin/e_exec.c:1099
 msgid "There was no error message."
 msgstr "Es gab keine Fehlermeldung."
 
-#: src/bin/e_exec.c:1022 src/bin/e_exec.c:1105
+#: src/bin/e_exec.c:1023 src/bin/e_exec.c:1106
 msgid "Save This Message"
 msgstr "Diese Nachricht speichern"
 
-#: src/bin/e_exec.c:1027 src/bin/e_exec.c:1030 src/bin/e_exec.c:1110
-#: src/bin/e_exec.c:1113
+#: src/bin/e_exec.c:1028 src/bin/e_exec.c:1031 src/bin/e_exec.c:1111
+#: src/bin/e_exec.c:1114
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "Dieses Fehlerprotokoll wird als %s/%s.log gespeichert"
 
-#: src/bin/e_exec.c:1056
+#: src/bin/e_exec.c:1057
 msgid "Error Information"
 msgstr "Fehlerinformation"
 
-#: src/bin/e_exec.c:1064
+#: src/bin/e_exec.c:1065
 msgid "Error Signal Information"
 msgstr "Fehlersignalinformation"
 
-#: src/bin/e_exec.c:1074 src/bin/e_exec.c:1081
+#: src/bin/e_exec.c:1075 src/bin/e_exec.c:1082
 msgid "Output Data"
 msgstr "Ausgabedaten"
 
-#: src/bin/e_exec.c:1082
+#: src/bin/e_exec.c:1083
 msgid "There was no output."
 msgstr "Es gab keine Ausgabe."
 
@@ -5346,11 +5346,6 @@ msgstr "Unter Fenstern"
 #: src/bin/e_int_shelf_config.c:171
 msgid "Below Everything"
 msgstr "Unter allem"
-
-#: src/bin/e_int_shelf_config.c:220
-#, c-format
-msgid "Height (%3.0f pixels)"
-msgstr "Höhe (%3.0f Pixel)"
 
 #: src/bin/e_int_shelf_config.c:223
 msgid "Shrink to Content Width"
@@ -13390,6 +13385,9 @@ msgstr "Tastatureinstellungen"
 #: src/modules/xkbswitch/e_mod_main.c:207
 msgid "NONE"
 msgstr ""
+
+#~ msgid "Height (%3.0f pixels)"
+#~ msgstr "Höhe (%3.0f Pixel)"
 
 #, fuzzy
 #~ msgid "Windows raise when focused"

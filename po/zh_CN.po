@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-05 16:26+0900\n"
+"POT-Creation-Date: 2013-11-19 17:09+0900\n"
 "PO-Revision-Date: 2012-12-20 22:40+0800\n"
 "Last-Translator: Aron Xu <happyaron.xu@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -3081,7 +3081,7 @@ msgstr "鼠标按键"
 #: src/bin/e_configure_option.c:1873 src/bin/e_configure_option.c:1875
 #: src/bin/e_configure_option.c:1877 src/bin/e_configure_option.c:1879
 #: src/bin/e_configure_option.c:1897 src/bin/e_configure_option.c:1899
-#: src/bin/e_configure_option.c:1901
+#: src/bin/e_configure_option.c:1901 src/bin/e_int_shelf_config.c:220
 #: src/modules/conf_interaction/e_int_config_interaction.c:105
 #: src/modules/conf_interaction/e_int_config_mouse.c:162
 #: src/modules/fileman/e_mod_main.c:394
@@ -3716,106 +3716,106 @@ msgid ""
 "application failed to start."
 msgstr "Enlightenment 未能运行程序:<br><br>%s<br><br>该程序启动失败。"
 
-#: src/bin/e_exec.c:836
+#: src/bin/e_exec.c:837
 msgid "Application Execution Error"
 msgstr "应用程序执行出错"
 
-#: src/bin/e_exec.c:849 src/bin/e_exec.c:851
+#: src/bin/e_exec.c:850 src/bin/e_exec.c:852
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "%s 意外终止。"
 
-#: src/bin/e_exec.c:857
+#: src/bin/e_exec.c:858
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "%2$s 返回推出代码 %1$i。"
 
-#: src/bin/e_exec.c:865
+#: src/bin/e_exec.c:866
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "%s 被中断信号中断。"
 
-#: src/bin/e_exec.c:868
+#: src/bin/e_exec.c:869
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "%s 被退出信号中断。"
 
-#: src/bin/e_exec.c:872
+#: src/bin/e_exec.c:873
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "%s 被终止信号中断。"
 
-#: src/bin/e_exec.c:875
+#: src/bin/e_exec.c:876
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "%s 被浮点错误中断。"
 
-#: src/bin/e_exec.c:879
+#: src/bin/e_exec.c:880
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr "%s 被不可捕获的“杀死信号”中断。"
 
-#: src/bin/e_exec.c:883
+#: src/bin/e_exec.c:884
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "%s 被错误信号中断。"
 
-#: src/bin/e_exec.c:887
+#: src/bin/e_exec.c:888
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "%s 被管道错误中断。"
 
-#: src/bin/e_exec.c:890
+#: src/bin/e_exec.c:891
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "%s 被终止信号中断。"
 
-#: src/bin/e_exec.c:894
+#: src/bin/e_exec.c:895
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "%s 被总线错误中断。"
 
-#: src/bin/e_exec.c:897
+#: src/bin/e_exec.c:898
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%s 被信号 %i 中断。"
 
-#: src/bin/e_exec.c:953
+#: src/bin/e_exec.c:954
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr "***剩余输出已截断。请保存输出文件以查看全部内容。***\n"
 
-#: src/bin/e_exec.c:1012 src/bin/e_exec.c:1090 src/bin/e_exec.c:1097
+#: src/bin/e_exec.c:1013 src/bin/e_exec.c:1091 src/bin/e_exec.c:1098
 msgid "Error Logs"
 msgstr "错误日志"
 
-#: src/bin/e_exec.c:1018 src/bin/e_exec.c:1098
+#: src/bin/e_exec.c:1019 src/bin/e_exec.c:1099
 msgid "There was no error message."
 msgstr "没有错误信息。"
 
-#: src/bin/e_exec.c:1022 src/bin/e_exec.c:1105
+#: src/bin/e_exec.c:1023 src/bin/e_exec.c:1106
 msgid "Save This Message"
 msgstr "保存此信息"
 
-#: src/bin/e_exec.c:1027 src/bin/e_exec.c:1030 src/bin/e_exec.c:1110
-#: src/bin/e_exec.c:1113
+#: src/bin/e_exec.c:1028 src/bin/e_exec.c:1031 src/bin/e_exec.c:1111
+#: src/bin/e_exec.c:1114
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "此错误日志将被保存为 %s/%s.log"
 
-#: src/bin/e_exec.c:1056
+#: src/bin/e_exec.c:1057
 msgid "Error Information"
 msgstr "错误信息"
 
-#: src/bin/e_exec.c:1064
+#: src/bin/e_exec.c:1065
 msgid "Error Signal Information"
 msgstr "错误信号信息"
 
-#: src/bin/e_exec.c:1074 src/bin/e_exec.c:1081
+#: src/bin/e_exec.c:1075 src/bin/e_exec.c:1082
 msgid "Output Data"
 msgstr "输出数据"
 
-#: src/bin/e_exec.c:1082
+#: src/bin/e_exec.c:1083
 msgid "There was no output."
 msgstr "没有输出。"
 
@@ -5248,11 +5248,6 @@ msgstr "窗口下"
 #: src/bin/e_int_shelf_config.c:171
 msgid "Below Everything"
 msgstr "在所有之下"
-
-#: src/bin/e_int_shelf_config.c:220
-#, c-format
-msgid "Height (%3.0f pixels)"
-msgstr "高 (%3.0f 像素)"
 
 #: src/bin/e_int_shelf_config.c:223
 msgid "Shrink to Content Width"
@@ -13108,6 +13103,9 @@ msgstr "键盘设置"
 #: src/modules/xkbswitch/e_mod_main.c:207
 msgid "NONE"
 msgstr ""
+
+#~ msgid "Height (%3.0f pixels)"
+#~ msgstr "高 (%3.0f 像素)"
 
 #, fuzzy
 #~ msgid "Windows raise when focused"

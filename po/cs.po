@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: DR17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-05 16:26+0900\n"
+"POT-Creation-Date: 2013-11-19 17:09+0900\n"
 "PO-Revision-Date: 2012-12-21 20:27+0100\n"
 "Last-Translator: \n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -3111,7 +3111,7 @@ msgstr "Kurzor myši"
 #: src/bin/e_configure_option.c:1873 src/bin/e_configure_option.c:1875
 #: src/bin/e_configure_option.c:1877 src/bin/e_configure_option.c:1879
 #: src/bin/e_configure_option.c:1897 src/bin/e_configure_option.c:1899
-#: src/bin/e_configure_option.c:1901
+#: src/bin/e_configure_option.c:1901 src/bin/e_int_shelf_config.c:220
 #: src/modules/conf_interaction/e_int_config_interaction.c:105
 #: src/modules/conf_interaction/e_int_config_mouse.c:162
 #: src/modules/fileman/e_mod_main.c:394
@@ -3759,106 +3759,106 @@ msgstr ""
 "Enlightenment nedokázal spustit aplikaci:<br><br>%s<br><br>Aplikace selhala "
 "při startu."
 
-#: src/bin/e_exec.c:836
+#: src/bin/e_exec.c:837
 msgid "Application Execution Error"
 msgstr "Chyba při spouštění aplikace"
 
-#: src/bin/e_exec.c:849 src/bin/e_exec.c:851
+#: src/bin/e_exec.c:850 src/bin/e_exec.c:852
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "Proces %s se neočekávaně skončil."
 
-#: src/bin/e_exec.c:857
+#: src/bin/e_exec.c:858
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "Návratová hodnota %i byla vrácena z %s."
 
-#: src/bin/e_exec.c:865
+#: src/bin/e_exec.c:866
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "%s byl přerušen signálem interrupt."
 
-#: src/bin/e_exec.c:868
+#: src/bin/e_exec.c:869
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "%s byl přerušen signálem quit."
 
-#: src/bin/e_exec.c:872
+#: src/bin/e_exec.c:873
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "%s byl přerušen signálem abort."
 
-#: src/bin/e_exec.c:875
+#: src/bin/e_exec.c:876
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "%s byl přerušen Floating point chybou."
 
-#: src/bin/e_exec.c:879
+#: src/bin/e_exec.c:880
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
 msgstr "%s byl přerušen nepřerušitelným kill signálem."
 
-#: src/bin/e_exec.c:883
+#: src/bin/e_exec.c:884
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "%s byl přerušen chybou při segmentaci."
 
-#: src/bin/e_exec.c:887
+#: src/bin/e_exec.c:888
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "%s byl přerušen chybou roury."
 
-#: src/bin/e_exec.c:890
+#: src/bin/e_exec.c:891
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "%s byl přerušen ukončovacím signálem."
 
-#: src/bin/e_exec.c:894
+#: src/bin/e_exec.c:895
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "%s byl přerušen chybou sběrnice."
 
-#: src/bin/e_exec.c:897
+#: src/bin/e_exec.c:898
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%s byl přerušen signálem číslo %i."
 
-#: src/bin/e_exec.c:953
+#: src/bin/e_exec.c:954
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr "***Zbývající výstup byl zkrácen. Uložte výstup.***\n"
 
-#: src/bin/e_exec.c:1012 src/bin/e_exec.c:1090 src/bin/e_exec.c:1097
+#: src/bin/e_exec.c:1013 src/bin/e_exec.c:1091 src/bin/e_exec.c:1098
 msgid "Error Logs"
 msgstr "Chybové záznamy"
 
-#: src/bin/e_exec.c:1018 src/bin/e_exec.c:1098
+#: src/bin/e_exec.c:1019 src/bin/e_exec.c:1099
 msgid "There was no error message."
 msgstr "Nebyla zaznamenána žádná chybová zpráva."
 
-#: src/bin/e_exec.c:1022 src/bin/e_exec.c:1105
+#: src/bin/e_exec.c:1023 src/bin/e_exec.c:1106
 msgid "Save This Message"
 msgstr "Uložit tuto zprávu"
 
-#: src/bin/e_exec.c:1027 src/bin/e_exec.c:1030 src/bin/e_exec.c:1110
-#: src/bin/e_exec.c:1113
+#: src/bin/e_exec.c:1028 src/bin/e_exec.c:1031 src/bin/e_exec.c:1111
+#: src/bin/e_exec.c:1114
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "Chybový záznam byl uložen jako %s/%s.log"
 
-#: src/bin/e_exec.c:1056
+#: src/bin/e_exec.c:1057
 msgid "Error Information"
 msgstr "Chybová informace"
 
-#: src/bin/e_exec.c:1064
+#: src/bin/e_exec.c:1065
 msgid "Error Signal Information"
 msgstr "Informace o chybovém signálu"
 
-#: src/bin/e_exec.c:1074 src/bin/e_exec.c:1081
+#: src/bin/e_exec.c:1075 src/bin/e_exec.c:1082
 msgid "Output Data"
 msgstr "Výstupní data"
 
-#: src/bin/e_exec.c:1082
+#: src/bin/e_exec.c:1083
 msgid "There was no output."
 msgstr "Nebyl zaznamenán žádný výstup."
 
@@ -5309,11 +5309,6 @@ msgstr "Pod okny"
 #: src/bin/e_int_shelf_config.c:171
 msgid "Below Everything"
 msgstr "Pod vším"
-
-#: src/bin/e_int_shelf_config.c:220
-#, c-format
-msgid "Height (%3.0f pixels)"
-msgstr "Výška (%3.0f pixelů)"
 
 #: src/bin/e_int_shelf_config.c:223
 msgid "Shrink to Content Width"
@@ -13305,6 +13300,9 @@ msgstr "Nastavení klávesnice"
 #: src/modules/xkbswitch/e_mod_main.c:207
 msgid "NONE"
 msgstr ""
+
+#~ msgid "Height (%3.0f pixels)"
+#~ msgstr "Výška (%3.0f pixelů)"
 
 #, fuzzy
 #~ msgid "Windows raise when focused"
