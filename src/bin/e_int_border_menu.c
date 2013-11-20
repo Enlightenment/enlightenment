@@ -937,14 +937,12 @@ _e_border_menu_cb_sendto_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
    E_Menu *subm;
    E_Menu_Item *submi;
    E_Border *bd;
-   E_Desk *desk_cur;
    E_Zone *zone;
    Eina_List *l = NULL;
    char buf[128];
    int zones, i;
 
    bd = data;
-   desk_cur = e_desk_current_get(bd->zone);
    zones = eina_list_count(bd->zone->container->zones);
 
    subm = e_menu_new();
@@ -979,7 +977,7 @@ _e_border_menu_cb_sendto_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
 #ifdef DESKMIRROR_TEST
              e_menu_item_icon_file_set(submi, "sup");
 #endif
-             if ((bd->zone == zone) && (desk_cur == desk))
+             if ((bd->zone == zone) && (!bd->iconic) && (bd->desk == desk))
                e_menu_item_toggle_set(submi, 1);
              else
                e_menu_item_callback_set(submi, _e_border_menu_cb_sendto, desk);
