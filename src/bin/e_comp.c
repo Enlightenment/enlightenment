@@ -2746,6 +2746,8 @@ _e_comp_win_hide(E_Comp_Win *cw)
         ecore_timer_del(cw->update_timeout);
         cw->update_timeout = NULL;
      }
+   if (cw->nocomp)
+     _e_comp_render_queue(cw->c);
    if (conf->keep_unmapped && cw->win)
      {
         if (!cw->delete_me)
