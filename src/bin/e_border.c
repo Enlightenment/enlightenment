@@ -728,7 +728,10 @@ e_border_new(E_Container *con, Ecore_X_Window win, int first_map, int internal)
    desk[1] = desky;
    ecore_x_window_prop_card32_set(win, E_ATOM_DESK, desk, 2);
 
-   focus_stack = eina_list_append(focus_stack, bd);
+   if (starting)
+     focus_stack = eina_list_prepend(focus_stack, bd);
+   else
+     focus_stack = eina_list_append(focus_stack, bd);
 
    return bd;
 }
