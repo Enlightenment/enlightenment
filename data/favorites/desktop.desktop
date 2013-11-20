@@ -20,5 +20,5 @@ Comment[ru]=Файлы на рабочем столе
 Comment[sr]=Датотеке радне површи
 Icon=user-desktop
 NotShowIn=GNOME;KDE;LXDE;ROX;XFCE;
-URL=file:$HOME/Desktop
+URL=file:$XDG_DESKTOP_DIR
 X-Enlightenment-Type=Mount
