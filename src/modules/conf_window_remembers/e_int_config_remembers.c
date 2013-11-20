@@ -186,7 +186,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_list_object_append(of2, ow, 1, 1, 0.5);
    cfdata->btn2 = ow = e_widget_button_add(evas, _("Delete"), "list-remove", _cb_delete, cfdata, NULL);
    e_widget_list_object_append(of2, ow, 1, 1, 0.5);
-   e_widget_list_object_append(ol, of2, 1, 1, 0.5);
+   e_widget_list_object_append(ol, of2, 1, 0, 0.5);
 
    _cb_list_change(cfdata, NULL);
    return ol;
