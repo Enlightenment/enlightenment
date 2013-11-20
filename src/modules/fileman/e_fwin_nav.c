@@ -55,6 +55,8 @@ static void             _cb_button_click(void *data, Evas_Object *obj, const cha
 static void             _cb_scroll_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 static void             _box_button_append(Instance *inst, const char *label, Edje_Signal_Cb func);
 static void             _box_button_free(Nav_Item *ni);
+static void _cb_fm_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info);
+
 
 static Eina_List *instances = NULL;
 static const char *_nav_mod_dir = NULL;
@@ -289,6 +291,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->tbar = tbar;
    inst->o_fm = o_fm;
 
+   evas_object_event_callback_add(o_fm, EVAS_CALLBACK_MOUSE_DOWN, _cb_fm_mouse_down, inst);
+
    snprintf(buf, sizeof(buf), "%s/e-module-efm_nav.edj", _nav_mod_dir);
    inst->theme = eina_stringshare_add(buf);
 
@@ -391,6 +395,9 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    if (!inst) return;
    instances = eina_list_remove(instances, inst);
 
+   evas_object_event_callback_del_full(inst->o_fm,
+                                       EVAS_CALLBACK_MOUSE_DOWN,
+                                       _cb_fm_mouse_down, inst);
    evas_object_event_callback_del_full(inst->o_fm,
                                        EVAS_CALLBACK_KEY_DOWN,
                                        _cb_key_down, inst);
@@ -585,6 +592,18 @@ _cb_favorites_click(void *data, Evas_Object *obj __UNUSED__, const char *emissio
    inst = data;
 
    e_fm2_path_set(inst->o_fm, "favorites", "/");
+}
+
+static void
+_cb_fm_mouse_down(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Instance *inst = data;
+   Evas_Event_Mouse_Down *ev = event_info;
+
+   if (ev->button == 9)
+     _cb_forward_click(inst, NULL, NULL, NULL);
+   else if (ev->button == 8)
+     _cb_back_click(inst, NULL, NULL, NULL);
 }
 
 static void
