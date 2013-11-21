@@ -387,8 +387,21 @@ out:
    if (v && v->validated) e_fm_ipc_volume_add(v);
    if (s)
      {
+        Eina_List *l;
+
         if (!block) //cdrom :/
           s->udi = eina_stringshare_add(udi);
+        EINA_LIST_FOREACH(_e_vols, l, v)
+          {
+             if ((v->parent == s->udi) || (v->parent == s->dbus_path))
+               {
+                  if (!v->storage)
+                    {
+                       v->storage = s;
+                       s->volumes = eina_list_append(s->volumes, v);
+                    }
+               }
+          }
         _e_fm_main_udisks2_storage_add_send(s);
      }
 }
@@ -1275,6 +1288,8 @@ _e_fm_main_udisks2_storage_del(const char *path)
         eldbus_proxy_unref(s->proxy);
         eldbus_object_unref(obj);
      }
+   while (s->volumes)
+     _volume_del(eina_list_data_get(s->volumes));
    _e_fm_shared_device_storage_free(s);
 }
 
