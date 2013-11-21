@@ -661,7 +661,7 @@ _e_int_menus_app_finder(const char *exec)
 
    if (!env)
      {
-        ERR("Unable to $PATH, Returning TRUE for every .desktop");
+        WRN("Unable to $PATH, Returning TRUE for every .desktop");
         return EINA_TRUE;
      }
 
@@ -680,7 +680,7 @@ _e_int_menus_app_finder(const char *exec)
    free(split);
 
    if (!exec_found)
-     ERR("Unable to find: [%s] I searched $PATH=%s", exec, env);
+     WRN("Unable to find: [%s] I searched $PATH=%s", exec, env);
 
    return exec_found;
 }
@@ -730,14 +730,14 @@ _e_int_menus_app_config_append(Efreet_Desktop *desktop)
 
         if ((!strcmp(ma->orig_path, cma->orig_path)) && (ma->load_time != cma->load_time))
           {
-             ERR("Modified: [%s]", cma->orig_path);
+             WRN("Modified: [%s]", cma->orig_path);
              e_config->menu_applications = eina_list_remove(e_config->menu_applications, ma);
           }
      }
 
    if (cma->try_exec)
      {
-        ERR("Try_Exec: [%s]", cma->try_exec);
+        WRN("Try_Exec: [%s]", cma->try_exec);
         cma->exec_valid = _e_int_menus_app_finder(cma->try_exec);
      }
    else if (cma->exec)
