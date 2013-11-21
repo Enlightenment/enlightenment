@@ -421,7 +421,7 @@ e_border_new(E_Container *con,
    ecore_x_window_shadow_tree_flush();
    e_object_del_func_set(E_OBJECT(bd), E_OBJECT_CLEANUP_FUNC(_e_border_del));
 
-   bd->focus_policy = e_config->focus_policy;
+   bd->focus_policy_override = E_FOCUS_LAST;
    bd->w = 1;
    bd->h = 1;
    /* FIXME: ewww - round trip */
@@ -7460,7 +7460,7 @@ _e_border_eval0(E_Border *bd)
           }
         else if (bd->client.netwm.type == ECORE_X_WINDOW_TYPE_DESKTOP)
           {
-             bd->focus_policy = E_FOCUS_CLICK;
+             bd->focus_policy_override = E_FOCUS_CLICK;
              e_focus_setup(bd);
              if (!bd->client.netwm.state.skip_pager)
                {
