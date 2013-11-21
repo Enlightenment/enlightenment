@@ -700,11 +700,11 @@ _e_fm_main_udisks2_storage_drive_add(const char *udi, E_Storage *s, Eldbus_Messa
                eina_stringshare_replace(&s->drive_type, media);
           }
         else if (!strcmp(key2, "Model"))
-          eina_stringshare_replace(&s->model, val);
+          eina_stringshare_replace(&s->model, (val && val[0]) ? val : NULL);
         else if (!strcmp(key2, "Vendor"))
-           eina_stringshare_replace(&s->vendor, val);
+           eina_stringshare_replace(&s->vendor, (val && val[0]) ? val : NULL);
         else if (!strcmp(key2, "Serial"))
-          eina_stringshare_replace(&s->serial, val);
+          eina_stringshare_replace(&s->serial, (val && val[0]) ? val : NULL);
         else if (!strcmp(key2, "MediaAvailable"))
           s->media_available = !!b;
         else if (!strcmp(key2, "Size"))
