@@ -33,7 +33,7 @@ static void      _e_randr_config_outputs_from_crtc_set(E_Randr_Crtc_Config *crtc
 static void      _e_randr_config_crtc_from_outputs_set(E_Randr_Crtc_Config *crtc_cfg);
 static Eina_Bool _e_randr_config_lid_update(void);
 static Eina_Bool _e_randr_output_mode_valid(Ecore_X_Randr_Mode mode, Ecore_X_Randr_Mode *modes, int nmodes);
-static void      _e_randr_output_connected(E_Randr_Output_Config *cfg, Eina_Bool connected);
+static void      _e_randr_output_connected_set(E_Randr_Output_Config *cfg, Eina_Bool connected);
 static int       _e_randr_config_output_cmp(const void *a, const void *b);
 
 /* local variables */
@@ -379,29 +379,10 @@ _e_randr_config_update(void)
    /* find outputs which should be connected */
    EINA_LIST_FOREACH(e_randr_cfg->outputs, l, output_cfg)
      {
-#if 0
-        E_Randr_Output_Config *cfg;
-#endif
-
         if (!output_cfg->exists) continue;
         if (!output_cfg->connected) continue;
-        crtc_cfg = _e_randr_config_crtc_find(output_cfg->crtc);
-        if (!crtc_cfg) continue;
-        /* already in list */
-        if (eina_list_data_find(crtc_cfg->outputs, output_cfg)) continue;
-        fprintf(stderr, "E_RANDR: Need to enable output\n");
-#if 0
-        /* remove connected outputs */
-        /* TODO: If we can clone, keep the outputs */
-        EINA_LIST_FREE(crtc_cfg->outputs, cfg)
-           cfg->connected = EINA_FALSE;
-
         /* we want to connect this output */
-        e_randr_cfg->connected++;
-        /* add this output to the list for this crtc */
-        crtc_cfg->outputs =
-           eina_list_append(crtc_cfg->outputs, output_cfg);
-#endif
+        _e_randr_output_connected_set(output_cfg, EINA_TRUE);
      }
 
    /* 
@@ -698,7 +679,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
                        fprintf(stderr, "E_RANDR: Output On Same Crtc\n");
 
                        /* connect to crtc */
-                       _e_randr_output_connected(output_cfg, EINA_TRUE);
+                       _e_randr_output_connected_set(output_cfg, EINA_TRUE);
                        /* validate output mode */
                        _e_randr_config_output_mode_update(output_cfg);
                        output_new = EINA_TRUE;
@@ -719,7 +700,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
                     {
                        output_cfg->crtc = crtc_cfg->xid;
                        /* connect to crtc */
-                       _e_randr_output_connected(output_cfg, EINA_TRUE);
+                       _e_randr_output_connected_set(output_cfg, EINA_TRUE);
                        /* get orientation from crtc if not set */
                        if (!output_cfg->orient)
                          output_cfg->orient = crtc_cfg->orient;
@@ -735,10 +716,10 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
                {
                   fprintf(stderr, "E_RANDR: Output With New Crtc\n");
                   /* remove from old crtc */
-                  _e_randr_output_connected(output_cfg, EINA_FALSE);
+                  _e_randr_output_connected_set(output_cfg, EINA_FALSE);
                   /* add to new crtc */
                   output_cfg->crtc = ev->crtc;
-                  _e_randr_output_connected(output_cfg, EINA_TRUE);
+                  _e_randr_output_connected_set(output_cfg, EINA_TRUE);
 
                   /* validate output mode */
                   _e_randr_config_output_mode_update(output_cfg);
@@ -751,7 +732,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
              if (output_cfg->connected)
                {
                   fprintf(stderr, "E_RANDR: Output Disconnected: %d\n", output_cfg->crtc);
-                  _e_randr_output_connected(output_cfg, EINA_FALSE);
+                  _e_randr_output_connected_set(output_cfg, EINA_FALSE);
                   output_removed = EINA_TRUE;
                }
           }
@@ -1219,13 +1200,13 @@ _e_randr_config_lid_update(void)
              /* only disable lid if we got more than 1 connected output */
              if (e_randr_cfg->connected > 1)
                {
-                  _e_randr_output_connected(output_cfg, EINA_FALSE);
+                  _e_randr_output_connected_set(output_cfg, EINA_FALSE);
                   changed = EINA_TRUE;
                }
           }
         else if (!output_cfg->connected)
           {
-             _e_randr_output_connected(output_cfg, EINA_TRUE);
+             _e_randr_output_connected_set(output_cfg, EINA_TRUE);
              changed = EINA_TRUE;
           }
      }
@@ -1251,7 +1232,7 @@ _e_randr_output_mode_valid(Ecore_X_Randr_Mode mode, Ecore_X_Randr_Mode *modes, i
 }
 
 static void
-_e_randr_output_connected(E_Randr_Output_Config *cfg, Eina_Bool connected)
+_e_randr_output_connected_set(E_Randr_Output_Config *cfg, Eina_Bool connected)
 {
    E_Randr_Crtc_Config *crtc_cfg;
 
