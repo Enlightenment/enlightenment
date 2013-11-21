@@ -178,7 +178,7 @@ _e_msgbus_request_name_cb(void *data __UNUSED__, const Eldbus_Message *msg,
      }
 
    if (!(flag & ELDBUS_NAME_REQUEST_REPLY_PRIMARY_OWNER))
-     ERR("Name already in use\n");
+     WRN("Name already in use\n");
 }
 
 /* Core Handlers */
