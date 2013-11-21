@@ -3331,7 +3331,7 @@ _e_fm2_dev_path_map(E_Fm2_Smart_Data *sd, const char *dev, const char *path)
    s = buf;
    while (*s)
      {
-        if ((s[0] == '/') && (s[1] == '/'))
+        while ((s[0] == '/') && (s[1] == '/'))
           {
              ss = s;
              do
