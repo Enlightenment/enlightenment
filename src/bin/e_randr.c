@@ -1121,7 +1121,6 @@ _e_randr_config_primary_update(void)
      }
 
    output_cfg = _e_randr_config_output_find(e_randr_cfg->primary);
-   fprintf(stderr, "primary output: %d %s\n", e_randr_cfg->primary, output_cfg->name);
 }
 
 static void
