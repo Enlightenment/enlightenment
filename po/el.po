@@ -1,31 +1,29 @@
 # translation of el.po to Ελληνικά
 # Greek translation for Enlightenment17.
 # This file is put in the public domain.
-# 
-# Geo Kou <ragecryx@yahoo.gr>, 2008.
+#
+# George Koutsikos <ragecryx@yahoo.gr>, 2008.
 # Aron Xu <aronmalache@163.com>, 2008.
-# Giorgos RageCryX Koutsikos <ragecryx@yahoo.gr>, 2009.
-# George Koutsikos <ragecryx@yahoo.gr>, 2011.
 # Efstathios Iosifidis <iosifidis@opensuse.org>, 2012.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-11-19 17:09+0900\n"
-"PO-Revision-Date: 2012-12-21 21:19+0200\n"
-"Last-Translator: Efstathios Iosifidis <iosifidis@opensuse.org>\n"
+"PO-Revision-Date: 2013-11-20 22:41+0200\n"
+"Last-Translator: George Koutsikos <ragecryx@yahoo.gr>\n"
 "Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
 "Language: el_GR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bits\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Gtranslator 2.91.5\n"
+"X-Generator: Poedit 1.5.7\n"
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
-msgstr "Περί Enlightenment"
+msgstr "Σχετικά με το Enlightenment"
 
 #: src/bin/e_about.c:20 src/bin/e_actions.c:2989 src/bin/e_config_dialog.c:288
 #: src/bin/e_fm.c:1088 src/bin/e_int_border_menu.c:209
@@ -47,17 +45,16 @@ msgid "Enlightenment"
 msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
-#, fuzzy
 msgid ""
 "<title>Copyright &copy; 2000-2013, by the Enlightenment Development Team</"
 "><br><br>We hope you enjoy using this software as much as we enjoyed writing "
 "it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
 "org</><br><br>"
 msgstr ""
-"<title>Πνευματικά δικαιώματα &αντίγραφο; 2000-2012, από την ομάδα ανάπτυξης "
-"του Enlightenment</><br><br>Ελπίζουμε ότι απολαμβάνετε την χρήση του "
-"λογισμικού όσο εμείς απολαμβάναμε την δημιουργία του.<br><br>Για επικοινωνία "
-"μαζί μας, παρακαλώ επισκεφθείτε την διεύθυνση:<br><hilight>http://www."
+"<title>Πνευματικά δικαιώματα &copy; 2000-2013, από την ομάδα ανάπτυξης του "
+"Enlightenment</><br><br>Ελπίζουμε ότι απολαμβάνετε την χρήση αυτού του "
+"λογισμικού όσο εμείς απολαύσαμε τη δημιουργία του.<br><br>Για επικοινωνία "
+"μαζί μας, παρακαλώ επισκεφθείτε τη διεύθυνση:<br><hilight>http://www."
 "enlightenment.org</><br><br>"
 
 #: src/bin/e_about.c:69
@@ -873,9 +870,8 @@ msgid "Title"
 msgstr "Τίτλος"
 
 #: src/bin/e_comp.c:4792
-#, fuzzy
 msgid "Use fast composite effects for windows"
-msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυρα σε πλήρη οθόνη"
+msgstr "Χρησιμοποίησε γρήγορα composite εφέ στα παράθυρα"
 
 #: src/bin/e_comp.c:4792 src/bin/e_comp.c:4794 src/bin/e_comp.c:4796
 #: src/bin/e_comp.c:4798 src/bin/e_comp.c:4800 src/bin/e_comp.c:4803
@@ -889,9 +885,8 @@ msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυ
 #: src/bin/e_comp.c:4877 src/bin/e_comp.c:4881 src/bin/e_comp.c:4882
 #: src/bin/e_comp.c:4883 src/bin/e_comp.c:5110 src/bin/e_comp.c:5111
 #: src/modules/conf_comp/e_mod_main.c:259
-#, fuzzy
 msgid "composite"
-msgstr "Composite εφέ"
+msgstr ""
 
 #: src/bin/e_comp.c:4792 src/bin/e_comp.c:4803 src/bin/e_comp.c:4817
 #: src/bin/e_comp.c:4821 src/bin/e_comp.c:4826 src/bin/e_comp.c:4829
@@ -957,9 +952,8 @@ msgstr "Composite εφέ"
 #: src/modules/tiling/e_mod_tiling.c:3921
 #: src/modules/tiling/e_mod_tiling.c:3923
 #: src/modules/tiling/e_mod_tiling.c:4057
-#, fuzzy
 msgid "border"
-msgstr "Περίγραμμα"
+msgstr "περίγραμμα"
 
 #: src/bin/e_comp.c:4792 src/bin/e_comp.c:4794 src/bin/e_comp.c:4796
 #: src/bin/e_comp.c:4798 src/bin/e_comp.c:4800 src/bin/e_comp.c:4803
@@ -974,9 +968,8 @@ msgstr "Περίγραμμα"
 #: src/bin/e_configure_option.c:1961 src/bin/e_configure_option.c:2064
 #: src/modules/conf_theme/e_mod_main.c:175
 #: src/modules/conf_theme/e_mod_main.c:183
-#, fuzzy
 msgid "theme"
-msgstr "Θέμα"
+msgstr "θέμα"
 
 #: src/bin/e_comp.c:4792 src/bin/e_comp.c:4794 src/bin/e_comp.c:4796
 #: src/bin/e_comp.c:4798 src/bin/e_comp.c:4800 src/bin/e_comp.c:4803
@@ -989,14 +982,12 @@ msgstr "Θέμα"
 #: src/bin/e_configure_option.c:1612 src/bin/e_configure_option.c:1613
 #: src/bin/e_configure_option.c:1810 src/bin/e_configure_option.c:1828
 #: src/bin/e_configure_option.c:1913
-#, fuzzy
 msgid "animate"
-msgstr "Κίνηση"
+msgstr "με κίνηση"
 
 #: src/bin/e_comp.c:4794
-#, fuzzy
 msgid "Use fast composite effects for menus"
-msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυρα σε πλήρη οθόνη"
+msgstr ""
 
 #: src/bin/e_comp.c:4794 src/bin/e_comp.c:4805
 #: src/bin/e_configure_option.c:1488 src/bin/e_configure_option.c:1491
@@ -1011,28 +1002,24 @@ msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυ
 #: src/bin/e_configure_option.c:1799 src/bin/e_configure_option.c:1800
 #: src/bin/e_configure_option.c:2042
 msgid "menu"
-msgstr ""
+msgstr "μενού"
 
 #: src/bin/e_comp.c:4796
-#, fuzzy
 msgid "Use fast composite effects for popups"
-msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυρα σε πλήρη οθόνη"
+msgstr ""
 
 #: src/bin/e_comp.c:4796 src/bin/e_comp.c:4807
-#, fuzzy
 msgid "popup"
-msgstr "Αναδυόμενο"
+msgstr "αναδυόμενο"
 
 #: src/bin/e_comp.c:4798
-#, fuzzy
 msgid "Use fast composite effects for objects"
-msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυρα σε πλήρη οθόνη"
+msgstr ""
 
 #: src/bin/e_comp.c:4800
-#, fuzzy
 msgid ""
 "Use fast composite effects for override-redirect windows (tooltips and such)"
-msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυρα σε πλήρη οθόνη"
+msgstr ""
 
 #: src/bin/e_comp.c:4803 src/modules/conf_comp/e_mod_config.c:226
 #, fuzzy
@@ -1078,9 +1065,8 @@ msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυ
 #: src/modules/notification/e_mod_main.c:274
 #: src/modules/notification/e_mod_main.c:299
 #: src/modules/teamwork/e_mod_main.c:178
-#, fuzzy
 msgid "screen"
-msgstr "Οθόνη"
+msgstr "οθόνη"
 
 #: src/bin/e_comp.c:4814
 msgid ""
@@ -1089,23 +1075,20 @@ msgid ""
 msgstr ""
 
 #: src/bin/e_comp.c:4817
-#, fuzzy
 msgid "Compositing engine"
-msgstr "Σύνθεση"
+msgstr ""
 
 #: src/bin/e_comp.c:4821
 msgid "Default window composite effect"
 msgstr ""
 
 #: src/bin/e_comp.c:4826
-#, fuzzy
 msgid "Smooth scaling of composited window content"
-msgstr "Ομαλή κλιμάκωση του περιεχομένου του παραθύρου"
+msgstr "Ομαλή αλλαγή μεγέθους του περιεχομένου του παραθύρου"
 
 #: src/bin/e_comp.c:4829
-#, fuzzy
 msgid "Sync composited windows"
-msgstr "Συγχρονισμός παραθύρων"
+msgstr ""
 
 #: src/bin/e_comp.c:4832
 #, fuzzy
@@ -1134,27 +1117,24 @@ msgstr ""
 #: src/modules/notification/e_mod_main.c:264
 #: src/modules/notification/e_mod_main.c:265
 msgid "delay"
-msgstr ""
+msgstr "καθυστέρηση"
 
 #: src/bin/e_comp.c:4839
-#, fuzzy, c-format
+#, c-format
 msgid "%1.2f seconds"
-msgstr "%.2f δευτερόλεπτα"
+msgstr "%1.2f δευτερόλεπτα"
 
 #: src/bin/e_comp.c:4845
-#, fuzzy
 msgid "Tear-free compositing (VSYNC)"
-msgstr "Εύκολες Ενημερώσεις (VSynced)"
+msgstr ""
 
 #: src/bin/e_comp.c:4848
-#, fuzzy
 msgid "Texture from pixmap rendering for composite"
-msgstr "Υφή από εικόνα"
+msgstr ""
 
 #: src/bin/e_comp.c:4855
-#, fuzzy
 msgid "Composite swapping method"
-msgstr "Υπόθεση μεθόδου εκτεταμένης μνήμης (swap):"
+msgstr ""
 
 #: src/bin/e_comp.c:4863 src/modules/conf_comp/e_mod_config.c:253
 #: src/modules/conf_comp/e_mod_config.c:593
@@ -1170,9 +1150,8 @@ msgstr "Χωρίς απόκρυψη συστατικών"
 #: src/bin/e_comp.c:4865 src/bin/e_configure_option.c:1907
 #: src/bin/e_configure_option.c:1910 src/bin/e_configure_option.c:1913
 #: src/bin/e_configure_option.c:1916 src/bin/e_configure_option.c:1918
-#, fuzzy
 msgid "backlight"
-msgstr "Οπίσθιος Φωτισμός"
+msgstr "οπίσθιος φωτισμός"
 
 #: src/bin/e_comp.c:4867
 msgid "Send flush when compositing windows"
@@ -1191,9 +1170,9 @@ msgid "Rolling average for fps display when compositing"
 msgstr ""
 
 #: src/bin/e_comp.c:4875
-#, fuzzy, c-format
+#, c-format
 msgid "%1.0f frames"
-msgstr "%1.0f Καρέ"
+msgstr "%1.0f καρέ"
 
 #: src/bin/e_comp.c:4877
 msgid "Composite framerate display corner"
@@ -1209,9 +1188,8 @@ msgstr ""
 #: src/modules/quickaccess/e_mod_main.c:82
 #: src/modules/quickaccess/e_mod_main.c:103
 #: src/modules/tiling/e_mod_tiling.c:3929
-#, fuzzy
 msgid "windows"
-msgstr "Παράθυρα"
+msgstr "παράθυρα"
 
 #: src/bin/e_comp.c:4965
 #, fuzzy
@@ -1226,26 +1204,24 @@ msgstr ""
 "XFixes στον X11 και Ecore."
 
 #: src/bin/e_comp.c:4974
-#, fuzzy
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr ""
-"Η οθόνη σας δεν υποστηρίζει την επέκταση XDamage<br>ή το Ecore έχει φτιαχτεί "
+"Η οθόνη σας δεν υποστηρίζει την επέκταση XDamage ή το Ecore έχει φτιαχτεί "
 "χωρίς υποστήριξη για το XDamage."
 
 #: src/bin/e_comp.c:5057 src/bin/e_comp.c:5063
-#, fuzzy
 msgid "Compositor"
-msgstr "Composite εφέ"
+msgstr ""
 
 #: src/bin/e_comp.c:5058
 msgid "Change current window opacity"
-msgstr ""
+msgstr "Αλλαγή αδιαφάνειας τρέχοντος παραθύρου"
 
 #: src/bin/e_comp.c:5064
 msgid "Set current window opacity"
-msgstr ""
+msgstr "Ορισμός αδιαφάνειας τρέχοντος παραθύρου"
 
 #: src/bin/e_config.c:971
 msgid ""
@@ -1493,21 +1469,18 @@ msgstr "Επιβράδυνση"
 
 #: src/bin/e_configure_option.c:644
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:217
-#, fuzzy
 msgid "Pronounced accelerate"
-msgstr "Έντονη Επιτάχυνση"
+msgstr ""
 
 #: src/bin/e_configure_option.c:645
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:221
-#, fuzzy
 msgid "Pronounced decelerate"
-msgstr "Έντονη Επιβράδυνση"
+msgstr ""
 
 #: src/bin/e_configure_option.c:646
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:225
-#, fuzzy
 msgid "Pronounced accelerate, then decelerate"
-msgstr "Έντονη Επιτάχυνση, μετά επιβράδυνση"
+msgstr ""
 
 #: src/bin/e_configure_option.c:647
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:229
@@ -1522,22 +1495,20 @@ msgstr "Περισσότερη Αναπήδηση"
 #: src/bin/e_configure_option.c:668
 #, fuzzy
 msgid "Try not to cover other windows"
-msgstr "Εστίαση απλά με μετακίνηση του ποντικιού"
+msgstr "Προσπάθησε να μην επικαλύψεις άλλα παράθυρα"
 
 #: src/bin/e_configure_option.c:669
 #, fuzzy
 msgid "Try not to cover gadgets"
-msgstr "Προσθήκη άλλων συστατικών"
+msgstr "Προσπάθησε να μην επικαλύψεις τα συστατικά"
 
 #: src/bin/e_configure_option.c:670
-#, fuzzy
 msgid "Place at mouse pointer (automatic)"
-msgstr "Τοποθέτηση στον δείκτη ποντικιού"
+msgstr "Τοποθέτηση στον δείκτη ποντικιού (αυτόματα)"
 
 #: src/bin/e_configure_option.c:671
-#, fuzzy
 msgid "Place at mouse pointer (interactive)"
-msgstr "Τοποθέτηση στον δείκτη ποντικιού"
+msgstr "Τοποθέτηση στον δείκτη ποντικιού (διαδραστικά)"
 
 #: src/bin/e_configure_option.c:691
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:250
@@ -1556,35 +1527,29 @@ msgid "Sloppy"
 msgstr "Άτσαλο"
 
 #: src/bin/e_configure_option.c:713
-#, fuzzy
 msgid "Don't set focus on new windows"
-msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυρα σε πλήρη οθόνη"
+msgstr ""
 
 #: src/bin/e_configure_option.c:714
-#, fuzzy
 msgid "Set focus on all new windows"
-msgstr "Συσχετισμός ενός μόνο παραθύρου"
+msgstr "Εστίαση σε όλα τα νέα παράθυρα"
 
 #: src/bin/e_configure_option.c:715
 msgid "Set focus only on all new dialog windows"
 msgstr ""
 
 #: src/bin/e_configure_option.c:716
-#, fuzzy
 msgid ""
 "Set focus only on new dialog windows if dialog's parent window has focus"
 msgstr ""
-"Γίνεται εστίαση μόνο στα νέα παράθυρα διαλόγων αν το γονικό τους έχει εστίαση"
 
 #: src/bin/e_configure_option.c:736
-#, fuzzy
 msgid "Ignore application"
-msgstr "Εφαρμογές IBar"
+msgstr "Αγνόηση εφαρμογής"
 
 #: src/bin/e_configure_option.c:737
-#, fuzzy
 msgid "Animate application window"
-msgstr "Αγαπημένες Εφαρμογές"
+msgstr ""
 
 #: src/bin/e_configure_option.c:738
 #, fuzzy
@@ -1616,19 +1581,16 @@ msgid "Expand to maximum size ignoring shelves"
 msgstr ""
 
 #: src/bin/e_configure_option.c:803
-#, fuzzy
 msgid "No hinting"
-msgstr "Υπόδειξη"
+msgstr ""
 
 #: src/bin/e_configure_option.c:804
-#, fuzzy
 msgid "Automatic hinting"
-msgstr "Αυτόματο κλείδωμα"
+msgstr ""
 
 #: src/bin/e_configure_option.c:805
-#, fuzzy
 msgid "Bytecode hinting"
-msgstr "Bytecode"
+msgstr ""
 
 #: src/bin/e_configure_option.c:828
 #: src/modules/conf_display/e_int_config_desklock.c:259
@@ -1636,53 +1598,45 @@ msgid "Show on all screens"
 msgstr "Εμφάνιση σε όλες τις οθόνες"
 
 #: src/bin/e_configure_option.c:829
-#, fuzzy
 msgid "Show on screen of pointer"
-msgstr "Εμφάνιση στην οθόνη #:"
+msgstr ""
 
 #: src/bin/e_configure_option.c:830
-#, fuzzy, c-format
+#, c-format
 msgid "Show on screen %d"
-msgstr "Εμφάνιση στην οθόνη #:"
+msgstr "Εμφάνιση στην οθόνη %d"
 
 #: src/bin/e_configure_option.c:867
-#, fuzzy
 msgid "No grouping"
-msgstr "Ομαδοποίηση"
+msgstr "Χωρίς ομαδοποίηση"
 
 #: src/bin/e_configure_option.c:868
-#, fuzzy
 msgid "Virtual desktop"
-msgstr "Εικονική Επιφάνεια Εργασίας"
+msgstr "Εικονική επιφάνεια εργασίας"
 
 #: src/bin/e_configure_option.c:869 src/bin/e_int_border_remember.c:686
 msgid "Window class"
 msgstr "Κλάση παραθύρου"
 
 #: src/bin/e_configure_option.c:889
-#, fuzzy
 msgid "No separation"
-msgstr "Χωρίς Επιλογή"
+msgstr "Χωρίς διαχωρισμό"
 
 #: src/bin/e_configure_option.c:890
-#, fuzzy
 msgid "Separator bars"
-msgstr "Χρησιμοποιώντας μπάρες διαχωρισμού"
+msgstr "Μπάρες διαχωρισμού"
 
 #: src/bin/e_configure_option.c:891
-#, fuzzy
 msgid "Separate menus"
-msgstr "Διαχωρισμός ομάδας"
+msgstr "Ξεχωριστά μενού"
 
 #: src/bin/e_configure_option.c:911
-#, fuzzy
 msgid "No sorting"
-msgstr "Καμία Ταξινόμηση"
+msgstr "Χωρίς ταξινόμηση"
 
 #: src/bin/e_configure_option.c:912
-#, fuzzy
 msgid "Alphabetical order"
-msgstr "Αλφαβητικά"
+msgstr "Αλφαβητική ταξινόμηση"
 
 #: src/bin/e_configure_option.c:913
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:148
@@ -1691,17 +1645,15 @@ msgstr "Στρώμα στοίβαξης παραθύρων"
 
 #: src/bin/e_configure_option.c:914
 msgid "Recently used windows first"
-msgstr ""
+msgstr "Πρόσφατα χρησιμοποιημένα παράθυρα πρώτα"
 
 #: src/bin/e_configure_option.c:934
-#, fuzzy
 msgid "Group by owner virtual desktop"
-msgstr "Ομάδα με τον ιδιοκτήτη της επιφάνειας εργασίας"
+msgstr ""
 
 #: src/bin/e_configure_option.c:935
-#, fuzzy
 msgid "Group by current virtual desktop"
-msgstr "Ομάδα με την τρέχουσα επιφάνεια εργασίας"
+msgstr ""
 
 #: src/bin/e_configure_option.c:936
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:165
@@ -1710,24 +1662,19 @@ msgstr "Διαχωρισμός ομάδας"
 
 #: src/bin/e_configure_option.c:957
 msgid "none"
-msgstr ""
+msgstr "κανένα"
 
 #: src/bin/e_configure_option.c:984
-#, fuzzy
 msgid "Allow windows partly out of the screen limits"
 msgstr ""
-"Να επιτρέπεται στα παράθυρα να είναι μερικώς έξω από τα οπτικά όρια οθόνης"
 
 #: src/bin/e_configure_option.c:985
-#, fuzzy
 msgid "Allow windows completely out of the screen limits"
 msgstr ""
-"Να επιτρέπεται στα παράθυρα να είναι πλήρως έξω από τα οπτικά όρια οθόνης"
 
 #: src/bin/e_configure_option.c:986
-#, fuzzy
 msgid "Keep windows completely within the screen limits"
-msgstr "Διατήρηση παραθύρων στα οπτικά όρια της οθόνης"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1074 src/bin/e_int_border_prop.c:298
 #: src/modules/clock/e_mod_config.c:103 src/modules/clock/e_mod_config.c:141
@@ -1744,27 +1691,23 @@ msgid "None"
 msgstr "Κανένα"
 
 #: src/bin/e_configure_option.c:1461
-#, fuzzy
 msgid "Show splash screen on startup"
-msgstr "Εμφάνιση Αρχικής Οθόνης στη Σύνδεση"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1461 src/bin/e_configure_option.c:1462
 #: src/bin/e_configure_option.c:2009
-#, fuzzy
 msgid "splash"
-msgstr "Οθόνης Εκκίνησης"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1461 src/bin/e_configure_option.c:1462
 #: src/bin/e_configure_option.c:1466
 #: src/modules/conf_applications/e_mod_main.c:92
-#, fuzzy
 msgid "startup"
-msgstr "Εκκίνηση"
+msgstr "εκκίνηση"
 
 #: src/bin/e_configure_option.c:1462
-#, fuzzy
 msgid "Startup splash theme"
-msgstr "Εφαρμογές κατά την Εκκίνηση"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1466
 msgid "Startup transition effect"
@@ -1772,13 +1715,12 @@ msgstr ""
 
 #: src/bin/e_configure_option.c:1466 src/bin/e_configure_option.c:1470
 #: src/bin/e_configure_option.c:1474 src/bin/e_configure_option.c:2012
-#, fuzzy
 msgid "transition"
-msgstr "Μεταβάσεις"
+msgstr "μετάβαση"
 
 #: src/bin/e_configure_option.c:1470
 msgid "Desk change transition effect"
-msgstr ""
+msgstr "Εφέ εναλλαγής επιφάνειας εργασίας"
 
 #: src/bin/e_configure_option.c:1470 src/bin/e_configure_option.c:1535
 #: src/bin/e_configure_option.c:1537 src/bin/e_configure_option.c:1565
@@ -1789,9 +1731,8 @@ msgstr ""
 #: src/bin/e_configure_option.c:1824 src/bin/e_configure_option.c:1825
 #: src/bin/e_configure_option.c:1826 src/bin/e_configure_option.c:1828
 #: src/bin/e_configure_option.c:2024
-#, fuzzy
 msgid "vdesk"
-msgstr "Επιφάνεια εργασίας"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1474
 msgid "Wallpaper change transition effect"
@@ -1800,58 +1741,50 @@ msgstr ""
 #: src/bin/e_configure_option.c:1474 src/bin/e_configure_option.c:1479
 #: src/bin/e_configure_option.c:1748 src/bin/e_configure_option.c:2008
 #: src/modules/conf_theme/e_mod_main.c:179
-#, fuzzy
 msgid "wallpaper"
-msgstr "Ταπετσαρία"
+msgstr "ταπετσαρία"
 
 #: src/bin/e_configure_option.c:1479
-#, fuzzy
 msgid "Default desktop wallpaper"
-msgstr "Ταπετσαρία Επιφάνειας Εργασίας"
+msgstr "Προεπιλεγμένη ταπετσαρία επιφάνειας εργασίας"
 
 #: src/bin/e_configure_option.c:1483
-#, fuzzy
 msgid "Default desktop name"
-msgstr "Όνομα Επιφάνειας Εργασίας"
+msgstr "Προεπιλεγμένο όνομα επιφάνειας εργασίας"
 
 #: src/bin/e_configure_option.c:1483 src/bin/e_configure_option.c:1535
 #: src/bin/e_configure_option.c:1537 src/bin/e_configure_option.c:1599
 #: src/bin/e_configure_option.c:1854 src/bin/e_configure_option.c:1858
 #: src/bin/e_configure_option.c:2025 src/modules/conf_shelves/e_mod_main.c:38
-#, fuzzy
 msgid "desktop"
-msgstr "Επιφάνεια εργασίας"
+msgstr "επιφάνεια εργασίας"
 
 #: src/bin/e_configure_option.c:1483 src/bin/e_configure_option.c:1947
-#, fuzzy
 msgid "name"
-msgstr "Μετονομασία"
+msgstr "όνομα"
 
 #: src/bin/e_configure_option.c:1484
 msgid "Used in Pager displays"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1488
-#, fuzzy
 msgid "Menu scroll speed"
-msgstr "Ταχύτητα Κύλισης Μενού"
+msgstr "Ταχύτητα κύλισης μενού"
 
 #: src/bin/e_configure_option.c:1488 src/bin/e_configure_option.c:1497
 #: src/bin/e_configure_option.c:1500 src/bin/e_configure_option.c:1846
 #: src/bin/e_configure_option.c:1847 src/bin/e_configure_option.c:1849
 #: src/bin/e_configure_option.c:1851
-#, fuzzy
 msgid "scroll"
-msgstr "Αυτόματη κύλιση"
+msgstr "κύλιση"
 
 #: src/bin/e_configure_option.c:1488 src/bin/e_configure_option.c:1491
 #: src/bin/e_configure_option.c:1508 src/bin/e_configure_option.c:1512
 #: src/bin/e_configure_option.c:1587 src/bin/e_configure_option.c:1613
 #: src/bin/e_configure_option.c:1820 src/bin/e_configure_option.c:1847
 #: src/bin/e_configure_option.c:1849 src/bin/e_configure_option.c:1913
-#, fuzzy
 msgid "speed"
-msgstr "Ταχύτητα παραμόρφωσης"
+msgstr "ταχύτητα"
 
 #: src/bin/e_configure_option.c:1489
 #: src/modules/conf_menus/e_int_config_menus.c:306
@@ -1866,15 +1799,14 @@ msgstr ""
 #: src/bin/e_configure_option.c:1491
 #, fuzzy
 msgid "Menu fast move threshold"
-msgstr "Όριο Γρήγορης Μετακίνησης Ποντικιού"
+msgstr "Κατώτατο όριο γρήγορης μετακίνησης του μενού"
 
 #: src/bin/e_configure_option.c:1491 src/bin/e_configure_option.c:1589
 #: src/bin/e_configure_option.c:1672 src/bin/e_configure_option.c:1674
 #: src/bin/e_configure_option.c:1683 src/bin/e_configure_option.c:1872
 #: src/bin/e_configure_option.c:1874 src/bin/e_configure_option.c:2038
-#, fuzzy
 msgid "move"
-msgstr "Αφαίρεση"
+msgstr "μετακίνηση"
 
 #: src/bin/e_configure_option.c:1492 src/bin/e_configure_option.c:1509
 #: src/modules/conf_menus/e_int_config_menus.c:311
@@ -1944,9 +1876,8 @@ msgstr ""
 #: src/bin/e_configure_option.c:2045 src/modules/conf_bindings/e_mod_main.c:53
 #: src/modules/conf_bindings/e_mod_main.c:63
 #: src/modules/teamwork/e_mod_main.c:176
-#, fuzzy
 msgid "mouse"
-msgstr "Ποντίκι"
+msgstr "ποντίκι"
 
 #: src/bin/e_configure_option.c:1500 src/bin/e_configure_option.c:1585
 #: src/bin/e_configure_option.c:1586 src/bin/e_configure_option.c:1587
@@ -1955,9 +1886,8 @@ msgstr "Ποντίκι"
 #: src/bin/e_configure_option.c:1803 src/bin/e_configure_option.c:1805
 #: src/bin/e_configure_option.c:1808 src/bin/e_configure_option.c:1810
 #: src/bin/e_configure_option.c:2046 src/bin/e_configure_option.c:2065
-#, fuzzy
 msgid "pointer"
-msgstr "Δείκτης"
+msgstr "δείκτης"
 
 #: src/bin/e_configure_option.c:1502
 msgid ""
@@ -1966,24 +1896,21 @@ msgid ""
 msgstr ""
 
 #: src/bin/e_configure_option.c:1504
-#, fuzzy
 msgid "Enable window shading animation"
-msgstr "Επέτρεψε μεταχείρηση του παραθύρου"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1504 src/bin/e_configure_option.c:1505
 #: src/bin/e_configure_option.c:1508
-#, fuzzy
 msgid "shade"
-msgstr "Σκίαση"
+msgstr "σκίαση"
 
 #: src/bin/e_configure_option.c:1505
 msgid "Window shade animation type"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1508
-#, fuzzy
 msgid "Window shade animation speed"
-msgstr "Ταχύτητα κίνησης"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1512
 #: src/modules/conf_performance/e_int_config_performance.c:107
@@ -1991,18 +1918,17 @@ msgid "Framerate"
 msgstr "Ρυθμός Καρέ"
 
 #: src/bin/e_configure_option.c:1513
-#, fuzzy, c-format
+#, c-format
 msgid "%1.0f frames/second"
-msgstr "%1.0f Καρέ"
+msgstr "%1.0f καρέ/δευτερόλεπτο"
 
 #: src/bin/e_configure_option.c:1514
 msgid "The framerate at which animations in Enlightenment occur"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1516
-#, fuzzy
 msgid "Application exec priority"
-msgstr "Προτεραιότητα εφαρμογών"
+msgstr "Προτεραιότητα εκτέλεσης εφαρμογών"
 
 #: src/bin/e_configure_option.c:1516 src/bin/e_configure_option.c:1699
 #: src/bin/e_configure_option.c:1700 src/bin/e_configure_option.c:2017
@@ -2015,9 +1941,8 @@ msgstr "Προτεραιότητα εφαρμογών"
 #: src/modules/conf_applications/e_mod_main.c:89
 #: src/modules/conf_applications/e_mod_main.c:92
 #: src/modules/conf_applications/e_mod_main.c:95
-#, fuzzy
 msgid "application"
-msgstr "Εφαρμογή"
+msgstr "εφαρμογή"
 
 #: src/bin/e_configure_option.c:1516 src/bin/e_configure_option.c:1704
 #: src/bin/e_configure_option.c:1733 src/bin/e_configure_option.c:1735
@@ -2032,14 +1957,13 @@ msgstr "Εφαρμογή"
 #: src/modules/conf_applications/e_mod_main.c:92
 #: src/modules/conf_applications/e_mod_main.c:95
 #: src/modules/everything/e_mod_main.c:70
-#, fuzzy
 msgid "exec"
 msgstr "εκτέλεση"
 
 #: src/bin/e_configure_option.c:1516 src/bin/e_configure_option.c:1842
 #: src/bin/e_configure_option.c:2053
 msgid "priority"
-msgstr ""
+msgstr "προτεραιότητα"
 
 #: src/bin/e_configure_option.c:1517
 #: src/modules/conf_display/e_int_config_desklock.c:275
@@ -2071,9 +1995,8 @@ msgstr "Μέγεθος λανθάνουσας μνήμης εικόνων"
 #: src/bin/e_configure_option.c:1531 src/bin/e_configure_option.c:2052
 #: src/modules/teamwork/e_mod_main.c:166 src/modules/teamwork/e_mod_main.c:168
 #: src/modules/teamwork/e_mod_main.c:171
-#, fuzzy
 msgid "cache"
-msgstr "Λανθάνουσα μνήμη"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1519 src/bin/e_configure_option.c:1691
 #: src/bin/e_configure_option.c:1708 src/bin/e_configure_option.c:1842
@@ -2082,9 +2005,8 @@ msgstr "Λανθάνουσα μνήμη"
 #: src/bin/e_configure_option.c:1955 src/bin/e_configure_option.c:1961
 #: src/bin/e_configure_option.c:2063 src/modules/fileman/e_mod_main.c:393
 #: src/modules/fileman/e_mod_main.c:438 src/modules/fileman/e_mod_main.c:448
-#, fuzzy
 msgid "image"
-msgstr "Εικόνες"
+msgstr "εικόνα"
 
 #: src/bin/e_configure_option.c:1519 src/bin/e_configure_option.c:1522
 #: src/bin/e_configure_option.c:1525 src/bin/e_configure_option.c:1528
@@ -2095,14 +2017,13 @@ msgstr "Εικόνες"
 #: src/bin/e_configure_option.c:1896 src/bin/e_configure_option.c:1898
 #: src/bin/e_configure_option.c:1900 src/modules/conf_randr/e_mod_main.c:31
 #: src/modules/fileman/e_mod_main.c:416 src/modules/fileman/e_mod_main.c:438
-#, fuzzy
 msgid "size"
-msgstr "Αλλαγή μεγέθους"
+msgstr "μέγεθος"
 
 #: src/bin/e_configure_option.c:1520
-#, fuzzy, c-format
+#, c-format
 msgid "%4.0f KiB"
-msgstr "%'.0f KiB"
+msgstr "%4.0f KiB"
 
 #: src/bin/e_configure_option.c:1522
 #: src/modules/conf_performance/e_int_config_performance.c:132
@@ -2112,22 +2033,21 @@ msgstr "Μέγεθος λανθάνουσας μνήμης γραμματοσε�
 #: src/bin/e_configure_option.c:1522 src/bin/e_configure_option.c:1725
 #: src/bin/e_configure_option.c:2010 src/modules/conf_theme/e_mod_main.c:187
 msgid "font"
-msgstr ""
+msgstr "γραμματοσειρά "
 
 #: src/bin/e_configure_option.c:1523
-#, fuzzy, c-format
+#, c-format
 msgid "%3.0f KiB"
-msgstr "%'.0f KiB"
+msgstr "%3.0f KiB"
 
 #: src/bin/e_configure_option.c:1525
-#, fuzzy
 msgid "Edje cache size"
-msgstr "Μέγεθος λανθάνουσας μνήμης εικόνων"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1525 src/bin/e_configure_option.c:1528
 #: src/modules/conf_bindings/e_mod_main.c:63
 msgid "edje"
-msgstr ""
+msgstr "edje"
 
 #: src/bin/e_configure_option.c:1526
 #: src/modules/conf_performance/e_int_config_performance.c:150
@@ -2136,9 +2056,8 @@ msgid "%1.0f files"
 msgstr "%1.0f αρχεία"
 
 #: src/bin/e_configure_option.c:1528
-#, fuzzy
 msgid "Edje collection cache size"
-msgstr "Αριθμός συλλογών Edje για δημιουργία λανθάνουσας μνήμης"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1529
 #: src/modules/conf_performance/e_int_config_performance.c:156
@@ -2147,9 +2066,8 @@ msgid "%1.0f collections"
 msgstr "%1.0f συλλογές"
 
 #: src/bin/e_configure_option.c:1531
-#, fuzzy
 msgid "Cache flushing interval"
-msgstr "Διάστημα καθαρισμού λανθάνουσας μνήμης"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1532 src/modules/battery/e_mod_config.c:237
 #: src/modules/conf_performance/e_int_config_performance.c:128
@@ -2165,9 +2083,8 @@ msgid "Horizontal virtual desktop count"
 msgstr "Οριζόντια στοίχιση"
 
 #: src/bin/e_configure_option.c:1537
-#, fuzzy
 msgid "Vertical virtual desktop count"
-msgstr "Ορισμός Εικονικών Επιφανειών Εργασίας"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1539
 msgid "Edge flip while dragging"
@@ -2177,7 +2094,7 @@ msgstr ""
 #: src/bin/e_configure_option.c:1825 src/bin/e_configure_option.c:1826
 #: src/modules/conf_bindings/e_mod_main.c:60
 msgid "edge"
-msgstr ""
+msgstr "άκρη"
 
 #: src/bin/e_configure_option.c:1539 src/bin/e_configure_option.c:1824
 #: src/bin/e_configure_option.c:1825 src/bin/e_configure_option.c:1826
@@ -2191,14 +2108,12 @@ msgstr ""
 #: src/modules/conf_bindings/e_mod_main.c:56
 #: src/modules/conf_bindings/e_mod_main.c:60
 #: src/modules/conf_bindings/e_mod_main.c:63
-#, fuzzy
 msgid "binding"
-msgstr "Προσθήκη συνδυασμού"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1540
-#, fuzzy
 msgid "Enable edge binding functionality while dragging objects to screen edge"
-msgstr "Εναλλαγή όταν μετακινείται αντικείμενο στην άκρη της οθόνης"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1541
 #: src/modules/conf_performance/e_int_config_engine.c:87
@@ -2207,20 +2122,18 @@ msgid "Use shaped windows instead of ARGB"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1543
-#, fuzzy
 msgid "Module settings"
-msgstr "Ρυθμίσεις Αρθρωμάτων"
+msgstr "Ρυθμίσεις αρθρώματος"
 
 #: src/bin/e_configure_option.c:1543 src/bin/e_configure_option.c:1546
 #: src/bin/e_configure_option.c:2058
-#, fuzzy
 msgid "module"
-msgstr "Αρθρώματα"
+msgstr "άρθρωμα"
 
 #: src/bin/e_configure_option.c:1546
 #, fuzzy
 msgid "Disable module delay"
-msgstr "Να επιτρέπεται η καθυστέρηση φόρτωσης αρθρώματος"
+msgstr "Απενεργοποίηση καθυστέρησης αρθρώματος"
 
 #: src/bin/e_configure_option.c:1547
 msgid ""
@@ -2229,9 +2142,8 @@ msgid ""
 msgstr ""
 
 #: src/bin/e_configure_option.c:1560
-#, fuzzy
 msgid "Window placement policy"
-msgstr "Αυτόματη Τοποθέτηση νέου παραθύρου"
+msgstr "Πολιτική τοποθέτησης παραθύρου"
 
 #: src/bin/e_configure_option.c:1560 src/bin/e_configure_option.c:1564
 #: src/bin/e_configure_option.c:1565 src/bin/e_configure_option.c:1602
@@ -2250,9 +2162,8 @@ msgstr "Αυτόματη Τοποθέτηση νέου παραθύρου"
 #: src/bin/e_configure_option.c:1874 src/bin/e_configure_option.c:1876
 #: src/bin/e_configure_option.c:1878 src/bin/e_configure_option.c:2032
 #: src/modules/tiling/e_mod_tiling.c:3921
-#, fuzzy
 msgid "placement"
-msgstr "Τοποθέτηση"
+msgstr "τοποθέτηση"
 
 #: src/bin/e_configure_option.c:1563
 msgid "Determines where and how new windows are placed when created"
@@ -2266,12 +2177,11 @@ msgstr "Ομαδοποίηση με τα παράθυρα της ίδιας εφ
 #: src/bin/e_configure_option.c:1565
 #, fuzzy
 msgid "Switch to desk of new window"
-msgstr "Εναλλαγή στην επιφάνεια εργασίας με το νέο παράθυρο"
+msgstr "Εναλλαγή στην επιφάνεια εργασίας του νέου παράθυρου"
 
 #: src/bin/e_configure_option.c:1567
-#, fuzzy
 msgid "Window focus policy"
-msgstr "Εστίαση Παραθύρου"
+msgstr "Πολιτική εστίασης παραθύρου"
 
 #: src/bin/e_configure_option.c:1567 src/bin/e_configure_option.c:1570
 #: src/bin/e_configure_option.c:1573 src/bin/e_configure_option.c:1575
@@ -2284,9 +2194,8 @@ msgstr "Εστίαση Παραθύρου"
 #: src/bin/e_configure_option.c:1610 src/bin/e_configure_option.c:1623
 #: src/bin/e_configure_option.c:1624 src/bin/e_configure_option.c:1651
 #: src/bin/e_configure_option.c:2030 src/modules/quickaccess/e_mod_main.c:75
-#, fuzzy
 msgid "focus"
-msgstr "Εστίαση"
+msgstr "εστίαση"
 
 #: src/bin/e_configure_option.c:1570
 #, fuzzy
@@ -2300,9 +2209,8 @@ msgstr "Κλικ για εστίαση παραθύρων"
 
 #: src/bin/e_configure_option.c:1573 src/bin/e_configure_option.c:1578
 #: src/bin/e_configure_option.c:1579 src/bin/e_configure_option.c:1856
-#, fuzzy
 msgid "click"
-msgstr "Κλικ"
+msgstr "κλικ"
 
 #: src/bin/e_configure_option.c:1574
 msgid ""
@@ -2317,30 +2225,27 @@ msgstr ""
 #: src/bin/e_configure_option.c:1578
 #, fuzzy
 msgid "Always raise window when clicked"
-msgstr "Εστίασε στο παράθυρο προορισμού όταν κάνω κλικ"
+msgstr "Ανύψωσε πάντα το παράθυρο κάνοντας κλικ"
 
 #: src/bin/e_configure_option.c:1578 src/bin/e_configure_option.c:1580
 #: src/bin/e_configure_option.c:1581 src/bin/e_configure_option.c:1589
 #: src/bin/e_configure_option.c:1620 src/bin/e_configure_option.c:1624
 #: src/bin/e_configure_option.c:1685 src/bin/e_configure_option.c:1686
-#, fuzzy
 msgid "raise"
-msgstr "Ανύψωση"
+msgstr "ανύψωση"
 
 #: src/bin/e_configure_option.c:1579
 #, fuzzy
 msgid "Always focus window when clicked"
-msgstr "Εστίασε στο παράθυρο προορισμού όταν κάνω κλικ"
+msgstr "Εστίασε το παράθυρο κάνοντας κλικ"
 
 #: src/bin/e_configure_option.c:1580
-#, fuzzy
 msgid "Enable window autoraise"
-msgstr "Ενεργοποίηση θέματος εικονιδίων"
+msgstr "Ενεργοποίηση αυτόματης ανύψωσης παραθύρου"
 
 #: src/bin/e_configure_option.c:1581
-#, fuzzy
 msgid "Window autoraise delay"
-msgstr "Προβολή Παραθύρου"
+msgstr "Καθυστέρηση αυτόματης ανύψωσης παραθύρου"
 
 #: src/bin/e_configure_option.c:1582 src/bin/e_configure_option.c:1914
 #: src/modules/pager/e_mod_config.c:249 src/modules/pager/e_mod_config.c:286
@@ -2353,13 +2258,11 @@ msgstr "%1.1f δευτερόλεπτα"
 #: src/bin/e_configure_option.c:1583
 #, fuzzy
 msgid "Revert window focus on desk switch"
-msgstr ""
-"Εστίαση ξανά στο τελευταίο παράθυρο κατά την εναλλαγή επιφάνεια εργασίας"
+msgstr "Επαναφορά εστίασης στο τελευταίο εστιασμένο παράθυρο"
 
 #: src/bin/e_configure_option.c:1584
-#, fuzzy
 msgid "Revert window focus on window hide or close"
-msgstr "Επαναφορά επικεντρωθεί όταν χάνεται"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1585
 #, fuzzy
@@ -2394,61 +2297,52 @@ msgid "%1.2f"
 msgstr "%1.2f"
 
 #: src/bin/e_configure_option.c:1589
-#, fuzzy
 msgid "Windows raise on mouse move/resize"
-msgstr "Ανύψωση παραθύρων κατά την διέλευση του ποντικιού"
+msgstr "Ανύψωση παραθύρων κατά την μετακίνηση/αλλαγή μεγέθους"
 
 #: src/bin/e_configure_option.c:1589 src/bin/e_configure_option.c:1605
 #: src/bin/e_configure_option.c:1673 src/bin/e_configure_option.c:1675
 #: src/bin/e_configure_option.c:1684 src/bin/e_configure_option.c:1876
 #: src/bin/e_configure_option.c:1878 src/bin/e_configure_option.c:2039
-#, fuzzy
 msgid "resize"
-msgstr "Αλλαγή μεγέθους"
+msgstr "αλλαγή μεγέθους"
 
 #: src/bin/e_configure_option.c:1591
-#, fuzzy
 msgid "Shelf gadget resistance"
-msgstr "Απόσταση Σκιάς"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1591 src/bin/e_configure_option.c:1599
 #: src/bin/e_configure_option.c:1702 src/bin/e_configure_option.c:1866
-#, fuzzy
 msgid "gadget"
-msgstr "Συστατικά"
+msgstr "συστατικό"
 
 #: src/bin/e_configure_option.c:1591 src/bin/e_configure_option.c:1594
 #: src/bin/e_configure_option.c:1595 src/bin/e_configure_option.c:1597
 #: src/bin/e_configure_option.c:1599 src/bin/e_configure_option.c:1851
 #: src/bin/e_configure_option.c:2033
-#, fuzzy
 msgid "resist"
-msgstr "Βοηθός"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1591 src/bin/e_configure_option.c:1649
 #: src/bin/e_configure_option.c:2026 src/modules/conf_shelves/e_mod_main.c:38
-#, fuzzy
 msgid "shelf"
-msgstr "Ράφι"
+msgstr "ράφι"
 
 #: src/bin/e_configure_option.c:1594
-#, fuzzy
 msgid "Enable resistance when dragging windows"
-msgstr "Αντίσταση μεταξύ παραθύρων:"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1595
 msgid "Window resistance against screen edges"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1597
-#, fuzzy
 msgid "Window resistance against other windows"
-msgstr "Αντίσταση μεταξύ παραθύρων:"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1599
-#, fuzzy
 msgid "Window resistance against desktop gadgets"
-msgstr "Αντίσταση στα συστατικά επιφάνειας εργασίας"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1602
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:263
@@ -2490,9 +2384,8 @@ msgstr ""
 #: src/bin/e_configure_option.c:1631 src/bin/e_configure_option.c:1633
 #: src/bin/e_configure_option.c:1635 src/bin/e_configure_option.c:1637
 #: src/bin/e_configure_option.c:1639 src/bin/e_configure_option.c:2031
-#, fuzzy
 msgid "winlist"
-msgstr "Αντικείμενο Winlist"
+msgstr "winlist"
 
 #: src/bin/e_configure_option.c:1609
 msgid "Winlist moves pointer to currently selected window after winlist closes"
@@ -2516,7 +2409,7 @@ msgstr "Ενεργοποίηση θέματος εικονιδίων για εφ
 #: src/bin/e_configure_option.c:1613
 #, fuzzy
 msgid "Winlist scroll speed"
-msgstr "Ταχύτητα κύλισης"
+msgstr "Ταχύτητα κύλισης Winlist"
 
 #: src/bin/e_configure_option.c:1615
 #, fuzzy
@@ -2527,9 +2420,8 @@ msgstr "Εμφάνιση εικονιδιοποιημένων παραθύρων
 #: src/bin/e_configure_option.c:1617 src/bin/e_configure_option.c:1689
 #: src/bin/e_configure_option.c:1795 src/bin/e_configure_option.c:2035
 #: src/bin/e_configure_option.c:2066
-#, fuzzy
 msgid "minimize"
-msgstr "Ελάχιστο Μέγεθος"
+msgstr "ελαχιστοποίηση"
 
 #: src/bin/e_configure_option.c:1616
 #, fuzzy
@@ -2556,9 +2448,8 @@ msgid "Winlist uniconifies and unshades windows while selecting"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1621
-#, fuzzy
 msgid "Winlist moves window to current screen+desk after selection"
-msgstr "Παραμόρφωση ποντικού κατά την επιλογή"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1622
 #, fuzzy
@@ -2566,60 +2457,57 @@ msgid "Winlist switches desks while selecting"
 msgstr "Παραμόρφωση ποντικού κατά την επιλογή"
 
 #: src/bin/e_configure_option.c:1623
-#, fuzzy
 msgid "Winlist focuses windows while selecting"
-msgstr "Παραμόρφωση ποντικού κατά την επιλογή"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1624
-#, fuzzy
 msgid "Winlist raises windows while selecting"
-msgstr "Παραμόρφωση ποντικού κατά την επιλογή"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1625
 #, fuzzy
 msgid "Winlist horizontal alignment"
-msgstr "Οριζόντια στοίχιση"
+msgstr "Οριζόντια ευθυγράμμιση Winlist"
 
 #: src/bin/e_configure_option.c:1627
 #, fuzzy
 msgid "Winlist vertical alignment"
-msgstr "Κάθετη στοίχιση"
+msgstr "Κάθετη ευθυγράμμιση Winlist"
 
 #: src/bin/e_configure_option.c:1629
-#, fuzzy
 msgid "Winlist width"
-msgstr "Τίτλος Winlist"
+msgstr "Πλάτος Winlist"
 
 #: src/bin/e_configure_option.c:1631
 #, fuzzy
 msgid "Winlist height"
-msgstr "Τίτλος Winlist"
+msgstr "Ύψος Winlist"
 
 #: src/bin/e_configure_option.c:1633
 #, fuzzy
 msgid "Winlist minimum width"
-msgstr "Ελάχιστο πλάτος"
+msgstr "Ελάχιστο πλάτος Winlist"
 
 #: src/bin/e_configure_option.c:1634 src/bin/e_configure_option.c:1636
 #: src/bin/e_configure_option.c:1638 src/bin/e_configure_option.c:1640
-#, fuzzy, c-format
+#, c-format
 msgid "%4.0f pixels"
-msgstr "%1.0f pixel"
+msgstr "%4.0f pixel"
 
 #: src/bin/e_configure_option.c:1635
 #, fuzzy
 msgid "Winlist minimum height"
-msgstr "Ελάχιστο ύψος"
+msgstr "Ελάχιστο ύψος Winlist"
 
 #: src/bin/e_configure_option.c:1637
 #, fuzzy
 msgid "Winlist maximum width"
-msgstr "Μέγιστο πλάτος"
+msgstr "Μέγιστο πλάτος Winlist"
 
 #: src/bin/e_configure_option.c:1639
 #, fuzzy
 msgid "Winlist maximum height"
-msgstr "Μέγιστο ύψος"
+msgstr "Μέγιστο ύψος Winlist"
 
 #: src/bin/e_configure_option.c:1642
 #, fuzzy
@@ -2628,24 +2516,20 @@ msgstr "Εναλλαγή σε λειτουργία πλήρους οθόνης"
 
 #: src/bin/e_configure_option.c:1642 src/bin/e_configure_option.c:1651
 #: src/bin/e_configure_option.c:1825
-#, fuzzy
 msgid "fullscreen"
-msgstr "Πλήρης οθόνη"
+msgstr "πλήρης οθόνη"
 
 #: src/bin/e_configure_option.c:1645
-#, fuzzy
 msgid "Window maximize policy"
-msgstr "Πολιτική μεγιστοποίησης"
+msgstr "Πολιτική μεγιστοποίησης παραθύρου"
 
 #: src/bin/e_configure_option.c:1645 src/bin/e_configure_option.c:1648
-#, fuzzy
 msgid "maximize"
-msgstr "Αναίρεση Μεγιστοποίησης"
+msgstr "μεγιστοποίηση"
 
 #: src/bin/e_configure_option.c:1648
-#, fuzzy
 msgid "Allow moving of maximized windows"
-msgstr "Να επιτρέπεται χειρισμός των μεγιστοποιημένων παραθύρων"
+msgstr "Επέτρεψε τη μετακίνηση των μεγιστοποιημένων παραθύρων"
 
 #: src/bin/e_configure_option.c:1649
 #, fuzzy
@@ -2661,7 +2545,8 @@ msgstr ""
 #: src/bin/e_configure_option.c:1651
 #, fuzzy
 msgid "Allow windows above fullscreen windows"
-msgstr "Να επιτρέπονται παράθυρα πάνω από το παράθυρο που είναι σε πλήρη οθόνη"
+msgstr ""
+"Επέτρεψε την ύπαρξη παραθύρων πάνω από το παράθυρο που είναι σε πλήρη οθόνη"
 
 #: src/bin/e_configure_option.c:1653
 #, fuzzy
@@ -2671,7 +2556,7 @@ msgstr "Διεργασία βίαιου τερματισμού αντί για �
 #: src/bin/e_configure_option.c:1653 src/bin/e_configure_option.c:1654
 #: src/bin/e_configure_option.c:1655 src/bin/e_configure_option.c:2036
 msgid "kill"
-msgstr ""
+msgstr "τερματισμός"
 
 #: src/bin/e_configure_option.c:1654
 #: src/modules/conf_window_manipulation/e_int_config_window_process.c:97
@@ -2680,9 +2565,8 @@ msgid "Kill process instead of client"
 msgstr "Διεργασία βίαιου τερματισμού αντί για πελάτη"
 
 #: src/bin/e_configure_option.c:1655
-#, fuzzy
 msgid "Window kill delay"
-msgstr "Προβολή Παραθύρου"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1656 src/bin/e_configure_option.c:1659
 #: src/bin/e_configure_option.c:1770 src/bin/e_configure_option.c:1871
@@ -2747,9 +2631,8 @@ msgstr "Απομνημόνευση παραθύρων διαχειριστή α�
 #: src/modules/fileman/e_mod_main.c:438 src/modules/fileman/e_mod_main.c:442
 #: src/modules/fileman/e_mod_main.c:448 src/modules/fileman/e_mod_main.c:452
 #: src/modules/fileman/e_mod_main.c:453
-#, fuzzy
 msgid "files"
-msgstr "Αρχεία"
+msgstr "αρχεία"
 
 #: src/bin/e_configure_option.c:1668
 msgid ""
@@ -2795,7 +2678,7 @@ msgstr ""
 #: src/bin/e_configure_option.c:1689 src/bin/e_configure_option.c:2037
 #, fuzzy
 msgid "transient"
-msgstr "Παροδικά"
+msgstr "μεταβατικό"
 
 #: src/bin/e_configure_option.c:1684
 msgid "Transient windows follow resize of their child"
@@ -2823,14 +2706,13 @@ msgstr ""
 
 #: src/bin/e_configure_option.c:1691
 #: src/modules/conf_menus/e_int_config_menus.c:302
-#, fuzzy
 msgid "Disable icons in menus"
-msgstr "Απενεργοποίηση Κίνησης"
+msgstr "Απενεργοποίηση εικονιδίων στα μενού"
 
 #: src/bin/e_configure_option.c:1692
 #, fuzzy
 msgid "Application menus shows Name field"
-msgstr "Όνομα ή αρχείο εφαρμογής (.desktop)"
+msgstr "Τα μενού εφαρμογών εμφανίζουν το πεδίο Όνομα"
 
 #: src/bin/e_configure_option.c:1693 src/bin/e_configure_option.c:1695
 #: src/bin/e_configure_option.c:1697
@@ -2846,19 +2728,18 @@ msgid "Application menus shows Comment field"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1699
-#, fuzzy
 msgid "Show Favorite Applications in the main menu"
-msgstr "Εμφάνιση αγαπημένων στο κεντρικό μενού"
+msgstr "Εμφάνιση αγαπημένων εφαρμογών στο κεντρικό μενού"
 
 #: src/bin/e_configure_option.c:1700
-#, fuzzy
 msgid "Show Applications in the main menu"
-msgstr "Εμφάνιση μενού όλων των εφαρμογών"
+msgstr "Εμφάνιση εφαρμογών στο κεντρικό μενού"
 
 #: src/bin/e_configure_option.c:1702
 #, fuzzy
 msgid "Show gadget settings in top-level gadget menu"
-msgstr "Εμφάνιση των ρυθμίσεων του συστατικών σε ανώτερο επιπέδο"
+msgstr ""
+"Εμφάνιση των ρυθμίσεων του συστατικού στο κεντρικό μενού των συστατικών"
 
 #: src/bin/e_configure_option.c:1704
 msgid "Launch commands with this command"
@@ -2869,9 +2750,8 @@ msgid "Command used to launch files and applications"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1708
-#, fuzzy
 msgid "Window borders use application icon"
-msgstr "Επιλογή Περιθωρίων Παραθύρου"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1709
 msgid ""
@@ -2885,16 +2765,14 @@ msgid "Disable confirmation dialogs"
 msgstr "Απενεργοποίηση Παραθύρων Επιβεβαίωσης"
 
 #: src/bin/e_configure_option.c:1716
-#, fuzzy
 msgid "confirm"
-msgstr "Επιβεβαίωση"
+msgstr "επιβεβαίωση"
 
 #: src/bin/e_configure_option.c:1716 src/bin/e_configure_option.c:1718
 #: src/bin/e_configure_option.c:1720 src/bin/e_configure_option.c:1722
 #: src/bin/e_configure_option.c:2056 src/modules/tiling/e_mod_tiling.c:3921
-#, fuzzy
 msgid "dialog"
-msgstr "Παράθυρο"
+msgstr "παράθυρο διαλόγου"
 
 #: src/bin/e_configure_option.c:1717
 msgid ""
@@ -2905,14 +2783,14 @@ msgstr ""
 #: src/bin/e_configure_option.c:1718
 msgid "Configuration dialogs automatically apply their changes"
 msgstr ""
+"Τα παράθυρα διαλόγου των ρυθμίσεων εφαρμόζουν τις αλλαγές τους αυτόματα"
 
 #: src/bin/e_configure_option.c:1718 src/bin/e_configure_option.c:1720
 #: src/bin/e_configure_option.c:1868 src/bin/e_configure_option.c:2056
 #: src/bin/e_configure_option.c:2057 src/bin/e_configure_option.c:2058
 #: src/bin/e_configure_option.c:2059
-#, fuzzy
 msgid "settings"
-msgstr "Ρυθμίσεις"
+msgstr "ρυθμίσεις"
 
 #: src/bin/e_configure_option.c:1719
 msgid ""
@@ -2923,16 +2801,21 @@ msgstr ""
 #: src/bin/e_configure_option.c:1720
 msgid "Configuration dialogs show advanced view by default"
 msgstr ""
+"Τα παράθυρα διαλόγου των ρυθμίσεων εμφανίζουν άμεσα τη λειτουργία για "
+"προχωρημένους"
 
 #: src/bin/e_configure_option.c:1721
 msgid ""
 "Configurations dialogs can have basic and advanced views; this option causes "
 "all configuration dialogs to show the advanced view by default"
 msgstr ""
+"Τα παράθυρα διαλόγου των ρυθμίσεων μπορούν να έχουν απλή λειτουργία και "
+"λειτουργία για προχωρημένους: αυτή η επιλογή κάνει όλα τα παράθυρα ρυθμίσεων "
+"να εμφανίζουν την λειτουργία για προχωρημένους εξ' αρχής."
 
 #: src/bin/e_configure_option.c:1722
 msgid "Configuration dialog windows are normal windows"
-msgstr ""
+msgstr "Τα παράθυρα διαλόγου των ρυθμίσεων είναι κανονικά παράθυρα"
 
 #: src/bin/e_configure_option.c:1723
 msgid ""
@@ -2945,14 +2828,13 @@ msgid "Set font hinting mode"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1725
-#, fuzzy
 msgid "hinting"
-msgstr "Υπόδειξη"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1733
 #, fuzzy
 msgid "Use custom command for desklock"
-msgstr "Χρήση προσαρμοσμένου κλειδώματος"
+msgstr "Χρήση προσαρμοσμένης εντολής για κλείδωμα"
 
 #: src/bin/e_configure_option.c:1733 src/bin/e_configure_option.c:1735
 #: src/bin/e_configure_option.c:1737 src/bin/e_configure_option.c:1740
@@ -2964,9 +2846,8 @@ msgstr "Χρήση προσαρμοσμένου κλειδώματος"
 #: src/modules/conf_applications/e_mod_main.c:83
 #: src/modules/conf_applications/e_mod_main.c:86
 #: src/modules/conf_intl/e_mod_main.c:41
-#, fuzzy
 msgid "desklock"
-msgstr "Ρύθμιση Κλειδώματος Οθόνης"
+msgstr "κλείδωμα επιφάνειας εργασίας"
 
 #: src/bin/e_configure_option.c:1734
 msgid "This option allows an external application to manage desklock"
@@ -2975,16 +2856,15 @@ msgstr ""
 #: src/bin/e_configure_option.c:1735
 #, fuzzy
 msgid "Custom desklock command"
-msgstr "Προσαρμοσμένη Εντολή Κλειδώματος"
+msgstr "Προσαρμοσμένη εντολή κλειδώματος"
 
 #: src/bin/e_configure_option.c:1737
 msgid "Desklock login box shows on which screen?"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1740
-#, fuzzy
 msgid "Desklock activates on login"
-msgstr "Χωρίς εφαρμογές"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1741
 msgid "Desklock activates on resume from suspend"
@@ -2999,26 +2879,23 @@ msgstr ""
 #: src/bin/e_configure_option.c:1760 src/bin/e_configure_option.c:1762
 #: src/bin/e_configure_option.c:1765 src/bin/e_configure_option.c:1767
 #: src/bin/e_configure_option.c:1769
-#, fuzzy
 msgid "screensaver"
-msgstr "Προφύλαξη οθόνης"
+msgstr "προφύλαξη οθόνης"
 
 #: src/bin/e_configure_option.c:1743
-#, fuzzy
 msgid "Desklock activates X seconds after screensaver activates"
-msgstr "Κλέιδωμα με την ενεργοποίηση του X Screensaver"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1744 src/bin/e_configure_option.c:1747
 #: src/bin/e_configure_option.c:1751 src/bin/e_configure_option.c:1755
 #: src/bin/e_configure_option.c:1763
-#, fuzzy, c-format
+#, c-format
 msgid "%2.0f seconds"
-msgstr "%1.0f δευτερόλεπτα"
+msgstr "%2.0f δευτερόλεπτα"
 
 #: src/bin/e_configure_option.c:1745
-#, fuzzy
 msgid "Desklock activates when idle"
-msgstr "Τίτλος Κλειδώματος Οθόνης"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1746
 msgid "Desklock activates when idle for X seconds"
@@ -3027,7 +2904,7 @@ msgstr ""
 #: src/bin/e_configure_option.c:1748
 #, fuzzy
 msgid "Use custom desklock wallpaper"
-msgstr "Χρήση προσαρμοσμένου κλειδώματος"
+msgstr "Χρήση προσαρμοσμένης ταπετσαρίας στην οθόνη κλειδώματος"
 
 #: src/bin/e_configure_option.c:1749
 msgid "Prompt for desklock timer delay if deactivated quickly"
@@ -3038,13 +2915,14 @@ msgid "Desklock quick deactivation timer delay"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1753
-#, fuzzy
 msgid "Enable screensaver"
-msgstr "Ενεργοποίηση μαυρίσματος οθόνης"
+msgstr "Ενεργοποίηση screensaver"
 
 #: src/bin/e_configure_option.c:1754
 msgid "Screensaver activates when idle for X seconds"
 msgstr ""
+"Η προφύλαξη οθόνης ενεργοποιείται όταν το σύστημα είναι αδρανές για Χ "
+"δευτερόλεπτα"
 
 #: src/bin/e_configure_option.c:1760
 msgid "Prompt for screensaver timer delay if deactivated quickly"
@@ -3055,39 +2933,35 @@ msgid "Screensaver quick deactivation timer delay"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1765
-#, fuzzy
 msgid "Suspend when screensaver activates"
-msgstr "Χρόνος μέχρι την ενεργοποίηση της προφύλαξης οθόνης"
+msgstr "Αναστολή λειτουργίας του Η/Υ όταν ενεργοποιείται η προφύλαξη οθόνης"
 
 #: src/bin/e_configure_option.c:1767
 #, fuzzy
 msgid "Suspend when screensaver activates even if on AC"
-msgstr "Χρόνος μέχρι την ενεργοποίηση της προφύλαξης οθόνης"
+msgstr ""
+"Αναστολή λειτουργίας του Η/Υ όταν ενεργοποιείται η προφύλαξη οθόνης, ακόμη "
+"και όταν υπάρχει παροχή ρεύματος"
 
 #: src/bin/e_configure_option.c:1769
-#, fuzzy
 msgid "Screensaver suspend delay"
-msgstr "Καθυστέρηση αναστολής"
+msgstr "Καθυστέρηση αναστολής της προφύλαξης οθόνης"
 
 #: src/bin/e_configure_option.c:1785
-#, fuzzy
 msgid "Window list menu grouping policy"
-msgstr "Ρυθμίσεις Μενού Λίστας Παραθύρων"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1788
-#, fuzzy
 msgid "Window list menu includes windows from all screens"
-msgstr "Εμφάνιση παραθύρων από όλες τις οθόνες"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1789
-#, fuzzy
 msgid "Window list menu separator policy"
-msgstr "Ρυθμίσεις Μενού Λίστας Παραθύρων"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1792
-#, fuzzy
 msgid "Window list menu sort policy"
-msgstr "Ρυθμίσεις Μενού Λίστας Παραθύρων"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1795
 msgid "Window list menu iconified window grouping policy"
@@ -3106,19 +2980,17 @@ msgid "Window list menu length limit (characters)"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1801
-#, fuzzy, c-format
+#, c-format
 msgid "%1.0f characters"
-msgstr "%1.0f Χαρακτήρες"
+msgstr "%1.0f χαρακτήρες"
 
 #: src/bin/e_configure_option.c:1803
-#, fuzzy
 msgid "Use Enlightenment theme cursor"
-msgstr "Χρήση δείκτη Enlightenment"
+msgstr "Χρήση του δείκτη από το θέμα του Enlightenment"
 
 #: src/bin/e_configure_option.c:1805
-#, fuzzy
 msgid "Mouse cursor size"
-msgstr "Δείκτης ποντικιού"
+msgstr "Μέγεθος δείκτη ποντικιού"
 
 #: src/bin/e_configure_option.c:1806 src/bin/e_configure_option.c:1848
 #: src/bin/e_configure_option.c:1873 src/bin/e_configure_option.c:1875
@@ -3133,49 +3005,41 @@ msgid "%1.0f pixels"
 msgstr "%1.0f pixel"
 
 #: src/bin/e_configure_option.c:1808
-#, fuzzy
 msgid "Show mouse cursor"
-msgstr "Εμφάνιση δείκτη"
+msgstr "Εμφάνιση δείκτη ποντικιού"
 
 #: src/bin/e_configure_option.c:1810
-#, fuzzy
 msgid "Enable idle effects for mouse cursor"
-msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυρα σε πλήρη οθόνη"
+msgstr "Ενεργοποίηση εφέ του δείκτη ποντικιού όταν είναι σε αδράνεια"
 
 #: src/bin/e_configure_option.c:1812
-#, fuzzy
 msgid "Enable left-handed mouse"
-msgstr "Ενεργοποίηση αρθρώματος με όνομα"
+msgstr "Ενεργοποίηση ποντικιού για αριστερόχειρες"
 
 #: src/bin/e_configure_option.c:1820
-#, fuzzy
 msgid "Mouse acceleration threshold"
-msgstr "Επιτάχυνση ποντικιού"
+msgstr "Επιτάχυνση δείκτη ποντικιού"
 
 #: src/bin/e_configure_option.c:1824
 msgid "Enable desk flip between last and first desks"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1825
-#, fuzzy
 msgid "Enable desk flipping with fullscreen windows"
-msgstr "Να επιτρέπεται ενεργοποίηση συνδυασμών σε παράθυρα σε πλήρη οθόνη"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1826
-#, fuzzy
 msgid "Enable desk flipping with multiple monitors (DANGEROUS)"
 msgstr ""
-"Να επιτρέπεται ενεργοποίηση συνδυασμών με πολλαπλές οθόνες (ΕΠΙΚΙΝΔΥΝΟ!)"
 
 #: src/bin/e_configure_option.c:1828
-#, fuzzy
 msgid "Desk flip animation type"
-msgstr "Περιστροφή Κίνησης"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1833
 #, fuzzy
 msgid "Default window border style"
-msgstr "Προκαθορισμένο Στυλ Περιγράμματος"
+msgstr "Προκαθορισμένο στυλ περιγράμματος παραθύρου"
 
 #: src/bin/e_configure_option.c:1838
 msgid "Window screen limit policy"
@@ -3196,28 +3060,25 @@ msgid "Enable click-to-drag scrolling (thumbscrolling)"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1847
-#, fuzzy
 msgid "Thumbscroll threshold"
-msgstr "Thumbscroll"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1849
 msgid "Thumbscroll momentum threshold"
-msgstr ""
+msgstr "Κατώτατο όριο ορμής του Thumbscroll"
 
 #: src/bin/e_configure_option.c:1850
-#, fuzzy, c-format
+#, c-format
 msgid "%1.0f pixels/second"
-msgstr "%1.0f pixel/δευ"
+msgstr "%1.0f pixel/δευτερόλεπτο"
 
 #: src/bin/e_configure_option.c:1851
-#, fuzzy
 msgid "Thumbscroll resistance"
-msgstr "Thumbscroll"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1854
-#, fuzzy
 msgid "Show files on desktop"
-msgstr "Εμφάνιση εικονιδίων συσκευών στην επιφάνεια εργασίας"
+msgstr "Εμφάνιση αρχείων στην επιφάνεια εργασίας"
 
 #: src/bin/e_configure_option.c:1856
 msgid "Filemanager uses single click to activate"
@@ -3242,7 +3103,7 @@ msgstr ""
 #: src/bin/e_configure_option.c:1864
 #, fuzzy
 msgid "Filemanager deletes files securely"
-msgstr "Ο διαχειριστής αρχείων είναι σε αδράνεια"
+msgstr "Ο διαχειριστής αρχείων διαγράφει αρχεία με ασφάλεια"
 
 #: src/bin/e_configure_option.c:1866
 msgid "Only show label on keyboard gadgets instead of flags"
@@ -3256,17 +3117,15 @@ msgstr ""
 #: src/modules/fileman/e_mod_main.c:430 src/modules/tiling/e_mod_tiling.c:3925
 #: src/modules/xkbswitch/e_mod_main.c:83
 msgid "key"
-msgstr ""
+msgstr "πλήκτρο"
 
 #: src/bin/e_configure_option.c:1868
-#, fuzzy
 msgid "Do not apply any keyboard layout settings"
-msgstr "Ρυθμίσεις Πληκτρολογίου"
+msgstr "Μην εφαρμόσεις αλλαγές στις ρυθμίσεις της γλώσσας πληκτρολογίου"
 
 #: src/bin/e_configure_option.c:1870
-#, fuzzy
 msgid "Window change timeout when moving or resizing using keyboard"
-msgstr "Εμφάνιση πληροφοριών γεωμετρίας κατά την μετακίνηση"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1872
 msgid "Window horizontal movement speed when using keyboard"
@@ -3281,21 +3140,19 @@ msgid "Window horizontal resize speed when using keyboard"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1885
-#, fuzzy
 msgid "Overall scaling factor"
-msgstr "Προσωπικός παράγοντας κλιμάκωσης"
+msgstr "Συνολικός παράγοντας αλλαγής μεγέθους"
 
 #: src/bin/e_configure_option.c:1885 src/bin/e_configure_option.c:1888
 #: src/bin/e_configure_option.c:1890 src/bin/e_configure_option.c:1892
 #: src/bin/e_configure_option.c:2013
-#, fuzzy
 msgid "scale"
-msgstr "Εντοπιότητα"
+msgstr "αλλαγή μεγέθους"
 
 #: src/bin/e_configure_option.c:1886
-#, fuzzy, c-format
+#, c-format
 msgid "%1.2f pixels"
-msgstr "%1.0f pixel"
+msgstr "%1.2f pixel"
 
 #: src/bin/e_configure_option.c:1888
 msgid "Use screen DPI for scaling"
@@ -3322,9 +3179,8 @@ msgstr ""
 #: src/bin/e_configure_option.c:1896 src/bin/e_configure_option.c:1898
 #: src/bin/e_configure_option.c:1900 src/bin/e_configure_option.c:1902
 #: src/bin/e_configure_option.c:1904
-#, fuzzy
 msgid "syscon"
-msgstr "Syscon"
+msgstr "syscon"
 
 #: src/bin/e_configure_option.c:1898
 msgid "System Console secondary action icon size"
@@ -3352,38 +3208,32 @@ msgstr "Προεπιλεγμένη ενέργεια μετά την λήξη χ�
 #: src/modules/conf_bindings/e_mod_main.c:60
 #: src/modules/conf_bindings/e_mod_main.c:63
 #: src/modules/conf_intl/e_mod_main.c:45 src/modules/xkbswitch/e_mod_main.c:83
-#, fuzzy
 msgid "input"
-msgstr "Είσοδος"
+msgstr "είσοδος"
 
 #: src/bin/e_configure_option.c:1907
 msgid "Backlight \"normal\" brightness"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1910
-#, fuzzy
 msgid "Backlight \"dim\" brightness"
-msgstr "Ελάχιστος οπίσθιος φωτισμός"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1913
-#, fuzzy
 msgid "Backlight transition length"
-msgstr "Ρυθμίσεις Οπίσθιου Φωτισμού"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1916
-#, fuzzy
 msgid "Backlight dims after idle"
-msgstr "Προσαρμογή οπίσθιου φωτισμού"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1918
-#, fuzzy
 msgid "Backlight idle delay"
-msgstr "Μέσος οπίσθιος φωτισμός"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1938
-#, fuzzy
 msgid "Load ~/.Xresources on startup"
-msgstr "Φόρτωση Πηγών X"
+msgstr "Φόρτωση του ~/.Xresources κατά την εκκίνηση"
 
 #: src/bin/e_configure_option.c:1938 src/bin/e_configure_option.c:1939
 #: src/bin/e_configure_option.c:1940 src/bin/e_configure_option.c:1941
@@ -3392,13 +3242,12 @@ msgstr "Φόρτωση Πηγών X"
 #: src/bin/e_configure_option.c:1955 src/bin/e_configure_option.c:1961
 #: src/modules/conf_paths/e_mod_main.c:35
 #: src/modules/conf_paths/e_mod_main.c:38
-#, fuzzy
 msgid "environment"
-msgstr "Επιφάνειες Εργασίας"
+msgstr "περιβάλλον"
 
 #: src/bin/e_configure_option.c:1939
 msgid "Load ~/.Xmodmap"
-msgstr ""
+msgstr "Φόρτωσε το ~/.Xmodmap"
 
 #: src/bin/e_configure_option.c:1940
 msgid "Run gnome-settings-daemon"
@@ -3409,17 +3258,15 @@ msgid "Run kdeinit"
 msgstr ""
 
 #: src/bin/e_configure_option.c:1943
-#, fuzzy
 msgid "Enable GTK application settings"
-msgstr "Ρυθμίσεις Θέματος Εφαρμογών"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1943 src/bin/e_configure_option.c:1945
 #: src/bin/e_configure_option.c:1947 src/bin/e_configure_option.c:1953
 #: src/bin/e_configure_option.c:1955 src/bin/e_configure_option.c:1961
 #: src/bin/e_configure_option.c:2014 src/bin/e_configure_option.c:2019
-#, fuzzy
 msgid "xsettings"
-msgstr "Ρυθμίσεις"
+msgstr "xsettings"
 
 #: src/bin/e_configure_option.c:1945
 msgid "Try setting GTK theme to match E18 theme"
@@ -3427,93 +3274,78 @@ msgstr ""
 
 #: src/bin/e_configure_option.c:1947
 msgid "GTK theme name"
-msgstr ""
+msgstr "Όνομα θέματος GTK"
 
 #: src/bin/e_configure_option.c:1953
-#, fuzzy
 msgid "Enable use of icon theme for applications"
-msgstr "Ενεργοποίηση θέματος εικονιδίων για εφαρμογές"
+msgstr "Ενεργοποίηση της χρήσης του θέματος εικονιδίων για εφαρμογές"
 
 #: src/bin/e_configure_option.c:1955
-#, fuzzy
 msgid "Icon theme"
-msgstr "Θέματα εικονιδίων"
+msgstr "Θέμα εικονιδίων"
 
 #: src/bin/e_configure_option.c:1961
-#, fuzzy
 msgid "Icon theme overrides E18 internal theme icons"
-msgstr "Εικόνες παρακάμψετε γενικό θέμα"
+msgstr ""
 
 #: src/bin/e_configure_option.c:1964
-#, fuzzy
 msgid "Always launch applications as single-instance"
-msgstr "Εκκίνηση μόνο απλών στιγμιοτύπων"
+msgstr ""
 
 #: src/bin/e_configure_option.c:2008 src/bin/e_configure_option.c:2009
 #: src/bin/e_configure_option.c:2010 src/bin/e_configure_option.c:2011
 #: src/bin/e_configure_option.c:2012 src/bin/e_configure_option.c:2013
 #: src/bin/e_configure_option.c:2014 src/bin/e_configure_option.c:2015
-#, fuzzy
 msgid "appearance"
-msgstr "Εμφάνιση"
+msgstr "εμφάνιση"
 
 #: src/bin/e_configure_option.c:2017 src/bin/e_configure_option.c:2018
 #: src/bin/e_configure_option.c:2019 src/bin/e_configure_option.c:2020
 #: src/modules/teamwork/e_mod_main.c:161 src/modules/teamwork/e_mod_main.c:184
 #: src/modules/teamwork/e_mod_main.c:205
-#, fuzzy
 msgid "applications"
-msgstr "Εφαρμογή"
+msgstr "εφαρμογές"
 
 #: src/bin/e_configure_option.c:2042 src/bin/e_configure_option.c:2043
-#, fuzzy
 msgid "menus"
-msgstr "Μενού"
+msgstr "μενού"
 
 #: src/bin/e_configure_option.c:2051 src/bin/e_configure_option.c:2052
 #: src/bin/e_configure_option.c:2053 src/bin/e_configure_option.c:2054
-#, fuzzy
 msgid "advanced"
-msgstr "Για προχωρημένους"
+msgstr "για προχωρημένους"
 
 #: src/bin/e_configure_option.c:2051
-#, fuzzy
 msgid "framerate"
-msgstr "Ρυθμός Καρέ"
+msgstr "ρυθμός καρέ"
 
 #: src/bin/e_configure_option.c:2057 src/modules/conf_dialogs/e_mod_main.c:28
-#, fuzzy
 msgid "profile"
-msgstr "Προφίλ"
+msgstr "προφίλ"
 
 #: src/bin/e_configure_option.c:2061
-#, fuzzy
 msgid "window"
-msgstr "Παράθυρα"
+msgstr "παράθυρο"
 
 #: src/bin/e_configure_option.c:2062
-#, fuzzy
 msgid "launch"
-msgstr "Εκτέλεση"
+msgstr "εκκίνηση"
 
 #: src/bin/e_configure_option.c:2063
 msgid "icon"
-msgstr ""
+msgstr "εικονίδιο"
 
 #: src/bin/e_configure_option.c:2064
-#, fuzzy
 msgid "style"
-msgstr "Στυλ"
+msgstr "στυλ"
 
 #: src/bin/e_configure_option.c:2065
-#, fuzzy
 msgid "cursor"
-msgstr "Δείκτης"
+msgstr "δείκτης"
 
 #: src/bin/e_configure_option.c:2066
-#, fuzzy
 msgid "iconify"
-msgstr "Εικονιδιοποίηση"
+msgstr "εικονιδιοποίηση"
 
 #: src/bin/e_container.c:84
 #, c-format
@@ -3528,12 +3360,12 @@ msgstr "Σφάλμα - δεν υπάρχει υποστήριξη PAM"
 msgid ""
 "No PAM support was built into Enlightenment, so<br>desk locking is disabled."
 msgstr ""
-"Δεν έχει υλοποιηθεί υποστήριξη PAM στο Enlightenment, έτσι<br>το κλείδωμα "
-"της επιφάνειας εργασίας είναι απενεργοποιημένο."
+"Δεν έχει υλοποιηθεί υποστήριξη PAM στο Enlightenment, το<br> κλείδωμα της "
+"επιφάνειας εργασίας είναι απενεργοποιημένο."
 
 #: src/bin/e_desklock.c:302
 msgid "Lock Failed"
-msgstr "Το Κλείδωμα απέτυχε"
+msgstr "Το κλείδωμα απέτυχε"
 
 #: src/bin/e_desklock.c:303
 msgid ""
@@ -3937,9 +3769,8 @@ msgid "The recent DND operation requested for '%s' has failed."
 msgstr "Απέτυχε η πρόσφατη λειτουργία DND που αιτήθηκε για '%s'."
 
 #: src/bin/e_fm.c:6750
-#, fuzzy
 msgid "A link to the requested URL already exists!"
-msgstr "Υπάρχει ήδη ένα ράφι με αυτό το όνομα!"
+msgstr "Ένας σύνδεσμος στο ζητούμενο URL υπάρχει ήδη!"
 
 #: src/bin/e_fm.c:8801 src/modules/fileman/e_mod_config.c:360
 msgid "Case Sensitive"
@@ -4500,9 +4331,8 @@ msgid "Fill"
 msgstr "Γέμισμα"
 
 #: src/bin/e_import_config_dialog.c:507
-#, fuzzy
 msgid "Pan"
-msgstr "Μετακίνηση προβολής"
+msgstr "Μετατόπιση"
 
 #: src/bin/e_import_config_dialog.c:515
 msgid "File Quality"
@@ -4938,18 +4768,16 @@ msgid "Transient For"
 msgstr "Παροδικό Για"
 
 #: src/bin/e_int_border_prop.c:466
-#, fuzzy
 msgid "Client Leader"
-msgstr "Ηγέτης πελάτη"
+msgstr ""
 
 #: src/bin/e_int_border_prop.c:467
 msgid "Gravity"
 msgstr "Βαρύτητα"
 
 #: src/bin/e_int_border_prop.c:469
-#, fuzzy
 msgid "States"
-msgstr "Κατάσταση"
+msgstr "Καταστάσεις"
 
 #: src/bin/e_int_border_prop.c:472
 msgid "Take Focus"
@@ -5124,7 +4952,7 @@ msgstr "Παράκαμψη Λίστας Παραθύρων (%w)"
 
 #: src/bin/e_int_border_remember.c:787 src/modules/teamwork/e_mod_config.c:114
 msgid "Opacity"
-msgstr ""
+msgstr "Αδιαφάνεια"
 
 #: src/bin/e_int_border_remember.c:790
 msgid "Application file or name (.desktop)"
@@ -5305,9 +5133,9 @@ msgstr "Παράθυρο χωρίς τίτλο"
 
 #: src/bin/e_int_menus.c:1797 src/bin/e_shelf.c:1503
 #: src/modules/conf_shelves/e_int_config_shelf.c:193
-#, fuzzy, c-format
+#, c-format
 msgid "Shelf %s"
-msgstr "Ράφι #"
+msgstr "Ράφι %s"
 
 #: src/bin/e_int_menus.c:1865
 msgid "Add a Shelf"
@@ -5764,14 +5592,12 @@ msgstr ""
 "Αδυναμία ρύθμισης συστήματος ελέγχου συστατικών από το Enlightenment.\n"
 
 #: src/bin/e_main.c:869
-#, fuzzy
 msgid "Setup Toolbars"
-msgstr "Ορισμός Περιεχομένων Μπάρας Εργαλείων"
+msgstr ""
 
 #: src/bin/e_main.c:873
-#, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
-msgstr "Αδυναμία ρύθμισης εσωτερικού συστήματος από το Enlightenment.\n"
+msgstr ""
 
 #: src/bin/e_main.c:880
 msgid "Setup Wallpaper"
@@ -5982,9 +5808,8 @@ msgstr ""
 "συστήματος καθορίζει την γραμματοσειρά 'Sans'.\n"
 
 #: src/bin/e_main.c:1623
-#, fuzzy
 msgid "Enlightenment cannot setup compositing.\n"
-msgstr "Αδυναμία ρύθμισης απομνημόνευσης ρυθμίσεων από το Enlightenment.\n"
+msgstr ""
 
 #: src/bin/e_main.c:1638
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
@@ -6083,14 +5908,14 @@ msgid "Module does not contain all needed functions"
 msgstr "Το άρθρωμα δεν περιέχει όλες τις απαραίτητες λειτουργίες"
 
 #: src/bin/e_module.c:357
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Module API Error<br>Error initializing Module: %s<br>It requires a module "
 "API version of: %i.<br>The module API advertized by Enlightenment is: %i.<br>"
 msgstr ""
-"Σφάλμα API αρθρώματος<br>Σφάλμα κατά την αρχικοποίηση του αρθρώματος: "
-"%s<br>Απαιτεί ελάχιστη έκδοση API αρθρώματος: %i.<br>Το API του αρθρώματος "
-"που υπάρχει στο Enlightenment είναι: %i.<br>"
+"Σφάλμα API Αρθρώματος<br>Σφάλμα αρχικοποίησης αρθρώματος: %s<br>Απαιτείται "
+"ελάχιστη έκδοση API: %i.<br>Το API του αρθρώματος που υπάρχει στο "
+"Enlightenment είναι: %i.<br>"
 
 #: src/bin/e_module.c:362
 #, c-format
@@ -6203,9 +6028,9 @@ msgid "Right-bottom Corner"
 msgstr "Δεξιά-κάτω Γωνία"
 
 #: src/bin/e_shelf.c:256 src/bin/e_shelf.c:996
-#, fuzzy, c-format
+#, c-format
 msgid "Shelf #%d"
-msgstr "Ράφι #"
+msgstr "Ράφι #%d"
 
 #: src/bin/e_shelf.c:840
 msgid "Shelf Autohide Error"
@@ -6278,9 +6103,9 @@ msgid "Refresh"
 msgstr "Ανανέωση"
 
 #: src/bin/e_startup.c:66
-#, fuzzy, c-format
+#, c-format
 msgid "Starting %s"
-msgstr "Εκκινείται"
+msgstr "Εκκίνηση %s"
 
 #: src/bin/e_sys.c:436
 msgid "Checking System Permissions"
@@ -6427,9 +6252,8 @@ msgid "Select Theme"
 msgstr "Επιλογή Θέματος"
 
 #: src/bin/e_toolbar.c:128
-#, fuzzy
 msgid "EFM Toolbar"
-msgstr "Γραμμής εργαλείων"
+msgstr "Εργαλειοθήκη EFM"
 
 #: src/bin/e_toolbar.c:343
 msgid "Stop Moving/Resizing Items"
@@ -6445,16 +6269,15 @@ msgstr "Ορισμός Περιεχομένων Μπάρας Εργαλείων"
 
 #: src/bin/e_update.c:78
 msgid "Bother me later"
-msgstr ""
+msgstr "Ενόχλησε με αργότερα"
 
 #: src/bin/e_update.c:80
 msgid "Never tell me"
 msgstr ""
 
 #: src/bin/e_update.c:83
-#, fuzzy
 msgid "Update Notice"
-msgstr "Ενημερώσεις"
+msgstr "Ειδοποίηση ενημερώσεων"
 
 #: src/bin/e_update.c:87
 #, c-format
@@ -6642,53 +6465,53 @@ msgid "Never"
 msgstr "Ποτέ"
 
 #: src/bin/e_utils.c:1286
-#, fuzzy, c-format
+#, c-format
 msgid "A second"
 msgid_plural "%li Seconds"
-msgstr[0] "%.1f δευτερόλεπτα"
-msgstr[1] "%.1f δευτερόλεπτα"
+msgstr[0] "Ένα δευτερόλεπτο"
+msgstr[1] "%li δευτερόλεπτα"
 
 #: src/bin/e_utils.c:1290
-#, fuzzy, c-format
+#, c-format
 msgid "One year"
 msgid_plural "%li Years"
 msgstr[0] "Ένας χρόνος"
-msgstr[1] "Ένας χρόνος"
+msgstr[1] "%li χρόνια"
 
 #: src/bin/e_utils.c:1295
-#, fuzzy, c-format
+#, c-format
 msgid "One month"
 msgid_plural "%li Months"
 msgstr[0] "Ένας μήνας"
-msgstr[1] "Ένας μήνας"
+msgstr[1] "%li μήνες"
 
 #: src/bin/e_utils.c:1300
-#, fuzzy, c-format
+#, c-format
 msgid "One week"
 msgid_plural "%li Weeks"
 msgstr[0] "Μια εβδομάδα"
-msgstr[1] "Μια εβδομάδα"
+msgstr[1] "%li εβδομάδες"
 
 #: src/bin/e_utils.c:1305
-#, fuzzy, c-format
+#, c-format
 msgid "One day"
 msgid_plural "%li Days"
 msgstr[0] "Μια ημέρα"
-msgstr[1] "Μια ημέρα"
+msgstr[1] "%li ημέρες"
 
 #: src/bin/e_utils.c:1310
-#, fuzzy, c-format
+#, c-format
 msgid "An hour"
 msgid_plural "%li Hours"
 msgstr[0] "Μια ώρα"
-msgstr[1] "Μια ώρα"
+msgstr[1] "%li ώρες"
 
 #: src/bin/e_utils.c:1315
-#, fuzzy, c-format
+#, c-format
 msgid "A minute"
 msgid_plural "%li Minutes"
 msgstr[0] "Ένα λεπτό"
-msgstr[1] "Ένα λεπτό"
+msgstr[1] "%li λεπτά"
 
 #: src/bin/e_widget_config_list.c:80
 #: src/modules/conf_applications/e_int_config_apps.c:306
@@ -6773,7 +6596,7 @@ msgstr "Δικαιώματα:"
 
 #: src/bin/e_widget_filepreview.c:447
 msgid "Modified:"
-msgstr "Τροποποίηση:"
+msgstr "Τροποποιημένο:"
 
 #: src/bin/e_widget_filepreview.c:603 src/bin/e_widget_filepreview.c:794
 #: src/bin/e_widget_filepreview.c:803 src/bin/e_widget_filepreview.c:812
@@ -6802,7 +6625,7 @@ msgstr "Προστατευμένο"
 #: src/bin/e_widget_filepreview.c:801 src/bin/e_widget_filepreview.c:810
 #, c-format
 msgid "Forbidden"
-msgstr "Απαγορεύεται"
+msgstr "Απαγορευμένο"
 
 #: src/bin/e_widget_fsel.c:334
 msgid "Add to Favorites"
@@ -6821,9 +6644,8 @@ msgid "Access Settings"
 msgstr "Ρυθμίσεις Πρόσβασης"
 
 #: src/modules/appmenu/e_mod_main.c:88
-#, fuzzy
 msgid "Application Menu"
-msgstr "Εφαρμογή"
+msgstr "Μενού εφαρμογών"
 
 #: src/modules/backlight/e_mod_main.c:378
 #: src/modules/conf_display/e_mod_main.c:36
@@ -6962,9 +6784,8 @@ msgid "Battery Meter"
 msgstr "Μετρητής Μπαταρίας"
 
 #: src/modules/bluez4/agent.c:116
-#, fuzzy
 msgid "Reject"
-msgstr "Εξαγωγή"
+msgstr "Απόρριψη"
 
 #: src/modules/bluez4/agent.c:133
 msgid "Pin Code Requested"
@@ -6978,41 +6799,40 @@ msgstr ""
 
 #: src/modules/bluez4/agent.c:145
 msgid "Passkey Requested"
-msgstr ""
+msgstr "Ζητήθηκε κωδικός πρόσβασης"
 
 #: src/modules/bluez4/agent.c:146
 msgid "Enter the Passkey above. It should be a numeric value between 0-999999."
 msgstr ""
+"Εισάγετε τον παραπάνω κωδικό πρόσβασης. Πρέπει να είναι μια αριθμητική τιμή "
+"μεταξύ 0 και 999999."
 
 #: src/modules/bluez4/agent.c:163
 #, c-format
 msgid "%d keys were typed on %s. Passkey is %06d"
-msgstr ""
+msgstr "%d κωδικοί εισήχθησαν στο %s. Ο κωδικός πρόσβασης είναι %06d"
 
 #: src/modules/bluez4/agent.c:165
-#, fuzzy
 msgid "Display Passkey"
-msgstr "Εμφάνιση Κλάσης"
+msgstr "Εμφάνιση κωδικού πρόσβασης"
 
 #: src/modules/bluez4/agent.c:178
 #, c-format
 msgid "Pincode for %s is %s"
-msgstr ""
+msgstr "Ο κωδικός pin για το %s είναι %s"
 
 #: src/modules/bluez4/agent.c:179
-#, fuzzy
 msgid "Display Pincode"
-msgstr "Εμφάνιση Τίτλου"
+msgstr "Εμφάνιση κωδικού pin"
 
 #: src/modules/bluez4/agent.c:193
 #, c-format
 msgid "%06d is the passkey presented in %s?"
-msgstr ""
+msgstr "%06d είναι ο κωδικός πρόσβασης που παρουσιάζεται στο %s?"
 
 #: src/modules/bluez4/agent.c:196
-#, fuzzy
 msgid "Confirm Request"
-msgstr "Επιβεβαίωση διαγραφής"
+msgstr "Επιβεβαίωση Αιτήματος"
 
 #: src/modules/bluez4/agent.c:196 src/modules/shot/e_mod_main.c:567
 msgid "Confirm"
@@ -7021,106 +6841,94 @@ msgstr "Επιβεβαίωση"
 #: src/modules/bluez4/agent.c:209
 #, c-format
 msgid "Grant permission for %s to connect?"
-msgstr ""
+msgstr "Παραχώρηση άδειας σύνδεσης στο %s?"
 
 #: src/modules/bluez4/agent.c:212
-#, fuzzy
 msgid "Authorize Connection"
-msgstr "Χωρίς σύνδεση"
+msgstr "Εξουσιοδότηση σύνδεσης"
 
 #: src/modules/bluez4/agent.c:212
 msgid "Grant"
-msgstr ""
+msgstr "Παραχώρησε"
 
 #: src/modules/bluez4/e_mod_main.c:91 src/modules/bluez4/ebluez4.c:221
 #: src/modules/bluez4/ebluez4.c:440 src/modules/bluez4/ebluez4.c:462
 #: src/modules/bluez4/ebluez4.c:603 src/modules/bluez4/ebluez4.c:621
 #: src/modules/bluez4/ebluez4.c:681 src/modules/bluez4/ebluez4.c:697
-#, fuzzy
 msgid "Bluez Error"
-msgstr "Σφάλμα Eκτέλεσης"
+msgstr "Σφάλμα Bluez"
 
 #: src/modules/bluez4/e_mod_main.c:119
-#, fuzzy
 msgid "Searching for Devices..."
-msgstr "Συγκεκριμένη συσκευή"
+msgstr "Αναζήτηση για συσκευές..."
 
 #: src/modules/bluez4/e_mod_main.c:190 src/modules/bluez4/e_mod_main.c:461
 #, fuzzy
 msgid "Adapter Settings"
-msgstr "Άλλες Ρυθμίσεις"
+msgstr "Ρυθμίσεις προσαρμογέα"
 
 #: src/modules/bluez4/e_mod_main.c:202
-#, fuzzy
 msgid "Powered"
-msgstr "Βύθιση"
+msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:217
-#, fuzzy
 msgid "Pairable"
-msgstr "Διαθέσιμο"
+msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:264
 #, fuzzy
 msgid "Adapters Available"
-msgstr "Διαθέσιμο"
+msgstr "Διαθέσιμοι προσαρμογείς"
 
 #: src/modules/bluez4/e_mod_main.c:374
 #, fuzzy
 msgid "Paired Devices"
-msgstr "Αφαιρούμενη Συσκευή"
+msgstr "Συζευγμένες συσκευές"
 
 #: src/modules/bluez4/e_mod_main.c:398
-#, fuzzy
 msgid "Disconnect"
-msgstr "αποσύνδεση"
+msgstr "Αποσύνδεση"
 
 #: src/modules/bluez4/e_mod_main.c:404
-#, fuzzy
 msgid "Connect"
-msgstr "συνδεδεμένο"
+msgstr "Σύνδεση"
 
 #: src/modules/bluez4/e_mod_main.c:408
 msgid "Forget"
 msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:417
-#, fuzzy
 msgid "Lock on disconnect"
-msgstr "αποσύνδεση"
+msgstr "Κλείδωμα κατά την αποσύνδεση"
 
 #: src/modules/bluez4/e_mod_main.c:425
-#, fuzzy
 msgid "Unlock on disconnect"
-msgstr "αποσύνδεση"
+msgstr "Ξεκλείδωμα κατά την αποσύνδεση"
 
 #: src/modules/bluez4/e_mod_main.c:447 src/modules/bluez4/e_mod_main.c:562
 msgid "Bluez4"
-msgstr ""
+msgstr "Bluez4"
 
 #: src/modules/bluez4/e_mod_main.c:457
-#, fuzzy
 msgid "Search New Devices"
-msgstr "Αναζήτηση Καταλόγων"
+msgstr "Αναζήτηση Νέων Συσκευών"
 
 #: src/modules/bluez4/e_mod_main.c:808
 msgid "An error has ocurred"
-msgstr ""
+msgstr "Συνέβη ένα σφάλμα"
 
 #: src/modules/bluez4/ebluez4.c:218 src/modules/bluez4/ebluez4.c:460
-#, c-format
+#, fuzzy, c-format
 msgid "Property of %s changed, but could not be read"
-msgstr ""
+msgstr "Η ιδιότητα του %s άλλαξε, αλλά δεν μπόρεσε να διαβαστεί"
 
 #: src/modules/bluez4/ebluez4.c:435
-#, fuzzy
 msgid "Error reading list of devices"
-msgstr "Σφάλμα φόρτωσης Αρθρώματος"
+msgstr "Σφάλμα ανάγνωσης της λίστας συσκευών"
 
 #: src/modules/bluez4/ebluez4.c:598
-#, fuzzy
 msgid "Error reading list of adapters"
-msgstr "Σφάλμα δημιουργίας καταλόγου"
+msgstr "Σφάλμα ανάγνωσης της λίστας προσαρμογέων"
 
 #: src/modules/bluez4/ebluez4.c:616
 msgid "Error reading path of Default Adapter"
@@ -7157,11 +6965,11 @@ msgstr "Δευτερόλεπτα"
 
 #: src/modules/clock/e_mod_config.c:93
 msgid "12 h"
-msgstr "12 h"
+msgstr "12ωρο"
 
 #: src/modules/clock/e_mod_config.c:95
 msgid "24 h"
-msgstr "24 h"
+msgstr "24ωρο"
 
 #: src/modules/clock/e_mod_config.c:100
 msgid "Date"
@@ -7198,12 +7006,12 @@ msgstr "Ημέρες"
 
 #: src/modules/clock/e_mod_main.c:97
 msgid "%a, %e %b, %Y"
-msgstr ""
+msgstr "%a, %e %b, %Y"
 
 #: src/modules/clock/e_mod_main.c:99
 #, c-format
 msgid "%a, %x"
-msgstr ""
+msgstr "%a, %x"
 
 #: src/modules/clock/e_mod_main.c:894
 msgid "Toggle calendar"
@@ -7241,17 +7049,16 @@ msgid "Modes"
 msgstr "Λειτουργίες"
 
 #: src/modules/conf2/e_conf2.c:1152 src/modules/conf2/e_mod_main.c:310
-#, fuzzy
 msgid "Control Panel"
-msgstr "Πίνακας Ρυθμίσεων"
+msgstr "Πίνακας Ελέγχου"
 
 #: src/modules/conf2/e_conf2.c:1191
 msgid "Search: "
-msgstr ""
+msgstr "Αναζήτηση:"
 
 #: src/modules/conf2/e_conf2.c:1269
 msgid "Discard"
-msgstr ""
+msgstr "Απέρριψε"
 
 #: src/modules/conf2/e_mod_main.c:287 src/modules/conf2/e_mod_main.c:314
 msgid "Configuration"
@@ -7353,9 +7160,8 @@ msgid "Load X Resources"
 msgstr "Φόρτωση Πηγών X"
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:115
-#, fuzzy
 msgid "Load X Modifier Map"
-msgstr "Φόρτωση Τροποποιητή Χάρτη X"
+msgstr ""
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:120
 msgid "Major Desktops"
@@ -7383,49 +7189,40 @@ msgid "IBar Other"
 msgstr "Άλλο IBar"
 
 #: src/modules/conf_applications/e_mod_main.c:71
-#, fuzzy
 msgid "Create a new application launcher"
-msgstr "Δημιουργία Εκκινητή Εφαρμογής"
+msgstr "Δημιουργία καινούργιου εκκινητή εφαρμογής"
 
 #: src/modules/conf_applications/e_mod_main.c:74
-#, fuzzy
 msgid "Application launchers"
-msgstr "Δημιουργία Εκκινητή Εφαρμογής"
+msgstr "Εκκινητές εφαρμογών"
 
 #: src/modules/conf_applications/e_mod_main.c:77
-#, fuzzy
 msgid "Favorite applications"
-msgstr "Αγαπημένες Εφαρμογές"
+msgstr "Αγαπημένες εφαρμογές"
 
 #: src/modules/conf_applications/e_mod_main.c:80
-#, fuzzy
 msgid "Ibar applications"
-msgstr "Εφαρμογές IBar"
+msgstr "Εφαρμογές Ibar"
 
 #: src/modules/conf_applications/e_mod_main.c:83
-#, fuzzy
 msgid "Desk lock applications"
-msgstr "Χωρίς εφαρμογές"
+msgstr ""
 
 #: src/modules/conf_applications/e_mod_main.c:86
-#, fuzzy
 msgid "Desk unlock applications"
-msgstr "Εφαρμογές Ξεκλειδώματος Οθόνης"
+msgstr ""
 
 #: src/modules/conf_applications/e_mod_main.c:89
-#, fuzzy
 msgid "Enlightenment restart applications"
-msgstr "Ενεργοποίηση θέματος εικονιδίων για εφαρμογές"
+msgstr ""
 
 #: src/modules/conf_applications/e_mod_main.c:92
-#, fuzzy
 msgid "Enlightenment start applications"
-msgstr "Ενεργοποίηση θέματος εικονιδίων για εφαρμογές"
+msgstr ""
 
 #: src/modules/conf_applications/e_mod_main.c:95
-#, fuzzy
 msgid "Enlightenment default applications"
-msgstr "Προκαθορισμένο του Enlightenment"
+msgstr "Προκαθορισμένες εφαρμογές του Enlightenment"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:71
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:190
@@ -7498,7 +7295,6 @@ msgid "Sleep Button"
 msgstr "Κουμπί Αναστολής"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:373
-#, fuzzy
 msgid "Thermal"
 msgstr "Θερμικό"
 
@@ -7544,24 +7340,20 @@ msgid "Mute"
 msgstr "Σίγαση"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:397
-#, fuzzy
 msgid "Volume"
-msgstr "Μετακίνηση Επάνω"
+msgstr "Ένταση"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:399
-#, fuzzy
 msgid "Brightness"
-msgstr "Ανύψωση Οπίσθιου Φωτισμού"
+msgstr "Φωτεινότητα"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:401
-#, fuzzy
 msgid "Volume Down"
-msgstr "Μετακίνηση Κάτω"
+msgstr "Μείωση Έντασης"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:403
-#, fuzzy
 msgid "Volume Up"
-msgstr "Μετακίνηση Επάνω"
+msgstr "Αύξηση Έντασης"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:405
 msgid "Tablet On"
@@ -7576,29 +7368,24 @@ msgid "Zoom"
 msgstr "Εστίαση"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:411
-#, fuzzy
 msgid "Screenlock"
-msgstr "Κλείδωμα Οθόνης"
+msgstr "Κλείδωμα οθόνης"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:413
-#, fuzzy
 msgid "Battery Button"
-msgstr "Κουμπί Ρεύματος"
+msgstr "Κουμπί μπαταρίας"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:416
-#, fuzzy
 msgid "Tablet Disabled"
-msgstr "Ανενεργό Κείμενο Ελέγχου"
+msgstr "Ταμπλέτα απενεργοποιημένη"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:417
-#, fuzzy
 msgid "Tablet Enabled"
-msgstr "Ενεργοποιημένο"
+msgstr "Ταμπλέτα ενεργοποιημένη"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:418
-#, fuzzy
 msgid "Tablet"
-msgstr "Ενεργοποίηση"
+msgstr "Ταμπλέτα"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:488
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:4
@@ -7689,9 +7476,8 @@ msgid "Clickable edge"
 msgstr "Άκρη που μπορείτε να κάνετε κλικ"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:891
-#, fuzzy
 msgid "Drag only"
-msgstr "Σύρετε το Εικονίδιο..."
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1222
 msgid "Edge Binding Error"
@@ -7768,9 +7554,9 @@ msgid "(left clickable)"
 msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1429
-#, fuzzy, c-format
+#, c-format
 msgid "(clickable)"
-msgstr "(μπορείτε να κάνετε κλικ)"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_keybindings.c:8
 msgid "Single key"
@@ -7892,14 +7678,12 @@ msgid "Extra button (%d)"
 msgstr "Πρόσθετο πλήκτρο (%d)"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1177
-#, fuzzy
 msgid "Mouse Wheel Up"
-msgstr "Μετακίνηση Ροδέλας Ποντικιού Επάνω"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1179
-#, fuzzy
 msgid "Mouse Wheel Down"
-msgstr "Μετακίνηση Ροδέλας Ποντικιού Κάτω"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1183
 #, c-format
@@ -7913,32 +7697,27 @@ msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:561
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:571
-#, fuzzy
 msgid "Signal Binding Error"
-msgstr "Συνδυασμοί Σήματος"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:561
 msgid "Signal and Source must NOT be blank!"
 msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:572
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The signal and source that you entered are already used by<br><hilight>%s</"
 "hilight> action.<br>"
 msgstr ""
-"Ο συνδυασμός της άκρης που επιλέξατε χρησιμοποιείται ήδη από την ενέργεια "
-"<br><hilight>%s</hilight>. <br>Παρακαλώ επιλέξτε άλλη άκρη να συνδυάσετε."
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:621
-#, fuzzy
 msgid "Add Signal Binding"
-msgstr "Συνδυασμοί Σήματος"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:632
-#, fuzzy
 msgid "Source:"
-msgstr "Μετακίνηση Πηγής"
+msgstr "Πηγή:"
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:637
 msgid "Signal:"
@@ -7950,9 +7729,8 @@ msgid "Signal Bindings"
 msgstr "Συνδυασμοί Σήματος"
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:829
-#, fuzzy
 msgid "Signal Bindings Settings"
-msgstr "Ρυθμίσεις Συνδυασμών Άκρων"
+msgstr ""
 
 #: src/modules/conf_bindings/e_mod_main.c:17
 #: src/modules/conf_interaction/e_mod_main.c:17
@@ -7961,42 +7739,36 @@ msgid "Input"
 msgstr "Είσοδος"
 
 #: src/modules/conf_bindings/e_mod_main.c:50
-#, fuzzy
 msgid "Key binding settings"
-msgstr "Ρυθμίσεις Συνδυασμών Πλήκτρων"
+msgstr "Ρυθμίσεις συνδυασμών πλήκτρων"
 
 #: src/modules/conf_bindings/e_mod_main.c:53
-#, fuzzy
 msgid "Mouse binding settings"
-msgstr "Ρυθμίσεις Συνδυασμών Ποντικιού"
+msgstr "Ρυθμίσεις συνδυασμών ποντικιού"
 
 #: src/modules/conf_bindings/e_mod_main.c:56
-#, fuzzy
 msgid "ACPI binding settings"
-msgstr "Ρυθμίσεις Συνδυασμών Πλήκτρων"
+msgstr "Ρυθμίσεις συνδυασμών ACPI"
 
 #: src/modules/conf_bindings/e_mod_main.c:56
 msgid "acpi"
-msgstr ""
+msgstr "acpi"
 
 #: src/modules/conf_bindings/e_mod_main.c:60
-#, fuzzy
 msgid "Screen edge binding settings"
-msgstr "Ρυθμίσεις Συνδυασμών Άκρων"
+msgstr "Ρυθμίσεις συνδυασμών άκρων της οθόνης"
 
 #: src/modules/conf_bindings/e_mod_main.c:63
-#, fuzzy
 msgid "Edje signal binding settings"
-msgstr "Ρυθμίσεις Συνδυασμών Άκρων"
+msgstr ""
 
 #: src/modules/conf_comp/e_mod_config.c:89
 msgid "Composite Settings"
 msgstr "Ρυθμίσεις Composite"
 
 #: src/modules/conf_comp/e_mod_config.c:190
-#, fuzzy
 msgid "Edit window matches"
-msgstr "Μέγιστη μάζα παραθύρου"
+msgstr ""
 
 #: src/modules/conf_comp/e_mod_config.c:193
 #: src/modules/conf_comp/e_mod_config.c:572
@@ -8008,14 +7780,12 @@ msgid "Styles"
 msgstr "Στυλ"
 
 #: src/modules/conf_comp/e_mod_config.c:207
-#, fuzzy
 msgid "Fast Effects"
-msgstr "Εφέ"
+msgstr "Γρήγορα Εφέ"
 
 #: src/modules/conf_comp/e_mod_config.c:208
-#, fuzzy
 msgid "Enable fast composite effects for windows"
-msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυρα σε πλήρη οθόνη"
+msgstr ""
 
 #: src/modules/conf_comp/e_mod_config.c:211
 msgid "Enable fast composite effects for menus"
@@ -8026,18 +7796,16 @@ msgid "Enable fast composite effects for popups"
 msgstr ""
 
 #: src/modules/conf_comp/e_mod_config.c:217
-#, fuzzy
 msgid "Enable fast composite effects for objects"
-msgstr "Να μην εφαρμόζεται εφέ composite στα  παράθυρα σε πλήρη οθόνη"
+msgstr ""
 
 #: src/modules/conf_comp/e_mod_config.c:220
 msgid "Enable fast composite effects for overrides"
 msgstr ""
 
 #: src/modules/conf_comp/e_mod_config.c:225
-#, fuzzy
 msgid "Disable Effects"
-msgstr "Εφέ αδράνειας"
+msgstr "Απενεργοποίηση εφέ"
 
 #: src/modules/conf_comp/e_mod_config.c:238
 msgid "Disable composite effects for overrides"
@@ -8080,9 +7848,8 @@ msgid "OpenGL"
 msgstr "OpenGL"
 
 #: src/modules/conf_comp/e_mod_config.c:270
-#, fuzzy
 msgid "OpenGL options:"
-msgstr "Επιλογές OpenGL"
+msgstr "Επιλογές OpenGL:"
 
 #: src/modules/conf_comp/e_mod_config.c:272
 #: src/modules/conf_comp/e_mod_config.c:587
@@ -8123,9 +7890,8 @@ msgid "Rendering"
 msgstr "Απεικόνιση"
 
 #: src/modules/conf_comp/e_mod_config.c:306
-#, fuzzy
 msgid "X Messages"
-msgstr "Μηνύματα"
+msgstr "X Messages"
 
 #: src/modules/conf_comp/e_mod_config.c:307
 msgid "Send flush"
@@ -8229,14 +7995,12 @@ msgid "Composite"
 msgstr "Composite εφέ"
 
 #: src/modules/conf_comp/e_mod_main.c:238
-#, fuzzy
 msgid "Composite Style Settings"
-msgstr "Ρυθμίσεις Composite"
+msgstr ""
 
 #: src/modules/conf_comp/e_mod_main.c:259
-#, fuzzy
 msgid "Advanced composite settings panel"
-msgstr "Προχωρημένες Ρυθμίσεις"
+msgstr ""
 
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:38
 msgid "Dialog Settings"
@@ -8265,12 +8029,12 @@ msgstr "Προεπιλεγμένες Ρυθμίσεις Κατάστασης Π�
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:122
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:166
 msgid "Basic Mode"
-msgstr "Βασική Κατάσταση"
+msgstr "Απλή λειτουργία"
 
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:124
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:168
 msgid "Advanced Mode"
-msgstr "Κατάσταση για Προχωρημένους"
+msgstr "Λειτουργία για προχωρημένους"
 
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:129
 msgid "Remember size and position of dialogs"
@@ -8291,7 +8055,7 @@ msgstr "Διαθέσιμα προφίλ"
 #: src/modules/conf_dialogs/e_int_config_profiles.c:122
 #: src/modules/wizard/page_020.c:115
 msgid "Select a profile"
-msgstr "Επιλογή ενός προφίλ"
+msgstr "Επέλεξε ένα προφίλ"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:138
 msgid "Scratch"
@@ -8299,7 +8063,7 @@ msgstr ""
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:141
 msgid "Reset"
-msgstr "Επανεκκίνηση"
+msgstr "Επαναφορά"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:292
 #, c-format
@@ -8330,7 +8094,7 @@ msgstr "Προφίλ"
 #: src/modules/conf_dialogs/e_mod_main.c:28
 #, fuzzy
 msgid "Enlightenment profile settings"
-msgstr "Αδυναμία ρύθμισης απομνημόνευσης ρυθμίσεων από το Enlightenment.\n"
+msgstr "Ρυθμίσεις των προφίλ του Enlightenment"
 
 #: src/modules/conf_display/e_int_config_desk.c:54
 msgid "Desk Settings"
@@ -8342,9 +8106,8 @@ msgid "Desktop Window Profile"
 msgstr "Προφίλ Παραθύρου Επιφάνειας Εργασίας"
 
 #: src/modules/conf_display/e_int_config_desk.c:193
-#, fuzzy
 msgid "Profile name"
-msgstr "Όνομα Προφίλ"
+msgstr "Όνομα προφίλ"
 
 #: src/modules/conf_display/e_int_config_desk.c:200
 #: src/modules/conf_display/e_int_config_desklock.c:357
@@ -8416,7 +8179,7 @@ msgstr "%1.0f λεπτά"
 
 #: src/modules/conf_display/e_int_config_desklock.c:304
 msgid "Timers"
-msgstr "Χρόνος"
+msgstr "Χρονομετρητές"
 
 #: src/modules/conf_display/e_int_config_desklock.c:309
 #: src/modules/conf_display/e_int_config_screensaver.c:183
@@ -8444,7 +8207,7 @@ msgstr "Τρέχουσα Ταπετσαρία"
 
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:41
 msgid "Select a Background..."
-msgstr "Επιλογή Ταπετσαρίας..."
+msgstr "Επιλογή φόντου..."
 
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:84
 #: src/modules/conf_intl/e_int_config_imc.c:803
@@ -8453,7 +8216,7 @@ msgstr "Επιλογή Ταπετσαρίας..."
 #: src/modules/conf_theme/e_int_config_wallpaper.c:577
 #: src/modules/gadman/e_mod_config.c:248
 msgid "Personal"
-msgstr "Εξατομίκευση"
+msgstr "Προσωπικά"
 
 #: src/modules/conf_display/e_int_config_desks.c:51
 #: src/modules/pager/e_mod_main.c:878
@@ -8585,7 +8348,6 @@ msgid "Interaction Settings"
 msgstr "Ρυθμίσεις διάδρασης"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:95
-#, fuzzy
 msgid "Thumbscroll"
 msgstr "Thumbscroll"
 
@@ -8598,9 +8360,8 @@ msgid "Threshold for a thumb drag"
 msgstr "Κατώτατο όριο για το σύρσιμο της προεπισκόπησης"
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:110
-#, fuzzy
 msgid "Threshold for applying drag momentum"
-msgstr "Όριο για την εφαρμογή δυναμικής αντίστασης"
+msgstr ""
 
 #: src/modules/conf_interaction/e_int_config_interaction.c:113
 #, c-format
@@ -8791,25 +8552,21 @@ msgid "Language"
 msgstr "Γλώσσα"
 
 #: src/modules/conf_intl/e_mod_main.c:38
-#, fuzzy
 msgid "Language settings"
 msgstr "Ρυθμίσεις γλώσσας"
 
 #: src/modules/conf_intl/e_mod_main.c:38 src/modules/conf_intl/e_mod_main.c:41
 #: src/modules/conf_intl/e_mod_main.c:45 src/modules/xkbswitch/e_mod_main.c:83
-#, fuzzy
 msgid "language"
-msgstr "Γλώσσα"
+msgstr "γλώσσα"
 
 #: src/modules/conf_intl/e_mod_main.c:41
-#, fuzzy
 msgid "Desklock language settings"
-msgstr "Ρυθμίσεις Γλώσσας Κλειδωμένης Οθόνης"
+msgstr ""
 
 #: src/modules/conf_intl/e_mod_main.c:45
-#, fuzzy
 msgid "Input method settings"
-msgstr "Ρυθμίσεις Μεθόδου Εισαγωγής"
+msgstr "Ρυθμίσεις μεθόδου εισαγωγής"
 
 #: src/modules/conf_menus/e_int_config_menus.c:38
 #: src/modules/conf_menus/e_mod_main.c:18
@@ -8879,9 +8636,8 @@ msgid "Menu Scroll Speed"
 msgstr "Ταχύτητα Κύλισης Μενού"
 
 #: src/modules/conf_menus/e_int_config_menus.c:309
-#, fuzzy
 msgid "Fast Mouse Move Threshold"
-msgstr "Όριο Γρήγορης Μετακίνησης Ποντικιού"
+msgstr ""
 
 #: src/modules/conf_menus/e_int_config_menus.c:314
 msgid "Click Drag Timeout"
@@ -8957,28 +8713,25 @@ msgid "Search Directories"
 msgstr "Αναζήτηση Καταλόγων"
 
 #: src/modules/conf_paths/e_mod_main.c:35
-#, fuzzy
 msgid "Search directory settings"
-msgstr "Αναζήτηση Καταλόγων"
+msgstr "Ρυθμίσεις αναζήτησης καταλόγων"
 
 #: src/modules/conf_paths/e_mod_main.c:38
-#, fuzzy
 msgid "Environment variable settings"
-msgstr "Μεταβλητές Περιβάλλοντος"
+msgstr "Ρυθμίσεις μεταβλητών περιβάλλοντος"
 
 #: src/modules/conf_performance/e_int_config_engine.c:37
 msgid "Engine Settings"
 msgstr "Ρυθμίσεις Μηχανής"
 
 #: src/modules/conf_performance/e_int_config_engine.c:108
-#, fuzzy
 msgid ""
 "You have chosen to use shaped windows<br>but your current screen is "
 "composited.<br><br>Are you really sure you wish to use<br>shaped windows?"
 msgstr ""
-"Έχετε επιλέξει να ενεργοποιήσετε την υποστήριξη composite ARGB, "
-"αλλά<br>τρέχουσα οθόνη σας δεν υποστηρίζει εφέ composite.<br><br>Είστε "
-"βέβαιοι ότι θέλετε να ενεργοποιήσετε την υποστήριξη ARGB;"
+"Έχετε επιλέξει να χρησιμοποιήσετε παράθυρα με προσαρμοσμένο σχήμα<br>αλλά η "
+"τρέχουσα οθόνη σας δεν υποστηρίζει εφέ composite.<br><br>Είστε βέβαιοι ότι "
+"θέλετε να χρησιμοποιήσετε παράθυρα προσαρμοσμένου σχήματος?"
 
 #: src/modules/conf_performance/e_int_config_performance.c:36
 msgid "Performance Settings"
@@ -9054,14 +8807,14 @@ msgstr "Επίπεδο"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:166
 msgid "e.g. Saving to disk"
-msgstr "πχ Αποθήκευση στον δίσκο"
+msgstr "π.χ. Αποθήκευση στον δίσκο"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:204
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:283
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:241
 #, c-format
 msgid "%1.1f s"
-msgstr "%1.1f δ"
+msgstr "%1.1f δευτ."
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:235
 #: src/modules/notification/e_mod_config.c:102
@@ -9101,27 +8854,24 @@ msgstr "Διαχείριση Ενέργειας"
 #: src/modules/conf_randr/e_int_config_randr.c:48
 #: src/modules/conf_randr/e_mod_main.c:21
 msgid "Screen Setup"
-msgstr "Ρυθμίσεις Οθόνης"
+msgstr "Ρύθμιση Οθόνης"
 
 #: src/modules/conf_randr/e_int_config_randr.c:123
-#, fuzzy
 msgid "Primary Output"
-msgstr "Έξοδος"
+msgstr "Κύρια Έξοδος"
 
 #: src/modules/conf_randr/e_int_config_randr.c:141
-#, fuzzy
 msgid "Restore On Startup"
-msgstr "Κλείδωμα με την Έναρξη"
+msgstr "Αποκατάσταση κατά την εκκίνηση"
 
 #: src/modules/conf_randr/e_mod_main.c:31
-#, fuzzy
 msgid "Screen resolution and orientation settings"
-msgstr "Ρυθμίσεις ανάλυσης οθόνης"
+msgstr "Ρυθμίσεις ανάλυσης και προσανατολισμού οθόνης"
 
 #: src/modules/conf_shelves/e_int_config_shelf.c:129
-#, fuzzy, c-format
+#, c-format
 msgid "Configured Shelves: Display %d"
-msgstr "Ρυθμισμένα Ράφια: Εμφάνιση"
+msgstr "Ρυθμισμένα Ράφια: Εμφάνιση %d"
 
 #: src/modules/conf_shelves/e_int_config_shelf.c:390
 #, c-format
@@ -9133,7 +8883,6 @@ msgid "Confirm Shelf Deletion"
 msgstr "Επιβεβαίωση Διαγραφής Ραφιού"
 
 #: src/modules/conf_shelves/e_mod_main.c:38
-#, fuzzy
 msgid "Shelf settings"
 msgstr "Ρυθμίσεις ραφιού"
 
@@ -9281,49 +9030,40 @@ msgid "Label Text"
 msgstr "Κείμενο Ετικέτας"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:111
-#, fuzzy
 msgid "List Item Text Selected"
-msgstr "Επιλεγμέχθηκε Κείμενο Λίστας Αντικειμένου"
+msgstr "Αντικείμενο Λίστας - Επιλεγμένο Κείμενο"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:112
-#, fuzzy
 msgid "List Item Text (Even)"
-msgstr "Κείμενο Λίστας Αντικειμένου (Ζυγός)"
+msgstr "Αντικείμενο Λίστας - Κείμενο (Ζυγός)"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:113
-#, fuzzy
 msgid "List Item Background Base (Even)"
-msgstr "Βάση Παρασκηνίου Λίστας Αντικειμένου (Ζυγός)"
+msgstr "Αντικείμενο Λίστας - Φόντο (Ζυγός)"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:114
-#, fuzzy
 msgid "List Item Text (Odd)"
-msgstr "Κείμενο Λίστας Αντικειμένου (Μονός)"
+msgstr "Αντικείμενο Λίστας - Κείμενο (Περιττός)"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:115
-#, fuzzy
 msgid "List Item Background Base (Odd)"
-msgstr "Βάση Παρασκηνίου Λίστας Αντικειμένου (Μονός)"
+msgstr "Αντικείμενο Λίστας - Φόντο (Περιττός)"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:116
-#, fuzzy
 msgid "List Header Text (Even)"
-msgstr "Κείμενο Λίστας Επιεφαλίδας (Ζυγός)"
+msgstr "Επικεφαλίδα Λίστας - Κείμενο (Ζυγός)"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:117
-#, fuzzy
 msgid "List Header Background Base (Even)"
-msgstr "Βάση Παρασκηνίου Λίστα Επικεφαλίδας (Ζυγός)"
+msgstr "Επικεφαλίδα Λίστας - Φόντο (Ζυγός)"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:118
-#, fuzzy
 msgid "List Header Text (Odd)"
-msgstr "Κείμενο Λίστας Επικεφαλίδας (Μονός)"
+msgstr "Επικεφαλίδα Λίστας - Κείμενο (Περιττός)"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:120
-#, fuzzy
 msgid "List Header Background Base (Odd)"
-msgstr "Βάση Παρασκηνίου Λίστας Επικεφαλίδας (Μονός)"
+msgstr "Επικεφαλίδα Λίστας - Φόντο (Περιττός)"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:121
 msgid "Radio Text"
@@ -9346,9 +9086,8 @@ msgid "Frame Background Base"
 msgstr "Βάση Παρασκηνίου Πλαισίου"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:126
-#, fuzzy
 msgid "Scroller Frame Background Base"
-msgstr "Βάση Παρασκηνίου Στήλης Κύλισης Πλαισίου"
+msgstr "Φόντο του πλαισίου της λίστας"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:131
 msgid "Module Label"
@@ -9362,7 +9101,7 @@ msgstr "Χρώματα"
 #: src/modules/conf_theme/e_int_config_color_classes.c:271
 #, c-format
 msgid "Color class: %s"
-msgstr "Κλάσεις χρωμάτων: %s"
+msgstr "Κλάση χρώματος: %s"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:278
 #, c-format
@@ -9382,7 +9121,7 @@ msgstr "Επιλεγμένες %u κλάσεις ομοιόμορφων χρωμ
 #: src/modules/conf_theme/e_int_config_color_classes.c:288
 #: src/modules/conf_theme/e_int_config_color_classes.c:548
 msgid "No selected color class"
-msgstr "Χωρίς επιλεγμένη χρωματική κλάση"
+msgstr "Μη επιλεγμένη χρωματική κλάση"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:551
 msgid "Custom colors"
@@ -9617,19 +9356,16 @@ msgid "Automatic"
 msgstr "Αυτόματα"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:694
-#, fuzzy
 msgid "Font Fallbacks"
-msgstr "Αναπλήρωση γραμματοσειρών"
+msgstr "Εφεδρικές γραμματοσειρές"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:695
-#, fuzzy
 msgid "Fallback Name"
-msgstr "Όνομα αναπλήρωσης"
+msgstr "Εφεδρικό όνομα"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:707
-#, fuzzy
 msgid "Enable Fallbacks"
-msgstr "Ενεργοποίηση αναπληρώσεων"
+msgstr "Ενεργοποίηση εφεδρικών γραμματοσειρών"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:716
 msgid "Hinting / Fallbacks"
@@ -9804,9 +9540,8 @@ msgid "Match Enlightenment theme if possible"
 msgstr "Συσχετισμός θέματος Enlightenment εάν είναι δυνατόν"
 
 #: src/modules/conf_theme/e_int_config_xsettings.c:422
-#, fuzzy
 msgid "Enable X Application Settings"
-msgstr "Ρυθμίσεις Θέματος Εφαρμογών"
+msgstr ""
 
 #: src/modules/conf_theme/e_int_config_xsettings.c:427
 msgid "GTK Applications"
@@ -9839,39 +9574,33 @@ msgstr "Κλιμάκωση"
 #: src/modules/conf_theme/e_mod_main.c:175
 #, fuzzy
 msgid "Enlightenment theme settings"
-msgstr "Αδυναμία ρύθμισης απομνημόνευσης ρυθμίσεων από το Enlightenment.\n"
+msgstr "Ρυθμίσεις θεμάτων του Enlightenment"
 
 #: src/modules/conf_theme/e_mod_main.c:179
-#, fuzzy
 msgid "Desktop wallpaper settings"
-msgstr "Ταπετσαρία Επιφάνειας Εργασίας"
+msgstr "Ρυθμίσεις ταπετσαρίας"
 
 #: src/modules/conf_theme/e_mod_main.c:183
-#, fuzzy
 msgid "Enlightenment color settings"
-msgstr "Αδυναμία ρύθμισης απομνημόνευσης ρυθμίσεων από το Enlightenment.\n"
+msgstr "Ρυθμίσεις χρωμάτων του Enlightenment"
 
 #: src/modules/conf_theme/e_mod_main.c:183
-#, fuzzy
 msgid "color"
-msgstr "Χρώματα"
+msgstr "χρώμα"
 
 #: src/modules/conf_theme/e_mod_main.c:187
-#, fuzzy
 msgid "Enlightenment font settings"
-msgstr "Διαδρομές Enlightenment"
+msgstr "Ρυθμίσεις γραμματοσειρών του Enlightenment"
 
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1106
-#, fuzzy
 msgid "Loading files..."
-msgstr "Διαγραφή αρχείων..."
+msgstr "Φόρτωση αρχείων..."
 
 #: src/modules/conf_wallpaper2/e_mod_main.c:23
 #: src/modules/conf_wallpaper2/e_mod_main.c:27
 #: src/modules/conf_wallpaper2/e_mod_main.c:91
-#, fuzzy
 msgid "Wallpaper 2"
-msgstr "Ταπετσαρία"
+msgstr "Ταπετσαρία 2"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:38
 msgid "Window List Menu Settings"
@@ -9922,9 +9651,8 @@ msgid "Group with current desktop"
 msgstr "Ομάδα με την τρέχουσα επιφάνεια εργασίας"
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:168
-#, fuzzy
 msgid "Warp to owning desktop"
-msgstr "Παραμόρφωση στην ιδιόκτητη επιφάνεια εργασίας"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:171
 msgid "Iconified Windows"
@@ -9965,9 +9693,8 @@ msgid "Raise windows on mouse over"
 msgstr "Ανύψωση παραθύρων κατά την διέλευση του ποντικιού"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:248
-#, fuzzy
 msgid "Focus Policy"
-msgstr "Πολιτική"
+msgstr "Πολιτική εστίασης"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:258
 msgid "New Window Focus"
@@ -9986,9 +9713,8 @@ msgid "Only dialogs"
 msgstr "Μονο διάλογοι"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:266
-#, fuzzy
 msgid "Only dialogs with focused parent"
-msgstr "Μόνο με παράθυρα με εστίαση"
+msgstr "Μόνο σε παράθυρα διαλόγου με εστιασμένο παράθυρο-γονέα"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:276
 msgid "Autoraise"
@@ -10027,14 +9753,12 @@ msgid "Hints"
 msgstr "Υποδείξεις"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:311
-#, fuzzy
 msgid "Warping"
-msgstr "Ρυθμίσεις παραμόρφωσης"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:322
-#, fuzzy
 msgid "Slide pointer to a new window which is focused"
-msgstr "Κύλιση του δείκτη σε ένα νέο εστιασμένο παράθυρο"
+msgstr "Ολίσθηση του δείκτη ποντικιού πάνω στο εστιασμένο παράθυρο"
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:327
 msgid "Warp speed"
@@ -10206,9 +9930,8 @@ msgid "Both"
 msgstr "Και τα δύο"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:226
-#, fuzzy
 msgid "Manipulation"
-msgstr "Μεγιστοποίηση"
+msgstr "Χειρισμός"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:227
 msgid "Allow manipulation of maximized windows"
@@ -10249,39 +9972,32 @@ msgid "Adjust windows on shelf hide"
 msgstr "Προσαρμογή παραθύρων κατά την απόκρυψη ραφιού"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:274
-#, fuzzy
 msgid "Follow Move"
-msgstr "Ακολουθεί Μετακίνηση"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:277
-#, fuzzy
 msgid "Follow Resize"
-msgstr "Ακολουθεί Αλλαγή μεγέθους"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:280
-#, fuzzy
 msgid "Follow Raise"
-msgstr "Ακολουθεί Ανύψωση"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:283
-#, fuzzy
 msgid "Follow Lower"
-msgstr "Ακολουθεί Ένα Επίπεδο Πίσω (Lower)"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:286
-#, fuzzy
 msgid "Follow Layer"
-msgstr "Ακολουθεί Επίπεδο"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:289
-#, fuzzy
 msgid "Follow Desktop"
-msgstr "Ακολουθεί Επιφάνεια Εργασίας"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:292
-#, fuzzy
 msgid "Follow Iconify"
-msgstr "Ακολουθεί Εικονιδιοποίηση"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:296
 #: src/modules/quickaccess/e_mod_config.c:312
@@ -10332,9 +10048,8 @@ msgid "Remember file manager windows"
 msgstr "Απομνημόνευση παραθύρων διαχειριστή αρχείων"
 
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:135
-#, fuzzy
 msgid "Don't remember file manager windows by directory"
-msgstr "Απομνημόνευση παραθύρων διαχειριστή αρχείων"
+msgstr ""
 
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:146
 msgid "Details"
@@ -10365,9 +10080,8 @@ msgid "No selection"
 msgstr "Χωρίς Επιλογή"
 
 #: src/modules/conf_window_remembers/e_mod_main.c:28
-#, fuzzy
 msgid "Window remember settings"
-msgstr "Απομνημόνευση Παραθύρων"
+msgstr ""
 
 #: src/modules/connman/e_mod_main.c:10
 msgid "Connection Manager"
@@ -10473,9 +10187,8 @@ msgid "Powersaving behavior"
 msgstr "Συμπεριφορά εξοικονόμησης ενέργειας"
 
 #: src/modules/cpufreq/e_mod_main.c:409
-#, fuzzy
 msgid "Power State Min"
-msgstr "Κουμπί Ρεύματος"
+msgstr ""
 
 #: src/modules/cpufreq/e_mod_main.c:415
 msgid "Power State Max"
@@ -10508,13 +10221,10 @@ msgstr ""
 "CPU μέσω της εφαρμογής<br>setfreq."
 
 #: src/modules/cpufreq/e_mod_main.c:592
-#, fuzzy
 msgid ""
 "There was an error trying to set the<br>cpu power state setting via the "
 "module's<br>setfreq utility."
 msgstr ""
-"Παρουσιάστηκε σφάλμα κατά την προσπάθεια ρύθμισης επιλογών<br>συχνότητας της "
-"CPU μέσω της εφαρμογής<br>setfreq."
 
 #: src/modules/cpufreq/e_mod_main.c:1335
 msgid "Cpufreq Error"
@@ -10545,29 +10255,25 @@ msgstr ""
 "+x %s<br>"
 
 #: src/modules/cpufreq/e_mod_main.c:1383
-#, fuzzy
 msgid "CPU Frequency"
-msgstr "Επείγον"
+msgstr "Συχνότητα της CPU"
 
 #: src/modules/cpufreq/e_mod_config.c:38
-#, fuzzy
 msgid "Cpu Frequency Control Settings"
-msgstr "Ρυθμίσεις αυτόματης κύλισης"
+msgstr "Ρυθμίσεις ελέγχου συχνότητας της CPU"
 
 #: src/modules/cpufreq/e_mod_config.c:91
 #, fuzzy
 msgid "Update poll interval"
-msgstr "Διάστημα καθαρισμού λανθάνουσας μνήμης"
+msgstr "Ρυθμός ανανέωσης"
 
 #: src/modules/cpufreq/e_mod_config.c:107
-#, fuzzy
 msgid "Minimum Power State"
-msgstr "Κουμπί Ρεύματος"
+msgstr ""
 
 #: src/modules/cpufreq/e_mod_config.c:113
-#, fuzzy
 msgid "Maximum Power State"
-msgstr "Κουμπί Ρεύματος"
+msgstr ""
 
 #: src/modules/everything/e_mod_main.c:49
 #: src/modules/everything/evry_plugin.c:179
@@ -10583,17 +10289,15 @@ msgid "Everything Configuration"
 msgstr "Ρύθμιση του Everything"
 
 #: src/modules/everything/e_mod_main.c:70
-#, fuzzy
 msgid "Everything launcher settings"
-msgstr "Εκκινητής Everything"
+msgstr "Ρυθμίσεις του εκκινητή Everything"
 
 #: src/modules/everything/e_mod_main.c:70
 #: src/modules/everything/e_mod_main.c:73
 #: src/modules/everything/e_mod_main.c:74
 #: src/modules/everything/e_mod_main.c:175
-#, fuzzy
 msgid "everything"
-msgstr "Εκτέλεση Everything"
+msgstr "everything"
 
 #: src/modules/everything/e_mod_main.c:420
 msgid "Everything Module"
@@ -10737,9 +10441,8 @@ msgid "Popup Align"
 msgstr "Στοίχιση Αναδυόμενου"
 
 #: src/modules/everything/evry_config.c:577
-#, fuzzy
 msgid "Edge Popup Size"
-msgstr "Μέγεθος Άκρης Αναδυόμενου"
+msgstr ""
 
 #: src/modules/everything/evry_config.c:594
 #: src/modules/winlist/e_int_config_winlist.c:273
@@ -10856,9 +10559,8 @@ msgid "Move to Trash"
 msgstr "Μετακίνηση στα απορρίματα"
 
 #: src/modules/everything/evry_plug_files.c:1331
-#, fuzzy
 msgid "Open Directory"
-msgstr "Νέος Κατάλογος"
+msgstr ""
 
 #: src/modules/everything/evry_plug_files.c:1335
 msgid "Sort by Date"
@@ -10950,6 +10652,26 @@ msgid ""
 "</hilight> toggle list view modes<br>    <hilight>&lt;ctrl+3&gt;</hilight> "
 "toggle thumb view modes"
 msgstr ""
+"  Λοιπόν, ας εξηγήσουμε τι είναι το <hilight>everything</hilight>...<br>  "
+"Απλά πληκτρολογήστε μερικά γράμματα από το πράγμα που ψάχνετε. <br>  "
+"Χρησιμοποιήστε τον δείκτη <hilight>&lt;up/down&gt;</hilight> για να "
+"επιλέξετε από τη λίστα.<br>  Πατήστε  <hilight>&lt;tab&gt;</hilight> για να "
+"επιλέξετε μια ενέργεια και έπειτα  <hilight>&lt;return&gt;</hilight> για να "
+"την εκτελέσετε.<br> Αυτή η σελίδα δεν θα εμφανιστεί ξανά την επόμενη φορά "
+"που θα ανοίξετε το <hilight>everything</hilight>.<br>    <hilight>&lt;Esc&gt;"
+"</hilight> κλείνει αυτό το παράθυρο<br>    <hilight>&lt;?&gt;</hilight> "
+"εμφάνιση αυτής της σελίδας<br>    <hilight>&lt;return&gt;</hilight> εκτέλεση "
+"ενέργειας<br>    <hilight>&lt;ctrl+return&gt;</hilight> εκτέλεση ενέργειας "
+"και συνέχεια<br>    <hilight>&lt;tab&gt;</hilight> εναλλαγή μεταξύ επιλογής "
+"πράγματος και ενέργειας<br>    <hilight>&lt;ctrl+tab&gt;</hilight> "
+"συμπλήρωση εισόδου (ανάλογα με το plugin)<br>    <hilight>&lt;ctrl+'x'&gt;</"
+"hilight> άμεση μεταφορά στο plugin που ξεκινάει με 'x'<br>    <hilight>&lt;"
+"ctrl+left/right&gt;</hilight> εναλλαγή μεταξύ των διαθέσιμων plugins<br>    "
+"<hilight>&lt;ctrl+up/down&gt;</hilight> μετάβαση στο πρώτο/τελευταίο "
+"αντικείμενο<br>    <hilight>&lt;ctrl+1&gt;</hilight> εναλλαγή του τρόπου "
+"προβολής (έξοδος από αυτή τη σελίδα ;)<br>    <hilight>&lt;ctrl+2&gt;</"
+"hilight> εναλλαγή τρόπων προβολής σε λίστα<br>    <hilight>&lt;ctrl+3&gt;</"
+"hilight> εναλλαγή τρόπων προβολής σε προεπισκόπηση"
 
 #: src/modules/everything/evry_view_tabs.c:93
 msgid "Back"
@@ -11028,9 +10750,9 @@ msgstr "Ματαιώθηκε η ασφαλής διαγραφή"
 
 #: src/modules/fileman/e_fwin.c:2990
 #: src/modules/fileman_opinfo/e_mod_main.c:121
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown operation from slave is aborted"
-msgstr "Ματαιώθηκε άγνωστη δυτερεύουσα λειτουργία"
+msgstr ""
 
 #: src/modules/fileman/e_fwin.c:3000
 #: src/modules/fileman_opinfo/e_mod_main.c:131
@@ -11082,9 +10804,9 @@ msgstr "Ασφαλής διαγραφή αρχείων..."
 
 #: src/modules/fileman/e_fwin.c:3027
 #: src/modules/fileman_opinfo/e_mod_main.c:160
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown operation from slave %d"
-msgstr "Άγνωστη δευτερεύουσα λειτουργία %d"
+msgstr ""
 
 #: src/modules/fileman/e_fwin_nav.c:450
 msgid "EFM Navigation"
@@ -11180,9 +10902,8 @@ msgid "'cp+rm' instead of 'mv'"
 msgstr "'cp+rm' αντί για 'mv'"
 
 #: src/modules/fileman/e_mod_config.c:400
-#, fuzzy
 msgid "Use Alternate Selection Modifiers"
-msgstr "Χρήση Τροποποιητών Εναλλακτικής Επιλογής"
+msgstr ""
 
 #: src/modules/fileman/e_mod_config.c:403
 msgid "Allow Navigation On Desktop"
@@ -11193,9 +10914,8 @@ msgid "Max File Size For Thumbnailing"
 msgstr "Μέγιστο Μέγεθος Αρχείου για Δημιουργία Επισκόπισης Εικονιδίων"
 
 #: src/modules/fileman/e_mod_config.c:413
-#, fuzzy
 msgid "Spring Delay"
-msgstr "Καθυστέρηση Αναπήδησης"
+msgstr ""
 
 #: src/modules/fileman/e_mod_config.c:427
 #: src/modules/fileman/e_mod_config.c:430
@@ -11258,101 +10978,86 @@ msgid "Navigate"
 msgstr "Περιήγηση"
 
 #: src/modules/fileman/e_mod_main.c:162 src/modules/fileman/e_mod_main.c:452
-#, fuzzy
 msgid "filemanager"
-msgstr "Διαχειριστής Αρχείων"
+msgstr "διαχειριστής αρχείων"
 
 #: src/modules/fileman/e_mod_main.c:163 src/modules/fileman/e_mod_main.c:453
-#, fuzzy
 msgid "file manager"
-msgstr "Διαχειριστής Αρχείων"
+msgstr "διαχειριστής αρχείων"
 
 #: src/modules/fileman/e_mod_main.c:343
-#, fuzzy
 msgid "Fileman"
 msgstr "Διαχειριστής Αρχείων"
 
 #: src/modules/fileman/e_mod_main.c:389
-#, fuzzy
 msgid "Default view mode"
-msgstr "Προκαθορισμένη Προβολή"
+msgstr "Προκαθορισμένη λειτουργία προβολής"
 
 #: src/modules/fileman/e_mod_main.c:393
-#, fuzzy
 msgid "Icon size"
-msgstr "Μέγεθος Εικονιδίου"
+msgstr "Μέγεθος εικονιδίου"
 
 #: src/modules/fileman/e_mod_main.c:397
-#, fuzzy
 msgid "Show file extensions"
-msgstr "Επεκτάσεις Αρχείων"
+msgstr "Εμφάνιση επεκτάσεων αρχείων"
 
 #: src/modules/fileman/e_mod_main.c:399
 msgid "Show full path in filemanager window titles"
 msgstr ""
+"Εμφάνιση πλήρους διαδρομής στον τίτλο παραθύρου του διαχειριστή αρχείων"
 
 #: src/modules/fileman/e_mod_main.c:401
-#, fuzzy
 msgid "Show path toolbar in filemanager windows"
-msgstr "Απομνημόνευση παραθύρων διαχειριστή αρχείων"
+msgstr "Εμφάνιση της γραμμής εργαλείων στον διαχειριστή αρχείων"
 
 #: src/modules/fileman/e_mod_main.c:403
 msgid "Filemanager path toolbar position"
-msgstr ""
+msgstr "Θέση της εργαλειοθήκης του διαχειριστή αρχείων"
 
 #: src/modules/fileman/e_mod_main.c:407
 #, fuzzy
 msgid "Show favorites sidebar in filemanager windows"
-msgstr "Απομνημόνευση παραθύρων διαχειριστή αρχείων"
+msgstr "Εμφάνιση της πλαϊνής μπάρας αγαπημένων στον διαχειριστή παραθύρων"
 
 #: src/modules/fileman/e_mod_main.c:410
 msgid "Ignore letter case when sorting files"
 msgstr ""
 
 #: src/modules/fileman/e_mod_main.c:412
-#, fuzzy
 msgid "Group files by extension"
-msgstr "Επεκτάσεις Αρχείων"
+msgstr "Ομαδοποίηση αρχείων ανά επέκταση"
 
 #: src/modules/fileman/e_mod_main.c:414
-#, fuzzy
 msgid "Sort files by modification time"
-msgstr "Ταξινόμηση Ανά Ώρα Τροποποίησης"
+msgstr "Ταξινόμηση αρχείων ανά ώρα τροποποίησης"
 
 #: src/modules/fileman/e_mod_main.c:416
-#, fuzzy
 msgid "Sort files by size"
-msgstr "Ταξινόμηση Ανά Μέγεθος"
+msgstr "Ταξινόμηση αρχείων ανά μέγεθος"
 
 #: src/modules/fileman/e_mod_main.c:420
-#, fuzzy
 msgid "Sort directories first"
 msgstr "Κατάλογοι στην αρχή"
 
 #: src/modules/fileman/e_mod_main.c:422
-#, fuzzy
 msgid "Sort directories last"
 msgstr "Κατάλογοι στο τέλος"
 
 #: src/modules/fileman/e_mod_main.c:426
-#, fuzzy
 msgid "Open directories in place"
-msgstr "Άνοιγμα Καταλόγων Στο Ίδιο Παράθυρο"
+msgstr "Άνοιγμα καταλόγων στο ίδιο παράθυρο"
 
 #: src/modules/fileman/e_mod_main.c:428
-#, fuzzy
 msgid "Use single click to open files"
-msgstr "Χρήση Μονού Κλικ"
+msgstr "Χρήση μονού κλικ για άνοιγμα αρχείων"
 
 #: src/modules/fileman/e_mod_main.c:430
-#, fuzzy
 msgid "Use alternate (Mac-style) selection modifiers"
-msgstr "Χρήση Τροποποιητών Εναλλακτικής Επιλογής"
+msgstr ""
 
 #: src/modules/fileman/e_mod_main.c:432
-#, fuzzy
 msgid "Allow navigation on desktop"
-msgstr "Να επιτρέπεται η περιήγηση στην επιφάνεια εργασίας"
+msgstr ""
 
 #: src/modules/fileman/e_mod_main.c:433
 msgid ""
@@ -11366,9 +11071,8 @@ msgid "Maximum file size for which thumbnails should be generated"
 msgstr ""
 
 #: src/modules/fileman/e_mod_main.c:442
-#, fuzzy
 msgid "Spring folder delay"
-msgstr "Καθυστέρηση Αναπήδησης"
+msgstr ""
 
 #: src/modules/fileman/e_mod_main.c:443
 msgid ""
@@ -11378,7 +11082,6 @@ msgid ""
 msgstr ""
 
 #: src/modules/fileman/e_mod_main.c:448
-#, fuzzy
 msgid "File icons"
 msgstr "Εικονίδια Αρχείων"
 
@@ -11468,9 +11171,8 @@ msgid "Background Options"
 msgstr "Επιλογές Ταπετσαρίας"
 
 #: src/modules/gadman/e_mod_gadman.c:125
-#, fuzzy
 msgid "Desktop Overlay"
-msgstr "Αρχείο Επιφάνειας Εργασίας"
+msgstr ""
 
 #: src/modules/gadman/e_mod_gadman.c:1066
 msgid "Begin move/resize"
@@ -11525,9 +11227,8 @@ msgid "Don't add items on launch"
 msgstr ""
 
 #: src/modules/ibar/e_mod_config.c:151
-#, fuzzy
 msgid "Track launch"
-msgstr "Γρήγορη εκκίνηση"
+msgstr ""
 
 #: src/modules/ibar/e_mod_config.c:184
 msgid "Create new IBar source"
@@ -11559,14 +11260,12 @@ msgid "Create new Icon"
 msgstr "Δημιουργία νέου Εικονιδίου"
 
 #: src/modules/ibar/e_mod_main.c:1273
-#, fuzzy
 msgid "Add to bar"
-msgstr "Προσθήκη στην IBar"
+msgstr "Προσθήκη στη μπάρα"
 
 #: src/modules/ibar/e_mod_main.c:1279
-#, fuzzy
 msgid "Remove from bar"
-msgstr "Αφαίρεση στοίβας"
+msgstr "Αφαίρεση από τη μπάρα"
 
 #: src/modules/ibar/e_mod_main.c:1285
 #, c-format
@@ -11643,7 +11342,7 @@ msgstr "Καταγραφή"
 
 #: src/modules/mixer/app_mixer.c:181 src/modules/mixer/app_mixer.c:288
 msgid "Switch"
-msgstr ""
+msgstr "Εναλλαγή"
 
 #: src/modules/mixer/app_mixer.c:350
 msgid "Cards"
@@ -11739,13 +11438,12 @@ msgid "Mute Volume"
 msgstr "Σίγαση Έντασης"
 
 #: src/modules/music-control/e_mod_main.c:9
-#, fuzzy
 msgid "Music controller"
-msgstr "Ρυθμίσεις αυτόματης κύλισης"
+msgstr "Ελεγκτής μουσικής"
 
 #: src/modules/music-control/ui.c:156
 msgid "Music Player"
-msgstr ""
+msgstr "Πρόγραμμα αναπαραγωγής μουσικής"
 
 #: src/modules/music-control/ui.c:166
 msgid "* Your player must be configured to export the DBus interface MPRIS2."
@@ -11753,12 +11451,11 @@ msgstr ""
 
 #: src/modules/music-control/ui.c:169
 msgid "Pause music when screen is locked"
-msgstr ""
+msgstr "Παύση της μουσικής όταν η οθόνη κλειδώνεται"
 
 #: src/modules/music-control/ui.c:240
-#, fuzzy
 msgid "Music control Settings"
-msgstr "Ρυθμίσεις αυτόματης κύλισης"
+msgstr "Ρυθμίσεις ελέγχου μουσικής"
 
 #: src/modules/notification/e_mod_config.c:51
 msgid "Notification Settings"
@@ -11787,26 +11484,23 @@ msgstr "Εξαναγκασμός λήξης χρόνου για όλες τις 
 #: src/modules/notification/e_mod_config.c:130
 #, fuzzy
 msgid "Screen Policy"
-msgstr "Κλείδωμα Οθόνης"
+msgstr "Πολιτική οθόνης"
 
 #: src/modules/notification/e_mod_config.c:132
-#, fuzzy
 msgid "Primary screen"
-msgstr "Εξασθένηση φωτεινότητας"
+msgstr "Κύρια οθόνη"
 
 #: src/modules/notification/e_mod_config.c:134
-#, fuzzy
 msgid "Current screen"
-msgstr "Τρέχουσα Οθόνη"
+msgstr "Τρέχουσα οθόνη"
 
 #: src/modules/notification/e_mod_config.c:136
-#, fuzzy
 msgid "All screens"
-msgstr "Πλήρης οθόνη"
+msgstr "Όλες οι οθόνες"
 
 #: src/modules/notification/e_mod_config.c:138
 msgid "Xinerama"
-msgstr ""
+msgstr "Xinerama"
 
 #: src/modules/notification/e_mod_config.c:142
 msgid "Popup Corner"
@@ -11896,18 +11590,14 @@ msgid "Error during notification server initialization"
 msgstr ""
 
 #: src/modules/notification/e_mod_main.c:244
-#, fuzzy
 msgid ""
 "Ensure there's no other module acting as a server and that D-Bus is "
 "correctly installed and running"
 msgstr ""
-"Σφάλμα κατά την αρχικοποίηση του DBus! Παρακαλούμε ελέγξτε αν το dbus είναι "
-"σωστά εγκατεστημένο και εκτελείται."
 
 #: src/modules/notification/e_mod_main.c:261
-#, fuzzy
 msgid "Display low urgency notifications"
-msgstr "Εμφάνιση Λεζάντας Περιγράμματος"
+msgstr "Προβολή ειδοποιήσεων χαμηλής προτεραιότητας"
 
 #: src/modules/notification/e_mod_main.c:261
 #: src/modules/notification/e_mod_main.c:262
@@ -11921,39 +11611,32 @@ msgstr "Εμφάνιση Λεζάντας Περιγράμματος"
 #: src/modules/notification/e_mod_main.c:276
 #: src/modules/notification/e_mod_main.c:299
 #: src/modules/notification/e_mod_main.c:300
-#, fuzzy
 msgid "notification"
-msgstr "Ειδοποιήσεις"
+msgstr "ειδοποίηση"
 
 #: src/modules/notification/e_mod_main.c:262
-#, fuzzy
 msgid "Display normal urgency notifications"
-msgstr "Εμφάνιση πληροφοριών"
+msgstr "Προβολή ειδοποιήσεων κανονικής προτεραιότητας"
 
 #: src/modules/notification/e_mod_main.c:263
-#, fuzzy
 msgid "Display high urgency notifications"
-msgstr "Εμφάνιση πληροφοριών"
+msgstr "Προβολή ειδοποιήσεων υψηλής προτεραιότητας"
 
 #: src/modules/notification/e_mod_main.c:264
-#, fuzzy
 msgid "Force a specified timeout on all notifications"
-msgstr "Εξαναγκασμός λήξης χρόνου για όλες τις ειδοποιήσεις"
+msgstr ""
 
 #: src/modules/notification/e_mod_main.c:265
-#, fuzzy
 msgid "Timeout to force on notifications"
-msgstr "Εξαναγκασμός λήξης χρόνου για όλες τις ειδοποιήσεις"
+msgstr ""
 
 #: src/modules/notification/e_mod_main.c:267
-#, fuzzy
 msgid "Screen(s) on which to display notifications"
-msgstr "Εξαναγκασμός λήξης χρόνου για όλες τις ειδοποιήσεις"
+msgstr "Οθόνες στις οποίες θα εμφανίζονται ειδοποιήσεις"
 
 #: src/modules/notification/e_mod_main.c:270
-#, fuzzy
 msgid "Corner in which to display notifications"
-msgstr "Εξαναγκασμός λήξης χρόνου για όλες τις ειδοποιήσεις"
+msgstr "Γωνία στην οποία θα εμφανίζονται ειδοποιήσεις"
 
 #: src/modules/pager/e_mod_config.c:76
 msgid "Pager Settings"
@@ -11985,9 +11668,9 @@ msgstr "Αντίσταση στο τράβηγμα"
 
 #: src/modules/pager/e_mod_config.c:200 src/modules/pager/e_mod_config.c:239
 #: src/modules/pager/e_mod_config.c:258
-#, fuzzy, c-format
+#, c-format
 msgid "%.0f pixels"
-msgstr "%1.0f pixel"
+msgstr "%.0f pixels"
 
 #: src/modules/pager/e_mod_config.c:205
 msgid "Select and Slide button"
@@ -12058,14 +11741,12 @@ msgid "Show Pager Popup"
 msgstr "Εμφάνιση Αναδυόμενου Διαχειριστή Επιφανειών Εργασίας"
 
 #: src/modules/pager/e_mod_main.c:2924
-#, fuzzy
 msgid "Popup Desk Right"
-msgstr "Αναδυόμενη Επιφάνεια Εργασίας Δεξιά"
+msgstr ""
 
 #: src/modules/pager/e_mod_main.c:2926
-#, fuzzy
 msgid "Popup Desk Left"
-msgstr "Αναδυόμενη Επιφάνεια Εργασίας Αριστερά"
+msgstr ""
 
 #: src/modules/pager/e_mod_main.c:2928
 msgid "Popup Desk Up"
@@ -12148,6 +11829,8 @@ msgid ""
 "Cowardly refusing to battle<br>with the Tiling module for control<br>of your "
 "windows. There can be only one!"
 msgstr ""
+"Μπορεί να είναι άνανδρο, αλλά αρνούμαι να πολεμήσω<br>ενάντια στο άρθρωμα "
+"Παράθεσης για τον έλεγχο<br>των παραθύρων σου. Μόνο ένας θα επιζήσει!"
 
 #: src/modules/physics/e_mod_main.c:67
 msgid "Physics Error"
@@ -12192,9 +11875,8 @@ msgid "Quickaccess"
 msgstr "Quickaccess"
 
 #: src/modules/quickaccess/e_mod_main.c:69
-#, fuzzy
 msgid "Quickaccess settings panel"
-msgstr "Ρυθμίσεις Quickaccess"
+msgstr "Πάνελ ρύθμισης του Quickaccess"
 
 #: src/modules/quickaccess/e_mod_main.c:69
 #: src/modules/quickaccess/e_mod_main.c:72
@@ -12206,14 +11888,13 @@ msgstr "Ρυθμίσεις Quickaccess"
 #: src/modules/quickaccess/e_mod_main.c:84
 #: src/modules/quickaccess/e_mod_main.c:102
 #: src/modules/quickaccess/e_mod_main.c:103
-#, fuzzy
 msgid "quickaccess"
-msgstr "Quickaccess"
+msgstr "quickaccess"
 
 #: src/modules/quickaccess/e_mod_main.c:72
 #, fuzzy
 msgid "Hide windows on activate instead of raising"
-msgstr "Απόκρυψη Αντί Ανύψωσης"
+msgstr "Απόκρυψη παραθύρων στην ενεργοποίηση αντί της ανίψωσης"
 
 #: src/modules/quickaccess/e_mod_main.c:73
 msgid ""
@@ -12225,7 +11906,7 @@ msgstr ""
 #: src/modules/quickaccess/e_mod_main.c:75
 #, fuzzy
 msgid "Hide windows when focus is lost"
-msgstr "Ανύψωση παραθύρων κατά την διέλευση του ποντικιού"
+msgstr "Απόκρυψη παραθύρων όταν χάσουν την εστίαση"
 
 #: src/modules/quickaccess/e_mod_main.c:76
 msgid ""
@@ -12234,18 +11915,16 @@ msgid ""
 msgstr ""
 
 #: src/modules/quickaccess/e_mod_main.c:77
-#, fuzzy
 msgid "Skip taskbar"
-msgstr "Παράλειψη Γραμμής Εργασιών"
+msgstr ""
 
 #: src/modules/quickaccess/e_mod_main.c:78
 msgid "This option causes Quickaccess windows to not show up in taskbars"
 msgstr ""
 
 #: src/modules/quickaccess/e_mod_main.c:79
-#, fuzzy
 msgid "Skip pager"
-msgstr "Παράλειψη Διαχειριστή Επιφανειών Εργασίας"
+msgstr ""
 
 #: src/modules/quickaccess/e_mod_main.c:80
 msgid "This option causes Quickaccess windows to not show up in pagers"
@@ -12290,7 +11969,7 @@ msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:318
 msgid "Like so:"
-msgstr ""
+msgstr "Κάπως έτσι:"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:320
 #: src/modules/quickaccess/e_mod_quickaccess.c:858
@@ -12315,16 +11994,13 @@ msgid "Cannot set relaunch for internal E dialog!"
 msgstr "Αδυναμία ρύθμισης εκκίνησης ξανά για εσωτερικό παράθυρο του E!"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:372
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected window created with name:<br>%s<br>and class:<br>%s<br>could "
 "not be found in the Quickaccess app database<br>This means that either the "
 "app is unknown to us<br>or it is not intended for use with this option."
 "<br>Please choose an action to take:"
 msgstr ""
-"δεν μπορεί να βρεθεί στην βάση δεδομένων της εφαρμογής Quickaccess<br>Αυτό "
-"σημαίνει είτε η εφαρμογή είναι άγνωστη σε εμάς <br>ή δεν έχει σκοπό να "
-"χρησιμοποιηθεί με αυτή την επιλογή.<br>Παρακαλώ επιλέξτε άλλη ενέργεια:"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:383
 #: src/modules/quickaccess/e_mod_quickaccess.c:1000
@@ -12355,9 +12031,8 @@ msgid "Hide Instead Of Raise"
 msgstr "Απόκρυψη Αντί Ανύψωσης"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:828
-#, fuzzy
 msgid "Jump Mode"
-msgstr "Κατάσταση Μετάβασης"
+msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:837
 msgid "Relaunch When Closed"
@@ -12366,7 +12041,7 @@ msgstr "Εκκίνηση ξανά όταν κλείσει"
 #: src/modules/quickaccess/e_mod_quickaccess.c:844
 #, fuzzy
 msgid "Transient"
-msgstr "Παροδικά"
+msgstr "Μεταβατικό"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:851
 msgid "Remove Quickaccess"
@@ -12381,7 +12056,6 @@ msgid "Add Quickaccess"
 msgstr "Προσθήκη Quickaccess"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:959
-#, fuzzy
 msgid ""
 "The options found in the Quickaccess menu are as follows:"
 "<br><hilight>Autohide</hilight> - hide the window whenever it loses "
@@ -12392,14 +12066,6 @@ msgid ""
 "exits<br><hilight>Transient</hilight> - Remember only this instance of the "
 "window (not permanent)"
 msgstr ""
-"Οι διαθέσιμες επιλογές στο μενού του Quickaccess είναι:<br><hilight>Αυτόματη "
-"Απόκρυψη</hilight> - απόκρυψη του παραθύρου όταν αυτό χάνει την "
-"εστίαση<br><hilight>Απόκρυψη Αντί Ανύψωσης</hilight> - Απόκρυψη παραθύρου "
-"όταν ενεργοποιείται χωρίς να εστιάζεται<br><hilight>Κατάσταση Jump</hilight> "
-"- Εναλλαγή Switch to window's desk and raise instead of showing/"
-"hiding<br><hilight>Relaunch When Closed</hilight> - Run the entry's command "
-"again when its window exits<br><hilight>Transient</hilight> - Remember only "
-"this instance of the window (not permanent)"
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:998
 msgid "You deleted it on your own, you rascal!<br>Way to go!"
@@ -12659,14 +12325,12 @@ msgid "Syscon"
 msgstr "Syscon"
 
 #: src/modules/systray/e_mod_main.c:75
-#, fuzzy
 msgid "Enable Xembed"
-msgstr "Ενεργοποιημένο"
+msgstr "Ενεργοποίηση Xembed"
 
 #: src/modules/systray/e_mod_main.c:116
-#, fuzzy
 msgid "Systray Settings"
-msgstr "Ρυθμίσεις Syscon"
+msgstr ""
 
 #: src/modules/systray/e_mod_main.c:237
 msgid "Another systray exists"
@@ -12693,9 +12357,8 @@ msgid "Show text only"
 msgstr "Εμφάνιση μόνο κειμένου"
 
 #: src/modules/tasks/e_mod_config.c:98
-#, fuzzy
 msgid "Item width"
-msgstr "Ελάχιστο πλάτος"
+msgstr "Πλάτος αντικειμένου"
 
 #: src/modules/tasks/e_mod_config.c:100 src/modules/tasks/e_mod_config.c:105
 #, c-format
@@ -12703,18 +12366,16 @@ msgid "%1.0f px"
 msgstr "%1.0f px"
 
 #: src/modules/tasks/e_mod_config.c:103
-#, fuzzy
 msgid "Item height"
-msgstr "Ελάχιστο ύψος"
+msgstr "Ύψος αντικειμένου"
 
 #: src/modules/tasks/e_mod_main.c:318 src/modules/tasks/e_mod_main.c:735
 msgid "Tasks"
 msgstr "Εργασίες"
 
 #: src/modules/teamwork/e_mod_config.c:80
-#, fuzzy
 msgid "Disable remote media fetching"
-msgstr "Απενεργοποίηση Περιστροφής"
+msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:83
 msgid "Maximum media size to fetch"
@@ -12722,9 +12383,9 @@ msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:85
 #: src/modules/teamwork/e_mod_main.c:169
-#, fuzzy, c-format
+#, c-format
 msgid "%2.0f MiB"
-msgstr "%1.0f MiB"
+msgstr "%2.0f MiB"
 
 #: src/modules/teamwork/e_mod_config.c:88
 msgid "Maximum media cache size in RAM"
@@ -12732,9 +12393,9 @@ msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:90
 #: src/modules/teamwork/e_mod_main.c:167
-#, fuzzy, c-format
+#, c-format
 msgid "%4.0f MiB"
-msgstr "%1.0f MiB"
+msgstr "%4.0f MiB"
 
 #: src/modules/teamwork/e_mod_config.c:92
 msgid "Maximum media cache age on disk"
@@ -12742,54 +12403,46 @@ msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:94
 #: src/modules/teamwork/e_mod_main.c:172
-#, fuzzy, c-format
+#, c-format
 msgid "%3.0f Days"
-msgstr "%.0f s"
+msgstr "%3.0f Ημέρες"
 
 #: src/modules/teamwork/e_mod_config.c:97
-#, fuzzy
 msgid "Cache"
-msgstr "Λανθάνουσα μνήμη"
+msgstr "Cache"
 
 #: src/modules/teamwork/e_mod_config.c:103
-#, fuzzy
 msgid "Disable video previews"
-msgstr "Ζωντανή προεπισκόπηση"
+msgstr "Απενεργοποίηση προεπισκόπησης βίντεο"
 
 #: src/modules/teamwork/e_mod_config.c:106
-#, fuzzy
 msgid "Mouse-out hide delay"
-msgstr "Ροδέλες Ποντικιού"
+msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:110
 msgid "Maximum size (Percentage of screens size)"
 msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:119
-#, fuzzy
 msgid "Popups"
-msgstr "Αναδυόμενο"
+msgstr "Αναδυόμενα"
 
 #: src/modules/teamwork/e_mod_config.c:169
-#, fuzzy
 msgid "Teamwork Settings"
-msgstr "Ρυθμίσεις Επιφάνειας Εργασίας"
+msgstr "Ρυθμίσεις του Teamwork"
 
 #: src/modules/teamwork/e_mod_main.c:14 src/modules/teamwork/e_mod_main.c:121
 #: src/modules/teamwork/e_mod_main.c:131
-#, fuzzy
 msgid "Teamwork"
-msgstr "Δίκτυα"
+msgstr "Teamwork"
 
 #: src/modules/teamwork/e_mod_main.c:15
-#, fuzzy
 msgid "Toggle Popup Visibility"
-msgstr "Εναλλαγή Ορατότητας"
+msgstr "Εναλλαγή εμφάνισης αναδυόμενων"
 
 #: src/modules/teamwork/e_mod_main.c:161
-#, fuzzy
 msgid "Teamwork settings panel"
-msgstr "Ρυθμίσεις Quickaccess"
+msgstr "Πάνελ ρυθμίσεων του Teamwork"
 
 #: src/modules/teamwork/e_mod_main.c:161 src/modules/teamwork/e_mod_main.c:164
 #: src/modules/teamwork/e_mod_main.c:165 src/modules/teamwork/e_mod_main.c:166
@@ -12798,9 +12451,8 @@ msgstr "Ρυθμίσεις Quickaccess"
 #: src/modules/teamwork/e_mod_main.c:180 src/modules/teamwork/e_mod_main.c:184
 #: src/modules/teamwork/e_mod_main.c:185 src/modules/teamwork/e_mod_main.c:186
 #: src/modules/teamwork/e_mod_main.c:204 src/modules/teamwork/e_mod_main.c:205
-#, fuzzy
 msgid "teamwork"
-msgstr "Δίκτυα"
+msgstr "teamwork"
 
 #: src/modules/teamwork/e_mod_main.c:164
 msgid "Disable Teamwork remote media fetching"
@@ -12808,7 +12460,7 @@ msgstr ""
 
 #: src/modules/teamwork/e_mod_main.c:165
 msgid "Disable Teamwork video popups"
-msgstr ""
+msgstr "Απενεργοποίηση των βίντεο-ειδοποιήσεων του Teamwork"
 
 #: src/modules/teamwork/e_mod_main.c:166
 msgid "Maximum total size of Teamwork media to keep in RAM"
@@ -12939,9 +12591,8 @@ msgid "Tiling"
 msgstr "Σε παράθεση"
 
 #: src/modules/tiling/e_mod_tiling.c:3805
-#, fuzzy
 msgid "Toggle floating"
-msgstr "Εναλλαγή κίνησης"
+msgstr ""
 
 #: src/modules/tiling/e_mod_tiling.c:3808
 msgid "Add a stack"
@@ -12968,9 +12619,8 @@ msgid "Move window to the left"
 msgstr "Μετακίνηση παραθύρου στα αριστερά"
 
 #: src/modules/tiling/e_mod_tiling.c:3827
-#, fuzzy
 msgid "Move window to the right"
-msgstr "Μετακίνηση παραθύρου στα αριστερά"
+msgstr "Μετακίνηση παραθύρου στα δεξιά"
 
 #: src/modules/tiling/e_mod_tiling.c:3830
 msgid "Move window up"
@@ -12981,9 +12631,8 @@ msgid "Move window down"
 msgstr "Μετακίνηση παραθύρου κάτω"
 
 #: src/modules/tiling/e_mod_tiling.c:3837
-#, fuzzy
 msgid "Adjust transitions"
-msgstr "Προσαρμογή Μεταβάσεων"
+msgstr "Προσαρμογή μεταβάσεων"
 
 #: src/modules/tiling/e_mod_tiling.c:3840
 msgid "Focus a particular window"
@@ -13006,9 +12655,8 @@ msgid "Send to lower left corner"
 msgstr "Αποστολή στην κάτω αριστερή γωνία"
 
 #: src/modules/tiling/e_mod_tiling.c:3916
-#, fuzzy
 msgid "Tiling settings"
-msgstr "Ρυθμίσεις Παραθύρων"
+msgstr "Ρυθμίσεις παράθεσης"
 
 #: src/modules/tiling/e_mod_tiling.c:3916
 #: src/modules/tiling/e_mod_tiling.c:3921
@@ -13020,24 +12668,20 @@ msgstr "Ρυθμίσεις Παραθύρων"
 #: src/modules/tiling/e_mod_tiling.c:4056
 #: src/modules/tiling/e_mod_tiling.c:4057
 #: src/modules/tiling/e_mod_tiling.c:4058
-#, fuzzy
 msgid "tiling"
-msgstr "Σε παράθεση"
+msgstr "παράθεση"
 
 #: src/modules/tiling/e_mod_tiling.c:3921
-#, fuzzy
 msgid "Tile dialog windows"
-msgstr "Τοποθέτηση σε παράθεση των παραθύρων διαλόγων"
+msgstr "Παράθεση των παραθύρων διαλόγων"
 
 #: src/modules/tiling/e_mod_tiling.c:3923
-#, fuzzy
 msgid "Show window titles when tiling"
-msgstr "Εμφάνιση τίτλων παραθύρων"
+msgstr "Εμφάνιση των τίτλων παραθύρων κατά την παράθεση"
 
 #: src/modules/tiling/e_mod_tiling.c:3925
-#, fuzzy
 msgid "Tiling key hints"
-msgstr "Υποδείξεις πλήκτρων"
+msgstr ""
 
 #: src/modules/winlist/e_int_config_winlist.c:53
 msgid "Window Switcher Settings"
@@ -13183,7 +12827,7 @@ msgstr "Παράθυρο στα Δεξιά"
 #: src/modules/winlist/e_mod_main.c:221
 #, fuzzy
 msgid "Winlist Error"
-msgstr "Σφάλμα Προσάρτησης"
+msgstr "Σφάλμα Winlist"
 
 #: src/modules/winlist/e_mod_main.c:209
 msgid "Winlist cannot be activated from an edge binding"
@@ -13231,19 +12875,16 @@ msgid "Select preferred size"
 msgstr "Επιλογή προτιμώμενου μεγέθους"
 
 #: src/modules/wizard/page_060.c:29
-#, fuzzy
 msgid "Focus:"
-msgstr "Εστίαση"
+msgstr "Εστίαση:"
 
 #: src/modules/wizard/page_060.c:33
-#, fuzzy
 msgid "Whenever a window is clicked"
-msgstr "Εστίασε στο παράθυρο προορισμού όταν κάνω κλικ"
+msgstr "Όταν γίνεται κλικ στο παράθυρο"
 
 #: src/modules/wizard/page_060.c:36
-#, fuzzy
 msgid "Whenever the mouse enters a window"
-msgstr "Απομνημόνευση κλειωμάτων γι' αυτό το παράθυρο"
+msgstr "Όταν το ποντίκι εισέρχεται στο παράθυρο"
 
 #: src/modules/wizard/page_110.c:13
 msgid "Network Management"
@@ -13350,9 +12991,8 @@ msgid "Do not apply any keyboard settings ever"
 msgstr ""
 
 #: src/modules/xkbswitch/e_mod_config.c:279
-#, fuzzy
 msgid "Label only in gadgets"
-msgstr "Μόνο ετικέτα"
+msgstr ""
 
 #: src/modules/xkbswitch/e_mod_config.c:463
 msgid "Add New Configuration"
@@ -13371,13 +13011,12 @@ msgid "Variant"
 msgstr "Παραλλαγή"
 
 #: src/modules/xkbswitch/e_mod_main.c:83
-#, fuzzy
 msgid "Keyboard layout settings"
-msgstr "Ρυθμίσεις Πληκτρολογίου"
+msgstr "Ρυθμίσεις γλώσσας πληκτρολογίου"
 
 #: src/modules/xkbswitch/e_mod_main.c:207
 msgid "NONE"
-msgstr ""
+msgstr "ΚΑΝΕΝΑ"
 
 #~ msgid "Height (%3.0f pixels)"
 #~ msgstr "Ύψος (%3.0f pixels)"
