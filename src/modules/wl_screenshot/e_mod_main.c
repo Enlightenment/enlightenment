@@ -219,15 +219,16 @@ static struct wl_buffer *
 _create_shm_buffer(struct wl_shm *_shm, int width, int height, void **data_out)
 {
    char filename[] = "wayland-shm-XXXXXX";
+   Eina_Tmpstr *tmpfile = NULL;
    struct wl_shm_pool *pool;
    struct wl_buffer *buffer;
    int fd, size, stride;
    void *data;
 
-   fd = eina_file_mkstemp(filename, NULL);
+   fd = eina_file_mkstemp(filename, &tmpfile);
    if (fd < 0) 
      {
-        fprintf(stderr, "open %s failed: %m\n", filename);
+        fprintf(stderr, "open %s failed: %m\n", tmpfile);
         return NULL;
      }
 
@@ -241,7 +242,8 @@ _create_shm_buffer(struct wl_shm *_shm, int width, int height, void **data_out)
      }
 
    data = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
-   unlink(filename);
+   unlink(tmpfile);
+   eina_tmpstr_del(tmpfile);
 
    if (data == MAP_FAILED) 
      {
