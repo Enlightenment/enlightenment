@@ -476,6 +476,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    oa = e_widget_aspect_add(evas, mw, mh);
    ow = e_widget_preview_add(evas, mw, mh);
    evas_object_size_hint_min_set(ow, mw, mh);
+   evas_object_show(ow);
    cfdata->o_preview = ow;
    _bg_set(cfdata);
    e_widget_aspect_child_set(oa, ow);
@@ -622,6 +623,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    mh = (320 * zone->h) / zone->w;
    oa = e_widget_aspect_add(evas, mw, mh);
    ow = e_widget_preview_add(evas, mw, mh);
+   evas_object_show(ow);
    evas_object_size_hint_min_set(ow, mw, mh);
    evas_object_size_hint_aspect_set(ow, EVAS_ASPECT_CONTROL_BOTH, zone->w, zone->h);
    cfdata->o_preview = ow;
