@@ -1045,7 +1045,7 @@ _e_desktop_edit_cb_exec_select_ok(void *data, E_Dialog *dia)
    file = e_widget_fsel_selection_path_get(cfdata->editor->exec_fsel);
 
    E_FREE(cfdata->exec);
-   IFDUP(file, cfdata->exec);
+   cfdata->exec = eina_str_escape(file);
 
    _e_desktop_edit_cb_exec_select_cancel(data, dia);
 }
