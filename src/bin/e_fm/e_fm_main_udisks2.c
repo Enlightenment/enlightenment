@@ -72,6 +72,7 @@ typedef struct U2_Block
    Eina_Stringshare *IdLabel;
    Eina_Stringshare *IdUUID;
    Eina_Bool HintIgnore;
+   Eina_Bool HintSystem;
    Eina_Stringshare *HintName;
    Eina_Stringshare *HintIconName;
 } U2_Block;
@@ -176,7 +177,7 @@ _e_fm_main_udisks2_storage_block_add(E_Storage *s, U2_Block *u2)
 static void
 _e_fm_main_udisks2_volume_block_add(E_Volume *v, U2_Block *u2)
 {
-   v->validated = u2->volume && u2->Device && u2->parent;
+   v->validated = u2->volume && u2->Device && u2->parent && (!u2->HintSystem);
    if (!v->validated) return;
    v->size = u2->Size;
    eina_stringshare_replace(&v->udi, u2->Device);
@@ -270,6 +271,8 @@ _e_fm_main_udisks2_block_handle(Eldbus_Message_Iter *arr3, U2_Block *u2)
           u2->IdUUID = eina_stringshare_add(val);
         else if (!strcmp(key2, "HintIgnore"))
           u2->HintIgnore = !!b;
+        else if (!strcmp(key2, "HintSystem"))
+          u2->HintSystem = !!b;
         else if (!strcmp(key2, "HintName"))
           u2->HintName = eina_stringshare_add(val);
         else if (!strcmp(key2, "HintIconName"))
