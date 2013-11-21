@@ -1536,10 +1536,7 @@ _e_fwin_window_title_set(E_Fwin_Page *page)
      file = ecore_file_file_get(e_fm2_real_path_get(page->fm_obj));
 
    if (file)
-     {
-        eina_strlcpy(buf, file, sizeof(buf));
-        e_win_title_set(page->fwin->win, buf);
-     }
+     e_win_title_set(page->fwin->win, file);
 
    if (e_config->remember_internal_fm_windows_globally)
      e_win_name_class_set(page->fwin->win, "E", fwin_class);
