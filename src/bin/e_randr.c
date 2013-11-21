@@ -571,8 +571,6 @@ _e_randr_event_cb_screen_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
 
    if (e_randr_cfg->primary != primary)
      {
-        E_Randr_Output_Config *cfg;
-
         e_randr_cfg->primary = primary;
         changed = EINA_TRUE;
      }
