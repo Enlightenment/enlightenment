@@ -669,6 +669,7 @@ struct _E_Border
    Eina_Bool                  argb;
 
    int                        tmp_input_hidden;
+   int                        focus_policy;
 };
 
 struct _E_Border_Pending_Move_Resize

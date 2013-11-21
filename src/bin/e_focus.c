@@ -27,8 +27,8 @@ e_focus_idler_before(void)
 EAPI void
 e_focus_event_mouse_in(E_Border *bd)
 {
-   if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
-       (e_config->focus_policy == E_FOCUS_SLOPPY))
+   if ((bd->focus_policy == E_FOCUS_MOUSE) ||
+       (bd->focus_policy == E_FOCUS_SLOPPY))
      {
         if (bd != e_border_focused_get())
           e_border_focus_set(bd, 1, 1);
@@ -53,7 +53,7 @@ e_focus_event_mouse_in(E_Border *bd)
 EAPI void
 e_focus_event_mouse_out(E_Border *bd)
 {
-   if (e_config->focus_policy == E_FOCUS_MOUSE)
+   if (bd->focus_policy == E_FOCUS_MOUSE)
      {
         /* FIXME: this is such a hack. its a big hack around x's async events
          * as we dont know always exactly what action causes what event
@@ -82,7 +82,7 @@ e_focus_event_mouse_down(E_Border *bd)
 {
    if (!bd->focused)
      {
-        if (e_config->focus_policy == E_FOCUS_CLICK)
+        if (bd->focus_policy == E_FOCUS_CLICK)
           e_border_focus_set(bd, 1, 1);
         else if (e_config->always_click_to_focus)
           e_border_focus_set(bd, 1, 1);
@@ -102,7 +102,7 @@ e_focus_event_mouse_up(E_Border *bd __UNUSED__)
 EAPI void
 e_focus_event_focus_in(E_Border *bd)
 {
-   if ((e_config->focus_policy == E_FOCUS_CLICK) &&
+   if ((bd->focus_policy == E_FOCUS_CLICK) &&
        (!e_config->always_click_to_raise) &&
        (!e_config->always_click_to_focus))
      {
@@ -126,7 +126,7 @@ e_focus_event_focus_in(E_Border *bd)
 EAPI void
 e_focus_event_focus_out(E_Border *bd)
 {
-   if ((e_config->focus_policy == E_FOCUS_CLICK) &&
+   if ((bd->focus_policy == E_FOCUS_CLICK) &&
        (!e_config->always_click_to_raise) &&
        (!e_config->always_click_to_focus))
      {
@@ -150,7 +150,7 @@ e_focus_event_focus_out(E_Border *bd)
 EAPI void
 e_focus_setup(E_Border *bd)
 {
-   if ((e_config->focus_policy == E_FOCUS_CLICK) ||
+   if ((bd->focus_policy == E_FOCUS_CLICK) ||
        (e_config->always_click_to_raise) ||
        (e_config->always_click_to_focus))
      {
