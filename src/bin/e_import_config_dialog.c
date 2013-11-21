@@ -20,6 +20,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
    int w = 0, h = 0;
    const char *file, *locale;
    char buf[PATH_MAX], cmd[PATH_MAX], tmpn[PATH_MAX], ipart[PATH_MAX], enc[128];
+   Eina_Tmpstr *path = NULL;
    char *imgdir = NULL, *fstrip;
    int cr, cg, cb, ca;
    FILE *f;
@@ -51,7 +52,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
      }
 
    strcpy(tmpn, "e_bgdlg_new.edc-tmp-XXXXXX");
-   fd = eina_file_mkstemp(tmpn, NULL);
+   fd = eina_file_mkstemp(tmpn, &path);
    if (fd < 0)
      {
         printf("Error Creating tmp file: %s\n", strerror(errno));
@@ -262,7 +263,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
    fclose(f);
 
    snprintf(cmd, sizeof(cmd), "%s/edje_cc -v %s %s %s", e_prefix_bin_get(),
-            ipart, tmpn, e_util_filename_escape(buf));
+            ipart, path, e_util_filename_escape(buf));
 
    import->tmpf = strdup(tmpn);
    import->fdest = eina_stringshare_add(buf);
@@ -270,6 +271,8 @@ _import_edj_gen(E_Import_Config_Dialog *import)
      ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                              _import_cb_edje_cc_exit, import);
    import->exe = ecore_exe_run(cmd, import);
+
+   eina_tmpstr_del(path);
 }
 
 static Eina_Bool
