@@ -548,6 +548,50 @@ group "E_Config" struct {
             value "mime" string: "application/x-desktop";
             value "icon" string: "DESKTOP";
         }
+        group "E_Config_Mime_Icon" struct {        
+           value "mime" string: "application/vnd.oasis.opendocument.presentation";
+           value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+           value "mime" string: "application/vnd.ms-excel";
+           value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+           value "mime" string: "application/vnd.ms-powerpoint";
+           value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+           value "mime" string: "application/vnd.ms-word";
+           value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+           value "mime" string: "application/vnd.oasis.opendocument.spreadsheet";
+           value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+           value "mime" string: "application/vnd.oasis.opendocument.text";
+           value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+           value "mime" string: "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+           value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+           value "mime" string: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+           value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+           value "mime" string: "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+           value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+           value "mime" string: "text/richtext";
+           value "icon" string: "THUMB";
+        }
+        group "E_Config_Mime_Icon" struct {
+           value "mime" string: "application/msword";
+           value "icon" string: "THUMB";
+        }
     }
     group "shelves" list {
         group "E_Config_Shelf" struct {
