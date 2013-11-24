@@ -271,11 +271,7 @@ _e_wid_fprev_preview_video_change(void *data, Evas_Object *obj)
    pos = (pos * tot) / 100.0;
    t = pos - t;
    if (t < 0.0) t = -t;
-   if (t > 0.25)
-     {
-        fprintf(stderr, "SET %3.3f\n", pos);
-        emotion_object_position_set(data, pos);
-     }
+   if (t > 0.25) emotion_object_position_set(data, pos);
 }
 
 static void
