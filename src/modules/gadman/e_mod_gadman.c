@@ -618,7 +618,7 @@ gadman_update_bg(void)
         edje_object_part_unswallow(Man->full_bg, obj);
         evas_object_del(obj);
      }
-   
+
    switch (Man->conf->bg_type)
      {
       case BG_STD:
