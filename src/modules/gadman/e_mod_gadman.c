@@ -611,13 +611,14 @@ gadman_update_bg(void)
    const char *ext;
 
    if (!Man->gadcons[GADMAN_LAYER_TOP]) return;
+   if (!Man->conf) return;
    obj = edje_object_part_swallow_get(Man->full_bg, "e.swallow.bg");
    if (obj)
      {
         edje_object_part_unswallow(Man->full_bg, obj);
         evas_object_del(obj);
      }
-
+   
    switch (Man->conf->bg_type)
      {
       case BG_STD:
