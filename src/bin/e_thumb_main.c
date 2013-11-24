@@ -420,7 +420,7 @@ _e_thumb_generate(E_Thumb *eth)
              evas_object_resize(im2, tw, th);
              evas_object_show(im2);
           }
-        else// if (evas_object_image_extension_can_load_get(ext))
+        else if (evas_object_image_extension_can_load_get(ext))
           {
              im = evas_object_image_add(evas);
              evas_object_image_load_size_set(im, eth->w, eth->h);
@@ -443,8 +443,8 @@ _e_thumb_generate(E_Thumb *eth)
              evas_object_resize(im, ww, hh);
              sortkey = EINA_TRUE;
           }
-//        else
-//          goto end;
+        else
+          goto end;
         
         ecore_evas_alpha_set(ee, alpha);
         ecore_evas_resize(ee, ww, hh);
