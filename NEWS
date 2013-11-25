@@ -235,3 +235,4 @@ Fixes:
     * fixed filemanager spring window closing when dragging from desktop
     * fixed catching XWindow closes during DND operations on those windows
     * wsod: Fixed gdb hangs when generating backtraces.
+    * Entry: Fixed issues with entry not scrolling to cursor.
