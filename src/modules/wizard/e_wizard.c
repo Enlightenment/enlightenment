@@ -163,7 +163,7 @@ e_wizard_page_show(Evas_Object *obj)
    o_content = obj;
    if (obj)
      {
-        Evas_Coord minw, minh;
+        Evas_Coord minw = 0, minh = 0;
 
         e_widget_size_min_get(obj, &minw, &minh);
         edje_extern_object_min_size_set(obj, minw, minh);
