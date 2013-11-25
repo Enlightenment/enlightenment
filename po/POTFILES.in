@@ -14,7 +14,6 @@ src/bin/e_comp.c
 src/bin/e_config.c
 src/bin/e_config_dialog.c
 src/bin/e_configure.c
-src/bin/e_configure_option.c
 src/bin/e_confirm_dialog.c
 src/bin/e_container.c
 src/bin/e_datastore.c
@@ -146,8 +145,6 @@ src/modules/clock/e_mod_main.c
 src/modules/conf/e_conf.c
 src/modules/conf/e_mod_config.c
 src/modules/conf/e_mod_main.c
-src/modules/conf2/e_conf2.c
-src/modules/conf2/e_mod_main.c
 src/modules/conf_applications/e_int_config_apps.c
 src/modules/conf_applications/e_int_config_apps_personal.c
 src/modules/conf_applications/e_int_config_defapps.c
