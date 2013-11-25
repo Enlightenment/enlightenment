@@ -63,16 +63,6 @@ e_modapi_init(E_Module *m)
    e_configure_registry_item_add
      ("launcher/run_everything", 40, _("Everything Configuration"),
      NULL, module_icon, evry_config_dialog);
-   {
-      E_Configure_Option *co;
-
-      e_configure_option_domain_current_set("everything");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "settings", _("Everything launcher settings"), _("exec"), _("everything"));
-      E_CONFIGURE_OPTION_ICON(co, module_icon);
-      co->info = eina_stringshare_add("launcher/run_everything");
-      e_configure_option_category_tag_add(_("everything"), _("everything"));
-      e_configure_option_category_icon_set(_("everything"), module_icon);;
-   }
    evry_init();
 
    _evry_type_init("NONE");
@@ -172,8 +162,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 
         em->active = EINA_FALSE;
      }
-   e_configure_option_category_tag_del(_("everything"), _("everything"));
-   e_configure_option_domain_clear("everything");
 
    evry_plug_apps_shutdown();
    evry_plug_files_shutdown();

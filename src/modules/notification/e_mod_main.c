@@ -117,52 +117,6 @@ _notification_cb_initial_mode_timer(Config *m_cfg)
    return EINA_FALSE;
 }
 
-static Eina_List *
-_notification_corner_info_cb(E_Configure_Option *co)
-{
-   Eina_List *ret = NULL;
-   E_Configure_Option_Info *oi;
-   int x;
-   const char *name[] =
-   {
-    "Top left corner",
-    "Top right corner",
-    "Bottom left corner",
-    "Bottom right corner",
-   };
-
-   for (x = 0; x <= CORNER_BR; x++)
-     {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
-        ret = eina_list_append(ret, oi);
-     }
-   return ret;
-}
-
-static Eina_List *
-_notification_screen_info_cb(E_Configure_Option *co)
-{
-   Eina_List *ret = NULL;
-   E_Configure_Option_Info *oi;
-   int x;
-   const char *name[] =
-   {
-    "Primary screen",
-    "Current screen",
-    "All screens",
-    "Xinerama",
-   };
-
-   for (x = 0; x <= POPUP_DISPLAY_POLICY_MULTI; x++)
-     {
-        oi = e_configure_option_info_new(co, _(name[x]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
-        ret = eina_list_append(ret, oi);
-     }
-   return ret;
-}
-
 /* Module Api Functions */
 EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Notification"};
 
@@ -191,7 +145,6 @@ EAPI void *
 e_modapi_init(E_Module *m)
 {
    char buf[PATH_MAX];
-   E_Configure_Option *co;
 
    snprintf(buf, sizeof(buf), "%s/e-module-notification.edj", m->dir);
    /* register config panel entry */
@@ -257,24 +210,6 @@ e_modapi_init(E_Module *m)
 
    notification_mod = m;
 
-   e_configure_option_domain_current_set("notification");
-   E_CONFIGURE_OPTION_ADD(co, BOOL, show_low, notification_cfg, _("Display low urgency notifications"), _("notification"));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, show_normal, notification_cfg, _("Display normal urgency notifications"), _("notification"));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, show_critical, notification_cfg, _("Display high urgency notifications"), _("notification"));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, force_timeout, notification_cfg, _("Force a specified timeout on all notifications"), _("notification"), _("delay"));
-   E_CONFIGURE_OPTION_ADD(co, DOUBLE, timeout, notification_cfg, _("Timeout to force on notifications"), _("notification"), _("delay"));
-   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0.0, 15.0, 0.1, _("%.1f seconds"));
-   E_CONFIGURE_OPTION_ADD(co, ENUM, dual_screen, notification_cfg, _("Screen(s) on which to display notifications"), _("notification"), _("screen"));
-   co->info_cb = _notification_screen_info_cb;
-   E_CONFIGURE_OPTION_ICON(co, buf);
-   E_CONFIGURE_OPTION_ADD(co, ENUM, corner, notification_cfg, _("Corner in which to display notifications"), _("notification"), _("screen"));
-   co->info_cb = _notification_corner_info_cb;
-   E_CONFIGURE_OPTION_ICON(co, buf);
-
-   e_configure_option_category_tag_add(_("screen"), _("notification"));
-   e_configure_option_category_tag_add(_("notification"), _("notification"));
-   e_configure_option_category_icon_set(_("notification"), buf);
-
    return m;
 }
 
@@ -295,9 +230,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_notification_server_unregister();
 
 
-   e_configure_option_domain_clear("notification");
-   e_configure_option_category_tag_del(_("screen"), _("notification"));
-   e_configure_option_category_tag_del(_("notification"), _("notification"));
    _notification_cfg_free(notification_cfg);
    E_CONFIG_DD_FREE(conf_edd);
    notification_mod = NULL;

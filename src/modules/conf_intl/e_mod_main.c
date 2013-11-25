@@ -30,23 +30,6 @@ e_modapi_init(E_Module *m)
    conf_module = m;
    e_module_delayed_set(m, 1);
 
-   {
-      E_Configure_Option *co;
-
-      e_configure_option_domain_current_set("conf_intl");
-
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "language", _("Language settings"), _("language"));
-      co->info = eina_stringshare_add("language/language_settings");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-locale");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "desklock language", _("Desklock language settings"), _("desklock"), _("language"));
-      co->info = eina_stringshare_add("language/desklock_language_settings");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-desklock-locale");
-
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "input method", _("Input method settings"), _("input"), _("language"));
-      co->info = eina_stringshare_add("language/input_method_settings");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-imc");
-   }
-
    return m;
 }
 
@@ -66,7 +49,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_configure_registry_item_del("language/language_settings");
    e_configure_registry_category_del("language");
 
-   e_configure_option_domain_clear("conf_intl");
    conf_module = NULL;
    return 1;
 }

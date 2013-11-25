@@ -63,40 +63,6 @@ e_modapi_init(E_Module *m)
                                  NULL, "preferences-system-windows",
                                  e_int_config_apps_ibar_other);
 
-   {
-      E_Configure_Option *co;
-
-      e_configure_option_domain_current_set("conf_applications");
-
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "new app launcher", _("Create a new application launcher"), _("application"), _("exec"));
-      co->info = eina_stringshare_add("applications/new_application");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-applications-add");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "apps", _("Application launchers"), _("application"), _("exec"));
-      co->info = eina_stringshare_add("applications/personal_applications");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-applications-personal");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "favorite apps", _("Favorite applications"), _("application"), _("exec"));
-      co->info = eina_stringshare_add("applications/favorite_applications");
-      E_CONFIGURE_OPTION_ICON(co, "user-bookmarks");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "ibar apps", _("Ibar applications"), _("application"), _("exec"));
-      co->info = eina_stringshare_add("applications/ibar_applications");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-applications-ibar");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "desklock apps", _("Desk lock applications"), _("application"), _("exec"), _("desklock"));
-      co->info = eina_stringshare_add("applications/screen_lock_applications");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-applications-screen-lock");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "deskunlock apps", _("Desk unlock applications"), _("application"), _("exec"), _("desklock"));
-      co->info = eina_stringshare_add("applications/screen_unlock_applications");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-applications-screen-unlock");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "restart apps", _("Enlightenment restart applications"), _("application"), _("exec"));
-      co->info = eina_stringshare_add("applications/restart_applications");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-applications-restart");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "startup apps", _("Enlightenment start applications"), _("application"), _("exec"), _("startup"));
-      co->info = eina_stringshare_add("applications/startup_applications");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-applications-startup");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "default apps", _("Enlightenment default applications"), _("application"), _("exec"));
-      co->info = eina_stringshare_add("applications/default_applications");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-default-applications");
-   }
-
    conf_module = m;
    e_module_delayed_set(m, 1);
    return m;
@@ -121,7 +87,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_configure_registry_item_del("applications/desktop_environments");
    e_configure_registry_category_del("applications");
 
-   e_configure_option_domain_clear("conf_applications");
    conf_module = NULL;
    return 1;
 }

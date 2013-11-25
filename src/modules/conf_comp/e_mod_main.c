@@ -252,14 +252,6 @@ e_modapi_init(E_Module *m)
      mod->conf->first_draw_delay = 0.20;
 
    _comp_mod = mod;
-   {
-      E_Configure_Option *co;
-
-      e_configure_option_domain_current_set("conf_comp");
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "comp_settings", _("Advanced composite settings panel"), _("composite"), _("border"));
-      co->info = eina_stringshare_add("internal/comp_matches");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-composite");
-   }
 
    e_module_delayed_set(m, 0);
    e_module_priority_set(m, -1000);
@@ -285,7 +277,6 @@ e_modapi_shutdown(E_Module *m)
      }
 
    free(mod);
-   e_configure_option_domain_clear("conf_comp");
 
    if (maug)
      {

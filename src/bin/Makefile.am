@@ -62,7 +62,6 @@ e_config_data.h \
 e_config_dialog.h \
 e_config.h \
 e_configure.h \
-e_configure_option.h \
 e_confirm_dialog.h \
 e_container.h \
 e_datastore.h \
@@ -233,7 +232,6 @@ e_config.c \
 e_config_data.c \
 e_config_dialog.c \
 e_configure.c \
-e_configure_option.c \
 e_confirm_dialog.c \
 e_container.c \
 e_datastore.c \

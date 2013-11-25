@@ -609,10 +609,6 @@ main(int argc, char **argv)
    TS("E_Intl Post Init Done");
    _e_main_shutdown_push(e_intl_post_shutdown);
 
-   TS("E_Configure Option Init");
-   e_configure_option_init();
-   TS("E_Configure Option Init Done");
-
    e_screensaver_preinit();
 
    if (e_config->show_splash)
@@ -655,8 +651,6 @@ main(int argc, char **argv)
         e_init_version_set(VERSION);
         e_init_show();
      }
-
-   //configure_option_shutdown needs to be first
 
    if (!really_know)
      {
@@ -1108,8 +1102,6 @@ _e_main_shutdown(int errcode)
    _idle_after = NULL;
    if (_idle_flush) ecore_idle_enterer_del(_idle_flush);
    _idle_flush = NULL;
-
-   e_configure_option_shutdown();
 
    for (i = (_e_main_lvl - 1); i >= 0; i--)
      (*_e_main_shutdown_func[i])();

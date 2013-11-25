@@ -113,7 +113,6 @@ EAPI void *
 e_modapi_init(E_Module *m)
 {
    char buf[PATH_MAX];
-   E_Configure_Option *co;
 
    snprintf(buf, sizeof(buf), "%s/e-module-teamwork.edj", e_module_dir_get(m));
    e_configure_registry_category_add("applications", 20, _("Apps"), NULL,
@@ -156,35 +155,6 @@ e_modapi_init(E_Module *m)
    e_tw_toggle->func.go = e_tw_act_toggle_cb;
    e_action_predef_name_set(_e_tw_name, _lbl_toggle, _act_toggle, NULL, NULL, 1);
 
-   e_configure_option_domain_current_set("teamwork");
-
-   E_CONFIGURE_OPTION_ADD_CUSTOM(co, "teamwork-settings", _("Teamwork settings panel"), _("teamwork"), _("applications"));
-   co->info = eina_stringshare_add("applications/teamwork");
-   E_CONFIGURE_OPTION_ICON(co, buf);
-   E_CONFIGURE_OPTION_ADD(co, BOOL, disable_media_fetch, tw_config, _("Disable Teamwork remote media fetching"), _("teamwork"));
-   E_CONFIGURE_OPTION_ADD(co, BOOL, disable_video, tw_config, _("Disable Teamwork video popups"), _("teamwork"));
-   E_CONFIGURE_OPTION_ADD(co, DOUBLE, allowed_media_size, tw_config, _("Maximum total size of Teamwork media to keep in RAM"), _("teamwork"), _("cache"));
-   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0, 1024, 16, _("%4.0f MiB"));
-   E_CONFIGURE_OPTION_ADD(co, DOUBLE, allowed_media_size, tw_config, _("Maximum size of remote media items to fetch with Teamwork"), _("teamwork"), _("cache"));
-   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 1, 50, 1, _("%2.0f MiB"));
-   E_CONFIGURE_OPTION_HELP(co, _("This option determines how much memory will be used to cache recent media for faster loading."));
-   E_CONFIGURE_OPTION_ADD(co, DOUBLE, allowed_media_age, tw_config, _("Maximum age for a disk-cached Teamwork media item"), _("teamwork"), _("cache"));
-   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, -1, 180, 1, _("%3.0f Days"));
-   E_CONFIGURE_OPTION_HELP(co, _("This option determines how long media will remain in the disk cache before it is pruned.</ps>"
-                                 "Set to -1 to never delete media, or to 0 to never cache media on disk."));
-
-   E_CONFIGURE_OPTION_ADD(co, DOUBLE, mouse_out_delay, tw_config, _("Delay before closing a Teamwork popup on mouse-out"), _("teamwork"), _("mouse"));
-   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0, 5, 0.5, _("%1.1f seconds"));
-   E_CONFIGURE_OPTION_ADD(co, DOUBLE, popup_size, tw_config, _("Maximum percentage of screen to use for Teamwork popups"), _("teamwork"), _("screen"));
-   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 10, 100, 1, _("%3.0f"));
-   E_CONFIGURE_OPTION_ADD(co, DOUBLE, popup_opacity, tw_config, _("Opacity to use for Teamwork popups"), _("teamwork"));
-   E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 10, 100, 1, _("%3.0f"));
-   co->funcs[0].none = tw_popup_opacity_set;
-
-   e_configure_option_category_tag_add(_("applications"), _("teamwork"));
-   e_configure_option_category_tag_add(_("teamwork"), _("teamwork"));
-   e_configure_option_category_icon_set(_("teamwork"), buf);
-
    return m;
 }
 
@@ -199,10 +169,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 
    e_configure_registry_item_del("applications/teamwork");
    e_configure_registry_category_del("applications");
-
-   e_configure_option_domain_clear("teamwork");
-   e_configure_option_category_tag_del(_("teamwork"), _("teamwork"));
-   e_configure_option_category_tag_del(_("applications"), _("teamwork"));
 
    e_action_predef_name_del(_e_tw_name, _lbl_toggle);
    e_action_del(_act_toggle);

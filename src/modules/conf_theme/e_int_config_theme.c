@@ -608,19 +608,16 @@ static void *
 _create_data(E_Config_Dialog *cfd)
 {
    E_Config_Dialog_Data *cfdata;
-   char theme_dir[PATH_MAX];
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    cfd->cfdata = cfdata;
    cfdata->cfd = cfd;
    _fill_data(cfdata);
    /* Grab the "Personal" themes. */
-   snprintf(theme_dir, sizeof(theme_dir), "%s", elm_theme_user_dir_get());
-   cfdata->init[0] = eio_file_ls(theme_dir, _eio_filter_cb, _init_main_cb, _init_done_cb, _init_error_cb, cfdata);
+   cfdata->init[0] = eio_file_ls(elm_theme_user_dir_get(), _eio_filter_cb, _init_main_cb, _init_done_cb, _init_error_cb, cfdata);
 
    /* Grab the "System" themes. */
-   snprintf(theme_dir, sizeof(theme_dir), "%s", elm_theme_system_dir_get());
-   cfdata->init[1] = eio_file_ls(theme_dir, _eio_filter_cb, _init_main_cb, _init_done_cb, _init_error_cb, cfdata);
+   cfdata->init[1] = eio_file_ls(elm_theme_system_dir_get(), _eio_filter_cb, _init_main_cb, _init_done_cb, _init_error_cb, cfdata);
    return cfdata;
 }
 

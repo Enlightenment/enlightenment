@@ -48,8 +48,6 @@ e_modapi_init(E_Module *m)
                                  e_int_config_mime);
    /* Setup Config edd */
    _e_mod_fileman_config_load();
-   e_configure_option_category_tag_add(_("files"), _("files"));
-   e_configure_option_category_icon_set(_("files"), "system-file-manager");
 
    /* add module supplied action */
    act = e_action_add("fileman");
@@ -158,11 +156,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_configure_registry_category_del("fileman");
 
    e_config_domain_save("module.fileman", conf_edd, fileman_config);
-   e_configure_option_category_tag_del(_("files"), _("files"));
-   e_configure_option_tag_alias_del(_("files"), _("filemanager"));
-   e_configure_option_tag_alias_del(_("files"), _("file manager"));
-   
-   e_configure_option_domain_clear("fileman");
+
    _e_mod_fileman_config_free();
    E_CONFIG_DD_FREE(conf_edd);
    E_CONFIG_DD_FREE(paths_edd);
@@ -230,52 +224,6 @@ void
 _e_mod_menu_add(void *data __UNUSED__, E_Menu *m)
 {
    e_mod_menu_add(m, NULL);
-}
-
-static Eina_List *
-_cfg_view_mode_info_cb(E_Configure_Option *co)
-{
-   Eina_List *ret = NULL;
-   E_Configure_Option_Info *oi;
-   int x;
-   const char *name[] =
-   {
-      "Grid-placed icons", //1
-      "Custom-placed icons", //2
-      NULL, //3
-      NULL, //4
-      "List icons"//5
-   };
-
-   for (x = E_FM2_VIEW_MODE_GRID_ICONS; x <= E_FM2_VIEW_MODE_LIST; x++)
-     {
-        if (!name[x - 1]) continue;
-        oi = e_configure_option_info_new(co, _(name[x - 1]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
-        ret = eina_list_append(ret, oi);
-     }
-   return ret;
-}
-
-static Eina_List *
-_cfg_toolbar_orient_cb_info_cb(E_Configure_Option *co)
-{
-   Eina_List *ret = NULL;
-   E_Configure_Option_Info *oi;
-   int x;
-   const char *name[] =
-   {
-      "Top",
-      "Bottom"
-   };
-
-   for (x = E_GADCON_ORIENT_TOP; x <= E_GADCON_ORIENT_BOTTOM; x++)
-     {
-        oi = e_configure_option_info_new(co, _(name[x - E_GADCON_ORIENT_TOP]), (intptr_t*)(long)x);
-        oi->current = (*(int*)co->valptr == x);
-        ret = eina_list_append(ret, oi);
-     }
-   return ret;
 }
 
 /* Abstract fileman config load/create to one function for maintainability */
@@ -381,78 +329,6 @@ _e_mod_fileman_config_load(void)
 
     fileman_config->view.menu_shows_files = 0;
 
-    {
-       E_Configure_Option *co;
-
-       e_configure_option_domain_current_set("fileman");
-
-       E_CONFIGURE_OPTION_ADD(co, ENUM, view.mode, fileman_config, _("Default view mode"), _("files"));
-       co->info_cb = _cfg_view_mode_info_cb;
-       E_CONFIGURE_OPTION_ICON(co, "system-file-manager");
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, DOUBLE_INT, icon.icon.w, fileman_config, _("Icon size"), _("files"), _("image"));
-       E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 16, 256, 1, _("%1.0f pixels"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-
-       E_CONFIGURE_OPTION_ADD(co, BOOL, icon.extension.show, fileman_config, _("Show file extensions"), _("files"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, BOOL, view.show_full_path, fileman_config, _("Show full path in filemanager window titles"), _("files"), _("border"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, BOOL, view.show_toolbar, fileman_config, _("Show path toolbar in filemanager windows"), _("files"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, ENUM, view.toolbar_orient, fileman_config, _("Filemanager path toolbar position"), _("files"));
-       co->info_cb = _cfg_toolbar_orient_cb_info_cb;
-       E_CONFIGURE_OPTION_ICON(co, "system-file-manager");
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, BOOL, view.show_sidebar, fileman_config, _("Show favorites sidebar in filemanager windows"), _("files"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-
-       E_CONFIGURE_OPTION_ADD(co, BOOL, list.sort.no_case, fileman_config, _("Ignore letter case when sorting files"), _("files"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, BOOL, list.sort.extension, fileman_config, _("Group files by extension"), _("files"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, BOOL, list.sort.mtime, fileman_config, _("Sort files by modification time"), _("files"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, BOOL, list.sort.size, fileman_config, _("Sort files by size"), _("files"), _("size"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-
-       /* FIXME: exclusive */
-       E_CONFIGURE_OPTION_ADD(co, BOOL, list.sort.dirs.first, fileman_config, _("Sort directories first"), _("files"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, BOOL, list.sort.dirs.last, fileman_config, _("Sort directories last"), _("files"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-
-
-       E_CONFIGURE_OPTION_ADD(co, BOOL, view.open_dirs_in_place, fileman_config, _("Open directories in place"), _("files"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, BOOL, view.single_click, fileman_config, _("Use single click to open files"), _("files"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, BOOL, selection.windows_modifiers, fileman_config, _("Use alternate (Mac-style) selection modifiers"), _("files"), _("key"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-       E_CONFIGURE_OPTION_ADD(co, BOOL, view.desktop_navigation, fileman_config, _("Allow navigation on desktop"), _("files"));
-       E_CONFIGURE_OPTION_HELP(co, _("Normally, icons on the desktop come from $XDG_HOME_DIR/Desktop[-$SCREEN]. "
-                                   "With this option enabled, the desktop can freely change directories using the Navigate "
-                                   "menu or type buffer."));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-
-       E_CONFIGURE_OPTION_ADD(co, DOUBLE_UINT, icon.max_thumb_size, fileman_config, _("Maximum file size for which thumbnails should be generated"), _("files"), _("size"), _("image"));
-       E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 0, 512, 1, _("%1.0f MiB"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-
-       E_CONFIGURE_OPTION_ADD(co, DOUBLE, view.spring_delay, fileman_config, _("Spring folder delay"), _("files"), _("delay"));
-       E_CONFIGURE_OPTION_HELP(co, _("A \"spring folder\" is the action that occurs when dragging a file onto a folder: "
-                                   "the folder will \"spring\" open and create a new window to continue the drag operation in."));
-       E_CONFIGURE_OPTION_MINMAX_STEP_FMT(co, 1, 10, 1, _("%1.0f seconds"));
-       co->funcs[1].none = co->funcs[0].none = e_fwin_reload_all;
-
-       E_CONFIGURE_OPTION_ADD_CUSTOM(co, "settings", _("File icons"), _("files"), _("image"));
-       co->info = eina_stringshare_add("fileman/file_icons");
-       E_CONFIGURE_OPTION_ICON(co, "preferences-file-icons");
-
-       e_configure_option_tag_alias_add(_("files"), _("filemanager"));
-       e_configure_option_tag_alias_add(_("files"), _("file manager"));
-    }
-    
     e_config_save_queue();
 }
 

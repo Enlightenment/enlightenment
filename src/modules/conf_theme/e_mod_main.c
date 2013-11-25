@@ -1,7 +1,6 @@
 #include "e.h"
 #include "e_mod_main.h"
 
-static const char *cur_theme = NULL;
 
 static E_Module *conf_module = NULL;
 static E_Int_Menu_Augmentation *maug[8] = {0};
@@ -38,86 +37,14 @@ _e_mod_run_theme_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__
 }
 
 static void
-_theme_set(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
-{
-   E_Action *a;
-   const char *file;
-   char *name;
-
-   file = ecore_file_file_get(data);
-   name = ecore_file_strip_ext(file);
-   if (name)
-     {
-        elm_theme_set(NULL, name);
-        elm_config_all_flush();
-        elm_config_save();
-        free(name);
-        a = e_action_find("restart");
-        if ((a) && (a->func.go)) a->func.go(NULL, NULL);
-     }
-}
-
-static void
-_item_new(Eina_Stringshare *file, E_Menu *m)
-{
-   E_Menu_Item *mi;
-   char *name, *sfx;
-   Eina_Bool used;
-
-   name = (char*)ecore_file_file_get(file);
-   if (!name) return;
-   used = (!e_util_strcmp(name, cur_theme));
-   sfx = strrchr(name, '.');
-   name = strndupa(name, sfx - name);
-   mi = e_menu_item_new(m);
-   e_menu_item_label_set(mi, name);
-   if (used)
-     e_menu_item_disabled_set(mi, 1);
-   else
-     e_menu_item_callback_set(mi, _theme_set, file);
-   e_menu_item_radio_group_set(mi, 1);
-   e_menu_item_radio_set(mi, 1);
-   e_menu_item_toggle_set(mi, used);
-}
-
-static void
-_e_mod_menu_theme_del(void *d __UNUSED__)
-{
-   cur_theme = NULL;
-}
-
-static void
 _e_mod_menu_theme_add(void *data __UNUSED__, E_Menu *m)
 {
    E_Menu_Item *mi;
-   Eina_Stringshare *file;
-   const Eina_List *themes, *sthemes, *l;
-   const char *theme;
-   static char buf[PATH_MAX];
 
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Theme"));
    e_util_menu_item_theme_icon_set(mi, "preferences-desktop-theme");
    e_menu_item_callback_set(mi, _e_mod_run_theme_cb, NULL);
-   theme = elm_theme_get(NULL);
-   if (!theme) return;
-
-   snprintf(buf, sizeof(buf), "%s.edj", theme);
-   cur_theme = buf;
-   m = e_menu_new();
-   e_object_del_attach_func_set(E_OBJECT(m), _e_mod_menu_theme_del);
-   e_menu_title_set(m, _("Themes"));
-   e_menu_item_submenu_set(mi, m);
-   e_object_unref(E_OBJECT(m));
-
-   themes = e_configure_option_util_themes_get();
-   sthemes = e_configure_option_util_themes_system_get();
-   EINA_LIST_FOREACH(themes, l, file)
-     _item_new(file, m);
-   if (themes && sthemes)
-     e_menu_item_separator_set(e_menu_item_new(m), 1);
-   EINA_LIST_FOREACH(sthemes, l, file)
-     _item_new(file, m);
 }
 
 EAPI void *
@@ -167,28 +94,6 @@ e_modapi_init(E_Module *m)
    conf_module = m;
    e_module_delayed_set(m, 1);
 
-   {
-      E_Configure_Option *co;
-
-      e_configure_option_domain_current_set("conf_theme");
-
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "themes", _("Enlightenment theme settings"), _("theme"));
-      co->info = eina_stringshare_add("appearance/theme");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-theme");
-
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "wallpaper", _("Desktop wallpaper settings"), _("wallpaper"));
-      co->info = eina_stringshare_add("appearance/wallpaper");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-wallpaper");
-
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "colors", _("Enlightenment color settings"), _("theme"), _("color"));
-      co->info = eina_stringshare_add("appearance/colors");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-color");
-
-      E_CONFIGURE_OPTION_ADD_CUSTOM(co, "fonts", _("Enlightenment font settings"), _("font"));
-      co->info = eina_stringshare_add("appearance/fonts");
-      E_CONFIGURE_OPTION_ICON(co, "preferences-desktop-font");
-   }
-
    return m;
 }
 
@@ -208,8 +113,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
         e_int_menus_menu_augmentation_del("config/1", maug[1]);
         maug[1] = NULL;
      }
-
-   cur_theme = NULL;
 
    while ((cfd = e_config_dialog_get("E", "appearance/scale")))
      e_object_del(E_OBJECT(cfd));
@@ -245,8 +148,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
    e_configure_registry_item_del("appearance/borders");
    e_configure_registry_item_del("internal/wallpaper_desk");
    e_configure_registry_category_del("internal");
-
-   e_configure_option_domain_clear("conf_theme");
 
    conf_module = NULL;
    return 1;
