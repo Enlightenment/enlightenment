@@ -44,19 +44,21 @@ static Eina_Bool gadman_locked;
 Manager *Man = NULL;
 static Eina_List *_gadman_hdls = NULL;
 static Eina_Hash *_gadman_gadgets = NULL;
+static Ecore_Job *gadman_reset_job = NULL;
 
 /* for locking geometry during our own move/resize */
 static Eina_Bool mover_lock = EINA_FALSE;
 
 /* Implementation */
 void
-gadman_reset(void)
+gadman_reset(void *d EINA_UNUSED)
 {
    E_Gadcon *gc;
    unsigned int layer;
    const Eina_List *l;
    E_Zone *zone;
 
+   E_FREE_FUNC(gadman_reset_job, ecore_job_del);
    if (gadman_locked) return;
    evas_event_freeze(e_comp_get(Man->container)->evas);
    for (layer = 0; layer < GADMAN_LAYER_COUNT; layer++)
@@ -129,7 +131,7 @@ gadman_init(E_Module *m)
    e_gadcon_location_register(location);
 
    _e_gadman_handlers_add();
-   if (!gadman_locked) gadman_reset();
+   if (!gadman_locked) gadman_reset_job = ecore_job_add(gadman_reset, NULL);
 }
 
 void
@@ -137,6 +139,7 @@ gadman_shutdown(void)
 {
    unsigned int layer;
 
+   E_FREE_FUNC(gadman_reset_job, ecore_job_del);
    _e_gadman_handler_del();
 
    gadman_gadget_edit_end(NULL, NULL, NULL, NULL);
@@ -1607,7 +1610,7 @@ static Eina_Bool
 _gadman_module_init_end_cb(void *d __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
    gadman_locked = EINA_FALSE;
-   gadman_reset();
+   gadman_reset(NULL);
    return ECORE_CALLBACK_RENEW;
 }
 
