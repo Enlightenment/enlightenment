@@ -325,14 +325,10 @@ gadman_gadget_place(E_Gadcon_Client *gcc, const E_Gadcon_Client_Class *cc, E_Con
    if (gcc->gadcon->id == ID_GADMAN_LAYER_TOP)
      {
         edje_object_signal_emit(gcc->o_frame, "e,state,visibility,hide", "e");
-        evas_object_layer_set(gcc->o_base, E_COMP_CANVAS_LAYER_POPUP);
         evas_object_layer_set(gcc->o_frame, E_COMP_CANVAS_LAYER_POPUP);
      }
    else
-     {
-        evas_object_layer_set(gcc->o_base, E_COMP_CANVAS_LAYER_DESKTOP);
-        evas_object_layer_set(gcc->o_frame, E_COMP_CANVAS_LAYER_DESKTOP);
-     }
+     evas_object_layer_set(gcc->o_frame, E_COMP_CANVAS_LAYER_DESKTOP);
    if (cc->name)
      {
         l = eina_hash_find(_gadman_gadgets, cc->name);
