@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-19 17:09+0900\n"
+"POT-Creation-Date: 2013-11-25 14:35+0900\n"
 "PO-Revision-Date: 2013-01-05 20:57+0000\n"
 "Last-Translator: Mantas Kriaučiūnas <mantas@akl.lt>\n"
 "Language-Team: Lithuanian Translation team\n"
@@ -31,7 +31,7 @@ msgstr "Apie Enlightenment"
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:867
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1201
 #: src/modules/everything/evry_plug_windows.c:452
-#: src/modules/fileman/e_fwin.c:2540 src/modules/mixer/app_mixer.c:502
+#: src/modules/fileman/e_fwin.c:2537 src/modules/mixer/app_mixer.c:502
 msgid "Close"
 msgstr "Užverti"
 
@@ -165,12 +165,12 @@ msgstr "Meniu"
 msgid "Window Menu"
 msgstr "Lango meniu"
 
-#: src/bin/e_actions.c:2979 src/bin/e_int_border_menu.c:1090
+#: src/bin/e_actions.c:2979 src/bin/e_int_border_menu.c:1088
 #: src/modules/winlist/e_int_config_winlist.c:207
 msgid "Raise"
 msgstr "Pakelti"
 
-#: src/bin/e_actions.c:2984 src/bin/e_int_border_menu.c:1098
+#: src/bin/e_actions.c:2984 src/bin/e_int_border_menu.c:1096
 msgid "Lower"
 msgstr "Nuleisti"
 
@@ -718,7 +718,7 @@ msgstr ""
 #: src/modules/conf_intl/e_int_config_imc.c:808
 #: src/modules/conf_theme/e_int_config_theme.c:669
 #: src/modules/conf_theme/e_int_config_wallpaper.c:427
-#: src/modules/conf_theme/e_int_config_wallpaper.c:581
+#: src/modules/conf_theme/e_int_config_wallpaper.c:582
 #: src/modules/gadman/e_mod_config.c:252 src/modules/syscon/e_mod_main.c:31
 #: src/modules/syscon/e_mod_main.c:35 src/modules/syscon/e_mod_main.c:129
 msgid "System"
@@ -791,7 +791,7 @@ msgstr ""
 #: src/bin/e_color_dialog.c:47 src/bin/e_desktop_editor.c:858
 #: src/bin/e_desktop_editor.c:921 src/bin/e_entry_dialog.c:64
 #: src/bin/e_fm.c:10110 src/bin/e_fm_prop.c:625
-#: src/bin/e_import_config_dialog.c:534 src/bin/e_import_dialog.c:195
+#: src/bin/e_import_config_dialog.c:537 src/bin/e_import_dialog.c:195
 #: src/modules/bluez4/agent.c:136 src/modules/bluez4/agent.c:148
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:624
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
@@ -805,82 +805,82 @@ msgstr ""
 msgid "Cancel"
 msgstr "Atsisakyti"
 
-#: src/bin/e_comp.c:4259
+#: src/bin/e_comp.c:4261
 #, fuzzy
 msgid "Compositor Warning"
 msgstr "Padėties"
 
-#: src/bin/e_comp.c:4259
+#: src/bin/e_comp.c:4261
 msgid ""
 "Your display driver does not support OpenGL, or<br>no OpenGL engines were "
 "compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
 "engine."
 msgstr ""
 
-#: src/bin/e_comp.c:4278 src/bin/e_comp.c:4300
+#: src/bin/e_comp.c:4280 src/bin/e_comp.c:4302
 #, fuzzy
 msgid "Compositor Error"
 msgstr "Klaida atjungiant"
 
-#: src/bin/e_comp.c:4278
+#: src/bin/e_comp.c:4280
 msgid "Another compositor is already running<br>on your display server."
 msgstr ""
 
-#: src/bin/e_comp.c:4300
+#: src/bin/e_comp.c:4302
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
 msgstr ""
 
-#: src/bin/e_comp.c:4645 src/modules/bluez4/e_mod_main.c:210
+#: src/bin/e_comp.c:4647 src/modules/bluez4/e_mod_main.c:210
 #: src/modules/conf_comp/e_mod_main.c:55
 msgid "Visible"
 msgstr ""
 
-#: src/bin/e_comp.c:4650 src/modules/conf_comp/e_mod_main.c:60
+#: src/bin/e_comp.c:4652 src/modules/conf_comp/e_mod_main.c:60
 msgid "Focus-Out"
 msgstr ""
 
-#: src/bin/e_comp.c:4655 src/modules/conf_comp/e_mod_main.c:65
+#: src/bin/e_comp.c:4657 src/modules/conf_comp/e_mod_main.c:65
 msgid "Focus-In"
 msgstr ""
 
-#: src/bin/e_comp.c:4660 src/bin/e_int_border_prop.c:510
+#: src/bin/e_comp.c:4662 src/bin/e_int_border_prop.c:510
 #: src/modules/conf_comp/e_mod_main.c:70
 msgid "Hidden"
 msgstr "Slepiamas"
 
-#: src/bin/e_comp.c:4709 src/bin/e_int_border_prop.c:444
+#: src/bin/e_comp.c:4711 src/bin/e_int_border_prop.c:444
 #: src/bin/e_int_border_remember.c:698 src/modules/conf_comp/e_mod_main.c:177
 #: src/modules/wizard/page_050.c:95
 msgid "Title"
 msgstr "Antraštė"
 
-#: src/bin/e_comp.c:4792
+#: src/bin/e_comp.c:4794
 msgid "Use fast composite effects for windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4792 src/bin/e_comp.c:4794 src/bin/e_comp.c:4796
-#: src/bin/e_comp.c:4798 src/bin/e_comp.c:4800 src/bin/e_comp.c:4803
-#: src/bin/e_comp.c:4805 src/bin/e_comp.c:4807 src/bin/e_comp.c:4809
-#: src/bin/e_comp.c:4811 src/bin/e_comp.c:4813 src/bin/e_comp.c:4817
-#: src/bin/e_comp.c:4821 src/bin/e_comp.c:4826 src/bin/e_comp.c:4829
-#: src/bin/e_comp.c:4832 src/bin/e_comp.c:4835 src/bin/e_comp.c:4838
-#: src/bin/e_comp.c:4845 src/bin/e_comp.c:4848 src/bin/e_comp.c:4855
-#: src/bin/e_comp.c:4863 src/bin/e_comp.c:4865 src/bin/e_comp.c:4867
-#: src/bin/e_comp.c:4869 src/bin/e_comp.c:4872 src/bin/e_comp.c:4874
-#: src/bin/e_comp.c:4877 src/bin/e_comp.c:4881 src/bin/e_comp.c:4882
-#: src/bin/e_comp.c:4883 src/bin/e_comp.c:5110 src/bin/e_comp.c:5111
+#: src/bin/e_comp.c:4794 src/bin/e_comp.c:4796 src/bin/e_comp.c:4798
+#: src/bin/e_comp.c:4800 src/bin/e_comp.c:4802 src/bin/e_comp.c:4805
+#: src/bin/e_comp.c:4807 src/bin/e_comp.c:4809 src/bin/e_comp.c:4811
+#: src/bin/e_comp.c:4813 src/bin/e_comp.c:4815 src/bin/e_comp.c:4819
+#: src/bin/e_comp.c:4823 src/bin/e_comp.c:4828 src/bin/e_comp.c:4831
+#: src/bin/e_comp.c:4834 src/bin/e_comp.c:4837 src/bin/e_comp.c:4840
+#: src/bin/e_comp.c:4847 src/bin/e_comp.c:4850 src/bin/e_comp.c:4857
+#: src/bin/e_comp.c:4865 src/bin/e_comp.c:4867 src/bin/e_comp.c:4869
+#: src/bin/e_comp.c:4871 src/bin/e_comp.c:4874 src/bin/e_comp.c:4876
+#: src/bin/e_comp.c:4879 src/bin/e_comp.c:4883 src/bin/e_comp.c:4884
+#: src/bin/e_comp.c:4885 src/bin/e_comp.c:5112 src/bin/e_comp.c:5113
 #: src/modules/conf_comp/e_mod_main.c:259
 msgid "composite"
 msgstr ""
 
-#: src/bin/e_comp.c:4792 src/bin/e_comp.c:4803 src/bin/e_comp.c:4817
-#: src/bin/e_comp.c:4821 src/bin/e_comp.c:4826 src/bin/e_comp.c:4829
-#: src/bin/e_comp.c:4832 src/bin/e_comp.c:4835 src/bin/e_comp.c:4838
-#: src/bin/e_comp.c:4845 src/bin/e_comp.c:4848 src/bin/e_comp.c:4855
-#: src/bin/e_comp.c:4863 src/bin/e_comp.c:4867 src/bin/e_comp.c:4869
-#: src/bin/e_comp.c:4872 src/bin/e_comp.c:4874 src/bin/e_comp.c:4877
+#: src/bin/e_comp.c:4794 src/bin/e_comp.c:4805 src/bin/e_comp.c:4819
+#: src/bin/e_comp.c:4823 src/bin/e_comp.c:4828 src/bin/e_comp.c:4831
+#: src/bin/e_comp.c:4834 src/bin/e_comp.c:4837 src/bin/e_comp.c:4840
+#: src/bin/e_comp.c:4847 src/bin/e_comp.c:4850 src/bin/e_comp.c:4857
+#: src/bin/e_comp.c:4865 src/bin/e_comp.c:4869 src/bin/e_comp.c:4871
+#: src/bin/e_comp.c:4874 src/bin/e_comp.c:4876 src/bin/e_comp.c:4879
 #: src/bin/e_configure_option.c:1504 src/bin/e_configure_option.c:1505
 #: src/bin/e_configure_option.c:1508 src/bin/e_configure_option.c:1541
 #: src/bin/e_configure_option.c:1560 src/bin/e_configure_option.c:1564
@@ -942,10 +942,10 @@ msgstr ""
 msgid "border"
 msgstr ""
 
-#: src/bin/e_comp.c:4792 src/bin/e_comp.c:4794 src/bin/e_comp.c:4796
-#: src/bin/e_comp.c:4798 src/bin/e_comp.c:4800 src/bin/e_comp.c:4803
-#: src/bin/e_comp.c:4805 src/bin/e_comp.c:4807 src/bin/e_comp.c:4809
-#: src/bin/e_comp.c:4811 src/bin/e_comp.c:4813 src/bin/e_comp.c:4821
+#: src/bin/e_comp.c:4794 src/bin/e_comp.c:4796 src/bin/e_comp.c:4798
+#: src/bin/e_comp.c:4800 src/bin/e_comp.c:4802 src/bin/e_comp.c:4805
+#: src/bin/e_comp.c:4807 src/bin/e_comp.c:4809 src/bin/e_comp.c:4811
+#: src/bin/e_comp.c:4813 src/bin/e_comp.c:4815 src/bin/e_comp.c:4823
 #: src/bin/e_configure_option.c:1462 src/bin/e_configure_option.c:1466
 #: src/bin/e_configure_option.c:1470 src/bin/e_configure_option.c:1474
 #: src/bin/e_configure_option.c:1803 src/bin/e_configure_option.c:1805
@@ -959,10 +959,10 @@ msgstr ""
 msgid "theme"
 msgstr "Apipavidalinimas"
 
-#: src/bin/e_comp.c:4792 src/bin/e_comp.c:4794 src/bin/e_comp.c:4796
-#: src/bin/e_comp.c:4798 src/bin/e_comp.c:4800 src/bin/e_comp.c:4803
-#: src/bin/e_comp.c:4805 src/bin/e_comp.c:4807 src/bin/e_comp.c:4809
-#: src/bin/e_comp.c:4811 src/bin/e_comp.c:4813
+#: src/bin/e_comp.c:4794 src/bin/e_comp.c:4796 src/bin/e_comp.c:4798
+#: src/bin/e_comp.c:4800 src/bin/e_comp.c:4802 src/bin/e_comp.c:4805
+#: src/bin/e_comp.c:4807 src/bin/e_comp.c:4809 src/bin/e_comp.c:4811
+#: src/bin/e_comp.c:4813 src/bin/e_comp.c:4815
 #: src/bin/e_configure_option.c:1462 src/bin/e_configure_option.c:1466
 #: src/bin/e_configure_option.c:1470 src/bin/e_configure_option.c:1474
 #: src/bin/e_configure_option.c:1504 src/bin/e_configure_option.c:1505
@@ -974,11 +974,11 @@ msgstr "Apipavidalinimas"
 msgid "animate"
 msgstr "Animuoti"
 
-#: src/bin/e_comp.c:4794
+#: src/bin/e_comp.c:4796
 msgid "Use fast composite effects for menus"
 msgstr ""
 
-#: src/bin/e_comp.c:4794 src/bin/e_comp.c:4805
+#: src/bin/e_comp.c:4796 src/bin/e_comp.c:4807
 #: src/bin/e_configure_option.c:1488 src/bin/e_configure_option.c:1491
 #: src/bin/e_configure_option.c:1494 src/bin/e_configure_option.c:1497
 #: src/bin/e_configure_option.c:1500 src/bin/e_configure_option.c:1691
@@ -993,50 +993,50 @@ msgstr ""
 msgid "menu"
 msgstr ""
 
-#: src/bin/e_comp.c:4796
+#: src/bin/e_comp.c:4798
 msgid "Use fast composite effects for popups"
 msgstr ""
 
-#: src/bin/e_comp.c:4796 src/bin/e_comp.c:4807
+#: src/bin/e_comp.c:4798 src/bin/e_comp.c:4809
 #, fuzzy
 msgid "popup"
 msgstr "Iškylantysis langas"
 
-#: src/bin/e_comp.c:4798
+#: src/bin/e_comp.c:4800
 msgid "Use fast composite effects for objects"
 msgstr ""
 
-#: src/bin/e_comp.c:4800
+#: src/bin/e_comp.c:4802
 msgid ""
 "Use fast composite effects for override-redirect windows (tooltips and such)"
 msgstr ""
 
-#: src/bin/e_comp.c:4803 src/modules/conf_comp/e_mod_config.c:226
+#: src/bin/e_comp.c:4805 src/modules/conf_comp/e_mod_config.c:226
 msgid "Disable composite effects for windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4805 src/modules/conf_comp/e_mod_config.c:229
+#: src/bin/e_comp.c:4807 src/modules/conf_comp/e_mod_config.c:229
 msgid "Disable composite effects for menus"
 msgstr ""
 
-#: src/bin/e_comp.c:4807 src/modules/conf_comp/e_mod_config.c:232
+#: src/bin/e_comp.c:4809 src/modules/conf_comp/e_mod_config.c:232
 msgid "Disable composite effects for popups"
 msgstr ""
 
-#: src/bin/e_comp.c:4809 src/modules/conf_comp/e_mod_config.c:235
+#: src/bin/e_comp.c:4811 src/modules/conf_comp/e_mod_config.c:235
 msgid "Disable composite effects for objects"
 msgstr ""
 
-#: src/bin/e_comp.c:4811
+#: src/bin/e_comp.c:4813
 msgid ""
 "Disable composite effects for override-redirect windows (tooltips and such)"
 msgstr ""
 
-#: src/bin/e_comp.c:4813
+#: src/bin/e_comp.c:4815
 msgid "Disable composite effects for the screen"
 msgstr ""
 
-#: src/bin/e_comp.c:4813 src/bin/e_configure_option.c:1535
+#: src/bin/e_comp.c:4815 src/bin/e_configure_option.c:1535
 #: src/bin/e_configure_option.c:1537 src/bin/e_configure_option.c:1595
 #: src/bin/e_configure_option.c:1617 src/bin/e_configure_option.c:1619
 #: src/bin/e_configure_option.c:1621 src/bin/e_configure_option.c:1737
@@ -1054,43 +1054,43 @@ msgstr ""
 msgid "screen"
 msgstr ""
 
-#: src/bin/e_comp.c:4814
+#: src/bin/e_comp.c:4816
 msgid ""
 "This option disables composite effects from themes, such as animating the "
 "screen fade when blanking"
 msgstr ""
 
-#: src/bin/e_comp.c:4817
+#: src/bin/e_comp.c:4819
 #, fuzzy
 msgid "Compositing engine"
 msgstr "Padėties"
 
-#: src/bin/e_comp.c:4821
+#: src/bin/e_comp.c:4823
 msgid "Default window composite effect"
 msgstr ""
 
-#: src/bin/e_comp.c:4826
+#: src/bin/e_comp.c:4828
 msgid "Smooth scaling of composited window content"
 msgstr ""
 
-#: src/bin/e_comp.c:4829
+#: src/bin/e_comp.c:4831
 #, fuzzy
 msgid "Sync composited windows"
 msgstr "Suskleisti į piktogramą langai"
 
-#: src/bin/e_comp.c:4832
+#: src/bin/e_comp.c:4834
 msgid "Loose sync composited windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4835
+#: src/bin/e_comp.c:4837
 msgid "Grab server during rendering of composited windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4838
+#: src/bin/e_comp.c:4840
 msgid "Initial draw timeout for newly-mapped composited windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4838 src/bin/e_configure_option.c:1494
+#: src/bin/e_comp.c:4840 src/bin/e_configure_option.c:1494
 #: src/bin/e_configure_option.c:1531 src/bin/e_configure_option.c:1546
 #: src/bin/e_configure_option.c:1581 src/bin/e_configure_option.c:1655
 #: src/bin/e_configure_option.c:1657 src/bin/e_configure_option.c:1658
@@ -1106,67 +1106,67 @@ msgstr ""
 msgid "delay"
 msgstr ""
 
-#: src/bin/e_comp.c:4839
+#: src/bin/e_comp.c:4841
 #, fuzzy, c-format
 msgid "%1.2f seconds"
 msgstr "%.2f sekundės"
 
-#: src/bin/e_comp.c:4845
+#: src/bin/e_comp.c:4847
 msgid "Tear-free compositing (VSYNC)"
 msgstr ""
 
-#: src/bin/e_comp.c:4848
+#: src/bin/e_comp.c:4850
 msgid "Texture from pixmap rendering for composite"
 msgstr ""
 
-#: src/bin/e_comp.c:4855
+#: src/bin/e_comp.c:4857
 #, fuzzy
 msgid "Composite swapping method"
 msgstr "Padėties"
 
-#: src/bin/e_comp.c:4863 src/modules/conf_comp/e_mod_config.c:253
+#: src/bin/e_comp.c:4865 src/modules/conf_comp/e_mod_config.c:253
 #: src/modules/conf_comp/e_mod_config.c:593
 msgid "Don't composite fullscreen windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4865 src/modules/conf_comp/e_mod_config.c:255
+#: src/bin/e_comp.c:4867 src/modules/conf_comp/e_mod_config.c:255
 #: src/modules/conf_comp/e_mod_config.c:554
 #, fuzzy
 msgid "Don't fade backlight"
 msgstr "Neslėpti įtaisų"
 
-#: src/bin/e_comp.c:4865 src/bin/e_configure_option.c:1907
+#: src/bin/e_comp.c:4867 src/bin/e_configure_option.c:1907
 #: src/bin/e_configure_option.c:1910 src/bin/e_configure_option.c:1913
 #: src/bin/e_configure_option.c:1916 src/bin/e_configure_option.c:1918
 msgid "backlight"
 msgstr ""
 
-#: src/bin/e_comp.c:4867
+#: src/bin/e_comp.c:4869
 msgid "Send flush when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4869
+#: src/bin/e_comp.c:4871
 msgid "Send dump when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4872
+#: src/bin/e_comp.c:4874
 msgid "Show framerate when compositing windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4874
+#: src/bin/e_comp.c:4876
 msgid "Rolling average for fps display when compositing"
 msgstr ""
 
-#: src/bin/e_comp.c:4875
+#: src/bin/e_comp.c:4877
 #, fuzzy, c-format
 msgid "%1.0f frames"
 msgstr "%1.0f files"
 
-#: src/bin/e_comp.c:4877
+#: src/bin/e_comp.c:4879
 msgid "Composite framerate display corner"
 msgstr ""
 
-#: src/bin/e_comp.c:4881 src/bin/e_comp.c:5111
+#: src/bin/e_comp.c:4883 src/bin/e_comp.c:5113
 #: src/bin/e_configure_option.c:2029 src/bin/e_configure_option.c:2030
 #: src/bin/e_configure_option.c:2031 src/bin/e_configure_option.c:2032
 #: src/bin/e_configure_option.c:2033 src/bin/e_configure_option.c:2034
@@ -1179,29 +1179,29 @@ msgstr ""
 msgid "windows"
 msgstr ""
 
-#: src/bin/e_comp.c:4965
+#: src/bin/e_comp.c:4967
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
 "need XRender and XFixes support in X11 and Ecore."
 msgstr ""
 
-#: src/bin/e_comp.c:4974
+#: src/bin/e_comp.c:4976
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr ""
 
-#: src/bin/e_comp.c:5057 src/bin/e_comp.c:5063
+#: src/bin/e_comp.c:5059 src/bin/e_comp.c:5065
 #, fuzzy
 msgid "Compositor"
 msgstr "Padėties"
 
-#: src/bin/e_comp.c:5058
+#: src/bin/e_comp.c:5060
 msgid "Change current window opacity"
 msgstr ""
 
-#: src/bin/e_comp.c:5064
+#: src/bin/e_comp.c:5066
 msgid "Set current window opacity"
 msgstr ""
 
@@ -1261,7 +1261,7 @@ msgstr ""
 #: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:856
 #: src/bin/e_desktop_editor.c:919 src/bin/e_entry_dialog.c:63
 #: src/bin/e_exec.c:734 src/bin/e_fm.c:10109 src/bin/e_fm.c:10840
-#: src/bin/e_fm_prop.c:624 src/bin/e_import_config_dialog.c:533
+#: src/bin/e_fm_prop.c:624 src/bin/e_import_config_dialog.c:536
 #: src/bin/e_int_border_remember.c:353 src/bin/e_int_border_remember.c:548
 #: src/bin/e_module.c:588 src/bin/e_module.c:996 src/bin/e_sys.c:759
 #: src/bin/e_sys.c:800 src/bin/e_update.c:76 src/bin/e_utils.c:689
@@ -1408,7 +1408,7 @@ msgid "Preferences"
 msgstr ""
 
 #: src/bin/e_configure_option.c:574 src/bin/e_fm_prop.c:480
-#: src/bin/e_import_config_dialog.c:470 src/bin/e_widget_fsel.c:348
+#: src/bin/e_import_config_dialog.c:473 src/bin/e_widget_fsel.c:348
 #: src/modules/conf_theme/e_int_config_transitions.c:218
 #: src/modules/conf_theme/e_int_config_xsettings.c:439
 msgid "Preview"
@@ -4235,11 +4235,11 @@ msgstr ""
 msgid "Automatically scroll contents"
 msgstr "Automatiškai slinkti turinį"
 
-#: src/bin/e_gadcon.c:1763 src/modules/gadman/e_mod_gadman.c:1078
+#: src/bin/e_gadcon.c:1763 src/modules/gadman/e_mod_gadman.c:1079
 msgid "Plain"
 msgstr "Paprastas"
 
-#: src/bin/e_gadcon.c:1776 src/modules/gadman/e_mod_gadman.c:1086
+#: src/bin/e_gadcon.c:1776 src/modules/gadman/e_mod_gadman.c:1087
 msgid "Inset"
 msgstr "Įdubęs"
 
@@ -4257,7 +4257,7 @@ msgstr "Išvaizda"
 #: src/modules/conf_applications/e_int_config_apps.c:294
 #: src/modules/conf_applications/e_int_config_apps.c:314
 #: src/modules/conf_applications/e_int_config_apps_personal.c:97
-#: src/modules/gadman/e_mod_gadman.c:1138
+#: src/modules/gadman/e_mod_gadman.c:1139
 #: src/modules/xkbswitch/e_mod_config.c:258
 msgid "Remove"
 msgstr "Pašalinti"
@@ -4310,78 +4310,78 @@ msgstr ""
 "Ankstesnis Enlightenment egzempliorius dar veikia\n"
 "šiame ekrane. Vykdymas nutraukiamas.\n"
 
-#: src/bin/e_import_config_dialog.c:288
+#: src/bin/e_import_config_dialog.c:291
 msgid "Picture Import Error"
 msgstr "Paveikslo importavimo klaida"
 
-#: src/bin/e_import_config_dialog.c:289
+#: src/bin/e_import_config_dialog.c:292
 msgid ""
 "Enlightenment was unable to import the picture<br>due to conversion errors."
 msgstr ""
 "Enlightenment nepavyko importuoti paveikslo<br>dėl konvertavimo klaidų."
 
-#: src/bin/e_import_config_dialog.c:345 src/bin/e_import_config_dialog.c:355
+#: src/bin/e_import_config_dialog.c:348 src/bin/e_import_config_dialog.c:358
 #: src/bin/e_import_dialog.c:74 src/bin/e_import_dialog.c:84
 msgid "Import Error"
 msgstr ""
 
-#: src/bin/e_import_config_dialog.c:346 src/bin/e_import_dialog.c:75
+#: src/bin/e_import_config_dialog.c:349 src/bin/e_import_dialog.c:75
 msgid "Enlightenment was unable to import the image<br>due to a copy error."
 msgstr ""
 
-#: src/bin/e_import_config_dialog.c:356 src/bin/e_import_dialog.c:85
+#: src/bin/e_import_config_dialog.c:359 src/bin/e_import_dialog.c:85
 msgid ""
 "Enlightenment was unable to import the image.<br><br>Are you sure this is a "
 "valid image?"
 msgstr ""
 
-#: src/bin/e_import_config_dialog.c:452
+#: src/bin/e_import_config_dialog.c:455
 msgid "Import Settings..."
 msgstr ""
 
-#: src/bin/e_import_config_dialog.c:484
+#: src/bin/e_import_config_dialog.c:487
 msgid "Fill and Stretch Options"
 msgstr "Užpildymo ir ištempimo parinktys"
 
-#: src/bin/e_import_config_dialog.c:486
+#: src/bin/e_import_config_dialog.c:489
 msgid "Stretch"
 msgstr "Ištempti"
 
-#: src/bin/e_import_config_dialog.c:490 src/bin/e_int_border_prop.c:236
+#: src/bin/e_import_config_dialog.c:493 src/bin/e_int_border_prop.c:236
 #, c-format
 msgid "Center"
 msgstr "Centruoti"
 
-#: src/bin/e_import_config_dialog.c:494
+#: src/bin/e_import_config_dialog.c:497
 msgid "Tile"
 msgstr "Iškloti"
 
-#: src/bin/e_import_config_dialog.c:499
+#: src/bin/e_import_config_dialog.c:502
 msgid "Within"
 msgstr "Viduje"
 
-#: src/bin/e_import_config_dialog.c:503
+#: src/bin/e_import_config_dialog.c:506
 msgid "Fill"
 msgstr "Užpildyti"
 
-#: src/bin/e_import_config_dialog.c:507
+#: src/bin/e_import_config_dialog.c:510
 msgid "Pan"
 msgstr ""
 
-#: src/bin/e_import_config_dialog.c:515
+#: src/bin/e_import_config_dialog.c:518
 msgid "File Quality"
 msgstr "Failo kokybė"
 
-#: src/bin/e_import_config_dialog.c:516
+#: src/bin/e_import_config_dialog.c:519
 msgid "Use original file"
 msgstr "Naudoti originalų failą"
 
-#: src/bin/e_import_config_dialog.c:518
+#: src/bin/e_import_config_dialog.c:521
 #, c-format
 msgid "%3.0f%%"
 msgstr "%3.0f%%"
 
-#: src/bin/e_import_config_dialog.c:523
+#: src/bin/e_import_config_dialog.c:526
 msgid "Fill Color"
 msgstr ""
 
@@ -4505,7 +4505,7 @@ msgstr "Prisiminti šias blokuotes"
 msgid "Window"
 msgstr ""
 
-#: src/bin/e_int_border_menu.c:151 src/bin/e_int_border_menu.c:1050
+#: src/bin/e_int_border_menu.c:151 src/bin/e_int_border_menu.c:1048
 msgid "Always on Top"
 msgstr ""
 
@@ -4573,12 +4573,12 @@ msgstr "Prisiminti"
 msgid "ICCCM/NetWM"
 msgstr ""
 
-#: src/bin/e_int_border_menu.c:959
+#: src/bin/e_int_border_menu.c:957
 #, c-format
 msgid "Screen %d"
 msgstr ""
 
-#: src/bin/e_int_border_menu.c:1061 src/bin/e_int_border_prop.c:157
+#: src/bin/e_int_border_menu.c:1059 src/bin/e_int_border_prop.c:157
 #: src/bin/e_int_border_prop.c:179
 #: src/modules/conf_theme/e_int_config_fonts.c:100
 #: src/modules/conf_theme/e_int_config_fonts.c:264
@@ -4587,43 +4587,43 @@ msgstr ""
 msgid "Normal"
 msgstr "Normalus"
 
-#: src/bin/e_int_border_menu.c:1072
+#: src/bin/e_int_border_menu.c:1070
 msgid "Always Below"
 msgstr "Visada apačioje"
 
-#: src/bin/e_int_border_menu.c:1116
+#: src/bin/e_int_border_menu.c:1114
 msgid "Pin to Desktop"
 msgstr "Prisegti prie darbalaukio"
 
-#: src/bin/e_int_border_menu.c:1127
+#: src/bin/e_int_border_menu.c:1125
 msgid "Unpin from Desktop"
 msgstr "Atsegti nuo darbalaukio"
 
-#: src/bin/e_int_border_menu.c:1217
+#: src/bin/e_int_border_menu.c:1215
 msgid "Select Border Style"
 msgstr "Parinkti rėmelio stilių"
 
-#: src/bin/e_int_border_menu.c:1229
+#: src/bin/e_int_border_menu.c:1227
 msgid "Use Enlightenment Default Icon Preference"
 msgstr ""
 
-#: src/bin/e_int_border_menu.c:1237
+#: src/bin/e_int_border_menu.c:1235
 msgid "Use Application Provided Icon"
 msgstr ""
 
-#: src/bin/e_int_border_menu.c:1245
+#: src/bin/e_int_border_menu.c:1243
 msgid "Use User Defined Icon"
 msgstr "Naudoti vartotojo nurodytą piktogramą"
 
-#: src/bin/e_int_border_menu.c:1254 src/bin/e_int_border_remember.c:784
+#: src/bin/e_int_border_menu.c:1252 src/bin/e_int_border_remember.c:784
 msgid "Offer Resistance"
 msgstr ""
 
-#: src/bin/e_int_border_menu.c:1315
+#: src/bin/e_int_border_menu.c:1313
 msgid "Window List"
 msgstr "Langų sąrašas"
 
-#: src/bin/e_int_border_menu.c:1325 src/modules/pager/e_mod_main.c:265
+#: src/bin/e_int_border_menu.c:1323 src/modules/pager/e_mod_main.c:265
 #: src/modules/pager/e_mod_main.c:2910 src/modules/pager/e_mod_main.c:2917
 #: src/modules/pager/e_mod_main.c:2924 src/modules/pager/e_mod_main.c:2926
 #: src/modules/pager/e_mod_main.c:2928 src/modules/pager/e_mod_main.c:2930
@@ -4631,7 +4631,7 @@ msgstr "Langų sąrašas"
 msgid "Pager"
 msgstr "Puslapiuotojas"
 
-#: src/bin/e_int_border_menu.c:1335 src/modules/wizard/page_180.c:24
+#: src/bin/e_int_border_menu.c:1333 src/modules/wizard/page_180.c:24
 msgid "Taskbar"
 msgstr "Programų juosta"
 
@@ -5937,14 +5937,14 @@ msgstr ""
 #: src/bin/e_shelf.c:66
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:219
 #: src/modules/everything/evry_config.c:568
-#: src/modules/gadman/e_mod_gadman.c:1107
+#: src/modules/gadman/e_mod_gadman.c:1108
 msgid "Horizontal"
 msgstr "Horizontalus"
 
 #: src/bin/e_shelf.c:67
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:221
 #: src/modules/everything/evry_config.c:561
-#: src/modules/gadman/e_mod_gadman.c:1116
+#: src/modules/gadman/e_mod_gadman.c:1117
 msgid "Vertical"
 msgstr "Vertikalus"
 
@@ -6269,84 +6269,84 @@ msgstr ""
 "Enlightenment<br>negalės būti išjungtas tol, kol nebus užverti šie langai "
 "arba išjungtas<br>gyvavimo trukmės užraktas."
 
-#: src/bin/e_utils.c:854
+#: src/bin/e_utils.c:872
 #, c-format
 msgid "%'.0f bytes"
 msgstr ""
 
-#: src/bin/e_utils.c:858
+#: src/bin/e_utils.c:876
 #, c-format
 msgid "%'.0f KiB"
 msgstr ""
 
-#: src/bin/e_utils.c:862
+#: src/bin/e_utils.c:880
 #, c-format
 msgid "%'.1f MiB"
 msgstr ""
 
-#: src/bin/e_utils.c:866
+#: src/bin/e_utils.c:884
 #, c-format
 msgid "%'.1f GiB"
 msgstr ""
 
-#: src/bin/e_utils.c:870
+#: src/bin/e_utils.c:888
 #, c-format
 msgid "%'.1f TiB"
 msgstr ""
 
-#: src/bin/e_utils.c:889
+#: src/bin/e_utils.c:907
 #, c-format
 msgid "In the future"
 msgstr ""
 
-#: src/bin/e_utils.c:893
+#: src/bin/e_utils.c:911
 #, c-format
 msgid "In the last minute"
 msgstr ""
 
-#: src/bin/e_utils.c:897
+#: src/bin/e_utils.c:915
 #, c-format
 msgid "Last year"
 msgid_plural "%li Years ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:902
+#: src/bin/e_utils.c:920
 #, c-format
 msgid "Last month"
 msgid_plural "%li Months ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:907
+#: src/bin/e_utils.c:925
 #, c-format
 msgid "Last week"
 msgid_plural "%li Weeks ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:912
+#: src/bin/e_utils.c:930
 #, c-format
 msgid "Yesterday"
 msgid_plural "%li Days ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:917
+#: src/bin/e_utils.c:935
 #, c-format
 msgid "An hour ago"
 msgid_plural "%li Hours ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:922
+#: src/bin/e_utils.c:940
 #, c-format
 msgid "A minute ago"
 msgid_plural "%li Minutes ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:929 src/bin/e_widget_filepreview.c:616
+#: src/bin/e_utils.c:947 src/bin/e_widget_filepreview.c:616
 #: src/bin/e_widget_filepreview.c:617 src/bin/e_widget_filepreview.c:618
 #: src/bin/e_widget_filepreview.c:648 src/bin/e_widget_filepreview.c:659
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:421
@@ -6358,23 +6358,23 @@ msgstr[1] ""
 msgid "Unknown"
 msgstr "Nežinomas"
 
-#: src/bin/e_utils.c:1000 src/bin/e_utils.c:1008
+#: src/bin/e_utils.c:1018 src/bin/e_utils.c:1026
 msgid "Error creating directory"
 msgstr ""
 
-#: src/bin/e_utils.c:1000
+#: src/bin/e_utils.c:1018
 #, c-format
 msgid ""
 "Failed to create directory: %s .<br>Check that you have correct permissions "
 "set."
 msgstr ""
 
-#: src/bin/e_utils.c:1008
+#: src/bin/e_utils.c:1026
 #, c-format
 msgid "Failed to create directory: %s .<br>A file of that name already exists."
 msgstr ""
 
-#: src/bin/e_utils.c:1166
+#: src/bin/e_utils.c:1184
 msgid ""
 "Configuration data needed upgrading. Your old configuration<br>has been "
 "wiped and a new set of defaults initialized. This<br>will happen regularly "
@@ -6385,12 +6385,12 @@ msgid ""
 "the hiccup in your configuration.<br>"
 msgstr ""
 
-#: src/bin/e_utils.c:1175 src/bin/e_utils.c:1199
+#: src/bin/e_utils.c:1193 src/bin/e_utils.c:1217
 #, c-format
 msgid "%s Configuration Updated"
 msgstr ""
 
-#: src/bin/e_utils.c:1188
+#: src/bin/e_utils.c:1206
 msgid ""
 "Your module configuration is NEWER than the module version. This is "
 "very<br>strange. This should not happen unless you downgraded<br>the module "
@@ -6399,12 +6399,12 @@ msgid ""
 "has been now restored to<br>defaults. Sorry for the inconvenience.<br>"
 msgstr ""
 
-#: src/bin/e_utils.c:1282
+#: src/bin/e_utils.c:1300
 #, c-format
 msgid "Never"
 msgstr ""
 
-#: src/bin/e_utils.c:1286
+#: src/bin/e_utils.c:1304
 #, fuzzy, c-format
 msgid "A second"
 msgid_plural "%li Seconds"
@@ -6412,7 +6412,7 @@ msgstr[0] "%.1f sekundės"
 msgstr[1] "%.1f sekundės"
 msgstr[2] "%.1f sekundės"
 
-#: src/bin/e_utils.c:1290
+#: src/bin/e_utils.c:1308
 #, c-format
 msgid "One year"
 msgid_plural "%li Years"
@@ -6420,7 +6420,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: src/bin/e_utils.c:1295
+#: src/bin/e_utils.c:1313
 #, c-format
 msgid "One month"
 msgid_plural "%li Months"
@@ -6428,7 +6428,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: src/bin/e_utils.c:1300
+#: src/bin/e_utils.c:1318
 #, c-format
 msgid "One week"
 msgid_plural "%li Weeks"
@@ -6436,7 +6436,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: src/bin/e_utils.c:1305
+#: src/bin/e_utils.c:1323
 #, c-format
 msgid "One day"
 msgid_plural "%li Days"
@@ -6444,7 +6444,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: src/bin/e_utils.c:1310
+#: src/bin/e_utils.c:1328
 #, c-format
 msgid "An hour"
 msgid_plural "%li Hours"
@@ -6452,7 +6452,7 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: src/bin/e_utils.c:1315
+#: src/bin/e_utils.c:1333
 #, c-format
 msgid "A minute"
 msgid_plural "%li Minutes"
@@ -8190,7 +8190,7 @@ msgstr ""
 #: src/modules/conf_intl/e_int_config_imc.c:803
 #: src/modules/conf_theme/e_int_config_theme.c:665
 #: src/modules/conf_theme/e_int_config_wallpaper.c:423
-#: src/modules/conf_theme/e_int_config_wallpaper.c:577
+#: src/modules/conf_theme/e_int_config_wallpaper.c:578
 #: src/modules/gadman/e_mod_config.c:248
 msgid "Personal"
 msgstr "Asmeniniai"
@@ -9467,35 +9467,35 @@ msgid "Wallpaper Settings"
 msgstr "Darbalaukio fono nustatymai"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:433
-#: src/modules/conf_theme/e_int_config_wallpaper.c:587
+#: src/modules/conf_theme/e_int_config_wallpaper.c:588
 msgid "Go up a directory"
 msgstr ""
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:465
-#: src/modules/conf_theme/e_int_config_wallpaper.c:612
+#: src/modules/conf_theme/e_int_config_wallpaper.c:613
 msgid "Use Theme Wallpaper"
 msgstr "Naudoti temos darbalaukio foną"
 
 #: src/modules/conf_theme/e_int_config_wallpaper.c:470
-#: src/modules/conf_theme/e_int_config_wallpaper.c:617
+#: src/modules/conf_theme/e_int_config_wallpaper.c:618
 msgid "Picture..."
 msgstr "Paveikslas..."
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:633
+#: src/modules/conf_theme/e_int_config_wallpaper.c:635
 msgid "Where to place the Wallpaper"
 msgstr "Kur patalpinti darbalaukio foną"
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:634
+#: src/modules/conf_theme/e_int_config_wallpaper.c:636
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1252
 msgid "All Desktops"
 msgstr "Visuose darbastaliuose"
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:636
+#: src/modules/conf_theme/e_int_config_wallpaper.c:638
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1258
 msgid "This Desktop"
 msgstr "Šiame darbastalyje"
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:638
+#: src/modules/conf_theme/e_int_config_wallpaper.c:640
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1263
 msgid "This Screen"
 msgstr "Šiame ekrane"
@@ -10465,7 +10465,7 @@ msgstr ""
 
 #: src/modules/everything/evry_plug_apps.c:1163
 #: src/modules/everything/evry_plug_apps.c:1210
-#: src/modules/fileman/e_fwin.c:2177 src/modules/fileman/e_fwin.c:2537
+#: src/modules/fileman/e_fwin.c:2174 src/modules/fileman/e_fwin.c:2534
 msgid "Open with..."
 msgstr "Atverti su..."
 
@@ -10654,138 +10654,138 @@ msgstr ""
 msgid "Back"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2068
+#: src/modules/fileman/e_fwin.c:2065
 msgid "Other application..."
 msgstr "Kita programa..."
 
-#: src/modules/fileman/e_fwin.c:2131
+#: src/modules/fileman/e_fwin.c:2128
 msgid "Go To Parent Directory"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2141
+#: src/modules/fileman/e_fwin.c:2138
 msgid "Clone Window"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2147
+#: src/modules/fileman/e_fwin.c:2144
 msgid "Copy Path"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2163
+#: src/modules/fileman/e_fwin.c:2160
 msgid "Run"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2170 src/modules/fileman/e_fwin.c:2538
+#: src/modules/fileman/e_fwin.c:2167 src/modules/fileman/e_fwin.c:2535
 msgid "Open"
 msgstr "Atverti"
 
-#: src/modules/fileman/e_fwin.c:2567 src/modules/fileman/e_fwin.c:2592
+#: src/modules/fileman/e_fwin.c:2564 src/modules/fileman/e_fwin.c:2589
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/modules/fileman/e_fwin.c:2610
+#: src/modules/fileman/e_fwin.c:2607
 msgid "Known Applications"
 msgstr "Žinomos programos"
 
-#: src/modules/fileman/e_fwin.c:2620
+#: src/modules/fileman/e_fwin.c:2617
 msgid "Suggested Applications"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2655
+#: src/modules/fileman/e_fwin.c:2652
 msgid "All Applications"
 msgstr "Visos programos"
 
-#: src/modules/fileman/e_fwin.c:2678
+#: src/modules/fileman/e_fwin.c:2675
 msgid "Custom Command"
 msgstr "Sava komanda"
 
-#: src/modules/fileman/e_fwin.c:2974
+#: src/modules/fileman/e_fwin.c:2971
 #: src/modules/fileman_opinfo/e_mod_main.c:105
 #, c-format
 msgid "Copying is aborted"
 msgstr "Kopijavimas nutraukiamas"
 
-#: src/modules/fileman/e_fwin.c:2978
+#: src/modules/fileman/e_fwin.c:2975
 #: src/modules/fileman_opinfo/e_mod_main.c:109
 #, c-format
 msgid "Moving is aborted"
 msgstr "Perkėlimas nutraukiamas"
 
-#: src/modules/fileman/e_fwin.c:2982
+#: src/modules/fileman/e_fwin.c:2979
 #: src/modules/fileman_opinfo/e_mod_main.c:113
 #, c-format
 msgid "Deleting is aborted"
 msgstr "Šalinimas nutraukiamas"
 
-#: src/modules/fileman/e_fwin.c:2986
+#: src/modules/fileman/e_fwin.c:2983
 #: src/modules/fileman_opinfo/e_mod_main.c:117
 #, c-format
 msgid "Secure deletion is aborted"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2990
+#: src/modules/fileman/e_fwin.c:2987
 #: src/modules/fileman_opinfo/e_mod_main.c:121
 #, c-format
 msgid "Unknown operation from slave is aborted"
 msgstr "Nežinomas veiksmas iš pagalbinio nutraukiamas"
 
-#: src/modules/fileman/e_fwin.c:3000
+#: src/modules/fileman/e_fwin.c:2997
 #: src/modules/fileman_opinfo/e_mod_main.c:131
 #, c-format
 msgid "Copy of %s done"
 msgstr "%s kopijavimas baigtas"
 
-#: src/modules/fileman/e_fwin.c:3002
+#: src/modules/fileman/e_fwin.c:2999
 #: src/modules/fileman_opinfo/e_mod_main.c:133
 #, c-format
 msgid "Copying %s (eta: %s)"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:3007
+#: src/modules/fileman/e_fwin.c:3004
 #: src/modules/fileman_opinfo/e_mod_main.c:139
 #, c-format
 msgid "Move of %s done"
 msgstr "%s perkėlimas baigtas"
 
-#: src/modules/fileman/e_fwin.c:3009
+#: src/modules/fileman/e_fwin.c:3006
 #: src/modules/fileman_opinfo/e_mod_main.c:141
 #, c-format
 msgid "Moving %s (eta: %s)"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:3014
+#: src/modules/fileman/e_fwin.c:3011
 #: src/modules/fileman_opinfo/e_mod_main.c:147
 #, c-format
 msgid "Delete done"
 msgstr "Šalinimas baigtas"
 
-#: src/modules/fileman/e_fwin.c:3016
+#: src/modules/fileman/e_fwin.c:3013
 #: src/modules/fileman_opinfo/e_mod_main.c:149
 #, c-format
 msgid "Deleting files..."
 msgstr "Šalinami failai"
 
-#: src/modules/fileman/e_fwin.c:3021
+#: src/modules/fileman/e_fwin.c:3018
 #: src/modules/fileman_opinfo/e_mod_main.c:154
 #, c-format
 msgid "Secure delete done"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:3023
+#: src/modules/fileman/e_fwin.c:3020
 #: src/modules/fileman_opinfo/e_mod_main.c:156
 #, c-format
 msgid "Securely deleting files..."
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:3027
+#: src/modules/fileman/e_fwin.c:3024
 #: src/modules/fileman_opinfo/e_mod_main.c:160
 #, c-format
 msgid "Unknown operation from slave %d"
 msgstr ""
 
-#: src/modules/fileman/e_fwin_nav.c:450
+#: src/modules/fileman/e_fwin_nav.c:457
 msgid "EFM Navigation"
 msgstr ""
 
@@ -11163,19 +11163,19 @@ msgstr "Fono parinktys"
 msgid "Desktop Overlay"
 msgstr "Darbalaukio failas"
 
-#: src/modules/gadman/e_mod_gadman.c:1066
+#: src/modules/gadman/e_mod_gadman.c:1067
 msgid "Begin move/resize"
 msgstr ""
 
-#: src/modules/gadman/e_mod_gadman.c:1098
+#: src/modules/gadman/e_mod_gadman.c:1099
 msgid "Free"
 msgstr "Laisva"
 
-#: src/modules/gadman/e_mod_gadman.c:1125
+#: src/modules/gadman/e_mod_gadman.c:1126
 msgid "Appearance"
 msgstr "Išvaizda"
 
-#: src/modules/gadman/e_mod_gadman.c:1147
+#: src/modules/gadman/e_mod_gadman.c:1148
 msgid "Add other gadgets"
 msgstr "Pridėti kitus įtaisus"
 
