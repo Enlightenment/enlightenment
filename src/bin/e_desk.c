@@ -309,6 +309,7 @@ e_desk_show(E_Desk *desk)
 
    EINA_LIST_FOREACH(e_shelf_list(), l, es)
      {
+        if (es->zone != desk->zone) continue;
         if (e_shelf_desk_visible(es, desk))
           e_shelf_show(es);
         else
