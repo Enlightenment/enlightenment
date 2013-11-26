@@ -9072,25 +9072,31 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
              e_menu_pre_activate_callback_set(sub, _e_fm2_add_menu_pre, sd);
           }
         {
+           const Eina_List *ll = NULL;
            E_Menu *subm = NULL;
            if (ic->info.mime)
              {
-                const Eina_List *ll;
                 /* see if we have any mime handlers registered for this file */
                 ll = e_fm2_mime_handler_mime_handlers_get(ic->info.mime);
-                if (ll)
-                  {
-                     mi = e_menu_item_new(mn);
-                     e_menu_item_separator_set(mi, 1);
+             }
+           if (ll || sd->realpath)
+             {
+                mi = e_menu_item_new(mn);
+                e_menu_item_separator_set(mi, 1);
 
-                     mi = e_menu_item_new(mn);
-                     e_menu_item_label_set(mi, _("Actions..."));
-                     e_util_menu_item_theme_icon_set(mi, "preferences-plugin");
-                     subm = e_menu_new();
-                     e_menu_item_submenu_set(mi, subm);
-                     _e_fm2_icon_realpath(ic, buf, sizeof(buf));
-                     _e_fm2_context_menu_append(sd, buf, ll, subm, ic);
-                  }
+                mi = e_menu_item_new(mn);
+                e_menu_item_label_set(mi, _("Actions..."));
+                e_util_menu_item_theme_icon_set(mi, "preferences-plugin");
+                subm = e_menu_new();
+                e_menu_item_submenu_set(mi, subm);
+                _e_fm2_icon_realpath(ic, buf, sizeof(buf));
+             }
+           if (ll)
+             _e_fm2_context_menu_append(sd, buf, ll, subm, ic);
+           if (sd->realpath && (ic->info.mime != _e_fm2_mime_inode_directory))
+             {
+                ll = e_fm2_mime_handler_mime_handlers_get("inode/directory");
+                _e_fm2_context_menu_append(sd, sd->realpath, ll, subm, ic);
              }
 
            /* see if we have any glob handlers registered for this file */
