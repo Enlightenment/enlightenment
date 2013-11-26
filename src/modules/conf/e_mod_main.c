@@ -201,7 +201,7 @@ static void
 _config_item_activate_cb(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
 {
    E_Configure_Cat *ecat = data;
-   e_configure_show(m->zone->container, ecat->cat);
+   e_configure_show(m->zone->container, ecat ? ecat->cat : NULL);
 }
 
 static void
@@ -251,6 +251,7 @@ e_mod_config_menu_add(void *data __UNUSED__, E_Menu *m)
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("All"));
    e_menu_item_submenu_set(mi, sub);
+   e_menu_item_callback_set(mi, _config_item_activate_cb, NULL);
    e_object_unref(E_OBJECT(sub));
 }
 
