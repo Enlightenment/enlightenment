@@ -1411,6 +1411,8 @@ e_fm2_refresh(Evas_Object *obj)
 {
    EFM_SMART_CHECK();
 
+   evas_object_smart_callback_call(sd->obj, "changed", NULL);
+
    _e_fm2_dir_save_props(sd);
 
    _e_fm2_queue_free(obj);
