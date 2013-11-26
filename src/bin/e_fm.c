@@ -10394,6 +10394,7 @@ _e_fm2_icon_entry_widget_del(E_Fm2_Icon *ic)
    if (ic->keygrab)
      e_grabinput_release(0, ic->keygrab);
    ic->keygrab = 0;
+   _e_fm2_icon_select(ic);
 }
 
 static void
