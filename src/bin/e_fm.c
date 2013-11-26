@@ -9746,6 +9746,7 @@ _e_fm2_new_file_end(void *data, Ecore_Thread *eth __UNUSED__)
    ecore_thread_global_data_del("path");
    ecore_thread_global_data_del("efm_text_uri_list");
    evas_object_unref(sd->obj);
+   e_fm2_refresh(sd->obj);
 }
 
 static void
