@@ -4795,7 +4795,7 @@ _e_fm2_icon_realize(E_Fm2_Icon *ic)
 {
    Evas *e;
 
-   if (ic->realized) return;
+   if (ic->realized) goto new_file;
    e = evas_object_evas_get(ic->sd->obj);
    /* actually create evas objects etc. */
    ic->realized = EINA_TRUE;
@@ -4899,6 +4899,7 @@ _e_fm2_icon_realize(E_Fm2_Icon *ic)
 
    if (ic->info.removable)
      _e_fm2_icon_removable_update(ic);
+new_file:
    if (ic->sd->new_file.thread && (!ic->sd->new_file.filename))
      {
         /* we got the file through the scanner :/ */
