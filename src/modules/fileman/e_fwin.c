@@ -1988,18 +1988,27 @@ _e_fwin_zone_del(void *data,
 }
 
 static int
-_e_fwin_cb_dir_handler_test(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path)
+_e_fwin_cb_dir_handler_test(void *data __UNUSED__, Evas_Object *obj, const char *path)
 {
-   return ecore_file_is_dir(path);
+   if (ecore_file_is_dir(path)) return 1;
+   if (e_fm2_real_path_get(obj))
+     {
+        evas_object_data_set(obj, "fileman_terminal_realpath", (void*)1);
+        return 1;
+     }
+   return 0;
 }
 
 static void
-_e_fwin_cb_dir_handler(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *path)
+_e_fwin_cb_dir_handler(void *data __UNUSED__, Evas_Object *obj, const char *path)
 {
    char buf[PATH_MAX];
+   Eina_Stringshare *rp;
 
    if (!getcwd(buf, sizeof(buf))) return;
-
+   rp = e_fm2_real_path_get(obj);
+   if (rp && (rp != path) && (evas_object_data_del(obj, "fileman_terminal_realpath"))) //icon menu; use rp
+     path = rp;
    if (chdir(path) < 0) perror("chdir");
    e_exec(e_util_zone_current_get(e_manager_current_get()), tdesktop, NULL, NULL, "fileman");
    if (chdir(buf) < 0) perror("chdir");
