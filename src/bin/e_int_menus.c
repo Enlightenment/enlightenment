@@ -70,6 +70,7 @@ static Eina_List *_e_int_menus_augmentation_disabled = NULL;
 static Eina_Hash *_e_int_menus_app_menus = NULL;
 static Eina_Hash *_e_int_menus_app_menus_waiting = NULL;
 static Efreet_Menu *_e_int_menus_app_menu_default = NULL;
+static Ecore_Timer *_e_int_menus_app_cleaner = NULL;
 static Eina_List *handlers = NULL;
 
 static Eina_List *
@@ -532,6 +533,8 @@ e_int_menus_init(void)
 EINTERN void
 e_int_menus_shutdown(void)
 {
+   if (_e_int_menus_app_cleaner) ecore_timer_del(_e_int_menus_app_cleaner);
+   _e_int_menus_app_cleaner = NULL;
    eina_hash_free(_e_int_menus_app_menus_waiting);
    _e_int_menus_app_menus_waiting = NULL;
    efreet_menu_free(_e_int_menus_app_menu_default);
@@ -818,92 +821,13 @@ _e_int_menus_apps_scan(E_Menu *m, Efreet_Menu *menu)
      }
 }
 
-#if (EFREET_VERSION_MAJOR > 1) || (EFREET_VERSION_MINOR >= 8)
-static void
-_e_int_menus_app_thread_notify_cb(void *data, Efreet_Menu *menu)
+static Eina_Bool
+_e_int_menus_app_cleaner_cb(void *d __UNUSED__)
 {
-   E_Menu *m;
-   Eina_Stringshare *dir = data;
-
-   if (dir)
-     {
-        eina_hash_add(_e_int_menus_app_menus, dir, menu);
-        m = eina_hash_set(_e_int_menus_app_menus_waiting, dir, NULL);
-     }
-   else
-     {
-        _e_int_menus_app_menu_default = menu;
-        m = eina_hash_set(_e_int_menus_app_menus_waiting, "APPMENUDEFAULTOMGBBQ", NULL);
-     }
-   eina_stringshare_del(dir);
-   if (!m) return;
-   e_object_del_attach_func_set(E_OBJECT(m), NULL);
-
-   _e_int_menus_apps_scan(m, menu);
-   e_menu_pre_activate_callback_set(m, NULL, NULL);
-   e_object_data_set(E_OBJECT(m), menu);
-   e_object_free_attach_func_set(E_OBJECT(m),
-                                 _e_int_menus_apps_free_hook2);
+   eina_hash_free_buckets(_e_int_menus_app_menus);
+   return EINA_TRUE;
 }
 
-static void
-_e_int_menus_apps_menu_del(void *data)
-{
-   Eina_Stringshare *dir;
-
-   dir = e_object_data_get(data);
-   if (!dir) dir = "APPMENUDEFAULTOMGBBQ";
-   eina_hash_del_by_key(_e_int_menus_app_menus_waiting, dir);
-}
-
-static Efreet_Menu *
-_e_int_menus_apps_thread_new(E_Menu *m, const char *dir)
-{
-   Efreet_Menu *menu = NULL;
-   E_Menu *mn = NULL;
-
-   if (!_e_int_menus_app_menus_waiting)
-     _e_int_menus_app_menus_waiting = eina_hash_string_superfast_new(NULL);
-   if (dir)
-     {
-        if (!_e_int_menus_app_menus)
-          _e_int_menus_app_menus = eina_hash_string_superfast_new((void *)efreet_menu_free);
-        else
-          menu = eina_hash_find(_e_int_menus_app_menus, dir);
-     }
-   else
-     {
-        menu = _e_int_menus_app_menu_default;
-        if (!menu)
-          {
-             efreet_menu_async_get(_e_int_menus_app_thread_notify_cb, NULL);
-             if (m)
-               {
-                  e_object_del_attach_func_set(E_OBJECT(m), _e_int_menus_apps_menu_del);
-                  eina_hash_add(_e_int_menus_app_menus_waiting, "APPMENUDEFAULTOMGBBQ", m);
-               }
-          }
-     }
-
-   if (menu) return menu;
-   if (dir)
-     {
-        if (_e_int_menus_app_menus_waiting)
-          mn = eina_hash_find(_e_int_menus_app_menus_waiting, dir);
-        else
-          _e_int_menus_app_menus_waiting = eina_hash_string_superfast_new(NULL);
-     }
-   else return NULL;
-
-   if (mn) return NULL;
-   if (dir && m)
-     eina_hash_add(_e_int_menus_app_menus_waiting, dir, m);
-
-   efreet_menu_async_parse(dir, _e_int_menus_app_thread_notify_cb, dir);
-   if (m) e_object_del_attach_func_set(E_OBJECT(m), _e_int_menus_apps_menu_del);
-   return NULL;
-}
-#else
 static void
 _e_int_menus_apps_menu_del(void *data)
 {
@@ -955,6 +879,10 @@ _e_int_menus_apps_thread_new(E_Menu *m, const char *dir)
    if (!mn) goto on_end;
    e_object_del_attach_func_set(E_OBJECT(mn), NULL);
 
+   if (_e_int_menus_app_cleaner)   
+     ecore_timer_reset(_e_int_menus_app_cleaner); 
+   else
+     _e_int_menus_app_cleaner = ecore_timer_add(300, _e_int_menus_app_cleaner_cb, NULL);
    eina_stringshare_del(dir);
    if (m)
      {
@@ -979,7 +907,6 @@ _e_int_menus_apps_thread_new(E_Menu *m, const char *dir)
    if (m) e_object_del_attach_func_set(E_OBJECT(m), _e_int_menus_apps_menu_del);
    return NULL;
 }
-#endif
 
 static void
 _e_int_menus_apps_start(void *data, E_Menu *m)
@@ -996,6 +923,8 @@ _e_int_menus_apps_start(void *data, E_Menu *m)
         menu = _e_int_menus_apps_thread_new(m, dir);
      }
    if (!menu) return;
+   if (_e_int_menus_app_cleaner)
+     ecore_timer_reset(_e_int_menus_app_cleaner);
    eina_stringshare_del(dir);
    _e_int_menus_apps_scan(m, menu);
    e_menu_pre_activate_callback_set(m, NULL, NULL);
