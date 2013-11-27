@@ -359,6 +359,7 @@ e_desklock_hide(void)
    if ((!edd) && (!_e_custom_desklock_exe)) return;
 
    E_LIST_FOREACH(e_comp_list(), e_comp_override_del);
+   E_LIST_FOREACH(e_comp_list(), e_comp_shape_queue);
    //e_comp_block_window_del();
    if (e_config->desklock_language)
      e_intl_language_set(e_config->language);

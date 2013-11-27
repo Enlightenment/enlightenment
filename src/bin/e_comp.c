@@ -5599,3 +5599,10 @@ e_comp_e_object_layer_get(const E_Object *obj)
      }
    return 0;
 }
+
+EAPI void
+e_comp_shape_queue(E_Comp *c)
+{
+   if (!c->shape_job)
+     c->shape_job = ecore_job_add((Ecore_Cb)_e_comp_shapes_update_job, c);
+}

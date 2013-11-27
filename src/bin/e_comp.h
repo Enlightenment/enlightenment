@@ -312,6 +312,6 @@ e_comp_e_object_layer_effective_get(const E_Object *obj)
 }
 
 EAPI void e_comp_util_wins_print(const E_Comp *c);
-
+EAPI void e_comp_shape_queue(E_Comp *c);
 #endif
 #endif
