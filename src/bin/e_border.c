@@ -6046,9 +6046,12 @@ _e_border_cb_client_message(void *data  __UNUSED__, int ev_type __UNUSED__, void
 
              bd->client.e.state.profile.wait_for_done = 0;
 
-             desk = e_container_desk_window_profile_get(con, profile);
-             if ((desk) && (bd->desk != desk))
-               e_border_desk_set(bd, desk);
+             if (bd->desk && e_util_strcmp(bd->desk->window_profile, profile))
+               {
+                  desk = e_container_desk_window_profile_get(con, profile);
+                  if (desk)
+                    e_border_desk_set(bd, desk);
+               }
              free(profile);
           }
      }
