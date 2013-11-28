@@ -191,7 +191,7 @@ download_media_status(void *data, int t EINA_UNUSED, Ecore_Con_Event_Url_Progres
      {
         E_FREE_FUNC(i->buf, eina_binbuf_free);
         E_FREE_FUNC(i->client, ecore_con_url_free);
-        if ((status >= 400) || (status <= 300)) goto dummy;
+        if ((status >= 400) || (status <= 301)) goto dummy;
         if (++i->tries < IMAGE_FETCH_TRIES)
           {
              i->client = ecore_con_url_new(i->addr);
