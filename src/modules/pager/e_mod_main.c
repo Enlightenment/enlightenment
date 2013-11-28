@@ -1910,14 +1910,6 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
              if (pd != pw->desk)
                {
                   edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,out", "e");
-                  if (pd->desk != e_desk_current_get(pd->desk->zone))
-                    e_border_hide(pw->border, 2);
-                  else
-                    {
-                       e_comp_win_effect_unclip(pw->border->cw);
-                       e_comp_win_effect_set(pw->border->cw, NULL);
-                       e_border_show(pw->border);
-                    }
                   e_border_desk_set(pw->border, pd->desk);
                   edje_object_signal_emit(pd->o_desk, "e,action,drag,in", "e");
                   pd->pager->active_drop_pd = pd;

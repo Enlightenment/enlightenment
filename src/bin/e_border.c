@@ -926,6 +926,14 @@ e_border_desk_set(E_Border *bd,
           }
      }
 #endif
+   if (desk == e_desk_current_get(desk->zone))
+     {
+        e_comp_win_effect_unclip(bd->cw);
+        e_comp_win_effect_set(bd->cw, NULL);
+        e_border_show(bd);
+     }
+   else
+     e_border_hide(bd, 2);
    ecore_x_window_shadow_tree_flush();
    if (bd->fullscreen)
      {

@@ -1002,17 +1002,7 @@ _e_border_menu_cb_sendto(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
    desk = data;
    bd = e_object_data_get(E_OBJECT(m));
    if ((bd) && (desk))
-     {
-         if (desk != e_desk_current_get(desk->zone))
-           e_border_hide(bd, 2);
-         else
-           {
-              e_comp_win_effect_unclip(bd->cw);
-              e_comp_win_effect_set(bd->cw, NULL);
-              e_border_show(bd);
-           }
-        e_border_desk_set(bd, desk);
-     }
+     e_border_desk_set(bd, desk);
 }
 
 static void
