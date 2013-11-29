@@ -523,7 +523,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    if (theme)
      {
         snprintf(path, sizeof(path), "%s.edj", theme);
-        cfdata->theme = eina_stringshare_ref(path);
+        cfdata->theme = eina_stringshare_add(path);
      }
    else
      {
