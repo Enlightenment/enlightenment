@@ -23,6 +23,7 @@ struct _E_Config_Dialog_Data
    Eio_File        *init[2];
    Eina_List       *theme_init; /* list of eio ops to load themes */
    Eina_List       *themes; /* eet file refs to work around load locking */
+   int              show_splash;
    Eina_Bool        free : 1;
 
    /* Dialog */
@@ -704,8 +705,11 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    of = e_widget_list_add(evas, 0, 0);
 
    il = e_widget_list_add(evas, 0, 1);
+
    o = e_widget_button_add(evas, _(" Import..."), "preferences-desktop-theme",
                            _cb_import, cfdata, NULL);
+   e_widget_list_object_append(il, o, 1, 0, 0.5);
+   o = e_widget_check_add(evas, _("Show startup splash"), &cfdata->show_splash);
    e_widget_list_object_append(il, o, 1, 0, 0.5);
    e_widget_list_object_append(of, il, 1, 0, 0.0);
 
@@ -756,5 +760,6 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
         a = e_action_find("restart");
         if ((a) && (a->func.go)) a->func.go(NULL, NULL);
      }
+   e_config->show_splash = cfdata->show_splash;
    return 1; /* Apply was OK */
 }
