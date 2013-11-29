@@ -10053,9 +10053,7 @@ cleanup:
              if (!warp_timer_border->lock_user_shade)
                e_border_unshade(warp_timer_border, warp_timer_border->shade.dir);
           }
-        if (!warp_timer_border->lock_user_stacking)
-          e_border_raise(warp_timer_border);
-        
+
         if (!warp_timer_border->lock_focus_out)
           {
              e_border_focus_set(warp_timer_border, 1, 1);
