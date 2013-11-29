@@ -200,8 +200,15 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
                             &_last_pointer_x, &_last_pointer_y);
 
    _e_winlist_activate_nth(1);
-   if ((eina_list_count(_wins) > 1) && (eina_list_data_get(_win_selected) == _last_border))
-     e_winlist_next();
+
+   if ((eina_list_count(_wins) > 1))
+     {
+        E_Winlist_Win *ww;
+
+        ww = eina_list_data_get(_win_selected);
+        if (ww && (ww->border == _last_border))
+          e_winlist_next();
+     }
    evas_event_thaw(_winlist->evas);
    _e_winlist_size_adjust();
 
