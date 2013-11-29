@@ -6,7 +6,7 @@ struct _E_Config_Dialog_Data
 {
    double delay; /* delay before applying physics */
    double max_mass; /* maximum mass for a window */
-   double gravity; /* maximum mass for a window */
+   double gravity; /* gravity for a window */
    Eina_Bool ignore_fullscreen;
    Eina_Bool ignore_maximized;
    Eina_Bool ignore_shelves;
@@ -58,6 +58,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 
    cfdata->delay = _physics_mod->conf->delay;
    cfdata->max_mass = _physics_mod->conf->max_mass;
+   cfdata->gravity = _physics_mod->conf->gravity;
 
    return cfdata;
 }
