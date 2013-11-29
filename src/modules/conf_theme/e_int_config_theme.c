@@ -745,22 +745,21 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
    file = ecore_file_file_get(cfdata->theme);
    name = ecore_file_strip_ext(file);
+   e_config->show_splash = cfdata->show_splash;
    if (name)
      {
         const char *theme = elm_theme_get(NULL);
 
-        if ((theme) && (!strcmp(name, theme)))
+        if (e_util_strcmp(name, theme))
           {
+             elm_theme_set(NULL, name);
+             elm_config_all_flush();
+             elm_config_save();
              free(name);
-             return 1;
+             a = e_action_find("restart");
+             if ((a) && (a->func.go)) a->func.go(NULL, NULL);
           }
-        elm_theme_set(NULL, name);
-        elm_config_all_flush();
-        elm_config_save();
         free(name);
-        a = e_action_find("restart");
-        if ((a) && (a->func.go)) a->func.go(NULL, NULL);
      }
-   e_config->show_splash = cfdata->show_splash;
    return 1; /* Apply was OK */
 }
