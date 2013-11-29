@@ -518,6 +518,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    char path[PATH_MAX];
    size_t len;
 
+   cfdata->show_splash = e_config->show_splash;
    theme = elm_theme_get(NULL);
    if (theme)
      {
