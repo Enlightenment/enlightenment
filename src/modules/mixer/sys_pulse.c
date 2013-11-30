@@ -2,19 +2,14 @@
 #include "e_mod_mixer.h"
 #include "Pulse.h"
 
-#define PULSE_BUS       "org.PulseAudio.Core1"
-#define PULSE_PATH      "/org/pulseaudio/core1"
-#define PULSE_INTERFACE "org.PulseAudio.Core1"
+static E_Exec_Instance *pulse_inst = NULL;
 
 static Pulse *conn = NULL;
 static Pulse_Server_Info *info = NULL;
 static Pulse_Sink *default_sink = NULL;
-static Ecore_Event_Handler *ph = NULL;
-static Ecore_Event_Handler *pch = NULL;
-static Ecore_Event_Handler *pdh = NULL;
+static Eina_List *handlers = NULL;
 static Eina_List *sinks = NULL;
 static Eina_List *sources = NULL;
-static Ecore_Poller *pulse_poller = NULL;
 static Eina_Hash *queue_states = NULL;
 static const char *_name = NULL;
 
@@ -26,59 +21,13 @@ static unsigned int disc_count = 0;
 static unsigned int update_count = 0;
 static Ecore_Timer *update_timer = NULL;
 
+
 static Eina_Bool
-_pulse_poller_cb(void *d __UNUSED__)
+_pulse_started(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *inst)
 {
-   char buf[4096];
-
-   snprintf(buf, sizeof(buf), "%s/.pulse-cookie", getenv("HOME"));
-   if (ecore_file_exists(buf))
-     return !e_mixer_pulse_init();
-   return EINA_TRUE;
-}
-
-static void
-_dbus_poll(void *data EINA_UNUSED, const Eldbus_Message *msg)
-{
-   const char *name, *from, *to;
-   if (eldbus_message_arguments_get(msg, "sss", &name, &from, &to))
-     {
-        if (!strcmp(name, PULSE_BUS))
-          e_mixer_pulse_init();
-     }
-
-   if (dbus_handler)
-     {
-        eldbus_signal_handler_del(dbus_handler);
-        dbus_handler = NULL;
-     }
-   if (dbus)
-     {
-        eldbus_connection_unref(dbus);
-        dbus = NULL;
-        eldbus_shutdown();
-     }
-}
-
-static void
-_dbus_test(void *data EINA_UNUSED, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
-{
-   if (eldbus_message_error_get(msg, NULL, NULL))
-     {
-        if (dbus_handler)
-          {
-             eldbus_signal_handler_del(dbus_handler);
-             dbus_handler = NULL;
-          }
-        if (dbus)
-          {
-             eldbus_connection_unref(dbus);
-             dbus = NULL;
-             eldbus_shutdown();
-          }
-        e_mod_mixer_pulse_ready(EINA_FALSE);
-        return;
-     }
+   if (inst != pulse_inst) return ECORE_CALLBACK_RENEW;
+   e_mixer_pulse_init();
+   return ECORE_CALLBACK_DONE;
 }
 
 static void
@@ -339,52 +288,22 @@ e_mixer_pulse_init(void)
 {
    pulse_init();
    conn = pulse_new();
-   if (dbus) goto error;
    if ((!conn) || (!pulse_connect(conn)))
      {
-        Eldbus_Message *msg;
-        double interval;
+        pulse_inst = e_exec(NULL, NULL, "pulseaudio -D", NULL, NULL);
+        if (!pulse_inst) return EINA_FALSE;
 
-        eldbus_init();
-        dbus = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SESSION);
-
-        if (!dbus)
-          {
-             eldbus_shutdown();
-             return EINA_FALSE;
-          }
-
-        if (!pulse_poller)
-          {
-             interval = ecore_poller_poll_interval_get(ECORE_POLLER_CORE);
-             /* polling every 5 seconds or so I guess ? */
-             pulse_poller = ecore_poller_add(ECORE_POLLER_CORE, 5.0 / interval,
-                                             _pulse_poller_cb, NULL);
-          }
-        if (!dbus_handler)
-          dbus_handler = eldbus_signal_handler_add(dbus, ELDBUS_FDO_BUS,
-                                                  ELDBUS_FDO_PATH,
-                                                  ELDBUS_FDO_INTERFACE,
-                                                  "NameOwnerChanged", _dbus_poll, NULL);
-
-        msg = eldbus_message_method_call_new(PULSE_BUS, PULSE_PATH, PULSE_INTERFACE, "suuuuuup");
-        eldbus_connection_send(dbus, msg, _dbus_test, NULL, -1); /* test for not running pulse */
+        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW, (Ecore_Event_Handler_Cb)_pulse_started, NULL);
         pulse_free(conn);
         conn = NULL;
         pulse_shutdown();
         return EINA_TRUE;
      }
-   pulse_poller = NULL;
-   ph = ecore_event_handler_add(PULSE_EVENT_CONNECTED, (Ecore_Event_Handler_Cb)_pulse_connected, conn);
-   pch = ecore_event_handler_add(PULSE_EVENT_CHANGE, (Ecore_Event_Handler_Cb)_pulse_update, conn);
-   pdh = ecore_event_handler_add(PULSE_EVENT_DISCONNECTED, (Ecore_Event_Handler_Cb)_pulse_disconnected, conn);
+   E_LIST_HANDLER_APPEND(handlers, PULSE_EVENT_CONNECTED, (Ecore_Event_Handler_Cb)_pulse_connected, conn);
+   E_LIST_HANDLER_APPEND(handlers, PULSE_EVENT_CHANGE, (Ecore_Event_Handler_Cb)_pulse_update, conn);
+   E_LIST_HANDLER_APPEND(handlers, PULSE_EVENT_DISCONNECTED, (Ecore_Event_Handler_Cb)_pulse_disconnected, conn);
    if (!_name) _name = eina_stringshare_add("Output");
    return EINA_TRUE;
-error:
-   pulse_free(conn);
-   conn = NULL;
-   pulse_shutdown();
-   return EINA_FALSE;
 }
 
 void
@@ -404,12 +323,7 @@ e_mixer_pulse_shutdown(void)
 
    pulse_free(conn);
    conn = NULL;
-   if (ph) ecore_event_handler_del(ph);
-   ph = NULL;
-   if (pch) ecore_event_handler_del(pch);
-   pch = NULL;
-   if (pdh) ecore_event_handler_del(pdh);
-   pdh = NULL;
+   E_FREE_LIST(handlers, ecore_event_handler_del);
    if (queue_states) eina_hash_free(queue_states);
    queue_states = NULL;
    if (dbus_handler)
