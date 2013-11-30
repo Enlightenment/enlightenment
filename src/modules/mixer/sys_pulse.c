@@ -13,8 +13,6 @@ static Eina_List *sources = NULL;
 static Eina_Hash *queue_states = NULL;
 static const char *_name = NULL;
 
-static Eldbus_Connection *dbus = NULL;
-static Eldbus_Signal_Handler *dbus_handler = NULL;
 static Ecore_Timer *disc_timer = NULL;
 
 static unsigned int disc_count = 0;
@@ -326,17 +324,6 @@ e_mixer_pulse_shutdown(void)
    E_FREE_LIST(handlers, ecore_event_handler_del);
    if (queue_states) eina_hash_free(queue_states);
    queue_states = NULL;
-   if (dbus_handler)
-     {
-        eldbus_signal_handler_del(dbus_handler);
-        dbus_handler = NULL;
-     }
-   if (dbus)
-     {
-        eldbus_connection_unref(dbus);
-        dbus = NULL;
-        eldbus_shutdown();
-     }
    pulse_shutdown();
    if (_name) eina_stringshare_del(_name);
    _name = NULL;
