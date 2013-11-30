@@ -288,13 +288,23 @@ e_mixer_pulse_init(void)
    conn = pulse_new();
    if ((!conn) || (!pulse_connect(conn)))
      {
+        pulse_free(conn);
+        conn = NULL;
+        pulse_shutdown();
+
+        if (pulse_inst)
+          {
+             ecore_exe_free(pulse_inst->exe);
+             pulse_inst = NULL;
+             e_mod_mixer_pulse_ready(EINA_FALSE);
+             return EINA_FALSE;
+          }
+
         pulse_inst = e_exec(NULL, NULL, "pulseaudio -D", NULL, NULL);
         if (!pulse_inst) return EINA_FALSE;
 
         E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW, (Ecore_Event_Handler_Cb)_pulse_started, NULL);
-        pulse_free(conn);
-        conn = NULL;
-        pulse_shutdown();
+
         return EINA_TRUE;
      }
    E_LIST_HANDLER_APPEND(handlers, PULSE_EVENT_CONNECTED, (Ecore_Event_Handler_Cb)_pulse_connected, conn);
