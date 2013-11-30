@@ -756,6 +756,7 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
              elm_config_all_flush();
              elm_config_save();
              free(name);
+             name = NULL;
              a = e_action_find("restart");
              if ((a) && (a->func.go)) a->func.go(NULL, NULL);
           }
