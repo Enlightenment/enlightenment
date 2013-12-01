@@ -616,6 +616,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, mouse_accel_threshold, INT);
 
    E_CONFIG_VAL(D, T, border_raise_on_mouse_action, INT);
+   E_CONFIG_VAL(D, T, border_raise_on_focus, INT);
    E_CONFIG_VAL(D, T, desk_flip_wrap, INT);
    E_CONFIG_VAL(D, T, fullscreen_flip, INT);
    E_CONFIG_VAL(D, T, multiscreen_flip, INT);
@@ -1205,6 +1206,16 @@ e_config_load(void)
              CONFIG_VERSION_UPDATE_INFO(11);
              e_config->pointer_warp_speed = e_config->winlist_warp_speed;
              e_config->winlist_warp_speed = 0;
+
+             if (e_config->focus_policy == E_FOCUS_CLICK)
+               {
+                  if (e_config->border_raise_on_focus)
+                    {
+                       /* approximate expected behavior from removed option */
+                       e_config->always_click_to_focus = 1;
+                       e_config->always_click_to_raise = 1;
+                    }
+               }
           }
         CONFIG_VERSION_CHECK(12)
           {
@@ -1366,6 +1377,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation_timeout, 1.0, 300.0);
    E_CONFIG_LIMIT(e_config->border_raise_on_mouse_action, 0, 1);
+   E_CONFIG_LIMIT(e_config->border_raise_on_focus, 0, 1);
    E_CONFIG_LIMIT(e_config->desk_flip_wrap, 0, 1);
    E_CONFIG_LIMIT(e_config->fullscreen_flip, 0, 1);
    E_CONFIG_LIMIT(e_config->icon_theme_overrides, 0, 1);
