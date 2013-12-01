@@ -1158,6 +1158,9 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
    cwf = _e_comp_fullscreen_check(c);
    if (!cwf) return;
 
+   if (cwf->bd)
+     e_border_raise(cwf->bd);
+
    EINA_INLIST_FOREACH(c->wins, cw)
      {
         _e_comp_win_release(cw);
