@@ -3992,7 +3992,7 @@ _e_comp_shapes_update_comp_win_shape_comp_helper(E_Comp_Win *cw, Eina_Tiler *tb)
      }
    else
      {
-        if (cw->bd && (!cw->bd->borderless))
+        if (cw->bd && (!cw->bd->borderless) && (!_e_comp_win_is_borderless(cw)))
           {
              if (cw->bd->client_inset.calc)
                {
