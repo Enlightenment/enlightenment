@@ -966,8 +966,6 @@ _e_drag_end(int x, int y)
      }
 
    dropped = 0;
-   ecore_x_window_free(_drag_win);
-   _drag_win = 0;
    if (!_drag_current->data)
      {
         /* Just leave */
@@ -1112,6 +1110,8 @@ _e_drag_free(E_Drag *drag)
    for (i = 0; i < drag->num_types; i++)
      eina_stringshare_del(drag->types[i]);
    free(drag);
+   ecore_x_window_free(_drag_win);
+   _drag_win = 0;
    ecore_x_window_shadow_tree_flush();
 }
 
