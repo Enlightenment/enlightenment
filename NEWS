@@ -57,6 +57,8 @@ Additions:
         * new winlist config option for moving selected window to current desk
 
 Changes:
+        * e now uses and looks for elementary themes
+        * elementary + emotion now hard dependencies
     Modules:
         * modules no longer require shutdown or save functions
         * merged all binding config dialogs into conf_bindings module
@@ -152,6 +154,21 @@ Improvements:
     * udisks2 support
     * Navigate menu item now opens $HOME
     * Clicking in the filemanager when renaming cancels the rename
+    * Shrink filemanager icon event area to allow easier selections
+    * Select previously-renaming filemanager icon when rename ends
+    * Improve reliability of new file/directory creation
+    * Clicking Settings->All in menu now opens settings panel
+    * Open Terminal Here now available when clicking regular files
+    * Add more filetypes to thumbnailer
+    * Improve focus handling with external desktop filemanagers
+    * Add back/forward button support for filemanager when toolbar is present
+    * Increase text file preview size
+    * Improve text file preview layout
+    * e now uses and looks for elementary themes
+    * Improve battery gadget text sizing
+    * Greatly improve filemanager icon selection
+    * clock gadgets now default to digital mode when added
+    * ignore netwm activate during startup
 
 Fixes:
     * IBar menu didn't allow to configure different icon sources, show contents menu even on empty IBar.
@@ -238,3 +255,15 @@ Fixes:
     * wsod: Fixed gdb hangs when generating backtraces.
     * Entry: Fixed issues with entry not scrolling to cursor.
     * Fixed NoDisplay entries in Everything launcher
+    * Remember view mode for desktop icons
+    * Fixed evry crash when switching views
+    * Correctly start pulseaudio from mixer
+    * Fix winlist case where activation would have no effect
+    * Reapply default filemanager view after changing settings
+    * Fix flickering in advanced wallpaper settings
+    * Fix focus/stacking of windows on restart
+    * More accurately set current desk in Move to... submenu
+    * Disable resizing of buttons in window remember dialog
+    * Fix unfocusing of disabled widgets
+    * Fix crash when activating e's restart from start gadget triggered menu
+    * Further improve initial window placement coordinates

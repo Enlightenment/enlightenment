@@ -3,22 +3,102 @@
         * Fixed NoDisplay entries in Everything launcher
         * Removed capabilities to alter gadgets in EFM toolbars
 
+2013-12-02 Mike Blumenkrantz
+
+        * Shrink filemanager icon event area to allow easier selections
+        * Remember view mode for desktop icons
+        * Fixed evry crash when switching views
+
+2013-11-30 Mike Blumenkrantz
+
+        * Correctly start pulseaudio from mixer
+
+2013-11-29 Mike Blumenkrantz
+
+        * Fix winlist case where activation would have no effect
+
+2013-11-26 Mike Blumenkrantz
+
+        * Select previously-renaming filemanager icon when rename ends
+        * Improve reliability of new file/directory creation
+        * Clicking Settings->All in menu now opens settings panel
+        * Open Terminal Here now available when clicking regular files
+
+2013-11-25 Mike Blumenkrantz
+
+        * Reapply default filemanager view after changing settings
+
 2013-11-25 Tom Hacohen
 
 	* Entry: Fixed issues with entry not scrolling to cursor.
+
+2013-11-22 Carsten Haitzler
+
+        * Add more filetypes to thumbnailer
+
+2013-11-21 Mike Blumenkrantz
+
+        * Fix flickering in advanced wallpaper settings
+
+2013-11-21 Sebastian Dransfeld
+
+        * Improve focus handling with external desktop filemanagers
+
+2013-11-20 Mike Blumenkrantz
+
+        * Add back/forward button support for filemanager when toolbar is present
+        * Fix focus/stacking of windows on restart
+        * More accurately set current desk in Move to... submenu
+        * Disable resizing of buttons in window remember dialog
+
+2013-11-20 Carsten Haitzler
+
+        * Add $XDG_DESKTOP_DIR support for file link paths
+
+2013-11-18 Carsten Haitzler
+
+        * Increase text file preview size
+        * Improve text file preview layout
 
 2013-11-05 Tom Hacohen
 
 	* wsod: Fixed gdb hangs when generating backtraces.
 
+2013-10-31 Carsten Haitzler
+
+        * e now uses and looks for elementary themes
+        * elementary + emotion now hard dependencies
+
+2013-10-26 Mike Blumenkrantz
+
+        * Fix unfocusing of disabled widgets
+
+2013-10-25 Iván Briano
+
+        * Improve battery gadget text sizing
+
+2013-10-15 Mike Blumenkrantz
+
+        * Fix crash when activating e's restart from start gadget triggered menu
+
 2013-10-07 Mike Blumenkrantz
 
         * removed "raise on focus" config option
+        * clock gadgets now default to digital mode when added
+
+2013-10-06 Yossi Kantor
+
+        * Greatly improve filemanager icon selection
 
 2013-10-03 Mike Blumenkrantz
 
         * Fix filemanager spring window closing when dragging from desktop
         * Catch XWindow closes during DND operations on those windows
+
+2013-09-26 Mike Blumenkrantz
+
+        * Further improve initial window placement coordinates
+        * ignore netwm activate during startup
 
 2013-09-19 Mike Blumenkrantz
 
