@@ -1661,8 +1661,8 @@ _e_gadcon_gadget_move_to_pre_cb(void *data, E_Menu *m)
      _e_gadcon_add_locations_menu_for_site(m, gcc, E_GADCON_SITE_DESKTOP, &n);
    if (!gcc->client_class->func.is_site || gcc->client_class->func.is_site(E_GADCON_SITE_TOOLBAR))
      _e_gadcon_add_locations_menu_for_site(m, gcc, E_GADCON_SITE_TOOLBAR, &n);
-   if (!gcc->client_class->func.is_site || gcc->client_class->func.is_site(E_GADCON_SITE_EFM_TOOLBAR))
-     _e_gadcon_add_locations_menu_for_site(m, gcc, E_GADCON_SITE_EFM_TOOLBAR, &n);
+   //if (!gcc->client_class->func.is_site || gcc->client_class->func.is_site(E_GADCON_SITE_EFM_TOOLBAR))
+     //_e_gadcon_add_locations_menu_for_site(m, gcc, E_GADCON_SITE_EFM_TOOLBAR, &n);
    _e_gadcon_add_locations_menu_for_site(m, gcc, E_GADCON_SITE_UNKNOWN, &n);
 }
 
@@ -1722,7 +1722,7 @@ e_gadcon_client_util_menu_items_append(E_Gadcon_Client *gcc, E_Menu *menu_gadget
    e_menu_post_deactivate_callback_set(menu_main, _e_gadcon_client_cb_menu_post, gcc);
    gcc->menu = menu_main;
 
-   if ((gcc->gadcon->shelf) || (gcc->gadcon->toolbar))
+   if (gcc->gadcon->shelf)
      {
         if (e_menu_item_nth(menu_gadget, 0))
           {
@@ -1803,7 +1803,7 @@ e_gadcon_client_util_menu_items_append(E_Gadcon_Client *gcc, E_Menu *menu_gadget
         e_menu_item_callback_set(mi, _e_gadcon_client_cb_menu_remove, gcc);
      }
 
-   if (!e_config->menu_gadcon_client_toplevel)
+   if ((!e_config->menu_gadcon_client_toplevel) && (!gcc->gadcon->toolbar))
      {
         mi = e_menu_item_new(menu_main);
         if (gcc->client_class->func.label)

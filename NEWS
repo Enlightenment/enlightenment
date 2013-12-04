@@ -81,6 +81,7 @@ Removed:
     * e_manager_comp namespace
     * HAL support for filemanager
     * "raise on focus" config option
+    * ability to alter gadgets in EFM toolbars
 
 Improvements:
     * mixer shows more channels when using alsa subsystem and correctly disable controls
@@ -236,3 +237,4 @@ Fixes:
     * fixed catching XWindow closes during DND operations on those windows
     * wsod: Fixed gdb hangs when generating backtraces.
     * Entry: Fixed issues with entry not scrolling to cursor.
+    * Fixed NoDisplay entries in Everything launcher

@@ -6,9 +6,9 @@ static void        _e_toolbar_cb_mouse_down(void *data, Evas *evas, Evas_Object 
 static void        _e_toolbar_menu_cb_post(void *data, E_Menu *mn);
 static void        _e_toolbar_menu_cb_pre(void *data, E_Menu *mn);
 static void        _e_toolbar_menu_append(E_Toolbar *tbar, E_Menu *mn);
-static void        _e_toolbar_menu_cb_edit(void *data, E_Menu *mn, E_Menu_Item *mi);
+//static void        _e_toolbar_menu_cb_edit(void *data, E_Menu *mn, E_Menu_Item *mi);
 static void        _e_toolbar_menu_cb_config(void *data, E_Menu *mn, E_Menu_Item *mi);
-static void        _e_toolbar_menu_cb_contents(void *data, E_Menu *mn, E_Menu_Item *mi);
+//static void        _e_toolbar_menu_cb_contents(void *data, E_Menu *mn, E_Menu_Item *mi);
 static void        _e_toolbar_gadcon_size_request(void *data, E_Gadcon *gc, Evas_Coord w, Evas_Coord h);
 static const char *_e_toolbar_orient_string_get(E_Toolbar *tbar);
 static void        _e_toolbar_fm2_changed(void *data, Evas_Object *obj, void *event_info);
@@ -31,7 +31,7 @@ _tb_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *info __UNUSED
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    if (tbar->gadcon) e_gadcon_swallowed_min_size_set(tbar->gadcon, w, h);
 }
-
+/*
 static void
 _e_toolbar_gadget_remove(void *data EINA_UNUSED, E_Gadcon_Client *gcc)
 {
@@ -121,13 +121,14 @@ _e_toolbar_gadget_add(void *data EINA_UNUSED, E_Gadcon_Client *gcc, const E_Gadc
      e_config_save_queue();
    return (gc || gcc);
 }
-
+*/
 EINTERN int
 e_toolbar_init(void)
 {
    tb_location = e_gadcon_location_new(_("EFM Toolbar"), E_GADCON_SITE_EFM_TOOLBAR,
-                                    _e_toolbar_gadget_add, NULL,
-                                    _e_toolbar_gadget_remove, NULL);
+                                       NULL, NULL, NULL, NULL);
+                                    //_e_toolbar_gadget_add, NULL,
+                                    //_e_toolbar_gadget_remove, NULL);
    e_gadcon_location_set_icon_name(tb_location, "configure-toolbars");
    e_gadcon_location_register(tb_location);
    return 1;
@@ -337,27 +338,28 @@ _e_toolbar_menu_cb_pre(void *data, E_Menu *mn)
 
    tbar = data;
    e_menu_pre_activate_callback_set(mn, NULL, NULL);
-
+/*
    mi = e_menu_item_new(mn);
    if (tbar->gadcon->editing)
-     e_menu_item_label_set(mi, _("Stop Moving/Resizing Items"));
+     e_menu_item_label_set(mi, _("Stop Moving Items"));
    else
-     e_menu_item_label_set(mi, _("Begin Moving/Resizing Items"));
+     e_menu_item_label_set(mi, _("Begin Moving Items"));
    e_util_menu_item_theme_icon_set(mi, "transform-scale");
    e_menu_item_callback_set(mi, _e_toolbar_menu_cb_edit, tbar);
 
    mi = e_menu_item_new(mn);
    e_menu_item_separator_set(mi, 1);
-
+*/
    mi = e_menu_item_new(mn);
    e_menu_item_label_set(mi, _("Toolbar Settings"));
    e_util_menu_item_theme_icon_set(mi, "configure");
    e_menu_item_callback_set(mi, _e_toolbar_menu_cb_config, tbar);
-
+/*
    mi = e_menu_item_new(mn);
    e_menu_item_label_set(mi, _("Set Toolbar Contents"));
    e_util_menu_item_theme_icon_set(mi, "preferences-toolbar");
    e_menu_item_callback_set(mi, _e_toolbar_menu_cb_contents, tbar);
+*/
 }
 
 static void
@@ -383,7 +385,7 @@ _e_toolbar_menu_append(E_Toolbar *tbar, E_Menu *mn)
    e_menu_item_submenu_set(mi, subm);
    e_object_unref(E_OBJECT(subm));
 }
-
+/*
 static void
 _e_toolbar_menu_cb_edit(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
@@ -395,7 +397,7 @@ _e_toolbar_menu_cb_edit(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi __UNU
    else
      e_gadcon_edit_begin(tbar->gadcon);
 }
-
+*/
 static void
 _e_toolbar_menu_cb_config(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
@@ -404,7 +406,7 @@ _e_toolbar_menu_cb_config(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi __U
    tbar = data;
    if (!tbar->cfg_dlg) e_int_toolbar_config(tbar);
 }
-
+/*
 static void
 _e_toolbar_menu_cb_contents(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
@@ -413,7 +415,7 @@ _e_toolbar_menu_cb_contents(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *mi _
    tbar = data;
    if (!tbar->gadcon->config_dialog) e_int_gadcon_config_toolbar(tbar->gadcon);
 }
-
+*/
 static void
 _e_toolbar_gadcon_size_request(void *data, E_Gadcon *gc, Evas_Coord w, Evas_Coord h)
 {
