@@ -1,5 +1,9 @@
 2013-12-04 Mike Blumenkrantz
 
+        * Fixed cases where gadgets would sometimes reorder randomly on shelves
+
+2013-12-04 Mike Blumenkrantz
+
         * Fixed NoDisplay entries in Everything launcher
         * Removed capabilities to alter gadgets in EFM toolbars
 
