@@ -2540,8 +2540,8 @@ _e_gadcon_client_move_start(E_Gadcon_Client *gcc)
      return;
 
    /* using drag pos to calc offset between pointer and gcc pos */
-   gcc->drag.x = (x - gcc->dx);
-   gcc->drag.y = (y - gcc->dy);
+   gcc->drag.x = x - (gcc->dx + gx);
+   gcc->drag.y = y - (gcc->dy + gy);
 
    gcc->state_info.resist = 0;
 }
