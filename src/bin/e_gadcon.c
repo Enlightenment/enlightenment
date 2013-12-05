@@ -3002,8 +3002,6 @@ _e_gadcon_cb_dnd_move(void *data, const char *type __UNUSED__, void *event)
         else if (gcc->o_base)
           evas_object_move(gcc->o_base, ev->x, ev->y);
      }
-   else
-     evas_object_geometry_get(gc->o_container, &dx, &dy, NULL, NULL);
    _e_gadcon_client_inject(gc, gcc, ev->x + dx, ev->y + dy);
 
    o = gcc->o_frame ? gcc->o_frame : gcc->o_base;
