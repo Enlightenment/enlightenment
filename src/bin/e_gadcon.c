@@ -2561,7 +2561,6 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
    Evas_Coord x, y, w, h;
    int cx, cy;
    int gx, gy, gw, gh;
-   int gcx = 0, gcy = 0;
    int changes = 0;
 
    if (!gcc->moving) return;
@@ -2572,15 +2571,12 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
    if (gcc->gadcon->toolbar)
      evas_pointer_canvas_xy_get(gcc->gadcon->evas, &cx, &cy);
    else
-     {
-        ecore_x_pointer_xy_get(gcc->gadcon->zone->container->win, &cx, &cy);
-        e_gadcon_canvas_zone_geometry_get(gcc->gadcon, &gcx, &gcy, NULL, NULL);
-     }
+     ecore_x_pointer_xy_get(gcc->gadcon->zone->container->win, &cx, &cy);
 
    evas_object_geometry_get(gcc->gadcon->o_container, &gx, &gy, &gw, &gh);
 
-   cx -= (gx + gcx);
-   cy -= (gy + gcy);
+   cx -= gx;
+   cy -= gy;
 
    x = cx - gcc->dx;
    y = cy - gcc->dy;
