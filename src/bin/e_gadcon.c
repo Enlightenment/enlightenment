@@ -2588,6 +2588,13 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
    gcc->state_info.flags = E_GADCON_LAYOUT_ITEM_LOCK_POSITION | E_GADCON_LAYOUT_ITEM_LOCK_ABSOLUTE;
    _e_gadcon_client_current_position_sync(gcc);
 
+   if ((cy + e_config->drag_resist < 0 || cy - e_config->drag_resist >= gh) ||
+       (cx + e_config->drag_resist < 0 || cx - e_config->drag_resist > gw))
+     {
+        _e_gadcon_client_drag_begin(gcc, cx, cy);
+        return;
+     }
+
    if (gcc->o_frame)
      evas_object_geometry_get(gcc->o_frame, NULL, NULL, &w, &h);
    else if (gcc->o_base)
@@ -2597,13 +2604,6 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
 
    if (e_gadcon_layout_orientation_get(gcc->gadcon->o_container))
      {
-        if ((cy + e_config->drag_resist < 0 || cy - e_config->drag_resist >= gh) ||
-            (cx + e_config->drag_resist < 0 || cx - e_config->drag_resist > gw))
-          {
-             _e_gadcon_client_drag_begin(gcc, cx, cy);
-             return;
-          }
-
         /* DRAG RIGHT */
         if (x > 0 && (cx + gcc->drag.x > gcc->config.pos))
           {
@@ -2635,13 +2635,6 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
      }
    else
      {
-        if ((cy + e_config->drag_resist < 0 || cy - e_config->drag_resist >= gh) ||
-            (cx + e_config->drag_resist < 0 || cx - e_config->drag_resist > gw))
-          {
-             _e_gadcon_client_drag_begin(gcc, cx, cy);
-             return;
-          }
-
         /* DRAG DOWN */
         if (y > 0 && (cy + gcc->drag.y > gcc->config.pos))
           {
