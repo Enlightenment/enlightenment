@@ -74,6 +74,7 @@ _basic_apply(E_Config_Dialog *dialog, E_Config_Dialog_Data *cfdata)
         conf->default_gc_id = eina_stringshare_add(id);
 
         conf->desktop_notification = ctxt->desktop_notification;
+        conf->disable_pulse = ctxt->disable_pulse;
      }
 
    return 1;
@@ -119,6 +120,10 @@ _basic_create_general(E_Config_Dialog *dialog, Evas *evas, E_Config_Dialog_Data 
 #ifndef HAVE_ENOTIFY
    e_widget_disabled_set(chk, EINA_TRUE);
 #endif
+   e_widget_list_object_append(cfdata->ui.list, chk, 1, 1, 0.5);
+
+   chk = e_widget_check_add(evas, _("Disable PulseAudio"), &ctxt->disable_pulse);
+   e_widget_check_checked_set(chk, ctxt->conf->disable_pulse);
    e_widget_list_object_append(cfdata->ui.list, chk, 1, 1, 0.5);
 }
 

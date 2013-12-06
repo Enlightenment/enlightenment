@@ -187,6 +187,7 @@ _mixer_module_configuration_new(void)
 
    conf = E_NEW(E_Mixer_Module_Config, 1);
    conf->desktop_notification = 1;
+   conf->disable_pulse = 0;
 
    return conf;
 }
@@ -1192,6 +1193,7 @@ _mixer_module_configuration_descriptor_new(E_Config_DD *gadget_conf_edd)
    E_CONFIG_VAL(conf_edd, E_Mixer_Module_Config, default_gc_id, STR);
    E_CONFIG_HASH(conf_edd, E_Mixer_Module_Config, gadgets, gadget_conf_edd);
    E_CONFIG_VAL(conf_edd, E_Mixer_Module_Config, desktop_notification, INT);
+   E_CONFIG_VAL(conf_edd, E_Mixer_Module_Config, disable_pulse, INT);
 
    return conf_edd;
 }
@@ -1266,6 +1268,7 @@ _mixer_module_configuration_setup(E_Mixer_Module_Context *ctxt)
 
    ctxt->conf->version = MOD_CONFIG_FILE_VERSION;
    ctxt->desktop_notification = ctxt->conf->desktop_notification;
+   ctxt->disable_pulse = ctxt->conf->disable_pulse;
 }
 
 static const char _act_increase[] = "volume_increase";
@@ -1356,8 +1359,13 @@ e_modapi_init(E_Module *m)
 
    _mixer_configure_registry_register();
    e_gadcon_provider_register(&_gc_class);
-   if (!e_mixer_pulse_init()) e_mixer_default_setup();
-   else _mixer_pulse_setup();
+   if (!ctxt->disable_pulse)
+     {
+        if (!e_mixer_pulse_init()) e_mixer_default_setup();
+        else _mixer_pulse_setup();
+     }
+   else
+     e_mixer_default_setup();
 
    mixer_mod = m;
    return ctxt;

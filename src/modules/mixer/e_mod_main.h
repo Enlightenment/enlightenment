@@ -30,6 +30,7 @@ typedef struct E_Mixer_Module_Config
    const char *default_gc_id;
    Eina_Hash *gadgets;
    int desktop_notification;
+   int disable_pulse;
 } E_Mixer_Module_Config;
 
 typedef struct E_Mixer_Instance
@@ -75,6 +76,7 @@ typedef struct E_Mixer_Module_Context
       E_Action *mute;
    } actions;
    int desktop_notification;
+   int disable_pulse;
 } E_Mixer_Module_Context;
 
 EAPI extern E_Module_Api e_modapi;
