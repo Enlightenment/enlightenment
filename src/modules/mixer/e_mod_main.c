@@ -1350,6 +1350,10 @@ e_modapi_init(E_Module *m)
    if (!ctxt)
      return NULL;
 
+   _mixer_module_configuration_setup(ctxt);
+   if (!ctxt->conf)
+     return NULL;
+
    _mixer_configure_registry_register();
    e_gadcon_provider_register(&_gc_class);
    if (!e_mixer_pulse_init()) e_mixer_default_setup();
