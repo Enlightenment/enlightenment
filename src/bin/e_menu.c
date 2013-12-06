@@ -2984,10 +2984,10 @@ _e_menu_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
                        _e_menu_deactivate_all();
                        _e_active_menu_item->drag_cb.func(_e_active_menu_item->drag_cb.data, _e_active_menu_item->menu, _e_active_menu_item);
                     }
+                  /* Either way, the maybe drag stops here. */
+                  _e_menu_activate_maybe_drag = 0;
                }
           }
-        /* Either way, the maybe drag stops here. */
-        _e_menu_activate_maybe_drag = 0;
      }
 
    _e_menu_list_free_unref(tmp);
