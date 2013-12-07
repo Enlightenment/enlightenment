@@ -82,18 +82,17 @@ e_ipc_init(void)
                  base, user, id1);
         if (mkdir(buf, S_IRWXU) < 0)
           goto retry;
-        if (stat(buf, &st) == 0)
+        if (stat(buf, &st) < 0)
+          goto retry;
+        if ((st.st_uid == getuid()) &&
+            ((st.st_mode & (S_IFDIR | S_IRWXU | S_IRWXG | S_IRWXO)) ==
+             (S_IRWXU | S_IFDIR)))
           {
-             if ((st.st_uid == getuid()) &&
-                 ((st.st_mode & (S_IFDIR | S_IRWXU | S_IRWXG | S_IRWXO)) ==
-                  (S_IRWXU | S_IFDIR)))
-               {
-                  snprintf(buf3, sizeof(buf3), "%s/%s-%i",
-                           buf, disp, pid);
-                  _e_ipc_server = ecore_ipc_server_add
-                      (ECORE_IPC_LOCAL_SYSTEM, buf3, 0, NULL);
-                  if (_e_ipc_server) break;
-               }
+             snprintf(buf3, sizeof(buf3), "%s/%s-%i",
+                      buf, disp, pid);
+             _e_ipc_server = ecore_ipc_server_add
+                (ECORE_IPC_LOCAL_SYSTEM, buf3, 0, NULL);
+             if (_e_ipc_server) break;
           }
 retry:
         id1 = rand();
