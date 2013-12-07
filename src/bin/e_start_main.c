@@ -523,6 +523,7 @@ main(int argc, char **argv)
                             int r = 0;
                             int back;
 
+                            memset(&sig, 0, sizeof(siginfo_t));
 #ifdef HAVE_SYS_PTRACE_H
                             if (!really_know)
                               r = ptrace(PT_GETSIGINFO, child, NULL, &sig);
