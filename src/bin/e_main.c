@@ -1221,7 +1221,7 @@ _e_main_parse_arguments(int argc, char **argv)
           }
         else
           {
-             if (!(p = strrchr(p, '.')))
+             if (!strrchr(p, '.'))
                {
                   snprintf(buff, sizeof(buff), "%s.0", s);
                   e_util_env_set("DISPLAY", buff);
