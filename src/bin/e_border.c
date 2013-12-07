@@ -2590,8 +2590,7 @@ _e_border_maximize(E_Border *bd, E_Maximize max)
 
       case E_MAXIMIZE_SMART:
       case E_MAXIMIZE_EXPAND:
-        if (bd->zone)
-          e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
+        e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
         w = zw, h = zh;
 
         if (bd->bg_object)
@@ -4093,9 +4092,6 @@ e_border_lost_windows_get(E_Zone *zone)
    E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, NULL);
    EINA_LIST_FOREACH(borders, l, bd)
      {
-        if (!bd->zone)
-          continue;
-
         if ((bd->zone != zone) ||
             (bd->zone->container != zone->container))
           continue;
@@ -4177,7 +4173,6 @@ _e_border_move_lost_window_to_center(E_Border *bd)
    int zw, zh, zx, zy;
 
    if (bd->during_lost) return;
-   if (!(bd->zone)) return;
 
    _e_border_zones_layout_calc(bd, &zx, &zy, &zw, &zh);
 
@@ -5107,8 +5102,7 @@ _e_border_cb_window_hide(void *data  __UNUSED__,
         if (!e->send_event) return ECORE_CALLBACK_PASS_ON;
         else
           {
-             if (!((bd->zone) && 
-                   (bd->zone->container->manager->root == e->event_win)))
+             if (bd->zone->container->manager->root != e->event_win)
                return ECORE_CALLBACK_PASS_ON;
           }
 #else
@@ -5205,8 +5199,7 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
         x = bd->x;
         y = bd->y;
 
-        if (bd->zone)
-          e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
+        e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
         if (e->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X)
           {
              /* ignore moves (usually from wine clients)
@@ -5363,19 +5356,15 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
                         * X configure request into an useful geometry.
                         * This is really useful for size jumping file dialogs.
                         */
+                       e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
 
-                       if (bd->zone)
+                       if (e_config->geometry_auto_resize_limit == 1)
                          {
-                            e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
+                            if (w > zw)
+                              w = zw;
 
-                            if (e_config->geometry_auto_resize_limit == 1)
-                              {
-                                 if (w > zw)
-                                   w = zw;
-
-                                 if (h > zh)
-                                   h = zh;
-                              }
+                            if (h > zh)
+                              h = zh;
                          }
                        e_border_resize(bd, w, h);
                     }
@@ -6701,13 +6690,6 @@ _e_border_stay_within_container(E_Border *bd, int x, int y, int *new_x, int *new
    int new_x_max, new_y_max;
    int zw, zh;
    Eina_Bool lw, lh;
-
-   if (!bd->zone)
-     {
-        if (new_x) *new_x = x;
-        if (new_y) *new_y = y;
-        return;
-     }
 
    _e_border_zones_layout_calc(bd, NULL, NULL, &zw, &zh);
 
@@ -8372,8 +8354,7 @@ _e_border_eval(E_Border *bd)
      {
         int zx = 0, zy = 0, zw = 0, zh = 0;
 
-        if (bd->zone)
-          e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
+        e_zone_useful_geometry_get(bd->zone, &zx, &zy, &zw, &zh);
 
         /*
          * Limit maximum size of windows to useful geometry
