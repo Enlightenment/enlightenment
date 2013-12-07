@@ -10176,10 +10176,7 @@ _e_border_under_pointer_helper(E_Desk *desk, E_Border *exclude, int x, int y)
         /* If the layer is higher, the position of the window is higher
          * (always on top vs always below) */
         if (!bd || (cbd->layer > bd->layer))
-          {
-             bd = cbd;
-             break;
-          }
+          bd = cbd;
      }
    return bd;
 }
