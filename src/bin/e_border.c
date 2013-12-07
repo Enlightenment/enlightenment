@@ -1067,7 +1067,7 @@ e_border_hide(E_Border *bd,
 
            case 3:
              bd->hidden = 1;
-
+             /* fallthrough */
            case 1:
            default:
              if (!e_comp_evas_exists(bd))
