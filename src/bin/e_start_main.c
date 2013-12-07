@@ -490,6 +490,8 @@ main(int argc, char **argv)
              pid_t result;
              int status;
              Eina_Bool done = EINA_FALSE;
+             Eina_Bool remember_sigill = EINA_FALSE;
+             Eina_Bool remember_sigusr1 = EINA_FALSE;
 
 #ifdef HAVE_SYS_PTRACE_H
              if (!really_know)
@@ -503,9 +505,6 @@ main(int argc, char **argv)
 #endif
              while (!done)
                {
-                  Eina_Bool remember_sigill = EINA_FALSE;
-                  Eina_Bool remember_sigusr1 = EINA_FALSE;
-
                   result = waitpid(child, &status, WNOHANG);
                   if (!result)
                     {
