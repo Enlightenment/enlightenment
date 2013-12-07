@@ -301,13 +301,13 @@ e_util_edje_icon_list_set(Evas_Object *obj, const char *list)
              buf[c - p] = 0;
              if (e_util_edje_icon_set(obj, buf)) return 1;
              p = c + 1;
-             if (!*p) return 0;
+             if (!*p) break;
           }
         else
           {
              strcpy(buf, p);
              if (e_util_edje_icon_set(obj, buf)) return 1;
-             return 0;
+             break;
           }
      }
    return 0;
