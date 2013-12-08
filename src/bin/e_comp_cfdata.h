@@ -4,8 +4,11 @@ typedef struct _E_Comp_Match  E_Comp_Match;
 #else
 #ifndef E_COMP_CFDATA_H
 #define E_COMP_CFDATA_H
+
+#define E_COMP_VERSION 1
 struct _E_Comp_Config
 {
+   int           version;
    const char   *shadow_style;
    int           engine;
    int           max_unmapped_pixels;

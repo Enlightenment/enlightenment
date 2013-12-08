@@ -32,6 +32,7 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
 #undef D
 #define T E_Comp_Config
 #define D *conf_edd
+   E_CONFIG_VAL(D, T, version, INT);
    E_CONFIG_VAL(D, T, shadow_style, STR);
    E_CONFIG_VAL(D, T, engine, INT);
    //E_CONFIG_VAL(D, T, max_unmapped_pixels, INT);
@@ -79,6 +80,7 @@ e_comp_cfdata_config_new(void)
    E_Comp_Match *mat;
 
    cfg = E_NEW(E_Comp_Config, 1);
+   cfg->version = E_COMP_VERSION;
    cfg->shadow_style = eina_stringshare_add("default");
    cfg->engine = E_COMP_ENGINE_SW;
    cfg->max_unmapped_pixels = 32 * 1024;  // implement
@@ -92,7 +94,7 @@ e_comp_cfdata_config_new(void)
    cfg->lock_fps = 0;
    cfg->efl_sync = 0;
    cfg->loose_sync = 1;
-   cfg->grab = 1;
+   cfg->grab = 0;
    cfg->vsync = 1;
 #ifdef ECORE_EVAS_GL_X11_OPT_SWAP_MODE
    cfg->swap_mode = ECORE_EVAS_GL_X11_SWAP_MODE_AUTO;

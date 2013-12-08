@@ -4770,6 +4770,23 @@ e_comp_init(void)
    else
      conf = e_comp_cfdata_config_new();
 
+   // comp config versioning - add this in. over time add epochs etc. if
+   // necessary, but for now a simple version number will do
+   if (conf->version < E_COMP_VERSION)
+     {
+        switch (conf->version)
+          {
+           case 0:
+             // going from version 0 we should disable grab for smoothness
+             conf->grab = 0;
+             /* fallthrough */
+           default:
+             break;
+          }
+        e_config_save_queue();
+        conf->version = E_COMP_VERSION;
+     }
+
    if (!getenv("ECORE_X_NO_XLIB"))
      {
         if (ecore_evas_engine_type_supported_get(ECORE_EVAS_ENGINE_OPENGL_X11))
