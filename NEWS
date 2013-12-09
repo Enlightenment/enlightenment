@@ -84,6 +84,7 @@ Removed:
     * HAL support for filemanager
     * "raise on focus" config option
     * ability to alter gadgets in EFM toolbars
+    * physics module
 
 Improvements:
     * mixer shows more channels when using alsa subsystem and correctly disable controls
