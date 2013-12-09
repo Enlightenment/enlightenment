@@ -566,8 +566,13 @@ main(int argc, char **argv)
                             if (home)
                               {
                                  /* call e_sys gdb */
-                                 snprintf(buffer, 4096,
-                                          "gdb %i %s/.e-crashdump.txt",
+                                 snprintf(buffer, sizeof(buffer),
+                                          "gdb "
+                                          "--pid=%i "
+                                          "-batch "
+                                          "-ex 'set logging file %s/.e-crashdump.txt' "
+                                          "-ex 'thread apply all backtrace full' "
+                                          "-ex detach > /dev/null 2>&1 < /dev/zero",
                                           child,
                                           home);
                                  r = system(buffer);
