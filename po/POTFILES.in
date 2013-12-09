@@ -259,8 +259,6 @@ src/modules/notification/e_mod_config.c
 src/modules/notification/e_mod_main.c
 src/modules/pager/e_mod_config.c
 src/modules/pager/e_mod_main.c
-src/modules/physics/e_mod_config.c
-src/modules/physics/e_mod_main.c
 src/modules/quickaccess/e_mod_config.c
 src/modules/quickaccess/e_mod_main.c
 src/modules/quickaccess/e_mod_quickaccess.c

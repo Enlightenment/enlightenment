@@ -195,10 +195,6 @@ if USE_MODULE_APPMENU
 include Makefile_appmenu.am
 endif
 
-if USE_MODULE_PHYSICS
-include Makefile_physics.am
-endif
-
 if USE_MODULE_QUICKACCESS
 include Makefile_quickaccess.am
 endif
