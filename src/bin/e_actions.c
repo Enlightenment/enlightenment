@@ -2859,6 +2859,7 @@ ACT_FN_GO(backlight_set, )
    e_backlight_mode_set(zone, E_BACKLIGHT_MODE_NORMAL);
    e_backlight_level_set(zone, ((double)v / 100.0), -1.0);
    e_config->backlight.normal = e_backlight_level_get(zone);
+   e_config_save_queue();
 }
 
 ACT_FN_GO(backlight_adjust, )
@@ -2870,6 +2871,7 @@ ACT_FN_GO(backlight_adjust, )
    e_backlight_mode_set(zone, E_BACKLIGHT_MODE_NORMAL);
    e_backlight_level_set(zone, e_backlight_level_get(zone) + ((double)v / 100.0), -1.0);
    e_config->backlight.normal = e_backlight_level_get(zone);
+   e_config_save_queue();
 }
 
 ACT_FN_GO(kbd_layout, )
