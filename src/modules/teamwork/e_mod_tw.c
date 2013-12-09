@@ -1113,12 +1113,10 @@ tw_show_local_file(const char *uri)
    e_object_data_set(E_OBJECT(tw_mod->pop), eina_stringshare_add(uri));
 }
 
-static Eina_Bool
-focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Border_Focus_Out *ev EINA_UNUSED)
+static void
+tw_handler_hide(void)
 {
-   if (!tw_mod->pop) return ECORE_CALLBACK_RENEW;
-   if (e_config->focus_policy == E_FOCUS_CLICK) return ECORE_CALLBACK_RENEW;
-   if (tw_mod->force || tw_mod->sticky) return ECORE_CALLBACK_RENEW;
+   if (tw_mod->force || tw_mod->sticky) return;
    if (tw_config->mouse_out_delay)
      {
         if (tw_hide_timer) ecore_timer_reset(tw_hide_timer);
@@ -1127,6 +1125,20 @@ focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Border_Focus_Out
    else
      tw_hide(NULL);
    tw_mod->force = 0;
+}
+
+static Eina_Bool
+desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Border_Focus_Out *ev EINA_UNUSED)
+{
+   if (tw_mod->pop) tw_handler_hide();
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+focus_out(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Border_Focus_Out *ev EINA_UNUSED)
+{
+   if (e_config->focus_policy == E_FOCUS_CLICK) return ECORE_CALLBACK_RENEW;
+   if (tw_mod->pop) tw_handler_hide();
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -1200,6 +1212,7 @@ e_tw_init(void)
    E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_PROGRESS, download_media_status, tw_mod);
    E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_DATA, download_media_data, tw_mod);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_BORDER_FOCUS_OUT, focus_out, tw_mod);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_DESK_SHOW, desk_show, tw_mod);
 
    tw_mod->media = eina_hash_string_superfast_new((Eina_Free_Cb)download_media_free);
    return 1;
