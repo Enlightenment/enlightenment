@@ -135,7 +135,6 @@ struct _E_Comp_Win
    Ecore_X_Image       *xim;  // x image - software fallback
    E_Comp_Render_Update            *up;  // update handler
    E_Object_Delfn      *dfn;  // delete function handle for objects being tracked
-   Ecore_X_Sync_Counter counter;  // sync counter for syncronised drawing
    Ecore_Timer         *update_timeout;  // max time between damage and "done" event
    Ecore_Timer         *ready_timeout;  // max time on show (new window draw) to wait for window contents to be ready if sync protocol not handled. this is fallback.
    int                  dmg_updates;  // num of damage event updates since a redirect

@@ -20,8 +20,6 @@ struct _E_Comp_Config
    unsigned char indirect;
    unsigned char texture_from_pixmap;
    unsigned char lock_fps;
-   unsigned char loose_sync;
-   unsigned char efl_sync;
    unsigned char grab;
    unsigned char vsync;
    unsigned char swap_mode;

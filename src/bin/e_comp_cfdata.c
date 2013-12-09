@@ -44,8 +44,6 @@ e_comp_cfdata_edd_init(E_Config_DD **conf_edd, E_Config_DD **match_edd)
    E_CONFIG_VAL(D, T, indirect, UCHAR);
    E_CONFIG_VAL(D, T, texture_from_pixmap, UCHAR);
    E_CONFIG_VAL(D, T, lock_fps, UCHAR);
-   E_CONFIG_VAL(D, T, efl_sync, UCHAR);
-   E_CONFIG_VAL(D, T, loose_sync, UCHAR);
    E_CONFIG_VAL(D, T, grab, UCHAR);
    E_CONFIG_VAL(D, T, vsync, UCHAR);
    E_CONFIG_VAL(D, T, swap_mode, UCHAR);
@@ -92,8 +90,6 @@ e_comp_cfdata_config_new(void)
    cfg->indirect = 0;
    cfg->texture_from_pixmap = 1;
    cfg->lock_fps = 0;
-   cfg->efl_sync = 0;
-   cfg->loose_sync = 1;
    cfg->grab = 0;
    cfg->vsync = 1;
 #ifdef ECORE_EVAS_GL_X11_OPT_SWAP_MODE

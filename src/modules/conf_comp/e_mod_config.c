@@ -8,8 +8,6 @@ struct _E_Config_Dialog_Data
    int         texture_from_pixmap;
    int         smooth_windows;
    int         lock_fps;
-   int         efl_sync;
-   int         loose_sync;
    int         grab;
    int         vsync;
    int         swap_mode;
@@ -121,8 +119,6 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    cfdata->texture_from_pixmap = _comp_mod->conf->texture_from_pixmap;
    cfdata->smooth_windows = _comp_mod->conf->smooth_windows;
    cfdata->lock_fps = _comp_mod->conf->lock_fps;
-   cfdata->efl_sync = _comp_mod->conf->efl_sync;
-   cfdata->loose_sync = _comp_mod->conf->loose_sync;
    cfdata->grab = _comp_mod->conf->grab;
    cfdata->vsync = _comp_mod->conf->vsync;
    cfdata->swap_mode = _comp_mod->conf->swap_mode;
@@ -337,10 +333,6 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
  */
    of = e_widget_framelist_add(evas, _("Sync"), 0);
-   ob = e_widget_check_add(evas, _("Sync windows"), &(cfdata->efl_sync));
-   e_widget_framelist_object_append(of, ob);
-   ob = e_widget_check_add(evas, _("Loose sync"), &(cfdata->loose_sync));
-   e_widget_framelist_object_append(of, ob);
    ob = e_widget_check_add(evas, _("Grab Server during draw"), &(cfdata->grab));
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_label_add(evas, _("Initial draw timeout for newly mapped windows"));
@@ -495,8 +487,6 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
    if ((cfdata->engine != _comp_mod->conf->engine) ||
        (cfdata->indirect != _comp_mod->conf->indirect) ||
        (cfdata->texture_from_pixmap != _comp_mod->conf->texture_from_pixmap) ||
-       (cfdata->efl_sync != _comp_mod->conf->efl_sync) ||
-       (cfdata->loose_sync != _comp_mod->conf->loose_sync) ||
        (cfdata->vsync != _comp_mod->conf->vsync) ||
        (cfdata->swap_mode != _comp_mod->conf->swap_mode))
      {
@@ -505,8 +495,6 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         _comp_mod->conf->engine = cfdata->engine;
         _comp_mod->conf->indirect = cfdata->indirect;
         _comp_mod->conf->texture_from_pixmap = cfdata->texture_from_pixmap;
-        _comp_mod->conf->efl_sync = cfdata->efl_sync;
-        _comp_mod->conf->loose_sync = cfdata->loose_sync;
         _comp_mod->conf->vsync = cfdata->vsync;
         _comp_mod->conf->swap_mode = cfdata->swap_mode;
 
@@ -688,8 +676,6 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
    if ((cfdata->engine != _comp_mod->conf->engine) ||
        (cfdata->indirect != _comp_mod->conf->indirect) ||
        (cfdata->texture_from_pixmap != _comp_mod->conf->texture_from_pixmap) ||
-       (cfdata->efl_sync != _comp_mod->conf->efl_sync) ||
-       (cfdata->loose_sync != _comp_mod->conf->loose_sync) ||
        (cfdata->vsync != _comp_mod->conf->vsync))
      {
         E_Action *a;
@@ -697,8 +683,6 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         _comp_mod->conf->engine = cfdata->engine;
         _comp_mod->conf->indirect = cfdata->indirect;
         _comp_mod->conf->texture_from_pixmap = cfdata->texture_from_pixmap;
-        _comp_mod->conf->efl_sync = cfdata->efl_sync;
-        _comp_mod->conf->loose_sync = cfdata->loose_sync;
         _comp_mod->conf->vsync = cfdata->vsync;
 
         a = e_action_find("restart");

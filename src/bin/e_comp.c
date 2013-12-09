@@ -512,7 +512,6 @@ _e_comp_win_ready_timeout_setup(E_Comp_Win *cw)
         cw->ready_timeout = NULL;
      }
    if (cw->show_ready) return;
-   if (cw->counter) return;
    // FIXME: make show_ready option
    if (0)
      {
@@ -1199,14 +1198,6 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
         cw->update = 0;
         cw->c->updates = eina_list_remove(cw->c->updates, cw);
      }
-   if (cw->counter)
-     {
-        if (cw->bd)
-          ecore_x_e_comp_sync_cancel_send(cw->bd->client.win);
-        else
-          ecore_x_e_comp_sync_cancel_send(cw->win);
-        ecore_x_sync_counter_inc(cw->counter, 1);
-     }
    DBG("JOB2...");
    _e_comp_render_queue(c);
 }
@@ -1257,13 +1248,6 @@ _e_comp_cb_nocomp_end(E_Comp *c)
              _e_comp_event_source_visibility(cw);
              // no need for effect
           }
-        if (cw->counter)
-          {
-             if (cw->bd)
-               ecore_x_e_comp_sync_begin_send(cw->bd->client.win);
-             else
-               ecore_x_e_comp_sync_begin_send(cw->win);
-          }
      }
 }
 
@@ -1286,7 +1270,6 @@ _e_comp_cb_update(E_Comp *c)
 {
    E_Comp_Win *cw;
    Eina_List *new_updates = NULL; // for failed pixmap fetches - get them next frame
-   Eina_List *update_done = NULL;
    //   static int doframeinfo = -1;
 
    if (!c) return EINA_FALSE;
@@ -1301,22 +1284,7 @@ _e_comp_cb_update(E_Comp *c)
      }
    EINA_LIST_FREE(c->updates, cw)
      {
-        if (conf->efl_sync)
-          {
-             if (((cw->counter) && (cw->drawme)) || (!cw->counter))
-               {
-                  _e_comp_win_update(cw);
-                  if (cw->drawme)
-                    {
-                       update_done = eina_list_append(update_done, cw);
-                       cw->drawme = 0;
-                    }
-               }
-             else
-               cw->update = 0;
-          }
-        else
-          _e_comp_win_update(cw);
+        _e_comp_win_update(cw);
         if (cw->update)
           {
              new_updates = eina_list_append(new_updates, cw);
@@ -1388,13 +1356,6 @@ _e_comp_cb_update(E_Comp *c)
      {
         DBG("MANUAL RENDER...");
         //        if (!c->nocomp) ecore_evas_manual_render(c->ee);
-     }
-   if (conf->efl_sync)
-     {
-        EINA_LIST_FREE(update_done, cw)
-          {
-             ecore_x_sync_counter_inc(cw->counter, 1);
-          }
      }
    if (conf->grab)
      {
@@ -1588,27 +1549,6 @@ _e_comp_win_do_shadow(E_Comp_Win *cw)
    return 1;
 }
 
-static Eina_Bool
-_e_comp_win_damage_timeout(void *data)
-{
-   E_Comp_Win *cw = data;
-
-   if (!cw->update)
-     {
-        if (cw->update_timeout)
-          {
-             ecore_timer_del(cw->update_timeout);
-             cw->update_timeout = NULL;
-          }
-        cw->update = 1;
-        cw->c->updates = eina_list_append(cw->c->updates, cw);
-     }
-   cw->drawme = 1;
-   _e_comp_win_render_queue(cw);
-   cw->update_timeout = NULL;
-   return ECORE_CALLBACK_CANCEL;
-}
-
 static void
 _e_comp_object_del(void *data, void *obj)
 {
@@ -1619,20 +1559,10 @@ _e_comp_object_del(void *data, void *obj)
    _e_comp_win_render_queue(cw);
    if (obj == cw->bd)
      {
-        if (cw->counter)
-          {
-             if (cw->bd)
-               ecore_x_e_comp_sync_cancel_send(cw->bd->client.win);
-             else
-               ecore_x_e_comp_sync_cancel_send(cw->win);
-             ecore_x_sync_counter_inc(cw->counter, 1);
-          }
         if (cw->bd) eina_hash_del(borders, e_util_winid_str_get(cw->bd->client.win), cw);
         cw->bd->cw = NULL;
         cw->bd = NULL;
         evas_object_data_del(cw->shobj, "border");
-        // hmm - lockup?
-        //        cw->counter = 0;
      }
    else if (obj == cw->pop)
      {
@@ -1696,28 +1626,6 @@ _e_comp_hide_done(void *data, Evas_Object *obj EINA_UNUSED, const char *emission
 {
    E_Comp_Win *cw = data;
    _e_comp_done_defer(cw);
-}
-
-static void
-_e_comp_win_sync_setup(E_Comp_Win *cw, Ecore_X_Window win)
-{
-   if (!conf->efl_sync) return;
-
-   if (cw->bd)
-     {
-        if (_e_comp_win_is_borderless(cw) ||
-            (conf->loose_sync))
-          cw->counter = ecore_x_e_comp_sync_counter_get(win);
-        else
-          ecore_x_e_comp_sync_cancel_send(win);
-     }
-   else
-     cw->counter = ecore_x_e_comp_sync_counter_get(win);
-   if (cw->counter)
-     {
-        ecore_x_e_comp_sync_begin_send(win);
-        ecore_x_sync_counter_inc(cw->counter, 1);
-     }
 }
 
 static void
@@ -2227,8 +2135,6 @@ _e_comp_win_bd_setup(E_Comp_Win *cw, E_Border *bd)
    cw->opacity = cw->bd->client.netwm.opacity;
    cw->eobj = E_OBJECT(cw->bd);
    e_object_ref(cw->eobj);
-   // setup on show
-   // _e_comp_win_sync_setup(cw, cw->bd->client.win);
    cw->input_only = cw->bd->client.initial_attributes.input_only;
    cw->override = cw->bd->client.initial_attributes.override;
    cw->vis = cw->bd->client.initial_attributes.visual;
@@ -2313,15 +2219,7 @@ _e_comp_win_add(E_Comp *c, Ecore_X_Window win, E_Border *bd)
            cw->bg_win = (con && (cw->win == con->bg_win));
         }
         cw->free_shape = 1;
-        // setup on show
-        // _e_comp_win_sync_setup(cw, cw->win);
         _e_comp_win_shape_create(cw, x, y, w, h);
-     }
-
-   if (!cw->counter)
-     {
-        // FIXME: config - disable ready timeout for non-counter wins
-        //        cw->show_ready = 1;
      }
 
    if (cw->bd)
@@ -2583,12 +2481,6 @@ _e_comp_win_show(E_Comp_Win *cw)
         return;
      }
    cw->show_anim = EINA_FALSE;
-
-   // setup on show
-   if (cw->bd)
-     _e_comp_win_sync_setup(cw, cw->bd->client.win);
-   else if (cw->win)
-     _e_comp_win_sync_setup(cw, cw->win);
 
    if (cw->real_hid)
      {
@@ -2904,79 +2796,30 @@ _e_comp_win_configure(E_Comp_Win *cw, int x, int y, int w, int h, int border)
      }
    cw->hidden.w = w;
    cw->hidden.h = h;
-   if (cw->counter)
+   if (!((w == cw->w) && (h == cw->h)))
      {
-        if (!((w == cw->w) && (h == cw->h)))
+        DBG("  [0x%x] rsz %4ix%4i", cw->win, w, h);
+        cw->w = w;
+        cw->h = h;
+        resized = EINA_TRUE;
+        if ((!cw->bd) || ((!cw->bd->shading) && (!cw->bd->shaded)))
           {
-#if 1
-             cw->w = w;
-             cw->h = h;
-             resized = EINA_TRUE;
-             if (cw->visible && ((!cw->bd) || ((!cw->bd->shading) && (!cw->bd->shaded))))
-               {
-                  cw->needpix = 1;
-                  // was cw->w / cw->h
-                  //             evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
-                  _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
-               }
-#else
-             if (cw->bd)
-               {
-                  if ((cw->bd->shading) || (cw->bd->shaded))
-                    {
-                       resized = EINA_TRUE;
-                       /* don't need pixmap fetch! */
-                       _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
-                    }
-                  else
-                    cw->update = 0;
-               }
-             else
-               {
-                  cw->update = 0;
-                  //if (cw->ready_timeout) ecore_timer_del(cw->ready_timeout);
-                  //cw->ready_timeout = ecore_timer_add(conf->first_draw_delay, _e_comp_cb_win_show_ready_timeout, cw);
-               }
-#endif
-          }
-        if (cw->border != border)
-          {
-             cw->border = border;
              cw->needpix = 1;
              // was cw->w / cw->h
              //             evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
-             resized = EINA_TRUE;
-             _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
+             if (!cw->real_obj) _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
           }
-        if ((cw->input_only) || (cw->invalid)) return;
      }
-   else
+   if (cw->border != border)
      {
-        if (!((w == cw->w) && (h == cw->h)))
-          {
-             DBG("  [0x%x] rsz %4ix%4i", cw->win, w, h);
-             cw->w = w;
-             cw->h = h;
-             resized = EINA_TRUE;
-             if ((!cw->bd) || ((!cw->bd->shading) && (!cw->bd->shaded)))
-               {
-                  cw->needpix = 1;
-                  // was cw->w / cw->h
-                  //             evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
-                  if (!cw->real_obj) _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
-               }
-          }
-        if (cw->border != border)
-          {
-             cw->border = border;
-             cw->needpix = 1;
-             //             evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
-             resized = EINA_TRUE;
-             _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
-          }
-        if ((cw->input_only) || (cw->invalid)) return;
-        _e_comp_win_render_queue(cw);
+        cw->border = border;
+        cw->needpix = 1;
+        //             evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
+        resized = EINA_TRUE;
+        _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
      }
+   if ((cw->input_only) || (cw->invalid)) return;
+   _e_comp_win_render_queue(cw);
    /* need to block move/resize of the edje for real objects so the external object doesn't
     * accidentally get shown and block our show callback
     */
@@ -3007,16 +2850,6 @@ _e_comp_win_damage(E_Comp_Win *cw, int x, int y, int w, int h, Eina_Bool dmg)
         return;
      }
    e_comp_render_update_add(cw->up, x, y, w, h);
-   if (dmg)
-     {
-        if (cw->counter)
-          {
-             if (!cw->update_timeout)
-               cw->update_timeout = ecore_timer_add
-                   (ecore_animator_frametime_get() * 2, _e_comp_win_damage_timeout, cw);
-             return;
-          }
-     }
    if (!cw->update)
      {
         //INF("RENDER QUEUE: %p:%u", cw, cw->win);
@@ -3225,109 +3058,6 @@ _e_comp_stack(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    if (!cw) return ECORE_CALLBACK_PASS_ON;
    if (ev->detail == ECORE_X_WINDOW_STACK_ABOVE) _e_comp_win_raise(cw);
    else _e_comp_win_lower(cw);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_e_comp_message(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
-{
-   Ecore_X_Event_Client_Message *ev = event;
-   E_Comp_Win *cw = NULL;
-   int version, w = 0, h = 0;
-   Eina_Bool force = 0;
-
-   if ((ev->message_type != ECORE_X_ATOM_E_COMP_SYNC_DRAW_DONE) ||
-       (ev->format != 32)) return ECORE_CALLBACK_PASS_ON;
-   version = ev->data.l[1];
-   cw = _e_comp_border_client_find(ev->data.l[0]);
-   if (cw)
-     {
-        if (!cw->bd) return ECORE_CALLBACK_PASS_ON;
-        if (ev->data.l[0] != (int)cw->bd->client.win) return ECORE_CALLBACK_PASS_ON;
-     }
-   else
-     {
-        cw = _e_comp_win_find(ev->data.l[0]);
-        if (!cw) return ECORE_CALLBACK_PASS_ON;
-        if (ev->data.l[0] != (int)cw->win) return ECORE_CALLBACK_PASS_ON;
-     }
-   if (version == 1) // v 0 was first, v1 added size params
-     {
-        w = ev->data.l[2];
-        h = ev->data.l[3];
-        if (cw->bd)
-          {
-             int clw, clh;
-
-             if ((cw->bd->shading) || (cw->bd->shaded)) force = 1;
-             clw = cw->hidden.w - e_border_inset_width_get(cw->bd);
-             clh = cw->hidden.h - e_border_inset_height_get(cw->bd);
-             DBG("  [0x%x] sync draw done @%4ix%4i, bd %4ix%4i",
-                 cw->win, w, h, cw->bd->client.w, cw->bd->client.h);
-             if ((w != clw) || (h != clh))
-               {
-                  cw->misses++;
-                  if (cw->misses > 1)
-                    {
-                       cw->misses = 0;
-                       force = 1;
-                    }
-                  else return ECORE_CALLBACK_PASS_ON;
-               }
-             cw->misses = 0;
-          }
-        else
-          {
-             DBG("  [0x%x] sync draw done @%4ix%4i, cw %4ix%4i",
-                 cw->win, w, h, cw->hidden.w, cw->hidden.h);
-             if ((w != cw->hidden.w) || (h != cw->hidden.h))
-               {
-                  if (cw->misses > 1)
-                    {
-                       cw->misses = 0;
-                       force = 1;
-                    }
-                  else return ECORE_CALLBACK_PASS_ON;
-               }
-             cw->misses = 0;
-          }
-     }
-   DBG("  [0x%x] sync draw done %4ix%4i", cw->win, cw->w, cw->h);
-   //   if (cw->bd)
-   {
-      if (cw->counter)
-        {
-           DBG("  [0x%x] have counter", cw->win);
-           cw->show_ready = 1;
-           if (!cw->update)
-             {
-                DBG("  [0x%x] set update", cw->win);
-                if (cw->update_timeout)
-                  {
-                     DBG("  [0x%x] del timeout", cw->win);
-                     ecore_timer_del(cw->update_timeout);
-                     cw->update_timeout = NULL;
-                  }
-                cw->update = 1;
-                cw->c->updates = eina_list_append(cw->c->updates, cw);
-             }
-           if ((cw->w != cw->hidden.w) ||
-               (cw->h != cw->hidden.h) ||
-               (force))
-             {
-                DBG("  [0x%x] rsz done msg %4ix%4i", cw->win, cw->hidden.w, cw->hidden.h);
-                cw->w = cw->hidden.w;
-                cw->h = cw->hidden.h;
-                cw->needpix = 1;
-                // was cw->w / cw->h
-                //                evas_object_resize(cw->effect_obj, cw->pw, cw->ph);
-                _e_comp_win_geometry_update(cw);
-                _e_comp_win_damage(cw, 0, 0, cw->w, cw->h, 0);
-             }
-           cw->drawme = 1;
-           _e_comp_win_render_queue(cw);
-        }
-   }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -4294,8 +4024,6 @@ _e_comp_add(E_Manager *man)
      }
    ecore_x_screen_is_composited_set(man->num, c->cm_selection);
 
-   ecore_x_e_comp_sync_supported_set(man->root, conf->efl_sync);
-
    c->man = man;
    man->comp = c;
    c->win = ecore_x_composite_render_window_enable(man->root);
@@ -4377,7 +4105,6 @@ _e_comp_add(E_Manager *man)
           ecore_job_add(_e_comp_add_fail_job, NULL);
      }
 
-   ecore_evas_comp_sync_set(c->ee, 0);
    ecore_evas_name_class_set(c->ee, "E", "Comp_EE");
    //   ecore_evas_manual_render_set(c->ee, conf->lock_fps);
    c->evas = ecore_evas_get(c->ee);
@@ -4439,11 +4166,6 @@ _e_comp_del(E_Comp *c)
    while (c->wins)
      {
         cw = (E_Comp_Win *)(c->wins);
-        if (cw->counter)
-          {
-             ecore_x_sync_counter_free(cw->counter);
-             cw->counter = 0;
-          }
         cw->force = 1;
         _e_comp_win_hide(cw);
         cw->force = 1;
@@ -4484,7 +4206,6 @@ _e_comp_del(E_Comp *c)
    if (c->nocomp_override_timer) ecore_timer_del(c->nocomp_override_timer);
 
    ecore_x_window_free(c->cm_selection);
-   ecore_x_e_comp_sync_supported_set(c->man->root, 0);
    ecore_x_screen_is_composited_set(c->man->num, 0);
 
    free(c);
@@ -4722,7 +4443,6 @@ e_comp_init(void)
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_REPARENT, _e_comp_reparent, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_CONFIGURE, _e_comp_configure, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_STACK, _e_comp_stack, NULL);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_CLIENT_MESSAGE, _e_comp_message, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_SHAPE, _e_comp_shape, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_DAMAGE_NOTIFY, _e_comp_damage, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_DAMAGE, _e_comp_damage_win, NULL);
