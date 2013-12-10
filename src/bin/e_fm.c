@@ -4829,7 +4829,6 @@ _e_fm2_icon_realize(E_Fm2_Icon *ic)
    evas_event_freeze(e);
    ic->obj = edje_object_add(e);
    edje_object_freeze(ic->obj);
-   evas_object_pass_events_set(ic->obj, 1);
    evas_object_smart_member_add(ic->obj, ic->sd->obj);
    ic->rect = evas_object_rectangle_add(e);
    evas_object_color_set(ic->rect, 0, 0, 0, 0);
