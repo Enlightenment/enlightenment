@@ -1099,7 +1099,8 @@ e_bindings_signal_handle(E_Binding_Context ctxt, E_Object *obj, const char *sig,
    E_Action *act;
    E_Binding_Signal *binding;
 
-   if (sig && (sig[0] == 0)) sig = NULL;
+   if ((!sig) || (sig && (sig[0] == 0)))
+     return NULL;
    if (src && (src[0] == 0)) src = NULL;
    act = e_bindings_signal_find(ctxt, sig, src, &binding);
    if (act)
