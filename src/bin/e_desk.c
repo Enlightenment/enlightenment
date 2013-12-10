@@ -402,8 +402,8 @@ e_desk_last_focused_focus(E_Desk *desk)
      }
    if (bds)
      {
-        e_border_focus_set_with_pointer(bd);
-        return bd;
+        e_border_focus_set_with_pointer(bds);
+        return bds;
      }
    return NULL;
 }
