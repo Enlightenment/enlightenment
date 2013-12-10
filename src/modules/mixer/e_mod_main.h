@@ -69,6 +69,7 @@ typedef struct E_Mixer_Module_Context
    E_Mixer_Instance *default_instance;
    Eina_List *instances;
    E_Dialog *mixer_dialog;
+   double last_act_time;
    struct st_mixer_actions
    {
       E_Action *incr;

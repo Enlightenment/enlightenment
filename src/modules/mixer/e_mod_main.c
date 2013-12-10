@@ -1098,6 +1098,11 @@ _mixer_cb_volume_modify(Eina_Bool up)
    if (!ctxt->default_instance)
      return;
 
+   if ((ecore_loop_time_get() - ctxt->last_act_time) < 0.04)
+     return;
+
+   ctxt->last_act_time = ecore_loop_time_get();
+
    if (ctxt->default_instance->conf->keybindings_popup)
      _mixer_popup_timer_new(ctxt->default_instance);
    _mixer_volume_change(ctxt->default_instance, up, EINA_TRUE);
@@ -1129,6 +1134,11 @@ _mixer_cb_volume_mute(E_Object *obj __UNUSED__, const char *params __UNUSED__)
 
    if (!ctxt->default_instance)
      return;
+
+   if ((ecore_loop_time_get() - ctxt->last_act_time) < 0.1)
+     return;
+
+   ctxt->last_act_time = ecore_loop_time_get();
 
    if (ctxt->default_instance->conf->keybindings_popup)
      _mixer_popup_timer_new(ctxt->default_instance);
