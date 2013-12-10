@@ -1,5 +1,7 @@
 #include "e.h"
 
+/* TODO: Check cache update */
+
 struct _E_Config_Dialog_Data
 {
    Efreet_Desktop *desktop;

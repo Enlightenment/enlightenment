@@ -398,6 +398,8 @@ _e_acpi_lid_status_get(const char *device, const char *bus)
    /* read the line from state file */
    ret = fgets(buff, sizeof(buff), f);
    fclose(f);
+   if (!ret)
+     return E_ACPI_LID_UNKNOWN;
 
    /* parse out state file */
    i = 0;
