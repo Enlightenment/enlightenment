@@ -374,7 +374,7 @@ EAPI E_Border *
 e_desk_last_focused_focus(E_Desk *desk)
 {
    Eina_List *l = NULL;
-   E_Border *bd;
+   E_Border *bd, *bds = NULL;
 
    EINA_LIST_FOREACH(e_border_focus_stack_get(), l, bd)
      {
@@ -390,10 +390,20 @@ e_desk_last_focused_focus(E_Desk *desk)
              /* this was the window last focused in this desktop */
              if (!bd->lock_focus_out)
                {
+                  if (bd->sticky)
+                    {
+                       bds = bd;
+                       continue;
+                    }
                   e_border_focus_set_with_pointer(bd);
                   return bd;
                }
           }
+     }
+   if (bds)
+     {
+        e_border_focus_set_with_pointer(bd);
+        return bd;
      }
    return NULL;
 }
