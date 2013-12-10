@@ -186,7 +186,7 @@ struct _E_Fm2_Icon
    E_Fm2_Smart_Data *sd;
    E_Fm2_Region     *region;
    Evas_Coord        x, y, w, h, min_w, min_h;
-   Evas_Object      *obj, *obj_icon, *rect;
+   Evas_Object      *obj, *obj_icon;
    E_Menu           *menu;
    E_Entry_Dialog   *entry_dialog;
    Evas_Object      *entry_widget;
@@ -4795,20 +4795,13 @@ _e_fm2_icon_label_click(void *data, Evas_Object *obj __UNUSED__, const char *emi
 static void
 _e_fm2_icon_realize(E_Fm2_Icon *ic)
 {
-   Evas *e;
-
    if (ic->realized) goto new_file;
-   e = evas_object_evas_get(ic->sd->obj);
    /* actually create evas objects etc. */
    ic->realized = EINA_TRUE;
-   evas_event_freeze(e);
-   ic->obj = edje_object_add(e);
+   evas_event_freeze(evas_object_evas_get(ic->sd->obj));
+   ic->obj = edje_object_add(evas_object_evas_get(ic->sd->obj));
    edje_object_freeze(ic->obj);
    evas_object_smart_member_add(ic->obj, ic->sd->obj);
-   ic->rect = evas_object_rectangle_add(e);
-   evas_object_color_set(ic->rect, 0, 0, 0, 0);
-   evas_object_smart_member_add(ic->rect, ic->sd->obj);
-   evas_object_repeat_events_set(ic->rect, 1);
    evas_object_stack_below(ic->obj, ic->sd->drop);
    if (_e_fm2_view_mode_get(ic->sd) == E_FM2_VIEW_MODE_LIST)
      {
@@ -4855,31 +4848,25 @@ _e_fm2_icon_realize(E_Fm2_Icon *ic)
                                        "base/theme/fileman",
                                        "icon/variable");
      }
-   evas_object_stack_above(ic->rect, ic->obj);
    _e_fm2_icon_label_set(ic, ic->obj);
    evas_object_clip_set(ic->obj, ic->sd->clip);
    evas_object_move(ic->obj,
                     ic->sd->x + ic->x - ic->sd->pos.x,
                     ic->sd->y + ic->y - ic->sd->pos.y);
-   evas_object_move(ic->rect,
-                    ic->sd->x + ic->x - ic->sd->pos.x,
-                    ic->sd->y + ic->y - ic->sd->pos.y);
    evas_object_resize(ic->obj, ic->w, ic->h);
-   evas_object_resize(ic->rect, ic->w, ic->h);
 
-   evas_object_event_callback_add(ic->rect, EVAS_CALLBACK_MOUSE_DOWN, _e_fm2_cb_icon_mouse_down, ic);
-   evas_object_event_callback_add(ic->rect, EVAS_CALLBACK_MOUSE_UP, _e_fm2_cb_icon_mouse_up, ic);
-   evas_object_event_callback_add(ic->rect, EVAS_CALLBACK_MOUSE_MOVE, _e_fm2_cb_icon_mouse_move, ic);
-   evas_object_event_callback_add(ic->rect, EVAS_CALLBACK_MOUSE_IN, _e_fm2_cb_icon_mouse_in, ic);
-   evas_object_event_callback_add(ic->rect, EVAS_CALLBACK_MOUSE_OUT, _e_fm2_cb_icon_mouse_out, ic);
+   evas_object_event_callback_add(ic->obj, EVAS_CALLBACK_MOUSE_DOWN, _e_fm2_cb_icon_mouse_down, ic);
+   evas_object_event_callback_add(ic->obj, EVAS_CALLBACK_MOUSE_UP, _e_fm2_cb_icon_mouse_up, ic);
+   evas_object_event_callback_add(ic->obj, EVAS_CALLBACK_MOUSE_MOVE, _e_fm2_cb_icon_mouse_move, ic);
+   evas_object_event_callback_add(ic->obj, EVAS_CALLBACK_MOUSE_IN, _e_fm2_cb_icon_mouse_in, ic);
+   evas_object_event_callback_add(ic->obj, EVAS_CALLBACK_MOUSE_OUT, _e_fm2_cb_icon_mouse_out, ic);
    edje_object_signal_callback_add(ic->obj, "e,action,label,click", "e", _e_fm2_icon_label_click, ic);
 
    _e_fm2_icon_icon_set(ic);
 
    edje_object_thaw(ic->obj);
-   evas_event_thaw(e);
+   evas_event_thaw(evas_object_evas_get(ic->sd->obj));
    evas_object_show(ic->obj);
-   evas_object_show(ic->rect);
 
    if (ic->selected)
      {
@@ -4927,15 +4914,13 @@ _e_fm2_icon_unrealize(E_Fm2_Icon *ic)
    if (!ic->realized) return;
    /* delete evas objects */
    ic->realized = EINA_FALSE;
+   evas_object_event_callback_del_full(ic->obj, EVAS_CALLBACK_MOUSE_DOWN, _e_fm2_cb_icon_mouse_down, ic);
+   evas_object_event_callback_del_full(ic->obj, EVAS_CALLBACK_MOUSE_UP, _e_fm2_cb_icon_mouse_up, ic);
+   evas_object_event_callback_del_full(ic->obj, EVAS_CALLBACK_MOUSE_MOVE, _e_fm2_cb_icon_mouse_move, ic);
+   evas_object_event_callback_del_full(ic->obj, EVAS_CALLBACK_MOUSE_IN, _e_fm2_cb_icon_mouse_in, ic);
+   evas_object_event_callback_del_full(ic->obj, EVAS_CALLBACK_MOUSE_OUT, _e_fm2_cb_icon_mouse_out, ic);
    evas_object_del(ic->obj);
    ic->obj = NULL;
-   evas_object_event_callback_del_full(ic->rect, EVAS_CALLBACK_MOUSE_DOWN, _e_fm2_cb_icon_mouse_down, ic);
-   evas_object_event_callback_del_full(ic->rect, EVAS_CALLBACK_MOUSE_UP, _e_fm2_cb_icon_mouse_up, ic);
-   evas_object_event_callback_del_full(ic->rect, EVAS_CALLBACK_MOUSE_MOVE, _e_fm2_cb_icon_mouse_move, ic);
-   evas_object_event_callback_del_full(ic->rect, EVAS_CALLBACK_MOUSE_IN, _e_fm2_cb_icon_mouse_in, ic);
-   evas_object_event_callback_del_full(ic->rect, EVAS_CALLBACK_MOUSE_OUT, _e_fm2_cb_icon_mouse_out, ic);
-   evas_object_del(ic->rect);
-   ic->rect = NULL;
    evas_object_del(ic->obj_icon);
    ic->obj_icon = NULL;
 }
@@ -5263,10 +5248,7 @@ _e_fm2_region_realize(E_Fm2_Region *rg)
    EINA_LIST_FOREACH(rg->list, l, ic)
      {
         if (ic->selected)
-          {
-             evas_object_stack_below(ic->obj, ic->sd->drop);
-             evas_object_stack_above(ic->rect, ic->obj);
-          }
+          evas_object_stack_below(ic->obj, ic->sd->drop);
      }
    edje_thaw();
 }
@@ -6221,7 +6203,6 @@ _e_fm2_dnd_finish(Evas_Object *obj, int refresh)
         ic->drag.src = EINA_FALSE;
         if (ic->drag.hidden) continue;
         if (ic->obj) evas_object_show(ic->obj);
-        if (ic->rect) evas_object_show(ic->rect);
         if (ic->obj_icon) evas_object_show(ic->obj_icon);
      }
    if (refresh) e_fm2_refresh(obj);
@@ -7327,6 +7308,7 @@ _e_fm2_cb_icon_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 
    if (ic->sd->selecting) return;
    edje_object_message_signal_process(ic->obj);
+   edje_object_message_signal_process(ic->obj);
 
    _e_fm2_typebuf_hide(ic->sd->obj);
    if ((ev->button == 1) && (!ic->drag.dnd))
@@ -7350,7 +7332,6 @@ _e_fm2_cb_drag_finished_show(E_Fm2_Icon *ic)
 {
    ic->drag.dnd = ic->drag.src = EINA_FALSE;
    if (ic->obj) evas_object_show(ic->obj);
-   if (ic->rect) evas_object_show(ic->rect);
    if (ic->obj_icon) evas_object_show(ic->obj_icon);
    ic->drag.dnd_end_timer = NULL;
    return EINA_FALSE;
@@ -7495,6 +7476,15 @@ _e_fm2_cb_icon_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    ev = event_info;
 
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   /* here we have some stupid checks to see if we're REALLY getting a mouse out or
+    * if some jackass is sending us bad events
+    * ticket #1324
+    */
+   if (E_INSIDE(ev->output.x, ev->output.y - 10, ic->sd->x + ic->x - ic->sd->pos.x, ic->sd->y + ic->y - ic->sd->pos.y, ic->w, ic->h) &&
+       E_INSIDE(ev->output.x - 10, ev->output.y, ic->sd->x + ic->x - ic->sd->pos.x, ic->sd->y + ic->y - ic->sd->pos.y, ic->w, ic->h) &&
+       E_INSIDE(ev->output.x + 10, ev->output.y, ic->sd->x + ic->x - ic->sd->pos.x, ic->sd->y + ic->y - ic->sd->pos.y, ic->w, ic->h) &&
+       E_INSIDE(ev->output.x, ev->output.y + 10, ic->sd->x + ic->x - ic->sd->pos.x, ic->sd->y + ic->y - ic->sd->pos.y, ic->w, ic->h) &&
+       evas_pointer_inside_get(evas_object_evas_get(ic->sd->obj))) return;
    evas_object_smart_callback_call(ic->sd->obj, "icon_mouse_out", &ic->info);
 }
 
@@ -7600,7 +7590,6 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 
                   ici->ic->drag.dnd = EINA_TRUE;
                   if (ici->ic->obj) evas_object_hide(ici->ic->obj);
-                  if (ici->ic->rect) evas_object_hide(ici->ic->rect);
                   if (ici->ic->obj_icon) evas_object_hide(ici->ic->obj_icon);
 
                   o = edje_object_add(e_util_comp_current_get()->evas);
@@ -8408,11 +8397,7 @@ _e_fm2_obj_icons_place(E_Fm2_Smart_Data *sd)
                   evas_object_move(ic->obj,
                                    sd->x + ic->x - sd->pos.x,
                                    sd->y + ic->y - sd->pos.y);
-                  evas_object_move(ic->rect,
-                                   sd->x + ic->x - sd->pos.x,
-                                   sd->y + ic->y - sd->pos.y);
                   evas_object_resize(ic->obj, ic->w, ic->h);
-                  evas_object_resize(ic->rect, ic->w, ic->h);
                   _e_fm2_icon_thumb(ic, ic->obj_icon, 0);
                   if (_e_fm2_view_mode_get(ic->sd) != E_FM2_VIEW_MODE_LIST) continue;
                   /* FIXME: this is probably something that should be unnecessary,

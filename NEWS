@@ -146,7 +146,6 @@ Improvements:
     * desk flip animations moved to edje
     * startup splash screen moved to compositor canvas
     * added new modes for notification display on multiple monitors
-    * improve efm mouse movement detection for icons
     * add check for vmware window in another spot to disable key remapping
     * border menu now has top-level item to set borderless state
     * added dnd support for text/x-moz-url

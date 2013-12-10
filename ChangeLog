@@ -191,7 +191,6 @@
 2013-04-25 Mike Blumenkrantz
 
         * added deskmirror
-        * improve efm mouse movement detection for icons
         * add check for vmware window in another spot to disable key remapping
 
 2013-04-19 Mike Blumenkrantz
