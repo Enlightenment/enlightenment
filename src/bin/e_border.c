@@ -5139,8 +5139,6 @@ _e_border_cb_window_hide(void *data  __UNUSED__,
      {
 //             printf("  hide2\n");
 
-        if (bd->delete_requested)
-          bd->destroyed = 1;
         e_border_hide(bd, 0);
         e_object_del(E_OBJECT(bd));
      }
