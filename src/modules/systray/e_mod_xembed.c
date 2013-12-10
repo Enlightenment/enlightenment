@@ -419,7 +419,22 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
    if (!invis)
      ecore_x_window_background_color_set(xembed->win.base, r, g, b);
    ecore_x_window_show(xembed->win.base);
-   e_container_window_raise(xembed->inst->con, xembed->win.base, E_LAYER_ABOVE);
+   if (xembed->inst->gcc->gadcon->shelf)
+     {
+        E_Shelf *es = xembed->inst->gcc->gadcon->shelf;
+
+        if (es->popup)
+          {
+             if (es->layer)
+               e_container_window_raise(xembed->inst->con, xembed->win.base, E_LAYER_ABOVE);
+             else
+               e_container_window_raise(xembed->inst->con, xembed->win.base, E_LAYER_BELOW);
+          }
+        else
+          e_container_window_raise(xembed->inst->con, xembed->win.base, E_LAYER_DESKTOP);
+     }
+   else
+     e_container_window_raise(xembed->inst->con, xembed->win.base, E_LAYER_DESKTOP);
    return EINA_TRUE;
 }
 
