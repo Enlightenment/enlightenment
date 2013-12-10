@@ -309,6 +309,7 @@ e_container_desk_window_profile_get(E_Container *con,
 
    E_OBJECT_CHECK_RETURN(con, NULL);
    E_OBJECT_TYPE_CHECK_RETURN(con, E_CONTAINER_TYPE, NULL);
+   if (!profile) return NULL;
 
    EINA_LIST_FOREACH(con->zones, l, zone)
      {
