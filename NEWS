@@ -268,3 +268,4 @@ Fixes:
     * Fix crash when activating e's restart from start gadget triggered menu
     * Further improve initial window placement coordinates
     * Fixed cases where gadgets would sometimes reorder randomly on shelves
+    * fixed filemanager race condition causing create-queued icons to not be deleted

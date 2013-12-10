@@ -3456,6 +3456,17 @@ _e_fm2_file_del(Evas_Object *obj, const char *file)
              return;
           }
      }
+   EINA_LIST_FOREACH(sd->queue, l, ic)
+     {
+        if (!strcmp(ic->info.file, file))
+          {
+             INF("MATCH!");
+             sd->queue = eina_list_remove_list(sd->queue, l);
+             ic->queued = EINA_FALSE;
+             _e_fm2_icon_free(ic);
+             return;
+          }
+     }
 }
 
 static void
