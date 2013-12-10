@@ -831,7 +831,7 @@ ACT_FN_GO(window_border_cycle, __UNUSED__)
                {
                   const char *bdname = params;
 
-                  while (bdname && (space = strchr(bdname, ' ')))
+                  while ((space = strchr(bdname, ' ')))
                     {
                        if (strncmp(bd->bordername, bdname, space - bdname) == 0)
                          {
