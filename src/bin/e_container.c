@@ -339,6 +339,7 @@ e_container_shape_add(E_Container *con)
    E_OBJECT_TYPE_CHECK_RETURN(con, E_CONTAINER_TYPE, 0);
 
    es = E_OBJECT_ALLOC(E_Container_Shape, E_CONTAINER_SHAPE_TYPE, _e_container_shape_free);
+   if (!es) return NULL;
    E_OBJECT_DEL_SET(es, _e_container_shape_del);
    es->con = con;
    con->shapes = eina_list_append(con->shapes, es);
