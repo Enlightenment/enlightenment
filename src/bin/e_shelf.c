@@ -979,7 +979,10 @@ e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es)
 
    if (cf_es->desk_show_mode)
      {
-        if (e_shelf_desk_visible(es, NULL)) e_shelf_show(es);
+        if (e_shelf_desk_visible(es, NULL))
+          e_shelf_show(es);
+        else
+          e_shelf_hide(es);
      }
    else
      e_shelf_show(es);
