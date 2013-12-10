@@ -18,8 +18,6 @@ static void      _e_desk_event_desk_window_profile_change_free(void *data, void 
 static void      _e_desk_window_profile_change_protocol_set(void);
 #endif
 
-static Eina_Bool nofocus = EINA_FALSE;
-
 EAPI int E_EVENT_DESK_SHOW = 0;
 EAPI int E_EVENT_DESK_BEFORE_SHOW = 0;
 EAPI int E_EVENT_DESK_AFTER_SHOW = 0;
@@ -392,7 +390,7 @@ e_desk_last_focused_focus(E_Desk *desk)
              /* this was the window last focused in this desktop */
              if (!bd->lock_focus_out)
                {
-                  if (!nofocus) e_border_focus_set_with_pointer(bd);
+                  e_border_focus_set_with_pointer(bd);
                   return bd;
                }
           }
