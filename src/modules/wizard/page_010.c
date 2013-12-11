@@ -159,7 +159,7 @@ wizard_page_show(E_Wizard_Page *pg)
    o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Language"));
    of = e_widget_framelist_add(pg->evas, _("Select one"), 0);
-   ob = e_widget_ilist_add(pg->evas, 32 * e_scale, 32 * e_scale, &lang);
+   ob = e_widget_ilist_add(pg->evas,10 * e_scale, 10 * e_scale, &lang);
    e_widget_size_min_set(ob, 140 * e_scale, 140 * e_scale);
 
    e_widget_ilist_freeze(ob);
@@ -180,7 +180,9 @@ wizard_page_show(E_Wizard_Page *pg)
           }
         else
           ic = NULL;
-        
+        if (ic)
+          evas_object_size_hint_aspect_set
+          (ic, EVAS_ASPECT_CONTROL_VERTICAL, 20, 10);
         if (e_intl_language_get())
           {
              if (!strcmp(pair->locale_key, e_intl_language_get()))

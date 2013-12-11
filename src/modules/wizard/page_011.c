@@ -145,7 +145,7 @@ wizard_page_show(E_Wizard_Page *pg)
    o = e_widget_list_add(pg->evas, 1, 0);
    e_wizard_title_set(_("Keyboard"));
    of = e_widget_framelist_add(pg->evas, _("Select one"), 0);
-   ob = e_widget_ilist_add(pg->evas, 32 * e_scale, 32 * e_scale, &layout);
+   ob = e_widget_ilist_add(pg->evas, 10 * e_scale, 10 * e_scale, &layout);
    e_widget_size_min_set(ob, 140 * e_scale, 140 * e_scale);
 
    e_widget_ilist_freeze(ob);
@@ -159,6 +159,9 @@ wizard_page_show(E_Wizard_Page *pg)
         e_xkb_e_icon_flag_setup(ic, lay->name);
         label = lay->label;
         if (!label) label = "Unknown";
+        if (ic)
+          evas_object_size_hint_aspect_set
+          (ic, EVAS_ASPECT_CONTROL_VERTICAL, 20, 10);
         e_widget_ilist_append(ob, ic, _(label), NULL, NULL, lay->name);
         if (lay->name)
           {
