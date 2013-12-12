@@ -1028,7 +1028,6 @@ config/default/Makefile
 config/standard/Makefile
 config/mobile/Makefile
 $po_makefile_in
-pkgbuild/PKGBUILD
 ])
 
 # report
