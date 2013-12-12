@@ -560,10 +560,14 @@ _e_fm_main_udisks2_cb_dev_del(void *data __UNUSED__, const Eldbus_Message *msg)
      }
    if (vol)
      {
-        /* TODO: Fix here: T432, T398, T380 */
         v = _volume_find_by_dbus_path(path);
-        if (v && (!v->mounted))
+        if (v)
           {
+             if (v->mounted)
+               {
+                  v->optype = E_VOLUME_OP_TYPE_EJECT;
+                  _e_fm_main_udisks2_cb_vol_unmounted(v);
+               }
              if (v->optype == E_VOLUME_OP_TYPE_EJECT)
                _e_fm_main_udisks2_cb_vol_ejected(v);
              _volume_del(v);
