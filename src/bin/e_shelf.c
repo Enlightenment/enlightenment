@@ -278,7 +278,8 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, int popup, E
    e_gadcon_shelf_set(es->gadcon, es);
    e_gadcon_xdnd_window_set(es->gadcon, e_comp_get(es)->ee_win);
    e_gadcon_dnd_window_set(es->gadcon, e_comp_get(es)->ee_win);
-   evas_object_clip_set(es->o_base, es->zone->bg_clip_object);
+   if (!es->popup)
+     evas_object_clip_set(es->o_base, es->zone->bg_clip_object);
    e_gadcon_util_menu_attach_func_set(es->gadcon,
                                       _e_shelf_cb_menu_items_append, es);
 
@@ -911,7 +912,11 @@ e_shelf_style_set(E_Shelf *es, const char *style)
    else
      es->instant_delay = -1.0;
 
-   if (es->popup && (es->popup->content != es->o_base)) e_popup_content_set(es->popup, es->o_base);
+   if (es->popup && (es->popup->content != es->o_base))
+     {
+        e_popup_content_set(es->popup, es->o_base);
+        evas_object_clip_set(es->popup->cw->effect_obj, es->zone->bg_clip_object);
+     }
 }
 
 EAPI void
