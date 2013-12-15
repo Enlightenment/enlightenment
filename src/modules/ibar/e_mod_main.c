@@ -1333,7 +1333,7 @@ _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    exe = eina_list_data_get(ic->exe_current);
    if (ev->z < 0)
      {
-        if (cur->exe_inst == exe)
+        if (cur && (cur->exe_inst == exe))
           {
              l = eina_list_data_find_list(exe->borders, cur);
              if (l) sel = eina_list_data_get(eina_list_next(l));
@@ -1347,7 +1347,7 @@ _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
      }
    else if (ev->z > 0)
      {
-        if (cur->exe_inst == exe)
+        if (cur && (cur->exe_inst == exe))
           {
              l = eina_list_data_find_list(exe->borders, cur);
              if (l) sel = eina_list_data_get(eina_list_prev(l));
