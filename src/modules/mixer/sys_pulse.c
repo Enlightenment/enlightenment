@@ -19,12 +19,20 @@ static unsigned int disc_count = 0;
 static unsigned int update_count = 0;
 static Ecore_Timer *update_timer = NULL;
 
+static Eina_Bool
+_pulse_start(void *d EINA_UNUSED)
+{
+   update_timer = NULL;
+   e_mixer_pulse_init();
+   return EINA_FALSE;
+}
 
 static Eina_Bool
 _pulse_started(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *inst)
 {
    if (inst != pulse_inst) return ECORE_CALLBACK_RENEW;
-   e_mixer_pulse_init();
+   if (!update_timer)
+     update_timer = ecore_timer_add(2.0, _pulse_start, NULL);
    return ECORE_CALLBACK_DONE;
 }
 
