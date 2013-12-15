@@ -3,6 +3,7 @@
 #include "Pulse.h"
 
 static E_Exec_Instance *pulse_inst = NULL;
+static Eina_Bool pa_started = EINA_FALSE;
 
 static Pulse *conn = NULL;
 static Pulse_Server_Info *info = NULL;
@@ -33,6 +34,8 @@ _pulse_started(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *in
    if (inst != pulse_inst) return ECORE_CALLBACK_RENEW;
    if (!update_timer)
      update_timer = ecore_timer_add(2.0, _pulse_start, NULL);
+   pa_started = EINA_TRUE;
+   pulse_inst = NULL;
    return ECORE_CALLBACK_DONE;
 }
 
@@ -300,10 +303,8 @@ e_mixer_pulse_init(void)
         conn = NULL;
         pulse_shutdown();
 
-        if (pulse_inst)
+        if (pa_started)
           {
-             ecore_exe_free(pulse_inst->exe);
-             pulse_inst = NULL;
              e_mod_mixer_pulse_ready(EINA_FALSE);
              return EINA_FALSE;
           }
