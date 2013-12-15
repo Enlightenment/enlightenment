@@ -300,7 +300,7 @@ e_mixer_pulse_init(void)
              return EINA_FALSE;
           }
 
-        pulse_inst = e_exec(NULL, NULL, "pulseaudio -D", NULL, NULL);
+        pulse_inst = e_exec(NULL, NULL, "start-pulseaudio-x11", NULL, NULL);
         if (!pulse_inst) return EINA_FALSE;
 
         E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW, (Ecore_Event_Handler_Cb)_pulse_started, NULL);
