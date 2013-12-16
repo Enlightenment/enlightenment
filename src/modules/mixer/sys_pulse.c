@@ -2,7 +2,7 @@
 #include "e_mod_mixer.h"
 #include "Pulse.h"
 
-static E_Exec_Instance *pulse_inst = NULL;
+static Ecore_Exe *pulse_inst = NULL;
 static Eina_Bool pa_started = EINA_FALSE;
 
 static Pulse *conn = NULL;
@@ -29,9 +29,9 @@ _pulse_start(void *d EINA_UNUSED)
 }
 
 static Eina_Bool
-_pulse_started(void *data EINA_UNUSED, int type EINA_UNUSED, E_Exec_Instance *inst)
+_pulse_started(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Exe_Event_Add *inst)
 {
-   if (inst != pulse_inst) return ECORE_CALLBACK_RENEW;
+   if (inst->exe != pulse_inst) return ECORE_CALLBACK_RENEW;
    if (!update_timer)
      update_timer = ecore_timer_add(2.0, _pulse_start, NULL);
    pa_started = EINA_TRUE;
@@ -309,7 +309,7 @@ e_mixer_pulse_init(void)
              return EINA_FALSE;
           }
 
-        pulse_inst = e_exec(NULL, NULL, "start-pulseaudio-x11", NULL, NULL);
+        pulse_inst = ecore_exe_run("start-pulseaudio-x11", NULL);
         if (!pulse_inst) return EINA_FALSE;
 
         E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW, (Ecore_Event_Handler_Cb)_pulse_started, NULL);
