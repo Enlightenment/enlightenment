@@ -863,7 +863,13 @@ systray_xembed_new(Instance *inst)
 void
 systray_xembed_free(Instance_Xembed *xembed)
 {
+   Evas_Object *ui = systray_edje_get(xembed->inst);
    EINA_SAFETY_ON_NULL_RETURN(xembed);
+
+   evas_object_event_callback_del(ui, EVAS_CALLBACK_MOVE,
+                                  _systray_xembed_cb_move);
+   evas_object_event_callback_del(ui, EVAS_CALLBACK_RESIZE,
+                                  _systray_xembed_cb_resize);
 
    _systray_xembed_deactivate(xembed);
 
