@@ -44,7 +44,7 @@ typedef struct _Icon     Icon;
 struct _Icon
 {
    Ecore_X_Window   win;
-   Evas_Object     *o;
+   Evas_Object     *rect;
    Instance_Xembed *xembed;
 };
 
@@ -83,39 +83,39 @@ static Ecore_X_Atom _atom_xembed_info = 0;
 static Ecore_X_Atom _atom_st_num = 0;
 static int _last_st_num = -1;
 
-/* TODO: remove me later: */
-static const char _part_box[] = "e.xembed.box";
-static const char _part_size[] = "e.xembed.size";
-static const char _sig_enable[] = "e,action,xembed,enable";
-static const char _sig_disable[] = "e,action,xembed,disable";
-/* END TODO: remove me later */
+static void
+_xembed_win_resize(Instance_Xembed *xembed)
+{
+   Evas_Coord first_x, first_y, first_w, first_h, last_x, last_y;
+   Icon *icon;
+
+   if (!xembed->icons)
+     return;
+
+   icon = eina_list_data_get(xembed->icons);
+   evas_object_geometry_get(icon->rect, &first_x,
+                            &first_y, &first_w, &first_h);
+
+   icon = eina_list_last_data_get(xembed->icons);
+   evas_object_geometry_get(icon->rect, &last_x,
+                            &last_y, NULL, NULL);
+
+   //because we always prepend xembed icons
+   ecore_x_window_move_resize(xembed->win.base, last_x, last_y,
+                              (first_x+first_w) - last_x,
+                              (first_y+first_h) - last_y);
+}
 
 void
 systray_xembed_size_updated(Instance_Xembed *xembed)
 {
-   const Evas_Object *o;
-   Evas_Object *ui = systray_edje_get(xembed->inst);
-   Evas_Coord x, y, w, h, mw = 1, mh = 1;
-
-   /* this hack is required so we resize the base xwindow */
-
-   edje_object_message_signal_process(ui);
-   o = edje_object_part_object_get(ui, _part_box);
-   if (!o) return;
-   evas_object_size_hint_min_get(o, &w, &h);
-
-   if (w < 1) w = 1;
-   if (h < 1) h = 1;
-
    if (eina_list_count(xembed->icons) == 0)
-     ecore_x_window_hide(xembed->win.base);
-   else
-     ecore_x_window_show(xembed->win.base);
-   edje_object_size_min_calc(systray_edje_get(xembed->inst), &mw, &mh);
-   e_gadcon_client_min_size_set(systray_gadcon_client_get(xembed->inst), mw, mh);
-
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-   ecore_x_window_move_resize(xembed->win.base, x, y, w, h);
+     {
+        ecore_x_window_hide(xembed->win.base);
+        return;
+     }
+   ecore_x_window_show(xembed->win.base);
+   _xembed_win_resize(xembed);
 }
 
 static void
@@ -135,15 +135,15 @@ _systray_xembed_cb_resize(void *data, Evas *evas __UNUSED__, Evas_Object *o __UN
 static void
 _systray_xembed_icon_geometry_apply(Icon *icon)
 {
-   const Evas_Object *o, *ui = systray_edje_get(icon->xembed->inst);
+   const Evas_Object *box;
    Evas_Coord x, y, w, h, wx, wy;
 
    /* hack required so we reposition x window inside parent */
-   o = edje_object_part_object_get(ui, _part_size);
-   if (!o) return;
+   box = systray_box_get(icon->xembed->inst);
+   if (!box) return;
 
-   evas_object_geometry_get(icon->o, &x, &y, &w, &h);
-   evas_object_geometry_get(o, &wx, &wy, NULL, NULL);
+   evas_object_geometry_get(icon->rect, &x, &y, &w, &h);
+   evas_object_geometry_get(box, &wx, &wy, NULL, NULL);
    ecore_x_window_move_resize(icon->win, x - wx, y - wy, w, h);
 }
 
@@ -220,16 +220,9 @@ static Icon *
 _systray_xembed_icon_add(Instance_Xembed *xembed, const Ecore_X_Window win)
 {
    Ecore_X_Gravity gravity;
-   Evas_Object *o;
+   Evas_Object *rect;
    Evas_Coord w, h, sz = 48;
    Icon *icon;
-
-   edje_object_part_geometry_get(systray_edje_get(xembed->inst), _part_size,
-                                 NULL, NULL, &w, &h);
-   if (w > h)
-     w = h;
-   else
-     h = w;
 
    /* assuming systray must be on a shelf here */
    switch (systray_gadcon_get(xembed->inst)->orient)
@@ -252,32 +245,31 @@ _systray_xembed_icon_add(Instance_Xembed *xembed, const Ecore_X_Window win)
       case E_GADCON_ORIENT_CORNER_LB:
       case E_GADCON_ORIENT_CORNER_RB:
         sz = systray_gadcon_get(xembed->inst)->shelf->w;
+        break;
+
       default:
         break;
      }
-   if ((w < 16) && (sz > 16))
-     w = h = sz - 5;
 
-   w = h = e_util_icon_size_normalize(w);
-   if (w > sz - 5)
-     w = h = e_util_icon_size_normalize(sz - 5);
+   sz = sz - 5;
+   w = h = e_util_icon_size_normalize(sz);
 
-   o = evas_object_rectangle_add(systray_evas_get(xembed->inst));
-   if (!o)
+   rect = evas_object_rectangle_add(systray_evas_get(xembed->inst));
+   if (!rect)
      return NULL;
-   evas_object_color_set(o, 0, 0, 0, 0);
-   evas_object_resize(o, w, h);
-   evas_object_show(o);
+   evas_object_color_set(rect, 0, 0, 0, 0);
+   evas_object_resize(rect, w, h);
+   evas_object_show(rect);
 
-   icon = malloc(sizeof(*icon));
+   icon = malloc(sizeof(Icon));
    if (!icon)
      {
-        evas_object_del(o);
+        evas_object_del(rect);
         return NULL;
      }
    icon->win = win;
    icon->xembed = xembed;
-   icon->o = o;
+   icon->rect = rect;
 
    gravity = _systray_xembed_gravity(xembed);
    ecore_x_icccm_size_pos_hints_set(win, 1, gravity,
@@ -290,15 +282,13 @@ _systray_xembed_icon_add(Instance_Xembed *xembed, const Ecore_X_Window win)
    ecore_x_window_save_set_add(win);
    ecore_x_window_shape_events_select(win, 1);
 
-   //ecore_x_window_geometry_get(win, NULL, NULL, &w, &h);
-
    evas_object_event_callback_add
-     (o, EVAS_CALLBACK_MOVE, _systray_xembed_icon_cb_move, icon);
+     (rect, EVAS_CALLBACK_MOVE, _systray_xembed_icon_cb_move, icon);
    evas_object_event_callback_add
-     (o, EVAS_CALLBACK_RESIZE, _systray_xembed_icon_cb_resize, icon);
+     (rect, EVAS_CALLBACK_RESIZE, _systray_xembed_icon_cb_resize, icon);
 
    xembed->icons = eina_list_append(xembed->icons, icon);
-   systray_edje_box_append(xembed->inst, _part_box, o);
+   systray_edje_box_prepend(xembed->inst, rect);
    systray_size_updated(xembed->inst);
    _systray_xembed_icon_geometry_apply(icon);
 
@@ -314,7 +304,7 @@ _systray_xembed_icon_del_list(Instance_Xembed *xembed, Eina_List *l, Icon *icon)
 
    ecore_x_window_save_set_del(icon->win);
    ecore_x_window_reparent(icon->win, 0, 0, 0);
-   evas_object_del(icon->o);
+   evas_object_del(icon->rect);
    free(icon);
 
    systray_size_updated(xembed->inst);
@@ -366,8 +356,6 @@ _systray_xembed_deactivate(Instance_Xembed *xembed)
 {
    if (xembed->win.selection == 0) return;
 
-   systray_edje_emit(xembed->inst, _sig_disable);
-
    while (xembed->icons)
      _systray_xembed_icon_del_list(xembed, xembed->icons, xembed->icons->data);
 
@@ -381,8 +369,8 @@ _systray_xembed_deactivate(Instance_Xembed *xembed)
 static Eina_Bool
 _systray_xembed_base_create(Instance_Xembed *xembed)
 {
-   const Evas_Object *o, *ui = systray_edje_get(xembed->inst);
-   Evas_Coord x, y, w, h;
+   const Evas_Object *box;
+   Evas_Coord x, y;
    unsigned short r, g, b;
    const char *color;
    Eina_Bool invis = EINA_FALSE;
@@ -392,7 +380,8 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
      invis = EINA_TRUE;
    else
      {
-        color = edje_object_data_get(ui, systray_style_get(xembed->inst));
+        color = edje_object_data_get(systray_edje_get(xembed->inst),
+                                     systray_style_get(xembed->inst));
 
         if (color && (sscanf(color, "%hu %hu %hu", &r, &g, &b) == 3))
           {
@@ -404,14 +393,12 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
           r = g = b = (unsigned short)65535;
      }
 
-   o = edje_object_part_object_get(ui, _part_size);
-   if (!o)
+   box = systray_box_get(xembed->inst);
+   if (!box)
      return EINA_FALSE;
 
-   evas_object_geometry_get(o, &x, &y, &w, &h);
-   if (w < 1) w = 1;
-   if (h < 1) h = 1;
-   xembed->win.base = ecore_x_window_new(0, x, y, w, h);
+   evas_object_geometry_get(box, &x, &y, NULL, NULL);
+   xembed->win.base = ecore_x_window_new(0, x, y, 1, 1);
    ecore_x_icccm_title_set(xembed->win.base, "noshadow_systray_base");
    ecore_x_icccm_name_class_set(xembed->win.base, "systray", "holder");
    ecore_x_netwm_name_set(xembed->win.base, "noshadow_systray_base");
@@ -480,8 +467,6 @@ _systray_xembed_activate(Instance_Xembed *xembed)
                                  ecore_x_current_time_get(), atom,
                                  xembed->win.selection, 0, 0);
 
-   systray_edje_emit(xembed->inst, _sig_enable);
-
    return 1;
 }
 
@@ -528,8 +513,6 @@ _systray_xembed_activate_retry_first(void *data)
         xembed->timer.retry = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
-
-   systray_edje_emit(xembed->inst, _sig_disable);
 
    fprintf(stderr, "SYSTRAY: activate failure! retrying in %0.1f seconds\n",
            RETRY_TIMEOUT);
@@ -737,8 +720,6 @@ _systray_xembed_cb_selection_clear(void *data, int type __UNUSED__, void *event)
        (ev->atom == _systray_xembed_atom_st_get(manager)) &&
        (ecore_x_selection_owner_get(ev->atom) != xembed->win.selection))
      {
-        systray_edje_emit(xembed->inst, _sig_disable);
-
         while (xembed->icons)
           _systray_xembed_icon_del_list(xembed, xembed->icons,
                                         xembed->icons->data);
@@ -850,8 +831,6 @@ systray_xembed_new(Instance *inst)
         if (!xembed->timer.retry)
           xembed->timer.retry = ecore_timer_add
               (0.1, _systray_xembed_activate_retry_first, xembed);
-        else
-          systray_edje_emit(xembed->inst, _sig_disable);
      }
 
    evas_object_event_callback_add(ui, EVAS_CALLBACK_MOVE,

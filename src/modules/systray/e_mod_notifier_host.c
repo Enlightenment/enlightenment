@@ -14,7 +14,6 @@ const char *Status_Names[] = {
    "unknown", "Active", "Passive", "NeedsAttention", NULL
 };
 
-static const char *box_part_name = "e.dbus_notifier.box";
 static Context_Notifier_Host *ctx = NULL;
 
 void
@@ -247,8 +246,7 @@ jump_search:
            image_load(item->icon_name, item->icon_path, ii->icon);
            if (!evas_object_visible_get(ii->icon))
              {
-                systray_edje_box_append(host_inst->inst, box_part_name,
-                                        ii->icon);
+                systray_edje_box_append(host_inst->inst, ii->icon);
                 evas_object_show(ii->icon);
              }
            break;
@@ -257,8 +255,7 @@ jump_search:
         {
            if (evas_object_visible_get(ii->icon))
              {
-                systray_edje_box_remove(host_inst->inst, box_part_name,
-                                        ii->icon);
+                systray_edje_box_remove(host_inst->inst, ii->icon);
                 evas_object_hide(ii->icon);
              }
            break;
@@ -268,8 +265,7 @@ jump_search:
            image_load(item->attention_icon_name, item->icon_path, ii->icon);
            if (!evas_object_visible_get(ii->icon))
              {
-                systray_edje_box_append(host_inst->inst, box_part_name,
-                                        ii->icon);
+                systray_edje_box_append(host_inst->inst, ii->icon);
                 evas_object_show(ii->icon);
              }
            break;

@@ -42,9 +42,10 @@ const char *systray_style_get(const Instance *inst);
 void systray_size_updated(Instance *inst);
 Evas *systray_evas_get(const Instance *inst);
 Evas_Object *systray_edje_get(const Instance *inst);
-void systray_edje_emit(const Instance *inst, const char *sig);
-void systray_edje_box_append(const Instance *inst, const char *part, Evas_Object *child);
-void systray_edje_box_remove(const Instance *inst, const char *part, Evas_Object *child);
+const Evas_Object *systray_box_get(const Instance *inst);
+void systray_edje_box_append(const Instance *inst, Evas_Object *child);
+void systray_edje_box_remove(const Instance *inst, Evas_Object *child);
+void systray_edje_box_prepend(const Instance *inst, Evas_Object *child);
 
 int systray_manager_number_get(const Instance *inst);
 Ecore_X_Window systray_root_get(const Instance *inst);

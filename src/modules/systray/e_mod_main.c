@@ -96,6 +96,7 @@ _cfg_data_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
         systray_xembed_shutdown();
         inst->xembed = NULL;
      }
+
    systray_size_updated(inst);
 
    ctx->config->use_xembed = cfdata->use_xembed;
@@ -514,31 +515,29 @@ systray_edje_get(const Instance *inst)
    return inst->ui.gadget;
 }
 
-void
-systray_edje_emit(const Instance *inst, const char *sig)
+const Evas_Object *
+systray_box_get(const Instance *inst)
 {
-   EINA_SAFETY_ON_NULL_RETURN(inst);
-   edje_object_signal_emit(inst->ui.gadget, sig, _sig_source);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(inst, NULL);
+   return edje_object_part_object_get(inst->ui.gadget, "box");
 }
 
 void
-systray_edje_box_append(const Instance *inst, const char *part,
-                        Evas_Object *child)
+systray_edje_box_append(const Instance *inst, Evas_Object *child)
 {
-   EINA_SAFETY_ON_NULL_RETURN(inst);
-   EINA_SAFETY_ON_NULL_RETURN(part);
-   EINA_SAFETY_ON_NULL_RETURN(child);
-   edje_object_part_box_append(inst->ui.gadget, part, child);
+   edje_object_part_box_append(inst->ui.gadget, "box", child);
 }
 
 void
-systray_edje_box_remove(const Instance *inst, const char *part,
-                        Evas_Object *child)
+systray_edje_box_prepend(const Instance *inst, Evas_Object *child)
 {
-   EINA_SAFETY_ON_NULL_RETURN(inst);
-   EINA_SAFETY_ON_NULL_RETURN(part);
-   EINA_SAFETY_ON_NULL_RETURN(child);
-   edje_object_part_box_remove(inst->ui.gadget, part, child);
+   edje_object_part_box_prepend(inst->ui.gadget, "box", child);
+}
+
+void
+systray_edje_box_remove(const Instance *inst, Evas_Object *child)
+{
+   edje_object_part_box_remove(inst->ui.gadget, "box", child);
 }
 
 int
@@ -560,12 +559,12 @@ _systray_size_apply_do(Instance *inst)
 {
    Evas_Coord w, h;
 
-   if (inst->xembed)
-     systray_xembed_size_updated(inst->xembed);
-
    edje_object_message_signal_process(inst->ui.gadget);
    edje_object_size_min_calc(inst->ui.gadget, &w, &h);
    e_gadcon_client_min_size_set(inst->gcc, MAX(w, SYSTRAY_MIN_W), MAX(h, SYSTRAY_MIN_H));
+
+   if (inst->xembed)
+     systray_xembed_size_updated(inst->xembed);
 }
 
 static void
