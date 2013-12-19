@@ -1467,6 +1467,8 @@ _e_fm_op_scan_atom(E_Fm_Op_Task *task)
 
    if (task->type == E_FM_OP_COPY)
      {
+        Eina_List *l;
+
         _e_fm_op_update_progress(NULL, 0, task->src.st.st_size);
 
         ctask = _e_fm_op_task_new();
@@ -1474,6 +1476,17 @@ _e_fm_op_scan_atom(E_Fm_Op_Task *task)
         memcpy(&(ctask->src.st), &(task->src.st), sizeof(struct stat));
         if (task->dst.name)
           ctask->dst.name = eina_stringshare_add(task->dst.name);
+        if (task->parent)
+          ctask->parent = task->parent;
+        else
+          {
+             EINA_LIST_FOREACH(_e_fm_op_scan_queue, l, rtask)
+               if (rtask->parent == task)
+                 rtask->parent = ctask;
+             EINA_LIST_FOREACH(_e_fm_op_work_queue, l, rtask)
+               if (rtask->parent == task)
+                 rtask->parent = ctask;
+          }
         ctask->type = E_FM_OP_COPY;
 
         _e_fm_op_work_queue = eina_list_append(_e_fm_op_work_queue, ctask);
