@@ -571,6 +571,7 @@ main(int argc, char **argv)
                                           "--pid=%i "
                                           "-batch "
                                           "-ex 'set logging file %s/.e-crashdump.txt' "
+					  "-ex 'set logging on' "
                                           "-ex 'thread apply all backtrace full' "
                                           "-ex detach > /dev/null 2>&1 < /dev/zero",
                                           child,
