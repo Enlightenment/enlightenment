@@ -167,6 +167,7 @@ main(int argc, char **argv)
    int i, last;
    E_Fm_Op_Type type;
 
+   ecore_app_no_system_modules();
    ecore_init();
    eina_init();
 

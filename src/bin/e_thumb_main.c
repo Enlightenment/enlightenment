@@ -94,6 +94,7 @@ main(int argc,
           }
      }
 
+   ecore_app_no_system_modules();
    ecore_init();
    ecore_app_args_set(argc, (const char **)argv);
    eet_init();

@@ -92,6 +92,7 @@ main(int argc, char **argv)
    if (tmp && !strcmp(tmp, "NO"))
      tainted = EINA_FALSE;
 
+   ecore_app_no_system_modules();
    if (!ecore_init()) return EXIT_FAILURE;
    ecore_app_args_set(argc, (const char **)argv);
 

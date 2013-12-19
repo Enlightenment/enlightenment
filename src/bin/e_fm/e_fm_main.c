@@ -129,6 +129,7 @@ main(int argc, char **argv)
 
    eina_init();
    eet_init();
+   ecore_app_no_system_modules();
    ecore_init();
    ecore_app_args_set(argc, (const char **)argv);
 
