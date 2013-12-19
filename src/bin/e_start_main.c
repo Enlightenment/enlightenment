@@ -492,6 +492,7 @@ main(int argc, char **argv)
              Eina_Bool done = EINA_FALSE;
              Eina_Bool remember_sigill = EINA_FALSE;
              Eina_Bool remember_sigusr1 = EINA_FALSE;
+	     Eina_Bool bad_kernel = EINA_FALSE;
 
 #ifdef HAVE_SYS_PTRACE_H
              if (!really_know)
@@ -564,10 +565,22 @@ main(int argc, char **argv)
                             /* And call gdb if available */
                             r = 0;
 
-                            if (home)
-                              {
-				 struct stat st;
+			    /* Check if patch to prevent ptrace to another process is present in the kernel. */
+			    {
+			       int fd;
+			       char c;
 
+			       fd = open("/proc/sys/kernel/yama/ptrace_scope", O_RDONLY);
+			       if (fd != -1)
+				 {
+				    if (read(fd, &c, sizeof (c)) == sizeof (c) && c != '0')
+				      bad_kernel = EINA_TRUE;
+				 }
+			       close(fd);
+			    }
+
+                            if (home && !bad_kernel)
+                              {
                                  /* call e_sys gdb */
                                  snprintf(buffer, sizeof(buffer),
                                           "gdb "
@@ -588,11 +601,7 @@ main(int argc, char **argv)
                                           "%s/.e-crashdump.txt",
                                           home);
 
-				 /* Check the file was correctly generated (may fail on crappy kernel with ptrace
-				  diable). In which case a manual :  echo 0 > /proc/sys/kernel/yama/ptrace_scope 
-				  as root is necessary. */
-				 if (!stat(buffer, &st))
-				   backtrace_str = strdup(buffer);
+				 backtrace_str = strdup(buffer);
                                  r = WEXITSTATUS(r);
                               }
 
