@@ -873,6 +873,7 @@ _e_fm_op_scan_idler(void *data __UNUSED__)
           {
              ntask = _e_fm_op_task_new();
              ntask->type = E_FM_OP_COPY_STAT_INFO;
+             ntask->parent = task;
              ntask->src.name = eina_stringshare_add(task->src.name);
              memcpy(&(ntask->src.st), &(task->src.st), sizeof(struct stat));
 
@@ -898,6 +899,7 @@ _e_fm_op_scan_idler(void *data __UNUSED__)
         ntask = _e_fm_op_task_new();
         ntask->type = task->type;
         ntask->src.name = eina_stringshare_add(info->path);
+        ntask->parent = task;
 
         if (task->dst.name)
           {
