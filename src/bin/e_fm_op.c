@@ -975,8 +975,25 @@ static void
 _e_fm_op_rollback(E_Fm_Op_Task *task)
 {
    E_Fm_Op_Copy_Data *data;
+   E_Fm_Op_Task *t;
+   Eina_List *l, *ll;
 
    if (!task) return;
+
+   EINA_LIST_FOREACH_SAFE(_e_fm_op_scan_queue, l, ll, t)
+     {
+        if (t == task) continue;
+        if (t->parent != task) continue;
+        _e_fm_op_scan_queue = eina_list_remove_list(_e_fm_op_scan_queue, l);
+        _e_fm_op_task_free(t);
+     }
+   EINA_LIST_FOREACH_SAFE(_e_fm_op_work_queue, l, ll, t)
+     {
+        if (t == task) continue;
+        if (t->parent != task) continue;
+        _e_fm_op_work_queue = eina_list_remove_list(_e_fm_op_work_queue, l);
+        _e_fm_op_task_free(t);
+     }
 
    if (task->type == E_FM_OP_COPY)
      {
