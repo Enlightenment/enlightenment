@@ -1,48 +1,50 @@
 # Maintainer: Enlightenment Developers <enlightenment-devel@enlightenment.org>>
-pkgname=enlightenment17-git
-_pkgname=enlightenment
-pkgver=0.18.0.17379.44f8ab0
+pkgname=enlightenment-git
+pkgver=0.18.0rc2.17382.ed1a5e4
 pkgrel=1
 pkgdesc="Enlightenment window manager - GIT development snapshot"
 arch=('i686' 'x86_64' 'arm')
 url="http://www.enlightenment.org"
 license=('BSD')
-depends=('elementary' 'xcb-util-keysyms' 'hicolor-icon-theme'
+depends=('elementary' 'xcb-util-keysyms' 'hicolor-icon-theme' 'pixman' 'mesa'
          'desktop-file-utils' 'udisks2' 'ttf-font' 'bluez-libs')
- [[ ! $(pacman -T "wayland>=1.2.90") ]] && depends+=('wayland>=1.2.90' 'pixman' 'mesa')
-optdepends=('connman: network module')
+optdepends=('connman: network module'
+            'acpid: power events on laptop lid close'
+            'gdb: create backtraces on crash')
 provides=("enlightenment17=$pkgver" 'notification-daemon')
 conflicts=("enlightenment17")
 backup=('etc/enlightenment/sysactions.conf'
         'etc/xdg/menus/enlightenment.menu')
-options=('!libtool' 'debug')
+options=('debug')
 install=enlightenment.install
 
 pkgver() {
   cd "../.."
 
-  for i in v_maj v_min v_mic; do
-    local _$i=$(grep -m 1 $i configure.ac | sed 's/m4//' | grep -o "[[:digit:]]*")
+  for _i in v_maj v_min v_mic; do
+    local v_ver=$v_ver.$(grep -m1 $_i configure.ac | sed 's/m4//' | grep -o "[[:digit:]]*")
   done
 
-  echo $_v_maj.$_v_min.$_v_mic.$(git rev-list --count HEAD).$(git rev-parse --short HEAD)
+  v_ver=$(awk -F , -v v_ver=${v_ver#.} '/^AC_INIT/ {gsub(/v_ver/, v_ver); gsub(/[\[\] -]/, ""); print $2}' configure.ac)
+
+  printf "$v_ver.$(git rev-list --count HEAD).$(git rev-parse --short HEAD)"
 }
 
 build() {
   cd "../.."
   export CFLAGS="$CFLAGS -fvisibility=hidden -fomit-frame-pointer"
   [[ -e Makefile ]] && make clean distclean
-  ./configure --prefix=/usr --sysconfdir=/etc --enable-wayland-clients --enable-wayland-egl
+  ./autogen.sh --prefix=/usr --sysconfdir=/etc --enable-wayland-clients --enable-wayland-egl
   make
 }
 
 package() {
   cd "../.."
   make -j1 DESTDIR="$pkgdir" install
-  install -Dm644 AUTHORS "$pkgdir/usr/share/$pkgname/AUTHORS"
-  install -Dm644 ChangeLog "$pkgdir/usr/share/$pkgname/ChangeLog"
-  install -Dm644 NEWS "$pkgdir/usr/share/$pkgname/NEWS"
-  install -Dm644 README "$pkgdir/usr/share/$pkgname/README"
+  install -Dm644 AUTHORS "$pkgdir/usr/share/doc/${pkgname%-*}/AUTHORS"
+  install -Dm644 ChangeLog "$pkgdir/usr/share/doc/${pkgname%-*}/ChangeLog"
+  install -Dm644 NEWS "$pkgdir/usr/share/doc/${pkgname%-*}/NEWS"
+  install -Dm644 README "$pkgdir/usr/share/doc/${pkgname%-*}/README"
   install -Dm644 COPYING "$pkgdir/usr/share/licenses/$pkgname/COPYING"
-  ln -sf "../licenses/$pkgname/COPYING" "$pkgdir/usr/share/$pkgname/COPYING"
+  ln -sf "../../licenses/$pkgname/COPYING" "$pkgdir/usr/share/doc/${pkgname%-*}/COPYING"
 }
