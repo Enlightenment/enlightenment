@@ -346,6 +346,7 @@ works:
    ev->suspend = suspend;
    ecore_event_add(E_EVENT_DESKLOCK, ev, NULL, NULL);
 
+   e_util_env_set("E_DESKLOCK_UNLOCKED", NULL);
    e_util_env_set("E_DESKLOCK_LOCKED", "locked");
    _e_desklock_state = EINA_TRUE;
    return 1;
@@ -413,6 +414,7 @@ e_desklock_hide(void)
         _e_desklock_autolock_time = 0.0;
      }
    e_util_env_set("E_DESKLOCK_LOCKED", "freefreefree");
+   e_util_env_set("E_DESKLOCK_UNLOCKED", "happened");
 }
 
 static void

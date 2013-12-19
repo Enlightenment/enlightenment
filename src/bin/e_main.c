@@ -738,9 +738,7 @@ main(int argc, char **argv)
    TS("E_Popups Init Done");
    _e_main_shutdown_push(e_popup_shutdown);
 
-   if ((locked) && ((!e_config->show_splash) && (!after_restart)))
-     e_desklock_show(EINA_TRUE);
-   else if (waslocked)
+   if (waslocked || (locked && ((!after_restart) || (getenv("E_DESKLOCK_UNLOCKED")))))
      e_desklock_show(EINA_TRUE);
 
    if (e_config->show_splash)
@@ -986,11 +984,8 @@ main(int argc, char **argv)
      }
    TS("Run Startup Apps Done");
 
-   if (!((!e_config->show_splash) || (after_restart)))
-     {
-        ecore_timer_add(2.0, _e_main_cb_startup_fake_end, NULL);
-        if (locked) e_desklock_show(EINA_TRUE);
-     }
+   if (e_config->show_splash && (!after_restart))
+     ecore_timer_add(2.0, _e_main_cb_startup_fake_end, NULL);
 
    TS("E_Container Thaw");
    e_container_all_thaw();
