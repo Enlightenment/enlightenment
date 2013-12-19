@@ -563,8 +563,11 @@ main(int argc, char **argv)
 #endif
                             /* And call gdb if available */
                             r = 0;
+
                             if (home)
                               {
+				 struct stat st;
+
                                  /* call e_sys gdb */
                                  snprintf(buffer, sizeof(buffer),
                                           "gdb "
@@ -585,20 +588,24 @@ main(int argc, char **argv)
                                           "%s/.e-crashdump.txt",
                                           home);
 
-                                 backtrace_str = strdup(buffer);
+				 /* Check the file was correctly generated (may fail on crappy kernel with ptrace
+				  diable). In which case a manual :  echo 0 > /proc/sys/kernel/yama/ptrace_scope 
+				  as root is necessary. */
+				 if (!stat(buffer, &st))
+				   backtrace_str = strdup(buffer);
                                  r = WEXITSTATUS(r);
                               }
 
                             /* call e_alert */
                             snprintf(buffer, 4096,
                                      backtrace_str ?
-                                     "%s/enlightenment/utils/enlightenment_alert %i %i '%s' %i" :
-                                     "%s/enlightenment/utils/enlightenment_alert %i %i '%s' %i",
+                                     "%s/enlightenment/utils/enlightenment_alert %i %i %i '%s'" :
+                                     "%s/enlightenment/utils/enlightenment_alert %i %i %i",
                                      eina_prefix_lib_get(pfx),
                                      sig.si_signo == SIGSEGV && remember_sigusr1 ? SIGILL : sig.si_signo,
                                      child,
-                                     backtrace_str,
-                                     r);
+                                     r,
+                                     backtrace_str);
                             r = system(buffer);
 
                             /* kill e */

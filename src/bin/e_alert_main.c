@@ -81,9 +81,9 @@ main(int argc, char **argv)
         else if (i == 2)
           pid = atoi(argv[i]);  // E's pid
         else if (i == 3)
-          backtrace_str = argv[i];
-        else if (i == 4)
           exit_gdb = atoi(argv[i]);
+        else if (i == 4)
+          backtrace_str = argv[i];
      }
 
    fprintf(stderr, "exit_gdb: %i\n", exit_gdb);
