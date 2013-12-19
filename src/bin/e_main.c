@@ -738,7 +738,7 @@ main(int argc, char **argv)
    TS("E_Popups Init Done");
    _e_main_shutdown_push(e_popup_shutdown);
 
-   if (waslocked || (locked && ((!after_restart) || (getenv("E_DESKLOCK_UNLOCKED")))))
+   if (waslocked || (locked && ((!after_restart) || (!getenv("E_DESKLOCK_UNLOCKED")))))
      e_desklock_show(EINA_TRUE);
 
    if (e_config->show_splash)
