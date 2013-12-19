@@ -10609,6 +10609,7 @@ _e_fm_overwrite_rename_del(void *data)
    ere = e_object_data_get(data);
    if (!ere) return;
    sd = evas_object_smart_data_get(ere->e_fm);
+   if (!sd) return;
    sd->rename_dialogs = eina_list_remove(sd->rename_dialogs, data);
    e_fm2_op_registry_entry_unref(ere);
 }
