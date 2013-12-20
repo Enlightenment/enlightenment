@@ -96,6 +96,9 @@ AC_DEFINE(HAVE_ENVIRON, 1, [Have environ var])
 efl_version="1.8.3"
 AC_SUBST(efl_version)
 
+elm_version="1.8.2"
+AC_SUBST(elm_version)
+
 AC_CHECK_HEADERS([sys/timerfd.h sys/ptrace.h arpa/inet.h netinet/in.h])
 
 dnl AC_CHECK_HEADERS(X11/extensions/shape.h,, AC_MSG_ERROR([Cannot find X11/extensions/shape.h. Make sure your CFLAGS environment variable contains include lines for the location of this file]))
@@ -552,7 +555,8 @@ PKG_CHECK_MODULES(E, [
   eina >= ${efl_version}
   eldbus >= ${efl_version}
   eio >= ${efl_version}
-  elementary >= ${efl_version}
+  elementary >= ${elm_version}
+  elementary < 1.8.99
   emotion >= ${efl_version}
   $eeze_mount
   $udisks_mount
@@ -574,7 +578,8 @@ efreet-trash >= ${efl_version} \
 eina >= ${efl_version} \
 eldbus >= ${efl_version} \
 eio >= ${efl_version} \
-elementary >= ${efl_version} \
+elementary >= ${elm_version} \
+elementary < 1.8.99 \
 emotion >= ${efl_version} \
 $udisks_mount \
 $eeze_mount \
