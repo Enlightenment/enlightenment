@@ -78,6 +78,7 @@ src/bin/e_place.c
 src/bin/e_pointer.c
 src/bin/e_popup.c
 src/bin/e_prefix.c
+src/bin/e_randr.c
 src/bin/e_remember.c
 src/bin/e_resist.c
 src/bin/e_screensaver.c
@@ -157,6 +158,7 @@ src/modules/conf_bindings/e_int_config_mousebindings.c
 src/modules/conf_bindings/e_int_config_signalbindings.c
 src/modules/conf_bindings/e_mod_main.c
 src/modules/conf_comp/e_mod_config.c
+src/modules/conf_comp/e_mod_config_match.c
 src/modules/conf_comp/e_mod_main.c
 src/modules/conf_dialogs/e_int_config_dialogs.c
 src/modules/conf_dialogs/e_int_config_profiles.c
@@ -209,6 +211,8 @@ src/modules/conf_window_manipulation/e_int_config_window_process.c
 src/modules/conf_window_manipulation/e_mod_main.c
 src/modules/conf_window_remembers/e_int_config_remembers.c
 src/modules/conf_window_remembers/e_mod_main.c
+src/modules/connman/agent.c
+src/modules/connman/e_mod_config.c
 src/modules/connman/e_mod_main.c
 src/modules/cpufreq/e_mod_main.c
 src/modules/cpufreq/e_mod_config.c
@@ -267,6 +271,7 @@ src/modules/start/e_mod_main.c
 src/modules/syscon/e_int_config_syscon.c
 src/modules/syscon/e_mod_main.c
 src/modules/syscon/e_syscon.c
+src/modules/syscon/e_syscon_gadget.c
 src/modules/systray/e_mod_main.c
 src/modules/systray/e_mod_xembed.c
 src/modules/tasks/e_mod_config.c
