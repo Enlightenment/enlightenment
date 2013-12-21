@@ -186,6 +186,10 @@ if USE_MODULE_TEAMWORK
 include src/modules/Makefile_teamwork.mk
 endif
 
+if USE_MODULE_LOKKER
+include src/modules/Makefile_lokker.mk
+endif
+
 if USE_MODULE_SHOT
 include src/modules/Makefile_shot.mk
 endif

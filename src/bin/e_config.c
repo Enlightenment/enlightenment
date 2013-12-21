@@ -1300,9 +1300,29 @@ e_config_load(void)
           }
         CONFIG_VERSION_CHECK(15)
           {
+             E_Config_Module *em;
+             Eina_List *l;
+             Eina_Bool found = EINA_FALSE;
+
              CONFIG_VERSION_UPDATE_INFO(15);
              if (e_config->desklock_use_custom_desklock)
                e_config->desklock_auth_method = E_DESKLOCK_AUTH_METHOD_EXTERNAL;
+
+             EINA_LIST_FOREACH(e_config->modules, l, em)
+               if (!strcmp(em->name, "lokker"))
+                 {
+                    found = EINA_TRUE;
+                    break;
+                 }
+             if (!found)
+               {
+                  /* add new desklock module */
+                  em = E_NEW(E_Config_Module, 1);
+                  em->name = eina_stringshare_add("lokker");
+                  em->enabled = 1;
+                  em->delayed = 0;
+                  e_config->modules = eina_list_append(e_config->modules, em);
+               }
           }
      }
    if (!e_config->remember_internal_fm_windows)
@@ -1404,7 +1424,6 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->desklock_autolock_idle, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_autolock_idle_timeout, 1.0, 5400.0);
    E_CONFIG_LIMIT(e_config->desklock_use_custom_desklock, 0, 1);
-   E_CONFIG_LIMIT(e_config->desklock_auth_method, 0, E_DESKLOCK_AUTH_METHOD_LAST);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation, 0, 1);
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation_timeout, 1.0, 300.0);
    E_CONFIG_LIMIT(e_config->border_raise_on_mouse_action, 0, 1);

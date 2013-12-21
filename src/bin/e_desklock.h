@@ -18,9 +18,19 @@ typedef enum
    E_DESKLOCK_AUTH_METHOD_EXTERNAL = 2,
 } E_Desklock_Auth_Method;
 
+typedef struct E_Desklock_Interface E_Desklock_Interface;
+
 #else
 #ifndef E_DESKLOCK_H
 #define E_DESKLOCK_H
+
+struct E_Desklock_Interface
+{
+   const char *name;
+   E_Desklock_Show_Cb show;
+   E_Desklock_Hide_Cb hide;
+   Eina_Bool active : 1; //interface is currently being used for locking
+};
 
 struct _E_Event_Desklock
 {
@@ -36,6 +46,9 @@ EAPI int e_desklock_show_autolocked(void);
 EAPI void e_desklock_hide(void);
 EAPI Eina_Bool e_desklock_state_get(void);
 
+EAPI void e_desklock_interface_append(E_Desklock_Interface *iface);
+EAPI void e_desklock_interface_remove(E_Desklock_Interface *iface);
+EAPI Eina_Stringshare *e_desklock_user_wallpaper_get(E_Zone *zone);
 EAPI void e_desklock_show_hook_add(E_Desklock_Show_Cb cb);
 EAPI void e_desklock_show_hook_del(E_Desklock_Show_Cb cb);
 EAPI void e_desklock_hide_hook_add(E_Desklock_Hide_Cb cb);
