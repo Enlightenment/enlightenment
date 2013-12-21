@@ -3,7 +3,6 @@ Changes since 0.17.0:
 
 Additions:
     Modules:
-        * conf2
         * music-control: control any mpris2-compatible music player
         * appmenu: externally show a menu of the current focused application
         * bluez4: control bluetoothd daemon
@@ -15,7 +14,6 @@ Additions:
         * Added function to hide all active menus
         * Added enum for deskflip animation mode
         * Added e_win_elm_available()
-        * Added e_configure_option API
         * Added D-Bus notification to systray module
         * Added D-Bus menu support
         * Added e_comp namespace and E_EVENT_COMP events

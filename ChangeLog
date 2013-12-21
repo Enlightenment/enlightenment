@@ -517,8 +517,6 @@
 2013-01-03  Mike Blumenkrantz
 
         * Added e_win_elm_available()
-        * Added conf2 module
-        * Added e_configure_option API
 
 2013-01-03 Cedric Bail
 
