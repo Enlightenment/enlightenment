@@ -29,13 +29,25 @@ _pulse_start(void *d EINA_UNUSED)
 }
 
 static Eina_Bool
-_pulse_started(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Exe_Event_Add *inst)
+_pulse_started(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Exe_Event_Add *ev)
 {
-   if (inst->exe != pulse_inst) return ECORE_CALLBACK_RENEW;
+   if (ev->exe != pulse_inst) return ECORE_CALLBACK_RENEW;
    if (!update_timer)
      update_timer = ecore_timer_add(2.0, _pulse_start, NULL);
    pa_started = EINA_TRUE;
    pulse_inst = NULL;
+   return ECORE_CALLBACK_DONE;
+}
+
+static Eina_Bool
+_pulse_not_started(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Exe_Event_Del *ev)
+{
+   if (ev->exe != pulse_inst) return ECORE_CALLBACK_RENEW;
+   if (!pa_started)
+     {
+        E_FREE_LIST(handlers, ecore_event_handler_del);
+        e_mod_mixer_pulse_ready(EINA_FALSE);
+     }
    return ECORE_CALLBACK_DONE;
 }
 
@@ -312,7 +324,8 @@ e_mixer_pulse_init(void)
         pulse_inst = ecore_exe_run("start-pulseaudio-x11", NULL);
         if (!pulse_inst) return EINA_FALSE;
 
-        E_LIST_HANDLER_APPEND(handlers, E_EVENT_EXEC_NEW, (Ecore_Event_Handler_Cb)_pulse_started, NULL);
+        E_LIST_HANDLER_APPEND(handlers, ECORE_EXE_EVENT_ADD, (Ecore_Event_Handler_Cb)_pulse_started, NULL);
+        E_LIST_HANDLER_APPEND(handlers, ECORE_EXE_EVENT_DEL, (Ecore_Event_Handler_Cb)_pulse_not_started, NULL);
 
         return EINA_TRUE;
      }
