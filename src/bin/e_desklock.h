@@ -36,6 +36,9 @@ EAPI int e_desklock_show_autolocked(void);
 EAPI void e_desklock_hide(void);
 EAPI Eina_Bool e_desklock_state_get(void);
 
+EAPI void e_desklock_create_callback_set(E_Desklock_Show_Cb cb);
+EAPI void e_desklock_destroy_callback_set(E_Desklock_Hide_Cb cb);
+EAPI Eina_Stringshare *e_desklock_user_wallpaper_get(E_Zone *zone);
 EAPI void e_desklock_show_hook_add(E_Desklock_Show_Cb cb);
 EAPI void e_desklock_show_hook_del(E_Desklock_Show_Cb cb);
 EAPI void e_desklock_hide_hook_add(E_Desklock_Hide_Cb cb);

@@ -1,41 +1,10 @@
 #include "e.h"
-#ifdef HAVE_PAM
-# include <security/pam_appl.h>
-# include <pwd.h>
-#endif
 
-#define E_DESKLOCK_STATE_DEFAULT  0
-#define E_DESKLOCK_STATE_CHECKING 1
-#define E_DESKLOCK_STATE_INVALID  2
-
-#define PASSWD_LEN                256
 
 /**************************** private data ******************************/
-typedef struct _E_Desklock_Data       E_Desklock_Data;
-typedef struct _E_Desklock_Popup_Data E_Desklock_Popup_Data;
-#ifdef HAVE_PAM
-typedef struct _E_Desklock_Auth       E_Desklock_Auth;
-#endif
 
 typedef struct _E_Desklock_Run E_Desklock_Run;
 
-struct _E_Desklock_Popup_Data
-{
-   E_Zone *zone;
-   Evas_Object *comp_object;
-   Evas_Object *bg_object;
-   Evas_Object *login_box;
-};
-
-struct _E_Desklock_Data
-{
-   Eina_List           *elock_wnd_list;
-   Eina_List           *handlers;
-   Ecore_Event_Handler *move_handler;
-   char                 passwd[PASSWD_LEN];
-   int                  state;
-   Eina_Bool            selected : 1;
-};
 
 struct _E_Desklock_Run
 {
@@ -43,26 +12,6 @@ struct _E_Desklock_Run
    int      position;
 };
 
-#ifdef HAVE_PAM
-struct _E_Desklock_Auth
-{
-   struct
-   {
-      struct pam_conv conv;
-      pam_handle_t   *handle;
-   } pam;
-
-   char user[4096];
-   char passwd[4096];
-};
-#endif
-
-static E_Desklock_Data *edd = NULL;
-static E_Zone *last_active_zone = NULL;
-#ifdef HAVE_PAM
-static Ecore_Event_Handler *_e_desklock_exit_handler = NULL;
-static pid_t _e_desklock_child_pid = -1;
-#endif
 static Ecore_Exe *_e_custom_desklock_exe = NULL;
 static Ecore_Event_Handler *_e_custom_desklock_exe_handler = NULL;
 static Ecore_Poller *_e_desklock_idle_poller = NULL;
@@ -80,40 +29,15 @@ static Eina_List *hide_cbs = NULL;
 
 static Eina_List *block_rects = NULL;
 
+static E_Desklock_Show_Cb create_cb = NULL;
+static E_Desklock_Hide_Cb destroy_cb = NULL;
+
 /***********************************************************************/
-
-static Eina_Bool _e_desklock_cb_key_down(void *data, int type, void *event);
-static Eina_Bool _e_desklock_cb_mouse_move(void *data, int type, void *event);
-static Eina_Bool _e_desklock_cb_custom_desklock_exit(void *data, int type, void *event);
-static Eina_Bool _e_desklock_cb_idle_poller(void *data);
-static Eina_Bool _e_desklock_cb_zone_add(void *data, int type, void *event);
-static Eina_Bool _e_desklock_cb_zone_del(void *data, int type, void *event);
-static Eina_Bool _e_desklock_cb_zone_move_resize(void *data, int type, void *event);
-
+static Eina_Bool _e_desklock_cb_custom_desklock_exit(void *data __UNUSED__, int type __UNUSED__, void *event);
+static Eina_Bool _e_desklock_cb_idle_poller(void *data __UNUSED__);
 static Eina_Bool _e_desklock_cb_run(void *data, int type, void *event);
 
-static void      _e_desklock_popup_free(E_Desklock_Popup_Data *edp);
-static void      _e_desklock_popup_add(E_Zone *zone);
-static void      _e_desklock_login_box_add(E_Desklock_Popup_Data *edp);
-static void      _e_desklock_select(void);
-static void      _e_desklock_unselect(void);
-static void      _e_desklock_null(void);
-static void      _e_desklock_passwd_update(void);
-static void      _e_desklock_backspace(void);
-static void      _e_desklock_delete(void);
-static int       _e_desklock_zone_num_get(void);
-static int       _e_desklock_check_auth(void);
-static void      _e_desklock_state_set(int state);
-
 static Eina_Bool _e_desklock_state = EINA_FALSE;
-#ifdef HAVE_PAM
-static Eina_Bool _e_desklock_cb_exit(void *data, int type, void *event);
-static int       _desklock_auth(char *passwd);
-static int       _desklock_pam_init(E_Desklock_Auth *da);
-static int       _desklock_auth_pam_conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr);
-static char     *_desklock_auth_get_current_user(void);
-static char     *_desklock_auth_get_current_host(void);
-#endif
 
 static void      _e_desklock_ask_presentation_mode(void);
 
@@ -142,12 +66,13 @@ e_desklock_init(void)
 EINTERN int
 e_desklock_shutdown(void)
 {
-   Eina_Bool waslocked = EINA_FALSE;
+   Eina_Bool waslocked = _e_desklock_state;
    E_Desklock_Run *task;
    Eina_List *l;
    E_Config_Desklock_Background *bg;
 
-   if (edd) waslocked = EINA_TRUE;
+   destroy_cb = NULL;
+   create_cb = NULL;
    if (!x_fatal)
      e_desklock_hide();
 
@@ -171,8 +96,8 @@ e_desklock_shutdown(void)
    return 1;
 }
 
-static const char *
-_user_wallpaper_get(E_Zone *zone)
+EAPI Eina_Stringshare *
+e_desklock_user_wallpaper_get(E_Zone *zone)
 {
    const E_Config_Desktop_Background *cdbg;
    const Eina_List *l;
@@ -192,6 +117,18 @@ _user_wallpaper_get(E_Zone *zone)
      return e_config->desktop_default_background;
 
    return e_theme_edje_file_get("base/theme/desklock", "e/desklock/background");
+}
+
+EAPI void
+e_desklock_create_callback_set(E_Desklock_Show_Cb cb)
+{
+   create_cb = cb;
+}
+
+EAPI void
+e_desklock_destroy_callback_set(E_Desklock_Hide_Cb cb)
+{
+   destroy_cb = cb;
 }
 
 EAPI void
@@ -233,10 +170,8 @@ e_desklock_show_autolocked(void)
 EAPI int
 e_desklock_show(Eina_Bool suspend)
 {
-   const Eina_List *l, *l3;
+   const Eina_List *l;
    E_Comp *comp;
-   E_Manager *man;
-   int total_zone_num;
    E_Event_Desklock *ev;
    E_Desklock_Show_Cb show_cb;
    E_Desklock_Hide_Cb hide_cb;
@@ -271,33 +206,25 @@ e_desklock_show(Eina_Bool suspend)
      }
 #endif
 
-   if (edd) return 0;
-
-#ifdef HAVE_PAM
    if (e_desklock_is_personal())
      {
-#endif
-   if (!e_config->desklock_passwd)
-     {
-        E_Zone *zone;
+        if (!e_config->desklock_passwd)
+          {
+             E_Zone *zone;
 
-        zone = e_util_zone_current_get(e_manager_current_get());
-        if (zone)
-          e_configure_registry_call("screen/screen_lock", zone->comp, NULL);
-        return 0;
+             zone = e_util_zone_current_get(e_manager_current_get());
+             if (zone)
+               e_configure_registry_call("screen/screen_lock", zone->comp, NULL);
+             return 0;
+          }
      }
-#ifdef HAVE_PAM
-}
-
-#endif
 
    e_menu_hide_all();
    EINA_LIST_FOREACH(show_cbs, l, show_cb)
      {
         if (!show_cb()) goto fail;
      }
-   edd = E_NEW(E_Desklock_Data, 1);
-   if (!edd) return 0;
+
    EINA_LIST_FOREACH(e_comp_list(), l, comp)
      {
         Evas_Object *o;
@@ -315,24 +242,8 @@ e_desklock_show(Eina_Bool suspend)
    if (e_config->xkb.lock_layout)
      e_xkb_layout_set(e_config->xkb.lock_layout);
 
-   total_zone_num = _e_desklock_zone_num_get();
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
-     {
-        E_Zone *zone;
-        EINA_LIST_FOREACH(man->comp->zones, l3, zone)
-          _e_desklock_popup_add(zone);
-     }
-
-   /* handlers */
-   E_LIST_HANDLER_APPEND(edd->handlers, ECORE_EVENT_KEY_DOWN, _e_desklock_cb_key_down, NULL);
-   E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_ZONE_ADD, _e_desklock_cb_zone_add, NULL);
-   E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_ZONE_DEL, _e_desklock_cb_zone_del, NULL);
-   E_LIST_HANDLER_APPEND(edd->handlers, E_EVENT_ZONE_MOVE_RESIZE, _e_desklock_cb_zone_move_resize, NULL);
-
-   if ((total_zone_num > 1) && (e_config->desklock_login_box_zone == -2))
-     edd->move_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _e_desklock_cb_mouse_move, NULL);
-
-   _e_desklock_passwd_update();
+   if (create_cb && !create_cb())
+     goto lang_fail;
 
    ev = E_NEW(E_Event_Desklock, 1);
    ev->on = 1;
@@ -343,10 +254,18 @@ e_desklock_show(Eina_Bool suspend)
    e_util_env_set("E_DESKLOCK_LOCKED", "locked");
    _e_desklock_state = EINA_TRUE;
    return 1;
+lang_fail:
+   if (e_config->desklock_language)
+     e_intl_language_set(e_config->language);
+
+   if (e_config_xkb_layout_eq(e_config->xkb.current_layout, e_config->xkb.lock_layout))
+     {
+        if (e_config->xkb.sel_layout)
+          e_xkb_layout_set(e_config->xkb.sel_layout);
+     }
 fail:
    EINA_LIST_FOREACH(hide_cbs, l, hide_cb)
      hide_cb();
-   E_FREE(edd);
    return 0;
 }
 
@@ -357,7 +276,7 @@ e_desklock_hide(void)
    E_Event_Desklock *ev;
    E_Desklock_Hide_Cb hide_cb;
 
-   if ((!edd) && (!_e_custom_desklock_exe)) return;
+   if ((!_e_desklock_state) && (!_e_custom_desklock_exe)) return;
 
    E_LIST_FOREACH(e_comp_list(), e_comp_override_del);
    E_LIST_FOREACH(e_comp_list(), e_comp_shape_queue);
@@ -384,16 +303,11 @@ e_desklock_hide(void)
         return;
      }
 
-   if (!edd) return;
-
    EINA_LIST_FOREACH(hide_cbs, l, hide_cb)
      hide_cb();
 
-   E_FREE_LIST(edd->elock_wnd_list, _e_desklock_popup_free);
-   E_FREE_LIST(edd->handlers, ecore_event_handler_del);
-   if (edd->move_handler) ecore_event_handler_del(edd->move_handler);
-
-   E_FREE(edd);
+   if (destroy_cb)
+     destroy_cb();
 
    if (_e_desklock_autolock_time > 0.0)
      {
@@ -416,678 +330,11 @@ e_desklock_hide(void)
    e_util_env_set("E_DESKLOCK_UNLOCKED", "happened");
 }
 
-static void
-_e_desklock_popup_add(E_Zone *zone)
-{
-   E_Desklock_Popup_Data *edp;
-   E_Config_Desklock_Background *cbg;
-   const char *bg;
-   Evas *evas;
-
-   cbg = eina_list_nth(e_config->desklock_backgrounds, zone->num);
-   bg = cbg ? cbg->file : NULL;
-   edp = E_NEW(E_Desklock_Popup_Data, 1);
-
-   edp->zone = zone;
-   evas = e_comp_get(zone)->evas;
-   evas_event_freeze(evas);
-   edp->bg_object = edje_object_add(evas);
-   evas_object_name_set(edp->bg_object, "desklock->bg_object");
-
-   if ((!bg) || (!strcmp(bg, "theme_desklock_background")))
-     {
-        e_theme_edje_object_set(edp->bg_object,
-                                "base/theme/desklock",
-                                "e/desklock/background");
-     }
-   else if (!strcmp(bg, "theme_background"))
-     {
-        e_theme_edje_object_set(edp->bg_object,
-                                "base/theme/backgrounds",
-                                "e/desktop/background");
-     }
-   else
-     {
-        const char *f;
-
-        if (!strcmp(bg, "user_background"))
-          f = _user_wallpaper_get(zone);
-        else
-          f = bg;
-
-        if (e_util_edje_collection_exists(f, "e/desklock/background"))
-          {
-             edje_object_file_set(edp->bg_object, f, "e/desklock/background");
-          }
-        else
-          {
-             if (!edje_object_file_set(edp->bg_object,
-                                       f, "e/desktop/background"))
-               {
-                  edje_object_file_set(edp->bg_object,
-                                       e_theme_edje_file_get("base/theme/desklock",
-                                                             "e/desklock/background"),
-                                       "e/desklock/background");
-               }
-          }
-     }
-
-   evas_object_move(edp->bg_object, zone->x, zone->y);
-   evas_object_resize(edp->bg_object, zone->w, zone->h);
-   evas_object_show(edp->bg_object);
-   edp->comp_object = e_comp_object_util_add(edp->bg_object, 0);
-   evas_object_layer_set(edp->comp_object, E_LAYER_DESKLOCK);
-   evas_object_clip_set(edp->comp_object, edp->zone->bg_clip_object);
-
-   _e_desklock_login_box_add(edp);
-   evas_event_thaw(evas);
-
-   edd->elock_wnd_list = eina_list_append(edd->elock_wnd_list, edp);
-}
-
-static void
-_e_desklock_login_box_add(E_Desklock_Popup_Data *edp)
-{
-   int mw, mh;
-   E_Zone *zone, *current_zone;
-   int total_zone_num;
-   Evas *evas;
-
-   zone = edp->zone;
-   last_active_zone = current_zone = e_util_zone_current_get(e_manager_current_get());
-   total_zone_num = _e_desklock_zone_num_get();
-   if (total_zone_num > 1)
-     {
-        if ((e_config->desklock_login_box_zone == -2) && (zone != current_zone))
-          return;
-        if ((e_config->desklock_login_box_zone > -1) && (e_config->desklock_login_box_zone != (int)eina_list_count(edd->elock_wnd_list)))
-          return;
-     }
-
-   evas = evas_object_evas_get(edp->bg_object);
-   edp->login_box = edje_object_add(evas);
-   evas_object_name_set(edp->login_box, "desklock->login_box");
-   e_theme_edje_object_set(edp->login_box,
-                           "base/theme/desklock",
-                           "e/desklock/login_box");
-   edje_object_part_text_set(edp->login_box, "e.text.title",
-                             _("Please enter your unlock password"));
-   edje_object_size_min_calc(edp->login_box, &mw, &mh);
-   if (edje_object_part_exists(edp->bg_object, "e.swallow.login_box"))
-     {
-        edje_extern_object_min_size_set(edp->login_box, mw, mh);
-        edje_object_part_swallow(edp->bg_object, "e.swallow.login_box", edp->login_box);
-     }
-   else
-     {
-        evas_object_resize(edp->login_box, mw, mh);
-        e_comp_object_util_center_on(edp->login_box, edp->comp_object);
-        evas_object_show(edp->login_box);
-        evas_object_layer_set(edp->login_box, E_LAYER_DESKLOCK);
-        evas_object_stack_above(edp->login_box, edp->comp_object);
-     }
-
-   evas_object_clip_set(edp->login_box, edp->zone->bg_clip_object);
-}
-
-static void
-_e_desklock_popup_free(E_Desklock_Popup_Data *edp)
-{
-   if (!edp) return;
-
-   evas_object_hide(edp->comp_object);
-   evas_object_del(edp->comp_object);
-   evas_object_del(edp->bg_object);
-   evas_object_del(edp->login_box);
-
-   free(edp);
-}
-
 EAPI Eina_Bool
 e_desklock_state_get(void)
 {
    return _e_desklock_state;
 }
-
-static Eina_List *
-_e_desklock_popup_find(E_Zone *zone)
-{
-   Eina_List *l;
-   E_Desklock_Popup_Data *edp;
-
-   EINA_LIST_FOREACH(edd->elock_wnd_list, l, edp)
-     if (edp->zone == zone) return l;
-   return NULL;
-}
-
-static Eina_Bool
-_e_desklock_cb_zone_add(void *data __UNUSED__,
-                        int type __UNUSED__,
-                        void *event)
-{
-   E_Event_Zone_Add *ev = event;
-   if (!edd) return ECORE_CALLBACK_PASS_ON;
-   if ((!edd->move_handler) && (e_config->desklock_login_box_zone == -2))
-     edd->move_handler = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _e_desklock_cb_mouse_move, NULL);
-   if (!_e_desklock_popup_find(ev->zone)) _e_desklock_popup_add(ev->zone);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_e_desklock_cb_zone_del(void *data __UNUSED__,
-                        int type __UNUSED__,
-                        void *event)
-{
-   E_Event_Zone_Del *ev = event;
-   Eina_List *l;
-   if (!edd) return ECORE_CALLBACK_PASS_ON;
-   if ((eina_list_count(e_util_comp_current_get()->zones) == 1) && (e_config->desklock_login_box_zone == -2))
-     edd->move_handler = ecore_event_handler_del(edd->move_handler);
-
-   l = _e_desklock_popup_find(ev->zone);
-   if (l)
-     {
-        _e_desklock_popup_free(l->data);
-        edd->elock_wnd_list = eina_list_remove_list(edd->elock_wnd_list, l);
-     }
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_e_desklock_cb_zone_move_resize(void *data __UNUSED__,
-                                int type __UNUSED__,
-                                void *event)
-{
-   E_Desklock_Popup_Data *edp;
-   Eina_List *l;
-   E_Event_Zone_Move_Resize *ev = event;
-
-   if (!edd) return ECORE_CALLBACK_PASS_ON;
-   EINA_LIST_FOREACH(edd->elock_wnd_list, l, edp)
-     if (edp->zone == ev->zone)
-       {
-          evas_object_resize(edp->bg_object, ev->zone->w, ev->zone->h);
-          e_comp_object_util_center_on(edp->login_box, edp->comp_object);
-          break;
-       }
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_e_desklock_cb_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   Ecore_Event_Key *ev = event;
-
-   if (edd->state == E_DESKLOCK_STATE_CHECKING) return ECORE_CALLBACK_DONE;
-
-   if (!strcmp(ev->key, "Escape"))
-     {
-        if (edd->selected)
-          {
-             _e_desklock_unselect();
-             return ECORE_CALLBACK_RENEW;
-          }
-     }
-   else if (!strcmp(ev->key, "KP_Enter"))
-     _e_desklock_check_auth();
-   else if (!strcmp(ev->key, "Return"))
-     _e_desklock_check_auth();
-   else if (!strcmp(ev->key, "BackSpace"))
-     {
-        if (edd->selected)
-          {
-             _e_desklock_null();
-             _e_desklock_unselect();
-             return ECORE_CALLBACK_RENEW;
-          }
-        _e_desklock_backspace();
-     }
-   else if (!strcmp(ev->key, "Delete"))
-     {
-        if (edd->selected)
-          {
-             _e_desklock_null();
-             _e_desklock_unselect();
-             return ECORE_CALLBACK_RENEW;
-          }
-        _e_desklock_delete();
-     }
-   else if ((!strcmp(ev->key, "u") &&
-             (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL)))
-     _e_desklock_null();
-   else if ((!strcmp(ev->key, "a") &&
-             (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL)))
-     _e_desklock_select();
-   else
-     {
-        /* here we have to grab a password */
-        if (ev->compose)
-          {
-             if (edd->selected)
-               {
-                  _e_desklock_null();
-                  _e_desklock_unselect();
-               }
-             if ((strlen(edd->passwd) < (PASSWD_LEN - strlen(ev->compose))))
-               {
-                  strcat(edd->passwd, ev->compose);
-                  _e_desklock_passwd_update();
-               }
-          }
-     }
-
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool
-_e_desklock_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
-{
-   E_Desklock_Popup_Data *edp;
-   E_Zone *current_zone;
-   Eina_List *l;
-
-   current_zone = e_util_zone_current_get(e_manager_current_get());
-
-   if (current_zone == last_active_zone)
-     return ECORE_CALLBACK_PASS_ON;
-
-   EINA_LIST_FOREACH(edd->elock_wnd_list, l, edp)
-     {
-        if (!edp) continue;
-
-        if (edp->zone != current_zone)
-          {
-             if (edp->login_box) evas_object_hide(edp->login_box);
-             continue;
-          }
-        if (edp->login_box)
-          evas_object_show(edp->login_box);
-        else
-          _e_desklock_login_box_add(edp);
-     }
-   _e_desklock_passwd_update();
-   last_active_zone = current_zone;
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static void
-_e_desklock_passwd_update(void)
-{
-   int len, i;
-   char passwd_hidden[PASSWD_LEN] = "", *pp;
-   E_Desklock_Popup_Data *edp;
-   Eina_List *l;
-
-   if (!edd) return;
-
-   len = eina_unicode_utf8_get_len(edd->passwd);
-   for (i = 0, pp = passwd_hidden; i < len; i++, pp++)
-     *pp = '*';
-   *pp = 0;
-
-   EINA_LIST_FOREACH(edd->elock_wnd_list, l, edp)
-     if (edp->login_box)
-       edje_object_part_text_set(edp->login_box, "e.text.password",
-                                 passwd_hidden);
-}
-
-static void
-_e_desklock_select(void)
-{
-   E_Desklock_Popup_Data *edp;
-   Eina_List *l;
-   EINA_LIST_FOREACH(edd->elock_wnd_list, l, edp)
-     if (edp->login_box)
-       edje_object_signal_emit(edp->login_box, "e,state,selected", "e");
-   edd->selected = EINA_TRUE;
-}
-
-static void
-_e_desklock_unselect(void)
-{
-   E_Desklock_Popup_Data *edp;
-   Eina_List *l;
-   EINA_LIST_FOREACH(edd->elock_wnd_list, l, edp)
-     if (edp->login_box)
-       edje_object_signal_emit(edp->login_box, "e,state,unselected", "e");
-   edd->selected = EINA_FALSE;
-}
-
-static void
-_e_desklock_null(void)
-{
-   memset(edd->passwd, 0, sizeof(char) * PASSWD_LEN);
-   _e_desklock_passwd_update();
-}
-
-static void
-_e_desklock_backspace(void)
-{
-   int len, val, pos;
-
-   if (!edd) return;
-
-   len = strlen(edd->passwd);
-   if (len > 0)
-     {
-        pos = evas_string_char_prev_get(edd->passwd, len, &val);
-        if ((pos < len) && (pos >= 0))
-          {
-             edd->passwd[pos] = 0;
-             _e_desklock_passwd_update();
-          }
-     }
-}
-
-static void
-_e_desklock_delete(void)
-{
-   _e_desklock_backspace();
-}
-
-static int
-_e_desklock_zone_num_get(void)
-{
-   int num;
-   Eina_List *l;
-   E_Manager *man;
-
-   num = 0;
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
-     num += eina_list_count(man->comp->zones);
-
-   return num;
-}
-
-static int
-_e_desklock_check_auth(void)
-{
-   if (!edd) return 0;
-#ifdef HAVE_PAM
-   if (e_config->desklock_auth_method == 0)
-     {
-        int ret;
-
-        ret = _desklock_auth(edd->passwd);
-        // passwd off in child proc now - null out from parent
-        memset(edd->passwd, 0, sizeof(char) * PASSWD_LEN);
-        return ret;
-     }
-   else if (e_config->desklock_auth_method == 1)
-     {
-#endif
-   if ((e_config->desklock_passwd) && (edd->passwd && edd->passwd[0]) &&
-       (e_config->desklock_passwd == eina_hash_djb2(edd->passwd, strlen(edd->passwd))))
-     {
-        /* password ok */
-        /* security - null out passwd string once we are done with it */
-        memset(edd->passwd, 0, sizeof(char) * PASSWD_LEN);
-        e_desklock_hide();
-        return 1;
-     }
-#ifdef HAVE_PAM
-}
-
-#endif
-   /* password is definitely wrong */
-   _e_desklock_state_set(E_DESKLOCK_STATE_INVALID);
-   _e_desklock_null();
-   return 0;
-}
-
-static void
-_e_desklock_state_set(int state)
-{
-   Eina_List *l;
-   E_Desklock_Popup_Data *edp;
-   const char *signal_desklock, *text;
-   if (!edd) return;
-
-   edd->state = state;
-   if (state == E_DESKLOCK_STATE_CHECKING)
-     {
-        signal_desklock = "e,state,checking";
-        text = _("Authenticating...");
-     }
-   else if (state == E_DESKLOCK_STATE_INVALID)
-     {
-        signal_desklock = "e,state,invalid";
-        text = _("The password you entered is invalid. Try again.");
-     }
-   else
-     return;
-
-   EINA_LIST_FOREACH(edd->elock_wnd_list, l, edp)
-     {
-        edje_object_signal_emit(edp->login_box, signal_desklock, "e");
-        edje_object_signal_emit(edp->bg_object, signal_desklock, "e");
-        edje_object_part_text_set(edp->login_box, "e.text.title", text);
-     }
-}
-
-#ifdef HAVE_PAM
-static Eina_Bool
-_e_desklock_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   Ecore_Exe_Event_Del *ev = event;
-
-   if (ev->pid == _e_desklock_child_pid)
-     {
-        _e_desklock_child_pid = -1;
-        /* ok */
-        if (ev->exit_code == 0)
-          {
-             /* security - null out passwd string once we are done with it */
-             memset(edd->passwd, 0, sizeof(char) * PASSWD_LEN);
-             e_desklock_hide();
-          }
-        /* error */
-        else if (ev->exit_code < 128)
-          {
-             /* security - null out passwd string once we are done with it */
-             memset(edd->passwd, 0, sizeof(char) * PASSWD_LEN);
-             e_desklock_hide();
-             e_util_dialog_show(_("Authentication System Error"),
-                                _("Authentication via PAM had errors setting up the<br>"
-                                  "authentication session. The error code was <hilight>%i</hilight>.<br>"
-                                  "This is bad and should not be happening. Please report this bug.")
-                                , ev->exit_code);
-          }
-        /* failed auth */
-        else
-          {
-             _e_desklock_state_set(E_DESKLOCK_STATE_INVALID);
-             /* security - null out passwd string once we are done with it */
-             _e_desklock_null();
-          }
-        if (_e_desklock_exit_handler)
-          ecore_event_handler_del(_e_desklock_exit_handler);
-        _e_desklock_exit_handler = NULL;
-     }
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static int
-_desklock_auth(char *passwd)
-{
-   _e_desklock_state_set(E_DESKLOCK_STATE_CHECKING);
-   _e_desklock_child_pid = fork();
-   if (_e_desklock_child_pid > 0)
-     {
-        /* parent */
-        _e_desklock_exit_handler =
-          ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _e_desklock_cb_exit,
-                                  NULL);
-     }
-   else if (_e_desklock_child_pid == 0)
-     {
-        /* child */
-        int pamerr;
-        E_Desklock_Auth da;
-        char *current_user, *p;
-        struct sigaction action;
-
-        action.sa_handler = SIG_DFL;
-        action.sa_flags = SA_ONSTACK | SA_NODEFER | SA_RESETHAND | SA_SIGINFO;
-        sigemptyset(&action.sa_mask);
-        sigaction(SIGSEGV, &action, NULL);
-        sigaction(SIGILL, &action, NULL);
-        sigaction(SIGFPE, &action, NULL);
-        sigaction(SIGBUS, &action, NULL);
-        sigaction(SIGABRT, &action, NULL);
-
-        current_user = _desklock_auth_get_current_user();
-        eina_strlcpy(da.user, current_user, sizeof(da.user));
-        eina_strlcpy(da.passwd, passwd, sizeof(da.passwd));
-        /* security - null out passwd string once we are done with it */
-        for (p = passwd; *p; p++)
-          *p = 0;
-        da.pam.handle = NULL;
-        da.pam.conv.conv = NULL;
-        da.pam.conv.appdata_ptr = NULL;
-
-        pamerr = _desklock_pam_init(&da);
-        if (pamerr != PAM_SUCCESS)
-          {
-             free(current_user);
-             exit(1);
-          }
-        pamerr = pam_authenticate(da.pam.handle, 0);
-        pam_end(da.pam.handle, pamerr);
-        /* security - null out passwd string once we are done with it */
-        memset(da.passwd, 0, sizeof(da.passwd));
-        if (pamerr == PAM_SUCCESS)
-          {
-             free(current_user);
-             exit(0);
-          }
-        free(current_user);
-        exit(-1);
-     }
-   else
-     {
-        _e_desklock_state_set(E_DESKLOCK_STATE_INVALID);
-        return 0;
-     }
-   return 1;
-}
-
-static char *
-_desklock_auth_get_current_user(void)
-{
-   char *user;
-   struct passwd *pwent = NULL;
-
-   pwent = getpwuid(getuid());
-   user = strdup(pwent->pw_name);
-   return user;
-}
-
-static int
-_desklock_pam_init(E_Desklock_Auth *da)
-{
-   int pamerr;
-   const char *pam_prof;
-   char *current_host;
-   char *current_user;
-
-   if (!da) return -1;
-
-   da->pam.conv.conv = _desklock_auth_pam_conv;
-   da->pam.conv.appdata_ptr = da;
-   da->pam.handle = NULL;
-
-   /* try other pam profiles - and system-auth (login for fbsd users) is a fallback */
-   pam_prof = "login";
-   if (ecore_file_exists("/etc/pam.d/enlightenment"))
-     pam_prof = "enlightenment";
-   else if (ecore_file_exists("/etc/pam.d/xscreensaver"))
-     pam_prof = "xscreensaver";
-   else if (ecore_file_exists("/etc/pam.d/kscreensaver"))
-     pam_prof = "kscreensaver";
-   else if (ecore_file_exists("/etc/pam.d/system-auth"))
-     pam_prof = "system-auth";
-   else if (ecore_file_exists("/etc/pam.d/system"))
-     pam_prof = "system";
-   else if (ecore_file_exists("/etc/pam.d/xdm"))
-     pam_prof = "xdm";
-   else if (ecore_file_exists("/etc/pam.d/gdm"))
-     pam_prof = "gdm";
-   else if (ecore_file_exists("/etc/pam.d/kdm"))
-     pam_prof = "kdm";
-
-   if ((pamerr = pam_start(pam_prof, da->user, &(da->pam.conv),
-                           &(da->pam.handle))) != PAM_SUCCESS)
-     return pamerr;
-
-   current_user = _desklock_auth_get_current_user();
-
-   if ((pamerr = pam_set_item(da->pam.handle, PAM_USER, current_user)) != PAM_SUCCESS)
-     {
-        free(current_user);
-        return pamerr;
-     }
-
-   current_host = _desklock_auth_get_current_host();
-   if ((pamerr = pam_set_item(da->pam.handle, PAM_RHOST, current_host)) != PAM_SUCCESS)
-     {
-        free(current_user);
-        free(current_host);
-        return pamerr;
-     }
-
-   free(current_user);
-   free(current_host);
-   return 0;
-}
-
-static int
-_desklock_auth_pam_conv(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *appdata_ptr)
-{
-   int replies = 0;
-   E_Desklock_Auth *da = (E_Desklock_Auth *)appdata_ptr;
-   struct pam_response *reply = NULL;
-
-   reply = (struct pam_response *)malloc(sizeof(struct pam_response) * num_msg);
-
-   if (!reply) return PAM_CONV_ERR;
-
-   for (replies = 0; replies < num_msg; replies++)
-     {
-        switch (msg[replies]->msg_style)
-          {
-           case PAM_PROMPT_ECHO_ON:
-             reply[replies].resp_retcode = PAM_SUCCESS;
-             reply[replies].resp = strdup(da->user);
-             break;
-
-           case PAM_PROMPT_ECHO_OFF:
-             reply[replies].resp_retcode = PAM_SUCCESS;
-             reply[replies].resp = strdup(da->passwd);
-             break;
-
-           case PAM_ERROR_MSG:
-           case PAM_TEXT_INFO:
-             reply[replies].resp_retcode = PAM_SUCCESS;
-             reply[replies].resp = NULL;
-             break;
-
-           default:
-             free(reply);
-             return PAM_CONV_ERR;
-          }
-     }
-   *resp = reply;
-   return PAM_SUCCESS;
-}
-
-static char *
-_desklock_auth_get_current_host(void)
-{
-   return strdup("localhost");
-}
-
-#endif
 
 static Eina_Bool
 _e_desklock_cb_custom_desklock_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
@@ -1114,7 +361,7 @@ _e_desklock_cb_idle_poller(void *data __UNUSED__)
         double idle, max;
 
         /* If a desklock is already up, bail */
-        if ((_e_custom_desklock_exe) || (edd)) return ECORE_CALLBACK_RENEW;
+        if ((_e_custom_desklock_exe) || (_e_desklock_state)) return ECORE_CALLBACK_RENEW;
 
         idle = ecore_x_screensaver_idle_time_get();
         max = e_config->desklock_autolock_idle_timeout;

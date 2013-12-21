@@ -7,6 +7,7 @@
 #include "e_error.h"
 #include "e_zone.h"
 #include "e_desk.h"
+#include "e_auth.h"
 #ifndef WAYLAND_ONLY
 #  include "e_comp_x.h"
 #endif

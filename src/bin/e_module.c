@@ -903,6 +903,7 @@ _e_module_whitelist_check(void)
       "ibar",
       "ibox",
       "layout",
+      "lokker",
       "mixer",
       "msgbus",
       "notification",

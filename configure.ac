@@ -892,6 +892,7 @@ AC_E_OPTIONAL_MODULE([systray], true)
 AC_E_OPTIONAL_MODULE([appmenu], true)
 AC_E_OPTIONAL_MODULE([quickaccess], true)
 AC_E_OPTIONAL_MODULE([teamwork], true)
+AC_E_OPTIONAL_MODULE([lokker], true)
 AC_E_OPTIONAL_MODULE([shot], true, $ecore_x)
 AC_E_OPTIONAL_MODULE([backlight], true)
 AC_E_OPTIONAL_MODULE([tasks], true)
@@ -1003,6 +1004,7 @@ src/modules/systray/module.desktop
 src/modules/appmenu/module.desktop
 src/modules/quickaccess/module.desktop
 src/modules/teamwork/module.desktop
+src/modules/lokker/module.desktop
 src/modules/shot/module.desktop
 src/modules/backlight/module.desktop
 src/modules/tasks/module.desktop
