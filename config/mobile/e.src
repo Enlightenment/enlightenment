@@ -1,8 +1,7 @@
 group "E_Config" struct {
-    value "config_version" int: 1000011;
+    value "config_version" int: 1000014;
     value "config_type" uint: 1;
     value "show_splash" int: 1;
-    value "init_default_theme" string: "default.edj";
     value "desktop_default_name" string: "%i-%i";
     value "desktop_default_window_profile" string: "mobile";
     value "menus_scroll_speed" double: 1000.0000000000000000000000000;
@@ -390,12 +389,6 @@ group "E_Config" struct {
             value "enabled" uchar: 1;
             value "delayed" uchar: 1;
             value "priority" int: 0;
-        }
-    }
-    group "themes" list {
-        group "E_Config_Theme" struct {
-            value "category" string: "theme";
-            value "file" string: "default.edj";
         }
     }
     group "gadcons" list {

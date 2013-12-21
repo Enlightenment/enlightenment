@@ -1,8 +1,7 @@
 group "E_Config" struct {
-    value "config_version" int: 1000012;
+    value "config_version" int: 1000014;
     value "config_type" uint: 3;
     value "show_splash" int: 1;
-    value "init_default_theme" string: "default.edj";
     value "desktop_default_name" string: "%i-%i";
     value "desktop_default_window_profile" string: "standard";
     value "menus_scroll_speed" double: 1000.0;
@@ -606,8 +605,7 @@ group "E_Config" struct {
             value "id" int: 1;
             value "manager" int: 0;
             value "zone" int: 0;
-            value "layer" int: 200;
-            value "popup" uchar: 1;
+            value "layer" int: 250;
             value "orient" int: 6;
             value "fit_along" uchar: 1;
             value "fit_size" uchar: 0;
@@ -866,12 +864,6 @@ group "E_Config" struct {
         group "E_Config_Gadcon" struct {
             value "name" string: "gadman_top";
             value "id" int: 115;
-        }
-    }
-    group "themes" list {
-        group "E_Config_Theme" struct {
-            value "category" string: "theme";
-            value "file" string: "default.edj";
         }
     }
     group "modules" list {
