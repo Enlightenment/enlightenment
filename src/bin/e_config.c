@@ -240,14 +240,6 @@ _e_config_edd_init(Eina_Bool old)
 #define D _e_config_path_append_edd
    E_CONFIG_VAL(D, T, dir, STR);
 
-   _e_config_theme_edd = E_CONFIG_DD_NEW("E_Config_Theme", E_Config_Theme);
-#undef T
-#undef D
-#define T E_Config_Theme
-#define D _e_config_theme_edd
-   E_CONFIG_VAL(D, T, category, STR);
-   E_CONFIG_VAL(D, T, file, STR);
-
    _e_config_module_edd = E_CONFIG_DD_NEW("E_Config_Module", E_Config_Module);
 #undef T
 #undef D
@@ -431,7 +423,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, config_version, INT); /**/
    E_CONFIG_VAL(D, T, config_type, UINT); /**/
    E_CONFIG_VAL(D, T, show_splash, INT); /**/
-   E_CONFIG_VAL(D, T, init_default_theme, STR); /**/
    E_CONFIG_VAL(D, T, desktop_default_background, STR); /**/
    E_CONFIG_VAL(D, T, desktop_default_name, STR); /**/
    E_CONFIG_VAL(D, T, desktop_default_window_profile, STR); /**/
@@ -462,7 +453,6 @@ _e_config_edd_init(Eina_Bool old)
    EET_DATA_DESCRIPTOR_ADD_LIST_STRING(D, T, "bad_modules", bad_modules);
    E_CONFIG_LIST(D, T, font_fallbacks, _e_config_font_fallback_edd); /**/
    E_CONFIG_LIST(D, T, font_defaults, _e_config_font_default_edd); /**/
-   E_CONFIG_LIST(D, T, themes, _e_config_theme_edd); /**/
    E_CONFIG_LIST(D, T, mouse_bindings, _e_config_bindings_mouse_edd); /**/
    E_CONFIG_LIST(D, T, key_bindings, _e_config_bindings_key_edd); /**/
    E_CONFIG_LIST(D, T, edge_bindings, _e_config_bindings_edge_edd); /**/
@@ -472,7 +462,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_LIST(D, T, path_append_data, _e_config_path_append_edd); /**/
    E_CONFIG_LIST(D, T, path_append_images, _e_config_path_append_edd); /**/
    E_CONFIG_LIST(D, T, path_append_fonts, _e_config_path_append_edd); /**/
-   E_CONFIG_LIST(D, T, path_append_themes, _e_config_path_append_edd); /**/
    E_CONFIG_LIST(D, T, path_append_init, _e_config_path_append_edd); /**/
    E_CONFIG_LIST(D, T, path_append_icons, _e_config_path_append_edd); /**/
    E_CONFIG_LIST(D, T, path_append_modules, _e_config_path_append_edd); /**/
@@ -1238,13 +1227,11 @@ e_config_load(void)
           }
         CONFIG_VERSION_CHECK(14)
           {
-             E_Config_Theme *et;
-             E_Path_Dir *epd;
-             char buf[PATH_MAX], buf2[PATH_MAX], *f;
              Eina_List *files, *l;
              Eina_Bool fail = EINA_FALSE;
              E_Config_Shelf *cf_es;
              E_Remember *rem;
+             char buf[PATH_MAX], buf2[PATH_MAX], *f;
 
              CONFIG_VERSION_UPDATE_INFO(14);
 
@@ -1262,19 +1249,6 @@ e_config_load(void)
                   cf_es->popup = 0;
                }
 
-             // empty out theme elements of config
-             eina_stringshare_replace(&e_config->init_default_theme, NULL);
-             EINA_LIST_FREE(e_config->themes, et)
-               {
-                  eina_stringshare_del(et->category);
-                  eina_stringshare_del(et->file);
-                  free(et);
-               }
-             EINA_LIST_FREE(e_config->path_append_themes, epd)
-               {
-                  eina_stringshare_del(epd->dir);
-                  free(epd);
-               }
              /* E19 layer values are higher */
              EINA_LIST_FOREACH(e_config->remembers, l, rem)
                if (rem->apply & E_REMEMBER_APPLY_LAYER)
@@ -2132,7 +2106,6 @@ _e_config_free(E_Config *ecf)
    E_Font_Fallback *eff;
    E_Config_Module *em;
    E_Font_Default *efd;
-   E_Config_Theme *et;
    E_Color_Class *cc;
    E_Path_Dir *epd;
    E_Remember *rem;
@@ -2174,12 +2147,6 @@ _e_config_free(E_Config *ecf)
         if (efd->font) eina_stringshare_del(efd->font);
         E_FREE(efd);
      }
-   EINA_LIST_FREE(ecf->themes, et)
-     {
-        if (et->category) eina_stringshare_del(et->category);
-        if (et->file) eina_stringshare_del(et->file);
-        E_FREE(et);
-     }
    EINA_LIST_FREE(ecf->path_append_data, epd)
      {
         if (epd->dir) eina_stringshare_del(epd->dir);
@@ -2191,11 +2158,6 @@ _e_config_free(E_Config *ecf)
         E_FREE(epd);
      }
    EINA_LIST_FREE(ecf->path_append_fonts, epd)
-     {
-        if (epd->dir) eina_stringshare_del(epd->dir);
-        E_FREE(epd);
-     }
-   EINA_LIST_FREE(ecf->path_append_themes, epd)
      {
         if (epd->dir) eina_stringshare_del(epd->dir);
         E_FREE(epd);
@@ -2247,7 +2209,6 @@ _e_config_free(E_Config *ecf)
         if (cc->name) eina_stringshare_del(cc->name);
         E_FREE(cc);
      }
-   if (ecf->init_default_theme) eina_stringshare_del(ecf->init_default_theme);
    if (ecf->desktop_default_background) eina_stringshare_del(ecf->desktop_default_background);
    if (ecf->desktop_default_name) eina_stringshare_del(ecf->desktop_default_name);
    if (ecf->desktop_default_window_profile) eina_stringshare_del(ecf->desktop_default_window_profile);
