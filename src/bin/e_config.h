@@ -4,7 +4,6 @@
 
 typedef struct _E_Config                    E_Config;
 typedef struct _E_Config_Module             E_Config_Module;
-typedef struct _E_Config_Theme              E_Config_Theme;
 typedef struct _E_Config_Binding_Mouse      E_Config_Binding_Mouse;
 typedef struct _E_Config_Binding_Key        E_Config_Binding_Key;
 typedef struct _E_Config_Binding_Edge       E_Config_Binding_Edge;
@@ -58,7 +57,6 @@ struct _E_Config
    int         config_version; // INTERNAL
    E_Config_Profile_Type config_type; // INTERNAL
    int         show_splash; // GUI
-   const char *init_default_theme; // GUI
    const char *desktop_default_background; // GUI
    Eina_List  *desktop_backgrounds; // GUI
    const char *desktop_default_name;
@@ -89,7 +87,6 @@ struct _E_Config
    Eina_List  *bad_modules; // GUI
    Eina_List  *font_fallbacks; // GUI
    Eina_List  *font_defaults; // GUI
-   Eina_List  *themes; // GUI
 
    /* NO LONGER SAVED WITH THIS STRUCT */
    Eina_List  *mouse_bindings; // GUI
@@ -102,7 +99,6 @@ struct _E_Config
    Eina_List  *path_append_data; // GUI
    Eina_List  *path_append_images; // GUI
    Eina_List  *path_append_fonts; // GUI
-   Eina_List  *path_append_themes; // GUI
    Eina_List  *path_append_init; // GUI
    Eina_List  *path_append_icons; // GUI
    Eina_List  *path_append_modules; // GUI
@@ -476,12 +472,6 @@ struct _E_Config_Module
    unsigned char enabled;
    unsigned char delayed;
    int           priority;
-};
-
-struct _E_Config_Theme
-{
-   const char *category;
-   const char *file;
 };
 
 struct _E_Config_Binding_Mouse
