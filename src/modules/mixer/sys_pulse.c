@@ -36,6 +36,7 @@ _pulse_started(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Exe_Event_Add
      update_timer = ecore_timer_add(2.0, _pulse_start, NULL);
    pa_started = EINA_TRUE;
    pulse_inst = NULL;
+   E_FREE_LIST(handlers, ecore_event_handler_del);
    return ECORE_CALLBACK_DONE;
 }
 
