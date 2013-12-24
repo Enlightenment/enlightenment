@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-11-29 19:31+0900\n"
-"PO-Revision-Date: 2013-06-23 23:01+0000\n"
+"PO-Revision-Date: 2013-12-22 11:15+0100\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <српски <xfce-i18n@xfce.org>>\n"
 "Language: sr\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
 "%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Launchpad-Export-Date: 2013-06-25 05:14+0000\n"
-"X-Generator: Launchpad (build 16677)\n"
+"X-Generator: Poedit 1.5.4\n"
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
@@ -3664,7 +3664,7 @@ msgid "Module does not contain all needed functions"
 msgstr "Јединица не садржи све потребне функције"
 
 #: src/bin/e_module.c:355
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Module API Error<br>Error initializing Module: %s<br>It requires a module "
 "API version of: %i.<br>The module API advertized by Enlightenment is: %i.<br>"
@@ -5059,14 +5059,12 @@ msgid "Mute"
 msgstr "Утишај"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:397
-#, fuzzy
 msgid "Volume"
-msgstr "Појачај"
+msgstr "Глсноћа"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:399
-#, fuzzy
 msgid "Brightness"
-msgstr "Повећај осветљење"
+msgstr "Осветљење"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:401
 msgid "Volume Down"
@@ -5097,19 +5095,16 @@ msgid "Battery Button"
 msgstr "Дугме батерије"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:416
-#, fuzzy
 msgid "Tablet Disabled"
-msgstr "Дугме провере је онемогућено"
+msgstr "Таблица је искључена"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:417
-#, fuzzy
 msgid "Tablet Enabled"
 msgstr "Таблица је укључена"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:418
-#, fuzzy
 msgid "Tablet"
-msgstr "Таблица је укључена"
+msgstr "Таблица"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:488
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:4
@@ -8078,27 +8073,22 @@ msgstr ""
 "%s<br>"
 
 #: src/modules/cpufreq/e_mod_main.c:1383
-#, fuzzy
 msgid "CPU Frequency"
-msgstr "Важност"
+msgstr "Учесталост процесора"
 
 #: src/modules/cpufreq/e_mod_config.c:38
-#, fuzzy
 msgid "Cpu Frequency Control Settings"
-msgstr "Поставке управљања музиком"
+msgstr "Поставке управљања учесталошћу процесора"
 
 #: src/modules/cpufreq/e_mod_config.c:91
-#, fuzzy
 msgid "Update poll interval"
-msgstr "Време пражњења прихватне меморије"
+msgstr "Време освежавања"
 
 #: src/modules/cpufreq/e_mod_config.c:107
-#, fuzzy
 msgid "Minimum Power State"
 msgstr "Најнижи учинак"
 
 #: src/modules/cpufreq/e_mod_config.c:113
-#, fuzzy
 msgid "Maximum Power State"
 msgstr "Најнижи учинак"
 
