@@ -1875,12 +1875,11 @@ _e_main_cb_idle_before(void *data __UNUSED__)
 static Eina_Bool
 _e_main_cb_idle_after(void *data __UNUSED__)
 {
-   static int first_idle;
+   static int first_idle = 1;
 
    edje_freeze();
 
 #ifdef E18_RELEASE_BUILD
-   first_idle = 1;
    if (first_idle)
      {
         TS("SLEEP");
