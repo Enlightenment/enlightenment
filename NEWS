@@ -1,3 +1,8 @@
+Changes since 0.18.1:
+---------------------
+
+* fixed infinite printing of SLEEP
+
 Changes since 0.18.0:
 ---------------------
 
