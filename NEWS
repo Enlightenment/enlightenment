@@ -3,6 +3,8 @@ Changes since 0.18.1:
 
 * fixed infinite printing of SLEEP
 * fixed suffix checking for screenshot filenames
+* fixed theme importing
+* updates for Serbian and Portuguese translations
 
 Changes since 0.18.0:
 ---------------------
