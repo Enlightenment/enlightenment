@@ -327,19 +327,16 @@ void
 e_int_config_theme_update(E_Config_Dialog *dia, char *file)
 {
    E_Config_Dialog_Data *cfdata;
-   char path[4096];
 
    cfdata = dia->cfdata;
 
    cfdata->fmdir = 1;
    e_widget_radio_toggle_set(cfdata->o_personal, 1);
 
-   e_user_homedir_concat_static(path, "themes");
-   eina_stringshare_del(cfdata->theme);
-   cfdata->theme = eina_stringshare_add(file);
+   eina_stringshare_replace(&cfdata->theme, file);
 
    if (cfdata->o_fm)
-     e_widget_flist_path_set(cfdata->o_fm, path, "/");
+     e_widget_flist_path_set(cfdata->o_fm, elm_theme_user_dir_get(), "/");
 
    if (cfdata->o_preview)
      _e_int_theme_preview_set(cfdata->o_preview, cfdata->theme);
