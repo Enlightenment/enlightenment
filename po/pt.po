@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2013-11-29 19:31+0900\n"
-"PO-Revision-Date: 2013-11-20 14:46-0000\n"
+"PO-Revision-Date: 2013-12-26 16:05-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: Portuguese\n"
 "Language: pt\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Launchpad-Export-Date: 2013-05-02 10:08+0000\n"
-"X-Generator: Poedit 1.6beta2\n"
+"X-Generator: Poedit 1.6.3\n"
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
@@ -819,6 +819,9 @@ msgid ""
 "compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
 "engine."
 msgstr ""
+"O controlador gráfico não tem suporte a OpenGL ou<br>não existem mecanismos "
+"OpenGL compilados/instalados para<br>Evas ou Ecore-Evas. Será utilizado o "
+"mecanismo pré-definido."
 
 #: src/bin/e_comp.c:4280 src/bin/e_comp.c:4302
 msgid "Compositor Error"
@@ -826,13 +829,15 @@ msgstr "Erro de composição"
 
 #: src/bin/e_comp.c:4280
 msgid "Another compositor is already running<br>on your display server."
-msgstr ""
+msgstr "Já existe um mecanismo de composição<br>em execução."
 
 #: src/bin/e_comp.c:4302
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
 msgstr ""
+"O servidor de ecrã não possui suporte à<br>janela de cobertura. Esta função "
+"requer<br>este suporte."
 
 #: src/bin/e_comp.c:4689
 msgid ""
@@ -840,12 +845,18 @@ msgid ""
 "without XComposite support. Note that for composite support you will also "
 "need XRender and XFixes support in X11 and Ecore."
 msgstr ""
+"O seu servidor de ecrã não tem suporte a XComposite ou o Ecore-X foi "
+"compilado sem suporte a XComposite. Tenha em atenção que, para ativar a "
+"composição, também precisa de suporte a XRender e XFixes nos pacote X11 e "
+"Ecore."
 
 #: src/bin/e_comp.c:4698
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr ""
+"O seu servidor de ecrã não tem suporte a XDamage ou o Ecore foi compilado "
+"sem suporte a XDamage."
 
 #: src/bin/e_comp.c:4781 src/bin/e_comp.c:4787
 msgid "Compositor"
@@ -897,9 +908,9 @@ msgid ""
 "<br>As a result, all bindings have been reloaded from defaults.<br>Sorry for "
 "the inconvenience.<br>"
 msgstr ""
-"A versão das suas definições de associação não coincidem com as atuais "
-"versões<br>Todas as associações foram repostas para as originais."
-"<br>Desculpe qualquer inconveniente.<br>"
+"A versão das definições de associação não coincidem com as atuais versões."
+"<br>Todas as associações foram repostas para as originais.<br>Desculpe "
+"qualquer inconveniente.<br>"
 
 #: src/bin/e_config.c:1694 src/bin/e_config.c:2355
 msgid "Enlightenment Settings Write Problems"
@@ -1600,7 +1611,7 @@ msgstr "Lista"
 
 #: src/bin/e_fm.c:9573 src/modules/everything/evry_config.c:458
 msgid "Default View"
-msgstr "Visualização padrão"
+msgstr "Vista pré-definida"
 
 #: src/bin/e_fm.c:9594
 #, c-format
@@ -1684,11 +1695,11 @@ msgstr "Remover imagem de fundo"
 
 #: src/bin/e_fm.c:10011 src/bin/e_fm.c:10240
 msgid "Set overlay..."
-msgstr "Definir sobreposição"
+msgstr "Definir cobertura..."
 
 #: src/bin/e_fm.c:10017
 msgid "Clear overlay"
-msgstr "Remover sobreposição"
+msgstr "Remover cobertura"
 
 #: src/bin/e_fm.c:10334 src/bin/e_fm.c:10676
 #, c-format
@@ -1886,7 +1897,7 @@ msgstr "Pré-visualização"
 #: src/bin/e_fm_prop.c:527 src/modules/bluez4/e_mod_main.c:198
 #: src/modules/everything/evry_config.c:426
 msgid "Default"
-msgstr "Padrão"
+msgstr "Pré-definido"
 
 #: src/bin/e_fm_prop.c:530
 msgid "Thumbnail"
@@ -2308,7 +2319,7 @@ msgstr "Escolha o tipo de contorno"
 
 #: src/bin/e_int_border_menu.c:1224
 msgid "Use Enlightenment Default Icon Preference"
-msgstr "Utilizar ícones do Enlightenment"
+msgstr "Utilizar ícones pré-definidos do Enlightenment"
 
 #: src/bin/e_int_border_menu.c:1232
 msgid "Use Application Provided Icon"
@@ -2972,7 +2983,7 @@ msgstr "%.2f segundos"
 
 #: src/bin/e_int_shelf_config.c:273
 msgid "Don't adjust windows when overlapping the shelf"
-msgstr "Não ajustar janelas ao sobrepor o painel"
+msgstr "Não ajustar as janelas ao cobrir o painel"
 
 #: src/bin/e_int_shelf_config.c:278
 msgid "Auto Hide"
@@ -3652,7 +3663,7 @@ msgid "Module does not contain all needed functions"
 msgstr "O módulo não contém as funções necessárias"
 
 #: src/bin/e_module.c:355
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Module API Error<br>Error initializing Module: %s<br>It requires a module "
 "API version of: %i.<br>The module API advertized by Enlightenment is: %i.<br>"
@@ -4028,6 +4039,9 @@ msgid ""
 "latest version is:<br><br>%s<br><br>Please visit www.enlightenment.org<br>or "
 "update your system packages<br>to get a new version."
 msgstr ""
+"A sua versão do Enlightenment<br>não é a versão mais recente.<br>A versão "
+"mais recente é a:<br><br>%s<br><br>Por favor aceda a www.enlightenment."
+"org<br>ou atualize os pacotes do sistema<br>para obter a nova versão."
 
 #: src/bin/e_utils.c:185 src/modules/conf_intl/e_int_config_imc.c:262
 #: src/modules/conf_intl/e_int_config_imc.c:511
@@ -4533,36 +4547,39 @@ msgstr "Recusar"
 
 #: src/modules/bluez4/agent.c:133
 msgid "Pin Code Requested"
-msgstr ""
+msgstr "Pedido de código PIN"
 
 #: src/modules/bluez4/agent.c:134
 msgid ""
 "Enter the PinCode above. It should have 1-16 characters and can be "
 "alphanumeric."
 msgstr ""
+"Introduza o código PIN em cima. Deve ser alfanumérico e possuir entre 1 e 16 "
+"caracteres."
 
 #: src/modules/bluez4/agent.c:145
 msgid "Passkey Requested"
-msgstr ""
+msgstr "Pedido de chave-mestra"
 
 #: src/modules/bluez4/agent.c:146
 msgid "Enter the Passkey above. It should be a numeric value between 0-999999."
 msgstr ""
+"Introduza a chave-mestra em cima. Deve ser um valor numérico e estar entre 0 "
+"e 999999."
 
 #: src/modules/bluez4/agent.c:163
 #, c-format
 msgid "%d keys were typed on %s. Passkey is %06d"
-msgstr ""
+msgstr "%d chaves introduzidas em %s. A chave-mestra é %06d"
 
 #: src/modules/bluez4/agent.c:165
-#, fuzzy
 msgid "Display Passkey"
-msgstr "Mostrar classe"
+msgstr "Mostrar chave-mestra"
 
 #: src/modules/bluez4/agent.c:178
 #, c-format
 msgid "Pincode for %s is %s"
-msgstr "O PIN para %s é %s"
+msgstr "O PIN de %s é %s"
 
 #: src/modules/bluez4/agent.c:179
 msgid "Display Pincode"
@@ -4571,7 +4588,7 @@ msgstr "Mostrar código PIN"
 #: src/modules/bluez4/agent.c:193
 #, c-format
 msgid "%06d is the passkey presented in %s?"
-msgstr ""
+msgstr "%06d é a chave-mestra existente em %s?"
 
 #: src/modules/bluez4/agent.c:196
 msgid "Confirm Request"
@@ -4603,7 +4620,7 @@ msgstr "Erro Bluez"
 
 #: src/modules/bluez4/e_mod_main.c:119
 msgid "Searching for Devices..."
-msgstr ""
+msgstr "Procura de dispositivos..."
 
 #: src/modules/bluez4/e_mod_main.c:190 src/modules/bluez4/e_mod_main.c:461
 msgid "Adapter Settings"
@@ -4618,9 +4635,8 @@ msgid "Visible"
 msgstr "Visível"
 
 #: src/modules/bluez4/e_mod_main.c:217
-#, fuzzy
 msgid "Pairable"
-msgstr "Disponível"
+msgstr "Emparelhável"
 
 #: src/modules/bluez4/e_mod_main.c:264
 msgid "Adapters Available"
@@ -4665,7 +4681,7 @@ msgstr "Ocorreu um erro"
 #: src/modules/bluez4/ebluez4.c:218 src/modules/bluez4/ebluez4.c:460
 #, c-format
 msgid "Property of %s changed, but could not be read"
-msgstr ""
+msgstr "A propriedade de %s foi alterada mas pôde ser lida"
 
 #: src/modules/bluez4/ebluez4.c:435
 msgid "Error reading list of devices"
@@ -4677,15 +4693,15 @@ msgstr "Erro ao ler a lista de adaptadores"
 
 #: src/modules/bluez4/ebluez4.c:616
 msgid "Error reading path of Default Adapter"
-msgstr ""
+msgstr "Erro ao ler o caminho do adaptador pré-definido"
 
 #: src/modules/bluez4/ebluez4.c:676
 msgid "Error reading path of Removed Adapter"
-msgstr ""
+msgstr "Erro ao ler o caminho do adaptador removido"
 
 #: src/modules/bluez4/ebluez4.c:692
 msgid "Error reading path of Added Adapter"
-msgstr ""
+msgstr "Erro ao ler o caminho do adaptador adicionado"
 
 #: src/modules/clock/e_mod_config.c:36
 msgid "Clock Settings"
@@ -4772,11 +4788,9 @@ msgid "Show configurations in menu"
 msgstr "Mostrar configurações no menu"
 
 #: src/modules/conf/e_mod_main.c:270
-#, fuzzy
 msgid "conf module cannot be loaded when conf2 module is already loaded!"
 msgstr ""
-"O módulo de composição não pode ser carregado. O Enlightenment já possui "
-"composição."
+"O módulo conf não pode ser carregado se o módulo conf2 estiver carregado!"
 
 #: src/modules/conf/e_mod_main.c:278 src/modules/conf/e_mod_main.c:282
 #: src/modules/conf/e_mod_main.c:458
@@ -4835,7 +4849,7 @@ msgstr "Lançadores de aplicações"
 #: src/modules/conf_applications/e_int_config_defapps.c:304
 #: src/modules/conf_applications/e_mod_main.c:53
 msgid "Default Applications"
-msgstr "Aplicações padrão"
+msgstr "Aplicações pré-definidas"
 
 #: src/modules/conf_applications/e_int_config_defapps.c:297
 msgid "Custom Browser Command"
@@ -5139,7 +5153,7 @@ msgstr "Eliminar tudo"
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:306
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:784
 msgid "Restore Default Bindings"
-msgstr "Restaurar associações padrão"
+msgstr "Restaurar associações originais"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:293
 msgid "Mouse Button"
@@ -5443,7 +5457,7 @@ msgstr "Editar ocorrências de janelas"
 #: src/modules/conf_comp/e_mod_config.c:193
 #: src/modules/conf_comp/e_mod_config.c:572
 msgid "Select default style"
-msgstr "Escolha o estilo padrão"
+msgstr "Escolha o estilo pré-definido"
 
 #: src/modules/conf_comp/e_mod_config.c:199
 msgid "Styles"
@@ -5524,9 +5538,8 @@ msgstr "Não compor janelas em ecrã completo"
 
 #: src/modules/conf_comp/e_mod_config.c:255
 #: src/modules/conf_comp/e_mod_config.c:554
-#, fuzzy
 msgid "Don't fade backlight"
-msgstr "Não ocultar gadgets"
+msgstr "Não desvanecer iluminação"
 
 #: src/modules/conf_comp/e_mod_config.c:259
 #: src/modules/conf_comp/e_mod_config.c:598
@@ -6244,8 +6257,8 @@ msgid ""
 msgstr ""
 "Definiu algumas variáveis de ambiente<br>que podem interferir com o idioma "
 "escolhido.<br>Se não as quiser afetar, utilize as<br>definições das "
-"variáveis de ambiente para <br>não as utilizar. <br>As variáveis de ambiente "
-"que podem afetar o seu idioma são:<br>%s."
+"variáveis de ambiente para <br>as desativar.  As variáveis de ambiente que "
+"podem<br>afetar o seu idioma são:<br>%s."
 
 #: src/modules/conf_intl/e_int_config_intl.c:966
 msgid "Possible Locale problems"
@@ -6284,11 +6297,11 @@ msgstr "Definições do menu"
 
 #: src/modules/conf_menus/e_int_config_menus.c:175
 msgid "Enlightenment Default"
-msgstr "Padrões do Enlightenment"
+msgstr "Pré-definições do Enlightenment"
 
 #: src/modules/conf_menus/e_int_config_menus.c:183
 msgid "Personal Default"
-msgstr "Padrões do utilizador"
+msgstr "Pré-definições do utilizador"
 
 #: src/modules/conf_menus/e_int_config_menus.c:258
 msgid "Main Menu"
@@ -6437,7 +6450,7 @@ msgstr "Caminhos Enlightenment"
 
 #: src/modules/conf_paths/e_int_config_paths.c:195
 msgid "Default Directories"
-msgstr "Diretórios padrão"
+msgstr "Diretórios pré-definidos"
 
 #: src/modules/conf_paths/e_int_config_paths.c:202
 msgid "User Defined Directories"
@@ -7066,7 +7079,7 @@ msgstr "Ativar classes personalizadas de letras"
 #: src/modules/conf_theme/e_int_config_fonts.c:449
 #: src/modules/conf_theme/e_int_config_fonts.c:669
 msgid "English 012 #!? 日本語 にほんご ソフト 中文 華語 한국"
-msgstr "Português 012 #!? 日本語 にほんご ソフト 中文 華語 한국"
+msgstr "Português 012 #!? ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:628
 msgid "Font Classes"
@@ -7566,7 +7579,7 @@ msgstr "Ao mover"
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:139
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:150
 msgid "Display information"
-msgstr "Exibir informações"
+msgstr "Mostrar informações"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:142
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:153
@@ -7978,13 +7991,12 @@ msgid "Powersaving behavior"
 msgstr "Comportamento da poupança de energia"
 
 #: src/modules/cpufreq/e_mod_main.c:409
-#, fuzzy
 msgid "Power State Min"
-msgstr "Botão de energia"
+msgstr "Estado mín. de energia"
 
 #: src/modules/cpufreq/e_mod_main.c:415
 msgid "Power State Max"
-msgstr ""
+msgstr "Estado máx. de energia"
 
 #: src/modules/cpufreq/e_mod_main.c:508
 msgid ""
@@ -8013,12 +8025,11 @@ msgstr ""
 "do<br>utilitário setfreq."
 
 #: src/modules/cpufreq/e_mod_main.c:592
-#, fuzzy
 msgid ""
 "There was an error trying to set the<br>cpu power state setting via the "
 "module's<br>setfreq utility."
 msgstr ""
-"Ocorreu um erro ao tentar definir a<br>frequência do cpu através "
+"Ocorreu um erro ao tentar definir a<br>estado de energia do cpu através "
 "do<br>utilitário setfreq."
 
 #: src/modules/cpufreq/e_mod_main.c:1335
@@ -8061,14 +8072,12 @@ msgid "Update poll interval"
 msgstr "Intervalo entre atualizações"
 
 #: src/modules/cpufreq/e_mod_config.c:107
-#, fuzzy
 msgid "Minimum Power State"
-msgstr "Botão de energia"
+msgstr "Estado mínimo de energia"
 
 #: src/modules/cpufreq/e_mod_config.c:113
-#, fuzzy
 msgid "Maximum Power State"
-msgstr "Botão de energia"
+msgstr "Estado máximo de energia"
 
 #: src/modules/everything/e_mod_main.c:49
 #: src/modules/everything/evry_plugin.c:179
@@ -8807,9 +8816,8 @@ msgid "Background"
 msgstr "Imagem de fundo"
 
 #: src/modules/gadman/e_mod_config.c:22
-#, fuzzy
 msgid "Overlay (Action Toggle)"
-msgstr "Invisível (trocar com teclas)"
+msgstr "Cobertura (Troca de ação)"
 
 #: src/modules/gadman/e_mod_config.c:79 src/modules/gadman/e_mod_config.c:156
 #: src/modules/gadman/e_mod_main.c:163
@@ -8850,9 +8858,8 @@ msgid "Background Options"
 msgstr "Opções de fundo"
 
 #: src/modules/gadman/e_mod_gadman.c:127
-#, fuzzy
 msgid "Desktop Overlay"
-msgstr "Ficheiro .desktop"
+msgstr "Cobertura da área de trabalho"
 
 #: src/modules/gadman/e_mod_gadman.c:1066
 msgid "Begin move/resize"
@@ -8904,11 +8911,11 @@ msgstr "Bloquear movimentação de ícones"
 
 #: src/modules/ibar/e_mod_config.c:149
 msgid "Don't add items on launch"
-msgstr ""
+msgstr "Não adicionar itens ao arrancar"
 
 #: src/modules/ibar/e_mod_config.c:151
 msgid "Track launch"
-msgstr "Acompanhar aplicações"
+msgstr "Acompanhar arranque"
 
 #: src/modules/ibar/e_mod_config.c:184
 msgid "Create new IBar source"
@@ -9145,7 +9152,7 @@ msgstr "Urgência"
 
 #: src/modules/notification/e_mod_config.c:100
 msgid "Levels of urgency to display:"
-msgstr "Níveis de urgência a exibir:"
+msgstr "Níveis de urgência a mostrar:"
 
 #: src/modules/notification/e_mod_config.c:106
 msgid "Critical"
@@ -9153,7 +9160,7 @@ msgstr "Crítica"
 
 #: src/modules/notification/e_mod_config.c:110
 msgid "Default Timeout"
-msgstr "Duração"
+msgstr "Duração pré-definida"
 
 #: src/modules/notification/e_mod_config.c:111
 msgid "Force timeout for all notifications"
@@ -9918,7 +9925,7 @@ msgstr "Ação predefinida após o tempo limite"
 
 #: src/modules/syscon/e_int_config_syscon.c:172
 msgid "Default Action"
-msgstr "Ações"
+msgstr "Ação pré-definida"
 
 #: src/modules/syscon/e_mod_main.c:31
 msgid "System Controls"
@@ -9979,11 +9986,11 @@ msgstr "Tarefas"
 
 #: src/modules/teamwork/e_mod_config.c:80
 msgid "Disable remote media fetching"
-msgstr "Desativar obtenção de multimédia remota"
+msgstr "Desativar obtenção de dados remotos"
 
 #: src/modules/teamwork/e_mod_config.c:83
 msgid "Maximum media size to fetch"
-msgstr ""
+msgstr "Tamanho máximo de dados a obter"
 
 #: src/modules/teamwork/e_mod_config.c:85
 #, c-format
@@ -9992,7 +9999,7 @@ msgstr "%2.0f MiB"
 
 #: src/modules/teamwork/e_mod_config.c:88
 msgid "Maximum media cache size in RAM"
-msgstr ""
+msgstr "Tamanho máximo de dados em RAM"
 
 #: src/modules/teamwork/e_mod_config.c:90
 #, c-format
@@ -10001,7 +10008,7 @@ msgstr "%4.0f MiB"
 
 #: src/modules/teamwork/e_mod_config.c:92
 msgid "Maximum media cache age on disk"
-msgstr ""
+msgstr "Antiguidade máxima de dados em cache"
 
 #: src/modules/teamwork/e_mod_config.c:94
 #, c-format
@@ -10013,37 +10020,33 @@ msgid "Cache"
 msgstr "Cache"
 
 #: src/modules/teamwork/e_mod_config.c:103
-#, fuzzy
 msgid "Disable video previews"
-msgstr "Pré-visualização"
+msgstr "Desativar pré-visualização de vídeos"
 
 #: src/modules/teamwork/e_mod_config.c:106
-#, fuzzy
 msgid "Mouse-out hide delay"
-msgstr "Rodas do rato"
+msgstr "Atraso para ocultar o rato ao sair"
 
 #: src/modules/teamwork/e_mod_config.c:110
 msgid "Maximum size (Percentage of screens size)"
-msgstr ""
+msgstr "Tamanho máximo (em percentagem do tamanho dos ecrãs)"
 
 #: src/modules/teamwork/e_mod_config.c:119
 msgid "Popups"
 msgstr "Alertas"
 
 #: src/modules/teamwork/e_mod_config.c:169
-#, fuzzy
 msgid "Teamwork Settings"
-msgstr "Definições da área de trabalho"
+msgstr "Definições Teamwork"
 
 #: src/modules/teamwork/e_mod_main.c:14 src/modules/teamwork/e_mod_main.c:120
 #: src/modules/teamwork/e_mod_main.c:130
 msgid "Teamwork"
-msgstr ""
+msgstr "Teamwork"
 
 #: src/modules/teamwork/e_mod_main.c:15
-#, fuzzy
 msgid "Toggle Popup Visibility"
-msgstr "Alternar visibilidade"
+msgstr "Alternar visibilidade do alerta"
 
 #: src/modules/temperature/e_mod_config.c:56
 msgid "Temperature Settings"
@@ -10244,7 +10247,7 @@ msgstr "Ir para a área de trabalho"
 
 #: src/modules/winlist/e_int_config_winlist.c:225
 msgid "Move to current desk after switch"
-msgstr ""
+msgstr "Mover para a área de trabalho atual ao trocar"
 
 #: src/modules/winlist/e_int_config_winlist.c:229
 msgid "Selecting"
