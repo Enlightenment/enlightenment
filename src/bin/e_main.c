@@ -646,11 +646,7 @@ main(int argc, char **argv)
         _e_main_shutdown_push(e_init_shutdown);
      }
    if (!((!e_config->show_splash) || (after_restart)))
-     {
-        e_init_title_set(_("Enlightenment"));
-        e_init_version_set(VERSION);
-        e_init_show();
-     }
+     e_init_show();
 
    if (!really_know)
      {

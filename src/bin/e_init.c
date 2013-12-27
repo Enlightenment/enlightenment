@@ -93,6 +93,8 @@ e_init_show(void)
    edje_object_signal_callback_add(_e_init_object, "e,state,done_ok", "e",
                                    _e_init_cb_signal_done_ok, NULL);
    _e_init_timeout_timer = ecore_timer_add(240.0, _e_init_cb_timeout, NULL);
+   e_init_title_set(_("Enlightenment"));
+   e_init_version_set(VERSION);
 }
 
 EAPI void
