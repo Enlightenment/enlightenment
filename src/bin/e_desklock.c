@@ -176,7 +176,7 @@ e_desklock_show(Eina_Bool suspend)
    E_Desklock_Show_Cb show_cb;
    E_Desklock_Hide_Cb hide_cb;
 
-   if (_e_custom_desklock_exe) return 0;
+   if (_e_desklock_state || _e_custom_desklock_exe) return 0;
 
    if (e_desklock_is_external() && e_config->desklock_custom_desklock_cmd && e_config->desklock_custom_desklock_cmd[0])
      {
