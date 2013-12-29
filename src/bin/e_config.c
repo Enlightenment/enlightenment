@@ -610,6 +610,7 @@ _e_config_edd_init(Eina_Bool old)
 
    E_CONFIG_VAL(D, T, border_raise_on_mouse_action, INT);
    E_CONFIG_VAL(D, T, border_raise_on_focus, INT);
+   E_CONFIG_VAL(D, T, raise_on_revert_focus, INT);
    E_CONFIG_VAL(D, T, desk_flip_wrap, INT);
    E_CONFIG_VAL(D, T, fullscreen_flip, INT);
    E_CONFIG_VAL(D, T, multiscreen_flip, INT);
@@ -1403,6 +1404,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->desklock_ask_presentation_timeout, 1.0, 300.0);
    E_CONFIG_LIMIT(e_config->border_raise_on_mouse_action, 0, 1);
    E_CONFIG_LIMIT(e_config->border_raise_on_focus, 0, 1);
+   E_CONFIG_LIMIT(e_config->raise_on_revert_focus, 0, 1);
    E_CONFIG_LIMIT(e_config->desk_flip_wrap, 0, 1);
    E_CONFIG_LIMIT(e_config->fullscreen_flip, 0, 1);
    E_CONFIG_LIMIT(e_config->icon_theme_overrides, 0, 1);

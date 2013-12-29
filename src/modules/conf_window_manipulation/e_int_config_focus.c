@@ -31,6 +31,7 @@ struct _E_Config_Dialog_Data
    double pointer_warp_speed;
    double auto_raise_delay;
    int    border_raise_on_mouse_action;
+   int    raise_on_revert_focus;
 };
 
 /* a nice easy setup function that does the dirty work */
@@ -84,6 +85,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->auto_raise_delay = e_config->auto_raise_delay;
    cfdata->border_raise_on_mouse_action =
      e_config->border_raise_on_mouse_action;
+   cfdata->raise_on_revert_focus = e_config->raise_on_revert_focus;
 }
 
 static void *
@@ -186,6 +188,7 @@ _advanced_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    e_config->use_auto_raise = cfdata->use_auto_raise;
    e_config->auto_raise_delay = cfdata->auto_raise_delay;
    e_config->border_raise_on_mouse_action = cfdata->border_raise_on_mouse_action;
+   e_config->raise_on_revert_focus = cfdata->raise_on_revert_focus;
    e_comp_button_bindings_grab_all();
    e_config_save_queue();
    return 1; /* Apply was OK */
@@ -207,7 +210,8 @@ _advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *c
           (fabs(e_config->pointer_warp_speed - cfdata->pointer_warp_speed) < DBL_EPSILON) ||
           (e_config->use_auto_raise != cfdata->use_auto_raise) ||
           (e_config->auto_raise_delay != cfdata->auto_raise_delay) ||
-          (e_config->border_raise_on_mouse_action != cfdata->border_raise_on_mouse_action);
+          (e_config->border_raise_on_mouse_action != cfdata->border_raise_on_mouse_action) ||
+          (e_config->raise_on_revert_focus != cfdata->raise_on_revert_focus);
 }
 
 /**--GUI--**/
@@ -290,6 +294,9 @@ _advanced_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Da
    e_widget_framelist_content_align_set(of, 0.0, 0.0);
    ob = e_widget_check_add(evas, _("Raise when starting to move or resize"),
                            &(cfdata->border_raise_on_mouse_action));
+   e_widget_framelist_object_append(of, ob);
+   ob = e_widget_check_add(evas, _("Raise when reverting focus"),
+                           &(cfdata->raise_on_revert_focus));
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Stacking"), ol,

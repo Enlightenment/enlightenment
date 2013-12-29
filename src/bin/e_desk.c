@@ -401,6 +401,8 @@ e_desk_last_focused_focus(E_Desk *desk)
                        continue;
                     }
                   e_client_focus_set_with_pointer(ec);
+                  if (e_config->raise_on_revert_focus)
+                    evas_object_raise(ec->frame);
                   return ec;
                }
           }
@@ -408,6 +410,8 @@ e_desk_last_focused_focus(E_Desk *desk)
    if (ecs)
      {
         e_client_focus_set_with_pointer(ecs);
+        if (e_config->raise_on_revert_focus)
+          evas_object_raise(ecs->frame);
         return ecs;
      }
    if (e_client_focused_get())
@@ -699,6 +703,8 @@ e_desk_flip_end(E_Desk *desk)
               if (!e_client_util_desk_visible(ec, desk)) continue;
               if (ec->iconic) continue;
               evas_object_focus_set(ec->frame, 1);
+              if (e_config->raise_on_revert_focus)
+                evas_object_raise(ec->frame);
               return;
            }
      }

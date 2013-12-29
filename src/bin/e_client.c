@@ -354,7 +354,11 @@ _e_client_revert_focus(E_Client *ec)
 
    if ((ec->parent) &&
        (ec->parent->desk == desk) && (ec->parent->modal == ec))
-     evas_object_focus_set(ec->parent->frame, 1);
+     {
+        evas_object_focus_set(ec->parent->frame, 1);
+        if (e_config->raise_on_revert_focus)
+          evas_object_raise(ec->parent->frame);
+     }
    else if (e_config->focus_revert_on_hide_or_close)
      {
         Eina_Bool unlock = ec->lock_focus_out;
@@ -367,6 +371,7 @@ _e_client_revert_focus(E_Client *ec)
         pec = e_client_under_pointer_get(desk, ec);
         if (pec)
           evas_object_focus_set(pec->frame, 1);
+        /* no autoraise/revert here because it's probably annoying */
      }
 }
 

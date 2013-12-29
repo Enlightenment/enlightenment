@@ -55,6 +55,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
         e_config->pass_click_on = 1;
         e_config->always_click_to_raise = 1;
         e_config->always_click_to_focus = 1;
+        e_config->raise_on_revert_focus = 1;
         e_config->focus_last_focused_per_desktop = 1;
         e_config->pointer_slide = 0;
         e_config->disable_all_pointer_warps = 1;
