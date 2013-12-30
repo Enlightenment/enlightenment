@@ -51,7 +51,7 @@ static Media_Cache_List *tw_cache_list[2] = {NULL};
 
 static Evas_Point last_coords = {0};
 
-static Ecore_Window tw_win = 0;
+static uint64_t tw_win = 0;
 
 static Ecore_Timer *tw_hide_timer = NULL;
 
@@ -442,9 +442,9 @@ dbus_link_mouse_in_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const E
 {
    const char *uri;
    unsigned int t;
-   int64_t win;
+   uint64_t win;
 
-   if (eldbus_message_arguments_get(msg, "suxii", &uri, &t, &win, &last_coords.x, &last_coords.y))
+   if (eldbus_message_arguments_get(msg, "sutii", &uri, &t, &win, &last_coords.x, &last_coords.y))
      {
         tw_win = win;
         dbus_link_show_helper(uri, 0);
@@ -458,9 +458,9 @@ dbus_link_mouse_out_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const 
 {
    const char *uri;
    unsigned int t;
-   int64_t win;
+   uint64_t win;
 
-   if (eldbus_message_arguments_get(msg, "suxii", &uri, &t, &win, &last_coords.x, &last_coords.y))
+   if (eldbus_message_arguments_get(msg, "sutii", &uri, &t, &win, &last_coords.x, &last_coords.y))
      {
         if (tw_mod->pop && (!tw_mod->sticky) &&
             ((tw_tmpfile && (!e_util_strcmp(evas_object_data_get(tw_mod->pop, "uri"), tw_tmpfile))) ||
@@ -504,8 +504,8 @@ dbus_link_open_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
 
 static const Eldbus_Method tw_methods[] = {
    { "LinkDetect", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}), NULL, dbus_link_detect_cb },
-   { "LinkMouseIn", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"x", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_in_cb },
-   { "LinkMouseOut", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"x", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_out_cb },
+   { "LinkMouseIn", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"t", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_in_cb },
+   { "LinkMouseOut", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"t", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_out_cb },
    { "LinkShow", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_show_cb },
    { "LinkHide", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_hide_cb },
    { "LinkOpen", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_open_cb },
@@ -806,7 +806,7 @@ tw_show_helper(Evas_Object *o, int w, int h)
           py = zone->h - ph;
         evas_object_move(tw_mod->pop, px, py);
      }
-   else if (tw_win && (((ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, tw_win))) ||
+   else if (tw_win && (((ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, (Ecore_Window)tw_win))) ||
                        ((ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, tw_win)))))
      {
         int x, y;
