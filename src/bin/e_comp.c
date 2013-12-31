@@ -3991,9 +3991,13 @@ static void
 _e_comp_add_fail_job(void *d EINA_UNUSED)
 {
    e_util_dialog_internal
-     (_("Compositor Warning"), _("Your display driver does not support OpenGL, or<br>"
-       "no OpenGL engines were compiled or installed for<br>"
-       "Evas or Ecore-Evas. Falling back to software engine."));
+     (_("Compositor Warning"),
+      _("Your display driver does not support OpenGL, GLSL<br>"
+        "shaders or no OpenGL engines were compiled or installed<br>"
+        "for Evas or Ecore-Evas. Falling back to software engine.<br>"
+        "<br>"
+        "You will need an OpenGL 2.0 (or OpenGL ES 2.0) capable<br>"
+        "GPU to use OpenGL with compositing."));
 }
 
 static E_Comp *
