@@ -10,14 +10,16 @@ struct _E_Widget_Data
 typedef struct _E_Widget_Desk_Data E_Widget_Desk_Data;
 struct _E_Widget_Desk_Data
 {
-   Evas_Object         *icon, *thumb;
+   Evas_Object         *icon, *thumb, *live;
    int                  zone, manager, x, y;
    Ecore_Event_Handler *bg_upd_hdl;
+   Ecore_Job           *resize_job;
    Eina_Bool            configurable : 1;
 };
 
 /* local function prototypes */
 static void      _e_wid_data_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
+static void      _e_wid_livethumb_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj EINA_UNUSED, void *event_info __UNUSED__);
 static void      _e_wid_del_hook(Evas_Object *obj);
 static void      _e_wid_reconfigure(E_Widget_Data *wd);
 static void      _e_wid_desk_cb_config(void *data, Evas *evas, Evas_Object *obj, void *event);
@@ -77,18 +79,22 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
    dd->x = x;
    dd->y = y;
 
-   dd->thumb = e_icon_add(e);
-   e_icon_fill_inside_set(dd->thumb, EINA_FALSE);
-   e_icon_file_edje_set(dd->thumb, bgfile, "e/desktop/background");
+   dd->live = e_livethumb_add(e);
+
+   dd->thumb = edje_object_add(e_livethumb_evas_get(dd->live));
+   edje_object_file_set(dd->thumb, bgfile, "e/desktop/background");
+   e_livethumb_thumb_set(dd->live, dd->thumb);
+   evas_object_show(dd->thumb);
    eina_stringshare_del(bgfile);
 
-   evas_object_data_set(dd->thumb, "desk_data", dd);
-   evas_object_event_callback_add(dd->thumb, EVAS_CALLBACK_FREE, _e_wid_data_del, dd);
+   evas_object_data_set(dd->live, "desk_data", dd);
+   evas_object_event_callback_add(dd->live, EVAS_CALLBACK_FREE, _e_wid_data_del, dd);
+   evas_object_event_callback_add(dd->live, EVAS_CALLBACK_RESIZE, _e_wid_livethumb_resize, dd);
 
    dd->bg_upd_hdl = ecore_event_handler_add(E_EVENT_BG_UPDATE,
                                             _e_wid_cb_bg_update, dd);
 
-   return dd->thumb;
+   return dd->live;
 }
 
 EAPI void
@@ -112,14 +118,40 @@ e_widget_bgpreview_desk_configurable_set(Evas_Object *obj, Eina_Bool enable)
 
 /* local function prototypes */
 static void
+_e_wid_livethumb_resize_job(void *data)
+{
+   E_Widget_Desk_Data *dd = data;
+   E_Zone *zone;
+   int w, h;
+
+   zone = e_comp_object_util_zone_get(dd->live);
+   if (!zone) zone = eina_list_data_get(e_comp_get(NULL)->zones);
+   evas_object_geometry_get(dd->live, NULL, NULL, &w, &h);
+   w *= ((float)w / (float)zone->w);
+   h *= ((float)h / (float)zone->h);
+   e_livethumb_vsize_set(dd->live, MAX(w, 64), MAX(h, 64));
+   dd->resize_job = NULL;
+}
+
+static void
+_e_wid_livethumb_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj EINA_UNUSED, void *event_info __UNUSED__)
+{
+   E_Widget_Desk_Data *dd = data;
+
+   if (!dd->resize_job)
+     dd->resize_job = ecore_job_add(_e_wid_livethumb_resize_job, dd);
+}
+
+static void
 _e_wid_data_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    E_Widget_Desk_Data *dd;
    dd = data;
    if (!dd) return;
    if (dd->bg_upd_hdl) ecore_event_handler_del(dd->bg_upd_hdl);
-   if (dd->thumb) evas_object_del(dd->thumb);
-   E_FREE(dd);
+   evas_object_del(dd->live);
+   ecore_job_del(dd->resize_job);
+   free(dd);
 }
 
 static void
@@ -180,7 +212,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
           }
         else
           {
-             evas_object_del(dd->thumb);
+             evas_object_del(dd->live);
              evas_object_del(dw);
              wd->desks = eina_list_remove(wd->desks, dw);
           }
@@ -205,7 +237,7 @@ _e_wid_reconfigure(E_Widget_Data *wd)
              e_theme_edje_object_set(dd->icon, "base/theme/widgets",
                                      "e/widgets/deskpreview/desk");
 
-             edje_object_part_swallow(dd->icon, "e.swallow.content", dd->thumb);
+             edje_object_part_swallow(dd->icon, "e.swallow.content", dd->live);
              dd->configurable = EINA_TRUE;
              evas_object_event_callback_add(dd->icon, EVAS_CALLBACK_MOUSE_DOWN,
                                             _e_wid_desk_cb_config, dd);
