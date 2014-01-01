@@ -284,6 +284,7 @@ _e_config_edd_init(Eina_Bool old)
 #undef D
 #define T E_Remember
 #define D e_remember_edd
+   E_CONFIG_VAL(D, T, version, UINT);
    E_CONFIG_VAL(D, T, match, INT);
    E_CONFIG_VAL(D, T, no_reopen, INT);
    E_CONFIG_VAL(D, T, apply_first_only, UCHAR);

@@ -8,6 +8,8 @@ typedef struct E_Event_Remember_Update
 } E_Event_Remember_Update;
 typedef struct _E_Remember E_Remember;
 
+#define E_REMEMBER_VERSION 1
+
 #define E_REMEMBER_MATCH_NAME             (1 << 0)
 #define E_REMEMBER_MATCH_CLASS            (1 << 1)
 #define E_REMEMBER_MATCH_TITLE            (1 << 2)
@@ -43,6 +45,7 @@ typedef struct _E_Remember E_Remember;
 
 struct _E_Remember
 {
+   unsigned int  version;
    int           match;
    int           no_reopen;
    unsigned char apply_first_only;

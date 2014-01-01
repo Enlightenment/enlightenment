@@ -4,7 +4,7 @@
 #define REMEMBER_SIMPLE    0
 
 EAPI int E_EVENT_REMEMBER_UPDATE = -1;
-EAPI E_Config_DD *e_remember_edd = NULL;
+EAPI E_Config_DD *e_remember_edd = NULL; //created in e_config.c
 
 typedef struct _E_Remember_List E_Remember_List;
 
@@ -223,6 +223,19 @@ EAPI void
 e_remember_use(E_Remember *rem)
 {
    rem->used_count++;
+   if (rem->version < E_REMEMBER_VERSION)
+     {
+        /* upgrade remembers as they get used */
+        switch (rem->version)
+          {
+           case 0:
+             rem->prop.opacity = 255; //don't let people wreck themselves with old configs
+           //fall through
+           default: break;
+          }
+        rem->version = E_REMEMBER_VERSION;
+        e_config_save_queue();
+     }
 }
 
 EAPI void
