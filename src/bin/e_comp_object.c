@@ -2117,7 +2117,6 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
         list = conf->match.popups;
         skip = conf->match.disable_popups;
         fast = conf->fast_popups;
-        shadow = EINA_TRUE;
         break;
       default:
         skip = EINA_TRUE;
