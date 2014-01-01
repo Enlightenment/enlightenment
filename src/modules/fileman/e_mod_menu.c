@@ -1,5 +1,4 @@
-#include "e_mod_main.h"
-#include "e_fm_device.h"
+#include "e_mod_main.h" include "e_fm_device.h"
 
 static void _e_mod_menu_populate(void *d, E_Menu *m __UNUSED__, E_Menu_Item *mi);
 
@@ -240,7 +239,7 @@ _e_mod_menu_populate_done(void *data, Eio_File *handler __UNUSED__)
         mi = e_menu_item_new(m);
         e_menu_item_label_set(mi, _("No listable items"));
         dev = e_object_data_get(data);
-        path = e_object_data_get(E_OBJECT(e_menu_item_active_get()));
+        path = e_object_data_get(E_OBJECT(m->parent_item));
         e_object_data_set(E_OBJECT(mi), eina_stringshare_ref(path));
         if (dev && (dev[0] == '/'))
           e_menu_item_callback_set(mi, _e_mod_menu_populate_cb, dev);
