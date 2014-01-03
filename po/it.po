@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-12-19 22:40+0100\n"
-"PO-Revision-Date: 2013-12-19 22:44+0100\n"
+"POT-Creation-Date: 2013-12-31 18:37+0100\n"
+"PO-Revision-Date: 2014-01-03 18:34+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: it\n"
@@ -32,7 +32,7 @@ msgid "Close"
 msgstr "Chiudi"
 
 #: src/bin/e_about.c:21 src/bin/e_actions.c:3365 src/bin/e_actions.c:3369
-#: src/bin/e_actions.c:3373 src/bin/e_int_menus.c:224 src/bin/e_main.c:650
+#: src/bin/e_actions.c:3373 src/bin/e_init.c:96 src/bin/e_int_menus.c:224
 #: src/modules/conf_interaction/e_int_config_mouse.c:176
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -161,6 +161,8 @@ msgstr "Ridimensiona"
 #: src/bin/e_actions.c:2975 src/bin/e_actions.c:3336 src/bin/e_actions.c:3338
 #: src/bin/e_actions.c:3340 src/bin/e_actions.c:3342 src/bin/e_actions.c:3344
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:336
+#: src/modules/conf_comp/e_mod_config_match.c:83
+#: src/modules/conf_comp/e_mod_config_match.c:382
 msgid "Menu"
 msgstr "Menù"
 
@@ -311,6 +313,8 @@ msgstr "Commuta stato attaccata"
 #: src/bin/e_actions.c:3221 src/bin/e_actions.c:3223 src/bin/e_actions.c:3436
 #: src/bin/e_actions.c:3441 src/bin/e_int_menus.c:186
 #: src/bin/e_int_shelf_config.c:293
+#: src/modules/conf_comp/e_mod_config_match.c:75
+#: src/modules/conf_comp/e_mod_config_match.c:374
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:118
 #: src/modules/fileman/e_mod_menu.c:432 src/modules/gadman/e_mod_gadman.c:120
 #: src/modules/ibox/e_mod_config.c:166
@@ -719,11 +723,12 @@ msgstr "Commuta il modulo specificato"
 #: src/modules/conf_applications/e_int_config_apps.c:278
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:87
 #: src/modules/conf_intl/e_int_config_imc.c:808
-#: src/modules/conf_theme/e_int_config_theme.c:668
+#: src/modules/conf_theme/e_int_config_theme.c:665
 #: src/modules/conf_theme/e_int_config_wallpaper.c:427
 #: src/modules/conf_theme/e_int_config_wallpaper.c:582
 #: src/modules/gadman/e_mod_config.c:252 src/modules/syscon/e_mod_main.c:31
 #: src/modules/syscon/e_mod_main.c:35 src/modules/syscon/e_mod_main.c:129
+#: src/modules/syscon/e_syscon_gadget.c:141
 msgid "System"
 msgstr "Sistema"
 
@@ -799,6 +804,7 @@ msgstr "Seleziona"
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:624
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
 #: src/modules/conf_theme/e_int_config_theme_import.c:123
+#: src/modules/connman/agent.c:251
 #: src/modules/fileman/e_int_config_mime_edit.c:316
 #: src/modules/quickaccess/e_mod_quickaccess.c:323
 #: src/modules/quickaccess/e_mod_quickaccess.c:385
@@ -812,25 +818,23 @@ msgstr "Annulla"
 msgid "Compositor Warning"
 msgstr "Avvertimento del compositor"
 
-#: src/bin/e_comp.c:3994
+#: src/bin/e_comp.c:3995
 msgid ""
-"Your display driver does not support OpenGL, or<br>no OpenGL engines were "
-"compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
-"engine."
-msgstr ""
-"Il vostro driver non supporta OpenGL, oppure non<br>sono stati compilati o "
-"installati motori OpenGL<br>per Evas o Ecore-Evas. Ripiego sul motore "
-"software."
+"Your display driver does not support OpenGL, GLSL<br>shaders or no OpenGL "
+"engines were compiled or installed<br>for Evas or Ecore-Evas. Falling back "
+"to software engine.<br><br>You will need an OpenGL 2.0 (or OpenGL ES 2.0) "
+"capable<br>GPU to use OpenGL with compositing."
+msgstr "Il vostro driver non supporta gli shader OpenGL<br>o GLSL, oppure non sono stati compilati o installati<br>motori OpenGL per Evas o Ecore-Evas.Ripiego sul<br>motore software.<br><br>Per usare OpenGL nel compositing è necessaria una<br>GPU che supporti OpenGL 2.0 (o OpenGL ES 2.0)."
 
-#: src/bin/e_comp.c:4013 src/bin/e_comp.c:4033
+#: src/bin/e_comp.c:4017 src/bin/e_comp.c:4037
 msgid "Compositor Error"
 msgstr "Errore del compositor"
 
-#: src/bin/e_comp.c:4013
+#: src/bin/e_comp.c:4017
 msgid "Another compositor is already running<br>on your display server."
 msgstr "Un altro compositor è in esecuzione sul<br>vostro server grafico."
 
-#: src/bin/e_comp.c:4033
+#: src/bin/e_comp.c:4037
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
@@ -838,7 +842,7 @@ msgstr ""
 "Il vostro server grafico non supporta la<br>finestra di overlay del "
 "compositor, che è<br>necessaria per il suo funzionamento."
 
-#: src/bin/e_comp.c:4413
+#: src/bin/e_comp.c:4417
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -849,7 +853,7 @@ msgstr ""
 "XComposite occorrono anche il supporto per XRender e per XFixes in X11 e in "
 "Ecore."
 
-#: src/bin/e_comp.c:4422
+#: src/bin/e_comp.c:4426
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -857,19 +861,19 @@ msgstr ""
 "Il vostro server grafico non supporta XDamage o Ecore è stato compilato "
 "senza supporto per XDamage."
 
-#: src/bin/e_comp.c:4521 src/bin/e_comp.c:4527
+#: src/bin/e_comp.c:4525 src/bin/e_comp.c:4531
 msgid "Compositor"
 msgstr "Compositor"
 
-#: src/bin/e_comp.c:4522
+#: src/bin/e_comp.c:4526
 msgid "Change current window opacity"
 msgstr "Cambia opacità finestra corrente"
 
-#: src/bin/e_comp.c:4528
+#: src/bin/e_comp.c:4532
 msgid "Set current window opacity"
 msgstr "Imposta opacità finestra corrente"
 
-#: src/bin/e_config.c:972
+#: src/bin/e_config.c:972 src/bin/e_randr.c:176
 msgid ""
 "Settings data needed upgrading. Your old settings have<br>been wiped and a "
 "new set of defaults initialized. This<br>will happen regularly during "
@@ -889,7 +893,7 @@ msgstr ""
 "funzionalità.<br>Adesso è possibile riconfigurare le cose a proprio "
 "piacimento.<br>Ci scusiamo per il disagio.<br>"
 
-#: src/bin/e_config.c:989
+#: src/bin/e_config.c:989 src/bin/e_randr.c:191
 msgid ""
 "Your settings are NEWER than Enlightenment. This is very<br>strange. This "
 "should not happen unless you downgraded<br>Enlightenment or copied the "
@@ -941,6 +945,7 @@ msgstr ""
 #: src/modules/bluez4/agent.c:71 src/modules/bluez4/agent.c:136
 #: src/modules/bluez4/agent.c:148
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:623
+#: src/modules/conf_comp/e_mod_config_match.c:539
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
 #: src/modules/conf_theme/e_int_config_theme_import.c:119
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1189
@@ -1191,6 +1196,7 @@ msgstr "Editor file desktop"
 
 #: src/bin/e_desktop_editor.c:675 src/bin/e_int_border_prop.c:445
 #: src/bin/e_int_border_prop.c:499
+#: src/modules/conf_comp/e_mod_config_match.c:336
 #: src/modules/conf_display/e_int_config_desk.c:186
 #: src/modules/conf_intl/e_int_config_imc.c:886
 #: src/modules/conf_menus/e_int_config_menus.c:266
@@ -1834,6 +1840,7 @@ msgid "Cannot change permissions: %s"
 msgstr "Impossibile cambiare i permessi: %s"
 
 #: src/bin/e_fm_prop.c:390 src/bin/e_shelf.c:1006 src/bin/e_shelf.c:2213
+#: src/modules/conf_comp/e_mod_config_match.c:124
 #: src/modules/conf_dialogs/e_int_config_profiles.c:316
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:147
 msgid "Name:"
@@ -2233,10 +2240,12 @@ msgid "Shade"
 msgstr "Contrai"
 
 #: src/bin/e_int_border_menu.c:193
+#: src/modules/conf_comp/e_mod_config_match.c:430
 msgid "Borderless"
 msgstr "Senza bordi"
 
 #: src/bin/e_int_border_menu.c:396 src/bin/e_int_border_prop.c:511
+#: src/modules/conf_comp/e_mod_config_match.c:505
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:207
 msgid "Fullscreen"
 msgstr "A tutto schermo"
@@ -2299,6 +2308,8 @@ msgstr "Schermo %d"
 
 #: src/bin/e_int_border_menu.c:1056 src/bin/e_int_border_prop.c:157
 #: src/bin/e_int_border_prop.c:179
+#: src/modules/conf_comp/e_mod_config_match.c:89
+#: src/modules/conf_comp/e_mod_config_match.c:388
 #: src/modules/conf_theme/e_int_config_fonts.c:100
 #: src/modules/conf_theme/e_int_config_fonts.c:264
 #: src/modules/notification/e_mod_config.c:104
@@ -2476,11 +2487,13 @@ msgid "ICCCM"
 msgstr "ICCCM"
 
 #: src/bin/e_int_border_prop.c:444 src/bin/e_int_border_remember.c:698
+#: src/modules/conf_comp/e_mod_config_match.c:325
 #: src/modules/conf_comp/e_mod_main.c:177 src/modules/wizard/page_050.c:95
 msgid "Title"
 msgstr "Titolo"
 
 #: src/bin/e_int_border_prop.c:446
+#: src/modules/conf_comp/e_mod_config_match.c:346
 msgid "Class"
 msgstr "Classe"
 
@@ -2493,6 +2506,7 @@ msgid "Machine"
 msgstr "Macchina"
 
 #: src/bin/e_int_border_prop.c:449
+#: src/modules/conf_comp/e_mod_config_match.c:355
 msgid "Role"
 msgstr "Ruolo"
 
@@ -2557,6 +2571,7 @@ msgid "Take Focus"
 msgstr "Prende il fuoco"
 
 #: src/bin/e_int_border_prop.c:473
+#: src/modules/conf_comp/e_mod_config_match.c:456
 msgid "Accepts Focus"
 msgstr "Accetta il fuoco"
 
@@ -2596,6 +2611,7 @@ msgid "Settings"
 msgstr "Impostazioni"
 
 #: src/bin/e_int_border_prop.c:505
+#: src/modules/conf_comp/e_mod_config_match.c:518
 msgid "Modal"
 msgstr "Modale"
 
@@ -2814,6 +2830,7 @@ msgstr "Gadget caricati"
 #: src/modules/conf_bindings/e_int_config_keybindings.c:244
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:292
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:773
+#: src/modules/conf_comp/e_mod_config_match.c:693
 #: src/modules/conf_dialogs/e_int_config_profiles.c:133
 #: src/modules/conf_paths/e_int_config_env.c:311
 #: src/modules/conf_shelves/e_int_config_shelf.c:137
@@ -2950,6 +2967,7 @@ msgid "Shrink to Content Width"
 msgstr "Riduci alla larghezza del contenuto"
 
 #: src/bin/e_int_shelf_config.c:234
+#: src/modules/conf_comp/e_mod_config_match.c:533
 #: src/modules/conf_theme/e_int_config_fonts.c:651
 msgid "Style"
 msgstr "Stile"
@@ -3246,265 +3264,265 @@ msgstr ""
 "Enlightenment non riesce a configurare la sua\n"
 "schermata di iniziazione.\n"
 
-#: src/bin/e_main.c:670
+#: src/bin/e_main.c:666
 msgid "Setup ACPI"
 msgstr "Impostazione ACPI"
 
-#: src/bin/e_main.c:677
+#: src/bin/e_main.c:673
 msgid "Setup Backlight"
 msgstr "Impostazione retroilluminazione"
 
-#: src/bin/e_main.c:681
+#: src/bin/e_main.c:677
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr ""
 "Enlightenment non riesce a configurare la\n"
 "retroilluminazione.\n"
 
-#: src/bin/e_main.c:687
+#: src/bin/e_main.c:683
 msgid "Setup Screensaver"
 msgstr "Impostazione screensaver"
 
-#: src/bin/e_main.c:691
+#: src/bin/e_main.c:687
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr ""
 "Enlightenment non riesce a configurare lo\n"
 "screensaver di X.\n"
 
-#: src/bin/e_main.c:698
+#: src/bin/e_main.c:694
 msgid "Setup DPMS"
 msgstr "Impostazione DPMS"
 
-#: src/bin/e_main.c:702
+#: src/bin/e_main.c:698
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le\n"
 "impostazioni DPMS.\n"
 
-#: src/bin/e_main.c:709
+#: src/bin/e_main.c:705
 msgid "Setup Powersave Modes"
 msgstr "Modalità risparmio energetico"
 
-#: src/bin/e_main.c:713
+#: src/bin/e_main.c:709
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di modi risparmio energetico.\n"
 
-#: src/bin/e_main.c:720
+#: src/bin/e_main.c:716
 msgid "Setup Desklock"
 msgstr "Impostazione bloccashermo"
 
-#: src/bin/e_main.c:724
+#: src/bin/e_main.c:720
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di blocco dello schermo.\n"
 
-#: src/bin/e_main.c:731
+#: src/bin/e_main.c:727
 msgid "Setup Popups"
 msgstr "Finestre popup"
 
-#: src/bin/e_main.c:735
+#: src/bin/e_main.c:731
 msgid "Enlightenment cannot set up its popup system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di popup.\n"
 
-#: src/bin/e_main.c:745
+#: src/bin/e_main.c:741
 msgid "Setup Message Bus"
 msgstr "Bus dei messaggi"
 
-#: src/bin/e_main.c:752
+#: src/bin/e_main.c:748
 msgid "Setup Paths"
 msgstr "Impostazione percorsi"
 
-#: src/bin/e_main.c:758
+#: src/bin/e_main.c:754
 msgid "Setup System Controls"
 msgstr "Controlli di sistema"
 
-#: src/bin/e_main.c:762
+#: src/bin/e_main.c:758
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr ""
 "Enlightenment non riesce a il sistema di comandi di sistema.\n"
 "\n"
 
-#: src/bin/e_main.c:769
+#: src/bin/e_main.c:765
 msgid "Setup Execution System"
 msgstr "Sistema di esecuzione"
 
-#: src/bin/e_main.c:773
+#: src/bin/e_main.c:769
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di esecuzione.\n"
 
-#: src/bin/e_main.c:784
+#: src/bin/e_main.c:780
 msgid "Setup Filemanager"
 msgstr "File manager"
 
-#: src/bin/e_main.c:788
+#: src/bin/e_main.c:784
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Enlightenment non riesce ad inizializzare il File manager.\n"
 
-#: src/bin/e_main.c:795
+#: src/bin/e_main.c:791
 msgid "Setup Message System"
 msgstr "Sistema di messaggi"
 
-#: src/bin/e_main.c:799
+#: src/bin/e_main.c:795
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di messaggi.\n"
 
-#: src/bin/e_main.c:806
+#: src/bin/e_main.c:802
 msgid "Setup Grab Input Handling"
 msgstr "Impostazioni gestione cattura dell'input"
 
-#: src/bin/e_main.c:810
+#: src/bin/e_main.c:806
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di gestione della cattura dell'input.\n"
 
-#: src/bin/e_main.c:817
+#: src/bin/e_main.c:813
 msgid "Setup Modules"
 msgstr "Impostazione moduli"
 
-#: src/bin/e_main.c:821 src/bin/e_main.c:1003
+#: src/bin/e_main.c:817 src/bin/e_main.c:999
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di moduli.\n"
 
-#: src/bin/e_main.c:828
+#: src/bin/e_main.c:824
 msgid "Setup Remembers"
 msgstr "Ripristino impostazioni da ricordare"
 
-#: src/bin/e_main.c:832
+#: src/bin/e_main.c:828
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le\n"
 "impostazioni da ricordare.\n"
 
-#: src/bin/e_main.c:839
+#: src/bin/e_main.c:835
 msgid "Setup Color Classes"
 msgstr "Impostazione classi colore"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:839
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di classi colore.\n"
 
-#: src/bin/e_main.c:850
+#: src/bin/e_main.c:846
 msgid "Setup Gadcon"
 msgstr "Controllo dei gadget"
 
-#: src/bin/e_main.c:854
+#: src/bin/e_main.c:850
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di controllo dei gadget.\n"
 
-#: src/bin/e_main.c:861
+#: src/bin/e_main.c:857
 msgid "Setup Toolbars"
 msgstr "Imposta barre strumenti"
 
-#: src/bin/e_main.c:865
+#: src/bin/e_main.c:861
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le sue\n"
 "barre degli strumenti.\n"
 
-#: src/bin/e_main.c:872
+#: src/bin/e_main.c:868
 msgid "Setup Wallpaper"
 msgstr "Impostazione sfondo"
 
-#: src/bin/e_main.c:876
+#: src/bin/e_main.c:872
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di sfondi del desktop.\n"
 
-#: src/bin/e_main.c:883
+#: src/bin/e_main.c:879
 msgid "Setup Mouse"
 msgstr "Impostazione mouse"
 
-#: src/bin/e_main.c:887
+#: src/bin/e_main.c:883
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr ""
 "Enlightenment non riesce a configurare le\n"
 "impostazioni del mouse.\n"
 
-#: src/bin/e_main.c:893
+#: src/bin/e_main.c:889
 msgid "Setup Bindings"
 msgstr "Combinazioni tastiera e mouse"
 
-#: src/bin/e_main.c:897
+#: src/bin/e_main.c:893
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di binding (associazioni).\n"
 
-#: src/bin/e_main.c:904
+#: src/bin/e_main.c:900
 msgid "Setup Thumbnailer"
 msgstr "Generatore miniature"
 
-#: src/bin/e_main.c:908
+#: src/bin/e_main.c:904
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di thumbnailing (anteprime).\n"
 
-#: src/bin/e_main.c:917
+#: src/bin/e_main.c:913
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr ""
 "Enlightenment non riesce a inizializzare il suo sistema di\n"
 "cache delle icone.\n"
 
-#: src/bin/e_main.c:926
+#: src/bin/e_main.c:922
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment non riesce a inizializzare il sistema XSettings.\n"
 
-#: src/bin/e_main.c:935
+#: src/bin/e_main.c:931
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr ""
 "Enlightenment non riesce a inizializzare il suo sistema di\n"
 "aggiornamenti.\n"
 
-#: src/bin/e_main.c:942
+#: src/bin/e_main.c:938
 msgid "Setup Desktop Environment"
 msgstr "Ambienti desktop"
 
-#: src/bin/e_main.c:946
+#: src/bin/e_main.c:942
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "ambiente desktop.\n"
 
-#: src/bin/e_main.c:953
+#: src/bin/e_main.c:949
 msgid "Setup File Ordering"
 msgstr "Ordinamento dei file"
 
-#: src/bin/e_main.c:957
+#: src/bin/e_main.c:953
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di ordinamento file.\n"
 
-#: src/bin/e_main.c:972
+#: src/bin/e_main.c:968
 msgid "Load Modules"
 msgstr "Carica moduli"
 
-#: src/bin/e_main.c:999
+#: src/bin/e_main.c:995
 msgid "Setup Shelves"
 msgstr "Impostazione mensole porta-gadget"
 
-#: src/bin/e_main.c:1017
+#: src/bin/e_main.c:1013
 msgid "Almost Done"
 msgstr "Quasi fatto"
 
-#: src/bin/e_main.c:1178
+#: src/bin/e_main.c:1174
 #, c-format
 msgid ""
 "Options:\n"
@@ -3557,7 +3575,7 @@ msgstr ""
 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
 "\t\tSe hai bisogno di questo aiuto non hai bisogno di questa opzione.\n"
 
-#: src/bin/e_main.c:1231
+#: src/bin/e_main.c:1227
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -3574,11 +3592,11 @@ msgstr ""
 "altre cose simili prima di cominciare l'esecuzione di\n"
 "enlightenment stesso.\n"
 
-#: src/bin/e_main.c:1494
+#: src/bin/e_main.c:1490
 msgid "Testing Format Support"
 msgstr "Test supporto formato"
 
-#: src/bin/e_main.c:1498
+#: src/bin/e_main.c:1494
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -3587,7 +3605,7 @@ msgstr ""
 "buffer. Controllare che Evas abbia il supporto per il motore di\n"
 "rendering software Buffer.\n"
 
-#: src/bin/e_main.c:1510
+#: src/bin/e_main.c:1506
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
@@ -3595,7 +3613,7 @@ msgstr ""
 "Enlightenment ha riscontrato che Evas non può caricare file SVG.\n"
 "Controllare che Evas abbia il supporto per il loader SVG.\n"
 
-#: src/bin/e_main.c:1520
+#: src/bin/e_main.c:1516
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
@@ -3603,7 +3621,7 @@ msgstr ""
 "Enlightenment ha riscontrato che Evas non può caricare file JPEG.\n"
 "Controllare che Evas abbia il supporto per il loader JPEG.\n"
 
-#: src/bin/e_main.c:1530
+#: src/bin/e_main.c:1526
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
@@ -3611,7 +3629,7 @@ msgstr ""
 "Enlightenment ha riscontrato che Evas non può caricare file PNG.\n"
 "Controllare che Evas abbia il supporto per il loader PNG.\n"
 
-#: src/bin/e_main.c:1540
+#: src/bin/e_main.c:1536
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
@@ -3619,7 +3637,7 @@ msgstr ""
 "Enlightenment ha riscontrato che Evas non può caricare file EET.\n"
 "Controllare che Evas abbia il supporto per il loader EET.\n"
 
-#: src/bin/e_main.c:1554
+#: src/bin/e_main.c:1550
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -3629,29 +3647,29 @@ msgstr ""
 "Controllare che Evas abbia il supporto per fontconfig e che il\n"
 "fontconfig di sistema definisca un font 'Sans'.\n"
 
-#: src/bin/e_main.c:1610
+#: src/bin/e_main.c:1606
 msgid "Enlightenment cannot setup compositing.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il\n"
 "compositor.\n"
 
-#: src/bin/e_main.c:1625
+#: src/bin/e_main.c:1621
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr ""
 "Enlightenment non riesce a impostare i layout\n"
 "di tastiera XKB.\n"
 
-#: src/bin/e_main.c:1631
+#: src/bin/e_main.c:1627
 msgid "Setup DND"
 msgstr "Impostazione drag and drop"
 
-#: src/bin/e_main.c:1635
+#: src/bin/e_main.c:1631
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr ""
 "Enlightenment non riesce a configurare il suo\n"
 "sistema di 'drag & drop'.\n"
 
-#: src/bin/e_main.c:1800
+#: src/bin/e_main.c:1796
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -3662,11 +3680,11 @@ msgstr ""
 "C'è stato un errore nel<br>caricamento del modulo: %s. Questo modulo è "
 "stato<br>disabilitato e non verrà caricato."
 
-#: src/bin/e_main.c:1805 src/bin/e_main.c:1821
+#: src/bin/e_main.c:1801 src/bin/e_main.c:1817
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment è andato subito in crash ed è stato riavviato"
 
-#: src/bin/e_main.c:1806
+#: src/bin/e_main.c:1802
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -3677,7 +3695,7 @@ msgstr ""
 "<br>C'è stato un errore nel caricamento del modulo: %s.<br><br>Questo modulo "
 "è stato disabilitato e non verrà caricato."
 
-#: src/bin/e_main.c:1814
+#: src/bin/e_main.c:1810
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -3690,7 +3708,7 @@ msgstr ""
 "finestra di configurazione<br>dei moduli dovrebbe permettervi di "
 "selezionare<br>nuovamente i vostri moduli.\n"
 
-#: src/bin/e_main.c:1822
+#: src/bin/e_main.c:1818
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -3777,6 +3795,10 @@ msgstr "Caricamento moduli instabili"
 #: src/bin/e_module.c:995
 msgid "I know"
 msgstr "Lo so"
+
+#: src/bin/e_randr.c:362
+msgid "Randr Settings Upgraded"
+msgstr "Impostazioni Randr aggiornate"
 
 #: src/bin/e_screensaver.c:182
 msgid ""
@@ -4213,6 +4235,7 @@ msgstr[1] "%li minuti fa"
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1226
 #: src/modules/conf_bindings/e_int_config_keybindings.c:973
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:574
+#: src/modules/conf_comp/e_mod_config_match.c:147
 #: src/modules/conf_dialogs/e_int_config_profiles.c:298
 #: src/modules/wizard/page_020.c:24
 msgid "Unknown"
@@ -4334,12 +4357,14 @@ msgstr[1] "%li minuti"
 
 #: src/bin/e_widget_config_list.c:80
 #: src/modules/conf_applications/e_int_config_apps.c:306
+#: src/modules/conf_comp/e_mod_config_match.c:689
 #: src/modules/xkbswitch/e_mod_config.c:247
 msgid "Up"
 msgstr "Su"
 
 #: src/bin/e_widget_config_list.c:86
 #: src/modules/conf_applications/e_int_config_apps.c:310
+#: src/modules/conf_comp/e_mod_config_match.c:691
 #: src/modules/xkbswitch/e_mod_config.c:251
 msgid "Down"
 msgstr "Giù"
@@ -4401,7 +4426,9 @@ msgstr "Riservato:"
 msgid "Mount status:"
 msgstr "Stato del montaggio:"
 
-#: src/bin/e_widget_filepreview.c:394 src/modules/mixer/app_mixer.c:381
+#: src/bin/e_widget_filepreview.c:394
+#: src/modules/conf_comp/e_mod_config_match.c:118
+#: src/modules/mixer/app_mixer.c:381
 msgid "Type:"
 msgstr "Tipo:"
 
@@ -4453,7 +4480,7 @@ msgstr "Aggiungi ai preferiti"
 #: src/bin/e_widget_fsel.c:339
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:91
 #: src/modules/conf_intl/e_int_config_imc.c:815
-#: src/modules/conf_theme/e_int_config_theme.c:675
+#: src/modules/conf_theme/e_int_config_theme.c:672
 #: src/modules/gadman/e_mod_config.c:256
 msgid "Go up a Directory"
 msgstr "Directory superiore"
@@ -4946,6 +4973,7 @@ msgid "Selected Application"
 msgstr "Applicazioni selezionate"
 
 #: src/modules/conf_applications/e_int_config_defapps.c:335
+#: src/modules/conf_comp/e_mod_config_match.c:405
 msgid "Types"
 msgstr "Tipi"
 
@@ -4987,6 +5015,7 @@ msgid "Start KDE services on login"
 msgstr "Avvia servizi KDE al login"
 
 #: src/modules/conf_applications/e_mod_main.c:18
+#: src/modules/conf_comp/e_mod_config_match.c:714
 #: src/modules/teamwork/e_mod_main.c:118
 msgid "Apps"
 msgstr "Applicazioni"
@@ -5761,6 +5790,159 @@ msgstr "Per reimpostazione compositor:"
 msgid "Ctrl+Alt+Shift+Home"
 msgstr "Ctrl+Alt+Shift+Home"
 
+#: src/modules/conf_comp/e_mod_config_match.c:71
+#: src/modules/conf_comp/e_mod_config_match.c:101
+#: src/modules/conf_comp/e_mod_config_match.c:369
+#: src/modules/conf_comp/e_mod_config_match.c:420
+msgid "Unused"
+msgstr "Inutilizzato"
+
+#: src/modules/conf_comp/e_mod_config_match.c:73
+#: src/modules/conf_comp/e_mod_config_match.c:372
+msgid "Combo"
+msgstr "Combo"
+
+#: src/modules/conf_comp/e_mod_config_match.c:77
+#: src/modules/conf_comp/e_mod_config_match.c:376
+#: src/modules/conf_comp/e_mod_config_match.c:443
+msgid "Dialog"
+msgstr "Finestra di dialogo"
+
+#: src/modules/conf_comp/e_mod_config_match.c:79
+#: src/modules/conf_comp/e_mod_config_match.c:378
+msgid "Dock"
+msgstr "Dock"
+
+#: src/modules/conf_comp/e_mod_config_match.c:81
+#: src/modules/conf_comp/e_mod_config_match.c:380
+msgid "Drag and Drop"
+msgstr "Drag and Drop"
+
+#: src/modules/conf_comp/e_mod_config_match.c:85
+#: src/modules/conf_comp/e_mod_config_match.c:384
+msgid "Menu (Dropdown)"
+msgstr "Menù (a tendina)"
+
+#: src/modules/conf_comp/e_mod_config_match.c:87
+#: src/modules/conf_comp/e_mod_config_match.c:386
+msgid "Menu (Popup)"
+msgstr "Menù (popup)"
+
+#: src/modules/conf_comp/e_mod_config_match.c:91
+#: src/modules/conf_comp/e_mod_config_match.c:390
+#: src/modules/notification/e_mod_main.c:154
+msgid "Notification"
+msgstr "Notifiche"
+
+#: src/modules/conf_comp/e_mod_config_match.c:93
+#: src/modules/conf_comp/e_mod_config_match.c:392
+msgid "Splash"
+msgstr "Splash screen"
+
+#: src/modules/conf_comp/e_mod_config_match.c:95
+#: src/modules/conf_comp/e_mod_config_match.c:394
+#: src/modules/fileman/e_mod_config.c:344
+msgid "Toolbar"
+msgstr "Barra strumenti"
+
+#: src/modules/conf_comp/e_mod_config_match.c:97
+#: src/modules/conf_comp/e_mod_config_match.c:396
+msgid "Tooltip"
+msgstr "Tooltip"
+
+#: src/modules/conf_comp/e_mod_config_match.c:99
+#: src/modules/conf_comp/e_mod_config_match.c:398
+msgid "Utility"
+msgstr "Utilità"
+
+#: src/modules/conf_comp/e_mod_config_match.c:112
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:163
+msgid "Title:"
+msgstr "Titolo:"
+
+#: src/modules/conf_comp/e_mod_config_match.c:114
+#: src/modules/conf_comp/e_mod_config_match.c:120
+#: src/modules/conf_comp/e_mod_config_match.c:126
+#: src/modules/conf_comp/e_mod_config_match.c:132
+#: src/modules/conf_comp/e_mod_config_match.c:138
+msgid " / "
+msgstr " / "
+
+#: src/modules/conf_comp/e_mod_config_match.c:130
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:155
+msgid "Class:"
+msgstr "Classe:"
+
+#: src/modules/conf_comp/e_mod_config_match.c:136
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:171
+msgid "Role:"
+msgstr "Ruolo:"
+
+#: src/modules/conf_comp/e_mod_config_match.c:142
+msgid "Style:"
+msgstr "Stile:"
+
+#: src/modules/conf_comp/e_mod_config_match.c:308
+msgid "Edit E_Comp_Match"
+msgstr "Modifica E_Comp_Match"
+
+#: src/modules/conf_comp/e_mod_config_match.c:360
+msgid "Names"
+msgstr "Nomi"
+
+#: src/modules/conf_comp/e_mod_config_match.c:422
+msgid "On"
+msgstr "Attivato"
+
+#: src/modules/conf_comp/e_mod_config_match.c:424
+#: src/modules/everything/evry_config.c:495
+msgid "Off"
+msgstr "Disattivato"
+
+#: src/modules/conf_comp/e_mod_config_match.c:469
+msgid "Virtual Keyboard"
+msgstr "Tastiera virtuale"
+
+#: src/modules/conf_comp/e_mod_config_match.c:482
+msgid "Quick Panel"
+msgstr "Pannello rapido"
+
+#: src/modules/conf_comp/e_mod_config_match.c:493
+msgid "ARGB"
+msgstr "ARGB"
+
+#: src/modules/conf_comp/e_mod_config_match.c:529
+msgid "Flags"
+msgstr "Flag"
+
+#: src/modules/conf_comp/e_mod_config_match.c:695
+msgid "Del"
+msgstr "Elimina"
+
+#: src/modules/conf_comp/e_mod_config_match.c:697
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:185
+#: src/modules/mixer/app_mixer.c:402
+msgid "Edit"
+msgstr "Modifica"
+
+#: src/modules/conf_comp/e_mod_config_match.c:718
+msgid "E"
+msgstr "E"
+
+#: src/modules/conf_comp/e_mod_config_match.c:722
+msgid "Over"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:726
+#: src/modules/conf_menus/e_int_config_menus.c:278
+#: src/modules/conf_menus/e_mod_main.c:17
+msgid "Menus"
+msgstr "Menù"
+
+#: src/modules/conf_comp/e_mod_config_match.c:860
+msgid "Composite Match Settings"
+msgstr "Impostazione associazioni compositing"
+
 #: src/modules/conf_comp/e_mod_main.c:28
 #: src/modules/conf_comp/e_mod_main.c:233
 #: src/modules/conf_comp/e_mod_main.c:242
@@ -6017,7 +6199,7 @@ msgstr "Seleziona uno sfondo..."
 
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:84
 #: src/modules/conf_intl/e_int_config_imc.c:803
-#: src/modules/conf_theme/e_int_config_theme.c:664
+#: src/modules/conf_theme/e_int_config_theme.c:661
 #: src/modules/conf_theme/e_int_config_wallpaper.c:423
 #: src/modules/conf_theme/e_int_config_wallpaper.c:578
 #: src/modules/gadman/e_mod_config.c:248
@@ -6401,11 +6583,6 @@ msgstr "Gadget"
 #: src/modules/conf_menus/e_int_config_menus.c:275
 msgid "Show gadget settings in top-level"
 msgstr "Mostra impostazioni gadget al livello più alto"
-
-#: src/modules/conf_menus/e_int_config_menus.c:278
-#: src/modules/conf_menus/e_mod_main.c:17
-msgid "Menus"
-msgstr "Menù"
 
 #: src/modules/conf_menus/e_int_config_menus.c:288
 msgid "Margin"
@@ -7255,20 +7432,20 @@ msgstr "Limiti"
 msgid "Theme Selector"
 msgstr "Selettore temi"
 
-#: src/modules/conf_theme/e_int_config_theme.c:558
+#: src/modules/conf_theme/e_int_config_theme.c:555
 msgid "Theme File Error"
 msgstr "Errore nel file del tema"
 
-#: src/modules/conf_theme/e_int_config_theme.c:559
+#: src/modules/conf_theme/e_int_config_theme.c:556
 #, c-format
 msgid "%s is probably not an E17 theme!"
 msgstr "Probabilmente %s non è un tema per E17"
 
-#: src/modules/conf_theme/e_int_config_theme.c:710
+#: src/modules/conf_theme/e_int_config_theme.c:707
 msgid " Import..."
 msgstr "Importa..."
 
-#: src/modules/conf_theme/e_int_config_theme.c:713
+#: src/modules/conf_theme/e_int_config_theme.c:710
 msgid "Show startup splash"
 msgstr "Mostra splash screen all'avvio"
 
@@ -7934,23 +8111,6 @@ msgstr "Non ricordare le finestre per directory"
 msgid "Details"
 msgstr "Dettagli"
 
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:155
-msgid "Class:"
-msgstr "Classe:"
-
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:163
-msgid "Title:"
-msgstr "Titolo:"
-
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:171
-msgid "Role:"
-msgstr "Ruolo:"
-
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:185
-#: src/modules/mixer/app_mixer.c:402
-msgid "Edit"
-msgstr "Modifica"
-
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:368
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:370
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:372
@@ -7958,7 +8118,19 @@ msgstr "Modifica"
 msgid "No selection"
 msgstr "Nessuna selezione"
 
-#: src/modules/connman/e_mod_main.c:10
+#: src/modules/connman/agent.c:225
+msgid "Show password"
+msgstr "Mostra password"
+
+#: src/modules/connman/agent.c:247
+msgid "Input requested"
+msgstr "Input richiesto"
+
+#: src/modules/connman/agent.c:250
+msgid "Ok"
+msgstr "Ok"
+
+#: src/modules/connman/e_mod_config.c:69 src/modules/connman/e_mod_main.c:10
 msgid "Connection Manager"
 msgstr "Gestore connessioni"
 
@@ -8240,10 +8412,6 @@ msgstr "Nascondi elenco"
 #: src/modules/everything/evry_config.c:493
 msgid "Quick Navigation"
 msgstr "Navigazione veloce"
-
-#: src/modules/everything/evry_config.c:495
-msgid "Off"
-msgstr "Disattivata"
 
 #: src/modules/everything/evry_config.c:497
 msgid "Emacs style (ALT + n,p,f,b,m,i)"
@@ -8742,10 +8910,6 @@ msgstr "Percorso completo nel titolo"
 #: src/modules/fileman/e_mod_config.c:341
 msgid "Icons On Desktop"
 msgstr "Icone sul desktop"
-
-#: src/modules/fileman/e_mod_config.c:344
-msgid "Toolbar"
-msgstr "Barra strumenti"
 
 #: src/modules/fileman/e_mod_config.c:347
 msgid "Sidebar"
@@ -9335,10 +9499,6 @@ msgid ""
 msgstr ""
 "Adesso si è in modalità <b>non in linea</b>.<br>Da ora in poi i moduli che "
 "usano la rete riprenderanno i loro compiti normali."
-
-#: src/modules/notification/e_mod_main.c:154
-msgid "Notification"
-msgstr "Notification"
 
 #: src/modules/notification/e_mod_main.c:175
 msgid "Notification Module"
@@ -9939,6 +10099,10 @@ msgstr "Controlli di sistema"
 msgid "Syscon"
 msgstr "Syscon"
 
+#: src/modules/syscon/e_syscon_gadget.c:72
+msgid "Show Menu"
+msgstr "Mostra menù"
+
 #: src/modules/systray/e_mod_main.c:75
 msgid "Enable Xembed"
 msgstr "Abilita Xembed"
@@ -10132,7 +10296,8 @@ msgstr "Suggerimenti sui tasti"
 
 #: src/modules/tiling/e_mod_config.c:199
 msgid "Number of columns/rows used to tile per desk (0 → tiling disabled):"
-msgstr "Numero di colonne/righe da usare per desktop (0 → griglia disabilitata):"
+msgstr ""
+"Numero di colonne/righe da usare per desktop (0 → griglia disabilitata):"
 
 #: src/modules/tiling/e_mod_config.c:354
 msgid "Tiling Configuration"
@@ -10539,1596 +10704,3 @@ msgstr "Variante"
 #: src/modules/xkbswitch/e_mod_main.c:195
 msgid "NONE"
 msgstr "NESSUNA"
-
-#~ msgid "Stop Moving/Resizing Items"
-#~ msgstr "Fine spostamento/ridimensionamento oggetti"
-
-#~ msgid "Begin Moving/Resizing Items"
-#~ msgstr "Inizio spostamento/ridimensionamento oggetti"
-
-#~ msgid "Set Toolbar Contents"
-#~ msgstr "Imposta contenuti della barra strumenti"
-
-#~ msgid "Sync windows"
-#~ msgstr "Sincronizza finestre"
-
-#~ msgid "Loose sync"
-#~ msgstr "Sincronizzazione Loose"
-
-#~ msgid "Physics Settings"
-#~ msgstr "Impostazioni di Physics"
-
-#~ msgid "Physics delay after drag"
-#~ msgstr "Ritardo di Physics dopo trascinamento"
-
-#~ msgid "%2.0f Frames"
-#~ msgstr "%2.0f Frame"
-
-#~ msgid "Maximum window mass"
-#~ msgstr "Massa massima della finestra"
-
-#~ msgid "%2.1f kg"
-#~ msgstr "%2.1f kg"
-
-#~ msgid "Desktop gravity"
-#~ msgstr "Gravità del desktop"
-
-#~ msgid "%1.1f m/s^2"
-#~ msgstr "%1.1f m/s^2"
-
-#~ msgid "Disable Movement"
-#~ msgstr "Disabilita movimento"
-
-#~ msgid "Disable Rotation"
-#~ msgstr "Disabilita rotazione"
-
-#~ msgid "Ignore Fullscreen"
-#~ msgstr "Ignora a schermo pieno"
-
-#~ msgid "Ignore Maximized"
-#~ msgstr "Ignora massimizzate"
-
-#~ msgid "Ignore Shelves"
-#~ msgstr "Ignora mensole"
-
-#~ msgid "Ignore"
-#~ msgstr "Ignora"
-
-#~ msgid "Physics"
-#~ msgstr "Physics"
-
-#~ msgid ""
-#~ "Cowardly refusing to battle<br>with the Tiling module for control<br>of "
-#~ "your windows. There can be only one!"
-#~ msgstr ""
-#~ "Codardamente mi rifiuto di<br>combattere col modulo Tiling<br>per il "
-#~ "controllo delle finestre.<br>Può essercene solo uno!"
-
-#~ msgid "Physics Error"
-#~ msgstr "Errore di Physics"
-
-#~ msgid "The physics module could not be started"
-#~ msgstr "Il modulo Physics non è potuto partire"
-
-#~ msgid "Use fast composite effects for windows"
-#~ msgstr "Usa effetti compositing rapidi per le finestre"
-
-#~ msgid "composite"
-#~ msgstr "composite"
-
-#~ msgid "border"
-#~ msgstr "bordo"
-
-#~ msgid "theme"
-#~ msgstr "tema"
-
-#~ msgid "animate"
-#~ msgstr "animazione"
-
-#~ msgid "Use fast composite effects for menus"
-#~ msgstr "Abilita effetti compositing rapidi per i menù"
-
-#~ msgid "menu"
-#~ msgstr "menù"
-
-#~ msgid "Use fast composite effects for popups"
-#~ msgstr "Usa effetti compositing rapidi per i popup"
-
-#~ msgid "popup"
-#~ msgstr "popup"
-
-#~ msgid "Use fast composite effects for objects"
-#~ msgstr "Usa effetti compositing rapidi per gli oggetti"
-
-#~ msgid ""
-#~ "Use fast composite effects for override-redirect windows (tooltips and "
-#~ "such)"
-#~ msgstr ""
-#~ "Usa effetti compositing rapidi per le finestre \"override\" (tooltip e "
-#~ "simili)"
-
-#~ msgid ""
-#~ "Disable composite effects for override-redirect windows (tooltips and "
-#~ "such)"
-#~ msgstr ""
-#~ "Disabilita effetti compositing per le finestre override (tooltip e simili)"
-
-#~ msgid "Disable composite effects for the screen"
-#~ msgstr "Disabilita effetti compositing per lo schermo"
-
-#~ msgid "screen"
-#~ msgstr "schermo"
-
-#~ msgid ""
-#~ "This option disables composite effects from themes, such as animating the "
-#~ "screen fade when blanking"
-#~ msgstr ""
-#~ "Questa opzione disabilita gli effetti di compositing del tema, come "
-#~ "l'animazione nell'oscuramento dello schermo"
-
-#~ msgid "Compositing engine"
-#~ msgstr "Motore di compositing"
-
-#~ msgid "Default window composite effect"
-#~ msgstr "Effetti finestre predefiniti"
-
-#~ msgid "Smooth scaling of composited window content"
-#~ msgstr "Scalatura dolce del contenuto delle finestre"
-
-#~ msgid "Sync composited windows"
-#~ msgstr "Sincronizza finestre"
-
-#~ msgid "Loose sync composited windows"
-#~ msgstr "Usa sincronizzazione \"loose\" per finestre"
-
-#~ msgid "Grab server during rendering of composited windows"
-#~ msgstr "Cattura server durante il rendering"
-
-#~ msgid "Initial draw timeout for newly-mapped composited windows"
-#~ msgstr "Timeout disegno iniziale per nuove finestre"
-
-#~ msgid "delay"
-#~ msgstr "ritardo"
-
-#~ msgid "%1.2f seconds"
-#~ msgstr "%1.2f secondi"
-
-#~ msgid "Tear-free compositing (VSYNC)"
-#~ msgstr "Compositing tear-free (VSYNC)"
-
-#~ msgid "Texture from pixmap rendering for composite"
-#~ msgstr "Rendering con texture da pixmap"
-
-#~ msgid "Composite swapping method"
-#~ msgstr "Metodo di swapping per composite"
-
-#~ msgid "backlight"
-#~ msgstr "backlight"
-
-#~ msgid "Send flush when compositing windows"
-#~ msgstr "Invia \"flush\" durante compositing"
-
-#~ msgid "Send dump when compositing windows"
-#~ msgstr "Invia \"dump\" durante compositing"
-
-#~ msgid "Show framerate when compositing windows"
-#~ msgstr "Mostra framerate durante compositing"
-
-#~ msgid "Rolling average for fps display when compositing"
-#~ msgstr "Media di rolling per fps durante compositing"
-
-#~ msgid "%1.0f frames"
-#~ msgstr "%1.0f frame"
-
-#~ msgid "Composite framerate display corner"
-#~ msgstr "Angolo visualizzazione framerate compositing"
-
-#~ msgid "windows"
-#~ msgstr "finestre"
-
-#~ msgid "Try not to cover other windows"
-#~ msgstr "Cerca di non coprire altre finestre"
-
-#~ msgid "Try not to cover gadgets"
-#~ msgstr "Cerca di non coprire i gadget"
-
-#~ msgid "Place at mouse pointer (automatic)"
-#~ msgstr "Posiziona sotto il puntatore del mouse (automatico)"
-
-#~ msgid "Place at mouse pointer (interactive)"
-#~ msgstr "Posiziona sotto il puntatore del mouse (interattivo)"
-
-#~ msgid "Don't set focus on new windows"
-#~ msgstr "Non impostare fuoco su nuove finestre"
-
-#~ msgid "Set focus on all new windows"
-#~ msgstr "Imposta fuoco su tutte le nuove finestre"
-
-#~ msgid "Set focus only on all new dialog windows"
-#~ msgstr "Imposta fuoco solo sulle nuove finestre di dialogo"
-
-#~ msgid ""
-#~ "Set focus only on new dialog windows if dialog's parent window has focus"
-#~ msgstr ""
-#~ "Imposta fuoco su nuove finestre di dialogo se il genitore ha il fuoco"
-
-#~ msgid "Ignore application"
-#~ msgstr "Ignora applicazione"
-
-#~ msgid "Animate application window"
-#~ msgstr "Anima finestra applicazione"
-
-#~ msgid "Raise and set focus to application window"
-#~ msgstr "Eleva e imposta fuoco su finestra applicazione"
-
-#~ msgid "Resize window, do not resize screen"
-#~ msgstr "Ridimensiona la finestra, non lo schermo"
-
-#~ msgid "Resize window and screen"
-#~ msgstr "Ridimensiona finestra e schermo"
-
-#~ msgid "Expand to maximum size without covering shelves"
-#~ msgstr "Espandi al massimo senza coprire le mensole"
-
-#~ msgid "Expand to maximum size ignoring shelves"
-#~ msgstr "Espandi al massimo ignorando le mensole"
-
-#~ msgid "No hinting"
-#~ msgstr "Nessun hinting"
-
-#~ msgid "Automatic hinting"
-#~ msgstr "Hinting automatico"
-
-#~ msgid "Bytecode hinting"
-#~ msgstr "Hinting con bytecode"
-
-#~ msgid "Show on screen of pointer"
-#~ msgstr "Mostra sullo schermo col puntatore"
-
-#~ msgid "Show on screen %d"
-#~ msgstr "Mostra sullo schermo %d"
-
-#~ msgid "No grouping"
-#~ msgstr "Nessun raggruppamento"
-
-#~ msgid "Virtual desktop"
-#~ msgstr "Desktop virtuale"
-
-#~ msgid "No separation"
-#~ msgstr "Nessuna separazione"
-
-#~ msgid "Separator bars"
-#~ msgstr "Barre di separazione"
-
-#~ msgid "Separate menus"
-#~ msgstr "Separa menù"
-
-#~ msgid "No sorting"
-#~ msgstr "Nessun ordinamento"
-
-#~ msgid "Alphabetical order"
-#~ msgstr "Ordine alfabetico"
-
-#~ msgid "Recently used windows first"
-#~ msgstr "Prima le finstre usate recentemente"
-
-#~ msgid "Group by owner virtual desktop"
-#~ msgstr "Raggruppa per desktop del proprietario"
-
-#~ msgid "Group by current virtual desktop"
-#~ msgstr "Raggruppa per desktop corrente"
-
-#~ msgid "none"
-#~ msgstr "nessuno"
-
-#~ msgid "Allow windows partly out of the screen limits"
-#~ msgstr "Consenti finestre parzialmente fuori schermo"
-
-#~ msgid "Allow windows completely out of the screen limits"
-#~ msgstr "Consenti finestre totalmente fuori schermo"
-
-#~ msgid "Keep windows completely within the screen limits"
-#~ msgstr "Mantieni finestre entro lo schermo visibile"
-
-#~ msgid "Show splash screen on startup"
-#~ msgstr "Mostra splash screen all'avvio"
-
-#~ msgid "splash"
-#~ msgstr "splash"
-
-#~ msgid "startup"
-#~ msgstr "avvio"
-
-#~ msgid "Startup transition effect"
-#~ msgstr "Effetti transizione avvio"
-
-#~ msgid "transition"
-#~ msgstr "transizioni"
-
-#~ msgid "Desk change transition effect"
-#~ msgstr "Effetti transizione cambio desktop"
-
-#~ msgid "vdesk"
-#~ msgstr "vdesk"
-
-#~ msgid "Wallpaper change transition effect"
-#~ msgstr "Effetti transizione cambio sfondo"
-
-#~ msgid "wallpaper"
-#~ msgstr "sfondo"
-
-#~ msgid "Default desktop wallpaper"
-#~ msgstr "Sfondo predefinito"
-
-#~ msgid "Default desktop name"
-#~ msgstr "Nome desktop predefinito"
-
-#~ msgid "desktop"
-#~ msgstr "desktop"
-
-#~ msgid "name"
-#~ msgstr "nome"
-
-#~ msgid "Used in Pager displays"
-#~ msgstr "Usato nella vista pager"
-
-#~ msgid "Menu scroll speed"
-#~ msgstr "Velocità di scorrimento menù"
-
-#~ msgid "scroll"
-#~ msgstr "scorrimento"
-
-#~ msgid "speed"
-#~ msgstr "velocità"
-
-#~ msgid "Speed at which the menus move onto screen if offscreen"
-#~ msgstr "Velocità riposizionamento menù"
-
-#~ msgid "Menu fast move threshold"
-#~ msgstr "Soglia movimento veloce del menù"
-
-#~ msgid "move"
-#~ msgstr "spostamento"
-
-#~ msgid ""
-#~ "Moving the mouse faster than this speed over a menu causes menu items to "
-#~ "not be selected"
-#~ msgstr ""
-#~ "Muovendo il mouse su un menù più velocemente di questa soglia rende le "
-#~ "voci non selezionate"
-
-#~ msgid "Menu mouse deactivate delay"
-#~ msgstr "Ritardo disattivazione mouse in menù"
-
-#~ msgid "drag"
-#~ msgstr "trascinamento"
-
-#~ msgid "%2.2f seconds"
-#~ msgstr "%2.2f secondi"
-
-#~ msgid ""
-#~ "The minimum time before a menu can be closed by clicking the mouse "
-#~ "outside the menu"
-#~ msgstr ""
-#~ "Il tempo minimo prima che il menù possa essere chiuso con un clic fuori "
-#~ "di esso"
-
-#~ msgid "Menu autoscroll margin"
-#~ msgstr "Margine autoscorrimento menù"
-
-#~ msgid ""
-#~ "The distance from the edge of the screen before menus begin to move away "
-#~ "from the edge"
-#~ msgstr ""
-#~ "La distanza dal bordo dello schermo prima che il menù inizi a spostarsi"
-
-#~ msgid "Menu autoscroll cursor margin"
-#~ msgstr "Margine cursore autoscorrimento menù"
-
-#~ msgid "mouse"
-#~ msgstr "mouse"
-
-#~ msgid "pointer"
-#~ msgstr "puntatore"
-
-#~ msgid ""
-#~ "The distance of the mouse pointer from the edge of the screen before "
-#~ "menus begin to move away from the edge"
-#~ msgstr ""
-#~ "La distanza del puntatore dal bordo dello schermo prima che il menù inizi "
-#~ "a spostarsi"
-
-#~ msgid "Enable window shading animation"
-#~ msgstr "Abilita animazione contrazione finestra"
-
-#~ msgid "shade"
-#~ msgstr "contrazione"
-
-#~ msgid "Window shade animation type"
-#~ msgstr "Tipo animazione per contrazione finestra"
-
-#~ msgid "Window shade animation speed"
-#~ msgstr "Velocità animazione per contrazione finestra"
-
-#~ msgid "%1.0f frames/second"
-#~ msgstr "%1.0f frame/secondo"
-
-#~ msgid "The framerate at which animations in Enlightenment occur"
-#~ msgstr "Il framerate oltre il quale si avviano le animazioni"
-
-#~ msgid "Application exec priority"
-#~ msgstr "Priorità esecuzione applicazione"
-
-#~ msgid "application"
-#~ msgstr "applicazione"
-
-#~ msgid "exec"
-#~ msgstr "esecuzione"
-
-#~ msgid "priority"
-#~ msgstr "priorità"
-
-#~ msgid "cache"
-#~ msgstr "cache"
-
-#~ msgid "image"
-#~ msgstr "immagine"
-
-#~ msgid "size"
-#~ msgstr "dimensione"
-
-#~ msgid "%4.0f KiB"
-#~ msgstr "%4.0f KiB"
-
-#~ msgid "font"
-#~ msgstr "font"
-
-#~ msgid "%3.0f KiB"
-#~ msgstr "%3.0f KiB"
-
-#~ msgid "Edje cache size"
-#~ msgstr "Dimensione cache Edje"
-
-#~ msgid "edje"
-#~ msgstr "edje"
-
-#~ msgid "Edje collection cache size"
-#~ msgstr "Dimensione cache collezioni Edje"
-
-#~ msgid "Cache flushing interval"
-#~ msgstr "Frequenza svuotamento cache"
-
-#~ msgid "Horizontal virtual desktop count"
-#~ msgstr "Numero desktop in orizzontale"
-
-#~ msgid "Vertical virtual desktop count"
-#~ msgstr "Numero desktop in verticale"
-
-#~ msgid "Edge flip while dragging"
-#~ msgstr "Cambia desktop nel trascinamento con mouse"
-
-#~ msgid "edge"
-#~ msgstr "bordi"
-
-#~ msgid "flip"
-#~ msgstr "passaggio"
-
-#~ msgid "binding"
-#~ msgstr "associazioni"
-
-#~ msgid ""
-#~ "Enable edge binding functionality while dragging objects to screen edge"
-#~ msgstr ""
-#~ "Abilita il passaggio a un desktop adiacente nel trascinamento di oggetti "
-#~ "sul limite dello schermo"
-
-#~ msgid "Module settings"
-#~ msgstr "Impostazioni modulo"
-
-#~ msgid "module"
-#~ msgstr "modulo"
-
-#~ msgid ""
-#~ "If enabled, this causes E to load all modules at once during startup "
-#~ "instead of loading them incrementally"
-#~ msgstr ""
-#~ "Se abilitata questa fa in modo che E carichi tutti i moduli insieme "
-#~ "all'avvio invece che caricarli in modo incrementale"
-
-#~ msgid "Window placement policy"
-#~ msgstr "Regole posizionamento finestra"
-
-#~ msgid "placement"
-#~ msgstr "posizionamento"
-
-#~ msgid "Determines where and how new windows are placed when created"
-#~ msgstr ""
-#~ "Determina dove e come vengono posizionate le finestre alla loro creazione"
-
-#~ msgid "Group new windows from same application"
-#~ msgstr "Raggruppa nuove finestre della stessa applicazione"
-
-#~ msgid "Switch to desk of new window"
-#~ msgstr "Vai al desktop con la nuova finestra"
-
-#~ msgid "Window focus policy"
-#~ msgstr "Regole per il fuoco delle finestre"
-
-#~ msgid "focus"
-#~ msgstr "fuoco"
-
-#~ msgid "New window focus policy"
-#~ msgstr "Regole fuoco delle finestre nuove"
-
-#~ msgid "Pass click to unfocused windows"
-#~ msgstr "Passa clic alle finestre fuori fuoco"
-
-#~ msgid "click"
-#~ msgstr "clic"
-
-#~ msgid ""
-#~ "When clicking an unfocused window, pass this click through to the "
-#~ "application instead of only using it to focus the window"
-#~ msgstr ""
-#~ "Quando si clicca su una finestra fuori fuoco questo viene passato "
-#~ "all'applicazione invece che essere semplicemente usato per dare il fuoco "
-#~ "alla finestra"
-
-#~ msgid "Policy when applications request focus"
-#~ msgstr "Regole per richiesta fuoco dall'applicazione"
-
-#~ msgid "Always raise window when clicked"
-#~ msgstr "Eleva sempre finestra quando cliccata"
-
-#~ msgid "raise"
-#~ msgstr "eleva"
-
-#~ msgid "Always focus window when clicked"
-#~ msgstr "Dai sempre fuoco a finestra quando cliccata"
-
-#~ msgid "Enable window autoraise"
-#~ msgstr "Abilita autoelevazione finestra"
-
-#~ msgid "Window autoraise delay"
-#~ msgstr "Ritardo autoelevazione finestra"
-
-#~ msgid "Revert window focus on desk switch"
-#~ msgstr "Ripristina fuoco finestra al cambio di desktop"
-
-#~ msgid "Revert window focus on window hide or close"
-#~ msgstr "Ripristina fuoco finestra alla chiusura o occultamento"
-
-#~ msgid "Warp pointer to new windows and away from closed windows"
-#~ msgstr "Invia puntatore a nuove finestre e via da quelle chiuse"
-
-#~ msgid "warp"
-#~ msgstr "invio"
-
-#~ msgid "Speed to move pointer when warping between windows"
-#~ msgstr "Velocità invio puntatore ad una finestra"
-
-#~ msgid "Windows raise on mouse move/resize"
-#~ msgstr "Eleva finestre allo spostamento/ridimensionamento con mouse"
-
-#~ msgid "resize"
-#~ msgstr "ridimensionamento"
-
-#~ msgid "Shelf gadget resistance"
-#~ msgstr "Resistenza ai gadget della mensola"
-
-#~ msgid "gadget"
-#~ msgstr "gadget"
-
-#~ msgid "resist"
-#~ msgstr "resistenza"
-
-#~ msgid "shelf"
-#~ msgstr "mensola"
-
-#~ msgid "Enable resistance when dragging windows"
-#~ msgstr "Abilita resistenza al trascinamento di finestre"
-
-#~ msgid "Window resistance against screen edges"
-#~ msgstr "Resistenza finestra contro bordi dello schermo"
-
-#~ msgid "Window resistance against other windows"
-#~ msgstr "Resistenza finestra contro altre finestre"
-
-#~ msgid "Window resistance against desktop gadgets"
-#~ msgstr "Resistenza finestra contro gadget sul desktop"
-
-#~ msgid ""
-#~ "Useful geometry is calculated as the screen size minus the geometry of "
-#~ "any shelves which do not allow windows to overlap them. This option "
-#~ "ensures that non-user placement of windows will be inside the useful "
-#~ "geometry of the current screen"
-#~ msgstr ""
-#~ "La geometria utile viene calcolata come la dimensione dello schermo meno "
-#~ "la geometria di ogni mensola che non consente la sovrapposizione delle "
-#~ "finestre. Questa opzione assicura che il posizionamento automatico (non "
-#~ "da parte dell'utente) delle finestre avvenga all'interno della geometria "
-#~ "utile dello schermo"
-
-#~ msgid "Limit window autoresizing to useful geometry"
-#~ msgstr "Limita ridimensionamento alla geometria utile"
-
-#~ msgid ""
-#~ "Useful geometry is calculated as the screen size minus the geometry of "
-#~ "any shelves which do not allow windows to overlap them"
-#~ msgstr ""
-#~ "La geometria utile viene calcolata come la dimensione dello schermo meno "
-#~ "la geometria di ogni mensola che non consente la sovrapposizione delle "
-#~ "finestre"
-
-#~ msgid "Winlist moves pointer to currently selected window while selecting"
-#~ msgstr "Winlist invia il puntatore alle finestre durante la selezione"
-
-#~ msgid "winlist"
-#~ msgstr "winlist"
-
-#~ msgid ""
-#~ "Winlist moves pointer to currently selected window after winlist closes"
-#~ msgstr "Winlist invia il puntatore alle finestre alla sua chiusura"
-
-#~ msgid "Disable pointer warping on winlist directional focus change"
-#~ msgstr "Disabilita invio puntatore nel cambio fuoco direzionale di Winlist"
-
-#~ msgid ""
-#~ "This option, when enabled, disables pointer warping only when switching "
-#~ "windows using a directional winlist action (up/down/left/right)"
-#~ msgstr ""
-#~ "Questa opzione se abilitata disabilita l'invio del puntatore solo quando "
-#~ "si ciclano le finestre tramite un comando direzionale di Winlist (su/giù/"
-#~ "sx/dx)"
-
-#~ msgid "Enable winlist scroll animation"
-#~ msgstr "Abilita animazione nello scorrimento con Winlist"
-
-#~ msgid "Winlist scroll speed"
-#~ msgstr "Velocità scorrimento con Winlist"
-
-#~ msgid "Winlist shows iconified windows"
-#~ msgstr "Winlist mostra finestre iconificate"
-
-#~ msgid "minimize"
-#~ msgstr "minimizza"
-
-#~ msgid "Winlist shows iconified windows from other desks"
-#~ msgstr "Winlist mostra finestre iconificate di altri desktop"
-
-#~ msgid "Winlist shows iconified windows from other screens"
-#~ msgstr "Winlist mostra finestre iconificate di altri schermi"
-
-#~ msgid "Winlist shows windows from other desks"
-#~ msgstr "Winlist mostra finestre di altri desktop"
-
-#~ msgid "Winlist shows windows from other screens"
-#~ msgstr "Winlist mostra finestre di altri schermi"
-
-#~ msgid "Winlist uniconifies and unshades windows while selecting"
-#~ msgstr ""
-#~ "Winlist dispiega finestre contratte e iconificate durante la selezione"
-
-#~ msgid "Winlist moves window to current screen+desk after selection"
-#~ msgstr ""
-#~ "Winlist porta le finestre allo schermo+desktop corrente dopo la selezione"
-
-#~ msgid "Winlist switches desks while selecting"
-#~ msgstr "Winlist cambia desktop mentre si seleziona"
-
-#~ msgid "Winlist focuses windows while selecting"
-#~ msgstr "Winlist dà fuoco a finestre mentre si seleziona"
-
-#~ msgid "Winlist raises windows while selecting"
-#~ msgstr "Winlist eleva finestre mentre si seleziona"
-
-#~ msgid "Winlist horizontal alignment"
-#~ msgstr "Allineamento orizzontale di Winlist"
-
-#~ msgid "Winlist vertical alignment"
-#~ msgstr "Allineamento verticale di Winlist"
-
-#~ msgid "Winlist width"
-#~ msgstr "Larghezza di Winlist"
-
-#~ msgid "Winlist height"
-#~ msgstr "Altezza di Winlist"
-
-#~ msgid "Winlist minimum width"
-#~ msgstr "Larghezza minima di Winlist"
-
-#~ msgid "%4.0f pixels"
-#~ msgstr "%4.0f pixel"
-
-#~ msgid "Winlist minimum height"
-#~ msgstr "Altezza minima di Winlist"
-
-#~ msgid "Winlist maximum width"
-#~ msgstr "Larghezza massima di Winlist"
-
-#~ msgid "Winlist maximum height"
-#~ msgstr "Altezza massima di Winlist"
-
-#~ msgid "Fullscreen window policy"
-#~ msgstr "Regole per le finestre a tutto schermo"
-
-#~ msgid "fullscreen"
-#~ msgstr "a tutto schermo"
-
-#~ msgid "Window maximize policy"
-#~ msgstr "Regole per la massimizzazione delle finestre"
-
-#~ msgid "maximize"
-#~ msgstr "massimizza"
-
-#~ msgid "Allow moving of maximized windows"
-#~ msgstr "Consenti lo spostamento delle finestre massimizzate"
-
-#~ msgid "Adjust windows on shelf toggle"
-#~ msgstr "Sistema finestre alla commutazione della mensola"
-
-#~ msgid ""
-#~ "When using an autohiding shelf, this option causes maximized windows to "
-#~ "expand and contract to fill the space that the shelf occupies when it "
-#~ "hides"
-#~ msgstr ""
-#~ "Quando si usa una mansola con scomparsa automatica questa opzione fa in "
-#~ "modo che le finestre massimizzate si espandano e si contraggano per "
-#~ "riempire lo spazio lasciato libero dalla mensola"
-
-#~ msgid "Allow windows above fullscreen windows"
-#~ msgstr "Consenti finestre sopra le finestre a tutto schermo"
-
-#~ msgid "Kill window if process not responding to close"
-#~ msgstr "Uccidi finestra se il processo non risponde alla chiusura"
-
-#~ msgid "kill"
-#~ msgstr "uccidi"
-
-#~ msgid "Window kill delay"
-#~ msgstr "Ritardo uccisione finestra"
-
-#~ msgid "Enable window client pinging"
-#~ msgstr "Abilita il ping del client della finestra"
-
-#~ msgid "Window client ping interval (CPU ticks)"
-#~ msgstr "Intervallo ping del client della finestra (tick CPU)"
-
-#~ msgid "Remember internal window geometry"
-#~ msgstr "Ricorda geometria finestre interne"
-
-#~ msgid "remember"
-#~ msgstr "ricorda"
-
-#~ msgid ""
-#~ "This option causes E to remember the geometry of its internal dialogs and "
-#~ "windows, NOT including filemanager windows"
-#~ msgstr ""
-#~ "Questa opzione fa in modo che E ricordi la geometria delle sue finestre "
-#~ "interne, anche di dialogo, ma NON delle finestre del filemanager"
-
-#~ msgid "Remember internal filemanager window geometry"
-#~ msgstr "Ricorda geometria finestre filemanager"
-
-#~ msgid "files"
-#~ msgstr "file"
-
-#~ msgid ""
-#~ "This option causes E to remember the geometry of its internal filemanager "
-#~ "windows, NOT including dialog windows, based on the directory the window "
-#~ "is showing"
-#~ msgstr ""
-#~ "Questa opzione fa in modo che E ricordi la geometria delle sue finestre "
-#~ "interne del filemanager, ma NON delle finestre di dialogo, basandosi "
-#~ "sulla directory mostrata dalla finestra"
-
-#~ msgid "Remember internal filemanager window geometry globally"
-#~ msgstr "Ricorda geometria finestre filemanager globalmente"
-
-#~ msgid ""
-#~ "This option causes E to remember the geometry of its internal filemanager "
-#~ "windows globally instead of using the target directory"
-#~ msgstr ""
-#~ "Questa opzione fa in modo che E ricordi la geometria delle sue finestre "
-#~ "interne del filemanager globalmente invece di usare la directory mostrata"
-
-#~ msgid "Window position info follows window when moving"
-#~ msgstr "Dati su posizione seguono la finestra nello spostamento"
-
-#~ msgid "Window geometry info follows window when resizing"
-#~ msgstr "Dati su geometria seguono la finestra nel ridimensionamento"
-
-#~ msgid "Window position info visible when moving"
-#~ msgstr "Dati su posizione finestra visibili nello spostamento"
-
-#~ msgid "Window geometry info visible when resizing"
-#~ msgstr "Dati su geometria finestra visibili nel ridimensionamento"
-
-#~ msgid "Transient windows follow movement of their child"
-#~ msgstr "Finestre transitorie seguono il movimento della figlia"
-
-#~ msgid "transient"
-#~ msgstr "transitoria"
-
-#~ msgid "Transient windows follow resize of their child"
-#~ msgstr "Finestre transitorie seguono il ridimensionamento della figlia"
-
-#~ msgid "Transient windows follow raise of their child"
-#~ msgstr "Finestre transitorie seguono l'elevazione della figlia"
-
-#~ msgid "Transient windows follow lower of their child"
-#~ msgstr "Finestre transitorie seguono l'abbassamento della figlia"
-
-#~ msgid "Transient windows follow layer change of their child"
-#~ msgstr "Finestre transitorie seguono il cambio livello della figlia"
-
-#~ msgid "Transient windows follow desk change of their child"
-#~ msgstr "Finestre transitorie seguono il cambio desktop della figlia"
-
-#~ msgid "Transient windows follow iconification of their child"
-#~ msgstr "Finestre transitorie seguono l'iconificazione della figlia"
-
-#~ msgid "Application menus shows Name field"
-#~ msgstr "I menù applicazioni mostrano il campo Nome"
-
-#~ msgid "This information is taken from the related .desktop file"
-#~ msgstr "Questa informazione viene presa dal relativo file .desktop"
-
-#~ msgid "Application menus shows Generic field"
-#~ msgstr "I menù applicazioni mostrano il campo Generico"
-
-#~ msgid "Application menus shows Comment field"
-#~ msgstr "I menù applicazioni mostrano il campo Commento"
-
-#~ msgid "Show Favorite Applications in the main menu"
-#~ msgstr "Mostra applicazioni preferite in menù principale"
-
-#~ msgid "Show Applications in the main menu"
-#~ msgstr "Mostra applicazioni in menù principale"
-
-#~ msgid "Show gadget settings in top-level gadget menu"
-#~ msgstr "Mostra voce impostazioni nel menù principale del gadget"
-
-#~ msgid "Launch commands with this command"
-#~ msgstr "Lancia eseguibili con questo comando"
-
-#~ msgid "Command used to launch files and applications"
-#~ msgstr "Il comando usato per lanciare file e applicazioni"
-
-#~ msgid "Window borders use application icon"
-#~ msgstr "Icona applicazione su bordo finestra"
-
-#~ msgid ""
-#~ "Applications provide their own icons. If this option is not set, E will "
-#~ "use internal theme icons instead of the application-provided icon"
-#~ msgstr ""
-#~ "Le applicazioni forniscono le proprie icone. Se questa opzione non viene "
-#~ "selezionata E userà il tema icone interno al posto dell'icona fornita "
-#~ "dall'applicazione"
-
-#~ msgid "Disable confirmation dialogs"
-#~ msgstr "Disabilita finestre di conferma"
-
-#~ msgid "confirm"
-#~ msgstr "conferma"
-
-#~ msgid "dialog"
-#~ msgstr "finestre dialogo"
-
-#~ msgid ""
-#~ "This option suppresses all confirmation dialogs and assumes that the user "
-#~ "has clicked the confirm option"
-#~ msgstr ""
-#~ "Questa opzione sopprime tutte le finestre di conferma e assume che "
-#~ "l'utente abbia cliccato l'opzione per confermare"
-
-#~ msgid "Configuration dialogs automatically apply their changes"
-#~ msgstr "Finestre di configurazione applicano cambiamenti automaticamente"
-
-#~ msgid "settings"
-#~ msgstr "impostazioni"
-
-#~ msgid ""
-#~ "This option causes any configuration options to be applied immediately "
-#~ "when changed instead of requiring the 'Apply' button to be clicked"
-#~ msgstr ""
-#~ "Questa opzione fa in modo che tutte le opzioni di configurazione vengano "
-#~ "applicate immediatamente al loro cambiamento invece di richiedere che "
-#~ "venga cliccato il bottone \"Applica\""
-
-#~ msgid "Configuration dialogs show advanced view by default"
-#~ msgstr "Finestre di configurazione mostrano impostazioni avanzate"
-
-#~ msgid ""
-#~ "Configurations dialogs can have basic and advanced views; this option "
-#~ "causes all configuration dialogs to show the advanced view by default"
-#~ msgstr ""
-#~ "Le finestre di configurazione possono avere una visualizzazione di base e "
-#~ "una avnazata; con questa opzione tutte le finestre di configurazione si "
-#~ "aprono mostrando la visualizzazione avanzata"
-
-#~ msgid "Configuration dialog windows are normal windows"
-#~ msgstr "Le finestre di configurazione sono normali finestre"
-
-#~ msgid ""
-#~ "This option causes configuration dialogs to be normal windows instead of "
-#~ "dialog windows"
-#~ msgstr ""
-#~ "Questa opzione rende le finestre di configurazione delle normali finestre "
-#~ "piuttosto che delle finestre di dialogo"
-
-#~ msgid "Set font hinting mode"
-#~ msgstr "Imposta modalità di hinting dei font"
-
-#~ msgid "hinting"
-#~ msgstr "hinting"
-
-#~ msgid "Use custom command for desklock"
-#~ msgstr "Usa comando personalizzato per bloccaschermo"
-
-#~ msgid "desklock"
-#~ msgstr "bloccashermo"
-
-#~ msgid "This option allows an external application to manage desklock"
-#~ msgstr ""
-#~ "Questa opzione consente di usare un'applicazione esterna per gestire il "
-#~ "bloccaschermo"
-
-#~ msgid "Custom desklock command"
-#~ msgstr "Comando bloccaschermo personalizzato"
-
-#~ msgid "Desklock login box shows on which screen?"
-#~ msgstr "Su quale schermo appare la finestra di sblocco?"
-
-#~ msgid "Desklock activates on login"
-#~ msgstr "Il bloccaschermo si attiva al login"
-
-#~ msgid "Desklock activates on resume from suspend"
-#~ msgstr "Il bloccaschermo si attiva al ripristino da sospensione"
-
-#~ msgid "Desklock activates during screensaver"
-#~ msgstr "Il bloccaschermo si attiva con lo screensaver"
-
-#~ msgid "screensaver"
-#~ msgstr "screensaver"
-
-#~ msgid "Desklock activates X seconds after screensaver activates"
-#~ msgstr "Il bloccaschermo si avvia X secondi dopo lo screensaver"
-
-#~ msgid "%2.0f seconds"
-#~ msgstr "%2.0f secondi"
-
-#~ msgid "Desklock activates when idle"
-#~ msgstr "Il bloccaschermo si avvia su inattività"
-
-#~ msgid "Desklock activates when idle for X seconds"
-#~ msgstr "Il bloccaschermo si avvia se inattivo per X secondi"
-
-#~ msgid "Use custom desklock wallpaper"
-#~ msgstr "Usa sfondo bloccaschermo personalizzato"
-
-#~ msgid "Prompt for desklock timer delay if deactivated quickly"
-#~ msgstr "Chiedi ritardo timer bloccaschermo se disattivato precocemente"
-
-#~ msgid "Desklock quick deactivation timer delay"
-#~ msgstr "Tempo per disattivazione precoce bloccaschermo"
-
-#~ msgid "Enable screensaver"
-#~ msgstr "Abilita screensaver"
-
-#~ msgid "Screensaver activates when idle for X seconds"
-#~ msgstr "Lo screensaver si avvia se inattivo per X secondi"
-
-#~ msgid "Prompt for screensaver timer delay if deactivated quickly"
-#~ msgstr "Chiedi ritardo timer screensaver se disattivato precocemente"
-
-#~ msgid "Screensaver quick deactivation timer delay"
-#~ msgstr "Tempo per disattivazione precoce screensaver"
-
-#~ msgid "Suspend when screensaver activates"
-#~ msgstr "Sospendi all'avvio dello screensaver"
-
-#~ msgid "Suspend when screensaver activates even if on AC"
-#~ msgstr "Sospendi all'avvio dello screensaver anche se alimentato da rete"
-
-#~ msgid "Screensaver suspend delay"
-#~ msgstr "Ritardo sospensione dopo screensaver"
-
-#~ msgid "Window list menu grouping policy"
-#~ msgstr "Regole per raggruppamento nel menù di Winlist"
-
-#~ msgid "Window list menu includes windows from all screens"
-#~ msgstr "Il menù di Winlist include finestre da tutti gli schermi"
-
-#~ msgid "Window list menu separator policy"
-#~ msgstr "Regole per i separatori nel menù di Winlist"
-
-#~ msgid "Window list menu sort policy"
-#~ msgstr "Regole per l'ordinamento nel menù di Winlist"
-
-#~ msgid "Window list menu iconified window grouping policy"
-#~ msgstr "Regole ordinamento finestre iconificate nel menù di Winlist"
-
-#~ msgid "Window list menu warps to desktop of selected iconified window"
-#~ msgstr "Il menù di Winlist invia al desktop della finestra iconificata"
-
-#~ msgid "Enable window list menu length limit"
-#~ msgstr "Abilita limite di lunghezza del menù di Winlist"
-
-#~ msgid "Window list menu length limit (characters)"
-#~ msgstr "Limite di lunghezza del menù di Winlist"
-
-#~ msgid "%1.0f characters"
-#~ msgstr "%1.0f caratteri"
-
-#~ msgid "Use Enlightenment theme cursor"
-#~ msgstr "Usa tema cursore di Enlightenment"
-
-#~ msgid "Mouse cursor size"
-#~ msgstr "Dimensione cursore del mouse"
-
-#~ msgid "Show mouse cursor"
-#~ msgstr "Mostra cursore del mouse"
-
-#~ msgid "Enable idle effects for mouse cursor"
-#~ msgstr "Abilita effetti inattività per cursore del mouse"
-
-#~ msgid "Enable left-handed mouse"
-#~ msgstr "Abilita mouse per mancini"
-
-#~ msgid "Mouse acceleration threshold"
-#~ msgstr "Soglia accelerazione mouse"
-
-#~ msgid "Enable desk flip between last and first desks"
-#~ msgstr "Abilita passaggio tra il primo e l'ultimo desktop"
-
-#~ msgid "Enable desk flipping with fullscreen windows"
-#~ msgstr "Abilita cambio desktop con finestre a tutto schermo"
-
-#~ msgid "Enable desk flipping with multiple monitors (DANGEROUS)"
-#~ msgstr "Abilita cambio desktop con schermi multipli (PERICOLOSO)"
-
-#~ msgid "Desk flip animation type"
-#~ msgstr "Tipo di animazione per cambio desktop"
-
-#~ msgid "Default window border style"
-#~ msgstr "Stile di bordo finestra predefinito"
-
-#~ msgid "Window screen limit policy"
-#~ msgstr "Regole per il limite dello schermo per le finestre"
-
-#~ msgid "Thumbnailing process priority"
-#~ msgstr "Priorità processo creazione miniature"
-
-#~ msgid ""
-#~ "Enlightenment runs its own thumbnailing daemon in the background. This "
-#~ "option configures the priority of that process"
-#~ msgstr ""
-#~ "Enlightenment utilizza il suo demone per la creazione delle miniature in "
-#~ "background. Questa opzione configura la priorità di quel processo"
-
-#~ msgid "Enable click-to-drag scrolling (thumbscrolling)"
-#~ msgstr "Abilita scorrimento \"clicca e trascina\" (thumbscrolling)"
-
-#~ msgid "Thumbscroll threshold"
-#~ msgstr "Soglia per thumbscrolling"
-
-#~ msgid "Thumbscroll momentum threshold"
-#~ msgstr "Soglia moto inerziale per thumbscrolling"
-
-#~ msgid "%1.0f pixels/second"
-#~ msgstr "%1.0f pixel/secondo"
-
-#~ msgid "Thumbscroll resistance"
-#~ msgstr "Resistenza per thumbscrolling"
-
-#~ msgid "Show files on desktop"
-#~ msgstr "Mostra file sul desktop"
-
-#~ msgid "Filemanager uses single click to activate"
-#~ msgstr "Il filemanager usa clic singolo per attivazione"
-
-#~ msgid "Filemanager shows removable devices on desktop"
-#~ msgstr "Il filemanager mostra dispositivi rimovibili sul desktop"
-
-#~ msgid "Filemanager automatically mounts removable devices when attached"
-#~ msgstr "Il filemanager monta automaticamente le unità all'inserimento"
-
-#~ msgid "Filemanager automatically opens removable devices when attached"
-#~ msgstr "Il filemanager apre automaticamente le unità all'inserimento"
-
-#~ msgid "Filemanager always performs `cp+rm` instead of `mv`"
-#~ msgstr "Il filemanager usa sempre `cp+rm` invece di `mv`"
-
-#~ msgid "Filemanager deletes files securely"
-#~ msgstr "Filemanager cancella i file in modo sicuro"
-
-#~ msgid "Only show label on keyboard gadgets instead of flags"
-#~ msgstr "Mostra solo etichette nei gadget Keyboard invece delle bandiere"
-
-#~ msgid "key"
-#~ msgstr "tasto"
-
-#~ msgid "Do not apply any keyboard layout settings"
-#~ msgstr "Non applicare alcuna impostazione per layout di tastiera"
-
-#~ msgid "Window change timeout when moving or resizing using keyboard"
-#~ msgstr ""
-#~ "Timeout cambio finestra con spostamento/ridimensionamento da tastiera"
-
-#~ msgid "Window horizontal movement speed when using keyboard"
-#~ msgstr "Velocità spostamento orizzontale usando la tastiera"
-
-#~ msgid "Window vertical movement speed when using keyboard"
-#~ msgstr "Velocità spostamento verticale usando la tastiera"
-
-#~ msgid "Window horizontal resize speed when using keyboard"
-#~ msgstr "Velocità ridimensionamento orizzontale usando la tastiera"
-
-#~ msgid "Overall scaling factor"
-#~ msgstr "Fattore generale di scalatura personalizzato"
-
-#~ msgid "scale"
-#~ msgstr "scalatura"
-
-#~ msgid "%1.2f pixels"
-#~ msgstr "%1.2f pixel"
-
-#~ msgid "Use screen DPI for scaling"
-#~ msgstr "Usa DPI dello schermo per scalatura"
-
-#~ msgid "Use custom DPI for scaling"
-#~ msgstr "Usa DPI personalizzato per scalatura"
-
-#~ msgid "Custom DPI to use when scaling"
-#~ msgstr "DPI personalizzato da usare per scalatura"
-
-#~ msgid "System Console primary action icon size"
-#~ msgstr "Dimensione icona azione primaria di Syscon"
-
-#~ msgid "syscon"
-#~ msgstr "syscon"
-
-#~ msgid "System Console secondary action icon size"
-#~ msgstr "Dimensione icona azione secondaria di Syscon"
-
-#~ msgid "System Console extra action icon size"
-#~ msgstr "Dimensione icona azione extra di Syscon"
-
-#~ msgid "System Console idle timeout"
-#~ msgstr "Timeout inattività per Syscon"
-
-#~ msgid "System Console performs default action after idle timeout"
-#~ msgstr "Syscon esegue azione predefinita dopo timeout per inattività"
-
-#~ msgid "input"
-#~ msgstr "input"
-
-#~ msgid "Backlight \"normal\" brightness"
-#~ msgstr "Luminosità \"normale\" di Backlight"
-
-#~ msgid "Backlight \"dim\" brightness"
-#~ msgstr "Luminosità \"attenuata\" di Backlight"
-
-#~ msgid "Backlight transition length"
-#~ msgstr "Durata transizione di Backlight"
-
-#~ msgid "Backlight dims after idle"
-#~ msgstr "Backlight attenua schermo su inattività"
-
-#~ msgid "Backlight idle delay"
-#~ msgstr "Ritardo per attenuazione di Backlight"
-
-#~ msgid "Load ~/.Xresources on startup"
-#~ msgstr "Carica ~/.Xresources all'avvio"
-
-#~ msgid "environment"
-#~ msgstr "ambienti"
-
-#~ msgid "Load ~/.Xmodmap"
-#~ msgstr "Carica ~/.Xmodmap"
-
-#~ msgid "Run gnome-settings-daemon"
-#~ msgstr "Esegui gnome-settings-daemon"
-
-#~ msgid "Run kdeinit"
-#~ msgstr "Esegui kdeinit"
-
-#~ msgid "Enable GTK application settings"
-#~ msgstr "Abilita impostazioni applicazioni GTK"
-
-#~ msgid "xsettings"
-#~ msgstr "xsettings"
-
-#~ msgid "Try setting GTK theme to match E18 theme"
-#~ msgstr "Cerca di impostare un tema GTK corrispondente al tema E18"
-
-#~ msgid "GTK theme name"
-#~ msgstr "Nome tema GTK"
-
-#~ msgid "Enable use of icon theme for applications"
-#~ msgstr "Abilita uso tema icone per le applicazioni"
-
-#~ msgid "Icon theme"
-#~ msgstr "Tema icone"
-
-#~ msgid "Icon theme overrides E18 internal theme icons"
-#~ msgstr "Il tema icone prevale sul tema icone interno di E18"
-
-#~ msgid "Always launch applications as single-instance"
-#~ msgstr "Lancia sempre applicazioni come singole istanze"
-
-#~ msgid "appearance"
-#~ msgstr "aspetto"
-
-#~ msgid "applications"
-#~ msgstr "applicazioni"
-
-#~ msgid "menus"
-#~ msgstr "menù"
-
-#~ msgid "advanced"
-#~ msgstr "avanzate"
-
-#~ msgid "framerate"
-#~ msgstr "framerate"
-
-#~ msgid "profile"
-#~ msgstr "profilo"
-
-#~ msgid "window"
-#~ msgstr "finestra"
-
-#~ msgid "launch"
-#~ msgstr "lancia"
-
-#~ msgid "icon"
-#~ msgstr "icona"
-
-#~ msgid "style"
-#~ msgstr "stile"
-
-#~ msgid "cursor"
-#~ msgstr "cursore"
-
-#~ msgid "iconify"
-#~ msgstr "iconifica"
-
-#~ msgid "Control Panel"
-#~ msgstr "Pannello di controllo"
-
-#~ msgid "Search: "
-#~ msgstr "Cerca:"
-
-#~ msgid "Discard"
-#~ msgstr "Scarta"
-
-#~ msgid "Configuration"
-#~ msgstr "Configurazione"
-
-#~ msgid "conf2 module cannot be loaded when conf module is already loaded!"
-#~ msgstr ""
-#~ "Il modulo conf2 non può essere caricato se è già caricato il modulo conf!"
-
-#~ msgid "Create a new application launcher"
-#~ msgstr "Crea nuovo lanciatore applicazione"
-
-#~ msgid "Application launchers"
-#~ msgstr "Lanciatori applicazione"
-
-#~ msgid "Favorite applications"
-#~ msgstr "applicazioni preferite"
-
-#~ msgid "Ibar applications"
-#~ msgstr "Applicazioni di IBar"
-
-#~ msgid "Desk lock applications"
-#~ msgstr "Applicazioni per il blocco dello schermo"
-
-#~ msgid "Desk unlock applications"
-#~ msgstr "Applicazioni per lo sblocco dello schermo"
-
-#~ msgid "Enlightenment restart applications"
-#~ msgstr "Applicazioni per il riavvio di Enlightenment"
-
-#~ msgid "Enlightenment start applications"
-#~ msgstr "Applicazioni per l'avvio di Enlightenment"
-
-#~ msgid "Enlightenment default applications"
-#~ msgstr "Applicazioni predefinite di Enlightenment"
-
-#~ msgid "Key binding settings"
-#~ msgstr "Impostazione combinazioni della tastiera"
-
-#~ msgid "Mouse binding settings"
-#~ msgstr "Impostazione associazioni del mouse"
-
-#~ msgid "ACPI binding settings"
-#~ msgstr "Impostazione associazioni di ACPI"
-
-#~ msgid "acpi"
-#~ msgstr "acpi"
-
-#~ msgid "Screen edge binding settings"
-#~ msgstr "Impostazione associazioni con bordi dello schermo"
-
-#~ msgid "Edje signal binding settings"
-#~ msgstr "Impostazione associazioni con segnali Edje"
-
-#~ msgid "Advanced composite settings panel"
-#~ msgstr "Pannello impostazioni compositing avanzate"
-
-#~ msgid "Enlightenment profile settings"
-#~ msgstr "Impostazioni profili di Enlightenment"
-
-#~ msgid "Language settings"
-#~ msgstr "Localizzazione"
-
-#~ msgid "language"
-#~ msgstr "lingua"
-
-#~ msgid "Desklock language settings"
-#~ msgstr "Localizzazione del bloccaschermo"
-
-#~ msgid "Input method settings"
-#~ msgstr "Impostazione metodo di input"
-
-#~ msgid "Search directory settings"
-#~ msgstr "Impostazione directory di ricerca"
-
-#~ msgid "Environment variable settings"
-#~ msgstr "Impostazione variabili d'ambiente"
-
-#~ msgid "Screen resolution and orientation settings"
-#~ msgstr "Impostazione risoluzione e orientamento schermo"
-
-#~ msgid "Shelf settings"
-#~ msgstr "Impostazioni mensole porta-gadget"
-
-#~ msgid "Themes"
-#~ msgstr "Temi"
-
-#~ msgid "Enlightenment theme settings"
-#~ msgstr "Impostazione tema di Enlightenment"
-
-#~ msgid "Desktop wallpaper settings"
-#~ msgstr "Impostazioni sfondo"
-
-#~ msgid "Enlightenment color settings"
-#~ msgstr "Impostazione colori di Enlightenment"
-
-#~ msgid "color"
-#~ msgstr "colori"
-
-#~ msgid "Enlightenment font settings"
-#~ msgstr "Impostazione font di Enlightenment"
-
-#~ msgid "Window remember settings"
-#~ msgstr "Impostazioni finestra da ricordare"
-
-#~ msgid "Everything launcher settings"
-#~ msgstr "Impostazioni lanciatore Everything"
-
-#~ msgid "everything"
-#~ msgstr "everything"
-
-#~ msgid "filemanager"
-#~ msgstr "filemanager"
-
-#~ msgid "file manager"
-#~ msgstr "file manager"
-
-#~ msgid "Default view mode"
-#~ msgstr "Vista predefinita"
-
-#~ msgid "Icon size"
-#~ msgstr "Dimensione icona"
-
-#~ msgid "Show file extensions"
-#~ msgstr "Mostra estensioni dei file"
-
-#~ msgid "Show full path in filemanager window titles"
-#~ msgstr "Mostra percorso completo nel titolo della finestra"
-
-#~ msgid "Show path toolbar in filemanager windows"
-#~ msgstr "Mostra barra del percorso nel filemanager"
-
-#~ msgid "Filemanager path toolbar position"
-#~ msgstr "Posizione della barra del percorso"
-
-#~ msgid "Show favorites sidebar in filemanager windows"
-#~ msgstr "Mostra riquadro dei preferiti nel filemanager"
-
-#~ msgid "Ignore letter case when sorting files"
-#~ msgstr "Ignora maiuscole nell'ordinamento dei file"
-
-#~ msgid "Group files by extension"
-#~ msgstr "Raggruppa file per estensione"
-
-#~ msgid "Sort files by modification time"
-#~ msgstr "Ordina file per data di modifica"
-
-#~ msgid "Sort files by size"
-#~ msgstr "Ordina file per dimensione"
-
-#~ msgid "Sort directories first"
-#~ msgstr "Ordina directory per prime"
-
-#~ msgid "Sort directories last"
-#~ msgstr "Ordina directory per ultime"
-
-#~ msgid "Open directories in place"
-#~ msgstr "Apri directory nella stessa finestra"
-
-#~ msgid "Use single click to open files"
-#~ msgstr "Usa clic singolo per aprire i file"
-
-#~ msgid "Use alternate (Mac-style) selection modifiers"
-#~ msgstr "Usa modificatori selezione alternativi (stile Mac)"
-
-#~ msgid "Allow navigation on desktop"
-#~ msgstr "Consenti esplorazione sul desktop"
-
-#~ msgid ""
-#~ "Normally, icons on the desktop come from $XDG_HOME_DIR/Desktop[-$SCREEN]. "
-#~ "With this option enabled, the desktop can freely change directories using "
-#~ "the Navigate menu or type buffer."
-#~ msgstr ""
-#~ "Normalmente le icone sul desktop provengono da $XDG_HOME_DIR/Desktop[-"
-#~ "$SCREEN]. Con questa opzione abilitata si può liberamente cambiare "
-#~ "directory per il desktop usando il menù di navigazione o la casella di "
-#~ "inserimento."
-
-#~ msgid "Maximum file size for which thumbnails should be generated"
-#~ msgstr "Massima dimensione file per la generazione di miniature"
-
-#~ msgid "Spring folder delay"
-#~ msgstr "Ritardo apertura directory su trascinamento"
-
-#~ msgid ""
-#~ "A \"spring folder\" is the action that occurs when dragging a file onto a "
-#~ "folder: the folder will \"spring\" open and create a new window to "
-#~ "continue the drag operation in."
-#~ msgstr ""
-#~ "L'apertura su trascinamento è l'azione che viene eseguita quando si "
-#~ "trascina un file su una directory: la directory viene aperta in una nuova "
-#~ "finestra in cui continuare l'operazione di trascinamento"
-
-#~ msgid "File icons"
-#~ msgstr "Icone dei file"
-
-#~ msgid "Display low urgency notifications"
-#~ msgstr "Visualizza notifiche a bassa urgenza"
-
-#~ msgid "notification"
-#~ msgstr "notification"
-
-#~ msgid "Display normal urgency notifications"
-#~ msgstr "Visualizza notifiche ad urgenza normale"
-
-#~ msgid "Display high urgency notifications"
-#~ msgstr "Visualizza notifiche ad alta urgenza"
-
-#~ msgid "Force a specified timeout on all notifications"
-#~ msgstr "Forza timeout impostato per tutte le notifiche"
-
-#~ msgid "Timeout to force on notifications"
-#~ msgstr "Timeout impostato per tutte le notifiche"
-
-#~ msgid "Screen(s) on which to display notifications"
-#~ msgstr "Schermi in cui mostrare le notifiche"
-
-#~ msgid "Corner in which to display notifications"
-#~ msgstr "Angolo dove mostrare le notifiche"
-
-#~ msgid "Quickaccess settings panel"
-#~ msgstr "Pannello impostazioni di Quickaccess"
-
-#~ msgid "quickaccess"
-#~ msgstr "quickaccess"
-
-#~ msgid "Hide windows on activate instead of raising"
-#~ msgstr "Nascondi finestre all'attivazione invece di elevare"
-
-#~ msgid ""
-#~ "By default, activating a Quickaccess binding when the window is behind "
-#~ "other windows will raise the window. This option changes that behavior to "
-#~ "hide the window instead."
-#~ msgstr ""
-#~ "Di norma se si attiva un'associazione di Quickaccess mentre la finestra è "
-#~ "sotto le altre questa viene elevata. Questa opzione fa invece in modo che "
-#~ "quella finestra venga nascosta."
-
-#~ msgid "Hide windows when focus is lost"
-#~ msgstr "Nascondi finestre alla perdita del fuoco"
-
-#~ msgid ""
-#~ "This option causes Quickaccess windows to automatically hide when they "
-#~ "lose focus"
-#~ msgstr ""
-#~ "Questa opzione fa in modo che le finestre sotto Quickaccess vengano "
-#~ "automaticamente nascoste se perdono il fuoco"
-
-#~ msgid "Skip taskbar"
-#~ msgstr "Fuori Taskbar"
-
-#~ msgid "This option causes Quickaccess windows to not show up in taskbars"
-#~ msgstr ""
-#~ "Questa opzione fa in modo che le finestre sotto Quickaccess non vengano "
-#~ "mostrate nelle taskbar"
-
-#~ msgid "Skip pager"
-#~ msgstr "Fuori Pager"
-
-#~ msgid "This option causes Quickaccess windows to not show up in pagers"
-#~ msgstr ""
-#~ "Questa opzione fa in modo che le finestre sotto Quickaccess non vengano "
-#~ "mostrate nei pager"
-
-#~ msgid "Teamwork settings panel"
-#~ msgstr "Pannello impostazioni di Teamwork"
-
-#~ msgid "teamwork"
-#~ msgstr "teamwork"
-
-#~ msgid "Disable Teamwork remote media fetching"
-#~ msgstr "Disabilita scaricamento media remoti di Teamwork"
-
-#~ msgid "Disable Teamwork video popups"
-#~ msgstr "Disabilita popup video di Teamwork"
-
-#~ msgid "Maximum total size of Teamwork media to keep in RAM"
-#~ msgstr "Totale massimo di media di Teamwork da tenere in RAM"
-
-#~ msgid "Maximum size of remote media items to fetch with Teamwork"
-#~ msgstr "Dimensione massima dei media remoti di Teamwork da scaricare"
-
-#~ msgid ""
-#~ "This option determines how much memory will be used to cache recent media "
-#~ "for faster loading."
-#~ msgstr ""
-#~ "Questa opzione determina quanta memoria verrà usata per il caching dei "
-#~ "media recentiin modo da velocizzare il caricamento."
-
-#~ msgid "Maximum age for a disk-cached Teamwork media item"
-#~ msgstr "Età massima dei media di Teamwork nella cache su disco"
-
-#~ msgid ""
-#~ "This option determines how long media will remain in the disk cache "
-#~ "before it is pruned.</ps>Set to -1 to never delete media, or to 0 to "
-#~ "never cache media on disk."
-#~ msgstr ""
-#~ "Questa opzione determina per quanto tempo i media rimarranno nella cache "
-#~ "su disco prima di essere eliminati.</ps>Impostare a -1 per non eliminarli "
-#~ "mai, a 0 per disattivare la cache su disco."
-
-#~ msgid "Delay before closing a Teamwork popup on mouse-out"
-#~ msgstr ""
-#~ "Ritardo per la chiusura di un popup di Teamwork dopo l'uscita del mouse"
-
-#~ msgid "Maximum percentage of screen to use for Teamwork popups"
-#~ msgstr "Percentuale massima di schermo da usare per i popup di Teamwork"
-
-#~ msgid "Opacity to use for Teamwork popups"
-#~ msgstr "Opacità dei popup di Teamwork"
-
-#~ msgid "Tiling settings"
-#~ msgstr "Impostazioni di Tiling"
-
-#~ msgid "tiling"
-#~ msgstr "tiling"
-
-#~ msgid "Tile dialog windows"
-#~ msgstr "Metti in griglia anche finestre di dialogo"
-
-#~ msgid "Show window titles when tiling"
-#~ msgstr "Mostra i titoli nella disposizione in griglia"
-
-#~ msgid "Tiling key hints"
-#~ msgstr "Suggerimenti tasti di Tiling"
-
-#~ msgid "Keyboard layout settings"
-#~ msgstr "Impostazione layout della tastiera"
-
-#~ msgid "Height (%3.0f pixels)"
-#~ msgstr "Altezza (%3.0f pixel)"
