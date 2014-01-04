@@ -2156,7 +2156,7 @@ _e_wl_shell_move_grab_cb_button(struct wl_pointer_grab *grab, unsigned int times
        (state == WL_POINTER_BUTTON_STATE_RELEASED))
      {
         E_Wayland_Surface *ews = NULL;
-        int btn, x, y;
+        int btn = 0, x, y;
 
         if (!(ews = ewsg->shell_surface->surface)) return;
 
@@ -2240,7 +2240,7 @@ _e_wl_shell_resize_grab_cb_button(struct wl_pointer_grab *grab, unsigned int tim
        (state == WL_POINTER_BUTTON_STATE_RELEASED))
      {
         E_Wayland_Surface *ews = NULL;
-        int btn, x, y;
+        int btn = 0, x, y;
 
         if (!(ews = ewsg->shell_surface->surface)) return;
 
