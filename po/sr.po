@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
-"POT-Creation-Date: 2013-12-31 11:50+0100\n"
-"PO-Revision-Date: 2013-12-01 22:17+0000\n"
+"POT-Creation-Date: 2013-12-30 11:41+0100\n"
+"PO-Revision-Date: 2013-12-30 12:32+0000\n"
 "Last-Translator: Саша Петровић <salepetronije@gmail.com>\n"
 "Language-Team: српски <српски <xfce-i18n@xfce.org>>\n"
 "MIME-Version: 1.0\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Launchpad-Export-Date: 2014-01-03 05:46+0000\n"
+"X-Launchpad-Export-Date: 2013-12-31 05:57+0000\n"
 "X-Generator: Launchpad (build 16877)\n"
 "Language: sr\n"
 
@@ -824,24 +824,26 @@ msgstr "Откажи"
 msgid "Compositor Warning"
 msgstr "Упозорење управника слагања"
 
-#: src/bin/e_comp.c:3995
+#: src/bin/e_comp.c:3994
 msgid ""
-"Your display driver does not support OpenGL, GLSL<br>shaders or no OpenGL "
-"engines were compiled or installed<br>for Evas or Ecore-Evas. Falling back "
-"to software engine.<br><br>You will need an OpenGL 2.0 (or OpenGL ES 2.0) "
-"capable<br>GPU to use OpenGL with compositing."
+"Your display driver does not support OpenGL, or<br>no OpenGL engines were "
+"compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
+"engine."
 msgstr ""
+"Ваш управљачки програм приказа не подржава ОпенГЛ, или<br>нема преведених и "
+"уграђених ОпенГЛ погона за<br>Евас или Екор-Евас. Враћам на погон "
+"мекотворином."
 
-#: src/bin/e_comp.c:4017 src/bin/e_comp.c:4037
+#: src/bin/e_comp.c:4013 src/bin/e_comp.c:4033
 msgid "Compositor Error"
 msgstr "Грешка управника слагања приказа"
 
-#: src/bin/e_comp.c:4017
+#: src/bin/e_comp.c:4013
 msgid "Another compositor is already running<br>on your display server."
 msgstr ""
 "Други управник слагања је већ покренут<br>на вашем служитељу приказа."
 
-#: src/bin/e_comp.c:4037
+#: src/bin/e_comp.c:4033
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
@@ -849,7 +851,7 @@ msgstr ""
 "Ваш служитељ приказа не подржава<br>слагање заклањање прозора. То је "
 "неопходно<br>да би слагање радило."
 
-#: src/bin/e_comp.c:4417
+#: src/bin/e_comp.c:4413
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -859,7 +861,7 @@ msgstr ""
 "подршке Икс слагања. Знајте да вам за подршку слагања такође треба XRender и "
 "XFixes подршка у Икс11 и Екору."
 
-#: src/bin/e_comp.c:4426
+#: src/bin/e_comp.c:4422
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -867,15 +869,15 @@ msgstr ""
 "Ваш служитељ приказа не подржава XDamage или је Ecore грађено без XDamage "
 "подршке."
 
-#: src/bin/e_comp.c:4525 src/bin/e_comp.c:4531
+#: src/bin/e_comp.c:4521 src/bin/e_comp.c:4527
 msgid "Compositor"
 msgstr "Управник слагања"
 
-#: src/bin/e_comp.c:4526
+#: src/bin/e_comp.c:4522
 msgid "Change current window opacity"
 msgstr "Измени тренутну непровидност прозора"
 
-#: src/bin/e_comp.c:4532
+#: src/bin/e_comp.c:4528
 msgid "Set current window opacity"
 msgstr "Постави тренутну непровидност прозора"
 
@@ -10630,195 +10632,3 @@ msgstr "Подврста"
 #: src/modules/xkbswitch/e_mod_main.c:195
 msgid "NONE"
 msgstr "НИШТА"
-
-#~ msgid ""
-#~ "<title>Copyright &copy; 2000-2012, by the Enlightenment Development "
-#~ "Team</><br><br>We hope you enjoy using this software as much as we enjoyed "
-#~ "writing it.<br><br>To contact us please "
-#~ "visit:<br><hilight>http://www.enlightenment.org</><br><br>"
-#~ msgstr ""
-#~ "<title>Ауторска права &copy; 2000-2012, развојна дружина "
-#~ "Просвећења<br><br>Надамо се да уживате у нашим мекотворинама, као што смо ми "
-#~ "уживали у њиховом писању.<br><br>За везу са нама, молимо, "
-#~ "посетите:<br><hilight>http://www.enlightenment.org</><br><br>"
-
-#, c-format
-#~ msgid "Height (%3.0f pixels)"
-#~ msgstr "Висина (%3.0f тачака)"
-
-#~ msgid "Configure Shelves"
-#~ msgstr "Подесите полице"
-
-#~ msgid "Stop Moving/Resizing Items"
-#~ msgstr "Заустави померање/мењање величина ставки"
-
-#~ msgid "Set Toolbar Contents"
-#~ msgstr "Подеси садржај траке алата"
-
-#~ msgid "OpenGL options"
-#~ msgstr "ОпенГЛ.могућности"
-
-#~ msgid "Memory"
-#~ msgstr "Меморија"
-
-#~ msgid "Startup Settings"
-#~ msgstr "Поставке самосталног покретања при пријави"
-
-#~ msgid "Output"
-#~ msgstr "Излаз"
-
-#~ msgid "Sync windows"
-#~ msgstr "Усклади прозоре"
-
-#~ msgid "Loose sync"
-#~ msgstr "Одустани од усклађивања"
-
-#~ msgid "Pane"
-#~ msgstr "Клизно окно"
-
-#~ msgid "Animation speed"
-#~ msgstr "Брзина анимације"
-
-#~ msgid "Themes"
-#~ msgstr "Теме"
-
-#~ msgid "Theme Categories"
-#~ msgstr "Врсте тема"
-
-#~ msgid "Assign"
-#~ msgstr "Додели"
-
-#~ msgid "Clear"
-#~ msgstr "Очисти"
-
-#~ msgid "Clear All"
-#~ msgstr "Очисти све"
-
-#~ msgid "Pronounced Accelerate"
-#~ msgstr "Нагло убрзај"
-
-#~ msgid "Pronounced Decelerate"
-#~ msgstr "Нагло успори"
-
-#~ msgid "Pronounced Accelerate, then decelerate"
-#~ msgstr "Нагло убрзај, па успори"
-
-#~ msgid "Raise when focusing"
-#~ msgstr "Издигни при стављању у жижу"
-
-#~ msgid "Focus by ..."
-#~ msgstr "Узми у жижу ..."
-
-#~ msgid "Mouse Over"
-#~ msgstr "надношењем миша"
-
-#~ msgid "Systray Error"
-#~ msgstr "Грешка системске касете"
-
-#~ msgid "Systray cannot set its background invisible to match its shelf."
-#~ msgstr ""
-#~ "Системска касета не може поставити своју позадину провидном да би се "
-#~ "изгледом уклопила својој полици."
-
-#~ msgid "Systray cannot work in a shelf that is set to below everything."
-#~ msgstr ""
-#~ "Системска касета не може радити на полици која је постављена испод свега."
-
-#~ msgid "Number of columns used to tile per desk (0 → tiling disabled):"
-#~ msgstr ""
-#~ "Број коришћених колона за поплочавање по радном простору (0 → поплочавање "
-#~ "онемогућено):"
-
-#~ msgid "Label only"
-#~ msgstr "Само ознаке"
-
-#~ msgid "Use multiple monitor geometry"
-#~ msgstr "Користи вишеструку размеру екрана"
-
-#~ msgid "Enlightenment cannot initialize Ecore_IMF!\n"
-#~ msgstr "Просвећење није успело покренути Ecore_IMF!\n"
-
-#~ msgid "Physics Settings"
-#~ msgstr "Поставке физике"
-
-#~ msgid "Physics delay after drag"
-#~ msgstr "Физичко кашњење после превлачења"
-
-#~ msgid "Desktop gravity"
-#~ msgstr "Тежа радне површи"
-
-#, c-format
-#~ msgid "%2.1f kg"
-#~ msgstr "%2.1f kg"
-
-#~ msgid "Maximum window mass"
-#~ msgstr "Највећа маса прозора"
-
-#, c-format
-#~ msgid "%2.0f Frames"
-#~ msgstr "%2.0f сличица"
-
-#~ msgid "Disable Movement"
-#~ msgstr "Онемогући покрете"
-
-#, c-format
-#~ msgid "%1.1f m/s^2"
-#~ msgstr "%1.1f m/s^2"
-
-#~ msgid ""
-#~ "Cowardly refusing to battle<br>with the Tiling module for control<br>of your "
-#~ "windows. There can be only one!"
-#~ msgstr ""
-#~ "Кукавички одбијам да се борим<br>са јединицом поплочавања за "
-#~ "управљање<br>Вашим прозорима. Може бити само један!"
-
-#~ msgid "Physics Error"
-#~ msgstr "Грешка физике"
-
-#~ msgid "Ignore"
-#~ msgstr "Занемари"
-
-#~ msgid "Physics"
-#~ msgstr "Физика"
-
-#~ msgid "The physics module could not be started"
-#~ msgstr "Нисам успео покренути јединицу физике"
-
-#~ msgid "Ignore Fullscreen"
-#~ msgstr "Занемари прозоре преко целог екрана"
-
-#~ msgid "Disable Rotation"
-#~ msgstr "Онемогући обртање"
-
-#~ msgid "Ignore Shelves"
-#~ msgstr "Занемари полице"
-
-#~ msgid "Ignore Maximized"
-#~ msgstr "Занемари увећане прозоре"
-
-#~ msgid ""
-#~ "Your display driver does not support OpenGL, or<br>no OpenGL engines were "
-#~ "compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
-#~ "engine."
-#~ msgstr ""
-#~ "Ваш управљачки програм приказа не подржава ОпенГЛ, или<br>нема преведених и "
-#~ "уграђених ОпенГЛ погона за<br>Евас или Екор-Евас. Враћам на погон "
-#~ "мекотворином."
-
-#, c-format
-#~ msgid ""
-#~ "Module API Error<br>Error initializing Module: %s<br>It requires a minimum "
-#~ "module API version of: %i.<br>The module API advertized by Enlightenment is: "
-#~ "%i.<br>"
-#~ msgstr ""
-#~ "Десила се грешка јединице АПИ<br>Грешка покретања јединице: %s<br>Потребно  "
-#~ "најниже АПИ издање је:  %i.<br>АПИ јединица Просвећења је %i.<br>"
-
-#~ msgid "Begin Moving/Resizing Items"
-#~ msgstr "Почни померање/мењање величина ставки"
-
-#~ msgid "Show Splash Screen on Login"
-#~ msgstr "Прикажи поздравни приказ при пријави"
-
-#~ msgid "Hover (Key Toggle)"
-#~ msgstr "Издигнути слој (прекидач је дугме)"
