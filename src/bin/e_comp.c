@@ -809,6 +809,9 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
      {
         if (c->saver) continue;
         c->saver = EINA_TRUE;
+        if (c->render_animator)
+          ecore_animator_freeze(c->render_animator);
+        E_FREE_FUNC(c->update_job, ecore_job_del);
         EINA_LIST_FOREACH(c->zones, ll, zone)
           {
              e_comp_override_add(c);
@@ -833,6 +836,7 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
      {
         if (!c->saver) continue;
         c->saver = EINA_FALSE;
+        e_comp_render_queue(c);
         EINA_LIST_FOREACH(c->zones, ll, zone)
           {
              edje_object_signal_emit(zone->base, "e,state,screensaver,off", "e");
@@ -1358,6 +1362,8 @@ e_comp_render_queue(E_Comp *c)
    E_OBJECT_CHECK(c);
    E_OBJECT_TYPE_CHECK(c, E_COMP_TYPE);
    if (!c) return;
+
+   if (c->saver) return;
 
    if (conf->lock_fps)
      {
