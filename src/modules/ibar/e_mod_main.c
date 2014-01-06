@@ -58,6 +58,7 @@ struct _IBar
    Eina_Inlist  *icons;
    IBar_Order  *io;
    Evas_Coord   dnd_x, dnd_y;
+   IBar_Icon   *menu_icon;
    Eina_Bool    focused : 1;
 };
 
@@ -1152,6 +1153,7 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
    edje_object_signal_emit(o, "e,state,hidden", "e");
    edje_object_message_signal_process(o);
    e_gadcon_popup_show(ic->menu);
+   ic->ibar->menu_icon = ic;
    {
       Evas_Coord x, y, iw, ih, ox, oy;
       evas_object_geometry_get(ic->o_holder, &x, &y, &iw, &ih);
@@ -1173,16 +1175,15 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
 static void
 _ibar_icon_menu_show(IBar_Icon *ic, Eina_Bool grab)
 {
-   IBar_Icon *ic2;
-
-   EINA_INLIST_FOREACH(ic->ibar->icons, ic2)
-     {
-        if (ic2 == ic) continue;
-        if (ic2->menu) _ibar_icon_menu_hide(ic2, ic2->menu_grabbed);
-     }
+   if (ic->ibar->menu_icon && (ic->ibar->menu_icon != ic))
+     _ibar_icon_menu_hide(ic->ibar->menu_icon, ic->ibar->menu_icon->menu_grabbed);
    if (ic->menu)
      {
-        edje_object_signal_emit(ic->menu->o_bg, "e,action,show", "e");
+        if (ic->ibar->menu_icon != ic)
+          {
+             edje_object_signal_emit(ic->menu->o_bg, "e,action,show", "e");
+             ic->ibar->menu_icon = ic;
+          }
         return;
      }
    ic->drag.start = 0;
@@ -1196,6 +1197,8 @@ _ibar_icon_menu_hide(IBar_Icon *ic, Eina_Bool grab)
 {
    if (!ic->menu) return;
    if (ic->menu_grabbed != grab) return;
+   if (ic->ibar->menu_icon == ic)
+     ic->ibar->menu_icon = NULL;
    E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
    ic->menu_grabbed = EINA_FALSE;
    edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
