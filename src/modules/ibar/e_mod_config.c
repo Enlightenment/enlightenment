@@ -8,6 +8,7 @@ struct _E_Config_Dialog_Data
    int               lock_move;
    int               track_launch;
    int               dont_add_nonorder;
+   int               icon_menu_mouseover;
 
    Evas_Object      *tlist;
    Evas_Object      *radio_name;
@@ -70,6 +71,7 @@ _fill_data(Config_Item *ci, E_Config_Dialog_Data *cfdata)
    cfdata->lock_move = ci->lock_move;
    cfdata->dont_add_nonorder = ci->dont_add_nonorder;
    cfdata->track_launch = !ci->dont_track_launch;
+   cfdata->icon_menu_mouseover = !ci->dont_icon_menu_mouseover;
 }
 
 static void *
@@ -150,6 +152,8 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_check_add(evas, _("Track launch"), &(cfdata->track_launch));
    e_widget_framelist_object_append(of, ob);
+   ob = e_widget_check_add(evas, _("Mouseover Menu"), &(cfdata->icon_menu_mouseover));
+   e_widget_framelist_object_append(of, ob);
 
    e_widget_list_object_append(o, of, 1, 1, 0.5);
 
@@ -170,6 +174,7 @@ _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    ci->lock_move = cfdata->lock_move;
    ci->dont_add_nonorder = cfdata->dont_add_nonorder;
    ci->dont_track_launch = !cfdata->track_launch;
+   ci->dont_icon_menu_mouseover = !cfdata->icon_menu_mouseover;
    _ibar_config_update(ci);
    e_config_save_queue();
    return 1;

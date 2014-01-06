@@ -70,6 +70,7 @@ struct _IBar_Icon
    Efreet_Desktop  *app;
    Ecore_Timer     *reset_timer;
    Ecore_Timer     *timer;
+   Ecore_Timer     *hide_timer;
    E_Exec_Instance *exe_inst;
    Eina_List       *exes; //all instances
    Eina_List       *exe_current;
@@ -83,6 +84,7 @@ struct _IBar_Icon
    } drag;
    Eina_Bool       focused : 1;
    Eina_Bool       not_in_order : 1;
+   Eina_Bool       menu_grabbed : 1;
 };
 
 static IBar        *_ibar_new(Evas *evas, Instance *inst);
@@ -127,6 +129,9 @@ static void         _ibar_cb_drag_finished(E_Drag *data, int dropped);
 static void         _ibar_drop_position_update(Instance *inst, Evas_Coord x, Evas_Coord y);
 static void         _ibar_inst_cb_scroll(void *data);
 static Eina_Bool    _ibar_cb_config_icons(void *data, int ev_type, void *ev);
+
+static void         _ibar_icon_menu_show(IBar_Icon *ic, Eina_Bool grab);
+static void         _ibar_icon_menu_hide(IBar_Icon *ic, Eina_Bool grab);
 
 static E_Config_DD *conf_edd = NULL;
 static E_Config_DD *conf_item_edd = NULL;
@@ -667,6 +672,7 @@ _ibar_config_item_get(const char *id)
    ci->lock_move = 0;
    ci->dont_add_nonorder = 0;
    ci->dont_track_launch = 0;
+   ci->dont_icon_menu_mouseover = 0;
    ibar_config->items = eina_list_append(ibar_config->items, ci);
    return ci;
 }
@@ -833,6 +839,7 @@ _ibar_icon_free(IBar_Icon *ic)
        e_exec_instance_watcher_del(inst, _ibar_instance_watch, ic);
    E_FREE_FUNC(ic->menu, e_object_del);
    E_FREE_FUNC(ic->timer, ecore_timer_del);
+   E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
    evas_object_del(ic->o_holder);
    evas_object_del(ic->o_holder2);
    if (ic->exe_inst)
@@ -1070,7 +1077,7 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 }
 
 static void
-_ibar_icon_menu(IBar_Icon *ic)
+_ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
 {
    Evas_Object *o, *it;
    Eina_List *l;
@@ -1158,7 +1165,40 @@ _ibar_icon_menu(IBar_Icon *ic)
       e_popup_move(ic->menu->win, ox, oy);
    }
    edje_object_signal_emit(o, "e,action,show", "e");
-   e_popup_autoclose(ic->menu->win, _ibar_cb_icon_menu_autodel, NULL, ic);
+   ic->menu_grabbed = grab;
+   if (grab)
+     e_popup_autoclose(ic->menu->win, _ibar_cb_icon_menu_autodel, NULL, ic);
+}
+
+static void
+_ibar_icon_menu_show(IBar_Icon *ic, Eina_Bool grab)
+{
+   IBar_Icon *ic2;
+
+   EINA_INLIST_FOREACH(ic->ibar->icons, ic2)
+     {
+        if (ic2 == ic) continue;
+        if (ic2->menu) _ibar_icon_menu_hide(ic2, ic2->menu_grabbed);
+     }
+   if (ic->menu)
+     {
+        edje_object_signal_emit(ic->menu->o_bg, "e,action,show", "e");
+        return;
+     }
+   ic->drag.start = 0;
+   ic->drag.dnd = 0;
+   ic->mouse_down = 0;
+   _ibar_icon_menu(ic, grab);
+}
+
+static void
+_ibar_icon_menu_hide(IBar_Icon *ic, Eina_Bool grab)
+{
+   if (!ic->menu) return;
+   if (ic->menu_grabbed != grab) return;
+   E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
+   ic->menu_grabbed = EINA_FALSE;
+   edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
 }
 
 static void
@@ -1167,12 +1207,24 @@ _ibar_cb_icon_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
    IBar_Icon *ic;
 
    ic = data;
-   if (ic->reset_timer) ecore_timer_del(ic->reset_timer);
-   ic->reset_timer = NULL;
+   E_FREE_FUNC(ic->reset_timer, ecore_timer_del);
    ic->focused = EINA_TRUE;
    _ibar_icon_signal_emit(ic, "e,state,focused", "e");
    if (ic->ibar->inst->ci->show_label)
      _ibar_icon_signal_emit(ic, "e,action,show,label", "e");
+   E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
+   if (!ic->ibar->inst->ci->dont_icon_menu_mouseover)
+     _ibar_icon_menu_show(ic, EINA_FALSE);
+}
+
+static Eina_Bool
+_ibar_cb_out_hide_delay(void *data)
+{
+   IBar_Icon *ic = data;
+
+   ic->hide_timer = NULL;
+   _ibar_icon_menu_hide(ic, EINA_FALSE);
+   return EINA_FALSE;
 }
 
 static void
@@ -1181,12 +1233,16 @@ _ibar_cb_icon_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
    IBar_Icon *ic;
 
    ic = data;
-   if (ic->reset_timer) ecore_timer_del(ic->reset_timer);
-   ic->reset_timer = NULL;
+   E_FREE_FUNC(ic->reset_timer, ecore_timer_del);
    ic->focused = EINA_FALSE;
    _ibar_icon_signal_emit(ic, "e,state,unfocused", "e");
    if (ic->ibar->inst->ci->show_label)
      _ibar_icon_signal_emit(ic, "e,action,hide,label", "e");
+   if (!ic->ibar->inst->ci->dont_icon_menu_mouseover)
+     {
+        if (ic->hide_timer) ecore_timer_del(ic->hide_timer);
+        ic->hide_timer = ecore_timer_add(2.0, _ibar_cb_out_hide_delay, ic);
+     }
 }
 
 static Eina_Bool
@@ -1195,10 +1251,7 @@ _ibar_cb_icon_menu_cb(void *data)
    IBar_Icon *ic = data;
 
    ic->timer = NULL;
-   ic->drag.start = 0;
-   ic->drag.dnd = 0;
-   ic->mouse_down = 0;
-   _ibar_icon_menu(ic);
+   _ibar_icon_menu_show(ic, EINA_TRUE);
    return EINA_FALSE;
 }
 
@@ -1222,7 +1275,9 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      }
    else if (ev->button == 2)
      {
-        _ibar_cb_icon_menu_cb(ic);
+        E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
+        E_FREE_FUNC(ic->timer, ecore_timer_del);
+        _ibar_icon_menu_show(ic, EINA_TRUE);
      }
    else if (ev->button == 3)
      {
@@ -2395,7 +2450,8 @@ e_modapi_init(E_Module *m)
    E_CONFIG_VAL(D, T, lock_move, INT);
    E_CONFIG_VAL(D, T, dont_add_nonorder, INT);
    E_CONFIG_VAL(D, T, dont_track_launch, UCHAR);
-
+   E_CONFIG_VAL(D, T, dont_icon_menu_mouseover, UCHAR);
+   
    conf_edd = E_CONFIG_DD_NEW("IBar_Config", Config);
 #undef T
 #undef D
@@ -2419,6 +2475,7 @@ e_modapi_init(E_Module *m)
         ci->lock_move = 0;
         ci->dont_add_nonorder = 0;
         ci->dont_track_launch = 0;
+        ci->dont_icon_menu_mouseover = 0;
         ibar_config->items = eina_list_append(ibar_config->items, ci);
      }
 

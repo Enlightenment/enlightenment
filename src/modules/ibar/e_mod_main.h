@@ -24,6 +24,7 @@ struct _Config_Item
    int lock_move;
    int dont_add_nonorder;
    unsigned char dont_track_launch;
+   unsigned char dont_icon_menu_mouseover;
 };
 
 EAPI extern E_Module_Api e_modapi;
