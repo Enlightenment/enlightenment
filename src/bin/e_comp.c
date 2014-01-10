@@ -5,7 +5,7 @@
  
 #define ACTION_TIMEOUT 30.0
 #define OVER_FLOW 1
-//#define SHAPE_DEBUG
+#define SHAPE_DEBUG
 //#define BORDER_ZOOMAPS
 //////////////////////////////////////////////////////////////////////////
 //
