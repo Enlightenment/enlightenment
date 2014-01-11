@@ -60,6 +60,7 @@ EAPI void e_comp_object_signal_callback_del(Evas_Object *obj, const char *sig, c
 EAPI void e_comp_object_signal_callback_del_full(Evas_Object *obj, const char *sig, const char *src, Edje_Signal_Cb cb, const void *data);
 EAPI void e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h);
 EAPI void e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h);
+EAPI Eina_Bool e_comp_object_damage_exists(Evas_Object *obj);
 EAPI void e_comp_object_render_update_add(Evas_Object *obj);
 EAPI void e_comp_object_render_update_del(Evas_Object *obj);
 EAPI void e_comp_object_shape_apply(Evas_Object *obj);

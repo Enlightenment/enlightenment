@@ -1208,7 +1208,7 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
         return;
      }
    e_pixmap_size_get(cw->ec->pixmap, &pw, &ph);   
-   if ((!e_pixmap_refresh(cw->ec->pixmap)) || (!e_pixmap_size_get(cw->ec->pixmap, &w, &h)))
+   if (!e_pixmap_size_get(cw->ec->pixmap, &w, &h))
      e_pixmap_clear(cw->ec->pixmap);
 
    if (cw->real_hid && w && h)
@@ -2754,6 +2754,13 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
      }
    cw->updates_exist = 1;
    e_comp_object_render_update_add(obj);
+}
+
+EAPI Eina_Bool
+e_comp_object_damage_exists(Evas_Object *obj)
+{
+   API_ENTRY EINA_FALSE;
+   return cw->updates_exist;
 }
 
 EAPI void

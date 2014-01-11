@@ -3,6 +3,9 @@
 #ifdef HAVE_WAYLAND_CLIENTS
 # include "e_comp_wl.h"
 #endif
+#ifndef WAYLAND_ONLY
+# include "e_comp_x.h"
+#endif
 
 static Eina_Hash *pixmaps[2] = {NULL};
 
@@ -329,7 +332,14 @@ e_pixmap_refresh(E_Pixmap *cp)
              e_comp_object_native_surface_set(cp->client->frame, 0);
            success = !!pixmap;
            if (!success) break;
-           ecore_x_pixmap_geometry_get(pixmap, NULL, NULL, &pw, &ph);
+           if (ecore_x_present_exists() && cp->client->comp_data->pw && cp->client->comp_data->ph &&
+               (!e_client_resizing_get(cp->client))) //PRESENT is unreliable during resizes
+             {
+                pw = cp->client->comp_data->pw;
+                ph = cp->client->comp_data->ph;
+             }
+           else
+             ecore_x_pixmap_geometry_get(pixmap, NULL, NULL, &pw, &ph);
            success = (pw > 0) && (ph > 0);
            if (success)
              {

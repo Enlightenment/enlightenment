@@ -199,6 +199,8 @@ _e_comp_x_client_new_helper(E_Client *ec)
    
 
    e_pixmap_visual_cmap_set(ec->pixmap, ec->comp_data->initial_attributes.visual, ec->comp_data->initial_attributes.colormap);
+   if (ec->override && (!ec->input_only))
+     ecore_x_present_select_events(win, ECORE_X_PRESENT_EVENT_MASK_CONFIGURE_NOTIFY);
    if (ec->override && (!(ec->comp_data->initial_attributes.event_mask.mine & ECORE_X_EVENT_MASK_WINDOW_PROPERTY)))
      ecore_x_event_mask_set(win, ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
 
@@ -829,7 +831,8 @@ _e_comp_x_evas_resize_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
      }
 
    ec->post_resize = 1;
-   e_pixmap_dirty(ec->pixmap);
+   if (!ecore_x_present_exists())
+     e_pixmap_dirty(ec->pixmap);
    e_comp_object_render_update_del(ec->frame);
    _e_comp_x_post_client_idler_add(ec);
 }
@@ -1335,7 +1338,8 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
      evas_object_move(ec->frame, ev->x, ev->y);
    if (resize)
      {
-        e_pixmap_dirty(ec->pixmap);
+        if (!ecore_x_present_exists())
+          e_pixmap_dirty(ec->pixmap);
         evas_object_resize(ec->frame, ev->w, ev->h);
      }
    return ECORE_CALLBACK_RENEW;
@@ -2458,6 +2462,24 @@ _e_comp_x_grab_replay(void *data EINA_UNUSED, int type, void *event)
                                         &ev2, NULL);
 }
 
+static Eina_Bool
+_e_comp_x_present_configure(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Present_Configure *ev)
+{
+   E_Client *ec;
+
+   ec = _e_comp_x_client_find_by_window(ev->win);
+   if (!ec) return ECORE_CALLBACK_RENEW;
+   if (e_pixmap_size_changed(ec->pixmap, ev->pixmap_width, ev->pixmap_height))
+     {
+        e_pixmap_dirty(ec->pixmap);
+        if (e_comp_object_damage_exists(ec->frame))
+          e_comp_object_render_update_add(ec->frame);
+        ec->comp_data->pw = ev->pixmap_width;
+        ec->comp_data->ph = ev->pixmap_height;
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _e_comp_x_hook_client_eval_end(void *d EINA_UNUSED, E_Client *ec)
 {
@@ -2582,6 +2604,7 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
         pwin = ecore_x_window_override_new(ec->comp->man->root, ec->client.x, ec->client.y, ec->client.w, ec->client.h);
         ecore_x_window_shape_events_select(pwin, !ec->internal); //let's just agree never to do this with our own windows...
      }
+   ecore_x_present_select_events(pwin, ECORE_X_PRESENT_EVENT_MASK_CONFIGURE_NOTIFY);
 
    if (ec->client.w && ec->client.h)
      /* force a resize here (no-op most of the time)
@@ -4974,6 +4997,7 @@ e_comp_x_init(void)
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SYNC_ALARM,
                          _e_comp_x_sync_alarm, NULL);
 
+   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_PRESENT_CONFIGURE, _e_comp_x_present_configure, NULL);
 
    E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN,
                          _e_comp_x_mouse_down, NULL);
