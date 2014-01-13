@@ -83,6 +83,12 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
         free(item);
         return NULL;
      }
+   else if (!item->client)
+     {
+        ERR("Tried deleting node %p that doesn't have a client.", item);
+        return root;
+     }
+
 
    int children_count = eina_inlist_count(item->parent->children);
 
@@ -97,7 +103,18 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
           }
 
         item->parent->client = item_keep->client;
-        item->parent->children = NULL;
+        item->parent->children = item_keep->children;
+        item->parent->split_type = item_keep->split_type;
+
+        /* Update the children's parent. */
+          {
+             Window_Tree *itr;
+
+             EINA_INLIST_FOREACH(item->parent->children, itr)
+               {
+                  itr->parent = item->parent;
+               }
+          }
 
         free(item_keep);
      }
