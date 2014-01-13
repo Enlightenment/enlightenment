@@ -695,6 +695,19 @@ _do_overlay(E_Client *focused_ec,
 /* Reorganize Stacks {{{*/
 
 static void
+_reapply_tree(void)
+{
+     int zx, zy, zw, zh;
+
+     if (_G.tinfo->tree)
+       {
+          e_zone_useful_geometry_get(_G.tinfo->desk->zone, &zx, &zy, &zw, &zh);
+
+          tiling_window_tree_apply(_G.tinfo->tree, zx, zy, zw, zh);
+       }
+}
+
+static void
 _reorganize_stack(int stack)
 {
     Eina_List *l;
@@ -1214,10 +1227,6 @@ _e_mod_action_tg_stack_cb(E_Object   *obj __UNUSED__,
 static void
 _add_client(E_Client *ec)
 {
-    Client_Extra *extra;
-    int stack;
-    int i;
-
     if (!ec) {
         return;
     }
@@ -1235,207 +1244,58 @@ _add_client(E_Client *ec)
         return;
     }
 
-    extra = _get_or_create_client_extra(ec);
+    _get_or_create_client_extra(ec);
 
     /* Stack tiled window below so that winlist doesn't mix up stacking */
     evas_object_layer_set(ec->frame, E_LAYER_CLIENT_BELOW);
 
     DBG("adding %p", ec);
 
-    e_client_focused_get();
+    if (ec->maximized)
+       _e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
 
-    if (_G.tinfo->stacks[0]) {
-        DBG("got stack 0");
-        if (_G.tinfo->stacks[_G.tinfo->conf->nb_stacks - 1]) {
-            DBG("using last stack");
-            stack = _G.tinfo->conf->nb_stacks - 1;
+    /* Window tree updating. */
+      {
+         /* If focused is NULL, it should return the root. */
+         Window_Tree *parent = tiling_window_tree_client_find(_G.tinfo->tree,
+               e_client_focused_get());
+         Window_Tree *new_node;
+         if (!parent)
+           {
+              ERR("Couldn't find tree item for focused client %p. Using root..",
+                    e_client_focused_get());
+              parent = _G.tinfo->tree;
+           }
 
-            if (!_G.tinfo->stacks[stack]->next) {
-                _e_client_unmaximize(_G.tinfo->stacks[stack]->data,
-                                    E_MAXIMIZE_BOTH);
-            }
-            EINA_LIST_APPEND(_G.tinfo->stacks[stack], ec);
-            _reorganize_stack(stack);
-            if (ec->maximized)
-                _e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
-        } else {
-            /* Add stack */
-            int nb_stacks = get_stack_count();
-            int x, y, w, h;
-            int pos, s, size = 0;
+         new_node = tiling_window_tree_add(parent, ec, TILING_SPLIT_HORIZONTAL);
+         if (!_G.tinfo->tree)
+            _G.tinfo->tree = new_node;
+      }
 
-            DBG("add stack");
-
-            assert((0 <= nb_stacks) && (nb_stacks < TILING_MAX_STACKS));
-            e_zone_useful_geometry_get(ec->zone, &x, &y, &w, &h);
-
-            if (_G.tinfo->conf->use_rows) {
-                pos = y;
-                s = h;
-            } else {
-                pos = x;
-                s = w;
-            }
-
-            EINA_LIST_APPEND(_G.tinfo->stacks[nb_stacks], ec);
-
-            for (i = 0; i < nb_stacks; i++) {
-
-                size = s / (nb_stacks + 1 - i);
-
-                _set_stack_geometry(i, pos, size);
-
-                s -= size;
-                pos += size;
-            }
-
-            _G.tinfo->pos[nb_stacks] = pos;
-            _G.tinfo->size[nb_stacks] = size;
-            if (_G.tinfo->conf->use_rows) {
-                extra->expected.x = x;
-                extra->expected.y = pos;
-                extra->expected.w = w;
-                extra->expected.h = size;
-                _e_client_maximize(ec, E_MAXIMIZE_EXPAND |
-                                      E_MAXIMIZE_HORIZONTAL);
-            } else {
-                extra->expected.x = pos;
-                extra->expected.y = y;
-                extra->expected.w = size;
-                extra->expected.h = h;
-                _e_client_maximize(ec, E_MAXIMIZE_EXPAND |
-                                      E_MAXIMIZE_VERTICAL);
-            }
-            _e_client_move_resize(ec,
-                                  extra->expected.x,
-                                  extra->expected.y,
-                                  extra->expected.w,
-                                  extra->expected.h);
-
-            stack = nb_stacks;
-        }
-    } else {
-        DBG("lonely window");
-        e_zone_useful_geometry_get(ec->zone,
-                                   &extra->expected.x,
-                                   &extra->expected.y,
-                                   &extra->expected.w,
-                                   &extra->expected.h);
-
-        if (ec->maximized & E_MAXIMIZE_BOTH)
-            _e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
-        _e_client_move_resize(ec,
-                              extra->expected.x,
-                              extra->expected.y,
-                              extra->expected.w,
-                              extra->expected.h);
-        _e_client_maximize(ec, E_MAXIMIZE_EXPAND | E_MAXIMIZE_BOTH);
-        EINA_LIST_APPEND(_G.tinfo->stacks[0], ec);
-        if (_G.tinfo->conf->use_rows) {
-            e_zone_useful_geometry_get(ec->zone,
-                                       NULL, &_G.tinfo->pos[0],
-                                       NULL, &_G.tinfo->size[0]);
-        } else {
-            e_zone_useful_geometry_get(ec->zone,
-                                       &_G.tinfo->pos[0], NULL,
-                                       &_G.tinfo->size[0], NULL);
-        }
-        stack = 0;
-    }
-    DBG("expected: %dx%d+%d+%d (%p)",
-        extra->expected.w,
-        extra->expected.h,
-        extra->expected.x,
-        extra->expected.y,
-        ec);
+    _reapply_tree();
 }
 
 static void
 _remove_client(E_Client *ec)
 {
-    int stack;
-    int nb_stacks;
-    int i, j;
+    DBG("removing %p", ec);
 
-    nb_stacks = get_stack_count();
-
-    stack = get_stack(ec);
-    if (stack < 0)
-        return;
-
-    DBG("removing %p (%d%c)", ec, stack, _G.tinfo->conf->use_rows? 'r':'c');
-
-    EINA_LIST_REMOVE(_G.tinfo->stacks[stack], ec);
     eina_hash_del(_G.client_extras, ec, NULL);
 
-    if (_G.tinfo->stacks[stack]) {
-        _reorganize_stack(stack);
-    } else {
-        int nb_clients = get_window_count();
+    /* Window tree updating. */
+      {
+         /* If focused is NULL, it should return the root. */
+         Window_Tree *item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
+         if (!item)
+           {
+              ERR("Couldn't find tree item for focused client %p!", ec);
+              return;
+           }
 
-        if (nb_stacks > nb_clients) {
-            int pos, s;
-            /* Remove stack */
+         _G.tinfo->tree = tiling_window_tree_remove(_G.tinfo->tree, item);
+      }
 
-            nb_stacks--;
-
-            assert((0 <= nb_stacks) && (nb_stacks < TILING_MAX_STACKS - 1));
-
-            for (i = stack; i < nb_stacks; i++) {
-                _G.tinfo->stacks[i] = _G.tinfo->stacks[i+1];
-            }
-            _G.tinfo->stacks[nb_stacks] = NULL;
-            if (_G.tinfo->conf->use_rows) {
-                e_zone_useful_geometry_get(ec->zone,
-                                           NULL, &pos, NULL, &s);
-            } else {
-                e_zone_useful_geometry_get(ec->zone,
-                                           &pos, NULL, &s, NULL);
-            }
-            for (i = 0; i < nb_stacks; i++) {
-                int size;
-
-                size = s / (nb_stacks - i);
-
-                _set_stack_geometry(i, pos, size);
-
-                s -= size;
-                pos += size;
-            }
-        } else {
-            for (i = stack+1; i < nb_stacks; i++) {
-                if (eina_list_count(_G.tinfo->stacks[i]) > 1) {
-                    for (j = stack; j < i - 1; j++) {
-                        _G.tinfo->stacks[j] = _G.tinfo->stacks[j+1];
-                        _reorganize_stack(j);
-                    }
-                    ec = _G.tinfo->stacks[i]->data;
-                    EINA_LIST_REMOVE(_G.tinfo->stacks[i], ec);
-                    _reorganize_stack(i);
-
-                    _G.tinfo->stacks[i-1] = NULL;
-                    EINA_LIST_APPEND(_G.tinfo->stacks[i-1], ec);
-                    _reorganize_stack(i-1);
-                    return;
-                }
-            }
-            for (i = stack-1; i >= 0; i--) {
-                if (eina_list_count(_G.tinfo->stacks[i]) == 1) {
-                    _G.tinfo->stacks[i+1] = _G.tinfo->stacks[i];
-                    _reorganize_stack(i+1);
-                } else {
-                    ec = eina_list_last(_G.tinfo->stacks[i])->data;
-                    EINA_LIST_REMOVE(_G.tinfo->stacks[i], ec);
-                    _reorganize_stack(i);
-
-                    _G.tinfo->stacks[i+1] = NULL;
-                    EINA_LIST_APPEND(_G.tinfo->stacks[i+1], ec);
-                    _reorganize_stack(i+1);
-                    return;
-                }
-            }
-        }
-    }
+    _reapply_tree();
 }
 
 static void

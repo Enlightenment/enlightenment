@@ -60,7 +60,7 @@ struct _Tiling_Info
     int        pos[TILING_MAX_STACKS];
     int        size[TILING_MAX_STACKS];
 
-    Window_Tree tree;
+    Window_Tree *tree;
 };
 
 struct _E_Config_Dialog_Data
