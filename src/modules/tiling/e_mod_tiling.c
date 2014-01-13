@@ -327,15 +327,6 @@ _e_client_move(E_Client *ec,
 }
 
 static void
-_e_client_resize(E_Client *ec,
-                 int       w,
-                 int       h)
-{
-    DBG("%p -> %dx%d", ec, w, h);
-    evas_object_resize(ec->frame, w, h);
-}
-
-static void
 _e_client_maximize(E_Client *ec, E_Maximize max)
 {
     DBG("%p -> %s", ec,
@@ -1296,210 +1287,6 @@ _remove_client(E_Client *ec)
       }
 
     _reapply_tree();
-}
-
-static void
-_move_resize_client_stack(E_Client *ec, Client_Extra *extra,
-                          int stack, tiling_change_t change)
-{
-#define _MOVE_RESIZE_CLIENT_STACK(_pos, _size)                               \
-    if (change == TILING_RESIZE) {                                           \
-        if (stack == TILING_MAX_STACKS || !_G.tinfo->stacks[stack + 1]) {    \
-            /* You're not allowed to resize */                               \
-            ec->_size = extra->expected._size;                               \
-        } else {                                                             \
-            int delta = ec->_size - extra->expected._size;                   \
-                                                                             \
-            if (delta + 1 > _G.tinfo->size[stack + 1])                       \
-                delta = _G.tinfo->size[stack + 1] - 1;                       \
-                                                                             \
-            _move_resize_stack(stack, 0, delta);                             \
-            _move_resize_stack(stack + 1, delta, -delta);                    \
-            extra->expected._size = ec->_size;                               \
-        }                                                                    \
-    } else {                                                                 \
-        if (stack == 0) {                                                    \
-            /* You're not allowed to move */                                 \
-            ec->_pos = extra->expected._pos;                                 \
-        } else {                                                             \
-            int delta = ec->_pos - extra->expected._pos;                     \
-                                                                             \
-            if (delta + 1 > _G.tinfo->size[stack - 1])                       \
-                delta = _G.tinfo->size[stack - 1] - 1;                       \
-                                                                             \
-            _move_resize_stack(stack, delta, -delta);                        \
-            _move_resize_stack(stack - 1, 0, delta);                         \
-            extra->expected._pos = ec->_pos;                                 \
-        }                                                                    \
-    }
-    if (_G.tinfo->conf->use_rows) {
-        _MOVE_RESIZE_CLIENT_STACK(y, h)
-    } else {
-        _MOVE_RESIZE_CLIENT_STACK(x, w)
-    }
-#undef _MOVE_RESIZE_CLIENT_STACK
-}
-
-static void
-_move_resize_client_in_stack(E_Client *ec, Client_Extra *extra,
-                              int stack, tiling_change_t change)
-{
-    Eina_List *l;
-
-    l = eina_list_data_find_list(_G.tinfo->stacks[stack], ec);
-    if (!l) {
-        ERR("unable to ec %p in stack %d", ec, stack);
-        return;
-    }
-
-    switch (change) {
-      case TILING_RESIZE:
-        if (!l->next) {
-            if (l->prev) {
-                E_Client *prevec = l->prev->data;
-                Client_Extra *prevextra;
-
-                prevextra = eina_hash_find(_G.client_extras, &prevec);
-                if (!prevextra) {
-                    ERR("No extra for %p", prevec);
-                    return;
-                }
-
-                if (_G.tinfo->conf->use_rows) {
-                    int delta;
-
-                    delta = ec->w - extra->expected.w;
-                    prevextra->expected.w -= delta;
-                    extra->expected.x -= delta;
-                    extra->expected.w = ec->w;
-                } else {
-                    int delta;
-
-                    delta = ec->h - extra->expected.h;
-                    prevextra->expected.h -= delta;
-                    extra->expected.y -= delta;
-                    extra->expected.h = ec->h;
-                }
-
-                _e_client_resize(prevec,
-                                 prevextra->expected.w,
-                                 prevextra->expected.h);
-                _e_client_move(ec,
-                               extra->expected.x,
-                               extra->expected.y);
-            } else {
-                /* You're not allowed to resize */
-                _e_client_resize(ec,
-                                 extra->expected.w,
-                                 extra->expected.h);
-            }
-        } else {
-            E_Client *nextec = l->next->data;
-            Client_Extra *nextextra;
-
-            nextextra = eina_hash_find(_G.client_extras, &nextec);
-            if (!nextextra) {
-                ERR("No extra for %p", nextec);
-                return;
-            }
-
-            if (_G.tinfo->conf->use_rows) {
-                int min_width = MAX(nextec->icccm.base_w, 1);
-                int delta;
-
-                delta = ec->w - extra->expected.w;
-                if (nextextra->expected.w - delta < min_width)
-                    delta = nextextra->expected.w - min_width;
-
-                nextextra->expected.x += delta;
-                nextextra->expected.w -= delta;
-
-                extra->expected.w += delta;
-            } else {
-                int min_height = MAX(nextec->icccm.base_h, 1);
-                int delta;
-
-                delta = ec->h - extra->expected.h;
-                if (nextextra->expected.h - delta < min_height)
-                    delta = nextextra->expected.h - min_height;
-
-                nextextra->expected.y += delta;
-                nextextra->expected.h -= delta;
-
-                extra->expected.h += delta;
-            }
-
-            _e_client_move_resize(nextec,
-                                  nextextra->expected.x,
-                                  nextextra->expected.y,
-                                  nextextra->expected.w,
-                                  nextextra->expected.h);
-            _e_client_move_resize(ec,
-                                  extra->expected.x,
-                                  extra->expected.y,
-                                  extra->expected.w,
-                                  extra->expected.h);
-        }
-        break;
-      case TILING_MOVE:
-        if (!l->prev) {
-            /* You're not allowed to move */
-            if (_G.tinfo->conf->use_rows) {
-                ec->x = extra->expected.x;
-            } else {
-                ec->y = extra->expected.y;
-            }
-            _e_client_move(ec,
-                           extra->expected.x,
-                           extra->expected.y);
-            DBG("trying to move %p, but !l->prev", ec);
-        } else {
-            E_Client *prevec = l->prev->data;
-            Client_Extra *prevextra;
-
-            prevextra = eina_hash_find(_G.client_extras, &prevec);
-            if (!prevextra) {
-                ERR("No extra for %p", prevec);
-                return;
-            }
-
-            if (_G.tinfo->conf->use_rows) {
-                int delta = ec->x - extra->expected.x;
-                int min_width = MAX(prevec->icccm.base_w, 1);
-
-                if (prevextra->expected.w - delta < min_width)
-                    delta = prevextra->expected.w - min_width;
-
-                prevextra->expected.w += delta;
-
-                extra->expected.x += delta;
-                extra->expected.w -= delta;
-            } else {
-                int delta = ec->y - extra->expected.y;
-                int min_height = MAX(prevec->icccm.base_h, 1);
-
-                if (prevextra->expected.h - delta < min_height)
-                    delta = prevextra->expected.h - min_height;
-
-                prevextra->expected.h += delta;
-
-                extra->expected.y += delta;
-                extra->expected.h -= delta;
-            }
-
-            _e_client_resize(prevec,
-                             prevextra->expected.w,
-                             prevextra->expected.h);
-            _e_client_move_resize(ec,
-                                  extra->expected.x,
-                                  extra->expected.y,
-                                  extra->expected.w,
-                                  extra->expected.h);
-        }
-        break;
-      default:
-        ERR("invalid tiling change: %d", change);
-    }
 }
 
 /* }}} */
@@ -3120,11 +2907,6 @@ static void _move_or_resize(E_Client *ec)
         return;
     }
 
-    stack = get_stack(ec);
-    if (stack < 0) {
-        return;
-    }
-
     DBG("Resize: %p / '%s' / '%s', (%d,%d), changes(size=%d, position=%d, client=%d)"
         " g:%dx%d+%d+%d ecname:'%s' (stack:%d%c) maximized:%s fs:%s",
         ec, ec->icccm.title, ec->netwm.name,
@@ -3143,104 +2925,7 @@ static void _move_or_resize(E_Client *ec)
         return;
     }
 
-    DBG("expected: %dx%d+%d+%d",
-        extra->expected.w,
-        extra->expected.h,
-        extra->expected.x,
-        extra->expected.y);
-    DBG("delta:%dx%d,%d,%d. step:%dx%d. base:%dx%d",
-        ec->w - extra->expected.w, ec->h - extra->expected.h,
-        ec->x - extra->expected.x, ec->y - extra->expected.y,
-        ec->icccm.step_w, ec->icccm.step_h,
-        ec->icccm.base_w, ec->icccm.base_h);
-
-    if (stack == 0 && !_G.tinfo->stacks[1] && !_G.tinfo->stacks[0]->next) {
-        if (ec->maximized) {
-            extra->expected.x = ec->x;
-            extra->expected.y = ec->y;
-            extra->expected.w = ec->w;
-            extra->expected.h = ec->h;
-        } else {
-            /* TODO: what if a window doesn't want to be maximized? */
-            _e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
-            _e_client_maximize(ec, E_MAXIMIZE_EXPAND | E_MAXIMIZE_BOTH);
-        }
-    }
-    if (ec->x == extra->expected.x && ec->y == extra->expected.y
-    &&  ec->w == extra->expected.w && ec->h == extra->expected.h)
-    {
-        return;
-    }
-    if (ec->maximized) {
-
-        if (_G.tinfo->conf->use_rows) {
-            if (ec->maximized & E_MAXIMIZE_VERTICAL) {
-                 _e_client_unmaximize(ec, E_MAXIMIZE_VERTICAL);
-                 _e_client_move_resize(ec,
-                                       extra->expected.x,
-                                       extra->expected.y,
-                                       extra->expected.w,
-                                       extra->expected.h);
-            }
-            if (ec->maximized & E_MAXIMIZE_HORIZONTAL
-            && eina_list_count(_G.tinfo->stacks[stack]) > 1) {
-                 _e_client_unmaximize(ec, E_MAXIMIZE_HORIZONTAL);
-                 _e_client_move_resize(ec,
-                                       extra->expected.x,
-                                       extra->expected.y,
-                                       extra->expected.w,
-                                       extra->expected.h);
-            }
-        } else {
-            if (ec->maximized & E_MAXIMIZE_HORIZONTAL) {
-                 _e_client_unmaximize(ec, E_MAXIMIZE_HORIZONTAL);
-                 _e_client_move_resize(ec,
-                                       extra->expected.x,
-                                       extra->expected.y,
-                                       extra->expected.w,
-                                       extra->expected.h);
-            }
-            if (ec->maximized & E_MAXIMIZE_VERTICAL
-            && eina_list_count(_G.tinfo->stacks[stack]) > 1) {
-                 _e_client_unmaximize(ec, E_MAXIMIZE_VERTICAL);
-                 _e_client_move_resize(ec,
-                                       extra->expected.x,
-                                       extra->expected.y,
-                                       extra->expected.w,
-                                       extra->expected.h);
-            }
-        }
-    }
-
-    if (abs(extra->expected.w - ec->w) >= MAX(ec->icccm.step_w, 1)) {
-        if (_G.tinfo->conf->use_rows)
-            _move_resize_client_in_stack(ec, extra, stack, TILING_RESIZE);
-        else
-            _move_resize_client_stack(ec, extra, stack, TILING_RESIZE);
-    }
-    if (abs(extra->expected.h - ec->h) >= MAX(ec->icccm.step_h, 1)) {
-        if (_G.tinfo->conf->use_rows)
-            _move_resize_client_stack(ec, extra, stack, TILING_RESIZE);
-        else
-            _move_resize_client_in_stack(ec, extra, stack, TILING_RESIZE);
-    }
-    if (extra->expected.x != ec->x) {
-        if (_G.tinfo->conf->use_rows)
-            _move_resize_client_in_stack(ec, extra, stack, TILING_MOVE);
-        else
-            _move_resize_client_stack(ec, extra, stack, TILING_MOVE);
-    }
-    if (extra->expected.y != ec->y) {
-        if (_G.tinfo->conf->use_rows)
-            _move_resize_client_stack(ec, extra, stack, TILING_MOVE);
-        else
-            _move_resize_client_in_stack(ec, extra, stack, TILING_MOVE);
-    }
-
-    if (_G.input_mode == INPUT_MODE_MOVING
-    &&  ec == _G.focused_ec) {
-        _check_moving_anims(ec, extra, stack);
-    }
+    _reapply_tree();
 }
 
 static Eina_Bool
@@ -3267,7 +2952,6 @@ static Eina_Bool
 _add_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 {
     E_Client *ec = event->ec;
-    int stack = -1;
 
     if (e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
     if (_G.input_mode != INPUT_MODE_NONE
@@ -3277,27 +2961,12 @@ _add_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
         end_special_input();
     }
 
-    check_tinfo(ec->desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
-        return true;
-    }
-
-    if (!is_tilable(ec)) {
-        return true;
-    }
-
-    stack = get_stack(ec);
-    if (stack >= 0) {
-        return true;
-    }
-
     DBG("Add: %p / '%s' / '%s', (%d,%d), changes(size=%d, position=%d, client=%d)"
-        " g:%dx%d+%d+%d ecname:'%s' (stack:%d%c) maximized:%s fs:%s",
+        " g:%dx%d+%d+%d ecname:'%s' maximized:%s fs:%s",
         ec, ec->icccm.title, ec->netwm.name,
         ec->desk->x, ec->desk->y,
         ec->changes.size, ec->changes.pos, ec->changes.border,
         ec->w, ec->h, ec->x, ec->y, ec->bordername,
-        stack, _G.tinfo->conf->use_rows? 'r':'c',
         (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_NONE ? "NONE" :
         (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL ? "VERTICAL" :
         (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL ? "HORIZONTAL" :
@@ -3362,7 +3031,6 @@ static bool
 _uniconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 {
     E_Client *ec = event->ec;
-    int stack = -1;
 
     if (_G.input_mode != INPUT_MODE_NONE
     &&  _G.input_mode != INPUT_MODE_MOVING
@@ -3383,10 +3051,6 @@ _uniconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *even
         return true;
     }
 
-    stack = get_stack(ec);
-    if (stack >= 0) {
-        return true;
-    }
     _add_client(ec);
 
     return true;
