@@ -163,6 +163,7 @@ EAPI E_Comp *e_comp_evas_find(const Evas *e);
 
 EAPI void e_comp_button_bindings_grab_all(void);
 EAPI void e_comp_button_bindings_ungrab_all(void);
+EAPI void e_comp_client_redirect_toggle(E_Client *ec);
 
 EINTERN Evas_Object *e_comp_style_selector_create(Evas *evas, const char **source);
 EAPI E_Config_Dialog *e_int_config_comp(E_Comp *comp, const char *params);

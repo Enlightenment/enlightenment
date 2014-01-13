@@ -595,6 +595,7 @@ _e_comp_x_client_stack(E_Client *ec)
    Eina_List *l;
 
    if (ec->override && (!ec->internal)) return; //can't restack these
+   if (ec->comp_data->unredirected_single) return;
 
    ecore_x_window_shadow_tree_flush();
 
@@ -786,7 +787,7 @@ _e_comp_x_evas_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 {
    E_Client *ec = data;
 
-   if (ec->comp_data->moving)
+   if (ec->comp_data->moving && (!ec->comp_data->unredirected_single))
      {
         if (ec->comp_data->move_counter++ < MOVE_COUNTER_LIMIT) return;
         ec->comp_data->move_counter = 0;
@@ -855,6 +856,9 @@ _e_comp_x_evas_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
      evas_object_hide(tmp->frame);
 
+   if (ec->unredirected_single)
+     ecore_x_window_hide(_e_comp_x_client_window_get(ec));
+
    if (e_comp_config_get()->send_flush)
      ecore_x_e_comp_flush_send(e_client_util_pwin_get(ec));
    if (e_comp_config_get()->send_dump)
@@ -874,6 +878,8 @@ _e_comp_x_evas_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    ecore_x_window_shadow_tree_flush();
    if (!ec->comp_data->need_reparent)
      ecore_x_window_show(win);
+   if (ec->unredirected_single)
+     ecore_x_window_show(_e_comp_x_client_window_get(ec));
    e_hints_window_visible_set(ec);
 
    ecore_x_window_prop_card32_set(win, E_ATOM_MAPPED, &visible, 1);
@@ -1222,7 +1228,7 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
           }
         return ECORE_CALLBACK_PASS_ON;
      }
-   if (!ec->visible)
+   if ((!ec->visible) || (ec->hidden && ec->unredirected_single))
      {
         //INF("IGNORED");
         return ECORE_CALLBACK_PASS_ON;
@@ -4003,12 +4009,18 @@ static void
 _e_comp_x_hook_client_redirect(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
-   if (ec->comp->nocomp)
+   if (ec->comp_data->unredirected_single)
+     {
+        ecore_x_composite_redirect_window(_e_comp_x_client_window_get(ec), ECORE_X_COMPOSITE_UPDATE_MANUAL);
+        ec->comp_data->unredirected_single = 0;
+     }
+   else if (ec->comp->nocomp)
      {
         /* first window */
         ec->comp->nocomp = 0;
         ecore_x_composite_redirect_subwindows(ec->comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
-        ecore_x_window_show(ec->comp->win);
+        ecore_x_window_reparent(_e_comp_x_client_window_get(ec), ec->comp->man->root, ec->client.x, ec->client.y);
+        _e_comp_x_client_stack(ec);
      }
    if (!ec->comp_data->damage)
      _e_comp_x_client_damage_add(ec);
@@ -4027,6 +4039,13 @@ _e_comp_x_hook_client_unredirect(void *d EINA_UNUSED, E_Client *ec)
    ecore_x_damage_free(ec->comp_data->damage);
    ec->comp_data->damage = 0;
 
+   if (ec->unredirected_single && (!ec->comp_data->unredirected_single))
+     {
+        ecore_x_composite_unredirect_window(_e_comp_x_client_window_get(ec), ECORE_X_COMPOSITE_UPDATE_MANUAL);
+        ecore_x_window_reparent(_e_comp_x_client_window_get(ec), ec->comp->win, ec->client.x, ec->client.y);
+        ecore_x_window_raise(_e_comp_x_client_window_get(ec));
+        ec->comp_data->unredirected_single = 1;
+     }
    if (!ec->comp->nocomp) return; //wait for it...
    ecore_x_composite_unredirect_subwindows(ec->comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
    ecore_x_window_hide(ec->comp->win);

@@ -671,6 +671,7 @@ struct E_Client
    Eina_Bool dialog : 1;
    Eina_Bool tooltip : 1;
    Eina_Bool redirected : 1;
+   Eina_Bool unredirected_single : 1; //window has been selectively unredirected
    Eina_Bool shape_changed : 1;
    Eina_Bool layer_block : 1; // client is doing crazy stuff and should not be relayered in protocol
    Eina_Bool ignored : 1; // client is comp-ignored

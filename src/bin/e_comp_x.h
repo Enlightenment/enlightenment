@@ -100,6 +100,7 @@ struct _E_Comp_Client_Data
    Eina_Bool set_win_type : 1;
    Eina_Bool frame_update : 1;
    Eina_Bool evas_init : 1;
+   Eina_Bool unredirected_single : 1;
 };
 
 EINTERN Eina_Bool e_comp_x_init(void);

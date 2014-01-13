@@ -5,6 +5,7 @@ static void _e_client_menu_cb_locks(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_remember(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_borderless(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_border(void *data, E_Menu *m, E_Menu_Item *mi);
+static void _e_client_menu_cb_redirect_set(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi EINA_UNUSED);
 static void _e_client_menu_cb_close(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_iconify(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_kill(void *data, E_Menu *m, E_Menu_Item *mi);
@@ -200,6 +201,15 @@ e_int_client_menu_create(E_Client *ec)
                                   "e/widgets/border/default/borderless");
      }
 
+   if (e_comp_config_get()->enable_advanced_features && (e_pixmap_type_get(ec->pixmap) == E_PIXMAP_TYPE_X))
+     {
+        mi = e_menu_item_new(m);
+        e_menu_item_check_set(mi, 1);
+        e_menu_item_label_set(mi, _("Unredirected"));
+        e_menu_item_toggle_set(mi, !ec->redirected);
+        e_menu_item_callback_set(mi, _e_client_menu_cb_redirect_set, ec);
+     }
+
    if (!ec->lock_close)
      {
         mi = e_menu_item_new(m);
@@ -315,6 +325,13 @@ _e_client_menu_cb_borderless(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
    EC_CHANGED(ec);
    ec->border.changed = 1;
    ec->borderless = mi->toggle;
+}
+
+
+static void
+_e_client_menu_cb_redirect_set(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi EINA_UNUSED)
+{
+   e_comp_client_redirect_toggle(data);
 }
 
 static void

@@ -1020,6 +1020,12 @@ _e_comp_act_opacity_set_go(E_Object * obj __UNUSED__, const char *params)
    evas_object_color_set(o, opacity, opacity, opacity, opacity);
 }
 
+static void
+_e_comp_act_redirect_toggle_go(E_Object * obj EINA_UNUSED, const char *params EINA_UNUSED)
+{
+   e_comp_client_redirect_toggle(e_client_focused_get());
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 EINTERN Eina_Bool
@@ -1088,6 +1094,11 @@ e_comp_init(void)
       e_action_predef_name_set(N_("Compositor"),
                                N_("Set current window opacity"), "opacity_set",
                                "255", "syntax: number between 0-255 to set for transparent-opaque", 1);
+      act = e_action_add("redirect_toggle");
+      act->func.go = _e_comp_act_redirect_toggle_go;
+      e_action_predef_name_set(N_("Compositor"),
+                               N_("Toggle focused client's redirect state"), "redirect_toggle",
+                               NULL, NULL, 0);
       actions = eina_list_append(actions, act);
    }
 
@@ -1752,4 +1763,16 @@ e_comp_button_bindings_grab_all(void)
    EINA_LIST_FOREACH(compositors, l, c)
      if (c->bindings_grab_cb)
        c->bindings_grab_cb(c);
+}
+
+EAPI void
+e_comp_client_redirect_toggle(E_Client *ec)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ec);
+   if (!conf->enable_advanced_features) return;
+   if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_X) return;
+   ec->unredirected_single = !ec->unredirected_single;
+   e_client_redirected_set(ec, !ec->redirected);
+   ec->no_shape_cut = !ec->redirected;
+   e_comp_shape_queue(ec->comp);
 }
