@@ -213,20 +213,6 @@ change_window_border(E_Client   *ec,
     DBG("%p -> border %s", ec, bordername);
 }
 
-static int
-get_window_count(void)
-{
-    int res = 0;
-    int i;
-
-    for (i = 0; i < TILING_MAX_STACKS; i++) {
-        if (!_G.tinfo->stacks[i])
-            break;
-        res += eina_list_count(_G.tinfo->stacks[i]);
-    }
-    return res;
-}
-
 static Eina_Bool
 _info_hash_update(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__,
                   void *data, void *fdata __UNUSED__)
@@ -259,20 +245,6 @@ _e_client_move_resize(E_Client *ec,
 {
     DBG("%p -> %dx%d+%d+%d", ec, w, h, x, y);
     evas_object_geometry_set(ec->frame, x, y, w, h);
-}
-
-static void
-_e_client_maximize(E_Client *ec, E_Maximize max)
-{
-    DBG("%p -> %s", ec,
-        (max & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_NONE ? "NONE" :
-        (max & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL ? "VERTICAL" :
-        (max & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL ? "HORIZONTAL" :
-        "BOTH");
-    DBG("new_client:%s, ec->maximized=%x",
-        ec->new_client? "true": "false",
-        ec->maximized);
-//    e_client_maximize(ec, max);
 }
 
 static void
@@ -360,24 +332,6 @@ _get_or_create_client_extra(E_Client *ec)
 /* Overlays {{{*/
 
 static void
-_overlays_free_cb(void *data)
-{
-    Client_Extra *extra = data;
-
-    if (extra->overlay.obj) {
-        evas_object_del(extra->overlay.obj);
-        extra->overlay.obj = NULL;
-    }
-    if (extra->overlay.popup) {
-        evas_object_hide(extra->overlay.popup);
-        evas_object_del(extra->overlay.popup);
-        extra->overlay.popup = NULL;
-    }
-
-    extra->key[0] = '\0';
-}
-
-static void
 end_special_input(void)
 {
     int i;
@@ -441,180 +395,6 @@ end_special_input(void)
     }
 
     _G.input_mode = INPUT_MODE_NONE;
-}
-
-static Eina_Bool
-overlay_key_down(void *data __UNUSED__,
-		 int type __UNUSED__,
-		 void *event)
-{
-    Ecore_Event_Key *ev = event;
-    Client_Extra *extra;
-
-    if (ev->event_window != _G.action_input_win)
-        return ECORE_CALLBACK_PASS_ON;
-
-    if (strcmp(ev->key, "Return") == 0)
-        goto stop;
-    if (strcmp(ev->key, "Escape") == 0)
-        goto stop;
-    if (strcmp(ev->key, "Backspace") == 0) {
-        char *key = _G.keys;
-
-        while (*key)
-            key++;
-        *key = '\0';
-        return ECORE_CALLBACK_RENEW;
-    }
-
-    if (ev->key[0] && !ev->key[1] && strchr(tiling_g.config->keyhints,
-                                            ev->key[1])) {
-        char *key = _G.keys;
-
-        while (*key)
-            key++;
-        *key++ = ev->key[0];
-        *key = '\0';
-
-        extra = eina_hash_find(_G.overlays, _G.keys);
-        if (extra) {
-            _G.action_cb(_G.focused_ec, extra);
-        } else {
-            return ECORE_CALLBACK_RENEW;
-        }
-    }
-
-stop:
-    end_special_input();
-    return ECORE_CALLBACK_DONE;
-}
-
-static Eina_Bool
-_timeout_cb(void *data __UNUSED__)
-{
-    end_special_input();
-    return ECORE_CALLBACK_CANCEL;
-}
-
-static void
-_do_overlay(E_Client *focused_ec,
-            void (*action_cb)(E_Client *, Client_Extra *),
-            tiling_input_mode_t input_mode)
-{
-    Ecore_X_Window parent;
-    int nb_win;
-    int hints_len;
-    int key_len;
-    int n = 0;
-    int nmax;
-    int i;
-
-    end_special_input();
-
-    nb_win = get_window_count();
-    if (nb_win < 2) {
-        return;
-    }
-
-    _G.input_mode = input_mode;
-
-    _G.focused_ec = focused_ec;
-    _G.action_cb = action_cb;
-
-    _G.overlays = eina_hash_string_small_new(_overlays_free_cb);
-
-    hints_len = strlen(tiling_g.config->keyhints);
-    key_len = 1;
-    nmax = hints_len;
-    if (hints_len < nb_win) {
-        key_len = 2;
-        nmax *= hints_len;
-        if (hints_len * hints_len < nb_win) {
-            key_len = 3;
-            nmax *= hints_len;
-        }
-    }
-
-    for (i = 0; i < TILING_MAX_STACKS; i++) {
-        Eina_List *l;
-        E_Client *ec;
-
-        if (!_G.tinfo->stacks[i])
-            break;
-        EINA_LIST_FOREACH(_G.tinfo->stacks[i], l, ec) {
-            if (ec != focused_ec && n < nmax) {
-                Client_Extra *extra;
-                Evas_Coord ew, eh;
-
-                extra = eina_hash_find(_G.client_extras, &ec);
-                if (!extra) {
-                    ERR("No extra for %p", ec);
-                    continue;
-                }
-
-                extra->overlay.obj = edje_object_add(ec->comp->evas);
-                extra->overlay.popup = e_comp_object_util_add(extra->overlay.obj, E_COMP_OBJECT_TYPE_POPUP);
-                evas_object_layer_set(extra->overlay.popup, E_LAYER_CLIENT_NORMAL);
-                e_theme_edje_object_set(extra->overlay.obj,
-                                        "base/theme/borders",
-                                        "e/widgets/border/default/resize");
-
-                switch (key_len) {
-                  case 1:
-                    extra->key[0] = tiling_g.config->keyhints[n];
-                    extra->key[1] = '\0';
-                    break;
-                  case 2:
-                    extra->key[0] = tiling_g.config->keyhints[n / hints_len];
-                    extra->key[1] = tiling_g.config->keyhints[n % hints_len];
-                    extra->key[2] = '\0';
-                    break;
-                  case 3:
-                    extra->key[0] = tiling_g.config->keyhints[n / hints_len / hints_len];
-                    extra->key[0] = tiling_g.config->keyhints[n / hints_len];
-                    extra->key[1] = tiling_g.config->keyhints[n % hints_len];
-                    extra->key[2] = '\0';
-                    break;
-                }
-                n++;
-
-                eina_hash_add(_G.overlays, extra->key, extra);
-                edje_object_part_text_set(extra->overlay.obj,
-                                          "e.text.label",
-                                          extra->key);
-                edje_object_size_min_calc(extra->overlay.obj, &ew, &eh);
-
-                evas_object_geometry_set(extra->overlay.popup,
-                                    (ec->x - ec->zone->x) +
-                                    ((ec->w - ew) / 2),
-                                    (ec->y - ec->zone->y) +
-                                    ((ec->h - eh) / 2),
-                                    ew, eh);
-
-                evas_object_show(extra->overlay.popup);
-            }
-        }
-    }
-
-    /* Get input */
-    parent = _G.tinfo->desk->zone->comp->win;
-    _G.action_input_win = ecore_x_window_input_new(parent, 0, 0, 1, 1);
-    if (!_G.action_input_win) {
-        end_special_input();
-        return;
-    }
-
-    ecore_x_window_show(_G.action_input_win);
-    if (!e_grabinput_get(_G.action_input_win, 0, _G.action_input_win)) {
-        end_special_input();
-        return;
-    }
-    _G.action_timer = ecore_timer_add(TILING_OVERLAY_TIMEOUT,
-                                      _timeout_cb, NULL);
-
-    _G.keys[0] = '\0';
-    _G.handler_key = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN,
-                                             overlay_key_down, NULL);
 }
 
 /* }}} */
@@ -801,68 +581,6 @@ _e_mod_action_toggle_floating_cb(E_Object   *obj __UNUSED__,
 /* {{{ Swap */
 
 static void
-_action_swap(E_Client *ec_1,
-             Client_Extra *extra_2)
-{
-    Client_Extra *extra_1;
-    E_Client *ec_2 = extra_2->client;
-    Eina_List *l_1 = NULL,
-              *l_2 = NULL;
-    geom_t gt;
-    unsigned int ec_2_maximized;
-    int i;
-
-    extra_1 = eina_hash_find(_G.client_extras, &ec_1);
-    if (!extra_1) {
-        ERR("No extra for %p", ec_1);
-        return;
-    }
-
-    for (i = 0; i < TILING_MAX_STACKS; i++) {
-        if ((l_1 = eina_list_data_find_list(_G.tinfo->stacks[i], ec_1))) {
-            break;
-        }
-    }
-    for (i = 0; i < TILING_MAX_STACKS; i++) {
-        if ((l_2 = eina_list_data_find_list(_G.tinfo->stacks[i], ec_2))) {
-            break;
-        }
-    }
-
-    if (!l_1 || !l_2) {
-        return;
-    }
-
-    l_1->data = ec_2;
-    l_2->data = ec_1;
-
-    gt = extra_2->expected;
-    extra_2->expected = extra_1->expected;
-    extra_1->expected = gt;
-
-    ec_2_maximized = ec_2->maximized;
-    if (ec_2->maximized)
-        _e_client_unmaximize(ec_2, E_MAXIMIZE_BOTH);
-    if (ec_1->maximized) {
-        _e_client_unmaximize(ec_1, E_MAXIMIZE_BOTH);
-        _e_client_maximize(ec_2, ec_1->maximized);
-    }
-    if (ec_2_maximized) {
-        _e_client_maximize(ec_1, ec_2_maximized);
-    }
-    _e_client_move_resize(ec_1,
-                          extra_1->expected.x,
-                          extra_1->expected.y,
-                          extra_1->expected.w,
-                          extra_1->expected.h);
-    _e_client_move_resize(ec_2,
-                          extra_2->expected.x,
-                          extra_2->expected.y,
-                          extra_2->expected.w,
-                          extra_2->expected.h);
-}
-
-static void
 _e_mod_action_swap_cb(E_Object   *obj __UNUSED__,
                       const char *params __UNUSED__)
 {
@@ -880,7 +598,6 @@ _e_mod_action_swap_cb(E_Object   *obj __UNUSED__,
     if (!desk_should_tile_check(desk))
         return;
 
-    _do_overlay(focused_ec, _action_swap, INPUT_MODE_SWAPPING);
 }
 
 /* }}} */
