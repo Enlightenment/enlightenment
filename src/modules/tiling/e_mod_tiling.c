@@ -100,11 +100,6 @@ static struct tiling_mod_main_g
 
     E_Action             *act_togglefloat,
                          *act_swap,
-                         *act_move,
-                         *act_move_left,
-                         *act_move_right,
-                         *act_move_up,
-                         *act_move_down,
                          *act_toggle_split_mode;
 
     int                   warp_x,
@@ -696,6 +691,7 @@ change_desk_conf(struct _Config_vdesk *newconf)
 static void
 _add_client(E_Client *ec)
 {
+    /* Should I need to check that the client is not already added? */
     if (!ec) {
         return;
     }
@@ -1140,7 +1136,6 @@ _desk_before_show_hook(void *data __UNUSED__, int type __UNUSED__, void *event _
 static bool
 _desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_Set *ev)
 {
-    // FIXME: Fix this function
     DBG("%p: from (%d,%d) to (%d,%d)", ev->ec,
         ev->desk->x, ev->desk->y,
         ev->ec->desk->x, ev->ec->desk->y);
@@ -1153,21 +1148,16 @@ _desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_S
     if (is_floating_window(ev->ec)) {
         EINA_LIST_REMOVE(_G.tinfo->floating_windows, ev->ec);
     } else {
-#if 0
-        if (get_stack(ev->ec) >= 0) {
+         if (tiling_window_tree_client_find(_G.tinfo->tree, ev->ec)) {
             _remove_client(ev->ec);
             _restore_client(ev->ec);
         }
-#endif
     }
 
     if (!desk_should_tile_check(ev->ec->desk))
         return true;
 
-#if 0
-    if (get_stack(ev->ec) < 0)
-        _add_client(ev->ec);
-#endif
+    _add_client(ev->ec);
 
     return true;
 }
@@ -1453,12 +1443,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
     }
     ACTION_DEL(_G.act_togglefloat, "Toggle floating", "toggle_floating");
     ACTION_DEL(_G.act_swap, "Swap a window with an other", "swap");
-
-    ACTION_DEL(_G.act_move, "Move window", "move");
-    ACTION_DEL(_G.act_move_left, "Move window to the left", "move_left");
-    ACTION_DEL(_G.act_move_right, "Move window to the right", "move_right");
-    ACTION_DEL(_G.act_move_up, "Move window up", "move_up");
-    ACTION_DEL(_G.act_move_down, "Move window down", "move_down");
 
     ACTION_DEL(_G.act_toggle_split_mode, "Toggle split mode",
           "toggle_split_mode");
