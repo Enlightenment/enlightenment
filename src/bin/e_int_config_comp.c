@@ -40,6 +40,7 @@ struct _E_Config_Dialog_Data
    int          fps_average_range;
    double       first_draw_delay;
    int disable_screen_effects;
+   int enable_advanced_features;
    // the following options add the "/fast" suffix to the normal groups
    int fast_popups;
    int fast_borders;
@@ -112,6 +113,7 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    cfdata->match.disable_menus = conf->match.disable_menus;
    cfdata->match.disable_objects = conf->match.disable_objects;
    cfdata->disable_screen_effects = conf->disable_screen_effects;
+   cfdata->enable_advanced_features = conf->enable_advanced_features;
 
    cfdata->indirect = conf->indirect;
    cfdata->texture_from_pixmap = conf->texture_from_pixmap;
@@ -141,6 +143,17 @@ _create_data(E_Config_Dialog *cfd EINA_UNUSED)
    cfdata->first_draw_delay = conf->first_draw_delay;
 
    return cfdata;
+}
+
+static void
+_advanced_features_changed(E_Comp_Config *conf)
+{
+   conf->enable_advanced_features = !conf->enable_advanced_features;
+   if (conf->enable_advanced_features)
+     e_util_dialog_internal(_("WARNING"),
+                            _("This option WILL break your desktop if you don't know what you're doing.<br>"
+                              "Do not file bugs about anything that occurs with this option enabled.<br>"
+                              "You have been warned."));
 }
 
 static void
@@ -337,6 +350,10 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    ob = e_widget_slider_add(evas, 1, 0, _("%1.2f Seconds"), 0.01, 0.5, 0.01, 0, &(cfdata->first_draw_delay), NULL, 150);
    e_widget_framelist_object_append(of, ob);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
+   of = e_widget_framelist_add(evas, _("DANGEROUS"), 0);
+   ob = e_widget_check_add(evas, _("Enable advanced compositing features"), &(cfdata->enable_advanced_features));
+   e_widget_framelist_object_append(of, ob);
+   e_widget_list_object_append(ol, of, 1, 1, 0.5);
    e_widget_toolbook_page_append(otb, NULL, _("Misc"), ol, 0, 0, 0, 0, 0.5, 0.0);
 
    ///////////////////////////////////////////
@@ -445,6 +462,7 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
        (conf->match.disable_menus != cfdata->match.disable_menus) ||
        (conf->match.disable_objects != cfdata->match.disable_objects) ||
        (conf->disable_screen_effects != cfdata->disable_screen_effects) ||
+       (conf->enable_advanced_features != cfdata->enable_advanced_features) ||
        (conf->fast_popups != cfdata->fast_popups) ||
        (conf->fast_borders != cfdata->fast_borders) ||
        (conf->fast_overrides != cfdata->fast_overrides) ||
@@ -463,6 +481,8 @@ _advanced_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         conf->match.disable_menus = cfdata->match.disable_menus;
         conf->match.disable_objects = cfdata->match.disable_objects;
         conf->disable_screen_effects = cfdata->disable_screen_effects;
+        if (conf->enable_advanced_features != cfdata->enable_advanced_features)
+          _advanced_features_changed(conf);
         conf->lock_fps = cfdata->lock_fps;
         conf->smooth_windows = cfdata->smooth_windows;
         conf->grab = cfdata->grab;
@@ -661,6 +681,8 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
         conf->max_unmapped_pixels = cfdata->max_unmapped_pixels;
         conf->max_unmapped_time = cfdata->max_unmapped_time;
         conf->min_unmapped_time = cfdata->min_unmapped_time;
+        if (conf->enable_advanced_features != cfdata->enable_advanced_features)
+          _advanced_features_changed(conf);
         conf->send_flush = cfdata->send_flush;
         conf->send_dump = cfdata->send_dump;
         conf->fps_show = cfdata->fps_show;

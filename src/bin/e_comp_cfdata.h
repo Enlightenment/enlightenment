@@ -31,6 +31,7 @@ struct _E_Comp_Config
    unsigned char nofade;
    double        first_draw_delay;
    Eina_Bool disable_screen_effects;
+   Eina_Bool enable_advanced_features;
    // the following options add the "/fast" suffix to the normal groups
    Eina_Bool fast_popups;
    Eina_Bool fast_borders;
