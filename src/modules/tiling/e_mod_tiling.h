@@ -7,6 +7,8 @@
 
 #include <assert.h>
 
+#include "window_tree.h"
+
 typedef struct _Config      Config;
 typedef struct _Tiling_Info Tiling_Info;
 
@@ -40,15 +42,6 @@ struct _Config
     int            show_titles;
     char          *keyhints;
     Eina_List     *vdesks;
-};
-
-typedef struct _Window_Tree Window_Tree;
-
-struct _Window_Tree
-{
-   EINA_INLIST;
-   Window_Tree *children;
-   float weight;
 };
 
 struct _Tiling_Info
