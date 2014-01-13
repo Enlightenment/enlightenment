@@ -181,6 +181,13 @@ check_tinfo(const E_Desk *desk)
     }
 }
 
+static Eina_Bool
+desk_should_tile_check(const E_Desk *desk)
+{
+   check_tinfo(desk);
+   return (_G.tinfo->conf &&_G.tinfo->conf->nb_stacks);
+}
+
 static int
 is_floating_window(const E_Client *ec)
 {
@@ -1297,8 +1304,7 @@ toggle_floating(E_Client *ec)
 {
     if (!ec)
         return;
-    check_tinfo(ec->desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks)
+    if (!desk_should_tile_check(ec->desk))
         return;
 
     if (EINA_LIST_IS_IN(_G.tinfo->floating_windows, ec)) {
@@ -1401,10 +1407,8 @@ _e_mod_action_swap_cb(E_Object   *obj __UNUSED__,
     if (!focused_ec || focused_ec->desk != desk)
         return;
 
-    check_tinfo(desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
+    if (!desk_should_tile_check(desk))
         return;
-    }
 
     _do_overlay(focused_ec, _action_swap, INPUT_MODE_SWAPPING);
 }
@@ -2056,10 +2060,8 @@ _e_mod_action_move_direct_cb(E_Object   *obj __UNUSED__,
     if (!focused_ec || focused_ec->desk != desk)
         return;
 
-    check_tinfo(desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
+    if (!desk_should_tile_check(desk))
         return;
-    }
 
 
     assert(params != NULL);
@@ -2108,10 +2110,8 @@ _e_mod_action_move_cb(E_Object   *obj __UNUSED__,
     if (!focused_ec || focused_ec->desk != desk)
         return;
 
-    check_tinfo(desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
+    if (!desk_should_tile_check(desk))
         return;
-    }
 
     _G.focused_ec = focused_ec;
 
@@ -2708,10 +2708,8 @@ _e_mod_action_adjust_transitions(E_Object   *obj __UNUSED__,
     if (!desk)
         return;
 
-    check_tinfo(desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
+    if (!desk_should_tile_check(desk))
         return;
-    }
 
     _do_transition_overlay();
 }
@@ -2769,10 +2767,8 @@ _e_mod_action_go_cb(E_Object   *obj __UNUSED__,
     if (!desk)
         return;
 
-    check_tinfo(desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
+    if (!desk_should_tile_check(desk))
         return;
-    }
 
     _do_overlay(NULL, _action_go, INPUT_MODE_GOING);
 }
@@ -2802,8 +2798,7 @@ _e_mod_action_send_cb(E_Object   *obj __UNUSED__,
     if (!is_tilable(ec))
         return;
 
-    check_tinfo(desk);
-    if (!_G.tinfo->conf)
+    if (!desk_should_tile_check(desk))
         return;
 
     /* Fill initial values if not already done */
@@ -2866,10 +2861,8 @@ _pre_client_assign_hook(void *data __UNUSED__,
         return;
     }
 
-    check_tinfo(ec->desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
+    if (!desk_should_tile_check(ec->desk))
         return;
-    }
 
     if (is_floating_window(ec)) {
         return;
@@ -2902,10 +2895,8 @@ static void _move_or_resize(E_Client *ec)
         return;
     }
 
-    check_tinfo(ec->desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
+    if (!desk_should_tile_check(ec->desk))
         return;
-    }
 
     DBG("Resize: %p / '%s' / '%s', (%d,%d), changes(size=%d, position=%d, client=%d)"
         " g:%dx%d+%d+%d ecname:'%s' (stack:%d%c) maximized:%s fs:%s",
@@ -2988,8 +2979,7 @@ _remove_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
     if (_G.currently_switching_desktop)
         return true;
 
-    check_tinfo(ec->desk);
-    if (!_G.tinfo->conf)
+    if (!desk_should_tile_check(ec->desk))
         return true;
 
     if (EINA_LIST_IS_IN(_G.tinfo->floating_windows, ec)) {
@@ -3014,8 +3004,7 @@ _iconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
     if (ec->deskshow)
         return true;
 
-    check_tinfo(ec->desk);
-    if (!_G.tinfo->conf)
+    if (!desk_should_tile_check(ec->desk))
         return true;
 
     if (EINA_LIST_IS_IN(_G.tinfo->floating_windows, ec)) {
@@ -3042,10 +3031,8 @@ _uniconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *even
     if (ec->deskshow)
         return true;
 
-    check_tinfo(ec->desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
+    if (!desk_should_tile_check(ec->desk))
         return true;
-    }
 
     if (!is_tilable(ec)) {
         return true;
@@ -3099,10 +3086,8 @@ _desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_S
 
     end_special_input();
 
-    check_tinfo(ev->desk);
-    if (!_G.tinfo->conf) {
+    if (!desk_should_tile_check(ev->desk))
         return true;
-    }
 
     if (is_floating_window(ev->ec)) {
         EINA_LIST_REMOVE(_G.tinfo->floating_windows, ev->ec);
@@ -3113,11 +3098,10 @@ _desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_S
         }
     }
 
-    check_tinfo(ev->ec->desk);
-    if (!_G.tinfo->conf) {
+    if (!desk_should_tile_check(ev->ec->desk))
         return true;
-    }
 
+    // FIXME: Fix this.
     if (get_stack(ev->ec) < 0)
         _add_client(ev->ec);
 
@@ -3138,10 +3122,8 @@ _compositor_resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Comp
                 Eina_List *wins = NULL;
                 E_Client *ec;
 
-                check_tinfo(desk);
-                if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
-                    continue;
-                }
+                if (!desk_should_tile_check(desk))
+                   continue;
 
                 for (i = 0; i < TILING_MAX_STACKS; i++) {
                     EINA_LIST_FREE(_G.tinfo->stacks[i], ec) {
@@ -3366,10 +3348,8 @@ _disable_desk(E_Desk *desk)
     Eina_List *l;
     int i;
 
-    check_tinfo(desk);
-    if (!_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
-        return;
-    }
+   if (!desk_should_tile_check(desk))
+      return;
 
     for (i = 0; i < TILING_MAX_STACKS; i++) {
         for (l = _G.tinfo->stacks[i]; l; l = l->next) {
