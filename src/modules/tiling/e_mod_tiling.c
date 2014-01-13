@@ -1260,8 +1260,11 @@ _add_client(E_Client *ec)
          Window_Tree *new_node;
          if (!parent)
            {
-              ERR("Couldn't find tree item for focused client %p. Using root..",
-                    e_client_focused_get());
+              if (_G.tinfo->tree)
+                {
+                   ERR("Couldn't find tree item for focused client %p. Using root..",
+                         e_client_focused_get());
+                }
               parent = _G.tinfo->tree;
            }
 
