@@ -105,7 +105,7 @@ static struct tiling_mod_main_g
                          *act_move_right,
                          *act_move_up,
                          *act_move_down,
-                         *act_adjusttransitions;
+                         *act_toggle_split_mode;
 
     int                   warp_x,
                           warp_y,
@@ -2460,7 +2460,7 @@ _do_transition_overlay(void)
 }
 
 static void
-_e_mod_action_adjust_transitions(E_Object   *obj __UNUSED__,
+_e_mod_action_toggle_split_mode(E_Object   *obj __UNUSED__,
                                  const char *params __UNUSED__)
 {
     E_Desk *desk;
@@ -2471,8 +2471,6 @@ _e_mod_action_adjust_transitions(E_Object   *obj __UNUSED__,
 
     if (!desk_should_tile_check(desk))
         return;
-
-    _do_transition_overlay();
 }
 
 /* }}} */
@@ -2883,12 +2881,8 @@ e_modapi_init(E_Module *m)
                N_("Move window down"), "move_down",
                "down", NULL, 0);
 
-    ACTION_ADD(_G.act_adjusttransitions, _e_mod_action_adjust_transitions,
-               N_("Adjust transitions"), "adjust_transitions",
-               NULL, NULL, 0);
-
-    ACTION_ADD(_G.act_adjusttransitions, _e_mod_action_adjust_transitions,
-               N_("Adjust transitions"), "adjust_transitions",
+    ACTION_ADD(_G.act_toggle_split_mode, _e_mod_action_toggle_split_mode,
+               N_("Toggle split mode"), "toggle_split_mode",
                NULL, NULL, 0);
 
 #undef ACTION_ADD
@@ -3044,7 +3038,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
     ACTION_DEL(_G.act_move_up, "Move window up", "move_up");
     ACTION_DEL(_G.act_move_down, "Move window down", "move_down");
 
-    ACTION_DEL(_G.act_adjusttransitions, "Adjust transitions",
+    ACTION_DEL(_G.act_toggle_split_mode, "Adjust transitions",
                "adjust_transitions");
 #undef ACTION_DEL
 
