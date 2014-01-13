@@ -56,10 +56,6 @@ struct _Tiling_Info
     /* List of windows which were toggled floating */
     Eina_List *floating_windows;
 
-    Eina_List *stacks[TILING_MAX_STACKS];
-    int        pos[TILING_MAX_STACKS];
-    int        size[TILING_MAX_STACKS];
-
     Window_Tree *tree;
 };
 

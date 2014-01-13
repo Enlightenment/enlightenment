@@ -272,7 +272,6 @@ _restore_client(E_Client *ec)
          ERR("No extra for %p", ec);
          return;
     }
-    _e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
     _e_client_move_resize(ec,
                           extra->orig.geom.x,
                           extra->orig.geom.y,
@@ -418,6 +417,13 @@ _reapply_tree(void)
 }
 
 void
+_restore_free_client(void *client)
+{
+   _restore_client(client);
+   free(client);
+}
+
+void
 change_desk_conf(struct _Config_vdesk *newconf)
 {
     E_Manager *m;
@@ -426,8 +432,6 @@ change_desk_conf(struct _Config_vdesk *newconf)
     E_Desk *d;
     int old_nb_stacks = 0,
         new_nb_stacks = newconf->nb_stacks;
-    int i;
-    Eina_List *l;
 
     m = e_manager_current_get();
     if (!m) return;
@@ -455,15 +459,8 @@ change_desk_conf(struct _Config_vdesk *newconf)
         return;
 
     if (new_nb_stacks == 0) {
-        for (i = 0; i < TILING_MAX_STACKS; i++) {
-            for (l = _G.tinfo->stacks[i]; l; l = l->next) {
-                E_Client *ec = l->data;
-
-                _restore_client(ec);
-            }
-            eina_list_free(_G.tinfo->stacks[i]);
-            _G.tinfo->stacks[i] = NULL;
-        }
+        tiling_window_tree_walk(_G.tinfo->tree, _restore_free_client);
+        _G.tinfo->tree = NULL;
         e_place_zone_region_smart_cleanup(z);
     }
     _G.tinfo->conf->nb_stacks = new_nb_stacks;
@@ -1036,13 +1033,6 @@ e_modapi_init(E_Module *m)
     _G.action_cb = NULL;
 
     return m;
-}
-
-void
-_restore_free_client(void *client)
-{
-   _restore_client(client);
-   free(client);
 }
 
 static void
