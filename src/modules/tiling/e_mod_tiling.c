@@ -1163,38 +1163,9 @@ _desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_S
 }
 
 static bool
-_compositor_resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Compositor_Resize *ev)
+_compositor_resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Compositor_Resize *ev EINA_UNUSED)
 {
-    Eina_List *l;
-    E_Zone *zone;
-    int x, y, i;
-
-    EINA_LIST_FOREACH(ev->comp->zones, l, zone) {
-        for (x = 0; x < zone->desk_x_count; x++) {
-            for (y = 0; y < zone->desk_y_count; y++) {
-                E_Desk *desk = zone->desks[x + (y * zone->desk_x_count)];
-                Eina_List *wins = NULL;
-                E_Client *ec;
-
-                if (!desk_should_tile_check(desk))
-                   continue;
-
-                for (i = 0; i < TILING_MAX_STACKS; i++) {
-                    EINA_LIST_FREE(_G.tinfo->stacks[i], ec) {
-                        EINA_LIST_APPEND(wins, ec);
-                        _restore_client(ec);
-                    }
-                    _G.tinfo->stacks[i] = NULL;
-                    _G.tinfo->pos[i] = 0;
-                    _G.tinfo->size[i] = 0;
-                }
-
-                EINA_LIST_FREE(wins, ec) {
-                    _add_client(ec);
-                }
-            }
-        }
-    }
+   // FIXME
 
     return true;
 }
@@ -1206,13 +1177,10 @@ static void
 _clear_info_hash(void *data)
 {
     Tiling_Info *ti = data;
-    int i;
 
     eina_list_free(ti->floating_windows);
-    for (i = 0; i < TILING_MAX_STACKS; i++) {
-        eina_list_free(ti->stacks[i]);
-        ti->stacks[i] = NULL;
-    }
+    tiling_window_tree_free(ti->tree);
+    ti->tree = NULL;
     E_FREE(ti);
 }
 
@@ -1356,24 +1324,22 @@ e_modapi_init(E_Module *m)
     return m;
 }
 
+void
+_restore_free_client(void *client)
+{
+   _restore_client(client);
+   free(client);
+}
+
 static void
 _disable_desk(E_Desk *desk)
 {
-    Eina_List *l;
-    int i;
-
-   if (!desk_should_tile_check(desk))
+   check_tinfo(desk);
+   if (!_G.tinfo->conf)
       return;
 
-    for (i = 0; i < TILING_MAX_STACKS; i++) {
-        for (l = _G.tinfo->stacks[i]; l; l = l->next) {
-            E_Client *ec = l->data;
-
-            _restore_client(ec);
-        }
-        eina_list_free(_G.tinfo->stacks[i]);
-        _G.tinfo->stacks[i] = NULL;
-    }
+   tiling_window_tree_walk(_G.tinfo->tree, _restore_free_client);
+   _G.tinfo->tree = NULL;
 }
 
 static void

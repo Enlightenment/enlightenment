@@ -3,7 +3,7 @@
 #include "window_tree.h"
 
 void
-tiling_window_tree_free(Window_Tree *root)
+tiling_window_tree_walk(Window_Tree *root, void (*func)(void *))
 {
    Eina_Inlist *itr_safe;
    Window_Tree *itr;
@@ -11,7 +11,13 @@ tiling_window_tree_free(Window_Tree *root)
      {
         tiling_window_tree_free(itr);
      }
-   free(root);
+   func(root);
+}
+
+void
+tiling_window_tree_free(Window_Tree *root)
+{
+   tiling_window_tree_walk(root, free);
 }
 
 Window_Tree *

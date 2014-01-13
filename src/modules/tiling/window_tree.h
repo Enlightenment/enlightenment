@@ -21,6 +21,7 @@ struct _Window_Tree
 };
 
 void tiling_window_tree_free(Window_Tree *root);
+void tiling_window_tree_walk(Window_Tree *root, void (*func)(void *));
 
 Window_Tree *tiling_window_tree_add(Window_Tree *parent, E_Client *client, Tiling_Split_Type split_type);
 
