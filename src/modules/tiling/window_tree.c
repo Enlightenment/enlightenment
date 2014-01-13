@@ -7,6 +7,9 @@ tiling_window_tree_walk(Window_Tree *root, void (*func)(void *))
 {
    Eina_Inlist *itr_safe;
    Window_Tree *itr;
+   if (!root)
+      return;
+
    EINA_INLIST_FOREACH_SAFE(root->children, itr_safe, itr)
      {
         tiling_window_tree_free(itr);
