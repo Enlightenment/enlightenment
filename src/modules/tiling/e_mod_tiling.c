@@ -198,6 +198,10 @@ is_tilable(const E_Client *ec)
                 || (ec->netwm.type == E_WINDOW_TYPE_DIALOG)))
         return false;
 
+    if (ec->fullscreen) {
+         return false;
+    }
+
     return true;
 }
 
@@ -481,9 +485,6 @@ _add_client(E_Client *ec)
     if (!is_tilable(ec)) {
         return;
     }
-    if (ec->fullscreen) {
-         return;
-    }
 
     if (!_G.tinfo || !_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
         return;
@@ -643,10 +644,6 @@ _pre_client_assign_hook(void *data __UNUSED__,
 
     if (!is_tilable(ec)) {
         return;
-    }
-
-    if (ec->fullscreen) {
-         return;
     }
 
     /* Fill initial values if not already done */
