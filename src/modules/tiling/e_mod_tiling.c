@@ -37,13 +37,6 @@ typedef struct overlay_t {
     Evas_Object *obj;
 } overlay_t;
 
-typedef struct transition_overlay_t {
-    overlay_t overlay;
-    int stack;
-    char key[4];
-    E_Client *ec;
-} transition_overlay_t;
-
 typedef struct Client_Extra {
     E_Client *client;
     geom_t expected;
@@ -111,7 +104,6 @@ static struct tiling_mod_main_g
     Ecore_Timer          *warp_timer;
 
     overlay_t             move_overlays[MOVE_COUNT];
-    transition_overlay_t *transition_overlay;
     Ecore_Timer          *action_timer;
     E_Client             *focused_ec;
     void (*action_cb)(E_Client *ec, Client_Extra *extra);
@@ -380,19 +372,6 @@ end_special_input(void)
             }
         }
         break;
-      case INPUT_MODE_TRANSITION:
-        if (_G.transition_overlay) {
-            if (_G.transition_overlay->overlay.obj) {
-                evas_object_del(_G.transition_overlay->overlay.obj);
-            }
-            if (_G.transition_overlay->overlay.popup) {
-                evas_object_hide(_G.transition_overlay->overlay.popup);
-                evas_object_del(_G.transition_overlay->overlay.popup);
-            }
-            E_FREE(_G.transition_overlay);
-            _G.transition_overlay = NULL;
-        }
-        break;
       default:
         break;
     }
@@ -656,7 +635,6 @@ _pre_client_assign_hook(void *data __UNUSED__,
 static void _move_or_resize(E_Client *ec)
 {
     Client_Extra *extra;
-    int stack = -1;
 
     if (!ec) {
         return;
@@ -666,12 +644,11 @@ static void _move_or_resize(E_Client *ec)
         return;
 
     DBG("Resize: %p / '%s' / '%s', (%d,%d), changes(size=%d, position=%d, client=%d)"
-        " g:%dx%d+%d+%d ecname:'%s' (stack:%d%c) maximized:%s fs:%s",
+        " g:%dx%d+%d+%d ecname:'%s' maximized:%s fs:%s",
         ec, ec->icccm.title, ec->netwm.name,
         ec->desk->x, ec->desk->y,
         ec->changes.size, ec->changes.pos, ec->changes.border,
         ec->w, ec->h, ec->x, ec->y, ec->bordername,
-        stack, _G.tinfo->conf->use_rows? 'r':'c',
         (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_NONE ? "NONE" :
         (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL ? "VERTICAL" :
         (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL ? "HORIZONTAL" :
