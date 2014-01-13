@@ -120,11 +120,13 @@ static struct tiling_mod_main_g
     Ecore_Timer          *action_timer;
     E_Client             *focused_ec;
     void (*action_cb)(E_Client *ec, Client_Extra *extra);
+    Tiling_Split_Type     split_type;
 
     tiling_input_mode_t   input_mode;
     char                  keys[4];
 } _G = {
     .input_mode = INPUT_MODE_NONE,
+    .split_type = TILING_SPLIT_HORIZONTAL,
 };
 
 /* }}} */
@@ -975,7 +977,7 @@ _add_client(E_Client *ec)
               parent = _G.tinfo->tree;
            }
 
-         new_node = tiling_window_tree_add(parent, ec, TILING_SPLIT_HORIZONTAL);
+         new_node = tiling_window_tree_add(parent, ec, _G.split_type);
          if (!_G.tinfo->tree)
             _G.tinfo->tree = new_node;
       }
@@ -1863,6 +1865,9 @@ _e_mod_action_toggle_split_mode(E_Object   *obj __UNUSED__,
 
     if (!desk_should_tile_check(desk))
         return;
+
+    _G.split_type = (_G.split_type == TILING_SPLIT_VERTICAL) ?
+       TILING_SPLIT_HORIZONTAL : TILING_SPLIT_VERTICAL;
 }
 
 /* }}} */
@@ -2430,8 +2435,8 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
     ACTION_DEL(_G.act_move_up, "Move window up", "move_up");
     ACTION_DEL(_G.act_move_down, "Move window down", "move_down");
 
-    ACTION_DEL(_G.act_toggle_split_mode, "Adjust transitions",
-               "adjust_transitions");
+    ACTION_DEL(_G.act_toggle_split_mode, "Toggle split mode",
+          "toggle_split_mode");
 #undef ACTION_DEL
 
     e_configure_registry_item_del("windows/tiling");
