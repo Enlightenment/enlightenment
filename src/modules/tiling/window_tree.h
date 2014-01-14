@@ -1,5 +1,5 @@
 #ifndef WINDOW_TREE_H
-#define WINDOW_TREE_HO
+#define WINDOW_TREE_H
 #include <e.h>
 
 /* XXX: Gotta be 0 and 1 because it's calculated using level % 2. */

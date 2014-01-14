@@ -323,6 +323,21 @@ _get_or_create_client_extra(E_Client *ec)
     return extra;
 }
 
+void
+tiling_e_client_move_resize_extra(E_Client *ec,
+                      int       x,
+                      int       y,
+                      int       w,
+                      int       h)
+{
+   Client_Extra *extra = _get_or_create_client_extra(ec);
+   if (!extra) {
+        ERR("No extra for %p", ec);
+   }
+
+   _e_client_move_resize(ec, x, y, w, h);
+}
+
 /* }}} */
 /* Overlays {{{*/
 

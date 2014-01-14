@@ -1,6 +1,7 @@
 #include "e.h"
 
 #include "window_tree.h"
+#include "e_mod_tiling.h"
 
 void
 tiling_window_tree_walk(Window_Tree *root, void (*func)(void *))
@@ -243,18 +244,6 @@ tiling_window_tree_client_find(Window_Tree *root, E_Client *client)
    return NULL;
 }
 
-/* FIXME: Deduplicate this func. */
-static void
-_e_client_move_resize(E_Client *ec,
-                      int       x,
-                      int       y,
-                      int       w,
-                      int       h)
-{
-    DBG("%p -> %dx%d+%d+%d", ec, w, h, x, y);
-    evas_object_geometry_set(ec->frame, x, y, w, h);
-}
-
 void
 _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
       Evas_Coord w, Evas_Coord h, int level)
@@ -263,7 +252,7 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
    Tiling_Split_Type split_type = level % 2;
 
    if (root->client)
-      _e_client_move_resize(root->client, x, y, w, h);
+      tiling_e_client_move_resize_extra(root->client, x, y, w, h);
 
    if (split_type == TILING_SPLIT_HORIZONTAL)
      {
