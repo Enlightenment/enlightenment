@@ -158,37 +158,42 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
         if (!item_keep->children)
           {
              parent->client = item_keep->client;
+             parent->children = NULL;
 
              free(item_keep);
           }
-        else if (grand_parent)
-          {
-             /* Update the children's parent. */
-               {
-                  Eina_Inlist *itr_safe;
-                  Window_Tree *itr;
-
-                  EINA_INLIST_FOREACH_SAFE(item_keep->children, itr_safe, itr)
-                    {
-                       grand_parent->children =
-                          eina_inlist_append_relative(grand_parent->children,
-                                EINA_INLIST_GET(itr), EINA_INLIST_GET(parent));
-                       itr->weight *= parent->weight;
-                       itr->parent = grand_parent;
-                    }
-
-                  grand_parent->children = eina_inlist_remove(grand_parent->children,
-                        EINA_INLIST_GET(parent));
-                  free(parent);
-               }
-          }
         else
           {
-             /* This is fine, as this is a child of the root so we allow two
-              * levels. */
-          }
+             if (grand_parent)
+               {
+                  /* Update the children's parent. */
+                    {
+                       Eina_Inlist *itr_safe;
+                       Window_Tree *itr;
 
-        parent->children = eina_inlist_remove(parent->children, EINA_INLIST_GET(item));
+                       EINA_INLIST_FOREACH_SAFE(item_keep->children, itr_safe, itr)
+                         {
+                            grand_parent->children =
+                               eina_inlist_append_relative(grand_parent->children,
+                                     EINA_INLIST_GET(itr), EINA_INLIST_GET(parent));
+                            itr->weight *= parent->weight;
+                            itr->parent = grand_parent;
+                         }
+
+                       grand_parent->children = eina_inlist_remove(grand_parent->children,
+                             EINA_INLIST_GET(parent));
+                       free(parent);
+                    }
+               }
+             else
+               {
+                  /* This is fine, as this is a child of the root so we allow two
+                   * levels. */
+                  item_keep->weight = 1.0;
+               }
+
+             parent->children = eina_inlist_remove(parent->children, EINA_INLIST_GET(item));
+          }
      }
    else
      {
