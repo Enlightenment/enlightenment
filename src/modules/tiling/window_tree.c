@@ -275,3 +275,28 @@ tiling_window_tree_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
 {
    _tiling_window_tree_level_apply(root, x, y, w, h, 0);
 }
+
+void
+tiling_window_tree_dump(Window_Tree *root, int level)
+{
+   int i;
+
+   if (!root)
+      return;
+
+   for (i = 0 ; i < level ; i++)
+      printf(" ");
+
+   if (root->children)
+      printf("\\-");
+   else
+      printf("|-");
+
+   printf("%f\n", root->weight);
+
+   Window_Tree *itr;
+   EINA_INLIST_FOREACH(root->children, itr)
+     {
+        tiling_window_tree_dump(itr, level + 1);
+     }
+}
