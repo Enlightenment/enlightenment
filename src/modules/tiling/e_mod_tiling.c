@@ -482,7 +482,6 @@ _add_client(E_Client *ec)
          /* If focused is NULL, it should return the root. */
          Window_Tree *parent = tiling_window_tree_client_find(_G.tinfo->tree,
                ec_focused);
-         Window_Tree *new_node;
          if (!parent)
            {
               if (_G.tinfo->tree && ec_focused)
@@ -493,9 +492,7 @@ _add_client(E_Client *ec)
               parent = _G.tinfo->tree;
            }
 
-         new_node = tiling_window_tree_add(_G.tinfo->tree, parent, ec, _G.split_type);
-         if (!_G.tinfo->tree)
-            _G.tinfo->tree = new_node;
+         _G.tinfo->tree = tiling_window_tree_add(_G.tinfo->tree, parent, ec, _G.split_type);
       }
 
     _reapply_tree();

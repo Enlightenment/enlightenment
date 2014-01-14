@@ -114,12 +114,16 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent, E_Client *client,
           }
         else
           {
-             /* FIXME: This is wrong. */
+             root = calloc(1, sizeof(*root));
              _tiling_window_tree_split_add(parent, new_node);
+             root->weight = 1.0;
+             root->children = eina_inlist_append(root->children,
+                   EINA_INLIST_GET(parent));
+             parent->parent = root;
           }
      }
 
-   return new_node;
+   return root;
 }
 
 Window_Tree *
