@@ -333,10 +333,18 @@ tiling_e_client_move_resize_extra(E_Client *ec,
                       int       w,
                       int       h)
 {
-   Client_Extra *extra = _get_or_create_client_extra(ec);
-   if (!extra) {
+    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+    if (!extra) {
         ERR("No extra for %p", ec);
-   }
+        return;
+    }
+
+    extra->expected = (geom_t) {
+         .x = x,
+         .y = y,
+         .w = w,
+         .h = h,
+    };
 
    _e_client_move_resize(ec, x, y, w, h);
 }
@@ -597,6 +605,12 @@ static void _move_or_resize(E_Client *ec)
     if (!ec) {
         return;
     }
+    if (is_floating_window(ec)) {
+        return;
+    }
+    if (!is_tilable(ec)) {
+        return;
+    }
 
     if (!desk_should_tile_check(ec->desk))
         return;
@@ -617,6 +631,47 @@ static void _move_or_resize(E_Client *ec)
         ERR("No extra for %p", ec);
         return;
     }
+
+    if ((ec->x == extra->expected.x) && (ec->y == extra->expected.y) &&
+          (ec->w == extra->expected.w) && (ec->h == extra->expected.h))
+      {
+
+         return;
+      }
+
+    Window_Tree *item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
+    if (!item)
+      {
+         ERR("Couldn't find tree item for resized client %p!", ec);
+         return;
+      }
+
+      {
+         int w_dir = 1, h_dir = 1;
+         double w_diff = 1.0, h_diff = 1.0;
+         if (abs(extra->expected.w - ec->w) >= MAX(ec->icccm.step_w, 1))
+           {
+              w_diff = ((double) ec->w) / extra->expected.w;
+              printf("w %d %d %f\n", extra->expected.w, ec->w, w_diff);
+           }
+         if (abs(extra->expected.h - ec->h) >= MAX(ec->icccm.step_h, 1))
+           {
+              h_diff = ((double) ec->h) / extra->expected.h;
+              printf("h %d %d %f\n", extra->expected.h, ec->h, h_diff);
+           }
+         if (extra->expected.x != ec->x)
+           {
+              w_dir = -1;
+           }
+         if (extra->expected.y != ec->y)
+           {
+              h_dir = -1;
+           }
+         if ((w_diff != 1.0) || (h_diff != 1.0))
+           {
+              tiling_window_tree_node_resize(item, w_dir, w_diff, h_dir, h_diff);
+           }
+      }
 
     _reapply_tree();
 }

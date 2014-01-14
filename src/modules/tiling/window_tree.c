@@ -281,6 +281,100 @@ tiling_window_tree_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
    _tiling_window_tree_level_apply(root, x, y, w, h, 0);
 }
 
+static Window_Tree *
+_inlist_next(Window_Tree *it)
+{
+   return (Window_Tree *) EINA_INLIST_GET(it)->next;
+}
+
+static Window_Tree *
+_inlist_prev(Window_Tree *it)
+{
+   return (Window_Tree *) EINA_INLIST_GET(it)->prev;
+}
+
+static void
+_tiling_window_tree_node_resize_direction(Window_Tree *node, Window_Tree *parent,
+      double dir_diff, int dir)
+{
+   double weight = 0.0;
+   double weight_diff;
+   Window_Tree *children_start;
+   Window_Tree *itr;
+   Window_Tree *(*itr_func)(Window_Tree *);
+
+   if (dir > 0)
+     {
+        itr_func = _inlist_prev;
+        children_start = (Window_Tree *) parent->children->last;
+     }
+   else
+     {
+        itr_func = _inlist_next;
+        children_start = (Window_Tree *) parent->children;
+     }
+
+
+   itr = (Window_Tree *) children_start;
+   while (itr != node)
+     {
+        weight += itr->weight;
+
+        itr = itr_func(itr);
+     }
+
+   if (weight == 0.0)
+      return;
+
+   weight_diff = itr->weight;
+   itr->weight *= dir_diff;
+   weight_diff -= itr->weight;
+   weight_diff /= weight;
+
+   for (itr = children_start ; itr != node ; itr = itr_func(itr))
+     {
+        itr->weight += itr->weight * weight_diff;
+     }
+}
+
+void
+tiling_window_tree_node_resize(Window_Tree *node, int w_dir, double w_diff, int h_dir, double h_diff)
+{
+   Window_Tree *parent = node->parent;
+   Window_Tree *w_parent, *h_parent;
+
+   /* If we have no parent, means we need to be full screen anyway. */
+   if (!parent)
+      return;
+
+   Window_Tree *grand_parent = parent->parent;
+   Tiling_Split_Type parent_split_type = _tiling_window_tree_split_type_get(parent);
+
+   /* w_diff related changes. */
+   if (parent_split_type == TILING_SPLIT_HORIZONTAL)
+     {
+        w_parent = parent;
+        h_parent = grand_parent;
+     }
+   else
+     {
+        w_parent = grand_parent;
+        h_parent = parent;
+     }
+
+   if ((h_diff != 1.0) && h_parent)
+     {
+        Window_Tree *tmp_node = (h_parent == parent) ? node : parent;
+        _tiling_window_tree_node_resize_direction(tmp_node, h_parent, h_diff, h_dir);
+     }
+
+   if ((w_diff != 1.0) && w_parent)
+     {
+        Window_Tree *tmp_node = (w_parent == parent) ? node : parent;
+        _tiling_window_tree_node_resize_direction(tmp_node, w_parent, w_diff, w_dir);
+     }
+}
+
 void
 tiling_window_tree_dump(Window_Tree *root, int level)
 {
