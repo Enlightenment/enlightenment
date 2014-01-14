@@ -137,11 +137,11 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
      }
 
 
+   Window_Tree *parent = item->parent;
    int children_count = eina_inlist_count(item->parent->children);
 
    if (children_count <= 2)
      {
-        Window_Tree *parent = item->parent;
         Window_Tree *grand_parent = parent->parent;
         Window_Tree *item_keep = NULL;
         /* Adjust existing children's weights */
@@ -180,28 +180,27 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
           }
         else
           {
-             /* FIXME: Toggle root tree direction. */
-             item_keep->parent = NULL;
-             root = item_keep;
-             goto end;
+             /* This is fine, as this is a child of the root so we allow two
+              * levels. */
           }
+
+        parent->children = eina_inlist_remove(parent->children, EINA_INLIST_GET(item));
      }
    else
      {
         Window_Tree *itr;
         float weight = 1.0 - item->weight;
 
-        item->parent->children = eina_inlist_remove(item->parent->children,
+        parent->children = eina_inlist_remove(parent->children,
               EINA_INLIST_GET(item));
 
         /* Adjust existing children's weights */
-        EINA_INLIST_FOREACH(item->parent->children, itr)
+        EINA_INLIST_FOREACH(parent->children, itr)
           {
              itr->weight /= weight;
           }
      }
 
-end:
   free(item);
   return root;
 }
