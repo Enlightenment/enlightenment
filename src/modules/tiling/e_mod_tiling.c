@@ -185,6 +185,9 @@ is_tilable(const E_Client *ec)
     if (ec->icccm.gravity == ECORE_X_GRAVITY_STATIC)
         return false;
 
+    if (ec->e.state.centered)
+       return false;
+
     if (!tiling_g.config->tile_dialogs
             && ((ec->icccm.transient_for != 0)
                 || (ec->netwm.type == E_WINDOW_TYPE_DIALOG)))
