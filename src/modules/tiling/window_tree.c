@@ -114,6 +114,7 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent, E_Client *client,
           }
         else
           {
+             /* FIXME: This is wrong. */
              _tiling_window_tree_split_add(parent, new_node);
           }
      }
@@ -140,33 +141,55 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
 
    if (children_count <= 2)
      {
+        Window_Tree *parent = item->parent;
+        Window_Tree *grand_parent = parent->parent;
         Window_Tree *item_keep = NULL;
         /* Adjust existing children's weights */
-        EINA_INLIST_FOREACH(item->parent->children, item_keep)
+        EINA_INLIST_FOREACH(parent->children, item_keep)
           {
              if (item_keep != item)
                 break;
           }
 
-        item->parent->client = item_keep->client;
-        item->parent->children = item_keep->children;
-
-        /* Update the children's parent. */
+        if (!item_keep->children)
           {
-             Window_Tree *itr;
+             parent->client = item_keep->client;
+             parent->children = NULL; // FIXME: Remove this comment. item_keep->children
 
-             EINA_INLIST_FOREACH(item->parent->children, itr)
+             free(item_keep);
+          }
+        else if (grand_parent)
+          {
+             grand_parent->client = NULL; // FIXME: Remove this comment. item_keep->client;
+
+             /* Update the children's parent. */
                {
-                  itr->parent = item->parent;
+                  Eina_Inlist *itr_safe;
+                  Window_Tree *itr;
+
+                  EINA_INLIST_FOREACH_SAFE(item_keep->children, itr_safe, itr)
+                    {
+                       grand_parent->children =
+                          eina_inlist_append_relative(grand_parent->children,
+                                EINA_INLIST_GET(itr), EINA_INLIST_GET(parent));
+                       itr->weight *= parent->weight;
+                       itr->parent = grand_parent;
+                    }
+
+                  grand_parent->children = eina_inlist_remove(grand_parent->children,
+                        EINA_INLIST_GET(parent));
+                  free(parent);
                }
           }
-
-        free(item_keep);
+        else
+          {
+             ERR("FIXME");
+          }
      }
    else
      {
         Window_Tree *itr;
-        float weight = (((float) children_count) - 1.0) / children_count;
+        float weight = 1.0 - item->weight;
 
         item->parent->children = eina_inlist_remove(item->parent->children,
               EINA_INLIST_GET(item));
