@@ -478,13 +478,14 @@ _add_client(E_Client *ec)
 
     /* Window tree updating. */
       {
+         E_Client *ec_focused = e_client_focused_get();
          /* If focused is NULL, it should return the root. */
          Window_Tree *parent = tiling_window_tree_client_find(_G.tinfo->tree,
-               e_client_focused_get());
+               ec_focused);
          Window_Tree *new_node;
          if (!parent)
            {
-              if (_G.tinfo->tree)
+              if (_G.tinfo->tree && ec_focused)
                 {
                    ERR("Couldn't find tree item for focused client %p. Using root..",
                          e_client_focused_get());
@@ -492,7 +493,7 @@ _add_client(E_Client *ec)
               parent = _G.tinfo->tree;
            }
 
-         new_node = tiling_window_tree_add(parent, ec, _G.split_type);
+         new_node = tiling_window_tree_add(_G.tinfo->tree, parent, ec, _G.split_type);
          if (!_G.tinfo->tree)
             _G.tinfo->tree = new_node;
       }
@@ -660,7 +661,7 @@ static void _move_or_resize(E_Client *ec)
         return;
     }
 
-    _reapply_tree();
+//    _reapply_tree();
 }
 
 static Eina_Bool
