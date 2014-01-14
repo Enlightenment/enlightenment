@@ -339,62 +339,6 @@ tiling_e_client_move_resize_extra(E_Client *ec,
 }
 
 /* }}} */
-/* Overlays {{{*/
-
-static void
-end_special_input(void)
-{
-    int i;
-
-    if (_G.input_mode == INPUT_MODE_NONE)
-        return;
-
-    if (_G.overlays) {
-        eina_hash_free(_G.overlays);
-        _G.overlays = NULL;
-    }
-
-    if (_G.handler_key) {
-        ecore_event_handler_del(_G.handler_key);
-        _G.handler_key = NULL;
-    }
-    if (_G.action_input_win) {
-        e_grabinput_release(_G.action_input_win, _G.action_input_win);
-        ecore_x_window_free(_G.action_input_win);
-        _G.action_input_win = 0;
-    }
-    if (_G.action_timer) {
-        ecore_timer_del(_G.action_timer);
-        _G.action_timer = NULL;
-    }
-
-    _G.focused_ec = NULL;
-    _G.action_cb = NULL;
-
-    switch(_G.input_mode) {
-      case INPUT_MODE_MOVING:
-        for (i = 0; i < MOVE_COUNT; i++) {
-            overlay_t *overlay = &_G.move_overlays[i];
-
-            if (overlay->obj) {
-                evas_object_del(overlay->obj);
-                overlay->obj = NULL;
-            }
-            if (overlay->popup) {
-                evas_object_hide(overlay->popup);
-                evas_object_del(overlay->popup);
-                overlay->popup = NULL;
-            }
-        }
-        break;
-      default:
-        break;
-    }
-
-    _G.input_mode = INPUT_MODE_NONE;
-}
-
-/* }}} */
 /* Reorganize Stacks {{{*/
 
 static void
@@ -562,8 +506,6 @@ static void
 _e_mod_action_toggle_floating_cb(E_Object   *obj __UNUSED__,
                                  const char *params __UNUSED__)
 {
-    end_special_input();
-
     toggle_floating(e_client_focused_get());
 }
 
@@ -702,12 +644,6 @@ _add_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
     E_Client *ec = event->ec;
 
     if (e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
-    if (_G.input_mode != INPUT_MODE_NONE
-    &&  _G.input_mode != INPUT_MODE_MOVING
-    &&  _G.input_mode != INPUT_MODE_TRANSITION)
-    {
-        end_special_input();
-    }
 
     DBG("Add: %p / '%s' / '%s', (%d,%d), changes(size=%d, position=%d, client=%d)"
         " g:%dx%d+%d+%d ecname:'%s' maximized:%s fs:%s",
@@ -731,7 +667,6 @@ _remove_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
     E_Client *ec = event->ec;
 
     if (e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
-    end_special_input();
 
     if (_G.currently_switching_desktop)
         return true;
@@ -756,8 +691,6 @@ _iconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 
     DBG("iconify hook: %p", ec);
 
-    end_special_input();
-
     if (ec->deskshow)
         return true;
 
@@ -777,13 +710,6 @@ static bool
 _uniconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 {
     E_Client *ec = event->ec;
-
-    if (_G.input_mode != INPUT_MODE_NONE
-    &&  _G.input_mode != INPUT_MODE_MOVING
-    &&  _G.input_mode != INPUT_MODE_TRANSITION)
-    {
-        end_special_input();
-    }
 
     if (ec->deskshow)
         return true;
@@ -819,16 +745,12 @@ _desk_show_hook(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED
 {
     _G.currently_switching_desktop = 0;
 
-    end_special_input();
-
     return true;
 }
 
 static Eina_Bool
 _desk_before_show_hook(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
-    end_special_input();
-
     _G.currently_switching_desktop = 1;
 
     return true;
@@ -840,8 +762,6 @@ _desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_S
     DBG("%p: from (%d,%d) to (%d,%d)", ev->ec,
         ev->desk->x, ev->desk->y,
         ev->ec->desk->x, ev->ec->desk->y);
-
-    end_special_input();
 
     if (!desk_should_tile_check(ev->desk))
         return true;
@@ -1110,8 +1030,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 
     e_configure_registry_item_del("windows/tiling");
     e_configure_registry_category_del("windows");
-
-    end_special_input();
 
     free(tiling_g.config->keyhints);
     E_FREE(tiling_g.config);
