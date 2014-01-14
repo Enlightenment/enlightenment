@@ -658,7 +658,7 @@ static void _move_or_resize(E_Client *ec)
         return;
     }
 
-//    _reapply_tree();
+    _reapply_tree();
 }
 
 static Eina_Bool
