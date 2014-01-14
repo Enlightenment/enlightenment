@@ -155,7 +155,14 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
                 break;
           }
 
-        if (!item_keep->children)
+        if (!item_keep)
+          {
+             /* Special case of deleting the last vertical split item. */
+             free(item);
+             free(root);
+             return NULL;
+          }
+        else if (!item_keep->children)
           {
              parent->client = item_keep->client;
              parent->children = NULL;
