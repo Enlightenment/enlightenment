@@ -154,14 +154,11 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
         if (!item_keep->children)
           {
              parent->client = item_keep->client;
-             parent->children = NULL; // FIXME: Remove this comment. item_keep->children
 
              free(item_keep);
           }
         else if (grand_parent)
           {
-             grand_parent->client = NULL; // FIXME: Remove this comment. item_keep->client;
-
              /* Update the children's parent. */
                {
                   Eina_Inlist *itr_safe;
@@ -183,7 +180,10 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
           }
         else
           {
-             ERR("FIXME");
+             /* FIXME: Toggle root tree direction. */
+             item_keep->parent = NULL;
+             root = item_keep;
+             goto end;
           }
      }
    else
@@ -201,6 +201,7 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
           }
      }
 
+end:
   free(item);
   return root;
 }
