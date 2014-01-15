@@ -99,17 +99,13 @@ _mirror_visible_apply(Mirror *m)
 static void
 _mirror_scale_set(Mirror *m, float sc)
 {
-   Edje_Message_Float_Set msg;
+   Edje_Message_Float msg;
    Mirror_Border *mb;
 
-   /* FIXME: broken */
-   return;
    if (!m->frame) return;
-
    mb = evas_object_smart_data_get(m->mirror);
-   msg.count = 1;
-   msg.val[0] = sc;
-   edje_object_message_send(mb->frame, EDJE_MESSAGE_FLOAT_SET, 0, &msg);
+   msg.val = sc;
+   edje_object_message_send(mb->frame, EDJE_MESSAGE_FLOAT, 0, &msg);
 }
 
 static void
@@ -468,8 +464,6 @@ _mirror_client_new(Mirror *m)
    evas_object_name_set(mb->mirror, "mirror");
    edje_object_part_swallow(mb->frame, "e.swallow.client", m->mirror);
    edje_object_part_text_set(mb->frame, "e.text.title", e_client_name_get(m->ec));
-   if (m->sd->h)
-     _mirror_scale_set(m, (double)m->sd->h / (double)m->sd->desk->zone->h);
    return o;
 }
 
@@ -482,6 +476,7 @@ _e_deskmirror_mirror_setup(Mirror *m)
      {
         m->mirror = _mirror_client_new(m);
         m->frame = 1;
+        _mirror_scale_set(m, (double)m->sd->h / (double)m->sd->desk->zone->h);
      }
    else
      {
