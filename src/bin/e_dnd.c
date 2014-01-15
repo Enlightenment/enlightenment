@@ -161,6 +161,12 @@ e_dnd_shutdown(void)
 }
 
 EAPI E_Drag *
+e_drag_current_get(void)
+{
+   return _drag_current;
+}
+
+EAPI E_Drag *
 e_drag_new(E_Comp *comp, int x, int y,
            const char **types, unsigned int num_types,
            void *data, int size,

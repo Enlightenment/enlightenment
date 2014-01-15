@@ -112,6 +112,7 @@ EINTERN int          e_dnd_shutdown(void);
 
 EAPI int             e_dnd_active(void);
 
+EAPI E_Drag         *e_drag_current_get(void);
 /* x and y are the top left coords of the object that is to be dragged */
 EAPI E_Drag         *e_drag_new(E_Comp *comp, int x, int y,
                                 const char **types, unsigned int num_types,
