@@ -224,7 +224,7 @@ e_drag_object_set(E_Drag *drag, Evas_Object *object)
    else
      evas_object_hide(object);
    drag->object = object;
-   drag->comp_object = e_comp_object_util_add(object, E_COMP_OBJECT_TYPE_POPUP);
+   drag->comp_object = e_comp_object_util_add(object, E_COMP_OBJECT_TYPE_NONE);
    evas_object_layer_set(drag->comp_object, drag->layer);
    evas_object_name_set(drag->comp_object, "E Drag");
    evas_object_pass_events_set(drag->comp_object, 1);
