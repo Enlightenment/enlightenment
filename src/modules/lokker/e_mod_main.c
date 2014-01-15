@@ -18,9 +18,6 @@ e_modapi_init(E_Module *m)
 
    e_desklock_interface_append(&lokker_desklock_iface);
 
-   if (e_desklock_state_get())
-     lokker_lock();
-
    return m;
 }
 
