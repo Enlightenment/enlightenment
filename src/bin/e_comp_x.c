@@ -174,6 +174,7 @@ _e_comp_x_client_new_helper(E_Client *ec)
      }
    ec->depth = ec->comp_data->initial_attributes.depth;
    ec->override = ec->comp_data->initial_attributes.override;
+   ec->placed |= ec->override;
    ec->input_only = ec->comp_data->initial_attributes.input_only;
    ec->border_size = ec->comp_data->initial_attributes.border;
    ec->icccm.accepts_focus = (!ec->override) && (!ec->input_only);
