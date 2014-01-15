@@ -11,7 +11,6 @@ e_modapi_init(E_Module *m)
    Ecore_Evas *ee;
    E_Screen *screen;
    E_Comp *comp;
-   unsigned int layer;
    int w, h;
 
    printf("LOAD WL_FB MODULE\n");
