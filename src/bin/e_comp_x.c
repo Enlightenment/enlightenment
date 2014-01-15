@@ -847,11 +847,8 @@ _e_comp_x_evas_hide_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 
    if (!ec->comp_data) return; // already deleted, happens with internal wins
    ecore_x_window_shadow_tree_flush();
-   if (!ec->iconic)
-     {
-        ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_MAPPED, &visible, 1);
-        e_hints_window_hidden_set(ec);
-     }
+   if ((!ec->iconic) && (!ec->override))
+     ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_MAPPED, &visible, 1);
 
    EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
      evas_object_hide(tmp->frame);
@@ -880,7 +877,8 @@ _e_comp_x_evas_show_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
      ecore_x_window_show(win);
    if (ec->unredirected_single)
      ecore_x_window_show(_e_comp_x_client_window_get(ec));
-   e_hints_window_visible_set(ec);
+   if (!ec->override)
+     e_hints_window_visible_set(ec);
 
    ecore_x_window_prop_card32_set(win, E_ATOM_MAPPED, &visible, 1);
    ecore_x_window_prop_card32_set(win, E_ATOM_MANAGED, &visible, 1);
