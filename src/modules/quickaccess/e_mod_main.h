@@ -20,7 +20,7 @@ typedef struct E_Quick_Access_Entry
    const char *class; /* icccm class, stringshared */
    const char *cmd; /* stringshared */
    Ecore_X_Window win; /* current window */
-   E_Border       *border; /* associated border, if any */
+   E_Client       *client; /* associated client, if any */
    Ecore_Event_Handler *exe_handler; /* for catching exe delete */
    Ecore_Exe      *exe; /* if executed cmd but still no border associated */
    E_Dialog *dia; // used for option handling
@@ -93,7 +93,7 @@ void *e_qa_config_dd_free(void);
 void e_qa_config_entry_free(E_Quick_Access_Entry *entry);
 void e_qa_config_entry_add(E_Quick_Access_Entry *entry);
 void e_qa_config_entry_transient_convert(E_Quick_Access_Entry *entry);
-E_Config_Dialog *e_int_config_qa_module(E_Container *con, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_qa_module(E_Comp *comp, const char *params __UNUSED__);
 
 char *e_qa_db_class_lookup(const char *class);
 

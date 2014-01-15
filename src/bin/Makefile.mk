@@ -46,21 +46,23 @@ src/bin/e_atoms.h \
 src/bin/e_backlight.h \
 src/bin/e_bg.h \
 src/bin/e_bindings.h \
-src/bin/e_border.h \
 src/bin/e_box.h \
 src/bin/e_canvas.h \
+src/bin/e_client.h \
+src/bin/e_client.x \
 src/bin/e_color_class.h \
 src/bin/e_color_dialog.h  \
 src/bin/e_color.h \
 src/bin/e_comp.h \
+src/bin/e_comp_canvas.h \
 src/bin/e_comp_cfdata.h \
-src/bin/e_comp_render_update.h \
+src/bin/e_comp_object.h \
+src/bin/e_comp_x.h \
 src/bin/e_config_data.h \
 src/bin/e_config_dialog.h \
 src/bin/e_config.h \
 src/bin/e_configure.h \
 src/bin/e_confirm_dialog.h \
-src/bin/e_container.h \
 src/bin/e_datastore.h \
 src/bin/e_dbusmenu.h \
 src/bin/e_desk.h \
@@ -103,10 +105,10 @@ src/bin/e_import_config_dialog.h \
 src/bin/e_import_dialog.h \
 src/bin/e_includes.h \
 src/bin/e_init.h \
-src/bin/e_int_border_locks.h \
-src/bin/e_int_border_menu.h \
-src/bin/e_int_border_prop.h \
-src/bin/e_int_border_remember.h \
+src/bin/e_int_client_locks.h \
+src/bin/e_int_client_menu.h \
+src/bin/e_int_client_prop.h \
+src/bin/e_int_client_remember.h \
 src/bin/e_int_config_modules.h \
 src/bin/e_int_gadcon_config.h \
 src/bin/e_intl_data.h \
@@ -134,9 +136,9 @@ src/bin/e_object.h \
 src/bin/e_order.h \
 src/bin/e_pan.h \
 src/bin/e_path.h \
+src/bin/e_pixmap.h \
 src/bin/e_place.h \
 src/bin/e_pointer.h \
-src/bin/e_popup.h \
 src/bin/e_powersave.h \
 src/bin/e_prefix.h \
 src/bin/e_randr.h \
@@ -153,7 +155,6 @@ src/bin/e_slider.h \
 src/bin/e_slidesel.h \
 src/bin/e_spectrum.h \
 src/bin/e_startup.h \
-src/bin/e_stolen.h \
 src/bin/e_sys.h \
 src/bin/e_table.h \
 src/bin/e_test.h \
@@ -202,8 +203,7 @@ src/bin/e_zone.h
 
 if HAVE_WAYLAND_CLIENTS
 ENLIGHTENMENTHEADERS += \
-src/bin/e_comp_wl.h \
-src/bin/e_surface.h
+src/bin/e_comp_wl.h
 endif
 
 
@@ -216,21 +216,22 @@ src/bin/e_atoms.c \
 src/bin/e_backlight.c \
 src/bin/e_bg.c \
 src/bin/e_bindings.c \
-src/bin/e_border.c \
 src/bin/e_box.c \
 src/bin/e_canvas.c \
+src/bin/e_client.c \
 src/bin/e_color.c \
 src/bin/e_color_class.c \
 src/bin/e_color_dialog.c \
 src/bin/e_comp.c \
+src/bin/e_comp_canvas.c \
 src/bin/e_comp_cfdata.c \
-src/bin/e_comp_render_update.c \
+src/bin/e_comp_object.c \
+src/bin/e_comp_x.c \
 src/bin/e_config.c \
 src/bin/e_config_data.c \
 src/bin/e_config_dialog.c \
 src/bin/e_configure.c \
 src/bin/e_confirm_dialog.c \
-src/bin/e_container.c \
 src/bin/e_datastore.c \
 src/bin/e_dbusmenu.c \
 src/bin/e_desk.c \
@@ -269,10 +270,10 @@ src/bin/e_ilist.c \
 src/bin/e_import_config_dialog.c \
 src/bin/e_import_dialog.c \
 src/bin/e_init.c \
-src/bin/e_int_border_locks.c \
-src/bin/e_int_border_menu.c \
-src/bin/e_int_border_prop.c \
-src/bin/e_int_border_remember.c \
+src/bin/e_int_client_locks.c \
+src/bin/e_int_client_menu.c \
+src/bin/e_int_client_prop.c \
+src/bin/e_int_client_remember.c \
 src/bin/e_int_config_modules.c \
 src/bin/e_int_gadcon_config.c \
 src/bin/e_intl.c \
@@ -299,9 +300,9 @@ src/bin/e_object.c \
 src/bin/e_order.c \
 src/bin/e_pan.c \
 src/bin/e_path.c \
+src/bin/e_pixmap.c \
 src/bin/e_place.c \
 src/bin/e_pointer.c \
-src/bin/e_popup.c \
 src/bin/e_powersave.c \
 src/bin/e_prefix.c \
 src/bin/e_randr.c \
@@ -318,7 +319,6 @@ src/bin/e_slider.c \
 src/bin/e_slidesel.c \
 src/bin/e_spectrum.c \
 src/bin/e_startup.c \
-src/bin/e_stolen.c \
 src/bin/e_sys.c \
 src/bin/e_table.c \
 src/bin/e_test.c \
@@ -368,8 +368,7 @@ $(ENLIGHTENMENTHEADERS)
 
 if HAVE_WAYLAND_CLIENTS
 enlightenment_src += \
-src/bin/e_comp_wl.c \
-src/bin/e_surface.c
+src/bin/e_comp_wl.c
 endif
 
 src_bin_enlightenment_CFLAGS = $(AM_CPPFLAGS) @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@

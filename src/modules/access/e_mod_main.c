@@ -58,7 +58,7 @@ typedef struct
    int             device;
 } Multi;
 
-static E_Border *_prev_bd;
+static E_Client *_prev_bd;
 
 static Ecore_X_Atom _atom_access = 0;
 static Ecore_X_Window target_win = 0;
@@ -89,7 +89,7 @@ _mouse_in_win_get(Cover *cov, int x, int y)
       then previous target window which has the highlight object
       should get the message. how? */
    target_win = ecore_x_window_shadow_tree_at_xy_with_skip_get
-     (cov->zone->container->manager->root, x, y, skip, i);
+     (cov->zone->comp->manager->root, x, y, skip, i);
 }
 
 static unsigned int
@@ -353,7 +353,7 @@ _mouse_up(Cover *cov, Ecore_Event_Mouse_Button *ev)
              /* activate message would change focused window
                 FIXME: but it is possibe to create unfocused window
                 in this case, the message should go to unfocused window? */
-             _prev_bd = e_border_focused_get();
+             _prev_bd = e_client_focused_get();
 
              INFO(cov, "double_click");
              ecore_x_e_illume_access_action_activate_send(target_win);
@@ -505,7 +505,7 @@ _cb_mouse_down(void    *data __UNUSED__,
    Cover *cov;
    int i = 0;
    int x, y;
-   E_Border *bd;
+   E_Client *ec;
 
    for (i = 0; i < 3; i++)
      {
@@ -520,7 +520,7 @@ _cb_mouse_down(void    *data __UNUSED__,
    /* activate message would change focused window
       FIXME: but it is possibe to create unfocused window
       in this case, the message should go to focused window? */
-   bd = e_border_focused_get();
+   bd = e_client_focused_get();
    if (bd && (bd != _prev_bd)) target_win = bd->client.win;
 
    EINA_LIST_FOREACH(covers, l, cov)
@@ -738,8 +738,8 @@ _cover_new(E_Zone *zone)
 #if DEBUG_INFO
    Ecore_Evas *ee;
    ee = ecore_evas_new(NULL,
-                       zone->container->x + zone->x,
-                       zone->container->y + zone->y,
+                       zone->comp->x + zone->x,
+                       zone->comp->y + zone->y,
                        zone->w, zone->h,
                        NULL);
    ecore_evas_alpha_set(ee, EINA_TRUE);
@@ -750,7 +750,7 @@ _cover_new(E_Zone *zone)
    e = ecore_evas_get(ee);
    cov->info = evas_object_rectangle_add(e);
    evas_object_color_set(cov->info, 255, 255, 255, 100);
-   evas_object_move(cov->info, zone->container->x + zone->x, zone->container->y + zone->y);
+   evas_object_move(cov->info, zone->comp->x + zone->x, zone->comp->y + zone->y);
    evas_object_resize(cov->info, zone->w, 30);
    evas_object_show(cov->info);
 
@@ -761,13 +761,13 @@ _cover_new(E_Zone *zone)
 
    evas_object_color_set(cov->text, 0, 0, 0, 255);
    evas_object_resize(cov->text, (zone->w / 8), 20);
-   evas_object_move(cov->text, zone->container->x + zone->x + 5, zone->container->y + zone->y + 5);
+   evas_object_move(cov->text, zone->comp->x + zone->x + 5, zone->comp->y + zone->y + 5);
    evas_object_show(cov->text);
 
 #else
-   cov->win = ecore_x_window_input_new(zone->container->manager->root,
-                                       zone->container->x + zone->x,
-                                       zone->container->y + zone->y,
+   cov->win = ecore_x_window_input_new(zone->comp->manager->root,
+                                       zone->comp->x + zone->x,
+                                       zone->comp->y + zone->y,
                                        zone->w, zone->h);
 #endif
 
@@ -781,7 +781,7 @@ _cover_new(E_Zone *zone)
                             ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING |
                             ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE,
                             0, 0, 0, 0, 0,
-                            zone->container->layers[8].win,
+                            zone->comp->layers[8].win,
                             ECORE_X_WINDOW_STACK_ABOVE);
    ecore_x_window_show(cov->win);
    ecore_x_window_raise(cov->win);
@@ -798,7 +798,7 @@ _covers_init(void)
 
    EINA_LIST_FOREACH(e_manager_list(), l, man)
      {
-        E_Container *con;
+        E_Comp *comp;
         EINA_LIST_FOREACH(man->containers, l2, con)
           {
              E_Zone *zone;
@@ -928,12 +928,12 @@ _cb_property_change(void *data __UNUSED__,
                    int   type __UNUSED__,
                    void *ev)
 {
-   E_Border *bd;
+   E_Client *ec;
    Ecore_X_Event_Window_Property *event = ev;
 
    if (event->atom == ECORE_X_ATOM_NET_ACTIVE_WINDOW)
      {
-        bd = e_border_focused_get();
+        bd = e_client_focused_get();
         if (bd) target_win = bd->client.win;
 	 }
 

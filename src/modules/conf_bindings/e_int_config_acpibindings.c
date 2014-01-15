@@ -53,7 +53,7 @@ static Ecore_X_Window grab_win = 0;
 static Eina_List *grab_hdls = NULL;
 
 E_Config_Dialog *
-e_int_config_acpibindings(E_Container *con,
+e_int_config_acpibindings(E_Comp *comp,
                           const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
@@ -68,7 +68,7 @@ e_int_config_acpibindings(E_Container *con,
    v->basic.apply_cfdata = _basic_apply;
    v->basic.create_widgets = _basic_create;
 
-   cfd = e_config_dialog_new(con, _("ACPI Bindings"), "E",
+   cfd = e_config_dialog_new(comp, _("ACPI Bindings"), "E",
                              "advanced/acpi_bindings",
                              "preferences-system-power-management",
                              0, v, NULL);
@@ -517,7 +517,7 @@ _cb_add_binding(void *data,
    if (grab_win != 0) return;
    if (!(cfdata = data)) return;
    man = e_manager_current_get();
-   grab_dlg = e_dialog_new(e_container_current_get(man), "E",
+   grab_dlg = e_dialog_new(NULL, "E",
                            "_acpibind_getbind_dialog");
    if (!grab_dlg) return;
    e_dialog_title_set(grab_dlg, _("ACPI Binding"));

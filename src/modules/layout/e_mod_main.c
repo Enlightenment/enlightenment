@@ -15,10 +15,10 @@
 /* actual module specifics */
 
 static E_Module *layout_module = NULL;
-static E_Border_Hook *hook = NULL;
+static E_Client_Hook *hook = NULL;
 
 static void
-_e_module_layout_cb_hook(void *data, E_Border *bd)
+_e_module_layout_cb_hook(void *data, E_Client *ec)
 {
    /* FIXME: make some modification based on policy */
    printf("Window:\n"
@@ -26,33 +26,33 @@ _e_module_layout_cb_hook(void *data, E_Border *bd)
 	  "  Class:    %s::%s\n"
 	  "  Geometry: %ix%i+%i+%i\n"
 	  "  New:      %i\n"
-	  , bd->client.icccm.title, bd->client.netwm.name
-	  , bd->client.icccm.name, bd->client.icccm.class
+	  , bd->icccm.title, bd->netwm.name
+	  , bd->icccm.name, bd->icccm.class
 	  , bd->x, bd->y, bd->w, bd->h
 	  , bd->new_client
 	  );
-   if ((bd->client.icccm.transient_for != 0) ||
-       (bd->client.netwm.type == ECORE_X_WINDOW_TYPE_DIALOG))
+   if ((bd->icccm.transient_for != 0) ||
+       (bd->netwm.type == ECORE_X_WINDOW_TYPE_DIALOG))
      {
 	bd->client.e.state.centered = 1;
      }
    else
      {
-	e_border_unmaximize(bd, E_MAXIMIZE_BOTH);
-	e_border_resize(bd, 1, 1);
-	e_border_center(bd);
+	e_client_unmaximize(bd, E_MAXIMIZE_BOTH);
+	e_client_resize(bd, 1, 1);
+	e_client_center(bd);
 	if (bd->bordername) eina_stringshare_del(bd->bordername);
 	bd->bordername = eina_stringshare_add("borderless");
-	bd->client.icccm.base_w = 1;
-	bd->client.icccm.base_h = 1;
-	bd->client.icccm.min_w = 1;
-	bd->client.icccm.min_h = 1;
-	bd->client.icccm.max_w = 32767;
-	bd->client.icccm.max_h = 32767;
-	bd->client.icccm.min_aspect = 0.0;
-	bd->client.icccm.max_aspect = 0.0;
+	bd->icccm.base_w = 1;
+	bd->icccm.base_h = 1;
+	bd->icccm.min_w = 1;
+	bd->icccm.min_h = 1;
+	bd->icccm.max_w = 32767;
+	bd->icccm.max_h = 32767;
+	bd->icccm.min_aspect = 0.0;
+	bd->icccm.max_aspect = 0.0;
      }
-   e_border_maximize(bd, E_MAXIMIZE_FILL | E_MAXIMIZE_BOTH);
+   e_client_maximize(bd, E_MAXIMIZE_FILL | E_MAXIMIZE_BOTH);
 }
 
 /**/
@@ -78,7 +78,7 @@ e_modapi_init(E_Module *m)
 {
    layout_module = m;
 
-   hook = e_border_hook_add(E_BORDER_HOOK_EVAL_POST_FETCH,
+   hook = e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_FETCH,
 			    _e_module_layout_cb_hook, NULL);
    return m;
 }
@@ -88,7 +88,7 @@ e_modapi_shutdown(E_Module *m)
 {
    if (hook)
      {
-	e_border_hook_del(hook);
+	e_client_hook_del(hook);
 	hook = NULL;
      }
    layout_module = NULL;

@@ -84,7 +84,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_imc(E_Container *con, const char *params __UNUSED__)
+e_int_config_imc(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -99,7 +99,7 @@ e_int_config_imc(E_Container *con, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create_widgets;
    v->basic.apply_cfdata = _basic_apply_data;
 
-   cfd = e_config_dialog_new(con,
+   cfd = e_config_dialog_new(comp,
                              _("Input Method Settings"),
                              "E", "language/input_method_settings",
                              "preferences-imc", 0, v, NULL);

@@ -11,7 +11,7 @@ typedef struct _E_Widget_Desk_Data E_Widget_Desk_Data;
 struct _E_Widget_Desk_Data
 {
    Evas_Object         *icon, *thumb;
-   int                  zone, con, x, y;
+   int                  zone, manager, x, y;
    Ecore_Event_Handler *bg_upd_hdl;
    Eina_Bool            configurable : 1;
 };
@@ -69,10 +69,10 @@ e_widget_bgpreview_desk_add(Evas *e, E_Zone *zone, int x, int y)
    E_Widget_Desk_Data *dd;
    const char *bgfile;
 
-   bgfile = e_bg_file_get(zone->container->num, zone->num, x, y);
+   bgfile = e_bg_file_get(zone->comp->num, zone->num, x, y);
 
    dd = E_NEW(E_Widget_Desk_Data, 1);
-   dd->con = zone->container->num;
+   dd->manager = zone->comp->num;
    dd->zone = zone->num;
    dd->x = x;
    dd->y = y;
@@ -233,13 +233,11 @@ _e_wid_desk_cb_config(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
    if (!(dd = data)) return;
    if (ev->button == 1)
      {
-        E_Container *con;
         char buff[256];
 
-        con = e_container_current_get(e_manager_current_get());
         snprintf(buff, sizeof(buff), "%i %i %i %i",
-                 dd->con, dd->zone, dd->x, dd->y);
-        e_configure_registry_call("internal/desk", con, buff);
+                 dd->manager, dd->zone, dd->x, dd->y);
+        e_configure_registry_call("internal/desk", e_util_comp_current_get(), buff);
      }
 }
 
@@ -262,14 +260,14 @@ _e_wid_cb_bg_update(void *data, int type, void *event)
    if (!(dd = data)) return ECORE_CALLBACK_PASS_ON;
    ev = event;
 
-   if (((ev->container < 0) || (dd->con == ev->container)) &&
+   if (((ev->manager < 0) || (dd->manager == ev->manager)) &&
        ((ev->zone < 0) || (dd->zone == ev->zone)) &&
        ((ev->desk_x < 0) || (dd->x == ev->desk_x)) &&
        ((ev->desk_y < 0) || (dd->y == ev->desk_y)))
      {
         const char *bgfile;
 
-        bgfile = e_bg_file_get(dd->con, dd->zone, dd->x, dd->y);
+        bgfile = e_bg_file_get(dd->manager, dd->zone, dd->x, dd->y);
         e_icon_file_edje_set(dd->thumb, bgfile, "e/desktop/background");
         eina_stringshare_del(bgfile);
      }

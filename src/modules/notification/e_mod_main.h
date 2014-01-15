@@ -60,7 +60,7 @@ struct _Popup_Data
 {
   unsigned id;
   E_Notification_Notify *notif;
-  E_Popup *win;
+  Evas_Object *win;
   Eina_List *mirrors;
   Evas *e;
   Evas_Object *theme;
@@ -82,7 +82,7 @@ EAPI int    e_modapi_save(E_Module *m);
 
 void _gc_orient    (E_Gadcon_Client *gcc, E_Gadcon_Orient orient);
 
-E_Config_Dialog *e_int_config_notification_module(E_Container *con, const char *params);
+E_Config_Dialog *e_int_config_notification_module(E_Comp *comp, const char *params);
 
 extern E_Module *notification_mod;
 extern Config   *notification_cfg;

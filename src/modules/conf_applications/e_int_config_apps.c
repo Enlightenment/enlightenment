@@ -25,7 +25,7 @@ struct _E_Config_Dialog_Data
 };
 
 /* local function prototypes */
-static E_Config_Dialog *_create_dialog(E_Container *con, E_Config_Data *data);
+static E_Config_Dialog *_create_dialog(E_Comp *comp, E_Config_Data *data);
 static void            *_create_data(E_Config_Dialog *cfd);
 static void             _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata);
 static Evas_Object     *_basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata);
@@ -49,16 +49,16 @@ static void             _cb_order_del(void *data, void *data2 __UNUSED__);
 static Eina_Bool        _cb_fill_delay(void *data);
 
 E_Config_Dialog *
-e_int_config_apps_add(E_Container *con, const char *params __UNUSED__)
+e_int_config_apps_add(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Desktop_Edit *ed;
 
-   if (!(ed = e_desktop_edit(con, NULL))) return NULL;
+   if (!(ed = e_desktop_edit(comp, NULL))) return NULL;
    return ed->cfd;
 }
 
 E_Config_Dialog *
-e_int_config_apps_favs(E_Container *con, const char *params __UNUSED__)
+e_int_config_apps_favs(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -69,11 +69,11 @@ e_int_config_apps_favs(E_Container *con, const char *params __UNUSED__)
    data->dialog = eina_stringshare_add("menus/favorites_menu");
    data->icon = eina_stringshare_add("user-bookmarks");
    data->filename = eina_stringshare_add(buff);
-   return _create_dialog(con, data);
+   return _create_dialog(comp, data);
 }
 
 E_Config_Dialog *
-e_int_config_apps_ibar(E_Container *con, const char *params __UNUSED__)
+e_int_config_apps_ibar(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -84,11 +84,11 @@ e_int_config_apps_ibar(E_Container *con, const char *params __UNUSED__)
    data->dialog = eina_stringshare_add("applications/ibar_applications");
    data->icon = eina_stringshare_add("preferences-applications-ibar");
    data->filename = eina_stringshare_add(buff);
-   return _create_dialog(con, data);
+   return _create_dialog(comp, data);
 }
 
 E_Config_Dialog *
-e_int_config_apps_ibar_other(E_Container *con, const char *path)
+e_int_config_apps_ibar_other(E_Comp *comp, const char *path)
 {
    E_Config_Data *data;
 
@@ -98,11 +98,11 @@ e_int_config_apps_ibar_other(E_Container *con, const char *path)
    data->dialog = eina_stringshare_add("internal/ibar_other");
    data->icon = eina_stringshare_add("preferences-applications-ibar");
    data->filename = eina_stringshare_add(path);
-   return _create_dialog(con, data);
+   return _create_dialog(comp, data);
 }
 
 E_Config_Dialog *
-e_int_config_apps_startup(E_Container *con, const char *params __UNUSED__)
+e_int_config_apps_startup(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -114,11 +114,11 @@ e_int_config_apps_startup(E_Container *con, const char *params __UNUSED__)
    data->icon = eina_stringshare_add("preferences-applications-startup");
    data->filename = eina_stringshare_add(buff);
    data->show_autostart = EINA_TRUE;
-   return _create_dialog(con, data);
+   return _create_dialog(comp, data);
 }
 
 E_Config_Dialog *
-e_int_config_apps_restart(E_Container *con, const char *params __UNUSED__)
+e_int_config_apps_restart(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -129,11 +129,11 @@ e_int_config_apps_restart(E_Container *con, const char *params __UNUSED__)
    data->dialog = eina_stringshare_add("applications/restart_applications");
    data->icon = eina_stringshare_add("preferences-applications-restart");
    data->filename = eina_stringshare_add(buff);
-   return _create_dialog(con, data);
+   return _create_dialog(comp, data);
 }
 
 E_Config_Dialog *
-e_int_config_apps_desk_lock(E_Container *con, const char *params __UNUSED__)
+e_int_config_apps_desk_lock(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -144,11 +144,11 @@ e_int_config_apps_desk_lock(E_Container *con, const char *params __UNUSED__)
    data->dialog = eina_stringshare_add("applications/screen_lock_applications");
    data->icon = eina_stringshare_add("preferences-applications-screen-lock");
    data->filename = eina_stringshare_add(buff);
-   return _create_dialog(con, data);
+   return _create_dialog(comp, data);
 }
 
 E_Config_Dialog *
-e_int_config_apps_desk_unlock(E_Container *con, const char *params __UNUSED__)
+e_int_config_apps_desk_unlock(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Data *data;
    char buff[PATH_MAX];
@@ -159,12 +159,12 @@ e_int_config_apps_desk_unlock(E_Container *con, const char *params __UNUSED__)
    data->dialog = eina_stringshare_add("applications/screen_unlock_applications");
    data->icon = eina_stringshare_add("preferences-applications-screen-unlock");
    data->filename = eina_stringshare_add(buff);
-   return _create_dialog(con, data);
+   return _create_dialog(comp, data);
 }
 
 /* local function prototypes */
 static E_Config_Dialog *
-_create_dialog(E_Container *con, E_Config_Data *data)
+_create_dialog(E_Comp *comp, E_Config_Data *data)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -185,7 +185,7 @@ _create_dialog(E_Container *con, E_Config_Data *data)
    v->basic.create_widgets = _basic_create;
    v->basic.apply_cfdata = _basic_apply;
 
-   cfd = e_config_dialog_new(con, data->title, "E", data->dialog,
+   cfd = e_config_dialog_new(comp, data->title, "E", data->dialog,
                              data->icon, 0, v, data);
    return cfd;
 }

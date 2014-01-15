@@ -9,12 +9,12 @@ static void _e_color_dialog_cb_csel_change(void *data, Evas_Object *obj);
 /**
  * Create a color selector dialog.
  *
- * @param con container to display on
+ * @param c compositor to display on
  * @param color color to initialize to (or NULL for black).
  * @param alpha_enabled if set, uses alpha and let user edit it.
  */
 E_Color_Dialog *
-e_color_dialog_new(E_Container *con, const E_Color *color, Eina_Bool alpha_enabled)
+e_color_dialog_new(E_Comp *c, const E_Color *color, Eina_Bool alpha_enabled)
 {
    E_Color_Dialog *dia;
    Evas_Object *o;
@@ -22,7 +22,7 @@ e_color_dialog_new(E_Container *con, const E_Color *color, Eina_Bool alpha_enabl
 
    dia = E_OBJECT_ALLOC(E_Color_Dialog, E_COLOR_DIALOG_TYPE, _e_color_dialog_free);
    if (!dia) return NULL;
-   dia->dia = e_dialog_new(con, "E", "_color_dialog");
+   dia->dia = e_dialog_new(c, "E", "_color_dialog");
    e_dialog_title_set(dia->dia, _("Color Selector"));
 
    dia->color = calloc(1, sizeof(E_Color));

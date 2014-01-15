@@ -6,7 +6,7 @@ static void         _e_shelf_free(E_Shelf *es);
 static void         _e_shelf_gadcon_min_size_request(void *data, E_Gadcon *gc, Evas_Coord w, Evas_Coord h);
 static void         _e_shelf_gadcon_size_request(void *data, E_Gadcon *gc, Evas_Coord w, Evas_Coord h);
 static Evas_Object *_e_shelf_gadcon_frame_request(void *data, E_Gadcon_Client *gcc, const char *style);
-static void         _e_shelf_toggle_border_fix(E_Shelf *es);
+static void         _e_shelf_toggle_client_fix(E_Shelf *es);
 static void         _e_shelf_cb_menu_config(void *data, E_Menu *m, E_Menu_Item *mi);
 static void         _e_shelf_cb_menu_edit(void *data, E_Menu *m, E_Menu_Item *mi);
 static void         _e_shelf_cb_menu_contents(void *data, E_Menu *m, E_Menu_Item *mi);
@@ -138,7 +138,7 @@ e_shelf_config_update(void)
         E_Zone *zone;
 
         if (cf_es->id <= 0) cf_es->id = id + 1;
-        zone = e_util_container_zone_number_get(cf_es->container, cf_es->zone);
+        zone = e_util_comp_zone_number_get(cf_es->manager, cf_es->zone);
         if (zone)
           e_shelf_config_new(zone, cf_es);
         id = cf_es->id;
@@ -195,10 +195,11 @@ e_shelf_zone_dummy_new(E_Zone *zone, Evas_Object *obj, int id)
 }
 
 EAPI E_Shelf *
-e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, int popup, E_Layer layer, int id)
+e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer layer, int id)
 {
    E_Shelf *es;
    char buf[1024];
+   E_Comp_Object_Type type = E_COMP_OBJECT_TYPE_POPUP;
 
    es = E_OBJECT_ALLOC(E_Shelf, E_SHELF_TYPE, _e_shelf_free);
    if (!es) return NULL;
@@ -210,43 +211,28 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, int popup, E
    es->zone = zone;
    e_object_del_attach_func_set(E_OBJECT(es), _e_shelf_del_cb);
    e_zone_useful_geometry_dirty(zone);
-   if (popup)
-     {
-        es->popup = e_popup_new(zone, es->x, es->y, es->w, es->h);
-        e_popup_name_set(es->popup, "shelf");
-        if (layer)
-          e_popup_layer_set(es->popup, E_COMP_CANVAS_LAYER_LAYOUT, E_LAYER_ABOVE);
-        else
-          e_popup_layer_set(es->popup, E_COMP_CANVAS_LAYER_DESKTOP_TOP, 0);
-     }
-   es->ee = zone->container->bg_ecore_evas;
-   es->evas = zone->container->bg_evas;
+
+
+   es->ee = zone->comp->ee;
+   es->evas = zone->comp->evas;
    es->fit_along = 1;
    es->layer = layer;
 
-   es->handlers =
-     eina_list_append(es->handlers,
-                      ecore_event_handler_add(E_EVENT_ZONE_EDGE_MOVE,
-                                              _e_shelf_cb_mouse_in, es));
+   E_LIST_HANDLER_APPEND(es->handlers, E_EVENT_ZONE_EDGE_MOVE, _e_shelf_cb_mouse_in, es);
    es->o_base = edje_object_add(es->evas);
+   evas_object_name_set(es->o_base, "shelf");
    evas_object_event_callback_add(es->o_base, EVAS_CALLBACK_MOUSE_DOWN,
                                   _e_shelf_cb_mouse_down, es);
-   evas_object_name_set(es->o_base, name);
    es->name = eina_stringshare_add(name);
    evas_object_resize(es->o_base, es->w, es->h);
 
    e_shelf_style_set(es, style);
-
-   if (es->popup)
-     {
-        e_popup_show(es->popup);
-     }
-   else
-     {
-        evas_object_move(es->o_base, es->zone->x + es->x, es->zone->y + es->y);
-        evas_object_show(es->o_base);
-        es->cw = E_LAYER_SET(es->o_base, layer);
-     }
+   evas_object_move(es->o_base, es->zone->x + es->x, es->zone->y + es->y);
+   if (layer == E_LAYER_DESKTOP)
+     type = E_COMP_OBJECT_TYPE_NONE;
+   es->comp_object = e_comp_object_util_add(es->o_base, type);
+   evas_object_name_set(es->comp_object, es->name);
+   evas_object_layer_set(es->comp_object, layer);
 
    es->gadcon =
      e_gadcon_swallowed_new(es->name, es->id, es->o_base, "e.swallow.content");
@@ -278,8 +264,7 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, int popup, E
    e_gadcon_shelf_set(es->gadcon, es);
    e_gadcon_xdnd_window_set(es->gadcon, e_comp_get(es)->ee_win);
    e_gadcon_dnd_window_set(es->gadcon, e_comp_get(es)->ee_win);
-   if (!es->popup)
-     evas_object_clip_set(es->o_base, es->zone->bg_clip_object);
+   evas_object_clip_set(es->comp_object, es->zone->bg_clip_object);
    e_gadcon_util_menu_attach_func_set(es->gadcon,
                                       _e_shelf_cb_menu_items_append, es);
 
@@ -359,10 +344,7 @@ e_shelf_show(E_Shelf *es)
 {
    E_OBJECT_CHECK(es);
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
-   if (es->popup)
-     e_popup_show(es->popup);
-   else
-     evas_object_show(es->o_base);
+   evas_object_show(es->comp_object);
 }
 
 EAPI void
@@ -370,10 +352,7 @@ e_shelf_hide(E_Shelf *es)
 {
    E_OBJECT_CHECK(es);
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
-   if (es->popup)
-     e_popup_hide(es->popup);
-   else
-     evas_object_hide(es->o_base);
+   evas_object_hide(es->comp_object);
 }
 
 EAPI void
@@ -493,10 +472,7 @@ e_shelf_move(E_Shelf *es, int x, int y)
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
    es->x = x;
    es->y = y;
-   if (es->popup)
-     e_popup_move(es->popup, es->x, es->y);
-   else
-     e_comp_win_move(es->cw, es->zone->x + es->x, es->zone->y + es->y);
+   evas_object_move(es->comp_object, es->zone->x + es->x, es->zone->y + es->y);
 }
 
 EAPI void
@@ -506,10 +482,7 @@ e_shelf_resize(E_Shelf *es, int w, int h)
    E_OBJECT_TYPE_CHECK(es, E_SHELF_TYPE);
    es->w = w;
    es->h = h;
-   if (es->popup)
-     e_popup_resize(es->popup, es->w, es->h);
-   else
-     e_comp_win_resize(es->cw, es->w, es->h);
+   evas_object_resize(es->comp_object, es->w, es->h);
 }
 
 EAPI void
@@ -521,10 +494,8 @@ e_shelf_move_resize(E_Shelf *es, int x, int y, int w, int h)
    es->y = y;
    es->w = w;
    es->h = h;
-   if (es->popup)
-     e_popup_move_resize(es->popup, es->x, es->y, es->w, es->h);
-   else
-     e_comp_win_moveresize(es->cw, es->zone->x + es->x, es->zone->y + es->y, es->w, es->h);
+   evas_object_move(es->comp_object, es->zone->x + es->x, es->zone->y + es->y);
+   evas_object_resize(es->comp_object, es->w, es->h);
 }
 
 EAPI void
@@ -544,9 +515,8 @@ e_shelf_save(E_Shelf *es)
 
         cf_es = E_NEW(E_Config_Shelf, 1);
         cf_es->name = eina_stringshare_add(es->name);
-        cf_es->container = es->zone->container->num;
+        cf_es->manager = es->zone->comp->num;
         cf_es->zone = es->zone->num;
-        if (es->popup) cf_es->popup = 1;
         cf_es->layer = es->layer;
         e_config->shelves = eina_list_append(e_config->shelves, cf_es);
         cf_es->orient = es->gadcon->orient;
@@ -806,7 +776,7 @@ e_shelf_position_calc(E_Shelf *es)
 
         if (!es->cfg) break;
         if (!es->zone) break;
-        if ((!es->cfg->popup) || (!es->cfg->autohide)) break;
+        if (!es->cfg->autohide) break;
         switch (es->cfg->orient)
           {
            case E_GADCON_ORIENT_LEFT:
@@ -856,7 +826,7 @@ e_shelf_desk_visible(const E_Shelf *es, const E_Desk *desk)
    EINA_SAFETY_ON_NULL_RETURN_VAL(es, EINA_FALSE);
    if (!desk)
      {
-        EINA_LIST_FOREACH(e_util_container_current_get()->zones, ll, zone)
+        EINA_LIST_FOREACH(e_util_comp_current_get()->zones, ll, zone)
           {
              desk = e_desk_current_get(zone);
              if (e_shelf_desk_visible(es, desk)) return EINA_TRUE;
@@ -911,12 +881,6 @@ e_shelf_style_set(E_Shelf *es, const char *style)
      es->instant_delay = atof(option);
    else
      es->instant_delay = -1.0;
-
-   if (es->popup && (es->popup->content != es->o_base))
-     {
-        e_popup_content_set(es->popup, es->o_base);
-        evas_object_clip_set(es->popup->cw->effect_obj, es->zone->bg_clip_object);
-     }
 }
 
 EAPI void
@@ -967,8 +931,7 @@ e_shelf_config_new(E_Zone *zone, E_Config_Shelf *cf_es)
 {
    E_Shelf *es;
 
-   es = e_shelf_zone_new(zone, cf_es->name, cf_es->style,
-                         cf_es->popup, cf_es->layer, cf_es->id);
+   es = e_shelf_zone_new(zone, cf_es->name, cf_es->style, cf_es->layer, cf_es->id);
    if (!es) return NULL;
 
    if (!cf_es->hide_timeout) cf_es->hide_timeout = 1.0;
@@ -1029,10 +992,9 @@ _e_shelf_new_dialog_ok(void *data, char *text)
 
    cfg = E_NEW(E_Config_Shelf, 1);
    cfg->name = eina_stringshare_add(text);
-   cfg->container = zone->container->num;
+   cfg->manager = zone->comp->num;
    cfg->zone = zone->num;
-   cfg->popup = 1;
-   cfg->layer = 200;
+   cfg->layer = E_LAYER_CLIENT_ABOVE;
    EINA_LIST_FOREACH(e_config->shelves, l, es_cf)
      orient *= orientations[es_cf->orient];
    for (x = 3; x < (sizeof(orientations) / sizeof(orientations[0])); x++)
@@ -1114,38 +1076,17 @@ _e_shelf_free(E_Shelf *es)
    e_zone_useful_geometry_dirty(es->zone);
    E_FREE_LIST(es->handlers, ecore_event_handler_del);
 
-   if (es->autohide)
-     {
-        ecore_event_handler_del(es->autohide);
-        es->autohide = NULL;
-     }
-
-   if (es->hide_timer)
-     {
-        ecore_timer_del(es->hide_timer);
-        es->hide_timer = NULL;
-     }
-   if (es->hide_animator)
-     {
-        ecore_animator_del(es->hide_animator);
-        es->hide_animator = NULL;
-     }
-   if (es->instant_timer)
-     {
-        ecore_timer_del(es->instant_timer);
-        es->instant_timer = NULL;
-     }
-
+   E_FREE_FUNC(es->autohide, ecore_event_handler_del);
+   E_FREE_FUNC(es->hide_animator, ecore_animator_del);
+   E_FREE_FUNC(es->autohide_timer, ecore_timer_del);
+   E_FREE_FUNC(es->hide_timer, ecore_timer_del);
+   E_FREE_FUNC(es->instant_timer, ecore_timer_del);
+   E_FREE_FUNC(es->module_init_end_timer, ecore_timer_del);
    if (es->menu)
      {
         e_menu_post_deactivate_callback_set(es->menu, NULL, NULL);
         e_object_del(E_OBJECT(es->menu));
         es->menu = NULL;
-     }
-   if (es->module_init_end_timer)
-     {
-        ecore_timer_del(es->module_init_end_timer);
-        es->module_init_end_timer = NULL;
      }
    if (es->dummy)
      {
@@ -1166,12 +1107,12 @@ _e_shelf_free(E_Shelf *es)
      }
    if (es->config_dialog) e_object_del(E_OBJECT(es->config_dialog));
    es->config_dialog = NULL;
-   evas_object_del(es->o_base);
-   es->o_base = NULL;
-   if (es->popup) e_object_del(E_OBJECT(es->popup));
-   if (es->autohide_timer) ecore_timer_del(es->autohide_timer);
-   es->autohide_timer = NULL;
-   es->popup = NULL;
+   if (stopping)
+     evas_object_unref(es->comp_object);
+   else
+     evas_object_hide(es->comp_object);
+   E_FREE_FUNC(es->comp_object, evas_object_del);
+   E_FREE_FUNC(es->o_base, evas_object_del);
 
    ev = E_NEW(E_Event_Shelf, 1);
    ev->shelf = es;
@@ -1407,40 +1348,40 @@ _e_shelf_gadcon_frame_request(void *data, E_Gadcon_Client *gcc, const char *styl
 }
 
 static void
-_e_shelf_toggle_border_fix(E_Shelf *es)
+_e_shelf_toggle_client_fix(E_Shelf *es)
 {
    Eina_List *l;
-   E_Border *bd;
+   E_Client *ec;
 
    if (!e_config->border_fix_on_shelf_toggle)
      return;
    if (es->cfg->overlap)
      return;
 
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd)
+   EINA_LIST_FOREACH(e_comp_get(es)->clients, l, ec)
      {
-        if ((bd->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_NONE)
+        if ((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_NONE)
           {
-             if (bd->lock_client_location) continue;
+             if (ec->lock_client_location) continue;
              if (es->hidden)
                {
-                  if (!bd->shelf_fix.modified) continue;
-                  if (!--bd->shelf_fix.modified)
+                  if (!ec->shelf_fix.modified) continue;
+                  if (!--ec->shelf_fix.modified)
                     {
-                       e_border_move(bd, bd->shelf_fix.x, bd->shelf_fix.y);
+                       evas_object_move(ec->frame, ec->shelf_fix.x, ec->shelf_fix.y);
                        continue;
                     }
                }
 
-             if (!E_INTERSECTS(bd->x, bd->y, bd->w, bd->h,
+             if (!E_INTERSECTS(ec->x, ec->y, ec->w, ec->h,
                                es->x, es->y, es->w, es->h))
                continue;
 
              if (!es->hidden)
                {
-                  if (!bd->shelf_fix.modified++)
-                    bd->shelf_fix.x = bd->x;
-                  bd->shelf_fix.y = bd->y;
+                  if (!ec->shelf_fix.modified++)
+                    ec->shelf_fix.x = ec->x;
+                  ec->shelf_fix.y = ec->y;
                }
 
              switch (es->gadcon->orient)
@@ -1449,28 +1390,28 @@ _e_shelf_toggle_border_fix(E_Shelf *es)
                 case E_GADCON_ORIENT_CORNER_TL:
                 case E_GADCON_ORIENT_CORNER_TR:
                   if (!es->hidden)
-                    e_border_move(bd, bd->x, bd->y + es->h);
+                    evas_object_move(ec->frame, ec->x, ec->y + es->h);
                   break;
 
                 case E_GADCON_ORIENT_BOTTOM:
                 case E_GADCON_ORIENT_CORNER_BL:
                 case E_GADCON_ORIENT_CORNER_BR:
                   if (!es->hidden)
-                    e_border_move(bd, bd->x, bd->y - es->h);
+                    evas_object_move(ec->frame, ec->x, ec->y - es->h);
                   break;
 
                 case E_GADCON_ORIENT_LEFT:
                 case E_GADCON_ORIENT_CORNER_LB:
                 case E_GADCON_ORIENT_CORNER_LT:
                   if (!es->hidden)
-                    e_border_move(bd, bd->x + es->w, bd->y);
+                    evas_object_move(ec->frame, ec->x + es->w, ec->y);
                   break;
 
                 case E_GADCON_ORIENT_RIGHT:
                 case E_GADCON_ORIENT_CORNER_RB:
                 case E_GADCON_ORIENT_CORNER_RT:
                   if (!es->hidden)
-                    e_border_move(bd, bd->x - es->w, bd->y);
+                    evas_object_move(ec->frame, ec->x - es->w, ec->y);
                   break;
 
                 default:
@@ -1481,9 +1422,9 @@ _e_shelf_toggle_border_fix(E_Shelf *es)
           {
              E_Maximize max;
 
-             max = bd->maximized;
-             e_border_unmaximize(bd, E_MAXIMIZE_BOTH);
-             e_border_maximize(bd, max);
+             max = ec->maximized;
+             e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+             e_client_maximize(ec, max);
           }
      }
 }
@@ -1721,8 +1662,9 @@ _e_shelf_cb_mouse_move_autohide_fuck_systray(E_Shelf *es)
    Ecore_Event_Mouse_Move ev;
 
    memset(&ev, 0, sizeof(Ecore_Event_Mouse_Move));
-   ecore_x_pointer_xy_get(es->zone->container->manager->root, &x, &y);
-   ev.root.x = x, ev.root.y = y;
+   ecore_evas_pointer_xy_get(es->zone->comp->ee, &x, &y);
+   ev.root.x = e_comp_canvas_x_root_unadjust(es->zone->comp, x);
+   ev.root.y = e_comp_canvas_y_root_unadjust(es->zone->comp, y);
    _e_shelf_cb_mouse_in(es, ECORE_EVENT_MOUSE_MOVE, &ev);
    return EINA_TRUE;
 }
@@ -1839,18 +1781,21 @@ _e_shelf_cb_mouse_in(void *data, int type, void *event)
          * mouse in/out events. in the future, when we remove systray, we should go
          * back to mouse in/out events
          */
-        inside = (es->popup && ((ev->event_window == e_comp_get(es)->win)));
+        inside = (ev->event_window == e_comp_get(es)->win);
         if (!inside)
           {
-             inside = E_INSIDE(ev->root.x, ev->root.y, es->zone->x, es->zone->y, es->zone->w + 4, es->zone->h + 4);
-             x = ev->root.x - es->zone->x, y = ev->root.y - es->zone->y;
+             inside = E_INSIDE(e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.x),
+                               e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.y),
+                               es->zone->x, es->zone->y, es->zone->w + 4, es->zone->h + 4);
+             x = e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.x) - es->zone->x;
+             y = e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.y) - es->zone->y;
              if (inside)
                inside = (
                    ((E_INSIDE(x, y, es->x, es->y, es->w, es->h)) ||
                     (E_INSIDE(x, y, es->x - 2, es->y - 2, es->w + 4, es->h + 4)) ||
                     (E_INSIDE(x, y, es->x + 2, es->y + 2, es->w + 4, es->h + 4)))
                    );
-             if (inside && es->popup)
+             if (inside)
                {
                   if (es->autohide_timer)
                     ecore_timer_reset(es->autohide_timer);
@@ -1896,14 +1841,10 @@ _e_shelf_cb_mouse_out(void *data, int type, void *event)
 
    if (type == ECORE_X_EVENT_MOUSE_OUT)
      {
-        Ecore_X_Event_Mouse_Out *ev;
+        Ecore_X_Event_Mouse_Out *ev = event;
         int x, y, w, h;
 
-        ev = event;
-
-        if (es->popup) win = es->popup->evas_win;
-        else win = es->zone->container->event_win;
-        if (ev->win != win) return ECORE_CALLBACK_PASS_ON;
+        if (ev->win != e_comp_get(es)->ee_win) return ECORE_CALLBACK_PASS_ON;
 
         /*
          * ECORE_X_EVENT_DETAIL_INFERIOR means focus went to children windows
@@ -2072,7 +2013,7 @@ end:
    else if (es->urgent_show)
      e_shelf_toggle(es, 0);
    else
-     _e_shelf_toggle_border_fix(es);
+     _e_shelf_toggle_client_fix(es);
    if ((!es->hidden) && es->cfg->autohide_show_action)
      {
         edje_object_signal_emit(es->o_base, "e,state,hidden", "e");
@@ -2154,7 +2095,7 @@ _e_shelf_cb_instant_hide_timer(void *data)
         break;
      }
    es->instant_timer = NULL;
-   _e_shelf_toggle_border_fix(es);
+   _e_shelf_toggle_client_fix(es);
    return ECORE_CALLBACK_CANCEL;
 }
 

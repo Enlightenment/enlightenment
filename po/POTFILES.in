@@ -4,9 +4,9 @@ src/bin/e_alert.c
 src/bin/e_atoms.c
 src/bin/e_bg.c
 src/bin/e_bindings.c
-src/bin/e_border.c
 src/bin/e_box.c
 src/bin/e_canvas.c
+src/bin/e_client.c
 src/bin/e_color.c
 src/bin/e_color_class.c
 src/bin/e_color_dialog.c
@@ -15,7 +15,6 @@ src/bin/e_config.c
 src/bin/e_config_dialog.c
 src/bin/e_configure.c
 src/bin/e_confirm_dialog.c
-src/bin/e_container.c
 src/bin/e_datastore.c
 src/bin/e_desk.c
 src/bin/e_desklock.c
@@ -47,10 +46,10 @@ src/bin/e_imc_main.c
 src/bin/e_import_config_dialog.c
 src/bin/e_import_dialog.c
 src/bin/e_init.c
-src/bin/e_int_border_locks.c
-src/bin/e_int_border_menu.c
-src/bin/e_int_border_prop.c
-src/bin/e_int_border_remember.c
+src/bin/e_int_client_locks.c
+src/bin/e_int_client_menu.c
+src/bin/e_int_client_prop.c
+src/bin/e_int_client_remember.c
 src/bin/e_int_config_modules.c
 src/bin/e_int_gadcon_config.c
 src/bin/e_int_menus.c
@@ -76,7 +75,6 @@ src/bin/e_pan.c
 src/bin/e_path.c
 src/bin/e_place.c
 src/bin/e_pointer.c
-src/bin/e_popup.c
 src/bin/e_prefix.c
 src/bin/e_randr.c
 src/bin/e_remember.c
@@ -90,7 +88,6 @@ src/bin/e_slider.c
 src/bin/e_spectrum.c
 src/bin/e_start_main.c
 src/bin/e_startup.c
-src/bin/e_stolen.c
 src/bin/e_sys.c
 src/bin/e_sys_main.c
 src/bin/e_table.c

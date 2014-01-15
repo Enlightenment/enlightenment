@@ -33,7 +33,7 @@ e_confirm_dialog_show(const char *title, const char *icon, const char *text,
    cd->del.func = del_func;
    cd->del.data = del_data;
 
-   dia = e_dialog_new(e_container_current_get(e_manager_current_get()), "E", "_confirm_dialog");
+   dia = e_dialog_new(NULL, "E", "_confirm_dialog");
    if (!dia)
      {
         e_object_del(E_OBJECT(cd));

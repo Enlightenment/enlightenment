@@ -203,7 +203,7 @@ _e_mod_illume_config_new(void)
    _e_illume_cfg->policy.vkbd.class = eina_stringshare_add("Virtual-Keyboard");
    _e_illume_cfg->policy.vkbd.name = eina_stringshare_add("Virtual-Keyboard");
    _e_illume_cfg->policy.vkbd.title = eina_stringshare_add("Virtual Keyboard");
-   _e_illume_cfg->policy.vkbd.type = ECORE_X_WINDOW_TYPE_NORMAL;
+   _e_illume_cfg->policy.vkbd.type = E_WINDOW_TYPE_NORMAL;
    _e_illume_cfg->policy.vkbd.match.class = 0;
    _e_illume_cfg->policy.vkbd.match.name = 1;
    _e_illume_cfg->policy.vkbd.match.title = 1;
@@ -215,7 +215,7 @@ _e_mod_illume_config_new(void)
      eina_stringshare_add("Illume-Indicator");
    _e_illume_cfg->policy.indicator.title = 
      eina_stringshare_add("Illume Indicator");
-   _e_illume_cfg->policy.indicator.type = ECORE_X_WINDOW_TYPE_DOCK;
+   _e_illume_cfg->policy.indicator.type = E_WINDOW_TYPE_DOCK;
    _e_illume_cfg->policy.indicator.match.class = 0;
    _e_illume_cfg->policy.indicator.match.name = 1;
    _e_illume_cfg->policy.indicator.match.title = 1;
@@ -227,7 +227,7 @@ _e_mod_illume_config_new(void)
      eina_stringshare_add("Illume-Softkey");
    _e_illume_cfg->policy.softkey.title = 
      eina_stringshare_add("Illume Softkey");
-   _e_illume_cfg->policy.softkey.type = ECORE_X_WINDOW_TYPE_DOCK;
+   _e_illume_cfg->policy.softkey.type = E_WINDOW_TYPE_DOCK;
    _e_illume_cfg->policy.softkey.match.class = 0;
    _e_illume_cfg->policy.softkey.match.name = 1;
    _e_illume_cfg->policy.softkey.match.title = 1;
@@ -236,7 +236,7 @@ _e_mod_illume_config_new(void)
    _e_illume_cfg->policy.home.class = eina_stringshare_add("Illume-Home");
    _e_illume_cfg->policy.home.name = eina_stringshare_add("Illume-Home");
    _e_illume_cfg->policy.home.title = eina_stringshare_add("Illume Home");
-   _e_illume_cfg->policy.home.type = ECORE_X_WINDOW_TYPE_NORMAL;
+   _e_illume_cfg->policy.home.type = E_WINDOW_TYPE_NORMAL;
    _e_illume_cfg->policy.home.match.class = 0;
    _e_illume_cfg->policy.home.match.name = 1;
    _e_illume_cfg->policy.home.match.title = 1;

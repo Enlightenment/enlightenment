@@ -68,7 +68,7 @@ static int          _advanced_apply_data(E_Config_Dialog *cfd,
                                       E_Config_Dialog_Data *cfdata);
 
 EINTERN E_Config_Dialog *
-e_int_config_comp_module(E_Container *con, const char *params __UNUSED__)
+e_int_config_comp_module(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -84,7 +84,7 @@ e_int_config_comp_module(E_Container *con, const char *params __UNUSED__)
    v->advanced.apply_cfdata = _advanced_apply_data;
    v->advanced.create_widgets = _advanced_create_widgets;
    
-   cfd = e_config_dialog_new(con, _("Composite Settings"),
+   cfd = e_config_dialog_new(comp, _("Composite Settings"),
                              "E", "appearance/comp", "preferences-composite", 0, v, mod);
    mod->config_dialog = cfd;
    e_dialog_resizable_set(cfd->dia, 1);

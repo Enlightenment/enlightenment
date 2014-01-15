@@ -20,7 +20,7 @@ struct _Il_Home_Config
 int il_home_config_init(E_Module *m);
 int il_home_config_shutdown(void);
 int il_home_config_save(void);
-void il_home_config_show(E_Container *con, const char *params);
+void il_home_config_show(E_Comp *comp, const char *params);
 
 extern EAPI Il_Home_Config *il_home_cfg;
 

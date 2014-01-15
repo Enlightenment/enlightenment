@@ -393,8 +393,11 @@ static void
 _e_import_config_dia_del(void *data)
 {
    E_Dialog *dia = data;
+   E_Import_Config_Dialog *import;
 
-   e_object_del(dia->data);
+   import = dia->data;
+   dia->data = NULL;
+   e_object_del(E_OBJECT(import));
 }
 
 static void
@@ -421,6 +424,7 @@ _e_import_config_dialog_win_del(E_Win *win)
 
    dia = win->data;
    import = dia->data;
+   if (!import) return;
    e_object_ref(E_OBJECT(import));
    if (import->cancel) import->cancel(import);
    e_object_del(E_OBJECT(import));
@@ -430,7 +434,7 @@ _e_import_config_dialog_win_del(E_Win *win)
 ///////////////////////////////////////////////////////////////////////////////////
 
 EAPI E_Import_Config_Dialog *
-e_import_config_dialog_show(E_Container *con, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
+e_import_config_dialog_show(E_Comp *c, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
 {
    Evas *evas;
    E_Dialog *dia;
@@ -444,7 +448,7 @@ e_import_config_dialog_show(E_Container *con, const char *path, Ecore_End_Cb ok,
    import = E_OBJECT_ALLOC(E_Import_Config_Dialog, E_IMPORT_CONFIG_DIALOG_TYPE, _e_import_config_dialog_del);
    if (!import) return NULL;
 
-   dia = e_dialog_new(con, "E", "_import_config_dialog");
+   dia = e_dialog_new(c, "E", "_import_config_dialog");
    if (!dia)
      {
         e_object_del(E_OBJECT(import));

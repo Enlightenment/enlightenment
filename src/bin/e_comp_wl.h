@@ -267,6 +267,7 @@ struct _E_Wayland_Buffer
 
    int w, h;
    unsigned int busy_count;
+   E_Wayland_Surface *ews;
 };
 
 struct _E_Wayland_Buffer_Reference
@@ -281,6 +282,7 @@ struct _E_Wayland_Surface
    Ecore_Window id;
    struct 
      {
+        struct wl_client *client;
         struct wl_resource *surface;
         struct wl_signal destroy_signal;
         struct wl_list link, frames;
@@ -311,18 +313,12 @@ struct _E_Wayland_Surface
         pixman_region32_t damage, clip;
      } region;
 
-   /* smart object for this surface */
-   Evas_Object *obj;
-
-   Ecore_Evas *ee;
-   Ecore_X_Window evas_win;
-   Evas *evas;
-
-   E_Border *bd;
-   Eina_List *bd_hooks;
+   E_Client *ec;
+   E_Pixmap *pixmap;
 
    E_Wayland_Shell_Surface *shell_surface;
    Eina_Bool mapped : 1;
+   Eina_Bool updates : 1; //surface has render updates
 
    E_Wayland_Input *input;
 
@@ -367,7 +363,7 @@ struct _E_Wayland_Shell_Surface
    E_Wayland_Surface *surface, *parent;
    E_Wayland_Shell_Surface_Type type, next_type;
 
-   char *title, *clas;
+   Eina_Stringshare *title, *clas;
 
    Eina_Bool active : 1;
 
@@ -587,10 +583,6 @@ extern EAPI E_Wayland_Compositor *_e_wl_comp;
 
 EINTERN Eina_Bool e_comp_wl_init(void);
 EINTERN void e_comp_wl_shutdown(void);
-
-EAPI void e_comp_wl_border_surface_add(Ecore_Window win, const E_Border *bd);
-EAPI void e_comp_wl_border_surface_del(Ecore_Window win);
-EAPI E_Border *e_comp_wl_border_surface_find(Ecore_Window win);
 
 EAPI void wl_seat_init(struct wl_seat *seat);
 EAPI void wl_seat_release(struct wl_seat *seat);

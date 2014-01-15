@@ -49,7 +49,7 @@ e_int_config_theme_import(E_Config_Dialog *parent)
    import = E_NEW(Import, 1);
    if (!import) return NULL;
 
-   win = e_win_new(parent->con);
+   win = e_win_new(parent->comp);
    if (!win)
      {
         E_FREE(import);
@@ -140,15 +140,15 @@ e_int_config_theme_import(E_Config_Dialog *parent)
    e_win_size_min_set(win, w, h);
    e_win_size_max_set(win, 99999, 99999);
    e_win_show(win);
-   e_win_border_icon_set(win, "preferences-desktop-theme");
+   e_win_client_icon_set(win, "preferences-desktop-theme");
 
    win->data = import;
 
    return win;
 }
 
-void
-e_int_config_theme_del(E_Win *win)
+static void
+_theme_import_cb_delete(E_Win *win)
 {
    Import *import;
 
@@ -161,12 +161,6 @@ e_int_config_theme_del(E_Win *win)
    E_FREE(import->cfdata);
    E_FREE(import);
    return;
-}
-
-static void
-_theme_import_cb_delete(E_Win *win)
-{
-   e_int_config_theme_del(win);
 }
 
 static void
@@ -298,16 +292,13 @@ _theme_import_cb_ok(void *data, void *data2 __UNUSED__)
           }
      }
 
-   e_int_config_theme_del(import->win);
+   e_object_del(E_OBJECT(import->win));
 }
 
 static void
 _theme_import_cb_close(void *data, void *data2 __UNUSED__)
 {
-   E_Win *win;
-
-   win = data;
-   e_int_config_theme_del(win);
+   e_object_del(data);
 }
 
 static void

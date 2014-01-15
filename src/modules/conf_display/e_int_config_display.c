@@ -182,7 +182,7 @@ _surebox_new(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    SureBox *sb;
 
    sb = E_NEW(SureBox, 1);
-   sb->dia = e_dialog_new(cfd->con, "E", "_display_res_sure_dialog");
+   sb->dia = e_dialog_new(cfd->comp, "E", "_display_res_sure_dialog");
    sb->timer = ecore_timer_add(1.0, _surebox_timer_cb, sb);
    sb->iterations = 15;
    sb->cfd = cfd;
@@ -206,7 +206,7 @@ _surebox_new(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 E_Config_Dialog *
-e_int_config_display(E_Container *con, const char *params __UNUSED__)
+e_int_config_display(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -227,7 +227,7 @@ e_int_config_display(E_Container *con, const char *params __UNUSED__)
    v->basic.check_changed = _basic_check_changed;
    v->override_auto_apply = 1;
 
-   cfd = e_config_dialog_new(con, _("Screen Resolution Settings"),
+   cfd = e_config_dialog_new(comp, _("Screen Resolution Settings"),
                              "E", "screen/screen_resolution",
                              "preferences-system-screen-resolution", 0, v, NULL);
    return cfd;

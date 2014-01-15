@@ -812,7 +812,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
 
 E_Config_Dialog *
-e_int_config_signalbindings(E_Container *con, const char *params)
+e_int_config_signalbindings(E_Comp *comp, const char *params)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -826,7 +826,7 @@ e_int_config_signalbindings(E_Container *con, const char *params)
    v->basic.create_widgets = _basic_create_widgets;
    v->override_auto_apply = 1;
 
-   cfd = e_config_dialog_new(con, _("Signal Bindings Settings"), "E",
+   cfd = e_config_dialog_new(comp, _("Signal Bindings Settings"), "E",
                              "keyboard_and_mouse/signal_bindings",
                              "enlightenment/signals", 0, v, NULL);
    if ((params) && (params[0]))

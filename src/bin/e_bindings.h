@@ -6,7 +6,7 @@ typedef enum _E_Binding_Context
    E_BINDING_CONTEXT_UNKNOWN,
    E_BINDING_CONTEXT_WINDOW,
    E_BINDING_CONTEXT_ZONE,
-   E_BINDING_CONTEXT_CONTAINER,
+   E_BINDING_CONTEXT_COMPOSITOR,
    E_BINDING_CONTEXT_MANAGER,
    E_BINDING_CONTEXT_MENU,
    E_BINDING_CONTEXT_WINLIST,
@@ -193,8 +193,8 @@ EAPI void e_bindings_acpi_add(E_Binding_Context ctxt, int type, int status, cons
 EAPI void e_bindings_acpi_del(E_Binding_Context ctxt, int type, int status, const char *action, const char *params);
 EAPI E_Action *e_bindings_acpi_find(E_Binding_Context ctxt, E_Event_Acpi *ev, E_Binding_Acpi **bind_ret);
 EAPI E_Action *e_bindings_acpi_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Acpi *ev);
-EAPI void e_bindings_mapping_change_enable(Eina_Bool enable);
 
+EAPI int e_bindings_evas_modifiers_convert(Evas_Modifier *modifiers);
 EAPI int e_bindings_modifiers_to_ecore_convert(E_Binding_Modifier modifiers);
 EAPI void e_bindings_evas_event_mouse_button_convert(const Evas_Event_Mouse_Down *ev, E_Binding_Event_Mouse_Button *event);
 EAPI void e_bindings_evas_event_mouse_wheel_convert(const Evas_Event_Mouse_Wheel *ev, E_Binding_Event_Wheel *event);

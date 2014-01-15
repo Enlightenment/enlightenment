@@ -20,11 +20,11 @@ struct _E_Win
    E_Object             e_obj_inherit;
 
    int                  x, y, w, h;
-   E_Container         *container;
-   E_Border            *border;
+   E_Comp              *comp;
+   E_Client            *client;
    Ecore_Evas          *ecore_evas;
    Evas                *evas;
-   Ecore_X_Window       evas_win;
+   Ecore_Window       evas_win;
    unsigned char        placed : 1;
    int                  min_w, min_h, max_w, max_h, base_w, base_h;
    int                  step_x, step_y;
@@ -47,7 +47,7 @@ struct _E_Win
 EINTERN int    e_win_init               (void);
 EINTERN int    e_win_shutdown           (void);
 EAPI Eina_Bool e_win_elm_available(void);
-EAPI E_Win *e_win_new                (E_Container *con);
+EAPI E_Win *e_win_new                (E_Comp *c);
 EAPI void   e_win_show               (E_Win *win);
 EAPI void   e_win_hide               (E_Win *win);
 EAPI void   e_win_move               (E_Win *win, int x, int y);
@@ -71,8 +71,8 @@ EAPI void   e_win_size_base_set      (E_Win *win, int w, int h);
 EAPI void   e_win_step_set           (E_Win *win, int x, int y);
 EAPI void   e_win_name_class_set     (E_Win *win, const char *name, const char *class);
 EAPI void   e_win_title_set          (E_Win *win, const char *title);
-EAPI void   e_win_border_icon_set    (E_Win *win, const char *icon);
-EAPI void   e_win_border_icon_key_set(E_Win *win, const char *key);
+EAPI void   e_win_client_icon_set    (E_Win *win, const char *icon);
+EAPI void   e_win_client_icon_key_set(E_Win *win, const char *key);
 EAPI void   e_win_centered_set       (E_Win *win, int centered);
 EAPI void   e_win_dialog_set         (E_Win *win, int dialog);
 EAPI void   e_win_no_remember_set    (E_Win *win, int no_remember);

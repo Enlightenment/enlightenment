@@ -262,21 +262,21 @@ _opinfo_op_registry_window_jump_cb(void *data, Evas_Object *obj __UNUSED__, cons
                                                : e_win_evas_object_win_get(ere->e_fm);
    if (!win) return;
    
-   if (win->border)
+   if (win->client)
      {
-        if (win->border->iconic)
-           e_border_uniconify(win->border);
-        if (win->border->shaded)
-           e_border_unshade(win->border, win->border->shade.dir);
+        if (win->client->iconic)
+           e_client_uniconify(win->client);
+        if (win->client->shaded)
+           e_client_unshade(win->client, win->client->shade_dir);
      }
    else
      e_win_show(win);
    e_win_raise(win);
-   e_desk_show(win->border->desk);
-   e_border_focus_set_with_pointer(win->border);
+   e_desk_show(win->client->desk);
+   e_client_focus_set_with_pointer(win->client);
    
    if (ere->needs_attention && e_config->pointer_slide)
-      e_border_pointer_warp_to_center(win->border);
+      e_client_pointer_warp_to_center(win->client);
 }
 
 static Eina_Bool

@@ -16,9 +16,9 @@ static Eina_Bool _e_mod_policy_cb_zone_move_resize(void *data __UNUSED__, int ty
 static Eina_Bool _e_mod_policy_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _e_mod_policy_cb_window_property(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _e_mod_policy_cb_policy_change(void *data __UNUSED__, int type, void *event __UNUSED__);
-static void _e_mod_policy_cb_hook_post_fetch(void *data __UNUSED__, void *data2);
-static void _e_mod_policy_cb_hook_post_assign(void *data __UNUSED__, void *data2);
-static void _e_mod_policy_cb_hook_layout(void *data __UNUSED__, void *data2 __UNUSED__);
+static void _e_mod_policy_cb_hook_post_fetch(void *data __UNUSED__, E_Client *ec);
+static void _e_mod_policy_cb_hook_post_assign(void *data __UNUSED__, E_Client *ec);
+static void _e_mod_policy_cb_hook_layout(void *data __UNUSED__, E_Comp *comp);
 
 /* local variables */
 static E_Illume_Policy *_policy = NULL;
@@ -30,8 +30,8 @@ int E_ILLUME_POLICY_EVENT_CHANGE = 0;
 int 
 e_mod_policy_init(void) 
 {
-   Eina_List *ml;
-   E_Manager *man;
+   const Eina_List *l;
+   E_Comp *comp;
    char *file;
 
    /* try to find the policy specified in config */
@@ -60,39 +60,32 @@ e_mod_policy_init(void)
    _e_mod_policy_hooks_add();
 
    /* loop the root windows */
-   EINA_LIST_FOREACH(e_manager_list(), ml, man) 
+   EINA_LIST_FOREACH(e_comp_list(), l, comp) 
      {
-        Eina_List *cl;
-        E_Container *con;
+        Eina_List *zl;
+        E_Zone *zone;
 
-        /* loop the containers */
-        EINA_LIST_FOREACH(man->containers, cl, con) 
+        /* loop the zones */
+        EINA_LIST_FOREACH(comp->zones, zl, zone) 
           {
-             Eina_List *zl;
-             E_Zone *zone;
+             E_Illume_Config_Zone *cz;
+             Ecore_X_Illume_Mode mode = ECORE_X_ILLUME_MODE_SINGLE;
 
-             /* loop the zones */
-             EINA_LIST_FOREACH(con->zones, zl, zone) 
+             /* check for zone config */
+             if (!(cz = e_illume_zone_config_get(zone->num))) 
+               continue;
+
+             /* set mode on this zone */
+             if (cz->mode.dual == 0)
+               mode = ECORE_X_ILLUME_MODE_SINGLE;
+             else 
                {
-                  E_Illume_Config_Zone *cz;
-                  Ecore_X_Illume_Mode mode = ECORE_X_ILLUME_MODE_SINGLE;
-
-                  /* check for zone config */
-                  if (!(cz = e_illume_zone_config_get(zone->num))) 
-                    continue;
-
-                  /* set mode on this zone */
-                  if (cz->mode.dual == 0)
-                    mode = ECORE_X_ILLUME_MODE_SINGLE;
-                  else 
-                    {
-                       if ((cz->mode.dual == 1) && (cz->mode.side == 0)) 
-                         mode = ECORE_X_ILLUME_MODE_DUAL_TOP;
-                       else if ((cz->mode.dual == 1) && (cz->mode.side == 1))
-                         mode = ECORE_X_ILLUME_MODE_DUAL_LEFT;
-                    }
-                  ecore_x_e_illume_mode_set(zone->black_win, mode);
+                  if ((cz->mode.dual == 1) && (cz->mode.side == 0)) 
+                    mode = ECORE_X_ILLUME_MODE_DUAL_TOP;
+                  else if ((cz->mode.dual == 1) && (cz->mode.side == 1))
+                    mode = ECORE_X_ILLUME_MODE_DUAL_LEFT;
                }
+             ecore_x_e_illume_mode_set(zone->black_win, mode);
           }
      }
 
@@ -103,7 +96,7 @@ int
 e_mod_policy_shutdown(void) 
 {
    Ecore_Event_Handler *hdl;
-   E_Border_Hook *hook;
+   E_Client_Hook *hook;
 
    /* remove the ecore event handlers */
    EINA_LIST_FREE(_policy_hdls, hdl)
@@ -111,7 +104,7 @@ e_mod_policy_shutdown(void)
 
    /* remove the border hooks */
    EINA_LIST_FREE(_policy_hooks, hook)
-     e_border_hook_del(hook);
+     e_client_hook_del(hook);
 
    /* destroy the policy if it exists */
    if (_policy) e_object_del(E_OBJECT(_policy));
@@ -231,25 +224,25 @@ _e_mod_policy_handlers_add(void)
 {
    _policy_hdls = 
      eina_list_append(_policy_hdls, 
-                      ecore_event_handler_add(E_EVENT_BORDER_ADD, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_ADD, 
                                               _e_mod_policy_cb_border_add, NULL));
    _policy_hdls = 
      eina_list_append(_policy_hdls, 
-                      ecore_event_handler_add(E_EVENT_BORDER_REMOVE, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_REMOVE, 
                                               _e_mod_policy_cb_border_del, NULL));
    _policy_hdls = 
      eina_list_append(_policy_hdls, 
-                      ecore_event_handler_add(E_EVENT_BORDER_FOCUS_IN, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_FOCUS_IN, 
                                               _e_mod_policy_cb_border_focus_in, 
                                               NULL));
    _policy_hdls = 
      eina_list_append(_policy_hdls, 
-                      ecore_event_handler_add(E_EVENT_BORDER_FOCUS_OUT, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_FOCUS_OUT, 
                                               _e_mod_policy_cb_border_focus_out, 
                                               NULL));
    _policy_hdls = 
      eina_list_append(_policy_hdls, 
-                      ecore_event_handler_add(E_EVENT_BORDER_SHOW, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_SHOW, 
                                               _e_mod_policy_cb_border_show, 
                                               NULL));
    _policy_hdls = 
@@ -279,16 +272,16 @@ _e_mod_policy_hooks_add(void)
 {
    _policy_hooks = 
      eina_list_append(_policy_hooks, 
-                      e_border_hook_add(E_BORDER_HOOK_EVAL_POST_FETCH, 
+                      e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_FETCH, 
                                         _e_mod_policy_cb_hook_post_fetch, NULL));
    _policy_hooks = 
      eina_list_append(_policy_hooks, 
-                      e_border_hook_add(E_BORDER_HOOK_EVAL_POST_BORDER_ASSIGN, 
+                      e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, 
                                         _e_mod_policy_cb_hook_post_assign, NULL));
    _policy_hooks = 
      eina_list_append(_policy_hooks, 
-                      e_border_hook_add(E_BORDER_HOOK_CONTAINER_LAYOUT, 
-                                        _e_mod_policy_cb_hook_layout, NULL));
+                      e_client_hook_add(E_CLIENT_HOOK_CANVAS_LAYOUT, 
+                                        (E_Client_Hook_Cb)_e_mod_policy_cb_hook_layout, NULL));
 }
 
 static void 
@@ -311,11 +304,11 @@ _e_mod_policy_cb_free(E_Illume_Policy *p)
 static Eina_Bool
 _e_mod_policy_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Add *ev;
+   E_Event_Client *ev;
 
    ev = event;
    if ((_policy) && (_policy->funcs.border_add))
-     _policy->funcs.border_add(ev->border);
+     _policy->funcs.border_add(ev->ec);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -323,11 +316,11 @@ _e_mod_policy_cb_border_add(void *data __UNUSED__, int type __UNUSED__, void *ev
 static Eina_Bool
 _e_mod_policy_cb_border_del(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Remove *ev;
+   E_Event_Client *ev;
 
    ev = event;
    if ((_policy) && (_policy->funcs.border_del))
-     _policy->funcs.border_del(ev->border);
+     _policy->funcs.border_del(ev->ec);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -335,11 +328,11 @@ _e_mod_policy_cb_border_del(void *data __UNUSED__, int type __UNUSED__, void *ev
 static Eina_Bool
 _e_mod_policy_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Focus_In *ev;
+   E_Event_Client *ev;
 
    ev = event;
    if ((_policy) && (_policy->funcs.border_focus_in))
-     _policy->funcs.border_focus_in(ev->border);
+     _policy->funcs.border_focus_in(ev->ec);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -347,11 +340,11 @@ _e_mod_policy_cb_border_focus_in(void *data __UNUSED__, int type __UNUSED__, voi
 static Eina_Bool
 _e_mod_policy_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Focus_Out *ev;
+   E_Event_Client *ev;
 
    ev = event;
    if ((_policy) && (_policy->funcs.border_focus_out))
-     _policy->funcs.border_focus_out(ev->border);
+     _policy->funcs.border_focus_out(ev->ec);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -359,11 +352,11 @@ _e_mod_policy_cb_border_focus_out(void *data __UNUSED__, int type __UNUSED__, vo
 static Eina_Bool
 _e_mod_policy_cb_border_show(void *data __UNUSED__, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Show *ev;
+   E_Event_Client *ev;
 
    ev = event;
    if ((_policy) && (_policy->funcs.border_show))
-     _policy->funcs.border_show(ev->border);
+     _policy->funcs.border_show(ev->ec);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -384,13 +377,13 @@ static E_Zone *
 _e_mod_zone_win_get(Ecore_X_Window win)
 {
    E_Zone *zone = NULL;
-   E_Border *bd;
+   E_Client *ec;
 
-   if (!(bd = e_border_find_by_client_window(win)))
+   if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, win)))
      {
         if (!(zone = e_util_zone_window_find(win))) return NULL;
      }
-   else if (bd->zone) zone = bd->zone;
+   else if (ec->zone) zone = ec->zone;
    return zone;
 }
 
@@ -402,11 +395,11 @@ _e_mod_policy_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void
    ev = event;
    if (ev->message_type == ECORE_X_ATOM_NET_ACTIVE_WINDOW) 
      {
-        E_Border *bd;
+        E_Client *ec;
 
-        if (!(bd = e_border_find_by_client_window(ev->win))) return ECORE_CALLBACK_PASS_ON;
+        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->win))) return ECORE_CALLBACK_PASS_ON;
         if ((_policy) && (_policy->funcs.border_activate))
-          _policy->funcs.border_activate(bd);
+          _policy->funcs.border_activate(ec);
      }
    else if (ev->message_type == ECORE_X_ATOM_E_ILLUME_MODE) 
      {
@@ -450,19 +443,19 @@ _e_mod_policy_cb_client_message(void *data __UNUSED__, int type __UNUSED__, void
      }
    else if (ev->message_type == ECORE_X_ATOM_E_ILLUME_DRAG_START) 
      {
-        E_Border *bd;
+        E_Client *ec;
 
-        if (!(bd = e_border_find_by_client_window(ev->win))) return ECORE_CALLBACK_PASS_ON;
+        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->win))) return ECORE_CALLBACK_PASS_ON;
         if ((_policy) && (_policy->funcs.drag_start))
-          _policy->funcs.drag_start(bd);
+          _policy->funcs.drag_start(ec);
      }
    else if (ev->message_type == ECORE_X_ATOM_E_ILLUME_DRAG_END) 
      {
-        E_Border *bd;
+        E_Client *ec;
 
-        if (!(bd = e_border_find_by_client_window(ev->win))) return ECORE_CALLBACK_PASS_ON;
+        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->win))) return ECORE_CALLBACK_PASS_ON;
         if ((_policy) && (_policy->funcs.drag_end))
-          _policy->funcs.drag_end(bd);
+          _policy->funcs.drag_end(ec);
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -499,44 +492,40 @@ _e_mod_policy_cb_policy_change(void *data __UNUSED__, int type, void *event __UN
 }
 
 static void 
-_e_mod_policy_cb_hook_post_fetch(void *data __UNUSED__, void *data2) 
+_e_mod_policy_cb_hook_post_fetch(void *data __UNUSED__, E_Client *ec) 
 {
-   E_Border *bd;
-
-   if (!(bd = data2)) return;
    if ((_policy) && (_policy->funcs.border_post_fetch))
-     _policy->funcs.border_post_fetch(bd);
+     _policy->funcs.border_post_fetch(ec);
 }
 
 static void 
-_e_mod_policy_cb_hook_post_assign(void *data __UNUSED__, void *data2) 
+_e_mod_policy_cb_hook_post_assign(void *data __UNUSED__, E_Client *ec) 
 {
-   E_Border *bd;
-
-   if (!(bd = data2)) return;
    if ((_policy) && (_policy->funcs.border_post_assign))
-     _policy->funcs.border_post_assign(bd);
+     _policy->funcs.border_post_assign(ec);
 }
 
 static void 
-_e_mod_policy_cb_hook_layout(void *data __UNUSED__, void *data2 __UNUSED__) 
+_e_mod_policy_cb_hook_layout(void *data __UNUSED__, E_Comp *comp) 
 {
    E_Zone *zone;
-   E_Border *bd;
-   Eina_List *zl = NULL, *l;
+   E_Client *ec;
+   Eina_List *zl = NULL;
+   const Eina_List *l;
 
-   /* loop through border list and find what changed */
-   EINA_LIST_FOREACH(e_border_client_list(), l, bd) 
+   /* loop through client list and find what changed */
+   EINA_LIST_FOREACH(comp->clients, l, ec) 
      {
-        if ((bd->new_client) || (bd->pending_move_resize) || 
-            (bd->changes.pos) || (bd->changes.size) || (bd->changes.visible) || 
-            (bd->need_shape_export) || (bd->need_shape_merge)) 
+        if (e_client_util_ignored_get(ec)) continue;
+        if ((ec->new_client) ||
+            (ec->changes.pos) || (ec->changes.size) || (ec->changes.visible) || 
+            (ec->need_shape_export) || (ec->need_shape_merge)) 
           {
              /* NB: this border changed. add it's zone to list of what needs 
               * updating. This is done so we do not waste cpu cycles 
               * updating zones where nothing changed */
-             if (!eina_list_data_find(zl, bd->zone))
-               zl = eina_list_append(zl, bd->zone);
+             if (!eina_list_data_find(zl, ec->zone))
+               zl = eina_list_append(zl, ec->zone);
           }
      }
 

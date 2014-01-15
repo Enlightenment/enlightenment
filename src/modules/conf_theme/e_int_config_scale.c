@@ -106,7 +106,7 @@ _scale_preview_new(E_Config_Dialog_Data *cfdata, Evas *e, double sc, double *scp
    evas_object_show(bg);
    
    cm = edje_object_add(e_widget_preview_evas_get(ob));
-   e_theme_edje_object_set(cm, "base/theme/borders", "e/comp/border/default");
+   e_theme_edje_object_set(cm, "base/theme/borders", "e/comp/frame/default");
    evas_object_move(cm, 16, 16);
    evas_object_resize(cm, 180 * sc, 70);
    evas_object_show(cm);
@@ -135,9 +135,9 @@ _scale_preview_new(E_Config_Dialog_Data *cfdata, Evas *e, double sc, double *scp
    else
      edje_object_part_text_set(bd, "e.text.title", tit);
    edje_object_signal_emit(bd, "e,state,focused", "e");
+   edje_object_signal_emit(bd, "e,state,shadow,on", "e");
    
-   edje_object_signal_emit(cm, "e,state,visible,on", "e");
-   edje_object_signal_emit(cm, "e,state,shadow,on", "e");
+   edje_object_signal_emit(cm, "e,state,visible", "e");
    edje_object_signal_emit(cm, "e,state,focus,on", "e");
    
    edje_object_scale_set(bd, sc);
@@ -161,7 +161,7 @@ _scale_preview_new(E_Config_Dialog_Data *cfdata, Evas *e, double sc, double *scp
 }
 
 E_Config_Dialog *
-e_int_config_scale(E_Container *con, const char *params __UNUSED__)
+e_int_config_scale(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -177,7 +177,7 @@ e_int_config_scale(E_Container *con, const char *params __UNUSED__)
    v->advanced.apply_cfdata = _adv_apply;
    v->advanced.check_changed = _adv_changed;
 
-   cfd = e_config_dialog_new(con, _("Scale Settings"), "E", "appearance/scale",
+   cfd = e_config_dialog_new(comp, _("Scale Settings"), "E", "appearance/scale",
                              "preferences-scale", 0, v, NULL);
    e_config_dialog_changed_auto_set(cfd, 1);
    return cfd;
@@ -275,8 +275,8 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
            e_config->scale.min, e_config->scale.max, e_config->scale.factor,
            e_config->scale.base_dpi);
 
-   cfd->dia->win->border->internal_no_reopen = 1;
-   e_remember_update(cfd->dia->win->border);
+   cfd->dia->win->client->internal_no_reopen = 1;
+   e_remember_update(cfd->dia->win->client);
    e_config_save_queue();
 
    a = e_action_find("restart");
@@ -368,8 +368,8 @@ _adv_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    e_config->scale.factor = cfdata->factor;
    e_config->scale.base_dpi = cfdata->base_dpi;
 
-   cfd->dia->win->border->internal_no_reopen = 1;
-   e_remember_update(cfd->dia->win->border);
+   cfd->dia->win->client->internal_no_reopen = 1;
+   e_remember_update(cfd->dia->win->client);
    e_config_save_queue();
    
    a = e_action_find("restart");

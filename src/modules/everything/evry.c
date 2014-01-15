@@ -185,7 +185,8 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
         ecore_evas_name_class_set(win->ewin->ecore_evas, "E", "everything");
 
         e_win_show(win->ewin);
-        win->ewin->border->client.netwm.state.skip_taskbar = win->ewin->border->changed = 1;
+        win->ewin->client->netwm.state.skip_taskbar = 1;
+        EC_CHANGED(win->ewin->client);
 
         win->grab = 1;
      }
@@ -278,6 +279,7 @@ evry_hide(Evry_Window *win, int clear)
 
    if (!win) return;
 
+   e_win_delete_callback_set(win->ewin, NULL);
    e_win_hide(win->ewin);
    _evry_state_clear(win);
 
@@ -331,8 +333,11 @@ evry_hide(Evry_Window *win, int clear)
 
    win->visible = EINA_FALSE;
 
-   for (i = 0; win->sel_list[i]; i++)
-     _evry_selector_free(win->sel_list[i]);
+   if (win->sel_list)
+     {
+        for (i = 0; win->sel_list[i]; i++)
+          _evry_selector_free(win->sel_list[i]);
+     }
 
    E_FREE(win->sel_list);
 
@@ -758,7 +763,7 @@ _evry_window_new(E_Zone *zone, E_Zone_Edge edge)
    int offset_s = 0;
 
    win = E_NEW(Evry_Window, 1);
-   win->ewin = e_win_new(zone->container);
+   win->ewin = e_win_new(zone->comp);
    e_win_borderless_set(win->ewin, 1);
    e_win_no_remember_set(win->ewin, 1);
    e_win_placed_set(win->ewin, 1);
@@ -933,7 +938,7 @@ _evry_cb_mouse(void *data, int type, void *event)
              memcpy(sel + sel_length + s_len, "\r\n", 2);
              sel_length += s_len + 2;
 
-             d = e_drag_new(e_container_current_get(e_manager_current_get()),
+             d = e_drag_new(e_util_comp_current_get()),
                             ev->x, ev->y,
                             drag_types, 1, sel, sel_length, NULL,
                             _evry_cb_drag_finished);
@@ -956,7 +961,8 @@ _evry_cb_mouse(void *data, int type, void *event)
      {
         win->mouse_out = 0;
 
-        if (!E_INSIDE(ev->x, ev->y, 0, 0, w->w, w->h))
+        if (!E_INSIDE(e_comp_canvas_x_root_adjust(w->comp, ev->root.x),
+                      e_comp_canvas_y_root_adjust(w->comp, ev->root.y), w->x, w->y, w->w, w->h))
           {
              win->mouse_out = 1;
              return ECORE_CALLBACK_PASS_ON;
@@ -969,7 +975,8 @@ _evry_cb_mouse(void *data, int type, void *event)
         win->mouse_button = 0;
 
         if (win->mouse_out &&
-            !E_INSIDE(ev->x, ev->y, 0, 0, w->w, w->h))
+            (!E_INSIDE(e_comp_canvas_x_root_adjust(w->comp, ev->root.x),
+                      e_comp_canvas_y_root_adjust(w->comp, ev->root.y), w->x, w->y, w->w, w->h)))
           {
              evry_hide(win, 0);
              return ECORE_CALLBACK_PASS_ON;
@@ -1913,14 +1920,14 @@ _evry_cb_key_down(void *data, int type __UNUSED__, void *event)
         E_Win *ewin = win->ewin;
 
         e_grabinput_release(ewin->evas_win, ewin->evas_win);
-        e_border_layer_set(ewin->border, E_LAYER_NORMAL);
+        evas_object_layer_set(ewin->client->frame, E_LAYER_CLIENT_NORMAL);
         ecore_x_netwm_window_type_set(ewin->evas_win,
                                       ECORE_X_WINDOW_TYPE_DIALOG);
-        ewin->border->client.netwm.fetch.type = 1;
-        ewin->border->client.netwm.state.skip_taskbar = 0;
-        ewin->border->changed = 1;
-        ewin->border->client.netwm.update.state = 1;
-        ewin->border->internal_no_remember = 1;
+        EC_CHANGED(ewin->client);
+        ewin->client->netwm.fetch.type = 1;
+        ewin->client->netwm.state.skip_taskbar = 0;
+        ewin->client->netwm.update.state = 1;
+        ewin->client->internal_no_remember = 1;
         e_win_borderless_set(ewin, 0);
 
         win->grab = 0;

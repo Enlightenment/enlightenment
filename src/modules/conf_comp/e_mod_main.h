@@ -39,7 +39,7 @@ typedef struct _E_Demo_Style_Item
  * @}
  */
 EINTERN Evas_Object *_style_selector(Evas *evas, const char **source);
-EINTERN E_Config_Dialog *e_int_config_comp_module(E_Container *con, const char *params EINA_UNUSED);
-EINTERN E_Config_Dialog *e_int_config_comp_match(E_Container *con, const char *params EINA_UNUSED);
+EINTERN E_Config_Dialog *e_int_config_comp_module(E_Comp *comp, const char *params EINA_UNUSED);
+EINTERN E_Config_Dialog *e_int_config_comp_match(E_Comp *comp, const char *params EINA_UNUSED);
 
 #endif

@@ -57,7 +57,7 @@ static Eina_Bool    _cb_fill_delay(void *data);
 /* Externals */
 
 E_Config_Dialog *
-_xkb_cfg_dialog(E_Container *con, const char *params __UNUSED__)
+_xkb_cfg_dialog(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -71,7 +71,7 @@ _xkb_cfg_dialog(E_Container *con, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create;
    v->basic.apply_cfdata = _basic_apply;
 
-   cfd = e_config_dialog_new(con, _("Keyboard Settings"), "E",
+   cfd = e_config_dialog_new(comp, _("Keyboard Settings"), "E",
                              "keyboard_and_mouse/xkbswitch",
                              "preferences-desktop-keyboard",
                              0, v, NULL);
@@ -451,7 +451,7 @@ _dlg_add_new(E_Config_Dialog_Data *cfdata)
    Evas_Coord mw, mh;
    Evas_Object *mainn, *available, *modelss, *variants;
 
-   if (!(dlg = e_dialog_new(_xkb.cfd->con, "E", "xkbswitch_config_add_dialog"))) return NULL;
+   if (!(dlg = e_dialog_new(_xkb.cfd->comp, "E", "xkbswitch_config_add_dialog"))) return NULL;
 
    e_dialog_resizable_set(dlg, 1);
    dlg->data = cfdata;

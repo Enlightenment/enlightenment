@@ -7,7 +7,7 @@ static void _e_mod_illume_config_select_window_free_data(E_Config_Dialog *cfd, E
 static Evas_Object *_e_mod_illume_config_select_window_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static void _e_mod_illume_config_select_window_list_changed(void *data);
 static Eina_Bool _e_mod_illume_config_select_window_change_timeout(void *data);
-static int _e_mod_illume_config_select_window_match(E_Border *bd);
+static int _e_mod_illume_config_select_window_match(E_Client *ec);
 
 /* local variables */
 E_Illume_Select_Window_Type stype;
@@ -32,7 +32,7 @@ e_mod_illume_config_select_window(E_Illume_Select_Window_Type type)
    v->basic_only = 1;
    v->normal_win = 1;
    v->scroll = 1;
-   cfd = e_config_dialog_new(e_container_current_get(e_manager_current_get()), 
+   cfd = e_config_dialog_new(NULL, 
                              _("Select Home Window"), "E", 
                              "_config_illume_select_window", 
                              "enlightenment/windows", 0, v, NULL);
@@ -56,7 +56,7 @@ static Evas_Object *
 _e_mod_illume_config_select_window_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *cfdata __UNUSED__) 
 {
    Evas_Object *list, *ow;
-   Eina_List *bds, *l;
+   Eina_List *ecs, *l;
    E_Zone *zone;
    int i, sel = -1;
 
@@ -70,21 +70,22 @@ _e_mod_illume_config_select_window_create(E_Config_Dialog *cfd __UNUSED__, Evas 
    e_widget_ilist_clear(ow);
    e_widget_ilist_go(ow);
 
-   if ((bds = e_border_client_list()))
+   if ((ecs = zone->comp->clients))
      {
-        for (i = 0, l = bds; l; l = l->next, i++) 
+        for (i = 0, l = ecs; l; l = l->next, i++) 
           {
-             E_Border *bd;
+             E_Client *ec;
              const char *name;
 
-             if (!(bd = l->data)) continue;
-             if (bd->zone != zone) continue;
-             if (e_object_is_del(E_OBJECT(bd))) continue;
-             if (!(name = e_border_name_get(bd))) continue;
-             if (_e_mod_illume_config_select_window_match(bd)) sel = i;
+             if (!(ec = l->data)) continue;
+             if (e_client_util_ignored_get(ec)) continue;
+             if (ec->zone != zone) continue;
+             if (e_object_is_del(E_OBJECT(ec))) continue;
+             if (!(name = e_client_name_get(ec))) continue;
+             if (_e_mod_illume_config_select_window_match(ec)) sel = i;
              e_widget_ilist_append(ow, NULL, name, 
                                    _e_mod_illume_config_select_window_list_changed, 
-                                   bd, name);
+                                   ec, name);
           }
      }
 
@@ -101,14 +102,14 @@ _e_mod_illume_config_select_window_create(E_Config_Dialog *cfd __UNUSED__, Evas 
 static void 
 _e_mod_illume_config_select_window_list_changed(void *data) 
 {
-   E_Border *bd;
+   E_Client *ec;
    Ecore_X_Window_Type wtype;
    char *title, *name, *class;
 
-   if (!(bd = data)) return;
-   title = ecore_x_icccm_title_get(bd->client.win);
-   ecore_x_icccm_name_class_get(bd->client.win, &name, &class);
-   ecore_x_netwm_window_type_get(bd->client.win, &wtype);
+   if (!(ec = data)) return;
+   title = ecore_x_icccm_title_get(e_client_util_win_get(ec));
+   ecore_x_icccm_name_class_get(e_client_util_win_get(ec), &name, &class);
+   ecore_x_netwm_window_type_get(e_client_util_win_get(ec), &wtype);
 
    switch (stype) 
      {
@@ -152,16 +153,16 @@ _e_mod_illume_config_select_window_change_timeout(__UNUSED__ void *data)
 }
 
 static int 
-_e_mod_illume_config_select_window_match(E_Border *bd) 
+_e_mod_illume_config_select_window_match(E_Client *ec) 
 {
    Ecore_X_Window_Type wtype;
    char *title, *name, *class;
    int match = 0;
 
-   if (!bd) return 0;
-   title = ecore_x_icccm_title_get(bd->client.win);
-   ecore_x_icccm_name_class_get(bd->client.win, &name, &class);
-   ecore_x_netwm_window_type_get(bd->client.win, &wtype);
+   if (!ec) return 0;
+   title = ecore_x_icccm_title_get(e_client_util_win_get(ec));
+   ecore_x_icccm_name_class_get(e_client_util_win_get(ec), &name, &class);
+   ecore_x_netwm_window_type_get(e_client_util_win_get(ec), &wtype);
 
    switch (stype) 
      {

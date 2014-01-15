@@ -10,8 +10,7 @@ static void      _cb_signal_action_extra(void *data, Evas_Object *obj, const cha
 static Eina_Bool _cb_timeout_defaction(void *data);
 
 /* local subsystem globals */
-static E_Popup *popup = NULL;
-static Ecore_X_Window input_window = 0;
+static Evas_Object *popup = NULL;
 static const char *do_defact = NULL;
 static Eina_List *handlers = NULL;
 static Evas_Object *o_bg = NULL;
@@ -48,6 +47,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
    int iw, ih;
    Eina_List *l;
    double t;
+   Evas *evas;
 
    t = ecore_loop_time_get();
    if (popup)
@@ -74,24 +74,11 @@ e_syscon_show(E_Zone *zone, const char *defact)
         return 0;
      }
 
-   input_window = e_comp_get(zone)->ee_win;
-   if (!e_grabinput_get(input_window, 1, input_window))
-     {
-        input_window = 0;
-        return 0;
-     }
+   if (!e_comp_grab_input(e_comp_get(zone), 1, 1)) return 0;
+   evas = e_comp_get(zone)->evas;
+   evas_event_freeze(evas);
 
-   popup = e_popup_new(zone, 0, 0, 1, 1);
-   if (!popup)
-     {
-        e_grabinput_release(input_window, input_window);
-        input_window = 0;
-        return 0;
-     }
-   e_popup_autoclose(popup, NULL, _cb_key_down, NULL);
-   evas_event_freeze(popup->evas);
-
-   o = edje_object_add(popup->evas);
+   o = edje_object_add(evas);
    o_bg = o;
    e_theme_edje_object_set(o, "base/theme/syscon",
                            "e/widgets/syscon/main");
@@ -101,6 +88,9 @@ e_syscon_show(E_Zone *zone, const char *defact)
    edje_object_signal_callback_add(o, "e,action,syscon", "*",
                                    _cb_signal_syscon, NULL);
 
+   popup = e_comp_object_util_add(o_bg, E_COMP_OBJECT_TYPE_POPUP);
+   evas_object_data_set(popup, "zone", zone);
+   e_comp_object_util_autoclose(popup, NULL, _cb_key_down, NULL);
    act_count = 0;
    show_time = t;
 
@@ -111,22 +101,22 @@ e_syscon_show(E_Zone *zone, const char *defact)
    // extra (example for illume):
    //  home | close | kill
 
-   o = e_flowlayout_add(popup->evas);
-   e_popup_object_add(popup, o);
+   o = e_flowlayout_add(evas);
+   e_comp_object_util_del_list_append(popup, o);
    o_flow_main = o;
    e_flowlayout_orientation_set(o, 1);
    e_flowlayout_flowdirection_set(o, 1, 1);
    e_flowlayout_homogenous_set(o, 1);
 
-   o = e_flowlayout_add(popup->evas);
-   e_popup_object_add(popup, o);
+   o = e_flowlayout_add(evas);
+   e_comp_object_util_del_list_append(popup, o);
    o_flow_secondary = o;
    e_flowlayout_orientation_set(o, 1);
    e_flowlayout_flowdirection_set(o, 1, 1);
    e_flowlayout_homogenous_set(o, 1);
 
-   o = e_flowlayout_add(popup->evas);
-   e_popup_object_add(popup, o);
+   o = e_flowlayout_add(evas);
+   e_comp_object_util_del_list_append(popup, o);
    o_flow_extra = o;
    e_flowlayout_orientation_set(o, 1);
    e_flowlayout_flowdirection_set(o, 1, 1);
@@ -161,7 +151,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
         else if ((!strcmp(sca->action, "hibernate")) &&
                  (!e_sys_action_possible_get(E_SYS_HIBERNATE)))
           disabled = 1;
-        o = edje_object_add(popup->evas);
+        o = edje_object_add(evas);
         edje_object_signal_callback_add(o, "e,action,click", "",
                                         _cb_signal_action, sca);
         if (sca->button)
@@ -177,7 +167,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
                                   _(e_action_predef_label_get(sca->action, sca->params)));
         if (sca->icon)
           {
-             o2 = e_icon_add(popup->evas);
+             o2 = e_icon_add(evas);
              e_util_icon_theme_set(o2, sca->icon);
              edje_object_part_swallow(o, "e.swallow.icon", o2);
              evas_object_show(o2);
@@ -211,7 +201,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
         char buf[1024];
 
         sca = l->data;
-        o = edje_object_add(popup->evas);
+        o = edje_object_add(evas);
         edje_object_signal_callback_add(o, "e,action,click", "", _cb_signal_action_extra, sca);
         if (sca->button_name)
           {
@@ -225,7 +215,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
         edje_object_part_text_set(o, "e.text.label", sca->label);
         if (sca->icon_group)
           {
-             o2 = edje_object_add(popup->evas);
+             o2 = edje_object_add(evas);
              e_util_edje_icon_set(o2, sca->icon_group);
              edje_object_part_swallow(o, "e.swallow.icon", o2);
              evas_object_show(o2);
@@ -271,11 +261,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
    if (h > zh) h = zh;
    y = zy - zone->y + (zh - h) / 2;
 
-   e_popup_move_resize(popup, x, y, w, h);
-   evas_object_move(o_bg, 0, 0);
-   evas_object_resize(o_bg, w, h);
-   evas_object_show(o_bg);
-   e_popup_content_set(popup, o_bg);
+   evas_object_geometry_set(popup, x, y, w, h);
 
    if (e_config->syscon.do_input)
      {
@@ -284,9 +270,9 @@ e_syscon_show(E_Zone *zone, const char *defact)
         if (defact) do_defact = eina_stringshare_add(defact);
      }
 
-   evas_event_thaw(popup->evas);
+   evas_event_thaw(evas);
    inevas = 0;
-   e_popup_show(popup);
+   evas_object_show(popup);
    return 1;
 }
 
@@ -295,18 +281,12 @@ e_syscon_hide(void)
 {
    if (!popup) return;
 
-   if (deftimer)
-     {
-        ecore_timer_del(deftimer);
-        deftimer = NULL;
-     }
-   if (do_defact) eina_stringshare_del(do_defact);
-   do_defact = NULL;
+   E_FREE_FUNC(deftimer, ecore_timer_del);
+   eina_stringshare_replace(&do_defact, NULL);
    E_FREE_LIST(handlers, ecore_event_handler_del);
-   e_object_del(E_OBJECT(popup));
-   popup = NULL;
-   e_grabinput_release(input_window, input_window);
-   input_window = 0;
+   e_comp_ungrab_input(e_comp_util_evas_object_comp_get(popup), 1, 1);
+   evas_object_hide(popup);
+   E_FREE_FUNC(popup, evas_object_del);
    o_selected_flow = o_selected = o_flow_extra = o_flow_main = o_flow_secondary = NULL;
 }
 
@@ -409,7 +389,7 @@ _cb_key_down(__UNUSED__ void *data, Ecore_Event_Key *ev)
                     {
                        if (popup)
                          {
-                            e_syscon_show(popup->zone, do_defact);
+                            e_syscon_show(evas_object_data_get(popup, "zone"), do_defact);
                          }
                     }
                   else

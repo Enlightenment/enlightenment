@@ -55,7 +55,7 @@ _config_pager_module(Config_Item *ci)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   E_Container *con;
+   E_Comp *comp;
    char buff[PATH_MAX];
 
    v = E_NEW(E_Config_Dialog_View, 1);
@@ -72,8 +72,8 @@ _config_pager_module(Config_Item *ci)
 
    snprintf(buff, sizeof(buff), "%s/e-module-pager.edj",
             pager_config->module->dir);
-   con = e_container_current_get(e_manager_current_get());
-   cfd = e_config_dialog_new(con, _("Pager Settings"), "E",
+   comp = e_comp_get(NULL);
+   cfd = e_config_dialog_new(comp, _("Pager Settings"), "E",
                              "_e_mod_pager_config_dialog", buff, 0, v, ci);
    pager_config->config_dialog = cfd;
 }

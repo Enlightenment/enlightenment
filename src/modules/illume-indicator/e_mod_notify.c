@@ -180,7 +180,7 @@ _e_mod_notify_new(E_Notification_Notify *n, unsigned id)
    zone = e_util_zone_current_get(e_manager_current_get());
    nwin->zone = zone;
 
-   nwin->win = e_win_new(zone->container);
+   nwin->win = e_win_new(zone->comp);
    nwin->win->data = nwin;
 
    e_win_name_class_set(nwin->win, "Illume-Notify", "Illume-Notify");
@@ -214,8 +214,8 @@ _e_mod_notify_new(E_Notification_Notify *n, unsigned id)
    _e_mod_notify_refresh(nwin);
 
    e_win_show(nwin->win);
-   e_border_zone_set(nwin->win->border, zone);
-   nwin->win->border->user_skip_winlist = 1;
+   e_client_zone_set(nwin->win->client, zone);
+   nwin->win->client->user_skip_winlist = 1;
 
    return nwin;
 }

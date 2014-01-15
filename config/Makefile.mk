@@ -12,7 +12,7 @@ SUFFIXES = .cfg
 	$(MKDIR_P) $(@D)
 	$(EET_EET) -e \
 	$(top_builddir)/$@ config \
-	$< 0
+	$< 1
 
 include config/default/Makefile.mk
 include config/standard/Makefile.mk

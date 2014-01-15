@@ -67,8 +67,8 @@ struct _E_Smart_Data
         Evas_Coord vw, vh;
      } grid;
 
-   /* container number */
-   unsigned int con_num;
+   /* manager number */
+   unsigned int man_num;
 
    /* zone number */
    unsigned int zone_num;
@@ -437,7 +437,6 @@ e_smart_monitor_background_set(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy)
 {
    E_Smart_Data *sd;
    E_Manager *man;
-   E_Container *con;
    E_Zone *zone;
    E_Desk *desk;
 
@@ -448,13 +447,10 @@ e_smart_monitor_background_set(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy)
 
    /* get the current manager */
    man = e_manager_current_get();
-
-   /* get the current container */
-   con = e_container_current_get(man);
-   sd->con_num = con->num;
+   sd->man_num = man->num;
 
    /* get the zone number */
-   if (!(zone = e_container_zone_at_point_get(con, dx, dy)))
+   if (!(zone = e_comp_zone_xy_get(man->comp, dx, dy)))
      zone = e_util_zone_current_get(man);
    sd->zone_num = zone->num;
 
@@ -1350,7 +1346,7 @@ _e_smart_monitor_background_set(E_Smart_Data *sd, int dx, int dy)
    if (!sd) return;
 
    /* try to get the background file for this desktop */
-   if ((bg = e_bg_file_get(sd->con_num, sd->zone_num, dx, dy)))
+   if ((bg = e_bg_file_get(sd->man_num, sd->zone_num, dx, dy)))
      {
         Evas_Object *o;
 
@@ -1379,8 +1375,8 @@ _e_smart_monitor_background_update(void *data, int type EINA_UNUSED, void *event
 
    ev = event;
 
-   /* check this bg event happened on our container */
-   if (((ev->container < 0) || (ev->container == (int)sd->con_num)) && 
+   /* check this bg event happened on our manager */
+   if (((ev->manager < 0) || (ev->manager == (int)sd->man_num)) && 
        ((ev->zone < 0) || (ev->zone == (int)sd->zone_num)))
      {
         /* check this bg event happened on our desktop */

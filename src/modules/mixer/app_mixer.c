@@ -473,12 +473,12 @@ _cb_dialog_dismiss(void *data, E_Dialog *dialog)
 }
 
 E_Dialog *
-e_mixer_app_dialog_new(E_Container *con, void (*func)(E_Dialog *dialog, void *data), void *data)
+e_mixer_app_dialog_new(E_Comp *comp, void (*func)(E_Dialog *dialog, void *data), void *data)
 {
    E_Mixer_App_Dialog_Data *app;
    E_Dialog *dialog;
 
-   dialog = e_dialog_new(con, _e_mixer_Name, "e_mixer_app_dialog");
+   dialog = e_dialog_new(comp, _e_mixer_Name, "e_mixer_app_dialog");
    if (!dialog)
      return NULL;
 

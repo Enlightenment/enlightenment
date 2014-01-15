@@ -13,25 +13,17 @@ static void _e_dialog_cb_wid_on_focus(void *data, Evas_Object *obj);
 /* externally accessible functions */
 
 static E_Dialog *
-_e_dialog_internal_new(E_Container *con, const char *name, const char *class, int dialog)
+_e_dialog_internal_new(E_Comp *c, const char *name, const char *class, int dialog)
 {
    E_Dialog *dia;
-   E_Manager *man;
    Evas_Object *o;
    Evas_Modifier_Mask mask;
    Eina_Bool kg;
 
-   if (!con)
-     {
-        man = e_manager_current_get();
-        if (!man) return NULL;
-        con = e_container_current_get(man);
-        if (!con) con = e_container_number_get(man, 0);
-        if (!con) return NULL;
-     }
+   if (!c) c = e_util_comp_current_get();
    dia = E_OBJECT_ALLOC(E_Dialog, E_DIALOG_TYPE, _e_dialog_free);
    if (!dia) return NULL;
-   dia->win = e_win_new(con);
+   dia->win = e_win_new(c);
    if (!dia->win)
      {
         free(dia);
@@ -84,15 +76,15 @@ _e_dialog_internal_new(E_Container *con, const char *name, const char *class, in
 }
 
 EAPI E_Dialog *
-e_dialog_new(E_Container *con, const char *name, const char *class)
+e_dialog_new(E_Comp *c, const char *name, const char *class)
 {
-   return _e_dialog_internal_new(con, name, class, 1);
+   return _e_dialog_internal_new(c, name, class, 1);
 }
 
 EAPI E_Dialog *
-e_dialog_normal_win_new(E_Container *con, const char *name, const char *class)
+e_dialog_normal_win_new(E_Comp *c, const char *name, const char *class)
 {
-   return _e_dialog_internal_new(con, name, class, 0);
+   return _e_dialog_internal_new(c, name, class, 0);
 }
 
 EAPI void
@@ -182,17 +174,11 @@ e_dialog_icon_set(E_Dialog *dia, const char *icon, Evas_Coord size)
 EAPI void
 e_dialog_border_icon_set(E_Dialog *dia, const char *icon)
 {
-   E_Border *border;
+   E_Client *ec;
 
-   border = dia->win->border;
-   if (!border) return;
-   if (border->internal_icon)
-     {
-        eina_stringshare_del(border->internal_icon);
-        border->internal_icon = NULL;
-     }
-   if (icon)
-     border->internal_icon = eina_stringshare_add(icon);
+   ec = dia->win->client;
+   if (ec)
+     eina_stringshare_replace(&ec->internal_icon, icon);
 }
 
 EAPI void

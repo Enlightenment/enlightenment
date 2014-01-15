@@ -83,11 +83,11 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 
    inst->handlers = 
      eina_list_append(inst->handlers, 
-                      ecore_event_handler_add(E_EVENT_BORDER_FOCUS_IN, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_FOCUS_IN, 
                                               _cb_border_focus_in, inst));
    inst->handlers = 
      eina_list_append(inst->handlers, 
-                      ecore_event_handler_add(E_EVENT_BORDER_REMOVE, 
+                      ecore_event_handler_add(E_EVENT_CLIENT_REMOVE, 
                                               _cb_border_remove, inst));
    inst->handlers = 
      eina_list_append(inst->handlers, 
@@ -151,14 +151,14 @@ static void
 _cb_action_vkbd_enable(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Instance *inst;
-   E_Border *bd;
+   E_Client *ec;
 
    if (!(inst = data)) return;
-   if (!(bd = e_border_focused_get())) return;
-   if (bd->zone != inst->gcc->gadcon->zone) return;
-   if (bd->client.vkbd.state >= ECORE_X_VIRTUAL_KEYBOARD_STATE_ON) return;
+   if (!(ec = e_client_focused_get())) return;
+   if (ec->zone != inst->gcc->gadcon->zone) return;
+   if (ec->vkbd.state >= ECORE_X_VIRTUAL_KEYBOARD_STATE_ON) return;
 
-   ecore_x_e_virtual_keyboard_state_set(bd->client.win,
+   ecore_x_e_virtual_keyboard_state_set(e_client_util_win_get(ec),
                                         ECORE_X_VIRTUAL_KEYBOARD_STATE_ON);
 }
 
@@ -166,14 +166,14 @@ static void
 _cb_action_vkbd_disable(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Instance *inst;
-   E_Border *bd;
+   E_Client *ec;
 
    if (!(inst = data)) return;
-   if (!(bd = e_border_focused_get())) return;
-   if (bd->zone != inst->gcc->gadcon->zone) return;
-   if (bd->client.vkbd.state <= ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF) return;
+   if (!(ec = e_client_focused_get())) return;
+   if (ec->zone != inst->gcc->gadcon->zone) return;
+   if (ec->vkbd.state <= ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF) return;
 
-   ecore_x_e_virtual_keyboard_state_set(bd->client.win,
+   ecore_x_e_virtual_keyboard_state_set(e_client_util_win_get(ec),
                                         ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF);
 }
 
@@ -181,15 +181,15 @@ static Eina_Bool
 _cb_border_focus_in(void *data, int type __UNUSED__, void *event) 
 {
    Instance *inst;
-   E_Event_Border_Focus_In *ev;
-   E_Border *bd;
+   E_Event_Client *ev;
+   E_Client *ec;
 
    if (!(inst = data)) return ECORE_CALLBACK_PASS_ON;
    ev = event;
-   if (ev->border->stolen) return ECORE_CALLBACK_PASS_ON;
-   if (!(bd = ev->border)) return ECORE_CALLBACK_PASS_ON;
-   if (bd->zone != inst->gcc->gadcon->zone) return ECORE_CALLBACK_PASS_ON;
-   _set_btn_icon(inst->o_toggle, bd->client.vkbd.state);
+   if (ev->ec->stolen) return ECORE_CALLBACK_PASS_ON;
+   if (!(ec = ev->ec)) return ECORE_CALLBACK_PASS_ON;
+   if (ec->zone != inst->gcc->gadcon->zone) return ECORE_CALLBACK_PASS_ON;
+   _set_btn_icon(inst->o_toggle, ec->vkbd.state);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -208,17 +208,17 @@ _cb_border_property(void *data, int type __UNUSED__, void *event)
 {
    Instance *inst;
    Ecore_X_Event_Window_Property *ev;
-   E_Border *bd;
+   E_Client *ec;
 
    ev = event;
    if (ev->atom != ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE) 
      return ECORE_CALLBACK_PASS_ON;
-   if (!(bd = e_border_find_by_client_window(ev->win))) 
+   if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ev->win))) 
      return ECORE_CALLBACK_PASS_ON;
-   if (!bd->focused) return ECORE_CALLBACK_PASS_ON;
+   if (!ec->focused) return ECORE_CALLBACK_PASS_ON;
    if (!(inst = data)) return ECORE_CALLBACK_PASS_ON;
-   if (bd->zone != inst->gcc->gadcon->zone) return ECORE_CALLBACK_PASS_ON;
-   _set_btn_icon(inst->o_toggle, bd->client.vkbd.state);
+   if (ec->zone != inst->gcc->gadcon->zone) return ECORE_CALLBACK_PASS_ON;
+   _set_btn_icon(inst->o_toggle, ec->vkbd.state);
    return ECORE_CALLBACK_PASS_ON;
 }
 

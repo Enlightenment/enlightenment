@@ -69,7 +69,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    objs = eina_list_append(objs, o);
 
    o = edje_object_add(e);
-   _e_int_theme_edje_file_set(o, file, "e/comp/border/popup");
+   _e_int_theme_edje_file_set(o, file, "e/comp/frame/popup");
    evas_object_move(o, (w - (400 * e_scale)) / 2, h - (40 * e_scale));
    evas_object_resize(o, 400 * e_scale, (40 * e_scale));
    evas_object_show(o);
@@ -177,7 +177,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    
    
    o = edje_object_add(e);
-   _e_int_theme_edje_file_set(o, file, "e/comp/border/default");
+   _e_int_theme_edje_file_set(o, file, "e/comp/frame/default");
    evas_object_move(o, w / 2, h / 9);
    evas_object_resize(o, w / 3, h / 3);
    evas_object_show(o);
@@ -211,7 +211,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
    
    
    o = edje_object_add(e);
-   _e_int_theme_edje_file_set(o, file, "e/comp/border/default");
+   _e_int_theme_edje_file_set(o, file, "e/comp/frame/default");
    evas_object_move(o, w / 10, h / 5);
    evas_object_resize(o, w / 2, h / 3);
    evas_object_show(o);
@@ -294,7 +294,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
 }
 
 E_Config_Dialog *
-e_int_config_theme(E_Container *con, const char *params __UNUSED__)
+e_int_config_theme(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -307,7 +307,7 @@ e_int_config_theme(E_Container *con, const char *params __UNUSED__)
    v->basic.apply_cfdata = _basic_apply_data;
    v->basic.create_widgets = _basic_create_widgets;
    v->override_auto_apply = 1;
-   cfd = e_config_dialog_new(con,
+   cfd = e_config_dialog_new(comp,
                              _("Theme Selector"),
                              "E", "appearance/theme",
                              "preferences-desktop-theme", 0, v, NULL);
@@ -627,9 +627,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    Eio_File *ls;
    Eet_File *ef;
 
-   if (cfdata->win_import)
-     e_int_config_theme_del(cfdata->win_import);
-   cfdata->win_import = NULL;
+   E_FREE_FUNC(cfdata->win_import, e_object_del);
    if (cfdata->eio[0]) eio_file_cancel(cfdata->eio[0]);
    if (cfdata->eio[1]) eio_file_cancel(cfdata->eio[1]);
    EINA_LIST_FOREACH(cfdata->theme_init, l, ls)
@@ -651,7 +649,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    char path[PATH_MAX];
 
    e_dialog_resizable_set(cfd->dia, 1);
-   z = e_zone_current_get(cfd->con);
+   z = e_zone_current_get(cfd->comp);
 
    ot = e_widget_table_add(evas, 0);
    ol = e_widget_table_add(evas, 0);

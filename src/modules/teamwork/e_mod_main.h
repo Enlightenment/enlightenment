@@ -39,7 +39,7 @@ typedef struct Mod
    size_t media_size;
    Eina_Inlist *media_list;
    Eina_Hash *media;
-   E_Popup *pop;
+   Evas_Object *pop;
    Eina_Bool sticky : 1;
    Eina_Bool force : 1;
    Eina_Bool hidden : 1;
@@ -57,7 +57,7 @@ EINTERN Eina_Bool tw_hide(void *d EINA_UNUSED);
 EINTERN void tw_popup_opacity_set(void);
 EINTERN void tw_uri_show(const char *uri);
 
-EINTERN E_Config_Dialog *e_int_config_teamwork_module(E_Container *con, const char *params EINA_UNUSED); 
+EINTERN E_Config_Dialog *e_int_config_teamwork_module(E_Comp *comp, const char *params EINA_UNUSED); 
 
 EAPI int e_modapi_shutdown(E_Module *m __UNUSED__);
 #undef DBG

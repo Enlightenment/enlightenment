@@ -246,7 +246,7 @@ _battery_face_time_set(Evas_Object *battery, int t)
 static void
 _battery_face_cb_menu_powermanagement(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
 {
-   e_configure_registry_call("advanced/powermanagement", m->zone->container, NULL);
+   e_configure_registry_call("advanced/powermanagement", m->zone->comp, NULL);
 }
 
 static void
@@ -254,7 +254,7 @@ _battery_face_cb_menu_configure(void *data __UNUSED__, E_Menu *m, E_Menu_Item *m
 {
    if (!battery_config) return;
    if (battery_config->config_dialog) return;
-   e_int_config_battery_module(m->zone->container, NULL);
+   e_int_config_battery_module(m->zone->comp, NULL);
 }
 
 Battery *
@@ -423,9 +423,8 @@ _battery_warning_popup_destroy(Instance *inst)
         battery_config->alert_timer = NULL;
      }
    if ((!inst) || (!inst->warning)) return;
-   e_object_del(E_OBJECT(inst->warning));
-   inst->warning = NULL;
-   inst->popup_battery = NULL;
+   E_FREE_FUNC(inst->popup_battery, evas_object_del);
+   E_FREE_FUNC(inst->warning, e_object_del);
 }
 
 #ifdef HAVE_ENOTIFY
@@ -462,10 +461,10 @@ _battery_warning_popup(Instance *inst, int t, double percent)
         return;
      }
 #endif
-   inst->warning = e_gadcon_popup_new(inst->gcc);
+   inst->warning = e_gadcon_popup_new(inst->gcc, 0);
    if (!inst->warning) return;
 
-   e = inst->warning->win->evas;
+   e = e_comp_get(inst->warning)->evas;
 
    popup_bg = edje_object_add(e);
    inst->popup_battery = edje_object_add(e);
@@ -486,7 +485,6 @@ _battery_warning_popup(Instance *inst, int t, double percent)
    else
      edje_object_part_swallow(popup_bg, "battery", inst->popup_battery);
 
-   e_popup_object_add(inst->warning->win, inst->popup_battery);
    edje_object_part_text_set(popup_bg, "e.text.title",
                              _("Your battery is low!"));
    edje_object_part_text_set(popup_bg, "e.text.label",

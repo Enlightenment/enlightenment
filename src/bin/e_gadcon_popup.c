@@ -9,7 +9,7 @@ _e_popup_autoclose_deskafter_show_cb(void *data EINA_UNUSED, int type EINA_UNUSE
    E_Gadcon_Popup *pop = data;
 
    if (!pop) return ECORE_CALLBACK_RENEW;
-   if (!pop->win->visible) return ECORE_CALLBACK_RENEW;
+   if (!pop->visible) return ECORE_CALLBACK_RENEW;
    if (!e_gadcon_client_visible_get(pop->gcc, ev->desk))
      e_object_del(E_OBJECT(pop));
 
@@ -17,15 +17,15 @@ _e_popup_autoclose_deskafter_show_cb(void *data EINA_UNUSED, int type EINA_UNUSE
 }
 
 static Eina_Bool
-_e_popup_autoclose_border_fullscreen_cb(void *data, int type EINA_UNUSED, void *event)
+_e_popup_autoclose_client_fullscreen_cb(void *data, int type EINA_UNUSED, void *event)
 {
-   E_Event_Border_Fullscreen *ev = event;
+   E_Event_Client *ev = event;
    E_Gadcon_Popup *pop = data;
 
    if (!pop) return ECORE_CALLBACK_RENEW;
-   if (!pop->win->visible) return ECORE_CALLBACK_RENEW;
-   if (!ev->border->fullscreen) return ECORE_CALLBACK_RENEW;
-   if (e_gadcon_client_visible_get(pop->gcc, ev->border->desk))
+   if (!pop->visible) return ECORE_CALLBACK_RENEW;
+   if (!ev->ec->fullscreen) return ECORE_CALLBACK_RENEW;
+   if (e_gadcon_client_visible_get(pop->gcc, ev->ec->desk))
      e_object_del(E_OBJECT(pop));
    return ECORE_CALLBACK_RENEW;
 }
@@ -41,6 +41,14 @@ _e_gadcon_popup_locked_set(E_Gadcon_Popup *pop, Eina_Bool locked)
 }
 
 static void
+_e_gadcon_popup_delay_del(void *obj)
+{
+   E_Gadcon_Popup *pop = obj;
+
+   if (pop->comp_object) evas_object_hide(pop->comp_object);
+}
+
+static void
 _e_gadcon_popup_free(E_Gadcon_Popup *pop)
 {
    E_FREE_FUNC(pop->autoclose_handlers[0], ecore_event_handler_del);
@@ -49,33 +57,24 @@ _e_gadcon_popup_free(E_Gadcon_Popup *pop)
    if (pop->gadcon_was_locked)
      _e_gadcon_popup_locked_set(pop, 0);
    pop->gcc = NULL;
-   if (pop->win)
-     E_OBJECT_DEL_SET(pop->win, NULL);
-   E_FREE_FUNC(pop->win, e_object_del);
+   evas_object_hide(pop->comp_object);
+   E_FREE_FUNC(pop->comp_object, evas_object_del);
    free(pop);
-}
-
-static void
-_e_gadcon_popup_del_cb(void *obj)
-{
-   E_Gadcon_Popup *pop;
-
-   pop = e_object_data_get(obj);
-   pop->win = NULL;
-   e_object_del(E_OBJECT(pop));
 }
 
 static void
 _e_gadcon_popup_position(E_Gadcon_Popup *pop)
 {
    Evas_Coord gx = 0, gy = 0, gw, gh, zw, zh, zx, zy, px, py;
+   E_Zone *zone;
 
    /* Popup positioning */
    e_gadcon_client_geometry_get(pop->gcc, &gx, &gy, &gw, &gh);
-   zx = pop->win->zone->x;
-   zy = pop->win->zone->y;
-   zw = pop->win->zone->w;
-   zh = pop->win->zone->h;
+   zone = e_gadcon_zone_get(pop->gcc->gadcon);
+   zx = zone->x;
+   zy = zone->y;
+   zw = zone->w;
+   zh = zone->h;
    switch (pop->gcc->gadcon->orient)
      {
       case E_GADCON_ORIENT_CORNER_RT:
@@ -135,14 +134,14 @@ _e_gadcon_popup_position(E_Gadcon_Popup *pop)
         break;
 
       default:
-        e_popup_move(pop->win, 50, 50);
+        evas_object_move(pop->comp_object, 50, 50);
         return;
      }
    if (px - zx < 0)
      px = zx;
    if (py - zy < 0)
      py = zy;
-   e_popup_move(pop->win, px - zx, py - zy);
+   evas_object_move(pop->comp_object, px, py);
 
    if (pop->gadcon_lock && (!pop->gadcon_was_locked))
      _e_gadcon_popup_locked_set(pop, 1);
@@ -162,41 +161,36 @@ _e_gadcon_popup_size_recalc(E_Gadcon_Popup *pop, Evas_Object *obj)
      }
    edje_extern_object_min_size_set(obj, w, h);
    edje_object_size_min_calc(pop->o_bg, &pop->w, &pop->h);
-   e_popup_resize(pop->win, pop->w, pop->h);
+   evas_object_resize(pop->comp_object, pop->w, pop->h);
 
-   if (pop->win->visible)
+   if (pop->visible)
      _e_gadcon_popup_position(pop);
 }
 
 static void
 _e_gadcon_popup_changed_size_hints_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   E_Gadcon_Popup *pop;
-
-   pop = data;
-   _e_gadcon_popup_size_recalc(pop, obj);
+   _e_gadcon_popup_size_recalc(data, obj);
 }
 
 /* externally accessible functions */
 
 EAPI E_Gadcon_Popup *
-e_gadcon_popup_new(E_Gadcon_Client *gcc)
+e_gadcon_popup_new(E_Gadcon_Client *gcc, Eina_Bool noshadow)
 {
    E_Gadcon_Popup *pop;
    Evas_Object *o;
-   E_Zone *zone;
 
    pop = E_OBJECT_ALLOC(E_Gadcon_Popup, E_GADCON_POPUP_TYPE, _e_gadcon_popup_free);
    if (!pop) return NULL;
-   zone = e_gadcon_client_zone_get(gcc);
-   pop->win = e_popup_new(zone, 0, 0, 0, 0);
-   e_popup_layer_set(pop->win, E_COMP_CANVAS_LAYER_POPUP, 0);
-   e_object_data_set(E_OBJECT(pop->win), pop);
-   E_OBJECT_DEL_SET(pop->win, _e_gadcon_popup_del_cb);
+   e_object_delay_del_set(E_OBJECT(pop), _e_gadcon_popup_delay_del);
 
-   o = edje_object_add(pop->win->evas);
+   o = edje_object_add(e_comp_get(gcc)->evas);
    e_theme_edje_object_set(o, "base/theme/gadman", "e/gadman/popup");
    pop->o_bg = o;
+
+   pop->comp_object = e_comp_object_util_add(o, noshadow ? E_COMP_OBJECT_TYPE_NONE : E_COMP_OBJECT_TYPE_POPUP);
+   evas_object_layer_set(pop->comp_object, E_LAYER_POPUP);
 
    pop->gcc = gcc;
    pop->gadcon_lock = 1;
@@ -227,35 +221,31 @@ e_gadcon_popup_content_set(E_Gadcon_Popup *pop, Evas_Object *o)
                                        _e_gadcon_popup_changed_size_hints_cb, pop);
      }
    pop->content = o;
-   if (old_o) e_popup_object_remove(pop->win, old_o);
-   if (o) e_popup_object_add(pop->win, o);
    _e_gadcon_popup_size_recalc(pop, o);
 }
 
 EAPI void
 e_gadcon_popup_show(E_Gadcon_Popup *pop)
 {
-   if (!pop) return;
    E_OBJECT_CHECK(pop);
    E_OBJECT_TYPE_CHECK(pop, E_GADCON_POPUP_TYPE);
 
-   if (pop->win->visible) return;
+   if (pop->visible) return;
 
    _e_gadcon_popup_position(pop);
    pop->autoclose_handlers[0] = ecore_event_handler_add(E_EVENT_DESK_AFTER_SHOW, _e_popup_autoclose_deskafter_show_cb, NULL);
-   pop->autoclose_handlers[1] = ecore_event_handler_add(E_EVENT_BORDER_FULLSCREEN, _e_popup_autoclose_border_fullscreen_cb, NULL);
-   e_popup_content_set(pop->win, pop->o_bg);
-   e_popup_show(pop->win);
+   pop->autoclose_handlers[1] = ecore_event_handler_add(E_EVENT_CLIENT_FULLSCREEN, _e_popup_autoclose_client_fullscreen_cb, NULL);
+   e_comp_object_util_del_list_append(pop->comp_object, pop->content);
+   evas_object_show(pop->comp_object);
 }
 
 EAPI void
 e_gadcon_popup_hide(E_Gadcon_Popup *pop)
 {
-   if (!pop) return;
    E_OBJECT_CHECK(pop);
    E_OBJECT_TYPE_CHECK(pop, E_GADCON_POPUP_TYPE);
    if (pop->pinned) return;
-   e_popup_hide(pop->win);
+   evas_object_hide(pop->comp_object);
    if (pop->gadcon_was_locked)
      _e_gadcon_popup_locked_set(pop, 0);
 }

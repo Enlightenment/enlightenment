@@ -155,7 +155,7 @@ e_theme_comp_border_find(const char *comp)
    int found = 0;
    const char *str;
 
-   comps = e_theme_collection_items_find(NULL, "e/comp/border");
+   comps = e_theme_collection_items_find(NULL, "e/comp/frame");
    if (eina_list_search_sorted(comps, EINA_COMPARE_CB(strcmp), comp))
      found = 1;
    EINA_LIST_FREE(comps, str) eina_stringshare_del(str);
@@ -165,7 +165,7 @@ e_theme_comp_border_find(const char *comp)
 EAPI Eina_List *
 e_theme_comp_border_list(void)
 {
-   return e_theme_collection_items_find(NULL, "e/comp/border");
+   return e_theme_collection_items_find(NULL, "e/comp/frame");
 }
 
 /* local subsystem functions */

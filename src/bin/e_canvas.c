@@ -146,7 +146,7 @@ EAPI Ecore_Evas *
 e_canvas_new(Ecore_X_Window win, int x, int y, int w, int h,
              int direct_resize, int override, Ecore_X_Window *win_ret)
 {
-   Ecore_Evas *ee;
+   Ecore_Evas *ee = NULL;
 
    ee = ecore_evas_software_x11_new(NULL, win, x, y, w, h);
    if (ee)

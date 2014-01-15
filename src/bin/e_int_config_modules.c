@@ -83,7 +83,7 @@ static void         _btn_cb_unload(void *data, void *data2);
 static void         _btn_cb_load(void *data, void *data2);
 
 EAPI E_Config_Dialog *
-e_int_config_modules(E_Container *con, const char *params __UNUSED__)
+e_int_config_modules(E_Comp *c, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd = NULL;
    E_Config_Dialog_View *v = NULL;
@@ -95,7 +95,7 @@ e_int_config_modules(E_Container *con, const char *params __UNUSED__)
    v->free_cfdata = _free_data;
    v->basic.create_widgets = _basic_create;
 
-   cfd = e_config_dialog_new(con, _("Module Settings"),
+   cfd = e_config_dialog_new(c, _("Module Settings"),
                              "E", "extensions/modules",
                              "preferences-plugin", 0, v, NULL);
    return cfd;

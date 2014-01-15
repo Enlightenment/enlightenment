@@ -164,7 +164,7 @@ _cpufreq_cb_menu_configure(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __U
 {
    if (!cpufreq_config) return;
    if (cpufreq_config->config_dialog) return;
-   e_int_config_cpufreq_module(m->zone->container, NULL);
+   e_int_config_cpufreq_module(m->zone->comp, NULL);
 }
 
 static void
@@ -498,10 +498,8 @@ _cpufreq_set_governor(const char *governor)
    if (ret != 0)
      {
         E_Dialog *dia;
-        E_Container *con;
 
-        con = e_container_current_get(e_manager_current_get());
-        if (!(dia = e_dialog_new(con, "E", "_e_mod_cpufreq_error_setfreq")))
+        if (!(dia = e_dialog_new(NULL, "E", "_e_mod_cpufreq_error_setfreq")))
           return;
         e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
         e_dialog_icon_set(dia, "enlightenment", 64);
@@ -526,10 +524,8 @@ _cpufreq_set_frequency(int frequency)
    if (!cpufreq_config->status->can_set_frequency)
      {
         E_Dialog *dia;
-        E_Container *con;
 
-        con = e_container_current_get(e_manager_current_get());
-        if (!(dia = e_dialog_new(con, "E", "_e_mod_cpufreq_error_setfreq")))
+        if (!(dia = e_dialog_new(NULL, "E", "_e_mod_cpufreq_error_setfreq")))
           return;
         e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
         e_dialog_icon_set(dia, "enlightenment", 64);
@@ -554,10 +550,8 @@ _cpufreq_set_frequency(int frequency)
    if (ret != 0)
      {
         E_Dialog *dia;
-        E_Container *con;
 
-        con = e_container_current_get(e_manager_current_get());
-        if (!(dia = e_dialog_new(con, "E", "_e_mod_cpufreq_error_setfreq")))
+        if (!(dia = e_dialog_new(NULL, "E", "_e_mod_cpufreq_error_setfreq")))
           return;
         e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
         e_dialog_icon_set(dia, "enlightenment", 64);
@@ -582,10 +576,8 @@ _cpufreq_set_pstate(int min, int max, int turbo)
    if (ret != 0)
      {
         E_Dialog *dia;
-        E_Container *con;
 
-        con = e_container_current_get(e_manager_current_get());
-        if (!(dia = e_dialog_new(con, "E", "_e_mod_cpufreq_error_setfreq")))
+        if (!(dia = e_dialog_new(NULL, "E", "_e_mod_cpufreq_error_setfreq")))
           return;
         e_dialog_title_set(dia, "Enlightenment Cpufreq Module");
         e_dialog_icon_set(dia, "enlightenment", 64);

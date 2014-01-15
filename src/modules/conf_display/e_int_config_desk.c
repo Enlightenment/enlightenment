@@ -9,7 +9,7 @@ static Eina_Bool    _cb_bg_change(void *data, int type, void *event);
 
 struct _E_Config_Dialog_Data
 {
-   int                  con_num;
+   int                  man_num;
    int                  zone_num;
    int                  desk_x;
    int                  desk_y;
@@ -23,16 +23,16 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_desk(E_Container *con, const char *params)
+e_int_config_desk(E_Comp *comp, const char *params)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
    E_Config_Dialog_Data *cfdata;
-   int con_num, zone_num, dx, dy;
+   int man_num, zone_num, dx, dy;
 
    if (!params) return NULL;
-   con_num = zone_num = dx = dy = -1;
-   if (sscanf(params, "%i %i %i %i", &con_num, &zone_num, &dx, &dy) != 4)
+   man_num = zone_num = dx = dy = -1;
+   if (sscanf(params, "%i %i %i %i", &man_num, &zone_num, &dx, &dy) != 4)
      return NULL;
 
    if (e_config_dialog_find("E", "internal/desk")) return NULL;
@@ -40,7 +40,7 @@ e_int_config_desk(E_Container *con, const char *params)
    v = E_NEW(E_Config_Dialog_View, 1);
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
-   cfdata->con_num = con_num;
+   cfdata->man_num = man_num;
    cfdata->zone_num = zone_num;
    cfdata->desk_x = dx;
    cfdata->desk_y = dy;
@@ -51,7 +51,7 @@ e_int_config_desk(E_Container *con, const char *params)
    v->basic.create_widgets = _basic_create;
    v->override_auto_apply = 1;
 
-   cfd = e_config_dialog_new(con, _("Desk Settings"), "E", "internal/desk",
+   cfd = e_config_dialog_new(comp, _("Desk Settings"), "E", "internal/desk",
                              "preferences-desktop", 0, v, cfdata);
    return cfd;
 }
@@ -65,7 +65,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    E_Config_Desktop_Window_Profile *prof;
 #endif
-   cfdata->bg = e_bg_file_get(cfdata->con_num, cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
+   cfdata->bg = e_bg_file_get(cfdata->man_num, cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
 
    for (l = e_config->desktop_names; l; l = l->next)
      {
@@ -73,7 +73,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 
         dn = l->data;
         if (!dn) continue;
-        if (dn->container != cfdata->con_num) continue;
+        if (dn->manager != cfdata->man_num) continue;
         if (dn->zone != cfdata->zone_num) continue;
         if ((dn->desk_x != cfdata->desk_x) || (dn->desk_y != cfdata->desk_y))
           continue;
@@ -88,11 +88,10 @@ _fill_data(E_Config_Dialog_Data *cfdata)
         snprintf(name, sizeof(name), _(e_config->desktop_default_name), cfdata->desk_x, cfdata->desk_y);
         cfdata->name = strdup(name);
      }
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    ok = 0;
    EINA_LIST_FOREACH(e_config->desktop_window_profiles, l, prof)
      {
-        if (!((prof->container == cfdata->con_num) &&
+        if (!((prof->manager == cfdata->man_num) &&
               (prof->zone == cfdata->zone_num) &&
               (prof->desk_x == cfdata->desk_x) &&
               (prof->desk_y == cfdata->desk_y)))
@@ -106,7 +105,6 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 
    if (!ok)
      cfdata->profile = strdup(e_config->desktop_default_window_profile);
-#endif
 }
 
 static void *
@@ -150,21 +148,21 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    if (!cfdata->profile[0])
      cfdata->profile = strdup(e_config->desktop_default_window_profile);
 #endif
-   e_desk_name_del(cfdata->con_num, cfdata->zone_num,
+   e_desk_name_del(cfdata->man_num, cfdata->zone_num,
                    cfdata->desk_x, cfdata->desk_y);
-   e_desk_name_add(cfdata->con_num, cfdata->zone_num,
+   e_desk_name_add(cfdata->man_num, cfdata->zone_num,
                    cfdata->desk_x, cfdata->desk_y, cfdata->name);
    e_desk_name_update();
 
 #if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
-   e_desk_window_profile_del(cfdata->con_num, cfdata->zone_num,
+   e_desk_window_profile_del(cfdata->man_num, cfdata->zone_num,
                              cfdata->desk_x, cfdata->desk_y);
-   e_desk_window_profile_add(cfdata->con_num, cfdata->zone_num,
+   e_desk_window_profile_add(cfdata->man_num, cfdata->zone_num,
                              cfdata->desk_x, cfdata->desk_y, cfdata->profile);
    e_desk_window_profile_update();
 #endif
-   e_bg_del(cfdata->con_num, cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
-   e_bg_add(cfdata->con_num, cfdata->zone_num,
+   e_bg_del(cfdata->man_num, cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
+   e_bg_add(cfdata->man_num, cfdata->zone_num,
             cfdata->desk_x, cfdata->desk_y, cfdata->bg);
    e_bg_update();
 
@@ -178,7 +176,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    Evas_Object *o, *of, *ol, *ob;
    E_Zone *zone;
 
-   zone = e_zone_current_get(cfd->con);
+   zone = e_zone_current_get(cfd->comp);
 
    o = e_widget_list_add(evas, 0, 0);
 
@@ -224,10 +222,9 @@ _cb_config(void *data, void *data2 __UNUSED__)
    cfdata = data;
    if (!cfdata) return;
    snprintf(buf, sizeof(buf), "%i %i %i %i",
-            cfdata->con_num, cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
+            cfdata->man_num, cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
    e_configure_registry_call("internal/wallpaper_desk",
-                             e_container_current_get(e_manager_current_get()),
-                             buf);
+                             NULL, buf);
 }
 
 static Eina_Bool
@@ -241,12 +238,12 @@ _cb_bg_change(void *data, int type, void *event)
 
    cfdata = data;
    ev = event;
-   if (ev->container != cfdata->con_num) return ECORE_CALLBACK_PASS_ON;
+   if (ev->manager != cfdata->man_num) return ECORE_CALLBACK_PASS_ON;
    if (ev->zone != cfdata->zone_num) return ECORE_CALLBACK_PASS_ON;
    if (ev->desk_x != cfdata->desk_x) return ECORE_CALLBACK_PASS_ON;
    if (ev->desk_y != cfdata->desk_y) return ECORE_CALLBACK_PASS_ON;
 
-   file = e_bg_file_get(cfdata->con_num, cfdata->zone_num,
+   file = e_bg_file_get(cfdata->man_num, cfdata->zone_num,
                         cfdata->desk_x, cfdata->desk_y);
    eina_stringshare_replace(&cfdata->bg, file);
    e_widget_preview_edje_set(cfdata->preview, cfdata->bg,

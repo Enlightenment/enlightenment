@@ -7529,41 +7529,15 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
             (e_config->drag_resist * e_config->drag_resist))
           {
              E_Drag *d;
-             Evas_Object *o = NULL, *o2, *layout = NULL;
+             Evas_Object *o = NULL, *o2 = NULL, *layout = NULL;
              const char *drag_types[] = { "text/uri-list" }, *real_path;
              char buf[PATH_MAX + 8], *p, *sel = NULL;
-             E_Container *con = NULL;
+             E_Comp *c = NULL;
              Eina_Binbuf *sbuf;
              Eina_List *sl, *icons = NULL;
              size_t sel_length = 0, p_offset, p_length;
 
-             switch (ic->sd->eobj->type)
-               {
-                case E_GADCON_TYPE:
-                  con = ((E_Gadcon *)(ic->sd->eobj))->zone->container;
-                  break;
-
-                case E_WIN_TYPE:
-                  con = ((E_Win *)(ic->sd->eobj))->container;
-                  break;
-
-                case E_ZONE_TYPE:
-                  con = ((E_Zone *)(ic->sd->eobj))->container;
-                  break;
-
-                case E_BORDER_TYPE:
-                  con = ((E_Border *)(ic->sd->eobj))->zone->container;
-                  break;
-
-                case E_POPUP_TYPE:
-                  con = ((E_Popup *)(ic->sd->eobj))->zone->container;
-                  break;
-
-                /* FIXME: add more types as needed */
-                default:
-                  break;
-               }
-             if (!con) return;
+             c = e_comp_get(ic->sd->eobj);
              ic->sd->drag = EINA_TRUE;
              ic->drag.start = EINA_FALSE;
              real_path = e_fm2_real_path_get(ic->sd->obj);
@@ -7662,7 +7636,7 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              sel = (char*)eina_binbuf_string_steal(sbuf);
              eina_binbuf_free(sbuf);
 
-             d = e_drag_new(con, 0, 0, drag_types, 1,
+             d = e_drag_new(c, 0, 0, drag_types, 1,
                             sel, sel_length, NULL, _e_fm2_cb_drag_finished);
              if (layout)
                d->x = ic->sd->x, d->y = ic->sd->y;
@@ -7671,14 +7645,18 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
              e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
 
              e_drag_object_set(d, layout ?: o);
-             d->pop->objects = icons;
              if (layout)
                {
                   e_layout_thaw(layout);
                   e_drag_resize(d, ic->sd->w, ic->sd->h);
+                  EINA_LIST_FREE(icons, o)
+                    e_comp_object_util_del_list_append(d->comp_object, o);
                }
              else
-               e_drag_resize(d, ic->w, ic->h);
+               {
+                  e_drag_resize(d, ic->w, ic->h);
+                  e_comp_object_util_del_list_append(d->comp_object, o2);
+               }
              evas_object_smart_callback_call(ic->sd->obj, "dnd_begin", &ic->info);
 
              e_drag_key_down_cb_set(d, _e_fm_drag_key_down_cb);
@@ -8834,8 +8812,6 @@ _e_fm2_menu(Evas_Object *obj, unsigned int timestamp)
    E_Fm2_Smart_Data *sd;
    E_Menu *mn, *sub;
    E_Menu_Item *mi;
-   E_Manager *man;
-   E_Container *con;
    E_Zone *zone;
    int x, y;
 
@@ -8950,20 +8926,8 @@ _e_fm2_menu(Evas_Object *obj, unsigned int timestamp)
           sd->icon_menu.end.func(sd->icon_menu.end.data, sd->obj, mn, NULL);
      }
 
-   man = e_manager_current_get();
-   if (!man)
-     {
-        e_object_del(E_OBJECT(mn));
-        return;
-     }
-   con = e_container_current_get(man);
-   if (!con)
-     {
-        e_object_del(E_OBJECT(mn));
-        return;
-     }
-   ecore_x_pointer_xy_get(con->win, &x, &y);
-   zone = e_util_zone_current_get(man);
+   ecore_evas_pointer_xy_get(e_util_comp_current_get()->ee, &x, &y);
+   zone = e_zone_current_get(e_util_comp_current_get());
    if (!zone)
      {
         e_object_del(E_OBJECT(mn));
@@ -8991,8 +8955,6 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
    E_Fm2_Smart_Data *sd;
    E_Menu *mn, *sub;
    E_Menu_Item *mi;
-   E_Manager *man;
-   E_Container *con;
    E_Zone *zone;
    Eina_List *sel;
    Eina_List *l = NULL;
@@ -9297,20 +9259,8 @@ _e_fm2_icon_menu(E_Fm2_Icon *ic, Evas_Object *obj, unsigned int timestamp)
           sd->icon_menu.end.func(sd->icon_menu.end.data, sd->obj, mn, &(ic->info));
      }
 
-   man = e_manager_current_get();
-   if (!man)
-     {
-        e_object_del(E_OBJECT(mn));
-        return;
-     }
-   con = e_container_current_get(man);
-   if (!con)
-     {
-        e_object_del(E_OBJECT(mn));
-        return;
-     }
-   ecore_x_pointer_xy_get(con->win, &x, &y);
-   zone = e_util_zone_current_get(man);
+   ecore_evas_pointer_xy_get(e_util_comp_current_get()->ee, &x, &y);
+   zone = e_zone_current_get(e_util_comp_current_get());
    if (!zone)
      {
         e_object_del(E_OBJECT(mn));
@@ -10335,9 +10285,7 @@ static Evas_Object *
 _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
 {
    Evas *e;
-   E_Container *con;
-   E_Manager *man;
-   Eina_List *l, *ll;
+   E_Comp *c;
 
    if (ic->sd->iop_icon)
      _e_fm2_icon_entry_widget_accept(ic->sd->iop_icon);
@@ -10346,19 +10294,13 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
      return NULL;
 
    e = evas_object_evas_get(ic->obj);
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
-     EINA_LIST_FOREACH(man->containers, ll, con)
-       {
-          if (con->bg_evas != e) continue;
-          ic->keygrab = ecore_evas_window_get(con->bg_ecore_evas);
-          break;
-       }
+   c = e_comp_evas_find(e);
    ic->entry_widget = e_widget_entry_add(e, NULL, NULL, NULL, NULL);
    evas_object_event_callback_add(ic->entry_widget, EVAS_CALLBACK_KEY_DOWN,
                                   _e_fm2_icon_entry_widget_cb_key_down, ic);
    evas_event_feed_mouse_out(evas_object_evas_get(ic->obj), ecore_x_current_time_get(), NULL);
-   if (ic->keygrab)
-     e_grabinput_get(0, 0, ic->keygrab);
+   if (c)
+     e_comp_grab_input(c, 0, 1);
    edje_object_part_swallow(ic->obj, "e.swallow.entry", ic->entry_widget);
    evas_object_show(ic->entry_widget);
    e_widget_entry_text_set(ic->entry_widget, ic->info.file);
@@ -10366,7 +10308,7 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    e_widget_entry_select_all(ic->entry_widget);
    ic->sd->iop_icon = ic;
    ic->sd->typebuf.disabled = EINA_TRUE;
-   evas_event_feed_mouse_in(evas_object_evas_get(ic->obj), ecore_x_current_time_get(), NULL);
+   evas_event_feed_mouse_in(e, ecore_x_current_time_get(), NULL);
 
    return ic->entry_widget;
 }
@@ -10859,8 +10801,6 @@ _e_fm2_file_application_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item
 {
    Efreet_Desktop *desktop;
    E_Fm2_Icon *ic;
-   E_Manager *man;
-   E_Container *con;
    char buf[PATH_MAX];
 
    ic = data;
@@ -10868,31 +10808,19 @@ _e_fm2_file_application_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item
      return;
    desktop = efreet_desktop_get(buf);
 
-   man = e_manager_current_get();
-   if (!man) return;
-   con = e_container_current_get(man);
-   if (!con) return;
-
-   e_desktop_edit(con, desktop);
+   e_desktop_edit(NULL, desktop);
 }
 
 static void
 _e_fm2_file_properties(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
    E_Fm2_Icon *ic;
-   E_Manager *man;
-   E_Container *con;
 
    ic = data;
    if ((ic->entry_dialog) || (ic->entry_widget)) return;
 
-   man = e_manager_current_get();
-   if (!man) return;
-   con = e_container_current_get(man);
-   if (!con) return;
-
    if (ic->prop_dialog) e_object_del(E_OBJECT(ic->prop_dialog));
-   ic->prop_dialog = e_fm_prop_file(con, ic);
+   ic->prop_dialog = e_fm_prop_file(NULL, ic);
    E_OBJECT(ic->prop_dialog)->data = ic;
    e_object_del_attach_func_set(E_OBJECT(ic->prop_dialog), _e_fm2_file_properties_delete_cb);
 }
@@ -11676,8 +11604,6 @@ e_fm2_drop_menu(Evas_Object *obj, char *args)
 {
    E_Menu *menu;
    E_Menu_Item *item;
-   E_Manager *man;
-   E_Container *con;
    E_Zone *zone;
    int x, y;
 
@@ -11722,12 +11648,8 @@ e_fm2_drop_menu(Evas_Object *obj, char *args)
                                                    "e/fileman/default/button/abort"),
                              "e/fileman/default/button/abort");
 
-   man = e_manager_current_get();
-   if (!man) goto error;
-   con = e_container_current_get(man);
-   if (!con) goto error;
-   ecore_x_pointer_xy_get(con->win, &x, &y);
-   zone = e_util_zone_current_get(man);
+   ecore_evas_pointer_xy_get(e_util_comp_current_get()->ee, &x, &y);
+   zone = e_zone_current_get(e_util_comp_current_get());
    if (!zone) goto error;
    e_menu_activate_mouse(menu, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
    return;

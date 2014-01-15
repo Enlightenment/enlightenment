@@ -12,14 +12,14 @@ static void                  _basic_apply_border(E_Config_Dialog_Data *cfdata);
 
 struct _E_Config_Dialog_Data
 {
-   E_Border    *border;
-   E_Container *container;
+   E_Client *client;
+   E_Comp *comp;
    const char  *bordername;
    int          remember_border;
 };
 
 E_Config_Dialog *
-e_int_config_borders(E_Container *con, const char *params __UNUSED__)
+e_int_config_borders(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -27,30 +27,30 @@ e_int_config_borders(E_Container *con, const char *params __UNUSED__)
    if (e_config_dialog_find("E", "appearance/borders")) return NULL;
    v = _config_view_new();
    if (!v) return NULL;
-   cfd = e_config_dialog_new(con, _("Default Border Style"),
+   cfd = e_config_dialog_new(comp, _("Default Border Style"),
                              "E", "appearance/borders",
-                             "preferences-system-windows", 0, v, con);
+                             "preferences-system-windows", 0, v, comp);
    return cfd;
 }
 
 E_Config_Dialog *
-e_int_config_borders_border(E_Container *con __UNUSED__, const char *params)
+e_int_config_borders_border(E_Comp *comp __UNUSED__, const char *params)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   E_Border *bd;
+   E_Client *ec;
 
    if (!params) return NULL;
-   bd = NULL;
-   sscanf(params, "%p", &bd);
-   if (!bd) return NULL;
+   ec = NULL;
+   sscanf(params, "%p", &ec);
+   if (!ec) return NULL;
    v = _config_view_new();
    if (!v) return NULL;
-   cfd = e_config_dialog_new(bd->zone->container,
+   cfd = e_config_dialog_new(ec->zone->comp,
                              _("Window Border Selection"),
                              "E", "_config_border_border_style_dialog",
-                             "preferences-system-windows", 0, v, bd);
-   bd->border_border_dialog = cfd;
+                             "preferences-system-windows", 0, v, ec);
+   ec->border_border_dialog = cfd;
    return cfd;
 }
 
@@ -76,12 +76,12 @@ _create_data(E_Config_Dialog *cfd)
    E_Config_Dialog_Data *cfdata;
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
-   cfdata->container = NULL;
-   cfdata->border = NULL;
-   if (E_OBJECT(cfd->data)->type == E_CONTAINER_TYPE)
-     cfdata->container = cfd->data;
+   cfdata->comp = NULL;
+   cfdata->client = NULL;
+   if (E_OBJECT(cfd->data)->type == E_COMP_TYPE)
+     cfdata->comp = cfd->data;
    else
-     cfdata->border = cfd->data;
+     cfdata->client = cfd->data;
 
    _fill_data(cfdata);
    return cfdata;
@@ -90,14 +90,14 @@ _create_data(E_Config_Dialog *cfd)
 static void
 _fill_data(E_Config_Dialog_Data *cfdata)
 {
-   if (cfdata->border)
+   if (cfdata->client)
      {
-        if ((cfdata->border->remember) &&
-            (cfdata->border->remember->apply & E_REMEMBER_APPLY_BORDER))
+        if ((cfdata->client->remember) &&
+            (cfdata->client->remember->apply & E_REMEMBER_APPLY_BORDER))
           {
              cfdata->remember_border = 1;
           }
-        cfdata->bordername = eina_stringshare_add(cfdata->border->client.border.name);
+        cfdata->bordername = eina_stringshare_add(cfdata->client->border.name);
      }
    else
      cfdata->bordername = eina_stringshare_add(e_config->theme_default_border_style);
@@ -106,8 +106,8 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 static void
 _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   if (cfdata->border)
-     cfdata->border->border_border_dialog = NULL;
+   if (cfdata->client)
+     cfdata->client->border_border_dialog = NULL;
 
    eina_stringshare_del(cfdata->bordername);
    E_FREE(cfdata);
@@ -117,13 +117,13 @@ static int
 _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    Eina_Bool remch = ((cfdata->remember_border && 
-                       !((cfdata->border->remember) &&
-                         (cfdata->border->remember->apply & E_REMEMBER_APPLY_BORDER))) ||
-                      (!cfdata->remember_border && cfdata->border &&
-                          ((cfdata->border->remember) &&
-                              (cfdata->border->remember->apply & E_REMEMBER_APPLY_BORDER))));
-   if (cfdata->border)
-     return (cfdata->bordername != cfdata->border->client.border.name) || (remch);
+                       !((cfdata->client->remember) &&
+                         (cfdata->client->remember->apply & E_REMEMBER_APPLY_BORDER))) ||
+                      (!cfdata->remember_border && cfdata->client &&
+                          ((cfdata->client->remember) &&
+                              (cfdata->client->remember->apply & E_REMEMBER_APPLY_BORDER))));
+   if (cfdata->client)
+     return (cfdata->bordername != cfdata->client->border.name) || (remch);
    else
      return (cfdata->bordername != e_config->theme_default_border_style) || (remch);
 }
@@ -131,17 +131,18 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 static int
 _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   if (cfdata->border)
+   if (cfdata->client)
      _basic_apply_border(cfdata);
-   else if (cfdata->container)
+   else if (cfdata->comp)
      {
         Eina_List *l;
-        E_Border *bd;
+        E_Client *ec;
         eina_stringshare_replace(&e_config->theme_default_border_style, cfdata->bordername);
-        EINA_LIST_FOREACH(e_border_client_list(), l, bd)
+        EINA_LIST_FOREACH(cfdata->comp->clients, l, ec)
           {
-             bd->changed = 1;
-             bd->client.border.changed = 1;
+             if (e_client_util_ignored_get(ec)) continue;
+             EC_CHANGED(ec);
+             ec->border.changed = 1;
           }
      }
    e_config_save_queue();
@@ -151,15 +152,15 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 static void
 _basic_apply_border(E_Config_Dialog_Data *cfdata)
 {
-   if ((!cfdata->border->lock_border) && (!cfdata->border->shaded))
+   if ((!cfdata->client->lock_border) && (!cfdata->client->shaded))
      {
-        eina_stringshare_replace(&cfdata->border->bordername, cfdata->bordername);
-        cfdata->border->client.border.changed = 1;
-        cfdata->border->changed = 1;
+        eina_stringshare_replace(&cfdata->client->bordername, cfdata->bordername);
+        cfdata->client->border.changed = 1;
+        EC_CHANGED(cfdata->client);
      }
    if (cfdata->remember_border)
      {
-        E_Remember *rem = cfdata->border->remember;
+        E_Remember *rem = cfdata->client->remember;
 
         if (!rem)
           {
@@ -169,22 +170,22 @@ _basic_apply_border(E_Config_Dialog_Data *cfdata)
         if (rem)
           {
              rem->apply |= E_REMEMBER_APPLY_BORDER;
-             e_remember_default_match_set(rem, cfdata->border);
-             eina_stringshare_replace(&rem->prop.border, cfdata->border->bordername);
-             cfdata->border->remember = rem;
-             e_remember_update(cfdata->border);
+             e_remember_default_match_set(rem, cfdata->client);
+             eina_stringshare_replace(&rem->prop.border, cfdata->client->bordername);
+             cfdata->client->remember = rem;
+             e_remember_update(cfdata->client);
           }
      }
    else
      {
-        if (cfdata->border->remember)
+        if (cfdata->client->remember)
           {
-             cfdata->border->remember->apply &= ~E_REMEMBER_APPLY_BORDER;
-             if (cfdata->border->remember->apply == 0)
+             cfdata->client->remember->apply &= ~E_REMEMBER_APPLY_BORDER;
+             if (cfdata->client->remember->apply == 0)
                {
-                  e_remember_unuse(cfdata->border->remember);
-                  e_remember_del(cfdata->border->remember);
-                  cfdata->border->remember = NULL;
+                  e_remember_unuse(cfdata->client->remember);
+                  e_remember_del(cfdata->client->remember);
+                  cfdata->client->remember = NULL;
                }
           }
      }
@@ -200,8 +201,8 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    const char *str, *tmp;
 
    e_dialog_resizable_set(cfd->dia, 1);
-   if (cfdata->border)
-     tmp = cfdata->border->client.border.name;
+   if (cfdata->client)
+     tmp = cfdata->client->border.name;
    else
      tmp = e_config->theme_default_border_style;
 
@@ -250,7 +251,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_framelist_object_append(of, ol);
    e_widget_list_object_append(o, of, 1, 1, 0.5);
 
-   if (cfdata->border)
+   if (cfdata->client)
      {
         ob = e_widget_check_add(evas, _("Remember this Border for this window next time it appears"),
                                 &(cfdata->remember_border));

@@ -932,7 +932,7 @@ _edit_app_action(Evry_Action *act)
         desktop->exec = strdup(app->file);
      }
 
-   e_desktop_edit(e_container_current_get(e_manager_current_get()), desktop);
+   e_desktop_edit(NULL, desktop);
 
    return 1;
 }
@@ -1009,7 +1009,7 @@ _new_app_action(Evry_Action *act)
           desktop->mime_types = eina_list_clone(app->desktop->mime_types);
      }
    if (desktop)
-     e_desktop_edit(e_container_current_get(e_manager_current_get()), desktop);
+     e_desktop_edit(NULL, desktop);
 
    return 1;
 }
@@ -1284,7 +1284,7 @@ static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dia
 static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
 static E_Config_Dialog *
-_conf_dialog(E_Container *con, const char *params __UNUSED__)
+_conf_dialog(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd = NULL;
    E_Config_Dialog_View *v = NULL;
@@ -1299,7 +1299,7 @@ _conf_dialog(E_Container *con, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create;
    v->basic.apply_cfdata = _basic_apply;
 
-   cfd = e_config_dialog_new(con, _("Everything Applications"), "everything-apps",
+   cfd = e_config_dialog_new(comp, _("Everything Applications"), "everything-apps",
                              "launcher/everything-apps", _module_icon, 0, v, NULL);
 
    _conf->cfd = cfd;

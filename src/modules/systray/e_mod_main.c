@@ -114,7 +114,7 @@ _cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
    v->basic.create_widgets = _cfg_widgets_create;
    v->basic.apply_cfdata = _cfg_data_apply;
 
-   e_config_dialog_new(m->zone->container, _("Systray Settings"), "E",
+   e_config_dialog_new(m->zone->comp, _("Systray Settings"), "E",
                        "_e_mod_systray_config_dialog",
                        NULL, 0, v, data);
 }
@@ -245,8 +245,8 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    if (!inst)
      return NULL;
    inst->evas = gc->evas;
-   inst->con = e_container_current_get(e_manager_current_get());
-   if (!inst->con)
+   inst->comp = e_comp_get(NULL);
+   if (!inst->comp)
      {
         E_FREE(inst);
         return NULL;
@@ -544,14 +544,14 @@ int
 systray_manager_number_get(const Instance *inst)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(inst, 0);
-   return inst->con->manager->num;
+   return inst->comp->num;
 }
 
 Ecore_X_Window
 systray_root_get(const Instance *inst)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(inst, 0);
-   return inst->con->manager->root;
+   return inst->comp->man->root;
 }
 
 static void

@@ -54,7 +54,7 @@ _fsel_cb_ok(void *data, E_Dialog *dia __UNUSED__)
    if ((p) && (strcasecmp(p, ".edj")))
      {
         E_Import_Config_Dialog *import;
-        import = e_import_config_dialog_show(id->dia->win->container, path, _import_ok, NULL);
+        import = e_import_config_dialog_show(id->dia->win->comp, path, _import_ok, NULL);
         e_dialog_parent_set(import->dia, id->dia->win);
         e_object_data_set(E_OBJECT(import), id);
         return;
@@ -103,8 +103,11 @@ static void
 _e_import_dia_del(void *data)
 {
    E_Dialog *dia = data;
+   E_Import_Dialog *id;
 
-   e_object_del(dia->data);
+   id = dia->data;
+   dia->data = NULL;
+   e_object_del(E_OBJECT(id));
 }
 
 static void
@@ -125,13 +128,14 @@ _e_import_dialog_win_del(E_Win *win)
 
    dia = win->data;
    id = dia->data;
-   e_object_del(E_OBJECT(id));
+   if (id)
+     e_object_del(E_OBJECT(id));
 }
 
 //////////////////////////////////////////////////////////////////////////////////
 
 EAPI E_Import_Dialog *
-e_import_dialog_show(E_Container *con, const char *dev, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
+e_import_dialog_show(E_Comp *c, const char *dev, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
 {
    Evas *evas;
    E_Import_Dialog *id;
@@ -144,7 +148,7 @@ e_import_dialog_show(E_Container *con, const char *dev, const char *path, Ecore_
    id = E_OBJECT_ALLOC(E_Import_Dialog, E_IMPORT_DIALOG_TYPE, _e_import_dialog_del);
    if (!id) return NULL;
 
-   dia = e_dialog_new(con, "E", "_import_fsel_dialog");
+   dia = e_dialog_new(c, "E", "_import_fsel_dialog");
    if (!dia)
      {
         e_object_del(E_OBJECT(id));

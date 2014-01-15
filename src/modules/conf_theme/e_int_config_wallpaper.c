@@ -9,7 +9,7 @@ static Evas_Object     *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config
 static int              _adv_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object     *_adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 
-static E_Config_Dialog *_e_int_config_wallpaper_desk(E_Container *con, int con_num, int zone_num, int desk_x, int desk_y);
+static E_Config_Dialog *_e_int_config_wallpaper_desk(E_Comp *comp, int man_num, int zone_num, int desk_x, int desk_y);
 
 static void             _cb_button_up(void *data1, void *data2);
 static void             _cb_files_changed(void *data, Evas_Object *obj, void *event_info);
@@ -27,7 +27,7 @@ static void             _cb_import(void *data1, void *data2);
 struct _E_Config_Wallpaper
 {
    int specific_config;
-   int con_num, zone_num;
+   int man_num, zone_num;
    int desk_x, desk_y;
 };
 
@@ -52,25 +52,25 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_wallpaper(E_Container *con, const char *params __UNUSED__)
+e_int_config_wallpaper(E_Comp *comp, const char *params __UNUSED__)
 {
-   return _e_int_config_wallpaper_desk(con, -1, -1, -1, -1);
+   return _e_int_config_wallpaper_desk(comp, -1, -1, -1, -1);
 }
 
 E_Config_Dialog *
-e_int_config_wallpaper_desk(E_Container *con, const char *params)
+e_int_config_wallpaper_desk(E_Comp *comp, const char *params)
 {
-   int con_num, zone_num, desk_x, desk_y;
+   int man_num, zone_num, desk_x, desk_y;
 
    if (!params) return NULL;
-   con_num = zone_num = desk_x = desk_y = -1;
-   if (sscanf(params, "%i %i %i %i", &con_num, &zone_num, &desk_x, &desk_y) != 4)
+   man_num = zone_num = desk_x = desk_y = -1;
+   if (sscanf(params, "%i %i %i %i", &man_num, &zone_num, &desk_x, &desk_y) != 4)
      return NULL;
-   return _e_int_config_wallpaper_desk(con, con_num, zone_num, desk_x, desk_y);
+   return _e_int_config_wallpaper_desk(comp, man_num, zone_num, desk_x, desk_y);
 }
 
 static E_Config_Dialog *
-_e_int_config_wallpaper_desk(E_Container *con, int con_num, int zone_num, int desk_x, int desk_y)
+_e_int_config_wallpaper_desk(E_Comp *comp, int man_num, int zone_num, int desk_x, int desk_y)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -85,7 +85,7 @@ _e_int_config_wallpaper_desk(E_Container *con, int con_num, int zone_num, int de
    v->basic.apply_cfdata = _basic_apply;
    v->basic.create_widgets = _basic_create;
 
-   if (!(con_num == -1 && zone_num == -1 && desk_x == -1 && desk_y == -1))
+   if (!(man_num == -1 && zone_num == -1 && desk_x == -1 && desk_y == -1))
      cw->specific_config = 1;
    else
      {
@@ -95,12 +95,12 @@ _e_int_config_wallpaper_desk(E_Container *con, int con_num, int zone_num, int de
 
    v->override_auto_apply = 1;
 
-   cw->con_num = con_num;
+   cw->man_num = man_num;
    cw->zone_num = zone_num;
    cw->desk_x = desk_x;
    cw->desk_y = desk_y;
 
-   cfd = e_config_dialog_new(con, _("Wallpaper Settings"), "E",
+   cfd = e_config_dialog_new(comp, _("Wallpaper Settings"), "E",
                              "appearance/wallpaper",
                              "preferences-desktop-wallpaper", 0, v, cw);
    return cfd;
@@ -317,7 +317,7 @@ _cb_import(void *data1, void *data2 __UNUSED__)
         e_win_raise(cfdata->win_import->dia->win);
         return;
      }
-   cfdata->win_import = e_import_dialog_show(cfdata->cfd->dia->win->container, NULL, NULL, (Ecore_End_Cb)_cb_import_ok, NULL);
+   cfdata->win_import = e_import_dialog_show(cfdata->cfd->dia->win->comp, NULL, NULL, (Ecore_End_Cb)_cb_import_ok, NULL);
    e_object_data_set(E_OBJECT(cfdata->win_import), cfdata);
    e_object_del_attach_func_set(E_OBJECT(cfdata->win_import), _cb_import_del);
 }
@@ -333,24 +333,24 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    if (cw->specific_config)
      {
         /* specific config passed in. set for that only */
-        cfdata->bg = e_bg_file_get(cw->con_num, cw->zone_num, cw->desk_x, cw->desk_y);
+        cfdata->bg = e_bg_file_get(cw->man_num, cw->zone_num, cw->desk_x, cw->desk_y);
      }
    else
      {
         /* get current desk. advanced mode allows selecting all, screen or desk */
-        E_Container *c;
-        E_Zone *z;
-        E_Desk *d;
+        E_Comp *comp;
+        E_Zone *zone;
+        E_Desk *desk;
 
-        c = e_container_current_get(e_manager_current_get());
-        z = e_zone_current_get(c);
-        d = e_desk_current_get(z);
+        comp = e_manager_current_get()->comp;
+        zone = e_zone_current_get(comp);
+        desk = e_desk_current_get(zone);
 
-        cfbg = e_bg_config_get(c->num, z->num, d->x, d->y);
+        cfbg = e_bg_config_get(comp->num, zone->num, desk->x, desk->y);
         /* if we have a config for this bg, use it. */
         if (cfbg)
           {
-             if (cfbg->container >= 0 && cfbg->zone >= 0)
+             if (cfbg->manager >= 0 && cfbg->zone >= 0)
                {
                   if (cfbg->desk_x >= 0 && cfbg->desk_y >= 0)
                     cfdata->all_this_desk_screen = E_CONFIG_WALLPAPER_DESK;
@@ -412,7 +412,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    e_dialog_resizable_set(cfd->dia, 1);
 
-   zone = e_zone_current_get(cfd->con);
+   zone = e_zone_current_get(cfd->comp);
    o = e_widget_list_add(evas, 0, 1);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
@@ -529,8 +529,8 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    if (cw->specific_config)
      {
         /* update a specific config */
-        e_bg_del(cw->con_num, cw->zone_num, cw->desk_x, cw->desk_y);
-        e_bg_add(cw->con_num, cw->zone_num, cw->desk_x, cw->desk_y, cfdata->bg);
+        e_bg_del(cw->man_num, cw->zone_num, cw->desk_x, cw->desk_y);
+        e_bg_add(cw->man_num, cw->zone_num, cw->desk_x, cw->desk_y, cfdata->bg);
      }
    else
      {
@@ -540,7 +540,7 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
              E_Config_Desktop_Background *cfbg;
 
              cfbg = e_config->desktop_backgrounds->data;
-             e_bg_del(cfbg->container, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
+             e_bg_del(cfbg->manager, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
           }
         if ((cfdata->use_theme_bg) || (!cfdata->bg))
           e_bg_default_set(NULL);
@@ -567,7 +567,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    e_dialog_resizable_set(cfd->dia, 1);
 
-   zone = e_zone_current_get(cfd->con);
+   zone = e_zone_current_get(cfd->comp);
    o = e_widget_list_add(evas, 0, 1);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
@@ -638,8 +638,8 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    ow = e_widget_radio_add(evas, _("This Desktop"), E_CONFIG_WALLPAPER_DESK, rg);
    e_widget_frametable_object_append(of, ow, 0, 1, 1, 1, 1, 0, 1, 0);
    ow = e_widget_radio_add(evas, _("This Screen"), E_CONFIG_WALLPAPER_SCREEN, rg);
-   if (!(e_util_container_zone_number_get(0, 1) ||
-         (e_util_container_zone_number_get(1, 0))))
+   if (!(e_util_comp_zone_number_get(0, 1) ||
+         (e_util_comp_zone_number_get(1, 0))))
      e_widget_disabled_set(ow, 1);
    e_widget_frametable_object_append(of, ow, 0, 2, 1, 1, 1, 0, 1, 0);
    e_widget_table_object_append(ot, of, 0, 3, 2, 1, 1, 0, 1, 0);
@@ -656,7 +656,7 @@ _adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    E_Zone *z;
    E_Desk *d;
 
-   if (!(z = e_zone_current_get(cfdata->cfd->con))) return 0;
+   if (!(z = e_zone_current_get(cfdata->cfd->comp))) return 0;
    if (!(d = e_desk_current_get(z))) return 0;
    if (cfdata->use_theme_bg)
      {
@@ -665,7 +665,7 @@ _adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
              E_Config_Desktop_Background *cfbg;
 
              cfbg = e_config->desktop_backgrounds->data;
-             e_bg_del(cfbg->container, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
+             e_bg_del(cfbg->manager, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
           }
         e_bg_default_set(NULL);
      }
@@ -678,17 +678,17 @@ _adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
                   E_Config_Desktop_Background *cfbg;
 
                   cfbg = e_config->desktop_backgrounds->data;
-                  e_bg_del(cfbg->container, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
+                  e_bg_del(cfbg->manager, cfbg->zone, cfbg->desk_x, cfbg->desk_y);
                }
              e_bg_default_set(cfdata->bg);
           }
         else if (cfdata->all_this_desk_screen == E_CONFIG_WALLPAPER_DESK)
           {
-             e_bg_del(z->container->num, z->num, d->x, d->y);
-             e_bg_del(z->container->num, -1, d->x, d->y);
+             e_bg_del(z->comp->num, z->num, d->x, d->y);
+             e_bg_del(z->comp->num, -1, d->x, d->y);
              e_bg_del(-1, z->num, d->x, d->y);
              e_bg_del(-1, -1, d->x, d->y);
-             e_bg_add(z->container->num, z->num, d->x, d->y, cfdata->bg);
+             e_bg_add(z->comp->num, z->num, d->x, d->y, cfdata->bg);
           }
         else if (cfdata->all_this_desk_screen == E_CONFIG_WALLPAPER_SCREEN)
           {
@@ -697,7 +697,7 @@ _adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
                   E_Config_Desktop_Background *cfbg;
 
                   cfbg = l->data;
-                  if ((cfbg->container == (int)z->container->num) &&
+                  if ((cfbg->manager == (int)z->comp->num) &&
                       (cfbg->zone == (int)z->num))
                     fl = eina_list_append(fl, cfbg);
                }
@@ -706,11 +706,11 @@ _adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
                   E_Config_Desktop_Background *cfbg;
 
                   cfbg = fl->data;
-                  e_bg_del(cfbg->container, cfbg->zone, cfbg->desk_x,
+                  e_bg_del(cfbg->manager, cfbg->zone, cfbg->desk_x,
                            cfbg->desk_y);
                   fl = eina_list_remove_list(fl, fl);
                }
-             e_bg_add(z->container->num, z->num, -1, -1, cfdata->bg);
+             e_bg_add(z->comp->num, z->num, -1, -1, cfdata->bg);
           }
      }
    e_bg_update();

@@ -20,25 +20,17 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 EAPI E_Obj_Dialog *
-e_obj_dialog_new(E_Container *con, char *title, char *class_name, char *class_class)
+e_obj_dialog_new(E_Comp *c, char *title, char *class_name, char *class_class)
 {
    E_Obj_Dialog *od;
-   E_Manager *man;
    Evas_Object *o;
    Eina_Bool kg;
    Evas_Modifier_Mask mask;
 
-   if (!con)
-     {
-        man = e_manager_current_get();
-        if (!man) return NULL;
-        con = e_container_current_get(man);
-        if (!con) con = e_container_number_get(man, 0);
-        if (!con) return NULL;
-     }
+   if (!c) c = e_util_comp_current_get();
    od = E_OBJECT_ALLOC(E_Obj_Dialog, E_OBJ_DIALOG_TYPE, _e_obj_dialog_free);
    if (!od) return NULL;
-   od->win = e_win_new(con);
+   od->win = e_win_new(c);
    if (!od->win)
      {
         free(od);
@@ -78,14 +70,8 @@ e_obj_dialog_icon_set(E_Obj_Dialog *od, char *icon)
 {
    E_OBJECT_CHECK(od);
    E_OBJECT_TYPE_CHECK(od, E_OBJ_DIALOG_TYPE);
-   if (od->win->border->internal_icon)
-     {
-        eina_stringshare_del(od->win->border->internal_icon);
-        od->win->border->internal_icon = NULL;
-     }
-   if (icon)
-     od->win->border->internal_icon = eina_stringshare_add(icon);
-}
+   eina_stringshare_replace(&od->win->client->internal_icon, icon);
+ }
 
 EAPI void
 e_obj_dialog_show(E_Obj_Dialog *od)

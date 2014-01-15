@@ -114,7 +114,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
         inst->illume_mode = EINA_TRUE;
 
         inst->handlers = eina_list_append(inst->handlers,
-                                          ecore_event_handler_add(E_EVENT_BORDER_FOCUS_OUT,
+                                          ecore_event_handler_add(E_EVENT_CLIENT_FOCUS_OUT,
                                                                   _cb_focus_out, inst));
      }
 
@@ -237,8 +237,8 @@ _hide_done(void *data, Evas_Object *obj EINA_UNUSED, const char *s EINA_UNUSED, 
    evry_selectors_switch(inst->win, -1, 0);
    evry_selectors_switch(inst->win, -1, 0);
 
-   e_border_iconify(inst->win->ewin->border);
-   e_comp_win_effect_set(inst->win->ewin->border->cw, "none");
+   e_client_iconify(inst->win->ewin->client);
+   e_comp_object_effect_set(inst->win->ewin->client->frame, "none");
    inst->animating = 0;
 }
 
@@ -247,22 +247,22 @@ _evry_hide_func(Evry_Window *win, int finished __UNUSED__)
 {
    Instance *inst = win->data;
 
-   e_comp_win_effect_set(inst->win->ewin->border->cw, "pane");
+   e_comp_object_effect_set(inst->win->ewin->client->frame, "pane");
    /* set geoms */
-   e_comp_win_effect_params_set(inst->win->ewin->border->cw, 1,
+   e_comp_object_effect_params_set(inst->win->ewin->client->frame, 1,
      (int[]){inst->win->ewin->x, inst->win->ewin->y,
              inst->win->ewin->w, inst->win->ewin->h,
-             inst->win->ewin->border->zone->w, inst->win->ewin->border->zone->h,
+             inst->win->ewin->client->zone->w, inst->win->ewin->client->zone->h,
              inst->hide_x, inst->hide_y}, 8);
-   e_comp_win_effect_params_set(inst->win->ewin->border->cw, 0, (int[]){0}, 1);
-   e_comp_win_effect_start(inst->win->ewin->border->cw, _hide_done, inst);
+   e_comp_object_effect_params_set(inst->win->ewin->client->frame, 0, (int[]){0}, 1);
+   e_comp_object_effect_start(inst->win->ewin->client->frame, _hide_done, inst);
    inst->hidden = inst->animating = EINA_TRUE;
 }
 
 static Eina_Bool
 _cb_focus_out(void *data, int type __UNUSED__, void *event)
 {
-   E_Event_Border_Focus_Out *ev;
+   E_Event_Client *ev;
    Instance *inst;
 
    ev = event;
@@ -273,7 +273,7 @@ _cb_focus_out(void *data, int type __UNUSED__, void *event)
    if ((!inst) || (!inst->win))
      return ECORE_CALLBACK_PASS_ON;
 
-   if (inst->win->ewin->border != ev->border)
+   if (inst->win->ewin->client != ev->ec)
      return ECORE_CALLBACK_PASS_ON;
 
    _evry_hide_func(inst->win, 0);
@@ -410,10 +410,10 @@ _gadget_window_show(Instance *inst)
    e_win_resize(ewin, pw, ph);
    e_win_show(ewin);
 
-   e_border_focus_set(ewin->border, 1, 1);
-   ewin->border->client.netwm.state.skip_pager = 1;
-   ewin->border->client.netwm.state.skip_taskbar = 1;
-   ewin->border->sticky = 1;
+   evas_object_focus_set(ewin->client->frame, 1);
+   ewin->client->netwm.state.skip_pager = 1;
+   ewin->client->netwm.state.skip_taskbar = 1;
+   ewin->client->sticky = 1;
 
    inst->hidden = EINA_FALSE;
 }
@@ -434,21 +434,21 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
    if (ev->button == 1)
      {
         Evry_Window *win;
-        E_Border *bd;
+        E_Client *ec;
 
         if (inst->win)
           {
              win = inst->win;
-             bd = win->ewin->border;
+             ec = win->ewin->client;
 
-             if (inst->hidden || !bd->focused)
+             if (inst->hidden || !ec->focused)
                {
                   if (inst->animating)
-                    e_comp_win_effect_stop(bd->cw, NULL);
-                  e_comp_win_effect_set(bd->cw, "none");
-                  e_border_uniconify(bd);
-                  e_border_raise(bd);
-                  e_border_focus_set(bd, 1, 1);
+                    e_comp_object_effect_stop(ec->frame, NULL);
+                  e_comp_object_effect_set(ec->frame, "none");
+                  e_client_uniconify(ec);
+                  evas_object_raise(ec->frame);
+                  evas_object_focus_set(ec->frame, 1);
                   inst->hidden = EINA_FALSE;
                   return;
                }
@@ -546,7 +546,6 @@ static void
 _conf_dialog(Instance *inst)
 {
    E_Config_Dialog_View *v = NULL;
-   E_Container *con;
 
    if (inst->cfd)
      return;
@@ -562,8 +561,7 @@ _conf_dialog(Instance *inst)
    v->basic.create_widgets = _basic_create;
    v->basic.apply_cfdata = _basic_apply;
 
-   con = e_container_current_get(e_manager_current_get());
-   inst->cfd = e_config_dialog_new(con, _("Everything Gadgets"), "everything-gadgets",
+   inst->cfd = e_config_dialog_new(NULL, _("Everything Gadgets"), "everything-gadgets",
                                    "launcher/everything-gadgets", NULL, 0, v, inst);
 
    /* _conf->cfd = cfd; */
@@ -602,7 +600,7 @@ _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 static void
 _cb_button_settings(void *data __UNUSED__, void *data2 __UNUSED__)
 {
-   /* evry_collection_conf_dialog(e_container_current_get(e_manager_current_get()), "Start"); */
+   /* evry_collection_conf_dialog(e_util_comp_current_get()), "Start"); */
 }
 
 static void

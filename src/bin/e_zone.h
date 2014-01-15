@@ -38,8 +38,7 @@ struct _E_Zone
    /* num matches the id of the xinerama screen
     * this zone belongs to. */
    unsigned int num;
-   E_Container *container;
-   E_Comp_Zone *comp_zone;
+   E_Comp *comp;
    int          fullscreen;
 
    Evas_Object *bg_object;
@@ -55,6 +54,12 @@ struct _E_Zone
 
    Eina_List   *handlers;
 
+   /* formerly E_Comp_Zone */
+   Evas_Object *base;
+   Evas_Object *over;
+   double       bl;
+   Eina_Bool    bloff;
+
    struct
    {
       unsigned char      switching : 1;
@@ -65,12 +70,12 @@ struct _E_Zone
 
    struct
    {
-      Ecore_X_Window top, right, bottom, left;
+      Evas_Object *top, *right, *bottom, *left;
    } edge;
    struct
    {
-      Ecore_X_Window left_top, top_left, top_right, right_top,
-                     right_bottom, bottom_right, bottom_left, left_bottom;
+      Evas_Object *left_top, *top_left, *top_right, *right_top,
+                  *right_bottom, *bottom_right, *bottom_left, *left_bottom;
    } corner;
 
    E_Action      *cur_mouse_action;
@@ -78,7 +83,7 @@ struct _E_Zone
 
    Ecore_Evas    *black_ecore_evas;
    Evas          *black_evas;
-   Ecore_X_Window black_win;
+   Ecore_Window black_win;
    int            black_need;
    int            id;
 
@@ -133,13 +138,12 @@ struct _E_Event_Zone_Edge
 
 EINTERN int    e_zone_init(void);
 EINTERN int    e_zone_shutdown(void);
-EAPI E_Zone   *e_zone_new(E_Container *con, int num, int id, int x, int y, int w, int h);
+EAPI E_Zone   *e_zone_new(E_Comp *con, int num, int id, int x, int y, int w, int h);
 EAPI void      e_zone_name_set(E_Zone *zone, const char *name);
 EAPI void      e_zone_move(E_Zone *zone, int x, int y);
 EAPI void      e_zone_resize(E_Zone *zone, int w, int h);
-EAPI void      e_zone_move_resize(E_Zone *zone, int x, int y, int w, int h);
-EAPI void      e_zone_fullscreen_set(E_Zone *zone, int on);
-EAPI E_Zone   *e_zone_current_get(E_Container *con);
+EAPI Eina_Bool  e_zone_move_resize(E_Zone *zone, int x, int y, int w, int h);
+EAPI E_Zone   *e_zone_current_get(E_Comp *c);
 EAPI void      e_zone_bg_reconfigure(E_Zone *zone);
 EAPI void      e_zone_flip_coords_handle(E_Zone *zone, int x, int y);
 EAPI void      e_zone_desk_count_set(E_Zone *zone, int x_count, int y_count);
@@ -159,6 +163,8 @@ EAPI void      e_zone_edge_win_layer_set(E_Zone *zone, E_Layer layer);
 
 EAPI void      e_zone_useful_geometry_dirty(E_Zone *zone);
 EAPI void      e_zone_useful_geometry_get(E_Zone *zone, int *x, int *y, int *w, int *h);
+
+EAPI void e_zone_fade_handle(E_Zone *zone, int out, double tim);
 
 extern EAPI int E_EVENT_ZONE_DESK_COUNT_SET;
 extern EAPI int E_EVENT_ZONE_MOVE_RESIZE;

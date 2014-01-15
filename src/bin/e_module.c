@@ -569,11 +569,10 @@ EAPI void
 e_module_dialog_show(E_Module *m, const char *title, const char *body)
 {
    E_Dialog *dia;
-   E_Border *bd;
    char buf[PATH_MAX];
    const char *icon = NULL;
 
-   dia = e_dialog_new(e_container_current_get(e_manager_current_get()),
+   dia = e_dialog_new(NULL,
                       "E", "_module_dialog");
    if (!dia) return;
 
@@ -611,9 +610,8 @@ e_module_dialog_show(E_Module *m, const char *title, const char *body)
    e_win_centered_set(dia->win, 1);
    e_dialog_show(dia);
    if (!m) return;
-   bd = dia->win->border;
-   if (!bd) return;
-   bd->internal_icon = eina_stringshare_add(icon);
+   if (dia->win->client)
+     dia->win->client->internal_icon = eina_stringshare_add(icon);
 }
 
 EAPI void
@@ -785,7 +783,7 @@ _e_module_cb_idler(void *data __UNUSED__)
         if (name) m = e_module_new(name);
         if (m)
           {
-#ifndef E18_RELEASE_BUILD
+#ifndef E19_RELEASE_BUILD
              char buf[1024];
              snprintf(buf, sizeof(buf), "DELAYED MODULE LOAD: %s", name);
              e_main_ts(buf);
@@ -981,7 +979,7 @@ _e_module_whitelist_check(void)
       ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
                                      _x_tainted, &_e_tainted, 1);
 
-      e_env_set("E18_TAINTED", state);
+      e_env_set("E19_TAINTED", state);
    }
 
    if (eina_list_count(badl) != known)
@@ -989,7 +987,7 @@ _e_module_whitelist_check(void)
         E_Dialog *dia;
         Eina_Strbuf *sbuf;
 
-        dia = e_dialog_new(e_container_current_get(e_manager_current_get()),
+        dia = e_dialog_new(NULL,
                            "E", "_module_whitelist_dialog");
         if (!dia)
           {

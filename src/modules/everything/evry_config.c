@@ -60,7 +60,7 @@ struct _E_Config_Dialog_Data
 };
 
 EAPI E_Config_Dialog *
-evry_config_dialog(E_Container *con, const char *params __UNUSED__)
+evry_config_dialog(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -74,7 +74,7 @@ evry_config_dialog(E_Container *con, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create_widgets;
    v->advanced.apply_cfdata = NULL;
    v->advanced.create_widgets = NULL;
-   cfd = e_config_dialog_new(con,
+   cfd = e_config_dialog_new(comp,
                              _("Everything Settings"),
                              "E", "extensions/run_everything",
                              "system-run", 0, v, NULL);
@@ -349,9 +349,7 @@ _plugin_config_cb(void *data, void *data2 __UNUSED__)
    if (!p) return;
    printf(" %s\n", p->name);
 
-   e_configure_registry_call(p->config_path,
-                             e_container_current_get(e_manager_current_get()),
-                             p->name);
+   e_configure_registry_call(p->config_path, NULL, p->name);
 }
 
 static Evas_Object *
@@ -607,7 +605,7 @@ static Evas_Object *_cat_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas,
 static int          _cat_basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
 EAPI E_Config_Dialog *
-evry_collection_conf_dialog(E_Container *con, const char *params)
+evry_collection_conf_dialog(E_Comp *comp, const char *params)
 {
    E_Config_Dialog *cfd = NULL;
    E_Config_Dialog_View *v = NULL;
@@ -630,7 +628,7 @@ evry_collection_conf_dialog(E_Container *con, const char *params)
 
    snprintf(title, sizeof(title), "%s: %s", _("Everything Collection"), p->name);
 
-   cfd = e_config_dialog_new(con, title, p->config_path, p->config_path,
+   cfd = e_config_dialog_new(comp, title, p->config_path, p->config_path,
                              EVRY_ITEM(p)->icon, 0, v, p);
 
    /* FIXME free dialogs on shutdown

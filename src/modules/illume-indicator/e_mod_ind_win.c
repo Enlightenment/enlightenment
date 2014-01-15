@@ -36,7 +36,7 @@ e_mod_ind_win_new(E_Zone *zone)
    iwin->zone = zone;
 
    /* create new window */
-   iwin->win = e_win_new(zone->container);
+   iwin->win = e_win_new(zone->comp);
    iwin->win->data = iwin;
 
    /* set some properties on the window */
@@ -130,14 +130,14 @@ e_mod_ind_win_new(E_Zone *zone)
    e_win_show(iwin->win);
 
    /* set this window on proper zone */
-   e_border_zone_set(iwin->win->border, zone);
-   iwin->win->border->user_skip_winlist = 1;
-   iwin->win->border->lock_focus_in = 1;
-   iwin->win->border->lock_focus_out = 1;
+   e_client_zone_set(iwin->win->client, zone);
+   iwin->win->client->user_skip_winlist = 1;
+   iwin->win->client->lock_focus_in = 1;
+   iwin->win->client->lock_focus_out = 1;
 
    /* set this window to be a dock window. This needs to be done after show 
     * as E will sometimes reset the window type */
-   ecore_x_netwm_window_type_set(iwin->win->evas_win, ECORE_X_WINDOW_TYPE_DOCK);
+   ecore_x_netwm_window_type_set(iwin->win->evas_win, E_WINDOW_TYPE_DOCK);
 
    /* tell conformant apps our position and size */
    ecore_x_e_illume_indicator_geometry_set(zone->black_win, zone->x, zone->y, 
@@ -195,7 +195,7 @@ _e_mod_ind_win_cb_win_prop(void *data, int type __UNUSED__, void *event)
    ev = event;
 
    if (!(iwin = data)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != iwin->win->container->manager->root) 
+   if (ev->win != iwin->win->comp->man->root) 
      return ECORE_CALLBACK_PASS_ON;
    if (ev->atom != ATM_ENLIGHTENMENT_SCALE) return ECORE_CALLBACK_PASS_ON;
 
@@ -208,7 +208,7 @@ _e_mod_ind_win_cb_win_prop(void *data, int type __UNUSED__, void *event)
    /* NB: Not sure why, but we need to tell this border to fetch icccm 
     * size position hints now :( (NOTE: This was not needed a few days ago) 
     * If we do not do this, than indicator does not change w/ scale anymore */
-   iwin->win->border->client.icccm.fetch.size_pos_hints = 1;
+   iwin->win->client->icccm.fetch.size_pos_hints = 1;
 
    /* resize this window */
    e_win_resize(iwin->win, iwin->zone->w, mh);
@@ -269,12 +269,12 @@ _e_mod_ind_win_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj
         iwin->mouse_down = 1;
 
         /* make sure we can drag */
-        if (iwin->win->border->client.illume.drag.locked) return;
+        if (iwin->win->client->illume.drag.locked) return;
 
         iwin->drag.start = 1;
         iwin->drag.dnd = 0;
         iwin->drag.y = ev->output.y;
-        iwin->drag.by = iwin->win->border->y;
+        iwin->drag.by = iwin->win->client->y;
      }
    else if (ev->button == 3) 
      {
@@ -312,32 +312,32 @@ _e_mod_ind_win_cb_mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj _
      {
         Ecore_X_Window xwin;
 
-        xwin = iwin->win->border->zone->black_win;
+        xwin = iwin->win->client->zone->black_win;
         ecore_x_e_illume_quickpanel_state_toggle(xwin);
      }
    else if (iwin->drag.dnd) 
      {
-        E_Border *bd;
+        E_Client *ec;
 
-        bd = iwin->win->border;
+        ec = iwin->win->client;
 
         /* reset mouse pointer */
-        e_pointer_type_pop(e_comp_get(bd)->pointer, bd, "move");
+        e_pointer_type_pop(e_comp_get(ec)->pointer, ec, "move");
 
         /* tell edj we are done moving */
         edje_object_signal_emit(iwin->o_base, "e,action,move,stop", "e");
 
         /* send message that we are done dragging */
-        ecore_x_e_illume_drag_end_send(bd->client.win);
+        ecore_x_e_illume_drag_end_send(e_client_util_win_get(ec));
 
         /* update quickpanel position if needed */
-        if (bd->y != iwin->drag.by) 
-          ecore_x_e_illume_quickpanel_position_update_send(bd->client.win);
+        if (ec->y != iwin->drag.by) 
+          ecore_x_e_illume_quickpanel_position_update_send(e_client_util_win_get(ec));
 
         /* tell conformant apps our position and size */
         ecore_x_e_illume_indicator_geometry_set(iwin->zone->black_win, 
-                                                bd->x, bd->y, 
-                                                bd->w, bd->h);
+                                                ec->x, ec->y, 
+                                                ec->w, ec->h);
      }
    iwin->drag.start = 0;
    iwin->drag.dnd = 0;
@@ -351,11 +351,11 @@ _e_mod_ind_win_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj
 {
    Ind_Win *iwin;
    Evas_Event_Mouse_Move *ev;
-   E_Border *bd;
+   E_Client *ec;
 
    ev = event;
    if (!(iwin = data)) return;
-   bd = iwin->win->border;
+   ec = iwin->win->client;
    if (iwin->drag.start) 
      {
         iwin->drag.dnd = 1;
@@ -363,17 +363,17 @@ _e_mod_ind_win_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj
 
         /* change mouse pointer to indicate we are dragging */
         e_pointer_type_push(e_comp_get(iwin->win)->pointer, 
-                            iwin->win->border, "move");
+                            iwin->win->client, "move");
 
         /* tell edj we are going to start moving */
         edje_object_signal_emit(iwin->o_base, "e,action,move,start", "e");
 
         /* tell quickpanel to hide because we are going to drag */
-        ecore_x_e_illume_quickpanel_state_send(bd->zone->black_win, 
+        ecore_x_e_illume_quickpanel_state_send(ec->zone->black_win, 
                                               ECORE_X_ILLUME_QUICKPANEL_STATE_OFF);
 
         /* send message that we are going to start dragging */
-        ecore_x_e_illume_drag_start_send(bd->client.win);
+        ecore_x_e_illume_drag_start_send(e_client_util_win_get(ec));
      }
 
    /* make sure we are dragging */
@@ -385,7 +385,7 @@ _e_mod_ind_win_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj
         py = ev->cur.output.y;
 
         /* do moves in 'chunks' of screen size */
-        dy = ((bd->zone->h - bd->h) / 8);
+        dy = ((ec->zone->h - ec->h) / 8);
 
         /* are we moving up or down ? */
         if (ev->cur.output.y > ev->prev.output.y) 
@@ -401,23 +401,23 @@ _e_mod_ind_win_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj
         else return;
 
         if (py > iwin->drag.y) 
-          ny = bd->y + dy;
+          ny = ec->y + dy;
         else if (py < iwin->drag.y) 
-          ny = bd->y - dy;
+          ny = ec->y - dy;
         else return;
 
         /* make sure we don't drag off the screen */
         if (ny < iwin->zone->y) 
           ny = iwin->zone->y;
-        else if ((ny + bd->h) > (iwin->zone->y + iwin->zone->h)) 
+        else if ((ny + ec->h) > (iwin->zone->y + iwin->zone->h)) 
           return;
 
         /* move the border if we need to */
-        if (bd->y != ny) 
+        if (ec->y != ny) 
           {
-             bd->y = ny;
-             bd->changes.pos = 1;
-             BD_CHANGED(bd);
+             ec->y = ny;
+             ec->changes.pos = 1;
+             EC_CHANGED(ec);
              e_win_move(iwin->win, iwin->win->x, ny);
           }
      }

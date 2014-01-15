@@ -90,7 +90,7 @@ e_exec_init(void)
      ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _e_exec_cb_exit, NULL);
 #if 0
    _e_exec_border_add_handler =
-     ecore_event_handler_add(E_EVENT_BORDER_ADD, _e_exec_cb_event_border_add, NULL);
+     ecore_event_handler_add(E_EVENT_CLIENT_ADD, _e_exec_cb_event_border_add, NULL);
 #endif
 
    E_EVENT_EXEC_NEW = ecore_event_type_new();
@@ -159,20 +159,22 @@ e_exec(E_Zone *zone, Efreet_Desktop *desktop, const char *exec,
 
              if (dosingle)
                {
-                  Eina_List *l;
-                  E_Border *bd;
+                  const Eina_List *l, *ll;
+                  E_Client *ec;
+                  E_Comp *c;
 
-                  EINA_LIST_FOREACH(e_border_client_list(), l, bd)
-                    {
-                       if (bd && bd->desktop == desktop)
-                         {
-                            if (!bd->focused)
-                              e_border_activate(bd, EINA_TRUE);
-                            else
-                              e_border_raise(bd);
-                            return NULL;
-                         }
-                    }
+                  EINA_LIST_FOREACH(e_comp_list(), l, c)
+                    EINA_LIST_FOREACH(c->clients, ll, ec)
+                      {
+                         if (ec && (ec->desktop == desktop))
+                           {
+                              if (!ec->focused)
+                                e_client_activate(ec, EINA_TRUE);
+                              else
+                                evas_object_raise(ec->frame);
+                              return NULL;
+                           }
+                      }
                }
           }
      }
@@ -222,7 +224,7 @@ e_exec_phony_del(E_Exec_Instance *inst)
 }
 
 EAPI E_Exec_Instance *
-e_exec_phony(E_Border *bd)
+e_exec_phony(E_Client *ec)
 {
    E_Exec_Instance *inst;
    Eina_List *l, *lnew;
@@ -230,23 +232,23 @@ e_exec_phony(E_Border *bd)
    inst = E_NEW(E_Exec_Instance, 1);
    inst->ref = 1;
    inst->phony = 1;
-   inst->desktop = bd->desktop;
-   inst->startup_id = bd->client.netwm.startup_id;
-   if (bd->desktop)
+   inst->desktop = ec->desktop;
+   inst->startup_id = ec->netwm.startup_id;
+   if (ec->desktop)
      {
-        efreet_desktop_ref(bd->desktop);
-        inst->key = eina_stringshare_add(bd->desktop->orig_path ?: bd->desktop->name);
+        efreet_desktop_ref(ec->desktop);
+        inst->key = eina_stringshare_add(ec->desktop->orig_path ?: ec->desktop->name);
      }
-   else if (bd->client.icccm.command.argc)
+   else if (ec->icccm.command.argc)
      {
         Eina_Strbuf *buf;
         int x;
 
         buf = eina_strbuf_new();
-        for (x = 0; x < bd->client.icccm.command.argc; x++)
+        for (x = 0; x < ec->icccm.command.argc; x++)
           {
-             eina_strbuf_append(buf, bd->client.icccm.command.argv[x]);
-             if (x + 1 < bd->client.icccm.command.argc)
+             eina_strbuf_append(buf, ec->icccm.command.argv[x]);
+             if (x + 1 < ec->icccm.command.argc)
                eina_strbuf_append_char(buf, ' ');
           }
         inst->key = eina_stringshare_add(eina_strbuf_string_get(buf));
@@ -258,13 +260,13 @@ e_exec_phony(E_Border *bd)
         return NULL;
      }
    inst->used = 1;
-   bd->exe_inst = inst;
-   inst->borders = eina_list_append(inst->borders, bd);
-   if (bd->zone) inst->screen = bd->zone->num;
-   if (bd->desk)
+   ec->exe_inst = inst;
+   inst->clients = eina_list_append(inst->clients, ec);
+   if (ec->zone) inst->screen = ec->zone->num;
+   if (ec->desk)
      {
-        inst->desk_x = bd->desk->x;
-        inst->desk_y = bd->desk->y;
+        inst->desk_x = ec->desk->x;
+        inst->desk_y = ec->desk->y;
      }
    l = eina_hash_find(e_exec_instances, inst->key);
    lnew = eina_list_append(l, inst);
@@ -344,10 +346,10 @@ e_exec_instance_found(E_Exec_Instance *inst)
 }
 
 EAPI void
-e_exec_instance_client_add(E_Exec_Instance *inst, E_Border *bd)
+e_exec_instance_client_add(E_Exec_Instance *inst, E_Client *ec)
 {
-   inst->borders = eina_list_append(inst->borders, bd);
-   bd->exe_inst = inst;
+   inst->clients = eina_list_append(inst->clients, ec);
+   ec->exe_inst = inst;
    inst->ref++;
    ecore_event_add(E_EVENT_EXEC_NEW_CLIENT, inst, _e_exec_cb_exec_new_free, inst);
 }
@@ -422,7 +424,7 @@ _e_exec_cb_exec(void *data, Efreet_Desktop *desktop, char *exec, int remaining)
         int head_length;
         int penv_display_length;
 
-        head = launch->zone->container->manager->num;
+        head = launch->zone->comp->num;
 
         penv_display_length = strlen(penv_display);
         /* Check for insane length for DISPLAY env */
@@ -629,7 +631,7 @@ static void
 _e_exec_instance_free(E_Exec_Instance *inst)
 {
    Eina_List *instances;
-   E_Border *bd;
+   E_Client *ec;
 
    if (inst->ref) return;
    E_FREE_LIST(inst->watchers, free);
@@ -656,8 +658,8 @@ _e_exec_instance_free(E_Exec_Instance *inst)
      e_exec_start_pending = eina_list_remove(e_exec_start_pending,
                                              inst->desktop);
    if (inst->expire_timer) ecore_timer_del(inst->expire_timer);
-   EINA_LIST_FREE(inst->borders, bd)
-     bd->exe_inst = NULL;
+   EINA_LIST_FREE(inst->clients, ec)
+     ec->exe_inst = NULL;
    if (inst->desktop) efreet_desktop_free(inst->desktop);
    if (inst->exe) ecore_exe_data_set(inst->exe, NULL);
    free(inst);
@@ -716,7 +718,7 @@ _e_exec_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
           {
              E_Dialog *dia;
 
-             dia = e_dialog_new(e_container_current_get(e_manager_current_get()),
+             dia = e_dialog_new(NULL,
                                 "E", "_e_exec_run_error_dialog");
              if (dia)
                {
@@ -810,7 +812,6 @@ _e_exec_error_dialog(Efreet_Desktop *desktop, const char *exec, Ecore_Exe_Event_
 {
    E_Config_Dialog_View *v;
    E_Config_Dialog_Data *cfdata;
-   E_Container *con;
 
    v = E_NEW(E_Config_Dialog_View, 1);
    if (!v) return;
@@ -832,9 +833,8 @@ _e_exec_error_dialog(Efreet_Desktop *desktop, const char *exec, Ecore_Exe_Event_
    v->basic.create_widgets = _basic_create_widgets;
    v->advanced.create_widgets = _advanced_create_widgets;
 
-   con = e_container_current_get(e_manager_current_get());
    /* Create The Dialog */
-   e_config_dialog_new(con, _("Application Execution Error"),
+   e_config_dialog_new(NULL, _("Application Execution Error"),
                        "E", "_e_exec_error_exit_dialog",
                        NULL, 0, v, cfdata);
 }

@@ -21,7 +21,7 @@ _config_tasks_module(Config_Item *ci)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   E_Container *con;
+   E_Comp *comp;
 
    v = E_NEW(E_Config_Dialog_View, 1);
 
@@ -30,8 +30,8 @@ _config_tasks_module(Config_Item *ci)
    v->basic.apply_cfdata = _basic_apply_data;
    v->basic.create_widgets = _basic_create_widgets;
 
-   con = e_container_current_get(e_manager_current_get());
-   cfd = e_config_dialog_new(con, _("Tasks Configuration"), "Tasks",
+   comp = e_comp_get(NULL);
+   cfd = e_config_dialog_new(comp, _("Tasks Configuration"), "Tasks",
                              "_e_modules_tasks_config_dialog", NULL, 0, v, ci);
    if (tasks_config->config_dialog)
      e_object_del(E_OBJECT(tasks_config->config_dialog));

@@ -52,11 +52,9 @@ static E_Dialog *
 _create_dialog(const char *title, const char *msg,
              const char *icon, const char *class)
 {
-   E_Container *con;
    E_Dialog *dialog;
 
-   con = e_container_current_get(e_manager_current_get());
-   dialog = e_dialog_new(con, title, class);
+   dialog = e_dialog_new(NULL, title, class);
    e_dialog_title_set(dialog, _(title));
    e_dialog_icon_set(dialog, icon, 64);
    e_dialog_text_set(dialog, msg);

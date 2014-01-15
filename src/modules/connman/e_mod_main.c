@@ -251,6 +251,14 @@ _econnman_popup_del_cb(void *obj)
 }
 
 static void
+_econnman_popup_del(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   E_Connman_Instance *inst = data;
+
+   E_FREE_FUNC(inst->popup, e_object_del);
+}
+
+static void
 _econnman_popup_new(E_Connman_Instance *inst)
 {
    E_Connman_Module_Context *ctxt = inst->ctxt;
@@ -262,8 +270,8 @@ _econnman_popup_new(E_Connman_Instance *inst)
    if (!ctxt->cm)
      return;
 
-   inst->popup = e_gadcon_popup_new(inst->gcc);
-   evas = inst->popup->win->evas;
+   inst->popup = e_gadcon_popup_new(inst->gcc, 0);
+   evas = e_comp_get(inst->gcc)->evas;
 
    list = e_widget_list_add(evas, 0, 0);
    inst->ui.popup.list = e_widget_ilist_add(evas, 24, 24, NULL);
@@ -285,7 +293,7 @@ _econnman_popup_new(E_Connman_Instance *inst)
    /* 30,40 % -- min vga, max uvga */
    _e_connman_widget_size_set(inst, list, 30, 40, 192, 192, 384, 384);
    e_gadcon_popup_content_set(inst->popup, list);
-   e_popup_autoclose(inst->popup->win, NULL, NULL, NULL);
+   e_comp_object_util_autoclose(inst->popup->comp_object, _econnman_popup_del, NULL, inst);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _econnman_popup_del_cb);
@@ -295,6 +303,7 @@ void
 econnman_popup_del(E_Connman_Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
+   inst->ui.popup.powered = inst->ui.popup.list = NULL;
 }
 
 static void
@@ -438,8 +447,6 @@ _econnman_cb_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event)
      {
         if (!inst->popup)
           _econnman_popup_new(inst);
-        else
-          econnman_popup_del(inst);
      }
    else if (ev->button == 3)
      _econnman_menu_new(inst, ev);
@@ -565,7 +572,7 @@ static const E_Gadcon_Client_Class _gc_class =
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, _e_connman_Name };
 
 static E_Config_Dialog *
-_econnman_config(E_Container *con, const char *params)
+_econnman_config(E_Comp *comp, const char *params)
 {
    E_Connman_Module_Context *ctxt;
 
@@ -577,7 +584,7 @@ _econnman_config(E_Container *con, const char *params)
      return NULL;
 
    if (!ctxt->conf_dialog)
-     ctxt->conf_dialog = e_connman_config_dialog_new(con, ctxt);
+     ctxt->conf_dialog = e_connman_config_dialog_new(comp, ctxt);
 
    return ctxt->conf_dialog;
 }

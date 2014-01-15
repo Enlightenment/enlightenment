@@ -49,7 +49,6 @@ e_int_config_mime_edit(E_Config_Mime_Icon *data, void *data2)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   E_Container *con;
    E_Config_Dialog_Data *cfdata;
    
    if (e_config_dialog_find("E", "fileman/mime_edit_dialog")) return NULL;
@@ -57,7 +56,6 @@ e_int_config_mime_edit(E_Config_Mime_Icon *data, void *data2)
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    cfdata->data = data;
    cfdata->data2 = data2;
-   con = e_container_current_get(e_manager_current_get());
    
    v = E_NEW(E_Config_Dialog_View, 1);
    v->create_cfdata = _create_data;
@@ -66,7 +64,7 @@ e_int_config_mime_edit(E_Config_Mime_Icon *data, void *data2)
    v->basic.check_changed = _basic_check;
    v->basic.apply_cfdata = _basic_apply;
 
-   cfd = e_config_dialog_new(con, _("File Icon"), "E", 
+   cfd = e_config_dialog_new(NULL, _("File Icon"), "E", 
 			     "fileman/mime_edit_dialog",
 			     "preferences-file-icons", 0, v, cfdata);
    return cfd;
@@ -293,7 +291,7 @@ _cb_icon_sel(void *data, void *data2)
    cfd = data2;
    if (!cfd) return;
    
-   dia = e_dialog_new(cfd->con, "E", "_mime_icon_select_dialog");
+   dia = e_dialog_new(cfd->comp, "E", "_mime_icon_select_dialog");
    if (!dia) return;
    if (cfdata->type == EDJ)
      e_dialog_title_set(dia, _("Select an Edje file"));

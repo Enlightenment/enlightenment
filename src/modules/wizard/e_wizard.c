@@ -1,8 +1,8 @@
 #include "e_wizard.h"
 
 static void     _e_wizard_next_eval(void);
-static E_Popup *_e_wizard_main_new(E_Zone *zone);
-static E_Popup *_e_wizard_extra_new(E_Zone *zone);
+static Evas_Object *_e_wizard_main_new(E_Zone *zone);
+static Evas_Object *_e_wizard_extra_new(E_Zone *zone);
 static Eina_Bool _e_wizard_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event);
 static void     _e_wizard_cb_next(void *data, Evas_Object *obj, const char *emission, const char *source);
 
@@ -12,7 +12,7 @@ static Eina_Bool _e_wizard_cb_next_page(void *data);
 static Eina_Bool _e_wizard_cb_desktops_update(void *data, int ev_type, void *ev);
 static Eina_Bool _e_wizard_cb_icons_update(void *data, int ev_type, void *ev);
 
-static E_Popup *pop = NULL;
+static Evas_Object *pop = NULL;
 static Eina_List *pops = NULL;
 static Evas_Object *o_bg = NULL;
 static Evas_Object *o_content = NULL;
@@ -25,9 +25,7 @@ static int next_can = 0;
 static Eina_List *handlers = NULL;
 static Eina_Bool got_desktops = EINA_FALSE;
 static Eina_Bool got_icons = EINA_FALSE;
-#if (EFREET_VERSION_MAJOR > 1) || (EFREET_VERSION_MINOR >= 8)
 static Eina_Bool xdg_error = EINA_FALSE;
-#endif
 static Eina_Bool need_xdg_desktops = EINA_FALSE;
 static Eina_Bool need_xdg_icons = EINA_FALSE;
 
@@ -36,26 +34,18 @@ static Ecore_Timer *next_timer = NULL;
 EAPI int
 e_wizard_init(void)
 {
-   E_Manager *man;
-   Eina_List *l;
+   E_Comp *comp;
+   E_Zone *zone;
+   const Eina_List *l, *ll;
 
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
      {
-        E_Container *con;
-        Eina_List *l2;
-
-        EINA_LIST_FOREACH(man->containers, l2, con)
+        EINA_LIST_FOREACH(comp->zones, ll, zone)
           {
-             Eina_List *l3;
-             E_Zone *zone;
-
-             EINA_LIST_FOREACH(con->zones, l3, zone)
-               {
-                  if (!pop)
-                    pop = _e_wizard_main_new(zone);
-                  else
-                    pops = eina_list_append(pops, _e_wizard_extra_new(zone));
-               }
+             if (!pop)
+               pop = _e_wizard_main_new(zone);
+             else
+               pops = eina_list_append(pops, _e_wizard_extra_new(zone));
           }
      }
 
@@ -71,16 +61,9 @@ e_wizard_init(void)
 EAPI int
 e_wizard_shutdown(void)
 {
-   E_Object *eo;
+   E_FREE_FUNC(pop, evas_object_del);
+   E_FREE_LIST(pops, evas_object_del);
 
-   if (pop)
-     {
-        e_object_del(E_OBJECT(pop));
-        pop = NULL;
-     }
-
-   EINA_LIST_FREE(pops, eo)
-     e_object_del(eo);
    while (pages)
      e_wizard_page_del(pages);
 
@@ -189,7 +172,7 @@ e_wizard_page_add(void *handle,
    if (!pg) return NULL;
 
    pg->handle = handle;
-   pg->evas = pop->evas;
+   pg->evas = evas_object_evas_get(pop);
 
    pg->init = init_cb;
    pg->shutdown = shutdown_cb;
@@ -271,46 +254,37 @@ _e_wizard_next_eval(void)
      }
 }
 
-static E_Popup *
+static Evas_Object *
 _e_wizard_main_new(E_Zone *zone)
 {
-   E_Popup *popup;
-
-   popup = e_popup_new(zone, 0, 0, zone->w, zone->h);
-   o_bg = edje_object_add(popup->evas);
+   o_bg = edje_object_add(zone->comp->evas);
 
    e_theme_edje_object_set(o_bg, "base/theme/wizard", "e/wizard/main");
    edje_object_part_text_set(o_bg, "e.text.title", _("Welcome to Enlightenment"));
    edje_object_signal_callback_add(o_bg, "e,action,next", "",
-                                   _e_wizard_cb_next, popup);
-   e_popup_move_resize(popup, 0, 0, zone->w, zone->h);
-   e_popup_layer_set(popup, E_COMP_CANVAS_LAYER_POPUP, 0);
-   e_popup_content_set(popup, o_bg);
+                                   _e_wizard_cb_next, o_bg);
+   evas_object_geometry_set(o_bg, zone->x, zone->y, zone->w, zone->h);
+   evas_object_layer_set(o_bg, E_LAYER_POPUP);
 
    /* set up next/prev buttons */
 //   edje_object_signal_emit(o_bg, "e,state,next,disable", "e");
    e_wizard_labels_update();
 
-   e_popup_show(popup);
-   return popup;
+   evas_object_show(o_bg);
+   return o_bg;
 }
 
-static E_Popup *
+static Evas_Object *
 _e_wizard_extra_new(E_Zone *zone)
 {
-   E_Popup *popup;
    Evas_Object *o;
 
-   popup = e_popup_new(zone, 0, 0, zone->w, zone->h);
-   e_popup_layer_set(popup, E_COMP_CANVAS_LAYER_POPUP, 0);
-   o = edje_object_add(popup->evas);
+   o = edje_object_add(zone->comp->evas);
    e_theme_edje_object_set(o, "base/theme/wizard", "e/wizard/extra");
-   evas_object_move(o, 0, 0);
-   evas_object_resize(o, zone->w, zone->h);
+   evas_object_geometry_set(o, zone->x, zone->y, zone->w, zone->h);
+   evas_object_layer_set(o, E_LAYER_POPUP);
    evas_object_show(o);
-   e_popup_content_set(popup, o);
-   e_popup_show(popup);
-   return popup;
+   return o;
 }
 
 static Eina_Bool

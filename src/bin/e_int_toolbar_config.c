@@ -18,16 +18,14 @@ e_int_toolbar_config(E_Toolbar *tbar)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-   E_Container *con;
 
    v = E_NEW(E_Config_Dialog_View, 1);
    if (!v) return;
-   con = e_container_current_get(e_manager_current_get());
    v->create_cfdata = _create_data;
    v->free_cfdata = _free_data;
    v->basic.apply_cfdata = _basic_apply;
    v->basic.create_widgets = _basic_create;
-   cfd = e_config_dialog_new(con, _("Toolbar Settings"), "E",
+   cfd = e_config_dialog_new(NULL, _("Toolbar Settings"), "E",
                              "_toolbar_config_dialog", "preferences-desktop-shelf",
                              0, v, tbar);
    tbar->cfg_dlg = cfd;

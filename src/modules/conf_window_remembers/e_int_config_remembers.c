@@ -21,7 +21,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_remembers(E_Container *con, const char *params __UNUSED__)
+e_int_config_remembers(E_Comp *comp, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -35,7 +35,7 @@ e_int_config_remembers(E_Container *con, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(con, _("Window Remembers"), "E",
+   cfd = e_config_dialog_new(comp, _("Window Remembers"), "E",
                              "windows/window_remembers",
                              "preferences-desktop-window-remember", 0, v, NULL);
    return cfd;
@@ -306,7 +306,7 @@ _cb_edit(void *data, void *data2 __UNUSED__)
         E_Config_Dialog *cfd;
 
         rem = e_widget_ilist_item_data_get(ili);
-        cfd = e_int_border_remember_edit(rem);
+        cfd = e_int_client_remember_edit(rem);
         e_object_data_set(E_OBJECT(cfd), cfdata);
         E_OBJECT_DEL_SET(cfd, _cb_edit_del);
         cfdata->cfds = eina_list_append(cfdata->cfds, cfd);

@@ -761,7 +761,7 @@ e_gadcon_zone_get(E_Gadcon *gc)
    E_OBJECT_TYPE_CHECK_RETURN(gc, E_GADCON_TYPE, NULL);
    if (gc->zone) return gc->zone;
    if (!gc->toolbar) return NULL;
-   return gc->toolbar->fwin->border->zone;
+   return gc->toolbar->fwin->client->zone;
 }
 
 EAPI void
@@ -779,7 +779,7 @@ e_gadcon_canvas_zone_geometry_get(E_Gadcon *gc, int *x, int *y, int *w, int *h)
    E_OBJECT_TYPE_CHECK_RETURN(gc, E_GADCON_TYPE, 0);
    if (!gc->ecore_evas) return 0;
    ecore_evas_geometry_get(gc->ecore_evas, x, y, w, h);
-// so much relies on this down here to have been broken... ie return container-relative coords.
+// so much relies on this down here to have been broken... ie return comp-relative coords.
 //   if (gc->zone)
 //     {
 //	if (x) *x = *x - gc->zone->x;
@@ -1133,7 +1133,7 @@ e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
 {
    Evas_Coord x, y, w, h;
    Evas_Object *base;
-   unsigned int layer;
+   int layer;
 
    E_OBJECT_CHECK(gcc);
    E_OBJECT_TYPE_CHECK(gcc, E_GADCON_CLIENT_TYPE);
@@ -1141,11 +1141,11 @@ e_gadcon_client_edit_begin(E_Gadcon_Client *gcc)
 
    base = gcc->o_frame ?: gcc->o_base;
    if (!base) return;
+   layer = evas_object_layer_get(base) + 1;
    evas_object_geometry_get(base, &x, &y, &w, &h);
 
    gcc->o_control = edje_object_add(gcc->gadcon->evas);
    /* FIXME: should probably be in gadget theme or something */
-   layer = e_comp_e_object_layer_effective_get(E_OBJECT(gcc)) + 1;
    evas_object_layer_set(gcc->o_control, layer);
    e_gadcon_locked_set(gcc->gadcon, 1);
    gcc->gadcon->editing = 1;
@@ -2272,7 +2272,7 @@ _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y)
 
    zone = e_gadcon_zone_get(gcc->gadcon);
    if (gcc->gadcon->drag_gcc) return;
-   if ((!zone) || (!zone->container)) return;
+   if (!zone) return;
 
    if (!e_util_strcmp(gcc->client_class->name, "systray"))
      return;
@@ -2289,9 +2289,9 @@ _e_gadcon_client_drag_begin(E_Gadcon_Client *gcc, int x, int y)
    if (!e_drop_inside(gcc->gadcon->drop_handler, x, y))
      e_gadcon_client_hide(gcc);
 
-   ecore_x_pointer_xy_get(zone->container->win, &x, &y);
+   ecore_evas_pointer_xy_get(zone->comp->ee, &x, &y);
 
-   gcc->drag.drag = drag = e_drag_new(zone->container, x, y,
+   gcc->drag.drag = drag = e_drag_new(zone->comp, x, y,
                                       drag_types, 1, gcc, -1, NULL,
                                       e_gadcon_drag_finished_cb);
    if (!drag) return;
@@ -2480,7 +2480,7 @@ _e_gadcon_cb_client_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *o
           }
 
         if (gcc->gadcon->toolbar)
-          ecore_x_pointer_xy_get(zone->container->win, &cx, &cy);
+          ecore_evas_pointer_xy_get(zone->comp->ee, &cx, &cy);
         else
           {
              e_gadcon_canvas_zone_geometry_get(gcc->gadcon, &cx, &cy, NULL, NULL);
@@ -2591,7 +2591,7 @@ _e_gadcon_client_move_go(E_Gadcon_Client *gcc)
    if (gcc->gadcon->toolbar)
      evas_pointer_canvas_xy_get(gcc->gadcon->evas, &cx, &cy);
    else
-     ecore_x_pointer_xy_get(gcc->gadcon->zone->container->win, &cx, &cy);
+     ecore_evas_pointer_xy_get(e_comp_get(gcc)->ee, &cx, &cy);
 
    evas_object_geometry_get(gcc->gadcon->o_container, &gx, &gy, &gw, &gh);
 
@@ -5557,7 +5557,7 @@ _e_gadcon_custom_populate_job(void *data __UNUSED__)
    Eina_List *l, *ll;
    E_Gadcon *gc;
 
-#ifndef E18_RELEASE_BUILD
+#ifndef E19_RELEASE_BUILD
    static Eina_Bool first = EINA_TRUE;
    if (first)
      e_main_ts("gadcon custom populate idler start");
@@ -5584,14 +5584,14 @@ _e_gadcon_custom_populate_job(void *data __UNUSED__)
         _e_gadcon_event_populate(gc);
      }
 
-#ifndef E18_RELEASE_BUILD
+#ifndef E19_RELEASE_BUILD
    if (first)
      e_main_ts("gadcon custom populate idler end");
 #endif
    if (!custom_populate_requests)
      {
         custom_populate_job = NULL;
-#ifndef E18_RELEASE_BUILD
+#ifndef E19_RELEASE_BUILD
         first = EINA_FALSE;
 #endif
      }
@@ -5604,7 +5604,7 @@ _e_gadcon_provider_populate_job(void *data __UNUSED__)
    Eina_List *l;
    E_Gadcon *gc;
 
-#ifndef E18_RELEASE_BUILD
+#ifndef E19_RELEASE_BUILD
    static Eina_Bool first = EINA_TRUE;
    if (first)
      e_main_ts("gadcon populate idler start");
@@ -5620,7 +5620,7 @@ _e_gadcon_provider_populate_job(void *data __UNUSED__)
           }
         EINA_LIST_FREE(gc->populate_requests, cc)
           {
-#ifndef E18_RELEASE_BUILD
+#ifndef E19_RELEASE_BUILD
              if (first) e_main_ts(cc->name);
 #endif
              if (gc->populate_class.func)
@@ -5647,13 +5647,13 @@ _e_gadcon_provider_populate_job(void *data __UNUSED__)
         if (x && _modules_loaded) _e_gadcon_event_populate(gc);
      }
 //out:
-#ifndef E18_RELEASE_BUILD
+#ifndef E19_RELEASE_BUILD
    if (first)
      e_main_ts("gadcon populate idler end");
 #endif
 
    populate_job = NULL;
-#ifndef E18_RELEASE_BUILD
+#ifndef E19_RELEASE_BUILD
    first = EINA_FALSE;
 #endif
 }
@@ -5754,9 +5754,8 @@ _e_gadcon_location_change(E_Gadcon_Client *gcc, E_Gadcon_Location *src, E_Gadcon
 EAPI Eina_Bool
 e_gadcon_client_visible_get(const E_Gadcon_Client *gcc, const E_Desk *desk)
 {
-   const Eina_List *l, *ll, *lll;
-   E_Manager *man;
-   E_Container *con;
+   const Eina_List *l, *ll;
+   E_Comp *c;
    E_Zone *zone;
 
    if (!gcc->gadcon) return EINA_FALSE;
@@ -5766,18 +5765,16 @@ e_gadcon_client_visible_get(const E_Gadcon_Client *gcc, const E_Desk *desk)
         return EINA_TRUE; // FIXME for when gadman allows per-desk gadgets
       case E_GADCON_SITE_SHELF:
         if (desk) return e_shelf_desk_visible(gcc->gadcon->shelf, desk);
-        EINA_LIST_FOREACH(e_manager_list(), l, man)
-          EINA_LIST_FOREACH(man->containers, ll, con)
-            EINA_LIST_FOREACH(con->zones, lll, zone)
-              if (e_shelf_desk_visible(gcc->gadcon->shelf, e_desk_current_get(zone)))
-                return EINA_TRUE;
+        EINA_LIST_FOREACH(e_comp_list(), l, c)
+          EINA_LIST_FOREACH(c->zones, ll, zone)
+            if (e_shelf_desk_visible(gcc->gadcon->shelf, e_desk_current_get(zone)))
+              return EINA_TRUE;
       case E_GADCON_SITE_TOOLBAR:
       case E_GADCON_SITE_EFM_TOOLBAR:
-        if (desk) return (gcc->gadcon->toolbar->fwin->border->desk == desk);
-        EINA_LIST_FOREACH(e_manager_list(), l, man)
-          EINA_LIST_FOREACH(man->containers, ll, con)
-            EINA_LIST_FOREACH(con->zones, lll, zone)
-              if (gcc->gadcon->toolbar->fwin->border->desk == e_desk_current_get(zone)) return EINA_TRUE;
+        if (desk) return (gcc->gadcon->toolbar->fwin->client->desk == desk);
+        EINA_LIST_FOREACH(e_comp_list(), l, c)
+          EINA_LIST_FOREACH(c->zones, ll, zone)
+            if (gcc->gadcon->toolbar->fwin->client->desk == e_desk_current_get(zone)) return EINA_TRUE;
       default:
         break;
      }

@@ -11,7 +11,7 @@ static Evas_Object *_advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E
 /* Actual config data we will be playing with whil the dialog is active */
 struct _E_Config_Dialog_Data
 {
-   E_Border *border;
+   E_Client *client;
    /*- BASIC -*/
    int       do_what_i_say;
    int       protect_from_me;
@@ -45,7 +45,7 @@ struct _E_Config_Dialog_Data
 
 /* a nice easy setup function that does the dirty work */
 EAPI void
-e_int_border_locks(E_Border *bd)
+e_int_client_locks(E_Client *ec)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -62,11 +62,11 @@ e_int_border_locks(E_Border *bd)
         v->advanced.create_widgets = _advanced_create_widgets;
         v->override_auto_apply = 1;
         /* create config diaolg for bd object/data */
-        cfd = e_config_dialog_new(bd->zone->container,
+        cfd = e_config_dialog_new(ec->comp,
                                   _("Window Locks"),
                                   "E", "_border_locks_dialog",
-                                  NULL, 0, v, bd);
-        bd->border_locks_dialog = cfd;
+                                  NULL, 0, v, ec);
+        ec->border_locks_dialog = cfd;
      }
 }
 
@@ -74,31 +74,31 @@ e_int_border_locks(E_Border *bd)
 static void
 _fill_data(E_Config_Dialog_Data *cfdata)
 {
-   cfdata->lock.user.location = (int)cfdata->border->lock_user_location & 0x1;
-   cfdata->lock.user.size = (int)cfdata->border->lock_user_size & 0x1;
-   cfdata->lock.user.stacking = (int)cfdata->border->lock_user_stacking & 0x1;
-   cfdata->lock.user.iconify = (int)cfdata->border->lock_user_iconify & 0x1;
-   cfdata->lock.user.desk = (int)cfdata->border->lock_user_desk & 0x1;
-   cfdata->lock.user.sticky = (int)cfdata->border->lock_user_sticky & 0x1;
-   cfdata->lock.user.shade = (int)cfdata->border->lock_user_shade & 0x1;
-   cfdata->lock.user.maximize = (int)cfdata->border->lock_user_maximize & 0x1;
-   cfdata->lock.user.fullscreen = (int)cfdata->border->lock_user_fullscreen & 0x1;
-   cfdata->lock.client.location = (int)cfdata->border->lock_client_location & 0x1;
-   cfdata->lock.client.size = (int)cfdata->border->lock_client_size & 0x1;
-   cfdata->lock.client.stacking = (int)cfdata->border->lock_client_stacking & 0x1;
-   cfdata->lock.client.iconify = (int)cfdata->border->lock_client_iconify & 0x1;
-   cfdata->lock.client.desk = (int)cfdata->border->lock_client_desk & 0x1;
-   cfdata->lock.client.sticky = (int)cfdata->border->lock_client_sticky & 0x1;
-   cfdata->lock.client.shade = (int)cfdata->border->lock_client_shade & 0x1;
-   cfdata->lock.client.maximize = (int)cfdata->border->lock_client_maximize & 0x1;
-   cfdata->lock.client.fullscreen = (int)cfdata->border->lock_client_fullscreen & 0x1;
-   cfdata->lock.border = (int)cfdata->border->lock_border & 0x1;
-   cfdata->lock.close = (int)cfdata->border->lock_close & 0x1;
-   cfdata->lock.focus_in = (int)cfdata->border->lock_focus_in & 0x1;
-   cfdata->lock.focus_out = (int)cfdata->border->lock_focus_out & 0x1;
-   cfdata->lock.life = (int)cfdata->border->lock_life & 0x1;
-   if ((cfdata->border->remember) &&
-       (cfdata->border->remember->apply & E_REMEMBER_APPLY_LOCKS))
+   cfdata->lock.user.location = (int)cfdata->client->lock_user_location & 0x1;
+   cfdata->lock.user.size = (int)cfdata->client->lock_user_size & 0x1;
+   cfdata->lock.user.stacking = (int)cfdata->client->lock_user_stacking & 0x1;
+   cfdata->lock.user.iconify = (int)cfdata->client->lock_user_iconify & 0x1;
+   cfdata->lock.user.desk = (int)cfdata->client->lock_user_desk & 0x1;
+   cfdata->lock.user.sticky = (int)cfdata->client->lock_user_sticky & 0x1;
+   cfdata->lock.user.shade = (int)cfdata->client->lock_user_shade & 0x1;
+   cfdata->lock.user.maximize = (int)cfdata->client->lock_user_maximize & 0x1;
+   cfdata->lock.user.fullscreen = (int)cfdata->client->lock_user_fullscreen & 0x1;
+   cfdata->lock.client.location = (int)cfdata->client->lock_client_location & 0x1;
+   cfdata->lock.client.size = (int)cfdata->client->lock_client_size & 0x1;
+   cfdata->lock.client.stacking = (int)cfdata->client->lock_client_stacking & 0x1;
+   cfdata->lock.client.iconify = (int)cfdata->client->lock_client_iconify & 0x1;
+   cfdata->lock.client.desk = (int)cfdata->client->lock_client_desk & 0x1;
+   cfdata->lock.client.sticky = (int)cfdata->client->lock_client_sticky & 0x1;
+   cfdata->lock.client.shade = (int)cfdata->client->lock_client_shade & 0x1;
+   cfdata->lock.client.maximize = (int)cfdata->client->lock_client_maximize & 0x1;
+   cfdata->lock.client.fullscreen = (int)cfdata->client->lock_client_fullscreen & 0x1;
+   cfdata->lock.border = (int)cfdata->client->lock_border & 0x1;
+   cfdata->lock.close = (int)cfdata->client->lock_close & 0x1;
+   cfdata->lock.focus_in = (int)cfdata->client->lock_focus_in & 0x1;
+   cfdata->lock.focus_out = (int)cfdata->client->lock_focus_out & 0x1;
+   cfdata->lock.life = (int)cfdata->client->lock_life & 0x1;
+   if ((cfdata->client->remember) &&
+       (cfdata->client->remember->apply & E_REMEMBER_APPLY_LOCKS))
      cfdata->lock.remember = 1;
 
    /* figure out basic config from the current locks */
@@ -131,7 +131,7 @@ _create_data(E_Config_Dialog *cfd)
    E_Config_Dialog_Data *cfdata;
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
-   cfdata->border = cfd->data;
+   cfdata->client = cfd->data;
    _fill_data(cfdata);
    return cfdata;
 }
@@ -140,7 +140,7 @@ static void
 _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    /* Free the cfdata */
-   cfdata->border->border_locks_dialog = NULL;
+   cfdata->client->border_locks_dialog = NULL;
    free(cfdata);
 }
 
@@ -152,59 +152,59 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    /* Actually take our cfdata settings and apply them in real life */
 
    flag = cfdata->do_what_i_say;
-   cfdata->border->lock_client_location = flag;
-   cfdata->border->lock_client_size = flag;
-   cfdata->border->lock_client_stacking = flag;
-   cfdata->border->lock_client_iconify = flag;
-   cfdata->border->lock_client_desk = 0;
-   cfdata->border->lock_client_sticky = flag;
-   cfdata->border->lock_client_shade = flag;
-   cfdata->border->lock_client_maximize = flag;
-   cfdata->border->lock_client_fullscreen = flag;
+   cfdata->client->lock_client_location = flag;
+   cfdata->client->lock_client_size = flag;
+   cfdata->client->lock_client_stacking = flag;
+   cfdata->client->lock_client_iconify = flag;
+   cfdata->client->lock_client_desk = 0;
+   cfdata->client->lock_client_sticky = flag;
+   cfdata->client->lock_client_shade = flag;
+   cfdata->client->lock_client_maximize = flag;
+   cfdata->client->lock_client_fullscreen = flag;
 
    flag = cfdata->protect_from_me;
-   cfdata->border->lock_user_location = flag;
-   cfdata->border->lock_user_size = flag;
-   cfdata->border->lock_user_stacking = flag;
-   cfdata->border->lock_user_iconify = flag;
-   cfdata->border->lock_user_desk = 0;
-   cfdata->border->lock_user_sticky = flag;
-   cfdata->border->lock_user_shade = flag;
-   cfdata->border->lock_user_maximize = flag;
-   cfdata->border->lock_user_fullscreen = flag;
+   cfdata->client->lock_user_location = flag;
+   cfdata->client->lock_user_size = flag;
+   cfdata->client->lock_user_stacking = flag;
+   cfdata->client->lock_user_iconify = flag;
+   cfdata->client->lock_user_desk = 0;
+   cfdata->client->lock_user_sticky = flag;
+   cfdata->client->lock_user_shade = flag;
+   cfdata->client->lock_user_maximize = flag;
+   cfdata->client->lock_user_fullscreen = flag;
 
    flag = cfdata->important_window;
-   cfdata->border->lock_close = flag;
-   cfdata->border->lock_life = flag;
+   cfdata->client->lock_close = flag;
+   cfdata->client->lock_life = flag;
 
    flag = cfdata->keep_my_border;
-   cfdata->border->lock_border = flag;
+   cfdata->client->lock_border = flag;
 
    if (cfdata->remember_locks)
      {
-        if (!cfdata->border->remember)
+        if (!cfdata->client->remember)
           {
-             cfdata->border->remember = e_remember_new();
-             if (cfdata->border->remember)
-               e_remember_use(cfdata->border->remember);
+             cfdata->client->remember = e_remember_new();
+             if (cfdata->client->remember)
+               e_remember_use(cfdata->client->remember);
           }
-        if (cfdata->border->remember)
+        if (cfdata->client->remember)
           {
-             cfdata->border->remember->apply |= E_REMEMBER_APPLY_LOCKS;
-             e_remember_default_match_set(cfdata->border->remember, cfdata->border);
-             e_remember_update(cfdata->border);
+             cfdata->client->remember->apply |= E_REMEMBER_APPLY_LOCKS;
+             e_remember_default_match_set(cfdata->client->remember, cfdata->client);
+             e_remember_update(cfdata->client);
           }
      }
    else
      {
-        if (cfdata->border->remember)
+        if (cfdata->client->remember)
           {
-             cfdata->border->remember->apply &= ~E_REMEMBER_APPLY_LOCKS;
-             if (cfdata->border->remember->apply == 0)
+             cfdata->client->remember->apply &= ~E_REMEMBER_APPLY_LOCKS;
+             if (cfdata->client->remember->apply == 0)
                {
-                  e_remember_unuse(cfdata->border->remember);
-                  e_remember_del(cfdata->border->remember);
-                  cfdata->border->remember = NULL;
+                  e_remember_unuse(cfdata->client->remember);
+                  e_remember_del(cfdata->client->remember);
+                  cfdata->client->remember = NULL;
                }
           }
      }
@@ -216,55 +216,55 @@ static int
 _advanced_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    /* Actually take our cfdata settings and apply them in real life */
-   cfdata->border->lock_user_location = cfdata->lock.user.location;
-   cfdata->border->lock_user_size = cfdata->lock.user.size;
-   cfdata->border->lock_user_stacking = cfdata->lock.user.stacking;
-   cfdata->border->lock_user_iconify = cfdata->lock.user.iconify;
-   cfdata->border->lock_user_desk = cfdata->lock.user.desk;
-   cfdata->border->lock_user_sticky = cfdata->lock.user.sticky;
-   cfdata->border->lock_user_shade = cfdata->lock.user.shade;
-   cfdata->border->lock_user_maximize = cfdata->lock.user.maximize;
-   cfdata->border->lock_user_fullscreen = cfdata->lock.user.fullscreen;
-   cfdata->border->lock_client_location = cfdata->lock.client.location;
-   cfdata->border->lock_client_size = cfdata->lock.client.size;
-   cfdata->border->lock_client_stacking = cfdata->lock.client.stacking;
-   cfdata->border->lock_client_iconify = cfdata->lock.client.iconify;
-   cfdata->border->lock_client_desk = cfdata->lock.client.desk;
-   cfdata->border->lock_client_sticky = cfdata->lock.client.sticky;
-   cfdata->border->lock_client_shade = cfdata->lock.client.shade;
-   cfdata->border->lock_client_maximize = cfdata->lock.client.maximize;
-   cfdata->border->lock_client_fullscreen = cfdata->lock.client.fullscreen;
-   cfdata->border->lock_border = cfdata->lock.border;
-   cfdata->border->lock_close = cfdata->lock.close;
-   cfdata->border->lock_focus_in = cfdata->lock.focus_in;
-   cfdata->border->lock_focus_out = cfdata->lock.focus_out;
-   cfdata->border->lock_life = cfdata->lock.life;
+   cfdata->client->lock_user_location = cfdata->lock.user.location;
+   cfdata->client->lock_user_size = cfdata->lock.user.size;
+   cfdata->client->lock_user_stacking = cfdata->lock.user.stacking;
+   cfdata->client->lock_user_iconify = cfdata->lock.user.iconify;
+   cfdata->client->lock_user_desk = cfdata->lock.user.desk;
+   cfdata->client->lock_user_sticky = cfdata->lock.user.sticky;
+   cfdata->client->lock_user_shade = cfdata->lock.user.shade;
+   cfdata->client->lock_user_maximize = cfdata->lock.user.maximize;
+   cfdata->client->lock_user_fullscreen = cfdata->lock.user.fullscreen;
+   cfdata->client->lock_client_location = cfdata->lock.client.location;
+   cfdata->client->lock_client_size = cfdata->lock.client.size;
+   cfdata->client->lock_client_stacking = cfdata->lock.client.stacking;
+   cfdata->client->lock_client_iconify = cfdata->lock.client.iconify;
+   cfdata->client->lock_client_desk = cfdata->lock.client.desk;
+   cfdata->client->lock_client_sticky = cfdata->lock.client.sticky;
+   cfdata->client->lock_client_shade = cfdata->lock.client.shade;
+   cfdata->client->lock_client_maximize = cfdata->lock.client.maximize;
+   cfdata->client->lock_client_fullscreen = cfdata->lock.client.fullscreen;
+   cfdata->client->lock_border = cfdata->lock.border;
+   cfdata->client->lock_close = cfdata->lock.close;
+   cfdata->client->lock_focus_in = cfdata->lock.focus_in;
+   cfdata->client->lock_focus_out = cfdata->lock.focus_out;
+   cfdata->client->lock_life = cfdata->lock.life;
 
    if (cfdata->lock.remember)
      {
-        if (!cfdata->border->remember)
+        if (!cfdata->client->remember)
           {
-             cfdata->border->remember = e_remember_new();
-             if (cfdata->border->remember)
-               e_remember_use(cfdata->border->remember);
+             cfdata->client->remember = e_remember_new();
+             if (cfdata->client->remember)
+               e_remember_use(cfdata->client->remember);
           }
-        if (cfdata->border->remember)
+        if (cfdata->client->remember)
           {
-             cfdata->border->remember->apply |= E_REMEMBER_APPLY_LOCKS;
-             e_remember_default_match_set(cfdata->border->remember, cfdata->border);
-             e_remember_update(cfdata->border);
+             cfdata->client->remember->apply |= E_REMEMBER_APPLY_LOCKS;
+             e_remember_default_match_set(cfdata->client->remember, cfdata->client);
+             e_remember_update(cfdata->client);
           }
      }
    else
      {
-        if (cfdata->border->remember)
+        if (cfdata->client->remember)
           {
-             cfdata->border->remember->apply &= ~E_REMEMBER_APPLY_LOCKS;
-             if (cfdata->border->remember->apply == 0)
+             cfdata->client->remember->apply &= ~E_REMEMBER_APPLY_LOCKS;
+             if (cfdata->client->remember->apply == 0)
                {
-                  e_remember_unuse(cfdata->border->remember);
-                  e_remember_del(cfdata->border->remember);
-                  cfdata->border->remember = NULL;
+                  e_remember_unuse(cfdata->client->remember);
+                  e_remember_del(cfdata->client->remember);
+                  cfdata->client->remember = NULL;
                }
           }
      }

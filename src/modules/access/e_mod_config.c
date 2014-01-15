@@ -19,7 +19,6 @@ void
 _config_pager_module(void)
 {
    E_Config_Dialog_View *v;
-   E_Container *con;
 
    if (e_config_dialog_find("E", "_e_mod_access_config_dialog"))
      return;
@@ -31,8 +30,7 @@ _config_pager_module(void)
    v->basic.create_widgets = _basic_create;
    v->basic.apply_cfdata =   _basic_apply;
 
-   con = e_container_current_get(e_manager_current_get());
-   e_config_dialog_new(con, _("Access Settings"), "E",
+   e_config_dialog_new(NULL, _("Access Settings"), "E",
                        "_e_mod_access_config_dialog",
                        "preferences-desktop-access", 0, v, NULL);
 }

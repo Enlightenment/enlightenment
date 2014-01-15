@@ -64,7 +64,7 @@ struct _E_Illume_Keyboard
 {
    E_Object e_obj_inherit;
 
-   E_Border *border;
+   E_Client *client;
    Ecore_Timer *timer;
    Ecore_Animator *animator;
 
@@ -150,35 +150,35 @@ struct _E_Illume_Policy
          * do in here.
          * @warning Policies are required to implement this function. */
 
-        void (*border_add) (E_Border *bd);
+        void (*border_add) (E_Client *ec);
         /**< pointer to the function that Illume will call when a new border 
          * gets added. @note This function is optional. */
 
-        void (*border_del) (E_Border *bd);
+        void (*border_del) (E_Client *ec);
         /**< pointer to the function that Illume will call when a border gets 
          * deleted. @note This function is optional. */
 
-        void (*border_focus_in) (E_Border *bd);
+        void (*border_focus_in) (E_Client *ec);
         /**< pointer to the function that Illume will call when a border gets 
          * focus. @note This function is optional. */
 
-        void (*border_focus_out) (E_Border *bd);
+        void (*border_focus_out) (E_Client *ec);
         /**< pointer to the function that Illume will call when a border loses 
          * focus. @note This function is optional. */
 
-        void (*border_activate) (E_Border *bd);
+        void (*border_activate) (E_Client *ec);
         /**< pointer to the function that Illume will call when a border gets 
          * an activate message. @note This function is optional. */
 
-        void (*border_post_fetch) (E_Border *bd);
+        void (*border_post_fetch) (E_Client *ec);
         /**< pointer to the function that Illume will call when E signals a 
          * border post fetch. @note This function is optional. */
 
-        void (*border_post_assign) (E_Border *bd);
+        void (*border_post_assign) (E_Client *ec);
         /**< pointer to the function that Illume will call when E signals a 
          * border post assign. @note This function is optional. */
 
-        void (*border_show) (E_Border *bd);
+        void (*border_show) (E_Client *ec);
         /**< pointer to the function that Illume will call when a border gets 
          * shown. @note This function is optional. */
 
@@ -199,12 +199,12 @@ struct _E_Illume_Policy
          * requested a border get closed. This is usually signaled from the 
          * Softkey window. @note This function is optional. */
 
-        void (*drag_start) (E_Border *bd);
+        void (*drag_start) (E_Client *ec);
         /**< pointer to the function that Illume will call when the user has 
          * started to drag the Indicator/Softkey windows.
          * @note This function is optional. */
 
-        void (*drag_end) (E_Border *bd);
+        void (*drag_end) (E_Client *ec);
         /**< pointer to the function that Illume will call when the user has 
          * stopped draging the Indicator/Softkey windows.
          * @note This function is optional. */
@@ -337,39 +337,39 @@ struct _E_Illume_Quickpanel
 EAPI E_Illume_Config_Zone *e_illume_zone_config_get(int id);
 
 /* general functions */
-EAPI Eina_Bool e_illume_border_is_indicator(E_Border *bd);
-EAPI Eina_Bool e_illume_border_is_softkey(E_Border *bd);
-EAPI Eina_Bool e_illume_border_is_keyboard(E_Border *bd);
-EAPI Eina_Bool e_illume_border_is_home(E_Border *bd);
-EAPI Eina_Bool e_illume_border_is_splash(E_Border *bd);
-EAPI Eina_Bool e_illume_border_is_dialog(E_Border *bd);
-EAPI Eina_Bool e_illume_border_is_qt_frame(E_Border *bd);
-EAPI Eina_Bool e_illume_border_is_fullscreen(E_Border *bd);
-EAPI Eina_Bool e_illume_border_is_conformant(E_Border *bd);
-EAPI Eina_Bool e_illume_border_is_quickpanel(E_Border *bd);
-EAPI Eina_Bool e_illume_border_is_fixed_size(E_Border *bd);
+EAPI Eina_Bool e_illume_client_is_indicator(E_Client *ec);
+EAPI Eina_Bool e_illume_client_is_softkey(E_Client *ec);
+EAPI Eina_Bool e_illume_client_is_keyboard(E_Client *ec);
+EAPI Eina_Bool e_illume_client_is_home(E_Client *ec);
+EAPI Eina_Bool e_illume_client_is_splash(E_Client *ec);
+EAPI Eina_Bool e_illume_client_is_dialog(E_Client *ec);
+EAPI Eina_Bool e_illume_client_is_qt_frame(E_Client *ec);
+EAPI Eina_Bool e_illume_client_is_fullscreen(E_Client *ec);
+EAPI Eina_Bool e_illume_client_is_conformant(E_Client *ec);
+EAPI Eina_Bool e_illume_client_is_quickpanel(E_Client *ec);
+EAPI Eina_Bool e_illume_client_is_fixed_size(E_Client *ec);
 
-EAPI void e_illume_border_min_get(E_Border *bd, int *w, int *h);
-EAPI E_Border *e_illume_border_at_xy_get(E_Zone *zone, int x, int y);
-EAPI E_Border *e_illume_border_parent_get(E_Border *bd);
-EAPI void e_illume_border_show(E_Border *bd);
-EAPI void e_illume_border_hide(E_Border *bd);
+EAPI void e_illume_client_min_get(E_Client *ec, int *w, int *h);
+EAPI E_Client *e_illume_client_at_xy_get(E_Zone *zone, int x, int y);
+EAPI E_Client *e_illume_client_parent_get(E_Client *ec);
+EAPI void e_illume_client_show(E_Client *ec);
+EAPI void e_illume_client_hide(E_Client *ec);
 
 /* indicator functions */
-EAPI E_Border *e_illume_border_indicator_get(E_Zone *zone);
-EAPI void e_illume_border_indicator_pos_get(E_Zone *zone, int *x, int *y);
+EAPI E_Client *e_illume_client_indicator_get(E_Zone *zone);
+EAPI void e_illume_client_indicator_pos_get(E_Zone *zone, int *x, int *y);
 
 /* softkey functions */
-EAPI E_Border *e_illume_border_softkey_get(E_Zone *zone);
-EAPI void e_illume_border_softkey_pos_get(E_Zone *zone, int *x, int *y);
+EAPI E_Client *e_illume_client_softkey_get(E_Zone *zone);
+EAPI void e_illume_client_softkey_pos_get(E_Zone *zone, int *x, int *y);
 
 /* keyboard functions */
 EAPI E_Illume_Keyboard *e_illume_keyboard_get(void);
 EAPI void e_illume_keyboard_safe_app_region_get(E_Zone *zone, int *x, int *y, int *w, int *h);
 
 /* home functions */
-EAPI E_Border *e_illume_border_home_get(E_Zone *zone);
-EAPI Eina_List *e_illume_border_home_borders_get(E_Zone *zone);
+EAPI E_Client *e_illume_client_home_get(E_Zone *zone);
+EAPI Eina_List *e_illume_client_home_borders_get(E_Zone *zone);
 
 /* quickpanel functions */
 EAPI E_Illume_Quickpanel *e_illume_quickpanel_by_zone_get(E_Zone *zone);

@@ -505,7 +505,8 @@ _e_kbd_int_zoomkey_down(E_Kbd_Int *ki)
    const Eina_List *l;
 
    if (!ki->zoomkey.popup) return;
-   e_object_del(E_OBJECT(ki->zoomkey.popup));
+   evas_object_hide(ki->zoomkey.popup);
+   evas_object_del(ki->zoomkey.popup);
    ki->zoomkey.popup = NULL;
    ki->zoomkey.layout_obj = NULL;
    ki->zoomkey.sublayout_obj = NULL;
@@ -528,14 +529,12 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
    int sx, sy, sw, sh;
 
    if (ki->zoomkey.popup) return;
-   ki->zoomkey.popup = e_popup_new(ki->win->border->zone, -1, -1, 1, 1);
-   e_popup_layer_set(ki->zoomkey.popup, E_COMP_CANVAS_LAYER_LAYOUT, 190);
 
-   o = _theme_obj_new(ki->zoomkey.popup->evas, ki->themedir,
+   o = _theme_obj_new(e_comp_get(ki->win)->evas, ki->themedir,
                       "e/modules/kbd/zoom/default");
    ki->zoomkey.base_obj = o;
 
-   o = e_layout_add(ki->zoomkey.popup->evas);
+   o = e_layout_add(e_comp_get(ki->win)->evas);
    e_layout_virtual_size_set(o, 100, 100);
    edje_object_part_swallow(ki->zoomkey.base_obj, "e.swallow.content", o);
    evas_object_show(o);
@@ -543,7 +542,7 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
 
    e_layout_virtual_size_get(ki->layout_obj, &vw, &vh);
 
-   o = e_layout_add(ki->zoomkey.popup->evas);
+   o = e_layout_add(e_comp_get(ki->win)->evas);
    e_layout_virtual_size_set(o, vw, vh);
    e_layout_pack(ki->zoomkey.layout_obj, o);
    e_layout_child_move(o, 0, 0);
@@ -561,7 +560,7 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
         int selected;
 
         ky = l->data;
-        o = _theme_obj_new(ki->zoomkey.popup->evas, ki->themedir,
+        o = _theme_obj_new(e_comp_get(ki->win)->evas, ki->themedir,
                            "e/modules/kbd/zoomkey/default");
         label = "";
         icon = NULL;
@@ -574,7 +573,7 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
 
         edje_object_part_text_set(o, "e.text.label", label);
 
-        o2 = e_icon_add(ki->zoomkey.popup->evas);
+        o2 = e_icon_add(e_comp_get(ki->win)->evas);
         e_icon_fill_inside_set(o2, 1);
 //        e_icon_scale_up_set(o2, 0);
         edje_object_part_swallow(o, "e.swallow.content", o2);
@@ -613,21 +612,18 @@ _e_kbd_int_zoomkey_up(E_Kbd_Int *ki)
      }
 
    edje_object_size_min_calc(ki->zoomkey.base_obj, &vw, &vh);
-   e_zone_useful_geometry_get(ki->win->border->zone, &sx, &sy, &sw, &sh);
+   e_zone_useful_geometry_get(ki->win->client->zone, &sx, &sy, &sw, &sh);
    sh -= ki->win->h;
    mw = sw;
    if ((vw > 0) && (mw > vw)) mw = vw;
    mh = sh;
    if ((vh > 0) && (mh > vh)) mh = vh;
 
-   e_popup_move_resize(ki->zoomkey.popup, 
+   ki->zoomkey.popup = e_comp_object_util_add(ki->zoomkey.base_obj, E_COMP_OBJECT_TYPE_POPUP);
+   evas_object_layer_set(ki->zoomkey.popup, E_LAYER_CLIENT_EDGE);
+   evas_object_geometry_set(ki->zoomkey.popup, 
                        sx + ((sw - mw) / 2), sy + ((sh - mh) / 2), mw, mh);
-   evas_object_resize(ki->zoomkey.base_obj,
-                      ki->zoomkey.popup->w, ki->zoomkey.popup->h);
-   evas_object_show(ki->zoomkey.base_obj);
-   e_popup_content_set(ki->zoomkey.popup, ki->zoomkey.base_obj);
-   e_popup_show(ki->zoomkey.popup);
-   e_popup_layer_set(ki->zoomkey.popup, E_COMP_CANVAS_LAYER_LAYOUT, 190);
+   evas_object_show(ki->zoomkey.popup);
 }
 
 static void
@@ -1410,7 +1406,8 @@ _e_kbd_int_dictlist_down(E_Kbd_Int *ki)
    char *str;
 
    if (!ki->dictlist.popup) return;
-   e_object_del(E_OBJECT(ki->dictlist.popup));
+   evas_object_hide(ki->dictlist.popup);
+   evas_object_del(ki->dictlist.popup);
    ki->dictlist.popup = NULL;
    EINA_LIST_FREE(ki->dictlist.matches, str)
      eina_stringshare_del(str);
@@ -1452,14 +1449,11 @@ _e_kbd_int_dictlist_up(E_Kbd_Int *ki)
 
    if (ki->dictlist.popup) return;
 
-   ki->dictlist.popup = e_popup_new(ki->win->border->zone, -1, -1, 1, 1);
-   e_popup_layer_set(ki->dictlist.popup, E_COMP_CANVAS_LAYER_LAYOUT, 190);
-
-   o = _theme_obj_new(ki->dictlist.popup->evas, ki->themedir,
+   o = _theme_obj_new(e_comp_get(ki->win)->evas, ki->themedir,
                       "e/modules/kbd/match/default");
    ki->dictlist.base_obj = o;
 
-   o = e_widget_ilist_add(ki->dictlist.popup->evas, 
+   o = e_widget_ilist_add(e_comp_get(ki->win)->evas, 
                           (32 * e_scale), (32 * e_scale), NULL);
    e_widget_ilist_selector_set(o, 1);
    e_widget_ilist_freeze(o);
@@ -1545,16 +1539,15 @@ _e_kbd_int_dictlist_up(E_Kbd_Int *ki)
                             ki->dictlist.ilist_obj);
    edje_object_size_min_calc(ki->dictlist.base_obj, &mw, &mh);
 
-   e_zone_useful_geometry_get(ki->win->border->zone, NULL, NULL, NULL, &sh);
+   e_zone_useful_geometry_get(ki->win->client->zone, NULL, NULL, NULL, &sh);
    mw = ki->win->w;
    if (mh > (sh - ki->win->h)) mh = (sh - ki->win->h);
-   e_popup_move_resize(ki->dictlist.popup, 0, ki->win->y - mh, mw, mh);
 
-   evas_object_resize(ki->dictlist.base_obj, 
-                      ki->dictlist.popup->w, ki->dictlist.popup->h);
-   evas_object_show(ki->dictlist.base_obj);
-   e_popup_content_set(ki->dictlist.popup, ki->dictlist.base_obj);
-   e_popup_show(ki->dictlist.popup);
+   ki->dictlist.popup = e_comp_object_util_add(ki->dictlist.base_obj, E_COMP_OBJECT_TYPE_POPUP);
+   evas_object_layer_set(ki->dictlist.popup, E_LAYER_CLIENT_EDGE);
+   evas_object_geometry_set(ki->dictlist.popup, 0, ki->win->y - mh, mw, mh);
+
+   evas_object_show(ki->dictlist.popup);
    _e_kbd_int_matchlist_down(ki);
 }
 
@@ -1564,7 +1557,8 @@ _e_kbd_int_matchlist_down(E_Kbd_Int *ki)
    char *str;
 
    if (!ki->matchlist.popup) return;
-   e_object_del(E_OBJECT(ki->matchlist.popup));
+   evas_object_hide(ki->matchlist.popup);
+   evas_object_del(ki->matchlist.popup);
    ki->matchlist.popup = NULL;
    EINA_LIST_FREE(ki->matchlist.matches, str)
      eina_stringshare_del(str);
@@ -1599,14 +1593,12 @@ _e_kbd_int_matchlist_up(E_Kbd_Int *ki)
 
    if (!e_kbd_buf_string_matches_get(ki->kbuf)) return;
    if (ki->matchlist.popup) return;
-   ki->matchlist.popup = e_popup_new(ki->win->border->zone, -1, -1, 1, 1);
-   e_popup_layer_set(ki->matchlist.popup, E_COMP_CANVAS_LAYER_LAYOUT, 190);
 
-   o = _theme_obj_new(ki->matchlist.popup->evas, ki->themedir,
+   o = _theme_obj_new(e_comp_get(ki->win)->evas, ki->themedir,
                       "e/modules/kbd/match/default");
    ki->matchlist.base_obj = o;
 
-   o = e_widget_ilist_add(ki->matchlist.popup->evas, 
+   o = e_widget_ilist_add(e_comp_get(ki->win)->evas, 
                           (32 * e_scale), (32 * e_scale), NULL);
    e_widget_ilist_selector_set(o, 1);
    ki->matchlist.ilist_obj = o;
@@ -1649,16 +1641,14 @@ _e_kbd_int_matchlist_up(E_Kbd_Int *ki)
    edje_extern_object_min_size_set(ki->matchlist.ilist_obj, 0, 0);
    edje_object_part_swallow(ki->matchlist.base_obj, "e.swallow.content",
                                ki->matchlist.ilist_obj);
-   e_zone_useful_geometry_get(ki->win->border->zone, NULL, NULL, NULL, &sh);
+   e_zone_useful_geometry_get(ki->win->client->zone, NULL, NULL, NULL, &sh);
    mw = ki->win->w;
    if (mh > (sh - ki->win->h)) mh = (sh - ki->win->h);
-   e_popup_move_resize(ki->matchlist.popup,
+   ki->matchlist.popup = e_comp_object_util_add(ki->matchlist.base_obj, E_COMP_OBJECT_TYPE_POPUP);
+   evas_object_layer_set(ki->matchlist.popup, E_LAYER_CLIENT_EDGE);
+   evas_object_geometry_set(ki->matchlist.popup,
                        ki->win->x, ki->win->y - mh, mw, mh);
-   evas_object_resize(ki->matchlist.base_obj, 
-                      ki->matchlist.popup->w, ki->matchlist.popup->h);
-   evas_object_show(ki->matchlist.base_obj);
-   e_popup_content_set(ki->matchlist.popup, ki->matchlist.base_obj);
-   e_popup_show(ki->matchlist.popup);
+   evas_object_show(ki->matchlist.popup);
 
    _e_kbd_int_dictlist_down(ki);
 }
@@ -1736,7 +1726,7 @@ e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts)
    if (syskbds) ki->syskbds = eina_stringshare_add(syskbds);
    if (sysdicts) ki->sysdicts = eina_stringshare_add(sysdicts);
    zone = e_util_zone_current_get(e_manager_current_get());
-   ki->win = e_win_new(zone->container);
+   ki->win = e_win_new(zone->comp);
    states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
    states[1] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
    ecore_x_netwm_window_state_set(ki->win->evas_win, states, 2);
@@ -1813,13 +1803,13 @@ e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts)
      ecore_event_handler_add(ECORE_X_EVENT_CLIENT_MESSAGE, 
                              _e_kbd_int_cb_client_message, ki);
    ki->kbd_move_hdl = 
-     ecore_event_handler_add(E_EVENT_BORDER_MOVE, 
+     ecore_event_handler_add(E_EVENT_CLIENT_MOVE, 
                              _e_kbd_int_cb_border_move, ki);
 
    e_win_show(ki->win);
-   ki->win->border->user_skip_winlist = 1;
-   ki->win->border->lock_focus_in = 1;
-   ki->win->border->lock_focus_out = 1;
+   ki->win->client->user_skip_winlist = 1;
+   ki->win->client->lock_focus_in = 1;
+   ki->win->client->lock_focus_out = 1;
 
    return ki;
 }
@@ -1866,12 +1856,12 @@ _theme_obj_new(Evas *e, const char *custom_dir, const char *group)
 static Eina_Bool
 _e_kbd_int_cb_border_move(void *data, int type __UNUSED__, void *event) 
 {
-   E_Event_Border_Move *ev;
+   E_Event_Client *ev;
    E_Kbd_Int *ki;
 
    ev = event;
    if (!(ki = data)) return ECORE_CALLBACK_PASS_ON;
-   if (ki->win->border != ev->border) return ECORE_CALLBACK_PASS_ON;
+   if (ki->win->client != ev->ec) return ECORE_CALLBACK_PASS_ON;
    _e_kbd_int_zoomkey_down(ki);
    _e_kbd_int_matchlist_down(ki);
    _e_kbd_int_dictlist_down(ki);

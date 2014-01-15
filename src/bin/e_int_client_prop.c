@@ -6,17 +6,17 @@
 #define MODE_GEOMETRY_LOCKS 3
 #define MODE_ALL            4
 
-static void         _bd_cb_dialog_del(void *obj);
-static void         _bd_cb_dialog_close(void *data, E_Dialog *dia);
-static Evas_Object *_bd_icccm_create(E_Dialog *dia, void *data);
-static Evas_Object *_bd_netwm_create(E_Dialog *dia, void *data);
-static void         _bd_go(void *data, void *data2);
-static void         _create_data(E_Dialog *cfd, E_Border *bd);
+static void         _ec_cb_dialog_del(void *obj);
+static void         _ec_cb_dialog_close(void *data, E_Dialog *dia);
+static Evas_Object *_ec_icccm_create(E_Dialog *dia, void *data);
+static Evas_Object *_ec_netwm_create(E_Dialog *dia, void *data);
+static void         _ec_go(void *data, void *data2);
+static void         _create_data(E_Dialog *cfd, E_Client *ec);
 static void         _free_data(E_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
 struct _E_Config_Dialog_Data
 {
-   E_Border *border;
+   E_Client *client;
    /*- BASIC -*/
    struct
    {
@@ -65,89 +65,89 @@ struct _E_Config_Dialog_Data
 };
 
 EAPI void
-e_int_border_prop(E_Border *bd)
+e_int_client_prop(E_Client *ec)
 {
    E_Dialog *dia;
 
-   if (bd->border_prop_dialog) return;
+   if (ec->border_prop_dialog) return;
 
-   dia = e_dialog_new(bd->zone->container, "E", "_window_props");
-   e_object_del_attach_func_set(E_OBJECT(dia), _bd_cb_dialog_del);
+   dia = e_dialog_new(ec->zone->comp, "E", "_window_props");
+   e_object_del_attach_func_set(E_OBJECT(dia), _ec_cb_dialog_del);
 
-   _create_data(dia, bd);
+   _create_data(dia, ec);
 
-   _bd_go(dia, (void *)0);
+   _ec_go(dia, (void *)0);
 
-   e_dialog_button_add(dia, _("Close"), NULL, _bd_cb_dialog_close, dia);
+   e_dialog_button_add(dia, _("Close"), NULL, _ec_cb_dialog_close, dia);
    e_win_centered_set(dia->win, 1);
    e_dialog_show(dia);
    e_dialog_border_icon_set(dia, "preferences-system-windows");
 }
 
 static void
-_create_data(E_Dialog *cfd, E_Border *bd)
+_create_data(E_Dialog *cfd, E_Client *ec)
 {
    E_Config_Dialog_Data *cfdata;
    char buf[4096];
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
-   cfdata->border = bd;
-   bd->border_prop_dialog = cfd;
+   cfdata->client = ec;
+   ec->border_prop_dialog = cfd;
 
 #define IFDUP(prop, dest)   \
-  if (cfdata->border->prop) \
-    cfdata->dest = strdup(cfdata->border->prop)
+  if (cfdata->client->prop) \
+    cfdata->dest = strdup(cfdata->client->prop)
 
-   IFDUP(client.icccm.title, icccm.title);
-   IFDUP(client.icccm.name, icccm.name);
-   IFDUP(client.icccm.class, icccm.class);
-   IFDUP(client.icccm.icon_name, icccm.icon_name);
-   IFDUP(client.icccm.machine, icccm.machine);
-   IFDUP(client.icccm.window_role, icccm.role);
+   IFDUP(icccm.title, icccm.title);
+   IFDUP(icccm.name, icccm.name);
+   IFDUP(icccm.class, icccm.class);
+   IFDUP(icccm.icon_name, icccm.icon_name);
+   IFDUP(icccm.machine, icccm.machine);
+   IFDUP(icccm.window_role, icccm.role);
 
-   if (cfdata->border->client.icccm.min_w >= 0)
+   if (cfdata->client->icccm.min_w >= 0)
      {
         snprintf(buf, sizeof(buf), _("%i×%i"),
-                 cfdata->border->client.icccm.min_w,
-                 cfdata->border->client.icccm.min_h);
+                 cfdata->client->icccm.min_w,
+                 cfdata->client->icccm.min_h);
         cfdata->icccm.min = strdup(buf);
      }
-   if (cfdata->border->client.icccm.max_w >= 0)
+   if (cfdata->client->icccm.max_w >= 0)
      {
         snprintf(buf, sizeof(buf), _("%i×%i"),
-                 cfdata->border->client.icccm.max_w,
-                 cfdata->border->client.icccm.max_h);
+                 cfdata->client->icccm.max_w,
+                 cfdata->client->icccm.max_h);
         cfdata->icccm.max = strdup(buf);
      }
-   if (cfdata->border->client.icccm.base_w >= 0)
+   if (cfdata->client->icccm.base_w >= 0)
      {
         snprintf(buf, sizeof(buf), _("%i×%i"),
-                 cfdata->border->client.icccm.base_w,
-                 cfdata->border->client.icccm.base_h);
+                 cfdata->client->icccm.base_w,
+                 cfdata->client->icccm.base_h);
         cfdata->icccm.base = strdup(buf);
      }
-   if (cfdata->border->client.icccm.step_w >= 0)
+   if (cfdata->client->icccm.step_w >= 0)
      {
         snprintf(buf, sizeof(buf), _("%i,%i"),
-                 cfdata->border->client.icccm.step_w,
-                 cfdata->border->client.icccm.step_h);
+                 cfdata->client->icccm.step_w,
+                 cfdata->client->icccm.step_h);
         cfdata->icccm.step = strdup(buf);
      }
-   if ((cfdata->border->client.icccm.min_aspect > 0.0) &&
-       (cfdata->border->client.icccm.max_aspect > 0.0))
+   if ((cfdata->client->icccm.min_aspect > 0.0) &&
+       (cfdata->client->icccm.max_aspect > 0.0))
      {
-        if (cfdata->border->client.icccm.min_aspect == cfdata->border->client.icccm.max_aspect)
+        if (cfdata->client->icccm.min_aspect == cfdata->client->icccm.max_aspect)
           snprintf(buf, sizeof(buf), _("%1.3f"),
-                   cfdata->border->client.icccm.min_aspect);
+                   cfdata->client->icccm.min_aspect);
         else
           snprintf(buf, sizeof(buf), _("%1.3f–%1.3f"),
-                   cfdata->border->client.icccm.min_aspect,
-                   cfdata->border->client.icccm.max_aspect);
+                   cfdata->client->icccm.min_aspect,
+                   cfdata->client->icccm.max_aspect);
         cfdata->icccm.aspect = strdup(buf);
      }
-   if (cfdata->border->client.icccm.initial_state != ECORE_X_WINDOW_STATE_HINT_NONE)
+   if (cfdata->client->icccm.initial_state != ECORE_X_WINDOW_STATE_HINT_NONE)
      {
-        switch (cfdata->border->client.icccm.initial_state)
+        switch (cfdata->client->icccm.initial_state)
           {
            case ECORE_X_WINDOW_STATE_HINT_WITHDRAWN:
              snprintf(buf, sizeof(buf), _("Withdrawn"));
@@ -167,9 +167,9 @@ _create_data(E_Dialog *cfd, E_Border *bd)
           }
         cfdata->icccm.initial_state = strdup(buf);
      }
-   if (cfdata->border->client.icccm.state != ECORE_X_WINDOW_STATE_HINT_NONE)
+   if (cfdata->client->icccm.state != ECORE_X_WINDOW_STATE_HINT_NONE)
      {
-        switch (cfdata->border->client.icccm.state)
+        switch (cfdata->client->icccm.state)
           {
            case ECORE_X_WINDOW_STATE_HINT_WITHDRAWN:
              snprintf(buf, sizeof(buf), _("Withdrawn"));
@@ -190,27 +190,27 @@ _create_data(E_Dialog *cfd, E_Border *bd)
         cfdata->icccm.state = strdup(buf);
      }
    snprintf(buf, sizeof(buf), "0x%08x",
-            cfdata->border->client.win);
+            (unsigned int)e_client_util_win_get(cfdata->client));
    cfdata->icccm.window_id = strdup(buf);
-   if (cfdata->border->client.icccm.window_group != 0)
+   if (cfdata->client->icccm.window_group != 0)
      {
         snprintf(buf, sizeof(buf), "0x%08x",
-                 cfdata->border->client.icccm.window_group);
+                 cfdata->client->icccm.window_group);
         cfdata->icccm.window_group = strdup(buf);
      }
-   if (cfdata->border->client.icccm.transient_for != 0)
+   if (cfdata->client->icccm.transient_for != 0)
      {
         snprintf(buf, sizeof(buf), "0x%08x",
-                 cfdata->border->client.icccm.transient_for);
+                 cfdata->client->icccm.transient_for);
         cfdata->icccm.transient_for = strdup(buf);
      }
-   if (cfdata->border->client.icccm.client_leader != 0)
+   if (cfdata->client->icccm.client_leader != 0)
      {
         snprintf(buf, sizeof(buf), "0x%08x",
-                 cfdata->border->client.icccm.client_leader);
+                 cfdata->client->icccm.client_leader);
         cfdata->icccm.client_leader = strdup(buf);
      }
-   switch (cfdata->border->client.icccm.gravity)
+   switch (cfdata->client->icccm.gravity)
      {
       case ECORE_X_GRAVITY_FORGET:
         snprintf(buf, sizeof(buf), _("Forget/Unmap"));
@@ -261,38 +261,38 @@ _create_data(E_Dialog *cfd, E_Border *bd)
         break;
      }
    cfdata->icccm.gravity = strdup(buf);
-   if (cfdata->border->client.icccm.command.argv)
+   if (cfdata->client->icccm.command.argv)
      {
         int i;
 
         buf[0] = 0;
-        for (i = 0; i < cfdata->border->client.icccm.command.argc; i++)
+        for (i = 0; i < cfdata->client->icccm.command.argc; i++)
           {
              if ((sizeof(buf) - strlen(buf)) <
-                 (strlen(cfdata->border->client.icccm.command.argv[i]) - 2))
+                 (strlen(cfdata->client->icccm.command.argv[i]) - 2))
                break;
-             strcat(buf, cfdata->border->client.icccm.command.argv[i]);
+             strcat(buf, cfdata->client->icccm.command.argv[i]);
              strcat(buf, " ");
           }
         cfdata->icccm.command = strdup(buf);
      }
 
-   cfdata->icccm.take_focus = cfdata->border->client.icccm.take_focus;
-   cfdata->icccm.accepts_focus = cfdata->border->client.icccm.accepts_focus;
-   cfdata->icccm.urgent = cfdata->border->client.icccm.urgent;
-   cfdata->icccm.delete_request = cfdata->border->client.icccm.delete_request;
-   cfdata->icccm.request_pos = cfdata->border->client.icccm.request_pos;
+   cfdata->icccm.take_focus = cfdata->client->icccm.take_focus;
+   cfdata->icccm.accepts_focus = cfdata->client->icccm.accepts_focus;
+   cfdata->icccm.urgent = cfdata->client->icccm.urgent;
+   cfdata->icccm.delete_request = cfdata->client->icccm.delete_request;
+   cfdata->icccm.request_pos = cfdata->client->icccm.request_pos;
 
-   IFDUP(client.netwm.name, netwm.name);
-   IFDUP(client.netwm.icon_name, netwm.icon_name);
-   cfdata->netwm.modal = cfdata->border->client.netwm.state.modal;
-   cfdata->netwm.sticky = cfdata->border->client.netwm.state.sticky;
-   cfdata->netwm.shaded = cfdata->border->client.netwm.state.shaded;
-   cfdata->netwm.skip_taskbar = cfdata->border->client.netwm.state.skip_taskbar;
-   cfdata->netwm.skip_pager = cfdata->border->client.netwm.state.skip_pager;
-   cfdata->netwm.hidden = cfdata->border->client.netwm.state.hidden;
-   cfdata->netwm.fullscreen = cfdata->border->client.netwm.state.fullscreen;
-   switch (cfdata->border->client.netwm.state.stacking)
+   IFDUP(netwm.name, netwm.name);
+   IFDUP(netwm.icon_name, netwm.icon_name);
+   cfdata->netwm.modal = cfdata->client->netwm.state.modal;
+   cfdata->netwm.sticky = cfdata->client->netwm.state.sticky;
+   cfdata->netwm.shaded = cfdata->client->netwm.state.shaded;
+   cfdata->netwm.skip_taskbar = cfdata->client->netwm.state.skip_taskbar;
+   cfdata->netwm.skip_pager = cfdata->client->netwm.state.skip_pager;
+   cfdata->netwm.hidden = cfdata->client->netwm.state.hidden;
+   cfdata->netwm.fullscreen = cfdata->client->netwm.state.fullscreen;
+   switch (cfdata->client->netwm.state.stacking)
      {
       case 0:
         cfdata->netwm.stacking = strdup(_("None"));
@@ -313,8 +313,8 @@ _create_data(E_Dialog *cfd, E_Border *bd)
 static void
 _free_data(E_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
-   if (cfdata->border)
-     cfdata->border->border_prop_dialog = NULL;
+   if (cfdata->client)
+     cfdata->client->border_prop_dialog = NULL;
 
    /* Free the cfdata */
 #define IFREE(x) E_FREE(cfdata->x)
@@ -347,7 +347,7 @@ _free_data(E_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_bd_cb_dialog_del(void *obj)
+_ec_cb_dialog_del(void *obj)
 {
    E_Dialog *dia;
 
@@ -357,7 +357,7 @@ _bd_cb_dialog_del(void *obj)
 }
 
 static void
-_bd_cb_dialog_close(void *data __UNUSED__, E_Dialog *dia)
+_ec_cb_dialog_close(void *data __UNUSED__, E_Dialog *dia)
 {
    if (dia->data)
      _free_data(dia, dia->data);
@@ -365,7 +365,7 @@ _bd_cb_dialog_close(void *data __UNUSED__, E_Dialog *dia)
 }
 
 static void
-_bd_go(void *data, void *data2)
+_ec_go(void *data, void *data2)
 {
    E_Dialog *dia;
    Evas_Object *c, *o, *ob;
@@ -381,19 +381,19 @@ _bd_go(void *data, void *data2)
 
    if (!data2)
      {
-        o = _bd_icccm_create(dia, NULL);
+        o = _ec_icccm_create(dia, NULL);
         e_dialog_title_set(dia, _("ICCCM Properties"));
         e_widget_list_object_append(c, o, 1, 1, 0.0);
         ob = e_widget_button_add(e_win_evas_get(dia->win), _("NetWM"), "go-next",
-                                 _bd_go, dia, (void *)1);
+                                 _ec_go, dia, (void *)1);
      }
    else
      {
-        o = _bd_netwm_create(dia, NULL);
+        o = _ec_netwm_create(dia, NULL);
         e_dialog_title_set(dia, _("NetWM Properties"));
         e_widget_list_object_append(c, o, 1, 1, 0.0);
         ob = e_widget_button_add(e_win_evas_get(dia->win), _("ICCCM"), "go-next",
-                                 _bd_go, dia, (void *)0);
+                                 _ec_go, dia, (void *)0);
      }
 
    e_widget_list_object_append(c, ob, 0, 0, 1.0);
@@ -425,7 +425,7 @@ _bd_go(void *data, void *data2)
   }
 
 static Evas_Object *
-_bd_icccm_create(E_Dialog *dia, void *data __UNUSED__)
+_ec_icccm_create(E_Dialog *dia, void *data __UNUSED__)
 {
    Evas *evas;
    Evas_Object *o, *ob, *otb;
@@ -481,7 +481,7 @@ _bd_icccm_create(E_Dialog *dia, void *data __UNUSED__)
 }
 
 static Evas_Object *
-_bd_netwm_create(E_Dialog *dia, void *data __UNUSED__)
+_ec_netwm_create(E_Dialog *dia, void *data __UNUSED__)
 {
    Evas *evas;
    Evas_Object *o, *ob, *otb;

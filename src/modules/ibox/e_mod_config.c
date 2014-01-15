@@ -45,7 +45,7 @@ _config_ibox_module(Config_Item *ci)
    
    /* Create The Dialog */
    snprintf(buf, sizeof(buf), "%s/e-module-ibox.edj", e_module_dir_get(ibox_config->module));
-   cfd = e_config_dialog_new(e_container_current_get(e_manager_current_get()),
+   cfd = e_config_dialog_new(NULL,
 			     _("IBox Settings"),
 			     "E", "_e_mod_ibox_config_dialog",
 			     buf, 0, v, ci);
@@ -88,9 +88,9 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
    E_Radio_Group *rg;
    Evas_Object *o, *of, *ob;
    Evas_Object *show_check = NULL;
-   
-   Eina_List *l, *l2;
-   int zone_count;
+   E_Comp *comp;
+   const Eina_List *l;
+   int zone_count = 0;
 
    o = e_widget_list_add(evas, 0, 0);
 
@@ -134,20 +134,8 @@ _basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dial
 
    of = e_widget_framelist_add(evas, _("Screen"), 0);
 
-   zone_count = 0;
-   for (l = e_manager_list(); l; l = l->next)
-     {
-	E_Manager *man;
-	man = l->data;
-
-	for (l2 = man->containers; l2; l2 = l2->next)
-	  {
-	     E_Container *con;
-
-	     con = l2->data;
-	     zone_count += eina_list_count(con->zones);
-	  }
-     }
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+     zone_count += eina_list_count(comp->zones);
 
    if (zone_count <= 1) cfdata->zone_policy = 1;
 

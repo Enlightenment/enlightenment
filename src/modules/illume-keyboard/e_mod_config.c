@@ -110,7 +110,7 @@ il_kbd_config_save(void)
 }
 
 EAPI void 
-il_kbd_config_show(E_Container *con, const char *params __UNUSED__) 
+il_kbd_config_show(E_Comp *comp, const char *params __UNUSED__) 
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -125,7 +125,7 @@ il_kbd_config_show(E_Container *con, const char *params __UNUSED__)
    v->normal_win = 1;
    v->scroll = 1;
 
-   cfd = e_config_dialog_new(con, _("Keyboard Settings"), "E", 
+   cfd = e_config_dialog_new(comp, _("Keyboard Settings"), "E", 
                              "_config_illume_keyboard_settings", 
                              "enlightenment/keyboard_settings", 0, v, NULL);
    il_kbd_cfg->cfd = cfd;

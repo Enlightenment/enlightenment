@@ -52,7 +52,7 @@ config_temperature_module(Config_Face *inst)
    snprintf(buff, sizeof(buff), 
             "%s/e-module-temperature.edj", inst->module->dir);
    inst->config_dialog = 
-     e_config_dialog_new(e_container_current_get(e_manager_current_get()), 
+     e_config_dialog_new(NULL, 
                          _("Temperature Settings"), "E", 
                          "_e_mod_temperature_config_dialog", buff, 0, v, inst);
 }

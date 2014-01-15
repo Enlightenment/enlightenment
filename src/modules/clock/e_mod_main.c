@@ -12,7 +12,6 @@ struct _Instance
    E_Gadcon_Client *gcc;
    Evas_Object     *o_clock, *o_table, *o_popclock, *o_cal;
    E_Gadcon_Popup  *popup;
-   Eina_List *handlers;
 
    int              madj;
 
@@ -283,26 +282,10 @@ static void
 _clock_settings_cb(void *d1, void *d2 __UNUSED__)
 {
    Instance *inst = d1;
-   e_int_config_clock_module(inst->popup->win->zone->container, inst->cfg);
+   e_int_config_clock_module(e_comp_get(inst->popup), inst->cfg);
    e_object_del(E_OBJECT(inst->popup));
    inst->popup = NULL;
    inst->o_popclock = NULL;
-}
-
-static Eina_Bool
-_clock_popup_fullscreen_change(Instance *inst, int type __UNUSED__, void *ev __UNUSED__)
-{
-   _clock_popup_free(inst);
-   return ECORE_CALLBACK_RENEW;
-}
-
-static Eina_Bool
-_clock_popup_desk_change(Instance *inst, int type __UNUSED__, E_Event_Desk_After_Show *ev)
-{
-   if ((!inst->gcc) || (!inst->gcc->gadcon) || (!inst->gcc->gadcon->shelf)) return ECORE_CALLBACK_RENEW;
-   if (e_shelf_desk_visible(inst->gcc->gadcon->shelf, ev->desk)) return ECORE_CALLBACK_RENEW;
-   _clock_popup_free(inst);
-   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -331,8 +314,8 @@ _clock_popup_new(Instance *inst)
 
    _time_eval(inst);
 
-   inst->popup = e_gadcon_popup_new(inst->gcc);
-   evas = inst->popup->win->evas;
+   inst->popup = e_gadcon_popup_new(inst->gcc, 0);
+   evas = e_comp_get(inst->popup)->evas;
 
    inst->o_table = e_widget_table_add(evas, 0);
 
@@ -392,9 +375,6 @@ _clock_popup_new(Instance *inst)
 
    e_gadcon_popup_content_set(inst->popup, inst->o_table);
    e_gadcon_popup_show(inst->popup);
-
-   E_LIST_HANDLER_APPEND(inst->handlers, E_EVENT_DESK_AFTER_SHOW, _clock_popup_desk_change, inst);
-   E_LIST_HANDLER_APPEND(inst->handlers, E_EVENT_BORDER_FULLSCREEN, _clock_popup_fullscreen_change, inst);
 }
 
 static void
@@ -565,9 +545,7 @@ static void
 _clock_popup_free(Instance *inst)
 {
    if (!inst->popup) return;
-   if (inst->popup) e_object_del(E_OBJECT(inst->popup));
-   E_FREE_LIST(inst->handlers, ecore_event_handler_del);
-   inst->popup = NULL;
+   E_FREE_FUNC(inst->popup, e_object_del);
    inst->o_popclock = NULL;
 }
 
@@ -575,15 +553,9 @@ static void
 _clock_menu_cb_cfg(void *data, E_Menu *menu __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
    Instance *inst = data;
-   E_Container *con;
 
-   if (inst->popup)
-     {
-        e_object_del(E_OBJECT(inst->popup));
-        inst->popup = NULL;
-     }
-   con = e_container_current_get(e_manager_current_get());
-   e_int_config_clock_module(con, inst->cfg);
+   E_FREE_FUNC(inst->popup, e_object_del);
+   e_int_config_clock_module(NULL, inst->cfg);
 }
 
 static void

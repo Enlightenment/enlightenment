@@ -51,12 +51,11 @@ static void
 _create_dialog(E_Gadcon *gc, const char *title, E_Gadcon_Site site)
 {
    E_Config_Dialog_View *v;
-   E_Container *con;
 
    if (gc->config_dialog)
      {
         e_win_raise(gc->config_dialog->dia->win);
-        e_border_focus_set(gc->config_dialog->dia->win->border, 1, 1);
+        evas_object_focus_set(gc->config_dialog->dia->win->client->frame, 1);
         return;
      }
    if (!(v = E_NEW(E_Config_Dialog_View, 1))) return;
@@ -66,9 +65,8 @@ _create_dialog(E_Gadcon *gc, const char *title, E_Gadcon_Site site)
    v->basic.create_widgets = _basic_create;
    v->advanced.create_widgets = _advanced_create;
 
-   con = e_container_current_get(e_manager_current_get());
    gc->config_dialog =
-     e_config_dialog_new(con, title, "E", "_gadcon_config_dialog",
+     e_config_dialog_new(NULL, title, "E", "_gadcon_config_dialog",
                          "preferences-desktop-shelf", 0, v, gc);
    if (site) gc->config_dialog->cfdata->site = site;
    e_win_centered_set(gc->config_dialog->dia->win, EINA_TRUE);

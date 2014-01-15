@@ -1,8 +1,6 @@
 #include "e.h"
 
 /* local subsystem functions */
-static Eina_Bool          _e_bindings_mapping_change_event_cb(void *data, int type, void *event);
-
 static void               _e_bindings_mouse_free(E_Binding_Mouse *bind);
 static void               _e_bindings_key_free(E_Binding_Key *bind);
 static void               _e_bindings_edge_free(E_Binding_Edge *bind);
@@ -15,15 +13,12 @@ static Eina_Bool          _e_bindings_edge_cb_timer(void *data);
 
 /* local subsystem globals */
 
-static Ecore_Event_Handler *mapping_handler = NULL;
-
 static Eina_List *mouse_bindings = NULL;
 static Eina_List *key_bindings = NULL;
 static Eina_List *edge_bindings = NULL;
 static Eina_List *signal_bindings = NULL;
 static Eina_List *wheel_bindings = NULL;
 static Eina_List *acpi_bindings = NULL;
-static int _e_bindings_mapping_change_enabled = 1;
 
 typedef struct _E_Binding_Edge_Data E_Binding_Edge_Data;
 
@@ -47,9 +42,6 @@ e_bindings_init(void)
    E_Config_Binding_Key *ebk;
    E_Config_Binding_Acpi *eba;
    Eina_List *l;
-
-   mapping_handler = ecore_event_handler_add
-       (ECORE_X_EVENT_MAPPING_CHANGE, _e_bindings_mapping_change_event_cb, NULL);
 
    EINA_LIST_FOREACH(e_bindings->mouse_bindings, l, ebm)
      e_bindings_mouse_add(ebm->context, ebm->button, ebm->modifiers,
@@ -105,12 +97,6 @@ e_bindings_shutdown(void)
    E_FREE_LIST(wheel_bindings, _e_bindings_wheel_free);
    E_FREE_LIST(acpi_bindings, _e_bindings_acpi_free);
 
-   if (mapping_handler)
-     {
-        ecore_event_handler_del(mapping_handler);
-        mapping_handler = NULL;
-     }
-
    return 1;
 }
 
@@ -136,7 +122,8 @@ e_bindings_ecore_event_mouse_wheel_convert(const Ecore_Event_Mouse_Wheel *ev, E_
    memset(event, 0, sizeof(E_Binding_Event_Wheel));
    event->direction = ev->direction;
    event->z = ev->z;
-   event->canvas.x = ev->root.x, event->canvas.y = ev->root.y;
+   event->canvas.x = e_comp_canvas_x_root_adjust(e_comp_get(NULL), ev->root.x);
+   event->canvas.y = e_comp_canvas_x_root_adjust(e_comp_get(NULL), ev->root.y);
    event->timestamp = ev->timestamp;
    event->modifiers = _e_bindings_modifiers(ev->modifiers);
 }
@@ -146,7 +133,8 @@ e_bindings_ecore_event_mouse_button_convert(const Ecore_Event_Mouse_Button *ev, 
 {
    memset(event, 0, sizeof(E_Binding_Event_Mouse_Button));
    event->button = ev->buttons;
-   event->canvas.x = ev->root.x, event->canvas.y = ev->root.y;
+   event->canvas.x = e_comp_canvas_x_root_adjust(e_comp_get(NULL), ev->root.x);
+   event->canvas.y = e_comp_canvas_x_root_adjust(e_comp_get(NULL), ev->root.y);
    event->timestamp = ev->timestamp;
    event->modifiers = _e_bindings_modifiers(ev->modifiers);
 
@@ -189,6 +177,20 @@ e_bindings_evas_event_mouse_wheel_convert(const Evas_Event_Mouse_Wheel *ev, E_Bi
 */
 }
 
+EAPI int
+e_bindings_evas_modifiers_convert(Evas_Modifier *modifiers)
+{
+   int mod = 0;
+
+   mod |= (E_BINDING_MODIFIER_SHIFT * evas_key_modifier_is_set(modifiers, "Shift"));
+   mod |= (E_BINDING_MODIFIER_CTRL * evas_key_modifier_is_set(modifiers, "Control"));
+   mod |= (E_BINDING_MODIFIER_ALT * evas_key_modifier_is_set(modifiers, "Alt"));
+   mod |= (E_BINDING_MODIFIER_WIN * evas_key_modifier_is_set(modifiers, "Super"));
+   mod |= (E_BINDING_MODIFIER_WIN * evas_key_modifier_is_set(modifiers, "Hyper"));
+   mod |= (E_BINDING_MODIFIER_ALTGR * evas_key_modifier_is_set(modifiers, "AltGr"));
+   return mod;
+}
+
 EAPI void
 e_bindings_evas_event_mouse_button_convert(const Evas_Event_Mouse_Down *ev, E_Binding_Event_Mouse_Button *event)
 {
@@ -197,12 +199,7 @@ e_bindings_evas_event_mouse_button_convert(const Evas_Event_Mouse_Down *ev, E_Bi
    event->canvas.x = ev->output.x, event->canvas.y = ev->output.y;
    event->timestamp = ev->timestamp;
 
-   event->modifiers |= (E_BINDING_MODIFIER_SHIFT * evas_key_modifier_is_set(ev->modifiers, "Shift"));
-   event->modifiers |= (E_BINDING_MODIFIER_CTRL * evas_key_modifier_is_set(ev->modifiers, "Control"));
-   event->modifiers |= (E_BINDING_MODIFIER_ALT * evas_key_modifier_is_set(ev->modifiers, "Alt"));
-   event->modifiers |= (E_BINDING_MODIFIER_WIN * evas_key_modifier_is_set(ev->modifiers, "Super"));
-   event->modifiers |= (E_BINDING_MODIFIER_WIN * evas_key_modifier_is_set(ev->modifiers, "Hyper"));
-   event->modifiers |= (E_BINDING_MODIFIER_ALTGR * evas_key_modifier_is_set(ev->modifiers, "AltGr"));
+   event->modifiers = e_bindings_evas_modifiers_convert(ev->modifiers);
 
    event->hold = (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD);
    event->scroll = (ev->event_flags & EVAS_EVENT_FLAG_ON_SCROLL);
@@ -873,7 +870,7 @@ e_bindings_edge_in_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Z
    Eina_List *l;
 
    current = e_desk_at_xy_get(ev->zone, ev->zone->desk_x_current, ev->zone->desk_y_current);
-   if (current->fullscreen_borders && (!e_config->fullscreen_flip)) return NULL;
+   if (current->fullscreen_clients && (!e_config->fullscreen_flip)) return NULL;
 
    if (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) mod |= E_BINDING_MODIFIER_SHIFT;
    if (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) mod |= E_BINDING_MODIFIER_CTRL;
@@ -965,7 +962,7 @@ e_bindings_edge_down_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event
    Eina_List *l;
 
    current = e_desk_at_xy_get(ev->zone, ev->zone->desk_x_current, ev->zone->desk_y_current);
-   if (current->fullscreen_borders && (!e_config->fullscreen_flip)) return NULL;
+   if (current->fullscreen_clients && (!e_config->fullscreen_flip)) return NULL;
 
    if (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) mod |= E_BINDING_MODIFIER_SHIFT;
    if (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) mod |= E_BINDING_MODIFIER_CTRL;
@@ -1364,29 +1361,6 @@ e_bindings_acpi_event_handle(E_Binding_Context ctxt, E_Object *obj, E_Event_Acpi
    return act;
 }
 
-EAPI void
-e_bindings_mapping_change_enable(Eina_Bool enable)
-{
-   if (enable)
-     _e_bindings_mapping_change_enabled++;
-   else
-     _e_bindings_mapping_change_enabled--;
-   if (_e_bindings_mapping_change_enabled < 0)
-     _e_bindings_mapping_change_enabled = 0;
-}
-
-/* local subsystem functions */
-static Eina_Bool
-_e_bindings_mapping_change_event_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
-{
-   if (!_e_bindings_mapping_change_enabled) return ECORE_CALLBACK_RENEW;
-   e_managers_keys_ungrab();
-   e_border_button_bindings_ungrab_all();
-   e_border_button_bindings_grab_all();
-   e_managers_keys_grab();
-   return ECORE_CALLBACK_PASS_ON;
-}
-
 static void
 _e_bindings_mouse_free(E_Binding_Mouse *binding)
 {
@@ -1502,13 +1476,12 @@ _e_bindings_edge_cb_timer(void *data)
    ev = ed->ev;
 
    E_FREE(ed);
+   binding->timer = NULL;
 
    if (act->func.go_edge)
      act->func.go_edge(obj, binding->params, ev);
    else if (act->func.go)
      act->func.go(obj, binding->params);
-
-   binding->timer = NULL;
 
    /* Duplicate event */
    E_FREE(ev);

@@ -62,22 +62,22 @@ e_backlight_init(void)
        (E_EVENT_CONFIG_MODE_CHANGED, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_fullscreen = ecore_event_handler_add
-       (E_EVENT_BORDER_FULLSCREEN, _e_backlight_handler, NULL);
+       (E_EVENT_CLIENT_FULLSCREEN, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_unfullscreen = ecore_event_handler_add
-       (E_EVENT_BORDER_UNFULLSCREEN, _e_backlight_handler, NULL);
+       (E_EVENT_CLIENT_UNFULLSCREEN, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_remove = ecore_event_handler_add
-       (E_EVENT_BORDER_REMOVE, _e_backlight_handler, NULL);
+       (E_EVENT_CLIENT_REMOVE, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_iconify = ecore_event_handler_add
-       (E_EVENT_BORDER_ICONIFY, _e_backlight_handler, NULL);
+       (E_EVENT_CLIENT_ICONIFY, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_uniconify = ecore_event_handler_add
-       (E_EVENT_BORDER_UNICONIFY, _e_backlight_handler, NULL);
+       (E_EVENT_CLIENT_UNICONIFY, _e_backlight_handler, NULL);
 
    _e_backlight_handler_border_desk_set = ecore_event_handler_add
-       (E_EVENT_BORDER_DESK_SET, _e_backlight_handler, NULL);
+       (E_EVENT_CLIENT_DESK_SET, _e_backlight_handler, NULL);
 
    _e_backlight_handler_desk_show = ecore_event_handler_add
        (E_EVENT_DESK_SHOW, _e_backlight_handler, NULL);
@@ -179,23 +179,15 @@ e_backlight_exists(void)
 EAPI void
 e_backlight_update(void)
 {
-   Eina_List *m, *c, *z;
-   E_Manager *man;
-   E_Container *con;
+   const Eina_List *l, *ll;
+   E_Comp *c;
    E_Zone *zone;
 
    if (bl_avail == EINA_FALSE) return;
 
-   EINA_LIST_FOREACH(e_manager_list(), m, man)
-     {
-        EINA_LIST_FOREACH(man->containers, c, con)
-          {
-             EINA_LIST_FOREACH(con->zones, z, zone)
-               {
-                  _e_backlight_update(zone);
-               }
-          }
-     }
+   EINA_LIST_FOREACH(e_comp_list(), l, c)
+     EINA_LIST_FOREACH(c->zones, ll, zone)
+       _e_backlight_update(zone);
 }
 
 EAPI void
@@ -296,33 +288,36 @@ _e_backlight_update(E_Zone *zone)
    Ecore_X_Randr_Output *out;
    int i, num = 0;
 
-   root = zone->container->manager->root;
+   root = zone->comp->man->root;
    // try randr
-   out = ecore_x_randr_window_outputs_get(root, &num);
-   if ((out) && (num > 0) && (ecore_x_randr_output_backlight_available()))
+   if (ecore_x_randr_output_backlight_available())
      {
-        char *name;
-        const char *s;
-        Eina_Bool gotten = EINA_FALSE;
-
-        EINA_LIST_FREE(bl_devs, s)
-          eina_stringshare_del(s);
-        for (i = 0; i < num; i++)
+        out = ecore_x_randr_window_outputs_get(root, &num);
+        if ((out) && (num > 0))
           {
-             name = ecore_x_randr_output_name_get(root, out[i], NULL);
-             bl_devs = eina_list_append(bl_devs, eina_stringshare_add(name));
-             if ((name) && (e_config->backlight.sysdev) &&
-                 (!strcmp(name, e_config->backlight.sysdev)))
+             char *name;
+             const char *s;
+             Eina_Bool gotten = EINA_FALSE;
+
+             EINA_LIST_FREE(bl_devs, s)
+               eina_stringshare_del(s);
+             for (i = 0; i < num; i++)
                {
-                  x_bl = ecore_x_randr_output_backlight_level_get(root, out[i]);
-                  gotten = EINA_TRUE;
+                  name = ecore_x_randr_output_name_get(root, out[i], NULL);
+                  bl_devs = eina_list_append(bl_devs, eina_stringshare_add(name));
+                  if ((name) && (e_config->backlight.sysdev) &&
+                      (!strcmp(name, e_config->backlight.sysdev)))
+                    {
+                       x_bl = ecore_x_randr_output_backlight_level_get(root, out[i]);
+                       gotten = EINA_TRUE;
+                    }
+                  free(name);
                }
-             free(name);
+             if (!gotten)
+               x_bl = ecore_x_randr_output_backlight_level_get(root, out[0]);
           }
-        if (!gotten)
-          x_bl = ecore_x_randr_output_backlight_level_get(root, out[0]);
+        free(out);
      }
-   free(out);
    if (x_bl >= 0.0)
      {
         bl_val = x_bl;
@@ -350,7 +345,7 @@ _e_backlight_set(E_Zone *zone, double val)
         int num = 0, i;
         char *name;
 
-        root = zone->container->manager->root;
+        root = zone->comp->man->root;
         out = ecore_x_randr_window_outputs_get(root, &num);
         if ((out) && (num > 0))
           {

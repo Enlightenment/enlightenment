@@ -50,7 +50,7 @@ _metadata_update(E_Music_Control_Instance *inst)
    img = edje_object_part_swallow_get(inst->content_popup, "cover_swallow");
    if (img)
      {
-        e_popup_object_remove(inst->popup->win, img);
+        e_comp_object_util_del_list_remove(inst->popup->comp_object, img);
         evas_object_del(img);
      }
    if (inst->ctxt->meta_cover)
@@ -58,7 +58,7 @@ _metadata_update(E_Music_Control_Instance *inst)
         img = evas_object_image_filled_add(evas_object_evas_get(inst->content_popup));
         evas_object_image_file_set(img, inst->ctxt->meta_cover, NULL);
         edje_object_part_swallow(inst->content_popup, "cover_swallow", img);
-        e_popup_object_add(inst->popup->win, img);
+        e_comp_object_util_del_list_append(inst->popup->comp_object, img);
      }
 }
 
@@ -110,9 +110,9 @@ static void
 _popup_new(E_Music_Control_Instance *inst)
 {
    Evas_Object *o;
-   inst->popup = e_gadcon_popup_new(inst->gcc);
+   inst->popup = e_gadcon_popup_new(inst->gcc, 0);
 
-   o = edje_object_add(inst->popup->win->evas);
+   o = edje_object_add(e_comp_get(inst->gcc)->evas);
    e_theme_edje_object_set(o, "base/theme/modules/music-control",
                            "modules/music-control/popup");
    edje_object_signal_callback_add(o, "btn,clicked", "*", _btn_clicked, inst);
@@ -124,7 +124,7 @@ _popup_new(E_Music_Control_Instance *inst)
    _player_name_update(inst);
    _play_state_update(inst, EINA_TRUE);
    _metadata_update(inst);
-   e_popup_autoclose(inst->popup->win, NULL, NULL, NULL);
+   e_comp_object_util_autoclose(inst->popup->comp_object, NULL, NULL, NULL);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
@@ -237,7 +237,7 @@ _cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
    v->basic.apply_cfdata = _cfg_data_apply;
    v->basic.check_changed = _cfg_check_changed;
 
-   e_config_dialog_new(m->zone->container, _("Music control Settings"), "E",
+   e_config_dialog_new(m->zone->comp, _("Music control Settings"), "E",
                        "_e_mod_music_config_dialog",
                        NULL, 0, v, data);
 }

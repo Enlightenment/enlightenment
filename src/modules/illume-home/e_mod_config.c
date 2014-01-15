@@ -92,7 +92,7 @@ il_home_config_save(void)
 }
 
 void 
-il_home_config_show(E_Container *con, const char *params __UNUSED__) 
+il_home_config_show(E_Comp *comp, const char *params __UNUSED__) 
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v = NULL;
@@ -107,7 +107,7 @@ il_home_config_show(E_Container *con, const char *params __UNUSED__)
    v->normal_win = 1;
    v->scroll = 1;
 
-   cfd = e_config_dialog_new(con, _("Home Settings"), "E", 
+   cfd = e_config_dialog_new(comp, _("Home Settings"), "E", 
                              "_config_illume_home_settings", 
                              "enlightenment/launcher_settings", 0, v, NULL);
    il_home_cfg->cfd = cfd;
