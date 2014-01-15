@@ -1795,6 +1795,7 @@ _e_comp_smart_hide(Evas_Object *obj)
    evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
+   if (stopping) return;
    if (cw->ec->focused)
      evas_object_focus_set(cw->ec->frame, 0);
    e_comp_render_queue(cw->comp); //force nocomp recheck
