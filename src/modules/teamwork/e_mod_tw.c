@@ -730,6 +730,7 @@ tw_media_get(const char *url, unsigned long long timestamp, Eina_Bool *video)
         eina_stringshare_del(alias);
         return buf;
      }
+   *video = 0;
    return NULL;
 }
 
