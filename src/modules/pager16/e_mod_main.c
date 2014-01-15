@@ -266,6 +266,30 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class)
    return buf;
 }
 
+static void
+_pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Pager *p = data;
+   Eina_List *l;
+   Pager_Desk *pd;
+   int w, h, zw, zh;
+
+   zw = p->zone->w, zh = p->zone->h;
+   pd = eina_list_data_get(p->desks);
+   if (!pd) return;
+
+   evas_object_geometry_get(pd->o_desk, NULL, NULL, &w, &h);
+   if (zw * h != zh * w) //aspecting
+     {
+        if (w > h)
+          h = zh * w / zw;
+        else
+          w = zw * h / zh;
+     }
+   EINA_LIST_FOREACH(p->desks, l, pd)
+     e_table_pack_options_set(pd->o_desk, 1, 1, 1, 1, 0.5, 0.5, w, h, -1, -1);
+}
+
 static Pager *
 _pager_new(Evas *evas, E_Zone *zone, E_Gadcon *gc)
 {
@@ -275,6 +299,7 @@ _pager_new(Evas *evas, E_Zone *zone, E_Gadcon *gc)
    p->inst = NULL;
    p->popup = NULL;
    p->o_table = e_table_add(evas);
+   evas_object_event_callback_add(p->o_table, EVAS_CALLBACK_RESIZE, _pager_resize, p);
    e_table_homogenous_set(p->o_table, 1);
    p->zone = zone;
    _pager_fill(p, gc);
