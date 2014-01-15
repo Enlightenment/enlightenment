@@ -2508,7 +2508,7 @@ _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
    if (ec->need_shape_merge)
      {
         _e_comp_x_client_shape_input_rectangle_set(ec);
-        if (!ec->shaped)
+        if ((!ec->shaped) && ec->comp_data->reparented)
           ecore_x_window_shape_mask_set(e_client_util_pwin_get(ec), 0);
         ec->need_shape_merge = 0;
      }
