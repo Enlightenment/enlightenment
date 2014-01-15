@@ -1093,7 +1093,9 @@ _e_comp_intercept_lower(void *data, Evas_Object *obj)
    _e_comp_object_layers_add(cw, NULL, NULL, 1);
    if (evas_object_layer_get(o) != evas_object_layer_get(obj)) return; //already at bottom!
    if (obj == cw->comp->layers[cw->layer].obj) return; //never lower a layer marker!
+   evas_object_data_set(obj, "client_restack", (void*)1);
    evas_object_lower(obj);
+   evas_object_data_del(obj, "client_restack");
    e_comp_shape_queue(cw->comp);
 }
 
