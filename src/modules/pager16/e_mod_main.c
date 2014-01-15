@@ -1045,7 +1045,7 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
    Evas_Event_Mouse_Move *ev;
    Pager_Win *pw;
    E_Drag *drag;
-   Evas_Object *o, *oo;
+   Evas_Object *o;
    Evas_Coord x, y, w, h;
    const char *drag_types[] =
    { "enlightenment/pager_win", "enlightenment/border" };
@@ -1113,27 +1113,17 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
              evas_object_geometry_get(pw->o_mirror, &x, &y, &w, &h);
              evas_object_hide(pw->o_mirror);
 
-             drag = e_drag_new(pw->desk->pager->zone->comp,
+             drag = e_drag_new(pw->client->comp,
                                x, y, drag_types, 2, pw, -1,
                                _pager_window_cb_drag_convert,
                                _pager_window_cb_drag_finished);
 
-             o = edje_object_add(drag->evas);
-             e_theme_edje_object_set(o, "base/theme/modules/pager",
-                                     "e/modules/pager2/window");
+             o = e_deskmirror_mirror_copy(pw->o_mirror);
              evas_object_show(o);
-
-             oo = e_client_icon_add(pw->client, drag->evas);
-             if (oo)
-               {
-                  evas_object_show(oo);
-                  edje_object_part_swallow(o, "e.swallow.icon", oo);
-               }
 
              e_drag_object_set(drag, o);
              e_drag_resize(drag, w, h);
              e_drag_start(drag, x - pw->drag.dx, y - pw->drag.dy);
-             e_comp_object_util_del_list_append(drag->comp_object, oo);
 
              /* this prevents the desk from switching on drags */
              pw->drag.from_pager = pw->desk->pager;
