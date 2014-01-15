@@ -130,6 +130,14 @@ e_desklock_interface_append(E_Desklock_Interface *iface)
      desklock_ifaces = eina_list_prepend(desklock_ifaces, (void*)iface);
    else
      desklock_ifaces = eina_list_append(desklock_ifaces, (void*)iface);
+   if (_e_desklock_state && (!current_iface))
+     {
+        if (iface->show())
+          {
+             iface->active = EINA_TRUE;
+             current_iface = iface;
+          }
+     }
 }
 
 EAPI void
