@@ -949,6 +949,7 @@ m4_ifdef([v_mic],
    [
     EFL_COMPILER_FLAG([-Wshadow])
     EFL_COMPILER_FLAG([-Wall])
+    EFL_COMPILER_FLAG([-Wpointer-arith])
     EFL_COMPILER_FLAG([-W])
     EFL_COMPILER_FLAG([-Wno-missing-field-initializers])
    ])
