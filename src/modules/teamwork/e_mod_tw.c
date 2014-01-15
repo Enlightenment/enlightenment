@@ -976,7 +976,7 @@ tw_video_thread_cb(void *data, Ecore_Thread *eth)
 
         if (pos + num >= tot)
           num = tot - pos;
-        if (write(fd, buf + pos, num) < 0)
+        if (write(fd, (char*)buf + pos, num) < 0)
           {
              ERR("WRITE FAILED: %s", strerror(errno));
              ecore_thread_cancel(eth);
