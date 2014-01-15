@@ -405,7 +405,9 @@ _e_deskmirror_mirror_reconfigure(Mirror *m)
    _e_deskmirror_mirror_geometry_get(m);
    e_layout_child_move(m->mirror, m->x, m->y);
    e_layout_child_resize(m->mirror, m->w, m->h);
-   _mirror_visible_apply(m);
+   /* assume that anything happening here is the result of a drag */
+   if (!e_drag_current_get())
+     _mirror_visible_apply(m);
 }
 
 static void
@@ -734,6 +736,12 @@ e_deskmirror_mirror_list(Evas_Object *deskmirror)
    return l;
 }
 
+static void
+_mirror_copy_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   e_comp_object_signal_callback_del_full(data, "*", "*", _mirror_client_signal_cb, obj);
+}
+
 EAPI Evas_Object *
 e_deskmirror_mirror_copy(Evas_Object *obj)
 {
@@ -755,7 +763,10 @@ e_deskmirror_mirror_copy(Evas_Object *obj)
         else
           edje_object_signal_emit(o, "e,state,shadow,off", "e");
         if (mb->m->comp_object)
-          e_comp_object_signal_callback_add(mb->m->comp_object, "*", "*", _mirror_client_signal_cb, o);
+          {
+             e_comp_object_signal_callback_add(mb->m->comp_object, "*", "*", _mirror_client_signal_cb, o);
+             evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _mirror_copy_del, mb->m->comp_object);
+          }
         if (mb->m->ec->focused)
           edje_object_signal_emit(o, "e,state,focused", "e");
         if (mb->m->ec->shaded)
