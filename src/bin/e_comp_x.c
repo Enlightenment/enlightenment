@@ -4159,7 +4159,7 @@ _e_comp_x_hook_client_resize_begin(void *d EINA_UNUSED, E_Client *ec)
 {
    E_COMP_X_PIXMAP_CHECK;
    if (!ec->netwm.sync.request) return;
-   ec->netwm.sync.alarm = ecore_x_sync_alarm_new(ec->comp_data->sync_counter);
+   ec->comp_data->alarm = ecore_x_sync_alarm_new(ec->comp_data->sync_counter);
    eina_hash_add(alarm_hash, &ec->comp_data->alarm, ec);
    ec->netwm.sync.alarm = ec->netwm.sync.serial = 1;
    ec->netwm.sync.wait = 0;
