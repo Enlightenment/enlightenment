@@ -2170,16 +2170,16 @@ _e_comp_x_sync_alarm(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
         if (pnd)
           {
              resize = ((ec->w != pnd->w) || (ec->h != pnd->h));
-             ec->w = pnd->w;
-             ec->h = pnd->h;
+             e_comp_object_frame_wh_adjust(ec->frame, pnd->w, pnd->h, &ec->w, &ec->h);
              E_FREE(pnd);
           }
      }
 
    if (resize)
      {
-        ec->changes.size = 1;
-        EC_CHANGED(ec);
+        evas_object_resize(ec->frame, ec->w, ec->h);
+        if (ec->internal_ecore_evas)
+          ecore_evas_move_resize(ec->internal_ecore_evas, 0, 0, ec->client.w, ec->client.h);
      }
 
    ecore_x_pointer_xy_get(ec->comp->man->root,
