@@ -3141,6 +3141,7 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
    evas_object_image_smooth_scale_set(o, e_comp_config_get()->smooth_windows);
    cw->obj_mirror = eina_list_append(cw->obj_mirror, o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_mirror_del, cw);
+   evas_object_data_set(o, "E_Client", cw->ec);
 
    evas_object_image_alpha_set(o, evas_object_image_alpha_get(cw->obj));
    evas_object_image_size_set(o, w, h);
