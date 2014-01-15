@@ -1312,7 +1312,7 @@ _e_client_cb_evas_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    _e_client_event_simple(ec, E_EVENT_CLIENT_MOVE);
 
    _e_client_zone_update(ec);
-   if (ec->moving)
+   if (ec->moving || (ecmove == ec))
      _e_client_hook_call(E_CLIENT_HOOK_MOVE_UPDATE, ec);
 }
 
@@ -1343,7 +1343,7 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 
    _e_client_zone_update(ec);
 
-   if (e_client_resizing_get(ec))
+   if (e_client_resizing_get(ec) || (ecresize == ec))
      _e_client_hook_call(E_CLIENT_HOOK_RESIZE_UPDATE, ec);
 }
 
