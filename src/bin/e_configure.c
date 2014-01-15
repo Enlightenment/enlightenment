@@ -28,7 +28,13 @@ e_configure_init(void)
 {
    e_configure_registry_category_add("extensions", 90, _("Extensions"), NULL, "preferences-extensions");
    e_configure_registry_item_add("extensions/modules", 10, _("Modules"), NULL, "preferences-plugin", e_int_config_modules);
-
+   e_configure_registry_category_add("appearance", 10, _("Look"), NULL,
+                                     "preferences-look");
+   e_configure_registry_item_add("appearance/comp", 120, _("Compositor"), NULL, "preferences-composite", e_int_config_comp);
+   e_configure_registry_category_add("internal", -1, _("Internal"),
+                                     NULL, "enlightenment/internal");
+   e_configure_registry_item_add("internal/comp_matches", -1, _("Composite Style Settings"),
+                                 NULL, "preferences-composite", e_int_config_comp_match);
    maug = e_int_menus_menu_augmentation_add_sorted
        ("config/1", _("Modules"), _e_configure_menu_add, NULL, NULL, NULL);
 
