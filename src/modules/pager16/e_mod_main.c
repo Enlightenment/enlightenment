@@ -1201,6 +1201,7 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
 
         if (!(pw->client->lock_user_stacking))
           evas_object_raise(pw->client->frame);
+        evas_object_focus_set(pw->client->frame, 1);
      }
    if (pw->desk->pager->active_drop_pd)
      {
