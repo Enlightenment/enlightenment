@@ -300,7 +300,7 @@ _e_wid_cb_bg_update(void *data, int type, void *event)
         const char *bgfile;
 
         bgfile = e_bg_file_get(dd->manager, dd->zone, dd->x, dd->y);
-        e_icon_file_edje_set(dd->thumb, bgfile, "e/desktop/background");
+        edje_object_file_set(dd->thumb, bgfile, "e/desktop/background");
         eina_stringshare_del(bgfile);
      }
 
