@@ -16,4 +16,4 @@ src/modules/lokker/e_mod_main.h
 
 PHONIES += lokker install-lokker
 lokker: $(lokkerpkg_LTLIBRARIES) #$(lokker_DATA)
-install-lokker: install-lokkerDATA install-lokkerpkgLTLIBRARIES
+install-lokker: install-lokkerpkgLTLIBRARIES #install-lokkerDATA
