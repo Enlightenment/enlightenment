@@ -49,6 +49,7 @@ typedef struct Client_Extra {
     } orig;
     overlay_t overlay;
     char key[4];
+    int last_frame_adjustment; // FIXME: Hack for frame resize bug.
 } Client_Extra;
 
 struct tiling_g tiling_g = {
@@ -242,6 +243,15 @@ _e_client_move_resize(E_Client *ec,
                       int       w,
                       int       h)
 {
+    Client_Extra *extra;
+
+    extra = eina_hash_find(_G.client_extras, &ec);
+    if (!extra) {
+         ERR("No extra for %p", ec);
+         return;
+    }
+
+    extra->last_frame_adjustment = MAX(ec->h - ec->client.h, ec->w - ec->client.w);
     DBG("%p -> %dx%d+%d+%d", ec, w, h, x, y);
     evas_object_geometry_set(ec->frame, x, y, w, h);
 }
@@ -636,6 +646,13 @@ static void _move_or_resize(E_Client *ec)
           (ec->w == extra->expected.w) && (ec->h == extra->expected.h))
       {
 
+         return;
+      }
+
+    if (!extra->last_frame_adjustment)
+      {
+         printf("This is probably because of the frame adjustment bug. Return\n");
+         _reapply_tree();
          return;
       }
 
