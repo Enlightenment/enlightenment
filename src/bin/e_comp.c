@@ -245,6 +245,7 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
 
    DBG("JOB2...");
    e_comp_render_queue(c);
+   e_comp_shape_queue_block(c, 1);
 }
 
 static void
@@ -263,6 +264,7 @@ _e_comp_cb_nocomp_end(E_Comp *c)
         e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
      }
    e_comp_render_queue(c);
+   e_comp_shape_queue_block(c, 0);
 }
 
 static Eina_Bool
