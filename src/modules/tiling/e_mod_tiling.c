@@ -703,13 +703,22 @@ static void _move_or_resize(E_Client *ec)
            {
               h_diff = ((double) ec->h) / extra->expected.h;
            }
-         if (extra->expected.x != ec->x)
+         switch (ec->resize_mode)
            {
-              w_dir = -1;
-           }
-         if (extra->expected.y != ec->y)
-           {
-              h_dir = -1;
+            case E_POINTER_RESIZE_L:
+            case E_POINTER_RESIZE_BL:
+               w_dir = -1;
+               break;
+            case E_POINTER_RESIZE_T:
+            case E_POINTER_RESIZE_TR:
+               h_dir = -1;
+               break;
+            case E_POINTER_RESIZE_TL:
+               w_dir = -1;
+               h_dir = -1;
+               break;
+            default:
+               break;
            }
          if ((w_diff != 1.0) || (h_diff != 1.0))
            {
