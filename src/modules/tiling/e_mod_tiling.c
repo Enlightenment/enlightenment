@@ -472,7 +472,6 @@ _add_client(E_Client *ec)
                    ERR("Couldn't find tree item for focused client %p. Using root..",
                          e_client_focused_get());
                 }
-              parent = _G.tinfo->tree;
            }
 
          _G.tinfo->tree = tiling_window_tree_add(_G.tinfo->tree, parent, ec, _G.split_type);
