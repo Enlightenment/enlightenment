@@ -2496,6 +2496,19 @@ e_comp_object_frame_geometry_get(Evas_Object *obj, int *l, int *r, int *t, int *
    if (b) *b = cw->client_inset.b;
 }
 
+EAPI void
+e_comp_object_frame_icon_geometry_get(Evas_Object *obj, int *x, int *y, int *w, int *h)
+{
+   API_ENTRY;
+
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
+   if (!cw->frame_icon) return;
+   evas_object_geometry_get(cw->frame_icon, x, y, w, h);
+}
+
 EAPI Eina_Bool
 e_comp_object_frame_title_set(Evas_Object *obj, const char *name)
 {
