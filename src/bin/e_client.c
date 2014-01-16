@@ -1388,7 +1388,7 @@ _e_client_cb_evas_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
              below = child;
           }
      }
-
+   if (ec->unredirected_single) return;
    e_remember_update(ec);
    _e_client_event_simple(ec, E_EVENT_CLIENT_STACK);
 }
