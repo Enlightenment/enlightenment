@@ -1149,23 +1149,23 @@ _style_demo(void *data)
         switch (demo_state)
           {
            case 0:
-             edje_object_signal_emit(ob, "e,state,visible,on", "e");
-             edje_object_signal_emit(ob, "e,state,focus,on", "e");
+             edje_object_signal_emit(ob, "e,state,visible", "e");
+             edje_object_signal_emit(ob, "e,state,focused", "e");
              edje_object_part_text_set(of, "e.text.label", _("Visible"));
              break;
 
            case 1:
-             edje_object_signal_emit(ob, "e,state,focus,off", "e");
+             edje_object_signal_emit(ob, "e,state,unfocused", "e");
              edje_object_part_text_set(of, "e.text.label", _("Focus-Out"));
              break;
 
            case 2:
-             edje_object_signal_emit(ob, "e,state,focus,on", "e");
+             edje_object_signal_emit(ob, "e,state,focused", "e");
              edje_object_part_text_set(of, "e.text.label", _("Focus-In"));
              break;
 
            case 3:
-             edje_object_signal_emit(ob, "e,state,visible,off", "e");
+             edje_object_signal_emit(ob, "e,state,hidden", "e");
              edje_object_part_text_set(of, "e.text.label", _("Hidden"));
              break;
 
@@ -1259,6 +1259,7 @@ e_comp_style_selector_create(Evas *evas, const char **source)
         e_layout_child_move(oo, 39, 39);
         e_layout_child_resize(oo, 162, 162);
         edje_object_signal_emit(oo, "e,state,visible", "e");
+        edje_object_signal_emit(oo, "e,state,focused", "e");
         evas_object_show(oo);
 
         ds_it->frame = edje_object_add(evas);
@@ -1273,7 +1274,6 @@ e_comp_style_selector_create(Evas *evas, const char **source)
         e_theme_edje_object_set(obd, "base/theme/borders",
                                 "e/widgets/border/default/border");
         edje_object_part_text_set(obd, "e.text.title", _("Title"));
-        edje_object_signal_emit(obd, "e,state,focused", "e");
         edje_object_signal_emit(obd, "e,state,shadow,on", "e");
         edje_object_part_swallow(oo, "e.swallow.content", obd);
         evas_object_show(obd);
