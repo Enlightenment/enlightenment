@@ -91,6 +91,11 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent, E_Client *client,
    else if (!parent)
      {
         parent = root;
+        parent_split_type = _tiling_window_tree_split_type_get(parent);
+        if ((parent_split_type != split_type) && (parent->children))
+          {
+             parent = (Window_Tree *) parent->children;
+          }
      }
 
    parent_split_type = _tiling_window_tree_split_type_get(parent);
