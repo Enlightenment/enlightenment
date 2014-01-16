@@ -1250,8 +1250,10 @@ _ibar_cb_icon_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
      _ibar_icon_signal_emit(ic, "e,action,hide,label", "e");
    if (!ic->ibar->inst->ci->dont_icon_menu_mouseover)
      {
-        if (ic->hide_timer) ecore_timer_del(ic->hide_timer);
-        ic->hide_timer = ecore_timer_add(2.0, _ibar_cb_out_hide_delay, ic);
+        if (ic->hide_timer)
+          ecore_timer_reset(ic->hide_timer);
+        else
+          ic->hide_timer = ecore_timer_add(1.0, _ibar_cb_out_hide_delay, ic);
      }
 }
 
