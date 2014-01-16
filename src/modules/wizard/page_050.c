@@ -78,6 +78,7 @@ _scale_preview_new(Evas *e, double sc, double *scp)
 
    bd = edje_object_add(e_widget_preview_evas_get(ob));
    e_theme_edje_object_set(bd, "base/theme/borders", "e/widgets/border/default/border");
+   edje_object_signal_emit(bd, "e,state,shadow,on", "e");
    edje_object_part_swallow(cm, "e.swallow.content", bd);
    evas_object_show(bd);
 
@@ -96,9 +97,8 @@ _scale_preview_new(Evas *e, double sc, double *scp)
    edje_object_part_text_set(bd, "e.text.title", buf);
    edje_object_signal_emit(bd, "e,state,focused", "e");
 
-   edje_object_signal_emit(cm, "e,state,visible,on", "e");
-   edje_object_signal_emit(cm, "e,state,shadow,on", "e");
-   edje_object_signal_emit(cm, "e,state,focus,on", "e");
+   edje_object_signal_emit(cm, "e,state,visible", "e");
+   edje_object_signal_emit(cm, "e,state,focused", "e");
 
    edje_object_scale_set(bd, sc);
    edje_object_scale_set(cm, sc);
