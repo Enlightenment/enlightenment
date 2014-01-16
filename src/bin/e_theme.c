@@ -149,7 +149,7 @@ e_theme_shelf_list(void)
 }
 
 EAPI int
-e_theme_comp_border_find(const char *comp)
+e_theme_comp_frame_find(const char *comp)
 {
    Eina_List *comps = NULL;
    int found = 0;
@@ -163,7 +163,7 @@ e_theme_comp_border_find(const char *comp)
 }
 
 EAPI Eina_List *
-e_theme_comp_border_list(void)
+e_theme_comp_frame_list(void)
 {
    return e_theme_collection_items_find(NULL, "e/comp/frame");
 }

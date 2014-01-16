@@ -1232,7 +1232,7 @@ e_comp_style_selector_create(Evas *evas, const char **source)
    evas_object_event_callback_add(oi, EVAS_CALLBACK_DEL,
                                   _style_selector_del, oi);
    sel = 0;
-   styles = e_theme_comp_border_list();
+   styles = e_theme_comp_frame_list();
    n = 0;
    EINA_LIST_FOREACH(styles, l, style)
      {
