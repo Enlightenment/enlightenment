@@ -695,12 +695,10 @@ static void _move_or_resize(E_Client *ec)
          if (abs(extra->expected.w - ec->w) >= MAX(ec->icccm.step_w, 1))
            {
               w_diff = ((double) ec->w) / extra->expected.w;
-              printf("w %d %d %f\n", extra->expected.w, ec->w, w_diff);
            }
          if (abs(extra->expected.h - ec->h) >= MAX(ec->icccm.step_h, 1))
            {
               h_diff = ((double) ec->h) / extra->expected.h;
-              printf("h %d %d %f\n", extra->expected.h, ec->h, h_diff);
            }
          if (extra->expected.x != ec->x)
            {
