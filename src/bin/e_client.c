@@ -2649,8 +2649,9 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
                             evas_object_color_set(o, 255, 255, 255, 255);
                          }
                        e_drag_object_set(client_drag, o);
-
-                       e_drag_start(client_drag, ec->drag.x, ec->drag.y);
+                       e_drag_start(client_drag,
+                                    output->x + (ec->drag.x - x),
+                                    output->y + (ec->drag.y - y));
                     }
                   ec->drag.start = 0;
                }
