@@ -1585,8 +1585,6 @@ _e_client_eval(E_Client *ec)
              if ((x != ec->x) || (y != ec->y)) ec->changes.pos = 1;
              ec->placed = 1;
           }
-        if (ec->override)
-          ec->placed = 1;
         if (!ec->placed)
           {
              /* FIXME: special placement for dialogs etc. etc. etc goes
