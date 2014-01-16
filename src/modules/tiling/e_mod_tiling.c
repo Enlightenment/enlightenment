@@ -50,6 +50,8 @@ typedef struct Client_Extra {
     overlay_t overlay;
     char key[4];
     int last_frame_adjustment; // FIXME: Hack for frame resize bug.
+    Eina_Bool sticky : 1;
+    Eina_Bool floating : 1;
 } Client_Extra;
 
 struct tiling_g tiling_g = {
@@ -170,9 +172,12 @@ desk_should_tile_check(const E_Desk *desk)
 }
 
 static int
-is_floating_window(const E_Client *ec)
+is_ignored_window(const Client_Extra *extra)
 {
-    return EINA_LIST_IS_IN(_G.tinfo->floating_windows, ec);
+   if (extra->sticky || extra->floating)
+      return true;
+
+   return false;
 }
 
 static int
@@ -434,9 +439,6 @@ _add_client(E_Client *ec)
     if (!ec) {
         return;
     }
-    if (is_floating_window(ec)) {
-        return;
-    }
     if (!is_tilable(ec)) {
         return;
     }
@@ -444,7 +446,10 @@ _add_client(E_Client *ec)
     if (!desk_should_tile_check(ec->desk))
         return;
 
-    _get_or_create_client_extra(ec);
+    Client_Extra *extra = _get_or_create_client_extra(ec);
+
+    if (is_ignored_window(extra))
+       return;
 
     /* Stack tiled window below so that winlist doesn't mix up stacking */
     evas_object_layer_set(ec->frame, E_LAYER_CLIENT_BELOW);
@@ -482,9 +487,6 @@ _remove_client(E_Client *ec)
     if (!ec)
        return;
 
-    if (is_floating_window(ec))
-       return;
-
     if (!is_tilable(ec))
        return;
 
@@ -493,7 +495,11 @@ _remove_client(E_Client *ec)
 
     DBG("removing %p", ec);
 
-    eina_hash_del(_G.client_extras, ec, NULL);
+    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+    if (!extra) {
+        ERR("No extra for %p", ec);
+        return;
+    }
 
     /* Window tree updating. */
       {
@@ -508,8 +514,8 @@ _remove_client(E_Client *ec)
          _G.tinfo->tree = tiling_window_tree_remove(_G.tinfo->tree, item);
       }
 
-    EINA_LIST_REMOVE(_G.tinfo->floating_windows, ec);
-    EINA_LIST_REMOVE(_G.tinfo->sticky_windows, ec);
+    if (!is_ignored_window(extra))
+       eina_hash_del(_G.client_extras, ec, NULL);
 
     _reapply_tree();
 }
@@ -525,15 +531,24 @@ toggle_floating(E_Client *ec)
     if (!desk_should_tile_check(ec->desk))
         return;
 
-    if (EINA_LIST_IS_IN(_G.tinfo->floating_windows, ec)) {
-        EINA_LIST_REMOVE(_G.tinfo->floating_windows, ec);
+    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+    if (!extra) {
+        ERR("No extra for %p", ec);
+        return;
+    }
 
-        _add_client(ec);
-    } else {
+    extra->floating = !extra->floating;
+
+    /* This is the new state, act accordingly. */
+    if (extra->floating)
+      {
         _remove_client(ec);
         _restore_client(ec);
-        EINA_LIST_APPEND(_G.tinfo->floating_windows, ec);
-    }
+      }
+    else
+      {
+        _add_client(ec);
+      }
 }
 
 static void
@@ -603,16 +618,15 @@ _pre_client_assign_hook(void *data __UNUSED__,
     if (!desk_should_tile_check(ec->desk))
         return;
 
-    if (is_floating_window(ec)) {
-        return;
-    }
-
     if (!is_tilable(ec)) {
         return;
     }
 
     /* Fill initial values if not already done */
-    _get_or_create_client_extra(ec);
+    Client_Extra *extra = _get_or_create_client_extra(ec);
+
+    if (is_ignored_window(extra))
+       return;
 
     if ((ec->bordername && strcmp(ec->bordername, "pixel"))
     ||  !ec->bordername)
@@ -626,9 +640,6 @@ static void _move_or_resize(E_Client *ec)
     Client_Extra *extra;
 
     if (!ec) {
-        return;
-    }
-    if (is_floating_window(ec)) {
         return;
     }
     if (!is_tilable(ec)) {
@@ -654,6 +665,9 @@ static void _move_or_resize(E_Client *ec)
         ERR("No extra for %p", ec);
         return;
     }
+
+    if (is_ignored_window(extra))
+       return;
 
     if ((ec->x == extra->expected.x) && (ec->y == extra->expected.y) &&
           (ec->w == extra->expected.w) && (ec->h == extra->expected.h))
@@ -762,11 +776,6 @@ _remove_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
     if (!desk_should_tile_check(ec->desk))
         return true;
 
-    if (EINA_LIST_IS_IN(_G.tinfo->floating_windows, ec)) {
-        EINA_LIST_REMOVE(_G.tinfo->floating_windows, ec);
-        return true;
-    }
-
     _remove_client(ec);
 
     return true;
@@ -785,9 +794,14 @@ _iconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
     if (!desk_should_tile_check(ec->desk))
         return true;
 
-    if (EINA_LIST_IS_IN(_G.tinfo->floating_windows, ec)) {
+    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+    if (!extra) {
+        ERR("No extra for %p", ec);
         return true;
     }
+
+    if (is_ignored_window(extra))
+       return true;
 
     _remove_client(ec);
 
@@ -822,15 +836,24 @@ toggle_sticky(E_Client *ec)
     if (!desk_should_tile_check(ec->desk))
         return;
 
-    if (EINA_LIST_IS_IN(_G.tinfo->sticky_windows, ec)) {
-        EINA_LIST_REMOVE(_G.tinfo->sticky_windows, ec);
+    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+    if (!extra) {
+        ERR("No extra for %p", ec);
+        return;
+    }
 
-        _add_client(ec);
-    } else {
+    extra->sticky = !extra->sticky;
+
+    /* This is the new state, act accordingly. */
+    if (extra->sticky)
+      {
         _remove_client(ec);
         _restore_client(ec);
-        EINA_LIST_APPEND(_G.tinfo->sticky_windows, ec);
-    }
+      }
+    else
+      {
+        _add_client(ec);
+      }
 }
 
 static Eina_Bool
@@ -873,13 +896,9 @@ _desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_S
     if (!desk_should_tile_check(ev->desk))
         return true;
 
-    if (is_floating_window(ev->ec)) {
-        EINA_LIST_REMOVE(_G.tinfo->floating_windows, ev->ec);
-    } else {
-         if (tiling_window_tree_client_find(_G.tinfo->tree, ev->ec)) {
-            _remove_client(ev->ec);
-            _restore_client(ev->ec);
-        }
+    if (tiling_window_tree_client_find(_G.tinfo->tree, ev->ec)) {
+         _remove_client(ev->ec);
+         _restore_client(ev->ec);
     }
 
     if (!desk_should_tile_check(ev->ec->desk))
@@ -906,7 +925,6 @@ _clear_info_hash(void *data)
 {
     Tiling_Info *ti = data;
 
-    eina_list_free(ti->floating_windows);
     tiling_window_tree_free(ti->tree);
     ti->tree = NULL;
     E_FREE(ti);
