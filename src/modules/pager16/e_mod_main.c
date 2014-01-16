@@ -1136,6 +1136,37 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
      }
    else
      {
+        int dx, dy, x, y, zx, zy, zw, zh;
+        pw->client->hidden = !p->active_pd->desk->visible;
+        e_client_desk_set(pw->client, p->active_pd->desk);
+
+        dx = (pw->client->w / 2);
+        dy = (pw->client->h / 2);
+
+        evas_pointer_canvas_xy_get(evas_object_evas_get(p->o_table), &x, &y);
+        e_zone_useful_geometry_get(p->zone, &zx, &zy, &zw, &zh);
+
+        /* offset so that center of window is on mouse, but keep within desk bounds */
+        if (dx < x)
+          {
+             x -= dx;
+             if ((pw->client->w < zw) &&
+                 (x + pw->client->w > zx + zw))
+               x -= x + pw->client->w - (zx + zw);
+          }
+        else x = 0;
+
+        if (dy < y)
+          {
+             y -= dy;
+             if ((pw->client->h < zh) &&
+                 (y + pw->client->h > zy + zh))
+               y -= y + pw->client->h - (zy + zh);
+          }
+        else y = 0;
+        evas_object_move(pw->client->frame, x, y);
+
+
         if (!(pw->client->lock_user_stacking))
           evas_object_raise(pw->client->frame);
         evas_object_focus_set(pw->client->frame, 1);
@@ -1337,7 +1368,7 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
              e_client_desk_set(ec, pd->desk);
              evas_object_raise(ec->frame);
                   
-             if ((!pw) && ((!max) && (!fullscreen)))
+             if ((!max) && (!fullscreen))
                {
                   int zx, zy, zw, zh, mx, my;
 
