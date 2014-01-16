@@ -21,6 +21,13 @@ struct _Window_Tree
    double weight;
 };
 
+#define TILING_WINDOW_TREE_EDGE_LEFT (1 << 0)
+#define TILING_WINDOW_TREE_EDGE_RIGHT (1 << 1)
+#define TILING_WINDOW_TREE_EDGE_TOP (1 << 2)
+#define TILING_WINDOW_TREE_EDGE_BOTTOM (1 << 3)
+
+int tiling_window_tree_edges_get(Window_Tree *node);
+
 void tiling_window_tree_free(Window_Tree *root);
 void tiling_window_tree_walk(Window_Tree *root, void (*func)(void *));
 

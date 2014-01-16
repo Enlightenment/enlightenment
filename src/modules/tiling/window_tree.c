@@ -396,6 +396,55 @@ tiling_window_tree_node_resize(Window_Tree *node, int w_dir, double w_diff, int 
    return ret;
 }
 
+int
+_tiling_window_tree_edges_get_helper(Window_Tree *node, Tiling_Split_Type split_type, Eina_Bool gave_up_this,
+      Eina_Bool gave_up_parent)
+{
+   int ret = TILING_WINDOW_TREE_EDGE_LEFT | TILING_WINDOW_TREE_EDGE_RIGHT |
+      TILING_WINDOW_TREE_EDGE_TOP | TILING_WINDOW_TREE_EDGE_BOTTOM;
+   if (!node->parent)
+     {
+        return ret;
+     }
+   else if (gave_up_this && gave_up_parent)
+     {
+        return 0;
+     }
+   else if (gave_up_this)
+     {
+        /* Mixed the gave_up vals on purpose, we do it on every call. */
+        return _tiling_window_tree_edges_get_helper(node->parent, !split_type ,gave_up_parent,
+              gave_up_this);
+     }
+
+   if (EINA_INLIST_GET(node)->prev)
+     {
+        gave_up_this = EINA_TRUE;
+        ret ^= (split_type == TILING_SPLIT_HORIZONTAL) ?
+           TILING_WINDOW_TREE_EDGE_LEFT : TILING_WINDOW_TREE_EDGE_TOP;
+     }
+
+   if (EINA_INLIST_GET(node)->next)
+     {
+        gave_up_this = EINA_TRUE;
+        ret ^= (split_type == TILING_SPLIT_HORIZONTAL) ?
+           TILING_WINDOW_TREE_EDGE_RIGHT : TILING_WINDOW_TREE_EDGE_BOTTOM;
+     }
+
+   /* Mixed the gave_up vals on purpose, we do it on every call. */
+   return ret & _tiling_window_tree_edges_get_helper(node->parent, !split_type ,gave_up_parent,
+         gave_up_this);
+}
+
+int
+tiling_window_tree_edges_get(Window_Tree *node)
+{
+   Tiling_Split_Type split_type = _tiling_window_tree_split_type_get(node);
+
+   return _tiling_window_tree_edges_get_helper(node, !split_type, EINA_FALSE,
+         EINA_FALSE);
+}
+
 void
 tiling_window_tree_dump(Window_Tree *root, int level)
 {

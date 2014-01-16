@@ -732,6 +732,108 @@ static void _move_or_resize(E_Client *ec)
     _reapply_tree();
 }
 
+static void
+_resize_begin_hook(void *data EINA_UNUSED, E_Client *ec)
+{
+    Client_Extra *extra;
+
+    if (!ec) {
+        return;
+    }
+    if (!is_tilable(ec)) {
+        return;
+    }
+
+    if (!desk_should_tile_check(ec->desk))
+        return;
+
+    extra = eina_hash_find(_G.client_extras, &ec);
+    if (!extra) {
+        ERR("No extra for %p", ec);
+        return;
+    }
+
+    if (is_ignored_window(extra))
+       return;
+
+    Window_Tree *item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
+    if (!item)
+      {
+         ERR("Couldn't find tree item for resized client %p!", ec);
+         return;
+      }
+
+    int edges = tiling_window_tree_edges_get(item);
+    if (edges & TILING_WINDOW_TREE_EDGE_LEFT)
+      {
+         switch (ec->resize_mode)
+           {
+            case E_POINTER_RESIZE_L:
+               ec->resize_mode = E_POINTER_RESIZE_NONE;
+               break;
+            case E_POINTER_RESIZE_TL:
+               ec->resize_mode = E_POINTER_RESIZE_T;
+               break;
+            case E_POINTER_RESIZE_BL:
+               ec->resize_mode = E_POINTER_RESIZE_B;
+               break;
+            default:
+               break;
+           }
+      }
+    if (edges & TILING_WINDOW_TREE_EDGE_RIGHT)
+      {
+         switch (ec->resize_mode)
+           {
+            case E_POINTER_RESIZE_R:
+               ec->resize_mode = E_POINTER_RESIZE_NONE;
+               break;
+            case E_POINTER_RESIZE_TR:
+               ec->resize_mode = E_POINTER_RESIZE_T;
+               break;
+            case E_POINTER_RESIZE_BR:
+               ec->resize_mode = E_POINTER_RESIZE_B;
+               break;
+            default:
+               break;
+           }
+      }
+    if (edges & TILING_WINDOW_TREE_EDGE_TOP)
+      {
+         switch (ec->resize_mode)
+           {
+            case E_POINTER_RESIZE_T:
+               ec->resize_mode = E_POINTER_RESIZE_NONE;
+               break;
+            case E_POINTER_RESIZE_TL:
+               ec->resize_mode = E_POINTER_RESIZE_L;
+               break;
+            case E_POINTER_RESIZE_TR:
+               ec->resize_mode = E_POINTER_RESIZE_R;
+               break;
+            default:
+               break;
+           }
+      }
+    if (edges & TILING_WINDOW_TREE_EDGE_BOTTOM)
+      {
+         switch (ec->resize_mode)
+           {
+            case E_POINTER_RESIZE_B:
+               ec->resize_mode = E_POINTER_RESIZE_NONE;
+               break;
+            case E_POINTER_RESIZE_BL:
+               ec->resize_mode = E_POINTER_RESIZE_L;
+               break;
+            case E_POINTER_RESIZE_BR:
+               ec->resize_mode = E_POINTER_RESIZE_R;
+               break;
+            default:
+               break;
+           }
+      }
+}
+
 static Eina_Bool
 _resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 {
@@ -1014,6 +1116,7 @@ e_modapi_init(E_Module *m)
                                  (Ecore_Event_Handler_Cb) _f, \
                                  NULL);
 
+    e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, _resize_begin_hook, NULL);
     HANDLER(_G.handler_client_resize, CLIENT_RESIZE, _resize_hook);
     HANDLER(_G.handler_client_move, CLIENT_MOVE, _move_hook);
     HANDLER(_G.handler_client_add, CLIENT_ADD, _add_hook);
