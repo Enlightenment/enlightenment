@@ -299,7 +299,7 @@ _inlist_prev(Window_Tree *it)
    return (Window_Tree *) EINA_INLIST_GET(it)->prev;
 }
 
-static void
+static Eina_Bool
 _tiling_window_tree_node_resize_direction(Window_Tree *node, Window_Tree *parent,
       double dir_diff, int dir)
 {
@@ -329,8 +329,18 @@ _tiling_window_tree_node_resize_direction(Window_Tree *node, Window_Tree *parent
         itr = itr_func(itr);
      }
 
+   /* If it's at the edge, try the grandpa of the parent. */
    if (weight == 0.0)
-      return;
+     {
+        if (parent->parent && parent->parent->parent)
+          {
+             return _tiling_window_tree_node_resize_direction(parent->parent,
+                   parent->parent->parent,
+                   1.0 + ((dir_diff - 1.) * node->weight),
+                   dir);
+          }
+        return EINA_FALSE;
+     }
 
    weight_diff = itr->weight;
    itr->weight *= dir_diff;
@@ -341,17 +351,20 @@ _tiling_window_tree_node_resize_direction(Window_Tree *node, Window_Tree *parent
      {
         itr->weight += itr->weight * weight_diff;
      }
+
+   return EINA_TRUE;
 }
 
-void
+Eina_Bool
 tiling_window_tree_node_resize(Window_Tree *node, int w_dir, double w_diff, int h_dir, double h_diff)
 {
    Window_Tree *parent = node->parent;
    Window_Tree *w_parent, *h_parent;
+   Eina_Bool ret = EINA_FALSE;
 
    /* If we have no parent, means we need to be full screen anyway. */
    if (!parent)
-      return;
+      return EINA_FALSE;
 
    Window_Tree *grand_parent = parent->parent;
    Tiling_Split_Type parent_split_type = _tiling_window_tree_split_type_get(parent);
@@ -371,14 +384,16 @@ tiling_window_tree_node_resize(Window_Tree *node, int w_dir, double w_diff, int 
    if ((h_diff != 1.0) && h_parent)
      {
         Window_Tree *tmp_node = (h_parent == parent) ? node : parent;
-        _tiling_window_tree_node_resize_direction(tmp_node, h_parent, h_diff, h_dir);
+        ret = ret || _tiling_window_tree_node_resize_direction(tmp_node, h_parent, h_diff, h_dir);
      }
 
    if ((w_diff != 1.0) && w_parent)
      {
         Window_Tree *tmp_node = (w_parent == parent) ? node : parent;
-        _tiling_window_tree_node_resize_direction(tmp_node, w_parent, w_diff, w_dir);
+        ret = ret || _tiling_window_tree_node_resize_direction(tmp_node, w_parent, w_diff, w_dir);
      }
+
+   return ret;
 }
 
 void

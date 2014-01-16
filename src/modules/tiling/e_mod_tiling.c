@@ -722,7 +722,10 @@ static void _move_or_resize(E_Client *ec)
            }
          if ((w_diff != 1.0) || (h_diff != 1.0))
            {
-              tiling_window_tree_node_resize(item, w_dir, w_diff, h_dir, h_diff);
+              if (!tiling_window_tree_node_resize(item, w_dir, w_diff, h_dir, h_diff))
+                {
+                   /* FIXME: Do something? */
+                }
            }
       }
 
