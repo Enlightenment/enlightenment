@@ -56,7 +56,6 @@ struct tiling_g tiling_g = {
     .module = NULL,
     .config = NULL,
     .log_domain = -1,
-    .default_keyhints = "asdfg;lkjh",
 };
 
 static void
@@ -989,7 +988,6 @@ e_modapi_init(E_Module *m)
                                    struct _Config_vdesk);
     E_CONFIG_VAL(_G.config_edd, Config, tile_dialogs, INT);
     E_CONFIG_VAL(_G.config_edd, Config, show_titles, INT);
-    E_CONFIG_VAL(_G.config_edd, Config, keyhints, STR);
 
     E_CONFIG_LIST(_G.config_edd, Config, vdesks, _G.vdesk_edd);
     E_CONFIG_VAL(_G.vdesk_edd, struct _Config_vdesk, x, INT);
@@ -1004,10 +1002,6 @@ e_modapi_init(E_Module *m)
         tiling_g.config->tile_dialogs = 1;
         tiling_g.config->show_titles = 1;
     }
-    if (!tiling_g.config->keyhints)
-        tiling_g.config->keyhints = strdup(tiling_g.default_keyhints);
-    else
-        tiling_g.config->keyhints = strdup(tiling_g.config->keyhints);
 
     E_CONFIG_LIMIT(tiling_g.config->tile_dialogs, 0, 1);
     E_CONFIG_LIMIT(tiling_g.config->show_titles, 0, 1);
@@ -1117,7 +1111,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
     e_configure_registry_item_del("windows/tiling");
     e_configure_registry_category_del("windows");
 
-    free(tiling_g.config->keyhints);
     E_FREE(tiling_g.config);
     E_CONFIG_DD_FREE(_G.config_edd);
     E_CONFIG_DD_FREE(_G.vdesk_edd);

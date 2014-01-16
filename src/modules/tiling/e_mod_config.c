@@ -54,7 +54,6 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
     /* Because we save a lot of lines here by using memcpy,
      * the structs have to be ordered the same */
     memcpy(cfdata, tiling_g.config, sizeof(Config));
-    cfdata->config.keyhints = strdup(tiling_g.config->keyhints);
 
     /* Handle things which can't be easily memcpy'd */
     cfdata->config.vdesks = NULL;
@@ -84,7 +83,6 @@ _free_data(E_Config_Dialog      *cfd __UNUSED__,
            E_Config_Dialog_Data *cfdata)
 {
     eina_list_free(cfdata->config.vdesks);
-    free(cfdata->config.keyhints);
     free(cfdata);
 }
 
@@ -105,8 +103,7 @@ _fill_zone_config(E_Zone               *zone,
     for (i = 0; i < zone->desk_y_count * zone->desk_x_count; i++) {
         E_Desk *desk = zone->desks[i];
         struct _Config_vdesk *vd;
-        Evas_Object *list, *slider, *radio;
-        E_Radio_Group *rg;
+        Evas_Object *list, *slider;
 
         if (!desk)
             continue;
@@ -118,7 +115,6 @@ _fill_zone_config(E_Zone               *zone,
             vd->y = desk->y;
             vd->zone_num = zone->num;
             vd->nb_stacks = 0;
-            vd->use_rows = 0;
 
             EINA_LIST_APPEND(cfdata->config.vdesks, vd);
         }
@@ -126,16 +122,8 @@ _fill_zone_config(E_Zone               *zone,
         list = e_widget_list_add(evas, false, true);
 
         LIST_ADD(list, e_widget_label_add(evas, desk->name));
-        slider = e_widget_slider_add(evas, 1, 0, _("%1.0f"),
-                                     0.0, 8.0, 1.0, 0, NULL,
-                                     &vd->nb_stacks, 150);
+        slider = e_widget_check_add(evas, "", &vd->nb_stacks);
         LIST_ADD(list, slider);
-
-        rg = e_widget_radio_group_new(&vd->use_rows);
-        radio = e_widget_radio_add(evas, _("columns"), 0, rg);
-        LIST_ADD(list, radio);
-        radio = e_widget_radio_add(evas, _("rows"), 1, rg);
-        LIST_ADD(list, radio);
 
         LIST_ADD(cfdata->o_desklist, list);
     }
@@ -185,19 +173,13 @@ _basic_create_widgets(E_Config_Dialog      *cfd __UNUSED__,
       e_widget_check_add(evas, _("Show window titles"),
                          &cfdata->config.show_titles));
     oc = e_widget_list_add(evas, false, true);
-    e_widget_list_object_append(oc,
-      e_widget_label_add(evas, _("Key hints")), 1, 0, 0.5);
-    e_widget_list_object_append(oc,
-      e_widget_entry_add(evas, &cfdata->config.keyhints, NULL, NULL, NULL),
-      1, 1, 0.5);
     e_widget_framelist_object_append(of, oc);
 
     LIST_ADD(o, of);
 
     /* Virtual desktop settings */
     of = e_widget_label_add(evas,
-                       _("Number of columns/rows used to tile per desk"
-                          " (0 → tiling disabled):"));
+                       _("Enable/disable tiling per desktop."));
     LIST_ADD(o, of);
     of = e_widget_framelist_add(evas, _("Virtual Desktops"), 0);
     cfdata->osf = e_widget_list_add(evas, 0, 1);
@@ -240,27 +222,6 @@ _basic_apply_data(E_Config_Dialog      *cfd __UNUSED__,
 
     tiling_g.config->tile_dialogs = cfdata->config.tile_dialogs;
     tiling_g.config->show_titles = cfdata->config.show_titles;
-    if (strcmp(tiling_g.config->keyhints, cfdata->config.keyhints)) {
-        free(tiling_g.config->keyhints);
-        if (!cfdata->config.keyhints || !*cfdata->config.keyhints) {
-            tiling_g.config->keyhints = strdup(tiling_g.default_keyhints);
-        } else {
-            char *c = cfdata->config.keyhints;
-            int len = strlen(cfdata->config.keyhints);
-
-            /* Remove duplicates */
-            while (*c) {
-                char *f = c + 1;
-
-                while ((f = strchr(f, *c))) {
-                    *f = cfdata->config.keyhints[--len];
-                    cfdata->config.keyhints[len] = '\0';
-                }
-                c++;
-            }
-            tiling_g.config->keyhints = strdup(cfdata->config.keyhints);
-        }
-    }
 
     /* Check if the layout for one of the vdesks has changed */
     for (l = tiling_g.config->vdesks; l; l = l->next) {
