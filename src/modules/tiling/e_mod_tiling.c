@@ -733,9 +733,9 @@ _resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 static Eina_Bool
 _move_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client*event)
 {
-    E_Client *ec = event->ec;
+    e_client_act_move_end(event->ec, NULL);
 
-    _move_or_resize(ec);
+    _reapply_tree();
 
     return true;
 }
