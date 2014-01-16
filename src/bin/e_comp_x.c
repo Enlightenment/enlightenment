@@ -4017,6 +4017,7 @@ _e_comp_x_hook_client_redirect(void *d EINA_UNUSED, E_Client *ec)
      {
         /* first window */
         ec->comp->nocomp = 0;
+        ecore_x_window_show(ec->comp->win);
         ecore_x_composite_redirect_subwindows(ec->comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
         ecore_x_window_reparent(_e_comp_x_client_window_get(ec), ec->comp->man->root, ec->client.x, ec->client.y);
         _e_comp_x_client_stack(ec);
