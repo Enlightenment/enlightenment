@@ -799,12 +799,14 @@ _e_fwin_icon_popup_handler(void *data, int type, void *event)
              if (ev->event_window == e_client_util_win_get(fwin->win->client)) return ECORE_CALLBACK_RENEW;
           }
      }
-   if (fwin->popup_timer) ecore_timer_del(fwin->popup_timer);
-   if (fwin->popup) evas_object_del(fwin->popup);
+   E_FREE_FUNC(fwin->popup_timer, ecore_timer_del);
+   if (fwin->popup)
+     {
+        evas_object_hide(fwin->popup);
+        E_FREE_FUNC(fwin->popup, evas_object_del);
+     }
    E_FREE_LIST(fwin->popup_handlers, ecore_event_handler_del);
    fwin->popup_icon = NULL;
-   fwin->popup_timer = NULL;
-   fwin->popup = NULL;
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -1867,7 +1869,6 @@ _e_fwin_selection_change(void *data,
           e_fwin_all_unsel(l->data);
      }
    evas_object_focus_set(obj, 1);
-   _e_fwin_icon_mouse_out(page->fwin, NULL, NULL);
 }
 
 static void
