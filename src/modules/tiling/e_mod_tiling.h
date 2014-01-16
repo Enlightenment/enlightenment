@@ -32,7 +32,6 @@ struct _Config_vdesk
    int           x, y;
    unsigned int  zone_num;
    int           nb_stacks;
-   int           use_rows;
 };
 
 struct _Config

@@ -70,7 +70,6 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
         newvd->y = vd->y;
         newvd->zone_num = vd->zone_num;
         newvd->nb_stacks = vd->nb_stacks;
-        newvd->use_rows = vd->use_rows;
 
         EINA_LIST_APPEND(cfdata->config.vdesks, newvd);
     }
@@ -237,13 +236,12 @@ _basic_apply_data(E_Config_Dialog      *cfd __UNUSED__,
             continue;
         }
 
-        if (newvd->nb_stacks != vd->nb_stacks
-        ||  newvd->use_rows != vd->use_rows) {
-            DBG("number of columns for (%d, %d, %d) changed from %d|%d"
-                " to %d|%d",
+        if (newvd->nb_stacks != vd->nb_stacks) {
+            DBG("number of columns for (%d, %d, %d) changed from %d"
+                " to %d",
                 vd->x, vd->y, vd->zone_num,
-                vd->nb_stacks, vd->use_rows,
-                newvd->nb_stacks, newvd->use_rows);
+                vd->nb_stacks,
+                newvd->nb_stacks);
             change_desk_conf(newvd);
             free(vd);
             l->data = NULL;
@@ -279,7 +277,6 @@ _basic_apply_data(E_Config_Dialog      *cfd __UNUSED__,
         newvd->y = vd->y;
         newvd->zone_num = vd->zone_num;
         newvd->nb_stacks = vd->nb_stacks;
-        newvd->use_rows = vd->use_rows;
 
         EINA_LIST_APPEND(tiling_g.config->vdesks, newvd);
     }

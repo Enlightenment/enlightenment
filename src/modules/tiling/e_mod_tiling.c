@@ -407,11 +407,6 @@ change_desk_conf(struct _Config_vdesk *newconf)
     check_tinfo(d);
     if (_G.tinfo->conf) {
         old_nb_stacks = _G.tinfo->conf->nb_stacks;
-        if (_G.tinfo->conf->use_rows != newconf->use_rows) {
-            _G.tinfo->conf = newconf;
-            _G.tinfo->conf->use_rows = !_G.tinfo->conf->use_rows;
-            return;
-        }
     } else {
         newconf->nb_stacks = 0;
     }
@@ -1031,7 +1026,6 @@ e_modapi_init(E_Module *m)
     E_CONFIG_VAL(_G.vdesk_edd, struct _Config_vdesk, y, INT);
     E_CONFIG_VAL(_G.vdesk_edd, struct _Config_vdesk, zone_num, INT);
     E_CONFIG_VAL(_G.vdesk_edd, struct _Config_vdesk, nb_stacks, INT);
-    E_CONFIG_VAL(_G.vdesk_edd, struct _Config_vdesk, use_rows, INT);
 
     tiling_g.config = e_config_domain_load("module.tiling", _G.config_edd);
     if (!tiling_g.config) {
@@ -1049,7 +1043,6 @@ e_modapi_init(E_Module *m)
         vd = l->data;
 
         E_CONFIG_LIMIT(vd->nb_stacks, 0, TILING_MAX_STACKS);
-        E_CONFIG_LIMIT(vd->use_rows, 0, 1);
     }
 
     desk = get_current_desk();
