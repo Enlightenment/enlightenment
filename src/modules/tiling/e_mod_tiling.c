@@ -6,36 +6,9 @@
 #define TILING_RESIZE_STEP 5
 #define TILING_WRAP_SPEED 0.1
 
-typedef enum {
-    TILING_RESIZE,
-    TILING_MOVE,
-} tiling_change_t;
-
-typedef enum {
-    INPUT_MODE_NONE,
-    INPUT_MODE_SWAPPING,
-    INPUT_MODE_MOVING,
-    INPUT_MODE_GOING,
-    INPUT_MODE_TRANSITION,
-} tiling_input_mode_t;
-
-typedef enum {
-    MOVE_UP,
-    MOVE_DOWN,
-    MOVE_LEFT,
-    MOVE_RIGHT,
-
-    MOVE_COUNT
-} tiling_move_t;
-
 typedef struct geom_t {
     int x, y, w, h;
 } geom_t;
-
-typedef struct overlay_t {
-    Evas_Object *popup;
-    Evas_Object *obj;
-} overlay_t;
 
 typedef struct Client_Extra {
     E_Client *client;
@@ -47,8 +20,6 @@ typedef struct Client_Extra {
          E_Maximize  maximized;
          const char *bordername;
     } orig;
-    overlay_t overlay;
-    char key[4];
     int last_frame_adjustment; // FIXME: Hack for frame resize bug.
     Eina_Bool sticky : 1;
     Eina_Bool floating : 1;
@@ -105,16 +76,13 @@ static struct tiling_mod_main_g
                           warp_to_y;
     Ecore_Timer          *warp_timer;
 
-    overlay_t             move_overlays[MOVE_COUNT];
     Ecore_Timer          *action_timer;
     E_Client             *focused_ec;
     void (*action_cb)(E_Client *ec, Client_Extra *extra);
     Tiling_Split_Type     split_type;
 
-    tiling_input_mode_t   input_mode;
     char                  keys[4];
 } _G = {
-    .input_mode = INPUT_MODE_NONE,
     .split_type = TILING_SPLIT_HORIZONTAL,
 };
 
@@ -1203,7 +1171,6 @@ e_modapi_init(E_Module *m)
     desk = get_current_desk();
     _G.tinfo = _initialize_tinfo(desk);
 
-    _G.input_mode = INPUT_MODE_NONE;
     _G.currently_switching_desktop = 0;
     _G.action_cb = NULL;
 
