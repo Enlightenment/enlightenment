@@ -181,8 +181,9 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
 
                        EINA_INLIST_FOREACH_SAFE(item_keep->children, itr_safe, itr)
                          {
+                            /* We are prepending to double-reverse the order. */
                             grand_parent->children =
-                               eina_inlist_append_relative(grand_parent->children,
+                               eina_inlist_prepend_relative(grand_parent->children,
                                      EINA_INLIST_GET(itr), EINA_INLIST_GET(parent));
                             itr->weight *= parent->weight;
                             itr->parent = grand_parent;
