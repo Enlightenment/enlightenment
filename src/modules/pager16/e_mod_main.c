@@ -109,6 +109,7 @@ static Eina_Bool        _pager_cb_event_desk_name_change(void *data __UNUSED__, 
 static Eina_Bool        _pager_cb_event_compositor_resize(void *data __UNUSED__, int type __UNUSED__, void *event);
 static void             _pager_window_cb_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void             _pager_window_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
+static void             _pager_window_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 static void             _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 static void            *_pager_window_cb_drag_convert(E_Drag *drag, const char *type);
 static void             _pager_window_cb_drag_finished(E_Drag *drag, int dropped);
@@ -664,6 +665,8 @@ _pager_window_new(Pager_Desk *pd, Evas_Object *mirror, E_Client *client)
 
    evas_object_event_callback_add(mirror, EVAS_CALLBACK_MOUSE_DOWN,
                                   _pager_window_cb_mouse_down, pw);
+   evas_object_event_callback_add(mirror, EVAS_CALLBACK_MOUSE_UP,
+                                  _pager_window_cb_mouse_up, pw);
    evas_object_event_callback_add(mirror, EVAS_CALLBACK_MOUSE_MOVE,
                                   _pager_window_cb_mouse_move, pw);
    evas_object_event_callback_add(mirror, EVAS_CALLBACK_DEL,
@@ -1008,6 +1011,14 @@ _pager_window_cb_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUS
 }
 
 static void
+_pager_window_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info EINA_UNUSED)
+{
+   Pager_Win *pw = data;
+
+   pw->drag.button = 0;
+}
+
+static void
 _pager_window_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Event_Mouse_Down *ev;
@@ -1057,6 +1068,7 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
    if (!pw) return;
    if (pw->client->lock_user_location) return;
    if ((pw->desk->pager->popup) && (!act_popup)) return;
+   if (!pw->drag.button) return;
 
    /* prevent drag for a few pixels */
    if (!pw->drag.start) return;
