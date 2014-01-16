@@ -552,6 +552,14 @@ _e_mod_action_toggle_floating_cb(E_Object   *obj __UNUSED__,
     toggle_floating(e_client_focused_get());
 }
 
+static void
+_e_mod_menu_border_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+{
+   E_Client *ec = data;
+
+   toggle_floating(ec);
+}
+
 /* }}} */
 /* {{{ Swap */
 
@@ -909,6 +917,36 @@ _compositor_resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Comp
     return true;
 }
 
+static void
+_bd_hook(void *d __UNUSED__, E_Client *ec)
+{
+   E_Menu_Item *mi;
+   E_Menu *m;
+   Eina_List *l;
+   if (!ec->border_menu) return;
+   m = ec->border_menu;
+
+   /* position menu item just before the last separator */
+   EINA_LIST_REVERSE_FOREACH(m->items, l, mi)
+      if (mi->separator) break;
+   if ((!mi) || (!mi->separator)) return;
+   l = eina_list_prev(l);
+   mi = eina_list_data_get(l);
+   if (!mi) return;
+
+    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+    if (!extra) {
+        ERR("No extra for %p", ec);
+        return;
+    }
+
+   mi = e_menu_item_new_relative(m, mi);
+   e_menu_item_label_set(mi, _("Floating"));
+   e_menu_item_check_set(mi, true);
+   e_menu_item_toggle_set(mi, (extra->floating) ? true : false);
+   e_menu_item_callback_set(mi, _e_mod_menu_border_cb, ec);
+}
+
 /* }}} */
 /* Module setup {{{*/
 
@@ -1044,6 +1082,8 @@ e_modapi_init(E_Module *m)
 
         E_CONFIG_LIMIT(vd->nb_stacks, 0, TILING_MAX_STACKS);
     }
+
+    e_int_client_menu_hook_add(_bd_hook, NULL);
 
     desk = get_current_desk();
     _G.tinfo = _initialize_tinfo(desk);
