@@ -2635,7 +2635,7 @@ reshadow:
               */
              int x, y;
 
-             if (cw->ec->placed && cw->ec->new_client)
+             if (cw->ec->changes.size)
                {
                   x = cw->ec->x;
                   y = cw->ec->y;
