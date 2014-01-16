@@ -1258,8 +1258,7 @@ e_comp_style_selector_create(Evas *evas, const char **source)
         e_layout_pack(oly, oo);
         e_layout_child_move(oo, 39, 39);
         e_layout_child_resize(oo, 162, 162);
-        edje_object_signal_emit(oo, "e,state,shadow,on", "e");
-        edje_object_signal_emit(oo, "e,state,visible,on", "e");
+        edje_object_signal_emit(oo, "e,state,visible", "e");
         evas_object_show(oo);
 
         ds_it->frame = edje_object_add(evas);
@@ -1275,6 +1274,7 @@ e_comp_style_selector_create(Evas *evas, const char **source)
                                 "e/widgets/border/default/border");
         edje_object_part_text_set(obd, "e.text.title", _("Title"));
         edje_object_signal_emit(obd, "e,state,focused", "e");
+        edje_object_signal_emit(obd, "e,state,shadow,on", "e");
         edje_object_part_swallow(oo, "e.swallow.content", obd);
         evas_object_show(obd);
 
