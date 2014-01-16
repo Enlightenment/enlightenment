@@ -695,11 +695,11 @@ static void _move_or_resize(E_Client *ec)
       {
          int w_dir = 1, h_dir = 1;
          double w_diff = 1.0, h_diff = 1.0;
-         if (abs(extra->expected.w - ec->w) >= MAX(ec->icccm.step_w, 1))
+         if (abs(extra->expected.w - ec->w) >= 1)
            {
               w_diff = ((double) ec->w) / extra->expected.w;
            }
-         if (abs(extra->expected.h - ec->h) >= MAX(ec->icccm.step_h, 1))
+         if (abs(extra->expected.h - ec->h) >= 1)
            {
               h_diff = ((double) ec->h) / extra->expected.h;
            }
