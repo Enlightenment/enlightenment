@@ -167,7 +167,7 @@ static Eina_Bool
 desk_should_tile_check(const E_Desk *desk)
 {
    check_tinfo(desk);
-   return (_G.tinfo->conf &&_G.tinfo->conf->nb_stacks);
+   return (_G.tinfo && _G.tinfo->conf &&_G.tinfo->conf->nb_stacks);
 }
 
 static int
@@ -442,9 +442,8 @@ _add_client(E_Client *ec)
         return;
     }
 
-    if (!_G.tinfo || !_G.tinfo->conf || !_G.tinfo->conf->nb_stacks) {
+    if (!desk_should_tile_check(ec->desk))
         return;
-    }
 
     _get_or_create_client_extra(ec);
 
@@ -481,6 +480,18 @@ _add_client(E_Client *ec)
 static void
 _remove_client(E_Client *ec)
 {
+    if (!ec)
+       return;
+
+    if (is_floating_window(ec))
+       return;
+
+    if (!is_tilable(ec))
+       return;
+
+    if (!desk_should_tile_check(ec->desk))
+       return;
+
     DBG("removing %p", ec);
 
     eina_hash_del(_G.client_extras, ec, NULL);
