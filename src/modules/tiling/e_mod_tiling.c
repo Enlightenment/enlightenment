@@ -508,6 +508,8 @@ _remove_client(E_Client *ec)
          _G.tinfo->tree = tiling_window_tree_remove(_G.tinfo->tree, item);
       }
 
+    EINA_LIST_REMOVE(_G.tinfo->floating_windows, ec);
+
     _reapply_tree();
 }
 
