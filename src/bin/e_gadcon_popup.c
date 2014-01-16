@@ -235,7 +235,8 @@ e_gadcon_popup_show(E_Gadcon_Popup *pop)
    _e_gadcon_popup_position(pop);
    pop->autoclose_handlers[0] = ecore_event_handler_add(E_EVENT_DESK_AFTER_SHOW, _e_popup_autoclose_deskafter_show_cb, NULL);
    pop->autoclose_handlers[1] = ecore_event_handler_add(E_EVENT_CLIENT_FULLSCREEN, _e_popup_autoclose_client_fullscreen_cb, NULL);
-   e_comp_object_util_del_list_append(pop->comp_object, pop->content);
+   if (pop->content)
+     e_comp_object_util_del_list_append(pop->comp_object, pop->content);
    evas_object_show(pop->comp_object);
 }
 
