@@ -674,9 +674,15 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
    int ix, iy;
 
    if ((cw->x == x) && (cw->y == y)) return;
+   if ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL)
+     y = cw->y;
+   if ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL)
+     x = cw->x;
    ix = x + cw->client_inset.l;
    iy = y + cw->client_inset.t;
-   if (cw->ec->maximized && ((cw->ec->x != x) || (cw->ec->y != y)))
+   if (cw->ec->maximized && ((cw->ec->x != x) || (cw->ec->y != y)) &&
+       ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) != E_MAXIMIZE_VERTICAL) &&
+       ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) != E_MAXIMIZE_HORIZONTAL))
      {
         if ((!e_config->allow_manip) && ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_BOTH)) return;
         if ((!cw->ec->shading) && (!cw->ec->shaded))
