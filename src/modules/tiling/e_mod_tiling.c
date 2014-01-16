@@ -509,6 +509,7 @@ _remove_client(E_Client *ec)
       }
 
     EINA_LIST_REMOVE(_G.tinfo->floating_windows, ec);
+    EINA_LIST_REMOVE(_G.tinfo->sticky_windows, ec);
 
     _reapply_tree();
 }
@@ -813,18 +814,37 @@ _uniconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *even
     return true;
 }
 
-static Eina_Bool
-_stick_hook(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+static void
+toggle_sticky(E_Client *ec)
 {
-    DBG("TODO");
-    return true;
+    if (!ec)
+        return;
+    if (!desk_should_tile_check(ec->desk))
+        return;
+
+    if (EINA_LIST_IS_IN(_G.tinfo->sticky_windows, ec)) {
+        EINA_LIST_REMOVE(_G.tinfo->sticky_windows, ec);
+
+        _add_client(ec);
+    } else {
+        _remove_client(ec);
+        _restore_client(ec);
+        EINA_LIST_APPEND(_G.tinfo->sticky_windows, ec);
+    }
 }
 
 static Eina_Bool
-_unstick_hook(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_stick_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 {
-    DBG("TODO");
-    return true;
+   toggle_sticky(event->ec);
+   return true;
+}
+
+static Eina_Bool
+_unstick_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
+{
+   toggle_sticky(event->ec);
+   return true;
 }
 
 static Eina_Bool

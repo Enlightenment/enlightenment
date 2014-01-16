@@ -167,11 +167,11 @@ _basic_create_widgets(E_Config_Dialog      *cfd __UNUSED__,
     /* General settings */
     of = e_widget_framelist_add(evas, _("General"), 0);
     e_widget_framelist_object_append(of,
-      e_widget_check_add(evas, _("Tile dialog windows as well"),
-                         &cfdata->config.tile_dialogs));
-    e_widget_framelist_object_append(of,
       e_widget_check_add(evas, _("Show window titles"),
                          &cfdata->config.show_titles));
+    e_widget_framelist_object_append(of,
+      e_widget_check_add(evas, _("Tile dialog windows"),
+                         &cfdata->config.tile_dialogs));
     oc = e_widget_list_add(evas, false, true);
     e_widget_framelist_object_append(of, oc);
 

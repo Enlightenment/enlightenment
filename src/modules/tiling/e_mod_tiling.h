@@ -53,6 +53,8 @@ struct _Tiling_Info
 
     /* List of windows which were toggled floating */
     Eina_List *floating_windows;
+    /* List of sticky windows. */
+    Eina_List *sticky_windows;
 
     Window_Tree *tree;
 };
