@@ -2630,15 +2630,17 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
                   if (ec->netwm.icons || ec->desktop || ec->internal_icon)
                     {
                        Evas_Object *o = NULL;
+                       int x, y, w, h;
                        const char *drag_types[] = { "enlightenment/border" };
 
                        e_object_ref(E_OBJECT(ec));
+                       e_comp_object_frame_icon_geometry_get(ec->frame, &x, &y, &w, &h);
                        client_drag = e_drag_new(ec->zone->comp,
                                                 output->x, output->y,
                                                 drag_types, 1, ec, -1,
                                                 NULL,
                                                 _e_client_cb_drag_finished);
-                       e_drag_resize(client_drag, e_scale * 48, e_scale * 48);
+                       e_drag_resize(client_drag, w, h);
                        o = e_client_icon_add(ec, client_drag->evas);
                        if (!o)
                          {
