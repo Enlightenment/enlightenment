@@ -23,6 +23,7 @@ typedef struct Client_Extra {
     int last_frame_adjustment; // FIXME: Hack for frame resize bug.
     Eina_Bool sticky : 1;
     Eina_Bool floating : 1;
+    Eina_Bool tiled : 1;
 } Client_Extra;
 
 struct tiling_g tiling_g = {
@@ -31,8 +32,8 @@ struct tiling_g tiling_g = {
     .log_domain = -1,
 };
 
-static void
-_add_client(E_Client *ec);
+static void _add_client(E_Client *ec);
+static void _remove_client(E_Client *ec);
 
 /* }}} */
 /* Globals {{{ */
@@ -351,10 +352,14 @@ _reapply_tree(void)
 }
 
 void
-_restore_free_client(void *client)
+_restore_free_client(void *_item)
 {
-   _restore_client(client);
-   free(client);
+   Window_Tree *item = _item;
+   if (item->client)
+     {
+        _restore_client(item->client);
+     }
+   free(item);
 }
 
 void
@@ -417,6 +422,11 @@ _add_client(E_Client *ec)
     if (is_ignored_window(extra))
        return;
 
+    if (extra->tiled)
+       return;
+
+    extra->tiled = EINA_TRUE;
+
     /* Stack tiled window below so that winlist doesn't mix up stacking */
     evas_object_layer_set(ec->frame, E_LAYER_CLIENT_BELOW);
 
@@ -463,6 +473,8 @@ _remove_client(E_Client *ec)
         ERR("No extra for %p", ec);
         return;
     }
+
+    extra->tiled = EINA_FALSE;
 
     /* Window tree updating. */
       {
@@ -1239,6 +1251,18 @@ e_modapi_init(E_Module *m)
 
     _G.currently_switching_desktop = 0;
     _G.action_cb = NULL;
+
+    /* Add all the existing windows. */
+      {
+         E_Client *ec;
+         E_CLIENT_FOREACH(e_comp_get(NULL), ec)
+           {
+              if (e_client_util_ignored_get(ec))
+                 continue;
+
+              _add_client(ec);
+           }
+      }
 
     return m;
 }
