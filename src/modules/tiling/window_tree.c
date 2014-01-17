@@ -445,6 +445,78 @@ tiling_window_tree_edges_get(Window_Tree *node)
          EINA_FALSE);
 }
 
+/* Node move */
+static struct _Node_Move_Context {
+     Window_Tree *node;
+     Window_Tree *ret;
+     int cross_edge;
+} _node_move_ctx;
+
+static void
+_tiling_window_tree_node_move_walker(void *_node)
+{
+   Window_Tree *node = _node;
+
+   /* We are only interested in nodes with clients. */
+   if (!node->client)
+      return;
+
+   /* Quit if we've already found something. */
+   if (_node_move_ctx.ret)
+      return;
+
+   switch (_node_move_ctx.cross_edge)
+     {
+      case TILING_WINDOW_TREE_EDGE_LEFT:
+         if ((node->client->x + node->client->w) ==
+               _node_move_ctx.node->client->x)
+            _node_move_ctx.ret = node;
+         break;
+      case TILING_WINDOW_TREE_EDGE_RIGHT:
+         if (node->client->x ==
+               (_node_move_ctx.node->client->x + _node_move_ctx.node->client->w))
+            _node_move_ctx.ret = node;
+         break;
+      case TILING_WINDOW_TREE_EDGE_TOP:
+         if ((node->client->y + node->client->h) ==
+               _node_move_ctx.node->client->y)
+            _node_move_ctx.ret = node;
+         break;
+      case TILING_WINDOW_TREE_EDGE_BOTTOM:
+         if (node->client->y ==
+               (_node_move_ctx.node->client->y + _node_move_ctx.node->client->h))
+            _node_move_ctx.ret = node;
+         break;
+      default:
+         break;
+     }
+}
+
+void
+tiling_window_tree_node_move(Window_Tree *node, int cross_edge)
+{
+   Window_Tree *root = node;
+   /* FIXME: This is very slow and possibly buggy. Can be done much better,
+    * but is very easy to implement. */
+
+   while (root->parent)
+      root = root->parent;
+
+   _node_move_ctx.node = node;
+   _node_move_ctx.cross_edge = cross_edge;
+   _node_move_ctx.ret = NULL;
+
+   tiling_window_tree_walk(root, _tiling_window_tree_node_move_walker);
+
+   if (_node_move_ctx.ret)
+     {
+        E_Client *ec = node->client;
+        node->client = _node_move_ctx.ret->client;
+        _node_move_ctx.ret->client = ec;
+     }
+}
+/* End Node move. */
+
 void
 tiling_window_tree_dump(Window_Tree *root, int level)
 {

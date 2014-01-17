@@ -41,4 +41,6 @@ void tiling_window_tree_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y, Eva
 
 Eina_Bool tiling_window_tree_node_resize(Window_Tree *node, int w_dir, double w_diff, int h_dir, double h_diff);
 
+void tiling_window_tree_node_move(Window_Tree *node, int cross_edge);
+
 #endif

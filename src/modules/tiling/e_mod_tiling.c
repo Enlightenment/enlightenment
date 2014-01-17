@@ -65,7 +65,10 @@ static struct tiling_mod_main_g
     Eina_Hash            *overlays;
 
     E_Action             *act_togglefloat,
-                         *act_swap,
+                         *act_move_up,
+                         *act_move_down,
+                         *act_move_left,
+                         *act_move_right,
                          *act_toggle_split_mode;
 
     int                   warp_x,
@@ -530,11 +533,10 @@ _e_mod_menu_border_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED
 }
 
 /* }}} */
-/* {{{ Swap */
+/* {{{ Move windows */
 
 static void
-_e_mod_action_swap_cb(E_Object   *obj __UNUSED__,
-                      const char *params __UNUSED__)
+_action_swap(int cross_edge)
 {
     E_Desk *desk;
     E_Client *focused_ec;
@@ -550,6 +552,42 @@ _e_mod_action_swap_cb(E_Object   *obj __UNUSED__,
     if (!desk_should_tile_check(desk))
         return;
 
+    Window_Tree *item = tiling_window_tree_client_find(_G.tinfo->tree, focused_ec);
+
+    if (item)
+      {
+         tiling_window_tree_node_move(item, cross_edge);
+
+         _reapply_tree();
+      }
+}
+
+static void
+_e_mod_action_move_left_cb(E_Object   *obj __UNUSED__,
+                      const char *params __UNUSED__)
+{
+   _action_swap(TILING_WINDOW_TREE_EDGE_LEFT);
+}
+
+static void
+_e_mod_action_move_right_cb(E_Object   *obj __UNUSED__,
+                      const char *params __UNUSED__)
+{
+   _action_swap(TILING_WINDOW_TREE_EDGE_RIGHT);
+}
+
+static void
+_e_mod_action_move_up_cb(E_Object   *obj __UNUSED__,
+                      const char *params __UNUSED__)
+{
+   _action_swap(TILING_WINDOW_TREE_EDGE_TOP);
+}
+
+static void
+_e_mod_action_move_down_cb(E_Object   *obj __UNUSED__,
+                      const char *params __UNUSED__)
+{
+   _action_swap(TILING_WINDOW_TREE_EDGE_BOTTOM);
 }
 
 /* }}} */
@@ -1137,8 +1175,18 @@ e_modapi_init(E_Module *m)
     ACTION_ADD(_G.act_togglefloat, _e_mod_action_toggle_floating_cb,
                N_("Toggle floating"), "toggle_floating",
                NULL, NULL, 0);
-    ACTION_ADD(_G.act_swap, _e_mod_action_swap_cb,
-               N_("Swap a window with an other"), "swap",
+
+    ACTION_ADD(_G.act_move_up, _e_mod_action_move_up_cb,
+               N_("Move the focused window up"), "move_up",
+               NULL, NULL, 0);
+    ACTION_ADD(_G.act_move_down, _e_mod_action_move_down_cb,
+               N_("Move the focused window down"), "move_down",
+               NULL, NULL, 0);
+    ACTION_ADD(_G.act_move_left, _e_mod_action_move_left_cb,
+               N_("Move the focused window left"), "move_left",
+               NULL, NULL, 0);
+    ACTION_ADD(_G.act_move_right, _e_mod_action_move_right_cb,
+               N_("Move the focused window right"), "move_right",
                NULL, NULL, 0);
 
     ACTION_ADD(_G.act_toggle_split_mode, _e_mod_action_toggle_split_mode,
@@ -1275,7 +1323,10 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
         act = NULL;                                          \
     }
     ACTION_DEL(_G.act_togglefloat, "Toggle floating", "toggle_floating");
-    ACTION_DEL(_G.act_swap, "Swap a window with an other", "swap");
+    ACTION_DEL(_G.act_move_up, "Move the focused window up", "move_up");
+    ACTION_DEL(_G.act_move_down, "Move the focused window down", "move_down");
+    ACTION_DEL(_G.act_move_left, "Move the focused window left", "move_left");
+    ACTION_DEL(_G.act_move_right, "Move the focused window right", "move_right");
 
     ACTION_DEL(_G.act_toggle_split_mode, "Toggle split mode",
           "toggle_split_mode");
