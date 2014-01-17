@@ -3511,7 +3511,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    if ((eina_list_count(ec->comp->zones) > 1) ||
        (policy == E_FULLSCREEN_RESIZE) || (!ecore_x_randr_query()))
      {
-        e_comp_object_util_fullscreen(ec->frame);
+        evas_object_geometry_set(ec->frame, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h);
      }
    else if (policy == E_FULLSCREEN_ZOOM)
      {
