@@ -95,6 +95,7 @@ e_screensaver_force_update(void)
    int timeout = e_screensaver_timeout_get(EINA_TRUE);
 #ifdef WAYLAND_ONLY
 #else
+   if (!getenv("DISPLAY")) return;
    ecore_x_screensaver_set(timeout + 10,
                            0,
 //                           e_config->screensaver_interval,
