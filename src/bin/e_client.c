@@ -3327,13 +3327,13 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    if (!(ec->maximized & E_MAXIMIZE_HORIZONTAL))
      {
         /* Horizontal hasn't been set */
-        ec->saved.x = ec->client.x;
+        ec->saved.x = ec->client.x - ec->zone->x;
         ec->saved.w = ec->client.w;
      }
    if (!(ec->maximized & E_MAXIMIZE_VERTICAL))
      {
         /* Vertical hasn't been set */
-        ec->saved.y = ec->client.y;
+        ec->saved.y = ec->client.y - ec->zone->y;
         ec->saved.h = ec->client.h;
      }
 
@@ -3393,8 +3393,8 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
              evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
              ec->maximized = E_MAXIMIZE_NONE;
              e_client_util_move_resize_without_frame(ec,
-                                                     ec->saved.x,
-                                                     ec->saved.y,
+                                                     ec->saved.x + ec->zone->x,
+                                                     ec->saved.y + ec->zone->y,
                                                      ec->saved.w, ec->saved.h);
              ec->saved.x = ec->saved.y = ec->saved.w = ec->saved.h = 0;
              e_hints_window_size_unset(ec);
@@ -3484,8 +3484,8 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
      }
    else
      {
-        ec->saved.x = ec->x - ec->zone->x;
-        ec->saved.y = ec->y - ec->zone->y;
+        ec->saved.x = ec->client.x - ec->zone->x;
+        ec->saved.y = ec->client.y - ec->zone->y;
         ec->saved.w = ec->client.w;
         ec->saved.h = ec->client.h;
      }
@@ -3511,7 +3511,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    if ((eina_list_count(ec->comp->zones) > 1) ||
        (policy == E_FULLSCREEN_RESIZE) || (!ecore_x_randr_query()))
      {
-        evas_object_geometry_set(ec->frame, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h);
+        e_comp_object_util_fullscreen(ec->frame);
      }
    else if (policy == E_FULLSCREEN_ZOOM)
      {

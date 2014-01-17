@@ -1426,8 +1426,17 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
      {
         if ((ec->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE)
           {
+             E_Zone *zone;
+
              ec->saved.x = x;
              ec->saved.y = y;
+
+             zone = e_comp_zone_xy_get(ec->comp, x, y);
+             if (zone && (zone->x || zone->y))
+               {
+                  ec->saved.x -= zone->x;
+                  ec->saved.y -= zone->y;
+               }
           }
         else
           {

@@ -688,8 +688,8 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
         if ((!cw->ec->shading) && (!cw->ec->shaded))
           {
              cw->ec->changes.need_unmaximize = 1;
-             cw->ec->saved.x = ix;
-             cw->ec->saved.y = iy;
+             cw->ec->saved.x = ix - cw->ec->zone->x;
+             cw->ec->saved.y = iy - cw->ec->zone->y;
              cw->ec->saved.w = cw->ec->client.w;
              cw->ec->saved.h = cw->ec->client.h;
              EC_CHANGED(cw->ec);
@@ -734,8 +734,8 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
              cw->ec->changes.need_unmaximize = 1;
              cw->ec->saved.w = iw;
              cw->ec->saved.h = ih;
-             cw->ec->saved.x = cw->ec->client.x;
-             cw->ec->saved.y = cw->ec->client.y;
+             cw->ec->saved.x = cw->ec->client.x - cw->ec->zone->x;
+             cw->ec->saved.y = cw->ec->client.y - cw->ec->zone->y;
              EC_CHANGED(cw->ec);
              return;
           }
