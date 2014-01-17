@@ -1060,12 +1060,22 @@ _desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_S
     return true;
 }
 
+static void
+_compositor_resize_hook_desk_reapply(E_Desk *desk)
+{
+   check_tinfo(desk);
+   if (!desk_should_tile_check(desk))
+      return;
+
+   _reapply_tree();
+}
+
 static bool
 _compositor_resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Compositor_Resize *ev EINA_UNUSED)
 {
-   // FIXME
+   _foreach_desk(_compositor_resize_hook_desk_reapply);
 
-    return true;
+   return true;
 }
 
 static void
