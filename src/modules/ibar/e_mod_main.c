@@ -1124,10 +1124,45 @@ _ibar_icon_menu_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
      ic->hide_timer = ecore_timer_add(0.5, _ibar_cb_out_hide_delay, ic);
 }
 
+static Eina_Bool
+_ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
+{
+   Evas_Object *o, *it, *img;
+   Eina_Stringshare *txt;
+   int w, h;
+   
+   if (ec->netwm.state.skip_taskbar) return EINA_FALSE;
+   o = ic->menu->o_bg;
+   it = edje_object_add(e_comp_get(ec)->evas);
+   e_comp_object_util_del_list_append(ic->menu->comp_object, it);
+   e_theme_edje_object_set(it, "base/theme/modules/ibar",
+                           "e/modules/ibar/menu/item");
+   img = e_comp_object_util_mirror_add(ec->frame);
+   evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
+                                  _ibar_cb_icon_menu_img_del, it);
+   txt = e_client_name_get(ec);
+   w = ec->client.w;
+   h = ec->client.h;
+   e_comp_object_util_del_list_append(ic->menu->comp_object, img);
+   evas_object_show(img);
+   edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, w, h);
+   edje_object_part_swallow(it, "e.swallow.icon", img);
+   edje_object_part_text_set(it, "e.text.title", txt);
+   edje_object_calc_force(it);
+   edje_object_size_min_calc(it, &w, &h);
+   edje_extern_object_min_size_set(it, w, h);
+   evas_object_size_hint_min_set(it, w, h);
+   evas_object_show(it);
+   evas_object_event_callback_add(it, EVAS_CALLBACK_MOUSE_UP, _ibar_cb_icon_menu_mouse_up, ec);
+   evas_object_data_set(it, "ibar_icon", ic);
+   edje_object_part_box_append(o, "e.box", it);
+   return EINA_TRUE;
+}
+
 static void
 _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
 {
-   Evas_Object *o, *it;
+   Evas_Object *o;
    Eina_List *l;
    E_Exec_Instance *exe;
    Evas *e;
@@ -1151,39 +1186,13 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
    evas_object_layer_set(ic->menu->comp_object, E_LAYER_POPUP);
    EINA_LIST_FOREACH(ic->exes, l, exe)
      {
-        Evas_Object *img;
-        const char *txt;
         Eina_List *ll;
         E_Client *ec;
 
         EINA_LIST_FOREACH(exe->clients, ll, ec)
           {
-             if (ec->netwm.state.skip_taskbar) continue;
-             it = edje_object_add(e);
-             e_comp_object_util_del_list_append(ic->menu->comp_object, it);
-             e_theme_edje_object_set(it, "base/theme/modules/ibar",
-                                     "e/modules/ibar/menu/item");
-             img = e_comp_object_util_mirror_add(ec->frame);
-             evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
-                                            _ibar_cb_icon_menu_img_del, it);
-             txt = e_client_name_get(ec);
-             w = ec->client.w;
-             h = ec->client.h;
-             e_comp_object_util_del_list_append(ic->menu->comp_object, img);
-             evas_object_show(img);
-             edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, w, h);
-             edje_object_part_swallow(it, "e.swallow.icon", img);
-             edje_object_part_text_set(it, "e.text.title", txt);
-             edje_object_calc_force(it);
-             edje_object_size_min_calc(it, &w, &h);
-             edje_extern_object_min_size_set(it, w, h);
-             evas_object_size_hint_min_set(it, w, h);
-             evas_object_show(it);
-             evas_object_event_callback_add(it, EVAS_CALLBACK_MOUSE_UP,
-               _ibar_cb_icon_menu_mouse_up, ec);
-             evas_object_data_set(it, "ibar_icon", ic);
-             edje_object_part_box_append(o, "e.box", it);
-             empty = EINA_FALSE;
+             if (_ibar_icon_menu_client_add(ic, ec))
+               empty = EINA_FALSE;
           }
      }
    if (empty)
