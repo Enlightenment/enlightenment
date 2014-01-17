@@ -2823,7 +2823,8 @@ _e_menu_cb_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
    ev = event;
    if (ev->window != _e_menu_win)
      {
-        _e_menu_deactivate_all();
+        if (_e_menu_active_get())
+          _e_menu_deactivate_all();
         return ECORE_CALLBACK_PASS_ON;
      }
 
