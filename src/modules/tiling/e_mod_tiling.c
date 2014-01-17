@@ -648,7 +648,7 @@ _pre_client_assign_hook(void *data __UNUSED__,
        return;
 
     if ((ec->bordername && strcmp(ec->bordername, "pixel"))
-    ||  !ec->bordername)
+          || !ec->bordername)
     {
         change_window_border(ec, "pixel");
     }
