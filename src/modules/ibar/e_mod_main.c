@@ -1033,6 +1033,7 @@ _ibar_cb_icon_menu_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
      }
    e_client_activate(ec, 1);
    if (!ic) return;
+   evas_object_pass_events_set(ic->menu->comp_object, 1);
    edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
 }
 
@@ -1051,6 +1052,7 @@ _ibar_cb_icon_menu_autodel(void *data, Evas_Object *obj EINA_UNUSED)
    IBar_Icon *ic = data;
 
    if (!ic->menu) return;
+   evas_object_pass_events_set(ic->menu->comp_object, 1);
    edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
 }
 
@@ -1076,6 +1078,7 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    evas_object_del(data);
    if (eina_list_count(ic->exes) < 2)
      {
+        evas_object_pass_events_set(ic->menu->comp_object, 1);
         edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
         return;
      }
@@ -1225,6 +1228,7 @@ _ibar_icon_menu_hide(IBar_Icon *ic, Eina_Bool grab)
      ic->ibar->menu_icon = NULL;
    E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
    ic->menu_grabbed = EINA_FALSE;
+   evas_object_pass_events_set(ic->menu->comp_object, 1);
    edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
 }
 
