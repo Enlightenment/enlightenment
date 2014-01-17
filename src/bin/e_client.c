@@ -516,7 +516,11 @@ _e_client_del(E_Client *ec)
         client_drag = NULL;
      }
    if (ec->border_menu) e_menu_deactivate(ec->border_menu);
-   if (!stopping) e_client_comp_hidden_set(ec, 1);
+   if (!stopping)
+     {
+        e_client_comp_hidden_set(ec, 1);
+        evas_object_pass_events_set(ec->frame, 1);
+     }
 
    E_FREE_FUNC(ec->border_locks_dialog, e_object_del);
    E_FREE_FUNC(ec->border_remember_dialog, e_object_del);
