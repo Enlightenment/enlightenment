@@ -1130,7 +1130,8 @@ _e_comp_intercept_raise(void *data, Evas_Object *obj)
    else
      {
         evas_object_stack_below(obj, cw->comp->layers[cw->layer].obj);
-        e_client_raise_latest_set(cw->ec);
+        if (e_client_focus_track_enabled())
+          e_client_raise_latest_set(cw->ec);
      }
    e_comp_shape_queue(cw->comp);
 }
