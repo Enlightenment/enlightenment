@@ -473,7 +473,7 @@ _remove_client(E_Client *ec)
          Window_Tree *item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
          if (!item)
            {
-              ERR("Couldn't find tree item for focused client %p!", ec);
+              ERR("Couldn't find tree item for client %p!", ec);
               return;
            }
 
