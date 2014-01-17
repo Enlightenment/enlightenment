@@ -256,15 +256,20 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
 {
    Window_Tree *itr;
    Tiling_Split_Type split_type = level % 2;
+   double total_weight = 0.0;
 
    if (root->client)
-      tiling_e_client_move_resize_extra(root->client, x, y, w, h);
+     {
+        tiling_e_client_move_resize_extra(root->client, x, y, w, h);
+        return;
+     }
 
    if (split_type == TILING_SPLIT_HORIZONTAL)
      {
         EINA_INLIST_FOREACH(root->children, itr)
           {
              Evas_Coord itw = w * itr->weight;
+             total_weight += itr->weight;
              _tiling_window_tree_level_apply(itr, x, y, itw, h, level + 1);
              x += itw;
           }
@@ -274,10 +279,14 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
         EINA_INLIST_FOREACH(root->children, itr)
           {
              Evas_Coord ith = h * itr->weight;
+             total_weight += itr->weight;
              _tiling_window_tree_level_apply(itr, x, y, w, ith, level + 1);
              y += ith;
           }
      }
+
+   /* Adjust the last item's weight in case weight < 1.0 */
+   ((Window_Tree *) root->children->last)->weight += 1.0 - total_weight;
 }
 
 void
