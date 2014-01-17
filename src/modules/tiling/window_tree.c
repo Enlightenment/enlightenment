@@ -13,7 +13,7 @@ tiling_window_tree_walk(Window_Tree *root, void (*func)(void *))
 
    EINA_INLIST_FOREACH_SAFE(root->children, itr_safe, itr)
      {
-        tiling_window_tree_free(itr);
+        tiling_window_tree_walk(itr, func);
      }
    func(root);
 }
