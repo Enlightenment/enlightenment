@@ -34,6 +34,7 @@ struct tiling_g tiling_g = {
 
 static void _add_client(E_Client *ec);
 static void _remove_client(E_Client *ec);
+static void _foreach_desk(void (*func)(E_Desk *desk));
 
 /* }}} */
 /* Globals {{{ */
@@ -1284,6 +1285,22 @@ _disable_all_tiling(void)
     const Eina_List *l, *ll;
     E_Comp *comp;
     E_Zone *zone;
+
+    _foreach_desk(_disable_desk);
+
+    EINA_LIST_FOREACH(e_comp_list(), l, comp) {
+        EINA_LIST_FOREACH(comp->zones, ll, zone) {
+            e_place_zone_region_smart_cleanup(zone);
+        }
+    }
+}
+
+static void
+_foreach_desk(void (*func)(E_Desk *desk))
+{
+    const Eina_List *l, *ll;
+    E_Comp *comp;
+    E_Zone *zone;
     E_Desk *desk;
     int x, y;
 
@@ -1293,10 +1310,9 @@ _disable_all_tiling(void)
                 for (y = 0; y < zone->desk_y_count; y++) {
                     desk = zone->desks[x + (y * zone->desk_x_count)];
 
-                    _disable_desk(desk);
+                    func(desk);
                 }
             }
-            e_place_zone_region_smart_cleanup(zone);
         }
     }
 }
