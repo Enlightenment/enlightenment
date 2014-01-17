@@ -277,7 +277,10 @@ e_winlist_hide(void)
              if (!ec->sticky) e_desk_show(ec->desk);
           }
         if (!ec->lock_user_stacking)
-          evas_object_raise(ec->frame);
+          {
+             evas_object_raise(ec->frame);
+             e_client_raise_latest_set(ec);
+          }
 
         if ((e_config->focus_policy != E_FOCUS_CLICK) ||
             (e_config->winlist_warp_at_end) ||
