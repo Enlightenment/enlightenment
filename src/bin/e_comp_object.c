@@ -2566,7 +2566,7 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
         int w, h;
 
         w = cw->w, h = cw->h;
-        e_comp_object_frame_wh_unadjust(cw->frame_object, w, h, &cw->w, &cw->h);
+        e_comp_object_frame_wh_unadjust(obj, w, h, &cw->w, &cw->h);
         if (cw->ec && ((cw->w != w) || (cw->h != h)))
           {
              cw->ec->changes.size = 1;
