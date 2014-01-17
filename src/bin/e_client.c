@@ -3344,9 +3344,6 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    ec->saved.zone = ec->zone->num;
    e_hints_window_size_set(ec);
 
-   if (!starting)
-     evas_object_raise(ec->frame);
-
    _e_client_maximize(ec, max);
 
    /* Remove previous type */
