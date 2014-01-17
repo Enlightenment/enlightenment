@@ -492,15 +492,6 @@ main(int argc, char **argv)
    s = getenv("E_DESKLOCK_LOCKED");
    if ((s) && (!strcmp(s, "locked"))) waslocked = EINA_TRUE;
 
-   TS("E_Pointer Init");
-   if (!e_pointer_init())
-     {
-        e_error_message_show(_("Enlightenment cannot set up its pointer system.\n"));
-        _e_main_shutdown(-1);
-     }
-   TS("E_Pointer Init Done");
-   _e_main_shutdown_push(e_pointer_shutdown);
-
    TS("E Paths Init");
    if (!_e_main_path_init())
      {
@@ -596,7 +587,6 @@ main(int argc, char **argv)
     */
    e_zone_init();
    e_desk_init();
-   e_menu_init();
    e_exehist_init();
 
 
@@ -623,6 +613,15 @@ main(int argc, char **argv)
    TS("Screens Init Done");
    _e_main_shutdown_push(_e_main_screens_shutdown);
 
+   TS("E_Pointer Init");
+   if (!e_pointer_init())
+     {
+        e_error_message_show(_("Enlightenment cannot set up its pointer system.\n"));
+        _e_main_shutdown(-1);
+     }
+   TS("E_Pointer Init Done");
+   _e_main_shutdown_push(e_pointer_shutdown);
+   e_menu_init();
 
    TS("E_Scale Init");
    if (!e_scale_init())
