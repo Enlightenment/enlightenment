@@ -1121,7 +1121,7 @@ _ibar_icon_menu_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
    if (ic->hide_timer)
      ecore_timer_reset(ic->hide_timer);
    else
-     ic->hide_timer = ecore_timer_add(1.0, _ibar_cb_out_hide_delay, ic);
+     ic->hide_timer = ecore_timer_add(0.5, _ibar_cb_out_hide_delay, ic);
 }
 
 static void
@@ -1318,7 +1318,7 @@ _ibar_cb_icon_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
         if (ic->hide_timer)
           ecore_timer_reset(ic->hide_timer);
         else
-          ic->hide_timer = ecore_timer_add(1.0, _ibar_cb_out_hide_delay, ic);
+          ic->hide_timer = ecore_timer_add(0.75, _ibar_cb_out_hide_delay, ic);
      }
 }
 
