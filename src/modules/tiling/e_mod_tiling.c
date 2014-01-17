@@ -456,9 +456,6 @@ _remove_client(E_Client *ec)
     if (!is_tilable(ec))
        return;
 
-    if (!desk_should_tile_check(ec->desk))
-       return;
-
     DBG("removing %p", ec);
 
     Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
@@ -1034,13 +1031,13 @@ _desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_S
         ev->desk->x, ev->desk->y,
         ev->ec->desk->x, ev->ec->desk->y);
 
-    if (!desk_should_tile_check(ev->desk))
-        return true;
-
-    if (tiling_window_tree_client_find(_G.tinfo->tree, ev->ec)) {
-         _remove_client(ev->ec);
-         _restore_client(ev->ec);
-    }
+    if (desk_should_tile_check(ev->desk))
+      {
+         if (tiling_window_tree_client_find(_G.tinfo->tree, ev->ec)) {
+              _remove_client(ev->ec);
+              _restore_client(ev->ec);
+         }
+      }
 
     if (!desk_should_tile_check(ev->ec->desk))
         return true;
