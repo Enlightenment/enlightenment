@@ -131,6 +131,7 @@ static void         _ibar_drop_position_update(Instance *inst, Evas_Coord x, Eva
 static void         _ibar_inst_cb_scroll(void *data);
 static Eina_Bool    _ibar_cb_config_icons(void *data, int ev_type, void *ev);
 
+static Eina_Bool    _ibar_cb_out_hide_delay(void *data);
 static void         _ibar_icon_menu_show(IBar_Icon *ic, Eina_Bool grab);
 static void         _ibar_icon_menu_hide(IBar_Icon *ic, Eina_Bool grab);
 
@@ -1103,6 +1104,25 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 }
 
 static void
+_ibar_icon_menu_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   IBar_Icon *ic = data;
+
+   E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
+}
+
+static void
+_ibar_icon_menu_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   IBar_Icon *ic = data;
+
+   if (ic->hide_timer)
+     ecore_timer_reset(ic->hide_timer);
+   else
+     ic->hide_timer = ecore_timer_add(1.0, _ibar_cb_out_hide_delay, ic);
+}
+
+static void
 _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
 {
    Evas_Object *o, *it;
@@ -1174,6 +1194,12 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
    edje_object_calc_force(o);
    edje_object_size_min_calc(o, &w, &h);
    edje_extern_object_min_size_set(o, w, h);
+
+   if (!grab)
+     {
+        evas_object_event_callback_add(ic->menu->comp_object, EVAS_CALLBACK_MOUSE_IN, _ibar_icon_menu_mouse_in, ic);
+        evas_object_event_callback_add(ic->menu->comp_object, EVAS_CALLBACK_MOUSE_OUT, _ibar_icon_menu_mouse_out, ic);
+     }
 
    ic->menu->w = w, ic->menu->h = h;
    edje_object_signal_callback_add(o, "e,action,hide,done", "*",
