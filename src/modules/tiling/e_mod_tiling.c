@@ -239,7 +239,7 @@ _e_client_unmaximize(E_Client *ec, E_Maximize max)
         (max & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL ? "VERTICAL" :
         (max & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL ? "HORIZONTAL" :
         "BOTH");
-//    e_client_unmaximize(ec, max);
+    e_client_unmaximize(ec, max);
 }
 
 static void
