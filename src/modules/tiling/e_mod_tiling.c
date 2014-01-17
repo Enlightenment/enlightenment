@@ -815,6 +815,26 @@ _resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 static Eina_Bool
 _move_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client*event)
 {
+    E_Client *ec = event->ec;
+    if (!ec) {
+        return true;
+    }
+    if (!is_tilable(ec)) {
+        return true;
+    }
+
+    if (!desk_should_tile_check(ec->desk))
+        return true;
+
+    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+    if (!extra) {
+        ERR("No extra for %p", ec);
+        return true;
+    }
+
+    if (is_ignored_window(extra))
+       return true;
+
     e_client_act_move_end(event->ec, NULL);
 
     _reapply_tree();
