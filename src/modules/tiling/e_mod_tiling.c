@@ -428,9 +428,10 @@ _add_client(E_Client *ec)
          /* If focused is NULL, it should return the root. */
          Window_Tree *parent = tiling_window_tree_client_find(_G.tinfo->tree,
                ec_focused);
-         if (!parent)
+         if (!parent && (ec_focused != ec))
            {
-              if (_G.tinfo->tree && ec_focused)
+              Client_Extra *extra_focused = eina_hash_find(_G.client_extras, &ec_focused);
+              if (_G.tinfo->tree && extra_focused && !is_ignored_window(extra_focused))
                 {
                    ERR("Couldn't find tree item for focused client %p. Using root..",
                          e_client_focused_get());
