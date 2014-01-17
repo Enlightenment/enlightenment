@@ -781,6 +781,8 @@ _e_comp_x_evas_frame_recalc_cb(void *data, Evas_Object *obj, void *event_info)
      _e_comp_x_client_frame_update(ec, fr->l, fr->r, fr->t, fr->b);
    else
      ec->comp_data->frame_update = 1;
+   ec->post_move = ec->post_resize = 1;
+   _e_comp_x_post_client_idler_add(ec);
 }
 
 static void
