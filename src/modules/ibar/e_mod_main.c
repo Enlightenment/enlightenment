@@ -71,7 +71,8 @@ struct _IBar_Icon
    Efreet_Desktop  *app;
    Ecore_Timer     *reset_timer;
    Ecore_Timer     *timer;
-   Ecore_Timer     *hide_timer;
+   Ecore_Timer     *show_timer; //for menu
+   Ecore_Timer     *hide_timer; //for menu
    E_Exec_Instance *exe_inst;
    Eina_List       *exes; //all instances
    Eina_List       *exe_current;
@@ -834,6 +835,7 @@ _ibar_icon_free(IBar_Icon *ic)
    E_FREE_FUNC(ic->menu, e_object_del);
    E_FREE_FUNC(ic->timer, ecore_timer_del);
    E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
+   E_FREE_FUNC(ic->show_timer, ecore_timer_del);
    ic->ibar->icons = eina_inlist_remove(ic->ibar->icons, EINA_INLIST_GET(ic));
    eina_hash_del_by_key(ic->ibar->icon_hash, _desktop_name_get(ic->app));
    E_FREE_FUNC(ic->reset_timer, ecore_timer_del);
@@ -1258,6 +1260,16 @@ _ibar_icon_menu_hide(IBar_Icon *ic, Eina_Bool grab)
    edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
 }
 
+static Eina_Bool
+_ibar_icon_mouse_in_timer(void *data)
+{
+   IBar_Icon *ic = data;
+
+   ic->show_timer = NULL;
+   _ibar_icon_menu_show(ic, EINA_FALSE);
+   return EINA_FALSE;
+}
+
 static void
 _ibar_cb_icon_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -1271,7 +1283,12 @@ _ibar_cb_icon_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
      _ibar_icon_signal_emit(ic, "e,action,show,label", "e");
    E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
    if (!ic->ibar->inst->ci->dont_icon_menu_mouseover)
-     _ibar_icon_menu_show(ic, EINA_FALSE);
+     {
+        if (ic->show_timer)
+          ecore_timer_reset(ic->show_timer);
+        else
+          ic->show_timer = ecore_timer_add(0.2, _ibar_icon_mouse_in_timer, ic);
+     }
 }
 
 static Eina_Bool
@@ -1291,6 +1308,7 @@ _ibar_cb_icon_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 
    ic = data;
    E_FREE_FUNC(ic->reset_timer, ecore_timer_del);
+   E_FREE_FUNC(ic->show_timer, ecore_timer_del);
    ic->focused = EINA_FALSE;
    _ibar_icon_signal_emit(ic, "e,state,unfocused", "e");
    if (ic->ibar->inst->ci->show_label)
@@ -1334,6 +1352,7 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      }
    else if (ev->button == 2)
      {
+        E_FREE_FUNC(ic->show_timer, ecore_timer_del);
         E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
         E_FREE_FUNC(ic->timer, ecore_timer_del);
         _ibar_icon_menu_show(ic, EINA_TRUE);
