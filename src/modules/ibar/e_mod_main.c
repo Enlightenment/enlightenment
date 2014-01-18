@@ -76,6 +76,7 @@ struct _IBar_Icon
    E_Exec_Instance *exe_inst;
    Eina_List       *exes; //all instances
    Eina_List       *exe_current;
+   Eina_List       *menu_pending; //clients with menu items pending
    E_Gadcon_Popup  *menu;
    int              mouse_down;
    struct
@@ -131,7 +132,7 @@ static void         _ibar_cb_drag_finished(E_Drag *data, int dropped);
 static void         _ibar_drop_position_update(Instance *inst, Evas_Coord x, Evas_Coord y);
 static void         _ibar_inst_cb_scroll(void *data);
 static Eina_Bool    _ibar_cb_config_icons(void *data, int ev_type, void *ev);
-
+static void         _ibar_exec_new_client_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED);
 static Eina_Bool    _ibar_cb_out_hide_delay(void *data);
 static void         _ibar_icon_menu_show(IBar_Icon *ic, Eina_Bool grab);
 static void         _ibar_icon_menu_hide(IBar_Icon *ic, Eina_Bool grab);
@@ -1063,10 +1064,36 @@ static void
 _ibar_cb_icon_menu_hidden(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    IBar_Icon *ic = data;
+   E_Client *ec;
 
    E_OBJECT_DEL_SET(ic->menu, NULL);
    E_FREE_FUNC(ic->menu, e_object_del);
    E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
+   EINA_LIST_FREE(ic->menu_pending, ec)
+     evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_SHOW, _ibar_exec_new_client_show, ic);
+}
+
+static void
+_ibar_icon_menu_recalc(IBar_Icon *ic)
+{
+   int x, y, w, h, iw, ih, ox, oy;
+   Evas_Object *o;
+
+   o = ic->menu->o_bg;
+
+   edje_object_calc_force(o);
+   edje_object_size_min_calc(o, &w, &h);
+   edje_extern_object_min_size_set(o, w, h);
+   ic->menu->w = w, ic->menu->h = h;
+   evas_object_resize(ic->menu->comp_object, w, h);
+   e_gadcon_popup_show(ic->menu);
+   evas_object_geometry_get(ic->o_holder, &x, &y, &iw, &ih);
+   evas_object_geometry_get(ic->menu->comp_object, &ox, &oy, NULL, NULL);
+   if (e_box_orientation_get(ic->ibar->o_box))
+     ox = (x + (iw / 2)) - (w / 2);
+   else
+     oy = (y + (ih / 2)) - (h / 2);
+   evas_object_move(ic->menu->comp_object, ox, oy);
 }
 
 static void
@@ -1079,7 +1106,7 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    if (!ic->menu) return; //who knows
    edje_object_part_box_remove(ic->menu->o_bg, "e.box", data);
    evas_object_del(data);
-   if (eina_list_count(ic->exes) < 2)
+   if (eina_list_count(ic->exes) < 1)
      {
         evas_object_pass_events_set(ic->menu->comp_object, 1);
         edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
@@ -1166,10 +1193,12 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
    Eina_List *l;
    E_Exec_Instance *exe;
    Evas *e;
-   int w, h;
    Eina_Bool empty = EINA_TRUE;
+   E_Client *ec;
 
    if (!ic->exes) return; //FIXME
+   EINA_LIST_FREE(ic->menu_pending, ec)
+     evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_SHOW, _ibar_exec_new_client_show, ic);
    ic->menu = e_gadcon_popup_new(ic->ibar->inst->gcc, 1);
    e_object_data_set(E_OBJECT(ic->menu), ic);
    E_OBJECT_DEL_SET(ic->menu, _ibar_cb_icon_menu_del);
@@ -1187,7 +1216,6 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
    EINA_LIST_FOREACH(ic->exes, l, exe)
      {
         Eina_List *ll;
-        E_Client *ec;
 
         EINA_LIST_FOREACH(exe->clients, ll, ec)
           {
@@ -1202,9 +1230,6 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
         e_object_del(E_OBJECT(ic->menu));
         return;
      }
-   edje_object_calc_force(o);
-   edje_object_size_min_calc(o, &w, &h);
-   edje_extern_object_min_size_set(o, w, h);
 
    if (!grab)
      {
@@ -1212,28 +1237,30 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
         evas_object_event_callback_add(ic->menu->comp_object, EVAS_CALLBACK_MOUSE_OUT, _ibar_icon_menu_mouse_out, ic);
      }
 
-   ic->menu->w = w, ic->menu->h = h;
    edje_object_signal_callback_add(o, "e,action,hide,done", "*",
                                    _ibar_cb_icon_menu_hidden, ic);
-   evas_object_resize(ic->menu->comp_object, w, h);
    edje_object_signal_emit(o, "e,state,hidden", "e");
    edje_object_message_signal_process(o);
-   e_gadcon_popup_show(ic->menu);
    ic->ibar->menu_icon = ic;
-   {
-      Evas_Coord x, y, iw, ih, ox, oy;
-      evas_object_geometry_get(ic->o_holder, &x, &y, &iw, &ih);
-      evas_object_geometry_get(ic->menu->comp_object, &ox, &oy, NULL, NULL);
-      if (e_box_orientation_get(ic->ibar->o_box))
-        ox = (x + (iw / 2)) - (w / 2);
-      else
-        oy = (y + (ih / 2)) - (h / 2);
-      evas_object_move(ic->menu->comp_object, ox, oy);
-   }
+   _ibar_icon_menu_recalc(ic);
+
    edje_object_signal_emit(o, "e,action,show", "e");
    ic->menu_grabbed = grab;
    if (grab)
      e_comp_object_util_autoclose(ic->menu->comp_object, _ibar_cb_icon_menu_autodel, NULL, ic);
+}
+
+static void
+_ibar_exec_new_client_show(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   IBar_Icon *ic = data;
+   E_Client *ec = e_comp_object_client_get(obj);
+
+   if (!ic->menu) return;
+   _ibar_icon_menu_client_add(ic, ec);
+   _ibar_icon_menu_recalc(ic);
+   ic->menu_pending = eina_list_remove(ic->menu_pending, ec);
+   evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_SHOW, _ibar_exec_new_client_show, ic);
 }
 
 static void
@@ -2465,6 +2492,12 @@ _ibar_cb_exec_new_client(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance
              if (skip) continue;
              if (!eina_list_data_find(ic->exes, exe))
                ic->exes = eina_list_append(ic->exes, exe);
+             if (ic->menu)
+               {
+                  /* adding will fail if client hasn't been shown yet */
+                  ic->menu_pending = eina_list_append(ic->menu_pending, ec);
+                  evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, _ibar_exec_new_client_show, ic);
+               }
           }
         else if (!b->inst->ci->dont_add_nonorder)
           {
@@ -2502,6 +2535,12 @@ _ibar_cb_exec_new(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
              if (skip) continue;
              if (!eina_list_data_find(ic->exes, exe))
                ic->exes = eina_list_append(ic->exes, exe);
+             if (ic->menu)
+               {
+                  /* adding will fail if client hasn't been shown yet */
+                  ic->menu_pending = eina_list_append(ic->menu_pending, ec);
+                  evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, _ibar_exec_new_client_show, ic);
+               }
           }
         else if (!b->inst->ci->dont_add_nonorder)
           {
