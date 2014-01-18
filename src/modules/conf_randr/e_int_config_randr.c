@@ -9,8 +9,7 @@ struct _E_Config_Dialog_Data
 {
    Evas_Object *o_randr;
 
-   unsigned char restore;
-   unsigned int primary;
+   int restore, primary;
 };
 
 /* local function prototypes */
