@@ -156,7 +156,7 @@ _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    Eina_Bool change_primary = EINA_FALSE;
 
-   change_primary = (e_randr_cfg->primary != cfdata->primary);
+   change_primary = (e_randr_cfg->primary != (unsigned int)cfdata->primary);
 
    e_randr_cfg->primary = cfdata->primary;
    e_randr_cfg->restore = cfdata->restore;
@@ -175,7 +175,7 @@ static int
 _basic_check(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    return ((e_randr_cfg->restore != cfdata->restore) || 
-           (e_randr_cfg->primary != cfdata->primary));
+           (e_randr_cfg->primary != (unsigned int)cfdata->primary));
 }
 
 static void 
