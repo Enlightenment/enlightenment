@@ -229,6 +229,18 @@ e_exec_phony(E_Client *ec)
    E_Exec_Instance *inst;
    Eina_List *l, *lnew;
 
+   if (ec->desktop)
+     {
+        /* try grouping with previous phony exec */
+        l = eina_hash_find(e_exec_instances, ec->desktop->orig_path ?: ec->desktop->name);
+        EINA_LIST_FOREACH(l, lnew, inst)
+          if (inst && inst->phony)
+            {
+               e_exec_instance_client_add(inst, ec);
+               return inst;
+            }
+     }
+
    inst = E_NEW(E_Exec_Instance, 1);
    inst->ref = 1;
    inst->phony = 1;
