@@ -1061,11 +1061,21 @@ _ibar_cb_icon_menu_autodel(void *data, Evas_Object *obj EINA_UNUSED)
 }
 
 static void
+_ibar_cb_icon_menu_shown(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   IBar_Icon *ic = data;
+
+   evas_object_pass_events_set(ic->menu->o_bg, 0);
+   fprintf(stderr, "bleh show\n");
+}
+
+static void
 _ibar_cb_icon_menu_hidden(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
    IBar_Icon *ic = data;
    E_Client *ec;
 
+   fprintf(stderr, "bleh hide\n");
    E_OBJECT_DEL_SET(ic->menu, NULL);
    E_FREE_FUNC(ic->menu, e_object_del);
    E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
@@ -1108,7 +1118,7 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
    evas_object_del(data);
    if (eina_list_count(ic->exes) < 1)
      {
-        evas_object_pass_events_set(ic->menu->comp_object, 1);
+        evas_object_pass_events_set(ic->menu->o_bg, 1);
         edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
         return;
      }
@@ -1237,6 +1247,8 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
         evas_object_event_callback_add(ic->menu->comp_object, EVAS_CALLBACK_MOUSE_OUT, _ibar_icon_menu_mouse_out, ic);
      }
 
+   edje_object_signal_callback_add(o, "e,action,show,done", "*",
+                                   _ibar_cb_icon_menu_shown, ic);
    edje_object_signal_callback_add(o, "e,action,hide,done", "*",
                                    _ibar_cb_icon_menu_hidden, ic);
    edje_object_signal_emit(o, "e,state,hidden", "e");
@@ -1244,6 +1256,7 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
    ic->ibar->menu_icon = ic;
    _ibar_icon_menu_recalc(ic);
 
+   evas_object_pass_events_set(o, 1);
    edje_object_signal_emit(o, "e,action,show", "e");
    ic->menu_grabbed = grab;
    if (grab)
