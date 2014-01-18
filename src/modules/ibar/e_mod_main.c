@@ -1153,6 +1153,7 @@ _ibar_icon_menu_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
 {
    IBar_Icon *ic = data;
 
+   if (e_menu_grab_window_get()) return;
    if (ic->hide_timer)
      ecore_timer_reset(ic->hide_timer);
    else
