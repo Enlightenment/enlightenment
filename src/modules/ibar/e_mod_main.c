@@ -1400,6 +1400,11 @@ _ibar_cb_icon_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         char buf[256];
         int cx, cy;
 
+        E_FREE_FUNC(ic->show_timer, ecore_timer_del);
+        E_FREE_FUNC(ic->hide_timer, ecore_timer_del);
+        E_FREE_FUNC(ic->timer, ecore_timer_del);
+        if (ic->menu)
+          _ibar_icon_menu_hide(ic, ic->menu_grabbed);
         m = e_menu_new();
 
         /* FIXME: other icon options go here too */
