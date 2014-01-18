@@ -131,9 +131,9 @@ _auth_pam_init(E_Auth *da)
 #endif
 
 EAPI int
+#ifdef HAVE_PAM
 e_auth_begin(char *passwd)
 {
-#ifdef HAVE_PAM
    /* child */
    int pamerr;
    E_Auth da;
@@ -180,9 +180,15 @@ e_auth_begin(char *passwd)
      }
    free(current_user);
    exit(-1);
-#endif
+
    return 0;
 }
+#else
+e_auth_begin(char *passwd EINA_UNUSED)
+{
+   return 0;
+}
+#endif
 
 EAPI char *
 e_auth_hostname_get(void)

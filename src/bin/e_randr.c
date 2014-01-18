@@ -807,8 +807,8 @@ _e_randr_config_output_mode_update(E_Randr_Output_Config *cfg)
      {
         for (i = 0; i < nmode_infos; i++)
           {
-             if ((mode_infos[i]->width == cfg->geo.w) &&
-                 (mode_infos[i]->height == cfg->geo.h))
+             if ((mode_infos[i]->width == (unsigned int)cfg->geo.w) &&
+                 (mode_infos[i]->height == (unsigned int)cfg->geo.h))
                {
                   cfg->mode = mode_infos[i]->xid;
                   break;
