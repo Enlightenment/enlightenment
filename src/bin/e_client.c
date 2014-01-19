@@ -1271,9 +1271,6 @@ _e_client_cb_evas_hide(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    if (action_client == ec) _e_client_action_finish();
    e_pointer_type_pop(ec->comp->pointer, ec, NULL);
 
-   if ((!ec->iconic) && (!ec->override))
-      e_hints_window_hidden_set(ec);
-
    if (!ec->hidden)
      {
         ec->visible = 0;
