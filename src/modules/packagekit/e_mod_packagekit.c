@@ -196,10 +196,11 @@ _store_error(E_PackageKit_Module_Context *ctxt, const char *err)
 
 /* RefreshCache() */
 static void
-null_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+null_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    E_PackageKit_Module_Context *ctxt = data;
    const char *error, *error_msg;
+
    if (eldbus_message_error_get(msg, &error, &error_msg))
      _store_error(ctxt, error_msg);
 }
@@ -465,9 +466,10 @@ packagekit_create_transaction_and_exec(E_PackageKit_Module_Context *ctxt,
 
 /* PackageKit DBus */
 static void
-_signal_updates_changed_cb(void *data, const Eldbus_Message *msg)
+_signal_updates_changed_cb(void *data, const Eldbus_Message *msg EINA_UNUSED)
 {
    E_PackageKit_Module_Context *ctxt = data;
+
    packagekit_create_transaction_and_exec(ctxt, packagekit_get_updates);
 }
 
@@ -489,7 +491,7 @@ _iterate_dict(void *data, const void *key, Eldbus_Message_Iter *var)
 }
 
 static void
-_prop_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_prop_get_cb(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending EINA_UNUSED)
 {
    E_PackageKit_Module_Context *ctxt = data;
    Eldbus_Message_Iter *array;
