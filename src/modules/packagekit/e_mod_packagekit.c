@@ -132,6 +132,12 @@ _popup_del_cb(void *obj)
    packagekit_popup_del(e_object_data_get(obj));
 }
 
+static void
+_popup_autoclose_cb(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   packagekit_popup_del((E_PackageKit_Instance *)data);
+}
+
 void
 packagekit_popup_new(E_PackageKit_Instance *inst)
 {
@@ -161,16 +167,19 @@ packagekit_popup_new(E_PackageKit_Instance *inst)
    packagekit_popup_update(inst);
 
    e_gadcon_popup_content_set(inst->popup, table);
-   e_comp_object_util_autoclose(inst->popup->comp_object, NULL, NULL, NULL);
-   e_gadcon_popup_show(inst->popup);
+   e_comp_object_util_autoclose(inst->popup->comp_object,
+                                _popup_autoclose_cb, NULL, inst);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
+
+   e_gadcon_popup_show(inst->popup);
 }
 
 void
 packagekit_popup_del(E_PackageKit_Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
+   inst->popup_ilist = inst->popup_label = NULL;
 }
 
 
