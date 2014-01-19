@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Link
+Name=System updates
+Name[es]=Actualizaciones del sistema
+Name[fi]=Järjestelmän päivitykset
+Name[gl]=Actualizacións do sistema
+Name[it]=Aggiornamenti di sistema
+Name[pt]=Atualizações do sistema
+Comment=Control system update status
+Comment[es]=Contrala el estado de las actualizaciones del sistema
+Comment[fi]=Hallinnoi järjestelmän päivitysten tilaa
+Comment[gl]=Controla o estado das actualizacións do sistema
+Comment[it]=Controlla lo stato degli aggiornamenti del sistema
+Comment[pt]=Controlar o estado das atualizações do sistema
+Icon=e-module-packagekit
+X-Enlightenment-ModuleType=system

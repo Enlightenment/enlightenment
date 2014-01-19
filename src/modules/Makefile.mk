@@ -218,6 +218,10 @@ if USE_MODULE_MUSIC_CONTROL
 include src/modules/Makefile_music_control.mk
 endif
 
+if USE_MODULE_PACKAGEKIT
+include src/modules/Makefile_packagekit.mk
+endif
+
 if USE_MODULE_CONTACT
 include src/modules/Makefile_contact.mk
 endif

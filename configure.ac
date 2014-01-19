@@ -664,6 +664,12 @@ define([CHECK_MODULE_MUSIC_CONTROL],
   AC_E_CHECK_PKG(MUSIC_CONTROL, [ ecore >= $efl_version eina >= $efl_version eldbus ], [], [MUSIC_CONTROL=false])
 ])
 
+AM_CONDITIONAL(HAVE_PACKAGEKIT, false)
+define([CHECK_MODULE_PACKAGEKIT],
+[
+  AC_E_CHECK_PKG(PACKAGEKIT, [ ecore >= $efl_version eina >= $efl_version eldbus efreet ], [], [PACKAGEKIT=false])
+])
+
 ##have_exchange=no
 ##AC_ARG_ENABLE(exchange,
 ##  AS_HELP_STRING([--disable-exchange], [disable Exchange support @<:@default=detect@:>@]),
@@ -901,6 +907,7 @@ AC_E_OPTIONAL_MODULE([xkbswitch], true, $ecore_x)
 AC_E_OPTIONAL_MODULE([tiling], true)
 AC_E_OPTIONAL_MODULE([access], false, $ecore_x)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
+AC_E_OPTIONAL_MODULE([packagekit], true, [CHECK_MODULE_PACKAGEKIT])
 AC_E_OPTIONAL_MODULE([contact], false)
 AC_E_OPTIONAL_MODULE([wl_desktop_shell], true, [CHECK_MODULE_WL_DESKTOP_SHELL])
 AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, $wl_x11)
@@ -1012,6 +1019,7 @@ src/modules/xkbswitch/module.desktop
 src/modules/tiling/module.desktop
 src/modules/access/module.desktop
 src/modules/music-control/module.desktop
+src/modules/packagekit/module.desktop
 src/modules/contact/module.desktop
 src/modules/wl_desktop_shell/module.desktop
 src/modules/wl_screenshot/module.desktop
