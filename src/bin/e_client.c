@@ -1329,17 +1329,6 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
         EC_CHANGED(ec);
         ec->changes.size = 1;
      }
-   if (ec->shaped)
-     {
-        ec->need_shape_merge = 1;
-        ec->need_shape_export = 1;
-        EC_CHANGED(ec);
-     }
-   else if (ec->shaped_input)
-     {
-        ec->need_shape_merge = 1;
-        EC_CHANGED(ec);
-     }
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_RESIZE);
 
