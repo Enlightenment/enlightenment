@@ -107,6 +107,12 @@ _popup_del_cb(void *obj)
 }
 
 static void
+_popup_autoclose_cb(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   music_control_popup_del((E_Music_Control_Instance *)data);
+}
+
+static void
 _popup_new(E_Music_Control_Instance *inst)
 {
    Evas_Object *o;
@@ -124,7 +130,8 @@ _popup_new(E_Music_Control_Instance *inst)
    _player_name_update(inst);
    _play_state_update(inst, EINA_TRUE);
    _metadata_update(inst);
-   e_comp_object_util_autoclose(inst->popup->comp_object, NULL, NULL, NULL);
+   e_comp_object_util_autoclose(inst->popup->comp_object,
+                                _popup_autoclose_cb, NULL, inst);
    e_gadcon_popup_show(inst->popup);
    e_object_data_set(E_OBJECT(inst->popup), inst);
    E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
