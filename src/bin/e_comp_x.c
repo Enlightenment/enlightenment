@@ -101,7 +101,6 @@ _e_comp_x_client_event_free(void *d EINA_UNUSED, void *e)
    free(ev);
 }
 
-/*
 static void
 _e_comp_x_print_win(Ecore_X_Window win)
 {
@@ -112,7 +111,6 @@ _e_comp_x_print_win(Ecore_X_Window win)
    vis = ecore_x_window_visible_get(win);
    fprintf(stderr, "%s 0x%x: %d,%d @ %dx%d\n", vis ? "VIS" : "HID", win, x, y, w, h);
 }
-*/
 
 static void
 _e_comp_x_focus_setup(E_Client *ec)
@@ -4969,6 +4967,7 @@ e_comp_x_init(void)
 
    if (!ecore_x_init(NULL))
      {
+        _e_comp_x_print_win(0);
         e_error_message_show(_("Enlightenment cannot initialize Ecore_X!\n"));
         return EINA_FALSE;
      }
