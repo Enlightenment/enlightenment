@@ -20,6 +20,7 @@ struct _E_Comp_Client_Data
    Ecore_X_Visual       vis;  // window visual
    Ecore_X_Colormap     cmap; // colormap of window
    int pw, ph; //XPRESENT!
+   Eina_Rectangle shape; //SHAPE
 
 #if 0 //NOT USED
    Ecore_X_Pixmap       cache_pixmap;  // the cached pixmap (1/nth the dimensions)

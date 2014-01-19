@@ -2414,10 +2414,26 @@ _e_comp_x_shape(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Wind
              ec->need_shape_merge = 1;
           }
         else
-          ec->changes.shape = 1;
+          {
+             if ((ec->comp_data->shape.x != ev->x) ||
+                 (ec->comp_data->shape.y != ev->y) ||
+                 (ec->comp_data->shape.w != ev->w) ||
+                 (ec->comp_data->shape.h != ev->h))
+               {
+                  /* bounding box changed, need export for rendering */
+                  EINA_RECTANGLE_SET(&ec->comp_data->shape, ev->x, ev->y, ev->w, ev->h);
+                  ec->need_shape_export = 1;
+               }
+             ec->changes.shape = 1;
+          }
      }
    else if (ec->shaped) //shape change on parent window only valid if window is known to be shaped
      ec->need_shape_export = 1;
+   if (ec->changes.shape)
+     {
+        if (ev->type == ECORE_X_SHAPE_BOUNDING)
+          e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+     }
    EC_CHANGED(ec);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -2590,6 +2606,7 @@ _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
                   ec->shape_rects = (Eina_Rectangle*)rects;
                   ec->shape_rects_num = num;
                   ec->shape_changed = 1;
+                  e_comp_shape_queue(ec->comp);
                }
              else
                free(rects);
