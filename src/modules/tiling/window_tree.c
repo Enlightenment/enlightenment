@@ -542,7 +542,7 @@ tiling_window_tree_dump(Window_Tree *root, int level)
    else
       printf("|-");
 
-   printf("%f\n", root->weight);
+   printf("%f (%p)\n", root->weight, root->client);
 
    Window_Tree *itr;
    EINA_INLIST_FOREACH(root->children, itr)
