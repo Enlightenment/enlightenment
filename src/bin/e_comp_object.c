@@ -1941,8 +1941,6 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
         if (cw->input_obj)
           evas_object_geometry_set(cw->input_obj, cw->x + cw->input_rect.x, cw->y + cw->input_rect.y, cw->input_rect.w, cw->input_rect.h);
         cw->updates_full = 0;
-        e_comp_object_damage(obj, 0, 0, cw->w, cw->h);
-
      }
    else
      {
