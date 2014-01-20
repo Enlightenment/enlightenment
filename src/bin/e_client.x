@@ -96,3 +96,9 @@ e_client_resizing_get(const E_Client *ec)
 {
    return (ec->resize_mode != E_POINTER_RESIZE_NONE);
 }
+
+static inline Eina_Bool
+e_client_util_borderless(const E_Client *ec)
+{
+   return (ec->borderless || ec->mwm.borderless || (!ec->border.name) || (!strcmp(ec->border.name, "borderless")));
+}
