@@ -621,7 +621,7 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
      }
 #endif
 
-   if ((!ec->borderless) && (e_util_strcmp(ec->border.name, "borderless")))
+   if (!e_client_util_borderless(ec))
      {
         /* add the frame */
         eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x, ec->y, ec->w, ec->h});

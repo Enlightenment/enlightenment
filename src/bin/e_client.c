@@ -1989,7 +1989,7 @@ _e_client_frame_update(E_Client *ec)
      bordername = "borderless";
    else if (ec->bordername)
      bordername = ec->bordername;
-   else if ((ec->mwm.borderless) || (ec->borderless))
+   else if (ec->mwm.borderless)
      bordername = "borderless";
    else if (((ec->icccm.transient_for != 0) ||
              (ec->dialog)) &&

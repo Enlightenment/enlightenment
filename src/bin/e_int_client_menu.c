@@ -124,7 +124,7 @@ e_int_client_menu_create(E_Client *ec)
         if (ec->desktop)
           e_util_desktop_menu_item_icon_add(ec->desktop, 16, mi);
      }
-   borderless = ec->borderless || (!ec->border.name) || (!e_util_strcmp("borderless", ec->border.name));
+   borderless = e_client_util_borderless(ec);
 
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Window"));

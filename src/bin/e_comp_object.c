@@ -139,7 +139,7 @@ _e_comp_object_do_shadow(E_Comp_Object *cw)
      {
         if (cw->ec->shaped) return 0;
         if (cw->frame_object) return 0;
-        if (cw->ec->borderless || (!e_util_strcmp(cw->ec->border.name, "borderless")))
+        if (e_client_util_borderless(cw->ec))
           return 0;
      }
    return 1;
@@ -313,7 +313,7 @@ _e_comp_object_shadow_client_match(const E_Client *ec, E_Comp_Match *m)
     {
        int borderless = 0;
 
-       if ((ec->mwm.borderless) || (ec->borderless))
+       if (e_client_util_borderless(ec))
          borderless = 1;
        if (!(((m->borderless == -1) && (!borderless)) ||
              ((m->borderless == 1) && (borderless))))
