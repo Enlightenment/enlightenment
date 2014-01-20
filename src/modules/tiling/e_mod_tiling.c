@@ -58,6 +58,7 @@ static struct tiling_mod_main_g
                          *handler_desk_set,
                          *handler_compositor_resize;
     E_Client_Hook        *pre_client_assign_hook;
+    E_Client_Menu_Hook   *client_menu_hook;
 
     Tiling_Info          *tinfo;
     Eina_Hash            *info_hash;
@@ -1079,6 +1080,11 @@ _bd_hook(void *d __UNUSED__, E_Client *ec)
    if (!ec->border_menu) return;
    m = ec->border_menu;
 
+    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+    if (!extra) {
+        return;
+    }
+
    /* position menu item just before the last separator */
    EINA_LIST_REVERSE_FOREACH(m->items, l, mi)
       if (mi->separator) break;
@@ -1086,12 +1092,6 @@ _bd_hook(void *d __UNUSED__, E_Client *ec)
    l = eina_list_prev(l);
    mi = eina_list_data_get(l);
    if (!mi) return;
-
-    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
-    if (!extra) {
-        ERR("No extra for %p", ec);
-        return;
-    }
 
    mi = e_menu_item_new_relative(m, mi);
    e_menu_item_label_set(mi, _("Floating"));
@@ -1247,7 +1247,7 @@ e_modapi_init(E_Module *m)
         E_CONFIG_LIMIT(vd->nb_stacks, 0, TILING_MAX_STACKS);
     }
 
-    e_int_client_menu_hook_add(_bd_hook, NULL);
+    _G.client_menu_hook = e_int_client_menu_hook_add(_bd_hook, NULL);
 
     desk = get_current_desk();
     _G.tinfo = _initialize_tinfo(desk);
@@ -1323,6 +1323,8 @@ EAPI int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
     _disable_all_tiling();
+
+    e_int_client_menu_hook_del(_G.client_menu_hook);
 
     if (tiling_g.log_domain >= 0) {
         eina_log_domain_unregister(tiling_g.log_domain);
