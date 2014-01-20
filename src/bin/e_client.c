@@ -3382,6 +3382,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
 
         if ((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN)
           {
+             _e_client_frame_update(ec);
              evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
              ec->maximized = E_MAXIMIZE_NONE;
              e_client_util_move_resize_without_frame(ec,
@@ -3429,6 +3430,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
              if (!(ec->maximized & E_MAXIMIZE_DIRECTION))
                {
                   ec->maximized = E_MAXIMIZE_NONE;
+                  _e_client_frame_update(ec);
                   evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
                   e_client_util_move_resize_without_frame(ec, x, y, w, h);
                   e_hints_window_size_unset(ec);
@@ -3441,11 +3443,6 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
           }
         e_hints_window_maximized_set(ec, ec->maximized & E_MAXIMIZE_HORIZONTAL,
                                      ec->maximized & E_MAXIMIZE_VERTICAL);
-     }
-   if (!e_client_util_ignored_get(ec))
-     {
-        ec->border.changed = 1;
-        EC_CHANGED(ec);
      }
    e_remember_update(ec);
 }
