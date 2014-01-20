@@ -3515,10 +3515,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    e_hints_window_fullscreen_set(ec, 1);
    e_hints_window_size_unset(ec);
    if (!e_client_util_ignored_get(ec))
-     {
-        ec->border.changed = 1;
-        EC_CHANGED(ec);
-     }
+     _e_client_frame_update(ec);
    ec->fullscreen_policy = policy;
    evas_object_smart_callback_call(ec->frame, "fullscreen", NULL);
 
@@ -3542,6 +3539,10 @@ e_client_unfullscreen(E_Client *ec)
    if (ec->fullscreen_policy == E_FULLSCREEN_ZOOM)
      evas_object_smart_callback_call(ec->frame, "unfullscreen_zoom", NULL);
 
+   if (!e_client_util_ignored_get(ec))
+     _e_client_frame_update(ec);
+   ec->fullscreen_policy = 0;
+   evas_object_smart_callback_call(ec->frame, "unfullscreen", NULL);
    e_client_util_move_resize_without_frame(ec, ec->zone->x + ec->saved.x,
                                            ec->zone->y + ec->saved.y,
                                            ec->saved.w, ec->saved.h);
@@ -3553,13 +3554,6 @@ e_client_unfullscreen(E_Client *ec)
    evas_object_layer_set(ec->frame, ec->saved.layer);
 
    e_hints_window_fullscreen_set(ec, 0);
-   if (!e_client_util_ignored_get(ec))
-     {
-        ec->border.changed = 1;
-        EC_CHANGED(ec);
-     }
-   ec->fullscreen_policy = 0;
-   evas_object_smart_callback_call(ec->frame, "unfullscreen", NULL);
    _e_client_event_simple(ec, E_EVENT_CLIENT_UNFULLSCREEN);
 
    e_remember_update(ec);
