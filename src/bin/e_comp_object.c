@@ -3004,6 +3004,7 @@ e_comp_object_dirty(Evas_Object *obj)
    if (!dirty)
      evas_object_image_data_set(cw->obj, NULL);
    evas_object_image_size_set(cw->obj, w, h);
+   //INF("SIZE [%p]: %dx%d", cw->ec, w, h);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         evas_object_image_pixels_dirty_set(o, dirty);
@@ -3068,22 +3069,6 @@ e_comp_object_render(Evas_Object *obj)
         return EINA_FALSE;
      }
 
-   {
-      int ow, oh;
-      evas_object_geometry_get(cw->obj, NULL, NULL, &ow, &oh);
-      if ((ow != pw) || (oh != ph))
-        {
-           /* this results in a black frame, but I think that's better than
-            * pixmap size mismatch renders...
-            */
-           e_comp_object_damage(cw->smart_obj, 0, 0, cw->w, cw->h);
-           evas_object_image_data_set(cw->obj, NULL);
-           EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-             evas_object_image_data_set(o, NULL);
-           return EINA_FALSE;
-           //CRI("ACK");
-        }
-   }
 
    it = eina_tiler_iterator_new(cw->pending_updates);
    if (e_pixmap_image_is_argb(cw->ec->pixmap))
