@@ -174,6 +174,9 @@ is_tilable(const E_Client *ec)
          return false;
     }
 
+    if (e_client_util_ignored_get(ec))
+       return false;
+
     return true;
 }
 
@@ -892,8 +895,6 @@ _add_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 {
     E_Client *ec = event->ec;
 
-    if (e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
-
     DBG("Add: %p / '%s' / '%s', (%d,%d), changes(size=%d, position=%d, client=%d)"
         " g:%dx%d+%d+%d ecname:'%s' maximized:%s fs:%s",
         ec, ec->icccm.title, ec->netwm.name,
@@ -1263,9 +1264,6 @@ e_modapi_init(E_Module *m)
          E_Client *ec;
          E_CLIENT_FOREACH(e_comp_get(NULL), ec)
            {
-              if (e_client_util_ignored_get(ec))
-                 continue;
-
               _add_client(ec);
            }
       }
