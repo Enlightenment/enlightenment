@@ -2568,9 +2568,10 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
      {
         int w, h;
 
-        w = cw->w, h = cw->h;
-        e_comp_object_frame_wh_unadjust(obj, w, h, &cw->w, &cw->h);
-        if (cw->ec && ((cw->w != w) || (cw->h != h)))
+        w = cw->ec->w, h = cw->ec->h;
+        e_comp_object_frame_wh_unadjust(obj, w, h, &cw->ec->w, &cw->ec->h);
+        e_comp_object_frame_xy_unadjust(obj, cw->ec->x, cw->ec->y, &cw->ec->x, &cw->ec->y);
+        if ((cw->ec->w != w) || (cw->ec->h != h))
           {
              cw->ec->changes.size = 1;
              EC_CHANGED(cw->ec);
