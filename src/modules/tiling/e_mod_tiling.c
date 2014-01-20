@@ -491,8 +491,7 @@ _remove_client(E_Client *ec)
          _G.tinfo->tree = tiling_window_tree_remove(_G.tinfo->tree, item);
       }
 
-    if (!is_ignored_window(extra))
-       eina_hash_del(_G.client_extras, ec, NULL);
+    eina_hash_del(_G.client_extras, ec, NULL);
 
     _reapply_tree();
 }
