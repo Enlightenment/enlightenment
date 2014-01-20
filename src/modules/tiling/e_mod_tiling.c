@@ -15,8 +15,6 @@ typedef struct Client_Extra {
     geom_t expected;
     struct {
          geom_t geom;
-         unsigned int layer;
-         E_Stacking  stacking;
          E_Maximize  maximized;
          const char *bordername;
     } orig;
@@ -259,7 +257,6 @@ _restore_client(E_Client *ec)
                           extra->orig.geom.y,
                           extra->orig.geom.w,
                           extra->orig.geom.h);
-    evas_object_layer_set(ec->frame, extra->orig.layer);
     if (extra->orig.maximized) {
         e_client_maximize(ec, extra->orig.maximized);
         ec->maximized = extra->orig.maximized;
@@ -294,8 +291,6 @@ _get_or_create_client_extra(E_Client *ec)
                     .w = ec->w,
                     .h = ec->h,
                 },
-                .layer = ec->layer,
-                .stacking = ec->netwm.state.stacking,
                 .maximized = ec->maximized,
                 .bordername = eina_stringshare_add(ec->bordername),
             },
