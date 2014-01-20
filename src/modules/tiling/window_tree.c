@@ -459,7 +459,33 @@ static struct _Node_Move_Context {
      Window_Tree *node;
      Window_Tree *ret;
      int cross_edge;
+     int best_match;
 } _node_move_ctx;
+
+#define CNODE (_node_move_ctx.node)
+
+#define IF_MATCH_SET_LR(node) _tiling_window_tree_node_move_if_match_set(node, \
+      CNODE->client->y, CNODE->client->h, node->client->y, node->client->h)
+#define IF_MATCH_SET_TB(node) _tiling_window_tree_node_move_if_match_set(node, \
+      CNODE->client->x, CNODE->client->w, node->client->x, node->client->w)
+
+static void
+_tiling_window_tree_node_move_if_match_set(Window_Tree *node, Evas_Coord cx,
+      Evas_Coord cw, Evas_Coord ox, Evas_Coord ow)
+{
+   Evas_Coord leftx, rightx;
+   int match;
+
+   leftx = _TILE_MAX(cx, ox);
+   rightx = _TILE_MIN(cx + cw, ox + ow);
+   match = rightx - leftx;
+
+   if (match > _node_move_ctx.best_match)
+     {
+        _node_move_ctx.best_match = match;
+        _node_move_ctx.ret = node;
+     }
+}
 
 static void
 _tiling_window_tree_node_move_walker(void *_node)
@@ -470,36 +496,32 @@ _tiling_window_tree_node_move_walker(void *_node)
    if (!node->client)
       return;
 
-   /* Quit if we've already found something. */
-   if (_node_move_ctx.ret)
-      return;
-
    switch (_node_move_ctx.cross_edge)
      {
       case TILING_WINDOW_TREE_EDGE_LEFT:
-         if ((node->client->x + node->client->w) ==
-               _node_move_ctx.node->client->x)
-            _node_move_ctx.ret = node;
+         if ((node->client->x + node->client->w) == CNODE->client->x)
+            IF_MATCH_SET_LR(node);
          break;
       case TILING_WINDOW_TREE_EDGE_RIGHT:
-         if (node->client->x ==
-               (_node_move_ctx.node->client->x + _node_move_ctx.node->client->w))
-            _node_move_ctx.ret = node;
+         if (node->client->x == (CNODE->client->x + CNODE->client->w))
+            IF_MATCH_SET_LR(node);
          break;
       case TILING_WINDOW_TREE_EDGE_TOP:
-         if ((node->client->y + node->client->h) ==
-               _node_move_ctx.node->client->y)
-            _node_move_ctx.ret = node;
+         if ((node->client->y + node->client->h) == CNODE->client->y)
+            IF_MATCH_SET_TB(node);
          break;
       case TILING_WINDOW_TREE_EDGE_BOTTOM:
-         if (node->client->y ==
-               (_node_move_ctx.node->client->y + _node_move_ctx.node->client->h))
-            _node_move_ctx.ret = node;
+         if (node->client->y == (CNODE->client->y + CNODE->client->h))
+            IF_MATCH_SET_TB(node);
          break;
       default:
          break;
      }
 }
+
+#undef CNODE
+#undef IF_MATCH_SET_LR
+#undef IF_MATCH_SET_TB
 
 void
 tiling_window_tree_node_move(Window_Tree *node, int cross_edge)
@@ -514,6 +536,7 @@ tiling_window_tree_node_move(Window_Tree *node, int cross_edge)
    _node_move_ctx.node = node;
    _node_move_ctx.cross_edge = cross_edge;
    _node_move_ctx.ret = NULL;
+   _node_move_ctx.best_match = 0;
 
    tiling_window_tree_walk(root, _tiling_window_tree_node_move_walker);
 

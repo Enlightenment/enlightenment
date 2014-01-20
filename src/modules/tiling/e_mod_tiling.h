@@ -93,4 +93,7 @@ void tiling_e_client_move_resize_extra(E_Client *ec,
 #define EINA_LIST_REMOVE(_list, _el) \
     _list = eina_list_remove(_list, _el)
 
+#define _TILE_MIN(a, b) (((a) < (b)) ? (a) : (b))
+#define _TILE_MAX(a, b) (((a) > (b)) ? (a) : (b))
+
 #endif
