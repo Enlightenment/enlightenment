@@ -349,6 +349,43 @@ e_winlist_prev(void)
    _e_winlist_activate();
 }
 
+static void
+_e_winlist_select(E_Client *ec)
+{
+   Eina_Bool focus = EINA_FALSE;
+
+   if (ec->shaded)
+     {
+        if (!ec->lock_user_shade)
+          e_client_unshade(ec, ec->shade_dir);
+     }
+   if (ec->iconic)
+     e_client_uniconify(ec);
+   if ((!ec->lock_focus_out) &&
+       (!e_config->winlist_no_warp_on_direction) &&
+       ((e_config->focus_policy != E_FOCUS_CLICK) ||
+       (e_config->winlist_warp_at_end) ||
+       (e_config->winlist_warp_while_selecting)))
+     {
+       if (!e_client_pointer_warp_to_center(ec))
+         focus = EINA_TRUE;
+       if (_list_object && (!_animator))
+         _animator = ecore_animator_add(_e_winlist_animator, NULL);
+     }
+
+   if ((!ec->lock_user_stacking) &&
+       (e_config->winlist_list_raise_while_selecting))
+     {
+        e_client_raise_latest_set(ec);
+        evas_object_raise(ec->frame);
+     }
+   if ((!ec->lock_focus_out) &&
+       (e_config->winlist_list_focus_while_selecting))
+     focus = EINA_TRUE;
+   if (focus)
+     evas_object_focus_set(ec->frame, 1);
+}
+
 void
 e_winlist_left(E_Zone *zone)
 {
@@ -428,26 +465,7 @@ e_winlist_left(E_Zone *zone)
           }
      }
 
-   if (_ec_next)
-     {
-        if ((!e_config->winlist_no_warp_on_direction) &&
-            ((e_config->focus_policy != E_FOCUS_CLICK) ||
-            (e_config->winlist_warp_at_end) ||
-            (e_config->winlist_warp_while_selecting)))
-          {
-            if (!e_client_pointer_warp_to_center(_ec_next))
-              evas_object_focus_set(_ec_next->frame, 1);
-            if (!_animator)
-              _animator = ecore_animator_add(_e_winlist_animator, NULL);
-          }
-
-        if ((!_ec_next->lock_user_stacking) &&
-            (e_config->winlist_list_raise_while_selecting))
-          evas_object_raise(_ec_next->frame);
-        if ((!_ec_next->lock_focus_out) &&
-            (e_config->winlist_list_focus_while_selecting))
-          evas_object_focus_set(_ec_next->frame, 1);
-     }
+   if (_ec_next) _e_winlist_select(_ec_next);
 }
 
 void
@@ -529,26 +547,7 @@ e_winlist_down(E_Zone *zone)
           }
      }
 
-   if (_ec_next)
-     {
-        if ((!e_config->winlist_no_warp_on_direction) &&
-            ((e_config->focus_policy != E_FOCUS_CLICK) ||
-            (e_config->winlist_warp_at_end) ||
-            (e_config->winlist_warp_while_selecting)))
-          {
-            if (!e_client_pointer_warp_to_center(_ec_next))
-              evas_object_focus_set(_ec_next->frame, 1);
-            if (!_animator)
-              _animator = ecore_animator_add(_e_winlist_animator, NULL);
-          }
-
-        if ((!_ec_next->lock_user_stacking) &&
-            (e_config->winlist_list_raise_while_selecting))
-          evas_object_raise(_ec_next->frame);
-        if ((!_ec_next->lock_focus_out) &&
-            (e_config->winlist_list_focus_while_selecting))
-          evas_object_focus_set(_ec_next->frame, 1);
-     }
+   if (_ec_next) _e_winlist_select(_ec_next);
 }
 
 void
@@ -630,26 +629,7 @@ e_winlist_up(E_Zone *zone)
           }
      }
 
-   if (_ec_next)
-     {
-        if ((!e_config->winlist_no_warp_on_direction) &&
-            ((e_config->focus_policy != E_FOCUS_CLICK) ||
-            (e_config->winlist_warp_at_end) ||
-            (e_config->winlist_warp_while_selecting)))
-          {
-            if (!e_client_pointer_warp_to_center(_ec_next))
-              evas_object_focus_set(_ec_next->frame, 1);
-            if (!_animator)
-              _animator = ecore_animator_add(_e_winlist_animator, NULL);
-          }
-
-        if ((!_ec_next->lock_user_stacking) &&
-            (e_config->winlist_list_raise_while_selecting))
-          evas_object_raise(_ec_next->frame);
-        if ((!_ec_next->lock_focus_out) &&
-            (e_config->winlist_list_focus_while_selecting))
-          evas_object_focus_set(_ec_next->frame, 1);
-     }
+   if (_ec_next) _e_winlist_select(_ec_next);
 }
 
 void
@@ -731,26 +711,7 @@ e_winlist_right(E_Zone *zone)
           }
      }
 
-   if (_ec_next)
-     {
-        if ((!e_config->winlist_no_warp_on_direction) &&
-            ((e_config->focus_policy != E_FOCUS_CLICK) ||
-            (e_config->winlist_warp_at_end) ||
-            (e_config->winlist_warp_while_selecting)))
-          {
-            if (!e_client_pointer_warp_to_center(_ec_next))
-              evas_object_focus_set(_ec_next->frame, 1);
-            if (!_animator)
-              _animator = ecore_animator_add(_e_winlist_animator, NULL);
-          }
-
-        if ((!_ec_next->lock_user_stacking) &&
-            (e_config->winlist_list_raise_while_selecting))
-          evas_object_raise(_ec_next->frame);
-        if ((!_ec_next->lock_focus_out) &&
-            (e_config->winlist_list_focus_while_selecting))
-          evas_object_focus_set(_ec_next->frame, 1);
-     }
+   if (_ec_next) _e_winlist_select(_ec_next);
 }
 
 void
