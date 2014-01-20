@@ -25,6 +25,23 @@ Config *qa_config = NULL;
 EAPI E_Module_Api e_modapi = {E_MODULE_API_VERSION, "Quickaccess"};
 
 //////////////////////////////
+static void
+_e_modapi_shutdown(void)
+{
+   e_qa_shutdown();
+
+   conf_edd = e_qa_config_dd_free();
+   eina_log_domain_unregister(_e_quick_access_log_dom);
+   _e_quick_access_log_dom = -1;
+
+   e_configure_registry_item_del("launcher/quickaccess");
+   e_configure_registry_category_del("launcher");
+
+   e_qa_config_free(qa_config);
+   E_FREE(qa_mod);
+   qa_config = NULL;
+}
+
 EAPI void *
 e_modapi_init(E_Module *m)
 {
@@ -59,7 +76,7 @@ e_modapi_init(E_Module *m)
 
    if (!e_qa_init())
      {
-        e_modapi_shutdown(NULL);
+        _e_modapi_shutdown();
         return NULL;
      }
 
@@ -69,18 +86,7 @@ e_modapi_init(E_Module *m)
 EAPI int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
-   e_qa_shutdown();
-
-   conf_edd = e_qa_config_dd_free();
-   eina_log_domain_unregister(_e_quick_access_log_dom);
-   _e_quick_access_log_dom = -1;
-
-   e_configure_registry_item_del("launcher/quickaccess");
-   e_configure_registry_category_del("launcher");
-
-   e_qa_config_free(qa_config);
-   E_FREE(qa_mod);
-   qa_config = NULL;
+   _e_modapi_shutdown();
    return 1;
 }
 

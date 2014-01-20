@@ -109,6 +109,26 @@ e_tw_act_toggle_cb(E_Object *obj EINA_UNUSED, const char *params)
      }
 }
 //////////////////////////////
+static void
+_e_modapi_shutdown(void)
+{
+   e_tw_shutdown();
+
+   E_CONFIG_DD_FREE(conf_edd);
+   eina_log_domain_unregister(_e_teamwork_log_dom);
+   _e_teamwork_log_dom = -1;
+
+   e_configure_registry_item_del("applications/teamwork");
+   e_configure_registry_category_del("applications");
+
+   e_action_predef_name_del(_e_tw_name, _lbl_toggle);
+   e_action_del(_act_toggle);
+   e_tw_toggle = NULL;
+
+   E_FREE(tw_config);
+   E_FREE(tw_mod);
+}
+
 EAPI void *
 e_modapi_init(E_Module *m)
 {
@@ -148,7 +168,7 @@ e_modapi_init(E_Module *m)
 
    if (!e_tw_init())
      {
-        e_modapi_shutdown(NULL);
+        _e_modapi_shutdown();
         return NULL;
      }
    e_tw_toggle = e_action_add(_act_toggle);
@@ -161,21 +181,7 @@ e_modapi_init(E_Module *m)
 EAPI int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
-   e_tw_shutdown();
-
-   E_CONFIG_DD_FREE(conf_edd);
-   eina_log_domain_unregister(_e_teamwork_log_dom);
-   _e_teamwork_log_dom = -1;
-
-   e_configure_registry_item_del("applications/teamwork");
-   e_configure_registry_category_del("applications");
-
-   e_action_predef_name_del(_e_tw_name, _lbl_toggle);
-   e_action_del(_act_toggle);
-   e_tw_toggle = NULL;
-
-   E_FREE(tw_config);
-   E_FREE(tw_mod);
+   _e_modapi_shutdown();
    return 1;
 }
 
