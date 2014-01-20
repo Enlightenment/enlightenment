@@ -646,11 +646,8 @@ _pre_client_assign_hook(void *data __UNUSED__,
     if (is_ignored_window(extra))
        return;
 
-    if ((ec->bordername && strcmp(ec->bordername, "pixel"))
-          || !ec->bordername)
-    {
-        change_window_border(ec, "pixel");
-    }
+    if (!ec->bordername || strcmp(ec->bordername, "pixel"))
+       change_window_border(ec, "pixel");
 }
 
 static void _move_or_resize(E_Client *ec)
