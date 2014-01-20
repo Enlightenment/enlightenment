@@ -3586,7 +3586,10 @@ e_client_iconify(E_Client *ec)
         e_comp_object_signal_emit(ec->frame, "e,action,iconify", "e");
      }
    else
-     evas_object_hide(ec->frame);
+     {
+        _e_client_revert_focus(ec);
+        evas_object_hide(ec->frame);
+     }
    e_hints_window_iconic_set(ec);
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_ICONIFY);
