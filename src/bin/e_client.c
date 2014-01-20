@@ -1979,6 +1979,64 @@ _e_client_eval(E_Client *ec)
    _e_client_hook_call(E_CLIENT_HOOK_EVAL_END, ec);
 }
 
+static void
+_e_client_frame_update(E_Client *ec)
+{
+   const char *bordername;
+   Eina_Stringshare *pborder;
+
+   if (ec->fullscreen || ec->borderless)
+     bordername = "borderless";
+   else if (ec->bordername)
+     bordername = ec->bordername;
+   else if ((ec->mwm.borderless) || (ec->borderless))
+     bordername = "borderless";
+   else if (((ec->icccm.transient_for != 0) ||
+             (ec->dialog)) &&
+            (ec->icccm.min_w == ec->icccm.max_w) &&
+            (ec->icccm.min_h == ec->icccm.max_h))
+     bordername = "noresize_dialog";
+   else if ((ec->icccm.min_w == ec->icccm.max_w) &&
+            (ec->icccm.min_h == ec->icccm.max_h))
+     bordername = "noresize";
+   else if (ec->shaped)
+     bordername = "shaped";
+   else if (e_pixmap_is_x(ec->pixmap) &&
+            ((!ec->icccm.accepts_focus) &&
+            (!ec->icccm.take_focus)))
+     bordername = "nofocus";
+   else if (ec->icccm.urgent)
+     bordername = "urgent";
+   else if ((ec->icccm.transient_for != 0) ||
+            (ec->dialog))
+     bordername = "dialog";
+   else if (ec->netwm.state.modal)
+     bordername = "modal";
+   else if ((ec->netwm.state.skip_taskbar) ||
+            (ec->netwm.state.skip_pager))
+     bordername = "skipped";
+  /*
+   else if ((ec->internal) && (ec->icccm.class) &&
+            (!strncmp(ec->icccm.class, "e_fwin", 6)))
+     bordername = "internal_fileman";
+  */
+   else
+     bordername = e_config->theme_default_border_style;
+   if (!bordername) bordername = "default";
+
+   if (e_util_strcmp(ec->border.name, bordername))
+     {
+        pborder = ec->border.name;
+        ec->border.name = eina_stringshare_add(bordername);
+        if (e_comp_object_frame_theme_set(ec->frame, bordername))
+          eina_stringshare_del(pborder);
+        else
+          {
+             eina_stringshare_del(ec->border.name);
+             ec->border.name = pborder;
+          }
+     }
+}
 
 ////////////////////////////////////////////////
 EINTERN void
@@ -2016,60 +2074,7 @@ e_client_idler_before(void)
              if ((ec->border.changed) && (!ec->shaded) &&
                  (!(((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN))))
                {
-                  const char *bordername;
-                  Eina_Stringshare *pborder;
-
-                  if (ec->fullscreen || ec->borderless)
-                    bordername = "borderless";
-                  else if (ec->bordername)
-                    bordername = ec->bordername;
-                  else if ((ec->mwm.borderless) || (ec->borderless))
-                    bordername = "borderless";
-                  else if (((ec->icccm.transient_for != 0) ||
-                            (ec->dialog)) &&
-                           (ec->icccm.min_w == ec->icccm.max_w) &&
-                           (ec->icccm.min_h == ec->icccm.max_h))
-                    bordername = "noresize_dialog";
-                  else if ((ec->icccm.min_w == ec->icccm.max_w) &&
-                           (ec->icccm.min_h == ec->icccm.max_h))
-                    bordername = "noresize";
-                  else if (ec->shaped)
-                    bordername = "shaped";
-                  else if (e_pixmap_is_x(ec->pixmap) &&
-                           ((!ec->icccm.accepts_focus) &&
-                           (!ec->icccm.take_focus)))
-                    bordername = "nofocus";
-                  else if (ec->icccm.urgent)
-                    bordername = "urgent";
-                  else if ((ec->icccm.transient_for != 0) ||
-                           (ec->dialog))
-                    bordername = "dialog";
-                  else if (ec->netwm.state.modal)
-                    bordername = "modal";
-                  else if ((ec->netwm.state.skip_taskbar) ||
-                           (ec->netwm.state.skip_pager))
-                    bordername = "skipped";
-          /*
-                  else if ((ec->internal) && (ec->icccm.class) &&
-                           (!strncmp(ec->icccm.class, "e_fwin", 6)))
-                    bordername = "internal_fileman";
-           */
-                  else
-                    bordername = e_config->theme_default_border_style;
-                  if (!bordername) bordername = "default";
-
-                  if (e_util_strcmp(ec->border.name, bordername))
-                    {
-                       pborder = ec->border.name;
-                       ec->border.name = eina_stringshare_add(bordername);
-                       if (e_comp_object_frame_theme_set(ec->frame, bordername))
-                         eina_stringshare_del(pborder);
-                       else
-                         {
-                            eina_stringshare_del(ec->border.name);
-                            ec->border.name = pborder;
-                         }
-                    }
+                  _e_client_frame_update(ec);
                   ec->border.changed = 0;
                }
              if (urgent != ec->icccm.urgent)
