@@ -582,6 +582,9 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, screensaver_ask_presentation, UCHAR);
    E_CONFIG_VAL(D, T, screensaver_ask_presentation_timeout, DOUBLE);
 
+   E_CONFIG_VAL(D, T, screensaver_wake_on_notify, INT);
+   E_CONFIG_VAL(D, T, screensaver_wake_on_urgent, INT);
+
    E_CONFIG_VAL(D, T, screensaver_suspend, UCHAR);
    E_CONFIG_VAL(D, T, screensaver_suspend_on_ac, UCHAR);
    E_CONFIG_VAL(D, T, screensaver_suspend_delay, DOUBLE);
@@ -1431,6 +1434,9 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->screensaver_expose, 0, 2);
    E_CONFIG_LIMIT(e_config->screensaver_ask_presentation, 0, 1);
    E_CONFIG_LIMIT(e_config->screensaver_ask_presentation_timeout, 1.0, 300.0);
+
+   E_CONFIG_LIMIT(e_config->screensaver_wake_on_notify, 0, 1);
+   E_CONFIG_LIMIT(e_config->screensaver_wake_on_urgent, 0, 1);
 
    E_CONFIG_LIMIT(e_config->clientlist_group_by, 0, 2);
    E_CONFIG_LIMIT(e_config->clientlist_include_all_zones, 0, 1);

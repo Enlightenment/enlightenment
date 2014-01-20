@@ -28,6 +28,9 @@ struct _E_Config_Dialog_Data
    int screensaver_suspend_on_ac;
    double screensaver_suspend_delay;
 
+   int wake_on_notify;
+   int wake_on_urgent;
+
    struct 
      {
         Evas_Object *ask_presentation_slider;
@@ -67,6 +70,9 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->screensaver_suspend = e_config->screensaver_suspend;
    cfdata->screensaver_suspend_on_ac = e_config->screensaver_suspend_on_ac;
    cfdata->screensaver_suspend_delay = e_config->screensaver_suspend_delay;
+
+   cfdata->wake_on_notify = e_config->screensaver_wake_on_notify;
+   cfdata->wake_on_urgent = e_config->screensaver_wake_on_urgent;
 }
 
 static void *
@@ -96,6 +102,9 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    e_config->screensaver_suspend = cfdata->screensaver_suspend;
    e_config->screensaver_suspend_on_ac = cfdata->screensaver_suspend_on_ac;
    e_config->screensaver_suspend_delay = cfdata->screensaver_suspend_delay;
+
+   e_config->screensaver_wake_on_notify = cfdata->wake_on_notify;
+   e_config->screensaver_wake_on_urgent = cfdata->wake_on_urgent;
 
    // enough of dpms vs screensaver being different! useless
 //   e_config->dpms_enable = e_config->screensaver_enable;
@@ -135,7 +144,10 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 	   (e_config->screensaver_ask_presentation_timeout != cfdata->ask_presentation_timeout) ||
 	   (e_config->screensaver_suspend != cfdata->screensaver_suspend) ||
 	   (e_config->screensaver_suspend_on_ac != cfdata->screensaver_suspend_on_ac) ||
-	   (e_config->screensaver_suspend_delay != cfdata->screensaver_suspend_delay));
+	   (e_config->screensaver_suspend_delay != cfdata->screensaver_suspend_delay) ||
+	   (e_config->screensaver_wake_on_notify != cfdata->wake_on_notify) ||
+	   (e_config->screensaver_wake_on_urgent != cfdata->wake_on_urgent)
+    );
 }
 
 static Evas_Object *
@@ -177,6 +189,17 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, ow, 1, 1, 0.5);
    
    e_widget_toolbook_page_append(otb, NULL, _("Blanking"), ol, 
+                                 1, 0, 1, 0, 0.5, 0.0);
+
+   /* Wakeups */
+   ol = e_widget_list_add(evas, 0, 0);
+   oc = e_widget_check_add(evas, _("Wake on notification"),
+                           &(cfdata->wake_on_notify));
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   oc = e_widget_check_add(evas, _("Wake on urgency"),
+                           &(cfdata->wake_on_urgent));
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   e_widget_toolbook_page_append(otb, NULL, _("Wakeups"), ol,
                                  1, 0, 1, 0, 0.5, 0.0);
    /* Presentation */
    ol = e_widget_list_add(evas, 0, 0);

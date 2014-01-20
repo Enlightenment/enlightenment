@@ -90,6 +90,12 @@ notify_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Messag
         e_object_del(E_OBJECT(n));
         return NULL;
      }
+   if (e_screensaver_on_get() && e_config->screensaver_wake_on_notify)
+     {
+        int x, y;
+        ecore_evas_pointer_xy_get(e_comp_get(NULL)->ee, &x, &y);
+        ecore_evas_pointer_warp(e_comp_get(NULL)->ee, x, y);
+     }
    eldbus_message_iter_dict_iterate(hints_iter, "sv", hints_dict_iter, n);
    n->app_name = eina_stringshare_add(n->app_name);
    n->icon.icon = eina_stringshare_add(n->icon.icon);

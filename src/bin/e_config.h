@@ -226,6 +226,9 @@ struct _E_Config
    unsigned char             screensaver_ask_presentation; // GUI
    double                    screensaver_ask_presentation_timeout; // GUI
 
+   int                       screensaver_wake_on_notify; // GUI
+   int                       screensaver_wake_on_urgent; // GUI
+
    unsigned char             screensaver_suspend; // GUI
    unsigned char             screensaver_suspend_on_ac; // GUI
    double                    screensaver_suspend_delay; // GUI

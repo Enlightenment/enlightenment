@@ -2084,6 +2084,12 @@ e_client_idler_before(void)
                     e_comp_object_signal_emit(ec->frame, "e,state,urgent", "e");
                   else
                     e_comp_object_signal_emit(ec->frame, "e,state,not_urgent", "e");
+                  if (ec->icccm.urgent && e_screensaver_on_get() && e_config->screensaver_wake_on_urgent)
+                    {
+                       int x, y;
+                       ecore_evas_pointer_xy_get(e_comp_get(NULL)->ee, &x, &y);
+                       ecore_evas_pointer_warp(e_comp_get(NULL)->ee, x, y);
+                    }
                }
              _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
           }
