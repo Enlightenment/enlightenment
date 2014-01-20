@@ -428,9 +428,6 @@ _add_client(E_Client *ec)
 
     extra->tiled = EINA_TRUE;
 
-    /* Stack tiled window below so that winlist doesn't mix up stacking */
-    evas_object_layer_set(ec->frame, E_LAYER_CLIENT_BELOW);
-
     DBG("adding %p", ec);
 
     if (ec->maximized)
