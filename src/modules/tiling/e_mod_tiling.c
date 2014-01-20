@@ -464,16 +464,17 @@ _remove_client(E_Client *ec)
     if (!ec)
        return;
 
-    if (!is_tilable(ec))
-       return;
-
     DBG("removing %p", ec);
 
     Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
-    if (!extra) {
-        ERR("No extra for %p", ec);
-        return;
-    }
+    if (!extra)
+      {
+         if (is_tilable(ec))
+           {
+              ERR("No extra for %p", ec);
+           }
+         return;
+      }
 
     extra->tiled = EINA_FALSE;
 
