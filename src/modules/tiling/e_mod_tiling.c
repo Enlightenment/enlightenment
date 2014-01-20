@@ -510,8 +510,6 @@ _remove_client(E_Client *ec)
          _G.tinfo->tree = tiling_window_tree_remove(_G.tinfo->tree, item);
       }
 
-    eina_hash_del(_G.client_extras, &ec, NULL);
-
     _reapply_tree();
 }
 
@@ -532,8 +530,8 @@ toggle_floating(E_Client *ec)
     /* This is the new state, act accordingly. */
     if (extra->floating)
       {
-        _remove_client(ec);
         _restore_client(ec);
+        _remove_client(ec);
       }
     else
       {
@@ -893,6 +891,8 @@ _remove_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 
     _remove_client(ec);
 
+    eina_hash_del(_G.client_extras, &ec, NULL);
+
     return true;
 }
 
@@ -938,8 +938,8 @@ toggle_sticky(E_Client *ec)
     /* This is the new state, act accordingly. */
     if (extra->sticky)
       {
-        _remove_client(ec);
         _restore_client(ec);
+        _remove_client(ec);
       }
     else
       {
@@ -987,8 +987,8 @@ _desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_S
     if (desk_should_tile_check(ev->desk))
       {
          if (tiling_window_tree_client_find(_G.tinfo->tree, ev->ec)) {
-              _remove_client(ev->ec);
               _restore_client(ev->ec);
+              _remove_client(ev->ec);
          }
       }
 
