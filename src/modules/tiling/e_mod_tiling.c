@@ -338,6 +338,26 @@ tiling_e_client_move_resize_extra(E_Client *ec,
    _e_client_move_resize(ec, x, y, w, h);
 }
 
+static Client_Extra *
+tiling_entry_func(E_Client *ec)
+{
+    if (!ec)
+       return NULL;
+
+    if (!is_tilable(ec))
+       return NULL;
+
+    if (!desk_should_tile_check(ec->desk))
+       return NULL;
+
+    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+
+    if (!extra)
+       ERR("No extra for %p", ec);
+
+    return extra;
+}
+
 /* }}} */
 /* Reorganize Stacks {{{*/
 
@@ -501,14 +521,9 @@ _remove_client(E_Client *ec)
 static void
 toggle_floating(E_Client *ec)
 {
-    if (!ec)
-        return;
-    if (!desk_should_tile_check(ec->desk))
-        return;
+    Client_Extra *extra = tiling_entry_func(ec);
 
-    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
     if (!extra) {
-        ERR("No extra for %p", ec);
         return;
     }
 
@@ -652,32 +667,9 @@ _pre_client_assign_hook(void *data __UNUSED__,
 
 static void _move_or_resize(E_Client *ec)
 {
-    Client_Extra *extra;
+    Client_Extra *extra = tiling_entry_func(ec);
 
-    if (!ec) {
-        return;
-    }
-    if (!is_tilable(ec)) {
-        return;
-    }
-
-    if (!desk_should_tile_check(ec->desk))
-        return;
-
-    DBG("Resize: %p / '%s' / '%s', (%d,%d), changes(size=%d, position=%d, client=%d)"
-        " g:%dx%d+%d+%d ecname:'%s' maximized:%s fs:%s",
-        ec, ec->icccm.title, ec->netwm.name,
-        ec->desk->x, ec->desk->y,
-        ec->changes.size, ec->changes.pos, ec->changes.border,
-        ec->w, ec->h, ec->x, ec->y, ec->bordername,
-        (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_NONE ? "NONE" :
-        (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL ? "VERTICAL" :
-        (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL ? "HORIZONTAL" :
-        "BOTH", ec->fullscreen? "true": "false");
-
-    extra = eina_hash_find(_G.client_extras, &ec);
     if (!extra) {
-        ERR("No extra for %p", ec);
         return;
     }
 
@@ -748,21 +740,9 @@ static void _move_or_resize(E_Client *ec)
 static void
 _resize_begin_hook(void *data EINA_UNUSED, E_Client *ec)
 {
-    Client_Extra *extra;
+    Client_Extra *extra = tiling_entry_func(ec);
 
-    if (!ec) {
-        return;
-    }
-    if (!is_tilable(ec)) {
-        return;
-    }
-
-    if (!desk_should_tile_check(ec->desk))
-        return;
-
-    extra = eina_hash_find(_G.client_extras, &ec);
     if (!extra) {
-        ERR("No extra for %p", ec);
         return;
     }
 
@@ -861,19 +841,9 @@ static Eina_Bool
 _move_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client*event)
 {
     E_Client *ec = event->ec;
-    if (!ec) {
-        return true;
-    }
-    if (!is_tilable(ec)) {
-        return true;
-    }
+    Client_Extra *extra = tiling_entry_func(ec);
 
-    if (!desk_should_tile_check(ec->desk))
-        return true;
-
-    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
     if (!extra) {
-        ERR("No extra for %p", ec);
         return true;
     }
 
@@ -936,18 +906,6 @@ _iconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
     if (ec->deskshow)
         return true;
 
-    if (!desk_should_tile_check(ec->desk))
-        return true;
-
-    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
-    if (!extra) {
-        ERR("No extra for %p", ec);
-        return true;
-    }
-
-    if (is_ignored_window(extra))
-       return true;
-
     _remove_client(ec);
 
     return true;
@@ -961,13 +919,6 @@ _uniconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *even
     if (ec->deskshow)
         return true;
 
-    if (!desk_should_tile_check(ec->desk))
-        return true;
-
-    if (!is_tilable(ec)) {
-        return true;
-    }
-
     _add_client(ec);
 
     return true;
@@ -976,14 +927,9 @@ _uniconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *even
 static void
 toggle_sticky(E_Client *ec)
 {
-    if (!ec)
-        return;
-    if (!desk_should_tile_check(ec->desk))
-        return;
+    Client_Extra *extra = tiling_entry_func(ec);
 
-    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
     if (!extra) {
-        ERR("No extra for %p", ec);
         return;
     }
 
