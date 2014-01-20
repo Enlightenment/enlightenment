@@ -304,6 +304,9 @@ _get_or_create_client_extra(E_Client *ec)
             .w = ec->w,
             .h = ec->h,
         };
+        extra->orig.geom = extra->expected;
+        extra->orig.maximized = ec->maximized;
+        eina_stringshare_replace(&extra->orig.bordername, ec->bordername);
     }
 
     return extra;
