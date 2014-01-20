@@ -3060,6 +3060,16 @@ e_comp_object_render(Evas_Object *obj)
    if (!e_pixmap_size_get(cw->ec->pixmap, &pw, &ph)) return EINA_FALSE;
    //if (e_pixmap_type_get(cw->ec->pixmap) == E_PIXMAP_TYPE_WL)
      //INF("WL RENDER!");
+
+   if (!cw->pending_updates)
+     {
+        WRN("RENDER [%p]: NO RECTS!", cw->ec);
+        evas_object_image_data_set(cw->obj, NULL);
+        EINA_LIST_FOREACH(cw->obj_mirror, l, o)
+          evas_object_image_data_set(o, NULL);
+        return EINA_FALSE;
+     }
+
    {
       int ow, oh;
       evas_object_geometry_get(cw->obj, NULL, NULL, &ow, &oh);
@@ -3076,15 +3086,6 @@ e_comp_object_render(Evas_Object *obj)
            //CRI("ACK");
         }
    }
-
-   if (!cw->pending_updates)
-     {
-        WRN("RENDER [%p]: NO RECTS!", cw->ec);
-        evas_object_image_data_set(cw->obj, NULL);
-        EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-          evas_object_image_data_set(o, NULL);
-        return EINA_FALSE;
-     }
 
    it = eina_tiler_iterator_new(cw->pending_updates);
    if (e_pixmap_image_is_argb(cw->ec->pixmap))
