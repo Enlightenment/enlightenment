@@ -933,6 +933,7 @@ _e_module_whitelist_check(void)
       "music-control",
       "conf2",
       "appmenu",
+      "packagekit",
       NULL   // end marker
    };
 
