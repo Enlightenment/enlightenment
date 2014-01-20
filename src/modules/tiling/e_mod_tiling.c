@@ -57,7 +57,6 @@ static struct tiling_mod_main_g
                          *handler_desk_before_show,
                          *handler_desk_set,
                          *handler_compositor_resize;
-    E_Client_Hook        *pre_client_assign_hook;
     E_Client_Menu_Hook   *client_menu_hook;
 
     Tiling_Info          *tinfo;
@@ -455,6 +454,10 @@ _add_client(E_Client *ec)
     if (ec->maximized)
        _e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
 
+    if (!tiling_g.config->show_titles &&
+          (!ec->bordername || strcmp(ec->bordername, "pixel")))
+       change_window_border(ec, "pixel");
+
     /* Window tree updating. */
       {
          E_Client *ec_focused = e_client_focused_get();
@@ -634,34 +637,6 @@ _e_mod_action_toggle_split_mode(E_Object   *obj __UNUSED__,
 
 /* }}} */
 /* Hooks {{{*/
-
-static void
-_pre_client_assign_hook(void *data __UNUSED__,
-                        E_Client *ec)
-{
-    if (tiling_g.config->show_titles)
-        return;
-
-    if (!ec) {
-        return;
-    }
-
-    if (!desk_should_tile_check(ec->desk))
-        return;
-
-    if (!is_tilable(ec)) {
-        return;
-    }
-
-    /* Fill initial values if not already done */
-    Client_Extra *extra = _get_or_create_client_extra(ec);
-
-    if (is_ignored_window(extra))
-       return;
-
-    if (!ec->bordername || strcmp(ec->bordername, "pixel"))
-       change_window_border(ec, "pixel");
-}
 
 static void _move_or_resize(E_Client *ec)
 {
@@ -1094,9 +1069,6 @@ e_modapi_init(E_Module *m)
     _G.info_hash = eina_hash_pointer_new(_clear_info_hash);
     _G.client_extras = eina_hash_pointer_new(_clear_border_extras);
 
-    _G.pre_client_assign_hook = e_client_hook_add(
-        E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, _pre_client_assign_hook, NULL);
-
 #define HANDLER(_h, _e, _f)                                   \
     _h = ecore_event_handler_add(E_EVENT_##_e,                \
                                  (Ecore_Event_Handler_Cb) _f, \
@@ -1273,11 +1245,6 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
     if (tiling_g.log_domain >= 0) {
         eina_log_domain_unregister(tiling_g.log_domain);
         tiling_g.log_domain = -1;
-    }
-
-    if (_G.pre_client_assign_hook) {
-        e_client_hook_del(_G.pre_client_assign_hook);
-        _G.pre_client_assign_hook = NULL;
     }
 
 #define FREE_HANDLER(x)              \
