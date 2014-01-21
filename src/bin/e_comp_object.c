@@ -1228,7 +1228,11 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
      }
 
    if (!cw->real_hid)
-     evas_object_show(cw->smart_obj);
+     {
+        if (cw->ec->internal)
+          e_comp_object_damage(cw->smart_obj, 0, 0, cw->w, cw->h);
+        evas_object_show(cw->smart_obj);
+     }
 }
 
 static void
