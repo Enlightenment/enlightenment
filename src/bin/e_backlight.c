@@ -207,7 +207,7 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    // transition time
    if (val < 0.0) val = 0.0;
    else if (val > 1.0) val = 1.0;
-   if ((val == bl_val) && (!bl_anim)) return;
+   if ((fabs(val - bl_val) < DBL_EPSILON) && (!bl_anim)) return;
    if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
    bl_now = bl_val;
    bl_val = val;
