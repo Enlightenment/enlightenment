@@ -4314,7 +4314,11 @@ _e_comp_x_backlight_notify_cb(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X
    x_bl = ecore_x_randr_output_backlight_level_get(0, ev->output);
 
    if (x_bl >= 0.0)
-     e_bl_val = x_bl;
+     {
+        if (fabs(e_bl_val - x_bl) < DBL_EPSILON)
+          ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);;
+        e_bl_val = x_bl;
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
