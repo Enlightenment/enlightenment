@@ -43,9 +43,7 @@ static struct tiling_mod_main_g
     E_Config_DD          *config_edd,
                          *vdesk_edd;
     int                   currently_switching_desktop;
-    Ecore_X_Window        action_input_win;
-    Ecore_Event_Handler  *handler_key,
-                         *handler_client_resize,
+    Ecore_Event_Handler  *handler_client_resize,
                          *handler_client_move,
                          *handler_client_add,
                          *handler_client_remove,
@@ -62,7 +60,6 @@ static struct tiling_mod_main_g
     Tiling_Info          *tinfo;
     Eina_Hash            *info_hash;
     Eina_Hash            *client_extras;
-    Eina_Hash            *overlays;
 
     E_Action             *act_togglefloat,
                          *act_move_up,
@@ -71,20 +68,7 @@ static struct tiling_mod_main_g
                          *act_move_right,
                          *act_toggle_split_mode;
 
-    int                   warp_x,
-                          warp_y,
-                          old_warp_x,
-                          old_warp_y,
-                          warp_to_x,
-                          warp_to_y;
-    Ecore_Timer          *warp_timer;
-
-    Ecore_Timer          *action_timer;
-    E_Client             *focused_ec;
-    void (*action_cb)(E_Client *ec, Client_Extra *extra);
     Tiling_Split_Type     split_type;
-
-    char                  keys[4];
 } _G = {
     .split_type = TILING_SPLIT_HORIZONTAL,
 };
@@ -1180,7 +1164,6 @@ e_modapi_init(E_Module *m)
     _G.tinfo = _initialize_tinfo(desk);
 
     _G.currently_switching_desktop = 0;
-    _G.action_cb = NULL;
 
     /* Add all the existing windows. */
       {
