@@ -36,6 +36,7 @@ struct _E_Comp_Client_Data
    unsigned int move_counter; //reduce X calls when moving a window
    unsigned int internal_props_set; //don't need to refetch our own internal props
 
+   Ecore_Timer *first_draw_delay; //configurable placebo
    Eina_Bool first_damage : 1; //ignore first damage on non-re_manage clients
 
    struct

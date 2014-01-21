@@ -2460,6 +2460,7 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
           return ECORE_CALLBACK_RENEW;
      }
 
+   E_FREE_FUNC(ec->comp_data->first_draw_delay, ecore_timer_del);
    //WRN("DAMAGE %p: %dx%d", ec, ev->area.width, ev->area.height);
    if (ec->comp->nocomp)
      e_pixmap_dirty(ec->pixmap);
@@ -3979,6 +3980,16 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
      }
 }
 
+static Eina_Bool
+_e_comp_x_first_draw_delay_cb(void *data)
+{
+   E_Client *ec = data;
+
+   ec->comp_data->first_draw_delay = NULL;
+   e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+   return EINA_FALSE;
+}
+
 static void
 _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
 {
@@ -4003,6 +4014,7 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
 
    eina_hash_add(clients_win_hash, &win, ec);
    e_hints_client_list_set();
+   ec->comp_data->first_draw_delay = ecore_timer_add(e_comp_config_get()->first_draw_delay, _e_comp_x_first_draw_delay_cb, ec);
 }
 
 static void
@@ -4144,6 +4156,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
         ec->parent->lock_close = 0;
         ec->parent->modal = NULL;
      }
+   E_FREE_FUNC(ec->comp_data->first_draw_delay, ecore_timer_del);
    E_FREE(ec->comp_data);
    if (post_clients)
      post_clients = eina_list_remove(post_clients, ec);
