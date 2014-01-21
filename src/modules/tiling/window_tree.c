@@ -83,7 +83,11 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent, E_Client *client,
    new_node->client = client;
    Tiling_Split_Type parent_split_type;
 
-   if (!root)
+   if (split_type > TILING_SPLIT_VERTICAL)
+     {
+        return root;
+     }
+   else  if (!root)
      {
         new_node->weight = 1.0;
         return new_node;

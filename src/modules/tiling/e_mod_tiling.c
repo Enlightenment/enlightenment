@@ -444,6 +444,12 @@ _add_client(E_Client *ec)
     if (is_ignored_window(extra))
        return;
 
+    if (_G.split_type == TILING_SPLIT_FLOAT)
+      {
+         extra->floating = EINA_TRUE;
+         return;
+      }
+
     if (extra->tiled)
        return;
 
@@ -631,8 +637,7 @@ _e_mod_action_toggle_split_mode(E_Object   *obj __UNUSED__,
     if (!desk_should_tile_check(desk))
         return;
 
-    _G.split_type = (_G.split_type == TILING_SPLIT_VERTICAL) ?
-       TILING_SPLIT_HORIZONTAL : TILING_SPLIT_VERTICAL;
+    _G.split_type = (_G.split_type + 1) % TILING_SPLIT_LAST;
 }
 
 /* }}} */

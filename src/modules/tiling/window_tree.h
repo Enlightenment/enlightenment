@@ -2,10 +2,12 @@
 #define WINDOW_TREE_H
 #include <e.h>
 
-/* XXX: Gotta be 0 and 1 because it's calculated using level % 2. */
+/* XXX: First two have to be 0 and 1 because I use them with modulo. */
 typedef enum {
      TILING_SPLIT_HORIZONTAL = 0,
-     TILING_SPLIT_VERTICAL = 1
+     TILING_SPLIT_VERTICAL = 1,
+     TILING_SPLIT_FLOAT,
+     TILING_SPLIT_LAST
 } Tiling_Split_Type;
 
 typedef struct _Window_Tree Window_Tree;
