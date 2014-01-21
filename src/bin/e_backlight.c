@@ -11,7 +11,7 @@
 #define MODE_RANDR 0
 #define MODE_SYS   1
 
-static double bl_val = 1.0;
+EINTERN double e_bl_val = 1.0;
 static double bl_animval = 1.0;
 static int sysmode = MODE_NONE;
 static Ecore_Animator *bl_anim = NULL;
@@ -121,11 +121,11 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    if (val < 0.0) val = 0.0;
    else if (val > 1.0)
      val = 1.0;
-   if ((val == bl_val) && (!bl_anim)) return;
+   if ((val == e_bl_val) && (!bl_anim)) return;
    if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
    ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
-   bl_now = bl_val;
-   bl_val = val;
+   bl_now = e_bl_val;
+   e_bl_val = val;
    if (fabs(tim) < DBL_EPSILON)
      {
         _e_backlight_set(zone, val);
@@ -147,7 +147,7 @@ EAPI double
 e_backlight_level_get(E_Zone *zone __UNUSED__)
 {
    // zone == NULL == everything
-   return bl_val;
+   return e_bl_val;
 }
 
 EAPI void
@@ -235,7 +235,7 @@ _e_backlight_update(E_Zone *zone)
      }
    if (x_bl >= 0.0)
      {
-        bl_val = x_bl;
+        e_bl_val = x_bl;
         sysmode = MODE_RANDR;
         return;
      }
@@ -311,7 +311,7 @@ _bl_anim(void *data, double pos)
 
    // FIXME: if zone is deleted while anim going... bad things.
    pos = ecore_animator_pos_map(pos, ECORE_POS_MAP_DECELERATE, 0.0, 0.0);
-   v = (bl_animval * (1.0 - pos)) + (bl_val * pos);
+   v = (bl_animval * (1.0 - pos)) + (e_bl_val * pos);
    _e_backlight_set(zone, v);
    if (pos >= 1.0)
      {
@@ -440,14 +440,14 @@ _bl_sys_level_get(void)
    eina_stringshare_del(str);
    if ((!maxval) && (!val))
      {
-        bl_val = 0;
+        e_bl_val = 0;
         sysmode = MODE_NONE;
         return;
      }
    if (!maxval) maxval = 255;
    if ((val >= 0) && (val <= maxval))
-     bl_val = (double)val / (double)maxval;
-//   fprintf(stderr, "GET: %i/%i (%1.3f)\n", val, maxval, bl_val);
+     e_bl_val = (double)val / (double)maxval;
+//   fprintf(stderr, "GET: %i/%i (%1.3f)\n", val, maxval, e_bl_val);
 }
 
 static Eina_Bool
