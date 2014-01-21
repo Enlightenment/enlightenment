@@ -31,12 +31,12 @@ struct _E_Comp_Client_Data
    Ecore_X_Sync_Alarm   alarm;
    Ecore_X_Sync_Counter sync_counter;  // netwm sync counter
 
-   unsigned char        misses; // number of sync misses
-
    Ecore_X_Window_Attributes initial_attributes;
 
    unsigned int move_counter; //reduce X calls when moving a window
    unsigned int internal_props_set; //don't need to refetch our own internal props
+
+   Eina_Bool first_damage : 1; //ignore first damage on non-re_manage clients
 
    struct
    {

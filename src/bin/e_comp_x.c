@@ -2453,6 +2453,12 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
         ecore_x_damage_subtract(ec->comp_data->damage, 0, parts);
         ecore_x_region_free(parts);
      }
+   if (!ec->comp_data->first_damage)
+     {
+        ec->comp_data->first_damage = 1;
+        if (!ec->re_manage)
+          return ECORE_CALLBACK_RENEW;
+     }
 
    //WRN("DAMAGE %p: %dx%d", ec, ev->area.width, ev->area.height);
    if (ec->comp->nocomp)
