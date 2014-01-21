@@ -29,8 +29,11 @@ static Ecore_Event_Handler *_e_backlight_handler_desk_show = NULL;
 static void      _e_backlight_update(E_Zone *zone);
 static void      _e_backlight_set(E_Zone *zone, double val);
 static Eina_Bool _bl_anim(void *data, double pos);
-static Eina_Bool bl_avail = EINA_FALSE;
+static Eina_Bool bl_avail = EINA_TRUE;
 static Eina_Bool _e_backlight_handler(void *d, int type, void *ev);
+#ifndef WAYLAND_ONLY
+static Eina_Bool xbl_avail = EINA_FALSE;
+#endif
 #ifdef HAVE_EEZE
 static double bl_delayval = 1.0;
 static const char *bl_sysval = NULL;
@@ -53,10 +56,6 @@ e_backlight_init(void)
 #ifdef HAVE_EEZE
    eeze_init();
 #endif
-// why did someone do this? this makes it ONLY work if xrandr has bl support.
-// WRONG!
-//   bl_avail = ecore_x_randr_output_backlight_available();
-   bl_avail = EINA_TRUE;
 
    _e_backlight_handler_config_mode = ecore_event_handler_add
        (E_EVENT_CONFIG_MODE_CHANGED, _e_backlight_handler, NULL);
@@ -82,14 +81,15 @@ e_backlight_init(void)
    _e_backlight_handler_desk_show = ecore_event_handler_add
        (E_EVENT_DESK_SHOW, _e_backlight_handler, NULL);
 
-   if (bl_avail)
+#ifndef WAYLAND_ONLY
+   if (e_comp_get(NULL)->man->root)
+     xbl_avail = ecore_x_randr_output_backlight_available();
+#endif
+   e_backlight_update();
+   if (!getenv("E_RESTART"))
      {
-        e_backlight_update();
-        if (!getenv("E_RESTART"))
-          {
-             e_backlight_level_set(NULL, 0.1, 0.0);
-             e_backlight_level_set(NULL, e_config->backlight.normal, 0.0);
-          }
+        e_backlight_level_set(NULL, 0.1, 0.0);
+        e_backlight_level_set(NULL, e_config->backlight.normal, 0.0);
      }
 
    E_EVENT_BACKLIGHT_CHANGE = ecore_event_type_new();
@@ -292,7 +292,7 @@ _e_backlight_update(E_Zone *zone)
 
    root = zone->comp->man->root;
    // try randr
-   if (root && ecore_x_randr_output_backlight_available())
+   if (root && xbl_avail)
      {
         out = ecore_x_randr_window_outputs_get(root, &num);
         if ((out) && (num > 0))
