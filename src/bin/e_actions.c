@@ -3356,7 +3356,7 @@ e_actions_init(void)
    /* app */
    ACT_GO(app);
    e_action_predef_name_set(N_("Launch"), N_("Application"), "app", NULL,
-                            "syntax: , example:", 1);
+                            "syntax: [file:file.desktop|name:App Name|generic:Generic Name|exe:exename], example: file:terminology.desktop | file:/path/to/terminology.desktop | name:Terminology | generic:Terminal Emulator | exe:xterm", 1);
 
    /* new instance of focused app */
    ACT_GO(app_new_instance);
