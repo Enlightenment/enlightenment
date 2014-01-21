@@ -557,7 +557,6 @@ PKG_CHECK_MODULES(E, [
   eldbus >= ${efl_version}
   eio >= ${efl_version}
   elementary >= ${elm_version}
-  elementary < 1.8.99
   emotion >= ${efl_version}
   $eeze_mount
   $udisks_mount
