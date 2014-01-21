@@ -504,6 +504,9 @@ _remove_client(E_Client *ec)
          return;
       }
 
+    if (!extra->tiled)
+       return;
+
     extra->tiled = EINA_FALSE;
 
     /* Window tree updating. */
