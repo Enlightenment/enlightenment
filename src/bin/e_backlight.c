@@ -298,22 +298,23 @@ _e_backlight_update(E_Zone *zone)
         if ((out) && (num > 0))
           {
              char *name;
-             const char *s;
              Eina_Bool gotten = EINA_FALSE;
 
-             EINA_LIST_FREE(bl_devs, s)
-               eina_stringshare_del(s);
+             E_FREE_LIST(bl_devs, eina_stringshare_del);
              for (i = 0; i < num; i++)
                {
+                  Eina_Stringshare *n;
+
                   name = ecore_x_randr_output_name_get(root, out[i], NULL);
-                  bl_devs = eina_list_append(bl_devs, eina_stringshare_add(name));
-                  if ((name) && (e_config->backlight.sysdev) &&
-                      (!strcmp(name, e_config->backlight.sysdev)))
+                  if (!name) continue;
+                  n = eina_stringshare_add(name);
+                  free(name);
+                  bl_devs = eina_list_append(bl_devs, n);
+                  if (!e_util_strcmp(n, e_config->backlight.sysdev))
                     {
                        x_bl = ecore_x_randr_output_backlight_level_get(root, out[i]);
                        gotten = EINA_TRUE;
                     }
-                  free(name);
                }
              if (!gotten)
                x_bl = ecore_x_randr_output_backlight_level_get(root, out[0]);
