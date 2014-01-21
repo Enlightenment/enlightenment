@@ -171,9 +171,12 @@ _save_to(const char *file)
       snprintf(opts, sizeof(opts), "quality=%i", quality);
    if (screen == -1)
      {
-        if (!evas_object_image_save(o_img, file, NULL, opts))
-          e_util_dialog_show(_("Error saving screenshot file"),
-                             _("Path: %s"), file);
+        if (o_img)
+          {
+             if (!evas_object_image_save(o_img, file, NULL, opts))
+             e_util_dialog_show(_("Error saving screenshot file"),
+                                _("Path: %s"), file);
+          }
      }
    else
      {
@@ -189,25 +192,29 @@ _save_to(const char *file)
         if (z)
           {
              unsigned char *src, *dst, *s, *d;
-             int sstd, y;
+             int sstd, dstd, y;
              
              o = evas_object_image_add(evas_object_evas_get(o_img));
              evas_object_image_colorspace_set(o, EVAS_COLORSPACE_ARGB8888);
              evas_object_image_alpha_set(o, EINA_FALSE);
              evas_object_image_size_set(o, z->w, z->h);
+             dstd = evas_object_image_stride_get(o);
              src = evas_object_image_data_get(o_img, EINA_FALSE);
              sstd = evas_object_image_stride_get(o_img);
              dst = evas_object_image_data_get(o, EINA_TRUE);
-             d = dst;
-             for (y = z->y; y < z->y + z->h; y++)
+             if ((dstd > 0) && (sstd > 0) && (src) && (dst))
                {
-                  s = src + (sstd * y) + (z->x * 4);
-                  memcpy(d, s, z->w * 4);
-                  d += z->w * 4;
+                  d = dst;
+                  for (y = z->y; y < z->y + z->h; y++)
+                    {
+                       s = src + (sstd * y) + (z->x * 4);
+                       memcpy(d, s, z->w * 4);
+                       d += dstd;
+                    }
+                  if (!evas_object_image_save(o, file, NULL, opts))
+                  e_util_dialog_show(_("Error saving screenshot file"),
+                                     _("Path: %s"), file);
                }
-             if (!evas_object_image_save(o, file, NULL, opts))
-               e_util_dialog_show(_("Error saving screenshot file"),
-                                  _("Path: %s"), file);
 
              evas_object_del(o);
           }
@@ -601,7 +608,7 @@ _rect_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 }
 
 static void
-_shot_now(E_Zone *zone, E_Client *ec)
+_shot_now(E_Zone *zone, E_Client *ec, const char *params)
 {
    Ecore_X_Image *img;
    unsigned char *src;
@@ -825,17 +832,44 @@ _shot_now(E_Zone *zone, E_Client *ec)
    e_win_resize(win, w, h);
    e_win_size_min_set(win, w, h);
    e_win_size_max_set(win, 99999, 99999);
-   e_win_show(win);
-   e_win_client_icon_set(win, "screenshot");
    
-   if (!e_widget_focus_get(o_bg)) e_widget_focus_set(o_box, 1);
+   if (params)
+     {
+        char smode[128], squal[128], sscreen[128];
+
+        if (sscanf(params, "%100s %100s %100s", smode, squal, sscreen) == 3)
+          {
+             screen = -1;
+             if (!strcmp(sscreen, "current")) screen = zone->num;
+             else if (!strcmp(sscreen, "all")) screen = -1;
+             else screen = atoi(sscreen);
+             
+             quality = 90;
+             if (!strcmp(squal, "perfect")) quality = 100;
+             else if (!strcmp(squal, "high")) quality = 90;
+             else if (!strcmp(squal, "medium")) quality = 70;
+             else if (!strcmp(squal, "low")) quality = 50;
+             else quality = atoi(squal);
+             
+             if (!strcmp(smode, "save")) _win_save_cb(NULL, NULL);
+             else if (!strcmp(smode, "share"))  _win_share_cb(NULL, NULL);
+             return;
+          }
+     }
+   else
+     {
+        e_win_show(win);
+        e_win_client_icon_set(win, "screenshot");
+        
+        if (!e_widget_focus_get(o_bg)) e_widget_focus_set(o_box, 1);
+     }
 }
 
 static Eina_Bool
 _shot_delay(void *data)
 {
    timer = NULL;
-   _shot_now(data, NULL);
+   _shot_now(data, NULL, NULL);
    return EINA_FALSE;
 }
 
@@ -843,7 +877,7 @@ static Eina_Bool
 _shot_delay_border(void *data)
 {
    border_timer = NULL;
-   _shot_now(NULL, data);
+   _shot_now(NULL, data, NULL);
    return EINA_FALSE;
 }
 
@@ -884,11 +918,11 @@ _e_mod_action_border_cb(E_Object *obj __UNUSED__, const char *params __UNUSED__)
          ecore_timer_del(border_timer);
          border_timer = NULL;
       }
-   _shot_now(NULL, ec);
+   _shot_now(NULL, ec, NULL);
 }
 
 static void
-_e_mod_action_cb(E_Object *obj, const char *params __UNUSED__)
+_e_mod_action_cb(E_Object *obj, const char *params)
 {
    E_Zone *zone = NULL;
    
@@ -906,7 +940,7 @@ _e_mod_action_cb(E_Object *obj, const char *params __UNUSED__)
    if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
    if (!zone) return;
    E_FREE_FUNC(timer, ecore_timer_del);
-   _shot_now(zone, NULL);
+   _shot_now(zone, NULL, params);
 }
 
 static void
@@ -969,14 +1003,16 @@ e_modapi_init(E_Module *m)
      {
         act->func.go = _e_mod_action_cb;
         e_action_predef_name_set(N_("Screen"), N_("Take Screenshot"),
-                                 "shot", NULL, NULL, 0);
+                                 "shot", NULL,
+                                 "syntax: [share|save] [perfect|high|medium|low|QUALITY] [current|all|SCREEN-NUM]", 1);
      }
    border_act = e_action_add("border_shot");
    if (border_act)
      {
         border_act->func.go = _e_mod_action_border_cb;
         e_action_predef_name_set(N_("Window : Actions"), N_("Take Shot"),
-                                 "border_shot", NULL, NULL, 0);
+                                 "border_shot", NULL,
+                                 "syntax: [share|save] [perfect|high|medium|low|QUALITY] all", 1);
      }
    maug = e_int_menus_menu_augmentation_add_sorted
       ("main/2",  _("Take Screenshot"), _e_mod_menu_add, NULL, NULL, NULL);
