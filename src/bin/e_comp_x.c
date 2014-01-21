@@ -55,6 +55,7 @@ static Ecore_Timer *screensaver_idle_timer = NULL;
 static Eina_Bool screensaver_dimmed = EINA_FALSE;
 
 static Ecore_X_Atom backlight_atom = 0;
+extern double e_bl_val;
 
 static inline Ecore_X_Window
 _e_comp_x_client_window_get(const E_Client *ec)
@@ -4307,8 +4308,13 @@ _e_comp_x_screensaver_notify_cb(void *data __UNUSED__, int type __UNUSED__, Ecor
 static Eina_Bool
 _e_comp_x_backlight_notify_cb(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Randr_Output_Property_Notify *ev)
 {
-   if (ev->property == backlight_atom)
-     e_backlight_update();
+   double x_bl;
+
+   if (ev->property != backlight_atom) return ECORE_CALLBACK_RENEW;
+   x_bl = ecore_x_randr_output_backlight_level_get(0, ev->output);
+
+   if (x_bl >= 0.0)
+     e_bl_val = x_bl;
    return ECORE_CALLBACK_RENEW;
 }
 
