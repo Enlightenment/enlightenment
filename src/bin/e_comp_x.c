@@ -1,6 +1,9 @@
 #include "e.h"
 #include <Ecore_X.h>
 
+# define RANDR_VERSION_1_3 ((1 << 16) | 3)
+# define RANDR_VERSION_1_4 ((1 << 16) | 4)
+
 #define GRAV_SET(ec, grav)                                                         \
   ecore_x_window_gravity_set(e_client_util_pwin_get(ec), grav);                          \
   if (ec->comp_data->lock_win) ecore_x_window_gravity_set(ec->comp_data->lock_win, grav);  \
@@ -51,6 +54,7 @@ static int screen_size_index = -1;
 static Ecore_Timer *screensaver_idle_timer = NULL;
 static Eina_Bool screensaver_dimmed = EINA_FALSE;
 
+static Ecore_X_Atom backlight_atom = 0;
 
 static inline Ecore_X_Window
 _e_comp_x_client_window_get(const E_Client *ec)
@@ -4301,6 +4305,14 @@ _e_comp_x_screensaver_notify_cb(void *data __UNUSED__, int type __UNUSED__, Ecor
 }
 
 static Eina_Bool
+_e_comp_x_backlight_notify_cb(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_Event_Randr_Output_Property_Notify *ev)
+{
+   if (ev->property == backlight_atom)
+     e_backlight_update();
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 _e_comp_x_cb_frame_extents_request(void *data EINA_UNUSED, int ev_type EINA_UNUSED, Ecore_X_Event_Frame_Extents_Request *ev)
 {
    E_Manager *man;
@@ -5087,7 +5099,13 @@ e_comp_x_init(void)
                          _e_comp_x_cb_frame_extents_request, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_PING,
                          _e_comp_x_cb_ping, NULL);
-   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SCREENSAVER_NOTIFY, _e_comp_x_screensaver_notify_cb, NULL);;
+   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_SCREENSAVER_NOTIFY, _e_comp_x_screensaver_notify_cb, NULL);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY, _e_comp_x_backlight_notify_cb, NULL);
+   if (ecore_x_randr_version_get() >= RANDR_VERSION_1_3)
+     backlight_atom = ecore_x_atom_get("Backlight");
+
+   if (!backlight_atom)
+     backlight_atom = ecore_x_atom_get("BACKLIGHT");
 
    ecore_x_screensaver_custom_blanking_enable();
 

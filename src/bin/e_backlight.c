@@ -17,20 +17,10 @@ static int sysmode = MODE_NONE;
 static Ecore_Animator *bl_anim = NULL;
 static Eina_List *bl_devs = NULL;
 
-static Ecore_Event_Handler *_e_backlight_handler_config_mode = NULL;
-static Ecore_Event_Handler *_e_backlight_handler_border_fullscreen = NULL;
-static Ecore_Event_Handler *_e_backlight_handler_border_unfullscreen = NULL;
-static Ecore_Event_Handler *_e_backlight_handler_border_remove = NULL;
-static Ecore_Event_Handler *_e_backlight_handler_border_iconify = NULL;
-static Ecore_Event_Handler *_e_backlight_handler_border_uniconify = NULL;
-static Ecore_Event_Handler *_e_backlight_handler_border_desk_set = NULL;
-static Ecore_Event_Handler *_e_backlight_handler_desk_show = NULL;
-
 static void      _e_backlight_update(E_Zone *zone);
 static void      _e_backlight_set(E_Zone *zone, double val);
 static Eina_Bool _bl_anim(void *data, double pos);
 static Eina_Bool bl_avail = EINA_TRUE;
-static Eina_Bool _e_backlight_handler(void *d, int type, void *ev);
 #ifndef WAYLAND_ONLY
 static Eina_Bool xbl_avail = EINA_FALSE;
 #endif
@@ -56,30 +46,6 @@ e_backlight_init(void)
 #ifdef HAVE_EEZE
    eeze_init();
 #endif
-
-   _e_backlight_handler_config_mode = ecore_event_handler_add
-       (E_EVENT_CONFIG_MODE_CHANGED, _e_backlight_handler, NULL);
-
-   _e_backlight_handler_border_fullscreen = ecore_event_handler_add
-       (E_EVENT_CLIENT_FULLSCREEN, _e_backlight_handler, NULL);
-
-   _e_backlight_handler_border_unfullscreen = ecore_event_handler_add
-       (E_EVENT_CLIENT_UNFULLSCREEN, _e_backlight_handler, NULL);
-
-   _e_backlight_handler_border_remove = ecore_event_handler_add
-       (E_EVENT_CLIENT_REMOVE, _e_backlight_handler, NULL);
-
-   _e_backlight_handler_border_iconify = ecore_event_handler_add
-       (E_EVENT_CLIENT_ICONIFY, _e_backlight_handler, NULL);
-
-   _e_backlight_handler_border_uniconify = ecore_event_handler_add
-       (E_EVENT_CLIENT_UNICONIFY, _e_backlight_handler, NULL);
-
-   _e_backlight_handler_border_desk_set = ecore_event_handler_add
-       (E_EVENT_CLIENT_DESK_SET, _e_backlight_handler, NULL);
-
-   _e_backlight_handler_desk_show = ecore_event_handler_add
-       (E_EVENT_DESK_SHOW, _e_backlight_handler, NULL);
 
 #ifndef WAYLAND_ONLY
    if (e_comp_get(NULL)->man->root)
@@ -119,53 +85,7 @@ e_backlight_shutdown(void)
    bl_sys_pending_set = EINA_FALSE;
    eeze_shutdown();
 #endif
-   if (_e_backlight_handler_config_mode)
-     {
-        ecore_event_handler_del(_e_backlight_handler_config_mode);
-        _e_backlight_handler_config_mode = NULL;
-     }
 
-   if (_e_backlight_handler_border_fullscreen)
-     {
-        ecore_event_handler_del(_e_backlight_handler_border_fullscreen);
-        _e_backlight_handler_border_fullscreen = NULL;
-     }
-
-   if (_e_backlight_handler_border_unfullscreen)
-     {
-        ecore_event_handler_del(_e_backlight_handler_border_unfullscreen);
-        _e_backlight_handler_border_unfullscreen = NULL;
-     }
-
-   if (_e_backlight_handler_border_remove)
-     {
-        ecore_event_handler_del(_e_backlight_handler_border_remove);
-        _e_backlight_handler_border_remove = NULL;
-     }
-
-   if (_e_backlight_handler_border_iconify)
-     {
-        ecore_event_handler_del(_e_backlight_handler_border_iconify);
-        _e_backlight_handler_border_iconify = NULL;
-     }
-
-   if (_e_backlight_handler_border_uniconify)
-     {
-        ecore_event_handler_del(_e_backlight_handler_border_uniconify);
-        _e_backlight_handler_border_uniconify = NULL;
-     }
-
-   if (_e_backlight_handler_border_desk_set)
-     {
-        ecore_event_handler_del(_e_backlight_handler_border_desk_set);
-        _e_backlight_handler_border_desk_set = NULL;
-     }
-
-   if (_e_backlight_handler_desk_show)
-     {
-        ecore_event_handler_del(_e_backlight_handler_desk_show);
-        _e_backlight_handler_desk_show = NULL;
-     }
    return 1;
 }
 
@@ -272,14 +192,6 @@ e_backlight_devices_get(void)
 }
 
 /* local subsystem functions */
-
-static Eina_Bool
-_e_backlight_handler(void *d __UNUSED__, int type __UNUSED__, void *ev __UNUSED__)
-{
-   if (!bl_anim)
-     e_backlight_update();
-   return ECORE_CALLBACK_PASS_ON;
-}
 
 static void
 _e_backlight_update(E_Zone *zone)
