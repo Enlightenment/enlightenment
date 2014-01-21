@@ -282,7 +282,8 @@ e_backlight_devices_get(void)
 static Eina_Bool
 _e_backlight_handler(void *d __UNUSED__, int type __UNUSED__, void *ev __UNUSED__)
 {
-   e_backlight_update();
+   if (!bl_anim)
+     e_backlight_update();
    return ECORE_CALLBACK_PASS_ON;
 }
 
