@@ -1207,8 +1207,11 @@ e_menu_idler_before(void)
      {
         if (_e_menu_win)
           {
-             e_grabinput_release(_e_menu_win, _e_menu_win);
-             _mouse_up_feed(e_comp_find_by_window(_e_menu_win)->evas, 0);
+             E_Comp *c;
+
+             c = e_comp_find_by_window(_e_menu_win);
+             if (!c) c = e_comp_get(NULL);
+             e_comp_ungrab_input(c, 1, 1);
              _e_menu_win = 0;
           }
      }
@@ -1991,7 +1994,7 @@ _e_menu_activate_internal(E_Menu *m, E_Zone *zone)
    if (!_e_menu_win)
      {
         _e_menu_win = zone->comp->ee_win;
-        if (!e_grabinput_get(_e_menu_win, 0, _e_menu_win))
+        if (!e_comp_grab_input(zone->comp, 1, 1))
           {
              _e_menu_win = 0;
              return;
