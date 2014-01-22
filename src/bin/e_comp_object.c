@@ -132,21 +132,6 @@ _e_comp_shaped_check(int w, int h, const Eina_Rectangle *rects, int num)
 
 /////////////////////////////////////
 
-static Eina_Bool
-_e_comp_object_do_shadow(E_Comp_Object *cw)
-{
-   if (cw->ec)
-     {
-        if (cw->ec->shaped) return 0;
-        if (cw->frame_object) return 0;
-        if (e_client_util_borderless(cw->ec))
-          return 0;
-     }
-   return 1;
-}
-
-/////////////////////////////////////
-
 static void
 _e_comp_object_layers_add(E_Comp_Object *cw, E_Comp_Object *above, E_Comp_Object *below, Eina_Bool prepend)
 {
@@ -486,7 +471,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      }
    if (cw->ec->override)
      {
-        if (_e_comp_object_do_shadow(cw) && (!no_shadow))
+        if ((!cw->ec->shaped) && (!no_shadow))
           e_comp_object_signal_emit(cw->smart_obj, "e,state,shadow,on", "e");
         else
           e_comp_object_signal_emit(cw->smart_obj, "e,state,shadow,off", "e");
