@@ -111,7 +111,7 @@ e_dnd_init(void)
    _text_atom = ecore_x_atom_get("text/plain");
 
    _drop_win_hash = eina_hash_int32_new(NULL);
-   _drop_handlers_responsives = eina_hash_string_superfast_new(NULL);
+   _drop_handlers_responsives = eina_hash_int32_new(NULL);
 
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _e_dnd_cb_mouse_up, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_MOUSE_MOVE, _e_dnd_cb_mouse_move, NULL);
@@ -509,18 +509,20 @@ EAPI void
 e_drop_handler_responsive_set(E_Drop_Handler *handler)
 {
    Ecore_X_Window hwin = _e_drag_win_get(handler, 1);
-   const char *wid = e_util_winid_str_get(hwin);
+   Eina_List *l;
 
-   eina_hash_add(_drop_handlers_responsives, wid, (void *)handler);
+   l = eina_hash_find(_drop_handlers_responsives, &hwin);
+   eina_hash_set(_drop_handlers_responsives, &hwin, eina_list_append(l, handler));
 }
 
 EAPI int
 e_drop_handler_responsive_get(const E_Drop_Handler *handler)
 {
    Ecore_X_Window hwin = _e_drag_win_get(handler, 1);
-   const char *wid = e_util_winid_str_get(hwin);
+   Eina_List *l;
 
-   return eina_hash_find(_drop_handlers_responsives, wid) == (void *)handler;
+   l = eina_hash_find(_drop_handlers_responsives, &hwin);
+   return l && eina_list_data_find(l, handler);
 }
 
 EAPI void
