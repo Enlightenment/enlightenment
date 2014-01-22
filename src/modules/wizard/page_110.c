@@ -100,7 +100,8 @@ _check_connman_owner(void *data, const Eldbus_Message *msg,
 
    e_wizard_button_next_enable_set(1);
    ecore_idler_add(_page_next_call, NULL);
-
+   return;
+   
 fail:
    _connman_fail(data);
 }
