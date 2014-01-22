@@ -457,10 +457,19 @@ EAPI void
 e_drop_handler_del(E_Drop_Handler *handler)
 {
    unsigned int i;
+   Eina_List *l;
+   Ecore_X_Window hwin;
 
    if (!handler)
      return;
 
+   hwin = _e_drag_win_get(handler, 1);
+   if (hwin)
+     {
+        l = eina_hash_find(_drop_handlers_responsives, &hwin);
+        if (l)
+          eina_hash_set(_drop_handlers_responsives, &hwin, eina_list_remove(l, handler));
+     }
    _drop_handlers = eina_list_remove(_drop_handlers, handler);
    if (handler->active)
      _active_handlers = eina_list_remove(_active_handlers, handler);
