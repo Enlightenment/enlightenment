@@ -1711,13 +1711,42 @@ e_comp_e_object_layer_get(const E_Object *obj)
 EAPI Eina_Bool
 e_comp_grab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd)
 {
-   return e_grabinput_get((!!mouse) * c->ee_win, 0, (!!kbd) * c->ee_win);
+   Eina_Bool ret = EINA_FALSE;
+   Ecore_Window mwin = 0, kwin = 0;
+
+   mouse = !!mouse;
+   kbd = !!kbd;
+   if (mouse || c->input_mouse_grabs)
+     mwin = c->ee_win;
+   if (kbd || c->input_mouse_grabs)
+     kwin = c->ee_win;
+   if ((c->input_mouse_grabs && c->input_key_grabs) ||
+       e_grabinput_get(mwin, 0, kwin))
+     {
+        ret = EINA_TRUE;
+        c->input_mouse_grabs += mouse;
+        c->input_key_grabs += kbd;
+     }
+   return ret;
 }
 
 EAPI void
 e_comp_ungrab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd)
 {
-   e_grabinput_release((!!mouse) * c->ee_win, (!!kbd) * c->ee_win);
+   Ecore_Window mwin = 0, kwin = 0;
+
+   mouse = !!mouse;
+   kbd = !!kbd;
+   if (mouse && (c->input_mouse_grabs == 1))
+     mwin = c->ee_win;
+   if (kbd && (c->input_key_grabs == 1))
+     kwin = c->ee_win;
+   if (c->input_mouse_grabs)
+     c->input_mouse_grabs -= mouse;
+   if (c->input_key_grabs)
+     c->input_key_grabs -= kbd;
+   if ((!mwin) || (!kwin)) return;
+   e_grabinput_release(mwin, kwin);
    evas_event_feed_mouse_out(c->evas, 0, NULL);
    evas_event_feed_mouse_in(c->evas, 0, NULL);
 }

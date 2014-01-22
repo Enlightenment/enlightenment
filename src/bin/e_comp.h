@@ -101,6 +101,8 @@ struct _E_Comp
    Ecore_Window  cm_selection; //FIXME: move to comp_x ?
 
    int depth;
+   unsigned int    input_key_grabs;
+   unsigned int    input_mouse_grabs;
 
    Ecore_Cb        grab_cb;
    Ecore_Cb        bindings_grab_cb;
