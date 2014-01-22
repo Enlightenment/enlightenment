@@ -343,10 +343,8 @@ _e_comp_object_shadow_client_match(const E_Client *ec, E_Comp_Match *m)
     }
   if (m->fullscreen != 0)
     {
-       int fullscreen = 0;
+       int fullscreen = ec->fullscreen;
 
-       if (ec->netwm.state.fullscreen)
-         fullscreen = 1;
        if (!(((m->fullscreen == -1) && (!fullscreen)) ||
              ((m->fullscreen == 1) && (fullscreen))))
          return EINA_FALSE;
