@@ -3289,15 +3289,14 @@ e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb EINA_UNUSED)
 ////////////////////////////////////
 
 static void
-_e_comp_object_autoclose_cleanup(E_Comp *c)
+_e_comp_object_autoclose_cleanup(E_Comp *c, Eina_Bool already_del)
 {
    if (c->autoclose.obj)
      {
-        c = e_comp_util_evas_object_comp_get(c->autoclose.obj);
         e_comp_ungrab_input(c, 0, 1);
         if (c->autoclose.del_cb)
           c->autoclose.del_cb(c->autoclose.data, c->autoclose.obj);
-        else
+        else if (!already_del)
           {
              evas_object_hide(c->autoclose.obj);
              E_FREE_FUNC(c->autoclose.obj, evas_object_del);
@@ -3321,14 +3320,14 @@ _e_comp_object_autoclose_key_down_cb(void *data, int type EINA_UNUSED, void *eve
 
    if (c->autoclose.key_cb)
      del = !c->autoclose.key_cb(c->autoclose.data, ev);
-   if (del) _e_comp_object_autoclose_cleanup(data);
+   if (del) _e_comp_object_autoclose_cleanup(data, 0);
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
 _e_comp_object_autoclose_mouse_up_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   _e_comp_object_autoclose_cleanup(data);
+   _e_comp_object_autoclose_cleanup(data, 0);
 }
 
 static void
@@ -3339,17 +3338,18 @@ _e_comp_object_autoclose_setup(Evas_Object *obj)
    if (!c->autoclose.rect)
      {
         c->autoclose.rect = evas_object_rectangle_add(c->evas);
+        evas_object_move(c->autoclose.rect, 0, 0);
+        evas_object_resize(c->autoclose.rect, c->man->w, c->man->h);
+        evas_object_show(c->autoclose.rect);
         evas_object_name_set(c->autoclose.rect, "c->autoclose.rect");
         evas_object_color_set(c->autoclose.rect, 0, 0, 0, 0);
         evas_object_event_callback_add(c->autoclose.rect, EVAS_CALLBACK_MOUSE_UP, _e_comp_object_autoclose_mouse_up_cb, c);
+        e_comp_grab_input(c, 0, 1);
      }
-   evas_object_move(c->autoclose.rect, 0, 0);
-   evas_object_resize(c->autoclose.rect, c->man->w, c->man->h);
    evas_object_layer_set(c->autoclose.rect, evas_object_layer_get(obj) - 1);
-   evas_object_show(c->autoclose.rect);
    e_comp_shape_queue(c);
-   c->autoclose.key_handler = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_comp_object_autoclose_key_down_cb, c);
-   e_comp_grab_input(c, 0, 1);
+   if (!c->autoclose.key_handler)
+     c->autoclose.key_handler = ecore_event_handler_add(ECORE_EVENT_KEY_DOWN, _e_comp_object_autoclose_key_down_cb, c);
 }
 
 static void
@@ -3363,7 +3363,7 @@ static void
 _e_comp_object_autoclose_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show);
-   _e_comp_object_autoclose_cleanup(data);
+   _e_comp_object_autoclose_cleanup(data, 1);
 }
 
 EAPI void
@@ -3377,11 +3377,17 @@ e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb
    EINA_SAFETY_ON_NULL_RETURN(c);
    if (c->autoclose.obj)
      {
-        /* block overwrite of current autoclose object */
-        if (c->autoclose.obj != obj) return;
+        if (c->autoclose.obj == obj) return;
+        evas_object_event_callback_del_full(c->autoclose.obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, c);
+        c->autoclose.obj = obj;
         c->autoclose.del_cb = del_cb;
         c->autoclose.key_cb = cb;
         c->autoclose.data = (void*)data;
+        if (evas_object_visible_get(obj))
+          _e_comp_object_autoclose_setup(obj);
+        else
+          evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show, c);
+        evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, c);
         return;
      }
    c->autoclose.obj = obj;
