@@ -840,7 +840,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
         if (sscanf(params, "%100s %100s %100s", smode, squal, sscreen) == 3)
           {
              screen = -1;
-             if (!strcmp(sscreen, "current")) screen = zone->num;
+             if ((zone) && (!strcmp(sscreen, "current"))) screen = zone->num;
              else if (!strcmp(sscreen, "all")) screen = -1;
              else screen = atoi(sscreen);
              
