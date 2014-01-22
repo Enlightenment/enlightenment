@@ -10294,6 +10294,7 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
      e_comp_grab_input(c, 0, 1);
    edje_object_part_swallow(ic->obj, "e.swallow.entry", ic->entry_widget);
    evas_object_show(ic->entry_widget);
+   edje_object_signal_emit(ic->obj, "e,state,rename,on", "e");
    e_widget_entry_text_set(ic->entry_widget, ic->info.file);
    e_widget_focus_set(ic->entry_widget, 0);
    e_widget_entry_select_all(ic->entry_widget);
@@ -10316,6 +10317,7 @@ _e_fm2_icon_entry_widget_del(E_Fm2_Icon *ic)
      e_grabinput_release(0, ic->keygrab);
    ic->keygrab = 0;
    _e_fm2_icon_select(ic);
+   edje_object_signal_emit(ic->obj, "e,state,rename,off", "e");
 }
 
 static void
