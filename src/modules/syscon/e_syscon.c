@@ -90,8 +90,8 @@ e_syscon_show(E_Zone *zone, const char *defact)
 
    popup = e_comp_object_util_add(o_bg, E_COMP_OBJECT_TYPE_POPUP);
    evas_object_data_set(popup, "zone", zone);
-   e_comp_object_util_autoclose(popup, NULL, _cb_key_down, NULL);
    evas_object_layer_set(popup, E_LAYER_POPUP);
+   e_comp_object_util_autoclose(popup, NULL, _cb_key_down, NULL);
    act_count = 0;
    show_time = t;
 
