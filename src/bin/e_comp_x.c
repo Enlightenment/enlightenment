@@ -204,7 +204,7 @@ _e_comp_x_client_new_helper(E_Client *ec)
    
 
    e_pixmap_visual_cmap_set(ec->pixmap, ec->comp_data->initial_attributes.visual, ec->comp_data->initial_attributes.colormap);
-   if (ec->override && (!ec->internal))
+   if (ec->override && (!ec->input_only))
      ecore_x_window_shape_events_select(win, 1);
    if (ec->override && (!ec->input_only))
      ecore_x_present_select_events(win, ECORE_X_PRESENT_EVENT_MASK_CONFIGURE_NOTIFY);
