@@ -2838,6 +2838,8 @@ e_comp_object_shape_apply(Evas_Object *obj)
    evas_object_image_size_get(cw->obj, &w, &h);
    if ((w < 1) || (h < 1)) return;
 
+   //INF("SHAPE RENDER %p", cw->ec);
+
    if (cw->ec->shape_rects) evas_object_image_native_surface_set(cw->obj, NULL);
    evas_object_image_alpha_set(cw->obj, !!cw->ec->shape_rects);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
@@ -3018,7 +3020,7 @@ e_comp_object_dirty(Evas_Object *obj)
    it = eina_tiler_iterator_new(cw->updates);
    EINA_ITERATOR_FOREACH(it, r)
      {
-        //INF("UPDATE [%p]: %d %d %dx%d", cw->ec, r->x, r->y, r->w, r->h);
+        //INF("UPDATE ADD [%p]: %d %d %dx%d", cw->ec, r->x, r->y, r->w, r->h);
         evas_object_image_data_update_add(cw->obj, r->x, r->y, r->w, r->h);
         EINA_LIST_FOREACH(cw->obj_mirror, l, o)
           evas_object_image_data_update_add(o, r->x, r->y, r->w, r->h);
@@ -3066,7 +3068,7 @@ e_comp_object_render(Evas_Object *obj)
         return EINA_FALSE;
      }
 
-
+   //INF("RENDER SIZE: %dx%d", pw, ph);
    it = eina_tiler_iterator_new(cw->pending_updates);
    if (e_pixmap_image_is_argb(cw->ec->pixmap))
      {
