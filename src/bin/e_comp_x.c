@@ -2429,7 +2429,7 @@ _e_comp_x_shape(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Wind
                {
                   /* bounding box changed, need export for rendering */
                   EINA_RECTANGLE_SET(&ec->comp_data->shape, ev->x, ev->y, ev->w, ev->h);
-                  ec->need_shape_export = 1;
+                  ec->need_shape_export = !ec->override;
                }
              ec->changes.shape = 1;
           }
