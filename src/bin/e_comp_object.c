@@ -3000,6 +3000,8 @@ e_comp_object_dirty(Evas_Object *obj)
      evas_object_image_data_set(cw->obj, NULL);
    evas_object_image_size_set(cw->obj, w, h);
    //INF("SIZE [%p]: %dx%d", cw->ec, w, h);
+   if (cw->pending_updates)
+     eina_tiler_area_size_set(cw->pending_updates, w, h);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
      {
         evas_object_image_pixels_dirty_set(o, dirty);
