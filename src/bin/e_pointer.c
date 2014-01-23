@@ -922,37 +922,3 @@ e_pointer_mode_pop(void *obj, E_Pointer_Mode mode)
       default: break;
      }
 }
-
-EAPI void
-e_pointer_block_add(E_Pointer *p)
-{
-   if (!p->blocks)
-     {
-        evas_object_hide(p->pointer_object);
-        if (p->pixmap)
-          {
-             int w, h;
-
-             e_pixmap_size_get(p->pixmap, &w, &h);
-             e_pointer_image_set(p, p->pixmap, w, h, p->hot.x, p->hot.y);
-          }
-     }
-   p->blocks++;
-   
-}
-
-EAPI void
-e_pointer_block_del(E_Pointer *p)
-{
-   if (!p->blocks) return;
-   p->blocks--;
-   if (p->blocks) return;
-   e_pointers_size_set(e_config->cursor_size);
-   if (p->pointer_image)
-     {
-        if (p->canvas)
-          evas_object_resize(p->pointer_image, p->w, p->h);
-        else
-          evas_object_hide(p->pointer_image);
-     }
-}
