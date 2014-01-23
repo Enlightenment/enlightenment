@@ -683,7 +683,7 @@ _e_comp_x_client_pri_norm(E_Client *ec)
 static void
 _e_comp_x_client_shape_input_rectangle_set(E_Client *ec)
 {
-   Ecore_X_Window win = e_client_util_pwin_get(ec);
+   Ecore_X_Window win = _e_comp_x_client_window_get(ec);
 
    if (!ec->comp_data->reparented) return;
 
