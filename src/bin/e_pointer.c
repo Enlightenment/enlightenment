@@ -553,6 +553,13 @@ e_pointer_window_new(Ecore_Window win,
    p->e_cursor = e_config->use_e_cursor;
    p->win = win;
    p->color = 0;
+   {
+      E_Comp *c;
+
+      c = e_comp_get(NULL);
+      if (c->pointer)
+        p->color = c->pointer->color;
+   }
 
 #ifndef WAYLAND_ONLY
    ecore_x_cursor_size_set(e_config->cursor_size * 3 / 4);
