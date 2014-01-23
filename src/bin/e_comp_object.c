@@ -772,10 +772,13 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
         //INF("INTERCEPT %dx%d", w, h);
         evas_object_resize(obj, w, h);
      }
-   cw->ec->need_shape_merge |= cw->ec->shaped || cw->ec->shaped_input;
-   cw->ec->need_shape_export |= cw->ec->shaped;
-   if (cw->ec->shaped || cw->ec->shaped_input)
-     EC_CHANGED(cw->ec);
+   if (!cw->ec->override)
+     {
+        cw->ec->need_shape_merge |= cw->ec->shaped || cw->ec->shaped_input;
+        cw->ec->need_shape_export |= cw->ec->shaped;
+        if (cw->ec->shaped || cw->ec->shaped_input)
+          EC_CHANGED(cw->ec);
+     }
 
    /* this fixes positioning jiggles when using a resize mode
     * which also changes the client's position
