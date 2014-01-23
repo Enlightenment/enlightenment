@@ -2400,6 +2400,40 @@ _e_comp_x_focus_in(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_W
 }
 
 static Eina_Bool
+_shapes_differ(E_Client *ec)
+{
+   Eina_Bool differ = EINA_FALSE;
+   if (ec->shape_input_rects)
+     {
+        Ecore_X_Rectangle *rects;
+        int num = 0, i;
+
+        rects = ecore_x_window_shape_input_rectangles_get
+        (e_client_util_win_get(ec), &num);
+        if (rects)
+          {
+             if (num == (int)ec->shape_input_rects_num)
+               {
+                  for (i = 0; i < num; i++)
+                    {
+                       if ((rects[i].x != ec->shape_input_rects[i].x) ||
+                           (rects[i].y != ec->shape_input_rects[i].y) ||
+                           (rects[i].width != (unsigned int)ec->shape_input_rects[i].w) ||
+                           (rects[i].height != (unsigned int)ec->shape_input_rects[i].h))
+                         {
+                            differ = EINA_TRUE;
+                            break;
+                         }
+                    }
+               }
+             else differ = EINA_TRUE;
+             free(rects);
+          }
+     }
+   return differ;
+}
+
+static Eina_Bool
 _e_comp_x_shape(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Shape *ev)
 {
    E_Client *ec;
@@ -2417,8 +2451,11 @@ _e_comp_x_shape(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Wind
      {
         if (ev->type == ECORE_X_SHAPE_INPUT)
           {
-             ec->changes.shape_input = 1;
-             ec->need_shape_merge = 1;
+             if (_shapes_differ(ec))
+               {
+                  ec->changes.shape_input = 1;
+                  ec->need_shape_merge = 1;
+               }
           }
         else
           {
