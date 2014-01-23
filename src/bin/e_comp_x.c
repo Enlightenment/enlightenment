@@ -4970,6 +4970,17 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
    c->pointer->color = c->pointer->e_cursor && ecore_x_cursor_color_supported_get();
    _e_comp_x_manage_windows(c);
 
+   {
+      E_Client *ec;
+
+      E_CLIENT_REVERSE_FOREACH(c, ec)
+        if (!e_client_util_ignored_get(ec))
+          {
+             ec->want_focus = ec->take_focus = 1;
+             break;
+          }
+   }
+
    return !!c->bg_blank_object;
 }
 
