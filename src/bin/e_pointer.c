@@ -666,6 +666,8 @@ e_pointers_size_set(int size)
    EINA_LIST_FOREACH(_e_pointers, l, p)
      {
         Eina_Stringshare *type;
+
+        p->e_cursor = e_config->use_e_cursor;
         if (p->evas)
           {
              if (!p->canvas)
