@@ -66,7 +66,8 @@ static struct tiling_mod_main_g
                          *act_move_down,
                          *act_move_left,
                          *act_move_right,
-                         *act_toggle_split_mode;
+                         *act_toggle_split_mode,
+                         *act_swap_window;
 
     Tiling_Split_Type     split_type;
 } _G = {
@@ -540,6 +541,66 @@ _e_mod_action_toggle_floating_cb(E_Object   *obj __UNUSED__,
                                  const char *params __UNUSED__)
 {
     toggle_floating(e_client_focused_get());
+}
+
+static E_Client *_go_mouse_client = NULL;
+
+static void
+_e_mod_action_swap_window_go_mouse(E_Object * obj EINA_UNUSED, const char *params EINA_UNUSED,
+      E_Binding_Event_Mouse_Button * ev EINA_UNUSED)
+{
+   E_Client *ec = e_client_under_pointer_get(get_current_desk(), NULL);
+
+   Client_Extra *extra = tiling_entry_func(ec);
+
+   if (!extra)
+      return;
+
+   if (is_ignored_window(extra))
+      return;
+
+   _go_mouse_client = ec;
+}
+
+static void
+_e_mod_action_swap_window_end_mouse(E_Object * obj EINA_UNUSED, const char *params EINA_UNUSED,
+      E_Binding_Event_Mouse_Button * ev EINA_UNUSED)
+{
+   E_Client *ec = e_client_under_pointer_get(get_current_desk(), NULL);
+   E_Client *first_ec = _go_mouse_client;
+
+   _go_mouse_client = NULL;
+
+   if (!first_ec)
+      return;
+
+   Client_Extra *extra = tiling_entry_func(ec);
+
+   if (!extra)
+      return;
+
+   if (is_ignored_window(extra))
+      return;
+
+   /* XXX: Only support swap on the first desk for now. */
+   if (ec->desk != first_ec->desk)
+      return;
+
+   Window_Tree *item, *first_item;
+   item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
+
+   if (!item)
+      return;
+
+   first_item = tiling_window_tree_client_find(_G.tinfo->tree, first_ec);
+
+   if (!first_item)
+      return;
+
+   item->client = first_ec;
+   first_item->client = ec;
+
+   _reapply_tree();
 }
 
 static void
@@ -1115,6 +1176,12 @@ e_modapi_init(E_Module *m)
                N_("Toggle split mode"), "toggle_split_mode",
                NULL, NULL, 0);
 
+    ACTION_ADD(_G.act_swap_window, NULL,
+               N_("Swap window"), "swap_window",
+               NULL, NULL, 0);
+    _G.act_swap_window->func.go_mouse = _e_mod_action_swap_window_go_mouse;
+    _G.act_swap_window->func.end_mouse = _e_mod_action_swap_window_end_mouse;
+
 #undef ACTION_ADD
 
     /* Configuration entries */
@@ -1272,6 +1339,8 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 
     ACTION_DEL(_G.act_toggle_split_mode, "Toggle split mode",
           "toggle_split_mode");
+    ACTION_DEL(_G.act_swap_window, "Swap window",
+          "swap_window");
 #undef ACTION_DEL
 
     e_configure_registry_item_del("windows/tiling");
