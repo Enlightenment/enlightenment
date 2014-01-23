@@ -1083,9 +1083,8 @@ e_modapi_init(E_Module *m)
     HANDLER(_G.handler_compositor_resize, COMPOSITOR_RESIZE, _compositor_resize_hook);
 #undef HANDLER
 
-#define ACTION_ADD(_act, _cb, _title, _value, _params, _example, _editable)  \
+#define ACTION_ADD(_action, _cb, _title, _value, _params, _example, _editable)  \
     {                                                                        \
-        E_Action *_action = _act;                                            \
         const char *_name = _value;                                          \
         if ((_action = e_action_add(_name))) {                               \
             _action->func.go = _cb;                                          \
