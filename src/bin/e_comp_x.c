@@ -602,6 +602,7 @@ _e_comp_x_client_stack(E_Client *ec)
    Eina_List *l;
 
    if (ec->override && (!ec->internal)) return; //can't restack these
+   if (e_client_util_is_stacking(ec)) return;
    if (ec->comp_data->unredirected_single) return;
 
    ecore_x_window_shadow_tree_flush();
