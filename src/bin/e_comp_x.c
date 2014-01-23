@@ -2863,21 +2863,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         if (!((ec->icccm.name == pname) &&
               (ec->icccm.class == pclass)))
           {
-             if (ec->icccm.name && (!e_util_strcmp(ec->icccm.class, "e_layer_win")))
-               {
-                  /* this is a stacking window or someone trying to crash us */
-                  E_Layer layer;
-
-                  errno = 0;
-                  layer = strtol(ec->icccm.name, NULL, 10);
-                  if ((!errno) && (!ec->comp->layers[e_comp_canvas_layer_map(layer)].obj))
-                    {
-                       ec->lock_client_stacking = 1;
-                       ec->internal = 1;
-                       ec->comp->layers[e_comp_canvas_layer_map(layer)].obj = ec->frame;
-                       evas_object_layer_set(ec->frame, layer);
-                    }
-               }
              ec->changes.icon = 1;
              rem_change = 1;
           }
@@ -4950,6 +4935,7 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
    for (i = e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP); i <= e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO); i++)
      {
         char buf[64];
+        E_Client *ec;
 
         c->layers[i].win = ecore_x_window_input_new(root, 0, 0, 1, 1);
         ecore_x_window_show(c->layers[i].win);
@@ -4964,6 +4950,11 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
                                    c->layers[i - 1].win, ECORE_X_WINDOW_STACK_ABOVE);
         else
           ecore_x_window_raise(c->layers[i].win);
+        ec = _e_comp_x_client_new(c, c->layers[i].win, 0);
+        ec->lock_client_stacking = 1;
+        ec->internal = 1;
+        ec->comp->layers[i].obj = ec->frame;
+        evas_object_layer_set(ec->frame, e_comp_canvas_layer_map_to(i));
      }
 
    ecore_evas_lower(c->ee);
