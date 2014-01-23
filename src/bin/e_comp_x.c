@@ -3662,28 +3662,12 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                  ((int)rects[0].width == cw) &&
                  ((int)rects[0].height == ch))
                {
-                  if (ec->shaped_input)
-                    {
-                       ec->shaped_input = 0;
-                       if (ec->comp_data->reparented && (!ec->bordername))
-                         {
-                            ec->border.changed = 1;
-                            EC_CHANGED(ec);
-                         }
-                    }
+                  ec->shaped_input = 0;
                   free(rects);
                }
              else
                {
-                  if (!ec->shaped_input)
-                    {
-                       ec->shaped_input = 1;
-                       if (ec->comp_data->reparented && (!ec->bordername))
-                         {
-                            ec->border.changed = 1;
-                            EC_CHANGED(ec);
-                         }
-                    }
+                  ec->shaped_input = 1;
                   if (ec->comp_data->reparented)
                     ecore_x_window_shape_input_rectangles_set(pwin, rects, num);
                   changed = EINA_TRUE;
@@ -3693,16 +3677,12 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                }
           }
         else
-          {
-             ec->shaped_input = 1;
-             if (ec->comp_data->reparented && (!ec->bordername))
-               {
-                  ec->border.changed = 1;
-                  EC_CHANGED(ec);
-               }
-          }
+          ec->shaped_input = 0;
         if (changed || (pshaped != ec->shaped_input))
-          ec->need_shape_merge = 1;
+          {
+             ec->need_shape_merge = 1;
+             e_comp_shape_queue(ec->comp);
+          }
      }
    if (ec->changes.prop || ec->mwm.fetch.hints)
      {
