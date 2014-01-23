@@ -24,6 +24,13 @@ static Ecore_Timer *deftimer = NULL;
 static double show_time = 0.0;
 static int act_count = 0;
 
+static void
+_cb_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
+{
+   evas_object_hide(popup);
+   E_FREE_FUNC(popup, evas_object_del);
+}
+
 /* externally accessible functions */
 int
 e_syscon_init(void)
@@ -91,7 +98,7 @@ e_syscon_show(E_Zone *zone, const char *defact)
    popup = e_comp_object_util_add(o_bg, E_COMP_OBJECT_TYPE_POPUP);
    evas_object_data_set(popup, "zone", zone);
    evas_object_layer_set(popup, E_LAYER_POPUP);
-   e_comp_object_util_autoclose(popup, NULL, _cb_key_down, NULL);
+   e_comp_object_util_autoclose(popup, _cb_del, _cb_key_down, NULL);
    act_count = 0;
    show_time = t;
 
