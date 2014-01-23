@@ -685,7 +685,7 @@ _e_comp_x_client_shape_input_rectangle_set(E_Client *ec)
 {
    Ecore_X_Window win = _e_comp_x_client_window_get(ec);
 
-   if (!ec->comp_data->reparented) return;
+   if ((!ec->override) && (!ec->comp_data->reparented)) return;
 
    if (ec->shaped_input)
      ecore_x_composite_window_events_disable(win);
