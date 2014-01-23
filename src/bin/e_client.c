@@ -631,6 +631,11 @@ _e_client_cb_ping_poller(void *data)
 static int
 _e_client_action_input_win_new(E_Client *ec)
 {
+   if (comp_grabbed)
+     {
+        CRI("DOUBLE COMP GRAB! ACK!!!!");
+        return 1;
+     }
    comp_grabbed = e_comp_grab_input(ec->comp, 1, 1);
    if (!comp_grabbed) _e_client_action_input_win_del(ec->comp);
    return comp_grabbed;
@@ -3735,12 +3740,6 @@ e_client_act_move_keyboard(E_Client *ec)
    if (!_e_client_move_begin(ec))
      return;
 
-   if (!_e_client_action_input_win_new(ec))
-     {
-        _e_client_move_end(ec);
-        return;
-     }
-
    _e_client_action_init(ec);
    _e_client_action_move_timeout_add();
    if (!_e_client_hook_call(E_CLIENT_HOOK_MOVE_UPDATE, ec)) return;
@@ -3779,12 +3778,6 @@ e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
    if (!_e_client_move_begin(ec))
      return;
 
-   if (!_e_client_action_input_win_new(ec))
-     {
-        _e_client_move_end(ec);
-        return;
-     }
-   _e_client_action_init(ec);
    e_zone_edge_disable();
    ec->moving = 1;
    e_pointer_mode_push(ec, E_POINTER_MOVE);
