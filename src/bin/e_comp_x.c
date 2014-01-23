@@ -4109,7 +4109,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
    win = e_client_util_win_get(ec);
 
    if ((!stopping) && (!ec->comp_data->deleted))
-     ecore_x_window_prop_card32_set(e_client_util_win_get(ec), E_ATOM_MANAGED, &visible, 1);
+     ecore_x_window_prop_card32_set(win, E_ATOM_MANAGED, &visible, 1);
    if ((!ec->already_unparented) && ec->comp_data->reparented)
      {
         e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, e_client_util_pwin_get(ec));
