@@ -3369,8 +3369,18 @@ _e_comp_object_autoclose_show(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_
 static void
 _e_comp_object_autoclose_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
+   E_Client *ec;
+   Eina_List *l;
+
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show);
    _e_comp_object_autoclose_cleanup(data, 1);
+   if (e_client_focused_get()) return;
+   EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
+     if (ec->desk && ec->desk->visible)
+       {
+          evas_object_focus_set(ec->frame, 1);
+          break;
+       }
 }
 
 EAPI void
