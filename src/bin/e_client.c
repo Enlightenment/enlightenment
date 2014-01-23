@@ -3778,6 +3778,7 @@ e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
    if (!_e_client_move_begin(ec))
      return;
 
+   _e_client_action_init(ec);
    e_zone_edge_disable();
    ec->moving = 1;
    e_pointer_mode_push(ec, E_POINTER_MOVE);
