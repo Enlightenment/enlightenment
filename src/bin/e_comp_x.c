@@ -196,7 +196,7 @@ _e_comp_x_client_new_helper(E_Client *ec)
      {
         ec->comp_data->need_reparent = 1;
         EC_CHANGED(ec);
-        ec->take_focus = 1;
+        ec->take_focus = !starting;
      }
    ec->w = ec->client.w = ec->comp_data->initial_attributes.w;
    ec->h = ec->client.h = ec->comp_data->initial_attributes.h;
