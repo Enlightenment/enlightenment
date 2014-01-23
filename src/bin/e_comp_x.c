@@ -2536,6 +2536,46 @@ _e_comp_x_hook_client_eval_end(void *d EINA_UNUSED, E_Client *ec)
      }
 }
 
+static Eina_Bool
+_e_comp_x_client_shape_rects_check(E_Client *ec, Ecore_X_Rectangle *rects, int num)
+{
+   Eina_Bool changed = 1;
+   Ecore_X_Rectangle *orects;
+
+   if (((unsigned int)num == ec->shape_rects_num) && (ec->shape_rects))
+     {
+        int i;
+
+        orects = (Ecore_X_Rectangle*)ec->shape_rects;
+        changed = 0;
+        for (i = 0; i < num; i++)
+          {
+             E_RECTS_CLIP_TO_RECT(rects[i].x, rects[i].y,
+               rects[i].width, rects[i].height, 0, 0, ec->client.w, ec->client.h);
+
+             if ((orects[i].x != rects[i].x) ||
+                 (orects[i].y != rects[i].y) ||
+                 (orects[i].width != rects[i].width) ||
+                 (orects[i].height != rects[i].height))
+               {
+                  changed = 1;
+                  break;
+               }
+          }
+     }
+   if (changed)
+     {
+        E_FREE(ec->shape_rects);
+        ec->shape_rects = (Eina_Rectangle*)rects;
+        ec->shape_rects_num = num;
+        ec->shape_changed = 1;
+        e_comp_shape_queue(ec->comp);
+     }
+   else
+     free(rects);
+   return changed;
+}
+
 static void
 _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
 {
@@ -2585,46 +2625,12 @@ _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
 
    if (ec->need_shape_export)
      {
-        Ecore_X_Rectangle *rects, *orects;
+        Ecore_X_Rectangle *rects;
         int num;
 
         rects = ecore_x_window_shape_rectangles_get(e_client_util_win_get(ec), &num);
         if (rects)
-          {
-             int changed = 1;
-
-             if (((unsigned int)num == ec->shape_rects_num) && (ec->shape_rects))
-               {
-                  int i;
-
-                  orects = (Ecore_X_Rectangle*)ec->shape_rects;
-                  changed = 0;
-                  for (i = 0; i < num; i++)
-                    {
-                       E_RECTS_CLIP_TO_RECT(rects[i].x, rects[i].y,
-                         rects[i].width, rects[i].height, 0, 0, ec->client.w, ec->client.h);
-
-                       if ((orects[i].x != rects[i].x) ||
-                           (orects[i].y != rects[i].y) ||
-                           (orects[i].width != rects[i].width) ||
-                           (orects[i].height != rects[i].height))
-                         {
-                            changed = 1;
-                            break;
-                         }
-                    }
-               }
-             if (changed)
-               {
-                  E_FREE(ec->shape_rects);
-                  ec->shape_rects = (Eina_Rectangle*)rects;
-                  ec->shape_rects_num = num;
-                  ec->shape_changed = 1;
-                  e_comp_shape_queue(ec->comp);
-               }
-             else
-               free(rects);
-          }
+          _e_comp_x_client_shape_rects_check(ec, rects, num);
         else
           {
              E_FREE(ec->shape_rects);
