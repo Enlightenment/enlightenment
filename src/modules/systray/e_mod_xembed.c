@@ -852,6 +852,7 @@ _systray_xembed_client_add(Instance_Xembed *xembed, int t EINA_UNUSED, E_Event_C
         xembed->ec = ev->ec;
         ev->ec->internal_no_remember = ev->ec->borderless = ev->ec->visible = ev->ec->internal = 1;
         ev->ec->border.changed = 1;
+        ecore_x_window_shape_events_select(e_client_util_win_get(ev->ec), 0);
         _xembed_win_resize(xembed);
         ev->ec->icccm.take_focus = ev->ec->icccm.accepts_focus = 0;
         EC_CHANGED(ev->ec);
