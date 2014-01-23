@@ -19,7 +19,6 @@ typedef struct Client_Extra {
          const char *bordername;
     } orig;
     int last_frame_adjustment; // FIXME: Hack for frame resize bug.
-    Eina_Bool sticky : 1;
     Eina_Bool floating : 1;
     Eina_Bool tiled : 1;
 } Client_Extra;
@@ -130,7 +129,7 @@ desk_should_tile_check(const E_Desk *desk)
 static int
 is_ignored_window(const Client_Extra *extra)
 {
-   if (extra->sticky || extra->floating)
+   if (extra->client->sticky || extra->floating)
       return true;
 
    return false;
@@ -961,10 +960,8 @@ toggle_sticky(E_Client *ec)
         return;
     }
 
-    extra->sticky = !extra->sticky;
-
     /* This is the new state, act accordingly. */
-    if (extra->sticky)
+    if (ec->sticky)
       {
         _restore_client(ec);
         _remove_client(ec);
