@@ -4966,8 +4966,9 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
      }
 
    ecore_evas_lower(c->ee);
-   c->pointer = e_pointer_window_new(c->man->root, 1);
+   c->pointer = e_pointer_window_new(c->man->root, 0);
    c->pointer->color = c->pointer->e_cursor && ecore_x_cursor_color_supported_get();
+   e_pointer_type_push(c->pointer, c->pointer, "default");
    _e_comp_x_manage_windows(c);
 
    {
