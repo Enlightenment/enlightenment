@@ -621,6 +621,8 @@ e_pointer_image_set(E_Pointer *p, E_Pixmap *cp, int w, int h, int hot_x, int hot
         evas_object_image_size_set(p->pointer_image, 1, 1);
         evas_object_image_data_set(p->pointer_image, NULL);
         E_FREE_FUNC(p->pointer_image, evas_object_del);
+        p->blocks = 0;
+        _e_pointer_canvas_resize(p, e_config->cursor_size, e_config->cursor_size);
         return;
      }
    _e_pointer_hot_update(p, hot_x, hot_y);
@@ -630,16 +632,26 @@ e_pointer_image_set(E_Pointer *p, E_Pixmap *cp, int w, int h, int hot_x, int hot
         /* e cursor: edje or image */
         if (!p->canvas)
           _e_pointer_canvas_resize(p, w, h);
-        evas_object_hide(p->pointer_object);
         if (!p->pointer_image)
           {
+             if (!p->e_cursor)
+               p->blocks = 1;
              p->pointer_image = evas_object_image_filled_add(p->evas);
              evas_object_image_alpha_set(p->pointer_image, 1);
           }
         evas_object_image_size_set(p->pointer_image, w, h);
         evas_object_image_data_set(p->pointer_image, img);
         evas_object_resize(p->pointer_image, w, h);
-        evas_object_show(p->pointer_image);
+        if (p->e_cursor)
+          {
+             evas_object_hide(p->pointer_image);
+             evas_object_show(p->pointer_object);
+          }
+        else
+          {
+             evas_object_hide(p->pointer_object);
+             evas_object_show(p->pointer_image);
+          }
      }
 #ifndef WAYLAND_ONLY
    else
