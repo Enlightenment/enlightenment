@@ -4103,8 +4103,15 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
         if (!ec->comp_data->deleted)
           {
              if (stopping)
-               ecore_x_window_reparent(win, ec->comp->man->root,
-                                       ec->client.x, ec->client.y);
+               {
+                  ecore_x_window_reparent(win, ec->comp->man->root,
+                                          ec->client.x, ec->client.y);
+                  ecore_x_window_configure(win,
+                                           ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING |
+                                           ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE,
+                                           0, 0, 0, 0, 0, e_client_util_pwin_get(ec),
+                                           ECORE_X_WINDOW_STACK_BELOW);
+               }
 
              else
                /* put the window back where we found it to prevent annoying dancing windows */
