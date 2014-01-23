@@ -4680,6 +4680,7 @@ _e_comp_x_manage_windows(E_Comp *c)
                }
              ec->ignore_first_unmap = 1;
              evas_object_show(ec->frame);
+             _e_comp_x_client_stack(ec);
           }
      }
    free(windows);
