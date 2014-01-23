@@ -1344,7 +1344,8 @@ e_comp_shutdown(void)
    E_FREE_FUNC(action_timeout, ecore_timer_del);
    EINA_LIST_FREE(compositors, c)
      {
-        E_FREE_LIST(c->clients, e_object_del);
+        while (c->clients)
+          e_object_del(eina_list_data_get(c->clients));
         e_object_del(E_OBJECT(c));
      }
    E_FREE_LIST(handlers, ecore_event_handler_del);
