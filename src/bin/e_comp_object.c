@@ -469,7 +469,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      }
    if (cw->ec->override)
      {
-        if ((!cw->ec->shaped) && (!no_shadow))
+        if ((!cw->ec->shaped) && (!no_shadow) && (!cw->ec->argb))
           e_comp_object_signal_emit(cw->smart_obj, "e,state,shadow,on", "e");
         else
           e_comp_object_signal_emit(cw->smart_obj, "e,state,shadow,off", "e");
