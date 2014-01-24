@@ -4978,8 +4978,10 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
         ec = _e_comp_x_client_new(c, c->layers[i].win, 0);
         ec->lock_client_stacking = 1;
         ec->internal = 1;
+        ec->visible = 1;
         ec->comp->layers[i].obj = ec->frame;
         evas_object_layer_set(ec->frame, e_comp_canvas_layer_map_to(i));
+        evas_object_show(ec->frame);
      }
 
    ecore_evas_lower(c->ee);
