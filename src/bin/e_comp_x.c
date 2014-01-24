@@ -4003,7 +4003,6 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
    ec->ignored = e_comp_ignore_win_find(win);
 
    ec->comp_data = E_NEW(E_Comp_Client_Data, 1);
-   ec->comp_data->first_damage = ec->internal;
    ec->comp_data->set_win_type = ec->comp_data->fetch_exe = 1;
 
    /* FIXME: ewww - round trip */
@@ -4015,6 +4014,8 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
    ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_NONE;
 
    if (!_e_comp_x_client_new_helper(ec)) return;
+
+   ec->comp_data->first_damage = ec->internal || ec->override;
 
    eina_hash_add(clients_win_hash, &win, ec);
    e_hints_client_list_set();
