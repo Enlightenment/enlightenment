@@ -201,6 +201,8 @@ _e_comp_x_client_new_helper(E_Client *ec)
    ec->w = ec->client.w = ec->comp_data->initial_attributes.w;
    ec->h = ec->client.h = ec->comp_data->initial_attributes.h;
    ec->changes.size = 1;
+   if (ec->override)
+     ec->comp_data->pw = ec->w, ec->comp_data->ph = ec->h;
    
 
    e_pixmap_visual_cmap_set(ec->pixmap, ec->comp_data->initial_attributes.visual, ec->comp_data->initial_attributes.colormap);
@@ -1362,8 +1364,8 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
      evas_object_move(ec->frame, ev->x, ev->y);
    if (resize)
      {
-        if (!ecore_x_present_exists())
-          e_pixmap_dirty(ec->pixmap);
+        ec->comp_data->pw = ev->w, ec->comp_data->ph = ev->h;
+        e_pixmap_dirty(ec->pixmap);
         evas_object_resize(ec->frame, ev->w, ev->h);
      }
    return ECORE_CALLBACK_RENEW;
