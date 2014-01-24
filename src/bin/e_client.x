@@ -82,12 +82,14 @@ e_client_util_desk_visible(const E_Client *ec, const E_Desk *desk)
 static inline Ecore_Window
 e_client_util_pwin_get(const E_Client *ec)
 {
+   if (!ec->pixmap) return 0;
    return e_pixmap_parent_window_get(ec->pixmap);
 }
 
 static inline Ecore_Window
 e_client_util_win_get(const E_Client *ec)
 {
+   if (!ec->pixmap) return 0;
    return e_pixmap_window_get(ec->pixmap);
 }
 
