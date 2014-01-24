@@ -1572,6 +1572,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
      }
 
    /* FIXME: need to send synthetic stacking event too as well as move/resize */
+   _e_comp_x_client_move_resize_send(ec);
    return ECORE_CALLBACK_PASS_ON;
 }
 
