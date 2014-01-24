@@ -24,6 +24,12 @@
 # define e_util_size_debug_set(x, y)
 #endif
 
+#if 0
+#define RENDER_DEBUG(...) INF(__VA_ARGS__)
+#else
+#define RENDER_DEBUG(...)
+#endif
+
 typedef struct _E_Comp_Object
 {
    EINA_INLIST;
@@ -2727,12 +2733,12 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
    /* ignore overdraw */
    if (cw->updates_full)
      {
-        //INF("IGNORED %p: %d,%d %dx%d", cw->ec, x, y, w, h);
+        RENDER_DEBUG("IGNORED %p: %d,%d %dx%d", cw->ec, x, y, w, h);
         e_comp_object_render_update_add(obj);
         return;
      }
    /* clip rect to client surface */
-   //INF("DAMAGE(%d,%d %dx%d) CLIP(%dx%d)", x, y, w, h, cw->ec->client.w, cw->ec->client.h);
+   RENDER_DEBUG("DAMAGE(%d,%d %dx%d) CLIP(%dx%d)", x, y, w, h, cw->ec->client.w, cw->ec->client.h);
    E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, cw->ec->client.w, cw->ec->client.h);
    /* if rect is the total size of the client after clip, clear the updates
     * since this is guaranteed to be the whole region anyway
@@ -2740,7 +2746,7 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
    eina_tiler_area_size_get(cw->updates, &tw, &th);
    if ((w > tw) || (h > th))
      {
-        //INF("DAMAGE RESIZE %p: %dx%d", cw->ec, cw->ec->client.w, cw->ec->client.h);
+        RENDER_DEBUG("DAMAGE RESIZE %p: %dx%d", cw->ec, cw->ec->client.w, cw->ec->client.h);
         eina_tiler_clear(cw->updates);
         eina_tiler_area_size_set(cw->updates, cw->ec->client.w, cw->ec->client.h);
         x = 0, y = 0;
@@ -2749,7 +2755,7 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
    if ((!x) && (!y) && (w == tw) && (h == th))
      {
         eina_tiler_clear(cw->updates);
-        //INF("DAMAGE FULL: %p", cw->ec);
+        RENDER_DEBUG("DAMAGE FULL: %p", cw->ec);
         cw->updates_full = 1;
         cw->update_count = 0;
      }
@@ -2760,12 +2766,12 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
         eina_tiler_clear(cw->updates);
         cw->update_count = cw->updates_full = 1;
         eina_tiler_rect_add(cw->updates, &(Eina_Rectangle){0, 0, tw, th});
-        //INF("DAMAGE MAX: %dx%d", tw, th);
+        RENDER_DEBUG("DAMAGE MAX: %dx%d", tw, th);
      }
    else
      {
         eina_tiler_rect_add(cw->updates, &(Eina_Rectangle){x, y, w, h});
-        //INF("DAMAGE: %d,%d %dx%d", x, y, w, h);
+        RENDER_DEBUG("DAMAGE: %d,%d %dx%d", x, y, w, h);
      }
    cw->updates_exist = 1;
    e_comp_object_render_update_add(obj);
@@ -3002,7 +3008,7 @@ e_comp_object_dirty(Evas_Object *obj)
    if (!dirty)
      evas_object_image_data_set(cw->obj, NULL);
    evas_object_image_size_set(cw->obj, w, h);
-   //INF("SIZE [%p]: %dx%d", cw->ec, w, h);
+   RENDER_DEBUG("SIZE [%p]: %dx%d", cw->ec, w, h);
    if (cw->pending_updates)
      eina_tiler_area_size_set(cw->pending_updates, w, h);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
@@ -3021,7 +3027,7 @@ e_comp_object_dirty(Evas_Object *obj)
    it = eina_tiler_iterator_new(cw->updates);
    EINA_ITERATOR_FOREACH(it, r)
      {
-        //INF("UPDATE ADD [%p]: %d %d %dx%d", cw->ec, r->x, r->y, r->w, r->h);
+        RENDER_DEBUG("UPDATE ADD [%p]: %d %d %dx%d", cw->ec, r->x, r->y, r->w, r->h);
         evas_object_image_data_update_add(cw->obj, r->x, r->y, r->w, r->h);
         EINA_LIST_FOREACH(cw->obj_mirror, l, o)
           evas_object_image_data_update_add(o, r->x, r->y, r->w, r->h);
@@ -3069,7 +3075,7 @@ e_comp_object_render(Evas_Object *obj)
         return EINA_FALSE;
      }
 
-   //INF("RENDER SIZE: %dx%d", pw, ph);
+   RENDER_DEBUG("RENDER SIZE: %dx%d", pw, ph);
    it = eina_tiler_iterator_new(cw->pending_updates);
    if (e_pixmap_image_is_argb(cw->ec->pixmap))
      {
@@ -3084,7 +3090,7 @@ e_comp_object_render(Evas_Object *obj)
                   e_comp_object_damage(obj, 0, 0, pw, ph);
                   break;
                }
-             //INF("UPDATE [%p] %i %i %ix%i", cw->ec, r->x, r->y, r->w, r->h);
+             RENDER_DEBUG("UPDATE [%p] %i %i %ix%i", cw->ec, r->x, r->y, r->w, r->h);
           }
         evas_object_image_data_set(cw->obj, pix);
         EINA_LIST_FOREACH(cw->obj_mirror, l, o)
@@ -3108,7 +3114,7 @@ e_comp_object_render(Evas_Object *obj)
              break;
           }
         e_pixmap_image_data_argb_convert(cw->ec->pixmap, pix, srcpix, r, stride);
-        //INF("UPDATE [%p]: %d %d %dx%d -- pix = %p", cw->ec, r->x, r->y, r->w, r->h, pix);
+        RENDER_DEBUG("UPDATE [%p]: %d %d %dx%d -- pix = %p", cw->ec, r->x, r->y, r->w, r->h, pix);
      }
    evas_object_image_data_set(cw->obj, pix);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
