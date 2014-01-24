@@ -1909,10 +1909,13 @@ _e_comp_smart_move(Evas_Object *obj, int x, int y)
 static void
 _e_comp_smart_resize(Evas_Object *obj, int w, int h)
 {
+   Eina_Bool first = EINA_FALSE;
+
    INTERNAL_ENTRY;
 
-   //INF("RSZ");
+   //INF("RSZ(%p): %dx%d -> %dx%d", cw->ec, cw->w, cw->h, w, h);
    if (!cw->effect_obj) CRI("ACK!");
+   first = ((cw->w < 1) || (cw->h < 1));
    cw->w = w, cw->h = h;
    evas_object_resize(cw->clip, cw->comp->man->w, cw->comp->man->h);
    if ((!cw->ec->shading) && (!cw->ec->shaded))
@@ -1934,8 +1937,11 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
         if (cw->zoomobj) e_zoomap_child_resize(cw->zoomobj, cw->ec->client.w, cw->ec->client.h);
         if (cw->input_obj)
           evas_object_geometry_set(cw->input_obj, cw->x + cw->input_rect.x, cw->y + cw->input_rect.y, cw->input_rect.w, cw->input_rect.h);
-        cw->updates_full = 0;
-        if (cw->updates) eina_tiler_clear(cw->updates);
+        if (!first)
+          {
+             cw->updates_full = 0;
+             if (cw->updates) eina_tiler_clear(cw->updates);
+          }
      }
    else
      {
