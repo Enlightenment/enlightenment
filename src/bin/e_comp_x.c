@@ -603,6 +603,7 @@ _e_comp_x_client_stack(E_Client *ec)
 
    if (ec->override && (!ec->internal)) return; //can't restack these
    if (e_client_util_is_stacking(ec)) return;
+   if (!ec->comp_data) return;
    if (ec->comp_data->unredirected_single) return;
 
    ecore_x_window_shadow_tree_flush();
@@ -705,6 +706,7 @@ _e_comp_x_evas_color_set_cb(void *data, Evas_Object *obj EINA_UNUSED, void *even
    E_Client *ec = data;
    int a;
 
+   if (!ec->comp_data) return;
    evas_object_color_get(obj, NULL, NULL, NULL, &a);
    if (a == ec->netwm.opacity) return;
    ec->netwm.opacity_changed = 1;
@@ -716,6 +718,7 @@ _e_comp_x_evas_ping_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
 {
    E_Client *ec = data;
 
+   if (!ec->comp_data) return;
    ecore_x_netwm_ping_send(e_client_util_win_get(ec));
 }
 
@@ -724,6 +727,7 @@ _e_comp_x_evas_kill_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_inf
 {
    E_Client *ec = data;
 
+   if (!ec->comp_data) return;
    ecore_x_kill(e_client_util_win_get(ec));
 }
 
@@ -732,6 +736,7 @@ _e_comp_x_evas_delete_request_cb(void *data, Evas_Object *obj EINA_UNUSED, void 
 {
    E_Client *ec = data;
 
+   if (!ec->comp_data) return;
    if (ec->netwm.ping)
      e_client_ping(ec);
    ecore_x_window_delete_request_send(e_client_util_win_get(ec));
@@ -744,6 +749,7 @@ _e_comp_x_evas_comp_hidden_cb(void *data, Evas_Object *obj EINA_UNUSED, void *ev
    Eina_List *l;
    Ecore_X_Window win;
 
+   if (!ec->comp_data) return;
    if (ec->comp_data->need_reparent) return;
    win = _e_comp_x_client_window_get(ec);
 
@@ -772,6 +778,7 @@ _e_comp_x_evas_shade_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
    Eina_List *l;
    E_Client *tmp;
 
+   if (!ec->comp_data) return;
    EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
      ecore_x_window_hide(e_client_util_pwin_get(tmp));
 
@@ -784,6 +791,7 @@ _e_comp_x_evas_frame_recalc_cb(void *data, Evas_Object *obj, void *event_info)
    E_Client *ec = data;
    E_Comp_Object_Frame *fr = event_info;
 
+   if (!ec->comp_data) return;
    if (evas_object_visible_get(obj))
      _e_comp_x_client_frame_update(ec, fr->l, fr->r, fr->t, fr->b);
    else
@@ -797,6 +805,7 @@ _e_comp_x_evas_move_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
 {
    E_Client *ec = data;
 
+   if (!ec->comp_data) return;
    if (ec->comp_data->moving && (!ec->comp_data->unredirected_single))
      {
         if (ec->comp_data->move_counter++ < MOVE_COUNTER_LIMIT) return;
@@ -813,6 +822,7 @@ _e_comp_x_evas_resize_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
 {
    E_Client *ec = data;
 
+   if (!ec->comp_data) return;
    if (ec->shading || ec->shaded) return;
    if (!e_pixmap_size_changed(ec->pixmap, ec->client.w, ec->client.h)) return;
 
