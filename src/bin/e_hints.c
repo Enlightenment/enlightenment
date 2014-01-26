@@ -134,35 +134,47 @@ e_hints_init(Ecore_Window root, Ecore_Window propwin)
         twin = win;
         for (;; )
           {
+             Ecore_X_Window selfwin = 0;
+             
+             /* check that supporting wm win points to itself to be valid */
+             nwins = ecore_x_window_prop_window_get(twin,
+                                                    ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
+                                                    &selfwin, 1);
              if (nwins < 1) break;
-             if (twin != win) break;
+             if (selfwin != twin) break;
+             /* check the wm is e */
              if (ecore_x_netwm_name_get(twin, &name))
                {
                   if (name)
                     {
+                       /* if it is NOT e - don't care here as all this code is dealing with e restarts */
                        if (strcmp(name, "Enlightenment"))
                          {
                             free(name);
                             break;
                          }
-                       nwins = ecore_x_window_prop_window_get(root,
-                                                              ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
-                                                              &twin, 1);
-                       if (nwins < 1) break;
                        free(name);
                     }
+                  /* no name - not e - don't care */
+                  else
+                    break;
                }
              else
-               if (ecore_x_error_code_get()) break; //some dead window
+               /* can't get name - obviously not e */
+               break;
+             /* have we been spinning too long? 2 sec */
              if ((ecore_time_get() - ts) > 2.0)
                {
                   e_error_message_show(_("A previous instance of Enlightenment is still active\n"
                                          "on this screen. Aborting startup.\n"));
                   exit(1);
                }
+             /* get/check agan */
              nwins = ecore_x_window_prop_window_get(root,
                                                     ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
                                                     &twin, 1);
+             if (nwins < 1) break;
+             if (twin != win) break;
           }
      }
 
