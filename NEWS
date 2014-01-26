@@ -1,3 +1,17 @@
+Changes since 0.18.2:
+---------------------
+
+* fixed canvas leak when using livethumb widget
+* fixed mounting errors when mounting native filesystems
+* fixed crashes in some cases involving menu scrolling
+* fixed rare compositor-related crash
+* fixed crash when using teamwork with specific types of links
+* fixed dnd handler leaks
+* fixed dnd to external application windows
+* fixed logout fade to reset after a delay involving applications failing to close
+* allow use with Elementary >= 1.9
+* updates for Serbian and Italian translations
+
 Changes since 0.18.1:
 ---------------------
 
