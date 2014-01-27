@@ -86,6 +86,15 @@ _e_comp_canvas_cb_mouse_wheel(E_Comp *c, Evas *e EINA_UNUSED, Evas_Object *obj E
 
 ////////////////////////////////////
 
+static void
+_e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   /* thawed in _e_comp_screensaver_off() */
+   e_main_idler_freeze();
+}
+
+////////////////////////////////////
+
 static int
 _e_comp_canvas_cb_zone_sort(const void *data1, const void *data2)
 {
@@ -312,6 +321,7 @@ e_comp_canvas_zone_update(E_Zone *zone)
    evas_object_show(o);
 
    zone->over = o = edje_object_add(zone->comp->evas);
+   edje_object_signal_callback_add(o, "e,state,screensaver,active", "e", _e_comp_canvas_screensaver_active, NULL);
    evas_object_layer_set(o, E_LAYER_MAX);
    evas_object_raise(o);
    evas_object_name_set(zone->over, "zone->over");

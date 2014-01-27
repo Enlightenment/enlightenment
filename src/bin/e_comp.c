@@ -837,6 +837,8 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    EINA_LIST_FOREACH(compositors, l, c)
      {
         if (!c->saver) continue;
+        /* frozen in _e_comp_canvas_screensaver_active() */
+        e_main_idler_thaw();
         c->saver = EINA_FALSE;
         e_comp_render_queue(c);
         EINA_LIST_FOREACH(c->zones, ll, zone)

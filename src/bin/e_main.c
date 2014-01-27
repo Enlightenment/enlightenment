@@ -87,6 +87,7 @@ static Eina_Bool _e_main_cb_idle_after(void *data __UNUSED__);
 static Eina_Bool _e_main_cb_startup_fake_end(void *data __UNUSED__);
 
 /* local variables */
+static int idle_freeze = 0;
 static Eina_Bool really_know = EINA_FALSE;
 static Eina_Bool locked = EINA_FALSE;
 static Eina_Bool inloop = EINA_FALSE;
@@ -1714,3 +1715,20 @@ _e_main_cb_startup_fake_end(void *data __UNUSED__)
    return ECORE_CALLBACK_CANCEL;
 }
 
+EINTERN void
+e_main_idler_freeze(void)
+{
+   if (idle_freeze++) return;
+   E_FREE_FUNC(_idle_before, ecore_idle_enterer_del);
+   E_FREE_FUNC(_idle_after, ecore_idle_enterer_del);
+}
+
+EINTERN void
+e_main_idler_thaw(void)
+{
+   if (!idle_freeze) return;
+   if (--idle_freeze) return;
+
+   _idle_before = ecore_idle_enterer_before_add(_e_main_cb_idle_before, NULL);
+   _idle_after = ecore_idle_enterer_add(_e_main_cb_idle_after, NULL);
+}

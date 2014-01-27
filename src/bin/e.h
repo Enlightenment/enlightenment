@@ -273,6 +273,8 @@ typedef struct _E_Rect         E_Rect;
 # include "e_includes.h"
 
 EAPI double          e_main_ts(const char *str);
+EINTERN void         e_main_idler_freeze(void);
+EINTERN void         e_main_idler_thaw(void);
 
 struct _E_Rect
 {
