@@ -654,7 +654,7 @@ e_pointer_image_set(E_Pointer *p, E_Pixmap *cp, int w, int h, int hot_x, int hot
           }
      }
 #ifndef WAYLAND_ONLY
-   else
+   else if (!p->e_cursor)
      {
          Ecore_X_Cursor cur;
 
