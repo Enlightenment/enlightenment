@@ -434,8 +434,8 @@ _e_smart_event_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
    E_Smart_Data *sd = data;
 
    if (sd->disabled) return;
-   if ((!strcmp(ev->keyname, "Up")) ||
-       (!strcmp(ev->keyname, "KP_Up")) ||
+   if ((!strcmp(ev->keyname, "Down")) ||
+       (!strcmp(ev->keyname, "KP_Down")) ||
        (!strcmp(ev->keyname, "Left")) ||
        (!strcmp(ev->keyname, "KP_Left")))
      {
@@ -448,8 +448,8 @@ _e_smart_event_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
           edje_object_part_drag_step(sd->edje_obj, "e.dragable.slider", -1, -1);
         sd->direction = -1;
      }
-   else if ((!strcmp(ev->keyname, "Down")) ||
-            (!strcmp(ev->keyname, "KP_Down")) ||
+   else if ((!strcmp(ev->keyname, "Up")) ||
+            (!strcmp(ev->keyname, "KP_Up")) ||
             (!strcmp(ev->keyname, "Right")) ||
             (!strcmp(ev->keyname, "KP_Right")))
      {
