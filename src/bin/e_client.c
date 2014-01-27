@@ -2058,7 +2058,6 @@ e_client_idler_before(void)
 
         EINA_LIST_FOREACH(c->clients, ll, ec)
           {
-             int urgent = ec->icccm.urgent;
              Eina_Stringshare *title;
              // pass 1 - eval0. fetch properties on new or on change and
              // call hooks to decide what to do - maybe move/resize
@@ -2080,20 +2079,6 @@ e_client_idler_before(void)
                {
                   _e_client_frame_update(ec);
                   ec->border.changed = 0;
-               }
-             if (urgent != ec->icccm.urgent)
-               {
-                  _e_client_event_property(ec, E_CLIENT_PROPERTY_URGENCY);
-                  if (ec->icccm.urgent && (!ec->focused))
-                    e_comp_object_signal_emit(ec->frame, "e,state,urgent", "e");
-                  else
-                    e_comp_object_signal_emit(ec->frame, "e,state,not_urgent", "e");
-                  if (ec->icccm.urgent && e_screensaver_on_get() && e_config->screensaver_wake_on_urgent)
-                    {
-                       int x, y;
-                       ecore_evas_pointer_xy_get(e_comp_get(NULL)->ee, &x, &y);
-                       ecore_evas_pointer_warp(e_comp_get(NULL)->ee, x, y);
-                    }
                }
              _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
           }
@@ -3633,6 +3618,30 @@ e_client_uniconify(E_Client *ec)
           e_client_uniconify(child);
      }
    e_remember_update(ec);
+}
+
+///////////////////////////////////////
+
+EAPI void
+e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
+{
+   E_OBJECT_CHECK(ec);
+   E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+
+   urgent = !!urgent;
+   if (urgent == ec->icccm.urgent) return;
+   ec->icccm.urgent = urgent;
+   _e_client_event_property(ec, E_CLIENT_PROPERTY_URGENCY);
+   if (urgent && (!ec->focused))
+     e_comp_object_signal_emit(ec->frame, "e,state,urgent", "e");
+   else
+     e_comp_object_signal_emit(ec->frame, "e,state,not_urgent", "e");
+   if (urgent && e_screensaver_on_get() && e_config->screensaver_wake_on_urgent)
+     {
+        int x, y;
+        ecore_evas_pointer_xy_get(e_comp_get(NULL)->ee, &x, &y);
+        ecore_evas_pointer_warp(e_comp_get(NULL)->ee, x, y);
+     }
 }
 
 ///////////////////////////////////////

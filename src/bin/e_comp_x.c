@@ -1865,18 +1865,14 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
            case 0: break;
 
            case 1:
-             e_comp_object_signal_emit(ec->frame, "e,state,urgent", "e");
-             ec->icccm.urgent = 1;
-             EC_CHANGED(ec);
+             e_client_urgent_set(ec, 1);
              break;
 
            default:
              if (e_client_action_get())
                {
                   /* be helpful and ignore activates during window actions, but still set urgent */
-                  e_comp_object_signal_emit(ec->frame, "e,state,urgent", "e");
-                  ec->icccm.urgent = 1;
-                  EC_CHANGED(ec);
+                  e_client_urgent_set(ec, 1);
                   break;
                }
              if ((!starting) && (!ec->focused))
@@ -3082,7 +3078,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                     &is_urgent))
           {
              ec->icccm.accepts_focus = accepts_focus;
-             ec->icccm.urgent = is_urgent;
+             e_client_urgent_set(ec, is_urgent);
 
              /* If this is a new window, set the state as requested. */
              if ((ec->new_client) &&

@@ -767,6 +767,7 @@ EAPI void e_client_fullscreen(E_Client *ec, E_Fullscreen policy);
 EAPI void e_client_unfullscreen(E_Client *ec);
 EAPI void e_client_iconify(E_Client *ec);
 EAPI void e_client_uniconify(E_Client *ec);
+EAPI void e_client_urgent_set(E_Client *ec, Eina_Bool urgent);
 EAPI void e_client_stick(E_Client *ec);
 EAPI void e_client_unstick(E_Client *ec);
 EAPI void e_client_pinned_set(E_Client *ec, Eina_Bool set);
