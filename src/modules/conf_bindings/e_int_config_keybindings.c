@@ -476,9 +476,23 @@ _restore_key_binding_defaults_cb(void *data,
    ecb = e_config_domain_system_load("e_bindings", e_config_descriptor_find("E_Config_Bindings"));
    if (!ecb)
      {
+        const char *type;
+
         prof = eina_stringshare_ref(e_config_profile_get());
-        /* FIXME: need some type of parenting/typing system for profiles */
-        e_config_profile_set("standard");
+        switch (e_config->config_type)
+          {
+           case E_CONFIG_PROFILE_TYPE_DESKTOP:
+             type = "standard";
+             break;
+           case E_CONFIG_PROFILE_TYPE_MOBILE:
+             type = "mobile";
+             break;
+           //case E_CONFIG_PROFILE_TYPE_TABLET: FIXME - not used
+           default:
+             type = "default";
+             break;
+          }
+        e_config_profile_set(type);
         ecb = e_config_domain_system_load("e_bindings", e_config_descriptor_find("E_Config_Bindings"));
         e_config_profile_set(prof);
         eina_stringshare_del(prof);
