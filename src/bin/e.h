@@ -272,17 +272,7 @@ typedef struct _E_Rect         E_Rect;
 # undef E_TYPEDEFS
 # include "e_includes.h"
 
-EAPI E_Before_Idler *e_main_idler_before_add(int (*func)(void *data), void *data, int once);
-EAPI void            e_main_idler_before_del(E_Before_Idler *eb);
 EAPI double          e_main_ts(const char *str);
-
-struct _E_Before_Idler
-{
-   int       (*func)(void *data);
-   void     *data;
-   Eina_Bool once : 1;
-   Eina_Bool delete_me : 1;
-};
 
 struct _E_Rect
 {

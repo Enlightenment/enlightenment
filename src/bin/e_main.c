@@ -95,7 +95,6 @@ static jmp_buf x_fatal_buff;
 static int _e_main_lvl = 0;
 static int(*_e_main_shutdown_func[MAX_LEVEL]) (void);
 
-static Eina_List *_idle_before_list = NULL;
 static Ecore_Idle_Enterer *_idle_before = NULL;
 static Ecore_Idle_Enterer *_idle_after = NULL;
 static Ecore_Idle_Enterer *_idle_flush = NULL;
@@ -1003,26 +1002,6 @@ main(int argc, char **argv)
    return 0;
 }
 
-/* FIXME: make safe to delete within a callback */
-EAPI E_Before_Idler *
-e_main_idler_before_add(int (*func)(void *data), void *data, int once)
-{
-   E_Before_Idler *eb;
-
-   eb = calloc(1, sizeof(E_Before_Idler));
-   eb->func = func;
-   eb->data = data;
-   eb->once = once;
-   _idle_before_list = eina_list_append(_idle_before_list, eb);
-   return eb;
-}
-
-EAPI void
-e_main_idler_before_del(E_Before_Idler *eb)
-{
-   eb->delete_me = 1;
-}
-
 EAPI double
 e_main_ts(const char *str)
 {
@@ -1687,28 +1666,9 @@ _e_main_modules_load(Eina_Bool safe_mode)
 static Eina_Bool
 _e_main_cb_idle_before(void *data __UNUSED__)
 {
-   Eina_List *l, *pl;
-   E_Before_Idler *eb;
-
    e_menu_idler_before();
    e_client_idler_before();
    e_pointer_idler_before();
-   EINA_LIST_FOREACH(_idle_before_list, l, eb)
-     {
-        if (!eb->delete_me)
-          {
-             if (!eb->func(eb->data)) eb->delete_me = 1;
-          }
-     }
-   EINA_LIST_FOREACH_SAFE(_idle_before_list, pl, l, eb)
-     {
-        if ((eb->once) || (eb->delete_me))
-          {
-             _idle_before_list =
-               eina_list_remove_list(_idle_before_list, pl);
-             free(eb);
-          }
-     }
    edje_thaw();
    return ECORE_CALLBACK_RENEW;
 }
