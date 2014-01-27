@@ -1322,7 +1322,7 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
         return ECORE_CALLBACK_RENEW;
      }
    ec = _e_comp_x_client_find_by_window(ev->win);
-   if ((!ec) || (!ec->override)) return ECORE_CALLBACK_PASS_ON;
+   if ((!ec) || (!ec->override) || (!ev->override)) return ECORE_CALLBACK_PASS_ON;
 
    //INF("configure %p: %d,%d %dx%d", ec, ev->x, ev->y, ev->w, ev->h);
    if (ev->abovewin == 0)
