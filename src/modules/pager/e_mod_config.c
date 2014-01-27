@@ -50,7 +50,7 @@ static Eina_Bool    _grab_cb_mouse_down(void *data, int type, void *event);
 static Eina_Bool    _grab_cb_key_down(void *data, int type, void *event);
 static void         _cb_disable_check_list(void *data, Evas_Object *obj);
 
-void
+EINTERN void
 _config_pager_module(Config_Item *ci)
 {
    E_Config_Dialog *cfd;

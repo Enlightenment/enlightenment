@@ -916,7 +916,7 @@ _pager_instance_drop_zone_recalc(Instance *inst)
    e_drop_handler_geometry_set(inst->pager->drop_handler, x, y, w, h);
 }
 
-void
+EINTERN void
 _pager_cb_config_updated(void)
 {
    Pager *p;
