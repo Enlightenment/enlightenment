@@ -1718,9 +1718,12 @@ _e_comp_smart_focus_in(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object 
 }
 
 static void
-_e_comp_smart_focus_out(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_comp_smart_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   e_comp_object_signal_emit(obj, "e,state,unfocused", "e");
+   E_Comp_Object *cw = data;
+
+   if (!e_object_is_del(E_OBJECT(cw->ec)))
+     e_comp_object_signal_emit(obj, "e,state,unfocused", "e");
 }
 
 static void

@@ -378,8 +378,6 @@ _e_client_revert_focus(E_Client *ec)
 static void
 _e_client_free(E_Client *ec)
 {
-   if (ec->focused)
-     e_client_focused_set(NULL);
    e_comp_object_redirected_set(ec->frame, 0);
    e_comp_object_render_update_del(ec->frame);
 
@@ -534,6 +532,7 @@ _e_client_del(E_Client *ec)
 
    if (ec->focused)
      _e_client_revert_focus(ec);
+   evas_object_focus_set(ec->frame, 0);
 
    E_FREE_FUNC(ec->ping_poller, ecore_poller_del);
    /* must be called before parent/child clear */
@@ -3141,12 +3140,12 @@ e_client_focused_set(E_Client *ec)
                e_client_unfullscreen(ec_unfocus);
           }
 
-        /* only send event/hook here if we're not being deleted */
+        _e_client_hook_call(E_CLIENT_HOOK_FOCUS_UNSET, ec_unfocus);
+        /* only send event here if we're not being deleted */
         if ((!e_object_is_del(E_OBJECT(ec_unfocus))) && 
            (e_object_ref_get(E_OBJECT(ec_unfocus)) > 0))
           {
              _e_client_event_simple(ec_unfocus, E_EVENT_CLIENT_FOCUS_OUT);
-             _e_client_hook_call(E_CLIENT_HOOK_FOCUS_UNSET, ec_unfocus);
           }
         break;
      }
