@@ -2192,15 +2192,6 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
    else
      e_comp_object_signal_emit(o, "e,state,shadow,off", "e");
 
-   if (evas_object_visible_get(obj))
-     {
-        evas_object_show(o);
-        e_comp_object_signal_emit(o, "e,state,visible", "e");
-        evas_object_ref(o);
-     }
-   else
-     e_comp_object_signal_emit(o, "e,state,hidden", "e");
-
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_object_geometry_set(o, x, y, w, h);
    evas_object_pass_events_set(o, evas_object_pass_events_get(obj));
@@ -2222,9 +2213,14 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_comp_object_util_del, z);
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _e_comp_object_util_moveresize, z);
 
+   e_comp_object_signal_emit(o, "e,state,hidden", "e");
+
    edje_object_part_swallow(o, "e.swallow.content", z ?: obj);
 
    _e_comp_object_event_add(o);
+
+   if (evas_object_visible_get(obj))
+     evas_object_show(o);
 
    return o;
 }
