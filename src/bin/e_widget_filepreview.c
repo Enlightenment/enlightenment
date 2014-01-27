@@ -16,6 +16,8 @@ struct _E_Widget_Data
    Evas_Object  *o_preview_extra_entry;
    Evas_Object  *o_preview_size;
    Evas_Object  *o_preview_size_entry;
+   Evas_Object  *o_preview_resolution;
+   Evas_Object  *o_preview_resolution_entry;
    Evas_Object  *o_preview_owner;
    Evas_Object  *o_preview_owner_entry;
    Evas_Object  *o_preview_perms;
@@ -200,6 +202,8 @@ _e_wid_fprev_clear_widgets(E_Widget_Data *wd)
    CLRWID(o_preview_extra_entry);
    CLRWID(o_preview_size);
    CLRWID(o_preview_size_entry);
+   CLRWID(o_preview_resolution);
+   CLRWID(o_preview_resolution_entry);
    CLRWID(o_preview_owner);
    CLRWID(o_preview_owner_entry);
    CLRWID(o_preview_perms);
@@ -259,9 +263,12 @@ static void
 _e_wid_fprev_preview_video_resize(E_Widget_Data *wd, Evas_Object *obj, void *event_info __UNUSED__)
 {
    int w, h, mw, mh;
+   char buf[128];
 
    emotion_object_size_get(obj, &w, &h);
 
+   snprintf(buf, sizeof(buf), "%dx%d", w, h);
+   e_widget_entry_text_set(wd->o_preview_resolution_entry, buf);
    if (!wd->clamp_video) return;
    e_widget_size_min_get(wd->o_preview_preview, &mw, &mh);
    e_table_pack_options_set(wd->o_preview_preview, 1, 1, 1, 1, 0.5, 0.5, mw, mh, w, h);
@@ -347,6 +354,7 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
    e_widget_on_change_hook_set(o, _e_wid_fprev_preview_video_change, em);
    WIDROW(_("Length:"), o_preview_extra, o_preview_extra_entry, 40);
    WIDROW(_("Size:"), o_preview_size, o_preview_size_entry, 40);
+   WIDROW(_("Resolution:"), o_preview_resolution, o_preview_resolution_entry, 40);
    /* FIXME: other infos? */
 
    e_widget_list_object_append(wd->o_preview_list,
@@ -360,6 +368,8 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
    evas_object_show(wd->o_preview_extra_entry);
    evas_object_show(wd->o_preview_size);
    evas_object_show(wd->o_preview_size_entry);
+   evas_object_show(wd->o_preview_resolution);
+   evas_object_show(wd->o_preview_resolution_entry);
    evas_object_show(wd->o_preview_owner);
    evas_object_show(wd->o_preview_owner_entry);
    evas_object_show(wd->o_preview_perms);
