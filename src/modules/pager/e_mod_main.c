@@ -1677,12 +1677,13 @@ _pager_cb_event_desk_show(void *data __UNUSED__, int type __UNUSED__, void *even
    if ((pager_config->popup) && (!act_popup))
      {
         if ((pp = _pager_popup_find(ev->desk->zone)))
-          ecore_timer_del(pp->timer);
-        else
-          pp = _pager_popup_new(ev->desk->zone, 0);
-
-        if (pp)
           {
+             ecore_timer_reset(pp->timer);
+             evas_object_show(pp->popup);
+          }
+        else
+          {
+             pp = _pager_popup_new(ev->desk->zone, 0);
              pp->timer = ecore_timer_add(pager_config->popup_speed,
                                          _pager_popup_cb_timeout, pp);
           }
