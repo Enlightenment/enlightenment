@@ -9,6 +9,8 @@ Changes since 0.18.2:
 * fixed dnd handler leaks
 * fixed dnd to external application windows
 * fixed logout fade to reset after a delay involving applications failing to close
+* fixed slider up/down key wrong direction
+* use config_type to set parent profile when resetting bindings
 * allow use with Elementary >= 1.9
 * updates for Serbian and Italian translations
 
