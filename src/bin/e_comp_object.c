@@ -2071,7 +2071,7 @@ _e_comp_object_util_done_defer(void *data, Evas_Object *obj, const char *emissio
 {
    if (!e_util_strcmp(emission, "e,action,hide,done"))
      {
-        evas_object_data_del(obj, "comp_hiding");
+        if (!evas_object_data_del(obj, "comp_hiding")) return;
         evas_object_intercept_hide_callback_del(obj, _e_comp_object_util_hide);
         evas_object_hide(obj);
         e_comp_shape_queue(e_comp_util_evas_object_comp_get(obj));
