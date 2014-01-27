@@ -260,6 +260,7 @@ _e_mod_fileman_config_load(void)
    E_CONFIG_VAL(D, T, tooltip.delay, DOUBLE);
    E_CONFIG_VAL(D, T, tooltip.size, DOUBLE);
    E_CONFIG_VAL(D, T, tooltip.enable, UCHAR);
+   E_CONFIG_VAL(D, T, tooltip.clamp_size, UCHAR);
    E_CONFIG_VAL(D, T, view.spring_delay, INT);
    E_CONFIG_VAL(D, T, view.toolbar_orient, UINT);
    E_CONFIG_LIST(D, T, paths, paths_edd);

@@ -46,6 +46,7 @@ struct _Config
       double delay;
       double size;
       Eina_Bool enable;
+      Eina_Bool clamp_size;
    } tooltip;
    /* display of icons */
    struct

@@ -848,6 +848,7 @@ _e_fwin_icon_popup(void *data)
    list = e_widget_list_add(e_comp_get(zone)->evas, 0, 0);
    
    o = e_widget_filepreview_add(e_comp_get(zone)->evas, mw, mh, 0);
+   e_widget_filepreview_clamp_video_set(o, fileman_config->tooltip.clamp_size);
    e_widget_filepreview_path_set(o, buf, fwin->popup_icon->mime);
    e_widget_list_object_append(list, o, 1, 0, 0.5);
    e_widget_size_min_get(list, &mw, &mh);

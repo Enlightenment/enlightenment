@@ -45,6 +45,7 @@ struct _E_Widget_Data
    Eina_Bool     prev_is_txt : 1;
    Eina_Bool     prev_is_font : 1;
    Eina_Bool     prev_is_video : 1;
+   Eina_Bool     clamp_video : 1;
 };
 
 static void  _e_wid_fprev_preview_update(void *data, Evas_Object *obj, void *event_info);
@@ -255,6 +256,18 @@ _e_wid_fprev_preview_video_position(E_Widget_Data *wd, Evas_Object *obj, void *e
 }
 
 static void
+_e_wid_fprev_preview_video_resize(E_Widget_Data *wd, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   int w, h, mw, mh;
+
+   emotion_object_size_get(obj, &w, &h);
+
+   if (!wd->clamp_video) return;
+   e_widget_size_min_get(wd->o_preview_preview, &mw, &mh);
+   e_table_pack_options_set(wd->o_preview_preview, 1, 1, 1, 1, 0.5, 0.5, mw, mh, w, h);
+}
+
+static void
 _e_wid_fprev_preview_video_opened(E_Widget_Data *wd, Evas_Object *obj, void *event_info __UNUSED__)
 {
    e_widget_entry_text_set(wd->o_preview_extra_entry, e_util_time_str_get(emotion_object_play_length_get(obj)));
@@ -322,6 +335,7 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
    e_widget_table_object_append(wd->o_preview_properties_table,
                                 wd->o_preview_preview, 0, 0, 2, 2, 1, 1, 1, 1);
 
+   evas_object_smart_callback_add(o, "frame_resize", (Evas_Smart_Cb)_e_wid_fprev_preview_video_resize, wd);
    evas_object_smart_callback_add(o, "length_change", (Evas_Smart_Cb)_e_wid_fprev_preview_video_opened, wd);
    evas_object_smart_callback_add(o, "frame_decode", (Evas_Smart_Cb)_e_wid_fprev_preview_video_position, wd);
 
@@ -1237,3 +1251,13 @@ e_widget_filepreview_filemode_force(Evas_Object *obj)
    _e_wid_fprev_preview_file_widgets(wd, 0, 0, 0);
 }
 
+EAPI void
+e_widget_filepreview_clamp_video_set(Evas_Object *obj, Eina_Bool clamp)
+{
+   E_Widget_Data *wd;
+
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   wd = e_widget_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(wd);
+   wd->clamp_video = !!clamp;
+}

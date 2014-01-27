@@ -28,6 +28,8 @@ struct _E_Config_Dialog_Data
       double delay;
       double size;
       Eina_Bool enable;
+      Eina_Bool clamp_size;
+      Evas_Object *check_clamp_size;
       Evas_Object *delay_slider_text;
       Evas_Object *delay_slider;
       Evas_Object *size_slider_text;
@@ -158,6 +160,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->tooltip.delay = fileman_config->tooltip.delay;
    cfdata->tooltip.size = fileman_config->tooltip.size;
    cfdata->tooltip.enable = fileman_config->tooltip.enable;
+   cfdata->tooltip.clamp_size = fileman_config->tooltip.clamp_size;
    cfdata->selection.windows_modifiers = fileman_config->selection.windows_modifiers;
    cfdata->list.sort.dirs.first = fileman_config->list.sort.dirs.first;
    cfdata->list.sort.extension = fileman_config->list.sort.extension;
@@ -201,6 +204,7 @@ _basic_apply(E_Config_Dialog *cfd  __UNUSED__,
    fileman_config->tooltip.delay = cfdata->tooltip.delay;
    fileman_config->tooltip.size = cfdata->tooltip.size;
    fileman_config->tooltip.enable = cfdata->tooltip.enable;
+   fileman_config->tooltip.clamp_size = cfdata->tooltip.clamp_size;
    fileman_config->selection.windows_modifiers = cfdata->selection.windows_modifiers;
    fileman_config->list.sort.dirs.first = cfdata->list.sort.dirs.first;
    fileman_config->list.sort.dirs.last = !(cfdata->list.sort.dirs.first);
@@ -248,6 +252,7 @@ _basic_check_changed(E_Config_Dialog *cfd  __UNUSED__,
      (fileman_config->tooltip.delay != cfdata->tooltip.delay) ||
      (fileman_config->tooltip.size != cfdata->tooltip.size) ||
      (fileman_config->tooltip.enable != cfdata->tooltip.enable) ||
+     (fileman_config->tooltip.clamp_size != cfdata->tooltip.clamp_size) ||
      (fileman_config->selection.windows_modifiers != cfdata->selection.windows_modifiers) ||
      (fileman_config->list.sort.dirs.first != cfdata->list.sort.dirs.first) ||
      (fileman_config->list.sort.dirs.last != !(cfdata->list.sort.dirs.first)) ||
@@ -283,6 +288,7 @@ _tooltip_changed(void *data, Evas_Object *obj __UNUSED__)
 {
    E_Config_Dialog_Data *cfdata = data;
 
+   e_widget_disabled_set(cfdata->tooltip.check_clamp_size, !cfdata->tooltip.enable);
    e_widget_disabled_set(cfdata->tooltip.delay_slider_text, !cfdata->tooltip.enable);
    e_widget_disabled_set(cfdata->tooltip.delay_slider, !cfdata->tooltip.enable);
    e_widget_disabled_set(cfdata->tooltip.size_slider_text, !cfdata->tooltip.enable);
@@ -458,6 +464,9 @@ _basic_create(E_Config_Dialog *cfd  __UNUSED__,
    ob = e_widget_check_add(evas, _("Show tooltip"),
                            (int*)&(cfdata->tooltip.enable));
    e_widget_on_change_hook_set(ob, _tooltip_changed, cfdata);
+   e_widget_list_object_append(o, ob, 1, 1, 0.5);
+   cfdata->tooltip.check_clamp_size = ob = e_widget_check_add(evas, _("Clamp video size"),
+                           (int*)&(cfdata->tooltip.clamp_size));
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
    cfdata->tooltip.delay_slider_text = ob = e_widget_label_add(evas, _("Tooltip delay"));
    e_widget_list_object_append(o, ob, 1, 1, 0.5);
