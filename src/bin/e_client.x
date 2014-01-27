@@ -18,6 +18,7 @@
 static inline void
 e_client_util_move_without_frame(E_Client *ec, int x, int y)
 {
+   if (!ec) return;
    e_comp_object_frame_xy_adjust(ec->frame, x, y, &x, &y);
    evas_object_move(ec->frame, x, y);
 }
@@ -41,6 +42,7 @@ e_client_util_move_without_frame(E_Client *ec, int x, int y)
 static inline void
 e_client_util_resize_without_frame(E_Client *ec, int w, int h)
 {
+   if (!ec) return;
    e_comp_object_frame_wh_adjust(ec->frame, w, h, &w, &h);
    evas_object_resize(ec->frame, w, h);
 }
@@ -70,12 +72,14 @@ e_client_util_move_resize_without_frame(E_Client *ec, int x, int y, int w, int h
 static inline Eina_Bool
 e_client_util_ignored_get(const E_Client *ec)
 {
+   if (!ec) return EINA_TRUE;
    return ec->override || ec->input_only || ec->ignored;
 }
 
 static inline Eina_Bool
 e_client_util_desk_visible(const E_Client *ec, const E_Desk *desk)
 {
+   if (!ec) return EINA_FALSE;
    return ec->sticky || (ec->desk == desk);
 }
 
@@ -96,11 +100,13 @@ e_client_util_win_get(const E_Client *ec)
 static inline Eina_Bool
 e_client_resizing_get(const E_Client *ec)
 {
+   if (!ec) return EINA_FALSE;
    return (ec->resize_mode != E_POINTER_RESIZE_NONE);
 }
 
 static inline Eina_Bool
 e_client_util_borderless(const E_Client *ec)
 {
+   if (!ec) return EINA_FALSE;
    return (ec->borderless || ec->mwm.borderless || (!ec->border.name) || (!strcmp(ec->border.name, "borderless")));
 }
