@@ -2336,7 +2336,7 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
         ec->hidden = 1;
         evas_object_hide(ec->frame);
      }
-   e_client_comp_hidden_set(ec, !desk->visible);
+   e_client_comp_hidden_set(ec, (!desk->visible) && (!ec->sticky));
    e_client_zone_set(ec, desk->zone);
 
    e_hints_window_desktop_set(ec);
