@@ -3649,12 +3649,17 @@ e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
 EAPI void
 e_client_stick(E_Client *ec)
 {
+   E_Desk *desk;
+
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (ec->sticky) return;
+   desk = ec->desk;
+   ec->desk = NULL;
    ec->sticky = 1;
+   ec->hidden = 0;
    e_hints_window_sticky_set(ec, 1);
-   evas_object_show(ec->frame);
+   e_client_desk_set(ec, desk);
 
    if (e_config->transient.desktop)
      {
@@ -3676,12 +3681,17 @@ e_client_stick(E_Client *ec)
 EAPI void
 e_client_unstick(E_Client *ec)
 {
+   E_Desk *desk;
+
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    /* Set the desk before we unstick the client */
    if (!ec->sticky) return;
+   desk = ec->desk;
+   ec->desk = NULL;
    ec->sticky = 0;
    e_hints_window_sticky_set(ec, 0);
+   e_client_desk_set(ec, desk);
 
    if (e_config->transient.desktop)
      {
