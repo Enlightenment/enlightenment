@@ -3689,7 +3689,7 @@ e_client_unstick(E_Client *ec)
    if (!ec->sticky) return;
    desk = ec->desk;
    ec->desk = NULL;
-   ec->sticky = 0;
+   ec->hidden = ec->sticky = 0;
    e_hints_window_sticky_set(ec, 0);
    e_client_desk_set(ec, desk);
 
