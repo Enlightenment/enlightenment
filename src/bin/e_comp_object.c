@@ -3400,7 +3400,7 @@ _e_comp_object_autoclose_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
    _e_comp_object_autoclose_cleanup(data, 1);
    if (e_client_focused_get()) return;
    EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
-     if (ec->desk && ec->desk->visible)
+     if (ec->desk && ec->desk->visible && (!ec->iconic))
        {
           evas_object_focus_set(ec->frame, 1);
           break;
