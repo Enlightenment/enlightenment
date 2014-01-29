@@ -93,7 +93,6 @@ typedef struct _E_Comp_Object
    Eina_Bool            updates_full : 1; // entire object will be updated
 
    Eina_Bool            force_move : 1;
-   Eina_Bool            layer_tmp : 1; // layer chage is temporary - effect
 } E_Comp_Object;
 
 static Evas_Smart *_e_comp_smart = NULL;
@@ -502,7 +501,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      {
         e_iconify_provider_obj_message(cw->ec, EINA_TRUE, cw->shobj);
         e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
-        cw->layer_tmp = EINA_TRUE;
+        cw->ec->layer_block = 1;
         evas_object_layer_set(cw->smart_obj, E_LAYER_CLIENT_PRIO);
      }
    else
@@ -512,7 +511,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      {
         e_iconify_provider_obj_message(cw->ec, EINA_TRUE, cw->shobj);
         e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
-        cw->layer_tmp = EINA_TRUE;
+        cw->ec->layer_block = 1;
         evas_object_layer_set(cw->smart_obj, E_LAYER_CLIENT_PRIO);
      }
    if (!cw->zoomap_disabled)
@@ -570,7 +569,7 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
    if ((!strcmp(emission, "e,action,iconify,done")) ||
        (!strcmp(emission, "e,action,uniconify,done")))
      {
-        cw->layer_tmp = EINA_FALSE;
+        cw->ec->layer_block = 0;
         evas_object_layer_set(cw->smart_obj, cw->ec->layer);
      }
 }
@@ -852,7 +851,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
    _e_comp_object_layers_remove(cw);
    /* clamp to valid client layer */
    layer = e_comp_canvas_client_layer_map_nearest(layer);
-   if (!cw->layer_tmp) cw->ec->layer = layer;
+   cw->ec->layer = layer;
    if (e_config->transient.layer)
      {
         E_Client *child;
@@ -883,24 +882,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
    //if (cw->ec->new_client)
      //INF("CLIENT STACKED %p: %u", cw->ec, layer);
    evas_object_layer_set(obj, layer);
-   if (!cw->comp->layers[cw->layer].obj)
-     {
-        /* got a fast stacker :/ */
-        E_Client *ec2;
-
-        ec2 = e_client_below_get(cw->ec);
-        if (ec2)
-          evas_object_stack_above(obj, ec2->frame);
-        else
-          {
-             ec2 = e_client_above_get(cw->ec);
-             if (ec2)
-               evas_object_stack_below(obj, ec2->frame);
-             else
-               evas_object_lower(obj);
-          }
-        return;
-     }
+   if (!cw->comp->layers[cw->layer].obj) return; //this is a layer marker
    evas_object_stack_below(obj, cw->comp->layers[cw->layer].obj);
    if (evas_object_below_get(obj) == cw->comp->layers[cw->layer].obj)
      {
@@ -1179,7 +1161,7 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
                {
                   e_iconify_provider_obj_message(cw->ec, EINA_TRUE, cw->shobj);
                   e_comp_object_signal_emit(obj, "e,action,iconify", "e");
-                  cw->layer_tmp = EINA_TRUE;
+                  cw->ec->layer_block = 1;
                   evas_object_layer_set(cw->smart_obj, E_LAYER_CLIENT_PRIO);
                }
              else
@@ -1204,7 +1186,7 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
           {
              e_iconify_provider_obj_message(cw->ec, EINA_FALSE, cw->shobj);
              e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
-             cw->layer_tmp = EINA_TRUE;
+             cw->ec->layer_block = 1;
              evas_object_layer_set(cw->smart_obj, E_LAYER_CLIENT_PRIO);
              cw->defer_hide = 0;
           }
@@ -1859,7 +1841,7 @@ _e_comp_smart_show(Evas_Object *obj)
      {
         e_iconify_provider_obj_message(cw->ec, EINA_FALSE, cw->shobj);
         e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
-        cw->layer_tmp = EINA_TRUE;
+        cw->ec->layer_block = 1;
         evas_object_layer_set(cw->smart_obj, E_LAYER_CLIENT_PRIO);
      }
    else
