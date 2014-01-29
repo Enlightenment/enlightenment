@@ -33,6 +33,8 @@ static E_Config_DD *conf_match_edd = NULL;
 static Ecore_Timer *action_timeout = NULL;
 static Eina_Bool gl_avail = EINA_FALSE;
 
+static double ecore_frametime = 0;
+
 static int _e_comp_log_dom = -1;
 
 EAPI int E_EVENT_COMPOSITOR_RESIZE = -1;
@@ -806,6 +808,7 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    E_Zone *zone;
    E_Comp *c;
 
+   ecore_frametime = ecore_animator_frametime_get();
    // fixme: use hash if compositors list > 4
    EINA_LIST_FOREACH(compositors, l, c)
      {
@@ -833,6 +836,7 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    E_Zone *zone;
    E_Comp *c;
 
+   ecore_animator_frametime_set(ecore_frametime);
    // fixme: use hash if compositors list > 4
    EINA_LIST_FOREACH(compositors, l, c)
      {
@@ -840,6 +844,8 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
         /* frozen in _e_comp_canvas_screensaver_active() */
         e_main_idler_thaw();
         c->saver = EINA_FALSE;
+        if (!c->nocomp)
+          ecore_evas_manual_render_set(c->ee, EINA_FALSE);
         e_comp_render_queue(c);
         EINA_LIST_FOREACH(c->zones, ll, zone)
           {
@@ -1037,6 +1043,8 @@ e_comp_init(void)
 {
    _e_comp_log_dom = eina_log_domain_register("e_comp", EINA_COLOR_YELLOW);
    eina_log_domain_level_set("e_comp", EINA_LOG_LEVEL_INFO);
+
+   ecore_frametime = ecore_animator_frametime_get();
 
    E_EVENT_COMPOSITOR_RESIZE = ecore_event_type_new();
    E_EVENT_COMP_OBJECT_ADD = ecore_event_type_new();

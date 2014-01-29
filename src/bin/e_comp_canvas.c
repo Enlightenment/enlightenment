@@ -87,10 +87,15 @@ _e_comp_canvas_cb_mouse_wheel(E_Comp *c, Evas *e EINA_UNUSED, Evas_Object *obj E
 ////////////////////////////////////
 
 static void
-_e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+_e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
 {
+   E_Comp *c;
    /* thawed in _e_comp_screensaver_off() */
    e_main_idler_freeze();
+   ecore_animator_frametime_set(10.0);
+   c = e_comp_util_evas_object_comp_get(obj);
+   if (!c->nocomp)
+     ecore_evas_manual_render_set(c->ee, EINA_TRUE);
 }
 
 ////////////////////////////////////
