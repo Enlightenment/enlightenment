@@ -138,6 +138,7 @@ _ibox_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
    E_Client *ec;
 
    ec = e_comp_object_client_get(obj);
+   if (ec->zone != inst->gcc->gadcon->zone) return EINA_FALSE;
    if (!strcmp(signal, "e,action,uniconify"))
      {
         EINA_LIST_FOREACH(inst->ibox->icons, l, ic)

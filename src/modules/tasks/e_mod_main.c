@@ -347,6 +347,7 @@ _tasks_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
    E_Client *ec;
 
    ec = e_comp_object_client_get(obj);
+   if (ec->zone != tasks->gcc->gadcon->zone) return EINA_FALSE;
    EINA_LIST_FOREACH(tasks->items, l, item)
      {
         if (item->client == ec)
