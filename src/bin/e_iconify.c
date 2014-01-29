@@ -20,7 +20,11 @@ _e_iconify_provider_get(void)
 
    EINA_LIST_FOREACH(_e_iconify_providers, l, prov)
      {
-        if (prov->pri >= pri_found) prov_found = prov;
+        if (prov->pri >= pri_found)
+          {
+             pri_found = prov->pri;
+             prov_found = prov;
+          }
      }
    return prov_found;
 }
