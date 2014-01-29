@@ -257,6 +257,8 @@ src/modules/music-control/e_mod_main.c
 src/modules/music-control/ui.c
 src/modules/notification/e_mod_config.c
 src/modules/notification/e_mod_main.c
+src/modules/packagekit/e_mod_main.c
+src/modules/packagekit/e_mod_packagekit.c
 src/modules/pager/e_mod_config.c
 src/modules/pager/e_mod_main.c
 src/modules/quickaccess/e_mod_config.c
