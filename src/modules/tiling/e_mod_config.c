@@ -11,6 +11,20 @@ struct _E_Widget_Smart_Data
    Eina_List   *subobjs;
 };
 
+static void
+_open_browser_help_cb(void *data EINA_UNUSED, void *obj EINA_UNUSED)
+{
+   const char *url = "https://phab.enlightenment.org/w/enlightenment_module_tiling2/";
+   char *sb;
+   size_t size = 4096, len = sizeof(E_BINDIR "/enlightenment_open ") - 1;
+
+   sb = malloc(size);
+   memcpy(sb, E_BINDIR "/enlightenment_open ", len);
+   sb = e_util_string_append_quoted(sb, &size, &len, url);
+   ecore_exe_run(sb, NULL);
+   free(sb);
+}
+
 /* Some defines to make coding with the e_widget_* easier for
  * configuration panel */
 #define RADIO(title, value, radiogroup) \
@@ -171,8 +185,6 @@ _basic_create_widgets(E_Config_Dialog      *cfd __UNUSED__,
     e_widget_framelist_object_append(of,
       e_widget_check_add(evas, _("Tile dialog windows"),
                          &cfdata->config.tile_dialogs));
-    oc = e_widget_list_add(evas, false, true);
-    e_widget_framelist_object_append(of, oc);
 
     LIST_ADD(o, of);
 
@@ -208,6 +220,10 @@ _basic_create_widgets(E_Config_Dialog      *cfd __UNUSED__,
     e_widget_framelist_object_append(of, cfdata->osf);
 
     LIST_ADD(o, of);
+
+    oc = e_widget_button_add(evas, _("Help"), "help", _open_browser_help_cb,
+          NULL, NULL);
+    LIST_ADD(o, oc);
 
     return o;
 }
