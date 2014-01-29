@@ -326,6 +326,28 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
 
 /***************************************************************************/
 
+static void
+_tasks_cb_iconify_provider(void *data, E_Client *ec, Eina_Bool iconify EINA_UNUSED, int *x, int *y, int *w, int *h)
+{
+   Tasks *tasks = data;
+   Tasks_Item *item;
+   Evas_Coord ox, oy, ow, oh;
+   Eina_List *l;
+   
+   EINA_LIST_FOREACH(tasks->items, l, item)
+     {
+        if (item->client == ec)
+          {
+             evas_object_geometry_get(item->o_item, &ox, &oy, &ow, &oh);
+             *x = ox;
+             *y = oy;
+             *w = ow;
+             *h = oh;
+             return;
+          }
+     }
+}
+
 static Tasks *
 _tasks_new(Evas *evas, E_Zone *zone, const char *id)
 {
@@ -347,6 +369,7 @@ _tasks_new(Evas *evas, E_Zone *zone, const char *id)
    e_box_orientation_set(tasks->o_items, tasks->horizontal);
    e_box_align_set(tasks->o_items, 0.5, 0.5);
    tasks->zone = zone;
+   e_iconify_provider_add(90, _tasks_cb_iconify_provider, tasks);
    return tasks;
 }
 
@@ -354,6 +377,7 @@ static void
 _tasks_free(Tasks *tasks)
 {
    Tasks_Item *item;
+   e_iconify_provider_del(90, _tasks_cb_iconify_provider, tasks);
    EINA_LIST_FREE(tasks->items, item)
      _tasks_item_free(item);
    eina_list_free(tasks->clients);
