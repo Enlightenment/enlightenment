@@ -31,6 +31,7 @@ typedef struct _IBox_Icon IBox_Icon;
 struct _Instance
 {
    E_Gadcon_Client *gcc;
+   E_Comp_Object_Mover *iconify_provider;
    Evas_Object     *o_ibox;
    IBox            *ibox;
    E_Drop_Handler  *drop_handler;
@@ -117,32 +118,52 @@ static E_Config_DD *conf_item_edd = NULL;
 Config *ibox_config = NULL;
 
 static void
-_ibox_cb_iconify_provider(void *data, E_Client *ec, Eina_Bool iconify EINA_UNUSED, int *x, int *y, int *w, int *h)
+_ibox_cb_iconify_end_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   evas_object_layer_set(ec->frame, ec->layer);
+   ec->layer_block = 0;
+   if (ec->iconic)
+     evas_object_hide(ec->frame);
+}
+
+static Eina_Bool
+_ibox_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
 {
    Instance *inst = data;
    IBox_Icon *ic;
    Evas_Coord ox, oy, ow, oh;
    Eina_List *l;
-   
-   EINA_LIST_FOREACH(inst->ibox->icons, l, ic)
+   E_Client *ec;
+
+   ec = e_comp_object_client_get(obj);
+   if (!strcmp(signal, "e,action,uniconify"))
      {
-        if (ic->client == ec)
+        EINA_LIST_FOREACH(inst->ibox->icons, l, ic)
           {
-             evas_object_geometry_get(ic->o_holder, &ox, &oy, &ow, &oh);
-             *x = ox;
-             *y = oy;
-             *w = ow;
-             *h = oh;
-             return;
+             if (ic->client == ec)
+               {
+                  evas_object_geometry_get(ic->o_holder, &ox, &oy, &ow, &oh);
+                  break;
+               }
           }
      }
-   // XXX: ibox doesn't know yet where a new icon might go... so assume right
-   // edge of ibox
-   evas_object_geometry_get(inst->ibox->o_box, &ox, &oy, &ow, &oh);
-   *x = ox + ow - 1;
-   *y = oy + (oh / 2);
-   *w = 1;
-   *h = 1;
+   else
+     {
+        // XXX: ibox doesn't know yet where a new icon might go... so assume right
+        // edge of ibox
+        evas_object_geometry_get(inst->ibox->o_box, &ox, &oy, &ow, &oh);
+        ox += ow - 1;
+        oy += (oh / 2);
+     }
+   ec->layer_block = 1;
+   evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
+   e_comp_object_effect_set(ec->frame, "iconify/ibox");
+   e_comp_object_effect_params_set(ec->frame, 1, (int[]){ec->x, ec->y, ec->w, ec->h, ox, oy, ow, oh}, 8);
+   e_comp_object_effect_params_set(ec->frame, 0, (int[]){!!strcmp(signal, "e,action,iconify")}, 1);
+   e_comp_object_effect_start(ec->frame, _ibox_cb_iconify_end_cb, ec);
+   return EINA_TRUE;
 }
 
 static E_Gadcon_Client *
@@ -187,7 +208,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    ibox_config->instances = eina_list_append(ibox_config->instances, inst);
    // add highest priority iconify provider - tasks and ibar can do this
    // but lower priority
-   e_iconify_provider_add(100, _ibox_cb_iconify_provider, inst);
+   inst->iconify_provider = e_comp_object_effect_mover_add(100, "e,action,*iconify", _ibox_cb_iconify_provider, inst);
    return gcc;
 }
 
@@ -197,7 +218,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    Instance *inst;
 
    inst = gcc->data;
-   e_iconify_provider_del(100, _ibox_cb_iconify_provider, inst);
+   e_comp_object_effect_mover_del(inst->iconify_provider);
    inst->ci->gcc = NULL;
    ibox_config->instances = eina_list_remove(ibox_config->instances, inst);
    e_drop_handler_del(inst->drop_handler);

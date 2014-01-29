@@ -3,6 +3,9 @@ typedef struct E_Comp_Object_Frame E_Comp_Object_Frame;
 typedef struct E_Event_Comp_Object E_Event_Comp_Object;
 typedef void (*E_Comp_Object_Autoclose_Cb)(void *, Evas_Object *);
 typedef Eina_Bool (*E_Comp_Object_Key_Cb)(void *, Ecore_Event_Key *);
+typedef Eina_Bool (*E_Comp_Object_Mover_Cb) (void *data, Evas_Object *comp_object, const char *signal);
+
+typedef struct E_Comp_Object_Mover E_Comp_Object_Mover;
 
 typedef enum
 {
@@ -75,6 +78,8 @@ EAPI void e_comp_object_effect_clip(Evas_Object *obj);
 EAPI void e_comp_object_effect_unclip(Evas_Object *obj);
 EAPI void e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *end_data);
 EAPI void e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb EINA_UNUSED);
+EAPI E_Comp_Object_Mover *e_comp_object_effect_mover_add(int pri, const char *sig, E_Comp_Object_Mover_Cb provider, const void *data);
+EAPI void e_comp_object_effect_mover_del(E_Comp_Object_Mover *prov);
 
 #endif
 #endif

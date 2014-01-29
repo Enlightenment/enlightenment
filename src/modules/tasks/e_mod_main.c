@@ -32,6 +32,7 @@ typedef struct _Tasks_Item Tasks_Item;
 struct _Tasks
 {
    E_Gadcon_Client *gcc; // The gadcon client
+   E_Comp_Object_Mover *iconify_provider;
    Evas_Object     *o_items; // Table of items
    Eina_List       *items; // List of items
    Eina_List       *clients; // List of clients
@@ -325,27 +326,42 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
 }
 
 /***************************************************************************/
-
 static void
-_tasks_cb_iconify_provider(void *data, E_Client *ec, Eina_Bool iconify EINA_UNUSED, int *x, int *y, int *w, int *h)
+_tasks_cb_iconify_end_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   evas_object_layer_set(ec->frame, ec->layer);
+   ec->layer_block = 0;
+   if (ec->iconic)
+     evas_object_hide(ec->frame);
+}
+
+static Eina_Bool
+_tasks_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
 {
    Tasks *tasks = data;
    Tasks_Item *item;
    Evas_Coord ox, oy, ow, oh;
    Eina_List *l;
-   
+   E_Client *ec;
+
+   ec = e_comp_object_client_get(obj);
    EINA_LIST_FOREACH(tasks->items, l, item)
      {
         if (item->client == ec)
           {
              evas_object_geometry_get(item->o_item, &ox, &oy, &ow, &oh);
-             *x = ox;
-             *y = oy;
-             *w = ow;
-             *h = oh;
-             return;
+             ec->layer_block = 1;
+             evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
+             e_comp_object_effect_set(ec->frame, "iconify/tasks");
+             e_comp_object_effect_params_set(ec->frame, 1, (int[]){ec->x, ec->y, ec->w, ec->h, ox, oy, ow, oh}, 8);
+             e_comp_object_effect_params_set(ec->frame, 0, (int[]){!!strcmp(signal, "e,action,iconify")}, 1);
+             e_comp_object_effect_start(ec->frame, _tasks_cb_iconify_end_cb, ec);
+             return EINA_TRUE;
           }
      }
+   return EINA_FALSE;
 }
 
 static Tasks *
@@ -369,7 +385,7 @@ _tasks_new(Evas *evas, E_Zone *zone, const char *id)
    e_box_orientation_set(tasks->o_items, tasks->horizontal);
    e_box_align_set(tasks->o_items, 0.5, 0.5);
    tasks->zone = zone;
-   e_iconify_provider_add(90, _tasks_cb_iconify_provider, tasks);
+   tasks->iconify_provider = e_comp_object_effect_mover_add(90, "e,action,*iconify", _tasks_cb_iconify_provider, tasks);
    return tasks;
 }
 
@@ -377,7 +393,7 @@ static void
 _tasks_free(Tasks *tasks)
 {
    Tasks_Item *item;
-   e_iconify_provider_del(90, _tasks_cb_iconify_provider, tasks);
+   e_comp_object_effect_mover_del(tasks->iconify_provider);
    EINA_LIST_FREE(tasks->items, item)
      _tasks_item_free(item);
    eina_list_free(tasks->clients);

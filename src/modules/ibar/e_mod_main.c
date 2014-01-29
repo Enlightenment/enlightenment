@@ -30,6 +30,7 @@ typedef struct _IBar_Icon IBar_Icon;
 struct _Instance
 {
    E_Gadcon_Client *gcc;
+   E_Comp_Object_Mover *iconify_provider;
    IBar            *ibar;
    E_Drop_Handler  *drop_handler;
    Config_Item     *ci;
@@ -215,36 +216,36 @@ _ibar_order_refresh(IBar *b, const char *path)
 }
 
 static void
-_ibar_cb_iconify_provider(void *data, E_Client *ec, Eina_Bool iconify EINA_UNUSED, int *x, int *y, int *w, int *h)
+_ibar_cb_iconify_end_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   evas_object_layer_set(ec->frame, ec->layer);
+   ec->layer_block = 0;
+   if (ec->iconic)
+     evas_object_hide(ec->frame);
+}
+
+static Eina_Bool
+_ibar_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal EINA_UNUSED)
 {
    Instance *inst = data;
    IBar_Icon *ic;
-   Evas_Coord ox, oy, ow, oh;
+   int ox, oy, ow, oh;
+   E_Client *ec;
 
-   EINA_INLIST_FOREACH(inst->ibar->icons, ic)
-     {
-        E_Exec_Instance *exe;
-        Eina_List *l;
-        
-        EINA_LIST_FOREACH(ic->exes, l, exe)
-          {
-             Eina_List *ll;
-             E_Client *ec2;
-             
-             EINA_LIST_FOREACH(exe->clients, ll, ec2)
-               {
-                  if (ec == ec2)
-                    {
-                       evas_object_geometry_get(ic->o_holder, &ox, &oy, &ow, &oh);
-                       *x = ox;
-                       *y = oy;
-                       *w = ow;
-                       *h = oh;
-                       return;
-                    }
-               }
-          }
-     }
+   ec = e_comp_object_client_get(obj);
+
+   ic = eina_hash_find(inst->ibar->icon_hash, _desktop_name_get(ec->exe_inst ? ec->exe_inst->desktop : ec->desktop));
+   if (!ic) return EINA_FALSE;
+   ec->layer_block = 1;
+   evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
+   evas_object_geometry_get(ic->o_holder, &ox, &oy, &ow, &oh);
+   e_comp_object_effect_set(ec->frame, "iconify/ibar");
+   e_comp_object_effect_params_set(ec->frame, 1, (int[]){ec->x, ec->y, ec->w, ec->h, ox, oy, ow, oh}, 8);
+   e_comp_object_effect_params_set(ec->frame, 0, (int[]){!!strcmp(signal, "e,action,iconify")}, 1);
+   e_comp_object_effect_start(ec->frame, _ibar_cb_iconify_end_cb, ec);
+   return EINA_TRUE;
 }
 
 static E_Gadcon_Client *
@@ -282,7 +283,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    evas_object_event_callback_add(b->o_outerbox, EVAS_CALLBACK_RESIZE,
                                   _ibar_cb_obj_moveresize, inst);
    ibar_config->instances = eina_list_append(ibar_config->instances, inst);
-   e_iconify_provider_add(80, _ibar_cb_iconify_provider, inst);
+   inst->iconify_provider = e_comp_object_effect_mover_add(80, "e,action,*iconify", _ibar_cb_iconify_provider, inst);
    return gcc;
 }
 
@@ -292,7 +293,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    Instance *inst;
 
    inst = gcc->data;
-   e_iconify_provider_del(80, _ibar_cb_iconify_provider, inst);
+   e_comp_object_effect_mover_del(inst->iconify_provider);
    ibar_config->instances = eina_list_remove(ibar_config->instances, inst);
    e_drop_handler_del(inst->drop_handler);
    _ibar_free(inst->ibar);
