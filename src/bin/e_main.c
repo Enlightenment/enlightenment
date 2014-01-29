@@ -1721,6 +1721,7 @@ e_main_idler_freeze(void)
    if (idle_freeze++) return;
    E_FREE_FUNC(_idle_before, ecore_idle_enterer_del);
    E_FREE_FUNC(_idle_after, ecore_idle_enterer_del);
+   edje_thaw();
 }
 
 EINTERN void
