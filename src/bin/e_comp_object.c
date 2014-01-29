@@ -93,6 +93,7 @@ typedef struct _E_Comp_Object
    Eina_Bool            updates_full : 1; // entire object will be updated
 
    Eina_Bool            force_move : 1;
+   Eina_Bool            layer_tmp : 1; // layer chage is temporary - effect
 } E_Comp_Object;
 
 static Evas_Smart *_e_comp_smart = NULL;
@@ -501,6 +502,8 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      {
         e_iconify_provider_obj_message(cw->ec, EINA_TRUE, cw->shobj);
         e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
+        cw->layer_tmp = EINA_TRUE;
+        evas_object_layer_set(cw->smart_obj, E_LAYER_CLIENT_PRIO);
      }
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,hidden", "e");
@@ -509,6 +512,8 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      {
         e_iconify_provider_obj_message(cw->ec, EINA_TRUE, cw->shobj);
         e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
+        cw->layer_tmp = EINA_TRUE;
+        evas_object_layer_set(cw->smart_obj, E_LAYER_CLIENT_PRIO);
      }
    if (!cw->zoomap_disabled)
      e_zoomap_child_set(cw->zoomobj, NULL);
@@ -562,6 +567,12 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
        ((!strcmp(emission, "e,action,hide,done")) ||
         (!strcmp(emission, "e,action,iconify,done"))))
      evas_object_hide(cw->smart_obj);
+   if ((!strcmp(emission, "e,action,iconify,done")) ||
+       (!strcmp(emission, "e,action,uniconify,done")))
+     {
+        cw->layer_tmp = EINA_FALSE;
+        evas_object_layer_set(cw->smart_obj, cw->ec->layer);
+     }
 }
 
 /////////////////////////////////////////////
@@ -841,7 +852,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
    _e_comp_object_layers_remove(cw);
    /* clamp to valid client layer */
    layer = e_comp_canvas_client_layer_map_nearest(layer);
-   cw->ec->layer = layer;
+   if (!cw->layer_tmp) cw->ec->layer = layer;
    if (e_config->transient.layer)
      {
         E_Client *child;
@@ -1168,6 +1179,8 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
                {
                   e_iconify_provider_obj_message(cw->ec, EINA_TRUE, cw->shobj);
                   e_comp_object_signal_emit(obj, "e,action,iconify", "e");
+                  cw->layer_tmp = EINA_TRUE;
+                  evas_object_layer_set(cw->smart_obj, E_LAYER_CLIENT_PRIO);
                }
              else
                e_comp_object_signal_emit(obj, "e,state,hidden", "e");
@@ -1191,6 +1204,8 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
           {
              e_iconify_provider_obj_message(cw->ec, EINA_FALSE, cw->shobj);
              e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
+             cw->layer_tmp = EINA_TRUE;
+             evas_object_layer_set(cw->smart_obj, E_LAYER_CLIENT_PRIO);
              cw->defer_hide = 0;
           }
         return;
@@ -1844,6 +1859,8 @@ _e_comp_smart_show(Evas_Object *obj)
      {
         e_iconify_provider_obj_message(cw->ec, EINA_FALSE, cw->shobj);
         e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
+        cw->layer_tmp = EINA_TRUE;
+        evas_object_layer_set(cw->smart_obj, E_LAYER_CLIENT_PRIO);
      }
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
