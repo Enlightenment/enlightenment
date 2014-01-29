@@ -1062,6 +1062,7 @@ _e_comp_x_resize_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_E
 static void
 _e_comp_x_client_evas_init(E_Client *ec)
 {
+   if (ec->comp_data->evas_init) return;
    ec->comp_data->evas_init = 1;
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_RESTACK, _e_comp_x_evas_stack_cb, ec);
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, _e_comp_x_evas_show_cb, ec);
