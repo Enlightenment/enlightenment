@@ -1086,6 +1086,18 @@ _e_comp_x_client_evas_init(E_Client *ec)
 }
 
 static Eina_Bool
+_e_comp_x_object_add(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Object *ev)
+{
+   E_Client *ec;
+
+   ec = e_comp_object_client_get(ev->comp_object);
+   if (!ec) return ECORE_CALLBACK_RENEW;
+   _e_comp_x_client_evas_init(ec);
+   _e_comp_x_client_stack(ec);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 _e_comp_x_show_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Window_Show_Request *ev)
 {
    E_Client *ec;
@@ -5080,6 +5092,8 @@ e_comp_x_init(void)
           e_comp_gl_set(EINA_TRUE);
      }
    ecore_x_screensaver_event_listen_set(1);
+
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, _e_comp_x_object_add, NULL);
 
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_DESTROY, _e_comp_x_destroy, NULL);
    E_LIST_HANDLER_APPEND(handlers, ECORE_X_EVENT_WINDOW_SHOW, _e_comp_x_show, NULL);
