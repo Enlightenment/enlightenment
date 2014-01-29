@@ -116,6 +116,35 @@ static E_Config_DD *conf_item_edd = NULL;
 
 Config *ibox_config = NULL;
 
+static void
+_ibox_cb_iconify_provider(void *data, E_Client *ec, Eina_Bool iconify EINA_UNUSED, int *x, int *y, int *w, int *h)
+{
+   Instance *inst = data;
+   IBox_Icon *ic;
+   Evas_Coord ox, oy, ow, oh;
+   Eina_List *l;
+   
+   EINA_LIST_FOREACH(inst->ibox->icons, l, ic)
+     {
+        if (ic->client == ec)
+          {
+             evas_object_geometry_get(ic->o_holder, &ox, &oy, &ow, &oh);
+             *x = ox;
+             *y = oy;
+             *w = ow;
+             *h = oh;
+             return;
+          }
+     }
+   // XXX: ibox doesn't know yet where a new icon might go... so assume right
+   // edge of ibox
+   evas_object_geometry_get(inst->ibox->o_box, &ox, &oy, &ow, &oh);
+   *x = ox + ow - 1;
+   *y = oy + (oh / 2);
+   *w = 1;
+   *h = 1;
+}
+
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
@@ -156,6 +185,9 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE,
                                   _ibox_cb_obj_moveresize, inst);
    ibox_config->instances = eina_list_append(ibox_config->instances, inst);
+   // add highest priority iconify provider - tasks and ibar can do this
+   // but lower priority
+   e_iconify_provider_add(100, _ibox_cb_iconify_provider, inst);
    return gcc;
 }
 
@@ -165,6 +197,7 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    Instance *inst;
 
    inst = gcc->data;
+   e_iconify_provider_del(100, _ibox_cb_iconify_provider, inst);
    inst->ci->gcc = NULL;
    ibox_config->instances = eina_list_remove(ibox_config->instances, inst);
    e_drop_handler_del(inst->drop_handler);

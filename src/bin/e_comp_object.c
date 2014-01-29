@@ -498,12 +498,18 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
    if (cw->visible || cw->ec->re_manage)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
    else if (cw->ec->iconic)
-     e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
+     {
+        e_iconify_provider_obj_message(cw->ec, EINA_TRUE, cw->shobj);
+        e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
+     }
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,hidden", "e");
 
    if (cw->ec->iconic && cw->ec->re_manage)
-     e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
+     {
+        e_iconify_provider_obj_message(cw->ec, EINA_TRUE, cw->shobj);
+        e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
+     }
    if (!cw->zoomap_disabled)
      e_zoomap_child_set(cw->zoomobj, NULL);
    if (cw->frame_object)
@@ -1159,7 +1165,10 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
              cw->animating = 1;
              e_object_ref(E_OBJECT(cw->ec));
              if (cw->ec->iconic)
-               e_comp_object_signal_emit(obj, "e,action,iconify", "e");
+               {
+                  e_iconify_provider_obj_message(cw->ec, EINA_TRUE, cw->shobj);
+                  e_comp_object_signal_emit(obj, "e,action,iconify", "e");
+               }
              else
                e_comp_object_signal_emit(obj, "e,state,hidden", "e");
           }
@@ -1180,6 +1189,7 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
      {
         if (cw->ec->iconic && cw->animating)
           {
+             e_iconify_provider_obj_message(cw->ec, EINA_FALSE, cw->shobj);
              e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
              cw->defer_hide = 0;
           }
@@ -1831,7 +1841,10 @@ _e_comp_smart_show(Evas_Object *obj)
    e_comp_shape_queue(cw->comp);
    if (cw->ec->input_only) return;
    if (cw->ec->iconic)
-     e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
+     {
+        e_iconify_provider_obj_message(cw->ec, EINA_FALSE, cw->shobj);
+        e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
+     }
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
    if (!cw->animating)

@@ -101,6 +101,7 @@ src/bin/e_grab_dialog.h \
 src/bin/e.h \
 src/bin/e_hints.h \
 src/bin/e_icon.h \
+src/bin/e_iconify.h \
 src/bin/e_ilist.h \
 src/bin/e_import_config_dialog.h \
 src/bin/e_import_dialog.h \
@@ -266,6 +267,7 @@ src/bin/e_grabinput.c \
 src/bin/e_grab_dialog.c \
 src/bin/e_hints.c \
 src/bin/e_icon.c \
+src/bin/e_iconify.c \
 src/bin/e_ilist.c \
 src/bin/e_import_config_dialog.c \
 src/bin/e_import_dialog.c \
