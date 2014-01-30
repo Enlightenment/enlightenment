@@ -349,10 +349,8 @@ e_win_show(E_Win *win)
           }
         else
 #endif
-          win->client = e_client_new(win->comp, e_pixmap_new(E_PIXMAP_TYPE_X, win->evas_win), 1, 1);
+          win->client = e_client_new(win->comp, e_pixmap_new(E_PIXMAP_TYPE_X, win->evas_win), 0, 1);
         EINA_SAFETY_ON_NULL_RETURN(win->client);
-        if (!win->placed)
-          win->client->re_manage = 0;
         if (win->ecore_evas)
           win->client->internal_ecore_evas = win->ecore_evas;
         if (win->state.no_remember) win->client->internal_no_remember = 1;
