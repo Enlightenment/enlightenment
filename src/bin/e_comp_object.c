@@ -3312,9 +3312,10 @@ e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *
 }
 
 EAPI void
-e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb EINA_UNUSED)
+e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb)
 {
    API_ENTRY;
+   if (evas_object_data_get(cw->effect_obj, "_e_comp.end_cb") != end_cb) return;
    e_comp_object_effect_unclip(obj);
    if (cw->effect_clip)
      {

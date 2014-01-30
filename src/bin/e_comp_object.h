@@ -77,7 +77,7 @@ EAPI void e_comp_object_effect_params_set(Evas_Object *obj, int id, int *params,
 EAPI void e_comp_object_effect_clip(Evas_Object *obj);
 EAPI void e_comp_object_effect_unclip(Evas_Object *obj);
 EAPI void e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *end_data);
-EAPI void e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb EINA_UNUSED);
+EAPI void e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb);
 EAPI E_Comp_Object_Mover *e_comp_object_effect_mover_add(int pri, const char *sig, E_Comp_Object_Mover_Cb provider, const void *data);
 EAPI void e_comp_object_effect_mover_del(E_Comp_Object_Mover *prov);
 
