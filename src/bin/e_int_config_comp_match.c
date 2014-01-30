@@ -688,7 +688,7 @@ _create_styles_toolbook(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *
 
    oi = _create_match_editor(cfd, evas, cfdata, &(cfdata->overrides), &il);
    cfdata->overrides_il = il;
-   e_widget_toolbook_page_append(tb, NULL, _("Over"), oi, 1, 1, 1, 1, 0.5, 0.0);
+   e_widget_toolbook_page_append(tb, NULL, _("Overrides"), oi, 1, 1, 1, 1, 0.5, 0.0);
 
    oi = _create_match_editor(cfd, evas, cfdata, &(cfdata->menus), &il);
    cfdata->menus_il = il;
