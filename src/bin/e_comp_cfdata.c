@@ -145,12 +145,6 @@ e_comp_cfdata_config_new(void)
    mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->name = eina_stringshare_add("E");
-   mat->clas = eina_stringshare_add("Background_Window");
-   mat->shadow_style = eina_stringshare_add("none");
-
-   mat = E_NEW(E_Comp_Match, 1);
-   cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
-   mat->name = eina_stringshare_add("E");
    mat->clas = eina_stringshare_add("everything");
    mat->shadow_style = eina_stringshare_add("everything");
 
