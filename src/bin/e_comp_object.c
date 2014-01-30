@@ -1153,11 +1153,14 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
              else
                {
                   e_comp_object_signal_emit(obj, "e,state,hidden", "e");
-                  cw->comp->animating++;
-                  cw->animating = 1;
-                  e_object_ref(E_OBJECT(cw->ec));
+                  if (!cw->animating)
+                    {
+                       cw->comp->animating++;
+                       cw->animating = 1;
+                       e_object_ref(E_OBJECT(cw->ec));
+                    }
                }
-             cw->defer_hide = cw->animating;
+             cw->defer_hide = !!cw->animating;
              if (!cw->animating)
                e_comp_object_effect_set(obj, NULL);
           }
@@ -1833,9 +1836,12 @@ _e_comp_smart_show(Evas_Object *obj)
    else
      {
         e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
-        cw->comp->animating++;
-        cw->animating = 1;
-        e_object_ref(E_OBJECT(cw->ec));
+        if (!cw->animating)
+          {
+             cw->comp->animating++;
+             cw->animating = 1;
+             e_object_ref(E_OBJECT(cw->ec));
+          }
      }
    if (!cw->animating)
      e_comp_object_effect_set(obj, NULL);
@@ -3306,6 +3312,7 @@ e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *
    evas_object_data_set(cw->effect_obj, "_e_comp.end_data", end_data);
 
    edje_object_signal_emit(cw->effect_obj, "e,action,go", "e");
+   if (cw->animating) return;
    cw->comp->animating++;
    cw->animating++;
    e_object_ref(E_OBJECT(cw->ec));
