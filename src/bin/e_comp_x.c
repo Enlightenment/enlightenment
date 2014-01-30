@@ -2495,19 +2495,17 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
         ecore_x_damage_subtract(ec->comp_data->damage, 0, parts);
         ecore_x_region_free(parts);
      }
-   if (!ec->comp_data->first_damage)
-     {
-        ec->comp_data->first_damage = 1;
-        if (!ec->re_manage)
-          return ECORE_CALLBACK_RENEW;
-     }
-
-   E_FREE_FUNC(ec->comp_data->first_draw_delay, ecore_timer_del);
    //WRN("DAMAGE %p: %dx%d", ec, ev->area.width, ev->area.height);
+
    if (ec->comp->nocomp)
      e_pixmap_dirty(ec->pixmap);
    else
      e_comp_object_damage(ec->frame, ev->area.x, ev->area.y, ev->area.width, ev->area.height);
+   if ((!ec->re_manage) && (!ec->comp_data->first_damage))
+     e_comp_object_render_update_del(ec->frame);
+   else
+     E_FREE_FUNC(ec->comp_data->first_draw_delay, ecore_timer_del);
+   ec->comp_data->first_damage = 1;
    return ECORE_CALLBACK_RENEW;
 }
 
