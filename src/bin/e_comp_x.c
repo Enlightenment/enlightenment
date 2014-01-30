@@ -1898,7 +1898,13 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
                   break;
                }
              if ((!starting) && (!ec->focused))
-               e_client_activate(ec, EINA_TRUE);
+               {
+                  if ((e_config->window_activehint_policy == E_ACTIVEHINT_POLICY_ACTIVATE_EXCLUDE) &&
+                      (!ec->desk->visible))
+                    e_client_urgent_set(ec, 1);
+                  else
+                    e_client_activate(ec, EINA_TRUE);
+               }
              else
                evas_object_raise(ec->frame);
           }

@@ -1334,7 +1334,7 @@ e_config_load(void)
    E_CONFIG_LIMIT(e_config->focus_policy, 0, 2);
    E_CONFIG_LIMIT(e_config->focus_setting, 0, 3);
    E_CONFIG_LIMIT(e_config->pass_click_on, 0, 1);
-   E_CONFIG_LIMIT(e_config->window_activehint_policy, 0, 2);
+   E_CONFIG_LIMIT(e_config->window_activehint_policy, E_ACTIVEHINT_POLICY_IGNORE, E_ACTIVEHINT_POLICY_LAST - 1);
    E_CONFIG_LIMIT(e_config->always_click_to_raise, 0, 1);
    E_CONFIG_LIMIT(e_config->always_click_to_focus, 0, 1);
    E_CONFIG_LIMIT(e_config->use_auto_raise, 0, 1);

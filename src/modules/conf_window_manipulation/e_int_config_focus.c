@@ -311,6 +311,8 @@ _advanced_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Da
    e_widget_framelist_object_append(of, ob);
    ob = e_widget_radio_add(evas, _("Activate on hint"), E_ACTIVEHINT_POLICY_ACTIVATE, rg);
    e_widget_framelist_object_append(of, ob);
+   ob = e_widget_radio_add(evas, _("Activate if on visible desk"), E_ACTIVEHINT_POLICY_ACTIVATE_EXCLUDE, rg);
+   e_widget_framelist_object_append(of, ob);
    e_widget_toolbook_page_append(otb, NULL, _("Hints"), of,
                                  1, 0, 1, 0, 0.5, 0.0);
    /* Pointer */
