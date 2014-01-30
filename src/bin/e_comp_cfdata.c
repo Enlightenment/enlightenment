@@ -156,12 +156,6 @@ e_comp_cfdata_config_new(void)
 
    mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
-   mat->name = eina_stringshare_add("E");
-   mat->clas = eina_stringshare_add("Init_Window");
-   mat->shadow_style = eina_stringshare_add("still");
-
-   mat = E_NEW(E_Comp_Match, 1);
-   cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->primary_type = ECORE_X_WINDOW_TYPE_DROPDOWN_MENU;
    mat->shadow_style = eina_stringshare_add("menu");
 
