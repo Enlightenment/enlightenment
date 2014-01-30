@@ -170,6 +170,16 @@ e_comp_cfdata_config_new(void)
 
    mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
+   mat->primary_type = E_WINDOW_TYPE_MENU;
+   mat->shadow_style = eina_stringshare_add("menu");
+
+   mat = E_NEW(E_Comp_Match, 1);
+   cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
+   mat->primary_type = E_WINDOW_TYPE_DND;
+   mat->shadow_style = eina_stringshare_add("still");
+
+   mat = E_NEW(E_Comp_Match, 1);
+   cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->name = eina_stringshare_add("geany");
    mat->clas = eina_stringshare_add("Geany");
    mat->primary_type = E_WINDOW_TYPE_NORMAL;
