@@ -16,6 +16,7 @@ struct _E_Config_Dialog_Data
    Eina_List *borders;    // used for borders
    Eina_List *overrides;    // used for client menus, tooltips etc.
    Eina_List *menus;    // used for e menus
+   Eina_List *objects;    // used for e objects
    int        changed;
 
    Evas_Object *edit_il;
@@ -24,6 +25,7 @@ struct _E_Config_Dialog_Data
    Evas_Object *borders_il;
    Evas_Object *overrides_il;
    Evas_Object *menus_il;
+   Evas_Object *objects_il;
 };
 
 static void
@@ -274,6 +276,8 @@ _edit_ok(void *d1, void *d2)
           m->cfd->cfdata->overrides = eina_list_append(m->cfd->cfdata->overrides, m);
         else if (il == m->cfd->cfdata->menus_il)
           m->cfd->cfdata->menus = eina_list_append(m->cfd->cfdata->menus, m);
+        else if (il == m->cfd->cfdata->objects_il)
+          m->cfd->cfdata->objects = eina_list_append(m->cfd->cfdata->objects, m);
         _match_ilist_append(il, m, -1, 0);
         n = e_widget_ilist_count(il);
         e_widget_ilist_nth_show(il, n - 1, 0);
@@ -540,6 +544,7 @@ _but_up(void *d1, void *d2)
    _match_list_up(&(cfd->cfdata->borders), m);
    _match_list_up(&(cfd->cfdata->overrides), m);
    _match_list_up(&(cfd->cfdata->menus), m);
+   _match_list_up(&(cfd->cfdata->objects), m);
    cfd->cfdata->changed = 1;
    e_config_dialog_changed_set(cfd, 1);
 }
@@ -571,6 +576,7 @@ _but_down(void *d1, void *d2)
    _match_list_down(&(cfd->cfdata->borders), m);
    _match_list_down(&(cfd->cfdata->overrides), m);
    _match_list_down(&(cfd->cfdata->menus), m);
+   _match_list_down(&(cfd->cfdata->objects), m);
    cfd->cfdata->changed = 1;
    e_config_dialog_changed_set(cfd, 1);
 }
@@ -613,6 +619,7 @@ _but_del(void *d1, void *d2)
    _match_list_del(&(cfd->cfdata->borders), m);
    _match_list_del(&(cfd->cfdata->overrides), m);
    _match_list_del(&(cfd->cfdata->menus), m);
+   _match_list_del(&(cfd->cfdata->objects), m);
    cfd->cfdata->changed = 1;
    e_config_dialog_changed_set(cfd, 1);
 }
@@ -684,7 +691,7 @@ _create_styles_toolbook(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *
 
    oi = _create_match_editor(cfd, evas, cfdata, &(cfdata->popups), &il);
    cfdata->popups_il = il;
-   e_widget_toolbook_page_append(tb, NULL, _("E"), oi, 1, 1, 1, 1, 0.5, 0.0);
+   e_widget_toolbook_page_append(tb, NULL, _("Popups"), oi, 1, 1, 1, 1, 0.5, 0.0);
 
    oi = _create_match_editor(cfd, evas, cfdata, &(cfdata->overrides), &il);
    cfdata->overrides_il = il;
@@ -693,6 +700,10 @@ _create_styles_toolbook(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *
    oi = _create_match_editor(cfd, evas, cfdata, &(cfdata->menus), &il);
    cfdata->menus_il = il;
    e_widget_toolbook_page_append(tb, NULL, _("Menus"), oi, 1, 1, 1, 1, 0.5, 0.0);
+
+   oi = _create_match_editor(cfd, evas, cfdata, &(cfdata->objects), &il);
+   cfdata->objects_il = il;
+   e_widget_toolbook_page_append(tb, NULL, _("Objects"), oi, 1, 1, 1, 1, 0.5, 0.0);
 
    e_widget_toolbook_page_show(tb, 0);
 
@@ -713,6 +724,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
    E_FREE_LIST(conf->match.borders, e_comp_cfdata_match_free);
    E_FREE_LIST(conf->match.overrides, e_comp_cfdata_match_free);
    E_FREE_LIST(conf->match.menus, e_comp_cfdata_match_free);
+   E_FREE_LIST(conf->match.objects, e_comp_cfdata_match_free);
 
    EINA_LIST_FOREACH(cfdata->popups, l, m2)
      {
@@ -738,6 +750,12 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata
         _match_dup2(m2, m);
         conf->match.menus = eina_list_append(conf->match.menus, m);
      }
+   EINA_LIST_FOREACH(cfdata->objects, l, m2)
+     {
+        m = E_NEW(E_Comp_Match, 1);
+        _match_dup2(m2, m);
+        conf->match.objects = eina_list_append(conf->match.objects, m);
+     }
    cfdata->changed = 0;
    e_comp_shadows_reset();
    e_config_save_queue();
@@ -761,6 +779,7 @@ _free_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
    E_FREE_LIST(cfdata->popups, _match_free);
    E_FREE_LIST(cfdata->borders, _match_free);
    E_FREE_LIST(cfdata->menus, _match_free);
+   E_FREE_LIST(cfdata->objects, _match_free);
    E_FREE_LIST(cfdata->overrides, _match_free);
    free(cfdata);
 }
@@ -806,6 +825,14 @@ _create_data(E_Config_Dialog *cfd)
         _match_dup(m, m2);
         m2->cfd = cfd;
         cfdata->menus = eina_list_append(cfdata->menus, m2);
+     }
+
+   EINA_LIST_FOREACH(conf->match.objects, l, m)
+     {
+        m2 = E_NEW(Match_Config, 1);
+        _match_dup(m, m2);
+        m2->cfd = cfd;
+        cfdata->objects = eina_list_append(cfdata->objects, m2);
      }
 
    return cfdata;
