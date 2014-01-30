@@ -2137,7 +2137,9 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
         fast = conf->fast_popups;
         break;
       default:
-        skip = EINA_TRUE;
+        list = conf->match.objects;
+        skip = conf->match.disable_objects;
+        fast = conf->fast_objects;
      }
    name = evas_object_name_get(obj);
    c = e_comp_util_evas_object_comp_get(obj);
@@ -2147,7 +2149,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
      skip = (!strncmp(name, "noshadow", 8));
    if (skip)
      evas_object_data_set(o, "comp_object_skip", (void*)1);
-   else
+   else if (list)
      {
         EINA_LIST_FOREACH(list, l, m)
           {
@@ -2172,6 +2174,8 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
                }
           }
      }
+   else
+     skip = EINA_TRUE;
    while (!ok)
      {
         if (skip)
