@@ -150,22 +150,22 @@ e_comp_cfdata_config_new(void)
 
    mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
-   mat->primary_type = ECORE_X_WINDOW_TYPE_DROPDOWN_MENU;
+   mat->primary_type = E_WINDOW_TYPE_DROPDOWN_MENU;
    mat->shadow_style = eina_stringshare_add("menu");
 
    mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
-   mat->primary_type = ECORE_X_WINDOW_TYPE_POPUP_MENU;
+   mat->primary_type = E_WINDOW_TYPE_POPUP_MENU;
    mat->shadow_style = eina_stringshare_add("menu");
 
    mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
-   mat->primary_type = ECORE_X_WINDOW_TYPE_COMBO;
+   mat->primary_type = E_WINDOW_TYPE_COMBO;
    mat->shadow_style = eina_stringshare_add("menu");
 
    mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
-   mat->primary_type = ECORE_X_WINDOW_TYPE_TOOLTIP;
+   mat->primary_type = E_WINDOW_TYPE_TOOLTIP;
    mat->shadow_style = eina_stringshare_add("menu");
 
    mat = E_NEW(E_Comp_Match, 1);
