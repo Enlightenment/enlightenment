@@ -230,7 +230,6 @@ _edit_ok(void *d1, void *d2)
    Match_Config *m = d1;
    Evas_Object *dia, *bg, *of = d2;
    Evas_Object *il;
-   int n;
 
    if (m->title || m->name || m->clas || m->role)
      {
@@ -266,22 +265,22 @@ _edit_ok(void *d1, void *d2)
         m->match.argb = m->argb;
         m->match.fullscreen = m->fullscreen;
         m->match.modal = m->modal;
-
         il = m->cfd->cfdata->edit_il;
-        if (il == m->cfd->cfdata->popups_il)
-          m->cfd->cfdata->popups = eina_list_append(m->cfd->cfdata->popups, m);
-        else if (il == m->cfd->cfdata->borders_il)
-          m->cfd->cfdata->borders = eina_list_append(m->cfd->cfdata->borders, m);
-        else if (il == m->cfd->cfdata->overrides_il)
-          m->cfd->cfdata->overrides = eina_list_append(m->cfd->cfdata->overrides, m);
-        else if (il == m->cfd->cfdata->menus_il)
-          m->cfd->cfdata->menus = eina_list_append(m->cfd->cfdata->menus, m);
-        else if (il == m->cfd->cfdata->objects_il)
-          m->cfd->cfdata->objects = eina_list_append(m->cfd->cfdata->objects, m);
-        _match_ilist_append(il, m, -1, 0);
-        n = e_widget_ilist_count(il);
-        e_widget_ilist_nth_show(il, n - 1, 0);
-        e_widget_ilist_selected_set(il, n - 1);
+        {
+           const Eina_List *l;
+           E_Ilist_Item *ili;
+
+           EINA_LIST_FOREACH(e_widget_ilist_items_get(il), l, ili)
+             {
+                char *txt;
+
+                if (e_widget_ilist_item_data_get(ili) != m) continue;
+                txt = _match_label_get(m);
+                e_ilist_item_label_set(ili, txt);
+                free(txt);
+                break;
+             }
+        }
      }
    bg = evas_object_data_get(of, "bg");
    dia = evas_object_data_get(of, "dia");
