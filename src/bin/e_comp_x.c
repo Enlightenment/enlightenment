@@ -1091,7 +1091,7 @@ _e_comp_x_object_add(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Comp_Object
    E_Client *ec;
 
    ec = e_comp_object_client_get(ev->comp_object);
-   if (!ec) return ECORE_CALLBACK_RENEW;
+   if ((!ec) || e_object_is_del(E_OBJECT(ec))) return ECORE_CALLBACK_RENEW;
    _e_comp_x_client_evas_init(ec);
    _e_comp_x_client_stack(ec);
    return ECORE_CALLBACK_RENEW;
