@@ -66,35 +66,35 @@ _match_dup2(Match_Config *m2, E_Comp_Match *m)
 static const char *
 _match_type_label_get(int type)
 {
-   if (ECORE_X_WINDOW_TYPE_UNKNOWN == type)
+   if (E_WINDOW_TYPE_UNKNOWN == type)
      return _("Unused");
-   if (ECORE_X_WINDOW_TYPE_COMBO == type)
+   if (E_WINDOW_TYPE_COMBO == type)
      return _("Combo");
-   if (ECORE_X_WINDOW_TYPE_DESKTOP == type)
+   if (E_WINDOW_TYPE_DESKTOP == type)
      return _("Desktop");
-   if (ECORE_X_WINDOW_TYPE_DIALOG == type)
+   if (E_WINDOW_TYPE_DIALOG == type)
      return _("Dialog");
-   if (ECORE_X_WINDOW_TYPE_DOCK == type)
+   if (E_WINDOW_TYPE_DOCK == type)
      return _("Dock");
-   if (ECORE_X_WINDOW_TYPE_DND == type)
+   if (E_WINDOW_TYPE_DND == type)
      return _("Drag and Drop");
-   if (ECORE_X_WINDOW_TYPE_MENU == type)
+   if (E_WINDOW_TYPE_MENU == type)
      return _("Menu");
-   if (ECORE_X_WINDOW_TYPE_DROPDOWN_MENU == type)
+   if (E_WINDOW_TYPE_DROPDOWN_MENU == type)
      return _("Menu (Dropdown)");
-   if (ECORE_X_WINDOW_TYPE_POPUP_MENU == type)
+   if (E_WINDOW_TYPE_POPUP_MENU == type)
      return _("Menu (Popup)");
-   if (ECORE_X_WINDOW_TYPE_NORMAL == type)
+   if (E_WINDOW_TYPE_NORMAL == type)
      return _("Normal");
-   if (ECORE_X_WINDOW_TYPE_NOTIFICATION == type)
+   if (E_WINDOW_TYPE_NOTIFICATION == type)
      return _("Notification");
-   if (ECORE_X_WINDOW_TYPE_SPLASH == type)
+   if (E_WINDOW_TYPE_SPLASH == type)
      return _("Splash");
-   if (ECORE_X_WINDOW_TYPE_TOOLBAR == type)
+   if (E_WINDOW_TYPE_TOOLBAR == type)
      return _("Toolbar");
-   if (ECORE_X_WINDOW_TYPE_TOOLTIP == type)
+   if (E_WINDOW_TYPE_TOOLTIP == type)
      return _("Tooltip");
-   if (ECORE_X_WINDOW_TYPE_UTILITY == type)
+   if (E_WINDOW_TYPE_UTILITY == type)
      return _("Utility");
 
    return _("Unused");
@@ -363,36 +363,36 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
 
         li = e_widget_list_add(evas, 1, 0);
 
-        o = e_widget_radio_add(evas, _("Unused"), ECORE_X_WINDOW_TYPE_UNKNOWN, rg);
+        o = e_widget_radio_add(evas, _("Unused"), E_WINDOW_TYPE_UNKNOWN, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
 
-        o = e_widget_radio_add(evas, _("Combo"), ECORE_X_WINDOW_TYPE_COMBO, rg);
+        o = e_widget_radio_add(evas, _("Combo"), E_WINDOW_TYPE_COMBO, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Desktop"), ECORE_X_WINDOW_TYPE_DESKTOP, rg);
+        o = e_widget_radio_add(evas, _("Desktop"), E_WINDOW_TYPE_DESKTOP, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Dialog"), ECORE_X_WINDOW_TYPE_DIALOG, rg);
+        o = e_widget_radio_add(evas, _("Dialog"), E_WINDOW_TYPE_DIALOG, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Dock"), ECORE_X_WINDOW_TYPE_DOCK, rg);
+        o = e_widget_radio_add(evas, _("Dock"), E_WINDOW_TYPE_DOCK, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Drag and Drop"), ECORE_X_WINDOW_TYPE_DND, rg);
+        o = e_widget_radio_add(evas, _("Drag and Drop"), E_WINDOW_TYPE_DND, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Menu"), ECORE_X_WINDOW_TYPE_MENU, rg);
+        o = e_widget_radio_add(evas, _("Menu"), E_WINDOW_TYPE_MENU, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Menu (Dropdown)"), ECORE_X_WINDOW_TYPE_DROPDOWN_MENU, rg);
+        o = e_widget_radio_add(evas, _("Menu (Dropdown)"), E_WINDOW_TYPE_DROPDOWN_MENU, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Menu (Popup)"), ECORE_X_WINDOW_TYPE_POPUP_MENU, rg);
+        o = e_widget_radio_add(evas, _("Menu (Popup)"), E_WINDOW_TYPE_POPUP_MENU, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Normal"), ECORE_X_WINDOW_TYPE_NORMAL, rg);
+        o = e_widget_radio_add(evas, _("Normal"), E_WINDOW_TYPE_NORMAL, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Notification"), ECORE_X_WINDOW_TYPE_NOTIFICATION, rg);
+        o = e_widget_radio_add(evas, _("Notification"), E_WINDOW_TYPE_NOTIFICATION, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Splash"), ECORE_X_WINDOW_TYPE_SPLASH, rg);
+        o = e_widget_radio_add(evas, _("Splash"), E_WINDOW_TYPE_SPLASH, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Toolbar"), ECORE_X_WINDOW_TYPE_TOOLBAR, rg);
+        o = e_widget_radio_add(evas, _("Toolbar"), E_WINDOW_TYPE_TOOLBAR, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Tooltip"), ECORE_X_WINDOW_TYPE_TOOLTIP, rg);
+        o = e_widget_radio_add(evas, _("Tooltip"), E_WINDOW_TYPE_TOOLTIP, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
-        o = e_widget_radio_add(evas, _("Utility"), ECORE_X_WINDOW_TYPE_UTILITY, rg);
+        o = e_widget_radio_add(evas, _("Utility"), E_WINDOW_TYPE_UTILITY, rg);
         e_widget_list_object_append(li, o, 1, 0, 0.0);
 
         e_widget_size_min_get(li, &mw, &mh);
