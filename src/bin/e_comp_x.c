@@ -4154,6 +4154,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
      {
         eina_hash_del(damages_hash, &ec->comp_data->damage, ec);
         ecore_x_damage_free(ec->comp_data->damage);
+        ec->comp_data->damage = 0;
      }
    if (ec->comp_data->reparented)
      {
