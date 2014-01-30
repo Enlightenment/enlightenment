@@ -117,7 +117,10 @@ static void
 _e_comp_object_event_free(void *d EINA_UNUSED, void *event)
 {
    E_Event_Comp_Object *ev = event;
+   E_Client *ec;
 
+   ec = evas_object_data_get(ev->comp_object, "E_Client");
+   if (ec) e_object_unref(E_OBJECT(ec));
    evas_object_unref(ev->comp_object);
    free(ev);
 }
@@ -2270,6 +2273,7 @@ e_comp_object_client_add(E_Client *ec)
    ec->frame = o;
    evas_object_data_set(o, "comp_object", (void*)1);
 
+   e_object_ref(E_OBJECT(ec));
    _e_comp_object_event_add(o);
 
    return o;
