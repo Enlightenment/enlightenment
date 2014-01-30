@@ -4977,14 +4977,7 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
         snprintf(buf, sizeof(buf), "%d", e_comp_canvas_layer_map_to(i));
         ecore_x_icccm_name_class_set(c->layers[i].win, buf, "e_layer_win");
 
-        if (i - e_comp_canvas_layer_map(E_LAYER_CLIENT_DESKTOP) > 0)
-          ecore_x_window_configure(c->layers[i].win,
-                                   ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING |
-                                   ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE,
-                                   0, 0, 0, 0, 0,
-                                   c->layers[i - 1].win, ECORE_X_WINDOW_STACK_ABOVE);
-        else
-          ecore_x_window_raise(c->layers[i].win);
+        ecore_x_window_raise(c->layers[i].win);
         ec = _e_comp_x_client_new(c, c->layers[i].win, 0);
         ec->lock_client_stacking = 1;
         ec->internal = 1;
