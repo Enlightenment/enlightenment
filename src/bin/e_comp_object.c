@@ -1219,6 +1219,7 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
      {
         DBG("  [%p] real hid - fix", cw->ec);
         cw->real_hid = 0;
+        e_comp_object_frame_theme_set(cw->smart_obj, E_COMP_OBJECT_FRAME_RESHADOW);
      }
 
    if (!cw->real_hid)
@@ -1264,8 +1265,6 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
 #else
         cw->zoomap_disabled = 1;
 #endif
-        e_comp_object_frame_theme_set(cw->smart_obj, E_COMP_OBJECT_FRAME_RESHADOW);
-
         cw->redirected = 1;
         evas_object_color_set(cw->clip, ec->netwm.opacity, ec->netwm.opacity, ec->netwm.opacity, ec->netwm.opacity);
 
