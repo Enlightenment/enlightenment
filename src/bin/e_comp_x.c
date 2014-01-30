@@ -4179,6 +4179,7 @@ _e_comp_x_hook_client_del(void *d EINA_UNUSED, E_Client *ec)
         ec->parent->modal = NULL;
      }
    E_FREE_FUNC(ec->comp_data->first_draw_delay, ecore_timer_del);
+   E_FREE(ec->comp_data);
    if (post_clients)
      post_clients = eina_list_remove(post_clients, ec);
 
