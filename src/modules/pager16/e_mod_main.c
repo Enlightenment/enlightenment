@@ -743,7 +743,7 @@ _pager_popup_new(E_Zone *zone, int keyaction)
    edje_object_part_swallow(pp->o_bg, "e.swallow.content", pp->pager->o_table);
    edje_object_size_min_calc(pp->o_bg, &w, &h);
 
-   pp->popup = e_comp_object_util_add(pp->o_bg, E_COMP_OBJECT_TYPE_NONE);
+   pp->popup = e_comp_object_util_add(pp->o_bg, E_COMP_OBJECT_TYPE_POPUP);
    evas_object_layer_set(pp->popup, E_LAYER_CLIENT_POPUP);
    evas_object_pass_events_set(pp->popup, 1);
    e_zone_useful_geometry_get(zone, &zx, &zy, &zw, &zh);
