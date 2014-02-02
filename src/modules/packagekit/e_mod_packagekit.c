@@ -37,7 +37,7 @@ _run_button_cb(void *data, void *data2 EINA_UNUSED)
    packagekit_popup_del(inst);
 
    if (ctxt->config->manager_command && ctxt->config->manager_command[0])
-     e_exec(NULL, NULL, inst->ctxt->config->manager_command, NULL, NULL);
+     e_exec(inst->gcc->gadcon->zone, NULL, inst->ctxt->config->manager_command, NULL, NULL);
    else
      e_util_dialog_show(_("No package manager configured"),
                         _("You need to set your preferred package manager.<br>"
