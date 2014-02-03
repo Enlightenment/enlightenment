@@ -8487,14 +8487,11 @@ _e_border_eval(E_Border *bd)
                        /* some application failing to correctly center a window */
                        if (eina_list_count(bd->zone->container->zones) > 1)
                          {
-                            if (((abs((bd->zone->container->w / 2) - bd->x) < 3) || //bd->x is center of container
-                                 ((abs((bd->zone->container->w / 2) - bd->x - bd->w) < 3) || //bd->x - bd->w is center of container
-                                  (abs((bd->zone->container->w / 2) - bd->x - (bd->w / 2)) < 3))) || //bd->x - bd->w/2 is center of container
-                                ((abs((bd->zone->container->h / 2) - bd->y) < 3) || //bd->y is center of container
-                                 ((abs((bd->zone->container->h / 2) - bd->y - bd->h) < 3) || //bd->y - bd->h is center of container
-                                  (abs((bd->zone->container->h / 2) - bd->y - (bd->h / 2)) < 3))) //bd->y - bd->h/2 is center of container
-                                )
-                              e_border_center(bd);
+                            if (abs((bd->zone->container->manager->w / 2) - bd->x - (bd->w / 2)) < 3)
+                              bd->x = ((bd->zone->x + bd->zone->w) / 2) - (bd->w / 2);
+                            if (abs((bd->zone->container->manager->h / 2) - bd->y - (bd->h / 2)) < 3)
+                              bd->y = ((bd->zone->y + bd->zone->h) / 2) - (bd->h / 2);
+                            e_border_zone_set(bd, e_container_zone_at_point_get(bd->zone->container, bd->x, bd->y));
                          }
                        bd->changes.pos = 1;
                        bd->placed = 1;
