@@ -3341,14 +3341,16 @@ e_border_idler_before(void)
                        bd->changes.visible = 0;
                     }
 
-                  if (bd->zone && (!bd->new_client) &&
-                      (!E_INSIDE(bd->x, bd->y, 0, 0, bd->zone->w - 5, bd->zone->h - 5)) &&
-                      (!E_INSIDE(bd->x, bd->y, 0 - bd->w + 5, 0 - bd->h + 5, bd->zone->w - 5, bd->zone->h - 5))
+                  if ((!bd->new_client) &&
+                      (!E_INSIDE(bd->x, bd->y, 0, 0, bd->zone->container->manager->w - 5, bd->zone->container->manager->h - 5)) &&
+                      (!E_INSIDE(bd->x, bd->y, 0 - bd->w + 5, 0 - bd->h + 5, bd->zone->container->manager->w - 5, bd->zone->container->manager->h - 5))
                       )
                     {
                        if (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)
                          _e_border_move_lost_window_to_center(bd);
                     }
+                  else
+                    e_border_zone_set(bd, e_container_zone_at_point_get(bd->zone->container, bd->x, bd->y));
                }
              e_container_border_list_free(bl);
 
@@ -5300,13 +5302,19 @@ _e_border_cb_window_configure_request(void *data  __UNUSED__,
                     }
                   else
                     {
-                       if ((e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY) && bd->zone &&
-                           (!E_INSIDE(x, y, 0, 0, bd->zone->w - 5, bd->zone->h - 5)) &&
-                           (!E_INSIDE(x, y, 0 - bd->w + 5, 0 - bd->h + 5, bd->zone->w - 5, bd->zone->h - 5))
+                       if ((e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY) &&
+                           (!E_INSIDE(x, y, 0, 0, bd->zone->container->manager->w - 5, bd->zone->container->manager->h - 5)) &&
+                           (!E_INSIDE(x, y, 0 - bd->zone->container->manager->w + 5, 0 - bd->zone->container->manager->h + 5, bd->zone->container->manager->w - 5, bd->zone->container->manager->h - 5))
                           )
                          _e_border_move_lost_window_to_center(bd);
                        else
-                         e_border_move(bd, x, y);
+                         {
+                            E_Zone *zone;
+
+                            zone = e_container_zone_at_point_get(bd->zone->container, x, y);
+                            e_border_zone_set(bd, zone);
+                            e_border_move(bd, x, y);
+                         }
                     }
                }
           }
