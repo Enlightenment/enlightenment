@@ -833,6 +833,7 @@ _e_drag_update(Ecore_X_Window root, int x, int y, Ecore_X_Atom action)
 
    if (_drag_current)
      {
+        if (_drag_current->ended) return 0;
         if (_drag_current->visible) e_popup_show(_drag_current->pop);
         else e_popup_hide(_drag_current->pop);
         _e_drag_move(_drag_current, x, y);
@@ -969,6 +970,7 @@ _e_drag_end(int x, int y)
         if (_drag_current->cb.finished)
           _drag_current->cb.finished(_drag_current, dropped);
         _drag_current->cb.finished = NULL;
+        _drag_current->ended = 1;
 
         return;
      }
