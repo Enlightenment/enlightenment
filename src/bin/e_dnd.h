@@ -48,6 +48,7 @@ struct _E_Drag
 
    E_Layer            layer;
    unsigned char      visible : 1;
+   Eina_Bool          ended : 1;
 
    unsigned int       num_types;
    const char        *types[];
