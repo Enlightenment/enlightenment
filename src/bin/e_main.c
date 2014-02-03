@@ -87,6 +87,7 @@ static Eina_Bool _e_main_cb_idle_after(void *data __UNUSED__);
 static Eina_Bool _e_main_cb_startup_fake_end(void *data __UNUSED__);
 
 /* local variables */
+static Eina_Bool frozen = EINA_FALSE;
 static int idle_freeze = 0;
 static Eina_Bool really_know = EINA_FALSE;
 static Eina_Bool locked = EINA_FALSE;
@@ -1671,6 +1672,7 @@ _e_main_cb_idle_before(void *data __UNUSED__)
    e_client_idler_before();
    e_pointer_idler_before();
    edje_thaw();
+   frozen = EINA_FALSE;
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -1680,6 +1682,7 @@ _e_main_cb_idle_after(void *data __UNUSED__)
    static int first_idle = 1;
 
    edje_freeze();
+   frozen = EINA_TRUE;
 
 #ifdef E19_RELEASE_BUILD
    if (first_idle)
@@ -1721,7 +1724,9 @@ e_main_idler_freeze(void)
    if (idle_freeze++) return;
    E_FREE_FUNC(_idle_before, ecore_idle_enterer_del);
    E_FREE_FUNC(_idle_after, ecore_idle_enterer_del);
+   if (!frozen) return;
    edje_thaw();
+   frozen = EINA_FALSE;
 }
 
 EINTERN void
