@@ -2,6 +2,7 @@
 #define PACKAGEKIT_H
 
 #include <Eldbus.h>
+#include <e.h>
 
 
 #define PKITV07 (ctxt->v_maj == 0) && (ctxt->v_min == 7)

@@ -13,6 +13,8 @@ src_modules_packagekit_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_packagekit_module_la_SOURCES = \
     src/modules/packagekit/e_mod_main.c \
     src/modules/packagekit/e_mod_main.h \
+    src/modules/packagekit/e_mod_config.c \
+    src/modules/packagekit/e_mod_config.h \
     src/modules/packagekit/e_mod_packagekit.c \
     src/modules/packagekit/e_mod_packagekit.h
 
