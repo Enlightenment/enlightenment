@@ -1240,7 +1240,7 @@ _e_client_zone_update(E_Client *ec)
    E_Zone *zone;
 
    /* still within old zone - leave it there */
-   if (E_INTERSECTS(ec->x, ec->y, ec->w, ec->h,
+   if (ec->zone && E_INTERSECTS(ec->x, ec->y, ec->w, ec->h,
                     ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h))
      return;
    /* find a new zone */
@@ -2103,7 +2103,7 @@ e_client_idler_before(void)
                     _e_client_move_lost_window_to_center(ec);
                }
              else
-               e_client_zone_set(ec, e_comp_zone_xy_get(ec->comp, ec->x, ec->y));
+               _e_client_zone_update(ec);
           }
 
 
@@ -2225,7 +2225,10 @@ e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal)
    ec->comp->new_clients++;
 
    if (!_e_client_hook_call(E_CLIENT_HOOK_NEW_CLIENT, ec)) return NULL;
-   e_client_desk_set(ec, e_desk_current_get(e_zone_current_get(c)));
+   if (ec->override)
+     _e_client_zone_update(ec);
+   else
+     e_client_desk_set(ec, e_desk_current_get(e_zone_current_get(c)));
 
    ec->icccm.title = NULL;
    ec->icccm.name = NULL;
@@ -2785,7 +2788,7 @@ e_client_zone_set(E_Client *ec, E_Zone *zone)
 
    ec->zone = zone;
 
-   if (ec->desk->zone != ec->zone)
+   if ((!ec->desk) || (ec->desk->zone != ec->zone))
      e_client_desk_set(ec, e_desk_current_get(ec->zone));
 
    ev = E_NEW(E_Event_Client_Zone_Set, 1);
