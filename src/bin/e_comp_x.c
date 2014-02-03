@@ -3219,7 +3219,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                          ec->y = zy + zh - ec->h;
 
                        // <--
-                       if (ec->zone && e_comp_zone_xy_get(ec->comp, ec->x, ec->y))
+                       if (e_comp_zone_xy_get(ec->comp, ec->x, ec->y))
                          {
                             if (!E_INSIDE(ec->x, ec->y, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h))
                               {
@@ -3229,14 +3229,11 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                             /* some application failing to correctly center a window */
                             if (eina_list_count(ec->comp->zones) > 1)
                               {
-                                 if (((abs((ec->comp->man->w / 2) - ec->x) < 3) || //ec->x is center of manager
-                                      ((abs((ec->comp->man->w / 2) - ec->x - ec->w) < 3) || //ec->x - ec->w is center of manager
-                                       (abs((ec->comp->man->w / 2) - ec->x - (ec->w / 2)) < 3))) || //ec->x - ec->w/2 is center of manager
-                                     ((abs((ec->comp->man->h / 2) - ec->y) < 3) || //ec->y is center of manager
-                                      ((abs((ec->comp->man->h / 2) - ec->y - ec->h) < 3) || //ec->y - ec->h is center of manager
-                                       (abs((ec->comp->man->h / 2) - ec->y - (ec->h / 2)) < 3))) //ec->y - ec->h/2 is center of manager
-                                     )
-                                   e_comp_object_util_center(ec->frame);
+                                 if (abs((ec->comp->man->w / 2) - ec->x - (ec->w / 2)) < 3)
+                                   ec->x = ((ec->zone->x + ec->zone->w) / 2) - (ec->w / 2);
+                                 if (abs((ec->comp->man->h / 2) - ec->y - (ec->h / 2)) < 3)
+                                   ec->y = ((ec->zone->y + ec->zone->h) / 2) - (ec->h / 2);
+                                 e_client_zone_set(ec, e_comp_zone_xy_get(ec->comp, ec->x, ec->y));
                               }
                             ec->changes.pos = 1;
                             ec->placed = 1;
