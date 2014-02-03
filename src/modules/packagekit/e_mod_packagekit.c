@@ -7,17 +7,52 @@
 
 /* GUI */
 void
-packagekit_icon_update(E_PackageKit_Module_Context *ctxt, const char *state, unsigned num)
+packagekit_icon_update(E_PackageKit_Module_Context *ctxt,
+                       Eina_Bool working)
 {
    E_PackageKit_Instance *inst;
+   E_PackageKit_Package *pkg;
+   unsigned count = 0;
+   const char *state;
    char buf[16];
    Eina_List *l;
 
-   if (num) snprintf(buf, sizeof(buf), "%d", num);
+   if (working)
+     state = "packagekit,state,working";
+   else if (ctxt->error)
+     state = "packagekit,state,error";
+   else
+     {
+        EINA_LIST_FOREACH(ctxt->packages, l, pkg)
+          {
+             switch (pkg->info)
+               {
+                  case PK_INFO_ENUM_LOW:
+                  case PK_INFO_ENUM_ENHANCEMENT:
+                  case PK_INFO_ENUM_NORMAL:
+                  case PK_INFO_ENUM_BUGFIX:
+                  case PK_INFO_ENUM_IMPORTANT:
+                  case PK_INFO_ENUM_SECURITY:
+                     count++;
+                     break;
+                  default:
+                     break;
+               }
+          }
+
+        if (count > 0)
+          state = "packagekit,state,updates";
+        else
+          state = "packagekit,state,updated";
+     }
+
+   DBG("PKGKIT: IconUpdate, %d updates available (%s)", count, state);
+
+   if (count) snprintf(buf, sizeof(buf), "%d", count);
    EINA_LIST_FOREACH(ctxt->instances, l, inst)
      {
         edje_object_signal_emit(inst->gadget, state, "e");
-        edje_object_part_text_set(inst->gadget, "num_updates", num ? buf : "");
+        edje_object_part_text_set(inst->gadget, "num_updates", count ? buf : "");
      }
 }
 
@@ -186,13 +221,14 @@ packagekit_popup_del(E_PackageKit_Instance *inst)
 static void
 _store_error(E_PackageKit_Module_Context *ctxt, const char *err)
 {
-   ERR("PKGKIT ERROR: %s", err);
-   packagekit_icon_update(ctxt, "packagekit,state,error", 0);
+   ERR("PKGKIT: ERROR: %s", err);
    if (ctxt->error)
       eina_stringshare_replace(&ctxt->error, err);
    else
       ctxt->error = eina_stringshare_add(err);
+   packagekit_icon_update(ctxt, EINA_FALSE);
 }
+
 
 /* RefreshCache() */
 static void
@@ -334,9 +370,6 @@ _signal_finished_cb(void *data, const Eldbus_Message *msg)
 {  /* Finished ('u'exit, 'u'runtime) */
    const char *error, *error_msg;
    E_PackageKit_Module_Context *ctxt = data;
-   E_PackageKit_Package *pkg;
-   unsigned num_updates = 0;
-   Eina_List *l;
 
    if (eldbus_message_error_get(msg, &error, &error_msg))
      {
@@ -349,27 +382,8 @@ _signal_finished_cb(void *data, const Eldbus_Message *msg)
    E_FREE_FUNC(obj, eldbus_object_unref);
    E_FREE_FUNC(ctxt->error, eina_stringshare_del);
 
-   EINA_LIST_FOREACH(ctxt->packages, l, pkg)
-     {
-        switch (pkg->info)
-          {
-             case PK_INFO_ENUM_LOW:
-             case PK_INFO_ENUM_ENHANCEMENT:
-             case PK_INFO_ENUM_NORMAL:
-             case PK_INFO_ENUM_BUGFIX:
-             case PK_INFO_ENUM_IMPORTANT:
-             case PK_INFO_ENUM_SECURITY:
-               num_updates++;
-               break;
-             default:
-               break;
-          }
-     }
-   DBG("PKGKIT: PackageFinished, %d updates available", num_updates);
-   if (num_updates > 0)
-     packagekit_icon_update(ctxt, "packagekit,state,updates", num_updates);
-   else
-     packagekit_icon_update(ctxt, "packagekit,state,updated", 0);
+   DBG("PKGKIT: PackageFinished");
+   packagekit_icon_update(ctxt, EINA_FALSE);
 }
 
 void
@@ -440,9 +454,7 @@ packagekit_create_transaction_and_exec(E_PackageKit_Module_Context *ctxt,
 {
    Eldbus_Pending *pending;
 
-   DBG("*****************");
-   DBG("PKGKIT Version: %d . %d . %d", ctxt->v_maj, ctxt->v_min, ctxt->v_mic);
-   DBG("*****************");
+   DBG("PKGKIT: Version: %d.%d.%d", ctxt->v_maj, ctxt->v_min, ctxt->v_mic);
 
    if (ctxt->transaction)
      {
@@ -459,8 +471,7 @@ packagekit_create_transaction_and_exec(E_PackageKit_Module_Context *ctxt,
         return;
      }
    eldbus_pending_data_set(pending, "func", func);
-
-   packagekit_icon_update(ctxt, "packagekit,state,working", 0);
+   packagekit_icon_update(ctxt, EINA_TRUE);
 }
 
 

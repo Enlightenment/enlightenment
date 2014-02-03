@@ -93,8 +93,7 @@ void      packagekit_create_transaction_and_exec(E_PackageKit_Module_Context *ct
                                                  E_PackageKit_Transaction_Func func);
 void      packagekit_get_updates(E_PackageKit_Module_Context *ctxt, const char *transaction);
 void      packagekit_refresh_cache(E_PackageKit_Module_Context *ctxt, const char *transaction);
-
-void      packagekit_icon_update(E_PackageKit_Module_Context *ctxt, const char *state, unsigned num);
+void      packagekit_icon_update(E_PackageKit_Module_Context *ctxt, Eina_Bool working);
 void      packagekit_popup_new(E_PackageKit_Instance *inst);
 void      packagekit_popup_del(E_PackageKit_Instance *inst);
 void      packagekit_popup_update(E_PackageKit_Instance *inst);

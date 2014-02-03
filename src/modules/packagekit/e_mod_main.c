@@ -192,6 +192,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    evas_object_event_callback_add(inst->gadget, EVAS_CALLBACK_MOUSE_DOWN,
                                   packagekit_mouse_down_cb, inst);
    ctxt->instances = eina_list_append(ctxt->instances, inst);
+   packagekit_icon_update(ctxt, EINA_FALSE);
    return inst->gcc;
 }
 
