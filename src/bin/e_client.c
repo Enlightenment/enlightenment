@@ -2102,8 +2102,6 @@ e_client_idler_before(void)
                   if (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)
                     _e_client_move_lost_window_to_center(ec);
                }
-             else
-               _e_client_zone_update(ec);
           }
 
 
