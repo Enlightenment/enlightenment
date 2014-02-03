@@ -1485,25 +1485,21 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
           }
         else
           {
-             if (ec->zone)
-               {
-                  /* client is completely outside the zone, policy does not allow */
-                  if (((!E_INTERSECTS(x, y, ec->w, ec->h, ec->zone->x, ec->zone->y, ec->zone->w - 5, ec->zone->h - 5)) &&
-                      (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)) ||
-                      /* client is partly outside the zone, policy does not allow */
-                      (((!E_INSIDE(x, y, ec->zone->x, ec->zone->y, ec->zone->w - 5, ec->zone->h - 5)) &&
-                       (!E_INSIDE(x + ec->w, y, ec->zone->x, ec->zone->y, ec->zone->w - 5, ec->zone->h - 5)) &&
-                       (!E_INSIDE(x, y + ec->h, ec->zone->x, ec->zone->y, ec->zone->w - 5, ec->zone->h - 5)) &&
-                       (!E_INSIDE(x + ec->w, y + ec->h, ec->zone->x, ec->zone->y, ec->zone->w - 5, ec->zone->h - 5))) &&
-                       (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN))
-                     )
-                    e_comp_object_util_center(ec->frame);
-                  else
-                    evas_object_move(ec->frame, x, y);
-               }
+             /* client is completely outside the screen, policy does not allow */
+             if (((!E_INTERSECTS(x, y, ec->w, ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+                 (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)) ||
+                 /* client is partly outside the zone, policy does not allow */
+                 (((!E_INSIDE(x, y, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+                  (!E_INSIDE(x + ec->w, y, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+                  (!E_INSIDE(x, y + ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+                  (!E_INSIDE(x + ec->w, y + ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5))) &&
+                  (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN))
+                )
+               e_comp_object_util_center(ec->frame);
              else
                {
                   evas_object_move(ec->frame, x, y);
+                  e_client_zone_set(ec, e_comp_zone_xy_get(ec->comp, x, y));
                }
           }
      }

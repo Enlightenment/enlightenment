@@ -2095,13 +2095,15 @@ e_client_idler_before(void)
                }
 
              if ((!ec->new_client) && (!e_client_util_ignored_get(ec)) &&
-                 (!E_INSIDE(ec->x, ec->y, 0, 0, ec->zone->w - 5, ec->zone->h - 5)) &&
-                 (!E_INSIDE(ec->x, ec->y, 0 - ec->w + 5, 0 - ec->h + 5, ec->zone->w - 5, ec->zone->h - 5))
+                 (!E_INSIDE(ec->x, ec->y, 0, 0, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+                 (!E_INSIDE(ec->x, ec->y, 0 - ec->w + 5, 0 - ec->h + 5, ec->comp->man->w - 5, ec->comp->man->h - 5))
                  )
                {
                   if (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)
                     _e_client_move_lost_window_to_center(ec);
                }
+             else
+               e_client_zone_set(ec, e_comp_zone_xy_get(ec->comp, ec->x, ec->y));
           }
 
 
