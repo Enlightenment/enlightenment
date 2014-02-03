@@ -1499,7 +1499,6 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
              else
                {
                   evas_object_move(ec->frame, x, y);
-                  e_client_zone_set(ec, e_comp_zone_xy_get(ec->comp, x, y));
                }
           }
      }
@@ -3233,7 +3232,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                    ec->x = ((ec->zone->x + ec->zone->w) / 2) - (ec->w / 2);
                                  if (abs((ec->comp->man->h / 2) - ec->y - (ec->h / 2)) < 3)
                                    ec->y = ((ec->zone->y + ec->zone->h) / 2) - (ec->h / 2);
-                                 e_client_zone_set(ec, e_comp_zone_xy_get(ec->comp, ec->x, ec->y));
                               }
                             ec->changes.pos = 1;
                             ec->placed = 1;
