@@ -91,6 +91,7 @@ typedef struct _E_Comp_Object
    Eina_Bool            zoomap_disabled : 1; //whether zoomap is usable
    Eina_Bool            updates_exist : 1;
    Eina_Bool            updates_full : 1; // entire object will be updated
+   Eina_Bool            dirty : 1; //object is dirty but not visible
 
    Eina_Bool            force_move : 1;
 } E_Comp_Object;
@@ -1838,6 +1839,8 @@ _e_comp_smart_show(Evas_Object *obj)
      }
    if (!cw->animating)
      e_comp_object_effect_set(obj, NULL);
+   if (cw->dirty)
+     e_comp_object_render_update_add(obj);
 }
 
 static void
@@ -3016,9 +3019,14 @@ e_comp_object_dirty(Evas_Object *obj)
    Eina_Bool dirty;
 
    API_ENTRY;
-
+   cw->dirty = 0;
    evas_object_geometry_get(cw->obj, NULL, NULL, &ow, &oh);
-   if ((!ow) && (!oh)) return; //get it on the next resize
+   if ((!ow) && (!oh))
+     {
+        RENDER_DEBUG("DIRTY REJECTED(%p)", cw->ec);
+        cw->dirty = !cw->visible;
+        return; //get it on the next resize/show
+     }
    dirty = e_pixmap_size_get(cw->ec->pixmap, &w, &h);
    if (!dirty) w = h = 1;
    evas_object_image_pixels_dirty_set(cw->obj, dirty);
