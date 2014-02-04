@@ -265,11 +265,6 @@ e_modapi_init(E_Module *m)
 
    conf_module = m;
 
-   if (e_action_find("configuration"))
-     {
-        e_util_dialog_show(_("Error"), _("conf module cannot be loaded when conf2 module is already loaded!"));
-        return NULL;
-     }
    /* add module supplied action */
    act = e_action_add("configuration");
    if (act)
