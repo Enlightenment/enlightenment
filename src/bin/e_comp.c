@@ -842,7 +842,7 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
      {
         if (!c->saver) continue;
         /* frozen in _e_comp_canvas_screensaver_active() */
-//        e_main_idler_thaw();
+        e_main_idler_thaw();
         c->saver = EINA_FALSE;
         if (!c->nocomp)
           ecore_evas_manual_render_set(c->ee, EINA_FALSE);

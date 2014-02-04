@@ -91,7 +91,7 @@ _e_comp_canvas_screensaver_active(void *d EINA_UNUSED, Evas_Object *obj, const c
 {
    E_Comp *c;
    /* thawed in _e_comp_screensaver_off() */
-//   e_main_idler_freeze();
+   e_main_idler_freeze();
    ecore_animator_frametime_set(10.0);
    c = e_comp_util_evas_object_comp_get(obj);
    if (!c->nocomp)
