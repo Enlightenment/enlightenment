@@ -680,12 +680,11 @@ e_desk_flip_end(E_Desk *desk)
    if ((e_config->focus_policy == E_FOCUS_MOUSE) ||
        (e_config->focus_policy == E_FOCUS_SLOPPY))
      {
-             ec = e_client_focused_get();
-             /* only set focus/warp pointer if currently focused window
-              * is on same screen (user hasn't switched screens during transition)
-              */
-             if (ec && ec->desk && (ec->desk->zone != desk->zone))
-               return;
+        ec = e_client_focused_get();
+        /* only set focus/warp pointer if currently focused window
+         * is on same screen (user hasn't switched screens during transition)
+         */
+        if (ec && ec->desk && (ec->desk->zone != desk->zone)) return;
      }
    if (starting) return;
    ec = e_desk_last_focused_focus(desk);
