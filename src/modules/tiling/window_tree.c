@@ -4,31 +4,33 @@
 #include "e_mod_tiling.h"
 
 void
-tiling_window_tree_walk(Window_Tree *root, void (*func)(void *))
+tiling_window_tree_walk(Window_Tree * root, void (*func) (void *))
 {
    Eina_Inlist *itr_safe;
    Window_Tree *itr;
+
    if (!root)
       return;
 
    EINA_INLIST_FOREACH_SAFE(root->children, itr_safe, itr)
-     {
-        tiling_window_tree_walk(itr, func);
-     }
+   {
+      tiling_window_tree_walk(itr, func);
+   }
    func(root);
 }
 
 void
-tiling_window_tree_free(Window_Tree *root)
+tiling_window_tree_free(Window_Tree * root)
 {
    tiling_window_tree_walk(root, free);
 }
 
 static void
-_tiling_window_tree_split_add(Window_Tree *parent, Window_Tree *new_node)
+_tiling_window_tree_split_add(Window_Tree * parent, Window_Tree * new_node)
 {
    /* Make a new node for the parent client and split the weights in half. */
    Window_Tree *new_parent_client = calloc(1, sizeof(*new_node));
+
    new_node->parent = parent;
    new_parent_client->parent = parent;
    new_parent_client->client = parent->client;
@@ -36,14 +38,14 @@ _tiling_window_tree_split_add(Window_Tree *parent, Window_Tree *new_node)
    new_parent_client->weight = 0.5;
    new_node->weight = 0.5;
 
-   parent->children = eina_inlist_append(parent->children,
-         EINA_INLIST_GET(new_parent_client));
-   parent->children = eina_inlist_append(parent->children,
-         EINA_INLIST_GET(new_node));
+   parent->children =
+       eina_inlist_append(parent->children, EINA_INLIST_GET(new_parent_client));
+   parent->children =
+       eina_inlist_append(parent->children, EINA_INLIST_GET(new_node));
 }
 
 static void
-_tiling_window_tree_parent_add(Window_Tree *parent, Window_Tree *new_node)
+_tiling_window_tree_parent_add(Window_Tree * parent, Window_Tree * new_node)
 {
    /* Adjust existing children's weights */
    Window_Tree *itr;
@@ -55,185 +57,182 @@ _tiling_window_tree_parent_add(Window_Tree *parent, Window_Tree *new_node)
 
    weight *= children_count;
    EINA_INLIST_FOREACH(parent->children, itr)
-     {
-        itr->weight *= weight;
-     }
+   {
+      itr->weight *= weight;
+   }
 
-   parent->children = eina_inlist_append(parent->children,
-         EINA_INLIST_GET(new_node));
+   parent->children =
+       eina_inlist_append(parent->children, EINA_INLIST_GET(new_node));
 }
 
 static int
-_tiling_window_tree_split_type_get(Window_Tree *node)
+_tiling_window_tree_split_type_get(Window_Tree * node)
 {
    int ret = 0;
+
    while (node->parent)
      {
-        ret++;
-        node = node->parent;
+	ret++;
+	node = node->parent;
      }
 
    return ret % 2;
 }
 
 Window_Tree *
-tiling_window_tree_add(Window_Tree *root, Window_Tree *parent, E_Client *client, Tiling_Split_Type split_type)
+tiling_window_tree_add(Window_Tree * root, Window_Tree * parent,
+    E_Client * client, Tiling_Split_Type split_type)
 {
    Window_Tree *new_node = calloc(1, sizeof(*new_node));
+
    new_node->client = client;
    Tiling_Split_Type parent_split_type;
 
    if (split_type > TILING_SPLIT_VERTICAL)
      {
-        return root;
-     }
-   else  if (!root)
+	return root;
+   } else if (!root)
      {
-        new_node->weight = 1.0;
-        return new_node;
-     }
-   else if (!parent)
+	new_node->weight = 1.0;
+	return new_node;
+   } else if (!parent)
      {
-        parent = root;
-        parent_split_type = _tiling_window_tree_split_type_get(parent);
-        if ((parent_split_type != split_type) && (parent->children))
-          {
-             parent = (Window_Tree *) parent->children;
-          }
+	parent = root;
+	parent_split_type = _tiling_window_tree_split_type_get(parent);
+	if ((parent_split_type != split_type) && (parent->children))
+	  {
+	     parent = (Window_Tree *) parent->children;
+	  }
      }
 
    parent_split_type = _tiling_window_tree_split_type_get(parent);
 
    if (parent_split_type == split_type)
      {
-        if (parent->children)
-          {
-             _tiling_window_tree_parent_add(parent, new_node);
-          }
-        else
-          {
-             _tiling_window_tree_split_add(parent, new_node);
-          }
-     }
-   else
+	if (parent->children)
+	  {
+	     _tiling_window_tree_parent_add(parent, new_node);
+	} else
+	  {
+	     _tiling_window_tree_split_add(parent, new_node);
+	  }
+   } else
      {
-        Window_Tree *grand_parent = parent->parent;
-        if (grand_parent && grand_parent->children)
-          {
-             _tiling_window_tree_parent_add(grand_parent, new_node);
-          }
-        else
-          {
-             root = calloc(1, sizeof(*root));
-             _tiling_window_tree_split_add(parent, new_node);
-             root->weight = 1.0;
-             root->children = eina_inlist_append(root->children,
-                   EINA_INLIST_GET(parent));
-             parent->parent = root;
-          }
+	Window_Tree *grand_parent = parent->parent;
+
+	if (grand_parent && grand_parent->children)
+	  {
+	     _tiling_window_tree_parent_add(grand_parent, new_node);
+	} else
+	  {
+	     root = calloc(1, sizeof(*root));
+	     _tiling_window_tree_split_add(parent, new_node);
+	     root->weight = 1.0;
+	     root->children =
+		 eina_inlist_append(root->children, EINA_INLIST_GET(parent));
+	     parent->parent = root;
+	  }
      }
 
    return root;
 }
 
 Window_Tree *
-tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
+tiling_window_tree_remove(Window_Tree * root, Window_Tree * item)
 {
    if (root == item)
      {
-        free(item);
-        return NULL;
-     }
-   else if (!item->client)
+	free(item);
+	return NULL;
+   } else if (!item->client)
      {
-        ERR("Tried deleting node %p that doesn't have a client.", item);
-        return root;
+	ERR("Tried deleting node %p that doesn't have a client.", item);
+	return root;
      }
-
 
    Window_Tree *parent = item->parent;
    int children_count = eina_inlist_count(item->parent->children);
 
    if (children_count <= 2)
      {
-        Window_Tree *grand_parent = parent->parent;
-        Window_Tree *item_keep = NULL;
-        /* Adjust existing children's weights */
-        EINA_INLIST_FOREACH(parent->children, item_keep)
-          {
-             if (item_keep != item)
-                break;
-          }
+	Window_Tree *grand_parent = parent->parent;
+	Window_Tree *item_keep = NULL;
 
-        if (!item_keep)
-          {
-             /* Special case of deleting the last vertical split item. */
-             free(item);
-             free(root);
-             return NULL;
-          }
-        else if (!item_keep->children)
-          {
-             parent->client = item_keep->client;
-             parent->children = NULL;
+	/* Adjust existing children's weights */
+	EINA_INLIST_FOREACH(parent->children, item_keep)
+	{
+	   if (item_keep != item)
+	      break;
+	}
 
-             free(item_keep);
-          }
-        else
-          {
-             if (grand_parent)
-               {
-                  /* Update the children's parent. */
-                    {
-                       Eina_Inlist *itr_safe;
-                       Window_Tree *itr;
+	if (!item_keep)
+	  {
+	     /* Special case of deleting the last vertical split item. */
+	     free(item);
+	     free(root);
+	     return NULL;
+	} else if (!item_keep->children)
+	  {
+	     parent->client = item_keep->client;
+	     parent->children = NULL;
 
-                       EINA_INLIST_FOREACH_SAFE(item_keep->children, itr_safe, itr)
-                         {
-                            /* We are prepending to double-reverse the order. */
-                            grand_parent->children =
-                               eina_inlist_prepend_relative(grand_parent->children,
-                                     EINA_INLIST_GET(itr), EINA_INLIST_GET(parent));
-                            itr->weight *= parent->weight;
-                            itr->parent = grand_parent;
-                         }
+	     free(item_keep);
+	} else
+	  {
+	     if (grand_parent)
+	       {
+		  /* Update the children's parent. */
+		  {
+		     Eina_Inlist *itr_safe;
+		     Window_Tree *itr;
 
-                       grand_parent->children = eina_inlist_remove(grand_parent->children,
-                             EINA_INLIST_GET(parent));
-                       free(parent);
-                    }
-               }
-             else
-               {
-                  /* This is fine, as this is a child of the root so we allow two
-                   * levels. */
-                  item_keep->weight = 1.0;
-               }
+		     EINA_INLIST_FOREACH_SAFE(item_keep->children, itr_safe,
+			 itr)
+		     {
+			/* We are prepending to double-reverse the order. */
+			grand_parent->children =
+			    eina_inlist_prepend_relative(grand_parent->children,
+			    EINA_INLIST_GET(itr), EINA_INLIST_GET(parent));
+			itr->weight *= parent->weight;
+			itr->parent = grand_parent;
+		     }
 
-             parent->children = eina_inlist_remove(parent->children, EINA_INLIST_GET(item));
-          }
-     }
-   else
+		     grand_parent->children =
+			 eina_inlist_remove(grand_parent->children,
+			 EINA_INLIST_GET(parent));
+		     free(parent);
+		  }
+	     } else
+	       {
+		  /* This is fine, as this is a child of the root so we allow
+		   * two levels. */
+		  item_keep->weight = 1.0;
+	       }
+
+	     parent->children =
+		 eina_inlist_remove(parent->children, EINA_INLIST_GET(item));
+	  }
+   } else
      {
-        Window_Tree *itr;
-        float weight = 1.0 - item->weight;
+	Window_Tree *itr;
+	float weight = 1.0 - item->weight;
 
-        parent->children = eina_inlist_remove(parent->children,
-              EINA_INLIST_GET(item));
+	parent->children =
+	    eina_inlist_remove(parent->children, EINA_INLIST_GET(item));
 
-        /* Adjust existing children's weights */
-        EINA_INLIST_FOREACH(parent->children, itr)
-          {
-             itr->weight /= weight;
-          }
+	/* Adjust existing children's weights */
+	EINA_INLIST_FOREACH(parent->children, itr)
+	{
+	   itr->weight /= weight;
+	}
      }
 
-  free(item);
-  return root;
+   free(item);
+   return root;
 }
 
 Window_Tree *
-tiling_window_tree_client_find(Window_Tree *root, E_Client *client)
+tiling_window_tree_client_find(Window_Tree * root, E_Client * client)
 {
    Window_Tree *itr;
 
@@ -244,19 +243,20 @@ tiling_window_tree_client_find(Window_Tree *root, E_Client *client)
       return root;
 
    EINA_INLIST_FOREACH(root->children, itr)
-     {
-        Window_Tree *ret;
-        ret = tiling_window_tree_client_find(itr, client);
-        if (ret)
-           return ret;
-     }
+   {
+      Window_Tree *ret;
+
+      ret = tiling_window_tree_client_find(itr, client);
+      if (ret)
+	 return ret;
+   }
 
    return NULL;
 }
 
 void
-_tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
-      Evas_Coord w, Evas_Coord h, int level)
+_tiling_window_tree_level_apply(Window_Tree * root, Evas_Coord x, Evas_Coord y,
+    Evas_Coord w, Evas_Coord h, int level)
 {
    Window_Tree *itr;
    Tiling_Split_Type split_type = level % 2;
@@ -264,29 +264,30 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
 
    if (root->client)
      {
-        tiling_e_client_move_resize_extra(root->client, x, y, w, h);
-        return;
+	tiling_e_client_move_resize_extra(root->client, x, y, w, h);
+	return;
      }
 
    if (split_type == TILING_SPLIT_HORIZONTAL)
      {
-        EINA_INLIST_FOREACH(root->children, itr)
-          {
-             Evas_Coord itw = w * itr->weight;
-             total_weight += itr->weight;
-             _tiling_window_tree_level_apply(itr, x, y, itw, h, level + 1);
-             x += itw;
-          }
-     }
-   else if (split_type == TILING_SPLIT_VERTICAL)
+	EINA_INLIST_FOREACH(root->children, itr)
+	{
+	   Evas_Coord itw = w * itr->weight;
+
+	   total_weight += itr->weight;
+	   _tiling_window_tree_level_apply(itr, x, y, itw, h, level + 1);
+	   x += itw;
+	}
+   } else if (split_type == TILING_SPLIT_VERTICAL)
      {
-        EINA_INLIST_FOREACH(root->children, itr)
-          {
-             Evas_Coord ith = h * itr->weight;
-             total_weight += itr->weight;
-             _tiling_window_tree_level_apply(itr, x, y, w, ith, level + 1);
-             y += ith;
-          }
+	EINA_INLIST_FOREACH(root->children, itr)
+	{
+	   Evas_Coord ith = h * itr->weight;
+
+	   total_weight += itr->weight;
+	   _tiling_window_tree_level_apply(itr, x, y, w, ith, level + 1);
+	   y += ith;
+	}
      }
 
    /* Adjust the last item's weight in case weight < 1.0 */
@@ -294,65 +295,62 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
 }
 
 void
-tiling_window_tree_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
-      Evas_Coord w, Evas_Coord h)
+tiling_window_tree_apply(Window_Tree * root, Evas_Coord x, Evas_Coord y,
+    Evas_Coord w, Evas_Coord h)
 {
    _tiling_window_tree_level_apply(root, x, y, w, h, 0);
 }
 
 static Window_Tree *
-_inlist_next(Window_Tree *it)
+_inlist_next(Window_Tree * it)
 {
    return (Window_Tree *) EINA_INLIST_GET(it)->next;
 }
 
 static Window_Tree *
-_inlist_prev(Window_Tree *it)
+_inlist_prev(Window_Tree * it)
 {
    return (Window_Tree *) EINA_INLIST_GET(it)->prev;
 }
 
 static Eina_Bool
-_tiling_window_tree_node_resize_direction(Window_Tree *node, Window_Tree *parent,
-      double dir_diff, int dir)
+_tiling_window_tree_node_resize_direction(Window_Tree * node,
+    Window_Tree * parent, double dir_diff, int dir)
 {
    double weight = 0.0;
    double weight_diff;
    Window_Tree *children_start;
    Window_Tree *itr;
-   Window_Tree *(*itr_func)(Window_Tree *);
+   Window_Tree *(*itr_func) (Window_Tree *);
 
    if (dir > 0)
      {
-        itr_func = _inlist_prev;
-        children_start = (Window_Tree *) parent->children->last;
-     }
-   else
+	itr_func = _inlist_prev;
+	children_start = (Window_Tree *) parent->children->last;
+   } else
      {
-        itr_func = _inlist_next;
-        children_start = (Window_Tree *) parent->children;
+	itr_func = _inlist_next;
+	children_start = (Window_Tree *) parent->children;
      }
-
 
    itr = (Window_Tree *) children_start;
    while (itr != node)
      {
-        weight += itr->weight;
+	weight += itr->weight;
 
-        itr = itr_func(itr);
+	itr = itr_func(itr);
      }
 
    /* If it's at the edge, try the grandpa of the parent. */
    if (weight == 0.0)
      {
-        if (parent->parent && parent->parent->parent)
-          {
-             return _tiling_window_tree_node_resize_direction(parent->parent,
-                   parent->parent->parent,
-                   1.0 + ((dir_diff - 1.) * node->weight),
-                   dir);
-          }
-        return EINA_FALSE;
+	if (parent->parent && parent->parent->parent)
+	  {
+	     return _tiling_window_tree_node_resize_direction(parent->parent,
+		 parent->parent->parent, 1.0 + ((dir_diff - 1.) * node->weight),
+		 dir);
+	  }
+	return EINA_FALSE;
      }
 
    weight_diff = itr->weight;
@@ -360,16 +358,17 @@ _tiling_window_tree_node_resize_direction(Window_Tree *node, Window_Tree *parent
    weight_diff -= itr->weight;
    weight_diff /= weight;
 
-   for (itr = children_start ; itr != node ; itr = itr_func(itr))
+   for (itr = children_start; itr != node; itr = itr_func(itr))
      {
-        itr->weight += itr->weight * weight_diff;
+	itr->weight += itr->weight * weight_diff;
      }
 
    return EINA_TRUE;
 }
 
 Eina_Bool
-tiling_window_tree_node_resize(Window_Tree *node, int w_dir, double w_diff, int h_dir, double h_diff)
+tiling_window_tree_node_resize(Window_Tree * node, int w_dir, double w_diff,
+    int h_dir, double h_diff)
 {
    Window_Tree *parent = node->parent;
    Window_Tree *w_parent, *h_parent;
@@ -380,90 +379,101 @@ tiling_window_tree_node_resize(Window_Tree *node, int w_dir, double w_diff, int 
       return EINA_FALSE;
 
    Window_Tree *grand_parent = parent->parent;
-   Tiling_Split_Type parent_split_type = _tiling_window_tree_split_type_get(parent);
+   Tiling_Split_Type parent_split_type =
+       _tiling_window_tree_split_type_get(parent);
 
    /* w_diff related changes. */
    if (parent_split_type == TILING_SPLIT_HORIZONTAL)
      {
-        w_parent = parent;
-        h_parent = grand_parent;
-     }
-   else
+	w_parent = parent;
+	h_parent = grand_parent;
+   } else
      {
-        w_parent = grand_parent;
-        h_parent = parent;
+	w_parent = grand_parent;
+	h_parent = parent;
      }
 
    if ((h_diff != 1.0) && h_parent)
      {
-        Window_Tree *tmp_node = (h_parent == parent) ? node : parent;
-        ret = ret || _tiling_window_tree_node_resize_direction(tmp_node, h_parent, h_diff, h_dir);
+	Window_Tree *tmp_node = (h_parent == parent) ? node : parent;
+
+	ret = ret ||
+	    _tiling_window_tree_node_resize_direction(tmp_node, h_parent,
+	    h_diff, h_dir);
      }
 
    if ((w_diff != 1.0) && w_parent)
      {
-        Window_Tree *tmp_node = (w_parent == parent) ? node : parent;
-        ret = ret || _tiling_window_tree_node_resize_direction(tmp_node, w_parent, w_diff, w_dir);
+	Window_Tree *tmp_node = (w_parent == parent) ? node : parent;
+
+	ret = ret ||
+	    _tiling_window_tree_node_resize_direction(tmp_node, w_parent,
+	    w_diff, w_dir);
      }
 
    return ret;
 }
 
 int
-_tiling_window_tree_edges_get_helper(Window_Tree *node, Tiling_Split_Type split_type, Eina_Bool gave_up_this,
-      Eina_Bool gave_up_parent)
+_tiling_window_tree_edges_get_helper(Window_Tree * node,
+    Tiling_Split_Type split_type, Eina_Bool gave_up_this,
+    Eina_Bool gave_up_parent)
 {
-   int ret = TILING_WINDOW_TREE_EDGE_LEFT | TILING_WINDOW_TREE_EDGE_RIGHT |
-      TILING_WINDOW_TREE_EDGE_TOP | TILING_WINDOW_TREE_EDGE_BOTTOM;
+   int ret =
+       TILING_WINDOW_TREE_EDGE_LEFT | TILING_WINDOW_TREE_EDGE_RIGHT |
+       TILING_WINDOW_TREE_EDGE_TOP | TILING_WINDOW_TREE_EDGE_BOTTOM;
    if (!node->parent)
      {
-        return ret;
-     }
-   else if (gave_up_this && gave_up_parent)
+	return ret;
+   } else if (gave_up_this && gave_up_parent)
      {
-        return 0;
-     }
-   else if (gave_up_this)
+	return 0;
+   } else if (gave_up_this)
      {
-        /* Mixed the gave_up vals on purpose, we do it on every call. */
-        return _tiling_window_tree_edges_get_helper(node->parent, !split_type ,gave_up_parent,
-              gave_up_this);
+	/* Mixed the gave_up vals on purpose, we do it on every call. */
+	return _tiling_window_tree_edges_get_helper(node->parent, !split_type,
+	    gave_up_parent, gave_up_this);
      }
 
    if (EINA_INLIST_GET(node)->prev)
      {
-        gave_up_this = EINA_TRUE;
-        ret ^= (split_type == TILING_SPLIT_HORIZONTAL) ?
-           TILING_WINDOW_TREE_EDGE_LEFT : TILING_WINDOW_TREE_EDGE_TOP;
+	gave_up_this = EINA_TRUE;
+	ret ^=
+	    (split_type ==
+	    TILING_SPLIT_HORIZONTAL) ? TILING_WINDOW_TREE_EDGE_LEFT :
+	    TILING_WINDOW_TREE_EDGE_TOP;
      }
 
    if (EINA_INLIST_GET(node)->next)
      {
-        gave_up_this = EINA_TRUE;
-        ret ^= (split_type == TILING_SPLIT_HORIZONTAL) ?
-           TILING_WINDOW_TREE_EDGE_RIGHT : TILING_WINDOW_TREE_EDGE_BOTTOM;
+	gave_up_this = EINA_TRUE;
+	ret ^=
+	    (split_type ==
+	    TILING_SPLIT_HORIZONTAL) ? TILING_WINDOW_TREE_EDGE_RIGHT :
+	    TILING_WINDOW_TREE_EDGE_BOTTOM;
      }
 
    /* Mixed the gave_up vals on purpose, we do it on every call. */
-   return ret & _tiling_window_tree_edges_get_helper(node->parent, !split_type ,gave_up_parent,
-         gave_up_this);
+   return ret & _tiling_window_tree_edges_get_helper(node->parent, !split_type,
+       gave_up_parent, gave_up_this);
 }
 
 int
-tiling_window_tree_edges_get(Window_Tree *node)
+tiling_window_tree_edges_get(Window_Tree * node)
 {
    Tiling_Split_Type split_type = _tiling_window_tree_split_type_get(node);
 
    return _tiling_window_tree_edges_get_helper(node, !split_type, EINA_FALSE,
-         EINA_FALSE);
+       EINA_FALSE);
 }
 
 /* Node move */
-static struct _Node_Move_Context {
-     Window_Tree *node;
-     Window_Tree *ret;
-     int cross_edge;
-     int best_match;
+static struct _Node_Move_Context
+{
+   Window_Tree *node;
+   Window_Tree *ret;
+   int cross_edge;
+   int best_match;
 } _node_move_ctx;
 
 #define CNODE (_node_move_ctx.node)
@@ -474,8 +484,8 @@ static struct _Node_Move_Context {
       CNODE->client->x, CNODE->client->w, node->client->x, node->client->w)
 
 static void
-_tiling_window_tree_node_move_if_match_set(Window_Tree *node, Evas_Coord cx,
-      Evas_Coord cw, Evas_Coord ox, Evas_Coord ow)
+_tiling_window_tree_node_move_if_match_set(Window_Tree * node, Evas_Coord cx,
+    Evas_Coord cw, Evas_Coord ox, Evas_Coord ow)
 {
    Evas_Coord leftx, rightx;
    int match;
@@ -486,8 +496,8 @@ _tiling_window_tree_node_move_if_match_set(Window_Tree *node, Evas_Coord cx,
 
    if (match > _node_move_ctx.best_match)
      {
-        _node_move_ctx.best_match = match;
-        _node_move_ctx.ret = node;
+	_node_move_ctx.best_match = match;
+	_node_move_ctx.ret = node;
      }
 }
 
@@ -502,24 +512,24 @@ _tiling_window_tree_node_move_walker(void *_node)
 
    switch (_node_move_ctx.cross_edge)
      {
-      case TILING_WINDOW_TREE_EDGE_LEFT:
-         if ((node->client->x + node->client->w) == CNODE->client->x)
-            IF_MATCH_SET_LR(node);
-         break;
-      case TILING_WINDOW_TREE_EDGE_RIGHT:
-         if (node->client->x == (CNODE->client->x + CNODE->client->w))
-            IF_MATCH_SET_LR(node);
-         break;
-      case TILING_WINDOW_TREE_EDGE_TOP:
-         if ((node->client->y + node->client->h) == CNODE->client->y)
-            IF_MATCH_SET_TB(node);
-         break;
-      case TILING_WINDOW_TREE_EDGE_BOTTOM:
-         if (node->client->y == (CNODE->client->y + CNODE->client->h))
-            IF_MATCH_SET_TB(node);
-         break;
-      default:
-         break;
+       case TILING_WINDOW_TREE_EDGE_LEFT:
+	  if ((node->client->x + node->client->w) == CNODE->client->x)
+	     IF_MATCH_SET_LR(node);
+	  break;
+       case TILING_WINDOW_TREE_EDGE_RIGHT:
+	  if (node->client->x == (CNODE->client->x + CNODE->client->w))
+	     IF_MATCH_SET_LR(node);
+	  break;
+       case TILING_WINDOW_TREE_EDGE_TOP:
+	  if ((node->client->y + node->client->h) == CNODE->client->y)
+	     IF_MATCH_SET_TB(node);
+	  break;
+       case TILING_WINDOW_TREE_EDGE_BOTTOM:
+	  if (node->client->y == (CNODE->client->y + CNODE->client->h))
+	     IF_MATCH_SET_TB(node);
+	  break;
+       default:
+	  break;
      }
 }
 
@@ -528,11 +538,12 @@ _tiling_window_tree_node_move_walker(void *_node)
 #undef IF_MATCH_SET_TB
 
 void
-tiling_window_tree_node_move(Window_Tree *node, int cross_edge)
+tiling_window_tree_node_move(Window_Tree * node, int cross_edge)
 {
    Window_Tree *root = node;
-   /* FIXME: This is very slow and possibly buggy. Can be done much better,
-    * but is very easy to implement. */
+
+   /* FIXME: This is very slow and possibly buggy. Can be done much better, but
+    * is very easy to implement. */
 
    while (root->parent)
       root = root->parent;
@@ -546,22 +557,24 @@ tiling_window_tree_node_move(Window_Tree *node, int cross_edge)
 
    if (_node_move_ctx.ret)
      {
-        E_Client *ec = node->client;
-        node->client = _node_move_ctx.ret->client;
-        _node_move_ctx.ret->client = ec;
+	E_Client *ec = node->client;
+
+	node->client = _node_move_ctx.ret->client;
+	_node_move_ctx.ret->client = ec;
      }
 }
+
 /* End Node move. */
 
 void
-tiling_window_tree_dump(Window_Tree *root, int level)
+tiling_window_tree_dump(Window_Tree * root, int level)
 {
    int i;
 
    if (!root)
       return;
 
-   for (i = 0 ; i < level ; i++)
+   for (i = 0; i < level; i++)
       printf(" ");
 
    if (root->children)
@@ -572,8 +585,9 @@ tiling_window_tree_dump(Window_Tree *root, int level)
    printf("%f (%p)\n", root->weight, root->client);
 
    Window_Tree *itr;
+
    EINA_INLIST_FOREACH(root->children, itr)
-     {
-        tiling_window_tree_dump(itr, level + 1);
-     }
+   {
+      tiling_window_tree_dump(itr, level + 1);
+   }
 }
