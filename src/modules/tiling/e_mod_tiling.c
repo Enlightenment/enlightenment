@@ -176,8 +176,8 @@ change_window_border(E_Client   *ec,
 }
 
 static Eina_Bool
-_info_hash_update(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__,
-                  void *data, void *fdata __UNUSED__)
+_info_hash_update(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
+                  void *data, void *fdata EINA_UNUSED)
 {
     Tiling_Info *tinfo = data;
 
@@ -536,8 +536,8 @@ toggle_floating(E_Client *ec)
 }
 
 static void
-_e_mod_action_toggle_floating_cb(E_Object   *obj __UNUSED__,
-                                 const char *params __UNUSED__)
+_e_mod_action_toggle_floating_cb(E_Object   *obj EINA_UNUSED,
+                                 const char *params EINA_UNUSED)
 {
     toggle_floating(e_client_focused_get());
 }
@@ -603,7 +603,7 @@ _e_mod_action_swap_window_end_mouse(E_Object * obj EINA_UNUSED, const char *para
 }
 
 static void
-_e_mod_menu_border_cb(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_e_mod_menu_border_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    E_Client *ec = data;
 
@@ -641,29 +641,29 @@ _action_swap(int cross_edge)
 }
 
 static void
-_e_mod_action_move_left_cb(E_Object   *obj __UNUSED__,
-                      const char *params __UNUSED__)
+_e_mod_action_move_left_cb(E_Object   *obj EINA_UNUSED,
+                      const char *params EINA_UNUSED)
 {
    _action_swap(TILING_WINDOW_TREE_EDGE_LEFT);
 }
 
 static void
-_e_mod_action_move_right_cb(E_Object   *obj __UNUSED__,
-                      const char *params __UNUSED__)
+_e_mod_action_move_right_cb(E_Object   *obj EINA_UNUSED,
+                      const char *params EINA_UNUSED)
 {
    _action_swap(TILING_WINDOW_TREE_EDGE_RIGHT);
 }
 
 static void
-_e_mod_action_move_up_cb(E_Object   *obj __UNUSED__,
-                      const char *params __UNUSED__)
+_e_mod_action_move_up_cb(E_Object   *obj EINA_UNUSED,
+                      const char *params EINA_UNUSED)
 {
    _action_swap(TILING_WINDOW_TREE_EDGE_TOP);
 }
 
 static void
-_e_mod_action_move_down_cb(E_Object   *obj __UNUSED__,
-                      const char *params __UNUSED__)
+_e_mod_action_move_down_cb(E_Object   *obj EINA_UNUSED,
+                      const char *params EINA_UNUSED)
 {
    _action_swap(TILING_WINDOW_TREE_EDGE_BOTTOM);
 }
@@ -672,8 +672,8 @@ _e_mod_action_move_down_cb(E_Object   *obj __UNUSED__,
 /* Toggle split mode {{{ */
 
 static void
-_e_mod_action_toggle_split_mode(E_Object   *obj __UNUSED__,
-                                 const char *params __UNUSED__)
+_e_mod_action_toggle_split_mode(E_Object   *obj EINA_UNUSED,
+                                 const char *params EINA_UNUSED)
 {
     E_Desk *desk;
 
@@ -853,7 +853,7 @@ _resize_begin_hook(void *data EINA_UNUSED, E_Client *ec)
 }
 
 static Eina_Bool
-_resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
+_resize_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
 {
     E_Client *ec = event->ec;
 
@@ -863,7 +863,7 @@ _resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 }
 
 static Eina_Bool
-_move_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client*event)
+_move_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client*event)
 {
     E_Client *ec = event->ec;
     Client_Extra *extra = tiling_entry_func(ec);
@@ -883,7 +883,7 @@ _move_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client*event)
 }
 
 static Eina_Bool
-_add_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
+_add_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
 {
     E_Client *ec = event->ec;
 
@@ -904,7 +904,7 @@ _add_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 }
 
 static Eina_Bool
-_remove_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
+_remove_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
 {
     E_Client *ec = event->ec;
 
@@ -924,7 +924,7 @@ _remove_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 }
 
 static bool
-_iconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
+_iconify_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
 {
     E_Client *ec = event->ec;
 
@@ -939,7 +939,7 @@ _iconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
 }
 
 static bool
-_uniconify_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
+_uniconify_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
 {
     E_Client *ec = event->ec;
 
@@ -973,21 +973,21 @@ toggle_sticky(E_Client *ec)
 }
 
 static Eina_Bool
-_stick_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
+_stick_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
 {
    toggle_sticky(event->ec);
    return true;
 }
 
 static Eina_Bool
-_unstick_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client *event)
+_unstick_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
 {
    toggle_sticky(event->ec);
    return true;
 }
 
 static Eina_Bool
-_desk_show_hook(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_desk_show_hook(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
     _G.currently_switching_desktop = 0;
 
@@ -995,7 +995,7 @@ _desk_show_hook(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED
 }
 
 static Eina_Bool
-_desk_before_show_hook(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+_desk_before_show_hook(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
     _G.currently_switching_desktop = 1;
 
@@ -1003,7 +1003,7 @@ _desk_before_show_hook(void *data __UNUSED__, int type __UNUSED__, void *event _
 }
 
 static bool
-_desk_set_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Client_Desk_Set *ev)
+_desk_set_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client_Desk_Set *ev)
 {
     DBG("%p: from (%d,%d) to (%d,%d)", ev->ec,
         ev->desk->x, ev->desk->y,
@@ -1036,7 +1036,7 @@ _compositor_resize_hook_desk_reapply(E_Desk *desk)
 }
 
 static bool
-_compositor_resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Compositor_Resize *ev EINA_UNUSED)
+_compositor_resize_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Compositor_Resize *ev EINA_UNUSED)
 {
    _foreach_desk(_compositor_resize_hook_desk_reapply);
 
@@ -1044,7 +1044,7 @@ _compositor_resize_hook(void *data __UNUSED__, int type __UNUSED__, E_Event_Comp
 }
 
 static void
-_bd_hook(void *d __UNUSED__, E_Client *ec)
+_bd_hook(void *d EINA_UNUSED, E_Client *ec)
 {
    E_Menu_Item *mi;
    E_Menu *m;
@@ -1290,7 +1290,7 @@ _foreach_desk(void (*func)(E_Desk *desk))
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m __UNUSED__)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
     _disable_all_tiling();
 
@@ -1361,7 +1361,7 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
 }
 
 EAPI int
-e_modapi_save(E_Module *m __UNUSED__)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
     e_config_domain_save("module.tiling", _G.config_edd, tiling_g.config);
 
