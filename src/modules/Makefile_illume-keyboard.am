@@ -1,9 +1,28 @@
+EXTRA_DIST += illume-keyboard/e-module-illume-keyboard.edj \
+illume-keyboard/module.desktop.in \
+illume-keyboard/keyboards/ignore_built_in_keyboards \
+illume-keyboard/keyboards/Default.kbd \
+illume-keyboard/keyboards/alpha.png \
+illume-keyboard/keyboards/Numbers.kbd \
+illume-keyboard/keyboards/numeric.png \
+illume-keyboard/keyboards/Terminal.kbd \
+illume-keyboard/keyboards/qwerty.png \
+illume-keyboard/keyboards/up.png \
+illume-keyboard/keyboards/down.png \
+illume-keyboard/keyboards/left.png \
+illume-keyboard/keyboards/right.png \
+illume-keyboard/keyboards/shift.png \
+illume-keyboard/keyboards/tab.png \
+illume-keyboard/keyboards/enter.png \
+illume-keyboard/keyboards/backspace.png \
+illume-keyboard/dicts/English_US.dic \
+illume-keyboard/dicts/English_US_Small.dic
+
+
+if USE_MODULE_ILLUME2
 illume_keyboarddir = $(MDIR)/illume-keyboard
 illume_keyboard_DATA = illume-keyboard/e-module-illume-keyboard.edj \
 		       illume-keyboard/module.desktop
-
-EXTRA_DIST += illume-keyboard/e-module-illume-keyboard.edj \
-	      illume-keyboard/module.desktop.in
 
 
 # keyboards
@@ -24,14 +43,12 @@ illumekeyboards_DATA = illume-keyboard/keyboards/ignore_built_in_keyboards \
 		       illume-keyboard/keyboards/enter.png \
 		       illume-keyboard/keyboards/backspace.png
 
-EXTRA_DIST += $(illumekeyboards_DATA)
 
 # dicts
 illumedictsdir = $(MDIR)/illume-keyboard/dicts
 illumedicts_DATA = illume-keyboard/dicts/English_US.dic \
 		   illume-keyboard/dicts/English_US_Small.dic
 
-EXTRA_DIST += $(illumedicts_DATA)
 
 
 illume_keyboardpkgdir = $(MDIR)/illume-keyboard/$(MODULE_ARCH)
@@ -51,6 +68,7 @@ illume_keyboard_module_la_SOURCES = illume-keyboard/e_mod_main.c \
 				    illume-keyboard/e_mod_config.h
 
 # TODO: incomplete
-.PHONY: illume_keyboard install-illume_keyboard
+PHONIES += illume_keyboard install-illume_keyboard
 illume_keyboard: $(illume_keyboardpkg_LTLIBRARIES) $(illume_keyboard_DATA)
 install-illume_keyboard: install-illume_keyboardDATA install-illume_keyboardpkgLTLIBRARIES
+endif

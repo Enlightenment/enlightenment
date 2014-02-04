@@ -1,14 +1,17 @@
+EXTRA_DIST += shot/module.desktop.in \
+shot/e-module-shot.edj
+if USE_MODULE_SHOT
 shotdir = $(MDIR)/shot
 shot_DATA = shot/e-module-shot.edj \
 	    shot/module.desktop
 
-EXTRA_DIST += $(shot_DATA)
 
 shotpkgdir = $(MDIR)/shot/$(MODULE_ARCH)
 shotpkg_LTLIBRARIES = shot/module.la
 
 shot_module_la_SOURCES = shot/e_mod_main.c
 
-.PHONY: shot install-shot
+PHONIES += shot install-shot
 shot: $(shotpkg_LTLIBRARIES) $(shot_DATA)
 install-shot: install-shotDATA install-shotpkgLTLIBRARIES
+endif

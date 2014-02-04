@@ -1,7 +1,8 @@
+EXTRA_DIST += conf_theme/module.desktop.in
+if USE_MODULE_CONF_THEME
 conf_themedir = $(MDIR)/conf_theme
 conf_theme_DATA = conf_theme/module.desktop
 
-EXTRA_DIST += $(conf_theme_DATA)
 
 conf_themepkgdir = $(MDIR)/conf_theme/$(MODULE_ARCH)
 conf_themepkg_LTLIBRARIES = conf_theme/module.la
@@ -18,6 +19,7 @@ conf_theme_module_la_SOURCES = conf_theme/e_mod_main.c \
 			       conf_theme/e_int_config_wallpaper.c \
 			       conf_theme/e_int_config_xsettings.c
 
-.PHONY: conf_theme install-conf_theme
+PHONIES += conf_theme install-conf_theme
 conf_theme: $(conf_themepkg_LTLIBRARIES) $(conf_theme_DATA)
 install-conf_theme: install-conf_themeDATA install-conf_themepkgLTLIBRARIES
+endif

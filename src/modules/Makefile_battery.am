@@ -1,8 +1,10 @@
+EXTRA_DIST += battery/module.desktop.in \
+battery/e-module-battery.edj
+if USE_MODULE_BATTERY
 batterydir = $(MDIR)/battery
 battery_DATA = battery/e-module-battery.edj \
 	       battery/module.desktop
 
-EXTRA_DIST += $(battery_DATA)
 
 batterypkgdir = $(MDIR)/battery/$(MODULE_ARCH)
 batterypkg_LTLIBRARIES = battery/module.la
@@ -34,6 +36,7 @@ battery_batget_SOURCES = battery/batget.c
 battery_batget_LDADD   = @BATTERY_LIBS@
 battery_batget_LDFLAGS = @BATTERY_LDFLAGS@
 
-.PHONY: battery install-battery
+PHONIES += battery install-battery
 battery: $(batterypkg_LTLIBRARIES) $(battery_DATA) $(batget_PROGRAMS)
 install-battery: install-batteryDATA install-batterypkgLTLIBRARIES install-batgetPROGRAMS
+endif

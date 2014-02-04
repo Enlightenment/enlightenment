@@ -1,8 +1,10 @@
+EXTRA_DIST += fileman/module.desktop.in \
+fileman/e-module-fileman.edj
+if USE_MODULE_FILEMAN
 filemandir = $(MDIR)/fileman
 fileman_DATA = fileman/e-module-fileman.edj \
 	       fileman/module.desktop
 
-EXTRA_DIST += $(fileman_DATA)
 
 filemanpkgdir = $(MDIR)/fileman/$(MODULE_ARCH)
 filemanpkg_LTLIBRARIES = fileman/module.la
@@ -17,6 +19,7 @@ fileman_module_la_SOURCES = fileman/e_mod_main.c \
 			    fileman/e_mod_dbus.c \
 			    fileman/e_mod_menu.c
 
-.PHONY: fileman install-fileman
+PHONIES += fileman install-fileman
 fileman: $(filemanpkg_LTLIBRARIES) $(fileman_DATA)
 install-fileman: install-filemanDATA install-filemanpkgLTLIBRARIES
+endif

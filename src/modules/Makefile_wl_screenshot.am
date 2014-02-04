@@ -1,11 +1,11 @@
+EXTRA_DIST += wl_screenshot/module.desktop.in \
+wl_screenshot/e-module-wl_screenshot.edj \
+wl_screenshot/e_screenshooter_client_protocol.h \
+wl_screenshot/e_screenshooter_client_protocol.c
+if USE_MODULE_WL_SCREENSHOT
 wl_screenshotdir = $(MDIR)/wl_screenshot
 wl_screenshot_DATA = wl_screenshot/e-module-wl_screenshot.edj \
 	       wl_screenshot/module.desktop
-
-EXTRA_DIST += wl_screenshot/e-module-wl_screenshot.edj \
-	      wl_screenshot/module.desktop.in \
-	      wl_screenshot/e_screenshooter_client_protocol.h \
-	      wl_screenshot/e_screenshooter_client_protocol.c
 
 wl_screenshotpkgdir = $(MDIR)/wl_screenshot/$(MODULE_ARCH)
 wl_screenshotpkg_LTLIBRARIES = wl_screenshot/module.la
@@ -18,6 +18,7 @@ wl_screenshot_module_la_SOURCES = wl_screenshot/e_mod_main.c \
                             wl_screenshot/e_screenshooter_client_protocol.h \
                             wl_screenshot/e_screenshooter_client_protocol.c
 # TODO: incomplete
-#.PHONY: wl_screenshot install-wl_screenshot
+#PHONIES += wl_screenshot install-wl_screenshot
 #wl_screenshot: $(wl_screenshotpkg_LTLIBRARIES) $(wl_screenshot_DATA)
 #install-wl_screenshot: install-wl_screenshotDATA install-wl_screenshotpkgLTLIBRARIES
+endif

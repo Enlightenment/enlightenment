@@ -1,3 +1,10 @@
+EXTRA_DIST += wizard/module.desktop.in \
+wizard/e-module-wizard.edj \
+wizard/data/def-ibar.txt \
+wizard/data/desktop/home.desktop \
+wizard/data/desktop/root.desktop \
+wizard/data/desktop/tmp.desktop
+if USE_MODULE_WIZARD
 wizarddir = $(MDIR)/wizard
 wizard_DATA = wizard/data/def-ibar.txt
 
@@ -6,7 +13,6 @@ wizard_desktop_DATA = wizard/data/desktop/home.desktop \
 		      wizard/data/desktop/root.desktop \
 		      wizard/data/desktop/tmp.desktop
 
-EXTRA_DIST += $(wizard_DATA) $(wizard_desktop_DATA)
 
 ### dont install these - this way e wont list the module for people to
 #wizard_DATA = wizard/e-module-wizard.edj \
@@ -85,6 +91,7 @@ wizard_page_180_la_SOURCES        = wizard/page_180.c
 
 wizard_page_200_la_SOURCES        = wizard/page_200.c
 
-.PHONY: wizard install-wizard
+PHONIES += wizard install-wizard
 wizard: $(wizardpkg_LTLIBRARIES) $(wizard_DATA)
 install-wizard: install-wizardDATA install-wizardpkgLTLIBRARIES
+endif

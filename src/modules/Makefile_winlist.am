@@ -1,8 +1,10 @@
+EXTRA_DIST += winlist/module.desktop.in \
+winlist/e-module-winlist.edj
+if USE_MODULE_WINLIST
 winlistdir = $(MDIR)/winlist
 winlist_DATA = winlist/e-module-winlist.edj \
 	       winlist/module.desktop
 
-EXTRA_DIST += $(winlist_DATA)
 
 winlistpkgdir = $(MDIR)/winlist/$(MODULE_ARCH)
 winlistpkg_LTLIBRARIES = winlist/module.la
@@ -13,6 +15,7 @@ winlist_module_la_SOURCES = winlist/e_mod_main.h \
 			    winlist/e_winlist.h \
 			    winlist/e_winlist.c
 
-.PHONY: winlist install-winlist
+PHONIES += winlist install-winlist
 winlist: $(winlistpkg_LTLIBRARIES) $(winlist_DATA)
 install-winlist: install-winlistDATA install-winlistpkgLTLIBRARIES
+endif

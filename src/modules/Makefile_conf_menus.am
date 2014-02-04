@@ -1,8 +1,10 @@
+EXTRA_DIST += conf_menus/module.desktop.in \
+conf_menus/e-module-conf_menus.edj
+if USE_MODULE_CONF_MENUS
 conf_menusdir = $(MDIR)/conf_menus
 conf_menus_DATA = conf_menus/e-module-conf_menus.edj \
 		  conf_menus/module.desktop
 
-EXTRA_DIST += $(conf_menus_DATA)
 
 conf_menuspkgdir = $(MDIR)/conf_menus/$(MODULE_ARCH)
 conf_menuspkg_LTLIBRARIES = conf_menus/module.la
@@ -11,6 +13,7 @@ conf_menus_module_la_SOURCES = conf_menus/e_mod_main.c \
 			       conf_menus/e_mod_main.h \
 			       conf_menus/e_int_config_menus.c
 
-.PHONY: conf_menus install-conf_menus
+PHONIES += conf_menus install-conf_menus
 conf_menus: $(conf_menuspkg_LTLIBRARIES) $(conf_menus_DATA)
 install-conf_menus: install-conf_menusDATA install-conf_menuspkgLTLIBRARIES
+endif

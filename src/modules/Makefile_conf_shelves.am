@@ -1,8 +1,10 @@
+EXTRA_DIST += conf_shelves/module.desktop.in \
+conf_shelves/e-module-conf_shelves.edj
+if USE_MODULE_CONF_SHELVES
 conf_shelvesdir = $(MDIR)/conf_shelves
 conf_shelves_DATA = conf_shelves/e-module-conf_shelves.edj \
 		    conf_shelves/module.desktop
 
-EXTRA_DIST += $(conf_shelves_DATA)
 
 conf_shelvespkgdir = $(MDIR)/conf_shelves/$(MODULE_ARCH)
 conf_shelvespkg_LTLIBRARIES = conf_shelves/module.la
@@ -12,6 +14,7 @@ conf_shelves_module_la_SOURCES = conf_shelves/e_mod_main.c \
 				 conf_shelves/e_int_config_shelf.c \
 				 conf_shelves/e_int_config_shelf.h
 
-.PHONY: conf_shelves install-conf_shelves
+PHONIES += conf_shelves install-conf_shelves
 conf_shelves: $(conf_shelvespkg_LTLIBRARIES) $(conf_shelves_DATA)
 install-conf_shelves: install-conf_shelvesDATA install-conf_shelvespkgLTLIBRARIES
+endif

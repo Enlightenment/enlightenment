@@ -1,8 +1,10 @@
+EXTRA_DIST += conf_randr/module.desktop.in \
+conf_randr/e-module-conf_randr.edj
+if USE_MODULE_CONF_RANDR
 conf_randrdir = $(MDIR)/conf_randr
 conf_randr_DATA = conf_randr/e-module-conf_randr.edj \
 		  conf_randr/module.desktop
 
-EXTRA_DIST += $(conf_randr_DATA)
 
 conf_randrpkgdir = $(MDIR)/conf_randr/$(MODULE_ARCH)
 conf_randrpkg_LTLIBRARIES = conf_randr/module.la
@@ -16,6 +18,7 @@ conf_randr_module_la_SOURCES = conf_randr/e_mod_main.c \
                                conf_randr/e_smart_monitor.c \
                                conf_randr/e_smart_monitor.h
 
-.PHONY: conf_randr install-conf_randr
+PHONIES += conf_randr install-conf_randr
 conf_randr: $(conf_randrpkg_LTLIBRARIES) $(conf_randr_DATA)
 install-conf_randr: install-conf_randrDATA install-conf_randrpkgLTLIBRARIES
+endif
