@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/quickaccess/module.desktop.in \
+src/modules/quickaccess/e-module-quickaccess.edj
+if USE_MODULE_QUICKACCESS
 quickaccessdir = $(MDIR)/quickaccess
 quickaccess_DATA = src/modules/quickaccess/e-module-quickaccess.edj \
 		   src/modules/quickaccess/module.desktop
 
-EXTRA_DIST += $(quickaccess_DATA)
 
 quickaccesspkgdir = $(MDIR)/quickaccess/$(MODULE_ARCH)
 quickaccesspkg_LTLIBRARIES = src/modules/quickaccess/module.la
@@ -20,3 +22,4 @@ src/modules/quickaccess/e_quickaccess_db.c
 PHONIES += quickaccess install-quickaccess
 quickaccess: $(quickaccesspkg_LTLIBRARIES) $(quickaccess_DATA)
 install-quickaccess: install-quickaccessDATA install-quickaccesspkgLTLIBRARIES
+endif

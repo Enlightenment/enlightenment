@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/conf_dialogs/module.desktop.in \
+src/modules/conf_dialogs/e-module-conf_dialogs.edj
+if USE_MODULE_CONF_DIALOGS
 conf_dialogsdir = $(MDIR)/conf_dialogs
 conf_dialogs_DATA = src/modules/conf_dialogs/e-module-conf_dialogs.edj \
 		    src/modules/conf_dialogs/module.desktop
 
-EXTRA_DIST += $(conf_dialogs_DATA)
 
 conf_dialogspkgdir = $(MDIR)/conf_dialogs/$(MODULE_ARCH)
 conf_dialogspkg_LTLIBRARIES = src/modules/conf_dialogs/module.la
@@ -18,3 +20,4 @@ src_modules_conf_dialogs_module_la_SOURCES = src/modules/conf_dialogs/e_mod_main
 PHONIES += conf_dialogs install-conf_dialogs
 conf_dialogs: $(conf_dialogspkg_LTLIBRARIES) $(conf_dialogs_DATA)
 install-conf_dialogs: install-conf_dialogsDATA install-conf_dialogspkgLTLIBRARIES
+endif

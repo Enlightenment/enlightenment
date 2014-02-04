@@ -1,7 +1,8 @@
+EXTRA_DIST += src/modules/conf_wallpaper2/module.desktop.in
+if USE_MODULE_CONF_WALLPAPER2
 conf_wallpaper2dir = $(MDIR)/conf_wallpaper2
 conf_wallpaper2_DATA = src/modules/conf_wallpaper2/module.desktop
 
-EXTRA_DIST += $(conf_wallpaper2_DATA)
 
 conf_wallpaper2pkgdir = $(MDIR)/conf_wallpaper2/$(MODULE_ARCH)
 conf_wallpaper2pkg_LTLIBRARIES = src/modules/conf_wallpaper2/module.la
@@ -16,3 +17,4 @@ src_modules_conf_wallpaper2_module_la_SOURCES = src/modules/conf_wallpaper2/e_mo
 PHONIES += conf_wallpaper2 install-conf_wallpaper2
 conf_wallpaper2: $(conf_wallpaper2pkg_LTLIBRARIES) $(conf_wallpaper2_DATA)
 install-conf_wallpaper2: install-conf_wallpaper2DATA install-conf_wallpaper2pkgLTLIBRARIES
+endif

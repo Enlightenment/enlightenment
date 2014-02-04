@@ -1,3 +1,4 @@
+if USE_MODULE_WL_X11
 wl_x11dir = $(MDIR)/wl_x11
 
 wl_x11pkgdir = $(MDIR)/wl_x11/$(MODULE_ARCH)
@@ -13,3 +14,4 @@ src_modules_wl_x11_module_la_SOURCES = src/modules/wl_x11/e_mod_main.c
 #.PHONY: wl_x11 install-wl_x11
 #wl_x11: $(wl_x11pkg_LTLIBRARIES) $(wl_x11_DATA)
 #install-wl_x11: install-wl_x11DATA install-wl_x11pkgLTLIBRARIES
+endif

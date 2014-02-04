@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/ibox/module.desktop.in \
+src/modules/ibox/e-module-ibox.edj
+if USE_MODULE_IBOX
 iboxdir = $(MDIR)/ibox
 ibox_DATA = src/modules/ibox/e-module-ibox.edj \
 	    src/modules/ibox/module.desktop
 
-EXTRA_DIST += $(ibox_DATA)
 
 iboxpkgdir = $(MDIR)/ibox/$(MODULE_ARCH)
 iboxpkg_LTLIBRARIES = src/modules/ibox/module.la
@@ -17,3 +19,4 @@ src_modules_ibox_module_la_SOURCES = src/modules/ibox/e_mod_main.c \
 PHONIES += ibox install-ibox
 ibox: $(iboxpkg_LTLIBRARIES) $(ibox_DATA)
 install-ibox: install-iboxDATA install-iboxpkgLTLIBRARIES
+endif

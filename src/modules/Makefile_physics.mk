@@ -2,7 +2,6 @@ physicsdir = $(MDIR)/physics
 physics_DATA = src/modules/physics/e-module-physics.edj \
 	       src/modules/physics/module.desktop
 
-EXTRA_DIST += $(physics_DATA)
 
 src_modules_physics_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_physics_module_la_CPPFLAGS += @EPHYSICS_CFLAGS@

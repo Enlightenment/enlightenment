@@ -1,7 +1,8 @@
+EXTRA_DIST += src/modules/conf_bindings/module.desktop.in
+if USE_MODULE_CONF_BINDINGS
 conf_bindingsdir = $(MDIR)/conf_bindings
 conf_bindings_DATA = src/modules/conf_bindings/module.desktop
 
-EXTRA_DIST += $(conf_bindings_DATA)
 
 conf_bindingspkgdir = $(MDIR)/conf_bindings/$(MODULE_ARCH)
 conf_bindingspkg_LTLIBRARIES = src/modules/conf_bindings/module.la
@@ -20,3 +21,4 @@ src_modules_conf_bindings_module_la_SOURCES = src/modules/conf_bindings/e_mod_ma
 PHONIES += conf_bindings install-conf_bindings
 conf_bindings: $(conf_bindingspkg_LTLIBRARIES) $(conf_bindings_DATA)
 install-conf_bindings: install-conf_bindingsDATA install-conf_bindingspkgLTLIBRARIES
+endif

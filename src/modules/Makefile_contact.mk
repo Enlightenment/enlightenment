@@ -1,9 +1,9 @@
+EXTRA_DIST += src/modules/contact/module.desktop.in \
+src/modules/contact/e-module-contact.edj
+if USE_MODULE_CONTACT
 contactdir = $(MDIR)/contact
 contact_DATA = src/modules/contact/e-module-contact.edj \
 	       src/modules/contact/module.desktop
-
-EXTRA_DIST += src/modules/contact/e-module-contact.edj \
-	      src/modules/contact/module.desktop.in
 
 contactpkgdir = $(MDIR)/contact/$(MODULE_ARCH)
 contactpkg_LTLIBRARIES = src/modules/contact/module.la
@@ -22,3 +22,4 @@ src_modules_contact_module_la_SOURCES = src/modules/contact/e_mod_main.c \
 PHONIES += contact install-contact
 contact: $(contactpkg_LTLIBRARIES) $(contact_DATA)
 install-contact: install-contactDATA install-contactpkgLTLIBRARIES
+endif

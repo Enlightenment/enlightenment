@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/connman/module.desktop.in \
+src/modules/connman/e-module-connman.edj
+if USE_MODULE_CONNMAN
 connmandir = $(MDIR)/connman
 connman_DATA = src/modules/connman/e-module-connman.edj \
 	       src/modules/connman/module.desktop
 
-EXTRA_DIST += $(connman_DATA)
 
 connmanpkgdir = $(MDIR)/connman/$(MODULE_ARCH)
 connmanpkg_LTLIBRARIES = src/modules/connman/module.la
@@ -21,3 +23,4 @@ src_modules_connman_module_la_LIBADD = $(MOD_LIBS) @ECONNMAN_LIBS@
 PHONIES += connman install-connman
 connman: $(connmanpkg_LTLIBRARIES) $(connman_DATA)
 install-connman: install-connmanDATA install-connmanpkgLTLIBRARIES
+endif

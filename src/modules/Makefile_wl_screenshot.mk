@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/wl_screenshot/module.desktop.in \
+src/modules/wl_screenshot/e-module-wl_screenshot.edj
+if USE_MODULE_WL_SCREENSHOT
 wl_screenshotdir = $(MDIR)/wl_screenshot
 wl_screenshot_DATA = src/modules/wl_screenshot/e-module-wl_screenshot.edj \
 	       src/modules/wl_screenshot/module.desktop
 
-EXTRA_DIST += src/modules/wl_screenshot/e-module-wl_screenshot.edj \
 	      src/modules/wl_screenshot/module.desktop.in \
 	      src/modules/wl_screenshot/e_screenshooter_client_protocol.h \
 	      src/modules/wl_screenshot/e_screenshooter_client_protocol.c
@@ -22,3 +24,4 @@ wl_screenshot_module_la_SOURCES = src/modules/wl_screenshot/e_mod_main.c \
 PHONIES: wl_screenshot install-wl_screenshot
 wl_screenshot: $(wl_screenshotpkg_LTLIBRARIES) $(wl_screenshot_DATA)
 install-wl_screenshot: install-wl_screenshotDATA install-wl_screenshotpkgLTLIBRARIES
+endif

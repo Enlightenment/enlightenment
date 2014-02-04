@@ -1,9 +1,12 @@
+EXTRA_DIST += src/modules/everything/module.desktop.in \
+src/modules/everything/e-module-everything.edj \
+src/modules/everything/e-module-everything-start.edj
+if USE_MODULE_EVERYTHING
 everythingdir = $(MDIR)/everything
 everything_DATA = src/modules/everything/e-module-everything.edj \
 		  src/modules/everything/e-module-everything-start.edj \
 		  src/modules/everything/module.desktop
 
-EXTRA_DIST += $(everything_DATA)
 
 everythingpkgdir = $(MDIR)/everything/$(MODULE_ARCH)
 everythingpkg_LTLIBRARIES = src/modules/everything/module.la
@@ -44,9 +47,9 @@ dist_everything_headers_DATA = $(EVRYHEADERS)
 
 everything_pkgconfigdir = $(libdir)/pkgconfig
 everything_pkgconfig_DATA = src/modules/everything/everything.pc
-EXTRA_DIST += src/modules/everything/everything.pc.in
 DISTCLEANFILES += src/modules/everything/everything.pc
 
 PHONIES += everything install-everything
 everything: $(everythingpkg_LTLIBRARIES) $(everything_DATA)
 install-everything: install-everythingDATA install-everythingpkgLTLIBRARIES install-everything_pkgconfig_DATA
+endif

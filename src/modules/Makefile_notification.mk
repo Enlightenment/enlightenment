@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/notification/module.desktop.in \
+src/modules/notification/e-module-notification.edj
+if USE_MODULE_NOTIFICATION
 notificationdir = $(MDIR)/notification
 notification_DATA = src/modules/notification/e-module-notification.edj \
 		    src/modules/notification/module.desktop
 
-EXTRA_DIST += $(notification_DATA)
 
 notificationpkgdir = $(MDIR)/notification/$(MODULE_ARCH)
 notificationpkg_LTLIBRARIES = src/modules/notification/module.la
@@ -19,3 +21,4 @@ src_modules_notification_module_la_LIBADD = $(MOD_LIBS) @ENOTIFY_LIBS@
 PHONIES += notification install-notification
 notification: $(notificationpkg_LTLIBRARIES) $(notification_DATA)
 install-notification: install-notificationDATA install-notificationpkgLTLIBRARIES
+endif

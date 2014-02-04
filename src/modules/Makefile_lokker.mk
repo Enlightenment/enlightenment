@@ -1,7 +1,7 @@
+if USE_MODULE_LOKKER
 lokkerdir = $(MDIR)/lokker
 ##lokker_DATA = \
 ##src/modules/lokker/e-module-lokker.edj
-##EXTRA_DIST += $(lokker_DATA)
 
 lokkerpkgdir = $(MDIR)/lokker/$(MODULE_ARCH)
 lokkerpkg_LTLIBRARIES = src/modules/lokker/module.la
@@ -17,3 +17,4 @@ src/modules/lokker/e_mod_main.h
 PHONIES += lokker install-lokker
 lokker: $(lokkerpkg_LTLIBRARIES) #$(lokker_DATA)
 install-lokker: install-lokkerpkgLTLIBRARIES #install-lokkerDATA
+endif

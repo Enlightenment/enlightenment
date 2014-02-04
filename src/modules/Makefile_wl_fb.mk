@@ -1,3 +1,4 @@
+if USE_MODULE_WL_FB
 wl_fbdir = $(MDIR)/wl_fb
 
 wl_fbpkgdir = $(MDIR)/wl_fb/$(MODULE_ARCH)
@@ -13,3 +14,4 @@ src_modules_wl_fb_module_la_SOURCES = src/modules/wl_fb/e_mod_main.c
 #.PHONY: wl_fb install-wl_fb
 #wl_fb: $(wl_fbpkg_LTLIBRARIES) $(wl_fb_DATA)
 #install-wl_fb: install-wl_fbDATA install-wl_fbpkgLTLIBRARIES
+endif

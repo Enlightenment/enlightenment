@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/xkbswitch/module.desktop.in \
+src/modules/xkbswitch/e-module-xkbswitch.edj
+if USE_MODULE_XKBSWITCH
 xkbswitchdir = $(MDIR)/xkbswitch
 xkbswitch_DATA = src/modules/xkbswitch/e-module-xkbswitch.edj \
 		 src/modules/xkbswitch/module.desktop
 
-EXTRA_DIST += $(xkbswitch_DATA)
 
 xkbswitchpkgdir = $(MDIR)/xkbswitch/$(MODULE_ARCH)
 xkbswitchpkg_LTLIBRARIES = src/modules/xkbswitch/module.la
@@ -19,3 +21,4 @@ src_modules_xkbswitch_module_la_SOURCES = src/modules/xkbswitch/e_mod_main.c \
 PHONIES += xkbswitch install-xkbswitch
 xkbswitch: $(xkbswitchpkg_LTLIBRARIES) $(xkbswitch_DATA)
 install-xkbswitch: install-xkbswitchDATA install-xkbswitchpkgLTLIBRARIES
+endif

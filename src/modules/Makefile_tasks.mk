@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/tasks/module.desktop.in \
+src/modules/tasks/e-module-tasks.edj
+if USE_MODULE_TASKS
 tasksdir = $(MDIR)/tasks
 tasks_DATA = src/modules/tasks/e-module-tasks.edj \
 	     src/modules/tasks/module.desktop
 
-EXTRA_DIST += $(tasks_DATA)
 
 taskspkgdir = $(MDIR)/tasks/$(MODULE_ARCH)
 taskspkg_LTLIBRARIES = src/modules/tasks/module.la
@@ -17,3 +19,4 @@ src_modules_tasks_module_la_SOURCES = src/modules/tasks/e_mod_main.c \
 PHONIES += tasks install-tasks
 tasks: $(taskspkg_LTLIBRARIES) $(tasks_DATA)
 install-tasks: install-tasksDATA install-taskspkgLTLIBRARIES
+endif

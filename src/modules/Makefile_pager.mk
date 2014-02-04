@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/pager/module.desktop.in \
+src/modules/pager/e-module-pager.edj
+if USE_MODULE_PAGER
 pagerdir = $(MDIR)/pager
 pager_DATA = src/modules/pager/e-module-pager.edj \
 	     src/modules/pager/module.desktop
 
-EXTRA_DIST += $(pager_DATA)
 
 pagerpkgdir = $(MDIR)/pager/$(MODULE_ARCH)
 pagerpkg_LTLIBRARIES = src/modules/pager/module.la
@@ -17,3 +19,4 @@ src_modules_pager_module_la_SOURCES = src/modules/pager/e_mod_main.h \
 PHONIES += pager install-pager
 pager: $(pagerpkg_LTLIBRARIES) $(pager_DATA)
 install-pager: install-pagerDATA install-pagerpkgLTLIBRARIES
+endif

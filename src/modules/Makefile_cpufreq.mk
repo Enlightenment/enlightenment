@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/cpufreq/module.desktop.in \
+src/modules/cpufreq/e-module-cpufreq.edj
+if USE_MODULE_CPUFREQ
 cpufreqdir = $(MDIR)/cpufreq
 cpufreq_DATA = src/modules/cpufreq/e-module-cpufreq.edj \
 	       src/modules/cpufreq/module.desktop
 
-EXTRA_DIST += $(cpufreq_DATA)
 
 cpufreqpkgdir = $(MDIR)/cpufreq/$(MODULE_ARCH)
 cpufreqpkg_LTLIBRARIES = src/modules/cpufreq/module.la
@@ -33,3 +35,4 @@ INSTALL_DATA_HOOKS += cpufreq-install-data-hook
 PHONIES += cpufreq install-cpufreq
 cpufreq: $(cpufreqpkg_LTLIBRARIES) $(cpufreq_DATA) $(src_modules_cpufreq_freqset_PROGRAMS)
 install-cpufreq: install-cpufreqDATA install-cpufreqpkgLTLIBRARIES install-src_modules_cpufreq_freqsetPROGRAMS
+endif

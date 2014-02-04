@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/wl_desktop_shell/module.desktop.in \
+src/modules/wl_desktop_shell/e-module-wl_desktop_shell.edj
+if USE_MODULE_WL_DESKTOP_SHELL
 wl_desktop_shelldir = $(MDIR)/wl_desktop_shell
 wl_desktop_shell_DATA = src/modules/wl_desktop_shell/e-module-wl_desktop_shell.edj \
 	       src/modules/wl_desktop_shell/module.desktop
 
-EXTRA_DIST += src/modules/wl_desktop_shell/e-module-wl_desktop_shell.edj \
 	      src/modules/wl_desktop_shell/module.desktop.in \
 	      src/modules/wl_desktop_shell/e-desktop-shell.xml \
 	      src/modules/wl_desktop_shell/e_desktop_shell_protocol.h \
@@ -24,3 +26,4 @@ src_modules_wl_desktop_shell_module_la_SOURCES = src/modules/wl_desktop_shell/e_
 PHONIES += wl_desktop_shell install-wl_desktop_shell
 wl_desktop_shell: $(wl_desktop_shellpkg_LTLIBRARIES) $(wl_desktop_shell_DATA)
 install-wl_desktop_shell: install-wl_desktop_shellDATA install-wl_desktop_shellpkgLTLIBRARIES
+endif

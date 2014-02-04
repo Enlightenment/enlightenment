@@ -1,14 +1,15 @@
+EXTRA_DIST += src/modules/illume2/module.desktop.in \
+src/modules/illume2/e-module-illume2.edj
+if USE_MODULE_ILLUME2
 illume2dir = $(MDIR)/illume2
 illume2_DATA = src/modules/illume2/e-module-illume2.edj \
 	       src/modules/illume2/module.desktop
 
-EXTRA_DIST += src/modules/illume2/e-module-illume2.edj \
 	      src/modules/illume2/module.desktop.in
 
 # keyboards
 illume2keyboardsdir = $(MDIR)/illume2/keyboards
 illume2keyboards_DATA = src/modules/illume2/keyboards/ignore_built_in_keyboards
-EXTRA_DIST += $(illume2keyboards_DATA)
 
 # policies
 ## illume
@@ -63,3 +64,4 @@ src_modules_illume2_module_la_SOURCES = src/modules/illume2/e_mod_main.c \
 PHONIES += illume2 install-illume2
 illume2: $(illume2pkg_LTLIBRARIES) $(illume2_DATA)
 install-illume2: install-illume2DATA install-illume2pkgLTLIBRARIES
+endif

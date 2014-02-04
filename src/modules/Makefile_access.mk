@@ -1,7 +1,8 @@
+EXTRA_DIST += src/modules/access/module.desktop.in
+if USE_MODULE_ACCESS
 accessdir = $(MDIR)/access
 access_DATA = src/modules/access/module.desktop
 
-EXTRA_DIST += $(access_DATA)
 
 accesspkgdir = $(MDIR)/access/$(MODULE_ARCH)
 accesspkg_LTLIBRARIES = src/modules/access/module.la
@@ -16,3 +17,4 @@ src_modules_access_module_la_SOURCES = src/modules/access/e_mod_main.c \
 PHONIES += access install-access
 access: $(accesspkg_LTLIBRARIES) $(access_DATA)
 install-access: install-accessDATA install-accesspkgLTLIBRARIES
+endif

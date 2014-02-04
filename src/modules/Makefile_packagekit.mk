@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/packagekit/module.desktop.in \
+src/modules/packagekit/e-module-packagekit.edj
+if USE_MODULE_PACKAGEKIT
 packagekitdir = $(MDIR)/packagekit
 packagekit_DATA = src/modules/packagekit/e-module-packagekit.edj \
                   src/modules/packagekit/module.desktop
 
-EXTRA_DIST += $(packagekit_DATA)
 
 packagekitpkgdir = $(MDIR)/packagekit/$(MODULE_ARCH)
 packagekitpkg_LTLIBRARIES = src/modules/packagekit/module.la
@@ -21,3 +23,4 @@ src_modules_packagekit_module_la_SOURCES = \
 PHONIES += packagekit install-packagekit
 packagekit: $(packagekitpkg_LTLIBRARIES) $(packagekit_DATA)
 install-packagekit: install-packagekitDATA install-packagekitpkgLTLIBRARIES
+endif

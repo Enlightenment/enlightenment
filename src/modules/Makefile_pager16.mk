@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/pager16/module.desktop.in \
+src/modules/pager16/e-module-pager16.edj
+if USE_MODULE_PAGER16
 pager16dir = $(MDIR)/pager16
 pager16_DATA = src/modules/pager16/e-module-pager16.edj \
 	     src/modules/pager16/module.desktop
 
-EXTRA_DIST += $(pager16_DATA)
 
 pager16pkgdir = $(MDIR)/pager16/$(MODULE_ARCH)
 pager16pkg_LTLIBRARIES = src/modules/pager16/module.la
@@ -17,3 +19,4 @@ src_modules_pager16_module_la_SOURCES = src/modules/pager16/e_mod_main.h \
 PHONIES += pager16 install-pager16
 pager16: $(pager16pkg_LTLIBRARIES) $(pager16_DATA)
 install-pager16: install-pager16DATA install-pager16pkgLTLIBRARIES
+endif

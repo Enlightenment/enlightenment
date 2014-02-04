@@ -1,9 +1,11 @@
+EXTRA_DIST += src/modules/tiling/module.desktop.in \
+src/modules/tiling/e-module-tiling.edj
+if USE_MODULE_TILING
 tilingdir = $(MDIR)/tiling
 tiling_DATA = src/modules/tiling/e-module-tiling.edj \
 	      src/modules/tiling/module.desktop
 CLEANFILES += src/modules/tiling/e-module-tiling.edj
 
-EXTRA_DIST += $(tiling_DATA) \
 	      src/modules/tiling/e-module-tiling.edc \
 	      src/modules/tiling/module.desktop.in \
 	      src/modules/tiling/images/module_icon.png \
@@ -34,3 +36,4 @@ src_modules_tiling_module_la_SOURCES = src/modules/tiling/e_mod_tiling.c \
 PHONIES += tiling install-tiling
 tiling: $(tilingpkg_LTLIBRARIES) $(tiling_DATA)
 install-tiling: install-tilingDATA install-tilingpkgLTLIBRARIES
+endif

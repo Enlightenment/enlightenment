@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/conf_window_remembers/module.desktop.in \
+src/modules/conf_window_remembers/e-module-conf_window_remembers.edj
+if USE_MODULE_CONF_WINDOW_REMEMBERS
 conf_window_remembersdir = $(MDIR)/conf_window_remembers
 conf_window_remembers_DATA = src/modules/conf_window_remembers/e-module-conf_window_remembers.edj \
 			     src/modules/conf_window_remembers/module.desktop
 
-EXTRA_DIST += $(conf_window_remembers_DATA)
 
 conf_window_rememberspkgdir = $(MDIR)/conf_window_remembers/$(MODULE_ARCH)
 conf_window_rememberspkg_LTLIBRARIES = src/modules/conf_window_remembers/module.la
@@ -18,3 +20,4 @@ src/modules/conf_window_remembers/e_int_config_remembers.c
 PHONIES += conf_window_remembers install-conf_window_remembers
 conf_window_remembers: $(conf_window_rememberspkg_LTLIBRARIES) $(conf_window_remembers_DATA)
 install-conf_window_remembers: install-conf_window_remembersDATA install-conf_window_rememberspkgLTLIBRARIES
+endif

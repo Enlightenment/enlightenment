@@ -1,7 +1,8 @@
+EXTRA_DIST += src/modules/conf_intl/module.desktop.in
+if USE_MODULE_CONF_INTL
 conf_intldir = $(MDIR)/conf_intl
 conf_intl_DATA = src/modules/conf_intl/module.desktop
 
-EXTRA_DIST += $(conf_intl_DATA)
 
 conf_intlpkgdir = $(MDIR)/conf_intl/$(MODULE_ARCH)
 conf_intlpkg_LTLIBRARIES = src/modules/conf_intl/module.la
@@ -18,3 +19,4 @@ src_modules_conf_intl_module_la_SOURCES = src/modules/conf_intl/e_mod_main.c \
 PHONIES += conf_intl install-conf_intl
 conf_intl: $(conf_intlpkg_LTLIBRARIES) $(conf_intl_DATA)
 install-conf_intl: install-conf_intlDATA install-conf_intlpkgLTLIBRARIES
+endif

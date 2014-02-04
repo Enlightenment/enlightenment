@@ -1,8 +1,8 @@
+if USE_MODULE_ILLUME-HOME
 illume_homedir = $(MDIR)/illume-home
 illume_home_DATA = src/modules/illume-home/e-module-illume-home.edj \
 		   src/modules/illume-home/module.desktop
 
-EXTRA_DIST += $(illume_home_DATA)
 
 illume_homepkgdir = $(MDIR)/illume-home/$(MODULE_ARCH)
 illume_homepkg_LTLIBRARIES = src/modules/illume-home/module.la
@@ -20,3 +20,4 @@ src/modules/illume-home/e_busycover.h
 PHONIES += illume_home install-illume_home
 illume_home: $(illume_homepkg_LTLIBRARIES) $(illume_home_DATA)
 install-illume_home: install-illume_homeDATA install-illume_homepkgLTLIBRARIES
+endif

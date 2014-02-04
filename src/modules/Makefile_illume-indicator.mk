@@ -1,7 +1,7 @@
+if USE_MODULE_ILLUME-INDICATOR
 illume_indicatordir = $(MDIR)/illume-indicator
 illume_indicator_DATA = src/modules/illume-indicator/e-module-illume-indicator.edj \
 src/modules/illume-indicator/module.desktop
-EXTRA_DIST += src/modules/illume-indicator/module.desktop.in \
 	      src/modules/illume-indicator/e-module-illume-indicator.edj
 
 illume_indicatorpkgdir = $(MDIR)/illume-indicator/$(MODULE_ARCH)
@@ -26,3 +26,4 @@ src_modules_illume_indicator_module_la_LIBADD = $(MOD_LIBS) @ENOTIFY_LIBS@
 PHONIES += illume_indicator install-illume_indicator
 illume_indicator: $(illume_indicatorpkg_LTLIBRARIES) $(illume_indicator_DATA)
 install-illume_indicator: install-illume_indicatorDATA install-illume_indicatorpkgLTLIBRARIES
+endif

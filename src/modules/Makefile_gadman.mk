@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/gadman/module.desktop.in \
+src/modules/gadman/e-module-gadman.edj
+if USE_MODULE_GADMAN
 gadmandir = $(MDIR)/gadman
 gadman_DATA = src/modules/gadman/e-module-gadman.edj \
 	      src/modules/gadman/module.desktop
 
-EXTRA_DIST += $(gadman_DATA)
 
 gadmanpkgdir = $(MDIR)/gadman/$(MODULE_ARCH)
 gadmanpkg_LTLIBRARIES = src/modules/gadman/module.la
@@ -18,3 +20,4 @@ src_modules_gadman_module_la_SOURCES = src/modules/gadman/e_mod_main.c \
 PHONIES += gadman install-gadman
 gadman: $(gadmanpkg_LTLIBRARIES) $(gadman_DATA)
 install-gadman: install-gadmanDATA install-gadmanpkgLTLIBRARIES
+endif

@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/syscon/module.desktop.in \
+src/modules/syscon/e-module-syscon.edj
+if USE_MODULE_SYSCON
 syscondir = $(MDIR)/syscon
 syscon_DATA = src/modules/syscon/e-module-syscon.edj \
 	      src/modules/syscon/module.desktop
 
-EXTRA_DIST += $(syscon_DATA)
 
 sysconpkgdir = $(MDIR)/syscon/$(MODULE_ARCH)
 sysconpkg_LTLIBRARIES = src/modules/syscon/module.la
@@ -19,3 +21,4 @@ src_modules_syscon_module_la_SOURCES = src/modules/syscon/e_mod_main.c \
 PHONIES += syscon install-syscon
 syscon: $(sysconpkg_LTLIBRARIES) $(syscon_DATA)
 install-syscon: install-sysconDATA install-sysconpkgLTLIBRARIES
+endif

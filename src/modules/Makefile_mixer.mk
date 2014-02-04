@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/mixer/module.desktop.in \
+src/modules/mixer/e-module-mixer.edj
+if USE_MODULE_MIXER
 mixerdir = $(MDIR)/mixer
 mixer_DATA = src/modules/mixer/e-module-mixer.edj \
 	     src/modules/mixer/module.desktop
 
-EXTRA_DIST += $(mixer_DATA)
 
 mixerpkgdir = $(MDIR)/mixer/$(MODULE_ARCH)
 mixerpkg_LTLIBRARIES = src/modules/mixer/module.la
@@ -42,3 +44,4 @@ endif
 PHONIES += mixer install-mixer
 mixer: $(mixerpkg_LTLIBRARIES) $(mixer_DATA)
 install-mixer: install-mixerDATA install-mixerpkgLTLIBRARIES
+endif

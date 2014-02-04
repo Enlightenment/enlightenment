@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/temperature/module.desktop.in \
+src/modules/temperature/e-module-temperature.edj
+if USE_MODULE_TEMPERATURE
 temperaturedir = $(MDIR)/temperature
 temperature_DATA = src/modules/temperature/e-module-temperature.edj \
 		   src/modules/temperature/module.desktop
 
-EXTRA_DIST += $(temperature_DATA)
 
 temperaturepkgdir = $(MDIR)/temperature/$(MODULE_ARCH)
 temperaturepkg_LTLIBRARIES = src/modules/temperature/module.la
@@ -30,3 +32,4 @@ src_modules_temperature_tempget_LDADD   = @TEMPERATURE_LIBS@
 PHONIES += temperature install-temperature
 temperature: $(temperaturepkg_LTLIBRARIES) $(temperature_DATA) $(src_modules_temperature_tempget_PROGRAMS)
 install-temperature: install-temperatureDATA install-temperaturepkgLTLIBRARIES install-src_modules_temperature_tempgetPROGRAMS
+endif

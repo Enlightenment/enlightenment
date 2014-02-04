@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/msgbus/module.desktop.in \
+src/modules/msgbus/e-module-msgbus.edj
+if USE_MODULE_MSGBUS
 msgbusdir = $(MDIR)/msgbus
 msgbus_DATA = src/modules/msgbus/e-module-msgbus.edj \
 	      src/modules/msgbus/module.desktop
 
-EXTRA_DIST += $(msgbus_DATA)
 
 msgbuspkgdir = $(MDIR)/msgbus/$(MODULE_ARCH)
 msgbuspkg_LTLIBRARIES = src/modules/msgbus/module.la
@@ -20,3 +22,4 @@ src/modules/msgbus/msgbus_lang.c
 PHONIES += msgbus install-msgbus
 msgbus: $(msgbuspkg_LTLIBRARIES) $(msgbus_DATA)
 install-msgbus: install-msgbusDATA install-msgbuspkgLTLIBRARIES
+endif

@@ -1,8 +1,8 @@
+if USE_MODULE_ILLUME-KEYBOARD
 illume_keyboarddir = $(MDIR)/illume-keyboard
 illume_keyboard_DATA = src/modules/illume-keyboard/e-module-illume-keyboard.edj \
 		       src/modules/illume-keyboard/module.desktop
 
-EXTRA_DIST += src/modules/illume-keyboard/e-module-illume-keyboard.edj \
 	      src/modules/illume-keyboard/module.desktop.in
 
 
@@ -24,14 +24,12 @@ illumekeyboards_DATA = src/modules/illume-keyboard/keyboards/ignore_built_in_key
 		       src/modules/illume-keyboard/keyboards/enter.png \
 		       src/modules/illume-keyboard/keyboards/backspace.png
 
-EXTRA_DIST += $(illumekeyboards_DATA)
 
 # dicts
 illumedictsdir = $(MDIR)/illume-keyboard/dicts
 illumedicts_DATA = src/modules/illume-keyboard/dicts/English_US.dic \
 		   src/modules/illume-keyboard/dicts/English_US_Small.dic
 
-EXTRA_DIST += $(illumedicts_DATA)
 
 
 illume_keyboardpkgdir = $(MDIR)/illume-keyboard/$(MODULE_ARCH)
@@ -57,3 +55,4 @@ src_modules_illume_keyboard_module_la_SOURCES = src/modules/illume-keyboard/e_mo
 PHONIES += illume_keyboard install-illume_keyboard
 illume_keyboard: $(illume_keyboardpkg_LTLIBRARIES) $(illume_keyboard_DATA)
 install-illume_keyboard: install-illume_keyboardDATA install-illume_keyboardpkgLTLIBRARIES
+endif

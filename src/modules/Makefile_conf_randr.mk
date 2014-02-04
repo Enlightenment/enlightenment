@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/conf_randr/module.desktop.in \
+src/modules/conf_randr/e-module-conf_randr.edj
+if USE_MODULE_CONF_RANDR
 conf_randrdir = $(MDIR)/conf_randr
 conf_randr_DATA = src/modules/conf_randr/e-module-conf_randr.edj \
 		  src/modules/conf_randr/module.desktop
 
-EXTRA_DIST += $(conf_randr_DATA)
 
 conf_randrpkgdir = $(MDIR)/conf_randr/$(MODULE_ARCH)
 conf_randrpkg_LTLIBRARIES = src/modules/conf_randr/module.la
@@ -22,3 +24,4 @@ src_modules_conf_randr_module_la_SOURCES = src/modules/conf_randr/e_mod_main.c \
 PHONIES += conf_randr install-conf_randr
 conf_randr: $(conf_randrpkg_LTLIBRARIES) $(conf_randr_DATA)
 install-conf_randr: install-conf_randrDATA install-conf_randrpkgLTLIBRARIES
+endif

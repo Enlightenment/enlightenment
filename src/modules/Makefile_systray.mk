@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/systray/module.desktop.in \
+src/modules/systray/e-module-systray.edj
+if USE_MODULE_SYSTRAY
 systraydir = $(MDIR)/systray
 systray_DATA = src/modules/systray/e-module-systray.edj \
 	       src/modules/systray/module.desktop
 
-EXTRA_DIST += $(systray_DATA)
 
 systraypkgdir = $(MDIR)/systray/$(MODULE_ARCH)
 systraypkg_LTLIBRARIES = src/modules/systray/module.la
@@ -24,3 +26,4 @@ endif
 PHONIES += systray install-systray
 systray: $(systraypkg_LTLIBRARIES) $(systray_DATA)
 install-systray: install-systrayDATA install-systraypkgLTLIBRARIES
+endif

@@ -1,12 +1,19 @@
+wd = src/modules/wizard/data/def-ibar.txt
+wdd = src/modules/wizard/data/desktop/home.desktop \
+	src/modules/wizard/data/desktop/root.desktop \
+	src/modules/wizard/data/desktop/tmp.desktop
+
+EXTRA_DIST += src/modules/wizard/module.desktop.in \
+src/modules/wizard/e-module-wizard.edj \
+$(wd) \
+$(wdd)
+if USE_MODULE_WIZARD
 wizarddir = $(MDIR)/wizard
-wizard_DATA = src/modules/wizard/data/def-ibar.txt
+wizard_DATA = $(wd)
 
 wizard_desktopdir = $(MDIR)/wizard/desktop
-wizard_desktop_DATA = src/modules/wizard/data/desktop/home.desktop \
-		      src/modules/wizard/data/desktop/root.desktop \
-		      src/modules/wizard/data/desktop/tmp.desktop
+wizard_desktop_DATA = $(wdd)
 
-EXTRA_DIST += $(wizard_DATA) $(wizard_desktop_DATA)
 
 ### dont install these - this way e wont list the module for people to
 #wizard_DATA = src/modules/wizard/e-module-wizard.edj \
@@ -154,3 +161,4 @@ src_modules_wizard_page_200_la_SOURCES = src/modules/wizard/page_200.c
 PHONIES += wizard install-wizard
 wizard: $(wizardpkg_LTLIBRARIES) $(wizard_DATA)
 install-wizard: install-wizardDATA install-wizardpkgLTLIBRARIES
+endif

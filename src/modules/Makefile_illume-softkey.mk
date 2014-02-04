@@ -1,8 +1,8 @@
+if USE_MODULE_ILLUME-SOFTKEY
 illume_softkeydir = $(MDIR)/illume-softkey
 illume_softkey_DATA = src/modules/illume-softkey/e-module-illume-softkey.edj \
 		      src/modules/illume-softkey/module.desktop
 
-EXTRA_DIST += src/modules/illume-softkey/e-module-illume-softkey.edj \
 	      src/modules/illume-softkey/module.desktop.in
 
 
@@ -22,3 +22,4 @@ src_modules_illume_softkey_module_la_SOURCES = src/modules/illume-softkey/e_mod_
 PHONIES += illume_softkey install-illume_softkey
 illume_softkey: $(illume_softkeypkg_LTLIBRARIES) $(illume_softkey_DATA)
 install-illume_softkey: install-illume_softkeyDATA install-illume_softkeypkgLTLIBRARIES
+endif

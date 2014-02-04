@@ -1,8 +1,9 @@
+EXTRA_DIST += src/modules/music-control/module.desktop.in \
+src/modules/music-control/e-module-music-control.edj
 music_controldir = $(MDIR)/music-control
 music_control_DATA = src/modules/music-control/module.desktop \
 src/modules/music-control/e-module-music-control.edj
 
-EXTRA_DIST += $(music_control_DATA)
 
 music_controlpkgdir = $(MDIR)/music-control/$(MODULE_ARCH)
 music_controlpkg_LTLIBRARIES = src/modules/music-control/module.la

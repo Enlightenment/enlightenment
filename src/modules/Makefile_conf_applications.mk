@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/conf_applications/module.desktop.in \
+src/modules/conf_applications/e-module-conf_applications.edj
+if USE_MODULE_CONF_APPLICATIONS
 conf_applicationsdir = $(MDIR)/conf_applications
 conf_applications_DATA = src/modules/conf_applications/e-module-conf_applications.edj \
 			 src/modules/conf_applications/module.desktop
 
-EXTRA_DIST += $(conf_applications_DATA)
 
 conf_applicationspkgdir = $(MDIR)/conf_applications/$(MODULE_ARCH)
 conf_applicationspkg_LTLIBRARIES = src/modules/conf_applications/module.la
@@ -20,3 +22,4 @@ src_modules_conf_applications_module_la_SOURCES = src/modules/conf_applications/
 PHONIES += conf_applications install-conf_applications
 conf_applications: $(conf_applicationspkg_LTLIBRARIES) $(conf_applications_DATA)
 install-conf_applications: install-conf_applicationsDATA install-conf_applicationspkgLTLIBRARIES
+endif

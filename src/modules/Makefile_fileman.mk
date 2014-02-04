@@ -1,8 +1,10 @@
+EXTRA_DIST += src/modules/fileman/module.desktop.in \
+src/modules/fileman/e-module-fileman.edj
+if USE_MODULE_FILEMAN
 filemandir = $(MDIR)/fileman
 fileman_DATA = src/modules/fileman/e-module-fileman.edj \
 	       src/modules/fileman/module.desktop
 
-EXTRA_DIST += $(fileman_DATA)
 
 filemanpkgdir = $(MDIR)/fileman/$(MODULE_ARCH)
 filemanpkg_LTLIBRARIES = src/modules/fileman/module.la
@@ -23,3 +25,4 @@ src_modules_fileman_module_la_SOURCES = src/modules/fileman/e_mod_main.c \
 PHONIES += fileman install-fileman
 fileman: $(filemanpkg_LTLIBRARIES) $(fileman_DATA)
 install-fileman: install-filemanDATA install-filemanpkgLTLIBRARIES
+endif
