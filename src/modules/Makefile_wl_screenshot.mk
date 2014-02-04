@@ -1,13 +1,11 @@
 EXTRA_DIST += src/modules/wl_screenshot/module.desktop.in \
-src/modules/wl_screenshot/e-module-wl_screenshot.edj
+src/modules/wl_screenshot/e-module-wl_screenshot.edj \
+src/modules/wl_screenshot/e_screenshooter_client_protocol.h \
+src/modules/wl_screenshot/e_screenshooter_client_protocol.c
 if USE_MODULE_WL_SCREENSHOT
 wl_screenshotdir = $(MDIR)/wl_screenshot
 wl_screenshot_DATA = src/modules/wl_screenshot/e-module-wl_screenshot.edj \
 	       src/modules/wl_screenshot/module.desktop
-
-	      src/modules/wl_screenshot/module.desktop.in \
-	      src/modules/wl_screenshot/e_screenshooter_client_protocol.h \
-	      src/modules/wl_screenshot/e_screenshooter_client_protocol.c
 
 wl_screenshotpkgdir = $(MDIR)/wl_screenshot/$(MODULE_ARCH)
 wl_screenshotpkg_LTLIBRARIES = src/modules/wl_screenshot/module.la

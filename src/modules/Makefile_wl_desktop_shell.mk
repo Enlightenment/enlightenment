@@ -1,14 +1,13 @@
 EXTRA_DIST += src/modules/wl_desktop_shell/module.desktop.in \
-src/modules/wl_desktop_shell/e-module-wl_desktop_shell.edj
+src/modules/wl_desktop_shell/e-module-wl_desktop_shell.edj \
+src/modules/wl_desktop_shell/module.desktop.in \
+src/modules/wl_desktop_shell/e-desktop-shell.xml \
+src/modules/wl_desktop_shell/e_desktop_shell_protocol.h \
+src/modules/wl_desktop_shell/e_desktop_shell_protocol.c
 if USE_MODULE_WL_DESKTOP_SHELL
 wl_desktop_shelldir = $(MDIR)/wl_desktop_shell
 wl_desktop_shell_DATA = src/modules/wl_desktop_shell/e-module-wl_desktop_shell.edj \
 	       src/modules/wl_desktop_shell/module.desktop
-
-	      src/modules/wl_desktop_shell/module.desktop.in \
-	      src/modules/wl_desktop_shell/e-desktop-shell.xml \
-	      src/modules/wl_desktop_shell/e_desktop_shell_protocol.h \
-	      src/modules/wl_desktop_shell/e_desktop_shell_protocol.c
 
 wl_desktop_shellpkgdir = $(MDIR)/wl_desktop_shell/$(MODULE_ARCH)
 wl_desktop_shellpkg_LTLIBRARIES = src/modules/wl_desktop_shell/module.la
