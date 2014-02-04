@@ -14,7 +14,7 @@ struct _E_Widget_Smart_Data
 static void
 _open_browser_help_cb(void *data EINA_UNUSED, void *obj EINA_UNUSED)
 {
-   const char *url = "https://phab.enlightenment.org/w/enlightenment_module_tiling2/";
+   const char *url = "https://phab.enlightenment.org/w/emodules/tiling2/";
    char *sb;
    size_t size = 4096, len = sizeof(E_BINDIR "/enlightenment_open ") - 1;
 
