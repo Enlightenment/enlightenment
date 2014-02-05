@@ -212,12 +212,11 @@ static void
 _e_comp_object_shadow(E_Comp_Object *cw)
 {
    if (e_util_client_shadow_state_get(cw->ec))
-     {
-        edje_object_signal_emit(cw->frame_object ?: cw->shobj, "e,state,shadow,on", "e");
-        edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
-     }
+     edje_object_signal_emit(cw->frame_object ?: cw->shobj, "e,state,shadow,on", "e");
    else
      edje_object_signal_emit(cw->frame_object ?: cw->shobj, "e,state,shadow,off", "e");
+   if (cw->frame_object)
+     edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
 }
 
 static void
