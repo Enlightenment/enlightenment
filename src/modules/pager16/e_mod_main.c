@@ -264,7 +264,7 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
      e_gadcon_client_aspect_set(gcc,
                                 inst->pager->xnum * inst->pager->zone->w,
                                 inst->pager->ynum * inst->pager->zone->h);
-   e_gadcon_client_min_size_set(gcc, 16, 16);
+   e_gadcon_client_min_size_set(gcc, 4, 4);
 }
 
 static const char *
@@ -302,22 +302,32 @@ _pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    Pager *p = data;
    Eina_List *l;
    Pager_Desk *pd;
-   int w, h, zw, zh;
+   Evas_Coord mw = 0, mh = 0;
+   int w, h, zw, zh, w2, h2;
 
-   zw = p->zone->w, zh = p->zone->h;
+   zw = p->zone->w; zh = p->zone->h;
    pd = eina_list_data_get(p->desks);
    if (!pd) return;
 
+   edje_object_size_min_calc(pd->o_desk, &mw, &mh);
    evas_object_geometry_get(pd->o_desk, NULL, NULL, &w, &h);
-   if (zw * h != zh * w) //aspecting
+   w -= mw; h -= mh;
+   w2 = w; h2 = (zh * w) / zw;
+   if (h2 > h)
      {
-        if (w > h)
-          h = zh * w / zw;
-        else
-          w = zw * h / zh;
+        h2 = h; w2 = (zw * h) / zh;
      }
+   w = w2; h = h2;
+   w += mw; h += mh;
    EINA_LIST_FOREACH(p->desks, l, pd)
      e_table_pack_options_set(pd->o_desk, 1, 1, 1, 1, 0.5, 0.5, w, h, -1, -1);
+   if ((p->inst) && (p->inst->gcc))
+     {
+        if (p->invert)
+          e_gadcon_client_aspect_set(p->inst->gcc, p->ynum * w, p->xnum * h);
+        else
+          e_gadcon_client_aspect_set(p->inst->gcc, p->xnum * w, p->ynum * h);
+     }
 }
 
 static Pager *
@@ -708,6 +718,7 @@ _pager_popup_new(E_Zone *zone, int keyaction)
    Evas_Coord w, h, zx, zy, zw, zh;
    int x, y, height, width;
    E_Desk *desk;
+   Pager_Desk *pd;
 
    pp = E_NEW(Pager_Popup, 1);
    if (!pp) return NULL;
@@ -722,11 +733,28 @@ _pager_popup_new(E_Zone *zone, int keyaction)
    e_zone_desk_count_get(zone, &x, &y);
 
    if (keyaction)
-     height = pager_config->popup_act_height * y;
+     height = pager_config->popup_act_height;
    else
-     height = pager_config->popup_height * y;
+     height = pager_config->popup_height;
 
-   width = height * (zone->w * x) / (zone->h * y);
+   pd = eina_list_data_get(pp->pager->desks);
+   if (!pd)
+     {
+        height *= y;
+        width = height * (zone->w * x) / (zone->h * y);
+     }
+   else
+     {
+        Evas_Coord mw = 0, mh = 0;
+
+        edje_object_size_min_calc(pd->o_desk, &mw, &mh);
+        height -= mh;
+        width = (height * zone->w) / zone->h;
+        height *= y;
+        height += (y * mh);
+        width *= x;
+        width += (x * mw);
+     }
 
    evas_object_move(pp->pager->o_table, 0, 0);
    evas_object_resize(pp->pager->o_table, width, height);
