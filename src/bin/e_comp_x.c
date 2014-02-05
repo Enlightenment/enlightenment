@@ -2080,7 +2080,7 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
    if (!ec) return ECORE_CALLBACK_RENEW;
    E_COMP_X_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
-   if (e_client_resizing_get(ec) &&
+   if (e_client_util_resizing_get(ec) &&
        ec->netwm.sync.request &&
        ec->comp_data->alarm
       )
@@ -3256,7 +3256,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         //	if (ec->icccm.step_w < 1) ec->icccm.step_w = 1;
         //	if (ec->icccm.step_h < 1) ec->icccm.step_h = 1;
         // if doing a resize, fix it up
-        if (e_client_resizing_get(ec))
+        if (e_client_util_resizing_get(ec))
           {
              int x, y, w, h, new_w, new_h;
 

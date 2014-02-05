@@ -820,7 +820,7 @@ _e_wl_shell_shell_surface_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_C
    else if ((changed_type) || (x != 0) || (y != 0) || 
             (ews->geometry.w != w) || (ews->geometry.h != h))
      {
-        if (ews->ec && e_client_resizing_get(ews->ec)) return;
+        if (ews->ec && e_client_util_resizing_get(ews->ec)) return;
         ews->geometry.w = w;
         ews->geometry.h = h;
         ews->geometry.changed = EINA_TRUE;

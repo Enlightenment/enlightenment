@@ -333,7 +333,7 @@ e_pixmap_refresh(E_Pixmap *cp)
            success = !!pixmap;
            if (!success) break;
            if (ecore_x_present_exists() && cp->client->comp_data->pw && cp->client->comp_data->ph &&
-               (!e_client_resizing_get(cp->client))) //PRESENT is unreliable during resizes
+               (!e_client_util_resizing_get(cp->client))) //PRESENT is unreliable during resizes
              {
                 pw = cp->client->comp_data->pw;
                 ph = cp->client->comp_data->ph;

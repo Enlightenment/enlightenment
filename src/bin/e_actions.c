@@ -185,7 +185,7 @@ ACT_FN_GO_SIGNAL(window_resize, )
         else
           {
              if (!params) params = "";
-             if (e_client_resizing_get((E_Client *)obj))
+             if (e_client_util_resizing_get((E_Client *)obj))
                e_client_signal_resize_end((E_Client *)obj, params, sig, src);
              else
                e_client_signal_resize_begin((E_Client *)obj, params, sig, src);

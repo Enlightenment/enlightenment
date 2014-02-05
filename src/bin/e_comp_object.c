@@ -701,7 +701,7 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
         return;
      }
    cw->ec->x = x, cw->ec->y = y;
-   if (e_client_resizing_get(cw->ec) && (!cw->force_move)) return;
+   if (e_client_util_resizing_get(cw->ec) && (!cw->force_move)) return;
    if (!cw->ec->shading)
      {
         cw->ec->client.x = ix;
@@ -753,7 +753,7 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
           }
         return;
      }
-   if ((!cw->ec->internal) && e_client_resizing_get(cw->ec) && cw->ec->netwm.sync.request &&
+   if ((!cw->ec->internal) && e_client_util_resizing_get(cw->ec) && cw->ec->netwm.sync.request &&
        ((cw->ec->w != w) && (cw->ec->h != h)))
      {
         /* this is ugly. */
@@ -2814,7 +2814,7 @@ e_comp_object_render_update_add(Evas_Object *obj)
    if (e_object_is_del(E_OBJECT(cw->ec)))
      CRI("CAN'T RENDER A DELETED CLIENT!");
    if (!e_pixmap_usable_get(cw->ec->pixmap)) return;
-   //if (e_client_resizing_get(cw->ec) && (e_pixmap_type_get(cw->ec->pixmap) == E_PIXMAP_TYPE_WL))
+   //if (e_client_util_resizing_get(cw->ec) && (e_pixmap_type_get(cw->ec->pixmap) == E_PIXMAP_TYPE_WL))
      //INF("WL RENDER UPDATE");
    if (!cw->update)
      {

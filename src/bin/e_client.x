@@ -98,7 +98,7 @@ e_client_util_win_get(const E_Client *ec)
 }
 
 static inline Eina_Bool
-e_client_resizing_get(const E_Client *ec)
+e_client_util_resizing_get(const E_Client *ec)
 {
    if (!ec) return EINA_FALSE;
    return (ec->resize_mode != E_POINTER_RESIZE_NONE);

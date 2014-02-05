@@ -1338,7 +1338,7 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
 
    _e_client_zone_update(ec);
 
-   if (e_client_resizing_get(ec) || (ecresize == ec))
+   if (e_client_util_resizing_get(ec) || (ecresize == ec))
      _e_client_hook_call(E_CLIENT_HOOK_RESIZE_UPDATE, ec);
    e_remember_update(ec);
 }
@@ -2596,7 +2596,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
         evas_object_move(ec->frame, new_x, new_y);
         e_zone_flip_coords_handle(ec->zone, output->x, output->y);
      }
-   else if (e_client_resizing_get(ec))
+   else if (e_client_util_resizing_get(ec))
      {
         _e_client_resize_handle(ec);
      }
@@ -3792,7 +3792,7 @@ e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
-   if (e_client_resizing_get(ec) || (ec->moving)) return;
+   if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    if (!_e_client_move_begin(ec))
      return;
 
@@ -3827,7 +3827,7 @@ e_client_act_resize_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (ec->lock_user_size || ec->shaded || ec->shading) return;
-   if (e_client_resizing_get(ec) || (ec->moving)) return;
+   if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    if (ev)
      {
         char source[256];
@@ -3893,7 +3893,7 @@ e_client_act_resize_end(E_Client *ec, E_Binding_Event_Mouse_Button *ev EINA_UNUS
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
-   if (e_client_resizing_get(ec))
+   if (e_client_util_resizing_get(ec))
      {
         _e_client_resize_end(ec);
         ec->changes.reset_gravity = 1;
@@ -4146,7 +4146,7 @@ e_client_signal_move_begin(E_Client *ec, const char *sig, const char *src EINA_U
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
 
-   if (e_client_resizing_get(ec) || (ec->moving)) return;
+   if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    if (!_e_client_move_begin(ec)) return;
    ec->moving = 1;
    e_pointer_mode_push(ec, E_POINTER_MOVE);
@@ -4184,7 +4184,7 @@ e_client_signal_resize_begin(E_Client *ec, const char *dir, const char *sig, con
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
 
-   if (e_client_resizing_get(ec) || (ec->moving)) return;
+   if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    if (!strcmp(dir, "tl"))
      {
         resize_mode = E_POINTER_RESIZE_TL;
@@ -4243,7 +4243,7 @@ e_client_signal_resize_end(E_Client *ec, const char *dir EINA_UNUSED, const char
 {
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
-   if (!e_client_resizing_get(ec)) return;
+   if (!e_client_util_resizing_get(ec)) return;
    _e_client_resize_handle(ec);
    _e_client_resize_end(ec);
    ec->changes.reset_gravity = 1;
