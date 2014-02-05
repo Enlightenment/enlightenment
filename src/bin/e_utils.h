@@ -69,8 +69,6 @@ EAPI char *e_util_string_append_quoted(char *str, size_t *size, size_t *len, con
 EAPI void e_util_evas_objects_above_print(Evas_Object *o);
 EAPI void e_util_evas_objects_above_print_smart(Evas_Object *o);
 
-EAPI Eina_Bool e_util_client_shadow_state_get(const E_Client *ec);
-
 EAPI void e_util_string_list_free(Eina_List *l);
 
 static inline E_Comp *

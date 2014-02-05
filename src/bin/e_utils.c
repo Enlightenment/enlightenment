@@ -1608,14 +1608,3 @@ e_util_evas_objects_above_print_smart(Evas_Object *o)
           fprintf(stderr, "[%p] - %s(%s) %s\n", a, evas_object_type_get(a), evas_object_name_get(a), evas_object_visible_get(a) ? "VISIBLE" : "HIDDEN");
      }
 }
-
-EAPI Eina_Bool
-e_util_client_shadow_state_get(const E_Client *ec)
-{
-   Eina_Bool on;
-   if (ec->argb || ec->shaped) return EINA_FALSE;
-   on = !ec->e.state.video;
-   if (on)
-     on = !ec->fullscreen;
-   return on;
-}

@@ -110,3 +110,14 @@ e_client_util_borderless(const E_Client *ec)
    if (!ec) return EINA_FALSE;
    return (ec->borderless || ec->mwm.borderless || (!ec->border.name) || (!strcmp(ec->border.name, "borderless")));
 }
+
+static inline Eina_Bool
+e_client_util_shadow_state_get(const E_Client *ec)
+{
+   Eina_Bool on;
+   if (ec->argb || ec->shaped) return EINA_FALSE;
+   on = !ec->e.state.video;
+   if (on)
+     on = !ec->fullscreen;
+   return on;
+}

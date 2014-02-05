@@ -440,7 +440,7 @@ _mirror_client_new(Mirror *m)
    evas_object_name_set(mb->frame, "mirror_border");
    snprintf(buf, sizeof(buf), "e/deskmirror/frame/%s", m->ec->border.name);
    e_theme_edje_object_set(mb->frame, "base/theme/borders", buf);
-   if (e_util_client_shadow_state_get(m->ec))
+   if (e_client_util_shadow_state_get(m->ec))
      edje_object_signal_emit(mb->frame, "e,state,shadow,on", "e");
    else
      edje_object_signal_emit(mb->frame, "e,state,shadow,off", "e");
@@ -758,7 +758,7 @@ e_deskmirror_mirror_copy(Evas_Object *obj)
         o = edje_object_add(evas_object_evas_get(obj));
         snprintf(buf, sizeof(buf), "e/deskmirror/frame/%s", mb->m->ec->border.name);
         e_theme_edje_object_set(o, "base/theme/borders", buf);
-        if (e_util_client_shadow_state_get(mb->m->ec))
+        if (e_client_util_shadow_state_get(mb->m->ec))
           edje_object_signal_emit(o, "e,state,shadow,on", "e");
         else
           edje_object_signal_emit(o, "e,state,shadow,off", "e");
