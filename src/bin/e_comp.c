@@ -315,7 +315,7 @@ _e_comp_client_update(E_Client *ec)
                e_comp_object_render_update_add(ec->frame);
           }
      }
-   if (e_pixmap_size_get(ec->pixmap, &pw, &ph))
+   if ((!ec->comp->saver) && e_pixmap_size_get(ec->pixmap, &pw, &ph))
      {
         //INF("PX DIRTY: PX(%dx%d) CLI(%dx%d)", pw, ph, ec->client.w, ec->client.h);
         e_pixmap_image_refresh(ec->pixmap);
@@ -816,7 +816,6 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
         c->saver = EINA_TRUE;
         if (c->render_animator)
           ecore_animator_freeze(c->render_animator);
-        E_FREE_FUNC(c->update_job, ecore_job_del);
         EINA_LIST_FOREACH(c->zones, ll, zone)
           {
              e_comp_override_add(c);
@@ -840,13 +839,11 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    // fixme: use hash if compositors list > 4
    EINA_LIST_FOREACH(compositors, l, c)
      {
+        E_Client *ec;
         if (!c->saver) continue;
-        /* frozen in _e_comp_canvas_screensaver_active() */
-//        e_main_idler_thaw();
         c->saver = EINA_FALSE;
         if (!c->nocomp)
           ecore_evas_manual_render_set(c->ee, EINA_FALSE);
-        e_comp_render_queue(c);
         EINA_LIST_FOREACH(c->zones, ll, zone)
           {
              edje_object_signal_emit(zone->base, "e,state,screensaver,off", "e");
@@ -854,6 +851,9 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
              e_zone_fade_handle(zone, 0, 0.5);
              e_comp_override_timed_pop(c);
           }
+        E_CLIENT_FOREACH(c, ec)
+          if (e_comp_object_damage_exists(ec->frame))
+            e_comp_object_render_update_add(ec->frame);
      }
 
    return ECORE_CALLBACK_PASS_ON;
@@ -1386,8 +1386,6 @@ e_comp_render_queue(E_Comp *c)
    E_OBJECT_CHECK(c);
    E_OBJECT_TYPE_CHECK(c, E_COMP_TYPE);
    if (!c) return;
-
-   if (c->saver) return;
 
    if (conf->lock_fps)
      {
