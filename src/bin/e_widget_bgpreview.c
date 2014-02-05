@@ -127,9 +127,19 @@ _e_wid_livethumb_resize_job(void *data)
    zone = e_comp_object_util_zone_get(dd->live);
    if (!zone) zone = eina_list_data_get(e_comp_get(NULL)->zones);
    evas_object_geometry_get(dd->live, NULL, NULL, &w, &h);
-   w *= ((float)w / (float)zone->w);
-   h *= ((float)h / (float)zone->h);
-   e_livethumb_vsize_set(dd->live, MAX(w, 64), MAX(h, 64));
+   w *= 2;
+   h *= 2;
+   if (w > 128)
+     {
+        w = 128;
+        h = (zone->h * w) / zone->w;
+     }
+   if (h > 128)
+     {
+        h = 128;
+        w = (zone->w * h) / zone->h;
+     }
+   e_livethumb_vsize_set(dd->live, w, h);
    dd->resize_job = NULL;
 }
 
