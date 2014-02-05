@@ -894,8 +894,6 @@ _add_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client * event)
 {
    E_Client *ec = event->ec;
 
-   DBG("Add: %p / '%s' / '%s', (%d,%d), changes(size=%d, position=%d, client=%d)" " g:%dx%d+%d+%d ecname:'%s' maximized:%s fs:%s", ec, ec->icccm.title, ec->netwm.name, ec->desk->x, ec->desk->y, ec->changes.size, ec->changes.pos, ec->changes.border, ec->w, ec->h, ec->x, ec->y, ec->bordername, (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_NONE ? "NONE" : (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL ? "VERTICAL" : (ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL ? "HORIZONTAL" : "BOTH", ec->fullscreen ? "true" : "false");
-
    _add_client(ec);
 
    return true;
