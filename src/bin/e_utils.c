@@ -1613,10 +1613,9 @@ EAPI Eina_Bool
 e_util_client_shadow_state_get(const E_Client *ec)
 {
    Eina_Bool on;
+   if (ec->argb || ec->shaped) return EINA_FALSE;
    on = !ec->e.state.video;
    if (on)
      on = !ec->fullscreen;
-   if (on)
-     on = !!e_util_strcmp(ec->border.name, "borderless");
    return on;
 }

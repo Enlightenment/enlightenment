@@ -211,11 +211,13 @@ _e_comp_object_layers_remove(E_Comp_Object *cw)
 static void
 _e_comp_object_shadow(E_Comp_Object *cw)
 {
-   if (!cw->frame_object) return;
    if (e_util_client_shadow_state_get(cw->ec))
-     edje_object_signal_emit(cw->frame_object, "e,state,shadow,on", "e");
+     {
+        edje_object_signal_emit(cw->frame_object ?: cw->shobj, "e,state,shadow,on", "e");
+        edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
+     }
    else
-     edje_object_signal_emit(cw->frame_object, "e,state,shadow,off", "e");
+     edje_object_signal_emit(cw->frame_object ?: cw->shobj, "e,state,shadow,off", "e");
 }
 
 static void
