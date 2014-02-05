@@ -830,7 +830,7 @@ _e_desk_show_begin(E_Desk *desk, int dx, int dy)
      }
    E_CLIENT_FOREACH(desk->zone->comp, ec)
      {
-        if ((ec->desk->zone != desk->zone) || (ec->iconic) || e_client_util_ignored_get(ec)) continue;
+        if (e_client_util_ignored_get(ec) || (ec->desk->zone != desk->zone) || (ec->iconic)) continue;
         if (ec->moving)
           {
              e_client_desk_set(ec, desk);
@@ -874,7 +874,7 @@ _e_desk_hide_begin(E_Desk *desk, int dx, int dy)
      }
    E_CLIENT_FOREACH(desk->zone->comp, ec)
      {
-        if ((ec->desk->zone != desk->zone) || (ec->iconic) || e_client_util_ignored_get(ec)) continue;
+        if (e_client_util_ignored_get(ec) || (ec->desk->zone != desk->zone) || (ec->iconic)) continue;
         if (ec->moving) continue;
         if ((ec->desk != desk) || (ec->sticky)) continue;
         if ((!starting) && _e_desk_transition_setup(ec, -dx, -dy, 0))
