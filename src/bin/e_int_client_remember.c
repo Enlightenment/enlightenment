@@ -174,7 +174,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
           cfdata->role = strdup(ec->icccm.window_role);
         if (!cfdata->title)
           {
-             const char *title = e_client_name_get(ec);
+             const char *title = e_client_util_name_get(ec);
              if (title && title[0])
                cfdata->title = strdup(title);
           }
@@ -368,7 +368,7 @@ _check_matches(E_Remember *rem, int update)
      EINA_LIST_FOREACH(c->clients, ll, ec)
        {
           int match = rem->match;
-          title = e_client_name_get(ec);
+          title = e_client_util_name_get(ec);
 
           if ((match & E_REMEMBER_MATCH_NAME) &&
               (e_util_glob_match(ec->icccm.name, rem->name)))

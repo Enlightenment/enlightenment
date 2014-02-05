@@ -619,7 +619,7 @@ _ibox_icon_fill_label(IBox_Icon *ic)
         break;
 
       case 4:
-        label = e_client_name_get(ic->client);
+        label = e_client_util_name_get(ic->client);
         break;
      }
 

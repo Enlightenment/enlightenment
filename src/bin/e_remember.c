@@ -347,7 +347,7 @@ e_remember_default_match_set(E_Remember *rem, E_Client *ec)
         rem->name = eina_stringshare_ref(name);
         rem->class = eina_stringshare_ref(clasz);
      }
-   else if ((title = e_client_name_get(ec)) && title[0])
+   else if ((title = e_client_util_name_get(ec)) && title[0])
      {
         match |= E_REMEMBER_MATCH_TITLE;
         rem->title = eina_stringshare_ref(title);

@@ -139,7 +139,7 @@ _notification_theme_cb_find(Popup_Data *popup,
 
           if (e_client_util_ignored_get(ec)) continue;
           len = strlen(popup->app_name);
-          name = e_client_name_get(ec);
+          name = e_client_util_name_get(ec);
           if (!name) continue;
           test = eina_strlen_bounded(name, len + 1);
 

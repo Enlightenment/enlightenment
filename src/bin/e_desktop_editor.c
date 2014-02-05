@@ -107,7 +107,7 @@ e_desktop_client_create(E_Client *ec)
    if ((bname) && (bname[0] == 0)) bname = NULL;
    bclass = ec->icccm.class;
    if ((bclass) && (bclass[0] == 0)) bclass = NULL;
-   btitle = e_client_name_get(ec);
+   btitle = e_client_util_name_get(ec);
 
    desktop_dir = e_user_desktop_dir_get();
 

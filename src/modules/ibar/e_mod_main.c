@@ -1212,7 +1212,7 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    img = e_comp_object_util_mirror_add(ec->frame);
    evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
                                   _ibar_cb_icon_menu_img_del, it);
-   txt = e_client_name_get(ec);
+   txt = e_client_util_name_get(ec);
    w = ec->client.w;
    h = ec->client.h;
    e_comp_object_util_del_list_append(ic->menu->comp_object, img);

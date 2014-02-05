@@ -1203,8 +1203,8 @@ _e_int_menus_clients_sort_alpha_cb(const void *d1, const void *d2)
 
    ec1 = d1;
    ec2 = d2;
-   name1 = e_client_name_get(ec1);
-   name2 = e_client_name_get(ec2);
+   name1 = e_client_util_name_get(ec1);
+   name2 = e_client_util_name_get(ec2);
 
    if (strcasecmp(name1, name2) > 0) return 1;
    if (strcasecmp(name1, name2) < 0) return -1;
@@ -1526,7 +1526,7 @@ _e_int_menus_clients_item_create(E_Client *ec, E_Menu *m)
    E_Menu_Item *mi;
    const char *title;
 
-   title = _e_int_menus_clients_title_abbrv(e_client_name_get(ec));
+   title = _e_int_menus_clients_title_abbrv(e_client_util_name_get(ec));
    mi = e_menu_item_new(m);
    e_menu_item_check_set(mi, 1);
    if ((title) && (title[0]))
@@ -1625,7 +1625,7 @@ _e_int_menus_lost_clients_pre_cb(void *data __UNUSED__, E_Menu *m)
      {
         const char *title = "";
 
-        title = e_client_name_get(ec);
+        title = e_client_util_name_get(ec);
         mi = e_menu_item_new(m);
         if ((title) && (title[0]))
           e_menu_item_label_set(mi, title);

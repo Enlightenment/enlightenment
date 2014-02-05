@@ -100,7 +100,7 @@ e_illume_client_is_indicator(E_Client *ec)
      {
         const char *title;
 
-        if ((title = e_client_name_get(ec)))
+        if ((title = e_client_util_name_get(ec)))
           if (!strcmp(title, _e_illume_cfg->policy.indicator.title))
             return EINA_TRUE;
      }
@@ -159,7 +159,7 @@ e_illume_client_is_softkey(E_Client *ec)
      {
         const char *title;
 
-        if ((title = e_client_name_get(ec)))
+        if ((title = e_client_util_name_get(ec)))
           if (!strcmp(title, _e_illume_cfg->policy.softkey.title))
             return EINA_TRUE;
      }
@@ -217,7 +217,7 @@ e_illume_client_is_keyboard(E_Client *ec)
      {
         const char *title;
 
-        if ((title = e_client_name_get(ec)))
+        if ((title = e_client_util_name_get(ec)))
           if (!strcmp(title, _e_illume_cfg->policy.vkbd.title))
             return EINA_TRUE;
      }
@@ -271,7 +271,7 @@ e_illume_client_is_home(E_Client *ec)
      {
         const char *title;
 
-        if ((title = e_client_name_get(ec)))
+        if ((title = e_client_util_name_get(ec)))
           if (!strcmp(title, _e_illume_cfg->policy.home.title))
             return EINA_TRUE;
      }

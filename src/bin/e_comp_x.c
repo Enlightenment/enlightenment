@@ -679,7 +679,7 @@ _e_comp_x_client_pri_raise(E_Client *ec)
 //            EINA_TRUE, EINA_TRUE);
             EINA_TRUE, EINA_FALSE);
 //   printf("WIN: pid %i, title %s (HI!!!!!!!!!!!!!!!!!!)\n",
-//          ec->netwm.pid, e_client_name_get(ec));
+//          ec->netwm.pid, e_client_util_name_get(ec));
 }
 
 static void
@@ -692,7 +692,7 @@ _e_comp_x_client_pri_norm(E_Client *ec)
 //            EINA_TRUE, EINA_TRUE);
             EINA_TRUE, EINA_FALSE);
 //   printf("WIN: pid %i, title %s (NORMAL)\n",
-//          ec->netwm.pid, e_client_name_get(ec));
+//          ec->netwm.pid, e_client_util_name_get(ec));
 }
 
 static void

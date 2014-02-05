@@ -2065,9 +2065,9 @@ e_client_idler_before(void)
 
              if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FETCH, ec)) continue;
              /* FETCH is hooked by the compositor to get client hints */
-             title = e_client_name_get(ec);
+             title = e_client_util_name_get(ec);
              if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_FETCH, ec)) continue;
-             if (title != e_client_name_get(ec))
+             if (title != e_client_util_name_get(ec))
                _e_client_event_property(ec, E_CLIENT_PROPERTY_TITLE);
              /* PRE_POST_FETCH calls e_remember apply for new client */
              if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_POST_FETCH, ec)) continue;
@@ -4456,18 +4456,6 @@ e_client_redirected_set(E_Client *ec, Eina_Bool set)
 
 ////////////////////////////////////////////
 
-
-EAPI Eina_Stringshare *
-e_client_name_get(const E_Client *ec)
-{
-   E_OBJECT_CHECK_RETURN(ec, NULL);
-   E_OBJECT_TYPE_CHECK_RETURN(ec, E_CLIENT_TYPE, NULL);
-   if (ec->netwm.name)
-     return ec->netwm.name;
-   else if (ec->icccm.title)
-     return ec->icccm.title;
-   return NULL;
-}
 
 EAPI Eina_Bool
 e_client_util_is_stacking(const E_Client *ec)

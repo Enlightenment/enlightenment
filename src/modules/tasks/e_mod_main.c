@@ -646,7 +646,7 @@ _tasks_item_fill(Tasks_Item *item)
    if (item->tasks->config->icon_only)
      label = "";
    else
-     label = e_client_name_get(item->client);
+     label = e_client_util_name_get(item->client);
    edje_object_part_text_set(item->o_item, "e.text.label", label);
 
    if (item->client->iconic)

@@ -464,7 +464,7 @@ _mirror_client_new(Mirror *m)
    evas_object_smart_member_add(mb->frame, o);
    evas_object_name_set(mb->mirror, "mirror");
    edje_object_part_swallow(mb->frame, "e.swallow.client", m->mirror);
-   edje_object_part_text_set(mb->frame, "e.text.title", e_client_name_get(m->ec));
+   edje_object_part_text_set(mb->frame, "e.text.title", e_client_util_name_get(m->ec));
    return o;
 }
 
@@ -782,7 +782,7 @@ e_deskmirror_mirror_copy(Evas_Object *obj)
 
         oo = e_comp_object_util_mirror_add(mb->m->comp_object);
         edje_object_part_swallow(o, "e.swallow.client", oo);
-        edje_object_part_text_set(o, "e.text.title", e_client_name_get(mb->m->ec));
+        edje_object_part_text_set(o, "e.text.title", e_client_util_name_get(mb->m->ec));
         e_comp_object_util_del_list_append(o, oo);
         return o;
      }

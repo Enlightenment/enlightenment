@@ -34,7 +34,7 @@ static void
 _policy_border_set_focus(E_Client *ec)
 {
    if (!ec) return;
-   /* printf("_policy_border_set_focus %s\n", e_client_name_get(ec)); */
+   /* printf("_policy_border_set_focus %s\n", e_client_util_name_get(ec)); */
 
    /* if focus is locked out then get out */
    if (ec->lock_focus_out) return;
@@ -161,7 +161,7 @@ _policy_border_show_below(E_Client *ec)
    //	       ec->icccm.class, ec->x, ec->y);
 
    if (!ec) return;
-   /* printf("_policy_border_show_below %s\n", e_client_name_get(ec)); */
+   /* printf("_policy_border_show_below %s\n", e_client_util_name_get(ec)); */
    if (ec->icccm.transient_for)
      {
 	if ((prev = e_pixmap_find_client(E_PIXMAP_TYPE_X, ec->icccm.transient_for)))
@@ -1024,7 +1024,7 @@ _policy_border_show(E_Client *ec)
 {
    if (!ec) return;
 
-   /* printf("_policy_border_show %s\n", e_client_name_get(ec)); */
+   /* printf("_policy_border_show %s\n", e_client_util_name_get(ec)); */
 
    if (!ec->icccm.name) return;
 

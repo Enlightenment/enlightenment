@@ -81,7 +81,7 @@ _e_mod_illume_config_select_window_create(E_Config_Dialog *cfd __UNUSED__, Evas 
              if (e_client_util_ignored_get(ec)) continue;
              if (ec->zone != zone) continue;
              if (e_object_is_del(E_OBJECT(ec))) continue;
-             if (!(name = e_client_name_get(ec))) continue;
+             if (!(name = e_client_util_name_get(ec))) continue;
              if (_e_mod_illume_config_select_window_match(ec)) sel = i;
              e_widget_ilist_append(ow, NULL, name, 
                                    _e_mod_illume_config_select_window_list_changed, 

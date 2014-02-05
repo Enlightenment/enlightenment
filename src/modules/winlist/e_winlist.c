@@ -819,7 +819,7 @@ _e_winlist_client_add(E_Client *ec, E_Zone *zone, E_Desk *desk)
    ww->bg_object = o;
    e_theme_edje_object_set(o, "base/theme/winlist",
                            "e/widgets/winlist/item");
-   edje_object_part_text_set(o, "e.text.label", e_client_name_get(ww->client));
+   edje_object_part_text_set(o, "e.text.label", e_client_util_name_get(ww->client));
    evas_object_show(o);
    if (edje_object_part_exists(ww->bg_object, "e.swallow.icon"))
      {
@@ -972,7 +972,7 @@ _e_winlist_activate(void)
           }
      }
    edje_object_part_text_set(_bg_object, "e.text.label",
-                             e_client_name_get(ww->client));
+                             e_client_util_name_get(ww->client));
    if (_icon_object)
      {
         e_comp_object_util_del_list_remove(_winlist, _icon_object);

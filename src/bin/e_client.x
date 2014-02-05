@@ -121,3 +121,14 @@ e_client_util_shadow_state_get(const E_Client *ec)
      on = !ec->fullscreen;
    return on;
 }
+
+static inline Eina_Stringshare *
+e_client_util_name_get(const E_Client *ec)
+{
+   if (!ec) return NULL;
+   if (ec->netwm.name)
+     return ec->netwm.name;
+   else if (ec->icccm.title)
+     return ec->icccm.title;
+   return NULL;
+}

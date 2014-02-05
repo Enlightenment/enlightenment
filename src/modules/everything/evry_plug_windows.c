@@ -58,7 +58,7 @@ _client_item_add(Plugin *p, E_Client *ec)
    if (e_client_util_ignored_get(ec))
      return 0;
 
-   bi = EVRY_ITEM_NEW(Client_Item, p, e_client_name_get(ec),
+   bi = EVRY_ITEM_NEW(Client_Item, p, e_client_util_name_get(ec),
                       _icon_get, _client_item_free);
 
    snprintf(buf, sizeof(buf), "%d:%d %s",
