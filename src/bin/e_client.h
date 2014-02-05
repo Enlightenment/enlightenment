@@ -798,6 +798,6 @@ EAPI E_Client *e_client_under_pointer_get(E_Desk *desk, E_Client *exclude);
 EAPI int e_client_pointer_warp_to_center_now(E_Client *ec);
 EAPI int e_client_pointer_warp_to_center(E_Client *ec);
 EAPI void e_client_redirected_set(E_Client *ec, Eina_Bool set);
-EAPI Eina_Bool e_client_util_is_stacking(const E_Client *ec);
+EAPI Eina_Bool e_client_is_stacking(const E_Client *ec);
 #include "e_client.x"
 #endif

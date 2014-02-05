@@ -606,7 +606,7 @@ _e_comp_x_client_stack(E_Client *ec)
    Eina_List *l;
 
    if (ec->override && (!ec->internal)) return; //can't restack these
-   if (e_client_util_is_stacking(ec)) return;
+   if (e_client_is_stacking(ec)) return;
    if (!ec->comp_data) return;
    if (ec->comp_data->unredirected_single) return;
 
@@ -617,7 +617,7 @@ _e_comp_x_client_stack(E_Client *ec)
    do
      {
         ec2 = e_client_above_get(ec2);
-        if (ec2 && (e_client_util_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
+        if (ec2 && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
           {
              if (ec2->layer != ec->layer) break;
              win = _e_comp_x_client_window_get(ec2);
@@ -631,7 +631,7 @@ _e_comp_x_client_stack(E_Client *ec)
         do
           {
              ec2 = e_client_below_get(ec2);
-             if (ec2 && (e_client_util_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
+             if (ec2 && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
                {
                   if (ec2->layer != ec->layer) break;
                   win = _e_comp_x_client_window_get(ec2);
@@ -1359,7 +1359,7 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
         if (ec2)
           {
              /* client(ec) wants to be above a layer client(ec2) */
-             if (e_client_util_is_stacking(ec2)) //is it a stacking placeholder window?
+             if (e_client_is_stacking(ec2)) //is it a stacking placeholder window?
                {
                   E_Client *ec3;
 
@@ -1368,7 +1368,7 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
                   if (ec3)
                     {
                        evas_object_layer_set(ec->frame, ec3->layer);
-                       if (!e_client_util_is_stacking(ec3))
+                       if (!e_client_is_stacking(ec3))
                          evas_object_stack_below(ec->frame, ec3->frame);
                     }
                   else //force override to obey our stacking

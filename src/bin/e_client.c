@@ -4456,9 +4456,8 @@ e_client_redirected_set(E_Client *ec, Eina_Bool set)
 
 ////////////////////////////////////////////
 
-
 EAPI Eina_Bool
-e_client_util_is_stacking(const E_Client *ec)
+e_client_is_stacking(const E_Client *ec)
 {
    return ec->comp->layers[e_comp_canvas_layer_map(ec->layer)].obj == ec->frame;
 }
