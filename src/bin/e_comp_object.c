@@ -901,7 +901,11 @@ _e_comp_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
    if (evas_object_below_get(obj) == above) return;
    if (cw->ec->layer_block)
      {
+        if (cw->ec->layer == evas_object_layer_get(obj))
+          evas_object_data_set(obj, "client_restack", (void*)1);
         evas_object_stack_above(obj, above);
+        if (cw->ec->layer == evas_object_layer_get(obj))
+          evas_object_data_del(obj, "client_restack");
         return;
      }
    if (cw->ec->new_client)
@@ -992,7 +996,11 @@ _e_comp_intercept_stack_below(void *data, Evas_Object *obj, Evas_Object *below)
    if (evas_object_above_get(obj) == below) return;
    if (cw->ec->layer_block)
      {
+        if (cw->ec->layer == evas_object_layer_get(obj))
+          evas_object_data_set(obj, "client_restack", (void*)1);
         evas_object_stack_below(obj, below);
+        if (cw->ec->layer == evas_object_layer_get(obj))
+          evas_object_data_del(obj, "client_restack");
         return;
      }
    if (cw->ec->new_client)
