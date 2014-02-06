@@ -51,6 +51,7 @@ static E_Exec_Instance *_e_exec_cb_exec(void *data, Efreet_Desktop *desktop, cha
 static Eina_Bool        _e_exec_cb_expire_timer(void *data);
 static Eina_Bool        _e_exec_cb_exit(void *data, int type, void *event);
 static void        _e_exec_cb_exec_new_free(void *data, void *event);
+static void _e_exec_cb_exec_new_client_free(void *data, void *ev);
 static void        _e_exec_cb_exec_del_free(void *data, void *event);
 static void _e_exe_instance_watchers_call(E_Exec_Instance *inst, E_Exec_Watch_Type type);
 static Eina_Bool        _e_exec_startup_id_pid_find(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *value, void *data);
@@ -360,10 +361,11 @@ e_exec_instance_found(E_Exec_Instance *inst)
 EAPI void
 e_exec_instance_client_add(E_Exec_Instance *inst, E_Client *ec)
 {
+   e_object_ref(E_OBJECT(ec));
    inst->clients = eina_list_append(inst->clients, ec);
    ec->exe_inst = inst;
    inst->ref++;
-   ecore_event_add(E_EVENT_EXEC_NEW_CLIENT, inst, _e_exec_cb_exec_new_free, inst);
+   ecore_event_add(E_EVENT_EXEC_NEW_CLIENT, inst, _e_exec_cb_exec_new_client_free, ec);
 }
 
 EAPI void
@@ -663,6 +665,7 @@ _e_exec_instance_free(E_Exec_Instance *inst)
    if (!inst->deleted)
      {
         inst->deleted = 1;
+        E_LIST_FOREACH(inst->clients, e_object_ref);
         ecore_event_add(E_EVENT_EXEC_DEL, inst, _e_exec_cb_exec_del_free, inst);
         return;
      }
@@ -671,7 +674,10 @@ _e_exec_instance_free(E_Exec_Instance *inst)
                                              inst->desktop);
    if (inst->expire_timer) ecore_timer_del(inst->expire_timer);
    EINA_LIST_FREE(inst->clients, ec)
-     ec->exe_inst = NULL;
+     {
+        ec->exe_inst = NULL;
+        e_object_unref(E_OBJECT(ec));
+     }
    if (inst->desktop) efreet_desktop_free(inst->desktop);
    if (inst->exe) ecore_exe_data_set(inst->exe, NULL);
    free(inst);
@@ -685,6 +691,16 @@ _e_exec_instance_free(E_Exec_Instance *inst)
    return ECORE_CALLBACK_CANCEL;
    }
  */
+
+static void
+_e_exec_cb_exec_new_client_free(void *data, void *ev)
+{
+   E_Exec_Instance *inst = ev;
+
+   inst->ref--;
+   _e_exec_instance_free(inst);
+   e_object_unref(data);
+}
 
 static void
 _e_exec_cb_exec_new_free(void *data, void *ev EINA_UNUSED)
