@@ -49,6 +49,12 @@ static void _foreach_desk(void (*func) (E_Desk * desk));
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
 static void _gc_shutdown(E_Gadcon_Client *gcc);
 static void _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient);
+static void
+_tiling_cb_menu_configure(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   // FIXME here need to be some checks and return ?
+   e_int_config_tiling_module(NULL, NULL);
+}
 static const char *_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED);
 static Evas_Object *_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas);
 static const char *_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED);
@@ -1475,11 +1481,16 @@ _gadget_mouse_down_cb(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *e
      {
         E_Zone *zone;
         E_Menu *m;
+        E_Menu_Item *mi;
         int x, y;
 
         zone = e_util_zone_current_get(e_manager_current_get());
 
         m = e_menu_new();
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, _("Settings"));
+        e_util_menu_item_theme_icon_set(mi, "configure");
+        e_menu_item_callback_set(mi, _tiling_cb_menu_configure, NULL);
 
         m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
 
