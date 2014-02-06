@@ -17,6 +17,9 @@ struct tiling_g
    E_Module *module;
    Config *config;
    int log_domain;
+
+   Eina_List *gadget_instances;
+   int gadget_number;
 };
 extern struct tiling_g tiling_g;
 

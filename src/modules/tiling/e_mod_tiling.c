@@ -26,6 +26,15 @@ typedef struct Client_Extra
    Eina_Bool tiled:1;
 } Client_Extra;
 
+typedef struct _Instance
+{
+   E_Gadcon_Client *gcc;
+   Evas_Object *gadget;
+   Eina_Stringshare *gad_id;
+
+   E_Menu *lmenu;
+} Instance;
+
 struct tiling_g tiling_g = {
    .module = NULL,
    .config = NULL,
@@ -35,6 +44,16 @@ struct tiling_g tiling_g = {
 static void _add_client(E_Client * ec);
 static void _remove_client(E_Client * ec);
 static void _foreach_desk(void (*func) (E_Desk * desk));
+
+/* Func Proto Requirements for Gadcon */
+static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
+static void _gc_shutdown(E_Gadcon_Client *gcc);
+static void _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient);
+static const char *_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED);
+static Evas_Object *_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas);
+static const char *_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED);
+
+static void _gadget_icon_set(Instance *inst);
 
 /* }}} */
 /* Globals {{{ */
@@ -62,6 +81,15 @@ static struct tiling_mod_main_g
 } _G =
 {
 .split_type = TILING_SPLIT_HORIZONTAL,};
+
+/* Define the class and gadcon functions this module provides */
+static const E_Gadcon_Client_Class _gc_class =
+{
+   GADCON_CLIENT_CLASS_VERSION, "tiling",
+   { _gc_init, _gc_shutdown, _gc_orient, _gc_label, _gc_icon, _gc_id_new,
+      NULL, NULL },
+   E_GADCON_CLIENT_STYLE_PLAIN
+};
 
 /* }}} */
 /* Utils {{{ */
@@ -668,6 +696,19 @@ _e_mod_action_move_down_cb(E_Object * obj EINA_UNUSED,
 /* Toggle split mode {{{ */
 
 static void
+_tiling_split_type_next(void)
+{
+   Instance *inst;
+   Eina_List *itr;
+   _G.split_type = (_G.split_type + 1) % TILING_SPLIT_LAST;
+
+   EINA_LIST_FOREACH(tiling_g.gadget_instances, itr, inst)
+     {
+        _gadget_icon_set(inst);
+     }
+}
+
+static void
 _e_mod_action_toggle_split_mode(E_Object * obj EINA_UNUSED,
     const char *params EINA_UNUSED)
 {
@@ -680,7 +721,7 @@ _e_mod_action_toggle_split_mode(E_Object * obj EINA_UNUSED,
    if (!desk_should_tile_check(desk))
       return;
 
-   _G.split_type = (_G.split_type + 1) % TILING_SPLIT_LAST;
+   _tiling_split_type_next();
 }
 
 /* }}} */
@@ -1247,6 +1288,8 @@ e_modapi_init(E_Module * m)
       }
    }
 
+   e_gadcon_provider_register(&_gc_class);
+
    return m;
 }
 
@@ -1308,6 +1351,8 @@ _foreach_desk(void (*func) (E_Desk * desk))
 EAPI int
 e_modapi_shutdown(E_Module * m EINA_UNUSED)
 {
+   e_gadcon_provider_unregister(&_gc_class);
+
    _disable_all_tiling();
 
    e_int_client_menu_hook_del(_G.client_menu_hook);
@@ -1381,5 +1426,151 @@ e_modapi_save(E_Module * m EINA_UNUSED)
 
    return true;
 }
+
+/* GADGET STUFF. */
+
+/* Hack to properly save and free the gadget id. */
+static Eina_Stringshare *_current_gad_id = NULL;
+
+static void
+_gadget_icon_set(Instance *inst)
+{
+   switch (_G.split_type)
+     {
+      case TILING_SPLIT_HORIZONTAL:
+         edje_object_signal_emit(inst->gadget, "tiling,mode,horizontal", "e");
+         break;
+      case TILING_SPLIT_VERTICAL:
+         edje_object_signal_emit(inst->gadget, "tiling,mode,vertical", "e");
+         break;
+      case TILING_SPLIT_FLOAT:
+         edje_object_signal_emit(inst->gadget, "tiling,mode,floating", "e");
+         break;
+      default:
+         ERR("Unknown split type.");
+     }
+}
+
+static void
+_gadget_mouse_down_cb(void *data, Evas *e, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   Evas_Event_Mouse_Down *ev = event_info;
+   Instance *inst = data;
+
+   if (ev->button == 1) /* Change on left-click. */
+     {
+        _tiling_split_type_next();
+     }
+   else if (ev->button == 3)
+     {
+        E_Zone *zone;
+        E_Menu *m;
+        int x, y;
+
+        zone = e_util_zone_current_get(e_manager_current_get());
+
+        m = e_menu_new();
+
+        m = e_gadcon_client_util_menu_items_append(inst->gcc, m, 0);
+
+        e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &x, &y, NULL, NULL);
+        e_menu_activate_mouse(m, zone, x + ev->output.x, y + ev->output.y,
+                              1, 1, E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
+        evas_event_feed_mouse_up(e, ev->button,
+                                 EVAS_BUTTON_NONE, ev->timestamp, NULL);
+     }
+}
+
+static E_Gadcon_Client *
+_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
+{
+   Evas_Object *o;
+   E_Gadcon_Client *gcc;
+   Instance *inst;
+
+   inst = E_NEW(Instance, 1);
+
+   o = edje_object_add(gc->evas);
+   if (!e_theme_edje_object_set(o, "base/theme/modules/tiling",
+                                "modules/tiling/main"))
+      edje_object_file_set(o, _G.edj_path, "modules/tiling/main");
+   evas_object_show(o);
+
+   gcc = e_gadcon_client_new(gc, name, id, style, o);
+   gcc->data = inst;
+   inst->gcc = gcc;
+   inst->gad_id = _current_gad_id;
+   _current_gad_id = NULL;
+
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _gadget_mouse_down_cb, inst);
+
+   inst->gadget = o;
+
+   _gadget_icon_set(inst);
+
+   tiling_g.gadget_instances = eina_list_append(tiling_g.gadget_instances, inst);
+
+   return gcc;
+}
+
+static void
+_gc_shutdown(E_Gadcon_Client *gcc)
+{
+   Instance *inst;
+   Evas_Object *o;
+
+   if (!(inst = gcc->data)) return;
+
+   o = inst->gadget;
+
+   evas_object_event_callback_del_full(o, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _gadget_mouse_down_cb, inst);
+
+   if (inst->gadget)
+      evas_object_del(inst->gadget);
+
+   tiling_g.gadget_instances = eina_list_remove(tiling_g.gadget_instances, inst);
+
+   eina_stringshare_del(inst->gad_id);
+
+   E_FREE(inst);
+}
+
+static void
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
+{
+   e_gadcon_client_aspect_set(gcc, 16, 16);
+   e_gadcon_client_min_size_set(gcc, 16, 16);
+}
+
+static const char *
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
+{
+   return _("Tiling");
+}
+
+static Evas_Object *
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
+{
+   Evas_Object *o;
+
+   o = edje_object_add (evas);
+   edje_object_file_set(o, _G.edj_path, "icon");
+   return o;
+}
+
+static const char *
+_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
+{
+   char buf[1024];
+
+   snprintf(buf, sizeof(buf), "%s %d", _("Tiling"), tiling_g.gadget_number);
+
+   tiling_g.gadget_number++;
+
+   return _current_gad_id = eina_stringshare_add(buf);
+}
+
 
 /* }}} */
