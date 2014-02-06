@@ -27,8 +27,8 @@ struct _E_Desk
    E_Object             e_obj_inherit;
 
    E_Zone              *zone;
-   const char          *name;
-   const char          *window_profile;
+   Eina_Stringshare    *name;
+   Eina_Stringshare    *window_profile;
    int                  x, y;
    unsigned char        visible : 1;
    unsigned int         deskshow_toggle : 1;
