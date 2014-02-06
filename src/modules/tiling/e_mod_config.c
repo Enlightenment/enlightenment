@@ -182,6 +182,8 @@ _basic_create_widgets(E_Config_Dialog * cfd EINA_UNUSED, Evas * evas,
 	   _("Show window titles"), &cfdata->config.show_titles));
    e_widget_framelist_object_append(of, e_widget_check_add(evas,
 	   _("Tile dialog windows"), &cfdata->config.tile_dialogs));
+   e_widget_framelist_object_append(of, e_widget_check_add(evas,
+	   _("Enable floating split-mode"), &cfdata->config.have_floating_mode));
 
    LIST_ADD(o, of);
 
@@ -235,6 +237,7 @@ _basic_apply_data(E_Config_Dialog * cfd EINA_UNUSED,
 
    tiling_g.config->tile_dialogs = cfdata->config.tile_dialogs;
    tiling_g.config->show_titles = cfdata->config.show_titles;
+   tiling_g.config->have_floating_mode = cfdata->config.have_floating_mode;
 
    /* Check if the layout for one of the vdesks has changed */
    for (l = tiling_g.config->vdesks; l; l = l->next)
