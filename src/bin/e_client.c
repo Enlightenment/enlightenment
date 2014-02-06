@@ -2313,7 +2313,7 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
        (ec->e.state.profile.use))
      {
         if (ec->e.state.profile.wait_for_done) return;
-        if (e_util_strcmp(ec->e.state.profile.name, desk->window_profile))
+        if (ec->e.state.profile.name != desk->window_profile)
           {
              eina_stringshare_refplace(&ec->e.state.profile.set, desk->window_profile);
              EC_CHANGED(ec);
