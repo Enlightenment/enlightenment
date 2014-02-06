@@ -1918,9 +1918,9 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
 
              ec->e.state.profile.wait_for_done = 0;
 
-             if (ec->desk && e_util_strcmp(ec->desk->window_profile, profile))
+             if ((!ec->desk) || e_util_strcmp(ec->desk->window_profile, ec->e.state.profile.name))
                {
-                  desk = e_comp_desk_window_profile_get(ec->comp, profile);
+                  desk = e_comp_desk_window_profile_get(ec->comp, ec->e.state.profile.name);
                   if (desk)
                     e_client_desk_set(ec, desk);
                }
