@@ -87,7 +87,6 @@ static Eina_Bool _e_main_cb_idle_after(void *data __UNUSED__);
 static Eina_Bool _e_main_cb_startup_fake_end(void *data __UNUSED__);
 
 /* local variables */
-static int idle_freeze = 0;
 static Eina_Bool really_know = EINA_FALSE;
 static Eina_Bool locked = EINA_FALSE;
 static Eina_Bool inloop = EINA_FALSE;
