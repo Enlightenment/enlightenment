@@ -73,7 +73,7 @@ e_desk_new(E_Zone *zone, int x, int y)
             ((int)zone->num != cfname->zone)) continue;
         if ((cfname->desk_x != desk->x) || (cfname->desk_y != desk->y))
           continue;
-        desk->name = eina_stringshare_add(cfname->name);
+        desk->name = eina_stringshare_ref(cfname->name);
         ok = 1;
         break;
      }
@@ -93,16 +93,13 @@ e_desk_new(E_Zone *zone, int x, int y)
             ((int)zone->num != cfprof->zone)) continue;
         if ((cfprof->desk_x != desk->x) || (cfprof->desk_y != desk->y))
           continue;
-        desk->window_profile = eina_stringshare_add(cfprof->profile);
+        desk->window_profile = eina_stringshare_ref(cfprof->profile);
         ok = 1;
         break;
      }
 
    if (!ok)
-     {
-        desk->window_profile = eina_stringshare_add
-            (e_config->desktop_default_window_profile);
-     }
+     desk->window_profile = eina_stringshare_ref(e_config->desktop_default_window_profile);
    return desk;
 }
 
