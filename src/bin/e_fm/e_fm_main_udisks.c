@@ -498,6 +498,17 @@ _e_fm_main_udisks_cb_vol_prop(void *data, const Eldbus_Message *msg,
                   return;
                }
           }
+        else if (!strcmp(key, "DevicePresentationHide"))
+          {
+             Eina_Bool hid;
+             eldbus_message_iter_arguments_get(var, "b", &hid);
+             if (hid)
+               {
+                  DBG("removing is hidden %s", v->dbus_path);
+                  ecore_idler_add(_idler_volume_del, v->dbus_path);
+                  return;
+               }
+          }
         else if (!strcmp(key, "DeviceIsMediaChangeDetectionInhibited"))
           {
              Eina_Bool inibited;
