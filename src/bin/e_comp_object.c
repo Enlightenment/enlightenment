@@ -492,9 +492,9 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
    if (cw->ec->override)
      {
         if ((!cw->ec->shaped) && (!no_shadow) && (!cw->ec->argb))
-          e_comp_object_signal_emit(cw->smart_obj, "e,state,shadow,on", "e");
+          edje_object_signal_emit(cw->shobj, "e,state,shadow,on", "e");
         else
-          e_comp_object_signal_emit(cw->smart_obj, "e,state,shadow,off", "e");
+          edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
      }
 
    if (focus || cw->ec->focused)
@@ -2207,9 +2207,9 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
         break;
      }
    if (shadow)
-     e_comp_object_signal_emit(o, "e,state,shadow,on", "e");
+     edje_object_signal_emit(o, "e,state,shadow,on", "e");
    else
-     e_comp_object_signal_emit(o, "e,state,shadow,off", "e");
+     edje_object_signal_emit(o, "e,state,shadow,off", "e");
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_object_geometry_set(o, x, y, w, h);
