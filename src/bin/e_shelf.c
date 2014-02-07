@@ -234,6 +234,7 @@ e_shelf_zone_new(E_Zone *zone, const char *name, const char *style, E_Layer laye
    evas_object_data_set(es->comp_object, "E_Shelf", es);
    evas_object_name_set(es->comp_object, es->name);
    evas_object_layer_set(es->comp_object, layer);
+   evas_object_lower(es->comp_object);
 
    es->gadcon =
      e_gadcon_swallowed_new(es->name, es->id, es->o_base, "e.swallow.content");
