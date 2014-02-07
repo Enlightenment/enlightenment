@@ -1287,7 +1287,7 @@ e_modapi_init(E_Module * m)
 
 	vd = l->data;
 
-	E_CONFIG_LIMIT(vd->nb_stacks, 0, TILING_MAX_STACKS);
+	E_CONFIG_LIMIT(vd->nb_stacks, 0, 1);
      }
 
    _G.client_menu_hook = e_int_client_menu_hook_add(_bd_hook, NULL);

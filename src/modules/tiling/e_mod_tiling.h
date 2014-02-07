@@ -28,8 +28,6 @@ extern struct tiling_g tiling_g;
 # define ERR(...) EINA_LOG_DOM_ERR(tiling_g.log_domain, __VA_ARGS__)
 # define DBG(...) EINA_LOG_DOM_DBG(tiling_g.log_domain, __VA_ARGS__)
 
-# define TILING_MAX_STACKS 8
-
 struct _Config_vdesk
 {
    int x, y;

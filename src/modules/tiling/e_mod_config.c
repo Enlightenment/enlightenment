@@ -43,7 +43,7 @@ get_vdesk(Eina_List * vdesks, int x, int y, unsigned int zone_num)
 
 	if (!vd)
 	   continue;
-	if (vd->nb_stacks < 0 || vd->nb_stacks > TILING_MAX_STACKS)
+	if (vd->nb_stacks < 0 || vd->nb_stacks > 1)
 	   vd->nb_stacks = 0;
 	if (vd->x == x && vd->y == y && vd->zone_num == zone_num)
 	   return vd;
