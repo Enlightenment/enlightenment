@@ -223,7 +223,7 @@ _basic_create_widgets(E_Config_Dialog * cfd EINA_UNUSED, Evas * evas,
 
    of = e_widget_label_add(evas, _("Space between windows"));
    LIST_ADD(o,of);
-   slider = e_widget_slider_add(evas, 1,0, ("%1.0f px"), 0.0, 20.0,
+   slider = e_widget_slider_add(evas, 1,0, ("%1.0f px"), 0.0, TILING_MAX_PADDING,
                                 1.0, 0, NULL, &cfdata->config.nb_space, 150);
    LIST_ADD(o, slider);
 

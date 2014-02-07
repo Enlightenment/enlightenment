@@ -1279,7 +1279,7 @@ e_modapi_init(E_Module * m)
    E_CONFIG_LIMIT(tiling_g.config->tile_dialogs, 0, 1);
    E_CONFIG_LIMIT(tiling_g.config->show_titles, 0, 1);
    E_CONFIG_LIMIT(tiling_g.config->have_floating_mode, 0, 1);
-   E_CONFIG_LIMIT(tiling_g.config->nb_space, 0, 20);
+   E_CONFIG_LIMIT(tiling_g.config->nb_space, 0, TILING_MAX_PADDING);
 
    for (l = tiling_g.config->vdesks; l; l = l->next)
      {
