@@ -115,7 +115,7 @@ _fill_zone_config(E_Zone * zone, E_Config_Dialog_Data * cfdata)
      {
 	E_Desk *desk = zone->desks[i];
 	struct _Config_vdesk *vd;
-	Evas_Object *list, *slider;
+	Evas_Object *list, *checkbox;
 
 	if (!desk)
 	   continue;
@@ -136,8 +136,8 @@ _fill_zone_config(E_Zone * zone, E_Config_Dialog_Data * cfdata)
 	list = e_widget_list_add(evas, false, true);
 
 	LIST_ADD(list, e_widget_label_add(evas, desk->name));
-	slider = e_widget_check_add(evas, "", &vd->nb_stacks);
-	LIST_ADD(list, slider);
+	checkbox = e_widget_check_add(evas, "", &vd->nb_stacks);
+	LIST_ADD(list, checkbox);
 
 	LIST_ADD(cfdata->o_desklist, list);
      }
