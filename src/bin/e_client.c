@@ -4112,21 +4112,25 @@ e_client_resize_cancel(void)
 EAPI Eina_Bool
 e_client_resize_begin(E_Client *ec)
 {
-   E_Pointer_Mode mode = ec->resize_mode;
-
-   ec->resize_mode = E_POINTER_RESIZE_NONE;
    if ((ec->shaded) || (ec->shading) ||
        (ec->fullscreen) || (ec->lock_user_size))
-     return EINA_FALSE;
-   if (!_e_client_action_input_win_new(ec)) return EINA_FALSE;
+     goto error;
+   if (!_e_client_action_input_win_new(ec)) goto error;
+   _e_client_hook_call(E_CLIENT_HOOK_RESIZE_BEGIN, ec);
+   if (!e_client_util_resizing_get(ec))
+     {
+        _e_client_action_input_win_del(ec->comp);
+        return EINA_FALSE;
+     }
    if (!ec->lock_user_stacking)
      {
         if (e_config->border_raise_on_mouse_action)
           evas_object_raise(ec->frame);
      }
-   ec->resize_mode = mode;
-   _e_client_hook_call(E_CLIENT_HOOK_RESIZE_BEGIN, ec);
-   return e_client_util_resizing_get(ec);
+   return EINA_TRUE;
+error:
+   ec->resize_mode = E_POINTER_RESIZE_NONE;
+   return EINA_FALSE;
 }
 
 
