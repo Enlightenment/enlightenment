@@ -4127,6 +4127,7 @@ e_client_resize_begin(E_Client *ec)
         if (e_config->border_raise_on_mouse_action)
           evas_object_raise(ec->frame);
      }
+   ecresize = ec;
    return EINA_TRUE;
 error:
    ec->resize_mode = E_POINTER_RESIZE_NONE;
