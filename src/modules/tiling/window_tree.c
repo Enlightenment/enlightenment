@@ -256,7 +256,7 @@ tiling_window_tree_client_find(Window_Tree * root, E_Client * client)
 
 void
 _tiling_window_tree_level_apply(Window_Tree * root, Evas_Coord x, Evas_Coord y,
-    Evas_Coord w, Evas_Coord h, int level)
+    Evas_Coord w, Evas_Coord h, int level, Evas_Coord padding)
 {
    Window_Tree *itr;
    Tiling_Split_Type split_type = level % 2;
@@ -264,7 +264,8 @@ _tiling_window_tree_level_apply(Window_Tree * root, Evas_Coord x, Evas_Coord y,
 
    if (root->client)
      {
-	tiling_e_client_move_resize_extra(root->client, x, y, w, h);
+	tiling_e_client_move_resize_extra(root->client, x, y,
+              w - padding, h - padding);
 	return;
      }
 
@@ -275,7 +276,7 @@ _tiling_window_tree_level_apply(Window_Tree * root, Evas_Coord x, Evas_Coord y,
 	   Evas_Coord itw = w * itr->weight;
 
 	   total_weight += itr->weight;
-	   _tiling_window_tree_level_apply(itr, x, y, itw, h, level + 1);
+	   _tiling_window_tree_level_apply(itr, x, y, itw, h, level + 1, padding);
 	   x += itw;
 	}
    } else if (split_type == TILING_SPLIT_VERTICAL)
@@ -285,7 +286,7 @@ _tiling_window_tree_level_apply(Window_Tree * root, Evas_Coord x, Evas_Coord y,
 	   Evas_Coord ith = h * itr->weight;
 
 	   total_weight += itr->weight;
-	   _tiling_window_tree_level_apply(itr, x, y, w, ith, level + 1);
+	   _tiling_window_tree_level_apply(itr, x, y, w, ith, level + 1, padding);
 	   y += ith;
 	}
      }
@@ -296,9 +297,10 @@ _tiling_window_tree_level_apply(Window_Tree * root, Evas_Coord x, Evas_Coord y,
 
 void
 tiling_window_tree_apply(Window_Tree * root, Evas_Coord x, Evas_Coord y,
-    Evas_Coord w, Evas_Coord h)
+    Evas_Coord w, Evas_Coord h, Evas_Coord padding)
 {
-   _tiling_window_tree_level_apply(root, x, y, w, h, 0);
+   _tiling_window_tree_level_apply(root, x + padding, y + padding,
+         w - padding, h - padding, 0, padding);
 }
 
 static Window_Tree *

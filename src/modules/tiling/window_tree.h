@@ -43,7 +43,7 @@ Window_Tree *tiling_window_tree_client_find(Window_Tree * root,
     E_Client * client);
 
 void tiling_window_tree_apply(Window_Tree * root, Evas_Coord x, Evas_Coord y,
-    Evas_Coord w, Evas_Coord h);
+    Evas_Coord w, Evas_Coord h, Evas_Coord padding);
 
 Eina_Bool tiling_window_tree_node_resize(Window_Tree * node, int w_dir,
     double w_diff, int h_dir, double h_diff);
