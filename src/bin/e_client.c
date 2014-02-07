@@ -681,11 +681,6 @@ _e_client_key_down_modifier_apply(int modifier, int value)
 static int
 _e_client_move_begin(E_Client *ec)
 {
-   if (!ec->lock_user_stacking)
-     {
-        if (e_config->border_raise_on_mouse_action)
-          evas_object_raise(ec->frame);
-     }
    if ((ec->fullscreen) || (ec->lock_user_location))
      return 0;
 
@@ -697,9 +692,19 @@ _e_client_move_begin(E_Client *ec)
      }
 */
    if (!_e_client_action_input_win_new(ec)) return 0;
-   ecmove = ec;
+   ec->moving = 1;
    _e_client_hook_call(E_CLIENT_HOOK_MOVE_BEGIN, ec);
-
+   if (!ec->moving)
+     {
+        _e_client_action_input_win_del(ec->comp);
+        return 0;
+     }
+   ecmove = ec;
+   if (!ec->lock_user_stacking)
+     {
+        if (e_config->border_raise_on_mouse_action)
+          evas_object_raise(ec->frame);
+     }
    return 1;
 }
 
@@ -3801,7 +3806,6 @@ e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
 
    _e_client_action_init(ec);
    e_zone_edge_disable();
-   ec->moving = 1;
    e_pointer_mode_push(ec, E_POINTER_MOVE);
    if (ev)
      {
@@ -4155,7 +4159,6 @@ e_client_signal_move_begin(E_Client *ec, const char *sig, const char *src EINA_U
 
    if (e_client_util_resizing_get(ec) || (ec->moving)) return;
    if (!_e_client_move_begin(ec)) return;
-   ec->moving = 1;
    e_pointer_mode_push(ec, E_POINTER_MOVE);
    e_zone_edge_disable();
    _e_client_moveinfo_gather(ec, sig);
