@@ -3883,10 +3883,7 @@ e_client_act_resize_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev)
           }
      }
    if (!e_client_resize_begin(ec))
-     {
-        ec->resize_mode = E_POINTER_RESIZE_NONE;
-        return;
-     }
+     return;
    _e_client_action_init(ec);
    e_pointer_mode_push(ec, ec->resize_mode);
 }
@@ -4225,10 +4222,7 @@ e_client_signal_resize_begin(E_Client *ec, const char *dir, const char *sig, con
    ec->resize_mode = resize_mode;
    _e_client_moveinfo_gather(ec, sig);
    if (!e_client_resize_begin(ec))
-     {
-        ec->resize_mode = E_POINTER_RESIZE_NONE;
-        return;
-     }
+     return;
    e_pointer_mode_push(ec, ec->resize_mode);
    if (ec->cur_mouse_action)
      {
