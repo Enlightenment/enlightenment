@@ -39,6 +39,7 @@ struct _Config_vdesk
 
 struct _Config
 {
+   int nb_space;
    int tile_dialogs;
    int show_titles;
    int have_floating_mode;

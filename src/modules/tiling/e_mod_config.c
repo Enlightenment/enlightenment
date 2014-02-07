@@ -167,7 +167,7 @@ static Evas_Object *
 _basic_create_widgets(E_Config_Dialog * cfd EINA_UNUSED, Evas * evas,
     E_Config_Dialog_Data * cfdata)
 {
-   Evas_Object *o, *oc, *of;
+   Evas_Object *o, *oc, *of, *slider;
    E_Comp *comp;
    E_Zone *zone;
    Eina_List *l;
@@ -221,6 +221,12 @@ _basic_create_widgets(E_Config_Dialog * cfd EINA_UNUSED, Evas * evas,
 
    LIST_ADD(o, of);
 
+   of = e_widget_label_add(evas, _("Space between windows"));
+   LIST_ADD(o,of);
+   slider = e_widget_slider_add(evas, 1,0, ("%1.0f px"), 0.0, 20.0,
+                                1.0, 0, NULL, &cfdata->config.nb_space, 150);
+   LIST_ADD(o, slider);
+
    oc = e_widget_button_add(evas, _("Help"), "help", _open_browser_help_cb,
        NULL, NULL);
    LIST_ADD(o, oc);
@@ -238,6 +244,7 @@ _basic_apply_data(E_Config_Dialog * cfd EINA_UNUSED,
    tiling_g.config->tile_dialogs = cfdata->config.tile_dialogs;
    tiling_g.config->show_titles = cfdata->config.show_titles;
    tiling_g.config->have_floating_mode = cfdata->config.have_floating_mode;
+   tiling_g.config->nb_space = cfdata->config.nb_space;
 
    /* Check if the layout for one of the vdesks has changed */
    for (l = tiling_g.config->vdesks; l; l = l->next)

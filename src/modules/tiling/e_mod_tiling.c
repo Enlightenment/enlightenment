@@ -1258,6 +1258,7 @@ e_modapi_init(E_Module * m)
    E_CONFIG_VAL(_G.config_edd, Config, tile_dialogs, INT);
    E_CONFIG_VAL(_G.config_edd, Config, show_titles, INT);
    E_CONFIG_VAL(_G.config_edd, Config, have_floating_mode, INT);
+   E_CONFIG_VAL(_G.config_edd, Config, nb_space, INT);
 
    E_CONFIG_LIST(_G.config_edd, Config, vdesks, _G.vdesk_edd);
    E_CONFIG_VAL(_G.vdesk_edd, struct _Config_vdesk, x, INT);
@@ -1272,11 +1273,13 @@ e_modapi_init(E_Module * m)
 	tiling_g.config->tile_dialogs = 1;
 	tiling_g.config->show_titles = 1;
         tiling_g.config->have_floating_mode = 1;
+        tiling_g.config->nb_space = 0;
      }
 
    E_CONFIG_LIMIT(tiling_g.config->tile_dialogs, 0, 1);
    E_CONFIG_LIMIT(tiling_g.config->show_titles, 0, 1);
    E_CONFIG_LIMIT(tiling_g.config->have_floating_mode, 0, 1);
+   E_CONFIG_LIMIT(tiling_g.config->nb_space, 0, 20);
 
    for (l = tiling_g.config->vdesks; l; l = l->next)
      {
