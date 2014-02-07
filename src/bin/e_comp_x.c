@@ -1380,6 +1380,8 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
                   evas_object_stack_above(ec->frame, ec2->frame);
                }
           }
+        else
+          evas_object_layer_set(ec->frame, E_LAYER_CLIENT_PRIO);
      }
    move = (ec->client.x != ev->x) || (ec->client.y != ev->y);
    resize = (ec->client.w != ev->w) || (ec->client.h != ev->h);
