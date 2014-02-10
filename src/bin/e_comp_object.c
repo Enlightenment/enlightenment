@@ -643,7 +643,7 @@ _e_comp_object_pixels_get(void *data, Evas_Object *obj EINA_UNUSED)
           e_comp_object_shape_apply(ec->frame);
         ec->shape_changed = 0;
      }
-   evas_object_precise_is_inside_set(cw->obj, ec->shaped);
+   evas_object_precise_is_inside_set(cw->obj, ec->shaped || ec->shaped_input);
 
    if (e_pixmap_dirty_get(ec->pixmap) && e_pixmap_size_get(ec->pixmap, &pw, &ph))
      e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
