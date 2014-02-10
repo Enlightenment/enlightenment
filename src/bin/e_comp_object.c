@@ -497,7 +497,12 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
           edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
      }
    else
-     edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
+     {
+        if (no_shadow)
+          edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
+        else
+          _e_comp_object_shadow(cw);
+     }
 
    if (focus || cw->ec->focused)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,focused", "e");
@@ -2637,8 +2642,6 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
 
         if (cw->frame_name)
           edje_object_part_text_set(o, "e.text.title", cw->frame_name);
-
-        _e_comp_object_shadow(cw);
 
         if (pbg)
           {
