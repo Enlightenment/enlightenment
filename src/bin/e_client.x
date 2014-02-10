@@ -115,7 +115,11 @@ static inline Eina_Bool
 e_client_util_shadow_state_get(const E_Client *ec)
 {
    Eina_Bool on;
-   if (ec->argb || ec->shaped) return EINA_FALSE;
+   if (ec->shaped) return EINA_FALSE;
+   if (ec->argb)
+     {
+        return (!ec->borderless) && (ec->bordername || (ec->border.name && strcmp(ec->border.name, "borderless")));
+     }
    on = !ec->e.state.video;
    if (on)
      on = !ec->fullscreen;
