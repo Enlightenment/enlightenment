@@ -910,6 +910,9 @@ _resize_begin_hook(void *data EINA_UNUSED, E_Client * ec)
 	       break;
 	  }
      }
+
+   if (!e_client_util_resizing_get(ec))
+      e_client_resize_cancel();
 }
 
 static Eina_Bool
