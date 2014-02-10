@@ -702,15 +702,10 @@ _e_comp_x_client_shape_input_rectangle_set(E_Client *ec)
 
    if (ec->override || (!ec->comp_data->reparented)) return;
 
-   if (ec->shaped_input)
-     ecore_x_composite_window_events_disable(win);
+   if (ec->visible && (!ec->comp_hidden))
+     ecore_x_composite_window_events_enable(win);
    else
-     {
-        if (ec->visible && (!ec->comp_hidden))
-          ecore_x_composite_window_events_enable(win);
-        else
-          ecore_x_composite_window_events_disable(win);
-     }
+     ecore_x_composite_window_events_disable(win);
 }
 
 static void
