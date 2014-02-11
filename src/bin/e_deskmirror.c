@@ -768,6 +768,12 @@ _mirror_copy_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
    e_comp_object_signal_callback_del_full(mb->m->comp_object, "*", "*", _mirror_client_signal_cb, mb);
 }
 
+static void
+_mirror_copy_mirror_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   evas_object_event_callback_del(data, EVAS_CALLBACK_DEL, _mirror_copy_del);
+}
+
 EAPI Evas_Object *
 e_deskmirror_mirror_copy(Evas_Object *obj)
 {
@@ -791,6 +797,7 @@ e_deskmirror_mirror_copy(Evas_Object *obj)
         if (mb->m->comp_object)
           {
              e_comp_object_signal_callback_add(mb->m->comp_object, "*", "*", _mirror_client_signal_cb, mb);
+             evas_object_event_callback_add(mb->frame, EVAS_CALLBACK_DEL, _mirror_copy_mirror_del, o);
              evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _mirror_copy_del, mb);
           }
         if (mb->m->ec->focused)
