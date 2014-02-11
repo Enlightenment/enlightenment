@@ -269,9 +269,21 @@ _mirror_client_smart_add(Evas_Object *obj)
 static void
 _mirror_client_signal_cb(void *data, Evas_Object *obj EINA_UNUSED, const char *emission, const char *src)
 {
+   if (!strncmp(emission, "e,state,shadow", sizeof("e,state,shadow") - 1)) return;
    edje_object_signal_emit(data, emission, src);
    edje_object_message_signal_process(data);
    edje_object_calc_force(data);
+}
+
+static void
+_mirror_client_shadow_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   E_Client *ec = event_info;
+
+   if (e_client_util_shadow_state_get(ec))
+     edje_object_signal_emit(data, "e,state,shadow,on", "e");
+   else
+     edje_object_signal_emit(data, "e,state,shadow,off", "e");
 }
 
 static void
@@ -279,7 +291,10 @@ _mirror_client_smart_del(Evas_Object *obj)
 {
    Mirror_Border *mb = evas_object_smart_data_get(obj);
    if (mb->m->comp_object && mb->m->ec)
-     e_comp_object_signal_callback_del_full(mb->m->ec->frame, "*", "*", _mirror_client_signal_cb, mb->frame);
+     {
+        e_comp_object_signal_callback_del_full(mb->m->ec->frame, "*", "*", _mirror_client_signal_cb, mb->frame);
+        evas_object_smart_callback_del_full(mb->m->ec->frame, "shadow_change", _mirror_client_shadow_change, mb->frame);
+     }
    evas_object_del(mb->frame);
    evas_object_del(mb->mirror);
    free(mb);
@@ -447,6 +462,7 @@ _mirror_client_new(Mirror *m)
    if (m->comp_object)
      {
         e_comp_object_signal_callback_add(mb->m->comp_object, "*", "*", _mirror_client_signal_cb, mb->frame);
+        evas_object_smart_callback_add(mb->m->comp_object, "shadow_change", _mirror_client_shadow_change, mb->frame);
         evas_object_event_callback_add(m->comp_object, EVAS_CALLBACK_DEL, _e_deskmirror_mirror_del_cb, m);
      }
    if (mb->m->ec->focused)
@@ -752,6 +768,7 @@ static void
 _mirror_copy_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    e_comp_object_signal_callback_del_full(data, "*", "*", _mirror_client_signal_cb, obj);
+   evas_object_smart_callback_del_full(data, "shadow_change", _mirror_client_shadow_change, obj);
 }
 
 EAPI Evas_Object *
@@ -777,6 +794,7 @@ e_deskmirror_mirror_copy(Evas_Object *obj)
         if (mb->m->comp_object)
           {
              e_comp_object_signal_callback_add(mb->m->comp_object, "*", "*", _mirror_client_signal_cb, o);
+             evas_object_smart_callback_add(mb->m->comp_object, "shadow_change", _mirror_client_shadow_change, o);
              evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _mirror_copy_del, mb->m->comp_object);
           }
         if (mb->m->ec->focused)
