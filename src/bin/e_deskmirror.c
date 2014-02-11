@@ -663,10 +663,22 @@ _client_property(E_Smart_Data *sd, int type EINA_UNUSED, E_Event_Client_Property
 {
    Mirror *m;
 
-   if (!(ev->property & E_CLIENT_PROPERTY_NETWM_STATE)) return ECORE_CALLBACK_RENEW;
+   if ((!(ev->property & E_CLIENT_PROPERTY_NETWM_STATE)) &&
+       (!(ev->property & E_CLIENT_PROPERTY_STICKY)))
+     return ECORE_CALLBACK_RENEW;
 
    m = eina_hash_find(sd->mirror_hash, &ev->ec->frame);
-   if (m) _mirror_visible_apply(m);
+   if (m)
+     {
+        _mirror_visible_apply(m);
+        if (ev->property & E_CLIENT_PROPERTY_STICKY)
+          {
+             if ((!ev->ec->sticky) && (ev->ec->desk != sd->desk))
+               eina_hash_del_by_key(sd->mirror_hash, &ev->ec->frame);
+          }
+     }
+   else if (ev->ec->sticky)
+     _e_deskmirror_mirror_add(sd, ev->ec->frame);
    return ECORE_CALLBACK_RENEW;
 }
 
