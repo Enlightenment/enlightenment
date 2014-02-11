@@ -2871,7 +2871,6 @@ e_comp_object_shape_apply(Evas_Object *obj)
 
    API_ENTRY;
    if (!cw->ec) return; //NYI
-   _e_comp_object_shadow(cw);
    if (!_e_comp_shaped_check(cw->ec->client.w, cw->ec->client.h, cw->ec->shape_rects, cw->ec->shape_rects_num))
      {
         if (!cw->ec->shaped) return;
