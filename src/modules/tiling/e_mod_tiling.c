@@ -72,8 +72,8 @@ static struct tiling_mod_main_g
    int                  currently_switching_desktop;
    Ecore_Event_Handler *handler_client_resize, *handler_client_move,
                        *handler_client_add, *handler_client_remove, *handler_client_iconify,
-                       *handler_client_uniconify, *handler_client_stick,
-                       *handler_client_unstick, *handler_desk_show, *handler_desk_before_show,
+                       *handler_client_uniconify, *handler_client_property,
+                       *handler_desk_show, *handler_desk_before_show,
                        *handler_desk_set, *handler_compositor_resize;
    E_Client_Menu_Hook  *client_menu_hook;
 
@@ -1061,18 +1061,13 @@ toggle_sticky(E_Client *ec)
 }
 
 static Eina_Bool
-_stick_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-            E_Event_Client *event)
+_property_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
+            E_Event_Client_Property *event)
 {
-   toggle_sticky(event->ec);
-   return true;
-}
-
-static Eina_Bool
-_unstick_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-              E_Event_Client *event)
-{
-   toggle_sticky(event->ec);
+   if (event->property & E_CLIENT_PROPERTY_STICKY)
+     {
+        toggle_sticky(event->ec);
+     }
    return true;
 }
 
@@ -1234,8 +1229,7 @@ e_modapi_init(E_Module *m)
 
    HANDLER(_G.handler_client_iconify, CLIENT_ICONIFY, _iconify_hook);
    HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _uniconify_hook);
-   HANDLER(_G.handler_client_stick, CLIENT_STICK, _stick_hook);
-   HANDLER(_G.handler_client_unstick, CLIENT_UNSTICK, _unstick_hook);
+   HANDLER(_G.handler_client_property, CLIENT_PROPERTY, _property_hook);
 
    HANDLER(_G.handler_desk_show, DESK_SHOW, _desk_show_hook);
    HANDLER(_G.handler_desk_before_show, DESK_BEFORE_SHOW,
@@ -1428,8 +1422,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    FREE_HANDLER(_G.handler_client_iconify);
    FREE_HANDLER(_G.handler_client_uniconify);
-   FREE_HANDLER(_G.handler_client_stick);
-   FREE_HANDLER(_G.handler_client_unstick);
+   FREE_HANDLER(_G.handler_client_property);
 
    FREE_HANDLER(_G.handler_desk_show);
    FREE_HANDLER(_G.handler_desk_before_show);
