@@ -6670,7 +6670,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
 {
    E_Fm2_Smart_Data *sd = data;
    E_Event_Dnd_Drop *ev = event;
-   E_Fm2_Icon *ic;
+   E_Fm2_Icon *ic = NULL;
    Eina_List *fsel, *l, *ll, *il, *isel = NULL;
    char buf[PATH_MAX];
    const char *fp;
@@ -6857,8 +6857,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
                     {
                        args = e_util_string_append_char(args, &size, &length, ' ');
                        if (!args) memerr = EINA_TRUE;
-                       else if (ic)
-                         ic->drag.hidden = EINA_TRUE;
+                       else if (ic) ic->drag.hidden = EINA_TRUE;
                     }
                }
              eina_stringshare_del(fp);
