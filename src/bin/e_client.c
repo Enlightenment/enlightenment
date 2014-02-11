@@ -1548,6 +1548,7 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
           }
         break;
      }
+   evas_object_smart_callback_call(ec->frame, "maximize_done", NULL);
 }
 
 ////////////////////////////////////////////////
