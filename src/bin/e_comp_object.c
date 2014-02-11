@@ -217,6 +217,7 @@ _e_comp_object_shadow(E_Comp_Object *cw)
      edje_object_signal_emit(cw->frame_object ?: cw->shobj, "e,state,shadow,off", "e");
    if (cw->frame_object)
      edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
+   evas_object_smart_callback_call(cw->smart_obj, "shadow_change", cw->ec);
 }
 
 static void
@@ -495,11 +496,15 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
           edje_object_signal_emit(cw->shobj, "e,state,shadow,on", "e");
         else
           edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
+        evas_object_smart_callback_call(cw->smart_obj, "shadow_change", cw->ec);
      }
    else
      {
         if (no_shadow)
-          edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
+          {
+             edje_object_signal_emit(cw->shobj, "e,state,shadow,off", "e");
+             evas_object_smart_callback_call(cw->smart_obj, "shadow_change", cw->ec);
+          }
         else
           _e_comp_object_shadow(cw);
      }
