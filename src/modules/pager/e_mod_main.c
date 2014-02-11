@@ -1113,10 +1113,11 @@ _pager_cb_event_client_uniconify(void *data __UNUSED__, int type __UNUSED__, voi
 static Eina_Bool
 _pager_cb_event_client_stick(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   E_Event_Client *ev = event;
+   E_Event_Client_Property *ev = event;
    Eina_List *l;
    Pager *p;
 
+   if ((!(ev->property & E_CLIENT_PROPERTY_STICKY)) || (!ev->ec->sticky)) return ECORE_CALLBACK_RENEW;
    EINA_LIST_FOREACH(pagers, l, p)
      {
         Eina_List *l2;
@@ -1141,10 +1142,11 @@ _pager_cb_event_client_stick(void *data __UNUSED__, int type __UNUSED__, void *e
 static Eina_Bool
 _pager_cb_event_client_unstick(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
-   E_Event_Client *ev = event;
+   E_Event_Client_Property *ev = event;
    Eina_List *l;
    Pager *p;
 
+   if ((!(ev->property & E_CLIENT_PROPERTY_STICKY)) || (ev->ec->sticky)) return ECORE_CALLBACK_RENEW;
    EINA_LIST_FOREACH(pagers, l, p)
      {
         Pager_Desk *pd;
@@ -2864,8 +2866,8 @@ e_modapi_init(E_Module *m)
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_REMOVE, _pager_cb_event_client_remove, NULL);
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_ICONIFY, _pager_cb_event_client_iconify, NULL);
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_UNICONIFY, _pager_cb_event_client_uniconify, NULL);
-   E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_STICK, _pager_cb_event_client_stick, NULL);
-   E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_UNSTICK, _pager_cb_event_client_unstick, NULL);
+   E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_PROPERTY, _pager_cb_event_client_stick, NULL);
+   E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_PROPERTY, _pager_cb_event_client_unstick, NULL);
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_DESK_SET, _pager_cb_event_client_desk_set, NULL);
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_STACK, _pager_cb_event_client_stack, NULL);
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_PROPERTY, _pager_cb_event_client_icon_change, NULL);

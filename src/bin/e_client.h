@@ -128,6 +128,7 @@ typedef enum E_Client_Property
    E_CLIENT_PROPERTY_URGENCY = (1 << 4),
    E_CLIENT_PROPERTY_GRAVITY = (1 << 5),
    E_CLIENT_PROPERTY_NETWM_STATE = (1 << 6),
+   E_CLIENT_PROPERTY_STICKY = (1 << 7),
 } E_Client_Property;
 
 typedef struct E_Client E_Client;
@@ -713,8 +714,6 @@ EAPI extern int E_EVENT_CLIENT_SHOW;
 EAPI extern int E_EVENT_CLIENT_HIDE;
 EAPI extern int E_EVENT_CLIENT_ICONIFY;
 EAPI extern int E_EVENT_CLIENT_UNICONIFY;
-EAPI extern int E_EVENT_CLIENT_STICK;
-EAPI extern int E_EVENT_CLIENT_UNSTICK;
 EAPI extern int E_EVENT_CLIENT_STACK;
 EAPI extern int E_EVENT_CLIENT_FOCUS_IN;
 EAPI extern int E_EVENT_CLIENT_FOCUS_OUT;

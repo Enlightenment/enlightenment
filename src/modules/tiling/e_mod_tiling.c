@@ -3703,8 +3703,8 @@ e_modapi_init(E_Module *m)
 
     HANDLER(_G.handler_client_iconify, CLIENT_ICONIFY, _iconify_hook);
     HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _uniconify_hook);
-    HANDLER(_G.handler_client_stick, CLIENT_STICK, _stick_hook);
-    HANDLER(_G.handler_client_unstick, CLIENT_UNSTICK, _unstick_hook);
+    HANDLER(_G.handler_client_stick, CLIENT_PROPERTY, _stick_hook);
+    HANDLER(_G.handler_client_unstick, CLIENT_PROPERTY, _unstick_hook);
 
     HANDLER(_G.handler_desk_show, DESK_SHOW, _desk_show_hook);
     HANDLER(_G.handler_desk_before_show, DESK_BEFORE_SHOW, _desk_before_show_hook);

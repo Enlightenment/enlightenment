@@ -14,8 +14,6 @@ EAPI int E_EVENT_CLIENT_SHOW = -1;
 EAPI int E_EVENT_CLIENT_HIDE = -1;
 EAPI int E_EVENT_CLIENT_ICONIFY = -1;
 EAPI int E_EVENT_CLIENT_UNICONIFY = -1;
-EAPI int E_EVENT_CLIENT_STICK = -1;
-EAPI int E_EVENT_CLIENT_UNSTICK = -1;
 EAPI int E_EVENT_CLIENT_STACK = -1;
 EAPI int E_EVENT_CLIENT_FOCUS_IN = -1;
 EAPI int E_EVENT_CLIENT_FOCUS_OUT = -1;
@@ -2163,8 +2161,6 @@ e_client_init(void)
    E_EVENT_CLIENT_HIDE = ecore_event_type_new();
    E_EVENT_CLIENT_ICONIFY = ecore_event_type_new();
    E_EVENT_CLIENT_UNICONIFY = ecore_event_type_new();
-   E_EVENT_CLIENT_STICK = ecore_event_type_new();
-   E_EVENT_CLIENT_UNSTICK = ecore_event_type_new();
    E_EVENT_CLIENT_STACK = ecore_event_type_new();
    E_EVENT_CLIENT_FOCUS_IN = ecore_event_type_new();
    E_EVENT_CLIENT_FOCUS_OUT = ecore_event_type_new();
@@ -3685,7 +3681,7 @@ e_client_stick(E_Client *ec)
           }
      }
 
-   _e_client_event_simple(ec, E_EVENT_CLIENT_STICK);
+   _e_client_event_property(ec, E_CLIENT_PROPERTY_STICKY);
    e_remember_update(ec);
 }
 
@@ -3717,7 +3713,7 @@ e_client_unstick(E_Client *ec)
      }
 
    e_comp_object_signal_emit(ec->frame, "e,state,unsticky", "e");
-   _e_client_event_simple(ec, E_EVENT_CLIENT_UNSTICK);
+   _e_client_event_property(ec, E_CLIENT_PROPERTY_STICKY);
 
    e_client_desk_set(ec, e_desk_current_get(ec->zone));
    e_remember_update(ec);
