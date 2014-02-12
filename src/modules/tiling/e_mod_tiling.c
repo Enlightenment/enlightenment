@@ -49,12 +49,6 @@ static void             _foreach_desk(void (*func)(E_Desk *desk));
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
 static void             _gc_shutdown(E_Gadcon_Client *gcc);
 static void             _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient);
-static void
-_tiling_cb_menu_configure(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
-{
-   // FIXME here need to be some checks and return ?
-   e_int_config_tiling_module(NULL, NULL);
-}
 
 static const char  *_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED);
 static Evas_Object *_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas);
@@ -1478,6 +1472,13 @@ _gadget_icon_set(Instance *inst)
       default:
         ERR("Unknown split type.");
      }
+}
+
+static void
+_tiling_cb_menu_configure(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
+{
+   // FIXME here need to be some checks and return ?
+   e_int_config_tiling_module(NULL, NULL);
 }
 
 static void
