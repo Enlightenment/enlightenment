@@ -691,13 +691,14 @@ _e_client_move_begin(E_Client *ec)
 */
    if (!_e_client_action_input_win_new(ec)) return 0;
    ec->moving = 1;
+   ecmove = ec;
    _e_client_hook_call(E_CLIENT_HOOK_MOVE_BEGIN, ec);
    if (!ec->moving)
      {
+        if (ecmove == ec) ecmove = NULL;
         _e_client_action_input_win_del(ec->comp);
         return 0;
      }
-   ecmove = ec;
    if (!ec->lock_user_stacking)
      {
         if (e_config->border_raise_on_mouse_action)
@@ -4123,9 +4124,11 @@ e_client_resize_begin(E_Client *ec)
        (ec->fullscreen) || (ec->lock_user_size))
      goto error;
    if (!_e_client_action_input_win_new(ec)) goto error;
+   ecresize = ec;
    _e_client_hook_call(E_CLIENT_HOOK_RESIZE_BEGIN, ec);
    if (!e_client_util_resizing_get(ec))
      {
+        if (ecresize == ec) ecresize = NULL;
         _e_client_action_input_win_del(ec->comp);
         return EINA_FALSE;
      }
@@ -4134,7 +4137,6 @@ e_client_resize_begin(E_Client *ec)
         if (e_config->border_raise_on_mouse_action)
           evas_object_raise(ec->frame);
      }
-   ecresize = ec;
    return EINA_TRUE;
 error:
    ec->resize_mode = E_POINTER_RESIZE_NONE;
