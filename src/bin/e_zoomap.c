@@ -227,9 +227,8 @@ _e_zoomap_smart_reconfigure(E_Smart_Data *sd)
         evas_map_point_color_set(m, 1, r, g, b, a);
         evas_map_point_color_set(m, 2, r, g, b, a);
         evas_map_point_color_set(m, 3, r, g, b, a);
-        //if (a >= 255) evas_map_alpha_set(m, !sd->solid);
-        //else evas_map_alpha_set(m, EINA_TRUE); 
-        evas_map_alpha_set(m, EINA_TRUE);
+        if (a >= 255) evas_map_alpha_set(m, !sd->solid);
+        else evas_map_alpha_set(m, EINA_TRUE); 
         evas_object_map_set(sd->child_obj, m);
         evas_object_map_enable_set(sd->child_obj, EINA_TRUE);
         evas_map_free(m);
