@@ -3299,7 +3299,7 @@ _e_comp_object_effect_end_cb(void *data, Evas_Object *obj, const char *emission,
    end_cb = evas_object_data_get(obj, "_e_comp.end_cb");
    if (!end_cb) return;
    end_data = evas_object_data_get(obj, "_e_comp.end_data");
-   end_cb(end_data, obj, emission, source);
+   end_cb(end_data, cw->smart_obj, emission, source);
 
 }
 
