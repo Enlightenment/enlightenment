@@ -492,7 +492,7 @@ _client_apply_settings(E_Client *ec, Client_Extra *extra)
      change_window_border(ec, "pixel");
    else if (tiling_g.config->show_titles && (ec->bordername &&
                                          !strcmp(ec->bordername, "pixel")))
-      change_window_border(ec, (extra->orig.bordername) ? extra->orig.bordername : "default");
+     change_window_border(ec, (extra->orig.bordername) ? extra->orig.bordername : "default");
 
 }
 
