@@ -3425,18 +3425,19 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                   ec->maximized &= ~E_MAXIMIZE_HORIZONTAL;
                }
 
-             e_client_resize_limit(ec, &w, &h);
-
              if (!(ec->maximized & E_MAXIMIZE_DIRECTION))
                {
                   ec->maximized = E_MAXIMIZE_NONE;
                   _e_client_frame_update(ec);
                   evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
+                  e_client_resize_limit(ec, &w, &h);
                   e_client_util_move_resize_without_frame(ec, x, y, w, h);
                   e_hints_window_size_unset(ec);
                }
              else
                {
+                  evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
+                  e_client_resize_limit(ec, &w, &h);
                   e_client_util_move_resize_without_frame(ec, x, y, w, h);
                   e_hints_window_size_set(ec);
                }
