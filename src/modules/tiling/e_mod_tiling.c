@@ -268,6 +268,10 @@ _restore_client(E_Client *ec)
         ERR("No extra for %p", ec);
         return;
      }
+
+   if (!extra->tiled)
+     return;
+
    _e_client_move_resize(ec, extra->orig.geom.x, extra->orig.geom.y,
                          extra->orig.geom.w, extra->orig.geom.h);
    if (extra->orig.maximized)
@@ -390,6 +394,13 @@ _restore_free_client(void *_item)
    if (item->client)
      {
         _restore_client(item->client);
+
+        Client_Extra *extra = eina_hash_find(_G.client_extras, &item->client);
+
+        if (extra)
+          {
+             extra->tiled = EINA_FALSE;
+          }
      }
    free(item);
 }
@@ -401,7 +412,7 @@ change_desk_conf(struct _Config_vdesk *newconf)
    E_Comp *c;
    E_Zone *z;
    E_Desk *d;
-   int old_nb_stacks = 0, new_nb_stacks = newconf->nb_stacks;
+   int new_nb_stacks = newconf->nb_stacks;
 
    m = e_manager_current_get();
    if (!m)
@@ -415,19 +426,8 @@ change_desk_conf(struct _Config_vdesk *newconf)
      return;
 
    check_tinfo(d);
-   if (_G.tinfo->conf)
-     {
-        old_nb_stacks = _G.tinfo->conf->nb_stacks;
-     }
-   else
-     {
-        newconf->nb_stacks = 0;
-     }
    _G.tinfo->conf = newconf;
-   _G.tinfo->conf->nb_stacks = old_nb_stacks;
-
-   if (new_nb_stacks == old_nb_stacks)
-     return;
+   _G.tinfo->conf->nb_stacks = new_nb_stacks;
 
    if (new_nb_stacks == 0)
      {
@@ -435,7 +435,16 @@ change_desk_conf(struct _Config_vdesk *newconf)
         _G.tinfo->tree = NULL;
         e_place_zone_region_smart_cleanup(z);
      }
-   _G.tinfo->conf->nb_stacks = new_nb_stacks;
+   else
+     {
+        /* Add all the existing windows. */
+        E_Client *ec;
+
+        E_CLIENT_FOREACH(e_comp_get(NULL), ec)
+          {
+             _add_client(ec);
+          }
+     }
 }
 
 /* }}} */

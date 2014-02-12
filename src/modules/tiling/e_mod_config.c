@@ -270,18 +270,9 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED,
              free(vd);
              l->data = NULL;
           }
-     }
-
-   for (l = cfdata->config.vdesks; l; l = l->next)
-     {
-        vd = l->data;
-
-        if (!vd)
-          continue;
-        if (!get_vdesk(tiling_g.config->vdesks, vd->x, vd->y, vd->zone_num))
+        else if (vd->nb_stacks > 0)
           {
              change_desk_conf(vd);
-             continue;
           }
      }
 
