@@ -43,6 +43,7 @@ struct tiling_g tiling_g = {
 
 static void             _add_client(E_Client *ec);
 static void             _remove_client(E_Client *ec);
+static void             _client_apply_settings(E_Client *ec, Client_Extra *extra);
 static void             _foreach_desk(void (*func)(E_Desk *desk));
 
 /* Func Proto Requirements for Gadcon */
@@ -415,7 +416,7 @@ change_desk_conf(struct _Config_vdesk *newconf)
    E_Comp *c;
    E_Zone *z;
    E_Desk *d;
-   int new_nb_stacks = newconf->nb_stacks;
+   int old_nb_stacks, new_nb_stacks = newconf->nb_stacks;
 
    m = e_manager_current_get();
    if (!m)
@@ -429,6 +430,8 @@ change_desk_conf(struct _Config_vdesk *newconf)
      return;
 
    check_tinfo(d);
+   old_nb_stacks = _G.tinfo->conf->nb_stacks;
+
    _G.tinfo->conf = newconf;
    _G.tinfo->conf->nb_stacks = new_nb_stacks;
 
@@ -437,6 +440,17 @@ change_desk_conf(struct _Config_vdesk *newconf)
         tiling_window_tree_walk(_G.tinfo->tree, _restore_free_client);
         _G.tinfo->tree = NULL;
         e_place_zone_region_smart_cleanup(z);
+     }
+   else if (new_nb_stacks == old_nb_stacks)
+     {
+        E_Client *ec;
+
+        E_CLIENT_FOREACH(e_comp_get(NULL), ec)
+          {
+             _client_apply_settings(ec, NULL);
+          }
+
+        _reapply_tree();
      }
    else
      {
@@ -452,6 +466,35 @@ change_desk_conf(struct _Config_vdesk *newconf)
 
 /* }}} */
 /* Reorganize windows {{{ */
+
+static void
+_client_apply_settings(E_Client *ec, Client_Extra *extra)
+{
+   if (!extra)
+     {
+        extra = tiling_entry_func(ec);
+     }
+
+   if (!extra)
+      return;
+
+   if (is_ignored_window(extra))
+     return;
+
+   if (!extra->tiled)
+      return;
+
+   if (ec->maximized)
+     _e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+
+   if (!tiling_g.config->show_titles && (!ec->bordername ||
+                                         strcmp(ec->bordername, "pixel")))
+     change_window_border(ec, "pixel");
+   else if (tiling_g.config->show_titles && (ec->bordername &&
+                                         !strcmp(ec->bordername, "pixel")))
+      change_window_border(ec, (extra->orig.bordername) ? extra->orig.bordername : "default");
+
+}
 
 static void
 _add_client(E_Client *ec)
@@ -487,12 +530,7 @@ _add_client(E_Client *ec)
 
    DBG("adding %p", ec);
 
-   if (ec->maximized)
-     _e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
-
-   if (!tiling_g.config->show_titles && (!ec->bordername ||
-                                         strcmp(ec->bordername, "pixel")))
-     change_window_border(ec, "pixel");
+   _client_apply_settings(ec, extra);
 
    /* Window tree updating. */
    {
