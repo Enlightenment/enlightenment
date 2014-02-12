@@ -342,7 +342,7 @@ tiling_e_client_move_resize_extra(E_Client *ec, int x, int y, int w, int h)
 }
 
 static Client_Extra *
-tiling_entry_func(E_Client *ec)
+tiling_entry_no_desk_func(E_Client *ec)
 {
    if (!ec)
      return NULL;
@@ -350,13 +350,24 @@ tiling_entry_func(E_Client *ec)
    if (!is_tilable(ec))
      return NULL;
 
-   if (!desk_should_tile_check(ec->desk))
-     return NULL;
-
    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
 
    if (!extra)
      ERR("No extra for %p", ec);
+
+   return extra;
+}
+
+static Client_Extra *
+tiling_entry_func(E_Client *ec)
+{
+   Client_Extra *extra = tiling_entry_no_desk_func(ec);
+
+   if (!extra)
+      return NULL;
+
+   if (!desk_should_tile_check(ec->desk))
+     return NULL;
 
    return extra;
 }
@@ -556,7 +567,7 @@ _remove_client(E_Client *ec)
 static void
 toggle_floating(E_Client *ec)
 {
-   Client_Extra *extra = tiling_entry_func(ec);
+   Client_Extra *extra = tiling_entry_no_desk_func(ec);
 
    if (!extra)
      {
@@ -564,6 +575,9 @@ toggle_floating(E_Client *ec)
      }
 
    extra->floating = !extra->floating;
+
+   if (!desk_should_tile_check(ec->desk))
+     return;
 
    /* This is the new state, act accordingly. */
    if (extra->floating)
