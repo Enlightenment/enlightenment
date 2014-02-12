@@ -69,11 +69,9 @@ static struct tiling_mod_main_g
 {
    char                 edj_path[PATH_MAX];
    E_Config_DD         *config_edd, *vdesk_edd;
-   int                  currently_switching_desktop;
    Ecore_Event_Handler *handler_client_resize, *handler_client_move,
                        *handler_client_add, *handler_client_remove, *handler_client_iconify,
                        *handler_client_uniconify, *handler_client_property,
-                       *handler_desk_show, *handler_desk_before_show,
                        *handler_desk_set, *handler_compositor_resize;
    E_Client_Menu_Hook  *client_menu_hook;
 
@@ -1004,9 +1002,6 @@ _remove_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    if (e_client_util_ignored_get(ec))
      return ECORE_CALLBACK_RENEW;
 
-   if (_G.currently_switching_desktop)
-     return true;
-
    if (!desk_should_tile_check(ec->desk))
      return true;
 
@@ -1077,24 +1072,6 @@ _property_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
      {
         toggle_sticky(event->ec);
      }
-   return true;
-}
-
-static Eina_Bool
-_desk_show_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-                void *event EINA_UNUSED)
-{
-   _G.currently_switching_desktop = 0;
-
-   return true;
-}
-
-static Eina_Bool
-_desk_before_show_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-                       void *event EINA_UNUSED)
-{
-   _G.currently_switching_desktop = 1;
-
    return true;
 }
 
@@ -1240,9 +1217,6 @@ e_modapi_init(E_Module *m)
    HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _uniconify_hook);
    HANDLER(_G.handler_client_property, CLIENT_PROPERTY, _property_hook);
 
-   HANDLER(_G.handler_desk_show, DESK_SHOW, _desk_show_hook);
-   HANDLER(_G.handler_desk_before_show, DESK_BEFORE_SHOW,
-           _desk_before_show_hook);
    HANDLER(_G.handler_desk_set, CLIENT_DESK_SET, _desk_set_hook);
    HANDLER(_G.handler_compositor_resize, COMPOSITOR_RESIZE,
            _compositor_resize_hook);
@@ -1332,8 +1306,6 @@ e_modapi_init(E_Module *m)
 
    desk = get_current_desk();
    _G.tinfo = _initialize_tinfo(desk);
-
-   _G.currently_switching_desktop = 0;
 
    /* Add all the existing windows. */
    {
@@ -1433,8 +1405,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    FREE_HANDLER(_G.handler_client_uniconify);
    FREE_HANDLER(_G.handler_client_property);
 
-   FREE_HANDLER(_G.handler_desk_show);
-   FREE_HANDLER(_G.handler_desk_before_show);
    FREE_HANDLER(_G.handler_desk_set);
 #undef FREE_HANDLER
 
