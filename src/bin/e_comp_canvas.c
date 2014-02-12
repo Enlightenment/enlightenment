@@ -48,6 +48,7 @@ _e_comp_canvas_render_post(void *data, Evas *e EINA_UNUSED, void *event_info EIN
         //INF("POST %p", ec);
         if (!e_object_is_del(E_OBJECT(ec)))
           e_pixmap_image_clear(ec->pixmap, 1);
+        e_object_unref(E_OBJECT(ec));
      }
 }
 
