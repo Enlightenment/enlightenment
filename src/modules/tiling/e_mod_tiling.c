@@ -455,10 +455,10 @@ _add_client(E_Client *ec)
         return;
      }
 
+   Client_Extra *extra = _get_or_create_client_extra(ec);
+
    if (!desk_should_tile_check(ec->desk))
      return;
-
-   Client_Extra *extra = _get_or_create_client_extra(ec);
 
    if (is_ignored_window(extra))
      return;
@@ -996,10 +996,8 @@ _remove_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    if (e_client_util_ignored_get(ec))
      return ECORE_CALLBACK_RENEW;
 
-   if (!desk_should_tile_check(ec->desk))
-     return true;
-
-   _remove_client(ec);
+   if (desk_should_tile_check(ec->desk))
+      _remove_client(ec);
 
    eina_hash_del(_G.client_extras, &ec, NULL);
 
