@@ -45,7 +45,7 @@ _tiling_window_tree_split_add(Window_Tree *parent, Window_Tree *new_node)
 }
 
 static void
-_tiling_window_tree_parent_add(Window_Tree *parent, Window_Tree *new_node)
+_tiling_window_tree_parent_add(Window_Tree *parent, Window_Tree *new_node, Window_Tree *rel)
 {
    /* Adjust existing children's weights */
    Window_Tree *itr;
@@ -62,7 +62,8 @@ _tiling_window_tree_parent_add(Window_Tree *parent, Window_Tree *new_node)
      }
 
    parent->children =
-     eina_inlist_append(parent->children, EINA_INLIST_GET(new_node));
+     eina_inlist_append_relative(parent->children, EINA_INLIST_GET(new_node),
+           EINA_INLIST_GET(rel));
 }
 
 static int
@@ -83,6 +84,7 @@ Window_Tree *
 tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
                        E_Client *client, Tiling_Split_Type split_type)
 {
+   Window_Tree *orig_parent = parent;
    Window_Tree *new_node = calloc(1, sizeof(*new_node));
 
    new_node->client = client;
@@ -113,7 +115,7 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
      {
         if (parent->children)
           {
-             _tiling_window_tree_parent_add(parent, new_node);
+             _tiling_window_tree_parent_add(parent, new_node, NULL);
           }
         else
           {
@@ -126,7 +128,7 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
 
         if (grand_parent && grand_parent->children)
           {
-             _tiling_window_tree_parent_add(grand_parent, new_node);
+             _tiling_window_tree_parent_add(grand_parent, new_node, orig_parent);
           }
         else
           {
