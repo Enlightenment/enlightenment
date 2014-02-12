@@ -1961,7 +1961,7 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
                CRI("CW RSZ: %dx%d || PX: %dx%d", ww, hh, pw, ph);
           }
         evas_object_resize(cw->effect_obj, w, h);
-        if (cw->zoomobj) e_zoomap_child_resize(cw->zoomobj, cw->ec->client.w, cw->ec->client.h);
+        if (cw->zoomobj) e_zoomap_child_resize(cw->zoomobj, pw, ph);
         if (cw->input_obj)
           evas_object_geometry_set(cw->input_obj, cw->x + cw->input_rect.x, cw->y + cw->input_rect.y, cw->input_rect.w, cw->input_rect.h);
         if (!first)
