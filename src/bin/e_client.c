@@ -3395,6 +3395,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
         else
           {
              int w, h, x, y;
+             Eina_Bool horiz = EINA_FALSE, vert = EINA_FALSE;
 
              w = ec->w;
              h = ec->h;
@@ -3410,8 +3411,8 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                {
                   /* Remove vertical */
                   h = ec->saved.h;
+                  vert = EINA_TRUE;
                   y = ec->saved.y + ec->zone->y;
-                  ec->saved.h = ec->saved.y = 0;
                   ec->maximized &= ~E_MAXIMIZE_VERTICAL;
                   ec->maximized &= ~E_MAXIMIZE_LEFT;
                   ec->maximized &= ~E_MAXIMIZE_RIGHT;
@@ -3421,7 +3422,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                   /* Remove horizontal */
                   w = ec->saved.w;
                   x = ec->saved.x + ec->zone->x;
-                  ec->saved.w = ec->saved.x = 0;
+                  horiz = EINA_TRUE;
                   ec->maximized &= ~E_MAXIMIZE_HORIZONTAL;
                }
 
@@ -3441,6 +3442,10 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                   e_client_util_move_resize_without_frame(ec, x, y, w, h);
                   e_hints_window_size_set(ec);
                }
+             if (vert)
+               ec->saved.h = ec->saved.y = 0;
+             if (horiz)
+               ec->saved.w = ec->saved.x = 0;
           }
         e_hints_window_maximized_set(ec, ec->maximized & E_MAXIMIZE_HORIZONTAL,
                                      ec->maximized & E_MAXIMIZE_VERTICAL);
