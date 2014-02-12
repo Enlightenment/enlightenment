@@ -4167,17 +4167,6 @@ e_client_signal_move_begin(E_Client *ec, const char *sig, const char *src EINA_U
    e_pointer_mode_push(ec, E_POINTER_MOVE);
    e_zone_edge_disable();
    _e_client_moveinfo_gather(ec, sig);
-   if (ec->cur_mouse_action)
-     {
-        if ((!ec->cur_mouse_action->func.end_mouse) &&
-            (!ec->cur_mouse_action->func.end))
-          ec->cur_mouse_action = NULL;
-        else
-          e_object_unref(E_OBJECT(ec->cur_mouse_action));
-     }
-   ec->cur_mouse_action = e_action_find("window_move");
-   if (ec->cur_mouse_action)
-     e_object_ref(E_OBJECT(ec->cur_mouse_action));
 }
 
 EAPI void
@@ -4237,17 +4226,6 @@ e_client_signal_resize_begin(E_Client *ec, const char *dir, const char *sig, con
    if (!e_client_resize_begin(ec))
      return;
    e_pointer_mode_push(ec, ec->resize_mode);
-   if (ec->cur_mouse_action)
-     {
-        if ((!ec->cur_mouse_action->func.end_mouse) &&
-            (!ec->cur_mouse_action->func.end))
-          ec->cur_mouse_action = NULL;
-        else
-          e_object_unref(E_OBJECT(ec->cur_mouse_action));
-     }
-   ec->cur_mouse_action = e_action_find("window_resize");
-   if (ec->cur_mouse_action)
-     e_object_ref(E_OBJECT(ec->cur_mouse_action));
 }
 
 EAPI void
