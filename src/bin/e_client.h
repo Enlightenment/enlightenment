@@ -679,6 +679,7 @@ struct E_Client
    Eina_Bool layer_block : 1; // client is doing crazy stuff and should not be relayered in protocol
    Eina_Bool ignored : 1; // client is comp-ignored
    Eina_Bool no_shape_cut : 1; // client shape should not be cut
+   Eina_Bool maximize_override : 1; // client is doing crazy stuff and should "just do it" when moving/resizing
 };
 
 #define e_client_focus_policy_click(ec) \

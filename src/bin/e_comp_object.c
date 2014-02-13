@@ -694,13 +694,16 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
         cw->ec->x = x, cw->ec->y = y;
         return;
      }
-   if ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL)
-     y = cw->y;
-   if ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL)
-     x = cw->x;
+   if (!cw->ec->maximize_override)
+     {
+        if ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL)
+          y = cw->y;
+        if ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL)
+          x = cw->x;
+     }
    ix = x + cw->client_inset.l;
    iy = y + cw->client_inset.t;
-   if (cw->ec->maximized && ((cw->ec->x != x) || (cw->ec->y != y)) &&
+   if (cw->ec->maximized && (!cw->ec->maximize_override) && ((cw->ec->x != x) || (cw->ec->y != y)) &&
        ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) != E_MAXIMIZE_VERTICAL) &&
        ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) != E_MAXIMIZE_HORIZONTAL))
      {
@@ -751,7 +754,7 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
    /* calculate client size */
    iw = w - cw->client_inset.l - cw->client_inset.r;
    ih = h - cw->client_inset.t - cw->client_inset.b;
-   if (cw->ec->maximized && ((cw->ec->w != w) || (cw->ec->h != h)))
+   if (cw->ec->maximized && (!cw->ec->maximize_override) && ((cw->ec->w != w) || (cw->ec->h != h)))
      {
         if ((!e_config->allow_manip) && ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_BOTH)) return;
         if ((!cw->ec->shading) && (!cw->ec->shaded))
