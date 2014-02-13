@@ -1,8 +1,12 @@
 #ifdef E_TYPEDEFS
 
-typedef struct _E_Randr_Output_Config E_Randr_Output_Config;
-typedef struct _E_Randr_Crtc_Config E_Randr_Crtc_Config;
-typedef struct _E_Randr_Config E_Randr_Config;
+typedef struct _E_Config_Randr_Output E_Config_Randr_Output;
+typedef struct _E_Config_Randr_Crtc E_Config_Randr_Crtc;
+typedef struct _E_Config_Randr E_Config_Randr;
+
+typedef struct _E_Randr_Output E_Randr_Output;
+typedef struct _E_Randr_Crtc E_Randr_Crtc;
+typedef struct _E_Randr E_Randr;
 
 #else
 # ifndef E_RANDR_H
@@ -13,60 +17,57 @@ typedef struct _E_Randr_Config E_Randr_Config;
 #define E_RANDR_VERSION_1_3 ((1 << 16) | 3)
 #define E_RANDR_VERSION_1_4 ((1 << 16) | 4)
 
-#define E_RANDR_CONFIG_FILE_EPOCH 3
+#define E_RANDR_CONFIG_FILE_EPOCH 4
 #define E_RANDR_CONFIG_FILE_GENERATION 3
 #define E_RANDR_CONFIG_FILE_VERSION \
    ((E_RANDR_CONFIG_FILE_EPOCH * 1000000) + E_RANDR_CONFIG_FILE_GENERATION)
 
-struct _E_Randr_Output_Config
+struct _E_Config_Randr_Output
 {
-   /* Stored values */
-   unsigned int xid; // ecore_x_randr output id (xid)
-   unsigned int crtc; // ecore_x_randr crtc id (xid)
-   unsigned int orient; // value of the ecore_x_randr_orientation
-   Eina_Rectangle geo; // geometry
-   Eina_Bool connected; // connection status
+   unsigned int xid;    // ecore_x_randr output id (xid)
+   unsigned int crtc;   // ecore_x_randr crtc id (xid)
 
-   /* Runtime values */
-   Eina_Bool exists; // is this output present in X ?
-   unsigned int mode; // ecore_x_randr mode id (xid)
-   char *name; // Name of output
-   Eina_Bool is_lid; // Is this a laptop panel
+   unsigned int orient; // value of the ecore_x_randr_orientation
+   Eina_Rectangle geo;  // geometry
+   Eina_Bool connect;   // does the user want this output connected
 };
 
-struct _E_Randr_Crtc_Config
+struct _E_Config_Randr
 {
-   /* Stored values */
-   unsigned int xid; // ecore_x_randr crtc id (xid)
-
-   /* Runtime values */
-   Eina_Rectangle geo; // geometry
-   unsigned int orient; // value of the ecore_x_randr_orientation
-   unsigned int mode; // ecore_x_randr mode id (xid)
-   Eina_Bool exists; // is this crtc present in X ?
-   Eina_List *outputs; // list of outputs for this crtc
-};
-
-struct _E_Randr_Config
-{
-   /* Store values */
    int version; // INTERNAL CONFIG VERSION
 
-   struct
-     {
-        int width, height; // geometry
-     } screen;
-
-   Eina_List *crtcs;
    Eina_List *outputs;
 
-   int poll_interval;
    unsigned char restore;
    unsigned long config_timestamp;
    unsigned int primary;
+};
 
-   /* Runtime values */
-   int connected;
+struct _E_Randr_Output
+{
+   unsigned int mode; // ecore_x_randr mode id (xid)
+   char *name;        // name of output
+   Eina_Bool is_lid;  // is this a laptop panel
+   Eina_Bool active;  // if this output is active
+
+   E_Config_Randr_Output *cfg;
+};
+
+struct _E_Randr_Crtc
+{
+   unsigned int xid; // ecore_x_randr output id (xid)
+
+   Eina_Rectangle geo;  // geometry
+   unsigned int orient; // value of the ecore_x_randr_orientation
+   unsigned int mode;   // ecore_x_randr mode id (xid)
+   Eina_List *outputs;  // list of outputs for this crtc
+};
+
+struct _E_Randr
+{
+   int active;         // number of active outputs
+   Eina_List *crtcs;   // list of crtcs
+   Eina_List *outputs; // list of outputs
 };
 
 EINTERN Eina_Bool e_randr_init(void);
@@ -74,7 +75,7 @@ EINTERN int e_randr_shutdown(void);
 
 EAPI Eina_Bool e_randr_config_save(void);
 
-extern EAPI E_Randr_Config *e_randr_cfg;
+extern EAPI E_Config_Randr *e_randr_cfg;
 
 # endif
 #endif
