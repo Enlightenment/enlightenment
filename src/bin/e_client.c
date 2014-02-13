@@ -1549,7 +1549,6 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
           }
         break;
      }
-   evas_object_smart_callback_call(ec->frame, "maximize_done", NULL);
 }
 
 ////////////////////////////////////////////////
@@ -3352,6 +3351,7 @@ e_client_maximize(E_Client *ec, E_Maximize max)
      e_hints_window_maximized_set(ec, ec->maximized & E_MAXIMIZE_HORIZONTAL,
                                   ec->maximized & E_MAXIMIZE_VERTICAL);
    e_remember_update(ec);
+   evas_object_smart_callback_call(ec->frame, "maximize_done", NULL);
 }
 
 EAPI void
