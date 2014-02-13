@@ -558,11 +558,11 @@ _add_client(E_Client *ec)
    _reapply_tree();
 }
 
-static void
-_remove_client(E_Client *ec)
+static Eina_Bool
+_client_remove_no_apply(E_Client *ec)
 {
    if (!ec)
-     return;
+      return EINA_FALSE;
 
    DBG("removing %p", ec);
 
@@ -574,29 +574,36 @@ _remove_client(E_Client *ec)
           {
              ERR("No extra for %p", ec);
           }
-        return;
+        return EINA_FALSE;
      }
 
    if (!extra->tiled)
-     return;
+      return EINA_FALSE;
 
    extra->tiled = EINA_FALSE;
 
    /* Window tree updating. */
-   {
-      /* If focused is NULL, it should return the root. */
-      Window_Tree *item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
+     {
+        /* If focused is NULL, it should return the root. */
+        Window_Tree *item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
 
-      if (!item)
-        {
-           ERR("Couldn't find tree item for client %p!", ec);
-           return;
-        }
+        if (!item)
+          {
+             ERR("Couldn't find tree item for client %p!", ec);
+             return EINA_FALSE;
+          }
 
-      _G.tinfo->tree = tiling_window_tree_remove(_G.tinfo->tree, item);
-   }
+        _G.tinfo->tree = tiling_window_tree_remove(_G.tinfo->tree, item);
+     }
 
-   _reapply_tree();
+   return EINA_TRUE;
+}
+
+static void
+_remove_client(E_Client *ec)
+{
+   if (_client_remove_no_apply(ec))
+      _reapply_tree();
 }
 
 /* }}} */
@@ -1039,6 +1046,13 @@ _add_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
    return true;
 }
 
+static void
+_frame_del_cb(void *data EINA_UNUSED, Evas *evas EINA_UNUSED,
+      Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _reapply_tree();
+}
+
 static Eina_Bool
 _remove_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
              E_Event_Client *event)
@@ -1049,7 +1063,10 @@ _remove_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
      return ECORE_CALLBACK_RENEW;
 
    if (desk_should_tile_check(ec->desk))
-      _remove_client(ec);
+     {
+        _client_remove_no_apply(ec);
+        evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, _frame_del_cb, NULL);
+     }
 
    eina_hash_del(_G.client_extras, &ec, NULL);
 
