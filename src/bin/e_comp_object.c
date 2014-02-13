@@ -688,7 +688,12 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
    E_Comp_Object *cw = data;
    int ix, iy;
 
-   if ((cw->x == x) && (cw->y == y)) return;
+   if ((cw->x == x) && (cw->y == y))
+     {
+        cw->ec->post_move = 0;
+        cw->ec->x = x, cw->ec->y = y;
+        return;
+     }
    if ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL)
      y = cw->y;
    if ((cw->ec->maximized & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL)
@@ -735,7 +740,12 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
    E_Comp_Object *cw = data;
    int pw, ph, fw, fh, iw, ih, prev_w, prev_h;
 
-   if ((cw->w == w) && (cw->h == h)) return;
+   if ((cw->w == w) && (cw->h == h))
+     {
+        cw->ec->post_resize = 0;
+        cw->ec->w = w, cw->ec->h = h;
+        return;
+     }
    if (cw->ec->fullscreen && ((w != cw->ec->zone->w) || (h != cw->ec->zone->h)))
      return;
    /* calculate client size */
