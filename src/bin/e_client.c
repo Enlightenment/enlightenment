@@ -3452,6 +3452,7 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
                                      ec->maximized & E_MAXIMIZE_VERTICAL);
      }
    e_remember_update(ec);
+   evas_object_smart_callback_call(ec->frame, "unmaximize_done", NULL);
 }
 
 EAPI void
