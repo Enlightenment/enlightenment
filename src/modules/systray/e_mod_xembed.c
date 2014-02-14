@@ -453,6 +453,7 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
 
    evas_object_geometry_get(box, &x, &y, NULL, NULL);
    xembed->win.base = ecore_x_window_override_new(0, x, y, 1, 1);
+   ecore_x_netwm_window_type_set(xembed->win.base, ECORE_X_WINDOW_TYPE_DOCK);
    //fprintf(stderr, "xembed->win.base = %u\n", xembed->win.base);
    ecore_x_icccm_title_set(xembed->win.base, "noshadow_systray_base");
    ecore_x_icccm_name_class_set(xembed->win.base, "systray", "holder");
