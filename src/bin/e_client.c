@@ -3109,7 +3109,8 @@ e_client_focused_set(E_Client *ec)
 
         /* if there unfocus client is fullscreen and visible */
         if ((!e_config->allow_above_fullscreen) &&
-            (ec_unfocus->fullscreen) &&
+            (ec_unfocus->fullscreen) && (!ec_unfocus->iconic) && (!ec_unfocus->hidden) &&
+            (ec_unfocus->zone == e_zone_current_get(ec_unfocus->comp)) &&
             ((ec_unfocus->desk == e_desk_current_get(ec_unfocus->zone)) || (ec_unfocus->sticky)))
           {
              Eina_Bool have_vis_child = EINA_FALSE;
