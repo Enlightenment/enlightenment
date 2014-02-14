@@ -965,7 +965,7 @@ _resize(E_Win *wn)
 static void
 _delete(E_Win *wn __UNUSED__)
 {
-   wp_conf_hide();
+   e_object_del(E_OBJECT(global_info->win));
 }
 
 static void
@@ -1025,7 +1025,7 @@ _apply(void *data, void *data2 __UNUSED__)
 static void
 _close(void *data __UNUSED__, void *data2 __UNUSED__)
 {
-   wp_conf_hide();
+   e_object_del(E_OBJECT(global_info->win));
 }
 
 static void
