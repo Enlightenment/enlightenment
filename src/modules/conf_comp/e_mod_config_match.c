@@ -271,6 +271,7 @@ _edit_ok(void *d1, void *d2)
         {
            const Eina_List *l;
            E_Ilist_Item *ili;
+           Eina_Bool found = EINA_FALSE;
 
            EINA_LIST_FOREACH(e_widget_ilist_items_get(il), l, ili)
              {
@@ -280,7 +281,25 @@ _edit_ok(void *d1, void *d2)
                 txt = _match_label_get(m);
                 e_ilist_item_label_set(ili, txt);
                 free(txt);
+                found = EINA_TRUE;
                 break;
+             }
+           if (!found)
+             {
+                unsigned int n;
+
+                if (il == m->cfd->cfdata->popups_il)
+                  m->cfd->cfdata->popups = eina_list_append(m->cfd->cfdata->popups, m);
+                else if (il == m->cfd->cfdata->borders_il)
+                  m->cfd->cfdata->borders = eina_list_append(m->cfd->cfdata->borders, m);
+                else if (il == m->cfd->cfdata->overrides_il)
+                  m->cfd->cfdata->overrides = eina_list_append(m->cfd->cfdata->overrides, m);
+                else if (il == m->cfd->cfdata->menus_il)
+                  m->cfd->cfdata->menus = eina_list_append(m->cfd->cfdata->menus, m);
+                _match_ilist_append(il, m, -1, 0);
+                n = e_widget_ilist_count(il);
+                e_widget_ilist_nth_show(il, n - 1, 0);
+                e_widget_ilist_selected_set(il, n - 1);
              }
         }
      }
