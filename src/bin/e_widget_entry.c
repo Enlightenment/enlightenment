@@ -200,6 +200,8 @@ _e_wid_del_hook(Evas_Object *obj)
 
    if (!(obj) || (!(wd = e_widget_data_get(obj))))
      return;
+   evas_object_event_callback_del(wd->o_inout, EVAS_CALLBACK_MOUSE_IN, _e_wid_in);
+   evas_object_event_callback_del(wd->o_inout, EVAS_CALLBACK_MOUSE_OUT, _e_wid_out);
    p = e_widget_pointer_get(obj);
    if (p) e_pointer_type_pop(p, obj, NULL);
    evas_object_del(wd->o_entry);
