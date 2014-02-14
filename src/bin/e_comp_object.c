@@ -1385,8 +1385,9 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
         if (!cw->visible)
           {
              /* not yet visible, wait till the next time... */
-             ec->want_focus = 1;
-             EC_CHANGED(ec);
+             ec->want_focus = !ec->hidden;
+             if (ec->want_focus)
+               EC_CHANGED(ec);
              return;
           }
         e_client_focused_set(ec);
