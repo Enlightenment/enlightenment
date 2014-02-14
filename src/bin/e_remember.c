@@ -617,7 +617,7 @@ _e_remember_cb_hook_eval_post_new_client(void *data __UNUSED__, E_Client *ec)
 {
    // remember only when window was modified
    // if (!ec->new_client) return;
-
+   if (e_client_util_ignored_get(ec)) return;
    if ((ec->internal) && (!ec->remember) &&
        (e_config->remember_internal_windows) &&
        (!ec->internal_no_remember) &&
