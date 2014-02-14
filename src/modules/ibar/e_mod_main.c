@@ -2349,7 +2349,10 @@ _ibar_cb_exec_new(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance *exe)
    if (!exe->desktop->icon) return ECORE_CALLBACK_RENEW;
    EINA_LIST_FOREACH(exe->borders, l, bd)
      if (!bd->client.netwm.state.skip_taskbar)
-       skip = EINA_FALSE;
+       {
+          skip = EINA_FALSE;
+          break;
+       }
    EINA_LIST_FOREACH(ibars, l, b)
      {
         IBar_Icon *ic;
