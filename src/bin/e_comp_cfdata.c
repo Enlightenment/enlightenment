@@ -181,7 +181,7 @@ e_comp_cfdata_config_new(void)
    mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
    mat->primary_type = E_WINDOW_TYPE_DOCK;
-   mat->shadow_style = eina_stringshare_add("still");
+   mat->shadow_style = eina_stringshare_add("none");
 
    mat = E_NEW(E_Comp_Match, 1);
    cfg->match.overrides = eina_list_append(cfg->match.overrides, mat);
