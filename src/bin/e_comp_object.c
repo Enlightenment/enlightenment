@@ -692,8 +692,9 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
      {
         if ((cw->ec->x != x) || (cw->ec->y != y))
           {
-             cw->ec->post_move = 0;
              cw->ec->x = x, cw->ec->y = y;
+             cw->ec->client.x = x + cw->client_inset.l;
+             cw->ec->client.y = y + cw->client_inset.t;
           }
         return;
      }
@@ -750,8 +751,9 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
      {
         if ((cw->ec->w != w) || (cw->ec->h != h))
           {
-             cw->ec->post_resize = 0;
              cw->ec->w = w, cw->ec->h = h;
+             cw->ec->client.w = w - cw->client_inset.l - cw->client_inset.r;
+             cw->ec->client.h = h - cw->client_inset.t - cw->client_inset.b;
           }
         return;
      }
