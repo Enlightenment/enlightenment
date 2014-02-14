@@ -385,7 +385,11 @@ e_win_move(E_Win *win, int x, int y)
    E_OBJECT_CHECK(win);
    E_OBJECT_TYPE_CHECK(win, E_WIN_TYPE);
    if (win->client)
-     e_client_util_move_without_frame(win->client, x, y);
+     {
+        e_client_util_move_without_frame(win->client, x, y);
+        win->client->changes.pos = 1;
+        EC_CHANGED(win->client);
+     }
    else
      ecore_evas_move(win->ecore_evas, x, y);
 }
@@ -402,7 +406,11 @@ e_win_resize(E_Win *win, int w, int h)
    E_OBJECT_CHECK(win);
    E_OBJECT_TYPE_CHECK(win, E_WIN_TYPE);
    if (win->client)
-     e_client_util_resize_without_frame(win->client, w, h);
+     {
+        e_client_util_resize_without_frame(win->client, w, h);
+        win->client->changes.size = 1;
+        EC_CHANGED(win->client);
+     }
    else
      ecore_evas_resize(win->ecore_evas, w, h);
 }
@@ -422,7 +430,11 @@ e_win_move_resize(E_Win *win, int x, int y, int w, int h)
    E_OBJECT_CHECK(win);
    E_OBJECT_TYPE_CHECK(win, E_WIN_TYPE);
    if (win->client)
-     e_client_util_move_resize_without_frame(win->client, x, y, w, h);
+     {
+        e_client_util_move_resize_without_frame(win->client, x, y, w, h);
+        win->client->changes.pos = win->client->changes.size = 1;
+        EC_CHANGED(win->client);
+     }
    else
      ecore_evas_move_resize(win->ecore_evas, x, y, w, h);
 }
