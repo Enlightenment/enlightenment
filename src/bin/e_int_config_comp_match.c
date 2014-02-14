@@ -7,7 +7,7 @@ typedef struct _Match_Config
    E_Config_Dialog *cfd;
    char            *title, *name, *clas, *role;
    int              borderless, dialog, accepts_focus;
-   int              argb, fullscreen, modal;
+   int              argb, fullscreen, modal, primary_type;
 } Match_Config;
 
 struct _E_Config_Dialog_Data
@@ -36,6 +36,8 @@ _match_dup(E_Comp_Match *m, Match_Config *m2)
    m2->match.name = eina_stringshare_ref(m2->match.name);
    m2->match.clas = eina_stringshare_ref(m2->match.clas);
    m2->match.role = eina_stringshare_ref(m2->match.role);
+   m2->primary_type = m2->match.primary_type;
+
    m2->match.shadow_style = eina_stringshare_ref(m2->match.shadow_style);
 }
 
@@ -231,7 +233,7 @@ _edit_ok(void *d1, void *d2)
    Evas_Object *dia, *bg, *of = d2;
    Evas_Object *il;
 
-   if (m->title || m->name || m->clas || m->role)
+   if (m->title || m->name || m->clas || m->role || (m->primary_type != m->match.primary_type))
      {
         m->cfd->cfdata->changed = 1;
         e_config_dialog_changed_set(m->cfd, 1);
@@ -265,6 +267,7 @@ _edit_ok(void *d1, void *d2)
         m->match.argb = m->argb;
         m->match.fullscreen = m->fullscreen;
         m->match.modal = m->modal;
+        m->match.primary_type = m->primary_type;
         il = m->cfd->cfdata->edit_il;
         {
            const Eina_List *l;
@@ -383,7 +386,7 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
    if ((cfdata->edit_il == cfdata->borders_il) ||
        (cfdata->edit_il == cfdata->overrides_il))
      {
-        rg = e_widget_radio_group_new(&m->match.primary_type);
+        rg = e_widget_radio_group_new(&m->primary_type);
 
         li = e_widget_list_add(evas, 1, 0);
 
