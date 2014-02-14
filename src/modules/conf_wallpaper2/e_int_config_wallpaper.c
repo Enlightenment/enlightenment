@@ -1032,7 +1032,7 @@ static void
 _ok(void *data, void *data2 __UNUSED__)
 {
   _apply(data, data2);
-  wp_conf_hide();
+  e_object_del(E_OBJECT(global_info->win));
 }
 
 static void
@@ -1317,7 +1317,7 @@ wp_broser_free(Info *info)
    char *s;
 
    if (!info) return;
-   e_object_del(E_OBJECT(info->win));
+   if (info->win) e_object_del(E_OBJECT(info->win));
    if (info->dir) eina_iterator_free(info->dir);
    eina_stringshare_del(info->bg_file);
    free(info->curdir);
