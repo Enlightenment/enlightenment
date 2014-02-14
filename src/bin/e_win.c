@@ -772,12 +772,14 @@ static void
 _e_win_cb_delete(Ecore_Evas *ee)
 {
    E_Win *win;
+   E_Win_Cb cb;
 
    win = ecore_evas_data_get(ee, "E_Win");
    if (!win) return;
    e_object_ref(E_OBJECT(win));
-   if (win->cb_delete) win->cb_delete(win);
+   cb = win->cb_delete;
    win->cb_delete = NULL;
+   if (cb) cb(win);
    e_object_unref(E_OBJECT(win));
 }
 
