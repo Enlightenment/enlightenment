@@ -67,7 +67,11 @@ _e_deskmirror_visible_get(E_Smart_Data *sd, Mirror *m)
    Eina_Bool visible = evas_object_visible_get(m->comp_object);
    if (m->ec)
      {
-        if (m->ec->hidden) return EINA_FALSE;
+        if (m->ec->hidden)
+          {
+             if ((!sd->pager) && (!sd->taskbar))
+               return EINA_FALSE;
+          }
         visible = m->ec->visible;
         /* iconic flips meaning of visible flag at this point
          * where "this point" is defined as being during the show
