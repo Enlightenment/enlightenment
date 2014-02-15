@@ -623,6 +623,20 @@ _ibar_empty(IBar *b)
 static void
 _ibar_orient_set(IBar *b, int horizontal)
 {
+   Evas_Coord w, h;
+   
+   if (!horizontal)
+     e_theme_edje_object_set(b->o_sep, "base/theme/modules/ibar", "e/modules/ibar/separator/horizontal");
+   else
+     e_theme_edje_object_set(b->o_sep, "base/theme/modules/ibar", "e/modules/ibar/separator/default");
+   edje_object_size_min_calc(b->o_sep, &w, &h);
+   e_box_pack_options_set(b->o_sep,
+                          1, 1, /* fill */
+                          0, 0, /* expand */
+                          0.5, 0.5, /* align */
+                          w, h, /* min */
+                          -1, -1 /* max */
+                         );
    e_box_orientation_set(b->o_box, horizontal);
    e_box_align_set(b->o_box, 0.5, 0.5);
    e_box_orientation_set(b->o_outerbox, horizontal);
@@ -765,7 +779,9 @@ _ibar_config_update(Config_Item *ci)
 static void
 _ibar_sep_create(IBar *b)
 {
+   Evas_Coord w, h;
    if (b->o_sep) return;
+
    b->o_sep = edje_object_add(evas_object_evas_get(b->o_box));
    if (_gc_vertical(b->inst))
      e_theme_edje_object_set(b->o_sep, "base/theme/modules/ibar", "e/modules/ibar/separator/horizontal");
@@ -773,6 +789,14 @@ _ibar_sep_create(IBar *b)
      e_theme_edje_object_set(b->o_sep, "base/theme/modules/ibar", "e/modules/ibar/separator/default");
    evas_object_show(b->o_sep);
    e_box_pack_end(b->o_outerbox, b->o_sep);
+   edje_object_size_min_calc(b->o_sep, &w, &h);
+   e_box_pack_options_set(b->o_sep,
+                          1, 1, /* fill */
+                          0, 0, /* expand */
+                          0.5, 0.5, /* align */
+                          w, h, /* min */
+                          -1, -1 /* max */
+                         );
 }
 
 static IBar_Icon *
