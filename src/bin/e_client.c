@@ -488,7 +488,11 @@ _e_client_del(E_Client *ec)
         if (ec->exe_inst->phony && (eina_list_count(ec->exe_inst->clients) == 1))
           e_exec_phony_del(ec->exe_inst);
         else
-          ec->exe_inst->clients = eina_list_remove(ec->exe_inst->clients, ec);
+          {
+             ec->exe_inst->clients = eina_list_remove(ec->exe_inst->clients, ec);
+             if (ec->exe_inst->deleted)
+               e_object_unref(E_OBJECT(ec));
+          }
         ec->exe_inst = NULL;
      }
 
