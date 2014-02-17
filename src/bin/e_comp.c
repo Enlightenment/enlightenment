@@ -1567,9 +1567,11 @@ e_comp_util_wins_print(const E_Comp *c)
         evas_object_geometry_get(o, &x, &y, &w, &h);
         fprintf(stderr, "LAYER %d  ", evas_object_layer_get(o));
         if (ec)
-          fprintf(stderr, "COMP EC%s:  %p - '%s:%s' || %d,%d @ %dx%d\n", ec->focused ? "*" : "", ec, ec->icccm.name, ec->icccm.class, x, y, w, h);
+          fprintf(stderr, "EC%s%s:  %p - '%s:%s' || %d,%d @ %dx%d\n",
+                  ec->override ? "O" : "", ec->focused ? "*" : "", ec,
+                  e_client_util_name_get(ec) ?: ec->icccm.name, ec->icccm.class, x, y, w, h);
         else
-          fprintf(stderr, "COMP OBJ: %p - %s || %d,%d @ %dx%d\n", o, evas_object_name_get(o), x, y, w, h);
+          fprintf(stderr, "OBJ: %p - %s || %d,%d @ %dx%d\n", o, evas_object_name_get(o), x, y, w, h);
         o = evas_object_below_get(o);
      }
    fputc('\n', stderr);
