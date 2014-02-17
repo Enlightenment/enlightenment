@@ -1,3 +1,17 @@
+Changes since 0.18.3:
+---------------------
+
+* fixed menu placement in some cases
+* fixed dnd indicator visibility after operation ends
+* fixed screen limits window handling to not unexpectedly warp windows
+* fixed distcheck for non-default modules
+* fixed rare crash when closing applications
+* fixed crash when settings windows containing an entry widget were closed
+* fixed ibar app tracking with applications possessing a skip_taskbar window
+* EFM now respects device presentation hints
+* improved positioning of windows when using multiple monitors
+* compositor theme match dialog now functions as expected
+
 Changes since 0.18.2:
 ---------------------
 
