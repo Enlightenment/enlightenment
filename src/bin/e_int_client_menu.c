@@ -242,11 +242,9 @@ e_int_client_menu_show(E_Client *ec, Evas_Coord x, Evas_Coord y, int key, unsign
 EAPI void
 e_int_client_menu_del(E_Client *ec)
 {
-   if (ec->border_menu)
-     {
-        e_object_del(E_OBJECT(ec->border_menu));
-        ec->border_menu = NULL;
-     }
+   if (!ec->border_menu) return;
+   e_menu_post_deactivate_callback_set(ec->border_menu, NULL, NULL);
+   E_FREE_FUNC(ec->border_menu, e_object_del);
 }
 
 static void
