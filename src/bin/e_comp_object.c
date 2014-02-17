@@ -817,6 +817,12 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
         //INF("CALLBACK: REQ(%dx%d) != CUR(%dx%d)", w - fw, h - fh, pw, ph);
         evas_object_smart_callback_call(obj, "client_resize", NULL);
         e_comp_object_frame_wh_adjust(obj, pw, ph, &w, &h);
+        if ((cw->w == w) && (cw->h == h))
+          {
+             /* going to be a noop resize which won't trigger smart resize */
+             RENDER_DEBUG("DAMAGE RESIZE(%p): %", cw->ec, cw->ec->client.w, cw->ec->client.h);
+             if (cw->updates) eina_tiler_area_size_set(cw->updates, cw->ec->client.w, cw->ec->client.h);
+          }
         evas_object_resize(obj, w, h);
      }
    else
@@ -1985,8 +1991,14 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
           evas_object_geometry_set(cw->input_obj, cw->x + cw->input_rect.x, cw->y + cw->input_rect.y, cw->input_rect.w, cw->input_rect.h);
         if (!first)
           {
+             RENDER_DEBUG("DAMAGE UNFULL: %p", cw->ec);
              cw->updates_full = 0;
              if (cw->updates) eina_tiler_clear(cw->updates);
+          }
+        else
+          {
+             RENDER_DEBUG("DAMAGE RESIZE(%p): %dx%d", cw->ec, cw->ec->client.w, cw->ec->client.h);
+             if (cw->updates) eina_tiler_area_size_set(cw->updates, cw->ec->client.w, cw->ec->client.h);
           }
      }
    else
