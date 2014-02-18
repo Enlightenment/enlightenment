@@ -151,8 +151,8 @@ e_int_client_menu_create(E_Client *ec)
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Always on Top"));
    e_menu_item_check_set(mi, 1);
-   e_menu_item_toggle_set(mi, (ec->layer == 150 ? 1 : 0));
-   if (ec->layer == 150)
+   e_menu_item_toggle_set(mi, (ec->layer == E_LAYER_CLIENT_ABOVE ? 1 : 0));
+   if (ec->layer == E_LAYER_CLIENT_ABOVE)
      e_menu_item_callback_set(mi, _e_client_menu_cb_normal, ec);
    else
      e_menu_item_callback_set(mi, _e_client_menu_cb_on_top, ec);
@@ -1060,7 +1060,7 @@ _e_client_menu_cb_stacking_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi
    e_menu_item_label_set(submi, _("Always on Top"));
    e_menu_item_radio_set(submi, 1);
    e_menu_item_radio_group_set(submi, 2);
-   e_menu_item_toggle_set(submi, (ec->layer == 150 ? 1 : 0));
+   e_menu_item_toggle_set(submi, (ec->layer == E_LAYER_CLIENT_ABOVE ? 1 : 0));
    e_menu_item_callback_set(submi, _e_client_menu_cb_on_top, ec);
    e_menu_item_icon_edje_set(submi,
                              e_theme_edje_file_get("base/theme/borders",
@@ -1071,7 +1071,7 @@ _e_client_menu_cb_stacking_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi
    e_menu_item_label_set(submi, _("Normal"));
    e_menu_item_radio_set(submi, 1);
    e_menu_item_radio_group_set(submi, 2);
-   e_menu_item_toggle_set(submi, (ec->layer == 100 ? 1 : 0));
+   e_menu_item_toggle_set(submi, (ec->layer == E_LAYER_CLIENT_NORMAL ? 1 : 0));
    e_menu_item_callback_set(submi, _e_client_menu_cb_normal, ec);
    e_menu_item_icon_edje_set(submi,
                              e_theme_edje_file_get("base/theme/borders",
@@ -1082,7 +1082,7 @@ _e_client_menu_cb_stacking_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi
    e_menu_item_label_set(submi, _("Always Below"));
    e_menu_item_radio_set(submi, 1);
    e_menu_item_radio_group_set(submi, 2);
-   e_menu_item_toggle_set(submi, (ec->layer == 50 ? 1 : 0));
+   e_menu_item_toggle_set(submi, (ec->layer == E_LAYER_CLIENT_BELOW ? 1 : 0));
    e_menu_item_callback_set(submi, _e_client_menu_cb_below, ec);
    e_menu_item_icon_edje_set(submi,
                              e_theme_edje_file_get("base/theme/borders",
