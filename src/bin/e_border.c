@@ -4914,11 +4914,11 @@ _e_border_del(E_Border *bd)
           e_exec_phony_del(bd->exe_inst);
         else
           {
-             bd->exe_inst->borders = eina_list_remove(bd->exe_inst->borders, bd);
-             if (bd->exe_inst->deleted)
-               e_object_unref(E_OBJECT(bd));
+             if (!bd->exe_inst->deleted)
+               bd->exe_inst->borders = eina_list_remove(bd->exe_inst->borders, bd);
           }
-        bd->exe_inst = NULL;
+        if (!bd->exe_inst->deleted)
+          bd->exe_inst = NULL;
      }
 
    if (bd->fullscreen) bd->desk->fullscreen_borders--;
