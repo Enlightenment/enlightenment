@@ -489,11 +489,11 @@ _e_client_del(E_Client *ec)
           e_exec_phony_del(ec->exe_inst);
         else
           {
-             ec->exe_inst->clients = eina_list_remove(ec->exe_inst->clients, ec);
-             if (ec->exe_inst->deleted)
-               e_object_unref(E_OBJECT(ec));
+             if (!ec->exe_inst->deleted)
+               ec->exe_inst->clients = eina_list_remove(ec->exe_inst->clients, ec);
           }
-        ec->exe_inst = NULL;
+        if (!ec->exe_inst->deleted)
+          ec->exe_inst = NULL;
      }
 
    if (ec->cur_mouse_action)
