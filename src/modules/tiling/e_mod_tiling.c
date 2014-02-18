@@ -179,6 +179,9 @@ is_tilable(const E_Client *ec)
         return false;
      }
 
+   if (ec->iconic)
+      return false;
+
    if (e_client_util_ignored_get(ec))
      return false;
 
