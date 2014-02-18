@@ -68,6 +68,7 @@ static struct tiling_mod_main_g
                        *handler_client_add, *handler_client_remove, *handler_client_iconify,
                        *handler_client_uniconify, *handler_client_property,
                        *handler_desk_set, *handler_compositor_resize;
+   E_Client_Hook       *handler_client_resize_begin;
    E_Client_Menu_Hook  *client_menu_hook;
 
    Tiling_Info         *tinfo;
@@ -1268,7 +1269,8 @@ e_modapi_init(E_Module *m)
                                (Ecore_Event_Handler_Cb)_f, \
                                NULL);
 
-   e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, _resize_begin_hook, NULL);
+   _G.handler_client_resize_begin =
+      e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, _resize_begin_hook, NULL);
    HANDLER(_G.handler_client_resize, CLIENT_RESIZE, _resize_hook);
    HANDLER(_G.handler_client_move, CLIENT_MOVE, _move_hook);
    HANDLER(_G.handler_client_add, CLIENT_ADD, _add_hook);
@@ -1452,11 +1454,15 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
         eina_log_domain_unregister(tiling_g.log_domain);
         tiling_g.log_domain = -1;
      }
+#define SAFE_FREE(x, freefunc) \
+   if (x) \
+     { \
+        freefunc(x); \
+        x = NULL; \
+     }
 #define FREE_HANDLER(x)            \
-  if (x) {                         \
-       ecore_event_handler_del(x); \
-       x = NULL;                   \
-    }
+   SAFE_FREE(x, ecore_event_handler_del);
+
    FREE_HANDLER(_G.handler_client_resize);
    FREE_HANDLER(_G.handler_client_move);
    FREE_HANDLER(_G.handler_client_add);
@@ -1467,7 +1473,10 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    FREE_HANDLER(_G.handler_client_property);
 
    FREE_HANDLER(_G.handler_desk_set);
+
+   SAFE_FREE(_G.handler_client_resize_begin, e_client_hook_del);
 #undef FREE_HANDLER
+#undef SAFE_FREE
 
 #define ACTION_DEL(act, title, value)             \
   if (act) {                                      \
