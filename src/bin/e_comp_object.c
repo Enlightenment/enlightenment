@@ -750,6 +750,7 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
      {
         if ((cw->ec->w != w) || (cw->ec->h != h))
           {
+             evas_object_smart_callback_call(obj, "client_resize", NULL);
              cw->ec->w = w, cw->ec->h = h;
              cw->ec->client.w = w - cw->client_inset.l - cw->client_inset.r;
              cw->ec->client.h = h - cw->client_inset.t - cw->client_inset.b;
