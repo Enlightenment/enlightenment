@@ -821,7 +821,7 @@ _e_comp_intercept_resize(void *data, Evas_Object *obj, int w, int h)
         if ((cw->w == w) && (cw->h == h))
           {
              /* going to be a noop resize which won't trigger smart resize */
-             RENDER_DEBUG("DAMAGE RESIZE(%p): %", cw->ec, cw->ec->client.w, cw->ec->client.h);
+             RENDER_DEBUG("DAMAGE RESIZE(%p): %dx%d", cw->ec, cw->ec->client.w, cw->ec->client.h);
              if (cw->updates) eina_tiler_area_size_set(cw->updates, cw->ec->client.w, cw->ec->client.h);
           }
         evas_object_resize(obj, w, h);
