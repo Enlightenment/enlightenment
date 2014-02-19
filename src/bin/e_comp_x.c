@@ -2547,9 +2547,15 @@ _e_comp_x_present_configure(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_X_E
    if (!ec) return ECORE_CALLBACK_RENEW;
    if (e_pixmap_size_changed(ec->pixmap, ev->pixmap_width, ev->pixmap_height))
      {
+        //WRN("PRESENT %p: %dx%d", ec, ev->pixmap_width, ev->pixmap_height);
         e_pixmap_dirty(ec->pixmap);
         if (e_comp_object_damage_exists(ec->frame))
-          e_comp_object_render_update_add(ec->frame);
+          {
+             if (starting)
+               e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+             else
+               e_comp_object_render_update_add(ec->frame);
+          }
         ec->comp_data->pw = ev->pixmap_width;
         ec->comp_data->ph = ev->pixmap_height;
      }
