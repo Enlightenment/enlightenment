@@ -836,6 +836,14 @@ _e_mod_action_toggle_split_mode(E_Object *obj EINA_UNUSED,
 static Eina_Bool
 _maximize_check_handle(E_Client *ec, Client_Extra *extra)
 {
+   if (!extra)
+     {
+        extra = eina_hash_find(_G.client_extras, &ec);
+     }
+
+   if (!extra)
+      return EINA_FALSE;
+
    if (extra->tiled && ec->maximized)
      {
         _restore_client(ec);
@@ -858,13 +866,14 @@ _move_or_resize(E_Client *ec)
 {
    Client_Extra *extra = tiling_entry_func(ec);
 
+   /* FIXME: Hack for maximized windows. */
+   if (_maximize_check_handle(ec, extra))
+      return;
+
    if (!extra)
      {
         return;
      }
-
-   if (_maximize_check_handle(ec, extra))
-      return;
 
    if (is_ignored_window(extra))
      return;
