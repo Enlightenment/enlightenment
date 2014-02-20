@@ -1751,7 +1751,7 @@ _e_client_eval(E_Client *ec)
         if ((!ec->shaded) && (!ec->shading))
           {
              evas_object_resize(ec->frame, ec->w, ec->h);
-             if (ec->internal_ecore_evas)
+             if (ec->internal_ecore_evas && (!ec->override))
                ecore_evas_move_resize(ec->internal_ecore_evas, 0, 0, ec->client.w, ec->client.h);
           }
 
