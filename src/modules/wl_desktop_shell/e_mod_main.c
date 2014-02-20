@@ -1350,11 +1350,11 @@ _e_wl_shell_shell_surface_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object
           sym = xkb_keysym_from_name(ev->key, XKB_KEYSYM_CASE_INSENSITIVE);
         key = sym - 8;
      }
-   end = (kbd->keys.data + kbd->keys.size);
+   end = ((unsigned int *)kbd->keys.data + kbd->keys.size);
    for (k = kbd->keys.data; k < end; k++)
      if ((*k == key)) *k = *--end;
 
-   kbd->keys.size = (void *)end - kbd->keys.data;
+   kbd->keys.size = end - (unsigned int *)kbd->keys.data;
 
    /* try to get the current keyboard's grab interface. 
     * Fallback to the default grab */
@@ -1420,14 +1420,14 @@ _e_wl_shell_shell_surface_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Obje
    kbd->grab_key = key;
    kbd->grab_time = ev->timestamp;
 
-   end = (kbd->keys.data + kbd->keys.size);
+   end = ((unsigned int *)kbd->keys.data + kbd->keys.size);
    for (k = kbd->keys.data; k < end; k++)
      {
         /* ignore server generated key repeats */
         if ((*k == key)) return;
      }
 
-   kbd->keys.size = (void *)end - kbd->keys.data;
+   kbd->keys.size = end - (unsigned int *)kbd->keys.data;
    k = wl_array_add(&kbd->keys, sizeof(*k));
    *k = key;
 
