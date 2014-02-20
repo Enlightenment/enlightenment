@@ -3007,6 +3007,22 @@ e_client_focus_track_thaw(void)
    focus_track_frozen--;
 }
 
+EAPI void
+e_client_refocus(void)
+{
+   E_Client *ec;
+   const Eina_List *l;
+
+   EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
+     if (ec->desk && ec->desk->visible && (!ec->iconic))
+       {
+          if (ec->comp->input_key_grabs || ec->comp->input_mouse_grabs) break;
+          evas_object_focus_set(ec->frame, 1);
+          break;
+       }
+}
+
+
 /*
  * Sets the focus to the given client if necessary
  * There are 3 cases of different focus_policy-configurations:

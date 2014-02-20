@@ -1748,8 +1748,6 @@ EAPI void
 e_comp_ungrab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd)
 {
    Ecore_Window mwin = 0, kwin = 0;
-   Eina_List *l;
-   E_Client *ec;
 
    mouse = !!mouse;
    kbd = !!kbd;
@@ -1766,13 +1764,7 @@ e_comp_ungrab_input(E_Comp *c, Eina_Bool mouse, Eina_Bool kbd)
    evas_event_feed_mouse_out(c->evas, 0, NULL);
    evas_event_feed_mouse_in(c->evas, 0, NULL);
    if (e_client_focused_get()) return;
-   EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
-     if (ec->desk && ec->desk->visible && (!ec->iconic))
-       {
-          if (ec->comp->input_key_grabs || ec->comp->input_mouse_grabs) break;
-          evas_object_focus_set(ec->frame, 1);
-          break;
-       }
+   e_client_refocus();
 }
 
 EAPI void

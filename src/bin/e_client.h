@@ -755,6 +755,7 @@ EAPI void e_client_raise_latest_set(E_Client *ec);
 EAPI Eina_Bool e_client_focus_track_enabled(void);
 EAPI void e_client_focus_track_freeze(void);
 EAPI void e_client_focus_track_thaw(void);
+EAPI void e_client_refocus(void);
 EAPI void e_client_focus_set_with_pointer(E_Client *ec);
 EAPI void e_client_activate(E_Client *ec, Eina_Bool just_do_it);
 EAPI E_Client *e_client_focused_get(void);
