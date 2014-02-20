@@ -493,13 +493,7 @@ _client_apply_settings(E_Client *ec, Client_Extra *extra)
         extra = tiling_entry_func(ec);
      }
 
-   if (!extra)
-      return;
-
-   if (is_ignored_window(extra))
-     return;
-
-   if (!extra->tiled)
+   if (!extra || !extra->tiled)
       return;
 
    if (ec->maximized)
@@ -562,8 +556,7 @@ _add_client(E_Client *ec)
         {
            Client_Extra *extra_focused =
              eina_hash_find(_G.client_extras, &ec_focused);
-           if (_G.tinfo->tree && extra_focused &&
-               !is_ignored_window(extra_focused))
+           if (_G.tinfo->tree && extra_focused && extra_focused->tiled)
              {
                 ERR("Couldn't find tree item for focused client %p. Using root..", e_client_focused_get());
              }
@@ -672,10 +665,7 @@ _e_mod_action_swap_window_go_mouse(E_Object *obj EINA_UNUSED,
 
    Client_Extra *extra = tiling_entry_func(ec);
 
-   if (!extra)
-     return;
-
-   if (is_ignored_window(extra))
+   if (!extra || !extra->tiled)
      return;
 
    _go_mouse_client = ec;
@@ -696,10 +686,7 @@ _e_mod_action_swap_window_end_mouse(E_Object *obj EINA_UNUSED,
 
    Client_Extra *extra = tiling_entry_func(ec);
 
-   if (!extra)
-     return;
-
-   if (is_ignored_window(extra))
+   if (!extra || !extra->tiled)
      return;
 
    /* XXX: Only support swap on the first desk for now. */
@@ -860,13 +847,10 @@ _move_or_resize(E_Client *ec)
    if (_maximize_check_handle(ec, extra))
       return;
 
-   if (!extra)
+   if (!extra || !extra->tiled)
      {
         return;
      }
-
-   if (is_ignored_window(extra))
-     return;
 
    if ((ec->x == extra->expected.x) && (ec->y == extra->expected.y) &&
        (ec->w == extra->expected.w) && (ec->h == extra->expected.h))
@@ -940,13 +924,10 @@ _resize_begin_hook(void *data EINA_UNUSED, E_Client *ec)
 {
    Client_Extra *extra = tiling_entry_func(ec);
 
-   if (!extra)
+   if (!extra || !extra->tiled)
      {
         return;
      }
-
-   if (is_ignored_window(extra))
-     return;
 
    Window_Tree *item = tiling_window_tree_client_find(_G.tinfo->tree, ec);
 
@@ -1060,13 +1041,10 @@ _move_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
    E_Client *ec = event->ec;
    Client_Extra *extra = tiling_entry_func(ec);
 
-   if (!extra)
+   if (!extra || !extra->tiled)
      {
         return true;
      }
-
-   if (is_ignored_window(extra))
-     return true;
 
    e_client_act_move_end(event->ec, NULL);
 
