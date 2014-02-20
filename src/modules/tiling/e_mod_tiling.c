@@ -45,6 +45,7 @@ static void             _add_client(E_Client *ec);
 static void             _remove_client(E_Client *ec);
 static void             _client_apply_settings(E_Client *ec, Client_Extra *extra);
 static void             _foreach_desk(void (*func)(E_Desk *desk));
+static Eina_Bool _toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore);
 
 /* Func Proto Requirements for Gadcon */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -844,19 +845,8 @@ _maximize_check_handle(E_Client *ec, Client_Extra *extra)
    if (!extra)
       return EINA_FALSE;
 
-   if (extra->tiled && ec->maximized)
-     {
-        _restore_client(ec);
-        _remove_client(ec);
-
-        return EINA_TRUE;
-     }
-   else if (!extra->tiled && !ec->maximized)
-     {
-        _add_client(ec);
-
-        return EINA_TRUE;
-     }
+   if (_toggle_tiling_based_on_state(ec, EINA_TRUE))
+      return EINA_TRUE;
 
    return EINA_FALSE;
 }
@@ -1122,14 +1112,14 @@ _remove_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    return true;
 }
 
-static void
+static Eina_Bool
 _toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore)
 {
    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
 
    if (!extra)
      {
-        return;
+        return EINA_FALSE;
      }
 
    /* This is the new state, act accordingly. */
@@ -1140,11 +1130,17 @@ _toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore)
              _restore_client(ec);
           }
         _remove_client(ec);
+
+        return EINA_TRUE;
      }
    else if (!extra->tiled && is_tilable(ec))
      {
         _add_client(ec);
+
+        return EINA_TRUE;
      }
+
+   return EINA_FALSE;
 }
 
 static bool
