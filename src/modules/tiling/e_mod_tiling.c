@@ -187,6 +187,9 @@ is_tilable(const E_Client *ec)
    if (ec->iconic)
       return false;
 
+   if (ec->sticky)
+      return false;
+
    if (e_client_util_ignored_get(ec))
      return false;
 
@@ -1116,63 +1119,10 @@ _remove_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    return true;
 }
 
-static bool
-_iconify_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-              E_Event_Client *event)
-{
-   E_Client *ec = event->ec;
-
-   DBG("iconify hook: %p", ec);
-
-   if (ec->deskshow)
-     return true;
-
-   _remove_client(ec);
-
-   return true;
-}
-
-static bool
-_uniconify_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-                E_Event_Client *event)
-{
-   E_Client *ec = event->ec;
-
-   if (ec->deskshow)
-     return true;
-
-   _add_client(ec);
-
-   return true;
-}
-
-static bool
-_fullscreen_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-              E_Event_Client *event)
-{
-   E_Client *ec = event->ec;
-
-   _restore_client_no_sizing(ec);
-   _remove_client(ec);
-
-   return true;
-}
-
-static bool
-_unfullscreen_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-                E_Event_Client *event)
-{
-   E_Client *ec = event->ec;
-
-   _add_client(ec);
-
-   return true;
-}
-
 static void
-toggle_sticky(E_Client *ec)
+_toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore)
 {
-   Client_Extra *extra = tiling_entry_func(ec);
+   Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
 
    if (!extra)
      {
@@ -1180,15 +1130,43 @@ toggle_sticky(E_Client *ec)
      }
 
    /* This is the new state, act accordingly. */
-   if (ec->sticky)
+   if (extra->tiled && !is_tilable(ec))
      {
-        _restore_client(ec);
+        if (restore)
+          {
+             _restore_client(ec);
+          }
         _remove_client(ec);
      }
-   else
+   else if (!extra->tiled && is_tilable(ec))
      {
         _add_client(ec);
      }
+}
+
+static bool
+_iconify_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
+                E_Event_Client *event)
+{
+   E_Client *ec = event->ec;
+
+   if (ec->deskshow)
+     return true;
+
+   _toggle_tiling_based_on_state(ec, EINA_FALSE);
+
+   return true;
+}
+
+static bool
+_toggle_tiling_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
+              E_Event_Client *event)
+{
+   E_Client *ec = event->ec;
+
+   _toggle_tiling_based_on_state(ec, EINA_TRUE);
+
+   return true;
 }
 
 static Eina_Bool
@@ -1197,7 +1175,7 @@ _property_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
 {
    if (event->property & E_CLIENT_PROPERTY_STICKY)
      {
-        toggle_sticky(event->ec);
+        _toggle_tiling_based_on_state(event->ec, EINA_TRUE);
      }
    return true;
 }
@@ -1342,9 +1320,9 @@ e_modapi_init(E_Module *m)
    HANDLER(_G.handler_client_remove, CLIENT_REMOVE, _remove_hook);
 
    HANDLER(_G.handler_client_iconify, CLIENT_ICONIFY, _iconify_hook);
-   HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _uniconify_hook);
-   HANDLER(_G.handler_client_fullscreen, CLIENT_FULLSCREEN, _fullscreen_hook);
-   HANDLER(_G.handler_client_unfullscreen, CLIENT_UNFULLSCREEN, _unfullscreen_hook);
+   HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _iconify_hook);
+   HANDLER(_G.handler_client_fullscreen, CLIENT_FULLSCREEN, _toggle_tiling_hook);
+   HANDLER(_G.handler_client_unfullscreen, CLIENT_UNFULLSCREEN, _toggle_tiling_hook);
    HANDLER(_G.handler_client_property, CLIENT_PROPERTY, _property_hook);
 
    HANDLER(_G.handler_desk_set, CLIENT_DESK_SET, _desk_set_hook);
