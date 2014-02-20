@@ -1150,7 +1150,9 @@ static Eina_Bool
 _property_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
             E_Event_Client_Property *event)
 {
-   if (event->property & E_CLIENT_PROPERTY_STICKY)
+   E_Client_Property mask = E_CLIENT_PROPERTY_STICKY |
+      E_CLIENT_PROPERTY_NETWM_STATE;
+   if (event->property & mask)
      {
         _toggle_tiling_based_on_state(event->ec, EINA_TRUE);
      }
