@@ -1004,6 +1004,32 @@ _pager_cb_event_desk_name_change(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static Eina_Bool
+_pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client_Property *ev)
+{
+   if (!(ev->property & E_CLIENT_PROPERTY_URGENCY)) return ECORE_CALLBACK_RENEW;
+
+   if (pager_config->popup_urgent && (pager_config->popup_urgent_focus ||
+                                      (!pager_config->popup_urgent_focus && (!ev->ec->focused) && (!ev->ec->want_focus))))
+     {
+        Pager_Popup *pp;
+
+        pp = _pager_popup_find(ev->ec->zone);
+
+        if ((!pp) && (ev->ec->icccm.urgent) && (!ev->ec->iconic))
+          {
+             pp = _pager_popup_new(ev->ec->zone, 0);
+             if (!pp) return ECORE_CALLBACK_RENEW;
+
+             if (!pager_config->popup_urgent_stick)
+               pp->timer = ecore_timer_add(pager_config->popup_urgent_speed,
+                                           _pager_popup_cb_timeout, pp);
+             pp->urgent = 1;
+          }
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 _pager_cb_event_compositor_resize(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    E_Event_Compositor_Resize *ev = event;
@@ -1998,6 +2024,7 @@ e_modapi_init(E_Module *m)
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_DESK_SHOW, _pager_cb_event_desk_show, NULL);
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_DESK_NAME_CHANGE, _pager_cb_event_desk_name_change, NULL);
    E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_COMPOSITOR_RESIZE, _pager_cb_event_compositor_resize, NULL);
+   E_LIST_HANDLER_APPEND(pager_config->handlers, E_EVENT_CLIENT_PROPERTY, _pager_cb_event_client_urgent_change, NULL);
 
    pager_config->module = m;
 
