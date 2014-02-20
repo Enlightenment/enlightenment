@@ -693,7 +693,6 @@ _box_button_append(Instance *inst, const char *label, Edje_Signal_Cb func)
    ni->path = eina_stringshare_add(path);
    ni->monitor = eio_monitor_stringshared_add(ni->path);
    E_LIST_HANDLER_APPEND(ni->handlers, EIO_MONITOR_SELF_DELETED, _event_deleted, ni);
-   E_LIST_HANDLER_APPEND(ni->handlers, EIO_MONITOR_SELF_RENAME, _event_deleted, ni);
    E_LIST_HANDLER_APPEND(ni->handlers, EIO_MONITOR_ERROR, _event_deleted, ni);
 }
 
