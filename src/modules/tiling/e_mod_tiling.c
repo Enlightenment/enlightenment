@@ -292,12 +292,15 @@ _restore_client(E_Client *ec)
    if (!extra)
       return;
 
-   _e_client_move_resize(ec, extra->orig.geom.x, extra->orig.geom.y,
-                         extra->orig.geom.w, extra->orig.geom.h);
-   if (extra->orig.maximized != ec->maximized)
+   if (!ec->maximized && !ec->fullscreen)
      {
-        e_client_maximize(ec, extra->orig.maximized);
-        ec->maximized = extra->orig.maximized;
+        _e_client_move_resize(ec, extra->orig.geom.x, extra->orig.geom.y,
+              extra->orig.geom.w, extra->orig.geom.h);
+        if (extra->orig.maximized != ec->maximized)
+          {
+             e_client_maximize(ec, extra->orig.maximized);
+             ec->maximized = extra->orig.maximized;
+          }
      }
 }
 
