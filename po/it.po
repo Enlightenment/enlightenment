@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-02-16 13:43+0100\n"
+"POT-Creation-Date: 2014-02-20 12:37+0900\n"
 "PO-Revision-Date: 2014-02-19 10:04+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -71,7 +71,7 @@ msgid "Are you sure you want to kill this window?"
 msgstr "Siete sicuri di voler uccidere questa finestra?"
 
 #: src/bin/e_actions.c:373 src/bin/e_actions.c:2956
-#: src/bin/e_int_client_menu.c:791
+#: src/bin/e_int_client_menu.c:789
 msgid "Kill"
 msgstr "Uccidi"
 
@@ -150,11 +150,11 @@ msgid "Window : Actions"
 msgstr "Finestre : Azioni"
 
 #: src/bin/e_actions.c:2911 src/bin/e_fm.c:11620
-#: src/bin/e_int_client_menu.c:711
+#: src/bin/e_int_client_menu.c:709
 msgid "Move"
 msgstr "Sposta"
 
-#: src/bin/e_actions.c:2922 src/bin/e_int_client_menu.c:725
+#: src/bin/e_actions.c:2922 src/bin/e_int_client_menu.c:723
 msgid "Resize"
 msgstr "Ridimensiona"
 
@@ -169,12 +169,12 @@ msgstr "Menù"
 msgid "Window Menu"
 msgstr "Menù finestra"
 
-#: src/bin/e_actions.c:2941 src/bin/e_int_client_menu.c:1102
+#: src/bin/e_actions.c:2941 src/bin/e_int_client_menu.c:1100
 #: src/modules/winlist/e_int_config_winlist.c:207
 msgid "Raise"
 msgstr "Eleva"
 
-#: src/bin/e_actions.c:2946 src/bin/e_int_client_menu.c:1110
+#: src/bin/e_actions.c:2946 src/bin/e_int_client_menu.c:1108
 msgid "Lower"
 msgstr "Abbassa"
 
@@ -214,24 +214,24 @@ msgstr "Commuta stato a tutto schermo"
 msgid "Fullscreen Mode Enable"
 msgstr "Attiva stato a tutto schermo"
 
-#: src/bin/e_actions.c:2988 src/bin/e_int_client_menu.c:426
-#: src/bin/e_int_client_menu.c:686
+#: src/bin/e_actions.c:2988 src/bin/e_int_client_menu.c:424
+#: src/bin/e_int_client_menu.c:684
 msgid "Maximize"
 msgstr "Massimizza"
 
-#: src/bin/e_actions.c:2990 src/bin/e_int_client_menu.c:437
+#: src/bin/e_actions.c:2990 src/bin/e_int_client_menu.c:435
 msgid "Maximize Vertically"
 msgstr "Massimizza verticalmente"
 
-#: src/bin/e_actions.c:2993 src/bin/e_int_client_menu.c:448
+#: src/bin/e_actions.c:2993 src/bin/e_int_client_menu.c:446
 msgid "Maximize Horizontally"
 msgstr "Massimizza orizzontalmente"
 
-#: src/bin/e_actions.c:2996 src/bin/e_int_client_menu.c:459
+#: src/bin/e_actions.c:2996 src/bin/e_int_client_menu.c:457
 msgid "Maximize Left"
 msgstr "Massimizza verso sinistra"
 
-#: src/bin/e_actions.c:2999 src/bin/e_int_client_menu.c:470
+#: src/bin/e_actions.c:2999 src/bin/e_int_client_menu.c:468
 msgid "Maximize Right"
 msgstr "Massimizza verso destra"
 
@@ -856,7 +856,7 @@ msgstr "Titolo"
 msgid "Compositor %u"
 msgstr "Compositor %u"
 
-#: src/bin/e_config.c:969 src/bin/e_randr.c:189
+#: src/bin/e_config.c:969 src/bin/e_randr.c:177
 msgid ""
 "Settings data needed upgrading. Your old settings have<br>been wiped and a "
 "new set of defaults initialized. This<br>will happen regularly during "
@@ -876,7 +876,7 @@ msgstr ""
 "funzionalità.<br>Adesso è possibile riconfigurare le cose a proprio "
 "piacimento.<br>Ci scusiamo per il disagio.<br>"
 
-#: src/bin/e_config.c:986 src/bin/e_randr.c:204
+#: src/bin/e_config.c:986 src/bin/e_randr.c:192
 msgid ""
 "Your settings are NEWER than Enlightenment. This is very<br>strange. This "
 "should not happen unless you downgraded<br>Enlightenment or copied the "
@@ -2109,7 +2109,7 @@ msgid "Size"
 msgstr "Dimensione"
 
 #: src/bin/e_int_client_locks.c:313 src/bin/e_int_client_locks.c:332
-#: src/bin/e_int_client_menu.c:739 src/bin/e_int_client_prop.c:501
+#: src/bin/e_int_client_menu.c:737 src/bin/e_int_client_prop.c:501
 #: src/bin/e_int_client_remember.c:750 src/bin/e_int_shelf_config.c:163
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:302
 msgid "Stacking"
@@ -2175,7 +2175,7 @@ msgstr "Ricorda questi blocchi"
 msgid "Window"
 msgstr "Finestra"
 
-#: src/bin/e_int_client_menu.c:152 src/bin/e_int_client_menu.c:1062
+#: src/bin/e_int_client_menu.c:152 src/bin/e_int_client_menu.c:1060
 msgid "Always on Top"
 msgstr "Sempre sulle altre"
 
@@ -2195,69 +2195,69 @@ msgstr "Senza bordi"
 msgid "Unredirected"
 msgstr "Non rediretto"
 
-#: src/bin/e_int_client_menu.c:413 src/bin/e_int_client_prop.c:511
+#: src/bin/e_int_client_menu.c:411 src/bin/e_int_client_prop.c:511
 #: src/bin/e_int_config_comp_match.c:501
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:207
 msgid "Fullscreen"
 msgstr "A tutto schermo"
 
-#: src/bin/e_int_client_menu.c:481
+#: src/bin/e_int_client_menu.c:479
 msgid "Unmaximize"
 msgstr "Dimensioni normali"
 
-#: src/bin/e_int_client_menu.c:623
+#: src/bin/e_int_client_menu.c:621
 msgid "Edit Icon"
 msgstr "Modifica icona"
 
-#: src/bin/e_int_client_menu.c:631
+#: src/bin/e_int_client_menu.c:629
 msgid "Create Icon"
 msgstr "Crea icona"
 
-#: src/bin/e_int_client_menu.c:639
+#: src/bin/e_int_client_menu.c:637
 msgid "Add to Favorites Menu"
 msgstr "Aggiungi al menù preferiti"
 
-#: src/bin/e_int_client_menu.c:644
+#: src/bin/e_int_client_menu.c:642
 msgid "Add to IBar"
 msgstr "Aggiungi a IBar"
 
-#: src/bin/e_int_client_menu.c:652
+#: src/bin/e_int_client_menu.c:650
 msgid "Create Keyboard Shortcut"
 msgstr "Crea scorciatoia di tastiera"
 
-#: src/bin/e_int_client_menu.c:698
+#: src/bin/e_int_client_menu.c:696
 #: src/modules/everything/evry_plug_windows.c:441
 msgid "Iconify"
 msgstr "Iconifica"
 
-#: src/bin/e_int_client_menu.c:748
+#: src/bin/e_int_client_menu.c:746
 msgid "Skip"
 msgstr "Salta"
 
-#: src/bin/e_int_client_menu.c:758 src/modules/conf_theme/e_mod_main.c:57
+#: src/bin/e_int_client_menu.c:756 src/modules/conf_theme/e_mod_main.c:57
 msgid "Border"
 msgstr "Bordo"
 
-#: src/bin/e_int_client_menu.c:770 src/bin/e_int_client_remember.c:654
+#: src/bin/e_int_client_menu.c:768 src/bin/e_int_client_remember.c:654
 #: src/bin/e_int_client_remember.c:753
 msgid "Locks"
 msgstr "Blocchi"
 
-#: src/bin/e_int_client_menu.c:778
+#: src/bin/e_int_client_menu.c:776
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:128
 msgid "Remember"
 msgstr "Ricorda..."
 
-#: src/bin/e_int_client_menu.c:800
+#: src/bin/e_int_client_menu.c:798
 msgid "ICCCM/NetWM"
 msgstr "ICCCM/NetWM"
 
-#: src/bin/e_int_client_menu.c:974
+#: src/bin/e_int_client_menu.c:972
 #, c-format
 msgid "Screen %d"
 msgstr "Schermo %d"
 
-#: src/bin/e_int_client_menu.c:1073 src/bin/e_int_client_prop.c:157
+#: src/bin/e_int_client_menu.c:1071 src/bin/e_int_client_prop.c:157
 #: src/bin/e_int_client_prop.c:179 src/bin/e_int_config_comp_match.c:92
 #: src/bin/e_int_config_comp_match.c:412
 #: src/modules/conf_theme/e_int_config_fonts.c:100
@@ -2267,43 +2267,43 @@ msgstr "Schermo %d"
 msgid "Normal"
 msgstr "Normale"
 
-#: src/bin/e_int_client_menu.c:1084
+#: src/bin/e_int_client_menu.c:1082
 msgid "Always Below"
 msgstr "Sempre sotto le altre"
 
-#: src/bin/e_int_client_menu.c:1128
+#: src/bin/e_int_client_menu.c:1126
 msgid "Pin to Desktop"
 msgstr "Attacca al desktop"
 
-#: src/bin/e_int_client_menu.c:1139
+#: src/bin/e_int_client_menu.c:1137
 msgid "Unpin from Desktop"
 msgstr "Stacca dal desktop"
 
-#: src/bin/e_int_client_menu.c:1227
+#: src/bin/e_int_client_menu.c:1225
 msgid "Select Border Style"
 msgstr "Seleziona stile del bordo"
 
-#: src/bin/e_int_client_menu.c:1239
+#: src/bin/e_int_client_menu.c:1237
 msgid "Use Enlightenment Default Icon Preference"
 msgstr "Usa icona predefinita di Enlightenment"
 
-#: src/bin/e_int_client_menu.c:1247
+#: src/bin/e_int_client_menu.c:1245
 msgid "Use Application Provided Icon"
 msgstr "Usa icona fornita dall'applicazione"
 
-#: src/bin/e_int_client_menu.c:1255
+#: src/bin/e_int_client_menu.c:1253
 msgid "Use User Defined Icon"
 msgstr "Usa icona impostata dall'utente"
 
-#: src/bin/e_int_client_menu.c:1264 src/bin/e_int_client_remember.c:786
+#: src/bin/e_int_client_menu.c:1262 src/bin/e_int_client_remember.c:786
 msgid "Offer Resistance"
 msgstr "Offri resistenza"
 
-#: src/bin/e_int_client_menu.c:1325
+#: src/bin/e_int_client_menu.c:1323
 msgid "Window List"
 msgstr "Lista finestre"
 
-#: src/bin/e_int_client_menu.c:1335 src/modules/pager/e_mod_main.c:265
+#: src/bin/e_int_client_menu.c:1333 src/modules/pager/e_mod_main.c:265
 #: src/modules/pager/e_mod_main.c:2888 src/modules/pager/e_mod_main.c:2895
 #: src/modules/pager/e_mod_main.c:2902 src/modules/pager/e_mod_main.c:2904
 #: src/modules/pager/e_mod_main.c:2906 src/modules/pager/e_mod_main.c:2908
@@ -2311,7 +2311,7 @@ msgstr "Lista finestre"
 msgid "Pager"
 msgstr "Pager"
 
-#: src/bin/e_int_client_menu.c:1345 src/modules/wizard/page_180.c:24
+#: src/bin/e_int_client_menu.c:1343 src/modules/wizard/page_180.c:24
 msgid "Taskbar"
 msgstr "Taskbar"
 
@@ -4138,7 +4138,7 @@ msgstr "Caricamento moduli instabili"
 msgid "I know"
 msgstr "Lo so"
 
-#: src/bin/e_randr.c:437
+#: src/bin/e_randr.c:289
 msgid "Randr Settings Upgraded"
 msgstr "Impostazioni Randr aggiornate"
 
