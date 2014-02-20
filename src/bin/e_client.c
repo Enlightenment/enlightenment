@@ -3710,7 +3710,7 @@ e_client_unstick(E_Client *ec)
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    /* Set the desk before we unstick the client */
    if (!ec->sticky) return;
-   desk = ec->desk;
+   desk = e_desk_current_get(ec->zone);
    ec->desk = NULL;
    ec->hidden = ec->sticky = 0;
    e_hints_window_sticky_set(ec, 0);
