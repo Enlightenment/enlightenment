@@ -263,7 +263,7 @@ _e_client_unmaximize(E_Client *ec, E_Maximize max)
 }
 
 static Client_Extra *
-_restore_client_no_sizing(E_Client *ec)
+_restore_client(E_Client *ec)
 {
    Client_Extra *extra;
 
@@ -277,21 +277,6 @@ _restore_client_no_sizing(E_Client *ec)
    if (!extra->tiled)
      return NULL;
 
-   DBG("Change window border back to %s for %p", extra->orig.bordername, ec);
-   change_window_border(ec,
-                        (extra->orig.bordername) ? extra->orig.bordername : "default");
-
-   return extra;
-}
-
-static void
-_restore_client(E_Client *ec)
-{
-   Client_Extra *extra = _restore_client_no_sizing(ec);
-
-   if (!extra)
-      return;
-
    if (!ec->maximized && !ec->fullscreen)
      {
         _e_client_move_resize(ec, extra->orig.geom.x, extra->orig.geom.y,
@@ -302,6 +287,12 @@ _restore_client(E_Client *ec)
              ec->maximized = extra->orig.maximized;
           }
      }
+
+   DBG("Change window border back to %s for %p", extra->orig.bordername, ec);
+   change_window_border(ec,
+                        (extra->orig.bordername) ? extra->orig.bordername : "default");
+
+   return extra;
 }
 
 static Client_Extra *
@@ -847,7 +838,7 @@ _maximize_check_handle(E_Client *ec, Client_Extra *extra)
 {
    if (extra->tiled && ec->maximized)
      {
-        _restore_client_no_sizing(ec);
+        _restore_client(ec);
         _remove_client(ec);
 
         return EINA_TRUE;
