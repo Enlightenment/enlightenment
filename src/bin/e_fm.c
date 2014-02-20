@@ -190,6 +190,7 @@ struct _E_Fm2_Icon
    E_Menu           *menu;
    E_Entry_Dialog   *entry_dialog;
    Evas_Object      *entry_widget;
+   E_Client_Hook    *focus_hook;
    Eio_File         *eio;
    Ecore_X_Window    keygrab;
    E_Config_Dialog  *prop_dialog;
@@ -10271,6 +10272,18 @@ _e_fm2_file_rename(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
      }
 }
 
+/* FIXME: this is a stupid hack because it's impossible to get a focus event
+ * from e_widget_entry.
+ */
+static void
+_e_fm2_icon_entry_widget_focus_out(void *data, E_Client *ec EINA_UNUSED)
+{
+   E_Fm2_Icon *ic = data;
+
+   if (ic->entry_widget)
+     _e_fm2_icon_entry_widget_del(ic);
+}
+
 static Evas_Object *
 _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
 {
@@ -10295,7 +10308,8 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    evas_object_show(ic->entry_widget);
    edje_object_signal_emit(ic->obj, "e,state,rename,on", "e");
    e_widget_entry_text_set(ic->entry_widget, ic->info.file);
-   e_widget_focus_set(ic->entry_widget, 0);
+   e_widget_focus_set(ic->entry_widget, 1);
+   e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, _e_fm2_icon_entry_widget_focus_out, ic);
    e_widget_entry_select_all(ic->entry_widget);
    ic->sd->iop_icon = ic;
    ic->sd->typebuf.disabled = EINA_TRUE;
@@ -10311,6 +10325,7 @@ _e_fm2_icon_entry_widget_del(E_Fm2_Icon *ic)
    evas_object_focus_set(ic->sd->obj, 1);
    evas_object_del(ic->entry_widget);
    ic->entry_widget = NULL;
+   E_FREE_FUNC(ic->focus_hook, e_client_hook_del);
    ic->sd->typebuf.disabled = EINA_FALSE;
    if (ic->keygrab)
      {
