@@ -1406,7 +1406,7 @@ _pager_cb_event_client_urgent_change(void *data __UNUSED__, int type __UNUSED__,
    urgent = ev->ec->icccm.urgent;
 
    if (pager_config->popup_urgent && (pager_config->popup_urgent_focus ||
-                                      (!pager_config->popup_urgent_focus && !ev->ec->focused)))
+                                      ((!pager_config->popup_urgent_focus) && (!ev->ec->focused) && (!ev->ec->want_focus))))
      {
         pp = _pager_popup_find(zone);
 
