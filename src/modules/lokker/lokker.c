@@ -447,6 +447,18 @@ _lokker_popup_add(E_Zone *zone)
            case E_DESKLOCK_AUTH_METHOD_EXTERNAL: //handled by e_desklock
            default: break;
           }
+        if (cbg)
+          {
+             const char *sig[] =
+             {
+                "e,state,logo,visible",
+                "e,state,logo,hidden",
+             };
+             if (lp->bg_object)
+               edje_object_signal_emit(lp->bg_object, sig[cbg->hide_logo], "e");
+             if (lp->login_box)
+               edje_object_signal_emit(lp->login_box, sig[cbg->hide_logo], "e");
+          }
      }
 
    evas_event_thaw(evas);

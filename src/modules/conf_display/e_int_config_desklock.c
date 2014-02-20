@@ -84,22 +84,45 @@ e_int_config_desklock(E_Comp *comp, const char *params __UNUSED__)
 }
 
 void
-e_int_config_desklock_fsel_done(E_Config_Dialog *cfd, Evas_Object *bg, const char *bg_file)
+e_int_config_desklock_fsel_done(E_Config_Dialog *cfd, Evas_Object *bg, const char *bg_file, Eina_Bool hide_logo)
 {
    E_Config_Dialog_Data *cfdata;
    Eina_List *l;
-   const char *cbg;
+   E_Config_Desklock_Background *cbg;
+   Eina_Stringshare *bg_name;
+   Evas_Object *o;
+   unsigned int n = 0;
 
    if (!(cfdata = cfd->cfdata)) return;
    cfdata->bg_fsel = NULL;
    if (!bg_file) return;
-   e_widget_preview_file_get(bg, &cbg, NULL);
-   l = eina_list_data_find_list(cfdata->bgs, cbg);
-   if (l && l->data)
-     eina_stringshare_replace((const char**)&l->data, bg_file);
-   else
-     eina_list_data_set(l, eina_stringshare_add(bg_file));
+   e_widget_preview_file_get(bg, &bg_name, NULL);
+   EINA_LIST_FOREACH(cfdata->gui.bgs, l, o)
+     {
+        if (o == bg) break;
+        n++;
+     }
+   cbg = eina_list_nth(cfdata->bgs, n);
+   if (!cbg) return; //wtf
+   eina_stringshare_replace(&cbg->file, bg_file);
+   cbg->hide_logo = hide_logo;
    e_widget_preview_edje_set(bg, bg_file, "e/desktop/background");
+}
+
+static E_Config_Desklock_Background *
+desklock_bg_dup(const E_Config_Desklock_Background *cbg, const char *str)
+{
+   E_Config_Desklock_Background *ret;
+
+   ret = E_NEW(E_Config_Desklock_Background, 1);
+   if (cbg)
+     {
+        ret->file = eina_stringshare_ref(cbg->file);
+        ret->hide_logo = cbg->hide_logo;
+     }
+   else
+     ret->file = eina_stringshare_add(str);
+   return ret;
 }
 
 static void
@@ -111,16 +134,17 @@ _fill_data(E_Config_Dialog_Data *cfdata)
 
    cfdata->zone_count = _zone_count_get();
    EINA_LIST_FOREACH(e_config->desklock_backgrounds, l, bg)
-     cfdata->bgs = eina_list_append(cfdata->bgs, eina_stringshare_ref(bg->file));
+     cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(bg, NULL));
    if (!cfdata->bgs)
      for (x = 0; x < cfdata->zone_count; x++)
-     cfdata->bgs = eina_list_append(cfdata->bgs, eina_stringshare_add("theme_desklock_background"));
+       cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(NULL, "theme_desklock_background"));
 
-   if (!e_util_strcmp(eina_list_data_get(cfdata->bgs), "theme_desklock_background"))
+   bg = eina_list_data_get(cfdata->bgs);
+   if (!e_util_strcmp(bg->file, "theme_desklock_background"))
      cfdata->bg_method = E_DESKLOCK_BACKGROUND_METHOD_THEME_DESKLOCK;
-   else if (!e_util_strcmp(eina_list_data_get(cfdata->bgs), "theme_background"))
+   else if (!e_util_strcmp(bg->file, "theme_background"))
      cfdata->bg_method = E_DESKLOCK_BACKGROUND_METHOD_THEME;
-   else if (!e_util_strcmp(eina_list_data_get(cfdata->bgs), "user_background"))
+   else if (!e_util_strcmp(bg->file, "user_background"))
      cfdata->bg_method = E_DESKLOCK_BACKGROUND_METHOD_WALLPAPER;
    else
      cfdata->bg_method = E_DESKLOCK_BACKGROUND_METHOD_CUSTOM;
@@ -169,15 +193,18 @@ _create_data(E_Config_Dialog *cfd)
 static void
 _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   const char *bg;
+   E_Config_Desklock_Background *bg;
    if (cfdata->bg_fsel)
      e_object_del(E_OBJECT(cfdata->bg_fsel));
    E_FREE(cfdata->custom_lock_cmd);
    E_FREE(cfdata->desklock_personal_passwd);
    E_FREE(cfdata->pin_str);
    EINA_LIST_FREE(cfdata->bgs, bg)
-     eina_stringshare_del(bg);
-   E_FREE(cfdata);
+     {
+        eina_stringshare_del(bg->file);
+        free(bg);
+     }
+   free(cfdata);
 }
 
 static Evas_Object *
@@ -400,7 +427,6 @@ static int
 _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    const Eina_List *l;
-   const char *bg;
    E_Config_Desklock_Background *cbg;
 
    e_config->desklock_auth_method = cfdata->desklock_auth_method;
@@ -461,12 +487,10 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
              eina_stringshare_del(cbg->file);
              free(cbg);
           }
-        EINA_LIST_FOREACH(cfdata->bgs, l, bg)
+        EINA_LIST_FOREACH(cfdata->bgs, l, cbg)
           {
-             cbg = E_NEW(E_Config_Desklock_Background, 1);
-             cbg->file = eina_stringshare_ref(bg);
-             e_config->desklock_backgrounds = eina_list_append(e_config->desklock_backgrounds, cbg);
-             e_filereg_register(bg);
+             e_config->desklock_backgrounds = eina_list_append(e_config->desklock_backgrounds, desklock_bg_dup(cbg, NULL));
+             e_filereg_register(cbg->file);
           }
      }
 
@@ -533,9 +557,11 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
    ll = cfdata->bgs;
    EINA_LIST_FOREACH(e_config->desklock_backgrounds, l, cbg)
      {
-        if (!ll) return 1;
-        if (cbg->file != ll->data) return 1;
-        ll = ll->next;
+        E_Config_Desklock_Background *cbg2 = eina_list_data_get(ll);
+        if (!cbg2) return 1;
+        if (cbg->file != cbg2->file) return 1;
+        if (cbg->hide_logo != cbg2->hide_logo) return 1;
+        ll = eina_list_next(ll);
      }
 
    if (cfdata->login_zone < 0)
@@ -569,6 +595,7 @@ _cb_method_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
    Evas_Object *bg;
    const char *theme = NULL;
    int x;
+   E_Config_Desklock_Background *cbg;
 
    if (!(cfdata = data)) return;
    EINA_LIST_FOREACH(cfdata->gui.bgs, l, bg)
@@ -578,10 +605,13 @@ _cb_method_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
    switch (cfdata->bg_method)
      {
       case E_DESKLOCK_BACKGROUND_METHOD_THEME_DESKLOCK:
-        EINA_LIST_FREE(cfdata->bgs, theme)
-          eina_stringshare_del(theme);
+        EINA_LIST_FREE(cfdata->bgs, cbg)
+          {
+             eina_stringshare_del(cbg->file);
+             free(cbg);
+          }
         for (x = 0; x < cfdata->zone_count; x++)
-          cfdata->bgs = eina_list_append(cfdata->bgs, eina_stringshare_add("theme_desklock_background"));
+          cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(NULL, "theme_desklock_background"));
         theme = e_theme_edje_file_get("base/theme/desklock",
                                       "e/desklock/background");
         if (theme)
@@ -596,10 +626,13 @@ _cb_method_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
           {
              EINA_LIST_FOREACH(cfdata->gui.bgs, l, bg)
                e_widget_preview_edje_set(bg, theme, "e/desktop/background");
-             EINA_LIST_FREE(cfdata->bgs, theme)
-               eina_stringshare_del(theme);
+             EINA_LIST_FREE(cfdata->bgs, cbg)
+               {
+                  eina_stringshare_del(cbg->file);
+                  free(cbg);
+               }
              for (x = 0; x < cfdata->zone_count; x++)
-               cfdata->bgs = eina_list_append(cfdata->bgs, eina_stringshare_add("theme_background"));
+               cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(NULL, "theme_background"));
           }
         break;
 
@@ -612,25 +645,23 @@ _cb_method_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
                {
                   EINA_LIST_FOREACH(cfdata->gui.bgs, l, bg)
                     e_widget_preview_edje_set(bg, e_config->desktop_default_background, "e/desktop/background");
-                  EINA_LIST_FREE(cfdata->bgs, theme)
-                    eina_stringshare_del(theme);
+                  EINA_LIST_FREE(cfdata->bgs, cbg)
+                    {
+                       eina_stringshare_del(cbg->file);
+                       free(cbg);
+                    }
                   for (y = 0; y < cfdata->zone_count; y++)
-                    cfdata->bgs = eina_list_append(cfdata->bgs, eina_stringshare_add("user_background"));
+                    cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(NULL, "user_background"));
                }
              /* attempt to set wallpaper from desktop 0,0 on each zone as a desklock bg */
              EINA_LIST_FOREACH(e_config->desktop_backgrounds, l, cdb)
                if ((!cdb->desk_x) && (!cdb->desk_y))
                  {
-                    Eina_List *ll;
-                    ll = eina_list_nth_list(cfdata->bgs, cdb->zone);
-                    if (ll)
-                      {
-                         theme = eina_list_data_get(ll);
-                         eina_stringshare_replace(&theme, cdb->file);
-                         eina_list_data_set(ll, theme);
-                      }
+                    cbg = eina_list_nth(cfdata->bgs, cdb->zone);
+                    if (cbg)
+                      eina_stringshare_refplace(&cbg->file, cdb->file);
                     else
-                      cfdata->bgs = eina_list_append(cfdata->bgs, cdb->file);
+                      cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(NULL, cdb->file));
                     bg = eina_list_nth(cfdata->gui.bgs, cdb->zone);
                     if (bg)
                       e_widget_preview_edje_set(bg, cdb->file, "e/desktop/background");
@@ -640,26 +671,31 @@ _cb_method_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
           {
              EINA_LIST_FOREACH(cfdata->gui.bgs, l, bg)
                e_widget_preview_edje_set(bg, e_config->desktop_default_background, "e/desktop/background");
-             EINA_LIST_FREE(cfdata->bgs, theme)
-               eina_stringshare_del(theme);
+             EINA_LIST_FREE(cfdata->bgs, cbg)
+               {
+                  eina_stringshare_del(cbg->file);
+                  free(cbg);
+               }
              for (x = 0; x < cfdata->zone_count; x++)
-               cfdata->bgs = eina_list_append(cfdata->bgs, eina_stringshare_add("user_background"));
+               cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(NULL, "user_background"));
           }
         break;
 
       case E_DESKLOCK_BACKGROUND_METHOD_CUSTOM:
         {
              Eina_List *ll;
-             E_Config_Desklock_Background *cbg;
 
-             EINA_LIST_FREE(cfdata->bgs, theme)
-               eina_stringshare_del(theme);
+             EINA_LIST_FREE(cfdata->bgs, cbg)
+               {
+                  eina_stringshare_del(cbg->file);
+                  free(cbg);
+               }
              ll = cfdata->gui.bgs;
              EINA_LIST_FOREACH(e_config->desklock_backgrounds, l, cbg)
                {
                   if (!ll) break;
                   e_widget_preview_edje_set(ll->data, cbg->file, "e/desktop/background");
-                  cfdata->bgs = eina_list_append(cfdata->bgs, eina_stringshare_ref(cbg->file));
+                  cfdata->bgs = eina_list_append(cfdata->bgs, desklock_bg_dup(cbg, NULL));
                   ll = ll->next;
                }
         }

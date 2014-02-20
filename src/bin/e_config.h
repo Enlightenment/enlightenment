@@ -452,6 +452,7 @@ struct E_Config_Bindings
 struct _E_Config_Desklock_Background
 {
    const char *file;
+   Eina_Bool hide_logo;
 };
 
 struct _E_Config_Env_Var

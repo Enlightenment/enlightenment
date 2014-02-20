@@ -196,6 +196,7 @@ _e_config_edd_init(Eina_Bool old)
 #define T E_Config_Desklock_Background
 #define D _e_config_desklock_bg_edd
    E_CONFIG_VAL(D, T, file, STR);
+   E_CONFIG_VAL(D, T, hide_logo, UCHAR);
 
    _e_config_desktop_bg_edd = E_CONFIG_DD_NEW("E_Config_Desktop_Background", E_Config_Desktop_Background);
 #undef T

@@ -6,6 +6,7 @@ struct _E_Config_Dialog_Data
    Evas_Object *o_list, *o_up;
    int          fmdir;
    char        *bg;
+   int          hide_logo;
 };
 
 /* local function prototypes */
@@ -58,11 +59,12 @@ static void
 _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 {
    const char *bg_file = NULL;
+   Eina_Bool hide_logo = cfdata->hide_logo;
 
    if (cfdata->bg) bg_file = strdup(cfdata->bg);
    E_FREE(cfdata->bg);
    E_FREE(cfdata);
-   e_int_config_desklock_fsel_done(cfd->data, e_object_data_get(E_OBJECT(cfd)), bg_file);
+   e_int_config_desklock_fsel_done(cfd->data, e_object_data_get(E_OBJECT(cfd)), bg_file, hide_logo);
 }
 
 static Evas_Object *
@@ -113,7 +115,10 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_flist_path_set(cfdata->o_list, path, "/");
    e_widget_size_min_set(cfdata->o_list, 200, 160);
    e_widget_table_object_append(ot, cfdata->o_list, 0, 2, 1, 1, 1, 1, 1, 1);
+
    e_widget_list_object_append(o, ot, 1, 1, 0.5);
+   ow = e_widget_check_add(evas, _("Hide Logo"), &cfdata->hide_logo);
+   e_widget_list_object_append(o, ow, 1, 1, 0.5);
 
    return o;
 }
