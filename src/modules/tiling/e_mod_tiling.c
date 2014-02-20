@@ -153,7 +153,8 @@ desk_should_tile_check(const E_Desk *desk)
 static int
 is_ignored_window(const Client_Extra *extra)
 {
-   if (extra->client->sticky || extra->floating)
+   if (extra->client->sticky || extra->client->maximized ||
+         extra->client->fullscreen || extra->floating)
      return true;
 
    return false;
@@ -834,6 +835,26 @@ _e_mod_action_toggle_split_mode(E_Object *obj EINA_UNUSED,
 /* }}} */
 /* Hooks {{{ */
 
+static Eina_Bool
+_maximize_check_handle(E_Client *ec, Client_Extra *extra)
+{
+   if (extra->tiled && ec->maximized)
+     {
+        _restore_client_no_sizing(ec);
+        _remove_client(ec);
+
+        return EINA_TRUE;
+     }
+   else if (!extra->tiled && !ec->maximized)
+     {
+        _add_client(ec);
+
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 static void
 _move_or_resize(E_Client *ec)
 {
@@ -843,6 +864,9 @@ _move_or_resize(E_Client *ec)
      {
         return;
      }
+
+   if (_maximize_check_handle(ec, extra))
+      return;
 
    if (is_ignored_window(extra))
      return;
