@@ -67,6 +67,7 @@ static struct tiling_mod_main_g
    Ecore_Event_Handler *handler_client_resize, *handler_client_move,
                        *handler_client_add, *handler_client_remove, *handler_client_iconify,
                        *handler_client_uniconify, *handler_client_property,
+                       *handler_client_fullscreen, *handler_client_unfullscreen,
                        *handler_desk_set, *handler_compositor_resize;
    E_Client_Hook       *handler_client_resize_begin;
    E_Client_Menu_Hook  *client_menu_hook;
@@ -256,8 +257,8 @@ _e_client_unmaximize(E_Client *ec, E_Maximize max)
    e_client_unmaximize(ec, max);
 }
 
-static void
-_restore_client(E_Client *ec)
+static Client_Extra *
+_restore_client_no_sizing(E_Client *ec)
 {
    Client_Extra *extra;
 
@@ -265,11 +266,26 @@ _restore_client(E_Client *ec)
    if (!extra)
      {
         ERR("No extra for %p", ec);
-        return;
+        return NULL;
      }
 
    if (!extra->tiled)
-     return;
+     return NULL;
+
+   DBG("Change window border back to %s for %p", extra->orig.bordername, ec);
+   change_window_border(ec,
+                        (extra->orig.bordername) ? extra->orig.bordername : "default");
+
+   return extra;
+}
+
+static void
+_restore_client(E_Client *ec)
+{
+   Client_Extra *extra = _restore_client_no_sizing(ec);
+
+   if (!extra)
+      return;
 
    _e_client_move_resize(ec, extra->orig.geom.x, extra->orig.geom.y,
                          extra->orig.geom.w, extra->orig.geom.h);
@@ -278,10 +294,6 @@ _restore_client(E_Client *ec)
         e_client_maximize(ec, extra->orig.maximized);
         ec->maximized = extra->orig.maximized;
      }
-
-   DBG("Change window border back to %s for %p", extra->orig.bordername, ec);
-   change_window_border(ec,
-                        (extra->orig.bordername) ? extra->orig.bordername : "default");
 }
 
 static Client_Extra *
@@ -1109,6 +1121,29 @@ _uniconify_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    return true;
 }
 
+static bool
+_fullscreen_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
+              E_Event_Client *event)
+{
+   E_Client *ec = event->ec;
+
+   _restore_client_no_sizing(ec);
+   _remove_client(ec);
+
+   return true;
+}
+
+static bool
+_unfullscreen_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
+                E_Event_Client *event)
+{
+   E_Client *ec = event->ec;
+
+   _add_client(ec);
+
+   return true;
+}
+
 static void
 toggle_sticky(E_Client *ec)
 {
@@ -1283,6 +1318,8 @@ e_modapi_init(E_Module *m)
 
    HANDLER(_G.handler_client_iconify, CLIENT_ICONIFY, _iconify_hook);
    HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _uniconify_hook);
+   HANDLER(_G.handler_client_fullscreen, CLIENT_FULLSCREEN, _fullscreen_hook);
+   HANDLER(_G.handler_client_unfullscreen, CLIENT_UNFULLSCREEN, _unfullscreen_hook);
    HANDLER(_G.handler_client_property, CLIENT_PROPERTY, _property_hook);
 
    HANDLER(_G.handler_desk_set, CLIENT_DESK_SET, _desk_set_hook);
@@ -1475,6 +1512,8 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    FREE_HANDLER(_G.handler_client_iconify);
    FREE_HANDLER(_G.handler_client_uniconify);
+   FREE_HANDLER(_G.handler_client_fullscreen);
+   FREE_HANDLER(_G.handler_client_unfullscreen);
    FREE_HANDLER(_G.handler_client_property);
 
    FREE_HANDLER(_G.handler_desk_set);
