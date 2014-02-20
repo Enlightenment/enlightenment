@@ -5071,7 +5071,7 @@ _e_fm2_icon_deselect(E_Fm2_Icon *ic)
         const char *stacking, *selectraise;
 
         if (ic->entry_widget)
-          _e_fm2_icon_entry_widget_accept(ic);
+          _e_fm2_icon_entry_widget_del(ic);
 
         edje_object_signal_emit(ic->obj, "e,state,unselected", "e");
         edje_object_signal_emit(ic->obj_icon, "e,state,unselected", "e");
