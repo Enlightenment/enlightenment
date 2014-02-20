@@ -3502,6 +3502,7 @@ _e_comp_object_autoclose_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
    EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
      if (ec->desk && ec->desk->visible && (!ec->iconic))
        {
+          if (ec->comp->input_key_grabs || ec->comp->input_mouse_grabs) break;
           evas_object_focus_set(ec->frame, 1);
           break;
        }
