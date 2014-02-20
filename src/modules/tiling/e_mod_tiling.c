@@ -179,9 +179,10 @@ is_tilable(const E_Client *ec)
      return false;
 
    if (ec->fullscreen)
-     {
-        return false;
-     }
+      return false;
+
+   if (ec->maximized)
+      return false;
 
    if (ec->iconic)
       return false;
