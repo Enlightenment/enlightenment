@@ -10313,7 +10313,13 @@ _e_fm2_icon_entry_widget_del(E_Fm2_Icon *ic)
    ic->entry_widget = NULL;
    ic->sd->typebuf.disabled = EINA_FALSE;
    if (ic->keygrab)
-     e_grabinput_release(0, ic->keygrab);
+     {
+        E_Comp *c;
+
+        c = e_comp_evas_find(evas_object_evas_get(ic->obj));
+        if (c)
+          e_comp_ungrab_input(c, 0, 1);
+     }
    ic->keygrab = 0;
    _e_fm2_icon_select(ic);
    edje_object_signal_emit(ic->obj, "e,state,rename,off", "e");
