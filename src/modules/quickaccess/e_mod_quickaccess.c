@@ -205,11 +205,15 @@ _e_qa_border_activate(E_Quick_Access_Entry *entry)
 static void
 _e_qa_border_deactivate(E_Quick_Access_Entry *entry)
 {
+   Eina_Bool focused;
    if (entry->config.jump) return;
    entry->config.hidden = 1;
    if (!entry->client) return;
    entry->client->hidden = 1;
+   focused = entry->client->focused;
    evas_object_hide(entry->client->frame);
+   if (focused && e_config->focus_revert_on_hide_or_close)
+     e_desk_last_focused_focus(e_desk_current_get(entry->client->zone));
 }
 
 static void
