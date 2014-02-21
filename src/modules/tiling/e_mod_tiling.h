@@ -42,6 +42,15 @@ struct _Config
     Eina_List     *vdesks;
 };
 
+typedef struct _Window_Tree Window_Tree;
+
+struct _Window_Tree
+{
+   EINA_INLIST;
+   Window_Tree *children;
+   float weight;
+};
+
 struct _Tiling_Info
 {
     /* The desk for which this _Tiling_Info is used. Needed because
@@ -57,6 +66,8 @@ struct _Tiling_Info
     Eina_List *stacks[TILING_MAX_STACKS];
     int        pos[TILING_MAX_STACKS];
     int        size[TILING_MAX_STACKS];
+
+    Window_Tree tree;
 };
 
 struct _E_Config_Dialog_Data

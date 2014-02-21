@@ -346,7 +346,7 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
     DBG("new_client:%s, ec->maximized=%x",
         ec->new_client? "true": "false",
         ec->maximized);
-    e_client_maximize(ec, max);
+//    e_client_maximize(ec, max);
 }
 
 static void
@@ -357,7 +357,7 @@ _e_client_unmaximize(E_Client *ec, E_Maximize max)
         (max & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_VERTICAL ? "VERTICAL" :
         (max & E_MAXIMIZE_DIRECTION) == E_MAXIMIZE_HORIZONTAL ? "HORIZONTAL" :
         "BOTH");
-    e_client_unmaximize(ec, max);
+//    e_client_unmaximize(ec, max);
 }
 
 static void
@@ -1241,6 +1241,8 @@ _add_client(E_Client *ec)
     evas_object_layer_set(ec->frame, E_LAYER_CLIENT_BELOW);
 
     DBG("adding %p", ec);
+
+    e_client_focused_get();
 
     if (_G.tinfo->stacks[0]) {
         DBG("got stack 0");
@@ -3703,8 +3705,8 @@ e_modapi_init(E_Module *m)
 
     HANDLER(_G.handler_client_iconify, CLIENT_ICONIFY, _iconify_hook);
     HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _uniconify_hook);
-    HANDLER(_G.handler_client_stick, CLIENT_PROPERTY, _stick_hook);
-    HANDLER(_G.handler_client_unstick, CLIENT_PROPERTY, _unstick_hook);
+    HANDLER(_G.handler_client_stick, CLIENT_STICK, _stick_hook);
+    HANDLER(_G.handler_client_unstick, CLIENT_UNSTICK, _unstick_hook);
 
     HANDLER(_G.handler_desk_show, DESK_SHOW, _desk_show_hook);
     HANDLER(_G.handler_desk_before_show, DESK_BEFORE_SHOW, _desk_before_show_hook);
