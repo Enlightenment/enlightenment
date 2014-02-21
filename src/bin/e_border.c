@@ -9941,11 +9941,11 @@ static E_Border *
 _e_border_under_pointer_helper(E_Desk *desk, E_Border *exclude, int x, int y)
 {
    E_Border *bd = NULL, *cbd;
-   Eina_List *l;
+   E_Border_List *bl;
 
-   EINA_LIST_FOREACH(e_border_raise_stack_get(), l, cbd)
+   bl = e_container_border_list_last(desk->zone->container);
+   while ((cbd = e_container_border_list_prev(bl)))
      {
-        if (!cbd) continue;
         /* If a border was specified which should be excluded from the list
          * (because it will be closed shortly for example), skip */
         if ((exclude) && (cbd == exclude)) continue;
@@ -9957,6 +9957,7 @@ _e_border_under_pointer_helper(E_Desk *desk, E_Border *exclude, int x, int y)
         if (!bd || (cbd->layer > bd->layer))
           bd = cbd;
      }
+   e_container_border_list_free(bl);
    return bd;
 }
 
