@@ -51,5 +51,5 @@ DISTCLEANFILES += src/modules/everything/everything.pc
 
 PHONIES += everything install-everything
 everything: $(everythingpkg_LTLIBRARIES) $(everything_DATA)
-install-everything: install-everythingDATA install-everythingpkgLTLIBRARIES install-everything_pkgconfig_DATA
+install-everything: install-everythingDATA install-everythingpkgLTLIBRARIES install-everything_pkgconfigDATA
 endif
