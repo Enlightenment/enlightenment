@@ -128,7 +128,8 @@ e_maximize_border_shelf_fill(E_Border *bd, int *x1, int *yy1, int *x2, int *y2, 
    E_Shelf *es;
    E_Maximize_Rect *r;
 
-   EINA_LIST_FOREACH(e_shelf_list(), l, es)
+   l = e_shelf_list_all();
+   EINA_LIST_FREE(l, es)
      {
 	Eina_List *ll;
 	E_Config_Shelf_Desk *sd;
