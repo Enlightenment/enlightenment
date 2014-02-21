@@ -257,7 +257,12 @@ _e_deskmirror_mirror_frame_recalc_cb(void *data, Evas_Object *obj, void *event_i
         mb = evas_object_smart_data_get(m->mirror);
         if (mb->m->ec && (!e_object_is_del(E_OBJECT(mb->m->ec))))
           {
-             if (e_comp_object_frame_exists(obj)) return;
+             if (e_comp_object_frame_exists(obj))
+               {
+                  _mirror_client_theme_setup(mb);
+                  _mirror_scale_set(mb->m, (float)mb->m->sd->h / (float)mb->m->sd->desk->zone->h);
+                  return;
+               }
              evas_object_smart_member_del(mb->mirror);
              mb->m->mirror = mb->mirror;
              mb->mirror = NULL;
