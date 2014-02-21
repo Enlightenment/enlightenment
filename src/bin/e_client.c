@@ -1036,14 +1036,13 @@ static E_Client *
 _e_client_under_pointer_helper(E_Desk *desk, E_Client *exclude, int x, int y)
 {
    E_Client *ec = NULL, *cec;
-   Eina_List *l;
 
-   EINA_LIST_FOREACH(raise_stack, l, cec)
+   E_CLIENT_REVERSE_FOREACH(desk->zone->comp, cec)
      {
         /* If a border was specified which should be excluded from the list
          * (because it will be closed shortly for example), skip */
+        if (e_client_util_ignored_get(cec) || (!e_client_util_desk_visible(cec, desk))) continue;
         if ((exclude) && (cec == exclude)) continue;
-        if ((desk) && (cec->desk != desk)) continue;
         if (!E_INSIDE(x, y, cec->x, cec->y, cec->w, cec->h))
           continue;
         /* If the layer is higher, the position of the window is higher
