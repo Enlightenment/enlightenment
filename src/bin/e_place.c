@@ -89,15 +89,16 @@ _e_place_coverage_client_add(E_Desk *desk, Eina_List *skiplist, int ar, int x, i
 }
 
 static int
-_e_place_coverage_shelf_add(E_Zone *zone, int ar, int x, int y, int w, int h)
+_e_place_coverage_shelf_add(E_Desk *desk, int ar, int x, int y, int w, int h)
 {
    Eina_List *l;
    E_Shelf *es;
    int x2, y2, w2, h2;
 
-   EINA_LIST_FOREACH(e_shelf_list(), l, es)
+   l = e_shelf_list_all();
+   EINA_LIST_FREE(l, es)
      {
-        if (es->zone != zone) continue;
+        if (!e_shelf_desk_visible(es, desk)) continue;
         x2 = es->x; y2 = es->y; w2 = es->w; h2 = es->h;
         if (E_INTERSECTS(x, y, w, h, x2, y2, w2, h2))
           {
@@ -172,11 +173,12 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
         Eina_List *l;
         E_Shelf *es;
 
-        EINA_LIST_FOREACH(e_shelf_list(), l, es)
+        l = e_shelf_list_all();
+        EINA_LIST_FREE(l, es)
           {
              int bx, by, bw, bh;
 
-             if (es->zone != desk->zone) continue;
+             if (!e_shelf_desk_visible(es, desk)) continue;
 
              bx = es->x;
              by = es->y;
@@ -344,7 +346,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                                                        a_x[i], a_y[j],
                                                        w, h);
                      if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
-                       ar = _e_place_coverage_shelf_add(desk->zone, ar,
+                       ar = _e_place_coverage_shelf_add(desk, ar,
                                                         a_x[i], a_y[j],
                                                         w, h);
                      if (ar < area)
@@ -363,7 +365,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                                                        a_x[i + 1] - w, a_y[j],
                                                        w, h);
                      if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
-                       ar = _e_place_coverage_shelf_add(desk->zone, ar,
+                       ar = _e_place_coverage_shelf_add(desk, ar,
                                                         a_x[i + 1] - w, a_y[j],
                                                         w, h);
                      if (ar < area)
@@ -382,7 +384,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                                                        a_x[i + 1] - w, a_y[j + 1] - h,
                                                        w, h);
                      if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
-                       ar = _e_place_coverage_shelf_add(desk->zone, ar,
+                       ar = _e_place_coverage_shelf_add(desk, ar,
                                                         a_x[i + 1] - w, a_y[j + 1] - h,
                                                         w, h);
                      if (ar < area)
@@ -401,7 +403,7 @@ e_place_desk_region_smart(E_Desk *desk, Eina_List *skiplist, int x, int y, int w
                                                        a_x[i], a_y[j + 1] - h,
                                                        w, h);
                      if (e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART)
-                       ar = _e_place_coverage_shelf_add(desk->zone, ar,
+                       ar = _e_place_coverage_shelf_add(desk, ar,
                                                         a_x[i], a_y[j + 1] - h,
                                                         w, h);
                      if (ar < area)
