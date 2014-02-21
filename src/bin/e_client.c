@@ -1450,7 +1450,19 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
 
       case E_MAXIMIZE_SMART:
       case E_MAXIMIZE_EXPAND:
-        e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
+        if (ec->desk->visible)
+          e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
+        else
+          {
+             x1 = ec->zone->x;
+             yy1 = ec->zone->y;
+             x2 = ec->zone->x + ec->zone->w;
+             y2 = ec->zone->y + ec->zone->h;
+             e_maximize_client_shelf_fill(ec, &x1, &yy1, &x2, &y2, max);
+             zx = x1, zy = yy1;
+             zw = x2 - x1;
+             zh = y2 - yy1;
+          }
         w = zw, h = zh;
 
         evas_object_smart_callback_call(ec->frame, "maximize", NULL);
