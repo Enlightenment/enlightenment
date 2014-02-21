@@ -1,37 +1,29 @@
-MAINTAINERCLEANFILES = Makefile.in
+EXTRA_DIST += src/modules/tiling/module.desktop.in \
+src/modules/tiling/e-module-tiling.edc
+if USE_MODULE_TILING
+tilingdir = $(MDIR)/tiling
+tiling_DATA = src/modules/tiling/e-module-tiling.edj \
+	      src/modules/tiling/module.desktop
+CLEANFILES += src/modules/tiling/e-module-tiling.edj
 
-AM_CPPFLAGS = -I. \
-           -I$(top_srcdir) \
-           -I$(includedir) \
-           -DLOCALEDIR=\"$(datadir)/locale\" \
-           -DPACKAGE_DATA_DIR=\"$(module_dir)/$(PACKAGE)\" \
-           @E_CFLAGS@
+tilingpkgdir = $(MDIR)/tiling/$(MODULE_ARCH)
+tilingpkg_LTLIBRARIES = src/modules/tiling/module.la
 
-pkgdir = $(module_dir)/$(PACKAGE)/$(MODULE_ARCH)
-pkg_LTLIBRARIES = module.la
+TILING_EDJE_FLAGS = $(EDJE_FLAGS) -id $(top_srcdir)/src/modules/tiling/images
 
-module_la_SOURCES = e_mod_tiling.c \
-		    e_mod_tiling.h \
-		    window_tree.c \
-		    window_tree.h \
-		    e_mod_config.c
+src/modules/tiling/%.edj: src/modules/tiling/%.edc Makefile
+	$(EDJE_CC) $(TILING_EDJE_FLAGS) $< $@
 
-module_la_LIBADD = @E_LIBS@
-module_la_LDFLAGS = -module -avoid-version
-module_la_DEPENDENCIES = $(top_builddir)/config.h
+src_modules_tiling_module_la_LIBADD = $(MOD_LIBS)
+src_modules_tiling_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
+src_modules_tiling_module_la_LDFLAGS = $(MOD_LDFLAGS)
+src_modules_tiling_module_la_SOURCES = src/modules/tiling/e_mod_tiling.c \
+				       src/modules/tiling/e_mod_tiling.h \
+				       src/modules/tiling/window_tree.c \
+				       src/modules/tiling/window_tree.h \
+				       src/modules/tiling/e_mod_config.c
 
-filesdir = $(module_dir)/$(PACKAGE)
-files_DATA = module.desktop e-module-tiling.edj # images/icon.png
-
-EXTRA_DIST = module.desktop.in \
-	     e-module-tiling.edc
-
-e-module-tiling.edj: e-module-tiling.edc
-	$(EDJE_CC) -id $(top_srcdir)/src/images $< $@
-
-clean-local:
-	 rm -rf *.edj module.desktop *~
-
-uninstall-local:
-	 rm -rf $(DESTDIR)$(module_dir)/$(PACKAGE)
-
+PHONIES += tiling install-tiling
+tiling: $(tilingpkg_LTLIBRARIES) $(tiling_DATA)
+install-tiling: install-tilingDATA install-tilingpkgLTLIBRARIES
+endif
