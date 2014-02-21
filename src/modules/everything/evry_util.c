@@ -96,6 +96,8 @@ evry_fuzzy_match(const char *str, const char *match)
 
    while ((m_cnt < m_num) && (*next != 0))
      {
+        int ii;
+
         /* reset match */
         if (m_cnt == 0) m = match;
 
@@ -124,8 +126,10 @@ evry_fuzzy_match(const char *str, const char *match)
                     }
                   else
                     {
+                       ii = 0;
                        /* go to next word */
-                       for (; (*p != 0) && ((isspace(*p) || (ip && ispunct(*p)))); p++) ;
+                       for (; (*p != 0) && ((isspace(*p) || (ip && ispunct(*p)))); p += ii)
+                         if (!eina_unicode_utf8_next_get(p, &ii)) break;
                        cnt++;
                        next = p;
                        m_cnt = 0;
@@ -160,7 +164,10 @@ evry_fuzzy_match(const char *str, const char *match)
                   last = offset;
 
                   /* try next char of match */
-                  if (*(++m) != 0 && !isspace(*m))
+                  ii = 0;
+                  if (!eina_unicode_utf8_next_get(m, &ii)) continue;
+                  m += ii;
+                  if (*m != 0 && !isspace(*m))
                     continue;
 
                   /* end of match: store min weight of match */
@@ -171,22 +178,30 @@ evry_fuzzy_match(const char *str, const char *match)
                }
              else
                {
+                  ii = 0;
                   /* go to next match */
-                  for (; (*m != 0) && !isspace(*m); m++) ;
+                  for (; (*m != 0) && !isspace(*m); m += ii)
+                    if (!eina_unicode_utf8_next_get(m, &ii)) break;
                }
 
              if (m_cnt < m_num - 1)
                {
+                  ii = 0;
                   /* test next match */
-                  for (; (*m != 0) && isspace(*m); m++) ;
+                  for (; (*m != 0) && isspace(*m); m += ii)
+                    if (!eina_unicode_utf8_next_get(m, &ii)) break;
                   m_cnt++;
                   break;
                }
              else if (*p != 0)
                {
+                  ii = 0;
                   /* go to next word */
-                  for (; (*p != 0) && !((isspace(*p) || (ip && ispunct(*p)))); p++) ;
-                  for (; (*p != 0) && ((isspace(*p) || (ip && ispunct(*p)))); p++) ;
+                  for (; (*p != 0) && !((isspace(*p) || (ip && ispunct(*p)))); p += ii)
+                    if (!eina_unicode_utf8_next_get(p, &ii)) break;
+                  ii = 0;
+                  for (; (*p != 0) && ((isspace(*p) || (ip && ispunct(*p)))); p += ii)
+                    if (!eina_unicode_utf8_next_get(p, &ii)) break;
                   cnt++;
                   next = p;
                   m_cnt = 0;
