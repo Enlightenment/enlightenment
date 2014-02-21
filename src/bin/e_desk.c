@@ -281,13 +281,14 @@ e_desk_show(E_Desk *desk)
    desk->zone->desk_y_current = desk->y;
    desk->visible = 1;
 
-   msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)));
+   msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)) + 8);
    msg->count = 4;
    msg->val[0] = desk->x;
    msg->val[1] = desk->zone->desk_x_count;
    msg->val[2] = desk->y;
    msg->val[3] = desk->zone->desk_y_count;
-   edje_object_message_send(desk->zone->bg_object, EDJE_MESSAGE_INT_SET, 0, msg);
+   if (desk->zone->bg_object)
+     edje_object_message_send(desk->zone->bg_object, EDJE_MESSAGE_INT_SET, 0, msg);
 
    if (desk->zone->bg_object) was_zone = 1;
    _e_desk_show_begin(desk, dx, dy);
