@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-02-22 17:57+0900\n"
-"PO-Revision-Date: 2014-02-19 10:04+0100\n"
+"PO-Revision-Date: 2014-02-23 20:36+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: it\n"
@@ -6092,9 +6092,8 @@ msgid "Personal"
 msgstr "Personali"
 
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:120
-#, fuzzy
 msgid "Hide Logo"
-msgstr "Nascondi"
+msgstr "Nascondi logo"
 
 #: src/modules/conf_display/e_int_config_desks.c:51
 #: src/modules/pager/e_mod_main.c:867
@@ -10235,34 +10234,30 @@ msgid "Show window titles"
 msgstr "Mostra i titoli delle finestre"
 
 #: src/modules/tiling/e_mod_config.c:184
-#, fuzzy
 msgid "Tile dialog windows"
-msgstr "Metti in griglia anche le finestre di dialogo"
+msgstr "Includi finestre di dialogo in griglia"
 
 #: src/modules/tiling/e_mod_config.c:186
 msgid "Enable floating split-mode"
-msgstr ""
+msgstr "Abilità modalità divisione fluttuante"
 
 #: src/modules/tiling/e_mod_config.c:191
 msgid "Enable/disable tiling per desktop."
-msgstr ""
+msgstr "Abilita/disabilita griglia per desktop"
 
 #: src/modules/tiling/e_mod_config.c:224
-#, fuzzy
 msgid "Padding between windows"
-msgstr "Chiusura della finestra"
+msgstr "Spazio tra le finestre"
 
 #: src/modules/tiling/e_mod_config.c:230
-#, fuzzy
 msgid "Help"
-msgstr "Ulteriore aiuto"
+msgstr "Aiuto"
 
 #: src/modules/tiling/e_mod_config.c:330
 msgid "Tiling Configuration"
 msgstr "Configurazione di Tiling"
 
 #: src/modules/tiling/e_mod_tiling.c:1235
-#, fuzzy
 msgid "Floating"
 msgstr "Fluttuante"
 
@@ -10278,34 +10273,28 @@ msgid "Toggle floating"
 msgstr "Commuta fluttuazione"
 
 #: src/modules/tiling/e_mod_tiling.c:1327
-#, fuzzy
 msgid "Move the focused window up"
-msgstr "Sposta finestra in su"
+msgstr "Sposta finestra a fuoco in su"
 
 #: src/modules/tiling/e_mod_tiling.c:1329
-#, fuzzy
 msgid "Move the focused window down"
-msgstr "Sposta finestra in giù"
+msgstr "Sposta finestra a fuoco in giù"
 
 #: src/modules/tiling/e_mod_tiling.c:1331
-#, fuzzy
 msgid "Move the focused window left"
-msgstr "Sposta finestra a sinistra"
+msgstr "Sposta finestra a fuoco a sinistra"
 
 #: src/modules/tiling/e_mod_tiling.c:1333
-#, fuzzy
 msgid "Move the focused window right"
-msgstr "Sposta finestra a destra"
+msgstr "Sposta finestra a fuoco a destra"
 
 #: src/modules/tiling/e_mod_tiling.c:1336
-#, fuzzy
 msgid "Toggle split mode"
-msgstr "Commuta il modulo specificato"
+msgstr "Commuta modalità divisione"
 
 #: src/modules/tiling/e_mod_tiling.c:1338
-#, fuzzy
 msgid "Swap window"
-msgstr "Nessuna finestra"
+msgstr "Scambia finestra"
 
 #: src/modules/winlist/e_int_config_winlist.c:53
 msgid "Window Switcher Settings"
@@ -10639,49 +10628,3 @@ msgstr "Variante"
 #: src/modules/xkbswitch/e_mod_main.c:195
 msgid "NONE"
 msgstr "NESSUNA"
-
-#~ msgid "columns"
-#~ msgstr "colonne"
-
-#~ msgid "rows"
-#~ msgstr "righe"
-
-#~ msgid "Key hints"
-#~ msgstr "Suggerimenti sui tasti"
-
-#~ msgid "Number of columns/rows used to tile per desk (0 → tiling disabled):"
-#~ msgstr ""
-#~ "Numero di colonne/righe da usare per desktop (0 → griglia disabilitata):"
-
-#~ msgid "Add a stack"
-#~ msgstr "Aggiungi pila"
-
-#~ msgid "Remove a stack"
-#~ msgstr "Elimina pila"
-
-#~ msgid "Toggle between rows and columns"
-#~ msgstr "Commuta tra righe e colonne"
-
-#~ msgid "Swap a window with an other"
-#~ msgstr "Scambia una finestra con un'altra"
-
-#~ msgid "Move window"
-#~ msgstr "Sposta finestra"
-
-#~ msgid "Adjust transitions"
-#~ msgstr "Regola transizioni"
-
-#~ msgid "Focus a particular window"
-#~ msgstr "Fuoco ad una particolare finestra"
-
-#~ msgid "Send to upper right corner"
-#~ msgstr "Invia all'angolo superiore destro"
-
-#~ msgid "Send to upper left corner"
-#~ msgstr "Invia all'angolo superiore sinistro"
-
-#~ msgid "Send to lower right corner"
-#~ msgstr "Invia all'angolo inferiore destro"
-
-#~ msgid "Send to lower left corner"
-#~ msgstr "Invia all'angolo inferiore sinistro"
