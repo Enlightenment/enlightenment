@@ -249,6 +249,8 @@ src/modules/ibar/e_mod_config.c
 src/modules/ibar/e_mod_main.c
 src/modules/ibox/e_mod_config.c
 src/modules/ibox/e_mod_main.c
+src/modules/lokker/e_mod_main.c
+src/modules/lokker/lokker.c
 src/modules/mixer/app_mixer.c
 src/modules/mixer/conf_gadget.c
 src/modules/mixer/conf_module.c
