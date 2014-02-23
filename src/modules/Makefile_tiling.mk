@@ -1,5 +1,9 @@
 EXTRA_DIST += src/modules/tiling/module.desktop.in \
-src/modules/tiling/e-module-tiling.edc
+src/modules/tiling/e-module-tiling.edc \
+src/modules/tiling/images/icon_floating.png \
+src/modules/tiling/images/icon_horizontal.png \
+src/modules/tiling/images/icon_vertical.png \
+src/modules/tiling/images/module_icon.png
 if USE_MODULE_TILING
 tilingdir = $(MDIR)/tiling
 tiling_DATA = src/modules/tiling/e-module-tiling.edj \
