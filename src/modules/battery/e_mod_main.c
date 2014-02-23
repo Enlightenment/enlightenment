@@ -217,7 +217,7 @@ _battery_face_level_set(Evas_Object *battery, double level)
    Edje_Message_Float msg;
    char buf[256];
 
-   snprintf(buf, sizeof(buf), "%i%%", (int)(level * 100.0));
+   snprintf(buf, sizeof(buf), "%i", (int)(level * 100.0));
    edje_object_part_text_set(battery, "e.text.reading", buf);
 
    if (level < 0.0) level = 0.0;
