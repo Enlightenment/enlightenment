@@ -934,7 +934,8 @@ done:
    free(possible);
    free(modes);
 
-   output->cfg->crtc = crtc->xid;
+   if (crtc)
+     output->cfg->crtc = crtc->xid;
    return crtc;
 
 error:
