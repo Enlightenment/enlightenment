@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-02-22 17:57+0900\n"
-"PO-Revision-Date: 2014-02-23 20:36+0100\n"
+"POT-Creation-Date: 2014-02-24 19:27+0100\n"
+"PO-Revision-Date: 2014-02-24 19:33+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: it\n"
@@ -9166,6 +9166,34 @@ msgstr "Mostra finestre del desktop attivo"
 #: src/modules/ibox/e_mod_main.c:272
 msgid "IBox"
 msgstr "IBox"
+
+#: src/modules/lokker/lokker.c:70
+msgid "Authenticating..."
+msgstr "Autenticazione..."
+
+#: src/modules/lokker/lokker.c:75
+msgid "The password you entered is invalid. Try again."
+msgstr "La password inserita non è valida. Ritenta."
+
+#: src/modules/lokker/lokker.c:239
+msgid "Please enter your PIN"
+msgstr "Inserire il PIN"
+
+#: src/modules/lokker/lokker.c:335
+msgid "Please enter your unlock password"
+msgstr "Inserire la propria password di sblocco"
+
+#: src/modules/lokker/lokker.c:545
+msgid "Authentication System Error"
+msgstr "Errore del sistema di autenticazione"
+
+#: src/modules/lokker/lokker.c:546
+#, c-format
+msgid ""
+"Authentication via PAM had errors setting up the<br>authentication session. "
+"The error code was <hilight>%i</hilight>.<br>This is bad and should not be "
+"happening. Please report this bug."
+msgstr "L'autenticazione tramite PAM ha fallito<br>l'impostazione della sessione di autenticazione.<br>L'errore riportato è <hilight>%i</hilight>.<br>Questo non dovrebbe succedere, si prega di<br>segnalare questo bug."
 
 #: src/modules/mixer/app_mixer.c:175 src/modules/mixer/app_mixer.c:282
 msgid "Boost"
