@@ -4550,7 +4550,7 @@ _e_comp_x_ee_resize(Ecore_Evas *ee)
    e_comp_canvas_update(c);
    E_CLIENT_FOREACH(c, ec)
      {
-        if (ec->zone && !e_client_util_ignored_get(ec))
+        if (!e_client_util_ignored_get(ec))
           _e_comp_x_client_zone_geometry_set(ec);
      }
 }
