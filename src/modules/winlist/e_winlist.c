@@ -399,8 +399,8 @@ e_winlist_left(E_Zone *zone)
 
    _ec_next = NULL;
 
-   E_OBJECT_CHECK_RETURN(zone, 0);
-   E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, 0);
+   E_OBJECT_CHECK(zone);
+   E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
    ec_orig = e_client_focused_get();
    if (!ec_orig) return;
@@ -481,8 +481,8 @@ e_winlist_down(E_Zone *zone)
 
    _ec_next = NULL;
 
-   E_OBJECT_CHECK_RETURN(zone, 0);
-   E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, 0);
+   E_OBJECT_CHECK(zone);
+   E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
    ec_orig = e_client_focused_get();
    if (!ec_orig) return;
@@ -563,8 +563,8 @@ e_winlist_up(E_Zone *zone)
 
    _ec_next = NULL;
 
-   E_OBJECT_CHECK_RETURN(zone, 0);
-   E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, 0);
+   E_OBJECT_CHECK(zone);
+   E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
    ec_orig = e_client_focused_get();
    if (!ec_orig) return;
@@ -645,8 +645,8 @@ e_winlist_right(E_Zone *zone)
 
    _ec_next = NULL;
 
-   E_OBJECT_CHECK_RETURN(zone, 0);
-   E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, 0);
+   E_OBJECT_CHECK(zone);
+   E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
    ec_orig = e_client_focused_get();
    if (!ec_orig) return;
