@@ -459,7 +459,10 @@ e_comp_canvas_update(E_Comp *c)
         /* Make temporary list as e_client_res_change_geometry_restore
          * rearranges the order. */
         EINA_INLIST_FOREACH(c->layers[i].clients, ec)
-          tmp = eina_list_append(tmp, ec);
+          {
+             if (!e_client_util_ignored_get(ec))
+               tmp = eina_list_append(tmp, ec);
+          }
 
         EINA_LIST_FREE(tmp, ec)
           {
