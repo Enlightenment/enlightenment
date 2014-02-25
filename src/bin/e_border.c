@@ -477,6 +477,7 @@ e_border_new(E_Container *con, Ecore_X_Window win, int first_map, int internal)
 
    bd->client.win = win;
    bd->zone = e_zone_current_get(con);
+   bd->x = bd->zone->x, bd->y = bd->zone->y;
 
    _e_border_hook_call(E_BORDER_HOOK_NEW_BORDER, bd);
 
