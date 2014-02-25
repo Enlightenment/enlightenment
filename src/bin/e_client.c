@@ -2880,8 +2880,8 @@ e_client_below_get(const E_Client *ec)
    E_Client *ec2;
    Eina_Inlist *l;
 
-   E_OBJECT_CHECK(ec);
-   E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   E_OBJECT_CHECK_RETURN(ec, NULL);
+   E_OBJECT_TYPE_CHECK_RETURN(ec, E_CLIENT_TYPE, NULL);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ec, NULL);
    if (EINA_INLIST_GET(ec)->prev) //check current layer
