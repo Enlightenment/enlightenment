@@ -4548,11 +4548,10 @@ _e_comp_x_ee_resize(Ecore_Evas *ee)
    _e_comp_x_xinerama_setup(c->man->w, c->man->h);
 
    e_comp_canvas_update(c);
-   ec = e_client_bottom_get(c);
-   while (ec)
+   E_CLIENT_FOREACH(c, ec)
      {
-        _e_comp_x_client_zone_geometry_set(ec);
-        ec = e_client_above_get(ec);
+        if (!e_client_util_ignored_get(ec))
+          _e_comp_x_client_zone_geometry_set(ec);
      }
 }
 
