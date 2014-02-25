@@ -359,7 +359,7 @@ e_zone_move_resize(E_Zone *zone,
    E_Event_Zone_Move_Resize *ev;
 
    E_OBJECT_CHECK_RETURN(zone, EINA_FALSE);
-   E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
+   E_OBJECT_TYPE_CHECK_RETURN(zone, E_ZONE_TYPE, EINA_FALSE);
 
    if ((x == zone->x) && (y == zone->y) && (w == zone->w) && (h == zone->h))
      return EINA_FALSE;
