@@ -1829,3 +1829,31 @@ e_comp_client_redirect_toggle(E_Client *ec)
    ec->no_shape_cut = !ec->redirected;
    e_comp_shape_queue(ec->comp);
 }
+
+EAPI Eina_Bool
+e_comp_util_object_is_above_nocomp(Evas_Object *obj)
+{
+   E_Comp *comp;
+   Evas_Object *o;
+   int cl, ol;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   if (!evas_object_visible_get(obj)) return EINA_FALSE;
+   comp = e_comp_util_evas_object_comp_get(obj);
+   if (!comp->nocomp_ec) return EINA_FALSE;
+   cl = evas_object_layer_get(comp->nocomp_ec->frame);
+   ol = evas_object_layer_get(obj);
+   if (cl > ol) return EINA_FALSE;
+   o = evas_object_above_get(comp->nocomp_ec->frame);
+   if ((cl == ol) && (evas_object_layer_get(o) == cl))
+     {
+        do {
+           if (o == obj)
+             return EINA_TRUE;
+           o = evas_object_above_get(o);
+        } while (o && (evas_object_layer_get(o) == cl));
+     }
+   else
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
