@@ -1688,9 +1688,9 @@ e_comp_override_timed_pop(E_Comp *c)
    EINA_SAFETY_ON_NULL_RETURN(c);
    if (c->nocomp_override <= 0) return;
    if (c->nocomp_override_timer)
-     ecore_timer_reset(c->nocomp_override_timer);
+     c->nocomp_override--;
    else
-     c->nocomp_override_timer = ecore_timer_add(5.0, _e_comp_override_expire, c);
+     c->nocomp_override_timer = ecore_timer_add(1.0, _e_comp_override_expire, c);
 }
 
 EAPI unsigned int
