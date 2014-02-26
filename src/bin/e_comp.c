@@ -173,7 +173,7 @@ _e_comp_fullscreen_check(E_Comp *c)
      {
         Evas_Object *o = ec->frame;
 
-        if (e_client_util_ignored_get(ec) || (!evas_object_visible_get(ec->frame)))
+        if (ec->ignored || ec->input_only || (!evas_object_visible_get(ec->frame)))
           continue;
         if (!e_comp_util_client_is_fullscreen(ec)) return NULL;
         while (o)
