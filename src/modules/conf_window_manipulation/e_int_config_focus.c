@@ -204,7 +204,7 @@ _advanced_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *c
           (e_config->focus_revert_on_hide_or_close != cfdata->focus_revert_on_hide_or_close) ||
           (e_config->pointer_slide != cfdata->pointer_slide) ||
           (e_config->disable_all_pointer_warps != cfdata->disable_all_pointer_warps) ||
-          (fabs(e_config->pointer_warp_speed - cfdata->pointer_warp_speed) < DBL_EPSILON) ||
+          (fabs(e_config->pointer_warp_speed - cfdata->pointer_warp_speed) > DBL_EPSILON) ||
           (e_config->use_auto_raise != cfdata->use_auto_raise) ||
           (e_config->auto_raise_delay != cfdata->auto_raise_delay) ||
           (e_config->border_raise_on_mouse_action != cfdata->border_raise_on_mouse_action);
