@@ -2090,6 +2090,17 @@ _e_comp_object_util_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object
 }
 
 static void
+_e_comp_object_util_restack(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   if (e_comp_util_object_is_above_nocomp(obj) &&
+       (!evas_object_data_get(obj, "comp_override")))
+     {
+        evas_object_data_set(obj, "comp_override", (void*)1);
+        e_comp_override_add(e_comp_util_evas_object_comp_get(obj));
+     }
+}
+
+static void
 _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
 {
    Eina_Bool ref = EINA_TRUE;
@@ -2112,6 +2123,11 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
    if (ref) evas_object_ref(obj);
    edje_object_signal_emit(obj, "e,state,visible", "e");
    evas_object_data_set(obj, "comp_showing", (void*)1);
+   if (e_comp_util_object_is_above_nocomp(obj))
+     {
+        evas_object_data_set(obj, "comp_override", (void*)1);
+        e_comp_override_add(e_comp_util_evas_object_comp_get(obj));
+     }
 }
 
 static void
@@ -2123,6 +2139,9 @@ _e_comp_object_util_hide(void *data EINA_UNUSED, Evas_Object *obj)
    evas_object_data_del(obj, "comp_showing");
    edje_object_signal_emit(obj, "e,state,hidden", "e");
    evas_object_data_set(obj, "comp_hiding", (void*)1);
+
+   if (evas_object_data_del(obj, "comp_override"))
+     e_comp_override_timed_pop(e_comp_util_evas_object_comp_get(obj));
 }
 
 static void
@@ -2275,6 +2294,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOVE, _e_comp_object_util_moveresize, z);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_comp_object_util_del, z);
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _e_comp_object_util_moveresize, z);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_RESTACK, _e_comp_object_util_restack, z);
 
    e_comp_object_signal_emit(o, "e,state,hidden", "e");
 
