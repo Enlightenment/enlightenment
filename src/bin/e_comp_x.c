@@ -1163,6 +1163,7 @@ _e_comp_x_show_helper(E_Client *ec)
      }
    else if (ec->override)
      {
+        ec->redirected = !ec->input_only;
         ec->changes.visible = ec->visible = 1;
         EC_CHANGED(ec);
         if (!ec->comp_data->first_map)
