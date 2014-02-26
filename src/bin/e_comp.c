@@ -228,6 +228,7 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
 
    ecf = _e_comp_fullscreen_check(c);
    if (!ecf) return;
+   c->nocomp_ec = ecf;
    E_CLIENT_FOREACH(c, ec)
      if (ec != ecf) e_client_redirected_set(ec, 0);
 
@@ -472,7 +473,10 @@ nocomp:
         c->nocomp_want = 0;
         E_FREE_FUNC(c->nocomp_delay_timer, ecore_timer_del);
         if (c->nocomp)
-          _e_comp_cb_nocomp_end(c);
+          {
+             _e_comp_cb_nocomp_end(c);
+             c->nocomp_ec = NULL;
+          }
      }
 
    return ECORE_CALLBACK_RENEW;

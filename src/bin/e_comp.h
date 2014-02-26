@@ -99,6 +99,7 @@ struct _E_Comp
    int             block_count; //number of times block window has been requested
 
    Ecore_Window  cm_selection; //FIXME: move to comp_x ?
+   E_Client       *nocomp_ec;
 
    int depth;
    unsigned int    input_key_grabs;
