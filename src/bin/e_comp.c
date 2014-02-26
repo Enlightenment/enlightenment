@@ -820,12 +820,12 @@ _e_comp_screensaver_on(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
    EINA_LIST_FOREACH(compositors, l, c)
      {
         if (c->saver) continue;
+        e_comp_override_add(c);
         c->saver = EINA_TRUE;
         if (c->render_animator)
           ecore_animator_freeze(c->render_animator);
         EINA_LIST_FOREACH(c->zones, ll, zone)
           {
-             e_comp_override_add(c);
              e_zone_fade_handle(zone, 1, 3.0);
              edje_object_signal_emit(zone->base, "e,state,screensaver,on", "e");
              edje_object_signal_emit(zone->over, "e,state,screensaver,on", "e");
@@ -848,6 +848,7 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
      {
         E_Client *ec;
         if (!c->saver) continue;
+        e_comp_override_timed_pop(c);
         c->saver = EINA_FALSE;
         if (!c->nocomp)
           ecore_evas_manual_render_set(c->ee, EINA_FALSE);
@@ -856,7 +857,6 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
              edje_object_signal_emit(zone->base, "e,state,screensaver,off", "e");
              edje_object_signal_emit(zone->over, "e,state,screensaver,off", "e");
              e_zone_fade_handle(zone, 0, 0.5);
-             e_comp_override_timed_pop(c);
           }
         E_CLIENT_FOREACH(c, ec)
           if (e_comp_object_damage_exists(ec->frame))
