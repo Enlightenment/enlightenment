@@ -197,6 +197,7 @@ _e_qa_border_activate(E_Quick_Access_Entry *entry)
    if (!entry->client->lock_user_stacking)
      evas_object_raise(entry->client->frame);
    entry->client->hidden = 0;
+   e_client_comp_hidden_set(entry->client, 0);
    evas_object_show(entry->client->frame);
    if (!entry->client->lock_focus_out)
      e_client_focus_set_with_pointer(entry->client);
@@ -211,6 +212,7 @@ _e_qa_border_deactivate(E_Quick_Access_Entry *entry)
    if (!entry->client) return;
    entry->client->hidden = 1;
    focused = entry->client->focused;
+   e_client_comp_hidden_set(entry->client, 1);
    evas_object_hide(entry->client->frame);
    if (focused && e_config->focus_revert_on_hide_or_close)
      e_desk_last_focused_focus(e_desk_current_get(entry->client->zone));
