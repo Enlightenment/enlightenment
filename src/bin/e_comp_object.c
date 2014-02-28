@@ -3024,7 +3024,6 @@ e_comp_object_redirected_set(Evas_Object *obj, Eina_Bool set)
    cw->redirected = set;
    if (set)
      {
-        _e_comp_object_shadow_setup(cw);
         if (cw->updates_exist)
           e_comp_object_render_update_add(obj);
         else
