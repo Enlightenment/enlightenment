@@ -3112,6 +3112,7 @@ e_client_focused_set(E_Client *ec)
    if (ec)
      {
         ec->focused = 1;
+        e_client_urgent_set(ec, 0);
         if (!e_config->allow_above_fullscreen)
           {
              int x, total = ec->zone->desk_x_count * ec->zone->desk_y_count;
