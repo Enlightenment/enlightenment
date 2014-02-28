@@ -10309,7 +10309,7 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    edje_object_signal_emit(ic->obj, "e,state,rename,on", "e");
    e_widget_entry_text_set(ic->entry_widget, ic->info.file);
    e_widget_focus_set(ic->entry_widget, 1);
-   e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, _e_fm2_icon_entry_widget_focus_out, ic);
+   ic->focus_hook = e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, _e_fm2_icon_entry_widget_focus_out, ic);
    e_widget_entry_select_all(ic->entry_widget);
    ic->sd->iop_icon = ic;
    ic->sd->typebuf.disabled = EINA_TRUE;
