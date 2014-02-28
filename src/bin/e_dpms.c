@@ -23,7 +23,8 @@ e_dpms_update(void)
 
    enabled = ((e_config->screensaver_enable) &&
               (!e_config->mode.presentation) &&
-              (!e_util_fullscreen_current_any()));
+              ((!e_util_fullscreen_current_any()) && (!e_config->no_dpms_on_fullscreen))
+             );
    if (_e_dpms_enabled != enabled)
      {
         _e_dpms_enabled = enabled;
@@ -88,21 +89,21 @@ _e_dpms_handler_config_mode_cb(void *data __UNUSED__, int type __UNUSED__, void 
 static Eina_Bool
 _e_dpms_handler_border_fullscreen_check_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
-   e_dpms_update();
+   if (e_config->no_dpms_on_fullscreen) e_dpms_update();
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
 _e_dpms_handler_border_desk_set_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
-   e_dpms_update();
+   if (e_config->no_dpms_on_fullscreen) e_dpms_update();
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
 _e_dpms_handler_desk_show_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
-   e_dpms_update();
+   if (e_config->no_dpms_on_fullscreen) e_dpms_update();
    return ECORE_CALLBACK_PASS_ON;
 }
 

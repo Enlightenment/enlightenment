@@ -240,6 +240,7 @@ struct _E_Config
    int                       dpms_suspend_timeout; // GUI
    int                       dpms_off_enable; // GUI
    int                       dpms_off_timeout; // GUI
+   unsigned char             no_dpms_on_fullscreen; // GUI
 
    int                       clientlist_group_by; // GUI
    int                       clientlist_include_all_zones; // GUI

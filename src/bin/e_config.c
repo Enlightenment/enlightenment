@@ -597,6 +597,7 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, dpms_standby_timeout, INT);
    E_CONFIG_VAL(D, T, dpms_suspend_timeout, INT);
    E_CONFIG_VAL(D, T, dpms_off_timeout, INT);
+   E_CONFIG_VAL(D, T, no_dpms_on_fullscreen, UCHAR);
 
    E_CONFIG_VAL(D, T, clientlist_group_by, INT);
    E_CONFIG_VAL(D, T, clientlist_include_all_zones, INT);
