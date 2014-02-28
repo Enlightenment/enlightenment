@@ -10304,6 +10304,7 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    evas_event_feed_mouse_out(evas_object_evas_get(ic->obj), ecore_x_current_time_get(), NULL);
    if (c)
      e_comp_grab_input(c, 0, 1);
+   ic->keygrab = !!c;
    edje_object_part_swallow(ic->obj, "e.swallow.entry", ic->entry_widget);
    evas_object_show(ic->entry_widget);
    edje_object_signal_emit(ic->obj, "e,state,rename,on", "e");
