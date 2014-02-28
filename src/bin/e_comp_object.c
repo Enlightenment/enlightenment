@@ -1728,7 +1728,7 @@ _e_comp_smart_cb_unfullscreen(void *data, Evas_Object *obj, void *event_info EIN
    if (cw->frame_object)
      {
         _e_comp_object_shadow(cw);
-        e_comp_object_signal_emit(obj, "e,action,maximize,unfullscreen", "e");
+        e_comp_object_signal_emit(obj, "e,action,unmaximize,unfullscreen", "e");
         _e_comp_object_frame_recalc(cw);
         evas_object_smart_callback_call(cw->smart_obj, "frame_recalc_done", &cw->client_inset);
      }
