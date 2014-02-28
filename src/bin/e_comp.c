@@ -848,7 +848,7 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
      {
         E_Client *ec;
         if (!c->saver) continue;
-        e_comp_override_timed_pop(c);
+        e_comp_override_del(c);
         c->saver = EINA_FALSE;
         if (!c->nocomp)
           ecore_evas_manual_render_set(c->ee, EINA_FALSE);
