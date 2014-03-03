@@ -579,7 +579,6 @@ eina >= ${efl_version} \
 eldbus >= ${efl_version} \
 eio >= ${efl_version} \
 elementary >= ${elm_version} \
-elementary < 1.8.99 \
 emotion >= ${efl_version} \
 $udisks_mount \
 $eeze_mount \
