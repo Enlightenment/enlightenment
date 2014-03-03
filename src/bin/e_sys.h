@@ -1,9 +1,8 @@
 #ifdef E_TYPEDEFS
 
 typedef struct _E_Sys_Con_Action E_Sys_Con_Action;
-typedef enum _E_Sys_Action E_Sys_Action;
 
-enum _E_Sys_Action
+typedef enum _E_Sys_Action
 {
    E_SYS_NONE,
    E_SYS_EXIT,
@@ -15,7 +14,7 @@ enum _E_Sys_Action
    E_SYS_REBOOT,
    E_SYS_SUSPEND,
    E_SYS_HIBERNATE
-};
+} E_Sys_Action;
 
 struct _E_Sys_Con_Action
 {

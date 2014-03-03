@@ -1,9 +1,8 @@
 #ifdef E_TYPEDEFS
 
-typedef enum _E_Color_Component E_Color_Component;
 typedef struct _E_Color E_Color;
 
-enum _E_Color_Component
+typedef enum E_Color_Component
 {
    E_COLOR_COMPONENT_R,
    E_COLOR_COMPONENT_G,
@@ -12,7 +11,7 @@ enum _E_Color_Component
    E_COLOR_COMPONENT_S,
    E_COLOR_COMPONENT_V,
    E_COLOR_COMPONENT_MAX
-};
+} E_Color_Component;
 
 #else
 #ifndef E_COLOR_HEADER
