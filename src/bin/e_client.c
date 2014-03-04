@@ -1784,7 +1784,7 @@ _e_client_eval(E_Client *ec)
         prop |= E_CLIENT_PROPERTY_GRAVITY;
      }
 
-   if ((ec->changes.visible) && (ec->visible) && (ec->new_client))
+   if ((ec->changes.visible) && (ec->visible) && (ec->new_client) && (!ec->iconic))
      {
         int x, y;
 
@@ -1844,7 +1844,8 @@ _e_client_eval(E_Client *ec)
    else if ((ec->changes.visible) && (ec->new_client))
      {
         ec->changes.visible = 0;
-        _e_client_event_simple(ec, E_EVENT_CLIENT_HIDE);
+        if (!ec->iconic)
+          _e_client_event_simple(ec, E_EVENT_CLIENT_HIDE);
      }
 
    if (ec->changes.icon)
