@@ -15,6 +15,7 @@ SUFFIXES = .cfg
 	$< 1
 
 include config/default/Makefile.mk
+include config/tiling/Makefile.mk
 include config/standard/Makefile.mk
 include config/mobile/Makefile.mk
 
