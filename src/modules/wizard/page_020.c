@@ -59,7 +59,7 @@ wizard_page_show(E_Wizard_Page *pg)
    e_widget_ilist_freeze(ob);
 
    profiles = e_config_profile_list();
-   for (i = 0, l = profiles; l; l = l->next, i++)
+   for (i = 0, l = profiles; l; l = l->next)
      {
         Efreet_Desktop *desk = NULL;
         char buf[PATH_MAX], *prof;
@@ -102,6 +102,10 @@ wizard_page_show(E_Wizard_Page *pg)
         e_widget_ilist_append(ob, ic, label, NULL, NULL, prof);
         free(prof);
         if (desk) efreet_desktop_free(desk);
+
+        /* We incremet here, because we don't want to increment it unless we
+         * actually found an item. */
+        i++;
      }
    if (profiles) eina_list_free(profiles);
 
