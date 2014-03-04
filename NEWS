@@ -1,3 +1,14 @@
+Changes since 0.18.4:
+---------------------
+
+* Fix selection of the standard profile in wizard.
+* pointer warp speed config slider correctly detects changed state
+* set border starting geometry from initial zone
+* don't use raise stack for iterating borders
+* Fix wl_desktop_shell compiler warning for Mike
+* evry string matching now handles UTF8
+* remove efm nav SELF_RENAME handler
+
 Changes since 0.18.3:
 ---------------------
 
