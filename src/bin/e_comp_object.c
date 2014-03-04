@@ -522,14 +522,12 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,sticky", "e");
    if (cw->ec->hung)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,hung", "e");
-   if (cw->visible || cw->ec->re_manage)
+   if (cw->visible || cw->ec->iconic || cw->ec->re_manage)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
-   else if (cw->ec->iconic)
-     e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,hidden", "e");
 
-   if (cw->ec->iconic && cw->ec->re_manage)
+   if (cw->ec->iconic)
      e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
    if (!cw->zoomap_disabled)
      e_zoomap_child_set(cw->zoomobj, NULL);
@@ -1877,7 +1875,7 @@ _e_comp_smart_show(Evas_Object *obj)
    evas_object_show(cw->effect_obj);
    e_comp_shape_queue(cw->comp);
    if (cw->ec->input_only) return;
-   if (cw->ec->iconic)
+   if (cw->ec->iconic && (!cw->ec->new_client))
      e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
    else
      {
