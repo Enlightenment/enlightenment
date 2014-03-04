@@ -3618,18 +3618,12 @@ e_client_iconify(E_Client *ec)
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (ec->shading || ec->iconic) return;
    ec->iconic = 1;
-   ec->take_focus = 0;
+   ec->want_focus = ec->take_focus = 0;
+   ec->changes.visible = 0;
    if (ec->fullscreen)
      ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
    e_client_comp_hidden_set(ec, 1);
-   if (ec->new_client)
-     {
-        ec->visible = 0;
-        ec->changes.visible = 0;
-        EC_CHANGED(ec);
-        e_comp_object_signal_emit(ec->frame, "e,action,iconify", "e");
-     }
-   else
+   if (!ec->new_client)
      {
         _e_client_revert_focus(ec);
         evas_object_hide(ec->frame);
