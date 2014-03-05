@@ -569,7 +569,16 @@ _e_randr_event_cb_crtc_change(void *data EINA_UNUSED, int type EINA_UNUSED, void
 
    if (!crtc)
      {
-        fprintf(stderr, "E_RANDR: Weird, a new crtc?\n");
+        crtc = E_NEW(E_Randr_Crtc, 1);
+        if (crtc)
+          {
+             e_randr->crtcs = eina_list_append(e_randr->crtcs, crtc);
+             crtc->xid = ev->crtc;
+
+             crtc->geo = ev->geo;
+             crtc->mode = ev->mode;
+             crtc->orient = ev->orientation;
+          }
      }
    else
      {
