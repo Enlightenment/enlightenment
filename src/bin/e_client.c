@@ -3177,6 +3177,7 @@ e_client_focused_set(E_Client *ec)
            (e_object_ref_get(E_OBJECT(ec_unfocus)) > 0))
           {
              _e_client_event_simple(ec_unfocus, E_EVENT_CLIENT_FOCUS_OUT);
+             e_client_urgent_set(ec_unfocus, ec_unfocus->icccm.urgent);
           }
         break;
      }
@@ -3630,6 +3631,7 @@ e_client_iconify(E_Client *ec)
         evas_object_hide(ec->frame);
      }
    e_hints_window_iconic_set(ec);
+   e_client_urgent_set(ec, ec->icccm.urgent);
 
    _e_client_event_simple(ec, E_EVENT_CLIENT_ICONIFY);
 
