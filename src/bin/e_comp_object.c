@@ -3083,11 +3083,12 @@ e_comp_object_dirty(Evas_Object *obj)
    Eina_List *l;
    Evas_Object *o;
    int w, h, ow, oh;
-   Eina_Bool dirty;
+   Eina_Bool dirty, visible;
 
    API_ENTRY;
    evas_object_geometry_get(cw->obj, NULL, NULL, &ow, &oh);
    dirty = e_pixmap_size_get(cw->ec->pixmap, &w, &h);
+   visible = cw->visible;
    if (!dirty) w = h = 1;
    evas_object_image_pixels_dirty_set(cw->obj, dirty);
    if (!dirty)
@@ -3115,7 +3116,10 @@ e_comp_object_dirty(Evas_Object *obj)
         RENDER_DEBUG("UPDATE ADD [%p]: %d %d %dx%d", cw->ec, r->x, r->y, r->w, r->h);
         evas_object_image_data_update_add(cw->obj, r->x, r->y, r->w, r->h);
         EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-          evas_object_image_data_update_add(o, r->x, r->y, r->w, r->h);
+          {
+             evas_object_image_data_update_add(o, r->x, r->y, r->w, r->h);
+             visible |= evas_object_visible_get(o);
+          }
         if (cw->pending_updates)
           eina_tiler_rect_add(cw->pending_updates, r);
      }
@@ -3129,6 +3133,8 @@ e_comp_object_dirty(Evas_Object *obj)
         eina_tiler_tile_size_set(cw->updates, 1, 1);
      }
    cw->update_count = cw->updates_full = cw->updates_exist = 0;
+   if (cw->visible || (!visible) || (!cw->pending_updates)) return;
+   e_comp_object_render(obj);
 }
 
 EAPI Eina_Bool
@@ -3160,6 +3166,8 @@ e_comp_object_render(Evas_Object *obj)
         return EINA_FALSE;
      }
 
+   evas_object_image_pixels_dirty_set(cw->obj, EINA_FALSE);
+
    RENDER_DEBUG("RENDER SIZE: %dx%d", pw, ph);
    it = eina_tiler_iterator_new(cw->pending_updates);
    if (e_pixmap_image_is_argb(cw->ec->pixmap))
@@ -3179,7 +3187,10 @@ e_comp_object_render(Evas_Object *obj)
           }
         evas_object_image_data_set(cw->obj, pix);
         EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-          evas_object_image_data_set(o, pix);
+          {
+             evas_object_image_data_set(o, pix);
+             evas_object_image_pixels_dirty_set(o, EINA_FALSE);
+          }
         eina_iterator_free(it);
         E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
         return ret;
@@ -3203,7 +3214,10 @@ e_comp_object_render(Evas_Object *obj)
      }
    evas_object_image_data_set(cw->obj, pix);
    EINA_LIST_FOREACH(cw->obj_mirror, l, o)
-     evas_object_image_data_set(o, pix);
+     {
+        evas_object_image_data_set(o, pix);
+        evas_object_image_pixels_dirty_set(o, EINA_FALSE);
+     }
 
    eina_iterator_free(it);
    E_FREE_FUNC(cw->pending_updates, eina_tiler_free);
