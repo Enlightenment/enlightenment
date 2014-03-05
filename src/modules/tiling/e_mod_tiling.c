@@ -127,6 +127,7 @@ _initialize_tinfo(const E_Desk *desk)
 static void
 check_tinfo(const E_Desk *desk)
 {
+   if (!desk) return;
    if (!_G.tinfo || _G.tinfo->desk != desk)
      {
         _G.tinfo = eina_hash_find(_G.info_hash, &desk);
