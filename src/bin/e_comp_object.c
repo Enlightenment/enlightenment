@@ -2186,6 +2186,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
    char buf[1024];
    int ok = 0;
    int x, y, w, h;
+   Eina_Bool vis;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
 
@@ -2208,6 +2209,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
         fast = conf->fast_objects;
      }
    name = evas_object_name_get(obj);
+   vis = evas_object_visible_get(obj);
    c = e_comp_util_evas_object_comp_get(obj);
    o = edje_object_add(c->evas);
    evas_object_data_set(o, "comp_object", (void*)1);
@@ -2300,7 +2302,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
 
    _e_comp_object_event_add(o);
 
-   if (evas_object_visible_get(obj))
+   if (vis)
      evas_object_show(o);
 
    return o;
