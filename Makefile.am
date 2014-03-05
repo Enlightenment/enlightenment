@@ -84,6 +84,7 @@ include doc/Makefile.mk
 clean-local: doc-clean
 	rm -rf config/*.cfg config/*~
 	rm -rf config/standard/*.cfg config/standard/*~
+	rm -rf config/tiling/*.cfg config/tiling/*~
 	rm -rf config/mobile/*.cfg config/mobile/*~
 	rm -rf config/default/*.cfg config/default/*~
 	rm -f data/themes/*.edj
