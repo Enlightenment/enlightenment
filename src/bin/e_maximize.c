@@ -137,25 +137,9 @@ e_maximize_client_shelf_fill(E_Client *ec, int *x1, int *yy1, int *x2, int *y2, 
         E_Config_Shelf_Desk *sd;
 
         if (es->cfg->overlap) continue;
-        if (es->zone != ec->zone) continue;
-        if (es->cfg->desk_show_mode)
-          {
-             EINA_LIST_FOREACH(es->cfg->desk_list, ll, sd)
-               {
-                  if (!sd) continue;
-                  if ((sd->x == ec->desk->x) && (sd->y == ec->desk->y))
-                    {
-                       OBSTACLE(es->x + es->zone->x, es->y + es->zone->y,
-                                es->x + es->zone->x + es->w, es->y + es->zone->y + es->h);
-                       break;
-                    }
-               }
-          }
-        else
-          {
-             OBSTACLE(es->x + es->zone->x, es->y + es->zone->y,
-                      es->x + es->zone->x + es->w, es->y + es->zone->y + es->h);
-          }
+        if (!e_shelf_desk_visible(es, ec->desk)) continue;
+        OBSTACLE(es->x + es->zone->x, es->y + es->zone->y,
+                 es->x + es->zone->x + es->w, es->y + es->zone->y + es->h);
      }
    if (rects)
      {
