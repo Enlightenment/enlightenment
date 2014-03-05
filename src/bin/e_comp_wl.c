@@ -982,7 +982,6 @@ _default_grab_button(struct wl_pointer_grab *grab, uint32_t timestamp, uint32_t 
    struct wl_pointer *pointer = grab->pointer;
    struct wl_list *lst;
    struct wl_resource *res;
-   enum wl_pointer_button_state state = state_w;
 
    lst = &pointer->focus_resource_list;
    if (!wl_list_empty(lst))
