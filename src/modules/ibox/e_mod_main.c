@@ -186,7 +186,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    b = _ibox_new(gc->evas, gc->zone);
    b->inst = inst;
    inst->ibox = b;
-   _ibox_fill(b);
    o = b->o_box;
    gcc = e_gadcon_client_new(gc, name, id, style, o);
    gcc->data = inst;
@@ -195,6 +194,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->gcc = gcc;
    inst->o_ibox = o;
    inst->orient = E_GADCON_ORIENT_HORIZ;
+   _ibox_fill(b);
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
    inst->drop_handler =
@@ -589,6 +589,13 @@ _ibox_icon_fill(IBox_Icon *ic)
    evas_object_show(ic->o_icon2);
 
    _ibox_icon_fill_label(ic);
+
+   if (ic->client->urgent)
+     {
+        e_gadcon_urgent_show(ic->ibox->inst->gcc->gadcon);
+        edje_object_signal_emit(ic->o_holder, "e,state,urgent", "e");
+        edje_object_signal_emit(ic->o_holder2, "e,state,urgent", "e");
+     }
 }
 
 static void
