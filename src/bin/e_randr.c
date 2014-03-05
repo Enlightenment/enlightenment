@@ -622,55 +622,70 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    output = _e_randr_output_find(ev->output);
    if (!output)
      {
-        fprintf(stderr, "E_RANDR: Weird, a new output?\n");
-     }
-   else
-     {
-        /* we know this output */
-        if (output->is_lid && _e_randr_lid_is_closed)
-          {
-             /* ignore event from disconnected lid */
-             fprintf(stderr, "E_RANDR: ignore event from closed lid\n");
-          }
-        else if (ev->connection == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
-          {
-             E_Randr_Crtc *crtc = NULL;
+        E_Config_Randr_Output *output_cfg = NULL;
+        Ecore_X_Window root;
 
-             /* connected */
-             if ((ev->crtc != 0) && (output->cfg->crtc != ev->crtc))
-               {
-                  fprintf(stderr, "E_RANDR: output changed crtc\n");
-                  /* remove from old crtc */
-                  _e_randr_output_active_set(output, EINA_FALSE);
-                  /* set new crtc on output */
-                  output->cfg->crtc = ev->crtc;
-               }
-             if (!output->active)
-               {
-                  fprintf(stderr, "E_RANDR: output connected to crtc\n");
-                  crtc = _e_randr_output_crtc_find(output);
-                  if (crtc)
-                    {
-                       /* connect to crtc */
-                       _e_randr_output_active_set(output, EINA_TRUE);
-                       /* get orientation from crtc if not set */
-                       if (!output->cfg->orient)
-                         output->cfg->orient = crtc->orient;
-                       /* validate output mode */
-                       _e_randr_output_mode_update(output);
-                    }
-                  changed = EINA_TRUE;
-               }
-          }
-        else if (ev->connection == ECORE_X_RANDR_CONNECTION_STATUS_DISCONNECTED)
+        root = ecore_x_window_root_first_get();
+
+        output = E_NEW(E_Randr_Output, 1);
+        if (!output) goto error;
+        output_cfg = _e_randr_config_output_find(ev->output);
+        if (!output_cfg)
+          output_cfg = _e_randr_config_output_new(root, ev->output);
+        if (!output_cfg) goto error;
+
+        e_randr->outputs = eina_list_append(e_randr->outputs, output);
+        output->cfg = output_cfg;
+
+        output->name = ecore_x_randr_output_name_get(root, output->cfg->xid, NULL);
+        output->is_lid = _e_randr_is_lid(output);
+        changed = EINA_TRUE;
+     }
+
+   /* we know this output */
+   if (output->is_lid && _e_randr_lid_is_closed)
+     {
+        /* ignore event from disconnected lid */
+        fprintf(stderr, "E_RANDR: ignore event from closed lid\n");
+     }
+   else if (ev->connection == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
+     {
+        E_Randr_Crtc *crtc = NULL;
+
+        /* connected */
+        if ((ev->crtc != 0) && (output->cfg->crtc != ev->crtc))
           {
-             /* disconnected */
-             if (output->active)
+             fprintf(stderr, "E_RANDR: output changed crtc\n");
+             /* remove from old crtc */
+             _e_randr_output_active_set(output, EINA_FALSE);
+             /* set new crtc on output */
+             output->cfg->crtc = ev->crtc;
+          }
+        if (!output->active)
+          {
+             fprintf(stderr, "E_RANDR: output connected to crtc\n");
+             crtc = _e_randr_output_crtc_find(output);
+             if (crtc)
                {
-                  fprintf(stderr, "E_RANDR: output disconnected: %s\n", output->name);
-                  _e_randr_output_active_set(output, EINA_FALSE);
-                  changed = EINA_TRUE;
+                  /* connect to crtc */
+                  _e_randr_output_active_set(output, EINA_TRUE);
+                  /* get orientation from crtc if not set */
+                  if (!output->cfg->orient)
+                    output->cfg->orient = crtc->orient;
+                  /* validate output mode */
+                  _e_randr_output_mode_update(output);
                }
+             changed = EINA_TRUE;
+          }
+     }
+   else if (ev->connection == ECORE_X_RANDR_CONNECTION_STATUS_DISCONNECTED)
+     {
+        /* disconnected */
+        if (output->active)
+          {
+             fprintf(stderr, "E_RANDR: output disconnected: %s\n", output->name);
+             _e_randr_output_active_set(output, EINA_FALSE);
+             changed = EINA_TRUE;
           }
      }
 
@@ -683,6 +698,9 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
         e_randr_config_save();
      }
 
+   return ECORE_CALLBACK_RENEW;
+error:
+   free(output);
    return ECORE_CALLBACK_RENEW;
 }
 
