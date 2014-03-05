@@ -68,12 +68,11 @@ _e_deskmirror_visible_get(E_Smart_Data *sd, Mirror *m)
    if (m->ec)
      {
         visible = m->ec->visible;
-        /* iconic flips meaning of visible flag at this point
-         * where "this point" is defined as being during the show
-         * callback for a client
+        /* all iconic visibility changes occur with iconic flag set:
+         * visibility here is determined by frame visibility
          */
         if (m->sd->handlers && m->ec->iconic)
-          visible = !m->ec->visible;
+          visible = evas_object_visible_get(m->ec->frame);
         if (visible)
           {
              visible = (sd->desk == m->ec->desk) || (m->ec->sticky && (!m->ec->hidden));
