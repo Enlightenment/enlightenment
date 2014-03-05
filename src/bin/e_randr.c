@@ -14,7 +14,7 @@ static Eina_Bool _e_randr_config_cb_timer(void *data);
 static void      _e_randr_load(void);
 static void      _e_randr_apply(void);
 static void                   _e_randr_output_mode_update(E_Randr_Output *cfg);
-static E_Config_Randr_Output *_e_randr_config_output_new(unsigned int id);
+static E_Config_Randr_Output *_e_randr_config_output_new(Ecore_X_Window root, unsigned int id);
 static E_Config_Randr_Output *_e_randr_config_output_find(Ecore_X_Randr_Output output);
 static E_Randr_Crtc          *_e_randr_crtc_find(Ecore_X_Randr_Crtc xid);
 static E_Randr_Output        *_e_randr_output_find(Ecore_X_Randr_Output xid);
@@ -350,7 +350,7 @@ _e_randr_load(void)
 
              output_cfg = _e_randr_config_output_find(outputs[j]);
              if (!output_cfg)
-               output_cfg = _e_randr_config_output_new(outputs[j]);
+               output_cfg = _e_randr_config_output_new(root, outputs[j]);
              if (!output_cfg) continue;
 
              output = E_NEW(E_Randr_Output, 1);
@@ -803,19 +803,14 @@ error:
 }
 
 static E_Config_Randr_Output *
-_e_randr_config_output_new(unsigned int id)
+_e_randr_config_output_new(Ecore_X_Window root, unsigned int id)
 {
    E_Config_Randr_Output *cfg = NULL;
 
    if ((cfg = E_NEW(E_Config_Randr_Output, 1)))
      {
-        Ecore_X_Window root = 0;
-
         /* assign output xid */
         cfg->xid = id;
-
-        /* grab the root window */
-        root = ecore_x_window_root_first_get();
 
         /* get the crtc for this output */
         cfg->crtc = ecore_x_randr_output_crtc_get(root, cfg->xid);
