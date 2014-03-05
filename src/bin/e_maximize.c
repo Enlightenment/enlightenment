@@ -211,18 +211,18 @@ _e_maximize_client_rects_fill_both(E_Client *ec, Eina_List *rects, int *x1, int 
    if (y2) hy2 = vy2 = *y2;
 
    /* Init working values, try maximizing horizontally first */
-   bx = ec->x;
-   by = ec->y;
-   bw = ec->w;
-   bh = ec->h;
+   bx = ec->saved.x ?: ec->x;
+   by = ec->saved.y ?: ec->y;
+   bw = ec->saved.w ?: ec->w;
+   bh = ec->saved.h ?: ec->h;
    _e_maximize_client_rects_fill_horiz(ec, rects, &hx1, &hx2, &bx, &by, &bw, &bh);
    _e_maximize_client_rects_fill_vert(ec, rects, &hy1, &hy2, &bx, &by, &bw, &bh);
 
    /* Reset working values, try maximizing vertically first */
-   bx = ec->x;
-   by = ec->y;
-   bw = ec->w;
-   bh = ec->h;
+   bx = ec->saved.x ?: ec->x;
+   by = ec->saved.y ?: ec->y;
+   bw = ec->saved.w ?: ec->w;
+   bh = ec->saved.h ?: ec->h;
    _e_maximize_client_rects_fill_vert(ec, rects, &vy1, &vy2, &bx, &by, &bw, &bh);
    _e_maximize_client_rects_fill_horiz(ec, rects, &vx1, &vx2, &bx, &by, &bw, &bh);
 
