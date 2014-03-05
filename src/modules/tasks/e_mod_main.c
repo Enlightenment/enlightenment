@@ -657,7 +657,7 @@ _tasks_item_fill(Tasks_Item *item)
      _tasks_item_signal_emit(item, "e,state,focused", "e");
    else
      _tasks_item_signal_emit(item, "e,state,unfocused", "e");
-   if (item->client->icccm.urgent && !item->client->focused)
+   if (item->client->urgent)
      _tasks_item_signal_emit(item, "e,state,urgent", "e");
    else
      _tasks_item_signal_emit(item, "e,state,not_urgent", "e");
@@ -941,7 +941,7 @@ _tasks_cb_event_client_urgent_change(void *data __UNUSED__, int type __UNUSED__,
    E_Event_Client_Property *ev = event;
 
    if (!(ev->property & E_CLIENT_PROPERTY_URGENCY)) return ECORE_CALLBACK_RENEW;
-   if (ev->ec->icccm.urgent && (!ev->ec->focused))
+   if (ev->ec->urgent)
      _tasks_signal_emit(ev->ec, "e,state,urgent", "e");
    else
      _tasks_signal_emit(ev->ec, "e,state,not_urgent", "e");

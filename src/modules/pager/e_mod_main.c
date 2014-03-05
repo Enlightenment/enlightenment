@@ -685,7 +685,7 @@ _pager_window_new(Pager_Desk *pd, E_Client *client)
         edje_object_part_swallow(pw->o_window, "e.swallow.icon", o);
      }
 
-   if (client->icccm.urgent && !client->focused)
+   if (client->urgent)
      {
         if (!(client->iconic))
           edje_object_signal_emit(pd->o_desk, "e,state,urgent", "e");
@@ -1403,7 +1403,7 @@ _pager_cb_event_client_urgent_change(void *data __UNUSED__, int type __UNUSED__,
 
    if (!(ev->property & E_CLIENT_PROPERTY_URGENCY)) return ECORE_CALLBACK_RENEW;
    zone = ev->ec->zone;
-   urgent = ev->ec->icccm.urgent;
+   urgent = ev->ec->urgent || ev->ec->icccm.urgent;
 
    if (pager_config->popup_urgent && (pager_config->popup_urgent_focus ||
                                       ((!pager_config->popup_urgent_focus) && (!ev->ec->focused) && (!ev->ec->want_focus))))
@@ -1430,7 +1430,7 @@ _pager_cb_event_client_urgent_change(void *data __UNUSED__, int type __UNUSED__,
              pw = _pager_desk_window_find(pd, ev->ec);
              if (pw)
                {
-                  if (urgent && !ev->ec->focused)
+                  if (ev->ec->urgent)
                     {
                        if (!(ev->ec->iconic))
                          {

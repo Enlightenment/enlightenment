@@ -3097,6 +3097,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                                     &is_urgent))
           {
              ec->icccm.accepts_focus = accepts_focus;
+             ec->icccm.urgent = is_urgent;
              e_client_urgent_set(ec, is_urgent);
 
              /* If this is a new window, set the state as requested. */

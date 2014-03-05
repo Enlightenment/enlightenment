@@ -1172,7 +1172,7 @@ _ibox_cb_event_client_property(void *data __UNUSED__, int type __UNUSED__, E_Eve
              _ibox_icon_fill(ic);
              continue;
           }
-        if (ev->ec->icccm.urgent)
+        if (ev->ec->urgent)
           {
              e_gadcon_urgent_show(b->inst->gcc->gadcon);
              edje_object_signal_emit(ic->o_holder, "e,state,urgent", "e");

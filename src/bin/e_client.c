@@ -2029,7 +2029,7 @@ _e_client_frame_update(E_Client *ec)
             ((!ec->icccm.accepts_focus) &&
             (!ec->icccm.take_focus)))
      bordername = "nofocus";
-   else if (ec->icccm.urgent)
+   else if (ec->urgent)
      bordername = "urgent";
    else if ((ec->icccm.transient_for != 0) ||
             (ec->dialog))
@@ -3682,13 +3682,18 @@ e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
 
    urgent = !!urgent;
-   if (urgent == ec->icccm.urgent) return;
-   ec->icccm.urgent = urgent;
+   if (urgent == ec->urgent) return;
    _e_client_event_property(ec, E_CLIENT_PROPERTY_URGENCY);
-   if (urgent && (!ec->focused))
-     e_comp_object_signal_emit(ec->frame, "e,state,urgent", "e");
+   if (urgent && (!ec->focused) && (!ec->want_focus))
+     {
+        e_comp_object_signal_emit(ec->frame, "e,state,urgent", "e");
+        ec->urgent = urgent;
+     }
    else
-     e_comp_object_signal_emit(ec->frame, "e,state,not_urgent", "e");
+     {
+        e_comp_object_signal_emit(ec->frame, "e,state,not_urgent", "e");
+        ec->urgent = 0;
+     }
    if (urgent && e_screensaver_on_get() && e_config->screensaver_wake_on_urgent)
      {
         int x, y;

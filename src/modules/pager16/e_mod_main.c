@@ -682,7 +682,7 @@ _pager_window_new(Pager_Desk *pd, Evas_Object *mirror, E_Client *client)
    evas_object_event_callback_add(mirror, EVAS_CALLBACK_DEL,
                                   _pager_window_cb_del, pw);
 
-   if (client->icccm.urgent && !client->focused)
+   if (client->urgent)
      {
         if (!(client->iconic))
           edje_object_signal_emit(pd->o_desk, "e,state,urgent", "e");
@@ -1015,7 +1015,7 @@ _pager_cb_event_client_urgent_change(void *data EINA_UNUSED, int type EINA_UNUSE
 
         pp = _pager_popup_find(ev->ec->zone);
 
-        if ((!pp) && (ev->ec->icccm.urgent) && (!ev->ec->iconic))
+        if ((!pp) && (ev->ec->urgent || ev->ec->icccm.urgent) && (!ev->ec->iconic))
           {
              pp = _pager_popup_new(ev->ec->zone, 0);
              if (!pp) return ECORE_CALLBACK_RENEW;

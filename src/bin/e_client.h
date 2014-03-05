@@ -572,6 +572,7 @@ struct E_Client
    unsigned int       iconic : 1;
    unsigned int       deskshow : 1;
    unsigned int       sticky : 1;
+   unsigned int       urgent : 1;
    unsigned int       shaped_input : 1;
    unsigned int       need_shape_merge : 1;
    unsigned int       need_shape_export : 1;

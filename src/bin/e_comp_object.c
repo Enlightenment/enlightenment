@@ -512,7 +512,7 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,focused", "e");
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,unfocused", "e");
-   if (urgent || cw->ec->icccm.urgent)
+   if (urgent || cw->ec->urgent)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,urgent", "e");
    else
      e_comp_object_signal_emit(cw->smart_obj, "e,state,not_urgent", "e");
