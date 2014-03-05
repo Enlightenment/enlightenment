@@ -10,6 +10,7 @@ struct _E_Config_Dialog_Data
    Evas_Object *o_randr;
 
    int restore, primary;
+   Eina_Bool changed;
 };
 
 /* local function prototypes */
@@ -175,17 +176,17 @@ static int
 _basic_check(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    return ((e_randr_cfg->restore != cfdata->restore) || 
-           (e_randr_cfg->primary != (unsigned int)cfdata->primary));
+           (e_randr_cfg->primary != (unsigned int)cfdata->primary) ||
+           cfdata->changed);
 }
 
 static void 
 _randr_cb_changed(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
-   Eina_Bool changed = EINA_FALSE;
 
    if (!(cfd = data)) return;
 
-   changed = e_smart_randr_changed_get(obj);
-   e_config_dialog_changed_set(cfd, changed);
+   cfd->cfdata->changed = e_smart_randr_changed_get(obj);
+   e_config_dialog_changed_set(cfd, cfd->cfdata->changed);
 }
