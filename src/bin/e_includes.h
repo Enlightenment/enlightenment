@@ -155,3 +155,6 @@
 #include "e_comp_canvas.h"
 #include "e_utils.h"
 #include "e_hints.h"
+#ifdef HAVE_WAYLAND_CLIENTS
+#  include "e_uuid_store.h"
+#endif
