@@ -1168,12 +1168,14 @@ _e_randr_output_active_set(E_Randr_Output *output, Eina_Bool active)
           {
              crtc->outputs =
                 eina_list_append(crtc->outputs, output);
+             output->crtc = crtc;
              e_randr->active++;
           }
         else
           {
              crtc->outputs =
                 eina_list_remove(crtc->outputs, output);
+             output->crtc = NULL;
              e_randr->active--;
           }
      }

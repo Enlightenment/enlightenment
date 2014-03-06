@@ -50,6 +50,7 @@ struct _E_Randr_Output
    Eina_Bool active;  // if this output is active
 
    E_Config_Randr_Output *cfg;
+   E_Randr_Crtc *crtc;
 };
 
 struct _E_Randr_Crtc
