@@ -162,7 +162,6 @@ static void _e_smart_monitor_pointer_pop(Evas_Object *obj, const char *ptr);
 static inline void _e_smart_monitor_coord_virtual_to_canvas(E_Smart_Data *sd, Evas_Coord vx, Evas_Coord vy, Evas_Coord *cx, Evas_Coord *cy);
 static inline void _e_smart_monitor_coord_canvas_to_virtual(E_Smart_Data *sd, Evas_Coord cx, Evas_Coord cy, Evas_Coord *vx, Evas_Coord *vy);
 static Ecore_X_Randr_Mode_Info *_e_smart_monitor_mode_find(E_Smart_Data *sd, Evas_Coord w, Evas_Coord h, Eina_Bool skip_refresh);
-static inline double _e_smart_monitor_mode_refresh_rate_get(Ecore_X_Randr_Mode_Info *mode);
 static void _e_smart_monitor_mode_refresh_rates_fill(Evas_Object *obj);
 
 static void _e_smart_monitor_thumb_cb_mouse_in(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, Evas_Object *obj, void *event EINA_UNUSED);
@@ -282,7 +281,7 @@ e_smart_monitor_crtc_set(Evas_Object *obj, Ecore_X_Randr_Crtc crtc, Evas_Coord c
           {
              /* record current refresh rate */
              sd->crtc.refresh_rate = 
-               _e_smart_monitor_mode_refresh_rate_get(mode);
+               e_randr_mode_refresh_rate_get(mode);
 
              /* free any memory allocated from ecore_x_randr */
              free(mode);
@@ -561,7 +560,7 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
              sd->current.h = mode_info->height;
              sd->current.mode = mode_info->xid;
              sd->current.refresh_rate = 
-               _e_smart_monitor_mode_refresh_rate_get(mode_info);
+               e_randr_mode_refresh_rate_get(mode_info);
 
              sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
           }
@@ -584,7 +583,7 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
                        sd->current.h = pmode->height;
                        sd->current.mode = pmode->xid;
                        sd->current.refresh_rate = 
-                         _e_smart_monitor_mode_refresh_rate_get(pmode);
+                         e_randr_mode_refresh_rate_get(pmode);
 
                        sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
 
@@ -593,7 +592,7 @@ e_smart_monitor_clone_set(Evas_Object *obj, Evas_Object *parent)
 		       psd->current.h = mode_info->height;
 		       psd->current.mode = mode_info->xid;
 		       psd->current.refresh_rate = 
-			 _e_smart_monitor_mode_refresh_rate_get(mode_info);
+			 e_randr_mode_refresh_rate_get(mode_info);
 
 		       psd->changes |= E_SMART_MONITOR_CHANGED_MODE;
 
@@ -887,7 +886,7 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
    /*     (mode_info = ecore_x_randr_mode_info_get(root, sd->crtc.mode))) */
    /*   { */
    /*      sd->crtc.refresh_rate =  */
-   /*        _e_smart_monitor_mode_refresh_rate_get(mode_info); */
+   /*        e_randr_mode_refresh_rate_get(mode_info); */
    /*      ecore_x_randr_mode_info_free(mode_info); */
    /*   } */
    /* else */
@@ -1491,7 +1490,7 @@ _e_smart_monitor_mode_find(E_Smart_Data *sd, Evas_Coord w, Evas_Coord h, Eina_Bo
                   double rate = 0.0;
                   
                   /* get the refresh rate for this mode */
-                  rate = _e_smart_monitor_mode_refresh_rate_get(mode);
+                  rate = e_randr_mode_refresh_rate_get(mode);
                   
                   /* compare mode rate to "current" rate */
                   if ((int)rate == sd->current.refresh_rate)
@@ -1508,21 +1507,6 @@ _e_smart_monitor_mode_find(E_Smart_Data *sd, Evas_Coord w, Evas_Coord h, Eina_Bo
           }
      }
    return chosen;
-}
-
-static inline double 
-_e_smart_monitor_mode_refresh_rate_get(Ecore_X_Randr_Mode_Info *mode)
-{
-   double rate = 0.0;
-
-   if (mode)
-     {
-        if ((mode->hTotal) && (mode->vTotal))
-          rate = ((float)mode->dotClock / 
-                  ((float)mode->hTotal * (float)mode->vTotal));
-     }
-
-   return rate;
 }
 
 static void 
@@ -1571,7 +1555,7 @@ _e_smart_monitor_mode_refresh_rates_fill(Evas_Object *obj)
              if (!rg) rg = e_widget_radio_group_new(&sd->current.refresh_rate);
 
              /* get the refresh rate for this mode */
-             rate = _e_smart_monitor_mode_refresh_rate_get(mode);
+             rate = e_randr_mode_refresh_rate_get(mode);
              snprintf(buff, sizeof(buff), "%.1fHz", rate);
 
              /* create radio widget */
@@ -2136,7 +2120,7 @@ _e_smart_monitor_refresh_rate_cb_changed(void *data, Evas_Object *obj EINA_UNUSE
              int rate = 0;
 
              /* get the refresh rate for this mode */
-             rate = (int)_e_smart_monitor_mode_refresh_rate_get(mode);
+             rate = (int)e_randr_mode_refresh_rate_get(mode);
 
              /* compare refresh rates */
              if (rate == sd->current.refresh_rate)
@@ -2232,7 +2216,7 @@ _e_smart_monitor_resize_event(E_Smart_Data *sd, Evas_Object *mon, void *event)
 
         /* update refresh rate */
         sd->current.refresh_rate = 
-          (int)_e_smart_monitor_mode_refresh_rate_get(mode);
+          (int)e_randr_mode_refresh_rate_get(mode);
 
         /* if ((sd->current.x + mw) > sd->grid.vw) */
         /*   sd->current.x = (sd->grid.vw - mw); */
