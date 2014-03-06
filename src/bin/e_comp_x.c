@@ -2042,6 +2042,7 @@ _e_comp_x_mouse_up(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_But
                ec = e_client_action_get();
              if (!ec) return ECORE_CALLBACK_RENEW;
           }
+        if ((!ec) || e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
      }
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
    e_bindings_ecore_event_mouse_button_convert(ev, &ev2);
@@ -2061,7 +2062,7 @@ _e_comp_x_mouse_down(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_B
    //else
      {
         ec = _e_comp_x_client_find_by_window(ev->window);
-        if (!ec) return ECORE_CALLBACK_RENEW;
+        if ((!ec) || e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
      }
    if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
    e_bindings_ecore_event_mouse_button_convert(ev, &ev2);
@@ -2077,7 +2078,7 @@ _e_comp_x_mouse_move(void *d EINA_UNUSED, int t EINA_UNUSED, Ecore_Event_Mouse_M
    ec = e_client_action_get();
    if (!ec) return ECORE_CALLBACK_RENEW;
    E_COMP_X_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
-   if (ec->comp_data->deleted) return ECORE_CALLBACK_RENEW;
+   if (ec->comp_data->deleted || e_client_util_ignored_get(ec)) return ECORE_CALLBACK_RENEW;
    if (e_client_util_resizing_get(ec) &&
        ec->netwm.sync.request &&
        ec->comp_data->alarm
