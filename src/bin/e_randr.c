@@ -4,6 +4,8 @@
 /* TODO: Do we need e_randr_cfg->screen.{width,height} ? */
 /* TODO: Check so we can rely on connected only, not connected && exists */
 /* TODO: Ignore xrandr events triggered by changes in acpi cb */
+/* TODO: Clone mode */
+/* TODO: Lid at (x, y) == (0, 0) always */
 
 /* local function prototypes */
 static Eina_Bool _e_randr_config_load(void);
