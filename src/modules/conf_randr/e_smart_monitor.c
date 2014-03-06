@@ -1242,6 +1242,7 @@ _e_smart_monitor_mode_refresh_rates_fill(Evas_Object *obj)
    Ecore_X_Randr_Mode_Info *cmode = NULL, *mode = NULL;
    E_Radio_Group *rg = NULL;
    Evas_Coord mw = 0, mh = 0;
+   int count = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1268,18 +1269,21 @@ _e_smart_monitor_mode_refresh_rates_fill(Evas_Object *obj)
    /* loop the modes and find the current one */
    EINA_LIST_FOREACH(sd->modes, m, mode)
      {
+        double rate = 0.0;
+
+        rate = e_randr_mode_refresh_rate_get(mode);
+        if (rate == 0.0) continue;
+
         /* compare mode IDs */
         if (cmode->xid == mode->xid)
           {
              Evas_Object *ow;
-             double rate = 0.0;
              char buff[1024];
 
              /* create new radio group if needed */
              if (!rg) rg = e_widget_radio_group_new(&sd->current.refresh_rate);
 
              /* get the refresh rate for this mode */
-             rate = e_randr_mode_refresh_rate_get(mode);
              snprintf(buff, sizeof(buff), "%.1fHz", rate);
 
              /* create radio widget */
@@ -1291,19 +1295,29 @@ _e_smart_monitor_mode_refresh_rates_fill(Evas_Object *obj)
 
              /* add this radio to the list */
              e_widget_list_object_append(sd->o_refresh, ow, 1, 0, 0.5);
+             count++;
           }
      }
 
    /* free any memory allocated from ecore_x_randr */
    if (cmode) ecore_x_randr_mode_info_free(cmode);
 
-   /* calculate min size for refresh list and set */
-   e_widget_size_min_get(sd->o_refresh, &mw, &mh);
-   edje_extern_object_min_size_set(sd->o_refresh, mw, mh);
+   if (count > 0)
+     {
+        /* calculate min size for refresh list and set */
+        e_widget_size_min_get(sd->o_refresh, &mw, &mh);
+        edje_extern_object_min_size_set(sd->o_refresh, mw, mh);
 
-   /* swallow refresh list */
-   edje_object_part_swallow(sd->o_frame, "e.swallow.refresh", sd->o_refresh);
-   evas_object_show(sd->o_refresh);
+        /* swallow refresh list */
+        edje_object_part_swallow(sd->o_frame, "e.swallow.refresh", sd->o_refresh);
+        evas_object_show(sd->o_refresh);
+        edje_object_signal_emit(sd->o_frame, "e,state,refresh,enabled", "e");
+     }
+   else
+     {
+        E_FREE_FUNC(sd->o_refresh, evas_object_del);
+        edje_object_signal_emit(sd->o_frame, "e,state,refresh,disabled", "e");
+     }
 }
 
 static void 
