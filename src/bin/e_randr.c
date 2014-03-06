@@ -43,10 +43,9 @@ static E_Config_DD *_e_randr_output_edd = NULL;
 
 static int _e_randr_lid_is_closed = 0;
 
-static E_Randr *e_randr = NULL;
-
 /* external variables */
 EAPI E_Config_Randr *e_randr_cfg = NULL;
+EAPI E_Randr *e_randr = NULL;
 
 /* private internal functions */
 EINTERN Eina_Bool
