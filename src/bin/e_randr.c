@@ -129,6 +129,36 @@ e_randr_config_save(void)
    return e_config_domain_save("e_randr", _e_randr_edd, e_randr_cfg);
 }
 
+EAPI void
+e_randr_config_apply(void)
+{
+   Eina_List *l;
+   E_Randr_Output *output;
+
+   /* Update output mode */
+   EINA_LIST_FOREACH(e_randr->outputs, l, output)
+     {
+        if (!output->cfg->connect)
+          _e_randr_output_active_set(output, EINA_FALSE);
+        else if ((!output->active) && (output->status == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED))
+          {
+             if (_e_randr_output_crtc_find(output))
+               {
+                  _e_randr_output_mode_update(output);
+                  _e_randr_output_active_set(output, EINA_TRUE);
+               }
+          }
+     }
+   /* update lid status */
+   _e_randr_lid_update();
+
+   /* apply randr settings */
+   _e_randr_apply();
+
+   /* update primary output */
+   _e_randr_config_primary_update();
+}
+
 EAPI double
 e_randr_mode_refresh_rate_get(Ecore_X_Randr_Mode_Info *mode)
 {
