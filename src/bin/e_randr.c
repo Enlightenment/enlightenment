@@ -131,6 +131,22 @@ e_randr_config_save(void)
    return e_config_domain_save("e_randr", _e_randr_edd, e_randr_cfg);
 }
 
+EAPI double
+e_randr_mode_refresh_rate_get(Ecore_X_Randr_Mode_Info *mode)
+{
+   double rate = 0.0;
+
+   if (mode)
+     {
+        if ((mode->hTotal) && (mode->vTotal))
+          rate = ((double)mode->dotClock /
+                  ((double)mode->hTotal * (double)mode->vTotal));
+        rate = round(rate);
+     }
+
+   return rate;
+}
+
 /* local functions */
 static Eina_Bool
 _e_randr_config_load(void)
@@ -151,6 +167,7 @@ _e_randr_config_load(void)
    E_CONFIG_VAL(D, T, geo.y, INT);
    E_CONFIG_VAL(D, T, geo.w, INT);
    E_CONFIG_VAL(D, T, geo.h, INT);
+   E_CONFIG_VAL(D, T, refresh_rate, DOUBLE);
    E_CONFIG_VAL(D, T, connect, UCHAR);
 
    /* define edd for randr config */
@@ -205,6 +222,21 @@ _e_randr_config_load(void)
         _e_randr_config_new();
         do_restore = EINA_FALSE;
      }
+   else
+     {
+#define CONFIG_VERSION_CHECK(VERSION) \
+  if (e_randr_cfg->version - (E_RANDR_CONFIG_FILE_EPOCH * 1000000) < (VERSION))
+        CONFIG_VERSION_CHECK(4)
+          {
+             E_Config_Randr_Output *output;
+             Eina_List *l;
+
+             /* Set refresh_rate to 60 */
+             EINA_LIST_FOREACH(e_randr_cfg->outputs, l, output)
+                if (output->refresh_rate == 0) output->refresh_rate = 60.0;
+          }
+     }
+
    if (!e_randr_cfg) return EINA_FALSE;
 
    _e_randr_load();
@@ -759,16 +791,18 @@ _e_randr_output_mode_update(E_Randr_Output *output)
      {
         for (i = 0; i < nmode_infos; i++)
           {
+             double rate = 0.0;
+
+             rate = e_randr_mode_refresh_rate_get(mode_infos[i]);
              if ((mode_infos[i]->width == (unsigned int)output->cfg->geo.w) &&
-                 (mode_infos[i]->height == (unsigned int)output->cfg->geo.h))
+                 (mode_infos[i]->height == (unsigned int)output->cfg->geo.h) &&
+                 (rate == output->cfg->refresh_rate) &&
+                 (_e_randr_output_mode_valid(mode_infos[i]->xid, modes, nmodes)))
                {
                   output->mode = mode_infos[i]->xid;
                   break;
                }
           }
-        /* check if mode is available */
-        if (!_e_randr_output_mode_valid(output->mode, modes, nmodes))
-          output->mode = 0;
      }
 
    /* see if we can use the mode of the crtc */
@@ -801,6 +835,7 @@ _e_randr_output_mode_update(E_Randr_Output *output)
           {
              output->cfg->geo.w = mode_infos[i]->width;
              output->cfg->geo.h = mode_infos[i]->height;
+             output->cfg->refresh_rate = e_randr_mode_refresh_rate_get(mode_infos[i]);
              break;
           }
      }
@@ -826,6 +861,7 @@ error:
            output->cfg->geo.w, output->cfg->geo.h,
            output->cfg->geo.x, output->cfg->geo.y);
    output->cfg->geo.x = output->cfg->geo.y = output->cfg->geo.w = output->cfg->geo.h = 0;
+   output->cfg->refresh_rate = 0.0;
    output->mode = 0;
    return;
 }

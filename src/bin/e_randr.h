@@ -17,7 +17,7 @@ typedef struct _E_Randr E_Randr;
 #define E_RANDR_VERSION_1_4 ((1 << 16) | 4)
 
 #define E_RANDR_CONFIG_FILE_EPOCH 4
-#define E_RANDR_CONFIG_FILE_GENERATION 3
+#define E_RANDR_CONFIG_FILE_GENERATION 4
 #define E_RANDR_CONFIG_FILE_VERSION \
    ((E_RANDR_CONFIG_FILE_EPOCH * 1000000) + E_RANDR_CONFIG_FILE_GENERATION)
 
@@ -28,6 +28,7 @@ struct _E_Config_Randr_Output
 
    unsigned int orient; // value of the ecore_x_randr_orientation
    Eina_Rectangle geo;  // geometry
+   double refresh_rate; // calculated refresh rate
    Eina_Bool connect;   // does the user want this output connected
 };
 
@@ -74,6 +75,7 @@ EINTERN Eina_Bool e_randr_init(void);
 EINTERN int e_randr_shutdown(void);
 
 EAPI Eina_Bool e_randr_config_save(void);
+EAPI double    e_randr_mode_refresh_rate_get(Ecore_X_Randr_Mode_Info *mode);
 
 extern EAPI E_Config_Randr *e_randr_cfg;
 
