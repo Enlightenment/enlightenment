@@ -527,7 +527,7 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
 {
    E_Smart_Data *sd;
    Ecore_X_Window root = 0;
-   Ecore_X_Randr_Output *outputs, primary = 0;
+   Ecore_X_Randr_Output *outputs;
    int noutputs = 0;
    /* Ecore_X_Randr_Mode_Info *mode_info; */
    Ecore_X_Randr_Mode mode;
@@ -539,8 +539,7 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return EINA_FALSE;
 
-   primary = (Ecore_X_Randr_Output)e_randr_cfg->primary;
-   sd->primary = (sd->output == primary);
+   sd->primary = (sd->output == e_randr_cfg->primary);
 
    if (sd->primary)
      edje_object_signal_emit(sd->o_frame, "e,state,primary,on", "e");
