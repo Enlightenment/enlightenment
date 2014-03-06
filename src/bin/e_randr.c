@@ -35,6 +35,7 @@ static Eina_Bool _e_randr_lid_update(void);
 static Eina_Bool _e_randr_output_mode_valid(Ecore_X_Randr_Mode mode, Ecore_X_Randr_Mode *modes, int nmodes);
 static void      _e_randr_output_active_set(E_Randr_Output *cfg, Eina_Bool connected);
 static int       _e_randr_config_output_cmp(const void *a, const void *b);
+static char     *_e_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
 
 /* local variables */
 static Eina_List *_randr_event_handlers = NULL;
@@ -358,7 +359,7 @@ _e_randr_load(void)
              e_randr->outputs = eina_list_append(e_randr->outputs, output);
              output->cfg = output_cfg;
 
-             output->name = ecore_x_randr_output_name_get(root, output->cfg->xid, NULL);
+             output->name = _e_randr_output_name_get(root, output->cfg->xid);
              output->is_lid = _e_randr_is_lid(output);
 
              status = ecore_x_randr_output_connection_status_get(root, output->cfg->xid);
@@ -637,7 +638,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
         e_randr->outputs = eina_list_append(e_randr->outputs, output);
         output->cfg = output_cfg;
 
-        output->name = ecore_x_randr_output_name_get(root, output->cfg->xid, NULL);
+        output->name = _e_randr_output_name_get(root, output->cfg->xid);
         output->is_lid = _e_randr_is_lid(output);
         changed = EINA_TRUE;
      }
@@ -1192,3 +1193,28 @@ _e_randr_config_output_cmp(const void *a, const void *b)
    return 0;
 }
 
+static char *
+_e_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output)
+{
+   char *name;
+
+   name = ecore_x_randr_output_name_get(root, output, NULL);
+   if (!name)
+     {
+
+        unsigned char *edid = NULL;
+        unsigned long edid_length = 0;
+
+        /* get the edid for this output */
+        if ((edid =
+             ecore_x_randr_output_edid_get(root, output, &edid_length)))
+          {
+             /* get output name */
+             name = ecore_x_randr_edid_display_name_get(edid, edid_length);
+
+             /* free any memory allocated from ecore_x_randr */
+             free(edid);
+          }
+     }
+   return name;
+}
