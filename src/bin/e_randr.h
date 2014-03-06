@@ -1,7 +1,6 @@
 #ifdef E_TYPEDEFS
 
 typedef struct _E_Config_Randr_Output E_Config_Randr_Output;
-typedef struct _E_Config_Randr_Crtc E_Config_Randr_Crtc;
 typedef struct _E_Config_Randr E_Config_Randr;
 
 typedef struct _E_Randr_Output E_Randr_Output;
