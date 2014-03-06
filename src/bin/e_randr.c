@@ -687,7 +687,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
              /* set new crtc on output */
              output->cfg->crtc = ev->crtc;
           }
-        if (!output->active)
+        if ((!output->active) && (output->cfg->connect))
           {
              fprintf(stderr, "E_RANDR: output connected to crtc\n");
              crtc = _e_randr_output_crtc_find(output);
