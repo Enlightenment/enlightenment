@@ -53,7 +53,6 @@ static void _e_smart_randr_monitor_position_update(E_Smart_Data *sd, Evas_Object
 static void _e_smart_randr_monitor_position_normalize(E_Smart_Data *sd);
 
 static void _e_smart_randr_monitor_preferred_mode_size_get(Ecore_X_Randr_Output output, Evas_Coord *mw, Evas_Coord *mh);
-static Ecore_X_Randr_Crtc _e_smart_randr_crtc_find(Ecore_X_Randr_Output output);
 
 /* external functions exposed by this widget */
 Evas_Object *
@@ -85,16 +84,11 @@ e_smart_randr_virtual_size_calc(Evas_Object *obj)
 {
    E_Smart_Data *sd;
    Ecore_X_Window root = 0;
-   Ecore_X_Randr_Output *routputs;
+   E_Randr_Output *output;
+   Eina_List *l;
    Evas_Coord vw = 0, vh = 0;
-   int noutputs = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   /* NB: The old code here used to get the modes from the e_randr_cfg.
-    * I changed it to get directly from Xrandr because of attempts to 
-    * run this in Xephyr. Getting the information from e_randr_cfg was not 
-    * practical in those cases */
 
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
@@ -102,53 +96,29 @@ e_smart_randr_virtual_size_calc(Evas_Object *obj)
    /* grab the root window */
    root = ecore_x_window_root_first_get();
 
-   /* get list of outputs */
-   if ((routputs = ecore_x_randr_outputs_get(root, &noutputs)))
+   /* loop the outputs and get the largest mode */
+   EINA_LIST_FOREACH(e_randr->outputs, l, output)
      {
-        int j = 0;
-        intptr_t *o;
-        Eina_List *outputs = NULL;
+        Ecore_X_Randr_Mode *modes;
+        Evas_Coord mw = 0, mh = 0;
+        int nmode = 0;
 
-        for (j = 0; j < noutputs; j++)
-          {
-             Ecore_X_Randr_Connection_Status status = 
-               ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
+        if (output->status != ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED) continue;
 
-             status = 
-               ecore_x_randr_output_connection_status_get(root, routputs[j]);
-             if (status != ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED) continue;
+        /* try to get the list of modes for this output */
+        modes =
+           ecore_x_randr_output_modes_get(root, output->cfg->xid,
+                                          &nmode, NULL);
+        if (!modes) continue;
 
-             outputs = 
-               eina_list_append(outputs, (intptr_t *)(long)routputs[j]);
-          }
+        /* get the size of the largest mode */
+        ecore_x_randr_mode_size_get(root, modes[0], &mw, &mh);
 
-        /* loop the outputs and get the largest mode */
-        EINA_LIST_FREE(outputs, o)
-          {
-             Ecore_X_Randr_Output output;
-             Ecore_X_Randr_Mode *modes;
-             Evas_Coord mw = 0, mh = 0;
-             int nmode = 0;
+        vw += MAX(mw, mh);
+        vh += MAX(mw, mh);
 
-             output = (int)(long)o;
-
-             /* try to get the list of modes for this output */
-             modes = 
-               ecore_x_randr_output_modes_get(root, output, 
-                                              &nmode, NULL);
-             if (!modes) continue;
-
-             /* get the size of the largest mode */
-             ecore_x_randr_mode_size_get(root, modes[0], &mw, &mh);
-
-             vw += MAX(mw, mh);
-             vh += MAX(mw, mh);
-
-             /* free any allocated memory from ecore_x_randr */
-             free(modes);
-          }
-
-        free(routputs);
+        /* free any allocated memory from ecore_x_randr */
+        free(modes);
      }
 
    if ((vw == 0) && (vh == 0))
@@ -168,20 +138,15 @@ void
 e_smart_randr_monitors_create(Evas_Object *obj)
 {
    E_Smart_Data *sd;
+   E_Randr_Output *output;
    Evas *evas;
-   Ecore_X_Window root = 0;
    Evas_Coord gx = 0, gy = 0, gw = 0, gh = 0;
-   Ecore_X_Randr_Output *outputs;
    Evas_Object *mon;
    Eina_List *l = NULL;
-   int noutputs = 0, count = 0;
+   int cx, cy, cw, ch;
+   int count = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   /* NB: The old code here used to get the outputs from the e_randr_cfg.
-    * I changed it to get directly from Xrandr because of attempts to 
-    * run this in Xephyr. Getting the information from e_randr_cfg was not 
-    * practical in those cases */
 
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
@@ -192,115 +157,60 @@ e_smart_randr_monitors_create(Evas_Object *obj)
    /* get the geometry of the grid */
    evas_object_geometry_get(sd->o_grid, &gx, &gy, &gw, &gh);
 
-   /* grab the root window */
-   root = ecore_x_window_root_first_get();
-
    /* get a list of outputs from X */
-   if ((outputs = ecore_x_randr_outputs_get(root, &noutputs)))
+   EINA_LIST_FOREACH(e_randr->outputs, l, output)
      {
-        int i = 0;
-        Evas_Coord nx = 0;
-        Eina_List *connected = NULL;
+        if (output->status != ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED) continue;
 
-        /* loop these outputs */
-        for (i = 0; i < noutputs; i++)
+        /* for each output, try to create a monitor */
+        if (!(mon = e_smart_monitor_add(evas)))
+          continue;
+
+        /* hook into monitor changed callback */
+        evas_object_smart_callback_add(mon, "monitor_changed",
+                                       _e_smart_randr_monitor_cb_changed, obj);
+        evas_object_smart_callback_add(mon, "monitor_moved",
+                                       _e_smart_randr_monitor_cb_moved, obj);
+        evas_object_smart_callback_add(mon, "monitor_resized",
+                                       _e_smart_randr_monitor_cb_resized, obj);
+
+        /* add this monitor to our list */
+        sd->monitors = eina_list_append(sd->monitors, mon);
+
+        /* tell monitor what the grid's virtual size is */
+        e_smart_monitor_grid_virtual_size_set(mon, sd->vw, sd->vh);
+
+        /* tell monitor what the grid is and it's geometry */
+        e_smart_monitor_grid_set(mon, sd->o_grid, gx, gy, gw, gh);
+
+        /* if the output has no size, find an appropriate */
+        cx = output->cfg->geo.w;
+        cy = output->cfg->geo.w;
+        cw = output->cfg->geo.w;
+        ch = output->cfg->geo.h;
+        if ((cw == 0) && (ch == 0))
           {
-             Ecore_X_Randr_Crtc crtc = 0;
-             Evas_Coord mw = 0, mh = 0;
-             Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
-             Ecore_X_Randr_Connection_Status status = 
-               ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
-             Ecore_X_Randr_Mode mode = 0;
+             /* get the size of the preferred mode for this output */
+             _e_smart_randr_monitor_preferred_mode_size_get(output->cfg->xid,
+                                                            &cw, &ch);
 
-             /* ask X if this output is connected */
-             status = 
-               ecore_x_randr_output_connection_status_get(root, outputs[i]);
-
-             /* if it's not connected, skip it */
-             if (status != ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
-               continue;
-
-             connected = 
-               eina_list_append(connected, (intptr_t *)(long)outputs[i]);
-
-             /* for each output, try to create a monitor */
-             if (!(mon = e_smart_monitor_add(evas)))
-               continue;
-
-             /* hook into monitor changed callback */
-             evas_object_smart_callback_add(mon, "monitor_changed", 
-                                            _e_smart_randr_monitor_cb_changed, obj);
-             evas_object_smart_callback_add(mon, "monitor_moved", 
-                                            _e_smart_randr_monitor_cb_moved, obj);
-             evas_object_smart_callback_add(mon, "monitor_resized", 
-                                            _e_smart_randr_monitor_cb_resized, obj);
-
-             /* add this monitor to our list */
-             sd->monitors = eina_list_append(sd->monitors, mon);
-
-             /* tell monitor what the grid's virtual size is */
-             e_smart_monitor_grid_virtual_size_set(mon, sd->vw, sd->vh);
-
-             /* tell monitor what the grid is and it's geometry */
-             e_smart_monitor_grid_set(mon, sd->o_grid, gx, gy, gw, gh);
-
-             /* try to get the crtc of this output. If it does not have one 
-              * we will try to find a usable one */
-             if (!(crtc = ecore_x_randr_output_crtc_get(root, outputs[i])))
-               crtc = _e_smart_randr_crtc_find(outputs[i]);
-
-             /* get the geometry for this crtc */
-             ecore_x_randr_crtc_geometry_get(root, crtc, 
-                                             &cx, &cy, &cw, &ch);
-
-             e_smart_monitor_crtc_set(mon, crtc, cx, cy, cw, ch);
-
-             mode = ecore_x_randr_crtc_mode_get(root, crtc);
-
-             /* if this crtc has no mode, or it's size is 0, 
-              * then it's disabled */
-             if ((!mode) || ((cw == 0) && (ch == 0)))
+             /* safety */
+             if ((cw == 0) && (ch == 0))
                {
-                  /* get the size of the preferred mode for this output */
-                  _e_smart_randr_monitor_preferred_mode_size_get(outputs[i], 
-                                                                 &mw, &mh);
-                  if ((mw == 0) && (mh == 0))
-                    ecore_x_randr_crtc_size_get(root, crtc, &mw, &mh);
-
-                  /* safety */
-                  if ((mw == 0) && (mh == 0))
-                    {
-                       mw = 640;
-                       mh = 480;
-                    }
-
-                  /* tell monitor what it's current position is
-                   * NB: This also packs into the grid */
-                  e_smart_monitor_current_geometry_set(mon, nx, 0, mw, mh);
-
-                  /* tell monitor to set the background preview */
-                  e_smart_monitor_background_set(mon, nx, 0);
-
-                  nx += mw;
+                  cw = 640;
+                  ch = 480;
                }
-             else
-               {
-                  /* tell monitor what it's current position is
-                   * NB: This also packs into the grid */
-                  e_smart_monitor_current_geometry_set(mon, cx, cy, 
-                                                       cw, ch);
-
-                  /* tell monitor to set the background preview */
-                  e_smart_monitor_background_set(mon, cx, cy);
-
-                  nx += cw;
-               }
-
-             /* tell monitor what output it uses */
-             e_smart_monitor_output_set(mon, outputs[i]);
           }
 
-        free(outputs);
+        /* tell monitor what it's current position is
+         * NB: This also packs into the grid */
+        e_smart_monitor_current_geometry_set(mon, cx, cy, cw, ch);
+
+        /* tell monitor to set the background preview */
+        e_smart_monitor_background_set(mon, cx, cy);
+
+        /* tell monitor what output it uses */
+        e_smart_monitor_output_set(mon, output);
      }
 
    /* check if we have only one monitor. If so, we will disable the 
@@ -359,18 +269,13 @@ e_smart_randr_changes_apply(Evas_Object *obj)
    E_Smart_Data *sd;
    Eina_List *l = NULL;
    Evas_Object *mon;
-   Eina_Bool need_reset = EINA_FALSE;
 
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return;
 
    /* tell each monitor to apply it's changes */
    EINA_LIST_FOREACH(sd->monitors, l, mon)
-     if (e_smart_monitor_changes_apply(mon))
-       need_reset = EINA_TRUE;
-
-   if (need_reset) 
-     ecore_x_randr_screen_reset(ecore_x_window_root_first_get());
+      e_smart_monitor_changes_apply(mon);
 }
 
 Eina_List *
@@ -796,55 +701,4 @@ _e_smart_randr_monitor_preferred_mode_size_get(Ecore_X_Randr_Output output, Evas
      ecore_x_randr_mode_size_get(root, modes[0], mw, mh);
 
    free(modes);
-}
-
-static Ecore_X_Randr_Crtc 
-_e_smart_randr_crtc_find(Ecore_X_Randr_Output output)
-{
-   Ecore_X_Randr_Crtc ret = 0;
-   Ecore_X_Window root = 0;
-   Ecore_X_Randr_Crtc *crtcs;
-   int ncrtcs = 0;
-
-   /* get root window */
-   root = ecore_x_window_root_first_get();
-
-   /* get possible crtcs for this output */
-   if ((crtcs = ecore_x_randr_output_possible_crtcs_get(root, output, &ncrtcs)))
-     {
-        Ecore_X_Randr_Output *outputs;
-        int i = 0, noutputs = 0;
-
-        for (i = 0; i < ncrtcs; i++)
-          {
-             int j = 0;
-
-             /* get any outputs on this crtc */
-             if (!(outputs = 
-                   ecore_x_randr_crtc_outputs_get(root, crtcs[i], &noutputs)))
-               ret = crtcs[i];
-             else if (noutputs == 0)
-               ret = crtcs[i];
-             else
-               {
-                  /* loop the outputs */
-                  for (j = 0; j < noutputs; j++)
-                    {
-                       /* check if it is this output */
-                       if (outputs[j] == output)
-                         {
-                            ret = crtcs[i];
-                            break;
-                         }
-                    }
-               }
-
-             free(outputs);
-             if (ret) break;
-          }
-
-        free(crtcs);
-     }
-
-   return ret;
 }

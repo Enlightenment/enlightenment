@@ -155,19 +155,13 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 static int 
 _basic_apply(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
-   Eina_Bool change_primary = EINA_FALSE;
-
-   change_primary = (e_randr_cfg->primary != (unsigned int)cfdata->primary);
-
    e_randr_cfg->primary = cfdata->primary;
    e_randr_cfg->restore = cfdata->restore;
-   e_randr_config_save();
-
-   if (change_primary)
-     ecore_x_randr_primary_output_set(ecore_x_window_root_first_get(), 
-                                      (Ecore_X_Randr_Output)cfdata->primary);
 
    e_smart_randr_changes_apply(cfdata->o_randr);
+
+   e_randr_config_apply();
+   e_randr_config_save();
 
    return 1;
 }

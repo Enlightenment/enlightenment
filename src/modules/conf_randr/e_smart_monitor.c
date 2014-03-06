@@ -42,18 +42,8 @@ struct _E_Smart_Data
    /* refresh rate object */
    Evas_Object *o_refresh;
 
-   struct 
-     {
-        Ecore_X_Randr_Crtc id;
-        Evas_Coord x, y, w, h;
-        Ecore_X_Randr_Orientation orient;
-        Ecore_X_Randr_Mode mode;
-        double refresh_rate;
-        Eina_Bool enabled : 1;
-     } crtc;
-
    /* output config */
-   Ecore_X_Randr_Output output;
+   E_Randr_Output *output;
    Eina_Bool primary : 1;
 
    struct 
@@ -186,8 +176,6 @@ static inline Ecore_X_Randr_Orientation _e_smart_monitor_orientation_get(int rot
 static void _e_smart_monitor_frame_map_apply(Evas_Object *o_frame, int rotation);
 static void _e_smart_monitor_thumb_map_apply(Evas_Object *o_thumb, int rotation);
 
-static Ecore_X_Randr_Crtc _e_smart_monitor_crtc_find(Ecore_X_Randr_Output output);
-
 /* external functions exposed by this widget */
 Evas_Object *
 e_smart_monitor_add(Evas *evas)
@@ -214,111 +202,10 @@ e_smart_monitor_add(Evas *evas)
 }
 
 void 
-e_smart_monitor_crtc_set(Evas_Object *obj, Ecore_X_Randr_Crtc crtc, Evas_Coord cx, Evas_Coord cy, Evas_Coord cw, Evas_Coord ch)
-{
-   E_Smart_Data *sd;
-   Ecore_X_Randr_Orientation orients = ECORE_X_RANDR_ORIENTATION_ROT_0;
-   Ecore_X_Window root = 0;
-   Ecore_X_Randr_Crtc_Info *crtc_info;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   /* try to get the objects smart data */
-   if (!(sd = evas_object_smart_data_get(obj))) return;
-
-   /* set the crtc config */
-   sd->crtc.id = crtc;
-
-   /* record the crtc geometry */
-   sd->crtc.x = cx;
-   sd->crtc.y = cy;
-   sd->crtc.w = cw;
-   sd->crtc.h = ch;
-
-   sd->current.x = cx;
-   sd->current.y = cy;
-   sd->current.w = cw;
-   sd->current.h = ch;
-
-   /* get the root window */
-   root = ecore_x_window_root_first_get();
-
-   if ((crtc_info = ecore_x_randr_crtc_info_get(root, crtc)))
-     {
-        /* get current orientation */
-        sd->crtc.orient = crtc_info->rotation;
-
-        /* get possible orientations for this crtc */
-        orients = crtc_info->rotations;
-
-        /* check if orientation is possible and disable if not */
-        if (orients <= ECORE_X_RANDR_ORIENTATION_ROT_0)
-          edje_object_signal_emit(sd->o_frame, "e,state,rotate,disabled", "e");
-
-        /* get current mode */
-        sd->crtc.mode = crtc_info->mode;
-
-        /* free any memory allocated from ecore_x_randr */
-        ecore_x_randr_crtc_info_free(crtc_info);
-     }
-
-   /* check crtc current mode to determine if enabled */
-   if (sd->crtc.mode != 0)
-     {
-        Ecore_X_Randr_Mode_Info *mode;
-
-        /* try to get current refresh rate for this mode */
-        if ((mode = ecore_x_randr_mode_info_get(root, sd->crtc.mode)))
-          {
-             /* record current refresh rate */
-             sd->crtc.refresh_rate = 
-               e_randr_mode_refresh_rate_get(mode);
-
-             /* free any memory allocated from ecore_x_randr */
-             free(mode);
-          }
-     }
-
-   /* default refresh rate to 60 if not set */
-   if (!sd->crtc.refresh_rate) sd->crtc.refresh_rate = 60.0;
-
-   /* fill in current values */
-   sd->current.mode = sd->crtc.mode;
-   sd->current.orient = sd->crtc.orient;
-
-   sd->crtc.enabled = sd->current.enabled = 
-     ((sd->crtc.mode != 0) ? EINA_TRUE : EINA_FALSE);
-   if (!sd->current.enabled)
-     edje_object_signal_emit(sd->o_frame, "e,state,disabled", "e");
-
-   /* get the degree of rotation */
-   sd->current.rotation = _e_smart_monitor_rotation_get(sd->current.orient);
-
-   /* record starting refresh rate */
-   sd->current.refresh_rate = (int)sd->crtc.refresh_rate;
-}
-
-Ecore_X_Randr_Crtc 
-e_smart_monitor_crtc_get(Evas_Object *obj)
-{
-   E_Smart_Data *sd;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   /* try to get the objects smart data */
-   if (!(sd = evas_object_smart_data_get(obj))) return 0;
-
-   return sd->crtc.id;
-}
-
-void 
-e_smart_monitor_output_set(Evas_Object *obj, Ecore_X_Randr_Output output)
+e_smart_monitor_output_set(Evas_Object *obj, E_Randr_Output *output)
 {
    E_Smart_Data *sd;
    Ecore_X_Randr_Mode_Info *mode;
-   Ecore_X_Window root = 0;
-   Ecore_X_Randr_Output primary = 0;
-   char *name = NULL;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -337,47 +224,54 @@ e_smart_monitor_output_set(Evas_Object *obj, Ecore_X_Randr_Output output)
    sd->max.mode_width = mode->width;
    sd->max.mode_height = mode->height;
 
-   /* get the root window */
-   root = ecore_x_window_root_first_get();
-
-   /* get the primary output */
-   primary = ecore_x_randr_primary_output_get(root);
-
-   /* get output name */
-   if (!(name = ecore_x_randr_output_name_get(root, sd->output, NULL)))
-     {
-        unsigned char *edid = NULL;
-        unsigned long edid_length = 0;
-
-        /* get the edid for this output */
-        if ((edid = 
-             ecore_x_randr_output_edid_get(root, sd->output, &edid_length)))
-          {
-             /* get output name */
-             name = ecore_x_randr_edid_display_name_get(edid, edid_length);
-
-             /* free any memory allocated from ecore_x_randr */
-             free(edid);
-          }
-     }
-
    /* set if it's primary */
-   sd->primary = (output == primary);
+   sd->primary = (output->cfg->xid == e_randr_cfg->primary);
    if (sd->primary)
      edje_object_signal_emit(sd->o_frame, "e,state,primary,on", "e"); 
    else
      edje_object_signal_emit(sd->o_frame, "e,state,primary,off", "e");
 
    /* set monitor name */
-   edje_object_part_text_set(sd->o_frame, "e.text.name", name);
-
-   /* free any memory allocated from ecore_x_randr */
-   free(name);
+   edje_object_part_text_set(sd->o_frame, "e.text.name", sd->output->name);
 
    /* get the smallest mode */
    mode = eina_list_nth(sd->modes, 0);
    sd->min.mode_width = mode->width;
    sd->min.mode_height = mode->height;
+
+   sd->current.x = output->cfg->geo.x;
+   sd->current.y = output->cfg->geo.y;
+   sd->current.w = output->cfg->geo.w;
+   sd->current.h = output->cfg->geo.h;
+
+   /* get current orientation */
+   sd->current.orient = output->cfg->orient;
+
+   /* get possible orientations for this crtc */
+   if (output->crtc)
+     {
+        Ecore_X_Window root;
+        Ecore_X_Randr_Crtc_Info *crtc_info;
+
+        root = ecore_x_window_root_first_get();
+        crtc_info = ecore_x_randr_crtc_info_get(root, output->crtc->xid);
+        if (crtc_info->rotations <= ECORE_X_RANDR_ORIENTATION_ROT_0)
+          edje_object_signal_emit(sd->o_frame, "e,state,rotate,disabled", "e");
+        free(crtc_info);
+     }
+
+   /* get current mode */
+   sd->current.mode = output->mode;
+
+   /* record current refresh rate */
+   sd->current.refresh_rate = output->cfg->refresh_rate;
+
+   sd->current.enabled = output->cfg->connect;
+   if (!sd->current.enabled)
+     edje_object_signal_emit(sd->o_frame, "e,state,disabled", "e");
+
+   /* get the degree of rotation */
+   sd->current.rotation = _e_smart_monitor_rotation_get(sd->current.orient);
 
    /* fill in the refresh rate list
     * 
@@ -445,7 +339,7 @@ e_smart_monitor_background_set(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy)
    sd->zone_num = zone->num;
 
    /* get the desk */
-   if (!(desk = e_desk_at_xy_get(zone, sd->crtc.x, sd->crtc.y)))
+   if (!(desk = e_desk_at_xy_get(zone, sd->current.x, sd->current.y)))
      desk = e_desk_current_get(zone);
 
    /* set the background image */
@@ -522,24 +416,17 @@ e_smart_monitor_changes_get(Evas_Object *obj)
    return sd->changes;
 }
 
-Eina_Bool 
+void
 e_smart_monitor_changes_apply(Evas_Object *obj)
 {
    E_Smart_Data *sd;
-   Ecore_X_Window root = 0;
-   Ecore_X_Randr_Output *outputs;
-   int noutputs = 0;
-   /* Ecore_X_Randr_Mode_Info *mode_info; */
-   Ecore_X_Randr_Mode mode;
-   Evas_Coord cx, cy, cw, ch;
-   Ecore_X_Randr_Orientation orient;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* try to get the objects smart data */
-   if (!(sd = evas_object_smart_data_get(obj))) return EINA_FALSE;
+   if (!(sd = evas_object_smart_data_get(obj))) return;
 
-   sd->primary = (sd->output == e_randr_cfg->primary);
+   sd->primary = (sd->output->cfg->xid == e_randr_cfg->primary);
 
    if (sd->primary)
      edje_object_signal_emit(sd->o_frame, "e,state,primary,on", "e");
@@ -547,94 +434,19 @@ e_smart_monitor_changes_apply(Evas_Object *obj)
      edje_object_signal_emit(sd->o_frame, "e,state,primary,off", "e");
 
    /* if we have no changes to apply, get out */
-   if (sd->changes <= E_SMART_MONITOR_CHANGED_NONE) return EINA_FALSE;
-
-   /* grab the root window */
-   root = ecore_x_window_root_first_get();
-
-   /* get the outputs for this crtc */
-   outputs = ecore_x_randr_crtc_outputs_get(root, sd->crtc.id, &noutputs);
-   if (noutputs < 1)
-     {
-        free(outputs);
-
-        if ((outputs = malloc(sizeof(Ecore_X_Randr_Output))))
-          {
-             outputs[0] = sd->output;
-             noutputs = 1;
-          }
-     }
-
-   /* if this monitor gets re-enabled, we need to set a mode */
-   if ((sd->current.enabled) && (!sd->crtc.mode))
-     {
-        Ecore_X_Randr_Mode_Info *info;
-
-        info = _e_smart_monitor_mode_find(sd, sd->current.w, 
-                                          sd->current.h, EINA_FALSE);
-        if (info) 
-          sd->current.mode = info->xid;
-     }
-
-   /* if this monitor gets re-enabled, we need to assign a crtc */
-   if ((sd->current.enabled) && (!sd->crtc.id))
-     {
-        /* find a crtc */
-        sd->crtc.id = _e_smart_monitor_crtc_find(sd->output);
-     }
-
-   /* record current values */
-   mode = sd->current.mode;
-   if (!sd->current.enabled)
-     {
-        mode = 0;
-        noutputs = 0;
-        if (outputs) free(outputs);
-        outputs = NULL;
-        sd->current.mode = 0;
-     }
-
-   cx = sd->current.x;
-   cy = sd->current.y;
-   cw = sd->current.w;
-   ch = sd->current.h;
-   orient = sd->current.orient;
-
-   /* try to apply the settings */
-   printf("Applying Settings: %d %d %d %d\n", sd->crtc.id, cx, cy, mode);
-
-   if (!ecore_x_randr_crtc_settings_set(root, sd->crtc.id, outputs, 
-                                        noutputs, cx, cy, mode, orient))
-     printf("FAILED TO APPLY MONITOR SETTINGS !!!\n");
-
-   /* free any allocated memory from ecore_x_randr */
-   if (outputs) free(outputs);
-   outputs = NULL;
+   if (sd->changes <= E_SMART_MONITOR_CHANGED_NONE) return;
 
    /* update crtc values to match current values */
-   sd->crtc.x = cx;
-   sd->crtc.y = cy;
-   sd->crtc.w = cw;
-   sd->crtc.h = ch;
-   sd->crtc.mode = mode;
-   sd->crtc.orient = orient;
-   sd->crtc.enabled = sd->current.enabled;
-   sd->crtc.refresh_rate = sd->current.refresh_rate;
-
-   /* if ((sd->crtc.mode) &&  */
-   /*     (mode_info = ecore_x_randr_mode_info_get(root, sd->crtc.mode))) */
-   /*   { */
-   /*      sd->crtc.refresh_rate =  */
-   /*        e_randr_mode_refresh_rate_get(mode_info); */
-   /*      ecore_x_randr_mode_info_free(mode_info); */
-   /*   } */
-   /* else */
-   /*   sd->crtc.refresh_rate = 60.0; */
+   sd->output->cfg->geo.x = sd->current.x;
+   sd->output->cfg->geo.y = sd->current.y;
+   sd->output->cfg->geo.w = sd->current.w;
+   sd->output->cfg->geo.h = sd->current.h;
+   sd->output->cfg->orient = sd->current.orient;
+   sd->output->cfg->connect = sd->current.enabled;
+   sd->output->cfg->refresh_rate = sd->current.refresh_rate;
 
    /* reset changes */
    sd->changes = E_SMART_MONITOR_CHANGED_NONE;
-
-   return EINA_TRUE;
 }
 
 const char *
@@ -656,7 +468,7 @@ e_smart_monitor_output_get(Evas_Object *obj)
 
    /* try to get the objects smart data */
    if (!(sd = evas_object_smart_data_get(obj))) return 0;
-   return sd->output;
+   return sd->output->cfg->xid;
 }
 
 void 
@@ -1009,7 +821,7 @@ _e_smart_monitor_modes_fill(E_Smart_Data *sd)
    root = ecore_x_window_root_first_get();
 
    /* try to get the modes for this output from ecore_x_randr */
-   modes = ecore_x_randr_output_modes_get(root, sd->output, &num, NULL);
+   modes = ecore_x_randr_output_modes_get(root, sd->output->cfg->xid, &num, NULL);
    if (!modes) return;
 
    /* loop the returned modes */
@@ -1103,8 +915,8 @@ _e_smart_monitor_background_update(void *data, int type EINA_UNUSED, void *event
        ((ev->zone < 0) || (ev->zone == (int)sd->zone_num)))
      {
         /* check this bg event happened on our desktop */
-        if (((ev->desk_x < 0) || (ev->desk_x == sd->crtc.x)) && 
-            ((ev->desk_y < 0) || (ev->desk_y == sd->crtc.y)))
+        if (((ev->desk_x < 0) || (ev->desk_x == sd->current.x)) && 
+            ((ev->desk_y < 0) || (ev->desk_y == sd->current.y)))
           {
              /* set the livethumb preview to the background of this desktop */
              _e_smart_monitor_background_set(sd, ev->desk_x, ev->desk_y);
@@ -1381,7 +1193,7 @@ _e_smart_monitor_thumb_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Obje
    _e_smart_monitor_position_set(sd, sd->current.x, sd->current.y);
 
    /* update changes */
-   if ((sd->crtc.x != sd->current.x) || (sd->crtc.y != sd->current.y))
+   if ((sd->output->cfg->geo.x != sd->current.x) || (sd->output->cfg->geo.y != sd->current.y))
      sd->changes |= E_SMART_MONITOR_CHANGED_POSITION;
    else
      sd->changes &= ~(E_SMART_MONITOR_CHANGED_POSITION);
@@ -1572,7 +1384,7 @@ _e_smart_monitor_frame_cb_resize_stop(void *data, Evas_Object *obj EINA_UNUSED, 
    sd->resizing = EINA_FALSE;
 
    /* update changes */
-   if ((sd->crtc.mode != sd->current.mode))
+   if ((sd->output->mode != sd->current.mode))
      sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
    else
      sd->changes &= ~(E_SMART_MONITOR_CHANGED_MODE);
@@ -1729,7 +1541,7 @@ _e_smart_monitor_frame_cb_rotate_stop(void *data, Evas_Object *obj EINA_UNUSED, 
 
 ret:
    /* update changes */
-   if ((sd->crtc.orient != sd->current.orient))
+   if ((sd->output->cfg->orient != sd->current.orient))
      sd->changes |= E_SMART_MONITOR_CHANGED_ORIENTATION;
    else
      sd->changes &= ~(E_SMART_MONITOR_CHANGED_ORIENTATION);
@@ -1769,7 +1581,7 @@ _e_smart_monitor_frame_cb_indicator_toggle(void *data, Evas_Object *obj EINA_UNU
      }
 
    /* update changes */
-   if ((sd->crtc.enabled != sd->current.enabled))
+   if ((sd->output->cfg->connect != sd->current.enabled))
      sd->changes |= E_SMART_MONITOR_CHANGED_ENABLED;
    else
      sd->changes &= ~(E_SMART_MONITOR_CHANGED_ENABLED);
@@ -1825,7 +1637,7 @@ _e_smart_monitor_refresh_rate_cb_changed(void *data, Evas_Object *obj EINA_UNUSE
    if (cmode) ecore_x_randr_mode_info_free(cmode);
 
    /* update changes */
-   if ((sd->crtc.mode != sd->current.mode))
+   if ((sd->output->mode != sd->current.mode))
      sd->changes |= E_SMART_MONITOR_CHANGED_MODE;
    else
      sd->changes &= ~(E_SMART_MONITOR_CHANGED_MODE);
@@ -2150,55 +1962,4 @@ _e_smart_monitor_thumb_map_apply(Evas_Object *o_thumb, int rotation)
    /* tell the frame to use this map */
    evas_object_map_set(o_thumb, map);
    evas_object_map_enable_set(o_thumb, EINA_TRUE);
-}
-
-static Ecore_X_Randr_Crtc 
-_e_smart_monitor_crtc_find(Ecore_X_Randr_Output output)
-{
-   Ecore_X_Randr_Crtc ret = 0;
-   Ecore_X_Window root = 0;
-   Ecore_X_Randr_Crtc *crtcs;
-   int ncrtcs = 0;
-
-   /* get root window */
-   root = ecore_x_window_root_first_get();
-
-   /* get possible crtcs for this output */
-   if ((crtcs = ecore_x_randr_output_possible_crtcs_get(root, output, &ncrtcs)))
-     {
-        Ecore_X_Randr_Output *outputs;
-        int i = 0, noutputs = 0;
-
-        for (i = 0; i < ncrtcs; i++)
-          {
-             int j = 0;
-
-             /* get any outputs on this crtc */
-             if (!(outputs = 
-                   ecore_x_randr_crtc_outputs_get(root, crtcs[i], &noutputs)))
-               ret = crtcs[i];
-             else if (noutputs == 0)
-               ret = crtcs[i];
-             else
-               {
-                  /* loop the outputs */
-                  for (j = 0; j < noutputs; j++)
-                    {
-                       /* check if it is this output */
-                       if (outputs[j] == output)
-                         {
-                            ret = crtcs[i];
-                            break;
-                         }
-                    }
-               }
-
-             free(outputs);
-             if (ret) break;
-          }
-
-        free(crtcs);
-     }
-
-   return ret;
 }
