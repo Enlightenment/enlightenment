@@ -32,7 +32,7 @@ static int       _e_randr_is_lid(E_Randr_Output *cfg);
 static void      _e_randr_crtc_from_outputs_set(E_Randr_Crtc *crtc);
 static Eina_Bool _e_randr_lid_update(void);
 static Eina_Bool _e_randr_output_mode_valid(Ecore_X_Randr_Mode mode, Ecore_X_Randr_Mode *modes, int nmodes);
-static void      _e_randr_output_active_set(E_Randr_Output *cfg, Eina_Bool connected);
+static void      _e_randr_output_active_set(E_Randr_Output *output, Eina_Bool connected);
 static int       _e_randr_config_output_cmp(const void *a, const void *b);
 static char     *_e_randr_output_name_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
 
