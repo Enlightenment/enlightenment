@@ -49,6 +49,7 @@ struct _E_Randr_Output
    char *name;        // name of output
    Eina_Bool is_lid;  // is this a laptop panel
    Eina_Bool active;  // if this output is active
+   Ecore_X_Randr_Connection_Status status;
 
    E_Config_Randr_Output *cfg;
    E_Randr_Crtc *crtc;

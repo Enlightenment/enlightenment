@@ -377,7 +377,6 @@ _e_randr_load(void)
           {
              E_Config_Randr_Output *output_cfg = NULL;
              E_Randr_Output *output = NULL;
-             Ecore_X_Randr_Connection_Status status;
 
              output_cfg = _e_randr_config_output_find(outputs[j]);
              if (!output_cfg)
@@ -392,10 +391,10 @@ _e_randr_load(void)
              output->name = _e_randr_output_name_get(root, output->cfg->xid);
              output->is_lid = _e_randr_is_lid(output);
 
-             status = ecore_x_randr_output_connection_status_get(root, output->cfg->xid);
+             output->status = ecore_x_randr_output_connection_status_get(root, output->cfg->xid);
 
              /* find a crtc if we want this output connected */
-             if (output->cfg->connect && (status == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED))
+             if (output->cfg->connect && (output->status == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED))
                {
                   E_Randr_Crtc *crtc;
 
@@ -667,6 +666,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
         output->is_lid = _e_randr_is_lid(output);
         changed = EINA_TRUE;
      }
+   output->status = ev->connection;
 
    /* we know this output */
    if (output->is_lid && _e_randr_lid_is_closed)
