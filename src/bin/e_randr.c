@@ -29,7 +29,6 @@ static Eina_Bool _e_randr_event_cb_output_change(void *data, int type, void *eve
 
 static void      _e_randr_acpi_handler_add(void *data);
 static int       _e_randr_is_lid(E_Randr_Output *cfg);
-static void      _e_randr_outputs_from_crtc_set(E_Randr_Crtc *crtc);
 static void      _e_randr_crtc_from_outputs_set(E_Randr_Crtc *crtc);
 static Eina_Bool _e_randr_lid_update(void);
 static Eina_Bool _e_randr_output_mode_valid(Ecore_X_Randr_Mode mode, Ecore_X_Randr_Mode *modes, int nmodes);
@@ -624,11 +623,6 @@ _e_randr_event_cb_crtc_change(void *data EINA_UNUSED, int type EINA_UNUSED, void
              crtc->mode = ev->mode;
              crtc->orient = ev->orientation;
              crtc->geo = ev->geo;
-
-             /* propagate changes to stored outputs */
-             _e_randr_outputs_from_crtc_set(crtc);
-
-             e_randr_config_save();
           }
      }
 
@@ -1109,24 +1103,6 @@ _e_randr_is_lid(E_Randr_Output *cfg)
    else if (strstr(cfg->name, "Lvds")) ret = 1;
    else if (strstr(cfg->name, "LCD")) ret = 1;
    return ret;
-}
-
-static void
-_e_randr_outputs_from_crtc_set(E_Randr_Crtc *crtc)
-{
-   E_Randr_Output *output;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(crtc->outputs, l, output)
-     {
-        output->mode = crtc->mode;
-        output->cfg->orient = crtc->orient;
-        output->cfg->geo = crtc->geo;
-        fprintf(stderr, "set from crtc: %d = %dx%d+%d+%d\n",
-                crtc->xid,
-                output->cfg->geo.w, output->cfg->geo.h,
-                output->cfg->geo.x, output->cfg->geo.y);
-     }
 }
 
 static void
