@@ -45,7 +45,6 @@ static void _e_smart_clip_unset(Evas_Object *obj);
 static void _e_smart_randr_grid_cb_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_smart_randr_grid_cb_resize(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 
-static Evas_Object *_e_smart_randr_monitor_crtc_find(E_Smart_Data *sd, Ecore_X_Randr_Crtc crtc);
 static void _e_smart_randr_monitor_cb_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_smart_randr_monitor_cb_moved(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED);
 static void _e_smart_randr_monitor_cb_resized(void *data, Evas_Object *obj, void *event EINA_UNUSED);
@@ -54,7 +53,6 @@ static void _e_smart_randr_monitor_position_update(E_Smart_Data *sd, Evas_Object
 static void _e_smart_randr_monitor_position_normalize(E_Smart_Data *sd);
 
 static void _e_smart_randr_monitor_preferred_mode_size_get(Ecore_X_Randr_Output output, Evas_Coord *mw, Evas_Coord *mh);
-static Evas_Object *_e_smart_randr_clone_find(Ecore_X_Window root, Ecore_X_Randr_Output output, Ecore_X_Randr_Crtc crtc, Evas_Coord cx, Evas_Coord cy, E_Smart_Data *sd);
 static Ecore_X_Randr_Crtc _e_smart_randr_crtc_find(Ecore_X_Randr_Output output);
 
 /* external functions exposed by this widget */
@@ -208,7 +206,7 @@ e_smart_randr_monitors_create(Evas_Object *obj)
         for (i = 0; i < noutputs; i++)
           {
              Ecore_X_Randr_Crtc crtc = 0;
-             Evas_Coord mw = 0, mh = 0, crtcx = 0, crtcy = 0;
+             Evas_Coord mw = 0, mh = 0;
              Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
              Ecore_X_Randr_Connection_Status status = 
                ECORE_X_RANDR_CONNECTION_STATUS_UNKNOWN;
@@ -283,8 +281,6 @@ e_smart_randr_monitors_create(Evas_Object *obj)
                   /* tell monitor to set the background preview */
                   e_smart_monitor_background_set(mon, nx, 0);
 
-                  crtcx = nx;
-                  crtcy = 0;
                   nx += mw;
                }
              else
@@ -297,37 +293,11 @@ e_smart_randr_monitors_create(Evas_Object *obj)
                   /* tell monitor to set the background preview */
                   e_smart_monitor_background_set(mon, cx, cy);
 
-                  crtcx = cx;
-                  crtcy = cy;
                   nx += cw;
                }
 
              /* tell monitor what output it uses */
              e_smart_monitor_output_set(mon, outputs[i]);
-
-             if (eina_list_count(connected) > 0)
-               {
-                  intptr_t *o;
-                  Evas_Object *pmon;
-
-                  EINA_LIST_FOREACH(connected, l, o)
-                    {
-                       Ecore_X_Randr_Output out;
-
-                       out = (int)(long)o;
-                       if (out == outputs[i]) continue;
-
-                       pmon = 
-                         _e_smart_randr_clone_find(root, out, crtc, 
-                                                   crtcx, crtcy, sd);
-
-                       if (pmon) 
-                         {
-                            e_smart_monitor_clone_set(mon, pmon);
-                            break;
-                         }
-                    }
-               }
           }
 
         free(outputs);
@@ -635,25 +605,6 @@ _e_smart_randr_grid_cb_resize(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
      e_smart_monitor_grid_set(mon, sd->o_grid, gx, gy, gw, gh);
 }
 
-static Evas_Object *
-_e_smart_randr_monitor_crtc_find(E_Smart_Data *sd, Ecore_X_Randr_Crtc crtc)
-{
-   Eina_List *l = NULL;
-   Evas_Object *mon;
-
-   if ((!sd) || (!crtc)) return NULL;
-
-   EINA_LIST_FOREACH(sd->monitors, l, mon)
-     {
-        Ecore_X_Randr_Crtc mcrtc;
-
-        if ((mcrtc = e_smart_monitor_crtc_get(mon)))
-          if ((mcrtc == crtc)) return mon;
-     }
-
-   return NULL;
-}
-
 static void 
 _e_smart_randr_monitor_cb_changed(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -845,56 +796,6 @@ _e_smart_randr_monitor_preferred_mode_size_get(Ecore_X_Randr_Output output, Evas
      ecore_x_randr_mode_size_get(root, modes[0], mw, mh);
 
    free(modes);
-}
-
-static Evas_Object *
-_e_smart_randr_clone_find(Ecore_X_Window root, Ecore_X_Randr_Output output, Ecore_X_Randr_Crtc crtc, Evas_Coord cx, Evas_Coord cy, E_Smart_Data *sd)
-{
-   Evas_Object *mon = NULL;
-   Ecore_X_Randr_Crtc pcrtc = 0;
-   Evas_Coord px = 0, py = 0;
-
-   /* get the crtc of the previous output */
-   pcrtc = ecore_x_randr_output_crtc_get(root, output);
-   if (!pcrtc) return NULL;
-
-   /* get this crtcs geom */
-   ecore_x_randr_crtc_geometry_get(root, pcrtc, 
-                                   &px, &py, NULL, NULL);
-
-   if ((px == cx) && (py == cy))
-     {
-        Ecore_X_Randr_Orientation orient = 
-          ECORE_X_RANDR_ORIENTATION_ROT_0;
-        Ecore_X_Randr_Orientation porient = 
-          ECORE_X_RANDR_ORIENTATION_ROT_0;
-
-        porient = 
-          ecore_x_randr_crtc_orientation_get(root, pcrtc);
-
-        orient = 
-          ecore_x_randr_crtc_orientation_get(root, crtc);
-
-        if (porient == orient)
-          {
-             Ecore_X_Randr_Mode mode = 0, pmode = 0;
-             Evas_Coord pw = 0, ph = 0;
-             Evas_Coord w = 0, h = 0;
-
-             pmode = 
-               ecore_x_randr_crtc_mode_get(root, pcrtc);
-             ecore_x_randr_mode_size_get(root, pmode, &pw, &ph);
-
-             mode = 
-               ecore_x_randr_crtc_mode_get(root, crtc);
-             ecore_x_randr_mode_size_get(root, mode, &w, &h);
-
-             if ((pmode == mode) || ((pw == w) && (ph == h)))
-               mon = _e_smart_randr_monitor_crtc_find(sd, pcrtc);
-          }
-     }
-
-   return mon;
 }
 
 static Ecore_X_Randr_Crtc 
