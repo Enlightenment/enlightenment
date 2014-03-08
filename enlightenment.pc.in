@@ -1,13 +1,14 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
+datarootdir=@datarootdir@
 datadir=@datadir@
 includedir=@includedir@/@PACKAGE@
 modules=@libdir@/@PACKAGE@/modules
-pkgdatadir=@datadir@/enlightenment/data
+pkgdatadir=@datadir@/@PACKAGE@/data
 themes=${pkgdatadir}/themes
 backgrounds=${pkgdatadir}/backgrounds
-config_apps=@prefix@/share/@PACKAGE@/config-apps
+config_apps=@datadir@/@PACKAGE@/config-apps
 release=@release@
 
 Name: enlightenment
