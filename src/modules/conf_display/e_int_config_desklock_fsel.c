@@ -39,7 +39,8 @@ e_int_config_desklock_fsel(E_Config_Dialog *parent, Evas_Object *bg)
 
    cfd = e_config_dialog_new(comp, _("Select a Background..."),
                              "E", "_desklock_fsel_dialog",
-                             "enlightenment/background", 0, v, parent);
+                             "enlightenment/background", 0, v, bg);
+   cfd->data = parent;
    e_object_data_set(E_OBJECT(cfd), bg);
    return cfd;
 }
@@ -51,7 +52,7 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
    E_Config_Dialog_Data *cfdata;
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
-   cfdata->fmdir = 0;
+
    return cfdata;
 }
 
@@ -72,10 +73,22 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 {
    Evas_Object *o, *ow, *ot, *rt;
    E_Radio_Group *rg;
+   Eina_Stringshare *file;
    char path[PATH_MAX];
+   size_t len;
 
    /* Content */
    o = e_widget_list_add(evas, 0, 0);
+
+   len = e_user_dir_concat_static(path, "backgrounds");
+   e_widget_preview_file_get(cfd->data, &file, NULL);
+   cfdata->bg = strdup(file);
+   if (file)
+     {
+        cfdata->fmdir = strncmp(file, path, len);
+        if (cfdata->fmdir)
+          e_prefix_data_concat_static(path, "data/backgrounds");
+     }
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
    ot = e_widget_table_add(evas, 0);
@@ -92,11 +105,6 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                             _cb_dir_up, cfdata, NULL);
    cfdata->o_up = ow;
    e_widget_table_object_append(ot, ow, 0, 1, 1, 1, 0, 0, 0, 0);
-
-   if (cfdata->fmdir == 1)
-     e_prefix_data_concat_static(path, "data/backgrounds");
-   else
-     e_user_dir_concat_static(path, "backgrounds");
 
    cfdata->o_list = e_widget_flist_add(evas);
    {
