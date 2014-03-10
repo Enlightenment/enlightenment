@@ -780,49 +780,42 @@ e_hints_window_state_update(E_Client *ec,
         break;
 
       case ECORE_X_WINDOW_STATE_MAXIMIZED_VERT:
-        if (ec->lock_client_maximize) return;
-        switch (action)
-          {
-           case ECORE_X_WINDOW_STATE_ACTION_REMOVE:
-             if (ec->maximized & E_MAXIMIZE_VERTICAL)
-               e_client_unmaximize(ec, E_MAXIMIZE_VERTICAL);
-             break;
-
-           case ECORE_X_WINDOW_STATE_ACTION_ADD:
-             if (!(ec->maximized & E_MAXIMIZE_VERTICAL))
-               e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_VERTICAL);
-             break;
-
-           case ECORE_X_WINDOW_STATE_ACTION_TOGGLE:
-             if (ec->maximized & E_MAXIMIZE_VERTICAL)
-               e_client_unmaximize(ec, E_MAXIMIZE_VERTICAL);
-             else
-               e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_VERTICAL);
-             break;
-          }
-        break;
-
       case ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ:
-        if (ec->lock_client_maximize) return;
-        switch (action)
-          {
-           case ECORE_X_WINDOW_STATE_ACTION_REMOVE:
-             if (ec->maximized & E_MAXIMIZE_HORIZONTAL)
-               e_client_unmaximize(ec, E_MAXIMIZE_HORIZONTAL);
-             break;
+      {
+         E_Maximize max[] =
+         {
+            [ECORE_X_WINDOW_STATE_MAXIMIZED_VERT] = E_MAXIMIZE_VERTICAL,
+            [ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ] = E_MAXIMIZE_HORIZONTAL,
+         };
+         if (ec->lock_client_maximize) return;
+         switch (action)
+           {
+            case ECORE_X_WINDOW_STATE_ACTION_REMOVE:
+              if (ec->maximized & max[state])
+                e_client_unmaximize(ec, E_MAXIMIZE_VERTICAL);
+              break;
 
-           case ECORE_X_WINDOW_STATE_ACTION_ADD:
-             if (!(ec->maximized & E_MAXIMIZE_HORIZONTAL))
-               e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_HORIZONTAL);
-             break;
+            case ECORE_X_WINDOW_STATE_ACTION_ADD:
+              if (ec->maximized & max[state]) break;
+              ec->changes.need_maximize = 1;
+              ec->maximized &= ~E_MAXIMIZE_TYPE;
+              ec->maximized |= (e_config->maximize_policy & E_MAXIMIZE_TYPE) | max[state];
+              EC_CHANGED(ec);
+              break;
 
-           case ECORE_X_WINDOW_STATE_ACTION_TOGGLE:
-             if (ec->maximized & E_MAXIMIZE_HORIZONTAL)
-               e_client_unmaximize(ec, E_MAXIMIZE_HORIZONTAL);
-             else
-               e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | E_MAXIMIZE_HORIZONTAL);
-             break;
-          }
+            case ECORE_X_WINDOW_STATE_ACTION_TOGGLE:
+              if (ec->maximized & max[state])
+                {
+                   e_client_unmaximize(ec, max[state]);
+                   break;
+                }
+              ec->changes.need_maximize = 1;
+              ec->maximized &= ~E_MAXIMIZE_TYPE;
+              ec->maximized |= (e_config->maximize_policy & E_MAXIMIZE_TYPE) | max[state];
+              EC_CHANGED(ec);
+              break;
+           }
+      }
         break;
 
       case ECORE_X_WINDOW_STATE_SHADED:
