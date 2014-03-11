@@ -819,11 +819,14 @@ if test "x${have_wayland}" = "xyes"; then
   else
     have_wayland_egl=no
   fi
+  if test "x${e_cv_want_wayland_only}" != "xno"; then
+    have_wayland_only=yes
+    AC_DEFINE_UNQUOTED([HAVE_WAYLAND_ONLY],[1],[enable wayland-only version of enlightenment])
+  fi
 fi
 
 AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
-AM_CONDITIONAL([HAVE_WAYLAND_ONLY], 
-  [test "x${have_wayland}" = "xyes" && test "x${e_cv_want_wayland_only}" = "xyes"])
+AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
