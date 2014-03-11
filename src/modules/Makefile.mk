@@ -122,8 +122,7 @@ include src/modules/Makefile_packagekit.mk
 
 include src/modules/Makefile_contact.mk
 
-#if HAVE_WAYLAND_DRM
-#include src/modules/Makefile_wl_drm.mk
+include src/modules/Makefile_wl_drm.mk
 
 include src/modules/Makefile_wl_desktop_shell.mk
 

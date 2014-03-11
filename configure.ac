@@ -822,7 +822,8 @@ if test "x${have_wayland}" = "xyes"; then
 fi
 
 AM_CONDITIONAL([HAVE_WAYLAND], [test "x${have_wayland}" = "xyes"])
-AM_CONDITIONAL([HAVE_WAYLAND_ONLY], [test "x${have_wayland_only}" = "xyes"])
+AM_CONDITIONAL([HAVE_WAYLAND_ONLY], 
+  [test "x${have_wayland}" = "xyes" && test "x${e_cv_want_wayland_only}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_CLIENTS], [test "x${have_wayland_clients}" = "xyes"])
 AM_CONDITIONAL([HAVE_WAYLAND_EGL], [test "x${have_wayland_egl}" = "xyes"])
 
@@ -858,6 +859,16 @@ define([CHECK_MODULE_WL_FB],
   fi
 ])
 AM_CONDITIONAL([HAVE_WL_FB], [test "x${WL_FB}" = "xtrue"])
+
+define([CHECK_MODULE_WL_DRM],
+[
+  if test "x${have_wayland}" = "xyes" && test "x${e_cv_want_wayland_only}" = "xyes"; then
+    AC_E_CHECK_PKG(WL_DRM, [ ecore-drm >= $efl_version ecore >= $efl_version eina >= $efl_version ], [WL_DRM=true], [WL_DRM=false])
+  else
+    WL_DRM=false
+  fi
+])
+AM_CONDITIONAL([HAVE_WL_DRM], [test "x${WL_DRM}" = "xtrue"])
 
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
@@ -914,6 +925,7 @@ AC_E_OPTIONAL_MODULE([contact], false)
 AC_E_OPTIONAL_MODULE([wl_desktop_shell], true, [CHECK_MODULE_WL_DESKTOP_SHELL])
 AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, $wl_x11)
 AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
+AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland, [CHECK_MODULE_WL_DRM])
 #AC_E_OPTIONAL_MODULE([wl_screenshot], true, [CHECK_MODULE_WL_SCREENSHOT])
 
 HALT="/sbin/shutdown -h now"
