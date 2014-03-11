@@ -148,12 +148,13 @@ e_canvas_new(Ecore_Window win, int x, int y, int w, int h,
 {
    Ecore_Evas *ee = NULL;
 
-#ifdef WAYLAND_ONLY
+#ifdef HAVE_WAYLAND_ONLY
    ee = ecore_evas_wayland_shm_new(NULL, win, x, y, w, h, 0);
    if (ee)
      {
         ecore_evas_override_set(ee, override);
-        if (win_ret) *win_ret = ecore_evas_wayland_window_get(ee);
+        if (win_ret) 
+          *win_ret = ecore_wl_window_id_get(ecore_evas_wayland_window_get(ee));
      }
 #else
    switch (e_comp_get(NULL)->comp_type)
@@ -173,7 +174,11 @@ e_canvas_new(Ecore_Window win, int x, int y, int w, int h,
          if (ee)
            {
               ecore_evas_override_set(ee, override);
-              if (win_ret) *win_ret = (Ecore_Window)ecore_evas_wayland_window_get(ee);
+              if (win_ret) 
+                {
+                   *win_ret = 
+                     ecore_wl_window_id_get(ecore_evas_wayland_window_get(ee));
+                }
            }
          break;
 # endif

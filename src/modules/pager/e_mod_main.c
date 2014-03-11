@@ -177,7 +177,7 @@ static void             _pager_popup_cb_action_switch(E_Object *obj __UNUSED__, 
 /* variables for pager popup on key actions */
 static E_Action *act_popup_show = NULL;
 static E_Action *act_popup_switch = NULL;
-static Ecore_X_Window input_window = 0;
+static Ecore_Window input_window = 0;
 static Eina_List *handlers = NULL;
 static Pager_Popup *act_popup = NULL; /* active popup */
 static int hold_count = 0;
@@ -1960,7 +1960,7 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
    E_Comp *comp;
    E_Zone *zone;
    E_Desk *desk;
-   int x, y, dx, dy;
+   int x = 0, y = 0, dx, dy;
 
    pw = drag->data;
    if (!pw) return;
@@ -1981,7 +1981,9 @@ _pager_window_cb_drag_finished(E_Drag *drag, int dropped)
              e_client_desk_set(pw->client, desk);
           }
 
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_pointer_last_xy_get(&x, &y);
+#endif
 
         dx = (pw->client->w / 2);
         dy = (pw->client->h / 2);
@@ -2411,12 +2413,14 @@ _pager_popup_cb_timeout(void *data)
    pp->timer = NULL;
    _pager_popup_free(pp);
 
+#ifndef HAVE_WAYLAND_ONLY
    if (input_window)
      {
         ecore_x_window_free(input_window);
         e_grabinput_release(input_window, input_window);
         input_window = 0;
      }
+#endif
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2442,6 +2446,7 @@ _pager_popup_show(void)
    pp = _pager_popup_find(zone);
    if (pp) _pager_popup_free(pp);
 
+#ifndef HAVE_WAYLAND_ONLY
    input_window = ecore_x_window_input_new(zone->comp->win, 0, 0, 1, 1);
    ecore_x_window_show(input_window);
    if (!e_grabinput_get(input_window, 0, input_window))
@@ -2450,6 +2455,7 @@ _pager_popup_show(void)
         input_window = 0;
         return 0;
      }
+#endif
 
    handlers = eina_list_append
        (handlers, ecore_event_handler_add

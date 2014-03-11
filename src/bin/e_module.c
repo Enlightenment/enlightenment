@@ -972,7 +972,8 @@ _e_module_whitelist_check(void)
         known++;
      }
 
-   {
+#ifndef HAVE_WAYLAND_ONLY
+     {
       Ecore_X_Atom _x_tainted;
       char *state;
       unsigned int _e_tainted;
@@ -986,6 +987,7 @@ _e_module_whitelist_check(void)
 
       e_env_set("E19_TAINTED", state);
    }
+#endif
 
    if (eina_list_count(badl) != known)
      {

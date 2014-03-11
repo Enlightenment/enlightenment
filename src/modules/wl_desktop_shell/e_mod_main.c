@@ -1336,7 +1336,7 @@ _e_wl_shell_shell_surface_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object
    /* is the focused surface actually This surface ? */
    if (kbd->focus != ews->wl.surface) return;
 
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    if (_e_wl_comp->kbd_handler)
      /* get the keycode for this key from X, since we're definitely in X here */
      key = ecore_x_keysym_keycode_get(ev->key) - 8;
@@ -1402,7 +1402,7 @@ _e_wl_shell_shell_surface_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Obje
    /* if the compositor has a ping callback, call it on this surface */
    if (_e_wl_comp->ping_cb) _e_wl_comp->ping_cb(ews, serial);
 
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    if (_e_wl_comp->kbd_handler)
      /* get the keycode for this key from X, since we're definitely in X here */
      key = ecore_x_keysym_keycode_get(ev->key) - 8;

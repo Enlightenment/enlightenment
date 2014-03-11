@@ -290,7 +290,7 @@ struct E_Client
       unsigned char changed : 1;
       unsigned char user_selected : 1;
       Eina_Stringshare *name;
-      } border;
+   } border;
 
    struct
    {
@@ -389,9 +389,9 @@ struct E_Client
       unsigned int  desktop;
       Eina_Stringshare *name;
       Eina_Stringshare *icon_name;
-#ifdef E_COMP_X_H
+
       Ecore_X_Icon *icons;
-#endif
+
       int           num_icons;
       unsigned int  user_time;
       unsigned char opacity;

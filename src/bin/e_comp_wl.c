@@ -314,7 +314,7 @@ e_comp_wl_init(void)
         goto err;
      }
 
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    /* setup keymap_change event handler */
    _e_wl_comp->kbd_handler = 
      ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, 
@@ -344,7 +344,7 @@ e_comp_wl_init(void)
      }
 
    wl_event_loop_dispatch(_e_wl_comp->wl.loop, 0);
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    /* add an idler for deferred shell module loading */
    _module_idler = ecore_idler_add(_e_comp_wl_cb_module_idle, NULL);
 #endif
@@ -355,7 +355,7 @@ err:
    /* remove kbd handler */
    if (_e_wl_comp->kbd_handler) 
      ecore_event_handler_del(_e_wl_comp->kbd_handler);
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    /* remove the module idler */
    if (_module_idler) ecore_idler_del(_module_idler);
 #endif
@@ -423,13 +423,13 @@ e_comp_wl_shutdown(void)
      e_module_disable(mod);
 }
 
-#ifdef WAYLAND_ONLY
+#ifdef HAVE_WAYLAND_ONLY
 EAPI int 
 e_comp_wl_input_read(int fd EINA_UNUSED, unsigned int mask EINA_UNUSED, void *data)
 {
    E_Wayland_Compositor *wl_comp = data;
 
-   wl_event_loop_dispatch(wl_comp->wl.input_loop, 0);
+   wl_event_loop_dispatch(wl_comp->wl.loop, 0);
    return 1;
 }
 #endif
@@ -1975,7 +1975,7 @@ _e_comp_wl_input_keymap_get(void)
         names.layout = strdup(kbd_layout->name);
      }
 
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    /* if we are running under X11, try to get the xkb rule names atom */
    if (getenv("DISPLAY"))
      {

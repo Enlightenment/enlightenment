@@ -212,6 +212,7 @@ enlightenment_src = \
 src/bin/e_about.c \
 src/bin/e_acpi.c \
 src/bin/e_actions.c \
+src/bin/e_alert.c \
 src/bin/e_atoms.c \
 src/bin/e_auth.c \
 src/bin/e_backlight.c \
@@ -239,9 +240,9 @@ src/bin/e_deskenv.c \
 src/bin/e_desklock.c \
 src/bin/e_deskmirror.c \
 src/bin/e_dialog.c \
-src/bin/e_dnd.c \
 src/bin/e_dpms.c \
 src/bin/e_desktop_editor.c \
+src/bin/e_dnd.c \
 src/bin/e_entry.c \
 src/bin/e_entry_dialog.c \
 src/bin/e_env.c \
@@ -360,6 +361,7 @@ src/bin/e_widget_textblock.c \
 src/bin/e_widget_toolbar.c \
 src/bin/e_widget_toolbook.c \
 src/bin/e_win.c \
+src/bin/e_xkb.c \
 src/bin/e_xinerama.c \
 src/bin/e_zoomap.c \
 src/bin/e_zone.c \
@@ -367,10 +369,8 @@ $(ENLIGHTENMENTHEADERS)
 
 if ! HAVE_WAYLAND_ONLY
 enlightenment_src += \
-src/bin/e_alert.c \
 src/bin/e_comp_x.c \
 src/bin/e_randr.c \
-src/bin/e_xkb.c \
 src/bin/e_xsettings.c
 endif
 

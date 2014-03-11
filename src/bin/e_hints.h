@@ -48,7 +48,7 @@ EAPI void e_hints_scale_update(void);
 
 
 #ifdef E_COMP_X_H
-EAPI void e_hints_window_state_update(E_Client *ec, Ecore_X_Window_State state, Ecore_X_Window_State_Action action);
+EAPI void e_hints_window_state_update(E_Client *ec, int state, int action);
 extern EAPI Ecore_X_Atom ATM__QTOPIA_SOFT_MENU;
 extern EAPI Ecore_X_Atom ATM__QTOPIA_SOFT_MENUS;
 extern EAPI Ecore_X_Atom ATM_GNOME_SM_PROXY;

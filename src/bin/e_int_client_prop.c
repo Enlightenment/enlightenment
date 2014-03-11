@@ -145,6 +145,7 @@ _create_data(E_Dialog *cfd, E_Client *ec)
                    cfdata->client->icccm.max_aspect);
         cfdata->icccm.aspect = strdup(buf);
      }
+#ifdef E_COMP_X_H
    if (cfdata->client->icccm.initial_state != ECORE_X_WINDOW_STATE_HINT_NONE)
      {
         switch (cfdata->client->icccm.initial_state)
@@ -189,6 +190,7 @@ _create_data(E_Dialog *cfd, E_Client *ec)
           }
         cfdata->icccm.state = strdup(buf);
      }
+#endif
    snprintf(buf, sizeof(buf), "0x%08x",
             (unsigned int)e_client_util_win_get(cfdata->client));
    cfdata->icccm.window_id = strdup(buf);
@@ -210,6 +212,7 @@ _create_data(E_Dialog *cfd, E_Client *ec)
                  (unsigned int)cfdata->client->icccm.client_leader);
         cfdata->icccm.client_leader = strdup(buf);
      }
+#ifdef E_COMP_X_H
    switch (cfdata->client->icccm.gravity)
      {
       case ECORE_X_GRAVITY_FORGET:
@@ -261,6 +264,7 @@ _create_data(E_Dialog *cfd, E_Client *ec)
         break;
      }
    cfdata->icccm.gravity = strdup(buf);
+#endif
    if (cfdata->client->icccm.command.argv)
      {
         int i;

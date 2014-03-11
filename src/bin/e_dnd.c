@@ -17,6 +17,7 @@ static Eina_Bool      _e_dnd_cb_key_down(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_key_up(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_mouse_up(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_mouse_move(void *data, int type, void *event);
+#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool      _e_dnd_cb_event_dnd_enter(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_leave(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_position(void *data, int type, void *event);
@@ -25,6 +26,7 @@ static Eina_Bool      _e_dnd_cb_event_dnd_finished(void *data, int type, void *e
 static Eina_Bool      _e_dnd_cb_event_dnd_drop(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_dnd_selection(void *data, int type, void *event);
 static Eina_Bool      _e_dnd_cb_event_hide(void *data, int type, Ecore_X_Event_Window_Hide *ev);
+#endif
 
 /* local subsystem globals */
 
@@ -108,13 +110,18 @@ e_dnd_init(void)
    _type_xds = eina_stringshare_add("XdndDirectSave0");
    _type_text_x_moz_url = eina_stringshare_add("text/x-moz-url");
    _type_enlightenment_x_file = eina_stringshare_add("enlightenment/x-file");
+#ifndef HAVE_WAYLAND_ONLY
    _text_atom = ecore_x_atom_get("text/plain");
+#endif
 
    _drop_win_hash = eina_hash_int32_new(NULL);
    _drop_handlers_responsives = eina_hash_int32_new(NULL);
 
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_MOUSE_BUTTON_UP, _e_dnd_cb_mouse_up, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_MOUSE_MOVE, _e_dnd_cb_mouse_move, NULL);
+   E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_DOWN, _e_dnd_cb_key_down, NULL);
+   E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_UP, _e_dnd_cb_key_up, NULL);
+#ifndef HAVE_WAYLAND_ONLY
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_ENTER, _e_dnd_cb_event_dnd_enter, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_LEAVE, _e_dnd_cb_event_dnd_leave, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_POSITION, _e_dnd_cb_event_dnd_position, NULL);
@@ -123,13 +130,14 @@ e_dnd_init(void)
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_DROP, _e_dnd_cb_event_dnd_drop, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_SELECTION_NOTIFY, _e_dnd_cb_event_dnd_selection, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_WINDOW_HIDE, _e_dnd_cb_event_hide, NULL);
-   E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_DOWN, _e_dnd_cb_key_down, NULL);
-   E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_UP, _e_dnd_cb_key_up, NULL);
+#endif
 
    EINA_LIST_FOREACH(e_comp_list(), l, c)
      e_drop_xdnd_register_set(c->ee_win, 1);
 
+#ifndef HAVE_WAYLAND_ONLY
    _action = ECORE_X_ATOM_XDND_ACTION_PRIVATE;
+#endif
    return 1;
 }
 
@@ -204,7 +212,9 @@ e_drag_new(E_Comp *comp, int x, int y,
 
    _drag_list = eina_list_append(_drag_list, drag);
 
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_window_shadow_tree_flush();
+#endif
 
    _drag_win_root = drag->comp->man->root;
 
@@ -269,14 +279,18 @@ e_drag_start(E_Drag *drag, int x, int y)
    E_Drop_Handler *h;
 
    if (_drag_win) return 0;
+#ifndef HAVE_WAYLAND_ONLY
    _drag_win = ecore_x_window_input_new(drag->comp->win,
                                         drag->comp->man->x, drag->comp->man->y,
                                         drag->comp->man->w, drag->comp->man->h);
-   _drag_win_root = drag->comp->man->root;
    ecore_x_window_show(_drag_win);
+#endif
+   _drag_win_root = drag->comp->man->root;
    if (!e_grabinput_get(_drag_win, 1, _drag_win))
      {
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_window_free(_drag_win);
+#endif
         return 0;
      }
    if (!drag->object)
@@ -317,23 +331,29 @@ e_drag_start(E_Drag *drag, int x, int y)
 EAPI int
 e_drag_xdnd_start(E_Drag *drag, int x, int y)
 {
+#ifndef HAVE_WAYLAND_ONLY
    Ecore_X_Atom actions[] = {
       ECORE_X_DND_ACTION_MOVE, ECORE_X_DND_ACTION_PRIVATE,
       ECORE_X_DND_ACTION_COPY, ECORE_X_DND_ACTION_ASK,
       ECORE_X_DND_ACTION_LINK
    };
+#endif
    const Eina_List *l;
    E_Drop_Handler *h;
 
    if (_drag_win) return 0;
+#ifndef HAVE_WAYLAND_ONLY
    _drag_win = ecore_x_window_input_new(drag->comp->win,
                                         drag->comp->man->x, drag->comp->man->y,
                                         drag->comp->man->w, drag->comp->man->h);
 
    ecore_x_window_show(_drag_win);
+#endif
    if (!e_grabinput_get(_drag_win, 1, _drag_win))
      {
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_window_free(_drag_win);
+#endif
         return 0;
      }
    if (!drag->object)
@@ -366,10 +386,12 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
         h->entered = 0;
      }
 
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_dnd_aware_set(_drag_win, 1);
    ecore_x_dnd_types_set(_drag_win, drag->types, drag->num_types);
    ecore_x_dnd_actions_set(_drag_win, actions, 5);
    ecore_x_dnd_begin(_drag_win, drag->data, drag->data_size);
+#endif
 
    _drag_current = drag;
    return 1;
@@ -385,6 +407,7 @@ e_drop_handler_xds_set(E_Drop_Handler *handler, Eina_Bool (*cb)(void *data, cons
 EAPI void
 e_drop_xds_update(Eina_Bool enable, const char *value)
 {
+#ifndef HAVE_WAYLAND_ONLY
    Ecore_X_Window xwin;
    char buf[PATH_MAX + 8];
    char *file;
@@ -411,6 +434,7 @@ e_drop_xds_update(Eina_Bool enable, const char *value)
      }
    else
      ecore_x_window_prop_property_del(xwin, ECORE_X_ATOM_XDND_DIRECTSAVE0);
+#endif
 }
 
 EAPI E_Drop_Handler *
@@ -502,13 +526,17 @@ e_drop_xdnd_register_set(Ecore_Window win, int reg)
      {
         if (!eina_hash_find(_drop_win_hash, &win))
           {
+#ifndef HAVE_WAYLAND_ONLY
              ecore_x_dnd_aware_set(win, 1);
+#endif
              eina_hash_add(_drop_win_hash, &win, (void *)1);
           }
      }
    else
      {
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_dnd_aware_set(win, 0);
+#endif
         eina_hash_del(_drop_win_hash, &win, (void *)1);
      }
    return 1;
@@ -959,10 +987,12 @@ _e_drag_end(int x, int y)
    e_grabinput_release(_drag_win, _drag_win);
    while (_drag_current->type == E_DRAG_XDND)
      {
+#ifndef HAVE_WAYLAND_ONLY
         if (!(dropped = ecore_x_dnd_drop()))
           {
              if (win == e_comp_get(NULL)->ee_win) break;
           }
+#endif
         if (_drag_current->cb.finished)
           _drag_current->cb.finished(_drag_current, dropped);
         _drag_current->cb.finished = NULL;
@@ -1117,9 +1147,11 @@ _e_drag_free(E_Drag *drag)
    for (i = 0; i < drag->num_types; i++)
      eina_stringshare_del(drag->types[i]);
    free(drag);
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_window_free(_drag_win);
-   _drag_win = 0;
    ecore_x_window_shadow_tree_flush();
+#endif
+   _drag_win = 0;
 }
 
 static Eina_Bool
@@ -1171,13 +1203,16 @@ _e_dnd_cb_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 
    if (ev->window != _drag_win) return ECORE_CALLBACK_PASS_ON;
 
+#ifndef HAVE_WAYLAND_ONLY
    if (!_xdnd)
      _e_drag_update(_drag_win_root, ev->x, ev->y,
                     _action ?: ECORE_X_ATOM_XDND_ACTION_PRIVATE);
+#endif
 
    return ECORE_CALLBACK_PASS_ON;
 }
 
+#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
 _e_dnd_cb_event_dnd_enter(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
@@ -1380,7 +1415,6 @@ _e_dnd_cb_event_dnd_drop(void *data __UNUSED__, int type __UNUSED__, void *event
              E_FREE(_xdnd);
           }
      }
-
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1442,4 +1476,5 @@ _e_dnd_cb_event_dnd_selection(void *data __UNUSED__, int type __UNUSED__, void *
    E_FREE(_xdnd);
    return ECORE_CALLBACK_PASS_ON;
 }
+#endif
 

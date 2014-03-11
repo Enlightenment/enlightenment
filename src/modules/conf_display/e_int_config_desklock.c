@@ -150,7 +150,9 @@ _fill_data(E_Config_Dialog_Data *cfdata)
      cfdata->bg_method = E_DESKLOCK_BACKGROUND_METHOD_CUSTOM;
 
    cfdata->bg_method_prev = cfdata->bg_method;
+#ifndef HAVE_WAYLAND_ONLY
    cfdata->use_xscreensaver = ecore_x_screensaver_event_available_get();
+#endif
 
    cfdata->desklock_auth_method = e_config->desklock_auth_method;
    if (e_config->desklock_custom_desklock_cmd)

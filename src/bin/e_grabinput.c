@@ -40,12 +40,16 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
    if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return 1;
    if (grab_mouse_win)
      {
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_pointer_ungrab();
+#endif
         grab_mouse_win = 0;
      }
    if (grab_key_win)
      {
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_keyboard_ungrab();
+#endif
         grab_key_win = 0;
         focus_win = 0;
      }
@@ -53,15 +57,18 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
      {
         int ret = 0;
 
+#ifndef HAVE_WAYLAND_ONLY
         if (confine_mouse)
           ret = ecore_x_pointer_confine_grab(mouse_win);
         else
           ret = ecore_x_pointer_grab(mouse_win);
+#endif
         if (!ret) return 0;
         grab_mouse_win = mouse_win;
      }
    if (key_win)
      {
+#ifndef HAVE_WAYLAND_ONLY
         int ret = 0;
 
         ret = ecore_x_keyboard_grab(key_win);
@@ -74,6 +81,7 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
                }
              return 0;
           }
+#endif
         grab_key_win = key_win;
      }
    return 1;
@@ -85,12 +93,16 @@ e_grabinput_release(Ecore_Window mouse_win, Ecore_Window key_win)
    if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return;
    if (mouse_win == grab_mouse_win)
      {
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_pointer_ungrab();
+#endif
         grab_mouse_win = 0;
      }
    if (key_win == grab_key_win)
      {
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_keyboard_ungrab();
+#endif
         grab_key_win = 0;
         if (focus_win != 0)
           {
@@ -140,11 +152,13 @@ e_grabinput_key_win_get(void)
 static Eina_Bool
 _e_grabinput_focus_check(void *data __UNUSED__)
 {
+#ifndef HAVE_WAYLAND_ONLY
    if (ecore_x_window_focus_get() != focus_fix_win)
      {
         /* fprintf(stderr, "foc do 2\n"); */
         _e_grabinput_focus_do(focus_fix_win, focus_fix_method);
      }
+#endif
    focus_fix_timer = NULL;
    return EINA_FALSE;
 }
@@ -159,16 +173,22 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
         break;
 
       case E_FOCUS_METHOD_LOCALLY_ACTIVE:
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
         ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
+#endif
         break;
 
       case E_FOCUS_METHOD_GLOBALLY_ACTIVE:
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_icccm_take_focus_send(win, ecore_x_current_time_get());
+#endif
         break;
 
       case E_FOCUS_METHOD_PASSIVE:
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_window_focus_at_time(win, ecore_x_current_time_get());
+#endif
         break;
 
       default:

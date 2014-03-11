@@ -49,7 +49,7 @@ wizard_page_show(E_Wizard_Page *pg)
    Evas_Object *o, *of, *ob;
    Ecore_Evas *ee;
 
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    Ecore_X_Window_Attributes att;
 
    if (!ecore_x_composite_query()) return 0;

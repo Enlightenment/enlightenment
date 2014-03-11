@@ -1490,6 +1490,7 @@ _e_main_screens_init(void)
    if (!e_client_init()) return 0;
    TS("\tscreens: win");
    if (!e_win_init()) return 0;
+#ifndef HAVE_WAYLAND_ONLY
    TS("E_Xkb Init");
    if (!e_xkb_init())
      {
@@ -1497,6 +1498,7 @@ _e_main_screens_init(void)
         _e_main_shutdown(-1);
      }
    TS("E_Xkb Init Done");
+#endif
 
    TS("Compositor Init");
    if (!e_comp_init())
@@ -1507,6 +1509,7 @@ _e_main_screens_init(void)
 
    _e_main_desk_restore();
 
+#ifndef HAVE_WAYLAND_ONLY
    if (e_config->show_splash)
      e_init_status_set(_("Setup DND"));
    TS("E_Dnd Init");
@@ -1517,6 +1520,7 @@ _e_main_screens_init(void)
      }
    TS("E_Dnd Init Done");
    _e_main_shutdown_push(e_dnd_shutdown);
+#endif
 
    return 1;
 }
@@ -1703,7 +1707,9 @@ static Eina_Bool
 _e_main_cb_x_flusher(void *data __UNUSED__)
 {
    eet_clearcache();
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_flush();
+#endif
    return ECORE_CALLBACK_RENEW;
 }
 

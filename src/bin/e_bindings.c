@@ -381,12 +381,14 @@ e_bindings_mouse_grab(E_Binding_Context ctxt, Ecore_X_Window win)
      {
         if (_e_bindings_context_match(binding->ctxt, ctxt))
           {
+#ifndef HAVE_WAYLAND_ONLY
              ecore_x_window_button_grab(win, binding->button,
                                         ECORE_X_EVENT_MASK_MOUSE_DOWN |
                                         ECORE_X_EVENT_MASK_MOUSE_UP |
                                         ECORE_X_EVENT_MASK_MOUSE_MOVE,
                                         e_bindings_modifiers_to_ecore_convert(binding->mod),
                                         binding->any_mod);
+#endif
           }
      }
 }
@@ -401,8 +403,10 @@ e_bindings_mouse_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
      {
         if (_e_bindings_context_match(binding->ctxt, ctxt))
           {
+#ifndef HAVE_WAYLAND_ONLY
              ecore_x_window_button_ungrab(win, binding->button,
                                           e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
+#endif
           }
      }
 }
@@ -589,8 +593,12 @@ e_bindings_key_grab(E_Binding_Context ctxt, Ecore_X_Window win)
         if (_e_bindings_context_match(binding->ctxt, ctxt))
           {
              if (e_bindings_key_allowed(binding->key))
-               ecore_x_window_key_grab(win, binding->key,
-                                       e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
+               {
+#ifndef HAVE_WAYLAND_ONLY
+                  ecore_x_window_key_grab(win, binding->key,
+                                          e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
+#endif
+               }
           }
      }
 }
@@ -606,8 +614,12 @@ e_bindings_key_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
         if (_e_bindings_context_match(binding->ctxt, ctxt))
           {
              if (e_bindings_key_allowed(binding->key))
-               ecore_x_window_key_ungrab(win, binding->key,
-                                         e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
+               {
+#ifndef HAVE_WAYLAND_ONLY
+                  ecore_x_window_key_ungrab(win, binding->key,
+                                            e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
+#endif
+               }
           }
      }
 }
@@ -1176,10 +1188,12 @@ e_bindings_wheel_grab(E_Binding_Context ctxt, Ecore_X_Window win)
                   else if (binding->z > 0)
                     button = 7;
                }
+#ifndef HAVE_WAYLAND_ONLY
              if (button != 0)
                ecore_x_window_button_grab(win, button,
                                           ECORE_X_EVENT_MASK_MOUSE_DOWN,
                                           e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
+#endif
           }
      }
 }
@@ -1208,9 +1222,11 @@ e_bindings_wheel_ungrab(E_Binding_Context ctxt, Ecore_X_Window win)
                   else if (binding->z > 0)
                     button = 7;
                }
+#ifndef HAVE_WAYLAND_ONLY
              if (button != 0)
                ecore_x_window_button_ungrab(win, button,
                                             e_bindings_modifiers_to_ecore_convert(binding->mod), binding->any_mod);
+#endif
           }
      }
 }

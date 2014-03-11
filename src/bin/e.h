@@ -122,6 +122,10 @@ void *alloca (size_t);
 #  include <E_Hal.h>
 # endif
 
+# ifdef HAVE_WAYLAND
+#  include <Ecore_Wayland.h>
+# endif
+
 # ifdef EAPI
 #  undef EAPI
 # endif

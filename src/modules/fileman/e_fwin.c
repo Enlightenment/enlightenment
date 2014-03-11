@@ -882,6 +882,7 @@ _e_fwin_icon_popup(void *data)
    e_comp_object_util_del_list_append(fwin->popup, list);
    e_comp_object_util_del_list_append(fwin->popup, o);
    evas_object_pass_events_set(fwin->popup, 1);
+#ifndef HAVE_WAYLAND_ONLY
    if (!fwin->popup_handlers)
      {
         E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_ENTER, _e_fwin_icon_popup_handler, fwin);
@@ -890,6 +891,7 @@ _e_fwin_icon_popup(void *data)
         E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_fwin_icon_popup_handler, fwin);
         E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_MOUSE_OUT, _e_fwin_icon_popup_handler, fwin);
      }
+#endif
    evas_object_show(fwin->popup);
    return EINA_FALSE;
 }
@@ -922,6 +924,7 @@ _e_fwin_icon_mouse_in(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    if (!fileman_config->tooltip.enable) return;
    fwin->popup_timer = ecore_timer_add(fileman_config->tooltip.delay, _e_fwin_icon_popup, fwin);
    fwin->popup_icon = ici;
+#ifndef HAVE_WAYLAND_ONLY
    if (!fwin->popup_handlers)
      {
         E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_XDND_ENTER, _e_fwin_icon_popup_handler, fwin);
@@ -930,6 +933,7 @@ _e_fwin_icon_mouse_in(void *data, Evas_Object *obj __UNUSED__, void *event_info)
         E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, _e_fwin_icon_popup_handler, fwin);
         E_LIST_HANDLER_APPEND(fwin->popup_handlers, ECORE_X_EVENT_MOUSE_OUT, _e_fwin_icon_popup_handler, fwin);
      }
+#endif
 }
 
 static void
@@ -2109,7 +2113,9 @@ _e_fwin_path(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
      xwin = e_client_util_win_get(page->fwin->win->client);
    else
      xwin = page->fwin->zone->comp->ee_win;
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_selection_clipboard_set(xwin, path, strlen(path) + 1);
+#endif
 }
 
 static void

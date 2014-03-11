@@ -8,7 +8,7 @@
 #include "e_zone.h"
 #include "e_desk.h"
 #include "e_auth.h"
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
 #  include "e_comp_x.h"
 #endif
 #include "e_pixmap.h"
@@ -154,3 +154,4 @@
 #include "e_comp_cfdata.h"
 #include "e_comp_canvas.h"
 #include "e_utils.h"
+#include "e_hints.h"

@@ -21,7 +21,7 @@ static void      _e_backlight_update(E_Zone *zone);
 static void      _e_backlight_set(E_Zone *zone, double val);
 static Eina_Bool _bl_anim(void *data, double pos);
 static Eina_Bool bl_avail = EINA_TRUE;
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool xbl_avail = EINA_FALSE;
 #endif
 #ifdef HAVE_EEZE
@@ -47,7 +47,7 @@ e_backlight_init(void)
    eeze_init();
 #endif
 
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    if (e_comp_get(NULL)->man->root)
      xbl_avail = ecore_x_randr_output_backlight_available();
 #endif
@@ -197,7 +197,7 @@ static void
 _e_backlight_update(E_Zone *zone)
 {
    double x_bl = -1.0;
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    Ecore_X_Window root;
    Ecore_X_Randr_Output *out;
    int i, num = 0;
@@ -254,8 +254,11 @@ _e_backlight_update(E_Zone *zone)
 static void
 _e_backlight_set(E_Zone *zone, double val)
 {
-#ifdef WAYLAND_ONLY
+#ifdef HAVE_WAYLAND_ONLY
    if (0)
+     {
+        return;
+     }
 #else
    if (sysmode == MODE_RANDR)
      {

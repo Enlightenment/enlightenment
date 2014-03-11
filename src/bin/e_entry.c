@@ -534,6 +534,7 @@ _e_entry_mouse_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o
 static Eina_Bool
 _e_entry_x_selection_notify_handler(void *data, int type __UNUSED__, void *event)
 {
+#ifndef HAVE_WAYLAND_ONLY
    Evas_Object *entry;
    E_Entry_Smart_Data *sd;
    Ecore_X_Event_Selection_Notify *ev;
@@ -563,7 +564,7 @@ _e_entry_x_selection_notify_handler(void *data, int type __UNUSED__, void *event
                }
           }
      }
-
+#endif
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -595,9 +596,11 @@ _e_entry_x_selection_update(Evas_Object *entry)
    if (sd->password_mode)
      return;
 
+#ifndef HAVE_WAYLAND_ONLY
    text = edje_object_part_text_selection_get(sd->entry_object, ENTRY_PART_NAME);
    if (text)
      ecore_x_selection_primary_set(xwin, text, strlen(text) + 1);
+#endif
 }
 
 static void
@@ -623,6 +626,7 @@ _entry_paste_request_signal_cb(void *data,
    else
      xwin = win->evas_win;
 
+#ifndef HAVE_WAYLAND_ONLY
    if (emission[sizeof("ntry,paste,request,")] == '1')
      {
         ecore_x_selection_primary_request(xwin,
@@ -633,6 +637,7 @@ _entry_paste_request_signal_cb(void *data,
         ecore_x_selection_clipboard_request(xwin,
                                             ECORE_X_SELECTION_TARGET_UTF8_STRING);
      }
+#endif
 }
 
 static void
@@ -812,9 +817,11 @@ _e_entry_smart_add(Evas_Object *object)
 
    _entry_recalc_size(object);
 
+#ifndef HAVE_WAYLAND_ONLY
    sd->selection_handler =
      ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY,
                              _e_entry_x_selection_notify_handler, object);
+#endif
 }
 
 static void
@@ -976,7 +983,9 @@ _e_entry_cb_copy(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
                   xwin = c->ee_win;
                }
           }
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_selection_clipboard_set(xwin, range, strlen(range) + 1);
+#endif
      }
 }
 
@@ -1005,7 +1014,9 @@ _e_entry_cb_paste(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
              xwin = c->ee_win;
           }
      }
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_selection_clipboard_request(xwin, ECORE_X_SELECTION_TARGET_UTF8_STRING);
+#endif
 }
 
 static void

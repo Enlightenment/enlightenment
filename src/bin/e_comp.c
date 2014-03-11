@@ -726,7 +726,11 @@ _e_comp_shapes_update_job(E_Comp *c)
           }
 #endif
      }
+
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_window_shape_input_rectangles_set(c->win, (Ecore_X_Rectangle*)exr, i);
+#endif
+
 #ifdef SHAPE_DEBUG
    E_FREE_LIST(rl, free);
    printf("\n");
@@ -1127,7 +1131,7 @@ e_comp_init(void)
         }
    }
 #endif
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    if (!e_comp_x_init()) return EINA_FALSE;
 #endif
 #ifdef HAVE_WAYLAND_CLIENTS

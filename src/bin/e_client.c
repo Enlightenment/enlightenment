@@ -2676,12 +2676,14 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
 
                        e_object_ref(E_OBJECT(ec));
                        e_comp_object_frame_icon_geometry_get(ec->frame, &x, &y, &w, &h);
+#ifndef HAVE_WAYLAND_ONLY
                        client_drag = e_drag_new(ec->zone->comp,
                                                 output->x, output->y,
                                                 drag_types, 1, ec, -1,
                                                 NULL,
                                                 _e_client_cb_drag_finished);
                        e_drag_resize(client_drag, w, h);
+#endif
                        o = e_client_icon_add(ec, client_drag->evas);
                        if (!o)
                          {
@@ -2689,10 +2691,12 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
                             o = evas_object_rectangle_add(client_drag->evas);
                             evas_object_color_set(o, 255, 255, 255, 255);
                          }
+#ifndef HAVE_WAYLAND_ONLY
                        e_drag_object_set(client_drag, o);
                        e_drag_start(client_drag,
                                     output->x + (ec->drag.x - x),
                                     output->y + (ec->drag.y - y));
+#endif
                     }
                   ec->drag.start = 0;
                }
@@ -3574,8 +3578,13 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
    else if (e_config->mode.presentation)
      evas_object_layer_set(ec->frame, E_LAYER_CLIENT_TOP);
 
+#ifndef HAVE_WAYLAND_ONLY
    if ((eina_list_count(ec->comp->zones) > 1) ||
        (policy == E_FULLSCREEN_RESIZE) || (!ecore_x_randr_query()))
+#else
+   if ((eina_list_count(ec->comp->zones) > 1) || 
+       (policy == E_FULLSCREEN_RESIZE))
+#endif
      {
         evas_object_geometry_set(ec->frame, ec->zone->x, ec->zone->y, ec->zone->w, ec->zone->h);
      }
