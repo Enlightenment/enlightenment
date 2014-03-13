@@ -1915,7 +1915,7 @@ _e_client_eval(E_Client *ec)
                     {
                        char *s;
 
-                       strncpy(buf, ec->icccm.class, sizeof(buf));
+                       strncpy(buf, ec->icccm.class, sizeof(buf) - 1);
                        s = buf;
                        eina_str_tolower(&s);
                        if (strcmp(s, ec->icccm.class))
