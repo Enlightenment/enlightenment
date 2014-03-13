@@ -275,7 +275,7 @@ cb_playback_status_get(void *data, Eldbus_Pending *p, const char *propname, Eldb
 
    if (error_info)
      {
-        ERR("%s %s", error_info->error, error_info->message);
+        fprintf(stderr, "MUSIC-CONTROL: %s %s", error_info->error, error_info->message);
         return;
      }
 
@@ -414,7 +414,7 @@ e_modapi_shutdown(E_Module *m)
    e_gadcon_provider_unregister(&_gc_class);
 
    if (eina_list_count(ctxt->instances))
-     ERR("Live instances.");
+     fprintf(stderr, "MUSIC-CONTROL: Live instances.");
 
    free(ctxt);
    music_control_mod = NULL;
