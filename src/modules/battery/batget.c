@@ -1023,7 +1023,7 @@ linux_acpi_init(void)
         acpi_max_design = 0;
         EINA_ITERATOR_FOREACH(bats, info)
           {
-             char buf[4096];
+             char buf[PATH_MAX + 6];
              FILE *f;
 
              strcpy(buf, info->path);
