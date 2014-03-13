@@ -1,6 +1,5 @@
 #include "e.h"
 
-static Eina_List *_e_client_hooks = NULL;
 static int _e_client_hooks_delete = 0;
 static int _e_client_hooks_walking = 0;
 
@@ -54,6 +53,31 @@ static Eina_Rectangle action_orig = {0};
 
 EINTERN void e_client_focused_set(E_Client *ec);
 
+static Eina_Inlist *_e_client_hooks[] =
+{
+   [E_CLIENT_HOOK_EVAL_PRE_FETCH] = NULL,
+   [E_CLIENT_HOOK_EVAL_FETCH] = NULL,
+   [E_CLIENT_HOOK_EVAL_PRE_POST_FETCH] = NULL,
+   [E_CLIENT_HOOK_EVAL_POST_FETCH] = NULL,
+   [E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN] = NULL,
+   [E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN] = NULL,
+   [E_CLIENT_HOOK_EVAL_PRE_NEW_CLIENT] = NULL,
+   [E_CLIENT_HOOK_EVAL_POST_NEW_CLIENT] = NULL,
+   [E_CLIENT_HOOK_EVAL_END] = NULL,
+   [E_CLIENT_HOOK_FOCUS_SET] = NULL,
+   [E_CLIENT_HOOK_FOCUS_UNSET] = NULL,
+   [E_CLIENT_HOOK_NEW_CLIENT] = NULL,
+   [E_CLIENT_HOOK_DESK_SET] = NULL,
+   [E_CLIENT_HOOK_MOVE_BEGIN] = NULL,
+   [E_CLIENT_HOOK_MOVE_UPDATE] = NULL,
+   [E_CLIENT_HOOK_MOVE_END] = NULL,
+   [E_CLIENT_HOOK_RESIZE_BEGIN] = NULL,
+   [E_CLIENT_HOOK_RESIZE_UPDATE] = NULL,
+   [E_CLIENT_HOOK_RESIZE_END] = NULL,
+   [E_CLIENT_HOOK_DEL] = NULL,
+   [E_CLIENT_HOOK_UNREDIRECT] = NULL,
+   [E_CLIENT_HOOK_REDIRECT] = NULL,
+};
 
 ///////////////////////////////////////////
 
@@ -234,31 +258,30 @@ cleanup:
 static void
 _e_client_hooks_clean(void)
 {
-   Eina_List *l, *ln;
+   Eina_Inlist *l;
    E_Client_Hook *ch;
+   unsigned int x;
 
-   EINA_LIST_FOREACH_SAFE(_e_client_hooks, l, ln, ch)
-     {
-        if (ch->delete_me)
-          {
-             _e_client_hooks = eina_list_remove_list(_e_client_hooks, l);
-             free(ch);
-          }
-     }
+   for (x = 0; x < E_CLIENT_HOOK_LAST; x++)
+     EINA_INLIST_FOREACH_SAFE(_e_client_hooks[x], l, ch)
+       {
+          if (!ch->delete_me) continue;
+          _e_client_hooks[x] = eina_inlist_remove(_e_client_hooks[x], EINA_INLIST_GET(ch));
+          free(ch);
+       }
 }
 
 static Eina_Bool
 _e_client_hook_call(E_Client_Hook_Point hookpoint, E_Client *ec)
 {
-   Eina_List *l;
    E_Client_Hook *ch;
 
    e_object_ref(E_OBJECT(ec));
    _e_client_hooks_walking++;
-   EINA_LIST_FOREACH(_e_client_hooks, l, ch)
+   EINA_INLIST_FOREACH(_e_client_hooks[hookpoint], ch)
      {
         if (ch->delete_me) continue;
-        if (ch->hookpoint == hookpoint) ch->func(ch->data, ec);
+        ch->func(ch->data, ec);
      }
    _e_client_hooks_walking--;
    if ((_e_client_hooks_walking == 0) && (_e_client_hooks_delete > 0))
@@ -2970,12 +2993,13 @@ e_client_hook_add(E_Client_Hook_Point hookpoint, E_Client_Hook_Cb func, const vo
 {
    E_Client_Hook *ch;
 
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(hookpoint >= E_CLIENT_HOOK_LAST, NULL);
    ch = E_NEW(E_Client_Hook, 1);
    if (!ch) return NULL;
    ch->hookpoint = hookpoint;
    ch->func = func;
    ch->data = (void*)data;
-   _e_client_hooks = eina_list_append(_e_client_hooks, ch);
+   _e_client_hooks[hookpoint] = eina_inlist_append(_e_client_hooks[hookpoint], EINA_INLIST_GET(ch));
    return ch;
 }
 
@@ -2985,7 +3009,7 @@ e_client_hook_del(E_Client_Hook *ch)
    ch->delete_me = 1;
    if (_e_client_hooks_walking == 0)
      {
-        _e_client_hooks = eina_list_remove(_e_client_hooks, ch);
+        _e_client_hooks[ch->hookpoint] = eina_inlist_remove(_e_client_hooks[ch->hookpoint], EINA_INLIST_GET(ch));
         free(ch);
      }
    else

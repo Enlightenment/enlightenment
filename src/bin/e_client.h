@@ -164,6 +164,7 @@ typedef enum _E_Client_Hook_Point
    E_CLIENT_HOOK_DEL,
    E_CLIENT_HOOK_UNREDIRECT,
    E_CLIENT_HOOK_REDIRECT,
+   E_CLIENT_HOOK_LAST,
 } E_Client_Hook_Point;
 
 typedef void (*E_Client_Move_Intercept_Cb)(E_Client *, int x, int y);
@@ -197,6 +198,7 @@ struct _E_Event_Client_Property
 
 struct _E_Client_Hook
 {
+   EINA_INLIST;
    E_Client_Hook_Point hookpoint;
    E_Client_Hook_Cb func;
    void               *data;
