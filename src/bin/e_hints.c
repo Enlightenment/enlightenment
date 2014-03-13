@@ -1235,7 +1235,7 @@ e_hints_window_iconic_set(E_Client *ec)
    if (!e_pixmap_is_x(ec->pixmap)) return;
    if (ec->icccm.state != ECORE_X_WINDOW_STATE_HINT_ICONIC)
      ec->icccm.state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
-     ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_ICONIC);
+   ecore_x_icccm_state_set(e_client_util_win_get(ec), ECORE_X_WINDOW_STATE_HINT_ICONIC);
    if (!ec->netwm.state.hidden)
      {
         ec->netwm.update.state = 1;
