@@ -376,7 +376,7 @@ _cb_key_down(__UNUSED__ void *data, Ecore_Event_Key *ev)
           }
         edje_object_signal_emit(o_selected, "e,state,unfocused", "e");
      }
-   else if ((!strcmp(ev->keyname, "KP_Enter")) || (!strcmp(ev->keyname, "Return")))
+   else if ((!strcmp(ev->key, "KP_Enter")) || (!strcmp(ev->key, "Return")))
      {
         if (!o_selected) return ECORE_CALLBACK_RENEW;
         edje_object_signal_emit(o_selected, "e,state,focused", "e");

@@ -1339,7 +1339,7 @@ _e_wl_shell_shell_surface_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object
 #ifndef WAYLAND_ONLY
    if (_e_wl_comp->kbd_handler)
      /* get the keycode for this key from X, since we're definitely in X here */
-     key = ecore_x_keysym_keycode_get(ev->keyname) - 8;
+     key = ecore_x_keysym_keycode_get(ev->key) - 8;
    else
 #endif
      {
@@ -1405,7 +1405,7 @@ _e_wl_shell_shell_surface_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Obje
 #ifndef WAYLAND_ONLY
    if (_e_wl_comp->kbd_handler)
      /* get the keycode for this key from X, since we're definitely in X here */
-     key = ecore_x_keysym_keycode_get(ev->keyname) - 8;
+     key = ecore_x_keysym_keycode_get(ev->key) - 8;
    else
 #endif
      {

@@ -431,7 +431,7 @@ _mixer_popup_key_down_cb(void *data, Ecore_Event_Key *ev)
              if (ev->modifiers & ECORE_EVENT_MODIFIER_WIN)
                mod |= E_BINDING_MODIFIER_WIN;
 
-             if (binding->key && (!strcmp(binding->key, ev->keyname)) &&
+             if (binding->key && (!strcmp(binding->key, ev->key)) &&
                  ((binding->modifiers == mod) || (binding->any_mod)))
                {
                   if (!(act = e_action_find(binding->action))) continue;

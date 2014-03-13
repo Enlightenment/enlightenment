@@ -79,7 +79,7 @@ _key_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 {
    Evas_Event_Key_Down *ev = event;
    
-   if (!strcmp(ev->keyname, "Tab"))
+   if (!strcmp(ev->key, "Tab"))
      {
         if (evas_key_modifier_is_set(evas_key_modifier_get(e_win_evas_get(win)), "Shift"))
           {
@@ -116,9 +116,9 @@ _key_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
                }
           }
      }
-   else if (((!strcmp(ev->keyname, "Return")) ||
-             (!strcmp(ev->keyname, "KP_Enter")) ||
-             (!strcmp(ev->keyname, "space"))))
+   else if (((!strcmp(ev->key, "Return")) ||
+             (!strcmp(ev->key, "KP_Enter")) ||
+             (!strcmp(ev->key, "space"))))
      {
         Evas_Object *o = NULL;
         
@@ -128,7 +128,7 @@ _key_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
            o = e_widget_focused_object_get(o_box);
         if (o) e_widget_activate(o);
      }            
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      _win_cancel_cb(NULL, NULL);
 }            
 
@@ -136,9 +136,9 @@ static void
 _save_key_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Key_Down *ev = event;
-   if ((!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "KP_Enter")))
+   if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
      _file_select_ok_cb(NULL, fsel_dia);
-   else if (!strcmp(ev->keyname, "Escape"))
+   else if (!strcmp(ev->key, "Escape"))
      _file_select_cancel_cb(NULL, fsel_dia);
 }            
 

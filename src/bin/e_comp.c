@@ -743,7 +743,7 @@ _e_comp_shapes_update_job(E_Comp *c)
 static Eina_Bool
 _e_comp_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Event_Key *ev)
 {
-   if ((!strcasecmp(ev->keyname, "f")) &&
+   if ((!strcasecmp(ev->key, "f")) &&
        (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT) &&
        (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL) &&
        (ev->modifiers & ECORE_EVENT_MODIFIER_ALT))

@@ -2731,10 +2731,10 @@ _e_fwin_file_open_dialog_cb_key_down(void *data,
    E_Fwin_Page *page = data;
    E_Fwin *fwin = page->fwin;
 
-   if (!strcmp(ev->keyname, "Escape"))
+   if (!strcmp(ev->key, "Escape"))
      _e_fwin_cb_close(fwin->fad, fwin->fad->dia);
-   else if ((!strcmp(ev->keyname, "Return")) ||
-            (!strcmp(ev->keyname, "KP_Enter"))) 
+   else if ((!strcmp(ev->key, "Return")) ||
+            (!strcmp(ev->key, "KP_Enter"))) 
      _e_fwin_cb_open(fwin->fad, fwin->fad->dia);
 }
 

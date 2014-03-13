@@ -291,19 +291,19 @@ _e_wizard_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    Ecore_Event_Key *ev = event;
 
    if (!o_content) return ECORE_CALLBACK_RENEW;
-   if (!strcmp(ev->keyname, "Tab"))
+   if (!strcmp(ev->key, "Tab"))
      {
         if (ev->modifiers & ECORE_EVENT_MODIFIER_SHIFT)
           e_widget_focus_jump(o_content, 0);
         else
           e_widget_focus_jump(o_content, 1);
      }
-   else if ((!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "KP_Enter")))
+   else if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
      {
         if (next_can)
           e_wizard_next();
      }
-   else if (!strcmp(ev->keyname, "space"))
+   else if (!strcmp(ev->key, "space"))
      {
         Evas_Object *o;
 

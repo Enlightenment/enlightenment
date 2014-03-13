@@ -15,7 +15,7 @@ _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 {
    Evas_Event_Key_Down *ev = event;
 
-   if (!strcmp(ev->keyname, "Escape") && data)
+   if (!strcmp(ev->key, "Escape") && data)
      _e_obj_dialog_cb_delete(data);
 }
 
