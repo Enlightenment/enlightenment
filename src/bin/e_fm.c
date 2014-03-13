@@ -6686,7 +6686,6 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
    E_Fm2_Device_Mount_Op *mop = NULL;
 
    if (!_e_fm2_dnd_type_implemented(type)) return;
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
    if (type == _e_fm2_mime_xmozurl)
      {
         const char **name, *s;
@@ -6750,7 +6749,6 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
           }
         return;
      }
-#endif
    fsel = e_fm2_uri_path_list_get(ev->data);
    fp = eina_list_data_get(fsel);
    if (fp && sd->realpath && ((sd->drop_all) || (!sd->drop_icon)))

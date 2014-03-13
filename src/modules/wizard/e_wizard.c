@@ -225,9 +225,7 @@ e_wizard_dir_get(void)
 EAPI void
 e_wizard_xdg_desktops_reset(void)
 {
-#if (EFREET_VERSION_MAJOR > 1) || (EFREET_VERSION_MINOR >= 8)
    if (xdg_error) return;
-#endif
    got_desktops = EINA_FALSE;
 }
 
@@ -396,16 +394,12 @@ _e_wizard_cb_next_page(void *data __UNUSED__)
 static Eina_Bool
 _e_wizard_cb_desktops_update(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
-#if (EFREET_VERSION_MAJOR > 1) || (EFREET_VERSION_MINOR >= 8)
    Efreet_Event_Cache_Update *e;
 
    e = ev;
    /* TODO: Tell user he should fix his dbus setup */
    if ((e) && (e->error))
      xdg_error = EINA_TRUE;
-#else
-   (void)ev;
-#endif
    got_desktops = EINA_TRUE;
    if (_e_wizard_check_xdg())
      _e_wizard_next_xdg();

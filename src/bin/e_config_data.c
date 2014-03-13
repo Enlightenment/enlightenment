@@ -5,11 +5,7 @@ static Eina_Hash *config_hash = NULL;
 EAPI void
 e_config_descriptor_free(E_Config_DD *edd)
 {
-#if (EET_VERSION_MAJOR > 1) || (EET_VERSION_MINOR >= 8)
    eina_hash_del_by_key(config_hash, eet_data_descriptor_name_get((Eet_Data_Descriptor*)edd));
-#else
-   eina_hash_del_by_data(config_hash, edd);
-#endif
    eet_data_descriptor_free((Eet_Data_Descriptor*)edd);
 }
 

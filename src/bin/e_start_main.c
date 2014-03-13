@@ -22,9 +22,7 @@
 #include <Eina.h>
 #include <Evas.h>
 
-#if (EVAS_VERSION_MAJOR > 1) || (EVAS_VERSION_MINOR >= 8)
 # define E_CSERVE
-#endif
 
 static Eina_Bool stop_ptrace = EINA_FALSE;
 

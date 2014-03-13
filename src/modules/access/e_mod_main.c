@@ -1,5 +1,3 @@
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
-
 #include "e.h"
 #include "e_mod_main.h"
 #define HISTORY_MAX 8
@@ -479,19 +477,11 @@ _mouse_wheel(Cover *cov __UNUSED__, Ecore_Event_Mouse_Wheel *ev __UNUSED__)
 {
    if (ev->z == -1) // up
      {
-#if ECORE_VERSION_MAJOR >= 1
-# if ECORE_VERSION_MINOR >= 8
         ecore_x_e_illume_access_action_up_send(target_win);
-# endif
-#endif
      }
    else if (ev->z == 1) // down
      {
-#if ECORE_VERSION_MAJOR >= 1
-# if ECORE_VERSION_MINOR >= 8
         ecore_x_e_illume_access_action_down_send(target_win);
-# endif
-#endif
      }
 }
 
@@ -1045,5 +1035,3 @@ e_modapi_save(E_Module *m __UNUSED__)
    e_config_domain_save("module.access", conf_edd, access_config);
    return 1;
 }
-
-#endif

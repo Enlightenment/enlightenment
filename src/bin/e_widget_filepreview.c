@@ -330,11 +330,7 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
 
    wd->o_preview_preview = e_widget_preview_add(evas, 4, 4);
    em = o = emotion_object_add(e_widget_preview_evas_get(wd->o_preview_preview));
-#if (EMOTION_VERSION_MAJOR > 1) || (EMOTION_VERSION_MINOR >= 8)
    emotion_object_init(o, "vlc");
-#else
-   emotion_object_init(o, NULL);
-#endif
    emotion_object_file_set(o, wd->path);
    emotion_object_play_set(o, EINA_TRUE);
    evas_object_size_hint_aspect_set(o, EVAS_ASPECT_CONTROL_BOTH, wd->w, wd->h);

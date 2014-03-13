@@ -1421,7 +1421,6 @@ _e_dnd_cb_event_dnd_selection(void *data __UNUSED__, int type __UNUSED__, void *
      }
    else if (_type_text_x_moz_url == _xdnd->type)
      {
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
         Ecore_X_Selection_Data_X_Moz_Url *sel;
         E_Dnd_X_Moz_Url moz;
 
@@ -1430,7 +1429,6 @@ _e_dnd_cb_event_dnd_selection(void *data __UNUSED__, int type __UNUSED__, void *
         moz.link_names = sel->link_names;
         _xdnd->data = &moz;
         _e_drag_xdnd_end(ev->win, _xdnd->x, _xdnd->y);
-#endif
      }
    else
      _e_drag_xdnd_end(ev->win, _xdnd->x, _xdnd->y);

@@ -394,9 +394,7 @@ _e_thumb_generate(E_Thumb *eth)
              im = evas_object_text_add(evas);
              evas_object_text_font_set(im, eth->file, hh / 4);
              evas_object_color_set(im, 192, 192, 192, 255);
-#if ((EVAS_VERSION_MAJOR >= 1) && (EVAS_VERSION_MINOR >= 8))
              evas_object_text_ellipsis_set(im, 0.0);
-#endif
              evas_object_text_text_set(im, "ABCabc");
              evas_object_geometry_get(im, NULL, NULL, &tw, &th);
              if (tw > ww) tw = ww;
@@ -409,9 +407,7 @@ _e_thumb_generate(E_Thumb *eth)
              im2 = evas_object_text_add(evas);
              evas_object_text_font_set(im2, eth->file, hh / 4);
              evas_object_color_set(im2, 255, 255, 255, 255);
-#if ((EVAS_VERSION_MAJOR >= 1) && (EVAS_VERSION_MINOR >= 8))
              evas_object_text_ellipsis_set(im2, 0.0);
-#endif
              evas_object_text_text_set(im2, "123!@?");
              evas_object_geometry_get(im2, NULL, NULL, &tw, &th);
              if (tw > ww) tw = ww;

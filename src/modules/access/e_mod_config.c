@@ -1,5 +1,3 @@
-#if (ECORE_VERSION_MAJOR > 1) || (ECORE_VERSION_MINOR >= 8)
-
 #include "e.h"
 #include "e_mod_main.h"
 
@@ -77,5 +75,3 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata __UNU
    e_config_save_queue();
    return 1;
 }
-
-#endif
