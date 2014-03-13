@@ -356,7 +356,7 @@ bool econnman_service_disconnect(struct Connman_Service *cs,
    cd->cb = cb;
    cd->user_data = data;
 
-   cs->pending.connect = eldbus_proxy_call(cs->service_iface, "Disconnect",
+   cs->pending.disconnect = eldbus_proxy_call(cs->service_iface, "Disconnect",
                                           _service_connection_cb, cd,
                                           -1, "");
    return true;
