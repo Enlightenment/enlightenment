@@ -166,7 +166,7 @@ _systray_theme(Evas_Object *o, const char *shelf_style, const char *gc_style)
    p = buf + len;
    *p = '/';
    p++;
-   avail = sizeof(buf) - len - 1;
+   avail = sizeof(buf) - len - 2;
 
    if (shelf_style && gc_style)
      {
