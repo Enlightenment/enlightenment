@@ -653,7 +653,7 @@ _lokker_check_auth(void)
      }
    else if (lokker_is_pin())
      {
-        if (edd->passwd && edd->passwd[0])
+        if (edd->passwd[0])
           {
              if (eina_hash_djb2(edd->passwd, strlen(edd->passwd)) ==
                  e_config->desklock_pin)
