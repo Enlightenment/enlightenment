@@ -88,10 +88,15 @@ _elm_win_trap_show(void *data, Evas_Object *o)
         else
           {
              E_Pixmap *cp;
+             E_Comp *c = NULL;
 
              cp = e_pixmap_new(E_PIXMAP_TYPE_X, xwin);
              EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_TRUE);
-             ctx->client = e_client_new(e_comp_find_by_window(ecore_x_window_root_get(xwin)), cp, 0, 1);
+             if (eina_list_count(e_comp_list()) > 1)
+               c = e_comp_find_by_window(ecore_x_window_root_get(xwin));
+             if (!c)
+               c = e_comp_get(NULL);
+             ctx->client = e_client_new(c, cp, 0, 1);
              EINA_SAFETY_ON_NULL_RETURN_VAL(ctx->client, EINA_TRUE);
           }
         ctx->client->placed = ctx->placed;
