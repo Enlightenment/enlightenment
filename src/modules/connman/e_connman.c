@@ -242,12 +242,12 @@ static void _service_free(struct Connman_Service *cs)
         eldbus_pending_cancel(cs->pending.connect);
         free(cs->pending.data);
      }
-   if (cs->pending.disconnect)
+   else if (cs->pending.disconnect)
      {
         eldbus_pending_cancel(cs->pending.disconnect);
         free(cs->pending.data);
      }
-   if (cs->pending.remov)
+   else if (cs->pending.remov)
      {
         eldbus_pending_cancel(cs->pending.remov);
         free(cs->pending.data);
