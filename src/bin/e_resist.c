@@ -58,41 +58,21 @@ e_resist_client_position(E_Comp *c, Eina_List *skiplist,
    /* here if need be - ie xinerama middle between screens and panels etc. */
    E_CLIENT_FOREACH(c, ec)
      {
-        if (ec->visible && (!e_client_util_ignored_get(ec)))
+        if (e_client_util_ignored_get(ec) || evas_object_visible_get(ec->frame)) continue;
+        if (ec->offer_resistance && (!eina_list_data_find(skiplist, ec)))
           {
-             if (ec->offer_resistance && (!eina_list_data_find(skiplist, ec)))
-               {
-                  OBSTACLE(ec->x, ec->y, ec->w, ec->h, e_config->window_resist);
-               }
+             OBSTACLE(ec->x, ec->y, ec->w, ec->h, e_config->window_resist);
           }
      }
 
    desk = e_desk_current_get(e_zone_current_get(c));
-   EINA_LIST_FOREACH(e_shelf_list(), l, es)
+   l = e_shelf_list_all();
+   EINA_LIST_FREE(l, es)
      {
-        Eina_List *ll2;
-        E_Config_Shelf_Desk *sd;
-
-        if (es->zone->comp == c)
+        if (e_shelf_desk_visible(es, desk))
           {
-             if (es->cfg->desk_show_mode)
-               {
-                  EINA_LIST_FOREACH(es->cfg->desk_list, ll2, sd)
-                    {
-                       if (!sd) continue;
-                       if ((sd->x == desk->x) && (sd->y == desk->y))
-                         {
-                            OBSTACLE(es->x + es->zone->x, es->y + es->zone->y, es->w, es->h,
-                                     e_config->gadget_resist);
-                            break;
-                         }
-                    }
-               }
-             else
-               {
-                  OBSTACLE(es->x + es->zone->x, es->y + es->zone->y, es->w, es->h,
-                           e_config->gadget_resist);
-               }
+             OBSTACLE(es->x + es->zone->x, es->y + es->zone->y, es->w, es->h,
+                      e_config->gadget_resist);
           }
      }
    if (rects)
