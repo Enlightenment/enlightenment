@@ -687,14 +687,14 @@ e_intl_locale_parts_get(const char *locale)
                   codeset[tmp_idx] = 0;
                   tmp_idx = 0;
                }
-             else if (tmp_idx < 32)
+             else if (tmp_idx < 31)
                codeset[tmp_idx++] = locale_char;
              else
                return NULL;
              break;
 
            case 3: /* Gathering modifier */
-             if (tmp_idx < 32)
+             if (tmp_idx < 31)
                modifier[tmp_idx++] = locale_char;
              else
                return NULL;
