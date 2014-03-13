@@ -607,7 +607,6 @@ void
 gadman_update_bg(void)
 {
    Evas_Object *obj;
-   const char *ext;
 
    if (!Man->gadcons[GADMAN_LAYER_TOP]) return;
    if (!Man->conf) return;
@@ -638,8 +637,7 @@ gadman_update_bg(void)
         break;
 
       case BG_CUSTOM:
-        ext = strrchr(Man->conf->custom_bg, '.');
-        if (!strcmp(ext, ".edj") || !strcmp(ext, ".EDJ"))
+        if (eina_str_has_extension(Man->conf->custom_bg, ".edj"))
           {
              //THIS IS FOR E19 backgrounds
              obj = edje_object_add(Man->comp->evas);
