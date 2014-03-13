@@ -825,6 +825,7 @@ _update_action_params(E_Config_Dialog_Data *cfdata)
      {
         e_widget_disabled_set(cfdata->gui.o_params, 1);
         e_widget_entry_clear(cfdata->gui.o_params);
+        return;
      }
    sscanf(cfdata->locals.action, "%d %d", &g, &a);
 
