@@ -56,8 +56,7 @@ e_resist_client_position(E_Comp *c, Eina_List *skiplist,
    /* FIXME: need to add resist or complete BLOCKS for things like ibar */
    /* can add code here to add more fake obstacles with custom resist values */
    /* here if need be - ie xinerama middle between screens and panels etc. */
-   ec = e_client_bottom_get(c);
-   do
+   E_CLIENT_FOREACH(c, ec)
      {
         if (ec->visible && (!e_client_util_ignored_get(ec)))
           {
@@ -66,8 +65,7 @@ e_resist_client_position(E_Comp *c, Eina_List *skiplist,
                   OBSTACLE(ec->x, ec->y, ec->w, ec->h, e_config->window_resist);
                }
           }
-        ec = e_client_above_get(ec);
-     } while (ec);
+     }
 
    desk = e_desk_current_get(e_zone_current_get(c));
    EINA_LIST_FOREACH(e_shelf_list(), l, es)
