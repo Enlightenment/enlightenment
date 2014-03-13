@@ -607,7 +607,7 @@ e_desk_window_profile_del(int manager,
 EAPI void
 e_desk_window_profile_update(void)
 {
-   const Eina_List *z, *l;
+   const Eina_List *z, *l, *ll;
    E_Comp *c;
    E_Zone *zone;
    E_Desk *desk;
@@ -630,7 +630,7 @@ e_desk_window_profile_update(void)
                        desk = zone->desks[d_x + zone->desk_x_count * d_y];
                        ok = 0;
 
-                       EINA_LIST_FOREACH(e_config->desktop_window_profiles, l, cfprof)
+                       EINA_LIST_FOREACH(e_config->desktop_window_profiles, ll, cfprof)
                          {
                             if ((cfprof->manager >= 0) &&
                                 ((int)c->num != cfprof->manager)) continue;
