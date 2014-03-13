@@ -566,6 +566,7 @@ e_dnd_util_text_uri_list_convert(char *data, int size)
    int i, is;
    Eina_List *ret = NULL;
 
+   if ((!data) || (!size)) return NULL;
    tmp = malloc(size);
    is = i = 0;
    while ((is < size) && (data[is]))
