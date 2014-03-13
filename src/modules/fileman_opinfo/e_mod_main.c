@@ -272,6 +272,7 @@ _opinfo_op_registry_window_jump_cb(void *data, Evas_Object *obj __UNUSED__, cons
    else
      e_win_show(win);
    e_win_raise(win);
+   if (!win->client) return;
    e_desk_show(win->client->desk);
    e_client_focus_set_with_pointer(win->client);
    
