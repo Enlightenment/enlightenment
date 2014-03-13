@@ -202,7 +202,7 @@ e_pixmap_new(E_Pixmap_Type type, ...)
              if (cp)
                {
                   cp->refcount++;
-                  return cp;
+                  break;
                }
           }
         else
@@ -221,7 +221,7 @@ e_pixmap_new(E_Pixmap_Type type, ...)
              if (cp)
                {
                   cp->refcount++;
-                  return cp;
+                  break;
                }
           }
         else
