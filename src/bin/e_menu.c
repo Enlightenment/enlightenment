@@ -1718,7 +1718,7 @@ _e_menu_items_layout_update(E_Menu *m)
    int min_label_w = 0, min_label_h = 0;
    int min_submenu_w = 0, min_submenu_h = 0;
    int min_toggle_w = 0, min_toggle_h = 0;
-   int min_w = 0, min_h = 0;
+   int min_w = 0, min_h = 1;
    int zh = 0, ms = 0, maxh = 0;
    unsigned int cur_items = 0, max_items = -1;
 
