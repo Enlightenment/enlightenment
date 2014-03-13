@@ -697,6 +697,7 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
            case E_GADCON_CLIENT_TYPE:
              gc = ((E_Gadcon_Client *)(h->obj))->gadcon;
              if (!gc) return 0;
+             /* no break */
            case E_GADCON_TYPE:
              if (!gc) gc = (E_Gadcon *)h->obj;
 

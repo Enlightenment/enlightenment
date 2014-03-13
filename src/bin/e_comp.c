@@ -1514,10 +1514,12 @@ e_comp_get(const void *o)
         gp = (E_Gadcon_Popup*)obj;
         obj = (void*)gp->gcc;
         EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        /* no break */
       case E_GADCON_CLIENT_TYPE:
         gcc = (E_Gadcon_Client*)obj;
         obj = (void*)gcc->gadcon;
         EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+        /* no break */
       case E_GADCON_TYPE:
         gc = (E_Gadcon*)obj;
         obj = (void*)e_gadcon_zone_get(gc);
@@ -1703,6 +1705,7 @@ e_comp_e_object_layer_get(const E_Object *obj)
       case E_GADCON_CLIENT_TYPE:
         gc = ((E_Gadcon_Client *)(obj))->gadcon;
         EINA_SAFETY_ON_NULL_RETURN_VAL(gc, 0);
+        /* no break */
       case E_GADCON_TYPE:
         if (!gc) gc = (E_Gadcon *)obj;
         if (gc->shelf) return gc->shelf->layer;
