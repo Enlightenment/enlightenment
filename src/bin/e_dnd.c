@@ -802,6 +802,7 @@ _e_dnd_object_layer_get(E_Drop_Handler *h)
       case E_GADCON_CLIENT_TYPE:
         /* add 1 to ensure we're above a potential receiving gadcon */
         adjust = 1;
+        /* no break */
       default:
         adjust += e_comp_e_object_layer_get(obj);
      }
