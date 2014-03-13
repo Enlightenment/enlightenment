@@ -9978,6 +9978,13 @@ e_border_under_pointer_get(E_Desk *desk,
    else
      return NULL;
 
+   if (!desk)
+     {
+        desk = exclude->desk;
+        if (!desk)
+          desk = e_desk_current_get(exclude->zone);
+     }
+
    return _e_border_under_pointer_helper(desk, exclude, x, y);
 }
 
