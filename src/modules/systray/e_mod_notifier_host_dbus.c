@@ -8,6 +8,9 @@
 
 #define HOST_REGISTRER "/bla" //TODO check what watcher expect we send to him
 
+#undef ERR
+#define ERR(...) fprintf(stderr, __VA_ARGS__)
+
 extern const char *Category_Names[];
 extern const char *Status_Names[];
 
