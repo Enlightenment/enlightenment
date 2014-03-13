@@ -638,8 +638,7 @@ gadman_update_bg(void)
         break;
 
       case BG_CUSTOM:
-        ext = strrchr(Man->conf->custom_bg, '.');
-        if (!strcmp(ext, ".edj") || !strcmp(ext, ".EDJ"))
+        if (eina_str_has_extension(Man->conf->custom_bg, ".edj"))
           {
              //THIS IS FOR E18 backgrounds
              obj = edje_object_add(e_comp_get(Man->container)->evas);
