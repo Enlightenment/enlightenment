@@ -1368,7 +1368,7 @@ static void
 _e_menu_item_realize(E_Menu_Item *mi)
 {
    Evas_Object *o;
-   Evas_Coord ww, hh;
+   Evas_Coord ww = 1, hh = 1;
 
    /* and set up initial item state */
    if (mi->separator)
