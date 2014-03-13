@@ -7392,12 +7392,12 @@ _e_fm2_cb_drag_finished(E_Drag *drag, int dropped __UNUSED__)
 static void
 _e_fm_drag_key_down_cb(E_Drag *drag, Ecore_Event_Key *e)
 {
-   if (!strncmp(e->keyname, "Alt", 3))
+   if (!strncmp(e->key, "Alt", 3))
      {
         ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_ASK);
         edje_object_signal_emit(drag->object, "e,state,ask", "e");
      }
-   else if (!strncmp(e->keyname, "Shift", 5))
+   else if (!strncmp(e->key, "Shift", 5))
      {
         if (e->modifiers == ECORE_EVENT_MODIFIER_CTRL)
           {
@@ -7410,7 +7410,7 @@ _e_fm_drag_key_down_cb(E_Drag *drag, Ecore_Event_Key *e)
              edje_object_signal_emit(drag->object, "e,state,move", "e");
           }
      }
-   else if (!strncmp(e->keyname, "Control", 7))
+   else if (!strncmp(e->key, "Control", 7))
      {
         if (e->modifiers == ECORE_EVENT_MODIFIER_SHIFT)
           {
@@ -7430,11 +7430,11 @@ _e_fm_drag_key_up_cb(E_Drag *drag, Ecore_Event_Key *e)
 {
    /* Default action would be move. ;) */
 
-   if (!strncmp(e->keyname, "Alt", 3))
+   if (!strncmp(e->key, "Alt", 3))
      ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
-   else if (!strncmp(e->keyname, "Shift", 5))
+   else if (!strncmp(e->key, "Shift", 5))
      ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
-   else if (!strncmp(e->keyname, "Control", 7))
+   else if (!strncmp(e->key, "Control", 7))
      ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
 
    edje_object_signal_emit(drag->object, "e,state,move", "e");
@@ -7817,7 +7817,7 @@ _e_fm2_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event
         e_fm2_pan_set(obj, sd->pos.x, sd->pos.y - sd->h);
         evas_object_smart_callback_call(sd->obj, "pan_changed", NULL);
      }
-   else if (!strcmp(ev->keyname, "Next"))
+   else if (!strcmp(ev->key, "Next"))
      {
         /* down h * n pixels */
         e_fm2_pan_set(obj, sd->pos.x, sd->pos.y + sd->h);
