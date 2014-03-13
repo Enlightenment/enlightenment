@@ -133,9 +133,6 @@ e_maximize_client_shelf_fill(E_Client *ec, int *x1, int *yy1, int *x2, int *y2, 
    l = e_shelf_list_all();
    EINA_LIST_FREE(l, es)
      {
-        Eina_List *ll;
-        E_Config_Shelf_Desk *sd;
-
         if (es->cfg->overlap) continue;
         if (!e_shelf_desk_visible(es, ec->desk)) continue;
         OBSTACLE(es->x + es->zone->x, es->y + es->zone->y,
