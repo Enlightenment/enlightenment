@@ -1602,6 +1602,7 @@ _e_comp_x_stack_request(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Ev
    E_Client *ec;
 
    ec = _e_comp_x_client_find_by_window(ev->win);
+   if (!ec) return ECORE_CALLBACK_RENEW;
    if (ev->detail == ECORE_X_WINDOW_STACK_ABOVE)
      evas_object_raise(ec->frame);
    else if (ev->detail == ECORE_X_WINDOW_STACK_BELOW)
