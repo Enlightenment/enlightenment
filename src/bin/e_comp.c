@@ -1392,7 +1392,6 @@ e_comp_render_queue(E_Comp *c)
 {
    E_OBJECT_CHECK(c);
    E_OBJECT_TYPE_CHECK(c, E_COMP_TYPE);
-   if (!c) return;
 
    if (conf->lock_fps)
      {
