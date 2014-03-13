@@ -173,7 +173,7 @@ e_desk_name_del(int manager, int zone, int desk_x, int desk_y)
 EAPI void
 e_desk_name_update(void)
 {
-   const Eina_List *z, *l;
+   const Eina_List *z, *l, *ll;
    E_Comp *c;
    E_Zone *zone;
    E_Desk *desk;
@@ -192,7 +192,7 @@ e_desk_name_update(void)
                        desk = zone->desks[d_x + zone->desk_x_count * d_y];
                        ok = 0;
 
-                       EINA_LIST_FOREACH(e_config->desktop_names, l, cfname)
+                       EINA_LIST_FOREACH(e_config->desktop_names, ll, cfname)
                          {
                             if ((cfname->manager >= 0) &&
                                 ((int)c->num != cfname->manager)) continue;
