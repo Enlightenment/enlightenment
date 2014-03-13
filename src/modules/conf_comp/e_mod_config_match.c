@@ -196,15 +196,16 @@ _match_list_down(Eina_List **list, Match_Config *m)
    else *list = eina_list_append(*list, m);
 }
 
-static void
+static Eina_Bool
 _match_list_del(Eina_List **list, Match_Config *m)
 {
    Eina_List *l;
 
    l = eina_list_data_find_list(*list, m);
-   if (!l) return;
+   if (!l) return EINA_FALSE;
    *list = eina_list_remove_list(*list, l);
    _match_free(m);
+   return EINA_TRUE;
 }
 
 
@@ -663,10 +664,10 @@ _but_del(void *d1, void *d2)
    e_widget_ilist_remove_num(il, n);
    e_widget_ilist_thaw(il);
    e_widget_ilist_go(il);
-   _match_list_del(&(cfd->cfdata->popups), m);
-   _match_list_del(&(cfd->cfdata->borders), m);
-   _match_list_del(&(cfd->cfdata->overrides), m);
-   _match_list_del(&(cfd->cfdata->menus), m);
+   if (!_match_list_del(&(cfd->cfdata->popups), m))
+     if (!_match_list_del(&(cfd->cfdata->borders), m))
+       if (!_match_list_del(&(cfd->cfdata->overrides), m))
+         _match_list_del(&(cfd->cfdata->menus), m);
    cfd->cfdata->changed = 1;
    e_config_dialog_changed_set(cfd, 1);
 }
