@@ -447,7 +447,7 @@ _battery_warning_popup(Instance *inst, int t, double percent)
    if ((!inst) || (inst->warning)) return;
 
 #ifdef HAVE_ENOTIFY
-   if (battery_config && battery_config->desktop_notifications)
+   if (battery_config->desktop_notifications)
      {
         E_Notification_Notify n;
         memset(&n, 0, sizeof(E_Notification_Notify));
