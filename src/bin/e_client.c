@@ -4426,6 +4426,18 @@ e_client_under_pointer_get(E_Desk *desk, E_Client *exclude)
    else
      return NULL;
 
+   if (!desk)
+     {
+        desk = exclude->desk;
+        if (!desk)
+          {
+             if (exclude->zone)
+               desk = e_desk_current_get(exclude->zone);
+             else
+               desk = e_desk_current_get(e_zone_current_get(exclude->comp));
+          }
+     }
+
    return _e_client_under_pointer_helper(desk, exclude, x, y);
 }
 
