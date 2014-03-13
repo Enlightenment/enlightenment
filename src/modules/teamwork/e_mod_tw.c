@@ -599,7 +599,8 @@ media_cleaner_cb(void *data)
    int cleaned = 0;
    if ((!cleaner_edd) || (!cache_edd) || (tw_config->allowed_media_age < 0) || (!mcl) || (!mcl->cache))
      {
-        media_cleaner[mcl->video] = NULL;
+        if (mcl)
+          media_cleaner[mcl->video] = NULL;
         return EINA_FALSE;
      }
 
