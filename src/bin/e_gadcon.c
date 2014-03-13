@@ -5779,6 +5779,7 @@ e_gadcon_client_visible_get(const E_Gadcon_Client *gcc, const E_Desk *desk)
           EINA_LIST_FOREACH(c->zones, ll, zone)
             if (e_shelf_desk_visible(gcc->gadcon->shelf, e_desk_current_get(zone)))
               return EINA_TRUE;
+        break;
       case E_GADCON_SITE_TOOLBAR:
       case E_GADCON_SITE_EFM_TOOLBAR:
         if (desk) return (gcc->gadcon->toolbar->fwin->client->desk == desk);
