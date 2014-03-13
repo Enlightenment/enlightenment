@@ -465,7 +465,7 @@ gadman_gadget_edit_end(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const
    unsigned int layer;
    E_Gadcon_Client *drag_gcc = NULL;
 
-   for (layer = GADMAN_LAYER_COUNT - 1; layer < UINT_MAX; layer--)
+   for (layer = GADMAN_LAYER_COUNT - 1; layer < GADMAN_LAYER_COUNT; layer--)
      {
         const Eina_List *l;
         E_Gadcon *gc;
