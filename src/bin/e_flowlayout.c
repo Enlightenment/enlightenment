@@ -824,7 +824,7 @@ _e_flowlayout_smart_extents_calcuate(E_Smart_Data *sd)
                sd->cols = 1;
              count = eina_list_count(sd->items);
              sd->rows = sd->h / minh;
-             if (count < sd->cols) sd->rows = count;
+             if (count < sd->rows) sd->rows = count;
              sd->cols = 0;
              if (sd->rows > 0)
                {
