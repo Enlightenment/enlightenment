@@ -647,8 +647,8 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
         h = sh;
         x = E_CLAMP(x, ec->zone->x, ec->zone->x + ec->zone->w);
         y = E_CLAMP(y, ec->zone->y, ec->zone->y + ec->zone->h);
-        sw = E_CLAMP(sw, 0, ec->zone->x + ec->zone->w - x);
-        sh = E_CLAMP(sh, 0, ec->zone->y + ec->zone->h - y);
+        sw = E_CLAMP(sw, 1, ec->zone->x + ec->zone->w - x);
+        sh = E_CLAMP(sh, 1, ec->zone->y + ec->zone->h - y);
         visual = e_pixmap_visual_get(ec->pixmap);
         depth = ec->depth;
      }
