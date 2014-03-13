@@ -26,6 +26,7 @@ _auth_auth_get_current_user(void)
    struct passwd *pwent = NULL;
 
    pwent = getpwuid(getuid());
+   if (!pwent) return NULL;
    user = strdup(pwent->pw_name);
    return user;
 }
