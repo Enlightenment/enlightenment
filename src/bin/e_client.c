@@ -2801,7 +2801,6 @@ e_client_zone_set(E_Client *ec, E_Zone *zone)
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
-   if (!zone) return;
    if (ec->zone == zone) return;
 
    /* if the window does not lie in the new zone, move it so that it does */
