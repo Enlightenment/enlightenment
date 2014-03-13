@@ -88,7 +88,7 @@ e_resist_client_position(E_Comp *c, Eina_List *skiplist,
 }
 
 EAPI int
-e_resist_gadman_position(E_Comp *c, Eina_List *skiplist __UNUSED__,
+e_resist_gadman_position(E_Comp *c EINA_UNUSED, Eina_List *skiplist __UNUSED__,
                                    int px, int py, int pw, int ph,
                                    int x, int y, int w, int h,
                                    int *rx, int *ry)
@@ -104,9 +104,10 @@ e_resist_gadman_position(E_Comp *c, Eina_List *skiplist __UNUSED__,
         return 0;
      }
 
-   EINA_LIST_FOREACH(e_shelf_list(), l, es)
+   l = e_shelf_list_all();
+   EINA_LIST_FREE(l, es)
      {
-        if (es->zone->comp == c)
+        if (e_shelf_desk_visible(es, e_desk_current_get(es->zone)))
           {
              OBSTACLE(es->x + es->zone->x, es->y + es->zone->y, es->w, es->h,
                       e_config->gadget_resist);
