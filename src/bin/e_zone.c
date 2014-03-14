@@ -1360,7 +1360,7 @@ _e_zone_free(E_Zone *zone)
 
    evas_object_del(zone->base);
    evas_object_del(zone->over);
-   if (!e_comp_config_get()->nofade)
+   if ((!stopping) && (!e_comp_config_get()->nofade))
      {
         if (zone->bloff)
           {
