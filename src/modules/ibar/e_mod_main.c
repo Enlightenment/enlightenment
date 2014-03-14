@@ -886,6 +886,19 @@ _ibar_icon_notinorder_new(IBar *b, E_Exec_Instance *exe)
 }
 
 static void
+_ibar_cb_icon_menu_client_menu_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   IBar *b = data;
+
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_HIDE, _ibar_cb_icon_menu_client_menu_del);
+   if (!b->menu_icon) return;
+   if (b->menu_icon->hide_timer)
+     ecore_timer_reset(b->menu_icon->hide_timer);
+   else
+     b->menu_icon->hide_timer = ecore_timer_add(0.5, _ibar_cb_out_hide_delay, b->menu_icon);
+}
+
+static void
 _ibar_icon_free(IBar_Icon *ic)
 {
    E_Exec_Instance *inst;
@@ -923,8 +936,16 @@ _ibar_icon_free(IBar_Icon *ic)
      ic->ibar->ic_drop_before = NULL;
    _ibar_icon_empty(ic);
    EINA_LIST_FREE(ic->exes, inst)
-     if (!ic->not_in_order)
-       e_exec_instance_watcher_del(inst, _ibar_instance_watch, ic);
+     {
+        E_Client *ec;
+        Eina_List *ll;
+
+        if (!ic->not_in_order)
+          e_exec_instance_watcher_del(inst, _ibar_instance_watch, ic);
+        EINA_LIST_FOREACH(inst->clients, ll, ec)
+          if (ec->border_menu)
+            evas_object_event_callback_del(ec->border_menu->comp_object, EVAS_CALLBACK_HIDE, _ibar_cb_icon_menu_client_menu_del);
+     }
    evas_object_del(ic->o_holder);
    evas_object_del(ic->o_holder2);
    if (ic->exe_inst)
@@ -1093,6 +1114,7 @@ _ibar_cb_icon_menu_mouse_up(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, v
    if (ev->button == 3)
      {
         e_int_client_menu_show(ec, ev->canvas.x, ev->canvas.y, 0, ev->timestamp);
+        evas_object_event_callback_add(ec->border_menu->comp_object, EVAS_CALLBACK_HIDE, _ibar_cb_icon_menu_client_menu_del, ic->ibar);
         return;
      }
    e_client_activate(ec, 1);
@@ -1366,6 +1388,7 @@ _ibar_icon_menu_hide(IBar_Icon *ic, Eina_Bool grab)
    ic->menu_grabbed = EINA_FALSE;
    evas_object_pass_events_set(ic->menu->comp_object, 1);
    edje_object_signal_emit(ic->menu->o_bg, "e,action,hide", "e");
+
 }
 
 static Eina_Bool
