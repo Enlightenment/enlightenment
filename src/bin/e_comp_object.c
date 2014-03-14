@@ -1191,7 +1191,7 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
    cw->defer_hide |= stopping;
    if (!cw->defer_hide)
      {
-        if ((!cw->ec->iconic) && (!cw->ec->override) && (!cw->ec->delete_requested))
+        if ((!cw->ec->iconic) && (!cw->ec->override))
           e_hints_window_hidden_set(cw->ec);
         if ((!cw->animating) || (cw->ec->iconic))
           {
