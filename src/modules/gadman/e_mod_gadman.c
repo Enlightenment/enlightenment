@@ -607,7 +607,6 @@ void
 gadman_update_bg(void)
 {
    Evas_Object *obj;
-   const char *ext;
 
    if (!Man->gadcons[GADMAN_LAYER_TOP]) return;
    if (!Man->conf) return;
