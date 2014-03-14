@@ -3,7 +3,7 @@ define([_XTERM_COLORS],
 [
         # Check for XTerm and define some colors
         if test "x$TERM" = "xxterm" -o "x$TERM" = "xscreen"; then
-                COLOR_PREF="\0033\0133"
+                COLOR_PREF=`echo -e "\0033\0133"`
                 COLOR_H="${COLOR_PREF}1m"
                 COLOR_HGREEN="${COLOR_PREF}1;32m"
                 COLOR_HRED="${COLOR_PREF}1;31m"
