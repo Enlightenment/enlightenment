@@ -58,7 +58,7 @@ e_resist_client_position(E_Comp *c, Eina_List *skiplist,
    /* here if need be - ie xinerama middle between screens and panels etc. */
    E_CLIENT_FOREACH(c, ec)
      {
-        if (e_client_util_ignored_get(ec) || evas_object_visible_get(ec->frame)) continue;
+        if (e_client_util_ignored_get(ec) || (!evas_object_visible_get(ec->frame))) continue;
         if (ec->offer_resistance && (!eina_list_data_find(skiplist, ec)))
           {
              OBSTACLE(ec->x, ec->y, ec->w, ec->h, e_config->window_resist);
