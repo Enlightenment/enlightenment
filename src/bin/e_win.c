@@ -55,6 +55,7 @@ _elm_win_trap_del(void *data, Evas_Object *o)
         evas_object_hide(ctx->client->frame);
         e_object_del(E_OBJECT(ctx->client));
         evas_object_data_set(o, "E_Client", NULL);
+        ctx->client->internal_ecore_evas = NULL;
      }
    free(ctx);
 }
@@ -100,13 +101,12 @@ _elm_win_trap_show(void *data, Evas_Object *o)
              EINA_SAFETY_ON_NULL_RETURN_VAL(ctx->client, EINA_TRUE);
           }
         ctx->client->placed = ctx->placed;
-        ctx->client->internal = 1;
         ctx->client->internal_ecore_evas = ee;
         evas_object_data_set(o, "E_Client", ctx->client);
      }
    if (ctx->centered) e_comp_object_util_center(ctx->client->frame);
    evas_object_show(ctx->client->frame);
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -186,7 +186,7 @@ _elm_win_trap_size_base_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
    ctx->client->icccm.base_h = h;
    _elm_win_prop_update(ctx);
 
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static const Elm_Win_Trap _elm_win_trap = {
