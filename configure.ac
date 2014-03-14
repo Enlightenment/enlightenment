@@ -226,8 +226,16 @@ AC_ARG_ENABLE([systemd],
   AC_HELP_STRING([--disable-systemd], [disable systemd support @<:@default=detect@:>@]),
   [want_systemd=${enableval}], [want_systemd=auto])
 
+AC_ARG_WITH([systemdunitdir],
+         AC_HELP_STRING([--with-systemdunitdir=DIR],
+                [path to systemd user services directory]),
+         [USER_SESSION_DIR=${withval}])
+
 if test "$want_systemd" == "no"; then
   have_systemd_user_session="no"
+elif test -n "${USER_SESSION_DIR}"; then
+  have_systemd_user_session="yes"
+  AC_MSG_NOTICE([Using systemd user services directory as ${USER_SESSION_DIR}])
 else
   # Detect systemd user session directory properly
   EFL_PKG_CHECK_VAR([USER_SESSION_DIR], [systemd >= 192], [systemduserunitdir],
@@ -1049,7 +1057,23 @@ Summary:
  * CFLAGS..........: $(txt_strip $CFLAGS)
  * LDFLAGS.........: $(txt_strip $LDFLAGS)
 SUMMARY_EOF
+
+if test "$have_systemd_user_session" = "yes"; then
+  echo " * systemd.........: yes (${USER_SESSION_DIR})"
+else
+  echo " * systemd.........: no"
+fi
+
 echo
+cat << ACTIONS_EOF
+System Actions:
+ * Halt.....: ${HALT}
+ * Reboot...: ${REBOOT}
+ * Suspend..: ${SUSPEND}
+ * Hibernate: ${HIBERNATE}
+
+ACTIONS_EOF
+
 cat << DEVICE_EOF
 Preferred Backends:
  * device..............: $device_backend
