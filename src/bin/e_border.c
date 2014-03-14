@@ -1024,7 +1024,7 @@ e_border_hide(E_Border *bd,
      _e_border_action_finish();
 
    e_container_shape_hide(bd->shape);
-   if ((!bd->iconic) && (!bd->delete_requested))
+   if (!bd->iconic)
      e_hints_window_hidden_set(bd);
 
    bd->visible = 0;
