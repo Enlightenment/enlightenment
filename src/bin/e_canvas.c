@@ -148,15 +148,6 @@ e_canvas_new(Ecore_Window win, int x, int y, int w, int h,
 {
    Ecore_Evas *ee = NULL;
 
-#ifdef HAVE_WAYLAND_ONLY
-   ee = ecore_evas_wayland_shm_new(NULL, win, x, y, w, h, 0);
-   if (ee)
-     {
-        ecore_evas_override_set(ee, override);
-        if (win_ret) 
-          *win_ret = ecore_wl_window_id_get(ecore_evas_wayland_window_get(ee));
-     }
-#else
    switch (e_comp_get(NULL)->comp_type)
      {
       case E_PIXMAP_TYPE_X:
@@ -168,7 +159,7 @@ e_canvas_new(Ecore_Window win, int x, int y, int w, int h,
              if (win_ret) *win_ret = ecore_evas_software_x11_window_get(ee);
           }
         break;
-# ifdef HAVE_WAYLAND_CLIENTS
+#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
        case E_PIXMAP_TYPE_WL:
          ee = ecore_evas_wayland_shm_new(NULL, win, x, y, w, h, 0);
          if (ee)
@@ -181,10 +172,9 @@ e_canvas_new(Ecore_Window win, int x, int y, int w, int h,
                 }
            }
          break;
-# endif
+#endif
       default: break;
      }
-#endif
    if (!ee)
      EINA_LOG_ERR("Impossible to build any Ecore_Evas window !!");
    return ee;
