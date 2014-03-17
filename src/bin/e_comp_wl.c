@@ -320,6 +320,7 @@ e_comp_wl_init(void)
      ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, 
                              e_comp_wl_cb_keymap_changed, NULL);
 #endif
+
    /* get the displays event loop */
    _e_wl_comp->wl.loop = wl_display_get_event_loop(_e_wl_comp->wl.display);
 
@@ -344,10 +345,10 @@ e_comp_wl_init(void)
      }
 
    wl_event_loop_dispatch(_e_wl_comp->wl.loop, 0);
-#ifndef HAVE_WAYLAND_ONLY
+
    /* add an idler for deferred shell module loading */
    _module_idler = ecore_idler_add(_e_comp_wl_cb_module_idle, NULL);
-#endif
+
    /* return success */
    return EINA_TRUE;
 
@@ -355,10 +356,9 @@ err:
    /* remove kbd handler */
    if (_e_wl_comp->kbd_handler) 
      ecore_event_handler_del(_e_wl_comp->kbd_handler);
-#ifndef HAVE_WAYLAND_ONLY
+
    /* remove the module idler */
    if (_module_idler) ecore_idler_del(_module_idler);
-#endif
 
 #ifdef HAVE_WAYLAND_EGL
    /* unbind wayland display */
