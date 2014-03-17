@@ -349,6 +349,11 @@ e_win_new(E_Comp *c)
         win->pointer = e_pointer_window_new(win->evas_win, 1);
         win->pointer->color = c->pointer->color;
      }
+   else if (c->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        win->pointer = e_pointer_canvas_new(win->evas, 1);
+        win->pointer->color = c->pointer->color;
+     }
 
    return win;
 }
