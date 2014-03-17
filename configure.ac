@@ -845,7 +845,7 @@ fi
 
 define([CHECK_MODULE_WL_DESKTOP_SHELL],
 [
-  if test "x${have_wayland_clients}" = "xyes"; then
+  if test "x${have_wayland_clients}" = "xyes" || test "x${e_cv_want_wayland_only}" = "xyes"; then
     AC_E_CHECK_PKG(WL_DESKTOP_SHELL, [ ecore >= $efl_version eina >= $efl_version ], [WL_DESKTOP_SHELL=true], [WL_DESKTOP_SHELL=false])
   else
     WL_DESKTOP_SHELL=false
