@@ -59,6 +59,7 @@ e_xkb_update(int cur_group)
 
    if (e_config->xkb.dont_touch_my_damn_keyboard) return;
    if ((!e_config->xkb.used_layouts) && (!e_config->xkb.used_options) && (!e_config->xkb.default_model)) return;
+   if (!getenv("DISPLAY")) return;
    if (cur_group != -1)
      {
         _e_xkb_cur_group = cur_group;

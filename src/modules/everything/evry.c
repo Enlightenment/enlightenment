@@ -64,7 +64,7 @@ static void           _evry_view_hide(Evry_Window *win, Evry_View *v, int slide)
 static void           _evry_item_desel(Evry_State *s);
 static void           _evry_item_sel(Evry_State *s, Evry_Item *it);
 
-static Eina_Bool      _evry_cb_show(Evry_Window *win, int type __UNUSED__, Ecore_X_Event_Window_Show *ev);
+static void           _evry_cb_show(Evry_Window *win, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static Eina_Bool      _evry_cb_key_down(void *data, int type, void *event);
 static Eina_Bool      _evry_cb_selection_notify(void *data, int type, void *event);
 static Eina_Bool      _evry_cb_mouse(void *data, int type, void *event);
@@ -178,10 +178,11 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
 
    if (popup)
      {
-        //e_win_layer_set(win->ewin, E_WIN_LAYER_ABOVE);
-        ecore_x_netwm_window_type_set(win->ewin->evas_win,
-                                      ECORE_X_WINDOW_TYPE_UTILITY);
-
+#ifndef HAVE_WAYLAND_ONLY
+        if (e_comp_get(win->ewin)->comp_type == E_PIXMAP_TYPE_X)
+          ecore_x_netwm_window_type_set(win->ewin->evas_win,
+                                        ECORE_X_WINDOW_TYPE_UTILITY);
+#endif
         ecore_evas_name_class_set(win->ewin->ecore_evas, "E", "everything");
 
         e_win_show(win->ewin);
@@ -204,9 +205,11 @@ evry_show(E_Zone *zone, E_Zone_Edge edge, const char *params, Eina_Bool popup)
    _evry_selector_new(win, EVRY_PLUGIN_OBJECT);
 
    E_LIST_HANDLER_APPEND(win->handlers, ECORE_EVENT_KEY_DOWN, _evry_cb_key_down, win);
-
+#ifndef HAVE_WAYLAND_ONLY
+        if (e_comp_get(win->ewin)->comp_type == E_PIXMAP_TYPE_X)
    E_LIST_HANDLER_APPEND(win->handlers, ECORE_X_EVENT_SELECTION_NOTIFY, _evry_cb_selection_notify, win);
-   E_LIST_HANDLER_APPEND(win->handlers, ECORE_X_EVENT_WINDOW_SHOW, _evry_cb_show, win);
+#endif
+   evas_object_event_callback_add(win->ewin->client->frame, EVAS_CALLBACK_SHOW, (Evas_Object_Event_Cb)_evry_cb_show, win);
 
    E_LIST_HANDLER_APPEND(win->handlers, EVRY_EVENT_ITEM_CHANGED, _evry_cb_item_changed, win);
 
@@ -860,9 +863,8 @@ _evry_window_new(E_Zone *zone, E_Zone_Edge edge)
    evas_object_resize(o, mw, mh);
    evas_object_show(o);
 
-   evas_event_feed_mouse_in(win->evas, ecore_x_current_time_get(), NULL);
-   evas_event_feed_mouse_move(win->evas, -1000000, -1000000,
-                              ecore_x_current_time_get(), NULL);
+   evas_event_feed_mouse_in(win->evas, 0, NULL);
+   evas_event_feed_mouse_move(win->evas, -1000000, -1000000, 0, NULL);
 
    e_win_delete_callback_set(win->ewin, _evry_cb_win_delete);
    e_win_resize_callback_set(win->ewin, _evry_cb_win_resize);
@@ -1921,8 +1923,11 @@ _evry_cb_key_down(void *data, int type __UNUSED__, void *event)
 
         e_grabinput_release(ewin->evas_win, ewin->evas_win);
         evas_object_layer_set(ewin->client->frame, E_LAYER_CLIENT_NORMAL);
-        ecore_x_netwm_window_type_set(ewin->evas_win,
-                                      ECORE_X_WINDOW_TYPE_DIALOG);
+#ifndef HAVE_WAYLAND_ONLY
+        if (e_comp_get(ewin)->comp_type == E_PIXMAP_TYPE_X)
+          ecore_x_netwm_window_type_set(ewin->evas_win,
+                                        ECORE_X_WINDOW_TYPE_DIALOG);
+#endif
         EC_CHANGED(ewin->client);
         ewin->client->netwm.fetch.type = 1;
         ewin->client->netwm.state.skip_taskbar = 0;
@@ -2109,9 +2114,14 @@ _evry_cb_key_down(void *data, int type __UNUSED__, void *event)
           _evry_plugin_action(sel, 0);
         else if (!strcmp(ev->key, "v"))
           {
-             win->request_selection = EINA_TRUE;
-             ecore_x_selection_primary_request
-               (win->ewin->evas_win, ECORE_X_SELECTION_TARGET_UTF8_STRING);
+#ifndef HAVE_WAYLAND_ONLY
+             if (e_comp_get(win->ewin)->comp_type == E_PIXMAP_TYPE_X)
+               {
+                  win->request_selection = EINA_TRUE;
+                  ecore_x_selection_primary_request
+                    (win->ewin->evas_win, ECORE_X_SELECTION_TARGET_UTF8_STRING);
+               }
+#endif
           }
         else
           {
@@ -3017,15 +3027,14 @@ _evry_plugin_list_insert(Evry_State *s, Evry_Plugin *p)
      s->cur_plugins = eina_list_append(s->cur_plugins, p);
 }
 
-static Eina_Bool
-_evry_cb_show(Evry_Window *win, int type __UNUSED__, Ecore_X_Event_Window_Show *ev)
+static void
+_evry_cb_show(Evry_Window *win, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   if (win->ewin->evas_win != ev->event_win) return ECORE_CALLBACK_RENEW;
    if (win->grab)
      e_grabinput_get(win->ewin->evas_win, 0, win->ewin->evas_win);
-   return ECORE_CALLBACK_RENEW;
 }
 
+#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
 _evry_cb_selection_notify(void *data, int type __UNUSED__, void *event)
 {
@@ -3055,6 +3064,7 @@ _evry_cb_selection_notify(void *data, int type __UNUSED__, void *event)
 
    return ECORE_CALLBACK_PASS_ON;
 }
+#endif
 
 void
 evry_item_app_free(Evry_Item_App *app)

@@ -495,7 +495,7 @@ e_module_enable(E_Module *m)
                   break;
                }
           }
-        if (!_e_modules_initting)
+        if (_e_modules_hash && (!_e_modules_initting))
           _e_module_whitelist_check();
         return 1;
      }
@@ -973,17 +973,20 @@ _e_module_whitelist_check(void)
      }
 
 #ifndef HAVE_WAYLAND_ONLY
-     {
-      Ecore_X_Atom _x_tainted;
-      char *state;
-      unsigned int _e_tainted;
+   {
+      const char *state;
 
       state = badl ? "YES" : "NO";
-      _e_tainted = badl ? 1 : 0;
 
-      _x_tainted = ecore_x_atom_get("_E_TAINTED");
-      ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
-                                     _x_tainted, &_e_tainted, 1);
+      if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+        {
+           Ecore_X_Atom _x_tainted;
+           unsigned int _e_tainted = badl ? 1 : 0;
+
+           _x_tainted = ecore_x_atom_get("_E_TAINTED");
+           ecore_x_window_prop_card32_set(ecore_x_window_root_first_get(),
+                                          _x_tainted, &_e_tainted, 1);
+        }
 
       e_env_set("E19_TAINTED", state);
    }

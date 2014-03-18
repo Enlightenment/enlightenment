@@ -5060,7 +5060,6 @@ e_comp_x_init(void)
 
    if (!ecore_x_init(NULL))
      {
-        _e_comp_x_print_win(0);
         e_error_message_show(_("Enlightenment cannot initialize Ecore_X!\n"));
         return EINA_FALSE;
      }
@@ -5069,6 +5068,8 @@ e_comp_x_init(void)
 
    if (!ecore_x_composite_query())
      {
+        _e_comp_x_print_win(0);
+        ecore_x_shutdown();
         e_error_message_show
           (_("Your display server does not support XComposite, "
              "or Ecore-X was built without XComposite support. "

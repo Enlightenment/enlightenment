@@ -111,7 +111,8 @@ e_dnd_init(void)
    _type_text_x_moz_url = eina_stringshare_add("text/x-moz-url");
    _type_enlightenment_x_file = eina_stringshare_add("enlightenment/x-file");
 #ifndef HAVE_WAYLAND_ONLY
-   _text_atom = ecore_x_atom_get("text/plain");
+   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+     _text_atom = ecore_x_atom_get("text/plain");
 #endif
 
    _drop_win_hash = eina_hash_int32_new(NULL);
@@ -121,6 +122,7 @@ e_dnd_init(void)
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_MOUSE_MOVE, _e_dnd_cb_mouse_move, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_DOWN, _e_dnd_cb_key_down, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_EVENT_KEY_UP, _e_dnd_cb_key_up, NULL);
+   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return 1;
 #ifndef HAVE_WAYLAND_ONLY
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_ENTER, _e_dnd_cb_event_dnd_enter, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_LEAVE, _e_dnd_cb_event_dnd_leave, NULL);
@@ -130,12 +132,10 @@ e_dnd_init(void)
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_XDND_DROP, _e_dnd_cb_event_dnd_drop, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_SELECTION_NOTIFY, _e_dnd_cb_event_dnd_selection, NULL);
    E_LIST_HANDLER_APPEND(_event_handlers, ECORE_X_EVENT_WINDOW_HIDE, _e_dnd_cb_event_hide, NULL);
-#endif
 
    EINA_LIST_FOREACH(e_comp_list(), l, c)
      e_drop_xdnd_register_set(c->ee_win, 1);
 
-#ifndef HAVE_WAYLAND_ONLY
    _action = ECORE_X_ATOM_XDND_ACTION_PRIVATE;
 #endif
    return 1;
@@ -343,6 +343,7 @@ e_drag_xdnd_start(E_Drag *drag, int x, int y)
 
    if (_drag_win) return 0;
 #ifndef HAVE_WAYLAND_ONLY
+   if (e_comp_get(drag)->comp_type != E_PIXMAP_TYPE_X) return 0;
    _drag_win = ecore_x_window_input_new(drag->comp->win,
                                         drag->comp->man->x, drag->comp->man->y,
                                         drag->comp->man->w, drag->comp->man->h);
@@ -414,6 +415,7 @@ e_drop_xds_update(Eina_Bool enable, const char *value)
    int size;
    size_t len;
 
+   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return;
    enable = !!enable;
 
    xwin = ecore_x_selection_owner_get(ECORE_X_ATOM_SELECTION_XDND);
@@ -522,6 +524,7 @@ e_drop_handler_del(E_Drop_Handler *handler)
 EAPI int
 e_drop_xdnd_register_set(Ecore_Window win, int reg)
 {
+   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return 0;
    if (reg)
      {
         if (!eina_hash_find(_drop_win_hash, &win))

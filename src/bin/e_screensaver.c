@@ -82,10 +82,13 @@ e_screensaver_update(void)
         changed = EINA_TRUE;
      }
 
-#ifdef HAVE_WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+     {
+        if (changed)
+          ecore_x_screensaver_set(timeout, interval, blanking, expose);
+     }
 #else
-   if (changed)
-     ecore_x_screensaver_set(timeout, interval, blanking, expose);
 #endif
 }
 
@@ -93,19 +96,21 @@ EAPI void
 e_screensaver_force_update(void)
 {
    int timeout = e_screensaver_timeout_get(EINA_TRUE);
-#ifdef HAVE_WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+     {
+        ecore_x_screensaver_set(timeout + 10,
+                                0,
+     //                           e_config->screensaver_interval,
+                                !e_config->screensaver_blanking,
+                                !e_config->screensaver_expose);
+        ecore_x_screensaver_set(timeout,
+                                0,
+     //                           e_config->screensaver_interval,
+                                e_config->screensaver_blanking,
+                                e_config->screensaver_expose);
+     }
 #else
-   if (!getenv("DISPLAY")) return;
-   ecore_x_screensaver_set(timeout + 10,
-                           0,
-//                           e_config->screensaver_interval,
-                           !e_config->screensaver_blanking,
-                           !e_config->screensaver_expose);
-   ecore_x_screensaver_set(timeout,
-                           0,
-//                           e_config->screensaver_interval,
-                           e_config->screensaver_blanking,
-                           e_config->screensaver_expose);
 #endif
 }
 
@@ -335,8 +340,6 @@ e_screensaver_init(void)
 
    _e_screensaver_handler_powersave = ecore_event_handler_add
        (E_EVENT_POWERSAVE_UPDATE, _e_screensaver_handler_powersave_cb, NULL);
-
-   e_screensaver_force_update();
 
    return 1;
 }

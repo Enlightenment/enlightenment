@@ -865,7 +865,7 @@ AM_CONDITIONAL([HAVE_WL_FB], [test "x${WL_FB}" = "xtrue"])
 
 define([CHECK_MODULE_WL_DRM],
 [
-  if test "x${have_wayland}" = "xyes" && test "x${e_cv_want_wayland_only}" = "xyes"; then
+  if test "x${have_wayland}" = "xyes" ; then
     AC_E_CHECK_PKG(WL_DRM, [ ecore-drm >= $efl_version ecore >= $efl_version eina >= $efl_version ], [WL_DRM=true], [WL_DRM=false])
   else
     WL_DRM=false

@@ -1115,7 +1115,6 @@ e_comp_init(void)
       actions = eina_list_append(actions, act);
    }
 
-#ifdef HAVE_WAYLAND_ONLY
    {
       const char *eng;
       
@@ -1126,18 +1125,18 @@ e_comp_init(void)
 
            snprintf(buf, sizeof(buf), "wl_%s", eng);
            if (e_module_enable(e_module_new(buf)))
-             return EINA_TRUE;
+             goto out;
         }
    }
-#endif
 
 #ifndef HAVE_WAYLAND_ONLY
-   if (!e_comp_x_init()) return EINA_FALSE;
+   e_comp_x_init();
 #endif
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
-   if (!e_comp_wl_init()) return EINA_FALSE;
+   e_comp_wl_init();
 #endif
-
+   if (!compositors) return EINA_FALSE;
+out:
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_screensaver_on, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF, _e_comp_screensaver_off, NULL);
 

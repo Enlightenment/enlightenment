@@ -611,6 +611,7 @@ main(int argc, char **argv)
      }
    TS("Screens Init Done");
    _e_main_shutdown_push(_e_main_screens_shutdown);
+   e_screensaver_force_update();
 
    TS("E_Pointer Init");
    if (!e_pointer_init())
@@ -1708,7 +1709,8 @@ _e_main_cb_x_flusher(void *data __UNUSED__)
 {
    eet_clearcache();
 #ifndef HAVE_WAYLAND_ONLY
-   ecore_x_flush();
+   if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
+     ecore_x_flush();
 #endif
    return ECORE_CALLBACK_RENEW;
 }
