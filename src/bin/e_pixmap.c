@@ -3,7 +3,7 @@
 #ifdef HAVE_WAYLAND_CLIENTS
 # include "e_comp_wl.h"
 #endif
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
 # include "e_comp_x.h"
 #endif
 
@@ -23,7 +23,7 @@ struct _E_Pixmap
 #ifdef HAVE_WAYLAND_CLIENTS
    struct wl_resource *resource;
 #endif
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    uint32_t pixmap;
 #endif
    int w, h;
@@ -44,7 +44,7 @@ _e_pixmap_clear(E_Pixmap *cp, Eina_Bool cache)
    cp->image_argb = EINA_FALSE;
    switch (cp->type)
      {
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
       case E_PIXMAP_TYPE_X:
         if (cp->pixmap)
           {
@@ -64,7 +64,7 @@ _e_pixmap_clear(E_Pixmap *cp, Eina_Bool cache)
      }
 }
 
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
 static void
 _e_pixmap_image_clear_x(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -78,7 +78,7 @@ _e_pixmap_free(E_Pixmap *cp)
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
         if (!cp->images_cache) break;
         if (cp->client)
           evas_object_event_callback_add(cp->client->frame, EVAS_CALLBACK_FREE, _e_pixmap_image_clear_x, cp->images_cache);
@@ -121,7 +121,7 @@ _e_pixmap_new(E_Pixmap_Type type)
 static E_Pixmap *
 _e_pixmap_find(E_Pixmap_Type type, va_list *l)
 {
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    Ecore_X_Window xwin;
 #endif
 #ifdef HAVE_WAYLAND_CLIENTS
@@ -131,7 +131,7 @@ _e_pixmap_find(E_Pixmap_Type type, va_list *l)
    if (!pixmaps[type]) return NULL;
    switch (type)
      {
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
       case E_PIXMAP_TYPE_X:
         xwin = va_arg(*l, uint32_t);
         return eina_hash_find(pixmaps[type], &xwin);
@@ -155,7 +155,7 @@ e_pixmap_free(E_Pixmap *cp)
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
         if (cp->parent) eina_hash_set(pixmaps[cp->type], &cp->parent, NULL);
 #endif
         break;
@@ -182,7 +182,7 @@ e_pixmap_new(E_Pixmap_Type type, ...)
 {
    E_Pixmap *cp = NULL;
    va_list l;
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    Ecore_X_Window xwin;
 #endif
 #ifdef HAVE_WAYLAND_CLIENTS
@@ -194,7 +194,7 @@ e_pixmap_new(E_Pixmap_Type type, ...)
    switch (type)
      {
       case E_PIXMAP_TYPE_X:
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
         xwin = va_arg(l, uint32_t);
         if (pixmaps[type])
           {
@@ -323,7 +323,7 @@ e_pixmap_refresh(E_Pixmap *cp)
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
         {
            uint32_t pixmap;
 
@@ -482,7 +482,7 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
         ns->type = EVAS_NATIVE_SURFACE_X11;
         ns->data.x11.visual = cp->visual;
         ns->data.x11.pixmap = cp->pixmap;
@@ -518,7 +518,7 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
         if (cache)
           {
              void *i;
@@ -578,7 +578,7 @@ e_pixmap_image_refresh(E_Pixmap *cp)
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
         if ((!cp->visual) || (!cp->client->depth)) return EINA_FALSE;
         cp->image = ecore_x_image_new(cp->w, cp->h, cp->visual, cp->client->depth);
         if (cp->image)
@@ -629,7 +629,7 @@ e_pixmap_image_data_get(E_Pixmap *cp)
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
         return ecore_x_image_data_get(cp->image, &cp->ibpl, NULL, &cp->ibpp);
 #endif
         break;
@@ -653,11 +653,13 @@ e_pixmap_image_data_argb_convert(E_Pixmap *cp, void *pix, void *ipix, Eina_Recta
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
+#ifndef HAVE_WAYLAND_ONLY
         if (cp->image_argb) return EINA_FALSE;
         return ecore_x_image_to_argb_convert(ipix, cp->ibpp, cp->ibpl,
                                              cp->cmap, cp->visual,
                                              r->x, r->y, r->w, r->h,
                                              pix, stride, r->x, r->y);
+#endif
       case E_PIXMAP_TYPE_WL:
         return EINA_TRUE; //already guaranteed to be argb
       default:
@@ -674,8 +676,10 @@ e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r)
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
+#ifndef HAVE_WAYLAND_ONLY
         if (!cp->pixmap) return EINA_FALSE;
         return ecore_x_image_get(cp->image, cp->pixmap, r->x, r->y, r->x, r->y, r->w, r->h);
+#endif
       case E_PIXMAP_TYPE_WL:
         return EINA_TRUE; //this call is a NOP
       default:

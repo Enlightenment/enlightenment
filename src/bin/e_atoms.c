@@ -1,6 +1,7 @@
 #include "e.h"
 
 /* Atoms */
+#ifndef HAVE_WAYLAND_ONLY
 EAPI Ecore_X_Atom E_ATOM_MANAGED = 0;
 EAPI Ecore_X_Atom E_ATOM_ZONE = 0;
 EAPI Ecore_X_Atom E_ATOM_DESK = 0;
@@ -12,11 +13,13 @@ EAPI Ecore_X_Atom E_ATOM_WINDOW_STATE = 0;
 EAPI Ecore_X_Atom E_ATOM_WINDOW_STATE_CENTERED = 0;
 EAPI Ecore_X_Atom E_ATOM_DESKTOP_FILE = 0;
 EAPI Ecore_X_Atom E_ATOM_ZONE_GEOMETRY = 0;
+#endif
 
 /* externally accessible functions */
 EINTERN int
 e_atoms_init(void)
 {
+#ifndef HAVE_WAYLAND_ONLY
    const char *atom_names[] = {
       "__E_WINDOW_MANAGED",
       "__E_WINDOW_ZONE",
@@ -44,6 +47,7 @@ e_atoms_init(void)
    E_ATOM_WINDOW_STATE_CENTERED = atoms[8];
    E_ATOM_DESKTOP_FILE = atoms[9];
    E_ATOM_ZONE_GEOMETRY = atoms[10];
+#endif
    return 1;
 }
 

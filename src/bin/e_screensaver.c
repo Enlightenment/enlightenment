@@ -82,9 +82,9 @@ e_screensaver_update(void)
         changed = EINA_TRUE;
      }
 
-   if (changed)
-#ifdef WAYLAND_ONLY
+#ifdef HAVE_WAYLAND_ONLY
 #else
+   if (changed)
      ecore_x_screensaver_set(timeout, interval, blanking, expose);
 #endif
 }
@@ -93,7 +93,7 @@ EAPI void
 e_screensaver_force_update(void)
 {
    int timeout = e_screensaver_timeout_get(EINA_TRUE);
-#ifdef WAYLAND_ONLY
+#ifdef HAVE_WAYLAND_ONLY
 #else
    if (!getenv("DISPLAY")) return;
    ecore_x_screensaver_set(timeout + 10,

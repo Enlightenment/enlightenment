@@ -6,7 +6,12 @@
 
 #  define WL_HIDE_DEPRECATED
 #  include <pixman.h>
+
+/* NB: Turn off shadow warnings for Wayland includes */
+#  pragma GCC diagnostic ignored "-Wshadow"
 #  include <wayland-server.h>
+#  pragma GCC diagnostic pop
+
 #  include <xkbcommon/xkbcommon.h>
 
 /* headers for terminal support */
@@ -473,7 +478,7 @@ struct _E_Wayland_Compositor
 
    E_Wayland_Shell_Interface shell_interface;
 
-#ifdef WAYLAND_ONLY
+#ifdef HAVE_WAYLAND_ONLY
    Eina_Bool focus : 1;
 
    unsigned int output_pool;
@@ -592,7 +597,7 @@ extern EAPI E_Wayland_Compositor *_e_wl_comp;
 EAPI Eina_Bool e_comp_wl_init(void);
 EINTERN void e_comp_wl_shutdown(void);
 
-#ifdef WAYLAND_ONLY
+#ifdef HAVE_WAYLAND_ONLY
 EAPI int e_comp_wl_input_read(int fd EINA_UNUSED, unsigned int mask EINA_UNUSED, void *data);
 #endif
 

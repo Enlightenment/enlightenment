@@ -215,6 +215,7 @@ _box_button_cb_dnd_selection_notify(void *data, const char *type, void *event)
    if (!args) goto out;
    args = e_util_string_append_quoted(args, &size, &length, inst->dnd_path);
    if (!args) goto out;
+#ifndef HAVE_WAYLAND_ONLY
    if (link_drop || (e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_LINK))
      e_fm2_client_file_symlink(inst->o_fm, args);
    else if (e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_COPY)
@@ -223,6 +224,7 @@ _box_button_cb_dnd_selection_notify(void *data, const char *type, void *event)
      e_fm2_client_file_move(inst->o_fm, args);
    else if (e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_ASK)
      e_fm2_drop_menu(inst->o_fm, args);
+#endif
    free(args);
 out:
    E_FREE(inst->dnd_path);

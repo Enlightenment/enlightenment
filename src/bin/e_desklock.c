@@ -420,12 +420,14 @@ _e_desklock_cb_idle_poller(void *data __UNUSED__)
 {
    if ((e_config->desklock_autolock_idle) && (!e_config->mode.presentation))
      {
-        double idle, max;
+        double idle = 0.0, max;
 
         /* If a desklock is already up, bail */
         if ((_e_custom_desklock_exe) || (_e_desklock_state)) return ECORE_CALLBACK_RENEW;
 
+#ifndef HAVE_WAYLAND_ONLY
         idle = ecore_x_screensaver_idle_time_get();
+#endif
         max = e_config->desklock_autolock_idle_timeout;
         if (_e_desklock_ask_presentation_count > 0)
           max *= (1 + _e_desklock_ask_presentation_count);
@@ -491,7 +493,9 @@ _e_desklock_ask_presentation_no_increase(void *data __UNUSED__, E_Dialog *dia)
    blanking = e_config->screensaver_blanking;
    expose = e_config->screensaver_expose;
 
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_screensaver_set(timeout, interval, blanking, expose);
+#endif
    e_object_del(E_OBJECT(dia));
 }
 

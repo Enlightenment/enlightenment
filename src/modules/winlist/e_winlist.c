@@ -51,7 +51,7 @@ static int _hold_count = 0;
 static int _hold_mod = 0;
 static E_Winlist_Activate_Type _activate_type = 0;
 static Eina_List *_handlers = NULL;
-static Ecore_X_Window _input_window = 0;
+static Ecore_Window _input_window = 0;
 static int _scroll_to = 0;
 static double _scroll_align_to = 0.0;
 static double _scroll_align = 0.0;
@@ -103,6 +103,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 
    if (_winlist) return 0;
 
+#ifndef HAVE_WAYLAND_ONLY
    _input_window = ecore_x_window_input_new(zone->comp->man->root, 0, 0, 1, 1);
    ecore_x_window_show(_input_window);
    if (!e_grabinput_get(_input_window, 0, _input_window))
@@ -111,6 +112,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
         _input_window = 0;
         return 0;
      }
+#endif
 
    w = (double)zone->w * e_config->winlist_pos_size_w;
    if (w > e_config->winlist_pos_max_w) w = e_config->winlist_pos_max_w;
@@ -131,9 +133,11 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    e_client_resize_cancel();
    e_client_focus_track_freeze();
 
+#ifndef HAVE_WAYLAND_ONLY
    evas_event_feed_mouse_in(zone->comp->evas, ecore_x_current_time_get(), NULL);
    evas_event_feed_mouse_move(zone->comp->evas, -1000000, -1000000,
                               ecore_x_current_time_get(), NULL);
+#endif
 
    evas_event_freeze(zone->comp->evas);
    o = edje_object_add(zone->comp->evas);
@@ -258,7 +262,9 @@ e_winlist_hide(void)
    E_FREE_FUNC(_animator, ecore_animator_del);
 
    e_grabinput_release(_input_window, _input_window);
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_window_free(_input_window);
+#endif
    _input_window = 0;
    if (ec)
      {

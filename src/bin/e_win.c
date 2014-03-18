@@ -1,6 +1,5 @@
 #include "e.h"
 #ifdef HAVE_WAYLAND_CLIENTS
-# include <Ecore_Wayland.h>
 # include "e_comp_wl.h"
 #endif
 
@@ -77,12 +76,20 @@ _elm_win_trap_show(void *data, Evas_Object *o)
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
    if (!ctx->client)
      {
-        Ecore_X_Window xwin = elm_win_xwindow_get(o);
-        E_Client *ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, xwin);
+        E_Client *ec;
+        Ecore_Window win;
+
+#ifndef HAVE_WAYLAND_ONLY
+        win = elm_win_xwindow_get(o);
+        ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, win);
+#else
+        win = elm_win_window_id_get(o);
+        ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, win);
+#endif
         Evas *e = evas_object_evas_get(o);
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(e);
 
-        ctx->xwin = xwin;
+        ctx->xwin = win;
 
         if (ec)
           ctx->client = ec;
@@ -91,10 +98,22 @@ _elm_win_trap_show(void *data, Evas_Object *o)
              E_Pixmap *cp;
              E_Comp *c = NULL;
 
-             cp = e_pixmap_new(E_PIXMAP_TYPE_X, xwin);
+#ifndef HAVE_WAYLAND_ONLY
+             cp = e_pixmap_new(E_PIXMAP_TYPE_X, win);
+#else
+             cp = e_pixmap_new(E_PIXMAP_TYPE_WL, win);
+#endif
              EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_TRUE);
-             if (eina_list_count(e_comp_list()) > 1)
-               c = e_comp_find_by_window(ecore_x_window_root_get(xwin));
+
+             /* if (eina_list_count(e_comp_list()) > 1) */
+             /*   { */
+/* #ifndef HAVE_WAYLAND_ONLY */
+             /*      c = e_comp_find_by_window(ecore_x_window_root_get(win)); */
+/* #else */
+             /*      c = ; */
+/* #endif */
+             /*   } */
+
              if (!c)
                c = e_comp_get(NULL);
              ctx->client = e_client_new(c, cp, 0, 1);
@@ -104,6 +123,7 @@ _elm_win_trap_show(void *data, Evas_Object *o)
         ctx->client->internal_ecore_evas = ee;
         evas_object_data_set(o, "E_Client", ctx->client);
      }
+//#endif
    if (ctx->centered) e_comp_object_util_center(ctx->client->frame);
    evas_object_show(ctx->client->frame);
    return EINA_TRUE;
@@ -324,13 +344,17 @@ e_win_new(E_Comp *c)
    win->max_aspect = 0.0;
    wins = eina_list_append(wins, win);
 
-#ifndef WAYLAND_ONLY
    if (c->comp_type == E_PIXMAP_TYPE_X)
      {
         win->pointer = e_pointer_window_new(win->evas_win, 1);
         win->pointer->color = c->pointer->color;
      }
-#endif
+   else if (c->comp_type == E_PIXMAP_TYPE_WL)
+     {
+        win->pointer = e_pointer_canvas_new(win->evas, 1);
+        win->pointer->color = c->pointer->color;
+     }
+
    return win;
 }
 

@@ -168,7 +168,7 @@ is_tilable(const E_Client *ec)
    if (ec->icccm.min_h == ec->icccm.max_h && ec->icccm.max_h > 0)
      return false;
 
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    if (ec->icccm.gravity == ECORE_X_GRAVITY_STATIC)
      return false;
 #endif

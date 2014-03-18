@@ -28,7 +28,9 @@ e_dpms_update(void)
    if (_e_dpms_enabled != enabled)
      {
         _e_dpms_enabled = enabled;
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_dpms_enabled_set(enabled);
+#endif
      }
    if (!enabled) return;
 
@@ -54,7 +56,9 @@ e_dpms_update(void)
         _e_dpms_timeout_off = off;
         changed = EINA_TRUE;
      }
+#ifndef HAVE_WAYLAND_ONLY
    if (changed) ecore_x_dpms_timeouts_set(standby, suspend, off);
+#endif
 }
 
 EAPI void
@@ -65,7 +69,9 @@ e_dpms_force_update(void)
 
    enabled = ((e_config->screensaver_enable) &&
               (!e_config->mode.presentation));
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_dpms_enabled_set(enabled);
+#endif
    if (!enabled) return;
 
    if (e_config->screensaver_enable)
@@ -75,8 +81,10 @@ e_dpms_force_update(void)
         suspend += 6;
         off += 7;
      }
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_dpms_timeouts_set(standby + 10, suspend + 10, off + 10);
    ecore_x_dpms_timeouts_set(standby, suspend, off);
+#endif
 }
 
 static Eina_Bool
@@ -134,9 +142,11 @@ e_dpms_init(void)
    _e_dpms_handler_desk_show = ecore_event_handler_add
        (E_EVENT_DESK_SHOW, _e_dpms_handler_desk_show_cb, NULL);
 
+#ifndef HAVE_WAYLAND_ONLY
    _e_dpms_enabled = ecore_x_dpms_enabled_get();
    ecore_x_dpms_timeouts_get
      (&_e_dpms_timeout_standby, &_e_dpms_timeout_suspend, &_e_dpms_timeout_off);
+#endif
 
    e_dpms_force_update();
 

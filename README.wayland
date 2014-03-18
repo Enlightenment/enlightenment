@@ -1,0 +1,133 @@
+Wayland support in Enlightenment 0.19.0
+
+Caution: Support for running Enlightenment in a Wayland-Only
+configuration is considered Highly Experimental !! Use at your own
+risk !! We are not responsible if it nukes your files, burns up your cpu, 
+kills your cat, sells your house, divorces you, or otherwise messes
+Anything up !
+
+Use at your own risk !! You have been warned !!
+
+
+Requirements:
+-------------
+
+Aside from the normal requirements that Enlightenment needs, there are
+a few things to note in order to get Enlightenment to build without
+X11 support.
+
+Firstly, you MUST have EFL built with the following options:
+
+  --enable-drm
+  --enable-wayland
+
+This Readme does not address the dependencies needed to enable Wayland
+in EFL. If you require any information for that, please see:
+
+  https://phab.enlightenment.org/w/wayland/
+
+If you would like support for EGL in Wayland, then also build EFL with:
+
+  --enable-egl
+  --with-opengl=es
+
+The above options can be enabled for EFL without any adverse effects to
+existing applications.
+
+
+Next, you will need to adjust the options that you pass to
+Enlightenment during the compile phase.
+
+Please note, we recommend installing This version of Enlightenment into it's 
+own separate prefix so that you can still safely fallback to the X11 version.
+
+This can be done by passing:
+
+  --prefix=<some_other_install_location>
+
+Now, on to the magic bits ;)
+
+In order for Enlightenment to be compiled without X11, using Wayland
+only, you will need to pass a few more options to the configure stage
+of Enlightenment:
+
+  --enable-wayland-only
+  --enable-wayland-clients
+  --enable-wl-drm
+
+Since this is all still a work-in-progress, there are a few
+Enlightenment modules that have not been "fixed" to work without X11
+yet. Those will need to be disabled:
+
+  --disable-shot
+  --disable-xkbswitch
+  --disable-conf-randr
+  --disable-everything (don't worry, this is just the everything module)
+
+
+At this stage, you should have EFL properly built, and Enlightenment
+properly built. Let's move on to running it...
+
+
+Usage:
+-------------
+
+Hopefully at this stage you have successfully built EFL and
+Enlightenment in preparation for a Wayland-only setup. Congratulations
+!! Now, let's get it running...
+
+The following steps assume you are currently at a Virtual Terminal
+without anything else running (ie: no other window managers, X11, etc).
+
+In order for Enlightenment to function without X11, we need to setup
+the environment. In your current tty, do:
+
+  export E_WL_FORCE=drm
+  export ELM_ENGINE=wayland_shm (or wayland_egl)
+
+This will make sure that Enlightenment renders using DRM, and any
+Elementary applications use a Wayland engine.
+
+At this point, you should just be able 'cd' to the Enlightenment
+prefix where you installed, and issue:
+
+  ./enlightenment_start
+
+Please Note: It is suggested that you create a separate configuration
+profile with only a Minimum of modules loaded. Due to the experimental
+(and ongoing) status of Wayland-Only support in Enlightenment, Many
+modules May Not Work. Very few have actually been tested yet !!
+
+If you have a separate configuration profile (as suggested) that you
+would like to use, you can tell Enlightenment to use that when you
+start it:
+
+  ./enlightenment_start -profile <my_profile>
+
+
+Notes:
+-------------
+
+Please Note: There is currently NO support for running X11
+applications with this !! So basically, your web browsers won't work,
+don't expect to be able to run Firefox, Thunderbird, or practically
+Any Other X11 application yet. About the only things "known" to work
+so far are EFL/Elementary applications.
+
+
+Bugs:
+-------------
+
+Yes, there are Lots of them !!
+Yes, I am already aware of 99.9% of them. 
+No, you do not need to start reporting them yet !!
+
+When we feel that the work is reaching a "finalizing" stage, we will
+put out a request for actual testers and bug reports !
+
+You are here because you want to play...because you want to
+experiment...because you want to be "cool" ;) You are not hear to nag
+me with complaints & reports about things I am already well aware of
+;) Save yourself some time, and me some stress !! ;)
+
+

@@ -220,12 +220,14 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 {
    Evas_Object *o, *ob;
    double sc = 1.0;
-   int dpi, x = 0, y = 0;
+   int dpi = 0, x = 0, y = 0;
 
    _fill_data(cfdata);
    o = e_widget_table_add(evas, 1);
 
+#ifndef HAVE_WAYLAND_ONLY
    dpi = ecore_x_dpi_get();
+#endif
    if ((dpi > 0) && (cfdata->base_dpi > 0))
      sc = (double)dpi / (double)cfdata->base_dpi;
    
@@ -306,8 +308,10 @@ _adv_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data *c
    e_widget_on_change_hook_set(ow, _adv_policy_changed, cfdata);
    e_widget_list_object_append(o, ow, 1, 1, 0.5);
 
+#ifndef HAVE_WAYLAND_ONLY
    snprintf(buff, sizeof(buff),
             _("Base DPI (Currently %i DPI)"), ecore_x_dpi_get());
+#endif
    ow = e_widget_label_add(evas, buff);
    cfdata->gui.adv.dpi_lbl = ow;
    e_widget_list_object_append(o, ow, 1, 1, 0.5);

@@ -892,9 +892,11 @@ _e_desk_hide_begin(E_Desk *desk, int dx, int dy)
 static void
 _e_desk_window_profile_change_protocol_set(void)
 {
+#ifndef HAVE_WAYLAND_ONLY
    Eina_List *l = NULL;
    E_Manager *man;
 
    EINA_LIST_FOREACH(e_manager_list(), l, man)
      ecore_x_e_window_profile_supported_set(man->root, e_config->use_desktop_window_profile);
+#endif
 }

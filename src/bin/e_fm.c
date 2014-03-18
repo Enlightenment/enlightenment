@@ -6500,6 +6500,7 @@ _e_fm_drop_menu_queue(Evas_Object *e_fm, void *args, int op)
    if (!vol->mounted)
      {
         /* this should get picked up by the post-mount callback */
+#ifndef HAVE_WAYLAND_ONLY
         switch (op)
           {
            case 0: //copy
@@ -6514,6 +6515,7 @@ _e_fm_drop_menu_queue(Evas_Object *e_fm, void *args, int op)
              mop->action = ECORE_X_ATOM_XDND_ACTION_LINK;
              break;
           }
+#endif
         return EINA_TRUE;
      }
    switch (op)
@@ -6621,6 +6623,7 @@ _e_fm2_cb_dnd_selection_notify_post_mount(E_Volume *vol)
         if (mp)
           {
              mop->args = e_util_string_append_quoted(mop->args, &mop->size, &mop->length, mp);
+#ifndef HAVE_WAYLAND_ONLY
              if (mop->action == ECORE_X_ATOM_XDND_ACTION_ASK)
                continue;
              else if (mop->action == ECORE_X_ATOM_XDND_ACTION_MOVE)
@@ -6629,6 +6632,7 @@ _e_fm2_cb_dnd_selection_notify_post_mount(E_Volume *vol)
                e_fm2_client_file_copy(ic->sd->obj, mop->args);
              else if (mop->action == ECORE_X_ATOM_XDND_ACTION_LINK)
                e_fm2_client_file_symlink(ic->sd->obj, mop->args);
+#endif
           }
         else
           e_util_dialog_show(_("Error"), _("The recent DND operation requested for '%s' has failed."), vol->label ? : vol->udi);
@@ -6763,6 +6767,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
              ((f - fp - 1 > 0) && (!strncmp(sd->realpath, fp, f - fp - 1)))) &&
             ((size_t)(f - fp - 1) == strlen(sd->realpath)))
           {
+#ifndef HAVE_WAYLAND_ONLY
              if ((e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_MOVE) || (sd->config->view.link_drop))
                {
                   lnk = EINA_TRUE;
@@ -6770,10 +6775,12 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
                     goto end;
                   memerr = EINA_TRUE; // prevent actual file move op
                }
+#endif
           }
      }
    if (!fsel)
      {
+#ifndef HAVE_WAYLAND_ONLY
         if (e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_COPY)
           {
              /* most likely someone is trying to dnd some text to us */
@@ -6782,6 +6789,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
                isel = eina_list_append(isel, strdup(fp));
              ecore_thread_global_data_add("efm_text_uri_list", isel, (Eina_Free_Cb)e_util_string_list_free, 0);
           }
+#endif
         /* no files, abort! */
         return;
      }
@@ -6932,6 +6940,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
 
                        if (sd->drop_icon->mount_timer) ecore_timer_reset(sd->drop_icon->mount_timer);
                        else sd->drop_icon->mount_timer = ecore_timer_add(15., (Ecore_Task_Cb)_e_fm2_cb_dnd_selection_notify_post_mount_timer, sd->drop_icon);
+#ifndef HAVE_WAYLAND_ONLY
                        if ((e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_ASK) ||
                            ((sd->config->view.link_drop) || (!sd->drop_icon)))
                          /* this here's some buuuullshit */
@@ -6939,6 +6948,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
                        else if (e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_MOVE)
                          /* set copy if we're over a device */
                          e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_COPY);
+#endif
                        mop = e_fm2_device_mount_op_add(sd->drop_icon->mount, args, size, length);
                        mop->ic = sd->drop_icon;
                        mop->mnt = sd->drop_icon->mount;
@@ -7031,6 +7041,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
      {
         Eina_Bool do_lnk = EINA_FALSE, do_move = EINA_FALSE, do_copy = EINA_FALSE;
 
+#ifndef HAVE_WAYLAND_ONLY
         if (e_drop_handler_action_get() == ECORE_X_ATOM_XDND_ACTION_COPY)
           {
              lnk = EINA_TRUE;
@@ -7061,6 +7072,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
           e_fm2_client_file_copy(sd->obj, args);
         else if (do_move)
           e_fm2_client_file_move(sd->obj, args);
+#endif
         if ((!do_lnk) && (!do_copy) && (!do_move))
           {
              e_fm2_drop_menu(sd->obj, args);
@@ -7404,7 +7416,8 @@ _e_fm2_cb_drag_finished(E_Drag *drag, int dropped __UNUSED__)
 static void
 _e_fm_drag_key_down_cb(E_Drag *drag, Ecore_Event_Key *e)
 {
-   if (!strncmp(e->key, "Alt", 3))
+#ifndef HAVE_WAYLAND_ONLY
+   if (!strncmp(e->keyname, "Alt", 3))
      {
         ecore_x_dnd_source_action_set(ECORE_X_ATOM_XDND_ACTION_ASK);
         e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_ASK);
@@ -7440,11 +7453,13 @@ _e_fm_drag_key_down_cb(E_Drag *drag, Ecore_Event_Key *e)
              edje_object_signal_emit(drag->object, "e,state,copy", "e");
           }
      }
+#endif
 }
 
 static void
 _e_fm_drag_key_up_cb(E_Drag *drag, Ecore_Event_Key *e)
 {
+#ifndef HAVE_WAYLAND_ONLY
    Ecore_X_Atom act = ECORE_X_ATOM_XDND_ACTION_MOVE;
    /* Default action would be move. ;) */
 
@@ -7457,6 +7472,7 @@ _e_fm_drag_key_up_cb(E_Drag *drag, Ecore_Event_Key *e)
 
    ecore_x_dnd_source_action_set(act);
    e_drop_handler_action_set(act);
+#endif
 
    edje_object_signal_emit(drag->object, "e,state,move", "e");
 }
@@ -7631,8 +7647,9 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
                d->x = ic->sd->x, d->y = ic->sd->y;
              else
                d->x = ic->x + ic->sd->x - ic->sd->pos.x, d->y = ic->y + ic->sd->y - ic->sd->pos.y;
+#ifndef HAVE_WAYLAND_ONLY
              e_drop_handler_action_set(ECORE_X_ATOM_XDND_ACTION_MOVE);
-
+#endif
              e_drag_object_set(d, layout ?: o);
              if (layout)
                {
@@ -10299,7 +10316,9 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    ic->entry_widget = e_widget_entry_add(e, NULL, NULL, NULL, NULL);
    evas_object_event_callback_add(ic->entry_widget, EVAS_CALLBACK_KEY_DOWN,
                                   _e_fm2_icon_entry_widget_cb_key_down, ic);
+#ifndef HAVE_WAYLAND_ONLY
    evas_event_feed_mouse_out(evas_object_evas_get(ic->obj), ecore_x_current_time_get(), NULL);
+#endif
    if (c)
      e_comp_grab_input(c, 0, 1);
    ic->keygrab = !!c;
@@ -10312,8 +10331,9 @@ _e_fm2_icon_entry_widget_add(E_Fm2_Icon *ic)
    e_widget_entry_select_all(ic->entry_widget);
    ic->sd->iop_icon = ic;
    ic->sd->typebuf.disabled = EINA_TRUE;
+#ifndef HAVE_WAYLAND_ONLY
    evas_event_feed_mouse_in(e, ecore_x_current_time_get(), NULL);
-
+#endif
    return ic->entry_widget;
 }
 

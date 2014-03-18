@@ -72,7 +72,9 @@ _e_grab_dialog_free(E_Grab_Dialog *eg)
    if (eg->grab_win)
      {
         e_grabinput_release(eg->grab_win, eg->grab_win);
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_window_free(eg->grab_win);
+#endif
      }
    E_FREE_LIST(eg->handlers, ecore_event_handler_del);
 
@@ -137,9 +139,11 @@ e_grab_dialog_show(E_Win *parent, Eina_Bool is_mouse, Ecore_Event_Handler_Cb key
    e_object_del_attach_func_set(E_OBJECT(eg->dia), _e_grab_dialog_dia_del);
    e_win_delete_callback_set(eg->dia->win, _e_grab_dialog_delete);
 
+#ifndef HAVE_WAYLAND_ONLY
    eg->grab_win = ecore_x_window_input_new(c->man->root, 0, 0, 1, 1);
    ecore_x_window_show(eg->grab_win);
    e_grabinput_get(eg->grab_win, 0, eg->grab_win);
+#endif
 
    eg->key = key;
    eg->mouse = mouse;

@@ -228,7 +228,7 @@ _e_pointer_type_set(E_Pointer *p,
    /* Do not set type if in "hidden mode" */
    if (!e_config->show_cursor)
      {
-#ifdef WAYLAND_ONLY
+#ifdef HAVE_WAYLAND_ONLY
         evas_object_hide(p->pointer_image);
 #else
         if (!p->canvas)
@@ -266,55 +266,57 @@ _e_pointer_type_set(E_Pointer *p,
         return;
      }
 fallback:
-#ifndef WAYLAND_ONLY
    if (p->canvas) return;
-   {
-      Ecore_X_Cursor cursor = 0;
+     {
+        E_FREE_FUNC(p->pointer_image, evas_object_del);
+        if (p->evas) _e_pointer_canvas_del(p);
 
-      E_FREE_FUNC(p->pointer_image, evas_object_del);
-      if (p->evas) _e_pointer_canvas_del(p);
-      if (!strcmp(type, "move"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_FLEUR);
-#if 0
-      else if (!strcmp(type, "resize"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_SIZING);
+#ifndef HAVE_WAYLAND_ONLY
+        Ecore_X_Cursor cursor = 0;
+
+        if (!strcmp(type, "move"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_FLEUR);
+# if 0
+        else if (!strcmp(type, "resize"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_SIZING);
+# endif
+        else if (!strcmp(type, "resize_tl"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_LEFT_CORNER);
+        else if (!strcmp(type, "resize_t"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_SIDE);
+        else if (!strcmp(type, "resize_tr"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_RIGHT_CORNER);
+        else if (!strcmp(type, "resize_r"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_RIGHT_SIDE);
+        else if (!strcmp(type, "resize_br"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_RIGHT_CORNER);
+        else if (!strcmp(type, "resize_b"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_SIDE);
+        else if (!strcmp(type, "resize_bl"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_LEFT_CORNER);
+        else if (!strcmp(type, "resize_l"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_LEFT_SIDE);
+        else if (!strcmp(type, "entry"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_XTERM);
+        else if (!strcmp(type, "default"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_LEFT_PTR);
+        else if (!strcmp(type, "plus"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_PLUS);
+        else if (!strcmp(type, "hand"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_HAND1);
+        else if (!strcmp(type, "rotate"))
+          cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_EXCHANGE);
+        else
+          {
+             printf("Unknown pointer type: %s\n", type);
+             cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_ARROW);
+          }
+        if (!cursor) printf("X Cursor for %s is missing\n", type);
+        ecore_x_window_cursor_set(p->win, cursor);
+        if (cursor) ecore_x_cursor_free(cursor);
 #endif
-      else if (!strcmp(type, "resize_tl"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_LEFT_CORNER);
-      else if (!strcmp(type, "resize_t"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_SIDE);
-      else if (!strcmp(type, "resize_tr"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_TOP_RIGHT_CORNER);
-      else if (!strcmp(type, "resize_r"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_RIGHT_SIDE);
-      else if (!strcmp(type, "resize_br"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_RIGHT_CORNER);
-      else if (!strcmp(type, "resize_b"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_SIDE);
-      else if (!strcmp(type, "resize_bl"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_BOTTOM_LEFT_CORNER);
-      else if (!strcmp(type, "resize_l"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_LEFT_SIDE);
-      else if (!strcmp(type, "entry"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_XTERM);
-      else if (!strcmp(type, "default"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_LEFT_PTR);
-      else if (!strcmp(type, "plus"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_PLUS);
-      else if (!strcmp(type, "hand"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_HAND1);
-      else if (!strcmp(type, "rotate"))
-        cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_EXCHANGE);
-      else
-        {
-           printf("Unknown pointer type: %s\n", type);
-           cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_ARROW);
-        }
-      if (!cursor) printf("X Cursor for %s is missing\n", type);
-      ecore_x_window_cursor_set(p->win, cursor);
-      if (cursor) ecore_x_cursor_free(cursor);
-   }
-#endif
+     }
+   return;
 }
 
 static void
@@ -440,15 +442,16 @@ _e_pointer_idle_timer(void *data)
    return EINA_TRUE;
 }
 
-#ifndef WAYLAND_ONLY
 static Eina_Bool
 _e_pointer_cb_idle_timer_pre(void *data)
 {
    E_Pointer *p;
-   int x, y;
+   int x = 0, y = 0;
 
    if (!(p = data)) return ECORE_CALLBACK_RENEW;
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_pointer_xy_get(p->win, &x, &y);
+#endif
    p->x = x;
    p->y = y;
    if (p->canvas)
@@ -486,7 +489,7 @@ static Eina_Bool
 _e_pointer_cb_idle_poller(void *data)
 {
    E_Pointer *p;
-   int x, y;
+   int x = 0, y = 0;
 
    if (!(p = data)) return ECORE_CALLBACK_RENEW;
    if ((e_powersave_mode_get() >= E_POWERSAVE_MODE_MEDIUM) ||
@@ -495,9 +498,11 @@ _e_pointer_cb_idle_poller(void *data)
         p->idle_poller = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
+#ifndef HAVE_WAYLAND_ONLY
    /* check if pointer actually moved since the 1 second post-mouse move idle
     * pre-timer that fetches the position */
    ecore_x_pointer_xy_get(p->win, &x, &y);
+#endif
    if ((x != p->x) || (y != p->y))
      {
         /* it moved - so we are not idle yet - record position and wait
@@ -515,7 +520,6 @@ _e_pointer_cb_idle_poller(void *data)
      _e_pointer_idle(p);
    return ECORE_CALLBACK_RENEW;
 }
-#endif
 
 
 /* externally accessible functions */
@@ -561,7 +565,7 @@ e_pointer_window_new(Ecore_Window win,
         p->color = c->pointer->color;
    }
 
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_cursor_size_set(e_config->cursor_size * 3 / 4);
 #endif
    if (filled) e_pointer_type_push(p, p, "default");
@@ -653,7 +657,7 @@ e_pointer_image_set(E_Pointer *p, E_Pixmap *cp, int w, int h, int hot_x, int hot
              evas_object_show(p->pointer_image);
           }
      }
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
    else if (!p->e_cursor)
      {
          Ecore_X_Cursor cur;
@@ -685,7 +689,7 @@ e_pointers_size_set(int size)
              if (!p->canvas)
                _e_pointer_canvas_resize(p, size, size);
           }
-#ifndef WAYLAND_ONLY
+#ifndef HAVE_WAYLAND_ONLY
         else
           ecore_x_cursor_size_set(e_config->cursor_size * 3 / 4);
 #endif
@@ -703,8 +707,7 @@ EAPI void
 e_pointer_hide(E_Pointer *p)
 {
    if (!p) return;
-#ifdef WAYLAND_ONLY
-#else
+#ifndef HAVE_WAYLAND_ONLY
    if (p->win) ecore_x_window_cursor_set(p->win, 0);
 #endif
    if (p->canvas)
@@ -727,13 +730,13 @@ e_pointer_type_push(E_Pointer *p,
    if (!p->canvas)
      {
         evas_object_hide(p->pointer_image);
-#ifndef WAYLAND_ONLY
         if (p->blocks)
           {
+#ifndef HAVE_WAYLAND_ONLY
              ecore_x_cursor_size_set(e_config->cursor_size * 3 / 4);
+#endif
              _e_pointer_canvas_resize(p, e_config->cursor_size, e_config->cursor_size);
           }
-#endif
      }
    _e_pointer_type_set(p, type);
 
@@ -779,15 +782,13 @@ e_pointer_type_pop(E_Pointer *p,
         if (p->pointer_image)
           {
              evas_object_show(p->pointer_image);
-#ifndef WAYLAND_ONLY
              if (!p->canvas)
                {
                   int w, h;
 
                   e_pixmap_size_get(p->pixmap, &w, &h);
                   _e_pointer_canvas_resize(p, w, h);
-          }
-#endif
+               }
           }
      }
 
@@ -801,7 +802,6 @@ e_pointer_type_pop(E_Pointer *p,
 EAPI void
 e_pointer_idler_before(void)
 {
-#ifndef WAYLAND_ONLY
    Eina_List *l;
    E_Pointer *p;
 
@@ -825,6 +825,7 @@ e_pointer_idler_before(void)
                        evas_object_image_data_set(p->pointer_image, p->pixels);
                     }
                }
+#ifndef HAVE_WAYLAND_ONLY
              else
                {
                   Ecore_X_Cursor cur;
@@ -834,11 +835,11 @@ e_pointer_idler_before(void)
                   ecore_x_window_cursor_set(p->win, cur);
                   ecore_x_cursor_free(cur);
                }
+#endif
              evas_render_updates_free(updates);
           }
         p->hot.update = 0;
      }
-#endif
 }
 
 /**

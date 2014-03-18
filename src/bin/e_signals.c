@@ -14,6 +14,7 @@ static volatile Eina_Bool _e_x_composite_shutdown_try = 0;
 static void
 _e_x_composite_shutdown(void)
 {
+#ifdef E_COMP_X_H
 //   Ecore_X_Display *dpy;
    Ecore_X_Window root;
 
@@ -26,6 +27,7 @@ _e_x_composite_shutdown(void)
    /* ignore errors, we really don't care at this point */
    ecore_x_composite_unredirect_subwindows(root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
    _e_x_composite_shutdown_try = 0;
+#endif
 }
 
 #if 0
@@ -64,10 +66,12 @@ EAPI void
 e_sigseg_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
+#ifdef E_COMP_X_H
    ecore_x_pointer_ungrab();
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
    ecore_x_sync();
+#endif
    e_alert_show();
 }
 
@@ -93,10 +97,12 @@ EAPI void
 e_sigfpe_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
+#ifdef E_COMP_X_H
    ecore_x_pointer_ungrab();
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
    ecore_x_sync();
+#endif
    e_alert_show();
 }
 
@@ -104,10 +110,12 @@ EAPI void
 e_sigbus_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
+#ifdef E_COMP_X_H
    ecore_x_pointer_ungrab();
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
    ecore_x_sync();
+#endif
    e_alert_show();
 }
 
@@ -115,10 +123,12 @@ EAPI void
 e_sigabrt_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
+#ifdef E_COMP_X_H
    ecore_x_pointer_ungrab();
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
    ecore_x_sync();
+#endif
    e_alert_show();
 }
 

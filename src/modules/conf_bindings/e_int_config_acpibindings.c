@@ -49,7 +49,7 @@ static Eina_Bool              _cb_acpi_event(void *data,
 
 /* local variables */
 static E_Dialog *grab_dlg = NULL;
-static Ecore_X_Window grab_win = 0;
+static Ecore_Window grab_win = 0;
 static Eina_List *grab_hdls = NULL;
 
 E_Config_Dialog *
@@ -129,7 +129,9 @@ _free_data(E_Config_Dialog *cfd  __UNUSED__,
    if (grab_win)
      {
         e_grabinput_release(grab_win, grab_win);
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_window_free(grab_win);
+#endif
      }
    grab_win = 0;
 
@@ -528,9 +530,11 @@ _cb_add_binding(void *data,
    e_win_centered_set(grab_dlg->win, EINA_TRUE);
    e_win_borderless_set(grab_dlg->win, EINA_TRUE);
 
+#ifndef HAVE_WAYLAND_ONLY
    grab_win = ecore_x_window_input_new(man->root, 0, 0, 1, 1);
    ecore_x_window_show(grab_win);
    e_grabinput_get(grab_win, 0, grab_win);
+#endif
 
    grab_hdls =
      eina_list_append(grab_hdls,
@@ -545,8 +549,10 @@ _cb_add_binding(void *data,
    e_acpi_events_freeze();
 
    e_dialog_show(grab_dlg);
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_icccm_transient_for_set(grab_dlg->win->evas_win,
                                    cfdata->cfd->dia->win->evas_win);
+#endif
 }
 
 static void
@@ -633,7 +639,9 @@ _cb_grab_key_down(void *data,
 
         /* kill the dialog window */
         e_grabinput_release(grab_win, grab_win);
+#ifndef HAVE_WAYLAND_ONLY
         ecore_x_window_free(grab_win);
+#endif
         grab_win = 0;
         e_object_del(E_OBJECT(grab_dlg));
         grab_dlg = NULL;
@@ -663,7 +671,9 @@ _cb_acpi_event(void *data,
 
    /* kill the dialog window */
    e_grabinput_release(grab_win, grab_win);
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_window_free(grab_win);
+#endif
    grab_win = 0;
    e_object_del(E_OBJECT(grab_dlg));
    grab_dlg = NULL;
