@@ -150,7 +150,7 @@ _systray_xembed_visible_check(Instance_Xembed *xembed)
 void
 systray_xembed_size_updated(Instance_Xembed *xembed)
 {
-
+   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return;
    if (xembed->visibility_timer)
      ecore_timer_reset(xembed->visibility_timer);
    else
@@ -770,6 +770,7 @@ systray_xembed_orient_set(Instance_Xembed *xembed, E_Gadcon_Orient orient)
 {
    unsigned int systray_orient;
 
+   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return;
    EINA_SAFETY_ON_NULL_RETURN(xembed);
 
    switch (orient)
@@ -871,7 +872,10 @@ systray_xembed_new(Instance *inst)
 {
    Evas_Object *ui = systray_edje_get(inst);
    E_Gadcon *gc = inst->gcc->gadcon;
-   Instance_Xembed *xembed = calloc(1, sizeof(Instance_Xembed));
+   Instance_Xembed *xembed;
+
+   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return NULL;
+   xembed = calloc(1, sizeof(Instance_Xembed));
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(xembed, NULL);
    xembed->inst = inst;
@@ -925,7 +929,7 @@ void
 systray_xembed_free(Instance_Xembed *xembed)
 {
    Evas_Object *ui = systray_edje_get(xembed->inst);
-   EINA_SAFETY_ON_NULL_RETURN(xembed);
+   if (!xembed) return;
 
    evas_object_event_callback_del(ui, EVAS_CALLBACK_MOVE,
                                   _systray_xembed_cb_move);
@@ -962,6 +966,7 @@ systray_xembed_free(Instance_Xembed *xembed)
 void
 systray_xembed_init(void)
 {
+   if (e_comp_get(NULL)->comp_type != E_PIXMAP_TYPE_X) return;
    if (!_atom_manager)
      _atom_manager = ecore_x_atom_get("MANAGER");
    if (!_atom_st_orient)
