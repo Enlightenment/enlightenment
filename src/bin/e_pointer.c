@@ -593,6 +593,7 @@ e_pointer_canvas_new(Evas *e, int filled)
    evas_object_show(p->pointer_image);
 
    if (filled) e_pointer_type_push(p, p, "default");
+   if (!p->evas) _e_pointer_canvas_add(p);
    _e_pointers = eina_list_append(_e_pointers, p);
    return p;
 }

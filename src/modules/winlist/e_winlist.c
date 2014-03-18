@@ -51,7 +51,9 @@ static int _hold_count = 0;
 static int _hold_mod = 0;
 static E_Winlist_Activate_Type _activate_type = 0;
 static Eina_List *_handlers = NULL;
+#ifndef HAVE_WAYLAND_ONLY
 static Ecore_Window _input_window = 0;
+#endif
 static int _scroll_to = 0;
 static double _scroll_align_to = 0.0;
 static double _scroll_align = 0.0;
@@ -104,15 +106,23 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    if (_winlist) return 0;
 
 #ifndef HAVE_WAYLAND_ONLY
-   _input_window = ecore_x_window_input_new(zone->comp->man->root, 0, 0, 1, 1);
-   ecore_x_window_show(_input_window);
-   if (!e_grabinput_get(_input_window, 0, _input_window))
+   if (e_comp_get(zone)->comp_type == E_PIXMAP_TYPE_X)
      {
-        ecore_x_window_free(_input_window);
-        _input_window = 0;
-        return 0;
+        _input_window = ecore_x_window_input_new(zone->comp->man->root, 0, 0, 1, 1);
+        ecore_x_window_show(_input_window);
+        if (!e_grabinput_get(_input_window, 0, _input_window))
+          {
+             ecore_x_window_free(_input_window);
+             _input_window = 0;
+             return 0;
+          }
      }
 #endif
+   if (e_comp_get(zone)->comp_type != E_PIXMAP_TYPE_X)
+     {
+        if (!e_comp_grab_input(e_comp_get(zone), 1, 1))
+          return 0;
+     }
 
    w = (double)zone->w * e_config->winlist_pos_size_w;
    if (w > e_config->winlist_pos_max_w) w = e_config->winlist_pos_max_w;
@@ -134,9 +144,8 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    e_client_focus_track_freeze();
 
 #ifndef HAVE_WAYLAND_ONLY
-   evas_event_feed_mouse_in(zone->comp->evas, ecore_x_current_time_get(), NULL);
-   evas_event_feed_mouse_move(zone->comp->evas, -1000000, -1000000,
-                              ecore_x_current_time_get(), NULL);
+   evas_event_feed_mouse_in(zone->comp->evas, 0, NULL);
+   evas_event_feed_mouse_move(zone->comp->evas, -1000000, -1000000, 0, NULL);
 #endif
 
    evas_event_freeze(zone->comp->evas);
@@ -261,11 +270,16 @@ e_winlist_hide(void)
    E_FREE_FUNC(_scroll_timer, ecore_timer_del);
    E_FREE_FUNC(_animator, ecore_animator_del);
 
-   e_grabinput_release(_input_window, _input_window);
 #ifndef HAVE_WAYLAND_ONLY
-   ecore_x_window_free(_input_window);
+   if (_input_window)
+     {
+        e_grabinput_release(_input_window, _input_window);
+        ecore_x_window_free(_input_window);
+        _input_window = 0;
+     }
+   else
 #endif
-   _input_window = 0;
+     e_comp_ungrab_input(e_comp_get(NULL), 1, 1);
    if (ec)
      {
         if (ec->shaded)
