@@ -451,7 +451,10 @@ _e_pointer_cb_idle_timer_pre(void *data)
    if (!(p = data)) return ECORE_CALLBACK_RENEW;
 #ifndef HAVE_WAYLAND_ONLY
    ecore_x_pointer_xy_get(p->win, &x, &y);
+#else
+   ecore_wl_pointer_xy_get(&x, &y);
 #endif
+
    p->x = x;
    p->y = y;
    if (p->canvas)
@@ -502,7 +505,10 @@ _e_pointer_cb_idle_poller(void *data)
    /* check if pointer actually moved since the 1 second post-mouse move idle
     * pre-timer that fetches the position */
    ecore_x_pointer_xy_get(p->win, &x, &y);
+#else
+   ecore_wl_pointer_xy_get(&x, &y);
 #endif
+
    if ((x != p->x) || (y != p->y))
      {
         /* it moved - so we are not idle yet - record position and wait
@@ -591,6 +597,9 @@ e_pointer_canvas_new(Evas *e, int filled)
    evas_object_layer_set(p->pointer_image, EVAS_LAYER_MAX);
    evas_object_image_alpha_set(p->pointer_image, 1);
    evas_object_show(p->pointer_image);
+
+   /* FIXME: If we are running wayland only, we should have a function call 
+    * here to tell evas to place this object a hardware plane */
 
    if (filled) e_pointer_type_push(p, p, "default");
    if (!p->evas) _e_pointer_canvas_add(p);
