@@ -51,9 +51,7 @@ static int _hold_count = 0;
 static int _hold_mod = 0;
 static E_Winlist_Activate_Type _activate_type = 0;
 static Eina_List *_handlers = NULL;
-#ifndef HAVE_WAYLAND_ONLY
 static Ecore_Window _input_window = 0;
-#endif
 static int _scroll_to = 0;
 static double _scroll_align_to = 0.0;
 static double _scroll_align = 0.0;
