@@ -750,6 +750,7 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    /* save the config if anything changed or we added a new one */
    if (changed)
      {
+        _e_randr_lid_update();
         _e_randr_config_primary_update();
         _e_randr_apply();
 
