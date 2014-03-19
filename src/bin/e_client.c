@@ -2263,7 +2263,13 @@ e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal)
    ec->new_client = 1;
    ec->comp->new_clients++;
 
-   if (!_e_client_hook_call(E_CLIENT_HOOK_NEW_CLIENT, ec)) return NULL;
+   if (!_e_client_hook_call(E_CLIENT_HOOK_NEW_CLIENT, ec)) 
+     {
+        /* delete the above allocated object */
+        e_object_del(E_OBJECT(ec));
+        return NULL;
+     }
+
    if (ec->override)
      _e_client_zone_update(ec);
    else
