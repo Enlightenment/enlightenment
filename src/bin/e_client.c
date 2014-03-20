@@ -3760,6 +3760,7 @@ e_client_stick(E_Client *ec)
    ec->hidden = 0;
    e_hints_window_sticky_set(ec, 1);
    e_client_desk_set(ec, desk);
+   evas_object_smart_callback_call(ec->frame, "stick", NULL);
 
    if (e_config->transient.desktop)
      {
@@ -3792,6 +3793,7 @@ e_client_unstick(E_Client *ec)
    ec->hidden = ec->sticky = 0;
    e_hints_window_sticky_set(ec, 0);
    e_client_desk_set(ec, desk);
+   evas_object_smart_callback_call(ec->frame, "unstick", NULL);
 
    if (e_config->transient.desktop)
      {
