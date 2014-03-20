@@ -658,12 +658,12 @@ e_pointer_image_set(E_Pointer *p, E_Pixmap *cp, int w, int h, int hot_x, int hot
         evas_object_image_size_set(p->pointer_image, w, h);
         evas_object_image_data_set(p->pointer_image, img);
         evas_object_resize(p->pointer_image, w, h);
-        if (p->e_cursor)
+        if ((p->e_cursor) && (!p->canvas))
           {
              evas_object_hide(p->pointer_image);
              evas_object_show(p->pointer_object);
           }
-        else
+        else ((p->e_cursor) && (p->canvas))
           {
              evas_object_hide(p->pointer_object);
              evas_object_show(p->pointer_image);
