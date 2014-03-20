@@ -41,7 +41,7 @@ struct tiling_g tiling_g = {
    .log_domain = -1,
 };
 
-static void             _add_client(E_Client *ec);
+static Eina_Bool _add_client(E_Client *ec);
 static void             _remove_client(E_Client *ec);
 static void             _client_apply_settings(E_Client *ec, Client_Extra *extra);
 static void             _foreach_desk(void (*func)(E_Desk *desk));
@@ -66,9 +66,8 @@ static struct tiling_mod_main_g
    char                 edj_path[PATH_MAX];
    E_Config_DD         *config_edd, *vdesk_edd;
    Ecore_Event_Handler *handler_client_resize, *handler_client_move,
-                       *handler_client_add, *handler_client_remove, *handler_client_iconify,
-                       *handler_client_uniconify, *handler_client_property,
-                       *handler_client_fullscreen, *handler_client_unfullscreen,
+                       *handler_client_add, *handler_client_iconify,
+                       *handler_client_uniconify,
                        *handler_desk_set, *handler_compositor_resize;
    E_Client_Hook       *handler_client_resize_begin;
    E_Client_Menu_Hook  *client_menu_hook;
@@ -510,34 +509,42 @@ _client_apply_settings(E_Client *ec, Client_Extra *extra)
 }
 
 static void
+_e_client_check_based_on_state_cb(void *data, Evas_Object *obj EINA_UNUSED,
+      void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+   _toggle_tiling_based_on_state(ec, EINA_TRUE);
+}
+
+static Eina_Bool
 _add_client(E_Client *ec)
 {
    /* Should I need to check that the client is not already added? */
    if (!ec)
      {
-        return;
+        return EINA_FALSE;
      }
    if (!is_tilable(ec))
      {
-        return;
+        return EINA_FALSE;
      }
 
    Client_Extra *extra = _get_or_create_client_extra(ec);
 
    if (!desk_should_tile_check(ec->desk))
-     return;
+      return EINA_FALSE;
 
    if (is_ignored_window(extra))
-     return;
+      return EINA_FALSE;
 
    if (_G.split_type == TILING_SPLIT_FLOAT)
      {
         extra->floating = EINA_TRUE;
-        return;
+        return EINA_FALSE;
      }
 
    if (extra->tiled)
-     return;
+      return EINA_FALSE;
 
    extra->tiled = EINA_TRUE;
 
@@ -568,6 +575,8 @@ _add_client(E_Client *ec)
    }
 
    _reapply_tree();
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -822,31 +831,10 @@ _e_mod_action_toggle_split_mode(E_Object *obj EINA_UNUSED,
 /* }}} */
 /* Hooks {{{ */
 
-static Eina_Bool
-_maximize_check_handle(E_Client *ec, Client_Extra *extra)
-{
-   if (!extra)
-     {
-        extra = eina_hash_find(_G.client_extras, &ec);
-     }
-
-   if (!extra)
-      return EINA_FALSE;
-
-   if (_toggle_tiling_based_on_state(ec, EINA_TRUE))
-      return EINA_TRUE;
-
-   return EINA_FALSE;
-}
-
 static void
 _move_or_resize(E_Client *ec)
 {
    Client_Extra *extra = tiling_entry_func(ec);
-
-   /* FIXME: Hack for maximized windows. */
-   if (_maximize_check_handle(ec, extra))
-      return;
 
    if (!extra || !extra->tiled)
      {
@@ -1054,39 +1042,67 @@ _move_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
    return true;
 }
 
+static void
+_frame_del_cb(void *data, Evas *evas EINA_UNUSED,
+      Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   E_Client *ec = data;
+
+   if (e_client_util_ignored_get(ec))
+      return;
+
+   if (desk_should_tile_check(ec->desk))
+     {
+        _client_remove_no_apply(ec);
+     }
+
+   eina_hash_del(_G.client_extras, &ec, NULL);
+
+   _reapply_tree();
+}
+
+static void
+_e_client_extra_unregister_callbacks(void *_client_extra)
+{
+   Client_Extra *extra = _client_extra;
+   E_Client *ec = extra->client;
+
+   evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL,
+         _frame_del_cb, ec);
+   evas_object_smart_callback_del_full(ec->frame, "maximize_done",
+         _e_client_check_based_on_state_cb, ec);
+   evas_object_smart_callback_del_full(ec->frame, "frame_recalc_done",
+         _e_client_check_based_on_state_cb, ec);
+   evas_object_smart_callback_del_full(ec->frame, "stick",
+         _e_client_check_based_on_state_cb, ec);
+   evas_object_smart_callback_del_full(ec->frame, "unstick",
+         _e_client_check_based_on_state_cb, ec);
+}
+
+static void
+_add_client_hook(E_Client *ec)
+{
+   if (_add_client(ec))
+     {
+        evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL,
+              _frame_del_cb, ec);
+        evas_object_smart_callback_add(ec->frame, "maximize_done",
+              _e_client_check_based_on_state_cb, ec);
+        evas_object_smart_callback_add(ec->frame, "frame_recalc_done",
+              _e_client_check_based_on_state_cb, ec);
+        evas_object_smart_callback_add(ec->frame, "stick",
+              _e_client_check_based_on_state_cb, ec);
+        evas_object_smart_callback_add(ec->frame, "unstick",
+              _e_client_check_based_on_state_cb, ec);
+     }
+}
+
 static Eina_Bool
 _add_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
 {
    E_Client *ec = event->ec;
 
-   _add_client(ec);
-
-   return true;
-}
-
-static void
-_frame_del_cb(void *data EINA_UNUSED, Evas *evas EINA_UNUSED,
-      Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   _reapply_tree();
-}
-
-static Eina_Bool
-_remove_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-             E_Event_Client *event)
-{
-   E_Client *ec = event->ec;
-
-   if (e_client_util_ignored_get(ec))
-     return ECORE_CALLBACK_RENEW;
-
-   if (desk_should_tile_check(ec->desk))
-     {
-        _client_remove_no_apply(ec);
-        evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL, _frame_del_cb, NULL);
-     }
-
-   eina_hash_del(_G.client_extras, &ec, NULL);
+   _add_client_hook(ec);
 
    return true;
 }
@@ -1133,30 +1149,6 @@ _iconify_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
 
    _toggle_tiling_based_on_state(ec, EINA_FALSE);
 
-   return true;
-}
-
-static bool
-_toggle_tiling_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-              E_Event_Client *event)
-{
-   E_Client *ec = event->ec;
-
-   _toggle_tiling_based_on_state(ec, EINA_TRUE);
-
-   return true;
-}
-
-static Eina_Bool
-_property_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
-            E_Event_Client_Property *event)
-{
-   E_Client_Property mask = E_CLIENT_PROPERTY_STICKY |
-      E_CLIENT_PROPERTY_NETWM_STATE;
-   if (event->property & mask)
-     {
-        _toggle_tiling_based_on_state(event->ec, EINA_TRUE);
-     }
    return true;
 }
 
@@ -1297,13 +1289,9 @@ e_modapi_init(E_Module *m)
    HANDLER(_G.handler_client_resize, CLIENT_RESIZE, _resize_hook);
    HANDLER(_G.handler_client_move, CLIENT_MOVE, _move_hook);
    HANDLER(_G.handler_client_add, CLIENT_ADD, _add_hook);
-   HANDLER(_G.handler_client_remove, CLIENT_REMOVE, _remove_hook);
 
    HANDLER(_G.handler_client_iconify, CLIENT_ICONIFY, _iconify_hook);
    HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _iconify_hook);
-   HANDLER(_G.handler_client_fullscreen, CLIENT_FULLSCREEN, _toggle_tiling_hook);
-   HANDLER(_G.handler_client_unfullscreen, CLIENT_UNFULLSCREEN, _toggle_tiling_hook);
-   HANDLER(_G.handler_client_property, CLIENT_PROPERTY, _property_hook);
 
    HANDLER(_G.handler_desk_set, CLIENT_DESK_SET, _desk_set_hook);
    HANDLER(_G.handler_compositor_resize, COMPOSITOR_RESIZE,
@@ -1401,7 +1389,7 @@ e_modapi_init(E_Module *m)
 
       E_CLIENT_FOREACH(e_comp_get(NULL), ec)
       {
-         _add_client(ec);
+         _add_client_hook(ec);
       }
    }
 
@@ -1491,13 +1479,9 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    FREE_HANDLER(_G.handler_client_resize);
    FREE_HANDLER(_G.handler_client_move);
    FREE_HANDLER(_G.handler_client_add);
-   FREE_HANDLER(_G.handler_client_remove);
 
    FREE_HANDLER(_G.handler_client_iconify);
    FREE_HANDLER(_G.handler_client_uniconify);
-   FREE_HANDLER(_G.handler_client_fullscreen);
-   FREE_HANDLER(_G.handler_client_unfullscreen);
-   FREE_HANDLER(_G.handler_client_property);
 
    FREE_HANDLER(_G.handler_desk_set);
 
@@ -1534,6 +1518,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    eina_hash_free(_G.info_hash);
    _G.info_hash = NULL;
 
+   eina_hash_free_cb_set(_G.client_extras, _e_client_extra_unregister_callbacks);
    eina_hash_free(_G.client_extras);
    _G.client_extras = NULL;
 
