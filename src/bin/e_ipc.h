@@ -1,5 +1,7 @@
 #ifdef E_TYPEDEFS
 
+EINTERN extern char *e_ipc_socket;
+
 #ifdef USE_IPC
 
 #define E_IPC_OP_EXEC_ACTION 386

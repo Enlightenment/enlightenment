@@ -1,5 +1,7 @@
 #include "e.h"
 
+EINTERN char *e_ipc_socket = NULL;
+
 #ifdef USE_IPC
 /* local subsystem functions */
 static Eina_Bool _e_ipc_cb_client_add(void *data __UNUSED__, int type __UNUSED__, void *event);
@@ -14,7 +16,6 @@ static Ecore_Ipc_Server *_e_ipc_server = NULL;
 EINTERN int
 e_ipc_init(void)
 {
-#ifdef USE_IPC
    char buf[4096], buf2[128], buf3[4096];
    char *tmp, *user, *disp, *base;
    int pid, trynum = 0, id1 = 0;
@@ -88,15 +89,22 @@ e_ipc_init(void)
             ((st.st_mode & (S_IFDIR | S_IRWXU | S_IRWXG | S_IRWXO)) ==
              (S_IRWXU | S_IFDIR)))
           {
+#ifdef USE_IPC
              snprintf(buf3, sizeof(buf3), "%s/%s-%i",
                       buf, disp, pid);
              _e_ipc_server = ecore_ipc_server_add
                 (ECORE_IPC_LOCAL_SYSTEM, buf3, 0, NULL);
-             if (_e_ipc_server) break;
+             if (_e_ipc_server)
+#endif
+               {
+                  e_ipc_socket = strdup(ecore_file_file_get(buf));
+                  break;
+               }
           }
 retry:
         id1 = rand();
      }
+#ifdef USE_IPC
    if (!_e_ipc_server)
      {
         ERR("Gave up after 4096 sockets in '%s'. All failed", base);
@@ -128,6 +136,7 @@ e_ipc_shutdown(void)
         _e_ipc_server = NULL;
      }
 #endif
+   E_FREE(e_ipc_socket);
    return 1;
 }
 
