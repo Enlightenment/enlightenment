@@ -651,6 +651,8 @@ e_pointer_image_set(E_Pointer *p, E_Pixmap *cp, int w, int h, int hot_x, int hot
              if (!p->e_cursor)
                p->blocks = 1;
              p->pointer_image = evas_object_image_filled_add(p->evas);
+             evas_object_pass_events_set(p->pointer_image, 1);
+             evas_object_layer_set(p->pointer_image, EVAS_LAYER_MAX);
              evas_object_image_alpha_set(p->pointer_image, 1);
           }
         evas_object_image_size_set(p->pointer_image, w, h);
