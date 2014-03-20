@@ -225,7 +225,7 @@ static const struct wl_pointer_grab_interface _e_drag_grab_interface =
 /* local variables */
 static Ecore_Idler *_module_idler = NULL;
 #ifdef HAVE_WAYLAND_EGL
-static Eina_Bool can_terminate = EINA_TRUE;
+static Eina_Bool black_listed = EINA_FALSE;
 #endif
 
 /* external variables */
@@ -289,17 +289,19 @@ e_comp_wl_init(void)
          * calling eglTerminate. Let's hack around that.... */
         vendor = 
           (const char *)eglQueryString(_e_wl_comp->egl.display, EGL_VENDOR);
-        if (vendor)
+        if (!vendor || !strcmp(vendor, "NVIDIA Corporation"))
+          black_listed = EINA_TRUE;
+        if (black_listed)
           {
-             if (!strcmp(vendor, "NVIDIA Corporation"))
-               can_terminate = EINA_FALSE;
+             ERR("Black listed driver [%s]. Not a supported configuration.", vendor);
+             goto err;
           }
 
         /* try to initialize egl */
         if (!eglInitialize(_e_wl_comp->egl.display, &major, &minor))
           {
              ERR("Could not initialize EGL: %m");
-             if (can_terminate) eglTerminate(_e_wl_comp->egl.display);
+             eglTerminate(_e_wl_comp->egl.display);
           }
         else
           {
@@ -316,7 +318,7 @@ e_comp_wl_init(void)
                                    &_e_wl_comp->egl.config, 1, &n) || (n == 0)))
                {
                   ERR("Could not choose EGL config: %m");
-                  if (can_terminate) eglTerminate(_e_wl_comp->egl.display);
+                  eglTerminate(_e_wl_comp->egl.display);
                }
           }
      }
@@ -381,10 +383,13 @@ err:
      _e_wl_comp->egl.unbind_display(_e_wl_comp->egl.display, _e_wl_comp->wl.display);
 
    /* terminate the egl display */
-   if ((_e_wl_comp->egl.display) && (can_terminate))
-     eglTerminate(_e_wl_comp->egl.display);
+   if (!black_listed)
+     {
+        if ((_e_wl_comp->egl.display))
+          eglTerminate(_e_wl_comp->egl.display);
 
-   eglReleaseThread();
+        eglReleaseThread();
+     }
 #endif
 
    /* if we have a display, destroy it */
