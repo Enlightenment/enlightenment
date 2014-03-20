@@ -3807,7 +3807,6 @@ e_client_unstick(E_Client *ec)
           }
      }
 
-   e_comp_object_signal_emit(ec->frame, "e,state,unsticky", "e");
    _e_client_event_property(ec, E_CLIENT_PROPERTY_STICKY);
 
    e_client_desk_set(ec, e_desk_current_get(ec->zone));

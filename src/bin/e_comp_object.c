@@ -1739,6 +1739,12 @@ _e_comp_smart_cb_unfullscreen(void *data, Evas_Object *obj, void *event_info EIN
 }
 
 static void
+_e_comp_smart_cb_sticky(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   e_comp_object_signal_emit(obj, "e,state,sticky", "e");
+}
+
+static void
 _e_comp_smart_cb_unsticky(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    e_comp_object_signal_emit(obj, "e,state,unsticky", "e");
@@ -1810,7 +1816,8 @@ _e_comp_smart_add(Evas_Object *obj)
    evas_object_smart_callback_add(obj, "unmaximize", _e_comp_smart_cb_unmaximize, cw);
    evas_object_smart_callback_add(obj, "unfullscreen", _e_comp_smart_cb_unfullscreen, cw);
 
-   evas_object_smart_callback_add(obj, "unsticky", _e_comp_smart_cb_unsticky, cw);
+   evas_object_smart_callback_add(obj, "stick", _e_comp_smart_cb_sticky, cw);
+   evas_object_smart_callback_add(obj, "unstick", _e_comp_smart_cb_unsticky, cw);
 
    evas_object_smart_callback_add(obj, "hung", _e_comp_smart_cb_hung, cw);
    evas_object_smart_callback_add(obj, "unhung", _e_comp_smart_cb_unhung, cw);
