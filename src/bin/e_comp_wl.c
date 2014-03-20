@@ -236,13 +236,17 @@ EAPI Eina_Bool
 e_comp_wl_init(void)
 {
    int fd = 0;
+   char buf[PATH_MAX];
 
    /* try to allocate space for a new compositor */
    if (!(_e_wl_comp = E_NEW(E_Wayland_Compositor, 1)))
      return EINA_FALSE;
 
    /* try to create a wayland display */
-   if (!(_e_wl_comp->wl.display = wl_display_create()))
+   snprintf(buf, sizeof(buf), "%s/wayland-0", e_ipc_socket);
+   e_env_set("WAYLAND_DISPLAY", buf);
+   if ((!(_e_wl_comp->wl.display = wl_display_create())) ||
+       wl_display_add_socket(_e_wl_comp->wl.display, buf))
      {
         ERR("Could not create a Wayland Display: %m");
         goto err;
@@ -354,13 +358,6 @@ e_comp_wl_init(void)
 
    /* TODO: event handlers ?? */
 
-   /* try to add a display socket */
-   if (wl_display_add_socket(_e_wl_comp->wl.display, NULL) < 0)
-     {
-        ERR("Could not add a Wayland Display socket: %m");
-        goto err;
-     }
-
    wl_event_loop_dispatch(_e_wl_comp->wl.loop, 0);
 
    /* add an idler for deferred shell module loading */
@@ -370,6 +367,7 @@ e_comp_wl_init(void)
    return EINA_TRUE;
 
 err:
+   e_env_set("WAYLAND_DISPLAY", "");
    /* remove kbd handler */
    if (_e_wl_comp->kbd_handler) 
      ecore_event_handler_del(_e_wl_comp->kbd_handler);
