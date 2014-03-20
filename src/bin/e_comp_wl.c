@@ -224,6 +224,9 @@ static const struct wl_pointer_grab_interface _e_drag_grab_interface =
 
 /* local variables */
 static Ecore_Idler *_module_idler = NULL;
+#ifdef HAVE_WAYLAND_EGL
+static Eina_Bool can_terminate = EINA_TRUE;
+#endif
 
 /* external variables */
 EAPI E_Wayland_Compositor *_e_wl_comp;
@@ -278,12 +281,25 @@ e_comp_wl_init(void)
    else
      {
         EGLint major, minor;
+        const char *vendor;
+
+        /* FIXME: HACK:
+         * 
+         * Frenchie reports major icky crash with Binary Nvidia Driver and 
+         * calling eglTerminate. Let's hack around that.... */
+        vendor = 
+          (const char *)eglQueryString(_e_wl_comp->egl.display, EGL_VENDOR);
+        if (vendor)
+          {
+             if (!strcmp(vendor, "NVIDIA Corporation"))
+               can_terminate = EINA_FALSE;
+          }
 
         /* try to initialize egl */
         if (!eglInitialize(_e_wl_comp->egl.display, &major, &minor))
           {
              ERR("Could not initialize EGL: %m");
-             eglTerminate(_e_wl_comp->egl.display);
+             if (can_terminate) eglTerminate(_e_wl_comp->egl.display);
           }
         else
           {
@@ -295,13 +311,12 @@ e_comp_wl_init(void)
                   EGL_ALPHA_SIZE, 1, EGL_RENDERABLE_TYPE, 
                   EGL_OPENGL_ES2_BIT, EGL_NONE
                };
-             /* const char *exts; */
 
              if ((!eglChooseConfig(_e_wl_comp->egl.display, attribs, 
                                    &_e_wl_comp->egl.config, 1, &n) || (n == 0)))
                {
                   ERR("Could not choose EGL config: %m");
-                  eglTerminate(_e_wl_comp->egl.display);
+                  if (can_terminate) eglTerminate(_e_wl_comp->egl.display);
                }
           }
      }
@@ -366,7 +381,8 @@ err:
      _e_wl_comp->egl.unbind_display(_e_wl_comp->egl.display, _e_wl_comp->wl.display);
 
    /* terminate the egl display */
-   if (_e_wl_comp->egl.display) eglTerminate(_e_wl_comp->egl.display);
+   if ((_e_wl_comp->egl.display) && (can_terminate))
+     eglTerminate(_e_wl_comp->egl.display);
 
    eglReleaseThread();
 #endif
