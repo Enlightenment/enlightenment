@@ -1,5 +1,5 @@
 EXTRA_DIST += wl_desktop_shell/module.desktop.in \
-wl_desktop_shell/e-module-wl_desktop_shell.edj
+              wl_desktop_shell/e-module-wl_desktop_shell.edj \
 	      wl_desktop_shell/e-desktop-shell.xml \
 	      wl_desktop_shell/e_desktop_shell_protocol.h \
 	      wl_desktop_shell/e_desktop_shell_protocol.c
