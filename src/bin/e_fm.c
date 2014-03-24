@@ -5897,6 +5897,7 @@ _e_fm2_typebuf_complete(Evas_Object *obj)
         size_t size;
 
         s = strrchr(sd->typebuf.buf, '/');
+        if (!s) return;
         s++;
         s[0] = 0;
         size = s - sd->typebuf.buf + strlen(ic->info.file) + 1;
