@@ -6134,8 +6134,7 @@ _e_fm2_dnd_drop_show(E_Fm2_Icon *ic, int after)
 
    if ((ic->sd->drop_icon == ic) &&
        (ic->sd->drop_after == after)) return;
-   if (((ic->sd->drop_icon) && (!ic)) ||
-       ((!ic->sd->drop_icon) && (ic)) ||
+   if (((!ic->sd->drop_icon)) ||
        ((after < 0) && (ic->sd->drop_after >= 0)) ||
        ((after >= 0) && (ic->sd->drop_after < 0)))
      emit = 1;
