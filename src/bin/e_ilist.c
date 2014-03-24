@@ -466,7 +466,6 @@ e_ilist_remove_num(Evas_Object *obj, int n)
     */
    if (!resize) return;
    if (!sd->items) return;
-   si = eina_list_data_get(sd->items);
    evas_object_resize(sd->o_smart, w, sd->h - h);
 }
 
