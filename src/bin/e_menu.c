@@ -1,4 +1,5 @@
 #include "e.h"
+#include <Eo.h>
 
 /* TODO List:
  *
@@ -749,7 +750,7 @@ e_menu_item_submenu_set(E_Menu_Item *mi, E_Menu *sub)
      {
         if (mi->submenu_object)
           {
-             if (!e_util_strcmp(evas_object_type_get(mi->submenu_object), "edje"))
+             if (eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
                {
                   /* already have a correct submenu object, don't re-set it */
                   _e_menu_lock = EINA_FALSE;
@@ -1009,17 +1010,17 @@ e_menu_item_active_set(E_Menu_Item *mi, int active)
           edje_object_signal_emit(mi->bg_object, "e,state,selected", "e");
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,selected", "e");
-        if (mi->label_object)
+        if (mi->label_object && eo_isa(mi->label_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,selected", "e");
-        if (mi->submenu_object)
+        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->submenu_object, "e,state,selected", "e");
-        if (mi->toggle_object)
+        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,selected", "e");
         if (mi->icon_key)
           {
              if (mi->icon_object)
                {
-                  if (strcmp(evas_object_type_get(mi->icon_object), "e_icon"))
+                  if (eo_isa(mi->icon_object, EDJE_OBJ_CLASS))
                     edje_object_signal_emit(mi->icon_object, "e,state,selected", "e");
                   else
                     e_icon_selected_set(mi->icon_object, EINA_TRUE);
@@ -1038,17 +1039,17 @@ e_menu_item_active_set(E_Menu_Item *mi, int active)
           edje_object_signal_emit(mi->bg_object, "e,state,unselected", "e");
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,unselected", "e");
-        if (mi->label_object)
+        if (mi->label_object && eo_isa(mi->label_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,unselected", "e");
-        if (mi->submenu_object)
+        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->submenu_object, "e,state,unselected", "e");
-        if (mi->toggle_object)
+        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,unselected", "e");
         if (mi->icon_key)
           {
              if (mi->icon_object)
                {
-                  if (strcmp(evas_object_type_get(mi->icon_object), "e_icon"))
+                  if (eo_isa(mi->icon_object, EDJE_OBJ_CLASS))
                     edje_object_signal_emit(mi->icon_object, "e,state,unselected", "e");
                   else
                     e_icon_selected_set(mi->icon_object, EINA_FALSE);
@@ -1084,9 +1085,9 @@ e_menu_item_disabled_set(E_Menu_Item *mi, int disable)
         mi->disable = 1;
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,disable", "e");
-        if (mi->label_object)
+        if (mi->label_object && eo_isa(mi->label_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,disable", "e");
-        if (mi->toggle_object)
+        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,disable", "e");
      }
    else
@@ -1094,9 +1095,9 @@ e_menu_item_disabled_set(E_Menu_Item *mi, int disable)
         mi->disable = 0;
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,enable", "e");
-        if (mi->label_object)
+        if (mi->label_object && eo_isa(mi->label_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,enable", "e");
-        if (mi->toggle_object)
+        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,enable", "e");
      }
 }
