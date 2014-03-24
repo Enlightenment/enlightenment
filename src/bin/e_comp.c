@@ -135,10 +135,10 @@ _e_comp_visible_object_is(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coo
                                    {
                                       if (evas_object_clip_get(o))
                                         {
-                                           children = eina_list_free(children);
+                                           eina_list_free(children);
                                            return _e_comp_visible_object_clip_is(o);
                                         }
-                                      children = eina_list_free(children);
+                                      eina_list_free(children);
                                       return EINA_TRUE;
                                    }
                               }
