@@ -1,3 +1,29 @@
+Changes since 0.18.5:
+---------------------
+
+* wl_desktop_shell builds out of source tree
+* get entry width based on viewport size, not entry size
+* fix hiding of windows when delete is requested
+* don't deref teamwork pointer after null check
+* don't deref possibly-null value in mouse bindings
+* correctly calculate minimum flowlayout rows
+* efm_op no longer tries to close invalid fds during delete ops
+* don't use external log domain in systray
+* don't use external log domain in music player
+* don't crash when saving screenshots with no file extension
+* don't crash on possibly-null gadman bg string extensions
+* check for unicode string end in client menu
+* don't crash when passing NULL desk to e_border_under_pointer_get
+* set connman pending.disconnect when disconnecting a service
+* don't iterate with or access freed pointer in comp match dialog
+* ensure use of non-garbage values for menu item icon placeholders
+* use more descriptive + accurate buffer size in batget iterator
+* prevent out of bounds access in systray theme setup
+* prevent out of bounds write in e_intl_locale_parts_get()
+* ensure null termination of string in xsettings config
+* dim/undim actions don't require acpi triggers
+
+
 Changes since 0.18.4:
 ---------------------
 
