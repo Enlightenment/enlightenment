@@ -555,6 +555,7 @@ PKG_CHECK_MODULES(E, [
   eina >= ${efl_version}
   eldbus >= ${efl_version}
   eio >= ${efl_version}
+  eo >= ${efl_version}
   elementary >= ${efl_version}
   emotion >= ${efl_version}
   $eeze_mount
@@ -577,6 +578,7 @@ efreet-trash >= ${efl_version} \
 eina >= ${efl_version} \
 eldbus >= ${efl_version} \
 eio >= ${efl_version} \
+eo >= ${efl_version} \
 elementary >= ${efl_version} \
 emotion >= ${efl_version} \
 $udisks_mount \
