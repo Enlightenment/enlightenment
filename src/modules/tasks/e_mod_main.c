@@ -200,17 +200,6 @@ e_modapi_save(E_Module *m __UNUSED__)
    return 1;
 }
 
-static Tasks *
-_tasks_find(E_Comp *comp)
-{
-   Tasks *tasks;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
-     if (tasks->zone->comp == comp) return tasks;
-   return NULL;
-}
-
 /**************************************************************/
 
 static E_Gadcon_Client *
@@ -880,14 +869,16 @@ static Eina_Bool
 _tasks_cb_event_client_add(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    E_Event_Client *ev = event;
-   Tasks *tasks = _tasks_find(ev->ec->comp);
+   Tasks *tasks;
+   Eina_List *l;
 
-   if ((!tasks) || (e_client_util_ignored_get(ev->ec))) return ECORE_CALLBACK_RENEW;
-   if ((!tasks->clients) || (!eina_list_data_find(tasks->clients, ev->ec)))
+   if (e_client_util_ignored_get(ev->ec)) return ECORE_CALLBACK_RENEW;
+   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
      {
-        tasks->clients = eina_list_append(tasks->clients, ev->ec);
-        _tasks_refill_all();
+        if ((!tasks->clients) || (!eina_list_data_find(tasks->clients, ev->ec)))
+          tasks->clients = eina_list_append(tasks->clients, ev->ec);
      }
+   _tasks_refill_all();
    return EINA_TRUE;
 }
 
@@ -895,10 +886,14 @@ static Eina_Bool
 _tasks_cb_event_client_remove(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    E_Event_Client *ev = event;
-   Tasks *tasks = _tasks_find(ev->ec->comp);
+   Tasks *tasks;
+   Eina_List *l;
 
-   if ((!tasks) || (e_client_util_ignored_get(ev->ec))) return ECORE_CALLBACK_RENEW;
-   tasks->clients = eina_list_remove(tasks->clients, ev->ec);
+   if (e_client_util_ignored_get(ev->ec)) return ECORE_CALLBACK_RENEW;
+   EINA_LIST_FOREACH(tasks_config->tasks, l, tasks)
+     {
+        tasks->clients = eina_list_remove(tasks->clients, ev->ec);
+     }
    _tasks_refill_all();
    return EINA_TRUE;
 }
