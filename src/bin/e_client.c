@@ -2266,7 +2266,7 @@ e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal)
    if (!_e_client_hook_call(E_CLIENT_HOOK_NEW_CLIENT, ec)) 
      {
         /* delete the above allocated object */
-        e_object_del(E_OBJECT(ec));
+        //e_object_del(E_OBJECT(ec));
         return NULL;
      }
 
