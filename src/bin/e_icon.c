@@ -374,6 +374,17 @@ e_icon_edje_object_set(Evas_Object *obj, Evas_Object *edje)
    _e_icon_smart_reconfigure(sd);
 }
 
+EAPI Evas_Object *
+e_icon_edje_get(Evas_Object *obj)
+{
+   E_Smart_Data *sd;
+
+   if (evas_object_smart_smart_get(obj) != _e_smart) SMARTERR(NULL);
+   if (!(sd = evas_object_smart_data_get(obj)))
+     return NULL;
+   return sd->edje ? sd->obj : NULL;
+}
+
 EAPI Eina_Bool
 e_icon_file_edje_set(Evas_Object *obj, const char *file, const char *part)
 {

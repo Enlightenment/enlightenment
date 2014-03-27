@@ -9,6 +9,7 @@ EINTERN int e_icon_shutdown(void);
 EAPI Evas_Object *e_icon_add              (Evas *evas);
 EAPI Eina_Bool    e_icon_file_set         (Evas_Object *obj, const char *file);
 EAPI Eina_Bool    e_icon_file_key_set     (Evas_Object *obj, const char *file, const char *key);
+EAPI Evas_Object *e_icon_edje_get(Evas_Object *obj);
 EAPI Eina_Bool    e_icon_file_edje_set    (Evas_Object *obj, const char *file, const char *part);
 EAPI Eina_Bool    e_icon_fdo_icon_set     (Evas_Object *obj, const char *icon);
 EAPI void         e_icon_edje_object_set(Evas_Object *obj, Evas_Object *edje);
