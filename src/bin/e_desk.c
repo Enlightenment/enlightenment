@@ -381,7 +381,7 @@ e_desk_last_focused_focus(E_Desk *desk)
 
    EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
      {
-        if ((!ec->iconic) && (ec->visible) &&
+        if ((!ec->iconic) && (evas_object_visible_get(ec->frame)) &&
             ((ec->desk == desk) || ((ec->zone == desk->zone) && ec->sticky)) &&
             (ec->icccm.accepts_focus || ec->icccm.take_focus) &&
             (ec->netwm.type != E_WINDOW_TYPE_DOCK) &&
@@ -405,7 +405,7 @@ e_desk_last_focused_focus(E_Desk *desk)
                }
           }
      }
-   if (ecs)
+   if (ecs && evas_object_visible_get(ecs->frame))
      {
         e_client_focus_set_with_pointer(ecs);
         if (e_config->raise_on_revert_focus)
