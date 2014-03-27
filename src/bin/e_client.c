@@ -2621,6 +2621,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
         int new_w, new_h;
         Eina_List *skiplist = NULL;
 
+        if (action_handler_key) return;
         if ((ec->moveinfo.down.button >= 1) && (ec->moveinfo.down.button <= 3))
           {
              x = ec->mouse.last_down[ec->moveinfo.down.button - 1].x +
@@ -2655,6 +2656,7 @@ e_client_mouse_move(E_Client *ec, Evas_Point *output)
      }
    else if (e_client_util_resizing_get(ec))
      {
+        if (action_handler_key) return;
         _e_client_resize_handle(ec);
      }
    else if (ec->drag.start)
