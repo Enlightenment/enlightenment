@@ -372,6 +372,8 @@ _evry_items_sort_func(const void *data1, const void *data2)
           return prio1 - prio2;
      }
 
+   /* user has a broken system: -╯□）╯︵-┻━┻ */
+   if ((!it1->label) || (!it2->label)) return -1;
    return strcasecmp(it1->label, it2->label);
 }
 
