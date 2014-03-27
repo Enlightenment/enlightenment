@@ -4988,6 +4988,7 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
         ec->visible = 1;
         ec->comp->layers[i].obj = ec->frame;
         evas_object_layer_set(ec->frame, e_comp_canvas_layer_map_to(i));
+        evas_object_pass_events_set(ec->frame, 1);
         evas_object_show(ec->frame);
      }
 
