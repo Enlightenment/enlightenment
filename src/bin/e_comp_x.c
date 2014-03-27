@@ -2678,16 +2678,19 @@ static void
 _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
 {
    Ecore_X_Window win, pwin;
+   int w, h;
 
    E_COMP_X_PIXMAP_CHECK;
    win = e_client_util_win_get(ec);
    if (!ec->comp_data->need_reparent) return;
+   w = MAX(ec->client.w, 1);
+   h = MAX(ec->client.h, 1);
    /* match ec parent argbness */
    if (ec->argb)
-     pwin = ecore_x_window_manager_argb_new(ec->comp->man->root, ec->client.x, ec->client.y, ec->client.w, ec->client.h);
+     pwin = ecore_x_window_manager_argb_new(ec->comp->man->root, ec->client.x, ec->client.y, w, h);
    else
      {
-        pwin = ecore_x_window_override_new(ec->comp->man->root, ec->client.x, ec->client.y, ec->client.w, ec->client.h);
+        pwin = ecore_x_window_override_new(ec->comp->man->root, ec->client.x, ec->client.y, w, h);
         ecore_x_window_shape_events_select(pwin, !ec->internal); //let's just agree never to do this with our own windows...
      }
    ecore_x_present_select_events(pwin, ECORE_X_PRESENT_EVENT_MASK_CONFIGURE_NOTIFY);
