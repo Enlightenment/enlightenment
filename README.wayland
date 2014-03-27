@@ -63,6 +63,7 @@ yet. Those will need to be disabled:
   --disable-xkbswitch
   --disable-conf-randr
   --disable-everything (don't worry, this is just the everything module)
+  --disable-wl-x11
 
 
 At this stage, you should have EFL properly built, and Enlightenment
