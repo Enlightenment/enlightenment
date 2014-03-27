@@ -1246,6 +1246,12 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
         EC_CHANGED(cw->ec);
         return;
      }
+
+   if ((!cw->ec->input_only) && (!cw->ec->ignored) && (!cw->updates))
+     {
+        cw->updates = eina_tiler_new(cw->ec->client.w, cw->ec->client.h);
+        eina_tiler_tile_size_set(cw->updates, 1, 1);
+     }
    if (cw->ec->input_only)
      {
         cw->real_hid = 0;
@@ -1320,12 +1326,6 @@ _e_comp_intercept_show(void *data, Evas_Object *obj EINA_UNUSED)
 #endif
         cw->redirected = 1;
         evas_object_color_set(cw->clip, ec->netwm.opacity, ec->netwm.opacity, ec->netwm.opacity, ec->netwm.opacity);
-
-        if ((!cw->ec->input_only) && (!cw->ec->ignored))
-          {
-             cw->updates = eina_tiler_new(cw->ec->client.w, cw->ec->client.h);
-             eina_tiler_tile_size_set(cw->updates, 1, 1);
-          }
      }
 
    _e_comp_intercept_show_helper(cw);
