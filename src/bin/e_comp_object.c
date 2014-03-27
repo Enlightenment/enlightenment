@@ -2790,6 +2790,9 @@ e_comp_object_signal_emit(Evas_Object *obj, const char *sig, const char *src)
    if (cw->frame_object) edje_object_signal_emit(cw->frame_object, sig, src);
    if (cw->frame_icon && e_icon_edje_get(cw->frame_icon))
      edje_object_signal_emit(e_icon_edje_get(cw->frame_icon), sig, src);
+   if ((cw->ec->override && e_comp_config_get()->match.disable_overrides) ||
+       ((!cw->ec->override) && e_comp_config_get()->match.disable_borders))
+     return;
    EINA_INLIST_REVERSE_FOREACH(_e_comp_object_movers, prov)
      {
         if (!e_util_glob_match(sig, prov->sig)) continue;
