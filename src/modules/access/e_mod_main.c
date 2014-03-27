@@ -87,7 +87,7 @@ _mouse_in_win_get(Cover *cov, int x, int y)
       then previous target window which has the highlight object
       should get the message. how? */
    target_win = ecore_x_window_shadow_tree_at_xy_with_skip_get
-     (cov->zone->comp->manager->root, x, y, skip, i);
+     (cov->zone->comp->man->root, x, y, skip, i);
 }
 
 static unsigned int
@@ -510,8 +510,8 @@ _cb_mouse_down(void    *data __UNUSED__,
    /* activate message would change focused window
       FIXME: but it is possibe to create unfocused window
       in this case, the message should go to focused window? */
-   bd = e_client_focused_get();
-   if (bd && (bd != _prev_bd)) target_win = bd->client.win;
+   ec = e_client_focused_get();
+   if (ec && (ec != _prev_bd)) target_win = e_client_util_win_get(ec);
 
    EINA_LIST_FOREACH(covers, l, cov)
      {
@@ -728,8 +728,8 @@ _cover_new(E_Zone *zone)
 #if DEBUG_INFO
    Ecore_Evas *ee;
    ee = ecore_evas_new(NULL,
-                       zone->comp->x + zone->x,
-                       zone->comp->y + zone->y,
+                       zone->x,
+                       zone->y,
                        zone->w, zone->h,
                        NULL);
    ecore_evas_alpha_set(ee, EINA_TRUE);
@@ -740,7 +740,7 @@ _cover_new(E_Zone *zone)
    e = ecore_evas_get(ee);
    cov->info = evas_object_rectangle_add(e);
    evas_object_color_set(cov->info, 255, 255, 255, 100);
-   evas_object_move(cov->info, zone->comp->x + zone->x, zone->comp->y + zone->y);
+   evas_object_move(cov->info, zone->x, zone->y);
    evas_object_resize(cov->info, zone->w, 30);
    evas_object_show(cov->info);
 
@@ -751,7 +751,7 @@ _cover_new(E_Zone *zone)
 
    evas_object_color_set(cov->text, 0, 0, 0, 255);
    evas_object_resize(cov->text, (zone->w / 8), 20);
-   evas_object_move(cov->text, zone->comp->x + zone->x + 5, zone->comp->y + zone->y + 5);
+   evas_object_move(cov->text, zone->x + 5, zone->y + 5);
    evas_object_show(cov->text);
 
 #else
@@ -782,25 +782,19 @@ _cover_new(E_Zone *zone)
 static void
 _covers_init(void)
 {
-   Eina_List *l, *l2, *l3;
-   E_Manager *man;
+   const Eina_List *l, *l2;
+   E_Comp *comp;
    int i = 0;
 
-   EINA_LIST_FOREACH(e_manager_list(), l, man)
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
      {
-        E_Comp *comp;
-        EINA_LIST_FOREACH(man->containers, l2, con)
+        E_Zone *zone;
+        EINA_LIST_FOREACH(comp->zones, l2, zone)
           {
-             E_Zone *zone;
-             EINA_LIST_FOREACH(con->zones, l3, zone)
-               {
-                  Cover *cov = _cover_new(zone);
-                  if (cov)
-                    {
-                       covers = eina_list_append(covers, cov);
-                       for (i = 0; i < HISTORY_MAX; i++) cov->mouse_history[i] = -1;
-                    }
-               }
+             Cover *cov = _cover_new(zone);
+             if (!cov) continue;
+             covers = eina_list_append(covers, cov);
+             for (i = 0; i < HISTORY_MAX; i++) cov->mouse_history[i] = -1;
           }
      }
 }
@@ -923,8 +917,8 @@ _cb_property_change(void *data __UNUSED__,
 
    if (event->atom == ECORE_X_ATOM_NET_ACTIVE_WINDOW)
      {
-        bd = e_client_focused_get();
-        if (bd) target_win = bd->client.win;
+        ec = e_client_focused_get();
+        if (ec) target_win = e_client_util_win_get(ec);
 	 }
 
    return ECORE_CALLBACK_PASS_ON;
