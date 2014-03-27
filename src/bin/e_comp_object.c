@@ -874,7 +874,10 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
      {
         evas_object_layer_set(obj, layer);
         if (layer == cw->ec->layer) //trying to put layer back
-          evas_object_stack_below(obj, cw->comp->layers[cw->layer].obj);
+          {
+             evas_object_stack_below(obj, cw->comp->layers[cw->layer].obj);
+             e_comp_shape_queue(cw->comp);
+          }
         return;
      }
    if (cw->layer == l) return;
