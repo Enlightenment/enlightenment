@@ -1785,27 +1785,23 @@ _e_shelf_cb_mouse_in(void *data, int type, void *event)
          * mouse in/out events. in the future, when we remove systray, we should go
          * back to mouse in/out events
          */
-        inside = (ev->event_window == e_comp_get(es)->win);
-        if (!inside)
+        inside = E_INSIDE(e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.x),
+                          e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.y),
+                          es->zone->x, es->zone->y, es->zone->w + 4, es->zone->h + 4);
+        x = e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.x) - es->zone->x;
+        y = e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.y) - es->zone->y;
+        if (inside)
+          inside = (
+              ((E_INSIDE(x, y, es->x, es->y, es->w, es->h)) ||
+               (E_INSIDE(x, y, es->x - 2, es->y - 2, es->w + 4, es->h + 4)) ||
+               (E_INSIDE(x, y, es->x + 2, es->y + 2, es->w + 4, es->h + 4)))
+              );
+        if (inside)
           {
-             inside = E_INSIDE(e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.x),
-                               e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.y),
-                               es->zone->x, es->zone->y, es->zone->w + 4, es->zone->h + 4);
-             x = e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.x) - es->zone->x;
-             y = e_comp_canvas_x_root_adjust(e_comp_get(es), ev->root.y) - es->zone->y;
-             if (inside)
-               inside = (
-                   ((E_INSIDE(x, y, es->x, es->y, es->w, es->h)) ||
-                    (E_INSIDE(x, y, es->x - 2, es->y - 2, es->w + 4, es->h + 4)) ||
-                    (E_INSIDE(x, y, es->x + 2, es->y + 2, es->w + 4, es->h + 4)))
-                   );
-             if (inside)
-               {
-                  if (es->autohide_timer)
-                    ecore_timer_reset(es->autohide_timer);
-                  else
-                    es->autohide_timer = ecore_timer_add(0.5, (Ecore_Task_Cb)_e_shelf_cb_mouse_move_autohide_fuck_systray, es);
-               }
+             if (es->autohide_timer)
+               ecore_timer_reset(es->autohide_timer);
+             else
+               es->autohide_timer = ecore_timer_add(0.5, (Ecore_Task_Cb)_e_shelf_cb_mouse_move_autohide_fuck_systray, es);
           }
         if (inside)
           {
