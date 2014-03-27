@@ -464,6 +464,7 @@ e_border_new(E_Container *con, Ecore_X_Window win, int first_map, int internal)
    /* FIXME: if first_map is 1 then we should ignore the first hide event
     * or ensure the window is already hidden and events flushed before we
     * create a border for it */
+   bd->zone = e_zone_current_get(con);
    if (first_map)
      {
         // printf("##- FIRST MAP\n");
@@ -479,7 +480,6 @@ e_border_new(E_Container *con, Ecore_X_Window win, int first_map, int internal)
 
 
    bd->client.win = win;
-   bd->zone = e_zone_current_get(con);
 
    _e_border_hook_call(E_BORDER_HOOK_NEW_BORDER, bd);
 
