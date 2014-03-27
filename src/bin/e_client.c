@@ -1625,15 +1625,37 @@ _e_client_eval(E_Client *ec)
           }
         if (!ec->placed)
           {
-             /* FIXME: special placement for dialogs etc. etc. etc goes
-              * here */
-             /* FIXME: what if parent is not on this desktop - or zone? */
-             if ((ec->parent) && (ec->parent->visible))
+             if (ec->parent)
                {
-                  if (!E_INSIDE(ec->x, ec->y, ec->parent->x, ec->parent->y, ec->parent->w, ec->parent->h))
+                  if (ec->parent->zone != e_zone_current_get(ec->parent->comp))
                     {
-                       ec->x = ec->parent->x + ((ec->parent->w - ec->w) / 2);
-                       ec->y = ec->parent->y + ((ec->parent->h - ec->h) / 2);
+                       e_client_zone_set(ec, ec->parent->zone);
+                       e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
+                    }
+
+                  if (evas_object_visible_get(ec->parent->frame))
+                    {
+                       if ((!E_CONTAINS(ec->x, ec->y, ec->w, ec->h, zx, zy, zw, zh)) ||
+                          (!E_CONTAINS(ec->x, ec->y, ec->w, ec->h, ec->parent->x, ec->parent->y, ec->parent->w, ec->parent->h)))
+                         {
+                            int x, y;
+
+                            e_comp_object_util_center_pos_get(ec->parent->frame, &x, &y);
+                            if (E_CONTAINS(x, y, ec->w, ec->h, zx, zy, zw, zh))
+                              ec->x = x, ec->y = y;
+                            else
+                              {
+                                 x = ec->parent->x;
+                                 y = ec->parent->y;
+                                 if (!E_CONTAINS(x, y, ec->w, ec->h, zx, zy, zw, zh))
+                                   e_comp_object_util_center(ec->frame);
+                              }
+                            ec->changes.pos = 1;
+                         }
+                    }
+                  else
+                    {
+                       e_comp_object_util_center(ec->frame);
                        ec->changes.pos = 1;
                     }
                   ec->placed = 1;
