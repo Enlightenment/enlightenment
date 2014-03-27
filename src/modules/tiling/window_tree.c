@@ -92,6 +92,7 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
 
    if (split_type > TILING_SPLIT_VERTICAL)
      {
+        free(new_node);
         return root;
      }
    else if (!root)
