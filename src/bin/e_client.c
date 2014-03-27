@@ -2377,10 +2377,10 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
      }
    old_desk = ec->desk;
    ec->desk = desk;
+   e_comp_object_effect_unclip(ec->frame);
+   e_comp_object_effect_set(ec->frame, NULL);
    if (desk->visible || ec->sticky)
      {
-        e_comp_object_effect_unclip(ec->frame);
-        e_comp_object_effect_set(ec->frame, NULL);
         if ((!ec->hidden) && (!ec->iconic))
           evas_object_show(ec->frame);
      }
