@@ -2788,7 +2788,8 @@ e_comp_object_signal_emit(Evas_Object *obj, const char *sig, const char *src)
    //INF("EMIT %p: %s %s", cw->ec, sig, src);
    edje_object_signal_emit(cw->shobj, sig, src);
    if (cw->frame_object) edje_object_signal_emit(cw->frame_object, sig, src);
-   if (cw->frame_icon) edje_object_signal_emit(cw->frame_icon, sig, src);
+   if (cw->frame_icon && e_icon_edje_get(cw->frame_icon))
+     edje_object_signal_emit(e_icon_edje_get(cw->frame_icon), sig, src);
    EINA_INLIST_REVERSE_FOREACH(_e_comp_object_movers, prov)
      {
         if (!e_util_glob_match(sig, prov->sig)) continue;

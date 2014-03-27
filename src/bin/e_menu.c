@@ -880,11 +880,11 @@ e_menu_item_toggle_set(E_Menu_Item *mi, int tog)
           edje_object_signal_emit(mi->bg_object, "e,state,on", "e");
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,on", "e");
-        if (mi->label_object)
+        if (mi->label_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,on", "e");
-        if (mi->submenu_object)
+        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->submenu_object, "e,state,on", "e");
-        if (mi->toggle_object)
+        if (mi->toggle_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,on", "e");
         if (mi->menu->bg_object)
           edje_object_signal_emit(mi->menu->bg_object, "e,state,on", "e");
@@ -896,11 +896,11 @@ e_menu_item_toggle_set(E_Menu_Item *mi, int tog)
           edje_object_signal_emit(mi->bg_object, "e,state,off", "e");
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,off", "e");
-        if (mi->label_object)
+        if (mi->label_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,off", "e");
-        if (mi->submenu_object)
+        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->submenu_object, "e,state,off", "e");
-        if (mi->toggle_object)
+        if (mi->toggle_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,off", "e");
         if (mi->menu->bg_object)
           edje_object_signal_emit(mi->menu->bg_object, "e,state,off", "e");

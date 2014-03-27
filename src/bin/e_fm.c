@@ -4888,7 +4888,6 @@ _e_fm2_icon_realize(E_Fm2_Icon *ic)
         /* FIXME: while listing dirs need to use icons in-place and not
          * unrealize and re-realize */
         edje_object_signal_emit(ic->obj, "e,state,selected", "e");
-        edje_object_signal_emit(ic->obj_icon, "e,state,selected", "e");
         selectraise = edje_object_data_get(ic->obj, "selectraise");
         if ((selectraise) && (!strcmp(selectraise, "on")))
           evas_object_stack_below(ic->obj, ic->sd->drop);
@@ -5049,7 +5048,6 @@ _e_fm2_icon_select(E_Fm2_Icon *ic)
           _e_fm2_icon_entry_widget_accept(ic->sd->iop_icon);
 
         edje_object_signal_emit(ic->obj, "e,state,selected", "e");
-        edje_object_signal_emit(ic->obj_icon, "e,state,selected", "e");
         evas_object_stack_below(ic->obj, ic->sd->drop);
         selectraise = edje_object_data_get(ic->obj, "selectraise");
         if ((selectraise) && (!strcmp(selectraise, "on")))
@@ -5075,7 +5073,6 @@ _e_fm2_icon_deselect(E_Fm2_Icon *ic)
           _e_fm2_icon_entry_widget_del(ic);
 
         edje_object_signal_emit(ic->obj, "e,state,unselected", "e");
-        edje_object_signal_emit(ic->obj_icon, "e,state,unselected", "e");
         stacking = edje_object_data_get(ic->obj, "stacking");
         selectraise = edje_object_data_get(ic->obj, "selectraise");
         if ((selectraise) && (!strcmp(selectraise, "on")))
