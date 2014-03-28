@@ -1714,7 +1714,31 @@ _e_fwin_changed(void *data,
         eina_stringshare_replace(&fwin->scrollframe_file, NULL);
         eina_stringshare_replace(&fwin->theme_file, NULL);
      }
-   if (fwin->under_obj) evas_object_hide(fwin->under_obj);
+   if (page->scrollframe_obj)
+     {
+        if ((fwin->scrollframe_file) &&
+            (e_util_edje_collection_exists(fwin->scrollframe_file,
+                                           "e/fileman/default/scrollframe")))
+          e_scrollframe_custom_edje_file_set(page->scr,
+                                             (char *)fwin->scrollframe_file,
+                                             "e/fileman/default/scrollframe");
+        else
+          {
+             if (fwin->zone)
+               e_scrollframe_custom_theme_set(page->scr,
+                                              "base/theme/fileman",
+                                              "e/fileman/desktop/scrollframe");
+             else
+               e_scrollframe_custom_theme_set(page->scr,
+                                              "base/theme/fileman",
+                                              "e/fileman/default/scrollframe");
+          }
+        e_scrollframe_child_pos_set(page->scr, 0, 0);
+     }
+   if ((fwin->theme_file) && (ecore_file_exists(fwin->theme_file)))
+     e_fm2_custom_theme_set(obj, fwin->theme_file);
+   else
+     e_fm2_custom_theme_set(obj, NULL);
    if (fwin->wallpaper_file)
      {
         if (eina_str_has_extension(fwin->wallpaper_file, "edj"))
@@ -1738,15 +1762,18 @@ _e_fwin_changed(void *data,
           }
         if (fwin->under_obj)
           {
-             edje_object_part_swallow(e_scrollframe_edje_object_get(page->scr), 
+             edje_object_part_swallow(e_scrollframe_edje_object_get(page->scr),
                                       "e.swallow.bg", fwin->under_obj);
              evas_object_pass_events_set(fwin->under_obj, 1);
              evas_object_show(fwin->under_obj);
           }
      }
    else
-     edje_object_part_swallow(e_scrollframe_edje_object_get(page->scr), 
+     {
+        edje_object_part_swallow(e_scrollframe_edje_object_get(page->scr),
                                       "e.swallow.bg", NULL);
+        if (fwin->under_obj) evas_object_hide(fwin->under_obj);
+     }
    if (fwin->over_obj)
      {
         //printf("over obj\n");
@@ -1765,31 +1792,6 @@ _e_fwin_changed(void *data,
 //          e_icon_file_edje_set(fwin->over_obj, NULL, NULL);
         evas_object_show(fwin->over_obj);
      }
-   if (page->scrollframe_obj)
-     {
-        if ((fwin->scrollframe_file) &&
-            (e_util_edje_collection_exists(fwin->scrollframe_file, 
-                                           "e/fileman/default/scrollframe")))
-          e_scrollframe_custom_edje_file_set(page->scr,
-                                             (char *)fwin->scrollframe_file,
-                                             "e/fileman/default/scrollframe");
-        else
-          {
-             if (fwin->zone)
-               e_scrollframe_custom_theme_set(page->scr,
-                                              "base/theme/fileman",
-                                              "e/fileman/desktop/scrollframe");
-             else
-               e_scrollframe_custom_theme_set(page->scr,
-                                              "base/theme/fileman",
-                                              "e/fileman/default/scrollframe");
-          }
-        e_scrollframe_child_pos_set(page->scr, 0, 0);
-     }
-   if ((fwin->theme_file) && (ecore_file_exists(fwin->theme_file)))
-     e_fm2_custom_theme_set(obj, fwin->theme_file);
-   else
-     e_fm2_custom_theme_set(obj, NULL);
 
    _e_fwin_icon_mouse_out(fwin, NULL, NULL);
    if (fwin->zone)
