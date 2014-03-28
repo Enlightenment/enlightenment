@@ -620,6 +620,7 @@ _e_comp_x_client_stack(E_Client *ec)
         if (ec2 && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
           {
              if (ec2->layer != ec->layer) break;
+             if (ec2->comp_data->need_reparent && (!ec2->comp_data->reparented)) continue;
              win = _e_comp_x_client_window_get(ec2);
           }
      } while (ec2 && (!win));
@@ -634,6 +635,7 @@ _e_comp_x_client_stack(E_Client *ec)
              if (ec2 && (e_client_is_stacking(ec2) || ((!ec2->override) || ec2->internal)))
                {
                   if (ec2->layer != ec->layer) break;
+                  if (ec2->comp_data->need_reparent && (!ec2->comp_data->reparented)) continue;
                   win = _e_comp_x_client_window_get(ec2);
                   mode = ECORE_X_WINDOW_STACK_ABOVE;
                }
