@@ -10132,11 +10132,16 @@ _e_fm2_desktop_open(E_Fm2_Smart_Data *sd)
    Eina_Bool ret;
 
    snprintf(buf, sizeof(buf), "%s/.directory.desktop", sd->realpath);
+   if (sd->desktop)
+     {
+        if (!e_util_strcmp(buf, sd->desktop->orig_path)) return 1;
+     }
    ret = ecore_file_exists(buf) ? ecore_file_can_write(buf)
      : ecore_file_can_write(sd->realpath);
    if (!ret) return -1;
    ef = efreet_desktop_new(buf);
    if (!ef) return 0;
+   efreet_desktop_free(sd->desktop);
    sd->desktop = ef;
    return 1;
 }
@@ -11668,6 +11673,7 @@ EAPI Efreet_Desktop *
 e_fm2_desktop_get(Evas_Object *obj)
 {
    EFM_SMART_CHECK(NULL);
+   if (_e_fm2_desktop_open(sd) != 1) return NULL;
    return sd->desktop;
 }
 
