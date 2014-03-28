@@ -224,7 +224,8 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
 
    for (i = 0; i < eina_value_array_count(array); i++)
      {
-        const char *key, *str_val, *str_markup;
+        const char *key, *str_val;
+        char *str_markup;
         Eina_Value st, subst;
         Efreet_Uri *uri;
 
@@ -236,6 +237,7 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
              eina_value_struct_get(&subst, "arg0", &str_val);
              str_markup = evas_textblock_text_utf8_to_markup(NULL, str_val);
              ctxt->meta_title = eina_stringshare_add(str_markup);
+             free(str_markup);
              eina_value_flush(&subst);
           }
         else if (!strcmp(key, "xesam:album"))
@@ -244,6 +246,7 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
              eina_value_struct_get(&subst, "arg0", &str_val);
              str_markup = evas_textblock_text_utf8_to_markup(NULL, str_val);
              ctxt->meta_album = eina_stringshare_add(str_markup);
+             free(str_markup);
              eina_value_flush(&subst);
           }
         else if (!strcmp(key, "xesam:artist"))
@@ -254,6 +257,7 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
              eina_value_array_get(&arr, 0, &str_val);
              str_markup = evas_textblock_text_utf8_to_markup(NULL, str_val);
              ctxt->meta_artist = eina_stringshare_add(str_markup);
+             free(str_markup);
              eina_value_flush(&arr);
              eina_value_flush(&subst);
           }
