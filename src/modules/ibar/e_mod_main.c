@@ -1007,7 +1007,7 @@ _ibar_icon_signal_emit(IBar_Icon *ic, char *sig, char *src)
      edje_object_signal_emit(e_icon_edje_get(ic->o_icon), sig, src);
    if (ic->o_holder2)
      edje_object_signal_emit(ic->o_holder2, sig, src);
-   if (ic->o_icon2 && e_icon_edje_get(ic->o_icon))
+   if (ic->o_icon2 && e_icon_edje_get(ic->o_icon2))
      edje_object_signal_emit(e_icon_edje_get(ic->o_icon2), sig, src);
 }
 
