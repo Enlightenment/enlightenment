@@ -44,8 +44,6 @@ include src/modules/Makefile_wizard.mk
 
 include src/modules/Makefile_conf.mk
 
-include src/modules/Makefile_conf_wallpaper2.mk
-
 include src/modules/Makefile_conf_theme.mk
 
 include src/modules/Makefile_conf_intl.mk
