@@ -2142,8 +2142,8 @@ e_client_idler_before(void)
              if ((ec->border.changed) && (!ec->shaded) &&
                  (!(((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN))))
                {
-                  _e_client_frame_update(ec);
                   ec->border.changed = 0;
+                  _e_client_frame_update(ec);
                }
              _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
           }
