@@ -841,3 +841,30 @@ ebluez4_adapter_property_set(Adapter *adap, const char *prop_name, Eina_Bool val
    eldbus_message_iter_container_close(iter, variant);
    eldbus_proxy_send(adap->proxy, new_msg, NULL, NULL, -1);
 }
+
+static struct ebluez5 *bluez5 = NULL;
+
+void
+eldbus5_init(void)
+{
+   Eldbus_Object *obj;
+
+   if (bluez5 != NULL)
+      return;
+
+   bluez5 = calloc(1, sizeof(*bluez5));
+   bluez5->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+
+   obj = eldbus_object_get(bluez5->conn, BLUEZ_BUS, ORG_BLUEZ_PATH);
+   bluez5->agent_manager = eldbus_proxy_get(obj, AGENT_MANAGER_INTERFACE);
+}
+
+void
+eldbus5_shutdown(void)
+{
+   if (!bluez5)
+      return;
+
+   eldbus_connection_unref(bluez5->conn);
+   free(bluez5);
+}

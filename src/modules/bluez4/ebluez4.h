@@ -82,3 +82,16 @@ void ebluez4_pair_with_device(const char *addr, void (*cb)(void *, Eina_Bool, co
 void ebluez4_remove_device(Eldbus_Object *obj);
 int ebluez4_dev_path_cmp(const void *d1, const void *d2);
 void ebluez4_adapter_property_set(Adapter *adap, const char *prop_name, Eina_Bool value);
+
+
+#define ORG_BLUEZ_PATH  "/org/bluez"
+#define AGENT_MANAGER_INTERFACE  "org.bluez.AgentManager1"
+
+struct ebluez5
+{
+   Eldbus_Connection *conn;
+   Eldbus_Proxy *agent_manager;
+};
+
+void ebluez5_init(void);
+void ebluez5_shutdown(void);
