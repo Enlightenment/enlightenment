@@ -197,8 +197,6 @@ src/modules/conf_theme/e_int_config_transitions.c
 src/modules/conf_theme/e_int_config_wallpaper.c
 src/modules/conf_theme/e_int_config_xsettings.c
 src/modules/conf_theme/e_mod_main.c
-src/modules/conf_wallpaper2/e_int_config_wallpaper.c
-src/modules/conf_wallpaper2/e_mod_main.c
 src/modules/conf_window_manipulation/e_int_config_clientlist.c
 src/modules/conf_window_manipulation/e_int_config_focus.c
 src/modules/conf_window_manipulation/e_int_config_window_display.c
