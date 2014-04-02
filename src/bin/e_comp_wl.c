@@ -2289,7 +2289,7 @@ _e_comp_wl_pointer_configure(E_Wayland_Surface *ews, Evas_Coord x, Evas_Coord y,
 
    /* configure the surface geometry */
    ews->geometry.x = x;
-   ews->geometry.h = h;
+   ews->geometry.y = y;
    ews->geometry.w = w;
    ews->geometry.h = h;
    ews->geometry.changed = EINA_TRUE;
