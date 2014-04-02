@@ -969,6 +969,9 @@ _e_comp_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
    cw2 = evas_object_data_get(o, "comp_obj");
    while (!cw2)
      {
+        /* check for non-client layer object */
+        if (!e_util_strcmp(evas_object_name_get(o), "layer_obj"))
+          break;
         /* find an existing client to use for layering
          * by walking up the object stack
          *
@@ -1014,7 +1017,7 @@ _e_comp_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
      }
    else
      _e_comp_object_layers_add(cw, NULL, NULL, 0);
-   if (cw->ec->new_client || (ecstack != (cw2 ? cw2->ec : NULL)))
+   if (cw->ec->new_client || (ecstack->frame != o))
      evas_object_data_set(obj, "client_restack", (void*)1);
    evas_object_stack_above(obj, above);
    if (cw->comp->layers[cw->layer].obj)
@@ -1022,7 +1025,7 @@ _e_comp_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
        {
           CRI("STACKING ERROR!!!");
        }
-   if (cw->ec->new_client || (ecstack != (cw2 ? cw2->ec : NULL)))
+   if (cw->ec->new_client || (ecstack->frame != o))
      evas_object_data_del(obj, "client_restack");
    e_comp_shape_queue(cw->comp);
 }
@@ -1064,6 +1067,9 @@ _e_comp_intercept_stack_below(void *data, Evas_Object *obj, Evas_Object *below)
    cw2 = evas_object_data_get(o, "comp_obj");
    while (!cw2)
      {
+        /* check for non-client layer object */
+        if (!e_util_strcmp(evas_object_name_get(o), "layer_obj"))
+          break;
         /* find an existing client to use for layering
          * by walking up the object stack
          *
@@ -1109,7 +1115,7 @@ _e_comp_intercept_stack_below(void *data, Evas_Object *obj, Evas_Object *below)
      }
    else
      _e_comp_object_layers_add(cw, NULL, NULL, 0);
-   if (cw->ec->new_client || (ecstack != (cw2 ? cw2->ec : NULL)))
+   if (cw->ec->new_client || (ecstack->frame != o))
      evas_object_data_set(obj, "client_restack", (void*)1);
    evas_object_stack_below(obj, below);
    if (cw->comp->layers[cw->layer].obj)
@@ -1117,7 +1123,7 @@ _e_comp_intercept_stack_below(void *data, Evas_Object *obj, Evas_Object *below)
        {
           CRI("STACKING ERROR!!!");
        }
-   if (cw->ec->new_client || (ecstack != (cw2 ? cw2->ec : NULL)))
+   if (cw->ec->new_client || (ecstack->frame != o))
      evas_object_data_del(obj, "client_restack");
    e_comp_shape_queue(cw->comp);
 }
