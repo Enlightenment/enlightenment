@@ -1226,7 +1226,7 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
 static void
 _e_comp_intercept_show_helper(E_Comp_Object *cw)
 {
-   int w = 0, h = 0, pw, ph;
+   int w = 0, h = 0;
 
    if (cw->ec->sticky)
      e_comp_object_signal_emit(cw->smart_obj, "e,state,sticky", "e");
@@ -1264,7 +1264,6 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
         EC_CHANGED(cw->ec);
         return;
      }
-   e_pixmap_size_get(cw->ec->pixmap, &pw, &ph);   
    if (!e_pixmap_size_get(cw->ec->pixmap, &w, &h))
      e_pixmap_clear(cw->ec->pixmap);
 
