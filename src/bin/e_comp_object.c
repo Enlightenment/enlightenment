@@ -988,37 +988,38 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
    e_comp_shape_queue(cw->comp);
 }
 
+typedef void (*E_Comp_Object_Stack_Func)(Evas_Object *obj, Evas_Object *stack);
+
 static void
-_e_comp_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
+_e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Object_Stack_Func stack_cb)
 {
-   E_Comp_Object *cw2 = NULL, *cw = data;
+   E_Comp_Object *cw2 = NULL;
    E_Client *ecstack;
    short layer;
-   Evas_Object *o = above;
+   Evas_Object *o = stack;
+   Eina_Bool raising = stack_cb == evas_object_stack_above;
 
-   EINA_SAFETY_ON_TRUE_RETURN(obj == above);
-   if (evas_object_below_get(obj) == above) return;
    if (cw->ec->layer_block)
      {
         /* obey compositor effects! */
-        if (cw->ec->layer == evas_object_layer_get(obj))
-          evas_object_data_set(obj, "client_restack", (void*)1);
-        evas_object_stack_above(obj, above);
-        if (cw->ec->layer == evas_object_layer_get(obj))
-          evas_object_data_del(obj, "client_restack");
+        if (cw->ec->layer == evas_object_layer_get(cw->smart_obj))
+          evas_object_data_set(cw->smart_obj, "client_restack", (void*)1);
+        stack_cb(cw->smart_obj, stack);
+        if (cw->ec->layer == evas_object_layer_get(cw->smart_obj))
+          evas_object_data_del(cw->smart_obj, "client_restack");
         return;
      }
    /* assume someone knew what they were doing during client init */
    if (cw->ec->new_client)
      layer = cw->ec->layer;
    else
-     layer = evas_object_layer_get(above);
+     layer = evas_object_layer_get(stack);
    ecstack = e_client_below_get(cw->ec);
    if (layer != e_comp_canvas_layer_map_to(cw->layer))
      {
         /* some FOOL is trying to restack a layer marker */
-        if (obj == cw->comp->layers[cw->layer].obj) return;
-        evas_object_layer_set(obj, layer);
+        if (cw->smart_obj == cw->comp->layers[cw->layer].obj) return;
+        evas_object_layer_set(cw->smart_obj, layer);
         /* we got our layer wrangled, return now! */
         if (layer != e_comp_canvas_layer_map_to(cw->layer)) return;
      }
@@ -1038,7 +1039,7 @@ _e_comp_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
          * - find a stacking client
          */
         o = evas_object_above_get(o);
-        if ((!o) || (o == obj)) break;
+        if ((!o) || (o == cw->smart_obj)) break;
         if (evas_object_layer_get(o) != layer)
           {
              /* reached the top client layer somehow
@@ -1066,128 +1067,43 @@ _e_comp_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
    _e_comp_object_layers_remove(cw);
    if (cw2)
      {
-        if (o == above)
-          _e_comp_object_layers_add(cw, cw2, NULL, 0);
-        else if (o == obj)
-          _e_comp_object_layers_add(cw, NULL, NULL, 0);
-        else
-          _e_comp_object_layers_add(cw, NULL, cw2, 0);
+        if (o == stack) //if stacking above, cw2 is above; else cw2 is below
+          _e_comp_object_layers_add(cw, raising ? cw2 : NULL, raising ? NULL : cw2, 0);
+        else if (o == cw->smart_obj) //prepend (lower) if not stacking above
+          _e_comp_object_layers_add(cw, NULL, NULL, !raising);
+        else //if no stacking objects found, either raise or lower
+          _e_comp_object_layers_add(cw, raising ? NULL : cw2, raising ? cw2 : NULL, 0);
      }
    else
      _e_comp_object_layers_add(cw, NULL, NULL, 0);
    /* set restack if stacking has changed */
    if (cw->ec->new_client || (ecstack->frame != o))
-     evas_object_data_set(obj, "client_restack", (void*)1);
-   evas_object_stack_above(obj, above);
+     evas_object_data_set(cw->smart_obj, "client_restack", (void*)1);
+   stack_cb(cw->smart_obj, stack);
    if (cw->comp->layers[cw->layer].obj)
-     if (evas_object_below_get(obj) == cw->comp->layers[cw->layer].obj)
+     if (evas_object_below_get(cw->smart_obj) == cw->comp->layers[cw->layer].obj)
        {
           CRI("STACKING ERROR!!!");
        }
    if (cw->ec->new_client || (ecstack->frame != o))
-     evas_object_data_del(obj, "client_restack");
+     evas_object_data_del(cw->smart_obj, "client_restack");
    e_comp_shape_queue(cw->comp);
+}
+
+static void
+_e_comp_intercept_stack_above(void *data, Evas_Object *obj, Evas_Object *above)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(obj == above);
+   if (evas_object_below_get(obj) == above) return;
+   _e_comp_intercept_stack_helper(data, above, evas_object_stack_above);
 }
 
 static void
 _e_comp_intercept_stack_below(void *data, Evas_Object *obj, Evas_Object *below)
 {
-   E_Comp_Object *cw2 = NULL, *cw = data;
-   E_Client *ecstack;
-   short layer;
-   Evas_Object *o = below;
-
    EINA_SAFETY_ON_TRUE_RETURN(obj == below);
    if (evas_object_above_get(obj) == below) return;
-   if (cw->ec->layer_block)
-     {
-        /* obey compositor effects! */
-        if (cw->ec->layer == evas_object_layer_get(obj))
-          evas_object_data_set(obj, "client_restack", (void*)1);
-        evas_object_stack_below(obj, below);
-        if (cw->ec->layer == evas_object_layer_get(obj))
-          evas_object_data_del(obj, "client_restack");
-        return;
-     }
-   /* assume someone knew what they were doing during client init */
-   if (cw->ec->new_client)
-     layer = cw->ec->layer;
-   else
-     layer = evas_object_layer_get(below);
-   ecstack = e_client_below_get(cw->ec);
-   if (layer != e_comp_canvas_layer_map_to(cw->layer))
-     {
-        /* some FOOL is trying to restack a layer marker */
-        if (obj == cw->comp->layers[cw->layer].obj) return;
-        evas_object_layer_set(obj, layer);
-        /* we got our layer wrangled, return now! */
-        if (layer != e_comp_canvas_layer_map_to(cw->layer)) return;
-     }
-
-   /* check if we're stacking below another client */
-   cw2 = evas_object_data_get(o, "comp_obj");
-   while (!cw2)
-     {
-        /* check for non-client layer object */
-        if (!e_util_strcmp(evas_object_name_get(o), "layer_obj"))
-          break;
-        /* find an existing client to use for layering
-         * by walking up the object stack
-         *
-         * this is guaranteed to be pretty quick since we'll either:
-         * - run out of client layers
-         * - find a stacking client
-         */
-        o = evas_object_above_get(o);
-        if ((!o) || (o == obj)) break;
-        if (evas_object_layer_get(o) != layer)
-          {
-             /* reached the top client layer somehow
-              * use top client object
-              */
-             o = cw->comp->layers[e_comp_canvas_layer_map(E_LAYER_CLIENT_PRIO)].obj;
-          }
-        if (!o)
-          /* top client layer window hasn't been stacked yet. this probably shouldn't happen?
-           * return here since the top client layer window 
-           */
-          {
-             E_Client *ec;
-
-             ec = e_client_top_get(cw->comp);
-             if (ec)
-               o = ec->frame;
-             //else //wat
-          }
-        if (o) cw2 = evas_object_data_get(o, "comp_obj");
-     }
-
-
-   /* remove existing layers */
-   _e_comp_object_layers_remove(cw);
-   if (cw2)
-     {
-        if (o == below)
-          _e_comp_object_layers_add(cw, NULL, cw2, 0);
-        else if (o == obj)
-          _e_comp_object_layers_add(cw, NULL, NULL, 1);
-        else
-          _e_comp_object_layers_add(cw, cw2, NULL, 0);
-     }
-   else
-     _e_comp_object_layers_add(cw, NULL, NULL, 0);
-   /* set restack if stacking has changed */
-   if (cw->ec->new_client || (ecstack->frame != o))
-     evas_object_data_set(obj, "client_restack", (void*)1);
-   evas_object_stack_below(obj, below);
-   if (cw->comp->layers[cw->layer].obj)
-     if (evas_object_below_get(obj) == cw->comp->layers[cw->layer].obj)
-       {
-          CRI("STACKING ERROR!!!");
-       }
-   if (cw->ec->new_client || (ecstack->frame != o))
-     evas_object_data_del(obj, "client_restack");
-   e_comp_shape_queue(cw->comp);
+   _e_comp_intercept_stack_helper(data, below, evas_object_stack_below);
 }
 
 static void
