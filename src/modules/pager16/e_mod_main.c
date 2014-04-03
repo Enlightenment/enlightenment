@@ -244,7 +244,8 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    Instance *inst;
 
    inst = gcc->data;
-   pager_config->instances = eina_list_remove(pager_config->instances, inst);
+   if (pager_config)
+     pager_config->instances = eina_list_remove(pager_config->instances, inst);
    e_drop_handler_del(inst->pager->drop_handler);
    _pager_free(inst->pager);
    free(inst);
