@@ -159,6 +159,7 @@ e_xkb_layout_next(void)
    E_Config_XKB_Layout *cl;
 
    if (e_config->xkb.dont_touch_my_damn_keyboard) return;
+   if (!e_config->xkb.used_layouts) return;
    l = eina_list_nth_list(e_config->xkb.used_layouts, e_config->xkb.cur_group);
    l = eina_list_next(l);
    if (!l) l = e_config->xkb.used_layouts;
@@ -180,6 +181,7 @@ e_xkb_layout_prev(void)
    E_Config_XKB_Layout *cl;
 
    if (e_config->xkb.dont_touch_my_damn_keyboard) return;
+   if (!e_config->xkb.used_layouts) return;
    l = eina_list_nth_list(e_config->xkb.used_layouts, e_config->xkb.cur_group);
    l = eina_list_prev(l);
    if (!l) l = eina_list_last(e_config->xkb.used_layouts);
