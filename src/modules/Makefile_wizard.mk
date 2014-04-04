@@ -36,7 +36,6 @@ wizardpkg_LTLIBRARIES  = src/modules/wizard/module.la \
 			 src/modules/wizard/page_110.la \
 			 src/modules/wizard/page_120.la \
 			 src/modules/wizard/page_130.la \
-			 src/modules/wizard/page_140.la \
 			 src/modules/wizard/page_150.la \
 			 src/modules/wizard/page_160.la \
 			 src/modules/wizard/page_170.la \
@@ -127,11 +126,6 @@ src_modules_wizard_page_130_la_LIBADD = $(MOD_LIBS)
 src_modules_wizard_page_130_la_CPPFLAGS = $(MOD_CPPFLAGS)
 src_modules_wizard_page_130_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_wizard_page_130_la_SOURCES = src/modules/wizard/page_130.c
-
-src_modules_wizard_page_140_la_LIBADD = $(MOD_LIBS)
-src_modules_wizard_page_140_la_CPPFLAGS = $(MOD_CPPFLAGS)
-src_modules_wizard_page_140_la_LDFLAGS = $(MOD_LDFLAGS)
-src_modules_wizard_page_140_la_SOURCES = src/modules/wizard/page_140.c
 
 src_modules_wizard_page_150_la_LIBADD = $(MOD_LIBS)
 src_modules_wizard_page_150_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X=1
