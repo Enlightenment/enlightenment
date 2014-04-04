@@ -353,12 +353,14 @@ con(Pulse *conn, int type __UNUSED__, Ecore_Con_Event_Server_Add *ev)
    INF("connected to %s", ecore_con_server_name_get(ev->server));
 
    fd = ecore_con_server_fd_get(ev->server);
+   if (fd >= -1)
+     conn->fd = dup(fd);
    if (fd == -1)
      {
         pulse_disconnect(conn);
         return ECORE_CALLBACK_RENEW;
      }
-   conn->fd = dup(fd);
+
 #ifdef SO_PASSCRED
    setsockopt(conn->fd, SOL_SOCKET, SO_PASSCRED, &on, sizeof(on));
 #endif
