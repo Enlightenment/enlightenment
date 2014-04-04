@@ -1900,9 +1900,6 @@ _e_smart_monitor_orientation_get(int rotation)
    else if (((rotation - ROTATE_FUZZ) <= 270) ||
             ((rotation + ROTATE_FUZZ) <= 270))
      return ECORE_X_RANDR_ORIENTATION_ROT_270;
-   else if (((rotation - ROTATE_FUZZ) < 360) ||
-            ((rotation + ROTATE_FUZZ) < 360))
-     return ECORE_X_RANDR_ORIENTATION_ROT_0;
 
    /* return a default */
    return ECORE_X_RANDR_ORIENTATION_ROT_0;
