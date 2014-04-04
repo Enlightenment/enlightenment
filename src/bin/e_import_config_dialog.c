@@ -407,7 +407,8 @@ _e_import_config_dialog_del(void *data)
 
    if (import->exe_handler) ecore_event_handler_del(import->exe_handler);
    import->exe_handler = NULL;
-   if (import->tmpf) unlink(import->tmpf);
+   if (import->tmpf && (unlink(import->tmpf) < 0))
+     ERR("Could not delete tmpfile '%s'", import->tmpf);
    free(import->tmpf);
    eina_stringshare_del(import->fdest);
    import->exe = NULL;
