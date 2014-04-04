@@ -1322,7 +1322,8 @@ _e_fm_ipc_cb_fop_trash_idler(void *data)
      }
    else
      /* Could not create info file. Spec says to put orig file back */
-     rename(dest, fop->src);
+     if (rename(dest, fop->src) < 0)
+       ERR("File could not be put back!");
 
    free(dest);
    eina_stringshare_del(fop->src);
