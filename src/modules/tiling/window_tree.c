@@ -190,6 +190,9 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
           }
         else
           {
+
+             parent->children =
+               eina_inlist_remove(parent->children, EINA_INLIST_GET(item));
              if (grand_parent)
                {
                   /* Update the children's parent. */
@@ -220,9 +223,6 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
                    * two levels. */
                   item_keep->weight = 1.0;
                }
-
-             parent->children =
-               eina_inlist_remove(parent->children, EINA_INLIST_GET(item));
           }
      }
    else
