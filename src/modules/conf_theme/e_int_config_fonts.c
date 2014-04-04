@@ -619,6 +619,7 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    E_Radio_Group *rg;
    Eina_List *next = NULL;
    int option_enable;
+   E_Font_Fallback *eff;
 
    cfdata->evas = evas;
 
@@ -695,15 +696,11 @@ _advanced_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_
    ob = e_widget_config_list_add(evas, e_widget_entry_add, _("Fallback Name"), 2);
    cfdata->gui.fallback_list = ob;
    option_enable = 0;
-   for (next = e_font_fallback_list(); next; next = next->next)
+   EINA_LIST_FOREACH(e_font_fallback_list(), next, eff)
      {
-        E_Font_Fallback *eff;
-
-        eff = next->data;
         e_widget_config_list_append(ob, eff->name);
         option_enable = 1;
      }
-   if (next) eina_list_free(next);
    ob = e_widget_check_add(evas, _("Enable Fallbacks"), &(cfdata->cur_fallbacks_enabled));
    e_widget_config_list_object_append(cfdata->gui.fallback_list, ob,
                                       0, 0, 2, 1, 1, 0, 1, 0);
