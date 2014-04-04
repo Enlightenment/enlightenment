@@ -798,8 +798,10 @@ e_pointer_type_pop(E_Pointer *p,
                {
                   int w, h;
 
-                  e_pixmap_size_get(p->pixmap, &w, &h);
-                  _e_pointer_canvas_resize(p, w, h);
+                  if (e_pixmap_size_get(p->pixmap, &w, &h))
+                    _e_pointer_canvas_resize(p, w, h);
+                  else
+                    _e_pointer_canvas_resize(p, 1, 1);
                }
           }
      }
