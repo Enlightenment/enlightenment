@@ -236,9 +236,9 @@ parse_rules(void)
                      /* A hack to get it to parse right if
                       * the group name contains a space
                       */
-                     if (strstr(p, "  "))
+                     p = strstr(p, "  ");
+                     if (p)
                        {
-                          p = strstr(p, "  ");
                           while (p[0] == ' ')
                             ++p;
                        }
