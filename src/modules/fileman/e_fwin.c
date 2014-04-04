@@ -2770,11 +2770,7 @@ _e_fwin_cb_open(void *data,
    if (fad->app2)
      desktop = efreet_util_desktop_file_id_find(fad->app2);
 
-   if ((!desktop) && (!fad->exec_cmd))
-     {
-        if (desktop) efreet_desktop_free(desktop);
-        return;
-     }
+   if ((!desktop) && (!fad->exec_cmd)) return;
 
    // Create a fake .desktop for custom command.
    if (!desktop)
