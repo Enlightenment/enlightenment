@@ -362,10 +362,18 @@ con(Pulse *conn, int type __UNUSED__, Ecore_Con_Event_Server_Add *ev)
      }
 
 #ifdef SO_PASSCRED
-   setsockopt(conn->fd, SOL_SOCKET, SO_PASSCRED, &on, sizeof(on));
+   if (setsockopt(conn->fd, SOL_SOCKET, SO_PASSCRED, &on, sizeof(on)) < 0)
+     {
+        pulse_disconnect(conn);
+        return ECORE_CALLBACK_RENEW;
+     }
 #endif
-   setsockopt(conn->fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
-   fcntl(conn->fd, F_SETFL, O_NONBLOCK);
+   if ((setsockopt(conn->fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) < 0) ||
+      (fcntl(conn->fd, F_SETFL, O_NONBLOCK) < 0))
+     {
+        pulse_disconnect(conn);
+        return ECORE_CALLBACK_RENEW;
+     }
 
    flags = fcntl(conn->fd, F_GETFD);
    flags |= FD_CLOEXEC;
