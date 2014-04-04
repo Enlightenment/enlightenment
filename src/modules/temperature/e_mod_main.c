@@ -363,48 +363,44 @@ temperature_face_update_config(Config_Face *inst)
 }
 
 Eina_List *
-temperature_get_bus_files(const char* bus)
+temperature_get_bus_files(const char *bus)
 {
-   Eina_List *result, *therms;
+   Eina_List *result;
+   Eina_List *therms;
    char path[PATH_MAX];
    char busdir[PATH_MAX];
+   char *name;
 
    result = NULL;
-   if (result)
+
+   snprintf(busdir, sizeof(busdir), "/sys/bus/%s/devices", bus);
+   /* Look through all the devices for the given bus. */
+   therms = ecore_file_ls(busdir);
+
+   EINA_LIST_FREE(therms, name)
      {
-	snprintf(busdir, sizeof(busdir), "/sys/bus/%s/devices", bus);
-	/* Look through all the devices for the given bus. */
-	therms = ecore_file_ls(busdir);
-	if (therms)
-	  {
-	     char *name;
+        Eina_List *files;
+        char *file;
 
-	     EINA_LIST_FREE(therms, name)
-	       {
-		  Eina_List *files;
-		  char *file;
+        /* Search each device for temp*_input, these should be
+         * temperature devices. */
+        snprintf(path, sizeof(path), "%s/%s", busdir, name);
+        files = ecore_file_ls(path);
+        EINA_LIST_FREE(files, file)
+          {
+             if ((!strncmp("temp", file, 4)) &&
+                 (!strcmp("_input", &file[strlen(file) - 6])))
+               {
+                  char *f;
 
-		  /* Search each device for temp*_input, these should be 
-		   * temperature devices. */
-		  snprintf(path, sizeof(path), "%s/%s", busdir, name);
-		  files = ecore_file_ls(path);
-		  EINA_LIST_FREE(files, file)
-		    {
-		       if ((!strncmp("temp", file, 4)) && 
-			   (!strcmp("_input", &file[strlen(file) - 6])))
-			 {
-			    char *f;
-
-			    snprintf(path, sizeof(path),
-				     "%s/%s/%s", busdir, name, file);
-			    f = strdup(path);
-			    if (f) result = eina_list_append(result, f);
-			 }
-		       free(file);
-		    }
-		  free(name);
-	       }
-	  }
+                  snprintf(path, sizeof(path),
+                           "%s/%s/%s", busdir, name, file);
+                  f = strdup(path);
+                  if (f) result = eina_list_append(result, f);
+               }
+             free(file);
+          }
+        free(name);
      }
    return result;
 }
