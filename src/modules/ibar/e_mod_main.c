@@ -2513,7 +2513,7 @@ _ibar_cb_client_prop(void *d EINA_UNUSED, int t EINA_UNUSED, E_Event_Client_Prop
             else if (!b->inst->ci->dont_add_nonorder)
               {
                  _ibar_sep_create(b);
-                 ic = _ibar_icon_notinorder_new(b, ev->ec->exe_inst);
+                 _ibar_icon_notinorder_new(b, ev->ec->exe_inst);
                  _ibar_resize_handle(b);
               }
           }
@@ -2611,7 +2611,7 @@ _ibar_cb_exec_new_client(void *d EINA_UNUSED, int t EINA_UNUSED, E_Exec_Instance
           {
              if (skip) continue;
              _ibar_sep_create(b);
-             ic = _ibar_icon_notinorder_new(b, exe);
+             _ibar_icon_notinorder_new(b, exe);
              _ibar_resize_handle(b);
           }
      }
