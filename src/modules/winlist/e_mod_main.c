@@ -159,7 +159,6 @@ _e_mod_action_winlist_cb_helper(E_Object *obj, const char *params, int modifiers
    if (!ok)
      {
         if (!type) return;
-        if (!direction) return;
         e_winlist_modifiers_set(modifiers, type);
         return;
      }
