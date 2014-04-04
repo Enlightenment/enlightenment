@@ -2844,7 +2844,7 @@ _evry_matches_update(Evry_Selector *sel, int async)
                {
                   s->inp[0] = ':';
 
-                  if (s->inp + len_trigger)
+                  if (s->inp[len_trigger])
                     strcpy(s->inp + 1, s->inp + len_trigger);
                   else
                     s->inp[1] = 0;
