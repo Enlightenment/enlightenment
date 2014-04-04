@@ -743,6 +743,7 @@ e_bindings_key_up_event_find(E_Binding_Context ctxt, Ecore_Event_Key *ev)
 EAPI Eina_Bool
 e_bindings_key_allowed(const char *key)
 {
+   if (!key) return EINA_FALSE;
    if ((!strcmp(key, "Shift_L")) ||
        (!strcmp(key, "Shift_R")) ||
        (!strcmp(key, "Control_L")) ||
