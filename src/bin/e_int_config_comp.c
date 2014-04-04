@@ -562,14 +562,14 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
    
    cfdata->fast =
-     (cfdata->fast_menus && cfdata->fast_menus && cfdata->fast_borders && cfdata->fast_popups && cfdata->fast_objects);
+     (cfdata->fast_menus && cfdata->fast_overrides && cfdata->fast_borders && cfdata->fast_popups && cfdata->fast_objects);
    cfdata->fast_ob = ob = e_widget_check_add(evas, _("Enable \"fast\" composite effects"), &(cfdata->fast));
    evas_object_data_set(ob, "cfdata", cfdata);
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
    e_widget_on_change_hook_set(ob, _basic_comp_style_fast_toggle, cfdata);
 
    cfdata->match.disable_all =
-     (cfdata->match.disable_menus && cfdata->match.disable_menus && cfdata->match.disable_borders &&
+     (cfdata->match.disable_menus && cfdata->match.disable_overrides && cfdata->match.disable_borders &&
       cfdata->match.disable_popups && cfdata->match.disable_objects && cfdata->disable_screen_effects);
    e_widget_disabled_set(ob, cfdata->match.disable_all);
    ob = e_widget_check_add(evas, _("Disable composite effects"), &(cfdata->match.disable_all));
