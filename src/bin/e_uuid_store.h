@@ -27,6 +27,7 @@ struct uuid_store {
 
 EINTERN int e_uuid_store_init(void);
 EINTERN int e_uuid_store_shutdown(void);
+EAPI void e_uuid_dump(void);
 EAPI Eina_Bool e_uuid_store_reload(void);
 EAPI Eina_Bool e_uuid_store_entry_del(long uuid);
 EAPI Eina_Bool e_uuid_store_entry_update(long uuid, E_Client *ec);

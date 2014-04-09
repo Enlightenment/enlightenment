@@ -21,6 +21,23 @@
 
 struct uuid_store *store;
 
+void
+e_uuid_dump(void)
+ {
+   struct uuid_table *table;
+   struct table_entry *entry;
+   Eina_List *l;
+
+   if (store == NULL) return;
+
+   table = store->table;
+   if (table == NULL) return;
+
+   INF("Dump UUID table:");
+   EINA_LIST_FOREACH(table->entries, l, entry)
+     INF("UUID %li, x=%i, y=%i, width=%i, heigth=%i", entry->uuid, entry->x, entry->y, entry->width, entry->heigth );
+ }
+
 EINTERN int
 e_uuid_store_init(void)
  {
