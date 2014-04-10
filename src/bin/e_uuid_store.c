@@ -66,6 +66,12 @@ e_uuid_store_init(void)
     }
 
    INF("mmaped blob with size %i created", TABLE_SIZE);
+
+   if (store->table->version)
+     INF("UUID table with version %i", store->table->version);
+
+   INF("UUID table with %i entries", store->table->entry_count);
+
    return 1;
  }
 
