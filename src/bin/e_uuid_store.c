@@ -26,6 +26,7 @@ e_uuid_dump(void)
  {
    struct uuid_table *table;
    int i;
+   char uuid_string[37];
 
    if (store == NULL) return;
 
@@ -35,8 +36,9 @@ e_uuid_dump(void)
    INF("Dump UUID table:");
    for (i = 0; i < UUID_STORE_TABLE_SIZE -1; i++)
     {
-       if (table->entries[i].uuid == 0) continue;
-       INF("UUID %li, x=%i, y=%i, width=%i, heigth=%i", table->entries[i].uuid, table->entries[i].x,
+       if (uuid_is_null(table->entries[i].uuid)) continue;
+       uuid_unparse(table->entries[i].uuid, uuid_string);
+       INF("UUID %s, x=%i, y=%i, width=%i, heigth=%i", uuid_string, table->entries[i].x,
                                                         table->entries[i].y, table->entries[i].width,
                                                         table->entries[i].heigth);
     }
@@ -117,10 +119,11 @@ e_uuid_store_reload(void)
  }
 
 Eina_Bool
-e_uuid_store_entry_del(long uuid)
+e_uuid_store_entry_del(uuid_t uuid)
  {
    struct uuid_table *table;
    int i;
+   char uuid_string[37];
 
    if (store == NULL) return EINA_FALSE;
 
@@ -130,29 +133,32 @@ e_uuid_store_entry_del(long uuid)
    /* Search through uuid list and delete if found */
    for (i = 0; i < UUID_STORE_TABLE_SIZE -1; i++)
     {
-      if (table->entries[i].uuid == uuid)
+      if (!uuid_compare(table->entries[i].uuid, uuid))
        {
-         table->entries[i].uuid = 0;
+         uuid_clear(table->entries[i].uuid);
          table->entries[i].x = 0;
          table->entries[i].x = 0;
          table->entries[i].width = 0;
          table->entries[i].heigth = 0;
          table->entry_count--;
-         DBG("Removed entry with UUID %li", uuid);
+         uuid_unparse(uuid, uuid_string);
+         DBG("Removed entry with UUID %s", uuid_string);
          return EINA_TRUE;
        }
     }
-   DBG("NOT removed entry with UUID %li. Entry not found.", uuid);
+   uuid_unparse(uuid, uuid_string);
+   DBG("NOT removed entry with UUID %s. Entry not found.", uuid_string);
    return EINA_FALSE;
  }
 
 /* FIXME: Think about having _add  and _update functions instead only update */
 
 Eina_Bool
-e_uuid_store_entry_update(long uuid, E_Client *ec)
+e_uuid_store_entry_update(uuid_t uuid, E_Client *ec)
  {
    struct uuid_table *table;
    int i, index = -1;
+   char uuid_string[37];
 
    if (store == NULL) return EINA_FALSE;
 
@@ -162,13 +168,14 @@ e_uuid_store_entry_update(long uuid, E_Client *ec)
    /* Search through uuid list if it already exist if yes update */
    for (i = 0; i < UUID_STORE_TABLE_SIZE -1; i++)
     {
-      if (table->entries[i].uuid == uuid)
+      if (!uuid_compare(table->entries[i].uuid, uuid))
        {
          table->entries[i].x = ec->x;
          table->entries[i].y = ec->y;
          table->entries[i].width = ec->client.w;
          table->entries[i].heigth = ec->client.h;
-         DBG("Updated entry with UUID %li", uuid);
+         uuid_unparse(uuid, uuid_string);
+         DBG("Updated entry with UUID %s", uuid_string);
          return EINA_TRUE;
        }
     }
@@ -176,7 +183,7 @@ e_uuid_store_entry_update(long uuid, E_Client *ec)
    /* Find first empty entry */
    for (i = 0; i < UUID_STORE_TABLE_SIZE -1; i++)
     {
-      if (table->entries[i].uuid == 0)
+      if (uuid_is_null(table->entries[i].uuid))
         index = i;
     }
 
@@ -187,13 +194,14 @@ e_uuid_store_entry_update(long uuid, E_Client *ec)
      }
 
    /* We do not have this UUID in the table yet. Create it */
-   table->entries[index].uuid = uuid;
+   uuid_copy(table->entries[index].uuid, uuid);
    table->entries[index].x = ec->x;
    table->entries[index].y = ec->y;
    table->entries[index].width = ec->client.w;
    table->entries[index].heigth = ec->client.h;
    table->entry_count++;
-   DBG("Created entry with UUID %li", uuid);
+   uuid_unparse(table->entries[index].uuid, uuid_string);
+   DBG("Created entry with UUID %s", uuid_string);
 
    return EINA_TRUE;
  }

@@ -7,7 +7,7 @@
 #define UUID_STORE_TABLE_SIZE 100
 
 struct table_entry {
-   long uuid;
+   uuid_t uuid;
    /* data structure for per application properties */
    Evas_Coord x, y;
    Evas_Coord width, heigth;
@@ -31,6 +31,6 @@ EINTERN int e_uuid_store_init(void);
 EINTERN int e_uuid_store_shutdown(void);
 EAPI void e_uuid_dump(void);
 EAPI Eina_Bool e_uuid_store_reload(void);
-EAPI Eina_Bool e_uuid_store_entry_del(long uuid);
-EAPI Eina_Bool e_uuid_store_entry_update(long uuid, E_Client *ec);
+EAPI Eina_Bool e_uuid_store_entry_del(uuid_t uuid);
+EAPI Eina_Bool e_uuid_store_entry_update(uuid_t uuid, E_Client *ec);
 #endif

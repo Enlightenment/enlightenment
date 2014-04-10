@@ -2260,6 +2260,10 @@ e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal)
    if (!ec) return NULL;
    e_object_del_func_set(E_OBJECT(ec), E_OBJECT_CLEANUP_FUNC(_e_client_del));
 
+#ifdef HAVE_WAYLAND_CLIENTS
+   uuid_generate(ec->uuid);
+#endif
+
    ec->focus_policy_override = E_FOCUS_LAST;
    ec->w = 1;
    ec->h = 1;

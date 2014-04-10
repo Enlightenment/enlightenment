@@ -125,6 +125,7 @@ void *alloca (size_t);
 
 # ifdef HAVE_WAYLAND
 #  include <Ecore_Wayland.h>
+#  include <uuid.h>
 # endif
 
 # ifdef EAPI
