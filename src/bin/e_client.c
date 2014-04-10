@@ -548,6 +548,11 @@ _e_client_free(E_Client *ec)
    ec->e.state.profile.wait_desk = NULL;
    evas_object_del(ec->frame);
    E_OBJECT(ec)->references--;
+
+#ifdef HAVE_WAYLAND
+   e_uuid_store_entry_del(ec->uuid);
+#endif
+
    free(ec);
 }
 
