@@ -1,23 +1,23 @@
 #include "e.h"
 
-#define UPDATE_MAX 512 // same as evas
-#define SMART_NAME     "e_comp_object"
+#include "e_comp_object.eo.h"
 
-/* for non-util functions */
-#define API_ENTRY      E_Comp_Object *cw; \
-                       cw = evas_object_smart_data_get(obj); \
-                       if ((!obj) || (!cw) || (e_util_strcmp(evas_object_type_get(obj), SMART_NAME))) return
+#define UPDATE_MAX 512 // same as evas
+
+#define MY_CLASS E_COMP_OBJ_CLASS
+#define MY_CLASS_NAME "E_Comp_Object"
+#define MY_CLASS_NAME_LEGACY "e_comp_object"
 
 /* for util functions (obj may or may not be E_Comp_Object */
-#define SOFT_ENTRY(...)      E_Comp_Object *cw; \
+#define SOFT_ENTRY(...)      E_Comp_Object *cw = NULL; \
                        if (!obj) \
                          { \
                             CRI("YOU PASSED NULL! ARGH!"); \
                             return __VA_ARGS__; \
                          } \
-                       cw = evas_object_smart_data_get(obj); \
-                       if ((!cw) || (e_util_strcmp(evas_object_type_get(obj), SMART_NAME))) \
-                         cw = NULL
+                       if (eo_isa(obj, MY_CLASS)) \
+                         cw = eo_data_scope_get(obj, MY_CLASS)
+
 #define INTERNAL_ENTRY E_Comp_Object *cw; cw = evas_object_smart_data_get(obj);
 
 /* enable for lots of client size info in console output */
@@ -110,7 +110,6 @@ struct E_Comp_Object_Mover
 };
 
 static Eina_Inlist *_e_comp_object_movers = NULL;
-static Evas_Smart *_e_comp_smart = NULL;
 
 /* sekrit functionzzz */
 EINTERN void e_client_focused_set(E_Client *ec);
@@ -535,31 +534,31 @@ _e_comp_object_shadow_setup(E_Comp_Object *cw)
      }
 
    if (focus || cw->ec->focused)
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,focused", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,state,focused", "e");
    else
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,unfocused", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,state,unfocused", "e");
    if (urgent || cw->ec->urgent)
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,urgent", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,state,urgent", "e");
    else
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,not_urgent", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,state,not_urgent", "e");
    if (cw->ec->shaded)
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,shaded", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,state,shaded", "e");
    if (cw->ec->sticky)
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,sticky", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,state,sticky", "e");
    if (cw->ec->hung)
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,hung", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,state,hung", "e");
    /* visibility must always be enabled for re_manage clients to prevent
     * pop-in animations every time the user sees a persistent client again;
     * applying visibility for iconic clients prevents the client from getting
     * stuck as hidden
     */
    if (cw->visible || cw->ec->iconic || cw->ec->re_manage)
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
    else
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,hidden", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,state,hidden", "e");
 
    if (cw->ec->iconic)
-     e_comp_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,action,iconify", "e");
    if (!cw->zoomap_disabled)
      e_zoomap_child_set(cw->zoomobj, NULL);
    if (cw->frame_object)
@@ -622,12 +621,9 @@ _e_comp_object_done_defer(void *data, Evas_Object *obj EINA_UNUSED, const char *
 static void
 _e_comp_object_setup(E_Comp_Object *cw)
 {
-   cw->clip = evas_object_rectangle_add(cw->comp->evas);
-   evas_object_resize(cw->clip, cw->comp->man->w, cw->comp->man->h);
-   evas_object_smart_member_add(cw->clip, cw->smart_obj);
+   cw->clip = evas_object_smart_clipped_clipper_get(cw->smart_obj);
    cw->effect_obj = edje_object_add(cw->comp->evas);
    evas_object_move(cw->effect_obj, cw->x, cw->y);
-   evas_object_clip_set(cw->effect_obj, cw->clip);
    evas_object_smart_member_add(cw->effect_obj, cw->smart_obj);
    e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none");
    cw->shobj = edje_object_add(cw->comp->evas);
@@ -1147,12 +1143,14 @@ _e_comp_intercept_raise(void *data, Evas_Object *obj)
       if (ecabove && (ecabove->frame == cw->comp->layers[cw->layer].obj)) return; //highest below marker
    }
    o = evas_object_above_get(obj);
-   _e_comp_object_layers_remove(cw);
-   /* append to client list to put this one at end of list */
-   _e_comp_object_layers_add(cw, NULL, NULL, 0);
    if (evas_object_layer_get(o) != evas_object_layer_get(obj)) return; //already at top!
    if (obj == cw->comp->layers[cw->layer].obj) //never raise a non-layer marker!
-     evas_object_raise(obj);
+     {
+       _e_comp_object_layers_remove(cw);
+       /* append to client list to put this one at end of list */
+       _e_comp_object_layers_add(cw, NULL, NULL, 0);
+        evas_object_raise(obj);
+     }
    else
      {
         /* still stack below layer marker */
@@ -1197,10 +1195,10 @@ _e_comp_intercept_hide(void *data, Evas_Object *obj)
         if ((!cw->animating) || (cw->ec->iconic))
           {
              if (cw->ec->iconic)
-               e_comp_object_signal_emit(obj, "e,action,iconify", "e");
+               edje_object_signal_emit(obj, "e,action,iconify", "e");
              else
                {
-                  e_comp_object_signal_emit(obj, "e,state,hidden", "e");
+                  edje_object_signal_emit(obj, "e,state,hidden", "e");
                   cw->comp->animating++;
                   cw->animating++;
                   e_object_ref(E_OBJECT(cw->ec));
@@ -1222,13 +1220,13 @@ _e_comp_intercept_show_helper(E_Comp_Object *cw)
    int w = 0, h = 0;
 
    if (cw->ec->sticky)
-     e_comp_object_signal_emit(cw->smart_obj, "e,state,sticky", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,state,sticky", "e");
    if (cw->visible)
      {
         if (cw->ec->iconic && cw->animating)
           {
              /* triggered during iconify animation */
-             e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
+             edje_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
              cw->defer_hide = 0;
           }
         return;
@@ -1419,6 +1417,41 @@ _e_comp_intercept_focus(void *data, Evas_Object *obj, Eina_Bool focus)
 
 ////////////////////////////////////////////////////
 
+EOLIAN static void
+_e_comp_object_edje_signal_emit(Eo *obj, E_Comp_Object *cw, const char *sig, const char *src)
+{
+   E_Comp_Object_Mover *prov;
+
+   //INF("EMIT %p: %s %s", cw->ec, sig, src);
+   edje_object_signal_emit(cw->shobj, sig, src);
+   if (cw->frame_object) edje_object_signal_emit(cw->frame_object, sig, src);
+   if (cw->frame_icon && e_icon_edje_get(cw->frame_icon))
+     edje_object_signal_emit(e_icon_edje_get(cw->frame_icon), sig, src);
+   if ((cw->ec->override && e_comp_config_get()->match.disable_overrides) ||
+       ((!cw->ec->override) && e_comp_config_get()->match.disable_borders))
+     return;
+   /* start with highest priority callback first */
+   EINA_INLIST_REVERSE_FOREACH(_e_comp_object_movers, prov)
+     {
+        if (!e_util_glob_match(sig, prov->sig)) continue;
+        if (prov->func(prov->data, obj, sig)) break;
+     }
+}
+
+EOLIAN static void
+_e_comp_object_edje_signal_callback_add(Eo *obj EINA_UNUSED, E_Comp_Object *cw, const char *sig, const char *src, Edje_Signal_Cb cb, void *data)
+{
+   edje_object_signal_callback_add(cw->shobj, sig, src, cb, (void*)data);
+}
+
+EOLIAN static void *
+_e_comp_object_edje_signal_callback_del(Eo *obj EINA_UNUSED, E_Comp_Object *cw, const char *sig, const char *src, Edje_Signal_Cb cb, void *data)
+{
+   return edje_object_signal_callback_del_full(cw->shobj, sig, src, cb, (void*)data);
+}
+
+////////////////////////////////////////////////////
+
 static void
 _e_comp_object_frame_recalc(E_Comp_Object *cw)
 {
@@ -1453,7 +1486,7 @@ _e_comp_object_frame_recalc(E_Comp_Object *cw)
 }
 
 static void
-_e_comp_smart_cb_frame_recalc(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_comp_object_smart_cb_frame_recalc(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Comp_Object *cw = data;
    int w, h, pw, ph;
@@ -1596,17 +1629,17 @@ _e_comp_object_shade_animator(void *data)
 
         evas_object_smart_callback_call(cw->smart_obj, "shade_done", NULL);
         if (cw->ec->shaded)
-          e_comp_object_signal_emit(cw->smart_obj, "e,state,shaded", "e");
+          edje_object_signal_emit(cw->smart_obj, "e,state,shaded", "e");
         else
-          e_comp_object_signal_emit(cw->smart_obj, "e,state,unshaded", "e");
+          edje_object_signal_emit(cw->smart_obj, "e,state,unshaded", "e");
         edje_object_message_signal_process(cw->frame_object);
-        _e_comp_smart_cb_frame_recalc(cw, cw->smart_obj, NULL);
+        _e_comp_object_smart_cb_frame_recalc(cw, cw->smart_obj, NULL);
      }
    return cw->ec->shading;
 }
 
 static void
-_e_comp_smart_cb_shading(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_object_smart_cb_shading(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Comp_Object *cw = data;
 
@@ -1615,14 +1648,14 @@ _e_comp_smart_cb_shading(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
 
    cw->shade.x = cw->x;
    cw->shade.y = cw->y;
-   e_comp_object_signal_emit(cw->smart_obj, "e,state,shading", "e");
+   edje_object_signal_emit(cw->smart_obj, "e,state,shading", "e");
    cw->shade.start = ecore_loop_time_get();
    cw->shade.dir = (E_Direction)event_info;
    cw->shade.anim = ecore_animator_add(_e_comp_object_shade_animator, cw);
 }
 
 static void
-_e_comp_smart_cb_shaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_object_smart_cb_shaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Comp_Object *cw = data;
 
@@ -1631,14 +1664,14 @@ _e_comp_smart_cb_shaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_in
 
    cw->shade.x = cw->x;
    cw->shade.y = cw->y;
-   e_comp_object_signal_emit(cw->smart_obj, "e,state,shaded", "e");
+   edje_object_signal_emit(cw->smart_obj, "e,state,shaded", "e");
    cw->shade.start = -100;
    cw->shade.dir = (E_Direction)event_info;
    _e_comp_object_shade_animator(cw);
 }
 
 static void
-_e_comp_smart_cb_unshading(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_object_smart_cb_unshading(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Comp_Object *cw = data;
 
@@ -1657,13 +1690,13 @@ _e_comp_smart_cb_unshading(void *data, Evas_Object *obj EINA_UNUSED, void *event
         cw->shade.x = cw->x - cw->w;
         cw->shade.y = cw->y - cw->h;
      }
-   e_comp_object_signal_emit(cw->smart_obj, "e,state,unshading", "e");
+   edje_object_signal_emit(cw->smart_obj, "e,state,unshading", "e");
    cw->shade.start = ecore_loop_time_get();
    cw->shade.anim = ecore_animator_add(_e_comp_object_shade_animator, cw);
 }
 
 static void
-_e_comp_smart_cb_unshaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+_e_comp_object_smart_cb_unshaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    E_Comp_Object *cw = data;
 
@@ -1682,13 +1715,13 @@ _e_comp_smart_cb_unshaded(void *data, Evas_Object *obj EINA_UNUSED, void *event_
         cw->shade.x = cw->x - cw->w;
         cw->shade.y = cw->y - cw->h;
      }
-   e_comp_object_signal_emit(cw->smart_obj, "e,state,unshaded", "e");
+   edje_object_signal_emit(cw->smart_obj, "e,state,unshaded", "e");
    cw->shade.start = -100;
    _e_comp_object_shade_animator(cw);
 }
 
 static void
-_e_comp_smart_cb_maximize(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_object_smart_cb_maximize(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Comp_Object *cw = data;
 
@@ -1696,14 +1729,14 @@ _e_comp_smart_cb_maximize(void *data, Evas_Object *obj EINA_UNUSED, void *event_
    if (cw->frame_object)
      {
         _e_comp_object_shadow(cw);
-        e_comp_object_signal_emit(cw->smart_obj, "e,action,maximize", "e");
+        edje_object_signal_emit(cw->smart_obj, "e,action,maximize", "e");
         _e_comp_object_frame_recalc(cw);
         evas_object_smart_callback_call(cw->smart_obj, "frame_recalc_done", &cw->client_inset);
      }
 }
 
 static void
-_e_comp_smart_cb_fullscreen(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_object_smart_cb_fullscreen(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Comp_Object *cw = data;
 
@@ -1712,28 +1745,28 @@ _e_comp_smart_cb_fullscreen(void *data, Evas_Object *obj EINA_UNUSED, void *even
    if (cw->frame_object)
      {
         _e_comp_object_shadow(cw);
-        e_comp_object_signal_emit(cw->smart_obj, "e,action,maximize,fullscreen", "e");
+        edje_object_signal_emit(cw->smart_obj, "e,action,maximize,fullscreen", "e");
         _e_comp_object_frame_recalc(cw);
         evas_object_smart_callback_call(cw->smart_obj, "frame_recalc_done", &cw->client_inset);
      }
 }
 
 static void
-_e_comp_smart_cb_unmaximize(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_comp_object_smart_cb_unmaximize(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Comp_Object *cw = data;
 
    if (cw->frame_object)
      {
         _e_comp_object_shadow(cw);
-        e_comp_object_signal_emit(obj, "e,action,unmaximize", "e");
+        edje_object_signal_emit(obj, "e,action,unmaximize", "e");
         _e_comp_object_frame_recalc(cw);
         evas_object_smart_callback_call(cw->smart_obj, "frame_recalc_done", &cw->client_inset);
      }
 }
 
 static void
-_e_comp_smart_cb_unfullscreen(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_comp_object_smart_cb_unfullscreen(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Comp_Object *cw = data;
 
@@ -1745,66 +1778,96 @@ _e_comp_smart_cb_unfullscreen(void *data, Evas_Object *obj, void *event_info EIN
    if (cw->frame_object)
      {
         _e_comp_object_shadow(cw);
-        e_comp_object_signal_emit(obj, "e,action,unmaximize,unfullscreen", "e");
+        edje_object_signal_emit(obj, "e,action,unmaximize,unfullscreen", "e");
         _e_comp_object_frame_recalc(cw);
         evas_object_smart_callback_call(cw->smart_obj, "frame_recalc_done", &cw->client_inset);
      }
 }
 
 static void
-_e_comp_smart_cb_sticky(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_comp_object_smart_cb_sticky(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   e_comp_object_signal_emit(obj, "e,state,sticky", "e");
+   edje_object_signal_emit(obj, "e,state,sticky", "e");
 }
 
 static void
-_e_comp_smart_cb_unsticky(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_comp_object_smart_cb_unsticky(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   e_comp_object_signal_emit(obj, "e,state,unsticky", "e");
+   edje_object_signal_emit(obj, "e,state,unsticky", "e");
 }
 
 static void
-_e_comp_smart_cb_unhung(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   E_Comp_Object *cw = data;
-
-   if (!cw->ec) return; //NYI
-   e_comp_object_signal_emit(cw->smart_obj, "e,state,unhung", "e");
-}
-
-static void
-_e_comp_smart_cb_hung(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_object_smart_cb_unhung(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Comp_Object *cw = data;
 
    if (!cw->ec) return; //NYI
-   e_comp_object_signal_emit(cw->smart_obj, "e,state,hung", "e");
+   edje_object_signal_emit(cw->smart_obj, "e,state,unhung", "e");
 }
 
 static void
-_e_comp_smart_focus_in(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_comp_object_smart_cb_hung(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   e_comp_object_signal_emit(obj, "e,state,focused", "e");
+   E_Comp_Object *cw = data;
+
+   if (!cw->ec) return; //NYI
+   edje_object_signal_emit(cw->smart_obj, "e,state,hung", "e");
 }
 
 static void
-_e_comp_smart_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_comp_object_smart_focus_in(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   edje_object_signal_emit(obj, "e,state,focused", "e");
+}
+
+static void
+_e_comp_object_smart_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Comp_Object *cw = data;
 
    if (!e_object_is_del(E_OBJECT(cw->ec)))
-     e_comp_object_signal_emit(obj, "e,state,unfocused", "e");
+     edje_object_signal_emit(obj, "e,state,unfocused", "e");
 }
 
 static void
-_e_comp_smart_add(Evas_Object *obj)
+_e_comp_object_evas_smart_add(Eo *obj, E_Comp_Object *cw EINA_UNUSED)
 {
-   E_Comp_Object *cw;
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
+}
 
-   cw = E_NEW(E_Comp_Object, 1);
+EOLIAN static void
+_e_comp_object_constructor(Eo *obj, E_Comp_Object *cw, E_Client *ec)
+{
    cw->smart_obj = obj;
+
+   eo_do(obj, eo_parent_set(ec->comp->evas));
+   eo_do_super(obj, MY_CLASS, eo_constructor());
+   eo_do(obj,
+         evas_obj_type_set(MY_CLASS_NAME_LEGACY)
+        );
+
+   evas_object_smart_callback_add(obj, "shading", _e_comp_object_smart_cb_shading, cw);
+   evas_object_smart_callback_add(obj, "shaded", _e_comp_object_smart_cb_shaded, cw);
+   evas_object_smart_callback_add(obj, "unshading", _e_comp_object_smart_cb_unshading, cw);
+   evas_object_smart_callback_add(obj, "unshaded", _e_comp_object_smart_cb_unshaded, cw);
+
+   evas_object_smart_callback_add(obj, "maximize", _e_comp_object_smart_cb_maximize, cw);
+   evas_object_smart_callback_add(obj, "fullscreen", _e_comp_object_smart_cb_fullscreen, cw);
+   evas_object_smart_callback_add(obj, "unmaximize", _e_comp_object_smart_cb_unmaximize, cw);
+   evas_object_smart_callback_add(obj, "unfullscreen", _e_comp_object_smart_cb_unfullscreen, cw);
+
+   evas_object_smart_callback_add(obj, "stick", _e_comp_object_smart_cb_sticky, cw);
+   evas_object_smart_callback_add(obj, "unstick", _e_comp_object_smart_cb_unsticky, cw);
+
+   evas_object_smart_callback_add(obj, "hung", _e_comp_object_smart_cb_hung, cw);
+   evas_object_smart_callback_add(obj, "unhung", _e_comp_object_smart_cb_unhung, cw);
+
+   evas_object_smart_callback_add(obj, "frame_recalc", _e_comp_object_smart_cb_frame_recalc, cw);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _e_comp_object_smart_focus_in, cw);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _e_comp_object_smart_focus_out, cw);
+
    cw->x = cw->y = cw->w = cw->h = -1;
-   evas_object_smart_data_set(obj, cw);
    cw->opacity = 255.0;
    evas_object_data_set(obj, "comp_obj", cw);
    evas_object_move(obj, -1, -1);
@@ -1820,57 +1883,60 @@ _e_comp_smart_add(Evas_Object *obj)
    evas_object_intercept_hide_callback_add(obj, _e_comp_intercept_hide, cw);
    evas_object_intercept_focus_set_callback_add(obj, _e_comp_intercept_focus, cw);
 
-   evas_object_smart_callback_add(obj, "shading", _e_comp_smart_cb_shading, cw);
-   evas_object_smart_callback_add(obj, "shaded", _e_comp_smart_cb_shaded, cw);
-   evas_object_smart_callback_add(obj, "unshading", _e_comp_smart_cb_unshading, cw);
-   evas_object_smart_callback_add(obj, "unshaded", _e_comp_smart_cb_unshaded, cw);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _e_comp_object_smart_focus_in, cw);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _e_comp_object_smart_focus_out, cw);
 
-   evas_object_smart_callback_add(obj, "maximize", _e_comp_smart_cb_maximize, cw);
-   evas_object_smart_callback_add(obj, "fullscreen", _e_comp_smart_cb_fullscreen, cw);
-   evas_object_smart_callback_add(obj, "unmaximize", _e_comp_smart_cb_unmaximize, cw);
-   evas_object_smart_callback_add(obj, "unfullscreen", _e_comp_smart_cb_unfullscreen, cw);
+   cw->comp = ec->comp;
+   evas_object_data_set(obj, "E_Client", ec);
+   cw->ec = ec;
+   ec->frame = obj;
+   evas_object_data_set(obj, "comp_object", (void*)1);
 
-   evas_object_smart_callback_add(obj, "stick", _e_comp_smart_cb_sticky, cw);
-   evas_object_smart_callback_add(obj, "unstick", _e_comp_smart_cb_unsticky, cw);
+   e_object_ref(E_OBJECT(ec));
+   _e_comp_object_event_add(obj);
+}
 
-   evas_object_smart_callback_add(obj, "hung", _e_comp_smart_cb_hung, cw);
-   evas_object_smart_callback_add(obj, "unhung", _e_comp_smart_cb_unhung, cw);
+EOLIAN static void
+_e_comp_object_class_constructor(Eo_Class *klass)
+{
+   evas_smart_legacy_type_register(MY_CLASS_NAME_LEGACY, klass);
+}
 
-   evas_object_smart_callback_add(obj, "frame_recalc", _e_comp_smart_cb_frame_recalc, cw);
-
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _e_comp_smart_focus_in, cw);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _e_comp_smart_focus_out, cw);
+EOLIAN static void
+_e_comp_object_eo_base_constructor(Eo *obj, E_Comp_Object *cw EINA_UNUSED)
+{
+   eo_error_set(obj);
+   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
 static void
-_e_comp_smart_color_set(Evas_Object *obj, int r, int g, int b, int a)
+_e_comp_object_evas_smart_color_set(Eo *obj, E_Comp_Object *cw, int r, int g, int b, int a)
 {
-   INTERNAL_ENTRY;
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_color_set(r, g, b, a));
    evas_object_color_set(cw->clip, r, g, b, a);
    evas_object_smart_callback_call(obj, "color_set", NULL);
 }
 
 
 static void
-_e_comp_smart_clip_set(Evas_Object *obj, Evas_Object *clip)
+_e_comp_object_evas_smart_clip_set(Eo *obj, E_Comp_Object *cw, Evas_Object *clip)
 {
-   INTERNAL_ENTRY;
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_clip_set(clip));
    evas_object_clip_set(cw->clip, clip);
 }
 
 static void
-_e_comp_smart_clip_unset(Evas_Object *obj)
+_e_comp_object_evas_smart_clip_unset(Eo *obj, E_Comp_Object *cw)
 {
-   INTERNAL_ENTRY;
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_clip_unset());
    evas_object_clip_unset(cw->clip);
 }
 
 static void
-_e_comp_smart_hide(Evas_Object *obj)
+_e_comp_object_evas_smart_hide(Eo *obj, E_Comp_Object *cw)
 {
-   INTERNAL_ENTRY;
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
    cw->visible = 0;
-   evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
    if (stopping) return;
@@ -1882,12 +1948,12 @@ _e_comp_smart_hide(Evas_Object *obj)
 }
 
 static void
-_e_comp_smart_show(Evas_Object *obj)
+_e_comp_object_evas_smart_show(Eo *obj, E_Comp_Object *cw)
 {
    E_Client *tmp;
    Eina_List *l;
 
-   INTERNAL_ENTRY;
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_show());
    cw->defer_hide = 0;
    cw->visible = 1;
    if ((cw->w < 0) || (cw->h < 0))
@@ -1898,16 +1964,15 @@ _e_comp_smart_show(Evas_Object *obj)
    EINA_LIST_FOREACH(cw->ec->e.state.video_child, l, tmp)
      evas_object_show(tmp->frame);
 
-   evas_object_show(cw->clip);
    if (cw->input_obj) evas_object_show(cw->input_obj);
    evas_object_show(cw->effect_obj);
    e_comp_shape_queue(cw->comp);
    if (cw->ec->input_only) return;
    if (cw->ec->iconic && (!cw->ec->new_client))
-     e_comp_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
+     edje_object_signal_emit(cw->smart_obj, "e,action,uniconify", "e");
    else
      {
-        e_comp_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
+        edje_object_signal_emit(cw->smart_obj, "e,state,visible", "e");
         cw->comp->animating++;
         cw->animating++;
         e_object_ref(E_OBJECT(cw->ec));
@@ -1926,11 +1991,9 @@ _e_comp_object_cb_mirror_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
 }
 
 static void
-_e_comp_smart_del(Evas_Object *obj)
+_e_comp_object_evas_smart_del(Eo *obj, E_Comp_Object *cw)
 {
    Eina_List *l;
-
-   INTERNAL_ENTRY;
 
    if (cw->animating)
      {
@@ -1957,7 +2020,6 @@ _e_comp_smart_del(Evas_Object *obj)
    _e_comp_object_layers_remove(cw);
    l = evas_object_data_get(obj, "comp_object-to_del");
    E_FREE_LIST(l, evas_object_del);
-   evas_object_del(cw->clip);
    evas_object_del(cw->effect_obj);
    evas_object_del(cw->shobj);
    evas_object_del(cw->frame_icon);
@@ -1968,16 +2030,14 @@ _e_comp_smart_del(Evas_Object *obj)
    e_comp_shape_queue(cw->comp);
    eina_stringshare_del(cw->frame_theme);
    eina_stringshare_del(cw->frame_name);
-   free(cw);
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
 static void
-_e_comp_smart_move(Evas_Object *obj, int x, int y)
+_e_comp_object_evas_smart_move(Eo *obj, E_Comp_Object *cw, int x, int y)
 {
-   INTERNAL_ENTRY;
-
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
    cw->x = x, cw->y = y;
-   evas_object_move(cw->clip, 0, 0);
    evas_object_move(cw->effect_obj, x, y);
    if (cw->input_obj)
      evas_object_geometry_set(cw->input_obj, cw->x + cw->input_rect.x, cw->y + cw->input_rect.y, cw->input_rect.w, cw->input_rect.h);
@@ -1987,17 +2047,15 @@ _e_comp_smart_move(Evas_Object *obj, int x, int y)
 }
 
 static void
-_e_comp_smart_resize(Evas_Object *obj, int w, int h)
+_e_comp_object_evas_smart_resize(Eo *obj, E_Comp_Object *cw, int w, int h)
 {
    Eina_Bool first = EINA_FALSE;
 
-   INTERNAL_ENTRY;
-
    //INF("RSZ(%p): %dx%d -> %dx%d", cw->ec, cw->w, cw->h, w, h);
    if (!cw->effect_obj) CRI("ACK!");
+   eo_do_super(obj, MY_CLASS, evas_obj_smart_resize(w, h));
    first = ((cw->w < 1) || (cw->h < 1));
    cw->w = w, cw->h = h;
-   evas_object_resize(cw->clip, cw->comp->man->w, cw->comp->man->h);
    if ((!cw->ec->shading) && (!cw->ec->shaded))
      {
         int ww, hh, pw, ph;
@@ -2038,42 +2096,11 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
    e_comp_shape_queue(cw->comp);
 }
 
-static void
-_e_comp_smart_init(void)
-{
-   if (_e_comp_smart) return;
-   {
-      static const Evas_Smart_Class sc =
-      {
-         SMART_NAME,
-         EVAS_SMART_CLASS_VERSION,
-         _e_comp_smart_add,
-         _e_comp_smart_del,
-         _e_comp_smart_move,
-         _e_comp_smart_resize,
-         _e_comp_smart_show,
-         _e_comp_smart_hide,
-         _e_comp_smart_color_set,
-         _e_comp_smart_clip_set,
-         _e_comp_smart_clip_unset,
-         NULL,
-         NULL,
-         NULL,
-
-         NULL,
-         NULL,
-         NULL,
-         NULL
-      };
-      _e_comp_smart = evas_smart_class_new(&sc);
-   }
-}
-
 EAPI void
 e_comp_object_zoomap_set(Evas_Object *obj, Eina_Bool enabled)
 {
-   API_ENTRY;
-
+   SOFT_ENTRY();
+   EINA_SAFETY_ON_NULL_RETURN(cw);
    enabled = !enabled;
    if (cw->zoomap_disabled == enabled) return;
    if (enabled)
@@ -2327,7 +2354,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESIZE, _e_comp_object_util_moveresize, z);
    evas_object_event_callback_add(o, EVAS_CALLBACK_RESTACK, _e_comp_object_util_restack, z);
 
-   e_comp_object_signal_emit(o, "e,state,hidden", "e");
+   edje_object_signal_emit(o, "e,state,hidden", "e");
 
    edje_object_part_swallow(o, "e.swallow.content", z ?: obj);
 
@@ -2345,7 +2372,7 @@ e_comp_object_util_del_list_append(Evas_Object *obj, Evas_Object *to_del)
 {
    Eina_List *l;
 
-   SOFT_ENTRY();
+   EINA_SAFETY_ON_NULL_RETURN(obj);
    EINA_SAFETY_ON_NULL_RETURN(to_del);
    l = evas_object_data_get(obj, "comp_object-to_del");
    evas_object_data_set(obj, "comp_object-to_del", eina_list_append(l, to_del));
@@ -2358,7 +2385,7 @@ e_comp_object_util_del_list_remove(Evas_Object *obj, Evas_Object *to_del)
 {
    Eina_List *l;
 
-   SOFT_ENTRY();
+   EINA_SAFETY_ON_NULL_RETURN(obj);
    EINA_SAFETY_ON_NULL_RETURN(to_del);
    l = evas_object_data_get(obj, "comp_object-to_del");
    if (l)
@@ -2371,30 +2398,20 @@ EAPI Evas_Object *
 e_comp_object_client_add(E_Client *ec)
 {
    Evas_Object *o;
-   E_Comp_Object *cw;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(ec, NULL);
    if (ec->frame) return NULL;
-   _e_comp_smart_init();
-   o = evas_object_smart_add(ec->comp->evas, _e_comp_smart);
-   cw = evas_object_smart_data_get(o);
-   cw->comp = ec->comp;
-   evas_object_data_set(o, "E_Client", ec);
-   cw->ec = ec;
-   ec->frame = o;
-   evas_object_data_set(o, "comp_object", (void*)1);
 
-   e_object_ref(E_OBJECT(ec));
-   _e_comp_object_event_add(o);
+   o = eo_add_custom(MY_CLASS, ec->comp->evas, e_comp_obj_constructor(ec));
+   eo_unref(o);
 
    return o;
 }
 
 /* utility functions for getting client inset */
-EAPI void
-e_comp_object_frame_xy_adjust(Evas_Object *obj, int x, int y, int *ax, int *ay)
+EOLIAN static void
+_e_comp_object_frame_xy_adjust(Eo *obj EINA_UNUSED, E_Comp_Object *cw, int x, int y, int *ax, int *ay)
 {
-   API_ENTRY;
    if (!cw->client_inset.calc)
      {
         if (ax) *ax = x;
@@ -2405,10 +2422,9 @@ e_comp_object_frame_xy_adjust(Evas_Object *obj, int x, int y, int *ax, int *ay)
    if (ay) *ay = y - cw->client_inset.t;
 }
 
-EAPI void
-e_comp_object_frame_xy_unadjust(Evas_Object *obj, int x, int y, int *ax, int *ay)
+EOLIAN static void
+_e_comp_object_frame_xy_unadjust(Eo *obj EINA_UNUSED, E_Comp_Object *cw, int x, int y, int *ax, int *ay)
 {
-   API_ENTRY;
    if (!cw->client_inset.calc)
      {
         if (ax) *ax = x;
@@ -2419,10 +2435,9 @@ e_comp_object_frame_xy_unadjust(Evas_Object *obj, int x, int y, int *ax, int *ay
    if (ay) *ay = y + cw->client_inset.t;
 }
 
-EAPI void
-e_comp_object_frame_wh_adjust(Evas_Object *obj, int w, int h, int *aw, int *ah)
+EOLIAN static void
+_e_comp_object_frame_wh_adjust(Eo *obj EINA_UNUSED, E_Comp_Object *cw, int w, int h, int *aw, int *ah)
 {
-   API_ENTRY;
    if (!cw->client_inset.calc)
      {
         if (aw) *aw = w;
@@ -2433,10 +2448,9 @@ e_comp_object_frame_wh_adjust(Evas_Object *obj, int w, int h, int *aw, int *ah)
    if (ah) *ah = h + cw->client_inset.t + cw->client_inset.b;
 }
 
-EAPI void
-e_comp_object_frame_wh_unadjust(Evas_Object *obj, int w, int h, int *aw, int *ah)
+EOLIAN static void
+_e_comp_object_frame_wh_unadjust(Eo *obj EINA_UNUSED, E_Comp_Object *cw, int w, int h, int *aw, int *ah)
 {
-   API_ENTRY;
    if (!cw->client_inset.calc)
      {
         if (aw) *aw = w;
@@ -2571,10 +2585,9 @@ e_comp_object_util_center_pos_get(Evas_Object *obj, int *x, int *y)
    if (y) *y = zy + (zh - cw->h) / 2;
 }
 
-EAPI void
-e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
+EOLIAN static void
+_e_comp_object_input_area_set(Eo *obj, E_Comp_Object *cw, int x, int y, int w, int h)
 {
-   API_ENTRY;
 
    //INF("%d,%d %dx%d", x, y, w, h);
    E_RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, cw->ec->w, cw->ec->h);
@@ -2590,7 +2603,6 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
              evas_object_name_set(cw->input_obj, "cw->input_obj");
              evas_object_color_set(cw->input_obj, 0, 0, 0, 0);
              evas_object_pass_events_set(cw->obj, 1);
-             evas_object_clip_set(cw->input_obj, cw->clip);
              evas_object_smart_member_add(cw->input_obj, obj);
           }
         evas_object_geometry_set(cw->input_obj, MAX(cw->x, 0) + x, MAX(cw->y, 0) + y, w, h);
@@ -2605,20 +2617,18 @@ e_comp_object_input_area_set(Evas_Object *obj, int x, int y, int w, int h)
      }
 }
 
-EAPI void
-e_comp_object_frame_geometry_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
+EOLIAN static void
+_e_comp_object_frame_geometry_get(Eo *obj EINA_UNUSED, E_Comp_Object *cw, int *l, int *r, int *t, int *b)
 {
-   API_ENTRY;
    if (l) *l = cw->client_inset.l;
    if (r) *r = cw->client_inset.r;
    if (t) *t = cw->client_inset.t;
    if (b) *b = cw->client_inset.b;
 }
 
-EAPI void
-e_comp_object_frame_icon_geometry_get(Evas_Object *obj, int *x, int *y, int *w, int *h)
+EOLIAN static void
+_e_comp_object_frame_icon_geometry_get(Eo *obj EINA_UNUSED, E_Comp_Object *cw, int *x, int *y, int *w, int *h)
 {
-   API_ENTRY;
 
    if (x) *x = 0;
    if (y) *y = 0;
@@ -2628,10 +2638,9 @@ e_comp_object_frame_icon_geometry_get(Evas_Object *obj, int *x, int *y, int *w, 
    evas_object_geometry_get(cw->frame_icon, x, y, w, h);
 }
 
-EAPI Eina_Bool
-e_comp_object_frame_title_set(Evas_Object *obj, const char *name)
+EOLIAN static Eina_Bool
+_e_comp_object_frame_title_set(Eo *obj EINA_UNUSED, E_Comp_Object *cw, const char *name)
 {
-   API_ENTRY EINA_FALSE;
    if (!e_util_strcmp(cw->frame_name, name)) return EINA_FALSE;
    eina_stringshare_replace(&cw->frame_name, name);
    if (cw->frame_object)
@@ -2639,17 +2648,15 @@ e_comp_object_frame_title_set(Evas_Object *obj, const char *name)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
-e_comp_object_frame_exists(Evas_Object *obj)
+EOLIAN static Eina_Bool
+_e_comp_object_frame_exists(Eo *obj EINA_UNUSED, E_Comp_Object *cw)
 {
-   API_ENTRY EINA_FALSE;
    return !!cw->frame_object;
 }
 
-EAPI void
-e_comp_object_frame_icon_update(Evas_Object *obj)
+EOLIAN static void
+_e_comp_object_frame_icon_update(Eo *obj EINA_UNUSED, E_Comp_Object *cw)
 {
-   API_ENTRY;
 
    E_FREE_FUNC(cw->frame_icon, evas_object_del);
    if (!edje_object_part_exists(cw->frame_object, "e.swallow.icon"))
@@ -2660,15 +2667,13 @@ e_comp_object_frame_icon_update(Evas_Object *obj)
      E_FREE_FUNC(cw->frame_icon, evas_object_del);
 }
 
-EAPI Eina_Bool
-e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
+EOLIAN static Eina_Bool
+_e_comp_object_frame_theme_set(Eo *obj EINA_UNUSED, E_Comp_Object *cw, const char *name)
 {
    Evas_Object *o, *pbg;
    char buf[4096];
    int ok;
    Eina_Stringshare *theme;
-
-   API_ENTRY EINA_FALSE;
 
    if (!e_util_strcmp(cw->frame_theme, name))
     return edje_object_part_swallow(cw->shobj, "e.swallow.content", cw->frame_object ?: cw->obj);
@@ -2758,7 +2763,7 @@ reshadow:
      _e_comp_object_shadow_setup(cw);
    do
      {
-        _e_comp_smart_cb_frame_recalc(cw, cw->smart_obj, NULL);
+        _e_comp_object_smart_cb_frame_recalc(cw, cw->smart_obj, NULL);
         /* this guarantees that we won't get blocked by the NOP check in the interceptor */
         cw->y = cw->x = -99999;
         if (pbg)
@@ -2799,58 +2804,10 @@ reshadow:
    return EINA_TRUE;
 }
 
-EAPI void
-e_comp_object_signal_emit(Evas_Object *obj, const char *sig, const char *src)
-{
-   E_Comp_Object_Mover *prov;
-
-   API_ENTRY;
-   //INF("EMIT %p: %s %s", cw->ec, sig, src);
-   edje_object_signal_emit(cw->shobj, sig, src);
-   if (cw->frame_object) edje_object_signal_emit(cw->frame_object, sig, src);
-   if (cw->frame_icon && e_icon_edje_get(cw->frame_icon))
-     edje_object_signal_emit(e_icon_edje_get(cw->frame_icon), sig, src);
-   if ((cw->ec->override && e_comp_config_get()->match.disable_overrides) ||
-       ((!cw->ec->override) && e_comp_config_get()->match.disable_borders))
-     return;
-   /* start with highest priority callback first */
-   EINA_INLIST_REVERSE_FOREACH(_e_comp_object_movers, prov)
-     {
-        if (!e_util_glob_match(sig, prov->sig)) continue;
-        if (prov->func(prov->data, obj, sig)) break;
-     }
-}
-
-EAPI void
-e_comp_object_signal_callback_add(Evas_Object *obj, const char *sig, const char *src, Edje_Signal_Cb cb, const void *data)
-{
-   /* FIXME: at some point I guess this should use eo to inherit
-    * -EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_ADD
-    * -EDJE_OBJ_SUB_ID_SIGNAL_CALLBACK_DEL
-    */
-   API_ENTRY;
-   edje_object_signal_callback_add(cw->shobj, sig, src, cb, (void*)data);
-}
-
-EAPI void
-e_comp_object_signal_callback_del(Evas_Object *obj, const char *sig, const char *src, Edje_Signal_Cb cb)
-{
-   API_ENTRY;
-   edje_object_signal_callback_del(cw->shobj, sig, src, cb);
-}
-
-EAPI void
-e_comp_object_signal_callback_del_full(Evas_Object *obj, const char *sig, const char *src, Edje_Signal_Cb cb, const void *data)
-{
-   API_ENTRY;
-   edje_object_signal_callback_del_full(cw->shobj, sig, src, cb, (void*)data);
-}
-
-EAPI void
-e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
+EOLIAN static void
+_e_comp_object_damage(Eo *obj, E_Comp_Object *cw, int x, int y, int w, int h)
 {
    int tw, th;
-   API_ENTRY;
 
    if (cw->ec->input_only || (!cw->updates)) return;
    if (cw->nocomp) return;
@@ -2906,17 +2863,15 @@ e_comp_object_damage(Evas_Object *obj, int x, int y, int w, int h)
    e_comp_object_render_update_add(obj);
 }
 
-EAPI Eina_Bool
-e_comp_object_damage_exists(Evas_Object *obj)
+EOLIAN static Eina_Bool
+_e_comp_object_damage_exists(Eo *obj EINA_UNUSED, E_Comp_Object *cw)
 {
-   API_ENTRY EINA_FALSE;
    return cw->updates_exist;
 }
 
-EAPI void
-e_comp_object_render_update_add(Evas_Object *obj)
+EOLIAN static void
+_e_comp_object_render_update_add(Eo *obj EINA_UNUSED, E_Comp_Object *cw)
 {
-   API_ENTRY;
 
    if (cw->ec->input_only || (!cw->updates) || (!cw->redirected)) return;
    if (e_object_is_del(E_OBJECT(cw->ec)))
@@ -2932,10 +2887,9 @@ e_comp_object_render_update_add(Evas_Object *obj)
    e_comp_render_queue(cw->comp);
 }
 
-EAPI void
-e_comp_object_render_update_del(Evas_Object *obj)
+EOLIAN static void
+_e_comp_object_render_update_del(Eo *obj EINA_UNUSED, E_Comp_Object *cw)
 {
-   API_ENTRY;
 
    if (cw->ec->input_only || (!cw->updates)) return;
    if (!cw->update) return;
@@ -2951,15 +2905,14 @@ e_comp_object_render_update_del(Evas_Object *obj)
      }
 }
 
-EAPI void
-e_comp_object_shape_apply(Evas_Object *obj)
+EOLIAN static void
+_e_comp_object_shape_apply(Eo *obj EINA_UNUSED, E_Comp_Object *cw)
 {
    Eina_List *l;
    Evas_Object *o;
    unsigned int i, *pix, *p;
    int w, h, px, py;
 
-   API_ENTRY;
    if (!cw->ec) return; //NYI
    if (!_e_comp_shaped_check(cw->ec->client.w, cw->ec->client.h, cw->ec->shape_rects, cw->ec->shape_rects_num))
      {
@@ -3053,10 +3006,9 @@ e_comp_object_shape_apply(Evas_Object *obj)
 }
 
 /* helper function to simplify toggling of redirection for display servers which support it */
-EAPI void
-e_comp_object_redirected_set(Evas_Object *obj, Eina_Bool set)
+EOLIAN static void
+_e_comp_object_redirected_set(Eo *obj, E_Comp_Object *cw, Eina_Bool set)
 {
-   API_ENTRY;
 
    set = !!set;
    if (cw->redirected == set) return;
@@ -3091,14 +3043,13 @@ e_comp_object_redirected_set(Evas_Object *obj, Eina_Bool set)
      }
 }
 
-EAPI void
-e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
+EOLIAN static void
+_e_comp_object_native_surface_set(Eo *obj EINA_UNUSED, E_Comp_Object *cw, Eina_Bool set)
 {
    Evas_Native_Surface ns;
    Eina_List *l;
    Evas_Object *o;
 
-   API_ENTRY;
    EINA_SAFETY_ON_NULL_RETURN(cw->ec);
    if (cw->ec->input_only) return;
    set = !!set;
@@ -3118,8 +3069,8 @@ e_comp_object_native_surface_set(Evas_Object *obj, Eina_Bool set)
 }
 
 /* mark an object as dirty and setup damages */
-EAPI void
-e_comp_object_dirty(Evas_Object *obj)
+EOLIAN static void
+_e_comp_object_dirty(Eo *obj, E_Comp_Object *cw)
 {
    Eina_Iterator *it;
    Eina_Rectangle *r;
@@ -3128,7 +3079,6 @@ e_comp_object_dirty(Evas_Object *obj)
    int w, h, ow, oh;
    Eina_Bool dirty, visible;
 
-   API_ENTRY;
    evas_object_geometry_get(cw->obj, NULL, NULL, &ow, &oh);
    /* only actually dirty if pixmap is available */
    dirty = e_pixmap_size_get(cw->ec->pixmap, &w, &h);
@@ -3182,8 +3132,8 @@ e_comp_object_dirty(Evas_Object *obj)
    e_comp_object_render(obj);
 }
 
-EAPI Eina_Bool
-e_comp_object_render(Evas_Object *obj)
+EOLIAN static Eina_Bool
+_e_comp_object_render(Eo *obj, E_Comp_Object *cw)
 {
    Eina_Iterator *it;
    Eina_Rectangle *r;
@@ -3192,8 +3142,6 @@ e_comp_object_render(Evas_Object *obj)
    int stride, pw, ph;
    unsigned int *pix, *srcpix;
    Eina_Bool ret = EINA_FALSE;
-
-   API_ENTRY EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cw->ec, EINA_FALSE);
    if (cw->ec->input_only) return EINA_TRUE;
@@ -3340,13 +3288,12 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
 //////////////////////////////////////////////////////
 
 /* setup an api effect for a client */
-EAPI void
-e_comp_object_effect_set(Evas_Object *obj, const char *effect)
+EOLIAN static void
+_e_comp_object_effect_set(Eo *obj EINA_UNUSED, E_Comp_Object *cw, const char *effect)
 {
    char buf[4096];
    Eina_Stringshare *grp;
 
-   API_ENTRY;
    if (!cw->shobj) return; //input window
 
    if (!effect) effect = "none";
@@ -3362,20 +3309,18 @@ e_comp_object_effect_set(Evas_Object *obj, const char *effect)
    edje_object_part_swallow(cw->effect_obj, "e.swallow.content", cw->shobj);
    if (cw->effect_clip)
      {
-        evas_object_clip_unset(cw->clip);
         cw->effect_clip = 0;
      }
    cw->effect_clip_able = !edje_object_data_get(cw->effect_obj, "noclip");
 }
 
 /* set params for embryo scripts in effect */
-EAPI void
-e_comp_object_effect_params_set(Evas_Object *obj, int id, int *params, unsigned int count)
+EOLIAN static void
+_e_comp_object_effect_params_set(Eo *obj EINA_UNUSED, E_Comp_Object *cw, int id, int *params, unsigned int count)
 {
    Edje_Message_Int_Set *msg;
    unsigned int x;
 
-   API_ENTRY;
    EINA_SAFETY_ON_NULL_RETURN(params);
    EINA_SAFETY_ON_FALSE_RETURN(count);
 
@@ -3410,10 +3355,9 @@ _e_comp_object_effect_end_cb(void *data, Evas_Object *obj, const char *emission,
 }
 
 /* clip effect to client's zone */
-EAPI void
-e_comp_object_effect_clip(Evas_Object *obj)
+EOLIAN static void
+_e_comp_object_effect_clip(Eo *obj EINA_UNUSED, E_Comp_Object *cw)
 {
-   API_ENTRY;
    if (!cw->ec->zone) return;
    if (cw->effect_clip) e_comp_object_effect_unclip(cw->smart_obj);
    if (!cw->effect_clip_able) return;
@@ -3422,20 +3366,18 @@ e_comp_object_effect_clip(Evas_Object *obj)
 }
 
 /* unclip effect from client's zone */
-EAPI void
-e_comp_object_effect_unclip(Evas_Object *obj)
+EOLIAN static void
+_e_comp_object_effect_unclip(Eo *obj EINA_UNUSED, E_Comp_Object *cw)
 {
-   API_ENTRY;
    if (!cw->effect_clip) return;
    evas_object_clip_unset(cw->smart_obj);
    cw->effect_clip = 0;
 }
 
 /* start effect, running end_cb after */
-EAPI void
-e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *end_data)
+EOLIAN static void
+_e_comp_object_effect_start(Eo *obj, E_Comp_Object *cw, Edje_Signal_Cb end_cb, const void *end_data)
 {
-   API_ENTRY;
    EINA_SAFETY_ON_NULL_RETURN(cw->ec); //NYI
    e_comp_object_effect_clip(obj);
    edje_object_signal_callback_del(cw->effect_obj, "e,action,done", "e", _e_comp_object_effect_end_cb);
@@ -3452,10 +3394,9 @@ e_comp_object_effect_start(Evas_Object *obj, Edje_Signal_Cb end_cb, const void *
 }
 
 /* stop a currently-running effect immediately */
-EAPI void
-e_comp_object_effect_stop(Evas_Object *obj, Edje_Signal_Cb end_cb)
+EOLIAN static void
+_e_comp_object_effect_stop(Eo *obj, E_Comp_Object *cw, Edje_Signal_Cb end_cb)
 {
-   API_ENTRY;
    if (evas_object_data_get(cw->effect_obj, "_e_comp.end_cb") != end_cb) return;
    e_comp_object_effect_unclip(obj);
    if (cw->effect_clip)
@@ -3592,7 +3533,7 @@ e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb
 {
    E_Comp *c;
 
-   SOFT_ENTRY();
+   EINA_SAFETY_ON_NULL_RETURN(obj);
 
    c = e_comp_util_evas_object_comp_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(c);
@@ -3621,3 +3562,5 @@ e_comp_object_util_autoclose(Evas_Object *obj, E_Comp_Object_Autoclose_Cb del_cb
      evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _e_comp_object_autoclose_show, c);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, _e_comp_object_autoclose_del, c);
 }
+
+#include "e_comp_object.eo.c"
