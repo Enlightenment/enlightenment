@@ -44,3 +44,5 @@ default.edj
 /mkinstalldirs
 /stamp-h1
 /data/units/e18.service
+*.eo.c
+*.eo.h
