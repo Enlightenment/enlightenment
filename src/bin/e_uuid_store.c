@@ -51,10 +51,16 @@ e_uuid_store_init(void)
    store = calloc(1, sizeof(struct uuid_store));
    if (store == NULL) return 0;
 
-   store->shmfd = shm_open(OBJECT_NAME, O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
-   if (store->shmfd < 0)
+   /* Try to open existing SHM object */
+   store->shmfd = shm_open(OBJECT_NAME, O_RDWR, S_IRWXU | S_IRWXG);
+   if (store->shmfd < 0 && errno == ENOENT)
     {
-       ERR("shm_open failed");
+       INF("shm_open failed to open an existing file %s", OBJECT_NAME);
+       if (!e_uuid_store_reload()) return 0;
+    }
+   else if (store->shmfd < 0)
+    {
+       INF("shm_open failed");
        return 0;
     }
 
@@ -101,7 +107,13 @@ Eina_Bool
 e_uuid_store_reload(void)
  {
    /* After crash reload the table with its POSIX object name from memory */
-   return EINA_FALSE;
+   store->shmfd = shm_open(OBJECT_NAME, O_CREAT | O_RDWR, S_IRWXU | S_IRWXG);
+   if (store->shmfd < 0)
+    {
+       INF("shm_open failed");
+       return EINA_FALSE;
+    }
+   return EINA_TRUE;
  }
 
 Eina_Bool
