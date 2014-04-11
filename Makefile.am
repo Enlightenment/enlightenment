@@ -98,11 +98,11 @@ am__v_EOL_0 = @echo "  EOLIAN   " $@;
 
 SUFFIXES += .eo .eo.c .eo.h .eo.legacy.h
 
-%.eo.c: %.eo ${_EOLIAN_GEN_DEP}
+%.eo.c: %.eo @eolian_gen@
 	$(AM_V_EOL)@eolian_gen@ --eo --legacy $(EOLIAN_FLAGS) --gc -o $@ $<
 
-%.eo.h: %.eo ${_EOLIAN_GEN_DEP}
+%.eo.h: %.eo @eolian_gen@
 	$(AM_V_EOL)@eolian_gen@ --eo $(EOLIAN_FLAGS) --gh -o $@ $<
 
-%.eo.legacy.h: %.eo ${_EOLIAN_GEN_DEP}
+%.eo.legacy.h: %.eo @eolian_gen@
 	$(AM_V_EOL)@eolian_gen@ --legacy $(EOLIAN_FLAGS) --gh -o $@ $<
