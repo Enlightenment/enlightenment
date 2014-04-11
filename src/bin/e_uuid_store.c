@@ -25,8 +25,7 @@ void
 e_uuid_dump(void)
  {
    struct uuid_table *table;
-   struct table_entry *entry;
-   Eina_List *l;
+   int i;
 
    if (store == NULL) return;
 
@@ -34,8 +33,13 @@ e_uuid_dump(void)
    if (table == NULL) return;
 
    INF("Dump UUID table:");
-   EINA_LIST_FOREACH(table->entries, l, entry)
-     INF("UUID %li, x=%i, y=%i, width=%i, heigth=%i", entry->uuid, entry->x, entry->y, entry->width, entry->heigth );
+   for (i = 0; i < UUID_STORE_TABLE_SIZE -1; i++)
+    {
+       if (table->entries[i].uuid == 0) continue;
+       INF("UUID %li, x=%i, y=%i, width=%i, heigth=%i", table->entries[i].uuid, table->entries[i].x,
+                                                        table->entries[i].y, table->entries[i].width,
+                                                        table->entries[i].heigth);
+    }
  }
 
 EINTERN int
@@ -104,8 +108,7 @@ Eina_Bool
 e_uuid_store_entry_del(long uuid)
  {
    struct uuid_table *table;
-   struct table_entry *entry;
-   Eina_List *l;
+   int i;
 
    if (store == NULL) return EINA_FALSE;
 
@@ -113,12 +116,16 @@ e_uuid_store_entry_del(long uuid)
    if (table == NULL) return EINA_FALSE;
 
    /* Search through uuid list and delete if found */
-   EINA_LIST_FOREACH(table->entries, l, entry)
+   for (i = 0; i < UUID_STORE_TABLE_SIZE -1; i++)
     {
-      if (entry->uuid == uuid)
+      if (table->entries[i].uuid == uuid)
        {
-         table->entries = eina_list_remove(table->entries, entry);
-         free(entry);
+         table->entries[i].uuid = 0;
+         table->entries[i].x = 0;
+         table->entries[i].x = 0;
+         table->entries[i].width = 0;
+         table->entries[i].heigth = 0;
+         table->entry_count--;
          DBG("Removed entry with UUID %li", uuid);
          return EINA_TRUE;
        }
@@ -133,8 +140,7 @@ Eina_Bool
 e_uuid_store_entry_update(long uuid, E_Client *ec)
  {
    struct uuid_table *table;
-   struct table_entry *entry;
-   Eina_List *l;
+   int i, index = -1;
 
    if (store == NULL) return EINA_FALSE;
 
@@ -142,28 +148,39 @@ e_uuid_store_entry_update(long uuid, E_Client *ec)
    if (table == NULL) return EINA_FALSE;
 
    /* Search through uuid list if it already exist if yes update */
-   EINA_LIST_FOREACH(table->entries, l, entry)
+   for (i = 0; i < UUID_STORE_TABLE_SIZE -1; i++)
     {
-      if (entry->uuid == uuid)
+      if (table->entries[i].uuid == uuid)
        {
-         entry->x = ec->x;
-         entry->y = ec->y;
-         entry->width = ec->client.w;
-         entry->heigth = ec->client.h;
+         table->entries[i].x = ec->x;
+         table->entries[i].y = ec->y;
+         table->entries[i].width = ec->client.w;
+         table->entries[i].heigth = ec->client.h;
          DBG("Updated entry with UUID %li", uuid);
          return EINA_TRUE;
        }
     }
 
+   /* Find first empty entry */
+   for (i = 0; i < UUID_STORE_TABLE_SIZE -1; i++)
+    {
+      if (table->entries[i].uuid == 0)
+        index = i;
+    }
+
+   if (index == -1)
+     {
+        ERR("UUID table full");
+        return EINA_FALSE;
+     }
+
    /* We do not have this UUID in the table yet. Create it */
-   entry = calloc(1, sizeof(struct table_entry));
-   entry->uuid = uuid;
-   entry->x = ec->x;
-   entry->y = ec->y;
-   entry->width = ec->client.w;
-   entry->heigth = ec->client.h;
-   table->entries = eina_list_append(table->entries, entry);
-   table->entry_count = eina_list_count(table->entries);
+   table->entries[index].uuid = uuid;
+   table->entries[index].x = ec->x;
+   table->entries[index].y = ec->y;
+   table->entries[index].width = ec->client.w;
+   table->entries[index].heigth = ec->client.h;
+   table->entry_count++;
    DBG("Created entry with UUID %li", uuid);
 
    return EINA_TRUE;

@@ -4,12 +4,7 @@
 /* vim:ts=8 sw=3 sts=3 expandtab cino=>5n-3f0^-2{2(0W1st0
  */
 
-struct uuid_table {
-   int version; /* Version to allow future extensions */
-   unsigned int entry_count; /* Entry counter to allow excat memory consuptions needs? */
-   /* Global settings like current virtual desktop, screen setup, etc */
-   Eina_List *entries;
-};
+#define UUID_STORE_TABLE_SIZE 100
 
 struct table_entry {
    long uuid;
@@ -18,6 +13,13 @@ struct table_entry {
    Evas_Coord width, heigth;
    unsigned int virtual_desktop;
    int flags;
+};
+
+struct uuid_table {
+   int version; /* Version to allow future extensions */
+   unsigned int entry_count; /* Entry counter to allow excat memory consuptions needs? */
+   /* Global settings like current virtual desktop, screen setup, etc */
+   struct table_entry entries[UUID_STORE_TABLE_SIZE]; /* FIXME make this more adjustable */
 };
 
 struct uuid_store {
