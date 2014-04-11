@@ -601,7 +601,9 @@ AC_SUBST([e_cflags])
 AC_SUBST([e_configflags])
 AC_SUBST([requirements_e])
 
-AC_PATH_PROG([EOLIAN], [eolian_gen])
+EFL_WITH_BIN([eolian], [eolian-gen], [eolian_gen])
+# Force the helper to try external eolian-gen
+AM_CONDITIONAL(HAVE_EOLIAN_GEN, [true])
 EOLIAN_FLAGS=`pkg-config --variable=eolian_flags eo evas edje`
 AC_SUBST(EOLIAN_FLAGS)
 
