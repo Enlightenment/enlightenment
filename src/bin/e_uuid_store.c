@@ -85,6 +85,7 @@ e_uuid_store_shutdown(void)
        return 0;
     }
 
+   close(store->shmfd);
    free(store);
    eina_shutdown();
    return 1;
