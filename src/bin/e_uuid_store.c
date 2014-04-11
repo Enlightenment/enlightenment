@@ -69,6 +69,8 @@ e_uuid_store_init(void)
 
    if (store->table->version)
      INF("UUID table with version %i", store->table->version);
+   else
+     store->table->version = 1;
 
    INF("UUID table with %i entries", store->table->entry_count);
 
