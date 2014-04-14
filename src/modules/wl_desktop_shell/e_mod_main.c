@@ -1362,8 +1362,13 @@ _e_wl_shell_shell_surface_cb_key_up(void *data, Evas *e EINA_UNUSED, Evas_Object
 
    /* if we have a grab, send this key to it */
    if (grab)
-     grab->interface->key(grab, ev->timestamp, key, 
-                          WL_KEYBOARD_KEY_STATE_RELEASED);
+     {
+        /* send keycode from evdev */
+        grab->interface->key(grab,
+                             ev->timestamp,
+                             ev->keycode ? ev->keycode : key,
+                             WL_KEYBOARD_KEY_STATE_RELEASED);
+     }
 
    /* update xkb key state */
    xkb_state_update_key(_e_wl_comp->input->xkb.state, key + 8, XKB_KEY_UP);
@@ -1437,8 +1442,13 @@ _e_wl_shell_shell_surface_cb_key_down(void *data, Evas *e EINA_UNUSED, Evas_Obje
 
    /* if we have a grab, send this key to it */
    if (grab)
-     grab->interface->key(grab, ev->timestamp, key, 
-                          WL_KEYBOARD_KEY_STATE_PRESSED);
+     {
+        /* send keycode from evdev */
+        grab->interface->key(grab,
+                             ev->timestamp,
+                             ev->keycode ? ev->keycode : key,
+                             WL_KEYBOARD_KEY_STATE_PRESSED);
+     }
 
    /* update xkb key state */
    xkb_state_update_key(_e_wl_comp->input->xkb.state, key + 8, XKB_KEY_DOWN);
