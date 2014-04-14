@@ -1,3 +1,17 @@
+Changes since 0.18.6:
+---------------------
+
+* unify temp module temperature_get_bus_files() functions
+* check notification icon size correctly
+* correctly check evry trigger matches
+* comp config dialog correctly detects effects disabled/fast states
+* efm current .desktop fetching now returns the right .desktop
+* swallow efm background objects after applying theme
+* ibar now scrolls correctly during drags
+* no longer place windows at 0,0 during restart
+* music_control: Use correct markup for metadata text.
+
+
 Changes since 0.18.5:
 ---------------------
 
