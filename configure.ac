@@ -837,7 +837,7 @@ AC_MSG_CHECKING([whether wayland EGL support is enabled])
 AC_MSG_RESULT([${e_cv_want_wayland_egl}])
 
 if test "x${e_cv_want_wayland_only}" != "xno" || test "x${e_cv_want_wayland_clients}" != "xno";then
-  PKG_CHECK_MODULES([WAYLAND], [ecore-wayland wayland-server pixman-1 xkbcommon uuid],
+  PKG_CHECK_MODULES([WAYLAND], [ecore-wayland wayland-server xkbcommon],
     [
       have_wayland=yes
       AC_DEFINE_UNQUOTED([HAVE_WAYLAND],[1],[enable wayland support])
@@ -966,7 +966,7 @@ AC_E_OPTIONAL_MODULE([access], false, $ecore_x)
 AC_E_OPTIONAL_MODULE([music_control], true, [CHECK_MODULE_MUSIC_CONTROL])
 AC_E_OPTIONAL_MODULE([packagekit], true)
 AC_E_OPTIONAL_MODULE([contact], false)
-AC_E_OPTIONAL_MODULE([wl_desktop_shell], true, [CHECK_MODULE_WL_DESKTOP_SHELL])
+AC_E_OPTIONAL_MODULE([wl_desktop_shell], $have_wayland, [CHECK_MODULE_WL_DESKTOP_SHELL])
 AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, $wl_x11)
 AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
 AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland, [CHECK_MODULE_WL_DRM])
