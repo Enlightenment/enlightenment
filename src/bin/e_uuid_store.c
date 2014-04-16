@@ -194,11 +194,11 @@ e_uuid_store_entry_update(uuid_t uuid, E_Client *ec)
      }
 
    /* We do not have this UUID in the table yet. Create it */
-   uuid_copy(table->entries[index].uuid, uuid);
    table->entries[index].x = ec->x;
    table->entries[index].y = ec->y;
    table->entries[index].width = ec->client.w;
    table->entries[index].heigth = ec->client.h;
+   uuid_copy(table->entries[index].uuid, uuid);
    table->entry_count++;
    uuid_unparse(table->entries[index].uuid, uuid_string);
    DBG("Created entry with UUID %s", uuid_string);
