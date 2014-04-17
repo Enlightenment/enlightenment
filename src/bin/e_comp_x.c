@@ -4276,13 +4276,14 @@ _e_comp_x_screensaver_idle_timer_cb(void *d __UNUSED__)
    return EINA_FALSE;
 }
 
+static Ecore_Timer *screensaver_eval_timer = NULL;
+static Eina_Bool saver_on = EINA_FALSE;
+
 static Eina_Bool
-_e_comp_x_screensaver_notify_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_X_Event_Screensaver_Notify *ev)
+_e_comp_x_screensaver_eval_cb(void *d __UNUSED__)
 {
-   static Eina_Bool saver_on = EINA_FALSE;
-   if ((ev->on) && (!saver_on))
+  if (saver_on)
      {
-        saver_on = EINA_TRUE;
         if (e_config->backlight.idle_dim)
           {
              double t = e_config->screensaver_timeout -
@@ -4305,9 +4306,8 @@ _e_comp_x_screensaver_notify_cb(void *data __UNUSED__, int type __UNUSED__, Ecor
                ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
           }
      }
-   else if ((!ev->on) && (saver_on))
+   else if (saver_on)
      {
-        saver_on = EINA_FALSE;
         if (screensaver_idle_timer)
           {
              E_FREE_FUNC(screensaver_idle_timer, ecore_timer_del);
@@ -4328,6 +4328,25 @@ _e_comp_x_screensaver_notify_cb(void *data __UNUSED__, int type __UNUSED__, Ecor
              if (e_screensaver_on_get())
                ecore_event_add(E_EVENT_SCREENSAVER_OFF, NULL, NULL, NULL);
           }
+     }
+   screensaver_eval_timer = NULL;
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_e_comp_x_screensaver_notify_cb(void *data __UNUSED__, int type __UNUSED__, Ecore_X_Event_Screensaver_Notify *ev)
+{
+   if ((ev->on) && (!saver_on))
+     {
+        saver_on = EINA_TRUE;
+	E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
+	screensaver_eval_timer = ecore_timer_add(0.3, _e_comp_x_screensaver_eval_cb, NULL);
+     }
+   else if ((!ev->on) && (saver_on))
+     {
+        saver_on = EINA_FALSE;
+	E_FREE_FUNC(screensaver_eval_timer, ecore_timer_del);
+	screensaver_eval_timer = ecore_timer_add(0.3, _e_comp_x_screensaver_eval_cb, NULL);
      }
    return ECORE_CALLBACK_PASS_ON;
 }
