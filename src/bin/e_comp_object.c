@@ -1078,7 +1078,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
    else
      _e_comp_object_layers_add(cw, NULL, NULL, 0);
    /* set restack if stacking has changed */
-   if (cw->ec->new_client || (ecstack->frame != o))
+   if (cw->ec->new_client || (!ecstack) || (ecstack->frame != o))
      evas_object_data_set(cw->smart_obj, "client_restack", (void*)1);
    stack_cb(cw->smart_obj, stack);
    if (cw->comp->layers[cw->layer].obj)
@@ -1086,7 +1086,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
        {
           CRI("STACKING ERROR!!!");
        }
-   if (cw->ec->new_client || (ecstack->frame != o))
+   if (cw->ec->new_client || (!ecstack) || (ecstack->frame != o))
      evas_object_data_del(cw->smart_obj, "client_restack");
    e_comp_shape_queue(cw->comp);
 }
