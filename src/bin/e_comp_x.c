@@ -4282,7 +4282,7 @@ static Eina_Bool saver_on = EINA_FALSE;
 static Eina_Bool
 _e_comp_x_screensaver_eval_cb(void *d __UNUSED__)
 {
-  if (saver_on)
+   if (saver_on)
      {
         if (e_config->backlight.idle_dim)
           {
