@@ -4306,7 +4306,7 @@ _e_comp_x_screensaver_eval_cb(void *d __UNUSED__)
                ecore_event_add(E_EVENT_SCREENSAVER_ON, NULL, NULL, NULL);
           }
      }
-   else if (saver_on)
+   else
      {
         if (screensaver_idle_timer)
           {
