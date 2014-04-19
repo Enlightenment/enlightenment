@@ -1913,6 +1913,12 @@ _e_client_eval(E_Client *ec)
           }
         if (!ec->desktop)
           {
+             ec->desktop = e_exec_startup_id_pid_find(ec->netwm.startup_id,
+                                                      ec->netwm.pid);
+             if (ec->desktop) efreet_desktop_ref(ec->desktop);
+          }
+        if (!ec->desktop)
+          {
              if (ec->internal && (ec->icccm.class && (!strncmp(ec->icccm.class, "e_fwin::", 8))))
                ec->desktop = efreet_util_desktop_exec_find("enlightenment_filemanager");
           }
@@ -1921,6 +1927,10 @@ _e_client_eval(E_Client *ec)
              if ((ec->icccm.name) || (ec->icccm.class))
                ec->desktop = efreet_util_desktop_wm_class_find(ec->icccm.name,
                                                                ec->icccm.class);
+          }
+        if (!ec->desktop && ec->icccm.command.argv && (ec->icccm.command.argc > 0))
+          {
+             ec->desktop = efreet_util_desktop_exec_find(ec->icccm.command.argv[0]);
           }
         if (!ec->desktop)
           {
@@ -1942,12 +1952,6 @@ _e_client_eval(E_Client *ec)
                          ec->desktop = efreet_util_desktop_exec_find(s);
                     }
                }
-          }
-        if (!ec->desktop)
-          {
-             ec->desktop = e_exec_startup_id_pid_find(ec->netwm.startup_id,
-                                                      ec->netwm.pid);
-             if (ec->desktop) efreet_desktop_ref(ec->desktop);
           }
         if (!ec->desktop && ec->icccm.name)
           {
