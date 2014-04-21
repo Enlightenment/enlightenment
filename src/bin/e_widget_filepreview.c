@@ -221,17 +221,26 @@ _e_wid_fprev_clear_widgets(E_Widget_Data *wd)
 static void
 _e_wid_fprev_preview_video_position(E_Widget_Data *wd, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   double t, tot, ratio;
+   double t, tot;
+
+   if (!wd->o_preview_time) return;
+   tot = emotion_object_play_length_get(obj);
+   if (!tot) return;
+   wd->vid_pct = t = (emotion_object_position_get(obj) * 100.0) / emotion_object_play_length_get(obj);
+   e_widget_slider_value_double_set(wd->o_preview_time, t);
+}
+
+static void
+_e_wid_fprev_preview_video_opened(E_Widget_Data *wd, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   double ratio;
    int iw, ih;
    Evas_Coord w, h, mw, mh, ow, oh;
 
    evas_object_geometry_get(wd->o_preview_preview, NULL, NULL, &ow, &oh);
    evas_object_geometry_get(wd->o_preview_properties_table, NULL, NULL, &w, &h);
 
-   tot = emotion_object_play_length_get(obj);
-   if (!tot) return;
-   wd->vid_pct = t = (emotion_object_position_get(obj) * 100.0) / emotion_object_play_length_get(obj);
-   e_widget_slider_value_double_set(wd->o_preview_time, t);
+   e_widget_entry_text_set(wd->o_preview_extra_entry, e_util_time_str_get(emotion_object_play_length_get(obj)));
 
    if (w < 10) return;
    w -= 4;
@@ -272,12 +281,6 @@ _e_wid_fprev_preview_video_resize(E_Widget_Data *wd, Evas_Object *obj, void *eve
    if (!wd->clamp_video) return;
    e_widget_size_min_get(wd->o_preview_preview, &mw, &mh);
    e_table_pack_options_set(wd->o_preview_preview, 1, 1, 1, 1, 0.5, 0.5, mw, mh, w, h);
-}
-
-static void
-_e_wid_fprev_preview_video_opened(E_Widget_Data *wd, Evas_Object *obj, void *event_info __UNUSED__)
-{
-   e_widget_entry_text_set(wd->o_preview_extra_entry, e_util_time_str_get(emotion_object_play_length_get(obj)));
 }
 
 static void
