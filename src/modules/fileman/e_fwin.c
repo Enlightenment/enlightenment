@@ -833,10 +833,13 @@ _e_fwin_icon_popup(void *data)
    zone = fwin->zone ?: fwin->win->client->zone;
    e_fm2_icon_geometry_get(fwin->popup_icon->ic, &x, &y, &w, &h);
    if (fwin->zone)
-     evas_object_geometry_get(fwin->popup_icon->fm, &fx, &fy, NULL, NULL);
+     {
+        evas_object_geometry_get(fwin->popup_icon->fm, &fx, &fy, NULL, NULL);
+        fx -= zone->x, fy -= zone->y;
+     }
    else
-     fx = fwin->win->client->x, fy = fwin->win->client->y;
-   
+     fx = fwin->win->client->client.x, fy = fwin->win->client->client.y;
+
    bg = edje_object_add(e_comp_get(zone)->evas);
    e_theme_edje_object_set(bg, "base/theme/fileman",
                            "e/fileman/popup/default");
@@ -862,7 +865,7 @@ _e_fwin_icon_popup(void *data)
    /* prefer tooltip left of icon */
    px = (fx + x) - mw - 3;
    /* if it's offscreen, try right of icon */
-   if (px < 0) px = (fx + x + w) + 3;
+   if (px < zone->x) px = (fx + x + w) + 3;
    /* fuck this, stick it right on the icon */
    if ((px + mw + 3 > zone->x + zone->w) && (!e_zone_exists_direction(zone, E_ZONE_EDGE_RIGHT)))
      px = (x + w / 2) - (mw / 2);
@@ -872,7 +875,7 @@ _e_fwin_icon_popup(void *data)
    /* prefer tooltip above icon */
    py = (fy + y) - mh - 3;
    /* if it's offscreen, try below icon */
-   if (py < 0) py = (fy + y + h) + 3;
+   if (py < zone->y) py = (fy + y + h) + 3;
    /* fuck this, stick it right on the icon */
    if ((py + mh + 3 > zone->x + zone->h) && (!e_zone_exists_direction(zone, E_ZONE_EDGE_BOTTOM)))
      py = (y + h / 2) - (mh / 2);
