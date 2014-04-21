@@ -16,7 +16,7 @@ struct _E_Config_Dialog_Data
    const char  *default_model;
 
    int          only_label;
-   int dont_touch_my_damn_keyboard;
+   int          dont_touch_my_damn_keyboard;
 
    E_Dialog    *dlg_add_new;
 };
