@@ -538,7 +538,7 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
                     {
                        unsigned long fragsz;
                        unsigned long long blknum, blkused, blkres;
-                       double mbsize, mbused, mbres;
+                       off_t bsize, bused, bres;
                        Eina_Bool rdonly = EINA_FALSE;
                        Eina_Bool f_is_dir = EINA_FALSE;
                        Eina_Bool f_is_dev = EINA_FALSE;
@@ -587,35 +587,26 @@ _e_wid_fprev_preview_file(E_Widget_Data *wd)
                          {
                             is_fs = EINA_TRUE;
 
-                            mbres = ((double)blkres * (double)fragsz) /
-                              (double)(1024 * 1024);
-                            mbsize = ((double)blknum * (double)fragsz) /
-                              (double)(1024 * 1024);
-                            mbused = (mbsize * (double)blkused) /
-                              (double)blknum;
+                            bres = blkres * fragsz;
+                            bsize = blknum * fragsz;
+                            bused = bsize * ((double)blkused / blknum);
 #ifdef ST_RDONLY
                             if (stfs.f_flag & ST_RDONLY) rdonly = EINA_TRUE;
 #endif
                             _e_wid_fprev_preview_fs_widgets(wd, EINA_TRUE);
 
                             //-------------------
-                            if (mbused > 1024.0)
-                              snprintf(buf, sizeof(buf), "%1.2f Gb", mbused / 1024.0);
-                            else
-                              snprintf(buf, sizeof(buf), "%1.2f Mb", mbused);
-                            e_widget_entry_text_set(wd->o_preview_extra_entry, buf);
+                            size = e_util_size_string_get(bused);
+                            e_widget_entry_text_set(wd->o_preview_extra_entry, size);
+                            free(size);
                             //-------------------
-                            if (mbsize > 1024.0)
-                              snprintf(buf, sizeof(buf), "%1.2f Gb", mbsize / 1024.0);
-                            else
-                              snprintf(buf, sizeof(buf), "%1.2f Mb", mbsize);
-                            e_widget_entry_text_set(wd->o_preview_size_entry, buf);
+                            size = e_util_size_string_get(bsize);
+                            e_widget_entry_text_set(wd->o_preview_size_entry, size);
+                            free(size);
                             //-------------------
-                            if (mbres > 1024.0)
-                              snprintf(buf, sizeof(buf), "%1.2f Gb", mbres / 1024.0);
-                            else
-                              snprintf(buf, sizeof(buf), "%1.2f Mb", mbres);
-                            e_widget_entry_text_set(wd->o_preview_owner_entry, buf);
+                            size = e_util_size_string_get(bres);
+                            e_widget_entry_text_set(wd->o_preview_owner_entry, size);
+                            free(size);
                             //-------------------
                             if (mpoint[0])
                               {
