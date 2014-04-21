@@ -33,6 +33,7 @@ static void        *_create_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
+static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
 static void         _cb_add(void *data, void *data2 __UNUSED__);
 static void         _cb_del(void *data, void *data2 __UNUSED__);
@@ -70,6 +71,7 @@ _xkb_cfg_dialog(E_Comp *comp, const char *params __UNUSED__)
    v->free_cfdata = _free_data;
    v->basic.create_widgets = _basic_create;
    v->basic.apply_cfdata = _basic_apply;
+   v->basic.check_changed = _basic_check_changed;
 
    cfd = e_config_dialog_new(comp, _("Keyboard Settings"), "E",
                              "keyboard_and_mouse/xkbswitch",
@@ -160,6 +162,58 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    eina_stringshare_del(cfdata->default_model);
    E_FREE(cfdata);
    clear_rules();
+}
+
+static int
+_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
+{
+   Eina_List *l, *l2, *l3;
+   E_Config_XKB_Layout *cl, *nl;
+   E_Config_XKB_Option *co;
+   E_XKB_Dialog_Option *od;
+   Eina_Bool found;
+
+   if ((eina_list_count(e_config->xkb.used_layouts) !=
+         eina_list_count(cfdata->cfg_layouts)) ||
+       (e_config->xkb.default_model != cfdata->default_model) ||
+       (e_config->xkb.only_label != cfdata->only_label) ||
+       (e_config->xkb.dont_touch_my_damn_keyboard != cfdata->dont_touch_my_damn_keyboard))
+     return 1;
+
+   l2 = cfdata->cfg_layouts;
+   EINA_LIST_FOREACH(e_config->xkb.used_layouts, l, cl)
+     {
+        nl = eina_list_data_get(l2);
+        if ((cl->name != nl->name) ||
+            (cl->model != nl->model) ||
+            (cl->variant != nl->variant))
+          return 1;
+        l2 = eina_list_next(l2);
+     }
+
+   l2 = e_config->xkb.used_options;
+   EINA_LIST_FOREACH(cfdata->cfg_options, l, od)
+     {
+        found = EINA_FALSE;
+        EINA_LIST_FOREACH(l2, l3, co)
+          {
+             if (od->name == co->name)
+               {
+                  found = EINA_TRUE;
+                  break;
+               }
+          }
+        if ((!found) && (!od->enabled))
+          continue;
+        if (found && od->enabled)
+          {
+             l2 = eina_list_next(l3);
+             continue;
+          }
+        return 1;
+     }
+
+   return 0;
 }
 
 static int
