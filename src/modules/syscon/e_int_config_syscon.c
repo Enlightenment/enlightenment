@@ -40,7 +40,7 @@ e_int_config_syscon(E_Comp *comp, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(comp, _("Syscon Settings"),
+   cfd = e_config_dialog_new(comp, _("System Controls Settings"),
                              "E", "windows/conf_syscon",
                              "system-shutdown", 0, v, NULL);
    return cfd;
