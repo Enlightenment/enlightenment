@@ -264,10 +264,10 @@ e_syscon_show(E_Zone *zone, const char *defact)
 
    w = mw;
    if (w > zw) w = zw;
-   x = zx - zone->x + (zw - w) / 2;
+   x = zx + (zw - w) / 2;
    h = mh;
    if (h > zh) h = zh;
-   y = zy - zone->y + (zh - h) / 2;
+   y = zy + (zh - h) / 2;
 
    evas_object_geometry_set(popup, x, y, w, h);
 
