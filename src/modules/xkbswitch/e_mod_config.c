@@ -740,7 +740,12 @@ _cb_used_select(void *data)
    c = e_widget_ilist_count(cfdata->used_list);
    e_widget_disabled_set(cfdata->btn_del, EINA_FALSE);
 
-   if (n == (c - 1))
+   if (c == 1)
+     {
+        e_widget_disabled_set(cfdata->btn_up, EINA_TRUE);
+        e_widget_disabled_set(cfdata->btn_down, EINA_TRUE);
+     }
+   else if (n == (c - 1))
      {
         e_widget_disabled_set(cfdata->btn_up, EINA_FALSE);
         e_widget_disabled_set(cfdata->btn_down, EINA_TRUE);
