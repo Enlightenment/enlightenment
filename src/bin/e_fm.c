@@ -11470,34 +11470,39 @@ e_fm2_operation_abort(int id)
 }
 
 EAPI Eina_Bool
-e_fm2_optimal_size_calc(Evas_Object *obj, int maxw, int maxh, int *w, int *h)
+e_fm2_optimal_size_calc(Evas_Object *obj, int minw, int minh, int maxw, int maxh, int *w, int *h)
 {
-   int x, y, minw, minh;
+   int x, y, step_w, step_h;
    EFM_SMART_CHECK(EINA_FALSE);
    if ((!w) || (!h)) return EINA_FALSE;
    if (!sd->icons) return EINA_FALSE;
    if (maxw < 0) maxw = 0;
    if (maxh < 0) maxh = 0;
-   minw = sd->min.w + 5, minh = sd->min.h + 5;
+   step_w = sd->min.w + 5, step_h = sd->min.h + 5;
    switch (_e_fm2_view_mode_get(sd))
      {
       case E_FM2_VIEW_MODE_LIST:
-        *w = MIN(minw, maxw);
-        *h = MIN(minh * eina_list_count(sd->icons), (unsigned int)maxh);
+        *w = MIN(step_w, maxw);
+        *h = MIN(step_h * eina_list_count(sd->icons), (unsigned int)maxh);
         return EINA_TRUE;
 
       default:
         break;
      }
    y = x = (int)sqrt(eina_list_count(sd->icons));
-   if (maxw && (x * minw > maxw))
+   if (maxw && (x * step_w > maxw))
      {
-        x = maxw / minw;
-        y = (eina_list_count(sd->icons) / x) + ((maxw % minw) ? 1 : 0);
+        x = maxw / step_w;
+        y = (eina_list_count(sd->icons) / x) + ((maxw % step_w) ? 1 : 0);
      }
-   *w = minw * x;
+   if (minw && (x * step_w < minw))
+     {
+        x = minw / step_w;
+        y = (eina_list_count(sd->icons) / x) + ((minw % step_w) ? 1 : 0);
+     }
+   *w = step_w * x;
    *w = MIN(*w, maxw);
-   *h = minh * y;
+   *h = step_h * y;
    *h = MIN(*h, maxh);
    return EINA_TRUE;
 }
