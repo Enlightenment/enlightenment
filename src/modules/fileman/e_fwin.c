@@ -656,7 +656,7 @@ _e_fwin_bg_mouse_down(E_Fwin *fwin, Evas_Object *obj __UNUSED__, void *event __U
    evas_object_geometry_get(fwin->cur_page->fm_obj, &cx, &cy, &cw, &ch);
    if (x + w > zx + zw)
      w = zx + zw - x;
-   if (y + x > zy + zh)
+   if (y + h > zy + zh)
      h = zy + zh - y;
    w = w + cx;
    h = h + cx;
