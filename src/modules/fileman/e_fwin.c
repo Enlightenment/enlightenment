@@ -12,6 +12,8 @@
 
 #define DEFAULT_WIDTH  600
 #define DEFAULT_HEIGHT 350
+#define MINIMUM_WIDTH  360
+#define MINIMUM_HEIGHT 250
 
 typedef struct _E_Fwin             E_Fwin;
 typedef struct _E_Fwin_Page        E_Fwin_Page;
@@ -660,7 +662,7 @@ _e_fwin_bg_mouse_down(E_Fwin *fwin, Evas_Object *obj __UNUSED__, void *event __U
      h = zy + zh - y;
    w = w + cx;
    h = h + cx;
-   e_win_resize(fwin->win, MAX(w, 360), MAX(h, 250));
+   e_win_resize(fwin->win, MAX(w, MINIMUM_WIDTH), MAX(h, MINIMUM_HEIGHT));
 }
 
 static E_Fwin *
@@ -718,7 +720,7 @@ _e_fwin_new(E_Comp *comp,
    e_fm2_path_set(page->fm_obj, dev, path);
    _e_fwin_window_title_set(page);
 
-   e_win_size_min_set(fwin->win, 360, 250);
+   e_win_size_min_set(fwin->win, MINIMUM_WIDTH, MINIMUM_HEIGHT);
 
    zone = e_util_zone_current_get(e_manager_current_get());
    if ((zone) && (zone->w < DEFAULT_WIDTH))
