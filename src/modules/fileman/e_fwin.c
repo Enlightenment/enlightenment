@@ -661,7 +661,7 @@ _e_fwin_bg_mouse_down(E_Fwin *fwin, Evas_Object *obj __UNUSED__, void *event __U
    if (y + h > zy + zh)
      h = zy + zh - y;
    w = w + cx;
-   h = h + cx;
+   h = h + cy;
    e_win_resize(fwin->win, MAX(w, MINIMUM_WIDTH), MAX(h, MINIMUM_HEIGHT));
 }
 
