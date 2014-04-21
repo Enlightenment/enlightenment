@@ -130,9 +130,16 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata __UNUSED__)
+_basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
-   return 1;
+   if ((cfdata->main.icon_size != e_config->syscon.main.icon_size) ||
+       (cfdata->secondary.icon_size != e_config->syscon.secondary.icon_size) ||
+       (cfdata->extra.icon_size != e_config->syscon.extra.icon_size) ||
+       (cfdata->timeout != e_config->syscon.timeout) ||
+       (cfdata->do_input != e_config->syscon.do_input))
+     return 1;
+
+   return 0;
 }
 
 static Evas_Object *
