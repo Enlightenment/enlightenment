@@ -145,17 +145,17 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    ol = e_widget_list_add(evas, 0, 0);
    ob = e_widget_label_add(evas, _("Main"));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 16.0, 256.0, 1.0, 0,
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f pixels"), 16.0, 256.0, 1.0, 0,
                             NULL, &(cfdata->main.icon_size), 100);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_label_add(evas, _("Secondary"));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 16.0, 256.0, 1.0, 0,
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f pixels"), 16.0, 256.0, 1.0, 0,
                             NULL, &(cfdata->secondary.icon_size), 100);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_label_add(evas, _("Extra"));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f"), 16.0, 256.0, 1.0, 0,
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.0f pixels"), 16.0, 256.0, 1.0, 0,
                             NULL, &(cfdata->extra.icon_size), 100);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    e_widget_toolbook_page_append(otb, NULL, _("Icon Sizes"), ol,
@@ -166,7 +166,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    ob = e_widget_label_add(evas, _("Timeout"));
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.1f"), 0.0, 60.0, 0.1, 0,
+   ob = e_widget_slider_add(evas, 1, 0, _("%1.1f s"), 0.0, 60.0, 0.1, 0,
                             &(cfdata->timeout), NULL, 100);
    e_widget_list_object_append(ol, ob, 1, 0, 0.0);
    e_widget_toolbook_page_append(otb, NULL, _("Default Action"), ol,
