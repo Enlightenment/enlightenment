@@ -27,8 +27,7 @@ static int act_count = 0;
 static void
 _cb_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 {
-   evas_object_hide(popup);
-   E_FREE_FUNC(popup, evas_object_del);
+   e_syscon_hide();
 }
 
 /* externally accessible functions */
