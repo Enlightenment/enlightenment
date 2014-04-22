@@ -342,7 +342,7 @@ _e_wid_fprev_preview_video_widgets(E_Widget_Data *wd)
                                 wd->o_preview_preview, 0, 0, 2, 2, 1, 1, 1, 1);
 
    evas_object_smart_callback_add(o, "frame_resize", (Evas_Smart_Cb)_e_wid_fprev_preview_video_resize, wd);
-   evas_object_smart_callback_add(o, "length_change", (Evas_Smart_Cb)_e_wid_fprev_preview_video_opened, wd);
+   evas_object_smart_callback_add(o, "open_done", (Evas_Smart_Cb)_e_wid_fprev_preview_video_opened, wd);
    evas_object_smart_callback_add(o, "frame_decode", (Evas_Smart_Cb)_e_wid_fprev_preview_video_position, wd);
 
    o = e_widget_slider_add(evas, 1, 0, _("%3.1f%%"), 0, 100, 0.5, 0, &wd->vid_pct, NULL, 40);
