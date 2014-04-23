@@ -277,18 +277,20 @@ _e_backlight_set(E_Zone *zone, double val)
         if ((out) && (num > 0))
           {
              Eina_Bool gotten = EINA_FALSE;
-             for (i = 0; i < num; i++)
+             if (e_config->backlight.sysdev)
                {
-                  name = ecore_x_randr_output_name_get(root, out[i], NULL);
-                  if (name)
+                  for (i = 0; i < num; i++)
                     {
-                       if ((e_config->backlight.sysdev) &&
-                           (!strcmp(name, e_config->backlight.sysdev)))
+                       name = ecore_x_randr_output_name_get(root, out[i], NULL);
+                       if (name)
                          {
-                            ecore_x_randr_output_backlight_level_set(root, out[i], val);
-                            gotten = EINA_TRUE;
+                            if (!strcmp(name, e_config->backlight.sysdev))
+                              {
+                                 ecore_x_randr_output_backlight_level_set(root, out[i], val);
+                                 gotten = EINA_TRUE;
+                              }
+                            free(name);
                          }
-                       free(name);
                     }
                }
              if (!gotten)
