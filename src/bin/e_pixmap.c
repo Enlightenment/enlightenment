@@ -311,7 +311,6 @@ EAPI Eina_Bool
 e_pixmap_refresh(E_Pixmap *cp)
 {
    Eina_Bool success = EINA_FALSE;
-   int pw, ph;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
    if (!cp->usable)
@@ -326,6 +325,7 @@ e_pixmap_refresh(E_Pixmap *cp)
 #ifndef HAVE_WAYLAND_ONLY
         {
            uint32_t pixmap;
+           int pw, ph;
 
            pixmap = ecore_x_composite_name_window_pixmap_get(cp->parent ?: cp->win);
            if (cp->client)
