@@ -956,7 +956,7 @@ _pager_cb_event_desk_show(void *data __UNUSED__, int type __UNUSED__, void *even
         if (pd) _pager_desk_select(pd);
 
         if (p->popup)
-          edje_object_part_text_set(p->popup->o_bg, "text", ev->desk->name);
+          edje_object_part_text_set(p->popup->o_bg, "e.text.label", ev->desk->name);
      }
 
    if ((pager_config->popup) && (!act_popup))
