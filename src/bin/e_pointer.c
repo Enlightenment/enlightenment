@@ -634,7 +634,6 @@ e_pointer_image_set(E_Pointer *p, E_Pixmap *cp, int w, int h, int hot_x, int hot
           }
         evas_object_image_size_set(p->pointer_image, 1, 1);
         evas_object_image_data_set(p->pointer_image, NULL);
-        E_FREE_FUNC(p->pointer_image, evas_object_del);
         p->blocks = 0;
         _e_pointer_canvas_resize(p, e_config->cursor_size, e_config->cursor_size);
         return;
