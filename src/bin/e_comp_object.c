@@ -765,11 +765,6 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
    cw->ec->x = x, cw->ec->y = y;
    /* only update during resize if triggered by resize */
    if (e_client_util_resizing_get(cw->ec) && (!cw->force_move)) return;
-   if (!cw->ec->shading)
-     {
-        cw->ec->client.x = ix;
-        cw->ec->client.y = iy;
-     }
    if (cw->ec->new_client)
      {
         /* don't actually do anything until first client idler loop */
@@ -778,7 +773,16 @@ _e_comp_intercept_move(void *data, Evas_Object *obj, int x, int y)
         EC_CHANGED(cw->ec);
      }
    else
-     evas_object_move(obj, x, y);
+     {
+        /* only update xy position of client to avoid invalid
+         * first damage region if it is not a new_client. */
+        if (!cw->ec->shading)
+          {
+             cw->ec->client.x = ix;
+             cw->ec->client.y = iy;
+          }
+        evas_object_move(obj, x, y);
+     }
 }
 
 static void
