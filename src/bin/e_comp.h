@@ -33,8 +33,8 @@ typedef enum _E_Layer
 } E_Layer;
 
 #else
-#ifndef E_MOD_COMP_H
-#define E_MOD_COMP_H
+#ifndef E_COMP_H
+#define E_COMP_H
 
 # include "e_comp_cfdata.h"
 
