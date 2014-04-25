@@ -755,6 +755,32 @@ define([CHECK_MODULE_MIXER],
   fi
 ])
 
+SHM_OPEN_LIBS=""
+AC_MSG_CHECKING([whether shm_open() is present])
+LIBS_save=${LIBS}
+LIBS="${LIBS} -lrt"
+AC_LINK_IFELSE(
+   [AC_LANG_PROGRAM(
+      [[
+#include <sys/stat.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+      ]],
+      [[
+int fd;
+fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR |
+S_IWUSR);
+shm_unlink("/");
+      ]])],
+   [
+    have_shm_open="yes"
+    AC_DEFINE(HAVE_SHM_OPEN, 1, [Have shm_open() call])
+    SHM_OPEN_LIBS="-lrt"
+   ])
+LIBS=${LIBS_save}
+AC_MSG_RESULT([${have_shm_open}])
+AC_SUBST(SHM_OPEN_LIBS)
+                           
 AC_SUBST([SOUND_CFLAGS])
 AC_SUBST([SOUND_LIBS])
 
