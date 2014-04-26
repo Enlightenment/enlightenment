@@ -482,9 +482,6 @@ struct _E_Wayland_Compositor
    Eina_Bool focus : 1;
 
    unsigned int output_pool;
-
-   struct xkb_rule_names xkb_names;
-   struct xkb_context *xkb_context;
 #endif
 
    Ecore_Event_Handler *kbd_handler;
