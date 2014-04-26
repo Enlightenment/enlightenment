@@ -2502,9 +2502,13 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
 
    if (ec->comp->nocomp)
      e_pixmap_dirty(ec->pixmap);
+   /* discard unwanted xy position of first damage
+    * to avoid wrong composition for override redirect window */
+   else if ((ec->override) && (!ec->comp_data->first_damage))
+     e_comp_object_damage(ec->frame, 0, 0, ev->area.width, ev->area.height);
    else
      e_comp_object_damage(ec->frame, ev->area.x, ev->area.y, ev->area.width, ev->area.height);
-   if ((!ec->re_manage) && (!ec->comp_data->first_damage))
+   if ((!ec->re_manage) && (!ec->override) && (!ec->comp_data->first_damage))
      e_comp_object_render_update_del(ec->frame);
    else
      E_FREE_FUNC(ec->comp_data->first_draw_delay, ecore_timer_del);
@@ -4034,7 +4038,7 @@ _e_comp_x_hook_client_new(void *d EINA_UNUSED, E_Client *ec)
 
    if (!_e_comp_x_client_new_helper(ec)) return;
 
-   ec->comp_data->first_damage = ec->internal || ec->override;
+   ec->comp_data->first_damage = ec->internal;
 
    eina_hash_add(clients_win_hash, &win, ec);
    e_hints_client_list_set();
