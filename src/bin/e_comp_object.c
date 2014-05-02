@@ -1892,9 +1892,6 @@ _e_comp_object_constructor(Eo *obj, E_Comp_Object *cw, E_Client *ec)
    evas_object_intercept_hide_callback_add(obj, _e_comp_intercept_hide, cw);
    evas_object_intercept_focus_set_callback_add(obj, _e_comp_intercept_focus, cw);
 
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_IN, _e_comp_object_smart_focus_in, cw);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_FOCUS_OUT, _e_comp_object_smart_focus_out, cw);
-
    cw->comp = ec->comp;
    evas_object_data_set(obj, "E_Client", ec);
    cw->ec = ec;
