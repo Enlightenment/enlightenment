@@ -827,15 +827,6 @@ static void
 _e_mod_action_toggle_split_mode(E_Object *obj EINA_UNUSED,
                                 const char *params EINA_UNUSED)
 {
-   E_Desk *desk;
-
-   desk = get_current_desk();
-   if (!desk)
-     return;
-
-   if (!desk_should_tile_check(desk))
-     return;
-
    _tiling_split_type_next();
 }
 
