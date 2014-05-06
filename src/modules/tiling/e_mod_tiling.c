@@ -1,5 +1,11 @@
 #include "e_mod_tiling.h"
 
+/* There are two major concepts, (un)track and add/remove client.
+ * track - track all windows regardless if we are interested in them or not.
+ *    We need that in order to keep proper track of things as they change.
+ * add/remove: Clients should be tiled/untiled.
+ */
+
 /* types {{{ */
 
 #define TILING_OVERLAY_TIMEOUT 5.0
@@ -24,6 +30,7 @@ typedef struct Client_Extra
    int       last_frame_adjustment; // FIXME: Hack for frame resize bug.
    Eina_Bool floating : 1;
    Eina_Bool tiled : 1;
+   Eina_Bool tracked : 1;
 } Client_Extra;
 
 typedef struct _Instance
@@ -41,6 +48,8 @@ struct tiling_g tiling_g = {
    .log_domain = -1,
 };
 
+static void _client_track(E_Client *ec);
+static void _client_untrack(E_Client *ec);
 static Eina_Bool _add_client(E_Client *ec);
 static void             _remove_client(E_Client *ec);
 static void             _client_apply_settings(E_Client *ec, Client_Extra *extra);
@@ -524,12 +533,14 @@ _add_client(E_Client *ec)
      {
         return EINA_FALSE;
      }
+
+   Client_Extra *extra = _get_or_create_client_extra(ec);
+   _client_track(ec);
+
    if (!is_tilable(ec))
      {
         return EINA_FALSE;
      }
-
-   Client_Extra *extra = _get_or_create_client_extra(ec);
 
    if (!desk_should_tile_check(ec->desk))
       return EINA_FALSE;
@@ -1048,13 +1059,12 @@ _frame_del_cb(void *data, Evas *evas EINA_UNUSED,
 {
    E_Client *ec = data;
 
-   if (e_client_util_ignored_get(ec))
-      return;
-
    if (desk_should_tile_check(ec->desk))
      {
         _client_remove_no_apply(ec);
      }
+
+   _client_untrack(ec);
 
    eina_hash_del(_G.client_extras, &ec, NULL);
 
@@ -1065,7 +1075,19 @@ static void
 _e_client_extra_unregister_callbacks(void *_client_extra)
 {
    Client_Extra *extra = _client_extra;
-   E_Client *ec = extra->client;
+
+   _client_untrack(extra->client);
+}
+
+static void
+_client_untrack(E_Client *ec)
+{
+   Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+
+   if (!extra->tracked)
+      return;
+
+   extra->tracked = EINA_FALSE;
 
    evas_object_event_callback_del_full(ec->frame, EVAS_CALLBACK_DEL,
          _frame_del_cb, ec);
@@ -1080,21 +1102,25 @@ _e_client_extra_unregister_callbacks(void *_client_extra)
 }
 
 static void
-_add_client_hook(E_Client *ec)
+_client_track(E_Client *ec)
 {
-   if (_add_client(ec))
-     {
-        evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL,
-              _frame_del_cb, ec);
-        evas_object_smart_callback_add(ec->frame, "maximize_done",
-              _e_client_check_based_on_state_cb, ec);
-        evas_object_smart_callback_add(ec->frame, "frame_recalc_done",
-              _e_client_check_based_on_state_cb, ec);
-        evas_object_smart_callback_add(ec->frame, "stick",
-              _e_client_check_based_on_state_cb, ec);
-        evas_object_smart_callback_add(ec->frame, "unstick",
-              _e_client_check_based_on_state_cb, ec);
-     }
+   Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
+
+   if (extra->tracked)
+      return;
+
+   extra->tracked = EINA_TRUE;
+
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_DEL,
+         _frame_del_cb, ec);
+   evas_object_smart_callback_add(ec->frame, "maximize_done",
+         _e_client_check_based_on_state_cb, ec);
+   evas_object_smart_callback_add(ec->frame, "frame_recalc_done",
+         _e_client_check_based_on_state_cb, ec);
+   evas_object_smart_callback_add(ec->frame, "stick",
+         _e_client_check_based_on_state_cb, ec);
+   evas_object_smart_callback_add(ec->frame, "unstick",
+         _e_client_check_based_on_state_cb, ec);
 }
 
 static Eina_Bool
@@ -1102,7 +1128,7 @@ _add_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
 {
    E_Client *ec = event->ec;
 
-   _add_client_hook(ec);
+   _add_client(ec);
 
    return true;
 }
@@ -1389,7 +1415,7 @@ e_modapi_init(E_Module *m)
 
       E_CLIENT_FOREACH(e_comp_get(NULL), ec)
       {
-         _add_client_hook(ec);
+         _add_client(ec);
       }
    }
 
