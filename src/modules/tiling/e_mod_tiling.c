@@ -839,6 +839,7 @@ _tiling_split_type_changed_popup(void)
         _G.split_popup.comp_obj = comp_obj = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_POPUP);
         e_comp_object_util_center(comp_obj);
         evas_object_layer_set(comp_obj, E_LAYER_POPUP);
+        evas_object_pass_events_set(comp_obj, EINA_TRUE);
 
         evas_object_show(comp_obj);
 
