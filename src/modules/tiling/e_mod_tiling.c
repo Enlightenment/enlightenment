@@ -8,9 +8,8 @@
 
 /* types {{{ */
 
-#define TILING_OVERLAY_TIMEOUT 5.0
-#define TILING_RESIZE_STEP     5
-#define TILING_WRAP_SPEED      0.1
+#define TILING_POPUP_TIMEOUT 0.8
+#define TILING_POPUP_SIZE 100
 
 typedef struct geom_t
 {
@@ -55,6 +54,7 @@ static void             _remove_client(E_Client *ec);
 static void             _client_apply_settings(E_Client *ec, Client_Extra *extra);
 static void             _foreach_desk(void (*func)(E_Desk *desk));
 static Eina_Bool _toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore);
+static void _edje_tiling_icon_set(Evas_Object *o);
 
 /* Func Proto Requirements for Gadcon */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -89,6 +89,12 @@ static struct tiling_mod_main_g
                        *act_move_right, *act_toggle_split_mode, *act_swap_window;
 
    Tiling_Split_Type    split_type;
+
+   struct {
+        Evas_Object *comp_obj;
+        Evas_Object *obj;
+        Ecore_Timer *timer;
+   } split_popup;
 } _G =
 {
    .split_type = TILING_SPLIT_HORIZONTAL,
@@ -803,6 +809,49 @@ _e_mod_action_move_down_cb(E_Object *obj EINA_UNUSED,
 /* }}} */
 /* Toggle split mode {{{ */
 
+static Eina_Bool
+_split_type_popup_timer_del_cb(void *data EINA_UNUSED)
+{
+   evas_object_hide(_G.split_popup.comp_obj);
+   evas_object_del(_G.split_popup.comp_obj);
+   _G.split_popup.comp_obj = NULL;
+   _G.split_popup.obj = NULL;
+   _G.split_popup.timer = NULL;
+
+   return EINA_FALSE;
+}
+
+static void
+_tiling_split_type_changed_popup(void)
+{
+   Evas_Object *comp_obj = _G.split_popup.comp_obj;
+   Evas_Object *o = _G.split_popup.obj;
+
+   /* If this is not NULL, the rest isn't either. */
+   if (!o)
+     {
+        _G.split_popup.obj = o = edje_object_add(e_comp_get(NULL)->evas);
+        if (!e_theme_edje_object_set(o, "base/theme/modules/tiling",
+                 "modules/tiling/main"))
+           edje_object_file_set(o, _G.edj_path, "modules/tiling/main");
+        evas_object_resize(o, TILING_POPUP_SIZE, TILING_POPUP_SIZE);
+
+        _G.split_popup.comp_obj = comp_obj = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_POPUP);
+        e_comp_object_util_center(comp_obj);
+        evas_object_layer_set(comp_obj, E_LAYER_POPUP);
+
+        evas_object_show(comp_obj);
+
+        _G.split_popup.timer = ecore_timer_add(TILING_POPUP_TIMEOUT, _split_type_popup_timer_del_cb, NULL);
+     }
+   else
+     {
+        ecore_timer_reset(_G.split_popup.timer);
+     }
+
+   _edje_tiling_icon_set(o);
+}
+
 static void
 _tiling_split_type_next(void)
 {
@@ -821,6 +870,8 @@ _tiling_split_type_next(void)
      {
         _gadget_icon_set(inst);
      }
+
+   _tiling_split_type_changed_popup();
 }
 
 static void
@@ -1558,25 +1609,31 @@ e_modapi_save(E_Module *m EINA_UNUSED)
 static Eina_Stringshare *_current_gad_id = NULL;
 
 static void
-_gadget_icon_set(Instance *inst)
+_edje_tiling_icon_set(Evas_Object *o)
 {
    switch (_G.split_type)
      {
       case TILING_SPLIT_HORIZONTAL:
-        edje_object_signal_emit(inst->gadget, "tiling,mode,horizontal", "e");
+        edje_object_signal_emit(o, "tiling,mode,horizontal", "e");
         break;
 
       case TILING_SPLIT_VERTICAL:
-        edje_object_signal_emit(inst->gadget, "tiling,mode,vertical", "e");
+        edje_object_signal_emit(o, "tiling,mode,vertical", "e");
         break;
 
       case TILING_SPLIT_FLOAT:
-        edje_object_signal_emit(inst->gadget, "tiling,mode,floating", "e");
+        edje_object_signal_emit(o, "tiling,mode,floating", "e");
         break;
 
       default:
         ERR("Unknown split type.");
      }
+}
+
+static void
+_gadget_icon_set(Instance *inst)
+{
+   _edje_tiling_icon_set(inst->gadget);
 }
 
 static void
