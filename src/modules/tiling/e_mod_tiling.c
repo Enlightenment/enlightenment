@@ -375,9 +375,6 @@ tiling_entry_no_desk_func(E_Client *ec)
    if (!ec)
      return NULL;
 
-   if (!is_tilable(ec))
-     return NULL;
-
    Client_Extra *extra = eina_hash_find(_G.client_extras, &ec);
 
    if (!extra)
@@ -393,6 +390,9 @@ tiling_entry_func(E_Client *ec)
 
    if (!extra)
       return NULL;
+
+   if (!is_tilable(ec))
+     return NULL;
 
    if (!desk_should_tile_check(ec->desk))
      return NULL;
