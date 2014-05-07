@@ -286,7 +286,7 @@ static struct Connman_Service *_service_new(const char *path, Eldbus_Message_Ite
 }
 
 static void _service_connection_cb(void *data, const Eldbus_Message *msg,
-                                   Eldbus_Pending *pending)
+                                   Eldbus_Pending *pending EINA_UNUSED)
 {
    struct connection_data *cd = data;
 
@@ -489,7 +489,7 @@ static void _manager_services_changed(void *data, const Eldbus_Message *msg)
 }
 
 static void _manager_get_services_cb(void *data, const Eldbus_Message *msg,
-                                     Eldbus_Pending *pending)
+                                     Eldbus_Pending *pending EINA_UNUSED)
 {
    struct Connman_Manager *cm = data;
    Eldbus_Message_Iter *array, *s;
@@ -570,7 +570,7 @@ _manager_prop_changed(void *data, const Eldbus_Message *msg)
 }
 
 static void _manager_get_prop_cb(void *data, const Eldbus_Message *msg,
-                                 Eldbus_Pending *pending)
+                                 Eldbus_Pending *pending EINA_UNUSED)
 {
    struct Connman_Manager *cm = data;
    Eldbus_Message_Iter *array, *dict;
@@ -628,7 +628,7 @@ static void _manager_wifi_prop_changed(void *data, const Eldbus_Message *msg)
 }
 
 static void _manager_get_wifi_prop_cb(void *data, const Eldbus_Message *msg,
-                                      Eldbus_Pending *pending)
+                                      Eldbus_Pending *pending EINA_UNUSED)
 {
    struct Connman_Manager *cm = data;
    Eldbus_Message_Iter *array, *dict;
@@ -667,8 +667,8 @@ _manager_agent_unregister(struct Connman_Manager *cm)
 }
 
 static void
-_manager_agent_register_cb(void *data, const Eldbus_Message *msg,
-                           Eldbus_Pending *pending)
+_manager_agent_register_cb(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                           Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *name, *text;
 
@@ -725,7 +725,7 @@ static void _manager_free(struct Connman_Manager *cm)
 }
 
 static void _manager_powered_cb(void *data, const Eldbus_Message *msg,
-                                Eldbus_Pending *pending)
+                                Eldbus_Pending *pending EINA_UNUSED)
 {
    Eldbus_Pending *p;
    struct Connman_Manager *cm = data;
@@ -820,7 +820,7 @@ static inline void _e_connman_system_name_owner_exit(void)
    ecore_event_add(E_CONNMAN_EVENT_MANAGER_OUT, NULL, NULL, NULL);
 }
 
-static inline void _e_connman_system_name_owner_enter(const char *owner)
+static inline void _e_connman_system_name_owner_enter(const char *owner EINA_UNUSED)
 {
    connman_manager = _manager_new();
    _manager_agent_register(connman_manager);
@@ -829,7 +829,10 @@ static inline void _e_connman_system_name_owner_enter(const char *owner)
 }
 
 static void
-_e_connman_system_name_owner_changed(void *data, const char *bus, const char *from, const char *to)
+_e_connman_system_name_owner_changed(void *data EINA_UNUSED,
+                                     const char *bus EINA_UNUSED,
+                                     const char *from EINA_UNUSED,
+                                     const char *to)
 {
    if (to[0])
      _e_connman_system_name_owner_enter(to);

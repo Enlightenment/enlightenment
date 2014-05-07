@@ -8,13 +8,15 @@ struct _E_Config_Dialog_Data
 };
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *dialog, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create(E_Config_Dialog *dialog EINA_UNUSED, Evas *evas EINA_UNUSED,
+              E_Config_Dialog_Data *cfdata EINA_UNUSED)
 {
    return NULL;
 }
 
 static int
-_basic_apply(E_Config_Dialog *dialog, E_Config_Dialog_Data *cfdata)
+_basic_apply(E_Config_Dialog *dialog EINA_UNUSED,
+             E_Config_Dialog_Data *cfdata EINA_UNUSED)
 {
    return 1;
 }

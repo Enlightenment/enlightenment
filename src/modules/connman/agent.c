@@ -298,15 +298,15 @@ _agent_release(const Eldbus_Service_Interface *iface,
 }
 
 static Eldbus_Message *
-_agent_report_error(const Eldbus_Service_Interface *iface,
-                    const Eldbus_Message *msg)
+_agent_report_error(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                    const Eldbus_Message *msg EINA_UNUSED)
 {
    return NULL;
 }
 
 static Eldbus_Message *
-_agent_request_browser(const Eldbus_Service_Interface *iface,
-                       const Eldbus_Message *msg)
+_agent_request_browser(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                       const Eldbus_Message *msg EINA_UNUSED)
 {
    return NULL;
 }
@@ -349,7 +349,7 @@ _parse_field_value(struct Connman_Field *field, const char *key,
 
 static Eina_Bool
 _parse_field(struct Connman_Field *field, Eldbus_Message_Iter *value,
-             const char *signature)
+             const char *signature EINA_UNUSED)
 {
    Eldbus_Message_Iter *array, *dict;
 
