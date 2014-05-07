@@ -11401,10 +11401,14 @@ _e_fm2_volume_eject(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__
 static void
 _update_volume_icon(E_Volume *v, E_Fm2_Icon *ic)
 {
-   if (ic->info.removable_full)
-     edje_object_signal_emit(ic->obj_icon, "e,state,removable,full", "e");
-   else
-     edje_object_signal_emit(ic->obj_icon, "e,state,removable,empty", "e");
+   Evas_Object *e = e_icon_edje_get(ic->obj_icon);
+   if (e)
+     {
+        if (ic->info.removable_full)
+          edje_object_signal_emit(e, "e,state,removable,full", "e");
+        else
+          edje_object_signal_emit(e, "e,state,removable,empty", "e");
+     }
 
    if (v)
      {
