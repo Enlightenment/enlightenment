@@ -1684,11 +1684,17 @@ _e_shelf_cb_mouse_in(void *data, int type, void *event)
    if (type == E_EVENT_ZONE_EDGE_MOVE)
      {
         E_Event_Zone_Edge *ev;
+        E_Desk *desk;
+        Eina_List *l;
+        E_Client *ec;
         int show = 0;
 
         ev = event;
         if (es->zone != ev->zone) return ECORE_CALLBACK_PASS_ON;
         if (!_e_shelf_on_current_desk(es, ev)) return ECORE_CALLBACK_PASS_ON;
+        desk = e_desk_current_get(ev->zone);
+        EINA_LIST_FOREACH(desk->fullscreen_clients, l, ec)
+          if (evas_object_visible_get(ec->frame)) return ECORE_CALLBACK_RENEW;
 
         ev->x -= es->zone->x, ev->y -= es->zone->y;
         switch (es->gadcon->orient)
