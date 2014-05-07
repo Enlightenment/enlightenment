@@ -136,6 +136,7 @@ _ibox_cb_iconify_provider(void *data, Evas_Object *obj, const char *signal)
    Evas_Coord ox, oy, ow, oh;
    Eina_List *l;
    E_Client *ec;
+   ox = oy = ow = oh = 0;
 
    ec = e_comp_object_client_get(obj);
    if (ec->zone != inst->gcc->gadcon->zone) return EINA_FALSE;
