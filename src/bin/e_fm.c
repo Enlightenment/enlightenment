@@ -275,7 +275,7 @@ static void          _e_fm2_config_free(E_Fm2_Config *cfg);
 static void          _e_fm2_dir_load_props(E_Fm2_Smart_Data *sd);
 static void          _e_fm2_dir_save_props(E_Fm2_Smart_Data *sd);
 
-static Evas_Object  *_e_fm2_file_fm2_find(const char *file);
+static Eina_List    *_e_fm2_file_fm2_find(const char *file);
 static E_Fm2_Icon   *_e_fm2_icon_find(Evas_Object *obj, const char *file);
 static const char   *_e_fm2_uri_escape(const char *path);
 static Eina_List    *_e_fm2_uri_icon_list_get(Eina_List *uri);
@@ -4345,11 +4345,11 @@ _e_fm2_config_free(E_Fm2_Config *cfg)
    free(cfg);
 }
 
-static Evas_Object *
+static Eina_List *
 _e_fm2_file_fm2_find(const char *file)
 {
    char *dir;
-   Eina_List *l;
+   Eina_List *l, *ret = NULL;
    Evas_Object *obj;
 
    dir = ecore_file_dir_get(file);
@@ -4359,13 +4359,10 @@ _e_fm2_file_fm2_find(const char *file)
         if ((_e_fm2_list_walking > 0) &&
             (eina_list_data_find(_e_fm2_list_remove, obj))) continue;
         if (!strcmp(e_fm2_real_path_get(obj), dir))
-          {
-             free(dir);
-             return obj;
-          }
+          ret = eina_list_append(ret, obj);
      }
    free(dir);
-   return NULL;
+   return ret;
 }
 
 static E_Fm2_Icon *
@@ -4480,13 +4477,16 @@ _e_fm2_uri_icon_list_get(Eina_List *uri)
 
    EINA_LIST_FOREACH(uri, l, path)
      {
+        Eina_List *fms;
         Evas_Object *fm;
         E_Fm2_Icon *ic;
         const char *file;
 
         ic = NULL;
-        fm = _e_fm2_file_fm2_find(path);
-        if (!fm) continue;
+        fms = _e_fm2_file_fm2_find(path);
+        if (!fms) continue;
+        fm = eina_list_data_get(fms);
+        eina_list_free(fms);
         file = ecore_file_file_get(path);
         ic = _e_fm2_icon_find(fm, file);
         icons = eina_list_append(icons, ic);
@@ -7361,6 +7361,7 @@ _e_fm2_cb_drag_finished(E_Drag *drag, int dropped __UNUSED__)
    E_Fm2_Uri *uri;
    const char *p;
    char buf[PATH_MAX * 3 + 7];
+   Eina_List *fms;
    Evas_Object *fm;
    int i;
 
@@ -7375,8 +7376,8 @@ _e_fm2_cb_drag_finished(E_Drag *drag, int dropped __UNUSED__)
              memset(buf, 0, sizeof(buf));
              if (!uri) continue;
 
-             fm = _e_fm2_file_fm2_find(uri->path);
-             if (fm)
+             fms = _e_fm2_file_fm2_find(uri->path);
+             if (fms)
                {
                   const char *file;
                   E_Fm2_Icon *ic;
@@ -7384,19 +7385,24 @@ _e_fm2_cb_drag_finished(E_Drag *drag, int dropped __UNUSED__)
                   file = ecore_file_file_get(uri->path);
                   if (file)
                     {
-                       ic = _e_fm2_icon_find(fm, file);
-                       if (ic)
+                       EINA_LIST_FREE(fms, fm)
                          {
-                            ic->drag.dnd = EINA_FALSE;
-                            if (ic->sd->dnd_scroller) ecore_animator_del(ic->sd->dnd_scroller);
-                            ic->sd->dnd_scroller = NULL;
-                            if (ic->drag.dnd_end_timer) ecore_timer_reset(ic->drag.dnd_end_timer);
-                            else ic->drag.dnd_end_timer = ecore_timer_add(0.2, (Ecore_Task_Cb)_e_fm2_cb_drag_finished_show, ic);
-                            /* NOTE:
-                             * do not touch ic after this callback; it's possible that it may have been deleted
-                             */
-                            evas_object_smart_callback_call(ic->sd->obj, "dnd_end", &ic->info);
+                            ic = _e_fm2_icon_find(fm, file);
+                            if (ic && ic->drag.dnd)
+                              {
+                                 ic->drag.dnd = EINA_FALSE;
+                                 if (ic->sd->dnd_scroller) ecore_animator_del(ic->sd->dnd_scroller);
+                                 ic->sd->dnd_scroller = NULL;
+                                 if (ic->drag.dnd_end_timer) ecore_timer_reset(ic->drag.dnd_end_timer);
+                                 else ic->drag.dnd_end_timer = ecore_timer_add(0.2, (Ecore_Task_Cb)_e_fm2_cb_drag_finished_show, ic);
+                                 /* NOTE:
+                                  * do not touch ic after this callback; it's possible that it may have been deleted
+                                  */
+                                 evas_object_smart_callback_call(ic->sd->obj, "dnd_end", &ic->info);
+                                 break;
+                              }
                          }
+                       eina_list_free(fms);
                     }
                }
 
@@ -10532,10 +10538,15 @@ _e_fm_overwrite_dialog(int pid, const char *str)
    if (ere)
      {
         E_Fm2_Smart_Data *sd;
+        Eina_List *fms;
+        Evas_Object *fm;
 
-        sd = evas_object_smart_data_get(_e_fm2_file_fm2_find(ere->src));
-        if (sd)
-          E_LIST_FOREACH(sd->icons, _e_fm2_cb_drag_finished_show);
+        fms = _e_fm2_file_fm2_find(ere->src);
+        EINA_LIST_FREE(fms, fm)
+        {
+           sd = evas_object_smart_data_get(fm);
+           E_LIST_FOREACH(sd->icons, _e_fm2_cb_drag_finished_show);
+        }
      }
 
    dialog = e_dialog_new(NULL, "E", "_fm_overwrite_dialog");
