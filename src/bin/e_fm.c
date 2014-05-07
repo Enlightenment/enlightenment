@@ -8400,6 +8400,13 @@ _e_fm2_obj_icons_place(E_Fm2_Smart_Data *sd)
 
              EINA_LIST_FOREACH(rg->list, ll, ic)
                {
+                  const char *th[] =
+                  {
+                   "list/fixed",
+                   "list_odd/fixed",
+                  };
+                  Evas_Object *prev;
+
                   if (!ic->realized) continue;
                   if (!_e_fm2_icon_visible(ic))
                     {
@@ -8423,14 +8430,15 @@ _e_fm2_obj_icons_place(E_Fm2_Smart_Data *sd)
                    * 6 if icon is inserted into current viewport during 4.5, even/odd for surrounding items
                    *   will always be wrong (ticket #1579)
                    */
-                  if (ic->odd)
-                    _e_fm2_theme_edje_object_set(ic->sd, ic->obj,
-                                                 "base/theme/widgets",
-                                                 "list_odd/fixed");
-                  else
-                    _e_fm2_theme_edje_object_set(ic->sd, ic->obj,
-                                                 "base/theme/widgets",
-                                                 "list/fixed");
+
+                   prev = edje_object_part_swallow_get(ic->obj, "e.swallow.icon");
+                   _e_fm2_theme_edje_object_set(ic->sd, ic->obj,
+                                                "base/theme/widgets",
+                                                th[ic->odd]);
+                   edje_object_part_swallow(ic->obj, "e.swallow.icon", prev);
+                   _e_fm2_icon_label_set(ic, ic->obj);
+                   if (ic->selected)
+                     edje_object_signal_emit(ic->obj, "e,state,selected", "e");
                }
           }
      }
