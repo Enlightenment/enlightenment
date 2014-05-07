@@ -867,20 +867,20 @@ _e_fwin_icon_popup(void *data)
    /* if it's offscreen, try right of icon */
    if (px < zone->x) px = (fx + x + w) + 3;
    /* fuck this, stick it right on the icon */
-   if ((px + mw + 3 > zone->x + zone->w) && (!e_zone_exists_direction(zone, E_ZONE_EDGE_RIGHT)))
+   if (px + mw + 3 > zone->x + zone->w)
      px = (x + w / 2) - (mw / 2);
    /* give up */
-   if (px < 0) px = 0;
+   if (px < zone->x) px = zone->x;
 
    /* prefer tooltip above icon */
    py = (fy + y) - mh - 3;
    /* if it's offscreen, try below icon */
    if (py < zone->y) py = (fy + y + h) + 3;
    /* fuck this, stick it right on the icon */
-   if ((py + mh + 3 > zone->x + zone->h) && (!e_zone_exists_direction(zone, E_ZONE_EDGE_BOTTOM)))
+   if (py + mh + 3 > zone->x + zone->h)
      py = (y + h / 2) - (mh / 2);
    /* give up */
-   if (py < 0) py = 0;
+   if (py < zone->y) py = zone->y;
    fwin->popup = e_comp_object_util_add(bg, E_COMP_OBJECT_TYPE_POPUP);
    evas_object_layer_set(fwin->popup, E_LAYER_POPUP);
    evas_object_geometry_set(fwin->popup, px, py, mw, mh);
