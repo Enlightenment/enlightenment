@@ -2,11 +2,14 @@ E_EOLIANFILES = \
 src/bin/e_comp_object.eo.c \
 src/bin/e_comp_object.eo.h
 
+MAINTAINERCLEANFILES += \
+$(E_EOLIANFILES)
+
 DISTCLEANFILES += \
-$(E_EOLIANFILES) \
 src/bin/e_fm_shared_types.h
 
 EXTRA_DIST += \
+$(E_EOLIANFILES) \
 src/bin/e_comp_object.eo
 
 E_CPPFLAGS = \
