@@ -137,6 +137,7 @@ cb_mixer_app_del(E_Dialog *dialog __UNUSED__, void *data)
 static void
 cb_mixer_call(void *data, void *data2 __UNUSED__)
 {
+   Eina_List *l;
    E_Mixer_Module_Context *ctxt = data;
 
    if (ctxt->mixer_dialog)
@@ -146,6 +147,22 @@ cb_mixer_call(void *data, void *data2 __UNUSED__)
      }
 
    ctxt->mixer_dialog = e_mixer_app_dialog_new(NULL, cb_mixer_app_del, ctxt);
+
+   for (l = ctxt->instances; l; l = l->next)
+     {
+        E_Mixer_Instance *inst;
+        E_Mixer_Gadget_Config *conf;
+
+        inst = l->data;
+        conf = inst->conf;
+
+        if (conf)
+          {
+             e_mixer_app_dialog_select(ctxt->mixer_dialog, conf->card, conf->channel_name);
+             break;
+          }
+
+     }
 }
 
 static void
