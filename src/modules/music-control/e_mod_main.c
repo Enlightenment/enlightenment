@@ -25,7 +25,7 @@ const Player music_player_players[] =
 };
 
 Eina_Bool
-_desklock_cb(void *data, int type, void *ev)
+_desklock_cb(void *data, int type EINA_UNUSED, void *ev)
 {
    E_Music_Control_Module_Context *ctxt;
    E_Event_Desklock *event;
@@ -56,7 +56,7 @@ _desklock_cb(void *data, int type, void *ev)
 }
 
 static void
-_music_control(E_Object *obj, const char *params)
+_music_control(E_Object *obj EINA_UNUSED, const char *params)
 {
    E_Music_Control_Module_Context *ctxt;
    EINA_SAFETY_ON_NULL_RETURN(music_control_mod->data);
@@ -162,14 +162,14 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    e_gadcon_client_aspect_set(gcc, 16, 16);
    e_gadcon_client_min_size_set(gcc, 16, 16);
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _(_e_music_control_Name);
 }
@@ -177,7 +177,7 @@ _gc_label(const E_Gadcon_Client_Class *client_class)
 static char tmpbuf[1024]; /* general purpose buffer, just use immediately */
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o;
    EINA_SAFETY_ON_NULL_RETURN_VAL(music_control_mod, NULL);
@@ -189,7 +189,7 @@ _gc_icon(const E_Gadcon_Client_Class *client_class, Evas *evas)
 }
 
 static const char *
-_gc_id_new(const E_Gadcon_Client_Class *client_class)
+_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    E_Music_Control_Module_Context *ctxt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(music_control_mod, NULL);
@@ -277,7 +277,10 @@ parse_metadata(E_Music_Control_Module_Context *ctxt, Eina_Value *array)
 }
 
 static void
-cb_playback_status_get(void *data, Eldbus_Pending *p, const char *propname, Eldbus_Proxy *proxy, Eldbus_Error_Info *error_info, const char *value)
+cb_playback_status_get(void *data, Eldbus_Pending *p EINA_UNUSED,
+                       const char *propname EINA_UNUSED,
+                       Eldbus_Proxy *proxy EINA_UNUSED,
+                       Eldbus_Error_Info *error_info, const char *value)
 {
    E_Music_Control_Module_Context *ctxt = data;
 
@@ -295,7 +298,10 @@ cb_playback_status_get(void *data, Eldbus_Pending *p, const char *propname, Eldb
 }
 
 static void
-cb_metadata_get(void *data, Eldbus_Pending *p, const char *propname, Eldbus_Proxy *proxy, Eldbus_Error_Info *error_info, Eina_Value *value)
+cb_metadata_get(void *data, Eldbus_Pending *p EINA_UNUSED,
+                const char *propname EINA_UNUSED,
+                Eldbus_Proxy *proxy EINA_UNUSED,
+                Eldbus_Error_Info *error_info EINA_UNUSED, Eina_Value *value)
 {
    E_Music_Control_Module_Context *ctxt = data;
    parse_metadata(ctxt, value);
@@ -303,7 +309,7 @@ cb_metadata_get(void *data, Eldbus_Pending *p, const char *propname, Eldbus_Prox
 }
 
 static void
-prop_changed(void *data, Eldbus_Proxy *proxy, void *event_info)
+prop_changed(void *data, Eldbus_Proxy *proxy EINA_UNUSED, void *event_info)
 {
    Eldbus_Proxy_Event_Property_Changed *event = event_info;
    E_Music_Control_Module_Context *ctxt = data;
@@ -328,7 +334,8 @@ prop_changed(void *data, Eldbus_Proxy *proxy, void *event_info)
 }
 
 static void
-cb_name_owner_has(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+cb_name_owner_has(void *data, const Eldbus_Message *msg,
+                  Eldbus_Pending *pending EINA_UNUSED)
 {
    E_Music_Control_Module_Context *ctxt = data;
    Eina_Bool owner_exists;
@@ -398,7 +405,7 @@ error_dbus_bus_get:
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_Music_Control_Module_Context *ctxt;
    EINA_SAFETY_ON_NULL_RETURN_VAL(music_control_mod, 0);

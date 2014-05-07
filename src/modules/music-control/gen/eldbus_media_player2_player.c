@@ -132,7 +132,7 @@ media_player2_player_stop_call(Eldbus_Proxy *proxy)
 }
 
 static void
-media_player2_player_seeked_data_free(void *user_data, void *func_data)
+media_player2_player_seeked_data_free(void *user_data, void *func_data EINA_UNUSED)
 {
    Media_Player2_Player_Seeked_Data *s_data = user_data;
    free(s_data);
@@ -464,7 +464,7 @@ cb_media_player2_player_loop_status_set(void *data, const Eldbus_Message *msg, E
 }
 
 Eldbus_Pending *
-media_player2_player_loop_status_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb, const void *data, const void *value)
+media_player2_player_loop_status_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb EINA_UNUSED, const void *data, const void *value)
 {
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
@@ -742,7 +742,7 @@ cb_media_player2_player_rate_set(void *data, const Eldbus_Message *msg, Eldbus_P
 }
 
 Eldbus_Pending *
-media_player2_player_rate_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb, const void *data, const void *value)
+media_player2_player_rate_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb EINA_UNUSED, const void *data, const void *value)
 {
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
@@ -812,7 +812,7 @@ cb_media_player2_player_shuffle_set(void *data, const Eldbus_Message *msg, Eldbu
 }
 
 Eldbus_Pending *
-media_player2_player_shuffle_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb, const void *data, const void *value)
+media_player2_player_shuffle_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb EINA_UNUSED, const void *data, const void *value)
 {
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
@@ -882,7 +882,7 @@ cb_media_player2_player_volume_set(void *data, const Eldbus_Message *msg, Eldbus
 }
 
 Eldbus_Pending *
-media_player2_player_volume_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb, const void *data, const void *value)
+media_player2_player_volume_propset(Eldbus_Proxy *proxy, Eldbus_Codegen_Property_Set_Cb cb EINA_UNUSED, const void *data, const void *value)
 {
    Eldbus_Pending *p;
    EINA_SAFETY_ON_NULL_RETURN_VAL(proxy, NULL);
