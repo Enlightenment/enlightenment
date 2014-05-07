@@ -3455,6 +3455,7 @@ e_client_maximize(E_Client *ec, E_Maximize max)
    ec->maximized &= ~E_MAXIMIZE_TYPE;
    /* Add new maximization. It must be added, so that VERTICAL + HORIZONTAL == BOTH */
    ec->maximized |= max;
+   ec->changes.need_unmaximize = 0;
 
    if ((ec->maximized & E_MAXIMIZE_DIRECTION) > E_MAXIMIZE_BOTH)
      /* left/right maximize */
