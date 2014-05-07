@@ -668,6 +668,7 @@ _scanner_run(void)
 static Eina_Bool
 _scanner_con(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Del *ev __UNUSED__)
 {
+   _e_fm_main_catch(EFM_MODE_USING_EEZE_MOUNT);
    INF("Scanner connected");
    es_con = eet_connection_new(_scanner_read, _scanner_write, NULL);
    return ECORE_CALLBACK_RENEW;
