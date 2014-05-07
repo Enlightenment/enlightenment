@@ -125,7 +125,10 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
    ecore_event_add(E_EVENT_BACKLIGHT_CHANGE, NULL, NULL, NULL);
    bl_now = e_bl_val;
-   e_bl_val = val;
+
+   if (sysmode != MODE_RANDR)
+     e_bl_val = val;
+
    if (fabs(tim) < DBL_EPSILON)
      {
         _e_backlight_set(zone, val);
