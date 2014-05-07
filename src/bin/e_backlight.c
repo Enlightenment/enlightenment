@@ -13,6 +13,7 @@
 
 EINTERN double e_bl_val = 1.0;
 static double bl_animval = 1.0;
+static double bl_anim_toval = 1.0;
 static int sysmode = MODE_NONE;
 static Ecore_Animator *bl_anim = NULL;
 static Eina_List *bl_devs = NULL;
@@ -144,6 +145,7 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    E_FREE_FUNC(bl_anim, ecore_animator_del);
    bl_anim = ecore_animator_timeline_add(tim, _bl_anim, zone);
    bl_animval = bl_now;
+   bl_anim_toval = val;
 }
 
 EAPI double
@@ -317,7 +319,7 @@ _bl_anim(void *data, double pos)
 
    // FIXME: if zone is deleted while anim going... bad things.
    pos = ecore_animator_pos_map(pos, ECORE_POS_MAP_DECELERATE, 0.0, 0.0);
-   v = (bl_animval * (1.0 - pos)) + (e_bl_val * pos);
+   v = (bl_animval * (1.0 - pos)) + (bl_anim_toval * pos);
    _e_backlight_set(zone, v);
    if (pos >= 1.0)
      {
