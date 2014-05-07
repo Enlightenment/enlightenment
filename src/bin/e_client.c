@@ -1426,8 +1426,10 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
    int w, h, pw, ph;
    int zx, zy, zw, zh;
    int ecx, ecy, ecw, ech;
+   Eina_Bool override = ec->maximize_override;
 
    zx = zy = zw = zh = 0;
+   ec->maximize_override = 1;
 
    switch (max & E_MAXIMIZE_TYPE)
      {
@@ -1587,6 +1589,8 @@ _e_client_maximize(E_Client *ec, E_Maximize max)
           }
         break;
      }
+   if (ec->maximize_override)
+     ec->maximize_override = override;
 }
 
 ////////////////////////////////////////////////
