@@ -35,7 +35,7 @@ _temperature_cb_exe_data(void *data, __UNUSED__ int type, void *event)
           {
              /* enable therm object */
              edje_object_signal_emit(inst->o_temp, "e,state,known", "");
-             inst->have_temp = 1;
+             inst->have_temp = EINA_TRUE;
           }
 
         if (inst->units == FAHRENHEIT) 
@@ -56,7 +56,7 @@ _temperature_cb_exe_data(void *data, __UNUSED__ int type, void *event)
              edje_object_signal_emit(inst->o_temp, "e,state,unknown", "");
              edje_object_part_text_set(inst->o_temp, "e.text.reading", "N/A");
              _temperature_face_level_set(inst, 0.5);
-             inst->have_temp = 0;
+             inst->have_temp = EINA_FALSE;
           }
      }
    return ECORE_CALLBACK_DONE;

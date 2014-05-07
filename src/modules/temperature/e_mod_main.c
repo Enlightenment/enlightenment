@@ -91,7 +91,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->gcc = gcc;
    inst->o_temp = o;
    inst->module = temperature_config->module;
-   inst->have_temp = -1;
+   inst->have_temp = EINA_FALSE;
 #ifdef HAVE_EEZE
    if (inst->backend == TEMPGET)
      {
