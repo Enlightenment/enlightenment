@@ -3006,7 +3006,10 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
              if (v->mounted)
                e_fm2_device_mount(v, NULL, NULL, NULL, NULL, NULL);
              else if ((!starting) && e_config->device_auto_mount && v->first_time)
-               _e_fm2_client_mount(v->udi, v->mount_point);
+               {
+                  v->auto_unmount = !v->mounted;
+                  _e_fm2_client_mount(v->udi, v->mount_point);
+               }
              if (e_config->device_desktop)
                e_fm2_device_show_desktop_icons();
              else
@@ -3045,11 +3048,30 @@ e_fm2_client_data(Ecore_Ipc_Event_Client_Data *e)
                     {
                        E_Action *a;
                        Eina_List *m;
+                       unsigned int count;
 
                        a = e_action_find("fileman");
                        m = e_manager_list();
+                       count = eina_list_count(_e_fm2_list);
                        if (a && a->func.go && m && eina_list_data_get(m) && mountpoint)
-                         a->func.go(E_OBJECT(eina_list_data_get(m)), mountpoint);
+                         {
+                            Evas_Object *fm;
+                            Eina_Bool auto_unmount = v->auto_unmount;
+
+                            a->func.go(E_OBJECT(eina_list_data_get(m)), mountpoint);
+                            if (count == eina_list_count(_e_fm2_list)) break;
+                            EINA_LIST_REVERSE_FOREACH(_e_fm2_list, m, fm)
+                              {
+                                 E_Fm2_Smart_Data *sd = evas_object_smart_data_get(fm);
+                                 if (e_util_strcmp(sd->realpath, mountpoint)) continue;
+                                 if (sd->mount) break;
+                                 sd->mount = e_fm2_device_mount(v, _e_fm2_cb_mount_ok,
+                                                                _e_fm2_cb_mount_fail,
+                                                                _e_fm2_cb_unmount_ok, NULL, fm);
+                                 v->auto_unmount = auto_unmount;
+                                 break;
+                              }
+                         }
                     }
                }
           }
