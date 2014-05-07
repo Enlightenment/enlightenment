@@ -1168,6 +1168,7 @@ _ibar_icon_menu_recalc(IBar_Icon *ic)
 {
    int x, y, w, h, iw, ih, ox, oy;
    Evas_Object *o;
+   E_Zone *zone;
 
    o = ic->menu->o_bg;
 
@@ -1179,10 +1180,13 @@ _ibar_icon_menu_recalc(IBar_Icon *ic)
    e_gadcon_popup_show(ic->menu);
    evas_object_geometry_get(ic->o_holder, &x, &y, &iw, &ih);
    evas_object_geometry_get(ic->menu->comp_object, &ox, &oy, NULL, NULL);
+   zone = e_gadcon_zone_get(ic->ibar->inst->gcc->gadcon);
    if (e_box_orientation_get(ic->ibar->o_box))
      ox = (x + (iw / 2)) - (w / 2);
    else
      oy = (y + (ih / 2)) - (h / 2);
+   ox = E_CLAMP(ox, zone->x, zone->x + zone->w - w);
+   oy = E_CLAMP(oy, zone->y, zone->y + zone->h - h);
    evas_object_move(ic->menu->comp_object, ox, oy);
 }
 
