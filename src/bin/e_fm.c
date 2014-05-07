@@ -1100,6 +1100,15 @@ e_fm2_path_set(Evas_Object *obj, const char *dev, const char *path)
      }
    if (real_path && (sd->realpath == real_path)) return;
 
+   E_FREE_FUNC(sd->scan_timer, ecore_timer_del);
+   E_FREE_FUNC(sd->sort_idler, ecore_idler_del);
+   if (sd->busy_count)
+     sd->busy_count--;
+   if (sd->busy_count == 0)
+     {
+        edje_object_signal_emit(sd->overlay, "e,state,busy,stop", "e");
+        e_fm2_custom_file_flush();
+     }
    if (sd->realpath) _e_fm2_client_monitor_del(sd->id, sd->realpath);
    sd->listing = EINA_FALSE;
    if (sd->new_file.thread) ecore_thread_cancel(sd->new_file.thread);
