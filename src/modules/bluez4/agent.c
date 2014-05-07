@@ -80,7 +80,7 @@ _reply_and_del_dialog(Eldbus_Message *reply, E_Dialog *dialog)
 }
 
 static void
-_reject(void *data, E_Dialog *dialog)
+_reject(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    const Eldbus_Message *msg = dialog->data;
    Eldbus_Message *reply = eldbus_message_error_new(msg, BLUEZ_ERROR_REJECTED,
@@ -89,7 +89,7 @@ _reject(void *data, E_Dialog *dialog)
 }
 
 static void
-_ok(void *data, E_Dialog *dialog)
+_ok(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    const Eldbus_Message *msg = dialog->data;
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
@@ -117,14 +117,16 @@ _ask(const char *title, const char *ask_msg, const char *ok_label,
 
 /* Implementation of agent API */
 static Eldbus_Message *
-_agent_release(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
+_agent_release(const Eldbus_Service_Interface *iface EINA_UNUSED,
+               const Eldbus_Message *message)
 {
    DBG("Agent Released.");
    return eldbus_message_method_return_new(message);
 }
 
 static Eldbus_Message *
-_agent_request_pin_code(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
+_agent_request_pin_code(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                        const Eldbus_Message *message)
 {
    Eldbus_Message *msg = (Eldbus_Message *)message;
    eldbus_message_ref(msg);
@@ -136,7 +138,8 @@ _agent_request_pin_code(const Eldbus_Service_Interface *iface, const Eldbus_Mess
 }
 
 static Eldbus_Message *
-_agent_request_passkey(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
+_agent_request_passkey(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                       const Eldbus_Message *message)
 {
    Eldbus_Message *msg = (Eldbus_Message *)message;
    eldbus_message_ref(msg);
@@ -148,7 +151,8 @@ _agent_request_passkey(const Eldbus_Service_Interface *iface, const Eldbus_Messa
 }
 
 static Eldbus_Message *
-_agent_display_passkey(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
+_agent_display_passkey(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                       const Eldbus_Message *message)
 {
    const char *device;
    uint32_t passkey;
@@ -165,7 +169,8 @@ _agent_display_passkey(const Eldbus_Service_Interface *iface, const Eldbus_Messa
 }
 
 static Eldbus_Message *
-_agent_display_pin_code(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
+_agent_display_pin_code(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                        const Eldbus_Message *message)
 {
    const char *device, *pincode;
    Device *dev;
@@ -179,7 +184,8 @@ _agent_display_pin_code(const Eldbus_Service_Interface *iface, const Eldbus_Mess
 }
 
 static Eldbus_Message *
-_agent_request_confirmation(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
+_agent_request_confirmation(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                            const Eldbus_Message *message)
 {
    const char *device;
    uint32_t passkey;
@@ -196,7 +202,8 @@ _agent_request_confirmation(const Eldbus_Service_Interface *iface, const Eldbus_
 }
 
 static Eldbus_Message *
-_agent_authorize(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
+_agent_authorize(const Eldbus_Service_Interface *iface EINA_UNUSED,
+                 const Eldbus_Message *message)
 {
    const char *device, *uuid;
    Device *dev;
@@ -212,7 +219,8 @@ _agent_authorize(const Eldbus_Service_Interface *iface, const Eldbus_Message *me
 }
 
 static Eldbus_Message *
-_agent_cancel(const Eldbus_Service_Interface *iface, const Eldbus_Message *message)
+_agent_cancel(const Eldbus_Service_Interface *iface EINA_UNUSED,
+              const Eldbus_Message *message)
 {
    DBG("Request canceled.");
    return eldbus_message_method_return_new(message);

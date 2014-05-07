@@ -273,7 +273,8 @@ _on_dev_property_changed(void *context, const Eldbus_Message *msg)
 }
 
 static void
-_on_connected(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_on_connected(void *data EINA_UNUSED, const Eldbus_Message *msg,
+              Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err_name, *err_msg;
 
@@ -293,7 +294,8 @@ _try_to_connect(Eldbus_Proxy *proxy)
 }
 
 static void
-_on_disconnected(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_on_disconnected(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                 Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err_name, *err_msg;
 
@@ -313,7 +315,8 @@ _try_to_disconnect(Eldbus_Proxy *proxy)
 }
 
 static void
-_on_paired(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_on_paired(void *data, const Eldbus_Message *msg,
+           Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err_name, *err_msg;
    Pair_Cb *d = data;
@@ -329,7 +332,8 @@ _on_paired(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 }
 
 static void
-_on_dev_properties(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_on_dev_properties(void *data, const Eldbus_Message *msg,
+                   Eldbus_Pending *pending EINA_UNUSED)
 {
    Eldbus_Message_Iter *dict, *uuids;
    const char *addr, *name, *icon;
@@ -374,7 +378,7 @@ _set_dev(const char *path)
 }
 
 static void
-_on_removed(void *context, const Eldbus_Message *msg)
+_on_removed(void *context EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *path;
    Device *dev, *fdev;
@@ -391,7 +395,7 @@ _on_removed(void *context, const Eldbus_Message *msg)
 }
 
 static void
-_on_created(void *context, const Eldbus_Message *msg)
+_on_created(void *context EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *path;
 
@@ -402,7 +406,7 @@ _on_created(void *context, const Eldbus_Message *msg)
 }
 
 static void
-_on_device_found(void *context, const Eldbus_Message *msg)
+_on_device_found(void *context EINA_UNUSED, const Eldbus_Message *msg)
 {
    Eldbus_Message_Iter *dict, *uuids;
    const char *addr, *name, *icon;
@@ -428,7 +432,8 @@ _on_device_found(void *context, const Eldbus_Message *msg)
 }
 
 static void
-_on_list_devices(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_on_list_devices(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                 Eldbus_Pending *pending EINA_UNUSED)
 {
    Eldbus_Message_Iter *array;
    const char *path;
@@ -499,7 +504,8 @@ _on_adap_property_changed(void *context, const Eldbus_Message *msg)
 }
 
 static void
-_on_adap_properties(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_on_adap_properties(void *data, const Eldbus_Message *msg,
+                    Eldbus_Pending *pending EINA_UNUSED)
 {
    Eldbus_Message_Iter *dict, *entry, *variant;
    const char *name, *key;
@@ -591,7 +597,8 @@ _set_adapter(const char *path)
 }
 
 static void
-_on_list_adapters(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_on_list_adapters(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                  Eldbus_Pending *pending EINA_UNUSED)
 {
    Eldbus_Message_Iter *array;
    const char *path;
@@ -648,7 +655,8 @@ _set_default_adapter(const Eldbus_Message *msg)
 }
 
 static void
-_default_adapter_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
+_default_adapter_get(void *data EINA_UNUSED, const Eldbus_Message *msg,
+                     Eldbus_Pending *pending EINA_UNUSED)
 {
    const char *err_name, *err_msg;
 
@@ -664,13 +672,13 @@ _default_adapter_get(void *data, const Eldbus_Message *msg, Eldbus_Pending *pend
 }
 
 static void
-_on_default_adapter_changed(void *context, const Eldbus_Message *msg)
+_on_default_adapter_changed(void *context EINA_UNUSED, const Eldbus_Message *msg)
 {
    _set_default_adapter(msg);
 }
 
 static void
-_on_adapter_removed(void *context, const Eldbus_Message *msg)
+_on_adapter_removed(void *context EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *adap_path;
    const char *err_msg = _("Error reading path of Removed Adapter");
@@ -686,7 +694,7 @@ _on_adapter_removed(void *context, const Eldbus_Message *msg)
 }
 
 static void
-_on_adapter_added(void *context, const Eldbus_Message *msg)
+_on_adapter_added(void *context EINA_UNUSED, const Eldbus_Message *msg)
 {
    const char *adap_path;
    const char *err_msg = _("Error reading path of Added Adapter");
@@ -702,7 +710,8 @@ _on_adapter_added(void *context, const Eldbus_Message *msg)
 }
 
 static void
-_bluez_monitor(void *data, const char *bus, const char *old_id, const char *new_id)
+_bluez_monitor(void *data EINA_UNUSED, const char *bus EINA_UNUSED,
+               const char *old_id, const char *new_id)
 {
    if (!strcmp(old_id,"") && strcmp(new_id,""))
      {

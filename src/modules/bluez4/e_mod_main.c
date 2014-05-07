@@ -103,7 +103,7 @@ _ebluez4_cb_pair(void *data)
 }
 
 static void
-_ebluez4_cb_search(void *data, E_Menu *m, E_Menu_Item *mi)
+_ebluez4_cb_search(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    Instance *inst = data;
    E_Dialog *dialog;
@@ -242,7 +242,7 @@ _ebluez4_cb_adap_list_dialog_del(E_Win *win)
 }
 
 static void
-_ebluez4_cb_adap_list(void *data, E_Menu *m, E_Menu_Item *mi)
+_ebluez4_cb_adap_list(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    Instance *inst = data;
    E_Dialog *dialog;
@@ -270,19 +270,19 @@ _ebluez4_cb_adap_list(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 static void
-_ebluez4_cb_connect(void *data, E_Menu *m, E_Menu_Item *mi)
+_ebluez4_cb_connect(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    ebluez4_connect_to_device(data);
 }
 
 static void
-_ebluez4_cb_disconnect(void *data, E_Menu *m, E_Menu_Item *mi)
+_ebluez4_cb_disconnect(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    ebluez4_disconnect_device(data);
 }
 
 static void
-_ebluez4_cb_forget(void *data, E_Menu *m, E_Menu_Item *mi)
+_ebluez4_cb_forget(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
    Device *dev = data;
    ebluez4_remove_device(dev->obj);
@@ -458,7 +458,8 @@ _ebluez4_menu_new(Instance *inst)
 }
 
 static void
-_ebluez4_cb_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event)
+_ebluez4_cb_mouse_down(void *data, Evas *evas EINA_UNUSED,
+                       Evas_Object *obj EINA_UNUSED, void *event)
 {
    Instance *inst = NULL;
    Evas_Event_Mouse_Down *ev = event;
@@ -533,27 +534,27 @@ _gc_shutdown(E_Gadcon_Client *gcc)
 }
 
 static const char *
-_gc_id_new(const E_Gadcon_Client_Class *client_class)
+_gc_id_new(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
     snprintf(tmpbuf, sizeof(tmpbuf), "bluez4.%d", eina_list_count(instances));
     return tmpbuf;
 }
 
 static void
-_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient)
+_gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient EINA_UNUSED)
 {
    e_gadcon_client_aspect_set(gcc, 16, 16);
    e_gadcon_client_min_size_set(gcc, 16, 16);
 }
 
 static const char *
-_gc_label(const E_Gadcon_Client_Class *client_class)
+_gc_label(const E_Gadcon_Client_Class *client_class EINA_UNUSED)
 {
    return _("Bluez4");
 }
 
 static Evas_Object *
-_gc_icon(const E_Gadcon_Client_Class *client_class, Evas *evas)
+_gc_icon(const E_Gadcon_Client_Class *client_class EINA_UNUSED, Evas *evas)
 {
    Evas_Object *o = NULL;
    char buf[4096];
@@ -635,14 +636,16 @@ _ebluez_exe_die(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event_inf
 }
 
 static Eina_Bool
-_ebluez_exe_out(void *data, int ev_type, void *ev)
+_ebluez_exe_out(void *data EINA_UNUSED, int ev_type EINA_UNUSED,
+                void *ev EINA_UNUSED)
 {
    /* FIXME: Need experiment, but we should be able to use latency to somehow estimate distance, right ? */
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_ebluez_desklock(void *data, int ev_type, void *ev)
+_ebluez_desklock(void *data EINA_UNUSED, int ev_type EINA_UNUSED,
+                 void *ev EINA_UNUSED)
 {
    if (autolock_exe)
      ecore_exe_kill(autolock_exe);
@@ -694,7 +697,7 @@ e_modapi_init(E_Module *m)
 }
 
 EAPI int
-e_modapi_shutdown(E_Module *m)
+e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    E_CONFIG_DD_FREE(conf_edd);
 
@@ -717,7 +720,7 @@ e_modapi_shutdown(E_Module *m)
 }
 
 EAPI int
-e_modapi_save(E_Module *m)
+e_modapi_save(E_Module *m EINA_UNUSED)
 {
    e_config_domain_save("module.ebluez4",
 			conf_edd, ebluez4_config);
