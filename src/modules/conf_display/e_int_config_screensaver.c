@@ -55,7 +55,7 @@ e_int_config_screensaver(E_Comp *comp, const char *params __UNUSED__)
 
    v->override_auto_apply = 1;
 
-   cfd = e_config_dialog_new(comp,_("Screen Saver Settings"),
+   cfd = e_config_dialog_new(comp,_("Screen Blank Settings"),
 			     "E", "screen/screen_saver",
 			     "preferences-desktop-screensaver", 0, v, NULL);
    return cfd;
