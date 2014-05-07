@@ -772,7 +772,11 @@ _e_fwin_free(E_Fwin *fwin)
         fwin->fad = NULL;
      }
    if (fwin->popup_del_job) ecore_job_del(fwin->popup_del_job);
-   if (fwin->popup) evas_object_del(fwin->popup);
+   if (fwin->popup)
+     {
+        evas_object_hide(fwin->popup);
+        evas_object_del(fwin->popup);
+     }
    if (fwin->popup_timer) ecore_timer_del(fwin->popup_timer);
    fwin->popup_timer = NULL;
    E_FREE_LIST(fwin->popup_handlers, ecore_event_handler_del);
