@@ -22,16 +22,13 @@ typedef struct _Notifier_Host_Data {
 static Eina_Bool
 service_string_parse(const char *item, const char **path, const char **bus_id)
 {
-   unsigned i;
-   for (i = 0; i < strlen(item); i++)
-     {
-        if (item[i] != '/')
-          continue;
-        *path = eina_stringshare_add(item+i);
-        *bus_id = eina_stringshare_nprintf(i+1, "%s", item);
-        return EINA_TRUE;
-     }
-   return EINA_FALSE;
+   const char *p;
+
+   p = strchr(item, '/');
+   if (!p) return EINA_FALSE;
+   *path = eina_stringshare_add(p);
+   *bus_id = eina_stringshare_add_length(item, p - item);
+   return EINA_TRUE;
 }
 
 static Notifier_Item *
