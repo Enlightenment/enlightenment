@@ -704,6 +704,7 @@ _e_remember_cb_hook_pre_post_fetch(void *data __UNUSED__, E_Client *ec)
         desk = e_desk_at_xy_get(ec->zone, rem->prop.desk_x, rem->prop.desk_y);
         if (desk)
           {
+             ec->hidden = 0;
              e_client_desk_set(ec, desk);
              if (e_config->desk_auto_switch)
                e_desk_show(desk);
