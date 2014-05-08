@@ -157,8 +157,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
 
    o = e_box_add(zone->comp->evas);
    _list_object = o;
-   e_box_align_set(o, 0.5, 0.0);
-   e_box_orientation_set(o, 0);
+   e_box_freeze(_list_object);
    e_box_homogenous_set(o, 1);
    e_comp_object_util_del_list_append(_winlist, o);
    edje_object_part_swallow(_bg_object, "e.swallow.list", o);
@@ -168,7 +167,6 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    _last_client = e_client_focused_get();
 
    desk = e_desk_current_get(_winlist_zone);
-   e_box_freeze(_list_object);
    EINA_LIST_FOREACH(e_client_focus_stack_get(), l, ec)
      {
         Eina_Bool pick;
