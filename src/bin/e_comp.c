@@ -1107,6 +1107,7 @@ e_comp_init(void)
       e_action_predef_name_set(N_("Compositor"),
                                N_("Set current window opacity"), "opacity_set",
                                "255", "syntax: number between 0-255 to set for transparent-opaque", 1);
+      actions = eina_list_append(actions, act);
       act = e_action_add("redirect_toggle");
       act->func.go = _e_comp_act_redirect_toggle_go;
       e_action_predef_name_set(N_("Compositor"),
