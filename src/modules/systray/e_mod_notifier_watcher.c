@@ -48,7 +48,7 @@ register_item_cb(const Eldbus_Service_Interface *s_iface, const Eldbus_Message *
    if (!eldbus_message_arguments_get(msg, "s", &service))
      return NULL;
 
-   sprintf(buf, "%s%s", eldbus_message_sender_get(msg), service);
+   snprintf(buf, sizeof(buf), "%s%s", eldbus_message_sender_get(msg), service);
    service = eina_stringshare_add(buf);
    if (eina_list_data_find(items, service))
      {
