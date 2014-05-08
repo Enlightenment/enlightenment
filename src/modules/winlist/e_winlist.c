@@ -1010,12 +1010,6 @@ _e_winlist_activate(void)
                  e_border_focus_set(ww->border, 1, 1);
                  set = 0;
               }
-            if (!_animator)
-              _animator = ecore_animator_add(_e_winlist_animator, NULL);
-          }
-        else
-          {
-             E_FREE_FUNC(_animator, ecore_animator_del);
           }
 
         if ((!ww->border->lock_user_stacking) &&
