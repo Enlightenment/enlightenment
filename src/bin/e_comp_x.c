@@ -3931,15 +3931,18 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
 
                   if (inst->used == 0)
                     {
-                       E_Zone *zone;
-                       E_Desk *desk;
-
                        inst->used++;
-                       zone = e_comp_zone_number_get(ec->comp, inst->screen);
-                       if (zone) e_client_zone_set(ec, zone);
-                       desk = e_desk_at_xy_get(ec->zone, inst->desk_x,
-                                               inst->desk_y);
-                       if (desk) e_client_desk_set(ec, desk);
+                       if ((!ec->remember) || !(ec->remember->apply & E_REMEMBER_APPLY_DESKTOP))
+                         {
+                            E_Zone *zone;
+                            E_Desk *desk;
+
+                            zone = e_comp_zone_number_get(ec->comp, inst->screen);
+                            if (zone) e_client_zone_set(ec, zone);
+                            desk = e_desk_at_xy_get(ec->zone, inst->desk_x,
+                                                    inst->desk_y);
+                            if (desk) e_client_desk_set(ec, desk);
+                         }
                        if (ec->netwm.pid != ecore_exe_pid_get(inst->exe))
                          {
                             /* most likely what has happened here is that the .desktop launcher
