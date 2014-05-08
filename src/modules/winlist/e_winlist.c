@@ -1095,7 +1095,7 @@ _e_winlist_show_active(void)
    else
      {
         _scroll_align = _scroll_align_to;
-        e_box_align_set(_list_object, 0.5, _scroll_align);
+        e_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
      }
 }
 
@@ -1381,7 +1381,7 @@ _e_winlist_animator(void *data __UNUSED__)
              _scroll_align = _scroll_align_to;
              _scroll_to = 0;
           }
-        e_box_align_set(_list_object, 0.5, 1.0 - _scroll_align);
+        e_box_align_set(_list_object, 0.5, fabs(1.0 - _scroll_align));
      }
    if (!_scroll_to) _animator = NULL;
    return _scroll_to;
