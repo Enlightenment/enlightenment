@@ -1174,19 +1174,27 @@ _ibar_icon_menu_recalc(IBar_Icon *ic)
 
    edje_object_calc_force(o);
    edje_object_size_min_calc(o, &w, &h);
+   zone = e_gadcon_zone_get(ic->ibar->inst->gcc->gadcon);
+   evas_object_geometry_get(ic->o_holder, &x, &y, &iw, &ih);
    edje_extern_object_min_size_set(o, w, h);
    ic->menu->w = w, ic->menu->h = h;
    evas_object_resize(ic->menu->comp_object, w, h);
    e_gadcon_popup_show(ic->menu);
-   evas_object_geometry_get(ic->o_holder, &x, &y, &iw, &ih);
    evas_object_geometry_get(ic->menu->comp_object, &ox, &oy, NULL, NULL);
-   zone = e_gadcon_zone_get(ic->ibar->inst->gcc->gadcon);
    if (e_box_orientation_get(ic->ibar->o_box))
-     ox = (x + (iw / 2)) - (w / 2);
+     {
+        ox = (x + (iw / 2)) - (w / 2);
+        if (E_INTERSECTS(ox, oy, w, h, x, y, iw, ih))
+          {
+             if (y > h / 2)
+               oy = y - h;
+             else
+               oy = y + ih;
+          }
+     }
    else
      oy = (y + (ih / 2)) - (h / 2);
    ox = E_CLAMP(ox, zone->x, zone->x + zone->w - w);
-   oy = E_CLAMP(oy, zone->y, zone->y + zone->h - h);
    evas_object_move(ic->menu->comp_object, ox, oy);
 }
 
@@ -1312,6 +1320,7 @@ _ibar_icon_menu(IBar_Icon *ic, Eina_Bool grab)
    evas_object_del(ic->menu->comp_object);
    ic->menu->o_bg = o;
    ic->menu->comp_object = e_comp_object_util_add(o, E_COMP_OBJECT_TYPE_NONE);
+   evas_object_clip_set(ic->menu->comp_object, e_gadcon_zone_get(ic->ibar->inst->gcc->gadcon)->bg_clip_object);
    evas_object_layer_set(ic->menu->comp_object, E_LAYER_POPUP);
    EINA_LIST_FOREACH(ic->exes, l, exe)
      {
