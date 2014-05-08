@@ -131,7 +131,7 @@ _item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
                e_menu_item_radio_set(submi, 1);
              if (child->toggle_type)
                e_menu_item_toggle_set(submi, child->toggle_state);
-             if (eina_inlist_count(child->sub_items))
+             if (child->sub_items)
                _item_submenu_new(child, submi);
              e_util_menu_item_theme_icon_set(submi, child->icon_name);
           }
@@ -139,14 +139,19 @@ _item_submenu_new(E_DBusMenu_Item *item, E_Menu_Item *mi)
    return m;
 }
 
-static void
-_item_menu_new(Notifier_Item_Icon *ii)
+void
+_clicked_item_cb(void *data, Evas *evas, Evas_Object *obj __UNUSED__, void *event)
 {
+   Notifier_Item_Icon *ii = data;
+   Evas_Event_Mouse_Down *ev = event;
    E_DBusMenu_Item *root_item;
    E_Menu *m;
    E_Zone *zone;
    int x, y;
    E_Gadcon *gadcon = evas_object_data_get(ii->icon, "gadcon");
+
+   if (ev->button != 1) return;
+
    EINA_SAFETY_ON_NULL_RETURN(gadcon);
    if (!ii->item->dbus_item) return;
    root_item = ii->item->dbus_item;
@@ -156,19 +161,11 @@ _item_menu_new(Notifier_Item_Icon *ii)
    e_gadcon_locked_set(gadcon, 1);
    e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, gadcon);
 
-   zone = e_util_zone_current_get(e_manager_current_get());
+   zone = e_gadcon_zone_get(gadcon);
    ecore_evas_pointer_xy_get(zone->comp->ee, &x, &y);
-   e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
-}
-
-void
-_clicked_item_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
-{
-   Notifier_Item_Icon *ii = data;
-   Evas_Event_Mouse_Down *ev = event;
-
-   if (ev->button != 1) return;
-   _item_menu_new(ii);
+   e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN, ev->timestamp);
+   evas_event_feed_mouse_up(evas, ev->button,
+                         EVAS_BUTTON_NONE, ev->timestamp, NULL);
 }
 
 void
