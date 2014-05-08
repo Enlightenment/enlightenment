@@ -1220,7 +1220,7 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
         E_Zone *zone;
 
         evas_object_geometry_get(ic->menu->comp_object, &cx, &cy, &cw, &ch);
-        zone = e_comp_zone_xy_get(e_comp_get(ic->menu), cx, cy);
+        zone = e_gadcon_zone_get(ic->ibar->inst->gcc->gadcon);
         if (cy > (zone->h / 2))
           ny = cy - (h - ch);
         else
