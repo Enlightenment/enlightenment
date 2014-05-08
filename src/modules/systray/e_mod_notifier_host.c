@@ -66,13 +66,27 @@ systray_notifier_item_free(Notifier_Item *item)
 static void
 image_load(const char *name, const char *path, Evas_Object *image)
 {
-   if (path && strlen(path))
+   const char *exts[] =
+   {
+      ".png",
+      ".jpg",
+      NULL
+   };
+   if (path && path[0])
      {
-        char buf[1024];
-        sprintf(buf, "%s/%s", path, name);
+        char buf[PATH_MAX];
+
+        snprintf(buf, sizeof(buf), "%s/%s", path, name);
         if (!e_icon_file_set(image, buf))
-          e_util_icon_theme_set(image, "dialog-error");
-        return;
+          {
+             const char **ext;
+
+             for (ext = exts; *ext; ext++)
+               {
+                  snprintf(buf, sizeof(buf), "%s/%s%s", path, name, *ext);
+                  if (e_icon_file_set(image, buf)) return;
+               }
+          }
      }
    if (!e_util_icon_theme_set(image, name))
      e_util_icon_theme_set(image, "dialog-error");
