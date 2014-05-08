@@ -969,12 +969,6 @@ _e_winlist_activate(void)
                  evas_object_focus_set(ww->client->frame, 1);
                  set = 0;
               }
-            if (!_animator)
-              _animator = ecore_animator_add(_e_winlist_animator, NULL);
-          }
-        else
-          {
-             E_FREE_FUNC(_animator, ecore_animator_del);
           }
 
         if ((!ww->client->lock_user_stacking) &&
