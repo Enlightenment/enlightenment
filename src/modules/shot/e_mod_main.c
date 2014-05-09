@@ -676,6 +676,21 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
                }
              fclose(f);
           }
+#elif defined(__FreeBSD__) || defined(__FreeBSD_kernel__)
+        int max;
+        size_t len = sizeof(max);
+
+        if (!sysctlbyname("kern.ipc.shmmax", &max, &len, NULL, 0))
+          {
+             if (max && (max < (w * h * sizeof(int))))
+               {
+                  e_util_dialog_show(_("Screenshot Error"),
+                                      _("SHMMAX is too small to take screenshot.<br>"
+                                        "Consider increasing kern.ipc.shmmax to a value larger than %llu"),
+                                        (long long unsigned int)(w * h * sizeof(int)));
+                  dialog = EINA_TRUE;
+               }
+          }
 #endif
         if (!dialog)
           e_util_dialog_show(_("Screenshot Error"),
