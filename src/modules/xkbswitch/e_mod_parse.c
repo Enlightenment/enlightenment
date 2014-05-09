@@ -211,7 +211,7 @@ parse_rules(void)
      {
         if (fgets(buf, sizeof(buf), f))
           {
-             char *n, *p, *tmp, *name, *txt;
+             char *n, *p, *t, *tmp, *name, *txt;
 
              n = strchr(buf, '\n');
              if (n) *n = '\0';
@@ -236,11 +236,12 @@ parse_rules(void)
                      /* A hack to get it to parse right if
                       * the group name contains a space
                       */
-                     p = strstr(p, "  ");
-                     if (p)
+                     t = strstr(p, "  ");
+                     if (t)
                        {
-                          while (p[0] == ' ')
-                            ++p;
+                          while (t[0] == ' ')
+                            ++t;
+                          p = t;
                        }
 
                      txt = evas_textblock_text_markup_to_utf8(NULL, p);
