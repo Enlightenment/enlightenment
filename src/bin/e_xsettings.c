@@ -618,7 +618,8 @@ _e_xsettings_stop(void)
         if (sm->timer_retry)
           ecore_timer_del(sm->timer_retry);
 
-        _e_xsettings_deactivate(sm);
+        if (!stopping)
+          _e_xsettings_deactivate(sm);
 
         E_FREE(sm);
      }
