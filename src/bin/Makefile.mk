@@ -205,6 +205,8 @@ src/bin/e_zone.h
 if HAVE_WAYLAND_CLIENTS
 ENLIGHTENMENTHEADERS += \
 src/bin/e_uuid_store.h \
+src/bin/e_comp_wl_data.h \
+src/bin/e_comp_wl_input.h \
 src/bin/e_comp_wl.h
 endif
 
@@ -378,6 +380,8 @@ endif
 if HAVE_WAYLAND_CLIENTS
 enlightenment_src += \
 src/bin/e_uuid_store.c \
+src/bin/e_comp_wl_data.c \
+src/bin/e_comp_wl_input.c \
 src/bin/e_comp_wl.c
 endif
 
