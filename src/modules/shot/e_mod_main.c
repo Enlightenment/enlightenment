@@ -653,7 +653,36 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
         depth = ec->depth;
      }
    img = ecore_x_image_new(w, h, visual, depth);
-   ecore_x_image_get(img, xwin, x, y, 0, 0, sw, sh);
+   if (!ecore_x_image_get(img, xwin, x, y, 0, 0, sw, sh))
+     {
+        Eina_Bool dialog = EINA_FALSE;
+        ecore_x_image_free(img);
+#ifdef __linux__
+        FILE *f;
+
+        f = fopen("/proc/sys/kernel/shmmax", "r");
+        if (f)
+          {
+             long long unsigned int max = 0;
+
+             fscanf(f, "%llu", &max);
+             if (max && (max < (w * h * sizeof(int))))
+               {
+                  e_util_dialog_show(_("Screenshot Error"),
+                                      _("SHMMAX is too small to take screenshot.<br>"
+                                        "Consider increasing /proc/sys/kernel/shmmax to a value larger than %llu"),
+                                        (long long unsigned int)(w * h * sizeof(int)));
+                  dialog = EINA_TRUE;
+               }
+             fclose(f);
+          }
+#endif
+        if (!dialog)
+          e_util_dialog_show(_("Screenshot Error"),
+                             _("SHM creation failed.<br>"
+                               "Ensure your system has enough RAM free and your user has sufficient permissions."));
+        return;
+     }
    src = ecore_x_image_data_get(img, &bpl, &rows, &bpp);
    display = ecore_x_display_get();
    scr = ecore_x_default_screen_get();
