@@ -714,7 +714,7 @@ _e_comp_x_client_shape_input_rectangle_set(E_Client *ec)
 }
 
 static void
-_e_comp_x_evas_color_set_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_e_comp_x_evas_color_set_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    E_Client *ec = data;
    int a;
