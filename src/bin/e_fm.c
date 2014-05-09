@@ -11527,8 +11527,7 @@ e_fm2_operation_abort(int id)
 }
 
 EAPI Eina_Bool
-e_fm2_optimal_size_calc(Evas_Object *obj, int minw, int minh EINA_UNUSED,
-                        int maxw, int maxh, int *w, int *h)
+e_fm2_optimal_size_calc(Evas_Object *obj, int minw, int maxw, int maxh, int *w, int *h)
 {
    int x, y, step_w, step_h;
    EFM_SMART_CHECK(EINA_FALSE);
