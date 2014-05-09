@@ -1,7 +1,7 @@
 #include "e.h"
-#include <Ecore_Drm.h>
 #include "e_comp_wl.h"
-#include <Ecore_Wayland.h>
+#include <Ecore_Drm.h>
+//#include <Ecore_Wayland.h>
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1200
@@ -31,6 +31,8 @@ e_modapi_init(E_Module *m)
         return NULL;
      }
 
+   /* TODO: hook ecore_evas_callback_resize_set */
+
    if (!e_xinerama_fake_screens_exist())
      {
         E_Screen *screen;
@@ -43,14 +45,19 @@ e_modapi_init(E_Module *m)
         screen->h = SCREEN_HEIGHT;
         e_xinerama_screens_set(eina_list_append(NULL, screen));
      }
-   comp->man = e_manager_new(0, comp, SCREEN_WIDTH, SCREEN_HEIGHT);
-   if (!e_comp_wl_init()) return NULL;
-   e_comp_canvas_init(comp);
-   e_comp_canvas_fake_layers_init(comp);
-   comp->pointer = e_pointer_canvas_new(comp->evas, 1);
 
-   ecore_wl_server_mode_set(1);
-   ecore_wl_init(NULL);
+   comp->man = e_manager_new(0, comp, SCREEN_WIDTH, SCREEN_HEIGHT);
+   if (!e_comp_canvas_init(comp)) return NULL;
+   e_comp_canvas_fake_layers_init(comp);
+
+   /* NB: This needs to be called AFTER the comp canvas has been setup */
+   if (!e_comp_wl_init()) return NULL;
+
+   e_comp_wl_input_pointer_enabled_set(comp->comp_data, EINA_TRUE);
+   e_comp_wl_input_keyboard_enabled_set(comp->comp_data, EINA_TRUE);
+
+   comp->pointer = e_pointer_canvas_new(comp->evas, 1);
+   comp->pointer->color = 1;
 
    return m;
 }
