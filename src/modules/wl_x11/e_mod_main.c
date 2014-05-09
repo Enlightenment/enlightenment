@@ -1,6 +1,7 @@
 #include "e.h"
 #include "e_comp_wl.h"
 #include <Ecore_Wayland.h>
+#include <Ecore_X.h>
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_X11" };
 
