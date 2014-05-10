@@ -5012,7 +5012,8 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
         snprintf(buf, sizeof(buf), "%d", e_comp_canvas_layer_map_to(i));
         ecore_x_icccm_name_class_set(c->layers[i].win, buf, "e_layer_win");
 
-        ecore_x_window_raise(c->layers[i].win);
+        if (i >= e_comp_canvas_layer_map(E_LAYER_CLIENT_ABOVE))
+          ecore_x_window_raise(c->layers[i].win);
         ec = _e_comp_x_client_new(c, c->layers[i].win, 0);
         ec->lock_client_stacking = 1;
         ec->internal = 1;
@@ -5022,6 +5023,8 @@ _e_comp_x_setup(E_Comp *c, Ecore_X_Window root, int w, int h)
         evas_object_pass_events_set(ec->frame, 1);
         evas_object_show(ec->frame);
      }
+   for (i = e_comp_canvas_layer_map(E_LAYER_CLIENT_NORMAL); i < e_comp_canvas_layer_map(E_LAYER_CLIENT_ABOVE); i--)
+     ecore_x_window_lower(c->layers[i].win);
 
    ecore_evas_lower(c->ee);
    c->pointer = e_pointer_window_new(c->man->root, 0);
