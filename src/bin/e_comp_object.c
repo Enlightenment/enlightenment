@@ -18,7 +18,7 @@
                        if (eo_isa(obj, MY_CLASS)) \
                          cw = eo_data_scope_get(obj, MY_CLASS)
 
-#define INTERNAL_ENTRY E_Comp_Object *cw; cw = evas_object_smart_data_get(obj);
+#define INTERNAL_ENTRY E_Comp_Object *cw; cw = eo_data_scope_get(obj, MY_CLASS)
 
 /* enable for lots of client size info in console output */
 #if 1
@@ -166,7 +166,7 @@ _e_comp_object_layers_add(E_Comp_Object *cw, E_Comp_Object *above, E_Comp_Object
     * will return NULL for fake layers (eg. wayland)
     */
    if (cw->comp->layers[cw->layer].obj)
-     layer_cw = evas_object_smart_data_get(cw->comp->layers[cw->layer].obj);
+     layer_cw = eo_data_scope_get(cw->comp->layers[cw->layer].obj, MY_CLASS);
    if (layer_cw == cw) layer_cw = NULL;
 /*
    if (above)
