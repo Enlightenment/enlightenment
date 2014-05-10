@@ -163,6 +163,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->tooltip.clamp_size = fileman_config->tooltip.clamp_size;
    cfdata->selection.windows_modifiers = fileman_config->selection.windows_modifiers;
    cfdata->list.sort.dirs.first = fileman_config->list.sort.dirs.first;
+   cfdata->list.sort.dirs.last = fileman_config->list.sort.dirs.last;
    cfdata->list.sort.extension = fileman_config->list.sort.extension;
    cfdata->list.sort.mtime = fileman_config->list.sort.mtime;
    cfdata->list.sort.size = fileman_config->list.sort.size;
@@ -207,7 +208,7 @@ _basic_apply(E_Config_Dialog *cfd  __UNUSED__,
    fileman_config->tooltip.clamp_size = cfdata->tooltip.clamp_size;
    fileman_config->selection.windows_modifiers = cfdata->selection.windows_modifiers;
    fileman_config->list.sort.dirs.first = cfdata->list.sort.dirs.first;
-   fileman_config->list.sort.dirs.last = !(cfdata->list.sort.dirs.first);
+   fileman_config->list.sort.dirs.last = cfdata->list.sort.dirs.last;
    fileman_config->list.sort.extension = cfdata->list.sort.extension;
    fileman_config->list.sort.mtime = cfdata->list.sort.mtime;
    fileman_config->list.sort.size = cfdata->list.sort.size;
@@ -255,7 +256,7 @@ _basic_check_changed(E_Config_Dialog *cfd  __UNUSED__,
      (fileman_config->tooltip.clamp_size != cfdata->tooltip.clamp_size) ||
      (fileman_config->selection.windows_modifiers != cfdata->selection.windows_modifiers) ||
      (fileman_config->list.sort.dirs.first != cfdata->list.sort.dirs.first) ||
-     (fileman_config->list.sort.dirs.last != !(cfdata->list.sort.dirs.first)) ||
+     (fileman_config->list.sort.dirs.last != cfdata->list.sort.dirs.last) ||
      (fileman_config->list.sort.extension != cfdata->list.sort.extension) ||
      (fileman_config->list.sort.mtime != cfdata->list.sort.mtime) ||
      (fileman_config->list.sort.size != cfdata->list.sort.size) ||
