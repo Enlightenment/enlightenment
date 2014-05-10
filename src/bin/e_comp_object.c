@@ -197,6 +197,13 @@ _e_comp_object_layers_add(E_Comp_Object *cw, E_Comp_Object *above, E_Comp_Object
           cw->comp->layers[cw->layer].clients = eina_inlist_append(cw->comp->layers[cw->layer].clients, EINA_INLIST_GET(cw->ec));
      }
    cw->comp->layers[cw->layer].clients_count++;
+#ifndef E19_RELEASE_BUILD
+   if (layer_cw)
+     {
+        if (cw->comp->layers[cw->layer].obj == e_client_below_get(cw->ec)->frame)
+          CRI("ACK!");
+     }
+#endif
 }
 
 static void
