@@ -71,7 +71,6 @@ static const char _setting_theme_name[] = "Net/ThemeName";
 static const char _setting_font_name[] = "Gtk/FontName";
 static const char _setting_xft_dpi[] = "Xft/DPI";
 static const char *_setting_theme = NULL;
-static unsigned int event_ignore = 0;
 
 static void _e_xsettings_done_cb(void *data, Eio_File *handler, const Eina_Stat *stat);
 
@@ -655,7 +654,6 @@ e_xsettings_shutdown(void)
    if (eio_op) eio_file_cancel(eio_op);
    eio_op = NULL;
    setting = EINA_FALSE;
-   event_ignore = 0;
 
    return 1;
 }
@@ -685,6 +683,5 @@ e_xsettings_config_update(void)
         _e_xsettings_gtk_rcfiles_update();
         reset = EINA_TRUE;
      }
-   event_ignore++;
 }
 
