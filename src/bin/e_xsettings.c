@@ -441,7 +441,6 @@ _e_xsettings_error_cb(void *data, Eio_File *handler __UNUSED__, int error __UNUS
    else
      _e_xsettings_string_set(_setting_theme_name, NULL);
    _e_xsettings_update();
-   _e_xsettings_gtk_rcfiles_update();
 }
 
 static void
@@ -458,7 +457,6 @@ _e_xsettings_done_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__, const 
    eio_op = NULL;
    setting = EINA_FALSE;
    _e_xsettings_update();
-   _e_xsettings_gtk_rcfiles_update();
 }
 
 static void
@@ -642,7 +640,11 @@ e_xsettings_init(void)
    _atom_gtk_rcfiles = ecore_x_atom_get("_GTK_READ_RCFILES");
 
    if (e_config->xsettings.enabled)
-     _e_xsettings_start();
+     {
+        _e_xsettings_start();
+        if (!getenv("E_RESTART"))
+          _e_xsettings_gtk_rcfiles_update();
+     }
 
    return 1;
 }
@@ -680,7 +682,6 @@ e_xsettings_config_update(void)
         _e_xsettings_font_set();
         _e_xsettings_update();
         _e_xsettings_gtk_icon_update();
-        _e_xsettings_gtk_rcfiles_update();
         reset = EINA_TRUE;
      }
 }
