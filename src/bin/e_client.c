@@ -1917,8 +1917,19 @@ _e_client_eval(E_Client *ec)
           }
         if (!ec->desktop)
           {
-             ec->desktop = e_exec_startup_id_pid_find(ec->netwm.startup_id,
-                                                      ec->netwm.pid);
+             E_Exec_Instance *inst;
+
+             inst = e_exec_startup_id_pid_instance_find(ec->netwm.startup_id,
+                                                        ec->netwm.pid);
+             if (inst && inst->clients)
+               {
+                  E_Client *ec2 = eina_list_data_get(inst->clients);
+
+                  if (ec2->netwm.pid == ec->netwm.pid)
+                    ec->desktop = inst->desktop;
+               }
+             else if (inst)
+               ec->desktop = inst->desktop;
              if (ec->desktop) efreet_desktop_ref(ec->desktop);
           }
         if (!ec->desktop)
