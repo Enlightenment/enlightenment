@@ -5089,12 +5089,6 @@ _e_comp_x_screens_setup(void)
 EINTERN Eina_Bool
 e_comp_x_init(void)
 {
-   clients_win_hash = eina_hash_int32_new(NULL);
-   damages_hash = eina_hash_int32_new(NULL);
-   alarm_hash = eina_hash_int32_new(NULL);
-   frame_extents = eina_hash_string_superfast_new(free);
-
-
    if (!ecore_x_init(NULL))
      {
         e_error_message_show(_("Enlightenment cannot initialize Ecore_X!\n"));
@@ -5128,6 +5122,11 @@ e_comp_x_init(void)
           e_comp_gl_set(EINA_TRUE);
      }
    ecore_x_screensaver_event_listen_set(1);
+
+   clients_win_hash = eina_hash_int32_new(NULL);
+   damages_hash = eina_hash_int32_new(NULL);
+   alarm_hash = eina_hash_int32_new(NULL);
+   frame_extents = eina_hash_string_superfast_new(free);
 
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, _e_comp_x_object_add, NULL);
 
