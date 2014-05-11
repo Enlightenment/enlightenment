@@ -1439,6 +1439,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
         e_comp_object_frame_geometry_get(ec->frame, &l, NULL, &t, NULL);
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X)
           {
+             ec->comp_data->initial_attributes.x = ev->x;
              if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
                x = E_CLAMP(ev->x, zx, zx + zw - ec->w);
              else
@@ -1446,6 +1447,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
           }
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y)
           {
+             ec->comp_data->initial_attributes.y = ev->y;
              if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
                y = E_CLAMP(ev->y, zy, zy + zh - ec->h);
              else
@@ -1457,9 +1459,9 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
        (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H))
      {
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W)
-          w = ev->w;
+          w = ev->w, ec->comp_data->initial_attributes.w = ev->w;
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H)
-          h = ev->h;
+          h = ev->h, ec->comp_data->initial_attributes.h = ev->h;
      }
    
    e_comp_object_frame_wh_adjust(ec->frame, w, h, &w, &h);
