@@ -832,8 +832,7 @@ if test "x${e_cv_want_wayland_only}" != "xno" || test "x${e_cv_want_wayland_clie
     [
       have_wayland=yes
       AC_DEFINE_UNQUOTED([HAVE_WAYLAND],[1],[enable wayland support])
-    ],
-    [have_wayland=no])
+    ])
 else
   have_wayland=no
 fi
