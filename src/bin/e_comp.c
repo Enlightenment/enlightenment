@@ -1131,7 +1131,27 @@ e_comp_init(void)
    }
 
 #ifndef HAVE_WAYLAND_ONLY
-   e_comp_x_init();
+   if (!e_comp_x_init())
+     {
+        const char **test, *eng[] =
+        {
+#ifdef HAVE_WL_DRM
+           "wl_drm",
+#endif
+/* probably add other engines here; fb should be last? */
+#ifdef HAVE_WL_FM
+           "wl_fb",
+#endif
+           NULL
+        };
+
+        for (test = eng; *test; test++)
+          {
+             if (e_module_enable(e_module_new(*test)))
+               goto out;
+          }
+        return EINA_FALSE;
+     }
 #endif
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    e_comp_wl_init();
