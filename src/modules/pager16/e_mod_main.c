@@ -255,17 +255,28 @@ static void
 _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 {
    Instance *inst;
+   int aspect_w, aspect_h;
+   double aspect_ratio;
 
    inst = gcc->data;
    if (inst->pager->invert)
-     e_gadcon_client_aspect_set(gcc,
-                                inst->pager->ynum * inst->pager->zone->w,
-                                inst->pager->xnum * inst->pager->zone->h);
+     {
+        aspect_w = inst->pager->ynum * inst->pager->zone->w;
+        aspect_h = inst->pager->xnum * inst->pager->zone->h;
+     }
    else
-     e_gadcon_client_aspect_set(gcc,
-                                inst->pager->xnum * inst->pager->zone->w,
-                                inst->pager->ynum * inst->pager->zone->h);
-   e_gadcon_client_min_size_set(gcc, 4, 4);
+     {
+        aspect_w = inst->pager->xnum * inst->pager->zone->w;
+        aspect_h = inst->pager->ynum * inst->pager->zone->h;
+     }
+
+   e_gadcon_client_aspect_set(gcc, aspect_w, aspect_h);
+   aspect_ratio = (double)aspect_w / (double)aspect_h;
+
+   if (aspect_ratio > 1.0)
+     e_gadcon_client_min_size_set(gcc, 4 * aspect_ratio, 4);
+   else
+     e_gadcon_client_min_size_set(gcc, 4, 4 * aspect_ratio);
 }
 
 static const char *
