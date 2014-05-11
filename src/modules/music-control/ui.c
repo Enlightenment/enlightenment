@@ -120,7 +120,7 @@ _popup_new(E_Music_Control_Instance *inst)
 
    o = edje_object_add(e_comp_get(inst->gcc)->evas);
    e_theme_edje_object_set(o, "base/theme/modules/music-control",
-                           "modules/music-control/popup");
+                           "e/modules/music-control/popup");
    edje_object_signal_callback_add(o, "btn,clicked", "*", _btn_clicked, inst);
    edje_object_signal_callback_add(o, "label,clicked", "player_name", _label_clicked, inst);
 

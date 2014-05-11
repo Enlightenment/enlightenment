@@ -128,7 +128,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->ctxt = ctxt;
    inst->gadget = edje_object_add(gc->evas);
    e_theme_edje_object_set(inst->gadget, "base/theme/modules/music-control",
-                           "modules/music-control/main");
+                           "e/modules/music-control/main");
 
    inst->gcc = e_gadcon_client_new(gc, name, id, style, inst->gadget);
    inst->gcc->data = inst;
