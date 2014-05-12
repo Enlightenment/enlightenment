@@ -500,6 +500,7 @@ _e_comp_wl_cb_render_post(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, void *
      {
         struct wl_resource *cb;
 
+        if (!ec->comp_data) continue;
         EINA_LIST_FREE(ec->comp_data->frames, cb)
           {
              wl_callback_send_done(cb, ecore_loop_time_get());
@@ -1134,9 +1135,11 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    if (!e_pixmap_size_changed(ec->pixmap, ec->client.w, ec->client.h))
      return;
 
+   /* DBG("COMP_WL: Evas Resize: %d %d", ec->client.w, ec->client.h); */
+
    cdata = ec->comp->comp_data;
 
-   if ((ec->changes.pos) || (ec->changes.size))
+   /* if ((ec->changes.pos) || (ec->changes.size)) */
      {
         if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
           ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
@@ -1145,8 +1148,8 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
      }
 
    ec->post_resize = EINA_TRUE;
-   e_pixmap_dirty(ec->pixmap);
-   e_comp_object_render_update_del(ec->frame);
+   /* e_pixmap_dirty(ec->pixmap); */
+   /* e_comp_object_render_update_del(ec->frame); */
    _e_comp_wl_client_idler_add(ec);
 }
 
@@ -1182,8 +1185,38 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
 {
    E_Client *ec;
 
+   DBG("COMP_WL: Evas Del Request");
+
    if (!(ec = data)) return;
    if (ec->netwm.ping) e_client_ping(ec);
+
+   /* if (ec->comp_data->shell.surface) */
+   /*   wl_resource_destroy(ec->comp_data->shell.surface); */
+
+
+   /* FIXME !!!
+    * 
+    * This is a HUGE problem for internal windows...
+    * 
+    * IF we delete the client here, then we cannot reopen some internal 
+    * dialogs (configure, etc, etc) ...
+    * 
+    * BUT, if we don't handle delete_request Somehow, then the close button on 
+    * the frame does Nothing
+    * 
+    */
+
+
+   /* e_comp_ignore_win_del(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ec->pixmap)); */
+   /* if (ec->comp_data) */
+   /*   { */
+   /*      if (ec->comp_data->reparented) */
+   /*        e_client_comp_hidden_set(ec, EINA_TRUE); */
+   /*   } */
+
+   /* evas_object_pass_events_set(ec->frame, EINA_TRUE); */
+   /* if (ec->visible) evas_object_hide(ec->frame); */
+   /* e_object_del(E_OBJECT(ec)); */
 
    /* TODO: Delete request send ?? */
 #warning TODO Need to implement delete request ?
@@ -1352,6 +1385,24 @@ _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Ev
    return ECORE_CALLBACK_RENEW;
 }
 
+/* static Eina_Bool  */
+/* _e_comp_wl_cb_client_zone_set(void *data EINA_UNUSED, int type EINA_UNUSED, void *event) */
+/* { */
+/*    E_Event_Client *ev; */
+/*    E_Client *ec; */
+
+/*    DBG("CLIENT ZONE SET !!!"); */
+
+/*    ev = event; */
+/*    if (!(ec = ev->ec)) return ECORE_CALLBACK_RENEW; */
+/*    if (e_object_is_del(E_OBJECT(ec))) return ECORE_CALLBACK_RENEW; */
+/*    E_COMP_WL_PIXMAP_CHECK ECORE_CALLBACK_RENEW; */
+
+/*    DBG("\tClient Zone: %d", (ec->zone != NULL)); */
+
+/*    return ECORE_CALLBACK_RENEW; */
+/* } */
+
 static Eina_Bool 
 _e_comp_wl_cb_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
@@ -1391,7 +1442,7 @@ _e_comp_wl_cb_hook_client_del(void *data EINA_UNUSED, E_Client *ec)
 
    E_COMP_WL_PIXMAP_CHECK;
 
-   win = e_pixmap_window_get(ec->pixmap);
+   DBG("COMP_WL: Hook Client Del");
 
    if ((!ec->already_unparented) && (ec->comp_data->reparented))
      {
@@ -1400,6 +1451,7 @@ _e_comp_wl_cb_hook_client_del(void *data EINA_UNUSED, E_Client *ec)
      }
 
    ec->already_unparented = EINA_TRUE;
+   win = e_pixmap_window_get(ec->pixmap);
    eina_hash_del_by_key(clients_win_hash, &win);
 
    if (ec->comp_data->input)
@@ -1425,7 +1477,9 @@ _e_comp_wl_cb_hook_client_del(void *data EINA_UNUSED, E_Client *ec)
      }
 
    E_FREE_FUNC(ec->comp_data->first_draw_tmr, ecore_timer_del);
+
    E_FREE(ec->comp_data);
+   ec->comp_data = NULL;
 
    /* TODO: comp focus check */
 }
@@ -1437,9 +1491,15 @@ _e_comp_wl_cb_hook_client_new(void *data EINA_UNUSED, E_Client *ec)
 
    E_COMP_WL_PIXMAP_CHECK;
 
-   win = e_pixmap_window_get(ec->pixmap);
+   DBG("COMP_WL: Client New: %d", ec->internal);
 
+   win = e_pixmap_window_get(ec->pixmap);
    ec->ignored = e_comp_ignore_win_find(win);
+
+   /* NB: could not find a better place todo this, BUT for internal windows, 
+    * we need to set delete_request else the close buttons on the frames do 
+    * basically nothing */
+   if (ec->internal) ec->icccm.delete_request = EINA_TRUE;
 
    ec->comp_data = E_NEW(E_Comp_Client_Data, 1);
    ec->comp_data->input = eina_rectangle_new(0, 0, 0, 0);
@@ -1452,8 +1512,8 @@ _e_comp_wl_cb_hook_client_new(void *data EINA_UNUSED, E_Client *ec)
    ec->netwm.type = E_WINDOW_TYPE_UNKNOWN;
    /* ec->shaped = EINA_TRUE; */
    /* ec->shaped_input = EINA_TRUE; */
-   /* ec->changes.shape = EINA_TRUE; */
-   /* ec->changes.shape_input = EINA_TRUE; */
+   ec->changes.shape = EINA_TRUE;
+   ec->changes.shape_input = EINA_TRUE;
 
    if (!_e_comp_wl_client_new_helper(ec)) return;
    ec->comp_data->first_damage = ((ec->internal) || (ec->override));
@@ -1831,7 +1891,7 @@ e_comp_wl_init(void)
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, 
                          _e_comp_wl_cb_comp_object_add, NULL);
    /* E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_ZONE_SET,  */
-   /*                       _cb, NULL); */
+   /*                       _e_comp_wl_cb_client_zone_set, NULL); */
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_PROPERTY, 
                          _e_comp_wl_cb_client_prop, NULL);
 
