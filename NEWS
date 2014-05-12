@@ -1,3 +1,14 @@
+Changes since 0.18.7:
+---------------------
+
+* screenshot now displays a helpful error message when it fails
+* efm no longer sometimes shows files from other directories
+* efm no longer sometimes shows blank filenames
+* fix syscon button signals
+* fix winlist scrolling
+* fix systray appindicator deletion
+* fix systray appindicator icon loading
+
 Changes since 0.18.6:
 ---------------------
 
