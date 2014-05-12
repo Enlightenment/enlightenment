@@ -337,18 +337,18 @@ e_comp_wl_input_init(E_Comp_Data *cdata)
 EINTERN void 
 e_comp_wl_input_shutdown(E_Comp_Data *cdata)
 {
-   Eina_List *l;
+   /* Eina_List *l; */
    struct wl_resource *res;
 
    /* check for valid compositor data */
    if (!cdata) return;
 
    /* destroy pointer resources */
-   EINA_LIST_FOREACH(cdata->ptr.resources, l, res)
+   EINA_LIST_FREE(cdata->ptr.resources, res)
      wl_resource_destroy(res);
 
    /* destroy keyboard resources */
-   EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+   EINA_LIST_FREE(cdata->kbd.resources, res)
      wl_resource_destroy(res);
 
    /* TODO: destroy touch resources */
