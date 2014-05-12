@@ -38,7 +38,7 @@ _e_shell_surface_cb_destroy(struct wl_resource *resource)
 {
    E_Client *ec;
 
-   /* DBG("Shell Surface Destroy: %d", wl_resource_get_id(resource)); */
+   DBG("Shell Surface Destroy: %d", wl_resource_get_id(resource));
 
    /* get the client for this resource */
    if ((ec = wl_resource_get_user_data(resource)))
@@ -187,7 +187,7 @@ _e_shell_surface_cb_class_set(struct wl_client *client EINA_UNUSED, struct wl_re
      }
 
    /* use the wl_client to get the pid * and set it in the netwm props */
-   /* wl_client_get_credentials(client, &ec->netwm.pid, NULL, NULL); */
+   wl_client_get_credentials(client, &ec->netwm.pid, NULL, NULL);
 
    /* set class */
    eina_stringshare_replace(&ec->icccm.class, clas);
@@ -353,7 +353,6 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
              return;
           }
 
-        e_pixmap_ref(ep);
         ec->netwm.ping = EINA_TRUE;
      }
 
@@ -459,6 +458,8 @@ _e_xdg_shell_surface_cb_app_id_set(struct wl_client *client EINA_UNUSED, struct 
 {
    E_Client *ec;
 
+   /* DBG("XDG_SHELL: App Id: %s", id); */
+
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -469,7 +470,7 @@ _e_xdg_shell_surface_cb_app_id_set(struct wl_client *client EINA_UNUSED, struct 
      }
 
    /* use the wl_client to get the pid * and set it in the netwm props */
-   /* wl_client_get_credentials(client, &ec->netwm.pid, NULL, NULL); */
+   wl_client_get_credentials(client, &ec->netwm.pid, NULL, NULL);
 
    /* set class */
    eina_stringshare_replace(&ec->icccm.class, id);
@@ -535,6 +536,8 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
    E_Client *ec;
    E_Comp_Data *cdata;
    E_Binding_Event_Mouse_Button ev;
+
+   /* DBG("XDG_SHELL: Surface Resize"); */
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -748,7 +751,7 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         y = ec->parent->client.y + ec->comp_data->popup.y;
      }
 
-   if ((ec->client.x != x) || (ec->client.y != y))
+//   if ((ec->client.x != x) || (ec->client.y != y))
      {
         ec->client.x = x;
         ec->client.y = y;
@@ -757,7 +760,7 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         ec->changes.pos = EINA_TRUE;
      }
 
-   if ((ec->client.w != w) || (ec->client.h != h))
+//   if ((ec->client.w != w) || (ec->client.h != h))
      {
         ec->client.w = w;
         ec->client.h = h;
@@ -919,7 +922,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
              return;
           }
 
-        e_pixmap_ref(ep);
+        /* e_pixmap_ref(ep); */
         ec->netwm.ping = EINA_TRUE;
      }
 
@@ -1076,7 +1079,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
              return;
           }
 
-        e_pixmap_ref(ep);
+        /* e_pixmap_ref(ep); */
      }
 
    /* get the client data */
