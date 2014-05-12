@@ -1,7 +1,7 @@
 #include "e.h"
 #include "e_comp_wl.h"
-#include <Ecore_Drm.h>
-//#include <Ecore_Wayland.h>
+#include "e_comp_wl_input.h"
+/* #include <Ecore_Drm.h> */
 
 #define SCREEN_WIDTH 1920
 #define SCREEN_HEIGHT 1200
@@ -56,8 +56,22 @@ e_modapi_init(E_Module *m)
    e_comp_wl_input_pointer_enabled_set(comp->comp_data, EINA_TRUE);
    e_comp_wl_input_keyboard_enabled_set(comp->comp_data, EINA_TRUE);
 
+   /* comp->pointer =  */
+   /*   e_pointer_window_new(ecore_evas_window_get(comp->ee), 1); */
    comp->pointer = e_pointer_canvas_new(comp->evas, 1);
    comp->pointer->color = 1;
+
+   /* FIXME: We need a way to trap for user changing the keymap inside of E 
+    *        without the event coming from X11 */
+
+   /* FIXME: We should make a decision here ...
+    * 
+    * Fetch the keymap from drm, OR set this to what the E config is....
+    */
+
+   /* FIXME: This is just for testing at the moment....
+    * happens to jive with what drm does */
+   e_comp_wl_input_keymap_set(comp->comp_data, NULL, NULL, NULL);
 
    return m;
 }
