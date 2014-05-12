@@ -297,7 +297,10 @@ e_winlist_hide(void)
              evas_object_raise(ec->frame);
              e_client_raise_latest_set(ec);
           }
-
+        if (ec->iconic)
+          e_client_uniconify(ec);
+        if (ec->shaded)
+          e_client_unshade(ec, ec->shade_dir);
         if ((e_config->focus_policy != E_FOCUS_CLICK) ||
             (e_config->winlist_warp_at_end) ||
             (e_config->winlist_warp_while_selecting))
@@ -306,10 +309,6 @@ e_winlist_hide(void)
           }
         else if (!ec->lock_focus_out)
           {
-             if (ec->iconic)
-               e_client_uniconify(ec);
-             if (ec->shaded)
-               e_client_unshade(ec, ec->shade_dir);
              evas_object_focus_set(ec->frame, 1);
              e_client_focus_latest_set(ec);
           }
