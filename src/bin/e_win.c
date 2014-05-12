@@ -344,16 +344,16 @@ e_win_new(E_Comp *c)
    win->max_aspect = 0.0;
    wins = eina_list_append(wins, win);
 
-   if (c->comp_type == E_PIXMAP_TYPE_X)
-     {
-        win->pointer = e_pointer_window_new(win->evas_win, 1);
-        win->pointer->color = c->pointer->color;
-     }
-   else if (c->comp_type == E_PIXMAP_TYPE_WL)
-     {
-        win->pointer = e_pointer_canvas_new(win->evas, 1);
-        win->pointer->color = c->pointer->color;
-     }
+   /* if (c->comp_type == E_PIXMAP_TYPE_X) */
+   /*   { */
+   /*      win->pointer = e_pointer_window_new(win->evas_win, 1); */
+   /*      win->pointer->color = c->pointer->color; */
+   /*   } */
+   /* else if (c->comp_type == E_PIXMAP_TYPE_WL) */
+   /*   { */
+   /*      win->pointer = e_pointer_canvas_new(win->evas, 1); */
+   /*      win->pointer->color = c->pointer->color; */
+   /*   } */
 
    return win;
 }
@@ -370,11 +370,14 @@ e_win_show(E_Win *win)
         if (!strncmp(ecore_evas_engine_name_get(win->ecore_evas), "wayland", 7))
           {
              Ecore_Wl_Window *wl_win;
+             E_Pixmap *ep;
              uint64_t id;
 
              wl_win = ecore_evas_wayland_window_get(win->ecore_evas);
              id = e_comp_wl_id_get(getpid(), ecore_wl_window_surface_id_get(wl_win));
-             win->client = e_client_new(win->comp, e_pixmap_new(E_PIXMAP_TYPE_WL, id), 1, 1);
+             if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, id)))
+               ep = e_pixmap_new(E_PIXMAP_TYPE_WL, id);
+             win->client = e_client_new(win->comp, ep, 1, 1);
           }
         else
 #endif
