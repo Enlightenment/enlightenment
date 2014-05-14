@@ -236,7 +236,6 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
    Evas_Object *ob, *ol, *otb, *tab;
    int w, h;
 
-   e_dialog_resizable_set(cfd->dia, 1);
    tab = e_widget_table_add(evas, 0);
    evas_object_name_set(tab, "dia_table");
 
@@ -323,7 +322,6 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 {
    Evas_Object *ob, *ol, *otb, *tab;
 
-   e_dialog_resizable_set(cfd->dia, 1);
    cfdata->o_list_entry = cfdata->o_list_transient = NULL;
 
    tab = e_widget_table_add(evas, 0);

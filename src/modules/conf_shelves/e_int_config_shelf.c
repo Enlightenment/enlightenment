@@ -122,7 +122,6 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    char buf[64];
    E_Zone *zone;
 
-   e_dialog_resizable_set(cfd->dia, 1);
    
    ol = e_widget_list_add(evas, 0, 0);
    zone = cfdata->cfd->dia->win->client ? cfdata->cfd->dia->win->client->zone : e_zone_current_get(cfdata->cfd->comp);

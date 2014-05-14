@@ -419,7 +419,6 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
 
    cfdata->evas = evas;
 
-   e_dialog_resizable_set(cfd->dia, 1);
    ot = e_widget_table_add(evas, 0);
 
    cfdata->gui.class_list = NULL;

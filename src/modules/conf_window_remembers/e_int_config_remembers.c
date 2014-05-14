@@ -123,7 +123,6 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    Evas_Object *ol, *of2, *ow, *oc;
    Evas_Coord mw, mh;
 
-   e_dialog_resizable_set(cfd->dia, 1);
    ol = e_widget_list_add(evas, 0, 0);
 
    ow = e_widget_check_add(evas, _("Remember internal dialogs"),

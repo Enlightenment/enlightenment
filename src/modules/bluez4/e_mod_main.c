@@ -114,7 +114,6 @@ _ebluez4_cb_search(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSE
 
    dialog = e_dialog_new(NULL, "Search Dialog", "search");
    e_dialog_title_set(dialog, _("Searching for Devices..."));
-   e_dialog_resizable_set(dialog, EINA_TRUE);
    e_win_delete_callback_set(dialog->win, _ebluez4_cb_search_dialog_del);
 
    evas = e_win_evas_get(dialog->win);
@@ -182,7 +181,6 @@ _ebluez4_cb_adap_settings(void *data)
 
    dialog = e_dialog_new(NULL, "Adapter Dialog", "adapter");
    e_dialog_title_set(dialog, _("Adapter Settings"));
-   e_dialog_resizable_set(dialog, EINA_TRUE);
    e_win_delete_callback_set(dialog->win, _ebluez4_cb_adap_settings_dialog_del);
 
    evas = e_win_evas_get(dialog->win);
@@ -253,7 +251,6 @@ _ebluez4_cb_adap_list(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UN
 
    dialog = e_dialog_new(NULL, "Adapters Dialog", "adapters");
    e_dialog_title_set(dialog, _("Adapters Available"));
-   e_dialog_resizable_set(dialog, EINA_TRUE);
    e_win_delete_callback_set(dialog->win, _ebluez4_cb_adap_list_dialog_del);
 
    evas = e_win_evas_get(dialog->win);

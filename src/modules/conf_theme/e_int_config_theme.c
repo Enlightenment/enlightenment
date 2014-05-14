@@ -648,7 +648,6 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    E_Radio_Group *rg;
    char path[PATH_MAX];
 
-   e_dialog_resizable_set(cfd->dia, 1);
    z = e_zone_current_get(cfd->comp);
 
    ot = e_widget_table_add(evas, 0);
