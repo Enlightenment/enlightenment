@@ -200,8 +200,12 @@ _e_comp_object_layers_add(E_Comp_Object *cw, E_Comp_Object *above, E_Comp_Object
 #ifndef E19_RELEASE_BUILD
    if (layer_cw)
      {
-        if (cw->comp->layers[cw->layer].obj == e_client_below_get(cw->ec)->frame)
-          CRI("ACK!");
+        E_Client *below_ec = e_client_below_get(cw->ec);
+        if (below_ec)
+          {
+             if (cw->comp->layers[cw->layer].obj == below_ec->frame)
+               CRI("ACK!");
+          }
      }
 #endif
 }
