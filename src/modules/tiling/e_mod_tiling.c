@@ -640,8 +640,11 @@ _client_remove_no_apply(E_Client *ec)
 static void
 _remove_client(E_Client *ec)
 {
-   if (_client_remove_no_apply(ec))
-      _reapply_tree();
+   if (desk_should_tile_check(ec->desk))
+     {
+        if (_client_remove_no_apply(ec))
+          _reapply_tree();
+     }
 }
 
 /* }}} */
