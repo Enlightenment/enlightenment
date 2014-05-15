@@ -19,7 +19,7 @@ _cb_delete_request(Ecore_Evas *ee EINA_UNUSED)
 static Eina_Bool 
 _cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    E_Config_XKB_Layout *ekbd;
    char *rules, *model, *layout;
    Ecore_X_Atom xkb = 0;
@@ -43,7 +43,7 @@ _cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
    xkb = ecore_x_atom_get("_XKB_RULES_NAMES");
    ecore_x_window_prop_property_get(root, xkb, ECORE_X_ATOM_STRING, 
                                     1024, &dat, &len);
-   if ((data) && (len > 0))
+   if ((dat) && (len > 0))
      {
         rules = (char *)dat;
         dat += strlen((const char *)dat) + 1;
@@ -101,20 +101,20 @@ e_modapi_init(E_Module *m)
     * makes reference to the comp->evas */
    if (!e_comp_wl_init()) return NULL;
 
-   e_comp_wl_input_pointer_enabled_set(comp->comp_data, EINA_TRUE);
-   e_comp_wl_input_keyboard_enabled_set(comp->comp_data, EINA_TRUE);
+   e_comp_wl_input_pointer_enabled_set(comp->wl_comp_data, EINA_TRUE);
+   e_comp_wl_input_keyboard_enabled_set(comp->wl_comp_data, EINA_TRUE);
 
    comp->pointer = 
      e_pointer_window_new(ecore_evas_window_get(comp->ee), 1);
    /* comp->pointer = e_pointer_canvas_new(comp->evas, 1); */
 
    /* force a keymap update so compositor keyboard gets setup */
-   _cb_keymap_changed(comp->comp_data, 0, NULL);
+   _cb_keymap_changed(comp->wl_comp_data, 0, NULL);
 
    /* setup keymap_change event handler */
    kbd_hdlr = 
      ecore_event_handler_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, 
-                             _cb_keymap_changed, comp->comp_data);
+                             _cb_keymap_changed, comp->wl_comp_data);
 
    return m;
 }

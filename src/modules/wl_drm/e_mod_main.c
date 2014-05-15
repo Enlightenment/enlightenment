@@ -53,8 +53,8 @@ e_modapi_init(E_Module *m)
    /* NB: This needs to be called AFTER the comp canvas has been setup */
    if (!e_comp_wl_init()) return NULL;
 
-   e_comp_wl_input_pointer_enabled_set(comp->comp_data, EINA_TRUE);
-   e_comp_wl_input_keyboard_enabled_set(comp->comp_data, EINA_TRUE);
+   e_comp_wl_input_pointer_enabled_set(comp->wl_comp_data, EINA_TRUE);
+   e_comp_wl_input_keyboard_enabled_set(comp->wl_comp_data, EINA_TRUE);
 
    /* comp->pointer =  */
    /*   e_pointer_window_new(ecore_evas_window_get(comp->ee), 1); */
@@ -71,7 +71,7 @@ e_modapi_init(E_Module *m)
 
    /* FIXME: This is just for testing at the moment....
     * happens to jive with what drm does */
-   e_comp_wl_input_keymap_set(comp->comp_data, NULL, NULL, NULL);
+   e_comp_wl_input_keymap_set(comp->wl_comp_data, NULL, NULL, NULL);
 
    return m;
 }

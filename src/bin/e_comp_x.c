@@ -1443,7 +1443,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
         e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X)
           {
-             ec->comp_data->initial_attributes.x = ev->x;
+             ec->x_comp_data->initial_attributes.x = ev->x;
              if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
                x = E_CLAMP(ev->x, zx, zx + zw - ec->w);
              else
@@ -1451,7 +1451,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
           }
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y)
           {
-             ec->comp_data->initial_attributes.y = ev->y;
+             ec->x_comp_data->initial_attributes.y = ev->y;
              if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
                y = E_CLAMP(ev->y, zy, zy + zh - ec->h);
              else
@@ -1463,9 +1463,9 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
        (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H))
      {
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_W)
-          w = ev->w, ec->comp_data->initial_attributes.w = ev->w;
+          w = ev->w, ec->x_comp_data->initial_attributes.w = ev->w;
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_H)
-          h = ev->h, ec->comp_data->initial_attributes.h = ev->h;
+          h = ev->h, ec->x_comp_data->initial_attributes.h = ev->h;
      }
    
    e_comp_object_frame_wh_adjust(ec->frame, w, h, &w, &h);
@@ -2514,7 +2514,7 @@ _e_comp_x_damage(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Dam
      e_pixmap_dirty(ec->pixmap);
    /* discard unwanted xy position of first damage
     * to avoid wrong composition for override redirect window */
-   else if ((ec->override) && (!ec->comp_data->first_damage))
+   else if ((ec->override) && (!ec->x_comp_data->first_damage))
      e_comp_object_damage(ec->frame, 0, 0, ev->area.width, ev->area.height);
    else
      e_comp_object_damage(ec->frame, ev->area.x, ev->area.y, ev->area.width, ev->area.height);
