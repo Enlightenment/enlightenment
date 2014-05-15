@@ -1,7 +1,9 @@
 #ifdef E_TYPEDEFS
-typedef struct _E_Comp      E_Comp;
-typedef struct _E_Comp_Data      E_Comp_Data;
-typedef struct _E_Comp_Client_Data E_Comp_Client_Data;
+typedef struct _E_Comp E_Comp;
+typedef struct _E_Comp_X_Data E_Comp_X_Data;
+typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
+typedef struct _E_Comp_X_Client_Data E_Comp_X_Client_Data;
+typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
 typedef struct _E_Comp_Demo_Style_Item E_Comp_Demo_Style_Item;
 
 #define E_COMP_TYPE (int) 0xE0b01003
@@ -56,7 +58,9 @@ struct _E_Comp
    Eina_List *clients;
    unsigned int new_clients;
 
-   E_Comp_Data *comp_data;
+   E_Comp_X_Data *x_comp_data;
+   E_Comp_Wl_Data *wl_comp_data;
+
    E_Pixmap_Type comp_type; //for determining X/Wayland/
 
    unsigned int num;

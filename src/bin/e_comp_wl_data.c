@@ -29,7 +29,7 @@ _e_comp_wl_data_manager_cb_source_create(struct wl_client *client, struct wl_res
 static void 
 _e_comp_wl_data_manager_cb_device_get(struct wl_client *client EINA_UNUSED, struct wl_resource *manager_resource, uint32_t id, struct wl_resource *seat_resource)
 {
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    struct wl_resource *res;
 
    DBG("Comp_Wl_Data: Get Data Device");
@@ -58,7 +58,7 @@ static const struct wl_data_device_manager_interface _e_manager_interface =
 /* static void  */
 /* _e_comp_wl_data_cb_unbind_manager(struct wl_resource *resource) */
 /* { */
-/*    E_Comp_Data *cdata; */
+/*    E_Comp_Wl_Data *cdata; */
 
 /*    DBG("Comp_Wl_Data: Unbind Manager"); */
 
@@ -70,7 +70,7 @@ static const struct wl_data_device_manager_interface _e_manager_interface =
 static void 
 _e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data, uint32_t version EINA_UNUSED, uint32_t id)
 {
-   E_Comp_Data *cdata;
+   E_Comp_Wl_Data *cdata;
    struct wl_resource *res;
 
    if (!(cdata = data)) return;
@@ -90,7 +90,7 @@ _e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data, uint32_t v
 }
 
 EINTERN Eina_Bool 
-e_comp_wl_data_manager_init(E_Comp_Data *cdata)
+e_comp_wl_data_manager_init(E_Comp_Wl_Data *cdata)
 {
    /* check for valid compositor data */
    if (!cdata) return EINA_FALSE;
@@ -109,8 +109,8 @@ e_comp_wl_data_manager_init(E_Comp_Data *cdata)
 }
 
 EINTERN void 
-e_comp_wl_data_manager_shutdown(E_Comp_Data *cdata)
+e_comp_wl_data_manager_shutdown(E_Comp_Wl_Data *cdata)
 {
    /* destroy the global manager resource */
-   if (cdata->mgr.global) wl_global_destroy(cdata->mgr.global);
+   /* if (cdata->mgr.global) wl_global_destroy(cdata->mgr.global); */
 }

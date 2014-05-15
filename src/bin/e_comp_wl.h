@@ -23,7 +23,7 @@
 #   define BTN_BACK 0x116
 #  endif
 
-struct _E_Comp_Data
+struct _E_Comp_Wl_Data
 {
    struct 
      {
@@ -120,7 +120,7 @@ struct _E_Comp_Data
    Eina_Bool restack : 1;
 };
 
-struct _E_Comp_Client_Data
+struct _E_Comp_Wl_Client_Data
 {
    Eina_Rectangle *input;
    Eina_Rectangle *opaque;
