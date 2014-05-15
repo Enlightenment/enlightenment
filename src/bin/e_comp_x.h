@@ -12,7 +12,7 @@
 #  include "e_hints.h"
 #  include "e_randr.h"
 
-struct _E_Comp_Client_Data
+struct _E_Comp_X_Client_Data
 {
    Ecore_X_Window lock_win;
 
