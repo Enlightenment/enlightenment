@@ -640,11 +640,8 @@ _client_remove_no_apply(E_Client *ec)
 static void
 _remove_client(E_Client *ec)
 {
-   if (desk_should_tile_check(ec->desk))
-     {
-        if (_client_remove_no_apply(ec))
-          _reapply_tree();
-     }
+   if (_client_remove_no_apply(ec))
+     _reapply_tree();
 }
 
 /* }}} */
@@ -1196,7 +1193,10 @@ _toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore)
           {
              _restore_client(ec);
           }
-        _remove_client(ec);
+        if (desk_should_tile_check(ec->desk))
+          {
+             _remove_client(ec);
+          }
 
         return EINA_TRUE;
      }
