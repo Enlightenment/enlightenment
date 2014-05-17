@@ -413,7 +413,7 @@ _font_hash_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void
 }
 
 static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *ot, *ob, *of;
 
