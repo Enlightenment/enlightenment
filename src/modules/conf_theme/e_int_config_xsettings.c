@@ -451,7 +451,7 @@ _icon_theme_changed(void *data, Evas_Object *o __UNUSED__)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *otb, *ol, *ilist, *of, *ow, *oc;
    struct _fill_icon_themes_data *d;
