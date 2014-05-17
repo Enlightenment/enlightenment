@@ -184,8 +184,8 @@ e_smart_randr_monitors_create(Evas_Object *obj)
         e_smart_monitor_grid_set(mon, sd->o_grid, gx, gy, gw, gh);
 
         /* if the output has no size, find an appropriate */
-        cx = output->cfg->geo.w;
-        cy = output->cfg->geo.w;
+        cx = output->cfg->geo.x;
+        cy = output->cfg->geo.y;
         cw = output->cfg->geo.w;
         ch = output->cfg->geo.h;
         if ((cw == 0) && (ch == 0))
