@@ -75,10 +75,9 @@ static struct tiling_mod_main_g
    char                 edj_path[PATH_MAX];
    E_Config_DD         *config_edd, *vdesk_edd;
    Ecore_Event_Handler *handler_client_resize, *handler_client_move,
-                       *handler_client_add, *handler_client_iconify,
-                       *handler_client_uniconify,
+                       *handler_client_iconify, *handler_client_uniconify,
                        *handler_desk_set, *handler_compositor_resize;
-   E_Client_Hook       *handler_client_resize_begin;
+   E_Client_Hook       *handler_client_resize_begin, *handler_client_eval_fetch;
    E_Client_Menu_Hook  *client_menu_hook;
 
    Tiling_Info         *tinfo;
@@ -1166,14 +1165,19 @@ _client_track(E_Client *ec)
          _e_client_check_based_on_state_cb, ec);
 }
 
-static Eina_Bool
-_add_hook(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Client *event)
+static void
+_add_hook(void *data EINA_UNUSED, E_Client *ec)
 {
-   E_Client *ec = event->ec;
+   if (!ec)
+     return;
+
+   if (!ec->new_client)
+     return;
+
+   if (e_object_is_del(E_OBJECT(ec)))
+     return;
 
    _add_client(ec);
-
-   return true;
 }
 
 static Eina_Bool
@@ -1358,9 +1362,10 @@ e_modapi_init(E_Module *m)
 
    _G.handler_client_resize_begin =
       e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, _resize_begin_hook, NULL);
+   _G.handler_client_eval_fetch =
+      e_client_hook_add(E_CLIENT_HOOK_EVAL_FETCH, _add_hook, NULL);
    HANDLER(_G.handler_client_resize, CLIENT_RESIZE, _resize_hook);
    HANDLER(_G.handler_client_move, CLIENT_MOVE, _move_hook);
-   HANDLER(_G.handler_client_add, CLIENT_ADD, _add_hook);
 
    HANDLER(_G.handler_client_iconify, CLIENT_ICONIFY, _iconify_hook);
    HANDLER(_G.handler_client_uniconify, CLIENT_UNICONIFY, _iconify_hook);
@@ -1550,7 +1555,6 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
 
    FREE_HANDLER(_G.handler_client_resize);
    FREE_HANDLER(_G.handler_client_move);
-   FREE_HANDLER(_G.handler_client_add);
 
    FREE_HANDLER(_G.handler_client_iconify);
    FREE_HANDLER(_G.handler_client_uniconify);
@@ -1558,6 +1562,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    FREE_HANDLER(_G.handler_desk_set);
 
    SAFE_FREE(_G.handler_client_resize_begin, e_client_hook_del);
+   SAFE_FREE(_G.handler_client_eval_fetch, e_client_hook_del);
 #undef FREE_HANDLER
 #undef SAFE_FREE
 
