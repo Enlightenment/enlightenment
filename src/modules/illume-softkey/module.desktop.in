@@ -2,5 +2,8 @@
 Encoding=UTF-8
 Type=Link
 Name=Illume-Softkey
+Name[ms]=Illume-Softkey
+Name[sr]=Софтверска тастатура на додир
+Name[tr]=Illume-Ortatuş
 Icon=e-module-illume-softkey
 X-Enlightenment-ModuleType=mobile
