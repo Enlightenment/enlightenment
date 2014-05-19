@@ -3096,10 +3096,9 @@ _e_comp_object_dirty(Eo *obj, E_Comp_Object *cw)
    Eina_Rectangle *r;
    Eina_List *l;
    Evas_Object *o;
-   int w, h, ow, oh;
+   int w, h;
    Eina_Bool dirty, visible;
 
-   evas_object_geometry_get(cw->obj, NULL, NULL, &ow, &oh);
    /* only actually dirty if pixmap is available */
    dirty = e_pixmap_size_get(cw->ec->pixmap, &w, &h);
    visible = cw->visible;
