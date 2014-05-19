@@ -2648,6 +2648,7 @@ _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
           ecore_x_window_prop_card32_set(win->evas_win, E_ATOM_WINDOW_STATE, state, num);
         else
           ecore_x_window_prop_property_del(win->evas_win, E_ATOM_WINDOW_STATE);
+        ec->changes.internal_state = 0;
      }
 
    if (ec->changes.internal_props)
