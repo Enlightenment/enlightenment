@@ -293,7 +293,7 @@ packagekit_refresh_cache(E_PackageKit_Module_Context *ctxt, const char *transact
 
    obj = eldbus_object_get(ctxt->conn, "org.freedesktop.PackageKit", transaction);
    proxy = eldbus_proxy_get(obj, "org.freedesktop.PackageKit.Transaction");
-   pending = eldbus_proxy_call(proxy, "RefreshCache", null_cb, NULL, -1, "b", 1);
+   pending = eldbus_proxy_call(proxy, "RefreshCache", null_cb, ctxt, -1, "b", 1);
    if (!pending)
      {
         _store_error(ctxt, "could not call RefreshCache()");
