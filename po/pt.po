@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-05-14 14:32+0900\n"
-"PO-Revision-Date: 2014-02-24 15:12-0000\n"
+"PO-Revision-Date: 2014-05-23 12:13-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: Portuguese\n"
 "Language: pt\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Launchpad-Export-Date: 2013-05-02 10:08+0000\n"
-"X-Generator: Poedit 1.6.4\n"
+"X-Generator: Poedit 1.6.5\n"
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
@@ -40,16 +40,15 @@ msgid "Enlightenment"
 msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
-#, fuzzy
 msgid ""
 "<title>Copyright &copy; 2000-2014, by the Enlightenment Development Team</"
 "><br><br>We hope you enjoy using this software as much as we enjoyed writing "
 "it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
 "org</><br><br>"
 msgstr ""
-"<title>Direitos de autor &copy; 2000-2013, pela equipa de desenvolvimento do "
+"<title>Direitos de autor &copy; 2000-2014, pela equipa de desenvolvimento do "
 "Enlightenment</><br><br>Esperamos que goste de utilizar esta aplicação, "
-"tanto como nós gostámos de a desenvolver.<br><br>Para nos contactar, aceda a:"
+"tanto como nós gostamos de a desenvolver.<br><br>Para nos contactar, aceda a:"
 "<br><hilight>http://www.enlightenment.org</><br><br>"
 
 #: src/bin/e_about.c:69
@@ -6002,9 +6001,8 @@ msgid "Personal"
 msgstr "Pessoal"
 
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:128
-#, fuzzy
 msgid "Hide Logo"
-msgstr "Ocultar"
+msgstr "Ocultar LOGO"
 
 #: src/modules/conf_display/e_int_config_desks.c:49
 #: src/modules/pager/e_mod_main.c:878
@@ -6088,9 +6086,8 @@ msgid "Dimming"
 msgstr "Atenuação"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:58
-#, fuzzy
 msgid "Screen Blank Settings"
-msgstr "Definições do bloqueio do ecrã"
+msgstr "Definições"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:167
 msgid "Enable screen blanking"
@@ -6114,9 +6111,8 @@ msgid "Suspend delay"
 msgstr "Atraso de suspensão"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:196
-#, fuzzy
 msgid "Disable blanking for Fullscreen Windows"
-msgstr "Permitir ativação de associações nas janelas em ecrã completo"
+msgstr "Permitir nas janelas em ecrã completo"
 
 #: src/modules/conf_display/e_int_config_screensaver.c:200
 #: src/modules/conf_display/e_mod_main.c:32
@@ -6735,9 +6731,8 @@ msgid "Border Frame Active"
 msgstr "Moldura do contorno ativa"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:82
-#, fuzzy
 msgid "Composite Focus Color"
-msgstr "Cor ao retirar o foco"
+msgstr "Cor de foco da composição"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:83
 msgid "Composite Focus-out Color"
@@ -6834,9 +6829,8 @@ msgid "Label Text"
 msgstr "Texto da etiqueta"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:109
-#, fuzzy
 msgid "Label Text Disabled"
-msgstr "Tablet inativo"
+msgstr "Desativar texto da etiqueta"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:110
 msgid "List Item Text Selected"
@@ -6903,14 +6897,12 @@ msgid "Module Label"
 msgstr "Etiqueta do módulo"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:130
-#, fuzzy
 msgid "Module Label Invisible"
-msgstr "Etiqueta do módulo"
+msgstr "Etiqueta do módulo invisível"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:131
-#, fuzzy
 msgid "Module Label Plain"
-msgstr "Etiqueta do módulo"
+msgstr "Etiqueta do módulo simples"
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:163
 #: src/modules/conf_theme/e_mod_main.c:71
@@ -9079,18 +9071,16 @@ msgid "IBox"
 msgstr "IBox"
 
 #: src/modules/lokker/lokker.c:70
-#, fuzzy
 msgid "Authenticating..."
-msgstr "Outra aplicação..."
+msgstr "Autenticação..."
 
 #: src/modules/lokker/lokker.c:75
 msgid "The password you entered is invalid. Try again."
 msgstr "A senha indicada é inválida. Tente novamente."
 
 #: src/modules/lokker/lokker.c:239
-#, fuzzy
 msgid "Please enter your PIN"
-msgstr "Por favor indique a senha de desbloqueio."
+msgstr "Por favor introduza o PIN"
 
 #: src/modules/lokker/lokker.c:335
 msgid "Please enter your unlock password"
@@ -9935,9 +9925,8 @@ msgstr ""
 
 #: src/modules/shot/e_mod_main.c:671 src/modules/shot/e_mod_main.c:687
 #: src/modules/shot/e_mod_main.c:696
-#, fuzzy
 msgid "Screenshot Error"
-msgstr "Erro"
+msgstr "Erro de captura"
 
 #: src/modules/shot/e_mod_main.c:672
 #, c-format
@@ -9945,6 +9934,8 @@ msgid ""
 "SHMMAX is too small to take screenshot.<br>Consider increasing /proc/sys/"
 "kernel/shmmax to a value larger than %llu"
 msgstr ""
+"SHMMAX é demasiado pequeno.<br>Considere incrementar /proc/sys/kernel/shmmax "
+"para um valor superior a %llu"
 
 #: src/modules/shot/e_mod_main.c:688
 #, c-format
@@ -9952,12 +9943,16 @@ msgid ""
 "SHMMAX is too small to take screenshot.<br>Consider increasing kern.ipc."
 "shmmax to a value larger than %llu"
 msgstr ""
+"SHMMAX é demasiado pequeno.<br>Considere incrementar kern.ipc.shmmax para um "
+"valor superior a %llu"
 
 #: src/modules/shot/e_mod_main.c:697
 msgid ""
 "SHM creation failed.<br>Ensure your system has enough RAM free and your user "
 "has sufficient permissions."
 msgstr ""
+"Falha ao criar SHM.<br>Certifique-se que o seu sistema tem memória RAM livre "
+"e se o utilizador possui as permissões necessárias."
 
 #: src/modules/shot/e_mod_main.c:714
 msgid "Where to put Screenshot..."
@@ -9993,9 +9988,8 @@ msgid "Cannot initialize network"
 msgstr "Não foi possível iniciar a rede"
 
 #: src/modules/syscon/e_int_config_syscon.c:43
-#, fuzzy
 msgid "System Controls Settings"
-msgstr "Controlos do sistema"
+msgstr "Definições de controlos do sistema"
 
 #: src/modules/syscon/e_int_config_syscon.c:158
 msgid "Secondary"
@@ -10200,28 +10194,25 @@ msgstr "Diálogos em mosaico"
 
 #: src/modules/tiling/e_mod_config.c:186
 msgid "Enable floating split-mode"
-msgstr ""
+msgstr "Ativar modo de separação flutuante"
 
 #: src/modules/tiling/e_mod_config.c:191
 msgid "Enable/disable tiling per desktop."
-msgstr ""
+msgstr "Ativar/desativar mosaicos por área de trabalho."
 
 #: src/modules/tiling/e_mod_config.c:224
-#, fuzzy
 msgid "Padding between windows"
-msgstr "Fechar a janela"
+msgstr "Padding entre janelas"
 
 #: src/modules/tiling/e_mod_config.c:230
-#, fuzzy
 msgid "Help"
-msgstr "Mais ajuda"
+msgstr "Ajuda"
 
 #: src/modules/tiling/e_mod_config.c:330
 msgid "Tiling Configuration"
 msgstr "Definições"
 
 #: src/modules/tiling/e_mod_tiling.c:1297
-#, fuzzy
 msgid "Floating"
 msgstr "Flutuante"
 
@@ -10237,34 +10228,28 @@ msgid "Toggle floating"
 msgstr "Alternar flutuantes"
 
 #: src/modules/tiling/e_mod_tiling.c:1385
-#, fuzzy
 msgid "Move the focused window up"
-msgstr "Mover janela para cima"
+msgstr "Mover janela focada para cima"
 
 #: src/modules/tiling/e_mod_tiling.c:1387
-#, fuzzy
 msgid "Move the focused window down"
-msgstr "Mover janela para baixo"
+msgstr "Mover janela focada para baixo"
 
 #: src/modules/tiling/e_mod_tiling.c:1389
-#, fuzzy
 msgid "Move the focused window left"
-msgstr "Mover janela para a esquerda"
+msgstr "Mover janela focada para a esquerda"
 
 #: src/modules/tiling/e_mod_tiling.c:1391
-#, fuzzy
 msgid "Move the focused window right"
-msgstr "Mover janela para a direita"
+msgstr "Mover janela focada para a direita"
 
 #: src/modules/tiling/e_mod_tiling.c:1394
-#, fuzzy
 msgid "Toggle split mode"
-msgstr "Alternar módulo referenciado"
+msgstr "Alternar modo"
 
 #: src/modules/tiling/e_mod_tiling.c:1396
-#, fuzzy
 msgid "Swap window"
-msgstr "janela"
+msgstr "Trocar janela"
 
 #: src/modules/winlist/e_int_config_winlist.c:53
 msgid "Window Switcher Settings"
