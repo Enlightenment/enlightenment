@@ -629,6 +629,7 @@ e_pixmap_image_refresh(E_Pixmap *cp)
      {
       case E_PIXMAP_TYPE_X:
 #ifndef HAVE_WAYLAND_ONLY
+        if (cp->image) return EINA_TRUE;
         if ((!cp->visual) || (!cp->client->depth)) return EINA_FALSE;
         cp->image = ecore_x_image_new(cp->w, cp->h, cp->visual, cp->client->depth);
         if (cp->image)
@@ -654,7 +655,8 @@ e_pixmap_image_exists(const E_Pixmap *cp)
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
 
 #ifndef HAVE_WAYLAND_ONLY
-   return !!cp->image;
+   if (cp->type == E_PIXMAP_TYPE_X)
+     return !!cp->image;
 #endif
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    return (cp->resource != NULL);
