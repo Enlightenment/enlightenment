@@ -1,5 +1,7 @@
 #include "e.h"
 
+#define ACTION_TIMEOUT 30.0
+
 /* local subsystem functions */
 static Eina_Bool _e_sys_cb_timer(void *data);
 static Eina_Bool _e_sys_cb_exit(void *data, int type, void *event);
@@ -35,12 +37,6 @@ static E_Obj_Dialog *_e_sys_dialog = NULL;
 static E_Dialog *_e_sys_logout_confirm_dialog = NULL;
 static Ecore_Timer *_e_sys_susp_hib_check_timer = NULL;
 static double _e_sys_susp_hib_check_last_tick = 0.0;
-static void (*_e_sys_suspend_func)(void) = NULL;
-static void (*_e_sys_hibernate_func)(void) = NULL;
-static void (*_e_sys_reboot_func)(void) = NULL;
-static void (*_e_sys_shutdown_func)(void) = NULL;
-static void (*_e_sys_logout_func)(void) = NULL;
-static void (*_e_sys_resume_func)(void) = NULL;
 
 static void _e_sys_systemd_handle_inhibit(void);
 static void _e_sys_systemd_poweroff(void);
@@ -55,11 +51,131 @@ static int _e_sys_systemd_inhibit_fd = -1;
 static const int E_LOGOUT_AUTO_TIME = 60;
 static const int E_LOGOUT_WAIT_TIME = 15;
 
+static Ecore_Timer *action_timeout = NULL;
+
 static Eldbus_Proxy *login1_manger_proxy = NULL;
 
 EAPI int E_EVENT_SYS_SUSPEND = -1;
 EAPI int E_EVENT_SYS_HIBERNATE = -1;
 EAPI int E_EVENT_SYS_RESUME = -1;
+
+static void
+_e_sys_comp_done_cb(void *data, Evas_Object *obj, const char *sig, const char *src)
+{
+   edje_object_signal_callback_del(obj, sig, src, _e_sys_comp_done_cb);
+   e_sys_action_raw_do((E_Sys_Action)(long)data, NULL);
+   E_FREE_FUNC(action_timeout, ecore_timer_del);
+}
+
+static Eina_Bool
+_e_sys_comp_action_timeout(void *data)
+{
+   const Eina_List *l, *ll;
+   E_Comp *c;
+   E_Zone *zone;
+   E_Sys_Action a = (long)(intptr_t)data;
+   const char *sig = NULL;
+
+   switch (a)
+     {
+      case E_SYS_LOGOUT:
+        sig = "e,state,sys,logout,done";
+        break;
+      case E_SYS_HALT:
+        sig = "e,state,sys,halt,done";
+        break;
+      case E_SYS_REBOOT:
+        sig = "e,state,sys,reboot,done";
+        break;
+      case E_SYS_SUSPEND:
+        sig = "e,state,sys,suspend,done";
+        break;
+      case E_SYS_HIBERNATE:
+        sig = "e,state,sys,hibernate,done";
+        break;
+      default:
+        break;
+     }
+   E_FREE_FUNC(action_timeout, ecore_timer_del);
+   if (sig)
+     {
+        EINA_LIST_FOREACH(e_comp_list(), l, c)
+          EINA_LIST_FOREACH(c->zones, ll, zone)
+            edje_object_signal_callback_del(zone->over, sig, "e", _e_sys_comp_done_cb);
+     }
+   e_sys_action_raw_do(a, NULL);
+   return EINA_FALSE;
+}
+
+static void
+_e_sys_comp_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_Bool nocomp_push)
+{
+   const Eina_List *l, *ll;
+   E_Zone *zone;
+   E_Comp *c;
+   Eina_Bool first = EINA_TRUE;
+
+   EINA_LIST_FOREACH(e_comp_list(), l, c)
+     {
+        if (nocomp_push) e_comp_override_add(c);
+        else e_comp_override_timed_pop(c);
+        EINA_LIST_FOREACH(c->zones, ll, zone)
+          {
+             e_zone_fade_handle(zone, nocomp_push, 0.5);
+             edje_object_signal_emit(zone->base, sig, "e");
+             edje_object_signal_emit(zone->over, sig, "e");
+             if ((rep) && (first))
+               edje_object_signal_callback_add(zone->over, rep, "e", _e_sys_comp_done_cb, (void *)(long)a);
+             first = EINA_FALSE;
+          }
+     }
+   if (rep)
+     {
+        if (action_timeout) ecore_timer_del(action_timeout);
+        action_timeout = ecore_timer_add(ACTION_TIMEOUT, (Ecore_Task_Cb)_e_sys_comp_action_timeout, (intptr_t*)(long)a);
+     }
+}
+
+static void
+_e_sys_comp_suspend(void)
+{
+   _e_sys_comp_emit_cb_wait(E_SYS_SUSPEND, "e,state,sys,suspend", "e,state,sys,suspend,done", EINA_TRUE);
+}
+
+static void
+_e_sys_comp_hibernate(void)
+{
+   _e_sys_comp_emit_cb_wait(E_SYS_HIBERNATE, "e,state,sys,hibernate", "e,state,sys,hibernate,done", EINA_TRUE);
+}
+
+static void
+_e_sys_comp_reboot(void)
+{
+   _e_sys_comp_emit_cb_wait(E_SYS_REBOOT, "e,state,sys,reboot", "e,state,sys,reboot,done", EINA_TRUE);
+}
+
+static void
+_e_sys_comp_shutdown(void)
+{
+   _e_sys_comp_emit_cb_wait(E_SYS_HALT, "e,state,sys,halt", "e,state,sys,halt,done", EINA_TRUE);
+}
+
+static void
+_e_sys_comp_logout(void)
+{
+   _e_sys_comp_emit_cb_wait(E_SYS_LOGOUT, "e,state,sys,logout", "e,state,sys,logout,done", EINA_TRUE);
+}
+
+static void
+_e_sys_comp_resume(void)
+{
+   const Eina_List *l;
+   E_Comp *c;
+
+   EINA_LIST_FOREACH(e_comp_list(), l, c)
+     evas_damage_rectangle_add(c->evas, 0, 0, c->man->w, c->man->h);
+   _e_sys_comp_emit_cb_wait(E_SYS_SUSPEND, "e,state,sys,resume", NULL, EINA_FALSE);
+}
 
 /* externally accessible functions */
 EINTERN int
@@ -173,21 +289,9 @@ e_sys_action_do(E_Sys_Action a, char *param)
         break;
 
       case E_SYS_HALT:
-        if (!e_util_immortal_check())
-          {
-             if (_e_sys_shutdown_func) _e_sys_shutdown_func();
-             else _e_sys_logout_begin(a, EINA_FALSE);
-          }
-        return 1;
-        break;
-
       case E_SYS_REBOOT:
         if (!e_util_immortal_check())
-          {
-             if (_e_sys_reboot_func) _e_sys_reboot_func();
-             else _e_sys_logout_begin(a, EINA_FALSE);
-          }
-        return 1;
+          ret = _e_sys_action_do(a, param, EINA_FALSE);
         break;
 
       default:
@@ -210,27 +314,7 @@ e_sys_action_raw_do(E_Sys_Action a, char *param)
         _e_sys_current_action();
         return 0;
      }
-   switch (a)
-     {
-      case E_SYS_EXIT:
-      case E_SYS_RESTART:
-      case E_SYS_EXIT_NOW:
-      case E_SYS_LOGOUT:
-      case E_SYS_SUSPEND:
-      case E_SYS_HIBERNATE:
-      case E_SYS_HALT_NOW:
-        ret = _e_sys_action_do(a, param, EINA_TRUE);
-        break;
-
-      case E_SYS_HALT:
-      case E_SYS_REBOOT:
-        if (!e_util_immortal_check()) _e_sys_logout_begin(a, EINA_TRUE);
-        return 1;
-        break;
-
-      default:
-        break;
-     }
+   ret = _e_sys_action_do(a, param, EINA_TRUE);
 
    if (ret) _e_sys_action_current = a;
    else _e_sys_action_current = E_SYS_NONE;
@@ -276,22 +360,6 @@ EAPI const Eina_List *
 e_sys_con_extra_action_list_get(void)
 {
    return extra_actions;
-}
-
-EAPI void
-e_sys_handlers_set(void (*suspend_func)(void),
-                   void (*hibernate_func)(void),
-                   void (*reboot_func)(void),
-                   void (*shutdown_func)(void),
-                   void (*logout_func)(void),
-                   void (*resume_func)(void))
-{
-   _e_sys_suspend_func = suspend_func;
-   _e_sys_hibernate_func = hibernate_func;
-   _e_sys_reboot_func = reboot_func;
-   _e_sys_shutdown_func = shutdown_func;
-   _e_sys_logout_func = logout_func;
-   _e_sys_resume_func = resume_func;
 }
 
 static void
@@ -407,7 +475,7 @@ _e_sys_susp_hib_check_timer_cb(void *data __UNUSED__)
              _e_sys_dialog = NULL;
           }
         ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
-        if (_e_sys_resume_func) _e_sys_resume_func();
+        _e_sys_comp_resume();
         return EINA_FALSE;
      }
    _e_sys_susp_hib_check_last_tick = t;
@@ -589,14 +657,15 @@ _e_sys_logout_confirm_dialog_update(int remaining)
 static Eina_Bool
 _e_sys_cb_logout_timer(void *data __UNUSED__)
 {
-   const Eina_List *l, *ll;
+   const Eina_List *l;
    E_Comp *c;
    E_Client *ec;
    int pending = 0;
 
    EINA_LIST_FOREACH(e_comp_list(), l, c)
-     EINA_LIST_FOREACH(c->clients, ll, ec)
+     E_CLIENT_FOREACH(c, ec)
        {
+          if (e_client_util_ignored_get(ec)) continue;
           if (!ec->internal) pending++;
        }
    if (pending == 0) goto after;
@@ -652,13 +721,26 @@ _e_sys_cb_logout_timer(void *data __UNUSED__)
                   e_dialog_show(dia);
                   _e_sys_logout_begin_time = now;
                }
-             if (_e_sys_resume_func) _e_sys_resume_func();
+             _e_sys_comp_resume();
              return ECORE_CALLBACK_RENEW;
           }
      }
    return ECORE_CALLBACK_RENEW;
 after:
-   _e_sys_logout_after();
+   switch (_e_sys_action_after)
+     {
+      case E_SYS_EXIT:
+        _e_sys_comp_logout();
+        break;
+      case E_SYS_HALT:
+      case E_SYS_HALT_NOW:
+        _e_sys_comp_shutdown();
+        break;
+      case E_SYS_REBOOT:
+        _e_sys_comp_reboot();
+        break;
+      default: break;
+     }
    _e_sys_logout_timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
@@ -845,19 +927,11 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
         // XXX TODO: check for e_fm_op_registry entries and confirm
         if (raw)
           {
-             _e_sys_logout_begin(E_SYS_EXIT, raw);
+             _e_sys_logout_after();
           }
         else
           {
-             if (_e_sys_logout_func)
-               {
-                  _e_sys_logout_func();
-                  return 0;
-               }
-             else
-               {
-                  _e_sys_logout_begin(E_SYS_EXIT, raw);
-               }
+             _e_sys_logout_begin(E_SYS_EXIT, raw);
           }
         break;
 
@@ -889,33 +963,21 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                }
              else
                {
-                  if (_e_sys_shutdown_func)
-                    {
-                       _e_sys_shutdown_func();
-                       return 0;
-                    }
-                  else
-                    {
-                       _e_sys_begin_time = ecore_time_get();
-                       if (systemd_works)
-                         _e_sys_systemd_hibernate();
-                       else
-                         {
-                            _e_sys_exe = ecore_exe_run(buf, NULL);
-                            ret = 1;
-                         }
-                       od = e_obj_dialog_new(NULL,
-                                             _("Power off"), "E", "_sys_halt");
-                       e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/halt");
-                       e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
-                                                      _("Power off.<br>"
-                                                        "<hilight>Please wait.</hilight>"));
-                       e_obj_dialog_show(od);
-                       e_obj_dialog_icon_set(od, "system-shutdown");
-                       if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
-                       e_obj_dialog_cb_delete_set(od, _e_sys_dialog_cb_delete);
-                       _e_sys_dialog = od;
-                    }
+                  ret = 0;
+                  _e_sys_begin_time = ecore_time_get();
+
+                  od = e_obj_dialog_new(NULL,
+                                        _("Power off"), "E", "_sys_halt");
+                  e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/halt");
+                  e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
+                                                 _("Power off.<br>"
+                                                   "<hilight>Please wait.</hilight>"));
+                  e_obj_dialog_show(od);
+                  e_obj_dialog_icon_set(od, "system-shutdown");
+                  if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
+                  e_obj_dialog_cb_delete_set(od, _e_sys_dialog_cb_delete);
+                  _e_sys_dialog = od;
+                  _e_sys_logout_begin(a, EINA_TRUE);
                }
              /* FIXME: display halt status */
           }
@@ -948,33 +1010,20 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
                }
              else
                {
-                  if (_e_sys_reboot_func)
-                    {
-                       _e_sys_reboot_func();
-                       return 0;
-                    }
-                  else
-                    {
-                       _e_sys_begin_time = ecore_time_get();
-                       if (systemd_works)
-                         _e_sys_systemd_reboot();
-                       else
-                         {
-                            _e_sys_exe = ecore_exe_run(buf, NULL);
-                            ret = 1;
-                         }
-                       od = e_obj_dialog_new(NULL,
-                                             _("Resetting"), "E", "_sys_reboot");
-                       e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/reboot");
-                       e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
-                                                      _("Resetting.<br>"
-                                                        "<hilight>Please wait.</hilight>"));
-                       e_obj_dialog_show(od);
-                       e_obj_dialog_icon_set(od, "system-restart");
-                       if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
-                       e_obj_dialog_cb_delete_set(od, _e_sys_dialog_cb_delete);
-                       _e_sys_dialog = od;
-                    }
+                  ret = 0;
+                  _e_sys_begin_time = ecore_time_get();
+                  od = e_obj_dialog_new(NULL,
+                                        _("Resetting"), "E", "_sys_reboot");
+                  e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/reboot");
+                  e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
+                                                 _("Resetting.<br>"
+                                                   "<hilight>Please wait.</hilight>"));
+                  e_obj_dialog_show(od);
+                  e_obj_dialog_icon_set(od, "system-restart");
+                  if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
+                  e_obj_dialog_cb_delete_set(od, _e_sys_dialog_cb_delete);
+                  _e_sys_dialog = od;
+                  _e_sys_logout_begin(a, EINA_TRUE);
                }
              /* FIXME: display reboot status */
           }
@@ -1010,38 +1059,8 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
              else
                {
                   ecore_event_add(E_EVENT_SYS_SUSPEND, NULL, NULL, NULL);
-                  if (_e_sys_suspend_func)
-                    {
-                       _e_sys_suspend_func();
-                       return 0;
-                    }
-                  else
-                    {
-                       if (e_config->desklock_on_suspend)
-                         e_desklock_show(EINA_TRUE);
-
-                       _e_sys_susp_hib_check();
-
-                       _e_sys_begin_time = ecore_time_get();
-                       if (systemd_works)
-                         _e_sys_systemd_suspend();
-                       else
-                         {
-                            _e_sys_exe = ecore_exe_run(buf, NULL);
-                            ret = 1;
-                         }
-                       od = e_obj_dialog_new(NULL,
-                                             _("Suspending"), "E", "_sys_suspend");
-                       e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/suspend");
-                       e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
-                                                      _("Suspending.<br>"
-                                                        "<hilight>Please wait.</hilight>"));
-                       e_obj_dialog_show(od);
-                       e_obj_dialog_icon_set(od, "system-suspend");
-                       if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
-                       e_obj_dialog_cb_delete_set(od, _e_sys_dialog_cb_delete);
-                       _e_sys_dialog = od;
-                    }
+                  _e_sys_comp_suspend();
+                  return 0;
                }
              /* FIXME: display suspend status */
           }
@@ -1077,38 +1096,8 @@ _e_sys_action_do(E_Sys_Action a, char *param __UNUSED__, Eina_Bool raw)
              else
                {
                   ecore_event_add(E_EVENT_SYS_HIBERNATE, NULL, NULL, NULL);
-                  if (_e_sys_hibernate_func)
-                    {
-                       _e_sys_hibernate_func();
-                       return 0;
-                    }
-                  else
-                    {
-                       if (e_config->desklock_on_suspend)
-                         e_desklock_show(EINA_TRUE);
-
-                       _e_sys_susp_hib_check();
-
-                       _e_sys_begin_time = ecore_time_get();
-                       if (systemd_works)
-                         _e_sys_systemd_hibernate();
-                       else
-                         {
-                            _e_sys_exe = ecore_exe_run(buf, NULL);
-                            ret = 1;
-                         }
-                       od = e_obj_dialog_new(NULL,
-                                             _("Hibernating"), "E", "_sys_hibernate");
-                       e_obj_dialog_obj_theme_set(od, "base/theme/sys", "e/sys/hibernate");
-                       e_obj_dialog_obj_part_text_set(od, "e.textblock.message",
-                                                      _("Hibernating.<br>"
-                                                        "<hilight>Please wait.</hilight>"));
-                       e_obj_dialog_show(od);
-                       e_obj_dialog_icon_set(od, "system-suspend-hibernate");
-                       if (_e_sys_dialog) e_object_del(E_OBJECT(_e_sys_dialog));
-                       _e_sys_dialog = od;
-                       e_obj_dialog_cb_delete_set(od, _e_sys_dialog_cb_delete);
-                    }
+                  _e_sys_comp_hibernate();
+                  return 0;
                }
              /* FIXME: display hibernate status */
           }

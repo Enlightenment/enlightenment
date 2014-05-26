@@ -3,7 +3,6 @@
 #include "e_comp_wl.h"
 #endif
 
-#define ACTION_TIMEOUT 30.0
 #define OVER_FLOW 1
 //#define SHAPE_DEBUG
 //#define BORDER_ZOOMAPS
@@ -870,124 +869,6 @@ _e_comp_screensaver_off(void *data EINA_UNUSED, int type EINA_UNUSED, void *even
    return ECORE_CALLBACK_PASS_ON;
 }
 
-static void
-_e_comp_sys_done_cb(void *data, Evas_Object *obj, const char *sig, const char *src)
-{
-   edje_object_signal_callback_del(obj, sig, src, _e_comp_sys_done_cb);
-   e_sys_action_raw_do((E_Sys_Action)(long)data, NULL);
-   E_FREE_FUNC(action_timeout, ecore_timer_del);
-}
-
-static Eina_Bool
-_e_comp_sys_action_timeout(void *data)
-{
-   Eina_List *l, *ll;
-   E_Comp *c;
-   E_Zone *zone;
-   E_Sys_Action a = (long)(intptr_t)data;
-   const char *sig = NULL;
-
-   switch (a)
-     {
-      case E_SYS_LOGOUT:
-        sig = "e,state,sys,logout,done";
-        break;
-      case E_SYS_HALT:
-        sig = "e,state,sys,halt,done";
-        break;
-      case E_SYS_REBOOT:
-        sig = "e,state,sys,reboot,done";
-        break;
-      case E_SYS_SUSPEND:
-        sig = "e,state,sys,suspend,done";
-        break;
-      case E_SYS_HIBERNATE:
-        sig = "e,state,sys,hibernate,done";
-        break;
-      default:
-        break;
-     }
-   E_FREE_FUNC(action_timeout, ecore_timer_del);
-   if (sig)
-     {
-        EINA_LIST_FOREACH(compositors, l, c)
-          EINA_LIST_FOREACH(c->zones, ll, zone)
-            edje_object_signal_callback_del(zone->over, sig, "e", _e_comp_sys_done_cb);
-     }
-   e_sys_action_raw_do(a, NULL);
-   return EINA_FALSE;
-}
-
-static void
-_e_comp_sys_emit_cb_wait(E_Sys_Action a, const char *sig, const char *rep, Eina_Bool nocomp_push)
-{
-   Eina_List *l, *ll;
-   E_Zone *zone;
-   E_Comp *c;
-   Eina_Bool first = EINA_TRUE;
-
-   EINA_LIST_FOREACH(compositors, l, c)
-     {
-        if (nocomp_push) e_comp_override_add(c);
-        else e_comp_override_timed_pop(c);
-        EINA_LIST_FOREACH(c->zones, ll, zone)
-          {
-             e_zone_fade_handle(zone, nocomp_push, 0.5);
-             edje_object_signal_emit(zone->base, sig, "e");
-             edje_object_signal_emit(zone->over, sig, "e");
-             if ((rep) && (first))
-               edje_object_signal_callback_add(zone->over, rep, "e", _e_comp_sys_done_cb, (void *)(long)a);
-             first = EINA_FALSE;
-          }
-     }
-   if (rep)
-     {
-        if (action_timeout) ecore_timer_del(action_timeout);
-        action_timeout = ecore_timer_add(ACTION_TIMEOUT, (Ecore_Task_Cb)_e_comp_sys_action_timeout, (intptr_t*)(long)a);
-     }
-}
-
-static void
-_e_comp_sys_suspend(void)
-{
-   _e_comp_sys_emit_cb_wait(E_SYS_SUSPEND, "e,state,sys,suspend", "e,state,sys,suspend,done", EINA_TRUE);
-}
-
-static void
-_e_comp_sys_hibernate(void)
-{
-   _e_comp_sys_emit_cb_wait(E_SYS_HIBERNATE, "e,state,sys,hibernate", "e,state,sys,hibernate,done", EINA_TRUE);
-}
-
-static void
-_e_comp_sys_reboot(void)
-{
-   _e_comp_sys_emit_cb_wait(E_SYS_REBOOT, "e,state,sys,reboot", "e,state,sys,reboot,done", EINA_TRUE);
-}
-
-static void
-_e_comp_sys_shutdown(void)
-{
-   _e_comp_sys_emit_cb_wait(E_SYS_HALT, "e,state,sys,halt", "e,state,sys,halt,done", EINA_TRUE);
-}
-
-static void
-_e_comp_sys_logout(void)
-{
-   _e_comp_sys_emit_cb_wait(E_SYS_LOGOUT, "e,state,sys,logout", "e,state,sys,logout,done", EINA_TRUE);
-}
-
-static void
-_e_comp_sys_resume(void)
-{
-   Eina_List *l;
-   E_Comp *c;
-
-   EINA_LIST_FOREACH(compositors, l, c)
-     evas_damage_rectangle_add(c->evas, 0, 0, c->man->w, c->man->h);
-   _e_comp_sys_emit_cb_wait(E_SYS_SUSPEND, "e,state,sys,resume", NULL, EINA_FALSE);
-}
-
 static Evas_Object *
 _e_comp_act_opacity_obj_finder(E_Object *obj)
 {
@@ -1059,10 +940,6 @@ e_comp_init(void)
 
    E_EVENT_COMPOSITOR_RESIZE = ecore_event_type_new();
    E_EVENT_COMP_OBJECT_ADD = ecore_event_type_new();
-
-   e_sys_handlers_set(_e_comp_sys_suspend, _e_comp_sys_hibernate,
-                      _e_comp_sys_reboot, _e_comp_sys_shutdown,
-                      _e_comp_sys_logout, _e_comp_sys_resume);
 
    ignores = eina_hash_pointer_new(NULL);
 
@@ -1407,7 +1284,6 @@ e_comp_shutdown(void)
 
    E_FREE_FUNC(ignores, eina_hash_free);
 
-   e_sys_handlers_set(NULL, NULL, NULL, NULL, NULL, NULL);
    return 1;
 }
 
