@@ -6,37 +6,37 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: enlightenment\n"
-"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2013-11-29 19:31+0900\n"
-"PO-Revision-Date: 2013-01-05 20:57+0000\n"
+"Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
+"POT-Creation-Date: 2014-05-10 12:12+0200\n"
+"PO-Revision-Date: 2014-05-13 02:01+0000\n"
 "Last-Translator: Mantas Kriaučiūnas <mantas@akl.lt>\n"
 "Language-Team: Lithuanian Translation team\n"
-"Language: lt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && (n"
-"%100<10 || n%100>=20) ? 1 : 2;\n"
-"X-Launchpad-Export-Date: 2013-01-06 04:49+0000\n"
-"X-Generator: Launchpad (build 16393)\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"(n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Launchpad-Export-Date: 2014-05-14 06:33+0000\n"
+"X-Generator: Launchpad (build 17002)\n"
+"Language: lt\n"
 
 #: src/bin/e_about.c:17
 msgid "About Enlightenment"
 msgstr "Apie Enlightenment"
 
-#: src/bin/e_about.c:20 src/bin/e_actions.c:2989 src/bin/e_config_dialog.c:288
+#: src/bin/e_about.c:20 src/bin/e_actions.c:2993 src/bin/e_config_dialog.c:288
 #: src/bin/e_fm.c:1088 src/bin/e_int_border_menu.c:209
 #: src/bin/e_int_border_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf/e_conf.c:179
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:867
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:881
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1201
 #: src/modules/everything/evry_plug_windows.c:452
 #: src/modules/fileman/e_fwin.c:2547 src/modules/mixer/app_mixer.c:502
 msgid "Close"
 msgstr "Užverti"
 
-#: src/bin/e_about.c:21 src/bin/e_actions.c:3361 src/bin/e_actions.c:3365
-#: src/bin/e_actions.c:3369 src/bin/e_int_menus.c:224 src/bin/e_main.c:650
+#: src/bin/e_about.c:21 src/bin/e_actions.c:3365 src/bin/e_actions.c:3369
+#: src/bin/e_actions.c:3373 src/bin/e_init.c:96 src/bin/e_int_menus.c:224
 #: src/modules/conf_interaction/e_int_config_mouse.c:176
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:242
 #: src/modules/wizard/page_000.c:34
@@ -45,10 +45,10 @@ msgstr "Enlightenment"
 
 #: src/bin/e_about.c:26
 msgid ""
-"<title>Copyright &copy; 2000-2013, by the Enlightenment Development Team</"
-"><br><br>We hope you enjoy using this software as much as we enjoyed writing "
-"it.<br><br>To contact us please visit:<br><hilight>http://www.enlightenment."
-"org</><br><br>"
+"<title>Copyright &copy; 2000-2013, by the Enlightenment Development "
+"Team</><br><br>We hope you enjoy using this software as much as we enjoyed "
+"writing it.<br><br>To contact us please "
+"visit:<br><hilight>http://www.enlightenment.org</><br><br>"
 msgstr ""
 
 #: src/bin/e_about.c:69
@@ -67,21 +67,21 @@ msgstr ""
 msgid "Are you sure you want to kill this window?"
 msgstr "Ar tikrai norite priverstinai užverti šį langą?"
 
-#: src/bin/e_actions.c:373 src/bin/e_actions.c:2994
+#: src/bin/e_actions.c:373 src/bin/e_actions.c:2998
 #: src/bin/e_int_border_menu.c:774
 msgid "Kill"
-msgstr "Priverstinai uždaryti"
+msgstr "Nutraukti darbą"
 
 #: src/bin/e_actions.c:375 src/bin/e_actions.c:2125 src/bin/e_actions.c:2219
 #: src/bin/e_actions.c:2279 src/bin/e_actions.c:2339 src/bin/e_actions.c:2404
 #: src/bin/e_actions.c:2469 src/bin/e_confirm_dialog.c:53
-#: src/bin/e_desklock.c:1245 src/bin/e_fm.c:10579 src/bin/e_fm.c:10945
+#: src/bin/e_desklock.c:1247 src/bin/e_fm.c:10589 src/bin/e_fm.c:10956
 #: src/bin/e_screensaver.c:190
 #: src/modules/quickaccess/e_mod_quickaccess.c:1290
 msgid "No"
 msgstr "Ne"
 
-#: src/bin/e_actions.c:2120 src/bin/e_actions.c:3365 src/bin/e_int_menus.c:253
+#: src/bin/e_actions.c:2120 src/bin/e_actions.c:3369 src/bin/e_int_menus.c:253
 msgid "Exit"
 msgstr "Išeiti"
 
@@ -91,8 +91,8 @@ msgstr ""
 
 #: src/bin/e_actions.c:2123 src/bin/e_actions.c:2217 src/bin/e_actions.c:2277
 #: src/bin/e_actions.c:2337 src/bin/e_actions.c:2402 src/bin/e_actions.c:2467
-#: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:1243
-#: src/bin/e_fm.c:10582 src/bin/e_screensaver.c:188
+#: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:1245
+#: src/bin/e_fm.c:10592 src/bin/e_screensaver.c:188
 #: src/modules/quickaccess/e_mod_quickaccess.c:1290
 msgid "Yes"
 msgstr "Taip"
@@ -105,7 +105,7 @@ msgstr "Atsijungti"
 msgid "Are you sure you want to logout?"
 msgstr "Ar tikrai norite užverti visas programas ir atsijungti?"
 
-#: src/bin/e_actions.c:2273 src/bin/e_sys.c:903
+#: src/bin/e_actions.c:2273 src/bin/e_sys.c:904
 msgid "Power off"
 msgstr "Išjungti"
 
@@ -113,7 +113,7 @@ msgstr "Išjungti"
 msgid "Are you sure you want to power off your computer?"
 msgstr "Ar tikrai norite išjungti šį kompiuterį?"
 
-#: src/bin/e_actions.c:2334 src/bin/e_actions.c:3408
+#: src/bin/e_actions.c:2334 src/bin/e_actions.c:3412
 msgid "Reboot"
 msgstr "Paleisti iš naujo"
 
@@ -121,7 +121,7 @@ msgstr "Paleisti iš naujo"
 msgid "Are you sure you want to reboot your computer?"
 msgstr "Ar tikrai norite paleisti šį kompiuterį iš naujo?"
 
-#: src/bin/e_actions.c:2399 src/bin/e_actions.c:3416
+#: src/bin/e_actions.c:2399 src/bin/e_actions.c:3420
 msgid "Suspend"
 msgstr "Užmigdyti"
 
@@ -129,7 +129,7 @@ msgstr "Užmigdyti"
 msgid "Are you sure you want to suspend your computer?"
 msgstr "Ar tikrai norite pristabdyti šį kompiuterį?"
 
-#: src/bin/e_actions.c:2464 src/bin/e_actions.c:3420
+#: src/bin/e_actions.c:2464 src/bin/e_actions.c:3424
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:379
 msgid "Hibernate"
 msgstr "Hibernuoti"
@@ -138,359 +138,363 @@ msgstr "Hibernuoti"
 msgid "Are you sure you want to hibernate your computer?"
 msgstr "Ar tikrai norite hibernuoti šį kompiuterį?"
 
-#: src/bin/e_actions.c:2949 src/bin/e_actions.c:2960 src/bin/e_actions.c:2979
-#: src/bin/e_actions.c:2984 src/bin/e_actions.c:2989 src/bin/e_actions.c:2994
-#: src/bin/e_actions.c:3277 src/bin/e_actions.c:3281 src/bin/e_actions.c:3286
-#: src/bin/e_actions.c:3292 src/bin/e_actions.c:3298 src/bin/e_actions.c:3304
-#: src/modules/shot/e_mod_main.c:982
+#: src/bin/e_actions.c:2953 src/bin/e_actions.c:2964 src/bin/e_actions.c:2983
+#: src/bin/e_actions.c:2988 src/bin/e_actions.c:2993 src/bin/e_actions.c:2998
+#: src/bin/e_actions.c:3281 src/bin/e_actions.c:3285 src/bin/e_actions.c:3290
+#: src/bin/e_actions.c:3296 src/bin/e_actions.c:3302 src/bin/e_actions.c:3308
+#: src/modules/shot/e_mod_main.c:1010
 msgid "Window : Actions"
 msgstr "Langas : Veiksmai"
 
-#: src/bin/e_actions.c:2949 src/bin/e_fm.c:11713
+#: src/bin/e_actions.c:2953 src/bin/e_fm.c:11725
 #: src/bin/e_int_border_menu.c:694
 msgid "Move"
 msgstr "Perkelti"
 
-#: src/bin/e_actions.c:2960 src/bin/e_int_border_menu.c:708
+#: src/bin/e_actions.c:2964 src/bin/e_int_border_menu.c:708
 msgid "Resize"
 msgstr "Keisti dydį"
 
-#: src/bin/e_actions.c:2971 src/bin/e_actions.c:3332 src/bin/e_actions.c:3334
-#: src/bin/e_actions.c:3336 src/bin/e_actions.c:3338 src/bin/e_actions.c:3340
+#: src/bin/e_actions.c:2975 src/bin/e_actions.c:3336 src/bin/e_actions.c:3338
+#: src/bin/e_actions.c:3340 src/bin/e_actions.c:3342 src/bin/e_actions.c:3344
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:336
+#: src/modules/conf_comp/e_mod_config_match.c:84
+#: src/modules/conf_comp/e_mod_config_match.c:406
 msgid "Menu"
 msgstr "Meniu"
 
-#: src/bin/e_actions.c:2971
+#: src/bin/e_actions.c:2975
 msgid "Window Menu"
 msgstr "Lango meniu"
 
-#: src/bin/e_actions.c:2979 src/bin/e_int_border_menu.c:1085
+#: src/bin/e_actions.c:2983 src/bin/e_int_border_menu.c:1085
 #: src/modules/winlist/e_int_config_winlist.c:207
 msgid "Raise"
 msgstr "Pakelti"
 
-#: src/bin/e_actions.c:2984 src/bin/e_int_border_menu.c:1093
+#: src/bin/e_actions.c:2988 src/bin/e_int_border_menu.c:1093
 msgid "Lower"
 msgstr "Nuleisti"
 
-#: src/bin/e_actions.c:2999 src/bin/e_actions.c:3003 src/bin/e_actions.c:3008
-#: src/bin/e_actions.c:3012 src/bin/e_actions.c:3017 src/bin/e_actions.c:3021
-#: src/bin/e_actions.c:3026 src/bin/e_actions.c:3028 src/bin/e_actions.c:3031
-#: src/bin/e_actions.c:3034 src/bin/e_actions.c:3037 src/bin/e_actions.c:3040
-#: src/bin/e_actions.c:3042 src/bin/e_actions.c:3044 src/bin/e_actions.c:3046
-#: src/bin/e_actions.c:3053 src/bin/e_actions.c:3055 src/bin/e_actions.c:3057
-#: src/bin/e_actions.c:3059 src/bin/e_actions.c:3061 src/bin/e_actions.c:3065
-#: src/bin/e_actions.c:3070 src/bin/e_actions.c:3075 src/bin/e_actions.c:3081
-#: src/bin/e_actions.c:3087
+#: src/bin/e_actions.c:3003 src/bin/e_actions.c:3007 src/bin/e_actions.c:3012
+#: src/bin/e_actions.c:3016 src/bin/e_actions.c:3021 src/bin/e_actions.c:3025
+#: src/bin/e_actions.c:3030 src/bin/e_actions.c:3032 src/bin/e_actions.c:3035
+#: src/bin/e_actions.c:3038 src/bin/e_actions.c:3041 src/bin/e_actions.c:3044
+#: src/bin/e_actions.c:3046 src/bin/e_actions.c:3048 src/bin/e_actions.c:3050
+#: src/bin/e_actions.c:3057 src/bin/e_actions.c:3059 src/bin/e_actions.c:3061
+#: src/bin/e_actions.c:3063 src/bin/e_actions.c:3065 src/bin/e_actions.c:3069
+#: src/bin/e_actions.c:3074 src/bin/e_actions.c:3079 src/bin/e_actions.c:3085
+#: src/bin/e_actions.c:3091
 msgid "Window : State"
 msgstr "Langas : Būsena"
 
-#: src/bin/e_actions.c:2999
+#: src/bin/e_actions.c:3003
 msgid "Sticky Mode Toggle"
 msgstr "Perjungti prilipimo veikseną"
 
-#: src/bin/e_actions.c:3003
+#: src/bin/e_actions.c:3007
 msgid "Sticky Mode Enable"
 msgstr ""
 
-#: src/bin/e_actions.c:3008
+#: src/bin/e_actions.c:3012
 msgid "Iconic Mode Toggle"
 msgstr "Perjungti piktogramų veikseną"
 
-#: src/bin/e_actions.c:3012
+#: src/bin/e_actions.c:3016
 msgid "Iconic Mode Enable"
 msgstr ""
 
-#: src/bin/e_actions.c:3017
+#: src/bin/e_actions.c:3021
 msgid "Fullscreen Mode Toggle"
 msgstr "Perjungti pilno ekrano veikseną"
 
-#: src/bin/e_actions.c:3021
+#: src/bin/e_actions.c:3025
 msgid "Fullscreen Mode Enable"
 msgstr ""
 
-#: src/bin/e_actions.c:3026 src/bin/e_int_border_menu.c:409
+#: src/bin/e_actions.c:3030 src/bin/e_int_border_menu.c:409
 #: src/bin/e_int_border_menu.c:669
 msgid "Maximize"
 msgstr "Padidinti"
 
-#: src/bin/e_actions.c:3028 src/bin/e_int_border_menu.c:420
+#: src/bin/e_actions.c:3032 src/bin/e_int_border_menu.c:420
 msgid "Maximize Vertically"
 msgstr "Padidinti vertikaliai"
 
-#: src/bin/e_actions.c:3031 src/bin/e_int_border_menu.c:431
+#: src/bin/e_actions.c:3035 src/bin/e_int_border_menu.c:431
 msgid "Maximize Horizontally"
 msgstr "Padidinti horizontaliai"
 
-#: src/bin/e_actions.c:3034 src/bin/e_int_border_menu.c:442
+#: src/bin/e_actions.c:3038 src/bin/e_int_border_menu.c:442
 msgid "Maximize Left"
 msgstr ""
 
-#: src/bin/e_actions.c:3037 src/bin/e_int_border_menu.c:453
+#: src/bin/e_actions.c:3041 src/bin/e_int_border_menu.c:453
 msgid "Maximize Right"
 msgstr ""
 
-#: src/bin/e_actions.c:3040
+#: src/bin/e_actions.c:3044
 msgid "Maximize Fullscreen"
 msgstr "Padidinti per visą ekraną"
 
-#: src/bin/e_actions.c:3042
+#: src/bin/e_actions.c:3046
 msgid "Maximize Mode \"Smart\""
 msgstr "\"Gudri\" padidinimo veiksena"
 
-#: src/bin/e_actions.c:3044
+#: src/bin/e_actions.c:3048
 msgid "Maximize Mode \"Expand\""
 msgstr "\"Išplėtimo\" padidinimo veiksena"
 
-#: src/bin/e_actions.c:3046
+#: src/bin/e_actions.c:3050
 msgid "Maximize Mode \"Fill\""
 msgstr "\"Užpildymo\" padidinimo veiksena"
 
-#: src/bin/e_actions.c:3053
+#: src/bin/e_actions.c:3057
 msgid "Shade Up Mode Toggle"
 msgstr "Paslėpimo aukštyn veiksenos perjungimas"
 
-#: src/bin/e_actions.c:3055
+#: src/bin/e_actions.c:3059
 msgid "Shade Down Mode Toggle"
 msgstr "Paslėpimo žemyn veiksenos perjungimas"
 
-#: src/bin/e_actions.c:3057
+#: src/bin/e_actions.c:3061
 msgid "Shade Left Mode Toggle"
 msgstr "Paslėpimo kairėn veiksenos perjungimas"
 
-#: src/bin/e_actions.c:3059
+#: src/bin/e_actions.c:3063
 msgid "Shade Right Mode Toggle"
 msgstr "Paslėpimo dešinėn veiksenos perjungimas"
 
-#: src/bin/e_actions.c:3061
+#: src/bin/e_actions.c:3065
 msgid "Shade Mode Toggle"
 msgstr "Paslėpimo veiksenos perjungimas"
 
-#: src/bin/e_actions.c:3065
+#: src/bin/e_actions.c:3069
 msgid "Set Shaded State"
 msgstr ""
 
-#: src/bin/e_actions.c:3066
+#: src/bin/e_actions.c:3070
 msgid "syntax: \"(0|1) (up|down|left|right)\""
 msgstr ""
 
-#: src/bin/e_actions.c:3070
+#: src/bin/e_actions.c:3074
 msgid "Toggle Borderless State"
 msgstr "Būsenos be rėmelių perjungimas"
 
-#: src/bin/e_actions.c:3075
+#: src/bin/e_actions.c:3079
 msgid "Set Border"
 msgstr ""
 
-#: src/bin/e_actions.c:3081
+#: src/bin/e_actions.c:3085
 msgid "Cycle between Borders"
 msgstr ""
 
-#: src/bin/e_actions.c:3087
+#: src/bin/e_actions.c:3091
 msgid "Toggle Pinned State"
 msgstr "Prisegimo būsenos perjungimas"
 
-#: src/bin/e_actions.c:3092 src/bin/e_actions.c:3094 src/bin/e_actions.c:3096
-#: src/bin/e_actions.c:3098 src/bin/e_actions.c:3100 src/bin/e_actions.c:3106
-#: src/bin/e_actions.c:3111 src/bin/e_actions.c:3117 src/bin/e_actions.c:3122
-#: src/bin/e_actions.c:3128 src/bin/e_actions.c:3134 src/bin/e_actions.c:3136
-#: src/bin/e_actions.c:3138 src/bin/e_actions.c:3140 src/bin/e_actions.c:3142
-#: src/bin/e_actions.c:3144 src/bin/e_actions.c:3146 src/bin/e_actions.c:3148
-#: src/bin/e_actions.c:3150 src/bin/e_actions.c:3152 src/bin/e_actions.c:3154
-#: src/bin/e_actions.c:3156 src/bin/e_actions.c:3158 src/bin/e_actions.c:3164
-#: src/bin/e_actions.c:3166 src/bin/e_actions.c:3168 src/bin/e_actions.c:3170
-#: src/bin/e_actions.c:3172 src/bin/e_actions.c:3178 src/bin/e_actions.c:3184
-#: src/bin/e_actions.c:3190 src/bin/e_actions.c:3195 src/bin/e_actions.c:3197
-#: src/bin/e_actions.c:3199 src/bin/e_actions.c:3201 src/bin/e_actions.c:3203
-#: src/bin/e_actions.c:3205 src/bin/e_actions.c:3207 src/bin/e_actions.c:3209
-#: src/bin/e_actions.c:3211 src/bin/e_actions.c:3213 src/bin/e_actions.c:3215
-#: src/bin/e_actions.c:3217 src/bin/e_actions.c:3219 src/bin/e_actions.c:3432
-#: src/bin/e_actions.c:3437 src/bin/e_int_menus.c:186
+#: src/bin/e_actions.c:3096 src/bin/e_actions.c:3098 src/bin/e_actions.c:3100
+#: src/bin/e_actions.c:3102 src/bin/e_actions.c:3104 src/bin/e_actions.c:3110
+#: src/bin/e_actions.c:3115 src/bin/e_actions.c:3121 src/bin/e_actions.c:3126
+#: src/bin/e_actions.c:3132 src/bin/e_actions.c:3138 src/bin/e_actions.c:3140
+#: src/bin/e_actions.c:3142 src/bin/e_actions.c:3144 src/bin/e_actions.c:3146
+#: src/bin/e_actions.c:3148 src/bin/e_actions.c:3150 src/bin/e_actions.c:3152
+#: src/bin/e_actions.c:3154 src/bin/e_actions.c:3156 src/bin/e_actions.c:3158
+#: src/bin/e_actions.c:3160 src/bin/e_actions.c:3162 src/bin/e_actions.c:3168
+#: src/bin/e_actions.c:3170 src/bin/e_actions.c:3172 src/bin/e_actions.c:3174
+#: src/bin/e_actions.c:3176 src/bin/e_actions.c:3182 src/bin/e_actions.c:3188
+#: src/bin/e_actions.c:3194 src/bin/e_actions.c:3199 src/bin/e_actions.c:3201
+#: src/bin/e_actions.c:3203 src/bin/e_actions.c:3205 src/bin/e_actions.c:3207
+#: src/bin/e_actions.c:3209 src/bin/e_actions.c:3211 src/bin/e_actions.c:3213
+#: src/bin/e_actions.c:3215 src/bin/e_actions.c:3217 src/bin/e_actions.c:3219
+#: src/bin/e_actions.c:3221 src/bin/e_actions.c:3223 src/bin/e_actions.c:3436
+#: src/bin/e_actions.c:3441 src/bin/e_int_menus.c:186
 #: src/bin/e_int_shelf_config.c:293
+#: src/modules/conf_comp/e_mod_config_match.c:76
+#: src/modules/conf_comp/e_mod_config_match.c:398
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:118
 #: src/modules/fileman/e_mod_menu.c:432 src/modules/gadman/e_mod_gadman.c:120
 #: src/modules/ibox/e_mod_config.c:166
 msgid "Desktop"
 msgstr "Darbalaukis"
 
-#: src/bin/e_actions.c:3092
+#: src/bin/e_actions.c:3096
 msgid "Flip Desktop Left"
 msgstr "Versti darbalaukį kairėn"
 
-#: src/bin/e_actions.c:3094
+#: src/bin/e_actions.c:3098
 msgid "Flip Desktop Right"
 msgstr "Versti darbalaukį dešinėn"
 
-#: src/bin/e_actions.c:3096
+#: src/bin/e_actions.c:3100
 msgid "Flip Desktop Up"
 msgstr "Versti darbalaukį aukštyn"
 
-#: src/bin/e_actions.c:3098
+#: src/bin/e_actions.c:3102
 msgid "Flip Desktop Down"
 msgstr "Versti darbalaukį žemyn"
 
-#: src/bin/e_actions.c:3100
+#: src/bin/e_actions.c:3104
 msgid "Flip Desktop By..."
 msgstr "Versti darbalaukį per ..."
 
-#: src/bin/e_actions.c:3106
+#: src/bin/e_actions.c:3110
 msgid "Flip To Previous Desktop"
 msgstr ""
 
-#: src/bin/e_actions.c:3111
+#: src/bin/e_actions.c:3115
 msgid "Show The Desktop"
 msgstr "Rodyti darbalaukį"
 
-#: src/bin/e_actions.c:3117
+#: src/bin/e_actions.c:3121
 msgid "Show The Shelf"
 msgstr "Rodyti lentyną"
 
-#: src/bin/e_actions.c:3122
+#: src/bin/e_actions.c:3126
 msgid "Flip Desktop To..."
 msgstr "Versti darbalaukį į ..."
 
-#: src/bin/e_actions.c:3128
+#: src/bin/e_actions.c:3132
 msgid "Flip Desktop Linearly..."
 msgstr "Versti darbalaukį tiesiai ..."
 
-#: src/bin/e_actions.c:3134
+#: src/bin/e_actions.c:3138
 msgid "Switch To Desktop 0"
 msgstr "Persijungti į darbalaukį 0"
 
-#: src/bin/e_actions.c:3136
+#: src/bin/e_actions.c:3140
 msgid "Switch To Desktop 1"
 msgstr "Persijungti į darbalaukį 1"
 
-#: src/bin/e_actions.c:3138
+#: src/bin/e_actions.c:3142
 msgid "Switch To Desktop 2"
 msgstr "Persijungti į darbalaukį 2"
 
-#: src/bin/e_actions.c:3140
+#: src/bin/e_actions.c:3144
 msgid "Switch To Desktop 3"
 msgstr "Persijungti į darbalaukį 3"
 
-#: src/bin/e_actions.c:3142
+#: src/bin/e_actions.c:3146
 msgid "Switch To Desktop 4"
 msgstr "Persijungti į darbalaukį 4"
 
-#: src/bin/e_actions.c:3144
+#: src/bin/e_actions.c:3148
 msgid "Switch To Desktop 5"
 msgstr "Persijungti į darbalaukį 5"
 
-#: src/bin/e_actions.c:3146
+#: src/bin/e_actions.c:3150
 msgid "Switch To Desktop 6"
 msgstr "Persijungti į darbalaukį 6"
 
-#: src/bin/e_actions.c:3148
+#: src/bin/e_actions.c:3152
 msgid "Switch To Desktop 7"
 msgstr "Persijungti į darbalaukį 7"
 
-#: src/bin/e_actions.c:3150
+#: src/bin/e_actions.c:3154
 msgid "Switch To Desktop 8"
 msgstr "Persijungti į darbalaukį 8"
 
-#: src/bin/e_actions.c:3152
+#: src/bin/e_actions.c:3156
 msgid "Switch To Desktop 9"
 msgstr "Persijungti į darbalaukį 9"
 
-#: src/bin/e_actions.c:3154
+#: src/bin/e_actions.c:3158
 msgid "Switch To Desktop 10"
 msgstr "Persijungti į darbalaukį 10"
 
-#: src/bin/e_actions.c:3156
+#: src/bin/e_actions.c:3160
 msgid "Switch To Desktop 11"
 msgstr "Persijungti į darbalaukį 11"
 
-#: src/bin/e_actions.c:3158
+#: src/bin/e_actions.c:3162
 msgid "Switch To Desktop..."
 msgstr "Persijungti į darbalaukį ..."
 
-#: src/bin/e_actions.c:3164
+#: src/bin/e_actions.c:3168
 msgid "Flip Desktop Left (All Screens)"
 msgstr "Versti darbalaukį kairėn (Visus ekranus)"
 
-#: src/bin/e_actions.c:3166
+#: src/bin/e_actions.c:3170
 msgid "Flip Desktop Right (All Screens)"
 msgstr "Versti darbalaukį dešinėn (Visus ekranus)"
 
-#: src/bin/e_actions.c:3168
+#: src/bin/e_actions.c:3172
 msgid "Flip Desktop Up (All Screens)"
 msgstr "Versti darbalaukį aukštyn (Visus ekranus)"
 
-#: src/bin/e_actions.c:3170
+#: src/bin/e_actions.c:3174
 msgid "Flip Desktop Down (All Screens)"
 msgstr "Versti darbalaukį žemyn (Visus ekranus)"
 
-#: src/bin/e_actions.c:3172
+#: src/bin/e_actions.c:3176
 msgid "Flip Desktop By... (All Screens)"
 msgstr "Versti darbalaukį per ... (Visus ekranus)"
 
-#: src/bin/e_actions.c:3178
+#: src/bin/e_actions.c:3182
 msgid "Flip Desktop To... (All Screens)"
 msgstr "Versti darbalaukį į ... (Visus ekranus)"
 
-#: src/bin/e_actions.c:3184
+#: src/bin/e_actions.c:3188
 msgid "Flip Desktop Linearly... (All Screens)"
 msgstr "Versti darbalaukį tiesiškai ... (Visus ekranus)"
 
-#: src/bin/e_actions.c:3190
+#: src/bin/e_actions.c:3194
 msgid "Flip Desktop In Direction..."
 msgstr "Versti darbalaukį šia kryptimi ..."
 
-#: src/bin/e_actions.c:3195
+#: src/bin/e_actions.c:3199
 msgid "Switch To Desktop 0 (All Screens)"
 msgstr "Persijungti į darbalaukį 0 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3197
+#: src/bin/e_actions.c:3201
 msgid "Switch To Desktop 1 (All Screens)"
 msgstr "Persijungti į darbalaukį 1 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3199
+#: src/bin/e_actions.c:3203
 msgid "Switch To Desktop 2 (All Screens)"
 msgstr "Persijungti į darbalaukį 2 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3201
+#: src/bin/e_actions.c:3205
 msgid "Switch To Desktop 3 (All Screens)"
 msgstr "Persijungti į darbalaukį 3 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3203
+#: src/bin/e_actions.c:3207
 msgid "Switch To Desktop 4 (All Screens)"
 msgstr "Persijungti į darbalaukį 4 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3205
+#: src/bin/e_actions.c:3209
 msgid "Switch To Desktop 5 (All Screens)"
 msgstr "Persijungti į darbalaukį 5 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3207
+#: src/bin/e_actions.c:3211
 msgid "Switch To Desktop 6 (All Screens)"
 msgstr "Persijungti į darbalaukį 6 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3209
+#: src/bin/e_actions.c:3213
 msgid "Switch To Desktop 7 (All Screens)"
 msgstr "Persijungti į darbalaukį 7 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3211
+#: src/bin/e_actions.c:3215
 msgid "Switch To Desktop 8 (All Screens)"
 msgstr "Persijungti į darbalaukį 8 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3213
+#: src/bin/e_actions.c:3217
 msgid "Switch To Desktop 9 (All Screens)"
 msgstr "Persijungti į darbalaukį 9 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3215
+#: src/bin/e_actions.c:3219
 msgid "Switch To Desktop 10 (All Screens)"
 msgstr "Persijungti į darbalaukį 10 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3217
+#: src/bin/e_actions.c:3221
 msgid "Switch To Desktop 11 (All Screens)"
 msgstr "Persijungti į darbalaukį 11 (Visus ekranus)"
 
-#: src/bin/e_actions.c:3219
+#: src/bin/e_actions.c:3223
 msgid "Switch To Desktop... (All Screens)"
 msgstr "Persijungti į darbalaukį ... (Visus ekranus)"
 
-#: src/bin/e_actions.c:3225 src/bin/e_actions.c:3229
+#: src/bin/e_actions.c:3229 src/bin/e_actions.c:3233
 #: src/modules/winlist/e_mod_main.c:41 src/modules/winlist/e_mod_main.c:43
 #: src/modules/winlist/e_mod_main.c:45 src/modules/winlist/e_mod_main.c:48
 #: src/modules/winlist/e_mod_main.c:51 src/modules/winlist/e_mod_main.c:54
@@ -499,280 +503,281 @@ msgstr "Persijungti į darbalaukį ... (Visus ekranus)"
 msgid "Window : List"
 msgstr "Langas : Sąrašas"
 
-#: src/bin/e_actions.c:3225
+#: src/bin/e_actions.c:3229
 msgid "Jump to window..."
 msgstr ""
 
-#: src/bin/e_actions.c:3229
+#: src/bin/e_actions.c:3233
 msgid "Jump to window... or start..."
 msgstr ""
 
-#: src/bin/e_actions.c:3234 src/bin/e_actions.c:3236 src/bin/e_actions.c:3238
-#: src/bin/e_actions.c:3244 src/bin/e_actions.c:3246 src/bin/e_actions.c:3248
-#: src/bin/e_actions.c:3253 src/bin/e_actions.c:3256 src/bin/e_actions.c:3259
-#: src/bin/e_actions.c:3261 src/bin/e_actions.c:3263 src/bin/e_actions.c:3265
-#: src/bin/e_actions.c:3268 src/bin/e_actions.c:3270 src/bin/e_actions.c:3272
+#: src/bin/e_actions.c:3238 src/bin/e_actions.c:3240 src/bin/e_actions.c:3242
+#: src/bin/e_actions.c:3248 src/bin/e_actions.c:3250 src/bin/e_actions.c:3252
+#: src/bin/e_actions.c:3257 src/bin/e_actions.c:3260 src/bin/e_actions.c:3263
+#: src/bin/e_actions.c:3265 src/bin/e_actions.c:3267 src/bin/e_actions.c:3269
+#: src/bin/e_actions.c:3272 src/bin/e_actions.c:3274 src/bin/e_actions.c:3276
 #: src/modules/backlight/e_mod_main.c:465
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:16 src/modules/ibox/e_mod_config.c:135
-#: src/modules/shot/e_mod_main.c:740 src/modules/shot/e_mod_main.c:975
+#: src/modules/shot/e_mod_main.c:768 src/modules/shot/e_mod_main.c:1003
 msgid "Screen"
 msgstr "Ekranas"
 
-#: src/bin/e_actions.c:3234
+#: src/bin/e_actions.c:3238
 msgid "Send Mouse To Screen 0"
 msgstr "Perkelti žymeklį į ekraną 0"
 
-#: src/bin/e_actions.c:3236
+#: src/bin/e_actions.c:3240
 msgid "Send Mouse To Screen 1"
 msgstr "Perkelti žymeklį į ekraną 1"
 
-#: src/bin/e_actions.c:3238
+#: src/bin/e_actions.c:3242
 msgid "Send Mouse To Screen..."
 msgstr "Perkelti žymeklį į ekraną ..."
 
-#: src/bin/e_actions.c:3244
+#: src/bin/e_actions.c:3248
 msgid "Send Mouse Forward 1 Screen"
 msgstr "Perkelti žymeklį pirmyn per vieną ekraną"
 
-#: src/bin/e_actions.c:3246
+#: src/bin/e_actions.c:3250
 msgid "Send Mouse Back 1 Screen"
 msgstr "Perkelti žymeklį atgal per vieną ekraną"
 
-#: src/bin/e_actions.c:3248
+#: src/bin/e_actions.c:3252
 msgid "Send Mouse Forward/Back Screens..."
 msgstr "Perkelti žymeklį pirmyn/atgal per ekranus ..."
 
-#: src/bin/e_actions.c:3253
+#: src/bin/e_actions.c:3257
 msgid "Dim"
 msgstr ""
 
-#: src/bin/e_actions.c:3256
+#: src/bin/e_actions.c:3260
 msgid "Undim"
 msgstr ""
 
-#: src/bin/e_actions.c:3259
+#: src/bin/e_actions.c:3263
 msgid "Backlight Set"
 msgstr ""
 
-#: src/bin/e_actions.c:3261
+#: src/bin/e_actions.c:3265
 msgid "Backlight Min"
 msgstr ""
 
-#: src/bin/e_actions.c:3263
+#: src/bin/e_actions.c:3267
 msgid "Backlight Mid"
 msgstr ""
 
-#: src/bin/e_actions.c:3265
+#: src/bin/e_actions.c:3269
 msgid "Backlight Max"
 msgstr ""
 
-#: src/bin/e_actions.c:3268
+#: src/bin/e_actions.c:3272
 msgid "Backlight Adjust"
 msgstr ""
 
-#: src/bin/e_actions.c:3270
+#: src/bin/e_actions.c:3274
 msgid "Backlight Up"
 msgstr ""
 
-#: src/bin/e_actions.c:3272
+#: src/bin/e_actions.c:3276
 msgid "Backlight Down"
 msgstr ""
 
-#: src/bin/e_actions.c:3277
+#: src/bin/e_actions.c:3281
 msgid "Move To Center"
 msgstr "Perkelti į centrą"
 
-#: src/bin/e_actions.c:3281
+#: src/bin/e_actions.c:3285
 msgid "Move To Coordinates..."
 msgstr ""
 
-#: src/bin/e_actions.c:3286
+#: src/bin/e_actions.c:3290
 msgid "Move By Coordinate Offset..."
 msgstr ""
 
-#: src/bin/e_actions.c:3292
+#: src/bin/e_actions.c:3296
 msgid "Resize By..."
 msgstr ""
 
-#: src/bin/e_actions.c:3298
+#: src/bin/e_actions.c:3302
 msgid "Push in Direction..."
 msgstr ""
 
-#: src/bin/e_actions.c:3304
+#: src/bin/e_actions.c:3308
 msgid "Drag Icon..."
 msgstr ""
 
-#: src/bin/e_actions.c:3309 src/bin/e_actions.c:3311 src/bin/e_actions.c:3313
-#: src/bin/e_actions.c:3319 src/bin/e_actions.c:3325 src/bin/e_actions.c:3327
+#: src/bin/e_actions.c:3313 src/bin/e_actions.c:3315 src/bin/e_actions.c:3317
+#: src/bin/e_actions.c:3323 src/bin/e_actions.c:3329 src/bin/e_actions.c:3331
 msgid "Window : Moving"
 msgstr "Langas : Perkėlimas"
 
-#: src/bin/e_actions.c:3309
+#: src/bin/e_actions.c:3313
 msgid "To Next Desktop"
 msgstr "Į kitą darbalaukį"
 
-#: src/bin/e_actions.c:3311
+#: src/bin/e_actions.c:3315
 msgid "To Previous Desktop"
 msgstr "Į ankstesnį darbalaukį"
 
-#: src/bin/e_actions.c:3313
+#: src/bin/e_actions.c:3317
 msgid "By Desktop #..."
 msgstr "Pagal darbalaukio # ..."
 
-#: src/bin/e_actions.c:3319
+#: src/bin/e_actions.c:3323
 msgid "To Desktop..."
 msgstr "Į darbalaukį ..."
 
-#: src/bin/e_actions.c:3325
+#: src/bin/e_actions.c:3329
 msgid "To Next Screen"
 msgstr ""
 
-#: src/bin/e_actions.c:3327
+#: src/bin/e_actions.c:3331
 msgid "To Previous Screen"
 msgstr ""
 
-#: src/bin/e_actions.c:3332
+#: src/bin/e_actions.c:3336
 msgid "Show Main Menu"
 msgstr "Rodyti pagrindinį meniu"
 
-#: src/bin/e_actions.c:3334
+#: src/bin/e_actions.c:3338
 msgid "Show Favorites Menu"
 msgstr "Rodyti mėgstamiausių meniu"
 
-#: src/bin/e_actions.c:3336
+#: src/bin/e_actions.c:3340
 msgid "Show All Applications Menu"
 msgstr "Rodyti visų programų meniu"
 
-#: src/bin/e_actions.c:3338
+#: src/bin/e_actions.c:3342
 msgid "Show Clients Menu"
 msgstr "Rodyti klientų meniu"
 
-#: src/bin/e_actions.c:3340
+#: src/bin/e_actions.c:3344
 msgid "Show Menu..."
 msgstr "Rodyti meniu ..."
 
-#: src/bin/e_actions.c:3347 src/bin/e_actions.c:3352 src/bin/e_actions.c:3357
-#: src/modules/conf/e_mod_main.c:278
-#: src/modules/everything/evry_plug_apps.c:1169
+#: src/bin/e_actions.c:3351 src/bin/e_actions.c:3356 src/bin/e_actions.c:3361
+#: src/modules/conf/e_mod_main.c:273
+#: src/modules/everything/evry_plug_apps.c:1170
 #: src/modules/fileman/e_mod_main.c:57
 msgid "Launch"
 msgstr "Vykdyti"
 
-#: src/bin/e_actions.c:3347 src/bin/e_int_border_prop.c:468
+#: src/bin/e_actions.c:3351 src/bin/e_int_border_prop.c:468
 msgid "Command"
 msgstr "Komanda"
 
-#: src/bin/e_actions.c:3352 src/bin/e_desktop_editor.c:694
+#: src/bin/e_actions.c:3356 src/bin/e_desktop_editor.c:696
 #: src/bin/e_int_border_menu.c:119
 #, c-format
 msgid "Application"
 msgstr "Programa"
 
-#: src/bin/e_actions.c:3357
+#: src/bin/e_actions.c:3361
 msgid "New Instance of Focused App"
 msgstr ""
 
-#: src/bin/e_actions.c:3361 src/bin/e_int_menus.c:248
+#: src/bin/e_actions.c:3365 src/bin/e_int_menus.c:248
 msgid "Restart"
 msgstr "Paleisti iš naujo"
 
-#: src/bin/e_actions.c:3369
+#: src/bin/e_actions.c:3373
 msgid "Exit Now"
 msgstr "Išeiti dabar"
 
-#: src/bin/e_actions.c:3373 src/bin/e_actions.c:3378
+#: src/bin/e_actions.c:3377 src/bin/e_actions.c:3382
 msgid "Enlightenment : Mode"
 msgstr "Enlightenment : Veiksena"
 
-#: src/bin/e_actions.c:3374
+#: src/bin/e_actions.c:3378
 msgid "Presentation Mode Toggle"
 msgstr "Perjungti pristatymo veikseną"
 
-#: src/bin/e_actions.c:3379
+#: src/bin/e_actions.c:3383
 msgid "Offline Mode Toggle"
 msgstr "Perjungti atjungties veikseną"
 
-#: src/bin/e_actions.c:3383 src/bin/e_actions.c:3387 src/bin/e_actions.c:3391
+#: src/bin/e_actions.c:3387 src/bin/e_actions.c:3391 src/bin/e_actions.c:3395
 msgid "Enlightenment : Module"
 msgstr ""
 
-#: src/bin/e_actions.c:3384
+#: src/bin/e_actions.c:3388
 msgid "Enable the named module"
 msgstr ""
 
-#: src/bin/e_actions.c:3388
+#: src/bin/e_actions.c:3392
 msgid "Disable the named module"
 msgstr ""
 
-#: src/bin/e_actions.c:3392
+#: src/bin/e_actions.c:3396
 msgid "Toggle the named module"
 msgstr ""
 
-#: src/bin/e_actions.c:3396 src/bin/e_actions.c:3400 src/bin/e_actions.c:3404
-#: src/bin/e_actions.c:3408 src/bin/e_actions.c:3412 src/bin/e_actions.c:3416
-#: src/bin/e_actions.c:3420 src/bin/e_actions.c:3424 src/bin/e_configure.c:411
+#: src/bin/e_actions.c:3400 src/bin/e_actions.c:3404 src/bin/e_actions.c:3408
+#: src/bin/e_actions.c:3412 src/bin/e_actions.c:3416 src/bin/e_actions.c:3420
+#: src/bin/e_actions.c:3424 src/bin/e_actions.c:3428 src/bin/e_configure.c:411
 #: src/bin/e_int_config_modules.c:52
 #: src/modules/conf_applications/e_int_config_apps.c:278
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:87
 #: src/modules/conf_intl/e_int_config_imc.c:808
-#: src/modules/conf_theme/e_int_config_theme.c:666
+#: src/modules/conf_theme/e_int_config_theme.c:665
 #: src/modules/conf_theme/e_int_config_wallpaper.c:427
 #: src/modules/conf_theme/e_int_config_wallpaper.c:582
 #: src/modules/gadman/e_mod_config.c:252 src/modules/syscon/e_mod_main.c:31
 #: src/modules/syscon/e_mod_main.c:35 src/modules/syscon/e_mod_main.c:129
+#: src/modules/syscon/e_syscon_gadget.c:141
 msgid "System"
 msgstr "Sistema"
 
-#: src/bin/e_actions.c:3396
+#: src/bin/e_actions.c:3400
 msgid "Log Out"
 msgstr "Atsijungti"
 
-#: src/bin/e_actions.c:3400
+#: src/bin/e_actions.c:3404
 msgid "Power Off Now"
 msgstr "Iš kart išjungti"
 
-#: src/bin/e_actions.c:3404
+#: src/bin/e_actions.c:3408
 msgid "Power Off"
 msgstr "Išjungti"
 
-#: src/bin/e_actions.c:3412
+#: src/bin/e_actions.c:3416
 msgid "Suspend Now"
 msgstr "Pristabdyti dabar"
 
-#: src/bin/e_actions.c:3424
+#: src/bin/e_actions.c:3428
 msgid "Hibernate Now"
 msgstr "Hibernuoti dabar"
 
-#: src/bin/e_actions.c:3432
+#: src/bin/e_actions.c:3436
 msgid "Lock"
 msgstr "Užrakinti"
 
-#: src/bin/e_actions.c:3437 src/bin/e_int_menus.c:1452
+#: src/bin/e_actions.c:3441 src/bin/e_int_menus.c:1452
 msgid "Cleanup Windows"
 msgstr "Išvalyti langus"
 
-#: src/bin/e_actions.c:3442
+#: src/bin/e_actions.c:3446
 msgid "Generic : Actions"
 msgstr "Daugybinis : Veiksmai"
 
-#: src/bin/e_actions.c:3442
+#: src/bin/e_actions.c:3446
 msgid "Delayed Action"
 msgstr "Uždelstas veiksmas"
 
-#: src/bin/e_actions.c:3450 src/bin/e_actions.c:3454 src/bin/e_actions.c:3458
+#: src/bin/e_actions.c:3454 src/bin/e_actions.c:3458 src/bin/e_actions.c:3462
 msgid "Keyboard Layouts"
 msgstr "Klaviatūros išdėstymai"
 
-#: src/bin/e_actions.c:3451
+#: src/bin/e_actions.c:3455
 msgid "Use keyboard layout"
 msgstr ""
 
-#: src/bin/e_actions.c:3455
+#: src/bin/e_actions.c:3459
 msgid "Next keyboard layout"
 msgstr ""
 
-#: src/bin/e_actions.c:3459
+#: src/bin/e_actions.c:3463
 msgid "Previous keyboard layout"
 msgstr ""
 
@@ -788,77 +793,75 @@ msgstr "Spalvos parinkimas"
 msgid "Select"
 msgstr ""
 
-#: src/bin/e_color_dialog.c:47 src/bin/e_desktop_editor.c:858
-#: src/bin/e_desktop_editor.c:921 src/bin/e_entry_dialog.c:64
-#: src/bin/e_fm.c:10120 src/bin/e_fm_prop.c:625
+#: src/bin/e_color_dialog.c:47 src/bin/e_desktop_editor.c:860
+#: src/bin/e_desktop_editor.c:923 src/bin/e_entry_dialog.c:64
+#: src/bin/e_fm.c:10125 src/bin/e_fm_prop.c:625
 #: src/bin/e_import_config_dialog.c:537 src/bin/e_import_dialog.c:195
 #: src/modules/bluez4/agent.c:136 src/modules/bluez4/agent.c:148
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:624
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
 #: src/modules/conf_theme/e_int_config_theme_import.c:123
+#: src/modules/connman/agent.c:251
 #: src/modules/fileman/e_int_config_mime_edit.c:316
 #: src/modules/quickaccess/e_mod_quickaccess.c:323
 #: src/modules/quickaccess/e_mod_quickaccess.c:385
-#: src/modules/shot/e_mod_main.c:290 src/modules/shot/e_mod_main.c:541
-#: src/modules/shot/e_mod_main.c:567 src/modules/shot/e_mod_main.c:799
+#: src/modules/shot/e_mod_main.c:289 src/modules/shot/e_mod_main.c:540
+#: src/modules/shot/e_mod_main.c:566 src/modules/shot/e_mod_main.c:827
 #: src/modules/syscon/e_syscon.c:98 src/modules/xkbswitch/e_mod_config.c:499
 msgid "Cancel"
 msgstr "Atsisakyti"
 
-#: src/bin/e_comp.c:4261
-#, fuzzy
+#: src/bin/e_comp.c:3999
 msgid "Compositor Warning"
-msgstr "Padėties"
+msgstr ""
 
-#: src/bin/e_comp.c:4261
+#: src/bin/e_comp.c:3999
 msgid ""
 "Your display driver does not support OpenGL, or<br>no OpenGL engines were "
 "compiled or installed for<br>Evas or Ecore-Evas. Falling back to software "
 "engine."
 msgstr ""
 
-#: src/bin/e_comp.c:4280 src/bin/e_comp.c:4302
-#, fuzzy
+#: src/bin/e_comp.c:4018 src/bin/e_comp.c:4038
 msgid "Compositor Error"
-msgstr "Klaida atjungiant"
+msgstr ""
 
-#: src/bin/e_comp.c:4280
+#: src/bin/e_comp.c:4018
 msgid "Another compositor is already running<br>on your display server."
 msgstr ""
 
-#: src/bin/e_comp.c:4302
+#: src/bin/e_comp.c:4038
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
 msgstr ""
 
-#: src/bin/e_comp.c:4689
+#: src/bin/e_comp.c:4418
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
 "need XRender and XFixes support in X11 and Ecore."
 msgstr ""
 
-#: src/bin/e_comp.c:4698
+#: src/bin/e_comp.c:4427
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr ""
 
-#: src/bin/e_comp.c:4781 src/bin/e_comp.c:4787
-#, fuzzy
+#: src/bin/e_comp.c:4526 src/bin/e_comp.c:4532
 msgid "Compositor"
-msgstr "Padėties"
+msgstr ""
 
-#: src/bin/e_comp.c:4782
+#: src/bin/e_comp.c:4527
 msgid "Change current window opacity"
 msgstr ""
 
-#: src/bin/e_comp.c:4788
+#: src/bin/e_comp.c:4533
 msgid "Set current window opacity"
 msgstr ""
 
-#: src/bin/e_config.c:971
+#: src/bin/e_config.c:973 src/bin/e_randr.c:176
 msgid ""
 "Settings data needed upgrading. Your old settings have<br>been wiped and a "
 "new set of defaults initialized. This<br>will happen regularly during "
@@ -870,13 +873,13 @@ msgid ""
 msgstr ""
 "Nustatymų informacija buvo atnaujinta. Jūsų seni<br>nustatymai buvo "
 "ištrinti, o vietoje jų įrašyti nauji numatytieji nustatymai. Enlightenment "
-"tobulinimo metu tai<br>nutiks dažnai, todėl nemanykite, kad tai trūkumas."
-"<br> Paprasčiausiai nauja Enlightenment laida reikalauja naujų "
+"tobulinimo metu tai<br>nutiks dažnai, todėl nemanykite, kad tai "
+"trūkumas.<br> Paprasčiausiai nauja Enlightenment laida reikalauja naujų "
 "nustatymų<br>, kurių nebuvo anksčiau.<br>Tai bus pataisyta pridėjus naujus "
 "numatytuosius nustatymus. Dabar galite viską sukonfigūruoti kaip "
 "pageidaujate.<br>Atsiprašome už sukeltus nepatogumus.<br>"
 
-#: src/bin/e_config.c:988
+#: src/bin/e_config.c:990 src/bin/e_randr.c:191
 msgid ""
 "Your settings are NEWER than Enlightenment. This is very<br>strange. This "
 "should not happen unless you downgraded<br>Enlightenment or copied the "
@@ -891,36 +894,37 @@ msgstr ""
 "<br>viso pikto buvo grąžintos pradinės nustatymų reikšmės. Atsiprašome už "
 "nepatogumus.<br>"
 
-#: src/bin/e_config.c:1104
+#: src/bin/e_config.c:1106
 msgid ""
-"Your bindings settings version does not match the current settings version."
-"<br>As a result, all bindings have been reloaded from defaults.<br>Sorry for "
-"the inconvenience.<br>"
+"Your bindings settings version does not match the current settings "
+"version.<br>As a result, all bindings have been reloaded from "
+"defaults.<br>Sorry for the inconvenience.<br>"
 msgstr ""
 
-#: src/bin/e_config.c:1694 src/bin/e_config.c:2355
+#: src/bin/e_config.c:1711 src/bin/e_config.c:2372
 msgid "Enlightenment Settings Write Problems"
 msgstr "Problema įrašant Enlightenment nustatymus"
 
-#: src/bin/e_config.c:1697
+#: src/bin/e_config.c:1714
 #, c-format
 msgid ""
-"Enlightenment has had an error while moving config files<br>from:<br>"
-"%s<br><br>to:<br>%s<br><br>The rest of the write has been aborted for safety."
-"<br>"
+"Enlightenment has had an error while moving config "
+"files<br>from:<br>%s<br><br>to:<br>%s<br><br>The rest of the write has been "
+"aborted for safety.<br>"
 msgstr ""
 
-#: src/bin/e_config.c:1707 src/bin/e_config.c:2368
-#: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:856
-#: src/bin/e_desktop_editor.c:919 src/bin/e_entry_dialog.c:63
-#: src/bin/e_exec.c:734 src/bin/e_fm.c:10119 src/bin/e_fm.c:10851
+#: src/bin/e_config.c:1724 src/bin/e_config.c:2385
+#: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:858
+#: src/bin/e_desktop_editor.c:921 src/bin/e_entry_dialog.c:63
+#: src/bin/e_exec.c:750 src/bin/e_fm.c:10124 src/bin/e_fm.c:10862
 #: src/bin/e_fm_prop.c:624 src/bin/e_import_config_dialog.c:536
 #: src/bin/e_int_border_remember.c:353 src/bin/e_int_border_remember.c:548
-#: src/bin/e_module.c:586 src/bin/e_module.c:994 src/bin/e_sys.c:759
-#: src/bin/e_sys.c:800 src/bin/e_update.c:76 src/bin/e_utils.c:689
+#: src/bin/e_module.c:586 src/bin/e_module.c:993 src/bin/e_sys.c:760
+#: src/bin/e_sys.c:801 src/bin/e_update.c:76 src/bin/e_utils.c:679
 #: src/modules/bluez4/agent.c:71 src/modules/bluez4/agent.c:136
 #: src/modules/bluez4/agent.c:148
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:623
+#: src/modules/conf_comp/e_mod_config_match.c:563
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
 #: src/modules/conf_theme/e_int_config_theme_import.c:119
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1189
@@ -931,119 +935,119 @@ msgstr ""
 msgid "OK"
 msgstr "Gerai"
 
-#: src/bin/e_config.c:2246
+#: src/bin/e_config.c:2263
 msgid "Settings Upgraded"
 msgstr "Nustatymai atnaujinti"
 
-#: src/bin/e_config.c:2264
+#: src/bin/e_config.c:2281
 msgid "The EET file handle is bad."
 msgstr ""
 
-#: src/bin/e_config.c:2268
+#: src/bin/e_config.c:2285
 msgid "The file data is empty."
 msgstr ""
 
-#: src/bin/e_config.c:2272
+#: src/bin/e_config.c:2289
 msgid ""
 "The file is not writable. Perhaps the disk is read-only<br>or you lost "
 "permissions to your files."
 msgstr ""
 
-#: src/bin/e_config.c:2276
+#: src/bin/e_config.c:2293
 msgid "Memory ran out while preparing the write.<br>Please free up memory."
 msgstr ""
 
-#: src/bin/e_config.c:2280
+#: src/bin/e_config.c:2297
 msgid "This is a generic error."
 msgstr ""
 
-#: src/bin/e_config.c:2284
+#: src/bin/e_config.c:2301
 msgid ""
 "The settings file is too large.<br>It should be very small (a few hundred KB "
 "at most)."
 msgstr ""
 
-#: src/bin/e_config.c:2288
+#: src/bin/e_config.c:2305
 msgid "You have I/O errors on the disk.<br>Maybe it needs replacing?"
 msgstr ""
 
-#: src/bin/e_config.c:2292
+#: src/bin/e_config.c:2309
 msgid "You ran out of space while writing the file."
 msgstr ""
 
-#: src/bin/e_config.c:2296
+#: src/bin/e_config.c:2313
 msgid "The file was closed while writing."
 msgstr ""
 
-#: src/bin/e_config.c:2300
+#: src/bin/e_config.c:2317
 msgid "Memory-mapping (mmap) of the file failed."
 msgstr ""
 
-#: src/bin/e_config.c:2304
+#: src/bin/e_config.c:2321
 msgid "X509 Encoding failed."
 msgstr ""
 
-#: src/bin/e_config.c:2308
+#: src/bin/e_config.c:2325
 msgid "Signature failed."
 msgstr ""
 
-#: src/bin/e_config.c:2312
+#: src/bin/e_config.c:2329
 msgid "The signature was invalid."
 msgstr ""
 
-#: src/bin/e_config.c:2316
+#: src/bin/e_config.c:2333
 msgid "Not signed."
 msgstr ""
 
-#: src/bin/e_config.c:2320
+#: src/bin/e_config.c:2337
 msgid "Feature not implemented."
 msgstr ""
 
-#: src/bin/e_config.c:2324
+#: src/bin/e_config.c:2341
 msgid "PRNG was not seeded."
 msgstr ""
 
-#: src/bin/e_config.c:2328
+#: src/bin/e_config.c:2345
 msgid "Encryption failed."
 msgstr ""
 
-#: src/bin/e_config.c:2332
+#: src/bin/e_config.c:2349
 msgid "Decryption failed."
 msgstr ""
 
-#: src/bin/e_config.c:2336
+#: src/bin/e_config.c:2353
 msgid "The error is unknown to Enlightenment."
 msgstr ""
 
-#: src/bin/e_config.c:2358
+#: src/bin/e_config.c:2375
 #, c-format
 msgid ""
-"Enlightenment has had an error while writing<br>its config file.<br>"
-"%s<br><br>The file where the error occurred was:<br>%s<br><br>This file has "
-"been deleted to avoid corrupt data.<br>"
+"Enlightenment has had an error while writing<br>its config "
+"file.<br>%s<br><br>The file where the error occurred was:<br>%s<br><br>This "
+"file has been deleted to avoid corrupt data.<br>"
 msgstr ""
 
 #: src/bin/e_config_dialog.c:226 src/modules/battery/e_mod_main.c:811
-#: src/modules/conf/e_mod_main.c:289 src/modules/conf_bindings/e_mod_main.c:37
+#: src/modules/conf/e_mod_main.c:284 src/modules/conf_bindings/e_mod_main.c:37
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
 #: src/modules/cpufreq/e_mod_main.c:1381 src/modules/syscon/e_mod_main.c:36
 msgid "Advanced"
 msgstr "Sudėtingesnės"
 
-#: src/bin/e_config_dialog.c:255 src/bin/e_desktop_editor.c:715
+#: src/bin/e_config_dialog.c:255 src/bin/e_desktop_editor.c:717
 msgid "Basic"
 msgstr "Pagrindinės"
 
 #: src/bin/e_config_dialog.c:280
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:866
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:880
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1195
 msgid "Apply"
 msgstr "Pritaikyti"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
 #: src/modules/connman/e_mod_main.c:591 src/modules/gadman/e_mod_main.c:23
-#: src/modules/mixer/e_mod_main.c:1169
+#: src/modules/mixer/e_mod_main.c:1180
 #: src/modules/notification/e_mod_main.c:151
 msgid "Extensions"
 msgstr "Plėtiniai"
@@ -1085,26 +1089,26 @@ msgid ""
 "Locking the desktop failed because some application<br>has grabbed either "
 "the keyboard or the mouse or both<br>and their grab is unable to be broken."
 msgstr ""
-"Nepavyko užrakinti darbalaukio, nes viena programa<br>perėmė klaviatūrą ir/"
-"arba pelę ir šio perėmimo nepavyko apeiti."
+"Nepavyko užrakinti darbalaukio, nes viena programa<br>perėmė klaviatūrą "
+"ir/arba pelę ir šio perėmimo nepavyko apeiti."
 
-#: src/bin/e_desklock.c:512
+#: src/bin/e_desklock.c:514
 msgid "Please enter your unlock password"
 msgstr "Prašome įvesti atrakinimo slaptažodį"
 
-#: src/bin/e_desklock.c:859
+#: src/bin/e_desklock.c:861
 msgid "Authenticating..."
 msgstr ""
 
-#: src/bin/e_desklock.c:864
+#: src/bin/e_desklock.c:866
 msgid "The password you entered is invalid. Try again."
 msgstr ""
 
-#: src/bin/e_desklock.c:901
+#: src/bin/e_desklock.c:903
 msgid "Authentication System Error"
 msgstr "Atpažinimo sistemos klaida"
 
-#: src/bin/e_desklock.c:902
+#: src/bin/e_desklock.c:904
 #, c-format
 msgid ""
 "Authentication via PAM had errors setting up the<br>authentication session. "
@@ -1115,30 +1119,30 @@ msgstr ""
 "kodas: <hilight>%i</hilight>.<br>Tai yra blogai, ir to neturėtų įvykti. "
 "Prašome pranešti apie šią klaidą."
 
-#: src/bin/e_desklock.c:1234 src/bin/e_screensaver.c:179
+#: src/bin/e_desklock.c:1236 src/bin/e_screensaver.c:179
 msgid "Activate Presentation Mode?"
 msgstr "Įjungti pristatymo veikseną?"
 
-#: src/bin/e_desklock.c:1237
+#: src/bin/e_desklock.c:1239
 msgid ""
 "You unlocked your desktop too fast.<br><br>Would you like to enable "
 "<b>presentation</b> mode and temporarily disable screen saver, lock and "
 "power saving?"
 msgstr ""
 
-#: src/bin/e_desklock.c:1247 src/bin/e_screensaver.c:192
+#: src/bin/e_desklock.c:1249 src/bin/e_screensaver.c:192
 msgid "No, but increase timeout"
 msgstr "Ne, bet padidinkite laukimo laiką"
 
-#: src/bin/e_desklock.c:1249 src/bin/e_screensaver.c:194
+#: src/bin/e_desklock.c:1251 src/bin/e_screensaver.c:194
 msgid "No, and stop asking"
 msgstr "Ne, ir daugiau neklauskite"
 
-#: src/bin/e_desktop_editor.c:177
+#: src/bin/e_desktop_editor.c:179
 msgid "Incomplete Window Properties"
 msgstr "Nepilnos lango savybės"
 
-#: src/bin/e_desktop_editor.c:178
+#: src/bin/e_desktop_editor.c:180
 msgid ""
 "The window you are creating an icon for<br>does not contain window name and "
 "class<br>properties. Without these, you will have to<br>use the window title "
@@ -1146,12 +1150,13 @@ msgid ""
 "time the window starts up, and does not<br>change."
 msgstr ""
 
-#: src/bin/e_desktop_editor.c:230
+#: src/bin/e_desktop_editor.c:232
 msgid "Desktop Entry Editor"
 msgstr "Darbalaukio elemento redaktorius"
 
-#: src/bin/e_desktop_editor.c:673 src/bin/e_int_border_prop.c:445
+#: src/bin/e_desktop_editor.c:675 src/bin/e_int_border_prop.c:445
 #: src/bin/e_int_border_prop.c:499
+#: src/modules/conf_comp/e_mod_config_match.c:360
 #: src/modules/conf_display/e_int_config_desk.c:186
 #: src/modules/conf_intl/e_int_config_imc.c:886
 #: src/modules/conf_menus/e_int_config_menus.c:266
@@ -1159,89 +1164,88 @@ msgstr "Darbalaukio elemento redaktorius"
 msgid "Name"
 msgstr "Vardas"
 
-#: src/bin/e_desktop_editor.c:684 src/modules/ibar/e_mod_config.c:136
+#: src/bin/e_desktop_editor.c:686 src/modules/ibar/e_mod_config.c:136
 msgid "Comment"
 msgstr "Komentaras"
 
-#: src/bin/e_desktop_editor.c:706
+#: src/bin/e_desktop_editor.c:708
 msgid "URL"
 msgstr ""
 
-#: src/bin/e_desktop_editor.c:728 src/bin/e_desktop_editor.c:737
+#: src/bin/e_desktop_editor.c:730 src/bin/e_desktop_editor.c:739
 #: src/bin/e_fm_prop.c:495 src/modules/conf_theme/e_int_config_fonts.c:95
 #: src/modules/fileman/e_int_config_mime_edit.c:145
 msgid "Icon"
 msgstr "Piktograma"
 
-#: src/bin/e_desktop_editor.c:741
+#: src/bin/e_desktop_editor.c:743
 msgid "Generic Name"
 msgstr "Bendrinis vardas"
 
-#: src/bin/e_desktop_editor.c:747
+#: src/bin/e_desktop_editor.c:749
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:120
 msgid "Window Class"
 msgstr "Lango klasė"
 
-#: src/bin/e_desktop_editor.c:753 src/modules/fileman/e_int_config_mime.c:170
+#: src/bin/e_desktop_editor.c:755 src/modules/fileman/e_int_config_mime.c:170
 msgid "Categories"
 msgstr "Kategorijos"
 
-#: src/bin/e_desktop_editor.c:760
+#: src/bin/e_desktop_editor.c:762
 msgid "Mime Types"
 msgstr "Mime tipai"
 
-#: src/bin/e_desktop_editor.c:767
+#: src/bin/e_desktop_editor.c:769
 msgid "Desktop file"
 msgstr "Darbalaukio failas"
 
-#: src/bin/e_desktop_editor.c:777 src/bin/e_int_border_prop.c:450
+#: src/bin/e_desktop_editor.c:779 src/bin/e_int_border_prop.c:450
 #: src/bin/e_int_border_prop.c:502 src/modules/access/e_mod_config.c:70
 #: src/modules/conf_applications/e_int_config_defapps.c:358
-#: src/modules/conf_comp/e_mod_config.c:580
+#: src/modules/conf_comp/e_mod_config.c:568
 #: src/modules/conf_performance/e_int_config_performance.c:122
 #: src/modules/everything/evry_config.c:378
 #: src/modules/everything/evry_plug_files.c:1477
 #: src/modules/pager/e_mod_config.c:129 src/modules/pager/e_mod_config.c:226
-#: src/modules/physics/e_mod_config.c:120
 #: src/modules/tiling/e_mod_config.c:180
 #: src/modules/xkbswitch/e_mod_config.c:276
 msgid "General"
 msgstr "Bendri"
 
-#: src/bin/e_desktop_editor.c:780
+#: src/bin/e_desktop_editor.c:782
 msgid "Startup Notify"
 msgstr "Informavimas paleidžiant"
 
-#: src/bin/e_desktop_editor.c:782 src/modules/everything/evry_plug_apps.c:1183
+#: src/bin/e_desktop_editor.c:784 src/modules/everything/evry_plug_apps.c:1184
 msgid "Run in Terminal"
 msgstr "Vykdyti terminale"
 
-#: src/bin/e_desktop_editor.c:784
+#: src/bin/e_desktop_editor.c:786
 msgid "Show in Menus"
 msgstr "Rodyti meniu"
 
-#: src/bin/e_desktop_editor.c:787 src/bin/e_fm.c:8886 src/bin/e_fm.c:9046
+#: src/bin/e_desktop_editor.c:789 src/bin/e_fm.c:8891 src/bin/e_fm.c:9051
 #: src/bin/e_int_border_remember.c:818
 #: src/modules/xkbswitch/e_mod_config.c:316
 msgid "Options"
 msgstr "Parinktys"
 
-#: src/bin/e_desktop_editor.c:818
+#: src/bin/e_desktop_editor.c:820
 #, c-format
 msgid "Select an Icon for '%s'"
 msgstr ""
 
-#: src/bin/e_desktop_editor.c:884
+#: src/bin/e_desktop_editor.c:886
 msgid "Select an Executable"
 msgstr "Parinkti vykdomąjį failą"
 
-#: src/bin/e_entry.c:482 src/bin/e_fm.c:9237 src/bin/e_fm.c:10944
-#: src/bin/e_shelf.c:1659 src/bin/e_shelf.c:2317
+#: src/bin/e_entry.c:484 src/bin/e_fm.c:9242 src/bin/e_fm.c:10955
+#: src/bin/e_shelf.c:1667 src/bin/e_shelf.c:2325
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:201
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:269
 #: src/modules/conf_bindings/e_int_config_keybindings.c:247
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:294
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:776
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:790
 #: src/modules/conf_dialogs/e_int_config_profiles.c:135
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
 #: src/modules/conf_paths/e_int_config_env.c:317
@@ -1255,53 +1259,53 @@ msgstr "Parinkti vykdomąjį failą"
 msgid "Delete"
 msgstr "Šalinti"
 
-#: src/bin/e_entry.c:492 src/bin/e_fm.c:9148
+#: src/bin/e_entry.c:494 src/bin/e_fm.c:9153
 msgid "Cut"
 msgstr "Iškirpti"
 
-#: src/bin/e_entry.c:501 src/bin/e_fm.c:9162 src/bin/e_fm.c:11708
+#: src/bin/e_entry.c:503 src/bin/e_fm.c:9167 src/bin/e_fm.c:11720
 msgid "Copy"
 msgstr "Kopijuoti"
 
-#: src/bin/e_entry.c:511 src/bin/e_fm.c:8947 src/bin/e_fm.c:9175
+#: src/bin/e_entry.c:513 src/bin/e_fm.c:8952 src/bin/e_fm.c:9180
 msgid "Paste"
 msgstr "Įdėti"
 
-#: src/bin/e_entry.c:522
+#: src/bin/e_entry.c:524
 msgid "Select All"
 msgstr "Pažymėti viską"
 
-#: src/bin/e_exec.c:483 src/bin/e_exec.c:491 src/bin/e_exec.c:502
-#: src/bin/e_exec.c:562 src/bin/e_utils.c:184
+#: src/bin/e_exec.c:485 src/bin/e_exec.c:493 src/bin/e_exec.c:504
+#: src/bin/e_exec.c:564 src/bin/e_utils.c:177
 #: src/modules/conf_intl/e_int_config_imc.c:261
 #: src/modules/conf_intl/e_int_config_imc.c:510
 msgid "Run Error"
 msgstr "Vykdymo klaida"
 
-#: src/bin/e_exec.c:484
+#: src/bin/e_exec.c:486
 msgid "Enlightenment was unable to get current directory"
 msgstr ""
 
-#: src/bin/e_exec.c:492
+#: src/bin/e_exec.c:494
 #, c-format
 msgid "Enlightenment was unable to change to directory:<br><br>%s"
 msgstr ""
 
-#: src/bin/e_exec.c:503
+#: src/bin/e_exec.c:505
 #, c-format
 msgid "Enlightenment was unable to restore to directory:<br><br>%s"
 msgstr ""
 
-#: src/bin/e_exec.c:563
+#: src/bin/e_exec.c:565
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<br><br>%s"
 msgstr ""
 
-#: src/bin/e_exec.c:725
+#: src/bin/e_exec.c:741
 msgid "Application run error"
 msgstr "Programos vykdymo klaida"
 
-#: src/bin/e_exec.c:727
+#: src/bin/e_exec.c:743
 #, c-format
 msgid ""
 "Enlightenment was unable to run the application:<br><br>%s<br><br>The "
@@ -1309,108 +1313,109 @@ msgid ""
 msgstr ""
 "Enlightenment nepavyko paleisti programos: <br><br>%s<br>Programa nestartavo."
 
-#: src/bin/e_exec.c:837
+#: src/bin/e_exec.c:853
 msgid "Application Execution Error"
 msgstr "Programos vykdymo klaida"
 
-#: src/bin/e_exec.c:850 src/bin/e_exec.c:852
+#: src/bin/e_exec.c:866 src/bin/e_exec.c:868
 #, c-format
 msgid "%s stopped running unexpectedly."
 msgstr "%s netikėtai nustojo veikusi."
 
-#: src/bin/e_exec.c:858
+#: src/bin/e_exec.c:874
 #, c-format
 msgid "An exit code of %i was returned from %s."
 msgstr "Išėjimo kodas %i buvo grąžintas iš %s."
 
-#: src/bin/e_exec.c:866
+#: src/bin/e_exec.c:882
 #, c-format
 msgid "%s was interrupted by an Interrupt Signal."
 msgstr "%s vykdymą pertraukė petraukčių signalas."
 
-#: src/bin/e_exec.c:869
+#: src/bin/e_exec.c:885
 #, c-format
 msgid "%s was interrupted by a Quit Signal."
 msgstr "%s vykdymą pertraukė baigimo signalas."
 
-#: src/bin/e_exec.c:873
+#: src/bin/e_exec.c:889
 #, c-format
 msgid "%s was interrupted by an Abort Signal."
 msgstr "%s vykdymą pertraukė priešlaikinės baigties signalas."
 
-#: src/bin/e_exec.c:876
+#: src/bin/e_exec.c:892
 #, c-format
 msgid "%s was interrupted by a Floating Point Error."
 msgstr "%s vykdymą pertraukė slankiojo kablelio klaida."
 
-#: src/bin/e_exec.c:880
+#: src/bin/e_exec.c:896
 #, c-format
 msgid "%s was interrupted by an Uninterruptable Kill Signal."
-msgstr "%s vykdymą pertraukė nepertraukiamas priverstinio išjungimo signalas."
+msgstr ""
+"%s vykdymą pertraukė nepertraukiamas priverstinio išjungimo signalas."
 
-#: src/bin/e_exec.c:884
+#: src/bin/e_exec.c:900
 #, c-format
 msgid "%s was interrupted by a Segmentation Fault."
 msgstr "%s vykdymą pertraukė segmentavimo klaida."
 
-#: src/bin/e_exec.c:888
+#: src/bin/e_exec.c:904
 #, c-format
 msgid "%s was interrupted by a Broken Pipe."
 msgstr "%s vykdymą pertraukė komandų grandinės klaida."
 
-#: src/bin/e_exec.c:891
+#: src/bin/e_exec.c:907
 #, c-format
 msgid "%s was interrupted by a Termination Signal."
 msgstr "%s vykdymą pertraukė baigimo signalas."
 
-#: src/bin/e_exec.c:895
+#: src/bin/e_exec.c:911
 #, c-format
 msgid "%s was interrupted by a Bus Error."
 msgstr "%s vykdymą pertraukė magistralės klaida."
 
-#: src/bin/e_exec.c:898
+#: src/bin/e_exec.c:914
 #, c-format
 msgid "%s was interrupted by the signal number %i."
 msgstr "%s vykdymą pertraukė signalas nr. %i."
 
-#: src/bin/e_exec.c:954
+#: src/bin/e_exec.c:970
 msgid ""
 "***The remaining output has been truncated. Save the output to view.***\n"
 msgstr ""
 "***Likę rezultatai buvo atmesti. Norėdami juos peržiūrėti išsaugokite "
 "rezultatus.***\n"
 
-#: src/bin/e_exec.c:1013 src/bin/e_exec.c:1091 src/bin/e_exec.c:1098
+#: src/bin/e_exec.c:1029 src/bin/e_exec.c:1107 src/bin/e_exec.c:1114
 msgid "Error Logs"
 msgstr "Klaidų žurnalas"
 
-#: src/bin/e_exec.c:1019 src/bin/e_exec.c:1099
+#: src/bin/e_exec.c:1035 src/bin/e_exec.c:1115
 msgid "There was no error message."
 msgstr "Klaidos pranešimo nebuvo."
 
-#: src/bin/e_exec.c:1023 src/bin/e_exec.c:1106
+#: src/bin/e_exec.c:1039 src/bin/e_exec.c:1122
 msgid "Save This Message"
 msgstr "Išsaugoti šį pranešimą"
 
-#: src/bin/e_exec.c:1028 src/bin/e_exec.c:1031 src/bin/e_exec.c:1111
-#: src/bin/e_exec.c:1114
+#: src/bin/e_exec.c:1044 src/bin/e_exec.c:1047 src/bin/e_exec.c:1127
+#: src/bin/e_exec.c:1130
 #, c-format
 msgid "This error log will be saved as %s/%s.log"
 msgstr "Šis klaidų žurnalas bus išsaugotas kaip %s/%s.log"
 
-#: src/bin/e_exec.c:1057
+#: src/bin/e_exec.c:1073
 msgid "Error Information"
 msgstr "Informacija apie klaidą"
 
-#: src/bin/e_exec.c:1065
+#: src/bin/e_exec.c:1081
 msgid "Error Signal Information"
 msgstr "Informacija apie klaidos signalą"
 
-#: src/bin/e_exec.c:1075 src/bin/e_exec.c:1082
+#: src/bin/e_exec.c:1091 src/bin/e_exec.c:1098
 msgid "Output Data"
 msgstr "Išvedimo duomenys"
 
-#: src/bin/e_exec.c:1083
+#: src/bin/e_exec.c:1099
 msgid "There was no output."
 msgstr "Išvedimo nebuvo."
 
@@ -1423,108 +1428,108 @@ msgstr "Neegzistuojantis kelias"
 msgid "%s doesn't exist."
 msgstr "%s neegzistuoja."
 
-#: src/bin/e_fm.c:2864 src/bin/e_fm.c:3821
+#: src/bin/e_fm.c:2873 src/bin/e_fm.c:3841
 #, c-format
 msgid "%u file"
 msgid_plural "%u files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_fm.c:3083
+#: src/bin/e_fm.c:3092
 msgid "Mount Error"
 msgstr "Klaida prijungiant"
 
-#: src/bin/e_fm.c:3083
+#: src/bin/e_fm.c:3092
 msgid "Can't mount device"
 msgstr "Nepavyko prijungti įrenginio"
 
-#: src/bin/e_fm.c:3099
+#: src/bin/e_fm.c:3108
 msgid "Unmount Error"
 msgstr "Klaida atjungiant"
 
-#: src/bin/e_fm.c:3099
+#: src/bin/e_fm.c:3108
 msgid "Can't unmount device"
 msgstr "Nepavyko atjungti įrenginio"
 
-#: src/bin/e_fm.c:3114
+#: src/bin/e_fm.c:3123
 msgid "Eject Error"
 msgstr "Išėmimo klaida"
 
-#: src/bin/e_fm.c:3114
+#: src/bin/e_fm.c:3123
 msgid "Can't eject device"
 msgstr "Nepavyko išimti įrenginio"
 
-#: src/bin/e_fm.c:6616 src/bin/e_fm.c:6649 src/bin/e_fm.c:6753
-#: src/bin/e_fm.c:9621 src/bin/e_fm.c:9636 src/bin/e_fm.c:9771
-#: src/bin/e_fm.c:9776 src/bin/e_fm.c:9792 src/bin/e_fm.c:9797
-#: src/bin/e_fm.c:10424 src/bin/e_fm.c:10428 src/bin/e_fm.c:10432
-#: src/bin/e_fm.c:10460 src/bin/e_fm.c:10465 src/bin/e_fm.c:10469
-#: src/bin/e_fm.c:10528 src/bin/e_fm.c:10752 src/bin/e_fm_prop.c:254
-#: src/bin/e_shelf.c:2185 src/modules/conf/e_mod_main.c:270
+#: src/bin/e_fm.c:6609 src/bin/e_fm.c:6642 src/bin/e_fm.c:6746
+#: src/bin/e_fm.c:9626 src/bin/e_fm.c:9641 src/bin/e_fm.c:9776
+#: src/bin/e_fm.c:9781 src/bin/e_fm.c:9797 src/bin/e_fm.c:9802
+#: src/bin/e_fm.c:10434 src/bin/e_fm.c:10438 src/bin/e_fm.c:10442
+#: src/bin/e_fm.c:10470 src/bin/e_fm.c:10475 src/bin/e_fm.c:10479
+#: src/bin/e_fm.c:10538 src/bin/e_fm.c:10763 src/bin/e_fm_prop.c:254
+#: src/bin/e_shelf.c:2193
 msgid "Error"
 msgstr "Klaida"
 
-#: src/bin/e_fm.c:6616 src/bin/e_fm.c:6649
+#: src/bin/e_fm.c:6609 src/bin/e_fm.c:6642
 #, c-format
 msgid "The recent DND operation requested for '%s' has failed."
 msgstr ""
 
-#: src/bin/e_fm.c:6753
+#: src/bin/e_fm.c:6746
 msgid "A link to the requested URL already exists!"
 msgstr ""
 
-#: src/bin/e_fm.c:8804 src/modules/fileman/e_mod_config.c:360
+#: src/bin/e_fm.c:8809 src/modules/fileman/e_mod_config.c:360
 msgid "Case Sensitive"
 msgstr "Paisyti raidžių dydį"
 
-#: src/bin/e_fm.c:8810 src/modules/fileman/e_mod_config.c:363
+#: src/bin/e_fm.c:8815 src/modules/fileman/e_mod_config.c:363
 msgid "Sort By Extension"
 msgstr ""
 
-#: src/bin/e_fm.c:8816 src/modules/fileman/e_mod_config.c:366
+#: src/bin/e_fm.c:8821 src/modules/fileman/e_mod_config.c:366
 msgid "Sort By Modification Time"
 msgstr ""
 
-#: src/bin/e_fm.c:8822 src/modules/fileman/e_mod_config.c:369
+#: src/bin/e_fm.c:8827 src/modules/fileman/e_mod_config.c:369
 msgid "Sort By Size"
 msgstr ""
 
-#: src/bin/e_fm.c:8831 src/modules/fileman/e_mod_config.c:377
+#: src/bin/e_fm.c:8836 src/modules/fileman/e_mod_config.c:377
 msgid "Directories First"
 msgstr ""
 
-#: src/bin/e_fm.c:8837 src/modules/fileman/e_mod_config.c:381
+#: src/bin/e_fm.c:8842 src/modules/fileman/e_mod_config.c:381
 msgid "Directories Last"
 msgstr ""
 
-#: src/bin/e_fm.c:8870 src/bin/e_fm.c:9030
+#: src/bin/e_fm.c:8875 src/bin/e_fm.c:9035
 #: src/modules/fileman/e_mod_config.c:305
 msgid "View Mode"
 msgstr "Rodymo būdas"
 
-#: src/bin/e_fm.c:8879 src/bin/e_fm.c:9039
+#: src/bin/e_fm.c:8884 src/bin/e_fm.c:9044
 #: src/modules/everything/evry_config.c:503
 #: src/modules/fileman/e_mod_config.c:385
 msgid "Sorting"
 msgstr "Rikiavimas"
 
-#: src/bin/e_fm.c:8897 src/bin/e_fm.c:9057
+#: src/bin/e_fm.c:8902 src/bin/e_fm.c:9062
 msgid "Refresh View"
 msgstr "Atnaujinti vaizdą"
 
-#: src/bin/e_fm.c:8908 src/bin/e_fm.c:9069
+#: src/bin/e_fm.c:8913 src/bin/e_fm.c:9074
 msgid "New..."
 msgstr ""
 
-#: src/bin/e_fm.c:8928 src/bin/e_fm.c:9091 src/bin/e_fm.c:9127
+#: src/bin/e_fm.c:8933 src/bin/e_fm.c:9096 src/bin/e_fm.c:9132
 msgid "Actions..."
 msgstr ""
 
-#: src/bin/e_fm.c:8955 src/bin/e_fm.c:9183 src/bin/e_fm.c:11721
+#: src/bin/e_fm.c:8960 src/bin/e_fm.c:9188 src/bin/e_fm.c:11733
 msgid "Link"
 msgstr "Nuoroda"
 
-#: src/bin/e_fm.c:9245 src/bin/e_fm.c:10581 src/bin/e_shelf.c:2312
+#: src/bin/e_fm.c:9250 src/bin/e_fm.c:10591 src/bin/e_shelf.c:2320
 #: src/modules/conf_shelves/e_int_config_shelf.c:142
 #: src/modules/quickaccess/e_mod_config.c:226
 #: src/modules/quickaccess/e_mod_config.c:274
@@ -1532,230 +1537,230 @@ msgstr "Nuoroda"
 msgid "Rename"
 msgstr "Pervadinti"
 
-#: src/bin/e_fm.c:9264
+#: src/bin/e_fm.c:9269
 msgid "Unmount"
 msgstr "Atjungti"
 
-#: src/bin/e_fm.c:9269
+#: src/bin/e_fm.c:9274
 msgid "Mount"
 msgstr "Prijungti"
 
-#: src/bin/e_fm.c:9274
+#: src/bin/e_fm.c:9279
 msgid "Eject"
 msgstr "Išimti"
 
-#: src/bin/e_fm.c:9288 src/bin/e_int_border_remember.c:796
+#: src/bin/e_fm.c:9293 src/bin/e_int_border_remember.c:796
 #: src/modules/ibar/e_mod_main.c:1266
 msgid "Properties"
 msgstr "Savybės"
 
-#: src/bin/e_fm.c:9296
+#: src/bin/e_fm.c:9301
 msgid "Application Properties"
 msgstr ""
 
-#: src/bin/e_fm.c:9304 src/bin/e_fm_prop.c:115
+#: src/bin/e_fm.c:9309 src/bin/e_fm_prop.c:115
 msgid "File Properties"
 msgstr "Failo savybės"
 
-#: src/bin/e_fm.c:9520
+#: src/bin/e_fm.c:9525
 msgid "Use default"
 msgstr "Naudoti numatytąsias"
 
-#: src/bin/e_fm.c:9549 src/modules/fileman/e_mod_config.c:310
+#: src/bin/e_fm.c:9554 src/modules/fileman/e_mod_config.c:310
 msgid "Grid Icons"
 msgstr "Tinklelio piktogramos"
 
-#: src/bin/e_fm.c:9557 src/modules/fileman/e_mod_config.c:312
+#: src/bin/e_fm.c:9562 src/modules/fileman/e_mod_config.c:312
 msgid "Custom Icons"
 msgstr "Savos piktogramos"
 
-#: src/bin/e_fm.c:9565 src/modules/everything/evry_config.c:430
+#: src/bin/e_fm.c:9570 src/modules/everything/evry_config.c:430
 #: src/modules/everything/evry_config.c:460
 #: src/modules/fileman/e_mod_config.c:320
 msgid "List"
 msgstr "Sąrašas"
 
-#: src/bin/e_fm.c:9573 src/modules/everything/evry_config.c:458
+#: src/bin/e_fm.c:9578 src/modules/everything/evry_config.c:458
 msgid "Default View"
 msgstr "Numatytas vaizdas"
 
-#: src/bin/e_fm.c:9594
+#: src/bin/e_fm.c:9599
 #, c-format
 msgid "Icon Size (%d)"
 msgstr "Piktogramos dydis (%d)"
 
-#: src/bin/e_fm.c:9621
+#: src/bin/e_fm.c:9626
 msgid "Could not create a directory!"
 msgstr ""
 
-#: src/bin/e_fm.c:9636
+#: src/bin/e_fm.c:9641
 msgid "Could not create a file!"
 msgstr ""
 
-#: src/bin/e_fm.c:9652 src/bin/e_fm.c:9690
+#: src/bin/e_fm.c:9657 src/bin/e_fm.c:9695
 #: src/modules/conf_paths/e_int_config_paths.c:204
 msgid "New Directory"
 msgstr "Naujas katalogas"
 
-#: src/bin/e_fm.c:9652 src/bin/e_fm.c:9690
+#: src/bin/e_fm.c:9657 src/bin/e_fm.c:9695
 msgid "New File"
 msgstr ""
 
-#: src/bin/e_fm.c:9771 src/bin/e_fm.c:9792
+#: src/bin/e_fm.c:9776 src/bin/e_fm.c:9797
 msgid "Already creating a new file for this directory!"
 msgstr ""
 
-#: src/bin/e_fm.c:9776 src/bin/e_fm.c:9797
+#: src/bin/e_fm.c:9781 src/bin/e_fm.c:9802
 #, c-format
 msgid "%s can't be written to!"
 msgstr ""
 
-#: src/bin/e_fm.c:9816
+#: src/bin/e_fm.c:9821
 msgid "Directory"
 msgstr ""
 
-#: src/bin/e_fm.c:9821
+#: src/bin/e_fm.c:9826
 #: src/modules/conf_applications/e_int_config_defapps.c:312
 msgid "File"
-msgstr ""
+msgstr "Failas"
 
-#: src/bin/e_fm.c:9852
+#: src/bin/e_fm.c:9857
 msgid "Inherit parent settings"
 msgstr "Paveldėti tėvinio elemento nustatymus"
 
-#: src/bin/e_fm.c:9861
+#: src/bin/e_fm.c:9866
 msgid "Show Hidden Files"
 msgstr "Rodyti paslėptus failus"
 
-#: src/bin/e_fm.c:9873
+#: src/bin/e_fm.c:9878
 msgid "Remember Ordering"
 msgstr "Prisiminti rikiavimo tvarką"
 
-#: src/bin/e_fm.c:9882
+#: src/bin/e_fm.c:9887
 msgid "Sort Now"
 msgstr "Rikiuoti dabar"
 
-#: src/bin/e_fm.c:9890
+#: src/bin/e_fm.c:9895
 msgid "Single Click Activation"
-msgstr ""
+msgstr "Aktyvinimas vienu paspaudimu"
 
-#: src/bin/e_fm.c:9901 src/modules/fileman/e_mod_config.c:397
+#: src/bin/e_fm.c:9906 src/modules/fileman/e_mod_config.c:397
 msgid "Secure Deletion"
-msgstr ""
+msgstr "Saugus šalinimas"
 
-#: src/bin/e_fm.c:9914 src/modules/fileman/e_mod_config.c:122
+#: src/bin/e_fm.c:9919 src/modules/fileman/e_mod_config.c:122
 msgid "File Manager Settings"
-msgstr ""
+msgstr "Failų naršyklės nustatymai"
 
-#: src/bin/e_fm.c:9919
+#: src/bin/e_fm.c:9924
 msgid "File Icon Settings"
 msgstr ""
 
-#: src/bin/e_fm.c:9996 src/bin/e_fm.c:10212
+#: src/bin/e_fm.c:10001 src/bin/e_fm.c:10222
 msgid "Set background..."
 msgstr "Parinkti foną ..."
 
-#: src/bin/e_fm.c:10004
+#: src/bin/e_fm.c:10009
 msgid "Clear background"
 msgstr ""
 
-#: src/bin/e_fm.c:10011 src/bin/e_fm.c:10240
+#: src/bin/e_fm.c:10016 src/bin/e_fm.c:10250
 msgid "Set overlay..."
 msgstr "Parinkti perdangą ..."
 
-#: src/bin/e_fm.c:10017
+#: src/bin/e_fm.c:10022
 msgid "Clear overlay"
 msgstr ""
 
-#: src/bin/e_fm.c:10334 src/bin/e_fm.c:10676
+#: src/bin/e_fm.c:10344 src/bin/e_fm.c:10687
 #, c-format
 msgid "Rename %s to:"
 msgstr "Pervadinti %s į:"
 
-#: src/bin/e_fm.c:10336 src/bin/e_fm.c:10677
+#: src/bin/e_fm.c:10346 src/bin/e_fm.c:10688
 msgid "Rename File"
 msgstr "Pervadinti failą"
 
-#: src/bin/e_fm.c:10424 src/bin/e_fm.c:10460
+#: src/bin/e_fm.c:10434 src/bin/e_fm.c:10470
 #, c-format
 msgid "%s already exists!"
 msgstr ""
 
-#: src/bin/e_fm.c:10428 src/bin/e_fm.c:10465
+#: src/bin/e_fm.c:10438 src/bin/e_fm.c:10475
 #, c-format
 msgid "%s could not be renamed because it is protected"
 msgstr ""
 
-#: src/bin/e_fm.c:10432 src/bin/e_fm.c:10469
+#: src/bin/e_fm.c:10442 src/bin/e_fm.c:10479
 msgid "Internal filemanager error :("
 msgstr ""
 
-#: src/bin/e_fm.c:10524 src/bin/e_fm.c:10744
+#: src/bin/e_fm.c:10534 src/bin/e_fm.c:10755
 msgid "Retry"
 msgstr "Bandyti vėl"
 
-#: src/bin/e_fm.c:10525 src/bin/e_fm.c:10745 src/bin/e_fm.c:11729
+#: src/bin/e_fm.c:10535 src/bin/e_fm.c:10756 src/bin/e_fm.c:11741
 msgid "Abort"
 msgstr "Nutraukti"
 
-#: src/bin/e_fm.c:10580
+#: src/bin/e_fm.c:10590
 msgid "No to all"
 msgstr "Visiems ne"
 
-#: src/bin/e_fm.c:10583
+#: src/bin/e_fm.c:10593
 msgid "Yes to all"
 msgstr "Visiems taip"
 
-#: src/bin/e_fm.c:10586
+#: src/bin/e_fm.c:10596
 msgid "Warning"
 msgstr "Įspėjimas"
 
-#: src/bin/e_fm.c:10589
+#: src/bin/e_fm.c:10599
 #, c-format
 msgid "File already exists, overwrite?<br><hilight>%s</hilight>"
 msgstr "Failas jau egzistuoja, perrašyti?<br><hilight>%s</hilight>"
 
-#: src/bin/e_fm.c:10747
+#: src/bin/e_fm.c:10758
 msgid "Move Source"
 msgstr ""
 
-#: src/bin/e_fm.c:10748
+#: src/bin/e_fm.c:10759
 msgid "Ignore this"
 msgstr "Praleisti"
 
-#: src/bin/e_fm.c:10749
+#: src/bin/e_fm.c:10760
 msgid "Ignore all"
 msgstr "Praleisti visus"
 
-#: src/bin/e_fm.c:10754
+#: src/bin/e_fm.c:10765
 #, c-format
 msgid "An error occurred while performing an operation.<br>%s"
 msgstr "Vykdant veiksmą įvyko klaida.<br>%s"
 
-#: src/bin/e_fm.c:10947
+#: src/bin/e_fm.c:10958
 msgid "Confirm Delete"
 msgstr "Patvirtinti šalinimą"
 
-#: src/bin/e_fm.c:10957
+#: src/bin/e_fm.c:10968
 #, c-format
 msgid "Are you sure you want to delete<br><hilight>%s</hilight>?"
 msgstr ""
 
-#: src/bin/e_fm.c:10962
+#: src/bin/e_fm.c:10973
 #, c-format
 msgid ""
 "Are you sure you want to delete<br><hilight>all</hilight> the %d files "
 "in<br><hilight>%s</hilight>?"
 msgstr ""
 
-#: src/bin/e_fm.c:10972
+#: src/bin/e_fm.c:10983
 #, c-format
 msgid ""
-"Are you sure you want to delete<br>the %d selected file in<br><hilight>%s</"
-"hilight>?"
+"Are you sure you want to delete<br>the %d selected file "
+"in<br><hilight>%s</hilight>?"
 msgid_plural ""
-"Are you sure you want to delete<br>the %d selected files in<br><hilight>%s</"
-"hilight>?"
+"Are you sure you want to delete<br>the %d selected files "
+"in<br><hilight>%s</hilight>?"
 msgstr[0] ""
 msgstr[1] ""
 
@@ -1788,7 +1793,8 @@ msgstr "Keičiamasis įrenginys"
 msgid "Cannot change permissions: %s"
 msgstr ""
 
-#: src/bin/e_fm_prop.c:390 src/bin/e_shelf.c:998 src/bin/e_shelf.c:2205
+#: src/bin/e_fm_prop.c:390 src/bin/e_shelf.c:1006 src/bin/e_shelf.c:2213
+#: src/modules/conf_comp/e_mod_config_match.c:125
 #: src/modules/conf_dialogs/e_int_config_profiles.c:316
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:147
 msgid "Name:"
@@ -1796,7 +1802,7 @@ msgstr "Pavadinimas:"
 
 #: src/bin/e_fm_prop.c:397
 msgid "Location:"
-msgstr ""
+msgstr "Vieta:"
 
 #: src/bin/e_fm_prop.c:404 src/bin/e_widget_filepreview.c:335
 #: src/bin/e_widget_filepreview.c:390 src/bin/e_widget_filepreview.c:443
@@ -1829,23 +1835,23 @@ msgstr "Leidimai"
 
 #: src/bin/e_fm_prop.c:451 src/bin/e_fm_prop.c:460 src/bin/e_fm_prop.c:469
 msgid "read"
-msgstr ""
+msgstr "skaityti"
 
 #: src/bin/e_fm_prop.c:453 src/bin/e_fm_prop.c:462 src/bin/e_fm_prop.c:471
 msgid "write"
-msgstr ""
+msgstr "rašyti"
 
 #: src/bin/e_fm_prop.c:455 src/bin/e_fm_prop.c:464 src/bin/e_fm_prop.c:473
 msgid "execute"
-msgstr ""
+msgstr "vykdyti"
 
 #: src/bin/e_fm_prop.c:458
 msgid "Group:"
-msgstr ""
+msgstr "Grupė:"
 
 #: src/bin/e_fm_prop.c:467
 msgid "Others:"
-msgstr ""
+msgstr "Kiti:"
 
 #: src/bin/e_fm_prop.c:480 src/bin/e_import_config_dialog.c:473
 #: src/bin/e_widget_fsel.c:348
@@ -1901,11 +1907,11 @@ msgstr ""
 msgid "Automatically scroll contents"
 msgstr "Automatiškai slinkti turinį"
 
-#: src/bin/e_gadcon.c:1763 src/modules/gadman/e_mod_gadman.c:1078
+#: src/bin/e_gadcon.c:1763 src/modules/gadman/e_mod_gadman.c:1076
 msgid "Plain"
 msgstr "Paprastas"
 
-#: src/bin/e_gadcon.c:1776 src/modules/gadman/e_mod_gadman.c:1086
+#: src/bin/e_gadcon.c:1776 src/modules/gadman/e_mod_gadman.c:1084
 msgid "Inset"
 msgstr "Įdubęs"
 
@@ -1913,7 +1919,6 @@ msgstr "Įdubęs"
 #: src/modules/conf_comp/e_mod_main.c:231
 #: src/modules/conf_theme/e_mod_main.c:60
 #: src/modules/conf_wallpaper2/e_mod_main.c:22
-#: src/modules/physics/e_mod_main.c:45
 msgid "Look"
 msgstr "Išvaizda"
 
@@ -1923,20 +1928,20 @@ msgstr "Išvaizda"
 #: src/modules/conf_applications/e_int_config_apps.c:294
 #: src/modules/conf_applications/e_int_config_apps.c:314
 #: src/modules/conf_applications/e_int_config_apps_personal.c:97
-#: src/modules/gadman/e_mod_gadman.c:1138
+#: src/modules/gadman/e_mod_gadman.c:1136
 #: src/modules/xkbswitch/e_mod_config.c:258
 msgid "Remove"
 msgstr "Pašalinti"
 
-#: src/bin/e_gadcon.c:2448
+#: src/bin/e_gadcon.c:2468
 msgid "Stop moving"
 msgstr ""
 
-#: src/bin/e_gadcon.c:3104
+#: src/bin/e_gadcon.c:3110
 msgid "Insufficent gadcon support"
 msgstr ""
 
-#: src/bin/e_gadcon.c:3105
+#: src/bin/e_gadcon.c:3111
 #, c-format
 msgid "Module %s needs to support %s"
 msgstr ""
@@ -1953,8 +1958,8 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:7
 msgid ""
 "Please hold any modifier you want<br>and press any button on your mouse,<br> "
-"or roll a wheel, to assign mouse binding.<br>Press <hilight>Escape</"
-"highlight> to abort."
+"or roll a wheel, to assign mouse binding.<br>Press "
+"<hilight>Escape</highlight> to abort."
 msgstr ""
 "Prašome paspausti norimą naudoti modifikavimo<br>klavišą ir paspauskite bet "
 "kurį pelės mygtuką,<br>arba pasukite ratuką, kad priskirtumėte pelės "
@@ -2184,11 +2189,12 @@ msgid "Shade"
 msgstr ""
 
 #: src/bin/e_int_border_menu.c:193
-#, fuzzy
+#: src/modules/conf_comp/e_mod_config_match.c:454
 msgid "Borderless"
-msgstr "Rėmeliai"
+msgstr ""
 
 #: src/bin/e_int_border_menu.c:396 src/bin/e_int_border_prop.c:511
+#: src/modules/conf_comp/e_mod_config_match.c:529
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:207
 msgid "Fullscreen"
 msgstr "Per visą ekraną"
@@ -2251,6 +2257,8 @@ msgstr ""
 
 #: src/bin/e_int_border_menu.c:1056 src/bin/e_int_border_prop.c:157
 #: src/bin/e_int_border_prop.c:179
+#: src/modules/conf_comp/e_mod_config_match.c:90
+#: src/modules/conf_comp/e_mod_config_match.c:412
 #: src/modules/conf_theme/e_int_config_fonts.c:100
 #: src/modules/conf_theme/e_int_config_fonts.c:264
 #: src/modules/notification/e_mod_config.c:104
@@ -2428,11 +2436,13 @@ msgid "ICCCM"
 msgstr "ICCCM"
 
 #: src/bin/e_int_border_prop.c:444 src/bin/e_int_border_remember.c:698
+#: src/modules/conf_comp/e_mod_config_match.c:349
 #: src/modules/conf_comp/e_mod_main.c:177 src/modules/wizard/page_050.c:95
 msgid "Title"
 msgstr "Antraštė"
 
 #: src/bin/e_int_border_prop.c:446
+#: src/modules/conf_comp/e_mod_config_match.c:370
 msgid "Class"
 msgstr "Klasė"
 
@@ -2445,6 +2455,7 @@ msgid "Machine"
 msgstr "Kompiuteris"
 
 #: src/bin/e_int_border_prop.c:449
+#: src/modules/conf_comp/e_mod_config_match.c:379
 msgid "Role"
 msgstr "Vaidmuo"
 
@@ -2509,6 +2520,7 @@ msgid "Take Focus"
 msgstr "Priimti aktyvinimą"
 
 #: src/bin/e_int_border_prop.c:473
+#: src/modules/conf_comp/e_mod_config_match.c:480
 msgid "Accepts Focus"
 msgstr "Priima aktyvinimą"
 
@@ -2526,7 +2538,7 @@ msgstr "Padėties užklausa"
 
 #: src/bin/e_int_border_prop.c:477 src/bin/e_int_border_prop.c:512
 #: src/bin/e_int_config_modules.c:58 src/bin/e_int_menus.c:272
-#: src/bin/e_shelf.c:2283 src/modules/backlight/e_mod_main.c:262
+#: src/bin/e_shelf.c:2291 src/modules/backlight/e_mod_main.c:262
 #: src/modules/battery/e_mod_main.c:188 src/modules/clock/e_mod_main.c:369
 #: src/modules/clock/e_mod_main.c:612 src/modules/conf/e_conf.c:136
 #: src/modules/conf/e_conf.c:146 src/modules/conf/e_mod_main.c:101
@@ -2539,8 +2551,8 @@ msgstr "Padėties užklausa"
 #: src/modules/everything/evry_plug_settings.c:183
 #: src/modules/ibar/e_mod_main.c:441 src/modules/ibar/e_mod_main.c:1259
 #: src/modules/ibox/e_mod_main.c:302 src/modules/ibox/e_mod_main.c:678
-#: src/modules/mixer/e_mod_main.c:651 src/modules/music-control/ui.c:270
-#: src/modules/pager/e_mod_main.c:870 src/modules/systray/e_mod_main.c:133
+#: src/modules/mixer/e_mod_main.c:652 src/modules/music-control/ui.c:270
+#: src/modules/pager/e_mod_main.c:870 src/modules/systray/e_mod_main.c:134
 #: src/modules/tasks/e_mod_main.c:728 src/modules/temperature/e_mod_main.c:230
 #: src/modules/wizard/page_150.c:67 src/modules/xkbswitch/e_mod_main.c:323
 #: src/modules/xkbswitch/e_mod_main.c:357
@@ -2548,6 +2560,7 @@ msgid "Settings"
 msgstr "Nustatymai"
 
 #: src/bin/e_int_border_prop.c:505
+#: src/modules/conf_comp/e_mod_config_match.c:542
 msgid "Modal"
 msgstr "Modalinis"
 
@@ -2595,11 +2608,12 @@ msgstr ""
 "unikalių savybių</hilight>.<br><br>Tai reiškia, kad jis dalijasi tomis "
 "pačiomis vardo/klasės, trumpalaikiškumo, vaidmens ir kt. savybėmis<br>su "
 "daugiau nei 1 langu esančiu ekrane. Prisimenant savybes šiam langui, jos bus "
-"pritaikytos<br>ir visiems kitiems langams, turintiems tokias pačias savybes."
-"<br><br>Šis įspėjimas tam atvejui, jei Jūs nenorite, kad taip atsitiktų."
-"<br>Paspaudus <hilight>Pritaikyti</hilight> arba <hilight>Gerai</hilight> "
-"mygtukus nuostatos bus pritaikytos. Jei neesate tikri, paspausite "
-"<hilight>Atsisakyti</hilight> ir pakeitimai nebus pritaikyti."
+"pritaikytos<br>ir visiems kitiems langams, turintiems tokias pačias "
+"savybes.<br><br>Šis įspėjimas tam atvejui, jei Jūs nenorite, kad taip "
+"atsitiktų.<br>Paspaudus <hilight>Pritaikyti</hilight> arba "
+"<hilight>Gerai</hilight> mygtukus nuostatos bus pritaikytos. Jei neesate "
+"tikri, paspausite <hilight>Atsisakyti</hilight> ir pakeitimai nebus "
+"pritaikyti."
 
 #: src/bin/e_int_border_remember.c:539
 msgid "No match properties set"
@@ -2632,7 +2646,7 @@ msgstr "Dydis, padėtis ir užraktai"
 #: src/bin/e_int_border_remember.c:656 src/modules/conf/e_mod_main.c:252
 #: src/modules/everything/evry_gadget.c:623
 #: src/modules/everything/evry_plug_aggregator.c:313
-#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:744
+#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:772
 msgid "All"
 msgstr "Viskas"
 
@@ -2764,7 +2778,8 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:266
 #: src/modules/conf_bindings/e_int_config_keybindings.c:244
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:292
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:773
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:787
+#: src/modules/conf_comp/e_mod_config_match.c:717
 #: src/modules/conf_dialogs/e_int_config_profiles.c:133
 #: src/modules/conf_paths/e_int_config_env.c:311
 #: src/modules/conf_shelves/e_int_config_shelf.c:137
@@ -2802,9 +2817,9 @@ msgstr "Mėgstamiausios programos"
 #: src/modules/conf_menus/e_int_config_menus.c:284
 #: src/modules/conf_theme/e_int_config_fonts.c:58
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:215
-#: src/modules/everything/evry_plug_apps.c:1140
-#: src/modules/everything/evry_plug_apps.c:1156
-#: src/modules/everything/evry_plug_apps.c:1409
+#: src/modules/everything/evry_plug_apps.c:1141
+#: src/modules/everything/evry_plug_apps.c:1157
+#: src/modules/everything/evry_plug_apps.c:1410
 msgid "Applications"
 msgstr "Programos"
 
@@ -2835,7 +2850,6 @@ msgstr "Virtualus"
 #: src/bin/e_int_menus.c:332 src/modules/conf_shelves/e_mod_main.c:23
 #: src/modules/conf_shelves/e_mod_main.c:27
 #: src/modules/conf_shelves/e_mod_main.c:76
-#: src/modules/physics/e_mod_config.c:132
 msgid "Shelves"
 msgstr "Lentynos"
 
@@ -2859,11 +2873,11 @@ msgstr ""
 msgid "Untitled window"
 msgstr ""
 
-#: src/bin/e_int_menus.c:1726 src/bin/e_shelf.c:1503
+#: src/bin/e_int_menus.c:1726 src/bin/e_shelf.c:1511
 #: src/modules/conf_shelves/e_int_config_shelf.c:193
-#, fuzzy, c-format
+#, c-format
 msgid "Shelf %s"
-msgstr "Lentyna #"
+msgstr ""
 
 #: src/bin/e_int_menus.c:1794
 msgid "Add a Shelf"
@@ -2902,6 +2916,7 @@ msgid "Shrink to Content Width"
 msgstr "Sumažinti iki turinio pločio"
 
 #: src/bin/e_int_shelf_config.c:234
+#: src/modules/conf_comp/e_mod_config_match.c:557
 #: src/modules/conf_theme/e_int_config_fonts.c:651
 msgid "Style"
 msgstr "Stilius"
@@ -2933,15 +2948,14 @@ msgid "Hide duration"
 msgstr "Slėpimo trukmė"
 
 #: src/bin/e_int_shelf_config.c:268
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:878
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:892
 #, c-format
 msgid "%.2f seconds"
 msgstr "%.2f sekundės"
 
 #: src/bin/e_int_shelf_config.c:273
-#, fuzzy
 msgid "Don't adjust windows when overlapping the shelf"
-msgstr "Leisti langams užkloti lentyną"
+msgstr ""
 
 #: src/bin/e_int_shelf_config.c:278
 msgid "Auto Hide"
@@ -2955,7 +2969,7 @@ msgstr "Rodyti visuose darbalaukiuose"
 msgid "Show on specified Desktops"
 msgstr "Rodyti nurodytuose darbalaukiuose"
 
-#: src/bin/e_int_toolbar_config.c:30 src/bin/e_toolbar.c:353
+#: src/bin/e_int_toolbar_config.c:30 src/bin/e_toolbar.c:354
 msgid "Toolbar Settings"
 msgstr "Įrankių juostos nustatymai"
 
@@ -3176,221 +3190,219 @@ msgstr ""
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr ""
 
-#: src/bin/e_main.c:670
+#: src/bin/e_main.c:666
 msgid "Setup ACPI"
 msgstr ""
 
-#: src/bin/e_main.c:677
+#: src/bin/e_main.c:673
 msgid "Setup Backlight"
 msgstr ""
 
-#: src/bin/e_main.c:681
+#: src/bin/e_main.c:677
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr ""
 
-#: src/bin/e_main.c:687
+#: src/bin/e_main.c:683
 msgid "Setup Screensaver"
 msgstr "Ekrano užsklandos nustatymas"
 
-#: src/bin/e_main.c:691
+#: src/bin/e_main.c:687
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr ""
 
-#: src/bin/e_main.c:698
+#: src/bin/e_main.c:694
 msgid "Setup DPMS"
 msgstr "DPMS nustatymas"
 
-#: src/bin/e_main.c:702
+#: src/bin/e_main.c:698
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr ""
 
-#: src/bin/e_main.c:709
+#: src/bin/e_main.c:705
 msgid "Setup Powersave Modes"
 msgstr ""
 
-#: src/bin/e_main.c:713
+#: src/bin/e_main.c:709
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr ""
 
-#: src/bin/e_main.c:720
+#: src/bin/e_main.c:716
 msgid "Setup Desklock"
 msgstr "Darbalaukio užrakto nustatymas"
 
-#: src/bin/e_main.c:724
+#: src/bin/e_main.c:720
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:731
+#: src/bin/e_main.c:727
 msgid "Setup Popups"
 msgstr "Iškylančiųjų langų nustatymas"
 
-#: src/bin/e_main.c:735
+#: src/bin/e_main.c:731
 msgid "Enlightenment cannot set up its popup system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:747
+#: src/bin/e_main.c:741
 msgid "Setup Message Bus"
 msgstr ""
 
-#: src/bin/e_main.c:754
+#: src/bin/e_main.c:748
 msgid "Setup Paths"
 msgstr ""
 
-#: src/bin/e_main.c:760
+#: src/bin/e_main.c:754
 msgid "Setup System Controls"
 msgstr "Sistemos valdymo nustatymas"
 
-#: src/bin/e_main.c:764
+#: src/bin/e_main.c:758
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "Enlightenment nepavyko inicijuoti sistemos valdymo sistemos.\n"
 
-#: src/bin/e_main.c:771
+#: src/bin/e_main.c:765
 msgid "Setup Execution System"
 msgstr "Vykdymo sistemos nustatymas"
 
-#: src/bin/e_main.c:775
+#: src/bin/e_main.c:769
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:786
+#: src/bin/e_main.c:780
 msgid "Setup Filemanager"
 msgstr ""
 
-#: src/bin/e_main.c:790
+#: src/bin/e_main.c:784
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Enlightenment nepavyko inicijuoti failų tvarkyklės.\n"
 
-#: src/bin/e_main.c:797
+#: src/bin/e_main.c:791
 msgid "Setup Message System"
 msgstr "Pranešimų sistemos nustatymas"
 
-#: src/bin/e_main.c:801
+#: src/bin/e_main.c:795
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:808
+#: src/bin/e_main.c:802
 msgid "Setup Grab Input Handling"
 msgstr "Įvesties perėmimo valdymo nustatymas"
 
-#: src/bin/e_main.c:812
+#: src/bin/e_main.c:806
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:819
+#: src/bin/e_main.c:813
 msgid "Setup Modules"
 msgstr "Modulių nustatymas"
 
-#: src/bin/e_main.c:823 src/bin/e_main.c:1008
+#: src/bin/e_main.c:817 src/bin/e_main.c:999
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:830
+#: src/bin/e_main.c:824
 msgid "Setup Remembers"
 msgstr "Prisiminimų nustatymas"
 
-#: src/bin/e_main.c:834
+#: src/bin/e_main.c:828
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr ""
 
-#: src/bin/e_main.c:841
+#: src/bin/e_main.c:835
 msgid "Setup Color Classes"
 msgstr "Spalvų klasių nustatymas"
 
-#: src/bin/e_main.c:845
+#: src/bin/e_main.c:839
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:852
+#: src/bin/e_main.c:846
 msgid "Setup Gadcon"
 msgstr "Gadcon nustatymas"
 
-#: src/bin/e_main.c:856
+#: src/bin/e_main.c:850
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:863
-#, fuzzy
+#: src/bin/e_main.c:857
 msgid "Setup Toolbars"
-msgstr "Nurodyti įrankių juostos turinį"
+msgstr ""
 
-#: src/bin/e_main.c:867
-#, fuzzy
+#: src/bin/e_main.c:861
 msgid "Enlightenment cannot set up its toolbars.\n"
-msgstr "Enlightenment nepavyko inicijuoti failų tvarkyklės.\n"
+msgstr ""
 
-#: src/bin/e_main.c:874
+#: src/bin/e_main.c:868
 msgid "Setup Wallpaper"
 msgstr "Darbalaukio fono nustatymas"
 
-#: src/bin/e_main.c:878
+#: src/bin/e_main.c:872
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:885
+#: src/bin/e_main.c:879
 msgid "Setup Mouse"
 msgstr "Pelės nustatymas"
 
-#: src/bin/e_main.c:889
+#: src/bin/e_main.c:883
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr ""
 
-#: src/bin/e_main.c:895
+#: src/bin/e_main.c:889
 msgid "Setup Bindings"
 msgstr "Saistymo nustatymas"
 
-#: src/bin/e_main.c:899
+#: src/bin/e_main.c:893
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:906
+#: src/bin/e_main.c:900
 msgid "Setup Thumbnailer"
 msgstr "Miniatiūrų kūrimo sistemos nustatymas"
 
-#: src/bin/e_main.c:910
+#: src/bin/e_main.c:904
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenment nepavyko inicijuoti miniatiūrų kūrimo sistemos.\n"
 
-#: src/bin/e_main.c:919
+#: src/bin/e_main.c:913
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:928
+#: src/bin/e_main.c:922
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:937
+#: src/bin/e_main.c:931
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:944
+#: src/bin/e_main.c:938
 msgid "Setup Desktop Environment"
 msgstr ""
 
-#: src/bin/e_main.c:948
+#: src/bin/e_main.c:942
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr ""
 
-#: src/bin/e_main.c:955
+#: src/bin/e_main.c:949
 msgid "Setup File Ordering"
 msgstr ""
 
-#: src/bin/e_main.c:959
+#: src/bin/e_main.c:953
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:974
+#: src/bin/e_main.c:968
 msgid "Load Modules"
 msgstr "Įkelti modulius"
 
-#: src/bin/e_main.c:1004
+#: src/bin/e_main.c:995
 msgid "Setup Shelves"
 msgstr "Lentynų nustatymas"
 
-#: src/bin/e_main.c:1022
+#: src/bin/e_main.c:1013
 msgid "Almost Done"
 msgstr "Beveik baigta"
 
-#: src/bin/e_main.c:1183
+#: src/bin/e_main.c:1174
 #, c-format
 msgid ""
 "Options:\n"
@@ -3443,7 +3455,7 @@ msgstr ""
 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
 "\t\tJei Jums reikia šios pagalbos, šis parametras Jums nereikalingas.\n"
 
-#: src/bin/e_main.c:1236
+#: src/bin/e_main.c:1227
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -3453,11 +3465,11 @@ msgid ""
 "before enlightenment itself begins running.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1499
+#: src/bin/e_main.c:1490
 msgid "Testing Format Support"
 msgstr "Tikrinamas formatų palaikymas"
 
-#: src/bin/e_main.c:1503
+#: src/bin/e_main.c:1494
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -3465,31 +3477,31 @@ msgstr ""
 "Enlightenment pastebėjo, kad Evas negali sukurti buferio drobės. Prašome "
 "patikrinti ar Evas palaiko programinį buferio variklį.\n"
 
-#: src/bin/e_main.c:1515
+#: src/bin/e_main.c:1506
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1525
+#: src/bin/e_main.c:1516
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1535
+#: src/bin/e_main.c:1526
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1545
+#: src/bin/e_main.c:1536
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1559
+#: src/bin/e_main.c:1550
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -3498,24 +3510,23 @@ msgstr ""
 "Enlightenment pastebėjo, kad Evas negali įkelti 'Sans' šrifto. Patikrinkite "
 "ar Evas palaiko fontconfig ir fontconfig sistema apibrėžia 'Sans' šriftą.\n"
 
-#: src/bin/e_main.c:1615
-#, fuzzy
+#: src/bin/e_main.c:1606
 msgid "Enlightenment cannot setup compositing.\n"
-msgstr "Enlightenment nepavyko inicijuoti failų tvarkyklės.\n"
+msgstr ""
 
-#: src/bin/e_main.c:1630
+#: src/bin/e_main.c:1621
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1636
+#: src/bin/e_main.c:1627
 msgid "Setup DND"
 msgstr "DND nustatymas"
 
-#: src/bin/e_main.c:1640
+#: src/bin/e_main.c:1631
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1805
+#: src/bin/e_main.c:1796
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -3523,11 +3534,11 @@ msgid ""
 "will not be loaded."
 msgstr ""
 
-#: src/bin/e_main.c:1810 src/bin/e_main.c:1826
+#: src/bin/e_main.c:1801 src/bin/e_main.c:1817
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr "Enlightenment užstrigo įkrovos metu ir buvo paleistas iš naujo"
 
-#: src/bin/e_main.c:1811
+#: src/bin/e_main.c:1802
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -3535,7 +3546,7 @@ msgid ""
 "will not be loaded."
 msgstr ""
 
-#: src/bin/e_main.c:1819
+#: src/bin/e_main.c:1810
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -3548,7 +3559,7 @@ msgstr ""
 "Modulių<br>konfigūracijos langas turėtų leisti<br>vėl pasirinkti norimus "
 "modulius.\n"
 
-#: src/bin/e_main.c:1827
+#: src/bin/e_main.c:1818
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -3588,13 +3599,11 @@ msgid "Module does not contain all needed functions"
 msgstr "Modulis neturi visų reikalingų funkcijų"
 
 #: src/bin/e_module.c:355
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Module API Error<br>Error initializing Module: %s<br>It requires a module "
 "API version of: %i.<br>The module API advertized by Enlightenment is: %i.<br>"
 msgstr ""
-"Modulio API klaida<br>Klaida inicijuojant modulį: %s<br>Jis reikalauja bent "
-"%i modulių API versijos.<br>Enlightenment modulių API versija: %i.<br>"
 
 #: src/bin/e_module.c:360
 #, c-format
@@ -3605,26 +3614,30 @@ msgstr "Enlightenment %s modulis"
 msgid "What action should be taken with this module?<br>"
 msgstr ""
 
-#: src/bin/e_module.c:727 src/bin/e_shelf.c:1659
+#: src/bin/e_module.c:727 src/bin/e_shelf.c:1667
 #: src/modules/conf_dialogs/e_int_config_profiles.c:339
 #: src/modules/conf_shelves/e_int_config_shelf.c:394
 #: src/modules/ibar/e_mod_config.c:204
 msgid "Keep"
 msgstr ""
 
-#: src/bin/e_module.c:979
+#: src/bin/e_module.c:978
 msgid ""
 "The following modules are not standard ones for<br>Enlightenment and may "
-"cause bugs and crashes.<br>Please remove them before reporting any bugs."
-"<br><br>The module list is as follows:<br><br>"
+"cause bugs and crashes.<br>Please remove them before reporting any "
+"bugs.<br><br>The module list is as follows:<br><br>"
 msgstr ""
 
-#: src/bin/e_module.c:991
+#: src/bin/e_module.c:990
 msgid "Unstable module tainting"
 msgstr ""
 
-#: src/bin/e_module.c:995
+#: src/bin/e_module.c:994
 msgid "I know"
+msgstr ""
+
+#: src/bin/e_randr.c:362
+msgid "Randr Settings Upgraded"
 msgstr ""
 
 #: src/bin/e_screensaver.c:182
@@ -3641,14 +3654,14 @@ msgstr ""
 #: src/bin/e_shelf.c:66
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:219
 #: src/modules/everything/evry_config.c:568
-#: src/modules/gadman/e_mod_gadman.c:1107
+#: src/modules/gadman/e_mod_gadman.c:1105
 msgid "Horizontal"
 msgstr "Horizontalus"
 
 #: src/bin/e_shelf.c:67
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:221
 #: src/modules/everything/evry_config.c:561
-#: src/modules/gadman/e_mod_gadman.c:1116
+#: src/modules/gadman/e_mod_gadman.c:1114
 msgid "Vertical"
 msgstr "Vertikalus"
 
@@ -3700,80 +3713,80 @@ msgstr ""
 msgid "Right-bottom Corner"
 msgstr ""
 
-#: src/bin/e_shelf.c:256 src/bin/e_shelf.c:996
-#, fuzzy, c-format
+#: src/bin/e_shelf.c:256 src/bin/e_shelf.c:1004
+#, c-format
 msgid "Shelf #%d"
-msgstr "Lentyna #"
+msgstr ""
 
-#: src/bin/e_shelf.c:840
+#: src/bin/e_shelf.c:841
 msgid "Shelf Autohide Error"
 msgstr ""
 
-#: src/bin/e_shelf.c:840
+#: src/bin/e_shelf.c:841
 msgid ""
 "Shelf autohiding will not work properly<br>with the current configuration; "
 "set your shelf to<br>\"Below Everything\" or disable autohiding."
 msgstr ""
 
-#: src/bin/e_shelf.c:997
+#: src/bin/e_shelf.c:1005
 msgid "Add New Shelf"
 msgstr ""
 
-#: src/bin/e_shelf.c:1018
+#: src/bin/e_shelf.c:1026
 msgid "Shelf Error"
 msgstr ""
 
-#: src/bin/e_shelf.c:1018
+#: src/bin/e_shelf.c:1026
 msgid "A shelf with that name already exists!"
 msgstr ""
 
-#: src/bin/e_shelf.c:1524 src/bin/e_shelf.c:2328
+#: src/bin/e_shelf.c:1532 src/bin/e_shelf.c:2336
 msgid "Stop Moving Gadgets"
 msgstr ""
 
-#: src/bin/e_shelf.c:1526 src/bin/e_shelf.c:2330
+#: src/bin/e_shelf.c:1534 src/bin/e_shelf.c:2338
 msgid "Begin Moving Gadgets"
 msgstr ""
 
-#: src/bin/e_shelf.c:1654
+#: src/bin/e_shelf.c:1662
 msgid "Are you sure you want to delete this shelf?"
 msgstr "Ar tikrai norite pašalinti šią lentyną?"
 
-#: src/bin/e_shelf.c:1656
+#: src/bin/e_shelf.c:1664
 msgid ""
 "You requested to delete this shelf.<br><br>Are you sure you want to delete "
 "it?"
 msgstr "Jūs paprašėte pašalinti šią lentyną.<br><br>Ar esate įsitikinęs?"
 
-#: src/bin/e_shelf.c:2185
+#: src/bin/e_shelf.c:2193
 msgid "A shelf with that name and id already exists!"
 msgstr ""
 
-#: src/bin/e_shelf.c:2204
+#: src/bin/e_shelf.c:2212
 msgid "Rename Shelf"
 msgstr ""
 
-#: src/bin/e_shelf.c:2278 src/modules/conf_shelves/e_int_config_shelf.c:145
+#: src/bin/e_shelf.c:2286 src/modules/conf_shelves/e_int_config_shelf.c:145
 #: src/modules/ibar/e_mod_main.c:435 src/modules/ibar/e_mod_main.c:1253
 msgid "Contents"
 msgstr ""
 
-#: src/bin/e_shelf.c:2288
+#: src/bin/e_shelf.c:2296
 msgid "Orientation"
 msgstr ""
 
-#: src/bin/e_shelf.c:2297 src/modules/quickaccess/e_mod_quickaccess.c:815
+#: src/bin/e_shelf.c:2305 src/modules/quickaccess/e_mod_quickaccess.c:815
 msgid "Autohide"
 msgstr ""
 
-#: src/bin/e_shelf.c:2304
+#: src/bin/e_shelf.c:2312
 msgid "Refresh"
 msgstr "Kadrų dažnis"
 
 #: src/bin/e_startup.c:66
-#, fuzzy, c-format
+#, c-format
 msgid "Starting %s"
-msgstr "Paleidžiama"
+msgstr ""
 
 #: src/bin/e_sys.c:436
 msgid "Checking System Permissions"
@@ -3811,19 +3824,19 @@ msgstr "Palaukti"
 msgid "Cancel Logout"
 msgstr "Atšaukti atsijungimą"
 
-#: src/bin/e_sys.c:688
+#: src/bin/e_sys.c:689
 msgid "Logout in progress"
 msgstr "Vyksta atsijungimas"
 
-#: src/bin/e_sys.c:691
+#: src/bin/e_sys.c:692
 msgid "Logout in progress.<br><hilight>Please wait.</hilight>"
 msgstr "Vyksta atsijungimas.<br><hilight>Prašome palaukti</hilight>"
 
-#: src/bin/e_sys.c:720 src/bin/e_sys.c:775
+#: src/bin/e_sys.c:721 src/bin/e_sys.c:776
 msgid "Enlightenment is busy with another request"
 msgstr "Enlightenment užimtas kita užklausa"
 
-#: src/bin/e_sys.c:725
+#: src/bin/e_sys.c:726
 msgid ""
 "Logging out.<br>You cannot perform other system actions<br>once a logout has "
 "begun."
@@ -3831,14 +3844,14 @@ msgstr ""
 "Atsijungiama.<br>Pradėjus atsijungimą negalima vykdyti<br>kitų sistemos "
 "veiksmų."
 
-#: src/bin/e_sys.c:732
+#: src/bin/e_sys.c:733
 msgid ""
 "Powering off.<br>You cannot do any other system actions<br>once a shutdown "
 "has been started."
 msgstr ""
 "Išjungiama.<br>Pradėjus išjungimą negalima vykdyti kitų<br>sistemos veiksmų."
 
-#: src/bin/e_sys.c:738
+#: src/bin/e_sys.c:739
 msgid ""
 "Resetting.<br>You cannot do any other system actions<br>once a reboot has "
 "begun."
@@ -3846,7 +3859,7 @@ msgstr ""
 "Paleidžiama iš naujo.<br>Pradėjus paleidimą iš naujo<br>negalima vykdyti "
 "kitų sistemos veiksmų."
 
-#: src/bin/e_sys.c:744
+#: src/bin/e_sys.c:745
 msgid ""
 "Suspending.<br>Until suspend is complete you cannot perform<br>any other "
 "system actions."
@@ -3854,57 +3867,57 @@ msgstr ""
 "Sustabdoma.<br>Negalima vykdyti kitų sistemos veiksmų,<br>kol sustabdymas "
 "nebus baigtas."
 
-#: src/bin/e_sys.c:750
+#: src/bin/e_sys.c:751
 msgid ""
 "Hibernating.<br>You cannot perform any other system actions<br>until this is "
 "complete."
 msgstr ""
 
-#: src/bin/e_sys.c:756 src/bin/e_sys.c:797
+#: src/bin/e_sys.c:757 src/bin/e_sys.c:798
 msgid "EEK! This should not happen"
 msgstr "OI! To neturėjo nutikti"
 
-#: src/bin/e_sys.c:781
+#: src/bin/e_sys.c:782
 msgid "Power off failed."
 msgstr "Nepavyko išjungti."
 
-#: src/bin/e_sys.c:785
+#: src/bin/e_sys.c:786
 msgid "Reset failed."
 msgstr "Nepavyko paleisti iš naujo."
 
-#: src/bin/e_sys.c:789
+#: src/bin/e_sys.c:790
 msgid "Suspend failed."
 msgstr "Nepavyko sustabdyti."
 
-#: src/bin/e_sys.c:793
+#: src/bin/e_sys.c:794
 msgid "Hibernate failed."
 msgstr "Nepavyko užmigdyti."
 
-#: src/bin/e_sys.c:906
+#: src/bin/e_sys.c:907
 msgid "Power off.<br><hilight>Please wait.</hilight>"
 msgstr "Išjungiama.<br><hilight>Prašome palaukti</hilight>"
 
-#: src/bin/e_sys.c:962
+#: src/bin/e_sys.c:963
 msgid "Resetting"
 msgstr "Paleidžiama iš naujo"
 
-#: src/bin/e_sys.c:965
+#: src/bin/e_sys.c:966
 msgid "Resetting.<br><hilight>Please wait.</hilight>"
 msgstr "Paleidžiama iš naujo.<br><hilight>Prašome palaukti</hilight>"
 
-#: src/bin/e_sys.c:1029
+#: src/bin/e_sys.c:1030
 msgid "Suspending"
 msgstr "Sustabdoma"
 
-#: src/bin/e_sys.c:1032
+#: src/bin/e_sys.c:1033
 msgid "Suspending.<br><hilight>Please wait.</hilight>"
 msgstr "Sustabdoma.<br><hilight>Prašome palaukti</hilight>"
 
-#: src/bin/e_sys.c:1096
+#: src/bin/e_sys.c:1097
 msgid "Hibernating"
 msgstr "Užmigdoma"
 
-#: src/bin/e_sys.c:1099
+#: src/bin/e_sys.c:1100
 msgid "Hibernating.<br><hilight>Please wait.</hilight>"
 msgstr "Užmigdoma.<br><hilight>Prašome palaukti</hilight>"
 
@@ -3917,21 +3930,8 @@ msgid "Select Theme"
 msgstr ""
 
 #: src/bin/e_toolbar.c:128
-#, fuzzy
 msgid "EFM Toolbar"
-msgstr "Nurodyti įrankių juostos turinį"
-
-#: src/bin/e_toolbar.c:343
-msgid "Stop Moving/Resizing Items"
-msgstr "Baigti elementų perkėlimą/dydžio keitimą"
-
-#: src/bin/e_toolbar.c:345
-msgid "Begin Moving/Resizing Items"
-msgstr "Pradėti elementų perkėlimą/dydžio keitimą"
-
-#: src/bin/e_toolbar.c:358
-msgid "Set Toolbar Contents"
-msgstr "Nurodyti įrankių juostos turinį"
+msgstr ""
 
 #: src/bin/e_update.c:78
 msgid "Bother me later"
@@ -3953,17 +3953,17 @@ msgid ""
 "update your system packages<br>to get a new version."
 msgstr ""
 
-#: src/bin/e_utils.c:185 src/modules/conf_intl/e_int_config_imc.c:262
+#: src/bin/e_utils.c:178 src/modules/conf_intl/e_int_config_imc.c:262
 #: src/modules/conf_intl/e_int_config_imc.c:511
 #, c-format
 msgid "Enlightenment was unable to fork a child process:<br><br>%s<br>"
 msgstr "Enlightenment nepavyko paleisti poprocesio:<br><br>%s<br>"
 
-#: src/bin/e_utils.c:241
+#: src/bin/e_utils.c:231
 msgid "Cannot exit - immortal windows."
 msgstr "Negalima išeiti - neuždaromi langai."
 
-#: src/bin/e_utils.c:242
+#: src/bin/e_utils.c:232
 msgid ""
 "Some windows are left still around with the Lifespan lock enabled. This "
 "means<br>that Enlightenment will not allow itself to exit until these "
@@ -3973,112 +3973,114 @@ msgstr ""
 "Enlightenment<br>negalės būti išjungtas tol, kol nebus užverti šie langai "
 "arba išjungtas<br>gyvavimo trukmės užraktas."
 
-#: src/bin/e_utils.c:872
+#: src/bin/e_utils.c:862
 #, c-format
 msgid "%'.0f bytes"
 msgstr ""
 
-#: src/bin/e_utils.c:876
+#: src/bin/e_utils.c:866
 #, c-format
 msgid "%'.0f KiB"
 msgstr ""
 
-#: src/bin/e_utils.c:880
+#: src/bin/e_utils.c:870
 #, c-format
 msgid "%'.1f MiB"
 msgstr ""
 
-#: src/bin/e_utils.c:884
+#: src/bin/e_utils.c:874
 #, c-format
 msgid "%'.1f GiB"
 msgstr ""
 
-#: src/bin/e_utils.c:888
+#: src/bin/e_utils.c:878
 #, c-format
 msgid "%'.1f TiB"
 msgstr ""
 
-#: src/bin/e_utils.c:907
+#: src/bin/e_utils.c:897
 #, c-format
 msgid "In the future"
 msgstr ""
 
-#: src/bin/e_utils.c:911
+#: src/bin/e_utils.c:901
 #, c-format
 msgid "In the last minute"
 msgstr ""
 
-#: src/bin/e_utils.c:915
+#: src/bin/e_utils.c:905
 #, c-format
 msgid "Last year"
 msgid_plural "%li Years ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:920
+#: src/bin/e_utils.c:910
 #, c-format
 msgid "Last month"
 msgid_plural "%li Months ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:925
+#: src/bin/e_utils.c:915
 #, c-format
 msgid "Last week"
 msgid_plural "%li Weeks ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:930
+#: src/bin/e_utils.c:920
 #, c-format
 msgid "Yesterday"
 msgid_plural "%li Days ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:935
+#: src/bin/e_utils.c:925
 #, c-format
 msgid "An hour ago"
 msgid_plural "%li Hours ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:940
+#: src/bin/e_utils.c:930
 #, c-format
 msgid "A minute ago"
 msgid_plural "%li Minutes ago"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:947 src/bin/e_widget_filepreview.c:616
+#: src/bin/e_utils.c:937 src/bin/e_widget_filepreview.c:616
 #: src/bin/e_widget_filepreview.c:617 src/bin/e_widget_filepreview.c:618
 #: src/bin/e_widget_filepreview.c:648 src/bin/e_widget_filepreview.c:659
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:421
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1226
-#: src/modules/conf_bindings/e_int_config_keybindings.c:973
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1240
+#: src/modules/conf_bindings/e_int_config_keybindings.c:987
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:574
+#: src/modules/conf_comp/e_mod_config_match.c:148
 #: src/modules/conf_dialogs/e_int_config_profiles.c:298
 #: src/modules/wizard/page_020.c:24
 msgid "Unknown"
 msgstr "Nežinomas"
 
-#: src/bin/e_utils.c:1018 src/bin/e_utils.c:1026
+#: src/bin/e_utils.c:1008 src/bin/e_utils.c:1016
 msgid "Error creating directory"
 msgstr ""
 
-#: src/bin/e_utils.c:1018
+#: src/bin/e_utils.c:1008
 #, c-format
 msgid ""
 "Failed to create directory: %s .<br>Check that you have correct permissions "
 "set."
 msgstr ""
 
-#: src/bin/e_utils.c:1026
+#: src/bin/e_utils.c:1016
 #, c-format
-msgid "Failed to create directory: %s .<br>A file of that name already exists."
+msgid ""
+"Failed to create directory: %s .<br>A file of that name already exists."
 msgstr ""
 
-#: src/bin/e_utils.c:1184
+#: src/bin/e_utils.c:1174
 msgid ""
 "Configuration data needed upgrading. Your old configuration<br>has been "
 "wiped and a new set of defaults initialized. This<br>will happen regularly "
@@ -4089,12 +4091,12 @@ msgid ""
 "the hiccup in your configuration.<br>"
 msgstr ""
 
-#: src/bin/e_utils.c:1193 src/bin/e_utils.c:1217
+#: src/bin/e_utils.c:1183 src/bin/e_utils.c:1207
 #, c-format
 msgid "%s Configuration Updated"
 msgstr ""
 
-#: src/bin/e_utils.c:1206
+#: src/bin/e_utils.c:1196
 msgid ""
 "Your module configuration is NEWER than the module version. This is "
 "very<br>strange. This should not happen unless you downgraded<br>the module "
@@ -4103,75 +4105,70 @@ msgid ""
 "has been now restored to<br>defaults. Sorry for the inconvenience.<br>"
 msgstr ""
 
-#: src/bin/e_utils.c:1300
+#: src/bin/e_utils.c:1290
 #, c-format
 msgid "Never"
 msgstr ""
 
-#: src/bin/e_utils.c:1304
-#, fuzzy, c-format
+#: src/bin/e_utils.c:1294
+#, c-format
 msgid "A second"
 msgid_plural "%li Seconds"
-msgstr[0] "%.1f sekundės"
-msgstr[1] "%.1f sekundės"
-msgstr[2] "%.1f sekundės"
+msgstr[0] ""
+msgstr[1] ""
 
-#: src/bin/e_utils.c:1308
+#: src/bin/e_utils.c:1298
 #, c-format
 msgid "One year"
 msgid_plural "%li Years"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
-#: src/bin/e_utils.c:1313
+#: src/bin/e_utils.c:1303
 #, c-format
 msgid "One month"
 msgid_plural "%li Months"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
-#: src/bin/e_utils.c:1318
+#: src/bin/e_utils.c:1308
 #, c-format
 msgid "One week"
 msgid_plural "%li Weeks"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
-#: src/bin/e_utils.c:1323
+#: src/bin/e_utils.c:1313
 #, c-format
 msgid "One day"
 msgid_plural "%li Days"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
-#: src/bin/e_utils.c:1328
+#: src/bin/e_utils.c:1318
 #, c-format
 msgid "An hour"
 msgid_plural "%li Hours"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
-#: src/bin/e_utils.c:1333
+#: src/bin/e_utils.c:1323
 #, c-format
 msgid "A minute"
 msgid_plural "%li Minutes"
 msgstr[0] ""
 msgstr[1] ""
-msgstr[2] ""
 
 #: src/bin/e_widget_config_list.c:80
 #: src/modules/conf_applications/e_int_config_apps.c:306
+#: src/modules/conf_comp/e_mod_config_match.c:713
 #: src/modules/xkbswitch/e_mod_config.c:247
 msgid "Up"
 msgstr "Aukštyn"
 
 #: src/bin/e_widget_config_list.c:86
 #: src/modules/conf_applications/e_int_config_apps.c:310
+#: src/modules/conf_comp/e_mod_config_match.c:715
 #: src/modules/xkbswitch/e_mod_config.c:251
 msgid "Down"
 msgstr "Žemyn"
@@ -4231,9 +4228,11 @@ msgstr ""
 
 #: src/bin/e_widget_filepreview.c:392
 msgid "Mount status:"
-msgstr ""
+msgstr "Prijungimo būsena:"
 
-#: src/bin/e_widget_filepreview.c:394 src/modules/mixer/app_mixer.c:381
+#: src/bin/e_widget_filepreview.c:394
+#: src/modules/conf_comp/e_mod_config_match.c:119
+#: src/modules/mixer/app_mixer.c:381
 msgid "Type:"
 msgstr "Tipas:"
 
@@ -4261,7 +4260,7 @@ msgstr "Skaityti-rašyti"
 
 #: src/bin/e_widget_filepreview.c:608 src/bin/e_widget_filepreview.c:619
 msgid "Unmounted"
-msgstr ""
+msgstr "Atjungtas"
 
 #: src/bin/e_widget_filepreview.c:743
 #, c-format
@@ -4285,7 +4284,7 @@ msgstr "Įtraukti į mėgiamiausius"
 #: src/bin/e_widget_fsel.c:339
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:91
 #: src/modules/conf_intl/e_int_config_imc.c:815
-#: src/modules/conf_theme/e_int_config_theme.c:673
+#: src/modules/conf_theme/e_int_config_theme.c:672
 #: src/modules/gadman/e_mod_config.c:256
 msgid "Go up a Directory"
 msgstr "Katalogu aukštyn"
@@ -4295,9 +4294,8 @@ msgid "Access Settings"
 msgstr ""
 
 #: src/modules/appmenu/e_mod_main.c:88
-#, fuzzy
 msgid "Application Menu"
-msgstr "Programa"
+msgstr ""
 
 #: src/modules/backlight/e_mod_main.c:378
 #: src/modules/conf_display/e_mod_main.c:36
@@ -4444,9 +4442,8 @@ msgid "Battery Meter"
 msgstr "Baterijos matuoklis"
 
 #: src/modules/bluez4/agent.c:116
-#, fuzzy
 msgid "Reject"
-msgstr "Išimti"
+msgstr ""
 
 #: src/modules/bluez4/agent.c:133
 msgid "Pin Code Requested"
@@ -4463,7 +4460,8 @@ msgid "Passkey Requested"
 msgstr ""
 
 #: src/modules/bluez4/agent.c:146
-msgid "Enter the Passkey above. It should be a numeric value between 0-999999."
+msgid ""
+"Enter the Passkey above. It should be a numeric value between 0-999999."
 msgstr ""
 
 #: src/modules/bluez4/agent.c:163
@@ -4472,9 +4470,8 @@ msgid "%d keys were typed on %s. Passkey is %06d"
 msgstr ""
 
 #: src/modules/bluez4/agent.c:165
-#, fuzzy
 msgid "Display Passkey"
-msgstr "Rodyti klasę"
+msgstr ""
 
 #: src/modules/bluez4/agent.c:178
 #, c-format
@@ -4482,9 +4479,8 @@ msgid "Pincode for %s is %s"
 msgstr ""
 
 #: src/modules/bluez4/agent.c:179
-#, fuzzy
 msgid "Display Pincode"
-msgstr "Rodyti antraštę"
+msgstr ""
 
 #: src/modules/bluez4/agent.c:193
 #, c-format
@@ -4492,11 +4488,10 @@ msgid "%06d is the passkey presented in %s?"
 msgstr ""
 
 #: src/modules/bluez4/agent.c:196
-#, fuzzy
 msgid "Confirm Request"
-msgstr "Patvirtinti šalinimą"
+msgstr ""
 
-#: src/modules/bluez4/agent.c:196 src/modules/shot/e_mod_main.c:567
+#: src/modules/bluez4/agent.c:196 src/modules/shot/e_mod_main.c:566
 msgid "Confirm"
 msgstr ""
 
@@ -4517,23 +4512,20 @@ msgstr ""
 #: src/modules/bluez4/ebluez4.c:440 src/modules/bluez4/ebluez4.c:462
 #: src/modules/bluez4/ebluez4.c:603 src/modules/bluez4/ebluez4.c:621
 #: src/modules/bluez4/ebluez4.c:681 src/modules/bluez4/ebluez4.c:697
-#, fuzzy
 msgid "Bluez Error"
-msgstr "Vykdymo klaida"
+msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:119
 msgid "Searching for Devices..."
 msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:190 src/modules/bluez4/e_mod_main.c:461
-#, fuzzy
 msgid "Adapter Settings"
-msgstr "Kiti nustatymai"
+msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:202
-#, fuzzy
 msgid "Powered"
-msgstr "Nuleisti"
+msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:210 src/modules/conf_comp/e_mod_main.c:55
 msgid "Visible"
@@ -4548,9 +4540,8 @@ msgid "Adapters Available"
 msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:374
-#, fuzzy
 msgid "Paired Devices"
-msgstr "Keičiamasis įrenginys"
+msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:398
 msgid "Disconnect"
@@ -4577,9 +4568,8 @@ msgid "Bluez4"
 msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:457
-#, fuzzy
 msgid "Search New Devices"
-msgstr "Paieškos katalogai"
+msgstr ""
 
 #: src/modules/bluez4/e_mod_main.c:808
 msgid "An error has ocurred"
@@ -4591,14 +4581,12 @@ msgid "Property of %s changed, but could not be read"
 msgstr ""
 
 #: src/modules/bluez4/ebluez4.c:435
-#, fuzzy
 msgid "Error reading list of devices"
-msgstr "Klaida įkeliant modulį"
+msgstr ""
 
 #: src/modules/bluez4/ebluez4.c:598
-#, fuzzy
 msgid "Error reading list of adapters"
-msgstr "Klaida įkeliant modulį"
+msgstr ""
 
 #: src/modules/bluez4/ebluez4.c:616
 msgid "Error reading path of Default Adapter"
@@ -4687,36 +4675,30 @@ msgstr ""
 msgid "Toggle calendar"
 msgstr ""
 
-#: src/modules/conf/e_mod_config.c:35 src/modules/conf/e_mod_main.c:291
-#: src/modules/conf/e_mod_main.c:305
+#: src/modules/conf/e_mod_config.c:35 src/modules/conf/e_mod_main.c:286
+#: src/modules/conf/e_mod_main.c:300
 msgid "Configuration Panel"
 msgstr "Sąrankos panelė"
 
 #: src/modules/conf/e_mod_config.c:65
-#, fuzzy
 msgid "Show configurations in menu"
-msgstr "Sąrankos panelė"
-
-#: src/modules/conf/e_mod_main.c:270
-msgid "conf module cannot be loaded when conf2 module is already loaded!"
 msgstr ""
 
-#: src/modules/conf/e_mod_main.c:278 src/modules/conf/e_mod_main.c:282
-#: src/modules/conf/e_mod_main.c:458
-#, fuzzy
+#: src/modules/conf/e_mod_main.c:273 src/modules/conf/e_mod_main.c:277
+#: src/modules/conf/e_mod_main.c:453
 msgid "Settings Panel"
-msgstr "Nuostatų antraštė"
+msgstr "Nustatymų skydelis"
 
-#: src/modules/conf/e_mod_main.c:427
+#: src/modules/conf/e_mod_main.c:422
 #: src/modules/conf_display/e_int_config_screensaver.c:195
 msgid "Presentation"
 msgstr "Pristatymas"
 
-#: src/modules/conf/e_mod_main.c:434
+#: src/modules/conf/e_mod_main.c:429
 msgid "Offline"
 msgstr "Atsijungęs"
 
-#: src/modules/conf/e_mod_main.c:463
+#: src/modules/conf/e_mod_main.c:458
 msgid "Modes"
 msgstr "Veiksenos"
 
@@ -4787,6 +4769,7 @@ msgid "Selected Application"
 msgstr ""
 
 #: src/modules/conf_applications/e_int_config_defapps.c:335
+#: src/modules/conf_comp/e_mod_config_match.c:429
 msgid "Types"
 msgstr ""
 
@@ -4828,6 +4811,7 @@ msgid "Start KDE services on login"
 msgstr ""
 
 #: src/modules/conf_applications/e_mod_main.c:18
+#: src/modules/conf_comp/e_mod_config_match.c:738
 #: src/modules/teamwork/e_mod_main.c:118
 msgid "Apps"
 msgstr "Programos"
@@ -4850,7 +4834,7 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:286
 #: src/modules/conf_bindings/e_int_config_keybindings.c:264
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:312
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:789
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:803
 msgid "Action"
 msgstr "Veiksmas"
 
@@ -4858,7 +4842,7 @@ msgstr "Veiksmas"
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:299
 #: src/modules/conf_bindings/e_int_config_keybindings.c:271
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:319
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:796
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:810
 msgid "Action Params"
 msgstr "Veiksmo parametrai"
 
@@ -4951,28 +4935,25 @@ msgid "Vaio"
 msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:395
-#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:569
+#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:570
 msgid "Mute"
 msgstr "Nutildyti"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:397
-#, fuzzy
 msgid "Volume"
-msgstr "Pakelti aukštyn"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:399
 msgid "Brightness"
 msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:401
-#, fuzzy
 msgid "Volume Down"
-msgstr "Nuleisti žemyn"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:403
-#, fuzzy
 msgid "Volume Up"
-msgstr "Pakelti aukštyn"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:405
 msgid "Tablet On"
@@ -4987,29 +4968,24 @@ msgid "Zoom"
 msgstr "Mastelis"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:411
-#, fuzzy
 msgid "Screenlock"
-msgstr "Ekrano užraktas"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:413
-#, fuzzy
 msgid "Battery Button"
-msgstr "Baterijos matuoklis"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:416
-#, fuzzy
 msgid "Tablet Disabled"
-msgstr "Žymimojo langelio tekstas išjungtas"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:417
-#, fuzzy
 msgid "Tablet Enabled"
-msgstr "Įjungtas"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:418
-#, fuzzy
 msgid "Tablet"
-msgstr "Įjungtas"
+msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:488
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:4
@@ -5033,9 +5009,9 @@ msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:5
 msgid ""
-"Please select an edge,<br>or click <hilight>Close</hilight> to abort."
-"<br><br>You can either specify a delay of this<br> action using the slider, "
-"or make it<br>respond to edge clicks:"
+"Please select an edge,<br>or click <hilight>Close</hilight> to "
+"abort.<br><br>You can either specify a delay of this<br> action using the "
+"slider, or make it<br>respond to edge clicks:"
 msgstr ""
 "Prašome nurodykite kraštą,<br>jei norite nutraukti paspauskite "
 "<hilight>Uždaryti</hilight>.<br><br>Jūs galite nurodyti šio "
@@ -5061,14 +5037,14 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:277
 #: src/modules/conf_bindings/e_int_config_keybindings.c:255
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:302
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:780
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:794
 msgid "Delete All"
 msgstr "Pašalinti visus"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:281
 #: src/modules/conf_bindings/e_int_config_keybindings.c:259
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:306
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:784
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:798
 msgid "Restore Default Bindings"
 msgstr "Atkurti numatytuosius saistymus"
 
@@ -5088,91 +5064,91 @@ msgstr "Leisti saistymo aktyvavimą pilno ekrano langams"
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:864
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:878
 msgid "Edge Binding Sequence"
 msgstr "Krašto saistymo seka"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:883
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:897
 msgid "Clickable edge"
 msgstr "Paspaudžiamas kraštas"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:891
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:905
 msgid "Drag only"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1222
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1236
 msgid "Edge Binding Error"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1223
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1237
 #, c-format
 msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
 "action.<br>Please choose another edge to bind."
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1358
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1108
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1140
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1372
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1122
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1154
 msgid "CTRL"
 msgstr "CTRL"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1363
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1113
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1145
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1377
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1127
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1159
 msgid "ALT"
 msgstr "ALT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1369
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1119
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1151
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1383
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1133
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1165
 msgid "SHIFT"
 msgstr "SHIFT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1375
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1125
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1157
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1389
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1139
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1171
 msgid "WIN"
 msgstr "WIN"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1385
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1399
 msgid "Left Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1389
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1403
 msgid "Top Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1393
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1407
 msgid "Right Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1397
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1411
 msgid "Bottom Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1401
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1415
 msgid "Top Left Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1405
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1419
 msgid "Top Right Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1409
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1423
 msgid "Bottom Right Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1413
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1427
 msgid "Bottom Left Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1427
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1441
 #, c-format
 msgid "(left clickable)"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1429
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1443
 #, c-format
 msgid "(clickable)"
 msgstr ""
@@ -5190,15 +5166,16 @@ msgstr "Klavišų susiejimo nustatymai"
 msgid "Key Bindings"
 msgstr "Klavišų saistymas"
 
-#: src/modules/conf_bindings/e_int_config_keybindings.c:968
+#: src/modules/conf_bindings/e_int_config_keybindings.c:982
 msgid "Binding Key Error"
 msgstr "Klavišų saistymo klaida"
 
-#: src/modules/conf_bindings/e_int_config_keybindings.c:969
+#: src/modules/conf_bindings/e_int_config_keybindings.c:983
 #, c-format
 msgid ""
-"The binding key sequence, that you choose, is already used by <br><hilight>"
-"%s</hilight> action.<br>Please choose another binding key sequence."
+"The binding key sequence, that you choose, is already used by "
+"<br><hilight>%s</hilight> action.<br>Please choose another binding key "
+"sequence."
 msgstr ""
 "Jūsų nurodyta klavišų saistymo seka jau naudojama <br><hilight>%s</hilight> "
 "veiksmo.<br>Prašome pasirinkti kitą klavišų saistymo seką."
@@ -5245,7 +5222,7 @@ msgstr "Iškylantysis langas"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:348
 msgid "Zone"
-msgstr "Juosta"
+msgstr "Zona"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:352
 msgid "Container"
@@ -5255,61 +5232,61 @@ msgstr "Sudėtinis rodinys"
 msgid "Manager"
 msgstr "Tvarkytuvė"
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:695
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:709
 msgid "Mouse Buttons"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:755
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:769
 msgid "Mouse Wheels"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1128
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1146
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1143
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1161
 #: src/modules/pager/e_mod_config.c:374 src/modules/pager/e_mod_config.c:400
 #, c-format
 msgid "Left button"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1130
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1144
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1145
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1159
 #: src/modules/pager/e_mod_config.c:379 src/modules/pager/e_mod_config.c:395
 #, c-format
 msgid "Right button"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1133
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1149
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1148
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1164
 #: src/modules/pager/e_mod_config.c:384 src/modules/pager/e_mod_config.c:405
 #: src/modules/pager/e_mod_config.c:410
 #, c-format
 msgid "Button %i"
 msgstr "Mygtukas %i"
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1139
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1154
 #: src/modules/pager/e_mod_config.c:389
 #, c-format
 msgid "Middle button"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1161
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1176
 #, c-format
 msgid "Extra button (%d)"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1177
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1192
 msgid "Mouse Wheel Up"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1179
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1194
 msgid "Mouse Wheel Down"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1183
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1198
 #, c-format
 msgid "Extra Wheel (%d) Up"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1185
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1200
 #, c-format
 msgid "Extra Wheel (%d) Down"
 msgstr ""
@@ -5326,8 +5303,8 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:572
 #, c-format
 msgid ""
-"The signal and source that you entered are already used by<br><hilight>%s</"
-"hilight> action.<br>"
+"The signal and source that you entered are already used "
+"by<br><hilight>%s</hilight> action.<br>"
 msgstr ""
 
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:621
@@ -5342,12 +5319,12 @@ msgstr ""
 msgid "Signal:"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:768
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:782
 #: src/modules/conf_bindings/e_mod_main.c:39
 msgid "Signal Bindings"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:829
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:843
 msgid "Signal Bindings Settings"
 msgstr ""
 
@@ -5357,260 +5334,401 @@ msgstr ""
 msgid "Input"
 msgstr "Įvestis"
 
-#: src/modules/conf_comp/e_mod_config.c:89
+#: src/modules/conf_comp/e_mod_config.c:87
 msgid "Composite Settings"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:190
+#: src/modules/conf_comp/e_mod_config.c:186
 msgid "Edit window matches"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:193
-#: src/modules/conf_comp/e_mod_config.c:572
+#: src/modules/conf_comp/e_mod_config.c:189
+#: src/modules/conf_comp/e_mod_config.c:560
 msgid "Select default style"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:199
+#: src/modules/conf_comp/e_mod_config.c:195
 msgid "Styles"
 msgstr "Stiliai"
 
-#: src/modules/conf_comp/e_mod_config.c:207
+#: src/modules/conf_comp/e_mod_config.c:203
 msgid "Fast Effects"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:208
+#: src/modules/conf_comp/e_mod_config.c:204
 msgid "Enable fast composite effects for windows"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:211
+#: src/modules/conf_comp/e_mod_config.c:207
 msgid "Enable fast composite effects for menus"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:214
+#: src/modules/conf_comp/e_mod_config.c:210
 msgid "Enable fast composite effects for popups"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:217
+#: src/modules/conf_comp/e_mod_config.c:213
 msgid "Enable fast composite effects for objects"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:220
+#: src/modules/conf_comp/e_mod_config.c:216
 msgid "Enable fast composite effects for overrides"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:225
-#, fuzzy
+#: src/modules/conf_comp/e_mod_config.c:221
 msgid "Disable Effects"
-msgstr "Neveikos būsenos efektai"
+msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:226
+#: src/modules/conf_comp/e_mod_config.c:222
 msgid "Disable composite effects for windows"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:229
+#: src/modules/conf_comp/e_mod_config.c:225
 msgid "Disable composite effects for menus"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:232
+#: src/modules/conf_comp/e_mod_config.c:228
 msgid "Disable composite effects for popups"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:235
+#: src/modules/conf_comp/e_mod_config.c:231
 msgid "Disable composite effects for objects"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:238
+#: src/modules/conf_comp/e_mod_config.c:234
 msgid "Disable composite effects for overrides"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:241
+#: src/modules/conf_comp/e_mod_config.c:237
 msgid "Disable composite effects for screen"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:246
+#: src/modules/conf_comp/e_mod_config.c:242
 msgid "Effects"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:250
-#: src/modules/conf_comp/e_mod_config.c:585
+#: src/modules/conf_comp/e_mod_config.c:246
+#: src/modules/conf_comp/e_mod_config.c:573
 #: src/modules/fileman/e_mod_config.c:418
 #: src/modules/quickaccess/e_mod_config.c:252
 #: src/modules/quickaccess/e_mod_config.c:348
 msgid "Behavior"
 msgstr "Veiksena"
 
-#: src/modules/conf_comp/e_mod_config.c:251
+#: src/modules/conf_comp/e_mod_config.c:247
 msgid "Smooth scaling"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:253
-#: src/modules/conf_comp/e_mod_config.c:593
+#: src/modules/conf_comp/e_mod_config.c:249
+#: src/modules/conf_comp/e_mod_config.c:581
 msgid "Don't composite fullscreen windows"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:255
-#: src/modules/conf_comp/e_mod_config.c:554
-#, fuzzy
+#: src/modules/conf_comp/e_mod_config.c:251
+#: src/modules/conf_comp/e_mod_config.c:542
 msgid "Don't fade backlight"
-msgstr "Neslėpti įtaisų"
+msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:259
-#: src/modules/conf_comp/e_mod_config.c:598
+#: src/modules/conf_comp/e_mod_config.c:255
+#: src/modules/conf_comp/e_mod_config.c:586
 #: src/modules/conf_performance/e_mod_main.c:19
 msgid "Engine"
 msgstr "Variklis"
 
-#: src/modules/conf_comp/e_mod_config.c:261
-#: src/modules/conf_comp/e_mod_config.c:600
+#: src/modules/conf_comp/e_mod_config.c:257
+#: src/modules/conf_comp/e_mod_config.c:588
 msgid "Software"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:267
-#: src/modules/conf_comp/e_mod_config.c:606
+#: src/modules/conf_comp/e_mod_config.c:263
+#: src/modules/conf_comp/e_mod_config.c:594
 msgid "OpenGL"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:270
-#, fuzzy
+#: src/modules/conf_comp/e_mod_config.c:266
 msgid "OpenGL options:"
-msgstr "Parinktys"
+msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:272
-#: src/modules/conf_comp/e_mod_config.c:587
+#: src/modules/conf_comp/e_mod_config.c:268
+#: src/modules/conf_comp/e_mod_config.c:575
 msgid "Tear-free updates (VSynced)"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:274
+#: src/modules/conf_comp/e_mod_config.c:270
 msgid "Texture from pixmap"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:281
+#: src/modules/conf_comp/e_mod_config.c:277
 msgid "Assume swapping method:"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:284
+#: src/modules/conf_comp/e_mod_config.c:280
 msgid "Auto"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:286
+#: src/modules/conf_comp/e_mod_config.c:282
 msgid "Invalidate (full redraw)"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:288
+#: src/modules/conf_comp/e_mod_config.c:284
 msgid "Copy from back to front"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:290
+#: src/modules/conf_comp/e_mod_config.c:286
 msgid "Double buffered swaps"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:292
+#: src/modules/conf_comp/e_mod_config.c:288
 msgid "Triple buffered swaps"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:302
-#: src/modules/conf_comp/e_mod_config.c:617
+#: src/modules/conf_comp/e_mod_config.c:298
+#: src/modules/conf_comp/e_mod_config.c:605
 msgid "Rendering"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:306
-#, fuzzy
+#: src/modules/conf_comp/e_mod_config.c:302
 msgid "X Messages"
-msgstr "Žinutės"
+msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:307
+#: src/modules/conf_comp/e_mod_config.c:303
 msgid "Send flush"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:309
+#: src/modules/conf_comp/e_mod_config.c:305
 msgid "Send dump"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:339
+#: src/modules/conf_comp/e_mod_config.c:335
 msgid "Sync"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:340
-msgid "Sync windows"
-msgstr ""
-
-#: src/modules/conf_comp/e_mod_config.c:342
-msgid "Loose sync"
-msgstr ""
-
-#: src/modules/conf_comp/e_mod_config.c:344
+#: src/modules/conf_comp/e_mod_config.c:336
 msgid "Grab Server during draw"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:346
+#: src/modules/conf_comp/e_mod_config.c:338
 msgid "Initial draw timeout for newly mapped windows"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:348
+#: src/modules/conf_comp/e_mod_config.c:340
 #, c-format
 msgid "%1.2f Seconds"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:351
+#: src/modules/conf_comp/e_mod_config.c:343
 #: src/modules/ibar/e_mod_config.c:146
 msgid "Misc"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:399
+#: src/modules/conf_comp/e_mod_config.c:391
 msgid "Show Framerate"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:401
+#: src/modules/conf_comp/e_mod_config.c:393
 msgid "Rolling average frame count"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:403
+#: src/modules/conf_comp/e_mod_config.c:395
 #, c-format
 msgid "%1.0f Frames"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:407
+#: src/modules/conf_comp/e_mod_config.c:399
 msgid "Corner"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:410
+#: src/modules/conf_comp/e_mod_config.c:402
 msgid "Top Left"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:413
+#: src/modules/conf_comp/e_mod_config.c:405
 msgid "Top Right"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:416
+#: src/modules/conf_comp/e_mod_config.c:408
 msgid "Bottom Left"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:419
+#: src/modules/conf_comp/e_mod_config.c:411
 msgid "Bottom Right"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:424
+#: src/modules/conf_comp/e_mod_config.c:416
 msgid "Debug"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:559
+#: src/modules/conf_comp/e_mod_config.c:547
 msgid "Enable \"fast\" composite effects"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:568 src/modules/wizard/page_150.c:91
+#: src/modules/conf_comp/e_mod_config.c:556 src/modules/wizard/page_150.c:91
 msgid "Disable composite effects"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:590
+#: src/modules/conf_comp/e_mod_config.c:578
 msgid "Smooth scaling of window content"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:610
+#: src/modules/conf_comp/e_mod_config.c:598
 msgid "To reset compositor:"
 msgstr ""
 
-#: src/modules/conf_comp/e_mod_config.c:612
+#: src/modules/conf_comp/e_mod_config.c:600
 msgid "Ctrl+Alt+Shift+Home"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:72
+#: src/modules/conf_comp/e_mod_config_match.c:102
+#: src/modules/conf_comp/e_mod_config_match.c:393
+#: src/modules/conf_comp/e_mod_config_match.c:444
+msgid "Unused"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:74
+#: src/modules/conf_comp/e_mod_config_match.c:396
+msgid "Combo"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:78
+#: src/modules/conf_comp/e_mod_config_match.c:400
+#: src/modules/conf_comp/e_mod_config_match.c:467
+msgid "Dialog"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:80
+#: src/modules/conf_comp/e_mod_config_match.c:402
+msgid "Dock"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:82
+#: src/modules/conf_comp/e_mod_config_match.c:404
+msgid "Drag and Drop"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:86
+#: src/modules/conf_comp/e_mod_config_match.c:408
+msgid "Menu (Dropdown)"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:88
+#: src/modules/conf_comp/e_mod_config_match.c:410
+msgid "Menu (Popup)"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:92
+#: src/modules/conf_comp/e_mod_config_match.c:414
+#: src/modules/notification/e_mod_main.c:154
+msgid "Notification"
+msgstr "Pranešimas"
+
+#: src/modules/conf_comp/e_mod_config_match.c:94
+#: src/modules/conf_comp/e_mod_config_match.c:416
+msgid "Splash"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:96
+#: src/modules/conf_comp/e_mod_config_match.c:418
+#: src/modules/fileman/e_mod_config.c:344
+msgid "Toolbar"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:98
+#: src/modules/conf_comp/e_mod_config_match.c:420
+msgid "Tooltip"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:100
+#: src/modules/conf_comp/e_mod_config_match.c:422
+msgid "Utility"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:113
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:163
+msgid "Title:"
+msgstr "Antraštė:"
+
+#: src/modules/conf_comp/e_mod_config_match.c:115
+#: src/modules/conf_comp/e_mod_config_match.c:121
+#: src/modules/conf_comp/e_mod_config_match.c:127
+#: src/modules/conf_comp/e_mod_config_match.c:133
+#: src/modules/conf_comp/e_mod_config_match.c:139
+msgid " / "
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:131
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:155
+msgid "Class:"
+msgstr "Klasė:"
+
+#: src/modules/conf_comp/e_mod_config_match.c:137
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:171
+msgid "Role:"
+msgstr "Vaidmuo:"
+
+#: src/modules/conf_comp/e_mod_config_match.c:143
+msgid "Style:"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:332
+msgid "Edit E_Comp_Match"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:384
+msgid "Names"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:446
+msgid "On"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:448
+#: src/modules/everything/evry_config.c:495
+msgid "Off"
+msgstr "Išjungta"
+
+#: src/modules/conf_comp/e_mod_config_match.c:493
+msgid "Virtual Keyboard"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:506
+msgid "Quick Panel"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:517
+msgid "ARGB"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:553
+msgid "Flags"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:719
+msgid "Del"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:721
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:185
+#: src/modules/mixer/app_mixer.c:402
+msgid "Edit"
+msgstr "Keisti"
+
+#: src/modules/conf_comp/e_mod_config_match.c:742
+msgid "E"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:746
+msgid "Over"
+msgstr ""
+
+#: src/modules/conf_comp/e_mod_config_match.c:750
+#: src/modules/conf_menus/e_int_config_menus.c:278
+#: src/modules/conf_menus/e_mod_main.c:17
+msgid "Menus"
+msgstr "Meniu"
+
+#: src/modules/conf_comp/e_mod_config_match.c:884
+msgid "Composite Match Settings"
 msgstr ""
 
 #: src/modules/conf_comp/e_mod_main.c:28
@@ -5628,9 +5746,8 @@ msgid "Focus-In"
 msgstr ""
 
 #: src/modules/conf_comp/e_mod_main.c:238
-#, fuzzy
 msgid "Composite Style Settings"
-msgstr "Temperatūros stebėtuvo nustatymai"
+msgstr ""
 
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:38
 msgid "Dialog Settings"
@@ -5640,7 +5757,7 @@ msgstr "Dialogų langų nustatymai"
 #: src/modules/conf_performance/e_int_config_engine.c:86
 #: src/modules/conf_theme/e_int_config_fonts.c:674
 #: src/modules/everything/evry_config.c:519 src/modules/ibox/e_mod_config.c:97
-#: src/modules/mixer/conf_gadget.c:200 src/modules/mixer/conf_module.c:91
+#: src/modules/mixer/conf_gadget.c:200 src/modules/mixer/conf_module.c:92
 msgid "General Settings"
 msgstr "Bendri nustatymai"
 
@@ -5683,7 +5800,7 @@ msgid "Available Profiles"
 msgstr "Turimi profiliai"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:122
-#: src/modules/wizard/page_020.c:115
+#: src/modules/wizard/page_020.c:119
 msgid "Select a profile"
 msgstr "Parinkite profilį"
 
@@ -5868,7 +5985,7 @@ msgstr ""
 
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:84
 #: src/modules/conf_intl/e_int_config_imc.c:803
-#: src/modules/conf_theme/e_int_config_theme.c:662
+#: src/modules/conf_theme/e_int_config_theme.c:661
 #: src/modules/conf_theme/e_int_config_wallpaper.c:423
 #: src/modules/conf_theme/e_int_config_wallpaper.c:578
 #: src/modules/gadman/e_mod_config.c:248
@@ -5987,7 +6104,7 @@ msgid "Blanking"
 msgstr "Ištrynimas"
 
 #: src/modules/conf_display/e_mod_main.c:21
-#: src/modules/tiling/e_mod_config.c:198
+#: src/modules/tiling/e_mod_config.c:202
 msgid "Virtual Desktops"
 msgstr "Virtualūs darbalaukiai"
 
@@ -6247,11 +6364,6 @@ msgstr "Įtaisai"
 msgid "Show gadget settings in top-level"
 msgstr ""
 
-#: src/modules/conf_menus/e_int_config_menus.c:278
-#: src/modules/conf_menus/e_mod_main.c:17
-msgid "Menus"
-msgstr "Meniu"
-
 #: src/modules/conf_menus/e_int_config_menus.c:288
 msgid "Margin"
 msgstr "Paraštė"
@@ -6493,12 +6605,12 @@ msgstr ""
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:235
 #: src/modules/notification/e_mod_config.c:102
-#: src/modules/shot/e_mod_main.c:726
+#: src/modules/shot/e_mod_main.c:754
 msgid "Low"
 msgstr ""
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:274
-#: src/modules/shot/e_mod_main.c:724
+#: src/modules/shot/e_mod_main.c:752
 msgid "Medium"
 msgstr "Vidutinis"
 
@@ -6510,7 +6622,7 @@ msgid "%.0f s"
 msgstr ""
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:313
-#: src/modules/shot/e_mod_main.c:722
+#: src/modules/shot/e_mod_main.c:750
 msgid "High"
 msgstr ""
 
@@ -6532,18 +6644,17 @@ msgid "Screen Setup"
 msgstr ""
 
 #: src/modules/conf_randr/e_int_config_randr.c:123
-#, fuzzy
 msgid "Primary Output"
-msgstr "Išvestis"
+msgstr ""
 
 #: src/modules/conf_randr/e_int_config_randr.c:141
 msgid "Restore On Startup"
 msgstr ""
 
 #: src/modules/conf_shelves/e_int_config_shelf.c:129
-#, fuzzy, c-format
+#, c-format
 msgid "Configured Shelves: Display %d"
-msgstr "Lentynų konfigūracija"
+msgstr ""
 
 #: src/modules/conf_shelves/e_int_config_shelf.c:390
 #, c-format
@@ -6840,7 +6951,7 @@ msgstr "Didelis teksto blokas"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:68
 msgid "Settings Heading"
-msgstr "Nuostatų antraštė"
+msgstr "Nustatymų antraštė"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:69
 msgid "About Title"
@@ -7095,15 +7206,15 @@ msgstr "Didžiausias"
 msgid "Constraints"
 msgstr "Ribojimai"
 
-#: src/modules/conf_theme/e_int_config_theme.c:310
+#: src/modules/conf_theme/e_int_config_theme.c:311
 msgid "Theme Selector"
 msgstr "Temos pasirinkimas"
 
-#: src/modules/conf_theme/e_int_config_theme.c:556
+#: src/modules/conf_theme/e_int_config_theme.c:555
 msgid "Theme File Error"
 msgstr ""
 
-#: src/modules/conf_theme/e_int_config_theme.c:557
+#: src/modules/conf_theme/e_int_config_theme.c:556
 #, c-format
 msgid "%s is probably not an E17 theme!"
 msgstr ""
@@ -7111,6 +7222,10 @@ msgstr ""
 #: src/modules/conf_theme/e_int_config_theme.c:707
 msgid " Import..."
 msgstr " Importuoti..."
+
+#: src/modules/conf_theme/e_int_config_theme.c:710
+msgid "Show startup splash"
+msgstr ""
 
 #: src/modules/conf_theme/e_int_config_theme_import.c:66
 msgid "Select a Theme..."
@@ -7135,7 +7250,7 @@ msgstr "Enlightenment nepavyko importuoti temos<br>dėl kopijavimo klaidos."
 
 #: src/modules/conf_theme/e_int_config_transitions.c:46
 msgid "Transition Settings"
-msgstr "Keitimo nuostatos"
+msgstr "Keitimo nustatymai"
 
 #: src/modules/conf_theme/e_int_config_transitions.c:173
 msgid "Events"
@@ -7234,16 +7349,14 @@ msgid "Scaling"
 msgstr "Mastelis"
 
 #: src/modules/conf_wallpaper2/e_int_config_wallpaper.c:1106
-#, fuzzy
 msgid "Loading files..."
-msgstr "Šalinami failai"
+msgstr ""
 
 #: src/modules/conf_wallpaper2/e_mod_main.c:23
 #: src/modules/conf_wallpaper2/e_mod_main.c:27
 #: src/modules/conf_wallpaper2/e_mod_main.c:91
-#, fuzzy
 msgid "Wallpaper 2"
-msgstr "Darbalaukio fonas"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:38
 msgid "Window List Menu Settings"
@@ -7344,9 +7457,8 @@ msgid "Raise windows on mouse over"
 msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:248
-#, fuzzy
 msgid "Focus Policy"
-msgstr "Taisyklės"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:250
 msgid "Click"
@@ -7418,18 +7530,16 @@ msgid "Hints"
 msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:311
-#, fuzzy
 msgid "Warping"
-msgstr "Grupavimas"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:319
 msgid "Prevent all forms of pointer warping"
 msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:322
-#, fuzzy
 msgid "Slide pointer to a new window which is focused"
-msgstr "Nustumti žymeklį į suaktyvintą langą"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:327
 msgid "Warp speed"
@@ -7563,18 +7673,16 @@ msgid "Decelerate"
 msgstr "Sulėtėjimas"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:217
-#, fuzzy
 msgid "Pronounced accelerate"
-msgstr "Pelės spartinimas"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:221
 msgid "Pronounced decelerate"
 msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:225
-#, fuzzy
 msgid "Pronounced accelerate, then decelerate"
-msgstr "Pagreitinti, tada sulėtinti"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_display.c:229
 msgid "Bounce"
@@ -7646,9 +7754,8 @@ msgid "Both"
 msgstr "Abi"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:226
-#, fuzzy
 msgid "Manipulation"
-msgstr "Animacijos"
+msgstr ""
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:227
 msgid "Allow manipulation of maximized windows"
@@ -7773,30 +7880,12 @@ msgid "Remember file manager windows"
 msgstr "Prisiminti failų tvarkyklės langus"
 
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:135
-#, fuzzy
 msgid "Don't remember file manager windows by directory"
-msgstr "Prisiminti failų tvarkyklės langus"
+msgstr ""
 
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:146
 msgid "Details"
 msgstr "Išsamiau"
-
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:155
-msgid "Class:"
-msgstr "Klasė:"
-
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:163
-msgid "Title:"
-msgstr "Antraštė:"
-
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:171
-msgid "Role:"
-msgstr "Vaidmuo:"
-
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:185
-#: src/modules/mixer/app_mixer.c:402
-msgid "Edit"
-msgstr "Keisti"
 
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:368
 #: src/modules/conf_window_remembers/e_int_config_remembers.c:370
@@ -7805,7 +7894,19 @@ msgstr "Keisti"
 msgid "No selection"
 msgstr ""
 
-#: src/modules/connman/e_mod_main.c:10
+#: src/modules/connman/agent.c:225
+msgid "Show password"
+msgstr ""
+
+#: src/modules/connman/agent.c:247
+msgid "Input requested"
+msgstr ""
+
+#: src/modules/connman/agent.c:250
+msgid "Ok"
+msgstr ""
+
+#: src/modules/connman/e_mod_config.c:69 src/modules/connman/e_mod_main.c:10
 msgid "Connection Manager"
 msgstr "Ryšių tvarkytuvė"
 
@@ -7907,9 +8008,8 @@ msgid "Powersaving behavior"
 msgstr "Energijos taupymo elgsena"
 
 #: src/modules/cpufreq/e_mod_main.c:409
-#, fuzzy
 msgid "Power State Min"
-msgstr "Puslapiuotojo nustatymai"
+msgstr ""
 
 #: src/modules/cpufreq/e_mod_main.c:415
 msgid "Power State Max"
@@ -7942,13 +8042,10 @@ msgstr ""
 "setfreq įvyko klaida."
 
 #: src/modules/cpufreq/e_mod_main.c:592
-#, fuzzy
 msgid ""
 "There was an error trying to set the<br>cpu power state setting via the "
 "module's<br>setfreq utility."
 msgstr ""
-"Bandant nustatyti procesoriaus dažnį per<br>modulio paslaugų programą "
-"setfreq įvyko klaida."
 
 #: src/modules/cpufreq/e_mod_main.c:1335
 msgid "Cpufreq Error"
@@ -7968,34 +8065,29 @@ msgstr ""
 #, c-format
 msgid ""
 "The freqset binary in the cpufreq module<br>is not owned by root or does not "
-"have the<br>setuid bit set. Please ensure this is the<br>case. For example:"
-"<br><br>sudo chown root %s<br>sudo chmod u+s,a+x %s<br>"
+"have the<br>setuid bit set. Please ensure this is the<br>case. For "
+"example:<br><br>sudo chown root %s<br>sudo chmod u+s,a+x %s<br>"
 msgstr ""
 
 #: src/modules/cpufreq/e_mod_main.c:1383
-#, fuzzy
 msgid "CPU Frequency"
-msgstr "Skubumas"
+msgstr ""
 
 #: src/modules/cpufreq/e_mod_config.c:38
-#, fuzzy
 msgid "Cpu Frequency Control Settings"
-msgstr "Šriftų nustatymai"
+msgstr ""
 
 #: src/modules/cpufreq/e_mod_config.c:91
-#, fuzzy
 msgid "Update poll interval"
-msgstr "Podėlio išvalymo intervalas"
+msgstr ""
 
 #: src/modules/cpufreq/e_mod_config.c:107
-#, fuzzy
 msgid "Minimum Power State"
-msgstr "Puslapiuotojo nustatymai"
+msgstr ""
 
 #: src/modules/cpufreq/e_mod_config.c:113
-#, fuzzy
 msgid "Maximum Power State"
-msgstr "Puslapiuotojo nustatymai"
+msgstr ""
 
 #: src/modules/everything/e_mod_main.c:49
 #: src/modules/everything/evry_plugin.c:179
@@ -8086,10 +8178,6 @@ msgstr "Slėpti sąrašą"
 #: src/modules/everything/evry_config.c:493
 msgid "Quick Navigation"
 msgstr "Greitoji navigacija"
-
-#: src/modules/everything/evry_config.c:495
-msgid "Off"
-msgstr "Išjungta"
 
 #: src/modules/everything/evry_config.c:497
 msgid "Emacs style (ALT + n,p,f,b,m,i)"
@@ -8191,59 +8279,59 @@ msgstr[1] ""
 msgid "No plugins loaded"
 msgstr "Nėra įkeltų priedų"
 
-#: src/modules/everything/evry_plug_apps.c:1148
+#: src/modules/everything/evry_plug_apps.c:1149
 msgid "Exebuf"
 msgstr ""
 
-#: src/modules/everything/evry_plug_apps.c:1163
-#: src/modules/everything/evry_plug_apps.c:1210
+#: src/modules/everything/evry_plug_apps.c:1164
+#: src/modules/everything/evry_plug_apps.c:1211
 #: src/modules/fileman/e_fwin.c:2184 src/modules/fileman/e_fwin.c:2544
 msgid "Open with..."
 msgstr "Atverti su..."
 
-#: src/modules/everything/evry_plug_apps.c:1176
+#: src/modules/everything/evry_plug_apps.c:1177
 msgid "Open File..."
 msgstr ""
 
-#: src/modules/everything/evry_plug_apps.c:1190
+#: src/modules/everything/evry_plug_apps.c:1191
 msgid "Edit Application Entry"
 msgstr ""
 
-#: src/modules/everything/evry_plug_apps.c:1197
+#: src/modules/everything/evry_plug_apps.c:1198
 msgid "New Application Entry"
 msgstr ""
 
-#: src/modules/everything/evry_plug_apps.c:1204
+#: src/modules/everything/evry_plug_apps.c:1205
 msgid "Run with Sudo"
 msgstr ""
 
-#: src/modules/everything/evry_plug_apps.c:1217
+#: src/modules/everything/evry_plug_apps.c:1218
 #: src/modules/fileman/e_fwin.c:245
 msgid "Open Terminal here"
 msgstr ""
 
-#: src/modules/everything/evry_plug_apps.c:1223
+#: src/modules/everything/evry_plug_apps.c:1224
 msgid "Run Executable"
 msgstr ""
 
-#: src/modules/everything/evry_plug_apps.c:1301
-#: src/modules/everything/evry_plug_apps.c:1428
+#: src/modules/everything/evry_plug_apps.c:1302
+#: src/modules/everything/evry_plug_apps.c:1429
 msgid "Everything Applications"
 msgstr "Visko vykdyklės programos"
 
-#: src/modules/everything/evry_plug_apps.c:1332
+#: src/modules/everything/evry_plug_apps.c:1333
 msgid "Commands"
 msgstr "Komandos"
 
-#: src/modules/everything/evry_plug_apps.c:1333
+#: src/modules/everything/evry_plug_apps.c:1334
 msgid "Terminal Command"
 msgstr "Terminalo komanda"
 
-#: src/modules/everything/evry_plug_apps.c:1338
+#: src/modules/everything/evry_plug_apps.c:1339
 msgid "Sudo GUI"
 msgstr "Sudo grafinė sąsaja"
 
-#: src/modules/everything/evry_plug_apps.c:1409
+#: src/modules/everything/evry_plug_apps.c:1410
 #: src/modules/everything/evry_plug_collection.c:146
 #: src/modules/everything/evry_plug_files.c:1578
 msgid "Everything Plugin"
@@ -8352,35 +8440,36 @@ msgid ""
 "<hilight>&lt;return&gt;</hilight>.<br> This page will not show up next time "
 "you run <hilight>everything</hilight>.<br>    <hilight>&lt;Esc&gt;</hilight> "
 "close this Dialog<br>    <hilight>&lt;?&gt;</hilight> show this page<br>    "
-"<hilight>&lt;return&gt;</hilight> run action<br>    <hilight>&lt;ctrl"
-"+return&gt;</hilight> run action and continue<br>    <hilight>&lt;tab&gt;</"
-"hilight> toggle between selectors<br>    <hilight>&lt;ctrl+tab&gt;</hilight> "
-"complete input (depends on plugin)<br>    <hilight>&lt;ctrl+'x'&gt;</"
-"hilight> jump to plugin beginning with 'x'<br>    <hilight>&lt;ctrl+left/"
-"right&gt;</hilight> cycle through plugins<br>    <hilight>&lt;ctrl+up/"
-"down&gt;</hilight> go to first/last item<br>    <hilight>&lt;ctrl+1&gt;</"
-"hilight> toggle view modes (exit this page ;)<br>    <hilight>&lt;ctrl+2&gt;"
-"</hilight> toggle list view modes<br>    <hilight>&lt;ctrl+3&gt;</hilight> "
-"toggle thumb view modes"
+"<hilight>&lt;return&gt;</hilight> run action<br>    "
+"<hilight>&lt;ctrl+return&gt;</hilight> run action and continue<br>    "
+"<hilight>&lt;tab&gt;</hilight> toggle between selectors<br>    "
+"<hilight>&lt;ctrl+tab&gt;</hilight> complete input (depends on plugin)<br>   "
+" <hilight>&lt;ctrl+'x'&gt;</hilight> jump to plugin beginning with 'x'<br>   "
+" <hilight>&lt;ctrl+left/right&gt;</hilight> cycle through plugins<br>    "
+"<hilight>&lt;ctrl+up/down&gt;</hilight> go to first/last item<br>    "
+"<hilight>&lt;ctrl+1&gt;</hilight> toggle view modes (exit this page ;)<br>   "
+" <hilight>&lt;ctrl+2&gt;</hilight> toggle list view modes<br>    "
+"<hilight>&lt;ctrl+3&gt;</hilight> toggle thumb view modes"
 msgstr ""
 "  Trumpa <hilight>\"Visko vykdyklės\"</hilight> naudojimo instrukcija...<br> "
-"Įveskite kelias raides iš to ko ieškote.<br>Naudokite <hilight>&lt;aukštyn/"
-"žemyn&gt;</hilight> kursoriaus klavišus elementų iš sąrašo pasirinkimui.<br> "
-"Paspauskite <hilight>&lt;tab&gt;</hilight> veiksmo parinkimui, ir tada "
-"spauskite <hilight>&lt;enter&gt;</hilight>.<br> Kitą kartą paleidus "
-"<hilight>Visko vykdyklę</hilight> ši informacija nebus rodoma.<br> "
-"<hilight>&lt;Esc&gt;</hilight> uždaro šį dialogo langą<br> <hilight>&lt;?&gt;"
-"</hilight> rodo šią informaciją<br> <hilight>&lt;enter&gt;</hilight> vykdyti "
-"veiksmą<br> <hilight>&lt;ctrl+enter&gt;</hilight> vykdyti veiksmą ir "
-"tęsti<br> <hilight>&lt;tab&gt;</hilight> perjungti pasirinkimus<br> "
+"Įveskite kelias raides iš to ko ieškote.<br>Naudokite "
+"<hilight>&lt;aukštyn/žemyn&gt;</hilight> kursoriaus klavišus elementų iš "
+"sąrašo pasirinkimui.<br> Paspauskite <hilight>&lt;tab&gt;</hilight> veiksmo "
+"parinkimui, ir tada spauskite <hilight>&lt;enter&gt;</hilight>.<br> Kitą "
+"kartą paleidus <hilight>Visko vykdyklę</hilight> ši informacija nebus "
+"rodoma.<br> <hilight>&lt;Esc&gt;</hilight> uždaro šį dialogo langą<br> "
+"<hilight>&lt;?&gt;</hilight> rodo šią informaciją<br> "
+"<hilight>&lt;enter&gt;</hilight> vykdyti veiksmą<br> "
+"<hilight>&lt;ctrl+enter&gt;</hilight> vykdyti veiksmą ir tęsti<br> "
+"<hilight>&lt;tab&gt;</hilight> perjungti pasirinkimus<br> "
 "<hilight>&lt;ctrl+tab&gt;</hilight> pabaigti įvestį (priklausomai nuo "
 "papildinio) <br> <hilight>&lt;ctrl+'x'&gt;</hilight> persijungti į papildinį "
 "prasidedantį 'x'<br> <hilight>&lt;ctrl+kairėn/dešinėn&gt;</hilight> "
 "persijungti tarp papildinių<br> <hilight>&lt;ctrl+aukšyn/žemyn&gt;</hilight> "
 "parinkti į pirmą/paskutinį elementą<br> <hilight>&lt;ctrl+1&gt;</hilight> "
-"perjungti rodymo veikseną (išeiti iš šio puslapio ;)<br> <hilight>&lt;ctrl"
-"+2&gt;</hilight> perjungti sąrašo rodymo veikseną<br> <hilight>&lt;ctrl+3&gt;"
-"</hilight> perjungti miniatiūrų rodymo veikseną"
+"perjungti rodymo veikseną (išeiti iš šio puslapio ;)<br> "
+"<hilight>&lt;ctrl+2&gt;</hilight> perjungti sąrašo rodymo veikseną<br> "
+"<hilight>&lt;ctrl+3&gt;</hilight> perjungti miniatiūrų rodymo veikseną"
 
 #: src/modules/everything/evry_view_tabs.c:93
 msgid "Back"
@@ -8590,10 +8679,6 @@ msgstr ""
 msgid "Icons On Desktop"
 msgstr ""
 
-#: src/modules/fileman/e_mod_config.c:344
-msgid "Toolbar"
-msgstr ""
-
 #: src/modules/fileman/e_mod_config.c:347
 msgid "Sidebar"
 msgstr ""
@@ -8641,15 +8726,15 @@ msgstr ""
 
 #: src/modules/fileman/e_mod_config.c:448
 msgid "Mount volumes on insert"
-msgstr "Įrengti laikmenas prijungus"
+msgstr "Prijungti laikmenas pajungus prie kompiuterio"
 
 #: src/modules/fileman/e_mod_config.c:451
 msgid "Open filemanager on mount"
-msgstr "Atverti failų tvarkyklę įrengus"
+msgstr "Prijungus atverti failų tvarkyklę"
 
 #: src/modules/fileman/e_mod_config.c:455
 msgid "Device"
-msgstr ""
+msgstr "Įrenginys"
 
 #: src/modules/fileman/e_mod_config.c:459
 msgid "Show tooltip"
@@ -8687,9 +8772,8 @@ msgid "Navigate"
 msgstr ""
 
 #: src/modules/fileman/e_mod_main.c:291
-#, fuzzy
 msgid "Fileman"
-msgstr "Failų tvarkyklė"
+msgstr ""
 
 #: src/modules/fileman/e_mod_menu.c:241
 msgid "No listable items"
@@ -8777,23 +8861,22 @@ msgid "Background Options"
 msgstr "Fono parinktys"
 
 #: src/modules/gadman/e_mod_gadman.c:127
-#, fuzzy
 msgid "Desktop Overlay"
-msgstr "Darbalaukio failas"
+msgstr ""
 
-#: src/modules/gadman/e_mod_gadman.c:1066
+#: src/modules/gadman/e_mod_gadman.c:1064
 msgid "Begin move/resize"
 msgstr ""
 
-#: src/modules/gadman/e_mod_gadman.c:1098
+#: src/modules/gadman/e_mod_gadman.c:1096
 msgid "Free"
 msgstr "Laisva"
 
-#: src/modules/gadman/e_mod_gadman.c:1125
+#: src/modules/gadman/e_mod_gadman.c:1123
 msgid "Appearance"
 msgstr "Išvaizda"
 
-#: src/modules/gadman/e_mod_gadman.c:1147
+#: src/modules/gadman/e_mod_gadman.c:1145
 msgid "Add other gadgets"
 msgstr "Pridėti kitus įtaisus"
 
@@ -8858,7 +8941,7 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "Ar tikrai norite pašalinti šį juostos šaltinį?"
 
-#: src/modules/ibar/e_mod_main.c:308 src/modules/ibar/e_mod_main.c:2447
+#: src/modules/ibar/e_mod_main.c:308 src/modules/ibar/e_mod_main.c:2459
 msgid "IBar"
 msgstr "IBar"
 
@@ -8867,9 +8950,8 @@ msgid "Create new Icon"
 msgstr ""
 
 #: src/modules/ibar/e_mod_main.c:1273
-#, fuzzy
 msgid "Add to bar"
-msgstr "Įtraukti į mėgiamiausius"
+msgstr ""
 
 #: src/modules/ibar/e_mod_main.c:1279
 msgid "Remove from bar"
@@ -8880,7 +8962,7 @@ msgstr ""
 msgid "Icon %s"
 msgstr ""
 
-#: src/modules/ibar/e_mod_main.c:2447
+#: src/modules/ibar/e_mod_main.c:2459
 msgid "Focus IBar"
 msgstr ""
 
@@ -8996,19 +9078,23 @@ msgstr "Garso plokštės"
 msgid "Mixer Settings"
 msgstr "Garsumo reguliatoriaus nustatymai"
 
-#: src/modules/mixer/conf_module.c:93
+#: src/modules/mixer/conf_module.c:94
 msgid "Mixer to use for global actions:"
 msgstr "Maišiklis naudosiantis visuotinius veiksmus"
 
-#: src/modules/mixer/conf_module.c:117
+#: src/modules/mixer/conf_module.c:118
 msgid "Display desktop notifications on volume change"
 msgstr ""
 
-#: src/modules/mixer/conf_module.c:153
+#: src/modules/mixer/conf_module.c:125
+msgid "Disable PulseAudio"
+msgstr ""
+
+#: src/modules/mixer/conf_module.c:158
 msgid "Launch mixer..."
 msgstr "Paleisti maišiklį..."
 
-#: src/modules/mixer/conf_module.c:188
+#: src/modules/mixer/conf_module.c:193
 msgid "Mixer Module Settings"
 msgstr "Garso maišiklio modulio nustatymai"
 
@@ -9028,26 +9114,25 @@ msgstr ""
 msgid "Mixer Settings Updated"
 msgstr "Garsumo reguliatoriaus nustatymai atnaujinti"
 
-#: src/modules/mixer/e_mod_main.c:1246
+#: src/modules/mixer/e_mod_main.c:1258
 msgid "Mixer Module"
 msgstr ""
 
-#: src/modules/mixer/e_mod_main.c:1274
+#: src/modules/mixer/e_mod_main.c:1287
 msgid "Increase Volume"
 msgstr ""
 
-#: src/modules/mixer/e_mod_main.c:1275
+#: src/modules/mixer/e_mod_main.c:1288
 msgid "Decrease Volume"
 msgstr ""
 
-#: src/modules/mixer/e_mod_main.c:1276
+#: src/modules/mixer/e_mod_main.c:1289
 msgid "Mute Volume"
 msgstr ""
 
 #: src/modules/music-control/e_mod_main.c:9
-#, fuzzy
 msgid "Music controller"
-msgstr "Šriftų nustatymai"
+msgstr ""
 
 #: src/modules/music-control/ui.c:156
 msgid "Music Player"
@@ -9062,9 +9147,8 @@ msgid "Pause music when screen is locked"
 msgstr ""
 
 #: src/modules/music-control/ui.c:240
-#, fuzzy
 msgid "Music control Settings"
-msgstr "Šriftų nustatymai"
+msgstr ""
 
 #: src/modules/notification/e_mod_config.c:51
 msgid "Notification Settings"
@@ -9091,23 +9175,20 @@ msgid "Force timeout for all notifications"
 msgstr ""
 
 #: src/modules/notification/e_mod_config.c:130
-#, fuzzy
 msgid "Screen Policy"
-msgstr "Ekrano užraktas"
+msgstr ""
 
 #: src/modules/notification/e_mod_config.c:132
 msgid "Primary screen"
 msgstr ""
 
 #: src/modules/notification/e_mod_config.c:134
-#, fuzzy
 msgid "Current screen"
-msgstr "Dabartinis ekranas"
+msgstr ""
 
 #: src/modules/notification/e_mod_config.c:136
-#, fuzzy
 msgid "All screens"
-msgstr "Per visą ekraną"
+msgstr ""
 
 #: src/modules/notification/e_mod_config.c:138
 msgid "Xinerama"
@@ -9187,10 +9268,6 @@ msgid ""
 msgstr ""
 "Dirbama <b>prisijungus</b>.<br>Besijungiantys prie tinklo moduliai tęs "
 "įprastų užduočių vykdymą."
-
-#: src/modules/notification/e_mod_main.c:154
-msgid "Notification"
-msgstr "Pranešimas"
 
 #: src/modules/notification/e_mod_main.c:175
 msgid "Notification Module"
@@ -9335,80 +9412,6 @@ msgstr "Iškylantysis langas kitame darbalaukyje"
 msgid "Popup Desk Previous"
 msgstr "Iškylantysis langas ankstesniame darbalaukyje"
 
-#: src/modules/physics/e_mod_config.c:46
-msgid "Physics Settings"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:107
-msgid "Physics delay after drag"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:109
-#, c-format
-msgid "%2.0f Frames"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:111
-msgid "Maximum window mass"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:113
-#, c-format
-msgid "%2.1f kg"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:115
-msgid "Desktop gravity"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:117
-#, c-format
-msgid "%1.1f m/s^2"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:126
-msgid "Disable Movement"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:129
-msgid "Disable Rotation"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:137
-msgid "Ignore Fullscreen"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:140
-msgid "Ignore Maximized"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:143
-msgid "Ignore Shelves"
-msgstr ""
-
-#: src/modules/physics/e_mod_config.c:146
-msgid "Ignore"
-msgstr ""
-
-#: src/modules/physics/e_mod_main.c:29 src/modules/physics/e_mod_main.c:47
-#: src/modules/physics/e_mod_main.c:54
-msgid "Physics"
-msgstr ""
-
-#: src/modules/physics/e_mod_main.c:30
-msgid ""
-"Cowardly refusing to battle<br>with the Tiling module for control<br>of your "
-"windows. There can be only one!"
-msgstr ""
-
-#: src/modules/physics/e_mod_main.c:67
-msgid "Physics Error"
-msgstr ""
-
-#: src/modules/physics/e_mod_main.c:67
-msgid "The physics module could not be started"
-msgstr ""
-
 #: src/modules/quickaccess/e_mod_config.c:226
 msgid "Enter a unique name for this entry"
 msgstr ""
@@ -9511,8 +9514,8 @@ msgstr ""
 msgid ""
 "The selected window created with name:<br>%s<br>and class:<br>%s<br>could "
 "not be found in the Quickaccess app database<br>This means that either the "
-"app is unknown to us<br>or it is not intended for use with this option."
-"<br>Please choose an action to take:"
+"app is unknown to us<br>or it is not intended for use with this "
+"option.<br>Please choose an action to take:"
 msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:383
@@ -9569,12 +9572,12 @@ msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:959
 msgid ""
-"The options found in the Quickaccess menu are as follows:"
-"<br><hilight>Autohide</hilight> - hide the window whenever it loses "
+"The options found in the Quickaccess menu are as "
+"follows:<br><hilight>Autohide</hilight> - hide the window whenever it loses "
 "focus<br><hilight>Hide Instead of Raise</hilight> - Hide window when "
 "activated without focus<br><hilight>Jump Mode</hilight> - Switch to window's "
-"desk and raise instead of showing/hiding<br><hilight>Relaunch When Closed</"
-"hilight> - Run the entry's command again when its window "
+"desk and raise instead of showing/hiding<br><hilight>Relaunch When "
+"Closed</hilight> - Run the entry's command again when its window "
 "exits<br><hilight>Transient</hilight> - Remember only this instance of the "
 "window (not permanent)"
 msgstr ""
@@ -9623,8 +9626,8 @@ msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1250
 msgid ""
-"Quickaccess entries can be created from<br>the border menu of any window."
-"<br>Click Continue to see a demonstration."
+"Quickaccess entries can be created from<br>the border menu of any "
+"window.<br>Click Continue to see a demonstration."
 msgstr ""
 
 #: src/modules/quickaccess/e_mod_quickaccess.c:1271
@@ -9645,147 +9648,164 @@ msgstr ""
 msgid "quick access name/identifier"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:175 src/modules/shot/e_mod_main.c:209
+#: src/modules/shot/e_mod_main.c:174 src/modules/shot/e_mod_main.c:208
 msgid "Error saving screenshot file"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:176 src/modules/shot/e_mod_main.c:210
+#: src/modules/shot/e_mod_main.c:175 src/modules/shot/e_mod_main.c:209
 #, c-format
 msgid "Path: %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:227
+#: src/modules/shot/e_mod_main.c:226
 msgid "Error - Unknown format"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:228
+#: src/modules/shot/e_mod_main.c:227
 msgid ""
 "File has an unspecified extension.<br>Please use '.jpg' or '.png' "
 "extensions<br>only as other formats are not<br>supported currently."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:276
+#: src/modules/shot/e_mod_main.c:275
 msgid "Select screenshot save location"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:288 src/modules/shot/e_mod_main.c:795
+#: src/modules/shot/e_mod_main.c:287 src/modules/shot/e_mod_main.c:823
 msgid "Save"
 msgstr "Išsaugoti"
 
-#: src/modules/shot/e_mod_main.c:387
+#: src/modules/shot/e_mod_main.c:386
 #, c-format
 msgid "Uploaded %s / %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:408
+#: src/modules/shot/e_mod_main.c:407
 msgid "Error - Upload Failed"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:409
+#: src/modules/shot/e_mod_main.c:408
 #, c-format
 msgid "Upload failed with status code:<br>%i"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:452
+#: src/modules/shot/e_mod_main.c:451
 msgid "Error - Can't create file"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:453
+#: src/modules/shot/e_mod_main.c:452
 #, c-format
 msgid "Cannot create temporary file '%s': %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:471
+#: src/modules/shot/e_mod_main.c:470
 msgid "Error - Can't open file"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:472
+#: src/modules/shot/e_mod_main.c:471
 #, c-format
 msgid "Cannot open temporary file '%s': %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:480
+#: src/modules/shot/e_mod_main.c:479
 msgid "Error - Bad size"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:481
+#: src/modules/shot/e_mod_main.c:480
 #, c-format
 msgid "Cannot get size of file '%s'"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:491
+#: src/modules/shot/e_mod_main.c:490
 msgid "Error - Can't allocate memory"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:492
+#: src/modules/shot/e_mod_main.c:491
 #, c-format
 msgid "Cannot allocate memory for picture: %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:499
+#: src/modules/shot/e_mod_main.c:498
 msgid "Error - Can't read picture"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:500
+#: src/modules/shot/e_mod_main.c:499
 msgid "Cannot read picture"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:521
+#: src/modules/shot/e_mod_main.c:520
 msgid "Uploading screenshot"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:526
+#: src/modules/shot/e_mod_main.c:525
 msgid "Uploading ..."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:531
+#: src/modules/shot/e_mod_main.c:530
 msgid "Screenshot is available at this location:"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:540
+#: src/modules/shot/e_mod_main.c:539
 msgid "Hide"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:564
+#: src/modules/shot/e_mod_main.c:563
 msgid "Confirm Share"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:565
+#: src/modules/shot/e_mod_main.c:564
 msgid ""
 "This image will be uploaded<br>to enlightenment.org. It will be publicly "
 "visible."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:664
+#: src/modules/shot/e_mod_main.c:664 src/modules/shot/e_mod_main.c:674
+msgid "Screenshot Error"
+msgstr ""
+
+#: src/modules/shot/e_mod_main.c:665
+#, c-format
+msgid ""
+"SHMMAX is too small to take screenshot.<br>Consider increasing "
+"/proc/sys/kernel/shmmax to a value larger than %llu"
+msgstr ""
+
+#: src/modules/shot/e_mod_main.c:675
+msgid ""
+"SHM creation failed.<br>Ensure your system has enough RAM free and your user "
+"has sufficient permissions."
+msgstr ""
+
+#: src/modules/shot/e_mod_main.c:692
 msgid "Where to put Screenshot..."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:716
+#: src/modules/shot/e_mod_main.c:744
 msgid "Quality"
 msgstr "Kokybė"
 
-#: src/modules/shot/e_mod_main.c:720
+#: src/modules/shot/e_mod_main.c:748
 msgid "Perfect"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:797
+#: src/modules/shot/e_mod_main.c:825
 msgid "Share"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:935 src/modules/shot/e_mod_main.c:982
+#: src/modules/shot/e_mod_main.c:963 src/modules/shot/e_mod_main.c:1010
 msgid "Take Shot"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:946 src/modules/shot/e_mod_main.c:975
-#: src/modules/shot/e_mod_main.c:986
+#: src/modules/shot/e_mod_main.c:974 src/modules/shot/e_mod_main.c:1003
+#: src/modules/shot/e_mod_main.c:1014
 msgid "Take Screenshot"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:963
+#: src/modules/shot/e_mod_main.c:991
 msgid "Shot Error"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:964
+#: src/modules/shot/e_mod_main.c:992
 msgid "Cannot initialize network"
 msgstr ""
 
@@ -9821,27 +9841,29 @@ msgstr "Sistemos valdikliai"
 msgid "Syscon"
 msgstr ""
 
+#: src/modules/syscon/e_syscon_gadget.c:72
+msgid "Show Menu"
+msgstr ""
+
 #: src/modules/systray/e_mod_main.c:75
-#, fuzzy
 msgid "Enable Xembed"
-msgstr "Įjungtas"
+msgstr ""
 
-#: src/modules/systray/e_mod_main.c:116
-#, fuzzy
+#: src/modules/systray/e_mod_main.c:117
 msgid "Systray Settings"
-msgstr "Paleidimo nustatymai"
+msgstr ""
 
-#: src/modules/systray/e_mod_main.c:237
+#: src/modules/systray/e_mod_main.c:238
 msgid "Another systray exists"
 msgstr "Veikia kitas sistemos dėklas"
 
-#: src/modules/systray/e_mod_main.c:238
+#: src/modules/systray/e_mod_main.c:239
 msgid "There can be only one systray gadget and another one already exists."
 msgstr ""
 "Vienu metu gali veikti tik vienas sistemos dėklo įtaisas ir šiuo metu vienas "
 "jau veikia."
 
-#: src/modules/systray/e_mod_main.c:391
+#: src/modules/systray/e_mod_main.c:392
 msgid "Systray"
 msgstr "Sistemos dėklas"
 
@@ -9883,32 +9905,31 @@ msgid "Maximum media size to fetch"
 msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:85
-#, fuzzy, c-format
+#, c-format
 msgid "%2.0f MiB"
-msgstr "%4.0f"
+msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:88
 msgid "Maximum media cache size in RAM"
 msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:90
-#, fuzzy, c-format
+#, c-format
 msgid "%4.0f MiB"
-msgstr "%4.0f"
+msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:92
 msgid "Maximum media cache age on disk"
 msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:94
-#, fuzzy, c-format
+#, c-format
 msgid "%3.0f Days"
-msgstr "%1.0f simboliai"
+msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:97
-#, fuzzy
 msgid "Cache"
-msgstr "Podėliai"
+msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:103
 msgid "Disable video previews"
@@ -9923,14 +9944,12 @@ msgid "Maximum size (Percentage of screens size)"
 msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:119
-#, fuzzy
 msgid "Popups"
-msgstr "Iškylantysis langas"
+msgstr ""
 
 #: src/modules/teamwork/e_mod_config.c:169
-#, fuzzy
 msgid "Teamwork Settings"
-msgstr "Darbalaukio nustatymai"
+msgstr ""
 
 #: src/modules/teamwork/e_mod_main.c:14 src/modules/teamwork/e_mod_main.c:120
 #: src/modules/teamwork/e_mod_main.c:130
@@ -10017,11 +10036,11 @@ msgstr ""
 msgid "Key hints"
 msgstr ""
 
-#: src/modules/tiling/e_mod_config.c:200
-msgid "Number of columns used to tile per desk (0 → tiling disabled):"
+#: src/modules/tiling/e_mod_config.c:199
+msgid "Number of columns/rows used to tile per desk (0 → tiling disabled):"
 msgstr ""
 
-#: src/modules/tiling/e_mod_config.c:353
+#: src/modules/tiling/e_mod_config.c:354
 msgid "Tiling Configuration"
 msgstr ""
 
@@ -10285,9 +10304,8 @@ msgid "Select preferred size"
 msgstr ""
 
 #: src/modules/wizard/page_060.c:29
-#, fuzzy
 msgid "Focus:"
-msgstr "Aktyvinti"
+msgstr ""
 
 #: src/modules/wizard/page_060.c:33
 msgid "Whenever a window is clicked"
@@ -10322,9 +10340,8 @@ msgid "Checking to see if Connman exists"
 msgstr ""
 
 #: src/modules/wizard/page_150.c:61
-#, fuzzy
 msgid "Compositing"
-msgstr "Padėties"
+msgstr ""
 
 #: src/modules/wizard/page_150.c:85
 msgid "Hardware Accelerated (OpenGL)"
@@ -10350,8 +10367,8 @@ msgid ""
 "when they happen. As a<br>result, Enlightenment will connect "
 "to<br>enlightenment.org and transmit some<br>information, much like any web "
 "browser<br>might do. No personal information such as<br>username, password "
-"or any personal files<br>will be transmitted. If you don't like this,"
-"<br>please disable this below. It is highly<br>advised that you do not "
+"or any personal files<br>will be transmitted. If you don't like "
+"this,<br>please disable this below. It is highly<br>advised that you do not "
 "disable this as it<br>may leave you vulnerable or having to live<br>with "
 "bugs."
 msgstr ""
@@ -10411,998 +10428,3 @@ msgstr ""
 #: src/modules/xkbswitch/e_mod_main.c:195
 msgid "NONE"
 msgstr ""
-
-#, fuzzy
-#~ msgid "theme"
-#~ msgstr "Apipavidalinimas"
-
-#, fuzzy
-#~ msgid "animate"
-#~ msgstr "Animuoti"
-
-#, fuzzy
-#~ msgid "popup"
-#~ msgstr "Iškylantysis langas"
-
-#, fuzzy
-#~ msgid "Compositing engine"
-#~ msgstr "Padėties"
-
-#, fuzzy
-#~ msgid "Sync composited windows"
-#~ msgstr "Suskleisti į piktogramą langai"
-
-#, fuzzy
-#~ msgid "%1.2f seconds"
-#~ msgstr "%.2f sekundės"
-
-#, fuzzy
-#~ msgid "Composite swapping method"
-#~ msgstr "Padėties"
-
-#, fuzzy
-#~ msgid "%1.0f frames"
-#~ msgstr "%1.0f files"
-
-#, fuzzy
-#~ msgid "Try not to cover other windows"
-#~ msgstr "Suskleisti į piktogramą langai"
-
-#, fuzzy
-#~ msgid "Try not to cover gadgets"
-#~ msgstr "Pridėti kitus įtaisus"
-
-#, fuzzy
-#~ msgid "Place at mouse pointer (automatic)"
-#~ msgstr "Padėti prie žymeklio"
-
-#, fuzzy
-#~ msgid "Place at mouse pointer (interactive)"
-#~ msgstr "Padėti prie žymeklio"
-
-#, fuzzy
-#~ msgid "Don't set focus on new windows"
-#~ msgstr "Persijungti į naujo lango darbalaukį"
-
-#, fuzzy
-#~ msgid "Set focus on all new windows"
-#~ msgstr "Parinkti tik vieną langą"
-
-#, fuzzy
-#~ msgid "Ignore application"
-#~ msgstr "IBar programos"
-
-#, fuzzy
-#~ msgid "Animate application window"
-#~ msgstr "Mėgstamiausios programos"
-
-#, fuzzy
-#~ msgid "Raise and set focus to application window"
-#~ msgstr "Lango rėmelio pasirinkimas"
-
-#, fuzzy
-#~ msgid "Resize window, do not resize screen"
-#~ msgstr "Įtraukti langus iš kitų ekranų"
-
-#, fuzzy
-#~ msgid "Resize window and screen"
-#~ msgstr "Rodyti langus iš visų ekranų"
-
-#, fuzzy
-#~ msgid "No hinting"
-#~ msgstr "Taškinė korekcija"
-
-#, fuzzy
-#~ msgid "Automatic hinting"
-#~ msgstr "Automatinis"
-
-#, fuzzy
-#~ msgid "Bytecode hinting"
-#~ msgstr "Baitinis kodas"
-
-#, fuzzy
-#~ msgid "Show on screen of pointer"
-#~ msgstr "Rodyti prisistatymo langą prisijungiant"
-
-#, fuzzy
-#~ msgid "Show on screen %d"
-#~ msgstr "Rodyti užvedus žymeklį"
-
-#, fuzzy
-#~ msgid "No grouping"
-#~ msgstr "Grupavimas"
-
-#, fuzzy
-#~ msgid "Virtual desktop"
-#~ msgstr "Virtualus darbalaukis"
-
-#, fuzzy
-#~ msgid "Separator bars"
-#~ msgstr "Naudojant skirtukus"
-
-#, fuzzy
-#~ msgid "Separate menus"
-#~ msgstr "Atskira grupė"
-
-#, fuzzy
-#~ msgid "No sorting"
-#~ msgstr "Rikiavimas"
-
-#, fuzzy
-#~ msgid "Alphabetical order"
-#~ msgstr "Pagal abėcėlę"
-
-#, fuzzy
-#~ msgid "Group by owner virtual desktop"
-#~ msgstr "Grupuoti su darbalaukyje sąvininke"
-
-#, fuzzy
-#~ msgid "Group by current virtual desktop"
-#~ msgstr "Grupuoti dabartiniame darbalaukyje"
-
-#, fuzzy
-#~ msgid "Allow windows partly out of the screen limits"
-#~ msgstr "Leisti saistymo aktyvavimą pilno ekrano langams"
-
-#, fuzzy
-#~ msgid "Allow windows completely out of the screen limits"
-#~ msgstr "Leisti saistymo aktyvavimą pilno ekrano langams"
-
-#, fuzzy
-#~ msgid "Show splash screen on startup"
-#~ msgstr "Rodyti prisistatymo langą prisijungiant"
-
-#, fuzzy
-#~ msgid "splash"
-#~ msgstr "Rodymas"
-
-#, fuzzy
-#~ msgid "startup"
-#~ msgstr "Paleistis"
-
-#, fuzzy
-#~ msgid "Startup splash theme"
-#~ msgstr "Startuojant paleidžiamos programos"
-
-#, fuzzy
-#~ msgid "transition"
-#~ msgstr "Keitimo efektai"
-
-#, fuzzy
-#~ msgid "vdesk"
-#~ msgstr "Darbalaukis"
-
-#, fuzzy
-#~ msgid "wallpaper"
-#~ msgstr "Darbalaukio fonas"
-
-#, fuzzy
-#~ msgid "Default desktop wallpaper"
-#~ msgstr "Darbalaukio fono nustatymai"
-
-#, fuzzy
-#~ msgid "Default desktop name"
-#~ msgstr "Numatytas vaizdas"
-
-#, fuzzy
-#~ msgid "desktop"
-#~ msgstr "Darbalaukis"
-
-#, fuzzy
-#~ msgid "name"
-#~ msgstr "Pervadinti"
-
-#, fuzzy
-#~ msgid "Menu scroll speed"
-#~ msgstr "Meniu slinkimo greitis"
-
-#, fuzzy
-#~ msgid "scroll"
-#~ msgstr "Automatinė slinktis"
-
-#, fuzzy
-#~ msgid "speed"
-#~ msgstr "Perkėlimo greitis"
-
-#, fuzzy
-#~ msgid "move"
-#~ msgstr "Pašalinti"
-
-#, fuzzy
-#~ msgid "%2.2f seconds"
-#~ msgstr "%.2f sekundės"
-
-#, fuzzy
-#~ msgid "pointer"
-#~ msgstr "Žymeklis"
-
-#, fuzzy
-#~ msgid "shade"
-#~ msgstr "Suskleistas"
-
-#, fuzzy
-#~ msgid "Window shade animation speed"
-#~ msgstr "Animacijos greitis"
-
-#, fuzzy
-#~ msgid "%1.0f frames/second"
-#~ msgstr "%1.0f files"
-
-#, fuzzy
-#~ msgid "Application exec priority"
-#~ msgstr "Programos vykdymo klaida"
-
-#, fuzzy
-#~ msgid "application"
-#~ msgstr "Programa"
-
-#, fuzzy
-#~ msgid "cache"
-#~ msgstr "Podėliai"
-
-#, fuzzy
-#~ msgid "%4.0f KiB"
-#~ msgstr "%4.0f"
-
-#, fuzzy
-#~ msgid "%3.0f KiB"
-#~ msgstr "%1.0f min."
-
-#, fuzzy
-#~ msgid "Edje cache size"
-#~ msgstr "Paveikslėlių podėlio dydis"
-
-#, fuzzy
-#~ msgid "Edje collection cache size"
-#~ msgstr "Edje rinkinių skaičius podėlyje"
-
-#, fuzzy
-#~ msgid "Cache flushing interval"
-#~ msgstr "Podėlio išvalymo intervalas"
-
-#, fuzzy
-#~ msgid "Horizontal virtual desktop count"
-#~ msgstr "Gulsčias lygiavimas"
-
-#, fuzzy
-#~ msgid "Vertical virtual desktop count"
-#~ msgstr "Nustatyti virtualius darbalaukius"
-
-#, fuzzy
-#~ msgid "binding"
-#~ msgstr "Klavišų saistymas"
-
-#, fuzzy
-#~ msgid ""
-#~ "Enable edge binding functionality while dragging objects to screen edge"
-#~ msgstr "Perkelti, kai objektai atvelkami prie ekrano krašto"
-
-#, fuzzy
-#~ msgid "Module settings"
-#~ msgstr "Modulio nustatymai"
-
-#, fuzzy
-#~ msgid "module"
-#~ msgstr "Moduliai"
-
-#, fuzzy
-#~ msgid "Window placement policy"
-#~ msgstr "Lango geometrija"
-
-#, fuzzy
-#~ msgid "Switch to desk of new window"
-#~ msgstr "Persijungti į naujo lango darbalaukį"
-
-#, fuzzy
-#~ msgid "Window focus policy"
-#~ msgstr "Lango aktyvinimas"
-
-#, fuzzy
-#~ msgid "New window focus policy"
-#~ msgstr "Aktyvinti naują langą"
-
-#, fuzzy
-#~ msgid "Pass click to unfocused windows"
-#~ msgstr "Spragtelėjimas sufokusuoja langą"
-
-#, fuzzy
-#~ msgid "click"
-#~ msgstr "Spragtelėjimas"
-
-#, fuzzy
-#~ msgid "raise"
-#~ msgstr "Pakelti"
-
-#, fuzzy
-#~ msgid "Always focus window when clicked"
-#~ msgstr "Visada aktyvinti startuojant"
-
-#, fuzzy
-#~ msgid "Window autoraise delay"
-#~ msgstr "Lango rodymas"
-
-#, fuzzy
-#~ msgid "Revert window focus on desk switch"
-#~ msgstr "Perjungus darbalaukį sufokusuoti paskutinį langą"
-
-#, fuzzy
-#~ msgid "Warp pointer to new windows and away from closed windows"
-#~ msgstr "Nustumti žymeklį į suaktyvintą langą"
-
-#, fuzzy
-#~ msgid "resize"
-#~ msgstr "Keisti dydį"
-
-#, fuzzy
-#~ msgid "gadget"
-#~ msgstr "Įtaisai"
-
-#, fuzzy
-#~ msgid "resist"
-#~ msgstr "Pasipriešinimas"
-
-#, fuzzy
-#~ msgid "shelf"
-#~ msgstr "Lentyna"
-
-#, fuzzy
-#~ msgid "Enable resistance when dragging windows"
-#~ msgstr "Pasipriešinimas tempimui"
-
-#, fuzzy
-#~ msgid "winlist"
-#~ msgstr "Langų sąrašo elementas"
-
-#, fuzzy
-#~ msgid "Winlist scroll speed"
-#~ msgstr "Slinkties greitis"
-
-#, fuzzy
-#~ msgid "Winlist shows iconified windows"
-#~ msgstr "Suskleisti į piktogramą langai"
-
-#, fuzzy
-#~ msgid "minimize"
-#~ msgstr "Mažiausias dydis"
-
-#, fuzzy
-#~ msgid "Winlist shows iconified windows from other desks"
-#~ msgstr "Sumažinti į piktogramą iš kitų darbalaukių"
-
-#, fuzzy
-#~ msgid "Winlist shows iconified windows from other screens"
-#~ msgstr "Įtraukti langus iš kitų ekranų"
-
-#, fuzzy
-#~ msgid "Winlist shows windows from other desks"
-#~ msgstr "Langai iš kitų darbalaukių"
-
-#, fuzzy
-#~ msgid "Winlist shows windows from other screens"
-#~ msgstr "Langai iš kitų ekranų"
-
-#, fuzzy
-#~ msgid "Winlist moves window to current screen+desk after selection"
-#~ msgstr "Perkelti žymeklį kai žymima"
-
-#, fuzzy
-#~ msgid "Winlist switches desks while selecting"
-#~ msgstr "Perkelti žymeklį kai žymima"
-
-#, fuzzy
-#~ msgid "Winlist focuses windows while selecting"
-#~ msgstr "Perkelti žymeklį kai žymima"
-
-#, fuzzy
-#~ msgid "Winlist raises windows while selecting"
-#~ msgstr "Perkelti žymeklį kai žymima"
-
-#, fuzzy
-#~ msgid "Winlist horizontal alignment"
-#~ msgstr "Gulsčias lygiavimas"
-
-#, fuzzy
-#~ msgid "Winlist vertical alignment"
-#~ msgstr "Vertikalus lygiavimas"
-
-#, fuzzy
-#~ msgid "Winlist width"
-#~ msgstr "Langų sąrašo antraštė"
-
-#, fuzzy
-#~ msgid "Winlist height"
-#~ msgstr "Langų sąrašo antraštė"
-
-#, fuzzy
-#~ msgid "Winlist minimum width"
-#~ msgstr "Mažiausias plotis"
-
-#, fuzzy
-#~ msgid "%4.0f pixels"
-#~ msgstr "%1.0f pikseliai"
-
-#, fuzzy
-#~ msgid "Winlist minimum height"
-#~ msgstr "Mažiausias aukštis"
-
-#, fuzzy
-#~ msgid "Winlist maximum width"
-#~ msgstr "Didžiausias plotis"
-
-#, fuzzy
-#~ msgid "Winlist maximum height"
-#~ msgstr "Didžiausias aukštis"
-
-#, fuzzy
-#~ msgid "Fullscreen window policy"
-#~ msgstr "Perjungti pilno ekrano veikseną"
-
-#, fuzzy
-#~ msgid "fullscreen"
-#~ msgstr "Per visą ekraną"
-
-#, fuzzy
-#~ msgid "Window maximize policy"
-#~ msgstr "Lango rodymas"
-
-#, fuzzy
-#~ msgid "maximize"
-#~ msgstr "Atkurti dydį"
-
-#, fuzzy
-#~ msgid "Allow moving of maximized windows"
-#~ msgstr "Leisti valdyti padidintus langus"
-
-#, fuzzy
-#~ msgid "Adjust windows on shelf toggle"
-#~ msgstr "Pritaikyti langus pasislėpus lentynai"
-
-#, fuzzy
-#~ msgid "Allow windows above fullscreen windows"
-#~ msgstr "Leisti saistymo aktyvavimą pilno ekrano langams"
-
-#, fuzzy
-#~ msgid "Window kill delay"
-#~ msgstr "Lango rodymas"
-
-#, fuzzy
-#~ msgid "Remember internal window geometry"
-#~ msgstr "Prisiminti vidinius dialogų langus"
-
-#, fuzzy
-#~ msgid "remember"
-#~ msgstr "Prisiminti"
-
-#, fuzzy
-#~ msgid "Remember internal filemanager window geometry"
-#~ msgstr "Prisiminti failų tvarkyklės langus"
-
-#, fuzzy
-#~ msgid "Remember internal filemanager window geometry globally"
-#~ msgstr "Prisiminti failų tvarkyklės langus"
-
-#, fuzzy
-#~ msgid "transient"
-#~ msgstr "Pereinamumas"
-
-#, fuzzy
-#~ msgid "Application menus shows Name field"
-#~ msgstr "Programos failas ar vardas (.desktop)"
-
-#, fuzzy
-#~ msgid "Show Favorite Applications in the main menu"
-#~ msgstr "Mėgstamiausios programos"
-
-#, fuzzy
-#~ msgid "Show Applications in the main menu"
-#~ msgstr "Rodyti visų programų meniu"
-
-#, fuzzy
-#~ msgid "Window borders use application icon"
-#~ msgstr "Lango rėmelio pasirinkimas"
-
-#, fuzzy
-#~ msgid "Disable confirmation dialogs"
-#~ msgstr "Išjungti patvirtinimo dialogų langus"
-
-#, fuzzy
-#~ msgid "confirm"
-#~ msgstr "Konfigūruoti"
-
-#, fuzzy
-#~ msgid "settings"
-#~ msgstr "Nustatymai"
-
-#, fuzzy
-#~ msgid "hinting"
-#~ msgstr "Taškinė korekcija"
-
-#, fuzzy
-#~ msgid "desklock"
-#~ msgstr "Darbalaukio užrakto nustatymas"
-
-#, fuzzy
-#~ msgid "Custom desklock command"
-#~ msgstr "Sava komanda"
-
-#, fuzzy
-#~ msgid "Desklock activates on login"
-#~ msgstr "Visos programos"
-
-#, fuzzy
-#~ msgid "screensaver"
-#~ msgstr "Ekrano užsklandos nustatymas"
-
-#, fuzzy
-#~ msgid "%2.0f seconds"
-#~ msgstr "%1.0f sekundžių"
-
-#, fuzzy
-#~ msgid "Desklock activates when idle"
-#~ msgstr "Darbalaukio užrakto antraštė"
-
-#, fuzzy
-#~ msgid "Use custom desklock wallpaper"
-#~ msgstr "Naudoti temos darbalaukio foną"
-
-#, fuzzy
-#~ msgid "Enable screensaver"
-#~ msgstr "Ekrano užsklandos nustatymas"
-
-#, fuzzy
-#~ msgid "Window list menu includes windows from all screens"
-#~ msgstr "Rodyti langus iš visų ekranų"
-
-#, fuzzy
-#~ msgid "%1.0f characters"
-#~ msgstr "%1.0f simboliai"
-
-#, fuzzy
-#~ msgid "Use Enlightenment theme cursor"
-#~ msgstr "Enlightenment : Veiksena"
-
-#, fuzzy
-#~ msgid "Show mouse cursor"
-#~ msgstr "Rodyti žymeklį"
-
-#, fuzzy
-#~ msgid "Mouse acceleration threshold"
-#~ msgstr "Pelės spartinimas"
-
-#, fuzzy
-#~ msgid "Enable desk flipping with fullscreen windows"
-#~ msgstr "Leisti saistymo aktyvavimą pilno ekrano langams"
-
-#, fuzzy
-#~ msgid "Desk flip animation type"
-#~ msgstr "Perkėlimo animacija"
-
-#, fuzzy
-#~ msgid "Default window border style"
-#~ msgstr "Numatytasis rėmelio stilius"
-
-#, fuzzy
-#~ msgid "Thumbscroll threshold"
-#~ msgstr "Slinkimas slankikliu"
-
-#, fuzzy
-#~ msgid "%1.0f pixels/second"
-#~ msgstr "%1.0f pikseliai"
-
-#, fuzzy
-#~ msgid "Thumbscroll resistance"
-#~ msgstr "Slinkimas slankikliu"
-
-#, fuzzy
-#~ msgid "Show files on desktop"
-#~ msgstr "Rodyti darbalaukį"
-
-#, fuzzy
-#~ msgid "Filemanager deletes files securely"
-#~ msgstr "Failų tvarkyklė be darbo"
-
-#, fuzzy
-#~ msgid "Do not apply any keyboard layout settings"
-#~ msgstr "Klaviatūros išdėstymai"
-
-#, fuzzy
-#~ msgid "Overall scaling factor"
-#~ msgstr "Savas mastelio daugiklis"
-
-#, fuzzy
-#~ msgid "scale"
-#~ msgstr "Lokalė"
-
-#, fuzzy
-#~ msgid "%1.2f pixels"
-#~ msgstr "%1.0f pikseliai"
-
-#, fuzzy
-#~ msgid "input"
-#~ msgstr "Įvestis"
-
-#, fuzzy
-#~ msgid "Backlight transition length"
-#~ msgstr "Riboti pavadinimo ilgį"
-
-#, fuzzy
-#~ msgid "Enable GTK application settings"
-#~ msgstr "Sąveikos nustatymai"
-
-#, fuzzy
-#~ msgid "xsettings"
-#~ msgstr "Nustatymai"
-
-#, fuzzy
-#~ msgid "Enable use of icon theme for applications"
-#~ msgstr "Paleisti programas iš naujo"
-
-#, fuzzy
-#~ msgid "Icon theme"
-#~ msgstr "Piktogramos pavadinimas"
-
-#, fuzzy
-#~ msgid "appearance"
-#~ msgstr "Išvaizda"
-
-#, fuzzy
-#~ msgid "applications"
-#~ msgstr "Programa"
-
-#, fuzzy
-#~ msgid "menus"
-#~ msgstr "Meniu"
-
-#, fuzzy
-#~ msgid "advanced"
-#~ msgstr "Sudėtingesnės"
-
-#, fuzzy
-#~ msgid "framerate"
-#~ msgstr "Kadrų dažnis"
-
-#, fuzzy
-#~ msgid "profile"
-#~ msgstr "Profilis"
-
-#, fuzzy
-#~ msgid "window"
-#~ msgstr "Langai"
-
-#, fuzzy
-#~ msgid "launch"
-#~ msgstr "Vykdyti"
-
-#, fuzzy
-#~ msgid "style"
-#~ msgstr "Stilius"
-
-#, fuzzy
-#~ msgid "iconify"
-#~ msgstr "Suskleisti į piktogramą"
-
-#, fuzzy
-#~ msgid "Control Panel"
-#~ msgstr "Sąrankos panelė"
-
-#, fuzzy
-#~ msgid "Configuration"
-#~ msgstr "Sąrankos panelė"
-
-#, fuzzy
-#~ msgid "Application launchers"
-#~ msgstr "Programos vykdymo klaida"
-
-#, fuzzy
-#~ msgid "Favorite applications"
-#~ msgstr "Mėgstamiausios programos"
-
-#, fuzzy
-#~ msgid "Ibar applications"
-#~ msgstr "IBar programos"
-
-#, fuzzy
-#~ msgid "Desk lock applications"
-#~ msgstr "Visos programos"
-
-#, fuzzy
-#~ msgid "Desk unlock applications"
-#~ msgstr "Žinomos programos"
-
-#, fuzzy
-#~ msgid "Enlightenment restart applications"
-#~ msgstr "Paleisti programas iš naujo"
-
-#, fuzzy
-#~ msgid "Enlightenment start applications"
-#~ msgstr "Paleisti programas iš naujo"
-
-#, fuzzy
-#~ msgid "Key binding settings"
-#~ msgstr "Klavišų susiejimo nustatymai"
-
-#, fuzzy
-#~ msgid "Mouse binding settings"
-#~ msgstr "Pelės saistymo nustatymai"
-
-#, fuzzy
-#~ msgid "ACPI binding settings"
-#~ msgstr "Klavišų susiejimo nustatymai"
-
-#, fuzzy
-#~ msgid "Screen edge binding settings"
-#~ msgstr "Ekrano kraštų saistymo nustatymai"
-
-#, fuzzy
-#~ msgid "Edje signal binding settings"
-#~ msgstr "Ekrano kraštų saistymo nustatymai"
-
-#, fuzzy
-#~ msgid "Enlightenment profile settings"
-#~ msgstr "Enlightenment %s modulis"
-
-#, fuzzy
-#~ msgid "Language settings"
-#~ msgstr "Kalbos nustatymai"
-
-#, fuzzy
-#~ msgid "language"
-#~ msgstr "Kalba"
-
-#, fuzzy
-#~ msgid "Desklock language settings"
-#~ msgstr "Kalbos nustatymai"
-
-#, fuzzy
-#~ msgid "Input method settings"
-#~ msgstr "Įvesties metodas"
-
-#, fuzzy
-#~ msgid "Search directory settings"
-#~ msgstr "Paieškos katalogai"
-
-#, fuzzy
-#~ msgid "Environment variable settings"
-#~ msgstr "Eksportuoti aplinkos kintamieji"
-
-#, fuzzy
-#~ msgid "Shelf settings"
-#~ msgstr "Lentynos nustatymai"
-
-#~ msgid "Themes"
-#~ msgstr "Temos"
-
-#, fuzzy
-#~ msgid "Enlightenment theme settings"
-#~ msgstr "Enlightenment : Veiksena"
-
-#, fuzzy
-#~ msgid "Desktop wallpaper settings"
-#~ msgstr "Darbalaukio fono nustatymai"
-
-#, fuzzy
-#~ msgid "Enlightenment color settings"
-#~ msgstr "Enlightenment : Veiksena"
-
-#, fuzzy
-#~ msgid "color"
-#~ msgstr "Spalvos"
-
-#, fuzzy
-#~ msgid "Enlightenment font settings"
-#~ msgstr "Enlightenment : Veiksena"
-
-#, fuzzy
-#~ msgid "Window remember settings"
-#~ msgstr "Langas prisimena"
-
-#, fuzzy
-#~ msgid "Everything launcher settings"
-#~ msgstr "Visko vykdyklė"
-
-#, fuzzy
-#~ msgid "Default view mode"
-#~ msgstr "Numatytas vaizdas"
-
-#, fuzzy
-#~ msgid "Icon size"
-#~ msgstr "Piktogramos dydis"
-
-#, fuzzy
-#~ msgid "Show file extensions"
-#~ msgstr "Rodyti meniu"
-
-#, fuzzy
-#~ msgid "Show path toolbar in filemanager windows"
-#~ msgstr "Prisiminti failų tvarkyklės langus"
-
-#, fuzzy
-#~ msgid "Show favorites sidebar in filemanager windows"
-#~ msgstr "Prisiminti failų tvarkyklės langus"
-
-#, fuzzy
-#~ msgid "Sort directories first"
-#~ msgstr "Paieškos katalogai"
-
-#, fuzzy
-#~ msgid "Sort directories last"
-#~ msgstr "Paieškos katalogai"
-
-#, fuzzy
-#~ msgid "Open directories in place"
-#~ msgstr "Atverti katalogus vietoje"
-
-#, fuzzy
-#~ msgid "Use single click to open files"
-#~ msgstr "Naudoti vieną spragtelėjimą"
-
-#, fuzzy
-#~ msgid "Use alternate (Mac-style) selection modifiers"
-#~ msgstr "Naudoti pakaitinius parinkimo keitiklius"
-
-#, fuzzy
-#~ msgid "Allow navigation on desktop"
-#~ msgstr "Programos failas ar vardas (.desktop)"
-
-#, fuzzy
-#~ msgid "File icons"
-#~ msgstr "Failų piktogramos"
-
-#, fuzzy
-#~ msgid "Display low urgency notifications"
-#~ msgstr "Rodyti rėmelio pavadinimą"
-
-#, fuzzy
-#~ msgid "Display normal urgency notifications"
-#~ msgstr "Rodymo informacija"
-
-#, fuzzy
-#~ msgid "Display high urgency notifications"
-#~ msgstr "Rodymo informacija"
-
-#, fuzzy
-#~ msgid "Quickaccess settings panel"
-#~ msgstr "Nustatymų skydelis"
-
-#, fuzzy
-#~ msgid "Skip taskbar"
-#~ msgstr "Nerodyti programų juostoje"
-
-#, fuzzy
-#~ msgid "Skip pager"
-#~ msgstr "Nerodyti darbalaukių perjungiklyje"
-
-#, fuzzy
-#~ msgid "Teamwork settings panel"
-#~ msgstr "Nustatymų skydelis"
-
-#, fuzzy
-#~ msgid "Tile dialog windows"
-#~ msgstr "Pasirinkti langą"
-
-#, fuzzy
-#~ msgid "Keyboard layout settings"
-#~ msgstr "Klaviatūros išdėstymai"
-
-#~ msgid "Height (%3.0f pixels)"
-#~ msgstr "Aukštis (%3.0f pikseliai)"
-
-#, fuzzy
-#~ msgid "Windows raise when focused"
-#~ msgstr "Langas po žymekliu"
-
-#~ msgid "Startup Settings"
-#~ msgstr "Paleidimo nustatymai"
-
-#~ msgid "Show Splash Screen on Login"
-#~ msgstr "Rodyti prisistatymo langą prisijungiant"
-
-#~ msgid "Theme Categories"
-#~ msgstr "Temų kategorijos"
-
-#~ msgid "Assign"
-#~ msgstr "Priskirti"
-
-#~ msgid "Clear"
-#~ msgstr "Išvalyti"
-
-#~ msgid "Clear All"
-#~ msgstr "Išvalyti visus"
-
-#, fuzzy
-#~ msgid "Module Error"
-#~ msgstr "Klaida prijungiant"
-
-#, fuzzy
-#~ msgid "favorite apps"
-#~ msgstr "Mėgiamiausi"
-
-#, fuzzy
-#~ msgid "desklock apps"
-#~ msgstr "Darbalaukio užrakto slaptažodis"
-
-#, fuzzy
-#~ msgid "deskunlock apps"
-#~ msgstr "Darbalaukio užrakto slaptažodis"
-
-#, fuzzy
-#~ msgid "restart apps"
-#~ msgstr "Paleisti iš naujo"
-
-#, fuzzy
-#~ msgid "startup apps"
-#~ msgstr "Paleistis"
-
-#, fuzzy
-#~ msgid "default apps"
-#~ msgstr "Numatytasis"
-
-#, fuzzy
-#~ msgid "key bindings"
-#~ msgstr "Klavišų saistymas"
-
-#, fuzzy
-#~ msgid "mouse bindings"
-#~ msgstr "Pelės saistymas"
-
-#, fuzzy
-#~ msgid "ACPI bindings"
-#~ msgstr "Klavišų saistymas"
-
-#, fuzzy
-#~ msgid "edge bindings"
-#~ msgstr "Krašto saistymas"
-
-#, fuzzy
-#~ msgid "signal bindings"
-#~ msgstr "Krašto saistymas"
-
-#, fuzzy
-#~ msgid "comp_settings"
-#~ msgstr "Nustatymai"
-
-#, fuzzy
-#~ msgid "profiles"
-#~ msgstr "Profiliai"
-
-#, fuzzy
-#~ msgid "desklock language"
-#~ msgstr "Darbalaukio užrakto antraštė"
-
-#, fuzzy
-#~ msgid "input method"
-#~ msgstr "Įvesties metodo klaida"
-
-#, fuzzy
-#~ msgid "search directories"
-#~ msgstr "Paieškos katalogai"
-
-#, fuzzy
-#~ msgid "environment variables"
-#~ msgstr "Eksportuoti aplinkos kintamieji"
-
-#, fuzzy
-#~ msgid "shelves"
-#~ msgstr "Lentynos"
-
-#, fuzzy
-#~ msgid "themes"
-#~ msgstr "Temos"
-
-#, fuzzy
-#~ msgid "colors"
-#~ msgstr "Spalvos"
-
-#, fuzzy
-#~ msgid "fonts"
-#~ msgstr "Šriftai"
-
-#, fuzzy
-#~ msgid "window remembers"
-#~ msgstr "Langas prisimena"
-
-#~ msgid "Pane"
-#~ msgstr "Slinkimas"
-
-#~ msgid "Configure Shelves"
-#~ msgstr "Lentynų konfigūracija"
