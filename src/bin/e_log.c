@@ -1,9 +1,5 @@
 #include "e.h"
 
-#ifndef E_LOG_LEVEL
-# define E_LOG_LEVEL EINA_LOG_LEVEL_INFO
-#endif
-
 EINTERN int e_log_dom = -1;
 
 static const char *_names[] = {
@@ -32,7 +28,6 @@ EINTERN int
 e_log_init(void)
 {
    e_log_dom = eina_log_domain_register("e", EINA_COLOR_WHITE);
-   eina_log_domain_level_set("e", E_LOG_LEVEL);
    eina_log_print_cb_set(_e_log_cb, NULL);
    return e_log_dom != -1;
 }
