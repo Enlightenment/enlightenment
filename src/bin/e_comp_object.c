@@ -1161,11 +1161,12 @@ _e_comp_intercept_raise(void *data, Evas_Object *obj)
         return;
      }
    if (!EINA_INLIST_GET(cw->ec)->next) return;//already highest on layer
+   o = evas_object_above_get(obj);
    {
       E_Client *ecabove = e_client_above_get(cw->ec);
-      if (ecabove && (ecabove->frame == cw->comp->layers[cw->layer].obj)) return; //highest below marker
+      if (ecabove && (ecabove->frame == cw->comp->layers[cw->layer].obj) &&
+          (ecabove->frame == o)) return; //highest below marker
    }
-   o = evas_object_above_get(obj);
    if (evas_object_layer_get(o) != evas_object_layer_get(obj)) return; //already at top!
    if (obj == cw->comp->layers[cw->layer].obj) //never raise a non-layer marker!
      {
