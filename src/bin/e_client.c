@@ -2407,14 +2407,20 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
    if ((e_config->use_desktop_window_profile) &&
        (ec->e.state.profile.use))
      {
-        if (ec->e.state.profile.wait_for_done) return;
+        ec->e.state.profile.desk_num = desk->x + (desk->y * desk->zone->desk_x_count);
+        ec->e.state.profile.zone_num = desk->zone->num;
+        ec->e.state.profile.comp_num = desk->zone->comp->man->num;
         if (ec->e.state.profile.name != desk->window_profile)
           {
              eina_stringshare_refplace(&ec->e.state.profile.set, desk->window_profile);
              EC_CHANGED(ec);
              return;
           }
+        if (ec->e.state.profile.wait_for_done) return;
      }
+   ec->e.state.profile.desk_num =
+   ec->e.state.profile.zone_num =
+   ec->e.state.profile.comp_num = -1;
    if (ec->fullscreen)
      {
         ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);

@@ -498,6 +498,9 @@ struct E_Client
             Eina_Stringshare *name;
             Eina_Stringshare **available_list;
             Eina_Stringshare *set;
+            char    desk_num;
+            char    zone_num;
+            char    comp_num;
             int             num;
             unsigned char   wait_for_done : 1;
             unsigned char   use : 1;
