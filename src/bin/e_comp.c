@@ -672,6 +672,8 @@ _e_comp_shapes_update_job(E_Comp *c)
    Eina_Rectangle *r;
    Eina_List *rl = NULL;
    E_Color color = {0};
+
+   INF("---------------------");
 #endif
 
    E_FREE_LIST(c->debug_rects, evas_object_del);
