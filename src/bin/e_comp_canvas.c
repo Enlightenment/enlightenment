@@ -114,7 +114,6 @@ e_comp_canvas_init(E_Comp *c)
 {
    Evas_Object *o;
    Eina_List *screens;
-   unsigned int layer;
 
    c->evas = ecore_evas_get(c->ee);
 
@@ -142,18 +141,6 @@ e_comp_canvas_init(E_Comp *c)
    evas_event_callback_add(c->evas, EVAS_CALLBACK_RENDER_POST, _e_comp_canvas_render_post, c);
 
    c->ee_win = ecore_evas_window_get(c->ee);
-
-   for (layer = 0; layer <= e_comp_canvas_layer_map(E_LAYER_MAX); layer++)
-     {
-        Evas_Object *o2;
-
-        /* client layers have actual X windows backing them, so we wait */
-        if (e_comp_canvas_client_layer_map(e_comp_canvas_layer_map_to(layer)) != 9999)
-          continue;
-        o2 = c->layers[layer].obj = evas_object_rectangle_add(c->evas);
-        evas_object_layer_set(o2, e_comp_canvas_layer_map_to(layer));
-        evas_object_name_set(o2, "layer_obj");
-     }
 
    screens = (Eina_List *)e_xinerama_screens_get();
    if (screens)
