@@ -107,7 +107,7 @@ e_remember_internal_save(void)
    EINA_LIST_FOREACH(e_comp_list(), l, c)
      EINA_LIST_FOREACH(c->clients, ll, ec)
        {
-          if (!ec->internal) continue;
+          if ((!ec->internal) || e_client_util_ignored_get(ec)) continue;
 
           rem = E_NEW(E_Remember, 1);
           if (!rem) break;
