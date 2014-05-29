@@ -389,6 +389,7 @@ _e_remember_event_free(void *d EINA_UNUSED, void *event)
 static void
 _e_remember_update(E_Client *ec, E_Remember *rem)
 {
+   if (!ec->zone) return;
    if (rem->apply & E_REMEMBER_APPLY_POS ||
        rem->apply & E_REMEMBER_APPLY_SIZE)
      {
