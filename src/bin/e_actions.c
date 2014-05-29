@@ -1308,14 +1308,15 @@ ACT_FN_GO(window_zone_move_by, )
      move = eina_list_count(ec->zone->comp->zones) - 1;
    else if ((unsigned int)move >= eina_list_count(ec->zone->comp->zones))
      move = 0;
-   zone = eina_list_nth(ec->zone->comp->zones, move);
-   if ((!zone) || (zone->num != (unsigned int)move)) return;
+   zone = e_util_comp_zone_number_get(0, move);
+   if (!zone) return;
    max = ec->maximized;
    fs = ec->fullscreen_policy;
    fullscreen = ec->fullscreen;
    if (ec->maximized) e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
    if (fullscreen) e_client_unfullscreen(ec);
    e_client_zone_set(ec, zone);
+//   e_client_desk_set(ec, e_desk_current_get(zone));
    if (max) e_client_maximize(ec, max);
    if (fullscreen) e_client_fullscreen(ec, fs);
    evas_object_focus_set(ec->frame, 1);
