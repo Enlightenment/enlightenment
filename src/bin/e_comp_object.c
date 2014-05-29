@@ -1030,10 +1030,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
      layer = cw->ec->layer;
    else
      layer = evas_object_layer_get(stack);
-   if (raising)
-     ecstack = e_client_below_get(cw->ec);
-   else
-     ecstack = e_client_above_get(cw->ec);
+   ecstack = e_client_below_get(cw->ec);
    if (layer != e_comp_canvas_layer_map_to(cw->layer))
      {
         /* some FOOL is trying to restack a layer marker */
