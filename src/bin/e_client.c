@@ -3626,6 +3626,7 @@ e_client_fullscreen(E_Client *ec, E_Fullscreen policy)
      }
    e_hints_window_size_set(ec);
 
+   evas_object_data_set(ec->frame, "client_restack", (void *)1);
    ec->saved.layer = ec->layer;
    if (!e_config->allow_above_fullscreen)
      evas_object_layer_set(ec->frame, E_LAYER_CLIENT_FULLSCREEN);
