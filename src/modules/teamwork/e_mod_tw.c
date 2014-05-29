@@ -905,7 +905,7 @@ tw_show_video(Evas_Object *prev, const char *uri)
    Evas_Object *o;
 
    o = emotion_object_add(e_livethumb_evas_get(prev));
-   emotion_object_init(o, "vlc");
+   emotion_object_init(o, "gstreamer1");
    emotion_object_file_set(o, uri);
    emotion_object_play_set(o, EINA_TRUE);
    evas_object_smart_callback_add(o, "frame_decode", tw_video_opened_cb, prev);
