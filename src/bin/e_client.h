@@ -565,7 +565,7 @@ struct E_Client
    } changes;
 
    unsigned int       visible : 1;
-   Eina_Bool          hidden : 1; // set when window has been hidden by api and should not be shown
+   unsigned int       hidden : 1; // set when window has been hidden by api and should not be shown
    unsigned int       await_hide_event;
    unsigned int       moving : 1;
    unsigned int       focused : 1;
