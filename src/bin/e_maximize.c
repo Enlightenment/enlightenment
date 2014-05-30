@@ -196,8 +196,8 @@ _e_maximize_border_rects_fill(E_Border *bd, Eina_List *rects, int *x1, int *yy1,
      {
         int bx, by, bw, bh;
 
-        bx = bd->x;
-        by = bd->y;
+        bx = E_CLAMP(bd->x, bd->zone->x, bd->zone->x + bd->zone->w);
+        bx = E_CLAMP(bd->y, bd->zone->y, bd->zone->y + bd->zone->h);
         bw = bd->w;
         bh = bd->h;
 
