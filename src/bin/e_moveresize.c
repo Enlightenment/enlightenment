@@ -10,7 +10,6 @@ static void _e_move_end(void *data, E_Client *ec);
 static Evas_Object *_disp_obj = NULL;
 static Evas_Object *_disp_content = NULL;
 static Eina_List *hooks = NULL;
-static int visible = 0;
 
 static Eina_Bool _e_moveresize_enabled = EINA_TRUE;
 
@@ -119,6 +118,7 @@ _e_resize_begin(void *data __UNUSED__, E_Client *ec)
      e_comp_object_util_center_on(_disp_obj, ec->frame);
    else
      e_comp_object_util_center(_disp_obj);
+   evas_object_show(_disp_obj);
 }
 
 static void
@@ -135,7 +135,6 @@ _e_resize_end(void *data __UNUSED__, E_Client *ec __UNUSED__)
           }
      }
 
-   visible = 0;
 }
 
 static void
@@ -151,11 +150,6 @@ _e_resize_update(void *data __UNUSED__, E_Client *ec)
 
    e_moveresize_client_extents(ec, &w, &h);
 
-   if (!visible)
-     {
-        evas_object_show(_disp_obj);
-        visible = 1;
-     }
    snprintf(buf, sizeof(buf), _("%i×%i"), w, h);
    edje_object_part_text_set(_disp_content, "e.text.label", buf);
 }
@@ -198,6 +192,7 @@ _e_move_begin(void *data __UNUSED__, E_Client *ec)
      e_comp_object_util_center_on(_disp_obj, ec->frame);
    else
      e_comp_object_util_center(_disp_obj);
+   evas_object_show(_disp_obj);
 }
 
 static void
@@ -212,8 +207,6 @@ _e_move_end(void *data __UNUSED__, E_Client *ec __UNUSED__)
              _disp_content = NULL;
           }
      }
-
-   visible = 0;
 }
 
 static void
@@ -226,11 +219,6 @@ _e_move_update(void *data __UNUSED__, E_Client *ec)
    if (e_config->move_info_follows)
      e_comp_object_util_center_on(_disp_obj, ec->frame);
 
-   if (!visible)
-     {
-        evas_object_show(_disp_obj);
-        visible = 1;
-     }
    snprintf(buf, sizeof(buf), "%i %i", ec->x, ec->y);
    edje_object_part_text_set(_disp_content, "e.text.label", buf);
 }
