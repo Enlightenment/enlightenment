@@ -681,7 +681,8 @@ _e_comp_shapes_update_job(E_Comp *c)
    eina_tiler_tile_size_set(tb, 1, 1);
    /* background */
    eina_tiler_rect_add(tb, &(Eina_Rectangle){c->man->x, c->man->y, c->man->w, c->man->h});
-   o = evas_object_bottom_get(c->evas);
+
+   o = e_client_bottom_get(c)->frame;
    for (; o; o = evas_object_above_get(o))
      {
         int layer;
@@ -690,9 +691,8 @@ _e_comp_shapes_update_job(E_Comp *c)
         layer = evas_object_layer_get(o);
         if (e_comp_canvas_client_layer_map(layer) == 9999) //not a client layer
           {
-             /* ignore objects stacked below first client layer */
-             if (layer < E_LAYER_CLIENT_PRIO) continue;
              _e_comp_shapes_update_object_shape_comp_helper(c, o, tb);
+             continue;
           }
         ec = evas_object_data_get(o, "E_Client");
         if (ec && (!ec->no_shape_cut))
