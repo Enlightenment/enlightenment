@@ -1263,7 +1263,7 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    Evas_Object *o, *it, *img;
    Eina_Stringshare *txt;
    int w, h;
-   
+
    if (ec->netwm.state.skip_taskbar) return EINA_FALSE;
    o = ic->menu->o_bg;
    it = edje_object_add(e_comp_get(ec)->evas);
@@ -1281,6 +1281,20 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    edje_extern_object_aspect_set(img, EDJE_ASPECT_CONTROL_BOTH, w, h);
    edje_object_part_swallow(it, "e.swallow.icon", img);
    edje_object_part_text_set(it, "e.text.title", txt);
+   if (ec->focused)
+     edje_object_signal_emit(it, "e,state,focused", "e");
+   if (ec->sticky)
+     {
+        if (ec->zone != ic->ibar->inst->gcc->gadcon->zone)
+          edje_object_signal_emit(it, "e,state,otherscreen", "e");
+     }
+   else
+     {
+        if (ec->zone != ic->ibar->inst->gcc->gadcon->zone)
+          edje_object_signal_emit(it, "e,state,otherscreen", "e");
+        else if (ec->desk != e_desk_current_get(ic->ibar->inst->gcc->gadcon->zone))
+          edje_object_signal_emit(it, "e,state,otherdesk", "e");
+     }
    edje_object_calc_force(it);
    edje_object_size_min_calc(it, &w, &h);
    edje_extern_object_min_size_set(it, w, h);
