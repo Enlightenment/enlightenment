@@ -296,7 +296,7 @@ _e_maximize_client_rects_fill_vert(E_Client *ec, Eina_List *rects, int *yy1, int
    /* Expand up */
    EINA_LIST_FOREACH(rects, l, rect)
      {
-        if ((rect->y2 > cy1) && (rect->y2 <= *by) &&
+        if ((rect->y2 > cy1) && ((rect->yy1 <= *by) || (rect->y2 <= *by)) &&
             E_INTERSECTS(rect->x1, 0, (rect->x2 - rect->x1), ec->zone->h, *bx, 0, *bw, ec->zone->h))
           {
              cy1 = rect->y2;
