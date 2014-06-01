@@ -281,7 +281,7 @@ e_desk_show(E_Desk *desk)
    desk->zone->desk_y_current = desk->y;
    desk->visible = 1;
 
-   msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)) + 8);
+   msg = alloca(sizeof(Edje_Message_Int_Set) + (3 * sizeof(int)));
    msg->count = 4;
    msg->val[0] = desk->x;
    msg->val[1] = desk->zone->desk_x_count;
