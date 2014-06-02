@@ -166,7 +166,10 @@ _e_comp_object_layers_add(E_Comp_Object *cw, E_Comp_Object *above, E_Comp_Object
     * will return NULL for fake layers (eg. wayland)
     */
    if (cw->comp->layers[cw->layer].obj)
-     layer_cw = eo_data_scope_get(cw->comp->layers[cw->layer].obj, MY_CLASS);
+     {
+        if (eo_isa(cw->comp->layers[cw->layer].obj, MY_CLASS))
+          layer_cw = eo_data_scope_get(cw->comp->layers[cw->layer].obj, MY_CLASS);
+     }
    if (layer_cw == cw) layer_cw = NULL;
 /*
    if (above)
