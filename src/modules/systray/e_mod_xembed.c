@@ -425,14 +425,11 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
 {
    const Evas_Object *box;
    Evas_Coord x, y;
-   unsigned short r, g, b;
+   unsigned short r = 0, g = 0, b = 0;
    const char *color;
-   Eina_Bool invis = EINA_FALSE;
 
    if (systray_gadcon_get(xembed->inst)->shelf &&
-       (!e_util_strcmp(systray_gadcon_get(xembed->inst)->shelf->style, "invisible")))
-     invis = EINA_TRUE;
-   else
+       e_util_strcmp(systray_gadcon_get(xembed->inst)->shelf->style, "invisible"))
      {
         color = edje_object_data_get(systray_edje_get(xembed->inst),
                                      systray_style_get(xembed->inst));
@@ -458,8 +455,7 @@ _systray_xembed_base_create(Instance_Xembed *xembed)
    ecore_x_icccm_title_set(xembed->win.base, "noshadow_systray_base");
    ecore_x_icccm_name_class_set(xembed->win.base, "systray", "holder");
    ecore_x_netwm_name_set(xembed->win.base, "noshadow_systray_base");
-   if (!invis)
-     ecore_x_window_background_color_set(xembed->win.base, r, g, b);
+   ecore_x_window_background_color_set(xembed->win.base, r, g, b);
    ecore_x_window_show(xembed->win.base);
 
    return EINA_TRUE;
