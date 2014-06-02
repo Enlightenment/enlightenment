@@ -663,7 +663,8 @@ static void
 _e_comp_shapes_update_job(E_Comp *c)
 {
    Eina_Tiler *tb;
-   Evas_Object *o;
+   E_Client *ec;
+   Evas_Object *o = NULL;
    Eina_Rectangle *tr;
    Eina_Iterator *ti;
    Eina_Rectangle *exr;
@@ -682,11 +683,11 @@ _e_comp_shapes_update_job(E_Comp *c)
    /* background */
    eina_tiler_rect_add(tb, &(Eina_Rectangle){c->man->x, c->man->y, c->man->w, c->man->h});
 
-   o = e_client_bottom_get(c)->frame;
+   ec = e_client_bottom_get(c);
+   if (ec) o = ec->frame;
    for (; o; o = evas_object_above_get(o))
      {
         int layer;
-        E_Client *ec;
 
         layer = evas_object_layer_get(o);
         if (e_comp_canvas_client_layer_map(layer) == 9999) //not a client layer
