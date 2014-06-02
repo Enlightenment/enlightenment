@@ -190,7 +190,10 @@ e_gadcon_popup_new(E_Gadcon_Client *gcc, Eina_Bool noshadow)
    pop->o_bg = o;
 
    pop->comp_object = e_comp_object_util_add(o, noshadow ? E_COMP_OBJECT_TYPE_NONE : E_COMP_OBJECT_TYPE_POPUP);
-   evas_object_layer_set(pop->comp_object, E_LAYER_POPUP);
+   if (e_comp_get(gcc)->nocomp)
+     evas_object_layer_set(inst->popup->comp_object, E_LAYER_CLIENT_NORMAL);
+   else
+     evas_object_layer_set(pop->comp_object, E_LAYER_POPUP);
 
    pop->gcc = gcc;
    pop->gadcon_lock = 1;
