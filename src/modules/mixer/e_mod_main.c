@@ -252,6 +252,7 @@ _mixer_update_volume(E_Mixer_Instance *inst, int dl, int dr, Eina_Bool non_ui)
    E_Mixer_Channel_State *state;
 
    state = &inst->mixer_state;
+   if (!inst->channel) return;
    e_mod_mixer_volume_get(inst->sys, inst->channel,
                           &state->left, &state->right);
    if (state->left >= 0)
@@ -292,6 +293,8 @@ _mixer_toggle_mute(E_Mixer_Instance *inst, Eina_Bool non_ui)
 {
    E_Mixer_Channel_State *state;
 
+
+   if (!inst->channel) return;
    if (!e_mod_mixer_channel_is_mutable(inst->channel))
      return;
 
@@ -316,6 +319,7 @@ _mixer_popup_cb_volume_left_change(void *data, Evas_Object *obj, void *event __U
    E_Mixer_Instance *inst = data;
    E_Mixer_Channel_State *state = &inst->mixer_state;
 
+   if (!inst->channel) return;
    e_mod_mixer_volume_get(inst->sys, inst->channel,
                           &state->left, &state->right);
 
@@ -337,6 +341,7 @@ _mixer_popup_cb_volume_right_change(void *data, Evas_Object *obj, void *event __
    E_Mixer_Instance *inst = data;
    E_Mixer_Channel_State *state = &inst->mixer_state;
 
+   if (!inst->channel) return;
    e_mod_mixer_volume_get(inst->sys, inst->channel,
                           &state->left, &state->right);
 
@@ -358,6 +363,7 @@ _mixer_popup_cb_mute_change(void *data, Evas_Object *obj, void *event __UNUSED__
    E_Mixer_Instance *inst = data;
    E_Mixer_Channel_State *state = &inst->mixer_state;
 
+   if (!inst->channel) return;
    state->mute = e_widget_check_checked_get(obj);
    e_mod_mixer_mute_set(inst->sys, inst->channel, state->mute);
 
