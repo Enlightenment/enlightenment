@@ -177,7 +177,7 @@ _e_maximize_client_rects_fill(E_Client *ec, Eina_List *rects, int *x1, int *yy1,
         int bx, by, bw, bh;
 
         bx = E_CLAMP(ec->x, ec->zone->x, ec->zone->x + ec->zone->w);
-        bx = E_CLAMP(ec->y, ec->zone->y, ec->zone->y + ec->zone->h);
+        by = E_CLAMP(ec->y, ec->zone->y, ec->zone->y + ec->zone->h);
         bw = ec->w;
         bh = ec->h;
 
