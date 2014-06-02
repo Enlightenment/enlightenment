@@ -946,9 +946,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
              E_Client *ec;
 
              ec = e_client_above_get(cw->ec);
-             if (!ec)
-               ec = e_comp_object_client_get(cw->comp->layers[cw->layer].obj);
-             evas_object_stack_below(obj, ec->frame);
+             evas_object_stack_below(obj, ec ? ec->frame : cw->comp->layers[cw->layer].obj);
              e_comp_shape_queue(cw->comp);
           }
         return;
