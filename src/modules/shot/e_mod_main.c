@@ -663,8 +663,8 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
           {
              long long unsigned int max = 0;
 
-             fscanf(f, "%llu", &max);
-             if (max && (max < (w * h * sizeof(int))))
+             int n = fscanf(f, "%llu", &max);
+             if ((n > 0) && (max) && (max < (w * h * sizeof(int))))
                {
                   e_util_dialog_show(_("Screenshot Error"),
                                       _("SHMMAX is too small to take screenshot.<br>"
