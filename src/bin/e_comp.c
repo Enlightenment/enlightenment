@@ -681,7 +681,7 @@ _e_comp_shapes_update_job(E_Comp *c)
    tb = eina_tiler_new(c->man->w, c->man->h);
    eina_tiler_tile_size_set(tb, 1, 1);
    /* background */
-   eina_tiler_rect_add(tb, &(Eina_Rectangle){c->man->x, c->man->y, c->man->w, c->man->h});
+   eina_tiler_rect_add(tb, &(Eina_Rectangle){0, 0, c->man->w, c->man->h});
 
    ec = e_client_bottom_get(c);
    if (ec) o = ec->frame;
