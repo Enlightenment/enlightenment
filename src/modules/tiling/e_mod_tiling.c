@@ -208,6 +208,9 @@ is_tilable(const E_Client *ec)
    if (e_client_util_ignored_get(ec))
      return false;
 
+   if (e_object_is_del(E_OBJECT(ec)))
+     return false;
+
    return true;
 }
 
