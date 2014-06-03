@@ -77,7 +77,7 @@ static struct tiling_mod_main_g
    Ecore_Event_Handler *handler_client_resize, *handler_client_move,
                        *handler_client_iconify, *handler_client_uniconify,
                        *handler_desk_set, *handler_compositor_resize;
-   E_Client_Hook       *handler_client_resize_begin, *handler_client_eval_fetch;
+   E_Client_Hook       *handler_client_resize_begin, *handler_client_add;
    E_Client_Menu_Hook  *client_menu_hook;
 
    Tiling_Info         *tinfo;
@@ -1362,8 +1362,8 @@ e_modapi_init(E_Module *m)
 
    _G.handler_client_resize_begin =
       e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, _resize_begin_hook, NULL);
-   _G.handler_client_eval_fetch =
-      e_client_hook_add(E_CLIENT_HOOK_EVAL_FETCH, _add_hook, NULL);
+   _G.handler_client_add =
+      e_client_hook_add(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, _add_hook, NULL);
    HANDLER(_G.handler_client_resize, CLIENT_RESIZE, _resize_hook);
    HANDLER(_G.handler_client_move, CLIENT_MOVE, _move_hook);
 
@@ -1562,7 +1562,7 @@ e_modapi_shutdown(E_Module *m EINA_UNUSED)
    FREE_HANDLER(_G.handler_desk_set);
 
    SAFE_FREE(_G.handler_client_resize_begin, e_client_hook_del);
-   SAFE_FREE(_G.handler_client_eval_fetch, e_client_hook_del);
+   SAFE_FREE(_G.handler_client_add, e_client_hook_del);
 #undef FREE_HANDLER
 #undef SAFE_FREE
 
