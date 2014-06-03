@@ -3,13 +3,13 @@
 #include "e_comp_wl_data.h"
 
 static void 
-_e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resource *resource, struct wl_resource *source_resource, struct wl_resource *origin_resource, struct wl_resource *icon_resource, uint32_t serial)
+_e_comp_wl_data_device_cb_drag_start(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *source_resource EINA_UNUSED, struct wl_resource *origin_resource EINA_UNUSED, struct wl_resource *icon_resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
 {
 
 }
 
 static void 
-_e_comp_wl_data_device_cb_selection_set(struct wl_client *client, struct wl_resource *resource, struct wl_resource *source_resource, uint32_t serial)
+_e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *source_resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
 {
 
 }
@@ -21,7 +21,7 @@ static const struct wl_data_device_interface _e_data_device_interface =
 };
 
 static void 
-_e_comp_wl_data_manager_cb_source_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
+_e_comp_wl_data_manager_cb_source_create(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, uint32_t id EINA_UNUSED)
 {
    /* NB: New resource */
 }
@@ -109,7 +109,7 @@ e_comp_wl_data_manager_init(E_Comp_Wl_Data *cdata)
 }
 
 EINTERN void 
-e_comp_wl_data_manager_shutdown(E_Comp_Wl_Data *cdata)
+e_comp_wl_data_manager_shutdown(E_Comp_Wl_Data *cdata EINA_UNUSED)
 {
    /* destroy the global manager resource */
    /* if (cdata->mgr.global) wl_global_destroy(cdata->mgr.global); */

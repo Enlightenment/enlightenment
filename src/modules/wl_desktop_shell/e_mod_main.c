@@ -429,7 +429,7 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
 }
 
 static void 
-_e_xdg_shell_surface_cb_margin_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t l, int32_t r, int32_t t, int32_t b)
+_e_xdg_shell_surface_cb_margin_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t l, int32_t r, int32_t t, int32_t b)
 {
    /* E_Client *ec; */
    /* int32_t diff; */

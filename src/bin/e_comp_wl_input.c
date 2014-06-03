@@ -30,7 +30,7 @@ _e_comp_wl_input_cb_resource_destroy(struct wl_client *client EINA_UNUSED, struc
 }
 
 static void 
-_e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client, struct wl_resource *resource, uint32_t serial, struct wl_resource *surface_resource, int32_t x, int32_t y)
+_e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, uint32_t serial EINA_UNUSED, struct wl_resource *surface_resource EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED)
 {
    E_Comp_Wl_Data *cdata;
 
