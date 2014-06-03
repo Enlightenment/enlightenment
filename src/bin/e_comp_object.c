@@ -4,7 +4,7 @@
 
 #define UPDATE_MAX 512 // same as evas
 
-#define MY_CLASS E_COMP_OBJ_CLASS
+#define MY_CLASS E_COMP_OBJECT_CLASS
 #define MY_CLASS_NAME "E_Comp_Object"
 #define MY_CLASS_NAME_LEGACY "e_comp_object"
 
@@ -1854,8 +1854,8 @@ _e_comp_object_smart_focus_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj
      edje_object_signal_emit(obj, "e,state,unfocused", "e");
 }
 
-static void
-_e_comp_object_evas_smart_add(Eo *obj, E_Comp_Object *cw EINA_UNUSED)
+EOLIAN static void
+_e_comp_object_evas_object_smart_add(Eo *obj, E_Comp_Object *cw EINA_UNUSED)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_add());
 }
@@ -1931,8 +1931,8 @@ _e_comp_object_eo_base_constructor(Eo *obj, E_Comp_Object *cw EINA_UNUSED)
    ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
-static void
-_e_comp_object_evas_smart_color_set(Eo *obj, E_Comp_Object *cw, int r, int g, int b, int a)
+EOLIAN static void
+_e_comp_object_evas_object_smart_color_set(Eo *obj, E_Comp_Object *cw, int r, int g, int b, int a)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_color_set(r, g, b, a));
    evas_object_color_set(cw->clip, r, g, b, a);
@@ -1940,22 +1940,22 @@ _e_comp_object_evas_smart_color_set(Eo *obj, E_Comp_Object *cw, int r, int g, in
 }
 
 
-static void
-_e_comp_object_evas_smart_clip_set(Eo *obj, E_Comp_Object *cw, Evas_Object *clip)
+EOLIAN static void
+_e_comp_object_evas_object_smart_clip_set(Eo *obj, E_Comp_Object *cw, Evas_Object *clip)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_clip_set(clip));
    evas_object_clip_set(cw->clip, clip);
 }
 
-static void
-_e_comp_object_evas_smart_clip_unset(Eo *obj, E_Comp_Object *cw)
+EOLIAN static void
+_e_comp_object_evas_object_smart_clip_unset(Eo *obj, E_Comp_Object *cw)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_clip_unset());
    evas_object_clip_unset(cw->clip);
 }
 
-static void
-_e_comp_object_evas_smart_hide(Eo *obj, E_Comp_Object *cw)
+EOLIAN static void
+_e_comp_object_evas_object_smart_hide(Eo *obj, E_Comp_Object *cw)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_hide());
    cw->visible = 0;
@@ -1969,8 +1969,8 @@ _e_comp_object_evas_smart_hide(Eo *obj, E_Comp_Object *cw)
    e_comp_shape_queue(cw->comp);
 }
 
-static void
-_e_comp_object_evas_smart_show(Eo *obj, E_Comp_Object *cw)
+EOLIAN static void
+_e_comp_object_evas_object_smart_show(Eo *obj, E_Comp_Object *cw)
 {
    E_Client *tmp;
    Eina_List *l;
@@ -2012,8 +2012,8 @@ _e_comp_object_cb_mirror_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, 
    cw->obj_mirror = eina_list_remove(cw->obj_mirror, obj);
 }
 
-static void
-_e_comp_object_evas_smart_del(Eo *obj, E_Comp_Object *cw)
+EOLIAN static void
+_e_comp_object_evas_object_smart_del(Eo *obj, E_Comp_Object *cw)
 {
    Eina_List *l;
 
@@ -2055,8 +2055,8 @@ _e_comp_object_evas_smart_del(Eo *obj, E_Comp_Object *cw)
    eo_do_super(obj, MY_CLASS, evas_obj_smart_del());
 }
 
-static void
-_e_comp_object_evas_smart_move(Eo *obj, E_Comp_Object *cw, int x, int y)
+EOLIAN static void
+_e_comp_object_evas_object_smart_move(Eo *obj, E_Comp_Object *cw, int x, int y)
 {
    eo_do_super(obj, MY_CLASS, evas_obj_smart_move(x, y));
    cw->x = x, cw->y = y;
@@ -2068,8 +2068,8 @@ _e_comp_object_evas_smart_move(Eo *obj, E_Comp_Object *cw, int x, int y)
      e_comp_shape_queue(cw->comp);
 }
 
-static void
-_e_comp_object_evas_smart_resize(Eo *obj, E_Comp_Object *cw, int w, int h)
+EOLIAN static void
+_e_comp_object_evas_object_smart_resize(Eo *obj, E_Comp_Object *cw, int w, int h)
 {
    Eina_Bool first = EINA_FALSE;
 
