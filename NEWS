@@ -1,4 +1,149 @@
-Changes since 0.17.0:
+Release 0.19.0:
+---------------------
+
+Features:
+ * improved wayland support
+ * e_uuid_store: Add infrastructure to store window/surface properties.
+ * Add a tiling profile.
+ * per-screen desklock logo visibility config
+ * Tiling: Merge the tiling module rework..
+ * check udisks1 DevicePresentationHide flag
+ * ACTIVATE_EXCLUDE window active hint policy
+ * show video resolution in filepreview widget
+ * add fileman option to clamp video size for video previews
+ * handle xrandr backlight using a single, accurate handler
+ * blanking options for wakeup on events (urgent + notify)
+ * packagekit module for package manager integration
+ * ibar now optionaly triggers its menu on mouse in
+ * selective redirection toggling
+ * support XPRESENT extension to reduce compositing overhead
+ * new focus option "raise on revert focus"
+ * add PIN-style desklock for lokker module
+ * make desklock hookable, break out current desklock into module, move pam stuff to separate file
+ * revive personal desklock passwords
+ * allow moveresize visuals to be replaced
+ * allow desk flip animations to be handled completely externally
+ * E16-style live pager returns!
+ * comp config is no longer a module
+ * E_FIRST_FRAME env variable
+ * add script to set some debug vars
+ * new compositor
+ * add E_MODULE_SRC_PATH for setting current module src path without needing to install modules
+ * use non-recursive makefiles for entire build system
+
+Improvements:
+ * filemanager popups no longer span multiple monitors
+ * system operations no longer dim screen until action has begun
+ * window stacking and focus restore is more accurate across restarts
+ * gstreamer1 is now used for media previews
+
+Release 0.18.8:
+---------------------
+
+* screenshot now displays a helpful error message when it fails
+* efm no longer sometimes shows files from other directories
+* efm no longer sometimes shows blank filenames
+* fix syscon button signals
+* fix winlist scrolling
+* fix systray appindicator deletion
+* fix systray appindicator icon loading
+
+Release 0.18.7:
+---------------------
+
+* unify temp module temperature_get_bus_files() functions
+* check notification icon size correctly
+* correctly check evry trigger matches
+* comp config dialog correctly detects effects disabled/fast states
+* efm current .desktop fetching now returns the right .desktop
+* swallow efm background objects after applying theme
+* ibar now scrolls correctly during drags
+* no longer place windows at 0,0 during restart
+* music_control: Use correct markup for metadata text.
+
+
+Release 0.18.6:
+---------------------
+
+* wl_desktop_shell builds out of source tree
+* get entry width based on viewport size, not entry size
+* fix hiding of windows when delete is requested
+* don't deref teamwork pointer after null check
+* don't deref possibly-null value in mouse bindings
+* correctly calculate minimum flowlayout rows
+* efm_op no longer tries to close invalid fds during delete ops
+* don't use external log domain in systray
+* don't use external log domain in music player
+* don't crash when saving screenshots with no file extension
+* don't crash on possibly-null gadman bg string extensions
+* check for unicode string end in client menu
+* don't crash when passing NULL desk to e_border_under_pointer_get
+* set connman pending.disconnect when disconnecting a service
+* don't iterate with or access freed pointer in comp match dialog
+* ensure use of non-garbage values for menu item icon placeholders
+* use more descriptive + accurate buffer size in batget iterator
+* prevent out of bounds access in systray theme setup
+* prevent out of bounds write in e_intl_locale_parts_get()
+* ensure null termination of string in xsettings config
+* dim/undim actions don't require acpi triggers
+
+
+Release 0.18.5:
+---------------------
+
+* Fix selection of the standard profile in wizard.
+* pointer warp speed config slider correctly detects changed state
+* set border starting geometry from initial zone
+* don't use raise stack for iterating borders
+* Fix wl_desktop_shell compiler warning for Mike
+* evry string matching now handles UTF8
+* remove efm nav SELF_RENAME handler
+
+Release 0.18.4:
+---------------------
+
+* fixed menu placement in some cases
+* fixed dnd indicator visibility after operation ends
+* fixed screen limits window handling to not unexpectedly warp windows
+* fixed distcheck for non-default modules
+* fixed rare crash when closing applications
+* fixed crash when settings windows containing an entry widget were closed
+* fixed ibar app tracking with applications possessing a skip_taskbar window
+* EFM now respects device presentation hints
+* improved positioning of windows when using multiple monitors
+* compositor theme match dialog now functions as expected
+
+Release 0.18.3:
+---------------------
+
+* fixed canvas leak when using livethumb widget
+* fixed mounting errors when mounting native filesystems
+* fixed crashes in some cases involving menu scrolling
+* fixed rare compositor-related crash
+* fixed crash when using teamwork with specific types of links
+* fixed dnd handler leaks
+* fixed dnd to external application windows
+* fixed logout fade to reset after a delay involving applications failing to close
+* fixed slider up/down key wrong direction
+* use config_type to set parent profile when resetting bindings
+* allow use with Elementary >= 1.9
+* updates for Serbian and Italian translations
+
+Release 0.18.2:
+---------------------
+
+* fixed infinite printing of SLEEP
+* fixed suffix checking for screenshot filenames
+* fixed theme importing
+* improved reliability of startup splash version setting
+* updates for Serbian and Portuguese translations
+
+Release 0.18.1:
+---------------------
+
+* fixed issue where mixer would eat desklock events, making it impossible to unlock the screen
+
+Release 0.18.0:
 ---------------------
 
 Additions:
