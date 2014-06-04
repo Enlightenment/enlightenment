@@ -43,6 +43,7 @@ EAPI void e_comp_object_frame_xy_adjust(Evas_Object *obj, int x, int y, int *ax,
 EAPI void e_comp_object_frame_xy_unadjust(Evas_Object *obj, int x, int y, int *ax, int *ay);
 EAPI void e_comp_object_frame_wh_adjust(Evas_Object *obj, int w, int h, int *aw, int *ah);
 EAPI void e_comp_object_frame_wh_unadjust(Evas_Object *obj, int w, int h, int *aw, int *ah);
+EAPI void e_comp_object_frame_extends_get(Evas_Object *obj, int *x, int *y, int *w, int *h);
 EAPI E_Client *e_comp_object_client_get(Evas_Object *obj);
 EAPI E_Zone *e_comp_object_util_zone_get(Evas_Object *obj);
 EAPI void e_comp_object_util_del_list_append(Evas_Object *obj, Evas_Object *to_del);

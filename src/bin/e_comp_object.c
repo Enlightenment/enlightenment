@@ -97,6 +97,7 @@ typedef struct _E_Comp_Object
    Eina_Bool            updates_full : 1; // entire object will be updated
 
    Eina_Bool            force_move : 1;
+   Eina_Bool            frame_extends : 1; //frame may extend beyond object size
 } E_Comp_Object;
 
 
@@ -2473,6 +2474,21 @@ e_comp_object_client_get(Evas_Object *obj)
    return cw ? cw->ec : NULL;
 }
 
+EAPI void
+e_comp_object_frame_extends_get(Evas_Object *obj, int *x, int *y, int *w, int *h)
+{
+   API_ENTRY;
+   if (cw->frame_extends)
+     edje_object_parts_extends_calc(cw->frame_object, x, y, w, h);
+   else
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (w) *w  = cw->ec->w;
+        if (h) *h  = cw->ec->h;
+     }
+}
+
 EAPI E_Zone *
 e_comp_object_util_zone_get(Evas_Object *obj)
 {
@@ -2812,8 +2828,13 @@ reshadow:
      }
    evas_object_smart_callback_call(cw->smart_obj, "frame_changed", NULL);
    if (cw->frame_object)
-     edje_object_signal_callback_add(cw->frame_object, "*", "*",
-                                     _e_comp_object_cb_signal_bind, cw);
+     {
+        cw->frame_extends = !!edje_object_data_get(cw->frame_object, "frame_extends");
+        edje_object_signal_callback_add(cw->frame_object, "*", "*",
+                                        _e_comp_object_cb_signal_bind, cw);
+     }
+   else
+     cw->frame_extends = 0;
    evas_object_del(pbg);
    return EINA_TRUE;
 }

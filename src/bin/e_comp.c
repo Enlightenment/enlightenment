@@ -577,27 +577,28 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
 
         /* add the frame */
         e_comp_object_frame_geometry_get(ec->frame, &l, &r, &t, &b);
-        if (l || r || t || b)
+        e_comp_object_frame_extends_get(ec->frame, &x, &y, &w, &h);
+        if ((l + x) || (r + (w - ec->w + x)) || (t - y) || (b + (h - ec->h + y)))
           {
-             if (t)
+             if (t - y)
                {
-                  eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x, ec->y, ec->w, t});
-                  SHAPE_INF("ADD: %d,%d@%dx%d", ec->x, ec->y, ec->w, t);
+                  eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x + x, ec->y + y, w, t - y});
+                  SHAPE_INF("ADD: %d,%d@%dx%d", ec->x + x, ec->y + y, w, t - y);
                }
-             if (l)
+             if (l - x)
                {
-                  eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x, ec->y, l, ec->h});
-                  SHAPE_INF("ADD: %d,%d@%dx%d", ec->x, ec->y, l, ec->h);
+                  eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x + x, ec->y + y, l - x, h});
+                  SHAPE_INF("ADD: %d,%d@%dx%d", ec->x + x, ec->y + y, l - x, h);
                }
-             if (r)
+             if (r + (w - ec->w + x))
                {
-                  eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x + l + ec->client.w, ec->y, r, ec->h});
-                  SHAPE_INF("ADD: %d,%d@%dx%d", ec->client.x + ec->client.w, ec->y, r, ec->h);
+                  eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x + l + ec->client.w + x, ec->y + y, r + (w - ec->w + x), h});
+                  SHAPE_INF("ADD: %d,%d@%dx%d", ec->x + l + ec->client.w + x, ec->y + y, r + (w - ec->w + x), h);
                }
-             if (b)
+             if (b + (h - ec->h + y))
                {
-                  eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x, ec->y + t + ec->client.h, ec->w, b});
-                  SHAPE_INF("ADD: %d,%d@%dx%d", ec->x, ec->client.y + ec->client.h, ec->w, b);
+                  eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x + x, ec->y + t + ec->client.h + y, w, b + (h - ec->h + y)});
+                  SHAPE_INF("ADD: %d,%d@%dx%d", ec->x + x, ec->y + t + ec->client.h + y, w, b + (h - ec->h + y));
                }
           }
         rects = ec->shape_rects ?: ec->shape_input_rects;
@@ -631,9 +632,10 @@ _e_comp_shapes_update_comp_client_shape_comp_helper(E_Client *ec, Eina_Tiler *tb
 
    if (!e_client_util_borderless(ec))
      {
+        e_comp_object_frame_extends_get(ec->frame, &x, &y, &w, &h);
         /* add the frame */
-        eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x, ec->y, ec->w, ec->h});
-        SHAPE_INF("ADD: %d,%d@%dx%d", ec->x, ec->y, ec->w, ec->h);
+        eina_tiler_rect_add(tb, &(Eina_Rectangle){ec->x + x, ec->y + y, w, h});
+        SHAPE_INF("ADD: %d,%d@%dx%d", ec->x + x, ec->y + y, w, h);
      }
 
    if ((!ec->shaded) && (!ec->shading))
