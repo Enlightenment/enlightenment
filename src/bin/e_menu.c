@@ -750,7 +750,7 @@ e_menu_item_submenu_set(E_Menu_Item *mi, E_Menu *sub)
      {
         if (mi->submenu_object)
           {
-             if (eo_isa(mi->submenu_object, EDJE_CLASS))
+             if (eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
                {
                   /* already have a correct submenu object, don't re-set it */
                   _e_menu_lock = EINA_FALSE;
@@ -880,11 +880,11 @@ e_menu_item_toggle_set(E_Menu_Item *mi, int tog)
           edje_object_signal_emit(mi->bg_object, "e,state,on", "e");
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,on", "e");
-        if (mi->label_object && eo_isa(mi->label_object, EDJE_CLASS))
+        if (mi->label_object && eo_isa(mi->label_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,on", "e");
-        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_CLASS))
+        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->submenu_object, "e,state,on", "e");
-        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_CLASS))
+        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,on", "e");
         if (mi->menu->bg_object)
           edje_object_signal_emit(mi->menu->bg_object, "e,state,on", "e");
@@ -896,11 +896,11 @@ e_menu_item_toggle_set(E_Menu_Item *mi, int tog)
           edje_object_signal_emit(mi->bg_object, "e,state,off", "e");
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,off", "e");
-        if (mi->label_object && eo_isa(mi->label_object, EDJE_CLASS))
+        if (mi->label_object && eo_isa(mi->label_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,off", "e");
-        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_CLASS))
+        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->submenu_object, "e,state,off", "e");
-        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_CLASS))
+        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,off", "e");
         if (mi->menu->bg_object)
           edje_object_signal_emit(mi->menu->bg_object, "e,state,off", "e");
@@ -1010,17 +1010,17 @@ e_menu_item_active_set(E_Menu_Item *mi, int active)
           edje_object_signal_emit(mi->bg_object, "e,state,selected", "e");
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,selected", "e");
-        if (mi->label_object && eo_isa(mi->label_object, EDJE_CLASS))
+        if (mi->label_object && eo_isa(mi->label_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,selected", "e");
-        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_CLASS))
+        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->submenu_object, "e,state,selected", "e");
-        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_CLASS))
+        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,selected", "e");
         if (mi->icon_key)
           {
              if (mi->icon_object)
                {
-                  if (eo_isa(mi->icon_object, EDJE_CLASS))
+                  if (eo_isa(mi->icon_object, EDJE_OBJ_CLASS))
                     edje_object_signal_emit(mi->icon_object, "e,state,selected", "e");
                   else
                     e_icon_selected_set(mi->icon_object, EINA_TRUE);
@@ -1039,17 +1039,17 @@ e_menu_item_active_set(E_Menu_Item *mi, int active)
           edje_object_signal_emit(mi->bg_object, "e,state,unselected", "e");
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,unselected", "e");
-        if (mi->label_object && eo_isa(mi->label_object, EDJE_CLASS))
+        if (mi->label_object && eo_isa(mi->label_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,unselected", "e");
-        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_CLASS))
+        if (mi->submenu_object && eo_isa(mi->submenu_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->submenu_object, "e,state,unselected", "e");
-        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_CLASS))
+        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,unselected", "e");
         if (mi->icon_key)
           {
              if (mi->icon_object)
                {
-                  if (eo_isa(mi->icon_object, EDJE_CLASS))
+                  if (eo_isa(mi->icon_object, EDJE_OBJ_CLASS))
                     edje_object_signal_emit(mi->icon_object, "e,state,unselected", "e");
                   else
                     e_icon_selected_set(mi->icon_object, EINA_FALSE);
@@ -1085,9 +1085,9 @@ e_menu_item_disabled_set(E_Menu_Item *mi, int disable)
         mi->disable = 1;
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,disable", "e");
-        if (mi->label_object && eo_isa(mi->label_object, EDJE_CLASS))
+        if (mi->label_object && eo_isa(mi->label_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,disable", "e");
-        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_CLASS))
+        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,disable", "e");
      }
    else
@@ -1095,9 +1095,9 @@ e_menu_item_disabled_set(E_Menu_Item *mi, int disable)
         mi->disable = 0;
         if (mi->icon_bg_object)
           edje_object_signal_emit(mi->icon_bg_object, "e,state,enable", "e");
-        if (mi->label_object && eo_isa(mi->label_object, EDJE_CLASS))
+        if (mi->label_object && eo_isa(mi->label_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->label_object, "e,state,enable", "e");
-        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_CLASS))
+        if (mi->toggle_object && eo_isa(mi->toggle_object, EDJE_OBJ_CLASS))
           edje_object_signal_emit(mi->toggle_object, "e,state,enable", "e");
      }
 }

@@ -1,16 +1,4 @@
-E_EOLIANFILES = \
-src/bin/e_comp_object.eo.c \
-src/bin/e_comp_object.eo.h
-
-MAINTAINERCLEANFILES += \
-$(E_EOLIANFILES)
-
-DISTCLEANFILES += \
-src/bin/e_fm_shared_types.h
-
-EXTRA_DIST += \
-$(E_EOLIANFILES) \
-src/bin/e_comp_object.eo
+DISTCLEANFILES += src/bin/e_fm_shared_types.h
 
 E_CPPFLAGS = \
 -I$(top_builddir) \
@@ -70,7 +58,6 @@ src/bin/e_comp.h \
 src/bin/e_comp_canvas.h \
 src/bin/e_comp_cfdata.h \
 src/bin/e_comp_object.h \
-src/bin/e_comp_object.eo.h \
 src/bin/e_comp_x.h \
 src/bin/e_config_data.h \
 src/bin/e_config_dialog.h \
@@ -393,8 +380,6 @@ enlightenment_src += \
 src/bin/e_uuid_store.c \
 src/bin/e_comp_wl.c
 endif
-
-src/bin/e_comp_object.c: $(E_EOLIANFILES)
 
 src_bin_enlightenment_CPPFLAGS = $(E_CPPFLAGS) -DEFL_BETA_API_SUPPORT -DEFL_EO_API_SUPPORT -DE_LOGGING=1 @WAYLAND_CFLAGS@ @WAYLAND_EGL_CFLAGS@ @ECORE_X_CFLAGS@ -DNEED_X=1
 src_bin_enlightenment_SOURCES = \

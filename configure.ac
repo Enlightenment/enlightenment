@@ -601,12 +601,6 @@ AC_SUBST([e_cflags])
 AC_SUBST([e_configflags])
 AC_SUBST([requirements_e])
 
-EFL_WITH_BIN([eolian], [eolian-gen], [eolian_gen])
-# Force the helper to try external eolian-gen
-AM_CONDITIONAL(HAVE_EOLIAN_GEN, [true])
-EOLIAN_FLAGS=`pkg-config --variable=eolian_flags eo evas edje`
-AC_SUBST(EOLIAN_FLAGS)
-
 PKG_CHECK_EXISTS([xkeyboard-config],[
   xkb_base=`$PKG_CONFIG --variable=xkb_base xkeyboard-config 2>/dev/null`
   AC_DEFINE_UNQUOTED([XKB_BASE],["$xkb_base"],[Define to the base directory for X keyboard configuration data])
