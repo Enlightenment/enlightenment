@@ -119,6 +119,11 @@ void *alloca (size_t);
 # include <Emotion.h>
 # include <Elementary.h>
 
+/* FIXME: remove this hack at some point */
+# ifndef EDJE_CLASS
+#  define EDJE_CLASS EDJE_OBJ_CLASS
+#endif
+
 # ifdef HAVE_HAL
 #  include <E_Hal.h>
 # endif
@@ -180,10 +185,6 @@ typedef struct _E_Rect         E_Rect;
 /* convenience macro to compress code and avoid typos */
 #ifndef MAX
 # define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#endif
-
-#if (EINA_VERSION_MAJOR == 1) && (EINA_VERSION_MINOR < 8)
-# define eina_list_last_data_get(X) eina_list_data_get(eina_list_last(X))
 #endif
 
 # define E_FREE_FUNC(_h, _fn) do { if (_h) { _fn((void*)_h); _h = NULL; } } while (0)
