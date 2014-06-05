@@ -70,13 +70,113 @@ _e_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resourc
 static void 
 _e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
 {
-   DBG("SHELL: Surface Move");
+   E_Client *ec;
+   E_Comp_Wl_Data *cdata;
+   E_Binding_Event_Mouse_Button ev;
+
+   /* get the client for this resource */
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource, 
+                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "No Client For Shell Surface");
+        return;
+     }
+
+   if ((ec->maximized) || (ec->fullscreen)) return;
+
+   /* get compositor data from seat */
+   if (!(cdata = wl_resource_get_user_data(seat_resource)))
+     {
+        wl_resource_post_error(seat_resource, 
+                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "No Comp_Data for Seat");
+        return;
+     }
+
+   switch (cdata->ptr.button)
+     {
+      case BTN_LEFT:
+        ev.button = 1;
+        break;
+      case BTN_MIDDLE:
+        ev.button = 2;
+        break;
+      case BTN_RIGHT:
+        ev.button = 3;
+        break;
+      default:
+        ev.button = cdata->ptr.button;
+        break;
+     }
+
+   e_comp_object_frame_xy_unadjust(ec->frame, 
+                                   wl_fixed_to_int(cdata->ptr.x) + ec->client.x, 
+                                   wl_fixed_to_int(cdata->ptr.y) + ec->client.y, 
+                                   &ev.canvas.x, &ev.canvas.y);
+
+   _e_shell_surface_mouse_down_helper(ec, &ev, EINA_TRUE);
 }
 
 static void 
 _e_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, uint32_t edges EINA_UNUSED)
 {
-   DBG("SHELL: Surface Resize");
+   E_Client *ec;
+   E_Comp_Wl_Data *cdata;
+   E_Binding_Event_Mouse_Button ev;
+
+   /* get the client for this resource */
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource, 
+                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "No Client For Shell Surface");
+        return;
+     }
+
+   if ((edges == 0) || (edges > 15) || 
+       ((edges & 3) == 3) || ((edges & 12) == 12)) return;
+
+   if ((ec->maximized) || (ec->fullscreen)) return;
+
+   /* get compositor data from seat */
+   if (!(cdata = wl_resource_get_user_data(seat_resource)))
+     {
+        wl_resource_post_error(seat_resource, 
+                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "No Comp_Data for Seat");
+        return;
+     }
+
+   cdata->resize.resource = resource;
+   cdata->resize.edges = edges;
+   cdata->resize.width = ec->client.w;
+   cdata->resize.height = ec->client.h;
+   cdata->ptr.grab_x = cdata->ptr.x;
+   cdata->ptr.grab_y = cdata->ptr.y;
+
+   switch (cdata->ptr.button)
+     {
+      case BTN_LEFT:
+        ev.button = 1;
+        break;
+      case BTN_MIDDLE:
+        ev.button = 2;
+        break;
+      case BTN_RIGHT:
+        ev.button = 3;
+        break;
+      default:
+        ev.button = cdata->ptr.button;
+        break;
+     }
+
+   e_comp_object_frame_xy_unadjust(ec->frame, 
+                                   wl_fixed_to_int(cdata->ptr.x) + ec->client.x, 
+                                   wl_fixed_to_int(cdata->ptr.y) + ec->client.y, 
+                                   &ev.canvas.x, &ev.canvas.y);
+
+   _e_shell_surface_mouse_down_helper(ec, &ev, EINA_FALSE);
 }
 
 static void 
