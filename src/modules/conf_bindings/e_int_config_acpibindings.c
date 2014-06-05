@@ -511,11 +511,9 @@ _cb_add_binding(void *data,
                 void *data2 __UNUSED__)
 {
    E_Config_Dialog_Data *cfdata;
-   E_Manager *man;
 
    if (grab_win != 0) return;
    if (!(cfdata = data)) return;
-   man = e_manager_current_get();
    grab_dlg = e_dialog_new(NULL, "E",
                            "_acpibind_getbind_dialog");
    if (!grab_dlg) return;
@@ -528,6 +526,9 @@ _cb_add_binding(void *data,
    e_win_borderless_set(grab_dlg->win, EINA_TRUE);
 
 #ifndef HAVE_WAYLAND_ONLY
+   E_Manager *man;
+
+   man = e_manager_current_get();
    grab_win = ecore_x_window_input_new(man->root, 0, 0, 1, 1);
    ecore_x_window_show(grab_win);
    e_grabinput_get(grab_win, 0, grab_win);

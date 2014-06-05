@@ -95,8 +95,8 @@ e_screensaver_update(void)
 EAPI void
 e_screensaver_force_update(void)
 {
-   int timeout = e_screensaver_timeout_get(EINA_TRUE);
 #ifndef HAVE_WAYLAND_ONLY
+   int timeout = e_screensaver_timeout_get(EINA_TRUE);
    if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
      {
         ecore_x_screensaver_set(timeout + 10,
