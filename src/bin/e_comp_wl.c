@@ -262,7 +262,9 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 #endif
 
    /* handle surface opaque region */
-   ec->wl_comp_data->shape = ec->wl_comp_data->input;
+   EINA_RECTANGLE_SET(ec->wl_comp_data->shape, 
+                      ec->wl_comp_data->input->x, ec->wl_comp_data->input->y, 
+                      ec->wl_comp_data->input->w, ec->wl_comp_data->input->h)
 
    /* handle surface damages */
    if ((!ec->comp->nocomp) && (ec->frame))
