@@ -250,10 +250,10 @@ _e_deskmirror_mirror_frame_recalc_cb(void *data, Evas_Object *obj, void *event_i
    Mirror *m = data;
    Mirror_Border *mb;
 
+   
    if (m->frame)
      {
         mb = evas_object_smart_data_get(m->mirror);
-        if (!mb) return;
         if (mb->m->ec && (!e_object_is_del(E_OBJECT(mb->m->ec))))
           {
              if (e_comp_object_frame_exists(obj))
