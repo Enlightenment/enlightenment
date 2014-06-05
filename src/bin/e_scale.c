@@ -18,17 +18,13 @@ e_scale_shutdown(void)
 EAPI void
 e_scale_update(void)
 {
-   int dpi = 0;
    char buf[128];
 
    if (e_config->scale.use_dpi)
      {
 #ifndef HAVE_WAYLAND_ONLY
         if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
-          {
-             dpi = ecore_x_dpi_get();
-             e_scale = (double)dpi / (double)e_config->scale.base_dpi;
-          }
+          e_scale = (double)ecore_x_dpi_get() / (double)e_config->scale.base_dpi;
 #endif
         if (e_scale > e_config->scale.max) e_scale = e_config->scale.max;
         else if (e_scale < e_config->scale.min)
