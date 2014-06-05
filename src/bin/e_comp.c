@@ -1,6 +1,7 @@
 #include "e.h"
-#ifdef HAVE_WAYLAND_CLIENTS
-#include "e_comp_wl.h"
+
+#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
+# include "e_comp_wl.h"
 #endif
 
 #define OVER_FLOW 1
