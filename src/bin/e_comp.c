@@ -1413,7 +1413,12 @@ e_comp_get(const void *o)
    E_Drag *drag;
    E_Win *ewin;
 
-   if (!o) obj = (E_Object*)e_manager_current_get();
+   if (!o) 
+     {
+        if (!(obj = (E_Object*)e_manager_current_get()))
+          return NULL;
+     }
+
    /* try to get to zone type first */
    switch (obj->type)
      {
