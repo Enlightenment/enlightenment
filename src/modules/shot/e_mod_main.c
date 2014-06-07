@@ -725,7 +725,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    o = e_widget_list_add(evas, 0, 0);
    o_content = o;
    e_widget_size_min_get(o, &w, &h);
-   edje_extern_object_min_size_set(o, w, h);
+   evas_object_size_hint_min_set(o, w, h);
    edje_object_part_swallow(o_bg, "e.swallow.content", o);
    evas_object_show(o);
 
@@ -829,7 +829,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
 
    o = o_content;
    e_widget_size_min_get(o, &w, &h);
-   edje_extern_object_min_size_set(o, w, h);
+   evas_object_size_hint_min_set(o, w, h);
    edje_object_part_swallow(o_bg, "e.swallow.content", o);
    evas_object_show(o);
    
@@ -849,7 +849,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
    
    o = o_box;
    e_widget_size_min_get(o, &w, &h);
-   edje_extern_object_min_size_set(o, w, h);
+   evas_object_size_hint_min_set(o, w, h);
    edje_object_part_swallow(o_bg, "e.swallow.buttons", o);
    
    o = evas_object_rectangle_add(evas);

@@ -895,7 +895,7 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
    edje_object_part_box_append(o, "e.box", os);
    evas_object_show(os);
    e_widget_size_min_get(os, &minw, &minh);
-   edje_extern_object_min_size_set(os, minw, minh);
+   evas_object_size_hint_min_set(os, minw, minh);
 
    cfdata->gui.o_check2 = os = e_widget_check_add(evas, _("Drag only"), &(cfdata->locals.drag_only));
    e_widget_size_min_resize(os);
@@ -903,7 +903,7 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
    edje_object_part_box_append(o, "e.box", os);
    evas_object_show(os);
    e_widget_size_min_get(os, &minw, &minh);
-   edje_extern_object_min_size_set(os, minw, minh);
+   evas_object_size_hint_min_set(os, minw, minh);
 
    e_widget_disabled_set(cfdata->gui.o_slider, cfdata->locals.click);
    e_widget_disabled_set(cfdata->gui.o_check2, cfdata->locals.click);

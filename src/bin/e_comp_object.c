@@ -2028,8 +2028,8 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
              //INF("CW RSZ: %dx%d PIX(%dx%d)", w, h, pw, ph);
              //if (cw->obj)
                //{
-                  //edje_extern_object_max_size_set(cw->obj, pw, ph);
-                  //edje_extern_object_min_size_set(cw->obj, pw, ph);
+                  //evas_object_size_hint_max_set(cw->obj, pw, ph);
+                  //evas_object_size_hint_min_set(cw->obj, pw, ph);
                //}
              if ((ww != pw) || (hh != ph))
                CRI("CW RSZ: %dx%d || PX: %dx%d", ww, hh, pw, ph);

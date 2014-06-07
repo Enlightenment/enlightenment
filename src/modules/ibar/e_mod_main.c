@@ -1174,7 +1174,7 @@ _ibar_icon_menu_recalc(IBar_Icon *ic)
    edje_object_size_min_calc(o, &w, &h);
    zone = e_gadcon_zone_get(ic->ibar->inst->gcc->gadcon);
    evas_object_geometry_get(ic->o_holder, &x, &y, &iw, &ih);
-   edje_extern_object_min_size_set(o, w, h);
+   evas_object_size_hint_min_set(o, w, h);
    ic->menu->w = w, ic->menu->h = h;
    evas_object_resize(ic->menu->comp_object, w, h);
    e_gadcon_popup_show(ic->menu);
@@ -1219,7 +1219,7 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
      }
    edje_object_calc_force(ic->menu->o_bg);
    edje_object_size_min_calc(ic->menu->o_bg, &w, &h);
-   edje_extern_object_min_size_set(ic->menu->o_bg, w, h);
+   evas_object_size_hint_min_set(ic->menu->o_bg, w, h);
    if (e_box_orientation_get(ic->ibar->o_box))
      {
         int cx, cy, cw, ch, ny;
@@ -1297,7 +1297,7 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
      }
    edje_object_calc_force(it);
    edje_object_size_min_calc(it, &w, &h);
-   edje_extern_object_min_size_set(it, w, h);
+   evas_object_size_hint_min_set(it, w, h);
    evas_object_size_hint_min_set(it, w, h);
    evas_object_show(it);
    evas_object_event_callback_add(it, EVAS_CALLBACK_MOUSE_UP, _ibar_cb_icon_menu_mouse_up, ec);

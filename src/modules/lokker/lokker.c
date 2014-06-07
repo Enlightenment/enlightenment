@@ -298,12 +298,12 @@ _pin_box_add(Lokker_Popup *lp)
    e_table_thaw(table);
    evas_object_show(table);
    e_table_size_min_get(table, &mw, &mh);
-   edje_extern_object_min_size_set(table, mw, mh);
-   edje_extern_object_max_size_set(table, mw, mh);
+   evas_object_size_hint_min_set(table, mw, mh);
+   evas_object_size_hint_max_set(table, mw, mh);
    edje_object_part_swallow(lp->login_box, "e.swallow.buttons", table);
    edje_object_size_min_calc(lp->login_box, &mw, &mh);
-   edje_extern_object_min_size_set(lp->login_box, mw, mh);
-   edje_extern_object_max_size_set(lp->login_box, mw, mh);
+   evas_object_size_hint_min_set(lp->login_box, mw, mh);
+   evas_object_size_hint_max_set(lp->login_box, mw, mh);
 }
 
 static void
@@ -336,7 +336,7 @@ _text_login_box_add(Lokker_Popup *lp)
    edje_object_size_min_calc(lp->login_box, &mw, &mh);
    if (edje_object_part_exists(lp->bg_object, "e.swallow.login_box"))
      {
-        edje_extern_object_min_size_set(lp->login_box, mw, mh);
+        evas_object_size_hint_min_set(lp->login_box, mw, mh);
         edje_object_part_swallow(lp->bg_object, "e.swallow.login_box", lp->login_box);
      }
    else
