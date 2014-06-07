@@ -276,12 +276,8 @@ e_bg_zone_update(E_Zone *zone, E_Bg_Transition transition)
 
    if (transition != E_BG_TRANSITION_NONE)
      {
-        evas_object_size_hint_max_set(zone->prev_bg_object, 65536, 65536);
-        evas_object_size_hint_min_set(zone->prev_bg_object, 0, 0);
         edje_object_part_swallow(zone->transition_object, "e.swallow.bg.old",
                                  zone->prev_bg_object);
-        evas_object_size_hint_max_set(zone->bg_object, 65536, 65536);
-        evas_object_size_hint_min_set(zone->bg_object, 0, 0);
         edje_object_part_swallow(zone->transition_object, "e.swallow.bg.new",
                                  zone->bg_object);
         edje_object_signal_emit(zone->transition_object, "e,action,start", "e");
