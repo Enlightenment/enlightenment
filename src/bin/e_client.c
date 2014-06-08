@@ -2566,7 +2566,7 @@ EAPI void
 e_client_mouse_down(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_Mouse_Button *ev)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
-   if (action_client) return;
+   if (action_client || ec->iconic) return;
    if ((button >= 1) && (button <= 3))
      {
         ec->mouse.last_down[button - 1].mx = output->x;
@@ -2624,6 +2624,7 @@ EAPI void
 e_client_mouse_up(E_Client *ec, int button, Evas_Point *output, E_Binding_Event_Mouse_Button* ev)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
+   if (ec->iconic) return;
    if ((button >= 1) && (button <= 3))
      {
         ec->mouse.last_up[button - 1].mx = output->x;
@@ -2664,6 +2665,7 @@ EAPI void
 e_client_mouse_move(E_Client *ec, Evas_Point *output)
 {
    EINA_SAFETY_ON_NULL_RETURN(ec);
+   if (ec->iconic) return;
    ec->mouse.current.mx = output->x;
    ec->mouse.current.my = output->y;
    if (ec->moving)

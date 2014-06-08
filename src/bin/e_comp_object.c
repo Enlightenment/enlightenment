@@ -246,10 +246,10 @@ _e_comp_object_cb_signal_bind(void *data, Evas_Object *obj EINA_UNUSED, const ch
 {
    E_Comp_Object *cw = data;
 
-   if (!cw->ec) return;
 #ifndef HAVE_WAYLAND_ONLY
    if (e_dnd_active()) return;
 #endif
+   if (cw->ec->iconic) return;
    e_bindings_signal_handle(E_BINDING_CONTEXT_WINDOW, E_OBJECT(cw->ec),
                             emission, source);
 }
