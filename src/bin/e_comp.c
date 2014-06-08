@@ -1027,6 +1027,7 @@ e_comp_init(void)
            NULL
         };
 
+        e_util_env_set("HYBRIS_EGLPLATFORM", "wayland");
         for (test = eng; *test; test++)
           {
              if (e_module_enable(e_module_new(*test)))
@@ -1040,6 +1041,7 @@ e_comp_init(void)
 #endif
    if (!compositors) return EINA_FALSE;
 out:
+   e_util_env_set("HYBRIS_EGLPLATFORM", NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_ON, _e_comp_screensaver_on, NULL);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_SCREENSAVER_OFF, _e_comp_screensaver_off, NULL);
 
