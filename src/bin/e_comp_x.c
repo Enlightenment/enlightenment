@@ -1505,7 +1505,7 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
           }
      }
 
-   if (resize && (!ec->lock_client_size) && (move || (!ec->maximized)))
+   if (resize && (!ec->lock_client_size) && (move || ((!ec->maximized) && (!ec->fullscreen))))
      {
         if ((ec->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE)
           {
