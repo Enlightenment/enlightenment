@@ -68,7 +68,7 @@ _e_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resourc
 }
 
 static void 
-_e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
+_e_shell_surface_cb_move(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
 {
    E_Client *ec;
    E_Comp_Wl_Data *cdata;
