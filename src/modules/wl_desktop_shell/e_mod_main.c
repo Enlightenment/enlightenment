@@ -214,13 +214,13 @@ _e_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct w
 static void 
 _e_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t method EINA_UNUSED, uint32_t framerate EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED)
 {
+   E_Client *ec;
+
    DBG("SHELL: Surface Fullscreen Set");
 
-   E_Client *ec;
    if (!(ec = wl_resource_get_user_data(resource)))
      {
-        wl_resource_post_error(resource,
-                               WL_DISPLAY_ERROR_INVALID_OBJECT,
+        wl_resource_post_error(resource,WL_DISPLAY_ERROR_INVALID_OBJECT,
                                "No Client For Shell Surface");
         return;
      }
