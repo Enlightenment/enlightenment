@@ -498,12 +498,12 @@ struct E_Client
             Eina_Stringshare *name;
             Eina_Stringshare **available_list;
             Eina_Stringshare *set;
-            char    desk_num;
-            char    zone_num;
-            char    comp_num;
-            int             num;
-            unsigned char   wait_for_done : 1;
-            unsigned char   use : 1;
+            Eina_Stringshare *wait;
+            E_Desk           *wait_desk;
+            E_Object_Delfn   *wait_desk_delfn;
+            int               num;
+            unsigned char     wait_for_done : 1;
+            unsigned char     use : 1;
          } profile;
          unsigned char  centered : 1;
          unsigned char  video : 1;
@@ -810,5 +810,7 @@ EAPI int e_client_pointer_warp_to_center_now(E_Client *ec);
 EAPI int e_client_pointer_warp_to_center(E_Client *ec);
 EAPI void e_client_redirected_set(E_Client *ec, Eina_Bool set);
 EAPI Eina_Bool e_client_is_stacking(const E_Client *ec);
+EAPI Eina_Bool e_client_desk_window_profile_available_check(E_Client *ec, const char *profile);
+EAPI void      e_client_desk_window_profile_wait_desk_set(E_Client *ec, E_Desk *desk);
 #include "e_client.x"
 #endif

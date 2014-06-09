@@ -265,8 +265,12 @@ e_comp_desk_window_profile_get(E_Comp *c, const char *profile)
              for (y = 0; y < zone->desk_y_count; y++)
                {
                   E_Desk *desk = e_desk_at_xy_get(zone, x, y);
-                  if (!e_util_strcmp(desk->window_profile, profile))
-                    return desk;
+                  if (desk)
+                    {
+                       if (e_object_is_del(E_OBJECT(desk))) continue;
+                       if (!e_util_strcmp(desk->window_profile, profile))
+                         return desk;
+                    }
                }
           }
      }

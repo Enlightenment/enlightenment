@@ -1864,18 +1864,16 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
      {
         if (ec->e.state.profile.use)
           {
-             char *profile;
-             profile = ecore_x_atom_name_get(ev->data.l[1]);
-             ecore_x_e_window_profile_change_request_send(e_client_util_pwin_get(ec), profile);
-             eina_stringshare_replace(&ec->e.state.profile.set, profile);
-             ec->e.state.profile.wait_for_done = 1;
-             if (ec->desk && (!e_util_strcmp(ec->desk->window_profile, profile)))
+             char *p = ecore_x_atom_name_get(ev->data.l[1]);
+             if (e_client_desk_window_profile_available_check(ec, p))
                {
-                  ec->e.state.profile.desk_num = ec->desk->x + (ec->desk->y * ec->desk->zone->desk_x_count);
-                  ec->e.state.profile.zone_num = ec->desk->zone->num;
-                  ec->e.state.profile.comp_num = ec->desk->zone->comp->man->num;
+                  if (e_util_strcmp(p, ec->desk->window_profile))
+                    {
+                       E_Desk *desk = e_comp_desk_window_profile_get(ec->comp, p);
+                       if (desk) e_client_desk_set(ec, desk);
+                    }
                }
-             free(profile);
+             free(p);
           }
      }
    else if (ev->message_type == ECORE_X_ATOM_NET_ACTIVE_WINDOW)
@@ -1919,36 +1917,21 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
         if ((ec->e.state.profile.use) &&
             (ec->e.state.profile.wait_for_done))
           {
-             char *profile;
-
-             profile = ecore_x_atom_name_get(ev->data.l[1]);
-             if ((!e_util_strcmp(profile, ec->e.state.profile.set)) && (ec->e.state.profile.desk_num != -1))
+             char *p = ecore_x_atom_name_get(ev->data.l[1]);
+             if (!e_util_strcmp(ec->e.state.profile.wait, p))
                {
-                  E_Desk *desk;
-                  E_Comp *comp;
-                  E_Zone *zone;
-                  unsigned int d, z, c;
-
-                  c = MIN(ec->e.state.profile.comp_num, eina_list_count(e_comp_list()) - 1);
-                  comp = eina_list_nth(e_comp_list(), c);
-                  z = MIN(ec->e.state.profile.zone_num, eina_list_count(comp->zones) - 1);
-                  zone = e_comp_zone_number_get(comp, z);
-                  d = MIN(ec->e.state.profile.desk_num, (zone->desk_x_count * zone->desk_y_count) - 1);
-                  desk = zone->desks[d];
-
-                  if (profile)
-                    eina_stringshare_replace(&ec->e.state.profile.name, profile);
-
+                  eina_stringshare_replace(&ec->e.state.profile.wait, NULL);
                   ec->e.state.profile.wait_for_done = 0;
-
-                  if ((!ec->desk) || e_util_strcmp(ec->desk->window_profile, ec->e.state.profile.name) || (ec->desk != desk))
+                  E_Desk *desk = ec->e.state.profile.wait_desk;
+                  if ((desk) && (desk != ec->desk))
                     {
-                       if (ec->e.state.profile.name == desk->window_profile)
-                         e_client_desk_set(ec, desk);
+                       eina_stringshare_replace(&ec->e.state.profile.name,
+                                                desk->window_profile);
+                       e_client_desk_set(ec, desk);
                     }
+                  e_client_desk_window_profile_wait_desk_set(ec, NULL);
                }
-             eina_stringshare_replace(&ec->e.state.profile.set, NULL);
-             free(profile);
+             free(p);
           }
      }
    return ECORE_CALLBACK_PASS_ON;
@@ -2955,6 +2938,8 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         int n, i, res;
         unsigned int use;
 
+        ec->e.state.profile.use = 0;
+
         if (ec->e.state.profile.name)
           {
              eina_stringshare_del(ec->e.state.profile.name);
@@ -2991,7 +2976,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                   char *name = ecore_x_atom_name_get(val);
                   if (name)
                     {
-                       ec->e.state.profile.name = eina_stringshare_add(name);
+                       ec->e.state.profile.set = eina_stringshare_add(name);
                        free(name);
                     }
                }
@@ -3009,12 +2994,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
           }
 
         ec->e.fetch.profile = 0;
-     }
-   if (ec->e.state.profile.set)
-     {
-        ecore_x_e_window_profile_change_request_send(e_client_util_pwin_get(ec),
-                                                     ec->e.state.profile.set);
-        ec->e.state.profile.wait_for_done = 1;
      }
    if (ec->changes.prop || ec->netwm.fetch.type)
      {
@@ -3853,60 +3832,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
           }
         ec->netwm.update.state = 0;
      }
-
-   if ((e_config->use_desktop_window_profile) && (need_desk_set))
-     {
-        E_Desk *desk_use = NULL;
-
-        if (!(ec->e.state.profile.name) &&
-            (ec->e.state.profile.num >= 1))
-          {
-             const char *p = NULL;
-             int i;
-             for (i = 0; i < ec->e.state.profile.num; i++)
-               {
-                  if (!ec->e.state.profile.available_list[i])
-                    continue;
-                  p = ec->e.state.profile.available_list[i];
-                  if (!e_util_strcmp(ec->desk->window_profile, p))
-                    {
-                       desk_use = ec->desk;
-                       break;
-                    }
-               }
-
-             if (!desk_use)
-               {
-                  E_Comp *c = ec->comp;
-                  E_Desk *desk = NULL;
-
-                  for (i = 0; i < ec->e.state.profile.num; i++)
-                    {
-                       if (!ec->e.state.profile.available_list[i])
-                         continue;
-                       p = ec->e.state.profile.available_list[i];
-                       desk = e_comp_desk_window_profile_get(c, p);
-                       if ((desk) && (ec->desk != desk))
-                         {
-                            desk_use = desk;
-                            break;
-                         }
-                    }
-               }
-          }
-
-        if (!desk_use)
-          desk_use = ec->desk;
-        ec->e.state.profile.desk_num = desk_use->x + (desk_use->y * desk_use->zone->desk_x_count);
-        ec->e.state.profile.zone_num = desk_use->zone->num;
-        ec->e.state.profile.comp_num = desk_use->zone->comp->man->num;
-        eina_stringshare_refplace(&ec->e.state.profile.name, desk_use->window_profile);
-        eina_stringshare_refplace(&ec->e.state.profile.set, desk_use->window_profile);
-
-        ecore_x_e_window_profile_change_request_send(win,
-                                                     ec->e.state.profile.name);
-        ec->e.state.profile.wait_for_done = 1;
-     }
    if (ec->comp_data->fetch_exe)
      {
         E_Exec_Instance *inst;
@@ -4024,6 +3949,77 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
                }
           }
         ec->comp_data->fetch_exe = 0;
+     }
+   if ((e_config->use_desktop_window_profile) && (need_desk_set))
+     {
+        E_Desk *desk = NULL;
+        const char *p, *p2;
+        Eina_Bool set = EINA_FALSE;
+        int i;
+
+        /* set desktop using given initial profile */
+        p = ec->e.state.profile.set;
+        if (p)
+          {
+             if (!e_util_strcmp(p, ec->desk->window_profile))
+               {
+                  e_client_desk_window_profile_wait_desk_set(ec, ec->desk);
+                  set = EINA_TRUE;
+               }
+             else
+               {
+                  desk = e_comp_desk_window_profile_get(ec->comp, p);
+                  if (desk)
+                    {
+                       e_client_desk_set(ec, desk);
+                       set = EINA_TRUE;
+                    }
+               }
+          }
+
+        if (!set)
+          {
+             /* try to find desktop using available profile list */
+             for (i = 0; i < ec->e.state.profile.num; i++)
+               {
+                  p2 = ec->e.state.profile.available_list[i];
+                  if (!e_util_strcmp(p2, ec->desk->window_profile))
+                    {
+                       eina_stringshare_replace(&ec->e.state.profile.set, p2);
+                       e_client_desk_window_profile_wait_desk_set(ec, ec->desk);
+                       set = EINA_TRUE;
+                       break;
+                    }
+               }
+             if (!set)
+               {
+                  for (i = 0; i < ec->e.state.profile.num; i++)
+                    {
+                       p2 = ec->e.state.profile.available_list[i];
+                       desk = e_comp_desk_window_profile_get(ec->comp, p2);
+                       if (desk)
+                         {
+                            e_client_desk_set(ec, desk);
+                            set = EINA_TRUE;
+                            break;
+                         }
+                    }
+               }
+          }
+
+        if (!set)
+          {
+             eina_stringshare_replace(&ec->e.state.profile.set, ec->desk->window_profile);
+             e_client_desk_window_profile_wait_desk_set(ec, ec->desk);
+          }
+     }
+   if (ec->e.state.profile.set)
+     {
+        ecore_x_e_window_profile_change_request_send(e_client_util_win_get(ec),
+                                                     ec->e.state.profile.set);
+        eina_stringshare_replace(&ec->e.state.profile.wait, ec->e.state.profile.set);
+        ec->e.state.profile.wait_for_done = 1;
+        eina_stringshare_replace(&ec->e.state.profile.set, NULL);
      }
    ec->changes.prop = 0;
    if (rem_change) e_remember_update(ec);

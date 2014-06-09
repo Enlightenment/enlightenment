@@ -184,6 +184,41 @@ _e_client_cb_drag_finished(E_Drag *drag, int dropped EINA_UNUSED)
    e_object_unref(E_OBJECT(ec));
    client_drag = NULL;
 }
+
+static void
+_e_client_desk_window_profile_wait_desk_delfn(void *data, void *obj)
+{
+   E_Client *ec = data;
+   E_Desk *desk = obj, *new_desk;
+   const char *p;
+   int i;
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   ec->e.state.profile.wait_desk_delfn = NULL;
+   eina_stringshare_replace(&ec->e.state.profile.wait, NULL);
+   ec->e.state.profile.wait_desk = NULL;
+   ec->e.state.profile.wait_for_done = 0;
+
+   if (!ec->e.state.profile.use) return;
+
+   new_desk = e_comp_desk_window_profile_get(ec->comp, desk->window_profile);
+   if (new_desk)
+     e_client_desk_set(ec, new_desk);
+   else
+     {
+        for (i = 0; i < ec->e.state.profile.num; i++)
+          {
+             p = ec->e.state.profile.available_list[i];
+             new_desk = e_comp_desk_window_profile_get(ec->comp, p);
+             if (new_desk)
+               {
+                  e_client_desk_set(ec, new_desk);
+                  break;
+               }
+          }
+     }
+}
 ////////////////////////////////////////////////
 
 
@@ -412,6 +447,8 @@ _e_client_free(E_Client *ec)
      ec->comp->new_clients--;
    if (ec->e.state.profile.use)
      {
+        e_client_desk_window_profile_wait_desk_set(ec, NULL);
+
         if (ec->e.state.profile.available_list)
           {
              int i;
@@ -422,6 +459,8 @@ _e_client_free(E_Client *ec)
 
         ec->e.state.profile.num = 0;
 
+        eina_stringshare_replace(&ec->e.state.profile.set, NULL);
+        eina_stringshare_replace(&ec->e.state.profile.wait, NULL);
         eina_stringshare_replace(&ec->e.state.profile.name, NULL);
         ec->e.state.profile.wait_for_done = 0;
         ec->e.state.profile.use = 0;
@@ -2393,6 +2432,56 @@ e_client_new(E_Comp *c, E_Pixmap *cp, int first_map, int internal)
    return ec;
 }
 
+EAPI Eina_Bool
+e_client_desk_window_profile_available_check(E_Client *ec, const char *profile)
+{
+   int i;
+
+   E_OBJECT_CHECK_RETURN(ec, EINA_FALSE);
+   E_OBJECT_TYPE_CHECK_RETURN(ec, E_CLIENT_TYPE, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(profile, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ec->e.state.profile.use, EINA_FALSE);
+   if (ec->e.state.profile.num == 0) return EINA_TRUE;
+
+   for (i = 0; i < ec->e.state.profile.num; i++)
+     {
+        if (!e_util_strcmp(ec->e.state.profile.available_list[i],
+                           profile))
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+EAPI void
+e_client_desk_window_profile_wait_desk_set(E_Client *ec, E_Desk *desk)
+{
+   E_OBJECT_CHECK(ec);
+   E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
+   E_OBJECT_CHECK(desk);
+   E_OBJECT_TYPE_CHECK(desk, E_DESK_TYPE);
+
+   if (ec->e.state.profile.wait_desk == desk) return;
+
+   if (ec->e.state.profile.wait_desk_delfn)
+     {
+        if (ec->e.state.profile.wait_desk)
+          e_object_delfn_del(E_OBJECT(ec->e.state.profile.wait_desk),
+                             ec->e.state.profile.wait_desk_delfn);
+        ec->e.state.profile.wait_desk_delfn = NULL;
+     }
+
+   if (desk)
+     {
+        ec->e.state.profile.wait_desk_delfn =
+           e_object_delfn_add(E_OBJECT(desk),
+                              _e_client_desk_window_profile_wait_desk_delfn,
+                              ec);
+     }
+
+   ec->e.state.profile.wait_desk = desk;
+}
+
 EAPI void
 e_client_desk_set(E_Client *ec, E_Desk *desk)
 {
@@ -2407,20 +2496,19 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
    if ((e_config->use_desktop_window_profile) &&
        (ec->e.state.profile.use))
      {
-        ec->e.state.profile.desk_num = desk->x + (desk->y * desk->zone->desk_x_count);
-        ec->e.state.profile.zone_num = desk->zone->num;
-        ec->e.state.profile.comp_num = desk->zone->comp->man->num;
-        if (ec->e.state.profile.name != desk->window_profile)
+        if (e_util_strcmp(ec->e.state.profile.name, desk->window_profile))
           {
-             eina_stringshare_refplace(&ec->e.state.profile.set, desk->window_profile);
-             EC_CHANGED(ec);
-             return;
+             if (e_client_desk_window_profile_available_check(ec, desk->window_profile))
+               {
+                  eina_stringshare_replace(&ec->e.state.profile.set, desk->window_profile);
+                  eina_stringshare_replace(&ec->e.state.profile.wait, NULL);
+                  ec->e.state.profile.wait_for_done = 0;
+                  e_client_desk_window_profile_wait_desk_set(ec, desk);
+                  EC_CHANGED(ec);
+               }
           }
-        if (ec->e.state.profile.wait_for_done) return;
      }
-   ec->e.state.profile.desk_num =
-   ec->e.state.profile.zone_num =
-   ec->e.state.profile.comp_num = -1;
+
    if (ec->fullscreen)
      {
         ec->desk->fullscreen_clients = eina_list_remove(ec->desk->fullscreen_clients, ec);
