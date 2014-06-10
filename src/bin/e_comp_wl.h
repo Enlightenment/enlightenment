@@ -23,6 +23,15 @@
 #   define BTN_BACK 0x116
 #  endif
 
+#  define container_of(ptr, type, member) \
+   ({ \
+      const __typeof__( ((type *)0)->member ) *__mptr = (ptr); \
+      (type *)( (char *)__mptr - offsetof(type,member) ); \
+   })
+
+typedef struct _E_Comp_Wl_Buffer E_Comp_Wl_Buffer;
+typedef struct _E_Comp_Wl_Buffer_Ref E_Comp_Wl_Buffer_Ref;
+
 struct _E_Comp_Wl_Data
 {
    struct 
@@ -120,13 +129,28 @@ struct _E_Comp_Wl_Data
    Eina_Bool restack : 1;
 };
 
+struct _E_Comp_Wl_Buffer 
+{
+   struct wl_resource *resource;
+   struct wl_signal destroy_signal;
+   struct wl_listener destroy_listener;
+   union
+     {
+        struct wl_shm_buffer *shm_buffer;
+        void *legacy_buffer;
+     };
+   int32_t w, h;
+   uint32_t busy;
+};
+
+struct _E_Comp_Wl_Buffer_Ref
+{
+   E_Comp_Wl_Buffer *buffer;
+   struct wl_listener destroy_listener;
+};
+
 struct _E_Comp_Wl_Client_Data
 {
-   Eina_Rectangle *input;
-   Eina_Rectangle *opaque;
-   Eina_Rectangle *shape;
-   Eina_Rectangle *damage;
-
    Ecore_Timer *first_draw_tmr;
 
    /* regular surface resource (wl_compositor_create_surface) */
@@ -146,11 +170,17 @@ struct _E_Comp_Wl_Client_Data
         void (*unmap)(struct wl_resource *resource);
      } shell;
 
+   E_Comp_Wl_Buffer_Ref buffer_ref;
+
    struct 
      {
         int32_t x, y, w, h;
-        struct wl_resource *buffer;
+        E_Comp_Wl_Buffer *buffer;
+        struct wl_listener buffer_destroy;
         Eina_Bool new_attach : 1;
+        Eina_Tiler *damage;
+        Eina_Tiler *input;
+        Eina_Tiler *opaque;
      } pending;
 
    struct 
