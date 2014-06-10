@@ -3811,65 +3811,12 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         ec->netwm.update.state = 0;
      }
 
-   if ((e_config->use_desktop_window_profile) && (need_desk_set))
-     {
-        E_Desk *desk_use = NULL;
-
-        if (!(ec->e.state.profile.name) &&
-            (ec->e.state.profile.num >= 1))
-          {
-             const char *p = NULL;
-             int i;
-             for (i = 0; i < ec->e.state.profile.num; i++)
-               {
-                  if (!ec->e.state.profile.available_list[i])
-                    continue;
-                  p = ec->e.state.profile.available_list[i];
-                  if (!e_util_strcmp(ec->desk->window_profile, p))
-                    {
-                       desk_use = ec->desk;
-                       break;
-                    }
-               }
-
-             if (!desk_use)
-               {
-                  E_Comp *c = ec->comp;
-                  E_Desk *desk = NULL;
-
-                  for (i = 0; i < ec->e.state.profile.num; i++)
-                    {
-                       if (!ec->e.state.profile.available_list[i])
-                         continue;
-                       p = ec->e.state.profile.available_list[i];
-                       desk = e_comp_desk_window_profile_get(c, p);
-                       if ((desk) && (ec->desk != desk))
-                         {
-                            desk_use = desk;
-                            break;
-                         }
-                    }
-               }
-          }
-
-        if (!desk_use)
-          desk_use = ec->desk;
-        ec->e.state.profile.desk_num = desk_use->x + (desk_use->y * desk_use->zone->desk_x_count);
-        ec->e.state.profile.zone_num = desk_use->zone->num;
-        ec->e.state.profile.comp_num = desk_use->zone->comp->man->num;
-        eina_stringshare_refplace(&ec->e.state.profile.name, desk_use->window_profile);
-        eina_stringshare_refplace(&ec->e.state.profile.set, desk_use->window_profile);
-
-        ecore_x_e_window_profile_change_request_send(win,
-                                                     ec->e.state.profile.name);
-        ec->e.state.profile.wait_for_done = 1;
-     }
    if (ec->x_comp_data->fetch_exe)
->>>>>>> update X compositor code for structure rename
      {
         E_Exec_Instance *inst;
 
-        if (((!ec->lock_border) || (!ec->border.name)) && (ec->x_comp_data->reparented))
+        if (((!ec->lock_border) || (!ec->border.name)) && 
+            (ec->x_comp_data->reparented))
           {
              ec->border.changed = 1;
              EC_CHANGED(ec);
@@ -3983,6 +3930,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
           }
         ec->x_comp_data->fetch_exe = 0;
      }
+
    if ((e_config->use_desktop_window_profile) && (need_desk_set))
      {
         E_Desk *desk = NULL;
@@ -4046,6 +3994,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
              e_client_desk_window_profile_wait_desk_set(ec, ec->desk);
           }
      }
+
    if (ec->e.state.profile.set)
      {
         ecore_x_e_window_profile_change_request_send(e_client_util_win_get(ec),
