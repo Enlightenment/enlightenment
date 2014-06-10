@@ -281,34 +281,6 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
 }
 
 static void 
-_e_comp_wl_surface_attach(E_Client *ec, E_Comp_Wl_Buffer *buffer)
-{
-   _e_comp_wl_buffer_reference(&ec->wl_comp_data->buffer_ref,  buffer);
-
-   /* if (!buffer) */
-   /*   { */
-   /*      if (ec->wl_comp_data->mapped) */
-   /*        { */
-   /*           if ((ec->wl_comp_data->shell.surface) &&  */
-   /*               (ec->wl_comp_data->shell.unmap)) */
-   /*             ec->wl_comp_data->shell.unmap(ec->wl_comp_data->shell.surface); */
-   /*        } */
-   /*   } */
-   /* else */
-   /*   { */
-   /*      if (!ec->wl_comp_data->mapped) */
-   /*        { */
-   /*           if ((ec->wl_comp_data->shell.surface) &&  */
-   /*               (ec->wl_comp_data->shell.map)) */
-   /*             ec->wl_comp_data->shell.map(ec->wl_comp_data->shell.surface); */
-   /*        } */
-   /*   } */
-
-   /* TODO: renderer attach */
-   /* TODO: set_size_from_buffer */
-}
-
-static void 
 _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Pixmap *cp;
@@ -327,7 +299,8 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 
    if (ec->wl_comp_data->pending.new_attach)
      {
-        _e_comp_wl_surface_attach(ec, ec->wl_comp_data->pending.buffer);
+        _e_comp_wl_buffer_reference(&ec->wl_comp_data->buffer_ref,  
+                                    ec->wl_comp_data->pending.buffer);
 
         e_pixmap_resource_set(cp, ec->wl_comp_data->pending.buffer->resource);
         e_pixmap_usable_set(cp, (ec->wl_comp_data->pending.buffer != NULL));
@@ -1612,18 +1585,7 @@ _e_comp_wl_client_new_helper(E_Client *ec)
 static Eina_Bool 
 _e_comp_wl_client_shape_check(E_Client *ec)
 {
-   /* check for empty shape */
-   /* if (eina_rectangle_is_empty(ec->wl_comp_data->shape))  */
-   /*   { */
-   /*      ec->shape_rects = NULL; */
-   /*      ec->shape_rects_num = 0; */
-   /*   } */
-   /* else */
-   /*   { */
-   /*      ec->shape_rects = ec->wl_comp_data->shape; */
-   /*      ec->shape_rects_num = 1; */
-   /*   } */
-
+   /* FIXME: need way to determine if shape has changed */
    ec->shape_changed = EINA_TRUE;
    e_comp_shape_queue(ec->comp);
    return EINA_TRUE;
