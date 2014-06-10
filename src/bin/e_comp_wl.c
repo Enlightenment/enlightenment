@@ -14,17 +14,92 @@ static Ecore_Idle_Enterer *_client_idler = NULL;
 static Eina_List *_idle_clients = NULL;
 
 static void 
+_e_comp_wl_buffer_pending_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Comp_Wl_Client_Data *cd;
+
+   cd = container_of(listener, E_Comp_Wl_Client_Data, pending.buffer_destroy);
+   cd->pending.buffer = NULL;
+}
+
+static void 
+_e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Comp_Wl_Buffer *buffer;
+
+   buffer = container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
+   wl_signal_emit(&buffer->destroy_signal, buffer);
+   free(buffer);
+}
+
+static E_Comp_Wl_Buffer *
+_e_comp_wl_buffer_get(struct wl_resource *resource)
+{
+   E_Comp_Wl_Buffer *buffer;
+   struct wl_listener *listener;
+
+   listener = 
+     wl_resource_get_destroy_listener(resource, _e_comp_wl_buffer_cb_destroy);
+
+   if (listener)
+     return container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
+
+   if (!(buffer = malloc(sizeof(E_Comp_Wl_Buffer)))) return NULL;
+
+   buffer->resource = resource;
+   wl_signal_init(&buffer->destroy_signal);
+   buffer->destroy_listener.notify = _e_comp_wl_buffer_cb_destroy;
+   wl_resource_add_destroy_listener(resource, &buffer->destroy_listener);
+
+   return buffer;
+}
+
+static void 
+_e_comp_wl_buffer_reference_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Comp_Wl_Buffer_Ref *ref;
+
+   if (!(ref = container_of(listener, E_Comp_Wl_Buffer_Ref, destroy_listener)))
+     return;
+
+   ref->buffer = NULL;
+}
+
+static void 
+_e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer)
+{
+   if ((ref->buffer) && (buffer != ref->buffer))
+     {
+        ref->buffer->busy--;
+
+        if (ref->buffer->busy == 0)
+          wl_resource_queue_event(ref->buffer->resource, WL_BUFFER_RELEASE);
+
+        wl_list_remove(&ref->destroy_listener.link);
+     }
+
+   if ((buffer) && (buffer != ref->buffer))
+     {
+        buffer->busy++;
+        wl_signal_add(&buffer->destroy_signal, &ref->destroy_listener);
+     }
+
+   ref->buffer = buffer;
+   ref->destroy_listener.notify = _e_comp_wl_buffer_reference_cb_destroy;
+}
+
+static void 
 _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    wl_resource_destroy(resource);
 }
 
 static void 
-_e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t sx, int32_t sy)
+_e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t sx, int32_t sy)
 {
    E_Pixmap *cp;
    E_Client *ec;
-   int bw = 0, bh = 0;
+   E_Comp_Wl_Buffer *buffer;
 
    if (!(cp = wl_resource_get_user_data(resource))) return;
 
@@ -36,21 +111,35 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
 
    if (buffer_resource)
      {
+        if (!(buffer = _e_comp_wl_buffer_get(buffer_resource)))
+          {
+             wl_client_post_no_memory(client);
+             return;
+          }
+     }
+
+   if (!ec->wl_comp_data) return;
+
+   if (ec->wl_comp_data->pending.buffer)
+     wl_list_remove(&ec->wl_comp_data->pending.buffer_destroy.link);
+
+   ec->wl_comp_data->pending.x = sx;
+   ec->wl_comp_data->pending.y = sy;
+   ec->wl_comp_data->pending.w = 0;
+   ec->wl_comp_data->pending.h = 0;
+   ec->wl_comp_data->pending.buffer = buffer;
+   ec->wl_comp_data->pending.new_attach = EINA_TRUE;
+
+   if (buffer)
+     {
         struct wl_shm_buffer *b;
 
         b = wl_shm_buffer_get(buffer_resource);
-        bw = wl_shm_buffer_get_width(b);
-        bh = wl_shm_buffer_get_height(b);
-     }
+        ec->wl_comp_data->pending.w = wl_shm_buffer_get_width(b);
+        ec->wl_comp_data->pending.h = wl_shm_buffer_get_height(b);
 
-   if (ec->wl_comp_data)
-     {
-        ec->wl_comp_data->pending.x = sx;
-        ec->wl_comp_data->pending.y = sy;
-        ec->wl_comp_data->pending.w = bw;
-        ec->wl_comp_data->pending.h = bh;
-        ec->wl_comp_data->pending.buffer = buffer_resource;
-        ec->wl_comp_data->pending.new_attach = EINA_TRUE;
+        wl_signal_add(&buffer->destroy_signal, 
+                      &ec->wl_comp_data->pending.buffer_destroy);
      }
 }
 
@@ -59,6 +148,7 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
 {
    E_Pixmap *cp;
    E_Client *ec;
+   Eina_Tiler *tmp;
 
    if (!(cp = wl_resource_get_user_data(resource))) return;
 
@@ -67,16 +157,15 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
      ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(cp));
 
    if ((!ec) || (e_object_is_del(E_OBJECT(ec)))) return;
+   if (!ec->wl_comp_data) return;
 
-   if (ec->wl_comp_data)
-     {
-        EINA_RECTANGLE_SET(ec->wl_comp_data->damage, x, y, w, h);
-     }
-   else
-     {
-        /* FIXME: NB: This can happen with pointer surfaces */
-        /* DBG("\tSurface Has No Client"); */
-     }
+   tmp = eina_tiler_new(ec->w, ec->h);
+   eina_tiler_tile_size_set(tmp, 1, 1);
+   eina_tiler_rect_add(tmp, &(Eina_Rectangle){x, y, w, h});
+
+   eina_tiler_union(ec->wl_comp_data->pending.damage, tmp);
+
+   eina_tiler_free(tmp);
 }
 
 static void 
@@ -144,17 +233,18 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
 
    if (region_resource)
      {
-        Eina_Rectangle *opq;
+        Eina_Tiler *tmp;
 
-        if (!(opq = wl_resource_get_user_data(region_resource))) return;
+        if (!(tmp = wl_resource_get_user_data(region_resource)))
+          return;
 
-        EINA_RECTANGLE_SET(ec->wl_comp_data->opaque, 
-                           opq->x, opq->y, opq->w, opq->h);
+        eina_tiler_union(ec->wl_comp_data->pending.opaque, tmp);
      }
    else
      {
-        EINA_RECTANGLE_SET(ec->wl_comp_data->opaque, 0, 0, 0, 0);
-//                           0, 0, ec->client.w, ec->client.h);
+        eina_tiler_clear(ec->wl_comp_data->pending.opaque);
+        eina_tiler_rect_add(ec->wl_comp_data->pending.opaque, 
+                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
      }
 }
 
@@ -175,21 +265,47 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
 
    if (region_resource)
      {
-        Eina_Rectangle *input;
+        Eina_Tiler *tmp;
 
-        if (!(input = wl_resource_get_user_data(region_resource))) return;
+        if (!(tmp = wl_resource_get_user_data(region_resource)))
+          return;
 
-        DBG("\tInput Area: %d %d %d %d", input->x, input->y, 
-            input->w, input->h);
-
-        EINA_RECTANGLE_SET(ec->wl_comp_data->input, 
-                           input->x, input->y, input->w, input->h);
+        eina_tiler_union(ec->wl_comp_data->pending.input, tmp);
      }
+   else
+     {
+        eina_tiler_clear(ec->wl_comp_data->pending.input);
+        eina_tiler_rect_add(ec->wl_comp_data->pending.input, 
+                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
+     }
+}
+
+static void 
+_e_comp_wl_surface_attach(E_Client *ec, E_Comp_Wl_Buffer *buffer)
+{
+   _e_comp_wl_buffer_reference(&ec->wl_comp_data->buffer_ref,  buffer);
+
+   /* if (!buffer) */
+   /*   { */
+   /*      if (ec->wl_comp_data->mapped) */
+   /*        { */
+   /*           if ((ec->wl_comp_data->shell.surface) &&  */
+   /*               (ec->wl_comp_data->shell.unmap)) */
+   /*             ec->wl_comp_data->shell.unmap(ec->wl_comp_data->shell.surface); */
+   /*        } */
+   /*   } */
    /* else */
    /*   { */
-   /*      EINA_RECTANGLE_SET(ec->wl_comp_data->input, 0, 0,  */
-   /*                         ec->client.w, ec->client.h); */
+   /*      if (!ec->wl_comp_data->mapped) */
+   /*        { */
+   /*           if ((ec->wl_comp_data->shell.surface) &&  */
+   /*               (ec->wl_comp_data->shell.map)) */
+   /*             ec->wl_comp_data->shell.map(ec->wl_comp_data->shell.surface); */
+   /*        } */
    /*   } */
+
+   /* TODO: renderer attach */
+   /* TODO: set_size_from_buffer */
 }
 
 static void 
@@ -197,6 +313,7 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 {
    E_Pixmap *cp;
    E_Client *ec;
+   Eina_Tiler *src, *tmp;
 
    if (!(cp = wl_resource_get_user_data(resource))) return;
 
@@ -210,7 +327,9 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 
    if (ec->wl_comp_data->pending.new_attach)
      {
-        e_pixmap_resource_set(cp, ec->wl_comp_data->pending.buffer);
+        _e_comp_wl_surface_attach(ec, ec->wl_comp_data->pending.buffer);
+
+        e_pixmap_resource_set(cp, ec->wl_comp_data->pending.buffer->resource);
         e_pixmap_usable_set(cp, (ec->wl_comp_data->pending.buffer != NULL));
      }
 
@@ -220,7 +339,7 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    if ((ec->wl_comp_data->shell.surface) && 
        (ec->wl_comp_data->shell.configure))
      {
-        if (ec->wl_comp_data->pending.buffer)
+        if (ec->wl_comp_data->pending.new_attach)
           {
              if ((ec->client.w != ec->wl_comp_data->pending.w) || 
                  (ec->client.h != ec->wl_comp_data->pending.h))
@@ -250,37 +369,9 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
           }
      }
 
-#ifndef HAVE_WAYLAND_ONLY
-   if (ec->frame)
-     {
-        Eina_Rectangle *rect;
-
-        rect = ec->wl_comp_data->input;
-        e_comp_object_input_area_set(ec->frame, 
-                                     rect->x, rect->y, rect->w, rect->h);
-     }
-#endif
-
-   /* handle surface opaque region */
-   EINA_RECTANGLE_SET(ec->wl_comp_data->shape, 
-                      ec->wl_comp_data->input->x, ec->wl_comp_data->input->y, 
-                      ec->wl_comp_data->input->w, ec->wl_comp_data->input->h)
-
-   /* handle surface damages */
-   if ((!ec->comp->nocomp) && (ec->frame))
-     {
-        Eina_Rectangle *dmg;
-
-        dmg = ec->wl_comp_data->damage;
-        /* DBG("\tDmg: %d %d %d %d", dmg->x, dmg->y, dmg->w, dmg->h); */
-        e_comp_object_damage(ec->frame, dmg->x, dmg->y, dmg->w, dmg->h);
-     }
-
-   /* handle surface input region */
-   ec->shape_input_rects_num = 1;
-   ec->shape_input_rects = ec->wl_comp_data->input;
-   ec->changes.shape_input = EINA_TRUE;
-   EC_CHANGED(ec);
+   /* reset pending buffer */
+   if (ec->wl_comp_data->pending.buffer)
+     wl_list_remove(&ec->wl_comp_data->pending.buffer_destroy.link);
 
    ec->wl_comp_data->pending.x = 0;
    ec->wl_comp_data->pending.y = 0;
@@ -288,6 +379,86 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    ec->wl_comp_data->pending.h = 0;
    ec->wl_comp_data->pending.buffer = NULL;
    ec->wl_comp_data->pending.new_attach = EINA_FALSE;
+
+   /* handle surface damages */
+   if ((!ec->comp->nocomp) && (ec->frame))
+     {
+        tmp = eina_tiler_new(ec->w, ec->h);
+        eina_tiler_tile_size_set(tmp, 1, 1);
+        eina_tiler_rect_add(tmp,
+                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
+
+        src = eina_tiler_intersection(ec->wl_comp_data->pending.damage, tmp);
+        if (src)
+          {
+             Eina_Rectangle *rect;
+             Eina_Iterator *itr;
+
+             itr = eina_tiler_iterator_new(src);
+             EINA_ITERATOR_FOREACH(itr, rect)
+               {
+                  e_comp_object_damage(ec->frame, 
+                                       rect->x, rect->y, rect->w, rect->h);
+               }
+             eina_iterator_free(itr);
+             eina_tiler_free(src);
+          }
+
+        eina_tiler_free(tmp);
+
+        eina_tiler_clear(ec->wl_comp_data->pending.damage);
+     }
+
+   /* TODO !!! FIXME !!! */
+   /* handle surface opaque region */
+
+   tmp = eina_tiler_new(ec->w, ec->h);
+   eina_tiler_tile_size_set(tmp, 1, 1);
+   eina_tiler_rect_add(tmp, &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
+
+   src = eina_tiler_intersection(ec->wl_comp_data->pending.input, tmp);
+   if (src)
+     {
+        Eina_Rectangle *rect;
+        Eina_Iterator *itr;
+        int i = 0;
+
+        ec->shape_input_rects_num = 0;
+
+        itr = eina_tiler_iterator_new(src);
+        EINA_ITERATOR_FOREACH(itr, rect)
+          {
+             ec->shape_input_rects_num += 1;
+          }
+
+        ec->shape_input_rects = 
+          malloc(sizeof(Eina_Rectangle) * ec->shape_input_rects_num);
+
+        EINA_ITERATOR_FOREACH(itr, rect)
+          {
+             ec->shape_input_rects[i] = 
+               *(Eina_Rectangle *)((char *)rect);
+
+             ec->shape_input_rects[i].x = rect->x;
+             ec->shape_input_rects[i].y = rect->y;
+             ec->shape_input_rects[i].w = rect->w;
+             ec->shape_input_rects[i].h = rect->h;
+
+             i++;
+          }
+
+        eina_tiler_free(src);
+     }
+
+   eina_tiler_free(tmp);
+
+   ec->changes.shape_input = EINA_TRUE;
+   EC_CHANGED(ec);
+
+/* #ifndef HAVE_WAYLAND_ONLY */
+/*              e_comp_object_input_area_set(ec->frame, rect->x, rect->y,  */
+/*                                           rect->w, rect->h); */
+/* #endif */
 }
 
 static void 
@@ -365,23 +536,37 @@ _e_comp_wl_region_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_res
 static void 
 _e_comp_wl_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
-   Eina_Rectangle *rect;
+   Eina_Tiler *tiler;
 
-   if ((rect = wl_resource_get_user_data(resource)))
-     EINA_RECTANGLE_SET(rect, x, y, w, h);
+   if ((tiler = wl_resource_get_user_data(resource)))
+     {
+        Eina_Tiler *src;
+
+        src = eina_tiler_new(w, h);
+        eina_tiler_tile_size_set(src, 1, 1);
+        eina_tiler_rect_add(src, &(Eina_Rectangle){x, y, w, h});
+
+        eina_tiler_union(tiler, src);
+        eina_tiler_free(src);
+     }
 }
 
 static void 
-_e_comp_wl_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t x, int32_t y, int32_t w, int32_t h)
+_e_comp_wl_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
-   DBG("Comp Region Subtract: %d %d %d %d", x, y, w, h);
+   Eina_Tiler *tiler;
 
-   /* Eina_Rectangle *rect; */
+   if ((tiler = wl_resource_get_user_data(resource)))
+     {
+        Eina_Tiler *src;
 
-   /* if ((rect = wl_resource_get_user_data(resource))) */
-   /*   { */
-   /*      eina_rectangle_subtract(rect); */
-   /*   } */
+        src = eina_tiler_new(w, h);
+        eina_tiler_tile_size_set(src, 1, 1);
+        eina_tiler_rect_add(src, &(Eina_Rectangle){x, y, w, h});
+
+        eina_tiler_subtract(tiler, src);
+        eina_tiler_free(src);
+     }
 }
 
 static const struct wl_region_interface _e_region_interface = 
@@ -394,34 +579,43 @@ static const struct wl_region_interface _e_region_interface =
 static void 
 _e_comp_wl_comp_cb_region_destroy(struct wl_resource *resource)
 {
-   Eina_Rectangle *rect;
+   Eina_Tiler *tiler;
 
-   if ((rect = wl_resource_get_user_data(resource)))
-     eina_rectangle_free(rect);
+   if ((tiler = wl_resource_get_user_data(resource)))
+     eina_tiler_free(tiler);
 }
 
 static void 
 _e_comp_wl_comp_cb_region_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
-   Eina_Rectangle *rect;
+   E_Comp  *c;
+   Eina_Tiler *tiler;
    struct wl_resource *res;
 
-   /* try to create new rectangle */
-   if (!(rect = eina_rectangle_new(0, 0, 0, 0)))
+   if (!(c = e_comp_get(NULL)))
      {
         wl_resource_post_no_memory(resource);
         return;
      }
 
-   /* try to create new wayland resource */
+   if (!(tiler = eina_tiler_new(c->man->w, c->man->h)))
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   eina_tiler_tile_size_set(tiler, 1, 1);
+   eina_tiler_rect_add(tiler, 
+                       &(Eina_Rectangle){0, 0, c->man->w, c->man->h});
+
    if (!(res = wl_resource_create(client, &wl_region_interface, 1, id)))
      {
-        eina_rectangle_free(rect);
+        eina_tiler_free(tiler);
         wl_resource_post_no_memory(resource);
         return;
      }
 
-   wl_resource_set_implementation(res, &_e_region_interface, rect, 
+   wl_resource_set_implementation(res, &_e_region_interface, tiler, 
                                   _e_comp_wl_comp_cb_region_destroy);
 }
 
@@ -509,10 +703,11 @@ _e_comp_wl_cb_render_post(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, void *
              wl_resource_destroy(cb);
           }
 
-        /* NB: post a buffer release */
-        if ((cb = e_pixmap_resource_get(ec->pixmap)))
-          wl_resource_post_event(cb, WL_BUFFER_RELEASE);
-//          wl_resource_queue_event(cb, WL_BUFFER_RELEASE);
+        /* post a buffer release */
+        /* TODO: FIXME: We need a way to determine if the client wants to 
+         * keep the buffer or not. If so, then we should Not be setting NULL 
+         * here as this will essentially release the buffer */
+        _e_comp_wl_buffer_reference(&ec->wl_comp_data->buffer_ref, NULL);
      }
 
    eina_iterator_free(itr);
@@ -1045,9 +1240,12 @@ _e_comp_wl_evas_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    end = (uint32_t *)cdata->kbd.keys.data + cdata->kbd.keys.size;
 
-   /* ignore server-generated key repeats */
    for (k = cdata->kbd.keys.data; k < end; k++)
-     if (*k == keycode) return;
+     {
+        /* ignore server-generated key repeats */
+        if (*k == keycode) return;
+        *k = *--end;
+     }
 
    cdata->kbd.keys.size = end - (uint32_t *)cdata->kbd.keys.data;
    k = wl_array_add(&cdata->kbd.keys, sizeof(*k));
@@ -1415,16 +1613,16 @@ static Eina_Bool
 _e_comp_wl_client_shape_check(E_Client *ec)
 {
    /* check for empty shape */
-   if (eina_rectangle_is_empty(ec->wl_comp_data->shape)) 
-     {
-        ec->shape_rects = NULL;
-        ec->shape_rects_num = 0;
-     }
-   else
-     {
-        ec->shape_rects = ec->wl_comp_data->shape;
-        ec->shape_rects_num = 1;
-     }
+   /* if (eina_rectangle_is_empty(ec->wl_comp_data->shape))  */
+   /*   { */
+   /*      ec->shape_rects = NULL; */
+   /*      ec->shape_rects_num = 0; */
+   /*   } */
+   /* else */
+   /*   { */
+   /*      ec->shape_rects = ec->wl_comp_data->shape; */
+   /*      ec->shape_rects_num = 1; */
+   /*   } */
 
    ec->shape_changed = EINA_TRUE;
    e_comp_shape_queue(ec->comp);
@@ -1443,8 +1641,6 @@ _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Ev
      return ECORE_CALLBACK_RENEW;
 
    E_COMP_WL_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
-
-   DBG("COMP_WL: Comp Object Add: %p", ev->comp_object);
 
    _e_comp_wl_client_evas_init(ec);
 
@@ -1510,8 +1706,6 @@ _e_comp_wl_cb_hook_client_del(void *data EINA_UNUSED, E_Client *ec)
 
    E_COMP_WL_PIXMAP_CHECK;
 
-   DBG("COMP_WL: Hook Client Del");
-
    if ((!ec->already_unparented) && (ec->wl_comp_data->reparented))
      {
         /* TODO: focus setdown */
@@ -1522,14 +1716,12 @@ _e_comp_wl_cb_hook_client_del(void *data EINA_UNUSED, E_Client *ec)
    win = e_pixmap_window_get(ec->pixmap);
    eina_hash_del_by_key(clients_win_hash, &win);
 
-   if (ec->wl_comp_data->input)
-     eina_rectangle_free(ec->wl_comp_data->input);
-   if (ec->wl_comp_data->opaque)
-     eina_rectangle_free(ec->wl_comp_data->opaque);
-   if (ec->wl_comp_data->shape)
-     eina_rectangle_free(ec->wl_comp_data->shape);
-   if (ec->wl_comp_data->damage)
-     eina_rectangle_free(ec->wl_comp_data->damage);
+   if (ec->wl_comp_data->pending.damage)
+     eina_tiler_free(ec->wl_comp_data->pending.damage);
+   if (ec->wl_comp_data->pending.input)
+     eina_tiler_free(ec->wl_comp_data->pending.input);
+   if (ec->wl_comp_data->pending.opaque)
+     eina_tiler_free(ec->wl_comp_data->pending.opaque);
 
    if (ec->wl_comp_data->reparented)
      {
@@ -1562,18 +1754,24 @@ _e_comp_wl_cb_hook_client_new(void *data EINA_UNUSED, E_Client *ec)
    win = e_pixmap_window_get(ec->pixmap);
    ec->ignored = e_comp_ignore_win_find(win);
 
-   DBG("COMP_WL: Client New: %p %d", ec->pixmap, ec->internal);
-
    /* NB: could not find a better place todo this, BUT for internal windows, 
     * we need to set delete_request else the close buttons on the frames do 
     * basically nothing */
    if (ec->internal) ec->icccm.delete_request = EINA_TRUE;
 
    ec->wl_comp_data = E_NEW(E_Comp_Wl_Client_Data, 1);
-   ec->wl_comp_data->input = eina_rectangle_new(0, 0, 0, 0);
-   ec->wl_comp_data->opaque = eina_rectangle_new(0, 0, 0, 0);
-   ec->wl_comp_data->shape = eina_rectangle_new(0, 0, 0, 0);
-   ec->wl_comp_data->damage = eina_rectangle_new(0, 0, 0, 0);
+
+   ec->wl_comp_data->pending.damage = eina_tiler_new(ec->w, ec->h);
+   eina_tiler_tile_size_set(ec->wl_comp_data->pending.damage, 1, 1);
+
+   ec->wl_comp_data->pending.input = eina_tiler_new(ec->w, ec->h);
+   eina_tiler_tile_size_set(ec->wl_comp_data->pending.input, 1, 1);
+
+   ec->wl_comp_data->pending.opaque = eina_tiler_new(ec->w, ec->h);
+   eina_tiler_tile_size_set(ec->wl_comp_data->pending.opaque, 1, 1);
+
+   ec->wl_comp_data->pending.buffer_destroy.notify = 
+     _e_comp_wl_buffer_pending_cb_destroy;
 
    ec->wl_comp_data->mapped = EINA_FALSE;
    ec->wl_comp_data->set_win_type = EINA_TRUE;
@@ -1670,100 +1868,101 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
 
    /* TODO: vkbd, etc */
 
-   if (ec->changes.shape)
-     {
-        Eina_Rectangle *shape = NULL;
-        Eina_Bool pshaped = EINA_FALSE;
+   /* FIXME: Update ->changes.shape code for recent switch to eina_tiler */
+   /* if (ec->changes.shape) */
+   /*   { */
+   /*      Eina_Rectangle *shape = NULL; */
+   /*      Eina_Bool pshaped = EINA_FALSE; */
 
-        shape = eina_rectangle_new((ec->wl_comp_data->shape)->x, 
-                                   (ec->wl_comp_data->shape)->y, 
-                                   (ec->wl_comp_data->shape)->w, 
-                                   (ec->wl_comp_data->shape)->h);
+   /*      shape = eina_rectangle_new((ec->wl_comp_data->shape)->x,  */
+   /*                                 (ec->wl_comp_data->shape)->y,  */
+   /*                                 (ec->wl_comp_data->shape)->w,  */
+   /*                                 (ec->wl_comp_data->shape)->h); */
 
-        pshaped = ec->shaped;
-        ec->changes.shape = EINA_FALSE;
+   /*      pshaped = ec->shaped; */
+   /*      ec->changes.shape = EINA_FALSE; */
 
-        if (eina_rectangle_is_empty(shape))
-          {
-             if ((ec->shaped) && (ec->wl_comp_data->reparented) && 
-                 (!ec->bordername))
-               {
-                  ec->border.changed = EINA_TRUE;
-                  EC_CHANGED(ec);
-               }
+   /*      if (eina_rectangle_is_empty(shape)) */
+   /*        { */
+   /*           if ((ec->shaped) && (ec->wl_comp_data->reparented) &&  */
+   /*               (!ec->bordername)) */
+   /*             { */
+   /*                ec->border.changed = EINA_TRUE; */
+   /*                EC_CHANGED(ec); */
+   /*             } */
 
-             ec->shaped = EINA_FALSE;
-          }
-        else
-          {
-             int cw = 0, ch = 0;
+   /*           ec->shaped = EINA_FALSE; */
+   /*        } */
+   /*      else */
+   /*        { */
+   /*           int cw = 0, ch = 0; */
 
-             if (ec->border_size)
-               {
-                  shape->x += ec->border_size;
-                  shape->y += ec->border_size;
-                  shape->w -= ec->border_size;
-                  shape->h -= ec->border_size;
-               }
+   /*           if (ec->border_size) */
+   /*             { */
+   /*                shape->x += ec->border_size; */
+   /*                shape->y += ec->border_size; */
+   /*                shape->w -= ec->border_size; */
+   /*                shape->h -= ec->border_size; */
+   /*             } */
 
-             e_pixmap_size_get(ec->pixmap, &cw, &ch);
-             if ((cw != ec->client.w) || (ch != ec->client.h))
-               {
-                  ec->changes.shape = EINA_TRUE;
-                  EC_CHANGED(ec);
-               }
+   /*           e_pixmap_size_get(ec->pixmap, &cw, &ch); */
+   /*           if ((cw != ec->client.w) || (ch != ec->client.h)) */
+   /*             { */
+   /*                ec->changes.shape = EINA_TRUE; */
+   /*                EC_CHANGED(ec); */
+   /*             } */
 
-             if ((shape->x == 0) && (shape->y == 0) && 
-                 (shape->w == cw) && (shape->h == ch))
-               {
-                  if (ec->shaped)
-                    {
-                       ec->shaped = EINA_FALSE;
-                       if ((ec->wl_comp_data->reparented) && (!ec->bordername))
-                         {
-                            ec->border.changed = EINA_TRUE;
-                            EC_CHANGED(ec);
-                         }
-                    }
-               }
-             else
-               {
-                  if (ec->wl_comp_data->reparented)
-                    {
-                       EINA_RECTANGLE_SET(ec->wl_comp_data->shape, 
-                                          shape->x, shape->y, 
-                                          shape->w, shape->h);
+   /*           if ((shape->x == 0) && (shape->y == 0) &&  */
+   /*               (shape->w == cw) && (shape->h == ch)) */
+   /*             { */
+   /*                if (ec->shaped) */
+   /*                  { */
+   /*                     ec->shaped = EINA_FALSE; */
+   /*                     if ((ec->wl_comp_data->reparented) && (!ec->bordername)) */
+   /*                       { */
+   /*                          ec->border.changed = EINA_TRUE; */
+   /*                          EC_CHANGED(ec); */
+   /*                       } */
+   /*                  } */
+   /*             } */
+   /*           else */
+   /*             { */
+   /*                if (ec->wl_comp_data->reparented) */
+   /*                  { */
+   /*                     EINA_RECTANGLE_SET(ec->wl_comp_data->shape,  */
+   /*                                        shape->x, shape->y,  */
+   /*                                        shape->w, shape->h); */
 
-                       if ((!ec->shaped) && (!ec->bordername))
-                         {
-                            ec->border.changed = EINA_TRUE;
-                            EC_CHANGED(ec);
-                         }
-                    }
-                  else
-                    {
-                       if (_e_comp_wl_client_shape_check(ec))
-                         e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
-                    }
-                  ec->shaped = EINA_TRUE;
-                  ec->changes.shape_input = EINA_FALSE;
-                  ec->shape_input_rects_num = 0;
-               }
+   /*                     if ((!ec->shaped) && (!ec->bordername)) */
+   /*                       { */
+   /*                          ec->border.changed = EINA_TRUE; */
+   /*                          EC_CHANGED(ec); */
+   /*                       } */
+   /*                  } */
+   /*                else */
+   /*                  { */
+   /*                     if (_e_comp_wl_client_shape_check(ec)) */
+   /*                       e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h); */
+   /*                  } */
+   /*                ec->shaped = EINA_TRUE; */
+   /*                ec->changes.shape_input = EINA_FALSE; */
+   /*                ec->shape_input_rects_num = 0; */
+   /*             } */
 
-             if (ec->shape_changed)
-               e_comp_object_frame_theme_set(ec->frame, 
-                                             E_COMP_OBJECT_FRAME_RESHADOW);
-          }
+   /*           if (ec->shape_changed) */
+   /*             e_comp_object_frame_theme_set(ec->frame,  */
+   /*                                           E_COMP_OBJECT_FRAME_RESHADOW); */
+   /*        } */
 
-        if (ec->shaped != pshaped)
-          {
-             _e_comp_wl_client_shape_check(ec);
-          }
+        /* if (ec->shaped != pshaped) */
+        /*   { */
+        /*      _e_comp_wl_client_shape_check(ec); */
+        /*   } */
 
-        ec->need_shape_merge = EINA_TRUE;
+        /* ec->need_shape_merge = EINA_TRUE; */
 
-        eina_rectangle_free(shape);
-     }
+        /* eina_rectangle_free(shape); */
+     /* } */
 
    if ((ec->changes.prop) || (ec->netwm.update.state))
      {
