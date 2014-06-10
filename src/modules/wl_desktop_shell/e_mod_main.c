@@ -202,6 +202,10 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
    ec->wl_comp_data->set_win_type = EINA_FALSE;
+   if ((!ec->lock_user_maximize) && (ec->maximized))
+     e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+   if ((!ec->lock_user_fullscreen) && (ec->fullscreen))
+     e_client_unfullscreen(ec);
    EC_CHANGED(ec);
 }
 
