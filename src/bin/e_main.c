@@ -148,6 +148,12 @@ _xdg_data_dirs_augment(void)
         if (!dir) dir = "/tmp";
         e_util_env_set("XDG_RUNTIME_DIR", dir);
      }
+
+   /* set menu prefix so we get our e menu */
+   if (!getenv("XDG_MENU_PREFIX"))
+     {
+        e_util_env_set("XDG_MENU_PREFIX", "e-");
+     }
 }
 
 static Eina_Bool
