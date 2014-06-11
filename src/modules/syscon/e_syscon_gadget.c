@@ -104,7 +104,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    e_gadcon_client_util_menu_attach(inst->gcc);
    evas_object_event_callback_add(inst->o_base, EVAS_CALLBACK_MOUSE_DOWN, _cb_mouse_down, inst);
 
-   edje_object_signal_callback_add(inst->o_base, "e,action,shutdown,show", "",
+   edje_object_signal_callback_add(inst->o_base, "e,action,shutdown,show", "e",
                                    _cb_shutdown_show, inst);
 
    instances = eina_list_append(instances, inst);
