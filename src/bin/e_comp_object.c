@@ -2776,7 +2776,7 @@ e_comp_object_frame_theme_set(Evas_Object *obj, const char *name)
                     E_FREE_FUNC(cw->frame_icon, evas_object_del);
                }
           }
-        else if (cw->ec)
+        else
           {
              cw->ec->changes.icon = 1;
              EC_CHANGED(cw->ec);
@@ -2821,7 +2821,7 @@ reshadow:
           }
      } while (0);
 
-   if (cw->ec && cw->ec->maximized)
+   if (cw->ec->maximized)
      {
         cw->ec->changes.need_maximize = 1;
         EC_CHANGED(cw->ec);
