@@ -2134,7 +2134,7 @@ e_comp_wl_init(void)
      }
 
    /* create hash to store client windows */
-   clients_win_hash = eina_hash_int32_new(NULL);
+   clients_win_hash = eina_hash_int64_new(NULL);
 
    /* setup event handlers for e events */
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, 
