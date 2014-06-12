@@ -18,10 +18,10 @@
 
 #define OFFSET_ADD(n) ((n + 4 - 1) & (~(4 - 1)))
 
-typedef struct _Settings_Manger Settings_Manager;
+typedef struct _Settings_Manager Settings_Manager;
 typedef struct _Setting         Setting;
 
-struct _Settings_Manger
+struct _Settings_Manager
 {
    E_Manager     *man;
    Ecore_X_Window selection;
