@@ -44,7 +44,7 @@ _e_comp_wl_buffer_get(struct wl_resource *resource)
    if (listener)
      return container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
 
-   if (!(buffer = malloc(sizeof(E_Comp_Wl_Buffer)))) return NULL;
+   if (!(buffer = E_NEW(E_Comp_Wl_Buffer, 1))) return NULL;
 
    buffer->resource = resource;
    wl_signal_init(&buffer->destroy_signal);
