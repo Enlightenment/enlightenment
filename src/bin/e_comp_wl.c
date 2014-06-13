@@ -13,6 +13,15 @@ static Eina_Hash *clients_win_hash = NULL;
 static Ecore_Idle_Enterer *_client_idler = NULL;
 static Eina_List *_idle_clients = NULL;
 
+static void
+_e_comp_wl_client_event_free(void *d EINA_UNUSED, void *e)
+{
+   E_Event_Client *ev = e;
+
+   e_object_unref(E_OBJECT(ev->ec));
+   free(ev);
+}
+
 static void 
 _e_comp_wl_buffer_pending_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
 {
@@ -1823,7 +1832,11 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
              /* TODO: transient set */
           }
 
-        /* TODO: raise property event */
+        E_Event_Client_Property *ev = E_NEW(E_Event_Client_Property, 1);
+        ev->ec = ec;
+        e_object_ref(E_OBJECT(ec));
+        ev->property = E_CLIENT_PROPERTY_NETWM_STATE;
+        ecore_event_add(E_EVENT_CLIENT_PROPERTY, ev, _e_comp_wl_client_event_free, NULL);
 
         ec->netwm.fetch.type = EINA_FALSE;
      }
