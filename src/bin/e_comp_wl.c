@@ -636,8 +636,7 @@ _e_comp_wl_cb_bind_compositor(struct wl_client *client, void *data, uint32_t ver
    if (!(comp = data)) return;
 
    res = 
-     wl_resource_create(client, &wl_compositor_interface, 
-                        MIN(version, 3), id);
+     wl_resource_create(client, &wl_compositor_interface, MIN(version, 3), id);
    if (!res)
      {
         wl_client_post_no_memory(client);
@@ -999,6 +998,76 @@ _e_comp_wl_client_idler_add(E_Client *ec)
 }
 
 static void 
+_e_comp_wl_client_priority_adjust(int pid, int set, int adj, Eina_Bool use_adj, Eina_Bool adj_child, Eina_Bool do_child)
+{
+   int n;
+
+   n = set;
+   if (use_adj) n = (getpriority(PRIO_PROCESS, pid) + adj);
+   setpriority(PRIO_PROCESS, pid, n);
+
+   if (do_child)
+     {
+        Eina_List *files;
+        char *file, buff[PATH_MAX];
+        FILE *f;
+        int pid2, ppid;
+
+        files = ecore_file_ls("/proc");
+        EINA_LIST_FREE(files, file)
+          {
+             if (isdigit(file[0]))
+               {
+                  snprintf(buff, sizeof(buff), "/proc/%s/stat", file);
+                  if ((f = fopen(buff, "r")))
+                    {
+                       pid2 = -1;
+                       ppid = -1;
+                       if (fscanf(f, "%i %*s %*s %i %*s", &pid2, &ppid) == 2)
+                         {
+                            fclose(f);
+                            if (ppid == pid)
+                              {
+                                 if (adj_child)
+                                   _e_comp_wl_client_priority_adjust(pid2, set, 
+                                                                     adj, EINA_TRUE,
+                                                                     adj_child, do_child);
+                                 else
+                                   _e_comp_wl_client_priority_adjust(pid2, set, 
+                                                                     adj, use_adj,
+                                                                     adj_child, do_child);
+                              }
+                         }
+                       else 
+                         fclose(f);
+                    }
+               }
+             free(file);
+          }
+     }
+}
+
+static void 
+_e_comp_wl_client_priority_raise(E_Client *ec)
+{
+   if (ec->netwm.pid <= 0) return;
+   if (ec->netwm.pid == getpid()) return;
+   _e_comp_wl_client_priority_adjust(ec->netwm.pid, 
+                                     e_config->priority - 1, -1, 
+                                     EINA_FALSE, EINA_TRUE, EINA_FALSE);
+}
+
+static void 
+_e_comp_wl_client_priority_normal(E_Client *ec)
+{
+   if (ec->netwm.pid <= 0) return;
+   if (ec->netwm.pid == getpid()) return;
+   _e_comp_wl_client_priority_adjust(ec->netwm.pid, 
+                                     e_config->priority, 1, 
+                                     EINA_FALSE, EINA_TRUE, EINA_FALSE);
+}
+
+static void 
 _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec, *tmp;
@@ -1310,7 +1379,8 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    cdata = ec->comp->wl_comp_data;
 
-   /* TODO: priority raise */
+   /* priority raise */
+   _e_comp_wl_client_priority_raise(ec);
 
    /* update modifier state */
    wl_array_for_each(k, &cdata->kbd.keys)
@@ -1338,7 +1408,8 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    if (!(ec = data)) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
-   /* TODO: priority normal */
+   /* priority normal */
+   _e_comp_wl_client_priority_normal(ec);
 
    /* update modifier state */
    wl_array_for_each(k, &ec->comp->wl_comp_data->kbd.keys)
