@@ -1373,6 +1373,17 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
           ec->wl_comp_data->shell.configure_send(ec->wl_comp_data->shell.surface, 
                                                  cdata->resize.edges,
                                                  ec->client.w, ec->client.h);
+        if (ec->wl_comp_data)
+          {
+             if (ec->wl_comp_data->pending.damage)
+               eina_tiler_area_size_set(ec->wl_comp_data->pending.damage, ec->client.w, ec->client.h);
+
+             if (ec->wl_comp_data->pending.input)
+               eina_tiler_area_size_set(ec->wl_comp_data->pending.input, ec->client.w, ec->client.h);
+
+             if (ec->wl_comp_data->pending.opaque)
+               eina_tiler_area_size_set(ec->wl_comp_data->pending.opaque, ec->client.w, ec->client.h);
+          }
      }
 
    ec->post_resize = EINA_TRUE;
