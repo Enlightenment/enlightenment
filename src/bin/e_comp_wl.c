@@ -14,10 +14,11 @@ static Ecore_Idle_Enterer *_client_idler = NULL;
 static Eina_List *_idle_clients = NULL;
 
 static void
-_e_comp_wl_client_event_free(void *d EINA_UNUSED, void *e)
+_e_comp_wl_client_event_free(void *d EINA_UNUSED, void *event)
 {
-   E_Event_Client *ev = e;
+   E_Event_Client *ev;
 
+   if (!(ev = event)) return;
    e_object_unref(E_OBJECT(ev->ec));
    free(ev);
 }
@@ -1367,23 +1368,23 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
 
    cdata = ec->comp->wl_comp_data;
 
-   /* if ((ec->changes.pos) || (ec->changes.size)) */
+   if ((ec->wl_comp_data) && (ec->wl_comp_data->shell.configure_send))
+     ec->wl_comp_data->shell.configure_send(ec->wl_comp_data->shell.surface, 
+                                            cdata->resize.edges,
+                                            ec->client.w, ec->client.h);
+   if (ec->wl_comp_data)
      {
-        if ((ec->wl_comp_data) && (ec->wl_comp_data->shell.configure_send))
-          ec->wl_comp_data->shell.configure_send(ec->wl_comp_data->shell.surface, 
-                                                 cdata->resize.edges,
-                                                 ec->client.w, ec->client.h);
-        if (ec->wl_comp_data)
-          {
-             if (ec->wl_comp_data->pending.damage)
-               eina_tiler_area_size_set(ec->wl_comp_data->pending.damage, ec->client.w, ec->client.h);
+        if (ec->wl_comp_data->pending.damage)
+          eina_tiler_area_size_set(ec->wl_comp_data->pending.damage, 
+                                   ec->client.w, ec->client.h);
 
-             if (ec->wl_comp_data->pending.input)
-               eina_tiler_area_size_set(ec->wl_comp_data->pending.input, ec->client.w, ec->client.h);
+        if (ec->wl_comp_data->pending.input)
+          eina_tiler_area_size_set(ec->wl_comp_data->pending.input, 
+                                   ec->client.w, ec->client.h);
 
-             if (ec->wl_comp_data->pending.opaque)
-               eina_tiler_area_size_set(ec->wl_comp_data->pending.opaque, ec->client.w, ec->client.h);
-          }
+        if (ec->wl_comp_data->pending.opaque)
+          eina_tiler_area_size_set(ec->wl_comp_data->pending.opaque, 
+                                   ec->client.w, ec->client.h);
      }
 
    ec->post_resize = EINA_TRUE;
@@ -1777,6 +1778,8 @@ _e_comp_wl_cb_hook_client_new(void *data EINA_UNUSED, E_Client *ec)
 static void 
 _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
 {
+   E_Event_Client_Property *ev;
+
    E_COMP_WL_PIXMAP_CHECK;
 
    /* DBG("COMP_WL HOOK CLIENT EVAL FETCH !!"); */
@@ -1843,11 +1846,13 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
              /* TODO: transient set */
           }
 
-        E_Event_Client_Property *ev = E_NEW(E_Event_Client_Property, 1);
+        ev = E_NEW(E_Event_Client_Property, 1);
+
         ev->ec = ec;
         e_object_ref(E_OBJECT(ec));
         ev->property = E_CLIENT_PROPERTY_NETWM_STATE;
-        ecore_event_add(E_EVENT_CLIENT_PROPERTY, ev, _e_comp_wl_client_event_free, NULL);
+        ecore_event_add(E_EVENT_CLIENT_PROPERTY, ev, 
+                        _e_comp_wl_client_event_free, NULL);
 
         ec->netwm.fetch.type = EINA_FALSE;
      }

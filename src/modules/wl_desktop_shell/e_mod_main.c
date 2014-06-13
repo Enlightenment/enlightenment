@@ -546,7 +546,8 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
           pc = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(pp));
         if (!pc)
           {
-             wl_resource_post_error(parent_resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
+             wl_resource_post_error(parent_resource, 
+                                    WL_DISPLAY_ERROR_INVALID_OBJECT,
                                     "No Client For Shell Surface");
              return;
           }
@@ -560,7 +561,8 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
      {
         if (pc != ec->parent)
           {
-             ec->parent->transients = eina_list_remove(ec->parent->transients, ec);
+             ec->parent->transients = 
+               eina_list_remove(ec->parent->transients, ec);
              if (ec->parent->modal == ec) ec->parent->modal = NULL;
              ec->parent = NULL;
           }
@@ -584,8 +586,10 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
              ec->parent->lock_close = 1;
           }
 
-        if (e_config->focus_setting == E_FOCUS_NEW_DIALOG ||
-            (ec->parent->focused && (e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
+        if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
+            (ec->parent->focused && 
+                (e_config->focus_setting == 
+                    E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
           ec->take_focus = 1;
      }
 
