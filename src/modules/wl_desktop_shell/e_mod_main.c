@@ -532,10 +532,6 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
    E_Pixmap *pp = NULL;
    Ecore_Window pwin = 0;
 
-   /* DBG("XDG_SHELL: Transient For Set: %d", wl_resource_get_id(resource)); */
-   /* if (parent_resource) */
-   /*   DBG("\tParent Resource: %d", wl_resource_get_id(parent_resource)); */
-
    if (!(ec = wl_resource_get_user_data(resource)))
      {
         wl_resource_post_error(resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
