@@ -526,22 +526,74 @@ _e_xdg_shell_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_
 }
 
 static void 
-_e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *parent_resource EINA_UNUSED)
+_e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource)
 {
-   /* E_Client *ec; */
+   E_Client *ec, *pc = NULL;
+   E_Pixmap *pp = NULL;
+   Ecore_Window pwin = 0;
 
    /* DBG("XDG_SHELL: Transient For Set: %d", wl_resource_get_id(resource)); */
    /* if (parent_resource) */
    /*   DBG("\tParent Resource: %d", wl_resource_get_id(parent_resource)); */
 
-   /* get the client for this resource */
-   /* if (!(ec = wl_resource_get_user_data(resource))) */
-   /*   { */
-   /*      wl_resource_post_error(resource,  */
-   /*                             WL_DISPLAY_ERROR_INVALID_OBJECT,  */
-   /*                             "No Client For Shell Surface"); */
-   /*      return; */
-   /*   } */
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
+                               "No Client For Shell Surface");
+        return;
+     }
+
+   if (parent_resource)
+     {
+        pp = wl_resource_get_user_data(parent_resource);
+        if (!(pc = e_pixmap_client_get(pp)))
+          pc = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(pp));
+        if (!pc)
+          {
+             wl_resource_post_error(parent_resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
+                                    "No Client For Shell Surface");
+             return;
+          }
+        pwin = e_pixmap_window_get(pp);
+     }
+
+   ec->icccm.transient_for = pwin;
+
+   /* If we already have a parent, remove it */
+   if (ec->parent)
+     {
+        if (pc != ec->parent)
+          {
+             ec->parent->transients = eina_list_remove(ec->parent->transients, ec);
+             if (ec->parent->modal == ec) ec->parent->modal = NULL;
+             ec->parent = NULL;
+          }
+        else
+          pc = NULL;
+     }
+
+   if ((pc) && (pc != ec) &&
+       (eina_list_data_find(ec->transients, pc) != pc))
+     {
+        pc->transients = eina_list_append(pc->transients, ec);
+        ec->parent = pc;
+     }
+
+   if (ec->parent)
+     {
+        evas_object_layer_set(ec->frame, ec->parent->layer);
+        if (ec->netwm.state.modal)
+          {
+             ec->parent->modal = ec;
+             ec->parent->lock_close = 1;
+          }
+
+        if (e_config->focus_setting == E_FOCUS_NEW_DIALOG ||
+            (ec->parent->focused && (e_config->focus_setting == E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
+          ec->take_focus = 1;
+     }
+
+   EC_CHANGED(ec);
 }
 
 static void 
