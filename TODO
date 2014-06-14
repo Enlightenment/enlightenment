@@ -1,0 +1,28 @@
+== E19 release todo (not in order of importance) ==
+
+* fix desktop (gadman) gadgets
+	- T722
+	- T1012
+
+* verify stacking (T1337)
+
+* background generation (T1327)
+
+* crashes
+	- T1330
+	- T1340
+
+* split wp2 module to separate repo
+
+* SAFELY, without rushing, merge+test wl branch
+	- possibly also D817
+
+* fix ibar theme issues (T1300)
+
+* fix nocomp issues when changing vdesk
+
+* major tiling issues
+	- T1310
+	- T952 (for internal dialogs at minimum)
+	- T974
+	- T1304
