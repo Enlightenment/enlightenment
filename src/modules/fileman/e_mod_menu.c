@@ -224,7 +224,7 @@ _e_mod_menu_populate_err(void *data, Eio_File *handler __UNUSED__, int error __U
 static int
 _e_mod_menu_populate_sort(E_Menu_Item *a, E_Menu_Item *b)
 {
-   return strcmp(a->label, b->label);
+   return strcasecmp(a->label, b->label);
 }
 
 static void
