@@ -8,7 +8,7 @@ arch=('i686' 'x86_64' 'arm')
 url="http://www.enlightenment.org"
 license=('BSD')
 depends=('elementary' 'xcb-util-keysyms' 'hicolor-icon-theme' 'pixman' 'mesa'
-         'desktop-file-utils' 'udisks2' 'ttf-font' 'bluez-libs')
+         'desktop-file-utils' 'udisks2' 'ttf-font' 'bluez-libs' 'bluez4')
 optdepends=('connman: network module'
             'acpid: power events on laptop lid close'
             'gdb: create backtraces on crash')
