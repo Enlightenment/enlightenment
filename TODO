@@ -6,8 +6,6 @@
 
 * verify stacking (T1337)
 
-* background generation (T1327)
-
 * crashes
 	- T1330
 	- T1340
@@ -16,8 +14,6 @@
 
 * SAFELY, without rushing, merge+test wl branch
 	- possibly also D817
-
-* fix ibar theme issues (T1300)
 
 * fix nocomp issues when changing vdesk
 
