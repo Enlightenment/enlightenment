@@ -643,6 +643,7 @@ _e_comp_object_setup(E_Comp_Object *cw)
    evas_object_smart_member_add(cw->effect_obj, cw->smart_obj);
    e_theme_edje_object_set(cw->effect_obj, "base/theme/comp", "e/comp/effects/none");
    cw->shobj = edje_object_add(cw->comp->evas);
+   evas_object_data_set(cw->shobj, "comp_smart_obj", cw->smart_obj);
    edje_object_part_swallow(cw->effect_obj, "e.swallow.content", cw->shobj);
    edje_object_signal_callback_add(cw->shobj, "e,action,*,done", "e", _e_comp_object_done_defer, cw);
 
@@ -2470,7 +2471,13 @@ e_comp_object_frame_wh_unadjust(Evas_Object *obj, int w, int h, int *aw, int *ah
 EAPI E_Client *
 e_comp_object_client_get(Evas_Object *obj)
 {
+   Evas_Object *o;
+
    SOFT_ENTRY(NULL);
+   /* FIXME: remove this when eo is used */
+   o = evas_object_data_get(obj, "comp_smart_obj");
+   if (o)
+     return e_comp_object_client_get(o);
    return cw ? cw->ec : NULL;
 }
 
