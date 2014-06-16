@@ -2561,6 +2561,7 @@ e_client_desk_set(E_Client *ec, E_Desk *desk)
 
    e_remember_update(ec);
    _e_client_hook_call(E_CLIENT_HOOK_DESK_SET, ec);
+   evas_object_smart_callback_call(ec->frame, "desk_change", ec);
 }
 
 EAPI Eina_Bool
