@@ -22,7 +22,6 @@
 * fix nocomp issues when changing vdesk
 
 * major tiling issues
-	- T1310
 	- T952 (for internal dialogs at minimum)
 	- T974
 	- T1304

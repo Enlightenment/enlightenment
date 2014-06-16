@@ -1492,19 +1492,7 @@ _disable_desk(E_Desk *desk)
 static void
 _disable_all_tiling(void)
 {
-   const Eina_List *l, *ll;
-   E_Comp *comp;
-   E_Zone *zone;
-
    _foreach_desk(_disable_desk);
-
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     {
-        EINA_LIST_FOREACH(comp->zones, ll, zone)
-          {
-             e_place_zone_region_smart_cleanup(zone);
-          }
-     }
 }
 
 static void
