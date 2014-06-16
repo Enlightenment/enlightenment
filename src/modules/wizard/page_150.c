@@ -124,6 +124,7 @@ wizard_page_hide(E_Wizard_Page *pg __UNUSED__)
         conf->match.disable_borders =
         conf->match.disable_popups =
         conf->match.disable_menus =
+        conf->match.disable_objects =
         conf->match.disable_overrides = 1;
      }
 
