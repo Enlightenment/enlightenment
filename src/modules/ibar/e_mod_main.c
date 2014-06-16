@@ -1286,14 +1286,14 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    if (ec->sticky)
      {
         if (ec->zone != ic->ibar->inst->gcc->gadcon->zone)
-          edje_object_signal_emit(it, "e,state,otherscreen", "e");
+          edje_object_signal_emit(it, "e,state,other,screen", "e");
      }
    else
      {
         if (ec->zone != ic->ibar->inst->gcc->gadcon->zone)
-          edje_object_signal_emit(it, "e,state,otherscreen", "e");
+          edje_object_signal_emit(it, "e,state,other,screen", "e");
         else if (ec->desk != e_desk_current_get(ic->ibar->inst->gcc->gadcon->zone))
-          edje_object_signal_emit(it, "e,state,otherdesk", "e");
+          edje_object_signal_emit(it, "e,state,other,desk", "e");
      }
    edje_object_calc_force(it);
    edje_object_size_min_calc(it, &w, &h);
