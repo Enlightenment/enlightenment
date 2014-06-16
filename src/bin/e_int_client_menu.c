@@ -1017,7 +1017,10 @@ _e_client_menu_cb_sendto(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
    desk = data;
    ec = e_object_data_get(E_OBJECT(m));
    if ((ec) && (desk))
-     e_client_desk_set(ec, desk);
+     {
+        ec->hidden = 0;
+        e_client_desk_set(ec, desk);
+     }
 }
 
 static void
