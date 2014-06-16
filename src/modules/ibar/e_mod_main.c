@@ -1283,18 +1283,10 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    edje_object_part_text_set(it, "e.text.title", txt);
    if (ec->focused)
      edje_object_signal_emit(it, "e,state,focused", "e");
-   if (ec->sticky)
-     {
-        if (ec->zone != ic->ibar->inst->gcc->gadcon->zone)
-          edje_object_signal_emit(it, "e,state,other,screen", "e");
-     }
-   else
-     {
-        if (ec->zone != ic->ibar->inst->gcc->gadcon->zone)
-          edje_object_signal_emit(it, "e,state,other,screen", "e");
-        else if (ec->desk != e_desk_current_get(ic->ibar->inst->gcc->gadcon->zone))
-          edje_object_signal_emit(it, "e,state,other,desk", "e");
-     }
+   if (ec->sticky || (ec->zone != ic->ibar->inst->gcc->gadcon->zone))
+     edje_object_signal_emit(it, "e,state,other,screen", "e");
+   else if (!ec->desk->visible)
+     edje_object_signal_emit(it, "e,state,other,desk", "e");
    edje_object_calc_force(it);
    edje_object_size_min_calc(it, &w, &h);
    evas_object_size_hint_min_set(it, w, h);
