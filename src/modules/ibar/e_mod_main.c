@@ -1200,14 +1200,49 @@ _ibar_icon_menu_recalc(IBar_Icon *ic)
 }
 
 static void
-_ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_ibar_cb_icon_menu_focus_change(void *data, Evas_Object *obj, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   E_Client *ec;
+
+   ec = e_comp_object_client_get(obj);
+   if (ec->focused)
+     edje_object_signal_emit(data, "e,state,focused", "e");
+   else
+     edje_object_signal_emit(data, "e,state,unfocused", "e");
+}
+
+static void
+_ibar_cb_icon_menu_desk_change(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
+{
+   E_Client *ec = event_info;
+   IBar_Icon *ic;
+
+   ic = evas_object_data_get(data, "ibar_icon");
+
+   if (ec->sticky || (ec->zone != ic->ibar->inst->gcc->gadcon->zone))
+     edje_object_signal_emit(data, "e,state,other,screen", "e");
+   else if (!ec->desk->visible)
+     edje_object_signal_emit(data, "e,state,other,desk", "e");
+   else
+     edje_object_signal_emit(data, "e,state,other,none", "e");
+}
+
+static void
+_ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    int w, h;
+   E_Client *ec;
    IBar_Icon *ic = evas_object_data_del(data, "ibar_icon");
 
    if (!ic) return; //menu is closing
    if (!ic->menu) return; //who knows
    edje_object_part_box_remove(ic->menu->o_bg, "e.box", data);
+   ec = evas_object_data_get(obj, "E_Client");
+   if (ec)
+     {
+        e_comp_object_signal_callback_del_full(ec->frame, "e,state,*focused", "e", _ibar_cb_icon_menu_focus_change, data);
+        evas_object_smart_callback_del_full(ec->frame, "desk_change", _ibar_cb_icon_menu_desk_change, data);
+     }
    evas_object_del(data);
    if (eina_list_count(ic->exes) <= 1)
      {
@@ -1273,6 +1308,8 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    e_theme_edje_object_set(it, "base/theme/modules/ibar",
                            "e/modules/ibar/menu/item");
    img = e_comp_object_util_mirror_add(ec->frame);
+   e_comp_object_signal_callback_add(ec->frame, "e,state,*focused", "e", _ibar_cb_icon_menu_focus_change, it);
+   evas_object_smart_callback_add(ec->frame, "desk_change", _ibar_cb_icon_menu_desk_change, it);
    evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
                                   _ibar_cb_icon_menu_img_del, it);
    txt = e_client_util_name_get(ec);
