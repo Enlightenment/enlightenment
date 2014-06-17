@@ -13,6 +13,17 @@ static Eina_Hash *clients_win_hash = NULL;
 static Ecore_Idle_Enterer *_client_idler = NULL;
 static Eina_List *_idle_clients = NULL;
 
+static void 
+_e_comp_wl_focus_check(E_Comp *comp)
+{
+   E_Client *ec;
+
+   if (stopping) return;
+   ec = e_client_focused_get();
+   if ((!ec) || (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL))
+     e_grabinput_focus(comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+}
+
 static void
 _e_comp_wl_client_event_free(void *d EINA_UNUSED, void *event)
 {
@@ -1495,6 +1506,7 @@ static void
 _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec;
+   E_Comp *comp;
 
    DBG("COMP_WL: Evas Del Request");
 
@@ -1517,39 +1529,48 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
     * 
     */
 
-
-   /* e_comp_ignore_win_del(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ec->pixmap)); */
-   /* if (ec->wl_comp_data) */
-   /*   { */
-   /*      if (ec->wl_comp_data->reparented) */
-   /*        e_client_comp_hidden_set(ec, EINA_TRUE); */
-   /*   } */
-
-   /* evas_object_pass_events_set(ec->frame, EINA_TRUE); */
-   /* if (ec->visible) evas_object_hide(ec->frame); */
-   /* e_object_del(E_OBJECT(ec)); */
-
-   /* TODO: Delete request send ?? */
-#warning TODO Need to implement delete request ?
-}
-
-static void 
-_e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   E_Client *ec;
-
-   if (!(ec = data)) return;
-   if (ec->netwm.ping) e_client_ping(ec);
+   comp = ec->comp;
 
    e_comp_ignore_win_del(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ec->pixmap));
    if (ec->wl_comp_data)
      {
         if (ec->wl_comp_data->reparented)
           e_client_comp_hidden_set(ec, EINA_TRUE);
-        evas_object_pass_events_set(ec->frame, EINA_TRUE);
-        evas_object_hide(ec->frame);
-        e_object_del(E_OBJECT(ec));
      }
+
+   evas_object_pass_events_set(ec->frame, EINA_TRUE);
+   if (ec->visible) evas_object_hide(ec->frame);
+   if (!ec->internal) e_object_del(E_OBJECT(ec));
+
+   _e_comp_wl_focus_check(comp);
+
+   /* TODO: Delete request send ??
+    * NB: No such animal wrt wayland */
+}
+
+static void 
+_e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec;
+   E_Comp *comp;
+
+   if (!(ec = data)) return;
+   /* if (ec->netwm.ping) e_client_ping(ec); */
+
+   comp = ec->comp;
+
+   e_comp_ignore_win_del(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ec->pixmap));
+   if (ec->wl_comp_data)
+     {
+        if (ec->wl_comp_data->reparented)
+          e_client_comp_hidden_set(ec, EINA_TRUE);
+     }
+
+   evas_object_pass_events_set(ec->frame, EINA_TRUE);
+   if (ec->visible) evas_object_hide(ec->frame);
+   if (!ec->internal) e_object_del(E_OBJECT(ec));
+
+   _e_comp_wl_focus_check(comp);
 }
 
 static void 
@@ -2188,21 +2209,40 @@ _e_comp_wl_cb_hook_client_focus_set(void *data EINA_UNUSED, E_Client *ec)
 {
    if ((!ec) || (!ec->wl_comp_data)) return;
 
-   E_COMP_WL_PIXMAP_CHECK;
-
-   /* FIXME: We cannot use e_grabinput_focus calls here */
+//   E_COMP_WL_PIXMAP_CHECK;
 
    if (ec->wl_comp_data->shell.activate)
      {
         if (ec->wl_comp_data->shell.surface)
           ec->wl_comp_data->shell.activate(ec->wl_comp_data->shell.surface);
      }
+
+   /* FIXME: This seems COMPLETELY wrong !! (taken from e_comp_x)
+    * 
+    * We are getting focus on the client, WHY ON EARTH would we want to focus 
+    * the compositor window Even IF the client pixmap is not Wl ?? */
+
+   /* if ((e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL)) */
+   /*   { */
+   /*      e_grabinput_focus(ec->comp->ee_win, E_FOCUS_METHOD_PASSIVE); */
+   /*      return; */
+   /*   } */
+
+   if ((ec->icccm.take_focus) && (ec->icccm.accepts_focus))
+     e_grabinput_focus(e_client_util_win_get(ec), 
+                       E_FOCUS_METHOD_LOCALLY_ACTIVE);
+   else if (!ec->icccm.accepts_focus)
+     e_grabinput_focus(e_client_util_win_get(ec), 
+                       E_FOCUS_METHOD_GLOBALLY_ACTIVE);
+   else if (!ec->icccm.take_focus)
+     e_grabinput_focus(e_client_util_win_get(ec), E_FOCUS_METHOD_PASSIVE);
 }
 
 static void 
 _e_comp_wl_cb_hook_client_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 {
    if ((!ec) || (!ec->wl_comp_data)) return;
+
    E_COMP_WL_PIXMAP_CHECK;
 
    if (ec->wl_comp_data->shell.deactivate)
@@ -2210,6 +2250,8 @@ _e_comp_wl_cb_hook_client_focus_unset(void *data EINA_UNUSED, E_Client *ec)
         if (ec->wl_comp_data->shell.surface)
           ec->wl_comp_data->shell.deactivate(ec->wl_comp_data->shell.surface);
      }
+
+   _e_comp_wl_focus_check(ec->comp);
 }
 
 EAPI Eina_Bool 
