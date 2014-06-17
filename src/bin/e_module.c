@@ -891,7 +891,6 @@ _e_module_whitelist_check(void)
       "conf_randr",
       "conf_shelves",
       "conf_theme",
-      "conf_wallpaper2",
       "conf_window_manipulation",
       "conf_window_remembers",
       "connman",

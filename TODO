@@ -10,8 +10,6 @@
 	- T1330
 	- T1340
 
-* split wp2 module to separate repo
-
 * SAFELY, without rushing, merge+test wl branch
 	- possibly also D817
 
