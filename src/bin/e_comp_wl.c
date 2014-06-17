@@ -14,6 +14,16 @@ static Ecore_Idle_Enterer *_client_idler = NULL;
 static Eina_List *_idle_clients = NULL;
 
 static void 
+_e_comp_wl_focus_down_set(E_Client *ec)
+{
+   Ecore_Window win = 0;
+
+   win = e_client_util_pwin_get(ec);
+   e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
+   e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
+}
+
+static void 
 _e_comp_wl_focus_check(E_Comp *comp)
 {
    E_Client *ec;
@@ -1782,15 +1792,7 @@ _e_comp_wl_cb_hook_client_del(void *data EINA_UNUSED, E_Client *ec)
    E_COMP_WL_PIXMAP_CHECK;
 
    if ((!ec->already_unparented) && (ec->wl_comp_data->reparented))
-     {
-        e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, 
-                                e_client_util_pwin_get(ec));
-        e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, 
-                                e_client_util_pwin_get(ec));
-
-        /* TODO: focus setdown */
-#warning TODO Need to implement focus setdown
-     }
+     _e_comp_wl_focus_down_set(ec);
 
    ec->already_unparented = EINA_TRUE;
    win = e_pixmap_window_get(ec->pixmap);
@@ -1821,7 +1823,7 @@ _e_comp_wl_cb_hook_client_del(void *data EINA_UNUSED, E_Client *ec)
    E_FREE(ec->wl_comp_data);
    ec->wl_comp_data = NULL;
 
-   /* TODO: comp focus check */
+   _e_comp_wl_focus_check(ec->comp);
 }
 
 static void 
