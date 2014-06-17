@@ -353,10 +353,11 @@ e_comp_wl_input_shutdown(E_Comp_Wl_Data *cdata)
 
    /* TODO: destroy touch resources */
 
-   /* TODO: destroy cdata->kbd.keys array */
+   /* destroy cdata->kbd.keys array */
+   wl_array_release(&cdata->kbd.keys);
 
    /* destroy the global seat resource */
-   /* if (cdata->seat.global) wl_global_destroy(cdata->seat.global); */
+   if (cdata->seat.global) wl_global_destroy(cdata->seat.global);
    cdata->seat.global = NULL;
 }
 
