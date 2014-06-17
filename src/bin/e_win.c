@@ -1,5 +1,5 @@
 #include "e.h"
-#ifdef HAVE_WAYLAND_CLIENTS
+#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
 # include "e_comp_wl.h"
 #endif
 
@@ -79,13 +79,14 @@ _elm_win_trap_show(void *data, Evas_Object *o)
         E_Client *ec;
         Ecore_Window win;
 
-#ifndef HAVE_WAYLAND_ONLY
-        win = elm_win_xwindow_get(o);
-        ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, win);
-#else
+#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
         win = elm_win_window_id_get(o);
         ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, win);
+#else
+        win = elm_win_xwindow_get(o);
+        ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, win);
 #endif
+
         Evas *e = evas_object_evas_get(o);
         Ecore_Evas *ee = ecore_evas_ecore_evas_get(e);
 
@@ -98,10 +99,10 @@ _elm_win_trap_show(void *data, Evas_Object *o)
              E_Pixmap *cp;
              E_Comp *c = NULL;
 
-#ifndef HAVE_WAYLAND_ONLY
-             cp = e_pixmap_new(E_PIXMAP_TYPE_X, win);
-#else
+#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
              cp = e_pixmap_new(E_PIXMAP_TYPE_WL, win);
+#else
+             cp = e_pixmap_new(E_PIXMAP_TYPE_X, win);
 #endif
              EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_TRUE);
 
@@ -366,7 +367,7 @@ e_win_show(E_Win *win)
    ecore_evas_show(win->ecore_evas);
    if (!win->client)
      {
-#ifdef HAVE_WAYLAND_CLIENTS
+#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
         if (!strncmp(ecore_evas_engine_name_get(win->ecore_evas), "wayland", 7))
           {
              Ecore_Wl_Window *wl_win;
@@ -835,4 +836,3 @@ _e_win_cb_state(Ecore_Evas *ee)
    EC_CHANGED(win->client);
    win->client->changes.size = 1;
 }
-
