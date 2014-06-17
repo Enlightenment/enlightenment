@@ -1656,13 +1656,13 @@ _e_comp_wl_client_new_helper(E_Client *ec)
         return EINA_FALSE;
      }
 
-   /* if ((!e_client_util_ignored_get(ec)) &&  */
-   /*     (!ec->internal) && (!ec->internal_ecore_evas)) */
-   /*   { */
-   /*      ec->wl_comp_data->need_reparent = EINA_TRUE; */
-   /*      EC_CHANGED(ec); */
-   /*      ec->take_focus = !starting; */
-   /*   } */
+   if ((!e_client_util_ignored_get(ec)) && 
+       (!ec->internal) && (!ec->internal_ecore_evas))
+     {
+        ec->wl_comp_data->need_reparent = EINA_TRUE;
+        EC_CHANGED(ec);
+        ec->take_focus = !starting;
+     }
    ec->new_client ^= ec->override;
 
    if (e_pixmap_size_changed(ec->pixmap, ec->client.w, ec->client.h))
@@ -1762,6 +1762,11 @@ _e_comp_wl_cb_hook_client_del(void *data EINA_UNUSED, E_Client *ec)
 
    if ((!ec->already_unparented) && (ec->wl_comp_data->reparented))
      {
+        e_bindings_mouse_ungrab(E_BINDING_CONTEXT_WINDOW, 
+                                e_client_util_pwin_get(ec));
+        e_bindings_wheel_ungrab(E_BINDING_CONTEXT_WINDOW, 
+                                e_client_util_pwin_get(ec));
+
         /* TODO: focus setdown */
 #warning TODO Need to implement focus setdown
      }
