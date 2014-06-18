@@ -1858,8 +1858,6 @@ _e_comp_wl_cb_hook_client_new(void *data EINA_UNUSED, E_Client *ec)
    ec->wl_comp_data->mapped = EINA_FALSE;
    ec->wl_comp_data->set_win_type = EINA_TRUE;
    ec->netwm.type = E_WINDOW_TYPE_UNKNOWN;
-   /* ec->shaped = EINA_TRUE; */
-   /* ec->shaped_input = EINA_TRUE; */
    ec->changes.shape = EINA_TRUE;
    ec->changes.shape_input = EINA_TRUE;
 
@@ -1942,7 +1940,23 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
           }
         else if (ec->internal)
           {
-             /* TODO: transient set */
+             Ecore_Wl_Window *wwin;
+
+             DBG("CLIENT EVAL INTERNAL WINDOW");
+
+             /* FIXME: BORDERLESS INTERNAL OVERRIDE WINDOWS
+              * 
+              * ie: logout window */
+             wwin = ecore_evas_wayland_window_get(ec->internal_ecore_evas);
+             if (ec->dialog)
+               {
+                  Ecore_Wl_Window *pwin;
+
+                  pwin = ecore_evas_wayland_window_get(ec->comp->ee);
+                  ecore_wl_window_parent_set(wwin, pwin);
+               }
+             else
+               ecore_wl_window_parent_set(wwin, NULL);
           }
 
         ev = E_NEW(E_Event_Client_Property, 1);
@@ -2097,6 +2111,58 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
         ec->netwm.update.state = EINA_FALSE;
      }
 
+   if (ec->icccm.fetch.transient_for)
+     {
+        E_Client *pc = NULL;
+
+        WRN("Fetch Transient For !");
+
+        if (ec->icccm.transient_for)
+          {
+             pc = eina_hash_find(clients_win_hash, &ec->icccm.transient_for);
+             if ((pc) && (e_object_is_del(E_OBJECT(pc)))) pc = NULL;
+          }
+
+        /* If we already have a parent, remove it */
+        if (ec->parent)
+          {
+             if (pc != ec->parent)
+               {
+                  ec->parent->transients = 
+                    eina_list_remove(ec->parent->transients, ec);
+                  if (ec->parent->modal == ec) ec->parent->modal = NULL;
+                  ec->parent = NULL;
+               }
+             else
+               pc = NULL;
+          }
+
+        if ((pc) && (pc != ec) &&
+            (eina_list_data_find(ec->transients, pc) != pc))
+          {
+             pc->transients = eina_list_append(pc->transients, ec);
+             ec->parent = pc;
+          }
+
+        if (ec->parent)
+          {
+             evas_object_layer_set(ec->frame, ec->parent->layer);
+             if (ec->netwm.state.modal)
+               {
+                  ec->parent->modal = ec;
+                  ec->parent->lock_close = EINA_TRUE;
+               }
+
+             if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
+                 (ec->parent->focused && 
+                     (e_config->focus_setting == 
+                         E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
+               ec->take_focus = EINA_TRUE;
+          }
+
+        ec->icccm.fetch.transient_for = EINA_FALSE;
+     }
+
    ec->changes.prop = EINA_FALSE;
    if (!ec->wl_comp_data->reparented) ec->changes.border = EINA_FALSE;
    if (ec->changes.icon)
@@ -2136,17 +2202,35 @@ _e_comp_wl_cb_hook_client_pre_frame(void *data EINA_UNUSED, E_Client *ec)
 
    if (ec->visible)
      {
-        /* FIXME: Other window types */
-        if ((ec->wl_comp_data->set_win_type) && (ec->internal_ecore_evas))
+        if (ec->wl_comp_data->set_win_type)
           {
-             E_Win *ewin;
+             int type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
 
-             if ((ewin = ecore_evas_data_get(ec->internal_ecore_evas, "E_Win")))
+             if (ec->internal_ecore_evas)
                {
-                  Ecore_Wl_Window *wwin;
+                  switch (ec->netwm.type)
+                    {
+                     case E_WINDOW_TYPE_DIALOG:
+                       type = ECORE_WL_WINDOW_TYPE_TRANSIENT;
+                       break;
+                     case E_WINDOW_TYPE_DESKTOP:
+                       type = ECORE_WL_WINDOW_TYPE_FULLSCREEN;
+                       break;
+                     case E_WINDOW_TYPE_DND:
+                       type = ECORE_WL_WINDOW_TYPE_DND;
+                       break;
+                     case E_WINDOW_TYPE_MENU:
+                     case E_WINDOW_TYPE_DROPDOWN_MENU:
+                     case E_WINDOW_TYPE_POPUP_MENU:
+                       type = ECORE_WL_WINDOW_TYPE_MENU;
+                       break;
+                     case E_WINDOW_TYPE_NORMAL:
+                     default:
+                         break;
+                    }
 
-                  wwin = ecore_evas_wayland_window_get(ec->internal_ecore_evas);
-                  ecore_wl_window_type_set(wwin, ECORE_WL_WINDOW_TYPE_TOPLEVEL);
+                  if (ec->dialog) type = ECORE_WL_WINDOW_TYPE_TRANSIENT;
+                  ecore_evas_wayland_type_set(ec->internal_ecore_evas, type);
                }
 
              ec->wl_comp_data->set_win_type = EINA_FALSE;
@@ -2186,6 +2270,41 @@ _e_comp_wl_cb_hook_client_post_new(void *data EINA_UNUSED, E_Client *ec)
    E_COMP_WL_PIXMAP_CHECK;
 
    if (ec->need_shape_merge) ec->need_shape_merge = EINA_FALSE;
+
+   if (ec->changes.internal_state)
+     {
+        E_Win *win;
+
+        if ((win = ecore_evas_data_get(ec->internal_ecore_evas, "E_Win")))
+          {
+             if (win->state.centered)
+               {
+                  WRN("FIXME: Center Window");
+               }
+          }
+
+        ec->changes.internal_state = EINA_FALSE;
+     }
+
+   if (ec->changes.internal_props)
+     {
+        E_Win *win;
+
+        if ((win = ecore_evas_data_get(ec->internal_ecore_evas, "E_Win")))
+          {
+             ecore_evas_size_min_set(ec->internal_ecore_evas, 
+                                     win->min_w, win->min_h);
+             ecore_evas_size_max_set(ec->internal_ecore_evas, 
+                                     win->max_w, win->max_h);
+             ecore_evas_size_base_set(ec->internal_ecore_evas, 
+                                      win->base_w, win->base_h);
+             ecore_evas_size_step_set(ec->internal_ecore_evas, 
+                                      win->step_x, win->step_y);
+             /* TODO: handle aspect */
+
+             ec->changes.internal_props = EINA_FALSE;
+          }
+     }
 
    if (ec->need_shape_export) 
      {
