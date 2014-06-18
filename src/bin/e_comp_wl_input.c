@@ -100,7 +100,6 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
 {
    E_Comp_Wl_Data *cdata;
    struct wl_resource *res;
-   /* uint32_t serial; */
 
    /* get compositor data */
    if (!(cdata = wl_resource_get_user_data(resource))) return;
@@ -122,13 +121,6 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
    /* send current keymap */
    wl_keyboard_send_keymap(res, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1, 
                            cdata->xkb.fd, cdata->xkb.size);
-
-   /* FIXME: Should only need todo this if This client is focused */
-   /* send modifiers */
-   /* serial = wl_display_get_serial(cdata->wl.disp); */
-   /* wl_keyboard_send_modifiers(res, serial, cdata->kbd.mods_depressed,  */
-   /*                            cdata->kbd.mods_latched, cdata->kbd.mods_locked,  */
-   /*                            cdata->kbd.mod_group); */
 }
 
 static void 
