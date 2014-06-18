@@ -336,7 +336,10 @@ e_int_config_theme_update(E_Config_Dialog *dia, char *file)
    eina_stringshare_replace(&cfdata->theme, file);
 
    if (cfdata->o_fm)
-     e_widget_flist_path_set(cfdata->o_fm, elm_theme_user_dir_get(), "/");
+     {
+        ecore_file_mkpath(elm_theme_user_dir_get());
+        e_widget_flist_path_set(cfdata->o_fm, elm_theme_user_dir_get(), "/");
+     }
 
    if (cfdata->o_preview)
      _e_int_theme_preview_set(cfdata->o_preview, cfdata->theme);
@@ -459,7 +462,10 @@ _cb_dir(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (cfdata->fmdir == 1)
      snprintf(path, sizeof(path), "%s", elm_theme_system_dir_get());
    else
-     snprintf(path, sizeof(path), "%s", elm_theme_user_dir_get());
+     {
+        snprintf(path, sizeof(path), "%s", elm_theme_user_dir_get());
+        ecore_file_mkpath(path);
+     }
    e_widget_flist_path_set(cfdata->o_fm, path, "/");
 }
 
@@ -674,7 +680,10 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    if (cfdata->fmdir == 1)
      snprintf(path, sizeof(path), "%s", elm_theme_system_dir_get());
    else
-     snprintf(path, sizeof(path), "%s", elm_theme_user_dir_get());
+     {
+        snprintf(path, sizeof(path), "%s", elm_theme_user_dir_get());
+        ecore_file_mkpath(path);
+     }
 
    o = e_widget_flist_add(evas);
    cfdata->o_fm = o;
