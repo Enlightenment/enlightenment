@@ -201,7 +201,7 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
    ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
-   ec->wl_comp_data->set_win_type = EINA_FALSE;
+   ec->wl_comp_data->set_win_type = EINA_TRUE;
    if ((!ec->lock_user_maximize) && (ec->maximized))
      e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
    if ((!ec->lock_user_fullscreen) && (ec->fullscreen))
@@ -210,9 +210,36 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
 }
 
 static void 
-_e_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *parent_resource EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED, uint32_t flags EINA_UNUSED)
+_e_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED, uint32_t flags EINA_UNUSED)
 {
-   DBG("SHELL: Surface Transient Set");
+   E_Client *ec;
+   Ecore_Window pwin = 0;
+
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
+                               "No Client For Shell Surface");
+        return;
+     }
+
+   if (parent_resource)
+     {
+        E_Pixmap *pp = NULL;
+
+        if (!(pp = wl_resource_get_user_data(parent_resource)))
+          {
+             wl_resource_post_error(parent_resource, 
+                                    WL_DISPLAY_ERROR_INVALID_OBJECT,
+                                    "No Pixmap For Parent Resource");
+             return;
+          }
+
+        pwin = e_pixmap_window_get(pp);
+     }
+
+   ec->icccm.fetch.transient_for = EINA_TRUE;
+   ec->icccm.transient_for = pwin;
+   EC_CHANGED(ec);
 }
 
 static void 
@@ -528,8 +555,7 @@ _e_xdg_shell_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_
 static void 
 _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource)
 {
-   E_Client *ec, *pc = NULL;
-   E_Pixmap *pp = NULL;
+   E_Client *ec;
    Ecore_Window pwin = 0;
 
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -541,58 +567,21 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
 
    if (parent_resource)
      {
-        pp = wl_resource_get_user_data(parent_resource);
-        if (!(pc = e_pixmap_client_get(pp)))
-          pc = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(pp));
-        if (!pc)
+        E_Pixmap *pp = NULL;
+
+        if (!(pp = wl_resource_get_user_data(parent_resource)))
           {
              wl_resource_post_error(parent_resource, 
                                     WL_DISPLAY_ERROR_INVALID_OBJECT,
-                                    "No Client For Shell Surface");
+                                    "No Pixmap For Parent Resource");
              return;
           }
+
         pwin = e_pixmap_window_get(pp);
      }
 
+   ec->icccm.fetch.transient_for = EINA_TRUE;
    ec->icccm.transient_for = pwin;
-
-   /* If we already have a parent, remove it */
-   if (ec->parent)
-     {
-        if (pc != ec->parent)
-          {
-             ec->parent->transients = 
-               eina_list_remove(ec->parent->transients, ec);
-             if (ec->parent->modal == ec) ec->parent->modal = NULL;
-             ec->parent = NULL;
-          }
-        else
-          pc = NULL;
-     }
-
-   if ((pc) && (pc != ec) &&
-       (eina_list_data_find(ec->transients, pc) != pc))
-     {
-        pc->transients = eina_list_append(pc->transients, ec);
-        ec->parent = pc;
-     }
-
-   if (ec->parent)
-     {
-        evas_object_layer_set(ec->frame, ec->parent->layer);
-        if (ec->netwm.state.modal)
-          {
-             ec->parent->modal = ec;
-             ec->parent->lock_close = 1;
-          }
-
-        if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
-            (ec->parent->focused && 
-                (e_config->focus_setting == 
-                    E_FOCUS_NEW_DIALOG_IF_OWNER_FOCUSED)))
-          ec->take_focus = 1;
-     }
-
    EC_CHANGED(ec);
 }
 
@@ -1168,7 +1157,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_NORMAL;
-   ec->wl_comp_data->set_win_type = EINA_FALSE;
+   ec->wl_comp_data->set_win_type = EINA_TRUE;
    EC_CHANGED(ec);
 }
 
@@ -1325,7 +1314,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    ec->border.changed = ec->changes.border = !ec->borderless;
    ec->changes.icon = !!ec->icccm.class;
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
-   ec->wl_comp_data->set_win_type = EINA_FALSE;
+   ec->wl_comp_data->set_win_type = EINA_TRUE;
    ec->layer = E_LAYER_CLIENT_POPUP;
    EC_CHANGED(ec);
 
