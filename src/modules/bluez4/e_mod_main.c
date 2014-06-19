@@ -427,8 +427,6 @@ _ebluez4_menu_new(Instance *inst)
 {
    E_Menu *m;
    E_Menu_Item *mi;
-   E_Zone *zone;
-   int x, y;
 
    m = e_menu_new();
    e_menu_post_deactivate_callback_set(m, _menu_post_deactivate, inst);
@@ -448,10 +446,6 @@ _ebluez4_menu_new(Instance *inst)
    mi = e_menu_item_new(m);
    e_menu_item_label_set(mi, _("Adapter Settings"));
    e_menu_item_callback_set(mi, _ebluez4_cb_adap_list, inst);
-
-   ecore_evas_pointer_xy_get(e_comp_get(inst->gcc)->ee, &x, &y);
-   zone = e_comp_zone_xy_get(e_comp_get(inst->gcc), x, y);
-   e_menu_activate_mouse(m, zone, x, y, 1, 1, E_MENU_POP_DIRECTION_DOWN, 0);
 }
 
 static void
@@ -460,12 +454,22 @@ _ebluez4_cb_mouse_down(void *data, Evas *evas EINA_UNUSED,
 {
    Instance *inst = NULL;
    Evas_Event_Mouse_Down *ev = event;
+   int x, y;
 
    if (!(inst = data)) return;
    if (ev->button != 1) return;
    if (!ctxt->adap_obj) return;
 
    _ebluez4_menu_new(inst);
+
+   e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &x, &y, NULL, NULL);
+   e_menu_activate_mouse(inst->menu, 
+                         e_util_zone_current_get(e_manager_current_get()), 
+                         x + ev->output.x, y + ev->output.y, 1, 1, 
+                         E_MENU_POP_DIRECTION_AUTO, ev->timestamp);
+   evas_event_feed_mouse_up(inst->gcc->gadcon->evas, ev->button, 
+                            EVAS_BUTTON_NONE, ev->timestamp, NULL);
+
    e_gadcon_locked_set(inst->gcc->gadcon, 1);
 }
 
