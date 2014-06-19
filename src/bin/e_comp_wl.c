@@ -49,7 +49,10 @@ _e_comp_wl_buffer_pending_cb_destroy(struct wl_listener *listener, void *data EI
 {
    E_Comp_Wl_Client_Data *cd;
 
-   cd = container_of(listener, E_Comp_Wl_Client_Data, pending.buffer_destroy);
+   if (!(cd = container_of(listener, E_Comp_Wl_Client_Data, 
+                           pending.buffer_destroy)))
+     return;
+
    cd->pending.buffer = NULL;
 }
 
@@ -58,7 +61,9 @@ _e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSE
 {
    E_Comp_Wl_Buffer *buffer;
 
-   buffer = container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
+   if (!(buffer = container_of(listener, E_Comp_Wl_Buffer, destroy_listener)))
+     return;
+
    wl_signal_emit(&buffer->destroy_signal, buffer);
    free(buffer);
 }
@@ -130,7 +135,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
 {
    E_Pixmap *cp;
    E_Client *ec;
-   E_Comp_Wl_Buffer *buffer;
+   E_Comp_Wl_Buffer *buffer = NULL;
 
    if (!(cp = wl_resource_get_user_data(resource))) return;
 
@@ -1083,8 +1088,7 @@ _e_comp_wl_client_priority_normal(E_Client *ec)
 {
    if (ec->netwm.pid <= 0) return;
    if (ec->netwm.pid == getpid()) return;
-   _e_comp_wl_client_priority_adjust(ec->netwm.pid, 
-                                     e_config->priority, 1, 
+   _e_comp_wl_client_priority_adjust(ec->netwm.pid, e_config->priority, 1, 
                                      EINA_FALSE, EINA_TRUE, EINA_FALSE);
 }
 
@@ -1834,7 +1838,7 @@ _e_comp_wl_cb_hook_client_new(void *data EINA_UNUSED, E_Client *ec)
    win = e_pixmap_window_get(ec->pixmap);
    ec->ignored = e_comp_ignore_win_find(win);
 
-   /* NB: could not find a better place todo this, BUT for internal windows, 
+   /* NB: could not find a better place to do this, BUT for internal windows, 
     * we need to set delete_request else the close buttons on the frames do 
     * basically nothing */
    if (ec->internal) ec->icccm.delete_request = EINA_TRUE;

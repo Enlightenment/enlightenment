@@ -38,17 +38,17 @@ struct _Setting
    const char    *name;
 
    struct
-   {
+     {
       const char *value;
-   } s;
+     } s;
    struct
-   {
+     {
       int value;
-   } i;
+     } i;
    struct
-   {
+     {
       unsigned short red, green, blue, alpha;
-   } c;
+     } c;
 
    unsigned long length;
    unsigned long last_change;
@@ -78,6 +78,7 @@ static Ecore_X_Atom
 _e_xsettings_atom_screen_get(int screen_num)
 {
    char buf[32];
+
    snprintf(buf, sizeof(buf), "_XSETTINGS_S%d", screen_num);
    return ecore_x_atom_get(buf);
 }
@@ -90,7 +91,8 @@ _e_xsettings_selection_owner_set(Settings_Manager *sm)
    Eina_Bool ret;
 
    atom = _e_xsettings_atom_screen_get(sm->man->num);
-   ecore_x_selection_owner_set(sm->man->comp->cm_selection, atom, ecore_x_current_time_get());
+   ecore_x_selection_owner_set(sm->man->comp->cm_selection, atom, 
+                               ecore_x_current_time_get());
    ecore_x_sync();
    cur_selection = ecore_x_selection_owner_get(atom);
 
@@ -164,7 +166,7 @@ _e_xsettings_retry(Settings_Manager *sm)
 {
    if (sm->timer_retry) return;
    sm->timer_retry = ecore_timer_add
-       (RETRY_TIMEOUT, _e_xsettings_activate_retry, sm);
+     (RETRY_TIMEOUT, _e_xsettings_activate_retry, sm);
 }
 
 static void
@@ -378,7 +380,8 @@ _e_xsettings_gtk_icon_update(void)
    EINA_LIST_FOREACH(e_comp_list(), l, c)
      EINA_LIST_FOREACH(c->clients, ll, ec)
        if (ec->icccm.state)
-         ecore_x_client_message8_send(e_client_util_win_get(ec), _atom_gtk_iconthemes, NULL, 0);
+         ecore_x_client_message8_send(e_client_util_win_get(ec), 
+                                      _atom_gtk_iconthemes, NULL, 0);
 }
 
 static void
@@ -391,7 +394,8 @@ _e_xsettings_gtk_rcfiles_update(void)
    EINA_LIST_FOREACH(e_comp_list(), l, c)
      EINA_LIST_FOREACH(c->clients, ll, ec)
        if (ec->icccm.state)
-         ecore_x_client_message8_send(e_client_util_win_get(ec), _atom_gtk_rcfiles, NULL, 0);
+         ecore_x_client_message8_send(e_client_util_win_get(ec), 
+                                      _atom_gtk_rcfiles, NULL, 0);
 }
 
 static void
@@ -427,8 +431,10 @@ _e_xsettings_error_cb(void *data, Eio_File *handler __UNUSED__, int error __UNUS
         reset = EINA_FALSE;
         if (l)
           {
-             snprintf(buf, sizeof(buf), "%s/themes/%s", (char *)eina_list_data_get(l), _setting_theme);
-             eio_op = eio_file_direct_stat(buf, _e_xsettings_done_cb, _e_xsettings_error_cb, l);
+             snprintf(buf, sizeof(buf), "%s/themes/%s", 
+                      (char *)eina_list_data_get(l), _setting_theme);
+             eio_op = eio_file_direct_stat(buf, _e_xsettings_done_cb, 
+                                           _e_xsettings_error_cb, l);
              return;
           }
      }
@@ -437,7 +443,8 @@ _e_xsettings_error_cb(void *data, Eio_File *handler __UNUSED__, int error __UNUS
    _setting_theme = NULL;
 
    if (e_config->xsettings.net_theme_name)
-     _e_xsettings_string_set(_setting_theme_name, e_config->xsettings.net_theme_name);
+     _e_xsettings_string_set(_setting_theme_name, 
+                             e_config->xsettings.net_theme_name);
    else
      _e_xsettings_string_set(_setting_theme_name, NULL);
    _e_xsettings_update();
@@ -473,8 +480,10 @@ _e_xsettings_theme_set(void)
                {
                   char buf[PATH_MAX];
 
-                  e_user_homedir_snprintf(buf, sizeof(buf), ".themes/%s", _setting_theme);
-                  eio_op = eio_file_direct_stat(buf, _e_xsettings_done_cb, _e_xsettings_error_cb, NULL);
+                  e_user_homedir_snprintf(buf, sizeof(buf), 
+                                          ".themes/%s", _setting_theme);
+                  eio_op = eio_file_direct_stat(buf, _e_xsettings_done_cb, 
+                                                _e_xsettings_error_cb, NULL);
                   setting = EINA_TRUE;
                   return;
                }
@@ -525,7 +534,8 @@ _e_xsettings_font_set(void)
                   eina_strbuf_append_char(buf, ' ');
                }
              eina_strbuf_append(buf, size_buf);
-             _e_xsettings_string_set(_setting_font_name, eina_strbuf_string_get(buf));
+             _e_xsettings_string_set(_setting_font_name, 
+                                     eina_strbuf_string_get(buf));
              eina_strbuf_free(buf);
              e_font_properties_free(efp);
              return;
@@ -542,7 +552,8 @@ static void
 _e_xsettings_xft_set(void)
 {
    if (e_config->scale.use_dpi)
-     _e_xsettings_int_set(_setting_xft_dpi, e_config->scale.base_dpi, EINA_TRUE);
+     _e_xsettings_int_set(_setting_xft_dpi, 
+                          e_config->scale.base_dpi, EINA_TRUE);
    else
      _e_xsettings_int_set(_setting_xft_dpi, 0, EINA_FALSE);
 }

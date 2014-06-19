@@ -2193,8 +2193,7 @@ _e_client_frame_update(E_Client *ec)
      bordername = ec->bordername;
    else if (ec->mwm.borderless)
      bordername = "borderless";
-   else if (((ec->icccm.transient_for != 0) ||
-             (ec->dialog)) &&
+   else if (((ec->icccm.transient_for != 0) || (ec->dialog)) &&
             (ec->icccm.min_w == ec->icccm.max_w) &&
             (ec->icccm.min_h == ec->icccm.max_h))
      bordername = "noresize_dialog";
@@ -2209,8 +2208,8 @@ _e_client_frame_update(E_Client *ec)
      bordername = "nofocus";
    else if (ec->urgent)
      bordername = "urgent";
-   else if ((ec->icccm.transient_for != 0) ||
-            (ec->dialog))
+   else if (((ec->icccm.transient_for != 0) || (ec->dialog)) && 
+            (e_pixmap_is_x(ec->pixmap)))
      bordername = "dialog";
    else if (ec->netwm.state.modal)
      bordername = "modal";

@@ -215,8 +215,7 @@ _e_pointer_stack_free(E_Pointer_Stack *elem)
 }
 
 static void
-_e_pointer_type_set(E_Pointer *p,
-                    const char *type)
+_e_pointer_type_set(E_Pointer *p, const char *type)
 {
    if (!p) return;
 
@@ -551,8 +550,7 @@ e_pointer_shutdown(void)
 }
 
 EAPI E_Pointer *
-e_pointer_window_new(Ecore_Window win,
-                     int filled)
+e_pointer_window_new(Ecore_Window win, int filled)
 {
    E_Pointer *p = NULL;
 
@@ -733,9 +731,7 @@ e_pointer_hide(E_Pointer *p)
 }
 
 EAPI void
-e_pointer_type_push(E_Pointer *p,
-                    void *obj,
-                    const char *type)
+e_pointer_type_push(E_Pointer *p, void *obj, const char *type)
 {
    E_Pointer_Stack *stack;
 
@@ -764,9 +760,7 @@ e_pointer_type_push(E_Pointer *p,
 }
 
 EAPI void
-e_pointer_type_pop(E_Pointer *p,
-                   void *obj,
-                   const char *type)
+e_pointer_type_pop(E_Pointer *p, void *obj, const char *type)
 {
    Eina_List *l, *l_next;
    E_Pointer_Stack *stack;
