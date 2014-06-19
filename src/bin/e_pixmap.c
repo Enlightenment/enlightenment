@@ -304,6 +304,9 @@ e_pixmap_visual_cmap_set(E_Pixmap *cp, void *visual, unsigned int cmap)
 #ifndef HAVE_WAYLAND_ONLY
    cp->visual = visual;
    cp->cmap = cmap;
+#else
+   (void) visual;
+   (void) cmap;
 #endif
 }
 
@@ -519,6 +522,8 @@ e_pixmap_resource_set(E_Pixmap *cp, void *resource)
    if ((!cp) || (cp->type != E_PIXMAP_TYPE_WL)) return;
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    cp->resource = resource;
+#else
+   (void) resource;
 #endif
 }
 
@@ -722,6 +727,8 @@ e_pixmap_image_data_argb_convert(E_Pixmap *cp, void *pix, void *ipix, Eina_Recta
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cp, EINA_FALSE);
 
+   if (cp->image_argb) return EINA_TRUE;
+
    switch (cp->type)
      {
       case E_PIXMAP_TYPE_X:
@@ -737,6 +744,10 @@ e_pixmap_image_data_argb_convert(E_Pixmap *cp, void *pix, void *ipix, Eina_Recta
         if (cp->image_argb) return EINA_TRUE;
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
         WRN("FIXME: Convert wayland non-argb image");
+        (void) pix;
+        (void) ipix;
+        (void) r;
+        (void) stride;
 #endif
         break;
       default:
@@ -759,6 +770,7 @@ e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r)
 #endif
         break;
       case E_PIXMAP_TYPE_WL:
+        (void) r;
         return EINA_TRUE; //this call is a NOP
       default:
         break;
