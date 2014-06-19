@@ -4,6 +4,40 @@
 
 #define XDG_SERVER_VERSION 3
 
+/* FIXME: Popup Windows !! */
+static void 
+_e_shell_surface_popup_parent_set(E_Client *ec, struct wl_resource *parent_resource)
+{
+   E_Pixmap *pp;
+   E_Client *pc;
+   Ecore_Window pwin = 0;
+
+   /* get pixmap from parent */
+   if (!(pp = wl_resource_get_user_data(parent_resource)))
+     {
+        ERR("Could not get parent resource pixmap");
+        return;
+     }
+
+   pwin = e_pixmap_window_get(pp);
+
+   /* find the parent client */
+   if (!(pc = e_pixmap_client_get(pp)))
+     pc = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pwin);
+
+   if (!pc) 
+     {
+        ERR("Could not find parent pixmap client");
+        return;
+     }
+
+   e_pixmap_parent_window_set(ec->pixmap, pwin);
+
+   ec->parent = pc;
+   ec->icccm.fetch.transient_for = EINA_TRUE;
+   ec->icccm.transient_for = pwin;
+}
+
 static void 
 _e_shell_surface_mouse_down_helper(E_Client *ec, E_Binding_Event_Mouse_Button *ev, Eina_Bool move)
 {
@@ -261,10 +295,40 @@ _e_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct 
 }
 
 static void 
-_e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, struct wl_resource *parent_resource EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED, uint32_t flags EINA_UNUSED)
+_e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, struct wl_resource *parent_resource, int32_t x, int32_t y, uint32_t flags EINA_UNUSED)
 {
+   E_Client *ec;
+
    DBG("SHELL: Surface Popup Set");
    /* ec->internal = 1; */
+
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource,WL_DISPLAY_ERROR_INVALID_OBJECT,
+                               "No Client For Shell Surface");
+        return;
+     }
+
+   if (ec->wl_comp_data)
+     {
+        ec->wl_comp_data->popup.x = x;
+        ec->wl_comp_data->popup.y = y;
+     }
+
+   ec->argb = EINA_TRUE;
+   ec->no_shape_cut = EINA_TRUE;
+   ec->borderless = EINA_TRUE;
+   ec->lock_border = EINA_TRUE;
+   ec->border.changed = ec->changes.border = !ec->borderless;
+   ec->changes.icon = !!ec->icccm.class;
+   ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
+   ec->wl_comp_data->set_win_type = EINA_TRUE;
+   ec->layer = E_LAYER_CLIENT_POPUP;
+
+   /* set this client as a transient for parent */
+   _e_shell_surface_popup_parent_set(ec, parent_resource);
+
+   EC_CHANGED(ec);
 }
 
 static void 
@@ -375,7 +439,18 @@ _e_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coor
         return;
      }
 
-//   if ((ec->client.x != x) || (ec->client.y != y))
+   if (ec->parent)
+     {
+        if ((ec->netwm.type == E_WINDOW_TYPE_MENU) || 
+            (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) || 
+            (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
+          {
+             x = ec->parent->client.x + ec->wl_comp_data->popup.x;
+             y = ec->parent->client.y + ec->wl_comp_data->popup.y;
+          }
+     }
+
+   //   if ((ec->client.x != x) || (ec->client.y != y))
      {
         ec->client.x = x;
         ec->client.y = y;
@@ -928,10 +1003,15 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         return;
      }
 
-   if ((ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) && (ec->parent))
+   if (ec->parent)
      {
-        x = ec->parent->client.x + ec->wl_comp_data->popup.x;
-        y = ec->parent->client.y + ec->wl_comp_data->popup.y;
+        if ((ec->netwm.type == E_WINDOW_TYPE_MENU) || 
+            (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) || 
+            (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
+          {
+             x = ec->parent->client.x + ec->wl_comp_data->popup.x;
+             y = ec->parent->client.y + ec->wl_comp_data->popup.y;
+          }
      }
 
 //   if ((ec->client.x != x) || (ec->client.y != y))
@@ -1195,35 +1275,6 @@ static const struct xdg_popup_interface _e_xdg_popup_interface =
 };
 
 static void 
-_e_xdg_shell_popup_parent_set(E_Client *ec, struct wl_resource *parent_resource)
-{
-   E_Pixmap *pp;
-   E_Client *pc;
-
-   /* get pixmap from parent */
-   if (!(pp = wl_resource_get_user_data(parent_resource)))
-     {
-        ERR("Could not get parent resource pixmap");
-        return;
-     }
-
-   /* find the parent client */
-   if (!(pc = e_pixmap_client_get(pp)))
-     pc = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(pp));
-
-   if (!pc) 
-     {
-        ERR("Could not find parent pixmap client");
-        return;
-     }
-
-   ec->parent = pc;
-   e_pixmap_parent_window_set(ec->pixmap, e_pixmap_window_get(pp));
-
-   pc->transients = eina_list_append(pc->transients, ec);
-}
-
-static void 
 _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource EINA_UNUSED, uint32_t id, struct wl_resource *surface_resource, struct wl_resource *parent_resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, int32_t x, int32_t y, uint32_t flags EINA_UNUSED)
 {
    E_Pixmap *ep;
@@ -1316,10 +1367,11 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    ec->netwm.type = E_WINDOW_TYPE_POPUP_MENU;
    ec->wl_comp_data->set_win_type = EINA_TRUE;
    ec->layer = E_LAYER_CLIENT_POPUP;
-   EC_CHANGED(ec);
 
    /* set this client as a transient for parent */
-   _e_xdg_shell_popup_parent_set(ec, parent_resource);
+   _e_shell_surface_popup_parent_set(ec, parent_resource);
+
+   EC_CHANGED(ec);
 }
 
 static void 
