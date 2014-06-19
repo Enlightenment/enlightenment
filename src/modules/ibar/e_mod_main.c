@@ -1218,6 +1218,7 @@ _ibar_cb_icon_menu_desk_change(void *data, Evas_Object *obj EINA_UNUSED, void *e
    IBar_Icon *ic;
 
    ic = evas_object_data_get(data, "ibar_icon");
+   if (!ic) return;
 
    if (ec->sticky || (ec->zone != ic->ibar->inst->gcc->gadcon->zone))
      edje_object_signal_emit(data, "e,state,other,screen", "e");
