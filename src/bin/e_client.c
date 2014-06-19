@@ -3324,7 +3324,7 @@ e_client_focused_set(E_Client *ec)
 
         E_FREE_FUNC(ec_unfocus->raise_timer, ecore_timer_del);
 
-        e_comp_object_signal_emit(ec_unfocus->frame, "e,state,unfocused", "e");
+        edje_object_signal_emit(ec_unfocus->frame, "e,state,unfocused", "e");
 
         /* if there unfocus client is fullscreen and visible */
         if ((!e_config->allow_above_fullscreen) &&
@@ -3873,12 +3873,12 @@ e_client_urgent_set(E_Client *ec, Eina_Bool urgent)
    _e_client_event_property(ec, E_CLIENT_PROPERTY_URGENCY);
    if (urgent && (!ec->focused) && (!ec->want_focus))
      {
-        e_comp_object_signal_emit(ec->frame, "e,state,urgent", "e");
+        edje_object_signal_emit(ec->frame, "e,state,urgent", "e");
         ec->urgent = urgent;
      }
    else
      {
-        e_comp_object_signal_emit(ec->frame, "e,state,not_urgent", "e");
+        edje_object_signal_emit(ec->frame, "e,state,not_urgent", "e");
         ec->urgent = 0;
      }
    if (urgent && e_screensaver_on_get() && e_config->screensaver_wake_on_urgent)

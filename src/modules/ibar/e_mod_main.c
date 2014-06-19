@@ -1240,7 +1240,7 @@ _ibar_cb_icon_menu_img_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, vo
    ec = evas_object_data_get(obj, "E_Client");
    if (ec)
      {
-        e_comp_object_signal_callback_del_full(ec->frame, "e,state,*focused", "e", _ibar_cb_icon_menu_focus_change, data);
+        edje_object_signal_callback_del_full(ec->frame, "e,state,*focused", "e", _ibar_cb_icon_menu_focus_change, data);
         evas_object_smart_callback_del_full(ec->frame, "desk_change", _ibar_cb_icon_menu_desk_change, data);
      }
    evas_object_del(data);
@@ -1308,7 +1308,7 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    e_theme_edje_object_set(it, "base/theme/modules/ibar",
                            "e/modules/ibar/menu/item");
    img = e_comp_object_util_mirror_add(ec->frame);
-   e_comp_object_signal_callback_add(ec->frame, "e,state,*focused", "e", _ibar_cb_icon_menu_focus_change, it);
+   edje_object_signal_callback_add(ec->frame, "e,state,*focused", "e", _ibar_cb_icon_menu_focus_change, it);
    evas_object_smart_callback_add(ec->frame, "desk_change", _ibar_cb_icon_menu_desk_change, it);
    evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
                                   _ibar_cb_icon_menu_img_del, it);

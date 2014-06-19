@@ -6,7 +6,7 @@ configfilesdir = $(datadir)/enlightenment/data/config
 
 configfiles_DATA = config/profile.cfg
 
-SUFFIXES = .cfg
+SUFFIXES += .cfg
 
 .src.cfg:
 	$(MKDIR_P) $(@D)
