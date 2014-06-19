@@ -1518,8 +1518,6 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
    E_Client *ec;
    E_Comp *comp;
 
-   DBG("COMP_WL: Evas Del Request");
-
    if (!(ec = data)) return;
    if (ec->netwm.ping) e_client_ping(ec);
 
@@ -2114,8 +2112,6 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
    if (ec->icccm.fetch.transient_for)
      {
         E_Client *pc = NULL;
-
-        WRN("Fetch Transient For !");
 
         if (ec->icccm.transient_for)
           {
