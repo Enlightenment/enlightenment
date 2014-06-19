@@ -1934,9 +1934,22 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
              if (!e_client_util_ignored_get(ec))
                ec->border.changed = ec->borderless = EINA_TRUE;
           }
+        else if ((ec->netwm.type == E_WINDOW_TYPE_MENU) || 
+                 (ec->netwm.type == E_WINDOW_TYPE_POPUP_MENU) || 
+                 (ec->netwm.type == E_WINDOW_TYPE_DROPDOWN_MENU))
+          {
+             ec->netwm.state.skip_pager = EINA_TRUE;
+             ec->netwm.update.state = EINA_TRUE;
+             ec->netwm.state.skip_taskbar = EINA_TRUE;
+             ec->netwm.update.state = EINA_TRUE;
+             ec->focus_policy_override = E_FOCUS_CLICK;
+             ec->icccm.accepts_focus = EINA_FALSE;
+             eina_stringshare_replace(&ec->bordername, "borderless");
+          }
 
         if (ec->tooltip)
           {
+             ec->focus_policy_override = E_FOCUS_CLICK;
              ec->icccm.accepts_focus = EINA_FALSE;
              eina_stringshare_replace(&ec->bordername, "borderless");
           }
