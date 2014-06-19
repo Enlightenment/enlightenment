@@ -381,7 +381,10 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 
    e_font_apply();
    e_config_save_queue();
+
+#ifndef HAVE_WAYLAND_ONLY
    e_xsettings_config_update();
+#endif
 
    /* Apply to advanced */
    EINA_LIST_FOREACH(cfdata->text_classes, next, tc)
@@ -607,7 +610,11 @@ _advanced_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
    e_config->font_hinting = cfdata->hinting;
    e_config_save_queue();
    e_canvas_rehint();
+
+#ifndef HAVE_WAYLAND_ONLY
    e_xsettings_config_update();
+#endif
+
    return 1;
 }
 

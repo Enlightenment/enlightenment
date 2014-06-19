@@ -168,7 +168,9 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
         ecore_event_add(E_EVENT_CONFIG_ICON_THEME, ev, NULL, NULL);
      }
 
+#ifndef HAVE_WAYLAND_ONLY
    e_xsettings_config_update();
+#endif
 
    return 1;
 }
