@@ -134,7 +134,7 @@ class E_Comp_Object (Edje)
       frame_exists {
          return Eina_Bool;
       }
-      frame_icon_update {};
+      frame_icon_update {}
       frame_theme_set {
          return Eina_Bool;
          params {
