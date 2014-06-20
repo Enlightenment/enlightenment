@@ -564,13 +564,13 @@ struct E_Client
       Eina_Bool need_unmaximize : 1;
    } changes;
 
-   unsigned int       visible : 1;
+   unsigned int       visible : 1; // client is set to be visible by display server (never use this)
    unsigned int       hidden : 1; // set when window has been hidden by api and should not be shown
    unsigned int       await_hide_event;
    unsigned int       moving : 1;
    unsigned int       focused : 1;
    unsigned int       new_client : 1;
-   unsigned int       re_manage : 1;
+   unsigned int       re_manage : 1; // client is persisting from before E restart
    unsigned int       placed : 1;
    unsigned int       shading : 1;
    unsigned int       shaded : 1;
