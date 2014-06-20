@@ -835,9 +835,7 @@ _e_desk_show_begin(E_Desk *desk, int dx, int dy)
              continue;
           }
         if ((ec->desk != desk) || (ec->sticky)) continue;
-        if (starting)
-          ec->hidden = 0;
-        else if (_e_desk_transition_setup(ec, dx, dy, 1))
+        if ((!starting) && (!ec->new_client) && _e_desk_transition_setup(ec, dx, dy, 1))
           {
              e_comp_object_effect_stop(ec->frame, _e_desk_hide_end);
              e_comp_object_effect_start(ec->frame, _e_desk_show_end, ec);
@@ -874,7 +872,7 @@ _e_desk_hide_begin(E_Desk *desk, int dx, int dy)
         if (e_client_util_ignored_get(ec) || (ec->desk->zone != desk->zone) || (ec->iconic)) continue;
         if (ec->moving) continue;
         if ((ec->desk != desk) || (ec->sticky)) continue;
-        if ((!starting) && _e_desk_transition_setup(ec, -dx, -dy, 0))
+        if ((!starting) && (!ec->new_client) && _e_desk_transition_setup(ec, -dx, -dy, 0))
           {
              e_comp_object_effect_stop(ec->frame, _e_desk_show_end);
              e_comp_object_effect_start(ec->frame, _e_desk_hide_end, ec);
