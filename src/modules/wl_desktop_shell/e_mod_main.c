@@ -465,7 +465,7 @@ _e_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coor
           }
      }
 
-   //   if ((ec->client.x != x) || (ec->client.y != y))
+   if ((ec->client.x != x) || (ec->client.y != y))
      {
         ec->client.x = x;
         ec->client.y = y;
@@ -474,7 +474,7 @@ _e_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coor
         ec->changes.pos = EINA_TRUE;
      }
 
-//   if ((ec->client.w != w) || (ec->client.h != h))
+   if ((ec->client.w != w) || (ec->client.h != h))
      {
         ec->client.w = w;
         ec->client.h = h;
@@ -1038,7 +1038,7 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
           }
      }
 
-//   if ((ec->client.x != x) || (ec->client.y != y))
+   if ((ec->client.x != x) || (ec->client.y != y))
      {
         ec->client.x = x;
         ec->client.y = y;
@@ -1047,7 +1047,7 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         ec->changes.pos = EINA_TRUE;
      }
 
-//   if ((ec->client.w != w) || (ec->client.h != h))
+   if ((ec->client.w != w) || (ec->client.h != h))
      {
         ec->client.w = w;
         ec->client.h = h;
