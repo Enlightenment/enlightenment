@@ -1433,10 +1433,9 @@ _e_comp_x_configure_request(void *data  EINA_UNUSED, int type EINA_UNUSED, Ecore
    if ((ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X) ||
        (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_Y))
      {
-        int zx, zy, zw, zh, t, l;
+        int zx, zy, zw, zh;
 
         e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
-        e_comp_object_frame_geometry_get(ec->frame, &l, NULL, &t, NULL);
         if (ev->value_mask & ECORE_X_WINDOW_CONFIGURE_MASK_X)
           {
              ec->comp_data->initial_attributes.x = ev->x;
