@@ -77,6 +77,8 @@ _e_shell_surface_cb_destroy(struct wl_resource *resource)
    /* get the client for this resource */
    if ((ec = wl_resource_get_user_data(resource)))
      {
+        if (e_object_is_del(E_OBJECT(ec))) return;
+
         if (ec->wl_comp_data)
           {
              if (ec->wl_comp_data->mapped)
