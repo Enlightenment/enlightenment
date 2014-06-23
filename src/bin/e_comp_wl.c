@@ -1313,7 +1313,7 @@ _e_comp_wl_evas_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    if (!ec->focused) return;
 
    keycode = (ev->keycode - 8);
-   cdata = ec->comp->wl_comp_data;
+   if (!(cdata = ec->comp->wl_comp_data)) return;
 
    end = (uint32_t *)cdata->kbd.keys.data + cdata->kbd.keys.size;
 
@@ -1321,7 +1321,6 @@ _e_comp_wl_evas_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
      {
         /* ignore server-generated key repeats */
         if (*k == keycode) return;
-        *k = *--end;
      }
 
    cdata->kbd.keys.size = end - (uint32_t *)cdata->kbd.keys.data;
@@ -1359,7 +1358,7 @@ _e_comp_wl_evas_cb_key_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj E
    if (!ec->focused) return;
 
    keycode = (ev->keycode - 8);
-   cdata = ec->comp->wl_comp_data;
+   if (!(cdata = ec->comp->wl_comp_data)) return;
 
    end = (uint32_t *)cdata->kbd.keys.data + cdata->kbd.keys.size;
    for (k = cdata->kbd.keys.data; k < end; k++)
