@@ -6,7 +6,7 @@
 
 /* FIXME: Popup Windows !! */
 static void 
-_e_shell_surface_popup_parent_set(E_Client *ec, struct wl_resource *parent_resource)
+_e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
 {
    E_Pixmap *pp;
    E_Client *pc;
@@ -218,6 +218,8 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
 {
    E_Client *ec;
 
+   DBG("WL_SHELL: Toplevel Set");
+
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -249,6 +251,8 @@ _e_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct w
    E_Client *ec;
    Ecore_Window pwin = 0;
 
+   DBG("WL_SHELL: Transient Set");
+
    if (!(ec = wl_resource_get_user_data(resource)))
      {
         wl_resource_post_error(resource, WL_DISPLAY_ERROR_INVALID_OBJECT,
@@ -273,6 +277,16 @@ _e_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct w
 
    ec->icccm.fetch.transient_for = EINA_TRUE;
    ec->icccm.transient_for = pwin;
+
+   ec->argb = EINA_TRUE;
+   ec->no_shape_cut = EINA_TRUE;
+   ec->borderless = !ec->internal;
+   ec->lock_border = EINA_TRUE;
+   ec->border.changed = ec->changes.border = !ec->borderless;
+
+   /* set this client as a transient for parent */
+   _e_shell_surface_parent_set(ec, parent_resource);
+
    EC_CHANGED(ec);
 }
 
@@ -300,7 +314,6 @@ _e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_re
    E_Client *ec;
 
    DBG("SHELL: Surface Popup Set");
-   /* ec->internal = 1; */
 
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -326,7 +339,7 @@ _e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_re
    ec->layer = E_LAYER_CLIENT_POPUP;
 
    /* set this client as a transient for parent */
-   _e_shell_surface_popup_parent_set(ec, parent_resource);
+   _e_shell_surface_parent_set(ec, parent_resource);
 
    EC_CHANGED(ec);
 }
@@ -544,6 +557,8 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
    E_Client *ec;
    E_Comp_Wl_Client_Data *cdata;
 
+   DBG("WL_SHELL: Surface Get %d", wl_resource_get_id(surface_resource));
+
    /* get the pixmap from this surface so we can find the client */
    if (!(ep = wl_resource_get_user_data(surface_resource)))
      {
@@ -657,6 +672,13 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
 
    ec->icccm.fetch.transient_for = EINA_TRUE;
    ec->icccm.transient_for = pwin;
+
+   ec->netwm.type = E_WINDOW_TYPE_DIALOG;
+   ec->wl_comp_data->set_win_type = EINA_TRUE;
+
+   /* set this client as a transient for parent */
+   _e_shell_surface_parent_set(ec, parent_resource);
+
    EC_CHANGED(ec);
 }
 
@@ -1156,7 +1178,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    E_Client *ec;
    E_Comp_Wl_Client_Data *cdata;
 
-   /* DBG("XDG_SHELL: Surface Get %d", wl_resource_get_id(surface_resource)); */
+   DBG("XDG_SHELL: Surface Get %d", wl_resource_get_id(surface_resource));
 
    /* get the pixmap from this surface so we can find the client */
    if (!(ep = wl_resource_get_user_data(surface_resource)))
@@ -1369,7 +1391,7 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    ec->layer = E_LAYER_CLIENT_POPUP;
 
    /* set this client as a transient for parent */
-   _e_shell_surface_popup_parent_set(ec, parent_resource);
+   _e_shell_surface_parent_set(ec, parent_resource);
 
    EC_CHANGED(ec);
 }
