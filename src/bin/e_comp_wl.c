@@ -1914,6 +1914,9 @@ static void
 _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
 {
    E_Event_Client_Property *ev;
+   Eina_Bool move = EINA_FALSE;
+   Eina_Bool resize = EINA_FALSE;
+   int x, y, w, h;
 
    E_COMP_WL_PIXMAP_CHECK;
 
@@ -2162,6 +2165,74 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
         ec->netwm.update.state = EINA_FALSE;
      }
 
+   x = ec->x;
+   y = ec->y;
+   w = ec->client.w;
+   h = ec->client.h;
+
+   if ((ec->changes.pos) && (!ec->lock_client_location))
+     {
+        int zx, zy, zw, zh;
+
+        e_zone_useful_geometry_get(ec->zone, &zx, &zy, &zw, &zh);
+
+        if (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN)
+          {
+             x = E_CLAMP(ec->x, zx, zx + zw - ec->w);
+             y = E_CLAMP(ec->y, zy, zy + zh - ec->h);
+          }
+     }
+
+   e_comp_object_frame_wh_adjust(ec->frame, w, h, &w, &h);
+   move = ((x != ec->x) || (y != ec->y));
+   resize = ((w != ec->w) || (h != ec->h));
+
+   if ((move) && (!ec->lock_client_location))
+     {
+        if ((ec->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE)
+          {
+             E_Zone *zone;
+
+             ec->saved.x = x;
+             ec->saved.y = y;
+
+             zone = e_comp_zone_xy_get(ec->comp, x, y);
+             if (zone && ((zone->x) || (zone->y)))
+               {
+                  ec->saved.x -= zone->x;
+                  ec->saved.y -= zone->y;
+               }
+          }
+        else
+          {
+             /* client is completely outside the screen, policy does not allow */
+             if (((!E_INTERSECTS(x, y, ec->w, ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+                  (e_config->screen_limits != E_SCREEN_LIMITS_COMPLETELY)) ||
+                 /* client is partly outside the zone, policy does not allow */
+                 (((!E_INSIDE(x, y, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+                   (!E_INSIDE(x + ec->w, y, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+                   (!E_INSIDE(x, y + ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5)) &&
+                   (!E_INSIDE(x + ec->w, y + ec->h, ec->comp->man->x, ec->comp->man->y, ec->comp->man->w - 5, ec->comp->man->h - 5))) &&
+                     (e_config->screen_limits == E_SCREEN_LIMITS_WITHIN))
+                )
+               e_comp_object_util_center(ec->frame);
+             else
+               evas_object_move(ec->frame, x, y);
+          }
+     }
+
+   if (((resize) && (!ec->lock_client_size)) && 
+       ((move) || ((!ec->maximized) && (!ec->fullscreen))))
+     {
+        if ((ec->maximized & E_MAXIMIZE_TYPE) != E_MAXIMIZE_NONE)
+          {
+             ec->saved.w = w;
+             ec->saved.h = h;
+          }
+        else
+          evas_object_resize(ec->frame, w, h);
+     }
+
    if (ec->icccm.fetch.transient_for)
      {
         E_Client *pc = NULL;
@@ -2231,7 +2302,7 @@ _e_comp_wl_cb_hook_client_pre_frame(void *data EINA_UNUSED, E_Client *ec)
 
    if (!ec->wl_comp_data->need_reparent) return;
 
-   WRN("Client Needs New Parent in Pre Frame");
+   /* WRN("Client Needs New Parent in Pre Frame"); */
 
    parent = e_client_util_pwin_get(ec);
 
