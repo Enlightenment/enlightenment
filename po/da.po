@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-05-14 14:32+0900\n"
+"POT-Creation-Date: 2014-06-23 08:15+0900\n"
 "PO-Revision-Date: 2009-12-31 01:44+0000\n"
 "Last-Translator: nanker <Unknown>\n"
 "Language-Team: Danish\n"
@@ -21,20 +21,20 @@ msgstr ""
 msgid "About Enlightenment"
 msgstr "Om Enlightenment"
 
-#: src/bin/e_about.c:20 src/bin/e_actions.c:2957 src/bin/e_config_dialog.c:287
+#: src/bin/e_about.c:20 src/bin/e_actions.c:2958 src/bin/e_config_dialog.c:287
 #: src/bin/e_fm.c:1089 src/bin/e_int_client_menu.c:219
 #: src/bin/e_int_client_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf/e_conf.c:169
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:877
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:876
 #: src/modules/everything/evry_plug_windows.c:455
-#: src/modules/fileman/e_fwin.c:2576 src/modules/mixer/app_mixer.c:505
+#: src/modules/fileman/e_fwin.c:2575 src/modules/mixer/app_mixer.c:505
 msgid "Close"
 msgstr "Luk"
 
-#: src/bin/e_about.c:21 src/bin/e_actions.c:3329 src/bin/e_actions.c:3333
-#: src/bin/e_actions.c:3337 src/bin/e_init.c:94 src/bin/e_int_menus.c:224
+#: src/bin/e_about.c:21 src/bin/e_actions.c:3330 src/bin/e_actions.c:3334
+#: src/bin/e_actions.c:3338 src/bin/e_init.c:94 src/bin/e_int_menus.c:224
 #: src/modules/conf_interaction/e_int_config_mouse.c:173
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:242
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:241
 #: src/modules/wizard/page_000.c:34
 msgid "Enlightenment"
 msgstr "Enlightenment"
@@ -64,279 +64,279 @@ msgstr ""
 msgid "Are you sure you want to kill this window?"
 msgstr "Er du sikker på du vil lukke dette vindue?"
 
-#: src/bin/e_actions.c:373 src/bin/e_actions.c:2962
+#: src/bin/e_actions.c:373 src/bin/e_actions.c:2963
 #: src/bin/e_int_client_menu.c:789
 msgid "Kill"
 msgstr "Dræb"
 
-#: src/bin/e_actions.c:375 src/bin/e_actions.c:2083 src/bin/e_actions.c:2177
-#: src/bin/e_actions.c:2237 src/bin/e_actions.c:2297 src/bin/e_actions.c:2362
-#: src/bin/e_actions.c:2427 src/bin/e_confirm_dialog.c:53
+#: src/bin/e_actions.c:375 src/bin/e_actions.c:2084 src/bin/e_actions.c:2178
+#: src/bin/e_actions.c:2238 src/bin/e_actions.c:2298 src/bin/e_actions.c:2363
+#: src/bin/e_actions.c:2428 src/bin/e_confirm_dialog.c:53
 #: src/bin/e_desklock.c:543 src/bin/e_fm.c:10596 src/bin/e_fm.c:10949
 #: src/bin/e_screensaver.c:197
 #: src/modules/quickaccess/e_mod_quickaccess.c:1302
 msgid "No"
 msgstr "Nej"
 
-#: src/bin/e_actions.c:2078 src/bin/e_actions.c:3333 src/bin/e_int_menus.c:253
+#: src/bin/e_actions.c:2079 src/bin/e_actions.c:3334 src/bin/e_int_menus.c:253
 msgid "Exit"
 msgstr "Afslut"
 
-#: src/bin/e_actions.c:2079
+#: src/bin/e_actions.c:2080
 #, fuzzy
 msgid "Are you sure you want to exit Enlightenment?"
 msgstr "Er du sikker på at du vil afslutte?"
 
-#: src/bin/e_actions.c:2081 src/bin/e_actions.c:2175 src/bin/e_actions.c:2235
-#: src/bin/e_actions.c:2295 src/bin/e_actions.c:2360 src/bin/e_actions.c:2425
+#: src/bin/e_actions.c:2082 src/bin/e_actions.c:2176 src/bin/e_actions.c:2236
+#: src/bin/e_actions.c:2296 src/bin/e_actions.c:2361 src/bin/e_actions.c:2426
 #: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:541 src/bin/e_fm.c:10599
 #: src/bin/e_screensaver.c:195
 #: src/modules/quickaccess/e_mod_quickaccess.c:1302
 msgid "Yes"
 msgstr "Ja"
 
-#: src/bin/e_actions.c:2172
+#: src/bin/e_actions.c:2173
 #, fuzzy
 msgid "Logout"
 msgstr "Log nu"
 
-#: src/bin/e_actions.c:2173
+#: src/bin/e_actions.c:2174
 #, fuzzy
 msgid "Are you sure you want to logout?"
 msgstr "Er du sikker på du vil logge af?"
 
-#: src/bin/e_actions.c:2231 src/bin/e_sys.c:908
+#: src/bin/e_actions.c:2232 src/bin/e_sys.c:970
 #, fuzzy
 msgid "Power off"
 msgstr "sluk"
 
-#: src/bin/e_actions.c:2233
+#: src/bin/e_actions.c:2234
 #, fuzzy
 msgid "Are you sure you want to power off your computer?"
 msgstr "Er du sikker på du vil logge af?"
 
-#: src/bin/e_actions.c:2292 src/bin/e_actions.c:3376
+#: src/bin/e_actions.c:2293 src/bin/e_actions.c:3377
 msgid "Reboot"
 msgstr "Genstart"
 
-#: src/bin/e_actions.c:2293
+#: src/bin/e_actions.c:2294
 #, fuzzy
 msgid "Are you sure you want to reboot your computer?"
 msgstr "Er du sikker på du vil genstarte?"
 
-#: src/bin/e_actions.c:2357 src/bin/e_actions.c:3384
+#: src/bin/e_actions.c:2358 src/bin/e_actions.c:3385
 #, fuzzy
 msgid "Suspend"
 msgstr "Suspendér"
 
-#: src/bin/e_actions.c:2358
+#: src/bin/e_actions.c:2359
 #, fuzzy
 msgid "Are you sure you want to suspend your computer?"
 msgstr "Er du sikker på du vil logge af?"
 
-#: src/bin/e_actions.c:2422 src/bin/e_actions.c:3388
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:381
+#: src/bin/e_actions.c:2423 src/bin/e_actions.c:3389
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:378
 #, fuzzy
 msgid "Hibernate"
 msgstr "dvale"
 
-#: src/bin/e_actions.c:2423
+#: src/bin/e_actions.c:2424
 #, fuzzy
 msgid "Are you sure you want to hibernate your computer?"
 msgstr "Er du sikker på du vil dvale."
 
-#: src/bin/e_actions.c:2917 src/bin/e_actions.c:2928 src/bin/e_actions.c:2947
-#: src/bin/e_actions.c:2952 src/bin/e_actions.c:2957 src/bin/e_actions.c:2962
-#: src/bin/e_actions.c:3245 src/bin/e_actions.c:3249 src/bin/e_actions.c:3254
-#: src/bin/e_actions.c:3260 src/bin/e_actions.c:3266 src/bin/e_actions.c:3272
-#: src/modules/shot/e_mod_main.c:1056
+#: src/bin/e_actions.c:2918 src/bin/e_actions.c:2929 src/bin/e_actions.c:2948
+#: src/bin/e_actions.c:2953 src/bin/e_actions.c:2958 src/bin/e_actions.c:2963
+#: src/bin/e_actions.c:3246 src/bin/e_actions.c:3250 src/bin/e_actions.c:3255
+#: src/bin/e_actions.c:3261 src/bin/e_actions.c:3267 src/bin/e_actions.c:3273
+#: src/modules/shot/e_mod_main.c:1054
 #, fuzzy
 msgid "Window : Actions"
 msgstr "Window ; Handlinger"
 
-#: src/bin/e_actions.c:2917 src/bin/e_fm.c:11725
+#: src/bin/e_actions.c:2918 src/bin/e_fm.c:11725
 #: src/bin/e_int_client_menu.c:709
 msgid "Move"
 msgstr "Træk"
 
-#: src/bin/e_actions.c:2928 src/bin/e_int_client_menu.c:723
+#: src/bin/e_actions.c:2929 src/bin/e_int_client_menu.c:723
 msgid "Resize"
 msgstr "Skift størrelse"
 
-#: src/bin/e_actions.c:2939 src/bin/e_actions.c:3300 src/bin/e_actions.c:3302
-#: src/bin/e_actions.c:3304 src/bin/e_actions.c:3306 src/bin/e_actions.c:3308
+#: src/bin/e_actions.c:2940 src/bin/e_actions.c:3301 src/bin/e_actions.c:3303
+#: src/bin/e_actions.c:3305 src/bin/e_actions.c:3307 src/bin/e_actions.c:3309
 #: src/bin/e_int_config_comp_match.c:86 src/bin/e_int_config_comp_match.c:407
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:336
 msgid "Menu"
 msgstr "Menu"
 
-#: src/bin/e_actions.c:2939
+#: src/bin/e_actions.c:2940
 #, fuzzy
 msgid "Window Menu"
 msgstr "vindue Menu"
 
-#: src/bin/e_actions.c:2947 src/bin/e_int_client_menu.c:1100
+#: src/bin/e_actions.c:2948 src/bin/e_int_client_menu.c:1103
 #: src/modules/winlist/e_int_config_winlist.c:207
 msgid "Raise"
 msgstr "Løft"
 
-#: src/bin/e_actions.c:2952 src/bin/e_int_client_menu.c:1108
+#: src/bin/e_actions.c:2953 src/bin/e_int_client_menu.c:1111
 msgid "Lower"
 msgstr "Sænk"
 
-#: src/bin/e_actions.c:2967 src/bin/e_actions.c:2971 src/bin/e_actions.c:2976
-#: src/bin/e_actions.c:2980 src/bin/e_actions.c:2985 src/bin/e_actions.c:2989
-#: src/bin/e_actions.c:2994 src/bin/e_actions.c:2996 src/bin/e_actions.c:2999
-#: src/bin/e_actions.c:3002 src/bin/e_actions.c:3005 src/bin/e_actions.c:3008
-#: src/bin/e_actions.c:3010 src/bin/e_actions.c:3012 src/bin/e_actions.c:3014
-#: src/bin/e_actions.c:3021 src/bin/e_actions.c:3023 src/bin/e_actions.c:3025
-#: src/bin/e_actions.c:3027 src/bin/e_actions.c:3029 src/bin/e_actions.c:3033
-#: src/bin/e_actions.c:3038 src/bin/e_actions.c:3043 src/bin/e_actions.c:3049
-#: src/bin/e_actions.c:3055
+#: src/bin/e_actions.c:2968 src/bin/e_actions.c:2972 src/bin/e_actions.c:2977
+#: src/bin/e_actions.c:2981 src/bin/e_actions.c:2986 src/bin/e_actions.c:2990
+#: src/bin/e_actions.c:2995 src/bin/e_actions.c:2997 src/bin/e_actions.c:3000
+#: src/bin/e_actions.c:3003 src/bin/e_actions.c:3006 src/bin/e_actions.c:3009
+#: src/bin/e_actions.c:3011 src/bin/e_actions.c:3013 src/bin/e_actions.c:3015
+#: src/bin/e_actions.c:3022 src/bin/e_actions.c:3024 src/bin/e_actions.c:3026
+#: src/bin/e_actions.c:3028 src/bin/e_actions.c:3030 src/bin/e_actions.c:3034
+#: src/bin/e_actions.c:3039 src/bin/e_actions.c:3044 src/bin/e_actions.c:3050
+#: src/bin/e_actions.c:3056
 #, fuzzy
 msgid "Window : State"
 msgstr "Window ; State"
 
-#: src/bin/e_actions.c:2967
+#: src/bin/e_actions.c:2968
 #, fuzzy
 msgid "Sticky Mode Toggle"
 msgstr "Sticky tilstand Toggle"
 
-#: src/bin/e_actions.c:2971
+#: src/bin/e_actions.c:2972
 #, fuzzy
 msgid "Sticky Mode Enable"
 msgstr "Sticky tilstand Toggle"
 
-#: src/bin/e_actions.c:2976
+#: src/bin/e_actions.c:2977
 #, fuzzy
 msgid "Iconic Mode Toggle"
 msgstr "Ikonisk tilstand Toggle"
 
-#: src/bin/e_actions.c:2980
+#: src/bin/e_actions.c:2981
 #, fuzzy
 msgid "Iconic Mode Enable"
 msgstr "Ikonisk tilstand Toggle"
 
-#: src/bin/e_actions.c:2985
+#: src/bin/e_actions.c:2986
 #, fuzzy
 msgid "Fullscreen Mode Toggle"
 msgstr "Fullscreen mode Skift"
 
-#: src/bin/e_actions.c:2989
+#: src/bin/e_actions.c:2990
 #, fuzzy
 msgid "Fullscreen Mode Enable"
 msgstr "Fullscreen mode Skift"
 
-#: src/bin/e_actions.c:2994 src/bin/e_int_client_menu.c:424
+#: src/bin/e_actions.c:2995 src/bin/e_int_client_menu.c:424
 #: src/bin/e_int_client_menu.c:684
 msgid "Maximize"
 msgstr "Maksimér"
 
-#: src/bin/e_actions.c:2996 src/bin/e_int_client_menu.c:435
+#: src/bin/e_actions.c:2997 src/bin/e_int_client_menu.c:435
 msgid "Maximize Vertically"
 msgstr "Maksimér lodret"
 
-#: src/bin/e_actions.c:2999 src/bin/e_int_client_menu.c:446
+#: src/bin/e_actions.c:3000 src/bin/e_int_client_menu.c:446
 msgid "Maximize Horizontally"
 msgstr "Maksimér vandret"
 
-#: src/bin/e_actions.c:3002 src/bin/e_int_client_menu.c:457
+#: src/bin/e_actions.c:3003 src/bin/e_int_client_menu.c:457
 #, fuzzy
 msgid "Maximize Left"
 msgstr "Maksimér"
 
-#: src/bin/e_actions.c:3005 src/bin/e_int_client_menu.c:468
+#: src/bin/e_actions.c:3006 src/bin/e_int_client_menu.c:468
 #, fuzzy
 msgid "Maximize Right"
 msgstr "Maksimér"
 
-#: src/bin/e_actions.c:3008
+#: src/bin/e_actions.c:3009
 #, fuzzy
 msgid "Maximize Fullscreen"
 msgstr "Maksimer fuldskærm"
 
-#: src/bin/e_actions.c:3010
+#: src/bin/e_actions.c:3011
 msgid "Maximize Mode \"Smart\""
 msgstr ""
 
-#: src/bin/e_actions.c:3012
+#: src/bin/e_actions.c:3013
 msgid "Maximize Mode \"Expand\""
 msgstr ""
 
-#: src/bin/e_actions.c:3014
+#: src/bin/e_actions.c:3015
 msgid "Maximize Mode \"Fill\""
 msgstr ""
 
-#: src/bin/e_actions.c:3021
+#: src/bin/e_actions.c:3022
 #, fuzzy
 msgid "Shade Up Mode Toggle"
 msgstr "Shade up Mode Toggle"
 
-#: src/bin/e_actions.c:3023
+#: src/bin/e_actions.c:3024
 #, fuzzy
 msgid "Shade Down Mode Toggle"
 msgstr "Shade Down tilstand Toggle"
 
-#: src/bin/e_actions.c:3025
+#: src/bin/e_actions.c:3026
 #, fuzzy
 msgid "Shade Left Mode Toggle"
 msgstr "Shade Venstre tilstand Toggle"
 
-#: src/bin/e_actions.c:3027
+#: src/bin/e_actions.c:3028
 #, fuzzy
 msgid "Shade Right Mode Toggle"
 msgstr "Shade Højre tilstand Toggle"
 
-#: src/bin/e_actions.c:3029
+#: src/bin/e_actions.c:3030
 #, fuzzy
 msgid "Shade Mode Toggle"
 msgstr "Shade tilstand Toggle"
 
-#: src/bin/e_actions.c:3033
+#: src/bin/e_actions.c:3034
 #, fuzzy
 msgid "Set Shaded State"
 msgstr "Oprullet tilstand"
 
-#: src/bin/e_actions.c:3034
+#: src/bin/e_actions.c:3035
 msgid "syntax: \"(0|1) (up|down|left|right)\""
 msgstr ""
 
-#: src/bin/e_actions.c:3038
+#: src/bin/e_actions.c:3039
 #, fuzzy
 msgid "Toggle Borderless State"
 msgstr "Skift kant State"
 
-#: src/bin/e_actions.c:3043
+#: src/bin/e_actions.c:3044
 #, fuzzy
 msgid "Set Border"
 msgstr "Rammer"
 
-#: src/bin/e_actions.c:3049
+#: src/bin/e_actions.c:3050
 #, fuzzy
 msgid "Cycle between Borders"
 msgstr "Cycle mellem Grænser"
 
-#: src/bin/e_actions.c:3055
+#: src/bin/e_actions.c:3056
 #, fuzzy
 msgid "Toggle Pinned State"
 msgstr "Skift Pinned State"
 
-#: src/bin/e_actions.c:3060 src/bin/e_actions.c:3062 src/bin/e_actions.c:3064
-#: src/bin/e_actions.c:3066 src/bin/e_actions.c:3068 src/bin/e_actions.c:3074
-#: src/bin/e_actions.c:3079 src/bin/e_actions.c:3085 src/bin/e_actions.c:3090
-#: src/bin/e_actions.c:3096 src/bin/e_actions.c:3102 src/bin/e_actions.c:3104
-#: src/bin/e_actions.c:3106 src/bin/e_actions.c:3108 src/bin/e_actions.c:3110
-#: src/bin/e_actions.c:3112 src/bin/e_actions.c:3114 src/bin/e_actions.c:3116
-#: src/bin/e_actions.c:3118 src/bin/e_actions.c:3120 src/bin/e_actions.c:3122
-#: src/bin/e_actions.c:3124 src/bin/e_actions.c:3126 src/bin/e_actions.c:3132
-#: src/bin/e_actions.c:3134 src/bin/e_actions.c:3136 src/bin/e_actions.c:3138
-#: src/bin/e_actions.c:3140 src/bin/e_actions.c:3146 src/bin/e_actions.c:3152
-#: src/bin/e_actions.c:3158 src/bin/e_actions.c:3163 src/bin/e_actions.c:3165
-#: src/bin/e_actions.c:3167 src/bin/e_actions.c:3169 src/bin/e_actions.c:3171
-#: src/bin/e_actions.c:3173 src/bin/e_actions.c:3175 src/bin/e_actions.c:3177
-#: src/bin/e_actions.c:3179 src/bin/e_actions.c:3181 src/bin/e_actions.c:3183
-#: src/bin/e_actions.c:3185 src/bin/e_actions.c:3187 src/bin/e_actions.c:3400
-#: src/bin/e_actions.c:3405 src/bin/e_int_menus.c:186
+#: src/bin/e_actions.c:3061 src/bin/e_actions.c:3063 src/bin/e_actions.c:3065
+#: src/bin/e_actions.c:3067 src/bin/e_actions.c:3069 src/bin/e_actions.c:3075
+#: src/bin/e_actions.c:3080 src/bin/e_actions.c:3086 src/bin/e_actions.c:3091
+#: src/bin/e_actions.c:3097 src/bin/e_actions.c:3103 src/bin/e_actions.c:3105
+#: src/bin/e_actions.c:3107 src/bin/e_actions.c:3109 src/bin/e_actions.c:3111
+#: src/bin/e_actions.c:3113 src/bin/e_actions.c:3115 src/bin/e_actions.c:3117
+#: src/bin/e_actions.c:3119 src/bin/e_actions.c:3121 src/bin/e_actions.c:3123
+#: src/bin/e_actions.c:3125 src/bin/e_actions.c:3127 src/bin/e_actions.c:3133
+#: src/bin/e_actions.c:3135 src/bin/e_actions.c:3137 src/bin/e_actions.c:3139
+#: src/bin/e_actions.c:3141 src/bin/e_actions.c:3147 src/bin/e_actions.c:3153
+#: src/bin/e_actions.c:3159 src/bin/e_actions.c:3164 src/bin/e_actions.c:3166
+#: src/bin/e_actions.c:3168 src/bin/e_actions.c:3170 src/bin/e_actions.c:3172
+#: src/bin/e_actions.c:3174 src/bin/e_actions.c:3176 src/bin/e_actions.c:3178
+#: src/bin/e_actions.c:3180 src/bin/e_actions.c:3182 src/bin/e_actions.c:3184
+#: src/bin/e_actions.c:3186 src/bin/e_actions.c:3188 src/bin/e_actions.c:3401
+#: src/bin/e_actions.c:3406 src/bin/e_int_menus.c:186
 #: src/bin/e_int_config_comp_match.c:78 src/bin/e_int_config_comp_match.c:399
 #: src/bin/e_int_shelf_config.c:283
 #: src/modules/conf_window_manipulation/e_int_config_clientlist.c:118
@@ -345,199 +345,199 @@ msgstr "Skift Pinned State"
 msgid "Desktop"
 msgstr "Skrivebord"
 
-#: src/bin/e_actions.c:3060
+#: src/bin/e_actions.c:3061
 msgid "Flip Desktop Left"
 msgstr "Vend skrivebord til venstre"
 
-#: src/bin/e_actions.c:3062
+#: src/bin/e_actions.c:3063
 msgid "Flip Desktop Right"
 msgstr "Vend skrivebord til højre"
 
-#: src/bin/e_actions.c:3064
+#: src/bin/e_actions.c:3065
 msgid "Flip Desktop Up"
 msgstr "Vend skrivebord op"
 
-#: src/bin/e_actions.c:3066
+#: src/bin/e_actions.c:3067
 msgid "Flip Desktop Down"
 msgstr "Vend skrivebord ned"
 
-#: src/bin/e_actions.c:3068
+#: src/bin/e_actions.c:3069
 msgid "Flip Desktop By..."
 msgstr "Vend skrivebord med..."
 
-#: src/bin/e_actions.c:3074
+#: src/bin/e_actions.c:3075
 #, fuzzy
 msgid "Flip To Previous Desktop"
 msgstr "Til forrige Desktop"
 
-#: src/bin/e_actions.c:3079
+#: src/bin/e_actions.c:3080
 msgid "Show The Desktop"
 msgstr "Vis skrivebordet"
 
-#: src/bin/e_actions.c:3085
+#: src/bin/e_actions.c:3086
 msgid "Show The Shelf"
 msgstr "Vis hylden"
 
-#: src/bin/e_actions.c:3090
+#: src/bin/e_actions.c:3091
 msgid "Flip Desktop To..."
 msgstr "Vend skrivebordet til..."
 
-#: src/bin/e_actions.c:3096
+#: src/bin/e_actions.c:3097
 #, fuzzy
 msgid "Flip Desktop Linearly..."
 msgstr "Flip Desktop Lineært ..."
 
-#: src/bin/e_actions.c:3102
+#: src/bin/e_actions.c:3103
 #, fuzzy
 msgid "Switch To Desktop 0"
 msgstr "Skift Til desktop."
 
-#: src/bin/e_actions.c:3104
+#: src/bin/e_actions.c:3105
 #, fuzzy
 msgid "Switch To Desktop 1"
 msgstr "Skift til desktop."
 
-#: src/bin/e_actions.c:3106
+#: src/bin/e_actions.c:3107
 #, fuzzy
 msgid "Switch To Desktop 2"
 msgstr "Skift til desktop."
 
-#: src/bin/e_actions.c:3108
+#: src/bin/e_actions.c:3109
 #, fuzzy
 msgid "Switch To Desktop 3"
 msgstr "Skift til Desktop."
 
-#: src/bin/e_actions.c:3110
+#: src/bin/e_actions.c:3111
 msgid "Switch To Desktop 4"
 msgstr "Skift til skrivebord 4"
 
-#: src/bin/e_actions.c:3112
+#: src/bin/e_actions.c:3113
 msgid "Switch To Desktop 5"
 msgstr "Skift til skrivebord 5"
 
-#: src/bin/e_actions.c:3114
+#: src/bin/e_actions.c:3115
 msgid "Switch To Desktop 6"
 msgstr "Skift til skrivebord 6"
 
-#: src/bin/e_actions.c:3116
+#: src/bin/e_actions.c:3117
 msgid "Switch To Desktop 7"
 msgstr "Skift til skrivebord 7"
 
-#: src/bin/e_actions.c:3118
+#: src/bin/e_actions.c:3119
 msgid "Switch To Desktop 8"
 msgstr "Skift til skrivebord 8"
 
-#: src/bin/e_actions.c:3120
+#: src/bin/e_actions.c:3121
 msgid "Switch To Desktop 9"
 msgstr "Skift til skrivebord 9"
 
-#: src/bin/e_actions.c:3122
+#: src/bin/e_actions.c:3123
 msgid "Switch To Desktop 10"
 msgstr "Skift til skrivebord 10"
 
-#: src/bin/e_actions.c:3124
+#: src/bin/e_actions.c:3125
 msgid "Switch To Desktop 11"
 msgstr "Skift til skrivebord 11"
 
-#: src/bin/e_actions.c:3126
+#: src/bin/e_actions.c:3127
 msgid "Switch To Desktop..."
 msgstr "Skift til skrivebord..."
 
-#: src/bin/e_actions.c:3132
+#: src/bin/e_actions.c:3133
 msgid "Flip Desktop Left (All Screens)"
 msgstr "Vend skrivebord til venstre (alle skærme)"
 
-#: src/bin/e_actions.c:3134
+#: src/bin/e_actions.c:3135
 msgid "Flip Desktop Right (All Screens)"
 msgstr "Vend skrivebord til højre (alle skærme)"
 
-#: src/bin/e_actions.c:3136
+#: src/bin/e_actions.c:3137
 msgid "Flip Desktop Up (All Screens)"
 msgstr "Vend skrivebord op (alle skærme)"
 
-#: src/bin/e_actions.c:3138
+#: src/bin/e_actions.c:3139
 msgid "Flip Desktop Down (All Screens)"
 msgstr "Vend skrivebord ned (alle skærme)"
 
-#: src/bin/e_actions.c:3140
+#: src/bin/e_actions.c:3141
 msgid "Flip Desktop By... (All Screens)"
 msgstr "Vend skrivebord efter... (alle skærme)"
 
-#: src/bin/e_actions.c:3146
+#: src/bin/e_actions.c:3147
 msgid "Flip Desktop To... (All Screens)"
 msgstr "Vend skrivebord til... (alle skærme)"
 
-#: src/bin/e_actions.c:3152
+#: src/bin/e_actions.c:3153
 msgid "Flip Desktop Linearly... (All Screens)"
 msgstr "Vend skrivebord lineært... (alle skærme)"
 
-#: src/bin/e_actions.c:3158
+#: src/bin/e_actions.c:3159
 msgid "Flip Desktop In Direction..."
 msgstr "Vend skrivebord i retning..."
 
-#: src/bin/e_actions.c:3163
+#: src/bin/e_actions.c:3164
 msgid "Switch To Desktop 0 (All Screens)"
 msgstr "Skift til skrivebord 0 (alle skærme)"
 
-#: src/bin/e_actions.c:3165
+#: src/bin/e_actions.c:3166
 msgid "Switch To Desktop 1 (All Screens)"
 msgstr "Skift til skrivebord 1 (alle skærme)"
 
-#: src/bin/e_actions.c:3167
+#: src/bin/e_actions.c:3168
 msgid "Switch To Desktop 2 (All Screens)"
 msgstr "Skift til skrivebord 2 (alle skærme)"
 
-#: src/bin/e_actions.c:3169
+#: src/bin/e_actions.c:3170
 #, fuzzy
 msgid "Switch To Desktop 3 (All Screens)"
 msgstr "Skift til Desktop 3 (Alle skærmbilleder."
 
-#: src/bin/e_actions.c:3171
+#: src/bin/e_actions.c:3172
 #, fuzzy
 msgid "Switch To Desktop 4 (All Screens)"
 msgstr "Skift til desktop 4 (Alle skærmbilleder."
 
-#: src/bin/e_actions.c:3173
+#: src/bin/e_actions.c:3174
 #, fuzzy
 msgid "Switch To Desktop 5 (All Screens)"
 msgstr "Skift til desktop 5 (Alle skærme."
 
-#: src/bin/e_actions.c:3175
+#: src/bin/e_actions.c:3176
 #, fuzzy
 msgid "Switch To Desktop 6 (All Screens)"
 msgstr "Skift til desktop 6 (Alle skærmbilleder."
 
-#: src/bin/e_actions.c:3177
+#: src/bin/e_actions.c:3178
 #, fuzzy
 msgid "Switch To Desktop 7 (All Screens)"
 msgstr "Skift til desktop 7 (Alle skærme."
 
-#: src/bin/e_actions.c:3179
+#: src/bin/e_actions.c:3180
 #, fuzzy
 msgid "Switch To Desktop 8 (All Screens)"
 msgstr "Skift til desktop 8 (Alle skærmbilleder."
 
-#: src/bin/e_actions.c:3181
+#: src/bin/e_actions.c:3182
 #, fuzzy
 msgid "Switch To Desktop 9 (All Screens)"
 msgstr "Skift til desktop 9 (Alle skærmbilleder."
 
-#: src/bin/e_actions.c:3183
+#: src/bin/e_actions.c:3184
 #, fuzzy
 msgid "Switch To Desktop 10 (All Screens)"
 msgstr "Skift til desktop 10 (alle skærme."
 
-#: src/bin/e_actions.c:3185
+#: src/bin/e_actions.c:3186
 #, fuzzy
 msgid "Switch To Desktop 11 (All Screens)"
 msgstr "Skift til desktop 11 (alle skærme."
 
-#: src/bin/e_actions.c:3187
+#: src/bin/e_actions.c:3188
 #, fuzzy
 msgid "Switch To Desktop... (All Screens)"
 msgstr "Skift Til desktop ... (Alle skærme)"
 
-#: src/bin/e_actions.c:3193 src/bin/e_actions.c:3197
+#: src/bin/e_actions.c:3194 src/bin/e_actions.c:3198
 #: src/modules/winlist/e_mod_main.c:41 src/modules/winlist/e_mod_main.c:43
 #: src/modules/winlist/e_mod_main.c:45 src/modules/winlist/e_mod_main.c:48
 #: src/modules/winlist/e_mod_main.c:51 src/modules/winlist/e_mod_main.c:54
@@ -547,321 +547,321 @@ msgstr "Skift Til desktop ... (Alle skærme)"
 msgid "Window : List"
 msgstr "Window ; List"
 
-#: src/bin/e_actions.c:3193
+#: src/bin/e_actions.c:3194
 #, fuzzy
 msgid "Jump to window..."
 msgstr "Hop til skrivebord"
 
-#: src/bin/e_actions.c:3197
+#: src/bin/e_actions.c:3198
 msgid "Jump to window... or start..."
 msgstr ""
 
-#: src/bin/e_actions.c:3202 src/bin/e_actions.c:3204 src/bin/e_actions.c:3206
-#: src/bin/e_actions.c:3212 src/bin/e_actions.c:3214 src/bin/e_actions.c:3216
-#: src/bin/e_actions.c:3221 src/bin/e_actions.c:3224 src/bin/e_actions.c:3227
-#: src/bin/e_actions.c:3229 src/bin/e_actions.c:3231 src/bin/e_actions.c:3233
-#: src/bin/e_actions.c:3236 src/bin/e_actions.c:3238 src/bin/e_actions.c:3240
+#: src/bin/e_actions.c:3203 src/bin/e_actions.c:3205 src/bin/e_actions.c:3207
+#: src/bin/e_actions.c:3213 src/bin/e_actions.c:3215 src/bin/e_actions.c:3217
+#: src/bin/e_actions.c:3222 src/bin/e_actions.c:3225 src/bin/e_actions.c:3228
+#: src/bin/e_actions.c:3230 src/bin/e_actions.c:3232 src/bin/e_actions.c:3234
+#: src/bin/e_actions.c:3237 src/bin/e_actions.c:3239 src/bin/e_actions.c:3241
 #: src/modules/backlight/e_mod_main.c:472
 #: src/modules/conf_display/e_mod_main.c:17
 #: src/modules/conf_randr/e_mod_main.c:16 src/modules/ibox/e_mod_config.c:135
-#: src/modules/shot/e_mod_main.c:790 src/modules/shot/e_mod_main.c:1048
+#: src/modules/shot/e_mod_main.c:788 src/modules/shot/e_mod_main.c:1046
 msgid "Screen"
 msgstr "Skærm"
 
-#: src/bin/e_actions.c:3202
+#: src/bin/e_actions.c:3203
 #, fuzzy
 msgid "Send Mouse To Screen 0"
 msgstr "Send Mus til skærm."
 
-#: src/bin/e_actions.c:3204
+#: src/bin/e_actions.c:3205
 #, fuzzy
 msgid "Send Mouse To Screen 1"
 msgstr "Send Mus til skærm."
 
-#: src/bin/e_actions.c:3206
+#: src/bin/e_actions.c:3207
 #, fuzzy
 msgid "Send Mouse To Screen..."
 msgstr "Send Mus til skærm ..."
 
-#: src/bin/e_actions.c:3212
+#: src/bin/e_actions.c:3213
 #, fuzzy
 msgid "Send Mouse Forward 1 Screen"
 msgstr "Send musen fremad 1 skærm"
 
-#: src/bin/e_actions.c:3214
+#: src/bin/e_actions.c:3215
 #, fuzzy
 msgid "Send Mouse Back 1 Screen"
 msgstr "Send Mouse Tilbage 1 skærm"
 
-#: src/bin/e_actions.c:3216
+#: src/bin/e_actions.c:3217
 msgid "Send Mouse Forward/Back Screens..."
 msgstr ""
 
-#: src/bin/e_actions.c:3221
+#: src/bin/e_actions.c:3222
 #, fuzzy
 msgid "Dim"
 msgstr "Dim"
 
-#: src/bin/e_actions.c:3224
+#: src/bin/e_actions.c:3225
 #, fuzzy
 msgid "Undim"
 msgstr "Undim"
 
-#: src/bin/e_actions.c:3227
+#: src/bin/e_actions.c:3228
 #, fuzzy
 msgid "Backlight Set"
 msgstr "Baggrundslys Indstil"
 
-#: src/bin/e_actions.c:3229
+#: src/bin/e_actions.c:3230
 #, fuzzy
 msgid "Backlight Min"
 msgstr "Baggrundslys Min"
 
-#: src/bin/e_actions.c:3231
+#: src/bin/e_actions.c:3232
 #, fuzzy
 msgid "Backlight Mid"
 msgstr "baggrundsbelysning Mid"
 
-#: src/bin/e_actions.c:3233
+#: src/bin/e_actions.c:3234
 #, fuzzy
 msgid "Backlight Max"
 msgstr "Baggrundslys Max"
 
-#: src/bin/e_actions.c:3236
+#: src/bin/e_actions.c:3237
 #, fuzzy
 msgid "Backlight Adjust"
 msgstr "Baggrundslys Indstil"
 
-#: src/bin/e_actions.c:3238
+#: src/bin/e_actions.c:3239
 #, fuzzy
 msgid "Backlight Up"
 msgstr "Baggrundslys Up"
 
-#: src/bin/e_actions.c:3240
+#: src/bin/e_actions.c:3241
 #, fuzzy
 msgid "Backlight Down"
 msgstr "Baggrundslys Down"
 
-#: src/bin/e_actions.c:3245
+#: src/bin/e_actions.c:3246
 #, fuzzy
 msgid "Move To Center"
 msgstr "Flyt til center"
 
-#: src/bin/e_actions.c:3249
+#: src/bin/e_actions.c:3250
 #, fuzzy
 msgid "Move To Coordinates..."
 msgstr "Flyt til center"
 
-#: src/bin/e_actions.c:3254
+#: src/bin/e_actions.c:3255
 msgid "Move By Coordinate Offset..."
 msgstr ""
 
-#: src/bin/e_actions.c:3260
+#: src/bin/e_actions.c:3261
 #, fuzzy
 msgid "Resize By..."
 msgstr "Skift størrelse"
 
-#: src/bin/e_actions.c:3266
+#: src/bin/e_actions.c:3267
 #, fuzzy
 msgid "Push in Direction..."
 msgstr "Skub i Retning ..."
 
-#: src/bin/e_actions.c:3272
+#: src/bin/e_actions.c:3273
 #, fuzzy
 msgid "Drag Icon..."
 msgstr "Opret ikon"
 
-#: src/bin/e_actions.c:3277 src/bin/e_actions.c:3279 src/bin/e_actions.c:3281
-#: src/bin/e_actions.c:3287 src/bin/e_actions.c:3293 src/bin/e_actions.c:3295
+#: src/bin/e_actions.c:3278 src/bin/e_actions.c:3280 src/bin/e_actions.c:3282
+#: src/bin/e_actions.c:3288 src/bin/e_actions.c:3294 src/bin/e_actions.c:3296
 #, fuzzy
 msgid "Window : Moving"
 msgstr "Window ; Flytning"
 
-#: src/bin/e_actions.c:3277
+#: src/bin/e_actions.c:3278
 #, fuzzy
 msgid "To Next Desktop"
 msgstr "Til næste Desktop"
 
-#: src/bin/e_actions.c:3279
+#: src/bin/e_actions.c:3280
 #, fuzzy
 msgid "To Previous Desktop"
 msgstr "Til forrige Desktop"
 
-#: src/bin/e_actions.c:3281
+#: src/bin/e_actions.c:3282
 msgid "By Desktop #..."
 msgstr ""
 
-#: src/bin/e_actions.c:3287
+#: src/bin/e_actions.c:3288
 #, fuzzy
 msgid "To Desktop..."
 msgstr "Til desktop ..."
 
-#: src/bin/e_actions.c:3293
+#: src/bin/e_actions.c:3294
 #, fuzzy
 msgid "To Next Screen"
 msgstr "opsætningsskærme"
 
-#: src/bin/e_actions.c:3295
+#: src/bin/e_actions.c:3296
 #, fuzzy
 msgid "To Previous Screen"
 msgstr "Til forrige Desktop"
 
-#: src/bin/e_actions.c:3300
+#: src/bin/e_actions.c:3301
 msgid "Show Main Menu"
 msgstr "Vis hovedmenu"
 
-#: src/bin/e_actions.c:3302
+#: src/bin/e_actions.c:3303
 #, fuzzy
 msgid "Show Favorites Menu"
 msgstr "Vis menuen Foretrukne"
 
-#: src/bin/e_actions.c:3304
+#: src/bin/e_actions.c:3305
 #, fuzzy
 msgid "Show All Applications Menu"
 msgstr "Vis alle applikationer Menu"
 
-#: src/bin/e_actions.c:3306
+#: src/bin/e_actions.c:3307
 #, fuzzy
 msgid "Show Clients Menu"
 msgstr "Vis Kunder Menu"
 
-#: src/bin/e_actions.c:3308
+#: src/bin/e_actions.c:3309
 msgid "Show Menu..."
 msgstr "Vis menu..."
 
-#: src/bin/e_actions.c:3315 src/bin/e_actions.c:3320 src/bin/e_actions.c:3325
+#: src/bin/e_actions.c:3316 src/bin/e_actions.c:3321 src/bin/e_actions.c:3326
 #: src/modules/conf/e_mod_main.c:273
 #: src/modules/everything/evry_plug_apps.c:1170
 #: src/modules/fileman/e_mod_main.c:56
 msgid "Launch"
 msgstr "Kør"
 
-#: src/bin/e_actions.c:3315 src/bin/e_int_client_prop.c:472
+#: src/bin/e_actions.c:3316 src/bin/e_int_client_prop.c:472
 msgid "Command"
 msgstr "Kommando"
 
-#: src/bin/e_actions.c:3320 src/bin/e_desktop_editor.c:727
+#: src/bin/e_actions.c:3321 src/bin/e_desktop_editor.c:727
 #: src/bin/e_int_client_menu.c:120
 #, c-format
 msgid "Application"
 msgstr "Program"
 
-#: src/bin/e_actions.c:3325
+#: src/bin/e_actions.c:3326
 msgid "New Instance of Focused App"
 msgstr ""
 
-#: src/bin/e_actions.c:3329 src/bin/e_int_menus.c:248
+#: src/bin/e_actions.c:3330 src/bin/e_int_menus.c:248
 msgid "Restart"
 msgstr "Genstart"
 
-#: src/bin/e_actions.c:3337
+#: src/bin/e_actions.c:3338
 msgid "Exit Now"
 msgstr "Afslut nu"
 
-#: src/bin/e_actions.c:3341 src/bin/e_actions.c:3346
+#: src/bin/e_actions.c:3342 src/bin/e_actions.c:3347
 msgid "Enlightenment : Mode"
 msgstr ""
 
-#: src/bin/e_actions.c:3342
+#: src/bin/e_actions.c:3343
 #, fuzzy
 msgid "Presentation Mode Toggle"
 msgstr "Præsentation tilstand Toggle"
 
-#: src/bin/e_actions.c:3347
+#: src/bin/e_actions.c:3348
 #, fuzzy
 msgid "Offline Mode Toggle"
 msgstr "Offline tilstand Toggle"
 
-#: src/bin/e_actions.c:3351 src/bin/e_actions.c:3355 src/bin/e_actions.c:3359
+#: src/bin/e_actions.c:3352 src/bin/e_actions.c:3356 src/bin/e_actions.c:3360
 #, fuzzy
 msgid "Enlightenment : Module"
 msgstr "Enlightenment %s modul"
 
-#: src/bin/e_actions.c:3352
+#: src/bin/e_actions.c:3353
 #, fuzzy
 msgid "Enable the named module"
 msgstr "Enlightenment Randr-modul"
 
-#: src/bin/e_actions.c:3356
+#: src/bin/e_actions.c:3357
 msgid "Disable the named module"
 msgstr ""
 
-#: src/bin/e_actions.c:3360
+#: src/bin/e_actions.c:3361
 msgid "Toggle the named module"
 msgstr ""
 
-#: src/bin/e_actions.c:3364 src/bin/e_actions.c:3368 src/bin/e_actions.c:3372
-#: src/bin/e_actions.c:3376 src/bin/e_actions.c:3380 src/bin/e_actions.c:3384
-#: src/bin/e_actions.c:3388 src/bin/e_actions.c:3392 src/bin/e_configure.c:417
+#: src/bin/e_actions.c:3365 src/bin/e_actions.c:3369 src/bin/e_actions.c:3373
+#: src/bin/e_actions.c:3377 src/bin/e_actions.c:3381 src/bin/e_actions.c:3385
+#: src/bin/e_actions.c:3389 src/bin/e_actions.c:3393 src/bin/e_configure.c:417
 #: src/bin/e_int_config_modules.c:52
-#: src/modules/conf_applications/e_int_config_apps.c:278
+#: src/modules/conf_applications/e_int_config_apps.c:277
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:100
 #: src/modules/conf_intl/e_int_config_imc.c:808
-#: src/modules/conf_theme/e_int_config_theme.c:663
-#: src/modules/conf_theme/e_int_config_wallpaper.c:427
-#: src/modules/conf_theme/e_int_config_wallpaper.c:582
+#: src/modules/conf_theme/e_int_config_theme.c:668
+#: src/modules/conf_theme/e_int_config_wallpaper.c:426
+#: src/modules/conf_theme/e_int_config_wallpaper.c:580
 #: src/modules/gadman/e_mod_config.c:252 src/modules/syscon/e_mod_main.c:31
 #: src/modules/syscon/e_mod_main.c:35 src/modules/syscon/e_mod_main.c:129
 #: src/modules/syscon/e_syscon_gadget.c:141
 msgid "System"
 msgstr "System"
 
-#: src/bin/e_actions.c:3364
+#: src/bin/e_actions.c:3365
 msgid "Log Out"
 msgstr "Log af"
 
-#: src/bin/e_actions.c:3368
+#: src/bin/e_actions.c:3369
 msgid "Power Off Now"
 msgstr "Sluk strøm nu"
 
-#: src/bin/e_actions.c:3372
+#: src/bin/e_actions.c:3373
 msgid "Power Off"
 msgstr "Sluk strøm"
 
-#: src/bin/e_actions.c:3380
+#: src/bin/e_actions.c:3381
 #, fuzzy
 msgid "Suspend Now"
 msgstr "Suspendér nu"
 
-#: src/bin/e_actions.c:3392
+#: src/bin/e_actions.c:3393
 #, fuzzy
 msgid "Hibernate Now"
 msgstr "dvale nu"
 
-#: src/bin/e_actions.c:3400
+#: src/bin/e_actions.c:3401
 msgid "Lock"
 msgstr "Lås"
 
-#: src/bin/e_actions.c:3405 src/bin/e_int_menus.c:1461
+#: src/bin/e_actions.c:3406 src/bin/e_int_menus.c:1461
 msgid "Cleanup Windows"
 msgstr "Ryd vinduer op"
 
-#: src/bin/e_actions.c:3410
+#: src/bin/e_actions.c:3411
 #, fuzzy
 msgid "Generic : Actions"
 msgstr "Generiske ; Handlinger"
 
-#: src/bin/e_actions.c:3410
+#: src/bin/e_actions.c:3411
 #, fuzzy
 msgid "Delayed Action"
 msgstr "Forsinket Action"
 
-#: src/bin/e_actions.c:3418 src/bin/e_actions.c:3422 src/bin/e_actions.c:3426
+#: src/bin/e_actions.c:3419 src/bin/e_actions.c:3423 src/bin/e_actions.c:3427
 #, fuzzy
 msgid "Keyboard Layouts"
 msgstr "tastatur"
 
-#: src/bin/e_actions.c:3419
+#: src/bin/e_actions.c:3420
 #, fuzzy
 msgid "Use keyboard layout"
 msgstr "Opret Tastaturgenvej"
 
-#: src/bin/e_actions.c:3423
+#: src/bin/e_actions.c:3424
 #, fuzzy
 msgid "Next keyboard layout"
 msgstr "Opret Tastaturgenvej"
 
-#: src/bin/e_actions.c:3427
+#: src/bin/e_actions.c:3428
 msgid "Previous keyboard layout"
 msgstr ""
 
@@ -884,63 +884,63 @@ msgstr "Vælg et vindue"
 #: src/bin/e_fm.c:10109 src/bin/e_fm_prop.c:625
 #: src/bin/e_import_config_dialog.c:542 src/bin/e_import_dialog.c:199
 #: src/modules/bluez4/agent.c:136 src/modules/bluez4/agent.c:149
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:624
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:623
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
 #: src/modules/conf_theme/e_int_config_theme_import.c:123
 #: src/modules/connman/agent.c:251
-#: src/modules/fileman/e_int_config_mime_edit.c:314
+#: src/modules/fileman/e_int_config_mime_edit.c:313
 #: src/modules/quickaccess/e_mod_quickaccess.c:331
 #: src/modules/quickaccess/e_mod_quickaccess.c:393
-#: src/modules/shot/e_mod_main.c:296 src/modules/shot/e_mod_main.c:547
-#: src/modules/shot/e_mod_main.c:573 src/modules/shot/e_mod_main.c:849
-#: src/modules/syscon/e_syscon.c:91 src/modules/xkbswitch/e_mod_config.c:553
+#: src/modules/shot/e_mod_main.c:295 src/modules/shot/e_mod_main.c:545
+#: src/modules/shot/e_mod_main.c:571 src/modules/shot/e_mod_main.c:847
+#: src/modules/syscon/e_syscon.c:91 src/modules/xkbswitch/e_mod_config.c:551
 msgid "Cancel"
 msgstr "Fortryd"
 
-#: src/bin/e_comp.c:1101 src/bin/e_comp.c:1107 src/bin/e_comp.c:1113
+#: src/bin/e_comp.c:983 src/bin/e_comp.c:989 src/bin/e_comp.c:995
 #: src/bin/e_configure.c:33
 #, fuzzy
 msgid "Compositor"
 msgstr "Position"
 
-#: src/bin/e_comp.c:1102
+#: src/bin/e_comp.c:984
 msgid "Change current window opacity"
 msgstr ""
 
-#: src/bin/e_comp.c:1108
+#: src/bin/e_comp.c:990
 msgid "Set current window opacity"
 msgstr ""
 
-#: src/bin/e_comp.c:1114
+#: src/bin/e_comp.c:996
 msgid "Toggle focused client's redirect state"
 msgstr ""
 
-#: src/bin/e_comp.c:1197 src/modules/bluez4/e_mod_main.c:204
+#: src/bin/e_comp.c:1081 src/modules/bluez4/e_mod_main.c:202
 msgid "Visible"
 msgstr ""
 
-#: src/bin/e_comp.c:1202
+#: src/bin/e_comp.c:1086
 #, fuzzy
 msgid "Focus-Out"
 msgstr "Fokuséring"
 
-#: src/bin/e_comp.c:1207
+#: src/bin/e_comp.c:1091
 #, fuzzy
 msgid "Focus-In"
 msgstr "Fokuséring"
 
-#: src/bin/e_comp.c:1212 src/bin/e_int_client_prop.c:514
+#: src/bin/e_comp.c:1096 src/bin/e_int_client_prop.c:514
 #, fuzzy
 msgid "Hidden"
 msgstr "skjult"
 
-#: src/bin/e_comp.c:1319 src/bin/e_int_client_prop.c:448
+#: src/bin/e_comp.c:1203 src/bin/e_int_client_prop.c:448
 #: src/bin/e_int_client_remember.c:700 src/bin/e_int_config_comp_match.c:350
 #: src/modules/wizard/page_050.c:96
 msgid "Title"
 msgstr "Titel"
 
-#: src/bin/e_comp.c:1366
+#: src/bin/e_comp.c:1250
 #, fuzzy, c-format
 msgid "Compositor %u"
 msgstr "Position"
@@ -991,16 +991,16 @@ msgstr ""
 #: src/bin/e_fm_prop.c:624 src/bin/e_import_config_dialog.c:541
 #: src/bin/e_int_client_remember.c:353 src/bin/e_int_client_remember.c:550
 #: src/bin/e_int_config_comp_match.c:536 src/bin/e_module.c:618
-#: src/bin/e_module.c:1031 src/bin/e_sys.c:764 src/bin/e_sys.c:805
+#: src/bin/e_module.c:1030 src/bin/e_sys.c:846 src/bin/e_sys.c:887
 #: src/bin/e_update.c:70 src/bin/e_utils.c:470 src/modules/bluez4/agent.c:69
 #: src/modules/bluez4/agent.c:136 src/modules/bluez4/agent.c:149
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:623
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:622
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
 #: src/modules/conf_theme/e_int_config_theme_import.c:119
 #: src/modules/cpufreq/e_mod_main.c:509 src/modules/cpufreq/e_mod_main.c:536
 #: src/modules/cpufreq/e_mod_main.c:561 src/modules/cpufreq/e_mod_main.c:587
-#: src/modules/fileman/e_int_config_mime_edit.c:313
-#: src/modules/xkbswitch/e_mod_config.c:552
+#: src/modules/fileman/e_int_config_mime_edit.c:312
+#: src/modules/xkbswitch/e_mod_config.c:550
 msgid "OK"
 msgstr "O.k."
 
@@ -1133,22 +1133,22 @@ msgid "Basic"
 msgstr "Grundlæggende"
 
 #: src/bin/e_config_dialog.c:279
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:876
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:875
 msgid "Apply"
 msgstr "Anvend"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
 #: src/modules/connman/e_mod_main.c:600 src/modules/gadman/e_mod_main.c:23
-#: src/modules/mixer/e_mod_main.c:1182
+#: src/modules/mixer/e_mod_main.c:1188
 #: src/modules/notification/e_mod_main.c:151
 msgid "Extensions"
 msgstr "Udvidelser"
 
 #: src/bin/e_configure.c:30 src/bin/e_configure.c:39 src/bin/e_configure.c:286
 #: src/modules/conf_paths/e_int_config_paths.c:78
-#: src/modules/conf_theme/e_int_config_color_classes.c:862
+#: src/modules/conf_theme/e_int_config_color_classes.c:861
 #: src/modules/conf_theme/e_int_config_fonts.c:98
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:257
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:256
 msgid "Modules"
 msgstr "Moduler"
 
@@ -1268,7 +1268,7 @@ msgstr "Generisk navn"
 msgid "Window Class"
 msgstr "Window klasse"
 
-#: src/bin/e_desktop_editor.c:786 src/modules/fileman/e_int_config_mime.c:170
+#: src/bin/e_desktop_editor.c:786 src/modules/fileman/e_int_config_mime.c:169
 msgid "Categories"
 msgstr "Kategorier"
 
@@ -1284,13 +1284,13 @@ msgstr "Desktop-fil"
 #: src/bin/e_desktop_editor.c:810 src/bin/e_int_client_prop.c:454
 #: src/bin/e_int_client_prop.c:506 src/bin/e_int_config_comp.c:587
 #: src/modules/access/e_mod_config.c:66
-#: src/modules/conf_applications/e_int_config_defapps.c:358
+#: src/modules/conf_applications/e_int_config_defapps.c:357
 #: src/modules/conf_performance/e_int_config_performance.c:122
 #: src/modules/everything/evry_config.c:376
 #: src/modules/everything/evry_plug_files.c:1465
 #: src/modules/pager/e_mod_config.c:129 src/modules/pager/e_mod_config.c:226
 #: src/modules/tiling/e_mod_config.c:180
-#: src/modules/xkbswitch/e_mod_config.c:330
+#: src/modules/xkbswitch/e_mod_config.c:329
 msgid "General"
 msgstr "Generelt"
 
@@ -1310,7 +1310,7 @@ msgstr "Vis i menuer"
 
 #: src/bin/e_desktop_editor.c:820 src/bin/e_fm.c:8901 src/bin/e_fm.c:9047
 #: src/bin/e_int_client_remember.c:820
-#: src/modules/xkbswitch/e_mod_config.c:370
+#: src/modules/xkbswitch/e_mod_config.c:369
 msgid "Options"
 msgstr "Indstilinger"
 
@@ -1325,20 +1325,20 @@ msgstr "Vælg en kørbar fil"
 
 #: src/bin/e_entry.c:482 src/bin/e_fm.c:9238 src/bin/e_fm.c:10948
 #: src/bin/e_shelf.c:1612 src/bin/e_shelf.c:2272
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:203
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:201
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:265
-#: src/modules/conf_bindings/e_int_config_keybindings.c:247
+#: src/modules/conf_bindings/e_int_config_keybindings.c:245
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:294
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:790
-#: src/modules/conf_dialogs/e_int_config_profiles.c:135
-#: src/modules/conf_dialogs/e_int_config_profiles.c:339
-#: src/modules/conf_paths/e_int_config_env.c:317
-#: src/modules/conf_shelves/e_int_config_shelf.c:139
-#: src/modules/conf_shelves/e_int_config_shelf.c:394
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:187
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:789
+#: src/modules/conf_dialogs/e_int_config_profiles.c:134
+#: src/modules/conf_dialogs/e_int_config_profiles.c:338
+#: src/modules/conf_paths/e_int_config_env.c:316
+#: src/modules/conf_shelves/e_int_config_shelf.c:138
+#: src/modules/conf_shelves/e_int_config_shelf.c:393
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:186
 #: src/modules/ibar/e_mod_config.c:116 src/modules/ibar/e_mod_config.c:209
-#: src/modules/quickaccess/e_mod_config.c:277
-#: src/modules/quickaccess/e_mod_config.c:307
+#: src/modules/quickaccess/e_mod_config.c:276
+#: src/modules/quickaccess/e_mod_config.c:306
 msgid "Delete"
 msgstr "Slet"
 
@@ -1629,10 +1629,10 @@ msgid "Link"
 msgstr "Link"
 
 #: src/bin/e_fm.c:9246 src/bin/e_fm.c:10598 src/bin/e_shelf.c:2267
-#: src/modules/conf_shelves/e_int_config_shelf.c:142
+#: src/modules/conf_shelves/e_int_config_shelf.c:141
 #: src/modules/quickaccess/e_mod_config.c:226
-#: src/modules/quickaccess/e_mod_config.c:274
-#: src/modules/quickaccess/e_mod_config.c:304
+#: src/modules/quickaccess/e_mod_config.c:273
+#: src/modules/quickaccess/e_mod_config.c:303
 msgid "Rename"
 msgstr "Omdøb"
 
@@ -1649,7 +1649,7 @@ msgid "Eject"
 msgstr "Skub ud"
 
 #: src/bin/e_fm.c:9289 src/bin/e_int_client_remember.c:798
-#: src/modules/ibar/e_mod_main.c:1551
+#: src/modules/ibar/e_mod_main.c:1595
 msgid "Properties"
 msgstr "Egenskaber"
 
@@ -1705,7 +1705,7 @@ msgid "Could not create a file!"
 msgstr "Fejl ved indlæsning af modul"
 
 #: src/bin/e_fm.c:9641 src/bin/e_fm.c:9679
-#: src/modules/conf_paths/e_int_config_paths.c:204
+#: src/modules/conf_paths/e_int_config_paths.c:203
 msgid "New Directory"
 msgstr "Nyt katalog"
 
@@ -1729,7 +1729,7 @@ msgid "Directory"
 msgstr "Nyt katalog"
 
 #: src/bin/e_fm.c:9810
-#: src/modules/conf_applications/e_int_config_defapps.c:312
+#: src/modules/conf_applications/e_int_config_defapps.c:311
 #, fuzzy
 msgid "File"
 msgstr "Fil:"
@@ -1919,8 +1919,8 @@ msgstr ""
 
 #: src/bin/e_fm_prop.c:390 src/bin/e_int_config_comp_match.c:127
 #: src/bin/e_shelf.c:973 src/bin/e_shelf.c:2160
-#: src/modules/conf_dialogs/e_int_config_profiles.c:316
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:147
+#: src/modules/conf_dialogs/e_int_config_profiles.c:315
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:146
 #, fuzzy
 msgid "Name:"
 msgstr "Navn:"
@@ -1995,7 +1995,7 @@ msgstr "Andre indstillinger"
 msgid "Preview"
 msgstr "Eksempel"
 
-#: src/bin/e_fm_prop.c:527 src/modules/bluez4/e_mod_main.c:192
+#: src/bin/e_fm_prop.c:527 src/modules/bluez4/e_mod_main.c:190
 #: src/modules/everything/evry_config.c:424
 #, fuzzy
 msgid "Default"
@@ -2063,12 +2063,12 @@ msgstr "Inset"
 
 #: src/bin/e_gadcon.c:1803 src/bin/e_int_gadcon_config.c:697
 #: src/bin/e_int_gadcon_config.c:755 src/bin/e_widget_config_list.c:66
-#: src/modules/conf_applications/e_int_config_apps.c:273
-#: src/modules/conf_applications/e_int_config_apps.c:294
-#: src/modules/conf_applications/e_int_config_apps.c:314
-#: src/modules/conf_applications/e_int_config_apps_personal.c:97
+#: src/modules/conf_applications/e_int_config_apps.c:272
+#: src/modules/conf_applications/e_int_config_apps.c:293
+#: src/modules/conf_applications/e_int_config_apps.c:313
+#: src/modules/conf_applications/e_int_config_apps_personal.c:96
 #: src/modules/gadman/e_mod_gadman.c:1132
-#: src/modules/xkbswitch/e_mod_config.c:312
+#: src/modules/xkbswitch/e_mod_config.c:311
 #, fuzzy
 msgid "Remove"
 msgstr "Fjern"
@@ -2257,8 +2257,8 @@ msgstr "Position"
 #: src/bin/e_int_client_locks.c:311 src/bin/e_int_client_locks.c:330
 #: src/bin/e_int_client_remember.c:747 src/bin/e_int_shelf_config.c:216
 #: src/modules/conf_interaction/e_int_config_mouse.c:155
-#: src/modules/conf_theme/e_int_config_fonts.c:441
-#: src/modules/conf_theme/e_int_config_fonts.c:661
+#: src/modules/conf_theme/e_int_config_fonts.c:440
+#: src/modules/conf_theme/e_int_config_fonts.c:660
 msgid "Size"
 msgstr "Størrelse"
 
@@ -2333,7 +2333,7 @@ msgstr "Husk disse låsninger"
 msgid "Window"
 msgstr "Vindue"
 
-#: src/bin/e_int_client_menu.c:152 src/bin/e_int_client_menu.c:1060
+#: src/bin/e_int_client_menu.c:152 src/bin/e_int_client_menu.c:1063
 #, fuzzy
 msgid "Always on Top"
 msgstr "Altid på toppen"
@@ -2424,7 +2424,7 @@ msgstr ""
 msgid "Screen %d"
 msgstr "Skærm"
 
-#: src/bin/e_int_client_menu.c:1071 src/bin/e_int_client_prop.c:158
+#: src/bin/e_int_client_menu.c:1074 src/bin/e_int_client_prop.c:158
 #: src/bin/e_int_client_prop.c:180 src/bin/e_int_config_comp_match.c:92
 #: src/bin/e_int_config_comp_match.c:413
 #: src/modules/conf_theme/e_int_config_fonts.c:100
@@ -2434,51 +2434,51 @@ msgstr "Skærm"
 msgid "Normal"
 msgstr "Normal"
 
-#: src/bin/e_int_client_menu.c:1082
+#: src/bin/e_int_client_menu.c:1085
 msgid "Always Below"
 msgstr "Altid nederst"
 
-#: src/bin/e_int_client_menu.c:1126
+#: src/bin/e_int_client_menu.c:1129
 #, fuzzy
 msgid "Pin to Desktop"
 msgstr "Pin til Desktop"
 
-#: src/bin/e_int_client_menu.c:1137
+#: src/bin/e_int_client_menu.c:1140
 #, fuzzy
 msgid "Unpin from Desktop"
 msgstr "Frigør fra Desktop"
 
-#: src/bin/e_int_client_menu.c:1225
+#: src/bin/e_int_client_menu.c:1228
 #, fuzzy
 msgid "Select Border Style"
 msgstr "Vælg Border Style"
 
-#: src/bin/e_int_client_menu.c:1237
+#: src/bin/e_int_client_menu.c:1240
 #, fuzzy
 msgid "Use Enlightenment Default Icon Preference"
 msgstr "Brug E17 Standard Icon præference"
 
-#: src/bin/e_int_client_menu.c:1245
+#: src/bin/e_int_client_menu.c:1248
 #, fuzzy
 msgid "Use Application Provided Icon"
 msgstr "Anvendelse Ansøgning Forudsat Icon "
 
-#: src/bin/e_int_client_menu.c:1253
+#: src/bin/e_int_client_menu.c:1256
 #, fuzzy
 msgid "Use User Defined Icon"
 msgstr "Brug Brugerdefineret Icon"
 
-#: src/bin/e_int_client_menu.c:1262 src/bin/e_int_client_remember.c:786
+#: src/bin/e_int_client_menu.c:1265 src/bin/e_int_client_remember.c:786
 #, fuzzy
 msgid "Offer Resistance"
 msgstr "Modstand"
 
-#: src/bin/e_int_client_menu.c:1323
+#: src/bin/e_int_client_menu.c:1326
 #, fuzzy
 msgid "Window List"
 msgstr "Window List"
 
-#: src/bin/e_int_client_menu.c:1333 src/modules/pager/e_mod_main.c:276
+#: src/bin/e_int_client_menu.c:1336 src/modules/pager/e_mod_main.c:276
 #: src/modules/pager/e_mod_main.c:2905 src/modules/pager/e_mod_main.c:2912
 #: src/modules/pager/e_mod_main.c:2919 src/modules/pager/e_mod_main.c:2921
 #: src/modules/pager/e_mod_main.c:2923 src/modules/pager/e_mod_main.c:2925
@@ -2487,14 +2487,14 @@ msgstr "Window List"
 msgid "Pager"
 msgstr "Personsøger"
 
-#: src/bin/e_int_client_menu.c:1343 src/modules/wizard/page_180.c:24
+#: src/bin/e_int_client_menu.c:1346 src/modules/wizard/page_180.c:24
 #, fuzzy
 msgid "Taskbar"
 msgstr "proceslinjen"
 
 #: src/bin/e_int_client_prop.c:110 src/bin/e_int_client_prop.c:117
-#: src/bin/e_int_client_prop.c:124 src/bin/e_moveresize.c:109
-#: src/bin/e_moveresize.c:159 src/bin/e_widget_filepreview.c:85
+#: src/bin/e_int_client_prop.c:124 src/bin/e_moveresize.c:108
+#: src/bin/e_moveresize.c:153 src/bin/e_widget_filepreview.c:85
 #, c-format
 msgid "%i×%i"
 msgstr ""
@@ -2578,7 +2578,7 @@ msgstr "stat"
 #: src/modules/clock/e_mod_config.c:141
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:360
 #: src/modules/conf_performance/e_int_config_powermanagement.c:196
-#: src/modules/conf_theme/e_int_config_fonts.c:690
+#: src/modules/conf_theme/e_int_config_fonts.c:689
 #: src/modules/conf_theme/e_int_config_transitions.c:199
 #: src/modules/conf_theme/e_int_config_transitions.c:253
 #: src/modules/conf_theme/e_int_config_transitions.c:285
@@ -2739,18 +2739,18 @@ msgstr "anmodning Position"
 #: src/modules/conf/e_conf.c:136 src/modules/conf/e_mod_main.c:101
 #: src/modules/conf_dialogs/e_mod_main.c:17
 #: src/modules/conf_interaction/e_int_config_mouse.c:152
-#: src/modules/conf_shelves/e_int_config_shelf.c:149
+#: src/modules/conf_shelves/e_int_config_shelf.c:148
 #: src/modules/connman/e_mod_main.c:426 src/modules/cpufreq/e_mod_main.c:442
 #: src/modules/everything/evry_gadget.c:490
 #: src/modules/everything/evry_gadget.c:672
 #: src/modules/everything/evry_plug_settings.c:183
-#: src/modules/ibar/e_mod_main.c:486 src/modules/ibar/e_mod_main.c:1544
+#: src/modules/ibar/e_mod_main.c:486 src/modules/ibar/e_mod_main.c:1588
 #: src/modules/ibox/e_mod_main.c:356 src/modules/ibox/e_mod_main.c:737
-#: src/modules/mixer/e_mod_main.c:654 src/modules/music-control/ui.c:277
+#: src/modules/mixer/e_mod_main.c:660 src/modules/music-control/ui.c:277
 #: src/modules/packagekit/e_mod_main.c:48 src/modules/pager/e_mod_main.c:870
 #: src/modules/systray/e_mod_main.c:134 src/modules/tasks/e_mod_main.c:751
 #: src/modules/temperature/e_mod_main.c:230
-#: src/modules/tiling/e_mod_tiling.c:1668 src/modules/wizard/page_150.c:69
+#: src/modules/tiling/e_mod_tiling.c:1667 src/modules/wizard/page_150.c:69
 #: src/modules/xkbswitch/e_mod_main.c:323
 #: src/modules/xkbswitch/e_mod_main.c:357
 #, fuzzy
@@ -2767,13 +2767,13 @@ msgid "Shaded"
 msgstr "Oprullet"
 
 #: src/bin/e_int_client_prop.c:512 src/bin/e_int_client_remember.c:783
-#: src/modules/quickaccess/e_mod_config.c:342
+#: src/modules/quickaccess/e_mod_config.c:340
 #, fuzzy
 msgid "Skip Taskbar"
 msgstr "Spring proceslinjen"
 
 #: src/bin/e_int_client_prop.c:513 src/bin/e_int_client_remember.c:780
-#: src/modules/quickaccess/e_mod_config.c:345
+#: src/modules/quickaccess/e_mod_config.c:343
 #, fuzzy
 msgid "Skip Pager"
 msgstr "Spring Personsøger"
@@ -2841,7 +2841,7 @@ msgstr "Størelse, position og låsninger"
 #: src/bin/e_int_client_remember.c:658 src/modules/conf/e_mod_main.c:252
 #: src/modules/everything/evry_gadget.c:621
 #: src/modules/everything/evry_plug_aggregator.c:313
-#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:794
+#: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:792
 #, fuzzy
 msgid "All"
 msgstr "alle"
@@ -2944,7 +2944,7 @@ msgid "Launcher"
 msgstr "Kør"
 
 #: src/bin/e_int_config_modules.c:56
-#: src/modules/conf_applications/e_int_config_defapps.c:330
+#: src/modules/conf_applications/e_int_config_defapps.c:329
 #: src/modules/conf_theme/e_int_config_fonts.c:57
 #, fuzzy
 msgid "Core"
@@ -2987,19 +2987,19 @@ msgstr "Tilføj gadget"
 
 #: src/bin/e_int_gadcon_config.c:717 src/bin/e_int_gadcon_config.c:750
 #: src/bin/e_int_config_comp_match.c:693 src/bin/e_widget_config_list.c:60
-#: src/modules/conf_applications/e_int_config_apps.c:269
-#: src/modules/conf_applications/e_int_config_apps.c:290
-#: src/modules/conf_applications/e_int_config_apps_personal.c:93
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:199
+#: src/modules/conf_applications/e_int_config_apps.c:268
+#: src/modules/conf_applications/e_int_config_apps.c:289
+#: src/modules/conf_applications/e_int_config_apps_personal.c:92
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:197
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:262
-#: src/modules/conf_bindings/e_int_config_keybindings.c:244
+#: src/modules/conf_bindings/e_int_config_keybindings.c:242
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:292
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:787
-#: src/modules/conf_dialogs/e_int_config_profiles.c:133
-#: src/modules/conf_paths/e_int_config_env.c:311
-#: src/modules/conf_shelves/e_int_config_shelf.c:137
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:786
+#: src/modules/conf_dialogs/e_int_config_profiles.c:132
+#: src/modules/conf_paths/e_int_config_env.c:310
+#: src/modules/conf_shelves/e_int_config_shelf.c:136
 #: src/modules/ibar/e_mod_config.c:114
-#: src/modules/xkbswitch/e_mod_config.c:309
+#: src/modules/xkbswitch/e_mod_config.c:308
 #, fuzzy
 msgid "Add"
 msgstr "Tilføj"
@@ -3031,11 +3031,11 @@ msgid "Favorite Applications"
 msgstr "Favoritapplikationer"
 
 #: src/bin/e_int_menus.c:169
-#: src/modules/conf_applications/e_int_config_apps.c:298
+#: src/modules/conf_applications/e_int_config_apps.c:297
 #: src/modules/conf_menus/e_int_config_menus.c:261
 #: src/modules/conf_menus/e_int_config_menus.c:284
 #: src/modules/conf_theme/e_int_config_fonts.c:58
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:215
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:214
 #: src/modules/everything/evry_plug_apps.c:1141
 #: src/modules/everything/evry_plug_apps.c:1157
 #: src/modules/everything/evry_plug_apps.c:1410
@@ -3047,7 +3047,7 @@ msgstr "Applikationer"
 #: src/modules/conf_window_manipulation/e_mod_main.c:17
 #: src/modules/conf_window_remembers/e_mod_main.c:14
 #: src/modules/everything/evry_plug_windows.c:428
-#: src/modules/tiling/e_mod_tiling.c:1406 src/modules/winlist/e_mod_main.c:27
+#: src/modules/tiling/e_mod_tiling.c:1417 src/modules/winlist/e_mod_main.c:27
 msgid "Windows"
 msgstr "Vinduer"
 
@@ -3107,7 +3107,7 @@ msgid "Untitled window"
 msgstr "Andre indstillinger"
 
 #: src/bin/e_int_menus.c:1729 src/bin/e_shelf.c:1456
-#: src/modules/conf_shelves/e_int_config_shelf.c:193
+#: src/modules/conf_shelves/e_int_config_shelf.c:192
 #, fuzzy, c-format
 msgid "Shelf %s"
 msgstr "hylder"
@@ -3218,8 +3218,8 @@ msgstr "Idle effekter"
 
 #: src/bin/e_int_config_comp.c:256 src/bin/e_int_config_comp.c:592
 #: src/modules/fileman/e_mod_config.c:424
-#: src/modules/quickaccess/e_mod_config.c:252
-#: src/modules/quickaccess/e_mod_config.c:348
+#: src/modules/quickaccess/e_mod_config.c:251
+#: src/modules/quickaccess/e_mod_config.c:346
 #, fuzzy
 msgid "Behavior"
 msgstr "Behavior"
@@ -3464,7 +3464,7 @@ msgid "Utility"
 msgstr "Utilities"
 
 #: src/bin/e_int_config_comp_match.c:115
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:163
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:162
 #, fuzzy
 msgid "Title:"
 msgstr "Titel:"
@@ -3482,13 +3482,13 @@ msgid "Type:"
 msgstr "Type:"
 
 #: src/bin/e_int_config_comp_match.c:133
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:155
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:154
 #, fuzzy
 msgid "Class:"
 msgstr "klasse:"
 
 #: src/bin/e_int_config_comp_match.c:139
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:171
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:170
 #, fuzzy
 msgid "Role:"
 msgstr "rolle:"
@@ -3502,11 +3502,11 @@ msgstr "Style"
 #: src/bin/e_widget_filepreview.c:630 src/bin/e_widget_filepreview.c:631
 #: src/bin/e_widget_filepreview.c:632 src/bin/e_widget_filepreview.c:662
 #: src/bin/e_widget_filepreview.c:673
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:423
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1236
-#: src/modules/conf_bindings/e_int_config_keybindings.c:987
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:420
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1235
+#: src/modules/conf_bindings/e_int_config_keybindings.c:984
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:574
-#: src/modules/conf_dialogs/e_int_config_profiles.c:298
+#: src/modules/conf_dialogs/e_int_config_profiles.c:297
 #: src/modules/wizard/page_020.c:24
 #, fuzzy
 msgid "Unknown"
@@ -3523,7 +3523,7 @@ msgid "Names"
 msgstr "Navn"
 
 #: src/bin/e_int_config_comp_match.c:430
-#: src/modules/conf_applications/e_int_config_defapps.c:335
+#: src/modules/conf_applications/e_int_config_defapps.c:334
 #, fuzzy
 msgid "Types"
 msgstr "Type:"
@@ -3548,21 +3548,21 @@ msgid "Flags"
 msgstr ""
 
 #: src/bin/e_int_config_comp_match.c:530 src/bin/e_int_shelf_config.c:224
-#: src/modules/conf_theme/e_int_config_fonts.c:652
+#: src/modules/conf_theme/e_int_config_fonts.c:651
 #, fuzzy
 msgid "Style"
 msgstr "Style"
 
 #: src/bin/e_int_config_comp_match.c:689 src/bin/e_widget_config_list.c:80
-#: src/modules/conf_applications/e_int_config_apps.c:306
-#: src/modules/xkbswitch/e_mod_config.c:301
+#: src/modules/conf_applications/e_int_config_apps.c:305
+#: src/modules/xkbswitch/e_mod_config.c:300
 #, fuzzy
 msgid "Up"
 msgstr "Up"
 
 #: src/bin/e_int_config_comp_match.c:691 src/bin/e_widget_config_list.c:86
-#: src/modules/conf_applications/e_int_config_apps.c:310
-#: src/modules/xkbswitch/e_mod_config.c:305
+#: src/modules/conf_applications/e_int_config_apps.c:309
+#: src/modules/xkbswitch/e_mod_config.c:304
 #, fuzzy
 msgid "Down"
 msgstr "Down"
@@ -3573,7 +3573,7 @@ msgid "Del"
 msgstr "Slet"
 
 #: src/bin/e_int_config_comp_match.c:697
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:185
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:184
 #: src/modules/mixer/app_mixer.c:402
 #, fuzzy
 msgid "Edit"
@@ -3681,7 +3681,7 @@ msgid "Hide duration"
 msgstr "Skjul varighed"
 
 #: src/bin/e_int_shelf_config.c:258
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:888
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:887
 #, c-format
 msgid "%.2f seconds"
 msgstr ""
@@ -3731,32 +3731,32 @@ msgstr ""
 "input<br>metode konfigurationen er korrekt , og<br>at din konfiguration "
 "har<br>eksekverbare er i din PATH<br>"
 
-#: src/bin/e_main.c:235
+#: src/bin/e_main.c:258
 #, fuzzy
 msgid "Enlightenment cannot initialize Eina!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:241
+#: src/bin/e_main.c:264
 #, fuzzy
 msgid "Enlightenment could not create a logging domain!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:288
+#: src/bin/e_main.c:311
 #, fuzzy
 msgid "Enlightenment cannot initialize Eet!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:297
+#: src/bin/e_main.c:320
 #, fuzzy
 msgid "Enlightenment cannot initialize Ecore!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:312
+#: src/bin/e_main.c:335
 #, fuzzy
 msgid "Enlightenment cannot initialize EIO!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:324
+#: src/bin/e_main.c:347
 msgid ""
 "Enlightenment cannot set up an exit signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3764,7 +3764,7 @@ msgstr ""
 "Enlightenment kan ikke oprette en exit signal handler.\n"
 "Måske er du løbet tør for hukommelse?"
 
-#: src/bin/e_main.c:331
+#: src/bin/e_main.c:354
 msgid ""
 "Enlightenment cannot set up a HUP signal handler.\n"
 "Perhaps you are out of memory?"
@@ -3772,7 +3772,7 @@ msgstr ""
 "Enlightenment kan ikke oprette en HUP signal handler.\n"
 "Måske er du løbet tør for hukommelse?"
 
-#: src/bin/e_main.c:338
+#: src/bin/e_main.c:361
 #, fuzzy
 msgid ""
 "Enlightenment cannot set up a USER signal handler.\n"
@@ -3781,61 +3781,61 @@ msgstr ""
 "Enlightenment kan ikke oprette en HUP signal handler.\n"
 "Måske er du løbet tør for hukommelse?"
 
-#: src/bin/e_main.c:347
+#: src/bin/e_main.c:370
 #, fuzzy
 msgid "Enlightenment cannot initialize Ecore_File!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:356
+#: src/bin/e_main.c:379
 #, fuzzy
 msgid "Enlightenment cannot initialize Ecore_Con!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:365
+#: src/bin/e_main.c:388
 #, fuzzy
 msgid "Enlightenment cannot initialize Ecore_Ipc!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:378
+#: src/bin/e_main.c:401
 #, fuzzy
 msgid "Enlightenment cannot initialize Ecore_Evas!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:387
+#: src/bin/e_main.c:410
 #, fuzzy
 msgid "Enlightenment cannot initialize Elementary!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:396
+#: src/bin/e_main.c:419
 #, fuzzy
 msgid "Enlightenment cannot initialize Emotion!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:410
+#: src/bin/e_main.c:433
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software X11\n"
 "rendering in Evas. Please check your installation of Evas and\n"
 "Ecore and check they support the Software X11 rendering engine."
 msgstr ""
 
-#: src/bin/e_main.c:418
+#: src/bin/e_main.c:441
 msgid ""
 "Enlightenment found ecore_evas doesn't support the Software Buffer\n"
 "rendering in Evas. Please check your installation of Evas and\n"
 "Ecore and check they support the Software Buffer rendering engine."
 msgstr ""
 
-#: src/bin/e_main.c:428
+#: src/bin/e_main.c:451
 #, fuzzy
 msgid "Enlightenment cannot initialize Edje!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:440
+#: src/bin/e_main.c:463
 #, fuzzy
 msgid "Enlightenment cannot initialize E_Intl!\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:450
+#: src/bin/e_main.c:473
 msgid ""
 "Enlightenment cannot initialize its emergency alert system.\n"
 "Have you set your DISPLAY variable?"
@@ -3843,7 +3843,7 @@ msgstr ""
 "Enlightenment kan ikke initialisere sit nødalarm system.\n"
 "Har du sat din DISPLAY variabel?"
 
-#: src/bin/e_main.c:465
+#: src/bin/e_main.c:488
 msgid ""
 "Enlightenment cannot create directories in your home directory.\n"
 "Perhaps you have no home directory or the disk is full?"
@@ -3851,22 +3851,22 @@ msgstr ""
 "Enlightenment kan ikke oprette mapper i din hjemmemappe.\n"
 "Måske har du ingen hjemmemappe eller disken er fuld?"
 
-#: src/bin/e_main.c:475
+#: src/bin/e_main.c:498
 #, fuzzy
 msgid "Enlightenment cannot set up its file registry system.\n"
 msgstr "Enlightenment kan ikke initialisere sit konfigurationssystem."
 
-#: src/bin/e_main.c:484
+#: src/bin/e_main.c:507
 #, fuzzy
 msgid "Enlightenment cannot set up its config system.\n"
 msgstr "Enlightenment kan ikke initialisere sit konfigurationssystem."
 
-#: src/bin/e_main.c:493
+#: src/bin/e_main.c:516
 #, fuzzy
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment kan ikke initialisere sit temasystem."
 
-#: src/bin/e_main.c:509
+#: src/bin/e_main.c:532
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3874,22 +3874,22 @@ msgstr ""
 "Enlightenment kan ikke initialisere søgestier til at finde filer.\n"
 "Måske er du løbet tør for hukommelse?"
 
-#: src/bin/e_main.c:526
+#: src/bin/e_main.c:549
 #, fuzzy
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenment kan ikke initialisere sit fontsystem."
 
-#: src/bin/e_main.c:543
+#: src/bin/e_main.c:566
 #, fuzzy
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenment kan ikke initialisere sit temasystem."
 
-#: src/bin/e_main.c:555
+#: src/bin/e_main.c:578
 #, fuzzy
 msgid "Setup Message Bus"
 msgstr "Opsætning Besked Bus"
 
-#: src/bin/e_main.c:564
+#: src/bin/e_main.c:587
 #, fuzzy
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
@@ -3899,42 +3899,42 @@ msgstr ""
 "Enlightenment kan ikke initialisere File-systemet.\n"
 "Måske er du løbet tør for hukommelse?"
 
-#: src/bin/e_main.c:573
+#: src/bin/e_main.c:596
 #, fuzzy
 msgid "Starting International Support"
 msgstr "Start International Support"
 
-#: src/bin/e_main.c:577
+#: src/bin/e_main.c:600
 #, fuzzy
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenment kan ikke initialisere sit internationalseringssystem."
 
-#: src/bin/e_main.c:586
+#: src/bin/e_main.c:609
 #, fuzzy
 msgid "Setup Actions"
 msgstr "Opsætning Handlinger"
 
-#: src/bin/e_main.c:590
+#: src/bin/e_main.c:613
 #, fuzzy
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment kan ikke initialisere sit handlingssystem."
 
-#: src/bin/e_main.c:605
+#: src/bin/e_main.c:628
 #, fuzzy
 msgid "Setup Screensaver"
 msgstr "Opsætning Pauseskærm"
 
-#: src/bin/e_main.c:609
+#: src/bin/e_main.c:632
 #, fuzzy
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "Enlightenment kan ikke initialisere sit miniaturebilledsystem.\n"
 
-#: src/bin/e_main.c:616
+#: src/bin/e_main.c:639
 #, fuzzy
 msgid "Setup Screens"
 msgstr "opsætningsskærme"
 
-#: src/bin/e_main.c:620
+#: src/bin/e_main.c:643
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3942,254 +3942,254 @@ msgstr ""
 "Enlightenment kunne ikke blive indsat som vindueshåndtering på alle\n"
 "skærme på dit system. Måske kører der en anden vindueshåndtering?\n"
 
-#: src/bin/e_main.c:631
+#: src/bin/e_main.c:654
 #, fuzzy
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenment kan ikke initialisere sit fontsystem."
 
-#: src/bin/e_main.c:641
+#: src/bin/e_main.c:664
 #, fuzzy
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment kan ikke initialisere sit beskedsystem."
 
-#: src/bin/e_main.c:652
+#: src/bin/e_main.c:675
 #, fuzzy
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenment kan ikke initialisere sit internationalseringssystem."
 
-#: src/bin/e_main.c:676
+#: src/bin/e_main.c:699
 #, fuzzy
 msgid "Setup ACPI"
 msgstr "Opsætning af ACPI"
 
-#: src/bin/e_main.c:683
+#: src/bin/e_main.c:706
 #, fuzzy
 msgid "Setup Backlight"
 msgstr "Opsætning baggrundslys"
 
-#: src/bin/e_main.c:687
+#: src/bin/e_main.c:710
 #, fuzzy
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Enlightenment kan ikke initialisere sit miniaturebilledsystem.\n"
 
-#: src/bin/e_main.c:693
+#: src/bin/e_main.c:716
 #, fuzzy
 msgid "Setup DPMS"
 msgstr "Opsætning DPMS"
 
-#: src/bin/e_main.c:697
+#: src/bin/e_main.c:720
 #, fuzzy
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Enlightenment kan ikke initialisere sit miniaturebilledsystem.\n"
 
-#: src/bin/e_main.c:704
+#: src/bin/e_main.c:727
 #, fuzzy
 msgid "Setup Powersave Modes"
 msgstr "Setup til energisparestatus Modes"
 
-#: src/bin/e_main.c:708
+#: src/bin/e_main.c:731
 #, fuzzy
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Enlightenment kan ikke initialisere sit fontsystem."
 
-#: src/bin/e_main.c:715
+#: src/bin/e_main.c:738
 #, fuzzy
 msgid "Setup Desklock"
 msgstr "Opsætning Desklock"
 
-#: src/bin/e_main.c:719
+#: src/bin/e_main.c:742
 #, fuzzy
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "Enlightenment kan ikke initialisere sit beskedsystem."
 
-#: src/bin/e_main.c:729
+#: src/bin/e_main.c:752
 #, fuzzy
 msgid "Setup Paths"
 msgstr "Opsætning Stier"
 
-#: src/bin/e_main.c:735
+#: src/bin/e_main.c:758
 #, fuzzy
 msgid "Setup System Controls"
 msgstr "Setup System Controls"
 
-#: src/bin/e_main.c:739
+#: src/bin/e_main.c:762
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:746
+#: src/bin/e_main.c:769
 #, fuzzy
 msgid "Setup Execution System"
 msgstr "Opsætning Execution System"
 
-#: src/bin/e_main.c:750
+#: src/bin/e_main.c:773
 #, fuzzy
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Enlightenment kan ikke initialisere sit temasystem."
 
-#: src/bin/e_main.c:760
+#: src/bin/e_main.c:783
 #, fuzzy
 msgid "Setup Filemanager"
 msgstr "Opsætning Filemanager"
 
-#: src/bin/e_main.c:764
+#: src/bin/e_main.c:787
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
 
-#: src/bin/e_main.c:771
+#: src/bin/e_main.c:794
 #, fuzzy
 msgid "Setup Message System"
 msgstr "Opsætning Message System"
 
-#: src/bin/e_main.c:775
+#: src/bin/e_main.c:798
 #, fuzzy
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr "Enlightenment kan ikke initialisere sit beskedsystem."
 
-#: src/bin/e_main.c:782
+#: src/bin/e_main.c:805
 #, fuzzy
 msgid "Setup Grab Input Handling"
 msgstr "Opsætning Grab Input Håndtering"
 
-#: src/bin/e_main.c:786
+#: src/bin/e_main.c:809
 #, fuzzy
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr "Enlightenment kan ikke initialisere sit input grab system."
 
-#: src/bin/e_main.c:793
+#: src/bin/e_main.c:816
 #, fuzzy
 msgid "Setup Modules"
 msgstr "Opsætning af moduler"
 
-#: src/bin/e_main.c:797 src/bin/e_main.c:970
+#: src/bin/e_main.c:820 src/bin/e_main.c:993
 #, fuzzy
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenment kan ikke initialisere sit modulsystem."
 
-#: src/bin/e_main.c:804
+#: src/bin/e_main.c:827
 #, fuzzy
 msgid "Setup Remembers"
 msgstr "Opsætning Husker"
 
-#: src/bin/e_main.c:808
+#: src/bin/e_main.c:831
 #, fuzzy
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Enlightenment kan ikke initialisere huskesystemet."
 
-#: src/bin/e_main.c:815
+#: src/bin/e_main.c:838
 #, fuzzy
 msgid "Setup Color Classes"
 msgstr "Opsætning Color Klasser"
 
-#: src/bin/e_main.c:819
+#: src/bin/e_main.c:842
 #, fuzzy
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr "Enlightenment kan ikke initialisere sit handlingssystem."
 
-#: src/bin/e_main.c:826
+#: src/bin/e_main.c:849
 #, fuzzy
 msgid "Setup Gadcon"
 msgstr "Opsætning Gadcon"
 
-#: src/bin/e_main.c:830
+#: src/bin/e_main.c:853
 #, fuzzy
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenment kan ikke initialisere sit internationalseringssystem."
 
-#: src/bin/e_main.c:837
+#: src/bin/e_main.c:860
 #, fuzzy
 msgid "Setup Toolbars"
 msgstr "Sæt Toolbar Indhold"
 
-#: src/bin/e_main.c:841
+#: src/bin/e_main.c:864
 #, fuzzy
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenment kan ikke initialisere sit internationalseringssystem."
 
-#: src/bin/e_main.c:848
+#: src/bin/e_main.c:871
 #, fuzzy
 msgid "Setup Wallpaper"
 msgstr "Opsætning tapet"
 
-#: src/bin/e_main.c:852
+#: src/bin/e_main.c:875
 #, fuzzy
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Enlightenment kan ikke initialisere sit dnd-system."
 
-#: src/bin/e_main.c:859
+#: src/bin/e_main.c:882
 #, fuzzy
 msgid "Setup Mouse"
 msgstr "Opsætning af mus"
 
-#: src/bin/e_main.c:863
+#: src/bin/e_main.c:886
 #, fuzzy
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Enlightenment kan ikke initialisere sit miniaturebilledsystem.\n"
 
-#: src/bin/e_main.c:869
+#: src/bin/e_main.c:892
 #, fuzzy
 msgid "Setup Bindings"
 msgstr "Opsætning Bindinger"
 
-#: src/bin/e_main.c:873
+#: src/bin/e_main.c:896
 #, fuzzy
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenment kan ikke initialisere sit bindingssystem."
 
-#: src/bin/e_main.c:880
+#: src/bin/e_main.c:903
 #, fuzzy
 msgid "Setup Thumbnailer"
 msgstr "Opsætning Thumbnailer"
 
-#: src/bin/e_main.c:884
+#: src/bin/e_main.c:907
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenment kan ikke initialisere sit miniaturebilledsystem.\n"
 
-#: src/bin/e_main.c:893
+#: src/bin/e_main.c:916
 #, fuzzy
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "Enlightenment kan ikke initialisere sit miniaturebilledsystem.\n"
 
-#: src/bin/e_main.c:902
+#: src/bin/e_main.c:925
 #, fuzzy
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Enlightenment kan ikke initialisere sit miniaturebilledsystem.\n"
 
-#: src/bin/e_main.c:909
+#: src/bin/e_main.c:932
 #, fuzzy
 msgid "Setup Desktop Environment"
 msgstr "Opsætning Desktop Environment"
 
-#: src/bin/e_main.c:913
+#: src/bin/e_main.c:936
 #, fuzzy
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Enlightenment kan ikke initialisere sit temasystem."
 
-#: src/bin/e_main.c:920
+#: src/bin/e_main.c:943
 #, fuzzy
 msgid "Setup File Ordering"
 msgstr "Setup File Bestilling"
 
-#: src/bin/e_main.c:924
+#: src/bin/e_main.c:947
 #, fuzzy
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr "Enlightenment kan ikke initialisere sit modulsystem."
 
-#: src/bin/e_main.c:939
+#: src/bin/e_main.c:962
 #, fuzzy
 msgid "Load Modules"
 msgstr "load Moduler"
 
-#: src/bin/e_main.c:966
+#: src/bin/e_main.c:989
 #, fuzzy
 msgid "Setup Shelves"
 msgstr "Opsætning Hylder"
 
-#: src/bin/e_main.c:980
+#: src/bin/e_main.c:1003
 #, fuzzy
 msgid "Almost Done"
 msgstr "næsten færdig"
 
-#: src/bin/e_main.c:1121
+#: src/bin/e_main.c:1144
 #, c-format
 msgid ""
 "Options:\n"
@@ -4218,7 +4218,7 @@ msgid ""
 "\t\tIf you need this help, you don't need this option.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1174
+#: src/bin/e_main.c:1197
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -4228,69 +4228,69 @@ msgid ""
 "before enlightenment itself begins running.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1427
+#: src/bin/e_main.c:1450
 #, fuzzy
 msgid "Testing Format Support"
 msgstr "Test Format Support"
 
-#: src/bin/e_main.c:1431
+#: src/bin/e_main.c:1454
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1443
+#: src/bin/e_main.c:1466
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1453
+#: src/bin/e_main.c:1476
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1463
+#: src/bin/e_main.c:1486
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1473
+#: src/bin/e_main.c:1496
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1487
+#: src/bin/e_main.c:1510
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
 "support and system fontconfig defines a 'Sans' font.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1510
+#: src/bin/e_main.c:1533
 #, fuzzy
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr "Enlightenment kan ikke initialisere huskesystemet."
 
-#: src/bin/e_main.c:1519
+#: src/bin/e_main.c:1542
 #, fuzzy
 msgid "Enlightenment cannot create a compositor.\n"
 msgstr "Enlightenment kan ikke initialisere huskesystemet."
 
-#: src/bin/e_main.c:1527
+#: src/bin/e_main.c:1550
 #, fuzzy
 msgid "Setup DND"
 msgstr "Opsætning DND"
 
-#: src/bin/e_main.c:1531
+#: src/bin/e_main.c:1554
 #, fuzzy
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr "Enlightenment kan ikke initialisere sit dnd-system."
 
-#: src/bin/e_main.c:1651
+#: src/bin/e_main.c:1674
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -4298,11 +4298,11 @@ msgid ""
 "will not be loaded."
 msgstr ""
 
-#: src/bin/e_main.c:1656 src/bin/e_main.c:1672
+#: src/bin/e_main.c:1679 src/bin/e_main.c:1695
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr ""
 
-#: src/bin/e_main.c:1657
+#: src/bin/e_main.c:1680
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -4310,7 +4310,7 @@ msgid ""
 "will not be loaded."
 msgstr ""
 
-#: src/bin/e_main.c:1665
+#: src/bin/e_main.c:1688
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -4318,7 +4318,7 @@ msgid ""
 "dialog should let you select your<br>modules again.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1673
+#: src/bin/e_main.c:1696
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4378,24 +4378,24 @@ msgid "What action should be taken with this module?<br>"
 msgstr "Vil du gerne unloade dette modul?<br>"
 
 #: src/bin/e_module.c:758 src/bin/e_shelf.c:1612
-#: src/modules/conf_dialogs/e_int_config_profiles.c:339
-#: src/modules/conf_shelves/e_int_config_shelf.c:394
+#: src/modules/conf_dialogs/e_int_config_profiles.c:338
+#: src/modules/conf_shelves/e_int_config_shelf.c:393
 #: src/modules/ibar/e_mod_config.c:209
 msgid "Keep"
 msgstr ""
 
-#: src/bin/e_module.c:1016
+#: src/bin/e_module.c:1015
 msgid ""
 "The following modules are not standard ones for<br>Enlightenment and may "
 "cause bugs and crashes.<br>Please remove them before reporting any bugs."
 "<br><br>The module list is as follows:<br><br>"
 msgstr ""
 
-#: src/bin/e_module.c:1028
+#: src/bin/e_module.c:1027
 msgid "Unstable module tainting"
 msgstr ""
 
-#: src/bin/e_module.c:1032
+#: src/bin/e_module.c:1031
 #, fuzzy
 msgid "I know"
 msgstr "Ukendt"
@@ -4548,8 +4548,8 @@ msgstr ""
 msgid "Rename Shelf"
 msgstr "Omdøb fil"
 
-#: src/bin/e_shelf.c:2233 src/modules/conf_shelves/e_int_config_shelf.c:145
-#: src/modules/ibar/e_mod_main.c:480 src/modules/ibar/e_mod_main.c:1538
+#: src/bin/e_shelf.c:2233 src/modules/conf_shelves/e_int_config_shelf.c:144
+#: src/modules/ibar/e_mod_main.c:480 src/modules/ibar/e_mod_main.c:1582
 #, fuzzy
 msgid "Contents"
 msgstr "Kommentar"
@@ -4574,18 +4574,18 @@ msgstr "Opdater"
 msgid "Starting %s"
 msgstr "Start"
 
-#: src/bin/e_sys.c:436
+#: src/bin/e_sys.c:504
 #, fuzzy
 msgid "Checking System Permissions"
 msgstr "Kontrol System Tilladelser"
 
-#: src/bin/e_sys.c:482 src/bin/e_sys.c:493 src/bin/e_sys.c:502
-#: src/bin/e_sys.c:511
+#: src/bin/e_sys.c:550 src/bin/e_sys.c:561 src/bin/e_sys.c:570
+#: src/bin/e_sys.c:579
 #, fuzzy
 msgid "System Check Done"
 msgstr "System Check Udført"
 
-#: src/bin/e_sys.c:579
+#: src/bin/e_sys.c:647
 #, c-format
 msgid ""
 "Logout is taking too long.<br>Some applications refuse to close.<br>Do you "
@@ -4593,40 +4593,40 @@ msgid ""
 "first?<br><br>Auto logout in %d seconds."
 msgstr ""
 
-#: src/bin/e_sys.c:641
+#: src/bin/e_sys.c:710
 #, fuzzy
 msgid "Logout problems"
 msgstr "Log problemer"
 
-#: src/bin/e_sys.c:643
+#: src/bin/e_sys.c:712
 #, fuzzy
 msgid "Logout now"
 msgstr "Log nu"
 
-#: src/bin/e_sys.c:645
+#: src/bin/e_sys.c:714
 #, fuzzy
 msgid "Wait longer"
 msgstr "Vent længere"
 
-#: src/bin/e_sys.c:647
+#: src/bin/e_sys.c:716
 #, fuzzy
 msgid "Cancel Logout"
 msgstr "Annuller Log"
 
-#: src/bin/e_sys.c:692
+#: src/bin/e_sys.c:774
 #, fuzzy
 msgid "Logout in progress"
 msgstr "Logout i gang"
 
-#: src/bin/e_sys.c:695
+#: src/bin/e_sys.c:777
 msgid "Logout in progress.<br><hilight>Please wait.</hilight>"
 msgstr ""
 
-#: src/bin/e_sys.c:725 src/bin/e_sys.c:780
+#: src/bin/e_sys.c:807 src/bin/e_sys.c:862
 msgid "Enlightenment is busy with another request"
 msgstr ""
 
-#: src/bin/e_sys.c:730
+#: src/bin/e_sys.c:812
 #, fuzzy
 msgid ""
 "Logging out.<br>You cannot perform other system actions<br>once a logout has "
@@ -4635,7 +4635,7 @@ msgstr ""
 "Logge ud.<br>Du kan ikke udføre andet system handlinger<br>når en logout er "
 "begyndt."
 
-#: src/bin/e_sys.c:737
+#: src/bin/e_sys.c:819
 #, fuzzy
 msgid ""
 "Powering off.<br>You cannot do any other system actions<br>once a shutdown "
@@ -4644,7 +4644,7 @@ msgstr ""
 "Slukke.<br>Du kan ikke gøre noget andet system handlinger<br>når en lukning "
 "er startet."
 
-#: src/bin/e_sys.c:743
+#: src/bin/e_sys.c:825
 #, fuzzy
 msgid ""
 "Resetting.<br>You cannot do any other system actions<br>once a reboot has "
@@ -4653,7 +4653,7 @@ msgstr ""
 "Nulstilling.<br>Du kan ikke gøre noget andet system handlinger<br>når en "
 "genstart er begyndt."
 
-#: src/bin/e_sys.c:749
+#: src/bin/e_sys.c:831
 #, fuzzy
 msgid ""
 "Suspending.<br>Until suspend is complete you cannot perform<br>any other "
@@ -4662,7 +4662,7 @@ msgstr ""
 "Suspension.<br>Indtil suspendere er færdig, du kan ikke udføre<br>andre "
 "systemer handlinger."
 
-#: src/bin/e_sys.c:755
+#: src/bin/e_sys.c:837
 #, fuzzy
 msgid ""
 "Hibernating.<br>You cannot perform any other system actions<br>until this is "
@@ -4671,60 +4671,42 @@ msgstr ""
 "Dvale.<br>Du kan ikke udføre noget andet system handlinger<br>indtil denne "
 "er afsluttet."
 
-#: src/bin/e_sys.c:761 src/bin/e_sys.c:802
+#: src/bin/e_sys.c:843 src/bin/e_sys.c:884
 #, fuzzy
 msgid "EEK! This should not happen"
 msgstr "EEK. Dette bør ikke ske"
 
-#: src/bin/e_sys.c:786
+#: src/bin/e_sys.c:868
 #, fuzzy
 msgid "Power off failed."
 msgstr "Sluk mislykkedes."
 
-#: src/bin/e_sys.c:790
+#: src/bin/e_sys.c:872
 #, fuzzy
 msgid "Reset failed."
 msgstr "Nulstilles mislykkedes."
 
-#: src/bin/e_sys.c:794
+#: src/bin/e_sys.c:876
 #, fuzzy
 msgid "Suspend failed."
 msgstr "Suspend mislykkedes."
 
-#: src/bin/e_sys.c:798
+#: src/bin/e_sys.c:880
 #, fuzzy
 msgid "Hibernate failed."
 msgstr "Dvale mislykkedes."
 
-#: src/bin/e_sys.c:911
+#: src/bin/e_sys.c:973
 msgid "Power off.<br><hilight>Please wait.</hilight>"
 msgstr ""
 
-#: src/bin/e_sys.c:967
+#: src/bin/e_sys.c:1016
 #, fuzzy
 msgid "Resetting"
 msgstr "Nulstilling"
 
-#: src/bin/e_sys.c:970
+#: src/bin/e_sys.c:1019
 msgid "Resetting.<br><hilight>Please wait.</hilight>"
-msgstr ""
-
-#: src/bin/e_sys.c:1034
-#, fuzzy
-msgid "Suspending"
-msgstr "suspension"
-
-#: src/bin/e_sys.c:1037
-msgid "Suspending.<br><hilight>Please wait.</hilight>"
-msgstr ""
-
-#: src/bin/e_sys.c:1101
-#, fuzzy
-msgid "Hibernating"
-msgstr "dvale"
-
-#: src/bin/e_sys.c:1104
-msgid "Hibernating.<br><hilight>Please wait.</hilight>"
 msgstr ""
 
 #: src/bin/e_theme.c:14
@@ -4874,7 +4856,7 @@ msgstr ""
 msgid "Failed to create directory: %s .<br>A file of that name already exists."
 msgstr ""
 
-#: src/bin/e_utils.c:934
+#: src/bin/e_utils.c:938
 #, fuzzy
 msgid ""
 "Configuration data needed upgrading. Your old configuration<br>has been "
@@ -4894,12 +4876,12 @@ msgstr ""
 "tilføje det i. Du kan re- konfigurere ting nu til din<br>smag. Beklager "
 "ulejligheden.<br>"
 
-#: src/bin/e_utils.c:943 src/bin/e_utils.c:967
+#: src/bin/e_utils.c:947 src/bin/e_utils.c:971
 #, fuzzy, c-format
 msgid "%s Configuration Updated"
 msgstr "Konfiguration opgraderet"
 
-#: src/bin/e_utils.c:956
+#: src/bin/e_utils.c:960
 #, fuzzy
 msgid ""
 "Your module configuration is NEWER than the module version. This is "
@@ -4915,54 +4897,54 @@ msgstr ""
 "konfiguration er nu blevet gendannet til<br>standard. Beklager ulejligheden."
 "<br>"
 
-#: src/bin/e_utils.c:1045
+#: src/bin/e_utils.c:1049
 #, c-format
 msgid "Never"
 msgstr ""
 
-#: src/bin/e_utils.c:1049
+#: src/bin/e_utils.c:1053
 #, fuzzy, c-format
 msgid "A second"
 msgid_plural "%li Seconds"
 msgstr[0] "%1.1f sek."
 msgstr[1] "%1.1f sek."
 
-#: src/bin/e_utils.c:1053
+#: src/bin/e_utils.c:1057
 #, c-format
 msgid "One year"
 msgid_plural "%li Years"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:1058
+#: src/bin/e_utils.c:1062
 #, c-format
 msgid "One month"
 msgid_plural "%li Months"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:1063
+#: src/bin/e_utils.c:1067
 #, c-format
 msgid "One week"
 msgid_plural "%li Weeks"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:1068
+#: src/bin/e_utils.c:1072
 #, c-format
 msgid "One day"
 msgid_plural "%li Days"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/bin/e_utils.c:1073
+#: src/bin/e_utils.c:1077
 #, fuzzy, c-format
 msgid "An hour"
 msgid_plural "%li Hours"
 msgstr[0] "1 time"
 msgstr[1] "1 time"
 
-#: src/bin/e_utils.c:1078
+#: src/bin/e_utils.c:1082
 #, c-format
 msgid "A minute"
 msgid_plural "%li Minutes"
@@ -5083,7 +5065,7 @@ msgstr "Tilføj til favoritter"
 #: src/bin/e_widget_fsel.c:339
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:104
 #: src/modules/conf_intl/e_int_config_imc.c:815
-#: src/modules/conf_theme/e_int_config_theme.c:670
+#: src/modules/conf_theme/e_int_config_theme.c:675
 #: src/modules/gadman/e_mod_config.c:256
 #, fuzzy
 msgid "Go up a Directory"
@@ -5223,7 +5205,7 @@ msgid "Hardware"
 msgstr "Hardware"
 
 #: src/modules/battery/e_mod_main.c:146 src/modules/battery/e_mod_main.c:453
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:356
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:353
 #, fuzzy
 msgid "Battery"
 msgstr "batteri"
@@ -5311,7 +5293,7 @@ msgstr ""
 msgid "Confirm Request"
 msgstr "Bekræft sletning"
 
-#: src/modules/bluez4/agent.c:200 src/modules/shot/e_mod_main.c:573
+#: src/modules/bluez4/agent.c:200 src/modules/shot/e_mod_main.c:571
 #, fuzzy
 msgid "Confirm"
 msgstr "Konfigurationspanel"
@@ -5341,65 +5323,65 @@ msgstr "Udførselsfejl"
 msgid "Searching for Devices..."
 msgstr ""
 
-#: src/modules/bluez4/e_mod_main.c:184 src/modules/bluez4/e_mod_main.c:452
+#: src/modules/bluez4/e_mod_main.c:183 src/modules/bluez4/e_mod_main.c:447
 #, fuzzy
 msgid "Adapter Settings"
 msgstr "Andre indstillinger"
 
-#: src/modules/bluez4/e_mod_main.c:196
+#: src/modules/bluez4/e_mod_main.c:194
 #, fuzzy
 msgid "Powered"
 msgstr "Sænk"
 
-#: src/modules/bluez4/e_mod_main.c:211
+#: src/modules/bluez4/e_mod_main.c:209
 #, fuzzy
 msgid "Pairable"
 msgstr "Fyld den tilgængelige plads"
 
-#: src/modules/bluez4/e_mod_main.c:255
+#: src/modules/bluez4/e_mod_main.c:253
 #, fuzzy
 msgid "Adapters Available"
 msgstr "Fyld den tilgængelige plads"
 
-#: src/modules/bluez4/e_mod_main.c:365
+#: src/modules/bluez4/e_mod_main.c:362
 #, fuzzy
 msgid "Paired Devices"
 msgstr "af udtagelig enhed"
 
-#: src/modules/bluez4/e_mod_main.c:389
+#: src/modules/bluez4/e_mod_main.c:386
 #, fuzzy
 msgid "Disconnect"
 msgstr "afbryde"
 
-#: src/modules/bluez4/e_mod_main.c:395
+#: src/modules/bluez4/e_mod_main.c:392
 #, fuzzy
 msgid "Connect"
 msgstr "tilsluttet"
 
-#: src/modules/bluez4/e_mod_main.c:399
+#: src/modules/bluez4/e_mod_main.c:396
 msgid "Forget"
 msgstr ""
 
-#: src/modules/bluez4/e_mod_main.c:408
+#: src/modules/bluez4/e_mod_main.c:405
 #, fuzzy
 msgid "Lock on disconnect"
 msgstr "afbryde"
 
-#: src/modules/bluez4/e_mod_main.c:416
+#: src/modules/bluez4/e_mod_main.c:413
 #, fuzzy
 msgid "Unlock on disconnect"
 msgstr "afbryde"
 
-#: src/modules/bluez4/e_mod_main.c:438 src/modules/bluez4/e_mod_main.c:553
+#: src/modules/bluez4/e_mod_main.c:433 src/modules/bluez4/e_mod_main.c:554
 msgid "Bluez4"
 msgstr ""
 
-#: src/modules/bluez4/e_mod_main.c:448
+#: src/modules/bluez4/e_mod_main.c:443
 #, fuzzy
 msgid "Search New Devices"
 msgstr "Søg Directories"
 
-#: src/modules/bluez4/e_mod_main.c:801
+#: src/modules/bluez4/e_mod_main.c:802
 msgid "An error has ocurred"
 msgstr ""
 
@@ -5575,7 +5557,7 @@ msgstr "Skærmlås Indstillinger"
 msgid "Screen Unlock Applications"
 msgstr "kendte Applikationer"
 
-#: src/modules/conf_applications/e_int_config_apps.c:318
+#: src/modules/conf_applications/e_int_config_apps.c:317
 #, fuzzy
 msgid "Order"
 msgstr "Rammer"
@@ -5587,36 +5569,36 @@ msgid "Personal Application Launchers"
 msgstr "Slet Personlige Løfteraketter"
 
 #: src/modules/conf_applications/e_int_config_defapps.c:74
-#: src/modules/conf_applications/e_int_config_defapps.c:304
+#: src/modules/conf_applications/e_int_config_defapps.c:303
 #: src/modules/conf_applications/e_mod_main.c:53
 #, fuzzy
 msgid "Default Applications"
 msgstr "Favoritapplikationer"
 
-#: src/modules/conf_applications/e_int_config_defapps.c:297
+#: src/modules/conf_applications/e_int_config_defapps.c:296
 #, fuzzy
 msgid "Custom Browser Command"
 msgstr "Brugerdefineret Kommando"
 
-#: src/modules/conf_applications/e_int_config_defapps.c:310
+#: src/modules/conf_applications/e_int_config_defapps.c:309
 msgid "Browser"
 msgstr ""
 
-#: src/modules/conf_applications/e_int_config_defapps.c:311
+#: src/modules/conf_applications/e_int_config_defapps.c:310
 msgid "E-Mail"
 msgstr ""
 
-#: src/modules/conf_applications/e_int_config_defapps.c:313
+#: src/modules/conf_applications/e_int_config_defapps.c:312
 msgid "Trash"
 msgstr ""
 
-#: src/modules/conf_applications/e_int_config_defapps.c:314
+#: src/modules/conf_applications/e_int_config_defapps.c:313
 #, fuzzy
 msgid "Terminal"
 msgstr "Kør i terminal"
 
-#: src/modules/conf_applications/e_int_config_defapps.c:322
-#: src/modules/conf_applications/e_int_config_defapps.c:350
+#: src/modules/conf_applications/e_int_config_defapps.c:321
+#: src/modules/conf_applications/e_int_config_defapps.c:349
 #, fuzzy
 msgid "Selected Application"
 msgstr "Favoritapplikationer"
@@ -5677,195 +5659,195 @@ msgid "IBar Other"
 msgstr "Ibar Andet"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:71
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:192
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:190
 #: src/modules/conf_bindings/e_mod_main.c:29
 #, fuzzy
 msgid "ACPI Bindings"
 msgstr "Tilføj Binding"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:211
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:209
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:282
-#: src/modules/conf_bindings/e_int_config_keybindings.c:264
+#: src/modules/conf_bindings/e_int_config_keybindings.c:262
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:312
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:803
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:802
 #, fuzzy
 msgid "Action"
 msgstr "Action"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:218
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:216
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:295
-#: src/modules/conf_bindings/e_int_config_keybindings.c:271
+#: src/modules/conf_bindings/e_int_config_keybindings.c:269
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:319
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:810
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:809
 #, fuzzy
 msgid "Action Params"
 msgstr "Action Parametre"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:351
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:348
 msgid "AC Adapter Unplugged"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:352
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:349
 msgid "AC Adapter Plugged"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:353
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:350
 msgid "Ac Adapter"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:358
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:355
 #, fuzzy
 msgid "Button"
 msgstr "knapper"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:360
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:357
 #, fuzzy
 msgid "Fan"
 msgstr "Fjern"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:363
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:360
 #, fuzzy
 msgid "Lid Unknown"
 msgstr "Ukendt"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:364
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:361
 #, fuzzy
 msgid "Lid Closed"
 msgstr "Luk"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:365
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:362
 msgid "Lid Opened"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:366
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:363
 msgid "Lid"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:369
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:366
 #, fuzzy
 msgid "Power Button"
 msgstr "Fokusindstillinger"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:371
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:368
 msgid "Processor"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:373
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:370
 #, fuzzy
 msgid "Sleep Button"
 msgstr "Fokusindstillinger"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:375
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:372
 #, fuzzy
 msgid "Thermal"
 msgstr "Normal"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:377
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:374
 msgid "Video"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:379
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:376
 msgid "Wifi"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:383
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:380
 #, fuzzy
 msgid "Zoom Out"
 msgstr "Log af"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:385
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:382
 #, fuzzy
 msgid "Zoom In"
 msgstr "Zoom"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:387
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:384
 #, fuzzy
 msgid "Brightness Down"
 msgstr "Baggrundslys Down"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:389
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:386
 #, fuzzy
 msgid "Brightness Up"
 msgstr "Baggrundslys Up"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:391
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:388
 #, fuzzy
 msgid "Assist"
 msgstr "Tildel"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:393
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:390
 msgid "S1"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:395
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:392
 msgid "Vaio"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:397
-#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:573
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:394
+#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:579
 #, fuzzy
 msgid "Mute"
 msgstr "mute"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:399
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:396
 #, fuzzy
 msgid "Volume"
 msgstr "Træk"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:401
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:398
 #, fuzzy
 msgid "Brightness"
 msgstr "Baggrundslys Up"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:403
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:400
 #, fuzzy
 msgid "Volume Down"
 msgstr "Træk"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:405
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:402
 #, fuzzy
 msgid "Volume Up"
 msgstr "Træk"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:407
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:404
 msgid "Tablet On"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:409
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:406
 msgid "Tablet Off"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:411
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:408
 #, fuzzy
 msgid "Zoom"
 msgstr "Zoom"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:413
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:410
 #, fuzzy
 msgid "Screenlock"
 msgstr "Skærmlås"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:415
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:412
 #, fuzzy
 msgid "Battery Button"
 msgstr "Fokusindstillinger"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:418
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:415
 #, fuzzy
 msgid "Tablet Disabled"
 msgstr "Check Tekst Deaktiveret"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:419
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:416
 #, fuzzy
 msgid "Tablet Enabled"
 msgstr "Aktiv"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:420
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:417
 #, fuzzy
 msgid "Tablet"
 msgstr "Aktiv"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:490
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:487
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:4
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:11
 #: src/modules/conf_bindings/e_int_config_keybindings.c:3
@@ -5876,12 +5858,12 @@ msgstr "Aktiv"
 msgid "<None>"
 msgstr "<Ingen>"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:525
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:522
 #, fuzzy
 msgid "ACPI Binding"
 msgstr "Tilføj Binding"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:528
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:525
 msgid ""
 "Please trigger the ACPI event you wish to bind to, <br><br>or "
 "<hilight>Escape</hilight> to abort."
@@ -5906,25 +5888,25 @@ msgid "Edge Bindings"
 msgstr "Edge Bindinger"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:269
-#: src/modules/conf_bindings/e_int_config_keybindings.c:251
+#: src/modules/conf_bindings/e_int_config_keybindings.c:249
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:298
-#: src/modules/conf_paths/e_int_config_env.c:314
+#: src/modules/conf_paths/e_int_config_env.c:313
 #, fuzzy
 msgid "Modify"
 msgstr "modificeret:"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:273
-#: src/modules/conf_bindings/e_int_config_keybindings.c:255
+#: src/modules/conf_bindings/e_int_config_keybindings.c:253
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:302
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:794
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:793
 #, fuzzy
 msgid "Delete All"
 msgstr "Slet alle"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:277
-#: src/modules/conf_bindings/e_int_config_keybindings.c:259
+#: src/modules/conf_bindings/e_int_config_keybindings.c:257
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:306
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:798
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:797
 #, fuzzy
 msgid "Restore Default Bindings"
 msgstr "Restore Default Bindinger"
@@ -5949,100 +5931,100 @@ msgstr "Tillade binding aktivering med fuldskærm vinduer"
 msgid "Allow binding activation with multiple screens (DANGEROUS!)"
 msgstr "Tillade binding aktivering med fuldskærm vinduer"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:874
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:873
 #, fuzzy
 msgid "Edge Binding Sequence"
 msgstr "Kant bindingssekvens"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:893
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:892
 #, fuzzy
 msgid "Clickable edge"
 msgstr "klikbart kant"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:901
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:900
 #, fuzzy
 msgid "Drag only"
 msgstr "Opret ikon"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1232
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1231
 #, fuzzy
 msgid "Edge Binding Error"
 msgstr "musebindinger"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1233
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1232
 #, c-format
 msgid ""
 "The edge binding that you chose is already used by<br><hilight>%s</hilight> "
 "action.<br>Please choose another edge to bind."
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1368
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1122
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1154
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1367
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1119
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1151
 #, fuzzy
 msgid "CTRL"
 msgstr "CTRL"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1373
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1127
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1159
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1372
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1124
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1156
 #, fuzzy
 msgid "ALT"
 msgstr "ALT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1379
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1133
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1165
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1378
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1130
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1162
 #, fuzzy
 msgid "SHIFT"
 msgstr "SKIFT"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1385
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1139
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1171
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1384
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1136
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1168
 #, fuzzy
 msgid "WIN"
 msgstr "VIND"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1395
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1394
 msgid "Left Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1399
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1398
 msgid "Top Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1403
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1402
 #, fuzzy
 msgid "Right Edge"
 msgstr "Højre:"
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1407
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1406
 msgid "Bottom Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1411
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1410
 msgid "Top Left Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1415
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1414
 msgid "Top Right Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1419
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1418
 msgid "Bottom Right Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1423
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1422
 msgid "Bottom Left Edge"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1437
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1436
 #, c-format
 msgid "(left clickable)"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_edgebindings.c:1439
+#: src/modules/conf_bindings/e_int_config_edgebindings.c:1438
 #, fuzzy, c-format
 msgid "(clickable)"
 msgstr "klikbart kant"
@@ -6057,18 +6039,18 @@ msgstr "enkelt tast"
 msgid "Key Bindings Settings"
 msgstr "Tastebindinger Indstillinger"
 
-#: src/modules/conf_bindings/e_int_config_keybindings.c:239
+#: src/modules/conf_bindings/e_int_config_keybindings.c:237
 #: src/modules/conf_bindings/e_mod_main.c:21
 #, fuzzy
 msgid "Key Bindings"
 msgstr "Vigtige Bindinger"
 
-#: src/modules/conf_bindings/e_int_config_keybindings.c:982
+#: src/modules/conf_bindings/e_int_config_keybindings.c:979
 #, fuzzy
 msgid "Binding Key Error"
 msgstr "Binding Key Fejl"
 
-#: src/modules/conf_bindings/e_int_config_keybindings.c:983
+#: src/modules/conf_bindings/e_int_config_keybindings.c:980
 #, c-format
 msgid ""
 "The binding key sequence, that you choose, is already used by <br><hilight>"
@@ -6103,10 +6085,10 @@ msgid "Action Context"
 msgstr "Action Context"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:328
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:380
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:384
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:388
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:392
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:379
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:383
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:387
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:391
 #, fuzzy
 msgid "Any"
 msgstr "enhver"
@@ -6137,64 +6119,64 @@ msgstr "container"
 msgid "Manager"
 msgstr "manager"
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:709
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:708
 #, fuzzy
 msgid "Mouse Buttons"
 msgstr "Fokusindstillinger"
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:769
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:768
 #, fuzzy
 msgid "Mouse Wheels"
 msgstr "Træk"
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1143
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1161
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1142
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1160
 #: src/modules/pager/e_mod_config.c:374 src/modules/pager/e_mod_config.c:400
 #, fuzzy, c-format
 msgid "Left button"
 msgstr "Fokusindstillinger"
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1145
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1159
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1144
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1158
 #: src/modules/pager/e_mod_config.c:379 src/modules/pager/e_mod_config.c:395
 #, fuzzy, c-format
 msgid "Right button"
 msgstr "Radio knapper"
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1148
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1164
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1147
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1163
 #: src/modules/pager/e_mod_config.c:384 src/modules/pager/e_mod_config.c:405
 #: src/modules/pager/e_mod_config.c:410
 #, c-format
 msgid "Button %i"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1154
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1153
 #: src/modules/pager/e_mod_config.c:389
 #, fuzzy, c-format
 msgid "Middle button"
 msgstr "Fokusindstillinger"
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1176
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1175
 #, c-format
 msgid "Extra button (%d)"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1192
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1191
 msgid "Mouse Wheel Up"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1194
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1193
 #, fuzzy
 msgid "Mouse Wheel Down"
 msgstr "Træk"
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1198
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1197
 #, c-format
 msgid "Extra Wheel (%d) Up"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_mousebindings.c:1200
+#: src/modules/conf_bindings/e_int_config_mousebindings.c:1199
 #, c-format
 msgid "Extra Wheel (%d) Down"
 msgstr ""
@@ -6216,27 +6198,27 @@ msgid ""
 "hilight> action.<br>"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:621
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:620
 #, fuzzy
 msgid "Add Signal Binding"
 msgstr "Edge Bindinger"
 
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:632
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:631
 #, fuzzy
 msgid "Source:"
 msgstr "Træk"
 
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:637
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:636
 msgid "Signal:"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:782
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:781
 #: src/modules/conf_bindings/e_mod_main.c:39
 #, fuzzy
 msgid "Signal Bindings"
 msgstr "Edge Bindinger"
 
-#: src/modules/conf_bindings/e_int_config_signalbindings.c:843
+#: src/modules/conf_bindings/e_int_config_signalbindings.c:841
 #, fuzzy
 msgid "Signal Bindings Settings"
 msgstr "Edge bindinger Indstillinger"
@@ -6255,7 +6237,7 @@ msgstr "Dialog Indstillinger"
 
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:109
 #: src/modules/conf_performance/e_int_config_engine.c:86
-#: src/modules/conf_theme/e_int_config_fonts.c:675
+#: src/modules/conf_theme/e_int_config_fonts.c:674
 #: src/modules/everything/evry_config.c:517 src/modules/ibox/e_mod_config.c:97
 #: src/modules/mixer/conf_gadget.c:200 src/modules/mixer/conf_module.c:92
 #, fuzzy
@@ -6304,42 +6286,42 @@ msgstr "Standard Dialog tilstand"
 msgid "Profile Selector"
 msgstr "Profil Selector"
 
-#: src/modules/conf_dialogs/e_int_config_profiles.c:106
+#: src/modules/conf_dialogs/e_int_config_profiles.c:105
 #, fuzzy
 msgid "Available Profiles"
 msgstr "tilgængelige profiler"
 
-#: src/modules/conf_dialogs/e_int_config_profiles.c:122
+#: src/modules/conf_dialogs/e_int_config_profiles.c:121
 #: src/modules/wizard/page_020.c:119
 #, fuzzy
 msgid "Select a profile"
 msgstr "Vælg en profil"
 
-#: src/modules/conf_dialogs/e_int_config_profiles.c:138
+#: src/modules/conf_dialogs/e_int_config_profiles.c:137
 msgid "Scratch"
 msgstr ""
 
-#: src/modules/conf_dialogs/e_int_config_profiles.c:141
+#: src/modules/conf_dialogs/e_int_config_profiles.c:140
 #, fuzzy
 msgid "Reset"
 msgstr "Nulstil"
 
-#: src/modules/conf_dialogs/e_int_config_profiles.c:292
+#: src/modules/conf_dialogs/e_int_config_profiles.c:291
 #, c-format
 msgid "Selected profile: %s"
 msgstr ""
 
-#: src/modules/conf_dialogs/e_int_config_profiles.c:315
+#: src/modules/conf_dialogs/e_int_config_profiles.c:314
 #, fuzzy
 msgid "Add New Profile"
 msgstr "Tilføj ny profil"
 
-#: src/modules/conf_dialogs/e_int_config_profiles.c:336
+#: src/modules/conf_dialogs/e_int_config_profiles.c:335
 #, c-format
 msgid "You want to delete the \"%s\" profile.<br><br>Are you sure?"
 msgstr ""
 
-#: src/modules/conf_dialogs/e_int_config_profiles.c:338
+#: src/modules/conf_dialogs/e_int_config_profiles.c:337
 #, fuzzy
 msgid "Are you sure you want to delete this profile?"
 msgstr "Er du sikker på du vil slette denne hylde."
@@ -6381,7 +6363,7 @@ msgid "Wallpaper"
 msgstr "Wallpaper"
 
 #: src/modules/conf_display/e_int_config_desk.c:192
-#: src/modules/fileman/e_int_config_mime.c:184
+#: src/modules/fileman/e_int_config_mime.c:183
 #, fuzzy
 msgid "Set"
 msgstr "Sæt"
@@ -6544,9 +6526,9 @@ msgstr "Vælg en Baggrund ..."
 
 #: src/modules/conf_display/e_int_config_desklock_fsel.c:97
 #: src/modules/conf_intl/e_int_config_imc.c:803
-#: src/modules/conf_theme/e_int_config_theme.c:659
-#: src/modules/conf_theme/e_int_config_wallpaper.c:423
-#: src/modules/conf_theme/e_int_config_wallpaper.c:578
+#: src/modules/conf_theme/e_int_config_theme.c:664
+#: src/modules/conf_theme/e_int_config_wallpaper.c:422
+#: src/modules/conf_theme/e_int_config_wallpaper.c:576
 #: src/modules/gadman/e_mod_config.c:248
 #, fuzzy
 msgid "Personal"
@@ -6928,33 +6910,33 @@ msgstr ""
 msgid "Possible Locale problems"
 msgstr "Mulige Lokale problemer"
 
-#: src/modules/conf_intl/e_int_config_intl.c:1024
-#: src/modules/conf_intl/e_int_config_intl.c:1115
+#: src/modules/conf_intl/e_int_config_intl.c:1023
+#: src/modules/conf_intl/e_int_config_intl.c:1113
 #, fuzzy
 msgid "Language Selector"
 msgstr "Sprog Selector"
 
-#: src/modules/conf_intl/e_int_config_intl.c:1054
-#: src/modules/conf_intl/e_int_config_intl.c:1503
+#: src/modules/conf_intl/e_int_config_intl.c:1053
+#: src/modules/conf_intl/e_int_config_intl.c:1501
 #: src/modules/conf_menus/e_int_config_menus.c:170
-#: src/modules/wizard/page_010.c:169
+#: src/modules/wizard/page_010.c:170
 #, fuzzy
 msgid "System Default"
 msgstr "System Standard"
 
-#: src/modules/conf_intl/e_int_config_intl.c:1088
-#: src/modules/conf_intl/e_int_config_intl.c:1166
+#: src/modules/conf_intl/e_int_config_intl.c:1087
+#: src/modules/conf_intl/e_int_config_intl.c:1164
 #, fuzzy
 msgid "Locale Selected"
 msgstr "locale Valgte"
 
-#: src/modules/conf_intl/e_int_config_intl.c:1089
-#: src/modules/conf_intl/e_int_config_intl.c:1167
+#: src/modules/conf_intl/e_int_config_intl.c:1088
+#: src/modules/conf_intl/e_int_config_intl.c:1165
 #, fuzzy
 msgid "Locale"
 msgstr "Landestandard"
 
-#: src/modules/conf_intl/e_mod_main.c:17 src/modules/wizard/page_010.c:160
+#: src/modules/conf_intl/e_mod_main.c:17 src/modules/wizard/page_010.c:161
 #, fuzzy
 msgid "Language"
 msgstr "Sprog"
@@ -7090,7 +7072,7 @@ msgstr "Diverse valgmuligheder"
 msgid "Environment Variables"
 msgstr "miljøvariabler"
 
-#: src/modules/conf_paths/e_int_config_env.c:306
+#: src/modules/conf_paths/e_int_config_env.c:305
 #, fuzzy
 msgid "Unset"
 msgstr "Inset"
@@ -7111,7 +7093,7 @@ msgid "Images"
 msgstr "Billeder"
 
 #: src/modules/conf_paths/e_int_config_paths.c:74
-#: src/modules/conf_theme/e_int_config_fonts.c:433
+#: src/modules/conf_theme/e_int_config_fonts.c:432
 #: src/modules/conf_theme/e_mod_main.c:74
 #, fuzzy
 msgid "Fonts"
@@ -7135,17 +7117,17 @@ msgstr "Baggrunde"
 msgid "Messages"
 msgstr "Meddelelser"
 
-#: src/modules/conf_paths/e_int_config_paths.c:164
+#: src/modules/conf_paths/e_int_config_paths.c:163
 #, fuzzy
 msgid "Enlightenment Paths"
 msgstr "Enlightenment"
 
-#: src/modules/conf_paths/e_int_config_paths.c:195
+#: src/modules/conf_paths/e_int_config_paths.c:194
 #, fuzzy
 msgid "Default Directories"
 msgstr "Standard Directories"
 
-#: src/modules/conf_paths/e_int_config_paths.c:202
+#: src/modules/conf_paths/e_int_config_paths.c:201
 #, fuzzy
 msgid "User Defined Directories"
 msgstr "Brugerdefinerede mapper"
@@ -7296,12 +7278,12 @@ msgstr "%1.1f sek."
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:235
 #: src/modules/notification/e_mod_config.c:102
-#: src/modules/shot/e_mod_main.c:776
+#: src/modules/shot/e_mod_main.c:774
 msgid "Low"
 msgstr "Lav"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:274
-#: src/modules/shot/e_mod_main.c:774
+#: src/modules/shot/e_mod_main.c:772
 msgid "Medium"
 msgstr "Medium"
 
@@ -7313,7 +7295,7 @@ msgid "%.0f s"
 msgstr "%2.0f pixels"
 
 #: src/modules/conf_performance/e_int_config_powermanagement.c:313
-#: src/modules/shot/e_mod_main.c:772
+#: src/modules/shot/e_mod_main.c:770
 msgid "High"
 msgstr "Høj"
 
@@ -7348,23 +7330,23 @@ msgstr "Output"
 msgid "Restore On Startup"
 msgstr "Sæt kontrollør ved opstart"
 
-#: src/modules/conf_shelves/e_int_config_shelf.c:129
+#: src/modules/conf_shelves/e_int_config_shelf.c:128
 #, fuzzy, c-format
 msgid "Configured Shelves: Display %d"
 msgstr "konfigurerede Hylder"
 
-#: src/modules/conf_shelves/e_int_config_shelf.c:390
+#: src/modules/conf_shelves/e_int_config_shelf.c:389
 #, fuzzy, c-format
 msgid "Are you sure you want to delete \"%s\"?"
 msgstr "Er du sikker på du vil slette denne hylde."
 
-#: src/modules/conf_shelves/e_int_config_shelf.c:393
+#: src/modules/conf_shelves/e_int_config_shelf.c:392
 #, fuzzy
 msgid "Confirm Shelf Deletion"
 msgstr "Bekræft sletning"
 
 #: src/modules/conf_theme/e_int_config_borders.c:30
-#: src/modules/conf_theme/e_int_config_borders.c:210
+#: src/modules/conf_theme/e_int_config_borders.c:209
 #, fuzzy
 msgid "Default Border Style"
 msgstr "Standard Border Style"
@@ -7373,7 +7355,7 @@ msgstr "Standard Border Style"
 msgid "Window Border Selection"
 msgstr "Valg af vinduesramme"
 
-#: src/modules/conf_theme/e_int_config_borders.c:256
+#: src/modules/conf_theme/e_int_config_borders.c:255
 msgid "Remember this Border for this window next time it appears"
 msgstr "Husk denne ramme for dette vindue næste gang det vises"
 
@@ -7640,53 +7622,53 @@ msgid "Selected %u uniform colors classes"
 msgstr ""
 
 #: src/modules/conf_theme/e_int_config_color_classes.c:288
-#: src/modules/conf_theme/e_int_config_color_classes.c:548
+#: src/modules/conf_theme/e_int_config_color_classes.c:547
 #, fuzzy
 msgid "No selected color class"
 msgstr "Ingen valgte farve klasse"
 
-#: src/modules/conf_theme/e_int_config_color_classes.c:551
+#: src/modules/conf_theme/e_int_config_color_classes.c:550
 #, fuzzy
 msgid "Custom colors"
 msgstr "Brugerdefinerede farver"
 
-#: src/modules/conf_theme/e_int_config_color_classes.c:557
+#: src/modules/conf_theme/e_int_config_color_classes.c:556
 #, fuzzy
 msgid "Object:"
 msgstr "Skub ud"
 
-#: src/modules/conf_theme/e_int_config_color_classes.c:563
+#: src/modules/conf_theme/e_int_config_color_classes.c:562
 #, fuzzy
 msgid "Outline:"
 msgstr "Outline:"
 
-#: src/modules/conf_theme/e_int_config_color_classes.c:569
+#: src/modules/conf_theme/e_int_config_color_classes.c:568
 #, fuzzy
 msgid "Shadow:"
 msgstr "Oprullet"
 
-#: src/modules/conf_theme/e_int_config_color_classes.c:601
+#: src/modules/conf_theme/e_int_config_color_classes.c:600
 #, fuzzy
 msgid "Text with applied colors."
 msgstr "Tekst med anvendte farver."
 
-#: src/modules/conf_theme/e_int_config_color_classes.c:607
+#: src/modules/conf_theme/e_int_config_color_classes.c:606
 #, fuzzy
 msgid "Colors depend on theme capabilities."
 msgstr "Farver afhænger tema kapaciteter."
 
-#: src/modules/conf_theme/e_int_config_color_classes.c:858
+#: src/modules/conf_theme/e_int_config_color_classes.c:857
 #, fuzzy
 msgid "Window Manager"
 msgstr "Window Manager"
 
-#: src/modules/conf_theme/e_int_config_color_classes.c:860
+#: src/modules/conf_theme/e_int_config_color_classes.c:859
 #: src/modules/conf_theme/e_int_config_fonts.c:81
 #, fuzzy
 msgid "Widgets"
 msgstr "Widgets"
 
-#: src/modules/conf_theme/e_int_config_color_classes.c:866
+#: src/modules/conf_theme/e_int_config_color_classes.c:865
 #, fuzzy
 msgid "Others"
 msgstr "Andre indstillinger"
@@ -7885,63 +7867,63 @@ msgid_plural "%d pixels"
 msgstr[0] "%2.0f pixels"
 msgstr[1] "%2.0f pixels"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:427
+#: src/modules/conf_theme/e_int_config_fonts.c:426
 #, fuzzy
 msgid "Enable Custom Font Classes"
 msgstr "Aktiver egen skrifttype Classes"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:449
-#: src/modules/conf_theme/e_int_config_fonts.c:670
+#: src/modules/conf_theme/e_int_config_fonts.c:448
+#: src/modules/conf_theme/e_int_config_fonts.c:669
 msgid "English 012 #!? 日本語 にほんご ソフト 中文 華語 한국"
 msgstr ""
 
-#: src/modules/conf_theme/e_int_config_fonts.c:629
+#: src/modules/conf_theme/e_int_config_fonts.c:628
 #, fuzzy
 msgid "Font Classes"
 msgstr "Font Klasser"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:636
+#: src/modules/conf_theme/e_int_config_fonts.c:635
 #, fuzzy
 msgid "Enable Font Class"
 msgstr "Aktiver Font klasse"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:643
+#: src/modules/conf_theme/e_int_config_fonts.c:642
 #, fuzzy
 msgid "Font"
 msgstr "font"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:679
+#: src/modules/conf_theme/e_int_config_fonts.c:678
 #, fuzzy
 msgid "Hinting"
 msgstr "Hint"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:682
+#: src/modules/conf_theme/e_int_config_fonts.c:681
 #, fuzzy
 msgid "Bytecode"
 msgstr "bytekode"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:686
+#: src/modules/conf_theme/e_int_config_fonts.c:685
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:269
 #: src/modules/cpufreq/e_mod_main.c:238 src/modules/cpufreq/e_mod_main.c:274
 msgid "Automatic"
 msgstr "Automatisk"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:695
+#: src/modules/conf_theme/e_int_config_fonts.c:694
 #, fuzzy
 msgid "Font Fallbacks"
 msgstr "Font Fallbacks"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:696
+#: src/modules/conf_theme/e_int_config_fonts.c:695
 #, fuzzy
 msgid "Fallback Name"
 msgstr "fallback navn"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:704
+#: src/modules/conf_theme/e_int_config_fonts.c:703
 #, fuzzy
 msgid "Enable Fallbacks"
 msgstr "Aktiver Fallbacks"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:713
+#: src/modules/conf_theme/e_int_config_fonts.c:712
 msgid "Hinting / Fallbacks"
 msgstr ""
 
@@ -8021,22 +8003,22 @@ msgstr "begrænsninger"
 msgid "Theme Selector"
 msgstr "Tema Selector"
 
-#: src/modules/conf_theme/e_int_config_theme.c:555
+#: src/modules/conf_theme/e_int_config_theme.c:561
 #, fuzzy
 msgid "Theme File Error"
 msgstr "Tema Import Fejl"
 
-#: src/modules/conf_theme/e_int_config_theme.c:556
+#: src/modules/conf_theme/e_int_config_theme.c:562
 #, c-format
 msgid "%s is probably not an E17 theme!"
 msgstr ""
 
-#: src/modules/conf_theme/e_int_config_theme.c:705
+#: src/modules/conf_theme/e_int_config_theme.c:713
 #, fuzzy
 msgid " Import..."
 msgstr " Import ..."
 
-#: src/modules/conf_theme/e_int_config_theme.c:708
+#: src/modules/conf_theme/e_int_config_theme.c:716
 #, fuzzy
 msgid "Show startup splash"
 msgstr "startapplikationer"
@@ -8098,40 +8080,40 @@ msgstr "Overgange"
 msgid "Wallpaper Settings"
 msgstr "Tapetindstillinger"
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:433
-#: src/modules/conf_theme/e_int_config_wallpaper.c:588
+#: src/modules/conf_theme/e_int_config_wallpaper.c:432
+#: src/modules/conf_theme/e_int_config_wallpaper.c:586
 #, fuzzy
 msgid "Go up a directory"
 msgstr "Gå op et register"
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:465
-#: src/modules/conf_theme/e_int_config_wallpaper.c:613
+#: src/modules/conf_theme/e_int_config_wallpaper.c:464
+#: src/modules/conf_theme/e_int_config_wallpaper.c:611
 #, fuzzy
 msgid "Use Theme Wallpaper"
 msgstr "Brug Tema Wallpaper"
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:470
-#: src/modules/conf_theme/e_int_config_wallpaper.c:618
+#: src/modules/conf_theme/e_int_config_wallpaper.c:469
+#: src/modules/conf_theme/e_int_config_wallpaper.c:616
 #, fuzzy
 msgid "Picture..."
 msgstr "Billede ..."
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:635
+#: src/modules/conf_theme/e_int_config_wallpaper.c:633
 #, fuzzy
 msgid "Where to place the Wallpaper"
 msgstr "Hvor placere Wallpaper"
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:636
+#: src/modules/conf_theme/e_int_config_wallpaper.c:634
 #, fuzzy
 msgid "All Desktops"
 msgstr "Alle Desktops"
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:638
+#: src/modules/conf_theme/e_int_config_wallpaper.c:636
 #, fuzzy
 msgid "This Desktop"
 msgstr "Dette Desktop"
 
-#: src/modules/conf_theme/e_int_config_wallpaper.c:640
+#: src/modules/conf_theme/e_int_config_wallpaper.c:638
 #, fuzzy
 msgid "This Screen"
 msgstr "Denne skærm"
@@ -8752,7 +8734,7 @@ msgid "Follow Iconify"
 msgstr "Minimér"
 
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:296
-#: src/modules/quickaccess/e_mod_config.c:312
+#: src/modules/quickaccess/e_mod_config.c:311
 #, fuzzy
 msgid "Transients"
 msgstr "Midlertidighed"
@@ -8802,30 +8784,30 @@ msgstr "Window List Menu"
 msgid "Window Remembers"
 msgstr "Window Husker"
 
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:129
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:128
 #, fuzzy
 msgid "Remember internal dialogs"
 msgstr "Husk interne dialoger"
 
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:132
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:131
 #, fuzzy
 msgid "Remember file manager windows"
 msgstr "Husk filhåndtering vinduer"
 
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:135
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:134
 #, fuzzy
 msgid "Don't remember file manager windows by directory"
 msgstr "Husk filhåndtering vinduer"
 
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:146
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:145
 #, fuzzy
 msgid "Details"
 msgstr "Detaljer"
 
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:368
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:370
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:372
-#: src/modules/conf_window_remembers/e_int_config_remembers.c:374
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:367
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:369
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:371
+#: src/modules/conf_window_remembers/e_int_config_remembers.c:373
 #, fuzzy
 msgid "No selection"
 msgstr "Vælg en ikon"
@@ -9295,7 +9277,7 @@ msgstr "Typebuf"
 
 #: src/modules/everything/evry_plug_apps.c:1164
 #: src/modules/everything/evry_plug_apps.c:1211
-#: src/modules/fileman/e_fwin.c:2213 src/modules/fileman/e_fwin.c:2573
+#: src/modules/fileman/e_fwin.c:2213 src/modules/fileman/e_fwin.c:2572
 #, fuzzy
 msgid "Open with..."
 msgstr "Åbn med ..."
@@ -9518,116 +9500,116 @@ msgstr "E Stier"
 msgid "Run"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:2206 src/modules/fileman/e_fwin.c:2574
+#: src/modules/fileman/e_fwin.c:2206 src/modules/fileman/e_fwin.c:2573
 msgid "Open"
 msgstr "Åben"
 
-#: src/modules/fileman/e_fwin.c:2603 src/modules/fileman/e_fwin.c:2628
+#: src/modules/fileman/e_fwin.c:2602 src/modules/fileman/e_fwin.c:2627
 #, c-format
 msgid "%d file"
 msgid_plural "%d files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: src/modules/fileman/e_fwin.c:2646
+#: src/modules/fileman/e_fwin.c:2645
 #, fuzzy
 msgid "Known Applications"
 msgstr "kendte Applikationer"
 
-#: src/modules/fileman/e_fwin.c:2656
+#: src/modules/fileman/e_fwin.c:2655
 #, fuzzy
 msgid "Suggested Applications"
 msgstr "Favoritapplikationer"
 
-#: src/modules/fileman/e_fwin.c:2691
+#: src/modules/fileman/e_fwin.c:2690
 #, fuzzy
 msgid "All Applications"
 msgstr "alle applikationer"
 
-#: src/modules/fileman/e_fwin.c:2714
+#: src/modules/fileman/e_fwin.c:2713
 #, fuzzy
 msgid "Custom Command"
 msgstr "Brugerdefineret Kommando"
 
-#: src/modules/fileman/e_fwin.c:3006
+#: src/modules/fileman/e_fwin.c:3005
 #: src/modules/fileman_opinfo/e_mod_main.c:105
 #, fuzzy, c-format
 msgid "Copying is aborted"
 msgstr "Kopiering afbrydes"
 
-#: src/modules/fileman/e_fwin.c:3010
+#: src/modules/fileman/e_fwin.c:3009
 #: src/modules/fileman_opinfo/e_mod_main.c:109
 #, fuzzy, c-format
 msgid "Moving is aborted"
 msgstr "Flytning afbrydes"
 
-#: src/modules/fileman/e_fwin.c:3014
+#: src/modules/fileman/e_fwin.c:3013
 #: src/modules/fileman_opinfo/e_mod_main.c:113
 #, fuzzy, c-format
 msgid "Deleting is aborted"
 msgstr "Sletning afbrydes"
 
-#: src/modules/fileman/e_fwin.c:3018
+#: src/modules/fileman/e_fwin.c:3017
 #: src/modules/fileman_opinfo/e_mod_main.c:117
 #, fuzzy, c-format
 msgid "Secure deletion is aborted"
 msgstr "Sletning afbrydes"
 
-#: src/modules/fileman/e_fwin.c:3022
+#: src/modules/fileman/e_fwin.c:3021
 #: src/modules/fileman_opinfo/e_mod_main.c:121
 #, fuzzy, c-format
 msgid "Unknown operation from slave is aborted"
 msgstr "Ukendt drift fra slave afbrydes"
 
-#: src/modules/fileman/e_fwin.c:3032
+#: src/modules/fileman/e_fwin.c:3031
 #: src/modules/fileman_opinfo/e_mod_main.c:131
 #, c-format
 msgid "Copy of %s done"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:3034
+#: src/modules/fileman/e_fwin.c:3033
 #: src/modules/fileman_opinfo/e_mod_main.c:133
 #, c-format
 msgid "Copying %s (eta: %s)"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:3039
+#: src/modules/fileman/e_fwin.c:3038
 #: src/modules/fileman_opinfo/e_mod_main.c:139
 #, c-format
 msgid "Move of %s done"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:3041
+#: src/modules/fileman/e_fwin.c:3040
 #: src/modules/fileman_opinfo/e_mod_main.c:141
 #, c-format
 msgid "Moving %s (eta: %s)"
 msgstr ""
 
-#: src/modules/fileman/e_fwin.c:3046
+#: src/modules/fileman/e_fwin.c:3045
 #: src/modules/fileman_opinfo/e_mod_main.c:147
 #, fuzzy, c-format
 msgid "Delete done"
 msgstr "Slet gjort"
 
-#: src/modules/fileman/e_fwin.c:3048
+#: src/modules/fileman/e_fwin.c:3047
 #: src/modules/fileman_opinfo/e_mod_main.c:149
 #, fuzzy, c-format
 msgid "Deleting files..."
 msgstr "Sletning af filer ..."
 
-#: src/modules/fileman/e_fwin.c:3053
+#: src/modules/fileman/e_fwin.c:3052
 #: src/modules/fileman_opinfo/e_mod_main.c:154
 #, fuzzy, c-format
 msgid "Secure delete done"
 msgstr "Skærmopløsning"
 
-#: src/modules/fileman/e_fwin.c:3055
+#: src/modules/fileman/e_fwin.c:3054
 #: src/modules/fileman_opinfo/e_mod_main.c:156
 #, fuzzy, c-format
 msgid "Securely deleting files..."
 msgstr "Sletning af filer ..."
 
-#: src/modules/fileman/e_fwin.c:3059
+#: src/modules/fileman/e_fwin.c:3058
 #: src/modules/fileman_opinfo/e_mod_main.c:160
 #, fuzzy, c-format
 msgid "Unknown operation from slave %d"
@@ -9644,7 +9626,7 @@ msgstr "Quick Navigation"
 msgid "File Icons"
 msgstr "filikoner"
 
-#: src/modules/fileman/e_int_config_mime.c:177
+#: src/modules/fileman/e_int_config_mime.c:176
 #, fuzzy
 msgid "File Types"
 msgstr "filtyper"
@@ -10032,32 +10014,32 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "Er du sikker på du vil slette denne bar kilde."
 
-#: src/modules/ibar/e_mod_main.c:353 src/modules/ibar/e_mod_main.c:2755
+#: src/modules/ibar/e_mod_main.c:353 src/modules/ibar/e_mod_main.c:2799
 #, fuzzy
 msgid "IBar"
 msgstr "Ibar"
 
-#: src/modules/ibar/e_mod_main.c:469 src/modules/ibar/e_mod_main.c:1527
+#: src/modules/ibar/e_mod_main.c:469 src/modules/ibar/e_mod_main.c:1571
 #, fuzzy
 msgid "Create new Icon"
 msgstr "Opret nyt ikon"
 
-#: src/modules/ibar/e_mod_main.c:1558
+#: src/modules/ibar/e_mod_main.c:1602
 #, fuzzy
 msgid "Add to bar"
 msgstr "Tilføj til Ibar"
 
-#: src/modules/ibar/e_mod_main.c:1564
+#: src/modules/ibar/e_mod_main.c:1608
 #, fuzzy
 msgid "Remove from bar"
 msgstr "Fjern gadget"
 
-#: src/modules/ibar/e_mod_main.c:1570
+#: src/modules/ibar/e_mod_main.c:1614
 #, fuzzy, c-format
 msgid "Icon %s"
 msgstr "Ikoner"
 
-#: src/modules/ibar/e_mod_main.c:2755
+#: src/modules/ibar/e_mod_main.c:2799
 #, fuzzy
 msgid "Focus IBar"
 msgstr "Fokuséring"
@@ -10227,7 +10209,7 @@ msgstr "Vis Popup på volumen forandring via tastebindinger"
 msgid "Sound Cards"
 msgstr "Lydkort"
 
-#: src/modules/mixer/conf_gadget.c:387
+#: src/modules/mixer/conf_gadget.c:384
 #, fuzzy
 msgid "Mixer Settings"
 msgstr "Mixer -indstillinger"
@@ -10277,20 +10259,20 @@ msgstr "Skift af opløsning"
 msgid "Mixer Settings Updated"
 msgstr "Mixer Settings Opdateret"
 
-#: src/modules/mixer/e_mod_main.c:1260
+#: src/modules/mixer/e_mod_main.c:1266
 #, fuzzy
 msgid "Mixer Module"
 msgstr "Moduler"
 
-#: src/modules/mixer/e_mod_main.c:1289
+#: src/modules/mixer/e_mod_main.c:1295
 msgid "Increase Volume"
 msgstr ""
 
-#: src/modules/mixer/e_mod_main.c:1290
+#: src/modules/mixer/e_mod_main.c:1296
 msgid "Decrease Volume"
 msgstr ""
 
-#: src/modules/mixer/e_mod_main.c:1291
+#: src/modules/mixer/e_mod_main.c:1297
 #, fuzzy
 msgid "Mute Volume"
 msgstr "Ny volumen"
@@ -10660,29 +10642,29 @@ msgstr "Popup Desk Forrige"
 msgid "Enter a unique name for this entry"
 msgstr "Indtast et navn for denne nye kilde:"
 
-#: src/modules/quickaccess/e_mod_config.c:247
+#: src/modules/quickaccess/e_mod_config.c:246
 #, fuzzy
 msgid "Disable Warning Dialogs"
 msgstr "Deaktiver Bekræftelse Dialoger"
 
-#: src/modules/quickaccess/e_mod_config.c:249
+#: src/modules/quickaccess/e_mod_config.c:248
 msgid "Disable Startup Tutorial"
 msgstr ""
 
-#: src/modules/quickaccess/e_mod_config.c:283
+#: src/modules/quickaccess/e_mod_config.c:282
 #, fuzzy
 msgid "Entries"
 msgstr "indtastning"
 
-#: src/modules/quickaccess/e_mod_config.c:336
+#: src/modules/quickaccess/e_mod_config.c:334
 msgid "Hide Instead Of Raising"
 msgstr ""
 
-#: src/modules/quickaccess/e_mod_config.c:339
+#: src/modules/quickaccess/e_mod_config.c:337
 msgid "Hide If Focus Lost"
 msgstr ""
 
-#: src/modules/quickaccess/e_mod_config.c:564
+#: src/modules/quickaccess/e_mod_config.c:562
 #, fuzzy
 msgid "Quickaccess Settings"
 msgstr "Basale indstillinger"
@@ -10920,166 +10902,166 @@ msgid ""
 "extensions<br>only as other formats are not<br>supported currently."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:282
+#: src/modules/shot/e_mod_main.c:281
 msgid "Select screenshot save location"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:294 src/modules/shot/e_mod_main.c:845
+#: src/modules/shot/e_mod_main.c:293 src/modules/shot/e_mod_main.c:843
 #, fuzzy
 msgid "Save"
 msgstr "Gem"
 
-#: src/modules/shot/e_mod_main.c:393
+#: src/modules/shot/e_mod_main.c:392
 #, c-format
 msgid "Uploaded %s / %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:414
+#: src/modules/shot/e_mod_main.c:413
 #, fuzzy
 msgid "Error - Upload Failed"
 msgstr "Fejl ved indlæsning af modul"
 
-#: src/modules/shot/e_mod_main.c:415
+#: src/modules/shot/e_mod_main.c:414
 #, c-format
 msgid "Upload failed with status code:<br>%i"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:458
+#: src/modules/shot/e_mod_main.c:457
 #, fuzzy
 msgid "Error - Can't create file"
 msgstr "Fejl ved indlæsning af modul"
 
-#: src/modules/shot/e_mod_main.c:459
+#: src/modules/shot/e_mod_main.c:458
 #, c-format
 msgid "Cannot create temporary file '%s': %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:477
+#: src/modules/shot/e_mod_main.c:476
 msgid "Error - Can't open file"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:478
+#: src/modules/shot/e_mod_main.c:477
 #, c-format
 msgid "Cannot open temporary file '%s': %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:486
+#: src/modules/shot/e_mod_main.c:485
 #, fuzzy
 msgid "Error - Bad size"
 msgstr "Fejl ved indlæsning af modul"
 
-#: src/modules/shot/e_mod_main.c:487
+#: src/modules/shot/e_mod_main.c:486
 #, c-format
 msgid "Cannot get size of file '%s'"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:497
+#: src/modules/shot/e_mod_main.c:496
 msgid "Error - Can't allocate memory"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:498
+#: src/modules/shot/e_mod_main.c:497
 #, c-format
 msgid "Cannot allocate memory for picture: %s"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:505
+#: src/modules/shot/e_mod_main.c:504
 msgid "Error - Can't read picture"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:506
+#: src/modules/shot/e_mod_main.c:505
 #, fuzzy
 msgid "Cannot read picture"
 msgstr "Kan ikke tilføje ikon"
 
-#: src/modules/shot/e_mod_main.c:527
+#: src/modules/shot/e_mod_main.c:525
 msgid "Uploading screenshot"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:532
+#: src/modules/shot/e_mod_main.c:530
 msgid "Uploading ..."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:537
+#: src/modules/shot/e_mod_main.c:535
 msgid "Screenshot is available at this location:"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:546
+#: src/modules/shot/e_mod_main.c:544
 #, fuzzy
 msgid "Hide"
 msgstr "Auto Skjul"
 
-#: src/modules/shot/e_mod_main.c:570
+#: src/modules/shot/e_mod_main.c:568
 #, fuzzy
 msgid "Confirm Share"
 msgstr "Bekræft sletning"
 
-#: src/modules/shot/e_mod_main.c:571
+#: src/modules/shot/e_mod_main.c:569
 msgid ""
 "This image will be uploaded<br>to enlightenment.org. It will be publicly "
 "visible."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:671 src/modules/shot/e_mod_main.c:687
-#: src/modules/shot/e_mod_main.c:696
+#: src/modules/shot/e_mod_main.c:669 src/modules/shot/e_mod_main.c:685
+#: src/modules/shot/e_mod_main.c:694
 #, fuzzy
 msgid "Screenshot Error"
 msgstr "Monteringsfejl"
 
-#: src/modules/shot/e_mod_main.c:672
+#: src/modules/shot/e_mod_main.c:670
 #, c-format
 msgid ""
 "SHMMAX is too small to take screenshot.<br>Consider increasing /proc/sys/"
 "kernel/shmmax to a value larger than %llu"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:688
+#: src/modules/shot/e_mod_main.c:686
 #, c-format
 msgid ""
 "SHMMAX is too small to take screenshot.<br>Consider increasing kern.ipc."
 "shmmax to a value larger than %llu"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:697
+#: src/modules/shot/e_mod_main.c:695
 msgid ""
 "SHM creation failed.<br>Ensure your system has enough RAM free and your user "
 "has sufficient permissions."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:714
+#: src/modules/shot/e_mod_main.c:712
 msgid "Where to put Screenshot..."
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:766
+#: src/modules/shot/e_mod_main.c:764
 #, fuzzy
 msgid "Quality"
 msgstr "Kvalitet"
 
-#: src/modules/shot/e_mod_main.c:770
+#: src/modules/shot/e_mod_main.c:768
 msgid "Perfect"
 msgstr ""
 
-#: src/modules/shot/e_mod_main.c:847
+#: src/modules/shot/e_mod_main.c:845
 #, fuzzy
 msgid "Share"
 msgstr "Skarp"
 
-#: src/modules/shot/e_mod_main.c:1008 src/modules/shot/e_mod_main.c:1056
+#: src/modules/shot/e_mod_main.c:1006 src/modules/shot/e_mod_main.c:1054
 #, fuzzy
 msgid "Take Shot"
 msgstr "opsætningsskærme"
 
-#: src/modules/shot/e_mod_main.c:1019 src/modules/shot/e_mod_main.c:1048
-#: src/modules/shot/e_mod_main.c:1061
+#: src/modules/shot/e_mod_main.c:1017 src/modules/shot/e_mod_main.c:1046
+#: src/modules/shot/e_mod_main.c:1059
 #, fuzzy
 msgid "Take Screenshot"
 msgstr "opsætningsskærme"
 
-#: src/modules/shot/e_mod_main.c:1036
+#: src/modules/shot/e_mod_main.c:1034
 #, fuzzy
 msgid "Shot Error"
 msgstr "Monteringsfejl"
 
-#: src/modules/shot/e_mod_main.c:1037
+#: src/modules/shot/e_mod_main.c:1035
 #, fuzzy
 msgid "Cannot initialize network"
 msgstr "Enlightenment kan ikke initialisere filhåndteringen.\n"
@@ -11342,49 +11324,49 @@ msgstr ""
 msgid "Tiling Configuration"
 msgstr "Enlightenment opsætning"
 
-#: src/modules/tiling/e_mod_tiling.c:1297
+#: src/modules/tiling/e_mod_tiling.c:1307
 #, fuzzy
 msgid "Floating"
 msgstr "Ingenting"
 
-#: src/modules/tiling/e_mod_tiling.c:1375
-#: src/modules/tiling/e_mod_tiling.c:1408
-#: src/modules/tiling/e_mod_tiling.c:1748
-#: src/modules/tiling/e_mod_tiling.c:1766
+#: src/modules/tiling/e_mod_tiling.c:1386
+#: src/modules/tiling/e_mod_tiling.c:1419
+#: src/modules/tiling/e_mod_tiling.c:1747
+#: src/modules/tiling/e_mod_tiling.c:1765
 #, fuzzy
 msgid "Tiling"
 msgstr "Polling"
 
-#: src/modules/tiling/e_mod_tiling.c:1382
+#: src/modules/tiling/e_mod_tiling.c:1393
 #, fuzzy
 msgid "Toggle floating"
 msgstr "Eksekverbar"
 
-#: src/modules/tiling/e_mod_tiling.c:1385
+#: src/modules/tiling/e_mod_tiling.c:1396
 #, fuzzy
 msgid "Move the focused window up"
 msgstr "(Ingen vinduer)"
 
-#: src/modules/tiling/e_mod_tiling.c:1387
+#: src/modules/tiling/e_mod_tiling.c:1398
 #, fuzzy
 msgid "Move the focused window down"
 msgstr "Vinduesrolle"
 
-#: src/modules/tiling/e_mod_tiling.c:1389
+#: src/modules/tiling/e_mod_tiling.c:1400
 #, fuzzy
 msgid "Move the focused window left"
 msgstr "Vinduet til venstre"
 
-#: src/modules/tiling/e_mod_tiling.c:1391
+#: src/modules/tiling/e_mod_tiling.c:1402
 #, fuzzy
 msgid "Move the focused window right"
 msgstr "Vindue mod højre"
 
-#: src/modules/tiling/e_mod_tiling.c:1394
+#: src/modules/tiling/e_mod_tiling.c:1405
 msgid "Toggle split mode"
 msgstr ""
 
-#: src/modules/tiling/e_mod_tiling.c:1396
+#: src/modules/tiling/e_mod_tiling.c:1407
 #, fuzzy
 msgid "Swap window"
 msgstr "Vinduer"
@@ -11594,7 +11576,7 @@ msgstr ""
 msgid "Welcome to Enlightenment"
 msgstr ""
 
-#: src/modules/wizard/page_010.c:161 src/modules/wizard/page_011.c:147
+#: src/modules/wizard/page_010.c:162 src/modules/wizard/page_011.c:147
 #: src/modules/wizard/page_020.c:52
 #, fuzzy
 msgid "Select one"
@@ -11713,47 +11695,55 @@ msgstr "proceslinjen"
 msgid "Keyboard Settings"
 msgstr "Ibar Indstillinger"
 
-#: src/modules/xkbswitch/e_mod_config.c:318
+#: src/modules/xkbswitch/e_mod_config.c:317
 #, fuzzy
 msgid "Configurations"
 msgstr "Konfiguration"
 
-#: src/modules/xkbswitch/e_mod_config.c:325
+#: src/modules/xkbswitch/e_mod_config.c:324
 #, fuzzy
 msgid "Models"
 msgstr "Modes"
 
-#: src/modules/xkbswitch/e_mod_config.c:331
+#: src/modules/xkbswitch/e_mod_config.c:330
 msgid "Do not apply any keyboard settings ever"
 msgstr ""
 
-#: src/modules/xkbswitch/e_mod_config.c:333
+#: src/modules/xkbswitch/e_mod_config.c:332
 #, fuzzy
 msgid "Label only in gadgets"
 msgstr "Label"
 
-#: src/modules/xkbswitch/e_mod_config.c:517
+#: src/modules/xkbswitch/e_mod_config.c:515
 #, fuzzy
 msgid "Add New Configuration"
 msgstr "Konfiguration"
 
-#: src/modules/xkbswitch/e_mod_config.c:526
+#: src/modules/xkbswitch/e_mod_config.c:524
 #, fuzzy
 msgid "Available"
 msgstr "Fyld den tilgængelige plads"
 
-#: src/modules/xkbswitch/e_mod_config.c:531
+#: src/modules/xkbswitch/e_mod_config.c:529
 #, fuzzy
 msgid "Model"
 msgstr "Træk"
 
-#: src/modules/xkbswitch/e_mod_config.c:536
+#: src/modules/xkbswitch/e_mod_config.c:534
 msgid "Variant"
 msgstr ""
 
 #: src/modules/xkbswitch/e_mod_main.c:195
 msgid "NONE"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Suspending"
+#~ msgstr "suspension"
+
+#, fuzzy
+#~ msgid "Hibernating"
+#~ msgstr "dvale"
 
 #, fuzzy
 #~ msgid "Screen Saver Settings"
