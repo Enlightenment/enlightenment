@@ -1676,7 +1676,7 @@ _e_comp_wl_client_evas_init(E_Client *ec)
 static Eina_Bool 
 _e_comp_wl_client_new_helper(E_Client *ec)
 {
-   /* FIXME */
+   /* FIXME: No Way to get "initial attributes" of a wayland window */
    ec->border_size = 0;
 
    ec->placed |= ec->override;
@@ -2224,7 +2224,10 @@ _e_comp_wl_cb_hook_client_pre_frame(void *data EINA_UNUSED, E_Client *ec)
                   switch (ec->netwm.type)
                     {
                      case E_WINDOW_TYPE_DIALOG:
-                       type = ECORE_WL_WINDOW_TYPE_TRANSIENT;
+                       /* NB: If there is No transient set, then dialogs get 
+                        * treated as Normal Toplevel windows */
+                       if (ec->icccm.transient_for)
+                         type = ECORE_WL_WINDOW_TYPE_TRANSIENT;
                        break;
                      case E_WINDOW_TYPE_DESKTOP:
                        type = ECORE_WL_WINDOW_TYPE_FULLSCREEN;
@@ -2242,7 +2245,6 @@ _e_comp_wl_cb_hook_client_pre_frame(void *data EINA_UNUSED, E_Client *ec)
                          break;
                     }
 
-                  if (ec->dialog) type = ECORE_WL_WINDOW_TYPE_TRANSIENT;
                   ecore_evas_wayland_type_set(ec->internal_ecore_evas, type);
                }
 
