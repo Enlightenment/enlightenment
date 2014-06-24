@@ -11,6 +11,11 @@
 
 #  include <xkbcommon/xkbcommon.h>
 
+#  ifdef HAVE_WAYLAND_EGL
+#   include <EGL/egl.h>
+#   define GL_GLEXT_PROTOTYPES
+#  endif
+
 #  ifdef __linux__
 #   include <linux/input.h>
 #  else
