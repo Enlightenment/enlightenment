@@ -755,11 +755,11 @@ _e_comp_wl_cb_read(void *data, Ecore_Fd_Handler *hdl EINA_UNUSED)
    if (!(cdata = data)) return ECORE_CALLBACK_RENEW;
    if (!cdata->wl.disp) return ECORE_CALLBACK_RENEW;
 
-   /* dispatch any pending main loop events */
-   wl_event_loop_dispatch(cdata->wl.loop, 0);
-
    /* flush any pending client events */
    wl_display_flush_clients(cdata->wl.disp);
+
+   /* dispatch any pending main loop events */
+   wl_event_loop_dispatch(cdata->wl.loop, 0);
 
    return ECORE_CALLBACK_RENEW;
 }
