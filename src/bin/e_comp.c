@@ -1306,7 +1306,7 @@ e_comp_shutdown(void)
    E_FREE_LIST(actions, e_object_del);
    E_FREE_LIST(hooks, e_client_hook_del);
 
-#ifdef HAVE_WAYLAND_CLIENTS
+#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    e_comp_wl_shutdown();
 #endif
 
