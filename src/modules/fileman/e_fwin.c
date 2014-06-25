@@ -783,6 +783,7 @@ _e_fwin_free(E_Fwin *fwin)
    if (fwin->spring_parent) fwin->spring_parent->spring_child = NULL;
    if (fwin->win)
      {
+        e_win_delete_callback_set(fwin->win, NULL);
         e_object_del(E_OBJECT(fwin->win));
      }
    free(fwin);
