@@ -6242,7 +6242,6 @@ _e_fm2_dnd_finish(Evas_Object *obj, int refresh)
    sd->drag = EINA_FALSE;
    EINA_LIST_FOREACH(sd->icons, l, ic)
      {
-        ic->drag.dnd = EINA_FALSE;
         ic->drag.src = EINA_FALSE;
         if (ic->drag.hidden) continue;
         if (ic->obj) evas_object_show(ic->obj);
