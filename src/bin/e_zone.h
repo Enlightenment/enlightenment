@@ -79,7 +79,6 @@ struct _E_Zone
    } corner;
 
    E_Action      *cur_mouse_action;
-   Eina_List     *popups;
 
    int            id;
 
