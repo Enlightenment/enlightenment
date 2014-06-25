@@ -233,13 +233,9 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    popup->theme = edje_object_add(popup->e);
    evas_object_name_set(popup->theme, "noshadow_notification");
 
-   if (!e_theme_edje_object_set(popup->theme,
-                                "base/theme/modules/notification",
-                                "e/modules/notification/main"))
-     if (!e_theme_edje_object_set(popup->theme,
-                                  "base/theme/modules/notification",
-                                  "modules/notification/main"))
-       edje_object_file_set(popup->theme, buf, "modules/notification/main");
+   e_theme_edje_object_set(popup->theme,
+                           "base/theme/modules/notification",
+                           "e/modules/notification/main");
 
    /* Create the popup window */
    popup->win = e_comp_object_util_add(popup->theme, E_COMP_OBJECT_TYPE_POPUP);
