@@ -440,7 +440,7 @@ static void
 _battery_warning_popup(Instance *inst, int t, double percent)
 {
    Evas *e = NULL;
-   Evas_Object *rect = NULL, *popup_bg = NULL;
+   Evas_Object *popup_bg = NULL;
    int x, y, w, h;
 
    if ((!inst) || (inst->warning)) return;
@@ -493,18 +493,8 @@ _battery_warning_popup(Instance *inst, int t, double percent)
    e_gadcon_popup_show(inst->warning);
 
    evas_object_geometry_get(inst->warning->o_bg, &x, &y, &w, &h);
-
-   rect = evas_object_rectangle_add(e);
-   if (rect)
-     {
-        evas_object_move(rect, x, y);
-        evas_object_resize(rect, w, h);
-        evas_object_color_set(rect, 255, 255, 255, 0);
-        evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _battery_cb_warning_popup_hide, inst);
-        evas_object_repeat_events_set(rect, 1);
-        evas_object_show(rect);
-     }
+   evas_object_event_callback_add(inst->warning->comp_object, EVAS_CALLBACK_MOUSE_DOWN,
+                               _battery_cb_warning_popup_hide, inst);
 
    _battery_face_time_set(inst->popup_battery, t);
    _battery_face_level_set(inst->popup_battery, percent);
