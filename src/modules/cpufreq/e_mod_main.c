@@ -40,10 +40,10 @@ static void      _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, vo
 static void      _menu_cb_post(void *data, E_Menu *m);
 static void      _cpufreq_set_frequency(int frequency);
 static Eina_Bool _cpufreq_cb_check(void *data);
-static Status   *_cpufreq_status_new(void);
-static void      _cpufreq_status_free(Status *s);
-static void      _cpufreq_status_check_available(Status *s);
-static int       _cpufreq_status_check_current(Status *s);
+static Cpu_Status *_cpufreq_status_new(void);
+static void      _cpufreq_status_free(Cpu_Status *s);
+static void      _cpufreq_status_check_available(Cpu_Status *s);
+static int       _cpufreq_status_check_current(Cpu_Status *s);
 static int       _cpufreq_cb_sort(const void *item1, const void *item2);
 static void      _cpufreq_face_update_available(Instance *inst);
 static void      _cpufreq_face_update_current(Instance *inst);
@@ -622,19 +622,19 @@ _cpufreq_cb_check(void *data __UNUSED__)
    return ECORE_CALLBACK_RENEW;
 }
 
-static Status *
+static Cpu_Status *
 _cpufreq_status_new(void)
 {
-   Status *s;
+   Cpu_Status *s;
 
-   s = E_NEW(Status, 1);
+   s = E_NEW(Cpu_Status, 1);
    if (!s) return NULL;
    s->active = -1;
    return s;
 }
 
 static void
-_cpufreq_status_free(Status *s)
+_cpufreq_status_free(Cpu_Status *s)
 {
    Eina_List *l;
 
@@ -664,7 +664,7 @@ _cpufreq_cb_sort(const void *item1, const void *item2)
 }
 
 static void
-_cpufreq_status_check_available(Status *s)
+_cpufreq_status_check_available(Cpu_Status *s)
 {
    char buf[4096];
    Eina_List *l;
@@ -816,7 +816,7 @@ _cpufreq_status_check_available(Status *s)
 }
 
 static int
-_cpufreq_status_check_current(Status *s)
+_cpufreq_status_check_current(Cpu_Status *s)
 {
    int ret = 0;
    int frequency = 0;

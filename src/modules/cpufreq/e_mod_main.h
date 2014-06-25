@@ -1,12 +1,12 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-typedef struct _Status       Status;
+typedef struct _Cpu_Status       Cpu_Status;
 typedef struct _Config       Config;
 
 #define CPUFREQ_CONFIG_VERSION 1
 
-struct _Status
+struct _Cpu_Status
 {
    Eina_List     *frequencies;
    Eina_List     *governors;
@@ -47,7 +47,7 @@ struct _Config
    E_Menu       *menu_powersave;
    E_Menu       *menu_pstate1;
    E_Menu       *menu_pstate2;
-   Status       *status;
+   Cpu_Status   *status;
    char         *set_exe_path;
    Ecore_Poller *frequency_check_poller;
    Ecore_Event_Handler *handler;
