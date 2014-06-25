@@ -231,7 +231,6 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
    snprintf(buf, sizeof(buf), "%s/e-module-notification.edj",
             notification_mod->dir);
    popup->theme = edje_object_add(popup->e);
-   evas_object_name_set(popup->theme, "noshadow_notification");
 
    e_theme_edje_object_set(popup->theme,
                            "base/theme/modules/notification",
@@ -239,6 +238,7 @@ _notification_popup_new(E_Notification_Notify *n, unsigned id)
 
    /* Create the popup window */
    popup->win = e_comp_object_util_add(popup->theme, E_COMP_OBJECT_TYPE_POPUP);
+   edje_object_signal_emit(popup->win, "e,state,shadow,off", "e");
    evas_object_layer_set(popup->win, E_LAYER_POPUP);
    evas_object_event_callback_add(popup->win, EVAS_CALLBACK_DEL, _notification_popup_del_cb, popup);
 
