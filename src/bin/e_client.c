@@ -4407,8 +4407,8 @@ e_client_signal_move_end(E_Client *ec, const char *sig EINA_UNUSED, const char *
    E_OBJECT_CHECK(ec);
    E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if (!ec->moving) return;
-   e_zone_edge_enable();
    _e_client_move_end(ec);
+   e_zone_edge_enable();
    e_zone_flip_coords_handle(ec->zone, -1, -1);
 }
 
