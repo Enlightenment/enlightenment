@@ -7,7 +7,6 @@
 * verify stacking (T1337)
 
 * crashes
-	- T1330
 	- T1340
 
 * SAFELY, without rushing, merge+test wl branch
