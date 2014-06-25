@@ -12,7 +12,7 @@ typedef enum {
    STATUS_PASSIVE,
    STATUS_ATTENTION,
    STATUS_LAST
-} Status;
+} Tray_Status;
 
 typedef struct _Notifier_Data
 {
@@ -47,7 +47,7 @@ struct _Notifier_Item
    const char *path;
    Eldbus_Proxy *proxy;
    Category category;
-   Status status;
+   Tray_Status status;
    E_DBusMenu_Item *dbus_item;
    const char *id;
    const char *title;
