@@ -15,9 +15,6 @@ static void        _e_zone_cb_bg_mouse_up(void *data,
                                           void *event_info);
 static void        _e_zone_event_zone_desk_count_set_free(void *data,
                                                           void *ev);
-static Eina_Bool   _e_zone_cb_desk_after_show(void *data,
-                                              int type,
-                                              void *event);
 static Eina_Bool   _e_zone_cb_edge_timer(void *data);
 static void        _e_zone_event_move_resize_free(void *data,
                                                   void *ev);
@@ -230,8 +227,6 @@ e_zone_new(E_Comp *c, int num, int id, int x, int y, int w, int h)
    zone->useful_geometry.h = -1;
 
    //printf("@@@@@@@@@@ e_zone_new: %i %i | %i %i %ix%i = %p\n", num, id, x, y, w, h, zone);
-   E_LIST_HANDLER_APPEND(zone->handlers, E_EVENT_DESK_AFTER_SHOW,
-                                              _e_zone_cb_desk_after_show, zone);
 
    snprintf(name, sizeof(name), "Zone %d", zone->num);
    zone->name = eina_stringshare_add(name);
@@ -436,7 +431,75 @@ e_zone_flip_coords_handle(E_Zone *zone,
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
-   if (!e_config->edge_flip_dragging || zone->flip.switching) return;
+   if (zone->flip.switching)
+     {
+        int cx, cy, w, h;
+
+        switch (zone->flip.switching)
+          {
+           case E_ZONE_EDGE_LEFT:
+             evas_object_geometry_get(zone->edge.left, &cx, &cy, &w, &h);
+             if (!E_INSIDE(x, y, cx, cy, w, h))
+               zone->flip.switching = E_ZONE_EDGE_NONE;
+             break;
+           case E_ZONE_EDGE_RIGHT:
+             evas_object_geometry_get(zone->edge.right, &cx, &cy, &w, &h);
+             if (!E_INSIDE(x, y, cx, cy, w, h))
+               zone->flip.switching = E_ZONE_EDGE_NONE;
+             break;
+           case E_ZONE_EDGE_TOP:
+             evas_object_geometry_get(zone->edge.top, &cx, &cy, &w, &h);
+             if (!E_INSIDE(x, y, cx, cy, w, h))
+               zone->flip.switching = E_ZONE_EDGE_NONE;
+             break;
+           case E_ZONE_EDGE_BOTTOM:
+             evas_object_geometry_get(zone->edge.bottom, &cx, &cy, &w, &h);
+             if (!E_INSIDE(x, y, cx, cy, w, h))
+               zone->flip.switching = E_ZONE_EDGE_NONE;
+             break;
+
+           case E_ZONE_EDGE_TOP_LEFT:
+             evas_object_geometry_get(zone->corner.left_top, &cx, &cy, &w, &h);
+             if (!E_INSIDE(x, y, cx, cy, w, h))
+               {
+                  evas_object_geometry_get(zone->corner.top_left, &cx, &cy, &w, &h);
+                  if (!E_INSIDE(x, y, cx, cy, w, h))
+                    zone->flip.switching = E_ZONE_EDGE_NONE;
+               }
+             break;
+           case E_ZONE_EDGE_TOP_RIGHT:
+             evas_object_geometry_get(zone->corner.right_top, &cx, &cy, &w, &h);
+             if (!E_INSIDE(x, y, cx, cy, w, h))
+               {
+                  evas_object_geometry_get(zone->corner.top_right, &cx, &cy, &w, &h);
+                  if (!E_INSIDE(x, y, cx, cy, w, h))
+                    zone->flip.switching = E_ZONE_EDGE_NONE;
+               }
+             break;
+           case E_ZONE_EDGE_BOTTOM_RIGHT:
+             evas_object_geometry_get(zone->corner.right_bottom, &cx, &cy, &w, &h);
+             if (!E_INSIDE(x, y, cx, cy, w, h))
+               {
+                  evas_object_geometry_get(zone->corner.bottom_right, &cx, &cy, &w, &h);
+                  if (!E_INSIDE(x, y, cx, cy, w, h))
+                    zone->flip.switching = E_ZONE_EDGE_NONE;
+               }
+             break;
+           case E_ZONE_EDGE_BOTTOM_LEFT:
+             evas_object_geometry_get(zone->corner.left_bottom, &cx, &cy, &w, &h);
+             if (!E_INSIDE(x, y, cx, cy, w, h))
+               {
+                  evas_object_geometry_get(zone->corner.bottom_left, &cx, &cy, &w, &h);
+                  if (!E_INSIDE(x, y, cx, cy, w, h))
+                    zone->flip.switching = E_ZONE_EDGE_NONE;
+               }
+             break;
+             default: break;
+          }
+        if (zone->flip.switching) return;
+     }
+
+   if (!e_config->edge_flip_dragging) return;
    /* if we have only 1 row we can flip up/down even if we have xinerama */
    if (eina_list_count(zone->comp->zones) > 1)
      {
@@ -554,7 +617,7 @@ noflip:
         zev->edge = edge;
         zone->flip.ev = zev;
         zone->flip.bind = binding;
-        zone->flip.switching = 1;
+        zone->flip.switching = edge;
         binding->timer = ecore_timer_add(((double)binding->delay), _e_zone_cb_edge_timer, zone);
      }
 }
@@ -797,6 +860,7 @@ e_zone_edge_disable(void)
      {
         EINA_LIST_FOREACH(c->zones, ll, zone)
           {
+             zone->flip.switching = E_ZONE_EDGE_NONE;
              if (zone->edge.left) evas_object_hide(zone->edge.left);
              if (zone->edge.right) evas_object_hide(zone->edge.right);
              if (zone->edge.top) evas_object_hide(zone->edge.top);
@@ -1056,6 +1120,8 @@ e_zone_edge_free(E_Zone_Edge edge)
      {
         EINA_LIST_FOREACH(c->zones, ll, zone)
           {
+             if (zone->flip.switching == edge)
+               zone->flip.switching = E_ZONE_EDGE_NONE;
              switch (edge)
                {
                 case E_ZONE_EDGE_NONE:
@@ -1449,22 +1515,6 @@ _e_zone_event_zone_desk_count_set_free(void *data __UNUSED__,
    e = ev;
    e_object_unref(E_OBJECT(e->zone));
    free(e);
-}
-
-static Eina_Bool
-_e_zone_cb_desk_after_show(void *data,
-                           int type __UNUSED__,
-                           void *event)
-{
-   E_Event_Desk_Show *ev;
-   E_Zone *zone;
-
-   ev = event;
-   zone = data;
-   if (ev->desk->zone != zone) return ECORE_CALLBACK_PASS_ON;
-
-   zone->flip.switching = 0;
-   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool

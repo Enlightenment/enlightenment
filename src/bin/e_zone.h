@@ -62,7 +62,7 @@ struct _E_Zone
 
    struct
    {
-      unsigned char      switching : 1;
+      E_Zone_Edge        switching;
       E_Shelf           *es;
       E_Event_Zone_Edge *ev;
       E_Binding_Edge    *bind;
