@@ -1350,7 +1350,7 @@ _e_comp_wl_evas_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    keycode = (ev->keycode - 8);
    if (!(cdata = ec->comp->wl_comp_data)) return;
 
-   end = (uint32_t *)cdata->kbd.keys.data + cdata->kbd.keys.size;
+   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
 
    for (k = cdata->kbd.keys.data; k < end; k++)
      {
@@ -1358,7 +1358,7 @@ _e_comp_wl_evas_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
         if (*k == keycode) return;
      }
 
-   cdata->kbd.keys.size = end - (uint32_t *)cdata->kbd.keys.data;
+   cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
    k = wl_array_add(&cdata->kbd.keys, sizeof(*k));
    *k = keycode;
 
@@ -1395,11 +1395,11 @@ _e_comp_wl_evas_cb_key_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj E
    keycode = (ev->keycode - 8);
    if (!(cdata = ec->comp->wl_comp_data)) return;
 
-   end = (uint32_t *)cdata->kbd.keys.data + cdata->kbd.keys.size;
+   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
    for (k = cdata->kbd.keys.data; k < end; k++)
      if (*k == keycode) *k = *--end;
 
-   cdata->kbd.keys.size = end - (uint32_t *)cdata->kbd.keys.data;
+   cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
 
    wc = wl_resource_get_client(ec->wl_comp_data->surface);
    serial = wl_display_next_serial(cdata->wl.disp);
