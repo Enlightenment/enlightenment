@@ -295,7 +295,7 @@ e_comp_wl_init(void)
          * calling eglTerminate. Let's hack around that.... */
         vendor = 
           (const char *)eglQueryString(_e_wl_comp->egl.display, EGL_VENDOR);
-        if (!vendor || !strcmp(vendor, "NVIDIA Corporation"))
+        if ((vendor) && (!strcmp(vendor, "NVIDIA Corporation")))
           black_listed = EINA_TRUE;
         if (black_listed)
           {
