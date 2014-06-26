@@ -1210,7 +1210,7 @@ _default_grab_key(struct wl_keyboard_grab *grab, uint32_t timestamp, uint32_t ke
 
         serial = wl_display_next_serial(_e_wl_comp->wl.display);
         wl_resource_for_each(res, lst)
-          wl_keyboard_send_key(res, serial, timestamp, key, state);
+          wl_keyboard_send_key(res, serial, timestamp, key - 8, state);
      }
 }
 
