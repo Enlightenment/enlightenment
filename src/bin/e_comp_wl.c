@@ -238,6 +238,8 @@ e_comp_wl_init(void)
    int fd = 0;
    char buf[PATH_MAX];
 
+   if (_e_wl_comp) return EINA_TRUE;
+
    /* try to allocate space for a new compositor */
    if (!(_e_wl_comp = E_NEW(E_Wayland_Compositor, 1)))
      return EINA_FALSE;
