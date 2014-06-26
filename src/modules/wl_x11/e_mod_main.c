@@ -104,9 +104,10 @@ e_modapi_init(E_Module *m)
    e_comp_wl_input_pointer_enabled_set(comp->wl_comp_data, EINA_TRUE);
    e_comp_wl_input_keyboard_enabled_set(comp->wl_comp_data, EINA_TRUE);
 
-   comp->pointer = 
-     e_pointer_window_new(ecore_evas_window_get(comp->ee), 1);
-   /* comp->pointer = e_pointer_canvas_new(comp->evas, 1); */
+   /* comp->pointer =  */
+   /*   e_pointer_window_new(ecore_evas_window_get(comp->ee), EINA_TRUE); */
+   comp->pointer = e_pointer_canvas_new(comp->ee, EINA_TRUE);
+   comp->pointer->color = EINA_TRUE;
 
    /* force a keymap update so compositor keyboard gets setup */
    _cb_keymap_changed(comp->wl_comp_data, 0, NULL);
