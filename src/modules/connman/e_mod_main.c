@@ -275,7 +275,7 @@ _econnman_popup_new(E_Connman_Instance *inst)
 
    list = e_widget_list_add(evas, 0, 0);
    inst->ui.popup.list = e_widget_ilist_add(evas, 24, 24, NULL);
-   e_widget_size_min_set(inst->ui.popup.list, 120, 100);
+   e_widget_size_min_set(inst->ui.popup.list, 60, 100);
    e_widget_list_object_append(list, inst->ui.popup.list, 1, 1, 0.5);
 
    ck = e_widget_check_add(evas, _("Wifi On"), &(ctxt->powered));
@@ -291,7 +291,7 @@ _econnman_popup_new(E_Connman_Instance *inst)
    e_widget_list_object_append(list, bt, 1, 0, 0.5);
 
    /* 30,40 % -- min vga, max uvga */
-   _e_connman_widget_size_set(inst, list, 30, 40, 192, 192, 384, 384);
+   _e_connman_widget_size_set(inst, list, 10, 30, 192, 192, 384, 384);
    e_gadcon_popup_content_set(inst->popup, list);
    e_comp_object_util_autoclose(inst->popup->comp_object, _econnman_popup_del, NULL, inst);
    e_gadcon_popup_show(inst->popup);
