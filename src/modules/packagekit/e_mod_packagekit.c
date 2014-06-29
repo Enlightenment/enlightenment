@@ -152,12 +152,10 @@ packagekit_popup_update(E_PackageKit_Instance *inst)
           }
      }
 
-   if (num_updates == 1)
-     snprintf(buf, sizeof(buf), "%s", _("One update available"));
-   else if (num_updates > 1)
-     snprintf(buf, sizeof(buf), _("%d updates available"), num_updates);
+   if (num_updates >= 1)
+     snprintf(buf, sizeof(buf), P_("One update available", "%d updates available", num_updates), num_updates);
    else
-     snprintf(buf, sizeof(buf), "%s", _("Your system is updated"));
+     snprintf(buf, sizeof(buf), _("Your system is updated"));
    e_widget_label_text_set(inst->popup_label, buf);
 }
 
