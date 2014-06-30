@@ -119,11 +119,6 @@ void *alloca (size_t);
 # include <Emotion.h>
 # include <Elementary.h>
 
-/* FIXME: remove this hack at some point */
-# ifndef EDJE_CLASS
-#  define EDJE_CLASS EDJE_OBJECT_CLASS
-#endif
-
 # ifdef HAVE_HAL
 #  include <E_Hal.h>
 # endif
