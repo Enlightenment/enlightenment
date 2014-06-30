@@ -121,7 +121,7 @@ void *alloca (size_t);
 
 /* FIXME: remove this hack at some point */
 # ifndef EDJE_CLASS
-#  define EDJE_CLASS EDJE_OBJ_CLASS
+#  define EDJE_CLASS EDJE_OBJECT_CLASS
 #endif
 
 # ifdef HAVE_HAL
