@@ -159,24 +159,30 @@ e_module_init(void)
 
    if (mod_src_path)
      {
-        mon = eio_monitor_stringshared_add(mod_src_path);
-        ls = eio_file_direct_ls(mod_src_path, _module_filter_cb, _module_main_cb, _module_done_cb, _module_error_cb, NULL);
-        _e_module_path_monitors = eina_list_append(_e_module_path_monitors, mon);
-        _e_module_path_lists = eina_list_append(_e_module_path_lists, ls);
-        return 1;
+        if (ecore_file_is_dir(mod_src_path))
+          {
+             mon = eio_monitor_stringshared_add(mod_src_path);
+             ls = eio_file_direct_ls(mod_src_path, _module_filter_cb, _module_main_cb, _module_done_cb, _module_error_cb, NULL);
+             _e_module_path_monitors = eina_list_append(_e_module_path_monitors, mon);
+             _e_module_path_lists = eina_list_append(_e_module_path_lists, ls);
+             return 1;
+          }
      }
    module_paths = e_path_dir_list_get(path_modules);
    EINA_LIST_FREE(module_paths, epd)
      {
-        void *data = NULL;
+        if (ecore_file_is_dir(epd->dir))
+          {
+             void *data = NULL;
 
-        mon = eio_monitor_stringshared_add(epd->dir);
-        data = (intptr_t*)(long)!!strstr(epd->dir, e_user_dir_get());
-        ls = eio_file_direct_ls(epd->dir, _module_filter_cb, _module_main_cb, _module_done_cb, _module_error_cb, data);
-        _e_module_path_monitors = eina_list_append(_e_module_path_monitors, mon);
-        _e_module_path_lists = eina_list_append(_e_module_path_lists, ls);
-        eina_stringshare_del(epd->dir);
-        free(epd);
+             mon = eio_monitor_stringshared_add(epd->dir);
+             data = (intptr_t*)(long)!!strstr(epd->dir, e_user_dir_get());
+             ls = eio_file_direct_ls(epd->dir, _module_filter_cb, _module_main_cb, _module_done_cb, _module_error_cb, data);
+             _e_module_path_monitors = eina_list_append(_e_module_path_monitors, mon);
+             _e_module_path_lists = eina_list_append(_e_module_path_lists, ls);
+             eina_stringshare_del(epd->dir);
+             free(epd);
+          }
      }
 
    return 1;
