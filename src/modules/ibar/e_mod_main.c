@@ -1295,6 +1295,13 @@ _ibar_icon_menu_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA
      ic->hide_timer = ecore_timer_add(0.5, _ibar_cb_out_hide_delay, ic);
 }
 
+static void
+_ibar_cb_icon_frame_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   e_comp_object_signal_callback_del_full(data, "e,state,*focused", "e", _ibar_cb_icon_menu_focus_change, obj);
+   evas_object_smart_callback_del_full(data, "desk_change", _ibar_cb_icon_menu_desk_change, obj);
+}
+
 static Eina_Bool
 _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
 {
@@ -1311,6 +1318,8 @@ _ibar_icon_menu_client_add(IBar_Icon *ic, E_Client *ec)
    img = e_comp_object_util_mirror_add(ec->frame);
    e_comp_object_signal_callback_add(ec->frame, "e,state,*focused", "e", _ibar_cb_icon_menu_focus_change, it);
    evas_object_smart_callback_add(ec->frame, "desk_change", _ibar_cb_icon_menu_desk_change, it);
+   evas_object_event_callback_add(it, EVAS_CALLBACK_DEL,
+                                  _ibar_cb_icon_frame_del, ec->frame);
    evas_object_event_callback_add(img, EVAS_CALLBACK_DEL,
                                   _ibar_cb_icon_menu_img_del, it);
    txt = e_client_util_name_get(ec);
