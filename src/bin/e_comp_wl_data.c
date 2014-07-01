@@ -2,6 +2,24 @@
 #include "e_comp_wl.h"
 #include "e_comp_wl_data.h"
 
+static struct wl_resource *
+_e_comp_wl_data_find_for_client(Eina_List *list, struct wl_client *client)
+{
+   Eina_List *l;
+   struct wl_resource *res;
+
+   if ((!list) || (!client))
+     return NULL;
+
+   EINA_LIST_FOREACH(list, l, res)
+     {
+        if (wl_resource_get_client(res) == client)
+          return res;
+     }
+
+   return NULL;
+}
+
 static void 
 _e_comp_wl_data_offer_cb_accept(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t serial, const char *mime_type)
 {
