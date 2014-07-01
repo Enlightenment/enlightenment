@@ -679,7 +679,10 @@ _e_exec_instance_free(E_Exec_Instance *inst)
         e_object_unref(E_OBJECT(ec));
      }
    if (inst->desktop) efreet_desktop_free(inst->desktop);
-   if (inst->exe) ecore_exe_data_set(inst->exe, NULL);
+   if (!inst->phony)
+     {
+        if (inst->exe) ecore_exe_data_set(inst->exe, NULL);
+     }
    free(inst);
 }
 
@@ -824,7 +827,7 @@ _e_exec_startup_id_pid_find(const Eina_Hash *hash __UNUSED__, const void *key __
             ((search->startup_id > 0) &&
              (search->startup_id == inst->startup_id)) ||
 
-            ((inst->exe) && (search->pid > 1) &&
+            ((inst->exe) && (search->pid > 1) && (!inst->phony) &&
              (search->pid == ecore_exe_pid_get(inst->exe))))
           {
              search->inst = inst;
