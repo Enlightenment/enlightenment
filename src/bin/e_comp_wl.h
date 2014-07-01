@@ -107,9 +107,18 @@ struct _E_Comp_Wl_Data
    struct 
      {
         struct wl_global *global;
+        Eina_List *data_resource_list;
      } mgr;
 
-   struct 
+   struct
+     {
+        void *data_source;
+        uint32_t serial;
+        struct wl_signal signal;
+        struct wl_listener data_source_listener;
+     } selection;
+
+   struct
      {
         struct wl_resource *resource;
         int32_t width, height;
