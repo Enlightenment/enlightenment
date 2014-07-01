@@ -56,7 +56,10 @@ _e_comp_wl_data_offer_cb_source_destroy(struct wl_listener *listener, void *data
 {
    E_Comp_Wl_Data_Offer *offer;
 
-   offer = container_of(listener, E_Comp_Wl_Data_Offer, source_destroy_listener);
+   offer = container_of(listener, E_Comp_Wl_Data_Offer, 
+                        source_destroy_listener);
+   if (!offer) return;
+
    offer->source = NULL;
 }
 
@@ -75,7 +78,8 @@ _e_comp_wl_data_source_cb_offer(struct wl_client *client EINA_UNUSED, struct wl_
    if (!(source = wl_resource_get_user_data(resource)))
      return;
 
-   source->mime_types = eina_list_append(source->mime_types, eina_stringshare_add(mime_type));
+   source->mime_types = 
+     eina_list_append(source->mime_types, eina_stringshare_add(mime_type));
 }
 
 /* called by wl_data_source_destroy */
@@ -138,13 +142,16 @@ _e_comp_wl_data_device_destroy_selection_data_source(struct wl_listener *listene
    if (!(source = (E_Comp_Wl_Data_Source*)data))
      return;
 
-   if (!(cdata = container_of(listener, E_Comp_Wl_Data, selection.data_source_listener)))
+   if (!(cdata = container_of(listener, E_Comp_Wl_Data, 
+                              selection.data_source_listener)))
      return;
 
    cdata->selection.data_source = NULL;
 
    /* TODO: get data device from a focused surface */
-   data_device_res = _e_comp_wl_data_find_for_client(cdata->mgr.data_resource_list, wl_resource_get_client(source->resource));
+   data_device_res = 
+     _e_comp_wl_data_find_for_client(cdata->mgr.data_resources, 
+                                     wl_resource_get_client(source->resource));
 
    if (data_device_res)
      wl_data_device_send_selection(data_device_res, NULL);
@@ -169,9 +176,12 @@ _e_comp_wl_data_device_data_offer_create(E_Comp_Wl_Data_Source *source, struct w
         return NULL;
      }
 
-   wl_resource_set_implementation(offer->resource, &_e_data_offer_interface, offer, _e_comp_wl_data_offer_cb_resource_destroy);
+   wl_resource_set_implementation(offer->resource, 
+                                  &_e_data_offer_interface, offer, 
+                                  _e_comp_wl_data_offer_cb_resource_destroy);
    offer->source = source;
-   offer->source_destroy_listener.notify = _e_comp_wl_data_offer_cb_source_destroy;
+   offer->source_destroy_listener.notify = 
+     _e_comp_wl_data_offer_cb_source_destroy;
    wl_signal_add(&source->destroy_signal, &offer->source_destroy_listener);
 
    wl_data_device_send_data_offer(data_device_res, offer->resource);
@@ -217,11 +227,14 @@ _e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, st
    cdata->selection.serial = serial;
 
    /* TODO: get data device from a focused surface */
-   data_device_res = _e_comp_wl_data_find_for_client(cdata->mgr.data_resource_list, wl_resource_get_client(source->resource));
+   data_device_res = 
+     _e_comp_wl_data_find_for_client(cdata->mgr.data_resources, 
+                                     wl_resource_get_client(source->resource));
 
    if ((data_device_res) && (source))
      {
-        offer_res = _e_comp_wl_data_device_data_offer_create(source, data_device_res);
+        offer_res = 
+          _e_comp_wl_data_device_data_offer_create(source, data_device_res);
         wl_data_device_send_selection(data_device_res, offer_res);
      }
    else if (data_device_res)
@@ -233,8 +246,10 @@ _e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, st
 
    if (source)
      {
-        cdata->selection.data_source_listener.notify = _e_comp_wl_data_device_destroy_selection_data_source;
-        wl_signal_add(&source->destroy_signal, &cdata->selection.data_source_listener);
+        cdata->selection.data_source_listener.notify = 
+          _e_comp_wl_data_device_destroy_selection_data_source;
+        wl_signal_add(&source->destroy_signal, 
+                      &cdata->selection.data_source_listener);
      }
 }
 
@@ -252,7 +267,8 @@ _e_comp_wl_data_device_cb_unbind(struct wl_resource *resource)
    if(!(cdata = wl_resource_get_user_data(resource)))
      return;
 
-   cdata->mgr.data_resource_list = eina_list_remove(cdata->mgr.data_resource_list, resource);
+   cdata->mgr.data_resources = 
+     eina_list_remove(cdata->mgr.data_resources, resource);
 }
 
 static void
@@ -272,7 +288,8 @@ _e_comp_wl_data_manager_cb_source_create(struct wl_client *client EINA_UNUSED, s
    source->send = _e_comp_wl_data_source_send_send;
    source->cancelled = _e_comp_wl_data_source_cancelled_send;
 
-   source->resource = wl_resource_create(client, &wl_data_source_interface, 1, id);
+   source->resource = 
+     wl_resource_create(client, &wl_data_source_interface, 1, id);
    if (!source->resource)
      {
         ERR("Could not create data source resource: %m");
@@ -280,7 +297,10 @@ _e_comp_wl_data_manager_cb_source_create(struct wl_client *client EINA_UNUSED, s
         wl_resource_post_no_memory(resource);
         return;
      }
-   wl_resource_set_implementation(source->resource, &_e_data_source_interface, source, _e_comp_wl_data_source_cb_resource_destroy);
+
+   wl_resource_set_implementation(source->resource, 
+                                  &_e_data_source_interface, source, 
+                                  _e_comp_wl_data_source_cb_resource_destroy);
 }
 
 static void 
@@ -303,8 +323,10 @@ _e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resour
         return;
      }
 
-   cdata->mgr.data_resource_list = eina_list_append(cdata->mgr.data_resource_list, res);
-   wl_resource_set_implementation(res, &_e_data_device_interface, cdata, _e_comp_wl_data_device_cb_unbind);
+   cdata->mgr.data_resources = 
+     eina_list_append(cdata->mgr.data_resources, res);
+   wl_resource_set_implementation(res, &_e_data_device_interface, cdata, 
+                                  _e_comp_wl_data_device_cb_unbind);
 }
 
 static const struct wl_data_device_manager_interface _e_manager_interface = 
