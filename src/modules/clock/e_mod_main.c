@@ -802,12 +802,28 @@ _clock_eio_error(void *d __UNUSED__, int type __UNUSED__, void *event)
        (ev->monitor == clock_tz2_monitor) ||
        (ev->monitor == clock_tzetc_monitor))
      {
-        eio_monitor_del(clock_tz_monitor);
-        clock_tz_monitor = eio_monitor_add("/etc/localtime");
-        eio_monitor_del(clock_tz2_monitor);
-        clock_tz2_monitor = eio_monitor_add("/etc/timezone");
-        eio_monitor_del(clock_tzetc_monitor);
-        clock_tzetc_monitor = eio_monitor_add("/etc");
+        if (clock_tz_monitor)
+          {
+             eio_monitor_del(clock_tz_monitor);
+             clock_tz_monitor = NULL;
+          }
+        if (ecore_file_exists("/etc/localtime"))
+          clock_tz_monitor = eio_monitor_add("/etc/localtime");
+
+        if (clock_tz2_monitor)
+          {
+             eio_monitor_del(clock_tz2_monitor);
+             clock_tz2_monitor = NULL;
+          }
+        if (ecore_file_exists("/etc/timezone"))
+          clock_tz2_monitor = eio_monitor_add("/etc/timezone");
+        if (clock_tzetc_monitor)
+          {
+             eio_monitor_del(clock_tzetc_monitor);
+             clock_tzetc_monitor = NULL;
+          }
+        if (ecore_file_is_dir("/etc"))
+          clock_tzetc_monitor = eio_monitor_add("/etc");
      }
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -867,9 +883,12 @@ e_modapi_init(E_Module *m)
      }
 
    clock_config->module = m;
-   clock_tz_monitor = eio_monitor_add("/etc/localtime");
-   clock_tz2_monitor = eio_monitor_add("/etc/timezone");
-   clock_tzetc_monitor = eio_monitor_add("/etc");
+   if (ecore_file_exists("/etc/localtime"))
+     clock_tz_monitor = eio_monitor_add("/etc/localtime");
+   if (ecore_file_exists("/etc/timezone"))
+     clock_tz2_monitor = eio_monitor_add("/etc/timezone");
+   if (ecore_file_is_dir("/etc"))
+     clock_tzetc_monitor = eio_monitor_add("/etc");
    E_LIST_HANDLER_APPEND(clock_eio_handlers, EIO_MONITOR_ERROR, _clock_eio_error, NULL);
    E_LIST_HANDLER_APPEND(clock_eio_handlers, EIO_MONITOR_FILE_CREATED, _clock_eio_update, NULL);
    E_LIST_HANDLER_APPEND(clock_eio_handlers, EIO_MONITOR_FILE_MODIFIED, _clock_eio_update, NULL);
@@ -921,9 +940,9 @@ e_modapi_shutdown(E_Module *m __UNUSED__)
         ecore_timer_del(update_today);
         update_today = NULL;
      }
-   eio_monitor_del(clock_tz_monitor);
-   eio_monitor_del(clock_tz2_monitor);
-   eio_monitor_del(clock_tzetc_monitor);
+   if (clock_tz_monitor) eio_monitor_del(clock_tz_monitor);
+   if (clock_tz2_monitor) eio_monitor_del(clock_tz2_monitor);
+   if (clock_tzetc_monitor) eio_monitor_del(clock_tzetc_monitor);
    clock_tz_monitor = NULL;
    clock_tz2_monitor = NULL;
    clock_tzetc_monitor = NULL;
