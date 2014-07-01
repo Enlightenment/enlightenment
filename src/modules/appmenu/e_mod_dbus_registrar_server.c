@@ -199,7 +199,7 @@ appmenu_dbus_registrar_server_init(E_AppMenu_Context *ctx)
 void
 appmenu_dbus_registrar_server_shutdown(E_AppMenu_Context *ctx)
 {
-   eldbus_service_interface_unregister(ctx->iface);
-   eldbus_name_release(ctx->conn, REGISTRAR_BUS, NULL, NULL);
+   if (ctx->iface) eldbus_service_interface_unregister(ctx->iface);
+   if (ctx->conn) eldbus_name_release(ctx->conn, REGISTRAR_BUS, NULL, NULL);
    ctx->iface = NULL;
 }
