@@ -727,8 +727,11 @@ e_menu_item_label_set(E_Menu_Item *mi, const char *label)
 static Eina_Bool
 isedje(Evas_Object *obj)
 {
+   const char *type;
    if (!obj) return EINA_FALSE;
-   if (edje_object_play_get(obj)) return EINA_TRUE;
+   type = evas_object_type_get(obj);
+   if (!obj) return EINA_FALSE;
+   if (!strcmp(type, "edje")) return EINA_TRUE;
    return EINA_FALSE;
 }
 
