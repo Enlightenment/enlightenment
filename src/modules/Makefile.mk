@@ -117,6 +117,8 @@ include src/modules/Makefile_wl_x11.mk
 
 include src/modules/Makefile_wl_fb.mk
 
+include src/modules/Makefile_xwayland.mk
+
 #if HAVE_WAYLAND_SCREENSHOT
 #include src/modules/Makefile_wl_screenshot.mk
 
