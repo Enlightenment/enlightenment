@@ -7660,7 +7660,8 @@ _e_fm2_cb_icon_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
                                                    _e_fm2_cb_icon_thumb_dnd_gen, o,
                                                    1);
                   edje_object_signal_emit(o, "e,state,selected", "e");
-                  edje_object_signal_emit(o2, "e,state,selected", "e");
+                  if (isedje(o2))
+                    edje_object_signal_emit(o2, "e,state,selected", "e");
                   edje_object_signal_emit(o, "e,state,move", "e");
                   if (layout)
                     {
