@@ -1127,6 +1127,13 @@ tw_handler_hide(void)
 }
 
 static Eina_Bool
+button_press(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   if (tw_mod->pop) tw_handler_hide();
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
 desk_show(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Desk_Show *ev EINA_UNUSED)
 {
    if (tw_mod->pop) tw_handler_hide();
@@ -1213,6 +1220,8 @@ e_tw_init(void)
    E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_DATA, download_media_data, tw_mod);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_CLIENT_FOCUS_OUT, focus_out, tw_mod);
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_DESK_SHOW, desk_show, tw_mod);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_BUTTON_DOWN, button_press, tw_mod);
+   E_LIST_HANDLER_APPEND(handlers, ECORE_EVENT_MOUSE_BUTTON_UP, button_press, tw_mod);
 
    tw_mod->media = eina_hash_string_superfast_new((Eina_Free_Cb)download_media_free);
    return 1;
