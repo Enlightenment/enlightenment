@@ -420,6 +420,7 @@ _e_thumb_generate(E_Thumb *eth)
         else if (evas_object_image_extension_can_load_get(ext))
           {
              im = evas_object_image_add(evas);
+             evas_object_image_load_orientation_set(im, EINA_TRUE);
              evas_object_image_load_size_set(im, eth->w, eth->h);
              evas_object_image_file_set(im, eth->file, NULL);
              iw = 0; ih = 0;
