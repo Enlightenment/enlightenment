@@ -87,5 +87,11 @@ e_util_pointer_center(const E_Client *ec)
                              y + ec->y + (ec->h / 2));
 }
 
+static inline Eina_Bool
+isedje(const Evas_Object *obj)
+{
+   return obj && !e_util_strcmp(evas_object_type_get(obj), "edje");
+}
+
 #endif
 #endif
