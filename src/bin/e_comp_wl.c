@@ -359,22 +359,25 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
           }
      }
 
-   if (!ec->wl_comp_data->pending.buffer)
+   if (ec->wl_comp_data->pending.new_attach)
      {
-        if (ec->wl_comp_data->mapped)
+        if (!ec->wl_comp_data->pending.buffer)
           {
-             if ((ec->wl_comp_data->shell.surface) && 
-                 (ec->wl_comp_data->shell.unmap))
-               ec->wl_comp_data->shell.unmap(ec->wl_comp_data->shell.surface);
+             if (ec->wl_comp_data->mapped)
+               {
+                  if ((ec->wl_comp_data->shell.surface) && 
+                      (ec->wl_comp_data->shell.unmap))
+                    ec->wl_comp_data->shell.unmap(ec->wl_comp_data->shell.surface);
+               }
           }
-     }
-   else
-     {
-        if (!ec->wl_comp_data->mapped)
+        else
           {
-             if ((ec->wl_comp_data->shell.surface) && 
-                 (ec->wl_comp_data->shell.map))
-               ec->wl_comp_data->shell.map(ec->wl_comp_data->shell.surface);
+             if (!ec->wl_comp_data->mapped)
+               {
+                  if ((ec->wl_comp_data->shell.surface) && 
+                      (ec->wl_comp_data->shell.map))
+                    ec->wl_comp_data->shell.map(ec->wl_comp_data->shell.surface);
+               }
           }
      }
 
