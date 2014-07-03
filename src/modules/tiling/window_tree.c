@@ -525,7 +525,7 @@ static void
 _tiling_window_tree_node_move_walker(void *_node)
 {
    Window_Tree *node = _node;
-
+   int p = tiling_g.config->window_padding;
    /* We are only interested in nodes with clients. */
    if (!node->client)
      return;
@@ -533,22 +533,22 @@ _tiling_window_tree_node_move_walker(void *_node)
    switch (_node_move_ctx.cross_edge)
      {
       case TILING_WINDOW_TREE_EDGE_LEFT:
-        if ((node->client->x + node->client->w) == CNODE->client->x)
+        if ((node->client->x + node->client->w + p) == CNODE->client->x)
           IF_MATCH_SET_LR(node);
         break;
 
       case TILING_WINDOW_TREE_EDGE_RIGHT:
-        if (node->client->x == (CNODE->client->x + CNODE->client->w))
+        if (node->client->x == (CNODE->client->x + CNODE->client->w + p))
           IF_MATCH_SET_LR(node);
         break;
 
       case TILING_WINDOW_TREE_EDGE_TOP:
-        if ((node->client->y + node->client->h) == CNODE->client->y)
+        if ((node->client->y + node->client->h + p) == CNODE->client->y)
           IF_MATCH_SET_TB(node);
         break;
 
       case TILING_WINDOW_TREE_EDGE_BOTTOM:
-        if (node->client->y == (CNODE->client->y + CNODE->client->h))
+        if (node->client->y == (CNODE->client->y + CNODE->client->h + p))
           IF_MATCH_SET_TB(node);
         break;
 
