@@ -889,7 +889,8 @@ define([CHECK_MODULE_XWAYLAND],
 [
   if test "x${e_cv_want_wayland_only}" = "xyes"; then
     AC_E_CHECK_PKG(XWAYLAND, [ ecore >= $efl_version eina >= $efl_version ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
-    AC_PATH_PROGS([XWAYLAND_BIN], [Xwayland], [HAVE_XWAYLAND_DEPS=false], [/sbin:/usr/sbin:$PATH])
+    AC_PATH_PROG([XWAYLAND_BIN], [Xwayland], [HAVE_XWAYLAND_DEPS=false], [/sbin:/usr/sbin:$PATH])
+    AC_SUBST(XWAYLAND_BIN)
   else
     HAVE_XWAYLAND_DEPS=false
   fi
