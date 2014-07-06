@@ -8,10 +8,12 @@ typedef struct _E_XWayland_Server E_XWayland_Server;
 struct _E_XWayland_Server
 {
    int disp;
-   int abs_fd, unx_fd;
+   int abs_fd, unx_fd, wm_fd;
    char lock[256];
 
+   struct wl_display *wl_disp;
    struct wl_event_loop *loop;
+   struct wl_client *client;
 
    Ecore_Fd_Handler *abs_hdlr, *unx_hdlr;
    Ecore_Event_Handler *sig_hdlr;
@@ -214,9 +216,11 @@ fail:
         break;
       default:
         close(socks[1]);
-        /* TODO: client_create */
+        exs->client = wl_client_create(exs->disp, socks[0]);
+
         close(wms[1]);
-        /* TODO */
+        exs->wm_fd = wms[0];
+
         /* TODO: remove event sources */
         break;
       case -1:
@@ -230,14 +234,15 @@ fail:
 static Eina_Bool 
 _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   /* E_XWayland_Server *exs; */
-
    /* NB: SIGUSR1 comes from XWayland Server when it has finished 
     * initialized. */
 
-   /* if (!(exs = data)) return ECORE_CALLBACK_RENEW; */
-
    /* TODO: create "window manager" process */
+
+   /* TODO: NB: 
+    * 
+    * Weston creates a smaller window manager process here.
+    * We Maybe able to just do e_comp_x_init, but will have to test that */
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -260,6 +265,9 @@ e_modapi_init(E_Module *m)
    /* alloc space for server struct */
    if (!(exs = calloc(1, sizeof(E_XWayland_Server))))
      return NULL;
+
+   /* record wayland display */
+   exs->wl_disp = comp->wl_comp_data->wl.disp;
 
    /* default display to zero */
    exs->disp = 0;
