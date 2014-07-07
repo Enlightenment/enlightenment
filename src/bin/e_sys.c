@@ -175,6 +175,7 @@ _e_sys_comp_resume(void)
    EINA_LIST_FOREACH(e_comp_list(), l, c)
      evas_damage_rectangle_add(c->evas, 0, 0, c->man->w, c->man->h);
    _e_sys_comp_emit_cb_wait(E_SYS_SUSPEND, "e,state,sys,resume", NULL, EINA_FALSE);
+   e_screensaver_deactivate();
 }
 
 /* externally accessible functions */
