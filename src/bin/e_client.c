@@ -51,6 +51,8 @@ static Ecore_Event_Handler *action_handler_mouse = NULL;
 static Ecore_Timer *action_timer = NULL;
 static Eina_Rectangle action_orig = {0};
 
+static E_Client_Layout_Cb _e_client_layout_cb = NULL;
+
 EINTERN void e_client_focused_set(E_Client *ec);
 
 static Eina_Inlist *_e_client_hooks[] =
@@ -2227,6 +2229,8 @@ e_client_idler_before(void)
                }
           }
 
+        if (_e_client_layout_cb)
+          _e_client_layout_cb(c);
 
         // pass 3 - hide windows needing hide and eval (main eval)
         E_CLIENT_FOREACH(c, ec)
@@ -4694,4 +4698,14 @@ EAPI Eina_Bool
 e_client_is_stacking(const E_Client *ec)
 {
    return ec->comp->layers[e_comp_canvas_layer_map(ec->layer)].obj == ec->frame;
+}
+
+////////////////////////////////////////////
+
+EAPI void
+e_client_layout_cb_set(E_Client_Layout_Cb cb)
+{
+   if (_e_client_layout_cb && cb)
+     CRI("ATTEMPTING TO OVERWRITE EXISTING CLIENT LAYOUT HOOK!!!");
+   _e_client_layout_cb = cb;
 }

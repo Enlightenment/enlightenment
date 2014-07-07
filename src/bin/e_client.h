@@ -169,6 +169,7 @@ typedef enum _E_Client_Hook_Point
 
 typedef void (*E_Client_Move_Intercept_Cb)(E_Client *, int x, int y);
 typedef void (*E_Client_Hook_Cb)(void *data, E_Client *ec);
+typedef void (*E_Client_Layout_Cb)(void * /* E_Comp */); //< can't use real type because of include order
 #else
 
 #define E_CLIENT_TYPE (int)0xE0b01002
@@ -812,5 +813,7 @@ EAPI void e_client_redirected_set(E_Client *ec, Eina_Bool set);
 EAPI Eina_Bool e_client_is_stacking(const E_Client *ec);
 EAPI Eina_Bool e_client_desk_window_profile_available_check(E_Client *ec, const char *profile);
 EAPI void      e_client_desk_window_profile_wait_desk_set(E_Client *ec, E_Desk *desk);
+EAPI void      e_client_layout_cb_set(E_Client_Layout_Cb cb);
+
 #include "e_client.x"
 #endif
