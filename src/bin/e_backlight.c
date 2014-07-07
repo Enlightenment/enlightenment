@@ -133,6 +133,7 @@ e_backlight_level_set(E_Zone *zone, double val, double tim)
    if (fabs(tim) < DBL_EPSILON)
      {
         _e_backlight_set(zone, val);
+        e_backlight_update();
         return;
      }
 //   if (e_config->backlight.mode != E_BACKLIGHT_MODE_NORMAL) return;
@@ -326,6 +327,7 @@ _bl_anim(void *data, double pos)
    if (pos >= 1.0)
      {
         bl_anim = NULL;
+        e_backlight_update();
         return EINA_FALSE;
      }
    return EINA_TRUE;
