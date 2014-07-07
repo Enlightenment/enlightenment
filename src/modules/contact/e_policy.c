@@ -6,7 +6,7 @@ static Eina_Bool _cb_event_focus_in(void *data __UNUSED__, int type __UNUSED__, 
 static Eina_Bool _cb_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 static void _cb_hook_post_fetch(void *data __UNUSED__, E_Client *ec);
 static void _cb_hook_post_assign(void *data __UNUSED__, E_Client *ec);
-static void _cb_hook_layout(void *data __UNUSED__, E_Comp *comp);
+static void _cb_hook_layout(E_Comp *comp);
 
 static Eina_List *hooks = NULL;
 static Eina_List *handlers = NULL;
@@ -25,8 +25,6 @@ e_policy_init(void)
                                  _cb_hook_post_fetch, NULL));
    LADD(hooks, e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN,
                                  _cb_hook_post_assign, NULL));
-   LADD(hooks, e_client_hook_add(E_CLIENT_HOOK_CANVAS_LAYOUT,
-                                 (E_Client_Hook_Cb)_cb_hook_layout, NULL));
    LADD(handlers, ecore_event_handler_add(E_EVENT_CLIENT_ADD,
                                           _cb_event_add, NULL));
    LADD(handlers, ecore_event_handler_add(E_EVENT_CLIENT_REMOVE,
@@ -35,6 +33,7 @@ e_policy_init(void)
                                           _cb_event_focus_in, NULL));
    LADD(handlers, ecore_event_handler_add(E_EVENT_CLIENT_FOCUS_OUT,
                                           _cb_event_focus_out, NULL));
+   e_client_layout_cb_set((E_Client_Layout_Cb)_cb_hook_layout);
 }
 
 void
@@ -45,6 +44,7 @@ e_policy_shutdown(void)
    
    EINA_LIST_FREE(hooks, bh) e_client_hook_del(bh);
    EINA_LIST_FREE(handlers, eh) ecore_event_handler_del(eh);
+   e_client_layout_cb_set(NULL);
 }
 
 void
@@ -166,15 +166,13 @@ _cb_hook_post_assign(void *data __UNUSED__, E_Client *ec)
 }
 
 static void
-_cb_hook_layout(void *data __UNUSED__, E_Comp *comp)
+_cb_hook_layout(E_Comp *comp)
 {
    Eina_List *l;
    E_Client *ec, *kbd = NULL;;
    Eina_Bool want_kbd = EINA_FALSE;
    Eina_Bool have_focused = EINA_FALSE;
    int kx = 0, ky = 0, kw = 0, kh = 0;
-   
-   if (!comp) return;
    
    EINA_LIST_FOREACH(comp->clients, l, ec)
      {

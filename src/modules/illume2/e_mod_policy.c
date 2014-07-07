@@ -18,7 +18,7 @@ static Eina_Bool _e_mod_policy_cb_window_property(void *data __UNUSED__, int typ
 static Eina_Bool _e_mod_policy_cb_policy_change(void *data __UNUSED__, int type, void *event __UNUSED__);
 static void _e_mod_policy_cb_hook_post_fetch(void *data __UNUSED__, E_Client *ec);
 static void _e_mod_policy_cb_hook_post_assign(void *data __UNUSED__, E_Client *ec);
-static void _e_mod_policy_cb_hook_layout(void *data __UNUSED__, E_Comp *comp);
+static void _e_mod_policy_cb_hook_layout(E_Comp *comp);
 
 /* local variables */
 static E_Illume_Policy *_policy = NULL;
@@ -105,6 +105,7 @@ e_mod_policy_shutdown(void)
    /* remove the border hooks */
    EINA_LIST_FREE(_policy_hooks, hook)
      e_client_hook_del(hook);
+   e_client_layout_cb_set(NULL);
 
    /* destroy the policy if it exists */
    if (_policy) e_object_del(E_OBJECT(_policy));
@@ -278,10 +279,7 @@ _e_mod_policy_hooks_add(void)
      eina_list_append(_policy_hooks, 
                       e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, 
                                         _e_mod_policy_cb_hook_post_assign, NULL));
-   _policy_hooks = 
-     eina_list_append(_policy_hooks, 
-                      e_client_hook_add(E_CLIENT_HOOK_CANVAS_LAYOUT, 
-                                        (E_Client_Hook_Cb)_e_mod_policy_cb_hook_layout, NULL));
+   e_client_layout_cb_set((E_Client_Layout_Cb)_e_mod_policy_cb_hook_layout);
 }
 
 static void 
@@ -506,7 +504,7 @@ _e_mod_policy_cb_hook_post_assign(void *data __UNUSED__, E_Client *ec)
 }
 
 static void 
-_e_mod_policy_cb_hook_layout(void *data __UNUSED__, E_Comp *comp) 
+_e_mod_policy_cb_hook_layout(E_Comp *comp) 
 {
    E_Zone *zone;
    E_Client *ec;
