@@ -164,7 +164,12 @@ _xdg_data_dirs_augment(void)
         snprintf(buf, sizeof(buf), "/tmp/xdg-XXXXXX");
         dir = mkdtemp(buf);
         if (!dir) dir = "/tmp";
-        e_util_env_set("XDG_RUNTIME_DIR", dir);
+        else
+          {
+             e_util_env_set("XDG_RUNTIME_DIR", dir);
+             snprintf(buf, sizeof(buf), "%s/.e-deleteme", dir);
+             ecore_file_mkdir(buf);
+          }
      }
 
    /* set menu prefix so we get our e menu */
@@ -1054,6 +1059,8 @@ static void
 _e_main_shutdown(int errcode)
 {
    int i = 0;
+   char buf[PATH_MAX];
+   const char *dir;
 
    printf("E19: Begin Shutdown Procedure!\n");
 
@@ -1064,6 +1071,12 @@ _e_main_shutdown(int errcode)
    if (_idle_flush) ecore_idle_enterer_del(_idle_flush);
    _idle_flush = NULL;
 
+   dir = getenv("XDG_RUNTIME_DIR");
+   if (dir)
+     {
+        snprintf(buf, sizeof(buf), "%s/.e-deleteme", dir);
+        if (ecore_file_exists(buf)) ecore_file_recursive_rm(dir);
+     }
    for (i = (_e_main_lvl - 1); i >= 0; i--)
      (*_e_main_shutdown_func[i])();
    if (errcode < 0) exit(errcode);
