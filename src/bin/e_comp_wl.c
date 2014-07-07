@@ -710,7 +710,7 @@ _e_comp_wl_cb_render_post(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, void *
         if (!ec->wl_comp_data) continue;
         EINA_LIST_FREE(ec->wl_comp_data->frames, cb)
           {
-             wl_callback_send_done(cb, ecore_loop_time_get());
+             wl_callback_send_done(cb, (ecore_loop_time_get() * 1000));
              wl_resource_destroy(cb);
           }
 
