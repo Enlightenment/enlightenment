@@ -77,6 +77,7 @@ static Eina_Inlist *_e_client_hooks[] =
    [E_CLIENT_HOOK_DEL] = NULL,
    [E_CLIENT_HOOK_UNREDIRECT] = NULL,
    [E_CLIENT_HOOK_REDIRECT] = NULL,
+   [E_CLIENT_HOOK_CANVAS_LAYOUT] = NULL,
 };
 
 ///////////////////////////////////////////
@@ -322,6 +323,24 @@ _e_client_hook_call(E_Client_Hook_Point hookpoint, E_Client *ec)
    if ((_e_client_hooks_walking == 0) && (_e_client_hooks_delete > 0))
      _e_client_hooks_clean();
    return !!e_object_unref(E_OBJECT(ec));
+}
+
+static Eina_Bool
+_e_client_hook_comp_call(E_Client_Hook_Point hookpoint, E_Comp *c)
+{
+   E_Client_Hook *ch;
+
+   _e_client_hooks_walking++;
+   _e_client_hooks_walking++;
+   EINA_INLIST_FOREACH(_e_client_hooks[hookpoint], ch)
+     {
+        if (ch->delete_me) continue;
+        ch->func(ch->data, (void *)c);
+     }
+   _e_client_hooks_walking--;
+   if ((_e_client_hooks_walking == 0) && (_e_client_hooks_delete > 0))
+     _e_client_hooks_clean();
+   return EINA_TRUE;
 }
 
 ///////////////////////////////////////////
@@ -2205,6 +2224,16 @@ e_client_idler_before(void)
                }
              _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
           }
+
+        // layout hook - this is where a hook gets to figure out what to
+        // do if anything.
+        //
+        // XXX: FIXME - keep this until there is an acceptable replacement
+        // that can allow layout policie modules to evaluate everything
+        // at a single point after everything else is done as removing this
+        // breaks both illume2 and contact ... which didn't get updated to
+        // have an alternative method implemented
+        _e_client_hook_comp_call(E_CLIENT_HOOK_CANVAS_LAYOUT, c);
 
         E_CLIENT_FOREACH(c, ec)
           {
