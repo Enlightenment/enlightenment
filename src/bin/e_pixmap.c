@@ -743,11 +743,34 @@ e_pixmap_image_data_argb_convert(E_Pixmap *cp, void *pix, void *ipix, Eina_Recta
       case E_PIXMAP_TYPE_WL:
         if (cp->image_argb) return EINA_TRUE;
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
-        WRN("FIXME: Convert wayland non-argb image");
-        (void) pix;
-        (void) ipix;
-        (void) r;
-        (void) stride;
+        if (cp->resource)
+          {
+             /* TOOD: add more cases */
+             struct wl_shm_buffer *buffer;
+             uint32_t format;
+             int i, x, y;
+             unsigned int *src, *dst;
+
+             if (!(buffer = wl_shm_buffer_get(cp->resource)))
+               return EINA_FALSE;
+
+             format = wl_shm_buffer_get_format(buffer);
+             if (format == WL_SHM_FORMAT_XRGB8888)
+               {
+                  dst = (unsigned int *)pix;
+                  src = (unsigned int *)ipix;
+
+                  for (y = 0; y < r->h; y++)
+                    {
+                       i = (r->y + y) * stride / 4 + r->x;
+                       for (x = 0; x < r->w; x++)
+                         dst[i+x] = 0xff000000 | src[i+x];
+                    }
+                  pix = (void *)dst;
+               }
+          }
+
+        return EINA_TRUE;
 #endif
         break;
       default:
