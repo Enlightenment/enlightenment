@@ -535,28 +535,11 @@ _e_fm2_icon_path(const E_Fm2_Icon *ic, char *buf, int buflen)
 {
    int r;
 
-   if (ic->info.link)
-     {
-        if (ic->info.link[0] == '/')
-          r = snprintf(buf, buflen, "%s", ic->info.link);
-        else
-          {
-             char *tmp;
-             
-             r = snprintf(buf, buflen, "%s/%s", ic->sd->path, ic->info.file);
-             if (!ic->sd->dev)
-               {
-                  tmp = ecore_file_realpath(buf);
-                  if (tmp)
-                    {
-                       r = snprintf(buf, buflen, "%s", tmp);
-                       free(tmp);
-                    }
-               }
-          }
-     }
+   if (ic->info.real_link)
+     r = snprintf(buf, buflen, "%s", ic->info.real_link);
    else
      r = snprintf(buf, buflen, "%s/%s", ic->sd->path, ic->info.file);
+
    return r < buflen;
 }
 
@@ -5779,10 +5762,10 @@ _e_fm2_inplace_open(const E_Fm2_Icon *ic)
    if (!_e_fm2_icon_path(ic, buf, sizeof(buf)))
      return -1;
 
-   e_fm2_path_set(ic->sd->obj, 
-//                  ic->info.link ? "/" : ic->sd->dev, 
-                  ic->sd->dev, 
+   e_fm2_path_set(ic->sd->obj,
+                  ic->info.real_link ? "/" : ic->sd->dev,
                   buf);
+
    return 1;
 }
 
