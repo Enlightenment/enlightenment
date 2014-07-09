@@ -2482,6 +2482,12 @@ _e_comp_wl_cb_hook_client_focus_set(void *data EINA_UNUSED, E_Client *ec)
                        E_FOCUS_METHOD_GLOBALLY_ACTIVE);
    else if (!ec->icccm.take_focus)
      e_grabinput_focus(e_client_util_win_get(ec), E_FOCUS_METHOD_PASSIVE);
+
+   if (ec->comp->wl_comp_data->kbd.focus != ec->wl_comp_data->surface)
+     {
+        ec->comp->wl_comp_data->kbd.focus = ec->wl_comp_data->surface;
+        e_comp_wl_data_device_keyboard_focus_set(ec->comp->wl_comp_data);
+     }
 }
 
 static void 
@@ -2498,6 +2504,9 @@ _e_comp_wl_cb_hook_client_focus_unset(void *data EINA_UNUSED, E_Client *ec)
      }
 
    _e_comp_wl_focus_check(ec->comp);
+
+   if (ec->comp->wl_comp_data->kbd.focus == ec->wl_comp_data->surface)
+     ec->comp->wl_comp_data->kbd.focus = NULL;
 }
 
 EAPI Eina_Bool 

@@ -155,7 +155,7 @@ _e_comp_wl_data_device_destroy_selection_data_source(struct wl_listener *listene
 {
    E_Comp_Wl_Data *cdata;
    E_Comp_Wl_Data_Source *source;
-   struct wl_resource *data_device_res;
+   struct wl_resource *data_device_res, *focus = NULL;
 
    if (!(source = (E_Comp_Wl_Data_Source*)data))
      return;
@@ -166,13 +166,18 @@ _e_comp_wl_data_device_destroy_selection_data_source(struct wl_listener *listene
 
    cdata->selection.data_source = NULL;
 
-   /* TODO: get data device from a focused surface */
-   data_device_res = 
-     _e_comp_wl_data_find_for_client(cdata->mgr.data_resources, 
-                                     wl_resource_get_client(source->resource));
+   if (cdata->kbd.enabled)
+     focus = cdata->kbd.focus;
 
-   if (data_device_res)
-     wl_data_device_send_selection(data_device_res, NULL);
+   if (focus)
+     {
+        data_device_res = 
+           _e_comp_wl_data_find_for_client(cdata->mgr.data_resources, 
+                                           wl_resource_get_client(source->resource));
+
+        if (data_device_res)
+          wl_data_device_send_selection(data_device_res, NULL);
+     }
 
    wl_signal_emit(&cdata->selection.signal, cdata);
 }
@@ -221,7 +226,7 @@ _e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, st
 {
    E_Comp_Wl_Data *cdata;
    E_Comp_Wl_Data_Source *source, *sel_source;
-   struct wl_resource *offer_res, *data_device_res;
+   struct wl_resource *offer_res, *data_device_res, *focus = NULL;
 
    if (!source_resource) return;
    if (!(cdata = wl_resource_get_user_data(resource))) return;
@@ -244,20 +249,26 @@ _e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, st
    cdata->selection.data_source = sel_source = source;
    cdata->selection.serial = serial;
 
-   /* TODO: get data device from a focused surface */
-   data_device_res = 
-     _e_comp_wl_data_find_for_client(cdata->mgr.data_resources, 
-                                     wl_resource_get_client(source->resource));
+   if (cdata->kbd.enabled)
+     focus = cdata->kbd.focus;
 
-   if ((data_device_res) && (source))
+   if (focus)
      {
-        offer_res = 
-          _e_comp_wl_data_device_data_offer_create(source, data_device_res);
-        wl_data_device_send_selection(data_device_res, offer_res);
-     }
-   else if (data_device_res)
-     {
-        wl_data_device_send_selection(data_device_res, NULL);
+        data_device_res =
+           _e_comp_wl_data_find_for_client(cdata->mgr.data_resources,
+                                           wl_resource_get_client(focus));
+        if ((data_device_res) && (source))
+          {
+             offer_res =
+                _e_comp_wl_data_device_data_offer_create(source,
+                                                         data_device_res);
+             wl_data_device_send_selection(data_device_res, offer_res);
+
+          }
+        else if (data_device_res)
+          {
+             wl_data_device_send_selection(data_device_res, NULL);
+          }
      }
 
    wl_signal_emit(&cdata->selection.signal, cdata);
@@ -387,7 +398,32 @@ _e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data, uint32_t v
    wl_resource_set_implementation(res, &_e_manager_interface, cdata, NULL);
 }
 
-EINTERN Eina_Bool 
+EINTERN void
+e_comp_wl_data_device_keyboard_focus_set(E_Comp_Wl_Data *cdata)
+{
+   struct wl_resource *data_device_res, *offer_res, *focus;
+   E_Comp_Wl_Data_Source *source;
+
+   if (!cdata->kbd.enabled) return;
+
+   focus = cdata->kbd.focus;
+   if (!focus) return;
+
+   data_device_res =
+      _e_comp_wl_data_find_for_client(cdata->mgr.data_resources,
+                                      wl_resource_get_client(focus));
+   if (!data_device_res) return;
+
+   source = (E_Comp_Wl_Data_Source*)cdata->selection.data_source;
+   if (source)
+     {
+        offer_res = _e_comp_wl_data_device_data_offer_create(source,
+                                                             data_device_res);
+        wl_data_device_send_selection(data_device_res, offer_res);
+     }
+}
+
+EINTERN Eina_Bool
 e_comp_wl_data_manager_init(E_Comp_Wl_Data *cdata)
 {
    /* check for valid compositor data */

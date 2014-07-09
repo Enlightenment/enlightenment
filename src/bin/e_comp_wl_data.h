@@ -26,6 +26,7 @@ struct _E_Comp_Wl_Data_Offer
    struct wl_listener source_destroy_listener; //listener for destroy of source
 };
 
+EINTERN void e_comp_wl_data_device_keyboard_focus_set(E_Comp_Wl_Data *cdata);
 EINTERN Eina_Bool e_comp_wl_data_manager_init(E_Comp_Wl_Data *cdata);
 EINTERN void e_comp_wl_data_manager_shutdown(E_Comp_Wl_Data *cdata);
 
