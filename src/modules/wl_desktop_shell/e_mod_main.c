@@ -28,7 +28,6 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
 
    e_pixmap_parent_window_set(ec->pixmap, pwin);
 
-   ec->parent = pc;
    ec->icccm.fetch.transient_for = EINA_TRUE;
    ec->icccm.transient_for = pwin;
 }
