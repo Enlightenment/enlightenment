@@ -12,8 +12,9 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
    E_Client *pc;
    Ecore_Window pwin = 0;
 
+   if (!parent_resource) pp = NULL;
    /* get pixmap from parent */
-   if (!(pp = wl_resource_get_user_data(parent_resource)))
+   else if (!(pp = wl_resource_get_user_data(parent_resource)))
      {
         ERR("Could not get parent resource pixmap");
         return;
@@ -24,12 +25,6 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
    /* find the parent client */
    if (!(pc = e_pixmap_client_get(pp)))
      pc = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pwin);
-
-   if (!pc) 
-     {
-        ERR("Could not find parent pixmap client");
-        return;
-     }
 
    e_pixmap_parent_window_set(ec->pixmap, pwin);
 
