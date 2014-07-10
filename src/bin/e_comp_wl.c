@@ -195,7 +195,7 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
    if ((!ec) || (e_object_is_del(E_OBJECT(ec)))) return;
    if (!ec->wl_comp_data) return;
 
-   tmp = eina_tiler_new(ec->w, ec->h);
+   tmp = eina_tiler_new(ec->w ?: w, ec->h ?: h);
    eina_tiler_tile_size_set(tmp, 1, 1);
    eina_tiler_rect_add(tmp, &(Eina_Rectangle){x, y, w, h});
 
