@@ -2238,35 +2238,6 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
 
    if (ec->icccm.fetch.transient_for)
      {
-        E_Client *pc = NULL;
-
-        if (ec->icccm.transient_for)
-          {
-             pc = eina_hash_find(clients_win_hash, &ec->icccm.transient_for);
-             if ((pc) && (e_object_is_del(E_OBJECT(pc)))) pc = NULL;
-          }
-
-        /* If we already have a parent, remove it */
-        if (ec->parent)
-          {
-             if (pc != ec->parent)
-               {
-                  ec->parent->transients = 
-                    eina_list_remove(ec->parent->transients, ec);
-                  if (ec->parent->modal == ec) ec->parent->modal = NULL;
-                  ec->parent = NULL;
-               }
-             else
-               pc = NULL;
-          }
-
-        if ((pc) && (pc != ec) &&
-            (eina_list_data_find(ec->transients, pc) != pc))
-          {
-             pc->transients = eina_list_append(pc->transients, ec);
-             ec->parent = pc;
-          }
-
         if (ec->parent)
           {
              evas_object_layer_set(ec->frame, ec->parent->layer);
