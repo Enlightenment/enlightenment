@@ -1702,8 +1702,10 @@ _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
      {
         if (ic->exe_current)
           {
-             if ((exe = eina_list_data_get(ic->exe_current)))
-               sel = eina_list_data_get(exe->clients);
+             exe = eina_list_data_get(ic->exe_current);
+             sel = eina_list_data_get(exe->clients);
+             if (sel == cur)
+               sel = eina_list_data_get(eina_list_next(exe->clients));
           }
      }
 
