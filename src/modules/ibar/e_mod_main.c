@@ -76,7 +76,6 @@ struct _IBar_Icon
    Ecore_Timer     *hide_timer; //for menu
    E_Exec_Instance *exe_inst;
    Eina_List       *exes; //all instances
-   Eina_List       *exe_current;
    Eina_List       *menu_pending; //clients with menu items pending
    E_Gadcon_Popup  *menu;
    int              mouse_down;
@@ -914,7 +913,6 @@ _ibar_icon_free(IBar_Icon *ic)
    eina_hash_del_by_key(ic->ibar->icon_hash, _desktop_name_get(ic->app));
    E_FREE_FUNC(ic->reset_timer, ecore_timer_del);
    if (ic->app) efreet_desktop_unref(ic->app);
-   ic->exe_current = NULL;
    evas_object_event_callback_del_full(ic->o_holder, EVAS_CALLBACK_MOUSE_IN,
                                   _ibar_cb_icon_mouse_in, ic);
    evas_object_event_callback_del_full(ic->o_holder, EVAS_CALLBACK_MOUSE_OUT,
@@ -1660,15 +1658,24 @@ _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    E_Exec_Instance *exe;
    IBar_Icon *ic = data;
    E_Client *cur, *sel = NULL;
-   Eina_List *l;
+   Eina_List *l, *exe_current = NULL;
 
    if (!ic->exes) return;
 
    cur = e_client_focused_get();
-   if (!ic->exe_current)
-     ic->exe_current = ic->exes;
+   if (cur && cur->exe_inst)
+     {
+        EINA_LIST_FOREACH(ic->exes, l, exe)
+          if (cur->exe_inst == exe)
+            {
+               exe_current = l;
+               break;
+            }
+     }
+   if (!exe_current)
+     exe_current = ic->exes;
 
-   exe = eina_list_data_get(ic->exe_current);
+   exe = eina_list_data_get(exe_current);
    if (ev->z < 0)
      {
         if (cur && (cur->exe_inst == exe))
@@ -1678,9 +1685,9 @@ _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
           }
         if (!sel)
           {
-             ic->exe_current = eina_list_next(ic->exe_current);
-             if (!ic->exe_current)
-               ic->exe_current = ic->exes;
+             exe_current = eina_list_next(exe_current);
+             if (!exe_current)
+               exe_current = ic->exes;
           }
      }
    else if (ev->z > 0)
@@ -1692,21 +1699,18 @@ _ibar_cb_icon_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
           }
         if (!sel)
           {
-             ic->exe_current = eina_list_prev(ic->exe_current);
-             if (!ic->exe_current)
-               ic->exe_current = eina_list_last(ic->exes);
+             exe_current = eina_list_prev(exe_current);
+             if (!exe_current)
+               exe_current = eina_list_last(ic->exes);
           }
      }
 
    if (!sel)
      {
-        if (ic->exe_current)
-          {
-             exe = eina_list_data_get(ic->exe_current);
-             sel = eina_list_data_get(exe->clients);
-             if (sel == cur)
-               sel = eina_list_data_get(eina_list_next(exe->clients));
-          }
+        exe = eina_list_data_get(exe_current);
+        sel = eina_list_data_get(exe->clients);
+        if (sel == cur)
+          sel = eina_list_data_get(eina_list_next(exe->clients));
      }
 
    if (sel)
