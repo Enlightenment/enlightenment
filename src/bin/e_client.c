@@ -3253,6 +3253,8 @@ e_client_refocus(void)
 EAPI void
 e_client_focus_set_with_pointer(E_Client *ec)
 {
+   E_OBJECT_CHECK(ec);
+   E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    /* note: this is here as it seems there are enough apps that do not even
     * expect us to emulate a look of focus but not actually set x input
     * focus as we do - so simply abort any focuse set on such windows */
@@ -3379,6 +3381,8 @@ e_client_focused_set(E_Client *ec)
 EAPI void
 e_client_activate(E_Client *ec, Eina_Bool just_do_it)
 {
+   E_OBJECT_CHECK(ec);
+   E_OBJECT_TYPE_CHECK(ec, E_CLIENT_TYPE);
    if ((e_config->focus_setting == E_FOCUS_NEW_WINDOW) ||
        ((ec->parent) &&
         ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
