@@ -116,7 +116,11 @@ _abstract_socket_bind(int disp)
      }
 
    /* try to listen on the bound socket */
-   if (listen(fd, 1) < 0) goto err;
+   if (listen(fd, 1) < 0) 
+     {
+        ERR("Failed to listen to abstract fd: %d", fd);
+        goto err;
+     }
 
    return fd;
 
@@ -151,7 +155,11 @@ _unix_socket_bind(int disp)
      }
 
    /* try to listen on the bound socket */
-   if (listen(fd, 1) < 0) goto err;
+   if (listen(fd, 1) < 0) 
+     {
+        ERR("Failed to listen to unix fd: %d", fd);
+        goto err;
+     }
 
    return fd;
 
@@ -200,13 +208,13 @@ _cb_xserver_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
         /* ignore usr1 and have X send it to the parent process */
         signal(SIGUSR1, SIG_IGN);
 
-        /* FIXME: need to get the path of xwayland */
         snprintf(disp, sizeof(disp), ":%d", exs->disp);
 
         snprintf(xserver, sizeof(xserver), "%s", XWAYLAND_BIN);
-        DBG("\tLaunching XWayland: %s", xserver);
+        DBG("\tLaunching XWayland: %s: %s", xserver, disp);
         if (execl(xserver, xserver, disp, "-rootless", "-listen", abs_fd,
-                  "-listen", unx_fd, "-wm", wm_fd, "-terminate", NULL) < 0)
+                  "-listen", unx_fd, "-wm", wm_fd, "-terminate", "-shm", 
+                  NULL) < 0)
           {
              ERR("Failed to exec XWayland: %m");
           }
@@ -214,7 +222,6 @@ _cb_xserver_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 fail:
         _exit(EXIT_FAILURE);
 
-        break;
       default:
         close(socks[1]);
         exs->client = wl_client_create(exs->wl_disp, socks[0]);
@@ -222,7 +229,10 @@ fail:
         close(wms[1]);
         exs->wm_fd = wms[0];
 
-        /* TODO: remove event sources */
+        if (exs->abs_hdlr)
+          ecore_main_fd_handler_del(exs->abs_hdlr);
+        if (exs->unx_hdlr)
+          ecore_main_fd_handler_del(exs->unx_hdlr);
         break;
       case -1:
         ERR("Failed to fork: %m");
@@ -247,7 +257,7 @@ _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_
     * Weston creates a smaller window manager process here.
     * We Maybe able to just do e_comp_x_init, but will have to test that */
 
-   return ECORE_CALLBACK_RENEW;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 /* module functions */
@@ -318,6 +328,7 @@ lock:
 
    /* assemble x11 display name and set it */
    snprintf(disp, sizeof(disp), ":%d", exs->disp);
+   DBG("XWayland Listening on display: %s", disp);
    setenv("DISPLAY", disp, 1);
 
    /* setup ecore_fd handlers for abstract and unix socket fds */
