@@ -1321,6 +1321,8 @@ _e_comp_wl_cb_module_idle(void *data)
 {
    E_Module *mod = NULL;
    E_Comp_Data *cdata;
+   Eina_Bool have_shell = EINA_FALSE;
+   Eina_Bool have_xwayland = EINA_FALSE;
 
    if (!(cdata = data)) return ECORE_CALLBACK_RENEW;
 
@@ -1328,12 +1330,30 @@ _e_comp_wl_cb_module_idle(void *data)
 
    /* FIXME: make which shell to load configurable */
    if (!(mod = e_module_find("wl_desktop_shell")))
-     mod = e_module_new("wl_desktop_shell");
-
-   if (mod)
      {
-        e_module_enable(mod);
+        if ((mod = e_module_new("wl_desktop_shell")))
+          {
+             e_module_enable(mod);
+             have_shell = EINA_TRUE;
+          }
+     }
+   else
+     have_shell = EINA_TRUE;
 
+   /* load xwayland module */
+   if (!(mod = e_module_find("xwayland")))
+     {
+        if ((mod = e_module_new("xwayland")))
+          {
+             e_module_enable(mod);
+             have_xwayland = EINA_TRUE;
+          }
+     }
+   else
+     have_xwayland = EINA_TRUE;
+
+   if ((have_shell) && (have_xwayland))
+     {
         /* dispatch any pending main loop events */
         wl_event_loop_dispatch(cdata->wl.loop, 0);
 
