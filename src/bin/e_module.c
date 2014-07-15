@@ -935,6 +935,7 @@ _e_module_whitelist_check(void)
       "appmenu",
       "packagekit",
       "policy_mobile",
+      "xwayland",
       NULL   // end marker
    };
 
