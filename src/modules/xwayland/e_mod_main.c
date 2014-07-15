@@ -164,7 +164,7 @@ static Eina_Bool
 _cb_xserver_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
 {
    int socks[2], wms[2], fd;
-   char disp[8], s[8], *xserver = NULL;
+   char disp[8], s[8], xserver[PATH_MAX];
    char abs_fd[8], unx_fd[8], wm_fd[8];
 
    if (socketpair(AF_UNIX, (SOCK_STREAM | SOCK_CLOEXEC), 0, socks) < 0)
@@ -200,10 +200,11 @@ _cb_xserver_event(void *data EINA_UNUSED, Ecore_Fd_Handler *hdlr EINA_UNUSED)
         /* ignore usr1 and have X send it to the parent process */
         signal(SIGUSR1, SIG_IGN);
 
-        /* FIXME: need to get the patch of xwayland */
+        /* FIXME: need to get the path of xwayland */
         snprintf(disp, sizeof(disp), ":%d", exs->disp);
 
-        DBG("XWAYLAND: %s", XWAYLAND_BIN);
+        snprintf(xserver, sizeof(xserver), "%s", XWAYLAND_BIN);
+        DBG("\tLaunching XWayland: %s", xserver);
         if (execl(xserver, xserver, disp, "-rootless", "-listen", abs_fd,
                   "-listen", unx_fd, "-wm", wm_fd, "-terminate", NULL) < 0)
           {
@@ -216,7 +217,7 @@ fail:
         break;
       default:
         close(socks[1]);
-        exs->client = wl_client_create(exs->disp, socks[0]);
+        exs->client = wl_client_create(exs->wl_disp, socks[0]);
 
         close(wms[1]);
         exs->wm_fd = wms[0];
@@ -237,6 +238,8 @@ _cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_
    /* NB: SIGUSR1 comes from XWayland Server when it has finished 
     * initialized. */
 
+   DBG("XWayland Finished Init");
+
    /* TODO: create "window manager" process */
 
    /* TODO: NB: 
@@ -255,6 +258,8 @@ e_modapi_init(E_Module *m)
 {
    E_Comp *comp;
    char disp[8];
+
+   DBG("LOAD XWAYLAND MODULE");
 
    /* try to get the running compositor */
    if (!(comp = e_comp_get(NULL))) return NULL;
