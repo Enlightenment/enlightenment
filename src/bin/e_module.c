@@ -948,6 +948,7 @@ _e_module_whitelist_check(void)
       "packagekit",
       "policy_mobile",
       "geolocation",
+      "xwayland",
       NULL   // end marker
    };
 
