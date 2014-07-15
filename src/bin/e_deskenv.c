@@ -3,6 +3,7 @@
 EINTERN int
 e_deskenv_init(void)
 {
+#ifndef HAVE_WAYLAND_ONLY
    char buf[PATH_MAX], buf2[PATH_MAX + sizeof("xrdb -load ")];
 
    // run xdrb -load .Xdefaults & .Xresources
@@ -37,6 +38,7 @@ e_deskenv_init(void)
      {
         ecore_exe_run("kdeinit", NULL);
      }
+#endif
    return 1;
 }
 
@@ -49,6 +51,7 @@ e_deskenv_shutdown(void)
 EAPI void
 e_deskenv_xmodmap_run(void)
 {
+#ifndef HAVE_WAYLAND_ONLY
    char buf[PATH_MAX], buf2[PATH_MAX + sizeof("xmodmap ")];
    // load ~/.Xmodmap
    // NOTE: one day we should replace this with an e based config + service
@@ -57,5 +60,6 @@ e_deskenv_xmodmap_run(void)
    if (!ecore_file_exists(buf)) return;
    snprintf(buf2, sizeof(buf2), "xmodmap %s", buf);
    ecore_exe_run(buf2, NULL);
+#endif
 }
 
