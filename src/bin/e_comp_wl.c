@@ -1562,10 +1562,6 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
    if (!(ec = data)) return;
    if (ec->netwm.ping) e_client_ping(ec);
 
-   /* if (ec->wl_comp_data->shell.surface) */
-   /*   wl_resource_destroy(ec->wl_comp_data->shell.surface); */
-
-
    /* FIXME !!!
     * 
     * This is a HUGE problem for internal windows...

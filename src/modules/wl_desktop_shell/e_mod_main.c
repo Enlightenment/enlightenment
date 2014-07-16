@@ -655,6 +655,7 @@ _e_xdg_shell_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_
      {
         /* eina_stringshare_del(ec->icccm.title); */
         /* eina_stringshare_del(ec->icccm.class); */
+        wl_resource_destroy(ec->wl_comp_data->shell.surface);
         ec->wl_comp_data->shell.surface = NULL;
      }
 }
@@ -1303,6 +1304,7 @@ _e_xdg_shell_popup_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
                     eina_list_remove(ec->parent->transients, ec);
                }
 
+             wl_resource_destroy(ec->wl_comp_data->shell.surface);
              ec->wl_comp_data->shell.surface = NULL;
           }
      }
