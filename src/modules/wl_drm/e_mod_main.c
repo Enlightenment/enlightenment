@@ -24,7 +24,18 @@ e_modapi_init(E_Module *m)
 
    comp = e_comp_new();
    comp->comp_type = E_PIXMAP_TYPE_WL;
-   comp->ee = ecore_evas_drm_new(NULL, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+   if ((e_comp_gl_get()) && 
+       (e_comp_config_get()->engine == E_COMP_ENGINE_GL))
+     {
+        /* TOOD: create ecore_evas for new drm gl backend */
+        /* NB: If that fails, call e_comp_gl_set(EINA_FALSE) */
+     }
+
+   /* fallback to framebuffer drm (non-accel) */
+   if (!comp->ee)
+     comp->ee = ecore_evas_drm_new(NULL, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
    if (!comp->ee)
      {
         fprintf(stderr, "Could not create ecore_evas_drm canvas");
