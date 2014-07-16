@@ -5,6 +5,10 @@
 
 typedef struct _E_Comp_Wl_Data_Source E_Comp_Wl_Data_Source;
 typedef struct _E_Comp_Wl_Data_Offer E_Comp_Wl_Data_Offer;
+typedef struct _E_Comp_Wl_Clipboard_Source E_Comp_Wl_Clipboard_Source;
+typedef struct _E_Comp_Wl_Clipboard_Offer E_Comp_Wl_Clipboard_Offer;
+
+#define CLIPBOARD_CHUNK 1024
 
 struct _E_Comp_Wl_Data_Source
 {
@@ -24,6 +28,24 @@ struct _E_Comp_Wl_Data_Offer
 
    E_Comp_Wl_Data_Source *source; //indicates source client data
    struct wl_listener source_destroy_listener; //listener for destroy of source
+};
+
+struct _E_Comp_Wl_Clipboard_Source
+{
+   E_Comp_Wl_Data_Source data_source;
+   Ecore_Fd_Handler *fd_handler;
+   uint32_t serial;
+
+   struct wl_array contents; //for extendable buffer
+   int ref;
+   int fd;
+};
+
+struct _E_Comp_Wl_Clipboard_Offer
+{
+   E_Comp_Wl_Clipboard_Source *source;
+   Ecore_Fd_Handler *fd_handler;
+   size_t offset;
 };
 
 EINTERN void e_comp_wl_data_device_keyboard_focus_set(E_Comp_Wl_Data *cdata);
