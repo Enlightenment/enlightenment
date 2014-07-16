@@ -1080,7 +1080,7 @@ _e_desktop_edit_cb_exec_select_ok(void *data, E_Dialog *dia)
    E_FREE(cfdata->exec);
    cfdata->exec = eina_str_escape(file);
    E_FREE(cfdata->try_exec);
-   IFDUP(cfdata->try_exec, cfdata->exec);
+   IFDUP(cfdata->exec, cfdata->try_exec);
 
    _e_desktop_edit_cb_exec_select_cancel(data, dia);
 }
