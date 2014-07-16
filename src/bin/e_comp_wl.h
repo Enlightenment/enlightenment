@@ -36,6 +36,7 @@
 
 typedef struct _E_Comp_Wl_Buffer E_Comp_Wl_Buffer;
 typedef struct _E_Comp_Wl_Buffer_Ref E_Comp_Wl_Buffer_Ref;
+typedef struct _E_Comp_Wl_Subsurf E_Comp_Wl_Subsurf;
 
 struct _E_Comp_Wl_Data
 {
@@ -164,9 +165,45 @@ struct _E_Comp_Wl_Buffer_Ref
    struct wl_listener destroy_listener;
 };
 
+struct _E_Comp_Wl_Subsurf
+{
+   struct wl_resource *resource;
+
+   E_Client *parent;
+
+   struct
+     {
+        int x, y;
+        Eina_Bool set;
+     } position;
+
+   struct
+     {
+        int x, y;
+
+        Eina_Bool has_data;
+        Eina_Bool new_attach;
+
+        E_Comp_Wl_Buffer_Ref buffer_ref;
+
+        Eina_Tiler *damage;
+        Eina_Tiler *opaque;
+        Eina_Tiler *input;
+     } cached;
+
+   Eina_Bool synchronized;
+};
+
 struct _E_Comp_Wl_Client_Data
 {
    Ecore_Timer *first_draw_tmr;
+
+   struct
+     {
+        E_Comp_Wl_Subsurf *cdata;
+        E_Client *restack_target;
+        Eina_List *list;
+     } sub;
 
    /* regular surface resource (wl_compositor_create_surface) */
    struct wl_resource *surface;
