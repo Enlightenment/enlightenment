@@ -469,7 +469,23 @@ nocomp:
      {
         if (conf->nocomp_fs)
           {
-             if ((!c->nocomp) && (!c->nocomp_override > 0))
+             if (c->nocomp && c->nocomp_ec)
+               {
+                  E_CLIENT_REVERSE_FOREACH(c, ec)
+                    {
+                       if (ec == c->nocomp_ec) break;
+                       if (e_client_is_stacking(ec)) continue;
+                       if (e_object_is_del(E_OBJECT(ec)) || (!e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))) continue;
+                       if (e_config->allow_above_fullscreen && (!e_config->mode.presentation))
+                         {
+                            _e_comp_nocomp_end(c);
+                            break;
+                         }
+                       else
+                         evas_object_stack_below(ec->frame, c->nocomp_ec->frame);
+                    }
+               }
+             else if ((!c->nocomp) && (!c->nocomp_override > 0))
                {
                   if (!c->nocomp_delay_timer)
                     c->nocomp_delay_timer = ecore_timer_add(1.0, _e_comp_cb_nocomp_begin_timeout, c);
