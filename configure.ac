@@ -1014,7 +1014,7 @@ m4_ifdef([v_mic],
     EFL_COMPILER_FLAG([-Wno-missing-field-initializers])
    ])
 
-SUID_CFLAGS=-fPIE -fPIC
+SUID_CFLAGS=-fPIE
 SUID_LDFLAGS=-pie
 AC_SUBST([SUID_CFLAGS])
 AC_SUBST([SUID_LDFLAGS])
