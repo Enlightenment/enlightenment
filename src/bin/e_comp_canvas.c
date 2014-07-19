@@ -105,7 +105,7 @@ _e_comp_canvas_cb_zone_sort(const void *data1, const void *data2)
 {
    const E_Zone *z1 = data1, *z2 = data2;
 
-   return z2->num - z1->num;
+   return z1->num - z2->num;
 }
 
 
