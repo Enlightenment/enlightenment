@@ -277,8 +277,9 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
 
    if (root->client)
      {
-        tiling_e_client_move_resize_extra(root->client, x, y,
-                                          w - padding, h - padding);
+        if (!e_object_is_del(E_OBJECT(root->client)))
+          tiling_e_client_move_resize_extra(root->client, x, y,
+                                            w - padding, h - padding);
         return;
      }
 
