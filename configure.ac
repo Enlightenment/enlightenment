@@ -378,10 +378,14 @@ AC_ARG_ENABLE([device-udev],
 AC_MSG_CHECKING([whether the UDEV device backend is enabled])
 AC_MSG_RESULT([${e_cv_want_device_udev}])
 
+device_backend=
+device_libs=
+
 if test "x$e_cv_want_device_udev" != "xno";then
   PKG_CHECK_MODULES([EEZE], [eeze >= ${efl_version} ecore >= ${efl_version} eina >= ${efl_version}],
     [
       device_backend=eeze
+      device_libs=eeze
       AC_DEFINE_UNQUOTED([HAVE_EEZE],[1],[enable udev support])
     ])
 fi
@@ -390,7 +394,12 @@ AC_MSG_CHECKING([which device backend to use])
 AC_MSG_RESULT($device_backend)
 
 AM_CONDITIONAL([HAVE_EEZE], [test "x${device_backend}" = "xeeze"])
-test "x${device_backend}" = "xeeze" || AC_DEFINE_UNQUOTED([HAVE_HAL],[1],[enable HAL support])
+
+if test "x${device_backend}" != "xeeze"; then
+  device_backend=hal
+  device_libs=edbus
+  AC_DEFINE_UNQUOTED([HAVE_HAL],[1],[enable HAL support])
+fi
 
 
 DBUS_MOUNT_CONFIG=1
@@ -561,7 +570,7 @@ PKG_CHECK_MODULES(E, [
   emotion >= ${efl_version}
   $eeze_mount
   $udisks_mount
-  $device_backend
+  $device_libs
 ])
 requirements_e="\
 evas >= ${efl_version} \
@@ -584,7 +593,7 @@ elementary >= ${efl_version} \
 emotion >= ${efl_version} \
 $udisks_mount \
 $eeze_mount \
-$device_backend"
+$device_libs"
 
 PKG_CHECK_MODULES(E_OPEN, [
   eina >= ${efl_version}
@@ -1005,7 +1014,7 @@ m4_ifdef([v_mic],
     EFL_COMPILER_FLAG([-Wno-missing-field-initializers])
    ])
 
-SUID_CFLAGS=-fPIE
+SUID_CFLAGS=-fPIE -fPIC
 SUID_LDFLAGS=-pie
 AC_SUBST([SUID_CFLAGS])
 AC_SUBST([SUID_LDFLAGS])
