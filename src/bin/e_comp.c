@@ -326,6 +326,15 @@ _e_comp_client_update(E_Client *ec)
    return post;
 }
 
+static void
+_e_comp_nocomp_end(E_Comp *c)
+{
+   c->nocomp_want = 0;
+   E_FREE_FUNC(c->nocomp_delay_timer, ecore_timer_del);
+   _e_comp_cb_nocomp_end(c);
+   c->nocomp_ec = NULL;
+}
+
 static Eina_Bool
 _e_comp_cb_update(E_Comp *c)
 {
@@ -468,15 +477,7 @@ nocomp:
           }
      }
    else
-     {
-        c->nocomp_want = 0;
-        E_FREE_FUNC(c->nocomp_delay_timer, ecore_timer_del);
-        if (c->nocomp)
-          {
-             _e_comp_cb_nocomp_end(c);
-             c->nocomp_ec = NULL;
-          }
-     }
+     _e_comp_nocomp_end(c);
 
    return ECORE_CALLBACK_RENEW;
 }
