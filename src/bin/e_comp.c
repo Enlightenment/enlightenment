@@ -475,6 +475,7 @@ nocomp:
                     {
                        if (ec == c->nocomp_ec) break;
                        if (e_client_is_stacking(ec)) continue;
+                       if (ec->override && ec->internal) continue; //systray
                        if (e_object_is_del(E_OBJECT(ec)) || (!e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))) continue;
                        if (e_config->allow_above_fullscreen && (!e_config->mode.presentation))
                          {
