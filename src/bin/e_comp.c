@@ -138,7 +138,7 @@ _e_comp_visible_object_is(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coo
                                            return _e_comp_visible_object_clip_is(o);
                                         }
                                       eina_list_free(children);
-                                      return EINA_TRUE;
+                                      return !!evas_object_data_get(o, "E_Shelf");
                                    }
                               }
                             eina_list_free(children);
