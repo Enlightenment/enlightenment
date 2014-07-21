@@ -10,7 +10,7 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
 {
    E_Pixmap *pp;
    E_Client *pc;
-   Ecore_Window pwin = 0;
+   uint64_t pwin = 0;
 
    if (!parent_resource) pp = NULL;
    /* get pixmap from parent */
