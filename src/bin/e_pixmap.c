@@ -383,8 +383,8 @@ e_pixmap_refresh(E_Pixmap *cp)
            if (cp->client->comp_data &&
                cp->client->comp_data->pw && cp->client->comp_data->ph)
              {
-                pw = cp->client->comp_data->pw;
-                ph = cp->client->comp_data->ph;
+                pw = cp->client->x_comp_data->pw;
+                ph = cp->client->x_comp_data->ph;
              }
            else
              ecore_x_pixmap_geometry_get(pixmap, NULL, NULL, &pw, &ph);
@@ -409,6 +409,9 @@ e_pixmap_refresh(E_Pixmap *cp)
         break;
       case E_PIXMAP_TYPE_WL:
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
+        DBG("PIXMAP REFRESH");
+        if (cp->parent) DBG("\tHas Parent");
+        else DBG("\tNo Parent");
         _e_pixmap_update_wl(cp);
         success = ((cp->w > 0) && (cp->h > 0));
 #endif
@@ -599,7 +602,9 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
 #endif
         break;
       case E_PIXMAP_TYPE_WL:
+        DBG("PIXMAP IMAGE CLEAR: %d", cache);
         /* NB: Nothing to do here. No-Op */
+        /* NB: Old code would memcpy here */
         break;
       default:
         break;
@@ -632,6 +637,7 @@ e_pixmap_image_refresh(E_Pixmap *cp)
         break;
       case E_PIXMAP_TYPE_WL:
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
+        DBG("PIXMAP IMAGE REFRESH");
         _e_pixmap_update_wl(cp);
         return ((cp->w > 0) && (cp->h > 0));
 #endif
@@ -692,15 +698,20 @@ e_pixmap_image_data_get(E_Pixmap *cp)
         break;
       case E_PIXMAP_TYPE_WL:
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
+        DBG("PIXMAP IMAGE DATA GET");
         if (cp->resource)
           {
              struct wl_shm_buffer *buffer;
              void *data = NULL;
+             /* size_t size; */
 
              if (!(buffer = wl_shm_buffer_get(cp->resource)))
                return NULL;
 
+             /* size = (cp->w * cp->h * sizeof(int)); */
+             /* data = malloc(size); */
              wl_shm_buffer_begin_access(buffer);
+             /* memcpy(data, wl_shm_buffer_get_data(buffer), size); */
              data = wl_shm_buffer_get_data(buffer);
              wl_shm_buffer_end_access(buffer);
 
