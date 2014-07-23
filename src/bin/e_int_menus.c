@@ -801,6 +801,7 @@ _e_int_menus_apps_scan(E_Menu *m, Efreet_Menu *menu)
                   E_Menu *subm;
 
                   subm = e_menu_new();
+                  efreet_menu_ref(entry);
                   e_menu_pre_activate_callback_set(subm,
                                                    _e_int_menus_apps_start,
                                                    entry);
@@ -927,6 +928,12 @@ _e_int_menus_apps_start(void *data, E_Menu *m)
      ecore_timer_reset(_e_int_menus_app_cleaner);
    eina_stringshare_del(dir);
    _e_int_menus_apps_scan(m, menu);
+   if (m->pre_activate_cb.func == _e_int_menus_apps_start)
+     {
+        efreet_menu_unref(m->pre_activate_cb.data);
+        m->pre_activate_cb.func = NULL;
+        m->pre_activate_cb.data = NULL;
+     }
    e_menu_pre_activate_callback_set(m, NULL, NULL);
    e_object_data_set(E_OBJECT(m), menu);
    e_object_free_attach_func_set(E_OBJECT(m),
@@ -941,6 +948,13 @@ _e_int_menus_apps_free_hook2(void *obj)
    E_Menu_Item *mi;
 
    m = obj;
+   // unref the e menu we had pointed to in the pre activate cb */
+   if (m->pre_activate_cb.func == _e_int_menus_apps_start)
+     {
+        efreet_menu_unref(m->pre_activate_cb.data);
+        m->pre_activate_cb.func = NULL;
+        m->pre_activate_cb.data = NULL;
+     }
    // XXX TODO: this should be automatic in e_menu, just get references right!
    // XXX TODO: fix references and remove me!!!
    EINA_LIST_FOREACH_SAFE(m->items, l, l_next, mi)
