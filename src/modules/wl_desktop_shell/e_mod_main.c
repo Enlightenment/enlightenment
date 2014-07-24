@@ -11,8 +11,13 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
    E_Client *pc;
    uint64_t pwin = 0;
 
-   if (!parent_resource) pp = NULL;
-   /* get pixmap from parent */
+   if (!parent_resource)
+     {
+        ec->icccm.fetch.transient_for = EINA_FALSE;
+        ec->icccm.transient_for = 0;
+        ec->parent = NULL;
+        return;
+     }
    else if (!(pp = wl_resource_get_user_data(parent_resource)))
      {
         ERR("Could not get parent resource pixmap");
