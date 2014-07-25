@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2014-06-30 17:28+0400\n"
-"PO-Revision-Date: 2014-06-29 03:15+0400\n"
+"PO-Revision-Date: 2014-07-26 13:15+0400\n"
 "Last-Translator: Игорь Мурзов <e-mail@date.by>\n"
 "Language-Team: ru <enlightenment-intl@lists.sourceforge.net>\n"
 "Language: ru\n"
@@ -195,15 +195,15 @@ msgstr "Окно : Состояние"
 
 #: src/bin/e_actions.c:2968
 msgid "Sticky Mode Toggle"
-msgstr "Переключить \"липкий\" режим"
+msgstr "Переключить «липкий» режим"
 
 #: src/bin/e_actions.c:2972
 msgid "Sticky Mode Enable"
-msgstr "Включить \"липкий\" режим"
+msgstr "Включить «липкий» режим"
 
 #: src/bin/e_actions.c:2977
 msgid "Iconic Mode Toggle"
-msgstr "Переключить портретный режим "
+msgstr "Переключить портретный режим"
 
 #: src/bin/e_actions.c:2981
 msgid "Iconic Mode Enable"
@@ -244,15 +244,15 @@ msgstr "Увеличить на весь экран"
 
 #: src/bin/e_actions.c:3011
 msgid "Maximize Mode \"Smart\""
-msgstr "Режим увеличения \"Умный\""
+msgstr "Режим увеличения «Умный»"
 
 #: src/bin/e_actions.c:3013
 msgid "Maximize Mode \"Expand\""
-msgstr "Режим увеличения \"Расширить\""
+msgstr "Режим увеличения «Расширить»"
 
 #: src/bin/e_actions.c:3015
 msgid "Maximize Mode \"Fill\""
-msgstr "Режим увеличения \"Заполнить\""
+msgstr "Режим увеличения «Заполнить»"
 
 #: src/bin/e_actions.c:3022
 msgid "Shade Up Mode Toggle"
@@ -280,7 +280,7 @@ msgstr "Установить состояние свернуть в заголо
 
 #: src/bin/e_actions.c:3035
 msgid "syntax: \"(0|1) (up|down|left|right)\""
-msgstr "синтаксис: \"(0|1) (верх|низ|лево|право)\""
+msgstr "синтаксис: «(0|1) (верх|низ|лево|право)»"
 
 #: src/bin/e_actions.c:3039
 msgid "Toggle Borderless State"
@@ -650,7 +650,7 @@ msgstr "Показать избранное меню"
 
 #: src/bin/e_actions.c:3305
 msgid "Show All Applications Menu"
-msgstr "Показать \"Все приложения\""
+msgstr "Показать «Все приложения»"
 
 #: src/bin/e_actions.c:3307
 msgid "Show Clients Menu"
@@ -2188,7 +2188,7 @@ msgstr "Липкость"
 #: src/bin/e_int_client_locks.c:319 src/bin/e_int_client_locks.c:338
 #: src/bin/e_int_client_remember.c:768
 msgid "Shaded state"
-msgstr "Состояние \"свёрнут в заголовок\""
+msgstr "Состояние «свёрнут в заголовок»"
 
 #: src/bin/e_int_client_locks.c:321 src/bin/e_int_client_locks.c:340
 msgid "Maximized state"
@@ -2959,7 +2959,7 @@ msgstr "ОПАСНО"
 
 #: src/bin/e_int_config_comp.c:354
 msgid "Enable advanced compositing features"
-msgstr "Использовать \"продвинутые\" композитные эффекты"
+msgstr "Использовать «продвинутые» композитные эффекты"
 
 #: src/bin/e_int_config_comp.c:357 src/modules/ibar/e_mod_config.c:148
 msgid "Misc"
@@ -3004,7 +3004,7 @@ msgstr "Отладка"
 
 #: src/bin/e_int_config_comp.c:566
 msgid "Enable \"fast\" composite effects"
-msgstr "Использовать \"быстрые\" композитные эффекты"
+msgstr "Использовать «быстрые» композитные эффекты"
 
 #: src/bin/e_int_config_comp.c:575 src/modules/wizard/page_150.c:93
 msgid "Disable composite effects"
@@ -3907,7 +3907,7 @@ msgstr ""
 "800x600+800+0\n"
 "\t-profile CONF_PROFILE\n"
 "\t\tИспользовать конфигурационный профиль CONF_PROFILE вместо стандартного "
-"\"default\".\n"
+"«default».\n"
 "\t-good\n"
 "\t\tБудь хорошим.\n"
 "\t-evil\n"
@@ -3928,10 +3928,10 @@ msgid ""
 "and launching any other required services etc.\n"
 "before enlightenment itself begins running.\n"
 msgstr ""
-"Вы пытаетесь запустить enlightenment напрямую, \n"
-"что не рекомендуется. Пожалуйста, не запускайте \n"
-"бинарный \"enlightenment\", используйте \"enlightenment_start\". \n"
-"Это позволит произвести все необходимые настройки, \n"
+"Вы пытаетесь запустить enlightenment напрямую,\n"
+"что не рекомендуется. Пожалуйста, не запускайте\n"
+"бинарный «enlightenment», используйте «enlightenment_start».\n"
+"Это позволит произвести все необходимые настройки,\n"
 "запустить базовые службы прежде, чем стартует сам\n"
 "enlightenment.\n"
 
@@ -4225,7 +4225,7 @@ msgid ""
 "set your shelf to<br>\"Below Everything\" or disable autohiding."
 msgstr ""
 "Автоскрытие полки не будет работать должным образом<br>с текущей "
-"конфигурацией; установите уровень полки в<br>\"Под всем\" или отключите "
+"конфигурацией; установите уровень полки в<br>«Под всем» или отключите "
 "автоскрытие."
 
 #: src/bin/e_shelf.c:972
@@ -5875,7 +5875,7 @@ msgstr "Добавить новый профиль"
 #: src/modules/conf_dialogs/e_int_config_profiles.c:335
 #, c-format
 msgid "You want to delete the \"%s\" profile.<br><br>Are you sure?"
-msgstr "Вы хотите удалить профиль \"%s\".<br><br>Вы уверены?"
+msgstr "Вы хотите удалить профиль «%s».<br><br>Вы уверены?"
 
 #: src/modules/conf_dialogs/e_int_config_profiles.c:337
 msgid "Are you sure you want to delete this profile?"
@@ -5949,7 +5949,7 @@ msgstr "Использовать внешнюю команду блокиров�
 #: src/modules/conf_display/e_int_config_desklock.c:251
 #, fuzzy
 msgid "Personal Screenlock Password"
-msgstr "Пароль в \"Запереть Экран\""
+msgstr "Пароль в «Запереть Экран»"
 
 #: src/modules/conf_display/e_int_config_desklock.c:257
 #, fuzzy
@@ -6379,7 +6379,7 @@ msgstr ""
 "У вас заданы дополнительные переменные окружения,<br>связанные с "
 "локализацией, которые могут повлиять<br>на отображение выбранного вами "
 "языка. Если вы не<br>хотите этого, воспользуйтесь настройками в<br>"
-"\"Переменные окружения\", чтобы сбросить их.<br>Переменные, которые могут "
+"«Переменные окружения», чтобы сбросить их.<br>Переменные, которые могут "
 "оказать плохое влияние:<br>%s"
 
 #: src/modules/conf_intl/e_int_config_intl.c:966
@@ -6757,7 +6757,7 @@ msgstr "Настроенные полки: Дисплей %d"
 #: src/modules/conf_shelves/e_int_config_shelf.c:389
 #, c-format
 msgid "Are you sure you want to delete \"%s\"?"
-msgstr "Вы действительно хотите удалить \"%s\"?"
+msgstr "Вы действительно хотите удалить «%s»?"
 
 #: src/modules/conf_shelves/e_int_config_shelf.c:392
 msgid "Confirm Shelf Deletion"
@@ -7055,11 +7055,11 @@ msgstr "Заголовок настроек"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:69
 msgid "About Title"
-msgstr "Заголовок в \"Об\""
+msgstr "Заголовок в «Об»"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:70
 msgid "About Version"
-msgstr "Версия в \"Об\""
+msgstr "Версия в «Об»"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:72
 msgid "Desklock Title"
@@ -7067,7 +7067,7 @@ msgstr "Заголовок Desklock"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:73
 msgid "Desklock Password"
-msgstr "Пароль в \"Запереть Экран\""
+msgstr "Пароль в «Запереть Экран»"
 
 #: src/modules/conf_theme/e_int_config_fonts.c:74
 msgid "Dialog Error"
@@ -8242,7 +8242,7 @@ msgstr "Включено"
 
 #: src/modules/everything/evry_config.c:389
 msgid "Show in \"All\""
-msgstr "Показывать в списке \"Все\""
+msgstr "Показывать в списке «Все»"
 
 #: src/modules/everything/evry_config.c:395
 msgid "Show in top-level"
@@ -9053,7 +9053,7 @@ msgid ""
 "You requested to delete \"%s\".<br><br>Are you sure you want to delete this "
 "bar source?"
 msgstr ""
-"Вы запросили удалить \"%s\".<br><br>Вы действительно хотите удалить этот "
+"Вы запросили удалить «%s».<br><br>Вы действительно хотите удалить этот "
 "источник?"
 
 #: src/modules/ibar/e_mod_config.c:208
