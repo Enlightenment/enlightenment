@@ -15,7 +15,13 @@ _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
      {
         ec->icccm.fetch.transient_for = EINA_FALSE;
         ec->icccm.transient_for = 0;
-        ec->parent = NULL;
+        if (ec->parent)
+          {
+             ec->parent->transients =
+                eina_list_remove(ec->parent->transients, ec);
+             if (ec->parent->modal == ec) ec->parent->modal = NULL;
+             ec->parent = NULL;
+          }
         return;
      }
    else if (!(pp = wl_resource_get_user_data(parent_resource)))
