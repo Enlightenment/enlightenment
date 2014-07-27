@@ -220,7 +220,7 @@ change_window_border(E_Client *ec, const char *bordername)
    eina_stringshare_replace(&ec->bordername, bordername);
    ec->border.changed = true;
    ec->changes.border = true;
-   ec->changed = true;
+   EC_CHANGED(ec);
 
    DBG("%p -> border %s", ec, bordername);
 }
