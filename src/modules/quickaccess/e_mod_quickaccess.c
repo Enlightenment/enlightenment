@@ -555,8 +555,8 @@ _e_qa_event_border_focus_out_cb(void *data __UNUSED__, int type __UNUSED__, E_Ev
    return ECORE_CALLBACK_RENEW;
 }
 
-static Eina_Bool
-_e_qa_event_module_init_end_cb(void *data __UNUSED__, int type __UNUSED__, void *ev __UNUSED__)
+static void
+_e_qa_begin(void)
 {
    Eina_List *l, *ll;
    E_Quick_Access_Entry *entry;
@@ -609,7 +609,6 @@ _e_qa_event_module_init_end_cb(void *data __UNUSED__, int type __UNUSED__, void 
                if (!count) break;
             }
      }
-   return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
@@ -1341,7 +1340,6 @@ e_qa_init(void)
 
    E_LIST_HANDLER_APPEND(_e_qa_event_handlers, E_EVENT_CLIENT_FOCUS_OUT, (Ecore_Event_Handler_Cb)_e_qa_event_border_focus_out_cb, NULL);
    E_LIST_HANDLER_APPEND(_e_qa_event_handlers, E_EVENT_CLIENT_REMOVE, (Ecore_Event_Handler_Cb)_e_qa_event_border_remove_cb, NULL);
-   E_LIST_HANDLER_APPEND(_e_qa_event_handlers, E_EVENT_MODULE_INIT_END, (Ecore_Event_Handler_Cb)_e_qa_event_module_init_end_cb, NULL);
    E_LIST_HANDLER_APPEND(_e_qa_event_handlers, ECORE_EXE_EVENT_DEL, (Ecore_Event_Handler_Cb)_e_qa_event_exe_del_cb, NULL);
 
    _e_qa_toggle->func.go = _e_qa_toggle_cb;
@@ -1354,6 +1352,8 @@ e_qa_init(void)
    
    border_hook = e_int_client_menu_hook_add(_e_qa_bd_menu_hook, NULL);
    if (!qa_config->first_run) _e_qa_first_run();
+   else
+     _e_qa_begin();
 
    return EINA_TRUE;
 }
