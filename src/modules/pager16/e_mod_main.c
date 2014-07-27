@@ -50,7 +50,8 @@ struct _Pager
    Evas_Coord      dnd_x, dnd_y;
    Pager_Desk     *active_drop_pd;
    E_Client       *active_drag_client;
-   Eina_Bool invert : 1;
+   Eina_Bool       invert : 1;
+   Eina_Bool       recalc : 1;
 };
 
 struct _Pager_Desk
@@ -309,7 +310,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class)
 }
 
 static void
-_pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_pager_recalc(void *data)
 {
    Pager *p = data;
    Eina_List *l;
@@ -317,6 +318,7 @@ _pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
    Evas_Coord mw = 0, mh = 0;
    int w, h, zw, zh, w2, h2;
 
+   p->recalc = EINA_FALSE;
    zw = p->zone->w; zh = p->zone->h;
    pd = eina_list_data_get(p->desks);
    if (!pd) return;
@@ -331,8 +333,6 @@ _pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
      }
    w = w2; h = h2;
    w += mw; h += mh;
-   EINA_LIST_FOREACH(p->desks, l, pd)
-     e_table_pack_options_set(pd->o_desk, 1, 1, 1, 1, 0.5, 0.5, w, h, -1, -1);
    if ((p->inst) && (p->inst->gcc))
      {
         if (p->invert)
@@ -340,6 +340,16 @@ _pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
         else
           e_gadcon_client_aspect_set(p->inst->gcc, p->xnum * w, p->ynum * h);
      }
+}
+
+static void
+_pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Pager *p = data;
+
+   if (p->recalc) return;
+   p->recalc = EINA_TRUE;
+   ecore_job_add(_pager_recalc, p);
 }
 
 static Pager *
