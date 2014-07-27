@@ -50,8 +50,8 @@ struct _Pager
    Evas_Coord      dnd_x, dnd_y;
    Pager_Desk     *active_drop_pd;
    E_Client       *active_drag_client;
+   Ecore_Job      *recalc;
    Eina_Bool       invert : 1;
-   Eina_Bool       recalc : 1;
 };
 
 struct _Pager_Desk
@@ -318,7 +318,7 @@ _pager_recalc(void *data)
    Evas_Coord mw = 0, mh = 0;
    int w, h, zw, zh, w2, h2;
 
-   p->recalc = EINA_FALSE;
+   p->recalc = NULL;
    zw = p->zone->w; zh = p->zone->h;
    pd = eina_list_data_get(p->desks);
    if (!pd) return;
@@ -347,9 +347,8 @@ _pager_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, voi
 {
    Pager *p = data;
 
-   if (p->recalc) return;
-   p->recalc = EINA_TRUE;
-   ecore_job_add(_pager_recalc, p);
+   if (!p->recalc)
+     p->recalc = ecore_job_add(_pager_recalc, p);
 }
 
 static Pager *
@@ -374,6 +373,7 @@ _pager_free(Pager *p)
 {
    _pager_empty(p);
    evas_object_del(p->o_table);
+   ecore_job_del(p->recalc);
    pagers = eina_list_remove(pagers, p);
    free(p);
 }
