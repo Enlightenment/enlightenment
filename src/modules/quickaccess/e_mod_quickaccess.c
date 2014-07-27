@@ -1316,7 +1316,6 @@ _e_qa_first_run(void)
 Eina_Bool
 e_qa_init(void)
 {
-   Ecore_Event_Handler *eh;
    E_Client_Hook *h;
 
    _act_toggle = eina_stringshare_add("qa_toggle");
@@ -1340,15 +1339,10 @@ e_qa_init(void)
    CB(EVAL_PRE_POST_FETCH, eval_pre_post_fetch);
 #undef CB
 
-#define CB(id, func)                                 \
-  eh = ecore_event_handler_add(id, (Ecore_Event_Handler_Cb)_e_qa_event_##func##_cb, NULL); \
-  _e_qa_event_handlers = eina_list_append(_e_qa_event_handlers, eh)
-
-   CB(E_EVENT_CLIENT_FOCUS_OUT, border_focus_out);
-   CB(E_EVENT_CLIENT_REMOVE, border_remove);
-   CB(E_EVENT_MODULE_INIT_END, module_init_end);
-   CB(ECORE_EXE_EVENT_DEL, exe_del);
-#undef CB
+   E_LIST_HANDLER_APPEND(_e_qa_event_handlers, E_EVENT_CLIENT_FOCUS_OUT, (Ecore_Event_Handler_Cb)_e_qa_event_border_focus_out_cb, NULL);
+   E_LIST_HANDLER_APPEND(_e_qa_event_handlers, E_EVENT_CLIENT_REMOVE, (Ecore_Event_Handler_Cb)_e_qa_event_border_remove_cb, NULL);
+   E_LIST_HANDLER_APPEND(_e_qa_event_handlers, E_EVENT_MODULE_INIT_END, (Ecore_Event_Handler_Cb)_e_qa_event_module_init_end_cb, NULL);
+   E_LIST_HANDLER_APPEND(_e_qa_event_handlers, ECORE_EXE_EVENT_DEL, (Ecore_Event_Handler_Cb)_e_qa_event_exe_del_cb, NULL);
 
    _e_qa_toggle->func.go = _e_qa_toggle_cb;
    e_action_predef_name_set(_e_qa_name, _lbl_toggle, _act_toggle, NULL, _("quick access name/identifier"), 1);
