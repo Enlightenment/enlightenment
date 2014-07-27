@@ -167,8 +167,8 @@ _e_qa_entry_border_props_restore(E_Quick_Access_Entry *entry __UNUSED__, E_Clien
    SET(lock_user_sticky);
    SET(lock_client_sticky);
    SET(user_skip_winlist);
-   SET(sticky);
 #undef SET
+   e_client_unstick(ec);
 
    ec->netwm.state.skip_taskbar = 0;
    ec->netwm.state.skip_pager = 0;
@@ -238,7 +238,7 @@ _e_qa_entry_border_props_apply(E_Quick_Access_Entry *entry)
           SET(netwm.state.skip_taskbar);
         if (qa_config->skip_pager)
           SET(netwm.state.skip_pager);
-        SET(sticky);
+        e_client_stick(entry->client);
      }
    //ec->e.state.centered = 1;
    SET(lock_user_iconify);
