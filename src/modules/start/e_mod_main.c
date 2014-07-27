@@ -296,15 +296,17 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 }
 
 static void
-_menu_cb_post(void *data, E_Menu *m __UNUSED__)
+_menu_cb_post(void *data, E_Menu *m)
 {
-   Instance *inst;
+   Instance *inst = data;
+   Eina_Bool fin;
 
-   inst = data;
    if (stopping || (!inst->main_menu)) return;
+   fin = m == inst->main_menu;
+   e_object_del(E_OBJECT(m));
+   if (!fin) return;
    e_gadcon_locked_set(inst->gcc->gadcon, 0);
    edje_object_signal_emit(inst->o_button, "e,state,unfocused", "e");
-   e_object_del(E_OBJECT(inst->main_menu));
    inst->main_menu = NULL;
 }
 

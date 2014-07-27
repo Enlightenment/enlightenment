@@ -226,14 +226,16 @@ _cb_shutdown_show(void *data, Evas_Object *obj __UNUSED__, const char *emission 
 }
 
 static void
-_cb_menu_post(void *data, E_Menu *m __UNUSED__)
+_cb_menu_post(void *data, E_Menu *m)
 {
-   Instance *inst;
+   Instance *inst = data;
+   Eina_Bool fin;
 
-   if (!(inst = data)) return;
-   if (!inst->menu) return;
-   e_gadcon_locked_set(inst->gcc->gadcon, EINA_FALSE);
-   e_object_del(E_OBJECT(inst->menu));
+   if (stopping || (!inst->menu)) return;
+   fin = m == inst->menu;
+   e_object_del(E_OBJECT(m));
+   if (!fin) return;
+   e_gadcon_locked_set(inst->gcc->gadcon, 0);
    inst->menu = NULL;
 }
 
