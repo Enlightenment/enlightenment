@@ -217,10 +217,18 @@ is_tilable(const E_Client *ec)
 static void
 change_window_border(E_Client *ec, const char *bordername)
 {
-   eina_stringshare_replace(&ec->bordername, bordername);
-   ec->border.changed = true;
-   ec->changes.border = true;
-   EC_CHANGED(ec);
+   Eina_Stringshare *pborder;
+
+   if (!e_util_strcmp(ec->border.name, bordername)) return;
+   pborder = ec->border.name;
+   ec->border.name = eina_stringshare_add(bordername);
+   if (e_comp_object_frame_theme_set(ec->frame, bordername))
+     eina_stringshare_del(pborder);
+   else
+     {
+        eina_stringshare_del(ec->border.name);
+        ec->border.name = pborder;
+     }
 
    DBG("%p -> border %s", ec, bordername);
 }
