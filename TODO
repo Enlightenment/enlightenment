@@ -4,17 +4,9 @@
 	- T722
 	- T1012
 
-* verify stacking (T1337)
-
-* crashes
-	- T1340
-
 * SAFELY, without rushing, merge+test wl branch
 	- possibly also D817
-
-* fix nocomp issues when changing vdesk
 
 * major tiling issues
 	- T952 (for internal dialogs at minimum)
 	- T974
-	- T1304
