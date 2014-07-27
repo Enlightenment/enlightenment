@@ -72,7 +72,7 @@ e_modapi_init(E_Module *m)
    qa_config->config_version = MOD_CONFIG_FILE_VERSION;
 
    _e_quick_access_log_dom = eina_log_domain_register("quickaccess", EINA_COLOR_ORANGE);
-   eina_log_domain_level_set("quickaccess", EINA_LOG_LEVEL_DBG);
+   eina_log_domain_level_set("quickaccess", EINA_LOG_LEVEL_ERR);
 
    if (!e_qa_init())
      {
