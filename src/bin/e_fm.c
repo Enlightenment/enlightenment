@@ -3631,6 +3631,7 @@ _e_fm2_file_paste(Evas_Object *obj)
           e_fm2_client_file_symlink(sd->obj, args);
         else
           e_fm2_client_file_move(sd->obj, args);
+        _e_fm_file_buffer_clear();
      }
 
    free(args);
