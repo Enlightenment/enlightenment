@@ -522,15 +522,22 @@ _e_qa_toggle_cb(E_Object *obj __UNUSED__, const char *params)
      }
 }
 
+static Eina_Bool
+_e_qa_client_is_valid(const E_Client *ec)
+{
+   if (e_client_util_ignored_get(ec)) return EINA_FALSE;
+   if (ec->internal) return EINA_FALSE;
+   if ((!ec->icccm.class) || (!ec->icccm.class[0])) return EINA_FALSE;
+   if ((!ec->icccm.name) || (!ec->icccm.name[0])) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 static void
 _e_qa_border_eval_pre_post_fetch_cb(void *data __UNUSED__, E_Client *ec)
 {
    E_Quick_Access_Entry *entry;
 
-   if (e_client_util_ignored_get(ec)) return;
-   if ((!ec->new_client) || (ec->internal)) return;
-   if ((!ec->icccm.class) || (!ec->icccm.class[0])) return;
-   if ((!ec->icccm.name) || (!ec->icccm.name[0])) return;
+   if ((!ec->new_client) || (!_e_qa_client_is_valid(ec))) return;
 
    entry = _e_qa_entry_find_match(ec, 0);
    if (!entry) return;
