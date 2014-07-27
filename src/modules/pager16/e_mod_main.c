@@ -313,7 +313,6 @@ static void
 _pager_recalc(void *data)
 {
    Pager *p = data;
-   Eina_List *l;
    Pager_Desk *pd;
    Evas_Coord mw = 0, mh = 0;
    int w, h, zw, zh, w2, h2;
