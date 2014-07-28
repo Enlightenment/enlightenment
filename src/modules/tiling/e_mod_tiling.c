@@ -229,6 +229,7 @@ change_window_border(E_Client *ec, const char *bordername)
         eina_stringshare_del(ec->border.name);
         ec->border.name = pborder;
      }
+   ec->border.changed = 0;
 
    DBG("%p -> border %s", ec, bordername);
 }
