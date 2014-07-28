@@ -402,16 +402,15 @@ tiling_entry_no_desk_func(E_Client *ec)
 static Client_Extra *
 tiling_entry_func(E_Client *ec)
 {
-   Client_Extra *extra = NULL;
-
-   if (is_tilable(ec))
-     extra = tiling_entry_no_desk_func(ec);
-
-   if (!extra)
-      return NULL;
+   Client_Extra *extra;
 
    if (!is_tilable(ec))
      return NULL;
+
+   extra = tiling_entry_no_desk_func(ec);
+
+   if (!extra)
+      return NULL;
 
    if (!desk_should_tile_check(ec->desk))
      return NULL;
