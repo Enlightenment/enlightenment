@@ -2112,7 +2112,6 @@ static void
 _e_client_frame_update(E_Client *ec)
 {
    const char *bordername;
-   Eina_Stringshare *pborder;
 
    if (ec->fullscreen || ec->borderless)
      bordername = "borderless";
@@ -2153,18 +2152,7 @@ _e_client_frame_update(E_Client *ec)
      bordername = e_config->theme_default_border_style;
    if (!bordername) bordername = "default";
 
-   if (e_util_strcmp(ec->border.name, bordername))
-     {
-        pborder = ec->border.name;
-        ec->border.name = eina_stringshare_add(bordername);
-        if (e_comp_object_frame_theme_set(ec->frame, bordername))
-          eina_stringshare_del(pborder);
-        else
-          {
-             eina_stringshare_del(ec->border.name);
-             ec->border.name = pborder;
-          }
-     }
+   e_client_border_set(ec, bordername);
 }
 
 ////////////////////////////////////////////////
@@ -3983,6 +3971,31 @@ e_client_pinned_set(E_Client *ec, Eina_Bool set)
 
    ec->border.changed = 1;
    EC_CHANGED(ec);
+}
+
+///////////////////////////////////////
+
+EAPI Eina_Bool
+e_client_border_set(E_Client *ec, const char *name)
+{
+   Eina_Stringshare *pborder;
+
+   E_OBJECT_CHECK_RETURN(ec, EINA_FALSE);
+   E_OBJECT_TYPE_CHECK_RETURN(ec, E_CLIENT_TYPE, EINA_FALSE);
+   if (ec->border.changed)
+     CRI("CALLING WHEN border.changed SET!");
+
+   if (!e_util_strcmp(ec->border.name, name)) return EINA_TRUE;
+   pborder = ec->border.name;
+   ec->border.name = eina_stringshare_add(name);
+   if (e_comp_object_frame_theme_set(ec->frame, name))
+     {
+        eina_stringshare_del(pborder);
+        return EINA_TRUE;
+     }
+   eina_stringshare_del(ec->border.name);
+   ec->border.name = pborder;
+   return EINA_FALSE;
 }
 
 ///////////////////////////////////////

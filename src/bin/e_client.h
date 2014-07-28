@@ -786,6 +786,7 @@ EAPI void e_client_stick(E_Client *ec);
 EAPI void e_client_unstick(E_Client *ec);
 EAPI void e_client_pinned_set(E_Client *ec, Eina_Bool set);
 EAPI void e_client_comp_hidden_set(E_Client *ec, Eina_Bool hidden);
+EAPI Eina_Bool e_client_border_set(E_Client *ec, const char *name);
 EAPI void e_client_act_move_keyboard(E_Client *ec);
 EAPI void e_client_act_resize_keyboard(E_Client *ec);
 EAPI void e_client_act_move_begin(E_Client *ec, E_Binding_Event_Mouse_Button *ev);
