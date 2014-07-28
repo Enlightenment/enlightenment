@@ -1223,7 +1223,7 @@ e_zone_fade_handle(E_Zone *zone, int out, double tim)
 }
 
 static void
-_e_zone_useful_geometry_calc(E_Zone *zone)
+_e_zone_useful_geometry_calc(const E_Zone *zone, int dx, int dy, int *x, int *y, int *w, int *h)
 {
    const E_Shelf *shelf;
    Eina_List *shelves;
@@ -1259,7 +1259,7 @@ _e_zone_useful_geometry_calc(E_Zone *zone)
                   EINA_LIST_FOREACH(shelf->cfg->desk_list, ll, sd)
                     {
                        if (!sd) continue;
-                       if ((sd->x == zone->desk_x_current) && (sd->y == zone->desk_y_current))
+                       if ((sd->x == dx) && (sd->y == dy))
                          {
                             skip_shelf = 0;
                             break;
@@ -1313,11 +1313,10 @@ _e_zone_useful_geometry_calc(E_Zone *zone)
           }
      }
 
-   zone->useful_geometry.x = zone->x + x0;
-   zone->useful_geometry.y = zone->y + yy0;
-   zone->useful_geometry.w = x1 - x0;
-   zone->useful_geometry.h = yy1 - yy0;
-   zone->useful_geometry.dirty = 0;
+   if (x) *x = zone->x + x0;
+   if (y) *y = zone->y + yy0;
+   if (w) *w = x1 - x0;
+   if (h) *h = yy1 - yy0;
 }
 
 /**
@@ -1330,31 +1329,55 @@ e_zone_useful_geometry_get(E_Zone *zone,
                            int *w,
                            int *h)
 {
-   Eina_List *l;
    E_Shelf *shelf;
+   int zx, zy, zw, zh;
+   Eina_Bool calc = EINA_TRUE;
 
    E_OBJECT_CHECK(zone);
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
    if (!zone->useful_geometry.dirty)
      {
-        EINA_LIST_FOREACH(e_shelf_list(), l, shelf)
+        Eina_List *l = e_shelf_list_all();
+        calc = EINA_FALSE;
+        EINA_LIST_FREE(l, shelf)
           {
              if (!shelf->cfg) continue;
              if (shelf->cfg->desk_show_mode)
                {
-                  _e_zone_useful_geometry_calc(zone);
+                  _e_zone_useful_geometry_calc(zone, zone->desk_x_current, zone->desk_y_current, &zx, &zy, &zw, &zh);
+                  calc = EINA_TRUE;
                   break;
                }
+             eina_list_free(l);
           }
      }
    else
-     _e_zone_useful_geometry_calc(zone);
+     _e_zone_useful_geometry_calc(zone, zone->desk_x_current, zone->desk_y_current, &zx, &zy, &zw, &zh);
+   zone->useful_geometry.dirty = 0;
+   if (calc)
+     {
+        zone->useful_geometry.x = zx;
+        zone->useful_geometry.y = zy;
+        zone->useful_geometry.w = zw;
+        zone->useful_geometry.h = zh;
+     }
 
    if (x) *x = zone->useful_geometry.x;
    if (y) *y = zone->useful_geometry.y;
    if (w) *w = zone->useful_geometry.w;
    if (h) *h = zone->useful_geometry.h;
+}
+
+EAPI void
+e_zone_desk_useful_geometry_get(const E_Zone *zone, const E_Desk *desk, int *x, int *y, int *w, int *h)
+{
+   E_OBJECT_CHECK(zone);
+   E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
+   E_OBJECT_CHECK(desk);
+   E_OBJECT_TYPE_CHECK(desk, E_DESK_TYPE);
+
+   _e_zone_useful_geometry_calc(zone, desk->x, desk->y, x, y, w, h);
 }
 
 /**

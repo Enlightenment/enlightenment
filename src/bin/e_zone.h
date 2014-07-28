@@ -158,6 +158,7 @@ EAPI void      e_zone_edge_win_layer_set(E_Zone *zone, E_Layer layer);
 
 EAPI void      e_zone_useful_geometry_dirty(E_Zone *zone);
 EAPI void      e_zone_useful_geometry_get(E_Zone *zone, int *x, int *y, int *w, int *h);
+EAPI void      e_zone_desk_useful_geometry_get(const E_Zone *zone, const E_Desk *desk, int *x, int *y, int *w, int *h);
 
 EAPI void e_zone_fade_handle(E_Zone *zone, int out, double tim);
 
