@@ -1077,7 +1077,7 @@ src/modules/wl_desktop_shell/module.desktop
 src/modules/wl_screenshot/module.desktop
 data/xsession/enlightenment.desktop
 data/etc/sysactions.conf
-data/units/e18.service
+data/units/enlightenment.service
 doc/Doxyfile
 doc/e.dox
 $po_makefile_in

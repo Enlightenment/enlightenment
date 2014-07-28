@@ -1,5 +1,5 @@
 [Unit]
-Description=Enlightenment 18 service
+Description=Enlightenment service
 Before=end.target
 After=xorg.target
 Requires=xorg.target
