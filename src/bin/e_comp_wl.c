@@ -1031,6 +1031,81 @@ _e_comp_wl_subcomp_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
 }
 
 static void
+_e_comp_wl_subsurface_restack(E_Client *ec)
+{
+   E_Client *subc, *below = NULL;
+   Eina_List *l;
+
+   if (!ec->comp_data->sub.list) return;
+
+   EINA_LIST_REVERSE_FOREACH(ec->comp_data->sub.list, l, subc)
+     {
+        if (subc->iconic) continue;
+        if (below)
+          evas_object_stack_below(subc->frame, below->frame);
+        else
+          evas_object_stack_above(subc->frame, ec->frame);
+        below = subc;
+
+        if (subc->comp_data->sub.list)
+          _e_comp_wl_subsurface_restack(subc);
+     }
+}
+
+static Eina_Bool 
+_e_comp_wl_client_idler(void *data EINA_UNUSED)
+{
+   E_Client *ec;
+   E_Comp *comp;
+   const Eina_List *l;
+
+   EINA_LIST_FREE(_idle_clients, ec)
+     {
+        if ((e_object_is_del(E_OBJECT(ec))) || (!ec->comp_data)) continue;
+
+        ec->post_move = 0;
+        ec->post_resize = 0;
+
+        if (ec->comp_data->sub.restack_target)
+          {
+             if (ec->layer_block) continue;
+
+             // for blocking evas object restack callback.
+             restacking = EINA_TRUE;
+             if (ec->comp_data->sub.restack_target != ec)
+               evas_object_stack_below(ec->frame, ec->comp_data->sub.restack_target->frame);
+             _e_comp_wl_subsurface_restack(ec);
+             ec->comp_data->sub.restack_target = NULL;
+             restacking = EINA_FALSE;
+          }
+     }
+
+   EINA_LIST_FOREACH(e_comp_list(), l, comp)
+     {
+        if ((comp->wl_comp_data->restack) && (!comp->new_clients))
+          {
+             e_hints_client_stacking_set();
+             comp->wl_comp_data->restack = EINA_FALSE;
+          }
+     }
+
+   _client_idler = NULL;
+   return EINA_FALSE;
+}
+
+static void 
+_e_comp_wl_client_idler_add(E_Client *ec)
+{
+   if (!_client_idler) 
+     _client_idler = ecore_idle_enterer_add(_e_comp_wl_client_idler, NULL);
+
+   if (!ec) CRI("ACK!");
+
+   if (!eina_list_data_find(_idle_clients, ec))
+     _idle_clients = eina_list_append(_idle_clients, ec);
+}
+
+static void
 _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Client *ec;
@@ -1046,6 +1121,9 @@ _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
         y = ec->y + subc->comp_data->sub.cdata->position.y;
         evas_object_move(subc->frame, x, y);
      }
+
+   ec->post_move = EINA_FALSE;
+   _e_comp_wl_client_idler_add(ec);
 }
 
 static Eina_Bool
@@ -1248,81 +1326,6 @@ _e_comp_wl_cb_first_draw(void *data)
    ec->comp_data->first_draw_tmr = NULL;
    e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
    return EINA_FALSE;
-}
-
-static void
-_e_comp_wl_subsurface_restack(E_Client *ec)
-{
-   E_Client *subc, *below = NULL;
-   Eina_List *l;
-
-   if (!ec->comp_data->sub.list) return;
-
-   EINA_LIST_REVERSE_FOREACH(ec->comp_data->sub.list, l, subc)
-     {
-        if (subc->iconic) continue;
-        if (below)
-          evas_object_stack_below(subc->frame, below->frame);
-        else
-          evas_object_stack_above(subc->frame, ec->frame);
-        below = subc;
-
-        if (subc->comp_data->sub.list)
-          _e_comp_wl_subsurface_restack(subc);
-     }
-}
-
-static Eina_Bool 
-_e_comp_wl_client_idler(void *data EINA_UNUSED)
-{
-   E_Client *ec;
-   E_Comp *comp;
-   const Eina_List *l;
-
-   EINA_LIST_FREE(_idle_clients, ec)
-     {
-        if ((e_object_is_del(E_OBJECT(ec))) || (!ec->comp_data)) continue;
-
-        ec->post_move = 0;
-        ec->post_resize = 0;
-
-        if (ec->comp_data->sub.restack_target)
-          {
-             if (ec->layer_block) continue;
-
-             // for blocking evas object restack callback.
-             restacking = EINA_TRUE;
-             if (ec->comp_data->sub.restack_target != ec)
-               evas_object_stack_below(ec->frame, ec->comp_data->sub.restack_target->frame);
-             _e_comp_wl_subsurface_restack(ec);
-             ec->comp_data->sub.restack_target = NULL;
-             restacking = EINA_FALSE;
-          }
-     }
-
-   EINA_LIST_FOREACH(e_comp_list(), l, comp)
-     {
-        if ((comp->wl_comp_data->restack) && (!comp->new_clients))
-          {
-             e_hints_client_stacking_set();
-             comp->wl_comp_data->restack = EINA_FALSE;
-          }
-     }
-
-   _client_idler = NULL;
-   return EINA_FALSE;
-}
-
-static void 
-_e_comp_wl_client_idler_add(E_Client *ec)
-{
-   if (!_client_idler) 
-     _client_idler = ecore_idle_enterer_add(_e_comp_wl_client_idler, NULL);
-
-   if (!ec) CRI("ACK!");
-
-   if (!eina_list_data_find(_idle_clients, ec))
-     _idle_clients = eina_list_append(_idle_clients, ec);
 }
 
 static void
@@ -2262,8 +2265,8 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
      }
 
    ec->post_resize = EINA_TRUE;
-   /* e_pixmap_dirty(ec->pixmap); */
-   /* e_comp_object_render_update_del(ec->frame); */
+   e_pixmap_dirty(ec->pixmap);
+   e_comp_object_render_update_del(ec->frame);
    _e_comp_wl_client_idler_add(ec);
 }
 
@@ -2532,7 +2535,7 @@ _e_comp_wl_cb_client_prop(void *data EINA_UNUSED, int type EINA_UNUSED, void *ev
    E_Event_Client_Property *ev;
 
    ev = event;
-   if (!(ev->property & E_CLIENT_PROPERTY_ICON)) return ECORE_CALLBACK_RENEW;
+   /* if (!(ev->property & E_CLIENT_PROPERTY_ICON)) return ECORE_CALLBACK_RENEW; */
 
    ec = ev->ec;
    E_COMP_WL_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
@@ -2645,7 +2648,9 @@ _e_comp_wl_cb_hook_client_new(void *data EINA_UNUSED, E_Client *ec)
    ec->changes.shape_input = EINA_TRUE;
 
    if (!_e_comp_wl_client_new_helper(ec)) return;
-   ec->comp_data->first_damage = ((ec->internal) || (ec->override));
+
+   ec->comp_data->first_damage = ec->internal;
+   /* ec->comp_data->first_damage = ((ec->internal) || (ec->override)); */
 
    eina_hash_add(clients_win_hash, &win, ec);
    e_hints_client_list_set();
@@ -3034,6 +3039,8 @@ _e_comp_wl_cb_hook_client_pre_frame(void *data EINA_UNUSED, E_Client *ec)
 
    EC_CHANGED(ec);
 
+   eina_hash_add(clients_win_hash, &parent, ec);
+
    if (ec->visible)
      {
         if (ec->comp_data->set_win_type)
@@ -3114,9 +3121,7 @@ _e_comp_wl_cb_hook_client_post_new(void *data EINA_UNUSED, E_Client *ec)
         if ((win = ecore_evas_data_get(ec->internal_ecore_evas, "E_Win")))
           {
              if (win->state.centered)
-               {
-                  WRN("FIXME: Center Window");
-               }
+               e_comp_object_util_center(ec->frame);
           }
 
         ec->changes.internal_state = EINA_FALSE;
