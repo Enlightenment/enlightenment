@@ -7,9 +7,6 @@ _e_comp_wl_data_find_for_client(Eina_List *list, struct wl_client *client)
    Eina_List *l;
    struct wl_resource *res;
 
-   if ((!list) || (!client))
-     return NULL;
-
    EINA_LIST_FOREACH(list, l, res)
      {
         if (wl_resource_get_client(res) == client)
