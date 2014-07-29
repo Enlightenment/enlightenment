@@ -245,8 +245,6 @@ _e_shell_surface_cb_toplevel_set(struct wl_client *client EINA_UNUSED, struct wl
 {
    E_Client *ec;
 
-   DBG("WL_SHELL: Toplevel Set");
-
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -276,9 +274,6 @@ static void
 _e_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED, uint32_t flags EINA_UNUSED)
 {
    E_Client *ec;
-   Ecore_Window pwin = 0;
-
-   DBG("WL_SHELL: Transient Set");
 
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -287,29 +282,8 @@ _e_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct w
         return;
      }
 
-   if (parent_resource)
-     {
-        E_Pixmap *pp = NULL;
-
-        if (!(pp = wl_resource_get_user_data(parent_resource)))
-          {
-             wl_resource_post_error(parent_resource, 
-                                    WL_DISPLAY_ERROR_INVALID_OBJECT,
-                                    "No Pixmap For Parent Resource");
-             return;
-          }
-
-        pwin = e_pixmap_window_get(pp);
-     }
-
-   ec->icccm.fetch.transient_for = EINA_TRUE;
-   ec->icccm.transient_for = pwin;
-
-   ec->argb = EINA_TRUE;
-   ec->no_shape_cut = EINA_TRUE;
-   ec->borderless = !ec->internal;
-   ec->lock_border = EINA_TRUE;
-   ec->border.changed = ec->changes.border = !ec->borderless;
+   ec->netwm.type = E_WINDOW_TYPE_DIALOG;
+   ec->comp_data->set_win_type = EINA_TRUE;
 
    /* set this client as a transient for parent */
    _e_shell_surface_parent_set(ec, parent_resource);
@@ -321,8 +295,6 @@ static void
 _e_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t method EINA_UNUSED, uint32_t framerate EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED)
 {
    E_Client *ec;
-
-   DBG("SHELL: Surface Fullscreen Set");
 
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -339,8 +311,6 @@ static void
 _e_shell_surface_cb_popup_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, struct wl_resource *parent_resource, int32_t x, int32_t y, uint32_t flags EINA_UNUSED)
 {
    E_Client *ec;
-
-   DBG("SHELL: Surface Popup Set");
 
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -584,8 +554,6 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
    E_Client *ec;
    E_Comp_Client_Data *cdata;
 
-   DBG("WL_SHELL: Surface Get %d", wl_resource_get_id(surface_resource));
-
    /* get the pixmap from this surface so we can find the client */
    if (!(ep = wl_resource_get_user_data(surface_resource)))
      {
@@ -674,7 +642,6 @@ static void
 _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource)
 {
    E_Client *ec;
-   Ecore_Window pwin = 0;
 
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -682,24 +649,6 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
                                "No Client For Shell Surface");
         return;
      }
-
-   if (parent_resource)
-     {
-        E_Pixmap *pp = NULL;
-
-        if (!(pp = wl_resource_get_user_data(parent_resource)))
-          {
-             wl_resource_post_error(parent_resource, 
-                                    WL_DISPLAY_ERROR_INVALID_OBJECT,
-                                    "No Pixmap For Parent Resource");
-             return;
-          }
-
-        pwin = e_pixmap_window_get(pp);
-     }
-
-   ec->icccm.fetch.transient_for = EINA_TRUE;
-   ec->icccm.transient_for = pwin;
 
    ec->netwm.type = E_WINDOW_TYPE_DIALOG;
    ec->comp_data->set_win_type = EINA_TRUE;
@@ -711,12 +660,12 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
 }
 
 static void 
-_e_xdg_shell_surface_cb_margin_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t l, int32_t r, int32_t t, int32_t b)
+_e_xdg_shell_surface_cb_margin_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t l EINA_UNUSED, int32_t r EINA_UNUSED, int32_t t EINA_UNUSED, int32_t b EINA_UNUSED)
 {
    /* E_Client *ec; */
    /* int32_t diff; */
 
-   DBG("XDG_SHELL: Margin Set: %d %d %d %d", l, t, r, b);
+   /* DBG("XDG_SHELL: Margin Set: %d %d %d %d", l, t, r, b); */
 
    /* get the client for this resource */
    /* if (!(ec = wl_resource_get_user_data(resource))) */
@@ -1041,8 +990,8 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
 {
    E_Client *ec;
 
-   DBG("XDG_SHELL: Surface Configure: %d \t%d %d %d %d", 
-       wl_resource_get_id(resource), x, y, w, h);
+   /* DBG("XDG_SHELL: Surface Configure: %d \t%d %d %d %d",  */
+   /*     wl_resource_get_id(resource), x, y, w, h); */
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -1149,7 +1098,7 @@ _e_xdg_shell_surface_map(struct wl_resource *resource)
 {
    E_Client *ec;
 
-   DBG("XDG_SHELL: Map Surface: %d", wl_resource_get_id(resource));
+   /* DBG("XDG_SHELL: Map Surface: %d", wl_resource_get_id(resource)); */
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -1206,7 +1155,7 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    E_Client *ec;
    E_Comp_Client_Data *cdata;
 
-   DBG("XDG_SHELL: Surface Get %d", wl_resource_get_id(surface_resource));
+   /* DBG("XDG_SHELL: Surface Get %d", wl_resource_get_id(surface_resource)); */
 
    /* get the pixmap from this surface so we can find the client */
    if (!(ep = wl_resource_get_user_data(surface_resource)))
