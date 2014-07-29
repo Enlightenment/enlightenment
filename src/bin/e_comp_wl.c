@@ -133,8 +133,6 @@ _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
 static E_Comp_Wl_Subsurf *
 _e_comp_wl_client_subsurf_data_get(E_Client *ec)
 {
-   if (!ec->comp_data) return NULL;
-
    return ec->comp_data->sub.cdata;
 }
 
@@ -143,7 +141,6 @@ _e_comp_wl_subsurface_parent_get(E_Client *ec)
 {
    E_Comp_Wl_Subsurf *sub_cdata;
 
-   if (!ec->comp_data) return NULL;
    if (!(sub_cdata = _e_comp_wl_client_subsurf_data_get(ec))) return NULL;
 
    return sub_cdata->parent;
@@ -212,7 +209,6 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
      ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(cp));
 
    if ((!ec) || (e_object_is_del(E_OBJECT(ec)))) return;
-   if (!ec->comp_data) return;
 
    tmp = eina_tiler_new(ec->w ?: w, ec->h ?: h);
    eina_tiler_tile_size_set(tmp, 1, 1);
@@ -231,7 +227,6 @@ _e_comp_wl_surface_cb_frame_destroy(struct wl_resource *resource)
    if (!(ec = wl_resource_get_user_data(resource))) return;
 
    if (e_object_is_del(E_OBJECT(ec))) return;
-   if (!ec->comp_data) return;
 
    /* remove this frame callback from the list */
    ec->comp_data->frames = 
@@ -252,7 +247,6 @@ _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resour
      ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(cp));
 
    if ((!ec) || (e_object_is_del(E_OBJECT(ec)))) return;
-   if (!ec->comp_data) return;
 
    /* create frame callback */
    res = wl_resource_create(client, &wl_callback_interface, 1, callback);
@@ -284,7 +278,6 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
      ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(cp));
 
    if ((!ec) || (e_object_is_del(E_OBJECT(ec)))) return;
-   if (!ec->comp_data) return;
 
    if (region_resource)
      {
@@ -316,7 +309,6 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
      ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(cp));
 
    if ((!ec) || (e_object_is_del(E_OBJECT(ec)))) return;
-   if (!ec->comp_data) return;
 
    if (region_resource)
      {
@@ -382,7 +374,6 @@ _e_comp_wl_subsurface_root_get(E_Client *ec)
 {
    E_Client *parent = NULL;
 
-   if (!ec->comp_data) return ec;
    if (!_e_comp_wl_client_subsurf_data_get(ec)) return ec;
    if (!(parent = _e_comp_wl_subsurface_parent_get(ec))) return ec;
 
@@ -392,7 +383,7 @@ _e_comp_wl_subsurface_root_get(E_Client *ec)
 static Eina_Bool
 _e_comp_wl_subsurface_is_synchronized(E_Comp_Wl_Subsurf *sub_cdata)
 {
-   while(sub_cdata)
+   while (sub_cdata)
      {
         if (sub_cdata->synchronized) return EINA_TRUE;
 
@@ -578,7 +569,6 @@ _e_comp_wl_surface_commit(E_Client *ec)
    E_Pixmap *cp;
    Eina_Tiler *src, *tmp;
 
-   if (!ec->comp_data) return;
    if (!(cp = ec->pixmap)) return;
 
    if (ec->comp_data->pending.new_attach)
@@ -808,8 +798,6 @@ _e_comp_wl_subsurface_commit(E_Client *ec)
    Eina_List *l;
    int w, h;
 
-   if (!ec->comp_data) return;
-
    sub_cdata = _e_comp_wl_client_subsurf_data_get(ec);
    if (!sub_cdata) return;
 
@@ -858,8 +846,6 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 
    if ((!ec) || (e_object_is_del(E_OBJECT(ec))))
      return;
-
-   if (!ec->comp_data) return;
 
    if (_e_comp_wl_client_subsurf_data_get(ec))
      {
@@ -1894,7 +1880,6 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    ev = event;
    if (!(ec = data)) return;
-   if (!ec->comp_data) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
@@ -1919,7 +1904,6 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    uint32_t serial;
 
    if (!(ec = data)) return;
-   if (!ec->comp_data) return;
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
@@ -2291,8 +2275,7 @@ _e_comp_wl_evas_cb_frame_recalc(void *data, Evas_Object *obj, void *event)
 
    fr = event;
    if (!(ec = data)) return;
-   if (!ec->comp_data) return;
-   WRN("COMP_WL Frame Recalc: %d %d %d %d", fr->l, fr->r, fr->t, fr->b);
+
    if (evas_object_visible_get(obj))
      ec->comp_data->frame_update = EINA_FALSE;
    else
@@ -2381,7 +2364,6 @@ _e_comp_wl_evas_cb_ping(void *data, Evas_Object *obj EINA_UNUSED, void *event EI
    E_Client *ec;
 
    if (!(ec = data)) return;
-   if (!ec->comp_data) return;
 
    if (ec->comp_data->shell.ping)
      {
@@ -2397,7 +2379,6 @@ _e_comp_wl_evas_cb_color_set(void *data, Evas_Object *obj, void *event EINA_UNUS
    int a = 0;
 
    if (!(ec = data)) return;
-   if (!ec->comp_data) return;
    evas_object_color_get(obj, NULL, NULL, NULL, &a);
    if (ec->netwm.opacity == a) return;
    ec->netwm.opacity = a;
@@ -2408,7 +2389,6 @@ _e_comp_wl_evas_cb_color_set(void *data, Evas_Object *obj, void *event EINA_UNUS
 static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
-   if (!ec->comp_data) return;
    if (ec->comp_data->evas_init) return;
    ec->comp_data->evas_init = EINA_TRUE;
 
@@ -3185,8 +3165,6 @@ _e_comp_wl_cb_hook_client_eval_end(void *data EINA_UNUSED, E_Client *ec)
 static void 
 _e_comp_wl_cb_hook_client_focus_set(void *data EINA_UNUSED, E_Client *ec)
 {
-   if ((!ec) || (!ec->comp_data)) return;
-
 //   E_COMP_WL_PIXMAP_CHECK;
 
    if (ec->comp_data->shell.activate)
@@ -3225,8 +3203,6 @@ _e_comp_wl_cb_hook_client_focus_set(void *data EINA_UNUSED, E_Client *ec)
 static void 
 _e_comp_wl_cb_hook_client_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 {
-   if ((!ec) || (!ec->comp_data)) return;
-
    E_COMP_WL_PIXMAP_CHECK;
 
    if (ec->comp_data->shell.deactivate)
@@ -3349,6 +3325,7 @@ e_comp_wl_surface_destroy(struct wl_resource *resource)
 
    if (!ec)
      {
+        /* client was already deleted */
         e_pixmap_free(cp);
         return;
      }
