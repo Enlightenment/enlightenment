@@ -4,6 +4,8 @@
 static void           _e_msgbus_request_name_cb(void *data, const Eldbus_Message *msg,
                                                 Eldbus_Pending *pending);
 
+static Eldbus_Message *_e_msgbus_core_version_cb(const Eldbus_Service_Interface *iface,
+                                                const Eldbus_Message *msg);
 static Eldbus_Message *_e_msgbus_core_restart_cb(const Eldbus_Service_Interface *iface,
                                                 const Eldbus_Message *msg);
 static Eldbus_Message *_e_msgbus_core_shutdown_cb(const Eldbus_Service_Interface *iface,
@@ -48,6 +50,7 @@ E_MSGBUS_WIN_ACTION_CB_PROTO(unmaximize);
 static E_Msgbus_Data *_e_msgbus_data = NULL;
 
 static const Eldbus_Method core_methods[] = {
+   { "Version", NULL, ELDBUS_ARGS({"s", "version"}), _e_msgbus_core_version_cb },
    { "Restart", NULL, NULL, _e_msgbus_core_restart_cb },
    { "Shutdown", NULL, NULL, _e_msgbus_core_shutdown_cb },
    { }
@@ -182,6 +185,16 @@ _e_msgbus_request_name_cb(void *data __UNUSED__, const Eldbus_Message *msg,
 }
 
 /* Core Handlers */
+static Eldbus_Message *
+_e_msgbus_core_version_cb(const Eldbus_Service_Interface *iface __UNUSED__,
+                          const Eldbus_Message *msg)
+{
+   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(reply, NULL);
+   eldbus_message_arguments_append(reply, "s", VERSION);
+   return reply;
+}
+
 static Eldbus_Message *
 _e_msgbus_core_restart_cb(const Eldbus_Service_Interface *iface __UNUSED__,
                           const Eldbus_Message *msg)
