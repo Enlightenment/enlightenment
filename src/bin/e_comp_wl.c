@@ -2468,6 +2468,7 @@ _e_comp_wl_client_new_helper(E_Client *ec)
         EC_CHANGED(ec);
         ec->take_focus = !starting;
      }
+
    ec->new_client ^= ec->override;
 
    if (e_pixmap_size_changed(ec->pixmap, ec->client.w, ec->client.h))
@@ -2664,21 +2665,19 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
 
    E_COMP_WL_PIXMAP_CHECK;
 
-   /* DBG("COMP_WL HOOK CLIENT EVAL FETCH !!"); */
-
-   if ((ec->changes.prop) || (ec->netwm.fetch.state))
+   if ((ec->changes.prop) && (ec->netwm.fetch.state))
      {
         e_hints_window_state_get(ec);
         ec->netwm.fetch.state = EINA_FALSE;
      }
 
-   if ((ec->changes.prop) || (ec->e.fetch.state))
+   if ((ec->changes.prop) && (ec->e.fetch.state))
      {
         e_hints_window_e_state_get(ec);
         ec->e.fetch.state = EINA_FALSE;
      }
 
-   if ((ec->changes.prop) || (ec->netwm.fetch.type))
+   if ((ec->changes.prop) && (ec->netwm.fetch.type))
      {
         e_hints_window_type_get(ec);
         if (((!ec->lock_border) || (!ec->border.name)) && 
@@ -2866,7 +2865,7 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
         /* eina_rectangle_free(shape); */
      /* } */
 
-   if ((ec->changes.prop) || (ec->netwm.update.state))
+   if ((ec->changes.prop) && (ec->netwm.update.state))
      {
         e_hints_window_state_set(ec);
         if (((!ec->lock_border) || (!ec->border.name)) && 
