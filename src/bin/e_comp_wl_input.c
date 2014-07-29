@@ -9,8 +9,6 @@ _e_comp_wl_input_update_seat_caps(E_Comp_Data *cdata)
    struct wl_resource *res;
    enum wl_seat_capability caps = 0;
 
-   if (!cdata) return;
-
    if (cdata->ptr.enabled)
      caps |= WL_SEAT_CAPABILITY_POINTER;
    if (cdata->kbd.enabled)
@@ -158,9 +156,8 @@ _e_comp_wl_input_cb_bind_seat(struct wl_client *client, void *data, uint32_t ver
    E_Comp_Data *cdata;
    struct wl_resource *res;
 
-   if (!(cdata = data)) return;
-
    /* try to create the seat resource */
+   cdata = data;
    res = wl_resource_create(client, &wl_seat_interface, MIN(version, 3), id);
    if (!res) 
      {
@@ -224,8 +221,6 @@ _e_comp_wl_input_keymap_update(E_Comp_Data *cdata, struct xkb_keymap *keymap)
    struct wl_resource *res;
    Eina_List *l;
    uint32_t serial;
-
-   if (!cdata) return;
 
    /* unreference any existing keymap */
    if (cdata->xkb.keymap) xkb_map_unref(cdata->xkb.keymap);
@@ -305,7 +300,11 @@ EINTERN Eina_Bool
 e_comp_wl_input_init(E_Comp_Data *cdata)
 {
    /* check for valid compositor data */
-   if (!cdata) return EINA_FALSE;
+   if (!cdata) 
+     {
+        ERR("No compositor data");
+        return EINA_FALSE;
+     }
 
    /* set default seat name */
    if (!cdata->seat.name) cdata->seat.name = "default";
@@ -332,7 +331,11 @@ e_comp_wl_input_shutdown(E_Comp_Data *cdata)
    struct wl_resource *res;
 
    /* check for valid compositor data */
-   if (!cdata) return;
+   if (!cdata) 
+     {
+        ERR("No compositor data");
+        return;
+     }
 
    /* destroy pointer resources */
    EINA_LIST_FREE(cdata->ptr.resources, res)
@@ -421,7 +424,11 @@ EAPI void
 e_comp_wl_input_pointer_enabled_set(E_Comp_Data *cdata, Eina_Bool enabled)
 {
    /* check for valid compositor data */
-   if (!cdata) return;
+   if (!cdata) 
+     {
+        ERR("No compositor data");
+        return;
+     }
 
    cdata->ptr.enabled = enabled;
    _e_comp_wl_input_update_seat_caps(cdata);
@@ -431,7 +438,11 @@ EAPI void
 e_comp_wl_input_keyboard_enabled_set(E_Comp_Data *cdata, Eina_Bool enabled)
 {
    /* check for valid compositor data */
-   if (!cdata) return;
+   if (!cdata) 
+     {
+        ERR("No compositor data");
+        return;
+     }
 
    cdata->kbd.enabled = enabled;
    _e_comp_wl_input_update_seat_caps(cdata);
@@ -443,7 +454,12 @@ e_comp_wl_input_keymap_set(E_Comp_Data *cdata, const char *rules, const char *mo
    struct xkb_keymap *keymap;
    struct xkb_rule_names names;
 
-   if (!cdata) return;
+   /* check for valid compositor data */
+   if (!cdata) 
+     {
+        ERR("No compositor data");
+        return;
+     }
 
    /* DBG("COMP_WL: Keymap Set: %s %s %s", rules, model, layout); */
 
