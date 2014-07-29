@@ -43,6 +43,6 @@ default.edj
 /missing
 /mkinstalldirs
 /stamp-h1
-/data/units/e18.service
+/data/units/enlightenment.service
 *.eo.c
 *.eo.h
