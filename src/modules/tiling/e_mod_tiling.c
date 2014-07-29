@@ -419,7 +419,7 @@ _reapply_tree(void)
 
    if (_G.tinfo->tree)
      {
-        e_zone_useful_geometry_get(_G.tinfo->desk->zone, &zx, &zy, &zw, &zh);
+        e_zone_desk_useful_geometry_get(_G.tinfo->desk->zone, _G.tinfo->desk, &zx, &zy, &zw, &zh);
 
         tiling_window_tree_apply(_G.tinfo->tree, zx, zy, zw, zh,
                                  tiling_g.config->window_padding);
