@@ -1349,8 +1349,8 @@ e_zone_useful_geometry_get(E_Zone *zone,
                   calc = EINA_TRUE;
                   break;
                }
-             eina_list_free(l);
           }
+        eina_list_free(l);
      }
    else
      _e_zone_useful_geometry_calc(zone, zone->desk_x_current, zone->desk_y_current, &zx, &zy, &zw, &zh);
