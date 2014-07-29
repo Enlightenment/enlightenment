@@ -395,9 +395,8 @@ _e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data, uint32_t v
    E_Comp_Data *cdata;
    struct wl_resource *res;
 
-   if (!(cdata = data)) return;
-
    DBG("Comp_Wl_Data: Bind Manager");
+   cdata = data;
 
    /* try to create data manager resource */
    res = wl_resource_create(client, &wl_data_device_manager_interface, 1, id);
@@ -532,8 +531,6 @@ _e_comp_wl_clipboard_source_send_send(E_Comp_Wl_Data_Source *source, const char 
    E_Comp_Wl_Clipboard_Source* clip_source;
    char *t;
 
-   if (!source) return;
-
    clip_source = container_of(source, E_Comp_Wl_Clipboard_Source, data_source);
    if (!clip_source) return;
 
@@ -592,8 +589,7 @@ _e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, voi
    int p[2];
    char *mime_type;
 
-   if (!(cdata = data)) return;
-
+   cdata = data;
    sel_source = (E_Comp_Wl_Data_Source*) cdata->selection.data_source;
    clip_source = (E_Comp_Wl_Clipboard_Source*) cdata->clipboard.source;
 
@@ -633,16 +629,12 @@ _e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, voi
 static void
 _e_comp_wl_clipboard_destroy(E_Comp_Data *cdata)
 {
-   if (!cdata) return;
-
    wl_list_remove(&cdata->clipboard.listener.link);
 }
 
 static void
 _e_comp_wl_clipboard_create(E_Comp_Data *cdata)
 {
-   if (!cdata) return;
-
    cdata->clipboard.listener.notify = _e_comp_wl_clipboard_selection_set;
    wl_signal_add(&cdata->selection.signal, &cdata->clipboard.listener);
 }
@@ -653,10 +645,18 @@ e_comp_wl_data_device_keyboard_focus_set(E_Comp_Data *cdata)
    struct wl_resource *data_device_res, *offer_res, *focus;
    E_Comp_Wl_Data_Source *source;
 
-   if (!cdata->kbd.enabled) return;
+   if (!cdata->kbd.enabled) 
+     {
+        ERR("Keyboard not enabled");
+        return;
+     }
 
    focus = cdata->kbd.focus;
-   if (!focus) return;
+   if (!focus) 
+     {
+        ERR("No focused resource");
+        return;
+     }
 
    data_device_res =
       _e_comp_wl_data_find_for_client(cdata->mgr.data_resources,
@@ -676,7 +676,11 @@ EINTERN Eina_Bool
 e_comp_wl_data_manager_init(E_Comp_Data *cdata)
 {
    /* check for valid compositor data */
-   if (!cdata) return EINA_FALSE;
+   if (!cdata) 
+     {
+        ERR("No Compositor Data");
+        return EINA_FALSE;
+     }
 
    /* try to create global data manager */
    cdata->mgr.global =
