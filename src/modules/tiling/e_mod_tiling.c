@@ -11,6 +11,8 @@
 #define TILING_POPUP_TIMEOUT 0.8
 #define TILING_POPUP_SIZE 100
 
+static Eina_Bool started = EINA_FALSE;
+
 typedef struct geom_t
 {
    int x, y, w, h;
@@ -594,7 +596,8 @@ _add_client(E_Client *ec)
         tiling_window_tree_add(_G.tinfo->tree, parent, ec, _G.split_type);
    }
 
-   _reapply_tree();
+   if (started)
+     _reapply_tree();
 
    return EINA_TRUE;
 }
@@ -1473,7 +1476,8 @@ e_modapi_init(E_Module *m)
          _add_client(ec);
       }
    }
-
+   started = EINA_TRUE;
+   _reapply_tree();
    e_gadcon_provider_register(&_gc_class);
 
    return m;
@@ -1526,7 +1530,7 @@ EAPI int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    e_gadcon_provider_unregister(&_gc_class);
-
+   started = EINA_FALSE;
    _disable_all_tiling();
 
    e_int_client_menu_hook_del(_G.client_menu_hook);
