@@ -68,6 +68,7 @@ evry_fuzzy_match(const char *str, const char *match)
    unsigned int m_cnt = 0;
    unsigned int m_min[MAX_WORDS];
    unsigned int m_len = 0;
+   unsigned int s_len = 0;
 
    if (!match || !str || !match[0] || !str[0])
      return 0;
@@ -87,6 +88,7 @@ evry_fuzzy_match(const char *str, const char *match)
      if (ip && ispunct(*m)) ip = 0;
 
    m_len = strlen(match);
+   s_len = strlen(str);
 
    /* with less than 3 chars match must be a prefix */
    if (m_len < 3) m_len = 0;
@@ -180,7 +182,7 @@ evry_fuzzy_match(const char *str, const char *match)
                {
                   ii = 0;
                   /* go to next match */
-                  for (; (*m != 0) && !isspace(*m); m += ii)
+                  for (; (m[0] && m[ii]) && !isspace(*m); m += ii)
                     if (!eina_unicode_utf8_next_get(m, &ii)) break;
                }
 
@@ -188,7 +190,7 @@ evry_fuzzy_match(const char *str, const char *match)
                {
                   ii = 0;
                   /* test next match */
-                  for (; (*m != 0) && isspace(*m); m += ii)
+                  for (; (m[0] && m[ii]) && !isspace(*m); m += ii)
                     if (!eina_unicode_utf8_next_get(m, &ii)) break;
                   m_cnt++;
                   break;
@@ -197,10 +199,10 @@ evry_fuzzy_match(const char *str, const char *match)
                {
                   ii = 0;
                   /* go to next word */
-                  for (; (*p != 0) && !((isspace(*p) || (ip && ispunct(*p)))); p += ii)
+                  for (; (p[0] && (s_len - (p - str) >= ii)) && !((isspace(*p) || (ip && ispunct(*p)))); p += ii)
                     if (!eina_unicode_utf8_next_get(p, &ii)) break;
                   ii = 0;
-                  for (; (*p != 0) && ((isspace(*p) || (ip && ispunct(*p)))); p += ii)
+                  for (; (p[0] && (s_len - (p - str) >= ii)) && ((isspace(*p) || (ip && ispunct(*p)))); p += ii)
                     if (!eina_unicode_utf8_next_get(p, &ii)) break;
                   cnt++;
                   next = p;
