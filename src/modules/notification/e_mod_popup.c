@@ -530,7 +530,7 @@ _notification_format_message(Popup_Data *popup)
    Evas_Object *o = popup->theme;
    Eina_Strbuf *buf = eina_strbuf_new();
    edje_object_part_text_set(o, "notification.text.title",
-                             popup->notif->sumary);
+                             popup->notif->summary);
    /* FIXME: Filter to only include allowed markup? */
    /* We need to replace \n with <br>. FIXME: We need to handle all the
    * newline kinds, and paragraph separator. ATM this will suffice. */

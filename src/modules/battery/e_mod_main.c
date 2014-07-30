@@ -453,7 +453,7 @@ _battery_warning_popup(Instance *inst, int t, double percent)
         n.app_name = _("Battery");
         n.replaces_id = 0;
         n.icon.icon = "battery-low";
-        n.sumary = _("Your battery is low!");
+        n.summary = _("Your battery is low!");
         n.body = _("AC power is recommended.");
         n.timeout = battery_config->alert_timeout * 1000;
         e_notification_client_send(&n, _battery_warning_popup_cb, inst);

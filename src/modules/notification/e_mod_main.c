@@ -34,7 +34,7 @@ _notification_show_common(const char *summary,
    n.app_name = "enlightenment";
    n.replaces_id = replaces_id;
    n.icon.icon = "enlightenment";
-   n.sumary = summary;
+   n.summary = summary;
    n.body = body;
    e_notification_client_send(&n, NULL, NULL);
 }

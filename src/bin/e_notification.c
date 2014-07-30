@@ -21,7 +21,7 @@ _notification_free(E_Notification_Notify *notify)
    eina_stringshare_del(notify->icon.icon);
    if (notify->icon.icon_path)
      eina_stringshare_del(notify->icon.icon_path);
-   eina_stringshare_del(notify->sumary);
+   eina_stringshare_del(notify->summary);
    if (notify->icon.raw.data)
      free(notify->icon.raw.data);
    free(notify);
@@ -82,7 +82,7 @@ notify_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Messag
    n = E_OBJECT_ALLOC(E_Notification_Notify, E_NOTIFICATION_TYPE, _notification_free);
    n->urgency = E_NOTIFICATION_NOTIFY_URGENCY_NORMAL;
    if (!eldbus_message_arguments_get(msg, "susssasa{sv}i", &n->app_name,
-                                    &n->replaces_id, &n->icon.icon, &n->sumary,
+                                    &n->replaces_id, &n->icon.icon, &n->summary,
                                     &n->body, &actions_iter, &hints_iter,
                                     &n->timeout))
      {
@@ -99,7 +99,7 @@ notify_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbus_Messag
    eldbus_message_iter_dict_iterate(hints_iter, "sv", hints_dict_iter, n);
    n->app_name = eina_stringshare_add(n->app_name);
    n->icon.icon = eina_stringshare_add(n->icon.icon);
-   n->sumary = eina_stringshare_add(n->sumary);
+   n->summary = eina_stringshare_add(n->summary);
    n->body = eina_stringshare_add(n->body);
 
    e_object_ref(E_OBJECT(n));
@@ -321,7 +321,7 @@ notification_client_dbus_send(E_Notification_Notify *notify, E_Notification_Clie
                                             notify->app_name ? : "",
                                             notify->replaces_id,
                                             notify->icon.icon ? : "",
-                                            notify->sumary ? : "",
+                                            notify->summary ? : "",
                                             notify->body ? : "",
                                             &actions))
      goto error;
@@ -411,7 +411,7 @@ e_notification_client_send(E_Notification_Notify *notify, E_Notification_Client_
 
    copy->app_name = eina_stringshare_add(notify->app_name);
    copy->body = eina_stringshare_add(notify->body);
-   copy->sumary = eina_stringshare_add(notify->sumary);
+   copy->summary = eina_stringshare_add(notify->summary);
    copy->icon.icon = eina_stringshare_add(notify->icon.icon);
    if (notify->icon.icon_path)
      copy->icon.icon_path = eina_stringshare_add(notify->icon.icon_path);

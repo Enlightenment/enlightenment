@@ -26,7 +26,7 @@ typedef struct _E_Notification_Notify
    unsigned int id;
    const char *app_name;
    unsigned replaces_id;
-   const char *sumary;
+   const char *summary;
    const char *body;
    int timeout;
    E_Notification_Notify_Urgency urgency;

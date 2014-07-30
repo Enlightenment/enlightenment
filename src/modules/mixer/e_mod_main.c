@@ -55,7 +55,7 @@ _mixer_notify(const float val, E_Mixer_Instance *inst)
    n.app_name = _("Mixer");
    n.replaces_id = inst->notification_id;
    n.icon.icon = icon;
-   n.sumary = _("Volume changed");
+   n.summary = _("Volume changed");
    n.body = buf;
    n.timeout = 2000;
    e_notification_client_send(&n, _mixer_notify_cb, inst);

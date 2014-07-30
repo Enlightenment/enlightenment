@@ -152,7 +152,7 @@ _e_mod_notify_refresh(Ind_Notify_Win *nwin)
         edje_object_part_swallow(nwin->o_base, "e.swallow.icon", nwin->o_icon);
      }
 
-   edje_object_part_text_set(nwin->o_base, "e.text.title", nwin->notify->sumary);
+   edje_object_part_text_set(nwin->o_base, "e.text.title", nwin->notify->summary);
    edje_object_part_text_set(nwin->o_base, "e.text.message", nwin->notify->body);
 
 
