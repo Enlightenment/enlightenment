@@ -38,6 +38,8 @@ typedef enum _E_Layer
 
 # include "e_comp_cfdata.h"
 
+extern EAPI int E_EVENT_COMPOSITOR_DISABLE;
+extern EAPI int E_EVENT_COMPOSITOR_ENABLE;
 
 struct _E_Comp
 {

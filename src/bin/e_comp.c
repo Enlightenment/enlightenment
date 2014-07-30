@@ -37,6 +37,8 @@ static double ecore_frametime = 0;
 static int _e_comp_log_dom = -1;
 
 EAPI int E_EVENT_COMPOSITOR_RESIZE = -1;
+EAPI int E_EVENT_COMPOSITOR_DISABLE = -1;
+EAPI int E_EVENT_COMPOSITOR_ENABLE = -1;
 
 //////////////////////////////////////////////////////////////////////////
 #undef DBG
@@ -248,6 +250,7 @@ _e_comp_cb_nocomp_begin(E_Comp *c)
    DBG("JOB2...");
    e_comp_render_queue(c);
    e_comp_shape_queue_block(c, 1);
+   ecore_event_add(E_EVENT_COMPOSITOR_DISABLE, NULL, NULL, NULL);
 }
 
 static void
@@ -267,6 +270,7 @@ _e_comp_cb_nocomp_end(E_Comp *c)
      }
    e_comp_render_queue(c);
    e_comp_shape_queue_block(c, 0);
+   ecore_event_add(E_EVENT_COMPOSITOR_ENABLE, NULL, NULL, NULL);
 }
 
 static Eina_Bool
@@ -963,6 +967,8 @@ e_comp_init(void)
 
    E_EVENT_COMPOSITOR_RESIZE = ecore_event_type_new();
    E_EVENT_COMP_OBJECT_ADD = ecore_event_type_new();
+   E_EVENT_COMPOSITOR_DISABLE = ecore_event_type_new();
+   E_EVENT_COMPOSITOR_ENABLE = ecore_event_type_new();
 
    ignores = eina_hash_pointer_new(NULL);
 
