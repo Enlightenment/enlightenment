@@ -573,6 +573,9 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
              ecore_x_window_prop_card32_set(e_client_util_win_get(ec), ECORE_X_ATOM_NET_WM_WINDOW_OPACITY, &opacity, 1);
              /* flag gets unset in property cb to avoid fetching opacity after we just set it */
           }
+        if (ec->post_resize && (!ecore_x_present_exists()))
+          e_pixmap_dirty(ec->pixmap);
+        e_comp_object_render_update_del(ec->frame);
         ec->post_move = 0;
         ec->post_resize = 0;
      }
@@ -862,8 +865,6 @@ _e_comp_x_evas_resize_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_i
      }
 
    ec->post_resize = 1;
-   if (!ecore_x_present_exists())
-     e_pixmap_dirty(ec->pixmap);
    e_comp_object_render_update_del(ec->frame);
    _e_comp_x_post_client_idler_add(ec);
 }
