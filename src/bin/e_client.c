@@ -2113,6 +2113,7 @@ _e_client_frame_update(E_Client *ec)
 {
    const char *bordername;
 
+   ec->border.changed = 0;
    if (ec->fullscreen || ec->borderless)
      bordername = "borderless";
    else if (ec->bordername)
@@ -2187,12 +2188,10 @@ e_client_idler_before(void)
              if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FETCH, ec)) continue;
              if (!_e_client_hook_call(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN, ec)) continue;
 
-             if ((ec->border.changed) && (!ec->shaded) &&
+             if ((ec->border.changed) && (!ec->shaded) && (!ec->override) &&
                  (!(((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN))))
-               {
-                  ec->border.changed = 0;
-                  _e_client_frame_update(ec);
-               }
+               _e_client_frame_update(ec);
+             ec->border.changed = 0;
              _e_client_hook_call(E_CLIENT_HOOK_EVAL_POST_FRAME_ASSIGN, ec);
           }
 
