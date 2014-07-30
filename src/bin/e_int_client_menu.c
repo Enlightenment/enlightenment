@@ -209,6 +209,7 @@ e_int_client_menu_create(E_Client *ec)
         e_util_menu_item_theme_icon_set(mi, "preferences-composite");
         subm = e_menu_new();
         e_menu_item_submenu_set(mi, subm);
+        e_object_unref(E_OBJECT(subm));
         e_object_data_set(E_OBJECT(subm), ec->comp);
         if (e_pixmap_type_get(ec->pixmap) == E_PIXMAP_TYPE_X)
           {
