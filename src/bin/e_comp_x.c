@@ -1305,7 +1305,11 @@ _e_comp_x_hide(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Windo
         hid = EINA_TRUE;
         evas_object_hide(ec->frame);
         if (!ec->internal)
-          e_object_del(E_OBJECT(ec));
+          {
+             if (ec->exe_inst && ec->exe_inst->exe)
+               ec->exe_inst->phony = 0;
+             e_object_del(E_OBJECT(ec));
+          }
      }
    if (hid)
      _e_comp_x_focus_check(ec->comp);
