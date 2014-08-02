@@ -73,7 +73,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 {
    Evas_Object *o, *ow, *ot, *rt;
    E_Radio_Group *rg;
-   Eina_Stringshare *file;
+   const char *file = NULL;
    char path[PATH_MAX];
    size_t len;
 
@@ -82,13 +82,15 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 
    len = e_user_dir_concat_static(path, "backgrounds");
    e_widget_preview_file_get(cfd->data, &file, NULL);
-   cfdata->bg = strdup(file);
    if (file)
      {
+        cfdata->bg = strdup(file);
         cfdata->fmdir = strncmp(file, path, len);
         if (cfdata->fmdir)
           e_prefix_data_concat_static(path, "data/backgrounds");
      }
+   else
+     cfdata->bg = NULL;
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
    ot = e_widget_table_add(evas, 0);
