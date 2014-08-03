@@ -282,9 +282,6 @@ _e_shell_surface_cb_transient_set(struct wl_client *client EINA_UNUSED, struct w
         return;
      }
 
-   ec->netwm.type = E_WINDOW_TYPE_DIALOG;
-   ec->comp_data->set_win_type = EINA_TRUE;
-
    /* set this client as a transient for parent */
    _e_shell_surface_parent_set(ec, parent_resource);
 
@@ -650,13 +647,8 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
         return;
      }
 
-   ec->netwm.type = E_WINDOW_TYPE_DIALOG;
-   ec->comp_data->set_win_type = EINA_TRUE;
-
    /* set this client as a transient for parent */
    _e_shell_surface_parent_set(ec, parent_resource);
-
-   EC_CHANGED(ec);
 }
 
 static void 
