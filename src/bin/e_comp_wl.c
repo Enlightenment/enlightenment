@@ -750,9 +750,6 @@ _e_comp_wl_surface_commit(E_Client *ec)
    eina_tiler_free(tmp);
    eina_tiler_clear(ec->comp_data->pending.input);
 
-   ec->changes.shape_input = EINA_TRUE;
-   EC_CHANGED(ec);
-
 /* #ifndef HAVE_WAYLAND_ONLY */
 /*              e_comp_object_input_area_set(ec->frame, rect->x, rect->y,  */
 /*                                           rect->w, rect->h); */
@@ -1482,6 +1479,7 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *pc, uint32_t id, struct wl_
 
    ec->borderless = EINA_TRUE;
    ec->argb = EINA_TRUE;
+   ec->lock_border = EINA_TRUE;
    ec->lock_focus_in = ec->lock_focus_out = EINA_TRUE;
    ec->netwm.state.skip_taskbar = EINA_TRUE;
    ec->netwm.state.skip_pager = EINA_TRUE;
@@ -2642,8 +2640,6 @@ _e_comp_wl_cb_hook_client_new(void *data EINA_UNUSED, E_Client *ec)
      _e_comp_wl_buffer_pending_cb_destroy;
 
    ec->comp_data->mapped = EINA_FALSE;
-   ec->comp_data->set_win_type = EINA_TRUE;
-   ec->netwm.type = E_WINDOW_TYPE_UNKNOWN;
    ec->changes.shape = EINA_TRUE;
    ec->changes.shape_input = EINA_TRUE;
 
@@ -2775,100 +2771,6 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
    /* TODO: vkbd, etc */
 
    /* FIXME: Update ->changes.shape code for recent switch to eina_tiler */
-   /* if (ec->changes.shape) */
-   /*   { */
-   /*      Eina_Rectangle *shape = NULL; */
-   /*      Eina_Bool pshaped = EINA_FALSE; */
-
-   /*      shape = eina_rectangle_new((ec->comp_data->shape)->x,  */
-   /*                                 (ec->comp_data->shape)->y,  */
-   /*                                 (ec->comp_data->shape)->w,  */
-   /*                                 (ec->comp_data->shape)->h); */
-
-   /*      pshaped = ec->shaped; */
-   /*      ec->changes.shape = EINA_FALSE; */
-
-   /*      if (eina_rectangle_is_empty(shape)) */
-   /*        { */
-   /*           if ((ec->shaped) && (ec->comp_data->reparented) &&  */
-   /*               (!ec->bordername)) */
-   /*             { */
-   /*                ec->border.changed = EINA_TRUE; */
-   /*                EC_CHANGED(ec); */
-   /*             } */
-
-   /*           ec->shaped = EINA_FALSE; */
-   /*        } */
-   /*      else */
-   /*        { */
-   /*           int cw = 0, ch = 0; */
-
-   /*           if (ec->border_size) */
-   /*             { */
-   /*                shape->x += ec->border_size; */
-   /*                shape->y += ec->border_size; */
-   /*                shape->w -= ec->border_size; */
-   /*                shape->h -= ec->border_size; */
-   /*             } */
-
-   /*           e_pixmap_size_get(ec->pixmap, &cw, &ch); */
-   /*           if ((cw != ec->client.w) || (ch != ec->client.h)) */
-   /*             { */
-   /*                ec->changes.shape = EINA_TRUE; */
-   /*                EC_CHANGED(ec); */
-   /*             } */
-
-   /*           if ((shape->x == 0) && (shape->y == 0) &&  */
-   /*               (shape->w == cw) && (shape->h == ch)) */
-   /*             { */
-   /*                if (ec->shaped) */
-   /*                  { */
-   /*                     ec->shaped = EINA_FALSE; */
-   /*                     if ((ec->comp_data->reparented) && (!ec->bordername)) */
-   /*                       { */
-   /*                          ec->border.changed = EINA_TRUE; */
-   /*                          EC_CHANGED(ec); */
-   /*                       } */
-   /*                  } */
-   /*             } */
-   /*           else */
-   /*             { */
-   /*                if (ec->comp_data->reparented) */
-   /*                  { */
-   /*                     EINA_RECTANGLE_SET(ec->comp_data->shape,  */
-   /*                                        shape->x, shape->y,  */
-   /*                                        shape->w, shape->h); */
-
-   /*                     if ((!ec->shaped) && (!ec->bordername)) */
-   /*                       { */
-   /*                          ec->border.changed = EINA_TRUE; */
-   /*                          EC_CHANGED(ec); */
-   /*                       } */
-   /*                  } */
-   /*                else */
-   /*                  { */
-   /*                     if (_e_comp_wl_client_shape_check(ec)) */
-   /*                       e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h); */
-   /*                  } */
-   /*                ec->shaped = EINA_TRUE; */
-   /*                ec->changes.shape_input = EINA_FALSE; */
-   /*                ec->shape_input_rects_num = 0; */
-   /*             } */
-
-   /*           if (ec->shape_changed) */
-   /*             e_comp_object_frame_theme_set(ec->frame,  */
-   /*                                           E_COMP_OBJECT_FRAME_RESHADOW); */
-   /*        } */
-
-        /* if (ec->shaped != pshaped) */
-        /*   { */
-        /*      _e_comp_wl_client_shape_check(ec); */
-        /*   } */
-
-        /* ec->need_shape_merge = EINA_TRUE; */
-
-        /* eina_rectangle_free(shape); */
-     /* } */
 
    if ((ec->changes.prop) && (ec->netwm.update.state))
      {
@@ -3003,7 +2905,6 @@ _e_comp_wl_cb_hook_client_eval_fetch(void *data EINA_UNUSED, E_Client *ec)
      }
 
    ec->changes.prop = EINA_FALSE;
-   if (!ec->comp_data->reparented) ec->changes.border = EINA_FALSE;
    if (ec->changes.icon)
      {
         if (ec->comp_data->reparented) return;
@@ -3027,17 +2928,11 @@ _e_comp_wl_cb_hook_client_pre_frame(void *data EINA_UNUSED, E_Client *ec)
 
    ec->border_size = 0;
    e_pixmap_parent_window_set(ec->pixmap, parent);
-   ec->border.changed = EINA_TRUE;
 
    /* if (ec->shaped_input) */
    /*   { */
    /*      DBG("\tClient Shaped Input"); */
    /*   } */
-
-   ec->changes.shape = EINA_TRUE;
-   ec->changes.shape_input = EINA_TRUE;
-
-   EC_CHANGED(ec);
 
    eina_hash_add(clients_win_hash, &parent, ec);
 
@@ -3045,10 +2940,10 @@ _e_comp_wl_cb_hook_client_pre_frame(void *data EINA_UNUSED, E_Client *ec)
      {
         if (ec->comp_data->set_win_type)
           {
-             int type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
-
              if (ec->internal_ecore_evas)
                {
+                  int type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
+
                   switch (ec->netwm.type)
                     {
                      case E_WINDOW_TYPE_DIALOG:
