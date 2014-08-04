@@ -46,7 +46,7 @@ EAPI Eina_Bool e_pixmap_image_draw(E_Pixmap *cp, const Eina_Rectangle *r);
 static inline Eina_Bool
 e_pixmap_is_x(const E_Pixmap *cp)
 {
-   return e_pixmap_type_get(cp) == E_PIXMAP_TYPE_X;
+   return cp && e_pixmap_type_get(cp) == E_PIXMAP_TYPE_X;
 }
 
 # endif
