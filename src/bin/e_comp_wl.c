@@ -102,29 +102,6 @@ _e_comp_wl_buffer_reference_cb_destroy(struct wl_listener *listener, void *data 
 }
 
 static void 
-_e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer)
-{
-   if ((ref->buffer) && (buffer != ref->buffer))
-     {
-        ref->buffer->busy--;
-
-        if (ref->buffer->busy == 0)
-          wl_resource_queue_event(ref->buffer->resource, WL_BUFFER_RELEASE);
-
-        wl_list_remove(&ref->destroy_listener.link);
-     }
-
-   if ((buffer) && (buffer != ref->buffer))
-     {
-        buffer->busy++;
-        wl_signal_add(&buffer->destroy_signal, &ref->destroy_listener);
-     }
-
-   ref->buffer = buffer;
-   ref->destroy_listener.notify = _e_comp_wl_buffer_reference_cb_destroy;
-}
-
-static void 
 _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    wl_resource_destroy(resource);
@@ -344,7 +321,7 @@ _e_comp_wl_subsurface_destroy_internal(E_Client *ec)
              sub_cdata->parent = NULL;
           }
 
-        _e_comp_wl_buffer_reference(&sub_cdata->cached.buffer_ref, NULL);
+        e_comp_wl_buffer_reference(&sub_cdata->cached.buffer_ref, NULL);
 
         if (sub_cdata->cached.damage)
           eina_tiler_free(sub_cdata->cached.damage);
@@ -411,7 +388,7 @@ _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
    if (cdata->pending.new_attach)
      {
         sub_cdata->cached.new_attach = EINA_TRUE;
-        _e_comp_wl_buffer_reference(&sub_cdata->cached.buffer_ref,
+        e_comp_wl_buffer_reference(&sub_cdata->cached.buffer_ref,
                                     cdata->pending.buffer);
      }
 
@@ -444,7 +421,7 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
 
    if (sub_cdata->cached.new_attach)
      {
-        _e_comp_wl_buffer_reference(&cdata->buffer_ref,
+        e_comp_wl_buffer_reference(&cdata->buffer_ref,
                                     sub_cdata->cached.buffer_ref.buffer);
         e_pixmap_resource_set(cp, cdata->pending.buffer->resource);
         e_pixmap_usable_set(cp, (cdata->pending.buffer != NULL));
@@ -573,7 +550,7 @@ _e_comp_wl_surface_commit(E_Client *ec)
 
    if (ec->comp_data->pending.new_attach)
      {
-        _e_comp_wl_buffer_reference(&ec->comp_data->buffer_ref,
+        e_comp_wl_buffer_reference(&ec->comp_data->buffer_ref,
                                     ec->comp_data->pending.buffer);
 
         e_pixmap_resource_set(cp, ec->comp_data->pending.buffer->resource);
@@ -1199,35 +1176,6 @@ _e_comp_wl_cb_bind_compositor(struct wl_client *client, void *data, uint32_t ver
 }
 
 static void 
-_e_comp_wl_cb_render_post(void *data EINA_UNUSED, Evas *evas EINA_UNUSED, void *event EINA_UNUSED)
-{
-   Eina_Iterator *itr;
-   E_Client *ec;
-
-   if (!(itr = eina_hash_iterator_data_new(clients_win_hash))) return;
-
-   EINA_ITERATOR_FOREACH(itr, ec)
-     {
-        struct wl_resource *cb;
-
-        if (!ec->comp_data) continue;
-        EINA_LIST_FREE(ec->comp_data->frames, cb)
-          {
-             wl_callback_send_done(cb, (ecore_loop_time_get() * 1000));
-             wl_resource_destroy(cb);
-          }
-
-        /* post a buffer release */
-        /* TODO: FIXME: We need a way to determine if the client wants to 
-         * keep the buffer or not. If so, then we should Not be setting NULL 
-         * here as this will essentially release the buffer */
-        _e_comp_wl_buffer_reference(&ec->comp_data->buffer_ref, NULL);
-     }
-
-   eina_iterator_free(itr);
-}
-
-static void 
 _e_comp_wl_cb_del(E_Comp *comp)
 {
    E_Comp_Data *cdata;
@@ -1236,10 +1184,6 @@ _e_comp_wl_cb_del(E_Comp *comp)
 
    e_comp_wl_data_manager_shutdown(cdata);
    e_comp_wl_input_shutdown(cdata);
-
-   /* remove render_post callback */
-   evas_event_callback_del_full(comp->evas, EVAS_CALLBACK_RENDER_POST, 
-                                _e_comp_wl_cb_render_post, NULL);
 
    /* delete idler to flush clients */
    if (cdata->idler) ecore_idler_del(cdata->idler);
@@ -1758,10 +1702,6 @@ _e_comp_wl_compositor_create(void)
 
    /* setup module idler to load shell module */
    ecore_idler_add(_e_comp_wl_cb_module_idle, cdata);
-
-   /* add a render post callback so we can send frame_done to the surface */
-   evas_event_callback_add(comp->evas, EVAS_CALLBACK_RENDER_POST, 
-                           _e_comp_wl_cb_render_post, NULL);
 
    return EINA_TRUE;
 
@@ -3230,4 +3170,27 @@ e_comp_wl_surface_destroy(struct wl_resource *resource)
      }
 
    e_object_del(E_OBJECT(ec));
+}
+
+EINTERN void
+e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer)
+{
+   if ((ref->buffer) && (buffer != ref->buffer))
+     {
+        ref->buffer->busy--;
+
+        if (ref->buffer->busy == 0)
+          wl_resource_queue_event(ref->buffer->resource, WL_BUFFER_RELEASE);
+
+        wl_list_remove(&ref->destroy_listener.link);
+     }
+
+   if ((buffer) && (buffer != ref->buffer))
+     {
+        buffer->busy++;
+        wl_signal_add(&buffer->destroy_signal, &ref->destroy_listener);
+     }
+
+   ref->buffer = buffer;
+   ref->destroy_listener.notify = _e_comp_wl_buffer_reference_cb_destroy;
 }

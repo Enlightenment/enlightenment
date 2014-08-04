@@ -605,8 +605,26 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
 #endif
         break;
       case E_PIXMAP_TYPE_WL:
-        /* NB: Nothing to do here. No-Op */
-        /* NB: Old code would memcpy here */
+#if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
+      {
+         E_Comp_Wl_Client_Data *cd;
+         struct wl_resource *cb;
+
+         if ((!cp->client) || (!cp->client->comp_data)) return;
+         cd = (E_Comp_Wl_Client_Data*)cp->client->comp_data;
+         EINA_LIST_FREE(cd->frames, cb)
+           {
+              wl_callback_send_done(cb, (ecore_loop_time_get() * 1000));
+              wl_resource_destroy(cb);
+           }
+
+         /* post a buffer release */
+         /* TODO: FIXME: We need a way to determine if the client wants to
+          * keep the buffer or not. If so, then we should Not be setting NULL
+          * here as this will essentially release the buffer */
+         e_comp_wl_buffer_reference(&cd->buffer_ref, NULL);
+      }
+#endif
         break;
       default:
         break;

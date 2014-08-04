@@ -328,10 +328,10 @@ _e_comp_client_update(E_Client *ec)
         //INF("PX DIRTY: PX(%dx%d) CLI(%dx%d)", pw, ph, ec->client.w, ec->client.h);
         e_pixmap_image_refresh(ec->pixmap);
         e_comp_object_dirty(ec->frame);
-        if (!ec->override)
+        if (e_pixmap_is_x(ec->pixmap) && (!ec->override))
           evas_object_resize(ec->frame, ec->w, ec->h);
      }
-   return post;
+   return post || (!e_pixmap_is_x(ec->pixmap));
 }
 
 static void

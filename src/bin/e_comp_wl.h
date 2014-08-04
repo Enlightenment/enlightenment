@@ -266,6 +266,7 @@ EINTERN void e_comp_wl_shutdown(void);
 
 EINTERN struct wl_resource *e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id);
 EINTERN void e_comp_wl_surface_destroy(struct wl_resource *resource);
+EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer);
 
 static inline uint64_t
 e_comp_wl_id_get(uint32_t client, uint32_t surface)
