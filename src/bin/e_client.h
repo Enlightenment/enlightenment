@@ -172,6 +172,10 @@ typedef void (*E_Client_Hook_Cb)(void *data, E_Client *ec);
 typedef void (*E_Client_Layout_Cb)(void * /* E_Comp */); //< can't use real type because of include order
 #else
 
+#ifndef HAVE_WAYLAND_ONLY
+# include <Ecore_X.h>
+#endif
+
 #define E_CLIENT_TYPE (int)0xE0b01002
 
 struct E_Event_Client
@@ -332,7 +336,7 @@ struct E_Client
       Ecore_Window            window_group;
       Ecore_Window            transient_for;
       Ecore_Window            client_leader;
-#ifdef E_COMP_X_H
+#ifndef HAVE_WAYLAND_ONLY
       Ecore_X_Window_State_Hint initial_state;
       Ecore_X_Window_State_Hint state;
       Ecore_X_Pixmap            icon_pixmap;
@@ -370,7 +374,7 @@ struct E_Client
    /* MWM */
    struct
    {
-#ifdef E_COMP_X_H
+#ifndef HAVE_WAYLAND_ONLY
       Ecore_X_MWM_Hint_Func  func;
       Ecore_X_MWM_Hint_Decor decor;
       Ecore_X_MWM_Hint_Input input;
@@ -538,7 +542,7 @@ struct E_Client
          unsigned char state : 1;
          unsigned char vkbd : 1;
       } fetch;
-#ifdef E_COMP_X_H
+#ifndef HAVE_WAYLAND_ONLY
       Ecore_X_Virtual_Keyboard_State state;
 #endif
       unsigned char                  have_property : 1;
