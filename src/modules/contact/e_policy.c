@@ -1,3 +1,5 @@
+#define E_COMP_X
+
 #include "e_mod_main.h"
 
 static Eina_Bool _cb_event_add(void *data __UNUSED__, int type __UNUSED__, void *event);
@@ -178,10 +180,12 @@ _cb_hook_layout(E_Comp *comp)
      {
         if (e_client_util_ignored_get(ec)) continue;
         if (ec->focused) have_focused = EINA_TRUE;
+#ifndef HAVE_WAYLAND_ONLY
         if ((ec->focused) &&
             (ec->vkbd.state > ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF))
           want_kbd = EINA_TRUE;
         if (ec->vkbd.vkbd) kbd = ec;
+#endif
      }
    
    if ((have_focused) && (kbd_override)) want_kbd = EINA_TRUE;

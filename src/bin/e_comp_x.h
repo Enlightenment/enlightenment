@@ -1,8 +1,10 @@
 #ifdef E_TYPEDEFS
 # include <Ecore_X.h>
-#  include "e_atoms.h"
-#  include "e_hints.h"
-#  include "e_randr.h"
+# include "e_atoms.h"
+# include "e_hints.h"
+# include "e_randr.h"
+
+typedef struct _E_Comp_X_Client_Data E_Comp_X_Client_Data;
 
 #else
 # ifndef E_COMP_X_H

@@ -721,7 +721,9 @@ e_hints_window_state_update(E_Client *ec, int state, int action)
      {
       case ECORE_X_WINDOW_STATE_ICONIFIED:
         if (action != ECORE_X_WINDOW_STATE_ACTION_ADD) return;
+#ifndef HAVE_WAYLAND_ONLY
         if (ec->icccm.state == ECORE_X_WINDOW_STATE_HINT_ICONIC) return;
+#endif
         if (ec->lock_client_iconify) return;
         e_client_iconify(ec);
         break;

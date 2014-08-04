@@ -3,12 +3,15 @@
 # ifndef E_COMP_WL_DATA_H
 #  define E_COMP_WL_DATA_H
 
+#  undef NEED_X
+#  include "e_comp_wl.h"
+
+#  define CLIPBOARD_CHUNK 1024
+
 typedef struct _E_Comp_Wl_Data_Source E_Comp_Wl_Data_Source;
 typedef struct _E_Comp_Wl_Data_Offer E_Comp_Wl_Data_Offer;
 typedef struct _E_Comp_Wl_Clipboard_Source E_Comp_Wl_Clipboard_Source;
 typedef struct _E_Comp_Wl_Clipboard_Offer E_Comp_Wl_Clipboard_Offer;
-
-#define CLIPBOARD_CHUNK 1024
 
 struct _E_Comp_Wl_Data_Source
 {
@@ -48,9 +51,9 @@ struct _E_Comp_Wl_Clipboard_Offer
    size_t offset;
 };
 
-EINTERN void e_comp_wl_data_device_keyboard_focus_set(E_Comp_Wl_Data *cdata);
-EINTERN Eina_Bool e_comp_wl_data_manager_init(E_Comp_Wl_Data *cdata);
-EINTERN void e_comp_wl_data_manager_shutdown(E_Comp_Wl_Data *cdata);
+EINTERN void e_comp_wl_data_device_keyboard_focus_set(E_Comp_Data *cdata);
+EINTERN Eina_Bool e_comp_wl_data_manager_init(E_Comp_Data *cdata);
+EINTERN void e_comp_wl_data_manager_shutdown(E_Comp_Data *cdata);
 
 # endif
 #endif

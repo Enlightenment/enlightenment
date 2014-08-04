@@ -1,4 +1,5 @@
 #ifdef E_TYPEDEFS
+
 #else
 # ifndef E_COMP_WL_H
 #  define E_COMP_WL_H
@@ -37,6 +38,57 @@
 typedef struct _E_Comp_Wl_Buffer E_Comp_Wl_Buffer;
 typedef struct _E_Comp_Wl_Buffer_Ref E_Comp_Wl_Buffer_Ref;
 typedef struct _E_Comp_Wl_Subsurf E_Comp_Wl_Subsurf;
+typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
+typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
+
+struct _E_Comp_Wl_Buffer 
+{
+   struct wl_resource *resource;
+   struct wl_signal destroy_signal;
+   struct wl_listener destroy_listener;
+   union
+     {
+        struct wl_shm_buffer *shm_buffer;
+        void *legacy_buffer;
+     };
+   int32_t w, h;
+   uint32_t busy;
+};
+
+struct _E_Comp_Wl_Buffer_Ref
+{
+   E_Comp_Wl_Buffer *buffer;
+   struct wl_listener destroy_listener;
+};
+
+struct _E_Comp_Wl_Subsurf
+{
+   struct wl_resource *resource;
+
+   E_Client *parent;
+
+   struct
+     {
+        int x, y;
+        Eina_Bool set;
+     } position;
+
+   struct
+     {
+        int x, y;
+
+        Eina_Bool has_data;
+        Eina_Bool new_attach;
+
+        E_Comp_Wl_Buffer_Ref buffer_ref;
+
+        Eina_Tiler *damage;
+        Eina_Tiler *opaque;
+        Eina_Tiler *input;
+     } cached;
+
+   Eina_Bool synchronized;
+};
 
 struct _E_Comp_Wl_Data
 {
@@ -149,55 +201,6 @@ struct _E_Comp_Wl_Data
    /* Eina_List *retry_clients; */
    /* Ecore_Timer *retry_timer; */
    Eina_Bool restack : 1;
-};
-
-struct _E_Comp_Wl_Buffer 
-{
-   struct wl_resource *resource;
-   struct wl_signal destroy_signal;
-   struct wl_listener destroy_listener;
-   union
-     {
-        struct wl_shm_buffer *shm_buffer;
-        void *legacy_buffer;
-     };
-   int32_t w, h;
-   uint32_t busy;
-};
-
-struct _E_Comp_Wl_Buffer_Ref
-{
-   E_Comp_Wl_Buffer *buffer;
-   struct wl_listener destroy_listener;
-};
-
-struct _E_Comp_Wl_Subsurf
-{
-   struct wl_resource *resource;
-
-   E_Client *parent;
-
-   struct
-     {
-        int x, y;
-        Eina_Bool set;
-     } position;
-
-   struct
-     {
-        int x, y;
-
-        Eina_Bool has_data;
-        Eina_Bool new_attach;
-
-        E_Comp_Wl_Buffer_Ref buffer_ref;
-
-        Eina_Tiler *damage;
-        Eina_Tiler *opaque;
-        Eina_Tiler *input;
-     } cached;
-
-   Eina_Bool synchronized;
 };
 
 struct _E_Comp_Wl_Client_Data

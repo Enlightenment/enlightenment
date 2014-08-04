@@ -257,8 +257,7 @@ struct E_Client
 
    E_Direction               shade_dir;
 
-   E_Comp_Wl_Client_Data    *wl_comp_data;
-   E_Comp_X_Client_Data     *x_comp_data; //private for the compositor engine (X, Wayland) ONLY
+   E_Comp_Client_Data       *comp_data;
 
    Evas_Object *input_object; //for running wayland clients in X
 

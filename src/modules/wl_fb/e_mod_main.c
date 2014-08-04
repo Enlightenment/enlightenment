@@ -1,6 +1,5 @@
 #include "e.h"
 #include <Ecore_Fb.h>
-#include "e_comp_wl.h"
 #include <Ecore_Wayland.h>
 
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_FB" };

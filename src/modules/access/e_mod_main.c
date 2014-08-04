@@ -1,3 +1,4 @@
+#define E_COMP_X
 #include "e.h"
 #include "e_mod_main.h"
 #define HISTORY_MAX 8

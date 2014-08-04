@@ -1,6 +1,4 @@
 #include "e.h"
-#include "e_comp_wl.h"
-#include "e_comp_wl_input.h"
 /* #include <Ecore_Drm.h> */
 
 #define SCREEN_WIDTH 1920

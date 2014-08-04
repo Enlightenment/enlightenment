@@ -9,7 +9,7 @@ contactpkgdir = $(MDIR)/contact/$(MODULE_ARCH)
 contactpkg_LTLIBRARIES = src/modules/contact/module.la
 
 src_modules_contact_module_la_LIBADD = $(MOD_LIBS)
-src_modules_contact_module_la_CPPFLAGS = $(MOD_CPPFLAGS)
+src_modules_contact_module_la_CPPFLAGS = $(MOD_CPPFLAGS) -DNEED_X
 src_modules_contact_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_contact_module_la_SOURCES = src/modules/contact/e_mod_main.c \
 			    src/modules/contact/e_mod_main.h \

@@ -377,6 +377,7 @@ e_pixmap_refresh(E_Pixmap *cp)
         {
            uint32_t pixmap;
            int pw, ph;
+           E_Comp_X_Client_Data *cd = (E_Comp_X_Client_Data*)cp->client->comp_data;
 
            pixmap = ecore_x_composite_name_window_pixmap_get(cp->parent ?: cp->win);
            if (cp->client)
@@ -386,8 +387,8 @@ e_pixmap_refresh(E_Pixmap *cp)
            if (cp->client->comp_data &&
                cp->client->comp_data->pw && cp->client->comp_data->ph)
              {
-                pw = cp->client->x_comp_data->pw;
-                ph = cp->client->x_comp_data->ph;
+                pw = cd->pw;
+                ph = cd->ph;
              }
            else
              ecore_x_pixmap_geometry_get(pixmap, NULL, NULL, &pw, &ph);
@@ -635,6 +636,7 @@ e_pixmap_image_refresh(E_Pixmap *cp)
         cp->image = ecore_x_image_new(cp->w, cp->h, cp->visual, cp->client->depth);
         if (cp->image)
           cp->image_argb = ecore_x_image_is_argb32_get(cp->image);
+        return !!cp->image;
 #endif
         break;
       case E_PIXMAP_TYPE_WL:
@@ -646,7 +648,8 @@ e_pixmap_image_refresh(E_Pixmap *cp)
       default:
         break;
      }
-   return !!cp->image;
+
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool

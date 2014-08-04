@@ -145,7 +145,7 @@ _create_data(E_Dialog *cfd, E_Client *ec)
                    cfdata->client->icccm.max_aspect);
         cfdata->icccm.aspect = strdup(buf);
      }
-#ifdef E_COMP_X_H
+#ifndef HAVE_WAYLAND_ONLY
    if (cfdata->client->icccm.initial_state != ECORE_X_WINDOW_STATE_HINT_NONE)
      {
         switch (cfdata->client->icccm.initial_state)
@@ -212,7 +212,7 @@ _create_data(E_Dialog *cfd, E_Client *ec)
                  (unsigned int)cfdata->client->icccm.client_leader);
         cfdata->icccm.client_leader = strdup(buf);
      }
-#ifdef E_COMP_X_H
+#ifndef HAVE_WAYLAND_ONLY
    switch (cfdata->client->icccm.gravity)
      {
       case ECORE_X_GRAVITY_FORGET:

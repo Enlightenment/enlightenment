@@ -1,6 +1,4 @@
 #include "e.h"
-#include "e_comp_wl.h"
-#include "e_comp_wl_input.h"
 #include <Ecore_X.h>
 
 #define SCREEN_W 1024
@@ -19,7 +17,7 @@ _cb_delete_request(Ecore_Evas *ee EINA_UNUSED)
 static Eina_Bool 
 _cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
-   E_Comp_Wl_Data *cdata;
+   E_Comp_Data *cdata;
    E_Config_XKB_Layout *ekbd;
    char *rules, *model, *layout;
    Ecore_X_Atom xkb = 0;

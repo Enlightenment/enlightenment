@@ -8,8 +8,8 @@
 #include "e_zone.h"
 #include "e_desk.h"
 #include "e_auth.h"
-#ifndef HAVE_WAYLAND_ONLY
-#  include "e_comp_x.h"
+#ifdef NEED_X
+# include "e_comp_x.h"
 #endif
 #include "e_pixmap.h"
 #include "e_comp_object.h"
@@ -158,5 +158,7 @@
 
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
 # include "e_comp_wl.h"
+# include "e_comp_wl_data.h"
+# include "e_comp_wl_input.h"
 # include "e_uuid_store.h"
 #endif

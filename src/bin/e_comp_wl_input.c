@@ -1,10 +1,9 @@
+#define E_COMP_WL
 #include "e.h"
-#include "e_comp_wl.h"
-#include "e_comp_wl_input.h"
 #include <sys/mman.h>
 
 static void 
-_e_comp_wl_input_update_seat_caps(E_Comp_Wl_Data *cdata)
+_e_comp_wl_input_update_seat_caps(E_Comp_Data *cdata)
 {
    Eina_List *l;
    struct wl_resource *res;
@@ -32,7 +31,7 @@ _e_comp_wl_input_cb_resource_destroy(struct wl_client *client EINA_UNUSED, struc
 static void 
 _e_comp_wl_input_pointer_cb_cursor_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, uint32_t serial EINA_UNUSED, struct wl_resource *surface_resource EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED)
 {
-   E_Comp_Wl_Data *cdata;
+   E_Comp_Data *cdata;
 
    /* get compositor data */
    if (!(cdata = wl_resource_get_user_data(resource))) return;
@@ -52,7 +51,7 @@ static const struct wl_keyboard_interface _e_keyboard_interface =
 static void 
 _e_comp_wl_input_cb_pointer_unbind(struct wl_resource *resource)
 {
-   E_Comp_Wl_Data *cdata;
+   E_Comp_Data *cdata;
 
    /* get compositor data */
    if (!(cdata = wl_resource_get_user_data(resource))) return;
@@ -63,7 +62,7 @@ _e_comp_wl_input_cb_pointer_unbind(struct wl_resource *resource)
 static void 
 _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
-   E_Comp_Wl_Data *cdata;
+   E_Comp_Data *cdata;
    struct wl_resource *res;
 
    /* get compositor data */
@@ -87,7 +86,7 @@ _e_comp_wl_input_cb_pointer_get(struct wl_client *client, struct wl_resource *re
 static void 
 _e_comp_wl_input_cb_keyboard_unbind(struct wl_resource *resource)
 {
-   E_Comp_Wl_Data *cdata;
+   E_Comp_Data *cdata;
 
    /* get compositor data */
    if (!(cdata = wl_resource_get_user_data(resource))) return;
@@ -98,7 +97,7 @@ _e_comp_wl_input_cb_keyboard_unbind(struct wl_resource *resource)
 static void 
 _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
-   E_Comp_Wl_Data *cdata;
+   E_Comp_Data *cdata;
    struct wl_resource *res;
 
    /* get compositor data */
@@ -126,7 +125,7 @@ _e_comp_wl_input_cb_keyboard_get(struct wl_client *client, struct wl_resource *r
 static void 
 _e_comp_wl_input_cb_touch_get(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id EINA_UNUSED)
 {
-   E_Comp_Wl_Data *cdata;
+   E_Comp_Data *cdata;
 
    /* DBG("Input Touch Get"); */
 
@@ -146,7 +145,7 @@ static const struct wl_seat_interface _e_seat_interface =
 static void 
 _e_comp_wl_input_cb_unbind_seat(struct wl_resource *resource)
 {
-   E_Comp_Wl_Data *cdata;
+   E_Comp_Data *cdata;
 
    if (!(cdata = wl_resource_get_user_data(resource))) return;
 
@@ -156,7 +155,7 @@ _e_comp_wl_input_cb_unbind_seat(struct wl_resource *resource)
 static void 
 _e_comp_wl_input_cb_bind_seat(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
-   E_Comp_Wl_Data *cdata;
+   E_Comp_Data *cdata;
    struct wl_resource *res;
 
    if (!(cdata = data)) return;
@@ -218,7 +217,7 @@ _e_comp_wl_input_keymap_fd_get(off_t size)
 }
 
 static void 
-_e_comp_wl_input_keymap_update(E_Comp_Wl_Data *cdata, struct xkb_keymap *keymap)
+_e_comp_wl_input_keymap_update(E_Comp_Data *cdata, struct xkb_keymap *keymap)
 {
    char *tmp;
    xkb_mod_mask_t latched, locked;
@@ -303,7 +302,7 @@ _e_comp_wl_input_keymap_update(E_Comp_Wl_Data *cdata, struct xkb_keymap *keymap)
 }
 
 EINTERN Eina_Bool 
-e_comp_wl_input_init(E_Comp_Wl_Data *cdata)
+e_comp_wl_input_init(E_Comp_Data *cdata)
 {
    /* check for valid compositor data */
    if (!cdata) return EINA_FALSE;
@@ -327,7 +326,7 @@ e_comp_wl_input_init(E_Comp_Wl_Data *cdata)
 }
 
 EINTERN void 
-e_comp_wl_input_shutdown(E_Comp_Wl_Data *cdata)
+e_comp_wl_input_shutdown(E_Comp_Data *cdata)
 {
    /* Eina_List *l; */
    struct wl_resource *res;
@@ -368,7 +367,7 @@ e_comp_wl_input_keyboard_check(struct wl_resource *res)
 }
 
 EINTERN void 
-e_comp_wl_input_keyboard_modifiers_update(E_Comp_Wl_Data *cdata)
+e_comp_wl_input_keyboard_modifiers_update(E_Comp_Data *cdata)
 {
    xkb_mod_mask_t depressed, latched, locked;
    xkb_layout_index_t group;
@@ -404,7 +403,7 @@ e_comp_wl_input_keyboard_modifiers_update(E_Comp_Wl_Data *cdata)
 }
 
 EINTERN void 
-e_comp_wl_input_keyboard_state_update(E_Comp_Wl_Data *cdata, uint32_t keycode, Eina_Bool pressed)
+e_comp_wl_input_keyboard_state_update(E_Comp_Data *cdata, uint32_t keycode, Eina_Bool pressed)
 {
    enum xkb_key_direction dir;
 
@@ -419,7 +418,7 @@ e_comp_wl_input_keyboard_state_update(E_Comp_Wl_Data *cdata, uint32_t keycode, E
 }
 
 EAPI void 
-e_comp_wl_input_pointer_enabled_set(E_Comp_Wl_Data *cdata, Eina_Bool enabled)
+e_comp_wl_input_pointer_enabled_set(E_Comp_Data *cdata, Eina_Bool enabled)
 {
    /* check for valid compositor data */
    if (!cdata) return;
@@ -429,7 +428,7 @@ e_comp_wl_input_pointer_enabled_set(E_Comp_Wl_Data *cdata, Eina_Bool enabled)
 }
 
 EAPI void 
-e_comp_wl_input_keyboard_enabled_set(E_Comp_Wl_Data *cdata, Eina_Bool enabled)
+e_comp_wl_input_keyboard_enabled_set(E_Comp_Data *cdata, Eina_Bool enabled)
 {
    /* check for valid compositor data */
    if (!cdata) return;
@@ -439,7 +438,7 @@ e_comp_wl_input_keyboard_enabled_set(E_Comp_Wl_Data *cdata, Eina_Bool enabled)
 }
 
 EAPI void 
-e_comp_wl_input_keymap_set(E_Comp_Wl_Data *cdata, const char *rules, const char *model, const char *layout)
+e_comp_wl_input_keymap_set(E_Comp_Data *cdata, const char *rules, const char *model, const char *layout)
 {
    struct xkb_keymap *keymap;
    struct xkb_rule_names names;

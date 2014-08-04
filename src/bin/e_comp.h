@@ -1,15 +1,27 @@
 #ifdef E_TYPEDEFS
 typedef struct _E_Comp E_Comp;
-typedef struct _E_Comp_X_Data E_Comp_X_Data;
-typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
-typedef struct _E_Comp_X_Client_Data E_Comp_X_Client_Data;
-typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
+
+#ifdef E_COMP_WL
+typedef struct _E_Comp_Wl_Client_Data E_Comp_Client_Data;
+typedef struct _E_Comp_Wl_Data E_Comp_Data;
+#endif
+
+#ifdef E_COMP_X
+typedef struct _E_Comp_X_Client_Data E_Comp_Client_Data;
+typedef struct _E_Comp_X_Data E_Comp_Data;
+#endif
+
+#if !defined(E_COMP_WL) && !defined(E_COMP_X)
+typedef struct _E_Comp_Data E_Comp_Data;
+typedef struct _E_Comp_Client_Data E_Comp_Client_Data;
+#endif
+
 typedef struct _E_Comp_Demo_Style_Item E_Comp_Demo_Style_Item;
 
-#define E_COMP_TYPE (int) 0xE0b01003
+# define E_COMP_TYPE (int) 0xE0b01003
 
-#define E_LAYER_COUNT 19
-#define E_CLIENT_LAYER_COUNT 11
+# define E_LAYER_COUNT 19
+# define E_CLIENT_LAYER_COUNT 11
 
 typedef enum _E_Layer
 {
@@ -35,8 +47,8 @@ typedef enum _E_Layer
 } E_Layer;
 
 #else
-#ifndef E_COMP_H
-#define E_COMP_H
+# ifndef E_COMP_H
+#  define E_COMP_H
 
 # include "e_comp_cfdata.h"
 
@@ -58,8 +70,8 @@ struct _E_Comp
    Eina_List *clients;
    unsigned int new_clients;
 
-   E_Comp_X_Data *x_comp_data;
-   E_Comp_Wl_Data *wl_comp_data;
+   E_Comp_Data *x_comp_data;
+   E_Comp_Data *wl_comp_data;
 
    E_Pixmap_Type comp_type; //for determining X/Wayland/
 
