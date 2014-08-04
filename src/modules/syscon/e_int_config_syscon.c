@@ -31,7 +31,7 @@ e_int_config_syscon(E_Comp *comp, const char *params __UNUSED__)
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
 
-   if (e_config_dialog_find("E", "windows/conf_syscon")) return NULL;
+   if (e_config_dialog_find("E", "advanced/conf_syscon")) return NULL;
    v = E_NEW(E_Config_Dialog_View, 1);
 
    v->create_cfdata = _create_data;
@@ -41,7 +41,7 @@ e_int_config_syscon(E_Comp *comp, const char *params __UNUSED__)
    v->basic.check_changed = _basic_check_changed;
 
    cfd = e_config_dialog_new(comp, _("System Controls Settings"),
-                             "E", "windows/conf_syscon",
+                             "E", "advanced/conf_syscon",
                              "system-shutdown", 0, v, NULL);
    return cfd;
 }
