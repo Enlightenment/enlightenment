@@ -4,10 +4,10 @@
 #define EXAMPLE_STRING                     "example : "
 #define E_BINDING_CONTEXT_NUMBER           10
 
-#define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<br>"             \
-                                             "and press any button on your mouse,<br> or roll a" \
-                                             " wheel, to assign mouse binding."                  \
-                                             "<br>Press <hilight>Escape</highlight> to abort.")
+#define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<br>"            \
+                                             "and press any button on your mouse,<br>or roll a" \
+                                             " wheel, to assign mouse binding."                 \
+                                             "<br>Press <hilight>Escape</hilight> to abort.")
 
 static void        *_create_data(E_Config_Dialog *cfd);
 static void         _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);

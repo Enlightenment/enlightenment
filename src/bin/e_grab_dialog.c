@@ -2,10 +2,10 @@
 
 #define TEXT_PRESS_KEY_SEQUENCE            _("Please press key sequence,<br><br>" \
                                              "or <hilight>Escape</hilight> to abort.")
-#define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<br>"             \
-                                             "and press any button on your mouse,<br> or roll a" \
-                                             " wheel, to assign mouse binding."                  \
-                                             "<br>Press <hilight>Escape</highlight> to abort.")
+#define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<br>"            \
+                                             "and press any button on your mouse,<br>or roll a" \
+                                             " wheel, to assign mouse binding."                 \
+                                             "<br>Press <hilight>Escape</hilight> to abort.")
 
 static Eina_Bool
 _e_grab_dialog_key_handler(void *data, int type __UNUSED__, Ecore_Event_Key *ev)
