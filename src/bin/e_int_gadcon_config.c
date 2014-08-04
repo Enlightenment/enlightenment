@@ -44,7 +44,7 @@ static CFGadget    *_search_hash(E_Config_Dialog_Data *cfdata, const char *name)
 static Eina_Bool    _cb_cc_add(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Class_Add *ev);
 static Eina_Bool    _cb_cc_del(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Class_Add *ev);
 static Eina_Bool    _cb_gcc_add(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Add *ev);
-static Eina_Bool    _cb_gcc_del(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Add *ev);
+static Eina_Bool    _cb_gcc_del(E_Config_Dialog_Data *cfdata, int type, E_Event_Gadcon_Client_Del *ev);
 
 /* local function prototypes */
 static void
@@ -630,7 +630,7 @@ _search_hash(E_Config_Dialog_Data *cfdata, const char *name)
 }
 
 static Eina_Bool
-_cb_gcc_del(E_Config_Dialog_Data *cfdata, int type __UNUSED__, E_Event_Gadcon_Client_Add *ev)
+_cb_gcc_del(E_Config_Dialog_Data *cfdata, int type __UNUSED__, E_Event_Gadcon_Client_Del *ev)
 {
    if (cfdata->advanced.o_list)
      _list_item_del_advanced(cfdata, ev->gcc);
