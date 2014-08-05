@@ -574,6 +574,21 @@ _e_comp_wl_surface_commit(E_Client *ec)
           }
      }
 
+   if (ec->comp_data)
+     {
+        if (ec->comp_data->pending.damage)
+          eina_tiler_area_size_set(ec->comp_data->pending.damage,
+                                   ec->client.w, ec->client.h);
+
+        if (ec->comp_data->pending.input)
+          eina_tiler_area_size_set(ec->comp_data->pending.input,
+                                   ec->client.w, ec->client.h);
+
+        if (ec->comp_data->pending.opaque)
+          eina_tiler_area_size_set(ec->comp_data->pending.opaque,
+                                   ec->client.w, ec->client.h);
+     }
+
    if (ec->comp_data->pending.new_attach)
      {
         if (!ec->comp_data->pending.buffer)
@@ -1037,6 +1052,13 @@ _e_comp_wl_client_idler(void *data EINA_UNUSED)
      {
         if ((e_object_is_del(E_OBJECT(ec))) || (!ec->comp_data)) continue;
 
+        if (ec->post_resize)
+          {
+             if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
+               ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
+                                                      ec->comp->wl_comp_data->resize.edges,
+                                                      ec->client.w, ec->client.h);
+          }
         ec->post_move = 0;
         ec->post_resize = 0;
 
@@ -2178,7 +2200,6 @@ static void
 _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec;
-   E_Comp_Data *cdata;
 
    if (!(ec = data)) return;
    if ((ec->shading) || (ec->shaded)) return;
@@ -2186,27 +2207,6 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
      return;
 
    /* DBG("COMP_WL: Evas Resize: %d %d", ec->client.w, ec->client.h); */
-
-   cdata = ec->comp->wl_comp_data;
-
-   if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
-     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
-                                            cdata->resize.edges,
-                                            ec->client.w, ec->client.h);
-   if (ec->comp_data)
-     {
-        if (ec->comp_data->pending.damage)
-          eina_tiler_area_size_set(ec->comp_data->pending.damage, 
-                                   ec->client.w, ec->client.h);
-
-        if (ec->comp_data->pending.input)
-          eina_tiler_area_size_set(ec->comp_data->pending.input, 
-                                   ec->client.w, ec->client.h);
-
-        if (ec->comp_data->pending.opaque)
-          eina_tiler_area_size_set(ec->comp_data->pending.opaque, 
-                                   ec->client.w, ec->client.h);
-     }
 
    ec->post_resize = EINA_TRUE;
    e_pixmap_dirty(ec->pixmap);
