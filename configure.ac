@@ -913,7 +913,7 @@ AM_CONDITIONAL([HAVE_WL_DRM], [test "x${WL_DRM}" = "xtrue"])
 AC_E_OPTIONAL_MODULE([ibar], true)
 AC_E_OPTIONAL_MODULE([clock], true)
 AC_E_OPTIONAL_MODULE([pager], true)
-AC_E_OPTIONAL_MODULE([pager16], true)
+AC_E_OPTIONAL_MODULE([pager_plain], true)
 AC_E_OPTIONAL_MODULE([battery], true, [CHECK_MODULE_BATTERY])
 AC_E_OPTIONAL_MODULE([temperature], true, [CHECK_MODULE_TEMPERATURE])
 AC_E_OPTIONAL_MODULE([notification], true, [CHECK_MODULE_NOTIFICATION])
@@ -1027,7 +1027,7 @@ src/bin/e_fm_shared_types.h
 src/modules/ibar/module.desktop
 src/modules/clock/module.desktop
 src/modules/pager/module.desktop
-src/modules/pager16/module.desktop
+src/modules/pager_plain/module.desktop
 src/modules/battery/module.desktop
 src/modules/temperature/module.desktop
 src/modules/notification/module.desktop

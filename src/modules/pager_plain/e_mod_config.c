@@ -29,7 +29,7 @@ struct _E_Config_Dialog_Data
       Evas_Object *ob1, *ob2, *ob3;
       Eina_List   *popup_list, *urgent_list;
    } gui;
-   int drag_resist, flip_desk, show_desk_names;
+   int drag_resist, flip_desk, show_desk_names, live_preview;
    E_Config_Dialog *cfd;
 };
 
@@ -70,7 +70,7 @@ _config_pager_module(Config_Item *ci)
    v->advanced.apply_cfdata = _adv_apply;
    v->advanced.check_changed = _adv_check_changed;
 
-   snprintf(buff, sizeof(buff), "%s/e-module-pager.edj",
+   snprintf(buff, sizeof(buff), "%s/e-module-pager-plain.edj",
             pager_config->module->dir);
    comp = e_comp_get(NULL);
    cfd = e_config_dialog_new(comp, _("Pager Settings"), "E",
@@ -105,6 +105,7 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->btn.noplace = pager_config->btn_noplace;
    cfdata->btn.desk = pager_config->btn_desk;
    cfdata->flip_desk = pager_config->flip_desk;
+   cfdata->live_preview = !pager_config->disable_live_preview;
    cfdata->show_desk_names = pager_config->show_desk_names;
 }
 
@@ -132,6 +133,9 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    ow = e_widget_check_add(evas, _("Always show desktop names"),
                            &(cfdata->show_desk_names));
    e_widget_framelist_object_append(of, ow);
+   ow = e_widget_check_add(evas, _("Live preview"),
+                           &(cfdata->live_preview));
+   e_widget_framelist_object_append(of, ow);
    e_widget_list_object_append(ol, of, 1, 0, 0.5);
 
    of = e_widget_framelist_add(evas, _("Popup"), 0);
@@ -151,6 +155,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
    pager_config->popup = cfdata->popup.show;
    pager_config->flip_desk = cfdata->flip_desk;
+   pager_config->disable_live_preview = !cfdata->live_preview;
    pager_config->show_desk_names = cfdata->show_desk_names;
    pager_config->popup_urgent = cfdata->popup.urgent_show;
    _pager_cb_config_updated();
@@ -163,6 +168,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 {
    if ((int)pager_config->popup != cfdata->popup.show) return 1;
    if ((int)pager_config->flip_desk != cfdata->flip_desk) return 1;
+   if ((int)pager_config->disable_live_preview != !cfdata->live_preview) return 1;
    if ((int)pager_config->show_desk_names != cfdata->show_desk_names) return 1;
    if ((int)pager_config->popup_urgent != cfdata->popup.urgent_show) return 1;
 
@@ -185,6 +191,9 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    ow = e_widget_check_add(evas, _("Always show desktop names"),
                            &(cfdata->show_desk_names));
+   e_widget_list_object_append(ol, ow, 1, 0, 0.5);
+   ow = e_widget_check_add(evas, _("Live preview"),
+                           &(cfdata->live_preview));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
    ow = e_widget_label_add(evas, _("Resistance to dragging"));
    e_widget_list_object_append(ol, ow, 1, 0, 0.5);
@@ -294,6 +303,7 @@ _adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    pager_config->popup = cfdata->popup.show;
    pager_config->popup_speed = cfdata->popup.speed;
    pager_config->flip_desk = cfdata->flip_desk;
+   pager_config->disable_live_preview = !cfdata->live_preview;
    pager_config->popup_urgent = cfdata->popup.urgent_show;
    pager_config->popup_urgent_stick = cfdata->popup.urgent_stick;
    pager_config->popup_urgent_focus = cfdata->popup.urgent_focus;
@@ -316,6 +326,7 @@ _adv_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata
    if ((int)pager_config->popup != cfdata->popup.show) return 1;
    if (pager_config->popup_speed != cfdata->popup.speed) return 1;
    if ((int)pager_config->flip_desk != cfdata->flip_desk) return 1;
+   if ((int)pager_config->disable_live_preview != !cfdata->live_preview) return 1;
    if ((int)pager_config->popup_urgent != cfdata->popup.urgent_show) return 1;
    if ((int)pager_config->popup_urgent_stick != cfdata->popup.urgent_stick)
      return 1;

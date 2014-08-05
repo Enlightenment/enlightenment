@@ -20,7 +20,7 @@ include src/modules/Makefile_clock.mk
 
 include src/modules/Makefile_pager.mk
 
-include src/modules/Makefile_pager16.mk
+include src/modules/Makefile_pager_plain.mk
 
 include src/modules/Makefile_battery.mk
 
