@@ -914,7 +914,7 @@ _e_module_whitelist_check(void)
       "notification",
       "ofono",
       "pager",
-      "pager16",
+      "pager_plain",
       "physics",
       "quickaccess",
       "shot",
