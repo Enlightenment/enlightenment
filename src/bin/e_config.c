@@ -1305,6 +1305,20 @@ e_config_load(void)
                   e_config->modules = eina_list_append(e_config->modules, em);
                }
           }
+        CONFIG_VERSION_CHECK(17)
+          {
+             E_Config_Module *em;
+             Eina_List *l;
+
+             CONFIG_VERSION_UPDATE_INFO(17);
+
+             EINA_LIST_FOREACH(e_config->modules, l, em)
+               if (!strcmp(em->name, "pager16"))
+                 {
+                    eina_stringshare_replace(&em->name, "pager");
+                    break;
+                 }
+          }
      }
    if (!e_config->remember_internal_fm_windows)
      e_config->remember_internal_fm_windows = !!(e_config->remember_internal_windows & E_REMEMBER_INTERNAL_FM_WINS);
