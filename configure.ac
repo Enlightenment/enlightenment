@@ -659,6 +659,7 @@ define([CHECK_MODULE_BATTERY],
 ])
 
 have_openbsd="no"
+have_freebsd="no"
 BATTERY_LDFLAGS=
 case "$host_os" in
   darwin*)
@@ -667,10 +668,14 @@ case "$host_os" in
   openbsd*)
     have_openbsd="yes"
   ;;
+  freebsd*)
+    have_freebsd="yes"
+  ;;
 esac
 
 AC_SUBST([BATTERY_LDFLAGS])
 AM_CONDITIONAL([HAVE_OPENBSD], [test "x${have_openbsd}" = "xyes"])
+AM_CONDITIONAL([HAVE_FREEBSD], [test "x${have_freebsd}" = "xyes"])
 
 AM_CONDITIONAL(HAVE_TEMPERATURE, false)
 define([CHECK_MODULE_TEMPERATURE],
