@@ -19,7 +19,7 @@ _cb_keymap_changed(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Comp_Data *cdata;
    E_Config_XKB_Layout *ekbd;
-   char *rules, *model, *layout;
+   char *rules = NULL, *model = NULL, *layout = NULL;
    Ecore_X_Atom xkb = 0;
    Ecore_X_Window root = 0;
    int len = 0;
