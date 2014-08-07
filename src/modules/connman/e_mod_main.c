@@ -180,9 +180,10 @@ econnman_mod_services_changed(struct Connman_Manager *cm)
 static void
 _econnman_app_launch(E_Connman_Instance *inst)
 {
-   Efreet_Desktop *desktop = efreet_util_desktop_name_find("EConnMan");
+   Efreet_Desktop *desktop;
    E_Zone *zone;
 
+   desktop = efreet_util_desktop_file_id_find("econnman.desktop");
    if (!desktop)
      {
         e_util_dialog_internal
