@@ -608,7 +608,7 @@ media_cleaner_cb(void *data)
         now -= tw_config->allowed_media_age * 24 * 60 * 60;
      }
    else
-     now = ULONG_LONG_MAX;
+     now = ULLONG_MAX;
    EINA_LIST_FOREACH_SAFE(mcl->cache, l, l2, ic)
      {
         /* only clean up to 3 entries at a time to ensure responsiveness */
