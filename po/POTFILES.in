@@ -180,7 +180,6 @@ src/modules/conf_menus/e_mod_main.c
 src/modules/conf_paths/e_int_config_env.c
 src/modules/conf_paths/e_int_config_paths.c
 src/modules/conf_paths/e_mod_main.c
-src/modules/conf_performance/e_int_config_engine.c
 src/modules/conf_performance/e_int_config_performance.c
 src/modules/conf_performance/e_int_config_powermanagement.c
 src/modules/conf_performance/e_mod_main.c
