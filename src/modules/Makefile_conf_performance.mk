@@ -15,7 +15,6 @@ src_modules_conf_performance_module_la_LDFLAGS = $(MOD_LDFLAGS)
 src_modules_conf_performance_module_la_SOURCES = src/modules/conf_performance/e_mod_main.c \
 			     src/modules/conf_performance/e_mod_main.h \
 			     src/modules/conf_performance/e_int_config_performance.c \
-			     src/modules/conf_performance/e_int_config_engine.c \
 			     src/modules/conf_performance/e_int_config_powermanagement.c
 
 PHONIES += conf_performance install-conf_performance

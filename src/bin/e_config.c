@@ -1508,6 +1508,9 @@ e_config_load(void)
    /* FIXME: disabled auto apply because it causes problems */
    e_config->cfgdlg_auto_apply = 0;
 
+   // this is obsolete so 0 it out.
+   e_config->use_shaped_win = 0;
+
    ecore_event_add(E_EVENT_CONFIG_LOADED, NULL, NULL, NULL);
 }
 
