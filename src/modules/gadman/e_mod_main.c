@@ -220,6 +220,8 @@ gadman_gadget_add_handler(void *d __UNUSED__, int type __UNUSED__, E_Event_Gadco
    if (!l) return ECORE_CALLBACK_RENEW;
    if (ev->gcc->cf->geom.pos_x || ev->gcc->cf->geom.pos_y || ev->gcc->cf->geom.size_w || ev->gcc->cf->geom.size_h)
      return ECORE_CALLBACK_RENEW;
+   if ((ev->gcc->gadcon->new_gcc) && (ev->gcc->gadcon->new_gcc == ev->gcc))
+     return ECORE_CALLBACK_RENEW;
    ev->gcc->cf->style = eina_stringshare_add(ev->gcc->client_class->default_style ?: E_GADCON_CLIENT_STYLE_INSET);
    ev->gcc->style = eina_stringshare_ref(ev->gcc->cf->style);
    ev->gcc->cf->geom.pos_x = DEFAULT_POS_X;
