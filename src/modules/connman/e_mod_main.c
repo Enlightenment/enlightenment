@@ -287,9 +287,12 @@ _econnman_popup_new(E_Connman_Instance *inst)
 
    _econnman_popup_update(ctxt->cm, inst);
 
-   bt = e_widget_button_add(evas, _("Configure"), NULL,
-                            _econnman_configure_cb, inst, NULL);
-   e_widget_list_object_append(list, bt, 1, 0, 0.5);
+   if (efreet_util_desktop_file_id_find("econnman.desktop"))
+     {
+        bt = e_widget_button_add(evas, _("Configure"), NULL,
+                                 _econnman_configure_cb, inst, NULL);
+        e_widget_list_object_append(list, bt, 1, 0, 0.5);
+     }
 
    /* 30,40 % -- min vga, max uvga */
    _e_connman_widget_size_set(inst, list, 10, 30, 192, 192, 384, 384);
