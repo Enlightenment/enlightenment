@@ -79,7 +79,6 @@ struct _E_Config
    int         zone_desks_y_count; // GUI
    int         show_desktop_icons; // GUI
    int         edge_flip_dragging; // GUI
-   int         use_shaped_win; // GUI
    int         no_module_delay; // GUI
    const char *language; // GUI
    const char *desklock_language; // GUI

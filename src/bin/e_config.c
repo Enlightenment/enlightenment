@@ -446,7 +446,6 @@ _e_config_edd_init(Eina_Bool old)
    E_CONFIG_VAL(D, T, zone_desks_y_count, INT); /**/
    E_CONFIG_VAL(D, T, show_desktop_icons, INT); /**/
    E_CONFIG_VAL(D, T, edge_flip_dragging, INT); /**/
-   E_CONFIG_VAL(D, T, use_shaped_win, INT); /**/
    E_CONFIG_VAL(D, T, language, STR); /**/
    E_CONFIG_VAL(D, T, no_module_delay, INT); /**/
    E_CONFIG_VAL(D, T, desklock_language, STR); /**/
@@ -1507,9 +1506,6 @@ e_config_load(void)
 
    /* FIXME: disabled auto apply because it causes problems */
    e_config->cfgdlg_auto_apply = 0;
-
-   // this is obsolete so 0 it out.
-   e_config->use_shaped_win = 0;
 
    ecore_event_add(E_EVENT_CONFIG_LOADED, NULL, NULL, NULL);
 }
