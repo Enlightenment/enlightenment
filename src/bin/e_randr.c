@@ -466,8 +466,7 @@ static void
 _e_randr_apply(void)
 {
    E_Randr_Crtc *crtc;
-   E_Randr_Output *output;
-   Eina_List *l, *ll;
+   Eina_List *l;
    Ecore_X_Window root = 0;
    int nw = 0, nh = 0;
    int minw = 0, minh = 0;
@@ -490,6 +489,8 @@ _e_randr_apply(void)
    /* loop our lists of crtcs */
    EINA_LIST_FOREACH(e_randr->crtcs, l, crtc)
      {
+        E_Randr_Output *output;
+        Eina_List *ll;
         int x = 0, y = 0, w = 0, h = 0;
         Ecore_X_Randr_Mode mode = 0;
         Ecore_X_Randr_Orientation orient = ECORE_X_RANDR_ORIENTATION_ROT_0;
