@@ -269,6 +269,7 @@ _e_randr_config_load(void)
    if (!e_randr_cfg) return EINA_FALSE;
 
    _e_randr_load();
+   e_randr_config_save();
 
    if ((do_restore) && (e_randr_cfg->restore))
      _e_randr_apply();
@@ -408,10 +409,14 @@ _e_randr_load(void)
           {
              E_Config_Randr_Output *output_cfg = NULL;
              E_Randr_Output *output = NULL;
+             Eina_Bool unknown = EINA_FALSE;
 
              output_cfg = _e_randr_config_output_find(outputs[j]);
              if (!output_cfg)
-               output_cfg = _e_randr_config_output_new(root, outputs[j]);
+               {
+                  output_cfg = _e_randr_config_output_new(root, outputs[j]);
+                  unknown = EINA_TRUE;
+               }
              if (!output_cfg) continue;
 
              output = E_NEW(E_Randr_Output, 1);
@@ -439,6 +444,12 @@ _e_randr_load(void)
                          output->cfg->orient = crtc->orient;
                        /* find mode for output */
                        _e_randr_output_mode_update(output);
+                       /* set position from crtc if unknown */
+                       if (unknown)
+                         {
+                            output->cfg->geo.x = crtc->geo.x;
+                            output->cfg->geo.y = crtc->geo.y;
+                         }
                     }
                }
           }
