@@ -696,6 +696,9 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    else if (ev->connection == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
      {
         E_Randr_Crtc *crtc = NULL;
+        Eina_Bool unknown = EINA_FALSE;
+
+        if (output->cfg->crtc == 0) unknown = EINA_TRUE;
 
         /* connected */
         if ((ev->crtc != 0) && (output->cfg->crtc != ev->crtc))
@@ -717,6 +720,19 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
                     output->cfg->orient = crtc->orient;
                   /* validate output mode */
                   _e_randr_output_mode_update(output);
+                  /* if unknown position at far right */
+                  if (unknown)
+                    {
+                       E_Randr_Output *other;
+                       Eina_List *l;
+
+                       EINA_LIST_FOREACH(e_randr->outputs, l, other)
+                         {
+                            if ((other == output) || (!output->active)) continue;
+                            if ((other->cfg->geo.x + other->cfg->geo.w) > output->cfg->geo.x)
+                              output->cfg->geo.x = other->cfg->geo.x + other->cfg->geo.w;
+                         }
+                    }
                }
              changed = EINA_TRUE;
           }
