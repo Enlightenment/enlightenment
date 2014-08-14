@@ -500,11 +500,6 @@ _e_randr_apply(void)
         /* disable crtc if no outputs */
         if (!crtc->outputs)
           {
-             fprintf(stderr, "disable crtc: %d\n", crtc->xid);
-             fprintf(stderr, "\t%d > %d\n", (x + w), maxw);
-             fprintf(stderr, "\t%d > %d\n", (y + h), maxh);
-             fprintf(stderr, "\t%d\n", mode);
-             fprintf(stderr, "\t%p\n", crtc->outputs);
              ecore_x_randr_crtc_settings_set(root, crtc->xid, NULL, 0, 0, 0, 0,
                                              ECORE_X_RANDR_ORIENTATION_ROT_0);
              continue;
@@ -528,11 +523,6 @@ _e_randr_apply(void)
         /* if the crtc does not fit, disable it */
         if (((x + w) > maxw) || ((y + h) > maxh) || (mode == 0))
           {
-             fprintf(stderr, "disable crtc: %d\n", crtc->xid);
-             fprintf(stderr, "\t%d > %d\n", (x + w), maxw);
-             fprintf(stderr, "\t%d > %d\n", (y + h), maxh);
-             fprintf(stderr, "\t%d\n", mode);
-             fprintf(stderr, "\t%p\n", crtc->outputs);
              ecore_x_randr_crtc_settings_set(root, crtc->xid, NULL, 0, 0, 0, 0,
                                              ECORE_X_RANDR_ORIENTATION_ROT_0);
              continue;
@@ -558,9 +548,6 @@ _e_randr_apply(void)
         if (y < ny) ny = y;
 
         /* apply our stored crtc settings */
-        fprintf(stderr, "enable crtc: %d %d\n", crtc->xid, count);
-        fprintf(stderr, "\t%dx%d+%d+%d\n", crtc->geo.w, crtc->geo.h, crtc->geo.x, crtc->geo.y);
-        fprintf(stderr, "\t%d %d\n", crtc->mode, crtc->orient);
         ecore_x_randr_crtc_settings_set(root, crtc->xid, coutputs,
                                         count, crtc->geo.x, crtc->geo.y,
                                         crtc->mode, crtc->orient);
@@ -588,7 +575,6 @@ _e_randr_event_cb_screen_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    Eina_Bool changed = EINA_FALSE;
    Ecore_X_Randr_Output primary = 0;
 
-   fprintf(stderr, "E_RANDR: _e_randr_event_cb_screen_change\n");
    ev = event;
 
    /* check if this event's root window is Our root window */
@@ -609,8 +595,6 @@ _e_randr_event_cb_screen_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
         changed = EINA_TRUE;
      }
 
-   fprintf(stderr, "E_RANDR: changed: %d\n", changed);
-
    if (changed) e_randr_config_save();
 
    return ECORE_CALLBACK_RENEW;
@@ -623,10 +607,6 @@ _e_randr_event_cb_crtc_change(void *data EINA_UNUSED, int type EINA_UNUSED, void
    E_Randr_Crtc *crtc;
 
    ev = event;
-   fprintf(stderr, "E_RANDR: _e_randr_event_cb_crtc_change\n");
-   fprintf(stderr, "  %d %d %d\n", ev->crtc, ev->mode, ev->orientation);
-   fprintf(stderr, "  %dx%d+%d+%d\n", ev->geo.w, ev->geo.h, ev->geo.x, ev->geo.y);
-
    crtc = _e_randr_crtc_find(ev->crtc);
 
    if (!crtc)
@@ -667,9 +647,6 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    Eina_Bool changed = EINA_FALSE;
 
    ev = event;
-   fprintf(stderr, "E_RANDR: _e_randr_event_cb_output_change\n");
-   fprintf(stderr, "  %d %d %d\n", ev->output, ev->crtc, ev->mode);
-   fprintf(stderr, "  %d %d %d\n", ev->orientation, ev->connection, ev->subpixel_order);
 
    /* check if this event's root window is Our root window */
    if (ev->win != e_manager_current_get()->root)
@@ -704,7 +681,6 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    if (output->is_lid && _e_randr_lid_is_closed)
      {
         /* ignore event from disconnected lid */
-        fprintf(stderr, "E_RANDR: ignore event from closed lid\n");
      }
    else if (ev->connection == ECORE_X_RANDR_CONNECTION_STATUS_CONNECTED)
      {
@@ -713,7 +689,6 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
         /* connected */
         if ((ev->crtc != 0) && (output->cfg->crtc != ev->crtc))
           {
-             fprintf(stderr, "E_RANDR: output changed crtc\n");
              /* remove from old crtc */
              _e_randr_output_active_set(output, EINA_FALSE);
              /* set new crtc on output */
@@ -721,7 +696,6 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
           }
         if ((!output->active) && (output->cfg->connect))
           {
-             fprintf(stderr, "E_RANDR: output connected to crtc\n");
              crtc = _e_randr_output_crtc_find(output);
              if (crtc)
                {
@@ -741,7 +715,6 @@ _e_randr_event_cb_output_change(void *data EINA_UNUSED, int type EINA_UNUSED, vo
         /* disconnected */
         if (output->active)
           {
-             fprintf(stderr, "E_RANDR: output disconnected: %s\n", output->name);
              _e_randr_output_active_set(output, EINA_FALSE);
              changed = EINA_TRUE;
           }
@@ -768,7 +741,6 @@ _e_randr_event_cb_acpi(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
 {
    E_Event_Acpi *ev;
 
-   fprintf(stderr, "E_RANDR: _e_randr_event_cb_acpi\n");
    ev = event;
 
    if (ev->type == E_ACPI_TYPE_LID)
@@ -777,7 +749,6 @@ _e_randr_event_cb_acpi(void *data EINA_UNUSED, int type EINA_UNUSED, void *event
 
         _e_randr_lid_is_closed = (ev->status == E_ACPI_LID_CLOSED);
         changed = _e_randr_lid_update();
-        fprintf(stderr, "ch: %d\n", changed);
         if (changed)
           {
              /* force new evaluation of primary */
@@ -882,10 +853,6 @@ error:
           free(mode_infos[i]);
         free(mode_infos);
      }
-   fprintf(stderr, "E_RANDR: reset %s = %dx%d+%d+%d\n",
-           output->name,
-           output->cfg->geo.w, output->cfg->geo.h,
-           output->cfg->geo.x, output->cfg->geo.y);
    output->cfg->geo.x = output->cfg->geo.y = output->cfg->geo.w = output->cfg->geo.h = 0;
    output->cfg->refresh_rate = 0.0;
    output->mode = 0;
