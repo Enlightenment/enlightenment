@@ -475,7 +475,9 @@ nocomp:
           {
              if (c->nocomp && c->nocomp_ec)
                {
-                  E_CLIENT_REVERSE_FOREACH(c, ec)
+                  E_Client *nec = NULL;
+                  for (ec = e_client_top_get(c), nec = e_client_below_get(ec);
+                       (ec && nec) && (ec != nec); ec = nec, nec = e_client_below_get(ec))
                     {
                        if (ec == c->nocomp_ec) break;
                        if (e_client_is_stacking(ec)) continue;
