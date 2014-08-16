@@ -484,10 +484,12 @@ nocomp:
                        (ec && nec) && (ec != nec); ec = nec, nec = e_client_below_get(ec))
                     {
                        if (ec == c->nocomp_ec) break;
+                       if (evas_object_layer_get(ec->frame) < evas_object_layer_get(c->nocomp_ec->frame)) break;
                        if (e_client_is_stacking(ec)) continue;
-                       if (ec->override && ec->internal) continue; //systray
+                       if (!evas_object_visible_get(ec->frame)) continue;
+                       if (evas_object_data_get(ec->frame, "comp_skip")) continue;
                        if (e_object_is_del(E_OBJECT(ec)) || (!e_client_util_desk_visible(ec, e_desk_current_get(ec->zone)))) continue;
-                       if (e_config->allow_above_fullscreen && (!e_config->mode.presentation))
+                       if (ec->override || (e_config->allow_above_fullscreen && (!e_config->mode.presentation)))
                          {
                             _e_comp_nocomp_end(c);
                             break;
