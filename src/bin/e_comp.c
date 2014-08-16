@@ -96,7 +96,7 @@ _e_comp_visible_object_is(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coo
    const char *type = evas_object_type_get(obj);
    Evas_Coord xx, yy, ww, hh;
 
-   if (!type) return EINA_FALSE;
+   if ((!type) || (!e_util_strcmp(type, "e_comp_object"))) return EINA_FALSE;
    evas_object_geometry_get(obj, &xx, &yy, &ww, &hh);
    if (E_INTERSECTS(x, y, w, h, xx, yy, ww, hh))
      {
@@ -176,7 +176,11 @@ _e_comp_fullscreen_check(E_Comp *c)
 
         if (ec->ignored || ec->input_only || (!evas_object_visible_get(ec->frame)))
           continue;
-        if (!e_comp_util_client_is_fullscreen(ec)) return NULL;
+        if (!e_comp_util_client_is_fullscreen(ec))
+          {
+             if (evas_object_data_get(ec->frame, "comp_skip")) continue;
+             return NULL;
+          }
         while (o)
           {
              if (_e_comp_visible_object_is_above
