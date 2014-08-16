@@ -850,6 +850,30 @@ _systray_xembed_client_add(Instance_Xembed *xembed, int t EINA_UNUSED, E_Event_C
         else
           evas_object_show(xembed->ec->frame);
         _systray_xembed_restack(xembed);
+        evas_object_data_set(ev->ec->frame, "comp_skip", (void*)1);
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_systray_xembed_comp_enable(Instance_Xembed *xembed, int t EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   if (xembed->ec)
+     {
+        ecore_x_window_show(xembed->win.base);
+        evas_object_show(xembed->ec->frame);
+        e_comp_object_redirected_set(xembed->ec->frame, 1);
+     }
+   return ECORE_CALLBACK_RENEW;
+}
+
+static Eina_Bool
+_systray_xembed_comp_disable(Instance_Xembed *xembed, int t EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   if (xembed->ec)
+     {
+        ecore_x_window_hide(xembed->win.base);
+        evas_object_hide(xembed->ec->frame);
      }
    return ECORE_CALLBACK_RENEW;
 }
@@ -896,6 +920,8 @@ systray_xembed_new(Instance *inst)
    E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_WINDOW_REPARENT, _systray_xembed_cb_reparent_notify, xembed);
    E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_SELECTION_CLEAR, _systray_xembed_cb_selection_clear, xembed);
    E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_WINDOW_CONFIGURE, _systray_xembed_cb_window_configure, xembed);
+   E_LIST_HANDLER_APPEND(xembed->handlers, E_EVENT_COMPOSITOR_ENABLE, _systray_xembed_comp_enable, xembed);
+   E_LIST_HANDLER_APPEND(xembed->handlers, E_EVENT_COMPOSITOR_DISABLE, _systray_xembed_comp_disable, xembed);
 
    return xembed;
 }
