@@ -57,16 +57,7 @@ struct _Instance_Xembed
       Ecore_X_Window base;
       Ecore_X_Window selection;
    } win;
-   struct
-   {
-      Ecore_Event_Handler *message;
-      Ecore_Event_Handler *destroy;
-      Ecore_Event_Handler *show;
-      Ecore_Event_Handler *reparent;
-      Ecore_Event_Handler *sel_clear;
-      Ecore_Event_Handler *configure;
-      Ecore_Event_Handler *client;
-   } handler;
+   Eina_List *handlers;
    struct
    {
       Ecore_Timer *retry;
@@ -898,25 +889,13 @@ systray_xembed_new(Instance *inst)
         evas_object_event_callback_add(inst->gcc->gadcon->shelf->comp_object, EVAS_CALLBACK_SHOW, _systray_xembed_cb_show, xembed);
      }
 
-   xembed->handler.client = ecore_event_handler_add(E_EVENT_CLIENT_ADD, (Ecore_Event_Handler_Cb)_systray_xembed_client_add, xembed);
-   xembed->handler.message = ecore_event_handler_add
-       (ECORE_X_EVENT_CLIENT_MESSAGE, _systray_xembed_cb_client_message,
-        xembed);
-   xembed->handler.destroy = ecore_event_handler_add
-       (ECORE_X_EVENT_WINDOW_DESTROY, _systray_xembed_cb_window_destroy,
-        xembed);
-   xembed->handler.show = ecore_event_handler_add
-       (ECORE_X_EVENT_WINDOW_SHOW, _systray_xembed_cb_window_show,
-        xembed);
-   xembed->handler.reparent = ecore_event_handler_add
-       (ECORE_X_EVENT_WINDOW_REPARENT, _systray_xembed_cb_reparent_notify,
-        xembed);
-   xembed->handler.sel_clear = ecore_event_handler_add
-       (ECORE_X_EVENT_SELECTION_CLEAR, _systray_xembed_cb_selection_clear,
-        xembed);
-   xembed->handler.configure = ecore_event_handler_add
-       (ECORE_X_EVENT_WINDOW_CONFIGURE, _systray_xembed_cb_window_configure,
-        xembed);
+   E_LIST_HANDLER_APPEND(xembed->handlers, E_EVENT_CLIENT_ADD, (Ecore_Event_Handler_Cb)_systray_xembed_client_add, xembed);
+   E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_CLIENT_MESSAGE, _systray_xembed_cb_client_message, xembed);
+   E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_WINDOW_DESTROY, _systray_xembed_cb_window_destroy, xembed);
+   E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_WINDOW_SHOW, _systray_xembed_cb_window_show, xembed);
+   E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_WINDOW_REPARENT, _systray_xembed_cb_reparent_notify, xembed);
+   E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_SELECTION_CLEAR, _systray_xembed_cb_selection_clear, xembed);
+   E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_WINDOW_CONFIGURE, _systray_xembed_cb_window_configure, xembed);
 
    return xembed;
 }
@@ -943,19 +922,7 @@ systray_xembed_free(Instance_Xembed *xembed)
    _systray_xembed_deactivate(xembed);
    ecore_timer_del(xembed->visibility_timer);
 
-   if (xembed->handler.message)
-     ecore_event_handler_del(xembed->handler.message);
-   if (xembed->handler.destroy)
-     ecore_event_handler_del(xembed->handler.destroy);
-   if (xembed->handler.show)
-     ecore_event_handler_del(xembed->handler.show);
-   if (xembed->handler.reparent)
-     ecore_event_handler_del(xembed->handler.reparent);
-   if (xembed->handler.sel_clear)
-     ecore_event_handler_del(xembed->handler.sel_clear);
-   if (xembed->handler.configure)
-     ecore_event_handler_del(xembed->handler.configure);
-   ecore_event_handler_del(xembed->handler.client);
+   E_FREE_LIST(xembed->handlers, ecore_event_handler_del);
    if (xembed->timer.retry)
      ecore_timer_del(xembed->timer.retry);
 
