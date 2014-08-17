@@ -4498,15 +4498,17 @@ _e_fm2_uri_icon_list_get(Eina_List *uri)
         Eina_List *fms;
         Evas_Object *fm;
         E_Fm2_Icon *ic;
-        const char *file;
 
-        ic = NULL;
         fms = _e_fm2_file_fm2_find(path);
         if (!fms) continue;
-        fm = eina_list_data_get(fms);
-        eina_list_free(fms);
-        file = ecore_file_file_get(path);
-        ic = _e_fm2_icon_find(fm, file);
+        ic = NULL;
+        EINA_LIST_FREE(fms, fm)
+          {
+             ic = _e_fm2_icon_find(fm, ecore_file_file_get(path));
+             if (!ic) continue;
+             if (eina_list_data_find(ic->sd->selected_icons, ic)) break;
+             ic = NULL;
+          }
         icons = eina_list_append(icons, ic);
      }
    return icons;
