@@ -278,7 +278,7 @@ static void          _e_fm2_dir_save_props(E_Fm2_Smart_Data *sd);
 static Eina_List    *_e_fm2_file_fm2_find(const char *file);
 static E_Fm2_Icon   *_e_fm2_icon_find(Evas_Object *obj, const char *file);
 static const char   *_e_fm2_uri_escape(const char *path);
-static Eina_List    *_e_fm2_uri_icon_list_get(Eina_List *uri);
+static Eina_List    *_e_fm2_uri_selected_icon_list_get(Eina_List *uri);
 
 static E_Fm2_Icon   *_e_fm2_icon_new(E_Fm2_Smart_Data *sd, const char *file, E_Fm2_Finfo *finf);
 static void          _e_fm2_icon_unfill(E_Fm2_Icon *ic);
@@ -4487,7 +4487,7 @@ _e_fm2_uri_parse(const char *val)
 
 /* Takes an Eina_List of uri and return an Eina_List of real paths */
 static Eina_List *
-_e_fm2_uri_icon_list_get(Eina_List *uri)
+_e_fm2_uri_selected_icon_list_get(Eina_List *uri)
 {
    Eina_List *icons = NULL;
    Eina_List *l;
@@ -6810,7 +6810,7 @@ _e_fm2_cb_dnd_selection_notify(void *data, const char *type, void *event)
         return;
      }
 
-   isel = _e_fm2_uri_icon_list_get(fsel);
+   isel = _e_fm2_uri_selected_icon_list_get(fsel);
    ox = 0; oy = 0;
    EINA_LIST_FOREACH(isel, l, ic)
      {
