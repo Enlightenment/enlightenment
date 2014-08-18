@@ -279,26 +279,19 @@ _advanced_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data 
              e_widget_framelist_object_append(of, ob);
              ob = e_widget_check_add(evas, _("Texture from pixmap"), &(cfdata->texture_from_pixmap));
              e_widget_framelist_object_append(of, ob);
-#ifdef ECORE_EVAS_GL_X11_OPT_SWAP_MODE             
-             if ((evas_version->major >= 1) &&
-                 (evas_version->minor >= 7) &&
-                 (evas_version->micro >= 99))
-               {
-                  ob = e_widget_label_add(evas, _("Assume swapping method:"));
-                  e_widget_framelist_object_append(of, ob);
-                  rg = e_widget_radio_group_new(&(cfdata->swap_mode));
-                  ob = e_widget_radio_add(evas, _("Auto"), ECORE_EVAS_GL_X11_SWAP_MODE_AUTO, rg);
-                  e_widget_framelist_object_append(of, ob);
-                  ob = e_widget_radio_add(evas, _("Invalidate (full redraw)"), ECORE_EVAS_GL_X11_SWAP_MODE_FULL, rg);
-                  e_widget_framelist_object_append(of, ob);
-                  ob = e_widget_radio_add(evas, _("Copy from back to front"), ECORE_EVAS_GL_X11_SWAP_MODE_COPY, rg);
-                  e_widget_framelist_object_append(of, ob);
-                  ob = e_widget_radio_add(evas, _("Double buffered swaps"), ECORE_EVAS_GL_X11_SWAP_MODE_DOUBLE, rg);
-                  e_widget_framelist_object_append(of, ob);
-                  ob = e_widget_radio_add(evas, _("Triple buffered swaps"), ECORE_EVAS_GL_X11_SWAP_MODE_TRIPLE, rg);
-                  e_widget_framelist_object_append(of, ob);
-               }
-#endif             
+             ob = e_widget_label_add(evas, _("Assume swapping method:"));
+             e_widget_framelist_object_append(of, ob);
+             rg = e_widget_radio_group_new(&(cfdata->swap_mode));
+             ob = e_widget_radio_add(evas, _("Auto"), ECORE_EVAS_GL_X11_SWAP_MODE_AUTO, rg);
+             e_widget_framelist_object_append(of, ob);
+             ob = e_widget_radio_add(evas, _("Invalidate (full redraw)"), ECORE_EVAS_GL_X11_SWAP_MODE_FULL, rg);
+             e_widget_framelist_object_append(of, ob);
+             ob = e_widget_radio_add(evas, _("Copy from back to front"), ECORE_EVAS_GL_X11_SWAP_MODE_COPY, rg);
+             e_widget_framelist_object_append(of, ob);
+             ob = e_widget_radio_add(evas, _("Double buffered swaps"), ECORE_EVAS_GL_X11_SWAP_MODE_DOUBLE, rg);
+             e_widget_framelist_object_append(of, ob);
+             ob = e_widget_radio_add(evas, _("Triple buffered swaps"), ECORE_EVAS_GL_X11_SWAP_MODE_TRIPLE, rg);
+             e_widget_framelist_object_append(of, ob);
 // lets not offer this anymore             
 //             ob = e_widget_check_add(evas, _("Indirect OpenGL (EXPERIMENTAL)"), &(cfdata->indirect));
 //             e_widget_framelist_object_append(of, ob);
