@@ -136,8 +136,8 @@ download_media_complete(void *data, int type EINA_UNUSED, Ecore_Con_Event_Url_Co
 
    if (data != tw_mod) return ECORE_CALLBACK_RENEW;
    i = ecore_con_url_data_get(ev->url_con);
-   if (!i) return ECORE_CALLBACK_RENEW;
-   if (!i->valid) return ECORE_CALLBACK_RENEW;
+   if (!i) return ECORE_CALLBACK_DONE;
+   if (!i->valid) return ECORE_CALLBACK_DONE;
    i->timestamp = (unsigned long long)ecore_time_unix_get();
    if (tw_media_add(i->addr, i->buf, i->timestamp, i->video) == 1)
      tw_mod->media_size += eina_binbuf_length_get(i->buf);
@@ -145,7 +145,7 @@ download_media_complete(void *data, int type EINA_UNUSED, Ecore_Con_Event_Url_Co
    dbus_signal_link_complete(i);
    download_media_cleanup();
    DBG("MEDIA CACHE: %zu bytes", tw_mod->media_size);
-   return ECORE_CALLBACK_RENEW;
+   return ECORE_CALLBACK_DONE;
 }
 
 static Eina_Bool
@@ -155,11 +155,11 @@ download_media_data(void *data, int type EINA_UNUSED, Ecore_Con_Event_Url_Data *
 
    if (data != tw_mod) return ECORE_CALLBACK_RENEW;
    i = ecore_con_url_data_get(ev->url_con);
-   if (!i) return ECORE_CALLBACK_RENEW;
-   if (i->dummy) return ECORE_CALLBACK_RENEW;
+   if (!i) return ECORE_CALLBACK_DONE;
+   if (i->dummy) return ECORE_CALLBACK_DONE;
    if (!i->buf) i->buf = eina_binbuf_new();
    eina_binbuf_append_length(i->buf, ev->data, ev->size);
-   return ECORE_CALLBACK_RENEW;
+   return ECORE_CALLBACK_DONE;
 }
 
 static Eina_Bool
@@ -172,15 +172,15 @@ download_media_status(void *data, int t EINA_UNUSED, Ecore_Con_Event_Url_Progres
 
    if (data != tw_mod) return ECORE_CALLBACK_RENEW;
    i = ecore_con_url_data_get(ev->url_con);
-   if (!i) return ECORE_CALLBACK_RENEW;
+   if (!i) return ECORE_CALLBACK_DONE;
 
    if (i->valid)
      {
         dbus_signal_link_progress(i, ev->down.now / ev->down.total);
-        return ECORE_CALLBACK_RENEW; //already checked
+        return ECORE_CALLBACK_DONE; //already checked
      }
    status = ecore_con_url_status_code_get(ev->url_con);
-   if (!status) return ECORE_CALLBACK_RENEW; //not ready yet
+   if (!status) return ECORE_CALLBACK_DONE; //not ready yet
    if (ev->down.total / 1024 / 1024 > tw_config->allowed_media_fetch_size)
      {
         DBG("Media larger than allowed!");
@@ -198,7 +198,7 @@ download_media_status(void *data, int t EINA_UNUSED, Ecore_Con_Event_Url_Progres
              ecore_con_url_data_set(i->client, i);
              if (!ecore_con_url_get(i->client)) goto dummy;
           }
-        return ECORE_CALLBACK_RENEW;
+        return ECORE_CALLBACK_DONE;
      }
    EINA_LIST_FOREACH(ecore_con_url_response_headers_get(ev->url_con), l, h)
      {
@@ -214,7 +214,7 @@ download_media_status(void *data, int t EINA_UNUSED, Ecore_Con_Event_Url_Progres
    i->valid = !i->dummy;
    if (i->valid) dbus_signal_link_progress(i, ev->down.now / ev->down.total);
 
-   return ECORE_CALLBACK_RENEW;
+   return ECORE_CALLBACK_DONE;
 dummy:
    dbus_signal_link_invalid(i);
    tw_dummy_add(i->addr);
