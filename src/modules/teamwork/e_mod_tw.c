@@ -869,6 +869,7 @@ tw_video_opened_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    double ratio = tw_config->popup_size / 100.;
    E_Zone *zone;
 
+   evas_object_smart_callback_del_full(obj, "frame_decode", tw_video_opened_cb, data);
    if (tw_mod->hidden && (!tw_mod->sticky) && (!tw_mod->force))
      {
         tw_video_closed_cb(data, obj, NULL);
@@ -886,9 +887,7 @@ tw_video_opened_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    h = (w * ih) / iw;
    e_livethumb_thumb_set(data, obj);
    tw_show_helper(data, w, h);
-   e_comp_object_util_del_list_append(tw_mod->pop, obj);
    evas_object_data_set(tw_mod->pop, "uri", eina_stringshare_add(emotion_object_file_get(obj)));
-   evas_object_smart_callback_del_full(obj, "frame_decode", tw_video_opened_cb, data);
 }
 
 static void
@@ -1066,7 +1065,6 @@ tw_show(Media *i)
    e_livethumb_thumb_set(prev, ic);
    tw_show_helper(prev, w, h);
    evas_object_data_set(tw_mod->pop, "uri", eina_stringshare_ref(i->addr));
-   e_comp_object_util_del_list_append(tw_mod->pop, ic);
 }
 
 static void
