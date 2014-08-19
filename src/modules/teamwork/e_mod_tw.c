@@ -876,6 +876,11 @@ tw_video_opened_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
         return;
      }
    emotion_object_size_get(obj, &iw, &ih);
+   if ((iw <= 0) || (ih <= 0))
+     {
+        tw_video_closed_cb(data, obj, NULL);
+        return;
+     }
 
    zone = e_zone_current_get(e_util_comp_current_get());
    w = MIN(zone->w, (ratio * (double)zone->w));
