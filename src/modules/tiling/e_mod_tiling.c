@@ -57,6 +57,7 @@ static void             _client_apply_settings(E_Client *ec, Client_Extra *extra
 static void             _foreach_desk(void (*func)(E_Desk *desk));
 static Eina_Bool _toggle_tiling_based_on_state(E_Client *ec, Eina_Bool restore);
 static void _edje_tiling_icon_set(Evas_Object *o);
+static void _desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks);
 
 /* Func Proto Requirements for Gadcon */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -231,12 +232,25 @@ _info_hash_update(const Eina_Hash *hash EINA_UNUSED,
                   const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    Tiling_Info *tinfo = data;
+   int old_nb_stacks = 0, new_nb_stacks = 0;
+
+   if (tinfo->conf)
+     {
+        old_nb_stacks = tinfo->conf->nb_stacks;
+     }
 
    if (tinfo->desk)
      {
         tinfo->conf =
           get_vdesk(tiling_g.config->vdesks, tinfo->desk->x, tinfo->desk->y,
                     tinfo->desk->zone->num);
+
+        if (tinfo->conf)
+          {
+             new_nb_stacks = tinfo->conf->nb_stacks;
+          }
+
+        _desk_config_apply((E_Desk *) tinfo->desk, old_nb_stacks, new_nb_stacks);
      }
    else
      {
@@ -473,11 +487,18 @@ change_desk_conf(struct _Config_vdesk *newconf)
    _G.tinfo->conf = newconf;
    _G.tinfo->conf->nb_stacks = new_nb_stacks;
 
+   _desk_config_apply(d, old_nb_stacks, new_nb_stacks);
+}
+
+static void
+_desk_config_apply(E_Desk *d, int old_nb_stacks, int new_nb_stacks)
+{
+   check_tinfo(d);
+
    if (new_nb_stacks == 0)
      {
         tiling_window_tree_walk(_G.tinfo->tree, _restore_free_client);
         _G.tinfo->tree = NULL;
-        e_place_zone_region_smart_cleanup(z);
      }
    else if (new_nb_stacks == old_nb_stacks)
      {
@@ -499,6 +520,8 @@ change_desk_conf(struct _Config_vdesk *newconf)
           {
              _add_client(ec);
           }
+
+        _reapply_tree();
      }
 }
 
