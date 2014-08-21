@@ -857,6 +857,7 @@ tw_video_closed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    evas_object_hide(obj);
    evas_object_hide(data);
+   emotion_object_play_set(obj, EINA_FALSE);
    ecore_timer_add(3.0, stupid_obj_del_workaround_hack, data);
    if (!tw_tmpfile) return;
    eina_stringshare_replace(&tw_tmpfile, NULL);
