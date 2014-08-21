@@ -231,8 +231,18 @@ _e_imc_imc_toggle(void *data, Evas_Object *obj __UNUSED__)
    E_Config_Dialog_Data *cfdata;
 
    cfdata = data;
+
    if (cfdata->imc_disable)
-     e_widget_ilist_unselect(cfdata->gui.imc_basic_list);
+     {
+        e_widget_ilist_unselect(cfdata->gui.imc_basic_list);
+        e_widget_disabled_set(cfdata->gui.imc_basic_list, 1);
+        e_widget_disabled_set(cfdata->gui.imc_basic_setup, 1);
+     }
+   else
+     {
+        e_widget_disabled_set(cfdata->gui.imc_basic_list, 0);
+        e_widget_disabled_set(cfdata->gui.imc_basic_setup, 0);
+     }
 }
 
 static void
