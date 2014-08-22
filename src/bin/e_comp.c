@@ -727,7 +727,7 @@ _e_comp_shapes_update_job(E_Comp *c)
              _e_comp_shapes_update_object_shape_comp_helper(c, o, tb);
              continue;
           }
-        ec = evas_object_data_get(o, "E_Client");
+        ec = e_comp_object_client_get(o);
         if (ec && (!ec->no_shape_cut))
           _e_comp_shapes_update_comp_client_shape_comp_helper(ec, tb
 #ifdef SHAPE_DEBUG
