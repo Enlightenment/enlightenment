@@ -332,9 +332,8 @@ e_pixmap_refresh(E_Pixmap *cp)
              e_comp_object_native_surface_set(cp->client->frame, 0);
            success = !!pixmap;
            if (!success) break;
-           if (ecore_x_present_exists() && cp->client->comp_data &&
-               cp->client->comp_data->pw && cp->client->comp_data->ph &&
-               (!e_client_util_resizing_get(cp->client))) //PRESENT is unreliable during resizes
+           if (cp->client->comp_data &&
+               cp->client->comp_data->pw && cp->client->comp_data->ph)
              {
                 pw = cp->client->comp_data->pw;
                 ph = cp->client->comp_data->ph;
