@@ -20,6 +20,7 @@ Firstly, you MUST have EFL built with the following options:
 
   --enable-drm
   --enable-wayland
+  --enable-systemd
 
 This Readme does not address the dependencies needed to enable Wayland
 in EFL. If you require any information for that, please see:
@@ -34,6 +35,17 @@ If you would like support for EGL in Wayland, then also build EFL with:
 The above options can be enabled for EFL without any adverse effects to
 existing applications.
 
+Wayland-Only:
+-------------
+
+If you wish to test out the Highly Experimental standalone
+Wayland-Only (no X11) compositor, then you should checkout the
+e_comp_wl development branch:
+
+https://git.enlightenment.org/core/enlightenment.git/log/?h=devs/devilhorns/e_comp_wl
+
+Compiling:
+-------------
 
 Next, you will need to adjust the options that you pass to
 Enlightenment during the compile phase.
@@ -51,13 +63,18 @@ In order for Enlightenment to be compiled without X11, using Wayland
 only, you will need to pass a few more options to the configure stage
 of Enlightenment:
 
-  --enable-wayland-only
   --enable-wayland-clients
   --enable-wl-drm
 
+If you wish to test the experimental Wayland-Only compositor, then
+also pass to configure:
+
+  --enable-wayland-only
+
 Since this is all still a work-in-progress, there are a few
 Enlightenment modules that have not been "fixed" to work without X11
-yet. Those will need to be disabled:
+yet. Those will need to be disabled if you enabled the wayland-only
+option:
 
   --disable-shot
   --disable-xkbswitch
@@ -84,7 +101,8 @@ In order for Enlightenment to function without X11, we need to setup
 the environment. In your current tty, do:
 
   export E_WL_FORCE=drm
-  export ELM_ENGINE=wayland_shm (or wayland_egl)
+  export ELM_DISPLAY=wl
+  export ELM_ACCEL=opengl (or 'none' for SHM engine)
 
 This will make sure that Enlightenment renders using DRM, and any
 Elementary applications use a Wayland engine.
@@ -121,14 +139,9 @@ Bugs:
 
 Yes, there are Lots of them !!
 Yes, I am already aware of 99.9% of them. 
-No, you do not need to start reporting them yet !!
+Yes, you can start reporting them ... if you do create tickets for
+any bugs, please note in your ticket that you are using the e_comp_wl
+branch.
 
 When we feel that the work is reaching a "finalizing" stage, we will
 put out a request for actual testers and bug reports !
-
-You are here because you want to play...because you want to
-experiment...because you want to be "cool" ;) You are not hear to nag
-me with complaints & reports about things I am already well aware of
-;) Save yourself some time, and me some stress !! ;)
-
-
