@@ -1052,6 +1052,8 @@ _e_comp_wl_client_idler(void *data EINA_UNUSED)
      {
         if ((e_object_is_del(E_OBJECT(ec))) || (!ec->comp_data)) continue;
 
+//        E_COMP_WL_PIXMAP_CHECK continue;
+
         if (ec->post_resize)
           {
              if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
@@ -1111,6 +1113,8 @@ _e_comp_wl_evas_cb_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_U
 
    if (!(ec = data)) return;
 
+   E_COMP_WL_PIXMAP_CHECK;
+
    EINA_LIST_FOREACH(ec->comp_data->sub.list, l, subc)
      {
         x = ec->x + subc->comp_data->sub.cdata->position.x;
@@ -1131,6 +1135,8 @@ _e_comp_wl_cb_client_iconify(void *data EINA_UNUSED, int type EINA_UNUSED, void 
 
    ev = event;
    if (!(ec = ev->ec)) return ECORE_CALLBACK_PASS_ON;
+
+   E_COMP_WL_PIXMAP_CHECK ECORE_CALLBACK_PASS_ON;
 
    if (_e_comp_wl_client_subsurf_data_get(ec))
      {
@@ -1156,6 +1162,8 @@ _e_comp_wl_cb_client_uniconify(void *data EINA_UNUSED, int type EINA_UNUSED, voi
 
    ev = event;
    if (!(ec = ev->ec)) return ECORE_CALLBACK_PASS_ON;
+
+   E_COMP_WL_PIXMAP_CHECK ECORE_CALLBACK_PASS_ON;
 
    if (_e_comp_wl_client_subsurf_data_get(ec))
      {
@@ -1299,6 +1307,7 @@ _e_comp_wl_evas_cb_restack(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EIN
 
    if (restacking) return;
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if ((!ec->comp_data->sub.list) &&
        (!_e_comp_wl_client_subsurf_data_get(ec))) return;
 
@@ -1815,6 +1824,8 @@ _e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
 
    if (!(ec = data)) return;
 
+   E_COMP_WL_PIXMAP_CHECK;
+
    if (!ec->override) 
      e_hints_window_visible_set(ec);
 
@@ -1849,6 +1860,7 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    ev = event;
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
@@ -1873,6 +1885,7 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    uint32_t serial;
 
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
@@ -1898,6 +1911,7 @@ _e_comp_wl_evas_cb_mouse_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
 
    ev = event;
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (e_client_util_ignored_get(ec)) return;
@@ -1943,6 +1957,7 @@ _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    ev = event;
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (e_client_util_ignored_get(ec)) return;
@@ -1989,6 +2004,7 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
 
    ev = event;
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (e_client_util_ignored_get(ec)) return;
@@ -2023,6 +2039,7 @@ _e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *o
 
    ev = event;
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (e_client_util_ignored_get(ec)) return;
@@ -2056,6 +2073,7 @@ _e_comp_wl_evas_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 
    ev = event;
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!ec->focused) return;
@@ -2101,6 +2119,7 @@ _e_comp_wl_evas_cb_key_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj E
 
    ev = event;
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    if (!ec->focused) return;
@@ -2138,6 +2157,7 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    uint32_t serial, *k;
 
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    /* block refocus attempts on iconic clients
@@ -2178,6 +2198,7 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    uint32_t serial, *k;
 
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    /* priority normal */
@@ -2202,6 +2223,7 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
    E_Client *ec;
 
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if ((ec->shading) || (ec->shaded)) return;
    if (!e_pixmap_size_changed(ec->pixmap, ec->client.w, ec->client.h))
      return;
@@ -2223,6 +2245,7 @@ _e_comp_wl_evas_cb_frame_recalc(void *data, Evas_Object *obj, void *event)
    fr = event;
    if (!(ec = data)) return;
 
+   E_COMP_WL_PIXMAP_CHECK;
    if (evas_object_visible_get(obj))
      ec->comp_data->frame_update = EINA_FALSE;
    else
@@ -2247,6 +2270,7 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
    E_Comp *comp;
 
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    if (ec->netwm.ping) e_client_ping(ec);
 
    /* FIXME !!!
@@ -2287,6 +2311,7 @@ _e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *
    E_Comp *comp;
 
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    /* if (ec->netwm.ping) e_client_ping(ec); */
 
    comp = ec->comp;
@@ -2312,6 +2337,7 @@ _e_comp_wl_evas_cb_ping(void *data, Evas_Object *obj EINA_UNUSED, void *event EI
 
    if (!(ec = data)) return;
 
+   E_COMP_WL_PIXMAP_CHECK;
    if (ec->comp_data->shell.ping)
      {
         if (ec->comp_data->shell.surface)
@@ -2326,6 +2352,7 @@ _e_comp_wl_evas_cb_color_set(void *data, Evas_Object *obj, void *event EINA_UNUS
    int a = 0;
 
    if (!(ec = data)) return;
+   E_COMP_WL_PIXMAP_CHECK;
    evas_object_color_get(obj, NULL, NULL, NULL, &a);
    if (ec->netwm.opacity == a) return;
    ec->netwm.opacity = a;
@@ -3010,7 +3037,7 @@ _e_comp_wl_cb_hook_client_eval_end(void *data EINA_UNUSED, E_Client *ec)
 static void 
 _e_comp_wl_cb_hook_client_focus_set(void *data EINA_UNUSED, E_Client *ec)
 {
-//   E_COMP_WL_PIXMAP_CHECK;
+   E_COMP_WL_PIXMAP_CHECK;
 
    if (ec->comp_data->shell.activate)
      {
