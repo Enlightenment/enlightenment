@@ -1377,6 +1377,7 @@ static void
 _e_client_cb_evas_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Client *ec = data;
+   Evas_Coord x, y;
 
    ec->pre_res_change.valid = 0;
    if (ec->internal_ecore_evas)
@@ -1388,15 +1389,30 @@ _e_client_cb_evas_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    _e_client_event_simple(ec, E_EVENT_CLIENT_MOVE);
 
    _e_client_zone_update(ec);
+   evas_object_geometry_get(ec->frame, &x, &y, NULL, NULL);
+   if ((e_config->transient.move) && (ec->transients))
+     {
+        Eina_List *list = eina_list_clone(ec->transients);
+        E_Client *child;
+
+        EINA_LIST_FREE(list, child)
+          {
+             evas_object_move(child->frame,
+                              child->x + x - ec->pre_cb.x,
+                              child->y + y - ec->pre_cb.y);
+          }
+     }
    if (ec->moving || (ecmove == ec))
      _e_client_hook_call(E_CLIENT_HOOK_MOVE_UPDATE, ec);
    e_remember_update(ec);
+   ec->pre_cb.x = x; ec->pre_cb.y = y;
 }
 
 static void
 _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    E_Client *ec = data;
+   Evas_Coord x, y, w, h;
 
    ec->pre_res_change.valid = 0;
    if (ec->internal_ecore_evas || (!ec->netwm.sync.request))
@@ -1408,10 +1424,33 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    _e_client_event_simple(ec, E_EVENT_CLIENT_RESIZE);
 
    _e_client_zone_update(ec);
+   evas_object_geometry_get(ec->frame, &x, &y, &w, &h);
+   if ((e_config->transient.resize) && (ec->transients))
+     {
+        Eina_List *list = eina_list_clone(ec->transients);
+        E_Client *child;
+
+        EINA_LIST_FREE(list, child)
+          {
+             Evas_Coord nx, ny, nw, nh;
+
+             if ((ec->pre_cb.w > 0) && (ec->pre_cb.h > 0))
+               {
+                  nx = x + (((child->x - x) * w) / ec->pre_cb.w);
+                  ny = y + (((child->y - y) * h) / ec->pre_cb.h);
+                  nw = (child->w * w) / ec->pre_cb.w;
+                  nh = (child->h * h) / ec->pre_cb.h;
+                  nx += ((nw - child->w) / 2);
+                  ny += ((nh - child->h) / 2);
+                  evas_object_move(child->frame, nx, ny);
+               }
+          }
+     }
 
    if (e_client_util_resizing_get(ec) || (ecresize == ec))
      _e_client_hook_call(E_CLIENT_HOOK_RESIZE_UPDATE, ec);
    e_remember_update(ec);
+   ec->pre_cb.w = w; ec->pre_cb.h = h;
 }
 
 static void
@@ -1667,6 +1706,7 @@ _e_client_eval(E_Client *ec)
              if (ec->y) e_comp_object_frame_xy_adjust(ec->frame, 0, ec->y, NULL, &ec->y);
              if ((x != ec->x) || (y != ec->y)) ec->changes.pos = 1;
              ec->placed = 1;
+             ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
           }
         if (!ec->placed)
           {
@@ -1687,23 +1727,30 @@ _e_client_eval(E_Client *ec)
 
                             e_comp_object_util_center_pos_get(ec->parent->frame, &x, &y);
                             if (E_CONTAINS(x, y, ec->w, ec->h, zx, zy, zw, zh))
-                              ec->x = x, ec->y = y;
+                              {
+                                 ec->x = x, ec->y = y;
+                              }
                             else
                               {
                                  x = ec->parent->x;
                                  y = ec->parent->y;
                                  if (!E_CONTAINS(x, y, ec->w, ec->h, zx, zy, zw, zh))
-                                   e_comp_object_util_center(ec->frame);
+                                   {
+                                      e_comp_object_util_center_on(ec->frame,
+                                                                   ec->parent->frame);
+                                   }
                               }
                             ec->changes.pos = 1;
                          }
                     }
                   else
                     {
-                       e_comp_object_util_center(ec->frame);
+                       e_comp_object_util_center_on(ec->frame,
+                                                    ec->parent->frame);
                        ec->changes.pos = 1;
                     }
                   ec->placed = 1;
+                  ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
                }
 #if 0
              else if ((ec->leader) && (ec->dialog))
@@ -1713,10 +1760,25 @@ _e_client_eval(E_Client *ec)
 #endif
              else if (ec->dialog)
                {
-                  ec->x = zx + ((zw - ec->w) / 2);
-                  ec->y = zy + ((zh - ec->h) / 2);
+                  E_Client *trans_ec = NULL;
+
+                  if (ec->icccm.transient_for)
+                    trans_ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ec->icccm.transient_for);
+                  if (trans_ec)
+                    {
+                       // if transient for a window and not placed, center on
+                       // transient parent if found
+                       ec->x = trans_ec->x + ((trans_ec->w - ec->w) / 2);
+                       ec->y = trans_ec->y + ((trans_ec->h - ec->h) / 2);
+                    }
+                  else
+                    {
+                       ec->x = zx + ((zw - ec->w) / 2);
+                       ec->y = zy + ((zh - ec->h) / 2);
+                    }
                   ec->changes.pos = 1;
                   ec->placed = 1;
+                  ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
                }
           }
 
@@ -1724,6 +1786,7 @@ _e_client_eval(E_Client *ec)
           {
              Eina_List *skiplist = NULL;
              int new_x, new_y, t = 0;
+             E_Client *trans_ec = NULL;
 
              if (zw > ec->w)
                new_x = zx + (rand() % (zw - ec->w));
@@ -1736,7 +1799,16 @@ _e_client_eval(E_Client *ec)
 
              e_comp_object_frame_geometry_get(ec->frame, NULL, NULL, &t, NULL);
 
-             if ((e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART) || (e_config->window_placement_policy == E_WINDOW_PLACEMENT_ANTIGADGET))
+             if (ec->icccm.transient_for)
+               trans_ec = e_pixmap_find_client(E_PIXMAP_TYPE_X, ec->icccm.transient_for);
+             if (trans_ec)
+               {
+                  // if transient for a window and not placed, center on
+                  // transient parent if found
+                  new_x = trans_ec->x + ((trans_ec->w - ec->w) / 2);
+                  new_y = trans_ec->y + ((trans_ec->h - ec->h) / 2);
+               }
+             else if ((e_config->window_placement_policy == E_WINDOW_PLACEMENT_SMART) || (e_config->window_placement_policy == E_WINDOW_PLACEMENT_ANTIGADGET))
                {
                   skiplist = eina_list_append(skiplist, ec);
                   if (ec->desk)
@@ -1761,6 +1833,8 @@ _e_client_eval(E_Client *ec)
              ec->x = new_x;
              ec->y = new_y;
              ec->changes.pos = 1;
+             ec->placed = 1;
+             ec->pre_cb.x = ec->x; ec->pre_cb.y = ec->y;
           }
 
         /* Recreate state */
@@ -1773,7 +1847,6 @@ _e_client_eval(E_Client *ec)
              ec->x = zx + (zw - ec->w) / 2;
              ec->y = zy + (zh - ec->h) / 2;
              ec->changes.pos = 1;
-             ec->placed = 1;
           }
 
         /* if the explicit geometry request asks for the app to be

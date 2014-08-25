@@ -225,6 +225,9 @@ struct E_Client
    E_Comp *comp;
    int depth;
    int x, y, w, h; //frame+client geom
+   struct {
+      int x, y, w, h; //frame+client geom before move or resize callback
+   } pre_cb;
    Eina_Rectangle client; //client geom
    Evas_Object *frame; //comp object
    E_Zone *zone;
