@@ -384,8 +384,7 @@ e_pixmap_refresh(E_Pixmap *cp)
              e_comp_object_native_surface_set(cp->client->frame, 0);
            success = !!pixmap;
            if (!success) break;
-           if (cp->client->comp_data &&
-               cp->client->comp_data->pw && cp->client->comp_data->ph)
+           if (cd && cd->pw && cd->ph)
              {
                 pw = cd->pw;
                 ph = cd->ph;
