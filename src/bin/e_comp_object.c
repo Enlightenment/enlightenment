@@ -951,9 +951,22 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
           {
              E_Client *ec;
 
-             ec = e_client_above_get(cw->ec);
-             evas_object_stack_below(obj, ec ? ec->frame : cw->comp->layers[cw->layer].obj);
              e_comp_shape_queue(cw->comp);
+             ec = e_client_above_get(cw->ec);
+             if (ec && (evas_object_layer_get(ec->frame) != evas_object_layer_get(obj)))
+               {
+                  ec = e_client_below_get(cw->ec);
+                  if (ec && (evas_object_layer_get(ec->frame) == evas_object_layer_get(cw->smart_obj)))
+                    {
+                       evas_object_stack_above(obj, ec->frame);
+                       return;
+                    }
+                  ec = NULL;
+               }
+             if (ec && (cw->ec->parent == ec))
+               evas_object_stack_above(obj, ec->frame);
+             else
+               evas_object_stack_below(obj, ec ? ec->frame : cw->comp->layers[cw->layer].obj);
           }
         return;
      }
