@@ -21,6 +21,7 @@ _e_comp_wl_data_offer_cb_accept(struct wl_client *client EINA_UNUSED, struct wl_
 {
    E_Comp_Wl_Data_Offer *offer;
 
+   DBG("Data Offer Accept");
    if (!(offer = wl_resource_get_user_data(resource)))
      return;
 
@@ -32,6 +33,8 @@ static void
 _e_comp_wl_data_offer_cb_receive(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, const char *mime_type, int32_t fd)
 {
    E_Comp_Wl_Data_Offer *offer;
+
+   DBG("Data Offer Receive");
 
    if (!(offer = wl_resource_get_user_data(resource)))
      return;
@@ -46,6 +49,7 @@ _e_comp_wl_data_offer_cb_receive(struct wl_client *client EINA_UNUSED, struct wl
 static void
 _e_comp_wl_data_offer_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   DBG("Data Offer Destroy");
    wl_resource_destroy(resource);
 }
 
@@ -70,6 +74,7 @@ _e_comp_wl_data_offer_cb_source_destroy(struct wl_listener *listener, void *data
 {
    E_Comp_Wl_Data_Offer *offer;
 
+   DBG("Data Offer Source Destroy");
    offer = container_of(listener, E_Comp_Wl_Data_Offer, 
                         source_destroy_listener);
    if (!offer) return;
@@ -89,6 +94,7 @@ _e_comp_wl_data_source_cb_offer(struct wl_client *client EINA_UNUSED, struct wl_
 {
    E_Comp_Wl_Data_Source *source;
 
+   DBG("Data Source Offer");
    if (!(source = wl_resource_get_user_data(resource)))
      return;
 
@@ -100,6 +106,7 @@ _e_comp_wl_data_source_cb_offer(struct wl_client *client EINA_UNUSED, struct wl_
 static void
 _e_comp_wl_data_source_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   DBG("Data Source Destroy");
    wl_resource_destroy(resource);
 }
 
@@ -124,12 +131,14 @@ _e_comp_wl_data_source_cb_resource_destroy(struct wl_resource *resource)
 static void
 _e_comp_wl_data_source_target_send(E_Comp_Wl_Data_Source *source, uint32_t serial EINA_UNUSED, const char* mime_type)
 {
+   DBG("Data Source Target Send");
    wl_data_source_send_target(source->resource, mime_type);
 }
 
 static void
 _e_comp_wl_data_source_send_send(E_Comp_Wl_Data_Source *source, const char* mime_type, int32_t fd)
 {
+   DBG("Data Source Source Send");
    wl_data_source_send_send(source->resource, mime_type, fd);
    close(fd);
 }
@@ -137,6 +146,7 @@ _e_comp_wl_data_source_send_send(E_Comp_Wl_Data_Source *source, const char* mime
 static void
 _e_comp_wl_data_source_cancelled_send(E_Comp_Wl_Data_Source *source)
 {
+   DBG("Data Source Cancelled Send");
    wl_data_source_send_cancelled(source->resource);
 }
 
@@ -185,10 +195,14 @@ _e_comp_wl_data_device_data_offer_create(E_Comp_Wl_Data_Source *source, struct w
    Eina_List *l;
    char *t;
 
+   DBG("Data Offer Create");
+
    offer = E_NEW(E_Comp_Wl_Data_Offer, 1);
    if (!offer) return NULL;
 
-   offer->resource = wl_resource_create(wl_resource_get_client(data_device_res), &wl_data_offer_interface, 1, 0);
+   offer->resource = 
+     wl_resource_create(wl_resource_get_client(data_device_res), 
+                        &wl_data_offer_interface, 1, 0);
    if (!offer->resource)
      {
         free(offer);
@@ -260,9 +274,7 @@ _e_comp_wl_data_device_selection_set(E_Comp_Data *cdata, E_Comp_Wl_Data_Source *
 
           }
         else if (data_device_res)
-          {
-             wl_data_device_send_selection(data_device_res, NULL);
-          }
+          wl_data_device_send_selection(data_device_res, NULL);
      }
 
    wl_signal_emit(&cdata->selection.signal, cdata);
@@ -277,9 +289,37 @@ _e_comp_wl_data_device_selection_set(E_Comp_Data *cdata, E_Comp_Wl_Data_Source *
 }
 
 static void
-_e_comp_wl_data_device_cb_drag_start(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *source_resource EINA_UNUSED, struct wl_resource *origin_resource EINA_UNUSED, struct wl_resource *icon_resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
+_e_comp_wl_data_device_cb_drag_start(struct wl_client *client, struct wl_resource *resource, struct wl_resource *source_resource, struct wl_resource *origin_resource, struct wl_resource *icon_resource, uint32_t serial)
 {
+   E_Comp_Data *cdata;
+   E_Comp_Wl_Data_Source *source;
+   Eina_List *l;
+   struct wl_resource *res;
 
+   DBG("Data Device Drag Start");
+
+   if (!(cdata = wl_resource_get_user_data(resource))) return;
+   if ((cdata->kbd.focus) && (cdata->kbd.focus != origin_resource)) return;
+
+   if (!(source = wl_resource_get_user_data(source_resource))) return;
+
+   /* TODO: create icon for pointer ?? */
+   if (icon_resource)
+     {
+        E_Pixmap *cp;
+
+        DBG("\tHave Icon Resource: %p", icon_resource);
+        cp = wl_resource_get_user_data(icon_resource);
+     }
+
+   EINA_LIST_FOREACH(cdata->ptr.resources, l, res)
+     {
+        if (!e_comp_wl_input_pointer_check(res)) continue;
+        if (wl_resource_get_client(res) != client) continue;
+        wl_pointer_send_leave(res, serial, cdata->kbd.focus);
+     }
+
+   /* TODO: pointer start drag */
 }
 
 static void
@@ -290,8 +330,8 @@ _e_comp_wl_data_device_cb_selection_set(struct wl_client *client EINA_UNUSED, st
 
    if (!source_resource) return;
    if (!(cdata = wl_resource_get_user_data(resource))) return;
+   if (!(source = wl_resource_get_user_data(source_resource))) return;
 
-   source = wl_resource_get_user_data(source_resource);
    _e_comp_wl_data_device_selection_set(cdata, source, serial);
 }
 
@@ -317,6 +357,8 @@ static void
 _e_comp_wl_data_manager_cb_source_create(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id EINA_UNUSED)
 {
    E_Comp_Wl_Data_Source *source;
+
+   DBG("Data Manager Source Create");
 
    source = E_NEW(E_Comp_Wl_Data_Source, 1);
    if (!source)
@@ -351,7 +393,7 @@ _e_comp_wl_data_manager_cb_device_get(struct wl_client *client, struct wl_resour
    E_Comp_Data *cdata;
    struct wl_resource *res;
 
-   DBG("Comp_Wl_Data: Get Data Device");
+   DBG("Data Manager Device Get");
 
    /* try to get the compositor data */
    if (!(cdata = wl_resource_get_user_data(seat_resource))) return;
@@ -395,7 +437,6 @@ _e_comp_wl_data_cb_bind_manager(struct wl_client *client, void *data, uint32_t v
    E_Comp_Data *cdata;
    struct wl_resource *res;
 
-   DBG("Comp_Wl_Data: Bind Manager");
    cdata = data;
 
    /* try to create data manager resource */
@@ -651,8 +692,7 @@ e_comp_wl_data_device_keyboard_focus_set(E_Comp_Data *cdata)
         return;
      }
 
-   focus = cdata->kbd.focus;
-   if (!focus) 
+   if (!(focus = cdata->kbd.focus))
      {
         ERR("No focused resource");
         return;
@@ -666,8 +706,14 @@ e_comp_wl_data_device_keyboard_focus_set(E_Comp_Data *cdata)
    source = (E_Comp_Wl_Data_Source*)cdata->selection.data_source;
    if (source)
      {
+        uint32_t serial;
+
+        serial = wl_display_next_serial(cdata->wl.disp);
+
         offer_res = _e_comp_wl_data_device_data_offer_create(source,
                                                              data_device_res);
+        wl_data_device_send_enter(data_device_res, serial, focus, 
+                                  cdata->ptr.x, cdata->ptr.y, offer_res);
         wl_data_device_send_selection(data_device_res, offer_res);
      }
 }
