@@ -163,7 +163,9 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
      {
         struct wl_shm_buffer *b;
 
-        b = wl_shm_buffer_get(buffer_resource);
+        /* trap return of shm_buffer_get as it Can fail if the buffer is not 
+         * an shm buffer (ie: egl buffer) */
+        if (!(b = wl_shm_buffer_get(buffer_resource))) return;
         ec->comp_data->pending.w = wl_shm_buffer_get_width(b);
         ec->comp_data->pending.h = wl_shm_buffer_get_height(b);
 
