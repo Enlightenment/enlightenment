@@ -389,6 +389,15 @@ e_win_show(E_Win *win)
         win->client->take_focus = win->client->changes.size = win->client->changes.pos = 1;
         EC_CHANGED(win->client);
      }
+#ifndef HAVE_WAYLAND_ONLY
+   if (e_pixmap_is_x(win->client->pixmap))
+     {
+        if (win->state.dialog)
+          ecore_x_icccm_transient_for_set(ecore_evas_window_get(win->ecore_evas), win->client->comp->man->root);
+        else
+          ecore_x_icccm_transient_for_unset(ecore_evas_window_get(win->ecore_evas));
+     }
+#endif
    _e_win_prop_update(win);
    if (win->state.centered)
      e_comp_object_util_center(win->client->frame);

@@ -3024,13 +3024,6 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
              ec->icccm.accepts_focus = 0;
              eina_stringshare_replace(&ec->bordername, "borderless");
           }
-        else if (ec->internal)
-          {
-             if (ec->dialog)
-               ecore_x_icccm_transient_for_set(win, ec->comp->man->root);
-             else
-               ecore_x_icccm_transient_for_unset(win);
-          }
         {
            E_Event_Client_Property *ev;
 
