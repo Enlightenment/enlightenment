@@ -5,6 +5,7 @@
 #  define E_COMP_WL_H
 
 /* NB: Turn off shadow warnings for Wayland includes */
+#  pragma GCC diagnostic push
 #  pragma GCC diagnostic ignored "-Wshadow"
 #  define WL_HIDE_DEPRECATED
 #  include <wayland-server.h>
