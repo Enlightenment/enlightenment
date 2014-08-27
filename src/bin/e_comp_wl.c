@@ -425,7 +425,11 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
      {
         e_comp_wl_buffer_reference(&cdata->buffer_ref,
                                     sub_cdata->cached.buffer_ref.buffer);
-        e_pixmap_resource_set(cp, cdata->pending.buffer->resource);
+        if (cdata->pending.buffer)
+          e_pixmap_resource_set(cp,
+                                cdata->pending.buffer->resource);
+        else
+          e_pixmap_resource_set(cp, NULL);
         e_pixmap_usable_set(cp, (cdata->pending.buffer != NULL));
      }
 
@@ -554,8 +558,11 @@ _e_comp_wl_surface_commit(E_Client *ec)
      {
         e_comp_wl_buffer_reference(&ec->comp_data->buffer_ref,
                                     ec->comp_data->pending.buffer);
-
-        e_pixmap_resource_set(cp, ec->comp_data->pending.buffer->resource);
+        if (ec->comp_data->pending.buffer)
+          e_pixmap_resource_set(cp,
+                                ec->comp_data->pending.buffer->resource);
+        else
+          e_pixmap_resource_set(cp, NULL);
         e_pixmap_usable_set(cp, (ec->comp_data->pending.buffer != NULL));
      }
 
