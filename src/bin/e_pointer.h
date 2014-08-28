@@ -35,6 +35,7 @@ struct _E_Pointer
 //   E_Pixmap *pixmap;
    Ecore_Window win;
 
+   int *pixels;
    int x, y, w, h;
    const char *type;
 
