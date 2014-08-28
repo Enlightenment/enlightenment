@@ -103,8 +103,10 @@ _e_drop_handler_active_check(E_Drop_Handler *h, const E_Drag *drag, Eina_Strings
 EINTERN int
 e_dnd_init(void)
 {
+#ifndef HAVE_WAYLAND_ONLY
    E_Comp *c;
    const Eina_List *l;
+#endif
 
    _type_text_uri_list = eina_stringshare_add("text/uri-list");
    _type_xds = eina_stringshare_add("XdndDirectSave0");
