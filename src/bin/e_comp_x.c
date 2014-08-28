@@ -200,8 +200,8 @@ _e_comp_x_client_new_helper(E_Client *ec)
      }
    ec->new_client ^= ec->override;
 
-   ec->w = ec->client.w = ec->comp_data->initial_attributes.w;
-   ec->h = ec->client.h = ec->comp_data->initial_attributes.h;
+   ec->comp_data->pw = ec->w = ec->client.w = ec->comp_data->initial_attributes.w;
+   ec->comp_data->ph = ec->h = ec->client.h = ec->comp_data->initial_attributes.h;
    ec->changes.size = 1;
    if (ec->override)
      ec->comp_data->pw = ec->w, ec->comp_data->ph = ec->h;
