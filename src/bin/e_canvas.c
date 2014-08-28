@@ -161,6 +161,7 @@ e_canvas_new(Ecore_Window win, int x, int y, int w, int h,
         break;
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
        case E_PIXMAP_TYPE_WL:
+        /* FIXME: This should be based on if we are rendering with gl or not */
          ee = ecore_evas_wayland_shm_new(NULL, win, x, y, w, h, 0);
          if (ee)
            {
