@@ -245,6 +245,8 @@ _e_backlight_update(E_Zone *zone)
         sysmode = MODE_RANDR;
         return;
      }
+#else
+   (void)zone;
 #endif
 #ifdef HAVE_EEZE
    _bl_sys_find();
@@ -263,6 +265,8 @@ _e_backlight_set(E_Zone *zone, double val)
 #ifdef HAVE_WAYLAND_ONLY
    if (0)
      {
+        (void)zone;
+        (void)val;
         return;
      }
 #else
