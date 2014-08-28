@@ -52,6 +52,7 @@ e_screensaver_timeout_get(Eina_Bool use_idle)
 EAPI void
 e_screensaver_update(void)
 {
+#ifndef HAVE_WAYLAND_ONLY
    int timeout = 0, interval = 0, blanking = 0, expose = 0;
    Eina_Bool changed = EINA_FALSE;
 
@@ -82,13 +83,11 @@ e_screensaver_update(void)
         changed = EINA_TRUE;
      }
 
-#ifndef HAVE_WAYLAND_ONLY
    if (e_comp_get(NULL)->comp_type == E_PIXMAP_TYPE_X)
      {
         if (changed)
           ecore_x_screensaver_set(timeout, interval, blanking, expose);
      }
-#else
 #endif
 }
 
