@@ -263,7 +263,7 @@ _e_win_hide(void *obj)
    if (cb) cb(win);
    if (!e_object_unref(E_OBJECT(win)))
      return;
-   /* E_FREE_FUNC(win->pointer, e_object_del); */
+   E_FREE_FUNC(win->pointer, e_object_del);
    e_canvas_del(win->ecore_evas);
    ecore_evas_callback_move_set(win->ecore_evas, NULL);
    ecore_evas_callback_resize_set(win->ecore_evas, NULL);
@@ -716,8 +716,8 @@ e_win_client_icon_key_set(E_Win *win, const char *key)
 static void
 _e_win_free(E_Win *win)
 {
-   /* if (win->pointer) */
-   /*   e_object_del(E_OBJECT(win->pointer)); */
+   if (win->pointer)
+     e_object_del(E_OBJECT(win->pointer));
 
    if (win->ecore_evas)
      {
