@@ -202,8 +202,8 @@ e_backlight_devices_get(void)
 static void
 _e_backlight_update(E_Zone *zone)
 {
-   double x_bl = -1.0;
 #ifndef HAVE_WAYLAND_ONLY
+   double x_bl = -1.0;
    Ecore_X_Window root;
    Ecore_X_Randr_Output *out;
    int i, num = 0;
