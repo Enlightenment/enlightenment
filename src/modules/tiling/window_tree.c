@@ -269,7 +269,8 @@ tiling_window_tree_client_find(Window_Tree *root, E_Client *client)
 
 void
 _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
-                                Evas_Coord w, Evas_Coord h, int level, Evas_Coord padding)
+                                Evas_Coord w, Evas_Coord h, int level, Evas_Coord padding,
+                                Eina_List **floaters)
 {
    Window_Tree *itr;
    Tiling_Split_Type split_type = level % 2;
@@ -278,8 +279,18 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
    if (root->client)
      {
         if (!e_object_is_del(E_OBJECT(root->client)))
-          tiling_e_client_move_resize_extra(root->client, x, y,
-                                            w - padding, h - padding);
+          {
+             if ((root->client->icccm.min_w > (w - padding)) ||
+                   (root->client->icccm.min_h > (h - padding)))
+               {
+                  *floaters = eina_list_append(*floaters, root->client);
+               }
+             else
+               {
+                  tiling_e_client_move_resize_extra(root->client, x, y,
+                        w - padding, h - padding);
+               }
+          }
         return;
      }
 
@@ -290,7 +301,7 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
              Evas_Coord itw = w * itr->weight;
 
              total_weight += itr->weight;
-             _tiling_window_tree_level_apply(itr, x, y, itw, h, level + 1, padding);
+             _tiling_window_tree_level_apply(itr, x, y, itw, h, level + 1, padding, floaters);
              x += itw;
           }
      }
@@ -301,7 +312,7 @@ _tiling_window_tree_level_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
              Evas_Coord ith = h * itr->weight;
 
              total_weight += itr->weight;
-             _tiling_window_tree_level_apply(itr, x, y, w, ith, level + 1, padding);
+             _tiling_window_tree_level_apply(itr, x, y, w, ith, level + 1, padding, floaters);
              y += ith;
           }
      }
@@ -314,8 +325,19 @@ void
 tiling_window_tree_apply(Window_Tree *root, Evas_Coord x, Evas_Coord y,
                          Evas_Coord w, Evas_Coord h, Evas_Coord padding)
 {
-   _tiling_window_tree_level_apply(root, x + padding, y + padding,
-                                   w - padding, h - padding, 0, padding);
+   Eina_List *floaters = NULL;
+   E_Client *ec;
+
+   x += padding;
+   y += padding;
+   w -= padding;
+   h -= padding;
+   _tiling_window_tree_level_apply(root, x, y, w, h, 0, padding, &floaters);
+
+   EINA_LIST_FREE(floaters, ec)
+     {
+        tiling_e_client_does_not_fit(ec);
+     }
 }
 
 static Window_Tree *

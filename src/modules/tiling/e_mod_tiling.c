@@ -703,6 +703,12 @@ toggle_floating(E_Client *ec)
      }
 }
 
+void
+tiling_e_client_does_not_fit(E_Client *ec)
+{
+   toggle_floating(ec);
+}
+
 static void
 _e_mod_action_toggle_floating_cb(E_Object *obj EINA_UNUSED,
                                  const char *params EINA_UNUSED)

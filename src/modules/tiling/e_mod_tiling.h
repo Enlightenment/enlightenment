@@ -84,6 +84,7 @@ struct _Config_vdesk *get_vdesk(Eina_List *vdesks, int x, int y,
 
 void                  tiling_e_client_move_resize_extra(E_Client *ec, int x, int y, int w,
                                                         int h);
+void                  tiling_e_client_does_not_fit(E_Client *ec);
 # define EINA_LIST_IS_IN(_list, _el) \
   (eina_list_data_find(_list, _el) == _el)
 # define EINA_LIST_APPEND(_list, _el) \
