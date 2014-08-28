@@ -533,7 +533,6 @@ e_pointer_canvas_new(Ecore_Evas *ee, Eina_Bool filled)
    evas_object_layer_set(ptr->o_ptr, EVAS_LAYER_MAX);
    evas_object_move(ptr->o_ptr, 0, 0);
    evas_object_resize(ptr->o_ptr, ptr->w, ptr->h);
-   evas_object_show(ptr->o_ptr);
 
    /* set pointer default type */
    if (filled) e_pointer_type_push(ptr, ptr, "default");
