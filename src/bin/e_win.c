@@ -345,12 +345,10 @@ e_win_new(E_Comp *c)
    win->max_aspect = 0.0;
    wins = eina_list_append(wins, win);
 
-   win->pointer = e_pointer_canvas_new(win->ecore_evas, EINA_TRUE);
-
-   /* if (c->comp_type == E_PIXMAP_TYPE_X) */
-   /*   win->pointer = e_pointer_window_new(win->evas_win, EINA_TRUE); */
-   /* else if (c->comp_type == E_PIXMAP_TYPE_WL) */
-   /*   win->pointer = e_pointer_canvas_new(win->ecore_evas, EINA_TRUE); */
+   if (c->comp_type == E_PIXMAP_TYPE_X)
+     win->pointer = e_pointer_window_new(win->evas_win, EINA_TRUE);
+   else if (c->comp_type == E_PIXMAP_TYPE_WL)
+     win->pointer = e_pointer_canvas_new(win->ecore_evas, EINA_TRUE);
 
    return win;
 }
