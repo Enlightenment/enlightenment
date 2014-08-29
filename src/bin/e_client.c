@@ -3674,8 +3674,15 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
 
         if ((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN)
           {
+             E_Maximize tmp_max = ec->maximized;
+
+             //un-set maximized state for updating frame.
+             ec->maximized = E_MAXIMIZE_NONE;
              _e_client_frame_update(ec);
+             // re-set maximized state for unmaximize smart callback.
+             ec->maximized = tmp_max;
              evas_object_smart_callback_call(ec->frame, "unmaximize", NULL);
+             // un-set maximized state.
              ec->maximized = E_MAXIMIZE_NONE;
              e_client_util_move_resize_without_frame(ec,
                                                      ec->saved.x + ec->zone->x,
