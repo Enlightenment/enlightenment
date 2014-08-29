@@ -377,11 +377,14 @@ e_pixmap_refresh(E_Pixmap *cp)
         {
            uint32_t pixmap;
            int pw, ph;
-           E_Comp_X_Client_Data *cd = (E_Comp_X_Client_Data*)cp->client->comp_data;
+           E_Comp_X_Client_Data *cd = NULL;
 
            pixmap = ecore_x_composite_name_window_pixmap_get(cp->parent ?: cp->win);
            if (cp->client)
-             e_comp_object_native_surface_set(cp->client->frame, 0);
+             {
+                cd = (E_Comp_X_Client_Data*)cp->client->comp_data;
+                e_comp_object_native_surface_set(cp->client->frame, 0);
+             }
            success = !!pixmap;
            if (!success) break;
            if (cd && cd->pw && cd->ph)
