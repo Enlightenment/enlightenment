@@ -67,7 +67,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
                       Evas *evas,
                       E_Config_Dialog_Data *cfdata)
 {
-   Evas_Object *ob, *ol, *otb, *tab;
+   Evas_Object *ob, *ol, *otb, *tab, *oc;
 
    tab = e_widget_table_add(evas, 0);
 
@@ -80,19 +80,23 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
    ob = e_widget_check_add(evas, _("Disable remote media fetching"), &cfdata->disable_media_fetch);
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
 
-   ob = e_widget_label_add(evas, _("Maximum media size to fetch"));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_slider_add(evas, 1, 0, _("%2.0f MiB"), 1, 50, 1, 0, &cfdata->allowed_media_fetch_size, NULL, 150);
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   oc = e_widget_label_add(evas, _("Maximum media size to fetch"));
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   oc = e_widget_slider_add(evas, 1, 0, _("%2.0f MiB"), 1, 50, 1, 0, &cfdata->allowed_media_fetch_size, NULL, 150);
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   e_widget_check_widget_disable_on_checked_add(ob, oc);
 
-   ob = e_widget_label_add(evas, _("Maximum media cache size in RAM"));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_slider_add(evas, 1, 0, _("%4.0f MiB"), 0, 1024, 16, 0, &cfdata->allowed_media_size, NULL, 150);
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_label_add(evas, _("Maximum media cache age on disk"));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_slider_add(evas, 1, 0, _("%3.0f Days"), -1, 180, 1, 0, &cfdata->allowed_media_age, NULL, 150);
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   oc = e_widget_label_add(evas, _("Maximum media cache size in RAM"));
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   oc = e_widget_slider_add(evas, 1, 0, _("%4.0f MiB"), 0, 1024, 16, 0, &cfdata->allowed_media_size, NULL, 150);
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   e_widget_check_widget_disable_on_checked_add(ob, oc);
+
+   oc = e_widget_label_add(evas, _("Maximum media cache age on disk"));
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   oc = e_widget_slider_add(evas, 1, 0, _("%3.0f Days"), -1, 180, 1, 0, &cfdata->allowed_media_age, NULL, 150);
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   e_widget_check_widget_disable_on_checked_add(ob, oc);
 
    e_widget_toolbook_page_append(otb, NULL, _("Cache"), ol, 1, 1, 1, 1, 0.5, 0.5);
 
@@ -103,18 +107,23 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED,
    ob = e_widget_check_add(evas, _("Disable video previews"), &cfdata->disable_video);
    e_widget_list_object_append(ol, ob, 1, 0, 0.5);
 
-   ob = e_widget_label_add(evas, _("Mouse-out hide delay"));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_slider_add(evas, 1, 0, _("%1.1f seconds"), 0, 5, 0.5, 0, &cfdata->mouse_out_delay, NULL, 150);
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_label_add(evas, _("Maximum size (Percentage of screens size)"));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_slider_add(evas, 1, 0, _("%3.0f"), 10, 100, 1, 0, &cfdata->popup_size, NULL, 150);
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_label_add(evas, _("Opacity"));
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
-   ob = e_widget_slider_add(evas, 1, 0, _("%3.0f"), 10, 100, 1, 0, &cfdata->popup_opacity, NULL, 150);
-   e_widget_list_object_append(ol, ob, 1, 1, 0.5);
+   oc = e_widget_label_add(evas, _("Mouse-out hide delay"));
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   oc = e_widget_slider_add(evas, 1, 0, _("%1.1f seconds"), 0, 5, 0.5, 0, &cfdata->mouse_out_delay, NULL, 150);
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   e_widget_check_widget_disable_on_checked_add(ob, oc);
+
+   oc = e_widget_label_add(evas, _("Maximum size (Percentage of screens size)"));
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   oc = e_widget_slider_add(evas, 1, 0, _("%3.0f"), 10, 100, 1, 0, &cfdata->popup_size, NULL, 150);
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   e_widget_check_widget_disable_on_checked_add(ob, oc);
+
+   oc = e_widget_label_add(evas, _("Opacity"));
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   oc = e_widget_slider_add(evas, 1, 0, _("%3.0f"), 10, 100, 1, 0, &cfdata->popup_opacity, NULL, 150);
+   e_widget_list_object_append(ol, oc, 1, 1, 0.5);
+   e_widget_check_widget_disable_on_checked_add(ob, oc);
 
    e_widget_toolbook_page_append(otb, NULL, _("Popups"), ol, 1, 1, 1, 1, 0.5, 0.5);
 
