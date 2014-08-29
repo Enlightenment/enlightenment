@@ -1,16 +1,5 @@
 #include "e_mod_main.h"
 
-struct _Systray_Context
-{
-   Systray_Config *config;
-   E_Config_DD *conf_edd;
-};
-
-struct _E_Config_Dialog_Data
-{
-   int use_xembed;
-};
-
 static const char _Name[] = "Systray";
 static const char _name[] = "systray";
 static const char _group_gadget[] = "e/modules/systray/main";
@@ -18,7 +7,7 @@ static const char _sig_source[] = "e";
 
 static E_Module *systray_mod = NULL;
 static Systray_Context *ctx = NULL;
-static Instance *instance = NULL; /* only one systray ever possible */
+EINTERN Instance *instance = NULL; /* only one systray ever possible */
 static char tmpbuf[4096]; /* general purpose buffer, just use immediately */
 
 #define SYSTRAY_MIN_W 16
@@ -581,4 +570,10 @@ systray_size_updated(Instance *inst)
    EINA_SAFETY_ON_NULL_RETURN(inst);
    if (inst->job.size_apply) return;
    inst->job.size_apply = ecore_job_add(_systray_size_apply_delayed, inst);
+}
+
+EINTERN Systray_Context *
+systray_ctx_get(void)
+{
+   return ctx;
 }

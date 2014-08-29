@@ -77,6 +77,7 @@ static Ecore_X_Atom _atom_xembed = 0;
 static Ecore_X_Atom _atom_xembed_info = 0;
 static Ecore_X_Atom _atom_st_num = 0;
 static int _last_st_num = -1;
+static Eina_List *handlers = NULL;
 
 static void
 _xembed_win_resize(Instance_Xembed *xembed)
@@ -338,6 +339,8 @@ _systray_xembed_icon_add(Instance_Xembed *xembed, const Ecore_X_Window win)
    _systray_xembed_icon_geometry_apply(icon);
 
    ecore_x_window_show(win);
+   if ((!xembed->ec) || (!xembed->ec->comp->nocomp))
+     ecore_x_window_show(xembed->win.base);
 
    return icon;
 }
@@ -348,7 +351,8 @@ _systray_xembed_icon_del_list(Instance_Xembed *xembed, Eina_List *l, Icon *icon)
    xembed->icons = eina_list_remove_list(xembed->icons, l);
 
    ecore_x_window_save_set_del(icon->win);
-   ecore_x_window_reparent(icon->win, 0, 0, 0);
+   ecore_x_window_hide(icon->win);
+   ecore_x_window_reparent(icon->win, xembed->inst->comp->man->root, 0, 0);
    evas_object_del(icon->rect);
    free(icon);
 
@@ -407,6 +411,11 @@ _systray_xembed_deactivate(Instance_Xembed *xembed)
    xembed->win.selection = 0;
    _systray_xembed_selection_owner_set_current(xembed);
    ecore_x_sync();
+   if (xembed->ec)
+     {
+        evas_object_hide(xembed->ec->frame);
+        e_object_del(E_OBJECT(xembed->ec));
+     }
    ecore_x_window_free(xembed->win.base);
    xembed->win.base = 0;
 }
@@ -581,7 +590,7 @@ _systray_xembed_handle_request_dock(Instance_Xembed *xembed, Ecore_X_Event_Clien
    ecore_x_client_message32_send(win, _atom_xembed,
                                  ECORE_X_EVENT_MASK_NONE,
                                  t, XEMBED_EMBEDDED_NOTIFY, 0,
-                                 xembed->win.selection, 0);
+                                 xembed->win.base, 0);
 }
 
 static void
@@ -856,25 +865,20 @@ _systray_xembed_client_add(Instance_Xembed *xembed, int t EINA_UNUSED, E_Event_C
 }
 
 static Eina_Bool
-_systray_xembed_comp_enable(Instance_Xembed *xembed, int t EINA_UNUSED, void *ev EINA_UNUSED)
+_systray_xembed_comp_enable(void *d EINA_UNUSED, int t EINA_UNUSED, void *ev EINA_UNUSED)
 {
-   if (xembed->ec)
+   if (systray_ctx_get()->config->use_xembed)
      {
-        ecore_x_window_show(xembed->win.base);
-        evas_object_show(xembed->ec->frame);
-        e_comp_object_redirected_set(xembed->ec->frame, 1);
+        instance->xembed = systray_xembed_new(instance);
+        systray_size_updated(instance);
      }
    return ECORE_CALLBACK_RENEW;
 }
 
 static Eina_Bool
-_systray_xembed_comp_disable(Instance_Xembed *xembed, int t EINA_UNUSED, void *ev EINA_UNUSED)
+_systray_xembed_comp_disable(void *d EINA_UNUSED, int t EINA_UNUSED, void *ev EINA_UNUSED)
 {
-   if (xembed->ec)
-     {
-        ecore_x_window_hide(xembed->win.base);
-        evas_object_hide(xembed->ec->frame);
-     }
+   E_FREE_FUNC(instance->xembed, systray_xembed_free);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -920,8 +924,6 @@ systray_xembed_new(Instance *inst)
    E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_WINDOW_REPARENT, _systray_xembed_cb_reparent_notify, xembed);
    E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_SELECTION_CLEAR, _systray_xembed_cb_selection_clear, xembed);
    E_LIST_HANDLER_APPEND(xembed->handlers, ECORE_X_EVENT_WINDOW_CONFIGURE, _systray_xembed_cb_window_configure, xembed);
-   E_LIST_HANDLER_APPEND(xembed->handlers, E_EVENT_COMPOSITOR_ENABLE, _systray_xembed_comp_enable, xembed);
-   E_LIST_HANDLER_APPEND(xembed->handlers, E_EVENT_COMPOSITOR_DISABLE, _systray_xembed_comp_disable, xembed);
 
    return xembed;
 }
@@ -973,9 +975,12 @@ systray_xembed_init(void)
      _atom_xembed = ecore_x_atom_get("_XEMBED");
    if (!_atom_xembed_info)
      _atom_xembed_info = ecore_x_atom_get("_XEMBED_INFO");
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMPOSITOR_ENABLE, _systray_xembed_comp_enable, NULL);
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMPOSITOR_DISABLE, _systray_xembed_comp_disable, NULL);
 }
 
 void
 systray_xembed_shutdown(void)
 {
+   E_FREE_LIST(handlers, ecore_event_handler_del);
 }

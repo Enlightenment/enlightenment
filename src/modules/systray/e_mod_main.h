@@ -17,6 +17,16 @@ typedef struct _Notifier_Item Notifier_Item;
 typedef struct _Systray_Context Systray_Context;
 typedef struct _E_Config_Dialog_Data Systray_Config;
 
+struct _E_Config_Dialog_Data
+{
+   int use_xembed;
+};
+
+struct _Systray_Context
+{
+   Systray_Config *config;
+   E_Config_DD *conf_edd;
+};
 
 struct _Instance
 {
@@ -63,6 +73,9 @@ void systray_notifier_host_free(Instance_Notifier_Host *notifier);
 void systray_notifier_host_init(void);
 void systray_notifier_host_shutdown(void);
 
+
+EINTERN Systray_Context *systray_ctx_get(void);
+extern Instance *instance;
 /**
  * @addtogroup Optional_Gadgets
  * @{
