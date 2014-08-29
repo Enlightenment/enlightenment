@@ -938,6 +938,7 @@ _e_module_whitelist_check(void)
       "music-control",
       "appmenu",
       "packagekit",
+      "policy_mobile",
       NULL   // end marker
    };
 

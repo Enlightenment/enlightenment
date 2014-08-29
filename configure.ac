@@ -971,6 +971,7 @@ AC_E_OPTIONAL_MODULE([wl_x11], $have_wayland, $wl_x11)
 AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
 AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland, [CHECK_MODULE_WL_DRM])
 #AC_E_OPTIONAL_MODULE([wl_screenshot], true, [CHECK_MODULE_WL_SCREENSHOT])
+AC_E_OPTIONAL_MODULE([policy_mobile], true)
 
 HALT="/sbin/shutdown -h now"
 REBOOT="/sbin/shutdown -r now"
