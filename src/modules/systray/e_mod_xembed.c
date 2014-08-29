@@ -8,6 +8,7 @@
  *
  * @todo: implement messages/popup part of the spec (anyone using this at all?)
  */
+#define E_COMP_X
 #include "e_mod_main.h"
 
 #define RETRY_TIMEOUT                     2.0
@@ -97,6 +98,8 @@ _xembed_win_resize(Instance_Xembed *xembed)
                             &last_y, NULL, NULL);
 
    //because we always prepend xembed icons
+   xembed->ec->comp_data->pw = (first_x+first_w) - last_x;
+   xembed->ec->comp_data->ph = (first_y+first_h) - last_y;
    ecore_x_window_move_resize(xembed->win.base, last_x, last_y,
                               (first_x+first_w) - last_x,
                               (first_y+first_h) - last_y);
