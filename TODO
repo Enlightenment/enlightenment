@@ -1,12 +1,3 @@
 == E19 release todo (not in order of importance) ==
 
-* fix desktop (gadman) gadgets
-	- T722
-	- T1012
-
-* SAFELY, without rushing, merge+test wl branch
-	- possibly also D817
-
-* major tiling issues
-	- T952 (for internal dialogs at minimum)
-	- T974
+- D817
