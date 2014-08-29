@@ -200,11 +200,14 @@ _e_comp_x_client_new_helper(E_Client *ec)
      }
    ec->new_client ^= ec->override;
 
-   ec->comp_data->pw = ec->w = ec->client.w = ec->comp_data->initial_attributes.w;
-   ec->comp_data->ph = ec->h = ec->client.h = ec->comp_data->initial_attributes.h;
+   ec->w = ec->client.w = ec->comp_data->initial_attributes.w;
+   ec->h = ec->client.h = ec->comp_data->initial_attributes.h;
+   if (!ec->internal)
+     {
+        ec->comp_data->pw = ec->w;
+        ec->comp_data->ph = ec->h;
+     }
    ec->changes.size = 1;
-   if (ec->override)
-     ec->comp_data->pw = ec->w, ec->comp_data->ph = ec->h;
    
 
    e_pixmap_visual_cmap_set(ec->pixmap, ec->comp_data->initial_attributes.visual, ec->comp_data->initial_attributes.colormap);
@@ -574,8 +577,11 @@ _e_comp_x_post_client_idler_cb(void *d EINA_UNUSED)
         if (ec->post_resize)
           e_pixmap_dirty(ec->pixmap);
         e_comp_object_render_update_del(ec->frame);
-        ec->comp_data->pw = ec->client.w;
-        ec->comp_data->ph = ec->client.h;
+        if (!ec->internal)
+          {
+             ec->comp_data->pw = ec->client.w;
+             ec->comp_data->ph = ec->client.h;
+          }
         ec->post_move = 0;
         ec->post_resize = 0;
      }
@@ -1388,12 +1394,13 @@ _e_comp_x_configure(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_
      }
    move = (ec->client.x != ev->x) || (ec->client.y != ev->y);
    resize = (ec->client.w != ev->w) || (ec->client.h != ev->h);
+   if (!ec->internal)
+     ec->comp_data->pw = ev->w, ec->comp_data->ph = ev->h;
    EINA_RECTANGLE_SET(&ec->client, ev->x, ev->y, ev->w, ev->h);
    if (move)
      evas_object_move(ec->frame, ev->x, ev->y);
    if (resize)
      {
-        ec->comp_data->pw = ev->w, ec->comp_data->ph = ev->h;
         e_pixmap_dirty(ec->pixmap);
         evas_object_resize(ec->frame, ev->w, ev->h);
      }
