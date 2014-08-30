@@ -2183,7 +2183,11 @@ _e_comp_object_util_show(void *data EINA_UNUSED, Evas_Object *obj)
      e_comp_shape_queue(e_comp_util_evas_object_comp_get(obj));
    
    evas_object_show(obj);
-   if (ref) evas_object_ref(obj);
+   if (ref)
+     {
+        evas_object_ref(obj);
+        evas_object_data_set(obj, "comp_ref", (void*)1);
+     }
    edje_object_signal_emit(obj, "e,state,visible", "e");
    evas_object_data_set(obj, "comp_showing", (void*)1);
    if (e_comp_util_object_is_above_nocomp(obj))
@@ -2199,7 +2203,11 @@ _e_comp_object_util_hide(void *data EINA_UNUSED, Evas_Object *obj)
    if (!evas_object_visible_get(obj)) return;
    /* already hiding */
    if (evas_object_data_get(obj, "comp_hiding")) return;
-   evas_object_data_del(obj, "comp_showing");
+   if (!evas_object_data_del(obj, "comp_showing"))
+     {
+        evas_object_ref(obj);
+        evas_object_data_set(obj, "comp_ref", (void*)1);
+     }
    edje_object_signal_emit(obj, "e,state,hidden", "e");
    evas_object_data_set(obj, "comp_hiding", (void*)1);
 
@@ -2217,10 +2225,11 @@ _e_comp_object_util_done_defer(void *data, Evas_Object *obj, const char *emissio
         evas_object_hide(obj);
         e_comp_shape_queue(e_comp_util_evas_object_comp_get(obj));
         evas_object_intercept_hide_callback_add(obj, _e_comp_object_util_hide, data);
-        evas_object_unref(obj);
      }
    else
      evas_object_data_del(obj, "comp_showing");
+   if (evas_object_data_del(obj, "comp_ref"))
+     evas_object_unref(obj);
 }
 
 static void
