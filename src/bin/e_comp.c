@@ -270,7 +270,8 @@ _e_comp_cb_nocomp_end(E_Comp *c)
    E_CLIENT_FOREACH(c, ec)
      {
         e_client_redirected_set(ec, 1);
-        e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
+        if (ec->visible)
+          e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
      }
    e_comp_render_queue(c);
    e_comp_shape_queue_block(c, 0);
