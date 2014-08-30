@@ -1905,7 +1905,7 @@ _e_comp_x_message(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event_Cl
              break;
 
            default:
-             if (e_client_action_get())
+             if (e_client_action_get() || ec->comp->nocomp)
                {
                   /* be helpful and ignore activates during window actions, but still set urgent */
                   e_client_urgent_set(ec, 1);
