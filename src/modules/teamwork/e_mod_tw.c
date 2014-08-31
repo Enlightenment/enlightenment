@@ -21,6 +21,7 @@ typedef struct Media_Cache_List
 
 typedef struct Media
 {
+   Mod *mod;
    EINA_INLIST;
    Ecore_Con_Url *client;
    Eina_Binbuf *buf;
@@ -133,10 +134,10 @@ static Eina_Bool
 download_media_complete(void *data, int type EINA_UNUSED, Ecore_Con_Event_Url_Complete *ev)
 {
    Media *i;
+   void **test = ecore_con_url_data_get(ev->url_con);
 
-   if (data != tw_mod) return ECORE_CALLBACK_RENEW;
-   i = ecore_con_url_data_get(ev->url_con);
-   if (!i) return ECORE_CALLBACK_DONE;
+   if ((!test) || (*test != tw_mod)) return ECORE_CALLBACK_RENEW;
+   i = test;
    if (!i->valid) return ECORE_CALLBACK_DONE;
    i->timestamp = (unsigned long long)ecore_time_unix_get();
    if (tw_media_add(i->addr, i->buf, i->timestamp, i->video) == 1)
@@ -152,10 +153,10 @@ static Eina_Bool
 download_media_data(void *data, int type EINA_UNUSED, Ecore_Con_Event_Url_Data *ev)
 {
    Media *i;
+   void **test = ecore_con_url_data_get(ev->url_con);
 
-   if (data != tw_mod) return ECORE_CALLBACK_RENEW;
-   i = ecore_con_url_data_get(ev->url_con);
-   if (!i) return ECORE_CALLBACK_DONE;
+   if ((!test) || (*test != tw_mod)) return ECORE_CALLBACK_RENEW;
+   i = test;
    if (i->dummy) return ECORE_CALLBACK_DONE;
    if (!i->buf) i->buf = eina_binbuf_new();
    eina_binbuf_append_length(i->buf, ev->data, ev->size);
@@ -169,10 +170,10 @@ download_media_status(void *data, int t EINA_UNUSED, Ecore_Con_Event_Url_Progres
    const char *h;
    Media *i;
    const Eina_List *l;
+   void **test = ecore_con_url_data_get(ev->url_con);
 
-   if (data != tw_mod) return ECORE_CALLBACK_RENEW;
-   i = ecore_con_url_data_get(ev->url_con);
-   if (!i) return ECORE_CALLBACK_DONE;
+   if ((!test) || (*test != tw_mod)) return ECORE_CALLBACK_RENEW;
+   i = test;
 
    if (i->valid)
      {
@@ -271,6 +272,7 @@ download_media_add(const char *url)
         if (tw_config->disable_media_fetch) return NULL;
         add = EINA_TRUE;
         i = calloc(1, sizeof(Media));
+        i->mod = tw_mod;
         i->addr = eina_stringshare_add(url);
         i->buf = tw_media_get(url, t, &i->video);
      }
