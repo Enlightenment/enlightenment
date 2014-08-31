@@ -241,6 +241,7 @@ e_gadcon_popup_show(E_Gadcon_Popup *pop)
    if (pop->content)
      e_comp_object_util_del_list_append(pop->comp_object, pop->content);
    evas_object_show(pop->comp_object);
+   pop->visible = EINA_TRUE;
 }
 
 EAPI void
@@ -252,6 +253,7 @@ e_gadcon_popup_hide(E_Gadcon_Popup *pop)
    evas_object_hide(pop->comp_object);
    if (pop->gadcon_was_locked)
      _e_gadcon_popup_locked_set(pop, 0);
+   pop->visible = EINA_FALSE;
 }
 
 EAPI void
