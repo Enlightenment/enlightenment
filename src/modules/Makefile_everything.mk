@@ -48,7 +48,12 @@ endif
 everything_headersdir = $(pkgincludedir)
 dist_everything_headers_DATA = $(EVRYHEADERS)
 
+if HAVE_FREEBSD
+everything_pkgconfigdir = $(libdir)data/pkgconfig
+else
 everything_pkgconfigdir = $(libdir)/pkgconfig
+endif
+
 everything_pkgconfig_DATA = src/modules/everything/everything.pc
 DISTCLEANFILES += src/modules/everything/everything.pc
 
