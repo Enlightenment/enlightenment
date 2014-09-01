@@ -131,13 +131,13 @@ dbus_signal_link_downloading(Media *i)
 }
 
 static Eina_Bool
-download_media_complete(void *data, int type EINA_UNUSED, Ecore_Con_Event_Url_Complete *ev)
+download_media_complete(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Url_Complete *ev)
 {
    Media *i;
    void **test = ecore_con_url_data_get(ev->url_con);
 
    if ((!test) || (*test != tw_mod)) return ECORE_CALLBACK_RENEW;
-   i = test;
+   i = (Media*)test;
    if (!i->valid) return ECORE_CALLBACK_DONE;
    i->timestamp = (unsigned long long)ecore_time_unix_get();
    if (tw_media_add(i->addr, i->buf, i->timestamp, i->video) == 1)
@@ -150,13 +150,13 @@ download_media_complete(void *data, int type EINA_UNUSED, Ecore_Con_Event_Url_Co
 }
 
 static Eina_Bool
-download_media_data(void *data, int type EINA_UNUSED, Ecore_Con_Event_Url_Data *ev)
+download_media_data(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_Con_Event_Url_Data *ev)
 {
    Media *i;
    void **test = ecore_con_url_data_get(ev->url_con);
 
    if ((!test) || (*test != tw_mod)) return ECORE_CALLBACK_RENEW;
-   i = test;
+   i = (Media*)test;
    if (i->dummy) return ECORE_CALLBACK_DONE;
    if (!i->buf) i->buf = eina_binbuf_new();
    eina_binbuf_append_length(i->buf, ev->data, ev->size);
@@ -164,7 +164,7 @@ download_media_data(void *data, int type EINA_UNUSED, Ecore_Con_Event_Url_Data *
 }
 
 static Eina_Bool
-download_media_status(void *data, int t EINA_UNUSED, Ecore_Con_Event_Url_Progress *ev)
+download_media_status(void *data EINA_UNUSED, int t EINA_UNUSED, Ecore_Con_Event_Url_Progress *ev)
 {
    int status;
    const char *h;
@@ -173,7 +173,7 @@ download_media_status(void *data, int t EINA_UNUSED, Ecore_Con_Event_Url_Progres
    void **test = ecore_con_url_data_get(ev->url_con);
 
    if ((!test) || (*test != tw_mod)) return ECORE_CALLBACK_RENEW;
-   i = test;
+   i = (Media*)test;
 
    if (i->valid)
      {
