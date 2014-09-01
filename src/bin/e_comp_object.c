@@ -3350,6 +3350,7 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
 
    SOFT_ENTRY(NULL);
 
+   cw = evas_object_data_get(obj, "comp_object");
    if (!cw)
      {
         o = evas_object_image_filled_add(evas_object_evas_get(obj));
@@ -3367,6 +3368,7 @@ e_comp_object_util_mirror_add(Evas_Object *obj)
    cw->obj_mirror = eina_list_append(cw->obj_mirror, o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _e_comp_object_cb_mirror_del, cw);
    evas_object_data_set(o, "E_Client", cw->ec);
+   evas_object_data_set(o, "comp_object", cw);
 
    evas_object_image_alpha_set(o, cw->ec->argb || (!!cw->ec->shape_rects));
    evas_object_image_size_set(o, w, h);
