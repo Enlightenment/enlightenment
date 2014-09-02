@@ -1324,6 +1324,15 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
         return;
      }
 
+   /* check for the parent surface */
+   if (!parent_resource)
+     {
+        wl_resource_post_error(surface_resource,
+                               WL_DISPLAY_ERROR_INVALID_OBJECT,
+	                       "Popup requires a parent shell surface");
+        return;
+     }
+
    /* try to create a shell surface */
    if (!(cdata->shell.surface = 
          wl_resource_create(client, &xdg_popup_interface, 1, id)))
