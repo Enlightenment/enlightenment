@@ -1,9 +1,6 @@
 #include "e.h"
 
 #define TEXT_NONE_ACTION_KEY    _("<None>")
-#define TEXT_PRESS_KEY_SEQUENCE _("Please press key sequence,<br><br>" \
-                                  "or <hilight>Escape</hilight> to abort.")
-
 #define TEXT_NO_PARAMS          _("<None>")
 #define TEXT_NO_MODIFIER_HEADER _("Single key")
 
@@ -977,10 +974,10 @@ _grab_key_down_cb(void *data,
              if (actd) label = _(actd->act_name);
 
              e_util_dialog_show(_("Binding Key Error"),
-                                _("The binding key sequence, that you choose,"
+                                _("The binding key combination that you chose"
                                   " is already used by <br>"
                                   "<hilight>%s</hilight> action.<br>"
-                                  "Please choose another binding key sequence."),
+                                  "Please choose another binding key combination."),
                                 label ? label : _("Unknown"));
 #endif
              EINA_LIST_FOREACH(e_widget_ilist_items_get(cfdata->gui.o_binding_list), l, it)

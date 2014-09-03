@@ -1,6 +1,6 @@
 #include "e.h"
 
-#define TEXT_PRESS_KEY_SEQUENCE            _("Please press key sequence,<br><br>" \
+#define TEXT_PRESS_KEY_SEQUENCE            _("Please press key combination,<br><br>" \
                                              "or <hilight>Escape</hilight> to abort.")
 #define TEXT_PRESS_MOUSE_BINIDING_SEQUENCE _("Please hold any modifier you want<br>"            \
                                              "and press any button on your mouse,<br>or roll a" \
@@ -122,14 +122,14 @@ e_grab_dialog_show(E_Win *parent, Eina_Bool is_mouse, Ecore_Event_Handler_Cb key
    if (is_mouse)
      {
         eg->dia = e_dialog_new(c, "E", "_mousebind_getmouse_dialog");
-        e_dialog_title_set(eg->dia, _("Mouse Binding Sequence"));
+        e_dialog_title_set(eg->dia, _("Mouse Binding Combination"));
         e_dialog_icon_set(eg->dia, "preferences-desktop-mouse", 48);
         e_dialog_text_set(eg->dia, TEXT_PRESS_MOUSE_BINIDING_SEQUENCE);
      }
    else
      {
         eg->dia = e_dialog_new(c, "E", "_keybind_getkey_dialog");
-        e_dialog_title_set(eg->dia, _("Key Binding Sequence"));
+        e_dialog_title_set(eg->dia, _("Key Binding Combination"));
         e_dialog_icon_set(eg->dia, "preferences-desktop-keyboard-shortcuts", 48);
         e_dialog_text_set(eg->dia, TEXT_PRESS_KEY_SEQUENCE);
      }

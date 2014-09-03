@@ -68,7 +68,7 @@ e_int_config_acpibindings(E_Comp *comp,
    v->basic.apply_cfdata = _basic_apply;
    v->basic.create_widgets = _basic_create;
 
-   cfd = e_config_dialog_new(comp, _("ACPI Bindings"), "E",
+   cfd = e_config_dialog_new(comp, _("ACPI Bindings Settings"), "E",
                              "advanced/acpi_bindings",
                              "preferences-system-power-management",
                              0, v, NULL);
