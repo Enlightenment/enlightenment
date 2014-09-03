@@ -2343,7 +2343,7 @@ e_comp_object_util_add(Evas_Object *obj, E_Comp_Object_Type type)
           ok = e_theme_edje_object_set(o, "base/theme/comp", "e/comp/frame/default");
         break;
      }
-   if (shadow)
+   if (shadow && (e_util_strcmp(evas_object_type_get(obj), "edje") || (!edje_object_data_get(obj, "noshadow"))))
      edje_object_signal_emit(o, "e,state,shadow,on", "e");
    else
      edje_object_signal_emit(o, "e,state,shadow,off", "e");
