@@ -46,3 +46,4 @@ default.edj
 /data/units/enlightenment.service
 *.eo.c
 *.eo.h
+Session.vim
