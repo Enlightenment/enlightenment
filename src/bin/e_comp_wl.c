@@ -538,7 +538,6 @@ _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
    eina_tiler_free(tmp);
    eina_tiler_clear(sub_cdata->cached.opaque);
 
-
    tmp = eina_tiler_new(ec->w, ec->h);
    eina_tiler_tile_size_set(tmp, 1, 1);
    eina_tiler_rect_add(tmp, &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
