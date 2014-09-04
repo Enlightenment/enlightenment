@@ -1,5 +1,5 @@
+#define E_COMP_WL
 #include "e.h"
-#include "e_comp_wl.h"
 #include <sys/socket.h>
 #include <sys/un.h>
 
