@@ -1,15 +1,13 @@
 #include "e.h"
 /* #include <Ecore_Drm.h> */
 
-#define SCREEN_WIDTH 1920
-#define SCREEN_HEIGHT 1200
-
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, "Wl_Drm" };
 
 EAPI void *
 e_modapi_init(E_Module *m)
 {
    E_Comp *comp;
+   int w = 0, h = 0;
 
    printf("LOAD WL_DRM MODULE\n");
 
@@ -32,13 +30,19 @@ e_modapi_init(E_Module *m)
 
    /* fallback to framebuffer drm (non-accel) */
    if (!comp->ee)
-     comp->ee = ecore_evas_drm_new(NULL, 0, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+     comp->ee = ecore_evas_drm_new(NULL, 0, 0, 0, 1, 1);
 
    if (!comp->ee)
      {
         fprintf(stderr, "Could not create ecore_evas_drm canvas");
         return NULL;
      }
+
+   /* get the current screen geometry */
+   ecore_evas_screen_geometry_get(comp->ee, NULL, NULL, &w, &h);
+
+   /* resize the canvas */
+   ecore_evas_resize(comp->ee, w, h);
 
    /* TODO: hook ecore_evas_callback_resize_set */
 
@@ -50,12 +54,12 @@ e_modapi_init(E_Module *m)
         screen->escreen = screen->screen = 0;
         screen->x = 0;
         screen->y = 0;
-        screen->w = SCREEN_WIDTH;
-        screen->h = SCREEN_HEIGHT;
+        screen->w = w;
+        screen->h = h;
         e_xinerama_screens_set(eina_list_append(NULL, screen));
      }
 
-   comp->man = e_manager_new(0, comp, SCREEN_WIDTH, SCREEN_HEIGHT);
+   comp->man = e_manager_new(0, comp, w, h);
    if (!e_comp_canvas_init(comp)) return NULL;
    e_comp_canvas_fake_layers_init(comp);
 
