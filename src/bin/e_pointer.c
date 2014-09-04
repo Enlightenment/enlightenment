@@ -58,8 +58,9 @@ _e_pointer_cb_idle_poller(void *data)
 #ifndef HAVE_WAYLAND_ONLY
    if (!ptr->canvas)
      ecore_x_pointer_xy_get(ptr->win, &x, &y);
+   else
 #else
-   ecore_evas_pointer_xy_get(ptr->ee, &x, &y);
+     ecore_evas_pointer_xy_get(ptr->ee, &x, &y);
 #endif
 
    if ((ptr->x != x) || (ptr->y != y))
@@ -109,8 +110,9 @@ _e_pointer_cb_idle_pre(void *data)
 #ifndef HAVE_WAYLAND_ONLY
    if (!ptr->canvas)
      ecore_x_pointer_xy_get(ptr->win, &ptr->x, &ptr->y);
+   else
 #else
-   ecore_evas_pointer_xy_get(ptr->ee, &ptr->x, &ptr->y);
+     ecore_evas_pointer_xy_get(ptr->ee, &ptr->x, &ptr->y);
 #endif
 
    ptr->idle_tmr = ecore_timer_loop_add(4.0, _e_pointer_cb_idle_wait, ptr);
@@ -294,7 +296,6 @@ _e_pointer_canvas_add(E_Pointer *ptr)
 
    evas_object_move(ptr->o_ptr, 0, 0);
    evas_object_resize(ptr->o_ptr, ptr->w, ptr->h);
-   evas_object_show(ptr->o_ptr);
 
    return;
 
@@ -390,11 +391,11 @@ _e_pointer_type_set(E_Pointer *ptr, const char *type)
                                       &x, &y, NULL, NULL);
         _e_pointer_hot_update(ptr, x, y);
 
-        evas_object_show(ptr->o_ptr);
-
         if (ptr->canvas)
           ecore_evas_object_cursor_set(ptr->ee, ptr->o_ptr, EVAS_LAYER_MAX, 
                                        ptr->hot.x, ptr->hot.y);
+        else
+          evas_object_show(ptr->o_ptr);
 
         return;
      }
@@ -530,7 +531,6 @@ e_pointer_canvas_new(Ecore_Evas *ee, Eina_Bool filled)
    evas_object_event_callback_add(ptr->o_hot, EVAS_CALLBACK_SHOW, 
                                   _e_pointer_cb_hot_show, ptr);
 
-   evas_object_layer_set(ptr->o_ptr, EVAS_LAYER_MAX);
    evas_object_move(ptr->o_ptr, 0, 0);
    evas_object_resize(ptr->o_ptr, ptr->w, ptr->h);
 
@@ -559,7 +559,12 @@ e_pointers_size_set(int size)
         if ((ptr->evas) && (!ptr->canvas))
           _e_pointer_canvas_resize(ptr, size, size);
         else if (ptr->canvas)
-          evas_object_resize(ptr->o_ptr, size, size);
+          {
+             ptr->w = size;
+             ptr->h = size;
+             evas_object_resize(ptr->o_ptr, size, size);
+          }
+
 #ifndef HAVE_WAYLAND_ONLY
         ecore_x_cursor_size_set(e_config->cursor_size * 3 / 4);
 #endif
