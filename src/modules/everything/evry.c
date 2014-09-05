@@ -2073,7 +2073,7 @@ _evry_cb_key_down(void *data, int type __UNUSED__, void *event)
           }
      }
 
-   if (!win || !(sel = CUR_SEL))
+   if (!(sel = CUR_SEL))
      goto end;
 
    if (!strcmp(ev->key, "Tab") &&
