@@ -39,13 +39,9 @@ static Eina_Bool
 _module_filter_cb(void *d EINA_UNUSED, Eio_File *ls EINA_UNUSED, const Eina_File_Direct_Info *info)
 {
    struct stat st;
-   char buf[PATH_MAX];
 
    if (lstat(info->path, &st)) return EINA_FALSE;
    return (info->path[info->name_start] != '.');
-
-   snprintf(buf, sizeof(buf), "%s/%s/module.so", info->path, MODULE_ARCH);
-   return ecore_file_exists(buf);
 }
 
 static void
