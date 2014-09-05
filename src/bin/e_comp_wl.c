@@ -2292,12 +2292,10 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
 }
 
 static void 
-_e_comp_wl_evas_cb_frame_recalc(void *data, Evas_Object *obj, void *event)
+_e_comp_wl_evas_cb_frame_recalc(void *data, Evas_Object *obj, void *event EINA_UNUSED)
 {
    E_Client *ec;
-   E_Comp_Object_Frame *fr;
 
-   fr = event;
    if (!(ec = data)) return;
 
    E_COMP_WL_PIXMAP_CHECK;
