@@ -73,9 +73,11 @@ _display_msg(const char *title, const char *msg)
 static void
 _reply_and_del_dialog(Eldbus_Message *reply, E_Dialog *dialog)
 {
-   Eldbus_Message *message = dialog->data;
-   _reply(message, reply);
+   Eldbus_Message *message;
+
    if (!dialog) return;
+   if (!(message = dialog->data)) return;
+   _reply(message, reply);
    e_object_del(E_OBJECT(dialog));
 }
 
