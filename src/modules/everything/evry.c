@@ -1174,8 +1174,16 @@ _evry_selector_label_set(Evry_Selector *sel, const char *part, const char *label
 static void
 _evry_selector_activate(Evry_Selector *sel, int slide)
 {
-   Evry_Window *win = sel->win;
+   Evry_Window *win;
    Evry_State *s;
+
+   if (!sel)
+     {
+        ERR("selector == NULL");
+        return;
+     }
+
+   win = sel->win;
 
    if (CUR_SEL)
      {
@@ -1187,12 +1195,6 @@ _evry_selector_activate(Evry_Selector *sel, int slide)
 
         if (!slide && evry_conf->hide_list)
           _evry_list_win_hide(win);
-     }
-
-   if (!sel)
-     {
-        ERR("selector == NULL");
-        return;
      }
 
    CUR_SEL = sel;
