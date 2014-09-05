@@ -39,6 +39,5 @@ e_alert_show(void)
         fprintf(stderr, "PAUSE !\n");
         pause();
      }
-   return;
 }
 
