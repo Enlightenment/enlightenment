@@ -199,8 +199,6 @@ _basic_apply_data(E_Config_Dialog *cfd  __UNUSED__,
 
    EINA_LIST_FOREACH(cfdata->binding.key, l, bi2)
      {
-        bi2 = l->data;
-
         if (!bi2->key || !bi2->key[0]) continue;
 
         bi = E_NEW(E_Config_Binding_Key, 1);
