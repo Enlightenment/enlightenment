@@ -66,6 +66,12 @@ main(int argc, char **argv)
    const char *tmp;
    int i = 0;
 
+/* XCB is not avaibale when running in wayland only mode. No need to start anything here */
+#ifdef HAVE_WAYLAND_ONLY
+   printf("E Alert is not suitable to be used with E in wayland only mode\n");
+   exit(0);
+#endif
+
    for (i = 1; i < argc; i++)
      {
         if ((!strcmp(argv[i], "-h")) ||
