@@ -1016,9 +1016,11 @@ _ibar_cb_app_change(void *data, E_Order *eo __UNUSED__)
    EINA_INLIST_FOREACH(io->bars, b)
      {
         _ibar_empty(b);
-        _ibar_fill(b);
-        _ibar_resize_handle(b);
-        if (b->inst) _gc_orient(b->inst->gcc, -1);
+        if (b->inst)
+          {
+             _ibar_fill(b);
+             if (b->inst->gcc) _gc_orient(b->inst->gcc, -1);
+          }
      }
 }
 
