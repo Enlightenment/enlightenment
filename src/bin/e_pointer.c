@@ -130,8 +130,6 @@ _e_pointer_active_handle(E_Pointer *ptr)
      {
         E_FREE_FUNC(ptr->idle_tmr, ecore_timer_del);
         E_FREE_FUNC(ptr->idle_poll, ecore_poller_del);
-        ptr->idle_tmr = NULL;
-        ptr->idle_poll = NULL;
         if (e_powersave_mode_get() >= E_POWERSAVE_MODE_MEDIUM) return;
         if (!e_config->idle_cursor) return;
         ptr->idle_tmr = ecore_timer_loop_add(1.0, _e_pointer_cb_idle_pre, ptr);
@@ -347,8 +345,6 @@ _e_pointer_cb_free(E_Pointer *ptr)
 
    E_FREE_FUNC(ptr->idle_tmr, ecore_timer_del);
    E_FREE_FUNC(ptr->idle_poll, ecore_poller_del);
-   ptr->idle_tmr = NULL;
-   ptr->idle_poll = NULL;
 
    if (!ptr->canvas) _e_pointer_canvas_del(ptr);
 
