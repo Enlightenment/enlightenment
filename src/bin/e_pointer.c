@@ -82,13 +82,11 @@ _e_pointer_cb_idle_wait(void *data)
    E_Pointer *ptr;
 
    if (!(ptr = data)) return ECORE_CALLBACK_RENEW;
-
+   ptr->idle_tmr = NULL;
    if ((e_powersave_mode_get() >= E_POWERSAVE_MODE_MEDIUM) || 
        (!e_config->idle_cursor))
      {
         E_FREE_FUNC(ptr->idle_poll, ecore_poller_del);
-        ptr->idle_poll = NULL;
-        ptr->idle_tmr = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
 
@@ -96,7 +94,6 @@ _e_pointer_cb_idle_wait(void *data)
      ptr->idle_poll = ecore_poller_add(ECORE_POLLER_CORE, 64, 
                                        _e_pointer_cb_idle_poller, ptr);
 
-   ptr->idle_tmr = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -128,7 +125,6 @@ _e_pointer_active_handle(E_Pointer *ptr)
      ecore_timer_reset(ptr->idle_tmr);
    else
      {
-        E_FREE_FUNC(ptr->idle_tmr, ecore_timer_del);
         E_FREE_FUNC(ptr->idle_poll, ecore_poller_del);
         if (e_powersave_mode_get() >= E_POWERSAVE_MODE_MEDIUM) return;
         if (!e_config->idle_cursor) return;
@@ -341,14 +337,14 @@ _e_pointer_cb_free(E_Pointer *ptr)
 
    E_FREE_LIST(ptr->stack, _e_pointer_stack_free);
 
-   if (ptr->type) eina_stringshare_del(ptr->type);
+   eina_stringshare_del(ptr->type);
 
    E_FREE_FUNC(ptr->idle_tmr, ecore_timer_del);
    E_FREE_FUNC(ptr->idle_poll, ecore_poller_del);
 
    if (!ptr->canvas) _e_pointer_canvas_del(ptr);
 
-   E_FREE(ptr);
+   free(ptr);
 }
 
 static void 
