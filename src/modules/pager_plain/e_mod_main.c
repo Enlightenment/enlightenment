@@ -1870,7 +1870,11 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
 
    if (!pw) return;
    if (pw->client->lock_user_location) return;
-   if ((pw->desk->pager->popup) && (!act_popup)) return;
+   if ((pw->desk) && (pw->desk->pager))
+     {
+        if ((pw->desk->pager->popup) && (!act_popup)) return;
+     }
+
    /* prevent drag for a few pixels */
    if (pw->drag.start)
      {
@@ -1882,7 +1886,8 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
         if (((unsigned int)(dx * dx) + (unsigned int)(dy * dy)) <=
             (resist * resist)) return;
 
-        pw->desk->pager->dragging = 1;
+        if ((pw->desk) && (pw->desk->pager))
+          pw->desk->pager->dragging = 1;
         pw->drag.start = 0;
         e_comp_object_effect_clip(pw->client->frame);
         edje_object_signal_emit(pw->desk->o_desk, "e,action,drag,in", "e");
