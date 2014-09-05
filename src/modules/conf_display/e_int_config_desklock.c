@@ -435,7 +435,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    if (e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PERSONAL)
      {
         e_config->desklock_passwd =
-          eina_hash_djb2(cfdata->desklock_personal_passwd,
+          e_auth_hash_djb2(cfdata->desklock_personal_passwd,
           strlen(cfdata->desklock_personal_passwd));
      }
    else if (cfdata->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PIN)
@@ -450,7 +450,7 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
              if (errno) return 0; //NAN
              if (pp && pp[0]) return 0;
              if (test < 1) return 0;
-             e_config->desklock_pin = eina_hash_djb2(cfdata->pin_str, strlen(cfdata->pin_str));
+             e_config->desklock_pin = e_auth_hash_djb2(cfdata->pin_str, strlen(cfdata->pin_str));
           }
         else
           /* dumb, but let them do what they want... */
@@ -533,14 +533,14 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
    if (e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PERSONAL)
      {
         if (e_config->desklock_passwd !=
-          eina_hash_djb2(cfdata->desklock_personal_passwd,
+          e_auth_hash_djb2(cfdata->desklock_personal_passwd,
           strlen(cfdata->desklock_personal_passwd)))
           return 1;
      }
    if (e_config->desklock_auth_method == E_DESKLOCK_AUTH_METHOD_PIN)
      {
         if (e_config->desklock_pin !=
-          eina_hash_djb2(cfdata->pin_str,
+          e_auth_hash_djb2(cfdata->pin_str,
           strlen(cfdata->pin_str)))
           return 1;
      }
