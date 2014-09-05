@@ -214,7 +214,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 {
    E_Config_XKB_Layout *cl;
    int grp = 0;
-   Evas_Object *otb, *ol, *ow, *of, *ot, *oc;
+   Evas_Object *otb, *ol, *ow, *of, *oc;
    const Eina_List *l, *ll;
    E_Zone *zone;
    E_Radio_Group *rg;
@@ -402,7 +402,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_table_object_append(of, ow, 1, 1, 1, 1, 1, 0, 1, 0);
    e_widget_list_object_append(ol, of, 1, 1, 0.5);
 
-   cfdata->gui.o_table = ot = e_widget_table_add(evas, 1);
+   cfdata->gui.o_table = e_widget_table_add(evas, 1);
 
    EINA_LIST_FOREACH(e_comp_list(), l, comp)
      EINA_LIST_FOREACH(comp->zones, ll, zone)
