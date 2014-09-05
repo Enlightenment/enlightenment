@@ -443,9 +443,11 @@ _notification_popup_refresh(Popup_Data *popup)
    /* Compute the new size of the popup */
    edje_object_calc_force(popup->theme);
    edje_object_size_min_calc(popup->theme, &w, &h);
-   zone = e_comp_object_util_zone_get(popup->win);
-   w = MIN(w, zone->w / 2);
-   h = MIN(h, zone->h / 2);
+   if ((zone = e_comp_object_util_zone_get(popup->win)))
+     {
+        w = MIN(w, zone->w / 2);
+        h = MIN(h, zone->h / 2);
+     }
    evas_object_resize(popup->win, w, h);
 }
 
