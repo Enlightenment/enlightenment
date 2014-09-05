@@ -243,8 +243,13 @@ fail:
 }
 
 static Eina_Bool 
-_cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA_UNUSED)
+_cb_signal_event(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
 {
+   Ecore_Event_Signal_User *ev;
+
+   ev = event;
+   if (ev->number != 1) return ECORE_CALLBACK_RENEW;
+
    /* NB: SIGUSR1 comes from XWayland Server when it has finished 
     * initialized. */
 
