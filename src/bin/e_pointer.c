@@ -59,9 +59,8 @@ _e_pointer_cb_idle_poller(void *data)
    if (!ptr->canvas)
      ecore_x_pointer_xy_get(ptr->win, &x, &y);
    else
-#else
-     ecore_evas_pointer_xy_get(ptr->ee, &x, &y);
 #endif
+     ecore_evas_pointer_xy_get(ptr->ee, &x, &y);
 
    if ((ptr->x != x) || (ptr->y != y))
      {
@@ -108,9 +107,8 @@ _e_pointer_cb_idle_pre(void *data)
    if (!ptr->canvas)
      ecore_x_pointer_xy_get(ptr->win, &ptr->x, &ptr->y);
    else
-#else
-     ecore_evas_pointer_xy_get(ptr->ee, &ptr->x, &ptr->y);
 #endif
+     ecore_evas_pointer_xy_get(ptr->ee, &ptr->x, &ptr->y);
 
    ptr->idle_tmr = ecore_timer_loop_add(4.0, _e_pointer_cb_idle_wait, ptr);
 
