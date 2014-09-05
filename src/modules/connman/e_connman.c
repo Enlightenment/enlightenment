@@ -607,9 +607,6 @@ static bool _manager_parse_wifi_prop_changed(struct Connman_Manager *cm,
      return eldbus_message_iter_arguments_get(value, "b", &cm->powered);
    else
      return false;
-   
-   econnman_mod_manager_update(cm);
-   return true;
 }
 
 static void _manager_wifi_prop_changed(void *data, const Eldbus_Message *msg)
