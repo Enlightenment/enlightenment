@@ -482,7 +482,6 @@ _e_configure_fill_cat_list(void *data, const char *sel)
                {
                   char buf[1024];
 
-                  eci = ll->data;
                   if (eci->pri >= 0)
                     {
                        snprintf(buf, sizeof(buf), "%s/%s", ecat->cat,
