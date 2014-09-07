@@ -462,6 +462,13 @@ _e_sys_systemd_hibernate(void)
    eldbus_proxy_call(login1_manger_proxy, "Hibernate", NULL, NULL, -1, "b", 0);
 }
 
+static void
+_e_sys_resume_job(void *d EINA_UNUSED)
+{
+   ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
+   _e_sys_comp_resume();
+}
+
 static Eina_Bool
 _e_sys_susp_hib_check_timer_cb(void *data __UNUSED__)
 {
@@ -475,8 +482,7 @@ _e_sys_susp_hib_check_timer_cb(void *data __UNUSED__)
              e_object_del(E_OBJECT(_e_sys_dialog));
              _e_sys_dialog = NULL;
           }
-        ecore_event_add(E_EVENT_SYS_RESUME, NULL, NULL, NULL);
-        _e_sys_comp_resume();
+        ecore_job_add(_e_sys_resume_job, NULL);
         return EINA_FALSE;
      }
    _e_sys_susp_hib_check_last_tick = t;
