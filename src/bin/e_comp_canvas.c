@@ -386,7 +386,6 @@ e_comp_canvas_update(E_Comp *c)
                {
                   E_Client *ec;
 
-                  /* delete any shelves on this zone */
                   E_CLIENT_FOREACH(c, ec)
                     {
                        if (ec->zone == zone)
