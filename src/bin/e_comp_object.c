@@ -1,5 +1,24 @@
 #include "e.h"
 
+/* data keys:
+
+   = keys that return objects =
+   - E_Client: the client associated with the object (E_Client*)
+   - comp_smart_obj: cw->smart_obj (Evas_Object*)
+   - comp_obj: cw (E_Comp_Object*)
+
+   = keys that are bool flags =
+   - client_restack: client needs a protocol-level restack
+   - comp_override: object is triggering a nocomp override to force compositing
+   - comp_ref: object has a ref from visibility animations
+   - comp_showing: object is currently running its show animation
+   - comp_hiding: object is currently running its hiding animation
+   - comp_object: object is a compositor-created object
+   - comp_object_skip: object has a name which prohibits theme shadows
+   - comp_object-to_del: list of objects which will be deleted when this object is deleted
+   - comp_mirror: object is the result of e_comp_object_util_mirror_add()
+*/
+
 #define UPDATE_MAX 512 // same as evas
 #define SMART_NAME     "e_comp_object"
 
