@@ -1852,9 +1852,49 @@ _e_client_eval(E_Client *ec)
         /* if the explicit geometry request asks for the app to be
          * in another zone - well move it there */
         {
-           E_Zone *zone;
+           E_Zone *zone = NULL;
+           int x, y;
 
-           zone = e_comp_zone_xy_get(ec->comp, ec->x + (ec->w / 2), ec->y + (ec->h / 2));
+           x = MAX(ec->x, 0);
+           y = MAX(ec->y, 0);
+           if ((!ec->re_manage) && ((ec->x != x) || (ec->y != y)))
+             zone = e_comp_zone_xy_get(ec->comp, x, y);
+
+           if (!zone)
+             {
+                zone = e_comp_zone_xy_get(ec->comp, ec->x + (ec->w / 2), ec->y + (ec->h / 2));
+                if (zone)
+                  {
+                     E_Zone *z2 = e_comp_zone_xy_get(ec->comp, ec->x, ec->y);
+
+                     if (z2 && (z2 != zone))
+                       {
+                          size_t psz = 0;
+                          E_Zone *zf = z2;
+                          Eina_List *l;
+
+                          EINA_LIST_FOREACH(ec->comp->zones, l, z2)
+                            {
+                                int w, h;
+
+                                x = ec->x, y = ec->y, w = ec->w, h = ec->h;
+                                E_RECTS_CLIP_TO_RECT(x, y, w, h, z2->x, z2->y, z2->w, z2->h);
+                                if (w * h == z2->w * z2->h)
+                                  {
+                                     /* client fully covering zone */
+                                     zf = z2;
+                                     break;
+                                  }
+                                if ((unsigned)(w * h) > psz)
+                                  {
+                                     psz = w * h;
+                                     zf = z2;
+                                  }
+                            }
+                          zone = zf;
+                       }
+                  }
+             }
            if (!zone)
              zone = e_comp_zone_xy_get(ec->comp, ec->x, ec->y);
            if (!zone)
