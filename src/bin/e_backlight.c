@@ -358,16 +358,14 @@ _bl_sys_find(void)
         /* prefer backlights of type "firmware" where available */
         EINA_LIST_FOREACH(devs, l, f)
           {
-             s = eeze_udev_syspath_get_sysattr(f, "type");
-             use = (s && (!strcmp(s, "firmware")));
-             eina_stringshare_del(s);
+             use = eeze_udev_syspath_check_sysattr(f, "type", "firmware");
              if (!use) continue;
              s = eeze_udev_syspath_get_sysattr(f, "brightness");
              if (!s) continue;
              v = atoi(s);
              eina_stringshare_del(s);
              if (v < 0) continue;
-             pdevs = eina_list_append(pdevs, eina_stringshare_add(f));
+             pdevs = eina_list_append(pdevs, eina_stringshare_ref(f));
              eina_stringshare_del(f);
              l->data = NULL;
           }
@@ -379,7 +377,7 @@ _bl_sys_find(void)
              v = atoi(s);
              eina_stringshare_del(s);
              if (v < 0) continue;
-             pdevs = eina_list_append(pdevs, eina_stringshare_add(f));
+             pdevs = eina_list_append(pdevs, eina_stringshare_ref(f));
           }
      }
    if (!pdevs)
@@ -393,49 +391,37 @@ _bl_sys_find(void)
              v = atoi(s);
              eina_stringshare_del(s);
              if (v < 0) continue;
-             pdevs = eina_list_append(pdevs, eina_stringshare_add(f));
+             pdevs = eina_list_append(pdevs, eina_stringshare_ref(f));
           }
      }
    /* clear out original devs list now we've filtered */
-   EINA_LIST_FREE(devs, f)
-     {
-        if (f) eina_stringshare_del(f);
-     }
+   E_FREE_LIST(devs, eina_stringshare_del);
    /* clear out old configured bl sysval */
-   if (bl_sysval)
-     {
-        eina_stringshare_del(bl_sysval);
-        bl_sysval = NULL;
-     }
-   EINA_LIST_FREE(bl_devs, s)
-     eina_stringshare_del(s);
+   eina_stringshare_replace(&bl_sysval, NULL);
+   E_FREE_LIST(bl_devs, eina_stringshare_del);
    /* if configured backlight is there - use it, or if not use first */
    EINA_LIST_FOREACH(pdevs, l, f)
      {
         bl_devs = eina_list_append(bl_devs, eina_stringshare_add(f));
         if (!bl_sysval)
           {
-             if ((e_config->backlight.sysdev) &&
-                 (!strcmp(e_config->backlight.sysdev, f)))
-               bl_sysval = eina_stringshare_add(f);
+             if (!e_util_strcmp(e_config->backlight.sysdev, f))
+               bl_sysval = eina_stringshare_ref(f);
           }
      }
    if (!bl_sysval)
      {
         EINA_LIST_FOREACH(pdevs, l, f)
           {
-             if (!bl_sysval)
+             if ((!strstr(f, "kbd")) && (!strstr(f, "mail")))
                {
-                  if ((!strstr(f, "kbd")) && (!strstr(f, "mail")))
-                    bl_sysval = eina_stringshare_add(f);
+                  bl_sysval = eina_stringshare_add(f);
+                  break;
                }
           }
      }
    /* clear out preferred devs list */
-   EINA_LIST_FREE(pdevs, f)
-     {
-        eina_stringshare_del(f);
-     }
+   E_FREE_LIST(pdevs, eina_stringshare_del);
 }
 
 static void
