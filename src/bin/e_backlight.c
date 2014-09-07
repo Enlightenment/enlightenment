@@ -491,7 +491,10 @@ _bl_sys_find(void)
         EINA_LIST_FOREACH(pdevs, l, f)
           {
              if (!bl_sysval)
-               bl_sysval = eina_stringshare_add(f);
+               {
+                  if ((!strstr(f, "kbd")) && (!strstr(f, "mail")))
+                    bl_sysval = eina_stringshare_add(f);
+               }
           }
      }
    /* clear out preferred devs list */
