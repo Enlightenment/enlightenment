@@ -93,5 +93,11 @@ isedje(const Evas_Object *obj)
    return obj && !e_util_strcmp(evas_object_type_get(obj), "edje");
 }
 
+static inline Eina_Bool
+dblequal(double a, double b)
+{
+   return fabs(a - b) < DBL_EPSILON;
+}
+
 #endif
 #endif
