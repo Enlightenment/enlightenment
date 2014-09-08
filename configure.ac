@@ -888,7 +888,7 @@ AM_CONDITIONAL([HAVE_WL_DRM], [test "x${WL_DRM}" = "xtrue"])
 define([CHECK_MODULE_XWAYLAND],
 [
   if test "x${e_cv_want_wayland_only}" = "xyes"; then
-    AC_E_CHECK_PKG(XWAYLAND, [ ecore >= $efl_version eina >= $efl_version ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
+    AC_E_CHECK_PKG(XWAYLAND, [ ecore >= $efl_version eina >= $efl_version xcb xcb-xfixes xcb-composite xcursor ], [HAVE_XWAYLAND_DEPS=true], [HAVE_XWAYLAND_DEPS=false])
     AC_PATH_PROG([XWAYLAND_BIN], [Xwayland], [HAVE_XWAYLAND_DEPS=false], [/sbin:/usr/sbin:$PATH])
     AC_SUBST(XWAYLAND_BIN)
   else
