@@ -97,6 +97,7 @@ _e_comp_visible_object_is(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coo
    Evas_Coord xx, yy, ww, hh;
 
    if ((!type) || (!e_util_strcmp(type, "e_comp_object"))) return EINA_FALSE;
+   if (evas_object_data_get(obj, "comp_skip")) return EINA_FALSE;
    evas_object_geometry_get(obj, &xx, &yy, &ww, &hh);
    if (E_INTERSECTS(x, y, w, h, xx, yy, ww, hh))
      {
