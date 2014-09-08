@@ -262,7 +262,7 @@ _e_randr_config_load(void)
 
              /* Set refresh_rate to 60 */
              EINA_LIST_FOREACH(e_randr_cfg->outputs, l, output)
-                if (output->refresh_rate == 0) output->refresh_rate = 60.0;
+                if (dblequal(output->refresh_rate, 0.0)) output->refresh_rate = 60.0;
           }
      }
 
@@ -820,7 +820,7 @@ _e_randr_output_mode_update(E_Randr_Output *output)
              rate = e_randr_mode_refresh_rate_get(mode_infos[i]);
              if ((mode_infos[i]->width == (unsigned int)output->cfg->geo.w) &&
                  (mode_infos[i]->height == (unsigned int)output->cfg->geo.h) &&
-                 (rate == output->cfg->refresh_rate) &&
+                 (dblequal(rate, output->cfg->refresh_rate)) &&
                  (_e_randr_output_mode_valid(mode_infos[i]->xid, modes, nmodes)))
                {
                   output->mode = mode_infos[i]->xid;
