@@ -229,6 +229,8 @@ fail:
         close(wms[1]);
         exs->wm_fd = wms[0];
 
+        /* TODO: watch process ?? */
+
         if (exs->abs_hdlr)
           ecore_main_fd_handler_del(exs->abs_hdlr);
         if (exs->unx_hdlr)
@@ -354,5 +356,24 @@ lock:
 EAPI int 
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
+   char path[256];
+
+   if (!exs) return 1;
+
+   unlink(exs->lock);
+
+   snprintf(path, sizeof(path), "/tmp/.X11-unix/X%d", exs->disp);
+   unlink(path);
+
+   if (exs->abs_hdlr) ecore_main_fd_handler_del(exs->abs_hdlr);
+   if (exs->unx_hdlr) ecore_main_fd_handler_del(exs->unx_hdlr);
+
+   close(exs->abs_fd);
+   close(exs->unx_fd);
+
+   if (exs->sig_hdlr) ecore_event_handler_del(exs->sig_hdlr);
+
+   free(exs);
+
    return 1;
 }
