@@ -26,7 +26,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-06-23 08:15+0900\n"
+"POT-Creation-Date: 2014-09-08 18:30+0200\n"
 "PO-Revision-Date: 2012-12-21 13:52+0100\n"
 "Last-Translator: Thomas Gstädtner <thomas@gstaedtner.net>\n"
 "Language-Team: E17-de\n"
@@ -3941,13 +3941,13 @@ msgstr ""
 "Enlightenment entdeckte, dass Evas keine Buffercanvas erstellen konnte.\n"
 "Bitte überprüfen Sie Evas auf Softwarebufferengine-Unterstützung.\n"
 
-#: src/bin/e_main.c:1466
+#: src/bin/e_main.c:1479
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
 msgstr ""
-"Enlightenment stellte fest, dass Evas keine PNG-Dateien laden kann.\n"
-"Bitte überprüfen Sie Evas auf PNG-Loader-Unterstützung.\n"
+"Enlightenment stellte fest, dass Evas keine SVG-Dateien laden kann.\n"
+"Bitte überprüfen Sie Evas auf SVG-Loader-Unterstützung.\n"
 
 #: src/bin/e_main.c:1476
 msgid ""
