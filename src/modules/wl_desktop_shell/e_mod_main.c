@@ -92,8 +92,8 @@ _e_shell_surface_mouse_down_helper(E_Client *ec, E_Binding_Event_Mouse_Button *e
    e_focus_event_mouse_down(ec);
 }
 
-static void 
-_e_shell_surface_cb_destroy(struct wl_resource *resource)
+static void
+_e_shell_surface_destroy(struct wl_resource *resource)
 {
    E_Client *ec;
 
@@ -112,13 +112,26 @@ _e_shell_surface_cb_destroy(struct wl_resource *resource)
                       (ec->comp_data->shell.unmap))
                     ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
                }
-
+             if (ec->parent)
+               {
+                  ec->parent->transients =
+                    eina_list_remove(ec->parent->transients, ec);
+               }
+             wl_resource_destroy(ec->comp_data->shell.surface);
              ec->comp_data->shell.surface = NULL;
           }
      }
 }
 
-static void 
+static void
+_e_shell_surface_cb_destroy(struct wl_resource *resource)
+{
+   /* DBG("Shell Surface Destroy: %d", wl_resource_get_id(resource)); */
+
+   _e_shell_surface_destroy(resource);
+}
+
+static void
 _e_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t serial EINA_UNUSED)
 {
    E_Client *ec;
@@ -621,17 +634,9 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
 static void 
 _e_xdg_shell_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   E_Client *ec;
-
    /* DBG("XDG_SHELL: Surface Destroy"); */
 
-   if ((ec = wl_resource_get_user_data(resource)))
-     {
-        /* eina_stringshare_del(ec->icccm.title); */
-        /* eina_stringshare_del(ec->icccm.class); */
-        wl_resource_destroy(ec->comp_data->shell.surface);
-        ec->comp_data->shell.surface = NULL;
-     }
+   _e_shell_surface_destroy(resource);
 }
 
 static void 
@@ -1233,30 +1238,9 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
 static void 
 _e_xdg_shell_popup_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   E_Client *ec;
-
    /* DBG("XDG_SHELL: Popup Destroy"); */
-   if ((ec = wl_resource_get_user_data(resource)))
-     {
-        if (ec->comp_data)
-          {
-             if (ec->comp_data->mapped)
-               {
-                  if ((ec->comp_data->shell.surface) && 
-                      (ec->comp_data->shell.unmap))
-                    ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
-               }
 
-             if (ec->parent)
-               {
-                  ec->parent->transients = 
-                    eina_list_remove(ec->parent->transients, ec);
-               }
-
-             wl_resource_destroy(ec->comp_data->shell.surface);
-             ec->comp_data->shell.surface = NULL;
-          }
-     }
+   _e_shell_surface_destroy(resource);
 }
 
 static const struct xdg_popup_interface _e_xdg_popup_interface = 
