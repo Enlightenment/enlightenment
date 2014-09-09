@@ -624,7 +624,7 @@ AC_ARG_WITH(profile,
   [profile=$withval])
 AC_MSG_NOTICE([Enlightenment build profile set to $profile])
 EDJE_DEF="-DLOWRES_PDA=1 -DMEDIUMRES_PDA=2 -DHIRES_PDA=3 -DSLOW_PC=4 -DMEDIUM_PC=5 -DFAST_PC=6"
-EDJE_DEF=$EDJE_DEF" -DE18_PROFILE"=$profile
+EDJE_DEF=$EDJE_DEF" -DE19_PROFILE"=$profile
 AC_SUBST([EDJE_DEF])
 
 AC_ARG_WITH(edje-cc,
