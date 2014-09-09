@@ -94,7 +94,7 @@ main(int argc, char **argv)
 
    fprintf(stderr, "exit_gdb: %i\n", exit_gdb);
 
-   tmp = getenv("E19_TAINTED");
+   tmp = getenv("E_TAINTED");
    if (tmp && !strcmp(tmp, "NO"))
      tainted = EINA_FALSE;
 
@@ -560,7 +560,7 @@ _e_alert_draw_text(void)
                       "on. We were not able to generate a backtrace, check \n"
                       "if your 'sysactions.conf' has an 'gdb' action line.\n"
                       "\n"
-                      "Please compile latest Git E19 and EFL with\n"
+                      "Please compile latest Git E and EFL with\n"
                       "-g and -ggdb3 in your CFLAGS.\n");
           }
         else if (backtrace_str)
@@ -568,9 +568,9 @@ _e_alert_draw_text(void)
              snprintf(msg, sizeof(msg),
                       "This is not meant to happen and is likely a sign of \n"
                       "a bug in Enlightenment or the libraries it relies \n"
-                      "on. You will find an backtrace of E19 (%d) in :\n"
+                      "on. You will find an backtrace of E (%d) in :\n"
                       "'%s'\n"
-                      "Before reporting issue, compile latest E19 and EFL\n"
+                      "Before reporting issue, compile latest E and EFL\n"
                       "from Git with '-g -ggdb3' in your CFLAGS.\n"
                       "You can then report this crash on :\n"
                       "https://phab.enlightenment.org/maniphest/.\n",
@@ -586,7 +586,7 @@ _e_alert_draw_text(void)
                       "recover to try and get your desktop back the way \n"
                       "it was.\n"
                       "\n"
-                      "Please compile latest Git E19 and EFL with\n"
+                      "Please compile latest Git E and EFL with\n"
                       "-g and -ggdb3 in your CFLAGS.\n", pid);
           }
      }
@@ -598,7 +598,7 @@ _e_alert_draw_text(void)
                  "modules; before reporting this issue, please\n"
                  "unload them and try to see if the bug is still\n"
                  "there. Also update to latest Git and be sure to\n"
-                 "compile E19 and EFL with -g and -ggdb3 in your CFLAGS");
+                 "compile E and EFL with -g and -ggdb3 in your CFLAGS");
      }
 
    strcpy(warn, "");

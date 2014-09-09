@@ -55,7 +55,7 @@ AC_DEFINE_UNQUOTED(VMAJ, [v_maj], [Major version])
 AC_DEFINE_UNQUOTED(VMIN, [v_min], [Minor version])
 AC_DEFINE_UNQUOTED(VMIC, [v_mic], [Micro version])
 AC_DEFINE_UNQUOTED(VREV, [v_rev], [Revison])
-##AC_DEFINE_UNQUOTED(E19_RELEASE_BUILD, [1], [doin it])
+##AC_DEFINE_UNQUOTED(E_RELEASE_BUILD, [1], [doin it])
 version_info="lt_cur:lt_rev:lt_age"
 release_info="v_rel"
 AC_SUBST([version_info])
@@ -624,7 +624,7 @@ AC_ARG_WITH(profile,
   [profile=$withval])
 AC_MSG_NOTICE([Enlightenment build profile set to $profile])
 EDJE_DEF="-DLOWRES_PDA=1 -DMEDIUMRES_PDA=2 -DHIRES_PDA=3 -DSLOW_PC=4 -DMEDIUM_PC=5 -DFAST_PC=6"
-EDJE_DEF=$EDJE_DEF" -DE19_PROFILE"=$profile
+EDJE_DEF=$EDJE_DEF" -DE_PROFILE"=$profile
 AC_SUBST([EDJE_DEF])
 
 AC_ARG_WITH(edje-cc,

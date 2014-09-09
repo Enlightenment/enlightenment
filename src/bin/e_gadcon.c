@@ -5571,7 +5571,7 @@ _e_gadcon_custom_populate_job(void *data __UNUSED__)
    Eina_List *l, *ll;
    E_Gadcon *gc;
 
-#ifndef E19_RELEASE_BUILD
+#ifndef E_RELEASE_BUILD
    static Eina_Bool first = EINA_TRUE;
    if (first)
      e_main_ts("gadcon custom populate idler start");
@@ -5598,14 +5598,14 @@ _e_gadcon_custom_populate_job(void *data __UNUSED__)
         _e_gadcon_event_populate(gc);
      }
 
-#ifndef E19_RELEASE_BUILD
+#ifndef E_RELEASE_BUILD
    if (first)
      e_main_ts("gadcon custom populate idler end");
 #endif
    if (!custom_populate_requests)
      {
         custom_populate_job = NULL;
-#ifndef E19_RELEASE_BUILD
+#ifndef E_RELEASE_BUILD
         first = EINA_FALSE;
 #endif
      }
@@ -5618,7 +5618,7 @@ _e_gadcon_provider_populate_job(void *data __UNUSED__)
    Eina_List *l;
    E_Gadcon *gc;
 
-#ifndef E19_RELEASE_BUILD
+#ifndef E_RELEASE_BUILD
    static Eina_Bool first = EINA_TRUE;
    if (first)
      e_main_ts("gadcon populate idler start");
@@ -5634,7 +5634,7 @@ _e_gadcon_provider_populate_job(void *data __UNUSED__)
           }
         EINA_LIST_FREE(gc->populate_requests, cc)
           {
-#ifndef E19_RELEASE_BUILD
+#ifndef E_RELEASE_BUILD
              if (first) e_main_ts(cc->name);
 #endif
              if (gc->populate_class.func)
@@ -5661,13 +5661,13 @@ _e_gadcon_provider_populate_job(void *data __UNUSED__)
         if (x && _modules_loaded) _e_gadcon_event_populate(gc);
      }
 //out:
-#ifndef E19_RELEASE_BUILD
+#ifndef E_RELEASE_BUILD
    if (first)
      e_main_ts("gadcon populate idler end");
 #endif
 
    populate_job = NULL;
-#ifndef E19_RELEASE_BUILD
+#ifndef E_RELEASE_BUILD
    first = EINA_FALSE;
 #endif
 }

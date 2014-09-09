@@ -639,7 +639,7 @@ gadman_update_bg(void)
       case BG_CUSTOM:
         if (eina_str_has_extension(Man->conf->custom_bg, ".edj"))
           {
-             //THIS IS FOR E19 backgrounds
+             //THIS IS FOR E backgrounds
              obj = edje_object_add(Man->comp->evas);
              edje_object_file_set(obj, Man->conf->custom_bg,
                                   "e/desktop/background");

@@ -1,6 +1,6 @@
 #include "e.h"
 
-#if ((E19_PROFILE >= LOWRES_PDA) && (E19_PROFILE <= HIRES_PDA))
+#if ((E_PROFILE >= LOWRES_PDA) && (E_PROFILE <= HIRES_PDA))
 #define DEF_MENUCLICK             1.25
 #else
 #define DEF_MENUCLICK             0.25
@@ -1004,7 +1004,7 @@ e_config_load(void)
         _e_config_edd_init(EINA_TRUE);
         e_config = e_config_domain_load("e", _e_config_edd);
         /* I made a c&p error here and fucked the world, so this ugliness
-         * will be my public mark of shame until E19 :/
+         * will be my public mark of shame until E :/
          * -zmike, 2013
          */
         if (e_config)
@@ -1254,7 +1254,7 @@ e_config_load(void)
                   cf_es->popup = 0;
                }
 
-             /* E19 layer values are higher */
+             /* E layer values are higher */
              EINA_LIST_FOREACH(e_config->remembers, l, rem)
                if (rem->apply & E_REMEMBER_APPLY_LAYER)
                  rem->prop.layer += 100;

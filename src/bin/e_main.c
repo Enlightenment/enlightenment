@@ -1062,7 +1062,7 @@ _e_main_shutdown(int errcode)
    char buf[PATH_MAX];
    const char *dir;
 
-   printf("E19: Begin Shutdown Procedure!\n");
+   printf("E: Begin Shutdown Procedure!\n");
 
    if (_idle_before) ecore_idle_enterer_del(_idle_before);
    _idle_before = NULL;
@@ -1733,7 +1733,7 @@ _e_main_cb_idle_after(void *data __UNUSED__)
 
    edje_freeze();
 
-#ifdef E19_RELEASE_BUILD
+#ifdef E_RELEASE_BUILD
    if (first_idle)
      {
         TS("SLEEP");

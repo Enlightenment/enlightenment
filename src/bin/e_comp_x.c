@@ -4564,7 +4564,7 @@ _e_comp_x_xinerama_setup(int rw, int rh)
              /* get each xinerama screen geometry */
              if (ecore_x_xinerama_screen_geometry_get(i, &x, &y, &w, &h))
                {
-                  INF("E19 INIT: XINERAMA SCREEN: [%i][%i], %ix%i+%i+%i",
+                  INF("E INIT: XINERAMA SCREEN: [%i][%i], %ix%i+%i+%i",
                       i, i, w, h, x, y);
                   /* add it to our list */
                   screen = E_NEW(E_Screen, 1);

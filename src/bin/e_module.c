@@ -795,7 +795,7 @@ _e_module_cb_idler(void *data __UNUSED__)
         if (name) m = e_module_new(name);
         if (m)
           {
-#ifndef E19_RELEASE_BUILD
+#ifndef E_RELEASE_BUILD
              char buf[1024];
              snprintf(buf, sizeof(buf), "DELAYED MODULE LOAD: %s", name);
              e_main_ts(buf);
@@ -990,7 +990,7 @@ _e_module_whitelist_check(void)
                                           _x_tainted, &_e_tainted, 1);
         }
 
-      e_env_set("E19_TAINTED", state);
+      e_env_set("E_TAINTED", state);
    }
 #endif
 

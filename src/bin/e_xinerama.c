@@ -133,7 +133,7 @@ _e_xinerama_update(void)
    EINA_LIST_FOREACH(chosen_screens, l, scr)
      {
         scr->escreen = n;
-        INF("E19 INIT: XINERAMA CHOSEN: [%i][%i], %ix%i+%i+%i",
+        INF("E INIT: XINERAMA CHOSEN: [%i][%i], %ix%i+%i+%i",
             scr->screen, scr->escreen, scr->w, scr->h, scr->x, scr->y);
         n++;
      }
