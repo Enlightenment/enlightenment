@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include "e_fm_shared_types.h"
 #include "e_fm_shared_device.h"
 
