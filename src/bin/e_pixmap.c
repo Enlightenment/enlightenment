@@ -97,7 +97,7 @@ _e_pixmap_free(E_Pixmap *cp)
         break;
       case E_PIXMAP_TYPE_WL:
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
-        if (cp->resource) wl_resource_set_user_data(cp->resource, NULL);
+        /* NB: No-Op. Nothing to free. image data no longer memcpy'd */
 #endif
         break;
       default:
