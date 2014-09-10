@@ -441,8 +441,8 @@ _pager_desk_new(Pager *p, E_Desk *desk, int xpos, int ypos, Eina_Bool invert)
    e = evas_object_evas_get(p->o_table);
    o = edje_object_add(e);
    pd->o_desk = o;
-   e_theme_edje_object_set(o, "base/theme/modules/pager",
-                           "e/modules/pager/desk");
+   e_theme_edje_object_set(o, "base/theme/modules/pager_plain",
+                           "e/modules/pager_plain/desk");
    edje_object_part_text_set(o, "e.text.label", desk->name);
    if (pager_config->show_desk_names)
      edje_object_signal_emit(o, "e,name,show", "e");
@@ -674,8 +674,8 @@ _pager_window_new(Pager_Desk *pd, E_Client *client)
 
    o = edje_object_add(evas_object_evas_get(pd->pager->o_table));
    pw->o_window = o;
-   e_theme_edje_object_set(o, "base/theme/modules/pager",
-                           "e/modules/pager/window");
+   e_theme_edje_object_set(o, "base/theme/modules/pager_plain",
+                           "e/modules/pager_plain/window");
    if (visible) evas_object_show(o);
 
    e_layout_pack(pd->o_layout, pw->o_window);
@@ -797,8 +797,8 @@ _pager_popup_new(E_Zone *zone, int keyaction)
 
    pp->o_bg = edje_object_add(zone->comp->evas);
    evas_object_name_set(pp->o_bg, "pager_popup");
-   e_theme_edje_object_set(pp->o_bg, "base/theme/modules/pager",
-                           "e/modules/pager/popup");
+   e_theme_edje_object_set(pp->o_bg, "base/theme/modules/pager_plain",
+                           "e/modules/pager_plain/popup");
    desk = e_desk_current_get(zone);
    if (desk)
      edje_object_part_text_set(pp->o_bg, "e.text.label", desk->name);
@@ -1934,8 +1934,8 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
                                _pager_window_cb_drag_finished);
 
              o = edje_object_add(drag->evas);
-             e_theme_edje_object_set(o, "base/theme/modules/pager",
-                                     "e/modules/pager/window");
+             e_theme_edje_object_set(o, "base/theme/modules/pager_plain",
+                                     "e/modules/pager_plain/window");
              evas_object_show(o);
 
              oo = e_client_icon_add(pw->client, drag->evas);
@@ -2138,7 +2138,7 @@ _pager_drop_cb_drop(void *data, const char *type, void *event_info)
    pd = _pager_desk_at_coord(p, ev->x, ev->y);
    if (pd)
      {
-        if (!strcmp(type, "enlightenment/pager_win"))
+        if (!strcmp(type, "enlightenment/pager_plain_win"))
           {
              pw = (Pager_Win *)(ev->data);
              if (pw)
@@ -2313,8 +2313,8 @@ _pager_desk_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
 
         /* redraw the desktop theme above */
         o = edje_object_add(drag->evas);
-        e_theme_edje_object_set(o, "base/theme/modules/pager",
-                                "e/modules/pager/desk");
+        e_theme_edje_object_set(o, "base/theme/modules/pager_plain",
+                                "e/modules/pager_plain/desk");
         evas_object_show(o);
         e_drag_object_set(drag, o);
 
@@ -2334,8 +2334,8 @@ _pager_desk_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
                continue;
 
              o = edje_object_add(drag->evas);
-             e_theme_edje_object_set(o, "base/theme/modules/pager",
-                                     "e/modules/pager/window");
+             e_theme_edje_object_set(o, "base/theme/modules/pager_plain",
+                                     "e/modules/pager_plain/window");
              e_layout_pack(oo, o);
              e_layout_child_raise(o);
              e_zone_useful_geometry_get(pw->desk->desk->zone,
