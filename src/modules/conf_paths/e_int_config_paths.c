@@ -163,7 +163,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    of = e_widget_framelist_add(evas, _("Enlightenment Paths"), 0);
    ob = e_widget_ilist_add(evas, 0, 0, NULL);
    cfdata->gui.path_list = ob;
-   e_widget_size_min_set(ob, 170, 100);
+   e_widget_size_min_set(ob, 220, 100);
 
    evas_event_freeze(evas_object_evas_get(cfdata->gui.path_list));
    edje_freeze();
@@ -187,16 +187,16 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_ilist_thaw(cfdata->gui.path_list);
    edje_thaw();
    evas_event_thaw(evas_object_evas_get(cfdata->gui.path_list));
-   
+
    e_widget_framelist_object_append(of, ob);
-   e_widget_table_object_append(o, of, 0, 0, 1, 1, 1, 1, 1, 1);
+   e_widget_table_object_append(o, of, 0, 0, 1, 1, 0, 1, 0, 1);
 
    of = e_widget_framelist_add(evas, _("Default Directories"), 0);
    ob = e_widget_ilist_add(evas, 0, 0, NULL);
    cfdata->gui.default_list = ob;
-   e_widget_size_min_set(ob, 100, 100);
+   e_widget_size_min_set(ob, 220, 100);
    e_widget_framelist_object_append(of, ob);
-   e_widget_table_object_append(o, of, 0, 1, 1, 1, 1, 1, 1, 1);
+   e_widget_table_object_append(o, of, 0, 1, 1, 1, 0, 1, 0, 1);
 
    of = e_widget_framelist_add(evas, _("User Defined Directories"), 0);
    ob = e_widget_config_list_add(evas, e_widget_entry_add, 
@@ -204,7 +204,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
    e_widget_disabled_set(ob, 1);
    cfdata->gui.user_list = ob;
    e_widget_framelist_object_append(of, ob);
-   e_widget_table_object_append(o, of, 1, 0, 1, 2, 0, 1, 0, 1);
+   e_widget_table_object_append(o, of, 1, 0, 1, 2, 1, 1, 1, 1);
    
    return o;
 }
