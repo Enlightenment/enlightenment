@@ -1,3 +1,10 @@
+Changes since 0.18.8:
+---------------------
+
+* xdg menu implementation improvements
+* buffer overflow fixed in desk flip animation
+* editing a .desktop file no longer sets mime type for .desktop files
+
 Changes since 0.18.7:
 ---------------------
 

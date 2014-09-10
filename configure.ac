@@ -2,11 +2,11 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [0])
 m4_define([v_min], [18])
-m4_define([v_mic], [8])
+m4_define([v_mic], [9])
 dnl m4_define([v_rev], m4_esyscmd([(git rev-list --count HEAD 2>/dev/null || echo 0) | tr -d '\n']))dnl
 ##--   When released, remove the dnl on the below line
 dnl m4_undefine([v_rev])
-m4_define([relname], [0.18.8])
+m4_define([relname], [0.18.9])
 ##--   When doing snapshots - change soname. remove dnl on below line
 m4_define([relname], [ver-00])
 dnl m4_define([v_rel], [-release relname])
@@ -94,10 +94,10 @@ extern char **environ;
 AC_DEFINE(HAVE_ENVIRON, 1, [Have environ var])
     ])
 
-efl_version="1.8.3"
+efl_version="1.11.2"
 AC_SUBST(efl_version)
 
-elm_version="1.8.2"
+elm_version="1.11.2"
 AC_SUBST(elm_version)
 
 AC_CHECK_HEADERS([sys/timerfd.h sys/ptrace.h arpa/inet.h netinet/in.h])
