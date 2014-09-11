@@ -2,6 +2,8 @@
 Encoding=UTF-8
 Type=Link
 Name=Illume-Keyboard
+Name[ca]=Illume-Teclat
+Name[de]=Illume-Tastatur
 Name[eo]=Illume-Klavaro
 Name[fr]=Clavier Illume
 Name[ms]=Illume-Keyboard

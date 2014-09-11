@@ -2,6 +2,9 @@
 Encoding=UTF-8
 Type=Link
 Name=Illume-Home
+Name[ca]=Illume-Home
+Name[de]=Illume-Start
+Name[el]=Illume-Home
 Name[eo]=Illume-Hejmo
 Name[fr]=Accueil Illume
 Name[ms]=Illume-Home

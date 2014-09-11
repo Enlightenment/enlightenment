@@ -2,8 +2,12 @@
 Encoding=UTF-8
 Type=Link
 Name=Illume-Keyboard-Toggle
+Name[ca]=Illume-Keyboard-Toggle
+Name[de]=Illume-Tastaturumschalter
+Name[el]=Illume-Keyboard-Toggle
 Name[eo]=Baskulo de klavaro Illume
 Name[fr]=Bascule clavier Illume
+Name[ja]=Illume-Keyboard-Toggle
 Name[ms]=Illume-Keyboard-Toggle
 Name[sr]=Прекидач тастатуре одјсаја
 Name[tr]=Illume-Klavye-Değiştirici

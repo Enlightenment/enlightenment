@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment DR17\n"
 "Report-Msgid-Bugs-To: $MSGID_BUGS_ADDRESS\n"
-"POT-Creation-Date: 2014-08-23 11:32+0200\n"
+"POT-Creation-Date: 2014-09-06 11:30+0200\n"
 "PO-Revision-Date: 2014-01-02 15:47+0000\n"
 "Last-Translator: Eliovir <Unknown>\n"
 "Language-Team: French <kde-i18n-doc@kde.org>\n"
@@ -24,8 +24,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Launchpad-Export-Date: 2014-08-25 06:47+0000\n"
-"X-Generator: Launchpad (build 17163)\n"
+"X-Launchpad-Export-Date: 2014-09-07 06:08+0000\n"
+"X-Generator: Launchpad (build 17196)\n"
 "X-Poedit-Country: FRANCE\n"
 "Language: fr\n"
 "X-Poedit-Language: French\n"
@@ -35,7 +35,7 @@ msgstr ""
 msgid "About Enlightenment"
 msgstr "À propos d’Enlightenment"
 
-#: src/bin/e_about.c:20 src/bin/e_actions.c:2958 src/bin/e_config_dialog.c:287
+#: src/bin/e_about.c:20 src/bin/e_actions.c:2958 src/bin/e_config_dialog.c:288
 #: src/bin/e_fm.c:1072 src/bin/e_int_client_menu.c:230
 #: src/bin/e_int_client_prop.c:81 src/bin/e_theme_about.c:24
 #: src/modules/conf/e_conf.c:169
@@ -89,7 +89,7 @@ msgstr "Tuer"
 #: src/bin/e_actions.c:2238 src/bin/e_actions.c:2298 src/bin/e_actions.c:2363
 #: src/bin/e_actions.c:2428 src/bin/e_confirm_dialog.c:53
 #: src/bin/e_desklock.c:543 src/bin/e_fm.c:10582 src/bin/e_fm.c:10935
-#: src/bin/e_screensaver.c:197
+#: src/bin/e_screensaver.c:196
 #: src/modules/quickaccess/e_mod_quickaccess.c:1308
 msgid "No"
 msgstr "Non"
@@ -105,7 +105,7 @@ msgstr "Voulez-vous vraiment quitter Enlightenment ?"
 #: src/bin/e_actions.c:2082 src/bin/e_actions.c:2176 src/bin/e_actions.c:2236
 #: src/bin/e_actions.c:2296 src/bin/e_actions.c:2361 src/bin/e_actions.c:2426
 #: src/bin/e_confirm_dialog.c:52 src/bin/e_desklock.c:541 src/bin/e_fm.c:10585
-#: src/bin/e_screensaver.c:195
+#: src/bin/e_screensaver.c:194
 #: src/modules/quickaccess/e_mod_quickaccess.c:1308
 msgid "Yes"
 msgstr "Oui"
@@ -808,7 +808,7 @@ msgstr "Sélectionner"
 #: src/bin/e_desktop_editor.c:954 src/bin/e_entry_dialog.c:64
 #: src/bin/e_fm.c:10095 src/bin/e_fm_prop.c:625
 #: src/bin/e_import_config_dialog.c:542 src/bin/e_import_dialog.c:199
-#: src/modules/bluez4/agent.c:136 src/modules/bluez4/agent.c:149
+#: src/modules/bluez4/agent.c:138 src/modules/bluez4/agent.c:151
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:623
 #: src/modules/conf_intl/e_int_config_imc_import.c:124
 #: src/modules/conf_theme/e_int_config_theme_import.c:123
@@ -822,55 +822,55 @@ msgstr "Sélectionner"
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/bin/e_comp.c:1015 src/bin/e_comp.c:1021 src/bin/e_comp.c:1027
+#: src/bin/e_comp.c:1016 src/bin/e_comp.c:1022 src/bin/e_comp.c:1028
 #: src/bin/e_configure.c:33
 msgid "Compositor"
 msgstr "Compositeur"
 
-#: src/bin/e_comp.c:1016
+#: src/bin/e_comp.c:1017
 msgid "Change current window opacity"
 msgstr "Changer l'opacité de la fenêtre actuelle"
 
-#: src/bin/e_comp.c:1022
+#: src/bin/e_comp.c:1023
 msgid "Set current window opacity"
 msgstr "Définir l'opacité de la fenêtre"
 
-#: src/bin/e_comp.c:1028
+#: src/bin/e_comp.c:1029
 msgid "Toggle focused client's redirect state"
 msgstr ""
 
-#: src/bin/e_comp.c:1113 src/modules/bluez4/e_mod_main.c:202
+#: src/bin/e_comp.c:1114 src/modules/bluez4/e_mod_main.c:202
 msgid "Visible"
 msgstr "Visible"
 
-#: src/bin/e_comp.c:1118
+#: src/bin/e_comp.c:1119
 msgid "Focus-Out"
 msgstr ""
 
-#: src/bin/e_comp.c:1123
+#: src/bin/e_comp.c:1124
 msgid "Focus-In"
 msgstr ""
 
-#: src/bin/e_comp.c:1128 src/bin/e_int_client_prop.c:514
+#: src/bin/e_comp.c:1129 src/bin/e_int_client_prop.c:514
 msgid "Hidden"
 msgstr "Cachée"
 
-#: src/bin/e_comp.c:1235 src/bin/e_int_client_prop.c:448
+#: src/bin/e_comp.c:1236 src/bin/e_int_client_prop.c:448
 #: src/bin/e_int_client_remember.c:700 src/bin/e_int_config_comp_match.c:350
 #: src/modules/wizard/page_050.c:96
 msgid "Title"
 msgstr "Titre"
 
-#: src/bin/e_comp.c:1282
+#: src/bin/e_comp.c:1283
 #, c-format
 msgid "Compositor %u"
 msgstr ""
 
-#: src/bin/e_comp_x.c:389
+#: src/bin/e_comp_x.c:392
 msgid "Compositor Warning"
 msgstr "Avertissement du compositeur"
 
-#: src/bin/e_comp_x.c:390
+#: src/bin/e_comp_x.c:393
 msgid ""
 "Your display driver does not support OpenGL, GLSL<br>shaders or no OpenGL "
 "engines were compiled or installed<br>for Evas or Ecore-Evas. Falling back "
@@ -878,11 +878,11 @@ msgid ""
 "capable<br>GPU to use OpenGL with compositing."
 msgstr ""
 
-#: src/bin/e_comp_x.c:4880
+#: src/bin/e_comp_x.c:4885
 msgid "Lock Failed"
 msgstr "Échec du verrouillage"
 
-#: src/bin/e_comp_x.c:4881
+#: src/bin/e_comp_x.c:4886
 msgid ""
 "Locking the desktop failed because some application<br>has grabbed either "
 "the keyboard or the mouse or both<br>and their grab is unable to be broken."
@@ -891,17 +891,17 @@ msgstr ""
 "le clavier, la souris, ou les deux<br>et cette réservation n'a pu être "
 "annulée."
 
-#: src/bin/e_comp_x.c:4897 src/bin/e_comp_x.c:4918
+#: src/bin/e_comp_x.c:4902 src/bin/e_comp_x.c:4923
 msgid "Compositor Error"
 msgstr "Erreur du compositeur"
 
-#: src/bin/e_comp_x.c:4898
+#: src/bin/e_comp_x.c:4903
 msgid "Another compositor is already running<br>on your display server."
 msgstr ""
 "Aun autre compositor est déjà en<br>fonctionnement sur votre serveur "
 "d'affichage."
 
-#: src/bin/e_comp_x.c:4919
+#: src/bin/e_comp_x.c:4924
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
@@ -909,11 +909,11 @@ msgstr ""
 "Votre serveur d'affichage ne supporte pas<br>les fenêtres de recouvrement "
 "compositor.<br>C'est nécessaire pour qu'il fonctionne."
 
-#: src/bin/e_comp_x.c:5110
+#: src/bin/e_comp_x.c:5115
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment ne parvient pas à initialiser Ecore_X !\n"
 
-#: src/bin/e_comp_x.c:5121
+#: src/bin/e_comp_x.c:5126
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -924,7 +924,7 @@ msgstr ""
 "composite vous aurez aussi besoin du support de XRender et XFixes dans X11 "
 "et Ecore."
 
-#: src/bin/e_comp_x.c:5130
+#: src/bin/e_comp_x.c:5135
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -932,7 +932,7 @@ msgstr ""
 "Votre serveur d'affichage ne supporte pas XDamage ou Ecore est compilé sans "
 "le support de XDamage."
 
-#: src/bin/e_comp_x.c:5237
+#: src/bin/e_comp_x.c:5242
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment ne parvient pas à initialiser le système XSettings.\n"
 
@@ -994,15 +994,15 @@ msgstr ""
 "abandonnée par sécurité.<br>"
 
 #: src/bin/e_config.c:1764 src/bin/e_config.c:2407
-#: src/bin/e_config_dialog.c:277 src/bin/e_desktop_editor.c:889
+#: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:889
 #: src/bin/e_desktop_editor.c:952 src/bin/e_entry_dialog.c:63
 #: src/bin/e_exec.c:767 src/bin/e_fm.c:10094 src/bin/e_fm.c:10855
 #: src/bin/e_fm_prop.c:624 src/bin/e_import_config_dialog.c:541
 #: src/bin/e_int_client_remember.c:353 src/bin/e_int_client_remember.c:550
-#: src/bin/e_int_config_comp_match.c:536 src/bin/e_module.c:624
-#: src/bin/e_module.c:1036 src/bin/e_sys.c:847 src/bin/e_sys.c:888
+#: src/bin/e_int_config_comp_match.c:536 src/bin/e_module.c:620
+#: src/bin/e_module.c:1033 src/bin/e_sys.c:847 src/bin/e_sys.c:888
 #: src/bin/e_update.c:70 src/bin/e_utils.c:470 src/modules/bluez4/agent.c:69
-#: src/modules/bluez4/agent.c:136 src/modules/bluez4/agent.c:149
+#: src/modules/bluez4/agent.c:138 src/modules/bluez4/agent.c:151
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:622
 #: src/modules/conf_intl/e_int_config_imc_import.c:120
 #: src/modules/conf_theme/e_int_config_theme_import.c:119
@@ -1115,7 +1115,7 @@ msgstr ""
 "incriminé était :<br>%s<br><br>Ce fichier a été supprimé pour éviter la "
 "corruption des données.<br>"
 
-#: src/bin/e_config_dialog.c:225 src/modules/battery/e_mod_main.c:798
+#: src/bin/e_config_dialog.c:226 src/modules/battery/e_mod_main.c:798
 #: src/modules/conf/e_mod_main.c:284 src/modules/conf_bindings/e_mod_main.c:37
 #: src/modules/conf_paths/e_mod_main.c:17
 #: src/modules/conf_performance/e_mod_main.c:17
@@ -1123,11 +1123,11 @@ msgstr ""
 msgid "Advanced"
 msgstr "Avancé"
 
-#: src/bin/e_config_dialog.c:254 src/bin/e_desktop_editor.c:748
+#: src/bin/e_config_dialog.c:255 src/bin/e_desktop_editor.c:748
 msgid "Basic"
 msgstr "Basique"
 
-#: src/bin/e_config_dialog.c:279
+#: src/bin/e_config_dialog.c:280
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:875
 msgid "Apply"
 msgstr "Appliquer"
@@ -1179,7 +1179,7 @@ msgstr ""
 "Enlightenment a été compilé sans le support de PAM,<br>le verrouillage "
 "d'écran a été désactivé."
 
-#: src/bin/e_desklock.c:532 src/bin/e_screensaver.c:186
+#: src/bin/e_desklock.c:532 src/bin/e_screensaver.c:185
 msgid "Activate Presentation Mode?"
 msgstr "Activer le mode présentation ?"
 
@@ -1193,11 +1193,11 @@ msgstr ""
 "activer le mode de <b>présentation</b> et temporairement désactiver l'écran "
 "de veille, le verrouillage et la gestion de l'énergie ?"
 
-#: src/bin/e_desklock.c:545 src/bin/e_screensaver.c:199
+#: src/bin/e_desklock.c:545 src/bin/e_screensaver.c:198
 msgid "No, but increase timeout"
 msgstr "Non, mais augmenter le délai"
 
-#: src/bin/e_desklock.c:547 src/bin/e_screensaver.c:201
+#: src/bin/e_desklock.c:547 src/bin/e_screensaver.c:200
 msgid "No, and stop asking"
 msgstr "Non, et ne plus demander"
 
@@ -1269,6 +1269,8 @@ msgstr "Fichier desktop"
 #: src/modules/everything/evry_config.c:376
 #: src/modules/everything/evry_plug_files.c:1465
 #: src/modules/pager/e_mod_config.c:128 src/modules/pager/e_mod_config.c:217
+#: src/modules/pager_plain/e_mod_config.c:129
+#: src/modules/pager_plain/e_mod_config.c:226
 #: src/modules/tiling/e_mod_config.c:180
 #: src/modules/xkbswitch/e_mod_config.c:329
 msgid "General"
@@ -1305,7 +1307,7 @@ msgstr "Sélectionner un exécutable"
 #: src/bin/e_shelf.c:1613 src/bin/e_shelf.c:2273
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:201
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:265
-#: src/modules/conf_bindings/e_int_config_keybindings.c:245
+#: src/modules/conf_bindings/e_int_config_keybindings.c:240
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:294
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:789
 #: src/modules/conf_dialogs/e_int_config_profiles.c:134
@@ -1531,6 +1533,7 @@ msgstr "Impossible d'éjecter le périphérique"
 #: src/bin/e_fm.c:10458 src/bin/e_fm.c:10463 src/bin/e_fm.c:10467
 #: src/bin/e_fm.c:10526 src/bin/e_fm.c:10756 src/bin/e_fm_prop.c:254
 #: src/bin/e_shelf.c:2141 src/modules/pager/e_mod_main.c:1993
+#: src/modules/pager_plain/e_mod_main.c:2827
 msgid "Error"
 msgstr "Erreur"
 
@@ -1616,7 +1619,7 @@ msgid "Eject"
 msgstr "Éjecter"
 
 #: src/bin/e_fm.c:9275 src/bin/e_int_client_remember.c:798
-#: src/modules/ibar/e_mod_main.c:1602
+#: src/modules/ibar/e_mod_main.c:1604
 msgid "Properties"
 msgstr "Propriétés"
 
@@ -1928,7 +1931,7 @@ msgstr "Autres :"
 #: src/bin/e_fm_prop.c:480 src/bin/e_import_config_dialog.c:478
 #: src/bin/e_widget_fsel.c:348
 #: src/modules/conf_theme/e_int_config_transitions.c:214
-#: src/modules/conf_theme/e_int_config_xsettings.c:500
+#: src/modules/conf_theme/e_int_config_xsettings.c:502
 msgid "Preview"
 msgstr "Aperçu"
 
@@ -2012,12 +2015,9 @@ msgid "Module %s needs to support %s"
 msgstr "Le module %s doit prendre en charge %s"
 
 #: src/bin/e_grab_dialog.c:3
-#: src/modules/conf_bindings/e_int_config_keybindings.c:4
 msgid ""
-"Please press key sequence,<br><br>or <hilight>Escape</hilight> to abort."
+"Please press key combination,<br><br>or <hilight>Escape</hilight> to abort."
 msgstr ""
-"Veuillez composer votre séquence au clavier,<br><br>ou "
-"<hilight>Échap</hilight> pour annuler."
 
 #: src/bin/e_grab_dialog.c:5
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:7
@@ -2028,12 +2028,12 @@ msgid ""
 msgstr ""
 
 #: src/bin/e_grab_dialog.c:125
-msgid "Mouse Binding Sequence"
-msgstr "Séquence du raccourci souris"
+msgid "Mouse Binding Combination"
+msgstr ""
 
 #: src/bin/e_grab_dialog.c:132
-msgid "Key Binding Sequence"
-msgstr "Séquence de raccourci clavier"
+msgid "Key Binding Combination"
+msgstr ""
 
 #: src/bin/e_hints.c:168
 msgid ""
@@ -2169,8 +2169,8 @@ msgstr "Position"
 #: src/bin/e_int_client_locks.c:311 src/bin/e_int_client_locks.c:330
 #: src/bin/e_int_client_remember.c:747 src/bin/e_int_shelf_config.c:216
 #: src/modules/conf_interaction/e_int_config_mouse.c:155
-#: src/modules/conf_theme/e_int_config_fonts.c:440
-#: src/modules/conf_theme/e_int_config_fonts.c:660
+#: src/modules/conf_theme/e_int_config_fonts.c:443
+#: src/modules/conf_theme/e_int_config_fonts.c:667
 msgid "Size"
 msgstr "Taille"
 
@@ -2378,6 +2378,15 @@ msgstr "Liste des fenêtres"
 #: src/modules/pager/e_mod_main.c:2072 src/modules/pager/e_mod_main.c:2074
 #: src/modules/pager/e_mod_main.c:2076 src/modules/pager/e_mod_main.c:2078
 #: src/modules/pager/e_mod_main.c:2080 src/modules/pager/e_mod_main.c:2082
+#: src/modules/pager_plain/e_mod_main.c:276
+#: src/modules/pager_plain/e_mod_main.c:2910
+#: src/modules/pager_plain/e_mod_main.c:2917
+#: src/modules/pager_plain/e_mod_main.c:2924
+#: src/modules/pager_plain/e_mod_main.c:2926
+#: src/modules/pager_plain/e_mod_main.c:2928
+#: src/modules/pager_plain/e_mod_main.c:2930
+#: src/modules/pager_plain/e_mod_main.c:2932
+#: src/modules/pager_plain/e_mod_main.c:2934
 msgid "Pager"
 msgstr "Miniature des bureaux"
 
@@ -2471,7 +2480,7 @@ msgstr "Statique"
 #: src/modules/clock/e_mod_config.c:141
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:360
 #: src/modules/conf_performance/e_int_config_powermanagement.c:196
-#: src/modules/conf_theme/e_int_config_fonts.c:689
+#: src/modules/conf_theme/e_int_config_fonts.c:696
 #: src/modules/conf_theme/e_int_config_transitions.c:199
 #: src/modules/conf_theme/e_int_config_transitions.c:253
 #: src/modules/conf_theme/e_int_config_transitions.c:285
@@ -2610,13 +2619,14 @@ msgstr "Demande de position"
 #: src/modules/everything/evry_gadget.c:490
 #: src/modules/everything/evry_gadget.c:672
 #: src/modules/everything/evry_plug_settings.c:183
-#: src/modules/ibar/e_mod_main.c:485 src/modules/ibar/e_mod_main.c:1595
+#: src/modules/ibar/e_mod_main.c:485 src/modules/ibar/e_mod_main.c:1597
 #: src/modules/ibox/e_mod_main.c:356 src/modules/ibox/e_mod_main.c:737
 #: src/modules/mixer/e_mod_main.c:660 src/modules/music-control/ui.c:277
 #: src/modules/packagekit/e_mod_main.c:48 src/modules/pager/e_mod_main.c:855
-#: src/modules/systray/e_mod_main.c:134 src/modules/tasks/e_mod_main.c:751
+#: src/modules/pager_plain/e_mod_main.c:870
+#: src/modules/systray/e_mod_main.c:123 src/modules/tasks/e_mod_main.c:751
 #: src/modules/temperature/e_mod_main.c:230
-#: src/modules/tiling/e_mod_tiling.c:1695 src/modules/wizard/page_150.c:69
+#: src/modules/tiling/e_mod_tiling.c:1701 src/modules/wizard/page_150.c:69
 #: src/modules/xkbswitch/e_mod_main.c:323
 #: src/modules/xkbswitch/e_mod_main.c:357
 msgid "Settings"
@@ -2752,7 +2762,7 @@ msgstr "Écran actuel"
 msgid "Skip Window List"
 msgstr "Ne pas afficher dans la liste des fenêtres"
 
-#: src/bin/e_int_client_remember.c:789 src/modules/teamwork/e_mod_config.c:114
+#: src/bin/e_int_client_remember.c:789 src/modules/teamwork/e_mod_config.c:122
 msgid "Opacity"
 msgstr "Opacité"
 
@@ -3116,7 +3126,7 @@ msgstr ""
 #: src/bin/e_widget_filepreview.c:673
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:420
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1235
-#: src/modules/conf_bindings/e_int_config_keybindings.c:984
+#: src/modules/conf_bindings/e_int_config_keybindings.c:979
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:574
 #: src/modules/conf_dialogs/e_int_config_profiles.c:297
 #: src/modules/wizard/page_020.c:24
@@ -3154,7 +3164,7 @@ msgid "Flags"
 msgstr ""
 
 #: src/bin/e_int_config_comp_match.c:530 src/bin/e_int_shelf_config.c:224
-#: src/modules/conf_theme/e_int_config_fonts.c:651
+#: src/modules/conf_theme/e_int_config_fonts.c:658
 msgid "Style"
 msgstr "Style"
 
@@ -3177,7 +3187,7 @@ msgstr "Descendre"
 #: src/modules/conf_applications/e_int_config_apps_personal.c:92
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:197
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:262
-#: src/modules/conf_bindings/e_int_config_keybindings.c:242
+#: src/modules/conf_bindings/e_int_config_keybindings.c:237
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:292
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:786
 #: src/modules/conf_dialogs/e_int_config_profiles.c:132
@@ -3205,7 +3215,7 @@ msgid "Apps"
 msgstr "Applis"
 
 #: src/bin/e_int_config_comp_match.c:718
-#: src/modules/teamwork/e_mod_config.c:119
+#: src/modules/teamwork/e_mod_config.c:128
 msgid "Popups"
 msgstr ""
 
@@ -3262,7 +3272,7 @@ msgstr "Paramétrage des modules"
 msgid "Load"
 msgstr "Activer"
 
-#: src/bin/e_int_config_modules.c:203 src/bin/e_module.c:763
+#: src/bin/e_int_config_modules.c:203 src/bin/e_module.c:759
 msgid "Unload"
 msgstr "Désactiver"
 
@@ -3316,7 +3326,7 @@ msgstr "Applications"
 #: src/modules/conf_window_manipulation/e_mod_main.c:17
 #: src/modules/conf_window_remembers/e_mod_main.c:14
 #: src/modules/everything/evry_plug_windows.c:428
-#: src/modules/tiling/e_mod_tiling.c:1444 src/modules/winlist/e_mod_main.c:27
+#: src/modules/tiling/e_mod_tiling.c:1450 src/modules/winlist/e_mod_main.c:27
 msgid "Windows"
 msgstr "Fenêtres"
 
@@ -4090,57 +4100,57 @@ msgstr ""
 "dialogue de configuration des modules vous permettra<br>de recharger vos "
 "modules."
 
-#: src/bin/e_module.c:272
+#: src/bin/e_module.c:268
 #, c-format
 msgid "Loading Module: %s"
 msgstr "Chargement du module : %s"
 
-#: src/bin/e_module.c:340
+#: src/bin/e_module.c:336
 #, c-format
 msgid ""
 "There was an error loading the module named: %s<br>No module named %s could "
 "be found in the<br>module search directories.<br>"
 msgstr ""
 
-#: src/bin/e_module.c:343 src/bin/e_module.c:356 src/bin/e_module.c:374
+#: src/bin/e_module.c:339 src/bin/e_module.c:352 src/bin/e_module.c:370
 msgid "Error loading Module"
 msgstr "Erreur de chargement du module"
 
-#: src/bin/e_module.c:351 src/bin/e_module.c:368
+#: src/bin/e_module.c:347 src/bin/e_module.c:364
 #, c-format
 msgid ""
 "There was an error loading the module named: %s<br>The full path to this "
 "module is:<br>%s<br>The error reported was:<br>%s<br>"
 msgstr ""
 
-#: src/bin/e_module.c:373
+#: src/bin/e_module.c:369
 msgid "Module does not contain all needed functions"
 msgstr "Le module ne contient pas toutes les fonctions nécessaires"
 
-#: src/bin/e_module.c:388
+#: src/bin/e_module.c:384
 #, c-format
 msgid ""
 "Module API Error<br>Error initializing Module: %s<br>It requires a module "
 "API version of: %i.<br>The module API advertized by Enlightenment is: %i.<br>"
 msgstr ""
 
-#: src/bin/e_module.c:393
+#: src/bin/e_module.c:389
 #, c-format
 msgid "Enlightenment %s Module"
 msgstr "Module %s d`Enlightenment"
 
-#: src/bin/e_module.c:758
+#: src/bin/e_module.c:754
 msgid "What action should be taken with this module?<br>"
 msgstr "Quelle action doit être effectué avec ce module ?<br>"
 
-#: src/bin/e_module.c:764 src/bin/e_shelf.c:1613
+#: src/bin/e_module.c:760 src/bin/e_shelf.c:1613
 #: src/modules/conf_dialogs/e_int_config_profiles.c:338
 #: src/modules/conf_shelves/e_int_config_shelf.c:393
 #: src/modules/ibar/e_mod_config.c:209
 msgid "Keep"
 msgstr "Conserver"
 
-#: src/bin/e_module.c:1021
+#: src/bin/e_module.c:1018
 msgid ""
 "The following modules are not standard ones for<br>Enlightenment and may "
 "cause bugs and crashes.<br>Please remove them before reporting any "
@@ -4150,11 +4160,11 @@ msgstr ""
 "pourraient causer des bogues et des crashes.<br>Veuillez les supprimer avant "
 "de reporter un bogue.<br><br>La liste des modules est la suivante :<br><br>"
 
-#: src/bin/e_module.c:1033
+#: src/bin/e_module.c:1030
 msgid "Unstable module tainting"
 msgstr "Corruption de module instable"
 
-#: src/bin/e_module.c:1037
+#: src/bin/e_module.c:1034
 msgid "I know"
 msgstr "Je suis au courrant"
 
@@ -4162,7 +4172,7 @@ msgstr "Je suis au courrant"
 msgid "Randr Settings Upgraded"
 msgstr ""
 
-#: src/bin/e_screensaver.c:189
+#: src/bin/e_screensaver.c:188
 msgid ""
 "You disabled the screensaver too fast.<br><br>Would you like to enable "
 "<b>presentation</b> mode and temporarily disable screen saver, lock and "
@@ -4297,7 +4307,7 @@ msgid "Rename Shelf"
 msgstr "Renommer le rayon"
 
 #: src/bin/e_shelf.c:2234 src/modules/conf_shelves/e_int_config_shelf.c:144
-#: src/modules/ibar/e_mod_main.c:479 src/modules/ibar/e_mod_main.c:1589
+#: src/modules/ibar/e_mod_main.c:479 src/modules/ibar/e_mod_main.c:1591
 msgid "Contents"
 msgstr "Contenu"
 
@@ -4936,70 +4946,70 @@ msgstr "ERREUR"
 msgid "Battery Meter"
 msgstr "Surveillance de la batterie"
 
-#: src/modules/bluez4/agent.c:114
+#: src/modules/bluez4/agent.c:116
 msgid "Reject"
 msgstr "Refuser"
 
-#: src/modules/bluez4/agent.c:133
+#: src/modules/bluez4/agent.c:135
 msgid "Pin Code Requested"
 msgstr ""
 
-#: src/modules/bluez4/agent.c:134
+#: src/modules/bluez4/agent.c:136
 msgid ""
 "Enter the PinCode above. It should have 1-16 characters and can be "
 "alphanumeric."
 msgstr ""
 
-#: src/modules/bluez4/agent.c:146
+#: src/modules/bluez4/agent.c:148
 msgid "Passkey Requested"
 msgstr ""
 
-#: src/modules/bluez4/agent.c:147
+#: src/modules/bluez4/agent.c:149
 msgid ""
 "Enter the Passkey above. It should be a numeric value between 0-999999."
 msgstr ""
 
-#: src/modules/bluez4/agent.c:165
+#: src/modules/bluez4/agent.c:167
 #, c-format
 msgid "%d keys were typed on %s. Passkey is %06d"
 msgstr ""
 
-#: src/modules/bluez4/agent.c:167
+#: src/modules/bluez4/agent.c:169
 msgid "Display Passkey"
 msgstr ""
 
-#: src/modules/bluez4/agent.c:181
+#: src/modules/bluez4/agent.c:183
 #, c-format
 msgid "Pincode for %s is %s"
 msgstr ""
 
-#: src/modules/bluez4/agent.c:182
+#: src/modules/bluez4/agent.c:184
 msgid "Display Pincode"
 msgstr ""
 
-#: src/modules/bluez4/agent.c:197
+#: src/modules/bluez4/agent.c:199
 #, c-format
 msgid "%06d is the passkey presented in %s?"
 msgstr ""
 
-#: src/modules/bluez4/agent.c:200
+#: src/modules/bluez4/agent.c:202
 msgid "Confirm Request"
 msgstr "Confirmer la demande d'inscription"
 
-#: src/modules/bluez4/agent.c:200 src/modules/shot/e_mod_main.c:571
+#: src/modules/bluez4/agent.c:202 src/modules/shot/e_mod_main.c:571
 msgid "Confirm"
 msgstr "Confirmer"
 
-#: src/modules/bluez4/agent.c:214
+#: src/modules/bluez4/agent.c:216
 #, c-format
 msgid "Grant permission for %s to connect?"
 msgstr ""
 
-#: src/modules/bluez4/agent.c:217
+#: src/modules/bluez4/agent.c:219
 msgid "Authorize Connection"
 msgstr ""
 
-#: src/modules/bluez4/agent.c:217
+#: src/modules/bluez4/agent.c:219
 msgid "Grant"
 msgstr "Autoriser"
 
@@ -5305,6 +5315,9 @@ msgid "IBar Other"
 msgstr "IBar (autres)"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:71
+msgid "ACPI Bindings Settings"
+msgstr ""
+
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:190
 #: src/modules/conf_bindings/e_mod_main.c:29
 msgid "ACPI Bindings"
@@ -5312,7 +5325,7 @@ msgstr "Raccourcis ACPI"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:209
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:282
-#: src/modules/conf_bindings/e_int_config_keybindings.c:262
+#: src/modules/conf_bindings/e_int_config_keybindings.c:257
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:312
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:802
 msgid "Action"
@@ -5320,7 +5333,7 @@ msgstr "Action"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:216
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:295
-#: src/modules/conf_bindings/e_int_config_keybindings.c:269
+#: src/modules/conf_bindings/e_int_config_keybindings.c:264
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:319
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:809
 msgid "Action Params"
@@ -5471,17 +5484,17 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:4
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:11
 #: src/modules/conf_bindings/e_int_config_keybindings.c:3
-#: src/modules/conf_bindings/e_int_config_keybindings.c:7
+#: src/modules/conf_bindings/e_int_config_keybindings.c:4
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:3
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:3
 msgid "<None>"
 msgstr "<Aucun>"
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:522
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:520
 msgid "ACPI Binding"
 msgstr ""
 
-#: src/modules/conf_bindings/e_int_config_acpibindings.c:525
+#: src/modules/conf_bindings/e_int_config_acpibindings.c:523
 msgid ""
 "Please trigger the ACPI event you wish to bind to, <br><br>or "
 "<hilight>Escape</hilight> to abort."
@@ -5507,21 +5520,21 @@ msgid "Edge Bindings"
 msgstr "Raccourcis des bords"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:269
-#: src/modules/conf_bindings/e_int_config_keybindings.c:249
+#: src/modules/conf_bindings/e_int_config_keybindings.c:244
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:298
 #: src/modules/conf_paths/e_int_config_env.c:313
 msgid "Modify"
 msgstr "Modifier"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:273
-#: src/modules/conf_bindings/e_int_config_keybindings.c:253
+#: src/modules/conf_bindings/e_int_config_keybindings.c:248
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:302
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:793
 msgid "Delete All"
 msgstr "Tout supprimer"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:277
-#: src/modules/conf_bindings/e_int_config_keybindings.c:257
+#: src/modules/conf_bindings/e_int_config_keybindings.c:252
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:306
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:797
 msgid "Restore Default Bindings"
@@ -5570,26 +5583,26 @@ msgstr ""
 "le raccourci des bords."
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1367
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1119
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1151
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1114
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1146
 msgid "CTRL"
 msgstr "Ctrl"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1372
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1124
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1156
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1119
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1151
 msgid "ALT"
 msgstr "Alt"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1378
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1130
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1162
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1125
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1157
 msgid "SHIFT"
 msgstr "Majuscule"
 
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:1384
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1136
-#: src/modules/conf_bindings/e_int_config_keybindings.c:1168
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1131
+#: src/modules/conf_bindings/e_int_config_keybindings.c:1163
 msgid "WIN"
 msgstr "Logo"
 
@@ -5635,33 +5648,30 @@ msgstr "(laissé cliquable)"
 msgid "(clickable)"
 msgstr "(cliquable)"
 
-#: src/modules/conf_bindings/e_int_config_keybindings.c:8
+#: src/modules/conf_bindings/e_int_config_keybindings.c:5
 msgid "Single key"
 msgstr "Touche unique"
 
-#: src/modules/conf_bindings/e_int_config_keybindings.c:106
+#: src/modules/conf_bindings/e_int_config_keybindings.c:103
 msgid "Key Bindings Settings"
 msgstr "Paramétrage des raccourcis clavier"
 
-#: src/modules/conf_bindings/e_int_config_keybindings.c:237
+#: src/modules/conf_bindings/e_int_config_keybindings.c:232
 #: src/modules/conf_bindings/e_mod_main.c:21
 msgid "Key Bindings"
 msgstr "Raccourcis clavier"
 
-#: src/modules/conf_bindings/e_int_config_keybindings.c:979
+#: src/modules/conf_bindings/e_int_config_keybindings.c:974
 msgid "Binding Key Error"
 msgstr "Erreur de raccourci clavier"
 
-#: src/modules/conf_bindings/e_int_config_keybindings.c:980
+#: src/modules/conf_bindings/e_int_config_keybindings.c:975
 #, c-format
 msgid ""
-"The binding key sequence, that you choose, is already used by "
+"The binding key combination that you chose is already used by "
 "<br><hilight>%s</hilight> action.<br>Please choose another binding key "
-"sequence."
+"combination."
 msgstr ""
-"La séquence de raccourci clavier que vous avez choisie est déjà "
-"utilisée<br>par l'action <hilight>%s</hilight>.<br>Veuillez choisir une "
-"autre séquence de raccourci clavier."
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:109
 msgid "Mouse Bindings Settings"
@@ -5702,6 +5712,8 @@ msgstr "Liste de fenêtres"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:344
 #: src/modules/pager/e_mod_config.c:137 src/modules/pager/e_mod_config.c:252
+#: src/modules/pager_plain/e_mod_config.c:141
+#: src/modules/pager_plain/e_mod_config.c:261
 msgid "Popup"
 msgstr "Pop-up"
 
@@ -5728,6 +5740,8 @@ msgstr "Molette(s) de la souris"
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1142
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1160
 #: src/modules/pager/e_mod_config.c:363 src/modules/pager/e_mod_config.c:389
+#: src/modules/pager_plain/e_mod_config.c:374
+#: src/modules/pager_plain/e_mod_config.c:400
 #, c-format
 msgid "Left button"
 msgstr ""
@@ -5735,6 +5749,8 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1144
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1158
 #: src/modules/pager/e_mod_config.c:368 src/modules/pager/e_mod_config.c:384
+#: src/modules/pager_plain/e_mod_config.c:379
+#: src/modules/pager_plain/e_mod_config.c:395
 #, c-format
 msgid "Right button"
 msgstr ""
@@ -5743,12 +5759,16 @@ msgstr ""
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1163
 #: src/modules/pager/e_mod_config.c:373 src/modules/pager/e_mod_config.c:394
 #: src/modules/pager/e_mod_config.c:399
+#: src/modules/pager_plain/e_mod_config.c:384
+#: src/modules/pager_plain/e_mod_config.c:405
+#: src/modules/pager_plain/e_mod_config.c:410
 #, c-format
 msgid "Button %i"
 msgstr "Bouton %i"
 
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:1153
 #: src/modules/pager/e_mod_config.c:378
+#: src/modules/pager_plain/e_mod_config.c:389
 #, c-format
 msgid "Middle button"
 msgstr ""
@@ -5824,7 +5844,7 @@ msgid "Dialog Settings"
 msgstr "Paramétrage des boîtes de dialogue"
 
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:109
-#: src/modules/conf_theme/e_int_config_fonts.c:674
+#: src/modules/conf_theme/e_int_config_fonts.c:681
 #: src/modules/everything/evry_config.c:517 src/modules/ibox/e_mod_config.c:97
 #: src/modules/mixer/conf_gadget.c:200 src/modules/mixer/conf_module.c:92
 msgid "General Settings"
@@ -6082,7 +6102,7 @@ msgid "Hide Logo"
 msgstr ""
 
 #: src/modules/conf_display/e_int_config_desks.c:49
-#: src/modules/pager/e_mod_main.c:863
+#: src/modules/pager/e_mod_main.c:863 src/modules/pager_plain/e_mod_main.c:878
 msgid "Virtual Desktops Settings"
 msgstr "Paramétrage des bureaux virtuels"
 
@@ -6130,8 +6150,8 @@ msgstr "Rétroéclairage normal"
 #: src/modules/conf_display/e_int_config_dpms.c:183
 #: src/modules/cpufreq/e_mod_config.c:109
 #: src/modules/cpufreq/e_mod_config.c:115
-#: src/modules/teamwork/e_mod_config.c:112
-#: src/modules/teamwork/e_mod_config.c:116
+#: src/modules/teamwork/e_mod_config.c:118
+#: src/modules/teamwork/e_mod_config.c:124
 #, c-format
 msgid "%3.0f"
 msgstr "%3.0f"
@@ -6557,13 +6577,13 @@ msgid "Images"
 msgstr "Images"
 
 #: src/modules/conf_paths/e_int_config_paths.c:74
-#: src/modules/conf_theme/e_int_config_fonts.c:432
+#: src/modules/conf_theme/e_int_config_fonts.c:435
 #: src/modules/conf_theme/e_mod_main.c:74
 msgid "Fonts"
 msgstr "Polices"
 
 #: src/modules/conf_paths/e_int_config_paths.c:76
-#: src/modules/conf_theme/e_int_config_xsettings.c:528
+#: src/modules/conf_theme/e_int_config_xsettings.c:530
 #: src/modules/everything/evry_config.c:436
 #: src/modules/everything/evry_config.c:462
 msgid "Icons"
@@ -7192,54 +7212,54 @@ msgid_plural "%d pixels"
 msgstr[0] "%d pixel"
 msgstr[1] "%d pixels"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:426
+#: src/modules/conf_theme/e_int_config_fonts.c:429
 msgid "Enable Custom Font Classes"
 msgstr "Activer les polices personnalisées"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:448
-#: src/modules/conf_theme/e_int_config_fonts.c:669
+#: src/modules/conf_theme/e_int_config_fonts.c:451
+#: src/modules/conf_theme/e_int_config_fonts.c:676
 msgid "English 012 #!? 日本語 にほんご ソフト 中文 華語 한국"
 msgstr ""
 
-#: src/modules/conf_theme/e_int_config_fonts.c:628
+#: src/modules/conf_theme/e_int_config_fonts.c:635
 msgid "Font Classes"
 msgstr "Classes de police"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:635
+#: src/modules/conf_theme/e_int_config_fonts.c:642
 msgid "Enable Font Class"
 msgstr "Activer la classe de police"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:642
+#: src/modules/conf_theme/e_int_config_fonts.c:649
 msgid "Font"
 msgstr "Police"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:678
+#: src/modules/conf_theme/e_int_config_fonts.c:685
 msgid "Hinting"
 msgstr "Optimisation"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:681
+#: src/modules/conf_theme/e_int_config_fonts.c:688
 msgid "Bytecode"
 msgstr "Bytecode"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:685
+#: src/modules/conf_theme/e_int_config_fonts.c:692
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:269
 #: src/modules/cpufreq/e_mod_main.c:238 src/modules/cpufreq/e_mod_main.c:274
 msgid "Automatic"
 msgstr "Automatique"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:694
+#: src/modules/conf_theme/e_int_config_fonts.c:701
 msgid "Font Fallbacks"
 msgstr "Substitution"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:695
+#: src/modules/conf_theme/e_int_config_fonts.c:702
 msgid "Fallback Name"
 msgstr "Nom de la police"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:703
+#: src/modules/conf_theme/e_int_config_fonts.c:710
 msgid "Enable Fallbacks"
 msgstr "Activer les polices de repli"
 
-#: src/modules/conf_theme/e_int_config_fonts.c:712
+#: src/modules/conf_theme/e_int_config_fonts.c:719
 msgid "Hinting / Fallbacks"
 msgstr "Optimisation/Polices de repli"
 
@@ -7412,23 +7432,23 @@ msgstr "Cet écran"
 msgid "Application Theme Settings"
 msgstr ""
 
-#: src/modules/conf_theme/e_int_config_xsettings.c:474
+#: src/modules/conf_theme/e_int_config_xsettings.c:476
 msgid "Match Enlightenment theme if possible"
 msgstr "Établir des correspondances avec le thème de E"
 
-#: src/modules/conf_theme/e_int_config_xsettings.c:483
+#: src/modules/conf_theme/e_int_config_xsettings.c:485
 msgid "Enable X Application Settings"
 msgstr ""
 
-#: src/modules/conf_theme/e_int_config_xsettings.c:488
+#: src/modules/conf_theme/e_int_config_xsettings.c:490
 msgid "GTK Applications"
 msgstr ""
 
-#: src/modules/conf_theme/e_int_config_xsettings.c:519
+#: src/modules/conf_theme/e_int_config_xsettings.c:521
 msgid "Enable icon theme for applications"
 msgstr "Utiliser le thème d'icônes pour les applications"
 
-#: src/modules/conf_theme/e_int_config_xsettings.c:524
+#: src/modules/conf_theme/e_int_config_xsettings.c:526
 msgid "Enable icon theme for Enlightenment"
 msgstr "Utiliser le thème d'icônes pour Enlightenment"
 
@@ -9051,28 +9071,28 @@ msgstr ""
 msgid "Are you sure you want to delete this bar source?"
 msgstr "Voulez-vous vraiment supprimer cette source ?"
 
-#: src/modules/ibar/e_mod_main.c:352 src/modules/ibar/e_mod_main.c:2817
+#: src/modules/ibar/e_mod_main.c:352 src/modules/ibar/e_mod_main.c:2821
 msgid "IBar"
 msgstr "IBar"
 
-#: src/modules/ibar/e_mod_main.c:468 src/modules/ibar/e_mod_main.c:1578
+#: src/modules/ibar/e_mod_main.c:468 src/modules/ibar/e_mod_main.c:1580
 msgid "Create new Icon"
 msgstr "Créer une nouvelle icône"
 
-#: src/modules/ibar/e_mod_main.c:1609
+#: src/modules/ibar/e_mod_main.c:1611
 msgid "Add to bar"
 msgstr ""
 
-#: src/modules/ibar/e_mod_main.c:1615
+#: src/modules/ibar/e_mod_main.c:1617
 msgid "Remove from bar"
 msgstr ""
 
-#: src/modules/ibar/e_mod_main.c:1621
+#: src/modules/ibar/e_mod_main.c:1623
 #, c-format
 msgid "Icon %s"
 msgstr ""
 
-#: src/modules/ibar/e_mod_main.c:2817
+#: src/modules/ibar/e_mod_main.c:2821
 msgid "Focus IBar"
 msgstr "Focaliser l'IBar"
 
@@ -9494,96 +9514,127 @@ msgid "Run the package manager"
 msgstr ""
 
 #: src/modules/pager/e_mod_config.c:76
+#: src/modules/pager_plain/e_mod_config.c:76
 msgid "Pager Settings"
 msgstr "Configuration de la miniature des bureaux"
 
 #: src/modules/pager/e_mod_config.c:129 src/modules/pager/e_mod_config.c:183
+#: src/modules/pager_plain/e_mod_config.c:130
+#: src/modules/pager_plain/e_mod_config.c:189
 msgid "Flip desktop on mouse wheel"
 msgstr "Changer de bureau avec la molette de la souris"
 
 #: src/modules/pager/e_mod_config.c:132 src/modules/pager/e_mod_config.c:186
+#: src/modules/pager_plain/e_mod_config.c:133
+#: src/modules/pager_plain/e_mod_config.c:192
 msgid "Always show desktop names"
 msgstr "Toujours afficher les nom des bureaux"
 
 #: src/modules/pager/e_mod_config.c:138 src/modules/pager/e_mod_config.c:222
+#: src/modules/pager_plain/e_mod_config.c:142
+#: src/modules/pager_plain/e_mod_config.c:231
 msgid "Show popup on desktop change"
 msgstr "Afficher un pop-up lors du changement de bureau"
 
 #: src/modules/pager/e_mod_config.c:141
+#: src/modules/pager_plain/e_mod_config.c:145
 msgid "Show popup for urgent windows"
 msgstr "Afficher un pop-up pour les fenêtres urgentes"
 
 #: src/modules/pager/e_mod_config.c:189
+#: src/modules/pager_plain/e_mod_config.c:198
 msgid "Resistance to dragging"
 msgstr "Résistance au glissement"
 
 #: src/modules/pager/e_mod_config.c:191 src/modules/pager/e_mod_config.c:230
 #: src/modules/pager/e_mod_config.c:249
+#: src/modules/pager_plain/e_mod_config.c:200
+#: src/modules/pager_plain/e_mod_config.c:239
+#: src/modules/pager_plain/e_mod_config.c:258
 #, c-format
 msgid "%.0f pixels"
 msgstr ""
 
 #: src/modules/pager/e_mod_config.c:196
+#: src/modules/pager_plain/e_mod_config.c:205
 msgid "Select and Slide button"
 msgstr "Bouton de sélectionner-glisser"
 
 #: src/modules/pager/e_mod_config.c:198 src/modules/pager/e_mod_config.c:206
 #: src/modules/pager/e_mod_config.c:212 src/modules/pager/e_mod_config.c:358
+#: src/modules/pager_plain/e_mod_config.c:207
+#: src/modules/pager_plain/e_mod_config.c:215
+#: src/modules/pager_plain/e_mod_config.c:221
+#: src/modules/pager_plain/e_mod_config.c:369
 #, c-format
 msgid "Click to set"
 msgstr "Cliquer pour configurer"
 
 #: src/modules/pager/e_mod_config.c:204
+#: src/modules/pager_plain/e_mod_config.c:213
 msgid "Drag and Drop button"
 msgstr "Bouton de glisser-déposer"
 
 #: src/modules/pager/e_mod_config.c:210
+#: src/modules/pager_plain/e_mod_config.c:219
 msgid "Drag whole desktop"
 msgstr "Faire glisser le bureau"
 
 #: src/modules/pager/e_mod_config.c:226
+#: src/modules/pager_plain/e_mod_config.c:235
 msgid "Popup pager height"
 msgstr "Hauteur du pop-up de la miniature des bureaux"
 
 #: src/modules/pager/e_mod_config.c:236
+#: src/modules/pager_plain/e_mod_config.c:245
 msgid "Popup duration"
 msgstr "Durée du pop-up"
 
 #: src/modules/pager/e_mod_config.c:240 src/modules/pager/e_mod_config.c:277
-#: src/modules/teamwork/e_mod_config.c:108
+#: src/modules/pager_plain/e_mod_config.c:249
+#: src/modules/pager_plain/e_mod_config.c:286
+#: src/modules/teamwork/e_mod_config.c:112
 #, c-format
 msgid "%1.1f seconds"
 msgstr "%1.1f secondes"
 
 #: src/modules/pager/e_mod_config.c:247
+#: src/modules/pager_plain/e_mod_config.c:256
 msgid "Pager action popup height"
 msgstr "Hauteur du pop-up d'action de la miniature des bureaux"
 
 #: src/modules/pager/e_mod_config.c:257
+#: src/modules/pager_plain/e_mod_config.c:266
 msgid "Show popup for urgent window"
 msgstr ""
 
 #: src/modules/pager/e_mod_config.c:261
+#: src/modules/pager_plain/e_mod_config.c:270
 msgid "Urgent popup sticks on screen"
 msgstr "Ancrer les pop-up urgents à l'écran"
 
 #: src/modules/pager/e_mod_config.c:267
+#: src/modules/pager_plain/e_mod_config.c:276
 msgid "Show popup for focused windows"
 msgstr "Afficher un pop-up pour les fenêtres focalisées"
 
 #: src/modules/pager/e_mod_config.c:273
+#: src/modules/pager_plain/e_mod_config.c:282
 msgid "Urgent popup duration"
 msgstr "Durée du pop-up urgent"
 
 #: src/modules/pager/e_mod_config.c:284
+#: src/modules/pager_plain/e_mod_config.c:293
 msgid "Urgent Windows"
 msgstr "Fenêtres urgentes"
 
 #: src/modules/pager/e_mod_config.c:451
+#: src/modules/pager_plain/e_mod_config.c:462
 msgid "Attention"
 msgstr "Attention"
 
 #: src/modules/pager/e_mod_config.c:452
+#: src/modules/pager_plain/e_mod_config.c:463
 msgid ""
 "You cannot use the right mouse button in the<br>shelf for this as it is "
 "already taken by internal<br>code for context menus.<br>This button only "
@@ -9598,32 +9649,48 @@ msgid "Pager module cannot be loaded at the same time as Pager Plain!"
 msgstr ""
 
 #: src/modules/pager/e_mod_main.c:2065
+#: src/modules/pager_plain/e_mod_main.c:2917
 msgid "Show Pager Popup"
 msgstr "Afficher le pop-up de la miniature des bureaux"
 
 #: src/modules/pager/e_mod_main.c:2072
+#: src/modules/pager_plain/e_mod_main.c:2924
 msgid "Popup Desk Right"
 msgstr "Bureau à droite dans le pop-up"
 
 #: src/modules/pager/e_mod_main.c:2074
+#: src/modules/pager_plain/e_mod_main.c:2926
 msgid "Popup Desk Left"
 msgstr "Bureau à gauche dans le pop-up"
 
 #: src/modules/pager/e_mod_main.c:2076
+#: src/modules/pager_plain/e_mod_main.c:2928
 msgid "Popup Desk Up"
 msgstr "Bureau au-dessus dans le pop-up"
 
 #: src/modules/pager/e_mod_main.c:2078
+#: src/modules/pager_plain/e_mod_main.c:2930
 msgid "Popup Desk Down"
 msgstr "Bureau en dessous dans le pop-up"
 
 #: src/modules/pager/e_mod_main.c:2080
+#: src/modules/pager_plain/e_mod_main.c:2932
 msgid "Popup Desk Next"
 msgstr "Bureau suivant dans le pop-up"
 
 #: src/modules/pager/e_mod_main.c:2082
+#: src/modules/pager_plain/e_mod_main.c:2934
 msgid "Popup Desk Previous"
 msgstr "Bureau précédent dans le pop-up"
+
+#: src/modules/pager_plain/e_mod_config.c:136
+#: src/modules/pager_plain/e_mod_config.c:195
+msgid "Live preview"
+msgstr "Vue en liste"
+
+#: src/modules/pager_plain/e_mod_main.c:2827
+msgid "Pager Plain module cannot be loaded at the same time as Pager!"
+msgstr ""
 
 #: src/modules/quickaccess/e_mod_config.c:226
 msgid "Enter a unique name for this entry"
@@ -10072,25 +10139,25 @@ msgstr "Contrôles du système"
 msgid "Show Menu"
 msgstr "Afficher le menu"
 
-#: src/modules/systray/e_mod_main.c:75
+#: src/modules/systray/e_mod_main.c:64
 msgid "Enable Xembed"
 msgstr ""
 
-#: src/modules/systray/e_mod_main.c:117
+#: src/modules/systray/e_mod_main.c:106
 msgid "Systray Settings"
 msgstr ""
 
-#: src/modules/systray/e_mod_main.c:238
+#: src/modules/systray/e_mod_main.c:227
 msgid "Another systray exists"
 msgstr "Il y a déjà une zone de notification"
 
-#: src/modules/systray/e_mod_main.c:239
+#: src/modules/systray/e_mod_main.c:228
 msgid "There can be only one systray gadget and another one already exists."
 msgstr ""
 "Il y a déjà une zone de notification active et seule une instance de ce "
 "gadget est autorisée."
 
-#: src/modules/systray/e_mod_main.c:392
+#: src/modules/systray/e_mod_main.c:381
 msgid "Systray"
 msgstr "Zone de notification"
 
@@ -10136,41 +10203,41 @@ msgstr ""
 msgid "%2.0f MiB"
 msgstr "%2.0f Mio"
 
-#: src/modules/teamwork/e_mod_config.c:88
+#: src/modules/teamwork/e_mod_config.c:89
 msgid "Maximum media cache size in RAM"
 msgstr ""
 
-#: src/modules/teamwork/e_mod_config.c:90
+#: src/modules/teamwork/e_mod_config.c:91
 #, c-format
 msgid "%4.0f MiB"
 msgstr "%4.0f Mio"
 
-#: src/modules/teamwork/e_mod_config.c:92
+#: src/modules/teamwork/e_mod_config.c:95
 msgid "Maximum media cache age on disk"
 msgstr ""
 
-#: src/modules/teamwork/e_mod_config.c:94
+#: src/modules/teamwork/e_mod_config.c:97
 #, c-format
 msgid "%3.0f Days"
 msgstr "%3.0f jours"
 
-#: src/modules/teamwork/e_mod_config.c:97
+#: src/modules/teamwork/e_mod_config.c:101
 msgid "Cache"
 msgstr "Cache"
 
-#: src/modules/teamwork/e_mod_config.c:103
+#: src/modules/teamwork/e_mod_config.c:107
 msgid "Disable video previews"
 msgstr ""
 
-#: src/modules/teamwork/e_mod_config.c:106
+#: src/modules/teamwork/e_mod_config.c:110
 msgid "Mouse-out hide delay"
 msgstr ""
 
-#: src/modules/teamwork/e_mod_config.c:110
+#: src/modules/teamwork/e_mod_config.c:116
 msgid "Maximum size (Percentage of screens size)"
 msgstr ""
 
-#: src/modules/teamwork/e_mod_config.c:169
+#: src/modules/teamwork/e_mod_config.c:178
 msgid "Teamwork Settings"
 msgstr ""
 
@@ -10267,42 +10334,42 @@ msgstr ""
 msgid "Tiling Configuration"
 msgstr "Configuration du pavage"
 
-#: src/modules/tiling/e_mod_tiling.c:1334
+#: src/modules/tiling/e_mod_tiling.c:1340
 msgid "Floating"
 msgstr ""
 
-#: src/modules/tiling/e_mod_tiling.c:1413
-#: src/modules/tiling/e_mod_tiling.c:1446
-#: src/modules/tiling/e_mod_tiling.c:1775
-#: src/modules/tiling/e_mod_tiling.c:1793
+#: src/modules/tiling/e_mod_tiling.c:1419
+#: src/modules/tiling/e_mod_tiling.c:1452
+#: src/modules/tiling/e_mod_tiling.c:1781
+#: src/modules/tiling/e_mod_tiling.c:1799
 msgid "Tiling"
 msgstr "Pavage"
 
-#: src/modules/tiling/e_mod_tiling.c:1420
+#: src/modules/tiling/e_mod_tiling.c:1426
 msgid "Toggle floating"
 msgstr ""
 
-#: src/modules/tiling/e_mod_tiling.c:1423
+#: src/modules/tiling/e_mod_tiling.c:1429
 msgid "Move the focused window up"
 msgstr ""
 
-#: src/modules/tiling/e_mod_tiling.c:1425
+#: src/modules/tiling/e_mod_tiling.c:1431
 msgid "Move the focused window down"
 msgstr ""
 
-#: src/modules/tiling/e_mod_tiling.c:1427
+#: src/modules/tiling/e_mod_tiling.c:1433
 msgid "Move the focused window left"
 msgstr ""
 
-#: src/modules/tiling/e_mod_tiling.c:1429
+#: src/modules/tiling/e_mod_tiling.c:1435
 msgid "Move the focused window right"
 msgstr ""
 
-#: src/modules/tiling/e_mod_tiling.c:1432
+#: src/modules/tiling/e_mod_tiling.c:1438
 msgid "Toggle split mode"
 msgstr ""
 
-#: src/modules/tiling/e_mod_tiling.c:1434
+#: src/modules/tiling/e_mod_tiling.c:1440
 msgid "Swap window"
 msgstr ""
 
@@ -10643,14 +10710,36 @@ msgstr "Aucun(e)"
 #~ msgid "Menu Title Active"
 #~ msgstr "Titre du menu actif"
 
+#~ msgid ""
+#~ "Please press key sequence,<br><br>or <hilight>Escape</hilight> to abort."
+#~ msgstr ""
+#~ "Veuillez composer votre séquence au clavier,<br><br>ou "
+#~ "<hilight>Échap</hilight> pour annuler."
+
 #~ msgid "Engine Settings"
 #~ msgstr "Paramétrage du moteur"
+
+#~ msgid "Mouse Binding Sequence"
+#~ msgstr "Séquence du raccourci souris"
 
 #~ msgid "Screen Saver Settings"
 #~ msgstr "Paramétrage de l'économiseur d'écran"
 
 #~ msgid "Suspending.<br><hilight>Please wait.</hilight>"
 #~ msgstr "Mise en veille.<br><hilight>Veuillez patienter.</hilight>"
+
+#~ msgid "Key Binding Sequence"
+#~ msgstr "Séquence de raccourci clavier"
+
+#, c-format
+#~ msgid ""
+#~ "The binding key sequence, that you choose, is already used by "
+#~ "<br><hilight>%s</hilight> action.<br>Please choose another binding key "
+#~ "sequence."
+#~ msgstr ""
+#~ "La séquence de raccourci clavier que vous avez choisie est déjà "
+#~ "utilisée<br>par l'action <hilight>%s</hilight>.<br>Veuillez choisir une "
+#~ "autre séquence de raccourci clavier."
 
 #~ msgid ""
 #~ "Please hold any modifier you want<br>and press any button on your mouse,<br> "
@@ -10676,9 +10765,6 @@ msgstr "Aucun(e)"
 
 #~ msgid "Use Custom Screenlock Command"
 #~ msgstr "Utiliser cette commande"
-
-#~ msgid "Live preview"
-#~ msgstr "Vue en liste"
 
 #~ msgid "Syscon Settings"
 #~ msgstr "Paramétrage de Syscon"

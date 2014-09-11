@@ -2,6 +2,9 @@
 Encoding=UTF-8
 Type=Link
 Name=Illume-Home-Toggle
+Name[ca]=Illume-Home-Toggle
+Name[de]=Illume-Startumschalter
+Name[el]=Illume-Home-Toggle
 Name[eo]=Baskulilo de hejmo Illume
 Name[ms]=Illume-Home-Toggle
 Name[sr]=Прекидач личног одсјаја

@@ -2,7 +2,11 @@
 Encoding=UTF-8
 Type=Link
 Name=Bluez4
+Name[ca]=Bluez4
+Name[de]=Bluez4
+Name[fi]=Bluez4
 Name[gl]=Bluez4
+Name[ja]=Bluez4
 Name[ms]=Bluez4
 Name[sr]=Блуез4
 Name[tr]=Bluetooth

@@ -2,10 +2,14 @@
 Encoding=UTF-8
 Type=Link
 Name=Contact
+Name[ca]=Contacteu
+Name[de]=Kontakt
 Name[eo]=Kontakto
 Name[fr]=Contact
 Name[gl]=Contacto
+Name[ja]=コンタクト
 Name[ms]=Kenalan
+Name[pl]=Kontakt
 Name[sr]=Веза
 Name[tr]=Kişiler
 Comment=
