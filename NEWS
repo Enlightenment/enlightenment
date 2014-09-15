@@ -2,7 +2,8 @@ Release 0.19.0:
 ---------------------
 
 Features:
- * improved wayland support
+ * greatly improved wayland support
+   - E_WL_FORCE environment variable for forcing output types
  * e_uuid_store: Add infrastructure to store window/surface properties.
  * Add a tiling profile.
  * per-screen desklock logo visibility config
@@ -16,7 +17,6 @@ Features:
  * packagekit module for package manager integration
  * ibar now optionaly triggers its menu on mouse in
  * selective redirection toggling
- * support XPRESENT extension to reduce compositing overhead
  * new focus option "raise on revert focus"
  * add PIN-style desklock for lokker module
  * make desklock hookable, break out current desklock into module, move pam stuff to separate file
@@ -36,6 +36,8 @@ Improvements:
  * system operations no longer dim screen until action has begun
  * window stacking and focus restore is more accurate across restarts
  * gstreamer1 is now used for media previews
+ * improved multiple monitor setup reliability
+ * shaped windows now render more accurately
 
 Release 0.18.8:
 ---------------------
