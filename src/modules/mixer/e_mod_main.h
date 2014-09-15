@@ -7,7 +7,7 @@
 /* Increment for Major Changes */
 #define MOD_CONFIG_FILE_EPOCH      1
 /* Increment for Minor Changes (ie: user doesn't need a new config) */
-#define MOD_CONFIG_FILE_GENERATION 1
+#define MOD_CONFIG_FILE_GENERATION 0
 #define MOD_CONFIG_FILE_VERSION    ((MOD_CONFIG_FILE_EPOCH * 1000000) + MOD_CONFIG_FILE_GENERATION)
 
 typedef struct E_Mixer_Gadget_Config
@@ -31,8 +31,6 @@ typedef struct E_Mixer_Module_Config
    Eina_Hash *gadgets;
    int desktop_notification;
    int disable_pulse;
-   int external_mixer_enabled;
-   const char *external_mixer_command;
 } E_Mixer_Module_Config;
 
 typedef struct E_Mixer_Instance
@@ -80,8 +78,6 @@ typedef struct E_Mixer_Module_Context
    } actions;
    int desktop_notification;
    int disable_pulse;
-   int external_mixer_enabled;
-   char *external_mixer_command;
 } E_Mixer_Module_Context;
 
 EAPI extern E_Module_Api e_modapi;
