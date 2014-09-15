@@ -1011,7 +1011,7 @@ AC_SUBST([REBOOT])
 AC_SUBST([SUSPEND])
 AC_SUBST([HIBERNATE])
 
-m4_ifdef([v_mic],
+m4_ifndef([v_rel],
    [
     EFL_COMPILER_FLAG([-Wshadow])
     EFL_COMPILER_FLAG([-Wall])
