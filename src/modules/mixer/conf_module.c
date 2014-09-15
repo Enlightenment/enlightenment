@@ -75,6 +75,14 @@ _basic_apply(E_Config_Dialog *dialog, E_Config_Dialog_Data *cfdata)
 
         conf->desktop_notification = ctxt->desktop_notification;
         conf->disable_pulse = ctxt->disable_pulse;
+
+		if ((ctxt->external_mixer_enabled) && (!strlen(ctxt->external_mixer_command)))
+		  return 0;
+		conf->external_mixer_enabled = ctxt->external_mixer_enabled;
+		if (conf->external_mixer_command)
+		  eina_stringshare_del(conf->external_mixer_command);
+		if (ctxt->external_mixer_enabled)
+		  conf->external_mixer_command = eina_stringshare_add(ctxt->external_mixer_command);
      }
 
    return 1;
@@ -85,7 +93,7 @@ _basic_create_general(E_Config_Dialog *dialog, Evas *evas, E_Config_Dialog_Data 
 {
    struct mixer_config_ui_general *ui = &cfdata->ui.general;
    E_Mixer_Module_Context *ctxt = dialog->data;
-   Evas_Object *label, *chk;
+   Evas_Object *label, *chk, *edit;
    Eina_List *l;
    int i;
 
@@ -116,15 +124,22 @@ _basic_create_general(E_Config_Dialog *dialog, Evas *evas, E_Config_Dialog_Data 
 
    e_widget_list_object_append(cfdata->ui.list, ui->frame, 1, 1, 0.5);
    chk = e_widget_check_add(evas, _("Display desktop notifications on volume change"), &ctxt->desktop_notification);
-   e_widget_check_checked_set(chk, ctxt->conf->desktop_notification);
+   e_widget_check_checked_set(chk, ctxt->desktop_notification);
 #ifndef HAVE_ENOTIFY
    e_widget_disabled_set(chk, EINA_TRUE);
 #endif
    e_widget_list_object_append(cfdata->ui.list, chk, 1, 1, 0.5);
 
    chk = e_widget_check_add(evas, _("Disable PulseAudio"), &ctxt->disable_pulse);
-   e_widget_check_checked_set(chk, ctxt->conf->disable_pulse);
+   e_widget_check_checked_set(chk, ctxt->disable_pulse);
    e_widget_list_object_append(cfdata->ui.list, chk, 1, 1, 0.5);
+
+   chk = e_widget_check_add(evas, _("Enable external Mixer Command"), &ctxt->external_mixer_enabled);
+   e_widget_check_checked_set(chk, ctxt->external_mixer_enabled);
+   e_widget_list_object_append(cfdata->ui.list, chk, 1, 1, 0.5);
+
+   edit = e_widget_entry_add(evas, &ctxt->external_mixer_command, NULL, NULL, NULL);
+   e_widget_list_object_append(cfdata->ui.list, edit, 1, 1, 0.5);
 }
 
 static void
@@ -145,6 +160,14 @@ cb_mixer_call(void *data, void *data2 __UNUSED__)
         e_dialog_show(ctxt->mixer_dialog);
         return;
      }
+
+   if (ctxt->conf->external_mixer_enabled)
+     {
+	    E_Zone *zone;
+       zone = e_util_zone_current_get(e_manager_current_get());
+	    e_exec (zone, NULL, ctxt->conf->external_mixer_command, NULL, NULL);
+	    return;
+	 }
 
    ctxt->mixer_dialog = e_mixer_app_dialog_new(NULL, cb_mixer_app_del, ctxt);
 
