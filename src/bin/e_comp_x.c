@@ -4106,9 +4106,7 @@ _e_comp_x_hook_client_redirect(void *d EINA_UNUSED, E_Client *ec)
    else if (ec->comp->nocomp)
      {
         /* first window */
-        ec->comp->nocomp = 0;
-        ecore_x_window_show(ec->comp->win);
-        ecore_x_composite_redirect_subwindows(ec->comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
+        e_comp_x_nocomp_end(ec->comp);
         ecore_x_window_reparent(_e_comp_x_client_window_get(ec), ec->comp->man->root, ec->client.x, ec->client.y);
         _e_comp_x_client_stack(ec);
      }
@@ -5263,4 +5261,12 @@ e_comp_x_shutdown(void)
    ecore_x_focus_reset();
    ecore_x_events_allow_all();
    ecore_x_shutdown();
+}
+
+EINTERN void
+e_comp_x_nocomp_end(E_Comp *comp)
+{
+   comp->nocomp = 0;
+   ecore_x_window_show(comp->win);
+   ecore_x_composite_redirect_subwindows(comp->man->root, ECORE_X_COMPOSITE_UPDATE_MANUAL);
 }
