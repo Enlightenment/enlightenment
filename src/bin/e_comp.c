@@ -262,7 +262,6 @@ static void
 _e_comp_cb_nocomp_end(E_Comp *c)
 {
    E_Client *ec;
-   Eina_Bool need_manual = EINA_FALSE;
 
    if (!c->nocomp) return;
 
@@ -272,13 +271,11 @@ _e_comp_cb_nocomp_end(E_Comp *c)
    E_CLIENT_FOREACH(c, ec)
      {
         e_client_redirected_set(ec, 1);
-        need_manual |= ec->redirected;
         if (ec->visible && (!ec->input_only))
           e_comp_object_damage(ec->frame, 0, 0, ec->w, ec->h);
      }
 #ifndef HAVE_WAYLAND_ONLY
-   if (!need_manual)
-     e_comp_x_nocomp_end(c);
+   e_comp_x_nocomp_end(c);
 #endif
    e_comp_render_queue(c);
    e_comp_shape_queue_block(c, 0);
