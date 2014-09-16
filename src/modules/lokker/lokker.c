@@ -333,6 +333,12 @@ _text_login_box_add(Lokker_Popup *lp)
                            "e/desklock/login_box");
    edje_object_part_text_set(lp->login_box, "e.text.title",
                              _("Please enter your unlock password"));
+   if (evas_key_lock_is_set(evas_key_lock_get(evas), "Caps_Lock"))
+        edje_object_part_text_set(lp->login_box, "e.text.hint",
+                             _("Caps Lock is On"));
+   else
+        edje_object_part_text_set(lp->login_box, "e.text.hint",
+                             _(""));
    edje_object_size_min_calc(lp->login_box, &mw, &mh);
    if (edje_object_part_exists(lp->bg_object, "e.swallow.login_box"))
      {
@@ -626,6 +632,17 @@ _desklock_auth(char *passwd)
    return (_auth_child_pid > 0);
 }
 
+static void
+_lokker_caps_hint_update(const char *msg)
+{
+   Eina_List *l;
+   Lokker_Popup *lp;
+   EINA_LIST_FOREACH(edd->elock_wnd_list, l, lp)
+     {
+        edje_object_part_text_set(lp->login_box, "e.text.hint", _(msg));
+     }
+}
+
 static int
 _lokker_check_auth(void)
 {
@@ -709,6 +726,13 @@ _lokker_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
              return ECORE_CALLBACK_RENEW;
           }
         _lokker_delete();
+     }
+   else if (!strcmp(ev->key, "Caps_Lock"))
+     {
+        if(ev->modifiers & ECORE_EVENT_LOCK_CAPS)
+             _lokker_caps_hint_update("");
+        else
+             _lokker_caps_hint_update("Caps Lock is On");
      }
    else if ((!strcmp(ev->key, "u") &&
              (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL)))
