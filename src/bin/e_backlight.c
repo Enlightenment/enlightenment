@@ -340,6 +340,7 @@ _e_backlight_update(E_Zone *zone)
 static void
 _e_backlight_set(E_Zone *zone, double val)
 {
+   if (val < 0.05) val = 0.05;
    if (sysmode == MODE_RANDR)
      {
         Ecore_X_Window root;
