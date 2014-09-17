@@ -188,6 +188,8 @@ _mixer_module_configuration_new(void)
    conf = E_NEW(E_Mixer_Module_Config, 1);
    conf->desktop_notification = 1;
    conf->disable_pulse = 0;
+   conf->external_mixer_enabled = 0;
+   conf->external_mixer_command = eina_stringshare_add("");
 
    return conf;
 }
@@ -205,6 +207,9 @@ _mixer_module_configuration_free(E_Mixer_Module_Config *conf)
         eina_hash_free(conf->gadgets);
      }
    eina_stringshare_del(conf->default_gc_id);
+
+   if (conf->external_mixer_command)
+     eina_stringshare_del(conf->external_mixer_command);
    free(conf);
 }
 
@@ -503,6 +508,13 @@ _mixer_popup_cb_mixer(void *data, void *data2 __UNUSED__)
         /* maybe not update mixer dialog current selection */
         /* _mixer_app_select_current(ctxt->mixer_dialog, inst); */
         e_dialog_show(ctxt->mixer_dialog);
+        return;
+     }
+
+   if (ctxt->conf->external_mixer_enabled)
+     {
+        E_Zone *zone = e_util_zone_current_get(e_manager_current_get());
+        e_exec (zone, NULL, ctxt->conf->external_mixer_command, NULL, NULL);
         return;
      }
 
@@ -1212,6 +1224,8 @@ _mixer_module_configuration_descriptor_new(E_Config_DD *gadget_conf_edd)
    E_CONFIG_HASH(conf_edd, E_Mixer_Module_Config, gadgets, gadget_conf_edd);
    E_CONFIG_VAL(conf_edd, E_Mixer_Module_Config, desktop_notification, INT);
    E_CONFIG_VAL(conf_edd, E_Mixer_Module_Config, disable_pulse, INT);
+   E_CONFIG_VAL(conf_edd, E_Mixer_Module_Config, external_mixer_enabled, INT);
+   E_CONFIG_VAL(conf_edd, E_Mixer_Module_Config, external_mixer_command, STR);
 
    return conf_edd;
 }
@@ -1287,6 +1301,11 @@ _mixer_module_configuration_setup(E_Mixer_Module_Context *ctxt)
    ctxt->conf->version = MOD_CONFIG_FILE_VERSION;
    ctxt->desktop_notification = ctxt->conf->desktop_notification;
    ctxt->disable_pulse = ctxt->conf->disable_pulse;
+   ctxt->external_mixer_enabled = ctxt->conf->external_mixer_enabled;
+   if (ctxt->conf->external_mixer_command)
+     ctxt->external_mixer_command = strdup(ctxt->conf->external_mixer_command);
+   else
+     ctxt->external_mixer_command = strdup("");
 }
 
 static const char _act_increase[] = "volume_increase";
