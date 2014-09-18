@@ -50,65 +50,65 @@ E_MSGBUS_WIN_ACTION_CB_PROTO(unmaximize);
 static E_Msgbus_Data *_e_msgbus_data = NULL;
 
 static const Eldbus_Method core_methods[] = {
-   { "Version", NULL, ELDBUS_ARGS({"s", "version"}), _e_msgbus_core_version_cb },
-   { "Restart", NULL, NULL, _e_msgbus_core_restart_cb },
-   { "Shutdown", NULL, NULL, _e_msgbus_core_shutdown_cb },
-   { }
+   { "Version", NULL, ELDBUS_ARGS({"s", "version"}), _e_msgbus_core_version_cb, 0 },
+   { "Restart", NULL, NULL, _e_msgbus_core_restart_cb, 0 },
+   { "Shutdown", NULL, NULL, _e_msgbus_core_shutdown_cb, 0 },
+   { NULL, NULL, NULL, NULL, 0}
 };
 
 static const Eldbus_Method module_methods[] = {
-   { "Load", ELDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_load_cb },
-   { "Unload", ELDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_unload_cb },
-   { "Enable", ELDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_enable_cb },
-   { "Disable", ELDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_disable_cb },
+   { "Load", ELDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_load_cb, 0 },
+   { "Unload", ELDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_unload_cb, 0 },
+   { "Enable", ELDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_enable_cb, 0 },
+   { "Disable", ELDBUS_ARGS({"s", "module"}), NULL, _e_msgbus_module_disable_cb, 0 },
    { "List", NULL, ELDBUS_ARGS({"a(si)", "modules"}),
-     _e_msgbus_module_list_cb },
-   { }
+     _e_msgbus_module_list_cb, 0 },
+   { NULL, NULL, NULL, NULL, 0}
 };
 
 static const Eldbus_Method profile_methods[] = {
-   { "Set", ELDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_set_cb },
-   { "Get", NULL, ELDBUS_ARGS({"s", "profile"}), _e_msgbus_profile_get_cb },
+   { "Set", ELDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_set_cb, 0 },
+   { "Get", NULL, ELDBUS_ARGS({"s", "profile"}), _e_msgbus_profile_get_cb, 0 },
    { "List", NULL, ELDBUS_ARGS({"as", "array_profiles"}),
-     _e_msgbus_profile_list_cb },
-   { "Add", ELDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_add_cb },
-   { "Delete", ELDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_delete_cb },
-   { }
+     _e_msgbus_profile_list_cb, 0 },
+   { "Add", ELDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_add_cb, 0 },
+   { "Delete", ELDBUS_ARGS({"s", "profile"}), NULL, _e_msgbus_profile_delete_cb, 0 },
+   { NULL, NULL, NULL, NULL, 0}
 };
 
 static const Eldbus_Method window_methods[] = {
    { "List", NULL, ELDBUS_ARGS({"a(si)", "array_of_window"}),
-     _e_msgbus_window_list_cb },
-   { "Close", ELDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_close_cb },
-   { "Kill", ELDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_kill_cb },
-   { "Focus", ELDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_focus_cb },
+     _e_msgbus_window_list_cb, 0 },
+   { "Close", ELDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_close_cb, 0 },
+   { "Kill", ELDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_kill_cb, 0 },
+   { "Focus", ELDBUS_ARGS({"i", "window_id"}), NULL, _e_msgbus_window_focus_cb, 0 },
    { "Iconify", ELDBUS_ARGS({"i", "window_id"}), NULL,
-     _e_msgbus_window_iconify_cb },
+     _e_msgbus_window_iconify_cb, 0 },
    { "Uniconify", ELDBUS_ARGS({"i", "window_id"}), NULL,
-     _e_msgbus_window_uniconify_cb },
+     _e_msgbus_window_uniconify_cb, 0 },
    { "Maximize", ELDBUS_ARGS({"i", "window_id"}), NULL,
-     _e_msgbus_window_maximize_cb },
+     _e_msgbus_window_maximize_cb, 0 },
    { "Unmaximize", ELDBUS_ARGS({"i", "window_id"}), NULL,
-     _e_msgbus_window_unmaximize_cb },
-   { }
+     _e_msgbus_window_unmaximize_cb, 0 },
+   { NULL, NULL, NULL, NULL, 0}
 };
 
 #define PATH "/org/enlightenment/wm/RemoteObject"
 
 static const Eldbus_Service_Interface_Desc core_desc = {
-   "org.enlightenment.wm.Core", core_methods
+   "org.enlightenment.wm.Core", core_methods, NULL, NULL, NULL, NULL
 };
 
 static const Eldbus_Service_Interface_Desc module_desc = {
-   "org.enlightenment.wm.Module", module_methods
+   "org.enlightenment.wm.Module", module_methods, NULL, NULL, NULL, NULL
 };
 
 static const Eldbus_Service_Interface_Desc profile_desc = {
-   "org.enlightenment.wm.Profile", profile_methods
+   "org.enlightenment.wm.Profile", profile_methods, NULL, NULL, NULL, NULL
 };
 
 static const Eldbus_Service_Interface_Desc window_desc = {
-   "org.enlightenment.wm.Window", window_methods
+   "org.enlightenment.wm.Window", window_methods, NULL, NULL, NULL, NULL
 };
 
 /* externally accessible functions */
