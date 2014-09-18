@@ -118,27 +118,27 @@ properties_get(const Eldbus_Service_Interface *s_iface EINA_UNUSED, const char *
 
 static const Eldbus_Property properties[] =
 {
-   { "RegisteredStatusNotifierItems", "as" },
-   { "IsStatusNotifierHostRegistered", "b" },
-   { "ProtocolVersion", "i" },
-   { }
+   { "RegisteredStatusNotifierItems", "as", NULL, NULL, 0 },
+   { "IsStatusNotifierHostRegistered", "b", NULL, NULL, 0 },
+   { "ProtocolVersion", "i", NULL, NULL, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
 };
 
 static const Eldbus_Signal signals[] = {
-   { "StatusNotifierItemRegistered", ELDBUS_ARGS({"s", "service"}) },
-   { "StatusNotifierItemUnregistered", ELDBUS_ARGS({"s", "service"}) },
-   { "StatusNotifierHostRegistered", NULL },
-   { "StatusNotifierHostUnregistered", NULL },
-   { }
+   { "StatusNotifierItemRegistered", ELDBUS_ARGS({"s", "service"}), 0 },
+   { "StatusNotifierItemUnregistered", ELDBUS_ARGS({"s", "service"}), 0 },
+   { "StatusNotifierHostRegistered", NULL, 0 },
+   { "StatusNotifierHostUnregistered", NULL, 0 },
+   { NULL, NULL, 0 }
 };
 
 static const Eldbus_Method methods[] =
 {
    { "RegisterStatusNotifierItem", ELDBUS_ARGS({"s", "service"}), NULL,
-      register_item_cb },
+      register_item_cb, 0 },
    { "RegisterStatusNotifierHost", ELDBUS_ARGS({"s", "service"}), NULL,
-      register_host_cb },
-   { }
+      register_host_cb, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
 };
 
 static const Eldbus_Service_Interface_Desc iface_desc = {
