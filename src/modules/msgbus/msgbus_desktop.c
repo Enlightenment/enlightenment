@@ -185,32 +185,32 @@ cb_desktop_bglist(const Eldbus_Service_Interface *iface __UNUSED__,
 
 static const Eldbus_Method desktop_methods[] = {
    { "GetVirtualCount", NULL, ELDBUS_ARGS({"i", "desk_x"}, {"i", "desk_y"}),
-      cb_virtual_desktops },
+      cb_virtual_desktops, 0 },
    { "Show", ELDBUS_ARGS({"i", "desk_x"}, {"i", "desk_y"}), NULL,
-      cb_desktop_show },
+      cb_desktop_show, 0 },
    { "ShowByName", ELDBUS_ARGS({"s", "desk_name"}), NULL,
-      cb_desktop_show_by_name },
-   { "Lock", NULL, NULL, cb_desktop_lock },
-   { "Unlock", NULL, NULL, cb_desktop_unlock },
-   { }
+      cb_desktop_show_by_name, 0 },
+   { "Lock", NULL, NULL, cb_desktop_lock, 0 },
+   { "Unlock", NULL, NULL, cb_desktop_unlock, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
 };
 
 static const Eldbus_Method background_methods[] = {
    { "Add",
       ELDBUS_ARGS({"i", "manager"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}, {"s", "path"}),
-      NULL, cb_desktop_bgadd },
+      NULL, cb_desktop_bgadd, 0 },
    { "Del", ELDBUS_ARGS({"i", "manager"}, {"i", "zone"}, {"i", "desk_x"}, {"i", "desk_y"}),
-      NULL, cb_desktop_bgdel },
-   { "List", ELDBUS_ARGS({"a(iiiis)", "array_of_bg"}), NULL, cb_desktop_bglist },
-   { }
+      NULL, cb_desktop_bgdel, 0 },
+   { "List", ELDBUS_ARGS({"a(iiiis)", "array_of_bg"}), NULL, cb_desktop_bglist, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
 };
 
 static const Eldbus_Service_Interface_Desc desktop = {
-   "org.enlightenment.wm.Desktop", desktop_methods
+   "org.enlightenment.wm.Desktop", desktop_methods, NULL, NULL, NULL, NULL
 };
 
 static const Eldbus_Service_Interface_Desc bg = {
-   "org.enlightenment.wm.Desktop.Background", background_methods
+   "org.enlightenment.wm.Desktop.Background", background_methods, NULL, NULL, NULL, NULL
 };
 
 void msgbus_desktop_init(Eina_Array *ifaces)
