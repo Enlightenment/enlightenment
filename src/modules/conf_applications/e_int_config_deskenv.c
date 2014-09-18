@@ -57,23 +57,10 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->exe_always_single_instance = e_config->exe_always_single_instance;
    cfdata->desktop_environments = efreet_util_desktop_environments_list();
    eina_stringshare_replace(&(cfdata->desktop_environment), e_config->desktop_environment);
-   cfdata->desktop_environment_id = 0;
    if (e_config->desktop_environment)
-     {
-        Eina_List *l;
-        const char *de;
-        int cde = 0;
-
-        EINA_LIST_FOREACH(cfdata->desktop_environments, l, de)
-          {
-             cde++;
-             if (!strcmp(e_config->desktop_environment, de))
-               {
-                  cfdata->desktop_environment_id = cde;
-                  break;
-               }
-          }
-     }
+     cfdata->desktop_environment_id = eina_list_count(cfdata->desktop_environments) + 1;
+   else
+     cfdata->desktop_environment_id = 0;
 }
 
 static void *
@@ -98,18 +85,10 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 {
    if (cfdata->desktop_environment_id > 0)
      {
-        Eina_List *l;
         const char *de;
-        int cde = 0;
 
-        EINA_LIST_FOREACH(cfdata->desktop_environments, l, de)
-          {
-             if ((++cde) == cfdata->desktop_environment_id)
-               {
-                  eina_stringshare_replace(&(cfdata->desktop_environment), de);
-                  break;
-               }
-          }
+        de = eina_list_nth(cfdata->desktop_environments, (cfdata->desktop_environment_id - 1));
+        eina_stringshare_replace(&(cfdata->desktop_environment), de);
      }
    else
      {
@@ -182,6 +161,8 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_framelist_object_append(fr, ob);
    EINA_LIST_FOREACH(cfdata->desktop_environments, l, de)
      {
+        if (!strcmp(e_config->desktop_environment, de))
+          cfdata->desktop_environment_id = (cde + 1);
         ob = e_widget_radio_add(evas, de, ++cde, rg);
         e_widget_framelist_object_append(fr, ob);
      }
