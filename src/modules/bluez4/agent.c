@@ -229,26 +229,26 @@ _agent_cancel(const Eldbus_Service_Interface *iface EINA_UNUSED,
 }
 
 static const Eldbus_Method agent_methods[] = {
-   { "Release", NULL, NULL, _agent_release },
+   { "Release", NULL, NULL, _agent_release, 0 },
    { "RequestPinCode", ELDBUS_ARGS({"o", "device"}),
-      ELDBUS_ARGS({"s", "pincode"}), _agent_request_pin_code },
+      ELDBUS_ARGS({"s", "pincode"}), _agent_request_pin_code, 0 },
    { "RequestPasskey", ELDBUS_ARGS({"o", "device"}),
-      ELDBUS_ARGS({"u", "passkey"}), _agent_request_passkey },
+      ELDBUS_ARGS({"u", "passkey"}), _agent_request_passkey, 0 },
    { "DisplayPasskey",
       ELDBUS_ARGS({"o", "device"},{"u", "passkey"},{"q", "entered"}),
-      NULL, _agent_display_passkey },
+      NULL, _agent_display_passkey, 0 },
    { "DisplayPinCode", ELDBUS_ARGS({"o", "device"},{"s", "pincode"}),
-      NULL, _agent_display_pin_code },
+      NULL, _agent_display_pin_code, 0 },
    { "RequestConfirmation", ELDBUS_ARGS({"o", "device"},{"u", "passkey"}),
-      NULL, _agent_request_confirmation },
+      NULL, _agent_request_confirmation, 0 },
    { "Authorize", ELDBUS_ARGS({"o", "device"},{"s", "uuid"}),
-      NULL, _agent_authorize },
-   { "Cancel", NULL, NULL, _agent_cancel },
-   { }
+      NULL, _agent_authorize, 0 },
+   { "Cancel", NULL, NULL, _agent_cancel, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
 };
 
 static const Eldbus_Service_Interface_Desc agent_iface = {
-   AGENT_INTERFACE, agent_methods
+   AGENT_INTERFACE, agent_methods, NULL, NULL, NULL, NULL
 };
 
 /* Public Functions */
