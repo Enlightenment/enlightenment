@@ -163,26 +163,26 @@ _on_getmenus(const Eldbus_Service_Interface *iface, const Eldbus_Message *msg)
 
 static const Eldbus_Method registrar_methods[] = {
    { "RegisterWindow", ELDBUS_ARGS({"u", "windowId"},{"o", "menuObjectPath"}),
-      NULL, _on_register_window },
+      NULL, _on_register_window, 0 },
    { "UnregisterWindow", ELDBUS_ARGS({"u", "windowId"}),
-      NULL, _on_unregister_window },
+      NULL, _on_unregister_window, 0 },
    { "GetMenuForWindow", ELDBUS_ARGS({"u", "windowId"}),
-     ELDBUS_ARGS({"s", "bus_id"},{"o", "menu_path"}), _on_getmenu },
-   { "GetMenus", NULL, ELDBUS_ARGS({"a(uso)", "array_of_menu"}), _on_getmenus },
-   { }
+     ELDBUS_ARGS({"s", "bus_id"},{"o", "menu_path"}), _on_getmenu, 0 },
+   { "GetMenus", NULL, ELDBUS_ARGS({"a(uso)", "array_of_menu"}), _on_getmenus, 0 },
+   { NULL, NULL, NULL, NULL, 0}
 };
 
 static const Eldbus_Signal registrar_signals[] = {
    [SIGNAL_WINDOW_REGISTERED] =
      { "WindowRegistered",
-        ELDBUS_ARGS({"u", "windowId"}, {"s", "bus_id"}, {"o", "menu_path"}) },
+        ELDBUS_ARGS({"u", "windowId"}, {"s", "bus_id"}, {"o", "menu_path"}), 0 },
    [SIGNAL_WINDOW_UNREGISTERED] =
-     { "WindowUnregistered", ELDBUS_ARGS({"u", "windowId"}) },
-   { }
+     { "WindowUnregistered", ELDBUS_ARGS({"u", "windowId"}), 0 },
+   { NULL, NULL, 0}
 };
 
 static const Eldbus_Service_Interface_Desc registrar_iface = {
-   REGISTRAR_IFACE, registrar_methods, registrar_signals
+   REGISTRAR_IFACE, registrar_methods, registrar_signals, NULL, NULL, NULL
 };
 
 void
