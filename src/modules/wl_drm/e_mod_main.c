@@ -21,7 +21,7 @@ e_modapi_init(E_Module *m)
    comp = e_comp_new();
    comp->comp_type = E_PIXMAP_TYPE_WL;
 
-   if ((e_comp_gl_get()) && 
+   if ((e_comp_gl_get()) &&
        (e_comp_config_get()->engine == E_COMP_ENGINE_GL))
      {
         /* TOOD: create ecore_evas for new drm gl backend */
@@ -74,11 +74,11 @@ e_modapi_init(E_Module *m)
    comp->pointer = e_pointer_canvas_new(comp->ee, EINA_TRUE);
    comp->pointer->color = EINA_TRUE;
 
-   /* FIXME: We need a way to trap for user changing the keymap inside of E 
+   /* FIXME: We need a way to trap for user changing the keymap inside of E
     *        without the event coming from X11 */
 
    /* FIXME: We should make a decision here ...
-    * 
+    *
     * Fetch the keymap from drm, OR set this to what the E config is....
     */
 
@@ -89,7 +89,7 @@ e_modapi_init(E_Module *m)
    return m;
 }
 
-EAPI int 
+EAPI int
 e_modapi_shutdown(E_Module *m EINA_UNUSED)
 {
    /* shutdown ecore_drm */
