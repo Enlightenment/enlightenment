@@ -40,7 +40,6 @@ typedef struct Mirror
    Evas_Object *comp_object;
    Evas_Object *mirror;
    int x, y, w, h;
-   Eina_Bool frame : 1;
    Eina_Bool added : 1;
 } Mirror;
 
@@ -101,7 +100,7 @@ _mirror_scale_set(Mirror *m, float sc)
    Edje_Message_Float msg;
    Mirror_Border *mb;
 
-   if (!m->frame) return;
+   if (!m->mirror) return;
    mb = evas_object_smart_data_get(m->mirror);
    msg.val = sc;
    edje_object_message_send(mb->frame, EDJE_MESSAGE_FLOAT, 0, &msg);
@@ -222,65 +221,46 @@ _e_deskmirror_smart_clip_unset(Evas_Object *obj)
 ////////////////////////////////////////////////////////
 
 static void
-_mirror_client_theme_setup(Mirror_Border *mb)
+_mirror_client_theme_setup(Mirror_Border *mb, Evas_Object *o)
 {
    char buf[4096];
 
-   snprintf(buf, sizeof(buf), "e/deskmirror/frame/%s", mb->m->ec->border.name);
-   e_theme_edje_object_set(mb->frame, "base/theme/borders", buf);
-   if (e_client_util_shadow_state_get(mb->m->ec))
-     edje_object_signal_emit(mb->frame, "e,state,shadow,on", "e");
+   if (e_comp_object_frame_exists(mb->m->ec->frame))
+     snprintf(buf, sizeof(buf), "e/deskmirror/frame/%s", mb->m->ec->border.name);
    else
-     edje_object_signal_emit(mb->frame, "e,state,shadow,off", "e");
+     snprintf(buf, sizeof(buf), "e/deskmirror/frame/borderless");
+   e_theme_edje_object_set(o, "base/theme/borders", buf);
+   if (e_client_util_shadow_state_get(mb->m->ec))
+     edje_object_signal_emit(o, "e,state,shadow,on", "e");
+   else
+     edje_object_signal_emit(o, "e,state,shadow,off", "e");
    if (mb->m->ec->focused)
-     edje_object_signal_emit(mb->frame, "e,state,focused", "e");
+     edje_object_signal_emit(o, "e,state,focused", "e");
    if (mb->m->ec->shaded)
-     edje_object_signal_emit(mb->frame, "e,state,shaded", "e");
+     edje_object_signal_emit(o, "e,state,shaded", "e");
    if (mb->m->ec->maximized)
-     edje_object_signal_emit(mb->frame, "e,action,maximize", "e");
+     edje_object_signal_emit(o, "e,action,maximize", "e");
    if (mb->m->ec->sticky)
-     edje_object_signal_emit(mb->frame, "e,state,sticky", "e");
+     edje_object_signal_emit(o, "e,state,sticky", "e");
    if (mb->m->ec->iconic)
-     edje_object_signal_emit(mb->frame, "e,action,iconify", "e");
+     edje_object_signal_emit(o, "e,action,iconify", "e");
 }
 
 static void
-_e_deskmirror_mirror_frame_recalc_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_e_deskmirror_mirror_frame_recalc_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Mirror *m = data;
    Mirror_Border *mb;
 
-   
-   if (m->frame)
+   if (!m->mirror) return;
+   mb = evas_object_smart_data_get(m->mirror);
+   if (mb->m->ec && (!e_object_is_del(E_OBJECT(mb->m->ec))))
      {
-        mb = evas_object_smart_data_get(m->mirror);
-        if (mb->m->ec && (!e_object_is_del(E_OBJECT(mb->m->ec))))
-          {
-             if (e_comp_object_frame_exists(obj))
-               {
-                  _mirror_client_theme_setup(mb);
-                  _mirror_scale_set(mb->m, (float)mb->m->sd->h / (float)mb->m->sd->desk->zone->h);
-                  return;
-               }
-             evas_object_smart_member_del(mb->mirror);
-             mb->m->mirror = mb->mirror;
-             mb->mirror = NULL;
-             mb->m->frame = 0;
-          }
-        else
-          mb->m->comp_object = NULL;
-        evas_object_del(mb->obj);
-        e_layout_pack(m->sd->layout, m->mirror);
+        _mirror_client_theme_setup(mb, mb->frame);
+        _mirror_scale_set(mb->m, (float)mb->m->sd->h / (float)mb->m->sd->desk->zone->h);
      }
    else
-     {
-        if (m->ec && (!e_object_is_del(E_OBJECT(m->ec))))
-          {
-             if (!e_comp_object_frame_exists(obj)) return;
-             e_layout_unpack(m->mirror);
-             _e_deskmirror_mirror_setup(m);
-          }
-     }
+     mb->m->comp_object = NULL;
 }
 
 static void
@@ -479,7 +459,7 @@ _mirror_client_new(Mirror *m)
    mb->m = m;
    mb->frame = edje_object_add(m->sd->e);
    evas_object_name_set(mb->frame, "mirror_border");
-   _mirror_client_theme_setup(mb);
+   _mirror_client_theme_setup(mb, mb->frame);
    if (m->comp_object)
      {
         e_comp_object_signal_callback_add(mb->m->comp_object, "*", "*", _mirror_client_signal_cb, mb->frame);
@@ -500,10 +480,9 @@ _e_deskmirror_mirror_setup(Mirror *m)
 {
    if (!m->mirror) return;
    evas_object_event_callback_del_full(m->comp_object, EVAS_CALLBACK_DEL, _e_deskmirror_mirror_del_cb, m);
-   if (m->ec && e_comp_object_frame_exists(m->comp_object))
+   if (m->ec)
      {
         m->mirror = _mirror_client_new(m);
-        m->frame = 1;
         _mirror_scale_set(m, (double)m->sd->h / (double)m->sd->desk->zone->h);
      }
    else
@@ -791,55 +770,29 @@ e_deskmirror_mirror_copy(Evas_Object *obj)
      {
         Evas_Object *o, *oo;
         Edje_Message_Float msg;
-        char buf[1024];
         Mirror_Border *mb;
 
         mb = evas_object_smart_data_get(obj);
         o = edje_object_add(evas_object_evas_get(obj));
-        snprintf(buf, sizeof(buf), "e/deskmirror/frame/%s", mb->m->ec->border.name);
-        e_theme_edje_object_set(o, "base/theme/borders", buf);
-        if (e_client_util_shadow_state_get(mb->m->ec))
-          edje_object_signal_emit(o, "e,state,shadow,on", "e");
-        else
-          edje_object_signal_emit(o, "e,state,shadow,off", "e");
+        _mirror_client_theme_setup(mb, o);
         if (mb->m->comp_object)
           {
              e_comp_object_signal_callback_add(mb->m->comp_object, "*", "*", _mirror_client_signal_cb, o);
              evas_object_smart_callback_add(mb->m->comp_object, "shadow_change", _mirror_client_shadow_change, o);
              evas_object_event_callback_add(o, EVAS_CALLBACK_DEL, _mirror_copy_del, mb->m->comp_object);
           }
-        if (mb->m->ec->focused)
-          edje_object_signal_emit(o, "e,state,focused", "e");
-        if (mb->m->ec->shaded)
-          edje_object_signal_emit(o, "e,state,shaded", "e");
-        if (mb->m->ec->maximized)
-          edje_object_signal_emit(o, "e,action,maximize", "e");
-        if (mb->m->ec->sticky)
-          edje_object_signal_emit(o, "e,state,sticky", "e");
-        if (mb->m->ec->iconic)
-          edje_object_signal_emit(o, "e,action,iconify", "e");
         msg.val = mb->m->sd->h / mb->m->sd->desk->zone->h;
         edje_object_message_send(o, EDJE_MESSAGE_FLOAT, 0, &msg);
 
         oo = e_comp_object_util_mirror_add(mb->m->comp_object);
         edje_object_part_swallow(o, "e.swallow.client", oo);
-        edje_object_part_text_set(o, "e.text.title", e_client_util_name_get(mb->m->ec));
+        if (e_comp_object_frame_exists(mb->m->ec->frame))
+          edje_object_part_text_set(o, "e.text.title", e_client_util_name_get(mb->m->ec));
         e_comp_object_util_del_list_append(o, oo);
         return o;
      }
    else if (!e_util_strcmp(evas_object_type_get(obj), "image"))
-     {
-        if (!e_util_strcmp(evas_object_name_get(obj), "m->mirror"))
-          {
-             E_Client *ec;
-
-             ec = evas_object_data_get(obj, "E_Client");
-             if (!ec) return NULL;
-             return e_comp_object_util_mirror_add(ec->frame);
-          }
-        else
-          return e_comp_object_util_mirror_add(obj);
-     }
+     return e_comp_object_util_mirror_add(obj);
    CRI("NOT A DESKMIRROR CLIENT");
    return NULL;
 }
