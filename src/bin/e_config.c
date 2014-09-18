@@ -621,6 +621,7 @@ _e_config_edd_init(Eina_Bool old)
 
    E_CONFIG_VAL(D, T, icon_theme, STR);
    E_CONFIG_VAL(D, T, icon_theme_overrides, UCHAR);
+   E_CONFIG_VAL(D, T, desktop_environment, STR);
 
    E_CONFIG_VAL(D, T, desk_flip_animate_mode, INT);
    E_CONFIG_VAL(D, T, desk_flip_animate_type, STR);
@@ -2250,6 +2251,7 @@ _e_config_free(E_Config *ecf)
    if (ecf->input_method) eina_stringshare_del(ecf->input_method);
    if (ecf->exebuf_term_cmd) eina_stringshare_del(ecf->exebuf_term_cmd);
    if (ecf->icon_theme) eina_stringshare_del(ecf->icon_theme);
+   if (ecf->desktop_environment) eina_stringshare_del(ecf->desktop_environment);
    if (ecf->wallpaper_import_last_dev) eina_stringshare_del(ecf->wallpaper_import_last_dev);
    if (ecf->wallpaper_import_last_path) eina_stringshare_del(ecf->wallpaper_import_last_path);
    if (ecf->theme_default_border_style) eina_stringshare_del(ecf->theme_default_border_style);

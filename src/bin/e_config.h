@@ -264,6 +264,7 @@ struct _E_Config
 
    const char               *icon_theme; // GUI
    unsigned char             icon_theme_overrides; // GUI
+   const char               *desktop_environment; // GUI
 
    /* modes:
     * 1-"pane") horizontal or vertical movement to/from next/previous "screen"

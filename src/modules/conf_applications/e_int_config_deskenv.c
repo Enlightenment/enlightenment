@@ -16,6 +16,9 @@ struct _E_Config_Dialog_Data
    int load_gnome;
    int load_kde;
    int exe_always_single_instance;
+   const char *desktop_environment;
+   Eina_List *desktop_environments;
+   int desktop_environment_id;
 };
 
 /* a nice easy setup function that does the dirty work */
@@ -52,6 +55,25 @@ _fill_data(E_Config_Dialog_Data *cfdata)
    cfdata->load_gnome = e_config->deskenv.load_gnome;
    cfdata->load_kde = e_config->deskenv.load_kde;
    cfdata->exe_always_single_instance = e_config->exe_always_single_instance;
+   cfdata->desktop_environments = efreet_util_desktop_environments_list();
+   eina_stringshare_replace(&(cfdata->desktop_environment), e_config->desktop_environment);
+   cfdata->desktop_environment_id = 0;
+   if (e_config->desktop_environment)
+     {
+        Eina_List *l;
+        const char *de;
+        int cde = 0;
+
+        EINA_LIST_FOREACH(cfdata->desktop_environments, l, de)
+          {
+             cde++;
+             if (!strcmp(e_config->desktop_environment, de))
+               {
+                  cfdata->desktop_environment_id = cde;
+                  break;
+               }
+          }
+     }
 }
 
 static void *
@@ -67,17 +89,39 @@ _create_data(E_Config_Dialog *cfd __UNUSED__)
 static void
 _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
+   eina_list_free(cfdata->desktop_environments);
    E_FREE(cfdata);
 }
 
 static int
 _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 {
+   if (cfdata->desktop_environment_id > 0)
+     {
+        Eina_List *l;
+        const char *de;
+        int cde = 0;
+
+        EINA_LIST_FOREACH(cfdata->desktop_environments, l, de)
+          {
+             if ((++cde) == cfdata->desktop_environment_id)
+               {
+                  eina_stringshare_replace(&(cfdata->desktop_environment), de);
+                  break;
+               }
+          }
+     }
+   else
+     {
+        eina_stringshare_replace(&(cfdata->desktop_environment), NULL);
+     }
+
    return (e_config->deskenv.load_xrdb != cfdata->load_xrdb) ||
           (e_config->deskenv.load_xmodmap != cfdata->load_xmodmap) ||
           (e_config->deskenv.load_gnome != cfdata->load_gnome) ||
           (e_config->deskenv.load_kde != cfdata->load_kde) ||
-          (e_config->exe_always_single_instance != cfdata->exe_always_single_instance);
+          (e_config->exe_always_single_instance != cfdata->exe_always_single_instance) ||
+          (e_util_strcmp(e_config->desktop_environment, cfdata->desktop_environment));
 }
 
 /**--APPLY--**/
@@ -89,7 +133,9 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    e_config->deskenv.load_gnome = cfdata->load_gnome;
    e_config->deskenv.load_kde = cfdata->load_kde;
    e_config->exe_always_single_instance = cfdata->exe_always_single_instance;
+   eina_stringshare_replace(&(e_config->desktop_environment), cfdata->desktop_environment);
    e_config_save_queue();
+   efreet_desktop_environment_set(e_config->desktop_environment);
    return 1; /* Apply was OK */
 }
 
@@ -99,6 +145,10 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
 {
    /* generate the core widget layout for a basic dialog */
    Evas_Object *o, *fr, *ob;
+   Eina_List *l;
+   E_Radio_Group *rg;
+   const char *de;
+   int cde = 0;
 
    o = e_widget_list_add(evas, 0, 0);
    
@@ -125,7 +175,19 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
                            &(cfdata->load_kde));
    e_widget_framelist_object_append(fr, ob);
    e_widget_list_object_append(o, fr, 1, 0, 0.0);
-   
+
+   fr = e_widget_framelist_add(evas, _("Prefer applications from Desktop Environment"), 0);
+   rg = e_widget_radio_group_new(&(cfdata->desktop_environment_id));
+   ob = e_widget_radio_add(evas, _("All"), cde, rg);
+   e_widget_framelist_object_append(fr, ob);
+   EINA_LIST_FOREACH(cfdata->desktop_environments, l, de)
+     {
+        ob = e_widget_radio_add(evas, de, ++cde, rg);
+        e_widget_framelist_object_append(fr, ob);
+     }
+
+   e_widget_list_object_append(o, fr, 1, 0, 0.0);
+
    return o;
 }
 
