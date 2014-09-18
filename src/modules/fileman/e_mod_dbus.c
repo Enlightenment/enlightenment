@@ -24,14 +24,14 @@ _e_fileman_dbus_daemon_error(const Eldbus_Message *msg,
 
 static const Eldbus_Method methods[] = {
    { "OpenDirectory", ELDBUS_ARGS({"s", "directory"}), NULL,
-      _e_fileman_dbus_daemon_open_directory_cb },
+      _e_fileman_dbus_daemon_open_directory_cb, 0 },
    { "OpenFile", ELDBUS_ARGS({"s", "file"}), NULL,
-      _e_fileman_dbus_daemon_open_file_cb },
-   { }
+      _e_fileman_dbus_daemon_open_file_cb, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
 };
 
 static const Eldbus_Service_Interface_Desc desc = {
-   E_FILEMAN_INTERFACE, methods
+   E_FILEMAN_INTERFACE, methods, NULL, NULL, NULL, NULL
 };
 
 static void
