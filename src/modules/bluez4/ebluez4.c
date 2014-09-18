@@ -14,7 +14,7 @@ Service services[] = {
    { HumanInterfaceDevice_UUID, INPUT },
    { AudioSource_UUID, AUDIO_SOURCE },
    { AudioSink_UUID, AUDIO_SINK },
-   { }
+   { NULL, NONE }
 };
 
 static int
@@ -52,7 +52,7 @@ static struct icon_type
    { "network-wireless", "Wireless" },
    { "phone", "Phone" },
    { "printer", "Printer" },
-   { }
+   { NULL, NULL }
 };
 
 static const char *
