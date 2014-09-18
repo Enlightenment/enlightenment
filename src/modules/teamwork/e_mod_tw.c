@@ -85,7 +85,7 @@ static const Eldbus_Signal tw_signals[] =
    [TEAMWORK_SIGNAL_LINK_PROGRESS] = {"LinkProgress", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"d", "Percent Completion"}), 0},
    [TEAMWORK_SIGNAL_LINK_COMPLETE] = {"LinkComplete", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}), 0},
    [TEAMWORK_SIGNAL_LINK_INVALID] = {"LinkInvalid", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}), 0},
-   {}
+   {NULL, NULL, 0}
 };
 
 static void tw_show(Media *i);
@@ -505,18 +505,18 @@ dbus_link_open_cb(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
 
 
 static const Eldbus_Method tw_methods[] = {
-   { "LinkDetect", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}), NULL, dbus_link_detect_cb },
-   { "LinkMouseIn", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"t", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_in_cb },
-   { "LinkMouseOut", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"t", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_out_cb },
-   { "LinkShow", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_show_cb },
-   { "LinkHide", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_hide_cb },
-   { "LinkOpen", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_open_cb },
-   { }
+   { "LinkDetect", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}), NULL, dbus_link_detect_cb, 0 },
+   { "LinkMouseIn", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"t", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_in_cb, 0 },
+   { "LinkMouseOut", ELDBUS_ARGS({"s", "URI"}, {"u", "Timestamp"}, {"t", "Window ID"}, {"i", "X Coordinate"}, {"i", "Y Coordinate"}), NULL, dbus_link_mouse_out_cb, 0 },
+   { "LinkShow", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_show_cb, 0 },
+   { "LinkHide", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_hide_cb, 0 },
+   { "LinkOpen", ELDBUS_ARGS({"s", "URI"}), NULL, dbus_link_open_cb, 0 },
+   { NULL, NULL, NULL, NULL, 0 }
 };
 
 static const Eldbus_Service_Interface_Desc tw_desc =
 {
-   "org.enlightenment.wm.Teamwork", tw_methods, tw_signals
+   "org.enlightenment.wm.Teamwork", tw_methods, tw_signals, NULL, NULL, NULL
 };
 
 static Eet_Data_Descriptor *
