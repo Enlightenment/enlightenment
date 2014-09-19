@@ -177,6 +177,7 @@ _e_client_cb_desk_window_profile_change(void *data EINA_UNUSED, int type EINA_UN
    return ECORE_CALLBACK_RENEW;
 }
 
+#ifndef HAVE_WAYLAND_ONLY
 static void
 _e_client_cb_drag_finished(E_Drag *drag, int dropped EINA_UNUSED)
 {
@@ -186,6 +187,7 @@ _e_client_cb_drag_finished(E_Drag *drag, int dropped EINA_UNUSED)
    e_object_unref(E_OBJECT(ec));
    client_drag = NULL;
 }
+#endif
 
 static void
 _e_client_desk_window_profile_wait_desk_delfn(void *data, void *obj)
