@@ -1006,7 +1006,7 @@ tw_show(Media *i)
    if (i->video)
      {
         char buf[PATH_MAX];
-        const char *tmp;
+        Eina_Tmpstr *tmpfile;
 
         if (tw_config->disable_video) return;
         while (i->tmpfile)
@@ -1033,9 +1033,7 @@ tw_show(Media *i)
              tw_show_video(prev, tw_tmpfile);
              return;
           }
-        tmp = getenv("XDG_RUNTIME_DIR");
-        if (!tmp) tmp = "/tmp";
-        snprintf(buf, sizeof(buf), "%s/teamwork-%s-XXXXXX", tmp, ecore_file_file_get(i->addr));
+        snprintf(buf, sizeof(buf), "teamwork-%s-XXXXXX", ecore_file_file_get(i->addr));
         if (tw_tmpfile)
           {
              if (tw_tmpthread)
@@ -1046,14 +1044,15 @@ tw_show(Media *i)
                }
              close(tw_tmpfd);
           }
-        tw_tmpfd = mkstemp(buf);
-        eina_stringshare_replace(&tw_tmpfile, buf);
+        tw_tmpfd = eina_file_mkstemp(buf, &tmpfile);
+        eina_stringshare_replace(&tw_tmpfile, tmpfile);
         if (tw_tmpfd < 0)
           {
              ERR("ERROR: %s", strerror(errno));
              download_media_cleanup();
              eina_stringshare_replace(&tw_tmpfile, NULL);
              tw_tmpthread_media = NULL;
+             eina_tmpstr_del(tmpfile);
              return;
           }
         tw_tmpthread_media = i;
