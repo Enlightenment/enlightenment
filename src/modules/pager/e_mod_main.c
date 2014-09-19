@@ -1149,7 +1149,7 @@ _pager_window_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __U
 
    dx = pw->drag.x - ev->cur.output.x;
    dy = pw->drag.y - ev->cur.output.y;
-   if ((pw->desk) && (pw->desk->pager))
+   if (pw->desk->pager)
      resist = pager_config->drag_resist;
 
    if (((unsigned int)(dx * dx) + (unsigned int)(dy * dy)) <=
