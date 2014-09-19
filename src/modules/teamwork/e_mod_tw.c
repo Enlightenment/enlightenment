@@ -890,7 +890,6 @@ tw_video_opened_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    ratio = emotion_object_ratio_get(obj);
    if (ratio > 0.0) iw = (ih * ratio) + 0.5;
    if (iw < 1) iw = 1;
-   if (ih < 1) ih = 1;
 
    h = (w * ih) / iw;
    e_livethumb_thumb_set(data, obj);
