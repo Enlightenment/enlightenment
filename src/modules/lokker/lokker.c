@@ -658,7 +658,7 @@ _lokker_check_auth(void)
      }
    else if (e_desklock_is_personal())
      {
-        if ((e_config->desklock_passwd) && (edd->passwd && edd->passwd[0]) &&
+        if ((e_config->desklock_passwd) && edd->passwd[0] &&
             (e_config->desklock_passwd == e_auth_hash_djb2(edd->passwd, strlen(edd->passwd))))
           {
              /* password ok */
