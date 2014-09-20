@@ -2,11 +2,12 @@
 # This file is put in the public domain.
 # Jani Väyrynen <janivayrynen@gmail.com>, 2008.
 # Jussi Aalto <jta_lnx@dnainternet.net>, 2009.
+#: src/modules/lokker/lokker.c:341
 msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment (e17) CVS\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-07 16:09+0300\n"
+"POT-Creation-Date: 2014-09-21 00:23+0900\n"
 "PO-Revision-Date: 2014-09-05 13:18+0000\n"
 "Last-Translator: Kai Huuhko <kai.huuhko@gmail.com>\n"
 "Language-Team: Finnish <fi@li.org>\n"
@@ -109,7 +110,7 @@ msgstr "Kirjaudu ulos"
 msgid "Are you sure you want to logout?"
 msgstr "Haluatko varmasti kirjautua ulos?"
 
-#: src/bin/e_actions.c:2232 src/bin/e_sys.c:971
+#: src/bin/e_actions.c:2232 src/bin/e_sys.c:977
 msgid "Power off"
 msgstr "Sammuta"
 
@@ -813,46 +814,46 @@ msgstr "Valitse"
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: src/bin/e_comp.c:1016 src/bin/e_comp.c:1022 src/bin/e_comp.c:1028
+#: src/bin/e_comp.c:1020 src/bin/e_comp.c:1026 src/bin/e_comp.c:1032
 #: src/bin/e_configure.c:33
 msgid "Compositor"
 msgstr "Koostaja"
 
-#: src/bin/e_comp.c:1017
+#: src/bin/e_comp.c:1021
 msgid "Change current window opacity"
 msgstr "Vaihda nykyisen ikkunan läpinäkyvyyttä"
 
-#: src/bin/e_comp.c:1023
+#: src/bin/e_comp.c:1027
 msgid "Set current window opacity"
 msgstr "Aseta nykyisen ikkunan läpinäkyvyys"
 
-#: src/bin/e_comp.c:1029
+#: src/bin/e_comp.c:1033
 msgid "Toggle focused client's redirect state"
 msgstr ""
 
-#: src/bin/e_comp.c:1114 src/modules/bluez4/e_mod_main.c:202
+#: src/bin/e_comp.c:1118 src/modules/bluez4/e_mod_main.c:202
 msgid "Visible"
 msgstr "Näkyvä"
 
-#: src/bin/e_comp.c:1119
+#: src/bin/e_comp.c:1123
 msgid "Focus-Out"
 msgstr "Kohdistamattomaksi"
 
-#: src/bin/e_comp.c:1124
+#: src/bin/e_comp.c:1128
 msgid "Focus-In"
 msgstr "Kohdistetuksi"
 
-#: src/bin/e_comp.c:1129 src/bin/e_int_client_prop.c:514
+#: src/bin/e_comp.c:1133 src/bin/e_int_client_prop.c:514
 msgid "Hidden"
 msgstr "Piilotettu"
 
-#: src/bin/e_comp.c:1236 src/bin/e_int_client_prop.c:448
+#: src/bin/e_comp.c:1240 src/bin/e_int_client_prop.c:448
 #: src/bin/e_int_client_remember.c:700 src/bin/e_int_config_comp_match.c:350
 #: src/modules/wizard/page_050.c:96
 msgid "Title"
 msgstr "Otsikko"
 
-#: src/bin/e_comp.c:1283
+#: src/bin/e_comp.c:1287
 #, c-format
 msgid "Compositor %u"
 msgstr "Koostaja %u"
@@ -874,11 +875,11 @@ msgstr ""
 "näytönohjaimen joka tukee OpenGL 2.0 (tai OpenGL ES 2.0)<br>standardeja "
 "käyttääksesi OpenGL:ää varjostukseen."
 
-#: src/bin/e_comp_x.c:4885
+#: src/bin/e_comp_x.c:4883
 msgid "Lock Failed"
 msgstr "Lukitseminen epäonnistui"
 
-#: src/bin/e_comp_x.c:4886
+#: src/bin/e_comp_x.c:4884
 msgid ""
 "Locking the desktop failed because some application<br>has grabbed either "
 "the keyboard or the mouse or both<br>and their grab is unable to be broken."
@@ -886,15 +887,15 @@ msgstr ""
 "Työpöydän lukitseminen epäonnistui, koska jokin sovellus<br>on kaapannut "
 "joko näppäimistön, hiiren tai molemmat<br>ja kaappausta on mahdoton rikkoa."
 
-#: src/bin/e_comp_x.c:4902 src/bin/e_comp_x.c:4923
+#: src/bin/e_comp_x.c:4900 src/bin/e_comp_x.c:4921
 msgid "Compositor Error"
 msgstr "Koostajavirhe"
 
-#: src/bin/e_comp_x.c:4903
+#: src/bin/e_comp_x.c:4901
 msgid "Another compositor is already running<br>on your display server."
 msgstr "Toinen koostaja on jo käynnissä<br>näyttöpalvelimellasi."
 
-#: src/bin/e_comp_x.c:4924
+#: src/bin/e_comp_x.c:4922
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
@@ -902,11 +903,11 @@ msgstr ""
 "Näyttöpalvelimesi ei tue<br>koostimen päällysikkunaa. Tämä "
 "tarvitaan<br>koostimen toimintaan."
 
-#: src/bin/e_comp_x.c:5115
+#: src/bin/e_comp_x.c:5113
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment ei voi alustaa Ecore_X:ää!\n"
 
-#: src/bin/e_comp_x.c:5126
+#: src/bin/e_comp_x.c:5124
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -916,18 +917,18 @@ msgstr ""
 "ilman XComposite-tukea. Huomaa että koostamiseen tarvitaan myös XRender ja "
 "XFixes tuki X11:ssä ja ECoressa."
 
-#: src/bin/e_comp_x.c:5135
+#: src/bin/e_comp_x.c:5133
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
 msgstr ""
 "Näyttöpalvelimesi ei tue XDamagea tai Ecore käännettiin ilman XDamage-tukea."
 
-#: src/bin/e_comp_x.c:5242
+#: src/bin/e_comp_x.c:5240
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment ei voi alustaa XSettings-järjestelmää.\n"
 
-#: src/bin/e_config.c:970 src/bin/e_randr.c:224
+#: src/bin/e_config.c:971 src/bin/e_randr.c:224
 msgid ""
 "Settings data needed upgrading. Your old settings have<br>been wiped and a "
 "new set of defaults initialized. This<br>will happen regularly during "
@@ -945,7 +946,7 @@ msgstr ""
 "korjaavat tämän lisäämällä nämä uudet<br>ominaisuudet. Voit tehdä haluamasi "
 "asetukset uudelleen.<br>Olemme pahoillamme häiriöstä.<br>"
 
-#: src/bin/e_config.c:987 src/bin/e_randr.c:239
+#: src/bin/e_config.c:988 src/bin/e_randr.c:239
 msgid ""
 "Your settings are NEWER than Enlightenment. This is very<br>strange. This "
 "should not happen unless you downgraded<br>Enlightenment or copied the "
@@ -959,18 +960,18 @@ msgstr ""
 "versio Enlightenmentista. Tämä on<br>huono asia, ja varokeinona asetuksesi "
 "on nyt palautettu<br> oletusasetuksiin. Olemme pahoillamme häiriöstä.<br>"
 
-#: src/bin/e_config.c:1103
+#: src/bin/e_config.c:1104
 msgid ""
 "Your bindings settings version does not match the current settings version."
 "<br>As a result, all bindings have been reloaded from defaults.<br>Sorry for "
 "the inconvenience.<br>"
 msgstr ""
 
-#: src/bin/e_config.c:1751 src/bin/e_config.c:2394
+#: src/bin/e_config.c:1752 src/bin/e_config.c:2396
 msgid "Enlightenment Settings Write Problems"
 msgstr "Ongelmia Enlightenmentin asetusten kirjoituksessa"
 
-#: src/bin/e_config.c:1754
+#: src/bin/e_config.c:1755
 #, c-format
 msgid ""
 "Enlightenment has had an error while moving config files<br>from:<br>"
@@ -978,14 +979,14 @@ msgid ""
 "<br>"
 msgstr ""
 
-#: src/bin/e_config.c:1764 src/bin/e_config.c:2407
+#: src/bin/e_config.c:1765 src/bin/e_config.c:2409
 #: src/bin/e_config_dialog.c:278 src/bin/e_desktop_editor.c:889
 #: src/bin/e_desktop_editor.c:952 src/bin/e_entry_dialog.c:63
 #: src/bin/e_exec.c:767 src/bin/e_fm.c:10094 src/bin/e_fm.c:10855
 #: src/bin/e_fm_prop.c:624 src/bin/e_import_config_dialog.c:541
 #: src/bin/e_int_client_remember.c:353 src/bin/e_int_client_remember.c:550
 #: src/bin/e_int_config_comp_match.c:536 src/bin/e_module.c:620
-#: src/bin/e_module.c:1033 src/bin/e_sys.c:847 src/bin/e_sys.c:888
+#: src/bin/e_module.c:1033 src/bin/e_sys.c:853 src/bin/e_sys.c:894
 #: src/bin/e_update.c:70 src/bin/e_utils.c:470 src/modules/bluez4/agent.c:69
 #: src/modules/bluez4/agent.c:138 src/modules/bluez4/agent.c:151
 #: src/modules/conf_bindings/e_int_config_signalbindings.c:622
@@ -998,19 +999,19 @@ msgstr ""
 msgid "OK"
 msgstr "OK"
 
-#: src/bin/e_config.c:2286
+#: src/bin/e_config.c:2288
 msgid "Settings Upgraded"
 msgstr "Asetukset päivitetty"
 
-#: src/bin/e_config.c:2304
+#: src/bin/e_config.c:2306
 msgid "The EET file handle is bad."
 msgstr "EET-tiedostokahva on virheellinen"
 
-#: src/bin/e_config.c:2308
+#: src/bin/e_config.c:2310
 msgid "The file data is empty."
 msgstr "Tiedoston data on tyhjä"
 
-#: src/bin/e_config.c:2312
+#: src/bin/e_config.c:2314
 msgid ""
 "The file is not writable. Perhaps the disk is read-only<br>or you lost "
 "permissions to your files."
@@ -1018,17 +1019,17 @@ msgstr ""
 "Tiedostoon ei voida kirjoittaa. Levy on mahdollisesti vain-luku<br>tilassa "
 "tai olet menettänyt käyttöoikeuden tiedostoihin."
 
-#: src/bin/e_config.c:2316
+#: src/bin/e_config.c:2318
 msgid "Memory ran out while preparing the write.<br>Please free up memory."
 msgstr ""
 "Muisti loppui kesken valmistellessa kirjoittamista.<br>Ole hyvä ja vapauta "
 "muistia."
 
-#: src/bin/e_config.c:2320
+#: src/bin/e_config.c:2322
 msgid "This is a generic error."
 msgstr "Tämä on vakiovirhe."
 
-#: src/bin/e_config.c:2324
+#: src/bin/e_config.c:2326
 msgid ""
 "The settings file is too large.<br>It should be very small (a few hundred KB "
 "at most)."
@@ -1036,59 +1037,59 @@ msgstr ""
 "Asetustiedosto on liian suuri.<br>Sen tulisi olla hyvin pieni (korkeintaan "
 "muutama sata kilotavua)."
 
-#: src/bin/e_config.c:2328
+#: src/bin/e_config.c:2330
 msgid "You have I/O errors on the disk.<br>Maybe it needs replacing?"
 msgstr "Levylläsi on I/O-virheitä.<br>Kenties se pitäisi korvata uudella?"
 
-#: src/bin/e_config.c:2332
+#: src/bin/e_config.c:2334
 msgid "You ran out of space while writing the file."
 msgstr "Tila loppui kesken kirjoitettaessa tiedostoa."
 
-#: src/bin/e_config.c:2336
+#: src/bin/e_config.c:2338
 msgid "The file was closed while writing."
 msgstr "Tiedosto suljettiin kesken kirjoitusta."
 
-#: src/bin/e_config.c:2340
+#: src/bin/e_config.c:2342
 msgid "Memory-mapping (mmap) of the file failed."
 msgstr "Tiedoston muistikartoitus (mmap) epäonnistui."
 
-#: src/bin/e_config.c:2344
+#: src/bin/e_config.c:2346
 msgid "X509 Encoding failed."
 msgstr "X509-koodaus epäonnistui."
 
-#: src/bin/e_config.c:2348
+#: src/bin/e_config.c:2350
 msgid "Signature failed."
 msgstr "Allekirjoitus epäonnistui."
 
-#: src/bin/e_config.c:2352
+#: src/bin/e_config.c:2354
 msgid "The signature was invalid."
 msgstr "Allekirjoitus virheellinen."
 
-#: src/bin/e_config.c:2356
+#: src/bin/e_config.c:2358
 msgid "Not signed."
 msgstr "Ei allekirjoitettu."
 
-#: src/bin/e_config.c:2360
+#: src/bin/e_config.c:2362
 msgid "Feature not implemented."
 msgstr "Ominaisuutta ei ole toteutettu."
 
-#: src/bin/e_config.c:2364
+#: src/bin/e_config.c:2366
 msgid "PRNG was not seeded."
 msgstr "Satunnaislukugeneraattoria ei siemennetty."
 
-#: src/bin/e_config.c:2368
+#: src/bin/e_config.c:2370
 msgid "Encryption failed."
 msgstr "Salaus epäonnistui."
 
-#: src/bin/e_config.c:2372
+#: src/bin/e_config.c:2374
 msgid "Decryption failed."
 msgstr "Salauksen purku epäonnistui."
 
-#: src/bin/e_config.c:2376
+#: src/bin/e_config.c:2378
 msgid "The error is unknown to Enlightenment."
 msgstr "Enlightenment ei tunne tätä virhettä."
 
-#: src/bin/e_config.c:2397
+#: src/bin/e_config.c:2399
 #, c-format
 msgid ""
 "Enlightenment has had an error while writing<br>its config file.<br>"
@@ -1115,7 +1116,7 @@ msgstr "Käytä"
 
 #: src/bin/e_configure.c:29 src/modules/conf_shelves/e_mod_main.c:21
 #: src/modules/connman/e_mod_main.c:604 src/modules/gadman/e_mod_main.c:23
-#: src/modules/mixer/e_mod_main.c:1188
+#: src/modules/mixer/e_mod_main.c:1200
 #: src/modules/notification/e_mod_main.c:151
 msgid "Extensions"
 msgstr "Lisäosat"
@@ -2600,7 +2601,7 @@ msgstr "Vaadi sijaintia"
 #: src/modules/everything/evry_plug_settings.c:183
 #: src/modules/ibar/e_mod_main.c:485 src/modules/ibar/e_mod_main.c:1597
 #: src/modules/ibox/e_mod_main.c:356 src/modules/ibox/e_mod_main.c:737
-#: src/modules/mixer/e_mod_main.c:660 src/modules/music-control/ui.c:277
+#: src/modules/mixer/e_mod_main.c:672 src/modules/music-control/ui.c:277
 #: src/modules/packagekit/e_mod_main.c:48 src/modules/pager/e_mod_main.c:855
 #: src/modules/pager_plain/e_mod_main.c:870
 #: src/modules/systray/e_mod_main.c:123 src/modules/tasks/e_mod_main.c:751
@@ -2691,6 +2692,7 @@ msgid "Size, Position and Locks"
 msgstr "Koko, sijainti ja lukot"
 
 #: src/bin/e_int_client_remember.c:658 src/modules/conf/e_mod_main.c:252
+#: src/modules/conf_applications/e_int_config_deskenv.c:160
 #: src/modules/everything/evry_gadget.c:621
 #: src/modules/everything/evry_plug_aggregator.c:313
 #: src/modules/everything/evry_view.c:1618 src/modules/shot/e_mod_main.c:792
@@ -3591,7 +3593,7 @@ msgstr "Enlightenment ei voi perustaa asetusjärjestelmäänsä.\n"
 msgid "Enlightenment cannot set up its environment.\n"
 msgstr "Enlightenment ei voi asettaa ympäristöään.\n"
 
-#: src/bin/e_main.c:537
+#: src/bin/e_main.c:538
 msgid ""
 "Enlightenment cannot set up paths for finding files.\n"
 "Perhaps you are out of memory?"
@@ -3599,54 +3601,54 @@ msgstr ""
 "Enlightenment ei voi asettaa reittejä tiedostojen löytämiselle.\n"
 "Ehkäpä muisti on lopussa?"
 
-#: src/bin/e_main.c:554
+#: src/bin/e_main.c:555
 msgid "Enlightenment cannot set up its font system.\n"
 msgstr "Enlightenment ei voi perustaa fonttijärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:571
+#: src/bin/e_main.c:572
 msgid "Enlightenment cannot set up its theme system.\n"
 msgstr "Enlightenment ei voi perustaa teemajärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:583
+#: src/bin/e_main.c:584
 msgid "Setup Message Bus"
 msgstr "Aseta viestiväylä"
 
-#: src/bin/e_main.c:592
+#: src/bin/e_main.c:593
 msgid ""
 "Enlightenment cannot initialize the FDO desktop system.\n"
 "Perhaps you lack permissions on ~/.cache/efreet or are\n"
 "out of memory or disk space?"
 msgstr ""
 
-#: src/bin/e_main.c:601
+#: src/bin/e_main.c:602
 msgid "Starting International Support"
 msgstr "Käynnistetään kansainvälisyyden tuki"
 
-#: src/bin/e_main.c:605
+#: src/bin/e_main.c:606
 msgid "Enlightenment cannot set up its intl system.\n"
 msgstr "Enlightenment ei voi perustaa kansainvälistämisjärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:614
+#: src/bin/e_main.c:615
 msgid "Setup Actions"
 msgstr "Aseta toiminnot"
 
-#: src/bin/e_main.c:618
+#: src/bin/e_main.c:619
 msgid "Enlightenment cannot set up its actions system.\n"
 msgstr "Enlightenment ei voi asettaa toimintojärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:633
+#: src/bin/e_main.c:634
 msgid "Setup Screensaver"
 msgstr "Aseta näytönsäästäjä"
 
-#: src/bin/e_main.c:637
+#: src/bin/e_main.c:638
 msgid "Enlightenment cannot configure the X screensaver.\n"
 msgstr "Enlightenment ei voi asettaa X-näytönsäästäjää.\n"
 
-#: src/bin/e_main.c:644
+#: src/bin/e_main.c:645
 msgid "Setup Screens"
 msgstr "Aseta näytöt"
 
-#: src/bin/e_main.c:648
+#: src/bin/e_main.c:649
 msgid ""
 "Enlightenment set up window management for all the screens on your system\n"
 "failed. Perhaps another window manager is running?\n"
@@ -3654,209 +3656,209 @@ msgstr ""
 "Enlightenment asettama ikkunanhallinta kaikille järjestelmäsi näytöille\n"
 "epäonnistui. Ehkäpä toinen ikkunamanageri on käynnissä?\n"
 
-#: src/bin/e_main.c:659
+#: src/bin/e_main.c:660
 msgid "Enlightenment cannot set up its pointer system.\n"
 msgstr "Enlightenment ei voi asettaa osoitinjärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:669
+#: src/bin/e_main.c:670
 msgid "Enlightenment cannot set up its scale system.\n"
 msgstr "Enlightenment ei voi asettaa skaalausjärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:680
+#: src/bin/e_main.c:681
 msgid "Enlightenment cannot set up its init screen.\n"
 msgstr "Enlightenment ei voi asettaa käynnistysnäyttöään.\n"
 
-#: src/bin/e_main.c:704
+#: src/bin/e_main.c:705
 msgid "Setup ACPI"
 msgstr "Aseta ACPI"
 
-#: src/bin/e_main.c:711
+#: src/bin/e_main.c:712
 msgid "Setup Backlight"
 msgstr "Aseta taustavalo"
 
-#: src/bin/e_main.c:715
+#: src/bin/e_main.c:716
 msgid "Enlightenment cannot configure the backlight.\n"
 msgstr "Enlightenment ei voi asettaa taustavaloa.\n"
 
-#: src/bin/e_main.c:721
+#: src/bin/e_main.c:722
 msgid "Setup DPMS"
 msgstr "Aseta DPMS"
 
-#: src/bin/e_main.c:725
+#: src/bin/e_main.c:726
 msgid "Enlightenment cannot configure the DPMS settings.\n"
 msgstr "Enlightenment ei voi asettaa DPMS-asetuksia.\n"
 
-#: src/bin/e_main.c:732
+#: src/bin/e_main.c:733
 msgid "Setup Powersave Modes"
 msgstr "Aseta virransäästötilat"
 
-#: src/bin/e_main.c:736
+#: src/bin/e_main.c:737
 msgid "Enlightenment cannot set up its powersave modes.\n"
 msgstr "Enlightenment ei voi asettaa virransäästötilojaan.\n"
 
-#: src/bin/e_main.c:743
+#: src/bin/e_main.c:744
 msgid "Setup Desklock"
 msgstr "Aseta työpöydän lukko"
 
-#: src/bin/e_main.c:747
+#: src/bin/e_main.c:748
 msgid "Enlightenment cannot set up its desk locking system.\n"
 msgstr "Enlightenment ei voi perustaa työpöytälukitusjärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:757
+#: src/bin/e_main.c:758
 msgid "Setup Paths"
 msgstr "Aseta polut"
 
-#: src/bin/e_main.c:763
+#: src/bin/e_main.c:764
 msgid "Setup System Controls"
 msgstr "Aseta järjestelmän kontrollit"
 
-#: src/bin/e_main.c:767
+#: src/bin/e_main.c:768
 msgid "Enlightenment cannot initialize the System Command system.\n"
 msgstr "Enlightenment ei voi käynnistää järjestelmäkomentojärjestelmää.\n"
 
-#: src/bin/e_main.c:774
+#: src/bin/e_main.c:775
 msgid "Setup Execution System"
 msgstr "Aseta suoritusjärjestelmä"
 
-#: src/bin/e_main.c:778
+#: src/bin/e_main.c:779
 msgid "Enlightenment cannot set up its exec system.\n"
 msgstr "Enlightenment ei voi perustaa komentosuoritusjärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:788
+#: src/bin/e_main.c:789
 msgid "Setup Filemanager"
 msgstr "Aseta tiedostonhallinta"
 
-#: src/bin/e_main.c:792
+#: src/bin/e_main.c:793
 msgid "Enlightenment cannot initialize the File manager.\n"
 msgstr "Enlightenment ei voi aloittaa tiedostonhallintaa.\n"
 
-#: src/bin/e_main.c:799
+#: src/bin/e_main.c:800
 msgid "Setup Message System"
 msgstr "Aseta viestijärjestelmä"
 
-#: src/bin/e_main.c:803
+#: src/bin/e_main.c:804
 msgid "Enlightenment cannot set up its msg system.\n"
 msgstr "Enlightenment ei voi perustaa viestijärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:810
+#: src/bin/e_main.c:811
 msgid "Setup Grab Input Handling"
 msgstr "Aseta syötteenkaappauksen hallintajärjestelmä"
 
-#: src/bin/e_main.c:814
+#: src/bin/e_main.c:815
 msgid "Enlightenment cannot set up its grab input handling system.\n"
 msgstr ""
 "Enlightenment ei voi perustaa syöttölaitteiden kaappauksen "
 "käsittelyjärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:821
+#: src/bin/e_main.c:822
 msgid "Setup Modules"
 msgstr "Aseta moduulit"
 
-#: src/bin/e_main.c:825 src/bin/e_main.c:998
+#: src/bin/e_main.c:826 src/bin/e_main.c:999
 msgid "Enlightenment cannot set up its module system.\n"
 msgstr "Enlightenment ei voi perustaa moduulijärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:832
+#: src/bin/e_main.c:833
 msgid "Setup Remembers"
 msgstr "Aseta muistamiset"
 
-#: src/bin/e_main.c:836
+#: src/bin/e_main.c:837
 msgid "Enlightenment cannot setup remember settings.\n"
 msgstr "Enlightenment ei voi alustaa muistit-asetuksiaan.\n"
 
-#: src/bin/e_main.c:843
+#: src/bin/e_main.c:844
 msgid "Setup Color Classes"
 msgstr "Aseta väriluokat"
 
-#: src/bin/e_main.c:847
+#: src/bin/e_main.c:848
 msgid "Enlightenment cannot set up its color class system.\n"
 msgstr "Enlightenment ei voi perustaa väriluokkajärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:854
+#: src/bin/e_main.c:855
 msgid "Setup Gadcon"
 msgstr "Aseta vempaimenhallinta (Gadcon)"
 
-#: src/bin/e_main.c:858
+#: src/bin/e_main.c:859
 msgid "Enlightenment cannot set up its gadget control system.\n"
 msgstr "Enlightenment ei voi perustaa vempainten ohjausjärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:865
+#: src/bin/e_main.c:866
 msgid "Setup Toolbars"
 msgstr "Aseta työkalupalkit"
 
-#: src/bin/e_main.c:869
+#: src/bin/e_main.c:870
 msgid "Enlightenment cannot set up its toolbars.\n"
 msgstr "Enlightenment ei voi perustaa työkalupalkkejaan.\n"
 
-#: src/bin/e_main.c:876
+#: src/bin/e_main.c:877
 msgid "Setup Wallpaper"
 msgstr "Aseta taustakuva"
 
-#: src/bin/e_main.c:880
+#: src/bin/e_main.c:881
 msgid "Enlightenment cannot set up its desktop background system.\n"
 msgstr "Enlightenment ei voi perustaa työpöydän taustakuvajärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:887
+#: src/bin/e_main.c:888
 msgid "Setup Mouse"
 msgstr "Aseta hiiri"
 
-#: src/bin/e_main.c:891
+#: src/bin/e_main.c:892
 msgid "Enlightenment cannot configure the mouse settings.\n"
 msgstr "Enlightenment ei voi asettaa hiiriasetuksia.\n"
 
-#: src/bin/e_main.c:897
+#: src/bin/e_main.c:898
 msgid "Setup Bindings"
 msgstr "Aseta toimintosidokset"
 
-#: src/bin/e_main.c:901
+#: src/bin/e_main.c:902
 msgid "Enlightenment cannot set up its bindings system.\n"
 msgstr "Enlightenment ei voi perustaa toimintosidosjärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:908
+#: src/bin/e_main.c:909
 msgid "Setup Thumbnailer"
 msgstr "Asetetaan pikkukuvien tekijä"
 
-#: src/bin/e_main.c:912
+#: src/bin/e_main.c:913
 msgid "Enlightenment cannot initialize the Thumbnailing system.\n"
 msgstr "Enlightenment ei voi käynnistää pikkukuvajärjestelmäänsä.\n"
 
-#: src/bin/e_main.c:921
+#: src/bin/e_main.c:922
 msgid "Enlightenment cannot initialize the Icon Cache system.\n"
 msgstr "Enlightenment ei voi alustaa ikonien välimuistijärjestelmää.\n"
 
-#: src/bin/e_main.c:930
+#: src/bin/e_main.c:931
 msgid "Enlightenment cannot initialize the Update system.\n"
 msgstr "Enlightenment ei voi alustaa päivitysjärjestelmää.\n"
 
-#: src/bin/e_main.c:937
+#: src/bin/e_main.c:938
 msgid "Setup Desktop Environment"
 msgstr "Aseta työpöytäympäristö"
 
-#: src/bin/e_main.c:941
+#: src/bin/e_main.c:942
 msgid "Enlightenment cannot initialize its desktop environment.\n"
 msgstr "Enlightenment ei voi alustaa työpöytäympäristöään.\n"
 
-#: src/bin/e_main.c:948
+#: src/bin/e_main.c:949
 msgid "Setup File Ordering"
 msgstr "Aseta tiedostojärjestys"
 
-#: src/bin/e_main.c:952
+#: src/bin/e_main.c:953
 msgid "Enlightenment cannot set up its order file system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:967
+#: src/bin/e_main.c:968
 msgid "Load Modules"
 msgstr "Lataa moduulit"
 
-#: src/bin/e_main.c:994
+#: src/bin/e_main.c:995
 msgid "Setup Shelves"
 msgstr "Aseta hyllyt"
 
-#: src/bin/e_main.c:1008
+#: src/bin/e_main.c:1009
 msgid "Almost Done"
 msgstr "Melkein valmis"
 
-#: src/bin/e_main.c:1157
+#: src/bin/e_main.c:1158
 #, c-format
 msgid ""
 "Options:\n"
@@ -3909,7 +3911,7 @@ msgstr ""
 "\t-i-really-know-what-i-am-doing-and-accept-full-responsibility-for-it\n"
 "\t\tJos tarvitset tätä ohjetta, et tarvitse tätä valitsinta.\n"
 
-#: src/bin/e_main.c:1210
+#: src/bin/e_main.c:1211
 msgid ""
 "You are executing enlightenment directly. This is\n"
 "bad. Please do not execute the \"enlightenment\"\n"
@@ -3926,11 +3928,11 @@ msgstr ""
 "ja käynnistää tarvittavat palvelut ym. ennen\n"
 "kuin enlightenment itse käynnistetään.\n"
 
-#: src/bin/e_main.c:1463
+#: src/bin/e_main.c:1464
 msgid "Testing Format Support"
 msgstr "Testataan formaattitukea"
 
-#: src/bin/e_main.c:1467
+#: src/bin/e_main.c:1468
 msgid ""
 "Enlightenment found Evas can't create a buffer canvas. Please check\n"
 "Evas has Software Buffer engine support.\n"
@@ -3939,31 +3941,31 @@ msgstr ""
 "Tarkistaisitko,\n"
 "että Evasilla on ohjelmistopohjainen puskurimoottorin tuki.\n"
 
-#: src/bin/e_main.c:1479
+#: src/bin/e_main.c:1480
 msgid ""
 "Enlightenment found Evas can't load SVG files. Check Evas has SVG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1489
+#: src/bin/e_main.c:1490
 msgid ""
 "Enlightenment found Evas can't load JPEG files. Check Evas has JPEG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1499
+#: src/bin/e_main.c:1500
 msgid ""
 "Enlightenment found Evas can't load PNG files. Check Evas has PNG loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1509
+#: src/bin/e_main.c:1510
 msgid ""
 "Enlightenment found Evas can't load EET files. Check Evas has EET loader "
 "support.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1523
+#: src/bin/e_main.c:1524
 msgid ""
 "Enlightenment found Evas can't load the 'Sans' font. Check Evas has "
 "fontconfig\n"
@@ -3974,23 +3976,23 @@ msgstr ""
 "sisältää fontconfig-tuen ja että järjestelmän fontconfig määrittelee \"Sans"
 "\"-fontin.\n"
 
-#: src/bin/e_main.c:1546
+#: src/bin/e_main.c:1547
 msgid "Enlightenment cannot setup XKB Keyboard layouts.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1555
+#: src/bin/e_main.c:1556
 msgid "Enlightenment cannot create a compositor.\n"
 msgstr "Enlightenment ei voi luoda koostajaa.\n"
 
-#: src/bin/e_main.c:1563
+#: src/bin/e_main.c:1564
 msgid "Setup DND"
 msgstr "Aseta Drag & Drop (DND)"
 
-#: src/bin/e_main.c:1567
+#: src/bin/e_main.c:1568
 msgid "Enlightenment cannot set up its dnd system.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1687
+#: src/bin/e_main.c:1688
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. There was an "
@@ -3998,12 +4000,12 @@ msgid ""
 "will not be loaded."
 msgstr ""
 
-#: src/bin/e_main.c:1692 src/bin/e_main.c:1708
+#: src/bin/e_main.c:1693 src/bin/e_main.c:1709
 msgid "Enlightenment crashed early on start and has been restarted"
 msgstr ""
 "Enlightenment kaatui varhaisessa vaiheessa ja on käynnistetty uudelleen."
 
-#: src/bin/e_main.c:1693
+#: src/bin/e_main.c:1694
 #, c-format
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>There was an "
@@ -4011,7 +4013,7 @@ msgid ""
 "will not be loaded."
 msgstr ""
 
-#: src/bin/e_main.c:1701
+#: src/bin/e_main.c:1702
 msgid ""
 "Enlightenment crashed early on start and has<br>been restarted. All modules "
 "have been disabled<br>and will not be loaded to help remove any "
@@ -4019,7 +4021,7 @@ msgid ""
 "dialog should let you select your<br>modules again.\n"
 msgstr ""
 
-#: src/bin/e_main.c:1709
+#: src/bin/e_main.c:1710
 msgid ""
 "Enlightenment crashed early on start and has been restarted.<br>All modules "
 "have been disabled and will not be loaded to help<br>remove any problem "
@@ -4254,16 +4256,16 @@ msgstr "Päivitys"
 msgid "Starting %s"
 msgstr "Käynnistetään %s"
 
-#: src/bin/e_sys.c:505
+#: src/bin/e_sys.c:511
 msgid "Checking System Permissions"
 msgstr "Tarkistetaan järjestelmän oikeuksia"
 
-#: src/bin/e_sys.c:551 src/bin/e_sys.c:562 src/bin/e_sys.c:571
-#: src/bin/e_sys.c:580
+#: src/bin/e_sys.c:557 src/bin/e_sys.c:568 src/bin/e_sys.c:577
+#: src/bin/e_sys.c:586
 msgid "System Check Done"
 msgstr "Järjestelmän tarkistus valmis"
 
-#: src/bin/e_sys.c:648
+#: src/bin/e_sys.c:654
 #, c-format
 msgid ""
 "Logout is taking too long.<br>Some applications refuse to close.<br>Do you "
@@ -4275,35 +4277,35 @@ msgstr ""
 "näitä sovelluksia ensin?<br><br>Automaattinen uloskirjautuminen %d sekunnin "
 "kuluttua."
 
-#: src/bin/e_sys.c:711
+#: src/bin/e_sys.c:717
 msgid "Logout problems"
 msgstr "Sisäänkirjautumisen ongelmat"
 
-#: src/bin/e_sys.c:713
+#: src/bin/e_sys.c:719
 msgid "Logout now"
 msgstr "Kirjaudu ulos nyt"
 
-#: src/bin/e_sys.c:715
+#: src/bin/e_sys.c:721
 msgid "Wait longer"
 msgstr "Odota pidempään"
 
-#: src/bin/e_sys.c:717
+#: src/bin/e_sys.c:723
 msgid "Cancel Logout"
 msgstr "Peruuta uloskirjautuminen"
 
-#: src/bin/e_sys.c:775
+#: src/bin/e_sys.c:781
 msgid "Logout in progress"
 msgstr "Uloskirjautuminen käynnissä"
 
-#: src/bin/e_sys.c:778
+#: src/bin/e_sys.c:784
 msgid "Logout in progress.<br><hilight>Please wait.</hilight>"
 msgstr "Uloskirjautuminen käynnissä.<br><hilight>Odota hetki.</hilight>"
 
-#: src/bin/e_sys.c:808 src/bin/e_sys.c:863
+#: src/bin/e_sys.c:814 src/bin/e_sys.c:869
 msgid "Enlightenment is busy with another request"
 msgstr "Enlightenment on kiireinen toisen vaatimuksen takia"
 
-#: src/bin/e_sys.c:813
+#: src/bin/e_sys.c:819
 msgid ""
 "Logging out.<br>You cannot perform other system actions<br>once a logout has "
 "begun."
@@ -4311,7 +4313,7 @@ msgstr ""
 "Kirjaudutaan ulos järjestelmästä.<br>Muita järjestelmätoimintoja ei voi "
 "suorittaa<br>kun uloskirjautuminen on alkanut."
 
-#: src/bin/e_sys.c:820
+#: src/bin/e_sys.c:826
 msgid ""
 "Powering off.<br>You cannot do any other system actions<br>once a shutdown "
 "has been started."
@@ -4319,7 +4321,7 @@ msgstr ""
 "Kone sammutetaan.<br>Mitään muita järjestelmätoimintoja ei voida suorittaa "
 "sammutusprosessin käynnistyttyä."
 
-#: src/bin/e_sys.c:826
+#: src/bin/e_sys.c:832
 msgid ""
 "Resetting.<br>You cannot do any other system actions<br>once a reboot has "
 "begun."
@@ -4327,7 +4329,7 @@ msgstr ""
 "Järjestelmä käynnistetään uudelleen.<br>Muita järjestelmätoimintoja ei voi "
 "suorittaa,<br>kun uudelleenkäynnistys on alkanut."
 
-#: src/bin/e_sys.c:832
+#: src/bin/e_sys.c:838
 msgid ""
 "Suspending.<br>Until suspend is complete you cannot perform<br>any other "
 "system actions."
@@ -4335,7 +4337,7 @@ msgstr ""
 "Asetutaan valmiustilaan.<br>Ennen valmiustilan loppuunsaattamista ei voi "
 "suorittaa<br>muita järjestelmätoimintoja."
 
-#: src/bin/e_sys.c:838
+#: src/bin/e_sys.c:844
 msgid ""
 "Hibernating.<br>You cannot perform any other system actions<br>until this is "
 "complete."
@@ -4343,35 +4345,35 @@ msgstr ""
 "Siirrytään horrostilaan.<br>Et voi suorittaa muita "
 "järjestelmätoimintoja<br>kunnes tämä on valmis."
 
-#: src/bin/e_sys.c:844 src/bin/e_sys.c:885
+#: src/bin/e_sys.c:850 src/bin/e_sys.c:891
 msgid "EEK! This should not happen"
 msgstr "IIK! Tätä ei pitäisi tapahtua"
 
-#: src/bin/e_sys.c:869
+#: src/bin/e_sys.c:875
 msgid "Power off failed."
 msgstr "Koneen sammutus epäonnistui."
 
-#: src/bin/e_sys.c:873
+#: src/bin/e_sys.c:879
 msgid "Reset failed."
 msgstr "Uudelleenkäynnistys epäonnistui."
 
-#: src/bin/e_sys.c:877
+#: src/bin/e_sys.c:883
 msgid "Suspend failed."
 msgstr "Valmiustilaan siirtyminen epäonnistui."
 
-#: src/bin/e_sys.c:881
+#: src/bin/e_sys.c:887
 msgid "Hibernate failed."
 msgstr "Lepotilaan siirtyminen epäonnistui."
 
-#: src/bin/e_sys.c:974
+#: src/bin/e_sys.c:980
 msgid "Power off.<br><hilight>Please wait.</hilight>"
 msgstr "Kone sammutetaan.<br><hilight>Odota hetki.</hilight>"
 
-#: src/bin/e_sys.c:1017
+#: src/bin/e_sys.c:1023
 msgid "Resetting"
 msgstr "Käynnistetään uudelleen"
 
-#: src/bin/e_sys.c:1020
+#: src/bin/e_sys.c:1026
 msgid "Resetting.<br><hilight>Please wait.</hilight>"
 msgstr "Kone käynnistetään uudelleen.<br><hilight>Odota hetki.</hilight>"
 
@@ -5185,42 +5187,47 @@ msgstr "Pääte"
 msgid "Selected Application"
 msgstr "Valittu sovellus"
 
-#: src/modules/conf_applications/e_int_config_deskenv.c:40
+#: src/modules/conf_applications/e_int_config_deskenv.c:43
 #: src/modules/conf_applications/e_mod_main.c:57
 msgid "Desktop Environments"
 msgstr "Työpöytäympäristöt"
 
-#: src/modules/conf_applications/e_int_config_deskenv.c:105
+#: src/modules/conf_applications/e_int_config_deskenv.c:134
 msgid "Execution"
 msgstr "Suoritus"
 
-#: src/modules/conf_applications/e_int_config_deskenv.c:106
+#: src/modules/conf_applications/e_int_config_deskenv.c:135
 msgid "Only launch single instances"
 msgstr "Käynnistä vain kertaalleen"
 
-#: src/modules/conf_applications/e_int_config_deskenv.c:111
+#: src/modules/conf_applications/e_int_config_deskenv.c:140
 msgid "X11 Basics"
 msgstr "X11 perusteet"
 
-#: src/modules/conf_applications/e_int_config_deskenv.c:112
+#: src/modules/conf_applications/e_int_config_deskenv.c:141
 msgid "Load X Resources"
 msgstr "Lataa X-resurssit"
 
-#: src/modules/conf_applications/e_int_config_deskenv.c:115
+#: src/modules/conf_applications/e_int_config_deskenv.c:144
 msgid "Load X Modifier Map"
 msgstr "Lataa X-muunnoskartta"
 
-#: src/modules/conf_applications/e_int_config_deskenv.c:120
+#: src/modules/conf_applications/e_int_config_deskenv.c:149
 msgid "Major Desktops"
 msgstr "Tunnetut työpöytäympäristöt"
 
-#: src/modules/conf_applications/e_int_config_deskenv.c:121
+#: src/modules/conf_applications/e_int_config_deskenv.c:150
 msgid "Start GNOME services on login"
 msgstr "Käynnistä GNOMEn palvelut sisäänkirjautuessa"
 
-#: src/modules/conf_applications/e_int_config_deskenv.c:124
+#: src/modules/conf_applications/e_int_config_deskenv.c:153
 msgid "Start KDE services on login"
 msgstr "Käynnistä KDEn palvelut sisäänkirjautuessa"
+
+#: src/modules/conf_applications/e_int_config_deskenv.c:158
+#, fuzzy
+msgid "Prefer applications from Desktop Environment"
+msgstr "Aseta työpöytäympäristö"
 
 #: src/modules/conf_applications/e_mod_main.c:21
 msgid "Create Application Launcher"
@@ -5344,7 +5351,7 @@ msgid "Vaio"
 msgstr "Vaio"
 
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:394
-#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:579
+#: src/modules/mixer/app_mixer.c:395 src/modules/mixer/e_mod_main.c:591
 msgid "Mute"
 msgstr "Vaimenna"
 
@@ -5763,7 +5770,7 @@ msgstr "Valintaikkunan asetukset"
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:109
 #: src/modules/conf_theme/e_int_config_fonts.c:681
 #: src/modules/everything/evry_config.c:517 src/modules/ibox/e_mod_config.c:97
-#: src/modules/mixer/conf_gadget.c:200 src/modules/mixer/conf_module.c:92
+#: src/modules/mixer/conf_gadget.c:200 src/modules/mixer/conf_module.c:101
 msgid "General Settings"
 msgstr "Yleisasetukset"
 
@@ -9058,11 +9065,15 @@ msgstr "Syötä PIN-koodisi"
 msgid "Please enter your unlock password"
 msgstr "Syötä lukituksen avaava salasanasi, kiitos"
 
-#: src/modules/lokker/lokker.c:545
+#: src/modules/lokker/lokker.c:338
+msgid "Caps Lock is On"
+msgstr ""
+
+#: src/modules/lokker/lokker.c:551
 msgid "Authentication System Error"
 msgstr "Todennusjärjestelmän virhe"
 
-#: src/modules/lokker/lokker.c:546
+#: src/modules/lokker/lokker.c:552
 #, c-format
 msgid ""
 "Authentication via PAM had errors setting up the<br>authentication session. "
@@ -9134,23 +9145,28 @@ msgstr "Äänikortit"
 msgid "Mixer Settings"
 msgstr "Mikserin asetukset"
 
-#: src/modules/mixer/conf_module.c:94
+#: src/modules/mixer/conf_module.c:103
 msgid "Mixer to use for global actions:"
 msgstr "Mikseri perustoiminnoille:"
 
-#: src/modules/mixer/conf_module.c:118
+#: src/modules/mixer/conf_module.c:127
 msgid "Display desktop notifications on volume change"
 msgstr "Näytä työpöytäilmoitus äänenvoimakkuuden muututtua"
 
-#: src/modules/mixer/conf_module.c:125
+#: src/modules/mixer/conf_module.c:134
 msgid "Disable PulseAudio"
 msgstr "Poista käytöstä PulseAudio"
 
-#: src/modules/mixer/conf_module.c:173
+#: src/modules/mixer/conf_module.c:138
+#, fuzzy
+msgid "Enable external Mixer Command"
+msgstr "Ulkoinen näytönlukituksen komento"
+
+#: src/modules/mixer/conf_module.c:196
 msgid "Launch mixer..."
 msgstr "Avaa mikseri..."
 
-#: src/modules/mixer/conf_module.c:208
+#: src/modules/mixer/conf_module.c:231
 msgid "Mixer Module Settings"
 msgstr "Mikserimoduulin asetukset"
 
@@ -9170,19 +9186,19 @@ msgstr "Äänenvoimakkuus muutettu"
 msgid "Mixer Settings Updated"
 msgstr "Mikseriasetukset päivitetty"
 
-#: src/modules/mixer/e_mod_main.c:1266
+#: src/modules/mixer/e_mod_main.c:1280
 msgid "Mixer Module"
 msgstr "Mikseri-moduuli"
 
-#: src/modules/mixer/e_mod_main.c:1295
+#: src/modules/mixer/e_mod_main.c:1314
 msgid "Increase Volume"
 msgstr "Lisää äänenvoimakkuutta"
 
-#: src/modules/mixer/e_mod_main.c:1296
+#: src/modules/mixer/e_mod_main.c:1315
 msgid "Decrease Volume"
 msgstr "Vähennä äänenvoimakkuutta"
 
-#: src/modules/mixer/e_mod_main.c:1297
+#: src/modules/mixer/e_mod_main.c:1316
 msgid "Mute Volume"
 msgstr "Mykistä"
 
