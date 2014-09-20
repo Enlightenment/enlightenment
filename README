@@ -4,10 +4,12 @@ Requirements:
 -------------
 
 Must:
-  libc libm libX11 libXext efl
+  efl elementary
+  libc libm libX11 libXext
   xcb xcb-shape xcb-keysyms
-  [png loader in evas, jpeg loader in evas, eet loader in evas, software_x11
-  engine in evas, buffer engine in evas]
+
+Heavily suggested:
+  evas_generic_loaders (all loaders)
 
 NOTE: Users of DR16 will need to rename the $prefix/bin/enlightenment
 file prior to installing DR19 or it will be overwritten.
@@ -21,13 +23,6 @@ You will, as usual, need to add the subsequent bin dir to your $PATH etc.
 
 
 NOTES:
-
-* do NOT use -mfpmath=sse in CFLAGS - we are not sure, but it may have bugs
-and screws up things in edje, evas and e19. if your gcc uses this by default
-(which apparently gcc4.x does on amd64), turn it off with a -fpmath=387 in
-your CFLAGS.
-
-* your freetype2 version must be > 2.1.7
 
 * if you do not want security issues make sure sysactions.conf is in
 /etc/enlightenment (not PREFIX/etc/enlightenment) as this is the first place
