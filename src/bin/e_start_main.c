@@ -379,10 +379,8 @@ main(int argc, char **argv)
           really_know = EINA_TRUE;
      }
 
-   if (really_know)
-     _env_path_append("PATH", eina_prefix_bin_get(pfx));
-   else
-     _env_path_prepend("PATH", eina_prefix_bin_get(pfx));
+   if (really_know) _env_path_append("PATH", eina_prefix_bin_get(pfx));
+   else _env_path_prepend("PATH", eina_prefix_bin_get(pfx));
 
    if (valgrind_mode || valgrind_tool)
      {
@@ -406,6 +404,7 @@ main(int argc, char **argv)
    if (home)
      {
         FILE *f;
+        const char *tmps;
 
         /* if you have ~/.e-mtrack, then the tracker will be enabled
          * using the content of this file as the path to the mtrack.so
@@ -430,6 +429,11 @@ main(int argc, char **argv)
                }
              fclose(f);
           }
+        tmps = getenv("XDG_DATA_HOME");
+        if (tmps) snprintf(buf, sizeof(buf), "%s/Applications/.bin", tmps);
+        else snprintf(buf, sizeof(buf), "%s/Applications/.bin", home);
+        if (really_know) _env_path_append("PATH", buf);
+        else _env_path_prepend("PATH", buf);
      }
 
    /* run e directly now */
