@@ -1,11 +1,17 @@
 #!/bin/sh
 
-rm -rf autom4te.cache
-rm -f aclocal.m4 ltmain.sh config.cache
+test -n "$srcdir" || srcdir=`dirname "$0"`
+test -n "$srcdir" || srcdir=.
+(
+  cd "$srcdir" &&
+  (
+    rm -rf autom4te.cache
+    rm -f aclocal.m4 ltmain.sh config.cache
 
-autoreconf --symlink --install || exit 1
+    autoreconf --symlink --install || exit 1
+  )
+)
 
-if [ -z "$NOCONFIGURE" ]; then
-  exec ./configure -C "$@"
-fi
+test -n "$NOCONFIGURE" || exec $srcdir/configure -C "$@"
+
 exit 0
