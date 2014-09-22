@@ -338,7 +338,7 @@ _text_login_box_add(Lokker_Popup *lp)
                              _("Caps Lock is On"));
    else
         edje_object_part_text_set(lp->login_box, "e.text.hint",
-                             _(""));
+                             "");
    edje_object_size_min_calc(lp->login_box, &mw, &mh);
    if (edje_object_part_exists(lp->bg_object, "e.swallow.login_box"))
      {
@@ -639,7 +639,7 @@ _lokker_caps_hint_update(const char *msg)
    Lokker_Popup *lp;
    EINA_LIST_FOREACH(edd->elock_wnd_list, l, lp)
      {
-        edje_object_part_text_set(lp->login_box, "e.text.hint", _(msg));
+        edje_object_part_text_set(lp->login_box, "e.text.hint", msg);
      }
 }
 
@@ -730,9 +730,9 @@ _lokker_cb_key_down(void *data EINA_UNUSED, int type EINA_UNUSED, void *event)
    else if (!strcmp(ev->key, "Caps_Lock"))
      {
         if(ev->modifiers & ECORE_EVENT_LOCK_CAPS)
-             _lokker_caps_hint_update("");
+          _lokker_caps_hint_update("");
         else
-             _lokker_caps_hint_update("Caps Lock is On");
+          _lokker_caps_hint_update(_("Caps Lock is On"));
      }
    else if ((!strcmp(ev->key, "u") &&
              (ev->modifiers & ECORE_EVENT_MODIFIER_CTRL)))
