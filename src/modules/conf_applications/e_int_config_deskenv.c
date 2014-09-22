@@ -161,7 +161,7 @@ _basic_create(E_Config_Dialog *cfd __UNUSED__, Evas *evas, E_Config_Dialog_Data 
    e_widget_framelist_object_append(fr, ob);
    EINA_LIST_FOREACH(cfdata->desktop_environments, l, de)
      {
-        if (!strcmp(e_config->desktop_environment, de))
+        if (!e_util_strcmp(e_config->desktop_environment, de))
           cfdata->desktop_environment_id = (cde + 1);
         ob = e_widget_radio_add(evas, de, ++cde, rg);
         e_widget_framelist_object_append(fr, ob);
