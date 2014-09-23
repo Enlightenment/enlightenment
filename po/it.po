@@ -2,13 +2,12 @@
 # This file is put in the public domain.
 # Massimo Maiurana <maiurana@gmail.com>, 2005.
 #
-#: src/modules/lokker/lokker.c:341
 msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-21 00:23+0900\n"
-"PO-Revision-Date: 2014-09-09 22:16+0200\n"
+"POT-Creation-Date: 2014-09-23 18:46+0200\n"
+"PO-Revision-Date: 2014-09-23 18:50+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -5367,9 +5366,8 @@ msgid "Start KDE services on login"
 msgstr "Avvia servizi KDE al login"
 
 #: src/modules/conf_applications/e_int_config_deskenv.c:158
-#, fuzzy
 msgid "Prefer applications from Desktop Environment"
-msgstr "Ambienti desktop"
+msgstr "Preferisci le applicazioni dell'ambiente desktop"
 
 #: src/modules/conf_applications/e_mod_main.c:21
 msgid "Create Application Launcher"
@@ -9240,9 +9238,9 @@ msgstr "Inserire il PIN"
 msgid "Please enter your unlock password"
 msgstr "Inserire la propria password di sblocco"
 
-#: src/modules/lokker/lokker.c:338
+#: src/modules/lokker/lokker.c:338 src/modules/lokker/lokker.c:735
 msgid "Caps Lock is On"
-msgstr ""
+msgstr "Il blocco delle maiuscole è attivo"
 
 #: src/modules/lokker/lokker.c:551
 msgid "Authentication System Error"
@@ -9332,9 +9330,8 @@ msgid "Disable PulseAudio"
 msgstr "Disabilita PulseAudio"
 
 #: src/modules/mixer/conf_module.c:138
-#, fuzzy
 msgid "Enable external Mixer Command"
-msgstr "Comando bloccaschermo esterno"
+msgstr "Abilita comando mixer esterno"
 
 #: src/modules/mixer/conf_module.c:196
 msgid "Launch mixer..."
@@ -10831,9 +10828,3 @@ msgstr "Variante"
 #: src/modules/xkbswitch/e_mod_main.c:195
 msgid "NONE"
 msgstr "NESSUNA"
-
-#~ msgid "Mouse Binding Sequence"
-#~ msgstr "Sequenza del mouse"
-
-#~ msgid "Key Binding Sequence"
-#~ msgstr "Sequenza di tastiera"
