@@ -3707,8 +3707,6 @@ e_client_unmaximize(E_Client *ec, E_Maximize max)
    max &= (ec->maximized & E_MAXIMIZE_DIRECTION);
    /* Can only remove existing maximization directions */
    if (!max) return;
-   if (e_comp_util_client_is_fullscreen(ec))
-     e_comp_render_queue(ec->comp);
    if (ec->maximized & E_MAXIMIZE_TYPE)
      {
         ec->pre_res_change.valid = 0;
