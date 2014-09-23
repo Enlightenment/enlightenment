@@ -971,6 +971,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
              E_Client *ec;
 
              e_comp_shape_queue(cw->comp);
+             e_comp_render_queue(cw->comp);
              ec = e_client_above_get(cw->ec);
              if (ec && (evas_object_layer_get(ec->frame) != evas_object_layer_get(obj)))
                {
@@ -1040,6 +1041,7 @@ _e_comp_intercept_layer_set(void *data, Evas_Object *obj, int layer)
         /* can't stack a client above its own layer marker */
         CRI("STACKING ERROR!!!");
      }
+   e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
 }
 
@@ -1142,6 +1144,7 @@ _e_comp_intercept_stack_helper(E_Comp_Object *cw, Evas_Object *stack, E_Comp_Obj
        }
    if (cw->ec->new_client || (!ecstack) || (ecstack->frame != o))
      evas_object_data_del(cw->smart_obj, "client_restack");
+   e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
 }
 
@@ -1182,6 +1185,7 @@ _e_comp_intercept_lower(void *data, Evas_Object *obj)
    evas_object_data_set(obj, "client_restack", (void*)1);
    evas_object_lower(obj);
    evas_object_data_del(obj, "client_restack");
+   e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
 }
 
@@ -1213,6 +1217,7 @@ _e_comp_intercept_raise(void *data, Evas_Object *obj)
         if (e_client_focus_track_enabled())
           e_client_raise_latest_set(cw->ec); //modify raise list if necessary
      }
+   e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
 }
 
@@ -1954,6 +1959,7 @@ _e_comp_smart_show(Evas_Object *obj)
    evas_object_show(cw->clip);
    if (cw->input_obj) evas_object_show(cw->input_obj);
    evas_object_show(cw->effect_obj);
+   e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
    if (cw->ec->input_only) return;
    if (cw->ec->iconic && (!cw->ec->new_client))
@@ -2163,10 +2169,13 @@ _e_comp_object_util_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object
    if (comp_object)
      {
         Evas_Object *o;
+        E_Comp *comp;
 
         o = edje_object_part_swallow_get(obj, "e.swallow.content");
         evas_object_del(o);
-        e_comp_shape_queue(e_comp_util_evas_object_comp_get(obj));
+        comp = e_comp_util_evas_object_comp_get(obj);
+        e_comp_render_queue(comp);
+        e_comp_shape_queue(comp);
      }
    l = evas_object_data_get(obj, "comp_object-to_del");
    E_FREE_LIST(l, evas_object_del);
