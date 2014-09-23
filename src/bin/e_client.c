@@ -321,6 +321,9 @@ _e_client_hook_call(E_Client_Hook_Point hookpoint, E_Client *ec)
      {
         if (ch->delete_me) continue;
         ch->func(ch->data, ec);
+        if ((hookpoint != E_CLIENT_HOOK_DEL) &&
+          e_object_is_del(E_OBJECT(ec)))
+          break;
      }
    _e_client_hooks_walking--;
    if ((_e_client_hooks_walking == 0) && (_e_client_hooks_delete > 0))
