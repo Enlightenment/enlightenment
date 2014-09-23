@@ -195,6 +195,7 @@ e_winlist_show(E_Zone *zone, E_Winlist_Filter filter)
    if (!_wins)
      {
         e_winlist_hide();
+        evas_event_thaw(zone->comp->evas);
         return 1;
      }
 
