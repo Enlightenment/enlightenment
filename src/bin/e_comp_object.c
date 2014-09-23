@@ -2088,6 +2088,7 @@ _e_comp_smart_resize(Evas_Object *obj, int w, int h)
      {
         evas_object_resize(cw->effect_obj, w, h);
      }
+   e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
 }
 
