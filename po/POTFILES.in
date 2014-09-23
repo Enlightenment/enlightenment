@@ -164,7 +164,6 @@ src/modules/conf_display/e_int_config_desk.c
 src/modules/conf_display/e_int_config_desklock.c
 src/modules/conf_display/e_int_config_desklock_fsel.c
 src/modules/conf_display/e_int_config_desks.c
-src/modules/conf_display/e_int_config_display.c
 src/modules/conf_display/e_int_config_dpms.c
 src/modules/conf_display/e_int_config_screensaver.c
 src/modules/conf_display/e_mod_main.c
