@@ -166,6 +166,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
         /* trap return of shm_buffer_get as it Can fail if the buffer is not 
          * an shm buffer (ie: egl buffer) */
         if (!(b = wl_shm_buffer_get(buffer_resource))) return;
+
         ec->comp_data->pending.w = wl_shm_buffer_get_width(b);
         ec->comp_data->pending.h = wl_shm_buffer_get_height(b);
 
@@ -1113,8 +1114,8 @@ _e_comp_wl_client_idler(void *data EINA_UNUSED)
           {
              if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
                ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
-                                                      ec->comp->wl_comp_data->resize.edges,
-                                                      ec->client.w, ec->client.h);
+                                                   ec->comp->wl_comp_data->resize.edges,
+                                                   ec->client.w, ec->client.h);
           }
         ec->post_move = 0;
         ec->post_resize = 0;
@@ -2033,6 +2034,7 @@ _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
         break;
      }
 
+   ec->comp->wl_comp_data->resize.edges = 0;
    ec->comp->wl_comp_data->resize.resource = NULL;
    ec->comp->wl_comp_data->ptr.button = btn;
 
@@ -3092,10 +3094,12 @@ _e_comp_wl_cb_hook_client_focus_set(void *data EINA_UNUSED, E_Client *ec)
 {
    E_COMP_WL_PIXMAP_CHECK;
 
-   if (ec->comp_data->shell.activate)
+   /* send configure */
+   if (ec->comp_data->shell.configure_send)
      {
         if (ec->comp_data->shell.surface)
-          ec->comp_data->shell.activate(ec->comp_data->shell.surface);
+          ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
+                                              0, 0, 0);
      }
 
    /* FIXME: This seems COMPLETELY wrong !! (taken from e_comp_x)
@@ -3130,10 +3134,12 @@ _e_comp_wl_cb_hook_client_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 {
    E_COMP_WL_PIXMAP_CHECK;
 
-   if (ec->comp_data->shell.deactivate)
+   /* send configure */
+   if (ec->comp_data->shell.configure_send)
      {
         if (ec->comp_data->shell.surface)
-          ec->comp_data->shell.deactivate(ec->comp_data->shell.surface);
+          ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
+                                              0, 0, 0);
      }
 
    _e_comp_wl_focus_check(ec->comp);
