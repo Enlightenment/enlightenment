@@ -226,8 +226,6 @@ struct _E_Comp_Wl_Client_Data
         void (*configure_send)(struct wl_resource *resource, uint32_t edges, int32_t width, int32_t height);
         void (*configure)(struct wl_resource *resource, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
         void (*ping)(struct wl_resource *resource);
-        void (*activate)(struct wl_resource *resource);
-        void (*deactivate)(struct wl_resource *resource);
         void (*map)(struct wl_resource *resource);
         void (*unmap)(struct wl_resource *resource);
      } shell;
