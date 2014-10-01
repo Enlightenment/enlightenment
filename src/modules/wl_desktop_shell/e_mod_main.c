@@ -632,15 +632,66 @@ _e_shell_cb_shell_surface_get(struct wl_client *client, struct wl_resource *reso
 }
 
 static void 
+_e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges, int32_t width, int32_t height)
+{
+   E_Client *ec;
+   struct wl_array states;
+   uint32_t *s;
+   uint32_t serial;
+
+   DBG("XDG_SHELL: Surface Configure Send: %d \t%d %d", 
+       wl_resource_get_id(resource), width, height);
+
+   /* get the client for this resource */
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource, 
+                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "No Client For Shell Surface");
+        return;
+     }
+
+   wl_array_init(&states);
+
+   if (ec->fullscreen)
+     {
+        s = wl_array_add(&states, sizeof(*s));
+        *s = XDG_SURFACE_STATE_FULLSCREEN;
+     }
+   else if (ec->maximized)
+     {
+        s = wl_array_add(&states, sizeof(*s));
+        *s = XDG_SURFACE_STATE_MAXIMIZED;
+     }
+
+   if (edges != 0)
+     {
+        DBG("\tResizing");
+        s = wl_array_add(&states, sizeof(*s));
+        *s = XDG_SURFACE_STATE_RESIZING;
+     }
+
+   if (ec->focused)
+     {
+        s = wl_array_add(&states, sizeof(*s));
+        *s = XDG_SURFACE_STATE_ACTIVATED;
+     }
+
+   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+   if (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU)
+     xdg_surface_send_configure(resource, width, height, &states, serial);
+
+   wl_array_release(&states);
+}
+
+static void 
 _e_xdg_shell_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   /* DBG("XDG_SHELL: Surface Destroy"); */
-
    _e_shell_surface_destroy(resource);
 }
 
 static void 
-_e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource)
+_e_xdg_shell_surface_cb_parent_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *parent_resource)
 {
    E_Client *ec;
 
@@ -653,38 +704,6 @@ _e_xdg_shell_surface_cb_transient_for_set(struct wl_client *client EINA_UNUSED, 
 
    /* set this client as a transient for parent */
    _e_shell_surface_parent_set(ec, parent_resource);
-}
-
-static void 
-_e_xdg_shell_surface_cb_margin_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t l EINA_UNUSED, int32_t r EINA_UNUSED, int32_t t EINA_UNUSED, int32_t b EINA_UNUSED)
-{
-   /* E_Client *ec; */
-   /* int32_t diff; */
-
-   /* DBG("XDG_SHELL: Margin Set: %d %d %d %d", l, t, r, b); */
-
-   /* get the client for this resource */
-   /* if (!(ec = wl_resource_get_user_data(resource))) */
-   /*   { */
-   /*      wl_resource_post_error(resource,  */
-   /*                             WL_DISPLAY_ERROR_INVALID_OBJECT,  */
-   /*                             "No Client For Shell Surface"); */
-   /*      return; */
-   /*   } */
-
-   /* if (!ec->comp_data) return; */
-   /* if (eina_rectangle_is_empty(ec->comp_data->opaque)) return; */
-
-   /* diff = (ec->comp_data->opaque->x - l); */
-
-   /* ec->comp_data->opaque->x = l; */
-   /* ec->comp_data->opaque->y = t; */
-
-   /* ec->comp_data->opaque->w = ec->comp_data->opaque->w + (diff * 2); */
-   /* ec->comp_data->opaque->h = ec->comp_data->opaque->h + (diff * 2); */
-
-   /* EINA_RECTANGLE_SET(ec->comp_data->opaque,  */
-   /*                    l, t, pw, ph); */
 }
 
 static void 
@@ -711,8 +730,6 @@ _e_xdg_shell_surface_cb_app_id_set(struct wl_client *client EINA_UNUSED, struct 
 {
    E_Client *ec;
 
-   /* DBG("XDG_SHELL: App Id: %s", id); */
-
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
      {
@@ -730,6 +747,12 @@ _e_xdg_shell_surface_cb_app_id_set(struct wl_client *client EINA_UNUSED, struct 
    /* eina_stringshare_replace(&ec->netwm.name, id); */
    ec->changes.icon = !!ec->icccm.class;
    EC_CHANGED(ec);
+}
+
+static void 
+_e_xdg_shell_surface_cb_window_menu_show(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *seat_resource EINA_UNUSED, uint32_t serial EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED)
+{
+   /* TODO */
 }
 
 static void 
@@ -847,7 +870,103 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
 }
 
 static void 
-_e_xdg_shell_surface_cb_minimize(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+_e_xdg_shell_surface_cb_ack_configure(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, uint32_t serial EINA_UNUSED)
+{
+   /* No-Op */
+}
+
+static void 
+_e_xdg_shell_surface_cb_window_geometry_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t x EINA_UNUSED, int32_t y EINA_UNUSED, int32_t w EINA_UNUSED, int32_t h EINA_UNUSED)
+{
+   /* E_Client *ec; */
+
+   /* get the client for this resource */
+   /* if (!(ec = wl_resource_get_user_data(resource))) */
+   /*   { */
+   /*      wl_resource_post_error(resource,  */
+   /*                             WL_DISPLAY_ERROR_INVALID_OBJECT,  */
+   /*                             "No Client For Shell Surface"); */
+   /*      return; */
+   /*   } */
+
+   /* DBG("XDG_SHELL: Window Geom Set: %d \t%d %d, %d %d",  */
+   /*     wl_resource_get_id(resource), x, y, w, h); */
+}
+
+static void 
+_e_xdg_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   E_Client *ec;
+
+   /* get the client for this resource */
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource, 
+                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "No Client For Shell Surface");
+        return;
+     }
+
+   if (!ec->lock_user_maximize)
+     e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | 
+                       E_MAXIMIZE_BOTH);
+}
+
+static void 
+_e_xdg_shell_surface_cb_maximized_unset(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   E_Client *ec;
+
+   /* get the client for this resource */
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource, 
+                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "No Client For Shell Surface");
+        return;
+     }
+
+   e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+}
+
+static void 
+_e_xdg_shell_surface_cb_fullscreen_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *output_resource EINA_UNUSED)
+{
+   E_Client *ec;
+
+   /* get the client for this resource */
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource, 
+                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "No Client For Shell Surface");
+        return;
+     }
+
+   if (!ec->lock_user_fullscreen)
+     e_client_fullscreen(ec, e_config->fullscreen_policy);
+}
+
+static void 
+_e_xdg_shell_surface_cb_fullscreen_unset(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   E_Client *ec;
+
+   /* get the client for this resource */
+   if (!(ec = wl_resource_get_user_data(resource)))
+     {
+        wl_resource_post_error(resource, 
+                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
+                               "No Client For Shell Surface");
+        return;
+     }
+
+   if (!ec->lock_user_fullscreen)
+     e_client_unfullscreen(ec);
+}
+
+static void 
+_e_xdg_shell_surface_cb_minimized_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Client *ec;
 
@@ -864,96 +983,22 @@ _e_xdg_shell_surface_cb_minimize(struct wl_client *client EINA_UNUSED, struct wl
      e_client_iconify(ec);
 }
 
-static void 
-_e_xdg_shell_surface_cb_output_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, struct wl_resource *output_resource EINA_UNUSED)
-{
-   /* DBG("XDG_SHELL: Output Set"); */
-}
-
-static void 
-_e_xdg_shell_surface_cb_state_change_request(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t state, uint32_t value, uint32_t serial)
-{
-   E_Client *ec;
-
-   /* get the client for this resource */
-   if (!(ec = wl_resource_get_user_data(resource)))
-     {
-        wl_resource_post_error(resource, 
-                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "No Client For Shell Surface");
-        return;
-     }
-
-   switch (state)
-     {
-      case XDG_SURFACE_STATE_MAXIMIZED:
-        break;
-      case XDG_SURFACE_STATE_FULLSCREEN:
-        break;
-      default:
-        return;
-     }
-
-   xdg_surface_send_state_change(ec->comp_data->shell.surface, 
-                                 state, value, serial);
-}
-
-static void 
-_e_xdg_shell_surface_cb_state_change_acknowledge(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t state, uint32_t value, uint32_t serial EINA_UNUSED)
-{
-   E_Client *ec;
-
-   /* get the client for this resource */
-   if (!(ec = wl_resource_get_user_data(resource)))
-     {
-        wl_resource_post_error(resource, 
-                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "No Client For Shell Surface");
-        return;
-     }
-
-   switch (state)
-     {
-      case XDG_SURFACE_STATE_MAXIMIZED:
-        if (!ec->lock_user_maximize)
-          {
-             if (value)
-               e_client_maximize(ec, ((e_config->maximize_policy & 
-                                       E_MAXIMIZE_TYPE) | E_MAXIMIZE_BOTH));
-             else
-               e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
-          }
-        break;
-      case XDG_SURFACE_STATE_FULLSCREEN:
-        if (!ec->lock_user_fullscreen)
-          {
-             if (value)
-               e_client_fullscreen(ec, e_config->fullscreen_policy);
-             else
-               e_client_unfullscreen(ec);
-          }
-        break;
-      default:
-        return;
-     }
-
-   xdg_surface_send_configure(ec->comp_data->shell.surface, 
-                              ec->client.w, ec->client.h);
-}
-
 static const struct xdg_surface_interface _e_xdg_surface_interface = 
 {
    _e_xdg_shell_surface_cb_destroy,
-   _e_xdg_shell_surface_cb_transient_for_set,
-   _e_xdg_shell_surface_cb_margin_set,
+   _e_xdg_shell_surface_cb_parent_set,
    _e_xdg_shell_surface_cb_title_set,
    _e_xdg_shell_surface_cb_app_id_set,
+   _e_xdg_shell_surface_cb_window_menu_show,
    _e_xdg_shell_surface_cb_move,
    _e_xdg_shell_surface_cb_resize,
-   _e_xdg_shell_surface_cb_output_set,
-   _e_xdg_shell_surface_cb_state_change_request,
-   _e_xdg_shell_surface_cb_state_change_acknowledge,
-   _e_xdg_shell_surface_cb_minimize,
+   _e_xdg_shell_surface_cb_ack_configure,
+   _e_xdg_shell_surface_cb_window_geometry_set,
+   _e_xdg_shell_surface_cb_maximized_set,
+   _e_xdg_shell_surface_cb_maximized_unset,
+   _e_xdg_shell_surface_cb_fullscreen_set,
+   _e_xdg_shell_surface_cb_fullscreen_unset,
+   _e_xdg_shell_surface_cb_minimized_set,
 };
 
 static void 
@@ -961,24 +1006,6 @@ _e_xdg_shell_cb_unstable_version(struct wl_client *client EINA_UNUSED, struct wl
 {
    if (version > 1)
      wl_resource_post_error(resource, 1, "XDG Version Not Implemented Yet");
-}
-
-static void 
-_e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges EINA_UNUSED, int32_t width, int32_t height)
-{
-   E_Client *ec;
-
-   /* get the client for this resource */
-   if (!(ec = wl_resource_get_user_data(resource)))
-     {
-        wl_resource_post_error(resource, 
-                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "No Client For Shell Surface");
-        return;
-     }
-
-   if (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU)
-     xdg_surface_send_configure(resource, width, height);
 }
 
 static void 
@@ -1027,8 +1054,7 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         ec->changes.size = EINA_TRUE;
      }
 
-   if ((ec->changes.size) || (ec->changes.pos))
-     EC_CHANGED(ec);
+   if (ec->changes.pos) EC_CHANGED(ec);
 }
 
 static void 
@@ -1047,46 +1073,8 @@ _e_xdg_shell_surface_ping(struct wl_resource *resource)
      }
 
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
-
    if (ec->comp->wl_comp_data->shell_interface.xdg_shell)
      xdg_shell_send_ping(ec->comp->wl_comp_data->shell_interface.xdg_shell, serial);
-}
-
-static void 
-_e_xdg_shell_surface_activate(struct wl_resource *resource)
-{
-   E_Client *ec;
-
-   /* get the client for this resource */
-   if (!(ec = wl_resource_get_user_data(resource)))
-     {
-        wl_resource_post_error(resource, 
-                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "No Client For Shell Surface");
-        return;
-     }
-
-   if (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU)
-     xdg_surface_send_activated(ec->comp_data->shell.surface);
-}
-
-static void 
-_e_xdg_shell_surface_deactivate(struct wl_resource *resource)
-{
-   E_Client *ec;
-
-   /* get the client for this resource */
-   if (!(ec = wl_resource_get_user_data(resource)))
-     {
-        wl_resource_post_error(resource, 
-                               WL_DISPLAY_ERROR_INVALID_OBJECT, 
-                               "No Client For Shell Surface");
-        return;
-     }
-
-   /* DBG("\tSend XDG Deactivate"); */
-   if (ec->netwm.type != E_WINDOW_TYPE_POPUP_MENU)
-     xdg_surface_send_deactivated(ec->comp_data->shell.surface);
 }
 
 static void 
@@ -1219,8 +1207,6 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
    cdata->shell.configure_send = _e_xdg_shell_surface_configure_send;
    cdata->shell.configure = _e_xdg_shell_surface_configure;
    cdata->shell.ping = _e_xdg_shell_surface_ping;
-   cdata->shell.activate = _e_xdg_shell_surface_activate;
-   cdata->shell.deactivate = _e_xdg_shell_surface_deactivate;
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
 
@@ -1238,8 +1224,6 @@ _e_xdg_shell_cb_surface_get(struct wl_client *client, struct wl_resource *resour
 static void 
 _e_xdg_shell_popup_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   /* DBG("XDG_SHELL: Popup Destroy"); */
-
    _e_shell_surface_destroy(resource);
 }
 
@@ -1336,8 +1320,6 @@ _e_xdg_shell_cb_popup_get(struct wl_client *client, struct wl_resource *resource
    cdata->shell.configure_send = _e_xdg_shell_surface_configure_send;
    cdata->shell.configure = _e_xdg_shell_surface_configure;
    cdata->shell.ping = _e_xdg_shell_surface_ping;
-   cdata->shell.activate = _e_xdg_shell_surface_activate;
-   cdata->shell.deactivate = _e_xdg_shell_surface_deactivate;
    cdata->shell.map = _e_xdg_shell_surface_map;
    cdata->shell.unmap = _e_xdg_shell_surface_unmap;
 
