@@ -2,7 +2,7 @@
 #include "e.h"
 #include "e_desktop_shell_protocol.h"
 
-#define XDG_SERVER_VERSION 3
+#define XDG_SERVER_VERSION 4
 
 static void 
 _e_shell_surface_parent_set(E_Client *ec, struct wl_resource *parent_resource)
