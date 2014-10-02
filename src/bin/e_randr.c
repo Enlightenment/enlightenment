@@ -984,8 +984,8 @@ _e_randr_output_crtc_find(E_Randr_Output *output)
    /* loop the possible crtcs */
    for (i = 0; i < num; i++)
      {
-	if ((crtc = _e_randr_crtc_find(possible[i])))
-	  {
+        if ((crtc = _e_randr_crtc_find(possible[i])))
+          {
              if (!crtc->outputs)
                goto done;
           }
