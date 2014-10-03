@@ -438,6 +438,9 @@ e_drop_xds_update(Eina_Bool enable, const char *value)
      }
    else
      ecore_x_window_prop_property_del(xwin, ECORE_X_ATOM_XDND_DIRECTSAVE0);
+#else
+   (void)enable;
+   (void)value;
 #endif
 }
 
@@ -979,7 +982,7 @@ _e_drag_end(int x, int y)
    int dx, dy;
    Ecore_X_Window win;
    E_Drop_Handler *h;
-   int dropped;
+   int dropped = 0;
 
    if (!_drag_current) return;
    win = e_comp_top_window_at_xy_get(e_comp_get(_drag_current), x, y);
