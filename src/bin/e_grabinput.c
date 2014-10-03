@@ -84,6 +84,9 @@ e_grabinput_get(Ecore_Window mouse_win, int confine_mouse, Ecore_Window key_win)
 #endif
         grab_key_win = key_win;
      }
+#ifdef HAVE_WAYLAND_ONLY
+   (void)confine_mouse;
+#endif
    return 1;
 }
 
@@ -194,6 +197,9 @@ _e_grabinput_focus_do(Ecore_Window win, E_Focus_Method method)
       default:
         break;
      }
+#ifdef HAVE_WAYLAND_ONLY
+   (void)win;
+#endif
 }
 
 static void
