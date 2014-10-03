@@ -485,6 +485,7 @@ _e_desklock_ask_presentation_no(void *data __UNUSED__, E_Dialog *dia)
 static void
 _e_desklock_ask_presentation_no_increase(void *data __UNUSED__, E_Dialog *dia)
 {
+#ifndef HAVE_WAYLAND_ONLY
    int timeout, interval, blanking, expose;
 
    _e_desklock_ask_presentation_count++;
@@ -493,7 +494,6 @@ _e_desklock_ask_presentation_no_increase(void *data __UNUSED__, E_Dialog *dia)
    blanking = e_config->screensaver_blanking;
    expose = e_config->screensaver_expose;
 
-#ifndef HAVE_WAYLAND_ONLY
    ecore_x_screensaver_set(timeout, interval, blanking, expose);
 #endif
    e_object_del(E_OBJECT(dia));
