@@ -19,7 +19,9 @@ e_dpms_update(void)
 {
    unsigned int standby = 0, suspend = 0, off = 0;
    int enabled;
+#ifndef HAVE_WAYLAND_ONLY
    Eina_Bool changed = EINA_FALSE;
+#endif
 
    enabled = ((e_config->screensaver_enable) &&
               (!e_config->mode.presentation) &&
