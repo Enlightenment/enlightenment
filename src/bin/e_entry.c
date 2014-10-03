@@ -564,6 +564,9 @@ _e_entry_x_selection_notify_handler(void *data, int type __UNUSED__, void *event
                }
           }
      }
+#else
+   (void)data;
+   (void)event;
 #endif
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -576,7 +579,6 @@ _e_entry_x_selection_update(Evas_Object *entry)
    Ecore_Window xwin;
    E_Win *win;
    E_Comp *c;
-   const char *text;
 
    if ((!entry) || (!(sd = evas_object_smart_data_get(entry))))
      return;
@@ -597,6 +599,8 @@ _e_entry_x_selection_update(Evas_Object *entry)
      return;
 
 #ifndef HAVE_WAYLAND_ONLY
+   const char *text;
+
    text = edje_object_part_text_selection_get(sd->entry_object, ENTRY_PART_NAME);
    if (text)
      ecore_x_selection_primary_set(xwin, text, strlen(text) + 1);
@@ -637,6 +641,8 @@ _entry_paste_request_signal_cb(void *data,
         ecore_x_selection_clipboard_request(xwin,
                                             ECORE_X_SELECTION_TARGET_UTF8_STRING);
      }
+#else
+   (void)emission;
 #endif
 }
 
