@@ -14,7 +14,7 @@ static volatile Eina_Bool _e_x_composite_shutdown_try = 0;
 static void
 _e_x_composite_shutdown(void)
 {
-#ifdef E_COMP_X_H
+#ifndef HAVE_WAYLAND_ONLY
 //   Ecore_X_Display *dpy;
    Ecore_X_Window root;
 
@@ -66,7 +66,7 @@ EAPI void
 e_sigseg_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
-#ifdef E_COMP_X_H
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_pointer_ungrab();
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
@@ -97,7 +97,7 @@ EAPI void
 e_sigfpe_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
-#ifdef E_COMP_X_H
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_pointer_ungrab();
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
@@ -110,7 +110,7 @@ EAPI void
 e_sigbus_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
-#ifdef E_COMP_X_H
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_pointer_ungrab();
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
@@ -123,7 +123,7 @@ EAPI void
 e_sigabrt_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED__)
 {
    _e_x_composite_shutdown();
-#ifdef E_COMP_X_H
+#ifndef HAVE_WAYLAND_ONLY
    ecore_x_pointer_ungrab();
    ecore_x_keyboard_ungrab();
    ecore_x_ungrab();
@@ -131,4 +131,3 @@ e_sigabrt_act(int x __UNUSED__, siginfo_t *info __UNUSED__, void *data __UNUSED_
 #endif
    e_alert_show();
 }
-
