@@ -25,7 +25,9 @@ struct _E_Entry_Smart_Data
 };
 
 /* local subsystem functions */
+#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool _e_entry_x_selection_notify_handler(void *data, int type, void *event);
+#endif
 
 static void      _e_entry_x_selection_update(Evas_Object *entry);
 
@@ -531,10 +533,10 @@ _e_entry_mouse_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *o
 }
 
 /* Called when the the "selection_notify" event is emitted */
+#ifndef HAVE_WAYLAND_ONLY
 static Eina_Bool
 _e_entry_x_selection_notify_handler(void *data, int type __UNUSED__, void *event)
 {
-#ifndef HAVE_WAYLAND_ONLY
    Evas_Object *entry;
    E_Entry_Smart_Data *sd;
    Ecore_X_Event_Selection_Notify *ev;
@@ -564,12 +566,9 @@ _e_entry_x_selection_notify_handler(void *data, int type __UNUSED__, void *event
                }
           }
      }
-#else
-   (void)data;
-   (void)event;
-#endif
    return ECORE_CALLBACK_PASS_ON;
 }
+#endif
 
 /* Updates the X selection with the selected text of the entry */
 static void
