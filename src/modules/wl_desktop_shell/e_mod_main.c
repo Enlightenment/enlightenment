@@ -907,9 +907,12 @@ _e_xdg_shell_surface_cb_maximized_set(struct wl_client *client EINA_UNUSED, stru
         return;
      }
 
-   if (!ec->lock_user_maximize)
-     e_client_maximize(ec, (e_config->maximize_policy & E_MAXIMIZE_TYPE) | 
-                       E_MAXIMIZE_BOTH);
+   if (!ec->lock_user_maximize) 
+     {
+        e_client_maximize(ec, ((e_config->maximize_policy & E_MAXIMIZE_TYPE) | 
+                               E_MAXIMIZE_BOTH));
+        _e_xdg_shell_surface_configure_send(resource, 0, ec->w, ec->h);
+     }
 }
 
 static void 
@@ -927,6 +930,7 @@ _e_xdg_shell_surface_cb_maximized_unset(struct wl_client *client EINA_UNUSED, st
      }
 
    e_client_unmaximize(ec, E_MAXIMIZE_BOTH);
+   _e_xdg_shell_surface_configure_send(resource, 0, ec->w, ec->h);
 }
 
 static void 
