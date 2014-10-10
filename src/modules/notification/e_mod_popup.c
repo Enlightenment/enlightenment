@@ -291,6 +291,7 @@ _notification_popup_place(Popup_Data *popup, int pos)
    if (!popup->win) return pos;
    evas_object_geometry_get(popup->win, NULL, NULL, &w, &h);
    zone = e_comp_object_util_zone_get(popup->win);
+   if (!zone) return pos;
    _notification_popup_place_coords_get(zone->w, zone->h, w, h, pos, &x, &y);
    evas_object_move(popup->win, x, y);
    EINA_LIST_FOREACH(popup->mirrors, l, o)
