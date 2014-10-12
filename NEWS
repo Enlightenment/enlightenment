@@ -1,3 +1,26 @@
+Release 0.19.1:
+---------------------
+
+Mike Blumenkrantz (10):
+      don't add nocomp damages for input-only windows
+      check protocol visibility for nocomp breaks, not comp object visibility
+      manually break out of nocomp
+      end nocomp on nocomp end...always
+      force render queue on unmaximize if client was fullscreen
+      add borderless theme for deskmirror clients to support various animations
+      comp render queue on every client resize instead of on unmaximize
+      force comp render queue more aggressively to detect changes in nocomp
+      client hooks should not continue to be called if the client has been deleted
+      thaw evas on winlist activation with no clients available
+
+Stefan Schmidt (1):
+      modules/teamwork: Use eina_file_mkstemp() to avoid problems with umask
+
+Tom Hacohen (1):
+      fix: Add more desktops to be tiled by default in the tiling config.
+
+
+
 Release 0.19.0:
 ---------------------
 
