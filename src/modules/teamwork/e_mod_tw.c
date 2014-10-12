@@ -840,7 +840,7 @@ tw_show_helper(Evas_Object *o, int w, int h)
      }
    else
      {
-        e_comp_object_util_center(tw_mod->pop);
+        e_comp_object_util_center_on(tw_mod->pop, zone->bg_clip_object);
      }
    evas_object_show(tw_mod->pop);
    tw_popup_opacity_set();
