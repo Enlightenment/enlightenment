@@ -1110,6 +1110,14 @@ _e_comp_wl_client_idler(void *data EINA_UNUSED)
 
 //        E_COMP_WL_PIXMAP_CHECK continue;
 
+        if ((ec->post_resize) && (!ec->maximized))
+          {
+             if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
+               ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
+                                                   ec->comp->wl_comp_data->resize.edges, 
+                                                   ec->w, ec->h);
+          }
+
         ec->post_move = 0;
         ec->post_resize = 0;
 
