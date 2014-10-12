@@ -158,7 +158,7 @@ _e_comp_wl_input_cb_bind_seat(struct wl_client *client, void *data, uint32_t ver
 
    /* try to create the seat resource */
    cdata = data;
-   res = wl_resource_create(client, &wl_seat_interface, MIN(version, 3), id);
+   res = wl_resource_create(client, &wl_seat_interface, MIN(version, 4), id);
    if (!res) 
      {
         ERR("Could not create seat resource: %m");
@@ -173,7 +173,8 @@ _e_comp_wl_input_cb_bind_seat(struct wl_client *client, void *data, uint32_t ver
                                   _e_comp_wl_input_cb_unbind_seat);
 
    _e_comp_wl_input_update_seat_caps(cdata);
-   if (cdata->seat.version >= 2) wl_seat_send_name(res, cdata->seat.name);
+   if (cdata->seat.version >= WL_SEAT_NAME_SINCE_VERSION) 
+     wl_seat_send_name(res, cdata->seat.name);
 }
 
 static int 
@@ -311,7 +312,7 @@ e_comp_wl_input_init(E_Comp_Data *cdata)
 
    /* create the global resource for input seat */
    cdata->seat.global = 
-     wl_global_create(cdata->wl.disp, &wl_seat_interface, 3, 
+     wl_global_create(cdata->wl.disp, &wl_seat_interface, 4, 
                       cdata, _e_comp_wl_input_cb_bind_seat);
    if (!cdata->seat.global) 
      {
