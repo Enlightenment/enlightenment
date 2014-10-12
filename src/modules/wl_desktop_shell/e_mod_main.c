@@ -117,7 +117,7 @@ _e_shell_surface_destroy(struct wl_resource *resource)
                   ec->parent->transients =
                     eina_list_remove(ec->parent->transients, ec);
                }
-             wl_resource_destroy(ec->comp_data->shell.surface);
+             /* wl_resource_destroy(ec->comp_data->shell.surface); */
              ec->comp_data->shell.surface = NULL;
           }
      }
