@@ -123,7 +123,7 @@ void *alloca (size_t);
 #  include <E_Hal.h>
 # endif
 
-# ifdef HAVE_WAYLAND
+# if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
 #  include <Ecore_Wayland.h>
 #  include <uuid.h>
 # endif
