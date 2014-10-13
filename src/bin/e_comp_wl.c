@@ -1646,7 +1646,7 @@ _e_comp_wl_compositor_create(void)
 {
    E_Comp *comp;
    E_Comp_Data *cdata;
-   char buff[PATH_MAX];
+   const char *name;
    /* char *rules, *model, *layout; */
    int fd = 0;
 
@@ -1664,10 +1664,6 @@ _e_comp_wl_compositor_create(void)
    cdata = E_NEW(E_Comp_Data, 1);
    comp->wl_comp_data = cdata;
 
-   /* setup wayland display environment variable */
-   snprintf(buff, sizeof(buff), "%s/wayland-0", e_ipc_socket);
-   e_env_set("WAYLAND_DISPLAY", buff);
-
    /* try to create wayland display */
    if (!(cdata->wl.disp = wl_display_create()))
      {
@@ -1675,11 +1671,14 @@ _e_comp_wl_compositor_create(void)
         goto disp_err;
      }
 
-   if (wl_display_add_socket(cdata->wl.disp, buff))
+   if (!(name = wl_display_add_socket_auto(cdata->wl.disp)))
      {
         ERR("Could not create a Wayland Display: %m");
         goto disp_err;
      }
+
+   /* setup wayland display environment variable */
+   e_env_set("WAYLAND_DISPLAY", name);
 
    /* setup wayland compositor signals */
    wl_signal_init(&cdata->signals.surface.create);
