@@ -973,6 +973,9 @@ _e_comp_wl_comp_cb_surface_create(struct wl_client *client, struct wl_resource *
 
    /* set reference to pixmap so we can fetch it later */
    wl_resource_set_user_data(res, cp);
+
+   /* emit surface create signal */
+   wl_signal_emit(&comp->wl_comp_data->signals.surface.create, res);
 }
 
 static void 
@@ -1679,6 +1682,10 @@ _e_comp_wl_compositor_create(void)
      }
 
    /* setup wayland compositor signals */
+   wl_signal_init(&cdata->signals.surface.create);
+   wl_signal_init(&cdata->signals.surface.activate);
+   wl_signal_init(&cdata->signals.surface.kill);
+
    /* NB: So far, we don't need ANY of these... */
    /* wl_signal_init(&cdata->signals.destroy); */
    /* wl_signal_init(&cdata->signals.activate); */
@@ -3237,8 +3244,8 @@ e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id)
    struct wl_resource *ret = NULL;
 
    if ((ret = wl_resource_create(client, &wl_surface_interface, version, id)))
-     wl_resource_set_implementation(ret, &_e_comp_wl_surface_interface, NULL, 
-                                    e_comp_wl_surface_destroy);
+     wl_resource_set_implementation(ret, &_e_comp_wl_surface_interface, 
+                                    NULL, e_comp_wl_surface_destroy);
 
    return ret;
 }
@@ -3286,4 +3293,10 @@ e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer)
 
    ref->buffer = buffer;
    ref->destroy_listener.notify = _e_comp_wl_buffer_reference_cb_destroy;
+}
+
+EAPI struct wl_signal 
+e_comp_wl_surface_signal_get(E_Comp *comp)
+{
+   return comp->wl_comp_data->signals.surface.create;
 }
