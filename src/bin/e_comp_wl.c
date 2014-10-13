@@ -1296,7 +1296,7 @@ _e_comp_wl_cb_read(void *data, Ecore_Fd_Handler *hdl EINA_UNUSED)
    if (!cdata->wl.disp) return ECORE_CALLBACK_RENEW;
 
    /* flush any pending client events */
-   wl_display_flush_clients(cdata->wl.disp);
+   /* wl_display_flush_clients(cdata->wl.disp); */
 
    /* dispatch any pending main loop events */
    wl_event_loop_dispatch(cdata->wl.loop, 0);
@@ -1316,7 +1316,7 @@ _e_comp_wl_cb_idle(void *data)
    wl_display_flush_clients(cdata->wl.disp);
 
    /* dispatch any pending main loop events */
-   wl_event_loop_dispatch(cdata->wl.loop, 0);
+   /* wl_event_loop_dispatch(cdata->wl.loop, 0); */
 
    return ECORE_CALLBACK_RENEW;
 }
