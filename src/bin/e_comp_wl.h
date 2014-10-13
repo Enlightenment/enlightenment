@@ -99,23 +99,29 @@ struct _E_Comp_Wl_Data
         struct wl_event_loop *loop;
      } wl;
 
-   /* NB: At the moment, we don't need these */
-   /* struct  */
-   /*   { */
-   /*      struct wl_signal destroy; */
-   /*      struct wl_signal activate; */
-   /*      struct wl_signal transform; */
-   /*      struct wl_signal kill; */
-   /*      struct wl_signal idle; */
-   /*      struct wl_signal wake; */
-   /*      struct wl_signal session; */
-   /*      struct  */
-   /*        { */
-   /*           struct wl_signal created; */
-   /*           struct wl_signal destroyed; */
-   /*           struct wl_signal moved; */
-   /*        } seat, output; */
-   /*   } signals; */
+   struct 
+     {
+        struct 
+          {
+             struct wl_signal create;
+             struct wl_signal activate;
+             struct wl_signal kill;
+          } surface;
+        /* NB: At the moment, we don't need these */
+        /*      struct wl_signal destroy; */
+        /*      struct wl_signal activate; */
+        /*      struct wl_signal transform; */
+        /*      struct wl_signal kill; */
+        /*      struct wl_signal idle; */
+        /*      struct wl_signal wake; */
+        /*      struct wl_signal session; */
+        /*      struct  */
+        /*        { */
+        /*           struct wl_signal created; */
+        /*           struct wl_signal destroyed; */
+        /*           struct wl_signal moved; */
+        /*        } seat, output; */
+     } signals;
 
    struct 
      {
@@ -266,6 +272,8 @@ EINTERN void e_comp_wl_shutdown(void);
 EINTERN struct wl_resource *e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id);
 EINTERN void e_comp_wl_surface_destroy(struct wl_resource *resource);
 EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer);
+
+EAPI struct wl_signal e_comp_wl_surface_signal_get(E_Comp *comp);
 
 static inline uint64_t
 e_comp_wl_id_get(uint32_t client, uint32_t surface)
