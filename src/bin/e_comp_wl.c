@@ -185,6 +185,9 @@ _e_comp_wl_compositor_create(void)
         e_comp_wl_input_keyboard_enabled_set(cdata, EINA_TRUE);
      }
 
+   /* set compositor wayland data */
+   comp->wl_comp_data = cdata;
+
    return EINA_TRUE;
 
 input_err:
