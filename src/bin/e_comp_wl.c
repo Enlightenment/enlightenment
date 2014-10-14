@@ -98,6 +98,7 @@ static Eina_Bool
 _e_comp_wl_compositor_create(void)
 {
    E_Comp *comp;
+   E_Comp_Data *cdata;
    const char *name;
    int fd = 0;
 
