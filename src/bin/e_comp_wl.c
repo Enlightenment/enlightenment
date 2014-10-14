@@ -179,6 +179,12 @@ _e_comp_wl_compositor_create(void)
    /* setup module idler to load shell mmodule */
    ecore_idler_add(_e_comp_wl_cb_module_idle, cdata);
 
+   if (comp->comp_type == E_PIXMAP_TYPE_X)
+     {
+        e_comp_wl_input_pointer_enabled_set(cdata, EINA_TRUE);
+        e_comp_wl_input_keyboard_enabled_set(cdata, EINA_TRUE);
+     }
+
    return EINA_TRUE;
 
 input_err:
