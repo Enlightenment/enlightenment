@@ -10,7 +10,7 @@
 static void 
 _e_comp_wl_log_cb_print(const char *format, va_list args)
 {
-   INF("WL: ", format, args);
+   EINA_LOG_DOM_INFO(e_log_dom, format, args);
 }
 
 static Eina_Bool 
