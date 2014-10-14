@@ -65,11 +65,129 @@ _e_comp_wl_cb_module_idle(void *data)
 }
 
 static void 
+_e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+}
+
+static void 
+_e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t sx, int32_t sy)
+{
+
+}
+
+static void 
+_e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
+{
+
+}
+
+static void 
+_e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, uint32_t callback)
+{
+
+}
+
+static void 
+_e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
+{
+
+}
+
+static void 
+_e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
+{
+
+}
+
+static void 
+_e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+
+}
+
+static void 
+_e_comp_wl_surface_cb_buffer_transform_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t transform EINA_UNUSED)
+{
+   DBG("Surface Buffer Transform");
+}
+
+static void 
+_e_comp_wl_surface_cb_buffer_scale_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t scale EINA_UNUSED)
+{
+   DBG("Surface Buffer Scale");
+}
+
+static const struct wl_surface_interface _e_surface_interface = 
+{
+   _e_comp_wl_surface_cb_destroy,
+   _e_comp_wl_surface_cb_attach,
+   _e_comp_wl_surface_cb_damage,
+   _e_comp_wl_surface_cb_frame,
+   _e_comp_wl_surface_cb_opaque_region_set,
+   _e_comp_wl_surface_cb_input_region_set,
+   _e_comp_wl_surface_cb_commit,
+   _e_comp_wl_surface_cb_buffer_transform_set,
+   _e_comp_wl_surface_cb_buffer_scale_set
+};
+
+static void 
 _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
    E_Comp *comp;
+   struct wl_resource *res;
+   uint64_t wid;
+   pid_t pid;
+   E_Pixmap *ep;
 
    if (!(comp = wl_resource_get_user_data(resource))) return;
+
+   DBG("Compositor Cb Surface Create: %d", id);
+
+   /* try to create an internal surface */
+   if (!(res = wl_resource_create(client, &wl_surface_interface, 
+                                  wl_resource_get_version(resource), id)))
+     {
+        ERR("Could not create compositor surface");
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   /* FIXME: set callback ? */
+   /* set implementation on resource */
+   wl_resource_set_implementation(res, &_e_surface_interface, NULL, NULL);
+//                                  _callback);
+
+   DBG("\tCreated Resource: %d", wl_resource_get_id(res));
+
+   /* set implementation */
+
+   /* get the client pid and generate a pixmap id */
+   wl_client_get_credentials(client, &pid, NULL, NULL);
+   wid = e_comp_wl_id_get(pid, id);
+
+   DBG("\tClient Pid: %d", pid);
+
+   /* check for existing pixmap */
+   if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, wid)))
+     {
+        /* try to create new pixmap */
+        if (!(ep = e_pixmap_new(E_PIXMAP_TYPE_WL, wid)))
+          {
+             ERR("Could not create new pixmap");
+             wl_resource_destroy(res);
+             wl_resource_post_no_memory(resource);
+             return;
+          }
+     }
+
+   DBG("\tUsing Pixmap: %llu", wid);
+
+   /* set reference to pixmap so we can fetch it later */
+   wl_resource_set_user_data(res, ep);
+
+   /* emit surface create signal */
+   wl_signal_emit(&comp->wl_comp_data->signals.surface.create, res);
 }
 
 static void 
@@ -270,5 +388,12 @@ e_comp_wl_shutdown(void)
 EINTERN struct wl_resource *
 e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id)
 {
-   return NULL;
+   struct wl_resource *ret = NULL;
+
+   if ((ret = wl_resource_create(client, &wl_surface_interface, version, id)))
+     {
+        DBG("Created Surface: %d", wl_resource_get_id(ret));
+     }
+
+   return ret;
 }
