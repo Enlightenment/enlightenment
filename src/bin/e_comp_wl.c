@@ -146,6 +146,13 @@ _e_comp_wl_compositor_create(void)
         goto comp_global_err;
      }
 
+   /* try to init data manager */
+   if (!e_comp_wl_data_manager_init(cdata))
+     {
+        ERR("Could not initialize data manager");
+        goto data_err;
+     }
+
    /* initialize shm mechanism */
    wl_display_init_shm(cdata->wl.disp);
 
@@ -167,6 +174,7 @@ _e_comp_wl_compositor_create(void)
 
    return EINA_TRUE;
 
+data_err:
 comp_global_err:
    e_env_unset("WAYLAND_DISPLAY");
 sock_err:
