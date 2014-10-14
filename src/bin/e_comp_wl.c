@@ -62,6 +62,11 @@ _e_comp_wl_compositor_create(void)
    /* set wayland display environment variable */
    e_env_set("WAYLAND_DISPLAY", name);
 
+   /* initialize compositor signals */
+   wl_signal_init(&cdata->signals.surface.create);
+   wl_signal_init(&cdata->signals.surface.activate);
+   wl_signal_init(&cdata->signals.surface.kill);
+
    return EINA_TRUE;
 
 sock_err:
