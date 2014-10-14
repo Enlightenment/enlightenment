@@ -44,7 +44,18 @@ _e_comp_wl_compositor_create(void)
    /* set wayland log handler */
    wl_log_set_handler_server(_e_comp_wl_log_cb_print);
 
+   /* try to create a wayland display */
+   if (!(cdata->wl.disp = wl_display_create()))
+     {
+        ERR("Could not create a Wayland display: %m");
+        goto disp_err;
+     }
+
    return EINA_TRUE;
+
+disp_err:
+   free(cdata);
+   return EINA_FALSE;
 }
 
 /* public functions */
