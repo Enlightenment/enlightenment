@@ -14,6 +14,24 @@ _e_comp_wl_log_cb_print(const char *format, va_list args)
 }
 
 static void 
+_e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+{
+   E_Comp *comp;
+   struct wl_resource *res;
+
+   if (!(comp = data)) return;
+
+   if (!(res = 
+         wl_resource_create(client, &wl_compositor_interface, 
+                            MIN(version, COMPOSITOR_VERSION), id)))
+     {
+        ERR("Could not create compositor resource: %m");
+        wl_client_post_no_memory(client);
+        return;
+     }
+}
+
+static void 
 _e_comp_wl_cb_del(E_Comp *comp)
 {
    E_Comp_Data *cdata;
@@ -67,8 +85,19 @@ _e_comp_wl_compositor_create(void)
    wl_signal_init(&cdata->signals.surface.activate);
    wl_signal_init(&cdata->signals.surface.kill);
 
+   /* try to add compositor to wayland globals */
+   if (!wl_global_create(cdata->wl.disp, &wl_compositor_interface, 
+                         COMPOSITOR_VERSION, comp, 
+                         _e_comp_wl_compositor_cb_bind))
+     {
+        ERR("Could not add compositor to wayland globals: %m");
+        goto comp_global_err;
+     }
+
    return EINA_TRUE;
 
+comp_global_err:
+   e_env_unset("WAYLAND_DISPLAY");
 sock_err:
    wl_display_destroy(cdata->wl.disp);
 disp_err:
