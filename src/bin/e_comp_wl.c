@@ -8,6 +8,12 @@
 
 /* local functions */
 static void 
+_e_comp_wl_log_cb_print(const char *format, va_list args)
+{
+   INF("WL: ", format, args);
+}
+
+static void 
 _e_comp_wl_cb_del(E_Comp *comp)
 {
    E_Comp_Data *cdata;
@@ -34,6 +40,9 @@ _e_comp_wl_compositor_create(void)
 
    /* create new compositor data */
    cdata = E_NEW(E_Comp_Data, 1);
+
+   /* set wayland log handler */
+   wl_log_set_handler_server(_e_comp_wl_log_cb_print);
 
    return EINA_TRUE;
 }
