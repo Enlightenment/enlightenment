@@ -218,6 +218,13 @@ e_comp_wl_init(void)
         return EINA_FALSE;
      }
 
+   /* try to init ecore_wayland */
+   if (!ecore_wl_init(NULL))
+     {
+        e_error_message_show(_("Enlightenment cannot initialize Ecore_Wayland!\n"));
+        return EINA_FALSE;
+     }
+
    return EINA_TRUE;
 }
 
