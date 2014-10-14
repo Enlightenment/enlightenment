@@ -37,6 +37,33 @@ _e_comp_wl_cb_prepare(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
    wl_display_flush_clients(cdata->wl.disp);
 }
 
+static Eina_Bool 
+_e_comp_wl_cb_module_idle(void *data)
+{
+   E_Comp_Data *cdata;
+   E_Module  *mod = NULL;
+
+   if (!(cdata = data)) return ECORE_CALLBACK_RENEW;
+
+   /* check if we are still loading modules */
+   if (e_module_loading_get()) return ECORE_CALLBACK_RENEW;
+
+   if (!(mod = e_module_find("wl_desktop_shell")))
+     mod = e_module_new("wl_desktop_shell");
+
+   if (mod)
+     {
+        e_module_enable(mod);
+
+        /* FIXME: NB: 
+         * Do we need to dispatch pending wl events here ?? */
+
+        return ECORE_CALLBACK_CANCEL;
+     }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void 
 _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
@@ -134,6 +161,9 @@ _e_comp_wl_compositor_create(void)
                                _e_comp_wl_cb_read, cdata, NULL, NULL);
    ecore_main_fd_handler_prepare_callback_set(cdata->fd_hdlr, 
                                               _e_comp_wl_cb_prepare, cdata);
+
+   /* setup module idler to load shell mmodule */
+   ecore_idler_add(_e_comp_wl_cb_module_idle, cdata);
 
    return EINA_TRUE;
 
