@@ -238,7 +238,8 @@ e_comp_wl_surface_create_signal_get(E_Comp *comp)
 EINTERN void 
 e_comp_wl_shutdown(void)
 {
-
+   /* shutdown ecore_wayland */
+   ecore_wl_shutdown();
 }
 
 EINTERN struct wl_resource *
