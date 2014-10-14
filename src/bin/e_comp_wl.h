@@ -273,7 +273,7 @@ EINTERN struct wl_resource *e_comp_wl_surface_create(struct wl_client *client, i
 EINTERN void e_comp_wl_surface_destroy(struct wl_resource *resource);
 EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer);
 
-EAPI struct wl_signal e_comp_wl_surface_signal_get(E_Comp *comp);
+EAPI struct wl_signal e_comp_wl_surface_create_signal_get(E_Comp *comp);
 
 static inline uint64_t
 e_comp_wl_id_get(uint32_t client, uint32_t surface)
