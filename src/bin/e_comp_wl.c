@@ -29,6 +29,7 @@ static Eina_Bool
 _e_comp_wl_compositor_create(void)
 {
    E_Comp *comp;
+   const char *name;
 
    /* check for existing compositor. create if needed */
    if (!(comp = e_comp_get(NULL)))
@@ -51,8 +52,20 @@ _e_comp_wl_compositor_create(void)
         goto disp_err;
      }
 
+   /* try to setup wayland socket */
+   if (!(name = wl_display_add_socket_auto(cdata->wl.disp)))
+     {
+        ERR("Could not create Wayland display socket: %m");
+        goto sock_err;
+     }
+
+   /* set wayland display environment variable */
+   e_env_set("WAYLAND_DISPLAY", name);
+
    return EINA_TRUE;
 
+sock_err:
+   wl_display_destroy(cdata->wl.disp);
 disp_err:
    free(cdata);
    return EINA_FALSE;
