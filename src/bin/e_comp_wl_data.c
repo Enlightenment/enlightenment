@@ -661,10 +661,7 @@ _e_comp_wl_clipboard_selection_set(struct wl_listener *listener EINA_UNUSED, voi
                                          cdata->selection.serial, p[0]);
 
    if (!cdata->clipboard.source)
-     {
-        close(p[0]);
-        return;
-     }
+     close(p[0]);
 }
 
 static void
