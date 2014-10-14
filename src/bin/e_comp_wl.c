@@ -94,6 +94,9 @@ _e_comp_wl_compositor_create(void)
         goto comp_global_err;
      }
 
+   /* initialize shm mechanism */
+   wl_display_init_shm(cdata->wl.disp);
+
    return EINA_TRUE;
 
 comp_global_err:
