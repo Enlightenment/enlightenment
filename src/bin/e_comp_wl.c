@@ -232,6 +232,9 @@ _e_comp_wl_compositor_cb_del(E_Comp *comp)
    /* get existing compositor data */
    if (!(cdata = comp->wl_comp_data)) return;
 
+   /* delete fd handler */
+   if (cdata->fd_hdlr) ecore_main_fd_handler_del(cdata->fd_hdlr);
+
    /* free allocated data structure */
    free(cdata);
 }
