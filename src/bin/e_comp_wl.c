@@ -32,7 +32,7 @@ _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data, uint32_t ver
 }
 
 static void 
-_e_comp_wl_cb_del(E_Comp *comp)
+_e_comp_wl_compositor_cb_del(E_Comp *comp)
 {
    E_Comp_Data *cdata;
 
@@ -54,7 +54,7 @@ _e_comp_wl_compositor_create(void)
      {
         comp = e_comp_new();
         comp->comp_type = E_PIXMAP_TYPE_WL;
-        E_OBJECT_DEL_SET(comp, _e_comp_wl_cb_del);
+        E_OBJECT_DEL_SET(comp, _e_comp_wl_compositor_cb_del);
      }
 
    /* create new compositor data */
