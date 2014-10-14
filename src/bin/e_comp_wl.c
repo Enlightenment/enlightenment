@@ -65,6 +65,28 @@ _e_comp_wl_cb_module_idle(void *data)
 }
 
 static void 
+_e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
+{
+   E_Comp *comp;
+
+   if (!(comp = wl_resource_get_user_data(resource))) return;
+}
+
+static void 
+_e_comp_wl_compositor_cb_region_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
+{
+   E_Comp *comp;
+
+   if (!(comp = wl_resource_get_user_data(resource))) return;
+}
+
+static const struct wl_compositor_interface _e_comp_interface = 
+{
+   _e_comp_wl_compositor_cb_surface_create,
+   _e_comp_wl_compositor_cb_region_create
+};
+
+static void 
 _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
    E_Comp *comp;
@@ -80,6 +102,8 @@ _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data, uint32_t ver
         wl_client_post_no_memory(client);
         return;
      }
+
+   wl_resource_set_implementation(res, &_e_comp_interface, comp, NULL);
 }
 
 static void 
