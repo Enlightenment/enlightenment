@@ -153,6 +153,13 @@ _e_comp_wl_compositor_create(void)
         goto data_err;
      }
 
+   /* try to init input */
+   if (!e_comp_wl_input_init(cdata))
+     {
+        ERR("Could not initialize input");
+        goto input_err;
+     }
+
    /* initialize shm mechanism */
    wl_display_init_shm(cdata->wl.disp);
 
@@ -174,6 +181,8 @@ _e_comp_wl_compositor_create(void)
 
    return EINA_TRUE;
 
+input_err:
+   e_comp_wl_data_manager_shutdown(cdata);
 data_err:
 comp_global_err:
    e_env_unset("WAYLAND_DISPLAY");
