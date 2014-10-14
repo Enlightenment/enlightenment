@@ -13,6 +13,30 @@ _e_comp_wl_log_cb_print(const char *format, va_list args)
    INF("WL: ", format, args);
 }
 
+static Eina_Bool 
+_e_comp_wl_cb_read(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+{
+   E_Comp_Data *cdata;
+
+   if (!(cdata = data)) return ECORE_CALLBACK_RENEW;
+
+   /* dispatch pending wayland events */
+   wl_event_loop_dispatch(cdata->wl.loop, 0);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void 
+_e_comp_wl_cb_prepare(void *data, Ecore_Fd_Handler *hdlr EINA_UNUSED)
+{
+   E_Comp_Data *cdata;
+
+   if (!(cdata = data)) return;
+
+   /* flush pending client events */
+   wl_display_flush_clients(cdata->wl.disp);
+}
+
 static void 
 _e_comp_wl_compositor_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
 {
@@ -48,6 +72,7 @@ _e_comp_wl_compositor_create(void)
 {
    E_Comp *comp;
    const char *name;
+   int fd = 0;
 
    /* check for existing compositor. create if needed */
    if (!(comp = e_comp_get(NULL)))
@@ -96,6 +121,19 @@ _e_comp_wl_compositor_create(void)
 
    /* initialize shm mechanism */
    wl_display_init_shm(cdata->wl.disp);
+
+   /* get the wayland display loop */
+   cdata->wl.loop = wl_display_get_event_loop(cdata->wl.disp);
+
+   /* get the file descriptor of the wayland event loop */
+   fd = wl_event_loop_get_fd(cdata->wl.loop);
+
+   /* create a listener for wayland main loop events */
+   cdata->fd_hdlr = 
+     ecore_main_fd_handler_add(fd, (ECORE_FD_READ | ECORE_FD_ERROR), 
+                               _e_comp_wl_cb_read, cdata, NULL, NULL);
+   ecore_main_fd_handler_prepare_callback_set(cdata->fd_hdlr, 
+                                              _e_comp_wl_cb_prepare, cdata);
 
    return EINA_TRUE;
 
