@@ -6,7 +6,7 @@
 #define E_COMP_WL_PIXMAP_CHECK \
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return
 
-/* Resource Data Mapping: (wl_resource_user_data_get)
+/* Resource Data Mapping: (wl_resource_get_user_data)
  * 
  * wl_surface == e_pixmap
  * 
@@ -71,12 +71,65 @@ _e_comp_wl_cb_module_idle(void *data)
 }
 
 static void 
+_e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
+{
+   E_Comp_Wl_Buffer *buffer;
+
+   DBG("Buffer Cb Destroy");
+
+   /* try to get the buffer from the listener */
+   if ((buffer = container_of(listener, E_Comp_Wl_Buffer, destroy_listener)))
+     {
+        DBG("\tEmit buffer destroy signal");
+        /* emit the destroy signal */
+        wl_signal_emit(&buffer->destroy_signal, buffer);
+
+        /* FIXME: Investigate validity of this
+         * 
+         * I think this could be a problem because the destroy signal 
+         * uses the buffer as the 'data', so anything that catches 
+         * this signal is going to run into problems if we free */
+        free(buffer);
+     }
+}
+
+static E_Comp_Wl_Buffer *
+_e_comp_wl_buffer_get(struct wl_resource *resource)
+{
+   E_Comp_Wl_Buffer *buffer;
+   struct wl_listener *listener;
+
+   /* try to get the destroy listener from this resource */
+   listener = 
+     wl_resource_get_destroy_listener(resource, _e_comp_wl_buffer_cb_destroy);
+
+   /* if we have the destroy listener, return the E_Comp_Wl_Buffer */
+   if (listener)
+     return container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
+
+   /* no destroy listener on this resource, try to create new buffer */
+   if (!(buffer = E_NEW(E_Comp_Wl_Buffer, 1))) return NULL;
+
+   /* initialize buffer structure */
+   buffer->resource = resource;
+   wl_signal_init(&buffer->destroy_signal);
+
+   /* setup buffer destroy callback */
+   buffer->destroy_listener.notify = _e_comp_wl_buffer_cb_destroy;
+   wl_resource_add_destroy_listener(resource, &buffer->destroy_listener);
+
+   return buffer;
+}
+
+static void 
 _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Pixmap *ep;
 
+   DBG("Surface Cb Destroy: %d", wl_resource_get_id(resource));
+
    /* unset the pixmap resource */
-   if ((ep = wl_resource_user_data_get(resource)))
+   if ((ep = wl_resource_get_user_data(resource)))
      e_pixmap_resource_set(ep, NULL);
 
    /* destroy this resource */
@@ -86,37 +139,36 @@ _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
 static void 
 _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t sx, int32_t sy)
 {
-
 }
 
 static void 
 _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
-
+   DBG("Surface Cb Damage");
 }
 
 static void 
 _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, uint32_t callback)
 {
-
+   DBG("Surface Cb Frame");
 }
 
 static void 
 _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
 {
-
+   DBG("Surface Opaque Region Set");
 }
 
 static void 
 _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
 {
-
+   DBG("Surface Input Region Set");
 }
 
 static void 
 _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-
+   DBG("Surface Commit");
 }
 
 static void 
@@ -162,7 +214,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
                                   wl_resource_get_version(resource), id)))
      {
         ERR("Could not create compositor surface");
-        wl_resource_post_no_memory(resource);
+        wl_client_post_no_memory(client);
         return;
      }
 
@@ -187,7 +239,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
           {
              ERR("Could not create new pixmap");
              wl_resource_destroy(res);
-             wl_resource_post_no_memory(resource);
+             wl_client_post_no_memory(client);
              return;
           }
      }
