@@ -443,6 +443,46 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    /* TODO: first draw timer ? */
 }
 
+static void 
+_e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
+{
+   uint64_t win;
+
+   DBG("Comp Hook Client Del");
+
+   /* make sure this is a wayland client */
+   E_COMP_WL_PIXMAP_CHECK;
+
+   /* get window id from pixmap */
+   win = e_pixmap_window_get(ec->pixmap);
+   eina_hash_del_by_key(clients_win_hash, &win);
+
+   /* TODO: Focus set down */
+
+   ec->already_unparented = EINA_TRUE;
+   if (ec->comp_data->reparented)
+     {
+        /* get the parent window */
+        win = e_client_util_pwin_get(ec);
+
+        /* remove the parent from the hash */
+        eina_hash_del_by_key(clients_win_hash, &win);
+
+        /* reset pixmap parent window */
+        e_pixmap_parent_window_set(ec->pixmap, 0);
+     }
+
+   if ((ec->parent) && (ec->parent->modal == ec))
+     {
+        ec->parent->lock_close = EINA_FALSE;
+        ec->parent->modal = NULL;
+     }
+
+   E_FREE(ec->comp_data);
+
+   /* TODO */
+}
+
 static Eina_Bool 
 _e_comp_wl_compositor_create(void)
 {
@@ -580,6 +620,7 @@ e_comp_wl_init(void)
 
    /* add hooks to catch e_client events */
    e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_comp_wl_client_cb_new, NULL);
+   e_client_hook_add(E_CLIENT_HOOK_DEL, _e_comp_wl_client_cb_del, NULL);
 
    return EINA_TRUE;
 }
