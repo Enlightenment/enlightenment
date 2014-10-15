@@ -228,43 +228,72 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
 static void 
 _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
-   DBG("Surface Cb Damage");
+   DBG("Surface Cb Damage: %d", wl_resource_get_id(resource));
 }
 
 static void 
 _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, uint32_t callback)
 {
-   DBG("Surface Cb Frame");
+   DBG("Surface Cb Frame: %d", wl_resource_get_id(resource));
 }
 
 static void 
 _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
 {
-   DBG("Surface Opaque Region Set");
+   DBG("Surface Opaque Region Set: %d", wl_resource_get_id(resource));
 }
 
 static void 
 _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
 {
-   DBG("Surface Input Region Set");
+   DBG("Surface Input Region Set: %d", wl_resource_get_id(resource));
 }
 
 static void 
 _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   DBG("Surface Commit");
+   E_Pixmap *ep;
+   uint64_t pixid;
+   E_Client *ec;
+
+   DBG("Surface Commit: %d", wl_resource_get_id(resource));
+
+   /* get the e_pixmap reference */
+   if (!(ep = wl_resource_get_user_data(resource))) return;
+
+   pixid = e_pixmap_window_get(ep);
+   DBG("\tSurface has Pixmap: %llu", pixid);
+
+   /* try to find the associated e_client */
+   if (!(ec = e_pixmap_client_get(ep)))
+     {
+        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
+          {
+             ERR("\tCould not find client from pixmap %llu", pixid);
+             return;
+          }
+     }
+
+   /* trap for clients which are being deleted */
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   /* handle actual surface commit */
+   if (!e_comp_wl_surface_commit(ec))
+     {
+        ERR("Failed to commit surface: %d", wl_resource_get_id(resource));
+     }
 }
 
 static void 
 _e_comp_wl_surface_cb_buffer_transform_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t transform EINA_UNUSED)
 {
-   DBG("Surface Buffer Transform");
+   DBG("Surface Buffer Transform: %d", wl_resource_get_id(resource));
 }
 
 static void 
 _e_comp_wl_surface_cb_buffer_scale_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource EINA_UNUSED, int32_t scale EINA_UNUSED)
 {
-   DBG("Surface Buffer Scale");
+   DBG("Surface Buffer Scale: %d", wl_resource_get_id(resource));
 }
 
 static const struct wl_surface_interface _e_surface_interface = 
@@ -653,4 +682,70 @@ e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id)
      }
 
    return ret;
+}
+
+EINTERN Eina_Bool 
+e_comp_wl_surface_commit(E_Client *ec)
+{
+   E_Pixmap *ep;
+
+   if (!(ep = ec->pixmap)) return EINA_FALSE;
+
+   if (ec->comp_data->pending.new_attach)
+     {
+        /* TODO: buffer reference */
+
+        if (ec->comp_data->pending.buffer)
+          e_pixmap_resource_set(ep, ec->comp_data->pending.buffer->resource);
+        else
+          e_pixmap_resource_set(ep, NULL);
+
+        e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
+     }
+
+   /* mark the pixmap as dirty */
+   e_pixmap_dirty(ep);
+
+   /* check for any pending attachments */
+   if (ec->comp_data->pending.new_attach)
+     {
+        /* check if the pending size is different than the client size */
+        if ((ec->client.w != ec->comp_data->pending.w) || 
+            (ec->client.h != ec->comp_data->pending.h))
+          {
+             /* if the client has a shell configure, call it */
+             if ((ec->comp_data->shell.surface) && 
+                 (ec->comp_data->shell.configure))
+               ec->comp_data->shell.configure(ec->comp_data->shell.surface, 
+                                              ec->client.x, ec->client.y,
+                                              ec->comp_data->pending.w, 
+                                              ec->comp_data->pending.h);
+          }
+     }
+
+   /* check if we need to map this surface */
+   if (ec->comp_data->pending.buffer)
+     {
+        /* if this surface is not mapped yet, map it */
+        if (!ec->comp_data->mapped)
+          {
+             /* if the client has a shell map, call it */
+             if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.map))
+               ec->comp_data->shell.map(ec->comp_data->shell.surface);
+          }
+     }
+   else
+     {
+        /* no pending buffer to attach. unmap the surface */
+        if (ec->comp_data->mapped)
+          {
+             /* if the client has a shell map, call it */
+             if ((ec->comp_data->shell.surface) && (ec->comp_data->shell.unmap))
+               ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
+          }
+     }
+
+   /* TODO: Handle pending regions */
+
+   return EINA_TRUE;
 }
