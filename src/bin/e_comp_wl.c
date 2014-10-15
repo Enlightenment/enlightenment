@@ -6,6 +6,12 @@
 #define E_COMP_WL_PIXMAP_CHECK \
    if (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL) return
 
+/* Resource Data Mapping: (wl_resource_user_data_get)
+ * 
+ * wl_surface == e_pixmap
+ * 
+ */
+
 /* local functions */
 static void 
 _e_comp_wl_log_cb_print(const char *format, va_list args)
@@ -67,6 +73,13 @@ _e_comp_wl_cb_module_idle(void *data)
 static void 
 _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   E_Pixmap *ep;
+
+   /* unset the pixmap resource */
+   if ((ep = wl_resource_user_data_get(resource)))
+     e_pixmap_resource_set(ep, NULL);
+
+   /* destroy this resource */
    wl_resource_destroy(resource);
 }
 
@@ -153,14 +166,12 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
         return;
      }
 
+   DBG("\tCreated Resource: %d", wl_resource_get_id(res));
+
    /* FIXME: set callback ? */
    /* set implementation on resource */
    wl_resource_set_implementation(res, &_e_surface_interface, NULL, NULL);
 //                                  _callback);
-
-   DBG("\tCreated Resource: %d", wl_resource_get_id(res));
-
-   /* set implementation */
 
    /* get the client pid and generate a pixmap id */
    wl_client_get_credentials(client, &pid, NULL, NULL);
