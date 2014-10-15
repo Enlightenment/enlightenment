@@ -139,6 +139,87 @@ _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
 static void 
 _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t sx, int32_t sy)
 {
+   E_Pixmap *ep;
+   uint64_t pixid;
+   E_Client *ec;
+
+   DBG("Surface Attach: %d", wl_resource_get_id(resource));
+
+   /* get the e_pixmap reference */
+   if (!(ep = wl_resource_get_user_data(resource))) return;
+
+   pixid = e_pixmap_window_get(ep);
+   DBG("\tSurface has Pixmap: %llu", pixid);
+
+   /* try to find the associated e_client */
+   if (!(ec = e_pixmap_client_get(ep)))
+     {
+        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
+          {
+             ERR("\tCould not find client from pixmap %llu", pixid);
+             return;
+          }
+     }
+
+   /* check if client is being deleted */
+   if (e_object_is_del(E_OBJECT(ec)))
+     {
+        DBG("\tE_Client scheduled for deletion");
+        return;
+     }
+
+   /* check for valid comp_data */
+   if (!ec->comp_data)
+     {
+        ERR("\tE_Client has no comp data");
+        return;
+     }
+
+   /* clear any pending buffer
+    * 
+    * NB: This will call any buffer_destroy function associated */
+   if (ec->comp_data->pending.buffer)
+     wl_list_remove(&ec->comp_data->pending.buffer_destroy.link);
+
+   /* reset client pending information */
+   ec->comp_data->pending.x = 0;
+   ec->comp_data->pending.y = 0;
+   ec->comp_data->pending.w = 0;
+   ec->comp_data->pending.h = 0;
+   ec->comp_data->pending.buffer = NULL;
+   ec->comp_data->pending.new_attach = EINA_TRUE;
+
+   if (buffer_resource)
+     {
+        E_Comp_Wl_Buffer *buffer = NULL;
+        struct wl_shm_buffer *shmb;
+
+        /* try to get the E_Comp_Wl_Buffer */
+        if (!(buffer = _e_comp_wl_buffer_get(buffer_resource)))
+          {
+             ERR("\tCould not get E_Comp_Wl_Buffer");
+             wl_client_post_no_memory(client);
+             return;
+          }
+
+        /* since we have a valid buffer, set pending properties */
+        ec->comp_data->pending.x = sx;
+        ec->comp_data->pending.y = sy;
+        ec->comp_data->pending.buffer = buffer;
+
+        /* check for this resource being a shm buffer */
+        if ((shmb = wl_shm_buffer_get(buffer_resource)))
+          {
+             /* update pending size */
+             ec->comp_data->pending.w = wl_shm_buffer_get_width(shmb);
+             ec->comp_data->pending.h = wl_shm_buffer_get_height(shmb);
+          }
+
+        /* add buffer destroy signal so we get notified when this buffer 
+         * gets destroyed (callback set in buffer_get function) */
+        wl_signal_add(&buffer->destroy_signal, 
+                      &ec->comp_data->pending.buffer_destroy);
+     }
 }
 
 static void 
