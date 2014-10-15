@@ -12,6 +12,9 @@
  * 
  */
 
+/* local variables */
+static Eina_Hash *clients_win_hash = NULL;
+
 /* local functions */
 static void 
 _e_comp_wl_log_cb_print(const char *format, va_list args)
@@ -515,6 +518,9 @@ e_comp_wl_init(void)
         return EINA_FALSE;
      }
 
+   /* create hash to store clients */
+   clients_win_hash = eina_hash_int64_new(NULL);
+
    return EINA_TRUE;
 }
 
@@ -528,6 +534,9 @@ e_comp_wl_surface_create_signal_get(E_Comp *comp)
 EINTERN void 
 e_comp_wl_shutdown(void)
 {
+   /* free the clients win hash */
+   E_FREE_FUNC(clients_win_hash, eina_hash_free);
+
    /* shutdown ecore_wayland */
    ecore_wl_shutdown();
 }
