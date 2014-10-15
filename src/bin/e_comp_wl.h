@@ -271,6 +271,7 @@ EINTERN void e_comp_wl_shutdown(void);
 
 EINTERN struct wl_resource *e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id);
 EINTERN void e_comp_wl_surface_destroy(struct wl_resource *resource);
+EINTERN Eina_Bool e_comp_wl_surface_commit(E_Client *ec);
 EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer);
 
 EAPI struct wl_signal e_comp_wl_surface_create_signal_get(E_Comp *comp);
