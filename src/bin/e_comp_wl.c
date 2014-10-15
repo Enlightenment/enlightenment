@@ -386,6 +386,63 @@ _e_comp_wl_compositor_cb_del(E_Comp *comp)
    free(cdata);
 }
 
+static void 
+_e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
+{
+   uint64_t win;
+
+   DBG("Comp Hook Client New");
+
+   /* make sure this is a wayland client */
+   E_COMP_WL_PIXMAP_CHECK;
+
+   /* get window id from pixmap */
+   win = e_pixmap_window_get(ec->pixmap);
+
+   /* ignore fake root windows */
+   if ((ec->override) && ((ec->x == -77) && (ec->y == -77)))
+     {
+        e_comp_ignore_win_add(E_PIXMAP_TYPE_WL, win);
+        e_object_del(E_OBJECT(ec));
+        return;
+     }
+
+   if (!(ec->comp_data = E_NEW(E_Comp_Client_Data, 1)))
+     {
+        ERR("Could not allocate new client data structure");
+        return;
+     }
+
+   /* set initial client properties */
+   ec->ignored = e_comp_ignore_win_find(win);
+   ec->border_size = 0;
+   ec->placed |= ec->override;
+   ec->new_client ^= ec->override;
+   ec->icccm.accepts_focus = ((!ec->override) && (!ec->input_only));
+
+   /* NB: could not find a better place to do this, BUT for internal windows, 
+    * we need to set delete_request else the close buttons on the frames do 
+    * basically nothing */
+   if (ec->internal) ec->icccm.delete_request = EINA_TRUE;
+
+   /* set initial client data properties */
+   ec->comp_data->mapped = EINA_FALSE;
+   ec->comp_data->first_damage = ((ec->internal) || (ec->override));
+
+   if ((!e_client_util_ignored_get(ec)) && 
+       (!ec->internal) && (!ec->internal_ecore_evas))
+     {
+        ec->comp_data->need_reparent = EINA_TRUE;
+        ec->take_focus = !starting;
+     }
+
+   /* add this client to the hash */
+   eina_hash_add(clients_win_hash, &win, ec);
+   e_hints_client_list_set();
+
+   /* TODO: first draw timer ? */
+}
+
 static Eina_Bool 
 _e_comp_wl_compositor_create(void)
 {
@@ -520,6 +577,9 @@ e_comp_wl_init(void)
 
    /* create hash to store clients */
    clients_win_hash = eina_hash_int64_new(NULL);
+
+   /* add hooks to catch e_client events */
+   e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_comp_wl_client_cb_new, NULL);
 
    return EINA_TRUE;
 }
