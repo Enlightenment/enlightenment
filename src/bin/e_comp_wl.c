@@ -9,6 +9,7 @@
 /* Resource Data Mapping: (wl_resource_get_user_data)
  * 
  * wl_surface == e_pixmap
+ * wl_region == eina_tiler
  * 
  */
 
