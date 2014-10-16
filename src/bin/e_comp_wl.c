@@ -326,7 +326,6 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
    uint64_t pixid;
    E_Client *ec;
    Eina_Rectangle *dmg = NULL;
-   int pw, ph;
 
    DBG("Surface Cb Damage: %d", wl_resource_get_id(resource));
    DBG("\tGeom: %d %d %d %d", x, y, w, h);
@@ -335,7 +334,6 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
    pixid = e_pixmap_window_get(ep);
-   DBG("\tSurface has Pixmap: %llu", pixid);
 
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
@@ -348,15 +346,6 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
      }
 
    if (!ec->comp_data) return;
-
-   e_pixmap_size_get(ep, &pw, &ph);
-   DBG("\tPixmap Size: %d %d", pw, ph);
-
-   DBG("\tPending Size: %d %d", ec->comp_data->pending.w, 
-       ec->comp_data->pending.h);
-
-   DBG("\tE Client Size: %d %d", ec->client.w, ec->client.h);
-   DBG("\tE Size: %d %d", ec->w, ec->h);
 
    /* create new damage rectangle */
    dmg = eina_rectangle_new(x, y, w, h);
@@ -554,9 +543,6 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    /* get the client pid and generate a pixmap id */
    wl_client_get_credentials(client, &pid, NULL, NULL);
    wid = e_comp_wl_id_get(pid, id);
-
-   DBG("\tClient Pid: %d", pid);
-   DBG("\tWl Id: %llu", wid);
 
    /* check for existing pixmap */
    if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, wid)))
