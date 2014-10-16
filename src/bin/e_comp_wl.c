@@ -902,6 +902,7 @@ EINTERN Eina_Bool
 e_comp_wl_surface_commit(E_Client *ec)
 {
    E_Pixmap *ep;
+   Eina_Rectangle *dmg;
 
    if (!(ep = ec->pixmap)) return EINA_FALSE;
 
@@ -960,6 +961,16 @@ e_comp_wl_surface_commit(E_Client *ec)
      }
 
    /* TODO: Handle pending regions */
+
+   /* commit any pending damages */
+   if ((!ec->comp->nocomp) && (ec->frame))
+     {
+        EINA_LIST_FREE(ec->comp_data->pending.damages, dmg)
+          {
+             e_comp_object_damage(ec->frame, dmg->x, dmg->y, dmg->w, dmg->h);
+             eina_rectangle_free(dmg);
+          }
+     }
 
    return EINA_TRUE;
 }
