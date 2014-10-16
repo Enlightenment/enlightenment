@@ -696,6 +696,7 @@ static void
 _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 {
    uint64_t win;
+   Eina_Rectangle *dmg;
 
    DBG("Comp Hook Client Del");
 
@@ -727,9 +728,10 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
         ec->parent->modal = NULL;
      }
 
-   E_FREE(ec->comp_data);
+   EINA_LIST_FREE(ec->comp_data->pending.damage, dmg)
+     eina_rectangle_free(dmg);
 
-   /* TODO */
+   E_FREE(ec->comp_data);
 }
 
 static Eina_Bool 
