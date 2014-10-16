@@ -734,6 +734,9 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    EINA_LIST_FREE(ec->comp_data->pending.damage, dmg)
      eina_rectangle_free(dmg);
 
+   if (ec->comp_data->pending.input)
+     eina_tiler_free(ec->comp_data->pending.input);
+
    E_FREE(ec->comp_data);
 }
 
