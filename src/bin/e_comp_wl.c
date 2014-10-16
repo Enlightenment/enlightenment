@@ -279,9 +279,7 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 
    /* handle actual surface commit */
    if (!e_comp_wl_surface_commit(ec))
-     {
-        ERR("Failed to commit surface: %d", wl_resource_get_id(resource));
-     }
+     ERR("Failed to commit surface: %d", wl_resource_get_id(resource));
 }
 
 static void 
@@ -367,11 +365,109 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 }
 
 static void 
+_e_comp_wl_region_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   DBG("Region Destroy: %d", wl_resource_get_id(resource));
+   wl_resource_destroy(resource);
+}
+
+static void 
+_e_comp_wl_region_cb_add(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
+{
+   Eina_Tiler *tiler;
+
+   DBG("Region Add: %d", wl_resource_get_id(resource));
+   DBG("\tGeom: %d %d %d %d", x, y, w, h);
+
+   /* get the tiler from the resource */
+   if ((tiler = wl_resource_get_user_data(resource)))
+     {
+        Eina_Tiler *src;
+
+        src = eina_tiler_new(w, h);
+        eina_tiler_tile_size_set(src, 1, 1);
+        eina_tiler_rect_add(src, &(Eina_Rectangle){x, y, w, h});
+        eina_tiler_union(tiler, src);
+        eina_tiler_free(src);
+     }
+}
+
+static void 
+_e_comp_wl_region_cb_subtract(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
+{
+   Eina_Tiler *tiler;
+
+   DBG("Region Subtract: %d", wl_resource_get_id(resource));
+   DBG("\tGeom: %d %d %d %d", x, y, w, h);
+
+   /* get the tiler from the resource */
+   if ((tiler = wl_resource_get_user_data(resource)))
+     {
+        Eina_Tiler *src;
+
+        src = eina_tiler_new(w, h);
+        eina_tiler_tile_size_set(src, 1, 1);
+        eina_tiler_rect_add(src, &(Eina_Rectangle){x, y, w, h});
+
+        eina_tiler_subtract(tiler, src);
+        eina_tiler_free(src);
+     }
+}
+
+static const struct wl_region_interface _e_region_interface = 
+{
+   _e_comp_wl_region_cb_destroy, 
+   _e_comp_wl_region_cb_add, 
+   _e_comp_wl_region_cb_subtract
+};
+
+static void 
+_e_comp_wl_compositor_cb_region_destroy(struct wl_resource *resource)
+{
+   Eina_Tiler *tiler;
+
+   DBG("Compositor Region Destroy: %d", wl_resource_get_id(resource));
+
+   if ((tiler = wl_resource_get_user_data(resource)))
+     eina_tiler_free(tiler);
+}
+
+static void 
 _e_comp_wl_compositor_cb_region_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
    E_Comp *comp;
+   Eina_Tiler *tiler;
+   struct wl_resource *res;
 
+   /* get the compositor from the resource */
    if (!(comp = wl_resource_get_user_data(resource))) return;
+
+   DBG("Region Create: %d", wl_resource_get_id(resource));
+
+   /* try to create new tiler */
+   if (!(tiler = eina_tiler_new(comp->man->w, comp->man->h)))
+     {
+        ERR("Could not create Eina_Tiler");
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   /* set tiler size */
+   eina_tiler_tile_size_set(tiler, 1, 1);
+
+   /* add rectangle to tiler */
+   eina_tiler_rect_add(tiler, 
+                       &(Eina_Rectangle){0, 0, comp->man->w, comp->man->h});
+
+   if (!(res = wl_resource_create(client, &wl_region_interface, 1, id)))
+     {
+        ERR("\tFailed to create region resource");
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   wl_resource_set_implementation(res, &_e_region_interface, tiler, 
+                                  _e_comp_wl_compositor_cb_region_destroy);
 }
 
 static const struct wl_compositor_interface _e_comp_interface = 
@@ -441,6 +537,13 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
         ERR("Could not allocate new client data structure");
         return;
      }
+
+   /* create client tilers */
+   ec->comp_data->pending.input = eina_tiler_new(ec->w, ec->h);
+   eina_tiler_tile_size_set(ec->comp_data->pending.input, 1, 1);
+
+   ec->comp_data->pending.opaque = eina_tiler_new(ec->w, ec->h);
+   eina_tiler_tile_size_set(ec->comp_data->pending.opaque, 1, 1);
 
    /* set initial client properties */
    ec->ignored = e_comp_ignore_win_find(win);
