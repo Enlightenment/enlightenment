@@ -728,6 +728,9 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
         ec->parent->modal = NULL;
      }
 
+   if (ec->comp_data->pending.opaque)
+     eina_tiler_free(ec->comp_data->pending.opaque);
+
    EINA_LIST_FREE(ec->comp_data->pending.damage, dmg)
      eina_rectangle_free(dmg);
 
