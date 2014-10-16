@@ -321,7 +321,43 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
 static void 
 _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
 {
+   E_Pixmap *ep;
+   uint64_t pixid;
+   E_Client *ec;
+
    DBG("Surface Input Region Set: %d", wl_resource_get_id(resource));
+
+   /* get the e_pixmap reference */
+   if (!(ep = wl_resource_get_user_data(resource))) return;
+
+   /* try to find the associated e_client */
+   if (!(ec = e_pixmap_client_get(ep)))
+     {
+        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
+          {
+             ERR("\tCould not find client from pixmap %llu", pixid);
+             return;
+          }
+     }
+
+   /* trap for clients which are being deleted */
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   if (region_resource)
+     {
+        Eina_Tiler *tmp;
+
+        if (!(tmp = wl_resource_get_user_data(region_resource)))
+          return;
+
+        eina_tiler_union(ec->comp_data->pending.input, tmp);
+     }
+   else
+     {
+        eina_tiler_clear(ec->comp_data->pending.input);
+        eina_tiler_rect_add(ec->comp_data->pending.input, 
+                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
+     }
 }
 
 static void 
