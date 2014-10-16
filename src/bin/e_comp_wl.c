@@ -15,6 +15,7 @@
 
 /* local variables */
 static Eina_Hash *clients_win_hash = NULL;
+static Eina_List *handlers = NULL;
 
 /* local functions */
 static void 
@@ -70,6 +71,35 @@ _e_comp_wl_cb_module_idle(void *data)
 
         return ECORE_CALLBACK_CANCEL;
      }
+
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void 
+_e_comp_wl_client_evas_init(E_Client *ec)
+{
+   ec->comp_data->evas_init = EINA_TRUE;
+}
+
+static Eina_Bool 
+_e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Event_Comp_Object *ev)
+{
+   E_Client *ec;
+
+   /* try to get the client from the object */
+   if (!(ec = e_comp_object_client_get(ev->comp_object))) 
+     return ECORE_CALLBACK_RENEW;
+
+   /* check for client being deleted */
+   if (e_object_is_del(E_OBJECT(ec))) return ECORE_CALLBACK_RENEW;
+
+   /* check for wayland pixmap */
+   E_COMP_WL_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
+
+   DBG("Comp Object Added For Pixmap: %llu", e_pixmap_window_get(ec->pixmap));
+
+   /* if we have not setup evas callbacks for this client, do it */
+   if (!ec->comp_data->evas_init) _e_comp_wl_client_evas_init(ec);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -877,6 +907,10 @@ e_comp_wl_init(void)
    /* create hash to store clients */
    clients_win_hash = eina_hash_int64_new(NULL);
 
+   /* add event handlers to catch E events */
+   E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, 
+                         _e_comp_wl_cb_comp_object_add, NULL);
+
    /* add hooks to catch e_client events */
    e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_comp_wl_client_cb_new, NULL);
    e_client_hook_add(E_CLIENT_HOOK_DEL, _e_comp_wl_client_cb_del, NULL);
@@ -894,6 +928,9 @@ e_comp_wl_surface_create_signal_get(E_Comp *comp)
 EINTERN void 
 e_comp_wl_shutdown(void)
 {
+   /* free handlers */
+   E_FREE_LIST(handlers, ecore_event_handler_del);
+
    /* free the clients win hash */
    E_FREE_FUNC(clients_win_hash, eina_hash_free);
 
