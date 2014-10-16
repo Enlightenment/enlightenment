@@ -228,7 +228,46 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
 static void 
 _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
+   E_Pixmap *ep;
+   uint64_t pixid;
+   E_Client *ec;
+   Eina_Rectangle *dmg = NULL;
+   int pw, ph;
+
    DBG("Surface Cb Damage: %d", wl_resource_get_id(resource));
+   DBG("\tGeom: %d %d %d %d", x, y, w, h);
+
+   /* get the e_pixmap reference */
+   if (!(ep = wl_resource_get_user_data(resource))) return;
+
+   pixid = e_pixmap_window_get(ep);
+   DBG("\tSurface has Pixmap: %llu", pixid);
+
+   /* try to find the associated e_client */
+   if (!(ec = e_pixmap_client_get(ep)))
+     {
+        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
+          {
+             ERR("\tCould not find client from pixmap %llu", pixid);
+             return;
+          }
+     }
+
+   if (!ec->comp_data) return;
+
+   e_pixmap_size_get(ep, &pw, &ph);
+   DBG("\tPixmap Size: %d %d", pw, ph);
+
+   DBG("\tPending Size: %d %d", ec->comp_data->pending.w, 
+       ec->comp_data->pending.h);
+
+   DBG("\tE Client Size: %d %d", ec->client.w, ec->client.h);
+   DBG("\tE Size: %d %d", ec->w, ec->h);
+
+   dmg = eina_rectangle_new(x, y, w, h);
+
+   ec->comp_data->pending.damages = 
+     eina_list_append(ec->comp_data->pending.damages, dmg);
 }
 
 static void 
