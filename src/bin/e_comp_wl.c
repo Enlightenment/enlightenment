@@ -155,6 +155,37 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 }
 
 static void 
+_e_comp_wl_evas_cb_mouse_move(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   E_Client *ec;
+   Evas_Event_Mouse_Move *ev;
+   struct wl_resource *res;
+   struct wl_client *wc;
+   Eina_List *l;
+
+   ev = event;
+   if (!(ec = data)) return;
+   if (ec->cur_mouse_action) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (e_client_util_ignored_get(ec)) return;
+
+   ec->comp->wl_comp_data->ptr.x = 
+     wl_fixed_from_int(ev->cur.canvas.x - ec->client.x);
+   ec->comp->wl_comp_data->ptr.y = 
+     wl_fixed_from_int(ev->cur.canvas.y - ec->client.y);
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
+     {
+        if (!e_comp_wl_input_pointer_check(res)) continue;
+        if (wl_resource_get_client(res) != wc) continue;
+        wl_pointer_send_motion(res, ev->timestamp, 
+                               ec->comp->wl_comp_data->ptr.x, 
+                               ec->comp->wl_comp_data->ptr.y);
+     }
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
@@ -167,6 +198,8 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_mouse_in, ec);
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_OUT, 
                                   _e_comp_wl_evas_cb_mouse_out, ec);
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_MOVE, 
+                                  _e_comp_wl_evas_cb_mouse_move, ec);
 
    ec->comp_data->evas_init = EINA_TRUE;
 }
