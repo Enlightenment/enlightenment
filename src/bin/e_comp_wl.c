@@ -313,6 +313,51 @@ _e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *
 }
 
 static void 
+_e_comp_wl_evas_cb_key_down(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   E_Client *ec;
+   E_Comp_Data *cdata;
+   Evas_Event_Key_Down *ev;
+   uint32_t serial, *end, *k, keycode;
+   struct wl_resource *res;
+   struct wl_client *wc;
+   Eina_List *l;
+
+   ev = event;
+   if (!(ec = data)) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   if (!ec->focused) return;
+
+   keycode = (ev->keycode - 8);
+   if (!(cdata = ec->comp->wl_comp_data)) return;
+
+   end = (uint32_t *)cdata->kbd.keys.data + (cdata->kbd.keys.size / sizeof(*k));
+
+   for (k = cdata->kbd.keys.data; k < end; k++)
+     {
+        /* ignore server-generated key repeats */
+        if (*k == keycode) return;
+     }
+
+   cdata->kbd.keys.size = (const char *)end - (const char *)cdata->kbd.keys.data;
+   k = wl_array_add(&cdata->kbd.keys, sizeof(*k));
+   *k = keycode;
+
+   /* update modifier state */
+   e_comp_wl_input_keyboard_state_update(cdata, keycode, EINA_TRUE);
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+   EINA_LIST_FOREACH(ec->comp->wl_comp_data->kbd.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        wl_keyboard_send_key(res, serial, ev->timestamp, 
+                             keycode, WL_KEYBOARD_KEY_STATE_PRESSED);
+     }
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
@@ -333,6 +378,8 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_mouse_up, ec);
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_WHEEL, 
                                   _e_comp_wl_evas_cb_mouse_wheel, ec);
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_KEY_DOWN, 
+                                  _e_comp_wl_evas_cb_key_down, ec);
 
    ec->comp_data->evas_init = EINA_TRUE;
 }
