@@ -738,6 +738,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
      eina_tiler_free(ec->comp_data->pending.input);
 
    E_FREE(ec->comp_data);
+
+   /* TODO: focus check */
 }
 
 static Eina_Bool 
