@@ -76,8 +76,28 @@ _e_comp_wl_cb_module_idle(void *data)
 }
 
 static void 
+_e_comp_wl_evas_cb_show(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec, *tmp;
+   Eina_List *l;
+
+   if (!(ec = data)) return;
+
+   /* check for wayland pixmap */
+   E_COMP_WL_PIXMAP_CHECK;
+
+   if (!ec->override) e_hints_window_visible_set(ec);
+
+   EINA_LIST_FOREACH(ec->e.state.video_child, l, tmp)
+     evas_object_show(tmp->frame);
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
+                                  _e_comp_wl_evas_cb_show, ec);
+
    ec->comp_data->evas_init = EINA_TRUE;
 }
 
