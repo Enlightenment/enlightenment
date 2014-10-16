@@ -102,12 +102,44 @@ _e_comp_wl_evas_cb_hide(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EIN
 }
 
 static void 
+_e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec;
+   Evas_Event_Mouse_In *ev;
+   struct wl_resource *res;
+   struct wl_client *wc;
+   Eina_List *l;
+   uint32_t serial;
+
+   ev = event;
+   if (!(ec = data)) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   DBG("Mouse In On Surface: %d", wl_resource_get_id(ec->comp_data->surface));
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+   EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
+     {
+        if (!e_comp_wl_input_pointer_check(res)) continue;
+        if (wl_resource_get_client(res) != wc) continue;
+        wl_pointer_send_enter(res, serial, ec->comp_data->surface, 
+                              wl_fixed_from_int(ev->canvas.x), 
+                              wl_fixed_from_int(ev->canvas.y));
+     }
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
                                   _e_comp_wl_evas_cb_show, ec);
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_HIDE, 
                                   _e_comp_wl_evas_cb_hide, ec);
+
+   /* setup input callbacks */
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_IN, 
+                                  _e_comp_wl_evas_cb_mouse_in, ec);
 
    ec->comp_data->evas_init = EINA_TRUE;
 }
@@ -221,7 +253,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
      {
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
-             ERR("\tCould not find client from pixmap %llu", pixid);
+             ERR("\t\tCould not find client from pixmap %llu", pixid);
              return;
           }
      }
@@ -524,6 +556,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    wid = e_comp_wl_id_get(pid, id);
 
    DBG("\tClient Pid: %d", pid);
+   DBG("\tWl Id: %llu", wid);
 
    /* check for existing pixmap */
    if (!(ep = e_pixmap_find(E_PIXMAP_TYPE_WL, wid)))
@@ -1051,6 +1084,12 @@ e_comp_wl_surface_commit(E_Client *ec)
           }
      }
 
+   if (!ec->visible) 
+     {
+        DBG("\tSurface Not Visible. Skip to Unmapped");
+        goto unmap;
+     }
+
    /* handle pending opaque */
    if (ec->comp_data->pending.opaque)
      {
@@ -1151,8 +1190,21 @@ e_comp_wl_surface_commit(E_Client *ec)
           }
 
         eina_tiler_free(tmp);
-        eina_tiler_clear(ec->comp_data->pending.opaque);
+        eina_tiler_clear(ec->comp_data->pending.input);
      }
+
+   return EINA_TRUE;
+
+unmap:
+   /* clear pending opaque regions */
+   eina_tiler_clear(ec->comp_data->pending.opaque);
+
+   /* surface is not visible, clear damages */
+   EINA_LIST_FREE(ec->comp_data->pending.damages, dmg)
+     eina_rectangle_free(dmg);
+
+   /* clear pending input regions */
+   eina_tiler_clear(ec->comp_data->pending.input);
 
    return EINA_TRUE;
 }
