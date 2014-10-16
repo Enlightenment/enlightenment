@@ -265,8 +265,10 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
    DBG("\tE Client Size: %d %d", ec->client.w, ec->client.h);
    DBG("\tE Size: %d %d", ec->w, ec->h);
 
+   /* create new damage rectangle */
    dmg = eina_rectangle_new(x, y, w, h);
 
+   /* add damage rectangle to list of pending damages */
    ec->comp_data->pending.damages = 
      eina_list_append(ec->comp_data->pending.damages, dmg);
 }
@@ -306,6 +308,7 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
      {
         Eina_Tiler *tmp;
 
+        /* try to get the tiler from the region resource */
         if (!(tmp = wl_resource_get_user_data(region_resource)))
           return;
 
@@ -348,6 +351,7 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
      {
         Eina_Tiler *tmp;
 
+        /* try to get the tiler from the region resource */
         if (!(tmp = wl_resource_get_user_data(region_resource)))
           return;
 
@@ -540,6 +544,7 @@ _e_comp_wl_compositor_cb_region_destroy(struct wl_resource *resource)
 
    DBG("Compositor Region Destroy: %d", wl_resource_get_id(resource));
 
+   /* try to get the tiler from the region resource */
    if ((tiler = wl_resource_get_user_data(resource)))
      eina_tiler_free(tiler);
 }
