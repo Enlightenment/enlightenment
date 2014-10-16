@@ -278,6 +278,41 @@ _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 }
 
 static void 
+_e_comp_wl_evas_cb_mouse_wheel(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event)
+{
+   E_Client *ec;
+   Evas_Event_Mouse_Wheel *ev;
+   struct wl_resource *res;
+   struct wl_client *wc;
+   Eina_List *l;
+   uint32_t axis, dir;
+
+   ev = event;
+   if (!(ec = data)) return;
+   if (ec->cur_mouse_action) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (e_client_util_ignored_get(ec)) return;
+
+   if (ev->direction == 0)
+     axis = WL_POINTER_AXIS_VERTICAL_SCROLL;
+   else
+     axis = WL_POINTER_AXIS_HORIZONTAL_SCROLL;
+
+   if (ev->z < 0)
+     dir = -wl_fixed_from_int(abs(ev->z));
+   else
+     dir = wl_fixed_from_int(ev->z);
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
+     {
+        if (!e_comp_wl_input_pointer_check(res)) continue;
+        if (wl_resource_get_client(res) != wc) continue;
+        wl_pointer_send_axis(res, ev->timestamp, axis, dir);
+     }
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
@@ -296,6 +331,8 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_mouse_down, ec);
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_UP, 
                                   _e_comp_wl_evas_cb_mouse_up, ec);
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_WHEEL, 
+                                  _e_comp_wl_evas_cb_mouse_wheel, ec);
 
    ec->comp_data->evas_init = EINA_TRUE;
 }
