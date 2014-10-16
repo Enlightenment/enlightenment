@@ -321,6 +321,9 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
    /* get the e_pixmap reference */
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
+   pixid = e_pixmap_window_get(ep);
+   DBG("\tSurface has Pixmap: %llu", pixid);
+
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
@@ -363,6 +366,9 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
 
    /* get the e_pixmap reference */
    if (!(ep = wl_resource_get_user_data(resource))) return;
+
+   pixid = e_pixmap_window_get(ep);
+   DBG("\tSurface has Pixmap: %llu", pixid);
 
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
