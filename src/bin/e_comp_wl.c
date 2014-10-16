@@ -130,6 +130,31 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
 }
 
 static void 
+_e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec;
+   struct wl_resource *res;
+   struct wl_client *wc;
+   Eina_List *l;
+   uint32_t serial;
+
+   if (!(ec = data)) return;
+   if (ec->cur_mouse_action) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   DBG("Mouse Out On Surface: %d", wl_resource_get_id(ec->comp_data->surface));
+
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
+   EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
+     {
+        if (!e_comp_wl_input_pointer_check(res)) continue;
+        if (wl_resource_get_client(res) != wc) continue;
+        wl_pointer_send_leave(res, serial, ec->comp_data->surface);
+     }
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
@@ -140,6 +165,8 @@ _e_comp_wl_client_evas_init(E_Client *ec)
    /* setup input callbacks */
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_IN, 
                                   _e_comp_wl_evas_cb_mouse_in, ec);
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_MOUSE_OUT, 
+                                  _e_comp_wl_evas_cb_mouse_out, ec);
 
    ec->comp_data->evas_init = EINA_TRUE;
 }
