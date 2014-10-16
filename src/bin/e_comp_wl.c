@@ -903,6 +903,7 @@ e_comp_wl_surface_commit(E_Client *ec)
 {
    E_Pixmap *ep;
    Eina_Rectangle *dmg;
+   Eina_Tiler *src, *tmp;
 
    if (!(ep = ec->pixmap)) return EINA_FALSE;
 
@@ -960,7 +961,51 @@ e_comp_wl_surface_commit(E_Client *ec)
           }
      }
 
-   /* TODO: Handle pending regions */
+   /* handle pending opaque */
+   if (ec->comp_data->pending.opaque)
+     {
+        tmp = eina_tiler_new(ec->w, ec->h);
+        eina_tiler_tile_size_set(tmp, 1, 1);
+        eina_tiler_rect_add(tmp, 
+                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
+
+        if ((src = eina_tiler_intersection(ec->comp_data->pending.opaque, tmp)))
+          {
+             Eina_Rectangle *rect;
+             Eina_Iterator *itr;
+             int i = 0;
+
+             ec->shape_rects_num = 0;
+
+             itr = eina_tiler_iterator_new(src);
+             EINA_ITERATOR_FOREACH(itr, rect)
+               ec->shape_rects_num += 1;
+
+             ec->shape_rects = 
+               malloc(sizeof(Eina_Rectangle) * ec->shape_rects_num);
+
+             if (ec->shape_rects)
+               {
+                  EINA_ITERATOR_FOREACH(itr, rect)
+                    {
+                       ec->shape_rects[i] = *(Eina_Rectangle *)((char *)rect);
+
+                       ec->shape_rects[i].x = rect->x;
+                       ec->shape_rects[i].y = rect->y;
+                       ec->shape_rects[i].w = rect->w;
+                       ec->shape_rects[i].h = rect->h;
+
+                       i++;
+                    }
+               }
+
+             eina_iterator_free(itr);
+             eina_tiler_free(src);
+          }
+
+        eina_tiler_free(tmp);
+        eina_tiler_clear(ec->comp_data->pending.opaque);
+     }
 
    /* commit any pending damages */
    if ((!ec->comp->nocomp) && (ec->frame))
