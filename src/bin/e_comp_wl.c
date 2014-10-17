@@ -473,6 +473,20 @@ _e_comp_wl_evas_cb_ping(void *data, Evas_Object *obj EINA_UNUSED, void *event EI
 }
 
 static void 
+_e_comp_wl_evas_cb_color_set(void *data, Evas_Object *obj, void *event EINA_UNUSED)
+{
+   E_Client *ec;
+   int a = 0;
+
+   if (!(ec = data)) return;
+   evas_object_color_get(obj, NULL, NULL, NULL, &a);
+   if (ec->netwm.opacity == a) return;
+   ec->netwm.opacity = a;
+   ec->netwm.opacity_changed = EINA_TRUE;
+   // _e_comp_wl_client_idler_add(ec);
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
@@ -507,6 +521,9 @@ _e_comp_wl_client_evas_init(E_Client *ec)
    /* setup ping callback */
    evas_object_smart_callback_add(ec->frame, "ping", 
                                   _e_comp_wl_evas_cb_ping, ec);
+
+   evas_object_smart_callback_add(ec->frame, "color_set", 
+                                  _e_comp_wl_evas_cb_color_set, ec);
 
    ec->comp_data->evas_init = EINA_TRUE;
 }
