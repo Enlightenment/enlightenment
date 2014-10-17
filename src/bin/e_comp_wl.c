@@ -487,6 +487,27 @@ _e_comp_wl_evas_cb_color_set(void *data, Evas_Object *obj, void *event EINA_UNUS
 }
 
 static void 
+_e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec;
+
+   if (!(ec = data)) return;
+   if ((ec->shading) || (ec->shaded)) return;
+
+   DBG("Evas Resize Surface %d", 
+       wl_resource_get_id(ec->comp_data->shell.surface));
+   DBG("\tNew Size: %d %d", ec->client.w, ec->client.h);
+
+//   if (!e_pixmap_size_changed(ec->pixmap, ec->client.w, ec->client.h))
+//     return;
+
+   ec->post_resize = EINA_TRUE;
+   /* e_pixmap_dirty(ec->pixmap); */
+   e_comp_object_render_update_del(ec->frame);
+   // _e_comp_wl_client_idler_add(ec);
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
@@ -524,6 +545,12 @@ _e_comp_wl_client_evas_init(E_Client *ec)
 
    evas_object_smart_callback_add(ec->frame, "color_set", 
                                   _e_comp_wl_evas_cb_color_set, ec);
+
+   if (!ec->override)
+     {
+        evas_object_smart_callback_add(ec->frame, "client_resize", 
+                                       _e_comp_wl_evas_cb_resize, ec);
+     }
 
    ec->comp_data->evas_init = EINA_TRUE;
 }
