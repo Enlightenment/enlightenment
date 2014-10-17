@@ -23,6 +23,27 @@ static Eina_List *handlers = NULL;
 
 /* local functions */
 static void 
+_e_comp_wl_focus_down_set(E_Client *ec)
+{
+   Ecore_Window win = 0;
+
+   win = e_client_util_pwin_get(ec);
+   e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, win);
+   e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, win);
+}
+
+static void 
+_e_comp_wl_focus_check(E_Comp *comp)
+{
+   E_Client *ec;
+
+   if (stopping) return;
+   ec = e_client_focused_get();
+   if ((!ec) || (e_pixmap_type_get(ec->pixmap) != E_PIXMAP_TYPE_WL))
+     e_grabinput_focus(comp->ee_win, E_FOCUS_METHOD_PASSIVE);
+}
+
+static void 
 _e_comp_wl_log_cb_print(const char *format, va_list args)
 {
    EINA_LOG_DOM_INFO(e_log_dom, format, args);
@@ -430,7 +451,7 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
    if (ec->visible) evas_object_hide(ec->frame);
    if (!ec->internal) e_object_del(E_OBJECT(ec));
 
-   // _e_comp_wl_focus_check(comp);
+   _e_comp_wl_focus_check(ec->comp);
 
    /* TODO: Delete request send ??
     * NB: No such animal wrt wayland */
@@ -455,7 +476,7 @@ _e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *
    if (ec->visible) evas_object_hide(ec->frame);
    if (!ec->internal) e_object_del(E_OBJECT(ec));
 
-   // _e_comp_wl_focus_check(comp);
+   _e_comp_wl_focus_check(ec->comp);
 }
 
 static void 
@@ -584,11 +605,11 @@ _e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSE
 {
    E_Comp_Wl_Buffer *buffer;
 
-   DBG("Buffer Cb Destroy");
-
    /* try to get the buffer from the listener */
    if ((buffer = container_of(listener, E_Comp_Wl_Buffer, destroy_listener)))
      {
+        DBG("Buffer Cb Destroy: %d", wl_resource_get_id(buffer->resource));
+
         DBG("\tEmit buffer destroy signal");
         /* emit the destroy signal */
         wl_signal_emit(&buffer->destroy_signal, buffer);
@@ -618,6 +639,8 @@ _e_comp_wl_buffer_get(struct wl_resource *resource)
 
    /* no destroy listener on this resource, try to create new buffer */
    if (!(buffer = E_NEW(E_Comp_Wl_Buffer, 1))) return NULL;
+
+   DBG("Create New Buffer: %d", wl_resource_get_id(resource));
 
    /* initialize buffer structure */
    buffer->resource = resource;
@@ -1205,7 +1228,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    win = e_pixmap_window_get(ec->pixmap);
    eina_hash_del_by_key(clients_win_hash, &win);
 
-   /* TODO: Focus set down */
+   if ((!ec->already_unparented) && (ec->comp_data->reparented))
+     _e_comp_wl_focus_down_set(ec);
 
    ec->already_unparented = EINA_TRUE;
    if (ec->comp_data->reparented)
@@ -1237,7 +1261,51 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 
    E_FREE(ec->comp_data);
 
-   /* TODO: focus check */
+   _e_comp_wl_focus_check(ec->comp);
+}
+
+static void 
+_e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
+{
+   /* send configure */
+   if (ec->comp_data->shell.configure_send)
+     {
+        if (ec->comp_data->shell.surface)
+          ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
+                                              0, 0, 0);
+     }
+
+   if ((ec->icccm.take_focus) && (ec->icccm.accepts_focus))
+     e_grabinput_focus(e_client_util_win_get(ec), 
+                       E_FOCUS_METHOD_LOCALLY_ACTIVE);
+   else if (!ec->icccm.accepts_focus)
+     e_grabinput_focus(e_client_util_win_get(ec), 
+                       E_FOCUS_METHOD_GLOBALLY_ACTIVE);
+   else if (!ec->icccm.take_focus)
+     e_grabinput_focus(e_client_util_win_get(ec), E_FOCUS_METHOD_PASSIVE);
+
+   if (ec->comp->wl_comp_data->kbd.focus != ec->comp_data->surface)
+     {
+        ec->comp->wl_comp_data->kbd.focus = ec->comp_data->surface;
+        e_comp_wl_data_device_keyboard_focus_set(ec->comp->wl_comp_data);
+     }
+}
+
+static void 
+_e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
+{
+   /* send configure */
+   if (ec->comp_data->shell.configure_send)
+     {
+        if (ec->comp_data->shell.surface)
+          ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
+                                              0, 0, 0);
+     }
+
+   _e_comp_wl_focus_check(ec->comp);
+
+   if (ec->comp->wl_comp_data->kbd.focus == ec->comp_data->surface)
+     ec->comp->wl_comp_data->kbd.focus = NULL;
 }
 
 static Eina_Bool 
@@ -1382,6 +1450,11 @@ e_comp_wl_init(void)
    /* add hooks to catch e_client events */
    e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_comp_wl_client_cb_new, NULL);
    e_client_hook_add(E_CLIENT_HOOK_DEL, _e_comp_wl_client_cb_del, NULL);
+
+   e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, 
+                     _e_comp_wl_client_cb_focus_set, NULL);
+   e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, 
+                     _e_comp_wl_client_cb_focus_unset, NULL);
 
    return EINA_TRUE;
 }
