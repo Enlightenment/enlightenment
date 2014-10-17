@@ -459,6 +459,20 @@ _e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *
 }
 
 static void 
+_e_comp_wl_evas_cb_ping(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec;
+
+   if (!(ec = data)) return;
+
+   if (ec->comp_data->shell.ping)
+     {
+        if (ec->comp_data->shell.surface)
+          ec->comp_data->shell.ping(ec->comp_data->shell.surface);
+     }
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
@@ -489,6 +503,10 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_delete_request, ec);
    evas_object_smart_callback_add(ec->frame, "kill_request", 
                                   _e_comp_wl_evas_cb_kill_request, ec);
+
+   /* setup ping callback */
+   evas_object_smart_callback_add(ec->frame, "ping", 
+                                  _e_comp_wl_evas_cb_ping, ec);
 
    ec->comp_data->evas_init = EINA_TRUE;
 }
