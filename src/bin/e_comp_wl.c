@@ -564,10 +564,8 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_color_set, ec);
 
    if (!ec->override)
-     {
-        evas_object_smart_callback_add(ec->frame, "client_resize", 
-                                       _e_comp_wl_evas_cb_resize, ec);
-     }
+     evas_object_smart_callback_add(ec->frame, "client_resize", 
+                                    _e_comp_wl_evas_cb_resize, ec);
 
    ec->comp_data->evas_init = EINA_TRUE;
 }
@@ -1485,9 +1483,7 @@ e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id)
    struct wl_resource *ret = NULL;
 
    if ((ret = wl_resource_create(client, &wl_surface_interface, version, id)))
-     {
-        DBG("Created Surface: %d", wl_resource_get_id(ret));
-     }
+     DBG("Created Surface: %d", wl_resource_get_id(ret));
 
    return ret;
 }
