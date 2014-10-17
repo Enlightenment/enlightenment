@@ -1267,6 +1267,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 static void 
 _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
 {
+   E_COMP_WL_PIXMAP_CHECK;
+
    /* send configure */
    if (ec->comp_data->shell.configure_send)
      {
@@ -1294,6 +1296,8 @@ _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
 static void 
 _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 {
+   E_COMP_WL_PIXMAP_CHECK;
+
    /* send configure */
    if (ec->comp_data->shell.configure_send)
      {
