@@ -1,6 +1,10 @@
 #define E_COMP_WL
 #include "e.h"
 
+/* handle include for printing uint64_t */
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
+
 #define COMPOSITOR_VERSION 3
 
 #define E_COMP_WL_PIXMAP_CHECK \
@@ -397,6 +401,42 @@ _e_comp_wl_evas_cb_key_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj E
 }
 
 static void 
+_e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec;
+
+   if (!(ec = data)) return;
+   if (ec->netwm.ping) e_client_ping(ec);
+
+   /* FIXME !!!
+    * 
+    * This is a HUGE problem for internal windows...
+    * 
+    * IF we delete the client here, then we cannot reopen some internal 
+    * dialogs (configure, etc, etc) ...
+    * 
+    * BUT, if we don't handle delete_request Somehow, then the close button on 
+    * the frame does Nothing
+    */
+
+   e_comp_ignore_win_del(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ec->pixmap));
+   if (ec->comp_data)
+     {
+        if (ec->comp_data->reparented)
+          e_client_comp_hidden_set(ec, EINA_TRUE);
+     }
+
+   evas_object_pass_events_set(ec->frame, EINA_TRUE);
+   if (ec->visible) evas_object_hide(ec->frame);
+   if (!ec->internal) e_object_del(E_OBJECT(ec));
+
+   // _e_comp_wl_focus_check(comp);
+
+   /* TODO: Delete request send ??
+    * NB: No such animal wrt wayland */
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
@@ -422,6 +462,10 @@ _e_comp_wl_client_evas_init(E_Client *ec)
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_KEY_UP, 
                                   _e_comp_wl_evas_cb_key_up, ec);
 
+   /* setup delete/kill callbacks */
+   evas_object_smart_callback_add(ec->frame, "delete_request", 
+                                  _e_comp_wl_evas_cb_delete_request, ec);
+
    ec->comp_data->evas_init = EINA_TRUE;
 }
 
@@ -440,7 +484,8 @@ _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Ev
    /* check for wayland pixmap */
    E_COMP_WL_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
 
-   DBG("Comp Object Added For Pixmap: %llu", e_pixmap_window_get(ec->pixmap));
+   DBG("Comp Object Added For Pixmap: %"PRIu64"", 
+       e_pixmap_window_get(ec->pixmap));
 
    /* if we have not setup evas callbacks for this client, do it */
    if (!ec->comp_data->evas_init) _e_comp_wl_client_evas_init(ec);
@@ -527,14 +572,14 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
    pixid = e_pixmap_window_get(ep);
-   DBG("\tSurface has Pixmap: %llu", pixid);
+   DBG("\tSurface has Pixmap: %"PRIu64"", pixid);
 
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
-             ERR("\t\tCould not find client from pixmap %llu", pixid);
+             ERR("\t\tCould not find client from pixmap %"PRIu64"", pixid);
              return;
           }
      }
@@ -621,7 +666,7 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
      {
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
-             ERR("\tCould not find client from pixmap %llu", pixid);
+             ERR("\tCould not find client from pixmap %"PRIu64"", pixid);
              return;
           }
      }
@@ -655,14 +700,14 @@ _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, st
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
    pixid = e_pixmap_window_get(ep);
-   DBG("\tSurface has Pixmap: %llu", pixid);
+   DBG("\tSurface has Pixmap: %"PRIu64"", pixid);
 
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
-             ERR("\tCould not find client from pixmap %llu", pixid);
+             ERR("\tCould not find client from pixmap %"PRIu64"", pixid);
              return;
           }
      }
@@ -701,14 +746,14 @@ _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, str
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
    pixid = e_pixmap_window_get(ep);
-   DBG("\tSurface has Pixmap: %llu", pixid);
+   DBG("\tSurface has Pixmap: %"PRIu64, pixid);
 
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
-             ERR("\tCould not find client from pixmap %llu", pixid);
+             ERR("\tCould not find client from pixmap %"PRIu64, pixid);
              return;
           }
      }
@@ -747,14 +792,14 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
    pixid = e_pixmap_window_get(ep);
-   DBG("\tSurface has Pixmap: %llu", pixid);
+   DBG("\tSurface has Pixmap: %"PRIu64, pixid);
 
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
-             ERR("\tCould not find client from pixmap %llu", pixid);
+             ERR("\tCould not find client from pixmap %"PRIu64, pixid);
              return;
           }
      }
@@ -838,7 +883,7 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
           }
      }
 
-   DBG("\tUsing Pixmap: %llu", wid);
+   DBG("\tUsing Pixmap: %"PRIu64, wid);
 
    /* set reference to pixmap so we can fetch it later */
    wl_resource_set_user_data(res, ep);
