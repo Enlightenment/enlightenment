@@ -140,8 +140,6 @@ _e_comp_wl_evas_cb_mouse_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    if (!(ec = data)) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
 
-   DBG("Mouse In On Surface: %d", wl_resource_get_id(ec->comp_data->surface));
-
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    EINA_LIST_FOREACH(ec->comp->wl_comp_data->ptr.resources, l, res)
@@ -166,8 +164,6 @@ _e_comp_wl_evas_cb_mouse_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
    if (!(ec = data)) return;
    if (ec->cur_mouse_action) return;
    if (e_object_is_del(E_OBJECT(ec))) return;
-
-   DBG("Mouse Out On Surface: %d", wl_resource_get_id(ec->comp_data->surface));
 
    wc = wl_resource_get_client(ec->comp_data->surface);
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
