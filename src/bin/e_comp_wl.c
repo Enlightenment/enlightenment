@@ -437,6 +437,28 @@ _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void
 }
 
 static void 
+_e_comp_wl_evas_cb_kill_request(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec;
+
+   if (!(ec = data)) return;
+   /* if (ec->netwm.ping) e_client_ping(ec); */
+
+   e_comp_ignore_win_del(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ec->pixmap));
+   if (ec->comp_data)
+     {
+        if (ec->comp_data->reparented)
+          e_client_comp_hidden_set(ec, EINA_TRUE);
+     }
+
+   evas_object_pass_events_set(ec->frame, EINA_TRUE);
+   if (ec->visible) evas_object_hide(ec->frame);
+   if (!ec->internal) e_object_del(E_OBJECT(ec));
+
+   // _e_comp_wl_focus_check(comp);
+}
+
+static void 
 _e_comp_wl_client_evas_init(E_Client *ec)
 {
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_SHOW, 
@@ -465,6 +487,8 @@ _e_comp_wl_client_evas_init(E_Client *ec)
    /* setup delete/kill callbacks */
    evas_object_smart_callback_add(ec->frame, "delete_request", 
                                   _e_comp_wl_evas_cb_delete_request, ec);
+   evas_object_smart_callback_add(ec->frame, "kill_request", 
+                                  _e_comp_wl_evas_cb_kill_request, ec);
 
    ec->comp_data->evas_init = EINA_TRUE;
 }
