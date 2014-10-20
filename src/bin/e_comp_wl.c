@@ -701,11 +701,13 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
         return;
      }
 
-   /* clear any pending buffer
-    * 
-    * NB: This will call any buffer_destroy function associated */
+   /* clear any pending buffer */
    if (ec->comp_data->pending.buffer)
-     wl_list_remove(&ec->comp_data->pending.buffer_destroy.link);
+     wl_resource_queue_event(ec->comp_data->pending.buffer->resource, 
+                             WL_BUFFER_RELEASE);
+
+   /* if (ec->comp_data->pending.buffer) */
+   /*   wl_list_remove(&ec->comp_data->pending.buffer_destroy.link); */
 
    /* reset client pending information */
    ec->comp_data->pending.x = 0;
@@ -713,7 +715,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
    ec->comp_data->pending.w = 0;
    ec->comp_data->pending.h = 0;
    ec->comp_data->pending.buffer = NULL;
-   ec->comp_data->pending.new_attach = EINA_TRUE;
+   ec->comp_data->pending.new_attach = EINA_FALSE;
 
    if (buffer_resource)
      {
@@ -732,7 +734,8 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
         ec->comp_data->pending.x = sx;
         ec->comp_data->pending.y = sy;
         ec->comp_data->pending.buffer = buffer;
-
+        ec->comp_data->pending.new_attach = EINA_TRUE;
+ 
         /* check for this resource being a shm buffer */
         if ((shmb = wl_shm_buffer_get(buffer_resource)))
           {
@@ -743,8 +746,8 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
 
         /* add buffer destroy signal so we get notified when this buffer 
          * gets destroyed (callback set in buffer_get function) */
-        wl_signal_add(&buffer->destroy_signal, 
-                      &ec->comp_data->pending.buffer_destroy);
+        /* wl_signal_add(&buffer->destroy_signal,  */
+        /*               &ec->comp_data->pending.buffer_destroy); */
      }
 }
 
@@ -774,10 +777,11 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
           }
      }
 
+   if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data) return;
 
    /* create new damage rectangle */
-   dmg = eina_rectangle_new(x, y, w, h);
+   if (!(dmg = eina_rectangle_new(x, y, w, h))) return;
 
    /* add damage rectangle to list of pending damages */
    ec->comp_data->pending.damages = 
@@ -1499,13 +1503,16 @@ e_comp_wl_surface_commit(E_Client *ec)
 
    if (ec->comp_data->pending.new_attach)
      {
-        /* TODO: buffer reference */
-
         if (ec->comp_data->pending.buffer)
           e_pixmap_resource_set(ep, ec->comp_data->pending.buffer->resource);
         else
           e_pixmap_resource_set(ep, NULL);
 
+        e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
+     }
+   else
+     {
+        e_pixmap_resource_set(ep, NULL);
         e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
      }
 
@@ -1550,6 +1557,18 @@ e_comp_wl_surface_commit(E_Client *ec)
                ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
           }
      }
+
+   if (ec->comp_data->pending.buffer)
+     wl_resource_queue_event(ec->comp_data->pending.buffer->resource, 
+                             WL_BUFFER_RELEASE);
+
+   /* reset client pending information */
+   ec->comp_data->pending.x = 0;
+   ec->comp_data->pending.y = 0;
+   ec->comp_data->pending.w = 0;
+   ec->comp_data->pending.h = 0;
+   ec->comp_data->pending.buffer = NULL;
+   ec->comp_data->pending.new_attach = EINA_FALSE;
 
    if (!ec->visible) 
      {
