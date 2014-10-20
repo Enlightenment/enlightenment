@@ -1051,6 +1051,7 @@ e_comp_init(void)
 
 #ifndef HAVE_WAYLAND_ONLY
    if (!e_comp_x_init())
+#endif
      {
         const char **test, *eng[] =
         {
@@ -1072,7 +1073,6 @@ e_comp_init(void)
           }
         return EINA_FALSE;
      }
-#endif
 #if defined(HAVE_WAYLAND_CLIENTS) || defined(HAVE_WAYLAND_ONLY)
    e_comp_wl_init();
 #endif
