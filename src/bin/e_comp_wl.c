@@ -283,8 +283,6 @@ _e_comp_wl_evas_cb_mouse_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
         break;
      }
 
-   ec->comp->wl_comp_data->resize.edges = 0;
-   ec->comp->wl_comp_data->resize.resource = NULL;
    ec->comp->wl_comp_data->ptr.button = btn;
 
    wc = wl_resource_get_client(ec->comp_data->surface);
@@ -500,28 +498,6 @@ _e_comp_wl_evas_cb_color_set(void *data, Evas_Object *obj, void *event EINA_UNUS
    if (ec->netwm.opacity == a) return;
    ec->netwm.opacity = a;
    ec->netwm.opacity_changed = EINA_TRUE;
-   // _e_comp_wl_client_idler_add(ec);
-}
-
-static void 
-_e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
-{
-   E_Client *ec;
-
-   if (!(ec = data)) return;
-   if ((ec->shading) || (ec->shaded)) return;
-
-   DBG("Evas Resize Surface %d", 
-       wl_resource_get_id(ec->comp_data->shell.surface));
-   DBG("\tNew Size: %d %d", ec->client.w, ec->client.h);
-
-//   if (!e_pixmap_size_changed(ec->pixmap, ec->client.w, ec->client.h))
-//     return;
-
-   ec->post_resize = EINA_TRUE;
-   /* e_pixmap_dirty(ec->pixmap); */
-   e_comp_object_render_update_del(ec->frame);
-   // _e_comp_wl_client_idler_add(ec);
 }
 
 static void 
@@ -563,10 +539,6 @@ _e_comp_wl_client_evas_init(E_Client *ec)
    evas_object_smart_callback_add(ec->frame, "color_set", 
                                   _e_comp_wl_evas_cb_color_set, ec);
 
-   if (!ec->override)
-     evas_object_smart_callback_add(ec->frame, "client_resize", 
-                                    _e_comp_wl_evas_cb_resize, ec);
-
    ec->comp_data->evas_init = EINA_TRUE;
 }
 
@@ -585,9 +557,6 @@ _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Ev
    /* check for wayland pixmap */
    E_COMP_WL_PIXMAP_CHECK ECORE_CALLBACK_RENEW;
 
-   DBG("Comp Object Added For Pixmap: %"PRIu64"", 
-       e_pixmap_window_get(ec->pixmap));
-
    /* if we have not setup evas callbacks for this client, do it */
    if (!ec->comp_data->evas_init) _e_comp_wl_client_evas_init(ec);
 
@@ -604,7 +573,6 @@ _e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSE
      {
         DBG("Buffer Cb Destroy: %d", wl_resource_get_id(buffer->resource));
 
-        DBG("\tEmit buffer destroy signal");
         /* emit the destroy signal */
         wl_signal_emit(&buffer->destroy_signal, buffer);
 
@@ -715,7 +683,7 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
    ec->comp_data->pending.w = 0;
    ec->comp_data->pending.h = 0;
    ec->comp_data->pending.buffer = NULL;
-   ec->comp_data->pending.new_attach = EINA_FALSE;
+   ec->comp_data->pending.new_attach = EINA_TRUE;
 
    if (buffer_resource)
      {
@@ -734,7 +702,6 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
         ec->comp_data->pending.x = sx;
         ec->comp_data->pending.y = sy;
         ec->comp_data->pending.buffer = buffer;
-        ec->comp_data->pending.new_attach = EINA_TRUE;
  
         /* check for this resource being a shm buffer */
         if ((shmb = wl_shm_buffer_get(buffer_resource)))
@@ -742,12 +709,9 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
              /* update pending size */
              ec->comp_data->pending.w = wl_shm_buffer_get_width(shmb);
              ec->comp_data->pending.h = wl_shm_buffer_get_height(shmb);
+             DBG("\tPending Size: %d %d", 
+                 ec->comp_data->pending.w, ec->comp_data->pending.h);
           }
-
-        /* add buffer destroy signal so we get notified when this buffer 
-         * gets destroyed (callback set in buffer_get function) */
-        /* wl_signal_add(&buffer->destroy_signal,  */
-        /*               &ec->comp_data->pending.buffer_destroy); */
      }
 }
 
@@ -1310,6 +1274,109 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
      ec->comp->wl_comp_data->kbd.focus = NULL;
 }
 
+static void 
+_e_comp_wl_client_cb_resize_begin(void *data EINA_UNUSED, E_Client *ec)
+{
+   int pw, ph;
+
+   E_COMP_WL_PIXMAP_CHECK;
+
+   DBG("Client Resize Begin");
+   DBG("\tClient Size: %d %d", ec->client.w, ec->client.h);
+
+   e_pixmap_size_get(ec->pixmap, &pw, &ph);
+   DBG("\tPixmap Size: %d %d", pw, ph);
+
+   switch (ec->resize_mode)
+     {
+      case E_POINTER_RESIZE_T: // 1
+        DBG("\tResize From Top");
+        ec->comp->wl_comp_data->resize.edges = 1;
+        break;
+      case E_POINTER_RESIZE_B: // 2
+        DBG("\tResize From Bottom");
+        ec->comp->wl_comp_data->resize.edges = 2;
+        break;
+      case E_POINTER_RESIZE_L: // 4
+        DBG("\tResize From Left");
+        ec->comp->wl_comp_data->resize.edges = 4;
+        break;
+      case E_POINTER_RESIZE_R: // 8
+        DBG("\tResize From Right");
+        ec->comp->wl_comp_data->resize.edges = 8;
+        break;
+      case E_POINTER_RESIZE_TL: // 5
+        DBG("\tResize From Top Left");
+        ec->comp->wl_comp_data->resize.edges = 5;
+        break;
+      case E_POINTER_RESIZE_TR: // 9
+        DBG("\tResize From Top Right");
+        ec->comp->wl_comp_data->resize.edges = 9;
+        break;
+      case E_POINTER_RESIZE_BL: // 6
+        DBG("\tResize From Bottom Left");
+        ec->comp->wl_comp_data->resize.edges = 6;
+        break;
+      case E_POINTER_RESIZE_BR: // 10
+        DBG("\tResize From Bottom Right");
+        ec->comp->wl_comp_data->resize.edges = 10;
+        break;
+      default:
+        ec->comp->wl_comp_data->resize.edges = 0;
+        break;
+     }
+}
+
+static void 
+_e_comp_wl_client_cb_resize_update(void *data EINA_UNUSED, E_Client *ec)
+{
+   int pw, ph;
+
+   E_COMP_WL_PIXMAP_CHECK;
+
+   DBG("Client Resize Update");
+   DBG("\tClient Size: %d %d", ec->client.w, ec->client.h);
+
+   e_pixmap_size_get(ec->pixmap, &pw, &ph);
+   DBG("\tPixmap Size: %d %d", pw, ph);
+
+   if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
+     {
+        DBG("\tSend Configure: %d %d\tEdges: %d", pw, ph, 
+            ec->comp->wl_comp_data->resize.edges);
+        ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
+                                            ec->comp->wl_comp_data->resize.edges, 
+                                            pw, ph);
+     }
+}
+
+static void 
+_e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
+{
+   int pw, ph;
+
+   E_COMP_WL_PIXMAP_CHECK;
+
+   DBG("Client Resize End");
+   DBG("\tClient Size: %d %d", ec->client.w, ec->client.h);
+
+   e_pixmap_size_get(ec->pixmap, &pw, &ph);
+   DBG("\tPixmap Size: %d %d", pw, ph);
+
+   ec->comp->wl_comp_data->resize.edges = 0;
+   ec->comp->wl_comp_data->resize.resource = NULL;
+
+   if (ec->pending_resize)
+     {
+        DBG("\tPending Resize");
+        EC_CHANGED(ec);
+        ec->changes.pos = 1;
+        ec->changes.size = 1;
+     }
+
+   E_FREE_LIST(ec->pending_resize, free);
+}
+
 static Eina_Bool 
 _e_comp_wl_compositor_create(void)
 {
@@ -1458,6 +1525,13 @@ e_comp_wl_init(void)
    e_client_hook_add(E_CLIENT_HOOK_FOCUS_UNSET, 
                      _e_comp_wl_client_cb_focus_unset, NULL);
 
+   e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, 
+                     _e_comp_wl_client_cb_resize_begin, NULL);
+   e_client_hook_add(E_CLIENT_HOOK_RESIZE_UPDATE, 
+                     _e_comp_wl_client_cb_resize_update, NULL);
+   e_client_hook_add(E_CLIENT_HOOK_RESIZE_END, 
+                     _e_comp_wl_client_cb_resize_end, NULL);
+
    return EINA_TRUE;
 }
 
@@ -1501,20 +1575,13 @@ e_comp_wl_surface_commit(E_Client *ec)
 
    if (!(ep = ec->pixmap)) return EINA_FALSE;
 
-   if (ec->comp_data->pending.new_attach)
-     {
-        if (ec->comp_data->pending.buffer)
-          e_pixmap_resource_set(ep, ec->comp_data->pending.buffer->resource);
-        else
-          e_pixmap_resource_set(ep, NULL);
-
-        e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
-     }
+   if (ec->comp_data->pending.buffer)
+     e_pixmap_resource_set(ep, ec->comp_data->pending.buffer->resource);
    else
-     {
-        e_pixmap_resource_set(ep, NULL);
-        e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
-     }
+     e_pixmap_resource_set(ep, NULL);
+
+   /* mark the pixmap as usable or not */
+   e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
 
    /* mark the pixmap as dirty */
    e_pixmap_dirty(ep);
@@ -1526,6 +1593,11 @@ e_comp_wl_surface_commit(E_Client *ec)
         if ((ec->client.w != ec->comp_data->pending.w) || 
             (ec->client.h != ec->comp_data->pending.h))
           {
+             DBG("\tSurface Commit Sizes Different");
+             DBG("\t\tClient Size: %d %d", ec->client.w, ec->client.h);
+             DBG("\t\tPending Size: %d %d", 
+                 ec->comp_data->pending.w, ec->comp_data->pending.h);
+ 
              /* if the client has a shell configure, call it */
              if ((ec->comp_data->shell.surface) && 
                  (ec->comp_data->shell.configure))
@@ -1557,10 +1629,6 @@ e_comp_wl_surface_commit(E_Client *ec)
                ec->comp_data->shell.unmap(ec->comp_data->shell.surface);
           }
      }
-
-   if (ec->comp_data->pending.buffer)
-     wl_resource_queue_event(ec->comp_data->pending.buffer->resource, 
-                             WL_BUFFER_RELEASE);
 
    /* reset client pending information */
    ec->comp_data->pending.x = 0;
