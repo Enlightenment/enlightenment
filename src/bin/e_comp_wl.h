@@ -188,7 +188,6 @@ struct _E_Comp_Wl_Data
    struct
      {
         struct wl_resource *resource;
-        int32_t width, height;
         uint32_t edges;
      } resize;
 
