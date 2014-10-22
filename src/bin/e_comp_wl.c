@@ -416,6 +416,84 @@ _e_comp_wl_evas_cb_key_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj E
 }
 
 static void 
+_e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec, *focused;
+   E_Comp_Data *cdata;
+   struct wl_resource *res;
+   struct wl_client *wc;
+   uint32_t serial, *k;
+   Eina_List *l;
+
+   if (!(ec = data)) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+   if (ec->iconic) return;
+
+   E_COMP_WL_PIXMAP_CHECK;
+
+   /* block spurious focus events */
+   focused = e_client_focused_get();
+   if ((focused) && (ec != focused)) return;
+
+   DBG("Focus In On Surface: %d", 
+       wl_resource_get_id(ec->comp_data->surface));
+
+   /* TODO: Priority raise */
+
+   cdata = ec->comp->wl_comp_data;
+
+   /* update keyboard modifier state */
+   wl_array_for_each(k, &cdata->kbd.keys)
+     e_comp_wl_input_keyboard_state_update(cdata, *k, EINA_TRUE);
+
+   /* send keyboard_enter to all keyboard resources */
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(cdata->wl.disp);
+   EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        wl_keyboard_send_enter(res, serial, ec->comp_data->surface, 
+                               &cdata->kbd.keys);
+     }
+}
+
+static void 
+_e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec;
+   E_Comp_Data *cdata;
+   struct wl_resource *res;
+   struct wl_client *wc;
+   uint32_t serial, *k;
+   Eina_List *l;
+
+   if (!(ec = data)) return;
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   E_COMP_WL_PIXMAP_CHECK;
+
+   DBG("Focus Out On Surface: %d", 
+       wl_resource_get_id(ec->comp_data->surface));
+
+   /* TODO: set normal priority */
+
+   cdata = ec->comp->wl_comp_data;
+
+   /* update keyboard modifier state */
+   wl_array_for_each(k, &cdata->kbd.keys)
+     e_comp_wl_input_keyboard_state_update(cdata, *k, EINA_FALSE);
+
+   /* send keyboard_leave to all keyboard resources */
+   wc = wl_resource_get_client(ec->comp_data->surface);
+   serial = wl_display_next_serial(cdata->wl.disp);
+   EINA_LIST_FOREACH(cdata->kbd.resources, l, res)
+     {
+        if (wl_resource_get_client(res) != wc) continue;
+        wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
+     }
+}
+
+static void 
 _e_comp_wl_evas_cb_delete_request(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec;
@@ -525,6 +603,12 @@ _e_comp_wl_client_evas_init(E_Client *ec)
                                   _e_comp_wl_evas_cb_key_down, ec);
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_KEY_UP, 
                                   _e_comp_wl_evas_cb_key_up, ec);
+
+
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_IN, 
+                                  _e_comp_wl_evas_cb_focus_in, ec);
+   evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_OUT, 
+                                  _e_comp_wl_evas_cb_focus_out, ec);
 
    /* setup delete/kill callbacks */
    evas_object_smart_callback_add(ec->frame, "delete_request", 
