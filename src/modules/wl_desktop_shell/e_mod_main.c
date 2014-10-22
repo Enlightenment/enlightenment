@@ -853,8 +853,6 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
         return;
      }
 
-   DBG("Comp Resize Edges Set: %d", edges);
-
    cdata->resize.resource = resource;
    cdata->resize.edges = edges;
    cdata->ptr.grab_x = cdata->ptr.x;
