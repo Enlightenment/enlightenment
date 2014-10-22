@@ -837,9 +837,60 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
 }
 
 static void 
+_e_comp_wl_frame_cb_destroy(struct wl_resource *resource)
+{
+   E_Client *ec;
+
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   DBG("Frame Cb Destroy: %d", wl_resource_get_id(resource));
+
+   /* remove this frame callback */
+   ec->comp_data->frames = eina_list_remove(ec->comp_data->frames, resource);
+}
+
+static void 
 _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resource, uint32_t callback)
 {
+   E_Pixmap *ep;
+   E_Client *ec;
+   struct wl_resource *res;
+
    DBG("Surface Cb Frame: %d", wl_resource_get_id(resource));
+
+   if (!(ep = wl_resource_get_user_data(resource))) return;
+
+   /* try to find the associated e_client */
+   if (!(ec = e_pixmap_client_get(ep)))
+     {
+        uint64_t pixid;
+
+        pixid = e_pixmap_window_get(ep);
+        DBG("\tSurface has Pixmap: %"PRIu64"", pixid);
+
+        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
+          {
+             ERR("\tCould not find client from pixmap %"PRIu64"", pixid);
+             return;
+          }
+     }
+
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
+   /* create frame callback */
+   if (!(res = 
+         wl_resource_create(client, &wl_callback_interface, 1, callback)))
+     {
+        wl_resource_post_no_memory(resource);
+        return;
+     }
+
+   wl_resource_set_implementation(res, NULL, ec, _e_comp_wl_frame_cb_destroy);
+
+   /* append this frame callback to the client list */
+   ec->comp_data->frames = eina_list_append(ec->comp_data->frames, res);
 }
 
 static void 
