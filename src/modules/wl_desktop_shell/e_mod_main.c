@@ -224,10 +224,10 @@ _e_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_resou
         return;
      }
 
+   DBG("Comp Resize Edges Set: %d", edges);
+
    cdata->resize.resource = resource;
    cdata->resize.edges = edges;
-   cdata->resize.width = ec->client.w;
-   cdata->resize.height = ec->client.h;
    cdata->ptr.grab_x = cdata->ptr.x;
    cdata->ptr.grab_y = cdata->ptr.y;
 
@@ -480,7 +480,7 @@ _e_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_Coor
         ec->changes.pos = EINA_TRUE;
      }
 
-   if ((ec->client.w != w) || (ec->client.h != h))
+//   if ((ec->client.w != w) || (ec->client.h != h))
      {
         ec->client.w = w;
         ec->client.h = h;
@@ -641,8 +641,8 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
    uint32_t *s;
    uint32_t serial;
 
-   DBG("XDG_SHELL: Surface Configure Send: %d \t%d %d", 
-       wl_resource_get_id(resource), width, height);
+   DBG("XDG_SHELL: Surface Configure Send: %d \t%d %d\tEdges: %d", 
+       wl_resource_get_id(resource), width, height, edges);
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -668,7 +668,6 @@ _e_xdg_shell_surface_configure_send(struct wl_resource *resource, uint32_t edges
 
    if (edges != 0)
      {
-        DBG("\tResizing");
         s = wl_array_add(&states, sizeof(*s));
         *s = XDG_SURFACE_STATE_RESIZING;
      }
@@ -828,7 +827,8 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
    E_Comp_Data *cdata;
    E_Binding_Event_Mouse_Button ev;
 
-   /* DBG("XDG_SHELL: Surface Resize"); */
+   DBG("XDG_SHELL: Surface Resize: %d\tEdges: %d", 
+       wl_resource_get_id(resource), edges);
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -853,10 +853,10 @@ _e_xdg_shell_surface_cb_resize(struct wl_client *client EINA_UNUSED, struct wl_r
         return;
      }
 
+   DBG("Comp Resize Edges Set: %d", edges);
+
    cdata->resize.resource = resource;
    cdata->resize.edges = edges;
-   cdata->resize.width = ec->client.w;
-   cdata->resize.height = ec->client.h;
    cdata->ptr.grab_x = cdata->ptr.x;
    cdata->ptr.grab_y = cdata->ptr.y;
 
@@ -1032,8 +1032,8 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
 {
    E_Client *ec;
 
-   /* DBG("XDG_SHELL: Surface Configure: %d \t%d %d %d %d",  */
-   /*     wl_resource_get_id(resource), x, y, w, h); */
+   DBG("XDG_SHELL: Surface Configure: %d \t%d %d %d %d", 
+       wl_resource_get_id(resource), x, y, w, h);
 
    /* get the client for this resource */
    if (!(ec = wl_resource_get_user_data(resource)))
@@ -1043,6 +1043,8 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
                                "No Client For Shell Surface");
         return;
      }
+
+   DBG("\tClient Size: %d %d", ec->client.w, ec->client.h);
 
    if (ec->parent)
      {
@@ -1064,7 +1066,7 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         ec->changes.pos = EINA_TRUE;
      }
 
-   if ((ec->client.w != w) || (ec->client.h != h))
+//   if ((ec->client.w != w) || (ec->client.h != h))
      {
         ec->client.w = w;
         ec->client.h = h;
@@ -1073,7 +1075,10 @@ _e_xdg_shell_surface_configure(struct wl_resource *resource, Evas_Coord x, Evas_
         ec->changes.size = EINA_TRUE;
      }
 
-   if (ec->changes.pos) EC_CHANGED(ec);
+   /* TODO: ack configure ?? */
+
+   if ((ec->changes.pos) || (ec->changes.size))
+     EC_CHANGED(ec);
 }
 
 static void 
