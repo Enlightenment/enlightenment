@@ -1259,7 +1259,7 @@ _iconify_hook(void *data EINA_UNUSED, int type EINA_UNUSED,
    if (ec->deskshow)
      return true;
 
-   _toggle_tiling_based_on_state(ec, EINA_FALSE);
+   _toggle_tiling_based_on_state(ec, EINA_TRUE);
 
    return true;
 }
