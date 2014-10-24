@@ -97,6 +97,11 @@ void *alloca (size_t);
 #  include <execinfo.h>
 # endif
 
+/* egl.h must come before Evas_GL.h otherwise they will conflict */
+# ifdef HAVE_WAYLAND_EGL
+#  include <EGL/egl.h>
+# endif
+
 # include <setjmp.h>
 # include <Eo.h>
 # include <Eina.h>
