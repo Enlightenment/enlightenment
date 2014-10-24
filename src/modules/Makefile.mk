@@ -6,6 +6,7 @@ MOD_CPPFLAGS = -I. \
 -I$(top_builddir)/src/bin \
 -I$(top_srcdir)/src/modules \
 @e_cflags@ \
+@WAYLAND_CFLAGS@ \
 -DE_BINDIR=\"$(bindir)\"
 
 MOD_LIBS = @e_libs@ @dlopen_libs@
