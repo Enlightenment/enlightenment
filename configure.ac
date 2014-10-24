@@ -557,7 +557,6 @@ PKG_CHECK_MODULES(E, [
   ecore-con >= ${efl_version}
   ecore-ipc >= ${efl_version}
   ecore-file >= ${efl_version}
-  ecore-wayland >= ${efl_version}
   eet >= ${efl_version}
   edje >= ${efl_version}
   efreet >= ${efl_version}
