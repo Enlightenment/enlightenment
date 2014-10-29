@@ -1089,9 +1089,13 @@ _e_xdg_shell_surface_ping(struct wl_resource *resource)
         return;
      }
 
+   ec->hung = EINA_TRUE;
+   e_client_ping(ec);
+
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    if (ec->comp->wl_comp_data->shell_interface.xdg_shell)
-     xdg_shell_send_ping(ec->comp->wl_comp_data->shell_interface.xdg_shell, serial);
+        xdg_shell_send_ping(ec->comp->wl_comp_data->shell_interface.xdg_shell, serial);
+
 }
 
 static void 
@@ -1361,9 +1365,11 @@ _e_xdg_shell_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resource *r
 {
    E_Client *ec;
 
-   /* NB: Needs to set client->ping_ok, or client->hung */
    if ((ec = wl_resource_get_user_data(resource)))
-     ec->ping_ok = EINA_TRUE;
+     {
+        ec->ping_ok = EINA_TRUE;
+        ec->hung = EINA_FALSE;
+     }
 }
 
 static const struct wl_shell_interface _e_shell_interface = 
