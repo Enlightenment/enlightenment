@@ -214,7 +214,7 @@ tiling_window_tree_unref(Window_Tree *root, Window_Tree *item)
                   }
                   return grand_parent;
                }
-             else if(item_keep)
+             else if (item_keep)
                {
                   /* This is fine, as this is a child of the root so we allow
                    * two levels. */
@@ -553,13 +553,17 @@ _tiling_window_tree_node_break_out(Window_Tree *root, Window_Tree *node, Eina_Bo
      {
         res = _inlist_next(node->parent);
         if (res)
-          dir = EINA_FALSE;
+          {
+             dir = EINA_FALSE;
+          }
      }
    else
      {
         res = _inlist_prev(node->parent);
         if (res)
-           dir = EINA_TRUE;
+          {
+             dir = EINA_TRUE;
+          }
      }
 
    grand_parent = node->parent->parent;
@@ -582,37 +586,43 @@ _tiling_window_tree_node_join(Window_Tree *root, Window_Tree *node, Eina_Bool di
       pn = _inlist_prev(node);
 
    if (!pn)
-     return;
+      return;
 
-     par = node->parent;
-     if ((eina_inlist_count(par->children) == 2) && /* swap if there are just 2 */
+   par = node->parent;
+   if ((eina_inlist_count(par->children) == 2) && /* swap if there are just 2 */
          par->parent && (eina_inlist_count(par->parent->children) > 1)) /* do not swap if we are in the first level */
-       {
-          par->children = eina_inlist_demote(par->children, eina_inlist_first(par->children));
-          return;
-       }
-     else
-       {
-          pl = tiling_window_tree_unref(root, node);
-          if (pl == node->parent)
-            {
-               //unref has not changed the tree
-               if (!pn->children)
-                 _tiling_window_tree_split_add(pn, node);
-               else
-                 _tiling_window_tree_parent_add(pn, node, NULL, EINA_TRUE);
-            }
-          else
-            {
-               //unref changed the position of pn in the tree, result of unref
-               //will be the new parent
-               //we need to search the e_client ptr to get the corret relative pos
-               wts = pn->parent;
-               while(wts->client != pn->client)
-                 wts = _inlist_next(wts);
-               _tiling_window_tree_parent_add(pl, node, wts, EINA_TRUE);
-            }
-       }
+     {
+        par->children = eina_inlist_demote(par->children, eina_inlist_first(par->children));
+        return;
+     }
+   else
+     {
+        pl = tiling_window_tree_unref(root, node);
+        if (pl == node->parent)
+          {
+             //unref has not changed the tree
+             if (!pn->children)
+               {
+                  _tiling_window_tree_split_add(pn, node);
+               }
+             else
+               {
+                  _tiling_window_tree_parent_add(pn, node, NULL, EINA_TRUE);
+               }
+          }
+        else
+          {
+             //unref changed the position of pn in the tree, result of unref
+             //will be the new parent
+             //we need to search the e_client ptr to get the corret relative pos
+             wts = pn->parent;
+             while(wts->client != pn->client)
+               {
+                  wts = _inlist_next(wts);
+               }
+             _tiling_window_tree_parent_add(pl, node, wts, EINA_TRUE);
+          }
+     }
 }
 
 void
@@ -629,28 +639,28 @@ tiling_window_tree_node_change_pos(Window_Tree *node, int key)
       root = root->parent;
    switch(key)
      {
-        case TILING_WINDOW_TREE_EDGE_LEFT:
-          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
+      case TILING_WINDOW_TREE_EDGE_LEFT:
+         if (parent_split_type == TILING_SPLIT_HORIZONTAL)
             _tiling_window_tree_node_join(root, node, EINA_FALSE);
-          else if(parent_split_type == TILING_SPLIT_VERTICAL)
+         else if (parent_split_type == TILING_SPLIT_VERTICAL)
             _tiling_window_tree_node_break_out(root, node, EINA_FALSE);
-          break;
-        case TILING_WINDOW_TREE_EDGE_RIGHT:
-          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
+         break;
+      case TILING_WINDOW_TREE_EDGE_RIGHT:
+         if (parent_split_type == TILING_SPLIT_HORIZONTAL)
             _tiling_window_tree_node_join(root, node, EINA_TRUE);
-          else if(parent_split_type == TILING_SPLIT_VERTICAL)
+         else if (parent_split_type == TILING_SPLIT_VERTICAL)
             _tiling_window_tree_node_break_out(root, node, EINA_TRUE);
-          break;
-        case TILING_WINDOW_TREE_EDGE_TOP:
-          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
+         break;
+      case TILING_WINDOW_TREE_EDGE_TOP:
+         if (parent_split_type == TILING_SPLIT_HORIZONTAL)
             _tiling_window_tree_node_break_out(root, node, EINA_FALSE);
-          else if(parent_split_type == TILING_SPLIT_VERTICAL)
+         else if (parent_split_type == TILING_SPLIT_VERTICAL)
             _tiling_window_tree_node_join(root, node, EINA_FALSE);
-          break;
-        case TILING_WINDOW_TREE_EDGE_BOTTOM:
-          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
+         break;
+      case TILING_WINDOW_TREE_EDGE_BOTTOM:
+         if (parent_split_type == TILING_SPLIT_HORIZONTAL)
             _tiling_window_tree_node_break_out(root, node, EINA_TRUE);
-          else if(parent_split_type == TILING_SPLIT_VERTICAL)
+         else if (parent_split_type == TILING_SPLIT_VERTICAL)
             _tiling_window_tree_node_join(root, node, EINA_TRUE);
           break;
      }
