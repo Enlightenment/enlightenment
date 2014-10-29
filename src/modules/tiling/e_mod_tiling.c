@@ -786,7 +786,7 @@ _e_mod_menu_border_cb(void *data, E_Menu *m EINA_UNUSED,
 /* {{{ Move windows */
 
 static void
-_action_swap(int cross_edge)
+_action_move(int cross_edge)
 {
    E_Desk *desk;
    E_Client *focused_ec;
@@ -807,7 +807,7 @@ _action_swap(int cross_edge)
 
    if (item)
      {
-        tiling_window_tree_node_move(item, cross_edge);
+        tiling_window_tree_node_change_pos(item, cross_edge);
 
         _reapply_tree();
      }
@@ -817,28 +817,28 @@ static void
 _e_mod_action_move_left_cb(E_Object *obj EINA_UNUSED,
                            const char *params EINA_UNUSED)
 {
-   _action_swap(TILING_WINDOW_TREE_EDGE_LEFT);
+   _action_move(TILING_WINDOW_TREE_EDGE_LEFT);
 }
 
 static void
 _e_mod_action_move_right_cb(E_Object *obj EINA_UNUSED,
                             const char *params EINA_UNUSED)
 {
-   _action_swap(TILING_WINDOW_TREE_EDGE_RIGHT);
+   _action_move(TILING_WINDOW_TREE_EDGE_RIGHT);
 }
 
 static void
 _e_mod_action_move_up_cb(E_Object *obj EINA_UNUSED,
                          const char *params EINA_UNUSED)
 {
-   _action_swap(TILING_WINDOW_TREE_EDGE_TOP);
+   _action_move(TILING_WINDOW_TREE_EDGE_TOP);
 }
 
 static void
 _e_mod_action_move_down_cb(E_Object *obj EINA_UNUSED,
                            const char *params EINA_UNUSED)
 {
-   _action_swap(TILING_WINDOW_TREE_EDGE_BOTTOM);
+   _action_move(TILING_WINDOW_TREE_EDGE_BOTTOM);
 }
 
 /* }}} */

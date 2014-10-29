@@ -43,9 +43,8 @@ _tiling_window_tree_split_add(Window_Tree *parent, Window_Tree *new_node)
    parent->children =
      eina_inlist_append(parent->children, EINA_INLIST_GET(new_node));
 }
-
 static void
-_tiling_window_tree_parent_add(Window_Tree *parent, Window_Tree *new_node, Window_Tree *rel)
+_tiling_window_tree_parent_add(Window_Tree *parent, Window_Tree *new_node, Window_Tree *rel, Eina_Bool append)
 {
    /* Adjust existing children's weights */
    Window_Tree *itr;
@@ -60,10 +59,19 @@ _tiling_window_tree_parent_add(Window_Tree *parent, Window_Tree *new_node, Windo
      {
         itr->weight *= weight;
      }
+   if (append)
+     {
+        parent->children = eina_inlist_append_relative(parent->children,
+                                                       EINA_INLIST_GET(new_node),
+                                                       EINA_INLIST_GET(rel));
+     }
+   else
+     {
+        parent->children = eina_inlist_prepend_relative(parent->children,
+                                                        EINA_INLIST_GET(new_node),
+                                                        EINA_INLIST_GET(rel));
+     }
 
-   parent->children =
-     eina_inlist_append_relative(parent->children, EINA_INLIST_GET(new_node),
-           EINA_INLIST_GET(rel));
 }
 
 static int
@@ -116,7 +124,7 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
      {
         if (parent->children)
           {
-             _tiling_window_tree_parent_add(parent, new_node, NULL);
+             _tiling_window_tree_parent_add(parent, new_node, NULL, EINA_TRUE);
           }
         else
           {
@@ -129,7 +137,7 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
 
         if (grand_parent && grand_parent->children)
           {
-             _tiling_window_tree_parent_add(grand_parent, new_node, orig_parent);
+             _tiling_window_tree_parent_add(grand_parent, new_node, orig_parent, EINA_TRUE);
           }
         else
           {
@@ -145,20 +153,14 @@ tiling_window_tree_add(Window_Tree *root, Window_Tree *parent,
    return root;
 }
 
-Window_Tree *
-tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
+static Window_Tree *
+tiling_window_tree_unref(Window_Tree *root, Window_Tree *item)
 {
-   if (root == item)
+   if (!item->client)
      {
-        free(item);
+        ERR("Tried to unref node %p that doesn't have a client.", item);
         return NULL;
      }
-   else if (!item->client)
-     {
-        ERR("Tried deleting node %p that doesn't have a client.", item);
-        return root;
-     }
-
    Window_Tree *parent = item->parent;
    int children_count = eina_inlist_count(item->parent->children);
 
@@ -167,30 +169,24 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
         Window_Tree *grand_parent = parent->parent;
         Window_Tree *item_keep = NULL;
 
-        /* Adjust existing children's weights */
         EINA_INLIST_FOREACH(parent->children, item_keep)
           {
              if (item_keep != item)
                break;
           }
-
         if (!item_keep)
           {
-             /* Special case of deleting the last vertical split item. */
-             free(item);
-             free(root);
-             return NULL;
+             parent->children =eina_inlist_remove(parent->children, EINA_INLIST_GET(item));
+             return parent;
           }
-        else if (!item_keep->children)
+        else if (!item_keep->children && (parent != root))
           {
              parent->client = item_keep->client;
              parent->children = NULL;
-
-             free(item_keep);
+             return grand_parent; //we must have a grand_parent here, case the parent is not root
           }
         else
           {
-
              parent->children =
                eina_inlist_remove(parent->children, EINA_INLIST_GET(item));
              if (grand_parent)
@@ -216,12 +212,14 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
                                           EINA_INLIST_GET(parent));
                      free(parent);
                   }
+                  return grand_parent;
                }
-             else
+             else if(item_keep)
                {
                   /* This is fine, as this is a child of the root so we allow
                    * two levels. */
                   item_keep->weight = 1.0;
+                  return item_keep->parent;
                }
           }
      }
@@ -238,9 +236,34 @@ tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
           {
              itr->weight /= weight;
           }
+        return parent;
+     }
+     ERR("This is a state where we should never come to.\n");
+     return NULL;
+}
+
+Window_Tree *
+tiling_window_tree_remove(Window_Tree *root, Window_Tree *item)
+{
+   if (root == item)
+     {
+        free(item);
+        return NULL;
+     }
+   else if (!item->client)
+     {
+        ERR("Tried deleting node %p that doesn't have a client.", item);
+        return root;
+     }
+   tiling_window_tree_unref(root, item);
+   free(item);
+   if (eina_inlist_count(root->children) == 0)
+     {
+        //the last possible client was closed so we remove root
+        free(root);
+        return NULL;
      }
 
-   free(item);
    return root;
 }
 
@@ -511,103 +534,125 @@ tiling_window_tree_edges_get(Window_Tree *node)
 }
 
 /* Node move */
-static struct _Node_Move_Context
+/**
+ * - break would mean that the node will be breaked out in the parent node and
+ *   put into the grand parent node.
+ *
+ * - join would mean that the node will be put together with the next/previous
+ *   child into a new split.
+ *
+ * - The eina_bool dir is the flag in which direction the node will be added ,
+ *   appended or prependet, or joined with the previous child or the next child
+ */
+void
+_tiling_window_tree_node_break_out(Window_Tree *root, Window_Tree *node, Eina_Bool dir)
 {
-   Window_Tree *node;
-   Window_Tree *ret;
-   int          cross_edge;
-   int          best_match;
-} _node_move_ctx;
+   Window_Tree *res, *grand_parent;
 
-#define CNODE (_node_move_ctx.node)
-
-#define IF_MATCH_SET_LR(node) _tiling_window_tree_node_move_if_match_set(node, \
-                                                                         CNODE->client->y, CNODE->client->h, node->client->y, node->client->h)
-#define IF_MATCH_SET_TB(node) _tiling_window_tree_node_move_if_match_set(node, \
-                                                                         CNODE->client->x, CNODE->client->w, node->client->x, node->client->w)
-
-static void
-_tiling_window_tree_node_move_if_match_set(Window_Tree *node, Evas_Coord cx,
-                                           Evas_Coord cw, Evas_Coord ox, Evas_Coord ow)
-{
-   Evas_Coord leftx, rightx;
-   int match;
-
-   leftx = _TILE_MAX(cx, ox);
-   rightx = _TILE_MIN(cx + cw, ox + ow);
-   match = rightx - leftx;
-
-   if (match > _node_move_ctx.best_match)
+   if (dir)
      {
-        _node_move_ctx.best_match = match;
-        _node_move_ctx.ret = node;
+        res = _inlist_next(node->parent);
+        if (res)
+          dir = EINA_FALSE;
      }
-}
-
-static void
-_tiling_window_tree_node_move_walker(void *_node)
-{
-   Window_Tree *node = _node;
-   int p = tiling_g.config->window_padding;
-   /* We are only interested in nodes with clients. */
-   if (!node->client)
-     return;
-
-   switch (_node_move_ctx.cross_edge)
+   else
      {
-      case TILING_WINDOW_TREE_EDGE_LEFT:
-        if ((node->client->x + node->client->w + p) == CNODE->client->x)
-          IF_MATCH_SET_LR(node);
-        break;
-
-      case TILING_WINDOW_TREE_EDGE_RIGHT:
-        if (node->client->x == (CNODE->client->x + CNODE->client->w + p))
-          IF_MATCH_SET_LR(node);
-        break;
-
-      case TILING_WINDOW_TREE_EDGE_TOP:
-        if ((node->client->y + node->client->h + p) == CNODE->client->y)
-          IF_MATCH_SET_TB(node);
-        break;
-
-      case TILING_WINDOW_TREE_EDGE_BOTTOM:
-        if (node->client->y == (CNODE->client->y + CNODE->client->h + p))
-          IF_MATCH_SET_TB(node);
-        break;
-
-      default:
-        break;
+        res = _inlist_prev(node->parent);
+        if (res)
+           dir = EINA_TRUE;
      }
-}
 
-#undef CNODE
-#undef IF_MATCH_SET_LR
-#undef IF_MATCH_SET_TB
+   grand_parent = node->parent->parent;
+   if (!grand_parent)
+      return;
+
+   tiling_window_tree_unref(root, node);
+
+   _tiling_window_tree_parent_add(grand_parent, node, res, dir);
+}
 
 void
-tiling_window_tree_node_move(Window_Tree *node, int cross_edge)
+_tiling_window_tree_node_join(Window_Tree *root, Window_Tree *node, Eina_Bool dir)
 {
-   Window_Tree *root = node;
+   Window_Tree *pn, *pl, *wts, *par;
 
-   /* FIXME: This is very slow and possibly buggy. Can be done much better, but
-    * is very easy to implement. */
+   if (dir)
+      pn = _inlist_next(node);
+   else
+      pn = _inlist_prev(node);
 
-   while (root->parent)
-     root = root->parent;
+   if (!pn)
+     return;
 
-   _node_move_ctx.node = node;
-   _node_move_ctx.cross_edge = cross_edge;
-   _node_move_ctx.ret = NULL;
-   _node_move_ctx.best_match = 0;
+     par = node->parent;
+     if ((eina_inlist_count(par->children) == 2) && /* swap if there are just 2 */
+         par->parent && (eina_inlist_count(par->parent->children) > 1)) /* do not swap if we are in the first level */
+       {
+          par->children = eina_inlist_demote(par->children, eina_inlist_first(par->children));
+          return;
+       }
+     else
+       {
+          pl = tiling_window_tree_unref(root, node);
+          if (pl == node->parent)
+            {
+               //unref has not changed the tree
+               if (!pn->children)
+                 _tiling_window_tree_split_add(pn, node);
+               else
+                 _tiling_window_tree_parent_add(pn, node, NULL, EINA_TRUE);
+            }
+          else
+            {
+               //unref changed the position of pn in the tree, result of unref
+               //will be the new parent
+               //we need to search the e_client ptr to get the corret relative pos
+               wts = pn->parent;
+               while(wts->client != pn->client)
+                 wts = _inlist_next(wts);
+               _tiling_window_tree_parent_add(pl, node, wts, EINA_TRUE);
+            }
+       }
+}
 
-   tiling_window_tree_walk(root, _tiling_window_tree_node_move_walker);
+void
+tiling_window_tree_node_change_pos(Window_Tree *node, int key)
+{
+   if (!node->parent)
+     return;
 
-   if (_node_move_ctx.ret)
+   Tiling_Split_Type parent_split_type =
+     _tiling_window_tree_split_type_get(node->parent);
+
+   Window_Tree *root = node->parent;
+   while(root->parent)
+      root = root->parent;
+   switch(key)
      {
-        E_Client *ec = node->client;
-
-        node->client = _node_move_ctx.ret->client;
-        _node_move_ctx.ret->client = ec;
+        case TILING_WINDOW_TREE_EDGE_LEFT:
+          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
+            _tiling_window_tree_node_join(root, node, EINA_FALSE);
+          else if(parent_split_type == TILING_SPLIT_VERTICAL)
+            _tiling_window_tree_node_break_out(root, node, EINA_FALSE);
+          break;
+        case TILING_WINDOW_TREE_EDGE_RIGHT:
+          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
+            _tiling_window_tree_node_join(root, node, EINA_TRUE);
+          else if(parent_split_type == TILING_SPLIT_VERTICAL)
+            _tiling_window_tree_node_break_out(root, node, EINA_TRUE);
+          break;
+        case TILING_WINDOW_TREE_EDGE_TOP:
+          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
+            _tiling_window_tree_node_break_out(root, node, EINA_FALSE);
+          else if(parent_split_type == TILING_SPLIT_VERTICAL)
+            _tiling_window_tree_node_join(root, node, EINA_FALSE);
+          break;
+        case TILING_WINDOW_TREE_EDGE_BOTTOM:
+          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
+            _tiling_window_tree_node_break_out(root, node, EINA_TRUE);
+          else if(parent_split_type == TILING_SPLIT_VERTICAL)
+            _tiling_window_tree_node_join(root, node, EINA_TRUE);
+          break;
      }
 }
 
