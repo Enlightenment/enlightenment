@@ -136,9 +136,11 @@ _e_shell_surface_cb_pong(struct wl_client *client EINA_UNUSED, struct wl_resourc
 {
    E_Client *ec;
 
-   /* NB: Needs to set client->ping_ok, or client->hung */
    if ((ec = wl_resource_get_user_data(resource)))
-     ec->ping_ok = EINA_TRUE;
+     {
+        ec->ping_ok = EINA_TRUE;
+        ec->hung = EINA_FALSE;
+     }
 }
 
 static void 
@@ -505,6 +507,9 @@ _e_shell_surface_ping(struct wl_resource *resource)
                                "No Client For Shell Surface");
         return;
      }
+
+   ec->hung = EINA_TRUE;
+   e_client_ping(ec);
 
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    wl_shell_surface_send_ping(ec->comp_data->shell.surface, serial);
