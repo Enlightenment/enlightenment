@@ -1094,8 +1094,7 @@ _e_xdg_shell_surface_ping(struct wl_resource *resource)
 
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    if (ec->comp->wl_comp_data->shell_interface.xdg_shell)
-        xdg_shell_send_ping(ec->comp->wl_comp_data->shell_interface.xdg_shell, serial);
-
+     xdg_shell_send_ping(ec->comp->wl_comp_data->shell_interface.xdg_shell, serial);
 }
 
 static void 
