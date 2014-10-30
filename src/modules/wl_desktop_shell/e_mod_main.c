@@ -508,9 +508,6 @@ _e_shell_surface_ping(struct wl_resource *resource)
         return;
      }
 
-   ec->hung = EINA_TRUE;
-   e_client_ping(ec);
-
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    wl_shell_surface_send_ping(ec->comp_data->shell.surface, serial);
 }
@@ -1093,9 +1090,6 @@ _e_xdg_shell_surface_ping(struct wl_resource *resource)
                                "No Client For Shell Surface");
         return;
      }
-
-   ec->hung = EINA_TRUE;
-   e_client_ping(ec);
 
    serial = wl_display_next_serial(ec->comp->wl_comp_data->wl.disp);
    if (ec->comp->wl_comp_data->shell_interface.xdg_shell)
