@@ -416,6 +416,75 @@ _e_comp_wl_evas_cb_key_up(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj E
 }
 
 static void 
+_e_comp_wl_client_priority_adjust(int pid, int set, int adj, Eina_Bool use_adj, Eina_Bool adj_child, Eina_Bool do_child)
+{
+   int n;
+
+   n = set;
+   if (use_adj) n = (getpriority(PRIO_PROCESS, pid) + adj);
+   setpriority(PRIO_PROCESS, pid, n);
+
+   if (do_child)
+     {
+        Eina_List *files;
+        char *file, buff[PATH_MAX];
+        FILE *f;
+        int pid2, ppid;
+
+        files = ecore_file_ls("/proc");
+        EINA_LIST_FREE(files, file)
+          {
+             if (isdigit(file[0]))
+               {
+                  snprintf(buff, sizeof(buff), "/proc/%s/stat", file);
+                  if ((f = fopen(buff, "r")))
+                    {
+                       pid2 = -1;
+                       ppid = -1;
+                       if (fscanf(f, "%i %*s %*s %i %*s", &pid2, &ppid) == 2)
+                         {
+                            fclose(f);
+                            if (ppid == pid)
+                              {
+                                 if (adj_child)
+                                   _e_comp_wl_client_priority_adjust(pid2, set, 
+                                                                     adj, EINA_TRUE,
+                                                                     adj_child, do_child);
+                                 else
+                                   _e_comp_wl_client_priority_adjust(pid2, set, 
+                                                                     adj, use_adj,
+                                                                     adj_child, do_child);
+                              }
+                         }
+                       else 
+                         fclose(f);
+                    }
+               }
+             free(file);
+          }
+     }
+}
+
+static void 
+_e_comp_wl_client_priority_raise(E_Client *ec)
+{
+   if (ec->netwm.pid <= 0) return;
+   if (ec->netwm.pid == getpid()) return;
+   _e_comp_wl_client_priority_adjust(ec->netwm.pid, 
+                                     e_config->priority - 1, -1, 
+                                     EINA_FALSE, EINA_TRUE, EINA_FALSE);
+}
+
+static void 
+_e_comp_wl_client_priority_normal(E_Client *ec)
+{
+   if (ec->netwm.pid <= 0) return;
+   if (ec->netwm.pid == getpid()) return;
+   _e_comp_wl_client_priority_adjust(ec->netwm.pid, e_config->priority, 1, 
+                                     EINA_FALSE, EINA_TRUE, EINA_FALSE);
+}
+
+static void 
 _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
    E_Client *ec, *focused;
@@ -435,7 +504,8 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    focused = e_client_focused_get();
    if ((focused) && (ec != focused)) return;
 
-   /* TODO: Priority raise */
+   /* raise client priority */
+   _e_comp_wl_client_priority_raise(ec);
 
    cdata = ec->comp->wl_comp_data;
 
@@ -469,7 +539,8 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
    E_COMP_WL_PIXMAP_CHECK;
 
-   /* TODO: set normal priority */
+   /* lower client priority */
+   _e_comp_wl_client_priority_normal(ec);
 
    cdata = ec->comp->wl_comp_data;
 
