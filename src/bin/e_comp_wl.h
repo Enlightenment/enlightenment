@@ -240,8 +240,7 @@ struct _E_Comp_Wl_Client_Data
    struct 
      {
         int32_t x, y, w, h;
-        E_Comp_Wl_Buffer *buffer;
-        struct wl_listener buffer_destroy;
+        struct wl_resource *buffer;
         Eina_Bool new_attach : 1;
         Eina_List *damages;
         Eina_Tiler *input;
