@@ -13,10 +13,10 @@
 
 #  include <xkbcommon/xkbcommon.h>
 
-#  ifdef HAVE_WAYLAND_EGL
-#   include <EGL/egl.h>
-#   define GL_GLEXT_PROTOTYPES
-#  endif
+/* #  ifdef HAVE_WAYLAND_EGL */
+/* #   include <EGL/egl.h> */
+/* #   define GL_GLEXT_PROTOTYPES */
+/* #  endif */
 
 #  ifdef __linux__
 #   include <linux/input.h>
@@ -188,7 +188,6 @@ struct _E_Comp_Wl_Data
    struct
      {
         struct wl_resource *resource;
-        int32_t width, height;
         uint32_t edges;
      } resize;
 
@@ -241,10 +240,9 @@ struct _E_Comp_Wl_Client_Data
    struct 
      {
         int32_t x, y, w, h;
-        E_Comp_Wl_Buffer *buffer;
-        struct wl_listener buffer_destroy;
+        struct wl_resource *buffer;
         Eina_Bool new_attach : 1;
-        Eina_Tiler *damage;
+        Eina_List *damages;
         Eina_Tiler *input;
         Eina_Tiler *opaque;
      } pending;
@@ -271,9 +269,10 @@ EINTERN void e_comp_wl_shutdown(void);
 
 EINTERN struct wl_resource *e_comp_wl_surface_create(struct wl_client *client, int version, uint32_t id);
 EINTERN void e_comp_wl_surface_destroy(struct wl_resource *resource);
+EINTERN Eina_Bool e_comp_wl_surface_commit(E_Client *ec);
 EINTERN void e_comp_wl_buffer_reference(E_Comp_Wl_Buffer_Ref *ref, E_Comp_Wl_Buffer *buffer);
 
-EAPI struct wl_signal e_comp_wl_surface_signal_get(E_Comp *comp);
+EAPI struct wl_signal e_comp_wl_surface_create_signal_get(E_Comp *comp);
 
 static inline uint64_t
 e_comp_wl_id_get(uint32_t client, uint32_t surface)

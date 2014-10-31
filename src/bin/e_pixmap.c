@@ -619,12 +619,12 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
                   wl_callback_send_done(cb, (ecore_loop_time_get() * 1000));
                   wl_resource_destroy(cb);
                }
+          }
 
-             /* post a buffer release */
-             /* TODO: FIXME: We need a way to determine if the client wants to
-              * keep the buffer or not. If so, then we should Not be setting NULL
-              * here as this will essentially release the buffer */
-             e_comp_wl_buffer_reference(&cd->buffer_ref, NULL);
+        if (cache)
+          {
+             if (cp->resource) wl_buffer_send_release(cp->resource);
+             cp->resource = NULL;
           }
 #endif
         break;
