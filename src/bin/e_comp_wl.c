@@ -18,7 +18,7 @@
  */
 
 /* local variables */
-static Eina_Hash *clients_win_hash = NULL;
+/* static Eina_Hash *clients_win_hash = NULL; */
 static Eina_List *handlers = NULL;
 
 /* local functions */
@@ -435,9 +435,6 @@ _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj
    focused = e_client_focused_get();
    if ((focused) && (ec != focused)) return;
 
-   DBG("Focus In On Surface: %d", 
-       wl_resource_get_id(ec->comp_data->surface));
-
    /* TODO: Priority raise */
 
    cdata = ec->comp->wl_comp_data;
@@ -472,9 +469,6 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
 
    E_COMP_WL_PIXMAP_CHECK;
 
-   DBG("Focus Out On Surface: %d", 
-       wl_resource_get_id(ec->comp_data->surface));
-
    /* TODO: set normal priority */
 
    cdata = ec->comp->wl_comp_data;
@@ -491,6 +485,21 @@ _e_comp_wl_evas_cb_focus_out(void *data, Evas *evas EINA_UNUSED, Evas_Object *ob
         if (wl_resource_get_client(res) != wc) continue;
         wl_keyboard_send_leave(res, serial, ec->comp_data->surface);
      }
+}
+
+static void 
+_e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
+{
+   E_Client *ec;
+
+   if (!(ec = data)) return;
+
+   E_COMP_WL_PIXMAP_CHECK;
+
+   if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
+     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
+                                         ec->comp->wl_comp_data->resize.edges, 
+                                         ec->client.w, ec->client.h);
 }
 
 static void 
@@ -610,6 +619,12 @@ _e_comp_wl_client_evas_init(E_Client *ec)
    evas_object_event_callback_add(ec->frame, EVAS_CALLBACK_FOCUS_OUT, 
                                   _e_comp_wl_evas_cb_focus_out, ec);
 
+   if (!ec->override)
+     {
+        evas_object_smart_callback_add(ec->frame, "client_resize", 
+                                       _e_comp_wl_evas_cb_resize, ec);
+     }
+
    /* setup delete/kill callbacks */
    evas_object_smart_callback_add(ec->frame, "delete_request", 
                                   _e_comp_wl_evas_cb_delete_request, ec);
@@ -648,58 +663,6 @@ _e_comp_wl_cb_comp_object_add(void *data EINA_UNUSED, int type EINA_UNUSED, E_Ev
 }
 
 static void 
-_e_comp_wl_buffer_cb_destroy(struct wl_listener *listener, void *data EINA_UNUSED)
-{
-   E_Comp_Wl_Buffer *buffer;
-
-   /* try to get the buffer from the listener */
-   if ((buffer = container_of(listener, E_Comp_Wl_Buffer, destroy_listener)))
-     {
-        DBG("Buffer Cb Destroy: %d", wl_resource_get_id(buffer->resource));
-
-        /* emit the destroy signal */
-        wl_signal_emit(&buffer->destroy_signal, buffer);
-
-        /* FIXME: Investigate validity of this
-         * 
-         * I think this could be a problem because the destroy signal 
-         * uses the buffer as the 'data', so anything that catches 
-         * this signal is going to run into problems if we free */
-        free(buffer);
-     }
-}
-
-static E_Comp_Wl_Buffer *
-_e_comp_wl_buffer_get(struct wl_resource *resource)
-{
-   E_Comp_Wl_Buffer *buffer;
-   struct wl_listener *listener;
-
-   /* try to get the destroy listener from this resource */
-   listener = 
-     wl_resource_get_destroy_listener(resource, _e_comp_wl_buffer_cb_destroy);
-
-   /* if we have the destroy listener, return the E_Comp_Wl_Buffer */
-   if (listener)
-     return container_of(listener, E_Comp_Wl_Buffer, destroy_listener);
-
-   /* no destroy listener on this resource, try to create new buffer */
-   if (!(buffer = E_NEW(E_Comp_Wl_Buffer, 1))) return NULL;
-
-   DBG("Create New Buffer: %d", wl_resource_get_id(resource));
-
-   /* initialize buffer structure */
-   buffer->resource = resource;
-   wl_signal_init(&buffer->destroy_signal);
-
-   /* setup buffer destroy callback */
-   buffer->destroy_listener.notify = _e_comp_wl_buffer_cb_destroy;
-   wl_resource_add_destroy_listener(resource, &buffer->destroy_listener);
-
-   return buffer;
-}
-
-static void 
 _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Pixmap *ep;
@@ -715,10 +678,9 @@ _e_comp_wl_surface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_re
 }
 
 static void 
-_e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t sx, int32_t sy)
+_e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *buffer_resource, int32_t sx, int32_t sy)
 {
    E_Pixmap *ep;
-   uint64_t pixid;
    E_Client *ec;
 
    DBG("Surface Attach: %d", wl_resource_get_id(resource));
@@ -726,12 +688,12 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
    /* get the e_pixmap reference */
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
-   pixid = e_pixmap_window_get(ep);
-   DBG("\tSurface has Pixmap: %"PRIu64"", pixid);
-
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
+        uint64_t pixid;
+
+        pixid = e_pixmap_window_get(ep);
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
              ERR("\t\tCould not find client from pixmap %"PRIu64"", pixid);
@@ -753,39 +715,17 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
         return;
      }
 
-   /* clear any pending buffer */
-   if (ec->comp_data->pending.buffer)
-     wl_resource_queue_event(ec->comp_data->pending.buffer->resource, 
-                             WL_BUFFER_RELEASE);
-
-   /* if (ec->comp_data->pending.buffer) */
-   /*   wl_list_remove(&ec->comp_data->pending.buffer_destroy.link); */
-
    /* reset client pending information */
-   ec->comp_data->pending.x = 0;
-   ec->comp_data->pending.y = 0;
+   ec->comp_data->pending.x = sx;
+   ec->comp_data->pending.y = sy;
    ec->comp_data->pending.w = 0;
    ec->comp_data->pending.h = 0;
-   ec->comp_data->pending.buffer = NULL;
+   ec->comp_data->pending.buffer = buffer_resource;
    ec->comp_data->pending.new_attach = EINA_TRUE;
 
    if (buffer_resource)
      {
-        E_Comp_Wl_Buffer *buffer = NULL;
         struct wl_shm_buffer *shmb;
-
-        /* try to get the E_Comp_Wl_Buffer */
-        if (!(buffer = _e_comp_wl_buffer_get(buffer_resource)))
-          {
-             ERR("\tCould not get E_Comp_Wl_Buffer");
-             wl_client_post_no_memory(client);
-             return;
-          }
-
-        /* since we have a valid buffer, set pending properties */
-        ec->comp_data->pending.x = sx;
-        ec->comp_data->pending.y = sy;
-        ec->comp_data->pending.buffer = buffer;
  
         /* check for this resource being a shm buffer */
         if ((shmb = wl_shm_buffer_get(buffer_resource)))
@@ -793,8 +733,6 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client, struct wl_resource *resou
              /* update pending size */
              ec->comp_data->pending.w = wl_shm_buffer_get_width(shmb);
              ec->comp_data->pending.h = wl_shm_buffer_get_height(shmb);
-             DBG("\tPending Size: %d %d", 
-                 ec->comp_data->pending.w, ec->comp_data->pending.h);
           }
      }
 }
@@ -803,7 +741,6 @@ static void
 _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y, int32_t w, int32_t h)
 {
    E_Pixmap *ep;
-   uint64_t pixid;
    E_Client *ec;
    Eina_Rectangle *dmg = NULL;
 
@@ -813,11 +750,12 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
    /* get the e_pixmap reference */
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
-   pixid = e_pixmap_window_get(ep);
-
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
+        uint64_t pixid;
+
+        pixid = e_pixmap_window_get(ep);
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
              ERR("\tCould not find client from pixmap %"PRIu64"", pixid);
@@ -845,8 +783,6 @@ _e_comp_wl_frame_cb_destroy(struct wl_resource *resource)
 
    if (e_object_is_del(E_OBJECT(ec))) return;
 
-   DBG("Frame Cb Destroy: %d", wl_resource_get_id(resource));
-
    /* remove this frame callback */
    ec->comp_data->frames = eina_list_remove(ec->comp_data->frames, resource);
 }
@@ -858,8 +794,6 @@ _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resour
    E_Client *ec;
    struct wl_resource *res;
 
-   DBG("Surface Cb Frame: %d", wl_resource_get_id(resource));
-
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
    /* try to find the associated e_client */
@@ -868,8 +802,6 @@ _e_comp_wl_surface_cb_frame(struct wl_client *client, struct wl_resource *resour
         uint64_t pixid;
 
         pixid = e_pixmap_window_get(ep);
-        DBG("\tSurface has Pixmap: %"PRIu64"", pixid);
-
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
              ERR("\tCould not find client from pixmap %"PRIu64"", pixid);
@@ -897,20 +829,17 @@ static void
 _e_comp_wl_surface_cb_opaque_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
 {
    E_Pixmap *ep;
-   uint64_t pixid;
    E_Client *ec;
-
-   DBG("Surface Opaque Region Set: %d", wl_resource_get_id(resource));
 
    /* get the e_pixmap reference */
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
-   pixid = e_pixmap_window_get(ep);
-   DBG("\tSurface has Pixmap: %"PRIu64"", pixid);
-
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
+        uint64_t pixid;
+
+        pixid = e_pixmap_window_get(ep);
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
              ERR("\tCould not find client from pixmap %"PRIu64"", pixid);
@@ -943,20 +872,17 @@ static void
 _e_comp_wl_surface_cb_input_region_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *region_resource)
 {
    E_Pixmap *ep;
-   uint64_t pixid;
    E_Client *ec;
-
-   DBG("Surface Input Region Set: %d", wl_resource_get_id(resource));
 
    /* get the e_pixmap reference */
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
-   pixid = e_pixmap_window_get(ep);
-   DBG("\tSurface has Pixmap: %"PRIu64, pixid);
-
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
+        uint64_t pixid;
+
+        pixid = e_pixmap_window_get(ep);
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
              ERR("\tCould not find client from pixmap %"PRIu64, pixid);
@@ -989,7 +915,6 @@ static void
 _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Pixmap *ep;
-   uint64_t pixid;
    E_Client *ec;
 
    DBG("Surface Commit: %d", wl_resource_get_id(resource));
@@ -997,12 +922,12 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    /* get the e_pixmap reference */
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
-   pixid = e_pixmap_window_get(ep);
-   DBG("\tSurface has Pixmap: %"PRIu64, pixid);
-
    /* try to find the associated e_client */
    if (!(ec = e_pixmap_client_get(ep)))
      {
+        uint64_t pixid;
+
+        pixid = e_pixmap_window_get(ep);
         if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
           {
              ERR("\tCould not find client from pixmap %"PRIu64, pixid);
@@ -1067,7 +992,6 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
 
    DBG("\tCreated Resource: %d", wl_resource_get_id(res));
 
-   /* FIXME: set callback ? */
    /* set implementation on resource */
    wl_resource_set_implementation(res, &_e_surface_interface, NULL, NULL);
 //                                  _callback);
@@ -1304,7 +1228,7 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
      }
 
    /* add this client to the hash */
-   eina_hash_add(clients_win_hash, &win, ec);
+   /* eina_hash_add(clients_win_hash, &win, ec); */
    e_hints_client_list_set();
 
    /* TODO: first draw timer ? */
@@ -1313,7 +1237,7 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
 static void 
 _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 {
-   uint64_t win;
+   /* uint64_t win; */
    Eina_Rectangle *dmg;
 
    DBG("Comp Hook Client Del");
@@ -1322,8 +1246,8 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    E_COMP_WL_PIXMAP_CHECK;
 
    /* get window id from pixmap */
-   win = e_pixmap_window_get(ec->pixmap);
-   eina_hash_del_by_key(clients_win_hash, &win);
+   /* win = e_pixmap_window_get(ec->pixmap); */
+   /* eina_hash_del_by_key(clients_win_hash, &win); */
 
    if ((!ec->already_unparented) && (ec->comp_data->reparented))
      _e_comp_wl_focus_down_set(ec);
@@ -1332,10 +1256,10 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    if (ec->comp_data->reparented)
      {
         /* get the parent window */
-        win = e_client_util_pwin_get(ec);
+        /* win = e_client_util_pwin_get(ec); */
 
         /* remove the parent from the hash */
-        eina_hash_del_by_key(clients_win_hash, &win);
+        /* eina_hash_del_by_key(clients_win_hash, &win); */
 
         /* reset pixmap parent window */
         e_pixmap_parent_window_set(ec->pixmap, 0);
@@ -1346,6 +1270,10 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
         ec->parent->lock_close = EINA_FALSE;
         ec->parent->modal = NULL;
      }
+
+   /* the client is getting deleted, which means the pixmap will be getting 
+    * freed. We need to unset the surface user data */
+   wl_resource_set_user_data(ec->comp_data->surface, NULL);
 
    if (ec->comp_data->pending.opaque)
      eina_tiler_free(ec->comp_data->pending.opaque);
@@ -1412,76 +1340,44 @@ _e_comp_wl_client_cb_focus_unset(void *data EINA_UNUSED, E_Client *ec)
 static void 
 _e_comp_wl_client_cb_resize_begin(void *data EINA_UNUSED, E_Client *ec)
 {
-   int pw, ph;
-
    E_COMP_WL_PIXMAP_CHECK;
-
-   DBG("Client Resize Begin");
-   DBG("\tClient Size: %d %d", ec->client.w, ec->client.h);
-
-   e_pixmap_size_get(ec->pixmap, &pw, &ph);
-   DBG("\tPixmap Size: %d %d", pw, ph);
 
    switch (ec->resize_mode)
      {
       case E_POINTER_RESIZE_T: // 1
-        DBG("\tResize From Top");
         ec->comp->wl_comp_data->resize.edges = 1;
         break;
       case E_POINTER_RESIZE_B: // 2
-        DBG("\tResize From Bottom");
         ec->comp->wl_comp_data->resize.edges = 2;
         break;
       case E_POINTER_RESIZE_L: // 4
-        DBG("\tResize From Left");
         ec->comp->wl_comp_data->resize.edges = 4;
         break;
       case E_POINTER_RESIZE_R: // 8
-        DBG("\tResize From Right");
         ec->comp->wl_comp_data->resize.edges = 8;
         break;
       case E_POINTER_RESIZE_TL: // 5
-        DBG("\tResize From Top Left");
         ec->comp->wl_comp_data->resize.edges = 5;
         break;
       case E_POINTER_RESIZE_TR: // 9
-        DBG("\tResize From Top Right");
         ec->comp->wl_comp_data->resize.edges = 9;
         break;
       case E_POINTER_RESIZE_BL: // 6
-        DBG("\tResize From Bottom Left");
         ec->comp->wl_comp_data->resize.edges = 6;
         break;
       case E_POINTER_RESIZE_BR: // 10
-        DBG("\tResize From Bottom Right");
         ec->comp->wl_comp_data->resize.edges = 10;
         break;
       default:
         ec->comp->wl_comp_data->resize.edges = 0;
         break;
      }
-}
-
-static void 
-_e_comp_wl_client_cb_resize_update(void *data EINA_UNUSED, E_Client *ec)
-{
-   int pw, ph;
-
-   E_COMP_WL_PIXMAP_CHECK;
-
-   DBG("Client Resize Update");
-   DBG("\tClient Size: %d %d", ec->client.w, ec->client.h);
-
-   e_pixmap_size_get(ec->pixmap, &pw, &ph);
-   DBG("\tPixmap Size: %d %d", pw, ph);
 
    if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
      {
-        DBG("\tSend Configure: %d %d\tEdges: %d", pw, ph, 
-            ec->comp->wl_comp_data->resize.edges);
         ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
                                             ec->comp->wl_comp_data->resize.edges, 
-                                            pw, ph);
+                                            ec->client.w, ec->client.h);
      }
 }
 
@@ -1490,20 +1386,16 @@ _e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
 {
    int pw, ph;
 
+   if (e_object_is_del(E_OBJECT(ec))) return;
+
    E_COMP_WL_PIXMAP_CHECK;
-
-   DBG("Client Resize End");
-   DBG("\tClient Size: %d %d", ec->client.w, ec->client.h);
-
-   e_pixmap_size_get(ec->pixmap, &pw, &ph);
-   DBG("\tPixmap Size: %d %d", pw, ph);
 
    ec->comp->wl_comp_data->resize.edges = 0;
    ec->comp->wl_comp_data->resize.resource = NULL;
 
    if (ec->pending_resize)
      {
-        DBG("\tPending Resize");
+
         EC_CHANGED(ec);
         ec->changes.pos = 1;
         ec->changes.size = 1;
@@ -1645,7 +1537,7 @@ e_comp_wl_init(void)
      }
 
    /* create hash to store clients */
-   clients_win_hash = eina_hash_int64_new(NULL);
+   /* clients_win_hash = eina_hash_int64_new(NULL); */
 
    /* add event handlers to catch E events */
    E_LIST_HANDLER_APPEND(handlers, E_EVENT_COMP_OBJECT_ADD, 
@@ -1662,8 +1554,6 @@ e_comp_wl_init(void)
 
    e_client_hook_add(E_CLIENT_HOOK_RESIZE_BEGIN, 
                      _e_comp_wl_client_cb_resize_begin, NULL);
-   e_client_hook_add(E_CLIENT_HOOK_RESIZE_UPDATE, 
-                     _e_comp_wl_client_cb_resize_update, NULL);
    e_client_hook_add(E_CLIENT_HOOK_RESIZE_END, 
                      _e_comp_wl_client_cb_resize_end, NULL);
 
@@ -1684,7 +1574,7 @@ e_comp_wl_shutdown(void)
    E_FREE_LIST(handlers, ecore_event_handler_del);
 
    /* free the clients win hash */
-   E_FREE_FUNC(clients_win_hash, eina_hash_free);
+   /* E_FREE_FUNC(clients_win_hash, eina_hash_free); */
 
    /* shutdown ecore_wayland */
    ecore_wl_shutdown();
@@ -1711,36 +1601,35 @@ e_comp_wl_surface_commit(E_Client *ec)
    if (!(ep = ec->pixmap)) return EINA_FALSE;
 
    if (ec->comp_data->pending.buffer)
-     e_pixmap_resource_set(ep, ec->comp_data->pending.buffer->resource);
-   else
-     e_pixmap_resource_set(ep, NULL);
+     {
+        /* set pixmap resource */
+        e_pixmap_resource_set(ep, ec->comp_data->pending.buffer);
 
-   /* mark the pixmap as usable or not */
-   e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
+        /* mark the pixmap as usable or not */
+        e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
+     }
 
    /* mark the pixmap as dirty */
    e_pixmap_dirty(ep);
 
+   e_pixmap_refresh(ep);
+
    /* check for any pending attachments */
    if (ec->comp_data->pending.new_attach)
      {
-        /* check if the pending size is different than the client size */
-        if ((ec->client.w != ec->comp_data->pending.w) || 
-            (ec->client.h != ec->comp_data->pending.h))
-          {
-             DBG("\tSurface Commit Sizes Different");
-             DBG("\t\tClient Size: %d %d", ec->client.w, ec->client.h);
-             DBG("\t\tPending Size: %d %d", 
-                 ec->comp_data->pending.w, ec->comp_data->pending.h);
- 
-             /* if the client has a shell configure, call it */
-             if ((ec->comp_data->shell.surface) && 
-                 (ec->comp_data->shell.configure))
-               ec->comp_data->shell.configure(ec->comp_data->shell.surface, 
-                                              ec->client.x, ec->client.y,
-                                              ec->comp_data->pending.w, 
-                                              ec->comp_data->pending.h);
-          }
+        int nw, nh;
+
+        nw = ec->client.w;
+        nh = ec->client.h;
+        if (nw == 0) nw = ec->comp_data->pending.w;
+        if (nh == 0) nh = ec->comp_data->pending.h;
+
+        /* if the client has a shell configure, call it */
+        if ((ec->comp_data->shell.surface) && 
+            (ec->comp_data->shell.configure))
+          ec->comp_data->shell.configure(ec->comp_data->shell.surface, 
+                                         ec->client.x, ec->client.y,
+                                         nw, nh);
      }
 
    /* check if we need to map this surface */
@@ -1765,17 +1654,9 @@ e_comp_wl_surface_commit(E_Client *ec)
           }
      }
 
-   /* reset client pending information */
-   ec->comp_data->pending.x = 0;
-   ec->comp_data->pending.y = 0;
-   ec->comp_data->pending.w = 0;
-   ec->comp_data->pending.h = 0;
-   ec->comp_data->pending.buffer = NULL;
-   ec->comp_data->pending.new_attach = EINA_FALSE;
-
-   if (!ec->visible) 
+   if (!ec->comp_data->mapped) 
      {
-        DBG("\tSurface Not Visible. Skip to Unmapped");
+        DBG("\tSurface Not Mapped. Skip to Unmapped");
         goto unmap;
      }
 
@@ -1886,14 +1767,16 @@ e_comp_wl_surface_commit(E_Client *ec)
 
 unmap:
    /* clear pending opaque regions */
-   eina_tiler_clear(ec->comp_data->pending.opaque);
+   if (ec->comp_data->pending.opaque)
+     eina_tiler_clear(ec->comp_data->pending.opaque);
 
    /* surface is not visible, clear damages */
    EINA_LIST_FREE(ec->comp_data->pending.damages, dmg)
      eina_rectangle_free(dmg);
 
    /* clear pending input regions */
-   eina_tiler_clear(ec->comp_data->pending.input);
+   if (ec->comp_data->pending.input)
+     eina_tiler_clear(ec->comp_data->pending.input);
 
    return EINA_TRUE;
 }
