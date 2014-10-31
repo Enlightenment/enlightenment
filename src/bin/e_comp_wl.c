@@ -1455,8 +1455,6 @@ _e_comp_wl_client_cb_resize_begin(void *data EINA_UNUSED, E_Client *ec)
 static void 
 _e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
 {
-   int pw, ph;
-
    if (e_object_is_del(E_OBJECT(ec))) return;
 
    E_COMP_WL_PIXMAP_CHECK;
