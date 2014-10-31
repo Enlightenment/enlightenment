@@ -620,6 +620,12 @@ e_pixmap_image_clear(E_Pixmap *cp, Eina_Bool cache)
                   wl_resource_destroy(cb);
                }
           }
+
+        if (cache)
+          {
+             if (cp->resource) wl_buffer_send_release(cp->resource);
+             cp->resource = NULL;
+          }
 #endif
         break;
       default:
