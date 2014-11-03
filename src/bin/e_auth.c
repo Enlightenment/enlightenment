@@ -174,6 +174,9 @@ e_auth_begin(char *passwd)
    pam_end(da.pam.handle, pamerr);
    /* security - null out passwd string once we are done with it */
    memset(da.passwd, 0, sizeof(da.passwd));
+   /* break compiler optimization */
+   if (da.passwd[0] || da.passwd[3])
+     fprintf(stderr, "ACK!\n");
    if (pamerr == PAM_SUCCESS)
      {
         free(current_user);
