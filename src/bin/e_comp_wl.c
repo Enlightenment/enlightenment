@@ -14,6 +14,7 @@
  * 
  * wl_surface == e_pixmap
  * wl_region == eina_tiler
+ * wl_subsurface == e_client
  * 
  */
 
@@ -1242,6 +1243,46 @@ _e_comp_wl_compositor_cb_del(E_Comp *comp)
 }
 
 static void 
+_e_comp_wl_subsurface_destroy(struct wl_resource *resource)
+{
+   E_Client *ec;
+   E_Comp_Wl_Subsurf_Data *sdata;
+   Eina_Rectangle *dmg;
+
+   /* try to get the client from resource data */
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   if (!(sdata = ec->comp_data->sub.data)) return;
+
+   if (sdata->parent)
+     {
+        /* remove this client from parents sub list */
+        sdata->parent->comp_data->sub.list = 
+          eina_list_remove(sdata->parent->comp_data->sub.list, ec);
+     }
+
+   /* release buffer */
+   if (sdata->buffer) wl_buffer_send_release(sdata->buffer);
+
+   /* the client is getting deleted, which means the pixmap will be getting 
+    * freed. We need to unset the surface user data */
+   /* wl_resource_set_user_data(ec->comp_data->surface, NULL); */
+
+   if (sdata->cached.opaque)
+     eina_tiler_free(sdata->cached.opaque);
+
+   EINA_LIST_FREE(sdata->cached.damages, dmg)
+     eina_rectangle_free(dmg);
+
+   if (sdata->cached.input)
+     eina_tiler_free(sdata->cached.input);
+
+   E_FREE(sdata);
+
+   ec->comp_data->sub.data = NULL;
+}
+
+static void 
 _e_comp_wl_subsurface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    wl_resource_destroy(resource);
@@ -1317,9 +1358,9 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
         goto res_err;
      }
 
-   /* TODO: callback ?? */
    /* set resource implementation */
-   wl_resource_set_implementation(res, &_e_subsurface_interface, ec, NULL);
+   wl_resource_set_implementation(res, &_e_subsurface_interface, ec, 
+                                  _e_comp_wl_subsurface_destroy);
 
    /* set subsurface data properties */
    sdata->resource = res;
