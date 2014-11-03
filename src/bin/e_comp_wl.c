@@ -1244,7 +1244,7 @@ _e_comp_wl_compositor_cb_del(E_Comp *comp)
 static void 
 _e_comp_wl_subsurface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
-   DBG("Subsurface Cb Destroy: %d", wl_resource_get_id(resource));
+   wl_resource_destroy(resource);
 }
 
 static void 
