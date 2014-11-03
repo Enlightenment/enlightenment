@@ -18,6 +18,8 @@
  * 
  */
 
+static void _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_synchronized);
+
 /* local variables */
 /* static Eina_Hash *clients_win_hash = NULL; */
 static Eina_List *handlers = NULL;
@@ -1274,7 +1276,7 @@ _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
      }
 
    /* release buffer */
-   if (sdata->buffer) wl_buffer_send_release(sdata->buffer);
+   if (sdata->cached.buffer) wl_buffer_send_release(sdata->cached.buffer);
 
    /* the client is getting deleted, which means the pixmap will be getting 
     * freed. We need to unset the surface user data */
@@ -1295,7 +1297,7 @@ _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
 }
 
 static Eina_Bool 
-_e_comp_wl_subsurface_synchronized_get(E_Comp_Wl_Subsuf_Data *sdata)
+_e_comp_wl_subsurface_synchronized_get(E_Comp_Wl_Subsurf_Data *sdata)
 {
    while (sdata)
      {
@@ -1373,7 +1375,7 @@ _e_comp_wl_subsurface_cb_place_above(struct wl_client *client EINA_UNUSED, struc
      eina_list_remove(parent->comp_data->sub.list, ec);
 
    parent->comp_data->sub.list = 
-     eina_list_append_relative(parent->comp_data->sub.list, ec, sibling);
+     eina_list_append_relative(parent->comp_data->sub.list, ec, ecs);
 
    parent->comp_data->sub.restack_target = parent;
 }
@@ -1402,7 +1404,7 @@ _e_comp_wl_subsurface_cb_place_below(struct wl_client *client EINA_UNUSED, struc
      eina_list_remove(parent->comp_data->sub.list, ec);
 
    parent->comp_data->sub.list = 
-     eina_list_prepend_relative(parent->comp_data->sub.list, ec, sibling);
+     eina_list_prepend_relative(parent->comp_data->sub.list, ec, ecs);
 
    parent->comp_data->sub.restack_target = parent;
 }
@@ -2293,4 +2295,6 @@ e_comp_wl_subsurface_commit(E_Client *ec)
                _e_comp_wl_subsurface_parent_commit(subc, EINA_FALSE);
           }
      }
+
+   return EINA_TRUE;
 }
