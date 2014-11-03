@@ -1337,7 +1337,17 @@ _e_comp_wl_subsurface_cb_sync_set(struct wl_client *client EINA_UNUSED, struct w
 static void 
 _e_comp_wl_subsurface_cb_desync_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
+   E_Client *ec;
+   E_Comp_Wl_Subsurf_Data *sdata;
+
    DBG("Subsurface Cb Desync Set: %d", wl_resource_get_id(resource));
+
+   /* try to get the client from resource data */
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   if (!(sdata = ec->comp_data->sub.data)) return;
+
+   sdata->synchronized = EINA_FALSE;
 }
 
 static const struct wl_subsurface_interface _e_subsurface_interface = 
