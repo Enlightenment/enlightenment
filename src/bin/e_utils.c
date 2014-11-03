@@ -469,7 +469,7 @@ e_util_dialog_internal(const char *title, const char *txt)
    e_dialog_icon_set(dia, "dialog-error", 64);
    e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
    e_dialog_button_focus_num(dia, 0);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
    return dia;
 }
@@ -834,24 +834,27 @@ _win_auto_size_calc(int max, int min)
 }
 
 EAPI void
-e_util_win_auto_resize_fill(E_Win *win)
+e_util_win_auto_resize_fill(Evas_Object *win)
 {
    E_Zone *zone = NULL;
+   E_Client *ec;
 
-   if (win->client)
-     zone = win->client->zone;
-   if ((!zone) && (win->comp))
-     zone = e_zone_current_get(win->comp);
+   ec = e_win_client_get(win);
+   if (ec)
+     zone = ec->zone;
+   if (!zone)
+     zone = e_zone_current_get(e_comp_get(NULL));
 
    if (zone)
      {
-        int w, h;
+        int w, h, mw, mh;
 
         e_zone_useful_geometry_get(zone, NULL, NULL, &w, &h);
 
-        w = _win_auto_size_calc(w, win->min_w);
-        h = _win_auto_size_calc(h, win->min_h);
-        e_win_resize(win, w, h);
+        evas_object_size_hint_min_get(win, &mw, &mh);
+        w = _win_auto_size_calc(w, mw);
+        h = _win_auto_size_calc(h, mh);
+        evas_object_resize(win, w, h);
      }
 }
 

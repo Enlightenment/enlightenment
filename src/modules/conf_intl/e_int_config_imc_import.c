@@ -17,7 +17,7 @@ struct _Import
    Evas_Object          *ok_obj;
    Evas_Object          *cancel_obj;
 
-   E_Win                *win;
+   Evas_Object          *win;
 };
 
 struct _E_Config_Dialog_Data
@@ -25,8 +25,7 @@ struct _E_Config_Dialog_Data
    char *file;
 };
 
-static void _imc_import_cb_delete(E_Win *win);
-static void _imc_import_cb_resize(E_Win *win);
+static void _imc_import_cb_delete(void *data EINA_UNUSED, Evas *e, Evas_Object *obj, void *event_info);
 static void _imc_import_cb_wid_focus(void *data, Evas_Object *obj);
 static void _imc_import_cb_selected(void *data, Evas_Object *obj);
 static void _imc_import_cb_changed(void *data, Evas_Object *obj);
@@ -35,11 +34,11 @@ static void _imc_import_cb_close(void *data, void *data2);
 static void _imc_import_cb_key_down(void *data, Evas *e, Evas_Object *obj,
                                     void *event);
 
-E_Win *
+Evas_Object *
 e_int_config_imc_import(E_Config_Dialog *parent)
 {
    Evas *evas;
-   E_Win *win;
+   Evas_Object *win;
    Evas_Object *o, *ofm;
    Import *import;
    E_Config_Dialog_Data *cfdata;
@@ -50,30 +49,28 @@ e_int_config_imc_import(E_Config_Dialog *parent)
    import = E_NEW(Import, 1);
    if (!import) return NULL;
 
-   win = e_win_new(parent->comp);
+   win = elm_win_add(parent->parent, "E", ELM_WIN_BASIC);
    if (!win)
      {
         E_FREE(import);
         return NULL;
      }
 
-   evas = e_win_evas_get(win);
+   evas = evas_object_evas_get(win);
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    import->cfdata = cfdata;
    import->win = win;
    import->parent = parent;
 
-   e_win_title_set(win, _("Select an Input Method Settings..."));
-   e_win_delete_callback_set(win, _imc_import_cb_delete);
-   e_win_resize_callback_set(win, _imc_import_cb_resize);
-   e_win_dialog_set(win, 1);
-   e_win_name_class_set(win, "E", "_imc_import_dialog");
+   elm_win_title_set(win, _("Select an Input Method Settings..."));
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _imc_import_cb_delete, NULL);
+   ecore_evas_name_class_set(ecore_evas_ecore_evas_get(evas_object_evas_get(win)), "E", "_imc_import_dialog");
 
    o = edje_object_add(evas);
+   elm_win_resize_object_add(win, o);
    import->bg_obj = o;
    e_theme_edje_object_set(o, "base/theme/dialog", "e/widgets/dialog/main");
-   evas_object_move(o, 0, 0);
    evas_object_show(o);
 
    o = e_widget_list_add(evas, 1, 1);
@@ -127,7 +124,7 @@ e_int_config_imc_import(E_Config_Dialog *parent)
    e_widget_list_object_append(import->box_obj, import->cancel_obj, 1, 0, 0.5);
 
    e_widget_disabled_set(import->ok_obj, 1);
-   e_win_centered_set(win, 1);
+   elm_win_center(win, 1, 1);
 
    o = import->box_obj;
    e_widget_size_min_get(o, &w, &h);
@@ -136,25 +133,25 @@ e_int_config_imc_import(E_Config_Dialog *parent)
 
    edje_object_size_min_calc(import->bg_obj, &w, &h);
    evas_object_resize(import->bg_obj, w, h);
-   e_win_resize(win, w, h);
-   e_win_size_min_set(win, w, h);
-   e_win_size_max_set(win, 99999, 99999);
-   e_win_show(win);
+   evas_object_resize(win, w, h);
+   evas_object_size_hint_min_set(win, w, h);
+   evas_object_size_hint_max_set(win, 99999, 99999);
+   evas_object_show(win);
    e_win_client_icon_set(win, "preferences-imc");
 
-   win->data = import;
+   evas_object_data_set(win, "imc_win", import);
 
    return win;
 }
 
 void
-e_int_config_imc_import_del(E_Win *win)
+e_int_config_imc_import_del(Evas_Object *win)
 {
    Import *import;
 
-   import = win->data;
+   import = evas_object_data_get(win, "imc_win");
 
-   e_object_del(E_OBJECT(import->win));
+   evas_object_del(win);
    e_int_config_imc_import_done(import->parent);
 
    E_FREE(import->cfdata->file);
@@ -165,18 +162,9 @@ e_int_config_imc_import_del(E_Win *win)
 }
 
 static void
-_imc_import_cb_delete(E_Win *win)
+_imc_import_cb_delete(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   e_int_config_imc_import_del(win);
-}
-
-static void
-_imc_import_cb_resize(E_Win *win)
-{
-   Import *import;
-
-   if (!(import = win->data)) return;
-   evas_object_resize(import->bg_obj, win->w, win->h);
+   e_int_config_imc_import_del(obj);
 }
 
 static void
@@ -244,12 +232,12 @@ static void
 _imc_import_cb_ok(void *data, void *data2 __UNUSED__)
 {
    Import *import;
-   E_Win *win;
+   Evas_Object *win;
    const char *path;
    const char *file;
 
    win = data;
-   if (!(import = win->data)) return;
+   if (!(import = evas_object_data_get(win, "imc_win"))) return;
 
    path = e_widget_fsel_selection_path_get(import->fsel_obj);
    E_FREE(import->cfdata->file);
@@ -312,10 +300,7 @@ _imc_import_cb_ok(void *data, void *data2 __UNUSED__)
 static void
 _imc_import_cb_close(void *data, void *data2 __UNUSED__)
 {
-   E_Win *win;
-
-   win = data;
-   e_int_config_imc_import_del(win);
+   e_int_config_imc_import_del(data);
 }
 
 static void
@@ -328,7 +313,7 @@ _imc_import_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
    import = data;
    if ((!e_widget_fsel_typebuf_visible_get(import->fsel_obj)) && (!strcmp(ev->key, "Tab")))
      {
-        if (evas_key_modifier_is_set(evas_key_modifier_get(e_win_evas_get(import->win)), "Shift"))
+        if (evas_key_modifier_is_set(evas_key_modifier_get(evas_object_evas_get(import->win)), "Shift"))
           {
              if (e_widget_focus_get(import->box_obj))
                {

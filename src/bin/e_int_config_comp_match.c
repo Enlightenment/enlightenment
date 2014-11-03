@@ -537,7 +537,12 @@ _create_edit_frame(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdat
    e_widget_frametable_object_append(of, bt, 0, 1, 1, 1, 0, 0, 0, 0);
 
    e_widget_size_min_get(of, &mw, &mh);
-   e_win_resize(cfd->dia->win, MAX(mw, cfd->dia->win->w), MAX(mh, cfd->dia->win->h));
+   {
+      int ww, wh;
+
+      evas_object_geometry_get(cfd->dia->win, NULL, NULL, &ww, &wh);
+      evas_object_resize(cfd->dia->win, MAX(mw, ww), MAX(mh, wh));
+   }
 }
 
 static void
@@ -863,7 +868,7 @@ _create_data(E_Config_Dialog *cfd)
 }
 
 EAPI E_Config_Dialog *
-e_int_config_comp_match(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_comp_match(Evas_Object *parent, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -876,7 +881,7 @@ e_int_config_comp_match(E_Comp *comp, const char *params __UNUSED__)
    v->basic.apply_cfdata = _basic_apply_data;
    v->basic.create_widgets = _basic_create_widgets;
    
-   cfd = e_config_dialog_new(comp, _("Composite Match Settings"),
+   cfd = e_config_dialog_new(parent, _("Composite Match Settings"),
                              "E", "_comp_matches", "preferences-composite", 0, v, NULL);
    e_dialog_resizable_set(cfd->dia, 1);
    return cfd;

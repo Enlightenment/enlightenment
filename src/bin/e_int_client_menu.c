@@ -291,13 +291,9 @@ _e_client_menu_cb_locks(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUS
 
    ec = data;
    if (ec->border_locks_dialog)
-     {
-        e_client_desk_set(ec->border_locks_dialog->dia->win->client, ec->desk);
-        e_win_raise(ec->border_locks_dialog->dia->win);
-        evas_object_focus_set(ec->border_locks_dialog->dia->win->client->frame, 1);
-        return;
-     }
-   e_int_client_locks(ec);
+     e_client_activate(e_win_client_get(ec->border_locks_dialog->dia->win), 1);
+   else
+     e_int_client_locks(ec);
 }
 
 static void
@@ -307,13 +303,9 @@ _e_client_menu_cb_remember(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __U
 
    ec = data;
    if (ec->border_remember_dialog)
-     {
-        e_client_desk_set(ec->border_remember_dialog->dia->win->client, ec->desk);
-        e_win_raise(ec->border_remember_dialog->dia->win);
-        evas_object_focus_set(ec->border_remember_dialog->dia->win->client->frame, 1);
-        return;
-     }
-   e_int_client_remember(ec);
+     e_client_activate(e_win_client_get(ec->border_remember_dialog->dia->win), 1);
+   else
+     e_int_client_remember(ec);
 }
 
 static void
@@ -324,14 +316,12 @@ _e_client_menu_cb_border(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNU
 
    ec = data;
    if (ec->border_border_dialog)
+     e_client_activate(e_win_client_get(ec->border_border_dialog->dia->win), 1);
+   else
      {
-        e_client_desk_set(ec->border_border_dialog->dia->win->client, ec->desk);
-        e_win_raise(ec->border_border_dialog->dia->win);
-        evas_object_focus_set(ec->border_border_dialog->dia->win->client->frame, 1);
-        return;
+        snprintf(buf, sizeof(buf), "%p", ec);
+        e_configure_registry_call("internal/borders_border", NULL, buf);
      }
-   snprintf(buf, sizeof(buf), "%p", ec);
-   e_configure_registry_call("internal/borders_border", ec->zone->comp, buf);
 }
 
 static void
@@ -1628,7 +1618,7 @@ _e_client_menu_cb_kbdshrtct_add(void *data, E_Menu *m __UNUSED__, E_Menu_Item *m
    zone = e_util_zone_current_get(e_manager_current_get());
    if (!zone) return;
    e_configure_registry_call("keyboard_and_mouse/key_bindings",
-                             zone->comp, ec->desktop->exec);
+                             NULL, ec->desktop->exec);
 }
 
 static void

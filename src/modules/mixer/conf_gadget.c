@@ -364,7 +364,7 @@ e_mixer_config_pulse_toggle(void)
 }
 
 E_Config_Dialog *
-e_mixer_config_dialog_new(E_Comp *comp, E_Mixer_Gadget_Config *conf)
+e_mixer_config_dialog_new(Evas_Object *parent EINA_UNUSED, E_Mixer_Gadget_Config *conf)
 {
    E_Config_Dialog *dialog;
    E_Config_Dialog_View *view;
@@ -381,7 +381,7 @@ e_mixer_config_dialog_new(E_Comp *comp, E_Mixer_Gadget_Config *conf)
    view->basic.create_widgets = _basic_create;
    view->basic.apply_cfdata = _basic_apply;
 
-   dialog = e_config_dialog_new(comp, _("Mixer Settings"),
+   dialog = e_config_dialog_new(NULL, _("Mixer Settings"),
                                 _e_mixer_Name, "e_mixer_config_dialog_new",
                                 e_mixer_theme_path(), 0, view, conf);
 

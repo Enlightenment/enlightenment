@@ -14,7 +14,7 @@ static void _e_color_dialog_cb_csel_change(void *data, Evas_Object *obj);
  * @param alpha_enabled if set, uses alpha and let user edit it.
  */
 E_Color_Dialog *
-e_color_dialog_new(E_Comp *c, const E_Color *color, Eina_Bool alpha_enabled)
+e_color_dialog_new(E_Comp *c EINA_UNUSED, const E_Color *color, Eina_Bool alpha_enabled)
 {
    E_Color_Dialog *dia;
    Evas_Object *o;
@@ -22,7 +22,7 @@ e_color_dialog_new(E_Comp *c, const E_Color *color, Eina_Bool alpha_enabled)
 
    dia = E_OBJECT_ALLOC(E_Color_Dialog, E_COLOR_DIALOG_TYPE, _e_color_dialog_free);
    if (!dia) return NULL;
-   dia->dia = e_dialog_new(c, "E", "_color_dialog");
+   dia->dia = e_dialog_new(NULL, "E", "_color_dialog");
    e_dialog_title_set(dia->dia, _("Color Selector"));
 
    dia->color = calloc(1, sizeof(E_Color));
@@ -36,7 +36,7 @@ e_color_dialog_new(E_Comp *c, const E_Color *color, Eina_Bool alpha_enabled)
 
    e_color_copy(dia->color, dia->initial);
 
-   o = e_widget_csel_add(dia->dia->win->evas, dia->color, alpha_enabled);
+   o = e_widget_csel_add(evas_object_evas_get(dia->dia->win), dia->color, alpha_enabled);
    evas_object_show(o);
    e_widget_size_min_get(o, &mw, &mh);
    e_dialog_content_set(dia->dia, o, mw, mh);
@@ -45,7 +45,7 @@ e_color_dialog_new(E_Comp *c, const E_Color *color, Eina_Bool alpha_enabled)
    /* buttons at the bottom */
    e_dialog_button_add(dia->dia, _("Select"), NULL, _e_color_dialog_button1_click, dia);
    e_dialog_button_add(dia->dia, _("Cancel"), NULL, _e_color_dialog_button2_click, dia);
-   e_win_centered_set(dia->dia->win, 1);
+   elm_win_center(dia->dia->win, 1, 1);
 
    dia->dia->data = dia;
    e_object_del_attach_func_set(E_OBJECT(dia->dia), _e_color_dialog_dia_del);

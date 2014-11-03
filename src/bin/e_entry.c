@@ -576,7 +576,7 @@ _e_entry_x_selection_update(Evas_Object *entry)
 {
    E_Entry_Smart_Data *sd;
    Ecore_Window xwin;
-   E_Win *win;
+   Evas_Object *win;
    E_Comp *c;
 
    if ((!entry) || (!(sd = evas_object_smart_data_get(entry))))
@@ -592,7 +592,7 @@ _e_entry_x_selection_update(Evas_Object *entry)
           }
      }
    else
-     xwin = win->evas_win;
+     xwin = elm_win_window_id_get(win);
 
    if (sd->password_mode)
      return;
@@ -613,7 +613,7 @@ _entry_paste_request_signal_cb(void *data,
                                const char *source EINA_UNUSED)
 {
    Ecore_Window xwin;
-   E_Win *win;
+   Evas_Object *win;
    E_Comp *c;
 
    if (!(win = e_win_evas_object_win_get(data)))
@@ -627,7 +627,7 @@ _entry_paste_request_signal_cb(void *data,
           }
      }
    else
-     xwin = win->evas_win;
+     xwin = elm_win_window_id_get(win);
 
 #ifndef HAVE_WAYLAND_ONLY
    if (emission[sizeof("ntry,paste,request,")] == '1')
@@ -967,15 +967,15 @@ _e_entry_cb_copy(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
    E_Entry_Smart_Data *sd = data;
    const char *range;
-   Ecore_X_Window xwin;
-   E_Win *win;
+   Ecore_Window xwin;
+   Evas_Object *win;
 
    if (!sd) return;
    range = edje_object_part_text_selection_get(sd->entry_object, ENTRY_PART_NAME);
    if (range)
      {
         win = e_win_evas_object_win_get(sd->entry_object);
-        if (win) xwin = win->evas_win;
+        if (win) xwin = elm_win_window_id_get(win);
         else
           {
              xwin = e_grabinput_key_win_get();
@@ -998,15 +998,15 @@ static void
 _e_entry_cb_paste(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
    E_Entry_Smart_Data *sd;
-   Ecore_X_Window xwin;
-   E_Win *win;
+   Ecore_Window xwin;
+   Evas_Object *win;
 
    sd = data;
    if (!sd) return;
    if ((!sd->enabled) || (sd->noedit)) return;
 
    win = e_win_evas_object_win_get(sd->entry_object);
-   if (win) xwin = win->evas_win;
+   if (win) xwin = elm_win_window_id_get(win);
    else
      {
         xwin = e_grabinput_key_win_get();

@@ -45,7 +45,7 @@ e_mod_ind_win_new(E_Zone *zone)
    e_win_no_remember_set(iwin->win, EINA_TRUE);
 
    /* hook into window resize so we can resize our objects */
-   e_win_resize_callback_set(iwin->win, _e_mod_ind_win_cb_resize);
+   evas_object_resize_callback_set(iwin->win, _e_mod_ind_win_cb_resize);
 
    /* set this window to not show in taskbar or pager */
    states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
@@ -121,13 +121,13 @@ e_mod_ind_win_new(E_Zone *zone)
 //   printf("@@@@@@@@@@@@@@@@@@@@@@@ %i: %ix%i\n", h, mw, mh);
 
    /* set minimum size of this window */
-   e_win_size_min_set(iwin->win, zone->w, mh);
+   evas_object_size_hint_min_set(iwin->win, zone->w, mh);
 
    /* position and resize this window */
-   e_win_move_resize(iwin->win, zone->x, zone->y, zone->w, mh);
+   evas_object_geometry_set(iwin->win, zone->x, zone->y, zone->w, mh);
 
    /* show the window */
-   e_win_show(iwin->win);
+   evas_object_show(iwin->win);
 
    /* set this window on proper zone */
    e_client_zone_set(iwin->win->client, zone);
@@ -203,7 +203,7 @@ _e_mod_ind_win_cb_win_prop(void *data, int type __UNUSED__, void *event)
 //   printf("@@@@@@@@@@@@@@@@@@@@@@@ %i: %ix%i\n", h, mw, mh);
 
    /* set minimum size of this window */
-   e_win_size_min_set(iwin->win, iwin->zone->w, mh);
+   evas_object_size_hint_min_set(iwin->win, iwin->zone->w, mh);
 
    /* NB: Not sure why, but we need to tell this border to fetch icccm 
     * size position hints now :( (NOTE: This was not needed a few days ago) 
@@ -211,7 +211,7 @@ _e_mod_ind_win_cb_win_prop(void *data, int type __UNUSED__, void *event)
    iwin->win->client->icccm.fetch.size_pos_hints = 1;
 
    /* resize this window */
-   e_win_resize(iwin->win, iwin->zone->w, mh);
+   evas_object_resize(iwin->win, iwin->zone->w, mh);
 
    /* tell conformant apps our position and size */
    ecore_x_e_illume_indicator_geometry_set(iwin->zone->black_win, 
@@ -236,7 +236,7 @@ _e_mod_ind_win_cb_zone_resize(void *data, int type __UNUSED__, void *event)
 //   printf("@@@@@@@@@@@@@@@@@@@@@@@ %i: %ix%i\n", h, mw, mh);
 
    /* set minimum size of this window to match zone size */
-   e_win_size_min_set(iwin->win, ev->zone->w, mh);
+   evas_object_size_hint_min_set(iwin->win, ev->zone->w, mh);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -418,7 +418,7 @@ _e_mod_ind_win_cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj
              ec->y = ny;
              ec->changes.pos = 1;
              EC_CHANGED(ec);
-             e_win_move(iwin->win, iwin->win->x, ny);
+             evas_object_move(iwin->win, iwin->win->x, ny);
           }
      }
 }
@@ -519,8 +519,8 @@ _e_mod_ind_win_cb_menu_contents(void *data, E_Menu *mn __UNUSED__, E_Menu_Item *
      e_int_gadcon_config_shelf(iwin->gadcon);
    else 
      {
-        e_win_show(iwin->gadcon->config_dialog->dia->win);
-        e_win_raise(iwin->gadcon->config_dialog->dia->win);
+        evas_object_show(iwin->gadcon->config_dialog->dia->win);
+        elm_win_raise(iwin->gadcon->config_dialog->dia->win);
      }
 }
 

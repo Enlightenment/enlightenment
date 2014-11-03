@@ -150,7 +150,7 @@ e_toolbar_shutdown(void)
 }
 
 EAPI E_Toolbar *
-e_toolbar_new(Evas *evas, const char *name, E_Win *fwin, Evas_Object *fm2)
+e_toolbar_new(Evas *evas, const char *name, Evas_Object *fwin, Evas_Object *fm2)
 {
    E_Toolbar *tbar = NULL;
 
@@ -201,7 +201,7 @@ e_toolbar_new(Evas *evas, const char *name, E_Win *fwin, Evas_Object *fm2)
 
    e_gadcon_toolbar_set(tbar->gadcon, tbar);
    tbar->gadcon->location = tb_location;
-   e_gadcon_ecore_evas_set(tbar->gadcon, tbar->fwin->ecore_evas);
+   e_gadcon_ecore_evas_set(tbar->gadcon, ecore_evas_ecore_evas_get(evas_object_evas_get(tbar->fwin)));
    e_gadcon_util_menu_attach_func_set(tbar->gadcon,
                                       _e_toolbar_menu_items_append, tbar);
    e_gadcon_populate(tbar->gadcon);
@@ -212,14 +212,14 @@ e_toolbar_new(Evas *evas, const char *name, E_Win *fwin, Evas_Object *fm2)
 }
 
 EAPI void
-e_toolbar_fwin_set(E_Toolbar *tbar, E_Win *fwin)
+e_toolbar_fwin_set(E_Toolbar *tbar, Evas_Object *fwin)
 {
    E_OBJECT_CHECK(tbar);
    E_OBJECT_TYPE_CHECK(tbar, E_TOOLBAR_TYPE);
    tbar->fwin = fwin;
 }
 
-EAPI E_Win *
+EAPI Evas_Object *
 e_toolbar_fwin_get(E_Toolbar *tbar)
 {
    E_OBJECT_CHECK_RETURN(tbar, NULL);

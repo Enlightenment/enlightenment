@@ -19,7 +19,7 @@ struct _E_Toolbar
    E_Gadcon        *gadcon;
    E_Menu          *menu;
 
-   E_Win           *fwin;
+   Evas_Object     *fwin;
    Evas_Object     *fm2;
 
    E_Config_Dialog *cfg_dlg;
@@ -28,9 +28,9 @@ struct _E_Toolbar
 
 EINTERN int       e_toolbar_init(void);
 EINTERN int       e_toolbar_shutdown(void);
-EAPI E_Toolbar   *e_toolbar_new(Evas *evas, const char *name, E_Win *fwin, Evas_Object *fm2);
-EAPI void         e_toolbar_fwin_set(E_Toolbar *tbar, E_Win *fwin);
-EAPI E_Win       *e_toolbar_fwin_get(E_Toolbar *tbar);
+EAPI E_Toolbar   *e_toolbar_new(Evas *evas, const char *name, Evas_Object *fwin, Evas_Object *fm2);
+EAPI void         e_toolbar_fwin_set(E_Toolbar *tbar, Evas_Object *fwin);
+EAPI Evas_Object *e_toolbar_fwin_get(E_Toolbar *tbar);
 EAPI void         e_toolbar_fm2_set(E_Toolbar *tbar, Evas_Object *fm2);
 EAPI Evas_Object *e_toolbar_fm2_get(E_Toolbar *tbar);
 EAPI void         e_toolbar_orient(E_Toolbar *tbar, E_Gadcon_Orient orient);

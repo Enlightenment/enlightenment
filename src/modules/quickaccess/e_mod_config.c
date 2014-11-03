@@ -217,7 +217,7 @@ _list_rename(void *data, void *list)
 
    if (cfdata->ed)
      {
-        e_win_raise(cfdata->ed->dia->win);
+        elm_win_raise(cfdata->ed->dia->win);
         return;
      }
 
@@ -540,7 +540,7 @@ e_qa_config_entry_add(E_Quick_Access_Entry *entry)
 }
 
 E_Config_Dialog *
-e_int_config_qa_module(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_qa_module(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -559,7 +559,7 @@ e_int_config_qa_module(E_Comp *comp, const char *params __UNUSED__)
    v->advanced.check_changed = _advanced_check_changed;
 
    snprintf(buf, sizeof(buf), "%s/e-module-quickaccess.edj", e_module_dir_get(qa_mod->module));
-   cfd = e_config_dialog_new(comp, _("Quickaccess Settings"),
+   cfd = e_config_dialog_new(NULL, _("Quickaccess Settings"),
                              "E", "launcher/quickaccess", buf, 32, v, NULL);
    return cfd;
 }

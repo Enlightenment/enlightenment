@@ -637,7 +637,7 @@ struct E_Client
    unsigned int       internal_no_reopen : 1;
    Eina_Bool          theme_shadow : 1;
 
-   Ecore_Evas        *internal_ecore_evas;
+   Evas_Object       *internal_elm_win;
 
    double             ping;
 

@@ -34,7 +34,7 @@ struct _Config_Item
    Eina_Bool changed;
 };
 
-void e_int_config_clock_module(E_Comp *comp, Config_Item *ci);
+void e_int_config_clock_module(Evas_Object *parent, Config_Item *ci);
 void e_int_clock_instances_redo(Eina_Bool all);
 
 extern Config *clock_config;

@@ -17,7 +17,7 @@ typedef struct _Xkb
 /* Prototypes */
 
 void             _xkb_update_icon(int);
-E_Config_Dialog *_xkb_cfg_dialog(E_Comp *comp, const char *params);
+E_Config_Dialog *_xkb_cfg_dialog(Evas_Object *, const char *params);
 
 extern Xkb _xkb;
 

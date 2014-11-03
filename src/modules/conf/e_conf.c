@@ -12,7 +12,7 @@ struct _E_Configure
    E_Object             e_obj_inherit;
 
    E_Comp              *comp;
-   E_Win               *win;
+   Evas_Object         *win;
    Evas                *evas;
    Evas_Object         *edje;
 
@@ -47,8 +47,7 @@ struct _E_Configure_Item
 };
 
 static void                  _e_configure_free(E_Configure *eco);
-static void                  _e_configure_cb_del_req(E_Win *win);
-static void                  _e_configure_cb_resize(E_Win *win);
+static void                  _e_configure_cb_del_req(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void                  _e_configure_cb_close(void *data, void *data2);
 static E_Configure_Category *_e_configure_category_add(E_Configure *eco, const char *label, const char *icon_file, const char *icon);
 static void                  _e_configure_category_cb(void *data, void *data2);
@@ -69,6 +68,7 @@ e_configure_show(E_Comp *comp, const char *params)
    Evas_Object *o;
    Evas_Modifier_Mask mask;
    Eina_Bool kg;
+   E_Client *ec;
 
    if (_e_configure)
      {
@@ -78,23 +78,24 @@ e_configure_show(E_Comp *comp, const char *params)
         int x = 0;
 
         eco = _e_configure;
+        ec = e_win_client_get(eco->win);
         z = e_util_zone_current_get(e_manager_current_get());
-        z2 = eco->win->client->zone;
-        e_win_show(eco->win);
-        e_win_raise(eco->win);
+        z2 = ec->zone;
+        evas_object_show(eco->win);
+        elm_win_raise(eco->win);
         if (z->comp == z2->comp)
-          e_client_desk_set(eco->win->client, e_desk_current_get(z));
+          e_client_desk_set(ec, e_desk_current_get(z));
         else
           {
-             if (!eco->win->client->sticky)
-               e_desk_show(eco->win->client->desk);
+             if (!ec->sticky)
+               e_desk_show(ec->desk);
              ecore_evas_pointer_warp(z2->comp->ee,
                                   z2->x + (z2->w / 2), z2->y + (z2->h / 2));
           }
-        e_client_unshade(eco->win->client, eco->win->client->shade_dir);
+        e_client_unshade(ec, ec->shade_dir);
         if ((e_config->focus_setting == E_FOCUS_NEW_DIALOG) ||
             (e_config->focus_setting == E_FOCUS_NEW_WINDOW))
-          evas_object_focus_set(eco->win->client->frame, 1);
+          evas_object_focus_set(ec->frame, 1);
         EINA_LIST_FOREACH(e_widget_toolbar_items_get(eco->cat_list), l, it)
           {
              if (e_widget_toolbar_item_label_get(it) == params)
@@ -109,28 +110,27 @@ e_configure_show(E_Comp *comp, const char *params)
 
    eco = E_OBJECT_ALLOC(E_Configure, E_CONFIGURE_TYPE, _e_configure_free);
    if (!eco) return;
-   eco->win = e_win_new(comp);
+   eco->win = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
    if (!eco->win)
      {
         free(eco);
         return;
      }
-   eco->win->data = eco;
+   evas_object_data_set(eco->win, "e_conf_win", eco);
    eco->comp = comp;
-   eco->evas = e_win_evas_get(eco->win);
+   eco->evas = evas_object_evas_get(eco->win);
 
    /* Event Handler for Module Updates */
    eco->mod_hdl = ecore_event_handler_add(E_EVENT_MODULE_UPDATE,
                                           _e_configure_module_update_cb, eco);
 
-   e_win_title_set(eco->win, _("Settings"));
-   e_win_name_class_set(eco->win, "E", "_configure");
-   e_win_dialog_set(eco->win, 0);
-   e_win_delete_callback_set(eco->win, _e_configure_cb_del_req);
-   e_win_resize_callback_set(eco->win, _e_configure_cb_resize);
-   e_win_centered_set(eco->win, 1);
+   elm_win_title_set(eco->win, _("Settings"));
+   ecore_evas_name_class_set(e_win_ee_get(eco->win), "E", "_configure");
+   evas_object_event_callback_add(eco->win, EVAS_CALLBACK_DEL, _e_configure_cb_del_req, eco);
+   elm_win_center(eco->win, 1, 1);
 
    eco->edje = edje_object_add(eco->evas);
+   elm_win_resize_object_add(eco->win, eco->edje);
    e_theme_edje_object_set(eco->edje, "base/theme/configure",
                            "e/widgets/configure/main");
    edje_object_part_text_set(eco->edje, "e.text.title", _("Settings"));
@@ -144,7 +144,7 @@ e_configure_show(E_Comp *comp, const char *params)
    kg = evas_object_key_grab(o, "Tab", mask, ~mask, 0);
    if (!kg)
      fprintf(stderr, "ERROR: unable to redirect \"Tab\" key events to object %p.\n", o);
-   mask = evas_key_modifier_mask_get(e_win_evas_get(eco->win), "Shift");
+   mask = evas_key_modifier_mask_get(evas_object_evas_get(eco->win), "Shift");
    kg = evas_object_key_grab(o, "Tab", mask, ~mask, 0);
    if (!kg)
      fprintf(stderr, "ERROR: unable to redirect \"Tab\" key events to object %p.\n", o);
@@ -161,23 +161,23 @@ e_configure_show(E_Comp *comp, const char *params)
    if (!kg)
      fprintf(stderr, "ERROR: unable to redirect \"Escape\" key events to object %p.\n", o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN,
-                                  _e_configure_keydown_cb, eco->win);
+                                  _e_configure_keydown_cb, eco);
 
    _e_configure_fill_cat_list(eco, params);
 
    /* Close Button */
    eco->close = e_widget_button_add(eco->evas, _("Close"), NULL,
                                     _e_configure_cb_close, eco, NULL);
-   e_widget_on_focus_hook_set(eco->close, _e_configure_focus_cb, eco->win);
+   e_widget_on_focus_hook_set(eco->close, _e_configure_focus_cb, eco);
    e_widget_size_min_get(eco->close, &mw, &mh);
    evas_object_size_hint_min_set(eco->close, mw, mh);
    edje_object_part_swallow(eco->edje, "e.swallow.button", eco->close);
    edje_object_size_min_calc(eco->edje, &ew, &eh);
-   e_win_size_min_set(eco->win, ew, eh);
+   evas_object_size_hint_min_set(eco->win, ew, eh);
    e_util_win_auto_resize_fill(eco->win);
 
    evas_object_show(eco->edje);
-   e_win_show(eco->win);
+   evas_object_show(eco->win);
    e_win_client_icon_set(eco->win, "preferences-system");
 
    /* Preselect "Appearance" */
@@ -233,28 +233,14 @@ _e_configure_free(E_Configure *eco)
 //   evas_object_del(eco->item_list);
 //   evas_object_del(eco->o_list);
 //   evas_object_del(eco->edje);
-   e_object_del(E_OBJECT(eco->win));
-   E_FREE(eco);
+   evas_object_del(eco->win);
+   free(eco);
 }
 
 static void
-_e_configure_cb_del_req(E_Win *win)
+_e_configure_cb_del_req(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Configure *eco;
-
-   if (!(eco = win->data)) return;
-   e_object_del(E_OBJECT(eco));
-}
-
-static void
-_e_configure_cb_resize(E_Win *win)
-{
-   E_Configure *eco;
-   Evas_Coord w, h;
-
-   if (!(eco = win->data)) return;
-   ecore_evas_geometry_get(win->ecore_evas, NULL, NULL, &w, &h);
-   evas_object_resize(eco->edje, w, h);
+   e_object_del(E_OBJECT(data));
 }
 
 static void
@@ -369,17 +355,14 @@ _e_configure_item_cb(void *data)
 
    if (!(ci = data)) return;
    cb = ci->cb;
-   if (cb->path) e_configure_registry_call(cb->path, cb->eco->comp, NULL);
+   if (cb->path) e_configure_registry_call(cb->path, NULL, NULL);
 }
 
 static void
 _e_configure_focus_cb(void *data, Evas_Object *obj)
 {
-   E_Win *win;
-   E_Configure *eco;
+   E_Configure *eco = data;
 
-   win = data;
-   if (!(eco = win->data)) return;
    if (obj == eco->close)
      {
         e_widget_focused_object_clear(eco->item_list);
@@ -401,16 +384,13 @@ static void
 _e_configure_keydown_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Evas_Event_Key_Down *ev;
-   E_Win *win;
-   E_Configure *eco;
+   E_Configure *eco = data;
 
    ev = event;
-   win = data;
-   eco = win->data;
 
    if (!strcmp(ev->key, "Tab"))
      {
-        if (evas_key_modifier_is_set(evas_key_modifier_get(e_win_evas_get(win)), "Shift"))
+        if (evas_key_modifier_is_set(evas_key_modifier_get(evas_object_evas_get(eco->win)), "Shift"))
           {
              if (e_widget_focus_get(eco->close))
                e_widget_focus_set(eco->item_list, 0);
@@ -496,14 +476,14 @@ _e_configure_fill_cat_list(void *data, const char *sel)
                num = e_widget_toolbar_items_count(eco->cat_list) - 1;
           }
      }
-   e_widget_on_focus_hook_set(eco->cat_list, _e_configure_focus_cb, eco->win);
+   e_widget_on_focus_hook_set(eco->cat_list, _e_configure_focus_cb, eco);
    e_widget_list_object_append(eco->o_list, eco->cat_list, 1, 0, 0.5);
 
    /* Item List */
    eco->item_list = e_widget_ilist_add(eco->evas, 32 * e_scale, 32 * e_scale, NULL);
    e_widget_ilist_selector_set(eco->item_list, 1);
    e_widget_ilist_go(eco->item_list);
-   e_widget_on_focus_hook_set(eco->item_list, _e_configure_focus_cb, eco->win);
+   e_widget_on_focus_hook_set(eco->item_list, _e_configure_focus_cb, eco);
    e_widget_size_min_get(eco->item_list, &mw, &mh);
    if (mw < (200 * e_scale)) mw = 200 * e_scale;
    if (mh < (120 * e_scale)) mh = 120 * e_scale;

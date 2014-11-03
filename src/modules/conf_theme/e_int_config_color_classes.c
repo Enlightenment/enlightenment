@@ -146,7 +146,7 @@ static Eina_Bool    _fill_data_delayed(void *data);
 static Eina_Bool    _color_changed_delay(void *data);
 
 E_Config_Dialog *
-e_int_config_color_classes(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_color_classes(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -160,7 +160,7 @@ e_int_config_color_classes(E_Comp *comp, const char *params __UNUSED__)
    v->basic.apply_cfdata = _basic_apply_data;
    v->basic.create_widgets = _basic_create_widgets;
 
-   cfd = e_config_dialog_new(comp, _("Colors"), "E", "appearance/colors",
+   cfd = e_config_dialog_new(NULL, _("Colors"), "E", "appearance/colors",
                              "preferences-desktop-color", 0, v, NULL);
    return cfd;
 }
@@ -611,7 +611,7 @@ _basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cf
    e_widget_list_object_append(ol, cfdata->gui.frame, 1, 0, 0.0);
 
    e_util_win_auto_resize_fill(cfd->dia->win);
-   e_win_centered_set(cfd->dia->win, 1);
+   elm_win_center(cfd->dia->win, 1, 1);
 
    cfdata->delay_load_timer = ecore_timer_add(0.15, _fill_data_delayed, cfdata);
 

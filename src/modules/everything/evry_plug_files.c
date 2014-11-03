@@ -1427,7 +1427,7 @@ static Evas_Object *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dia
 static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
 static E_Config_Dialog *
-_conf_dialog(E_Comp *comp, const char *params __UNUSED__)
+_conf_dialog(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd = NULL;
    E_Config_Dialog_View *v = NULL;
@@ -1442,7 +1442,7 @@ _conf_dialog(E_Comp *comp, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create;
    v->basic.apply_cfdata = _basic_apply;
 
-   cfd = e_config_dialog_new(comp, _("Everything Files"), "everything-files",
+   cfd = e_config_dialog_new(NULL, _("Everything Files"), "everything-files",
                              "extensions/everything-files", _module_icon, 0, v, NULL);
 
    _conf->cfd = cfd;

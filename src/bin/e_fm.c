@@ -1077,7 +1077,7 @@ e_fm2_path_set(Evas_Object *obj, const char *dev, const char *path)
         snprintf(text, sizeof(text), _("%s doesn't exist."), real_path);
 
         e_dialog_text_set(dialog, text);
-        e_win_centered_set(dialog->win, 1);
+        elm_win_center(dialog->win, 1, 1);
         e_dialog_show(dialog);
         return;
      }
@@ -10085,7 +10085,7 @@ _e_fm2_view_image_sel(E_Fm2_Smart_Data *sd, const char *title,
    e_dialog_resizable_set(dia, 1);
    e_dialog_title_set(dia, title);
 
-   o = e_widget_fsel_add(dia->win->evas, "/", sd->realpath, NULL, NULL, NULL, sd, NULL, sd, 1);
+   o = e_widget_fsel_add(evas_object_evas_get(dia->win), "/", sd->realpath, NULL, NULL, NULL, sd, NULL, sd, 1);
    evas_object_show(o);
    e_widget_size_min_get(o, &w, &h);
    e_dialog_content_set(dia, o, w, h);
@@ -10093,7 +10093,7 @@ _e_fm2_view_image_sel(E_Fm2_Smart_Data *sd, const char *title,
 
    e_dialog_button_add(dia, _("OK"), NULL, ok_cb, sd);
    e_dialog_button_add(dia, _("Cancel"), NULL, _e_fm2_view_image_sel_close, sd);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_object_data_set(E_OBJECT(dia), sd);
    e_object_del_attach_func_set(E_OBJECT(dia), _image_sel_del);
    e_dialog_show(dia);
@@ -10530,7 +10530,7 @@ _e_fm_retry_abort_dialog(int pid, const char *str)
             str);
 
    e_dialog_text_set(dialog, text);
-   e_win_centered_set(dialog->win, 1);
+   elm_win_center(dialog->win, 1, 1);
    e_dialog_show(dialog);
    return dialog;
 }
@@ -10592,7 +10592,7 @@ _e_fm_overwrite_dialog(int pid, const char *str)
             _("File already exists, overwrite?<br><hilight>%s</hilight>"), str);
 
    e_dialog_text_set(dialog, text);
-   e_win_centered_set(dialog->win, 1);
+   elm_win_center(dialog->win, 1, 1);
    e_dialog_show(dialog);
    return dialog;
 }
@@ -10760,7 +10760,7 @@ _e_fm_error_dialog(int pid, const char *str)
             str);
 
    e_dialog_text_set(dialog, text);
-   e_win_centered_set(dialog->win, 1);
+   elm_win_center(dialog->win, 1, 1);
    e_dialog_show(dialog);
    return dialog;
 }
@@ -10864,7 +10864,7 @@ _e_fm_device_error_dialog(const char *title, const char *msg, const char *pstr)
    snprintf(text, sizeof(text), "%s<br>%s<br>%s<br>%s<br>%s", msg, u, d, n, m);
    e_dialog_text_set(dialog, text);
 
-   e_win_centered_set(dialog->win, 1);
+   elm_win_center(dialog->win, 1, 1);
    e_dialog_button_focus_num(dialog, 0);
    e_dialog_show(dialog);
 }
@@ -10969,7 +10969,7 @@ _e_fm2_file_delete(Evas_Object *obj)
      }
    if (sel) eina_list_free(sel);
    e_dialog_text_set(dialog, text);
-   e_win_centered_set(dialog->win, 1);
+   elm_win_center(dialog->win, 1, 1);
    e_dialog_show(dialog);
 }
 

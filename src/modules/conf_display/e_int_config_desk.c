@@ -21,7 +21,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_desk(E_Comp *comp, const char *params)
+e_int_config_desk(Evas_Object *parent EINA_UNUSED, const char *params)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -49,7 +49,7 @@ e_int_config_desk(E_Comp *comp, const char *params)
    v->basic.create_widgets = _basic_create;
    v->override_auto_apply = 1;
 
-   cfd = e_config_dialog_new(comp, _("Desk Settings"), "E", "internal/desk",
+   cfd = e_config_dialog_new(NULL, _("Desk Settings"), "E", "internal/desk",
                              "preferences-desktop", 0, v, cfdata);
    return cfd;
 }
@@ -166,7 +166,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    Evas_Object *o, *of, *ol, *ob;
    E_Zone *zone;
 
-   zone = e_zone_current_get(cfd->comp);
+   zone = e_zone_current_get(e_comp_get(cfd->dia->win));
 
    o = e_widget_list_add(evas, 0, 0);
 
@@ -211,8 +211,7 @@ _cb_config(void *data, void *data2 __UNUSED__)
    if (!cfdata) return;
    snprintf(buf, sizeof(buf), "%i %i %i %i",
             cfdata->man_num, cfdata->zone_num, cfdata->desk_x, cfdata->desk_y);
-   e_configure_registry_call("internal/wallpaper_desk",
-                             NULL, buf);
+   e_configure_registry_call("internal/wallpaper_desk", NULL, buf);
 }
 
 static Eina_Bool

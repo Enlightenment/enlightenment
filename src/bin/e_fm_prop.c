@@ -94,7 +94,7 @@ struct _E_Config_Dialog_Data
 
 /* a nice easy setup function that does the dirty work */
 EAPI E_Config_Dialog *
-e_fm_prop_file(E_Comp *c, E_Fm2_Icon *ic)
+e_fm_prop_file(E_Comp *c EINA_UNUSED, E_Fm2_Icon *ic)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -111,7 +111,7 @@ e_fm_prop_file(E_Comp *c, E_Fm2_Icon *ic)
    v->advanced.create_widgets = _advanced_create_widgets;
 #endif
    /* create config dialog for NULL object/data */
-   cfd = e_config_dialog_new(c,
+   cfd = e_config_dialog_new(NULL,
                              _("File Properties"),
                              "E", "_fm_prop",
                              "enlightenment/file_properties", 0, v, ic);
@@ -605,7 +605,7 @@ _cb_icon_sel(void *data, void *data2)
    cfd = data2;
    if (!cfd) return;
 
-   dia = e_dialog_new(cfd->comp, "E", "_fm2_file_properties_icon_select_dialog");
+   dia = e_dialog_new(NULL, "E", "_fm2_file_properties_icon_select_dialog");
    if (!dia) return;
 //   if (cfdata->type == EDJ)
 //     e_dialog_title_set(dia, _("Select an Edj File"));
@@ -613,7 +613,7 @@ _cb_icon_sel(void *data, void *data2)
    e_dialog_title_set(dia, _("Select an Image"));
 
    dia->data = cfdata;
-   o = e_widget_fsel_add(dia->win->evas, "~/", "/", NULL, NULL,
+   o = e_widget_fsel_add(evas_object_evas_get(dia->win), "~/", "/", NULL, NULL,
                          _cb_fsel_sel, cfdata, NULL, cfdata, 1);
 
    cfdata->gui.fsel_wid = o;
@@ -624,7 +624,7 @@ _cb_icon_sel(void *data, void *data2)
    e_dialog_button_add(dia, _("OK"), NULL, _cb_fsel_ok, cfdata);
    e_dialog_button_add(dia, _("Cancel"), NULL, _cb_fsel_cancel, cfdata);
    e_util_win_auto_resize_fill(dia->win);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
    e_object_del_attach_func_set(E_OBJECT(dia), _dia_del);
 

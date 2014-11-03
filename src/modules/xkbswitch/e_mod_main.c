@@ -477,10 +477,10 @@ _e_xkb_cb_lmenu_post(void *data, E_Menu *menu __UNUSED__)
 }
 
 static void
-_e_xkb_cb_menu_configure(void *data __UNUSED__, E_Menu *mn, E_Menu_Item *mi __UNUSED__)
+_e_xkb_cb_menu_configure(void *data __UNUSED__, E_Menu *mn EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
    if (_xkb.cfd) return;
-   _xkb_cfg_dialog(mn->zone->comp, NULL);
+   _xkb_cfg_dialog(NULL, NULL);
 }
 
 static void

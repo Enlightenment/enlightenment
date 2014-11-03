@@ -161,7 +161,7 @@ _scale_preview_new(E_Config_Dialog_Data *cfdata, Evas *e, double sc, double *scp
 }
 
 E_Config_Dialog *
-e_int_config_scale(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_scale(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -177,7 +177,7 @@ e_int_config_scale(E_Comp *comp, const char *params __UNUSED__)
    v->advanced.apply_cfdata = _adv_apply;
    v->advanced.check_changed = _adv_changed;
 
-   cfd = e_config_dialog_new(comp, _("Scale Settings"), "E", "appearance/scale",
+   cfd = e_config_dialog_new(NULL, _("Scale Settings"), "E", "appearance/scale",
                              "preferences-scale", 0, v, NULL);
    e_config_dialog_changed_auto_set(cfd, 1);
    return cfd;
@@ -277,8 +277,8 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
            e_config->scale.min, e_config->scale.max, e_config->scale.factor,
            e_config->scale.base_dpi);
 
-   cfd->dia->win->client->internal_no_reopen = 1;
-   e_remember_update(cfd->dia->win->client);
+   e_win_no_reopen_set(cfd->dia->win, 1);
+   e_remember_update(e_win_client_get(cfd->dia->win));
    e_config_save_queue();
 
    a = e_action_find("restart");
@@ -372,8 +372,8 @@ _adv_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    e_config->scale.factor = cfdata->factor;
    e_config->scale.base_dpi = cfdata->base_dpi;
 
-   cfd->dia->win->client->internal_no_reopen = 1;
-   e_remember_update(cfd->dia->win->client);
+   e_win_no_reopen_set(cfd->dia->win, 1);
+   e_remember_update(e_win_client_get(cfd->dia->win));
    e_config_save_queue();
    
    a = e_action_find("restart");

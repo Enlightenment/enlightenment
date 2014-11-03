@@ -160,7 +160,7 @@ _e_mod_notify_refresh(Ind_Notify_Win *nwin)
    edje_object_size_min_calc(nwin->o_base, &mw, &mh);
 
    evas_object_size_hint_min_set(nwin->o_base, mw, mh);
-   e_win_size_min_set(nwin->win, nwin->zone->w, mh);
+   evas_object_size_hint_min_set(nwin->win, nwin->zone->w, mh);
 }
 
 static Ind_Notify_Win *
@@ -185,7 +185,7 @@ _e_mod_notify_new(E_Notification_Notify *n, unsigned id)
 
    e_win_name_class_set(nwin->win, "Illume-Notify", "Illume-Notify");
    e_win_no_remember_set(nwin->win, EINA_TRUE);
-   e_win_resize_callback_set(nwin->win, _e_mod_notify_cb_resize);
+   evas_object_resize_callback_set(nwin->win, _e_mod_notify_cb_resize);
 
    ecore_x_e_illume_quickpanel_set(nwin->win->evas_win, EINA_TRUE);
    ecore_x_e_illume_quickpanel_priority_major_set(nwin->win->evas_win, n->urgency);
@@ -213,7 +213,7 @@ _e_mod_notify_new(E_Notification_Notify *n, unsigned id)
 
    _e_mod_notify_refresh(nwin);
 
-   e_win_show(nwin->win);
+   evas_object_show(nwin->win);
    e_client_zone_set(nwin->win->client, zone);
    nwin->win->client->user_skip_winlist = 1;
 

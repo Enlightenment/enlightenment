@@ -23,12 +23,8 @@ static void         _cb_dir_up(void *data1, void *data2);
 E_Config_Dialog *
 e_int_config_desklock_fsel(E_Config_Dialog *parent, Evas_Object *bg)
 {
-   E_Comp *comp = NULL;
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
-
-   if (parent)
-     comp = parent->comp;
 
    v = E_NEW(E_Config_Dialog_View, 1);
    v->create_cfdata = _create_data;
@@ -37,7 +33,7 @@ e_int_config_desklock_fsel(E_Config_Dialog *parent, Evas_Object *bg)
    v->basic_only = 1;
    v->normal_win = 1;
 
-   cfd = e_config_dialog_new(comp, _("Select a Background..."),
+   cfd = e_config_dialog_new(parent->dia->win, _("Select a Background..."),
                              "E", "_desklock_fsel_dialog",
                              "enlightenment/background", 0, v, bg);
    cfd->data = parent;

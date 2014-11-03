@@ -89,9 +89,9 @@ EAPI void *e_modapi_init(E_Module *m);
 EAPI int e_modapi_shutdown(E_Module *m);
 EAPI int e_modapi_save(E_Module *m);
 
-E_Config_Dialog *e_mixer_config_module_dialog_new(E_Comp *comp, E_Mixer_Module_Context *ctxt);
-E_Config_Dialog *e_mixer_config_dialog_new(E_Comp *comp, E_Mixer_Gadget_Config *conf);
-E_Dialog *e_mixer_app_dialog_new(E_Comp *comp, void (*func)(E_Dialog *dialog, void *data), void *data);
+E_Config_Dialog *e_mixer_config_module_dialog_new(Evas_Object *parent, E_Mixer_Module_Context *ctxt);
+E_Config_Dialog *e_mixer_config_dialog_new(Evas_Object *parent, E_Mixer_Gadget_Config *conf);
+E_Dialog *e_mixer_app_dialog_new(Evas_Object *parent, void (*func)(E_Dialog *dialog, void *data), void *data);
 int e_mixer_app_dialog_select(E_Dialog *dialog, const char *card_name, const char *channel_name);
 
 int e_mixer_update(E_Mixer_Instance *inst);

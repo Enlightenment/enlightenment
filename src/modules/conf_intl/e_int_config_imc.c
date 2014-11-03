@@ -80,11 +80,11 @@ struct _E_Config_Dialog_Data
       Evas_Object *xmodifiers;
    } gui;
 
-   E_Win *win_import;
+   Evas_Object *win_import;
 };
 
 E_Config_Dialog *
-e_int_config_imc(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_imc(Evas_Object *parent, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -99,7 +99,7 @@ e_int_config_imc(E_Comp *comp, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create_widgets;
    v->basic.apply_cfdata = _basic_apply_data;
 
-   cfd = e_config_dialog_new(comp,
+   cfd = e_config_dialog_new(parent,
                              _("Input Method Settings"),
                              "E", "language/input_method_settings",
                              "preferences-imc", 0, v, NULL);
@@ -772,7 +772,7 @@ _cb_import(void *data1, void *data2 __UNUSED__)
 
    cfdata = data1;
    if (cfdata->win_import)
-     e_win_raise(cfdata->win_import);
+     elm_win_raise(cfdata->win_import);
    else
      cfdata->win_import = e_int_config_imc_import(cfdata->cfd);
 }

@@ -763,7 +763,7 @@ e_gadcon_zone_get(E_Gadcon *gc)
    E_OBJECT_TYPE_CHECK_RETURN(gc, E_GADCON_TYPE, NULL);
    if (gc->zone) return gc->zone;
    if (!gc->toolbar) return NULL;
-   return gc->toolbar->fwin->client->zone;
+   return e_win_client_get(gc->toolbar->fwin)->zone;
 }
 
 EAPI void
@@ -5786,10 +5786,10 @@ e_gadcon_client_visible_get(const E_Gadcon_Client *gcc, const E_Desk *desk)
         break;
       case E_GADCON_SITE_TOOLBAR:
       case E_GADCON_SITE_EFM_TOOLBAR:
-        if (desk) return (gcc->gadcon->toolbar->fwin->client->desk == desk);
+        if (desk) return (e_win_client_get(gcc->gadcon->toolbar->fwin)->desk == desk);
         EINA_LIST_FOREACH(e_comp_list(), l, c)
           EINA_LIST_FOREACH(c->zones, ll, zone)
-            if (gcc->gadcon->toolbar->fwin->client->desk == e_desk_current_get(zone)) return EINA_TRUE;
+            if (e_win_client_get(gcc->gadcon->toolbar->fwin)->desk == e_desk_current_get(zone)) return EINA_TRUE;
       default:
         break;
      }

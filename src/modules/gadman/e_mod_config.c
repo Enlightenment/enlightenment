@@ -57,7 +57,7 @@ _basic_check_changed(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
 }
 
 E_Config_Dialog *
-_config_gadman_module(E_Comp *comp, const char *params __UNUSED__)
+_config_gadman_module(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -76,7 +76,7 @@ _config_gadman_module(E_Comp *comp, const char *params __UNUSED__)
    v->basic.check_changed = _basic_check_changed;
 
    snprintf(buf, sizeof(buf), "%s/e-module-gadman.edj", Man->module->dir);
-   cfd = e_config_dialog_new(comp, _("Desktop Gadgets"),
+   cfd = e_config_dialog_new(NULL, _("Desktop Gadgets"),
                              "E", "extensions/gadman",
                              buf, 0, v, Man);
 
@@ -151,7 +151,7 @@ _cb_config(void *data, void *data2 __UNUSED__)
 
    EINA_LIST_FOREACH(Man->gadcons[x], l, gc)
      {
-        if (gc->zone != cfdata->cfd->dia->win->client->zone) continue;
+        if (gc->zone != e_win_client_get(cfdata->cfd->dia->win)->zone) continue;
         if (gc->config_dialog) return;
         e_int_gadcon_config_hook(gc, _("Desktop Gadgets"), E_GADCON_SITE_DESKTOP);
         if (!Man->add)

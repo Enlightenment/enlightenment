@@ -603,10 +603,10 @@ e_module_dialog_show(E_Module *m, const char *title, const char *body)
                {
                   snprintf(buf, sizeof(buf), "%s/%s.edj",
                            e_module_dir_get(m), desktop->icon);
-                  dia->icon_object = e_util_icon_add(buf, e_win_evas_get(dia->win));
+                  dia->icon_object = e_util_icon_add(buf, evas_object_evas_get(dia->win));
                }
              else
-               dia->icon_object = e_util_icon_add(icon, e_win_evas_get(dia->win));
+               dia->icon_object = e_util_icon_add(icon, evas_object_evas_get(dia->win));
              evas_object_size_hint_min_set(dia->icon_object, 64, 64);
              edje_object_part_swallow(dia->bg_object, "e.swallow.icon", dia->icon_object);
              evas_object_show(dia->icon_object);
@@ -619,11 +619,10 @@ e_module_dialog_show(E_Module *m, const char *title, const char *body)
    e_dialog_text_set(dia, body);
    e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
    e_dialog_button_focus_num(dia, 0);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
    if (!m) return;
-   if (dia->win->client)
-     dia->win->client->internal_icon = eina_stringshare_add(icon);
+   e_win_client_icon_set(dia->win, icon);
 }
 
 EAPI void
@@ -758,8 +757,8 @@ _e_module_dialog_disable_show(const char *title, const char *body, E_Module *m)
    e_dialog_text_set(dia, buf);
    e_dialog_button_add(dia, _("Unload"), NULL, _e_module_cb_dialog_disable, m);
    e_dialog_button_add(dia, _("Keep"), NULL, NULL, NULL);
-   e_win_centered_set(dia->win, 1);
-   dia->win->state.no_remember = 1;
+   elm_win_center(dia->win, 1, 1);
+   e_win_no_remember_set(dia->win, 1);
    e_dialog_show(dia);
 }
 
@@ -1032,7 +1031,7 @@ _e_module_whitelist_check(void)
         e_dialog_text_set(dia, eina_strbuf_string_get(sbuf));
         e_dialog_button_add(dia, _("OK"), NULL, _cleanup_cb, badl);
         e_dialog_button_add(dia, _("I know"), NULL, _ignore_cb, badl);
-        e_win_centered_set(dia->win, 1);
+        elm_win_center(dia->win, 1, 1);
         e_dialog_show(dia);
         eina_strbuf_free(sbuf);
      }

@@ -9,7 +9,7 @@ static Evas_Object     *_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config
 static int              _adv_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static Evas_Object     *_adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata);
 
-static E_Config_Dialog *_e_int_config_wallpaper_desk(E_Comp *comp, int man_num, int zone_num, int desk_x, int desk_y);
+static E_Config_Dialog *_e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, int man_num, int zone_num, int desk_x, int desk_y);
 
 static void             _cb_button_up(void *data1, void *data2);
 static void             _cb_files_changed(void *data, Evas_Object *obj, void *event_info);
@@ -52,13 +52,13 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_wallpaper(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_wallpaper(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
-   return _e_int_config_wallpaper_desk(comp, -1, -1, -1, -1);
+   return _e_int_config_wallpaper_desk(NULL, -1, -1, -1, -1);
 }
 
 E_Config_Dialog *
-e_int_config_wallpaper_desk(E_Comp *comp, const char *params)
+e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, const char *params)
 {
    int man_num, zone_num, desk_x, desk_y;
 
@@ -66,11 +66,11 @@ e_int_config_wallpaper_desk(E_Comp *comp, const char *params)
    man_num = zone_num = desk_x = desk_y = -1;
    if (sscanf(params, "%i %i %i %i", &man_num, &zone_num, &desk_x, &desk_y) != 4)
      return NULL;
-   return _e_int_config_wallpaper_desk(comp, man_num, zone_num, desk_x, desk_y);
+   return _e_int_config_wallpaper_desk(NULL, man_num, zone_num, desk_x, desk_y);
 }
 
 static E_Config_Dialog *
-_e_int_config_wallpaper_desk(E_Comp *comp, int man_num, int zone_num, int desk_x, int desk_y)
+_e_int_config_wallpaper_desk(Evas_Object *parent EINA_UNUSED, int man_num, int zone_num, int desk_x, int desk_y)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -100,7 +100,7 @@ _e_int_config_wallpaper_desk(E_Comp *comp, int man_num, int zone_num, int desk_x
    cw->desk_x = desk_x;
    cw->desk_y = desk_y;
 
-   cfd = e_config_dialog_new(comp, _("Wallpaper Settings"), "E",
+   cfd = e_config_dialog_new(NULL, _("Wallpaper Settings"), "E",
                              "appearance/wallpaper",
                              "preferences-desktop-wallpaper", 0, v, cw);
    return cfd;
@@ -314,10 +314,10 @@ _cb_import(void *data1, void *data2 __UNUSED__)
    cfdata = data1;
    if (cfdata->win_import)
      {
-        e_win_raise(cfdata->win_import->dia->win);
+        elm_win_raise(cfdata->win_import->dia->win);
         return;
      }
-   cfdata->win_import = e_import_dialog_show(cfdata->cfd->dia->win->comp, NULL, NULL, (Ecore_End_Cb)_cb_import_ok, NULL);
+   cfdata->win_import = e_import_dialog_show(NULL, NULL, NULL, (Ecore_End_Cb)_cb_import_ok, NULL);
    e_object_data_set(E_OBJECT(cfdata->win_import), cfdata);
    e_object_del_attach_func_set(E_OBJECT(cfdata->win_import), _cb_import_del);
 }
@@ -401,7 +401,7 @@ _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *rt, *ot, *oa;
    Evas_Object *ow;
@@ -411,7 +411,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    int mw, mh;
 
 
-   zone = e_zone_current_get(cfd->comp);
+   zone = e_zone_current_get(e_comp_get(NULL));
    o = e_widget_list_add(evas, 0, 1);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
@@ -518,8 +518,7 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
    cw = cfd->data;
    if (!eina_str_has_extension(cfdata->bg, ".edj"))
      {
-        cfdata->import = e_import_config_dialog_show(NULL, cfdata->bg, (Ecore_End_Cb)_apply_import_ok, NULL);
-        e_dialog_parent_set(cfdata->import->dia, cfd->dia->win);
+        cfdata->import = e_import_config_dialog_show(cfd->dia->win, cfdata->bg, (Ecore_End_Cb)_apply_import_ok, NULL);
         e_object_del_attach_func_set(E_OBJECT(cfdata->import), _apply_import_del);
         e_object_data_set(E_OBJECT(cfdata->import), cfd);
         e_object_ref(E_OBJECT(cfd));
@@ -555,7 +554,7 @@ _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
+_adv_create(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *rt, *ot, *oa;
    Evas_Object *ow, *of;
@@ -565,7 +564,7 @@ _adv_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    int mw, mh;
 
 
-   zone = e_zone_current_get(cfd->comp);
+   zone = e_zone_current_get(e_comp_get(NULL));
    o = e_widget_list_add(evas, 0, 1);
 
    rg = e_widget_radio_group_new(&(cfdata->fmdir));
@@ -654,7 +653,7 @@ _adv_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    E_Zone *z;
    E_Desk *d;
 
-   if (!(z = e_zone_current_get(cfdata->cfd->comp))) return 0;
+   if (!(z = e_zone_current_get(e_comp_get(NULL)))) return 0;
    if (!(d = e_desk_current_get(z))) return 0;
    if (cfdata->use_theme_bg)
      {

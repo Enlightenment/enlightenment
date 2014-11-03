@@ -86,8 +86,8 @@ _e_startup_error_dialog(const char *msg)
    e_dialog_icon_set(dia, "enlightenment", 64);
    e_dialog_text_set(dia, msg);
    e_dialog_button_add(dia, _("Close"), NULL, NULL, NULL);
-   e_win_centered_set(dia->win, 1);
-   dia->win->state.no_remember = 1;
+   elm_win_center(dia->win, 1, 1);
+   e_win_no_remember_set(dia->win, 1);
    e_dialog_show(dia);
 }
 
@@ -101,7 +101,7 @@ _e_startup_event_cb(void *data, int ev_type __UNUSED__, void *ev)
    if ((e) && (e->error))
      {
         fprintf(stderr, "E: efreet couldn't build cache\n");
-        _e_startup_error_dialog("E: Efreet could not build cache. "                            
+        _e_startup_error_dialog("E: Efreet could not build cache. "
                                 "Please check your DBus setup");
      }
    ecore_event_handler_del(desktop_cache_update_handler);

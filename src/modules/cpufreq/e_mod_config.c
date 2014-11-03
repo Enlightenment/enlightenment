@@ -20,7 +20,7 @@ static int          _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data
 static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
 E_Config_Dialog *
-e_int_config_cpufreq_module(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_cpufreq_module(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -35,7 +35,7 @@ e_int_config_cpufreq_module(E_Comp *comp, const char *params __UNUSED__)
 
    snprintf(buf, sizeof(buf), "%s/e-module-cpufreq.edj",
             e_module_dir_get(cpufreq_config->module));
-   cfd = e_config_dialog_new(comp, _("Cpu Frequency Control Settings"),
+   cfd = e_config_dialog_new(NULL, _("Cpu Frequency Control Settings"),
                              "E", "_e_mod_cpufreq_config_dialog",
                              buf, 0, v, NULL);
    cpufreq_config->config_dialog = cfd;

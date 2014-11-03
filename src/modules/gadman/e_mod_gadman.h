@@ -85,7 +85,7 @@ void             gadman_gadgets_toggle(void);
 void             gadman_update_bg(void);
 Eina_Bool gadman_gadget_add_handler(void *d, int type, E_Event_Gadcon_Client_Add *ev);
 
-E_Config_Dialog *_config_gadman_module(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *_config_gadman_module(Evas_Object *parent, const char *params __UNUSED__);
 
 /**
  * @addtogroup Optional_Gadgets

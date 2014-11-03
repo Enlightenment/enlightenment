@@ -54,8 +54,7 @@ _fsel_cb_ok(void *data, E_Dialog *dia __UNUSED__)
    if ((p) && (strcasecmp(p, ".edj")))
      {
         E_Import_Config_Dialog *import;
-        import = e_import_config_dialog_show(id->dia->win->comp, path, _import_ok, NULL);
-        e_dialog_parent_set(import->dia, id->dia->win);
+        import = e_import_config_dialog_show(id->dia->win, path, _import_ok, NULL);
         e_object_data_set(E_OBJECT(import), id);
         return;
      }
@@ -121,12 +120,11 @@ _e_import_dialog_del(void *data)
 }
 
 static void
-_e_import_dialog_win_del(E_Win *win)
+_e_import_dialog_win_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Dialog *dia;
+   E_Dialog *dia = data;
    E_Import_Dialog *id;
 
-   dia = win->data;
    id = dia->data;
    if (id)
      e_object_del(E_OBJECT(id));
@@ -135,7 +133,7 @@ _e_import_dialog_win_del(E_Win *win)
 //////////////////////////////////////////////////////////////////////////////////
 
 EAPI E_Import_Dialog *
-e_import_dialog_show(E_Comp *c, const char *dev, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
+e_import_dialog_show(Evas_Object *parent EINA_UNUSED, const char *dev, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
 {
    Evas *evas;
    E_Import_Dialog *id;
@@ -148,7 +146,7 @@ e_import_dialog_show(E_Comp *c, const char *dev, const char *path, Ecore_End_Cb 
    id = E_OBJECT_ALLOC(E_Import_Dialog, E_IMPORT_DIALOG_TYPE, _e_import_dialog_del);
    if (!id) return NULL;
 
-   dia = e_dialog_new(c, "E", "_import_fsel_dialog");
+   dia = e_dialog_new(NULL, "E", "_import_fsel_dialog");
    if (!dia)
      {
         e_object_del(E_OBJECT(id));
@@ -160,9 +158,9 @@ e_import_dialog_show(E_Comp *c, const char *dev, const char *path, Ecore_End_Cb 
    id->dia = dia;
    id->ok = ok, id->cancel = cancel;
    e_object_del_attach_func_set(E_OBJECT(dia), _e_import_dia_del);
-   e_win_delete_callback_set(dia->win, _e_import_dialog_win_del);
+   evas_object_event_callback_add(dia->win, EVAS_CALLBACK_DEL, _e_import_dialog_win_del, dia);
 
-   evas = e_win_evas_get(dia->win);
+   evas = evas_object_evas_get(dia->win);
    e_dialog_title_set(dia, _("Select a Picture..."));
 
    fdev = dev ? : e_config->wallpaper_import_last_dev;
@@ -199,7 +197,7 @@ e_import_dialog_show(E_Comp *c, const char *dev, const char *path, Ecore_End_Cb 
    e_dialog_button_add(dia, _("Cancel"), NULL, _fsel_cb_close, id);
    e_dialog_border_icon_set(dia, "enlightenment/background");
    e_dialog_show(dia);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_widget_focus_set(ofm, 1);
 
    return id;

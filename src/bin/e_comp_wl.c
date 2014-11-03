@@ -2002,7 +2002,7 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    ec->comp_data->first_damage = ((ec->internal) || (ec->override));
 
    if ((!e_client_util_ignored_get(ec)) && 
-       (!ec->internal) && (!ec->internal_ecore_evas))
+       (!ec->internal))
      {
         ec->comp_data->need_reparent = EINA_TRUE;
         ec->take_focus = !starting;
@@ -2127,7 +2127,7 @@ _e_comp_wl_client_cb_pre_frame(void *data EINA_UNUSED, E_Client *ec)
 
    if (ec->visible)
      {
-        if ((ec->comp_data->set_win_type) && (ec->internal_ecore_evas))
+        if ((ec->comp_data->set_win_type) && (ec->internal_elm_win))
           {
              int type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
 
@@ -2155,7 +2155,7 @@ _e_comp_wl_client_cb_pre_frame(void *data EINA_UNUSED, E_Client *ec)
                     break;
                }
 
-             ecore_evas_wayland_type_set(ec->internal_ecore_evas, type);
+             ecore_evas_wayland_type_set(e_win_ee_get(ec->internal_elm_win), type);
              ec->comp_data->set_win_type = EINA_FALSE;
           }
      }

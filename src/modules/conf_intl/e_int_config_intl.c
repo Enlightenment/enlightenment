@@ -579,7 +579,7 @@ const E_Intl_Pair charset_predefined_pairs[] = {
 };
 
 E_Config_Dialog *
-e_int_config_intl(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_intl(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -596,7 +596,7 @@ e_int_config_intl(E_Comp *comp, const char *params __UNUSED__)
    v->basic.apply_cfdata = _basic_advanced_apply_data;
    v->basic.check_changed = _basic_advanced_check_changed;
 
-   cfd = e_config_dialog_new(comp,
+   cfd = e_config_dialog_new(NULL,
                              _("Language Settings"),
                              "E", "language/language_settings",
                              "preferences-desktop-locale", 0, v, NULL);
@@ -604,7 +604,7 @@ e_int_config_intl(E_Comp *comp, const char *params __UNUSED__)
 }
 
 E_Config_Dialog *
-e_int_config_desklock_intl(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_desklock_intl(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -621,7 +621,7 @@ e_int_config_desklock_intl(E_Comp *comp, const char *params __UNUSED__)
    v->basic.apply_cfdata = _basic_advanced_apply_data;
    v->basic.check_changed = _basic_advanced_check_changed;
 
-   cfd = e_config_dialog_new(comp,
+   cfd = e_config_dialog_new(NULL,
                              _("Desklock Language Settings"),
                              "E", "language/desklock_language_settings",
                              "preferences-desktop-locale", 0, v, NULL);

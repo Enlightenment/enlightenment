@@ -483,11 +483,7 @@ _e_client_free(E_Client *ec)
         EINA_LIST_FREE(ec->e.state.video_child, tmp)
           tmp->e.state.video_parent_client = NULL;
      }
-   if (ec->internal_ecore_evas)
-     {
-        e_canvas_del(ec->internal_ecore_evas);
-        E_FREE_FUNC(ec->internal_ecore_evas, ecore_evas_free);
-     }
+   E_FREE_FUNC(ec->internal_elm_win, evas_object_del);
    E_FREE_FUNC(ec->desktop, efreet_desktop_free);
    E_FREE_FUNC(ec->post_job, ecore_idle_enterer_del);
 
@@ -596,8 +592,8 @@ _e_client_del(E_Client *ec)
    e_int_client_menu_del(ec);
    E_FREE_FUNC(ec->raise_timer, ecore_timer_del);
 
-   if (ec->internal_ecore_evas)
-     ecore_evas_hide(ec->internal_ecore_evas);
+   if (ec->internal_elm_win)
+     evas_object_hide(ec->internal_elm_win);
 
    if (ec->focused)
      _e_client_revert_focus(ec);
@@ -1383,7 +1379,7 @@ _e_client_cb_evas_move(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UN
    Evas_Coord x, y;
 
    ec->pre_res_change.valid = 0;
-   if (ec->internal_ecore_evas)
+   if (ec->internal_elm_win)
      {
         EC_CHANGED(ec);
         ec->changes.pos = 1;
@@ -1418,7 +1414,7 @@ _e_client_cb_evas_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_
    Evas_Coord x, y, w, h;
 
    ec->pre_res_change.valid = 0;
-   if (ec->internal_ecore_evas || (!ec->netwm.sync.request))
+   if (ec->internal_elm_win || (!ec->netwm.sync.request))
      {
         EC_CHANGED(ec);
         ec->changes.size = 1;
@@ -1966,11 +1962,7 @@ _e_client_eval(E_Client *ec)
      {
         ec->changes.size = 0;
         if ((!ec->shaded) && (!ec->shading))
-          {
-             evas_object_resize(ec->frame, ec->w, ec->h);
-             if (ec->internal_ecore_evas && (!ec->override))
-               ecore_evas_move_resize(ec->internal_ecore_evas, 0, 0, ec->client.w, ec->client.h);
-          }
+          evas_object_resize(ec->frame, ec->w, ec->h);
 
         rem_change = 1;
         prop |= E_CLIENT_PROPERTY_SIZE;

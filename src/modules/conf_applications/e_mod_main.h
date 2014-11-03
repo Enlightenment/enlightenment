@@ -1,20 +1,20 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-E_Config_Dialog *e_int_config_apps_favs(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_apps_add(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_apps_ibar(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_apps_ibar_other(E_Comp *comp, const char *path);
-E_Config_Dialog *e_int_config_apps_startup(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_apps_restart(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_apps_desk_lock(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_apps_desk_unlock(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_apps_favs(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_apps_add(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_apps_ibar(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_apps_ibar_other(Evas_Object *parent, const char *path);
+E_Config_Dialog *e_int_config_apps_startup(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_apps_restart(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_apps_desk_lock(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_apps_desk_unlock(Evas_Object *parent, const char *params __UNUSED__);
 
-E_Config_Dialog *e_int_config_defapps(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_defapps(Evas_Object *parent, const char *params __UNUSED__);
 
-E_Config_Dialog *e_int_config_apps_personal(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_apps_personal(Evas_Object *parent, const char *params __UNUSED__);
 
-E_Config_Dialog *e_int_config_deskenv(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_deskenv(Evas_Object *parent, const char *params __UNUSED__);
 
 /**
  * @addtogroup Optional_Conf

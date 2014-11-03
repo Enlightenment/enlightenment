@@ -27,7 +27,7 @@ struct _E_Config_Dialog_Data
    Eina_Bool        free : 1;
 
    /* Dialog */
-   E_Win           *win_import;
+   Evas_Object      *win_import;
 };
 
 static void
@@ -294,7 +294,7 @@ _e_int_theme_preview_set(Evas_Object *preview, const char *file)
 }
 
 E_Config_Dialog *
-e_int_config_theme(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_theme(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -307,7 +307,7 @@ e_int_config_theme(E_Comp *comp, const char *params __UNUSED__)
    v->basic.apply_cfdata = _basic_apply_data;
    v->basic.create_widgets = _basic_create_widgets;
    v->override_auto_apply = 1;
-   cfd = e_config_dialog_new(comp,
+   cfd = e_config_dialog_new(NULL,
                              _("Theme Selector"),
                              "E", "appearance/theme",
                              "preferences-desktop-theme", 0, v, NULL);
@@ -509,7 +509,7 @@ _cb_import(void *data1, void *data2 __UNUSED__)
 
    cfdata = data1;
    if (cfdata->win_import)
-     e_win_raise(cfdata->win_import);
+     elm_win_raise(cfdata->win_import);
    else
      cfdata->win_import = e_int_config_theme_import(cfdata->cfd);
 }
@@ -633,7 +633,7 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    Eio_File *ls;
    Eet_File *ef;
 
-   E_FREE_FUNC(cfdata->win_import, e_object_del);
+   E_FREE_FUNC(cfdata->win_import, evas_object_del);
    if (cfdata->eio[0]) eio_file_cancel(cfdata->eio[0]);
    if (cfdata->eio[1]) eio_file_cancel(cfdata->eio[1]);
    EINA_LIST_FOREACH(cfdata->theme_init, l, ls)
@@ -647,14 +647,14 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    Evas_Object *o, *ot, *of, *il, *ol;
    E_Zone *z;
    E_Radio_Group *rg;
    char path[PATH_MAX];
 
-   z = e_zone_current_get(cfd->comp);
+   z = e_zone_current_get(e_comp_get(NULL));
 
    ot = e_widget_table_add(evas, 0);
    ol = e_widget_table_add(evas, 0);

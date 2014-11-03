@@ -81,8 +81,6 @@ _e_zone_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    E_Event_Zone_Edge *zev;
    E_Zone_Edge edge;
    E_Zone *zone = data;
-   const Eina_List *l;
-   Ecore_Evas *ee;
 
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
@@ -93,13 +91,7 @@ _e_zone_cb_mouse_in(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *eve
    zev->x = ev->output.x;
    zev->y = ev->output.y;
    zev->modifiers = e_bindings_evas_modifiers_convert(ev->modifiers);
-   EINA_LIST_FOREACH(e_canvas_list(), l, ee)
-     {
-        /* FIXME: comp */
-        if (!evas_pointer_button_down_mask_get(ecore_evas_get(ee))) continue;
-        zev->drag = 1;
-        break;
-     }
+   zev->drag = !!evas_pointer_button_down_mask_get(e_comp_get(zone)->evas);
    
    ecore_event_add(E_EVENT_ZONE_EDGE_IN, zev, NULL, NULL);
    e_bindings_edge_in_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev);
@@ -112,8 +104,6 @@ _e_zone_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *ev
    E_Event_Zone_Edge *zev;
    E_Zone_Edge edge;
    E_Zone *zone = data;
-   const Eina_List *l;
-   Ecore_Evas *ee;
 
    edge = _e_zone_detect_edge(zone, obj);
    if (edge == E_ZONE_EDGE_NONE) return;
@@ -124,13 +114,7 @@ _e_zone_cb_mouse_out(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *ev
    zev->x = ev->output.x;
    zev->y = ev->output.y;
    zev->modifiers = e_bindings_evas_modifiers_convert(ev->modifiers);
-   EINA_LIST_FOREACH(e_canvas_list(), l, ee)
-     {
-        /* FIXME: comp */
-        if (!evas_pointer_button_down_mask_get(ecore_evas_get(ee))) continue;
-        zev->drag = 1;
-        break;
-     }
+   zev->drag = !!evas_pointer_button_down_mask_get(e_comp_get(zone)->evas);
 
    ecore_event_add(E_EVENT_ZONE_EDGE_OUT, zev, NULL, NULL);
    e_bindings_edge_out_event_handle(E_BINDING_CONTEXT_ZONE, E_OBJECT(zone), zev);

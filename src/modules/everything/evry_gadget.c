@@ -10,7 +10,6 @@ struct _Instance
    E_Gadcon_Client *gcc;
    Evas_Object     *o_button;
 
-   E_Object_Delfn  *del_fn;
    Evry_Window     *win;
    Gadget_Config   *cfg;
    E_Config_Dialog *cfd;
@@ -30,6 +29,7 @@ struct _Instance
 /* static void _button_cb_mouse_up(void *data, Evas *e, Evas_Object *obj, void *event_info); */
 static void             _button_cb_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static Eina_Bool        _cb_focus_out(void *data, int type __UNUSED__, void *event);
+static void _del_func(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -136,9 +136,9 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    EINA_LIST_FREE (inst->handlers, h)
      ecore_event_handler_del(h);
 
-   if (inst->del_fn && inst->win)
+   if (inst->win)
      {
-        e_object_delfn_del(E_OBJECT(inst->win->ewin), inst->del_fn);
+        evas_object_event_callback_del(inst->win->ewin, EVAS_CALLBACK_DEL, _del_func);
         evry_hide(inst->win, 0);
      }
 
@@ -211,13 +211,12 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
 /***************************************************************************/
 
 static void
-_del_func(void *data, void *obj __UNUSED__)
+_del_func(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Instance *inst = data;
 
    e_gadcon_locked_set(inst->gcc->gadcon, 0);
 
-   inst->del_fn = NULL;
    inst->win = NULL;
    edje_object_signal_emit(inst->o_button, "e,state,unfocused", "e");
 }
@@ -232,13 +231,15 @@ static void
 _hide_done(void *data, Evas_Object *obj EINA_UNUSED, const char *s EINA_UNUSED, const char *ss EINA_UNUSED)
 {
    Instance *inst = data;
+   E_Client *ec;
 
    /* go bac to subject selector */
    evry_selectors_switch(inst->win, -1, 0);
    evry_selectors_switch(inst->win, -1, 0);
 
-   e_client_iconify(inst->win->ewin->client);
-   e_comp_object_effect_set(inst->win->ewin->client->frame, "none");
+   ec = e_win_client_get(inst->win->ewin);
+   e_client_iconify(ec);
+   e_comp_object_effect_set(ec->frame, "none");
    inst->animating = 0;
 }
 
@@ -246,16 +247,19 @@ static void
 _evry_hide_func(Evry_Window *win, int finished __UNUSED__)
 {
    Instance *inst = win->data;
+   E_Client *ec;
+   int x, y, w, h;
 
-   e_comp_object_effect_set(inst->win->ewin->client->frame, "pane");
+   ec = e_win_client_get(inst->win->ewin);;
+   e_comp_object_effect_set(ec->frame, "pane");
    /* set geoms */
-   e_comp_object_effect_params_set(inst->win->ewin->client->frame, 1,
-     (int[]){inst->win->ewin->x, inst->win->ewin->y,
-             inst->win->ewin->w, inst->win->ewin->h,
-             inst->win->ewin->client->zone->w, inst->win->ewin->client->zone->h,
+   evas_object_geometry_get(inst->win->ewin, &x, &y, &w, &h);
+   e_comp_object_effect_params_set(ec->frame, 1,
+     (int[]){x, y, w, h,
+             ec->zone->w, ec->zone->h,
              inst->hide_x, inst->hide_y}, 8);
-   e_comp_object_effect_params_set(inst->win->ewin->client->frame, 0, (int[]){0}, 1);
-   e_comp_object_effect_start(inst->win->ewin->client->frame, _hide_done, inst);
+   e_comp_object_effect_params_set(ec->frame, 0, (int[]){0}, 1);
+   e_comp_object_effect_start(ec->frame, _hide_done, inst);
    inst->hidden = inst->animating = EINA_TRUE;
 }
 
@@ -273,7 +277,7 @@ _cb_focus_out(void *data, int type __UNUSED__, void *event)
    if ((!inst) || (!inst->win))
      return ECORE_CALLBACK_PASS_ON;
 
-   if (inst->win->ewin->client != ev->ec)
+   if (e_win_client_get(inst->win->ewin) != ev->ec)
      return ECORE_CALLBACK_PASS_ON;
 
    _evry_hide_func(inst->win, 0);
@@ -285,11 +289,10 @@ static void
 _gadget_popup_show(Instance *inst)
 {
    Evas_Coord x, y, w, h;
-   int cx, cy, pw, ph;
-   E_Win *ewin = inst->win->ewin;
+   int cx, cy, px, py, pw, ph;
+   Evas_Object *ewin = inst->win->ewin;
 
-   pw = ewin->w;
-   ph = ewin->h;
+   evas_object_geometry_get(ewin, &px, &py, &pw, &ph);
 
    evas_object_geometry_get(inst->o_button, &x, &y, &w, &h);
    e_gadcon_canvas_zone_geometry_get(inst->gcc->gadcon, &cx, &cy, NULL, NULL);
@@ -333,13 +336,13 @@ _gadget_popup_show(Instance *inst)
         break;
      }
 
-   if (ewin->x + pw > inst->win->zone->w)
+   if (px + pw > inst->win->zone->w)
      x = inst->win->zone->w - pw;
 
-   if (ewin->y + ph > inst->win->zone->h)
+   if (py + ph > inst->win->zone->h)
      y = inst->win->zone->h - ph;
 
-   e_win_move(ewin, x, y);
+   evas_object_move(ewin, x, y);
 }
 
 static void
@@ -350,7 +353,7 @@ _gadget_window_show(Instance *inst)
    int cx, cy;
    int pw, ph;
 
-   E_Win *ewin = inst->win->ewin;
+   Evas_Object *ewin = inst->win->ewin;
 
    inst->win->func.hide = &_evry_hide_func;
 
@@ -369,7 +372,7 @@ _gadget_window_show(Instance *inst)
         pw = zw / 2;
         ph = zh / 2;
         inst->hide_y = -1;
-        e_win_move(ewin, zx, gy + gh);
+        evas_object_move(ewin, zx, gy + gh);
         break;
 
       case E_GADCON_ORIENT_BOTTOM:
@@ -378,7 +381,7 @@ _gadget_window_show(Instance *inst)
         pw = zw / 2;
         ph = zh / 2;
         inst->hide_y = 1;
-        e_win_move(ewin, zx, gy - ph);
+        evas_object_move(ewin, zx, gy - ph);
         break;
 
       case E_GADCON_ORIENT_LEFT:
@@ -387,7 +390,7 @@ _gadget_window_show(Instance *inst)
         pw = zw / 2.5;
         ph = zh;
         inst->hide_x = -1;
-        e_win_move(ewin, gx + gw, zy);
+        evas_object_move(ewin, gx + gw, zy);
         break;
 
       case E_GADCON_ORIENT_RIGHT:
@@ -396,7 +399,7 @@ _gadget_window_show(Instance *inst)
         pw = zw / 2.5;
         ph = zh;
         inst->hide_x = 1;
-        e_win_move(ewin, gx - pw, zy);
+        evas_object_move(ewin, gx - pw, zy);
         break;
 
       case E_GADCON_ORIENT_FLOAT:
@@ -407,13 +410,17 @@ _gadget_window_show(Instance *inst)
         break;
      }
 
-   e_win_resize(ewin, pw, ph);
-   e_win_show(ewin);
+   evas_object_resize(ewin, pw, ph);
+   evas_object_show(ewin);
 
-   evas_object_focus_set(ewin->client->frame, 1);
-   ewin->client->netwm.state.skip_pager = 1;
-   ewin->client->netwm.state.skip_taskbar = 1;
-   ewin->client->sticky = 1;
+   {
+      E_Client *ec = e_win_client_get(ewin);
+
+      evas_object_focus_set(ec->frame, 1);
+      ec->netwm.state.skip_pager = 1;
+      ec->netwm.state.skip_taskbar = 1;
+      ec->sticky = 1;
+   }
 
    inst->hidden = EINA_FALSE;
 }
@@ -439,7 +446,7 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
         if (inst->win)
           {
              win = inst->win;
-             ec = win->ewin->client;
+             ec = e_win_client_get(win->ewin);
 
              if (inst->hidden || !ec->focused)
                {
@@ -466,7 +473,7 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
         inst->win = win;
         win->data = inst;
 
-        ecore_evas_name_class_set(win->ewin->ecore_evas, "E", "everything-window");
+        ecore_evas_name_class_set(e_win_ee_get(win->ewin), "E", "everything-window");
 
         if (inst->illume_mode)
           _gadget_window_show(inst);
@@ -475,7 +482,7 @@ _button_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 
         e_gadcon_locked_set(inst->gcc->gadcon, 1);
 
-        inst->del_fn = e_object_delfn_add(E_OBJECT(win->ewin), _del_func, inst);
+        evas_object_event_callback_add(win->ewin, EVAS_CALLBACK_DEL, _del_func, inst);
 
         edje_object_signal_emit(inst->o_button, "e,state,focused", "e");
      }
@@ -600,7 +607,7 @@ _free_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 static void
 _cb_button_settings(void *data __UNUSED__, void *data2 __UNUSED__)
 {
-   /* evry_collection_conf_dialog(e_util_comp_current_get()), "Start"); */
+   /* evry_collection_conf_dialog(NULL, "Start"); */
 }
 
 static void

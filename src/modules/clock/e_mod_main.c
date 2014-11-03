@@ -282,7 +282,7 @@ static void
 _clock_settings_cb(void *d1, void *d2 __UNUSED__)
 {
    Instance *inst = d1;
-   e_int_config_clock_module(e_comp_get(inst->popup), inst->cfg);
+   e_int_config_clock_module(NULL, inst->cfg);
    e_object_del(E_OBJECT(inst->popup));
    inst->popup = NULL;
    inst->o_popclock = NULL;

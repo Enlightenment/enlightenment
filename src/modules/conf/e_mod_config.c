@@ -13,7 +13,7 @@ static int          _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfd
 static int          _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
 E_Config_Dialog *
-e_int_config_conf_module(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_conf_module(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd = NULL;
    E_Config_Dialog_View *v = NULL;
@@ -32,7 +32,7 @@ e_int_config_conf_module(E_Comp *comp, const char *params __UNUSED__)
    v->basic.check_changed = _basic_check_changed;
 
    snprintf(buf, sizeof(buf), "%s/e-module-conf.edj", conf->module->dir);
-   cfd = e_config_dialog_new(comp, _("Configuration Panel"), "Conf",
+   cfd = e_config_dialog_new(NULL, _("Configuration Panel"), "Conf",
                              "advanced/conf", buf, 0, v, NULL);
 
    conf->cfd = cfd;

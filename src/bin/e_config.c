@@ -1764,7 +1764,7 @@ _e_config_mv_error(const char *from, const char *to)
    e_dialog_text_set(dia, buf);
    e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
    e_dialog_button_focus_num(dia, 0);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_object_del_attach_func_set(E_OBJECT(dia),
                                 _e_config_error_dialog_cb_delete);
    e_dialog_show(dia);
@@ -2408,7 +2408,7 @@ _e_config_eet_close_handle(Eet_File *ef, char *file)
                   e_dialog_text_set(dia, buf);
                   e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
                   e_dialog_button_focus_num(dia, 0);
-                  e_win_centered_set(dia->win, 1);
+                  elm_win_center(dia->win, 1, 1);
                   e_object_del_attach_func_set(E_OBJECT(dia),
                                                _e_config_error_dialog_cb_delete);
                   e_dialog_show(dia);

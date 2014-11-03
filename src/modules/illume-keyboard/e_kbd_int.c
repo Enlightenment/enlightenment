@@ -1737,12 +1737,12 @@ e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts)
    mh = zone->h;
 
    if (mw > mh)
-     e_win_resize(ki->win, mw, (mh / 2));
+     evas_object_resize(ki->win, mw, (mh / 2));
    else
-     e_win_resize(ki->win, mw, mh);
+     evas_object_resize(ki->win, mw, mh);
 
-   e_win_resize_callback_set(ki->win, _e_kbd_int_cb_resize);
-   e_win_borderless_set(ki->win, 1);
+   evas_object_resize_callback_set(ki->win, _e_kbd_int_cb_resize);
+   elm_win_borderless_set(ki->win, 1);
    ki->win->data = ki;
    e_win_name_class_set(ki->win, "Virtual-Keyboard", "Virtual-Keyboard");
    e_win_title_set(ki->win, "Virtual Keyboard");
@@ -1796,7 +1796,7 @@ e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts)
    evas_object_resize(ki->base_obj, zone->w, mh);
    evas_object_show(ki->base_obj);
    
-   e_win_size_min_set(ki->win, mw, mh);
+   evas_object_size_hint_min_set(ki->win, mw, mh);
    ecore_x_e_virtual_keyboard_set(ki->win->evas_win, 1);
 
    ki->client_message_handler = 
@@ -1806,7 +1806,7 @@ e_kbd_int_new(const char *themedir, const char *syskbds, const char *sysdicts)
      ecore_event_handler_add(E_EVENT_CLIENT_MOVE, 
                              _e_kbd_int_cb_border_move, ki);
 
-   e_win_show(ki->win);
+   evas_object_show(ki->win);
    ki->win->client->user_skip_winlist = 1;
    ki->win->client->lock_focus_in = 1;
    ki->win->client->lock_focus_out = 1;

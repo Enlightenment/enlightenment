@@ -562,10 +562,6 @@ main(int argc, char **argv)
    e_font_apply();
    TS("E_Font Apply Done");
 
-   TS("E_Canvas Recache");
-   e_canvas_recache();
-   TS("E_Canvas Recache Done");
-
    TS("E_Theme Init");
    if (!e_theme_init())
      {
@@ -1022,7 +1018,7 @@ main(int argc, char **argv)
    inloop = EINA_FALSE;
    stopping = EINA_TRUE;
 
-   if (!x_fatal) e_canvas_idle_flush();
+   //if (!x_fatal) e_canvas_idle_flush();
 
    e_config_save_flush();
    _e_main_desk_save();
@@ -1469,7 +1465,6 @@ _e_main_test_formats(void)
                                "Evas has Software Buffer engine support.\n"));
         _e_main_shutdown(-1);
      }
-   e_canvas_add(ee);
    evas = ecore_evas_get(ee);
    im = evas_object_image_add(evas);
 
@@ -1526,7 +1521,6 @@ _e_main_test_formats(void)
         _e_main_shutdown(-1);
      }
    evas_object_del(txt);
-   e_canvas_del(ee);
    ecore_evas_free(ee);
 }
 

@@ -19,7 +19,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_performance(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_performance(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -33,7 +33,7 @@ e_int_config_performance(E_Comp *comp, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(comp, _("Performance Settings"),
+   cfd = e_config_dialog_new(NULL, _("Performance Settings"),
 			     "E", "advanced/performance",
 			     "preferences-system-performance", 0, v, NULL);
    return cfd;
@@ -77,7 +77,8 @@ _basic_apply(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
    e_config->priority = cfdata->priority;
    e_config->no_module_delay = !cfdata->module_delay;
    ecore_exe_run_priority_set(e_config->priority);
-   e_canvas_recache();
+   elm_config_cache_image_cache_size_set(cfdata->image_cache);
+   elm_config_cache_font_cache_size_set(cfdata->font_cache);
    e_config_save_queue();
    return 1;
 }

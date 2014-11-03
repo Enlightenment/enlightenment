@@ -71,7 +71,7 @@ e_int_client_prop(E_Client *ec)
 
    if (ec->border_prop_dialog) return;
 
-   dia = e_dialog_new(ec->zone->comp, "E", "_window_props");
+   dia = e_dialog_new(NULL, "E", "_window_props");
    e_object_del_attach_func_set(E_OBJECT(dia), _ec_cb_dialog_del);
 
    _create_data(dia, ec);
@@ -79,7 +79,7 @@ e_int_client_prop(E_Client *ec)
    _ec_go(dia, (void *)0);
 
    e_dialog_button_add(dia, _("Close"), NULL, _ec_cb_dialog_close, dia);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
    e_dialog_border_icon_set(dia, "preferences-system-windows");
 }
@@ -381,14 +381,14 @@ _ec_go(void *data, void *data2)
    if (dia->content_object)
      evas_object_del(dia->content_object);
 
-   c = e_widget_list_add(e_win_evas_get(dia->win), 0, 0);
+   c = e_widget_list_add(evas_object_evas_get(dia->win), 0, 0);
 
    if (!data2)
      {
         o = _ec_icccm_create(dia, NULL);
         e_dialog_title_set(dia, _("ICCCM Properties"));
         e_widget_list_object_append(c, o, 1, 1, 0.0);
-        ob = e_widget_button_add(e_win_evas_get(dia->win), _("NetWM"), "go-next",
+        ob = e_widget_button_add(evas_object_evas_get(dia->win), _("NetWM"), "go-next",
                                  _ec_go, dia, (void *)1);
      }
    else
@@ -396,7 +396,7 @@ _ec_go(void *data, void *data2)
         o = _ec_netwm_create(dia, NULL);
         e_dialog_title_set(dia, _("NetWM Properties"));
         e_widget_list_object_append(c, o, 1, 1, 0.0);
-        ob = e_widget_button_add(e_win_evas_get(dia->win), _("ICCCM"), "go-next",
+        ob = e_widget_button_add(evas_object_evas_get(dia->win), _("ICCCM"), "go-next",
                                  _ec_go, dia, (void *)0);
      }
 
@@ -441,7 +441,7 @@ _ec_icccm_create(E_Dialog *dia, void *data __UNUSED__)
    if (dia->content_object)
      evas_object_del(dia->content_object);
 
-   evas = e_win_evas_get(dia->win);
+   evas = evas_object_evas_get(dia->win);
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
 
    o = e_widget_table_add(evas, 0);
@@ -497,7 +497,7 @@ _ec_netwm_create(E_Dialog *dia, void *data __UNUSED__)
    if (dia->content_object)
      evas_object_del(dia->content_object);
 
-   evas = e_win_evas_get(dia->win);
+   evas = evas_object_evas_get(dia->win);
    otb = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
    o = e_widget_table_add(evas, 0);
    STR_ENTRY(_("Name"), 0, 1, netwm.name);

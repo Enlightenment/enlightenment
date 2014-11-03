@@ -67,7 +67,7 @@ struct _E_Config_Dialog_Data
    Evas          *evas;
 };
 
-E_Config_Dialog      *e_int_config_tiling_module(E_Comp *comp, const char *params);
+E_Config_Dialog      *e_int_config_tiling_module(Evas_Object *parent, const char *params);
 
 EAPI extern E_Module_Api e_modapi;
 

@@ -149,7 +149,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_fonts(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_fonts(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -164,7 +164,7 @@ e_int_config_fonts(E_Comp *comp, const char *params __UNUSED__)
    v->advanced.create_widgets = _advanced_create_widgets;
    v->advanced.apply_cfdata = _advanced_apply_data;
 
-   cfd = e_config_dialog_new(comp, _("Font Settings"),
+   cfd = e_config_dialog_new(NULL, _("Font Settings"),
                              "E", "appearance/fonts",
                              "preferences-desktop-font", 0, v, NULL);
    return cfd;
@@ -609,7 +609,13 @@ _advanced_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfda
    /* Apply Hinting */
    e_config->font_hinting = cfdata->hinting;
    e_config_save_queue();
-   e_canvas_rehint();
+   /* e font hinting is different */
+   if (e_config->font_hinting == 0)
+     elm_config_font_hint_type_set(EVAS_FONT_HINTING_BYTECODE);
+   else if (e_config->font_hinting == 1)
+     elm_config_font_hint_type_set(EVAS_FONT_HINTING_AUTO);
+   else if (e_config->font_hinting == 2)
+     elm_config_font_hint_type_set(EVAS_FONT_HINTING_NONE);
 
 #ifndef HAVE_WAYLAND_ONLY
    e_xsettings_config_update();

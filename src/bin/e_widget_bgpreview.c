@@ -279,7 +279,7 @@ _e_wid_desk_cb_config(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
 
         snprintf(buff, sizeof(buff), "%i %i %i %i",
                  dd->manager, dd->zone, dd->x, dd->y);
-        e_configure_registry_call("internal/desk", e_util_comp_current_get(), buff);
+        e_configure_registry_call("internal/desk", NULL, buff);
      }
 }
 

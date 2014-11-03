@@ -245,7 +245,7 @@ e_desktop_edit(E_Comp *c, Efreet_Desktop *desktop)
 }
 
 static int
-_e_desktop_edit_view_create(E_Desktop_Edit *editor, E_Comp *c)
+_e_desktop_edit_view_create(E_Desktop_Edit *editor, E_Comp *c EINA_UNUSED)
 {
    E_Config_Dialog_View *v;
 
@@ -260,7 +260,7 @@ _e_desktop_edit_view_create(E_Desktop_Edit *editor, E_Comp *c)
    v->basic.check_changed = _e_desktop_edit_basic_check_changed;
 
    editor->cfd =
-     e_config_dialog_new(c, _("Desktop Entry Editor"), "E",
+     e_config_dialog_new(NULL, _("Desktop Entry Editor"), "E",
                          "applications/new_application",
                          "preferences-applications", 0, v, editor);
 
@@ -297,7 +297,7 @@ _e_desktop_edit_create_data(E_Config_Dialog *cfd)
 
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    if (!cfdata) return NULL;
-   cfd->dia->win->state.no_reopen = EINA_TRUE;
+   e_win_no_reopen_set(cfd->dia->win, 1);
    cfdata->editor = cfd->data;
 
    /*
@@ -822,7 +822,7 @@ _e_desktop_edit_basic_create_widgets(E_Config_Dialog *cfd __UNUSED__, Evas *evas
    e_widget_toolbook_page_show(otb, 0);
 
    e_util_win_auto_resize_fill(cfd->dia->win);
-   e_win_centered_set(cfd->dia->win, 1);
+   elm_win_center(cfd->dia->win, 1, 1);
 
    return otb;
 }
@@ -844,7 +844,7 @@ _e_desktop_editor_cb_icon_select(void *data1, void *data2)
 
    if (editor->icon_fsel_dia) return;
 
-   dia = e_dialog_new(cfdata->editor->cfd->comp, "E", "_eap_icon_select_dialog");
+   dia = e_dialog_new(NULL, "E", "_eap_icon_select_dialog");
    if (!dia) return;
    e_object_del_attach_func_set(E_OBJECT(dia),
                                 _e_desktop_edit_cb_icon_select_destroy);
@@ -868,14 +868,14 @@ _e_desktop_editor_cb_icon_select(void *data1, void *data2)
 
    if (path)
      {
-        o = e_widget_fsel_add(dia->win->evas, "/", path, NULL, NULL,
+        o = e_widget_fsel_add(evas_object_evas_get(dia->win), "/", path, NULL, NULL,
                               _e_desktop_edit_select_cb, cfdata,
                               NULL, cfdata, 1);
         free(path);
      }
    else
      {
-        o = e_widget_fsel_add(dia->win->evas, "~/", "/", NULL, NULL,
+        o = e_widget_fsel_add(evas_object_evas_get(dia->win), "~/", "/", NULL, NULL,
                               _e_desktop_edit_select_cb, cfdata,
                               NULL, cfdata, 1);
      }
@@ -890,7 +890,7 @@ _e_desktop_editor_cb_icon_select(void *data1, void *data2)
                        _e_desktop_edit_cb_icon_select_ok, cfdata);
    e_dialog_button_add(dia, _("Cancel"), NULL,
                        _e_desktop_edit_cb_icon_select_cancel, cfdata);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
    editor->icon_fsel_dia = dia;
 }
@@ -910,7 +910,7 @@ _e_desktop_editor_cb_exec_select(void *data1, void *data2)
 
    if (editor->exec_fsel_dia) return;
 
-   dia = e_dialog_new(cfdata->editor->cfd->comp, "E", "_eap_exec_select_dialog");
+   dia = e_dialog_new(NULL, "E", "_eap_exec_select_dialog");
    if (!dia) return;
    e_object_del_attach_func_set(E_OBJECT(dia),
                                 _e_desktop_edit_cb_exec_select_destroy);
@@ -930,7 +930,7 @@ _e_desktop_editor_cb_exec_select(void *data1, void *data2)
 
    if (path)
      {
-        o = e_widget_fsel_add(dia->win->evas, "/", path, NULL, NULL,
+        o = e_widget_fsel_add(evas_object_evas_get(dia->win), "/", path, NULL, NULL,
                               _e_desktop_edit_select_cb, cfdata,
                               NULL, cfdata, 1);
         free(path);
@@ -938,7 +938,7 @@ _e_desktop_editor_cb_exec_select(void *data1, void *data2)
      }
    else
      {
-        o = e_widget_fsel_add(dia->win->evas, "~/", "/", NULL, NULL,
+        o = e_widget_fsel_add(evas_object_evas_get(dia->win), "~/", "/", NULL, NULL,
                               _e_desktop_edit_select_cb, cfdata,
                               NULL, cfdata, 1);
      }
@@ -953,7 +953,7 @@ _e_desktop_editor_cb_exec_select(void *data1, void *data2)
                        _e_desktop_edit_cb_exec_select_ok, cfdata);
    e_dialog_button_add(dia, _("Cancel"), NULL,
                        _e_desktop_edit_cb_exec_select_cancel, cfdata);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
    editor->exec_fsel_dia = dia;
 }

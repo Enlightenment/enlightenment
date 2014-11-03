@@ -1,8 +1,8 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-E_Config_Dialog *e_int_config_profiles(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_dialogs(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_profiles(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_dialogs(Evas_Object *parent, const char *params __UNUSED__);
 
 /**
  * @addtogroup Optional_Conf

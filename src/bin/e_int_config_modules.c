@@ -83,7 +83,7 @@ static void         _btn_cb_unload(void *data, void *data2);
 static void         _btn_cb_load(void *data, void *data2);
 
 EAPI E_Config_Dialog *
-e_int_config_modules(E_Comp *c, const char *params __UNUSED__)
+e_int_config_modules(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd = NULL;
    E_Config_Dialog_View *v = NULL;
@@ -95,7 +95,7 @@ e_int_config_modules(E_Comp *c, const char *params __UNUSED__)
    v->free_cfdata = _free_data;
    v->basic.create_widgets = _basic_create;
 
-   cfd = e_config_dialog_new(c, _("Module Settings"),
+   cfd = e_config_dialog_new(NULL, _("Module Settings"),
                              "E", "extensions/modules",
                              "preferences-plugin", 0, v, NULL);
    return cfd;
@@ -175,7 +175,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    e_dialog_resizable_set(cfd->dia, 1);
 
-   cfdata->evas = e_win_evas_get(cfd->dia->win);
+   cfdata->evas = evas_object_evas_get(cfd->dia->win);
 
    of = e_widget_table_add(evas, 0);
 
@@ -212,7 +212,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    e_dialog_resizable_set(cfd->dia, 1);
    e_util_win_auto_resize_fill(cfd->dia->win);
-   e_win_centered_set(cfd->dia->win, 1);
+   elm_win_center(cfd->dia->win, 1, 1);
 
    e_widget_focus_set(cfdata->o_toolbar, 1);
    e_widget_toolbar_item_select(cfdata->o_toolbar, 0);

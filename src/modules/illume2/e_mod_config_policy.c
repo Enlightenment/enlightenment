@@ -30,7 +30,7 @@ e_mod_illume_config_policy_show(E_Comp *comp, const char *params __UNUSED__)
    v->basic_only = 1;
    v->normal_win = 1;
    v->scroll = 1;
-   cfd = e_config_dialog_new(comp, _("Policy"), "E", "illume/policy", 
+   cfd = e_config_dialog_new(NULL, _("Policy"), "E", "illume/policy", 
                              "enlightenment/policy", 0, v, NULL);
    if (!cfd) return;
 }

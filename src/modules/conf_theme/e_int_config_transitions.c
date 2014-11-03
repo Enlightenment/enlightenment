@@ -28,7 +28,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_transitions(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_transitions(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -43,7 +43,7 @@ e_int_config_transitions(E_Comp *comp, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create_widgets;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(comp, _("Transition Settings"),
+   cfd = e_config_dialog_new(NULL, _("Transition Settings"),
                              "E", "appearance/transitions",
                              "preferences-transitions", 0, v, NULL);
    return cfd;
@@ -159,14 +159,14 @@ _basic_apply_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static Evas_Object *
-_basic_create_widgets(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
+_basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dialog_Data *cfdata)
 {
    E_Zone *zone;
    Evas_Object *o, *of, *il;
    Eina_List *l;
    char *t;
 
-   zone = e_zone_current_get(cfd->comp);
+   zone = e_zone_current_get(e_comp_get(NULL));
 
    o = e_widget_table_add(evas, 0);
 

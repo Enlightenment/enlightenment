@@ -141,7 +141,6 @@ static void             _pager_window_free(Pager_Win *pw);
 static Pager_Popup     *_pager_popup_new(E_Zone *zone, int keyaction);
 static void             _pager_popup_free(Pager_Popup *pp);
 static Pager_Popup     *_pager_popup_find(E_Zone *zone);
-static E_Config_Dialog *_pager_config_dialog(E_Comp *comp, const char *params);
 
 /* functions for pager popup on key actions */
 static int              _pager_popup_show(void);
@@ -884,7 +883,7 @@ _pager_inst_cb_menu_configure(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Men
 }
 
 static E_Config_Dialog *
-_pager_config_dialog(E_Comp *comp __UNUSED__, const char *params __UNUSED__)
+_pager_config_dialog(Evas_Object *parent __UNUSED__, const char *params __UNUSED__)
 {
    if (!pager_config) return NULL;
    if (pager_config->config_dialog) return NULL;
@@ -894,13 +893,9 @@ _pager_config_dialog(E_Comp *comp __UNUSED__, const char *params __UNUSED__)
 }
 
 static void
-_pager_inst_cb_menu_virtual_desktops_dialog(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
+_pager_inst_cb_menu_virtual_desktops_dialog(void *data EINA_UNUSED, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
-   Instance *inst;
-
-   inst = data;
-   e_configure_registry_call("screen/virtual_desktops",
-                             inst->gcc->gadcon->zone->comp, NULL);
+   e_configure_registry_call("screen/virtual_desktops", NULL, NULL);
 }
 
 static void

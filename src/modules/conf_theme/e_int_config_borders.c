@@ -19,7 +19,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_borders(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_borders(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -27,9 +27,9 @@ e_int_config_borders(E_Comp *comp, const char *params __UNUSED__)
    if (e_config_dialog_find("E", "appearance/borders")) return NULL;
    v = _config_view_new();
    if (!v) return NULL;
-   cfd = e_config_dialog_new(comp, _("Default Border Style"),
+   cfd = e_config_dialog_new(NULL, _("Default Border Style"),
                              "E", "appearance/borders",
-                             "preferences-system-windows", 0, v, comp);
+                             "preferences-system-windows", 0, v, NULL);
    return cfd;
 }
 
@@ -46,7 +46,7 @@ e_int_config_borders_border(E_Comp *comp __UNUSED__, const char *params)
    if (!ec) return NULL;
    v = _config_view_new();
    if (!v) return NULL;
-   cfd = e_config_dialog_new(ec->zone->comp,
+   cfd = e_config_dialog_new(NULL,
                              _("Window Border Selection"),
                              "E", "_config_border_border_style_dialog",
                              "preferences-system-windows", 0, v, ec);
@@ -78,8 +78,8 @@ _create_data(E_Config_Dialog *cfd)
    cfdata = E_NEW(E_Config_Dialog_Data, 1);
    cfdata->comp = NULL;
    cfdata->client = NULL;
-   if (E_OBJECT(cfd->data)->type == E_COMP_TYPE)
-     cfdata->comp = cfd->data;
+   if (!cfd->data)
+     cfdata->comp = e_comp_get(NULL);
    else
      cfdata->client = cfd->data;
 

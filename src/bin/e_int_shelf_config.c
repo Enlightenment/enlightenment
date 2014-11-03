@@ -43,10 +43,10 @@ e_int_shelf_config(E_Shelf *es)
    v->basic.check_changed = _basic_check_changed;
 
    es->config_dialog =
-     e_config_dialog_new(es->zone->comp, _("Shelf Settings"),
+     e_config_dialog_new(NULL, _("Shelf Settings"),
                          "E", "_shelf_config_dialog",
                          "preferences-desktop-shelf", 0, v, es);
-   e_win_centered_set(es->config_dialog->dia->win, EINA_TRUE);
+   elm_win_center(es->config_dialog->dia->win, 1, 1);
 }
 
 /* local functions */

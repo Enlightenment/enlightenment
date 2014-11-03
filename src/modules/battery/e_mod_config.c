@@ -43,7 +43,7 @@ static int          _advanced_check_changed(E_Config_Dialog *cfd, E_Config_Dialo
 static void         _cb_radio_changed(void *data, Evas_Object *obj __UNUSED__);
 
 E_Config_Dialog *
-e_int_config_battery_module(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_battery_module(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -61,7 +61,7 @@ e_int_config_battery_module(E_Comp *comp, const char *params __UNUSED__)
 
    snprintf(buf, sizeof(buf), "%s/e-module-battery.edj",
             e_module_dir_get(battery_config->module));
-   cfd = e_config_dialog_new(comp, _("Battery Monitor Settings"),
+   cfd = e_config_dialog_new(NULL, _("Battery Monitor Settings"),
                              "E", "_e_mod_battery_config_dialog",
                              buf, 0, v, NULL);
    battery_config->config_dialog = cfd;

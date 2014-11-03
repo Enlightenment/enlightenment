@@ -43,7 +43,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_paths(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_paths(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -56,7 +56,7 @@ e_int_config_paths(E_Comp *comp, const char *params __UNUSED__)
    v->basic.create_widgets    = _basic_create_widgets;
    v->basic.apply_cfdata      = _basic_apply_data;
    
-   cfd = e_config_dialog_new(comp, _("Search Path Settings"),
+   cfd = e_config_dialog_new(NULL, _("Search Path Settings"),
 			     "E", "advanced/search_directories",
 			     "preferences-directories", 0, v, NULL);
    return cfd;

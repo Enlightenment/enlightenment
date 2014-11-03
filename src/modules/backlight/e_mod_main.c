@@ -163,8 +163,7 @@ static void
 _backlight_settings_cb(void *d1, void *d2 __UNUSED__)
 {
    Instance *inst = d1;
-   e_configure_registry_call("screen/power_management",
-                             inst->gcc->gadcon->zone->comp, NULL);
+   e_configure_registry_call("screen/power_management", NULL, NULL);
    _backlight_popup_free(inst);
 }
 
@@ -239,8 +238,7 @@ _backlight_menu_cb_cfg(void *data, E_Menu *menu __UNUSED__, E_Menu_Item *mi __UN
    Instance *inst = data;
 
    _backlight_popup_free(inst);
-   e_configure_registry_call("screen/power_management",
-                             inst->gcc->gadcon->zone->comp, NULL);
+   e_configure_registry_call("screen/power_management", NULL, NULL);
 }
 
 static void

@@ -174,7 +174,7 @@ _dialog_field_add(E_Connman_Agent *agent, struct Connman_Field *field)
    char header[64];
    Evas *evas;
 
-   evas = agent->dialog->win->evas;
+   evas = evas_object_evas_get(agent->dialog->win);
    toolbook = agent->dialog->content_object;
    mandatory = !strcmp(field->requirement, "mandatory");
 
@@ -251,7 +251,7 @@ _dialog_new(E_Connman_Agent *agent)
    e_dialog_button_add(dialog, _("Cancel"), NULL, _dialog_cancel_cb, agent);
    agent->canceled = EINA_TRUE; /* if win is closed it works like cancel */
 
-   evas = dialog->win->evas;
+   evas = evas_object_evas_get(dialog->win);
 
    toolbook = e_widget_toolbook_add(evas, 48 * e_scale, 48 * e_scale);
    evas_object_show(toolbook);
@@ -272,7 +272,7 @@ _dialog_new(E_Connman_Agent *agent)
    e_object_data_set(E_OBJECT(dialog), agent);
 
    e_dialog_button_focus_num(dialog, 0);
-   e_win_centered_set(dialog->win, 1);
+   elm_win_center(dialog->win, 1, 1);
 
    return dialog;
 }

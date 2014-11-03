@@ -402,13 +402,13 @@ _il_home_win_new(E_Zone *zone)
    hwin->win->data = hwin;
    e_win_title_set(hwin->win, _("Illume Home"));
    e_win_name_class_set(hwin->win, "Illume-Home", "Illume-Home");
-   e_win_resize_callback_set(hwin->win, _il_home_win_cb_resize);
+   evas_object_resize_callback_set(hwin->win, _il_home_win_cb_resize);
    e_win_no_remember_set(hwin->win, EINA_TRUE);
 
    snprintf(buff, sizeof(buff), "%s/e-module-illume-home.edj", 
             il_home_cfg->mod_dir);
 
-   evas = e_win_evas_get(hwin->win);
+   evas = evas_object_evas_get(hwin->win);
 
    desk = e_desk_current_get(zone);
    if (desk)
@@ -446,8 +446,8 @@ _il_home_win_new(E_Zone *zone)
 
    hwin->cover = e_busycover_new(hwin->win);
 
-   e_win_move_resize(hwin->win, zone->x, zone->y, zone->w, (zone->h / 2));
-   e_win_show(hwin->win);
+   evas_object_geometry_set(hwin->win, zone->x, zone->y, zone->w, (zone->h / 2));
+   evas_object_show(hwin->win);
    e_client_zone_set(hwin->win->client, zone);
    if (hwin->win->evas_win) 
      e_drop_xdnd_register_set(hwin->win->evas_win, EINA_TRUE);

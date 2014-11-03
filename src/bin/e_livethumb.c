@@ -141,14 +141,12 @@ _e_smart_add(Evas_Object *obj)
    evas_object_smart_member_add(sd->evas_obj, obj);
    evas_object_image_size_set(sd->evas_obj, sd->vw, sd->vh);
    sd->evas = ecore_evas_get(sd->ee);
-   e_canvas_add(sd->ee);
 }
 
 static void
 _e_smart_del(Evas_Object *obj)
 {
    INTERNAL_ENTRY;
-   e_canvas_del(sd->ee);
    evas_object_del(sd->evas_obj);
    free(sd);
 }

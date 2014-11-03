@@ -50,7 +50,7 @@ _create_data(E_Config_Dialog *dialog)
 }
 
 E_Config_Dialog *
-e_connman_config_dialog_new(E_Comp *comp,
+e_connman_config_dialog_new(Evas_Object *parent,
                             E_Connman_Module_Context *ctxt)
 {
    E_Config_Dialog *dialog;
@@ -67,8 +67,7 @@ e_connman_config_dialog_new(E_Comp *comp,
    view->basic.create_widgets = _basic_create;
    view->basic.apply_cfdata = _basic_apply;
 
-   dialog = e_config_dialog_new
-       (comp, _("Connection Manager"),
+   dialog = e_config_dialog_new(NULL, _("Connection Manager"),
        _e_connman_Name, "e_connman_config_dialog_new",
        e_connman_theme_path(), 0, view, ctxt);
 

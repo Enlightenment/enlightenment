@@ -160,11 +160,11 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class __UNUSED__)
 }
 
 static void
-_cpufreq_cb_menu_configure(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_cpufreq_cb_menu_configure(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
    if (!cpufreq_config) return;
    if (cpufreq_config->config_dialog) return;
-   e_int_config_cpufreq_module(m->zone->comp, NULL);
+   e_int_config_cpufreq_module(NULL, NULL);
 }
 
 static void
@@ -507,7 +507,7 @@ _cpufreq_set_governor(const char *governor)
                                  "cpu frequency governor via the module's<br>"
                                  "setfreq utility."));
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-        e_win_centered_set(dia->win, 1);
+        elm_win_center(dia->win, 1, 1);
         e_dialog_show(dia);
      }
 }
@@ -534,7 +534,7 @@ _cpufreq_set_frequency(int frequency)
                                  "Kernel modules or features, or your CPU<br>"
                                  "simply does not support this feature."));
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-        e_win_centered_set(dia->win, 1);
+        elm_win_center(dia->win, 1, 1);
         e_dialog_show(dia);
         return;
      }
@@ -559,7 +559,7 @@ _cpufreq_set_frequency(int frequency)
                                  "cpu frequency setting via the module's<br>"
                                  "setfreq utility."));
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-        e_win_centered_set(dia->win, 1);
+        elm_win_center(dia->win, 1, 1);
         e_dialog_show(dia);
      }
 }
@@ -585,7 +585,7 @@ _cpufreq_set_pstate(int min, int max, int turbo)
                                  "cpu power state setting via the module's<br>"
                                  "setfreq utility."));
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-        e_win_centered_set(dia->win, 1);
+        elm_win_center(dia->win, 1, 1);
         e_dialog_show(dia);
      }
 }

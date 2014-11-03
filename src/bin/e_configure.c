@@ -5,7 +5,7 @@ static void      _e_configure_menu_add(void *data, E_Menu *m);
 static void      _e_configure_efreet_desktop_cleanup(void);
 static void      _e_configure_efreet_desktop_update(void);
 static Eina_Bool _e_configure_cb_efreet_desktop_cache_update(void *data, int type, void *event);
-static void      _e_configure_registry_item_full_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func)(E_Comp *c, const char *params), void (*generic_func)(E_Comp *c, const char *params), Efreet_Desktop *desktop, const char *params);
+static void      _e_configure_registry_item_full_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func)(Evas_Object *parent, const char *params), void (*generic_func)(Evas_Object *parent, const char *params), Efreet_Desktop *desktop, const char *params);
 static void      _e_configure_registry_item_free(E_Configure_It *eci);
 
 static void      _configure_job(void *data);
@@ -47,7 +47,7 @@ e_configure_init(void)
 }
 
 EAPI void
-e_configure_registry_call(const char *path, E_Comp *c, const char *params)
+e_configure_registry_call(const char *path, Evas_Object *parent, const char *params)
 {
    E_Configure_Cat *ecat;
    Eina_List *l;
@@ -58,7 +58,6 @@ e_configure_registry_call(const char *path, E_Comp *c, const char *params)
    cat = ecore_file_dir_get(path);
    if (!cat) return;
    item = ecore_file_file_get(path);
-   if (!c) c = e_comp_get(NULL);
    EINA_LIST_FOREACH(e_configure_registry, l, ecat)
      if (!strcmp(cat, ecat->cat))
        {
@@ -70,16 +69,16 @@ e_configure_registry_call(const char *path, E_Comp *c, const char *params)
               {
                  if (!params) params = eci->params;
 
-                 if (eci->func) eci->func(c, params);
+                 if (eci->func) eci->func(parent, params);
                  else if (eci->generic_func)
-                   eci->generic_func(c, params);
+                   eci->generic_func(parent, params);
                  else if (eci->desktop)
                    {
                       if (custom_desktop_exec.func)
                         custom_desktop_exec.func(custom_desktop_exec.data,
-                                                 c, params, eci->desktop);
+                                                 e_comp_get(NULL), params, eci->desktop);
                       else
-                        e_exec(e_util_zone_current_get(c->man),
+                        e_exec(e_zone_current_get(e_comp_get(NULL)),
                                eci->desktop, NULL, NULL, "config");
                    }
                  break;
@@ -90,19 +89,19 @@ e_configure_registry_call(const char *path, E_Comp *c, const char *params)
 }
 
 EAPI void
-e_configure_registry_item_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func)(E_Comp *c, const char *params))
+e_configure_registry_item_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func)(Evas_Object *parent, const char *params))
 {
    _e_configure_registry_item_full_add(path, pri, label, icon_file, icon, func, NULL, NULL, NULL);
 }
 
 EAPI void
-e_configure_registry_generic_item_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, void (*generic_func)(E_Comp *c, const char *params))
+e_configure_registry_generic_item_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, void (*generic_func)(Evas_Object *parent, const char *params))
 {
    _e_configure_registry_item_full_add(path, pri, label, icon_file, icon, NULL, generic_func, NULL, NULL);
 }
 
 EAPI void
-e_configure_registry_item_params_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func)(E_Comp *c, const char *params), const char *params)
+e_configure_registry_item_params_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func)(Evas_Object *parent, const char *params), const char *params)
 {
    _e_configure_registry_item_full_add(path, pri, label, icon_file, icon, func, NULL, NULL, params);
 }
@@ -272,9 +271,9 @@ e_configure_registry_exists(const char *path)
 }
 
 static void
-_e_configure_menu_module_item_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_configure_menu_module_item_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
-   e_int_config_modules(m->zone->comp, NULL);
+   e_int_config_modules(NULL, NULL);
 }
 
 static void
@@ -467,7 +466,7 @@ _e_configure_compare_pri_cb(E_Configure_It *eci, E_Configure_It *eci2)
 }
 
 static void
-_e_configure_registry_item_full_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func)(E_Comp *c, const char *params), void (*generic_func)(E_Comp *c, const char *params), Efreet_Desktop *desktop, const char *params)
+_e_configure_registry_item_full_add(const char *path, int pri, const char *label, const char *icon_file, const char *icon, E_Config_Dialog *(*func)(Evas_Object *parent, const char *params), void (*generic_func)(Evas_Object *parent, const char *params), Efreet_Desktop *desktop, const char *params)
 {
    Eina_List *l;
    char *cat;

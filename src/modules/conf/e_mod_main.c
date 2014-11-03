@@ -143,7 +143,7 @@ _cb_action_conf(void *data, Evas_Object *obj __UNUSED__, const char *emission __
 }
 
 static void
-_e_mod_run_cb(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_mod_run_cb(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
    Eina_List *l;
    E_Configure_Cat *ecat;
@@ -162,7 +162,7 @@ _e_mod_run_cb(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
                   if ((eci->pri >= 0) && (eci == data))
                     {
                        snprintf(buf, sizeof(buf), "%s/%s", ecat->cat, eci->item);
-                       e_configure_registry_call(buf, m->zone->comp, NULL);
+                       e_configure_registry_call(buf, NULL, NULL);
                     }
                }
           }
@@ -381,7 +381,7 @@ _e_mod_action_conf_cb(E_Object *obj, const char *params)
      }
    if (!zone) zone = e_util_zone_current_get(e_manager_current_get());
    if ((zone) && (params))
-     e_configure_registry_call(params, zone->comp, params);
+     e_configure_registry_call(params, NULL, params);
    else if (zone)
      e_configure_show(zone->comp, params);
 }

@@ -41,7 +41,7 @@ struct _E_Config_Dialog
    E_Config_Dialog_CFData_Type  view_type;
    E_Config_Dialog_View        *view;
    E_Config_Dialog_Data        *cfdata;
-   E_Comp                      *comp;
+   Evas_Object                 *parent;
    const char                  *title;
    const char                  *icon;
    const char                  *name;
@@ -55,7 +55,7 @@ struct _E_Config_Dialog
    unsigned char                cfg_changed_auto : 1;
 };
 
-EAPI E_Config_Dialog *e_config_dialog_new(E_Comp *c, const char *title, const char *name, const char *class, const char *icon, int icon_size, E_Config_Dialog_View *view, void *data);
+EAPI E_Config_Dialog *e_config_dialog_new(Evas_Object *parent, const char *title, const char *name, const char *class, const char *icon, int icon_size, E_Config_Dialog_View *view, void *data);
 EAPI int e_config_dialog_find(const char *name, const char *class);
 EAPI E_Config_Dialog *e_config_dialog_get(const char *name, const char *class);
 

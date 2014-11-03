@@ -221,8 +221,7 @@ _cb_config(void *data, void *data2 __UNUSED__)
    cfdata = data;
    e_user_dir_snprintf(path, sizeof(path), "applications/bar/%s/.order",
                        cfdata->dir);
-   e_configure_registry_call("internal/ibar_other",
-                             NULL, path);
+   e_configure_registry_call("internal/ibar_other", NULL, path);
 }
 
 static void

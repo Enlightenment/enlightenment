@@ -1046,7 +1046,7 @@ static void
 _ibar_cb_menu_icon_new(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 {
    if (!e_configure_registry_exists("applications/new_application")) return;
-   e_configure_registry_call("applications/new_application", e_comp_get(NULL), NULL);
+   e_configure_registry_call("applications/new_application", NULL, NULL);
 }
 
 static void
@@ -1058,8 +1058,7 @@ _ibar_cb_menu_icon_add(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSE
    b = data;
    e_user_dir_snprintf(path, sizeof(path), "applications/bar/%s/.order",
                        b->inst->ci->dir);
-   e_configure_registry_call("internal/ibar_other",
-                             NULL, path);
+   e_configure_registry_call("internal/ibar_other", NULL, path);
 }
 
 static void

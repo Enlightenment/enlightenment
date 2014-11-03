@@ -89,7 +89,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_edgebindings(E_Comp *comp, const char *params)
+e_int_config_edgebindings(Evas_Object *parent EINA_UNUSED, const char *params)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -103,7 +103,7 @@ e_int_config_edgebindings(E_Comp *comp, const char *params)
    v->basic.create_widgets = _basic_create_widgets;
    v->override_auto_apply = 1;
 
-   cfd = e_config_dialog_new(comp, _("Edge Bindings Settings"), "E",
+   cfd = e_config_dialog_new(NULL, _("Edge Bindings Settings"), "E",
                              "keyboard_and_mouse/edge_bindings",
                              "enlightenment/edges", 0, v, NULL);
    if ((params) && (params[0]))
@@ -868,7 +868,7 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
 
    if (cfdata->locals.dia != 0) return;
 
-   cfdata->locals.dia = e_dialog_normal_win_new(NULL, "E", "_edgebind_getedge_dialog");
+   cfdata->locals.dia = e_dialog_normal_win_new(cfdata->cfd->dia->win, "E", "_edgebind_getedge_dialog");
    if (!cfdata->locals.dia) return;
    e_dialog_title_set(cfdata->locals.dia, _("Edge Binding Sequence"));
    e_dialog_icon_set(cfdata->locals.dia, "enlightenment/edges", 48);
@@ -876,9 +876,9 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
    e_dialog_button_add(cfdata->locals.dia, _("Close"), NULL, _edge_grab_wnd_cb_close, cfdata);
    e_object_data_set(E_OBJECT(cfdata->locals.dia), cfdata);
    e_object_del_attach_func_set(E_OBJECT(cfdata->locals.dia), _dia_del);
-   e_win_centered_set(cfdata->locals.dia->win, 1);
+   elm_win_center(cfdata->locals.dia->win, 1, 1);
 
-   evas = e_win_evas_get(cfdata->locals.dia->win);
+   evas = evas_object_evas_get(cfdata->locals.dia->win);
 
    cfdata->gui.o_selector = o = edje_object_add(evas);
    e_theme_edje_object_set(o, "base/theme/modules/conf_edgebindings",
@@ -941,7 +941,6 @@ _edge_grab_wnd_show(E_Config_Dialog_Data *cfdata)
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN,
                                   _edge_grab_wnd_selected_edge_cb, cfdata);
    e_dialog_show(cfdata->locals.dia);
-   e_dialog_parent_set(cfdata->locals.dia, cfdata->cfd->dia->win);
 }
 
 static void

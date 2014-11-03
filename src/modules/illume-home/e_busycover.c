@@ -16,7 +16,7 @@ e_busycover_new(E_Win *win)
    snprintf(buff, sizeof(buff), "%s/e-module-illume-home.edj", 
             il_home_cfg->mod_dir);
 
-   cover->o_base = edje_object_add(e_win_evas_get(win));
+   cover->o_base = edje_object_add(evas_object_evas_get(win));
    if (!e_theme_edje_object_set(cover->o_base, 
                                 "base/theme/modules/illume-home", 
                                 "modules/illume-home/busycover")) 

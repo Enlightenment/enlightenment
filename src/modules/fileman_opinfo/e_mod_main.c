@@ -251,7 +251,8 @@ _opinfo_op_registry_window_jump_cb(void *data, Evas_Object *obj __UNUSED__, cons
 {
    int id = (long)data;
    E_Fm2_Op_Registry_Entry *ere;
-   E_Win *win;
+   Evas_Object *win;
+   E_Client *ec;
    
    if (!id) return;
    ere = e_fm2_op_registry_entry_get(id);
@@ -261,23 +262,13 @@ _opinfo_op_registry_window_jump_cb(void *data, Evas_Object *obj __UNUSED__, cons
    win = (ere->needs_attention && ere->dialog) ? ere->dialog->win
                                                : e_win_evas_object_win_get(ere->e_fm);
    if (!win) return;
-   
-   if (win->client)
-     {
-        if (win->client->iconic)
-           e_client_uniconify(win->client);
-        if (win->client->shaded)
-           e_client_unshade(win->client, win->client->shade_dir);
-     }
+
+   ec = e_win_client_get(win);
+   if (ec)
+     e_client_activate(ec, 1);
    else
-     e_win_show(win);
-   e_win_raise(win);
-   if (!win->client) return;
-   e_desk_show(win->client->desk);
-   e_client_focus_set_with_pointer(win->client);
-   
-   if (ere->needs_attention && e_config->pointer_slide)
-      e_client_pointer_warp_to_center(win->client);
+     evas_object_show(win);
+   elm_win_raise(win);
 }
 
 static Eina_Bool

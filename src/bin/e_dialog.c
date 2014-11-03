@@ -3,8 +3,7 @@
 /* local subsystem functions */
 static void _e_dialog_free(E_Dialog *dia);
 static void _e_dialog_del_func_cb(void *data, E_Dialog *dia);
-static void _e_dialog_cb_delete(E_Win *win);
-static void _e_dialog_cb_resize(E_Win *win);
+static void _e_dialog_cb_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void _e_dialog_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event);
 static void _e_dialog_cb_wid_on_focus(void *data, Evas_Object *obj);
 
@@ -13,47 +12,50 @@ static void _e_dialog_cb_wid_on_focus(void *data, Evas_Object *obj);
 /* externally accessible functions */
 
 static E_Dialog *
-_e_dialog_internal_new(E_Comp *c, const char *name, const char *class, int dialog)
+_e_dialog_internal_new(Evas_Object *parent, const char *name, const char *class, int dialog)
 {
    E_Dialog *dia;
    Evas_Object *o;
    Evas_Modifier_Mask mask;
    Eina_Bool kg;
+   Evas *e;
 
-   if (!c) c = e_util_comp_current_get();
    dia = E_OBJECT_ALLOC(E_Dialog, E_DIALOG_TYPE, _e_dialog_free);
    if (!dia) return NULL;
-   dia->win = e_win_new(c);
+   if (dialog)
+     dia->win = elm_win_add(parent, name, ELM_WIN_DIALOG_BASIC);
+   else
+     dia->win = elm_win_add(parent, name, ELM_WIN_BASIC);
    if (!dia->win)
      {
         free(dia);
         return NULL;
      }
-   e_win_delete_callback_set(dia->win, _e_dialog_cb_delete);
-   e_win_resize_callback_set(dia->win, _e_dialog_cb_resize);
-   dia->win->data = dia;
-   if (dialog) e_win_dialog_set(dia->win, 1);
-   e_win_name_class_set(dia->win, name, class);
-   o = edje_object_add(e_win_evas_get(dia->win));
-   dia->bg_object = o;
+   elm_win_modal_set(dia->win, !!parent);
+   e = evas_object_evas_get(dia->win);
+   evas_object_event_callback_add(dia->win, EVAS_CALLBACK_DEL, _e_dialog_cb_delete, dia);
+   ecore_evas_name_class_set(ecore_evas_ecore_evas_get(e), name, class);
+   dia->bg_object = o = edje_object_add(evas_object_evas_get(dia->win));
+   EXPAND(o);
+   FILL(o);
+   elm_win_resize_object_add(dia->win, o);
    e_theme_edje_object_set(o, "base/theme/dialog",
                            "e/widgets/dialog/main");
-   evas_object_move(o, 0, 0);
    evas_object_show(o);
 
-   o = e_widget_list_add(e_win_evas_get(dia->win), 1, 1);
+   o = e_widget_list_add(evas_object_evas_get(dia->win), 1, 1);
    e_widget_on_focus_hook_set(o, _e_dialog_cb_wid_on_focus, dia);
    dia->box_object = o;
    edje_object_part_swallow(dia->bg_object, "e.swallow.buttons", o);
    e_dialog_resizable_set(dia, 1);
 
-   o = evas_object_rectangle_add(e_win_evas_get(dia->win));
+   o = evas_object_rectangle_add(e);
    dia->event_object = o;
    mask = 0;
    kg = evas_object_key_grab(o, "Tab", mask, ~mask, 0);
    if (!kg)
      fprintf(stderr, "ERROR: unable to redirect \"Tab\" key events to object %p.\n", o);
-   mask = evas_key_modifier_mask_get(e_win_evas_get(dia->win), "Shift");
+   mask = evas_key_modifier_mask_get(evas_object_evas_get(dia->win), "Shift");
    kg = evas_object_key_grab(o, "Tab", mask, ~mask, 0);
    if (!kg)
      fprintf(stderr, "ERROR: unable to redirect \"Tab\" key events to object %p.\n", o);
@@ -76,15 +78,15 @@ _e_dialog_internal_new(E_Comp *c, const char *name, const char *class, int dialo
 }
 
 EAPI E_Dialog *
-e_dialog_new(E_Comp *c, const char *name, const char *class)
+e_dialog_new(Evas_Object *parent, const char *name, const char *class)
 {
-   return _e_dialog_internal_new(c, name, class, 1);
+   return _e_dialog_internal_new(parent, name, class, 1);
 }
 
 EAPI E_Dialog *
-e_dialog_normal_win_new(E_Comp *c, const char *name, const char *class)
+e_dialog_normal_win_new(Evas_Object *parent, const char *name, const char *class)
 {
-   return _e_dialog_internal_new(c, name, class, 0);
+   return _e_dialog_internal_new(parent, name, class, 0);
 }
 
 EAPI void
@@ -93,7 +95,7 @@ e_dialog_button_add(E_Dialog *dia, const char *label, const char *icon, E_Dialog
    Evas_Object *o;
 
    if (!func) func = _e_dialog_del_func_cb;
-   o = e_widget_button_add(e_win_evas_get(dia->win), label, icon, (void (*)(void *, void *))func, data, dia);
+   o = e_widget_button_add(evas_object_evas_get(dia->win), label, icon, (void (*)(void *, void *))func, data, dia);
    e_widget_list_object_append(dia->box_object, o, 1, 0, 0.5);
    dia->buttons = eina_list_append(dia->buttons, o);
 }
@@ -132,7 +134,7 @@ e_dialog_button_disable_num_get(E_Dialog *dia, int button)
 EAPI void
 e_dialog_title_set(E_Dialog *dia, const char *title)
 {
-   e_win_title_set(dia->win, title);
+   elm_win_title_set(dia->win, title);
 }
 
 EAPI void
@@ -142,7 +144,7 @@ e_dialog_text_set(E_Dialog *dia, const char *text)
      {
         Evas_Object *o;
 
-        o = edje_object_add(e_win_evas_get(dia->win));
+        o = edje_object_add(evas_object_evas_get(dia->win));
         dia->text_object = o;
         e_theme_edje_object_set(o, "base/theme/dialog",
                                 "e/widgets/dialog/text");
@@ -170,7 +172,7 @@ e_dialog_icon_set(E_Dialog *dia, const char *icon, Evas_Coord size)
      {
         if (!dia->icon_object)
           {
-             dia->icon_object = e_icon_add(e_win_evas_get(dia->win));
+             dia->icon_object = e_icon_add(evas_object_evas_get(dia->win));
              edje_object_part_swallow(dia->bg_object, "e.swallow.icon", dia->icon_object);
              evas_object_show(dia->icon_object);
           }
@@ -188,7 +190,7 @@ e_dialog_border_icon_set(E_Dialog *dia, const char *icon)
 {
    E_Client *ec;
 
-   ec = dia->win->client;
+   ec = e_win_client_get(dia->win);
    if (ec)
      eina_stringshare_replace(&ec->internal_icon, icon);
 }
@@ -202,8 +204,8 @@ e_dialog_content_set(E_Dialog *dia, Evas_Object *obj, Evas_Coord minw, Evas_Coor
    evas_object_size_hint_min_set(obj, minw, minh);
    edje_object_part_swallow(dia->bg_object, "e.swallow.content", obj);
    edje_object_size_min_calc(dia->bg_object, &mw, &mh);
-   e_win_resize(dia->win, mw, mh);
-   e_win_size_min_set(dia->win, mw, mh);
+   evas_object_resize(dia->win, mw, mh);
+   evas_object_size_hint_min_set(dia->bg_object, mw, mh);
    dia->min_w = mw;
    dia->min_h = mh;
    evas_object_show(obj);
@@ -217,30 +219,19 @@ e_dialog_resizable_set(E_Dialog *dia, int resizable)
      {
         if (resizable)
           {
-             e_win_size_max_set(dia->win, 99999, 99999);
+             evas_object_size_hint_max_set(dia->bg_object, 99999, 99999);
+             evas_object_size_hint_weight_set(dia->bg_object, 1, 1);
              e_util_win_auto_resize_fill(dia->win);
              edje_object_signal_emit(dia->bg_object, "e,state,resizable", "e");
           }
         else
           {
-             e_win_resize(dia->win, dia->min_w, dia->min_h);
-             e_win_size_max_set(dia->win, dia->min_w, dia->min_h);
+             evas_object_resize(dia->win, dia->min_w, dia->min_h);
+             evas_object_size_hint_weight_set(dia->bg_object, 0, 0);
+             evas_object_size_hint_max_set(dia->bg_object, dia->min_w, dia->min_h);
              edje_object_signal_emit(dia->bg_object, "e,state,no_resizable", "e");
           }
      }
-}
-
-EAPI void
-e_dialog_parent_set(E_Dialog *dia, E_Win *win)
-{
-   if (!dia) return;
-#ifndef HAVE_WAYLAND_ONLY
-   if (win)
-     ecore_x_icccm_transient_for_set(dia->win->evas_win, win->evas_win);
-   else
-     ecore_x_icccm_transient_for_unset(dia->win->evas_win);
-#endif
-   ecore_evas_modal_set(dia->win->ecore_evas, !!win);
 }
 
 EAPI void
@@ -263,17 +254,21 @@ e_dialog_show(E_Dialog *dia)
    edje_object_part_swallow(dia->bg_object, "e.swallow.buttons", o);
 
    edje_object_size_min_calc(dia->bg_object, &mw, &mh);
-   e_win_resize(dia->win, mw, mh);
-   e_win_size_min_set(dia->win, mw, mh);
+   evas_object_size_hint_min_set(dia->bg_object, mw, mh);
+   evas_object_resize(dia->win, mw, mh);
    dia->min_w = mw;
    dia->min_h = mh;
-   if (!dia->resizable) e_win_size_max_set(dia->win, mw, mh);
+   if (!dia->resizable)
+     {
+        evas_object_size_hint_weight_set(dia->bg_object, 0, 0);
+        evas_object_size_hint_max_set(dia->bg_object, mw, mh);
+     }
    else
      {
-        e_win_size_max_set(dia->win, 99999, 99999);
+        evas_object_size_hint_max_set(dia->win, 99999, 99999);
         e_util_win_auto_resize_fill(dia->win);
      }
-   e_win_show(dia->win);
+   evas_object_show(dia->win);
 
    if (!e_widget_focus_get(dia->box_object))
      e_widget_focus_set(dia->box_object, 1);
@@ -290,7 +285,7 @@ _e_dialog_free(E_Dialog *dia)
    if (dia->bg_object) evas_object_del(dia->bg_object);
    if (dia->content_object) evas_object_del(dia->content_object);
    if (dia->event_object) evas_object_del(dia->event_object);
-   e_object_del(E_OBJECT(dia->win));
+   evas_object_del(dia->win);
    free(dia);
 }
 
@@ -310,7 +305,7 @@ _e_dialog_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
    dia = data;
    if (!strcmp(ev->key, "Tab"))
      {
-        if (evas_key_modifier_is_set(evas_key_modifier_get(e_win_evas_get(dia->win)), "Shift"))
+        if (evas_key_modifier_is_set(evas_key_modifier_get(evas_object_evas_get(dia->win)), "Shift"))
           {
              if (e_widget_focus_get(dia->box_object))
                {
@@ -371,21 +366,9 @@ _e_dialog_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 }
 
 static void
-_e_dialog_cb_delete(E_Win *win)
+_e_dialog_cb_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Dialog *dia;
-
-   dia = win->data;
-   e_object_del(E_OBJECT(dia));
-}
-
-static void
-_e_dialog_cb_resize(E_Win *win)
-{
-   E_Dialog *dia;
-
-   dia = win->data;
-   evas_object_resize(dia->bg_object, dia->win->w, dia->win->h);
+   e_object_del(E_OBJECT(data));
 }
 
 static void

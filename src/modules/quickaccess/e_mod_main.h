@@ -93,7 +93,7 @@ void *e_qa_config_dd_free(void);
 void e_qa_config_entry_free(E_Quick_Access_Entry *entry);
 void e_qa_config_entry_add(E_Quick_Access_Entry *entry);
 void e_qa_config_entry_transient_convert(E_Quick_Access_Entry *entry);
-E_Config_Dialog *e_int_config_qa_module(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_qa_module(Evas_Object *parent, const char *params __UNUSED__);
 
 char *e_qa_db_class_lookup(const char *class);
 

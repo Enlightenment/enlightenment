@@ -481,11 +481,11 @@ e_widget_disabled_get(Evas_Object *obj)
 EAPI E_Pointer *
 e_widget_pointer_get(Evas_Object *obj)
 {
-   E_Win *win = NULL;
+   Evas_Object *win = NULL;
 
    API_ENTRY return NULL;
    win = e_win_evas_object_win_get(obj);
-   if (win) return win->pointer;
+   if (win) return e_win_pointer_get(win);
    return NULL;
 }
 

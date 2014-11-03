@@ -53,7 +53,7 @@ static Ecore_Window grab_win = 0;
 static Eina_List *grab_hdls = NULL;
 
 E_Config_Dialog *
-e_int_config_acpibindings(E_Comp *comp,
+e_int_config_acpibindings(Evas_Object *parent EINA_UNUSED,
                           const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
@@ -68,7 +68,7 @@ e_int_config_acpibindings(E_Comp *comp,
    v->basic.apply_cfdata = _basic_apply;
    v->basic.create_widgets = _basic_create;
 
-   cfd = e_config_dialog_new(comp, _("ACPI Bindings Settings"), "E",
+   cfd = e_config_dialog_new(NULL, _("ACPI Bindings Settings"), "E",
                              "advanced/acpi_bindings",
                              "preferences-system-power-management",
                              0, v, NULL);
@@ -514,7 +514,7 @@ _cb_add_binding(void *data,
 
    if (grab_win != 0) return;
    if (!(cfdata = data)) return;
-   grab_dlg = e_dialog_new(NULL, "E",
+   grab_dlg = e_dialog_new(cfdata->cfd->dia->win, "E",
                            "_acpibind_getbind_dialog");
    if (!grab_dlg) return;
    e_dialog_title_set(grab_dlg, _("ACPI Binding"));
@@ -522,8 +522,8 @@ _cb_add_binding(void *data,
    e_dialog_text_set(grab_dlg,
                      _("Please trigger the ACPI event you wish to bind to, "
                        "<br><br>or <hilight>Escape</hilight> to abort."));
-   e_win_centered_set(grab_dlg->win, EINA_TRUE);
-   e_win_borderless_set(grab_dlg->win, EINA_TRUE);
+   elm_win_center(grab_dlg->win, 1, 1);
+   elm_win_borderless_set(grab_dlg->win, EINA_TRUE);
 
 #ifndef HAVE_WAYLAND_ONLY
    E_Manager *man;
@@ -547,10 +547,6 @@ _cb_add_binding(void *data,
    e_acpi_events_freeze();
 
    e_dialog_show(grab_dlg);
-#ifndef HAVE_WAYLAND_ONLY
-   ecore_x_icccm_transient_for_set(grab_dlg->win->evas_win,
-                                   cfdata->cfd->dia->win->evas_win);
-#endif
 }
 
 static void

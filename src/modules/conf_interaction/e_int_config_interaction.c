@@ -17,7 +17,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_interaction(E_Comp *comp, const char *params __UNUSED__) 
+e_int_config_interaction(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__) 
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -33,7 +33,7 @@ e_int_config_interaction(E_Comp *comp, const char *params __UNUSED__)
    v->basic.check_changed = _basic_check_changed;
    v->override_auto_apply = 1;
 
-   cfd = e_config_dialog_new(comp, _("Interaction Settings"),
+   cfd = e_config_dialog_new(NULL, _("Interaction Settings"),
 			     "E", "keyboard_and_mouse/interaction",
 			     "preferences-interaction", 0, v, NULL);
    return cfd;

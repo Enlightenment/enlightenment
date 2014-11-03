@@ -110,7 +110,7 @@ _TEST(void *d __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
    Evas *e;
 
    dia = e_dialog_normal_win_new(m->zone->comp, "E", "_widget_playground_dialog");
-   e = e_win_evas_get(dia->win);
+   e = evas_object_evas_get(dia->win);
    o_list = e_widget_ilist_add(e, 32, 32, NULL);
    e_dialog_button_add(dia, "Add", NULL, _TEST_ADD, o_list);
    e_dialog_button_add(dia, "Del", NULL, _TEST_DEL, o_list);
@@ -1074,9 +1074,9 @@ _e_int_menus_desktops_free_hook(void *obj)
 }
 
 static void
-_e_int_menus_desk_item_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_int_menus_desk_item_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
-   e_configure_registry_call("screen/virtual_desktops", m->zone->comp, NULL);
+   e_configure_registry_call("screen/virtual_desktops", NULL, NULL);
 }
 
 static void
@@ -1112,9 +1112,9 @@ _e_int_menus_virtuals_icon_cb(void *data, E_Menu *m, E_Menu_Item *mi)
 }
 
 static void
-_e_e_int_menus_conf_comp_cb(void *data EINA_UNUSED, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
+_e_e_int_menus_conf_comp_cb(void *data EINA_UNUSED, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSED)
 {
-   e_int_config_comp(e_comp_get(m), NULL);
+   e_int_config_comp(NULL, NULL);
 }
 
 static void
@@ -1840,9 +1840,9 @@ _e_int_menus_shelves_add_cb(void *data __UNUSED__, E_Menu *m __UNUSED__, E_Menu_
 }
 
 static void
-_e_int_menus_shelves_del_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_int_menus_shelves_del_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
-   e_configure_registry_call("extensions/shelves", m->zone->comp, NULL);
+   e_configure_registry_call("extensions/shelves", NULL, NULL);
 }
 
 static void

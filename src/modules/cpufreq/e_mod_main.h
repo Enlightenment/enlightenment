@@ -60,7 +60,7 @@ EAPI void *e_modapi_init     (E_Module *m);
 EAPI int   e_modapi_shutdown (E_Module *m);
 EAPI int   e_modapi_save     (E_Module *m);
 
-E_Config_Dialog *e_int_config_cpufreq_module(E_Comp *comp, const char *params);
+E_Config_Dialog *e_int_config_cpufreq_module(Evas_Object *parent, const char *params);
 void _cpufreq_poll_interval_update(void);
 void _cpufreq_set_governor(const char *governor);
 void _cpufreq_set_pstate(int min, int max, int turbo);

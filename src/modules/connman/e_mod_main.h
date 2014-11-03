@@ -57,7 +57,7 @@ EAPI int e_modapi_save(E_Module *m);
 
 void econnman_popup_del(E_Connman_Instance *inst);
 const char *e_connman_theme_path(void);
-E_Config_Dialog *e_connman_config_dialog_new(E_Comp *comp,
+E_Config_Dialog *e_connman_config_dialog_new(Evas_Object *parent,
                                              E_Connman_Module_Context *ctxt);
 
 E_Connman_Agent *econnman_agent_new(Eldbus_Connection *eldbus_conn) EINA_ARG_NONNULL(1);

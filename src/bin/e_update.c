@@ -88,7 +88,7 @@ _new_version(const char *ver)
               "or update your system packages<br>"
               "to get a new version."), ver);
    e_dialog_text_set(dialog, text);
-   e_win_centered_set(dialog->win, 1);
+   elm_win_center(dialog->win, 1, 1);
    e_dialog_show(dialog);
 }
 

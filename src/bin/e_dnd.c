@@ -673,7 +673,15 @@ _e_drag_coords_update(const E_Drop_Handler *h, int *dx, int *dy)
 
    *dx = 0;
    *dy = 0;
-   if (h->obj)
+   if (e_obj_is_win(h->obj))
+     {
+        E_Client *ec;
+
+        ec = e_win_client_get((void*)h->obj);
+        px = ec->x;
+        py = ec->y;
+     }
+   else if (h->obj)
      {
         switch (h->obj->type)
           {
@@ -682,21 +690,19 @@ _e_drag_coords_update(const E_Drop_Handler *h, int *dx, int *dy)
            case E_GADCON_TYPE:
              gc = (E_Gadcon *)h->obj;
              if (!gc->toolbar) return;
-             px = gc->toolbar->fwin->x;
-             py = gc->toolbar->fwin->y;
+             evas_object_geometry_get(gc->toolbar->fwin, &px, &py, NULL, NULL);
              break;
 
            case E_GADCON_CLIENT_TYPE:
              gc = ((E_Gadcon_Client *)(h->obj))->gadcon;
              e_gadcon_canvas_zone_geometry_get(gc, &px, &py, NULL, NULL);
              if (!gc->toolbar) break;
-             px += gc->toolbar->fwin->x;
-             py += gc->toolbar->fwin->y;
-             break;
+             {
+                int x, y;
 
-           case E_WIN_TYPE:
-             px = ((E_Win *)(h->obj))->client->x;
-             py = ((E_Win *)(h->obj))->client->y;
+                evas_object_geometry_get(gc->toolbar->fwin, &x, &y, NULL, NULL);
+                px += x, py += y;
+             }
              break;
 
            case E_ZONE_TYPE:
@@ -725,6 +731,8 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
 {
    Ecore_X_Window hwin = 0;
 
+   if (e_obj_is_win(h->obj))
+     return elm_win_window_id_get((Evas_Object*)h->obj);
    if (h->obj)
      {
         E_Gadcon *gc = NULL;
@@ -738,16 +746,12 @@ _e_drag_win_get(const E_Drop_Handler *h, int xdnd)
            case E_GADCON_TYPE:
              if (!gc) gc = (E_Gadcon *)h->obj;
 
-             if (gc->toolbar) hwin = e_client_util_pwin_get(gc->toolbar->fwin->client); //double check for xdnd...
+             if (gc->toolbar) hwin = e_client_util_pwin_get(e_win_client_get(gc->toolbar->fwin)); //double check for xdnd...
              else
                {
                   if (xdnd) hwin = e_gadcon_xdnd_window_get(gc);
                   else hwin = e_gadcon_dnd_window_get(gc);
                }
-             break;
-
-           case E_WIN_TYPE:
-             hwin = ((E_Win *)(h->obj))->evas_win;
              break;
 
            case E_CLIENT_TYPE:
@@ -780,6 +784,7 @@ _e_drag_win_show(E_Drop_Handler *h)
 
    if (h->obj)
      {
+        if (e_obj_is_win(h->obj)) return;
         switch (h->obj->type)
           {
            case E_GADCON_TYPE:
@@ -806,6 +811,7 @@ _e_drag_win_hide(E_Drop_Handler *h)
 
    if (h->obj)
      {
+        if (e_obj_is_win(h->obj)) return;
         switch (h->obj->type)
           {
            case E_GADCON_TYPE:
@@ -833,6 +839,8 @@ _e_dnd_object_layer_get(E_Drop_Handler *h)
 
    if (h->base) return evas_object_layer_get(h->base);
    if (!obj) return 0;
+   if (e_obj_is_win(obj))
+     obj = (E_Object*)e_win_client_get((Evas_Object*)obj);
    switch (obj->type)
      {
       case E_GADCON_CLIENT_TYPE:

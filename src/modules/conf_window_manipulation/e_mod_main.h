@@ -1,14 +1,14 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-E_Config_Dialog *e_int_config_window_geometry(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_window_process(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_window_geometry(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_window_process(Evas_Object *parent, const char *params __UNUSED__);
 
-E_Config_Dialog *e_int_config_window_display(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_window_display(Evas_Object *parent, const char *params __UNUSED__);
 
-E_Config_Dialog *e_int_config_focus(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_focus(Evas_Object *parent, const char *params __UNUSED__);
 
-E_Config_Dialog *e_int_config_clientlist(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_clientlist(Evas_Object *parent, const char *params __UNUSED__);
 
 /**
  * @addtogroup Optional_Conf

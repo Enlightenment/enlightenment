@@ -125,7 +125,7 @@ il_kbd_config_show(E_Comp *comp, const char *params __UNUSED__)
    v->normal_win = 1;
    v->scroll = 1;
 
-   cfd = e_config_dialog_new(comp, _("Keyboard Settings"), "E", 
+   cfd = e_config_dialog_new(NULL, _("Keyboard Settings"), "E", 
                              "_config_illume_keyboard_settings", 
                              "enlightenment/keyboard_settings", 0, v, NULL);
    il_kbd_cfg->cfd = cfd;

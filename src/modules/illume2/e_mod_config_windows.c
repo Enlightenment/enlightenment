@@ -34,7 +34,7 @@ e_mod_illume_config_windows_show(E_Comp *comp, const char *params __UNUSED__)
    v->basic_only = 1;
    v->normal_win = 1;
    v->scroll = 1;
-   cfd = e_config_dialog_new(comp, _("Window Settings"), "E", 
+   cfd = e_config_dialog_new(NULL, _("Window Settings"), "E", 
                              "illume/windows", 
                              "preferences-system-windows", 0, v, NULL);
    if (!cfd) return;

@@ -91,18 +91,19 @@ _reject(void *data EINA_UNUSED, E_Dialog *dialog)
 }
 
 static void
+_close(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   E_Dialog *dialog = data;
+   _reject(NULL, dialog);
+}
+
+static void
 _ok(void *data EINA_UNUSED, E_Dialog *dialog)
 {
    const Eldbus_Message *msg = dialog->data;
    Eldbus_Message *reply = eldbus_message_method_return_new(msg);
+   evas_object_event_callback_del_full(dialog->win, EVAS_CALLBACK_DEL, _close, dialog);
    _reply_and_del_dialog(reply, dialog);
-}
-
-static void
-_close(E_Win *win)
-{
-   E_Dialog *dialog = win->data;
-   _reject(NULL, dialog);
 }
 
 static void
@@ -111,7 +112,7 @@ _ask(const char *title, const char *ask_msg, const char *ok_label,
 {
    E_Dialog *dialog = _create_dialog(title, ask_msg, "dialog-ask", "ask");
    dialog->data = eldbus_message;
-   e_win_delete_callback_set(dialog->win, _close);
+   evas_object_event_callback_add(dialog->win, EVAS_CALLBACK_DEL, _close, dialog);
    e_dialog_button_add(dialog, ok_label, NULL, _ok, NULL);
    e_dialog_button_add(dialog, _("Reject"), NULL, _reject, NULL);
    e_dialog_show(dialog);

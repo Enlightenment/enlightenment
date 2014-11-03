@@ -616,16 +616,16 @@ _signal_add_show(E_Config_Dialog_Data *cfdata)
 
    if (cfdata->locals.dia) return;
 
-   cfdata->locals.dia = e_dialog_new(NULL, "E", "_signalbind_new_dialog");
+   cfdata->locals.dia = e_dialog_new(cfdata->cfd->dia->win, "E", "_signalbind_new_dialog");
    e_dialog_title_set(cfdata->locals.dia, _("Add Signal Binding"));
    e_dialog_icon_set(cfdata->locals.dia, "enlightenment/signals", 48);
    e_dialog_button_add(cfdata->locals.dia, _("OK"), NULL, _signal_add_cb_ok, cfdata);
    e_dialog_button_add(cfdata->locals.dia, _("Cancel"), NULL, _signal_add_cb_cancel, cfdata);
    e_object_del_attach_func_set(E_OBJECT(cfdata->locals.dia), _signal_add_del);
    cfdata->locals.dia->data = cfdata;
-   e_win_centered_set(cfdata->locals.dia->win, 1);
+   elm_win_center(cfdata->locals.dia->win, 1, 1);
 
-   evas = e_win_evas_get(cfdata->locals.dia->win);
+   evas = evas_object_evas_get(cfdata->locals.dia->win);
    obg = e_widget_list_add(evas, 1, 0);
 
    ol = e_widget_framelist_add(evas, _("Source:"), 0);
@@ -643,7 +643,6 @@ _signal_add_show(E_Config_Dialog_Data *cfdata)
 
    e_dialog_show(cfdata->locals.dia);
    e_widget_focus_set(entry, 1);
-   e_dialog_parent_set(cfdata->locals.dia, cfdata->cfd->dia->win);
 }
 
 static void
@@ -824,7 +823,7 @@ _basic_create_widgets(E_Config_Dialog *cfd EINA_UNUSED, Evas *evas, E_Config_Dia
 
 
 E_Config_Dialog *
-e_int_config_signalbindings(E_Comp *comp, const char *params)
+e_int_config_signalbindings(Evas_Object *parent EINA_UNUSED, const char *params)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -838,7 +837,7 @@ e_int_config_signalbindings(E_Comp *comp, const char *params)
    v->basic.create_widgets = _basic_create_widgets;
    v->override_auto_apply = 1;
 
-   cfd = e_config_dialog_new(comp, _("Signal Bindings Settings"), "E",
+   cfd = e_config_dialog_new(NULL, _("Signal Bindings Settings"), "E",
                              "keyboard_and_mouse/signal_bindings",
                              "enlightenment/signals", 0, v, NULL);
    if ((params) && (params[0]))

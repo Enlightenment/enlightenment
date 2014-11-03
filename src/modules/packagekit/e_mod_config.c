@@ -118,6 +118,6 @@ packagekit_config_show(E_PackageKit_Module_Context *ctxt)
    v->basic.apply_cfdata = _cfg_data_apply;
    v->basic.check_changed = _cfg_check_changed;
 
-   e_config_dialog_new(e_util_comp_current_get(), _("System Updates Settings"),
+   e_config_dialog_new(NULL, _("System Updates Settings"),
                        "E", "_e_mod_packagekit_dialog", NULL, 0, v, ctxt);
 }

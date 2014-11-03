@@ -75,9 +75,9 @@ _ebluez4_search_dialog_del(Instance *inst)
 }
 
 static void
-_ebluez4_cb_search_dialog_del(E_Win *win)
+_ebluez4_cb_search_dialog_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   E_Dialog *dialog = win->data;
+   E_Dialog *dialog = data;
    _ebluez4_search_dialog_del(dialog->data);
 }
 
@@ -114,9 +114,9 @@ _ebluez4_cb_search(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSE
 
    dialog = e_dialog_new(NULL, "Search Dialog", "search");
    e_dialog_title_set(dialog, _("Searching for Devices..."));
-   e_win_delete_callback_set(dialog->win, _ebluez4_cb_search_dialog_del);
+   evas_object_event_callback_add(dialog->win, EVAS_CALLBACK_DEL, _ebluez4_cb_search_dialog_del, dialog);
 
-   evas = e_win_evas_get(dialog->win);
+   evas = evas_object_evas_get(dialog->win);
 
    inst->found_list = e_widget_ilist_add(evas, 100, 0, NULL);
 
@@ -132,9 +132,9 @@ _ebluez4_cb_search(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UNUSE
 }
 
 static void
-_ebluez4_cb_adap_settings_dialog_del(E_Win *win)
+_ebluez4_cb_adap_settings_dialog_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   E_Dialog *dialog = win->data;
+   E_Dialog *dialog = data;
    ebluez4_adapter_settings_del(dialog);
 }
 
@@ -181,9 +181,9 @@ _ebluez4_cb_adap_settings(void *data)
 
    dialog = e_dialog_new(NULL, "Adapter Dialog", "adapter");
    e_dialog_title_set(dialog, _("Adapter Settings"));
-   e_win_delete_callback_set(dialog->win, _ebluez4_cb_adap_settings_dialog_del);
+   evas_object_event_callback_add(dialog->win, EVAS_CALLBACK_DEL, _ebluez4_cb_adap_settings_dialog_del, dialog);
 
-   evas = e_win_evas_get(dialog->win);
+   evas = evas_object_evas_get(dialog->win);
 
    list = e_widget_list_add(evas, 0, 0);
 
@@ -233,9 +233,9 @@ _ebluez4_adap_list_dialog_del(Instance *inst)
 }
 
 static void
-_ebluez4_cb_adap_list_dialog_del(E_Win *win)
+_ebluez4_cb_adap_list_dialog_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
-   E_Dialog *dialog = win->data;
+   E_Dialog *dialog = data;
    _ebluez4_adap_list_dialog_del(dialog->data);
 }
 
@@ -251,9 +251,9 @@ _ebluez4_cb_adap_list(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi EINA_UN
 
    dialog = e_dialog_new(NULL, "Adapters Dialog", "adapters");
    e_dialog_title_set(dialog, _("Adapters Available"));
-   e_win_delete_callback_set(dialog->win, _ebluez4_cb_adap_list_dialog_del);
+   evas_object_event_callback_add(dialog->win, EVAS_CALLBACK_DEL, _ebluez4_cb_adap_list_dialog_del, dialog);
 
-   evas = e_win_evas_get(dialog->win);
+   evas = evas_object_evas_get(dialog->win);
 
    inst->adap_list = e_widget_ilist_add(evas, 0, 0, NULL);
 

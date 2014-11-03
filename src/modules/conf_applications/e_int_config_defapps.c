@@ -57,7 +57,7 @@ static int          _cb_desks_sort(const void *data1, const void *data2);
 static void         _fill_apps_list(E_Config_Dialog_Data *cfdata, Evas_Object *il, const char **desktop, int general);
 
 E_Config_Dialog *
-e_int_config_defapps(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_defapps(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -71,7 +71,7 @@ e_int_config_defapps(E_Comp *comp, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create;
    v->basic.apply_cfdata = _basic_apply;
 
-   cfd = e_config_dialog_new(comp, _("Default Applications"),
+   cfd = e_config_dialog_new(NULL, _("Default Applications"),
                              "E", "applications/default_applications",
                              "preferences-desktop-default-applications", 0, v, NULL);
    return cfd;
@@ -359,7 +359,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
 
    e_widget_toolbook_page_show(otb, 0);
 
-   e_win_centered_set(cfd->dia->win, 1);
+   elm_win_center(cfd->dia->win, 1, 1);
    return otb;
 }
 

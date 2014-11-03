@@ -23,7 +23,7 @@ static void         _btn_cb_del(void *data, void *data2);
 static void         _widget_list_selection_changed(void *data, Evas_Object *obj __UNUSED__);
 
 E_Config_Dialog *
-e_int_config_apps_personal(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_apps_personal(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -36,7 +36,7 @@ e_int_config_apps_personal(E_Comp *comp, const char *params __UNUSED__)
    v->free_cfdata = _free_data;
    v->basic.create_widgets = _basic_create;
 
-   cfd = e_config_dialog_new(comp, _("Personal Application Launchers"),
+   cfd = e_config_dialog_new(NULL, _("Personal Application Launchers"),
                              "E", "applications/personal_applications",
                              "preferences-applications-personal", 0, v, NULL);
    return cfd;
@@ -98,7 +98,7 @@ _basic_create(E_Config_Dialog *cfd, Evas *evas, E_Config_Dialog_Data *cfdata)
    e_widget_disabled_set(ob, 1);
    e_widget_table_object_append(of, ob, 1, 2, 1, 1, 1, 1, 1, 0);
 
-   e_win_centered_set(cfd->dia->win, 1);
+   elm_win_center(cfd->dia->win, 1, 1);
    return of;
 }
 

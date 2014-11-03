@@ -211,7 +211,7 @@ _basic_create(E_Config_Dialog *dialog, Evas *evas, E_Config_Dialog_Data *cfdata)
 }
 
 E_Config_Dialog *
-e_mixer_config_module_dialog_new(E_Comp *comp, E_Mixer_Module_Context *ctxt)
+e_mixer_config_module_dialog_new(Evas_Object *parent EINA_UNUSED, E_Mixer_Module_Context *ctxt)
 {
    E_Config_Dialog *dialog;
    E_Config_Dialog_View *view;
@@ -228,7 +228,7 @@ e_mixer_config_module_dialog_new(E_Comp *comp, E_Mixer_Module_Context *ctxt)
    view->basic.create_widgets = _basic_create;
    view->basic.apply_cfdata = _basic_apply;
 
-   dialog = e_config_dialog_new(comp, _("Mixer Module Settings"),
+   dialog = e_config_dialog_new(NULL, _("Mixer Module Settings"),
                                 _e_mixer_Name, "extensions/mixer",
                                 e_mixer_theme_path(), 0, view, ctxt);
 

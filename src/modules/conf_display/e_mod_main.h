@@ -1,12 +1,12 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-E_Config_Dialog *e_int_config_desk(E_Comp *comp, const char *params);
-E_Config_Dialog *e_int_config_screensaver(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_dpms(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_display(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_desks(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_desklock(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_desk(Evas_Object *parent, const char *params);
+E_Config_Dialog *e_int_config_screensaver(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_dpms(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_display(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_desks(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_desklock(Evas_Object *parent, const char *params __UNUSED__);
 void e_int_config_desklock_fsel_done(E_Config_Dialog *cfd, Evas_Object *bg, const char *bg_file, Eina_Bool hide_logo);
 E_Config_Dialog *e_int_config_desklock_fsel(E_Config_Dialog *parent, Evas_Object *bg);
 void e_int_config_desklock_fsel_del(E_Config_Dialog *cfd);

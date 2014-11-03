@@ -243,17 +243,17 @@ _battery_face_time_set(Evas_Object *battery, int t)
 }
 
 static void
-_battery_face_cb_menu_powermanagement(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_battery_face_cb_menu_powermanagement(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
-   e_configure_registry_call("advanced/powermanagement", m->zone->comp, NULL);
+   e_configure_registry_call("advanced/powermanagement", NULL, NULL);
 }
 
 static void
-_battery_face_cb_menu_configure(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_battery_face_cb_menu_configure(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
    if (!battery_config) return;
    if (battery_config->config_dialog) return;
-   e_int_config_battery_module(m->zone->comp, NULL);
+   e_int_config_battery_module(NULL, NULL);
 }
 
 Battery *

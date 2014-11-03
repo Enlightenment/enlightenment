@@ -951,41 +951,35 @@ _e_smart_monitor_resolution_set(E_Smart_Data *sd, Evas_Coord w, Evas_Coord h)
 static void 
 _e_smart_monitor_pointer_push(Evas_Object *obj, const char *ptr)
 {
-   Evas_Object *ow;
-   E_Win *win;
+   Evas_Object *win;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(ow = evas_object_name_find(evas_object_evas_get(obj), "E_Win")))
-     return;
-   if (!(win = evas_object_data_get(ow, "E_Win")))
+   if (!(win = evas_object_name_find(evas_object_evas_get(obj), "E_Win")))
      return;
 
    /* tell E to set the pointer type */
    if (ptr)
-     e_pointer_type_push(win->pointer, obj, ptr);
+     e_pointer_type_push(e_win_pointer_get(win), obj, ptr);
    else
-     e_pointer_type_pop(win->pointer, obj, "default");
+     e_pointer_type_pop(e_win_pointer_get(win), obj, "default");
 }
 
 static void 
 _e_smart_monitor_pointer_pop(Evas_Object *obj, const char *ptr)
 {
-   Evas_Object *ow;
-   E_Win *win;
+   Evas_Object *win;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(ow = evas_object_name_find(evas_object_evas_get(obj), "E_Win")))
-     return;
-   if (!(win = evas_object_data_get(ow, "E_Win")))
+   if (!(win = evas_object_name_find(evas_object_evas_get(obj), "E_Win")))
      return;
 
    /* tell E to set the pointer type */
    if (ptr)
-     e_pointer_type_pop(win->pointer, obj, ptr);
+     e_pointer_type_pop(e_win_pointer_get(win), obj, ptr);
    else
-     e_pointer_type_pop(win->pointer, obj, "default");
+     e_pointer_type_pop(e_win_pointer_get(win), obj, "default");
 }
 
 static inline void 

@@ -21,7 +21,7 @@ struct _E_Grab_Dialog
    void *data;
 };
 
-EAPI E_Grab_Dialog *e_grab_dialog_show(E_Win *parent, Eina_Bool is_mouse, Ecore_Event_Handler_Cb key, Ecore_Event_Handler_Cb mouse, Ecore_Event_Handler_Cb wheel, const void *data);
+EAPI E_Grab_Dialog *e_grab_dialog_show(Evas_Object *parent, Eina_Bool is_mouse, Ecore_Event_Handler_Cb key, Ecore_Event_Handler_Cb mouse, Ecore_Event_Handler_Cb wheel, const void *data);
 
 #endif
 #endif

@@ -25,7 +25,7 @@ struct _E_Config_Dialog_Data
 
 /* a nice easy setup function that does the dirty work */
 E_Config_Dialog *
-e_int_config_window_display(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_window_display(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -41,7 +41,7 @@ e_int_config_window_display(E_Comp *comp, const char *params __UNUSED__)
    v->basic.check_changed = _basic_check_changed;
 
    /* create config diaolg for NULL object/data */
-   cfd = e_config_dialog_new(comp, _("Window Display"),
+   cfd = e_config_dialog_new(NULL, _("Window Display"),
                              "E", "windows/window_display",
                              "preferences-system-windows", 0, v, NULL);
    return cfd;

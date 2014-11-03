@@ -68,7 +68,7 @@ static int          _advanced_apply_data(E_Config_Dialog *cfd,
                                       E_Config_Dialog_Data *cfdata);
 
 EAPI E_Config_Dialog *
-e_int_config_comp(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_comp(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -83,7 +83,7 @@ e_int_config_comp(E_Comp *comp, const char *params __UNUSED__)
    v->advanced.apply_cfdata = _advanced_apply_data;
    v->advanced.create_widgets = _advanced_create_widgets;
    
-   cfd = e_config_dialog_new(comp, _("Composite Settings"),
+   cfd = e_config_dialog_new(NULL, _("Composite Settings"),
                              "E", "appearance/comp", "preferences-composite", 0, v, NULL);
    e_dialog_resizable_set(cfd->dia, 1);
    return cfd;
@@ -173,10 +173,9 @@ _advanced_comp_style_toggle(void *oi, Evas_Object *o)
 static void
 _advanced_matches_edit(void *data, void *d EINA_UNUSED)
 {
-   E_Config_Dialog *md, *cfd = data;
+   E_Config_Dialog *cfd = data;
 
-   md = e_int_config_comp_match(NULL, NULL);
-   e_dialog_parent_set(md->dia, cfd->dia->win);
+   e_int_config_comp_match(cfd->dia->win, NULL);
 }
 
 static Evas_Object *

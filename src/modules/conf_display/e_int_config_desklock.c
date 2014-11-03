@@ -61,7 +61,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_desklock(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_desklock(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -77,7 +77,7 @@ e_int_config_desklock(E_Comp *comp, const char *params __UNUSED__)
    v->basic.check_changed = _basic_check_changed;
    v->override_auto_apply = 1;
 
-   cfd = e_config_dialog_new(comp, _("Screen Lock Settings"), "E",
+   cfd = e_config_dialog_new(NULL, _("Screen Lock Settings"), "E",
                              "screen/screen_lock", "preferences-system-lock-screen",
                              0, v, NULL);
    return cfd;
@@ -765,7 +765,7 @@ _cb_bg_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *eve
    if (e_widget_disabled_get(obj)) return;
    if (!(cfdata = data)) return;
    if (cfdata->bg_fsel)
-     e_win_raise(cfdata->bg_fsel->dia->win);
+     elm_win_raise(cfdata->bg_fsel->dia->win);
    else
      cfdata->bg_fsel = e_int_config_desklock_fsel(cfdata->cfd, obj);
 }

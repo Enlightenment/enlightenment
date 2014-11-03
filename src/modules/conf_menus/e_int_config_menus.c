@@ -21,7 +21,7 @@ static int _basic_apply(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 static int _basic_check_changed(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata);
 
 E_Config_Dialog *
-e_int_config_menus(E_Comp *comp, const char *params __UNUSED__) 
+e_int_config_menus(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__) 
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -35,7 +35,7 @@ e_int_config_menus(E_Comp *comp, const char *params __UNUSED__)
    v->basic.apply_cfdata = _basic_apply;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(comp, _("Menu Settings"), "E", "menus/menu_settings", 
+   cfd = e_config_dialog_new(NULL, _("Menu Settings"), "E", "menus/menu_settings", 
                              "preferences-menus", 0, v, NULL);
    return cfd;
 }

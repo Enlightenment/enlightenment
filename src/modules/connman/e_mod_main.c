@@ -578,7 +578,7 @@ static const E_Gadcon_Client_Class _gc_class =
 EAPI E_Module_Api e_modapi = { E_MODULE_API_VERSION, _e_connman_Name };
 
 static E_Config_Dialog *
-_econnman_config(E_Comp *comp, const char *params EINA_UNUSED)
+_econnman_config(Evas_Object *parent, const char *params EINA_UNUSED)
 {
    E_Connman_Module_Context *ctxt;
 
@@ -590,7 +590,7 @@ _econnman_config(E_Comp *comp, const char *params EINA_UNUSED)
      return NULL;
 
    if (!ctxt->conf_dialog)
-     ctxt->conf_dialog = e_connman_config_dialog_new(comp, ctxt);
+     ctxt->conf_dialog = e_connman_config_dialog_new(NULL, ctxt);
 
    return ctxt->conf_dialog;
 }

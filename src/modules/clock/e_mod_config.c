@@ -17,7 +17,7 @@ static int          _basic_apply_data(E_Config_Dialog *cfd,
                                       E_Config_Dialog_Data *cfdata);
 
 void
-e_int_config_clock_module(E_Comp *comp, Config_Item *ci)
+e_int_config_clock_module(Evas_Object *parent EINA_UNUSED, Config_Item *ci)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -33,7 +33,7 @@ e_int_config_clock_module(E_Comp *comp, Config_Item *ci)
 
    snprintf(buf, sizeof(buf), "%s/e-module-clock.edj",
             e_module_dir_get(clock_config->module));
-   cfd = e_config_dialog_new(comp, _("Clock Settings"),
+   cfd = e_config_dialog_new(NULL, _("Clock Settings"),
                              "E", "utils/clock", buf, 0, v, ci);
    clock_config->config_dialog = cfd;
 }

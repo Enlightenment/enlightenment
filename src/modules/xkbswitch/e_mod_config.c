@@ -58,7 +58,7 @@ static Eina_Bool    _cb_fill_delay(void *data);
 /* Externals */
 
 E_Config_Dialog *
-_xkb_cfg_dialog(E_Comp *comp, const char *params __UNUSED__)
+_xkb_cfg_dialog(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -73,7 +73,7 @@ _xkb_cfg_dialog(E_Comp *comp, const char *params __UNUSED__)
    v->basic.apply_cfdata = _basic_apply;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(comp, _("Keyboard Settings"), "E",
+   cfd = e_config_dialog_new(NULL, _("Keyboard Settings"), "E",
                              "keyboard_and_mouse/xkbswitch",
                              "preferences-desktop-keyboard",
                              0, v, NULL);
@@ -390,7 +390,7 @@ _cb_add(void *data, void *data2 __UNUSED__)
    E_Config_Dialog_Data *cfdata;
    if (!(cfdata = data)) return;
 
-   if (cfdata->dlg_add_new) e_win_raise(cfdata->dlg_add_new->win);
+   if (cfdata->dlg_add_new) elm_win_raise(cfdata->dlg_add_new->win);
    else cfdata->dlg_add_new = _dlg_add_new(cfdata);
 }
 
@@ -504,14 +504,14 @@ _dlg_add_new(E_Config_Dialog_Data *cfdata)
    Evas_Coord mw, mh;
    Evas_Object *mainn, *available, *modelss, *variants;
 
-   if (!(dlg = e_dialog_new(_xkb.cfd->comp, "E", "xkbswitch_config_add_dialog"))) return NULL;
+   if (!(dlg = e_dialog_new(NULL, "E", "xkbswitch_config_add_dialog"))) return NULL;
 
    dlg->data = cfdata;
    
    e_object_del_attach_func_set(E_OBJECT(dlg), _dlg_add_cb_del);
-   e_win_centered_set(dlg->win, 1);
+   elm_win_center(dlg->win, 1, 1);
 
-   evas = e_win_evas_get(dlg->win);
+   evas = evas_object_evas_get(dlg->win);
    e_dialog_title_set(dlg, _("Add New Configuration"));
 
    /* The main toolbook, holds the lists and tabs */

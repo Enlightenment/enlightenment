@@ -5,7 +5,7 @@ static void _e_entry_dia_del(void *data);
 static void _e_entry_dialog_free(E_Entry_Dialog *dia);
 static void _e_entry_dialog_ok(void *data, E_Dialog *dia);
 static void _e_entry_dialog_cancel(void *data, E_Dialog *dia);
-static void _e_entry_dialog_delete(E_Win *win);
+static void _e_entry_dialog_delete(E_Dialog *dia, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void _e_entry_cb_key_down(void *data, Evas_Object *obj, void *event_info);
 
 /* Externally accesible functions */
@@ -21,6 +21,7 @@ e_entry_dialog_show(const char *title, const char *icon, const char *text,
    Evas_Object *o, *ob;
    Evas_Modifier_Mask mask;
    int w, h;
+   Evas *e;
 
    ed = E_OBJECT_ALLOC(E_Entry_Dialog, E_ENTRY_DIALOG_TYPE, _e_entry_dialog_free);
    ed->ok.func = ok_func;
@@ -42,19 +43,20 @@ e_entry_dialog_show(const char *title, const char *icon, const char *text,
    mask = 0;
    evas_object_key_ungrab(dia->event_object, "space", mask, ~mask);
    e_object_del_attach_func_set(E_OBJECT(dia), _e_entry_dia_del);
-   e_win_delete_callback_set(dia->win, _e_entry_dialog_delete);
+   evas_object_event_callback_add(dia->win, EVAS_CALLBACK_DEL, (Evas_Object_Event_Cb)_e_entry_dialog_delete, dia);
 
    if (title) e_dialog_title_set(dia, title);
    if (icon) e_dialog_icon_set(dia, icon, 64);
 
-   o = e_widget_list_add(dia->win->evas, 0, 0);
+   e = evas_object_evas_get(dia->win);
+   o = e_widget_list_add(e, 0, 0);
    if (text)
      {
-        ob = e_widget_label_add(dia->win->evas, text);
+        ob = e_widget_label_add(e, text);
         e_widget_list_object_append(o, ob, 1, 0, 0.5);
      }
 
-   ed->entry = e_widget_entry_add(dia->win->evas, &(ed->text), NULL, NULL, NULL);
+   ed->entry = e_widget_entry_add(e, &(ed->text), NULL, NULL, NULL);
    evas_object_smart_callback_add(ed->entry, "key_down", _e_entry_cb_key_down, ed);
    e_widget_list_object_append(o, ed->entry, 1, 1, 0.5);
    e_widget_size_min_get(o, &w, &h);
@@ -63,7 +65,7 @@ e_entry_dialog_show(const char *title, const char *icon, const char *text,
    e_dialog_button_add(dia, !button_text ? _("OK") : button_text, NULL, _e_entry_dialog_ok, ed);
    e_dialog_button_add(dia, !button2_text ? _("Cancel") : button2_text, NULL, _e_entry_dialog_cancel, ed);
 
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
    e_widget_focus_set(ed->entry, 1);
    e_widget_entry_select_all(ed->entry);
@@ -76,7 +78,7 @@ _e_entry_dia_del(void *data)
 {
    E_Dialog *dia = data;
 
-   e_win_delete_callback_set(dia->win, _e_entry_dialog_delete);
+   evas_object_event_callback_add(dia->win, EVAS_CALLBACK_DEL, (Evas_Object_Event_Cb)_e_entry_dialog_delete, dia);
    e_object_del(dia->data);
 }
 
@@ -113,14 +115,9 @@ _e_entry_dialog_cancel(void *data, E_Dialog *dia __UNUSED__)
 }
 
 static void
-_e_entry_dialog_delete(E_Win *win)
+_e_entry_dialog_delete(E_Dialog *dia, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Dialog *dia;
-   E_Entry_Dialog *ed;
-
-   dia = win->data;
-   ed = dia->data;
-   e_object_del(E_OBJECT(ed));
+   e_object_del(E_OBJECT(dia->data));
 }
 
 static void

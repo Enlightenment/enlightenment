@@ -2,11 +2,9 @@
 
 /* local subsystem functions */
 static void
-_cb_settings_theme(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_cb_settings_theme(void *data EINA_UNUSED, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   E_Obj_Dialog *od = data;
-
-   e_configure_registry_call("appearance/theme", od->win->comp, NULL);
+   e_configure_registry_call("appearance/theme", NULL, NULL);
 }
 
 /* local subsystem globals */

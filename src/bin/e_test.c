@@ -98,16 +98,16 @@ _e_test_internal(E_Comp *c)
    Evas_Object *o;
 
    win = e_win_new(c);
-   e_win_resize_callback_set(win, _e_test_resize);
+   evas_object_resize_callback_set(win, _e_test_resize);
    e_win_delete_callback_set(win, _e_test_delete);
    e_win_placed_set(win, 0);
-   e_win_move_resize(win, 10, 80, 400, 200);
+   evas_object_geometry_set(win, 10, 80, 400, 200);
    e_win_name_class_set(win, "E", "_test_window");
    e_win_title_set(win, "A test window");
-   e_win_raise(win);
-   e_win_show(win);
+   elm_win_raise(win);
+   evas_object_show(win);
 
-   o = evas_object_rectangle_add(e_win_evas_get(win));
+   o = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_color_set(o, 255, 200, 100, 255);
    evas_object_resize(o, 400, 200);
    evas_object_show(o);
@@ -169,7 +169,7 @@ _e_test_internal(E_Comp *c)
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
    e_dialog_button_add(dia, "Apply", "system-restart", NULL, NULL);
    e_dialog_button_add(dia, "Cancel", "application-exit", NULL, NULL);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
 }
 
@@ -216,7 +216,7 @@ _e_test_internal(E_Comp *c)
 
    e_dialog_content_set(dia, o2, 500, 300);
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
 
    evas_object_focus_set(o, 1);
@@ -363,7 +363,7 @@ _e_test_internal(E_Comp *c)
    e_scrollframe_child_viewport_size_get(o2, &vw, &vh);
    e_dialog_content_set(dia, o2, 200, 150);
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_resizable_set(dia, 1);
    e_dialog_show(dia);
 
@@ -402,7 +402,7 @@ _e_test_internal(E_Comp *c)
    e_dialog_content_set(dia, o, 240 + mw, mh);
 
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
 
    evas_object_focus_set(o, 1);
@@ -449,7 +449,7 @@ _e_test_internal(E_Comp *c)
    e_dialog_content_set(dia, o, 160, 160);
 
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
 
    evas_object_focus_set(o, 1);
@@ -621,9 +621,9 @@ _e_test_internal(E_Comp *c)
    /* buttons at the bottom */
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
    e_dialog_resizable_set(dia, 1);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
-   e_win_resize(dia->win, 400, 300);
+   evas_object_resize(dia->win, 400, 300);
 }
 
 #elif 0
@@ -660,9 +660,9 @@ _e_test_internal(E_Comp *c)
    /* buttons at the bottom */
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
    e_dialog_resizable_set(dia, 1);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
-   e_win_resize(dia->win, 400, 300);
+   evas_object_resize(dia->win, 400, 300);
 }
 
 #elif 0
@@ -748,9 +748,9 @@ _e_test_internal(E_Comp *c)
    /* buttons at the bottom */
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
    e_dialog_resizable_set(dia, 1);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
-   e_win_resize(dia->win, 400, 400);
+   evas_object_resize(dia->win, 400, 400);
 }
 
 static void
@@ -813,9 +813,9 @@ _e_test_timer(void *data)
    /* buttons at the bottom */
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
    e_dialog_resizable_set(dia, 1);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
-   e_win_resize(dia->win, 400, 200);
+   evas_object_resize(dia->win, 400, 200);
 
    return 0;
 }
@@ -880,9 +880,9 @@ _e_test_timer(void *data)
    /* buttons at the bottom */
    e_dialog_button_add(dia, "OK", NULL, NULL, NULL);
    e_dialog_resizable_set(dia, 1);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
-   e_win_resize(dia->win, 400, 200);
+   evas_object_resize(dia->win, 400, 200);
 
    return 0;
 }

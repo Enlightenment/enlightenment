@@ -106,7 +106,7 @@ e_int_client_remember(E_Client *ec)
         v->override_auto_apply = 1;
 
         /* create config dialog for ec object/data */
-        cfd = e_config_dialog_new(ec->zone->comp,
+        cfd = e_config_dialog_new(NULL,
                                   _("Window Remember"),
                                   "E", "_border_remember_dialog",
                                   NULL, 0, v, ec);
@@ -328,11 +328,11 @@ _free_data(E_Config_Dialog *cfd __UNUSED__, E_Config_Dialog_Data *cfdata)
 }
 
 static void
-_warning_dialog_show(E_Comp *c)
+_warning_dialog_show(void)
 {
    E_Dialog *dia;
 
-   dia = e_dialog_new(c, "E", "_border_remember_error_multi_dialog");
+   dia = e_dialog_new(NULL, "E", "_border_remember_error_multi_dialog");
    e_dialog_title_set(dia, _("Window properties are not a unique match"));
    e_dialog_text_set
      (dia,
@@ -351,7 +351,7 @@ _warning_dialog_show(E_Comp *c)
        "are not sure and nothing will be affected.")
      );
    e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
 }
 
@@ -410,7 +410,7 @@ _check_matches(E_Remember *rem, int update)
 }
 
 static int
-_basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
+_basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    /* Actually take our cfdata settings and apply them in real life */
    E_Client *ec = cfdata->client;
@@ -443,7 +443,7 @@ _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 
    if ((!cfdata->warned) && (_check_matches(rem, 0) > 1))
      {
-        _warning_dialog_show(cfd->comp);
+        _warning_dialog_show();
         cfdata->warned = 1;
         return 0;
      }
@@ -459,7 +459,7 @@ _basic_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
 }
 
 static int
-_advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
+_advanced_apply_data(E_Config_Dialog *cfd EINA_UNUSED, E_Config_Dialog_Data *cfdata)
 {
    E_Client *ec = cfdata->client;
    E_Remember *rem;
@@ -537,7 +537,7 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
      {
         E_Dialog *dia;
 
-        dia = e_dialog_new(cfd->comp, "E", "_border_remember_error_noprop_dialog");
+        dia = e_dialog_new(NULL, "E", "_border_remember_error_noprop_dialog");
         e_dialog_title_set(dia, _("No match properties set"));
         e_dialog_text_set
           (dia,
@@ -548,7 +548,7 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
             "You must specify at least 1 way of remembering this window.")
           );
         e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
-        e_win_centered_set(dia->win, 1);
+        elm_win_center(dia->win, 1, 1);
         e_dialog_show(dia);
         if (ec)
           cfdata->client->remember = rem;
@@ -563,7 +563,7 @@ _advanced_apply_data(E_Config_Dialog *cfd, E_Config_Dialog_Data *cfdata)
         if ((!cfdata->remember.apply_first_only) &&
             (_check_matches(rem, 0) > 1))
           {
-             _warning_dialog_show(cfd->comp);
+             _warning_dialog_show();
              cfdata->warned = 1;
              return 0;
           }

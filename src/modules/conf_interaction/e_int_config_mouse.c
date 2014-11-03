@@ -27,7 +27,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_mouse(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_mouse(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -43,7 +43,7 @@ e_int_config_mouse(E_Comp *comp, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create_widgets;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(comp, _("Mouse Settings"), "E",
+   cfd = e_config_dialog_new(NULL, _("Mouse Settings"), "E",
 			     "keyboard_and_mouse/mouse_settings",
 			     "preferences-desktop-mouse", 0, v, NULL);
    return cfd;

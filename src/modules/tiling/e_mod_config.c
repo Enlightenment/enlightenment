@@ -308,7 +308,7 @@ _basic_apply_data(E_Config_Dialog *cfd EINA_UNUSED,
 }
 
 E_Config_Dialog *
-e_int_config_tiling_module(E_Comp *comp, const char *params EINA_UNUSED)
+e_int_config_tiling_module(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -327,7 +327,7 @@ e_int_config_tiling_module(E_Comp *comp, const char *params EINA_UNUSED)
    snprintf(buf, sizeof(buf), "%s/e-module-tiling.edj",
             e_module_dir_get(tiling_g.module));
    cfd =
-     e_config_dialog_new(comp, _("Tiling Configuration"), "E",
+     e_config_dialog_new(NULL, _("Tiling Configuration"), "E",
                          "windows/tiling", buf, 0, v, NULL);
    return cfd;
 }

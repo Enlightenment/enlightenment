@@ -192,7 +192,7 @@ _e_comp_x_client_new_helper(E_Client *ec)
         e_object_del(E_OBJECT(ec));
         return EINA_FALSE;
      }
-   if ((!e_client_util_ignored_get(ec)) && (!ec->internal) && (!ec->internal_ecore_evas))
+   if ((!e_client_util_ignored_get(ec)) && (!ec->internal) && (!ec->internal_elm_win))
      {
         ec->comp_data->need_reparent = 1;
         EC_CHANGED(ec);
@@ -459,8 +459,8 @@ _e_comp_x_client_find_by_alarm(Ecore_X_Sync_Alarm al)
 static void
 _e_comp_x_client_move_resize_send(E_Client *ec)
 {
-   if (ec->internal_ecore_evas)
-     ecore_evas_managed_move(ec->internal_ecore_evas, ec->client.x - ec->x, ec->client.y - ec->y);
+   if (ec->internal_elm_win)
+     ecore_evas_managed_move(e_win_ee_get(ec->internal_elm_win), ec->client.x - ec->x, ec->client.y - ec->y);
 
    ecore_x_icccm_move_resize_send(e_client_util_win_get(ec), ec->client.x, ec->client.y, ec->client.w, ec->client.h);
 }
@@ -1166,7 +1166,7 @@ _e_comp_x_show_helper(E_Client *ec)
         /* this is most likely an internal window */
         ec->comp_data->need_reparent = 1;
         ec->visible = 1;
-        if (ec->internal_ecore_evas)
+        if (ec->internal_elm_win)
           ec->take_focus = 1;
         EC_CHANGED(ec);
      }
@@ -1191,7 +1191,7 @@ _e_comp_x_show_helper(E_Client *ec)
         else
           evas_object_show(ec->frame);
         ec->comp_data->first_map = 1;
-        if (ec->internal_ecore_evas)
+        if (ec->internal_elm_win)
           {
              _e_comp_x_post_client_idler_add(ec);
              ec->post_move = 1;
@@ -2252,8 +2252,8 @@ _e_comp_x_sync_alarm(void *data EINA_UNUSED, int type EINA_UNUSED, Ecore_X_Event
    if (resize)
      {
         evas_object_resize(ec->frame, ec->w, ec->h);
-        if (ec->internal_ecore_evas)
-          ecore_evas_move_resize(ec->internal_ecore_evas, 0, 0, ec->client.w, ec->client.h);
+        if (ec->internal_elm_win)
+          evas_object_resize(ec->internal_elm_win, ec->client.w, ec->client.h);
      }
 
    ecore_x_pointer_xy_get(ec->comp->man->root,
@@ -2637,29 +2637,19 @@ _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
      {
         Ecore_X_Atom state[1];
         int num = 0;
-        E_Win *win = ecore_evas_data_get(ec->internal_ecore_evas, "E_Win");
 
-        if (win->state.centered)
+        if (e_win_centered_get(ec->internal_elm_win))
           state[num++] = E_ATOM_WINDOW_STATE_CENTERED;
 
         if (num)
-          ecore_x_window_prop_card32_set(win->evas_win, E_ATOM_WINDOW_STATE, state, num);
+          ecore_x_window_prop_card32_set(elm_win_window_id_get(ec->internal_elm_win), E_ATOM_WINDOW_STATE, state, num);
         else
-          ecore_x_window_prop_property_del(win->evas_win, E_ATOM_WINDOW_STATE);
+          ecore_x_window_prop_property_del(elm_win_window_id_get(ec->internal_elm_win), E_ATOM_WINDOW_STATE);
         ec->changes.internal_state = 0;
      }
 
    if (ec->changes.internal_props)
      {
-        E_Win *win = ecore_evas_data_get(ec->internal_ecore_evas, "E_Win");
-
-        ecore_x_icccm_size_pos_hints_set(win->evas_win,
-                                         win->placed, ECORE_X_GRAVITY_NW,
-                                         win->min_w, win->min_h,
-                                         win->max_w, win->max_h,
-                                         win->base_w, win->base_h,
-                                         win->step_x, win->step_y,
-                                         win->min_aspect, win->max_aspect);
         ec->changes.internal_props = 0;
         ec->comp_data->internal_props_set++;
      }
@@ -2739,7 +2729,7 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
      ecore_x_window_shape_input_rectangles_set(pwin, (Ecore_X_Rectangle*)ec->shape_input_rects, ec->shape_input_rects_num);
    ec->changes.shape = 1;
    ec->changes.shape_input = 1;
-   if (ec->internal_ecore_evas)
+   if (ec->internal_elm_win)
      {
         ecore_x_window_gravity_set(win, ECORE_X_GRAVITY_NW);
         ec->changes.reset_gravity = 1;
@@ -2750,17 +2740,12 @@ _e_comp_x_hook_client_pre_frame_assign(void *d EINA_UNUSED, E_Client *ec)
 
    if (ec->visible)
      {
-        if (ec->comp_data->set_win_type && ec->internal_ecore_evas)
+        if (ec->comp_data->set_win_type && ec->internal_elm_win)
           {
-             E_Win *ewin = ecore_evas_data_get(ec->internal_ecore_evas, "E_Win");
-
-             if (ewin)
-               {
-                  if (ec->dialog)
-                    ecore_x_netwm_window_type_set(win, ECORE_X_WINDOW_TYPE_DIALOG);
-                  else
-                    ecore_x_netwm_window_type_set(win, ECORE_X_WINDOW_TYPE_NORMAL);
-               }
+             if (ec->dialog)
+               ecore_x_netwm_window_type_set(win, ECORE_X_WINDOW_TYPE_DIALOG);
+             else
+               ecore_x_netwm_window_type_set(win, ECORE_X_WINDOW_TYPE_NORMAL);
              ec->comp_data->set_win_type = 0;
           }
      }

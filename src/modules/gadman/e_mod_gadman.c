@@ -1225,11 +1225,11 @@ on_menu_edit(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi __UNUSED__)
 }
 
 static void
-on_menu_add(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+on_menu_add(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
    if (Man->visible)
      gadman_gadgets_hide();
-   e_configure_registry_call("extensions/gadman", m->zone->comp, NULL);
+   e_configure_registry_call("extensions/gadman", NULL, NULL);
 }
 
 static void

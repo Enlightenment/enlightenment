@@ -766,7 +766,7 @@ _e_exec_cb_exit(void *data __UNUSED__, int type __UNUSED__, void *event)
                   e_dialog_text_set(dia, buf);
                   e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
                   e_dialog_button_focus_num(dia, 1);
-                  e_win_centered_set(dia->win, 1);
+                  elm_win_center(dia->win, 1, 1);
                   e_dialog_show(dia);
                }
           }

@@ -20,7 +20,7 @@ struct _Config
 void e_configure_show(E_Comp *comp, const char *params);
 void e_configure_del(void);
 
-E_Config_Dialog *e_int_config_conf_module(E_Comp *comp, const char *params);
+E_Config_Dialog *e_int_config_conf_module(Evas_Object *parent, const char *params);
 void e_mod_config_menu_add(void *data, E_Menu *m);
 
 extern Config *conf;

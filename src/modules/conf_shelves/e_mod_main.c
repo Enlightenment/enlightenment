@@ -61,9 +61,9 @@ e_modapi_save(E_Module *m __UNUSED__)
 
 /* menu item callback(s) */
 static void 
-_e_mod_run_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_mod_run_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
-   e_configure_registry_call("extensions/shelves", m->zone->comp, NULL);
+   e_configure_registry_call("extensions/shelves", NULL, NULL);
 }
 
 /* menu item add hook */

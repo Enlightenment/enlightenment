@@ -916,9 +916,6 @@ _e_comp_act_opacity_obj_finder(E_Object *obj)
 
    switch (obj->type)
      {
-      case E_WIN_TYPE:
-        ec = ((E_Win*)obj)->client;
-        return ec ? ec->frame : NULL;
       case E_CLIENT_TYPE:
         return ((E_Client*)obj)->frame;
       default:
@@ -928,6 +925,8 @@ _e_comp_act_opacity_obj_finder(E_Object *obj)
         ec = e_client_focused_get();
         return ec ? ec->frame : NULL;
      }
+   if (e_obj_is_win(obj))
+     return e_win_client_get((void*)obj)->frame;
    return NULL;
 }
 
@@ -1419,7 +1418,6 @@ e_comp_get(const void *o)
    E_Gadcon *gc;
    E_Gadcon_Client *gcc;
    E_Drag *drag;
-   E_Win *ewin;
 
    if (!o) 
      {
@@ -1430,9 +1428,6 @@ e_comp_get(const void *o)
    /* try to get to zone type first */
    switch (obj->type)
      {
-      case E_WIN_TYPE:
-        ewin = (E_Win*)obj;
-        return ewin->comp;
       case E_DESK_TYPE:
         desk = (E_Desk*)obj;
         obj = (void*)desk->zone;
@@ -1485,6 +1480,11 @@ e_comp_get(const void *o)
       case E_MANAGER_TYPE:
         if (!man) man = (E_Manager*)obj;
         return man->comp;
+     }
+   if (e_obj_is_win(obj))
+     {
+        ec = e_win_client_get((void*)obj);
+        return e_comp_get(ec);
      }
    CRI("UNIMPLEMENTED TYPE PASSED! FIXME!");
    return NULL;
@@ -1649,6 +1649,7 @@ e_comp_e_object_layer_get(const E_Object *obj)
    E_Gadcon *gc = NULL;
 
    if (!obj) return 0;
+
    switch (obj->type)
      {
       case E_GADCON_CLIENT_TYPE:
@@ -1659,10 +1660,7 @@ e_comp_e_object_layer_get(const E_Object *obj)
         if (!gc) gc = (E_Gadcon *)obj;
         if (gc->shelf) return gc->shelf->layer;
         if (!gc->toolbar) return E_LAYER_DESKTOP;
-        return gc->toolbar->fwin->client->layer;
-
-      case E_WIN_TYPE:
-        return ((E_Win *)(obj))->client->layer;
+        return e_win_client_get(gc->toolbar->fwin)->layer;
 
       case E_ZONE_TYPE:
         return E_LAYER_DESKTOP;
@@ -1674,6 +1672,8 @@ e_comp_e_object_layer_get(const E_Object *obj)
       default:
         break;
      }
+   if (e_obj_is_win(obj))
+     return e_win_client_get((void*)obj)->layer;
    return 0;
 }
 

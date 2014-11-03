@@ -45,7 +45,7 @@ EAPI void         e_util_desktop_menu_item_icon_add(Efreet_Desktop *desktop, uns
 EAPI int          e_util_dir_check(const char *dir);
 EAPI void         e_util_defer_object_del(E_Object *obj);
 EAPI const char  *e_util_winid_str_get(Ecore_X_Window win);
-EAPI void         e_util_win_auto_resize_fill(E_Win *win);
+EAPI void         e_util_win_auto_resize_fill(Evas_Object *win);
 /* check if loaded config version matches the current version, show a
    dialog warning if loaded version is older or newer than current */
 EAPI Eina_Bool    e_util_module_config_check(const char *module_name, int loaded, int current);

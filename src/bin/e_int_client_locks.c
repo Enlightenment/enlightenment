@@ -62,7 +62,7 @@ e_int_client_locks(E_Client *ec)
         v->advanced.create_widgets = _advanced_create_widgets;
         v->override_auto_apply = 1;
         /* create config diaolg for bd object/data */
-        cfd = e_config_dialog_new(ec->comp,
+        cfd = e_config_dialog_new(NULL,
                                   _("Window Locks"),
                                   "E", "_border_locks_dialog",
                                   NULL, 0, v, ec);

@@ -1,15 +1,15 @@
 #ifndef E_MOD_MAIN_H
 #define E_MOD_MAIN_H
 
-E_Config_Dialog *e_int_config_imc(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_imc(Evas_Object *parent, const char *params __UNUSED__);
 void e_int_config_imc_import_done(E_Config_Dialog *dia);
 void e_int_config_imc_update(E_Config_Dialog *dia, const char *file);
 
-E_Win *e_int_config_imc_import(E_Config_Dialog *parent);
-void e_int_config_imc_import_del(E_Win *win);
+Evas_Object *e_int_config_imc_import(E_Config_Dialog *parent);
+void e_int_config_imc_import_del(Evas_Object *);
 
-E_Config_Dialog *e_int_config_intl(E_Comp *comp, const char *params __UNUSED__);
-E_Config_Dialog *e_int_config_desklock_intl(E_Comp *comp, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_intl(Evas_Object *parent, const char *params __UNUSED__);
+E_Config_Dialog *e_int_config_desklock_intl(Evas_Object *parent, const char *params __UNUSED__);
 
 /**
  * @addtogroup Optional_Conf

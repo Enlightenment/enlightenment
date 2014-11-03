@@ -54,7 +54,7 @@ e_mod_sft_win_new(E_Zone *zone)
    e_win_no_remember_set(swin->win, EINA_TRUE);
 
    /* hook into window resize so we can resize our objects */
-   e_win_resize_callback_set(swin->win, _e_mod_sft_win_cb_resize);
+   evas_object_resize_callback_set(swin->win, _e_mod_sft_win_cb_resize);
 
    /* set this window to not show in taskbar or pager */
    states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
@@ -90,15 +90,15 @@ e_mod_sft_win_new(E_Zone *zone)
 
    mh = E_CLAMP(mh, 10, zone->h / 3);   
    /* set minimum size of this window */
-   e_win_size_min_set(swin->win, zone->w, mh);
+   evas_object_size_hint_min_set(swin->win, zone->w, mh);
 
    /* position and resize this window */
-   e_win_move_resize(swin->win, zone->x, 
+   evas_object_geometry_set(swin->win, zone->x, 
                      (zone->y + zone->h - (il_sft_cfg->height * e_scale)), 
                      zone->w, mh);
 
    /* show the window */
-   e_win_show(swin->win);
+   evas_object_show(swin->win);
 
    e_client_zone_set(swin->win->client, zone);
    swin->win->client->user_skip_winlist = 1;
@@ -184,7 +184,7 @@ _e_mod_sft_win_cb_win_prop(void *data, int type __UNUSED__, void *event)
    if (ev->atom != ATM_ENLIGHTENMENT_SCALE) return ECORE_CALLBACK_PASS_ON;
 
    /* set minimum size of this window */
-   e_win_size_min_set(swin->win, swin->zone->w, (il_sft_cfg->height * e_scale));
+   evas_object_size_hint_min_set(swin->win, swin->zone->w, (il_sft_cfg->height * e_scale));
 
    /* NB: Not sure why, but we need to tell this border to fetch icccm 
     * size position hints now :( (NOTE: This was not needed a few days ago) 
@@ -192,7 +192,7 @@ _e_mod_sft_win_cb_win_prop(void *data, int type __UNUSED__, void *event)
    swin->win->client->icccm.fetch.size_pos_hints = 1;
 
    /* resize this window */
-   e_win_resize(swin->win, swin->zone->w, (il_sft_cfg->height * e_scale));
+   evas_object_resize(swin->win, swin->zone->w, (il_sft_cfg->height * e_scale));
 
    /* tell conformant apps our position and size */
    ecore_x_e_illume_softkey_geometry_set(swin->zone->black_win, 
@@ -213,7 +213,7 @@ _e_mod_sft_win_cb_zone_resize(void *data, int type __UNUSED__, void *event)
    if (ev->zone != swin->zone) return ECORE_CALLBACK_PASS_ON;
 
    /* set minimum size of this window */
-   e_win_size_min_set(swin->win, ev->zone->w, (il_sft_cfg->height * e_scale));
+   evas_object_size_hint_min_set(swin->win, ev->zone->w, (il_sft_cfg->height * e_scale));
 
    return ECORE_CALLBACK_PASS_ON;
 }

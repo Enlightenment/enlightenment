@@ -26,7 +26,7 @@ _import_edj_gen(E_Import_Config_Dialog *import)
    FILE *f;
    size_t len, off;
 
-   evas = e_win_evas_get(import->dia->win);
+   evas = evas_object_evas_get(import->dia->win);
    file = ecore_file_file_get(import->file);
    fstrip = ecore_file_strip_ext(file);
    if (!fstrip) return;
@@ -332,7 +332,7 @@ _import_cb_ok(void *data, E_Dialog *dia __UNUSED__)
    if (!eina_str_has_extension(file, "edj"))
      {
         _import_edj_gen(import);
-        e_win_hide(import->dia->win);
+        evas_object_hide(import->dia->win);
         return;
      }
    e_user_dir_snprintf(buf, sizeof(buf), "backgrounds/%s", file);
@@ -418,12 +418,11 @@ _e_import_config_dialog_del(void *data)
 }
 
 static void
-_e_import_config_dialog_win_del(E_Win *win)
+_e_import_config_dialog_win_del(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Dialog *dia;
+   E_Dialog *dia = data;
    E_Import_Config_Dialog *import;
 
-   dia = win->data;
    import = dia->data;
    if (!import) return;
    e_object_ref(E_OBJECT(import));
@@ -435,7 +434,7 @@ _e_import_config_dialog_win_del(E_Win *win)
 ///////////////////////////////////////////////////////////////////////////////////
 
 EAPI E_Import_Config_Dialog *
-e_import_config_dialog_show(E_Comp *c, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
+e_import_config_dialog_show(Evas_Object *parent, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel)
 {
    Evas *evas;
    E_Dialog *dia;
@@ -449,7 +448,7 @@ e_import_config_dialog_show(E_Comp *c, const char *path, Ecore_End_Cb ok, Ecore_
    import = E_OBJECT_ALLOC(E_Import_Config_Dialog, E_IMPORT_CONFIG_DIALOG_TYPE, _e_import_config_dialog_del);
    if (!import) return NULL;
 
-   dia = e_dialog_new(c, "E", "_import_config_dialog");
+   dia = e_dialog_new(parent, "E", "_import_config_dialog");
    if (!dia)
      {
         e_object_del(E_OBJECT(import));
@@ -463,14 +462,14 @@ e_import_config_dialog_show(E_Comp *c, const char *path, Ecore_End_Cb ok, Ecore_
    import->ok = ok, import->cancel = cancel;
    import->path = eina_stringshare_add(path);
    e_object_del_attach_func_set(E_OBJECT(dia), _e_import_config_dia_del);
-   e_win_delete_callback_set(dia->win, _e_import_config_dialog_win_del);
+   evas_object_event_callback_add(dia->win, EVAS_CALLBACK_DEL, _e_import_config_dialog_win_del, dia);
 
    import->method = IMPORT_SCALE_ASPECT_OUT;
    import->external = 0;
    import->quality = 90;
    import->file = eina_stringshare_add(path);
 
-   evas = e_win_evas_get(dia->win);
+   evas = evas_object_evas_get(dia->win);
 
    o = e_widget_list_add(evas, 0, 0);
 
@@ -540,7 +539,7 @@ e_import_config_dialog_show(E_Comp *c, const char *path, Ecore_End_Cb ok, Ecore_
    e_dialog_content_set(dia, o, w, h);
    e_dialog_button_add(dia, _("OK"), NULL, _import_cb_ok, import);
    e_dialog_button_add(dia, _("Cancel"), NULL, _import_cb_close, import);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_border_icon_set(dia, "folder-image");
    e_dialog_button_focus_num(dia, 0);
    e_dialog_show(dia);

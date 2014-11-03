@@ -25,7 +25,6 @@
 #include "e_init.h"
 #include "e_int_menus.h"
 #include "e_module.h"
-#include "e_canvas.h"
 #include "e_focus.h"
 #include "e_place.h"
 #include "e_resist.h"

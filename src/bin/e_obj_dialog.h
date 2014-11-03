@@ -12,7 +12,7 @@ struct _E_Obj_Dialog
 {
    E_Object             e_obj_inherit;
 
-   E_Win               *win;
+   Evas_Object         *win;
    Evas_Object         *bg_object;
    void                *data;
    void		       (*cb_delete)(E_Obj_Dialog *od);

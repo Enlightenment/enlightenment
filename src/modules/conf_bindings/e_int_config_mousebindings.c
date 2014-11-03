@@ -91,7 +91,7 @@ struct _E_Config_Dialog_Data
 };
 
 E_Config_Dialog *
-e_int_config_mousebindings(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_mousebindings(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -105,7 +105,7 @@ e_int_config_mousebindings(E_Comp *comp, const char *params __UNUSED__)
    v->basic.create_widgets = _basic_create_widgets;
    v->override_auto_apply = 0;
 
-   cfd = e_config_dialog_new(comp,
+   cfd = e_config_dialog_new(NULL,
                              _("Mouse Bindings Settings"),
                              "E", "keyboard_and_mouse/mouse_bindings",
                              "preferences-desktop-mouse", 0, v, NULL);

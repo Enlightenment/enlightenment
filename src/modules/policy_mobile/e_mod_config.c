@@ -363,7 +363,7 @@ e_mod_pol_conf_desk_get_by_nums(Config *conf, unsigned int comp_num, unsigned in
 }
 
 E_Config_Dialog *
-e_int_config_pol_mobile(E_Comp *comp, const char *params EINA_UNUSED)
+e_int_config_pol_mobile(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -381,7 +381,7 @@ e_int_config_pol_mobile(E_Comp *comp, const char *params EINA_UNUSED)
    snprintf(buf, sizeof(buf), "%s/e-module-policy-mobile.edj",
             e_module_dir_get(_pol_mod->module));
 
-   cfd = e_config_dialog_new(comp, _("Mobile Policy Configuration"), "E",
+   cfd = e_config_dialog_new(NULL, _("Mobile Policy Configuration"), "E",
                              "windows/policy-mobile", buf, 0, v, NULL);
    return cfd;
 }

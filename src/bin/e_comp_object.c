@@ -1931,6 +1931,8 @@ _e_comp_smart_hide(Evas_Object *obj)
    evas_object_hide(cw->clip);
    if (cw->input_obj) evas_object_hide(cw->input_obj);
    evas_object_hide(cw->effect_obj);
+   if (cw->ec->internal_elm_win)
+     evas_object_hide(cw->ec->internal_elm_win);
    if (stopping) return;
    /* ensure focus-out */
    if (cw->ec->focused)
@@ -1959,6 +1961,8 @@ _e_comp_smart_show(Evas_Object *obj)
    evas_object_show(cw->clip);
    if (cw->input_obj) evas_object_show(cw->input_obj);
    evas_object_show(cw->effect_obj);
+   if (cw->ec->internal_elm_win)
+     evas_object_show(cw->ec->internal_elm_win);
    e_comp_render_queue(cw->comp);
    e_comp_shape_queue(cw->comp);
    if (cw->ec->input_only) return;
@@ -2560,6 +2564,8 @@ e_comp_object_util_zone_get(Evas_Object *obj)
         int x, y;
         E_Comp *c;
 
+        if (e_win_client_get(obj))
+          return e_win_client_get(obj)->zone;
         c = e_comp_util_evas_object_comp_get(obj);
         if (c)
           {
@@ -2568,32 +2574,8 @@ e_comp_object_util_zone_get(Evas_Object *obj)
           }
         else
           {
-             Ecore_Evas *ee;
-
-             ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-             if (ee)
-               {
-                  E_Win *win;
-
-                  win = ecore_evas_data_get(ee, "E_Win");
-                  if (win)
-                    {
-                       if (win->client)
-                         zone = win->client->zone;
-                       else
-                         zone = e_comp_zone_xy_get(NULL, win->x, win->y);
-                    }
-                  else
-                    {
-                       ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
-                       zone = e_comp_zone_xy_get(NULL, x, y);
-                    }
-               }
-             else
-               {
-                  evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-                  zone = e_comp_zone_xy_get(NULL, x, y);
-               }
+             evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+             zone = e_comp_zone_xy_get(NULL, x, y);
           }
      }
    return zone;

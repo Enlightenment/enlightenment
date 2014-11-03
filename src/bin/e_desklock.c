@@ -252,7 +252,7 @@ e_desklock_show(Eina_Bool suspend)
 
              zone = e_util_zone_current_get(e_manager_current_get());
              if (zone)
-               e_configure_registry_call("screen/screen_lock", zone->comp, NULL);
+               e_configure_registry_call("screen/screen_lock", NULL, NULL);
              return 0;
           }
      }
@@ -549,7 +549,7 @@ _e_desklock_ask_presentation_mode(void)
 
    e_dialog_button_focus_num(dia, 0);
    e_widget_list_homogeneous_set(dia->box_object, 0);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
 
    evas_object_event_callback_add(dia->bg_object, EVAS_CALLBACK_KEY_DOWN,

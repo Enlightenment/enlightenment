@@ -327,12 +327,9 @@ _e_actions_cb_kill_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED__
 }
 
 static void
-_e_actions_cb_kill_dialog_delete(E_Win *win)
+_e_actions_cb_kill_dialog_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Dialog *dia;
-
-   dia = win->data;
-   _e_actions_cb_kill_dialog_cancel(NULL, dia);
+   _e_actions_cb_kill_dialog_cancel(NULL, data);
 }
 
 ACT_FN_GO(window_kill, __UNUSED__)
@@ -364,8 +361,8 @@ ACT_FN_GO(window_kill, __UNUSED__)
    kill_dialog = e_dialog_new(NULL,
                               "E", "_kill_dialog");
    if (!kill_dialog) return;
-   e_win_delete_callback_set(kill_dialog->win,
-                             _e_actions_cb_kill_dialog_delete);
+   evas_object_event_callback_add(kill_dialog->win, EVAS_CALLBACK_DEL,
+                             _e_actions_cb_kill_dialog_delete, kill_dialog);
    e_dialog_title_set(kill_dialog,
                       _("Are you sure you want to kill this window?"));
    e_dialog_text_set(kill_dialog, _(dialog_text));
@@ -375,7 +372,7 @@ ACT_FN_GO(window_kill, __UNUSED__)
    e_dialog_button_add(kill_dialog, _("No"), NULL,
                        _e_actions_cb_kill_dialog_cancel, NULL);
    e_dialog_button_focus_num(kill_dialog, 1);
-   e_win_centered_set(kill_dialog->win, 1);
+   elm_win_center(kill_dialog->win, 1, 1);
    e_dialog_show(kill_dialog);
 }
 
@@ -1364,8 +1361,8 @@ _e_actions_zone_get(E_Object *obj)
           return ((E_Client *)obj)->zone;
         else if (obj->type == (int)E_SHELF_TYPE)
           return ((E_Shelf *)obj)->zone;
-        else if (obj->type == (int)E_WIN_TYPE)
-          return ((E_Win *)obj)->client->zone;
+        else if (e_obj_is_win(obj))
+          return e_win_client_get((void*)obj)->zone;
      }
    return e_util_zone_current_get(e_manager_current_get());
 }
@@ -2050,12 +2047,9 @@ _e_actions_cb_exit_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED__
 }
 
 static void
-_e_actions_cb_exit_dialog_delete(E_Win *win)
+_e_actions_cb_exit_dialog_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Dialog *dia;
-
-   dia = win->data;
-   _e_actions_cb_exit_dialog_cancel(NULL, dia);
+   _e_actions_cb_exit_dialog_cancel(NULL, data);
 }
 
 ACT_FN_GO(exit, )
@@ -2075,7 +2069,7 @@ ACT_FN_GO(exit, )
 
    exit_dialog = e_dialog_new(NULL, "E", "_exit_dialog");
    if (!exit_dialog) return;
-   e_win_delete_callback_set(exit_dialog->win, _e_actions_cb_exit_dialog_delete);
+   evas_object_event_callback_add(exit_dialog->win, EVAS_CALLBACK_DEL, _e_actions_cb_exit_dialog_delete, exit_dialog);
    e_dialog_title_set(exit_dialog, _("Exit"));
    e_dialog_text_set(exit_dialog, _("Are you sure you want to exit Enlightenment?"));
    e_dialog_icon_set(exit_dialog, "application-exit", 64);
@@ -2084,7 +2078,7 @@ ACT_FN_GO(exit, )
    e_dialog_button_add(exit_dialog, _("No"), NULL,
                        _e_actions_cb_exit_dialog_cancel, NULL);
    e_dialog_button_focus_num(exit_dialog, 1);
-   e_win_centered_set(exit_dialog->win, 1);
+   elm_win_center(exit_dialog->win, 1, 1);
    e_dialog_show(exit_dialog);
 }
 
@@ -2144,12 +2138,9 @@ _e_actions_cb_logout_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED
 }
 
 static void
-_e_actions_cb_logout_dialog_delete(E_Win *win)
+_e_actions_cb_logout_dialog_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Dialog *dia;
-
-   dia = win->data;
-   _e_actions_cb_logout_dialog_cancel(NULL, dia);
+   _e_actions_cb_logout_dialog_cancel(NULL, data);
 }
 
 ACT_FN_GO(logout, )
@@ -2169,7 +2160,7 @@ ACT_FN_GO(logout, )
 
    logout_dialog = e_dialog_new(NULL, "E", "_logout_dialog");
    if (!logout_dialog) return;
-   e_win_delete_callback_set(logout_dialog->win, _e_actions_cb_logout_dialog_delete);
+   evas_object_event_callback_add(logout_dialog->win, EVAS_CALLBACK_DEL, _e_actions_cb_logout_dialog_delete, logout_dialog);
    e_dialog_title_set(logout_dialog, _("Logout"));
    e_dialog_text_set(logout_dialog, _("Are you sure you want to logout?"));
    e_dialog_icon_set(logout_dialog, "system-log-out", 64);
@@ -2178,7 +2169,7 @@ ACT_FN_GO(logout, )
    e_dialog_button_add(logout_dialog, _("No"), NULL,
                        _e_actions_cb_logout_dialog_cancel, NULL);
    e_dialog_button_focus_num(logout_dialog, 1);
-   e_win_centered_set(logout_dialog->win, 1);
+   elm_win_center(logout_dialog->win, 1, 1);
    e_dialog_show(logout_dialog);
 }
 
@@ -2204,7 +2195,7 @@ _e_actions_cb_halt_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED__
 }
 
 static void
-_e_actions_cb_halt_dialog_delete(E_Win *win __UNUSED__)
+_e_actions_cb_halt_dialog_delete(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    if (!halt_dialog) return;
    e_object_del(E_OBJECT(halt_dialog));
@@ -2228,7 +2219,7 @@ ACT_FN_GO(halt, )
 
    halt_dialog = e_dialog_new(NULL, "E", "_halt_dialog");
    if (!halt_dialog) return;
-   e_win_delete_callback_set(halt_dialog->win, _e_actions_cb_halt_dialog_delete);
+   evas_object_event_callback_add(halt_dialog->win, EVAS_CALLBACK_DEL, _e_actions_cb_halt_dialog_delete, halt_dialog);
    e_dialog_title_set(halt_dialog, _("Power off"));
    e_dialog_text_set(halt_dialog,
                      _("Are you sure you want to power off your computer?"));
@@ -2238,7 +2229,7 @@ ACT_FN_GO(halt, )
    e_dialog_button_add(halt_dialog, _("No"), NULL,
                        _e_actions_cb_halt_dialog_cancel, NULL);
    e_dialog_button_focus_num(halt_dialog, 1);
-   e_win_centered_set(halt_dialog->win, 1);
+   elm_win_center(halt_dialog->win, 1, 1);
    e_dialog_show(halt_dialog);
 }
 
@@ -2264,12 +2255,9 @@ _e_actions_cb_reboot_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSED
 }
 
 static void
-_e_actions_cb_reboot_dialog_delete(E_Win *win)
+_e_actions_cb_reboot_dialog_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Dialog *dia;
-
-   dia = win->data;
-   _e_actions_cb_reboot_dialog_cancel(NULL, dia);
+   _e_actions_cb_reboot_dialog_cancel(NULL, data);
 }
 
 ACT_FN_GO(reboot, )
@@ -2289,7 +2277,7 @@ ACT_FN_GO(reboot, )
 
    reboot_dialog = e_dialog_new(NULL, "E", "_reboot_dialog");
    if (!reboot_dialog) return;
-   e_win_delete_callback_set(reboot_dialog->win, _e_actions_cb_reboot_dialog_delete);
+   evas_object_event_callback_add(reboot_dialog->win, EVAS_CALLBACK_DEL, _e_actions_cb_reboot_dialog_delete, reboot_dialog);
    e_dialog_title_set(reboot_dialog, _("Reboot"));
    e_dialog_text_set(reboot_dialog, _("Are you sure you want to reboot your computer?"));
    e_dialog_icon_set(reboot_dialog, "system-restart", 64);
@@ -2298,7 +2286,7 @@ ACT_FN_GO(reboot, )
    e_dialog_button_add(reboot_dialog, _("No"), NULL,
                        _e_actions_cb_reboot_dialog_cancel, NULL);
    e_dialog_button_focus_num(reboot_dialog, 1);
-   e_win_centered_set(reboot_dialog->win, 1);
+   elm_win_center(reboot_dialog->win, 1, 1);
    e_dialog_show(reboot_dialog);
 }
 
@@ -2324,12 +2312,9 @@ _e_actions_cb_suspend_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNUSE
 }
 
 static void
-_e_actions_cb_suspend_dialog_delete(E_Win *win)
+_e_actions_cb_suspend_dialog_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Dialog *dia;
-
-   dia = win->data;
-   _e_actions_cb_suspend_dialog_cancel(NULL, dia);
+   _e_actions_cb_suspend_dialog_cancel(NULL, data);
 }
 
 ACT_FN_GO(suspend_now, __UNUSED__)
@@ -2354,7 +2339,7 @@ ACT_FN_GO(suspend, )
 
    suspend_dialog = e_dialog_new(NULL, "E", "_suspend_dialog");
    if (!suspend_dialog) return;
-   e_win_delete_callback_set(suspend_dialog->win, _e_actions_cb_suspend_dialog_delete);
+   evas_object_event_callback_add(suspend_dialog->win, EVAS_CALLBACK_DEL, _e_actions_cb_suspend_dialog_delete, suspend_dialog);
    e_dialog_title_set(suspend_dialog, _("Suspend"));
    e_dialog_text_set(suspend_dialog, _("Are you sure you want to suspend your computer?"));
    e_dialog_icon_set(suspend_dialog, "system-suspend", 64);
@@ -2363,7 +2348,7 @@ ACT_FN_GO(suspend, )
    e_dialog_button_add(suspend_dialog, _("No"), NULL,
                        _e_actions_cb_suspend_dialog_cancel, NULL);
    e_dialog_button_focus_num(suspend_dialog, 1);
-   e_win_centered_set(suspend_dialog->win, 1);
+   elm_win_center(suspend_dialog->win, 1, 1);
    e_dialog_show(suspend_dialog);
 }
 
@@ -2389,12 +2374,9 @@ _e_actions_cb_hibernate_dialog_cancel(void *data __UNUSED__, E_Dialog *dia __UNU
 }
 
 static void
-_e_actions_cb_hibernate_dialog_delete(E_Win *win)
+_e_actions_cb_hibernate_dialog_delete(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   E_Dialog *dia;
-
-   dia = win->data;
-   _e_actions_cb_hibernate_dialog_cancel(NULL, dia);
+   _e_actions_cb_hibernate_dialog_cancel(NULL, data);
 }
 
 ACT_FN_GO(hibernate_now, __UNUSED__)
@@ -2419,7 +2401,7 @@ ACT_FN_GO(hibernate, )
 
    hibernate_dialog = e_dialog_new(NULL, "E", "_hibernate_dialog");
    if (!hibernate_dialog) return;
-   e_win_delete_callback_set(hibernate_dialog->win, _e_actions_cb_hibernate_dialog_delete);
+   evas_object_event_callback_add(hibernate_dialog->win, EVAS_CALLBACK_DEL, _e_actions_cb_hibernate_dialog_delete, hibernate_dialog);
    e_dialog_title_set(hibernate_dialog, _("Hibernate"));
    e_dialog_text_set(hibernate_dialog, _("Are you sure you want to hibernate your computer?"));
    e_dialog_icon_set(hibernate_dialog, "system-suspend-hibernate", 64);
@@ -2428,7 +2410,7 @@ ACT_FN_GO(hibernate, )
    e_dialog_button_add(hibernate_dialog, _("No"), NULL,
                        _e_actions_cb_hibernate_dialog_cancel, NULL);
    e_dialog_button_focus_num(hibernate_dialog, 1);
-   e_win_centered_set(hibernate_dialog->win, 1);
+   elm_win_center(hibernate_dialog->win, 1, 1);
    e_dialog_show(hibernate_dialog);
 }
 

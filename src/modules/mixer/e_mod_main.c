@@ -1166,7 +1166,7 @@ _mixer_cb_volume_mute(E_Object *obj __UNUSED__, const char *params __UNUSED__)
 }
 
 static E_Config_Dialog *
-_mixer_module_config(E_Comp *comp, const char *params __UNUSED__)
+_mixer_module_config(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Mixer_Module_Context *ctxt;
 
@@ -1187,7 +1187,7 @@ _mixer_module_config(E_Comp *comp, const char *params __UNUSED__)
           return NULL;
      }
 
-   ctxt->conf_dialog = e_mixer_config_module_dialog_new(comp, ctxt);
+   ctxt->conf_dialog = e_mixer_config_module_dialog_new(NULL, ctxt);
    return ctxt->conf_dialog;
 }
 

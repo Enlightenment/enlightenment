@@ -37,7 +37,7 @@ struct _Del_Profile_Confirm_Data
 };
 
 E_Config_Dialog *
-e_int_config_profiles(E_Comp *comp, const char *params __UNUSED__)
+e_int_config_profiles(Evas_Object *parent EINA_UNUSED, const char *params __UNUSED__)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -50,7 +50,7 @@ e_int_config_profiles(E_Comp *comp, const char *params __UNUSED__)
    v->basic.apply_cfdata = _apply_cfdata;
    v->basic.create_widgets = _create_widgets;
 
-   cfd = e_config_dialog_new(comp, _("Profile Selector"),
+   cfd = e_config_dialog_new(NULL, _("Profile Selector"),
                              "E", "settings/profiles",
                              "preferences-profiles", 0, v, NULL);
    e_config_dialog_changed_auto_set(cfd, 0);
@@ -308,7 +308,7 @@ _cb_add(void *data, void *data2 __UNUSED__)
    if (!cfdata) return;
 
    if (cfdata->dia_new_profile)
-     e_win_raise(cfdata->dia_new_profile->dia->win);
+     elm_win_raise(cfdata->dia_new_profile->dia->win);
    else
      {
         cfdata->dia_new_profile = e_entry_dialog_show(_("Add New Profile"), NULL,

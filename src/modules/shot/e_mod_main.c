@@ -15,7 +15,7 @@ static E_Module *shot_module = NULL;
 static E_Action *border_act = NULL, *act = NULL;
 static E_Int_Menu_Augmentation *maug = NULL;
 static Ecore_Timer *timer, *border_timer = NULL;
-static E_Win *win = NULL;
+static Evas_Object *win = NULL;
 E_Confirm_Dialog *cd = NULL;
 static Evas_Object *o_bg = NULL, *o_box = NULL, *o_content = NULL;
 static Evas_Object *o_event = NULL, *o_img = NULL, *o_hlist = NULL;
@@ -44,27 +44,13 @@ static void _file_select_cancel_cb(void *data __UNUSED__, E_Dialog *dia);
 static void
 _win_cancel_cb(void *data __UNUSED__, void *data2 __UNUSED__)
 {
-   if (win)
-     {
-        e_object_del(E_OBJECT(win));
-        win = NULL;
-     }
+   E_FREE_FUNC(win, evas_object_del);
 }
 
 static void
-_win_delete_cb(E_Win *w __UNUSED__)
+_win_delete_cb()
 {
-   if (win)
-     {
-        e_object_del(E_OBJECT(win));
-        win = NULL;
-     }
-}
-
-static void
-_win_resize_cb(E_Win *w __UNUSED__)
-{
-   evas_object_resize(o_bg, win->w, win->h);
+   win = NULL;
 }
 
 static void
@@ -81,7 +67,7 @@ _key_down_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
 
    if (!strcmp(ev->key, "Tab"))
      {
-        if (evas_key_modifier_is_set(evas_key_modifier_get(e_win_evas_get(win)), "Shift"))
+        if (evas_key_modifier_is_set(evas_key_modifier_get(evas_object_evas_get(win)), "Shift"))
           {
              if (e_widget_focus_get(o_box))
                {
@@ -239,11 +225,7 @@ _file_select_ok_cb(void *data __UNUSED__, E_Dialog *dia)
      }
    _save_to(file);
    if (dia) e_util_defer_object_del(E_OBJECT(dia));
-   if (win)
-     {
-        e_object_del(E_OBJECT(win));
-        win = NULL;
-     }
+   E_FREE_FUNC(win, evas_object_del);
    fsel_dia = NULL;
 }
 
@@ -277,9 +259,9 @@ _win_save_cb(void *data __UNUSED__, void *data2 __UNUSED__)
      strftime(buf, sizeof(buf), "shot-%Y-%m-%d_%H-%M-%S.png", tm);
    else
      strftime(buf, sizeof(buf), "shot-%Y-%m-%d_%H-%M-%S.jpg", tm);
-   fsel_dia = dia = e_dialog_new(scomp, "E", "_e_shot_fsel");
+   fsel_dia = dia = e_dialog_new(NULL, "E", "_e_shot_fsel");
    e_dialog_title_set(dia, _("Select screenshot save location"));
-   o = e_widget_fsel_add(dia->win->evas, "desktop", "/", 
+   o = e_widget_fsel_add(evas_object_evas_get(dia->win), "desktop", "/", 
                          buf,
                          NULL,
                          NULL, NULL,
@@ -294,8 +276,8 @@ _win_save_cb(void *data __UNUSED__, void *data2 __UNUSED__)
                        _file_select_ok_cb, NULL);
    e_dialog_button_add(dia, _("Cancel"), NULL,
                        _file_select_cancel_cb, NULL);
-   e_win_centered_set(dia->win, 1);
-   o = evas_object_rectangle_add(dia->win->evas);
+   elm_win_center(dia->win, 1, 1);
+   o = evas_object_rectangle_add(evas_object_evas_get(dia->win));
    if (!evas_object_key_grab(o, "Return", mask, ~mask, 0)) printf("grab err\n");
    mask = 0;
    if (!evas_object_key_grab(o, "KP_Enter", mask, ~mask, 0)) printf("grab err\n");
@@ -321,8 +303,7 @@ _upload_ok_cb(void *data __UNUSED__, E_Dialog *dia)
    o_label = NULL;
    if (dia) e_util_defer_object_del(E_OBJECT(dia));
    if (!win) return;
-   e_object_del(E_OBJECT(win));
-   win = NULL;
+   E_FREE_FUNC(win, evas_object_del);
 }
 
 static void
@@ -330,11 +311,7 @@ _upload_cancel_cb(void *data __UNUSED__, E_Dialog *dia)
 {
    o_label = NULL;
    if (dia) e_util_defer_object_del(E_OBJECT(dia));
-   if (win)
-     {
-        e_object_del(E_OBJECT(win));
-        win = NULL;
-     }
+   E_FREE_FUNC(win, evas_object_del);
    _share_done();
 }
 
@@ -457,19 +434,11 @@ _win_share_cb(void *data __UNUSED__, void *data2 __UNUSED__)
         e_util_dialog_show(_("Error - Can't create file"),
                            _("Cannot create temporary file '%s': %s"),
                            buf, strerror(errno));
-        if (win)
-          {
-             e_object_del(E_OBJECT(win));
-             win = NULL;
-          }
+        E_FREE_FUNC(win, evas_object_del);
         return;
      }
    _save_to(buf);
-   if (win)
-     {
-        e_object_del(E_OBJECT(win));
-        win = NULL;
-     }
+   E_FREE_FUNC(win, evas_object_del);
    f = fdopen(fd, "rb");
    if (!f)
      {
@@ -521,21 +490,21 @@ _win_share_cb(void *data __UNUSED__, void *data2 __UNUSED__)
    // out of the box
    ecore_con_url_http_version_set(url_up, ECORE_CON_URL_HTTP_VERSION_1_0);
    ecore_con_url_post(url_up, fdata, fsize, "application/x-e-shot");
-   dia = e_dialog_new(scomp, "E", "_e_shot_share");
+   dia = e_dialog_new(NULL, "E", "_e_shot_share");
    e_dialog_title_set(dia, _("Uploading screenshot"));
 
-   o = e_widget_list_add(dia->win->evas, 0, 0);
+   o = e_widget_list_add(evas_object_evas_get(dia->win), 0, 0);
    ol = o;
 
-   o = e_widget_label_add(dia->win->evas, _("Uploading ..."));
+   o = e_widget_label_add(evas_object_evas_get(dia->win), _("Uploading ..."));
    o_label = o;
    e_widget_list_object_append(ol, o, 0, 0, 0.5);
 
-   o = e_widget_label_add(dia->win->evas, 
+   o = e_widget_label_add(evas_object_evas_get(dia->win), 
                           _("Screenshot is available at this location:"));
    e_widget_list_object_append(ol, o, 0, 0, 0.5);
 
-   o = e_widget_entry_add(dia->win->evas, NULL, NULL, NULL, NULL);
+   o = e_widget_entry_add(evas_object_evas_get(dia->win), NULL, NULL, NULL, NULL);
    o_entry = o;
    e_widget_list_object_append(ol, o, 1, 0, 0.5);
 
@@ -545,7 +514,7 @@ _win_share_cb(void *data __UNUSED__, void *data2 __UNUSED__)
    e_dialog_button_add(dia, _("Cancel"), NULL, _upload_cancel_cb, NULL);
    e_object_del_attach_func_set(E_OBJECT(dia), _win_share_del);
    E_LIST_HANDLER_APPEND(handlers, ECORE_CON_EVENT_URL_COMPLETE, _upload_complete_cb, eina_list_last_data_get(dia->buttons));
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
 }
 
@@ -706,20 +675,18 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
                                  dst, (sw * sizeof(int)), 0, 0);
 
    if (win) e_object_del(E_OBJECT(win));
-   win = e_win_new(e_util_comp_current_get());
+   win = elm_win_add(NULL, NULL, ELM_WIN_BASIC);
 
-   evas = e_win_evas_get(win);
-   e_win_title_set(win, _("Where to put Screenshot..."));
-   e_win_delete_callback_set(win, _win_delete_cb);
-   e_win_resize_callback_set(win, _win_resize_cb);
-   e_win_dialog_set(win, 1);
-   e_win_centered_set(win, 1);
-   e_win_name_class_set(win, "E", "_shot_dialog");
+   evas = evas_object_evas_get(win);
+   elm_win_title_set(win, _("Where to put Screenshot..."));
+   evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _win_delete_cb, NULL);
+   elm_win_center(win, 1, 1);
+   ecore_evas_name_class_set(e_win_ee_get(win), "E", "_shot_dialog");
 
    o = edje_object_add(evas);
+   elm_win_resize_object_add(win, o);
    o_bg = o;;
    e_theme_edje_object_set(o, "base/theme/dialog", "e/widgets/dialog/main");
-   evas_object_move(o, 0, 0);
    evas_object_show(o);
 
    o = e_widget_list_add(evas, 0, 0);
@@ -870,9 +837,9 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
 
    edje_object_size_min_calc(o_bg, &w, &h);
    evas_object_resize(o_bg, w, h);
-   e_win_resize(win, w, h);
-   e_win_size_min_set(win, w, h);
-   e_win_size_max_set(win, 99999, 99999);
+   evas_object_resize(win, w, h);
+   evas_object_size_hint_min_set(win, w, h);
+   evas_object_size_hint_max_set(win, 99999, 99999);
 
    if (params)
      {
@@ -899,7 +866,7 @@ _shot_now(E_Zone *zone, E_Client *ec, const char *params)
      }
    else
      {
-        e_win_show(win);
+        evas_object_show(win);
         e_win_client_icon_set(win, "screenshot");
 
         if (!e_widget_focus_get(o_bg)) e_widget_focus_set(o_box, 1);
@@ -1065,11 +1032,7 @@ EAPI int
 e_modapi_shutdown(E_Module *m __UNUSED__)
 {
    _share_done();
-   if (win)
-     {
-        e_object_del(E_OBJECT(win));
-        win = NULL;
-     }
+   E_FREE_FUNC(win, evas_object_del);
    E_FREE_FUNC(cd, e_object_del);
    if (timer)
      {

@@ -14,9 +14,9 @@ EAPI E_Module_Api e_modapi =
 
 /* menu item add hook */
 static void
-_e_mod_run_wallpaper_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_mod_run_wallpaper_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
-   e_configure_registry_call("appearance/wallpaper", m->zone->comp, NULL);
+   e_configure_registry_call("appearance/wallpaper", NULL, NULL);
 }
 
 static void
@@ -31,9 +31,9 @@ _e_mod_menu_wallpaper_add(void *data __UNUSED__, E_Menu *m)
 }
 
 static void
-_e_mod_run_theme_cb(void *data __UNUSED__, E_Menu *m, E_Menu_Item *mi __UNUSED__)
+_e_mod_run_theme_cb(void *data __UNUSED__, E_Menu *m EINA_UNUSED, E_Menu_Item *mi __UNUSED__)
 {
-   e_configure_registry_call("appearance/theme", m->zone->comp, NULL);
+   e_configure_registry_call("appearance/theme", NULL, NULL);
 }
 
 static void

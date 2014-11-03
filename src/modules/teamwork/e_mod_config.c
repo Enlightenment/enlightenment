@@ -159,7 +159,7 @@ _basic_apply_data(E_Config_Dialog *cfd  EINA_UNUSED,
 }
 
 EINTERN E_Config_Dialog *
-e_int_config_teamwork_module(E_Comp *comp, const char *params EINA_UNUSED)
+e_int_config_teamwork_module(Evas_Object *parent EINA_UNUSED, const char *params EINA_UNUSED)
 {
    E_Config_Dialog *cfd;
    E_Config_Dialog_View *v;
@@ -175,7 +175,7 @@ e_int_config_teamwork_module(E_Comp *comp, const char *params EINA_UNUSED)
    v->basic.create_widgets = _basic_create_widgets;
    v->basic.check_changed = _basic_check_changed;
 
-   cfd = e_config_dialog_new(comp, _("Teamwork Settings"),
+   cfd = e_config_dialog_new(NULL, _("Teamwork Settings"),
                              "E", "applications/teamwork", buf, 32, v, tw_mod);
    tw_mod->cfd = cfd;
    return cfd;

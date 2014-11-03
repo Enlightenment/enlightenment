@@ -724,7 +724,7 @@ _e_sys_cb_logout_timer(void *data __UNUSED__)
                                       _e_sys_cb_logout_abort, NULL);
                   e_dialog_button_focus_num(dia, 1);
                   _e_sys_logout_confirm_dialog_update(E_LOGOUT_AUTO_TIME);
-                  e_win_centered_set(dia->win, 1);
+                  elm_win_center(dia->win, 1, 1);
                   e_dialog_show(dia);
                   _e_sys_logout_begin_time = now;
                }
@@ -852,7 +852,7 @@ _e_sys_current_action(void)
      }
    e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
    e_dialog_button_focus_num(dia, 0);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
 }
 
@@ -893,7 +893,7 @@ _e_sys_action_failed(void)
      }
    e_dialog_button_add(dia, _("OK"), NULL, NULL, NULL);
    e_dialog_button_focus_num(dia, 0);
-   e_win_centered_set(dia->win, 1);
+   elm_win_center(dia->win, 1, 1);
    e_dialog_show(dia);
 }
 

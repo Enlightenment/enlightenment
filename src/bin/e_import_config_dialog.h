@@ -26,7 +26,7 @@ struct _E_Import_Config_Dialog
    E_Dialog             *dia;
 };
 
-EAPI E_Import_Config_Dialog *e_import_config_dialog_show(E_Comp *c, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel);
+EAPI E_Import_Config_Dialog *e_import_config_dialog_show(Evas_Object *parent, const char *path, Ecore_End_Cb ok, Ecore_Cb cancel);
 
 #endif
 #endif

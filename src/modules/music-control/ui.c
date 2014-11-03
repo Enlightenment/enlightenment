@@ -244,7 +244,7 @@ _cb_menu_cfg(void *data, E_Menu *m, E_Menu_Item *mi __UNUSED__)
    v->basic.apply_cfdata = _cfg_data_apply;
    v->basic.check_changed = _cfg_check_changed;
 
-   e_config_dialog_new(m->zone->comp, _("Music control Settings"), "E",
+   e_config_dialog_new(NULL, _("Music control Settings"), "E",
                        "_e_mod_music_config_dialog",
                        NULL, 0, v, data);
 }
