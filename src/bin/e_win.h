@@ -31,13 +31,10 @@ e_obj_is_win(const void *obj)
    return type && !strcmp(type, "elm_win");
 }
 
-#define E_WIN_START \
-   char *eng__ = eina_strdup(getenv("ELM_ACCEL")); \
-   e_util_env_set("ELM_ACCEL", "none")
+EAPI Evas_Object *e_elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
 
-#define E_WIN_END \
-   e_util_env_set("ELM_ACCEL", eng__); \
-   free(eng__)
+#define elm_win_add(X, Y, Z) \
+   e_elm_win_add((X), (Y), (Z))
 
 #endif
 #endif

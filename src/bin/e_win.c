@@ -1,8 +1,7 @@
 #include "e.h"
 
 /* intercept elm_win operations so we talk directly to e_client */
-
-#include <Elementary.h>
+#undef elm_win_add
 
 typedef struct _Elm_Win_Trap_Ctx
 {
@@ -405,4 +404,17 @@ e_win_no_reopen_set(Evas_Object *obj, Eina_Bool no_reopen)
    ctx->internal_no_reopen = !!no_reopen;
    if (ctx->client)
      ctx->client->internal_no_reopen = !!no_reopen;
+}
+
+EAPI Evas_Object *
+e_elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
+{
+   char *eng = eina_strdup(getenv("ELM_ACCEL"));
+   Evas_Object *o;
+
+   e_util_env_set("ELM_ACCEL", "none");
+   o = elm_win_add(parent, name, type);
+   e_util_env_set("ELM_ACCEL", eng);
+   free(eng);
+   return o;
 }
