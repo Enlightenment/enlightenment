@@ -1055,6 +1055,23 @@ static const struct wl_surface_interface _e_surface_interface =
 };
 
 static void 
+_e_comp_wl_surface_destroy(struct wl_resource *resource)
+{
+   E_Pixmap *ep;
+   E_Client *ec;
+
+   if (!(ep = wl_resource_get_user_data(resource))) return;
+
+   /* try to get the e_client from this pixmap */
+   if (!(ec = e_pixmap_client_get(ep)))
+     ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, e_pixmap_window_get(ep));
+
+   if (!ec) return;
+
+   e_object_del(E_OBJECT(ec));
+}
+
+static void 
 _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_resource *resource, uint32_t id)
 {
    E_Comp *comp;
@@ -1079,8 +1096,8 @@ _e_comp_wl_compositor_cb_surface_create(struct wl_client *client, struct wl_reso
    DBG("\tCreated Resource: %d", wl_resource_get_id(res));
 
    /* set implementation on resource */
-   wl_resource_set_implementation(res, &_e_surface_interface, NULL, NULL);
-//                                  _callback);
+   wl_resource_set_implementation(res, &_e_surface_interface, NULL, 
+                                  _e_comp_wl_surface_destroy);
 
    /* get the client pid and generate a pixmap id */
    wl_client_get_credentials(client, &pid, NULL, NULL);
@@ -1265,6 +1282,8 @@ _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
 
    /* try to get the client from resource data */
    if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   if (!ec->comp_data) return;
 
    if (!(sdata = ec->comp_data->sub.data)) return;
 
@@ -1726,8 +1745,6 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
    sdata->synchronized = EINA_TRUE;
    sdata->parent = epc;
 
-   ec->comp_data->sub.data = sdata;
-
    /* create subsurface tilers */
    sdata->cached.input = eina_tiler_new(ec->w, ec->h);
    eina_tiler_tile_size_set(sdata->cached.input, 1, 1);
@@ -1746,6 +1763,8 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
 
         /* TODO: add callbacks ?? */
      }
+
+   ec->comp_data->sub.data = sdata;
 
    return EINA_TRUE;
 
