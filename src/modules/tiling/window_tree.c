@@ -545,13 +545,20 @@ tiling_window_tree_edges_get(Window_Tree *node)
  *   appended or prependet, or joined with the previous child or the next child
  */
 void
-_tiling_window_tree_node_break_out(Window_Tree *root, Window_Tree *node, Eina_Bool dir)
+_tiling_window_tree_node_break_out(Window_Tree *root, Window_Tree *node, Window_Tree *par, Eina_Bool dir)
 {
-   Window_Tree *res, *grand_parent;
+   Window_Tree *res, *ac; /* ac is the child of the root, that is a parent of a node */
+
+   if(!par) return;
+
+   /* search a path from the node to the par */
+   ac = node;
+   while (ac->parent != par)
+     ac = ac->parent;
 
    if (dir)
      {
-        res = _inlist_next(node->parent);
+        res = _inlist_next(ac);
         if (res)
           {
              dir = EINA_FALSE;
@@ -559,20 +566,16 @@ _tiling_window_tree_node_break_out(Window_Tree *root, Window_Tree *node, Eina_Bo
      }
    else
      {
-        res = _inlist_prev(node->parent);
+        res = _inlist_prev(ac);
         if (res)
           {
              dir = EINA_TRUE;
           }
      }
 
-   grand_parent = node->parent->parent;
-   if (!grand_parent)
-      return;
-
    tiling_window_tree_unref(root, node);
 
-   _tiling_window_tree_parent_add(grand_parent, node, res, dir);
+   _tiling_window_tree_parent_add(par, node, res, dir);
 }
 
 void
@@ -586,7 +589,11 @@ _tiling_window_tree_node_join(Window_Tree *root, Window_Tree *node, Eina_Bool di
       pn = _inlist_prev(node);
 
    if (!pn)
-      return;
+     {
+        if (node->parent && node->parent->parent && node->parent->parent->parent)
+          _tiling_window_tree_node_break_out(root, node, node->parent->parent->parent, dir);
+        return;
+     }
 
    par = node->parent;
    if ((eina_inlist_count(par->children) == 2) && /* swap if there are just 2 */
@@ -634,32 +641,37 @@ tiling_window_tree_node_change_pos(Window_Tree *node, int key)
    Tiling_Split_Type parent_split_type =
      _tiling_window_tree_split_type_get(node->parent);
 
-   Window_Tree *root = node->parent;
+   Window_Tree *root = node->parent,
+               *grand_parent;
    while(root->parent)
       root = root->parent;
+
+   if (node->parent && node->parent->parent)
+     grand_parent = node->parent->parent;
+
    switch(key)
      {
       case TILING_WINDOW_TREE_EDGE_LEFT:
          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
             _tiling_window_tree_node_join(root, node, EINA_FALSE);
          else if (parent_split_type == TILING_SPLIT_VERTICAL)
-            _tiling_window_tree_node_break_out(root, node, EINA_FALSE);
+            _tiling_window_tree_node_break_out(root, node, grand_parent, EINA_FALSE);
          break;
       case TILING_WINDOW_TREE_EDGE_RIGHT:
          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
             _tiling_window_tree_node_join(root, node, EINA_TRUE);
          else if (parent_split_type == TILING_SPLIT_VERTICAL)
-            _tiling_window_tree_node_break_out(root, node, EINA_TRUE);
+            _tiling_window_tree_node_break_out(root, node, grand_parent,EINA_TRUE);
          break;
       case TILING_WINDOW_TREE_EDGE_TOP:
          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
-            _tiling_window_tree_node_break_out(root, node, EINA_FALSE);
+            _tiling_window_tree_node_break_out(root, node, grand_parent, EINA_FALSE);
          else if (parent_split_type == TILING_SPLIT_VERTICAL)
             _tiling_window_tree_node_join(root, node, EINA_FALSE);
          break;
       case TILING_WINDOW_TREE_EDGE_BOTTOM:
          if (parent_split_type == TILING_SPLIT_HORIZONTAL)
-            _tiling_window_tree_node_break_out(root, node, EINA_TRUE);
+            _tiling_window_tree_node_break_out(root, node, grand_parent, EINA_TRUE);
          else if (parent_split_type == TILING_SPLIT_VERTICAL)
             _tiling_window_tree_node_join(root, node, EINA_TRUE);
           break;
