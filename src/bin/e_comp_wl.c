@@ -1312,13 +1312,223 @@ _e_comp_wl_subsurface_synchronized_get(E_Comp_Wl_Subsurf_Data *sdata)
 static void 
 _e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
 {
+   E_Comp_Client_Data *cdata;
+   E_Comp_Wl_Subsurf_Data *sdata;
+   Eina_Rectangle *dmg;
+   Eina_List *l;
 
+   if (!(cdata = ec->comp_data)) return;
+   if (!(sdata = cdata->sub.data)) return;
+
+   DBG("Subsurface Commit to Cache");
+
+   /* move pending damage to cached */
+   EINA_LIST_FOREACH(cdata->pending.damages, l, dmg)
+     eina_list_move(&sdata->cached.damages, &cdata->pending.damages, dmg);
+
+   DBG("\tList Count After Move: %d", eina_list_count(cdata->pending.damages));
+
+   sdata->cached.x = cdata->pending.x;
+   sdata->cached.y = cdata->pending.y;
+   sdata->cached.buffer = cdata->pending.buffer;
+   sdata->cached.new_attach = cdata->pending.new_attach;
+
+   eina_tiler_union(sdata->cached.opaque, cdata->pending.opaque);
+   eina_tiler_union(sdata->cached.input, cdata->pending.input);
+
+   sdata->cached.has_data = EINA_TRUE;
 }
 
 static void 
 _e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
 {
+   E_Comp_Client_Data *cdata;
+   E_Comp_Wl_Subsurf_Data *sdata;
+   E_Pixmap *ep;
+   Eina_Rectangle *dmg;
+   Eina_Tiler *src, *tmp;
 
+   if (!(cdata = ec->comp_data)) return;
+   if (!(sdata = cdata->sub.data)) return;
+   if (!(ep = ec->pixmap)) return;
+
+   DBG("Subsurface Commit from Cache");
+
+   if (sdata->cached.buffer)
+     {
+        /* set pixmap resource */
+        e_pixmap_resource_set(ep, sdata->cached.buffer);
+
+        /* mark the pixmap as usable or not */
+        e_pixmap_usable_set(ep, (sdata->cached.buffer != NULL));
+     }
+
+   /* mark the pixmap as dirty */
+   e_pixmap_dirty(ep);
+
+   e_pixmap_refresh(ep);
+
+   /* check for any pending attachments */
+   if (sdata->cached.new_attach)
+     {
+        int nw, nh;
+
+        nw = ec->client.w;
+        nh = ec->client.h;
+        if (nw == 0) nw = cdata->pending.w;
+        if (nh == 0) nh = cdata->pending.h;
+
+        /* if the client has a shell configure, call it */
+        if ((cdata->shell.surface) && (cdata->shell.configure))
+          cdata->shell.configure(cdata->shell.surface, 
+                                 ec->client.x, ec->client.y, nw, nh);
+     }
+
+   /* check if we need to map this surface */
+   if (sdata->cached.buffer)
+     {
+        /* if this surface is not mapped yet, map it */
+        if (!cdata->mapped)
+          {
+             /* if the client has a shell map, call it */
+             if ((cdata->shell.surface) && (cdata->shell.map))
+               cdata->shell.map(cdata->shell.surface);
+          }
+     }
+   else
+     {
+        /* no pending buffer to attach. unmap the surface */
+        if (cdata->mapped)
+          {
+             /* if the client has a shell map, call it */
+             if ((cdata->shell.surface) && (cdata->shell.unmap))
+               cdata->shell.unmap(cdata->shell.surface);
+          }
+     }
+
+   if (!cdata->mapped) 
+     {
+        DBG("\tSurface Not Mapped. Skip to Unmapped");
+        goto unmap;
+     }
+
+   /* handle pending opaque */
+   if (sdata->cached.opaque)
+     {
+        tmp = eina_tiler_new(ec->w, ec->h);
+        eina_tiler_tile_size_set(tmp, 1, 1);
+        eina_tiler_rect_add(tmp, 
+                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
+
+        if ((src = eina_tiler_intersection(sdata->cached.opaque, tmp)))
+          {
+             Eina_Rectangle *rect;
+             Eina_Iterator *itr;
+             int i = 0;
+
+             ec->shape_rects_num = 0;
+
+             itr = eina_tiler_iterator_new(src);
+             EINA_ITERATOR_FOREACH(itr, rect)
+               ec->shape_rects_num += 1;
+
+             ec->shape_rects = 
+               malloc(sizeof(Eina_Rectangle) * ec->shape_rects_num);
+
+             if (ec->shape_rects)
+               {
+                  EINA_ITERATOR_FOREACH(itr, rect)
+                    {
+                       ec->shape_rects[i] = *(Eina_Rectangle *)((char *)rect);
+
+                       ec->shape_rects[i].x = rect->x;
+                       ec->shape_rects[i].y = rect->y;
+                       ec->shape_rects[i].w = rect->w;
+                       ec->shape_rects[i].h = rect->h;
+
+                       i++;
+                    }
+               }
+
+             eina_iterator_free(itr);
+             eina_tiler_free(src);
+          }
+
+        eina_tiler_free(tmp);
+        eina_tiler_clear(sdata->cached.opaque);
+     }
+
+   /* commit any pending damages */
+   if ((!ec->comp->nocomp) && (ec->frame))
+     {
+        EINA_LIST_FREE(sdata->cached.damages, dmg)
+          {
+             e_comp_object_damage(ec->frame, dmg->x, dmg->y, dmg->w, dmg->h);
+             eina_rectangle_free(dmg);
+          }
+     }
+
+   /* handle pending input */
+   if (sdata->cached.input)
+     {
+        tmp = eina_tiler_new(ec->w, ec->h);
+        eina_tiler_tile_size_set(tmp, 1, 1);
+        eina_tiler_rect_add(tmp, 
+                            &(Eina_Rectangle){0, 0, ec->client.w, ec->client.h});
+
+        if ((src = eina_tiler_intersection(sdata->cached.input, tmp)))
+          {
+             Eina_Rectangle *rect;
+             Eina_Iterator *itr;
+             int i = 0;
+
+             ec->shape_input_rects_num = 0;
+
+             itr = eina_tiler_iterator_new(src);
+             EINA_ITERATOR_FOREACH(itr, rect)
+               ec->shape_input_rects_num += 1;
+
+             ec->shape_input_rects = 
+               malloc(sizeof(Eina_Rectangle) * ec->shape_input_rects_num);
+
+             if (ec->shape_input_rects)
+               {
+                  EINA_ITERATOR_FOREACH(itr, rect)
+                    {
+                       ec->shape_input_rects[i] = 
+                         *(Eina_Rectangle *)((char *)rect);
+
+                       ec->shape_input_rects[i].x = rect->x;
+                       ec->shape_input_rects[i].y = rect->y;
+                       ec->shape_input_rects[i].w = rect->w;
+                       ec->shape_input_rects[i].h = rect->h;
+
+                       i++;
+                    }
+               }
+
+             eina_iterator_free(itr);
+             eina_tiler_free(src);
+          }
+
+        eina_tiler_free(tmp);
+        eina_tiler_clear(sdata->cached.input);
+     }
+
+   return;
+
+unmap:
+   /* clear pending opaque regions */
+   if (sdata->cached.opaque)
+     eina_tiler_clear(sdata->cached.opaque);
+
+   /* surface is not visible, clear damages */
+   EINA_LIST_FREE(sdata->cached.damages, dmg)
+     eina_rectangle_free(dmg);
+
+   /* clear pending input regions */
+   if (sdata->cached.input)
+     eina_tiler_clear(sdata->cached.input);
 }
 
 static void 
