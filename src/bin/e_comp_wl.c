@@ -1945,8 +1945,6 @@ _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
    /* add this client to the hash */
    /* eina_hash_add(clients_win_hash, &win, ec); */
    e_hints_client_list_set();
-
-   /* TODO: first draw timer ? */
 }
 
 static void 
