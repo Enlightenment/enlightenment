@@ -1242,6 +1242,250 @@ _e_comp_wl_compositor_cb_del(E_Comp *comp)
 }
 
 static void 
+_e_comp_wl_subsurface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   DBG("Subsurface Cb Destroy: %d", wl_resource_get_id(resource));
+}
+
+static void 
+_e_comp_wl_subsurface_cb_position_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y)
+{
+   DBG("Subsurface Cb Position Set: %d", wl_resource_get_id(resource));
+}
+
+static void 
+_e_comp_wl_subsurface_cb_place_above(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *sibling_resource)
+{
+   DBG("Subsurface Cb Place Above: %d", wl_resource_get_id(resource));
+}
+
+static void 
+_e_comp_wl_subsurface_cb_place_below(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, struct wl_resource *sibling_resource)
+{
+   DBG("Subsurface Cb Place Below: %d", wl_resource_get_id(resource));
+}
+
+static void 
+_e_comp_wl_subsurface_cb_sync_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   DBG("Subsurface Cb Sync Set: %d", wl_resource_get_id(resource));
+}
+
+static void 
+_e_comp_wl_subsurface_cb_desync_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   DBG("Subsurface Cb Desync Set: %d", wl_resource_get_id(resource));
+}
+
+static const struct wl_subsurface_interface _e_subsurface_interface = 
+{
+   _e_comp_wl_subsurface_cb_destroy,
+   _e_comp_wl_subsurface_cb_position_set,
+   _e_comp_wl_subsurface_cb_place_above,
+   _e_comp_wl_subsurface_cb_place_below,
+   _e_comp_wl_subsurface_cb_sync_set, 
+   _e_comp_wl_subsurface_cb_desync_set
+};
+
+static Eina_Bool 
+_e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl_resource *surface_resource)
+{
+   struct wl_client *client;
+   struct wl_resource *res;
+   E_Comp_Wl_Subsurf_Data *sdata;
+
+   /* try to get the wayland client from the surface resource */
+   if (!(client = wl_resource_get_client(surface_resource)))
+     {
+        ERR("Could not get client from resource %d", 
+            wl_resource_get_id(surface_resource));
+        return EINA_FALSE;
+     }
+
+   /* try to allocate subsurface data */
+   if (!(sdata = E_NEW(E_Comp_Wl_Subsurf_Data, 1)))
+     {
+        ERR("Could not allocate space for subsurface data");
+        goto dat_err;
+     }
+
+   /* try to create the subsurface resource */
+   if (!(res = wl_resource_create(client, &wl_subsurface_interface, 1, id)))
+     {
+        ERR("Failed to create subsurface resource");
+        wl_resource_post_no_memory(surface_resource);
+        goto res_err;
+     }
+
+   /* TODO: callback ?? */
+   /* set resource implementation */
+   wl_resource_set_implementation(res, &_e_subsurface_interface, ec, NULL);
+
+   /* set subsurface data properties */
+   sdata->resource = res;
+   sdata->synchronized = EINA_TRUE;
+   sdata->parent = epc;
+
+   ec->comp_data->sub.data = sdata;
+
+   /* create subsurface tilers */
+   sdata->cached.input = eina_tiler_new(ec->w, ec->h);
+   eina_tiler_tile_size_set(sdata->cached.input, 1, 1);
+
+   sdata->cached.opaque = eina_tiler_new(ec->w, ec->h);
+   eina_tiler_tile_size_set(sdata->cached.opaque, 1, 1);
+
+   if (epc)
+     {
+        if (epc->comp_data)
+          {
+             /* append this client to the parents subsurface list */
+             epc->comp_data->sub.list = 
+               eina_list_append(epc->comp_data->sub.list, ec);
+          }
+
+        /* TODO: add callbacks ?? */
+     }
+
+   return EINA_TRUE;
+
+res_err:
+   free(sdata);
+dat_err:
+   return EINA_FALSE;
+}
+
+static void 
+_e_comp_wl_subcompositor_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
+{
+   wl_resource_destroy(resource);
+
+   /* TODO: destroy iconify/uniconify handlers */
+}
+
+static void 
+_e_comp_wl_subcompositor_cb_subsurface_get(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, uint32_t id, struct wl_resource *surface_resource, struct wl_resource *parent_resource)
+{
+   E_Pixmap *ep, *epp;
+   E_Client *ec, *epc = NULL;
+   static const char where[] = "get_subsurface: wl_subsurface@";
+
+   DBG("Subcompositor Create Subsurface for Surface: %d", 
+       wl_resource_get_id(surface_resource));
+
+   /* try to get the surface pixmap */
+   if (!(ep = wl_resource_get_user_data(surface_resource)))
+     {
+        wl_resource_post_error(resource, WL_SUBCOMPOSITOR_ERROR_BAD_SURFACE, 
+                               "%s%d: wl_surface@%d is invalid.", where, id, 
+                               wl_resource_get_id(surface_resource));
+        return;
+     }
+
+   /* try to get the parent pixmap */
+   if (!(epp = wl_resource_get_user_data(parent_resource)))
+     {
+        wl_resource_post_error(resource, WL_SUBCOMPOSITOR_ERROR_BAD_SURFACE, 
+                               "%s%d: wl_surface@%d is invalid.", where, id, 
+                               wl_resource_get_id(parent_resource));
+        return;
+     }
+
+   if (ep == epp)
+     {
+        wl_resource_post_error(resource, WL_SUBCOMPOSITOR_ERROR_BAD_SURFACE,
+                               "%s%d: wl_surface@%d cannot be its own parent",
+                               where, id, wl_resource_get_id(surface_resource));
+        return;
+     }
+
+   /* try to find the associated e_client */
+   if (!(ec = e_pixmap_client_get(ep)))
+     {
+        uint64_t pixid;
+
+        pixid = e_pixmap_window_get(ep);
+        if (!(ec = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
+          ERR("\tCould not find client from pixmap %"PRIu64, pixid);
+     }
+
+   if (!ec)
+     {
+        /* no client exists for this pixmap yet */
+        if (!(ec = e_client_new(e_util_comp_current_get(), ep, 1, 0)))
+          {
+             ERR("Failed to create new client");
+             wl_resource_post_no_memory(resource);
+             return;
+          }
+
+        if (ec->comp_data)
+          ec->comp_data->surface = surface_resource;
+     }
+   else
+     {
+        /* trap for clients which are being deleted */
+        if (e_object_is_del(E_OBJECT(ec))) return;
+     }
+
+   /* try to find the parents associated e_client */
+   if (!(epc = e_pixmap_client_get(epp)))
+     {
+        uint64_t pixid;
+
+        pixid = e_pixmap_window_get(epp);
+        if (!(epc = e_pixmap_find_client(E_PIXMAP_TYPE_WL, pixid)))
+          ERR("\tCould not find client from pixmap %"PRIu64, pixid);
+     }
+
+   /* trap for clients which are being deleted */
+   if ((epc) && (e_object_is_del(E_OBJECT(epc)))) return;
+
+   /* check if this surface is already a sub-surface */
+   if ((ec->comp_data) && (ec->comp_data->sub.data))
+     {
+        wl_resource_post_error(resource,
+                               WL_SUBCOMPOSITOR_ERROR_BAD_SURFACE,
+                               "%s%d: wl_surface@%d is already a sub-surface",
+                               where, id, wl_resource_get_id(surface_resource));
+        return;
+     }
+
+   /* try to create a new subsurface */
+   if (!_e_comp_wl_subsurface_create(ec, epc, id, surface_resource))
+     ERR("Failed to create subsurface for surface %d", 
+         wl_resource_get_id(surface_resource));
+}
+
+static const struct wl_subcompositor_interface _e_subcomp_interface = 
+{
+   _e_comp_wl_subcompositor_cb_destroy,
+   _e_comp_wl_subcompositor_cb_subsurface_get
+};
+
+static void 
+_e_comp_wl_subcompositor_cb_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+{
+   E_Comp *comp;
+   struct wl_resource *res;
+
+   if (!(comp = data)) return;
+
+   if (!(res = 
+         wl_resource_create(client, &wl_subcompositor_interface, 
+                            MIN(version, 1), id)))
+     {
+        ERR("Could not create subcompositor resource: %m");
+        wl_client_post_no_memory(client);
+        return;
+     }
+
+   wl_resource_set_implementation(res, &_e_subcomp_interface, comp, NULL);
+
+   /* TODO: add handlers for client iconify/uniconify */
+}
+
+static void 
 _e_comp_wl_client_cb_new(void *data EINA_UNUSED, E_Client *ec)
 {
    uint64_t win;
@@ -1523,6 +1767,14 @@ _e_comp_wl_compositor_create(void)
                          _e_comp_wl_compositor_cb_bind))
      {
         ERR("Could not add compositor to wayland globals: %m");
+        goto comp_global_err;
+     }
+
+   /* try to add subcompositor to wayland globals */
+   if (!wl_global_create(cdata->wl.disp, &wl_subcompositor_interface, 1, 
+                         comp, _e_comp_wl_subcompositor_cb_bind))
+     {
+        ERR("Could not add subcompositor to wayland globals: %m");
         goto comp_global_err;
      }
 
