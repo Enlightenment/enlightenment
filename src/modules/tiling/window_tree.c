@@ -591,7 +591,10 @@ _tiling_window_tree_node_join(Window_Tree *root, Window_Tree *node, Eina_Bool di
    if (!pn)
      {
         if (node->parent && node->parent->parent && node->parent->parent->parent)
-          _tiling_window_tree_node_break_out(root, node, node->parent->parent->parent, dir);
+          {
+             _tiling_window_tree_node_break_out(root, node, node->parent->parent->parent, dir);
+          }
+
         return;
      }
 
