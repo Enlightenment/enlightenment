@@ -16,7 +16,7 @@ typedef struct _Elm_Win_Trap_Ctx
 
 
 static void *
-_elm_win_trap_add(Evas_Object *o)
+_e_elm_win_trap_add(Evas_Object *o)
 {
    Elm_Win_Trap_Ctx *ctx = calloc(1, sizeof(Elm_Win_Trap_Ctx));
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, NULL);
@@ -25,7 +25,7 @@ _elm_win_trap_add(Evas_Object *o)
 }
 
 static void
-_elm_win_trap_del(void *data, Evas_Object *o)
+_e_elm_win_trap_del(void *data, Evas_Object *o)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN(ctx);
@@ -40,7 +40,7 @@ _elm_win_trap_del(void *data, Evas_Object *o)
 }
 
 static Eina_Bool
-_elm_win_trap_hide(void *data, Evas_Object *o)
+_e_elm_win_trap_hide(void *data, Evas_Object *o)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
@@ -55,7 +55,7 @@ _elm_win_trap_hide(void *data, Evas_Object *o)
 }
 
 static Eina_Bool
-_elm_win_trap_show(void *data, Evas_Object *o)
+_e_elm_win_trap_show(void *data, Evas_Object *o)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    Evas *e = evas_object_evas_get(o);
@@ -126,7 +126,7 @@ _elm_win_trap_show(void *data, Evas_Object *o)
 }
 
 static Eina_Bool
-_elm_win_trap_move(void *data, Evas_Object *o __UNUSED__, int x, int y)
+_e_elm_win_trap_move(void *data, Evas_Object *o __UNUSED__, int x, int y)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
@@ -139,7 +139,7 @@ _elm_win_trap_move(void *data, Evas_Object *o __UNUSED__, int x, int y)
 }
 
 static Eina_Bool
-_elm_win_trap_resize(void *data, Evas_Object *o __UNUSED__, int w, int h)
+_e_elm_win_trap_resize(void *data, Evas_Object *o __UNUSED__, int w, int h)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
@@ -151,7 +151,7 @@ _elm_win_trap_resize(void *data, Evas_Object *o __UNUSED__, int w, int h)
 }
 
 static Eina_Bool
-_elm_win_trap_center(void *data, Evas_Object *o __UNUSED__)
+_e_elm_win_trap_center(void *data, Evas_Object *o __UNUSED__)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
@@ -162,7 +162,7 @@ _elm_win_trap_center(void *data, Evas_Object *o __UNUSED__)
 }
 
 static Eina_Bool
-_elm_win_trap_lower(void *data, Evas_Object *o __UNUSED__)
+_e_elm_win_trap_lower(void *data, Evas_Object *o __UNUSED__)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
@@ -172,7 +172,7 @@ _elm_win_trap_lower(void *data, Evas_Object *o __UNUSED__)
 }
 
 static Eina_Bool
-_elm_win_trap_raise(void *data, Evas_Object *o __UNUSED__)
+_e_elm_win_trap_raise(void *data, Evas_Object *o __UNUSED__)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
@@ -182,7 +182,7 @@ _elm_win_trap_raise(void *data, Evas_Object *o __UNUSED__)
 }
 
 static Eina_Bool
-_elm_win_trap_activate(void *data, Evas_Object *o __UNUSED__)
+_e_elm_win_trap_activate(void *data, Evas_Object *o __UNUSED__)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
@@ -194,7 +194,7 @@ _elm_win_trap_activate(void *data, Evas_Object *o __UNUSED__)
 }
 
 static Eina_Bool
-_elm_win_trap_size_min_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
+_e_elm_win_trap_size_min_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    int mw, mh;
@@ -213,7 +213,7 @@ _elm_win_trap_size_min_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
 }
 
 static Eina_Bool
-_elm_win_trap_size_max_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
+_e_elm_win_trap_size_max_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    int mw, mh;
@@ -232,7 +232,7 @@ _elm_win_trap_size_max_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
 }
 
 static Eina_Bool
-_elm_win_trap_size_base_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
+_e_elm_win_trap_size_base_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    int mw, mh;
@@ -251,7 +251,7 @@ _elm_win_trap_size_base_set(void *data, Evas_Object *o __UNUSED__, int w, int h)
 }
 
 static Eina_Bool
-_elm_win_trap_borderless_set(void *data, Evas_Object *o EINA_UNUSED, Eina_Bool borderless)
+_e_elm_win_trap_borderless_set(void *data, Evas_Object *o EINA_UNUSED, Eina_Bool borderless)
 {
    Elm_Win_Trap_Ctx *ctx = data;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ctx, EINA_TRUE);
@@ -265,22 +265,22 @@ _elm_win_trap_borderless_set(void *data, Evas_Object *o EINA_UNUSED, Eina_Bool b
    return EINA_TRUE;
 }
 
-static const Elm_Win_Trap _elm_win_trap = {
+static const Elm_Win_Trap _e_elm_win_trap = {
    ELM_WIN_TRAP_VERSION,
-   _elm_win_trap_add,
-   _elm_win_trap_del,
-   _elm_win_trap_hide,
-   _elm_win_trap_show,
-   _elm_win_trap_move,
-   _elm_win_trap_resize,
-   _elm_win_trap_center,
-   _elm_win_trap_lower,
-   _elm_win_trap_raise,
-   _elm_win_trap_activate,
+   _e_elm_win_trap_add,
+   _e_elm_win_trap_del,
+   _e_elm_win_trap_hide,
+   _e_elm_win_trap_show,
+   _e_elm_win_trap_move,
+   _e_elm_win_trap_resize,
+   _e_elm_win_trap_center,
+   _e_elm_win_trap_lower,
+   _e_elm_win_trap_raise,
+   _e_elm_win_trap_activate,
    /* alpha_set */ NULL,
    /* aspect_set */ NULL,
    /* avoid_damage_set */ NULL,
-   _elm_win_trap_borderless_set,
+   _e_elm_win_trap_borderless_set,
    /* demand_attention_set */ NULL,
    /* focus_skip_set */ NULL,
    /* fullscreen_set */ NULL,
@@ -295,10 +295,10 @@ static const Elm_Win_Trap _elm_win_trap = {
    /* rotation_set */ NULL,
    /* rotation_with_resize_set */ NULL,
    /* shaped_set */ NULL,
-   _elm_win_trap_size_base_set,
+   _e_elm_win_trap_size_base_set,
    /* size_step_set */ NULL,
-   _elm_win_trap_size_min_set,
-   _elm_win_trap_size_max_set,
+   _e_elm_win_trap_size_min_set,
+   _e_elm_win_trap_size_max_set,
    /* sticky_set */ NULL,
    /* title_set */ NULL,
    /* urgent_set */ NULL,
@@ -309,7 +309,7 @@ static const Elm_Win_Trap _elm_win_trap = {
 EINTERN int
 e_win_init(void)
 {
-   if (!elm_win_trap_set(&_elm_win_trap)) return 0;
+   if (!elm_win_trap_set(&_e_elm_win_trap)) return 0;
    return 1;
 }
 
