@@ -38,7 +38,7 @@
 
 typedef struct _E_Comp_Wl_Buffer E_Comp_Wl_Buffer;
 typedef struct _E_Comp_Wl_Buffer_Ref E_Comp_Wl_Buffer_Ref;
-typedef struct _E_Comp_Wl_Subsurf E_Comp_Wl_Subsurf;
+typedef struct _E_Comp_Wl_Subsurf_Data E_Comp_Wl_Subsurf_Data;
 typedef struct _E_Comp_Wl_Client_Data E_Comp_Wl_Client_Data;
 typedef struct _E_Comp_Wl_Data E_Comp_Wl_Data;
 
@@ -62,7 +62,7 @@ struct _E_Comp_Wl_Buffer_Ref
    struct wl_listener destroy_listener;
 };
 
-struct _E_Comp_Wl_Subsurf
+struct _E_Comp_Wl_Subsurf_Data
 {
    struct wl_resource *resource;
 
@@ -79,13 +79,15 @@ struct _E_Comp_Wl_Subsurf
         int x, y;
 
         Eina_Bool has_data;
-        Eina_Bool new_attach;
+        Eina_Bool new_attach : 1;
+
+        struct wl_resource *buffer;
 
         E_Comp_Wl_Buffer_Ref buffer_ref;
 
-        Eina_Tiler *damage;
-        Eina_Tiler *opaque;
+        Eina_List *damages;
         Eina_Tiler *input;
+        Eina_Tiler *opaque;
      } cached;
 
    Eina_Bool synchronized;
@@ -215,7 +217,7 @@ struct _E_Comp_Wl_Client_Data
 
    struct
      {
-        E_Comp_Wl_Subsurf *cdata;
+        E_Comp_Wl_Subsurf_Data *data;
         E_Client *restack_target;
         Eina_List *list;
      } sub;
