@@ -987,7 +987,8 @@ static void
 _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_resource *resource)
 {
    E_Pixmap *ep;
-   E_Client *ec;
+   E_Client *ec, *subc;
+   Eina_List *l;
 
    DBG("Surface Commit: %d", wl_resource_get_id(resource));
 
@@ -1010,9 +1011,20 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    /* trap for clients which are being deleted */
    if (e_object_is_del(E_OBJECT(ec))) return;
 
+   /* call the subsurface commit function
+    * 
+    * NB: Returns true on success */
+   if (e_comp_wl_subsurface_commit(ec)) return;
+
    /* handle actual surface commit */
    if (!e_comp_wl_surface_commit(ec))
      ERR("Failed to commit surface: %d", wl_resource_get_id(resource));
+
+   EINA_LIST_FOREACH(ec->comp_data->sub.list, l, subc)
+     {
+        if (ec != subc)
+          _e_comp_wl_subsurface_parent_commit(subc, EINA_FALSE);
+     }
 }
 
 static void 
@@ -1280,6 +1292,37 @@ _e_comp_wl_subsurface_destroy(struct wl_resource *resource)
    E_FREE(sdata);
 
    ec->comp_data->sub.data = NULL;
+}
+
+static Eina_Bool 
+_e_comp_wl_subsurface_synchronized_get(E_Comp_Wl_Subsuf_Data *sdata)
+{
+   while (sdata)
+     {
+        if (sdata->synchronized) return EINA_TRUE;
+        if (!sdata->parent) return EINA_FALSE;
+        sdata = sdata->parent->comp_data->sub.data;
+     }
+
+   return EINA_FALSE;
+}
+
+static void 
+_e_comp_wl_subsurface_commit_to_cache(E_Client *ec)
+{
+
+}
+
+static void 
+_e_comp_wl_subsurface_commit_from_cache(E_Client *ec)
+{
+
+}
+
+static void 
+_e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_synchronized)
+{
+
 }
 
 static void 
@@ -2219,4 +2262,35 @@ unmap:
      eina_tiler_clear(ec->comp_data->pending.input);
 
    return EINA_TRUE;
+}
+
+EINTERN Eina_Bool 
+e_comp_wl_subsurface_commit(E_Client *ec)
+{
+   E_Comp_Wl_Subsurf_Data *sdata;
+
+   /* check for valid subcompositor data */
+   if (!(sdata = ec->comp_data->sub.data)) return EINA_FALSE;
+
+   if (_e_comp_wl_subsurface_synchronized_get(sdata))
+     _e_comp_wl_subsurface_commit_to_cache(ec);
+   else
+     {
+        E_Client *subc;
+        Eina_List *l;
+
+        if (sdata->cached.has_data)
+          {
+             _e_comp_wl_subsurface_commit_to_cache(ec);
+             _e_comp_wl_subsurface_commit_from_cache(ec);
+          }
+        else
+          e_comp_wl_surface_commit(ec);
+
+        EINA_LIST_FOREACH(ec->comp_data->sub.list, l, subc)
+          {
+             if (ec != subc)
+               _e_comp_wl_subsurface_parent_commit(subc, EINA_FALSE);
+          }
+     }
 }
