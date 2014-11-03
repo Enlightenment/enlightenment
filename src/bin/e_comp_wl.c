@@ -1291,7 +1291,19 @@ _e_comp_wl_subsurface_cb_destroy(struct wl_client *client EINA_UNUSED, struct wl
 static void 
 _e_comp_wl_subsurface_cb_position_set(struct wl_client *client EINA_UNUSED, struct wl_resource *resource, int32_t x, int32_t y)
 {
+   E_Client *ec;
+   E_Comp_Wl_Subsurf_Data *sdata;
+
    DBG("Subsurface Cb Position Set: %d", wl_resource_get_id(resource));
+
+   /* try to get the client from resource data */
+   if (!(ec = wl_resource_get_user_data(resource))) return;
+
+   if (!(sdata = ec->comp_data->sub.data)) return;
+
+   sdata->position.x = x;
+   sdata->position.y = y;
+   sdata->position.set = EINA_TRUE;
 }
 
 static void 
