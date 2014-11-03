@@ -1534,7 +1534,33 @@ unmap:
 static void 
 _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_synchronized)
 {
+   E_Client *parent;
+   E_Comp_Wl_Subsurf_Data *sdata;
 
+   if (!(sdata = ec->comp_data->sub.data)) return;
+   if (!(parent = sdata->parent)) return;
+
+   if (sdata->position.set)
+     {
+        evas_object_move(ec->frame, parent->x + sdata->position.x, 
+                         parent->y + sdata->position.y);
+        sdata->position.set = EINA_FALSE;
+     }
+
+   if ((parent_synchronized) || (sdata->synchronized))
+     {
+        E_Client *subc;
+        Eina_List *l;
+
+        if (sdata->cached.has_data)
+          _e_comp_wl_subsurface_commit_from_cache(ec);
+
+        EINA_LIST_FOREACH(ec->comp_data->sub.list, l, subc)
+          {
+             if (ec != subc)
+               _e_comp_wl_subsurface_parent_commit(subc, EINA_TRUE);
+          }
+     }
 }
 
 static void 
