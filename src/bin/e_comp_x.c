@@ -2990,8 +2990,9 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
      }
    if (ec->changes.prop || ec->netwm.fetch.type)
      {
+        unsigned int type = ec->netwm.type;
         e_hints_window_type_get(ec);
-        if (((!ec->lock_border) || (!ec->border.name)) && ec->comp_data->reparented)
+        if (((!ec->lock_border) || (!ec->border.name) || (type != ec->netwm.type)) && (ec->comp_data->reparented || ec->internal))
           {
              ec->border.changed = 1;
              EC_CHANGED(ec);
@@ -3717,7 +3718,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
           }
         if (ec->mwm.borderless != pb)
           {
-             if (ec->comp_data->reparented && ((!ec->lock_border) || (!ec->border.name)))
+             if ((ec->internal || ec->comp_data->reparented) && ((!ec->lock_border) || (!ec->border.name)))
                {
                   ec->border.changed = 1;
                   EC_CHANGED(ec);
@@ -3782,7 +3783,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         /* Some stats might change the border, like modal */
         if (((!ec->lock_border) || (!ec->border.name)) &&
             (!(((ec->maximized & E_MAXIMIZE_TYPE) == E_MAXIMIZE_FULLSCREEN))) &&
-            ec->comp_data->reparented)
+            (ec->internal || ec->comp_data->reparented))
           {
              ec->border.changed = 1;
              EC_CHANGED(ec);
@@ -3824,7 +3825,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
         E_Exec_Instance *inst;
 
         if (((!ec->lock_border) || (!ec->border.name)) && 
-            (ec->comp_data->reparented))
+            (ec->internal || ec->comp_data->reparented))
           {
              ec->border.changed = 1;
              EC_CHANGED(ec);
@@ -4013,7 +4014,7 @@ _e_comp_x_hook_client_fetch(void *d EINA_UNUSED, E_Client *ec)
      }
    ec->changes.prop = 0;
    if (rem_change) e_remember_update(ec);
-   if (!ec->comp_data->reparented) ec->changes.border = 0;
+   if ((!ec->comp_data->reparented) && (!ec->internal)) ec->changes.border = 0;
    if (ec->changes.icon)
      {
         /* don't create an icon until we need it */
