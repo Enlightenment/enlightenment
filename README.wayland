@@ -39,10 +39,8 @@ Wayland-Only:
 -------------
 
 If you wish to test out the Highly Experimental standalone
-Wayland-Only (no X11) compositor, then you should checkout the
-e_comp_wl development branch:
-
-https://git.enlightenment.org/core/enlightenment.git/log/?h=devs/devilhorns/e_comp_wl
+Wayland-Only (no X11) compositor, then read below about how to compile
+support for a wayland-only Enlightenment.
 
 Compiling:
 -------------
