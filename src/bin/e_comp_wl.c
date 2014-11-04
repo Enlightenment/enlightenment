@@ -1752,6 +1752,14 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
    sdata->cached.opaque = eina_tiler_new(ec->w, ec->h);
    eina_tiler_tile_size_set(sdata->cached.opaque, 1, 1);
 
+   /* set subsurface client properties */
+   ec->borderless = EINA_TRUE;
+   ec->argb = EINA_TRUE;
+   ec->lock_border = EINA_TRUE;
+   ec->lock_focus_in = ec->lock_focus_out = EINA_TRUE;
+   ec->netwm.state.skip_taskbar = EINA_TRUE;
+   ec->netwm.state.skip_pager = EINA_TRUE;
+
    if (epc)
      {
         if (epc->comp_data)
@@ -1764,6 +1772,7 @@ _e_comp_wl_subsurface_create(E_Client *ec, E_Client *epc, uint32_t id, struct wl
         /* TODO: add callbacks ?? */
      }
 
+   ec->comp_data->surface = surface_resource;
    ec->comp_data->sub.data = sdata;
 
    return EINA_TRUE;
