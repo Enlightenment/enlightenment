@@ -2475,6 +2475,9 @@ e_comp_wl_surface_commit(E_Client *ec)
                {
                   EINA_ITERATOR_FOREACH(itr, rect)
                     {
+                       E_RECTS_CLIP_TO_RECT(rect->x, rect->y, rect->w, rect->h, 
+                                            0, 0, ec->client.w, ec->client.h);
+
                        ec->shape_rects[i] = *(Eina_Rectangle *)((char *)rect);
 
                        ec->shape_rects[i].x = rect->x;
@@ -2484,6 +2487,8 @@ e_comp_wl_surface_commit(E_Client *ec)
 
                        i++;
                     }
+
+                  ec->need_shape_export = EINA_TRUE;
                }
 
              eina_iterator_free(itr);
@@ -2531,6 +2536,9 @@ e_comp_wl_surface_commit(E_Client *ec)
                {
                   EINA_ITERATOR_FOREACH(itr, rect)
                     {
+                       E_RECTS_CLIP_TO_RECT(rect->x, rect->y, rect->w, rect->h, 
+                                            0, 0, ec->client.w, ec->client.h);
+
                        ec->shape_input_rects[i] = 
                          *(Eina_Rectangle *)((char *)rect);
 
