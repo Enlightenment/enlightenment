@@ -2031,6 +2031,44 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
 }
 
 static void 
+_e_comp_wl_client_cb_post_new(void *data EINA_UNUSED, E_Client *ec)
+{
+   E_COMP_WL_PIXMAP_CHECK;
+
+   DBG("Client Post New: %d", wl_resource_get_id(ec->comp_data->surface));
+
+   ec->need_shape_merge = EINA_FALSE;
+
+   if (ec->changes.internal_props)
+     {
+        E_Win *win;
+
+        if ((win = ecore_evas_data_get(ec->internal_ecore_evas, "E_Win")))
+          {
+             ecore_evas_size_min_set(ec->internal_ecore_evas, 
+                                     win->min_w, win->min_h);
+             ecore_evas_size_max_set(ec->internal_ecore_evas, 
+                                     win->max_w, win->max_h);
+             ecore_evas_size_base_set(ec->internal_ecore_evas, 
+                                      win->base_w, win->base_h);
+             ecore_evas_size_step_set(ec->internal_ecore_evas, 
+                                      win->step_x, win->step_y);
+             /* TODO: handle aspect */
+
+             ec->changes.internal_props = EINA_FALSE;
+          }
+     }
+
+   if (ec->need_shape_export)
+     {
+        DBG("\tNeeds Shape Export");
+        ec->shape_changed = EINA_TRUE;
+        e_comp_shape_queue(ec->comp);
+        ec->need_shape_export = EINA_FALSE;
+     }
+}
+
+static void 
 _e_comp_wl_client_cb_focus_set(void *data EINA_UNUSED, E_Client *ec)
 {
    E_COMP_WL_PIXMAP_CHECK;
@@ -2293,6 +2331,9 @@ e_comp_wl_init(void)
    /* add hooks to catch e_client events */
    e_client_hook_add(E_CLIENT_HOOK_NEW_CLIENT, _e_comp_wl_client_cb_new, NULL);
    e_client_hook_add(E_CLIENT_HOOK_DEL, _e_comp_wl_client_cb_del, NULL);
+
+   e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_NEW_CLIENT, 
+                     _e_comp_wl_client_cb_post_new, NULL);
 
    e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, 
                      _e_comp_wl_client_cb_focus_set, NULL);
