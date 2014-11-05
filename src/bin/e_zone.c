@@ -1589,6 +1589,7 @@ _e_zone_object_del_attach(void *o)
    E_Event_Zone_Del *ev;
 
    zone = o;
+   if (stopping) return;
    ev = E_NEW(E_Event_Zone_Del, 1);
    ev->zone = zone;
    e_object_ref(E_OBJECT(ev->zone));

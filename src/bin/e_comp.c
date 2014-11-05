@@ -827,6 +827,7 @@ _e_comp_free(E_Comp *c)
    if (c->screen_job) ecore_job_del(c->screen_job);
    if (c->nocomp_delay_timer) ecore_timer_del(c->nocomp_delay_timer);
    if (c->nocomp_override_timer) ecore_timer_del(c->nocomp_override_timer);
+   ecore_job_del(c->shape_job);
 
    free(c);
 }

@@ -1078,7 +1078,8 @@ _e_shelf_free(E_Shelf *es)
    if (!es->dummy)
      _e_shelf_bindings_del(es);
 
-   e_zone_useful_geometry_dirty(es->zone);
+   if (!stopping)
+     e_zone_useful_geometry_dirty(es->zone);
    E_FREE_LIST(es->handlers, ecore_event_handler_del);
 
    E_FREE_FUNC(es->autohide, ecore_event_handler_del);

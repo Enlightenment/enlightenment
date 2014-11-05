@@ -1580,13 +1580,10 @@ _e_main_screens_shutdown(void)
    e_exehist_shutdown();
    e_backlight_shutdown();
    e_exec_shutdown();
-// ecore_evas closes evas - deletes objs - deletes fm widgets which tries to
-// ipc to slave to stop monitoring - but ipc has been shut down. dont shut
-// down.
-//   e_desk_shutdown();
-//   e_zone_shutdown();
-//   e_container_shutdown();
-//   e_manager_shutdown();
+
+   e_desk_shutdown();
+   e_zone_shutdown();
+   e_manager_shutdown();
    return 1;
 }
 
