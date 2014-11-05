@@ -1981,8 +1981,6 @@ _e_comp_wl_client_cb_del(void *data EINA_UNUSED, E_Client *ec)
    /* uint64_t win; */
    Eina_Rectangle *dmg;
 
-   DBG("Comp Hook Client Del");
-
    /* make sure this is a wayland client */
    E_COMP_WL_PIXMAP_CHECK;
 
@@ -2035,7 +2033,7 @@ _e_comp_wl_client_cb_post_new(void *data EINA_UNUSED, E_Client *ec)
 {
    E_COMP_WL_PIXMAP_CHECK;
 
-   DBG("Client Post New: %d", wl_resource_get_id(ec->comp_data->surface));
+   if (e_object_is_del(E_OBJECT(ec))) return;
 
    ec->need_shape_merge = EINA_FALSE;
 
@@ -2061,11 +2059,90 @@ _e_comp_wl_client_cb_post_new(void *data EINA_UNUSED, E_Client *ec)
 
    if (ec->need_shape_export)
      {
-        DBG("\tNeeds Shape Export");
-        ec->shape_changed = EINA_TRUE;
+//        ec->shape_changed = EINA_TRUE;
         e_comp_shape_queue(ec->comp);
         ec->need_shape_export = EINA_FALSE;
      }
+}
+
+static void 
+_e_comp_wl_client_cb_pre_frame(void *data EINA_UNUSED, E_Client *ec)
+{
+   uint64_t parent;
+
+   E_COMP_WL_PIXMAP_CHECK;
+
+   if (!ec->comp_data->need_reparent) return;
+
+   DBG("Client Pre Frame: %d", wl_resource_get_id(ec->comp_data->surface));
+
+   parent = e_client_util_pwin_get(ec);
+
+   /* set pixmap parent window */
+   e_pixmap_parent_window_set(ec->pixmap, parent);
+
+   ec->border_size = 0;
+   ec->border.changed = EINA_TRUE;
+   ec->changes.shape = EINA_TRUE;
+   ec->changes.shape_input = EINA_TRUE;
+   EC_CHANGED(ec);
+
+   if (ec->visible)
+     {
+        if ((ec->comp_data->set_win_type) && (ec->internal_ecore_evas))
+          {
+             int type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
+
+             switch (ec->netwm.type)
+               {
+                case E_WINDOW_TYPE_DIALOG:
+                  /* NB: If there is No transient set, then dialogs get 
+                   * treated as Normal Toplevel windows */
+                  if (ec->icccm.transient_for)
+                    type = ECORE_WL_WINDOW_TYPE_TRANSIENT;
+                  break;
+                case E_WINDOW_TYPE_DESKTOP:
+                  type = ECORE_WL_WINDOW_TYPE_FULLSCREEN;
+                  break;
+                case E_WINDOW_TYPE_DND:
+                  type = ECORE_WL_WINDOW_TYPE_DND;
+                  break;
+                case E_WINDOW_TYPE_MENU:
+                case E_WINDOW_TYPE_DROPDOWN_MENU:
+                case E_WINDOW_TYPE_POPUP_MENU:
+                  type = ECORE_WL_WINDOW_TYPE_MENU;
+                  break;
+                case E_WINDOW_TYPE_NORMAL:
+                default:
+                    break;
+               }
+
+             ecore_evas_wayland_type_set(ec->internal_ecore_evas, type);
+             ec->comp_data->set_win_type = EINA_FALSE;
+          }
+     }
+
+   e_bindings_mouse_grab(E_BINDING_CONTEXT_WINDOW, parent);
+   e_bindings_wheel_grab(E_BINDING_CONTEXT_WINDOW, parent);
+
+   _e_comp_wl_client_evas_init(ec);
+
+   /* if ((ec->netwm.ping) && (!ec->ping_poller)) */
+   /*   e_client_ping(ec); */
+
+   if (ec->visible) evas_object_show(ec->frame);
+
+   ec->comp_data->need_reparent = EINA_FALSE;
+   ec->redirected = EINA_TRUE;
+
+   if (ec->comp_data->change_icon)
+     {
+        ec->comp_data->change_icon = EINA_FALSE;
+        ec->changes.icon = EINA_TRUE;
+        EC_CHANGED(ec);
+     }
+
+   ec->comp_data->reparented = EINA_TRUE;
 }
 
 static void 
@@ -2256,6 +2333,45 @@ _e_comp_wl_compositor_create(void)
         goto input_err;
      }
 
+#ifndef HAVE_WAYLAND_ONLY
+   if (getenv("DISPLAY"))
+     {
+        E_Config_XKB_Layout *ekbd;
+        Ecore_X_Atom xkb = 0;
+        Ecore_X_Window root = 0;
+        int len = 0;
+        unsigned char *dat;
+        char *rules, *model, *layout;
+
+        if ((ekbd = e_xkb_layout_get()))
+          {
+             model = strdup(ekbd->model);
+             layout = strdup(ekbd->name);
+          }
+
+        root = ecore_x_window_root_first_get();
+        xkb = ecore_x_atom_get("_XKB_RULES_NAMES");
+        ecore_x_window_prop_property_get(root, xkb, ECORE_X_ATOM_STRING, 
+                                         1024, &dat, &len);
+        if ((dat) && (len > 0))
+          {
+             rules = (char *)dat;
+             dat += strlen((const char *)dat) + 1;
+             if (!model) model = strdup((const char *)dat);
+             dat += strlen((const char *)dat) + 1;
+             if (!layout) layout = strdup((const char *)dat);
+          }
+
+        /* fallback */
+        if (!rules) rules = strdup("evdev");
+        if (!model) model = strdup("pc105");
+        if (!layout) layout = strdup("us");
+
+        /* update compositor keymap */
+        e_comp_wl_input_keymap_set(cdata, rules, model, layout);
+     }
+#endif
+
    /* initialize shm mechanism */
    wl_display_init_shm(cdata->wl.disp);
 
@@ -2334,6 +2450,8 @@ e_comp_wl_init(void)
 
    e_client_hook_add(E_CLIENT_HOOK_EVAL_POST_NEW_CLIENT, 
                      _e_comp_wl_client_cb_post_new, NULL);
+   /* e_client_hook_add(E_CLIENT_HOOK_EVAL_PRE_FRAME_ASSIGN,  */
+   /*                   _e_comp_wl_client_cb_pre_frame, NULL); */
 
    e_client_hook_add(E_CLIENT_HOOK_FOCUS_SET, 
                      _e_comp_wl_client_cb_focus_set, NULL);
