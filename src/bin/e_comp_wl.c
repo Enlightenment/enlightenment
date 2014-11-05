@@ -2075,26 +2075,6 @@ _e_comp_wl_client_cb_post_new(void *data EINA_UNUSED, E_Client *ec)
 
    ec->need_shape_merge = EINA_FALSE;
 
-   if (ec->changes.internal_props)
-     {
-        E_Win *win;
-
-        if ((win = ecore_evas_data_get(ec->internal_ecore_evas, "E_Win")))
-          {
-             ecore_evas_size_min_set(ec->internal_ecore_evas, 
-                                     win->min_w, win->min_h);
-             ecore_evas_size_max_set(ec->internal_ecore_evas, 
-                                     win->max_w, win->max_h);
-             ecore_evas_size_base_set(ec->internal_ecore_evas, 
-                                      win->base_w, win->base_h);
-             ecore_evas_size_step_set(ec->internal_ecore_evas, 
-                                      win->step_x, win->step_y);
-             /* TODO: handle aspect */
-
-             ec->changes.internal_props = EINA_FALSE;
-          }
-     }
-
    if (ec->need_shape_export)
      {
 //        ec->shape_changed = EINA_TRUE;

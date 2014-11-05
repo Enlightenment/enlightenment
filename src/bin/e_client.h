@@ -566,7 +566,6 @@ struct E_Client
       unsigned char shape : 1;
       unsigned char shape_input : 1;
       unsigned char icon : 1;
-      Eina_Bool internal_props : 1;
       Eina_Bool internal_state : 1;
       Eina_Bool need_maximize : 1;
       Eina_Bool need_unmaximize : 1;

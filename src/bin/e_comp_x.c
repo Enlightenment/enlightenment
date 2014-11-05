@@ -2648,12 +2648,6 @@ _e_comp_x_hook_client_post_new_client(void *d EINA_UNUSED, E_Client *ec)
         ec->changes.internal_state = 0;
      }
 
-   if (ec->changes.internal_props)
-     {
-        ec->changes.internal_props = 0;
-        ec->comp_data->internal_props_set++;
-     }
-
    if (ec->need_shape_export)
      {
         Ecore_X_Rectangle *rects;

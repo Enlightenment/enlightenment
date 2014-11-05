@@ -2146,7 +2146,7 @@ _e_client_eval(E_Client *ec)
                  ec->changes.stack || ec->changes.prop || ec->changes.border ||
                  ec->changes.reset_gravity || ec->changes.shading || ec->changes.shaded ||
                  ec->changes.shape || ec->changes.shape_input || ec->changes.icon ||
-                 ec->changes.internal_props || ec->changes.internal_state ||
+                 ec->changes.internal_state ||
                  ec->changes.need_maximize || ec->changes.need_unmaximize;
    ec->changes.stack = 0;
 
