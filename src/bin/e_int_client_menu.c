@@ -34,6 +34,7 @@ static void _e_client_menu_cb_skip_winlist(void *data, E_Menu *m, E_Menu_Item *m
 static void _e_client_menu_cb_skip_pager(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_skip_taskbar(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_sendto_pre(void *data, E_Menu *m, E_Menu_Item *mi);
+static void _e_client_menu_cb_align_pre(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_sendto(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_pin(void *data, E_Menu *m, E_Menu_Item *mi);
 static void _e_client_menu_cb_unpin(void *data, E_Menu *m, E_Menu_Item *mi);
@@ -146,6 +147,13 @@ e_int_client_menu_create(E_Client *ec)
                                   e_theme_edje_file_get("base/theme/borders",
                                                         "e/widgets/border/default/sendto"),
                                   "e/widgets/border/default/sendto");
+     }
+
+   if ((!ec->lock_user_location) && (!ec->iconic) && (!ec->maximized) && (!ec->fullscreen))
+     {
+        mi = e_menu_item_new(m);
+        e_menu_item_label_set(mi, _("Align"));
+        e_menu_item_submenu_pre_callback_set(mi, _e_client_menu_cb_align_pre, ec);
      }
 
    mi = e_menu_item_new(m);
@@ -956,6 +964,234 @@ _e_client_menu_cb_sendto_icon_pre(void *data, E_Menu *m, E_Menu_Item *mi)
    mi->icon_object = o;
 }
 #endif
+
+static void
+_e_client_menu_cb_align_setup(E_Client *ec, Evas_Object_Event_Cb cb)
+{
+   E_Notification_Notify n;
+   Evas_Object *o;
+
+   memset(&n, 0, sizeof(E_Notification_Notify));
+   n.timeout = 3000;
+   n.summary = _("Alignment");
+   n.body = _("Click an object to align with.");
+   n.urgency = E_NOTIFICATION_NOTIFY_URGENCY_NORMAL;
+   e_notification_client_send(&n, NULL, NULL);
+
+   o = evas_object_rectangle_add(ec->comp->evas);
+   evas_object_resize(o, ec->comp->man->w, ec->comp->man->h);
+   evas_object_color_set(o, 0, 0, 0, 0);
+   evas_object_layer_set(o, E_LAYER_POPUP);
+   evas_object_show(o);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, cb, ec);
+   e_comp_shape_queue(ec->comp);
+}
+
+static Evas_Object *
+_e_client_menu_cb_align_cb(Evas *e, Evas_Object *obj, Evas_Event_Mouse_Down *ev)
+{
+   evas_object_hide(obj);
+   evas_object_del(obj);
+   e_comp_shape_queue(e_comp_util_evas_object_comp_get(obj));
+   return evas_object_top_at_xy_get(e, ev->output.x, ev->output.y, 0, 0);
+}
+
+static void
+_e_client_menu_cb_align_on_center(E_Client *ec, Evas *e, Evas_Object *obj, Evas_Event_Mouse_Down *ev)
+{
+   Evas_Object *o;
+
+   o = _e_client_menu_cb_align_cb(e, obj, ev);
+   e_comp_object_util_center_on(ec->frame, o);
+}
+
+static void
+_e_client_menu_cb_align_center(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
+{
+   E_Client *ec = e_object_data_get(E_OBJECT(m));
+
+   if (data)
+     _e_client_menu_cb_align_setup(ec, (Evas_Object_Event_Cb)_e_client_menu_cb_align_on_center);
+   else
+     e_comp_object_util_center(ec->frame);
+}
+
+static void
+_e_client_menu_cb_align_on_top(E_Client *ec, Evas *e, Evas_Object *obj, Evas_Event_Mouse_Down *ev)
+{
+   Evas_Object *o;
+   int y;
+
+   o = _e_client_menu_cb_align_cb(e, obj, ev);
+   evas_object_geometry_get(o, NULL, &y, NULL, NULL);
+   evas_object_move(ec->frame, ec->x, y);
+}
+
+static void
+_e_client_menu_cb_align_top(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
+{
+   E_Client *ec = e_object_data_get(E_OBJECT(m));
+
+   if (data)
+     _e_client_menu_cb_align_setup(ec, (Evas_Object_Event_Cb)_e_client_menu_cb_align_on_top);
+   else
+     {
+        int y;
+
+        e_zone_useful_geometry_get(ec->zone, NULL, &y, NULL, NULL);
+        evas_object_move(ec->frame, ec->x, y);
+     }
+}
+
+static void
+_e_client_menu_cb_align_on_left(E_Client *ec, Evas *e, Evas_Object *obj, Evas_Event_Mouse_Down *ev)
+{
+   Evas_Object *o;
+   int x;
+
+   o = _e_client_menu_cb_align_cb(e, obj, ev);
+   evas_object_geometry_get(o, &x, NULL, NULL, NULL);
+   evas_object_move(ec->frame, x, ec->y);
+}
+
+static void
+_e_client_menu_cb_align_left(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
+{
+   E_Client *ec = e_object_data_get(E_OBJECT(m));
+
+   if (data)
+     _e_client_menu_cb_align_setup(ec, (Evas_Object_Event_Cb)_e_client_menu_cb_align_on_left);
+   else
+     {
+        int x;
+
+        e_zone_useful_geometry_get(ec->zone, &x, NULL, NULL, NULL);
+        evas_object_move(ec->frame, x, ec->y);
+     }
+}
+
+static void
+_e_client_menu_cb_align_on_right(E_Client *ec, Evas *e, Evas_Object *obj, Evas_Event_Mouse_Down *ev)
+{
+   Evas_Object *o;
+   int x, w;
+
+   o = _e_client_menu_cb_align_cb(e, obj, ev);
+   evas_object_geometry_get(o, &x, NULL, &w, NULL);
+   evas_object_move(ec->frame, x + w - ec->w, ec->y);
+}
+
+static void
+_e_client_menu_cb_align_right(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
+{
+   E_Client *ec = e_object_data_get(E_OBJECT(m));
+
+   if (data)
+     _e_client_menu_cb_align_setup(ec, (Evas_Object_Event_Cb)_e_client_menu_cb_align_on_right);
+   else
+     {
+        int x, w;
+
+        e_zone_useful_geometry_get(ec->zone, &x, NULL, &w, NULL);
+        evas_object_move(ec->frame, x + w - ec->w, ec->y);
+     }
+}
+
+static void
+_e_client_menu_cb_align_on_bottom(E_Client *ec, Evas *e, Evas_Object *obj, Evas_Event_Mouse_Down *ev)
+{
+   Evas_Object *o;
+   int y, h;
+
+   o = _e_client_menu_cb_align_cb(e, obj, ev);
+   evas_object_geometry_get(o, NULL, &y, NULL, &h);
+   evas_object_move(ec->frame, ec->x, y + h - ec->h);
+}
+
+static void
+_e_client_menu_cb_align_bottom(void *data, E_Menu *m, E_Menu_Item *mi EINA_UNUSED)
+{
+   E_Client *ec = e_object_data_get(E_OBJECT(m));
+
+   if (data)
+     _e_client_menu_cb_align_setup(ec, (Evas_Object_Event_Cb)_e_client_menu_cb_align_on_bottom);
+   else
+     {
+        int y, h;
+
+        e_zone_useful_geometry_get(ec->zone, NULL, &y, NULL, &h);
+        evas_object_move(ec->frame, ec->x, y + h - ec->h);
+     }
+}
+
+static void
+_e_client_menu_cb_align_pre(void *data, E_Menu *m EINA_UNUSED, E_Menu_Item *mi)
+{
+   E_Menu *subm, *mm;
+   E_Menu_Item *submi;
+   E_Client *ec = data;
+
+   subm = e_menu_new();
+   e_menu_title_set(subm, _("Alignment"));
+   e_object_data_set(E_OBJECT(subm), ec);
+   e_menu_item_submenu_set(mi, subm);
+   e_object_unref(E_OBJECT(subm));
+
+   submi = e_menu_item_new(subm);
+   e_menu_item_label_set(submi, _("Center"));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_align_center, NULL);
+   mm = e_menu_new();
+   e_object_data_set(E_OBJECT(mm), ec);
+   e_menu_item_submenu_set(submi, mm);
+   e_object_unref(E_OBJECT(mm));
+   submi = e_menu_item_new(mm);
+   e_menu_item_label_set(submi, _("On window..."));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_align_center, (void*)1);
+
+   submi = e_menu_item_new(subm);
+   e_menu_item_label_set(submi, _("Top"));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_align_top, NULL);
+   mm = e_menu_new();
+   e_object_data_set(E_OBJECT(mm), ec);
+   e_menu_item_submenu_set(submi, mm);
+   e_object_unref(E_OBJECT(mm));
+   submi = e_menu_item_new(mm);
+   e_menu_item_label_set(submi, _("Of window..."));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_align_top, (void*)1);
+
+   submi = e_menu_item_new(subm);
+   e_menu_item_label_set(submi, _("Left"));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_align_left, NULL);
+   mm = e_menu_new();
+   e_object_data_set(E_OBJECT(mm), ec);
+   e_menu_item_submenu_set(submi, mm);
+   e_object_unref(E_OBJECT(mm));
+   submi = e_menu_item_new(mm);
+   e_menu_item_label_set(submi, _("Of window..."));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_align_left, (void*)1);
+
+   submi = e_menu_item_new(subm);
+   e_menu_item_label_set(submi, _("Right"));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_align_right, NULL);
+   mm = e_menu_new();
+   e_object_data_set(E_OBJECT(mm), ec);
+   e_menu_item_submenu_set(submi, mm);
+   e_object_unref(E_OBJECT(mm));
+   submi = e_menu_item_new(mm);
+   e_menu_item_label_set(submi, _("Of window..."));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_align_right, (void*)1);
+
+   submi = e_menu_item_new(subm);
+   e_menu_item_label_set(submi, _("Bottom"));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_align_bottom, NULL);
+   mm = e_menu_new();
+   e_object_data_set(E_OBJECT(mm), ec);
+   e_menu_item_submenu_set(submi, mm);
+   e_object_unref(E_OBJECT(mm));
+   submi = e_menu_item_new(mm);
+   e_menu_item_label_set(submi, _("Of window..."));
+   e_menu_item_callback_set(submi, _e_client_menu_cb_align_bottom, (void*)1);
+}
 
 static void
 _e_client_menu_cb_sendto_pre(void *data, E_Menu *m __UNUSED__, E_Menu_Item *mi)
