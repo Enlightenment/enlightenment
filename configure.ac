@@ -965,6 +965,7 @@ AC_E_OPTIONAL_MODULE([wl_fb], $have_wayland, [CHECK_MODULE_WL_FB])
 AC_E_OPTIONAL_MODULE([wl_drm], $have_wayland, [CHECK_MODULE_WL_DRM])
 #AC_E_OPTIONAL_MODULE([wl_screenshot], true, [CHECK_MODULE_WL_SCREENSHOT])
 AC_E_OPTIONAL_MODULE([policy_mobile], true)
+AC_E_OPTIONAL_MODULE([geolocation], true)
 
 HALT="/sbin/shutdown -h now"
 REBOOT="/sbin/shutdown -r now"
@@ -1087,6 +1088,7 @@ src/modules/quickaccess/module.desktop
 src/modules/teamwork/module.desktop
 src/modules/shot/module.desktop
 src/modules/backlight/module.desktop
+src/modules/geoclue2/module.desktop
 src/modules/tasks/module.desktop
 src/modules/xkbswitch/module.desktop
 src/modules/tiling/module.desktop

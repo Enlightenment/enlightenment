@@ -1,0 +1,7 @@
+[Desktop Entry]
+Encoding=UTF-8
+Type=Link
+Name=Geolocation
+Comment=Geolocation information
+Icon=e-module-geolocation
+X-Enlightenment-ModuleType=utils
