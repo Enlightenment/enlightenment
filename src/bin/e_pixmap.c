@@ -566,6 +566,7 @@ e_pixmap_native_surface_init(E_Pixmap *cp, Evas_Native_Surface *ns)
         ns->data.opengl.y = 0;
         ns->data.opengl.w = cp->w;
         ns->data.opengl.h = cp->h;
+        ret = EINA_TRUE;
 #endif
         break;
       default:
