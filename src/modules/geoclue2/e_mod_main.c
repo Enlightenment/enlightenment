@@ -1,14 +1,8 @@
 #include "e.h"
 
-/* TODO
- * o Grey if inUse property is false
- * o Blue if the inUse property is true
- * o Pulsing if an app requests access and the dialog shows?
- * o Dialog with app name and option for Not yet, Never, Only once, Always
- * o List of apps in settings window.
- * o Display accuracy level? Per app?
- */
-
+#include "gen/eldbus_geo_clue2_manager.h"
+#include "gen/eldbus_geo_clue2_client.h"
+#include "gen/eldbus_geo_clue2_location.h"
 
 /* gadcon requirements */
 static E_Gadcon_Client *_gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style);
@@ -37,10 +31,42 @@ struct _Instance
    E_Gadcon_Client *gcc;
    Evas_Object     *o_geoclue2;
    Eina_Bool       in_use;
+   Eldbus_Connection *conn;
+   Eldbus_Service_Interface *iface;
+   Eldbus_Proxy *manager;
+   Eldbus_Proxy *client;
+   Eldbus_Proxy *location;
+   double latitude;
+   double longitude;
+   double accuracy;
+   double altitude;
+   const char *description;
 };
 
 static Eina_List *geoclue2_instances = NULL;
 static E_Module *geoclue2_module = NULL;
+
+void
+cb_client_start(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pending EINA_UNUSED,
+		Eldbus_Error_Info *error EINA_UNUSED)
+{
+   Instance *inst = data;
+
+   DBG("Client proxy start callback received");
+
+   edje_object_signal_emit(inst->o_geoclue2, "e,state,location_on", "e");
+}
+
+void
+cb_client_stop(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pending EINA_UNUSED,
+		Eldbus_Error_Info *error EINA_UNUSED)
+{
+   Instance *inst = data;
+
+   DBG("Client proxy stop callback received");
+
+   edje_object_signal_emit(inst->o_geoclue2, "e,state,location_off", "e");
+}
 
 static void
 _geoclue2_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
@@ -48,12 +74,20 @@ _geoclue2_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UN
    Instance *inst = data;
    Evas_Event_Mouse_Down *ev = event;
 
+   if (ev->button == 1)
+     {
+        DBG("**** DEBUG **** Left mouse button clicked on icon");
+        geo_clue2_client_start_call(inst->client, cb_client_start, inst);
+     }
    if (ev->button == 3)
      {
         E_Zone *zone;
         E_Menu *m;
         E_Menu_Item *mi;
         int x, y;
+
+        DBG("**** DEBUG **** Right mouse button clicked on icon");
+        geo_clue2_client_stop_call(inst->client, cb_client_stop, inst);
 
         zone = e_util_zone_current_get(e_manager_current_get());
 
@@ -73,6 +107,108 @@ _geoclue2_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UN
      }
 }
 
+void
+cb_location_prop_latitude_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNUSED,
+		              const char *propname EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED,
+		              Eldbus_Error_Info *error_info EINA_UNUSED, double value)
+{
+   Instance *inst = data;
+   inst->latitude = value;
+
+   DBG("Location property Latitude: %f", value);
+}
+
+void
+cb_location_prop_longitude_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNUSED,
+		               const char *propname EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED,
+		               Eldbus_Error_Info *error_info EINA_UNUSED, double value)
+{
+   Instance *inst = data;
+   inst->longitude = value;
+
+   DBG("Location property Longitude: %f", value);
+}
+
+void
+cb_location_prop_accuracy_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNUSED,
+		              const char *propname EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED,
+		              Eldbus_Error_Info *error_info EINA_UNUSED, double value)
+{
+   Instance *inst = data;
+   inst->accuracy = value;
+
+   DBG("Location property Accuracy: %f", value);
+}
+
+void
+cb_location_prop_altitude_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNUSED,
+		              const char *propname EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED,
+		              Eldbus_Error_Info *error_info EINA_UNUSED, double value)
+{
+   Instance *inst = data;
+   inst->altitude = value;
+
+   DBG("Location property Altitude: %f", value);
+}
+
+void
+cb_location_prop_description_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNUSED,
+		                 const char *propname EINA_UNUSED, Eldbus_Proxy *proxy EINA_UNUSED,
+		                 Eldbus_Error_Info *error_info EINA_UNUSED, const char *value)
+{
+   Instance *inst = data;
+   inst->description = value;
+
+   DBG("Location property Description: %s", value);
+}
+
+void
+cb_client_location_updated_signal(void *data, const Eldbus_Message *msg)
+{
+   const char *new_path, *old_path;
+   Instance *inst = data;
+
+   DBG("Client LocationUpdated signal received");
+
+   if (!eldbus_message_arguments_get(msg, "oo", &old_path, &new_path))
+     {
+        ERR("Error: could not get location update");
+        return;
+     }
+   DBG("Client signal location path old: %s", old_path);
+   DBG("Client signal location path new: %s", new_path);
+
+   inst->location = geo_clue2_location_proxy_get(inst->conn, "org.freedesktop.GeoClue2", new_path);
+   if (!inst->location)
+     {
+        ERR("Error: could not connect to GeoClue2 location proxy");
+        return;
+     }
+
+   geo_clue2_location_latitude_propget(inst->location, cb_location_prop_latitude_get, inst);
+   geo_clue2_location_longitude_propget(inst->location, cb_location_prop_longitude_get, inst);
+   geo_clue2_location_accuracy_propget(inst->location, cb_location_prop_accuracy_get, inst);
+   geo_clue2_location_altitude_propget(inst->location, cb_location_prop_altitude_get, inst);
+   geo_clue2_location_description_propget(inst->location, cb_location_prop_description_get, inst);
+}
+
+void
+cb_client_object_get(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pending EINA_UNUSED,
+		     Eldbus_Error_Info *error EINA_UNUSED, const char *client_path)
+{
+   Instance *inst = data;
+
+   DBG("Client object path: %s", client_path);
+   inst->client = geo_clue2_client_proxy_get(inst->conn, "org.freedesktop.GeoClue2", client_path);
+   if (!inst->client)
+     {
+        ERR("Error: could not connect to GeoClue2 client proxy");
+        return;
+     }
+
+   eldbus_proxy_signal_handler_add(inst->client, "LocationUpdated", cb_client_location_updated_signal, inst);
+}
+
 static E_Gadcon_Client *
 _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
 {
@@ -80,6 +216,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    E_Gadcon_Client *gcc;
    Instance *inst;
 
+   eldbus_init();
    inst = E_NEW(Instance, 1);
 
    o = edje_object_add(gc->evas);
@@ -102,6 +239,23 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
                                   inst);
 
    geoclue2_instances = eina_list_append(geoclue2_instances, inst);
+
+   inst->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
+   if (!inst->conn)
+     {
+        ERR("Error: could not get system bus.");
+        return NULL;
+     }
+
+   inst->manager = geo_clue2_manager_proxy_get(inst->conn, "org.freedesktop.GeoClue2", "/org/freedesktop/GeoClue2/Manager");
+   if (!inst->manager)
+     {
+        ERR("Error: could not connect to GeoClue2 manager proxy");
+        return NULL;
+     }
+
+   geo_clue2_manager_get_client_call(inst->manager, cb_client_object_get, inst);
+
    return gcc;
 }
 
@@ -113,7 +267,12 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    inst = gcc->data;
    geoclue2_instances = eina_list_remove(geoclue2_instances, inst);
    evas_object_del(inst->o_geoclue2);
+   geo_clue2_manager_proxy_unref(inst->location);
+   geo_clue2_manager_proxy_unref(inst->client);
+   geo_clue2_manager_proxy_unref(inst->manager);
+   eldbus_connection_unref(inst->conn);
    free(inst);
+   eldbus_shutdown();
 }
 
 static void
