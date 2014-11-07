@@ -94,6 +94,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->o_geoclue2 = o;
 
    inst->in_use = EINA_FALSE;
+   edje_object_signal_emit(inst->o_geoclue2, "e,state,location_off", "e");
 
    evas_object_event_callback_add(inst->o_geoclue2,
                                   EVAS_CALLBACK_MOUSE_DOWN,
