@@ -30,6 +30,13 @@ struct _Instance
 {
    E_Gadcon_Client *gcc;
    Evas_Object     *o_geoclue2;
+   E_Gadcon_Popup  *popup;
+   Evas_Object     *popup_label;
+   Evas_Object     *popup_latitude;
+   Evas_Object     *popup_longitude;
+   Evas_Object     *popup_altitude;
+   Evas_Object     *popup_accuracy;
+   Evas_Object     *popup_description;
    Eina_Bool       in_use;
    Eldbus_Connection *conn;
    Eldbus_Service_Interface *iface;
@@ -45,6 +52,88 @@ struct _Instance
 
 static Eina_List *geoclue2_instances = NULL;
 static E_Module *geoclue2_module = NULL;
+
+void
+popup_update(Instance *inst)
+{
+   char buf[PATH_MAX];
+
+   if(!inst->popup)
+     return;
+
+   snprintf(buf, sizeof(buf), _("Latitude:  %f"), inst->latitude);
+   e_widget_label_text_set(inst->popup_latitude, buf);
+
+   snprintf(buf, sizeof(buf), _("Longitude:  %f"), inst->longitude);
+   e_widget_label_text_set(inst->popup_longitude, buf);
+
+   snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
+   e_widget_label_text_set(inst->popup_altitude, buf);
+
+   snprintf(buf, sizeof(buf), _("Accuracy:  %f"), inst->accuracy);
+   e_widget_label_text_set(inst->popup_accuracy, buf);
+}
+
+void
+popup_del(Instance *inst)
+{
+   E_FREE_FUNC(inst->popup, e_object_del);
+   inst->popup = NULL;
+}
+
+static void
+_popup_del_cb(void *obj)
+{
+   popup_del(e_object_data_get(obj));
+}
+
+static void
+_popup_autoclose_cb(void *data, Evas_Object *obj EINA_UNUSED)
+{
+   popup_del((Instance *)data);
+}
+
+void
+popup_new(Instance *inst)
+{
+   Evas_Object *list, *oa;
+   Evas *evas;
+   char buf[PATH_MAX];
+
+   inst->popup = e_gadcon_popup_new(inst->gcc, EINA_FALSE);
+   evas = e_comp_get(inst->popup)->evas;
+
+   list = e_widget_list_add(evas, 0, 0);
+
+   oa = e_widget_label_add(evas, _("Location information:"));
+   e_widget_list_object_append(list, oa, 1, 1, 0.5);
+
+   snprintf(buf, sizeof(buf), _("Latitude:  %f"), inst->latitude);
+   inst->popup_latitude = e_widget_label_add(evas, buf);
+   e_widget_list_object_append(list, inst->popup_latitude, 1, 1, 0.5);
+
+   snprintf(buf, sizeof(buf), _("Longitude:  %f"), inst->longitude);
+   inst->popup_longitude = e_widget_label_add(evas, buf);
+   e_widget_list_object_append(list, inst->popup_longitude, 1, 1, 0.5);
+
+   snprintf(buf, sizeof(buf), _("Altitude:  %f"), inst->altitude);
+   inst->popup_altitude = e_widget_label_add(evas, buf);
+   e_widget_list_object_append(list, inst->popup_altitude, 1, 1, 0.5);
+
+   snprintf(buf, sizeof(buf), _("Accuracy:  %f"), inst->accuracy);
+   inst->popup_accuracy = e_widget_label_add(evas, buf);
+   e_widget_list_object_append(list, inst->popup_accuracy, 1, 1, 0.5);
+
+   popup_update(inst);
+
+   e_gadcon_popup_content_set(inst->popup, list);
+   e_comp_object_util_autoclose(inst->popup->comp_object,
+                                _popup_autoclose_cb, NULL, inst);
+   e_object_data_set(E_OBJECT(inst->popup), inst);
+   E_OBJECT_DEL_SET(inst->popup, _popup_del_cb);
+
+   e_gadcon_popup_show(inst->popup);
+}
 
 void
 cb_client_start(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pending EINA_UNUSED,
@@ -76,8 +165,16 @@ _geoclue2_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UN
 
    if (ev->button == 1)
      {
-        DBG("**** DEBUG **** Left mouse button clicked on icon");
-        geo_clue2_client_start_call(inst->client, cb_client_start, inst);
+        if (inst->popup)
+          {
+             popup_del(inst);
+             geo_clue2_client_stop_call(inst->client, cb_client_stop, inst);
+          }
+        else
+          {
+             geo_clue2_client_start_call(inst->client, cb_client_start, inst);
+             popup_new(inst);
+	  }
      }
    if (ev->button == 3)
      {
@@ -85,9 +182,6 @@ _geoclue2_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UN
         E_Menu *m;
         E_Menu_Item *mi;
         int x, y;
-
-        DBG("**** DEBUG **** Right mouse button clicked on icon");
-        geo_clue2_client_stop_call(inst->client, cb_client_stop, inst);
 
         zone = e_util_zone_current_get(e_manager_current_get());
 
@@ -115,6 +209,8 @@ cb_location_prop_latitude_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNU
    Instance *inst = data;
    inst->latitude = value;
 
+   popup_update(inst);
+
    DBG("Location property Latitude: %f", value);
 }
 
@@ -125,6 +221,8 @@ cb_location_prop_longitude_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UN
 {
    Instance *inst = data;
    inst->longitude = value;
+
+   popup_update(inst);
 
    DBG("Location property Longitude: %f", value);
 }
@@ -137,6 +235,8 @@ cb_location_prop_accuracy_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNU
    Instance *inst = data;
    inst->accuracy = value;
 
+   popup_update(inst);
+
    DBG("Location property Accuracy: %f", value);
 }
 
@@ -148,6 +248,8 @@ cb_location_prop_altitude_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_UNU
    Instance *inst = data;
    inst->altitude = value;
 
+   popup_update(inst);
+
    DBG("Location property Altitude: %f", value);
 }
 
@@ -158,6 +260,8 @@ cb_location_prop_description_get(void *data EINA_UNUSED, Eldbus_Pending *p EINA_
 {
    Instance *inst = data;
    inst->description = value;
+
+   popup_update(inst);
 
    DBG("Location property Description: %s", value);
 }
@@ -230,6 +334,11 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->gcc = gcc;
    inst->o_geoclue2 = o;
 
+   inst->latitude = 0.0;
+   inst->longitude = 0.0;
+   inst->accuracy = 0.0;
+   inst->altitude= 0.0 ;
+   inst->description = NULL;
    inst->in_use = EINA_FALSE;
    edje_object_signal_emit(inst->o_geoclue2, "e,state,location_off", "e");
 
