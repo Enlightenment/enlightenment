@@ -336,7 +336,7 @@ _e_comp_client_update(E_Client *ec)
         if (e_pixmap_is_x(ec->pixmap) && (!ec->override))
           evas_object_resize(ec->frame, ec->w, ec->h);
      }
-   return post || (!e_pixmap_is_x(ec->pixmap));
+   return post;
 }
 
 static void
