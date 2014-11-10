@@ -23,6 +23,8 @@ static void _e_comp_wl_subsurface_parent_commit(E_Client *ec, Eina_Bool parent_s
 /* local variables */
 /* static Eina_Hash *clients_win_hash = NULL; */
 static Eina_List *handlers = NULL;
+static Eina_List *_idle_clients = NULL;
+static Ecore_Idle_Enterer *_client_idler = NULL;
 
 /* local functions */
 static void 
@@ -487,6 +489,43 @@ _e_comp_wl_client_priority_normal(E_Client *ec)
                                      EINA_FALSE, EINA_TRUE, EINA_FALSE);
 }
 
+static Eina_Bool 
+_e_comp_wl_client_cb_idle(void *data EINA_UNUSED)
+{
+   E_Client *ec;
+
+   EINA_LIST_FREE(_idle_clients, ec)
+     {
+        if ((e_object_is_del(E_OBJECT(ec)) || (!ec->comp_data))) continue;
+
+        if ((ec->post_resize) && (!ec->maximized))
+          {
+             if (ec->comp_data->shell.configure_send)
+               ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
+                                                   ec->comp->wl_comp_data->resize.edges, 
+                                                   ec->client.w, ec->client.h);
+          }
+
+        ec->post_move = EINA_FALSE;
+        ec->post_resize = EINA_FALSE;
+     }
+
+   _client_idler = NULL;
+   return EINA_FALSE;
+}
+
+static void 
+_e_comp_wl_client_idler_add(E_Client *ec)
+{
+   if (!ec) return;
+
+   if (!_client_idler)
+     _client_idler = ecore_idle_enterer_add(_e_comp_wl_client_cb_idle, NULL);
+
+   if (!eina_list_data_find(_idle_clients, ec))
+     _idle_clients = eina_list_append(_idle_clients, ec);
+}
+
 static void 
 _e_comp_wl_evas_cb_focus_in(void *data, Evas *evas EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event EINA_UNUSED)
 {
@@ -570,10 +609,9 @@ _e_comp_wl_evas_cb_resize(void *data, Evas_Object *obj EINA_UNUSED, void *event 
 
    E_COMP_WL_PIXMAP_CHECK;
 
-   if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
-     ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
-                                         ec->comp->wl_comp_data->resize.edges, 
-                                         ec->client.w, ec->client.h);
+   if ((ec->shading) || (ec->shaded)) return;
+   ec->post_resize = EINA_TRUE;
+   _e_comp_wl_client_idler_add(ec);
 }
 
 static void 
@@ -757,8 +795,6 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
    E_Pixmap *ep;
    E_Client *ec;
 
-   DBG("Surface Attach: %d", wl_resource_get_id(resource));
-
    /* get the e_pixmap reference */
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
@@ -789,6 +825,8 @@ _e_comp_wl_surface_cb_attach(struct wl_client *client EINA_UNUSED, struct wl_res
         return;
      }
 
+   DBG("Surface Attach: %d", wl_resource_get_id(resource));
+
    /* reset client pending information */
    ec->comp_data->pending.x = sx;
    ec->comp_data->pending.y = sy;
@@ -818,9 +856,6 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
    E_Client *ec;
    Eina_Rectangle *dmg = NULL;
 
-   DBG("Surface Cb Damage: %d", wl_resource_get_id(resource));
-   DBG("\tGeom: %d %d %d %d", x, y, w, h);
-
    /* get the e_pixmap reference */
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
@@ -839,6 +874,9 @@ _e_comp_wl_surface_cb_damage(struct wl_client *client EINA_UNUSED, struct wl_res
 
    if (e_object_is_del(E_OBJECT(ec))) return;
    if (!ec->comp_data) return;
+
+   DBG("Surface Cb Damage: %d", wl_resource_get_id(resource));
+   DBG("\tGeom: %d %d %d %d", x, y, w, h);
 
    /* create new damage rectangle */
    if (!(dmg = eina_rectangle_new(x, y, w, h))) return;
@@ -992,8 +1030,6 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
    E_Client *ec, *subc;
    Eina_List *l;
 
-   DBG("Surface Commit: %d", wl_resource_get_id(resource));
-
    /* get the e_pixmap reference */
    if (!(ep = wl_resource_get_user_data(resource))) return;
 
@@ -1012,6 +1048,8 @@ _e_comp_wl_surface_cb_commit(struct wl_client *client EINA_UNUSED, struct wl_res
 
    /* trap for clients which are being deleted */
    if (e_object_is_del(E_OBJECT(ec))) return;
+
+   DBG("Surface Commit: %d", wl_resource_get_id(resource));
 
    /* call the subsurface commit function
     * 
@@ -2228,13 +2266,6 @@ _e_comp_wl_client_cb_resize_begin(void *data EINA_UNUSED, E_Client *ec)
         ec->comp->wl_comp_data->resize.edges = 0;
         break;
      }
-
-   if ((ec->comp_data) && (ec->comp_data->shell.configure_send))
-     {
-        ec->comp_data->shell.configure_send(ec->comp_data->shell.surface, 
-                                            ec->comp->wl_comp_data->resize.edges, 
-                                            ec->client.w, ec->client.h);
-     }
 }
 
 static void 
@@ -2250,9 +2281,9 @@ _e_comp_wl_client_cb_resize_end(void *data EINA_UNUSED, E_Client *ec)
    if (ec->pending_resize)
      {
 
-        EC_CHANGED(ec);
         ec->changes.pos = 1;
         ec->changes.size = 1;
+        EC_CHANGED(ec);
      }
 
    E_FREE_LIST(ec->pending_resize, free);
@@ -2506,18 +2537,13 @@ e_comp_wl_surface_commit(E_Client *ec)
 
    if (!(ep = ec->pixmap)) return EINA_FALSE;
 
-   if (ec->comp_data->pending.buffer)
-     {
-        /* set pixmap resource */
-        e_pixmap_resource_set(ep, ec->comp_data->pending.buffer);
-
-        /* mark the pixmap as usable or not */
-        e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
-     }
+   /* mark the pixmap as usable or not */
+   e_pixmap_usable_set(ep, (ec->comp_data->pending.buffer != NULL));
 
    /* mark the pixmap as dirty */
    e_pixmap_dirty(ep);
 
+   /* refresh pixmap */
    e_pixmap_refresh(ep);
 
    /* check for any pending attachments */
