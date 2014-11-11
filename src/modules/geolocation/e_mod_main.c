@@ -29,7 +29,7 @@ typedef struct _Instance Instance;
 struct _Instance
 {
    E_Gadcon_Client *gcc;
-   Evas_Object     *o_geoclue2;
+   Evas_Object     *icon;
    E_Gadcon_Popup  *popup;
    Evas_Object     *popup_label;
    Evas_Object     *popup_latitude;
@@ -50,8 +50,8 @@ struct _Instance
    const char *description;
 };
 
-static Eina_List *geoclue2_instances = NULL;
-static E_Module *geoclue2_module = NULL;
+static Eina_List *geolocation_instances = NULL;
+static E_Module *geolocation_module = NULL;
 
 void
 popup_update(Instance *inst)
@@ -143,7 +143,7 @@ cb_client_start(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pen
 
    DBG("Client proxy start callback received");
 
-   edje_object_signal_emit(inst->o_geoclue2, "e,state,location_on", "e");
+   edje_object_signal_emit(inst->icon, "e,state,location_on", "e");
 }
 
 void
@@ -154,11 +154,11 @@ cb_client_stop(Eldbus_Proxy *proxy EINA_UNUSED, void *data, Eldbus_Pending *pend
 
    DBG("Client proxy stop callback received");
 
-   edje_object_signal_emit(inst->o_geoclue2, "e,state,location_off", "e");
+   edje_object_signal_emit(inst->icon, "e,state,location_off", "e");
 }
 
 static void
-_geoclue2_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
+_geolocation_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event)
 {
    Instance *inst = data;
    Evas_Event_Mouse_Down *ev = event;
@@ -332,7 +332,7 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    gcc->data = inst;
 
    inst->gcc = gcc;
-   inst->o_geoclue2 = o;
+   inst->icon = o;
 
    inst->latitude = 0.0;
    inst->longitude = 0.0;
@@ -340,14 +340,14 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    inst->altitude= 0.0 ;
    inst->description = NULL;
    inst->in_use = EINA_FALSE;
-   edje_object_signal_emit(inst->o_geoclue2, "e,state,location_off", "e");
+   edje_object_signal_emit(inst->icon, "e,state,location_off", "e");
 
-   evas_object_event_callback_add(inst->o_geoclue2,
+   evas_object_event_callback_add(inst->icon,
                                   EVAS_CALLBACK_MOUSE_DOWN,
-                                  _geoclue2_cb_mouse_down,
+                                  _geolocation_cb_mouse_down,
                                   inst);
 
-   geoclue2_instances = eina_list_append(geoclue2_instances, inst);
+   geolocation_instances = eina_list_append(geolocation_instances, inst);
 
    inst->conn = eldbus_connection_get(ELDBUS_CONNECTION_TYPE_SYSTEM);
    if (!inst->conn)
@@ -374,8 +374,8 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    Instance *inst;
 
    inst = gcc->data;
-   geoclue2_instances = eina_list_remove(geoclue2_instances, inst);
-   evas_object_del(inst->o_geoclue2);
+   geolocation_instances = eina_list_remove(geolocation_instances, inst);
+   evas_object_del(inst->icon);
    geo_clue2_manager_proxy_unref(inst->location);
    geo_clue2_manager_proxy_unref(inst->client);
    geo_clue2_manager_proxy_unref(inst->manager);
@@ -392,9 +392,9 @@ _gc_orient(E_Gadcon_Client *gcc, E_Gadcon_Orient orient __UNUSED__)
 
    inst = gcc->data;
    mw = 0, mh = 0;
-   edje_object_size_min_get(inst->o_geoclue2, &mw, &mh);
+   edje_object_size_min_get(inst->icon, &mw, &mh);
    if ((mw < 1) || (mh < 1))
-     edje_object_size_min_calc(inst->o_geoclue2, &mw, &mh);
+     edje_object_size_min_calc(inst->icon, &mw, &mh);
    if (mw < 4) mw = 4;
    if (mh < 4) mh = 4;
    e_gadcon_client_aspect_set(gcc, mw, mh);
@@ -414,8 +414,8 @@ _gc_icon(const E_Gadcon_Client_Class *client_class __UNUSED__, Evas *evas)
    char buf[4096];
 
    o = edje_object_add(evas);
-   snprintf(buf, sizeof(buf), "%s/e-module-geoclue2.edj",
-	    e_module_dir_get(geoclue2_module));
+   snprintf(buf, sizeof(buf), "%s/e-module-geolocation.edj",
+	    e_module_dir_get(geolocation_module));
    edje_object_file_set(o, buf, "icon");
    return o;
 }
@@ -426,7 +426,7 @@ _gc_id_new(const E_Gadcon_Client_Class *client_class)
    static char buf[4096];
 
    snprintf(buf, sizeof(buf), "%s.%d", client_class->name,
-            eina_list_count(geoclue2_instances) + 1);
+            eina_list_count(geolocation_instances) + 1);
    return buf;
 }
 
@@ -440,7 +440,7 @@ EAPI E_Module_Api e_modapi =
 EAPI void *
 e_modapi_init(E_Module *m)
 {
-   geoclue2_module = m;
+   geolocation_module = m;
    e_gadcon_provider_register(&_gadcon_class);
    return m;
 }

@@ -122,4 +122,4 @@ include src/modules/Makefile_wl_fb.mk
 
 include src/modules/Makefile_policy_mobile.mk
 
-include src/modules/Makefile_geoclue2.mk
+include src/modules/Makefile_geolocation.mk

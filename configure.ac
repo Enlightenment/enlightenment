@@ -1088,7 +1088,7 @@ src/modules/quickaccess/module.desktop
 src/modules/teamwork/module.desktop
 src/modules/shot/module.desktop
 src/modules/backlight/module.desktop
-src/modules/geoclue2/module.desktop
+src/modules/geolocation/module.desktop
 src/modules/tasks/module.desktop
 src/modules/xkbswitch/module.desktop
 src/modules/tiling/module.desktop
