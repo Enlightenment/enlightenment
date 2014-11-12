@@ -168,7 +168,9 @@ _geolocation_cb_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj _
         if (inst->popup)
           {
              popup_del(inst);
-             geo_clue2_client_stop_call(inst->client, cb_client_stop, inst);
+             /* FIXME: There is a problem with starting a client again after stopping it in
+              * GeoClue2 2.0.0 Need to test with a newer version to see if that is solved */
+             //geo_clue2_client_stop_call(inst->client, cb_client_stop, inst);
           }
         else
           {
