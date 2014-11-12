@@ -321,7 +321,6 @@ _gc_init(E_Gadcon *gc, const char *name, const char *id, const char *style)
    E_Gadcon_Client *gcc;
    Instance *inst;
 
-   eldbus_init();
    inst = E_NEW(Instance, 1);
 
    o = edje_object_add(gc->evas);
@@ -382,7 +381,6 @@ _gc_shutdown(E_Gadcon_Client *gcc)
    geo_clue2_manager_proxy_unref(inst->manager);
    eldbus_connection_unref(inst->conn);
    free(inst);
-   eldbus_shutdown();
 }
 
 static void
