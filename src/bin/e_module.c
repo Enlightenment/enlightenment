@@ -941,6 +941,7 @@ _e_module_whitelist_check(void)
       "appmenu",
       "packagekit",
       "policy_mobile",
+      "geolocation",
       NULL   // end marker
    };
 
