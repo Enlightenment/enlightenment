@@ -78,7 +78,6 @@ void
 popup_del(Instance *inst)
 {
    E_FREE_FUNC(inst->popup, e_object_del);
-   inst->popup = NULL;
 }
 
 static void
