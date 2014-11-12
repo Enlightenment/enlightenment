@@ -341,23 +341,31 @@ e_desk_deskshow(E_Zone *zone)
    E_OBJECT_TYPE_CHECK(zone, E_ZONE_TYPE);
 
    desk = e_desk_current_get(zone);
-   /* uniconify raises windows and changes stacking order
-    * go top-down to avoid skipping windows
-    */
-   E_CLIENT_REVERSE_FOREACH(zone->comp, ec)
+   if (desk->deskshow_toggle)
      {
-        if (e_client_util_ignored_get(ec)) continue;
-        if (ec->desk != desk) continue;
-        if (desk->deskshow_toggle)
+        /* uniconify raises windows and changes stacking order
+         * go top-down to avoid skipping windows
+         */
+        E_CLIENT_REVERSE_FOREACH(zone->comp, ec)
           {
+             if (e_client_util_ignored_get(ec)) continue;
+             if (ec->desk != desk) continue;
              if (ec->deskshow)
                {
                   ec->deskshow = 0;
                   e_client_uniconify(ec);
                }
           }
-        else
+     }
+   else
+     {
+        /*
+         * iconify raises, so we ahve to start from the bottom so we are going forward
+         */
+        E_CLIENT_FOREACH(zone->comp, ec)
           {
+             if (e_client_util_ignored_get(ec)) continue;
+             if (ec->desk != desk) continue;
              if (ec->iconic) continue;
              if (ec->netwm.state.skip_taskbar) continue;
              if (ec->user_skip_winlist) continue;
