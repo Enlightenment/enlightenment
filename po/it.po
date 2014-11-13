@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Enlightenment 0.17\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2014-09-23 18:46+0200\n"
-"PO-Revision-Date: 2014-09-23 18:50+0200\n"
+"POT-Creation-Date: 2014-11-13 22:05+0100\n"
+"PO-Revision-Date: 2014-11-13 23:51+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: General\n"
 "Language: it\n"
@@ -21,9 +21,9 @@ msgid "About Enlightenment"
 msgstr "Informazioni su Enlightenment"
 
 #: src/bin/e_about.c:20 src/bin/e_actions.c:2958 src/bin/e_config_dialog.c:288
-#: src/bin/e_fm.c:1072 src/bin/e_int_client_menu.c:230
-#: src/bin/e_int_client_prop.c:81 src/bin/e_theme_about.c:24
-#: src/modules/conf/e_conf.c:169
+#: src/bin/e_fm.c:1072 src/bin/e_int_client_menu.c:238
+#: src/bin/e_int_client_prop.c:81 src/bin/e_startup.c:88
+#: src/bin/e_theme_about.c:24 src/modules/conf/e_conf.c:169
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:876
 #: src/modules/everything/evry_plug_windows.c:455
 #: src/modules/fileman/e_fwin.c:2575 src/modules/mixer/app_mixer.c:505
@@ -70,7 +70,7 @@ msgid "Are you sure you want to kill this window?"
 msgstr "Siete sicuri di voler uccidere questa finestra?"
 
 #: src/bin/e_actions.c:373 src/bin/e_actions.c:2963
-#: src/bin/e_int_client_menu.c:800
+#: src/bin/e_int_client_menu.c:808
 msgid "Kill"
 msgstr "Uccidi"
 
@@ -149,11 +149,11 @@ msgid "Window : Actions"
 msgstr "Finestre : Azioni"
 
 #: src/bin/e_actions.c:2918 src/bin/e_fm.c:11711
-#: src/bin/e_int_client_menu.c:720
+#: src/bin/e_int_client_menu.c:728
 msgid "Move"
 msgstr "Sposta"
 
-#: src/bin/e_actions.c:2929 src/bin/e_int_client_menu.c:734
+#: src/bin/e_actions.c:2929 src/bin/e_int_client_menu.c:742
 msgid "Resize"
 msgstr "Ridimensiona"
 
@@ -168,12 +168,12 @@ msgstr "Menù"
 msgid "Window Menu"
 msgstr "Menù finestra"
 
-#: src/bin/e_actions.c:2948 src/bin/e_int_client_menu.c:1114
+#: src/bin/e_actions.c:2948 src/bin/e_int_client_menu.c:1350
 #: src/modules/winlist/e_int_config_winlist.c:207
 msgid "Raise"
 msgstr "Eleva"
 
-#: src/bin/e_actions.c:2953 src/bin/e_int_client_menu.c:1122
+#: src/bin/e_actions.c:2953 src/bin/e_int_client_menu.c:1358
 msgid "Lower"
 msgstr "Abbassa"
 
@@ -213,24 +213,24 @@ msgstr "Commuta stato a tutto schermo"
 msgid "Fullscreen Mode Enable"
 msgstr "Attiva stato a tutto schermo"
 
-#: src/bin/e_actions.c:2995 src/bin/e_int_client_menu.c:435
-#: src/bin/e_int_client_menu.c:695
+#: src/bin/e_actions.c:2995 src/bin/e_int_client_menu.c:443
+#: src/bin/e_int_client_menu.c:703
 msgid "Maximize"
 msgstr "Massimizza"
 
-#: src/bin/e_actions.c:2997 src/bin/e_int_client_menu.c:446
+#: src/bin/e_actions.c:2997 src/bin/e_int_client_menu.c:454
 msgid "Maximize Vertically"
 msgstr "Massimizza verticalmente"
 
-#: src/bin/e_actions.c:3000 src/bin/e_int_client_menu.c:457
+#: src/bin/e_actions.c:3000 src/bin/e_int_client_menu.c:465
 msgid "Maximize Horizontally"
 msgstr "Massimizza orizzontalmente"
 
-#: src/bin/e_actions.c:3003 src/bin/e_int_client_menu.c:468
+#: src/bin/e_actions.c:3003 src/bin/e_int_client_menu.c:476
 msgid "Maximize Left"
 msgstr "Massimizza verso sinistra"
 
-#: src/bin/e_actions.c:3006 src/bin/e_int_client_menu.c:479
+#: src/bin/e_actions.c:3006 src/bin/e_int_client_menu.c:487
 msgid "Maximize Right"
 msgstr "Massimizza verso destra"
 
@@ -668,7 +668,7 @@ msgid "Command"
 msgstr "Comando"
 
 #: src/bin/e_actions.c:3321 src/bin/e_desktop_editor.c:727
-#: src/bin/e_int_client_menu.c:120
+#: src/bin/e_int_client_menu.c:121
 #, c-format
 msgid "Application"
 msgstr "Applicazione"
@@ -872,11 +872,11 @@ msgstr ""
 "compositing è necessaria<br>una GPU in grado di supportare OpenGL 2.0 (o "
 "OpenGL<br>ES 2.0)."
 
-#: src/bin/e_comp_x.c:4883
+#: src/bin/e_comp_x.c:4884
 msgid "Lock Failed"
 msgstr "Blocco fallito"
 
-#: src/bin/e_comp_x.c:4884
+#: src/bin/e_comp_x.c:4885
 msgid ""
 "Locking the desktop failed because some application<br>has grabbed either "
 "the keyboard or the mouse or both<br>and their grab is unable to be broken."
@@ -885,15 +885,15 @@ msgstr ""
 "catturato la tastiera e/o il<br>mouse, e questa cattura non può essere "
 "sciolta."
 
-#: src/bin/e_comp_x.c:4900 src/bin/e_comp_x.c:4921
+#: src/bin/e_comp_x.c:4901 src/bin/e_comp_x.c:4922
 msgid "Compositor Error"
 msgstr "Errore del compositor"
 
-#: src/bin/e_comp_x.c:4901
+#: src/bin/e_comp_x.c:4902
 msgid "Another compositor is already running<br>on your display server."
 msgstr "Un altro compositor è già in esecuzione<br>sul vostro server grafico."
 
-#: src/bin/e_comp_x.c:4922
+#: src/bin/e_comp_x.c:4923
 msgid ""
 "Your display server does not support the<br>compositor overlay window. This "
 "is needed<br>for it to function."
@@ -901,11 +901,11 @@ msgstr ""
 "Il vostro server grafico non supporta la finestra<br>overlay del compositor. "
 "Ciò è necessario per il<br>suo funzionamento."
 
-#: src/bin/e_comp_x.c:5113
+#: src/bin/e_comp_x.c:5114
 msgid "Enlightenment cannot initialize Ecore_X!\n"
 msgstr "Enlightenment non riesce ad inizializzare Ecore_X!\n"
 
-#: src/bin/e_comp_x.c:5124
+#: src/bin/e_comp_x.c:5125
 msgid ""
 "Your display server does not support XComposite, or Ecore-X was built "
 "without XComposite support. Note that for composite support you will also "
@@ -915,7 +915,7 @@ msgstr ""
 "compilato senza supporto per XComposite. Notare che il supporto per il "
 "compositing richiede anche il supporto per XRender e XFixes in X11 ed Ecore."
 
-#: src/bin/e_comp_x.c:5133
+#: src/bin/e_comp_x.c:5134
 msgid ""
 "Your display server does not support XDamage or Ecore was built without "
 "XDamage support."
@@ -923,7 +923,7 @@ msgstr ""
 "Il vostro server grafico non supporta XDamage o Ecore è stato compilato "
 "senza il supporto per XDamage."
 
-#: src/bin/e_comp_x.c:5240
+#: src/bin/e_comp_x.c:5241
 msgid "Enlightenment cannot initialize the XSettings system.\n"
 msgstr "Enlightenment non riesce a inizializzare il suo sistema XSettings.\n"
 
@@ -1303,7 +1303,7 @@ msgstr "Selezionare un'icona per '%s'"
 msgid "Select an Executable"
 msgstr "Seleziona un'eseguibile"
 
-#: src/bin/e_entry.c:482 src/bin/e_fm.c:9224 src/bin/e_fm.c:10934
+#: src/bin/e_entry.c:484 src/bin/e_fm.c:9224 src/bin/e_fm.c:10934
 #: src/bin/e_shelf.c:1613 src/bin/e_shelf.c:2273
 #: src/modules/conf_bindings/e_int_config_acpibindings.c:201
 #: src/modules/conf_bindings/e_int_config_edgebindings.c:265
@@ -1322,19 +1322,19 @@ msgstr "Seleziona un'eseguibile"
 msgid "Delete"
 msgstr "Elimina"
 
-#: src/bin/e_entry.c:492 src/bin/e_fm.c:9135
+#: src/bin/e_entry.c:494 src/bin/e_fm.c:9135
 msgid "Cut"
 msgstr "Taglia"
 
-#: src/bin/e_entry.c:501 src/bin/e_fm.c:9149 src/bin/e_fm.c:11706
+#: src/bin/e_entry.c:503 src/bin/e_fm.c:9149 src/bin/e_fm.c:11706
 msgid "Copy"
 msgstr "Copia"
 
-#: src/bin/e_entry.c:511 src/bin/e_fm.c:8948 src/bin/e_fm.c:9162
+#: src/bin/e_entry.c:513 src/bin/e_fm.c:8948 src/bin/e_fm.c:9162
 msgid "Paste"
 msgstr "Incolla"
 
-#: src/bin/e_entry.c:522
+#: src/bin/e_entry.c:524
 msgid "Select All"
 msgstr "Seleziona tutto"
 
@@ -1969,7 +1969,7 @@ msgstr "Errore del gadget"
 msgid "%s does not support disabling autoscrolling"
 msgstr "%s non supporta la disabilitazione dello scorrimento automatico"
 
-#: src/bin/e_gadcon.c:1684 src/bin/e_int_client_menu.c:143
+#: src/bin/e_gadcon.c:1684 src/bin/e_int_client_menu.c:144
 msgid "Move to"
 msgstr "Sposta in"
 
@@ -2085,7 +2085,8 @@ msgstr "Opzioni riempimento"
 msgid "Stretch"
 msgstr "Stira"
 
-#: src/bin/e_import_config_dialog.c:498 src/bin/e_int_client_prop.c:239
+#: src/bin/e_import_config_dialog.c:498 src/bin/e_int_client_menu.c:1141
+#: src/bin/e_int_client_prop.c:239
 #, c-format
 msgid "Center"
 msgstr "Centra"
@@ -2177,7 +2178,7 @@ msgid "Size"
 msgstr "Dimensione"
 
 #: src/bin/e_int_client_locks.c:313 src/bin/e_int_client_locks.c:332
-#: src/bin/e_int_client_menu.c:748 src/bin/e_int_client_prop.c:505
+#: src/bin/e_int_client_menu.c:756 src/bin/e_int_client_prop.c:505
 #: src/bin/e_int_client_remember.c:750 src/bin/e_int_shelf_config.c:163
 #: src/modules/conf_window_manipulation/e_int_config_focus.c:302
 msgid "Stacking"
@@ -2238,98 +2239,136 @@ msgstr "Blocchi del comportamento"
 msgid "Remember these Locks"
 msgstr "Ricorda questi blocchi"
 
-#: src/bin/e_int_client_menu.c:130
+#: src/bin/e_int_client_menu.c:131
 #: src/modules/conf_bindings/e_int_config_mousebindings.c:332
 msgid "Window"
 msgstr "Finestra"
 
-#: src/bin/e_int_client_menu.c:152 src/bin/e_int_client_menu.c:1074
+#: src/bin/e_int_client_menu.c:155
+msgid "Align"
+msgstr "Allinea"
+
+#: src/bin/e_int_client_menu.c:160 src/bin/e_int_client_menu.c:1310
 msgid "Always on Top"
 msgstr "Sempre sulle altre"
 
-#: src/bin/e_int_client_menu.c:167 src/bin/e_int_client_prop.c:510
+#: src/bin/e_int_client_menu.c:175 src/bin/e_int_client_prop.c:510
 msgid "Sticky"
 msgstr "Persistente"
 
-#: src/bin/e_int_client_menu.c:181
+#: src/bin/e_int_client_menu.c:189
 msgid "Shade"
 msgstr "Contrai"
 
-#: src/bin/e_int_client_menu.c:194 src/bin/e_int_config_comp_match.c:453
+#: src/bin/e_int_client_menu.c:202 src/bin/e_int_config_comp_match.c:453
 msgid "Borderless"
 msgstr "Senza bordi"
 
-#: src/bin/e_int_client_menu.c:208 src/bin/e_int_menus.c:1140
+#: src/bin/e_int_client_menu.c:216 src/bin/e_int_menus.c:1140
 msgid "Composite"
 msgstr "Composite"
 
-#: src/bin/e_int_client_menu.c:218
+#: src/bin/e_int_client_menu.c:226
 msgid "Unredirected"
 msgstr "Non rediretto"
 
-#: src/bin/e_int_client_menu.c:422 src/bin/e_int_client_prop.c:515
+#: src/bin/e_int_client_menu.c:430 src/bin/e_int_client_prop.c:515
 #: src/bin/e_int_config_comp_match.c:502
 #: src/modules/conf_window_manipulation/e_int_config_window_geometry.c:207
 msgid "Fullscreen"
 msgstr "A tutto schermo"
 
-#: src/bin/e_int_client_menu.c:490
+#: src/bin/e_int_client_menu.c:498
 msgid "Unmaximize"
 msgstr "Dimensioni normali"
 
-#: src/bin/e_int_client_menu.c:632
+#: src/bin/e_int_client_menu.c:640
 msgid "Edit Icon"
 msgstr "Modifica icona"
 
-#: src/bin/e_int_client_menu.c:640
+#: src/bin/e_int_client_menu.c:648
 msgid "Create Icon"
 msgstr "Crea icona"
 
-#: src/bin/e_int_client_menu.c:648
+#: src/bin/e_int_client_menu.c:656
 msgid "Add to Favorites Menu"
 msgstr "Aggiungi al menù preferiti"
 
-#: src/bin/e_int_client_menu.c:653
+#: src/bin/e_int_client_menu.c:661
 msgid "Add to IBar"
 msgstr "Aggiungi a IBar"
 
-#: src/bin/e_int_client_menu.c:661
+#: src/bin/e_int_client_menu.c:669
 msgid "Create Keyboard Shortcut"
 msgstr "Crea scorciatoia di tastiera"
 
-#: src/bin/e_int_client_menu.c:707
+#: src/bin/e_int_client_menu.c:715
 #: src/modules/everything/evry_plug_windows.c:441
 msgid "Iconify"
 msgstr "Iconifica"
 
-#: src/bin/e_int_client_menu.c:757
+#: src/bin/e_int_client_menu.c:765
 msgid "Skip"
 msgstr "Salta"
 
-#: src/bin/e_int_client_menu.c:767 src/modules/conf_theme/e_mod_main.c:57
+#: src/bin/e_int_client_menu.c:775 src/modules/conf_theme/e_mod_main.c:57
 msgid "Border"
 msgstr "Bordo"
 
-#: src/bin/e_int_client_menu.c:779 src/bin/e_int_client_remember.c:654
+#: src/bin/e_int_client_menu.c:787 src/bin/e_int_client_remember.c:654
 #: src/bin/e_int_client_remember.c:753
 msgid "Locks"
 msgstr "Blocchi"
 
-#: src/bin/e_int_client_menu.c:787
+#: src/bin/e_int_client_menu.c:795
 #: src/modules/conf_dialogs/e_int_config_dialogs.c:128
 msgid "Remember"
 msgstr "Ricorda..."
 
-#: src/bin/e_int_client_menu.c:809
+#: src/bin/e_int_client_menu.c:817
 msgid "ICCCM/NetWM"
 msgstr "ICCCM/NetWM"
 
-#: src/bin/e_int_client_menu.c:983
+#: src/bin/e_int_client_menu.c:976 src/bin/e_int_client_menu.c:1135
+#: src/modules/winlist/e_int_config_winlist.c:287
+msgid "Alignment"
+msgstr "Allineamento"
+
+#: src/bin/e_int_client_menu.c:977
+msgid "Click an object to align with."
+msgstr "Clicca un oggetto con cui allineare."
+
+#: src/bin/e_int_client_menu.c:1148
+msgid "On window..."
+msgstr "Sulla finestra..."
+
+#: src/bin/e_int_client_menu.c:1152 src/bin/e_shelf.c:70
+msgid "Top"
+msgstr "In alto"
+
+#: src/bin/e_int_client_menu.c:1159 src/bin/e_int_client_menu.c:1170
+#: src/bin/e_int_client_menu.c:1181 src/bin/e_int_client_menu.c:1192
+msgid "Of window..."
+msgstr "Della finestra..."
+
+#: src/bin/e_int_client_menu.c:1163 src/bin/e_shelf.c:68
+msgid "Left"
+msgstr "A sinistra"
+
+#: src/bin/e_int_client_menu.c:1174 src/bin/e_shelf.c:69
+msgid "Right"
+msgstr "A destra"
+
+#: src/bin/e_int_client_menu.c:1185 src/bin/e_shelf.c:71
+msgid "Bottom"
+msgstr "In basso"
+
+#: src/bin/e_int_client_menu.c:1219
 #, c-format
 msgid "Screen %d"
 msgstr "Schermo %d"
 
-#: src/bin/e_int_client_menu.c:1085 src/bin/e_int_client_prop.c:158
+#: src/bin/e_int_client_menu.c:1321 src/bin/e_int_client_prop.c:158
 #: src/bin/e_int_client_prop.c:180 src/bin/e_int_config_comp_match.c:92
 #: src/bin/e_int_config_comp_match.c:413
 #: src/modules/conf_theme/e_int_config_fonts.c:100
@@ -2339,43 +2378,43 @@ msgstr "Schermo %d"
 msgid "Normal"
 msgstr "Normale"
 
-#: src/bin/e_int_client_menu.c:1096
+#: src/bin/e_int_client_menu.c:1332
 msgid "Always Below"
 msgstr "Sempre sotto le altre"
 
-#: src/bin/e_int_client_menu.c:1140
+#: src/bin/e_int_client_menu.c:1376
 msgid "Pin to Desktop"
 msgstr "Attacca al desktop"
 
-#: src/bin/e_int_client_menu.c:1151
+#: src/bin/e_int_client_menu.c:1387
 msgid "Unpin from Desktop"
 msgstr "Stacca dal desktop"
 
-#: src/bin/e_int_client_menu.c:1239
+#: src/bin/e_int_client_menu.c:1475
 msgid "Select Border Style"
 msgstr "Seleziona stile del bordo"
 
-#: src/bin/e_int_client_menu.c:1251
+#: src/bin/e_int_client_menu.c:1487
 msgid "Use Enlightenment Default Icon Preference"
 msgstr "Usa icona predefinita di Enlightenment"
 
-#: src/bin/e_int_client_menu.c:1259
+#: src/bin/e_int_client_menu.c:1495
 msgid "Use Application Provided Icon"
 msgstr "Usa icona fornita dall'applicazione"
 
-#: src/bin/e_int_client_menu.c:1267
+#: src/bin/e_int_client_menu.c:1503
 msgid "Use User Defined Icon"
 msgstr "Usa icona impostata dall'utente"
 
-#: src/bin/e_int_client_menu.c:1276 src/bin/e_int_client_remember.c:786
+#: src/bin/e_int_client_menu.c:1512 src/bin/e_int_client_remember.c:786
 msgid "Offer Resistance"
 msgstr "Offri resistenza"
 
-#: src/bin/e_int_client_menu.c:1337
+#: src/bin/e_int_client_menu.c:1573
 msgid "Window List"
 msgstr "Lista finestre"
 
-#: src/bin/e_int_client_menu.c:1347 src/modules/pager/e_mod_main.c:286
+#: src/bin/e_int_client_menu.c:1583 src/modules/pager/e_mod_main.c:286
 #: src/modules/pager/e_mod_main.c:2058 src/modules/pager/e_mod_main.c:2065
 #: src/modules/pager/e_mod_main.c:2072 src/modules/pager/e_mod_main.c:2074
 #: src/modules/pager/e_mod_main.c:2076 src/modules/pager/e_mod_main.c:2078
@@ -2392,7 +2431,7 @@ msgstr "Lista finestre"
 msgid "Pager"
 msgstr "Pager"
 
-#: src/bin/e_int_client_menu.c:1357 src/modules/wizard/page_180.c:24
+#: src/bin/e_int_client_menu.c:1593 src/modules/wizard/page_180.c:24
 msgid "Taskbar"
 msgstr "Taskbar"
 
@@ -4250,22 +4289,6 @@ msgstr "Orizzontale"
 #: src/modules/gadman/e_mod_gadman.c:1110
 msgid "Vertical"
 msgstr "Verticale"
-
-#: src/bin/e_shelf.c:68
-msgid "Left"
-msgstr "A sinistra"
-
-#: src/bin/e_shelf.c:69
-msgid "Right"
-msgstr "A destra"
-
-#: src/bin/e_shelf.c:70
-msgid "Top"
-msgstr "In alto"
-
-#: src/bin/e_shelf.c:71
-msgid "Bottom"
-msgstr "In basso"
 
 #: src/bin/e_shelf.c:72
 msgid "Top-left Corner"
@@ -10587,10 +10610,6 @@ msgstr "Allineamento orizzontale"
 #: src/modules/winlist/e_int_config_winlist.c:282
 msgid "Vertical alignment"
 msgstr "Allineamento verticale"
-
-#: src/modules/winlist/e_int_config_winlist.c:287
-msgid "Alignment"
-msgstr "Allineamento"
 
 #: src/modules/winlist/e_mod_main.c:28
 msgid "Window Switcher"
